@@ -1,5 +1,61 @@
 2017-12-18  Brady Eidson  <beidson@apple.com>
 
+        Add ability to API test Service Workers via a custom protocol.
+        https://bugs.webkit.org/show_bug.cgi?id=180911
+
+        Reviewed by Chris Dumez.
+
+        This adds a set of "Service Workers can handle this" schemes to the scheme registry
+        and most of these WebKit changes are to support getting those values out to all processes.
+        
+        Additionally, WebsiteDataRecords used to be file/http(s)-only. That seems bizarre and definitely
+        got in the way of testing. So I also added a way to allow any scheme to result in a valid record.
+
+        * Shared/ChildProcess.cpp:
+        (WebKit::ChildProcess::registerURLSchemeServiceWorkersCanHandle const):
+        * Shared/ChildProcess.h:
+        * Shared/ChildProcess.messages.in:
+        
+        * Shared/Storage/StorageProcessCreationParameters.cpp:
+        (WebKit::StorageProcessCreationParameters::encode const):
+        (WebKit::StorageProcessCreationParameters::decode):
+        * Shared/Storage/StorageProcessCreationParameters.h:
+        
+        * Shared/WebProcessCreationParameters.cpp:
+        (WebKit::WebProcessCreationParameters::encode const):
+        (WebKit::WebProcessCreationParameters::decode):
+        * Shared/WebProcessCreationParameters.h:
+        
+        * StorageProcess/StorageProcess.cpp:
+        (WebKit::StorageProcess::initializeWebsiteDataStore):
+        
+        * UIProcess/API/Cocoa/WKProcessPool.mm:
+        (-[WKProcessPool _registerURLSchemeServiceWorkersCanHandle:]):
+        * UIProcess/API/Cocoa/WKProcessPoolPrivate.h:
+        
+        * UIProcess/API/Cocoa/WKWebsiteDataStore.mm:
+        (+[WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins]):
+        * UIProcess/API/Cocoa/WKWebsiteDataStorePrivate.h:
+        
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::ensureStorageProcessAndWebsiteDataStore):
+        (WebKit::WebProcessPool::initializeNewWebProcess):
+        (WebKit::WebProcessPool::registerURLSchemeServiceWorkersCanHandle):
+        * UIProcess/WebProcessPool.h:
+        
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::allowWebsiteDataRecordsForAllOrigins):
+        (WebKit::WebsiteDataStore::fetchDataAndApply):
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+        
+        * WebProcess/Storage/WebServiceWorkerProvider.cpp:
+        (WebKit::WebServiceWorkerProvider::handleFetch):
+        
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::initializeWebProcess):
+
+2017-12-18  Brady Eidson  <beidson@apple.com>
+
         Apps that use both WK1 and WK2 can crash creating a WKWebsiteDataStore.
         https://bugs.webkit.org/show_bug.cgi?id=180953
 

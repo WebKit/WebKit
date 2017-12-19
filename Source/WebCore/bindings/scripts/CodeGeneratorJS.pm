@@ -1696,7 +1696,8 @@ sub NeedsRuntimeCheck
     return $context->extendedAttributes->{EnabledAtRuntime}
         || $context->extendedAttributes->{EnabledForWorld}
         || $context->extendedAttributes->{EnabledBySetting}
-        || $context->extendedAttributes->{SecureContext};
+        || $context->extendedAttributes->{SecureContext}
+        || $context->extendedAttributes->{ContextHasServiceWorkerScheme};
 }
 
 # https://heycam.github.io/webidl/#es-operations
@@ -3649,7 +3650,17 @@ sub GenerateRuntimeEnableConditionalString
     if ($context->extendedAttributes->{SecureContext}) {
         AddToImplIncludes("ScriptExecutionContext.h");
 
-        push(@conjuncts, "jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext()->isSecureContext()");
+        if ($context->extendedAttributes->{ContextHasServiceWorkerScheme}) {
+            push(@conjuncts, "(jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext()->isSecureContext() || jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext()->hasServiceWorkerScheme())");
+        } else {
+            push(@conjuncts, "jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext()->isSecureContext()");
+        }
+    } else {
+        if ($context->extendedAttributes->{ContextHasServiceWorkerScheme}) {
+            AddToImplIncludes("ScriptExecutionContext.h");
+
+            push(@conjuncts, "jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext()->hasServiceWorkerScheme()");
+        }
     }
 
     if ($context->extendedAttributes->{Exposed}) {

@@ -53,6 +53,7 @@ struct StorageProcessCreationParameters {
 #if ENABLE(SERVICE_WORKER)
     String serviceWorkerRegistrationDirectory;
     SandboxExtension::Handle serviceWorkerRegistrationDirectoryExtensionHandle;
+    Vector<String> urlSchemesServiceWorkersCanHandle;
 #endif
 };
 

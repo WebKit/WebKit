@@ -38,6 +38,7 @@
 #include "Logging.h"
 #include "NavigatorBase.h"
 #include "ResourceError.h"
+#include "SchemeRegistry.h"
 #include "ScriptExecutionContext.h"
 #include "SecurityOrigin.h"
 #include "ServiceWorker.h"
@@ -129,8 +130,7 @@ void ServiceWorkerContainer::addRegistration(const String& relativeScriptURL, co
         return;
     }
 
-    // FIXME: The spec disallows scripts outside of HTTP(S), but we'll likely support app custom URL schemes in WebKit.
-    if (!jobData.scriptURL.protocolIsInHTTPFamily()) {
+    if (!SchemeRegistry::canServiceWorkersHandleURLScheme(jobData.scriptURL.protocol().toStringWithoutCopying())) {
         promise->reject(Exception { TypeError, ASCIILiteral("serviceWorker.register() must be called with a script URL whose protocol is either HTTP or HTTPS") });
         return;
     }
@@ -145,7 +145,7 @@ void ServiceWorkerContainer::addRegistration(const String& relativeScriptURL, co
     if (!scope.isEmpty())
         jobData.scopeURL = context->completeURL(scope);
 
-    if (!jobData.scopeURL.isNull() && !jobData.scopeURL.protocolIsInHTTPFamily()) {
+    if (!jobData.scopeURL.isNull() && !SchemeRegistry::canServiceWorkersHandleURLScheme(jobData.scopeURL.protocol().toStringWithoutCopying())) {
         promise->reject(Exception { TypeError, ASCIILiteral("Scope URL provided to serviceWorker.register() must be either HTTP or HTTPS") });
         return;
     }

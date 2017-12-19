@@ -156,6 +156,8 @@ public:
     void setAllowsCellularAccess(AllowsCellularAccess allows) { m_allowsCellularAccess = allows; }
     AllowsCellularAccess allowsCellularAccess() { return m_allowsCellularAccess; }
 
+    static void allowWebsiteDataRecordsForAllOrigins();
+
 private:
     explicit WebsiteDataStore(PAL::SessionID);
     explicit WebsiteDataStore(Configuration, PAL::SessionID);

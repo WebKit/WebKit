@@ -41,7 +41,7 @@ void StorageProcessCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << indexedDatabaseDirectory << indexedDatabaseDirectoryExtensionHandle;
 #endif
 #if ENABLE(SERVICE_WORKER)
-    encoder << serviceWorkerRegistrationDirectory << serviceWorkerRegistrationDirectoryExtensionHandle;
+    encoder << serviceWorkerRegistrationDirectory << serviceWorkerRegistrationDirectoryExtensionHandle << urlSchemesServiceWorkersCanHandle;
 #endif
 }
 
@@ -68,6 +68,9 @@ bool StorageProcessCreationParameters::decode(IPC::Decoder& decoder, StorageProc
     if (!serviceWorkerRegistrationDirectoryExtensionHandle)
         return false;
     result.serviceWorkerRegistrationDirectoryExtensionHandle = WTFMove(*serviceWorkerRegistrationDirectoryExtensionHandle);
+
+    if (!decoder.decode(result.urlSchemesServiceWorkersCanHandle))
+        return false;
 #endif
 
     return true;

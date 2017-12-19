@@ -22,4 +22,5 @@
 
 messages -> ChildProcess {
     ShutDown()
+    RegisterURLSchemeServiceWorkersCanHandle(String scheme)
 }

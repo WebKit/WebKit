@@ -85,6 +85,9 @@
         "ConstructorMayThrowException": {
             "contextsAllowed": ["interface"]
         },
+        "ContextHasServiceWorkerScheme": {
+            "contextsAllowed": ["attribute"]
+        },
         "Custom": {
             "contextsAllowed": ["attribute", "operation"]
         },

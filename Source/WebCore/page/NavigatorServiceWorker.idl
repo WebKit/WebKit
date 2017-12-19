@@ -28,5 +28,5 @@
     Conditional=SERVICE_WORKER,
     EnabledAtRuntime=ServiceWorker
 ] interface NavigatorServiceWorker {
-    [SecureContext, SameObject] readonly attribute ServiceWorkerContainer serviceWorker;
+    [SecureContext, ContextHasServiceWorkerScheme, SameObject] readonly attribute ServiceWorkerContainer serviceWorker;
 };

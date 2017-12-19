@@ -28,6 +28,7 @@
 
 #include "Logging.h"
 #include "SandboxInitializationParameters.h"
+#include <WebCore/SchemeRegistry.h>
 #include <pal/SessionID.h>
 #include <unistd.h>
 
@@ -189,6 +190,11 @@ void ChildProcess::terminate()
 void ChildProcess::shutDown()
 {
     terminate();
+}
+
+void ChildProcess::registerURLSchemeServiceWorkersCanHandle(const String& urlScheme) const
+{
+    WebCore::SchemeRegistry::registerURLSchemeServiceWorkersCanHandle(urlScheme);
 }
 
 #if !PLATFORM(COCOA)

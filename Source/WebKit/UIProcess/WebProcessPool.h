@@ -218,6 +218,7 @@ public:
     void registerURLSchemeAsDisplayIsolated(const String&);
     void registerURLSchemeAsCORSEnabled(const String&);
     void registerURLSchemeAsCachePartitioned(const String&);
+    void registerURLSchemeServiceWorkersCanHandle(const String&);
     void preconnectToServer(const WebCore::URL&);
 
     VisitedLinkStore& visitedLinkStore() { return m_visitedLinkStore.get(); }
@@ -538,6 +539,7 @@ private:
     HashSet<String> m_schemesToRegisterAsCORSEnabled;
     HashSet<String> m_schemesToRegisterAsAlwaysRevalidated;
     HashSet<String> m_schemesToRegisterAsCachePartitioned;
+    HashSet<String> m_schemesServiceWorkersCanHandle;
 
     bool m_alwaysUsesComplexTextCodePath { false };
     bool m_shouldUseFontSmoothing { true };

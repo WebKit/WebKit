@@ -367,6 +367,9 @@ void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters)
     for (auto& scheme : parameters.urlSchemesRegisteredAsCachePartitioned)
         registerURLSchemeAsCachePartitioned(scheme);
 
+    for (auto& scheme : parameters.urlSchemesServiceWorkersCanHandle)
+        registerURLSchemeServiceWorkersCanHandle(scheme);
+
     setDefaultRequestTimeoutInterval(parameters.defaultRequestTimeoutInterval);
 
     setResourceLoadStatisticsEnabled(parameters.resourceLoadStatisticsEnabled);

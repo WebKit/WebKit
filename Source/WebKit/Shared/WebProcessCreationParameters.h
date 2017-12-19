@@ -107,6 +107,7 @@ struct WebProcessCreationParameters {
     Vector<String> urlSchemesRegisteredAsCORSEnabled;
     Vector<String> urlSchemesRegisteredAsAlwaysRevalidated;
     Vector<String> urlSchemesRegisteredAsCachePartitioned;
+    Vector<String> urlSchemesServiceWorkersCanHandle;
 
     Vector<String> fontWhitelist;
     Vector<String> languages;

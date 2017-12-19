@@ -45,6 +45,7 @@
 #include "ResourceRequest.h"
 #include "SWClientConnection.h"
 #include "SWContextManager.h"
+#include "SchemeRegistry.h"
 #include "ScriptState.h"
 #include "ServiceWorker.h"
 #include "ServiceWorkerGlobalScope.h"
@@ -537,6 +538,12 @@ JSC::ExecState* ScriptExecutionContext::execState()
 }
 
 #if ENABLE(SERVICE_WORKER)
+
+bool ScriptExecutionContext::hasServiceWorkerScheme()
+{
+    ASSERT(securityOrigin());
+    return SchemeRegistry::isServiceWorkerContainerCustomScheme(securityOrigin()->protocol());
+}
 
 ServiceWorker* ScriptExecutionContext::activeServiceWorker() const
 {

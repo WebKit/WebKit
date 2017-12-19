@@ -99,6 +99,11 @@ public:
     WEBCORE_EXPORT static void registerURLSchemeAsCachePartitioned(const String& scheme);
     static bool shouldPartitionCacheForURLScheme(const String& scheme);
 
+    // Schemes besides http(s) that service workers are allowed to handle
+    WEBCORE_EXPORT static void registerURLSchemeServiceWorkersCanHandle(const String& scheme);
+    WEBCORE_EXPORT static bool canServiceWorkersHandleURLScheme(const String& scheme);
+    static bool isServiceWorkerContainerCustomScheme(const String& scheme);
+
     static bool isUserExtensionScheme(const String& scheme);
 };
 

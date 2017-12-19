@@ -27,6 +27,8 @@
 #include "SchemeRegistry.h"
 
 #include "URLParser.h"
+#include <wtf/Lock.h>
+#include <wtf/Locker.h>
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
 
@@ -252,6 +254,19 @@ static URLSchemesMap& cachePartitioningSchemes()
     return schemes;
 }
 
+static Lock& serviceWorkerSchemesLock()
+{
+    static NeverDestroyed<Lock> lock;
+    return lock;
+}
+
+static URLSchemesMap& serviceWorkerSchemes()
+{
+    ASSERT(serviceWorkerSchemesLock().isHeld());
+    static NeverDestroyed<URLSchemesMap> schemes;
+    return schemes;
+}
+
 static URLSchemesMap& alwaysRevalidatedSchemes()
 {
     static NeverDestroyed<URLSchemesMap> schemes;
@@ -428,6 +443,37 @@ void SchemeRegistry::registerURLSchemeAsCachePartitioned(const String& scheme)
 bool SchemeRegistry::shouldPartitionCacheForURLScheme(const String& scheme)
 {
     return !scheme.isNull() && cachePartitioningSchemes().contains(scheme);
+}
+
+void SchemeRegistry::registerURLSchemeServiceWorkersCanHandle(const String& scheme)
+{
+    if (scheme.isNull())
+        return;
+
+    Locker<Lock> locker(serviceWorkerSchemesLock());
+    serviceWorkerSchemes().add(scheme);
+}
+
+bool SchemeRegistry::canServiceWorkersHandleURLScheme(const String& scheme)
+{
+    if (scheme.isNull())
+        return false;
+
+    if (scheme.startsWithIgnoringASCIICase(ASCIILiteral("http"))) {
+        if (scheme.length() == 4)
+            return true;
+        if (scheme.length() == 5 && isASCIIAlphaCaselessEqual(scheme[4], 's'))
+            return true;
+    }
+
+    Locker<Lock> locker(serviceWorkerSchemesLock());
+    return serviceWorkerSchemes().contains(scheme);
+}
+
+bool SchemeRegistry::isServiceWorkerContainerCustomScheme(const String& scheme)
+{
+    Locker<Lock> locker(serviceWorkerSchemesLock());
+    return !scheme.isNull() && serviceWorkerSchemes().contains(scheme);
 }
 
 bool SchemeRegistry::isUserExtensionScheme(const String& scheme)

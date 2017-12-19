@@ -191,6 +191,9 @@ void StorageProcess::initializeWebsiteDataStore(const StorageProcessCreationPara
         SandboxExtension::consumePermanently(parameters.serviceWorkerRegistrationDirectoryExtensionHandle);
         postStorageTask(createCrossThreadTask(*this, &StorageProcess::ensurePathExists, parameters.serviceWorkerRegistrationDirectory));
     }
+
+    for (auto& scheme : parameters.urlSchemesServiceWorkersCanHandle)
+        registerURLSchemeServiceWorkersCanHandle(scheme);
 #endif
 }
 

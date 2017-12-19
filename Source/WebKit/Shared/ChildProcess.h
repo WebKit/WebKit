@@ -104,6 +104,8 @@ protected:
 
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 
+    void registerURLSchemeServiceWorkersCanHandle(const String&) const;
+
 private:
     // IPC::MessageSender
     IPC::Connection* messageSenderConnection() override;

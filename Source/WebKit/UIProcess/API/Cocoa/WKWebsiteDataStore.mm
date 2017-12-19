@@ -590,6 +590,11 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
     store->setStatisticsTestingCallback(nullptr);
 }
 
++ (void)_allowWebsiteDataRecordsForAllOrigins
+{
+    WebKit::WebsiteDataStore::allowWebsiteDataRecordsForAllOrigins();
+}
+
 @end
 
 #endif // WK_API_ENABLED

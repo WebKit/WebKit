@@ -238,6 +238,7 @@ public:
     JSC::ExecState* execState();
 
 #if ENABLE(SERVICE_WORKER)
+    bool hasServiceWorkerScheme();
     ServiceWorker* activeServiceWorker() const;
     void setActiveServiceWorker(RefPtr<ServiceWorker>&&);
 

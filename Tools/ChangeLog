@@ -1,3 +1,18 @@
+2017-12-18  Brady Eidson  <beidson@apple.com>
+
+        Add ability to API test Service Workers via a custom protocol.
+        https://bugs.webkit.org/show_bug.cgi?id=180911
+
+        Reviewed by Chris Dumez.
+
+        Adds a very basic SW test:
+        - Verify WebsiteDataStore can wipe all SW registration data.
+        - Fire up a web page with a service worker
+        - Verify SW registration data for that page exists in the WebsiteDataStore.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/ServiceWorkerBasic.mm: Added.
+
 2017-12-18  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Attachment Support] Insert images as inline attachments when pasting and dropping

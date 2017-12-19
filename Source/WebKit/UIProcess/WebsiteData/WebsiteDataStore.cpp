@@ -55,6 +55,12 @@
 
 namespace WebKit {
 
+static bool allowsWebsiteDataRecordsForAllOrigins;
+void WebsiteDataStore::allowWebsiteDataRecordsForAllOrigins()
+{
+    allowsWebsiteDataRecordsForAllOrigins = true;
+}
+
 static HashMap<PAL::SessionID, WebsiteDataStore*>& nonDefaultDataStores()
 {
     RELEASE_ASSERT(isUIThread());
@@ -238,8 +244,12 @@ void WebsiteDataStore::fetchDataAndApply(OptionSet<WebsiteDataType> dataTypes, O
 
             for (auto& entry : websiteData.entries) {
                 auto displayName = WebsiteDataRecord::displayNameForOrigin(entry.origin);
-                if (!displayName)
-                    continue;
+                if (!displayName) {
+                    if (!allowsWebsiteDataRecordsForAllOrigins)
+                        continue;
+
+                    displayName = makeString(entry.origin.protocol, " ", entry.origin.host);
+                }
 
                 auto& record = m_websiteDataRecords.add(displayName, WebsiteDataRecord { }).iterator->value;
                 if (!record.displayName)

@@ -83,7 +83,7 @@ typedef NS_OPTIONS(NSUInteger, _WKWebsiteDataStoreFetchOptions) {
 - (void)_resourceLoadStatisticsClearInMemoryAndPersistentStoreModifiedSinceHours:(unsigned)hours WK_API_AVAILABLE(macosx(10.13), ios(11.0));
 - (void)_resourceLoadStatisticsResetToConsistentState WK_API_AVAILABLE(macosx(10.13), ios(11.0));
 - (void)_setResourceLoadStatisticsTestingCallback:(nullable void (^)(WKWebsiteDataStore *, NSString *))callback WK_API_AVAILABLE(macosx(10.13), ios(11.0));
-
++ (void)_allowWebsiteDataRecordsForAllOrigins WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
 @end
 
 NS_ASSUME_NONNULL_END

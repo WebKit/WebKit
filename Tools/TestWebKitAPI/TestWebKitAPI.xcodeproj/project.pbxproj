@@ -197,6 +197,7 @@
 		51E5C7031919C3B200D8B3E1 /* simple3.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 51E780371919AFF8001829A2 /* simple3.html */; };
 		51E6A8941D2F1C0A00C004B6 /* LocalStorageClear.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51E6A8921D2F1BEC00C004B6 /* LocalStorageClear.mm */; };
 		51E6A8961D2F1CA700C004B6 /* LocalStorageClear.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 51E6A8951D2F1C7700C004B6 /* LocalStorageClear.html */; };
+		51EB12941FDF052500A5A1BD /* ServiceWorkerBasic.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51EB12931FDF050500A5A1BD /* ServiceWorkerBasic.mm */; };
 		51FCF7A11534B2A000104491 /* ShouldGoToBackForwardListItem_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51FCF7971534AC6D00104491 /* ShouldGoToBackForwardListItem_Bundle.cpp */; };
 		520BCF4C141EB09E00937EA8 /* WebArchive_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 520BCF4A141EB09E00937EA8 /* WebArchive_Bundle.cpp */; };
 		524BBC9E19DF72C0002F1AF1 /* file-with-video.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 524BBC9B19DF3714002F1AF1 /* file-with-video.html */; };
@@ -1341,6 +1342,7 @@
 		51E780361919AFF8001829A2 /* simple2.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = simple2.html; sourceTree = "<group>"; };
 		51E780371919AFF8001829A2 /* simple3.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = simple3.html; sourceTree = "<group>"; };
 		51E93016156B13E1004C99DF /* WKPageGetScaleFactorNotZero.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKPageGetScaleFactorNotZero.cpp; sourceTree = "<group>"; };
+		51EB12931FDF050500A5A1BD /* ServiceWorkerBasic.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ServiceWorkerBasic.mm; sourceTree = "<group>"; };
 		51FBBB4C1513D4E900822738 /* WebViewCanPasteURL.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebViewCanPasteURL.mm; sourceTree = "<group>"; };
 		51FCF7971534AC6D00104491 /* ShouldGoToBackForwardListItem_Bundle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ShouldGoToBackForwardListItem_Bundle.cpp; sourceTree = "<group>"; };
 		51FCF7981534AC6D00104491 /* ShouldGoToBackForwardListItem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ShouldGoToBackForwardListItem.cpp; sourceTree = "<group>"; };
@@ -2102,6 +2104,7 @@
 				A180C0F91EE67DF000468F47 /* RunOpenPanel.mm */,
 				37BCA61B1B596BA9002012CA /* ShouldOpenExternalURLsInNewWindowActions.mm */,
 				2D9A53AE1B31FA8D0074D5AA /* ShrinkToFit.mm */,
+				51EB12931FDF050500A5A1BD /* ServiceWorkerBasic.mm */,
 				2DFF7B6C1DA487AF00814614 /* SnapshotStore.mm */,
 				515BE1701D428BD100DD7C68 /* StoreBlobThenDelete.mm */,
 				5CB40B4D1F4B98BE007DC7B9 /* UIDelegate.mm */,
@@ -3422,6 +3425,7 @@
 				5C0BF8931DD599BD00B00328 /* IsNavigationActionTrusted.mm in Sources */,
 				5C69BDD51F82A7EF000F4F4B /* JavaScriptDuringNavigation.mm in Sources */,
 				7CCE7EAD1A411A3400447C4C /* JavaScriptTest.cpp in Sources */,
+				51EB12941FDF052500A5A1BD /* ServiceWorkerBasic.mm in Sources */,
 				7CCE7EA51A411A0800447C4C /* JavaScriptTestMac.mm in Sources */,
 				7CCE7EC41A411A7E00447C4C /* JSWrapperForNodeInWebFrame.mm in Sources */,
 				7CCE7F061A411AE600447C4C /* LayoutMilestonesWithAllContentInFrame.cpp in Sources */,

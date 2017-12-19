@@ -35,6 +35,7 @@
 #include "APILegacyContextHistoryClient.h"
 #include "APIPageConfiguration.h"
 #include "APIProcessPoolConfiguration.h"
+#include "ChildProcessMessages.h"
 #include "DownloadProxy.h"
 #include "DownloadProxyMessages.h"
 #include "GamepadData.h"
@@ -557,6 +558,9 @@ void WebProcessPool::ensureStorageProcessAndWebsiteDataStore(WebsiteDataStore* r
             parameters.serviceWorkerRegistrationDirectory = m_configuration->serviceWorkerRegistrationDirectory();
             SandboxExtension::createHandleForReadWriteDirectory(parameters.serviceWorkerRegistrationDirectory, parameters.serviceWorkerRegistrationDirectoryExtensionHandle);
         }
+
+        if (!m_schemesServiceWorkersCanHandle.isEmpty())
+            parameters.urlSchemesServiceWorkersCanHandle = copyToVector(m_schemesServiceWorkersCanHandle);
 #endif
 
         m_storageProcess = StorageProcessProxy::create(*this);
@@ -777,6 +781,7 @@ void WebProcessPool::initializeNewWebProcess(WebProcessProxy& process, WebsiteDa
     parameters.urlSchemesRegisteredAsCORSEnabled = copyToVector(m_schemesToRegisterAsCORSEnabled);
     parameters.urlSchemesRegisteredAsAlwaysRevalidated = copyToVector(m_schemesToRegisterAsAlwaysRevalidated);
     parameters.urlSchemesRegisteredAsCachePartitioned = copyToVector(m_schemesToRegisterAsCachePartitioned);
+    parameters.urlSchemesServiceWorkersCanHandle = copyToVector(m_schemesServiceWorkersCanHandle);
 
     parameters.shouldAlwaysUseComplexTextCodePath = m_alwaysUsesComplexTextCodePath;
     parameters.shouldUseFontSmoothing = m_shouldUseFontSmoothing;
@@ -1288,6 +1293,14 @@ void WebProcessPool::registerURLSchemeAsCachePartitioned(const String& urlScheme
 {
     m_schemesToRegisterAsCachePartitioned.add(urlScheme);
     sendToAllProcesses(Messages::WebProcess::RegisterURLSchemeAsCachePartitioned(urlScheme));
+}
+
+void WebProcessPool::registerURLSchemeServiceWorkersCanHandle(const String& urlScheme)
+{
+    m_schemesServiceWorkersCanHandle.add(urlScheme);
+    sendToAllProcesses(Messages::ChildProcess::RegisterURLSchemeServiceWorkersCanHandle(urlScheme));
+    if (m_storageProcess)
+        m_storageProcess->send(Messages::ChildProcess::RegisterURLSchemeServiceWorkersCanHandle(urlScheme), 0);
 }
 
 void WebProcessPool::setCacheModel(CacheModel cacheModel)

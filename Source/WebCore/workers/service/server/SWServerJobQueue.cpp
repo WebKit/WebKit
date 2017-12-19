@@ -31,6 +31,7 @@
 #include "ExceptionData.h"
 #include "SWServer.h"
 #include "SWServerWorker.h"
+#include "SchemeRegistry.h"
 #include "SecurityOrigin.h"
 #include "ServiceWorkerFetchResult.h"
 #include "ServiceWorkerRegistrationData.h"
@@ -239,7 +240,7 @@ void SWServerJobQueue::runRegisterJob(const ServiceWorkerJobData& job)
 {
     ASSERT(job.type == ServiceWorkerJobType::Register);
 
-    if (!shouldTreatAsPotentiallyTrustworthy(job.scriptURL))
+    if (!shouldTreatAsPotentiallyTrustworthy(job.scriptURL) && !SchemeRegistry::isServiceWorkerContainerCustomScheme(job.scriptURL.protocol().toStringWithoutCopying()))
         return rejectCurrentJob(ExceptionData { SecurityError, ASCIILiteral("Script URL is not potentially trustworthy") });
 
     // If the origin of job's script url is not job's referrer's origin, then:

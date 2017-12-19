@@ -34,6 +34,7 @@
 #include <WebCore/CachedResource.h>
 #include <WebCore/Exception.h>
 #include <WebCore/ExceptionCode.h>
+#include <WebCore/SchemeRegistry.h>
 #include <WebCore/ServiceWorkerJob.h>
 #include <pal/SessionID.h>
 #include <wtf/text/WTFString.h>
@@ -71,7 +72,7 @@ static inline bool shouldHandleFetch(const ResourceLoaderOptions& options)
 
 void WebServiceWorkerProvider::handleFetch(ResourceLoader& loader, CachedResource* resource, PAL::SessionID sessionID, bool shouldClearReferrerOnHTTPSToHTTPRedirect, ServiceWorkerClientFetch::Callback&& callback)
 {
-    if (!loader.request().url().protocolIsInHTTPFamily() || !shouldHandleFetch(loader.options())) {
+    if (!SchemeRegistry::canServiceWorkersHandleURLScheme(loader.request().url().protocol().toStringWithoutCopying()) || !shouldHandleFetch(loader.options())) {
         callback(ServiceWorkerClientFetch::Result::Unhandled);
         return;
     }
