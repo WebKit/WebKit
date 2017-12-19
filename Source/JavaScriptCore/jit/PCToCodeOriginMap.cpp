@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -204,8 +204,8 @@ PCToCodeOriginMap::PCToCodeOriginMap(PCToCodeOriginMapBuilder&& builder, LinkBuf
             codeOriginCompressor.write<uintptr_t>(bitwise_cast<uintptr_t>(codeOrigin.inlineCallFrame));
     };
 
-    m_pcRangeStart = bitwise_cast<uintptr_t>(linkBuffer.locationOf(builder.m_codeRanges.first().start).dataLocation());
-    m_pcRangeEnd = bitwise_cast<uintptr_t>(linkBuffer.locationOf(builder.m_codeRanges.last().end).dataLocation());
+    m_pcRangeStart = linkBuffer.locationOf(builder.m_codeRanges.first().start).dataLocation<uintptr_t>();
+    m_pcRangeEnd = linkBuffer.locationOf(builder.m_codeRanges.last().end).dataLocation<uintptr_t>();
     m_pcRangeEnd -= 1;
 
     for (unsigned i = 0; i < builder.m_codeRanges.size(); i++) {
