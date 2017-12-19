@@ -38,6 +38,8 @@ public:
 
     virtual CallbackResult<unsigned short> acceptNode(Node&) = 0;
 
+    virtual bool hasCallback() const = 0;
+
     /*
      * The following constants are returned by the acceptNode()
      * method:

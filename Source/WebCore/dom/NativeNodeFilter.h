@@ -43,6 +43,8 @@ public:
 private:
     WEBCORE_EXPORT explicit NativeNodeFilter(ScriptExecutionContext*, Ref<NodeFilterCondition>&&);
 
+    bool hasCallback() const final;
+
     Ref<NodeFilterCondition> m_condition;
 };
 

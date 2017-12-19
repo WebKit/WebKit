@@ -1,3 +1,16 @@
+2017-11-03  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Crash inside ChildListMutationAccumulator::enqueueMutationRecord()
+        https://bugs.webkit.org/show_bug.cgi?id=179234
+        <rdar://problem/35287748>
+
+        Reviewed by Darin Adler.
+
+        Added a regression test.
+
+        * fast/dom/MutationObserver/disconnect-observer-while-mutation-records-are-enqueued-crash-expected.txt: Added.
+        * fast/dom/MutationObserver/disconnect-observer-while-mutation-records-are-enqueued-crash.html: Added.
+
 2017-11-10  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed GTK+ gardening. Rebaseline tests after r224572 and r224573. Part 3.
