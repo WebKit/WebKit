@@ -1,5 +1,12 @@
 2017-12-19  Yusuke Suzuki  <utatane.tea@gmail.com>
 
+        Unreviewed, include YarrErrorCode.h in Yarr.h
+        https://bugs.webkit.org/show_bug.cgi?id=180966
+
+        * yarr/Yarr.h:
+
+2017-12-19  Yusuke Suzuki  <utatane.tea@gmail.com>
+
         [YARR] Yarr should return ErrorCode instead of error messages (const char*)
         https://bugs.webkit.org/show_bug.cgi?id=180966
 
