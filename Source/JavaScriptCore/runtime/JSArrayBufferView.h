@@ -176,6 +176,7 @@ public:
     
     static ptrdiff_t offsetOfVector() { return OBJECT_OFFSETOF(JSArrayBufferView, m_vector); }
     static ptrdiff_t offsetOfLength() { return OBJECT_OFFSETOF(JSArrayBufferView, m_length); }
+    static ptrdiff_t offsetOfIndexingMask() { return OBJECT_OFFSETOF(JSArrayBufferView, m_indexingMask); }
     static ptrdiff_t offsetOfMode() { return OBJECT_OFFSETOF(JSArrayBufferView, m_mode); }
     
     static RefPtr<ArrayBufferView> toWrapped(VM&, JSValue);
@@ -192,6 +193,7 @@ protected:
 
     AuxiliaryBarrier<void*> m_vector;
     uint32_t m_length;
+    uint32_t m_indexingMask;
     TypedArrayMode m_mode;
 };
 

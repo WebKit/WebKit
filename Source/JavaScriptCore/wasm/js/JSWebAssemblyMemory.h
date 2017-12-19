@@ -52,6 +52,7 @@ public:
 
     static ptrdiff_t offsetOfMemory() { return OBJECT_OFFSETOF(JSWebAssemblyMemory, m_memoryBase); }
     static ptrdiff_t offsetOfSize() { return OBJECT_OFFSETOF(JSWebAssemblyMemory, m_memorySize); }
+    static ptrdiff_t offsetOfIndexingMask() { return OBJECT_OFFSETOF(JSWebAssemblyMemory, m_indexingMask); }
 
 private:
     JSWebAssemblyMemory(VM&, Structure*, Ref<Wasm::Memory>&&);
@@ -61,6 +62,7 @@ private:
 
     void* m_memoryBase;
     size_t m_memorySize;
+    size_t m_indexingMask;
     Ref<Wasm::Memory> m_memory;
     WriteBarrier<JSArrayBuffer> m_bufferWrapper;
     RefPtr<ArrayBuffer> m_buffer;

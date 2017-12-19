@@ -44,9 +44,10 @@ struct PinnedSizeRegisterInfo {
 struct PinnedRegisterInfo {
     Vector<PinnedSizeRegisterInfo> sizeRegisters;
     GPRReg baseMemoryPointer;
+    GPRReg indexingMask;
     GPRReg wasmContextPointer;
     static const PinnedRegisterInfo& get();
-    PinnedRegisterInfo(Vector<PinnedSizeRegisterInfo>&&, GPRReg, GPRReg);
+    PinnedRegisterInfo(Vector<PinnedSizeRegisterInfo>&&, GPRReg, GPRReg, GPRReg);
 
     RegisterSet toSave(MemoryMode mode) const
     {
@@ -55,6 +56,7 @@ struct PinnedRegisterInfo {
         if (wasmContextPointer != InvalidGPRReg)
             result.set(wasmContextPointer);
         if (mode != MemoryMode::Signaling) {
+            result.set(indexingMask);
             for (const auto& info : sizeRegisters)
                 result.set(info.sizeRegister);
         }

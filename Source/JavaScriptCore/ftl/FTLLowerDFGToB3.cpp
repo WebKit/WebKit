@@ -3022,9 +3022,10 @@ private:
         LValue args[2];
         for (unsigned i = numExtraArgs; i--;)
             args[i] = getIntTypedArrayStoreOperand(argEdges[i]);
+        LValue base = lowCell(baseEdge);
         LValue storage = lowStorage(storageEdge);
-        
-        TypedPointer pointer = pointerIntoTypedArray(storage, index, type);
+
+        TypedPointer pointer = pointerIntoTypedArray(base, storage, index, type);
         Width width = widthForBytes(elementSize(type));
         
         LValue atomicValue;
@@ -3658,13 +3659,14 @@ private:
         }
             
         default: {
+            LValue base = lowCell(m_node->child1());
             LValue index = lowInt32(m_node->child2());
             LValue storage = lowStorage(m_node->child3());
             
             TypedArrayType type = m_node->arrayMode().typedArrayType();
             
             if (isTypedView(type)) {
-                TypedPointer pointer = pointerIntoTypedArray(storage, index, type);
+                TypedPointer pointer = pointerIntoTypedArray(base, storage, index, type);
                 
                 if (isInt(type)) {
                     LValue result = loadFromIntTypedArray(pointer, type);
@@ -5091,8 +5093,10 @@ private:
             LValue fastResultValue =
                 allocateObject<JSArrayBufferView>(structure, m_out.intPtrZero, slowCase);
 
+            LValue indexingMask = m_out.castToInt32(m_out.lShr(m_out.zeroExt(m_out.constInt32(-1), Int64), m_out.ctlz32(size)));
             m_out.storePtr(storage, fastResultValue, m_heaps.JSArrayBufferView_vector);
             m_out.store32(size, fastResultValue, m_heaps.JSArrayBufferView_length);
+            m_out.store32(indexingMask, fastResultValue, m_heaps.JSArrayBufferView_indexingMask);
             m_out.store32(m_out.constInt32(FastTypedArray), fastResultValue, m_heaps.JSArrayBufferView_mode);
             
             mutatorFence();
@@ -12098,14 +12102,15 @@ private:
         functor(TypeofType::Undefined);
     }
     
-    TypedPointer pointerIntoTypedArray(LValue storage, LValue index, TypedArrayType type)
+    TypedPointer pointerIntoTypedArray(LValue base, LValue storage, LValue index, TypedArrayType type)
     {
+        LValue mask = m_out.load32(base, m_heaps.JSArrayBufferView_indexingMask);
         return TypedPointer(
             m_heaps.typedArrayProperties,
             m_out.add(
                 storage,
                 m_out.shl(
-                    m_out.zeroExtPtr(index),
+                    m_out.zeroExtPtr(m_out.bitAnd(index, mask)),
                     m_out.constIntPtr(logElementSize(type)))));
     }
     
