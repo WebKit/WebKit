@@ -65,6 +65,26 @@ void ServiceWorkerClientFetch::start()
     m_connection->startFetch(m_loader, m_loader->identifier());
 }
 
+// https://fetch.spec.whatwg.org/#http-fetch step 3.3
+std::optional<ResourceError> ServiceWorkerClientFetch::validateResponse(const ResourceResponse& response)
+{
+    // FIXME: make a better error reporting.
+    if (response.type() == ResourceResponse::Type::Error)
+        return ResourceError { ResourceError::Type::General };
+
+    auto& options = m_loader->options();
+    if (options.mode != FetchOptions::Mode::NoCors && response.tainting() == ResourceResponse::Tainting::Opaque)
+        return ResourceError { errorDomainWebKitInternal, 0, response.url(), ASCIILiteral("Response served by service worker is opaque"), ResourceError::Type::AccessControl };
+
+    if (options.redirect != FetchOptions::Redirect::Manual && response.tainting() == ResourceResponse::Tainting::Opaqueredirect)
+        return ResourceError { errorDomainWebKitInternal, 0, response.url(), ASCIILiteral("Response served by service worker is opaque redirect"), ResourceError::Type::AccessControl };
+
+    if (options.redirect != FetchOptions::Redirect::Follow && response.isRedirected())
+        return ResourceError { errorDomainWebKitInternal, 0, response.url(), ASCIILiteral("Response served by service worker has redirections"), ResourceError::Type::AccessControl };
+
+    return std::nullopt;
+}
+
 void ServiceWorkerClientFetch::didReceiveResponse(ResourceResponse&& response)
 {
     auto protectedThis = makeRef(*this);
@@ -86,9 +106,8 @@ void ServiceWorkerClientFetch::didReceiveResponse(ResourceResponse&& response)
         return;
     }
 
-    if (response.type() == ResourceResponse::Type::Error) {
-        // Add support for a better error.
-        m_loader->didFail({ ResourceError::Type::General });
+    if (auto error = validateResponse(response)) {
+        m_loader->didFail(error.value());
         if (auto callback = WTFMove(m_callback))
             callback(Result::Succeeded);
         return;
@@ -101,6 +120,7 @@ void ServiceWorkerClientFetch::didReceiveResponse(ResourceResponse&& response)
             response.setMimeType(ASCIILiteral("text/html"));
     }
     response.setSource(ResourceResponse::Source::ServiceWorker);
+
     m_loader->didReceiveResponse(response);
     if (auto callback = WTFMove(m_callback))
         callback(Result::Succeeded);

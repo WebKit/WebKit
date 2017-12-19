@@ -1,3 +1,13 @@
+2017-12-18  Youenn Fablet  <youenn@apple.com>
+
+        SameOrigin and CORS fetch should fail on opaque responses served from ServiceWorker
+        https://bugs.webkit.org/show_bug.cgi?id=180941
+
+        Reviewed by Chris Dumez.
+
+        * web-platform-tests/service-workers/service-worker/fetch-response-taint.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/opaque-response-preloaded.https-expected.txt:
+
 2017-12-18  Chris Dumez  <cdumez@apple.com>
 
         ExtendableMessageEvent.data should return the value it was initialized to

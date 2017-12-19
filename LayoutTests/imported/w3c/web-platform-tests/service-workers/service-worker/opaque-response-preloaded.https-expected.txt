@@ -1,4 +1,6 @@
+CONSOLE MESSAGE: XMLHttpRequest cannot load https://127.0.0.1:9443/service-workers/service-worker/resources/simple.txt. Response served by service worker is opaque
+CONSOLE MESSAGE: XMLHttpRequest cannot load https://127.0.0.1:9443/service-workers/service-worker/resources/simple.txt. Response served by service worker is opaque
 
-FAIL Opaque responses should not be reused for XHRs, loading case assert_equals: expected "PASS" but got "FAIL: a simple text file\n"
-FAIL Opaque responses should not be reused for XHRs, done case assert_equals: expected "PASS" but got "FAIL: a simple text file\n"
+PASS Opaque responses should not be reused for XHRs, loading case 
+PASS Opaque responses should not be reused for XHRs, done case 
 
