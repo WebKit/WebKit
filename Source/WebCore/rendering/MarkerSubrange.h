@@ -44,6 +44,7 @@ struct MarkerSubrange {
         // FIXME: See <rdar://problem/8933352>. Also, remove the PLATFORM(IOS)-guard.
         DictationPhraseWithAlternatives,
 #endif
+        Selection,
     };
 #if !COMPILER_SUPPORTS(NSDMI_FOR_AGGREGATES)
     MarkerSubrange() = default;
@@ -61,7 +62,7 @@ struct MarkerSubrange {
     const RenderedDocumentMarker* marker { nullptr };
 };
 
-enum class OverlapStrategy { None, Frontmost };
+enum class OverlapStrategy { None, Frontmost, FrontmostWithLongestEffectiveRange };
 WEBCORE_EXPORT Vector<MarkerSubrange> subdivide(const Vector<MarkerSubrange>&, OverlapStrategy = OverlapStrategy::None);
 
 }

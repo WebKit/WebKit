@@ -1,3 +1,16 @@
+2017-12-19  Daniel Bates  <dabates@apple.com>
+
+        Add support for computing the frontmost longest effective marker subrange
+        https://bugs.webkit.org/show_bug.cgi?id=180985
+
+        Reviewed by Dave Hyatt.
+
+        Adds a test case to ensure that we compute the minimum list of maximal length non-
+        overlapping subranges when using strategy OverlapStrategy::FrontmostWithLongestEffectiveRange.
+
+        * TestWebKitAPI/Tests/WebCore/MarkerSubrange.cpp:
+        (TestWebKitAPI::TEST):
+
 2017-12-18  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Attachment Support] The 'webkitattachmentbloburl' attribute should not persist after markup serialization
