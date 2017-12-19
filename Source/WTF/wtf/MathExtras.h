@@ -356,7 +356,7 @@ inline void doubleToInteger(double d, unsigned long long& value)
 namespace WTF {
 
 // From http://graphics.stanford.edu/~seander/bithacks.html#RoundUpPowerOf2
-inline uint32_t roundUpToPowerOfTwo(uint32_t v)
+inline constexpr uint32_t roundUpToPowerOfTwo(uint32_t v)
 {
     v--;
     v |= v >> 1;
@@ -366,6 +366,13 @@ inline uint32_t roundUpToPowerOfTwo(uint32_t v)
     v |= v >> 16;
     v++;
     return v;
+}
+
+inline constexpr unsigned maskForSize(unsigned size)
+{
+    if (!size)
+        return 0;
+    return roundUpToPowerOfTwo(size) - 1;
 }
 
 inline unsigned fastLog2(unsigned i)
