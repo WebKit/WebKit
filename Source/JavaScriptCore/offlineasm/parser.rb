@@ -481,7 +481,7 @@ class Parser
     end
     
     def couldBeExpression
-        @tokens[@idx] == "-" or @tokens[@idx] == "~" or @tokens[@idx] == "sizeof" or isInteger(@tokens[@idx]) or isString(@tokens[@idx]) or isVariable(@tokens[@idx]) or @tokens[@idx] == "("
+        @tokens[@idx] == "-" or @tokens[@idx] == "~" or @tokens[@idx] == "sizeof" or isInteger(@tokens[@idx]) or isString(@tokens[@idx]) or isVariable(@tokens[@idx]) or isLabel(@tokens[@idx]) or @tokens[@idx] == "("
     end
     
     def parseExpressionAdd
@@ -539,10 +539,6 @@ class Parser
             end
         elsif @tokens[@idx] == "["
             parseAddress(Immediate.new(@tokens[@idx].codeOrigin, 0))
-        elsif isLabel @tokens[@idx]
-            result = LabelReference.new(@tokens[@idx].codeOrigin, Label.forName(@tokens[@idx].codeOrigin, @tokens[@idx].string))
-            @idx += 1
-            result
         elsif isLocalLabel @tokens[@idx]
             result = LocalLabelReference.new(@tokens[@idx].codeOrigin, LocalLabel.forName(@tokens[@idx].codeOrigin, @tokens[@idx].string))
             @idx += 1

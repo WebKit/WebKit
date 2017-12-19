@@ -302,6 +302,12 @@ class AbsoluteAddress
     end
 end
 
+class LabelReference
+    def intMemRef
+        "*CAST<intptr_t*>(&#{cLabel})"
+    end
+end
+
 
 #
 # Lea support.

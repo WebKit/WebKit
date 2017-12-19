@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,44 +20,20 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "UDis86Disassembler.h"
+#pragma once
 
-#if USE(UDIS86)
-
-#include "MacroAssemblerCodeRef.h"
-#include "udis86.h"
+#include <wtf/Poisoned.h>
 
 namespace JSC {
 
-bool tryToDisassembleWithUDis86(const MacroAssemblerCodePtr& codePtr, size_t size, const char* prefix, PrintStream& out)
-{
-    ud_t disassembler;
-    ud_init(&disassembler);
-    ud_set_input_buffer(&disassembler, codePtr.executableAddress<unsigned char*>(), size);
-#if CPU(X86_64)
-    ud_set_mode(&disassembler, 64);
-#else
-    ud_set_mode(&disassembler, 32);
-#endif
-    ud_set_pc(&disassembler, codePtr.executableAddress<uintptr_t>());
-    ud_set_syntax(&disassembler, UD_SYN_ATT);
-    
-    uint64_t currentPC = disassembler.pc;
-    while (ud_disassemble(&disassembler)) {
-        char pcString[20];
-        snprintf(pcString, sizeof(pcString), "0x%lx", static_cast<unsigned long>(currentPC));
-        out.printf("%s%16s: %s\n", prefix, pcString, ud_insn_asm(&disassembler));
-        currentPC = disassembler.pc;
-    }
-    
-    return true;
-}
+enum Poison {
+    NotPoisoned = 0,
+    TransitionMapPoison,
+    WeakImplPoison,
+};
 
 } // namespace JSC
-
-#endif // USE(UDIS86)
 
