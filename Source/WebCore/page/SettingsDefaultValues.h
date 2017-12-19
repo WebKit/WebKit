@@ -70,6 +70,7 @@ static const bool defaultImageSubsamplingEnabled = true;
 static const bool defaultScrollingTreeIncludesFrames = true;
 static const bool defaultMediaControlsScaleWithPageZoom = true;
 static const bool defaultQuickTimePluginReplacementEnabled = true;
+static const bool defaultRequiresUserGestureToLoadVideo = true;
 #else
 static const bool defaultFixedBackgroundsPaintRelativeToDocument = false;
 static const bool defaultAcceleratedCompositingForFixedPositionEnabled = false;
@@ -83,9 +84,9 @@ static const bool defaultImageSubsamplingEnabled = false;
 static const bool defaultScrollingTreeIncludesFrames = false;
 static const bool defaultMediaControlsScaleWithPageZoom = true;
 static const bool defaultQuickTimePluginReplacementEnabled = false;
+static const bool defaultRequiresUserGestureToLoadVideo = false;
 #endif
 
-static const bool defaultRequiresUserGestureToLoadVideo = true;
 static const bool defaultAllowsPictureInPictureMediaPlayback = true;
 
 static const double defaultIncrementalRenderingSuppressionTimeoutInSeconds = 5;

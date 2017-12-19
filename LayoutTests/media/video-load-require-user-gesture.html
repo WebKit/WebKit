@@ -6,8 +6,10 @@
             var state = 0;
             var userGestureInitiated = 0;
 
-            if (window.internals) 
+            if (window.internals) {
                 window.internals.settings.setVideoPlaybackRequiresUserGesture(true);
+                window.internals.settings.setRequiresUserGestureToLoadVideo(true);
+            }
 
             function finishTest(success)
             {

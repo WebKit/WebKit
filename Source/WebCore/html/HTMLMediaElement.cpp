@@ -835,13 +835,7 @@ void HTMLMediaElement::parseAttribute(const QualifiedName& name, const AtomicStr
 
         // If a src attribute of a media element is set or changed, the user
         // agent must invoke the media element's media element load algorithm.
-#if PLATFORM(IOS)
-        // Note, unless the restriction on requiring user action has been removed,
-        // do not begin downloading data on iOS.
-        if (!value.isNull() && m_mediaSession->dataLoadingPermitted(*this))
-#else
         if (!value.isNull())
-#endif
             prepareForLoad();
     } else if (name == controlsAttr)
         configureMediaControls();
@@ -918,11 +912,7 @@ Node::InsertedIntoAncestorResult HTMLMediaElement::insertedIntoAncestor(Insertio
     if (insertionType.connectedToDocument) {
         m_inActiveDocument = true;
 
-#if PLATFORM(IOS)
-        if (m_networkState == NETWORK_EMPTY && !attributeWithoutSynchronization(srcAttr).isEmpty() && m_mediaSession->dataLoadingPermitted(*this))
-#else
         if (m_networkState == NETWORK_EMPTY && !attributeWithoutSynchronization(srcAttr).isEmpty())
-#endif
             prepareForLoad();
     }
 
@@ -1232,8 +1222,6 @@ void HTMLMediaElement::load()
 
     INFO_LOG(LOGIDENTIFIER);
 
-    if (!m_mediaSession->dataLoadingPermitted(*this))
-        return;
     if (processingUserGestureForMedia())
         removeBehaviorsRestrictionsAfterFirstUserGesture();
 
@@ -1342,7 +1330,10 @@ void HTMLMediaElement::prepareForLoad()
     mediaSession().clientWillBeginAutoplaying();
 
     // 9 - Invoke the media element's resource selection algorithm.
-    selectMediaResource();
+    // Note, unless the restriction on requiring user action has been removed,
+    // do not begin downloading data.
+    if (m_mediaSession->dataLoadingPermitted(*this))
+        selectMediaResource();
 
     // 10 - Note: Playback of any previously playing media resource for this element stops.
 
@@ -3451,7 +3442,7 @@ void HTMLMediaElement::playInternal()
 
     if (!m_mediaSession->clientWillBeginPlayback()) {
         ALWAYS_LOG(LOGIDENTIFIER, "  returning because of interruption");
-        return; // Treat as success because we will begin playback on cessation of the interruption.
+        return;
     }
 
     // 4.8.10.9. Playing the media resource

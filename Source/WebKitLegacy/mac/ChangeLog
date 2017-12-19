@@ -1,3 +1,16 @@
+2017-12-19  Jer Noble  <jer.noble@apple.com>
+
+        Playing media elements which call "pause(); play()" will have the play promise rejected.
+        https://bugs.webkit.org/show_bug.cgi?id=180781
+        <rdar://problem/33191377>
+
+        Reviewed by Eric Carlson.
+
+        shouldRequireUserGestureToLoadVideo() should default to false on Mac.
+
+        * WebView/WebView.mm:
+        (shouldRequireUserGestureToLoadVideo):
+
 2017-12-19  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         API test WKAttachmentTests.InsertPastedAttributedStringContainingMultipleAttachments is failing on El Capitan and Sierra
