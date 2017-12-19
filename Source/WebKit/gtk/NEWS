@@ -1,4 +1,16 @@
 ==================
+WebKitGTK+  2.18.4
+==================
+
+What's new in WebKitGTK+ 2.18.4?
+
+  - Make WebDriver implementation more spec compliant.
+  - Fix a bug when trying to remove cookies before a web process is spawned.
+  - WebKitWebDriver process no longer links to libjavascriptcoregtk.
+  - Fix several memory leaks in GStreamer media backend.
+  - Security fixes: CVE-2017-13866, CVE-2017-13870, CVE-2017-7156, CVE-2017-13856.
+
+==================
 WebKitGTK+  2.18.3
 ==================
 

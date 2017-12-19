@@ -1,3 +1,9 @@
+2017-12-19  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Update OptionsGTK.cmake and NEWS for 2.18.4 release.
+
+        * Source/cmake/OptionsGTK.cmake: Bump version numbers.
+
 2017-11-27  Adrian Perez de Castro  <aperez@igalia.com>
 
         [CMake] Values of CMAKE_BUILD_TYPE from toolchain file are ignored
