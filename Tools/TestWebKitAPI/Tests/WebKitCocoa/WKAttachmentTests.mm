@@ -224,6 +224,11 @@ static _WKAttachmentDisplayOptions *displayOptionsWithMode(_WKAttachmentDisplayM
     }
 }
 
+- (BOOL)hasAttribute:(NSString *)attributeName forQuerySelector:(NSString *)querySelector
+{
+    return [self stringByEvaluatingJavaScript:[NSString stringWithFormat:@"document.querySelector('%@').hasAttribute('%@')", querySelector, attributeName]].boolValue;
+}
+
 - (NSString *)valueOfAttribute:(NSString *)attributeName forQuerySelector:(NSString *)querySelector
 {
     return [self stringByEvaluatingJavaScript:[NSString stringWithFormat:@"document.querySelector('%@').getAttribute('%@')", querySelector, attributeName]];
@@ -425,6 +430,8 @@ TEST(WKAttachmentTests, AttachmentElementInsertion)
 
     [firstAttachment expectRequestedDataToBe:nil];
     [secondAttachment expectRequestedDataToBe:testImageData()];
+    EXPECT_FALSE([webView hasAttribute:@"webkitattachmentbloburl" forQuerySelector:@"attachment"]);
+    EXPECT_FALSE([webView hasAttribute:@"webkitattachmentpath" forQuerySelector:@"attachment"]);
 }
 
 TEST(WKAttachmentTests, AttachmentUpdatesWhenInsertingAndDeletingNewline)
@@ -490,6 +497,8 @@ TEST(WKAttachmentTests, AttachmentUpdatesWhenChangingFontStyles)
     [webView expectUpdatesAfterCommand:@"ToggleItalic" withArgument:nil expectedRemovals:@[] expectedInsertions:@[]];
     [webView expectUpdatesAfterCommand:@"ToggleUnderline" withArgument:nil expectedRemovals:@[] expectedInsertions:@[]];
     [attachment expectRequestedDataToBe:testHTMLData()];
+    EXPECT_FALSE([webView hasAttribute:@"webkitattachmentbloburl" forQuerySelector:@"attachment"]);
+    EXPECT_FALSE([webView hasAttribute:@"webkitattachmentpath" forQuerySelector:@"attachment"]);
 
     // Inserting text should delete the current selection, removing the attachment in the process.
     [webView expectUpdatesAfterCommand:@"InsertText" withArgument:@"foo" expectedRemovals:@[attachment.get()] expectedInsertions:@[]];
@@ -511,6 +520,8 @@ TEST(WKAttachmentTests, AttachmentUpdatesWhenInsertingLists)
     [webView expectUpdatesAfterCommand:@"InsertUnorderedList" withArgument:nil expectedRemovals:@[] expectedInsertions:@[]];
     [webView expectUpdatesAfterCommand:@"InsertUnorderedList" withArgument:nil expectedRemovals:@[] expectedInsertions:@[]];
     [attachment expectRequestedDataToBe:testHTMLData()];
+    EXPECT_FALSE([webView hasAttribute:@"webkitattachmentbloburl" forQuerySelector:@"attachment"]);
+    EXPECT_FALSE([webView hasAttribute:@"webkitattachmentpath" forQuerySelector:@"attachment"]);
 }
 
 TEST(WKAttachmentTests, AttachmentUpdatesWhenInsertingRichMarkup)
@@ -523,6 +534,8 @@ TEST(WKAttachmentTests, AttachmentUpdatesWhenInsertingRichMarkup)
         attachment = observer.observer().inserted[0];
         observer.expectAttachmentUpdates(@[ ], @[attachment.get()]);
     }
+    EXPECT_FALSE([webView hasAttribute:@"webkitattachmentbloburl" forQuerySelector:@"attachment"]);
+    EXPECT_FALSE([webView hasAttribute:@"webkitattachmentpath" forQuerySelector:@"attachment"]);
     {
         ObserveAttachmentUpdatesForScope observer(webView.get());
         [webView stringByEvaluatingJavaScript:@"document.querySelector('attachment').remove()"];
@@ -555,6 +568,8 @@ TEST(WKAttachmentTests, AttachmentUpdatesWhenCuttingAndPasting)
         observer.expectAttachmentUpdates(@[], @[attachment.get()]);
     }
     [attachment expectRequestedDataToBe:testHTMLData()];
+    EXPECT_FALSE([webView hasAttribute:@"webkitattachmentbloburl" forQuerySelector:@"attachment"]);
+    EXPECT_FALSE([webView hasAttribute:@"webkitattachmentpath" forQuerySelector:@"attachment"]);
 }
 
 TEST(WKAttachmentTests, AttachmentDataForEmptyFile)

@@ -356,7 +356,12 @@ URL HitTestResult::absoluteAttachmentURL() const
     if (!attachmentFile)
         return URL();
     
-    return URL::fileURLWithFileSystemPath(attachmentFile->path());
+    auto filepath = attachmentFile->path();
+    if (!filepath.isEmpty())
+        return URL::fileURLWithFileSystemPath(filepath);
+
+    ASSERT(attachmentFile->url().protocolIsBlob());
+    return attachmentFile->url();
 }
 #endif
 

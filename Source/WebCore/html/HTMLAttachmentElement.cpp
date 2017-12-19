@@ -120,8 +120,6 @@ void HTMLAttachmentElement::setFile(RefPtr<File>&& file, UpdateDisplayAttributes
 {
     m_file = WTFMove(file);
 
-    setAttributeWithoutSynchronization(HTMLNames::webkitattachmentbloburlAttr, m_file ? m_file->url() : emptyString());
-
     if (updateAttributes == UpdateDisplayAttributes::Yes) {
         if (m_file) {
             setAttributeWithoutSynchronization(HTMLNames::titleAttr, m_file->name());

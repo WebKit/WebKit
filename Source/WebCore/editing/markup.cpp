@@ -371,15 +371,19 @@ String StyledMarkupAccumulator::stringValueForRange(const Node& node, const Rang
     return nodeValue;
 }
 
-void StyledMarkupAccumulator::appendCustomAttributes(StringBuilder& out, const Element&element, Namespaces* namespaces)
+void StyledMarkupAccumulator::appendCustomAttributes(StringBuilder& out, const Element& element, Namespaces* namespaces)
 {
 #if ENABLE(ATTACHMENT_ELEMENT)
     if (!is<HTMLAttachmentElement>(element))
         return;
     
     const HTMLAttachmentElement& attachment = downcast<HTMLAttachmentElement>(element);
-    if (attachment.file())
-        appendAttribute(out, element, Attribute(webkitattachmentpathAttr, attachment.file()->path()), namespaces);
+    if (auto* file = attachment.file()) {
+        // These attributes are only intended for File deserialization, and are removed from the generated attachment
+        // element after we've deserialized and set its backing File.
+        appendAttribute(out, element, { webkitattachmentpathAttr, file->path() }, namespaces);
+        appendAttribute(out, element, { webkitattachmentbloburlAttr, { file->url() }}, namespaces);
+    }
 #else
     UNUSED_PARAM(out);
     UNUSED_PARAM(element);
@@ -764,11 +768,13 @@ Ref<DocumentFragment> createFragmentFromMarkup(Document& document, const String&
 
     for (auto& attachment : attachments) {
         auto attachmentPath = attachment->attachmentPath();
-        if (attachmentPath.isEmpty())
-            attachment->setFile(File::deserialize({ }, attachment->blobURL(), attachment->attachmentType(), attachment->attachmentTitle()));
-        else
+        auto blobURL = attachment->blobURL();
+        if (!attachmentPath.isEmpty())
             attachment->setFile(File::create(attachmentPath));
+        else if (!blobURL.isEmpty())
+            attachment->setFile(File::deserialize({ }, blobURL, attachment->attachmentType(), attachment->attachmentTitle()));
         attachment->removeAttribute(webkitattachmentpathAttr);
+        attachment->removeAttribute(webkitattachmentbloburlAttr);
     }
 #endif
     if (!baseURL.isEmpty() && baseURL != blankURL() && baseURL != document.baseURL())
