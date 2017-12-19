@@ -123,13 +123,11 @@ void WebFrameLoaderClient::frameLoaderDestroyed()
 
 std::optional<uint64_t> WebFrameLoaderClient::pageID() const
 {
-    RELEASE_ASSERT_NOT_REACHED();
     return std::nullopt;
 }
 
 std::optional<uint64_t> WebFrameLoaderClient::frameID() const
 {
-    RELEASE_ASSERT_NOT_REACHED();
     return std::nullopt;
 }
 

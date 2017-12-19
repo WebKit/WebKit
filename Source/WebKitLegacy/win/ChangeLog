@@ -1,3 +1,17 @@
+2017-12-18  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Win] SHOULD NEVER BE REACHED in WebFrameLoaderClient::pageID
+        https://bugs.webkit.org/show_bug.cgi?id=180926
+
+        Reviewed by Tim Horton.
+
+        Apply the same change of mac/WebCoreSupport/WebFrameLoaderClient.mm
+        of r225934 to win/WebCoreSupport/WebFrameLoaderClient.cpp.
+
+        * WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebFrameLoaderClient::frameID const): Removed RELEASE_ASSERT_NOT_REACHED.
+        (WebFrameLoaderClient::pageID const): Ditto.
+
 2017-12-16  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Remove unnecessary boolean result of start() functions
