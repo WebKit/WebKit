@@ -188,7 +188,7 @@ if (USE_GEOCLUE2)
     list(APPEND WebCore_DERIVED_SOURCES
         ${DERIVED_SOURCES_WEBCORE_DIR}/Geoclue2Interface.c
     )
-    execute_process(COMMAND pkg-config --variable dbus_interface geoclue-2.0 OUTPUT_VARIABLE GEOCLUE_DBUS_INTERFACE)
+    execute_process(COMMAND ${PKG_CONFIG_EXECUTABLE} --variable dbus_interface geoclue-2.0 OUTPUT_VARIABLE GEOCLUE_DBUS_INTERFACE)
     add_custom_command(
          OUTPUT ${DERIVED_SOURCES_WEBCORE_DIR}/Geoclue2Interface.c ${DERIVED_SOURCES_WEBCORE_DIR}/Geoclue2Interface.h
          COMMAND gdbus-codegen --interface-prefix org.freedesktop.GeoClue2. --c-namespace Geoclue --generate-c-code ${DERIVED_SOURCES_WEBCORE_DIR}/Geoclue2Interface ${GEOCLUE_DBUS_INTERFACE}

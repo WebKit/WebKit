@@ -1,3 +1,13 @@
+2017-11-11  Helmut Grohne  <helmut@subdivi.de>
+
+        [GTK] PlatformGTK.cmake: use the PKG_CONFIG_EXECUTABLE variable
+        https://bugs.webkit.org/show_bug.cgi?id=179547
+
+        Reviewed by Michael Catanzaro.
+
+        * PlatformGTK.cmake: Use PKG_CONFIG_EXECUTABLE instead of
+        hardcoding the executable name.
+
 2017-12-04  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GStreamer] More leaks in TextCombinerGStreamer
