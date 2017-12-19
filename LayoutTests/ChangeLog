@@ -1,3 +1,19 @@
+2017-12-18  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Assertion hit in DocumentOrderedMap::get while removing a form element
+        https://bugs.webkit.org/show_bug.cgi?id=137959
+        <rdar://problem/27702012>
+
+        Reviewed by Brent Fulgham.
+
+        Added regression tests for removing a subtree with a form associated element, its owner form element
+        and another element with the same ID.
+
+        * fast/forms/update-form-owner-in-moved-subtree-assertion-failure-5-expected.txt: Added.
+        * fast/forms/update-form-owner-in-moved-subtree-assertion-failure-5.html: Added.
+        * fast/forms/update-form-owner-in-moved-subtree-assertion-failure-6-expected.txt: Added.
+        * fast/forms/update-form-owner-in-moved-subtree-assertion-failure-6.html: Added.
+
 2017-12-18  Youenn Fablet  <youenn@apple.com>
 
         Service worker served response tainting should keep its tainting

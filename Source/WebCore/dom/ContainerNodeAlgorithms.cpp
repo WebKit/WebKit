@@ -35,6 +35,10 @@
 
 namespace WebCore {
 
+#if !ASSERT_DISABLED
+ContainerChildRemovalScope* ContainerChildRemovalScope::s_scope = nullptr;
+#endif
+
 enum class TreeScopeChange { Changed, DidNotChange };
 
 static void notifyNodeInsertedIntoDocument(ContainerNode& parentOfInsertedTree, Node& node, TreeScopeChange treeScopeChange, NodeVector& postInsertionNotificationTargets)
@@ -149,6 +153,7 @@ void notifyChildNodeRemoved(ContainerNode& oldParentOfRemovedTree, Node& child)
 {
     // Assert that the caller of this function has an instance of NoEventDispatchAssertion.
     ASSERT(!isMainThread() || !NoEventDispatchAssertion::InMainThread::isEventAllowed());
+    ContainerChildRemovalScope removalScope(oldParentOfRemovedTree, child);
 
     // Tree scope has changed if the container node from which "node" is removed is in a document or a shadow root.
     auto treeScopeChange = oldParentOfRemovedTree.isInTreeScope() ? TreeScopeChange::Changed : TreeScopeChange::DidNotChange;

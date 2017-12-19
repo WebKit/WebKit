@@ -31,6 +31,7 @@
 #include "config.h"
 #include "DocumentOrderedMap.h"
 
+#include "ContainerNodeAlgorithms.h"
 #include "ElementIterator.h"
 #include "HTMLImageElement.h"
 #include "HTMLLabelElement.h"
@@ -120,7 +121,24 @@ inline Element* DocumentOrderedMap::get(const AtomicStringImpl& key, const TreeS
         ASSERT_WITH_SECURITY_IMPLICATION(entry.registeredElements.contains(entry.element));
         return &element;
     }
+
+#if !ASSERT_DISABLED
+    // FormAssociatedElement may call getElementById to find its owner form in the middle of a tree removal.
+    if (auto* currentScope = ContainerChildRemovalScope::currentScope()) {
+        ASSERT(&scope.rootNode() == &currentScope->parentOfRemovedTree().rootNode());
+        Node& removedTree = currentScope->removedChild();
+        ASSERT(is<ContainerNode>(removedTree));
+        for (auto& element : descendantsOfType<Element>(downcast<ContainerNode>(removedTree))) {
+            if (!keyMatches(key, element))
+                continue;
+            bool removedFromAncestorHasNotBeenCalledYet = element.isConnected();
+            ASSERT(removedFromAncestorHasNotBeenCalledYet);
+            return nullptr;
+        }
+    }
     ASSERT_NOT_REACHED();
+#endif
+
     return nullptr;
 }
 
