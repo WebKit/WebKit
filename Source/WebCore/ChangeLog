@@ -1,3 +1,18 @@
+2017-11-10  Miguel Gomez  <magomez@igalia.com>
+
+        [GTK][WPE] CoordinatedGraphicsLayer::setNeedsDisplayInRect() converts FloatRect to IntRect erroneously
+        https://bugs.webkit.org/show_bug.cgi?id=179476
+
+        Reviewed by Žan Doberšek.
+
+        Convert the passed FloatRect into an IntRect using enclosingIntRect(), so we are guaranteed that
+        the rectangle to paint fits into the buffer that the backingStore will allocate.
+
+        No behaviour change.
+
+        * platform/graphics/texmap/coordinated/CoordinatedGraphicsLayer.cpp:
+        (WebCore::CoordinatedGraphicsLayer::setNeedsDisplayInRect):
+
 2017-12-18  Zalan Bujtas  <zalan@apple.com>
 
         [SVG] Detach list wrappers before resetting the base value.
