@@ -46,7 +46,7 @@ public:
     virtual ~PaymentContact() = default;
 
     static PaymentContact fromApplePayPaymentContact(unsigned version, const ApplePayPaymentContact&);
-    virtual ApplePayPaymentContact toApplePayPaymentContact() const;
+    virtual ApplePayPaymentContact toApplePayPaymentContact(unsigned version) const;
 
     PKContact *pkContact() const { return m_pkContact.get(); }
 

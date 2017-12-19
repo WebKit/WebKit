@@ -49,8 +49,8 @@ private:
     friend class PaymentHandler;
     explicit ApplePayPaymentHandler(Document&, const PaymentRequest::MethodIdentifier&, PaymentRequest&);
 
-    Document& document();
-    PaymentCoordinator& paymentCoordinator();
+    Document& document() const;
+    PaymentCoordinator& paymentCoordinator() const;
 
     ExceptionOr<ApplePaySessionPaymentRequest::TotalAndLineItems> computeTotalAndLineItems();
 
@@ -67,6 +67,7 @@ private:
     void complete(std::optional<PaymentComplete>&&) final;
 
     // PaymentSession
+    unsigned version() const final;
     void validateMerchant(const URL&) final;
     void didAuthorizePayment(const Payment&) final;
     void didSelectShippingMethod(const ApplePaySessionPaymentRequest::ShippingMethod&) final;

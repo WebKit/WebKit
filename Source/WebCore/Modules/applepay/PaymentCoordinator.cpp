@@ -45,7 +45,7 @@ PaymentCoordinator::~PaymentCoordinator()
     m_client.paymentCoordinatorDestroyed();
 }
 
-bool PaymentCoordinator::supportsVersion(unsigned version)
+bool PaymentCoordinator::supportsVersion(unsigned version) const
 {
     return m_client.supportsVersion(version);
 }

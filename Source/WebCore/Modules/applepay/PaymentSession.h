@@ -43,6 +43,7 @@ class PaymentSession : public virtual PaymentSessionBase {
 public:
     static ExceptionOr<void> canCreateSession(Document&);
 
+    virtual unsigned version() const = 0;
     virtual void validateMerchant(const URL&) = 0;
     virtual void didAuthorizePayment(const Payment&) = 0;
     virtual void didSelectShippingMethod(const ApplePaySessionPaymentRequest::ShippingMethod&) = 0;

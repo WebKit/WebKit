@@ -36,9 +36,9 @@ class Payment;
 
 class ApplePayPaymentAuthorizedEvent final : public Event {
 public:
-    static Ref<ApplePayPaymentAuthorizedEvent> create(const AtomicString& type, const Payment& payment)
+    static Ref<ApplePayPaymentAuthorizedEvent> create(const AtomicString& type, unsigned version, const Payment& payment)
     {
-        return adoptRef(*new ApplePayPaymentAuthorizedEvent(type, payment));
+        return adoptRef(*new ApplePayPaymentAuthorizedEvent(type, version, payment));
     }
 
     virtual ~ApplePayPaymentAuthorizedEvent();
@@ -46,7 +46,7 @@ public:
     const ApplePayPayment& payment() const { return m_payment; }
 
 private:
-    ApplePayPaymentAuthorizedEvent(const AtomicString& type, const Payment&);
+    ApplePayPaymentAuthorizedEvent(const AtomicString& type, unsigned version, const Payment&);
 
     // Event.
     EventInterface eventInterface() const override;

@@ -36,9 +36,9 @@ class PaymentContact;
 
 class ApplePayShippingContactSelectedEvent final : public Event {
 public:
-    static Ref<ApplePayShippingContactSelectedEvent> create(const AtomicString& type, const PaymentContact& shippingContact)
+    static Ref<ApplePayShippingContactSelectedEvent> create(const AtomicString& type, unsigned version, const PaymentContact& shippingContact)
     {
-        return adoptRef(*new ApplePayShippingContactSelectedEvent(type, shippingContact));
+        return adoptRef(*new ApplePayShippingContactSelectedEvent(type, version, shippingContact));
     }
 
     virtual ~ApplePayShippingContactSelectedEvent();
@@ -46,7 +46,7 @@ public:
     const ApplePayPaymentContact& shippingContact() const { return m_shippingContact; }
 
 private:
-    ApplePayShippingContactSelectedEvent(const AtomicString& type, const PaymentContact&);
+    ApplePayShippingContactSelectedEvent(const AtomicString& type, unsigned version, const PaymentContact&);
 
     // Event.
     EventInterface eventInterface() const override;

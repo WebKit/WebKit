@@ -46,7 +46,7 @@ public:
 
     virtual ~Payment() = default;
 
-    virtual ApplePayPayment toApplePayPayment() const;
+    virtual ApplePayPayment toApplePayPayment(unsigned version) const;
 
     PKPayment *pkPayment() const { return m_pkPayment.get(); }
 

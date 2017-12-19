@@ -97,7 +97,7 @@ public:
     using PaymentSession::deref;
 
 private:
-    ApplePaySession(Document&, ApplePaySessionPaymentRequest&&);
+    ApplePaySession(Document&, unsigned version, ApplePaySessionPaymentRequest&&);
 
     // ActiveDOMObject.
     const char* activeDOMObjectName() const override;
@@ -111,6 +111,7 @@ private:
     void derefEventTarget() override { deref(); }
 
     // PaymentSession
+    unsigned version() const override;
     void validateMerchant(const URL&) override;
     void didAuthorizePayment(const Payment&) override;
     void didSelectShippingMethod(const ApplePaySessionPaymentRequest::ShippingMethod&) override;
@@ -154,6 +155,7 @@ private:
     } m_merchantValidationState { MerchantValidationState::Idle };
 
     const ApplePaySessionPaymentRequest m_paymentRequest;
+    unsigned m_version;
 };
 
 }

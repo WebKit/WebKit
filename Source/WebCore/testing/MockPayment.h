@@ -39,7 +39,7 @@ public:
     {
     }
 
-    ApplePayPayment toApplePayPayment() const final { return m_applePayPayment; }
+    ApplePayPayment toApplePayPayment(unsigned) const final { return m_applePayPayment; }
 
 private:
     ApplePayPayment m_applePayPayment;

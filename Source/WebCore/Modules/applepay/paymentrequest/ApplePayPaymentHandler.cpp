@@ -79,12 +79,12 @@ ApplePayPaymentHandler::ApplePayPaymentHandler(Document& document, const Payment
     ASSERT(handlesIdentifier(m_identifier));
 }
 
-Document& ApplePayPaymentHandler::document()
+Document& ApplePayPaymentHandler::document() const
 {
     return downcast<Document>(*scriptExecutionContext());
 }
 
-PaymentCoordinator& ApplePayPaymentHandler::paymentCoordinator()
+PaymentCoordinator& ApplePayPaymentHandler::paymentCoordinator() const
 {
     return WebCore::paymentCoordinator(document());
 }
@@ -385,6 +385,16 @@ void ApplePayPaymentHandler::complete(std::optional<PaymentComplete>&& result)
     paymentCoordinator().completePaymentSession(WTFMove(authorizationResult));
 }
 
+unsigned ApplePayPaymentHandler::version() const
+{
+    if (!m_applePayRequest)
+        return 0;
+    
+    auto version = m_applePayRequest->version;
+    ASSERT(paymentCoordinator().supportsVersion(version));
+    return version;
+}
+
 void ApplePayPaymentHandler::validateMerchant(const URL& validationURL)
 {
     if (validationURL.isValid())
@@ -398,7 +408,7 @@ static Ref<PaymentAddress> convert(const ApplePayPaymentContact& contact)
 
 void ApplePayPaymentHandler::didAuthorizePayment(const Payment& payment)
 {
-    auto applePayPayment = payment.toApplePayPayment();
+    auto applePayPayment = payment.toApplePayPayment(version());
     auto& execState = *document().execState();
     auto lock = JSC::JSLockHolder { &execState };
     auto details = JSC::Strong<JSC::JSObject> { execState.vm(), asObject(toJS<IDLDictionary<ApplePayPayment>>(execState, *JSC::jsCast<JSDOMGlobalObject*>(execState.lexicalGlobalObject()), applePayPayment)) };
@@ -413,7 +423,7 @@ void ApplePayPaymentHandler::didSelectShippingMethod(const ApplePaySessionPaymen
 
 void ApplePayPaymentHandler::didSelectShippingContact(const PaymentContact& shippingContact)
 {
-    m_paymentRequest->shippingAddressChanged(convert(shippingContact.toApplePayPaymentContact()));
+    m_paymentRequest->shippingAddressChanged(convert(shippingContact.toApplePayPaymentContact(version())));
 }
 
 void ApplePayPaymentHandler::didSelectPaymentMethod(const PaymentMethod& paymentMethod)
