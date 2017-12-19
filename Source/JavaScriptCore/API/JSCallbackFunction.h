@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -53,9 +53,9 @@ private:
 
     static CallType getCallData(JSCell*, CallData&);
 
-    JSObjectCallAsFunctionCallback functionCallback() { return m_callback; }
+    JSObjectCallAsFunctionCallback functionCallback() { return m_callback.unpoisoned(); }
 
-    JSObjectCallAsFunctionCallback m_callback;
+    Poisoned<g_nativeCodePoison, JSObjectCallAsFunctionCallback> m_callback;
 };
 
 } // namespace JSC
