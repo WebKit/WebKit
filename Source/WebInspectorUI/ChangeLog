@@ -1,3 +1,25 @@
+2017-12-19  Devin Rousso  <webkit@devinrousso.com>
+
+        Web Inspector: Styles Redesign: Typing semicolon at the end of value should move to the next property
+        https://bugs.webkit.org/show_bug.cgi?id=178498
+        <rdar://problem/35065995>
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Views/SpreadsheetStypeProperty.js:
+        (WI.SpreadsheetStypeProperty.prototype._update):
+        (WI.SpreadsheetStypeProperty.prototype._handleValueBeforeInput):
+        Only move to the next property if there are no unbalanced quotes. For example, adding a
+        semicolon after `url("foo` or `url('bar` would not move to the next property.
+
+        * UserInterface/Views/SpreadsheetTextField.js:
+        (WI.SpreadsheetTextField.prototype.valueWithoutSuggestion):
+        (WI.SpreadsheetTextField.prototype.completionSuggestionsSelectedCompletion):
+        (WI.SpreadsheetTextField.prototype.completionSuggestionsClickedCompletion):
+        (WI.SpreadsheetTextField.prototype._handleKeyDownForSuggestionView):
+        (WI.SpreadsheetTextField.prototype._updateCompletions):
+        (WI.SpreadsheetTextField.prototype._getPrefix): Deleted.
+
 2017-12-18  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Styles Redesign: Command-S should save changes in matching CSS resource

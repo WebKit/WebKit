@@ -58,6 +58,12 @@ WI.SpreadsheetTextField = class SpreadsheetTextField
     get value() { return this._element.textContent; }
     set value(value) { this._element.textContent = value; }
 
+    valueWithoutSuggestion()
+    {
+        let value = this._element.textContent;
+        return value.slice(0, value.length - this.suggestionHint.length);
+    }
+
     get suggestionHint()
     {
         return this._suggestionHintElement.textContent;
@@ -132,7 +138,7 @@ WI.SpreadsheetTextField = class SpreadsheetTextField
 
     completionSuggestionsSelectedCompletion(suggestionsView, selectedText = "")
     {
-        let prefix = this._getPrefix();
+        let prefix = this.valueWithoutSuggestion();
         let completionPrefix = this._getCompletionPrefix(prefix);
 
         this.suggestionHint = selectedText.slice(completionPrefix.length);
@@ -158,7 +164,7 @@ WI.SpreadsheetTextField = class SpreadsheetTextField
         // completionPrefix:            ro
         //        newPrefix:  1px solid
         //     selectedText:            rosybrown
-        let prefix = this._getPrefix();
+        let prefix = this.valueWithoutSuggestion();
         let completionPrefix = this._getCompletionPrefix(prefix);
         let newPrefix = prefix.slice(0, -completionPrefix.length);
 
@@ -189,12 +195,6 @@ WI.SpreadsheetTextField = class SpreadsheetTextField
             if (this._delegate && typeof this._delegate.spreadsheetTextFieldDidChange === "function")
                 this._delegate.spreadsheetTextFieldDidChange(this);
         }
-    }
-
-    _getPrefix()
-    {
-        let value = this._element.textContent;
-        return value.slice(0, value.length - this.suggestionHint.length);
     }
 
     _handleFocus(event)
@@ -297,7 +297,7 @@ WI.SpreadsheetTextField = class SpreadsheetTextField
         if (event.key === "ArrowRight" && this.suggestionHint) {
             let selection = window.getSelection();
 
-            if (selection.isCollapsed && (selection.focusOffset === this._getPrefix().length || selection.focusNode === this._suggestionHintElement)) {
+            if (selection.isCollapsed && (selection.focusOffset === this.valueWithoutSuggestion().length || selection.focusNode === this._suggestionHintElement)) {
                 event.stop();
                 document.execCommand("insertText", false, this.suggestionHint);
 
@@ -350,7 +350,7 @@ WI.SpreadsheetTextField = class SpreadsheetTextField
         if (!this._completionProvider)
             return;
 
-        let prefix = this._getPrefix();
+        let prefix = this.valueWithoutSuggestion();
         let completionPrefix = this._getCompletionPrefix(prefix);
         let completions = this._completionProvider(completionPrefix);
 
