@@ -57,7 +57,7 @@ namespace WebKit {
 
 static HashMap<PAL::SessionID, WebsiteDataStore*>& nonDefaultDataStores()
 {
-    RELEASE_ASSERT(isMainThread());
+    RELEASE_ASSERT(isUIThread());
     static NeverDestroyed<HashMap<PAL::SessionID, WebsiteDataStore*>> map;
     return map;
 }

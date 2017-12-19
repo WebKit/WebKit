@@ -1,3 +1,12 @@
+2017-12-18  Brady Eidson  <beidson@apple.com>
+
+        Apps that use both WK1 and WK2 can crash creating a WKWebsiteDataStore.
+        https://bugs.webkit.org/show_bug.cgi?id=180953
+
+        Reviewed by Chris Dumez.
+
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp: Make an isMainThread() asset be an isUIThread() assert.
+
 2017-12-18  Brent Fulgham  <bfulgham@apple.com>
 
         [macOS, iOS] Add new mach lookup port for CoreMedia remote control
