@@ -68,6 +68,7 @@
 #import <WebCore/LegacyWebArchive.h>
 #import <WebCore/Page.h>
 #import <WebCore/PlatformKeyboardEvent.h>
+#import <WebCore/RuntimeEnabledFeatures.h>
 #import <WebCore/Settings.h>
 #import <WebCore/SpellChecker.h>
 #import <WebCore/StyleProperties.h>
@@ -433,7 +434,7 @@ void _WebCreateFragment(Document&, NSAttributedString *, FragmentAndResources&)
 static NSDictionary *attributesForAttributedStringConversion()
 {
     // This function needs to be kept in sync with identically named one in WebCore, which is used on newer OS versions.
-    NSArray *excludedElements = [[NSArray alloc] initWithObjects:
+    NSMutableArray *excludedElements = [[NSMutableArray alloc] initWithObjects:
         // Omit style since we want style to be inline so the fragment can be easily inserted.
         @"style",
         // Omit xml so the result is not XHTML.
@@ -442,8 +443,16 @@ static NSDictionary *attributesForAttributedStringConversion()
         @"doctype", @"html", @"head", @"body", 
         // Omit deprecated tags.
         @"applet", @"basefont", @"center", @"dir", @"font", @"menu", @"s", @"strike", @"u",
+#if !ENABLE(ATTACHMENT_ELEMENT)
         // Omit object so no file attachments are part of the fragment.
-        @"object", nil];
+        @"object",
+#endif
+        nil];
+
+#if ENABLE(ATTACHMENT_ELEMENT)
+    if (!RuntimeEnabledFeatures::sharedFeatures().attachmentElementEnabled())
+        [excludedElements addObject:@"object"];
+#endif
 
 #if PLATFORM(IOS)
     static NSString * const NSExcludedElementsDocumentAttribute = @"ExcludedElements";

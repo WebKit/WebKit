@@ -1,3 +1,19 @@
+2017-12-19  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        API test WKAttachmentTests.InsertPastedAttributedStringContainingMultipleAttachments is failing on El Capitan and Sierra
+        https://bugs.webkit.org/show_bug.cgi?id=180977
+
+        Reviewed by Tim Horton.
+
+        Fixes a failing API test by updating markup deserialization codepaths in WebKitLegacy to behave like the modern
+        WebCore counterpart. When determining element tags to exclude when generating markup from an attributed string,
+        don't add "object" as an element to exclude if the attachment element runtime feature is enabled.
+
+        * WebCoreSupport/WebEditorClient.mm:
+        (attributesForAttributedStringConversion):
+        * WebView/WebHTMLView.mm:
+        (+[WebHTMLView _excludedElementsForAttributedStringConversion]):
+
 2017-12-18  David Kilzer  <ddkilzer@apple.com>
 
         BUILD FIX: Ignore NSWindow deprecation warnings from the mysterious future

@@ -114,6 +114,7 @@
 #import <WebCore/RenderView.h>
 #import <WebCore/RenderWidget.h>
 #import <WebCore/RuntimeApplicationChecks.h>
+#import <WebCore/RuntimeEnabledFeatures.h>
 #import <WebCore/SharedBuffer.h>
 #import <WebCore/StyleProperties.h>
 #import <WebCore/StyleScope.h>
@@ -1115,7 +1116,7 @@ static NSCellStateValue kit(TriState state)
 
 + (NSArray *)_excludedElementsForAttributedStringConversion
 {
-    static NSArray *elements = [[NSArray alloc] initWithObjects:
+    NSMutableArray *elements = [[NSMutableArray alloc] initWithObjects:
         // Omit style since we want style to be inline so the fragment can be easily inserted.
         @"style",
         // Omit xml so the result is not XHTML.
@@ -1125,8 +1126,18 @@ static NSCellStateValue kit(TriState state)
         // Omit deprecated tags.
         @"applet", @"basefont", @"center", @"dir", @"font", @"menu", @"s", @"strike", @"u",
         // Omit object so no file attachments are part of the fragment.
-        @"object", nil];
-    return elements;
+#if !ENABLE(ATTACHMENT_ELEMENT)
+        // Omit object so no file attachments are part of the fragment.
+        @"object",
+#endif
+        nil];
+
+#if ENABLE(ATTACHMENT_ELEMENT)
+    if (!RuntimeEnabledFeatures::sharedFeatures().attachmentElementEnabled())
+        [elements addObject:@"object"];
+#endif
+
+    return [elements autorelease];
 }
 
 - (DOMDocumentFragment *)_documentFragmentFromPasteboard:(NSPasteboard *)pasteboard
