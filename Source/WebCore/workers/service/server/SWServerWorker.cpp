@@ -58,6 +58,8 @@ SWServerWorker::SWServerWorker(SWServer& server, SWServerRegistration& registrat
 
 SWServerWorker::~SWServerWorker()
 {
+    callWhenActivatedHandler(false);
+
     auto taken = allWorkers().take(identifier());
     ASSERT_UNUSED(taken, taken == this);
 }
@@ -150,6 +152,30 @@ void SWServerWorker::setHasPendingEvents(bool hasPendingEvents)
     if (registration->isUninstalling() && registration->tryClear())
         return;
     registration->tryActivate();
+}
+
+void SWServerWorker::whenActivated(WTF::Function<void(bool)>&& handler)
+{
+    if (state() == ServiceWorkerState::Activated) {
+        handler(true);
+        return;
+    }
+    m_whenActivatedHandlers.append(WTFMove(handler));
+}
+
+void SWServerWorker::setState(ServiceWorkerState state)
+{
+    m_data.state = state;
+
+    if (state == ServiceWorkerState::Activated || state == ServiceWorkerState::Redundant)
+        callWhenActivatedHandler(state == ServiceWorkerState::Activated);
+}
+
+void SWServerWorker::callWhenActivatedHandler(bool success)
+{
+    auto whenActivatedHandlers = WTFMove(m_whenActivatedHandlers);
+    for (auto& handler : whenActivatedHandlers)
+        handler(success);
 }
 
 } // namespace WebCore

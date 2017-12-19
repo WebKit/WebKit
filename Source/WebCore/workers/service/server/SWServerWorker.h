@@ -59,6 +59,8 @@ public:
 
     void terminate();
 
+    WEBCORE_EXPORT void whenActivated(WTF::Function<void(bool)>&&);
+
     enum class State {
         Running,
         Terminating,
@@ -78,7 +80,7 @@ public:
     SWServerToContextConnectionIdentifier contextConnectionIdentifier() const { return m_contextConnectionIdentifier; }
 
     ServiceWorkerState state() const { return m_data.state; }
-    void setState(ServiceWorkerState state) { m_data.state = state; }
+    void setState(ServiceWorkerState);
 
     bool hasPendingEvents() const { return m_hasPendingEvents; }
     void setHasPendingEvents(bool);
@@ -104,6 +106,8 @@ public:
 private:
     SWServerWorker(SWServer&, SWServerRegistration&, SWServerToContextConnectionIdentifier, const URL&, const String& script, WorkerType, ServiceWorkerIdentifier);
 
+    void callWhenActivatedHandler(bool success);
+
     SWServer& m_server;
     ServiceWorkerRegistrationKey m_registrationKey;
     SWServerToContextConnectionIdentifier m_contextConnectionIdentifier;
@@ -113,6 +117,7 @@ private:
     State m_state { State::NotRunning };
     mutable std::optional<ClientOrigin> m_origin;
     bool m_isSkipWaitingFlagSet { false };
+    Vector<WTF::Function<void(bool)>> m_whenActivatedHandlers;
 };
 
 } // namespace WebCore

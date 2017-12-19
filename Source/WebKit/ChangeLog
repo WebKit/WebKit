@@ -1,3 +1,19 @@
+2017-12-19  Chris Dumez  <cdumez@apple.com>
+
+        Handle Fetch should wait for the service worker's state to become activated
+        https://bugs.webkit.org/show_bug.cgi?id=180959
+
+        Reviewed by Youenn Fablet.
+
+        Handle Fetch should wait for the service worker's state to become activated when
+        it is currently activating.
+
+        Specification:
+        - https://w3c.github.io/ServiceWorker/#on-fetch-request-algorithm (Step 16)
+
+        * StorageProcess/ServiceWorker/WebSWServerConnection.cpp:
+        (WebKit::WebSWServerConnection::startFetch):
+
 2017-12-19  Youenn Fablet  <youenn@apple.com>
 
         Service Worker should not clean HTTP headers added by the application or by fetch specification before service worker interception
