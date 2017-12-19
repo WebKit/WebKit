@@ -1,5 +1,16 @@
 2017-12-18  Chris Dumez  <cdumez@apple.com>
 
+        Default scope used when registering a service worker is wrong
+        https://bugs.webkit.org/show_bug.cgi?id=180961
+
+        Reviewed by Youenn Fablet.
+
+        Rebaseline WPT test now that more checks are passing.
+
+        * web-platform-tests/service-workers/service-worker/register-default-scope.https-expected.txt:
+
+2017-12-18  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed, rebaseline imported/w3c/web-platform-tests/service-workers/service-worker/registration-security-error.https.html after r226087.
 
         * web-platform-tests/service-workers/service-worker/registration-security-error.https-expected.txt:

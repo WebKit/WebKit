@@ -3,7 +3,7 @@
 Received updatefound event on self.registration
 Received install event
 * self.registration
-scope: http://127.0.0.1:8000/workers/service/
+scope: http://127.0.0.1:8000/workers/service/resources/
 updateViaCache: imports
 installing worker:
 - scriptURL: http://127.0.0.1:8000/workers/service/resources/self_registration-worker.js
@@ -15,7 +15,7 @@ Received statechange event on service worker
 Received statechange event on service worker
 Received activate event
 * self.registration
-scope: http://127.0.0.1:8000/workers/service/
+scope: http://127.0.0.1:8000/workers/service/resources/
 updateViaCache: imports
 installing worker: null
 waiting worker: null
@@ -25,7 +25,7 @@ active worker:
 
 Received statechange event on service worker
 * self.registration
-scope: http://127.0.0.1:8000/workers/service/
+scope: http://127.0.0.1:8000/workers/service/resources/
 updateViaCache: imports
 installing worker: null
 waiting worker: null

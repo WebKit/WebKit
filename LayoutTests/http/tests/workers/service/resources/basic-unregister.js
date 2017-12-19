@@ -45,7 +45,7 @@ async function test()
             log("FAIL: There is a service worker registered for the origin");
 
         registration = await navigator.serviceWorker.register("resources/basic-fetch-worker.js", { });
-        if (registration.scope === "https://127.0.0.1:8443/workers/service/")
+        if (registration.scope === "https://127.0.0.1:8443/workers/service/resources/")
             log("PASS: registration scope is " + registration.scope);
         else
             log("FAIL: registration scope is " + registration.scope);

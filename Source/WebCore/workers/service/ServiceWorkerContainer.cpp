@@ -141,9 +141,10 @@ void ServiceWorkerContainer::addRegistration(const String& relativeScriptURL, co
         return;
     }
 
-    String scope = options.scope.isEmpty() ? ASCIILiteral("./") : options.scope;
-    if (!scope.isEmpty())
-        jobData.scopeURL = context->completeURL(scope);
+    if (!options.scope.isEmpty())
+        jobData.scopeURL = context->completeURL(options.scope);
+    else
+        jobData.scopeURL = URL(jobData.scriptURL, "./");
 
     if (!jobData.scopeURL.isNull() && !SchemeRegistry::canServiceWorkersHandleURLScheme(jobData.scopeURL.protocol().toStringWithoutCopying())) {
         promise->reject(Exception { TypeError, ASCIILiteral("Scope URL provided to serviceWorker.register() must be either HTTP or HTTPS") });

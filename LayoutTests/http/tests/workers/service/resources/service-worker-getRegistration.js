@@ -40,7 +40,7 @@ async function test()
         log("Service worker 1 registered with scope " + newRegistration1.scope);
 
         log("Registering service worker 2");
-        var newRegistration2 = await navigator.serviceWorker.register("resources/service-worker-getRegistration-worker.js");
+        var newRegistration2 = await navigator.serviceWorker.register("resources/service-worker-getRegistration-worker.js", { scope: "./" });
         log("Service worker 2 registered with scope " + newRegistration2.scope);
 
         var registration4 = await navigator.serviceWorker.getRegistration("/test1/test2");

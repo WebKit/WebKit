@@ -1,3 +1,21 @@
+2017-12-18  Chris Dumez  <cdumez@apple.com>
+
+        Default scope used when registering a service worker is wrong
+        https://bugs.webkit.org/show_bug.cgi?id=180961
+
+        Reviewed by Youenn Fablet.
+
+        Update / Rebaseline WebKit tests due to behavior change.
+
+        * http/tests/workers/service/basic-register-exceptions-expected.txt:
+        * http/tests/workers/service/basic-unregister.https-expected.txt:
+        * http/tests/workers/service/resources/basic-unregister.js:
+        (async.test):
+        * http/tests/workers/service/resources/service-worker-getRegistration.js:
+        (async.test):
+        * http/tests/workers/service/self_registration-expected.txt:
+        * http/tests/workers/service/service-worker-clear.html:
+
 2017-12-18  Ryosuke Niwa  <rniwa@webkit.org>
 
         Assertion hit in DocumentOrderedMap::get while removing a form element

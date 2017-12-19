@@ -4,5 +4,6 @@ CONSOLE MESSAGE: line 40: Registration failed with error: TypeError: serviceWork
 CONSOLE MESSAGE: line 50: Registration failed with error: TypeError: serviceWorker.register() must be called with a script URL whose path does not contain '%2f' or '%5c'
 CONSOLE MESSAGE: line 60: Registration failed with error: TypeError: Scope URL provided to serviceWorker.register() must be either HTTP or HTTPS
 CONSOLE MESSAGE: line 70: Registration failed with error: TypeError: Scope URL provided to serviceWorker.register() cannot have a path that contains '%2f' or '%5c'
+CONSOLE MESSAGE: line 80: Registration failed with error: SecurityError: Script origin does not match the registering client's origin
 CONSOLE MESSAGE: line 91: Registration failed with error: SecurityError: Scope origin does not match the registering client's origin
 
