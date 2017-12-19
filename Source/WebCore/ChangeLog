@@ -1,3 +1,23 @@
+2017-12-18  Zalan Bujtas  <zalan@apple.com>
+
+        [SVG] Detach list wrappers before resetting the base value.
+        https://bugs.webkit.org/show_bug.cgi?id=180912
+        <rdar://problem/36017970>
+
+        Reviewed by Simon Fraser.
+
+        Before resetting the animation value (and destroying the assigned SVG object -SVGLengthValue in this case),
+        we need to check if there's an associated tear off wrapper for the said SVG object and make a copy of it.
+        This is currently done in the wrong order through animValDidChange.
+
+        Test: svg/animations/crash-when-animation-is-running-while-getting-value.html
+
+        * svg/SVGAnimatedTypeAnimator.h:
+        (WebCore::SVGAnimatedTypeAnimator::resetFromBaseValue):
+        * svg/properties/SVGAnimatedPropertyTearOff.h:
+        * svg/properties/SVGAnimatedStaticPropertyTearOff.h:
+        (WebCore::SVGAnimatedStaticPropertyTearOff::synchronizeWrappersIfNeeded):
+
 2017-12-08  Zalan Bujtas  <zalan@apple.com>
 
         Document::updateLayout() could destroy current frame.

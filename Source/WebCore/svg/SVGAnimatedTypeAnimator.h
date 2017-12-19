@@ -78,8 +78,11 @@ protected:
     {
         ASSERT(animatedTypes[0].properties.size() == 1);
         ASSERT(type.type() == m_type);
+        auto* property = castAnimatedPropertyToActualType<AnimValType>(animatedTypes[0].properties[0].get());
+        property->synchronizeWrappersIfNeeded();
+
         typename AnimValType::ContentType& animatedTypeValue = (type.*getter)();
-        animatedTypeValue = castAnimatedPropertyToActualType<AnimValType>(animatedTypes[0].properties[0].get())->currentBaseValue();
+        animatedTypeValue = property->currentBaseValue();
 
         executeAction<AnimValType>(StartAnimationAction, animatedTypes, 0, &animatedTypeValue);
     }
