@@ -1,3 +1,16 @@
+2017-12-18  Youenn Fablet  <youenn@apple.com>
+
+        Service worker served response tainting should keep its tainting
+        https://bugs.webkit.org/show_bug.cgi?id=180952
+
+        Reviewed by Chris Dumez.
+
+        * http/tests/workers/service/resources/tainted-image-fetch.js:
+        (async.test): Updated erroneous test. This test is laoding a cross origin image.
+        through a service worker which instead provides a synthetic response which
+        should be considered as same origin.
+        * http/tests/workers/service/tainted-image-fetch-expected.txt:
+
 2017-12-18  Matt Lewis  <jlewis3@apple.com>
 
         Marked http/tests/resourceLoadStatistics/telemetry-generation.html as flaky.

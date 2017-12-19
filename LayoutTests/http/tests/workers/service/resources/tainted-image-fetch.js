@@ -8,9 +8,9 @@ async function test()
             canvas.getContext("2d").drawImage(frame.contentWindow.image, 0, 0);
             try {
                 canvas.toDataURL("image/jpeg");
-                log("FAIL: Image is not tainted");
+                log("PASS: Image is not tainted");
             } catch (e) {
-                log("PASS: canvas toDataURL fails with " + e);
+                log("FAIL: canvas toDataURL fails with " + e);
             }
             finishSWTest();
             return;

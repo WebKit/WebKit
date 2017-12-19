@@ -471,11 +471,17 @@ void CachedResource::setResponse(const ResourceResponse& response)
 {
     ASSERT(m_response.type() == ResourceResponse::Type::Default);
     m_response = response;
+    m_varyingHeaderValues = collectVaryingRequestHeaders(m_resourceRequest, m_response, m_sessionID);
+
+#if ENABLE(SERVICE_WORKER)
+    if (m_response.source() == ResourceResponse::Source::ServiceWorker) {
+        m_responseTainting = m_response.tainting();
+        return;
+    }
+#endif
     m_response.setRedirected(m_redirectChainCacheStatus.status != RedirectChainCacheStatus::NoRedirection);
     if (m_response.tainting() == ResourceResponse::Tainting::Basic || m_response.tainting() == ResourceResponse::Tainting::Cors)
         m_response.setTainting(m_responseTainting);
-
-    m_varyingHeaderValues = collectVaryingRequestHeaders(m_resourceRequest, m_response, m_sessionID);
 }
 
 void CachedResource::responseReceived(const ResourceResponse& response)
