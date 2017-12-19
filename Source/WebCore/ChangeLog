@@ -1,3 +1,18 @@
+2017-12-04  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GStreamer] More leaks in TextCombinerGStreamer
+        https://bugs.webkit.org/show_bug.cgi?id=180331
+
+        Reviewed by Michael Catanzaro.
+
+        I've noticed more leaks reading the code, but I couldn't check them with valgrind, because I don't know how to
+        trigger that code path. This patch cleans up the file using smart pointer everywhere.
+
+        * platform/graphics/gstreamer/TextCombinerGStreamer.cpp:
+        (webkit_text_combiner_pad_init):
+        (webkitTextCombinerPadEvent):
+        (webkitTextCombinerReleasePad):
+
 2017-12-03  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GStreamer] GstPad leaked in WebKitTextCombiner
