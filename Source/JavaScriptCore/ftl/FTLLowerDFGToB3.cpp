@@ -5443,9 +5443,9 @@ private:
                 // SaneChainOutOfBounds.
                 // https://bugs.webkit.org/show_bug.cgi?id=144668
                 
-                m_graph.watchpoints().addLazily(globalObject->stringPrototype()->structure()->transitionWatchpointSet());
-                m_graph.watchpoints().addLazily(globalObject->objectPrototype()->structure()->transitionWatchpointSet());
-                
+                m_graph.registerAndWatchStructureTransition(globalObject->stringPrototype()->structure());
+                m_graph.registerAndWatchStructureTransition(globalObject->objectPrototype()->structure());
+
                 prototypeChainIsSane = globalObject->stringPrototypeChainIsSane();
             }
             if (prototypeChainIsSane) {

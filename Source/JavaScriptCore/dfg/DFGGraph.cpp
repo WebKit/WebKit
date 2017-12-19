@@ -1422,6 +1422,12 @@ RegisteredStructure Graph::registerStructure(Structure* structure, StructureRegi
     return RegisteredStructure::createPrivate(structure);
 }
 
+void Graph::registerAndWatchStructureTransition(Structure* structure)
+{
+    m_plan.weakReferences.addLazily(structure);
+    m_plan.watchpoints.addLazily(structure->transitionWatchpointSet());
+}
+
 void Graph::assertIsRegistered(Structure* structure)
 {
     // It's convenient to be able to call this with a maybe-null structure.

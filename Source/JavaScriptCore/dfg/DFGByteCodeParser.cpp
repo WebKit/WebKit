@@ -2319,21 +2319,21 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, int resultOperand, Intrin
         case Array::Contiguous: {
             JSGlobalObject* globalObject = m_graph.globalObjectFor(currentNodeOrigin().semantic);
 
-            InlineWatchpointSet& objectPrototypeTransition = globalObject->objectPrototype()->structure()->transitionWatchpointSet();
-            InlineWatchpointSet& arrayPrototypeTransition = globalObject->arrayPrototype()->structure()->transitionWatchpointSet();
+            Structure* arrayPrototypeStructure = globalObject->arrayPrototype()->structure();
+            Structure* objectPrototypeStructure = globalObject->objectPrototype()->structure();
 
             // FIXME: We could easily relax the Array/Object.prototype transition as long as we OSR exitted if we saw a hole.
             // https://bugs.webkit.org/show_bug.cgi?id=173171
             if (globalObject->arraySpeciesWatchpoint().state() == IsWatched
                 && globalObject->havingABadTimeWatchpoint()->isStillValid()
-                && arrayPrototypeTransition.isStillValid()
-                && objectPrototypeTransition.isStillValid()
+                && arrayPrototypeStructure->transitionWatchpointSetIsStillValid()
+                && objectPrototypeStructure->transitionWatchpointSetIsStillValid()
                 && globalObject->arrayPrototypeChainIsSane()) {
 
                 m_graph.watchpoints().addLazily(globalObject->arraySpeciesWatchpoint());
                 m_graph.watchpoints().addLazily(globalObject->havingABadTimeWatchpoint());
-                m_graph.watchpoints().addLazily(arrayPrototypeTransition);
-                m_graph.watchpoints().addLazily(objectPrototypeTransition);
+                m_graph.registerAndWatchStructureTransition(arrayPrototypeStructure);
+                m_graph.registerAndWatchStructureTransition(objectPrototypeStructure);
 
                 insertChecks();
 
@@ -2408,19 +2408,19 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, int resultOperand, Intrin
         case Array::Contiguous: {
             JSGlobalObject* globalObject = m_graph.globalObjectFor(currentNodeOrigin().semantic);
 
-            InlineWatchpointSet& objectPrototypeTransition = globalObject->objectPrototype()->structure()->transitionWatchpointSet();
-            InlineWatchpointSet& arrayPrototypeTransition = globalObject->arrayPrototype()->structure()->transitionWatchpointSet();
+            Structure* arrayPrototypeStructure = globalObject->arrayPrototype()->structure();
+            Structure* objectPrototypeStructure = globalObject->objectPrototype()->structure();
 
             // FIXME: We could easily relax the Array/Object.prototype transition as long as we OSR exitted if we saw a hole.
             // https://bugs.webkit.org/show_bug.cgi?id=173171
             if (globalObject->havingABadTimeWatchpoint()->isStillValid()
-                && arrayPrototypeTransition.isStillValid()
-                && objectPrototypeTransition.isStillValid()
+                && arrayPrototypeStructure->transitionWatchpointSetIsStillValid()
+                && objectPrototypeStructure->transitionWatchpointSetIsStillValid()
                 && globalObject->arrayPrototypeChainIsSane()) {
 
                 m_graph.watchpoints().addLazily(globalObject->havingABadTimeWatchpoint());
-                m_graph.watchpoints().addLazily(arrayPrototypeTransition);
-                m_graph.watchpoints().addLazily(objectPrototypeTransition);
+                m_graph.registerAndWatchStructureTransition(arrayPrototypeStructure);
+                m_graph.registerAndWatchStructureTransition(objectPrototypeStructure);
 
                 insertChecks();
 

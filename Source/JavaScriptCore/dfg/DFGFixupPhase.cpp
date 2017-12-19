@@ -760,10 +760,8 @@ private:
                         }
                         
                         if (canDoSaneChain) {
-                            m_graph.watchpoints().addLazily(
-                                globalObject->arrayPrototype()->structure()->transitionWatchpointSet());
-                            m_graph.watchpoints().addLazily(
-                                globalObject->objectPrototype()->structure()->transitionWatchpointSet());
+                            m_graph.registerAndWatchStructureTransition(globalObject->arrayPrototype()->structure());
+                            m_graph.registerAndWatchStructureTransition(globalObject->objectPrototype()->structure());
                             if (globalObject->arrayPrototypeChainIsSane())
                                 node->setArrayMode(arrayMode.withSpeculation(Array::SaneChain));
                         }
@@ -1169,16 +1167,16 @@ private:
             // When we go down the fast path, we don't consult the prototype chain, so we must prove
             // that it doesn't contain any indexed properties, and that any holes will result in
             // jsUndefined().
-            InlineWatchpointSet& objectPrototypeTransition = globalObject->objectPrototype()->structure()->transitionWatchpointSet();
-            InlineWatchpointSet& arrayPrototypeTransition = globalObject->arrayPrototype()->structure()->transitionWatchpointSet();
-            if (node->child1()->shouldSpeculateArray() 
-                && arrayPrototypeTransition.isStillValid() 
-                && objectPrototypeTransition.isStillValid() 
+            Structure* arrayPrototypeStructure = globalObject->arrayPrototype()->structure();
+            Structure* objectPrototypeStructure = globalObject->objectPrototype()->structure();
+            if (node->child1()->shouldSpeculateArray()
+                && arrayPrototypeStructure->transitionWatchpointSetIsStillValid()
+                && objectPrototypeStructure->transitionWatchpointSetIsStillValid()
                 && globalObject->arrayPrototypeChainIsSane()
                 && m_graph.isWatchingArrayIteratorProtocolWatchpoint(node->child1().node())
                 && m_graph.isWatchingHavingABadTimeWatchpoint(node->child1().node())) {
-                m_graph.watchpoints().addLazily(objectPrototypeTransition);
-                m_graph.watchpoints().addLazily(arrayPrototypeTransition);
+                m_graph.registerAndWatchStructureTransition(objectPrototypeStructure);
+                m_graph.registerAndWatchStructureTransition(arrayPrototypeStructure);
                 fixEdge<ArrayUse>(node->child1());
             } else
                 fixEdge<CellUse>(node->child1());

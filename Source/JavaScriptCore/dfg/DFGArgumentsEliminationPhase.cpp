@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -246,20 +246,20 @@ private:
                 // If we're out-of-bounds then we proceed only if the prototype chain
                 // for the allocation is sane (i.e. doesn't have indexed properties).
                 JSGlobalObject* globalObject = m_graph.globalObjectFor(edge->origin.semantic);
-                InlineWatchpointSet& objectPrototypeTransition = globalObject->objectPrototype()->structure()->transitionWatchpointSet();
+                Structure* objectPrototypeStructure = globalObject->objectPrototype()->structure();
                 if (edge->op() == CreateRest) {
-                    InlineWatchpointSet& arrayPrototypeTransition = globalObject->arrayPrototype()->structure()->transitionWatchpointSet();
-                    if (arrayPrototypeTransition.isStillValid() 
-                        && objectPrototypeTransition.isStillValid() 
+                    Structure* arrayPrototypeStructure = globalObject->arrayPrototype()->structure();
+                    if (arrayPrototypeStructure->transitionWatchpointSetIsStillValid()
+                        && objectPrototypeStructure->transitionWatchpointSetIsStillValid()
                         && globalObject->arrayPrototypeChainIsSane()) {
-                        m_graph.watchpoints().addLazily(arrayPrototypeTransition);
-                        m_graph.watchpoints().addLazily(objectPrototypeTransition);
+                        m_graph.registerAndWatchStructureTransition(arrayPrototypeStructure);
+                        m_graph.registerAndWatchStructureTransition(objectPrototypeStructure);
                         break;
                     }
                 } else {
-                    if (objectPrototypeTransition.isStillValid() 
+                    if (objectPrototypeStructure->transitionWatchpointSetIsStillValid()
                         && globalObject->objectPrototypeIsSane()) {
-                        m_graph.watchpoints().addLazily(objectPrototypeTransition);
+                        m_graph.registerAndWatchStructureTransition(objectPrototypeStructure);
                         break;
                     }
                 }

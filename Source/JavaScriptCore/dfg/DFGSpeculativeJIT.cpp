@@ -2080,14 +2080,11 @@ void SpeculativeJIT::compileGetByValOnString(Node* node)
             // on a stringPrototypeChainIsSane() guaranteeing that the prototypes have no negative
             // indexed properties either.
             // https://bugs.webkit.org/show_bug.cgi?id=144668
-            m_jit.graph().watchpoints().addLazily(globalObject->stringPrototype()->structure()->transitionWatchpointSet());
-            m_jit.graph().watchpoints().addLazily(globalObject->objectPrototype()->structure()->transitionWatchpointSet());
+            m_jit.graph().registerAndWatchStructureTransition(globalObject->stringPrototype()->structure());
+            m_jit.graph().registerAndWatchStructureTransition(globalObject->objectPrototype()->structure());
             prototypeChainIsSane = globalObject->stringPrototypeChainIsSane();
         }
         if (prototypeChainIsSane) {
-            m_jit.graph().watchpoints().addLazily(globalObject->stringPrototype()->structure()->transitionWatchpointSet());
-            m_jit.graph().watchpoints().addLazily(globalObject->objectPrototype()->structure()->transitionWatchpointSet());
-            
 #if USE(JSVALUE64)
             addSlowPathGenerator(std::make_unique<SaneStringGetByValSlowPathGenerator>(
                 outOfBounds, this, JSValueRegs(scratchReg), baseReg, propertyReg));
