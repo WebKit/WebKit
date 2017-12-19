@@ -532,11 +532,6 @@ WI.Resource = class Resource extends WI.SourceCode
         return this.timingData.responseEnd || this.lastDataReceivedTimestamp || this.responseReceivedTimestamp || this.lastRedirectReceivedTimestamp || this.requestSentTimestamp;
     }
 
-    get duration()
-    {
-        return this.timingData.responseEnd - this.timingData.requestStart;
-    }
-
     get latency()
     {
         return this.timingData.responseStart - this.timingData.requestStart;
@@ -545,6 +540,11 @@ WI.Resource = class Resource extends WI.SourceCode
     get receiveDuration()
     {
         return this.timingData.responseEnd - this.timingData.responseStart;
+    }
+
+    get totalDuration()
+    {
+        return this.timingData.responseEnd - this.timingData.startTime;
     }
 
     get cached()

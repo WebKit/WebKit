@@ -1,3 +1,24 @@
+2017-12-19  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Network Table - Update the Time column to include the total duration not just the download duration
+        https://bugs.webkit.org/show_bug.cgi?id=180998
+        <rdar://problem/36140424>
+
+        Reviewed by Matt Baker.
+
+        * UserInterface/Models/Resource.js:
+        (WI.Resource.prototype.get totalDuration):
+        (WI.Resource.prototype.get duration): Deleted.
+        Rename and group getters to be clearer.
+
+        * UserInterface/Views/NetworkTableContentView.js:
+        (WI.NetworkTableContentView.prototype._entryForResource):
+        Use the totalDuration for the network table time column.
+
+        * UserInterface/Views/ResourceTimelineDataGridNode.js:
+        (WI.ResourceTimelineDataGridNode.prototype._mouseoverRecordBar graphDataSource.get secondsPerPixel):
+        Using the download duration was incorrect here.
+
 2017-12-19  Devin Rousso  <webkit@devinrousso.com>
 
         Web Inspector: Styles Redesign: Typing semicolon at the end of value should move to the next property

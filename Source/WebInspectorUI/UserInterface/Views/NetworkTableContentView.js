@@ -1196,7 +1196,7 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
             cached: resource.cached,
             resourceSize: resource.size,
             transferSize: !isNaN(resource.networkTotalTransferSize) ? resource.networkTotalTransferSize : resource.estimatedTotalTransferSize,
-            time: resource.duration,
+            time: resource.totalDuration,
             protocol: resource.protocol,
             priority: resource.priority,
             remoteAddress: resource.remoteAddress,
