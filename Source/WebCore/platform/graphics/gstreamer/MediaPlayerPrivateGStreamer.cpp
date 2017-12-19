@@ -2124,7 +2124,8 @@ void MediaPlayerPrivateGStreamer::createGSTPlayBin()
     m_textAppSinkPad = adoptGRef(gst_element_get_static_pad(m_textAppSink.get(), "sink"));
     ASSERT(m_textAppSinkPad);
 
-    g_object_set(m_textAppSink.get(), "emit-signals", true, "enable-last-sample", false, "caps", gst_caps_new_empty_simple("text/vtt"), nullptr);
+    GRefPtr<GstCaps> textCaps = adoptGRef(gst_caps_new_empty_simple("text/vtt"));
+    g_object_set(m_textAppSink.get(), "emit-signals", TRUE, "enable-last-sample", FALSE, "caps", textCaps.get(), nullptr);
     g_signal_connect_swapped(m_textAppSink.get(), "new-sample", G_CALLBACK(newTextSampleCallback), this);
 
     g_object_set(m_pipeline.get(), "text-sink", m_textAppSink.get(), nullptr);

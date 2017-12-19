@@ -1,3 +1,16 @@
+2017-12-03  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GStreamer] GstCaps leaked in MediaPlayerPrivateGStreamer::createGSTPlayBin
+        https://bugs.webkit.org/show_bug.cgi?id=180311
+
+        Reviewed by Michael Catanzaro.
+
+        gst_caps_new_empty_simple() is passed directly to g_object_set(). The returned caps should be freed with
+        gst_caps_unref().
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::createGSTPlayBin):
+
 2017-11-10  Miguel Gomez  <magomez@igalia.com>
 
         [GTK][WPE] CoordinatedGraphicsLayer::setNeedsDisplayInRect() converts FloatRect to IntRect erroneously
