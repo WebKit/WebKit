@@ -30,7 +30,12 @@ The following assertion is expected to fail.
 FAIL: Should produce an exception.
     Expected: not null
     Actual: null
-PASS: Should produce an exception.
-42
-FAIL: The returned promise should not resolve since an expected exception was not raised.
+PASS: Rejected value should be the returned value.
+
+-- Running test case: expectException.AsyncWorkThatResolvesImplicitly
+The following assertion is expected to fail.
+FAIL: Should produce an exception.
+    Expected: not null
+    Actual: null
+PASS: Implicitly resolved value should be undefined.
 

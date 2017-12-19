@@ -80,6 +80,22 @@ function test()
         }
     });
 
+    suite.addTestCase({
+        name: "expectException.AsyncWorkThatResolvesImplicitly",
+        async test() {
+            InspectorTest.log("The following assertion is expected to fail.");
+
+            let returnValue = 42;
+            await InspectorTest.expectException(async () => {
+                1 + 1;
+            }).then(() => {
+                InspectorTest.fail("The returned promise should not resolve since an expected exception was not raised.");
+            }).catch((resolvedValue) => {
+                InspectorTest.expectEqual(resolvedValue, undefined, "Implicitly resolved value should be undefined.");
+            });
+        }
+    });
+
     suite.runTestCasesAndFinish();
 }
 </script>

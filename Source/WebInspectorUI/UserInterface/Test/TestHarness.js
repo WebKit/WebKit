@@ -218,7 +218,7 @@ TestHarness = class TestHarness extends WI.Object
                 return result.then((resolvedValue) => {
                     expectAndDumpError(null);
                     return Promise.reject(resolvedValue);
-                }).catch((e) => {
+                }, (e) => { // Don't chain the .catch as it will log the value we just rejected.
                     expectAndDumpError(e);
                     return Promise.resolve(e);
                 });

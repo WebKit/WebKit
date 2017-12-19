@@ -1,3 +1,14 @@
+2017-12-19  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: InspectorTest.expectException does not handle implicitly resolved async functions correctly
+        https://bugs.webkit.org/show_bug.cgi?id=180944
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Test/TestHarness.js:
+        (TestHarness.prototype.expectException):
+        Don't chain .catch after we might have just returned a rejected promise.
+
 2017-12-19  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Network Table - Update the Time column to include the total duration not just the download duration

@@ -1,3 +1,17 @@
+2017-12-19  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: InspectorTest.expectException does not handle implicitly resolved async functions correctly
+        https://bugs.webkit.org/show_bug.cgi?id=180944
+
+        Reviewed by Joseph Pecoraro.
+
+        Add a new test case for implicitly resolved async functions passed to expectException.
+        Rebaseline one existing test that had a failing assertion that progresses with
+        this change. I didn't notice it because the assertion just prior is expected to fail.
+
+        * inspector/unit-tests/test-harness-expect-functions-async-expected.txt:
+        * inspector/unit-tests/test-harness-expect-functions-async.html:
+
 2017-12-19  Jer Noble  <jer.noble@apple.com>
 
         Playing media elements which call "pause(); play()" will have the play promise rejected.
