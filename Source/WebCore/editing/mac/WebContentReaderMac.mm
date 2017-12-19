@@ -47,6 +47,7 @@
 #import "Text.h"
 #import "WebCoreNSURLExtras.h"
 #import "markup.h"
+#import <wtf/UUID.h>
 
 namespace WebCore {
 
@@ -65,7 +66,8 @@ bool WebContentReader::readFilenames(const Vector<String>& paths)
 #if ENABLE(ATTACHMENT_ELEMENT)
         if (RuntimeEnabledFeatures::sharedFeatures().attachmentElementEnabled()) {
             auto attachment = HTMLAttachmentElement::create(HTMLNames::attachmentTag, document);
-            attachment->setFile(File::create([[NSURL fileURLWithPath:text] path]));
+            attachment->setUniqueIdentifier(createCanonicalUUIDString());
+            attachment->setFile(File::create([NSURL fileURLWithPath:text].path), HTMLAttachmentElement::UpdateDisplayAttributes::Yes);
             fragment->appendChild(attachment);
             continue;
         }

@@ -317,6 +317,8 @@ static NSArray *dataInteractionEventNames()
     _currentProgress = 0;
     _isDoneWithCurrentRun = false;
     _observedEventNames = adoptNS([[NSMutableArray alloc] init]);
+    _insertedAttachments = adoptNS([[NSMutableArray alloc] init]);
+    _removedAttachments = adoptNS([[NSMutableArray alloc] init]);
     _finalSelectionRects = @[ ];
     _dragSession = nil;
     _dropSession = nil;
@@ -576,6 +578,16 @@ static NSArray *dataInteractionEventNames()
     Util::run(&_isDoneWaitingForInputSession);
 }
 
+- (NSArray<_WKAttachment *> *)insertedAttachments
+{
+    return _insertedAttachments.get();
+}
+
+- (NSArray<_WKAttachment *> *)removedAttachments
+{
+    return _removedAttachments.get();
+}
+
 #pragma mark - WKUIDelegatePrivate
 
 - (void)_webView:(WKWebView *)webView dataInteractionOperationWasHandled:(BOOL)handled forSession:(id)session itemProviders:(NSArray<UIItemProvider *> *)itemProviders
@@ -615,6 +627,16 @@ static NSArray *dataInteractionEventNames()
 - (NSArray<UIDragItem *> *)_webView:(WKWebView *)webView willPerformDropWithSession:(id <UIDropSession>)session
 {
     return self.overridePerformDropBlock ? self.overridePerformDropBlock(session) : session.items;
+}
+
+- (void)_webView:(WKWebView *)webView didInsertAttachment:(_WKAttachment *)attachment
+{
+    [_insertedAttachments addObject:attachment];
+}
+
+- (void)_webView:(WKWebView *)webView didRemoveAttachment:(_WKAttachment *)attachment
+{
+    [_removedAttachments addObject:attachment];
 }
 
 #pragma mark - _WKInputDelegate

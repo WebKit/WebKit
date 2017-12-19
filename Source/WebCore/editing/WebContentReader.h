@@ -32,6 +32,7 @@
 namespace WebCore {
 
 class ArchiveResource;
+class Blob;
 
 class FrameWebContentReader : public PasteboardWebContentReader {
 public:
@@ -105,7 +106,8 @@ struct FragmentAndResources {
     Vector<Ref<ArchiveResource>> resources;
 };
 
-RefPtr<DocumentFragment> createFragmentAndAddResources(Frame&, NSAttributedString*);
+void replaceRichContentWithAttachmentsIfNecessary(DocumentFragment&, HashMap<AtomicString, RefPtr<Blob>>&& urlToBlobMap);
+RefPtr<DocumentFragment> createFragmentAndAddResources(Frame&, NSAttributedString*, HashMap<AtomicString, RefPtr<Blob>>& urlToBlobMap);
 #endif
 
 }

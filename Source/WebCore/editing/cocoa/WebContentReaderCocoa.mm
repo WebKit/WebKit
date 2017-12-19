@@ -34,9 +34,11 @@
 #import "Document.h"
 #import "DocumentFragment.h"
 #import "DocumentLoader.h"
+#import "File.h"
 #import "Frame.h"
 #import "FrameLoader.h"
 #import "FrameLoaderClient.h"
+#import "HTMLAttachmentElement.h"
 #import "HTMLBodyElement.h"
 #import "HTMLIFrameElement.h"
 #import "HTMLImageElement.h"
@@ -44,6 +46,7 @@
 #import "MainFrame.h"
 #import "Page.h"
 #import "PublicURLManager.h"
+#import "RuntimeEnabledFeatures.h"
 #import "Settings.h"
 #import "SocketProvider.h"
 #import "WebArchiveResourceFromNSAttributedString.h"
@@ -52,6 +55,7 @@
 #import "markup.h"
 #import <pal/spi/cocoa/NSAttributedStringSPI.h>
 #import <wtf/SoftLinking.h>
+#import <wtf/UUID.h>
 
 #if (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300)
 @interface NSAttributedString ()
@@ -68,6 +72,62 @@ SOFT_LINK(WebKitLegacy, _WebCreateFragment, void, (WebCore::Document& document, 
 #endif
 
 namespace WebCore {
+
+#if ENABLE(ATTACHMENT_ELEMENT)
+
+void replaceRichContentWithAttachmentsIfNecessary(DocumentFragment& fragment, HashMap<AtomicString, RefPtr<Blob>>&& urlToBlobMap)
+{
+    if (!RuntimeEnabledFeatures::sharedFeatures().attachmentElementEnabled() || urlToBlobMap.isEmpty())
+        return;
+
+    Vector<Ref<Element>> elementsToRemove;
+    Vector<std::pair<Ref<File>, Ref<Element>>> filesForElementsToReplace;
+    for (auto& image : descendantsOfType<HTMLImageElement>(fragment)) {
+        auto url = image.attributeWithoutSynchronization(HTMLNames::srcAttr);
+
+        if (url.isEmpty()) {
+            elementsToRemove.append(image);
+            continue;
+        }
+
+        auto blob = urlToBlobMap.get(url);
+        if (!blob) {
+            elementsToRemove.append(image);
+            continue;
+        }
+
+        auto title = image.attributeWithoutSynchronization(HTMLNames::titleAttr);
+        if (title.isEmpty())
+            title = AtomicString("media");
+
+        filesForElementsToReplace.append({ File::create(*blob, title), image });
+    }
+
+    for (auto& fileAndElement : filesForElementsToReplace) {
+        auto& file = fileAndElement.first;
+        auto& elementToReplace = fileAndElement.second;
+        auto parent = makeRefPtr(elementToReplace->parentNode());
+        if (!parent)
+            continue;
+
+        auto attachment = HTMLAttachmentElement::create(HTMLNames::attachmentTag, fragment.document());
+        attachment->setUniqueIdentifier(createCanonicalUUIDString());
+        attachment->setFile(WTFMove(file), HTMLAttachmentElement::UpdateDisplayAttributes::Yes);
+        attachment->updateDisplayMode(AttachmentDisplayMode::InPlace);
+        parent->replaceChild(attachment, elementToReplace);
+    }
+
+    for (auto& elementToRemove : elementsToRemove)
+        elementToRemove->remove();
+}
+
+#else
+
+void replaceRichContentWithAttachmentsIfNecessary(DocumentFragment&, HashMap<AtomicString, RefPtr<Blob>>&&)
+{
+}
+
+#endif
 
 #if (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300)
 
@@ -159,7 +219,7 @@ private:
     bool m_didDisableImage { false };
 };
 
-RefPtr<DocumentFragment> createFragmentAndAddResources(Frame& frame, NSAttributedString *string)
+RefPtr<DocumentFragment> createFragmentAndAddResources(Frame& frame, NSAttributedString *string, HashMap<AtomicString, RefPtr<Blob>>& urlToBlobMap)
 {
     if (!frame.page() || !frame.document())
         return nullptr;
@@ -178,6 +238,7 @@ RefPtr<DocumentFragment> createFragmentAndAddResources(Frame& frame, NSAttribute
         auto blob = Blob::create(subresource->data(), subresource->mimeType());
         String blobURL = DOMURL::createObjectURL(document, blob);
         blobURLMap.set(subresource->url().string(), blobURL);
+        urlToBlobMap.set(blobURL, WTFMove(blob));
     }
     replaceSubresourceURLs(*fragmentAndResources.fragment, WTFMove(blobURLMap));
 
@@ -207,7 +268,7 @@ static std::optional<MarkupAndArchive> extractMarkupAndArchive(SharedBuffer& buf
     return MarkupAndArchive { String::fromUTF8(mainResource->data().data(), mainResource->data().size()), mainResource.releaseNonNull(), archive.releaseNonNull() };
 }
 
-static String sanitizeMarkupWithArchive(Document& destinationDocument, MarkupAndArchive& markupAndArchive, const std::function<bool(const String)>& canShowMIMETypeAsHTML)
+static String sanitizeMarkupWithArchive(Document& destinationDocument, MarkupAndArchive& markupAndArchive, const std::function<bool(const String)>& canShowMIMETypeAsHTML, HashMap<AtomicString, RefPtr<Blob>>& urlToBlobMap)
 {
     auto page = createPageForSanitizingWebContent();
     Document* stagingDocument = page->mainFrame().document();
@@ -219,6 +280,7 @@ static String sanitizeMarkupWithArchive(Document& destinationDocument, MarkupAnd
         auto blob = Blob::create(subresource->data(), subresource->mimeType());
         String blobURL = DOMURL::createObjectURL(destinationDocument, blob);
         blobURLMap.set(subresource->url().string(), blobURL);
+        urlToBlobMap.set(blobURL, WTFMove(blob));
     }
 
     auto contentOrigin = SecurityOrigin::create(markupAndArchive.mainResource->url());
@@ -234,7 +296,7 @@ static String sanitizeMarkupWithArchive(Document& destinationDocument, MarkupAnd
         auto subframeURL = subframeMainResource->url();
         MarkupAndArchive subframeContent = { String::fromUTF8(subframeMainResource->data().data(), subframeMainResource->data().size()),
             subframeMainResource.releaseNonNull(), subframeArchive.copyRef() };
-        auto subframeMarkup = sanitizeMarkupWithArchive(destinationDocument, subframeContent, canShowMIMETypeAsHTML);
+        auto subframeMarkup = sanitizeMarkupWithArchive(destinationDocument, subframeContent, canShowMIMETypeAsHTML, urlToBlobMap);
 
         CString utf8 = subframeMarkup.utf8();
         Vector<uint8_t> blobBuffer;
@@ -244,6 +306,7 @@ static String sanitizeMarkupWithArchive(Document& destinationDocument, MarkupAnd
 
         String subframeBlobURL = DOMURL::createObjectURL(destinationDocument, blob);
         blobURLMap.set(subframeURL.string(), subframeBlobURL);
+        urlToBlobMap.set(subframeBlobURL, WTFMove(blob));
     }
 
     replaceSubresourceURLs(fragment.get(), WTFMove(blobURLMap));
@@ -274,11 +337,16 @@ bool WebContentReader::readWebArchive(SharedBuffer& buffer)
         return true;
     }
 
+    HashMap<AtomicString, RefPtr<Blob>> urlToBlobMap;
     String sanitizedMarkup = sanitizeMarkupWithArchive(*frame.document(), *result, [&] (const String& type) {
         return frame.loader().client().canShowMIMETypeAsHTML(type);
-    });
+    }, urlToBlobMap);
     fragment = createFragmentFromMarkup(*frame.document(), sanitizedMarkup, blankURL(), DisallowScriptingAndPluginContent);
 
+    if (!fragment)
+        return false;
+
+    replaceRichContentWithAttachmentsIfNecessary(*fragment, WTFMove(urlToBlobMap));
     return true;
 }
 
@@ -298,9 +366,10 @@ bool WebContentMarkupReader::readWebArchive(SharedBuffer& buffer)
         return true;
     }
 
+    HashMap<AtomicString, RefPtr<Blob>> urlToBlobMap;
     markup = sanitizeMarkupWithArchive(*frame.document(), *result, [&] (const String& type) {
         return frame.loader().client().canShowMIMETypeAsHTML(type);
-    });
+    }, urlToBlobMap);
 
     return true;
 }
@@ -348,12 +417,24 @@ bool WebContentMarkupReader::readHTML(const String& string)
     return !markup.isEmpty();
 }
 
+static RefPtr<DocumentFragment> createFragmentFromAttributedString(Frame& frame, NSAttributedString *string)
+{
+    HashMap<AtomicString, RefPtr<Blob>> urlToBlobMap;
+    auto fragment = createFragmentAndAddResources(frame, string, urlToBlobMap);
+    if (!fragment)
+        return nullptr;
+
+    replaceRichContentWithAttachmentsIfNecessary(*fragment, WTFMove(urlToBlobMap));
+    return fragment;
+}
+
 bool WebContentReader::readRTFD(SharedBuffer& buffer)
 {
     if (frame.settings().preferMIMETypeForImages() || !frame.document())
         return false;
 
-    auto fragment = createFragmentAndAddResources(frame, adoptNS([[NSAttributedString alloc] initWithRTFD:buffer.createNSData().get() documentAttributes:nullptr]).get());
+    auto string = adoptNS([[NSAttributedString alloc] initWithRTFD:buffer.createNSData().get() documentAttributes:nullptr]);
+    auto fragment = createFragmentFromAttributedString(frame, string.get());
     if (!fragment)
         return false;
     addFragment(fragment.releaseNonNull());
@@ -365,7 +446,11 @@ bool WebContentMarkupReader::readRTFD(SharedBuffer& buffer)
 {
     if (!frame.document())
         return false;
-    auto fragment = createFragmentAndAddResources(frame, adoptNS([[NSAttributedString alloc] initWithRTFD:buffer.createNSData().get() documentAttributes:nullptr]).get());
+    auto string = adoptNS([[NSAttributedString alloc] initWithRTFD:buffer.createNSData().get() documentAttributes:nullptr]);
+    auto fragment = createFragmentFromAttributedString(frame, string.get());
+    if (!fragment)
+        return false;
+
     markup = createMarkup(*fragment);
     return true;
 }
@@ -375,7 +460,8 @@ bool WebContentReader::readRTF(SharedBuffer& buffer)
     if (frame.settings().preferMIMETypeForImages())
         return false;
 
-    auto fragment = createFragmentAndAddResources(frame, adoptNS([[NSAttributedString alloc] initWithRTF:buffer.createNSData().get() documentAttributes:nullptr]).get());
+    auto string = adoptNS([[NSAttributedString alloc] initWithRTF:buffer.createNSData().get() documentAttributes:nullptr]);
+    auto fragment = createFragmentFromAttributedString(frame, string.get());
     if (!fragment)
         return false;
     addFragment(fragment.releaseNonNull());
@@ -387,7 +473,8 @@ bool WebContentMarkupReader::readRTF(SharedBuffer& buffer)
 {
     if (!frame.document())
         return false;
-    auto fragment = createFragmentAndAddResources(frame, adoptNS([[NSAttributedString alloc] initWithRTF:buffer.createNSData().get() documentAttributes:nullptr]).get());
+    auto string = adoptNS([[NSAttributedString alloc] initWithRTF:buffer.createNSData().get() documentAttributes:nullptr]);
+    auto fragment = createFragmentFromAttributedString(frame, string.get());
     if (!fragment)
         return false;
     markup = createMarkup(*fragment);
@@ -412,6 +499,11 @@ bool WebContentReader::readImage(Ref<SharedBuffer>&& buffer, const String& type)
     auto& document = *frame.document();
     String blobURL = DOMURL::createObjectURL(document, blob);
     addFragment(createFragmentForImageAndURL(document, blobURL));
+
+    if (!fragment)
+        return false;
+
+    replaceRichContentWithAttachmentsIfNecessary(*fragment, {{ blobURL, WTFMove(blob) }});
     return true;
 }
 

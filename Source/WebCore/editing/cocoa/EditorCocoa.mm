@@ -222,9 +222,12 @@ void Editor::replaceSelectionWithAttributedString(NSAttributedString *attributed
         return;
 
     if (m_frame.selection().selection().isContentRichlyEditable()) {
-        RefPtr<DocumentFragment> fragment = createFragmentAndAddResources(m_frame, attributedString);
-        if (fragment && shouldInsertFragment(*fragment, selectedRange().get(), EditorInsertAction::Pasted))
-            pasteAsFragment(fragment.releaseNonNull(), false, false, mailBlockquoteHandling);
+        HashMap<AtomicString, RefPtr<Blob>> urlToBlobMap;
+        if (auto fragment = createFragmentAndAddResources(m_frame, attributedString, urlToBlobMap)) {
+            replaceRichContentWithAttachmentsIfNecessary(*fragment, WTFMove(urlToBlobMap));
+            if (shouldInsertFragment(*fragment, selectedRange().get(), EditorInsertAction::Pasted))
+                pasteAsFragment(fragment.releaseNonNull(), false, false, mailBlockquoteHandling);
+        }
     } else {
         String text = attributedString.string;
         if (shouldInsertText(text, selectedRange().get(), EditorInsertAction::Pasted))

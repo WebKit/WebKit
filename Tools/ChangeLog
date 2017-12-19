@@ -1,3 +1,50 @@
+2017-12-18  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Attachment Support] Insert images as inline attachments when pasting and dropping
+        https://bugs.webkit.org/show_bug.cgi?id=180853
+        <rdar://problem/35756268>
+
+        Reviewed by Tim Horton.
+
+        Adds new WKAttachment API tests and test support. See comments below for more detail.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WKAttachmentTests.mm:
+
+        Tweak the editing test page markup, such that document.body.innerHTML doesn't additionally contain the contents
+        of the script tag.
+
+        (webViewForTestingAttachments):
+        (testImageFileURL):
+        (testImageData):
+        (testPDFFileURL):
+        (testPDFData):
+        (platformCopyRichTextWithAttachment):
+        (platformCopyPNG):
+        (platformImageWithData):
+
+        Add some platform helper functions, which some of the platform-agnostic tests below use to resolve differences
+        between iOS and macOS when writing to the pasteboard and creating an image from data.
+
+        (TestWebKitAPI::TEST):
+
+        Add new API tests to exercise drag and drop/copy and paste of rich content (namely, images and files) on iOS and
+        macOS. iOS attachment tests use DataInteractionSimulator to simulate UIKit drag and drop coordination. On macOS,
+        handling of dropped content is much closer to handling of pasted content (they use the same codepaths to read
+        from the platform pasteboard), so exercising paste codepaths on Mac is sufficient.
+
+        * TestWebKitAPI/ios/DataInteractionSimulator.h:
+        * TestWebKitAPI/ios/DataInteractionSimulator.mm:
+        (-[DataInteractionSimulator _resetSimulatedState]):
+        (-[DataInteractionSimulator insertedAttachments]):
+        (-[DataInteractionSimulator removedAttachments]):
+
+        Teach the iOS drag and drop simulator to keep track of attachment elements that are inserted during a drop. We
+        also keep track of removed attachments here too, though no default drop handling scenario should trigger
+        attachment removal, so we simply use this to check that no _WKAttachments were removed during a drop.
+
+        (-[DataInteractionSimulator _webView:didInsertAttachment:]):
+        (-[DataInteractionSimulator _webView:didRemoveAttachment:]):
+
 2017-12-18  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [WinCairo] Move the destination of WinCairoRequirements.zip into WebKitLibraries and register it and related files as git ignore files.
