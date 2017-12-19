@@ -113,58 +113,12 @@ const BorderValue& RenderTableRow::borderAdjoiningEndCell(const RenderTableCell&
 
 void RenderTableRow::addChild(RenderTreeBuilder& builder, RenderPtr<RenderObject> child, RenderObject* beforeChild)
 {
-    if (!is<RenderTableCell>(*child)) {
-        RenderObject* last = beforeChild;
-        if (!last)
-            last = lastCell();
-        if (last && last->isAnonymous() && is<RenderTableCell>(*last) && !last->isBeforeOrAfterContent()) {
-            RenderTableCell& cell = downcast<RenderTableCell>(*last);
-            if (beforeChild == &cell)
-                beforeChild = cell.firstChild();
-            builder.insertChild(cell, WTFMove(child), beforeChild);
-            return;
-        }
-
-        if (beforeChild && !beforeChild->isAnonymous() && beforeChild->parent() == this) {
-            RenderObject* cell = beforeChild->previousSibling();
-            if (is<RenderTableCell>(cell) && cell->isAnonymous()) {
-                builder.insertChild(downcast<RenderTableCell>(*cell), WTFMove(child));
-                return;
-            }
-        }
-
-        // Try to find an anonymous container for the child.
-        if (last && last->parent() && last->parent()->isAnonymous() && !last->parent()->isBeforeOrAfterContent()) {
-            // If beforeChild is inside an anonymous cell, insert into the cell.
-            if (!is<RenderTableCell>(*last)) {
-                builder.insertChild(*last->parent(), WTFMove(child), beforeChild);
-                return;
-            }
-            // If beforeChild is inside an anonymous row, insert into the row.
-            auto& parent = *last->parent();
-            if (is<RenderTableRow>(parent)) {
-                auto newCell = RenderTableCell::createAnonymousWithParentRenderer(*this);
-                auto& cell = *newCell;
-                builder.insertChild(parent, WTFMove(newCell), beforeChild);
-                builder.insertChild(cell, WTFMove(child));
-                return;
-            }
-        }
-        auto newCell = RenderTableCell::createAnonymousWithParentRenderer(*this);
-        auto& cell = *newCell;
-        builder.insertChild(*this, WTFMove(newCell), beforeChild);
-        builder.insertChild(cell, WTFMove(child));
-        return;
-    } 
-
     if (beforeChild && beforeChild->parent() != this)
         beforeChild = splitAnonymousBoxesAroundChild(beforeChild);    
 
-    RenderTableCell& cell = downcast<RenderTableCell>(*child);
-
     // Generated content can result in us having a null section so make sure to null check our parent.
-    if (RenderTableSection* section = this->section())
-        section->addCell(&cell, this);
+    if (auto* section = this->section())
+        section->addCell(&downcast<RenderTableCell>(*child), this);
 
     ASSERT(!beforeChild || is<RenderTableCell>(*beforeChild));
     RenderBox::addChild(builder, WTFMove(child), beforeChild);

@@ -389,6 +389,7 @@
 		10FB084B14E15C7E00A3DB98 /* PublicURLManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 10FB084A14E15C7E00A3DB98 /* PublicURLManager.h */; };
 		112B34D51E60B98300BB310A /* SimpleLineLayoutPagination.h in Headers */ = {isa = PBXBuildFile; fileRef = 112B34D41E60B98300BB310A /* SimpleLineLayoutPagination.h */; };
 		113D0B521F9FDD2B00F611BB /* LayoutContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 113D0B501F9FDD2B00F611BB /* LayoutContext.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		119340791FE8B92300935F1E /* RenderTreeBuilderTable.h in Headers */ = {isa = PBXBuildFile; fileRef = 119340771FE8B92300935F1E /* RenderTreeBuilderTable.h */; };
 		11E067EE1E6246E500162D16 /* SimpleLineLayoutCoverage.h in Headers */ = {isa = PBXBuildFile; fileRef = 11E067ED1E6246E500162D16 /* SimpleLineLayoutCoverage.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1400D7A817136EA70077CE05 /* ScriptWrappableInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 1400D7A717136EA70077CE05 /* ScriptWrappableInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1403B99709EB13AF00797C7F /* DOMWindow.h in Headers */ = {isa = PBXBuildFile; fileRef = 1403B99509EB13AF00797C7F /* DOMWindow.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -5561,6 +5562,8 @@
 		112B34D41E60B98300BB310A /* SimpleLineLayoutPagination.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SimpleLineLayoutPagination.h; sourceTree = "<group>"; };
 		113D0B4F1F9FDD2B00F611BB /* LayoutContext.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = LayoutContext.cpp; sourceTree = "<group>"; };
 		113D0B501F9FDD2B00F611BB /* LayoutContext.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LayoutContext.h; sourceTree = "<group>"; };
+		119340761FE8B92300935F1E /* RenderTreeBuilderTable.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RenderTreeBuilderTable.cpp; sourceTree = "<group>"; };
+		119340771FE8B92300935F1E /* RenderTreeBuilderTable.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RenderTreeBuilderTable.h; sourceTree = "<group>"; };
 		11E067EB1E62461300162D16 /* SimpleLineLayoutCoverage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SimpleLineLayoutCoverage.cpp; sourceTree = "<group>"; };
 		11E067ED1E6246E500162D16 /* SimpleLineLayoutCoverage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SimpleLineLayoutCoverage.h; sourceTree = "<group>"; };
 		1400D7A717136EA70077CE05 /* ScriptWrappableInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptWrappableInlines.h; sourceTree = "<group>"; };
@@ -24510,6 +24513,8 @@
 			children = (
 				E47C39201FE6E0D900BBBC6B /* RenderTreeBuilder.cpp */,
 				E47C392A1FE6E0DE00BBBC6B /* RenderTreeBuilder.h */,
+				119340761FE8B92300935F1E /* RenderTreeBuilderTable.cpp */,
+				119340771FE8B92300935F1E /* RenderTreeBuilderTable.h */,
 				E47C39291FE6E0DE00BBBC6B /* RenderTreePosition.cpp */,
 				E47C39241FE6E0DB00BBBC6B /* RenderTreePosition.h */,
 				E47C391F1FE6E0D800BBBC6B /* RenderTreeUpdater.cpp */,
@@ -26372,7 +26377,6 @@
 				079D086B162F21F900DB8658 /* CaptionUserPreferencesMediaAF.h in Headers */,
 				07B7116D1D899E63009F0FFB /* CaptureDevice.h in Headers */,
 				07B7116F1D899E63009F0FFB /* CaptureDeviceManager.h in Headers */,
-				E47C392D1FE6E0F300BBBC6B /* RenderTreeBuilder.h in Headers */,
 				CDC734151977896D0046BFC5 /* CARingBuffer.h in Headers */,
 				6550B69E099DF0270090D781 /* CDATASection.h in Headers */,
 				CDF4B7161E00B7E500E235A2 /* CDM.h in Headers */,
@@ -26477,7 +26481,6 @@
 				9746AF2114F4DDE6003E7A71 /* Coordinates.h in Headers */,
 				3F8020351E9E47BF00DEC61D /* CoreAudioCaptureDevice.h in Headers */,
 				3F8020371E9E47C500DEC61D /* CoreAudioCaptureDeviceManager.h in Headers */,
-				E47C392E1FE6E0F700BBBC6B /* RenderTreePosition.h in Headers */,
 				07AFF4221EFB144900B545B3 /* CoreAudioCaptureSourceIOS.h in Headers */,
 				CD7D33481C7A16BF00041293 /* CoreVideoSoftLink.h in Headers */,
 				862F129E18C1576F005C54AF /* CountedUserActivity.h in Headers */,
@@ -26839,7 +26842,6 @@
 				A7CFB3D20B7ED10A0070C32D /* DragImage.h in Headers */,
 				1AF5E4D91E5677A9004A1F01 /* DragItem.h in Headers */,
 				81F65FF613788FAA00FF6F2D /* DragState.h in Headers */,
-				E47C39321FE6E10500BBBC6B /* RenderTreeUpdaterListItem.h in Headers */,
 				E1BA66F11742BD8600C20251 /* DynamicLinkerInterposing.h in Headers */,
 				FD6ED2C8136B8E66003CF072 /* DynamicsCompressor.h in Headers */,
 				FD537357137B653B00008DCE /* DynamicsCompressorKernel.h in Headers */,
@@ -27236,7 +27238,6 @@
 				977B3878122883E900B81FF8 /* HTMLTokenizer.h in Headers */,
 				0707568C142262D600414161 /* HTMLTrackElement.h in Headers */,
 				977B37261228721700B81FF8 /* HTMLTreeBuilder.h in Headers */,
-				E47C39301FE6E0FD00BBBC6B /* RenderTreeUpdaterFirstLetter.h in Headers */,
 				A8EA79F20A1916DF00A8EF5F /* HTMLUListElement.h in Headers */,
 				AD49914318F0815100BF0092 /* HTMLUnknownElement.h in Headers */,
 				E44613AB0CD6331000FADA75 /* HTMLVideoElement.h in Headers */,
@@ -28523,7 +28524,6 @@
 				1A569D0B0D7E2B82007C3983 /* NP_jsobject.h in Headers */,
 				1A927FD21416A15B003A83C8 /* npapi.h in Headers */,
 				1A219B3B0DCA87AB0040E3A0 /* npfunctions.h in Headers */,
-				E47C392F1FE6E0F900BBBC6B /* RenderTreeUpdater.h in Headers */,
 				1A927FD31416A15B003A83C8 /* npruntime.h in Headers */,
 				1A569D0F0D7E2B82007C3983 /* npruntime_impl.h in Headers */,
 				1A569D100D7E2B82007C3983 /* npruntime_internal.h in Headers */,
@@ -28677,7 +28677,6 @@
 				070E09191875EEFC003A1D3C /* PlatformMediaSession.h in Headers */,
 				07F944161864D046005D31CB /* PlatformMediaSessionManager.h in Headers */,
 				41BF70100FE86F61005E8DEC /* PlatformMessagePortChannel.h in Headers */,
-				E47C39331FE6E10800BBBC6B /* RenderTreeUpdaterMultiColumn.h in Headers */,
 				935C476909AC4D4300A6AAB4 /* PlatformMouseEvent.h in Headers */,
 				C598905814E9C29900E8D18B /* PlatformPasteboard.h in Headers */,
 				BCEC01D70C274EB4009F4EC9 /* PlatformScreen.h in Headers */,
@@ -28925,6 +28924,14 @@
 				FED13D520CEA949700D89466 /* RenderThemeIOS.h in Headers */,
 				BCEA4887097D93020094C9E4 /* RenderThemeMac.h in Headers */,
 				93F1998C08245E59001E9ABC /* RenderTreeAsText.h in Headers */,
+				E47C392D1FE6E0F300BBBC6B /* RenderTreeBuilder.h in Headers */,
+				119340791FE8B92300935F1E /* RenderTreeBuilderTable.h in Headers */,
+				E47C392E1FE6E0F700BBBC6B /* RenderTreePosition.h in Headers */,
+				E47C392F1FE6E0F900BBBC6B /* RenderTreeUpdater.h in Headers */,
+				E47C39301FE6E0FD00BBBC6B /* RenderTreeUpdaterFirstLetter.h in Headers */,
+				E47C39311FE6E10200BBBC6B /* RenderTreeUpdaterGeneratedContent.h in Headers */,
+				E47C39321FE6E10500BBBC6B /* RenderTreeUpdaterListItem.h in Headers */,
+				E47C39331FE6E10800BBBC6B /* RenderTreeUpdaterMultiColumn.h in Headers */,
 				E44614520CD68A3500FADA75 /* RenderVideo.h in Headers */,
 				BCEA4868097D93020094C9E4 /* RenderView.h in Headers */,
 				BE20507E18A458C20080647E /* RenderVTTCue.h in Headers */,
@@ -29207,7 +29214,6 @@
 				97BC6A3C1505F081001B74AC /* SQLError.h in Headers */,
 				1A22464A0CC98DDB00C05240 /* SQLiteDatabase.h in Headers */,
 				7E474E1F12494DC900235364 /* SQLiteDatabaseTracker.h in Headers */,
-				E47C39311FE6E10200BBBC6B /* RenderTreeUpdaterGeneratedContent.h in Headers */,
 				7E474E1E12494DC900235364 /* SQLiteDatabaseTrackerClient.h in Headers */,
 				B5A684220FFABE9800D24689 /* SQLiteFileSystem.h in Headers */,
 				512BDB4B1C456FFA006494DF /* SQLiteIDBBackingStore.h in Headers */,

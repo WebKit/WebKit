@@ -45,11 +45,14 @@ public:
     static RenderTreeBuilder* current() { return s_current; }
 
 private:
+    class Table;
+
     void rubyRunInsertChild(RenderRubyRun&, RenderPtr<RenderObject> child, RenderObject* beforeChild);
 
     RenderView& m_view;
 
     RenderTreeBuilder* m_previous { nullptr };
+    std::unique_ptr<Table> m_tableBuilder;
     static RenderTreeBuilder* s_current;
 };
 

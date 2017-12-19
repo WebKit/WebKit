@@ -1980,6 +1980,7 @@ rendering/svg/SVGTextMetricsBuilder.cpp
 rendering/svg/SVGTextQuery.cpp
 
 rendering/updating/RenderTreeBuilder.cpp
+rendering/updating/RenderTreeBuilderTable.cpp
 rendering/updating/RenderTreePosition.cpp
 rendering/updating/RenderTreeUpdater.cpp
 rendering/updating/RenderTreeUpdaterFirstLetter.cpp
