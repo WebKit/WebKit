@@ -48,6 +48,7 @@ public:
 
     const ApplePayLineItem& total() const { return m_total; }
     const Vector<ApplePayLineItem>& lineItems() const { return m_lineItems; }
+    const Vector<String>& availablePaymentNetworks() const { return m_availablePaymentNetworks; }
 
     void ref() const { }
     void deref() const { }
@@ -73,6 +74,7 @@ private:
     MockPaymentAddress m_shippingAddress;
     ApplePayLineItem m_total;
     Vector<ApplePayLineItem> m_lineItems;
+    Vector<String> m_availablePaymentNetworks;
 };
 
 } // namespace WebCore

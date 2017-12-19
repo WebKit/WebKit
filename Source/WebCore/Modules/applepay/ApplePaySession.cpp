@@ -207,9 +207,9 @@ static ExceptionOr<Vector<ApplePaySessionPaymentRequest::ShippingMethod>> conver
     return WTFMove(result);
 }
 
-static ExceptionOr<ApplePaySessionPaymentRequest> convertAndValidate(unsigned version, ApplePayPaymentRequest&& paymentRequest)
+static ExceptionOr<ApplePaySessionPaymentRequest> convertAndValidate(unsigned version, ApplePayPaymentRequest&& paymentRequest, const PaymentCoordinator& paymentCoordinator)
 {
-    auto convertedRequest = convertAndValidate(version, paymentRequest);
+    auto convertedRequest = convertAndValidate(version, paymentRequest, paymentCoordinator);
     if (convertedRequest.hasException())
         return convertedRequest.releaseException();
 
@@ -413,7 +413,7 @@ ExceptionOr<Ref<ApplePaySession>> ApplePaySession::create(Document& document, un
     if (!version || !paymentCoordinator.supportsVersion(version))
         return Exception { InvalidAccessError, makeString("\"" + String::number(version), "\" is not a supported version.") };
 
-    auto convertedPaymentRequest = convertAndValidate(version, WTFMove(paymentRequest));
+    auto convertedPaymentRequest = convertAndValidate(version, WTFMove(paymentRequest), paymentCoordinator);
     if (convertedPaymentRequest.hasException())
         return convertedPaymentRequest.releaseException();
 

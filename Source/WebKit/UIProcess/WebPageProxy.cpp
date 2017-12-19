@@ -5846,6 +5846,10 @@ WebPageCreationParameters WebPageProxy::creationParameters()
     parameters.applicationManifest = m_configuration->applicationManifest() ? std::optional<WebCore::ApplicationManifest>(m_configuration->applicationManifest()->applicationManifest()) : std::nullopt;
 #endif
 
+#if ENABLE(APPLE_PAY)
+    parameters.availablePaymentNetworks = WebPaymentCoordinatorProxy::availablePaymentNetworks();
+#endif
+
     m_process->addWebUserContentControllerProxy(m_userContentController, parameters);
 
     return parameters;

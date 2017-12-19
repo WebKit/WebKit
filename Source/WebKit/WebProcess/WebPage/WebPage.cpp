@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2017 Apple Inc. All rights reserved.
  * Copyright (C) 2012 Intel Corporation. All rights reserved.
  * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies)
  *
@@ -418,6 +418,7 @@ WebPage::WebPage(uint64_t pageID, WebPageCreationParameters&& parameters)
 
 #if ENABLE(APPLE_PAY)
     pageConfiguration.paymentCoordinatorClient = new WebPaymentCoordinator(*this);
+    pageConfiguration.availablePaymentNetworks = WTFMove(parameters.availablePaymentNetworks);
 #endif
 
 #if ENABLE(APPLICATION_MANIFEST)

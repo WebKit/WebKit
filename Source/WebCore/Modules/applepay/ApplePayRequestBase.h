@@ -33,6 +33,8 @@
 
 namespace WebCore {
 
+class PaymentCoordinator;
+
 struct ApplePayRequestBase {
     Vector<ApplePayMerchantCapability> merchantCapabilities;
     Vector<String> supportedNetworks;
@@ -45,7 +47,7 @@ struct ApplePayRequestBase {
     Vector<String> supportedCountries;
 };
 
-ExceptionOr<ApplePaySessionPaymentRequest> convertAndValidate(unsigned version, ApplePayRequestBase&);
+ExceptionOr<ApplePaySessionPaymentRequest> convertAndValidate(unsigned version, ApplePayRequestBase&, const PaymentCoordinator&);
 
 } // namespace WebCore
 

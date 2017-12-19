@@ -68,8 +68,6 @@ public:
     const PaymentContact& shippingContact() const { return m_shippingContact; }
     void setShippingContact(const PaymentContact& shippingContact) { m_shippingContact = shippingContact; }
 
-    static bool isValidSupportedNetwork(unsigned version, const String&);
-
     const Vector<String>& supportedNetworks() const { return m_supportedNetworks; }
     void setSupportedNetworks(const Vector<String>& supportedNetworks) { m_supportedNetworks = supportedNetworks; }
 

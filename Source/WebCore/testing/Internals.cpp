@@ -520,7 +520,7 @@ Internals::Internals(Document& document)
     auto* frame = document.frame();
     if (frame && frame->isMainFrame()) {
         m_mockPaymentCoordinator = new MockPaymentCoordinator(frame->mainFrame());
-        frame->mainFrame().setPaymentCoordinator(std::make_unique<PaymentCoordinator>(*m_mockPaymentCoordinator));
+        frame->mainFrame().setPaymentCoordinator(std::make_unique<PaymentCoordinator>(*m_mockPaymentCoordinator, m_mockPaymentCoordinator->availablePaymentNetworks()));
     }
 #endif
 }

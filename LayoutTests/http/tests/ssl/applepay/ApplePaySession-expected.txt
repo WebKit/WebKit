@@ -82,6 +82,9 @@ PASS new ApplePaySession(2, request) threw exception TypeError: "carteBancaire" 
 SETUP: request = validRequest(); request.supportedNetworks = ['visa', 'visa'];
 PASS new ApplePaySession(2, request) did not throw exception.
 
+SETUP: request = validRequest(); request.supportedNetworks = ['vIsa', 'MasterCard', 'JCB'];
+PASS new ApplePaySession(2, request) did not throw exception.
+
 Testing PaymentRequest.merchantCapabilities
 
 SETUP: request = validRequest(); delete request.merchantCapabilities;

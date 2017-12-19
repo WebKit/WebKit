@@ -41,6 +41,15 @@ namespace WebCore {
 MockPaymentCoordinator::MockPaymentCoordinator(MainFrame& mainFrame)
     : m_mainFrame { mainFrame }
 {
+    m_availablePaymentNetworks.append("amex");
+    m_availablePaymentNetworks.append("carteBancaire");
+    m_availablePaymentNetworks.append("chinaUnionPay");
+    m_availablePaymentNetworks.append("discover");
+    m_availablePaymentNetworks.append("interac");
+    m_availablePaymentNetworks.append("jcb");
+    m_availablePaymentNetworks.append("masterCard");
+    m_availablePaymentNetworks.append("privateLabel");
+    m_availablePaymentNetworks.append("visa");
 }
 
 bool MockPaymentCoordinator::supportsVersion(unsigned version)

@@ -174,7 +174,7 @@ ExceptionOr<void> ApplePayPaymentHandler::convertData(JSC::JSValue&& data)
 
 ExceptionOr<void> ApplePayPaymentHandler::show()
 {
-    auto validatedRequest = convertAndValidate(m_applePayRequest->version, *m_applePayRequest);
+    auto validatedRequest = convertAndValidate(m_applePayRequest->version, *m_applePayRequest, paymentCoordinator());
     if (validatedRequest.hasException())
         return validatedRequest.releaseException();
 

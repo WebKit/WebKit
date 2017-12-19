@@ -50,15 +50,6 @@ SOFT_LINK_CLASS(PassKit, PKPaymentMerchantSession);
 SOFT_LINK_CLASS(PassKit, PKPaymentRequest);
 SOFT_LINK_CLASS(PassKit, PKPaymentSummaryItem);
 SOFT_LINK_CLASS(PassKit, PKShippingMethod);
-SOFT_LINK_CONSTANT(PassKit, PKPaymentNetworkAmex, NSString *);
-SOFT_LINK_CONSTANT(PassKit, PKPaymentNetworkCarteBancaire, NSString *);
-SOFT_LINK_CONSTANT(PassKit, PKPaymentNetworkChinaUnionPay, NSString *);
-SOFT_LINK_CONSTANT(PassKit, PKPaymentNetworkDiscover, NSString *);
-SOFT_LINK_CONSTANT(PassKit, PKPaymentNetworkInterac, NSString *);
-SOFT_LINK_CONSTANT(PassKit, PKPaymentNetworkJCB, NSString *);
-SOFT_LINK_CONSTANT(PassKit, PKPaymentNetworkMasterCard, NSString *);
-SOFT_LINK_CONSTANT(PassKit, PKPaymentNetworkPrivateLabel, NSString *);
-SOFT_LINK_CONSTANT(PassKit, PKPaymentNetworkVisa, NSString *);
 
 #if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000)
 SOFT_LINK_FRAMEWORK(Contacts)
@@ -440,39 +431,11 @@ static PKMerchantCapability toPKMerchantCapabilities(const WebCore::ApplePaySess
     return result;
 }
 
-static NSString *toSupportedNetwork(const String& supportedNetwork)
-{
-    if (supportedNetwork == "amex")
-        return getPKPaymentNetworkAmex();
-    if (supportedNetwork == "carteBancaire")
-        return getPKPaymentNetworkCarteBancaire();
-    if (supportedNetwork == "chinaUnionPay")
-        return getPKPaymentNetworkChinaUnionPay();
-    if (supportedNetwork == "discover")
-        return getPKPaymentNetworkDiscover();
-    if (supportedNetwork == "interac")
-        return getPKPaymentNetworkInterac();
-    if (supportedNetwork == "jcb")
-        return getPKPaymentNetworkJCB();
-    if (supportedNetwork == "masterCard")
-        return getPKPaymentNetworkMasterCard();
-    if (supportedNetwork == "privateLabel")
-        return getPKPaymentNetworkPrivateLabel();
-    if (supportedNetwork == "visa")
-        return getPKPaymentNetworkVisa();
-
-    return nil;
-}
-
 static RetainPtr<NSArray> toSupportedNetworks(const Vector<String>& supportedNetworks)
 {
-    auto result = adoptNS([[NSMutableArray alloc] init]);
-
-    for (auto& supportedNetwork : supportedNetworks) {
-        if (auto network = toSupportedNetwork(supportedNetwork))
-            [result addObject:network];
-    }
-
+    auto result = adoptNS([[NSMutableArray alloc] initWithCapacity:supportedNetworks.size()]);
+    for (auto& supportedNetwork : supportedNetworks)
+        [result addObject:supportedNetwork];
     return result;
 }
 
@@ -866,7 +829,16 @@ void WebPaymentCoordinatorProxy::platformCompletePaymentMethodSelection(const st
     m_paymentAuthorizationViewControllerDelegate->_didSelectPaymentMethodCompletion = nullptr;
 }
 
+Vector<String> WebPaymentCoordinatorProxy::availablePaymentNetworks()
+{
+    NSArray<PKPaymentNetwork> *availableNetworks = [getPKPaymentRequestClass() availableNetworks];
+    Vector<String> result;
+    result.reserveInitialCapacity(availableNetworks.count);
+    for (PKPaymentNetwork network in availableNetworks)
+        result.uncheckedAppend(network);
+    return result;
 }
 
-#endif
+} // namespace WebKit
 
+#endif // ENABLE(APPLE_PAY)

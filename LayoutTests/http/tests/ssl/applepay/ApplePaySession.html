@@ -75,6 +75,7 @@ function go() {
     logAndShouldThrow("request = validRequest(); request.supportedNetworks = ['carteBancaire'];", "new ApplePaySession(2, request)")
     // FIXME: Should duplicate supportedNetworks be allowed?
     logAndShouldNotThrow("request = validRequest(); request.supportedNetworks = ['visa', 'visa'];", "new ApplePaySession(2, request)")
+    logAndShouldNotThrow("request = validRequest(); request.supportedNetworks = ['vIsa', 'MasterCard', 'JCB'];", "new ApplePaySession(2, request)")
     
     debug("Testing PaymentRequest.merchantCapabilities")
     debug("");

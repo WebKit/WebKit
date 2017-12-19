@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -176,6 +176,7 @@ typedef NSString * PKPaymentNetwork NS_EXTENSIBLE_STRING_ENUM;
 @end
 
 @interface PKPaymentRequest : NSObject
++ (NSArray<PKPaymentNetwork> *)availableNetworks;
 @property (nonatomic, copy) NSString *countryCode;
 @property (nonatomic, copy) NSArray<PKPaymentNetwork> *supportedNetworks;
 @property (nonatomic, assign) PKMerchantCapability merchantCapabilities;

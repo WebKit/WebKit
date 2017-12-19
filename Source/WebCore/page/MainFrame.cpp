@@ -49,7 +49,7 @@ inline MainFrame::MainFrame(Page& page, PageConfiguration& configuration)
     , m_recentWheelEventDeltaFilter(WheelEventDeltaFilter::create())
     , m_pageOverlayController(std::make_unique<PageOverlayController>(*this))
 #if ENABLE(APPLE_PAY)
-    , m_paymentCoordinator(std::make_unique<PaymentCoordinator>(*configuration.paymentCoordinatorClient))
+    , m_paymentCoordinator(std::make_unique<PaymentCoordinator>(*configuration.paymentCoordinatorClient, configuration.availablePaymentNetworks))
 #endif
 #if ENABLE(APPLICATION_MANIFEST)
     , m_applicationManifest(configuration.applicationManifest)

@@ -37,30 +37,6 @@ ApplePaySessionPaymentRequest::ApplePaySessionPaymentRequest() = default;
 
 ApplePaySessionPaymentRequest::~ApplePaySessionPaymentRequest() = default;
 
-bool ApplePaySessionPaymentRequest::isValidSupportedNetwork(unsigned version, const String& supportedNetwork)
-{
-    if (supportedNetwork == "amex")
-        return true;
-    if (supportedNetwork == "chinaUnionPay")
-        return true;
-    if (supportedNetwork == "discover")
-        return true;
-    if (supportedNetwork == "interac")
-        return true;
-    if (supportedNetwork == "masterCard")
-        return true;
-    if (supportedNetwork == "privateLabel")
-        return true;
-    if (supportedNetwork == "visa")
-        return true;
-    if (version >= 2 && supportedNetwork == "jcb")
-        return true;
-    if (version >= 3 && supportedNetwork == "carteBancaire")
-        return true;
-
-    return false;
-}
-
 bool isFinalStateResult(const std::optional<PaymentAuthorizationResult>& result)
 {
     if (!result)

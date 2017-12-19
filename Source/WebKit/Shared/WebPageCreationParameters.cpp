@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, 2011, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -109,6 +109,9 @@ void WebPageCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << messageHandlers;
 #if ENABLE(CONTENT_EXTENSIONS)
     encoder << contentRuleLists;
+#endif
+#if ENABLE(APPLE_PAY)
+    encoder << availablePaymentNetworks;
 #endif
 }
 
@@ -311,6 +314,15 @@ std::optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::
         return std::nullopt;
     parameters.contentRuleLists = WTFMove(*contentRuleLists);
 #endif
+
+#if ENABLE(APPLE_PAY)
+    std::optional<Vector<String>> availablePaymentNetworks;
+    decoder >> availablePaymentNetworks;
+    if (!availablePaymentNetworks)
+        return std::nullopt;
+    parameters.availablePaymentNetworks = WTFMove(*availablePaymentNetworks);
+#endif
+
     return WTFMove(parameters);
 }
 
