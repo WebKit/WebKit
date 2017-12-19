@@ -49,6 +49,7 @@
 #import "RuntimeEnabledFeatures.h"
 #import "Settings.h"
 #import "SocketProvider.h"
+#import "TypedElementDescendantIterator.h"
 #import "WebArchiveResourceFromNSAttributedString.h"
 #import "WebArchiveResourceWebResourceHandler.h"
 #import "WebNSAttributedStringExtras.h"
