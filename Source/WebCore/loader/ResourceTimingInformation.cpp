@@ -30,6 +30,7 @@
 #include "DOMWindow.h"
 #include "Document.h"
 #include "Frame.h"
+#include "FrameLoader.h"
 #include "HTMLFrameOwnerElement.h"
 #include "LoadTiming.h"
 #include "Performance.h"
@@ -69,8 +70,10 @@ void ResourceTimingInformation::addResourceTiming(CachedResource& resource, Docu
         return;
 
     Document* initiatorDocument = &document;
-    if (resource.type() == CachedResource::MainResource)
+    if (resource.type() == CachedResource::MainResource && document.frame() && document.frame()->loader().shouldReportResourceTimingToParentFrame()) {
+        document.frame()->loader().setShouldReportResourceTimingToParentFrame(false);
         initiatorDocument = document.parentDocument();
+    }
     if (!initiatorDocument)
         return;
     if (!initiatorDocument->domWindow())

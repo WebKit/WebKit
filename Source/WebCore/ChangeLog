@@ -1,3 +1,32 @@
+2017-12-05  Alex Christensen  <achristensen@webkit.org>
+
+        Fix non-unified build after r225381
+        https://bugs.webkit.org/show_bug.cgi?id=180434
+
+        Reviewed by Keith Miller.
+
+        * loader/ResourceTimingInformation.cpp:
+        FrameLoader.h is included in other files that are combined with this file in unified builds,
+        but we need to merge r225381 to a branch that doesn't use unified builds.  This build failure
+        would've come up randomly in the future when we add files, too.
+
+2017-11-30  Alex Christensen  <achristensen@webkit.org>
+
+        Extra PerformanceEntryList entry after iframe navigation
+        https://bugs.webkit.org/show_bug.cgi?id=178433
+
+        Reviewed by Joseph Pecoraro.
+
+        Test: http/tests/security/PerformanceEntryList-parent-only-first-navigation.html
+
+        When an iframe is loaded, its main resource load should be reported to the parent frame's PerformanceEntryList.
+        Subsequent main resource loads should not.
+
+        * loader/FrameLoader.h:
+        (WebCore::FrameLoader::shouldReportResourceTimingToParentFrame):
+        * loader/ResourceTimingInformation.cpp:
+        (WebCore::ResourceTimingInformation::addResourceTiming):
+
 2017-11-03  Ryosuke Niwa  <rniwa@webkit.org>
 
         Crash inside ChildListMutationAccumulator::enqueueMutationRecord()

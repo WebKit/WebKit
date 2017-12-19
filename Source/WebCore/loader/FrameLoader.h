@@ -157,6 +157,9 @@ public:
     DocumentLoader* provisionalDocumentLoader() const { return m_provisionalDocumentLoader.get(); }
     FrameState state() const { return m_state; }
 
+    void setShouldReportResourceTimingToParentFrame(bool value) { m_shouldReportResourceTimingToParentFrame = value; }
+    bool shouldReportResourceTimingToParentFrame() { return m_shouldReportResourceTimingToParentFrame; };
+    
 #if PLATFORM(IOS)
     RetainPtr<CFDictionaryRef> connectionProperties(ResourceLoader*);
 #endif
@@ -415,6 +418,7 @@ private:
     bool m_quickRedirectComing;
     bool m_sentRedirectNotification;
     bool m_inStopAllLoaders;
+    bool m_shouldReportResourceTimingToParentFrame { true };
 
     String m_outgoingReferrer;
 
