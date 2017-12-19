@@ -72,6 +72,7 @@ public:
 
     void* memory() const { return m_memory; }
     size_t size() const { return m_size; }
+    size_t indexingMask() const { return m_indexingMask; }
     PageCount sizeInPages() const { return PageCount::fromBytes(m_size); }
 
     PageCount initial() const { return m_initial; }
@@ -84,6 +85,9 @@ public:
     bool grow(PageCount);
 
     void check() {  ASSERT(!deletionHasBegun()); }
+
+    static ptrdiff_t offsetOfIndexingMask() { return OBJECT_OFFSETOF(Memory, m_indexingMask); }
+
 private:
     Memory(void* memory, PageCount initial, PageCount maximum, size_t mappedCapacity, MemoryMode);
     Memory(PageCount initial, PageCount maximum);
@@ -91,6 +95,7 @@ private:
     // FIXME: we should move these to the instance to avoid a load on instance->instance calls.
     void* m_memory { nullptr };
     size_t m_size { 0 };
+    size_t m_indexingMask { 0 };
     PageCount m_initial;
     PageCount m_maximum;
     size_t m_mappedCapacity { 0 };

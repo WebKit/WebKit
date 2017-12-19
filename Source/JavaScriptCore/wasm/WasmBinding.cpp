@@ -649,6 +649,7 @@ Expected<MacroAssemblerCodeRef, BindingFailure> wasmToWasm(unsigned importIndex)
     // Set up the callee's baseMemory register as well as the memory size registers.
     jit.loadPtr(JIT::Address(baseMemory, JSWebAssemblyInstance::offsetOfMemory()), baseMemory); // JSWebAssemblyMemory*.
     ASSERT(!sizeRegs[0].sizeOffset); // The following code assumes we start at 0, and calculates subsequent size registers relative to 0.
+    jit.loadPtr(JIT::Address(baseMemory, JSWebAssemblyMemory::offsetOfIndexingMask()), pinnedRegs.indexingMask); // Indexing mask.
     jit.loadPtr(JIT::Address(baseMemory, JSWebAssemblyMemory::offsetOfSize()), sizeRegs[0].sizeRegister); // Memory size.
     jit.loadPtr(JIT::Address(baseMemory, JSWebAssemblyMemory::offsetOfMemory()), baseMemory); // WasmMemory::void*.
     for (unsigned i = 1; i < sizeRegs.size(); ++i) {
