@@ -1392,7 +1392,6 @@ webkit.org/b/168175 imported/w3c/web-platform-tests/html/semantics/grouping-cont
 webkit.org/b/168175 imported/w3c/web-platform-tests/html/semantics/grouping-content/the-li-element/grouping-li-reftest-list-owner-menu.html [ ImageOnlyFailure ]
 webkit.org/b/168175 imported/w3c/web-platform-tests/html/browsers/browsing-the-web/history-traversal/same-url.html [ Pass Failure ]
 webkit.org/b/168175 imported/w3c/web-platform-tests/html/browsers/offline/browser-state/navigator_online_online.html [ Pass Failure ]
-webkit.org/b/169264 imported/w3c/web-platform-tests/html/browsers/browsing-the-web/history-traversal/persisted-user-state-restoration/scroll-restoration-navigation-samedoc.html [ Failure ]
 
 imported/w3c/web-platform-tests/cssom/MediaList.html [ Failure ]
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/document-adopt-base-url.html [ ImageOnlyFailure ]
