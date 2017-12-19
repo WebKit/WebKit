@@ -542,7 +542,7 @@ bool SubresourceLoader::checkRedirectionCrossOriginAccessControl(const ResourceR
         m_origin = SecurityOrigin::createUnique();
 
     if (redirectingToNewOrigin) {
-        cleanRedirectedRequestForAccessControl(newRequest);
+        cleanHTTPRequestHeadersForAccessControl(newRequest);
         updateRequestForAccessControl(newRequest, *m_origin, options().storedCredentialsPolicy);
     }
 

@@ -1,14 +1,14 @@
 
 PASS initialize global state 
 PASS event.request has the expected headers for same-origin GET. 
-FAIL event.request has the expected headers for same-origin POST. promise_test: Unhandled rejection with value: object "Error: assert_array_equals: event.request has the expected headers for same-origin POST. lengths differ, expected 2 got 1"
+PASS event.request has the expected headers for same-origin POST. 
 PASS event.request has the expected headers for cross-origin GET. 
-FAIL event.request has the expected headers for cross-origin POST. promise_test: Unhandled rejection with value: object "Error: assert_array_equals: event.request has the expected headers for cross-origin POST. lengths differ, expected 2 got 1"
+PASS event.request has the expected headers for cross-origin POST. 
 PASS FetchEvent#request.body contains XHR request data (string) 
 FAIL FetchEvent#request.body contains XHR request data (blob) promise_test: Unhandled rejection with value: object "Error: assert_equals: expected "test blob" but got """
 PASS FetchEvent#request.method is set to XHR method 
 PASS XHR using OPTIONS method 
-FAIL XHR with form data promise_test: Unhandled rejection with value: object "Error: assert_equals: expected "--\r\nContent-Disposition: form-data; name=\"sample string\"\r\n\r\n1234567890\r\n--\r\nContent-Disposition: form-data; name=\"sample blob\"; filename=\"blob\"\r\nContent-Type: application/octet-stream\r\n\r\nblob content\r\n--\r\nContent-Disposition: form-data; name=\"sample file\"; filename=\"file.dat\"\r\nContent-Type: application/octet-stream\r\n\r\nfile content\r\n----\r\n" but got """
+FAIL XHR with form data promise_test: Unhandled rejection with value: object "Error: assert_true: form data response content is as expected expected true got false"
 FAIL XHR with mode/credentials set promise_test: Unhandled rejection with value: object "Error: assert_equals: expected "include" but got "same-origin""
 PASS XHR to data URL 
 PASS restore global state 

@@ -31,6 +31,7 @@
 #include "DataReference.h"
 #include "WebSWClientConnection.h"
 #include "WebServiceWorkerProvider.h"
+#include <WebCore/CrossOriginAccessControl.h>
 #include <WebCore/MIMETypeRegistry.h>
 #include <WebCore/NotImplemented.h>
 #include <WebCore/ResourceError.h>
@@ -62,7 +63,17 @@ ServiceWorkerClientFetch::ServiceWorkerClientFetch(WebServiceWorkerProvider& ser
 
 void ServiceWorkerClientFetch::start()
 {
-    m_connection->startFetch(m_loader, m_loader->identifier());
+    auto request = m_loader->request();
+    auto& options = m_loader->options();
+
+    auto referrer = request.httpReferrer();
+
+    // We are intercepting fetch calls after going through the HTTP layer, which may add some specific headers.
+    if (options.mode == FetchOptions::Mode::Cors)
+        cleanHTTPRequestHeadersForAccessControl(request, options.httpHeadersToKeep);
+
+    ASSERT(options.serviceWorkersMode != ServiceWorkersMode::None);
+    m_connection->startFetch(m_loader->identifier(), options.serviceWorkerIdentifier.value(), request, options, referrer);
 }
 
 // https://fetch.spec.whatwg.org/#http-fetch step 3.3

@@ -54,7 +54,7 @@ public:
     virtual void didNotHandle() = 0;
 };
 
-Ref<FetchEvent> dispatchFetchEvent(Ref<Client>&&, WorkerGlobalScope&, std::optional<ServiceWorkerClientIdentifier>, ResourceRequest&&, FetchOptions&&);
+Ref<FetchEvent> dispatchFetchEvent(Ref<Client>&&, WorkerGlobalScope&, std::optional<ServiceWorkerClientIdentifier>, ResourceRequest&&, String&& referrer, FetchOptions&&);
 };
 
 } // namespace WebCore

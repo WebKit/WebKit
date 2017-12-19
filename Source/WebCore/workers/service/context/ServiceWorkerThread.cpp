@@ -91,13 +91,13 @@ void ServiceWorkerThread::runEventLoop()
     WorkerThread::runEventLoop();
 }
 
-void ServiceWorkerThread::postFetchTask(Ref<ServiceWorkerFetch::Client>&& client, std::optional<ServiceWorkerClientIdentifier>&& clientId, ResourceRequest&& request, FetchOptions&& options)
+void ServiceWorkerThread::postFetchTask(Ref<ServiceWorkerFetch::Client>&& client, std::optional<ServiceWorkerClientIdentifier>&& clientId, ResourceRequest&& request, String&& referrer, FetchOptions&& options)
 {
     // FIXME: instead of directly using runLoop(), we should be using something like WorkerGlobalScopeProxy.
     // FIXME: request and options come straigth from IPC so are already isolated. We should be able to take benefit of that.
-    runLoop().postTaskForMode([client = WTFMove(client), clientId, request = request.isolatedCopy(), options = options.isolatedCopy()] (ScriptExecutionContext& context) mutable {
+    runLoop().postTaskForMode([client = WTFMove(client), clientId, request = request.isolatedCopy(), referrer = referrer.isolatedCopy(), options = options.isolatedCopy()] (ScriptExecutionContext& context) mutable {
         auto& serviceWorkerGlobalScope = downcast<ServiceWorkerGlobalScope>(context);
-        auto fetchEvent = ServiceWorkerFetch::dispatchFetchEvent(WTFMove(client), serviceWorkerGlobalScope, clientId, WTFMove(request), WTFMove(options));
+        auto fetchEvent = ServiceWorkerFetch::dispatchFetchEvent(WTFMove(client), serviceWorkerGlobalScope, clientId, WTFMove(request), WTFMove(referrer), WTFMove(options));
         serviceWorkerGlobalScope.updateExtendedEventsSet(fetchEvent.ptr());
     }, WorkerRunLoop::defaultMode());
 }

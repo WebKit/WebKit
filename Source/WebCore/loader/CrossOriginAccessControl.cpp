@@ -116,14 +116,35 @@ bool isValidCrossOriginRedirectionURL(const URL& redirectURL)
         && redirectURL.pass().isEmpty();
 }
 
-void cleanRedirectedRequestForAccessControl(ResourceRequest& request)
+HTTPHeaderNameSet httpHeadersToKeepFromCleaning(const HTTPHeaderMap& headers)
+{
+    HTTPHeaderNameSet headersToKeep;
+    if (headers.contains(HTTPHeaderName::ContentType))
+        headersToKeep.add(HTTPHeaderName::ContentType);
+    if (headers.contains(HTTPHeaderName::Referer))
+        headersToKeep.add(HTTPHeaderName::Referer);
+    if (headers.contains(HTTPHeaderName::Origin))
+        headersToKeep.add(HTTPHeaderName::Origin);
+    if (headers.contains(HTTPHeaderName::UserAgent))
+        headersToKeep.add(HTTPHeaderName::UserAgent);
+    if (headers.contains(HTTPHeaderName::AcceptEncoding))
+        headersToKeep.add(HTTPHeaderName::AcceptEncoding);
+    return headersToKeep;
+}
+
+void cleanHTTPRequestHeadersForAccessControl(ResourceRequest& request, const HashSet<HTTPHeaderName, WTF::IntHash<HTTPHeaderName>, WTF::StrongEnumHashTraits<HTTPHeaderName>>& headersToKeep)
 {
     // Remove headers that may have been added by the network layer that cause access control to fail.
-    request.clearHTTPContentType();
-    request.clearHTTPReferrer();
-    request.clearHTTPOrigin();
-    request.clearHTTPUserAgent();
-    request.clearHTTPAcceptEncoding();
+    if (!headersToKeep.contains(HTTPHeaderName::ContentType))
+        request.clearHTTPContentType();
+    if (!headersToKeep.contains(HTTPHeaderName::Referer))
+        request.clearHTTPReferrer();
+    if (!headersToKeep.contains(HTTPHeaderName::Origin))
+        request.clearHTTPOrigin();
+    if (!headersToKeep.contains(HTTPHeaderName::UserAgent))
+        request.clearHTTPUserAgent();
+    if (!headersToKeep.contains(HTTPHeaderName::AcceptEncoding))
+        request.clearHTTPAcceptEncoding();
 }
 
 bool passesAccessControlCheck(const ResourceResponse& response, StoredCredentialsPolicy storedCredentialsPolicy, SecurityOrigin& securityOrigin, String& errorDescription)

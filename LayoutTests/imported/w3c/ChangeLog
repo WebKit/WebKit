@@ -1,3 +1,14 @@
+2017-12-19  Youenn Fablet  <youenn@apple.com>
+
+        Service Worker should not clean HTTP headers added by the application or by fetch specification before service worker interception
+        https://bugs.webkit.org/show_bug.cgi?id=180939
+
+        Reviewed by Chris Dumez.
+
+        * web-platform-tests/service-workers/service-worker/fetch-request-xhr.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/resources/fetch-request-xhr-iframe.https.html:
+        * web-platform-tests/service-workers/service-worker/fetch-header-visibility.https-expected.txt:
+
 2017-12-19  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, rebaseline service workers flaky tests.

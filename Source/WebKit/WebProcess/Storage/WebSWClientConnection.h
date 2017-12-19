@@ -60,7 +60,7 @@ public:
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
 
     bool mayHaveServiceWorkerRegisteredForOrigin(const WebCore::SecurityOrigin&) const final;
-    void startFetch(const WebCore::ResourceLoader&, uint64_t identifier);
+    void startFetch(uint64_t fetchIdentifier, WebCore::ServiceWorkerIdentifier, const WebCore::ResourceRequest&, const WebCore::FetchOptions&, const String& referrer);
 
     void postMessageToServiceWorkerClient(WebCore::DocumentIdentifier destinationContextIdentifier, const IPC::DataReference& message, WebCore::ServiceWorkerData&& source, const String& sourceOrigin);
 

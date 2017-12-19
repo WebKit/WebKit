@@ -26,8 +26,10 @@
 
 #pragma once
 
+#include "HTTPHeaderNames.h"
 #include "StoredCredentialsPolicy.h"
 #include <wtf/Forward.h>
+#include <wtf/HashSet.h>
 
 namespace WebCore {
 
@@ -44,7 +46,10 @@ WEBCORE_EXPORT void updateRequestForAccessControl(ResourceRequest&, SecurityOrig
 WEBCORE_EXPORT ResourceRequest createAccessControlPreflightRequest(const ResourceRequest&, SecurityOrigin&, const String&);
 
 bool isValidCrossOriginRedirectionURL(const URL&);
-void cleanRedirectedRequestForAccessControl(ResourceRequest&);
+
+using HTTPHeaderNameSet = HashSet<HTTPHeaderName, WTF::IntHash<HTTPHeaderName>, WTF::StrongEnumHashTraits<HTTPHeaderName>>;
+HTTPHeaderNameSet httpHeadersToKeepFromCleaning(const HTTPHeaderMap&);
+WEBCORE_EXPORT void cleanHTTPRequestHeadersForAccessControl(ResourceRequest&, const HTTPHeaderNameSet& = { });
 
 WEBCORE_EXPORT bool passesAccessControlCheck(const ResourceResponse&, StoredCredentialsPolicy, SecurityOrigin&, String& errorDescription);
 WEBCORE_EXPORT bool validatePreflightResponse(const ResourceRequest&, const ResourceResponse&, StoredCredentialsPolicy, SecurityOrigin&, String& errorDescription);

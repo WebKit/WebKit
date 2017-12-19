@@ -119,6 +119,11 @@ DocumentThreadableLoader::DocumentThreadableLoader(Document& document, Threadabl
     if (m_async && m_options.mode == FetchOptions::Mode::Cors)
         m_originalHeaders = request.httpHeaderFields();
 
+#if ENABLE(SERVICE_WORKER)
+    if (m_options.serviceWorkersMode == ServiceWorkersMode::All && m_async && (m_options.serviceWorkerIdentifier || document.activeServiceWorker()))
+        m_options.httpHeadersToKeep = httpHeadersToKeepFromCleaning(request.httpHeaderFields());
+#endif
+
     if (document.page() && document.page()->isRunningUserScripts() && SchemeRegistry::isUserExtensionScheme(request.url().protocol().toStringWithoutCopying())) {
         m_options.mode = FetchOptions::Mode::NoCors;
         m_options.filteringPolicy = ResponseFilteringPolicy::Disable;

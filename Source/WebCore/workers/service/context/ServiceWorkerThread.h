@@ -56,8 +56,7 @@ public:
 
     WorkerObjectProxy& workerObjectProxy() const { return m_workerObjectProxy; }
 
-    WEBCORE_EXPORT void postFetchTask(Ref<ServiceWorkerFetch::Client>&&, ResourceRequest&&, FetchOptions&&);
-    WEBCORE_EXPORT void postFetchTask(Ref<ServiceWorkerFetch::Client>&&, std::optional<ServiceWorkerClientIdentifier>&&, ResourceRequest&&, FetchOptions&&);
+    WEBCORE_EXPORT void postFetchTask(Ref<ServiceWorkerFetch::Client>&&, std::optional<ServiceWorkerClientIdentifier>&&, ResourceRequest&&, String&& referrer, FetchOptions&&);
     WEBCORE_EXPORT void postMessageToServiceWorker(Ref<SerializedScriptValue>&&, std::unique_ptr<MessagePortChannelArray>&&, ServiceWorkerOrClientData&& sourceData);
 
     void fireInstallEvent();
