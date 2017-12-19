@@ -11,13 +11,13 @@ async function test()
         else
             log("FAIL: There is initially a service worker registered for the origin");
 
-        let registration = await navigator.serviceWorker.register("resources/basic-fetch-worker.js", { scope: "/" });
-        if (registration.scope === "https://127.0.0.1:8443/")
+        let registration = await navigator.serviceWorker.register("resources/basic-fetch-worker.js", { scope: "/workers/service/resources/" });
+        if (registration.scope === "https://127.0.0.1:8443/workers/service/resources/")
             log("PASS: registration scope is " + registration.scope);
         else
             log("FAIL: registration scope is " + registration.scope);
  
-        if (await internals.hasServiceWorkerRegistration(self.origin))
+        if (await internals.hasServiceWorkerRegistration("https://127.0.0.1:8443/workers/service/resources/"))
             log("PASS: There is a service worker registered for the origin");
         else
             log("FAIL: There is no service worker registered for the origin");

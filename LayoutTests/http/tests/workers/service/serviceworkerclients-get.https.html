@@ -14,7 +14,7 @@ promise_test(async (test) => {
         }));
     });
 
-    var registration = await navigator.serviceWorker.register("resources/serviceworkerclients-get-worker.js", { scope : "/noone" });
+    var registration = await navigator.serviceWorker.register("resources/serviceworkerclients-get-worker.js", { scope : "/workers/service/resources/noone" });
     var worker = registration.installing;
     if (!worker)
         worker = registration.active;

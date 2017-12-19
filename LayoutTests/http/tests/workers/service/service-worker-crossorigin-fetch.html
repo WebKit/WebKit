@@ -14,7 +14,7 @@ promise_test(test => {
 
 var frame;
 promise_test(async test => {
-    frame = await interceptedFrame("resources/service-worker-crossorigin-fetch-worker.js", "/");
+    frame = await interceptedFrame("resources/service-worker-crossorigin-fetch-worker.js", "/workers/service/resources/");
 }, "Registering service worker and controlled frame");
 
 promise_test(async test => {

@@ -19,10 +19,10 @@ async function test()
 
     testRunner.setPrivateBrowsingEnabled(false);
     try {
-        r = await navigator.serviceWorker.register("resources/empty-worker.js", { scope: "/test", updateViaCache: "none" })
+        r = await navigator.serviceWorker.register("resources/empty-worker.js", { scope: "/workers/service/resources/test", updateViaCache: "none" })
         log("Registered!");
 
-        if (r.scope == "http://127.0.0.1:8000/test")
+        if (r.scope == "http://127.0.0.1:8000/workers/service/resources/test")
             log("PASS: registration object's scope is valid");
         else
             log("FAIL: registration object's scope is invalid, got: " + r.scope);
@@ -32,7 +32,7 @@ async function test()
         else
             log("FAIL: registration object's updateViaCache is invalid, got: " + r.updateViaCache);
 
-        if (await internals.hasServiceWorkerRegistration("/test"))
+        if (await internals.hasServiceWorkerRegistration("/workers/service/resources/test"))
             log("PASS: A service worker is now registered for this origin");
         else
             log("FAIL: No service worker is registered for this origin");

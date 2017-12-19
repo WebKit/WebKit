@@ -28,6 +28,7 @@
 
 #if ENABLE(SERVICE_WORKER)
 
+#include "HTTPHeaderNames.h"
 #include "JSDOMPromiseDeferred.h"
 #include "MIMETypeRegistry.h"
 #include "ResourceError.h"
@@ -113,6 +114,23 @@ void ServiceWorkerJob::didReceiveResponse(unsigned long, const ResourceResponse&
         Exception exception { SecurityError, ASCIILiteral("MIME Type is not a JavaScript MIME type") };
         // Asynchronously complete these steps with a network error.
         ResourceError error { errorDomainWebKitInternal, 0, response.url(), ASCIILiteral("Unexpected MIME type") };
+        m_client->jobFailedLoadingScript(*this, WTFMove(error), WTFMove(exception));
+        m_scriptLoader = nullptr;
+    }
+    String serviceWorkerAllowed = response.httpHeaderField(HTTPHeaderName::ServiceWorkerAllowed);
+    String maxScopeString;
+    if (serviceWorkerAllowed.isNull()) {
+        String path = m_jobData.scriptURL.path();
+        // Last part of the path is the script's filename.
+        maxScopeString = path.substring(0, path.reverseFind('/'));
+    } else {
+        auto maxScope = URL(m_jobData.scriptURL, serviceWorkerAllowed);
+        maxScopeString = maxScope.path();
+    }
+    String scopeString = m_jobData.scopeURL.path();
+    if (!scopeString.startsWith(maxScopeString)) {
+        Exception exception { SecurityError, ASCIILiteral("Scope URL should start with the given script URL") };
+        ResourceError error { errorDomainWebKitInternal, 0, response.url(), ASCIILiteral("Scope URL should start with the given script URL") };
         m_client->jobFailedLoadingScript(*this, WTFMove(error), WTFMove(exception));
         m_scriptLoader = nullptr;
     }

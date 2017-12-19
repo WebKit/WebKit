@@ -8,10 +8,10 @@ function log(msg)
 async function runTest()
 {
     try {
-        let r = await navigator.serviceWorker.register("empty-worker.js", { scope: "/test" });
+        let r = await navigator.serviceWorker.register("empty-worker.js", { scope: "/workers/service/resources/test" });
         log("PASS: Registration succeeded");
 
-        let retrievedRegistration = await navigator.serviceWorker.getRegistration("/test");
+        let retrievedRegistration = await navigator.serviceWorker.getRegistration("/workers/service/resources/test");
         if (r === retrievedRegistration)
             log("PASS: getRegistration() returned the right registration");
         else

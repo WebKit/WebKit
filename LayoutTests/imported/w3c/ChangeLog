@@ -1,5 +1,18 @@
 2017-12-19  Chris Dumez  <cdumez@apple.com>
 
+        scopeURL should start with the provided scriptURL
+        https://bugs.webkit.org/show_bug.cgi?id=180983
+
+        Reviewed by Youenn Fablet.
+
+        Rebaseline WPT tests now that more checks are passing.
+
+        * web-platform-tests/service-workers/service-worker/register-default-scope.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/registration-iframe.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/registration-security-error.https-expected.txt:
+
+2017-12-19  Chris Dumez  <cdumez@apple.com>
+
         Handle Fetch should wait for the service worker's state to become activated
         https://bugs.webkit.org/show_bug.cgi?id=180959
 

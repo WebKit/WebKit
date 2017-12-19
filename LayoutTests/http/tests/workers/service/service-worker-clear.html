@@ -14,9 +14,9 @@ async function test()
         var hasRegistration = await internals.hasServiceWorkerRegistration("");
         log(hasRegistration ? "FAIL: Got registration" : "PASS: No registration");
 
-        await navigator.serviceWorker.register("resources/service-worker-fetch-worker.js", { scope: "./" });
+        await navigator.serviceWorker.register("resources/service-worker-fetch-worker.js");
 
-        var hasRegistration = await internals.hasServiceWorkerRegistration("");
+        var hasRegistration = await internals.hasServiceWorkerRegistration("/workers/service/resources/");
         log(hasRegistration ? "PASS: Got registration" : "FAIL: No registration");
     } catch(e) {
         log("Got exception: " + e);

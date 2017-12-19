@@ -6,7 +6,7 @@
 <script>
 async function startServiceWorker()
 {
-    var registration = await navigator.serviceWorker.register("resources/fetch-service-worker.js", { scope : "/"});
+    var registration = await navigator.serviceWorker.register("resources/fetch-service-worker.js", { scope : "/inspector/network/resources/"});
     await new Promise(resolve => {
         if (registration.active)
             resolve();
@@ -22,7 +22,7 @@ async function startServiceWorker()
     var frame;
     await new Promise(function(resolve) {
         frame = document.createElement('iframe');
-        frame.src = "/";
+        frame.src = "/inspector/network/resources/";
         frame.onload = function() { resolve(frame); };
         document.body.appendChild(frame);
     });

@@ -1,7 +1,7 @@
 async function test()
 {
     try {
-        var frame = await interceptedFrame("resources/basic-fetch-worker.js", "/");
+        var frame = await interceptedFrame("resources/basic-fetch-worker.js", "/workers/service/resources/");
         var fetch = frame.contentWindow.fetch;
 
         var response = await fetch("test1");

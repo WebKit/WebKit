@@ -31,7 +31,7 @@ async function interceptedFrame(workerURL, scopeURL)
 var fetch;
 
 promise_test(async (test) => {
-    var frame = await interceptedFrame("resources/service-worker-request-with-body-worker.js", "/");
+    var frame = await interceptedFrame("resources/service-worker-request-with-body-worker.js", "/workers/service/resources/");
     fetch = frame.contentWindow.fetch;
 }, "Setup test");
 

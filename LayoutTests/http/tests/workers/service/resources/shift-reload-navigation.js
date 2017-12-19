@@ -8,7 +8,7 @@ async function test()
             log("PASS: Fetch failed as expected with: " + e);
         }
 
-        var frame = await interceptedFrame("resources/service-worker-crossorigin-fetch-worker.js", "/");
+        var frame = await interceptedFrame("resources/service-worker-crossorigin-fetch-worker.js", "/workers/service/resources/");
 
         var response = await frame.contentWindow.fetch("http://localhost:8080/resources/square100.png.fromserviceworker");
         var buffer =  await response.arrayBuffer();

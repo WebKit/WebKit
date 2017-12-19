@@ -1,18 +1,17 @@
 Registering service worker 0
-Service worker 0 registered with scope http://127.0.0.1:8000/test1
+Service worker 0 registered with scope http://127.0.0.1:8000/workers/service/resources/test1
 PASS: registration0 is as expected
 PASS: registration1 is as expected
 PASS: registration2 is as expected
 PASS: registration3 is as expected
 Registering service worker 1
-Service worker 1 registered with scope http://127.0.0.1:8000/test1/test2
+Service worker 1 registered with scope http://127.0.0.1:8000/workers/service/resources/test1/test2
 Registering service worker 2
-Service worker 2 registered with scope http://127.0.0.1:8000/workers/service/
+Service worker 2 registered with scope http://127.0.0.1:8000/workers/service/resources/
 PASS: registration4 is as expected
 PASS: registration5 is as expected
 PASS: registration6 is as expected
 PASS: registration7 is as expected
 PASS: registration8 is as expected
 PASS: registration9 is as expected
-PASS: registration10 is as expected
 

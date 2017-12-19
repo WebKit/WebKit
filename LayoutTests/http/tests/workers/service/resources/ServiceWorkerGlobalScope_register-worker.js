@@ -8,10 +8,10 @@ function log(msg)
 async function runTest()
 {
     try {
-        let r = await navigator.serviceWorker.register("empty-worker.js", { scope: "/test", updateViaCache: "none" });
+        let r = await navigator.serviceWorker.register("empty-worker.js", { scope: "/workers/service/resources/test", updateViaCache: "none" });
         log("PASS: Registration succeeded");
 
-        if (r.scope == "http://127.0.0.1:8000/test")
+        if (r.scope == "http://127.0.0.1:8000/workers/service/resources/test")
             log("PASS: registration object's scope is valid");
         else
             log("FAIL: registration object's scope is invalid, got: " + r.scope);

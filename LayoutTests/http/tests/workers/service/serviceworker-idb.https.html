@@ -6,7 +6,7 @@
 <body>
 <script>
 var activeWorker;
-var scope = "whatever fits your IDB needs";
+var scope = "/workers/service/resources/IDB/";
 
 promise_test(async (test) => {
     var registration = await navigator.serviceWorker.getRegistration(scope);

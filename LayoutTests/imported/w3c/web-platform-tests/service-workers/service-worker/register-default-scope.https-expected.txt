@@ -1,5 +1,5 @@
 
 PASS default scope 
 PASS undefined scope 
-FAIL null scope assert_unreached: register should fail Reached unreachable code
+PASS null scope 
 
