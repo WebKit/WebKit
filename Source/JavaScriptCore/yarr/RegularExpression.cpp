@@ -42,16 +42,14 @@ public:
         return adoptRef(*new Private(pattern, caseSensitivity, multilineMode));
     }
 
-    int lastMatchLength;
+    int lastMatchLength { -1 };
 
     unsigned m_numSubpatterns;
     std::unique_ptr<JSC::Yarr::BytecodePattern> m_regExpByteCode;
 
 private:
     Private(const String& pattern, TextCaseSensitivity caseSensitivity, MultilineMode multilineMode)
-        : lastMatchLength(-1)
-        , m_regExpByteCode(compile(pattern, caseSensitivity, multilineMode))
-        , m_constructionError(nullptr)
+        : m_regExpByteCode(compile(pattern, caseSensitivity, multilineMode))
     {
     }
 
@@ -65,9 +63,9 @@ private:
         if (multilineMode == MultilineEnabled)
             flags = static_cast<RegExpFlags>(flags | FlagMultiline);
 
-        JSC::Yarr::YarrPattern pattern(patternString, flags, &m_constructionError);
-        if (m_constructionError) {
-            LOG_ERROR("RegularExpression: YARR compile failed with '%s'", m_constructionError);
+        JSC::Yarr::YarrPattern pattern(patternString, flags, m_constructionErrorCode);
+        if (JSC::Yarr::hasError(m_constructionErrorCode)) {
+            LOG_ERROR("RegularExpression: YARR compile failed with '%s'", JSC::Yarr::errorMessage(m_constructionErrorCode));
             return nullptr;
         }
 
@@ -77,7 +75,7 @@ private:
     }
 
     BumpPointerAllocator m_regexAllocator;
-    const char* m_constructionError;
+    JSC::Yarr::ErrorCode m_constructionErrorCode { Yarr::ErrorCode::NoError };
 };
 
 RegularExpression::RegularExpression(const String& pattern, TextCaseSensitivity caseSensitivity, MultilineMode multilineMode)

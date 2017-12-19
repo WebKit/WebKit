@@ -27,6 +27,7 @@
 #pragma once
 
 #include "RegExpKey.h"
+#include "YarrErrorCode.h"
 #include "YarrUnicodeProperties.h"
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/HashMap.h>
@@ -351,33 +352,7 @@ struct TermChain {
 
 
 struct YarrPattern {
-    JS_EXPORT_PRIVATE YarrPattern(const String& pattern, RegExpFlags, const char** error, void* stackLimit = nullptr);
-
-    enum ErrorCode {
-        NoError,
-        PatternTooLarge,
-        QuantifierOutOfOrder,
-        QuantifierWithoutAtom,
-        QuantifierTooLarge,
-        MissingParentheses,
-        ParenthesesUnmatched,
-        ParenthesesTypeInvalid,
-        InvalidGroupName,
-        DuplicateGroupName,
-        CharacterClassUnmatched,
-        CharacterClassOutOfOrder,
-        EscapeUnterminated,
-        InvalidUnicodeEscape,
-        InvalidBackreference,
-        InvalidIdentityEscape,
-        InvalidUnicodePropertyExpression,
-        TooManyDisjunctions,
-        OffsetTooLarge,
-        InvalidRegularExpressionFlags,
-        NumberOfErrorCodes
-    };
-    
-    JS_EXPORT_PRIVATE static const char* errorMessage(ErrorCode);
+    JS_EXPORT_PRIVATE YarrPattern(const String& pattern, RegExpFlags, ErrorCode&, void* stackLimit = nullptr);
 
     void reset()
     {
@@ -391,16 +366,16 @@ struct YarrPattern {
         m_hasCopiedParenSubexpressions = false;
         m_saveInitialStartValue = false;
 
-        anycharCached = 0;
-        newlineCached = 0;
-        digitsCached = 0;
-        spacesCached = 0;
-        wordcharCached = 0;
-        wordUnicodeIgnoreCaseCharCached = 0;
-        nondigitsCached = 0;
-        nonspacesCached = 0;
-        nonwordcharCached = 0;
-        nonwordUnicodeIgnoreCasecharCached = 0;
+        anycharCached = nullptr;
+        newlineCached = nullptr;
+        digitsCached = nullptr;
+        spacesCached = nullptr;
+        wordcharCached = nullptr;
+        wordUnicodeIgnoreCaseCharCached = nullptr;
+        nondigitsCached = nullptr;
+        nonspacesCached = nullptr;
+        nonwordcharCached = nullptr;
+        nonwordUnicodeIgnoreCasecharCached = nullptr;
         unicodePropertiesCached.clear();
 
         m_disjunctions.clear();
@@ -530,9 +505,9 @@ struct YarrPattern {
     bool m_hasCopiedParenSubexpressions : 1;
     bool m_saveInitialStartValue : 1;
     RegExpFlags m_flags;
-    unsigned m_numSubpatterns;
-    unsigned m_maxBackReference;
-    unsigned m_initialStartValueFrameLocation;
+    unsigned m_numSubpatterns { 0 };
+    unsigned m_maxBackReference { 0 };
+    unsigned m_initialStartValueFrameLocation { 0 };
     PatternDisjunction* m_body;
     Vector<std::unique_ptr<PatternDisjunction>, 4> m_disjunctions;
     Vector<std::unique_ptr<CharacterClass>> m_userCharacterClasses;
@@ -540,18 +515,18 @@ struct YarrPattern {
     HashMap<String, unsigned> m_namedGroupToParenIndex;
 
 private:
-    const char* compile(const String& patternString, void* stackLimit);
+    ErrorCode compile(const String& patternString, void* stackLimit);
 
-    CharacterClass* anycharCached;
-    CharacterClass* newlineCached;
-    CharacterClass* digitsCached;
-    CharacterClass* spacesCached;
-    CharacterClass* wordcharCached;
-    CharacterClass* wordUnicodeIgnoreCaseCharCached;
-    CharacterClass* nondigitsCached;
-    CharacterClass* nonspacesCached;
-    CharacterClass* nonwordcharCached;
-    CharacterClass* nonwordUnicodeIgnoreCasecharCached;
+    CharacterClass* anycharCached { nullptr };
+    CharacterClass* newlineCached { nullptr };
+    CharacterClass* digitsCached { nullptr };
+    CharacterClass* spacesCached { nullptr };
+    CharacterClass* wordcharCached { nullptr };
+    CharacterClass* wordUnicodeIgnoreCaseCharCached { nullptr };
+    CharacterClass* nondigitsCached { nullptr };
+    CharacterClass* nonspacesCached { nullptr };
+    CharacterClass* nonwordcharCached { nullptr };
+    CharacterClass* nonwordUnicodeIgnoreCasecharCached { nullptr };
     HashMap<unsigned, CharacterClass*> unicodePropertiesCached;
 };
 

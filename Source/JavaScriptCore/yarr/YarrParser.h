@@ -41,7 +41,7 @@ template<class Delegate, typename CharType>
 class Parser {
 private:
     template<class FriendDelegate>
-    friend const char* parse(FriendDelegate&, const String& pattern, bool isUnicode, unsigned backReferenceLimit);
+    friend ErrorCode parse(FriendDelegate&, const String& pattern, bool isUnicode, unsigned backReferenceLimit);
 
     /*
      * CharacterClassParserDelegate:
@@ -54,9 +54,9 @@ private:
      */
     class CharacterClassParserDelegate {
     public:
-        CharacterClassParserDelegate(Delegate& delegate, YarrPattern::ErrorCode& err)
+        CharacterClassParserDelegate(Delegate& delegate, ErrorCode& err)
             : m_delegate(delegate)
-            , m_err(err)
+            , m_errorCode(err)
             , m_state(Empty)
             , m_character(0)
         {
@@ -116,7 +116,7 @@ private:
 
             case CachedCharacterHyphen:
                 if (ch < m_character) {
-                    m_err = YarrPattern::CharacterClassOutOfOrder;
+                    m_errorCode = ErrorCode::CharacterClassOutOfOrder;
                     return;
                 }
                 m_delegate.atomCharacterClassRange(m_character, ch);
@@ -198,7 +198,7 @@ private:
 
     private:
         Delegate& m_delegate;
-        YarrPattern::ErrorCode& m_err;
+        ErrorCode& m_errorCode;
         enum CharacterClassConstructionState {
             Empty,
             CachedCharacter,
@@ -212,12 +212,9 @@ private:
     Parser(Delegate& delegate, const String& pattern, bool isUnicode, unsigned backReferenceLimit)
         : m_delegate(delegate)
         , m_backReferenceLimit(backReferenceLimit)
-        , m_err(YarrPattern::NoError)
         , m_data(pattern.characters<CharType>())
         , m_size(pattern.length())
-        , m_index(0)
         , m_isUnicode(isUnicode)
-        , m_parenthesesNestingDepth(0)
     {
     }
 
@@ -227,7 +224,7 @@ private:
     bool isIdentityEscapeAnError(int ch)
     {
         if (m_isUnicode && !strchr("^$\\.*+?()[]{}|/", ch)) {
-            m_err = YarrPattern::InvalidIdentityEscape;
+            m_errorCode = ErrorCode::InvalidIdentityEscape;
             return true;
         }
 
@@ -257,12 +254,12 @@ private:
     template<bool inCharacterClass, class EscapeDelegate>
     bool parseEscape(EscapeDelegate& delegate)
     {
-        ASSERT(!m_err);
+        ASSERT(!hasError(m_errorCode));
         ASSERT(peek() == '\\');
         consume();
 
         if (atEndOfPattern()) {
-            m_err = YarrPattern::EscapeUnterminated;
+            m_errorCode = ErrorCode::EscapeUnterminated;
             return false;
         }
 
@@ -343,7 +340,7 @@ private:
                 restoreState(state);
 
                 if (m_isUnicode) {
-                    m_err = YarrPattern::InvalidBackreference;
+                    m_errorCode = ErrorCode::InvalidBackreference;
                     return false;
                 }
             }
@@ -429,7 +426,7 @@ private:
                         break;
                     }
                     if (m_isUnicode) {
-                        m_err = YarrPattern::InvalidBackreference;
+                        m_errorCode = ErrorCode::InvalidBackreference;
                         break;
                     }
                 }
@@ -455,12 +452,12 @@ private:
                 consume();
                 auto optClassID = tryConsumeUnicodePropertyExpression();
                 if (!optClassID) {
-                    // tryConsumeUnicodePropertyExpression() will set m_err for a malformed property expression
+                    // tryConsumeUnicodePropertyExpression() will set m_errorCode for a malformed property expression
                     break;
                 }
                 delegate.atomBuiltInCharacterClass(optClassID.value(), escapeChar == 'P');
             } else
-                m_err = YarrPattern::InvalidUnicodePropertyExpression;
+                m_errorCode = ErrorCode::InvalidUnicodePropertyExpression;
             break;
         }
 
@@ -480,20 +477,20 @@ private:
                 UChar32 codePoint = 0;
                 do {
                     if (atEndOfPattern() || !isASCIIHexDigit(peek())) {
-                        m_err = YarrPattern::InvalidUnicodeEscape;
+                        m_errorCode = ErrorCode::InvalidUnicodeEscape;
                         break;
                     }
 
                     codePoint = (codePoint << 4) | toASCIIHexValue(consume());
 
                     if (codePoint > UCHAR_MAX_VALUE)
-                        m_err = YarrPattern::InvalidUnicodeEscape;
+                        m_errorCode = ErrorCode::InvalidUnicodeEscape;
                 } while (!atEndOfPattern() && peek() != '}');
                 if (!atEndOfPattern() && peek() == '}')
                     consume();
-                else if (!m_err)
-                    m_err = YarrPattern::InvalidUnicodeEscape;
-                if (m_err)
+                else if (!hasError(m_errorCode))
+                    m_errorCode = ErrorCode::InvalidUnicodeEscape;
+                if (hasError(m_errorCode))
                     return false;
 
                 delegate.atomPatternCharacter(codePoint);
@@ -585,11 +582,11 @@ private:
      */
     void parseCharacterClass()
     {
-        ASSERT(!m_err);
+        ASSERT(!hasError(m_errorCode));
         ASSERT(peek() == '[');
         consume();
 
-        CharacterClassParserDelegate characterClassConstructor(m_delegate, m_err);
+        CharacterClassParserDelegate characterClassConstructor(m_delegate, m_errorCode);
 
         characterClassConstructor.begin(tryConsume('^'));
 
@@ -608,11 +605,11 @@ private:
                 characterClassConstructor.atomPatternCharacter(consumePossibleSurrogatePair(), true);
             }
 
-            if (m_err)
+            if (hasError(m_errorCode))
                 return;
         }
 
-        m_err = YarrPattern::CharacterClassUnmatched;
+        m_errorCode = ErrorCode::CharacterClassUnmatched;
     }
 
     /*
@@ -622,13 +619,13 @@ private:
      */
     void parseParenthesesBegin()
     {
-        ASSERT(!m_err);
+        ASSERT(!hasError(m_errorCode));
         ASSERT(peek() == '(');
         consume();
 
         if (tryConsume('?')) {
             if (atEndOfPattern()) {
-                m_err = YarrPattern::ParenthesesTypeInvalid;
+                m_errorCode = ErrorCode::ParenthesesTypeInvalid;
                 return;
             }
 
@@ -652,15 +649,15 @@ private:
                     if (setAddResult.isNewEntry)
                         m_delegate.atomParenthesesSubpatternBegin(true, groupName);
                     else
-                        m_err = YarrPattern::DuplicateGroupName;
+                        m_errorCode = ErrorCode::DuplicateGroupName;
                 } else
-                    m_err = YarrPattern::InvalidGroupName;
+                    m_errorCode = ErrorCode::InvalidGroupName;
 
                 break;
             }
 
             default:
-                m_err = YarrPattern::ParenthesesTypeInvalid;
+                m_errorCode = ErrorCode::ParenthesesTypeInvalid;
             }
         } else
             m_delegate.atomParenthesesSubpatternBegin();
@@ -675,14 +672,14 @@ private:
      */
     void parseParenthesesEnd()
     {
-        ASSERT(!m_err);
+        ASSERT(!hasError(m_errorCode));
         ASSERT(peek() == ')');
         consume();
 
         if (m_parenthesesNestingDepth > 0)
             m_delegate.atomParenthesesEnd();
         else
-            m_err = YarrPattern::ParenthesesUnmatched;
+            m_errorCode = ErrorCode::ParenthesesUnmatched;
 
         --m_parenthesesNestingDepth;
     }
@@ -694,18 +691,18 @@ private:
      */
     void parseQuantifier(bool lastTokenWasAnAtom, unsigned min, unsigned max)
     {
-        ASSERT(!m_err);
+        ASSERT(!hasError(m_errorCode));
         ASSERT(min <= max);
 
         if (min == UINT_MAX) {
-            m_err = YarrPattern::QuantifierTooLarge;
+            m_errorCode = ErrorCode::QuantifierTooLarge;
             return;
         }
 
         if (lastTokenWasAnAtom)
             m_delegate.quantifyAtom(min, max, !tryConsume('?'));
         else
-            m_err = YarrPattern::QuantifierWithoutAtom;
+            m_errorCode = ErrorCode::QuantifierWithoutAtom;
     }
 
     /*
@@ -799,7 +796,7 @@ private:
                         if (min <= max)
                             parseQuantifier(lastTokenWasAnAtom, min, max);
                         else
-                            m_err = YarrPattern::QuantifierOutOfOrder;
+                            m_errorCode = ErrorCode::QuantifierOutOfOrder;
                         lastTokenWasAnAtom = false;
                         break;
                     }
@@ -815,29 +812,28 @@ private:
                 lastTokenWasAnAtom = true;
             }
 
-            if (m_err)
+            if (hasError(m_errorCode))
                 return;
         }
 
         if (m_parenthesesNestingDepth > 0)
-            m_err = YarrPattern::MissingParentheses;
+            m_errorCode = ErrorCode::MissingParentheses;
     }
 
     /*
      * parse():
      *
-     * This method calls parseTokens() to parse over the input and converts any
-     * error code to a const char* for a result.
+     * This method calls parseTokens() to parse over the input and returns error code for a result.
      */
-    const char* parse()
+    ErrorCode parse()
     {
         if (m_size > MAX_PATTERN_SIZE)
-            m_err = YarrPattern::PatternTooLarge;
+            m_errorCode = ErrorCode::PatternTooLarge;
         else
             parseTokens();
-        ASSERT(atEndOfPattern() || m_err);
+        ASSERT(atEndOfPattern() || hasError(m_errorCode));
         
-        return YarrPattern::errorMessage(m_err);
+        return m_errorCode;
     }
 
     // Misc helper functions:
@@ -892,22 +888,22 @@ private:
             int codePoint = 0;
             do {
                 if (atEndOfPattern() || !isASCIIHexDigit(peek())) {
-                    m_err = YarrPattern::InvalidUnicodeEscape;
+                    m_errorCode = ErrorCode::InvalidUnicodeEscape;
                     return -1;
                 }
 
                 codePoint = (codePoint << 4) | toASCIIHexValue(consume());
 
                 if (codePoint > UCHAR_MAX_VALUE) {
-                    m_err = YarrPattern::InvalidUnicodeEscape;
+                    m_errorCode = ErrorCode::InvalidUnicodeEscape;
                     return -1;
                 }
             } while (!atEndOfPattern() && peek() != '}');
             if (!atEndOfPattern() && peek() == '}')
                 consume();
-            else if (!m_err)
-                m_err = YarrPattern::InvalidUnicodeEscape;
-            if (m_err)
+            else if (!hasError(m_errorCode))
+                m_errorCode = ErrorCode::InvalidUnicodeEscape;
+            if (hasError(m_errorCode))
                 return -1;
 
             return codePoint;
@@ -1053,7 +1049,7 @@ private:
     std::optional<BuiltInCharacterClassID> tryConsumeUnicodePropertyExpression()
     {
         if (atEndOfPattern() || !isUnicodePropertyValueExpressionChar(peek())) {
-            m_err = YarrPattern::InvalidUnicodePropertyExpression;
+            m_errorCode = ErrorCode::InvalidUnicodePropertyExpression;
             return std::nullopt;
         }
 
@@ -1069,20 +1065,20 @@ private:
             if (ch == '}') {
                 consume();
                 if (errors) {
-                    m_err = YarrPattern::InvalidUnicodePropertyExpression;
+                    m_errorCode = ErrorCode::InvalidUnicodePropertyExpression;
                     return std::nullopt;
                 }
 
                 if (foundEquals) {
                     auto result = unicodeMatchPropertyValue(unicodePropertyName, expressionBuilder.toString());
                     if (!result)
-                        m_err = YarrPattern::InvalidUnicodePropertyExpression;
+                        m_errorCode = ErrorCode::InvalidUnicodePropertyExpression;
                     return result;
                 }
 
                 auto result = unicodeMatchProperty(expressionBuilder.toString());
                 if (!result)
-                    m_err = YarrPattern::InvalidUnicodePropertyExpression;
+                    m_errorCode = ErrorCode::InvalidUnicodePropertyExpression;
                 return result;
             }
 
@@ -1100,18 +1096,18 @@ private:
                 expressionBuilder.append(ch);
         }
 
-        m_err = YarrPattern::InvalidUnicodePropertyExpression;
+        m_errorCode = ErrorCode::InvalidUnicodePropertyExpression;
         return std::nullopt;
     }
 
     Delegate& m_delegate;
     unsigned m_backReferenceLimit;
-    YarrPattern::ErrorCode m_err;
+    ErrorCode m_errorCode { ErrorCode::NoError };
     const CharType* m_data;
     unsigned m_size;
-    unsigned m_index;
+    unsigned m_index { 0 };
     bool m_isUnicode;
-    unsigned m_parenthesesNestingDepth;
+    unsigned m_parenthesesNestingDepth { 0 };
     HashSet<String> m_captureGroupNames;
 
     // Derived by empirical testing of compile time in PCRE and WREC.
@@ -1179,7 +1175,7 @@ private:
  */
 
 template<class Delegate>
-const char* parse(Delegate& delegate, const String& pattern, bool isUnicode, unsigned backReferenceLimit = quantifyInfinite)
+ErrorCode parse(Delegate& delegate, const String& pattern, bool isUnicode, unsigned backReferenceLimit = quantifyInfinite)
 {
     if (pattern.is8Bit())
         return Parser<Delegate, LChar>(delegate, pattern, isUnicode, backReferenceLimit).parse();

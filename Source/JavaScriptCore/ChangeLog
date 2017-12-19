@@ -1,3 +1,71 @@
+2017-12-19  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [YARR] Yarr should return ErrorCode instead of error messages (const char*)
+        https://bugs.webkit.org/show_bug.cgi?id=180966
+
+        Reviewed by Mark Lam.
+
+        Currently, Yarr returns const char*` for an error message when needed.
+        But it is easier to handle error status if Yarr returns an error code
+        instead of `const char*`.
+
+        In this patch, we introduce Yarr::ErrorCode. Yarr returns it instead of
+        `const char*`. `std::expected<void, Yarr::ErrorCode>` would be appropriate
+        for the Yarr API interface. But it requires substantial changes removing
+        ErrorCode::NoError, so this patch just uses the current Yarr::ErrorCode as
+        a first step.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Sources.txt:
+        * inspector/ContentSearchUtilities.cpp:
+        (Inspector::ContentSearchUtilities::findMagicComment):
+        * parser/ASTBuilder.h:
+        (JSC::ASTBuilder::createRegExp):
+        * parser/Parser.cpp:
+        (JSC::Parser<LexerType>::parsePrimaryExpression):
+        * parser/SyntaxChecker.h:
+        (JSC::SyntaxChecker::createRegExp):
+        * runtime/RegExp.cpp:
+        (JSC::RegExp::RegExp):
+        (JSC::RegExp::byteCodeCompileIfNecessary):
+        (JSC::RegExp::compile):
+        (JSC::RegExp::compileMatchOnly):
+        * runtime/RegExp.h:
+        * yarr/RegularExpression.cpp:
+        (JSC::Yarr::RegularExpression::Private::Private):
+        (JSC::Yarr::RegularExpression::Private::compile):
+        * yarr/YarrErrorCode.cpp: Added.
+        (JSC::Yarr::errorMessage):
+        * yarr/YarrErrorCode.h: Copied from Source/JavaScriptCore/yarr/YarrSyntaxChecker.h.
+        (JSC::Yarr::hasError):
+        * yarr/YarrParser.h:
+        (JSC::Yarr::Parser::CharacterClassParserDelegate::CharacterClassParserDelegate):
+        (JSC::Yarr::Parser::CharacterClassParserDelegate::atomPatternCharacter):
+        (JSC::Yarr::Parser::Parser):
+        (JSC::Yarr::Parser::isIdentityEscapeAnError):
+        (JSC::Yarr::Parser::parseEscape):
+        (JSC::Yarr::Parser::parseCharacterClass):
+        (JSC::Yarr::Parser::parseParenthesesBegin):
+        (JSC::Yarr::Parser::parseParenthesesEnd):
+        (JSC::Yarr::Parser::parseQuantifier):
+        (JSC::Yarr::Parser::parseTokens):
+        (JSC::Yarr::Parser::parse):
+        (JSC::Yarr::Parser::tryConsumeUnicodeEscape):
+        (JSC::Yarr::Parser::tryConsumeUnicodePropertyExpression):
+        (JSC::Yarr::parse):
+        * yarr/YarrPattern.cpp:
+        (JSC::Yarr::YarrPatternConstructor::YarrPatternConstructor):
+        (JSC::Yarr::YarrPatternConstructor::setupDisjunctionOffsets):
+        (JSC::Yarr::YarrPatternConstructor::setupOffsets):
+        (JSC::Yarr::YarrPattern::compile):
+        (JSC::Yarr::YarrPattern::YarrPattern):
+        (JSC::Yarr::YarrPattern::errorMessage): Deleted.
+        * yarr/YarrPattern.h:
+        (JSC::Yarr::YarrPattern::reset):
+        * yarr/YarrSyntaxChecker.cpp:
+        (JSC::Yarr::checkSyntax):
+        * yarr/YarrSyntaxChecker.h:
+
 2017-12-18  Saam Barati  <sbarati@apple.com>
 
         Follow up to bug#179762. Fix PreciseLocalClobberize to handle Spread/PhantomSpread(PhantomNewArrayBuffer)

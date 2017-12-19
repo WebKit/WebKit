@@ -53,7 +53,7 @@ public:
     void disjunction() {}
 };
 
-const char* checkSyntax(const String& pattern, const String& flags)
+ErrorCode checkSyntax(const String& pattern, const String& flags)
 {
     SyntaxChecker syntaxChecker;
     return parse(syntaxChecker, pattern, flags.contains('u'));

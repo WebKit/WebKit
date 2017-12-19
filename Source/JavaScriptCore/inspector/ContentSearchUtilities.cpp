@@ -177,9 +177,9 @@ static String findMagicComment(const String& content, const String& patternStrin
     if (content.isEmpty())
         return String();
 
-    const char* error = nullptr;
-    YarrPattern pattern(patternString, JSC::RegExpFlags::FlagMultiline, &error);
-    ASSERT(!error);
+    JSC::Yarr::ErrorCode error { JSC::Yarr::ErrorCode::NoError };
+    YarrPattern pattern(patternString, JSC::RegExpFlags::FlagMultiline, error);
+    ASSERT(!hasError(error));
     BumpPointerAllocator regexAllocator;
     auto bytecodePattern = byteCompile(pattern, &regexAllocator);
     ASSERT(bytecodePattern);

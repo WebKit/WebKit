@@ -435,7 +435,6 @@ public:
         : m_pattern(pattern)
         , m_characterClassConstructor(pattern.ignoreCase(), pattern.unicode() ? CanonicalMode::Unicode : CanonicalMode::UCS2)
         , m_stackLimit(stackLimit)
-        , m_invertParentheticalAssertion(false)
     {
         auto body = std::make_unique<PatternDisjunction>();
         m_pattern.m_body = body.get();
@@ -764,12 +763,12 @@ public:
         m_alternative = m_alternative->m_parent->addNewAlternative();
     }
 
-    YarrPattern::ErrorCode setupAlternativeOffsets(PatternAlternative* alternative, unsigned currentCallFrameSize, unsigned initialInputPosition, unsigned& newCallFrameSize) WARN_UNUSED_RETURN
+    ErrorCode setupAlternativeOffsets(PatternAlternative* alternative, unsigned currentCallFrameSize, unsigned initialInputPosition, unsigned& newCallFrameSize) WARN_UNUSED_RETURN
     {
         if (UNLIKELY(!isSafeToRecurse()))
-            return YarrPattern::TooManyDisjunctions;
+            return ErrorCode::TooManyDisjunctions;
 
-        YarrPattern::ErrorCode error = YarrPattern::NoError;
+        ErrorCode error = ErrorCode::NoError;
         alternative->m_hasFixedSize = true;
         Checked<unsigned, RecordOverflow> currentInputPosition = initialInputPosition;
 
@@ -803,7 +802,7 @@ public:
                     Checked<unsigned, RecordOverflow> tempCount = term.quantityMaxCount;
                     tempCount *= U16_LENGTH(term.patternCharacter);
                     if (tempCount.hasOverflowed())
-                        return YarrPattern::OffsetTooLarge;
+                        return ErrorCode::OffsetTooLarge;
                     currentInputPosition += tempCount;
                 } else
                     currentInputPosition += term.quantityMaxCount;
@@ -830,7 +829,7 @@ public:
                 if (term.quantityMaxCount == 1 && !term.parentheses.isCopy) {
                     currentCallFrameSize += YarrStackSpaceForBackTrackInfoParenthesesOnce;
                     error = setupDisjunctionOffsets(term.parentheses.disjunction, currentCallFrameSize, currentInputPosition.unsafeGet(), currentCallFrameSize);
-                    if (error)
+                    if (hasError(error))
                         return error;
                     // If quantity is fixed, then pre-check its minimum size.
                     if (term.quantityType == QuantifierFixedCount)
@@ -839,14 +838,14 @@ public:
                 } else if (term.parentheses.isTerminal) {
                     currentCallFrameSize += YarrStackSpaceForBackTrackInfoParenthesesTerminal;
                     error = setupDisjunctionOffsets(term.parentheses.disjunction, currentCallFrameSize, currentInputPosition.unsafeGet(), currentCallFrameSize);
-                    if (error)
+                    if (hasError(error))
                         return error;
                     term.inputPosition = currentInputPosition.unsafeGet();
                 } else {
                     term.inputPosition = currentInputPosition.unsafeGet();
                     currentCallFrameSize += YarrStackSpaceForBackTrackInfoParentheses;
                     error = setupDisjunctionOffsets(term.parentheses.disjunction, currentCallFrameSize, currentInputPosition.unsafeGet(), currentCallFrameSize);
-                    if (error)
+                    if (hasError(error))
                         return error;
                 }
                 // Fixed count of 1 could be accepted, if they have a fixed size *AND* if all alternatives are of the same length.
@@ -857,7 +856,7 @@ public:
                 term.inputPosition = currentInputPosition.unsafeGet();
                 term.frameLocation = currentCallFrameSize;
                 error = setupDisjunctionOffsets(term.parentheses.disjunction, currentCallFrameSize + YarrStackSpaceForBackTrackInfoParentheticalAssertion, currentInputPosition.unsafeGet(), currentCallFrameSize);
-                if (error)
+                if (hasError(error))
                     return error;
                 break;
 
@@ -871,7 +870,7 @@ public:
                 break;
             }
             if (currentInputPosition.hasOverflowed())
-                return YarrPattern::OffsetTooLarge;
+                return ErrorCode::OffsetTooLarge;
         }
 
         alternative->m_minimumSize = (currentInputPosition - initialInputPosition).unsafeGet();
@@ -879,10 +878,10 @@ public:
         return error;
     }
 
-    YarrPattern::ErrorCode setupDisjunctionOffsets(PatternDisjunction* disjunction, unsigned initialCallFrameSize, unsigned initialInputPosition, unsigned& callFrameSize)
+    ErrorCode setupDisjunctionOffsets(PatternDisjunction* disjunction, unsigned initialCallFrameSize, unsigned initialInputPosition, unsigned& callFrameSize)
     {
         if (UNLIKELY(!isSafeToRecurse()))
-            return YarrPattern::TooManyDisjunctions;
+            return ErrorCode::TooManyDisjunctions;
 
         if ((disjunction != m_pattern.m_body) && (disjunction->m_alternatives.size() > 1))
             initialCallFrameSize += YarrStackSpaceForBackTrackInfoAlternative;
@@ -890,13 +889,13 @@ public:
         unsigned minimumInputSize = UINT_MAX;
         unsigned maximumCallFrameSize = 0;
         bool hasFixedSize = true;
-        YarrPattern::ErrorCode error = YarrPattern::NoError;
+        ErrorCode error = ErrorCode::NoError;
 
         for (unsigned alt = 0; alt < disjunction->m_alternatives.size(); ++alt) {
             PatternAlternative* alternative = disjunction->m_alternatives[alt].get();
             unsigned currentAlternativeCallFrameSize;
             error = setupAlternativeOffsets(alternative, initialCallFrameSize, initialInputPosition, currentAlternativeCallFrameSize);
-            if (error)
+            if (hasError(error))
                 return error;
             minimumInputSize = std::min(minimumInputSize, alternative->m_minimumSize);
             maximumCallFrameSize = std::max(maximumCallFrameSize, currentAlternativeCallFrameSize);
@@ -915,14 +914,11 @@ public:
         return error;
     }
 
-    const char* setupOffsets()
+    ErrorCode setupOffsets()
     {
         // FIXME: Yarr should not use the stack to handle subpatterns (rdar://problem/26436314).
         unsigned ignoredCallFrameSize;
-        YarrPattern::ErrorCode error = setupDisjunctionOffsets(m_pattern.m_body, 0, 0, ignoredCallFrameSize);
-        if (error)
-            return YarrPattern::errorMessage(error);
-        return nullptr;
+        return setupDisjunctionOffsets(m_pattern.m_body, 0, 0, ignoredCallFrameSize);
     }
 
     // This optimization identifies sets of parentheses that we will never need to backtrack.
@@ -1084,48 +1080,21 @@ private:
     CharacterClassConstructor m_characterClassConstructor;
     void* m_stackLimit;
     bool m_invertCharacterClass;
-    bool m_invertParentheticalAssertion;
+    bool m_invertParentheticalAssertion { false };
 };
 
-const char* YarrPattern::errorMessage(YarrPattern::ErrorCode error)
-{
-#define REGEXP_ERROR_PREFIX "Invalid regular expression: "
-    // The order of this array must match the ErrorCode enum.
-    static const char* errorMessages[NumberOfErrorCodes] = {
-        nullptr,                                                              // NoError
-        REGEXP_ERROR_PREFIX "regular expression too large",                   // PatternTooLarge     
-        REGEXP_ERROR_PREFIX "numbers out of order in {} quantifier",          // QuantifierOutOfOrder
-        REGEXP_ERROR_PREFIX "nothing to repeat",                              // QuantifierWithoutAtom
-        REGEXP_ERROR_PREFIX "number too large in {} quantifier",              // QuantifierTooLarge
-        REGEXP_ERROR_PREFIX "missing )",                                      // MissingParentheses
-        REGEXP_ERROR_PREFIX "unmatched parentheses",                          // ParenthesesUnmatched
-        REGEXP_ERROR_PREFIX "unrecognized character after (?",                // ParenthesesTypeInvalid
-        REGEXP_ERROR_PREFIX "invalid group specifier name",                   // InvalidGroupName
-        REGEXP_ERROR_PREFIX "duplicate group specifier name",                 // DuplicateGroupName
-        REGEXP_ERROR_PREFIX "missing terminating ] for character class",      // CharacterClassUnmatched
-        REGEXP_ERROR_PREFIX "range out of order in character class",          // CharacterClassOutOfOrder
-        REGEXP_ERROR_PREFIX "\\ at end of pattern",                           // EscapeUnterminated
-        REGEXP_ERROR_PREFIX "invalid unicode {} escape",                      // InvalidUnicodeEscape
-        REGEXP_ERROR_PREFIX "invalid backreference for unicode pattern",      // InvalidBackreference
-        REGEXP_ERROR_PREFIX "invalid escaped character for unicode pattern",  // InvalidIdentityEscape
-        REGEXP_ERROR_PREFIX "invalid property expression",                    // InvalidUnicodePropertyExpression
-        REGEXP_ERROR_PREFIX "too many nested disjunctions",                   // TooManyDisjunctions
-        REGEXP_ERROR_PREFIX "pattern exceeds string length limits",           // OffsetTooLarge
-        REGEXP_ERROR_PREFIX "invalid flags"                                   // InvalidRegularExpressionFlags
-    };
-
-    return errorMessages[error];
-}
-
-const char* YarrPattern::compile(const String& patternString, void* stackLimit)
+ErrorCode YarrPattern::compile(const String& patternString, void* stackLimit)
 {
     YarrPatternConstructor constructor(*this, stackLimit);
 
     if (m_flags == InvalidFlags)
-        return errorMessage(InvalidRegularExpressionFlags);
+        return ErrorCode::InvalidRegularExpressionFlags;
 
-    if (const char* error = parse(constructor, patternString, unicode()))
-        return error;
+    {
+        ErrorCode error = parse(constructor, patternString, unicode());
+        if (hasError(error))
+            return error;
+    }
     
     // If the pattern contains illegal backreferences reset & reparse.
     // Quoting Netscape's "What's new in JavaScript 1.2",
@@ -1133,54 +1102,41 @@ const char* YarrPattern::compile(const String& patternString, void* stackLimit)
     //       in \#, the \# is taken as an octal escape as described in the next row."
     if (containsIllegalBackReference()) {
         if (unicode())
-            return errorMessage(InvalidBackreference);
+            return ErrorCode::InvalidBackreference;
 
         unsigned numSubpatterns = m_numSubpatterns;
 
         constructor.reset();
-#if !ASSERT_DISABLED
-        const char* error =
-#endif
-            parse(constructor, patternString, unicode(), numSubpatterns);
-
-        ASSERT(!error);
+        ErrorCode error = parse(constructor, patternString, unicode(), numSubpatterns);
+        ASSERT_UNUSED(error, !hasError(error));
         ASSERT(numSubpatterns == m_numSubpatterns);
     }
 
     constructor.checkForTerminalParentheses();
     constructor.optimizeDotStarWrappedExpressions();
     constructor.optimizeBOL();
-        
-    if (const char* error = constructor.setupOffsets())
-        return error;
+
+    {
+        ErrorCode error = constructor.setupOffsets();
+        if (hasError(error))
+            return error;
+    }
 
     if (Options::dumpCompiledRegExpPatterns())
         dumpPattern(patternString);
 
-    return nullptr;
+    return ErrorCode::NoError;
 }
 
-YarrPattern::YarrPattern(const String& pattern, RegExpFlags flags, const char** error, void* stackLimit)
+YarrPattern::YarrPattern(const String& pattern, RegExpFlags flags, ErrorCode& error, void* stackLimit)
     : m_containsBackreferences(false)
     , m_containsBOL(false)
     , m_containsUnsignedLengthPattern(false)
     , m_hasCopiedParenSubexpressions(false)
     , m_saveInitialStartValue(false)
     , m_flags(flags)
-    , m_numSubpatterns(0)
-    , m_maxBackReference(0)
-    , anycharCached(0)
-    , newlineCached(0)
-    , digitsCached(0)
-    , spacesCached(0)
-    , wordcharCached(0)
-    , wordUnicodeIgnoreCaseCharCached(0)
-    , nondigitsCached(0)
-    , nonspacesCached(0)
-    , nonwordcharCached(0)
-    , nonwordUnicodeIgnoreCasecharCached(0)
 {
-    *error = compile(pattern, stackLimit);
+    error = compile(pattern, stackLimit);
 }
 
 void indentForNestingLevel(PrintStream& out, unsigned nestingDepth)
