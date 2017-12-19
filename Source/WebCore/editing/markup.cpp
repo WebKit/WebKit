@@ -382,7 +382,7 @@ void StyledMarkupAccumulator::appendCustomAttributes(StringBuilder& out, const E
         // These attributes are only intended for File deserialization, and are removed from the generated attachment
         // element after we've deserialized and set its backing File.
         appendAttribute(out, element, { webkitattachmentpathAttr, file->path() }, namespaces);
-        appendAttribute(out, element, { webkitattachmentbloburlAttr, { file->url() }}, namespaces);
+        appendAttribute(out, element, { webkitattachmentbloburlAttr, file->url().string() }, namespaces);
     }
 #else
     UNUSED_PARAM(out);
