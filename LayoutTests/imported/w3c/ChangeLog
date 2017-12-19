@@ -1,3 +1,9 @@
+2017-12-18  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, rebaseline imported/w3c/web-platform-tests/service-workers/service-worker/registration-security-error.https.html after r226087.
+
+        * web-platform-tests/service-workers/service-worker/registration-security-error.https-expected.txt:
+
 2017-12-18  Youenn Fablet  <youenn@apple.com>
 
         Service worker served response tainting should keep its tainting
