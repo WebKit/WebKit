@@ -22,7 +22,7 @@
  */
 
 #include "config.h"
-#include "RenderTreeUpdaterFirstLetter.h"
+#include "RenderTreeBuilderFirstLetter.h"
 
 #include "FontCascade.h"
 #include "RenderBlock.h"
@@ -101,7 +101,57 @@ static inline bool shouldSkipForFirstLetter(UChar c)
     return isSpaceOrNewline(c) || c == noBreakSpace || isPunctuationForFirstLetter(c);
 }
 
-static void updateFirstLetterStyle(RenderBlock& firstLetterBlock, RenderObject& currentChild)
+static bool supportsFirstLetter(RenderBlock& block)
+{
+    if (is<RenderButton>(block))
+        return true;
+    if (!is<RenderBlockFlow>(block))
+        return false;
+    if (is<RenderSVGText>(block))
+        return false;
+    if (is<RenderRubyRun>(block))
+        return false;
+    return block.canHaveGeneratedChildren();
+}
+
+RenderTreeBuilder::FirstLetter::FirstLetter(RenderTreeBuilder& builder)
+    : m_builder(builder)
+{
+}
+
+void RenderTreeBuilder::FirstLetter::updateAfterDescendants(RenderBlock& block)
+{
+    if (!block.style().hasPseudoStyle(FIRST_LETTER))
+        return;
+    if (!supportsFirstLetter(block))
+        return;
+
+    // FIXME: This should be refactored, firstLetterContainer is not needed.
+    RenderObject* firstLetterRenderer;
+    RenderElement* firstLetterContainer;
+    block.getFirstLetter(firstLetterRenderer, firstLetterContainer);
+
+    if (!firstLetterRenderer)
+        return;
+
+    // Other containers are handled when updating their renderers.
+    if (&block != firstLetterContainer)
+        return;
+
+    // If the child already has style, then it has already been created, so we just want
+    // to update it.
+    if (firstLetterRenderer->parent()->style().styleType() == FIRST_LETTER) {
+        updateStyle(block, *firstLetterRenderer);
+        return;
+    }
+
+    if (!is<RenderText>(firstLetterRenderer))
+        return;
+
+    createRenderers(block, downcast<RenderText>(*firstLetterRenderer));
+}
+
+void RenderTreeBuilder::FirstLetter::updateStyle(RenderBlock& firstLetterBlock, RenderObject& currentChild)
 {
     RenderElement* firstLetter = currentChild.parent();
     ASSERT(firstLetter->isFirstLetter());
@@ -125,7 +175,7 @@ static void updateFirstLetterStyle(RenderBlock& firstLetterBlock, RenderObject& 
             if (is<RenderText>(*child))
                 downcast<RenderText>(*child).removeAndDestroyTextBoxes();
             auto toMove = firstLetter->takeChild(*child);
-            RenderTreeBuilder::current()->insertChild(*newFirstLetter, WTFMove(toMove));
+            m_builder.insertChild(*newFirstLetter, WTFMove(toMove));
         }
 
         RenderObject* nextSibling = firstLetter->nextSibling();
@@ -136,12 +186,14 @@ static void updateFirstLetterStyle(RenderBlock& firstLetterBlock, RenderObject& 
             newFirstLetter->setFirstLetterRemainingText(*remainingText);
         }
         firstLetterContainer->removeAndDestroyChild(*firstLetter);
-        RenderTreeBuilder::current()->insertChild(*firstLetterContainer, WTFMove(newFirstLetter), nextSibling);
-    } else
-        firstLetter->setStyle(WTFMove(pseudoStyle));
+        m_builder.insertChild(*firstLetterContainer, WTFMove(newFirstLetter), nextSibling);
+        return;
+    }
+
+    firstLetter->setStyle(WTFMove(pseudoStyle));
 }
 
-static void createFirstLetterRenderer(RenderBlock& firstLetterBlock, RenderText& currentTextChild)
+void RenderTreeBuilder::FirstLetter::createRenderers(RenderBlock& firstLetterBlock, RenderText& currentTextChild)
 {
     RenderElement* firstLetterContainer = currentTextChild.parent();
     auto pseudoStyle = styleForFirstLetter(firstLetterBlock, *firstLetterContainer);
@@ -154,7 +206,7 @@ static void createFirstLetterRenderer(RenderBlock& firstLetterBlock, RenderText&
     newFirstLetter->setIsFirstLetter();
 
     auto& firstLetter = *newFirstLetter;
-    RenderTreeBuilder::current()->insertChild(*firstLetterContainer, WTFMove(newFirstLetter), &currentTextChild);
+    m_builder.insertChild(*firstLetterContainer, WTFMove(newFirstLetter), &currentTextChild);
 
     // The original string is going to be either a generated content string or a DOM node's
     // string. We want the original string before it got transformed in case first-letter has
@@ -198,60 +250,15 @@ static void createFirstLetterRenderer(RenderBlock& firstLetterBlock, RenderText&
             newRemainingText = createRenderer<RenderTextFragment>(firstLetterBlock.document(), oldText, length, oldText.length() - length);
 
         RenderTextFragment& remainingText = *newRemainingText;
-        RenderTreeBuilder::current()->insertChild(*firstLetterContainer, WTFMove(newRemainingText), beforeChild);
+        m_builder.insertChild(*firstLetterContainer, WTFMove(newRemainingText), beforeChild);
         remainingText.setFirstLetter(firstLetter);
         firstLetter.setFirstLetterRemainingText(remainingText);
 
         // construct text fragment for the first letter
         auto letter = createRenderer<RenderTextFragment>(firstLetterBlock.document(), oldText, 0, length);
 
-        RenderTreeBuilder::current()->insertChild(firstLetter, WTFMove(letter));
+        m_builder.insertChild(firstLetter, WTFMove(letter));
     }
-}
-
-static bool supportsFirstLetter(RenderBlock& block)
-{
-    if (is<RenderButton>(block))
-        return true;
-    if (!is<RenderBlockFlow>(block))
-        return false;
-    if (is<RenderSVGText>(block))
-        return false;
-    if (is<RenderRubyRun>(block))
-        return false;
-    return block.canHaveGeneratedChildren();
-}
-
-void RenderTreeUpdater::FirstLetter::update(RenderBlock& block)
-{
-    if (!block.style().hasPseudoStyle(FIRST_LETTER))
-        return;
-    if (!supportsFirstLetter(block))
-        return;
-
-    // FIXME: This should be refactored, firstLetterContainer is not needed.
-    RenderObject* firstLetterRenderer;
-    RenderElement* firstLetterContainer;
-    block.getFirstLetter(firstLetterRenderer, firstLetterContainer);
-
-    if (!firstLetterRenderer)
-        return;
-
-    // Other containers are handled when updating their renderers.
-    if (&block != firstLetterContainer)
-        return;
-
-    // If the child already has style, then it has already been created, so we just want
-    // to update it.
-    if (firstLetterRenderer->parent()->style().styleType() == FIRST_LETTER) {
-        updateFirstLetterStyle(block, *firstLetterRenderer);
-        return;
-    }
-
-    if (!is<RenderText>(firstLetterRenderer))
-        return;
-
-    createFirstLetterRenderer(block, downcast<RenderText>(*firstLetterRenderer));
 }
 
 };

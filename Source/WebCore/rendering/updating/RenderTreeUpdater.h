@@ -51,7 +51,6 @@ public:
     static void tearDownRenderers(Element&);
     static void tearDownRenderer(Text&);
 
-    class FirstLetter;
     class ListItem;
 
 private:

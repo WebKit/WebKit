@@ -32,8 +32,8 @@
 #include "RenderRubyRun.h"
 #include "RenderTableRow.h"
 #include "RenderText.h"
+#include "RenderTreeBuilderFirstLetter.h"
 #include "RenderTreeBuilderTable.h"
-#include "RenderTreeUpdater.h"
 
 namespace WebCore {
 
@@ -41,6 +41,7 @@ RenderTreeBuilder* RenderTreeBuilder::s_current;
 
 RenderTreeBuilder::RenderTreeBuilder(RenderView& view)
     : m_view(view)
+    , m_firstLetterBuilder(std::make_unique<FirstLetter>(*this))
     , m_tableBuilder(std::make_unique<Table>(*this))
 {
     RELEASE_ASSERT(!s_current || &m_view != &s_current->m_view);
@@ -63,12 +64,12 @@ void RenderTreeBuilder::insertChild(RenderElement& parent, RenderPtr<RenderObjec
     }
 
     if (is<RenderTableRow>(parent)) {
-        m_tableBuilder->findOrCreateParentForChild(downcast<RenderTableRow>(parent), *child, beforeChild).addChild(*this, WTFMove(child), beforeChild);
+        tableBuilder().findOrCreateParentForChild(downcast<RenderTableRow>(parent), *child, beforeChild).addChild(*this, WTFMove(child), beforeChild);
         return;
     }
 
     if (is<RenderTableSection>(parent)) {
-        auto& parentCandidate = m_tableBuilder->findOrCreateParentForChild(downcast<RenderTableSection>(parent), *child, beforeChild);
+        auto& parentCandidate = tableBuilder().findOrCreateParentForChild(downcast<RenderTableSection>(parent), *child, beforeChild);
         if (&parent != &parentCandidate) {
             insertChild(parentCandidate, WTFMove(child), beforeChild);
             return;
@@ -88,6 +89,12 @@ void RenderTreeBuilder::insertChild(RenderElement& parent, RenderPtr<RenderObjec
 void RenderTreeBuilder::insertChild(RenderTreePosition& position, RenderPtr<RenderObject> child)
 {
     insertChild(position.parent(), WTFMove(child), position.nextSibling());
+}
+
+void RenderTreeBuilder::updateAfterDescendants(RenderElement& renderer)
+{
+    if (is<RenderBlock>(renderer))
+        firstLetterBuilder().updateAfterDescendants(downcast<RenderBlock>(renderer));
 }
 
 void RenderTreeBuilder::rubyRunInsertChild(RenderRubyRun& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild)

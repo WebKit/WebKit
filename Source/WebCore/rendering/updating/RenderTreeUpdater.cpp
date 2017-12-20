@@ -41,7 +41,7 @@
 #include "RenderFullScreen.h"
 #include "RenderInline.h"
 #include "RenderListItem.h"
-#include "RenderTreeUpdaterFirstLetter.h"
+#include "RenderTreeBuilderFirstLetter.h"
 #include "RenderTreeUpdaterGeneratedContent.h"
 #include "RenderTreeUpdaterListItem.h"
 #include "RenderTreeUpdaterMultiColumn.h"
@@ -271,9 +271,9 @@ void RenderTreeUpdater::updateAfterDescendants(Element& element, const Style::El
     if (!renderer)
         return;
 
+    m_builder.updateAfterDescendants(*renderer);
+
     // These functions do render tree mutations that require descendant renderers.
-    if (is<RenderBlock>(*renderer))
-        FirstLetter::update(downcast<RenderBlock>(*renderer));
     if (is<RenderListItem>(*renderer))
         ListItem::updateMarker(m_builder, downcast<RenderListItem>(*renderer));
     if (is<RenderBlockFlow>(*renderer))

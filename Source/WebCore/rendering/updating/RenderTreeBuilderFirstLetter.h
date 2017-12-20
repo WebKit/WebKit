@@ -25,15 +25,23 @@
 
 #pragma once
 
-#include "RenderTreeUpdater.h"
+#include "RenderTreeBuilder.h"
 
 namespace WebCore {
 
-class RenderBlock;
+class RenderElement;
 
-class RenderTreeUpdater::FirstLetter {
+class RenderTreeBuilder::FirstLetter {
 public:
-    static void update(RenderBlock&);
+    FirstLetter(RenderTreeBuilder&);
+
+    void updateAfterDescendants(RenderBlock&);
+
+private:
+    void updateStyle(RenderBlock& firstLetterBlock, RenderObject& currentChild);
+    void createRenderers(RenderBlock& firstLetterBlock, RenderText& currentTextChild);
+
+    RenderTreeBuilder& m_builder;
 };
 
 }

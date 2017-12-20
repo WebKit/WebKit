@@ -37,7 +37,7 @@
 #include "RenderText.h"
 #include "RenderTextFragment.h"
 #include "RenderTreeBuilder.h"
-#include "RenderTreeUpdaterFirstLetter.h"
+#include "RenderTreeBuilderFirstLetter.h"
 #include "RenderTreeUpdaterListItem.h"
 #include "StyleResolver.h"
 
@@ -173,8 +173,7 @@ auto TextAutoSizingValue::adjustTextNodeSizes() -> StillHasNodes
         auto* block = downcast<RenderTextFragment>(textRenderer).blockForAccompanyingFirstLetter();
         if (!block)
             continue;
-        // FIXME: All render tree mutations should be done by RenderTreeUpdater commit.
-        RenderTreeUpdater::FirstLetter::update(*block);
+        builder.updateAfterDescendants(*block);
     }
 
     return stillHasNodes;

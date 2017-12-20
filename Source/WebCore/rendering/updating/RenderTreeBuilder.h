@@ -40,20 +40,28 @@ public:
     void insertChild(RenderElement& parent, RenderPtr<RenderObject>, RenderObject* beforeChild = nullptr);
     void insertChild(RenderTreePosition&, RenderPtr<RenderObject>);
 
+    void updateAfterDescendants(RenderElement&);
+
     // This avoids having to convert all sites that need RenderTreeBuilder in one go.
     // FIXME: Remove.
     static RenderTreeBuilder* current() { return s_current; }
 
 private:
+    class FirstLetter;
     class Table;
 
     void rubyRunInsertChild(RenderRubyRun&, RenderPtr<RenderObject> child, RenderObject* beforeChild);
 
+    FirstLetter& firstLetterBuilder() { return *m_firstLetterBuilder; }
+    Table& tableBuilder() { return *m_tableBuilder; }
+
     RenderView& m_view;
 
     RenderTreeBuilder* m_previous { nullptr };
-    std::unique_ptr<Table> m_tableBuilder;
     static RenderTreeBuilder* s_current;
+
+    std::unique_ptr<FirstLetter> m_firstLetterBuilder;
+    std::unique_ptr<Table> m_tableBuilder;
 };
 
 }
