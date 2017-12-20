@@ -179,6 +179,7 @@ ExceptionOr<void> ApplePayPaymentHandler::show()
         return validatedRequest.releaseException();
 
     ApplePaySessionPaymentRequest request = validatedRequest.releaseReturnValue();
+    request.setRequester(ApplePaySessionPaymentRequest::Requester::PaymentRequest);
 
     String expectedCurrency = m_paymentRequest->paymentDetails().total.amount.currency;
     request.setCurrencyCode(expectedCurrency);

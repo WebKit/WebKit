@@ -29,6 +29,7 @@
 
 #import <PassKit/PassKit.h>
 #import <PassKit/PKPaymentAuthorizationViewController_Private.h>
+#import <PassKit/PKPaymentRequest_Private.h>
 
 #else
 
@@ -245,6 +246,18 @@ NS_ASSUME_NONNULL_BEGIN
 @optional
 - (void)paymentAuthorizationViewController:(PKPaymentAuthorizationViewController *)controller didRequestMerchantSession:(void(^)(PKPaymentMerchantSession *, NSError *))sessionBlock;
 @end
+
+#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MAX_ALLOWED >= 101304) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MAX_ALLOWED >= 110300)
+typedef NS_ENUM(NSUInteger, PKPaymentRequestAPIType) {
+    PKPaymentRequestAPITypeInApp = 0,
+    PKPaymentRequestAPITypeWebJS,
+    PKPaymentRequestAPITypeWebPaymentRequest,
+};
+
+@interface PKPaymentRequest ()
+@property (nonatomic, assign) PKPaymentRequestAPIType APIType;
+@end
+#endif
 
 NS_ASSUME_NONNULL_END
 

@@ -214,6 +214,7 @@ static ExceptionOr<ApplePaySessionPaymentRequest> convertAndValidate(unsigned ve
         return convertedRequest.releaseException();
 
     auto result = convertedRequest.releaseReturnValue();
+    result.setRequester(ApplePaySessionPaymentRequest::Requester::ApplePayJS);
     result.setCurrencyCode(paymentRequest.currencyCode);
 
     auto total = convertAndValidateTotal(WTFMove(paymentRequest.total));

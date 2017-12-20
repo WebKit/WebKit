@@ -1,3 +1,18 @@
+2017-12-20  Andy Estes  <aestes@apple.com>
+
+        [Apple Pay] Tell PassKit whether Apple Pay JS or Payment Request was used to start an Apple Pay session
+        https://bugs.webkit.org/show_bug.cgi?id=181001
+        <rdar://problem/35479106>
+
+        Reviewed by Tim Horton.
+
+        * Shared/Cocoa/WebCoreArgumentCodersCocoa.mm:
+        (IPC::ArgumentCoder<ApplePaySessionPaymentRequest>::encode):
+        (IPC::ArgumentCoder<ApplePaySessionPaymentRequest>::decode):
+        * UIProcess/ApplePay/cocoa/WebPaymentCoordinatorProxyCocoa.mm:
+        (WebKit::toAPIType):
+        (WebKit::toPKPaymentRequest):
+
 2017-12-20  Ms2ger  <Ms2ger@igalia.com>
 
         REGRESSION(r226160) Build broken when MEDIA_STREAM is disabled with MediaStreamRequest namespace confusion

@@ -291,6 +291,7 @@ void ArgumentCoder<ApplePaySessionPaymentRequest>::encode(Encoder& encoder, cons
     encoder << request.total();
     encoder << request.applicationData();
     encoder << request.supportedCountries();
+    encoder.encodeEnum(request.requester());
 }
 
 bool ArgumentCoder<ApplePaySessionPaymentRequest>::decode(Decoder& decoder, ApplePaySessionPaymentRequest& request)
@@ -365,6 +366,11 @@ bool ArgumentCoder<ApplePaySessionPaymentRequest>::decode(Decoder& decoder, Appl
     if (!decoder.decode(supportedCountries))
         return false;
     request.setSupportedCountries(WTFMove(supportedCountries));
+
+    ApplePaySessionPaymentRequest::Requester requester;
+    if (!decoder.decodeEnum(requester))
+        return false;
+    request.setRequester(requester);
 
     return true;
 }

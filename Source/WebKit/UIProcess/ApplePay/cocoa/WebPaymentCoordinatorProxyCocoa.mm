@@ -479,6 +479,19 @@ static RetainPtr<NSSet> toNSSet(const Vector<String>& strings)
 }
 #endif
 
+#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300 && __MAC_OS_X_VERSION_MAX_ALLOWED >= 101304) \
+    || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000 && __IPHONE_OS_VERSION_MAX_ALLOWED >= 110300)
+static PKPaymentRequestAPIType toAPIType(WebCore::ApplePaySessionPaymentRequest::Requester requester)
+{
+    switch (requester) {
+    case WebCore::ApplePaySessionPaymentRequest::Requester::ApplePayJS:
+        return PKPaymentRequestAPITypeWebJS;
+    case WebCore::ApplePaySessionPaymentRequest::Requester::PaymentRequest:
+        return PKPaymentRequestAPITypeWebPaymentRequest;
+    }
+}
+#endif
+
 RetainPtr<PKPaymentRequest> toPKPaymentRequest(WebPageProxy& webPageProxy, const WebCore::URL& originatingURL, const Vector<WebCore::URL>& linkIconURLs, const WebCore::ApplePaySessionPaymentRequest& paymentRequest)
 {
     auto result = adoptNS([allocPKPaymentRequestInstance() init]);
@@ -493,6 +506,11 @@ RetainPtr<PKPaymentRequest> toPKPaymentRequest(WebPageProxy& webPageProxy, const
         [result setThumbnailURLs:thumbnailURLs.get()];
     } else if (!linkIconURLs.isEmpty())
         [result setThumbnailURL:linkIconURLs[0]];
+
+#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300 && __MAC_OS_X_VERSION_MAX_ALLOWED >= 101304) \
+    || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000 && __IPHONE_OS_VERSION_MAX_ALLOWED >= 110300)
+    [result setAPIType:toAPIType(paymentRequest.requester())];
+#endif
 
     [result setCountryCode:paymentRequest.countryCode()];
     [result setCurrencyCode:paymentRequest.currencyCode()];
