@@ -46,7 +46,7 @@ namespace WebCore {
 class MediaStream;
 class SecurityOrigin;
 
-class UserMediaRequest : public RefCounted<UserMediaRequest>, private ContextDestructionObserver {
+class UserMediaRequest : public RefCounted<UserMediaRequest>, public ActiveDOMObject {
 public:
     static RefPtr<UserMediaRequest> create(Document&, MediaStreamRequest&&, DOMPromiseDeferred<IDLInterface<MediaStream>>&&);
     virtual ~UserMediaRequest();
@@ -74,24 +74,27 @@ public:
 private:
     UserMediaRequest(Document&, MediaStreamRequest&&, DOMPromiseDeferred<IDLInterface<MediaStream>>&&);
 
-    void contextDestroyed() final;
+    void stop() final;
+    const char* activeDOMObjectName() const final;
+    bool canSuspendForDocumentSuspension() const final;
 
     void mediaStreamIsReady(Ref<MediaStream>&&);
 
     class PendingActivationMediaStream : public RefCounted<PendingActivationMediaStream>, private MediaStreamPrivate::Observer {
     public:
-        static Ref<PendingActivationMediaStream> create(Ref<UserMediaRequest>&& request, Ref<MediaStream>&& stream)
+        static Ref<PendingActivationMediaStream> create(Ref<PendingActivity<UserMediaRequest>>&& protectingUserMediaRequest, UserMediaRequest& userMediaRequest, Ref<MediaStream>&& stream)
         {
-            return adoptRef(*new PendingActivationMediaStream { WTFMove(request), WTFMove(stream) });
+            return adoptRef(*new PendingActivationMediaStream { WTFMove(protectingUserMediaRequest), userMediaRequest, WTFMove(stream) });
         }
         ~PendingActivationMediaStream();
 
     private:
-        PendingActivationMediaStream(Ref<UserMediaRequest>&&, Ref<MediaStream>&&);
+        PendingActivationMediaStream(Ref<PendingActivity<UserMediaRequest>>&&, UserMediaRequest&, Ref<MediaStream>&&);
 
         void characteristicsChanged() final;
 
-        Ref<UserMediaRequest> m_userMediaRequest;
+        Ref<PendingActivity<UserMediaRequest>> m_protectingUserMediaRequest;
+        UserMediaRequest& m_userMediaRequest;
         Ref<MediaStream> m_mediaStream;
     };
 

@@ -60,10 +60,11 @@ RefPtr<UserMediaRequest> UserMediaRequest::create(Document& document, MediaStrea
 }
 
 UserMediaRequest::UserMediaRequest(Document& document, MediaStreamRequest&& request, DOMPromiseDeferred<IDLInterface<MediaStream>>&& promise)
-    : ContextDestructionObserver(&document)
+    : ActiveDOMObject(&document)
     , m_promise(WTFMove(promise))
     , m_request(WTFMove(request))
 {
+    suspendIfNeeded();
 }
 
 UserMediaRequest::~UserMediaRequest() = default;
@@ -203,7 +204,7 @@ void UserMediaRequest::allow(CaptureDevice&& audioDevice, CaptureDevice&& videoD
 {
     RELEASE_LOG(MediaStream, "UserMediaRequest::allow %s %s", audioDevice ? audioDevice.persistentId().utf8().data() : "", videoDevice ? videoDevice.persistentId().utf8().data() : "");
 
-    auto callback = [this, protectedThis = makeRef(*this)](RefPtr<MediaStreamPrivate>&& privateStream) mutable {
+    auto callback = [this, protector = makePendingActivity(*this)](RefPtr<MediaStreamPrivate>&& privateStream) mutable {
         if (!m_scriptExecutionContext)
             return;
 
@@ -219,7 +220,7 @@ void UserMediaRequest::allow(CaptureDevice&& audioDevice, CaptureDevice&& videoD
             return;
         }
 
-        m_pendingActivationMediaStream = PendingActivationMediaStream::create(WTFMove(protectedThis), WTFMove(stream));
+        m_pendingActivationMediaStream = PendingActivationMediaStream::create(WTFMove(protector), *this, WTFMove(stream));
     };
 
     m_request.audioConstraints.deviceIDHashSalt = deviceIdentifierHashSalt;
@@ -274,11 +275,8 @@ void UserMediaRequest::deny(MediaAccessDenialReason reason, const String& invali
     }
 }
 
-void UserMediaRequest::contextDestroyed()
+void UserMediaRequest::stop()
 {
-    if (!m_scriptExecutionContext)
-        return;
-
     auto& document = downcast<Document>(*m_scriptExecutionContext);
     auto* controller = UserMediaController::from(document.page());
 
@@ -290,13 +288,24 @@ void UserMediaRequest::contextDestroyed()
     controller->cancelUserMediaAccessRequest(*this);
 }
 
+const char* UserMediaRequest::activeDOMObjectName() const
+{
+    return "UserMediaRequest";
+}
+
+bool UserMediaRequest::canSuspendForDocumentSuspension() const
+{
+    return !hasPendingActivity();
+}
+
 Document* UserMediaRequest::document() const
 {
     return downcast<Document>(m_scriptExecutionContext);
 }
 
-UserMediaRequest::PendingActivationMediaStream::PendingActivationMediaStream(Ref<UserMediaRequest>&& request, Ref<MediaStream>&& stream)
-    : m_userMediaRequest(WTFMove(request))
+UserMediaRequest::PendingActivationMediaStream::PendingActivationMediaStream(Ref<PendingActivity<UserMediaRequest>>&& protectingUserMediaRequest, UserMediaRequest& userMediaRequest, Ref<MediaStream>&& stream)
+    : m_protectingUserMediaRequest(WTFMove(protectingUserMediaRequest))
+    , m_userMediaRequest(userMediaRequest)
     , m_mediaStream(WTFMove(stream))
 {
     m_mediaStream->privateStream().addObserver(*this);
@@ -311,7 +320,7 @@ UserMediaRequest::PendingActivationMediaStream::~PendingActivationMediaStream()
 void UserMediaRequest::PendingActivationMediaStream::characteristicsChanged()
 {
     if (m_mediaStream->privateStream().hasVideo() || m_mediaStream->privateStream().hasAudio())
-        m_userMediaRequest->mediaStreamIsReady(m_mediaStream.copyRef());
+        m_userMediaRequest.mediaStreamIsReady(m_mediaStream.copyRef());
 }
 
 void UserMediaRequest::mediaStreamIsReady(Ref<MediaStream>&& stream)
