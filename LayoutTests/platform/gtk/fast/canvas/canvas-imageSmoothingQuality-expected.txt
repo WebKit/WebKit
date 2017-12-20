@@ -35,6 +35,7 @@ PASS highContext.restore(); highContext.imageSmoothingQuality is 'high'
 PASS scaleImageData(highCanvas, highCanvas.imageSmoothingQuality); is highData
 
 PASS successfullyParsed is true
+Some tests failed.
 
 TEST COMPLETE
  

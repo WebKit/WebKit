@@ -3080,8 +3080,6 @@ webkit.org/b/163971 fast/borders/border-image-space.html [ ImageOnlyFailure ]
 
 webkit.org/b/163972 fast/canvas/canvas-gradient-addStop-error.html [ Failure ]
 
-webkit.org/b/163973 fast/canvas/canvas-imageSmoothingQuality.html [ Failure ]
-
 webkit.org/b/163974 fast/canvas/drawImage-with-negative-source-destination.html [ Failure ]
 
 webkit.org/b/163976 fast/css/user-drag-none.html [ Failure ]

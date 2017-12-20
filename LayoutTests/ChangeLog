@@ -1,3 +1,15 @@
+2017-12-20  Ms2ger  <Ms2ger@igalia.com>
+
+        [GTK] Rebaseline fast/canvas/canvas-imageSmoothingQuality.html
+        https://bugs.webkit.org/show_bug.cgi?id=163973
+
+        Unreviewed test gardening.
+
+        * platform/gtk/TestExpectations: Remove failure annotation.
+        * platform/gtk/fast/canvas/canvas-imageSmoothingQuality-expected.txt:
+          Rebaseline: r202609 added additional output when one of the assertions
+          fails, which happens in this test.
+
 2017-12-20  Matt Lewis  <jlewis3@apple.com>
 
         Marked two imported/w3c/web-platform-tests/service-workers/service-worker/ test as slow.
