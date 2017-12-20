@@ -1,3 +1,16 @@
+2017-12-20  Ms2ger  <Ms2ger@igalia.com>
+
+        Make fast/css-generated-content/quotes-lang.html pass on GTK
+        https://bugs.webkit.org/show_bug.cgi?id=93976
+
+        Unreviewed test gardening.
+
+        Adding a span to the reference file avoids a one-pixel difference in the
+        font rendering between test and reference on GTK.
+
+        * fast/css-generated-content/quotes-lang-expected.html:
+        * platform/gtk/TestExpectations:
+
 2017-12-19  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Refactor user-installed font setting for clarity
