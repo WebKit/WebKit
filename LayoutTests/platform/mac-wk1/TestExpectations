@@ -479,3 +479,6 @@ webkit.org/b/179500 accessibility/mac/AOM-relation-property.html [ Skip ]
 
 # User-installed fonts test infrastructure is not present in WK1
 webkit.org/b/180062 fast/text/user-installed-fonts [ ImageOnlyFailure ]
+
+webkit.org/b/181008 http/tests/images/image-supports-video.html [ Pass Failure ]
+
