@@ -1202,8 +1202,6 @@ webkit.org/b/179989 fast/css3-text/css3-text-align-last/getComputedStyle/getComp
 #////////////////////////////////////////////////////////////////////////////////////////
 
 webkit.org/b/178781 http/tests/inspector/network/har/har-page.html [ Failure ]
-webkit.org/b/181029 imported/w3c/web-platform-tests/fetch/api/basic/request-headers.any.html [ Failure ]
-webkit.org/b/181029 imported/w3c/web-platform-tests/fetch/api/basic/request-headers.any.worker.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # 3. TESTS CRASHING

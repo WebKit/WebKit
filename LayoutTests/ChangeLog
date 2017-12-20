@@ -1,3 +1,14 @@
+2017-12-20  Alicia Boya García  <aboya@igalia.com>
+
+        [GTK] imported/w3c/web-platform-tests/fetch/api/basic/request-headers.any.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=181029
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk/imported/w3c/web-platform-tests/fetch/api/basic/request-headers.any-expected.txt:
+        * platform/gtk/imported/w3c/web-platform-tests/fetch/api/basic/request-headers.any.worker-expected.txt:
+
 2017-12-20  Youenn Fablet  <youenn@apple.com>
 
         LayoutTest imported/w3c/web-platform-tests/service-workers/cache-storage/serviceworker/cache-match.https.html is a flaky failure
