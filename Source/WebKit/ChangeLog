@@ -1,3 +1,14 @@
+2017-12-20  Ms2ger  <Ms2ger@igalia.com>
+
+        REGRESSION(r226160) Build broken when MEDIA_STREAM is disabled with MediaStreamRequest namespace confusion
+        https://bugs.webkit.org/show_bug.cgi?id=181026
+
+        Unreviewed build fix.
+
+        * UIProcess/UserMediaPermissionRequestManagerProxy.cpp:
+        (WebKit::UserMediaPermissionRequestManagerProxy::requestUserMediaPermissionForFrame):
+          Remove UNUSED_PARAM macros that check for (undefined) members rather than params.
+
 2017-12-19  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Refactor user-installed font setting for clarity

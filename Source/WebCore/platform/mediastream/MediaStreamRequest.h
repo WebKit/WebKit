@@ -25,10 +25,11 @@
 
 #pragma once
 
+#include <wtf/EnumTraits.h>
+
 #if ENABLE(MEDIA_STREAM)
 
 #include "MediaConstraints.h"
-#include <wtf/EnumTraits.h>
 
 namespace WebCore {
 
@@ -60,10 +61,14 @@ struct MediaStreamRequest {
 
 #else
 
+namespace WebCore {
+
 struct MediaStreamRequest {
     enum class Type { UserMedia };
     Type type;
 };
+
+} // namespace WebCore
 
 #endif // ENABLE(MEDIA_STREAM)
 

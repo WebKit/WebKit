@@ -331,8 +331,6 @@ void UserMediaPermissionRequestManagerProxy::requestUserMediaPermissionForFrame(
     UNUSED_PARAM(frameID);
     UNUSED_PARAM(userMediaDocumentOrigin);
     UNUSED_PARAM(topLevelDocumentOrigin);
-    UNUSED_PARAM(audioConstraints);
-    UNUSED_PARAM(videoConstraints);
     UNUSED_PARAM(userRequest);
 #endif
 }
