@@ -1,3 +1,71 @@
+2017-12-19  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Network Table - Redesign the waterfall popover showing timing data
+        https://bugs.webkit.org/show_bug.cgi?id=180996
+        <rdar://problem/34072542>
+
+        Reviewed by Matt Baker.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Main.html:
+        New strings and files.
+
+        * UserInterface/Views/NetworkTableContentView.js:
+        (WI.NetworkTableContentView.prototype._waterfallPopoverContentForResource):
+        (WI.NetworkTableContentView.prototype._handleMousedownWaterfall):
+        Use the ResourceTimingBreakdownView with a fixed width size.
+
+        * UserInterface/Views/ResourceTimingContentView.css: Removed.
+        * UserInterface/Views/ResourceTimingContentView.js:
+        (WI.ResourceTimingContentView.prototype.initialLayout):
+        (WI.ResourceTimingContentView.prototype._refreshTimingSection):
+        (WI.ResourceTimingContentView.prototype._refreshTimingSection.createBlock): Deleted.
+        (WI.ResourceTimingContentView.prototype._refreshTimingSection.createTimeLabel): Deleted.
+        (WI.ResourceTimingContentView.prototype._refreshTimingSection.createRow): Deleted.
+        Use the ResourceTimingBreakdownView with a flexible size.
+        Also changed the loading indicator and empty message to match
+        normal ContentView loading indicator and message only UI.
+
+        * UserInterface/Views/ResourceTimingBreakdownView.css:
+        (.waterfall-popover .resource-timing-breakdown):
+        (.resource-timing-breakdown > table > tr > td.label):
+        (.resource-timing-breakdown > table > tr > td.graph):
+        (.resource-timing-breakdown > table > tr > td.time):
+        (.resource-timing-breakdown > table > tr.empty):
+        (.resource-timing-breakdown > table > tr.header:not(.total-row) > td):
+        (.resource-timing-breakdown > table hr):
+        (.resource-timing-breakdown .waterfall .block):
+        (.resource-timing-breakdown): Deleted.
+        (.resource-timing-breakdown > .waterfall): Deleted.
+        (.resource-timing-breakdown > .waterfall .block): Deleted.
+        (.resource-timing-breakdown ul): Deleted.
+        (.resource-timing-breakdown ul > li): Deleted.
+        (.resource-timing-breakdown ul > li > .row-label): Deleted.
+        (body[dir=ltr] .resource-timing-breakdown ul > li > .row-label): Deleted.
+        (body[dir=rtl] .resource-timing-breakdown ul > li > .row-label): Deleted.
+        (.resource-timing-breakdown ul > li > .section-label): Deleted.
+        (.resource-timing-breakdown ul > li > .time-label): Deleted.
+        (.resource-timing-breakdown .time-section): Deleted.
+        (.resource-timing-breakdown ul > li > .time-section > .label): Deleted.
+        (.resource-timing-breakdown ul > li.total .block): Deleted.
+        (.resource-timing-breakdown ul > li.total .time-label): Deleted.
+        * UserInterface/Views/ResourceTimingBreakdownView.js:
+        (WI.ResourceTimingBreakdownView):
+        (WI.ResourceTimingBreakdownView.prototype._appendEmptyRow):
+        (WI.ResourceTimingBreakdownView.prototype._appendHeaderRow):
+        (WI.ResourceTimingBreakdownView.prototype._appendRow):
+        (WI.ResourceTimingBreakdownView.prototype.initialLayout):
+        (WI.ResourceTimingBreakdownView.prototype.initialLayout.createBlock): Deleted.
+        (WI.ResourceTimingBreakdownView.prototype.initialLayout.createSectionLabel): Deleted.
+        (WI.ResourceTimingBreakdownView.prototype.initialLayout.createTimeLabel): Deleted.
+        (WI.ResourceTimingBreakdownView.prototype.initialLayout.createTimeSection): Deleted.
+        (WI.ResourceTimingBreakdownView.prototype.initialLayout.createRow): Deleted.
+        (WI.ResourceTimingBreakdownView.prototype.initialLayout.emptyRow): Deleted.
+        (WI.ResourceTimingBreakdownView.prototype.initialLayout.appendGraphRow): Deleted.
+        (WI.ResourceTimingBreakdownView.prototype.initialLayout.appendEmptyRow): Deleted.
+        (WI.ResourceTimingBreakdownView.prototype.initialLayout.getCurrentSectionMetrics): Deleted.
+        Redesign the breakdown view.
+
 2017-12-19  Brian Burg  <bburg@apple.com>
 
         Web Inspector: InspectorTest.expectException does not handle implicitly resolved async functions correctly

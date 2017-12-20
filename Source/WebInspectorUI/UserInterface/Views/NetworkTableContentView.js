@@ -1411,7 +1411,7 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
             return contentElement;
         }
 
-        let breakdownView = new WI.ResourceTimingBreakdownView(resource);
+        let breakdownView = new WI.ResourceTimingBreakdownView(resource, 300);
         contentElement.appendChild(breakdownView.element);
         breakdownView.updateLayout();
 
@@ -1446,6 +1446,8 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
         };
 
         let targetFrame = calculateTargetFrame();
+        if (!targetFrame)
+            return;
         if (!targetFrame.size.width && !targetFrame.size.height)
             return;
 

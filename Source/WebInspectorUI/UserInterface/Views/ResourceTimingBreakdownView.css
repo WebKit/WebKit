@@ -23,97 +23,46 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-.resource-timing-breakdown {
-    width: 300px;
-    padding: 10px 0;
-    text-align: center;
+.waterfall-popover .resource-timing-breakdown {
+    margin: 5px;
 }
 
-.resource-timing-breakdown .waterfall {
+.resource-timing-breakdown > table > tr > td.label {
+    min-width: 80px;
+    color: gray;
+}
+
+.resource-timing-breakdown > table > tr > td.graph {
     position: relative;
-    height: 40px;
+    width: 100%;
+}
+
+.resource-timing-breakdown > table > tr > td.time {
+    -webkit-padding-start: 5px;
+    text-align: end;
+    color: gray;
+}
+
+.resource-timing-breakdown > table > tr.empty {
+    height: 8px;
+}
+
+.resource-timing-breakdown > table > tr.header:not(.total-row) > td {
+    color: black;
+}
+
+.resource-timing-breakdown > table hr {
+    position: relative;
+    top: 2px;
+    min-width: 40px;
+    border-top: none;
+    border-left: none;
+    border-right: none;
+    border-color: gray;
+    border-bottom-width: 1px;
 }
 
 .resource-timing-breakdown .waterfall .block {
-    top: 12px;
-    min-width: 3px;
-    height: 12px;
-}
-
-.resource-timing-breakdown .waterfall .block.request,
-.resource-timing-breakdown .waterfall .block.response {
-    top: 4px;
-    height: 28px;
-}
-
-body[dir=ltr] .resource-timing-breakdown .waterfall .block:matches(.queue, .request) {
-    border-top-left-radius: 2px;
-    border-bottom-left-radius: 2px;
-}
-
-body[dir=ltr] .resource-timing-breakdown .waterfall .block.response {
-    border-top-right-radius: 2px;
-    border-bottom-right-radius: 2px;
-}
-
-body[dir=rtl] .resource-timing-breakdown .waterfall .block:matches(.queue, .request) {
-    border-top-right-radius: 2px;
-    border-bottom-right-radius: 2px;
-}
-
-body[dir=rtl] .resource-timing-breakdown .waterfall .block.response {
-    border-top-left-radius: 2px;
-    border-bottom-left-radius: 2px;
-}
-
-.resource-timing-breakdown .numbers {
-    display: inline-block;
-    -webkit-margin-start: 20px;
-    text-align: start;
-}
-
-.resource-timing-breakdown .numbers > p {
-    margin: 5px 0;
-}
-
-.resource-timing-breakdown .numbers > p > .swatch {
-    display: inline-block;
-    width: 10px;
-    height: 10px;
-    -webkit-margin-start: 12px;
-    -webkit-margin-end: 3px;
-    border: 1px solid hsla(0, 0%, 25%, 0.4);
-    border-radius: 2px;
-}
-
-.resource-timing-breakdown .numbers .swatch.queue {
-    background-color: var(--network-queue-color);
-}
-
-.resource-timing-breakdown .numbers .swatch.dns {
-    background-color: var(--network-dns-color);
-}
-
-.resource-timing-breakdown .numbers .swatch.connect {
-    background-color: var(--network-connect-color);
-}
-
-.resource-timing-breakdown .numbers .swatch.secure {
-    background-color: var(--network-secure-color);
-}
-
-.resource-timing-breakdown .numbers .swatch.request {
-    background-color: var(--network-request-color);
-}
-
-.resource-timing-breakdown .numbers .swatch.response {
-    background-color: var(--network-response-color);
-}
-
-.resource-timing-breakdown .numbers > p > .label {
-    font-weight: bold;
-}
-
-.resource-timing-breakdown .numbers > p.total {
-    margin-top: 15px;
+    top: 1px;
+    height: 14px;
 }

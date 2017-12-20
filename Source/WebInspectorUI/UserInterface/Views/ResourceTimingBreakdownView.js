@@ -25,98 +25,113 @@
 
 WI.ResourceTimingBreakdownView = class ResourceTimingBreakdownView extends WI.View
 {
-    constructor(resource)
+    constructor(resource, fixedWidth)
     {
         super(null);
 
         console.assert(resource.timingData.startTime && resource.timingData.responseEnd, "Timing breakdown view requires a resource with timing data.");
+        console.assert(!fixedWidth || fixedWidth >= 100, "fixedWidth must be at least wide enough for strings.");
 
         this._resource = resource;
 
         this.element.classList.add("resource-timing-breakdown");
+
+        if (fixedWidth)
+            this.element.style.width = fixedWidth + "px";
     }
 
     // Protected
+
+    _appendEmptyRow()
+    {
+        let row = this._tableElement.appendChild(document.createElement("tr"));
+        row.className = "empty";
+        return row;
+    }
+
+    _appendHeaderRow(label, time, additionalClassName)
+    {
+        let row = this._tableElement.appendChild(document.createElement("tr"));
+        row.className = "header";
+        if (additionalClassName)
+            row.classList.add(additionalClassName);
+
+        let labelCell = row.appendChild(document.createElement("td"));
+        labelCell.className = "label";
+        labelCell.textContent = label;
+        labelCell.colSpan = 2;
+
+        let timeCell = row.appendChild(document.createElement("td"));
+        timeCell.className = "time";
+        if (time)
+            timeCell.textContent = time;
+        else if (time === undefined)
+            timeCell.appendChild(document.createElement("hr"));
+
+        return row;
+    }
+
+    _appendRow(label, type, startTime, endTime)
+    {
+        let row = this._tableElement.appendChild(document.createElement("tr"));
+
+        let labelCell = row.appendChild(document.createElement("td"));
+        labelCell.className = "label";
+        labelCell.textContent = label;
+
+        let duration = endTime - startTime;
+        let graphWidth = (duration / this._graphDuration) * 100;
+        let graphOffset = ((startTime - this._graphStartTime) / this._graphDuration) * 100;
+        let positionProperty = WI.resolvedLayoutDirection() === WI.LayoutDirection.RTL ? "right" : "left";
+        let graphCell = row.appendChild(document.createElement("td"));
+        graphCell.className = "graph";
+        let block = graphCell.appendChild(document.createElement("div"));
+        block.classList.add("block", type);
+        block.style.width = graphWidth + "%";
+        block.style[positionProperty] = graphOffset + "%";
+
+        let timeCell = row.appendChild(document.createElement("td"));
+        timeCell.className = "time";
+        timeCell.textContent = Number.secondsToMillisecondsString(duration);
+
+        return row;
+    }
 
     initialLayout()
     {
         super.initialLayout();
 
-        const graphWidth = 250;
-        const graphStartOffset = 25;
-
         let {startTime, domainLookupStart, domainLookupEnd, connectStart, connectEnd, secureConnectionStart, requestStart, responseStart, responseEnd} = this._resource.timingData;
-        let graphStartTime = startTime;
-        let graphEndTime = responseEnd;
-        let secondsPerPixel = (responseEnd - startTime) / graphWidth;
 
-        let waterfallElement = this.element.appendChild(document.createElement("div"));
-        waterfallElement.className = "waterfall";
+        this._tableElement = this.element.appendChild(document.createElement("table"));
+        this._tableElement.className = "waterfall";
 
-        function appendBlock(startTime, endTime, className) {
-            let startOffset = graphStartOffset + ((startTime - graphStartTime) / secondsPerPixel);
-            let width = (endTime - startTime) / secondsPerPixel;
-            let block = waterfallElement.appendChild(document.createElement("div"));
-            block.classList.add("block", className);
-            let styleAttribute = WI.resolvedLayoutDirection() === WI.LayoutDirection.LTR ? "left" : "right";
-            block.style[styleAttribute] = startOffset + "px";
-            block.style.width = width + "px";
-        }
+        this._graphStartTime = startTime;
+        this._graphEndTime = responseEnd;
+        this._graphDuration = this._graphEndTime - this._graphStartTime;
 
-        if (domainLookupStart) {
-            appendBlock(startTime, domainLookupStart, "queue");
-            appendBlock(domainLookupStart, connectStart || requestStart, "dns");
-        } else if (connectStart)
-            appendBlock(startTime, connectStart, "queue");
-        else if (requestStart)
-            appendBlock(startTime, requestStart, "queue");
-        if (connectStart)
-            appendBlock(connectStart, connectEnd, "connect");
-        if (secureConnectionStart)
-            appendBlock(secureConnectionStart, connectEnd, "secure");
-        appendBlock(requestStart, responseStart, "request");
-        appendBlock(responseStart, responseEnd, "response");
+        this._appendHeaderRow(WI.UIString("Scheduling:"));
+        this._appendRow(WI.UIString("Queued"), "queue", startTime, domainLookupStart || connectStart || requestStart);
 
-        let numbersSection = this.element.appendChild(document.createElement("div"));
-        numbersSection.className = "numbers";
-
-        function appendRow(label, duration, paragraphClass, swatchClass) {
-            let p = numbersSection.appendChild(document.createElement("p"));
-            if (paragraphClass)
-                p.className = paragraphClass;
-
-            if (swatchClass) {
-                let swatch = p.appendChild(document.createElement("span"));
-                swatch.classList.add("swatch", swatchClass);
-            }
-
-            let labelElement = p.appendChild(document.createElement("span"));
-            labelElement.className = "label";
-            labelElement.textContent = label;
-
-            p.append(": ");
-
-            let durationElement = p.appendChild(document.createElement("span"));
-            durationElement.className = "duration";
-            durationElement.textContent = Number.secondsToMillisecondsString(duration);
-        }
-
-        let scheduledDuration = (domainLookupStart || connectStart || requestStart) - startTime;
-        let connectionDuration = (connectEnd || requestStart) - (domainLookupStart || connectStart || connectEnd || requestStart);
-        let requestResponseDuration = responseEnd - requestStart;
-
-        appendRow(WI.UIString("Scheduled"), scheduledDuration);
-        if (connectionDuration) {
-            appendRow(WI.UIString("Connection"), connectionDuration);
+        if (domainLookupStart || connectStart) {
+            this._appendEmptyRow();
+            this._appendHeaderRow(WI.UIString("Connection:"));
             if (domainLookupStart)
-                appendRow(WI.UIString("DNS"), (domainLookupEnd || connectStart) - domainLookupStart, "sub", "dns");
-            appendRow(WI.UIString("TCP"), connectEnd - connectStart, "sub", "connect");
+                this._appendRow(WI.UIString("DNS"), "dns", domainLookupStart, domainLookupEnd || connectStart || requestStart);
+            if (connectStart)
+                this._appendRow(WI.UIString("TCP"), "connect", connectStart, connectEnd || requestStart);
             if (secureConnectionStart)
-                appendRow(WI.UIString("Secure"), connectEnd - secureConnectionStart, "sub", "secure");
+                this._appendRow(WI.UIString("Secure"), "secure", secureConnectionStart, connectEnd || requestStart);
         }
-        appendRow(WI.UIString("Request & Response"), responseEnd - requestStart);
-        appendRow(WI.UIString("Waiting"), responseStart - requestStart, "sub", "request");
-        appendRow(WI.UIString("Response"), responseEnd - responseStart, "sub", "response");
-        appendRow(WI.UIString("Total"), responseEnd - startTime, "total");
+
+        this._appendEmptyRow();
+        this._appendHeaderRow(WI.UIString("Response:"));
+        this._appendRow(WI.UIString("Waiting"), "request", requestStart, responseStart);
+        this._appendRow(WI.UIString("Download"), "response", responseStart, responseEnd);
+
+        this._appendEmptyRow();
+        this._appendHeaderRow(WI.UIString("Totals:"));
+        this._appendHeaderRow(WI.UIString("Time to First Byte"), Number.secondsToMillisecondsString(responseStart - startTime), "total-row");
+        this._appendHeaderRow(WI.UIString("Start to Finish"), Number.secondsToMillisecondsString(responseEnd - startTime), "total-row");
     }
 };
