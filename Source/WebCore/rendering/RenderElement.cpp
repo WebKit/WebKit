@@ -511,6 +511,11 @@ void RenderElement::addChild(RenderTreeBuilder& builder, RenderPtr<RenderObject>
     SVGRenderSupport::childAdded(*this, child);
 }
 
+void RenderElement::addChildIgnoringContinuation(RenderTreeBuilder& builder, RenderPtr<RenderObject> newChild, RenderObject* beforeChild)
+{
+    builder.insertChild(*this, WTFMove(newChild), beforeChild);
+}
+
 RenderPtr<RenderObject> RenderElement::takeChild(RenderObject& oldChild)
 {
     return takeChildInternal(oldChild);

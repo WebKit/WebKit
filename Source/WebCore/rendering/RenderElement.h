@@ -88,7 +88,7 @@ public:
 
     virtual bool isChildAllowed(const RenderObject&, const RenderStyle&) const { return true; }
     virtual void addChild(RenderTreeBuilder&, RenderPtr<RenderObject>, RenderObject* beforeChild);
-    virtual void addChildIgnoringContinuation(RenderTreeBuilder& builder, RenderPtr<RenderObject> newChild, RenderObject* beforeChild = nullptr) { addChild(builder, WTFMove(newChild), beforeChild); }
+    virtual void addChildIgnoringContinuation(RenderTreeBuilder&, RenderPtr<RenderObject> newChild, RenderObject* beforeChild = nullptr);
     virtual RenderPtr<RenderObject> takeChild(RenderObject&) WARN_UNUSED_RETURN;
     void removeAndDestroyChild(RenderObject&);
 
