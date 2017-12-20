@@ -107,7 +107,7 @@ static const char* imageTypeToFakeFilename(ImageType type)
         return nullptr;
     case ImageType::TIFF:
 #if PLATFORM(MAC)
-        return "image/png"; // For Web compatibility, we pretend to have PNG instead.
+        return "image.png"; // For Web compatibility, we pretend to have PNG instead.
 #else
         ASSERT_NOT_REACHED();
         return nullptr;

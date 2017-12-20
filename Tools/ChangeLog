@@ -1,3 +1,14 @@
+2017-12-20  Ryosuke Niwa  <rniwa@webkit.org>
+
+        REGRESSION(r222699): Drag & drop from a web page to Gmail fails
+        https://bugs.webkit.org/show_bug.cgi?id=181019
+
+        Reviewed by Wenson Hsieh.
+
+        Added assertions for filenames.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/PasteImage.mm:
+
 2017-12-19  Daniel Bates  <dabates@apple.com>
 
         MarkerSubrange.SubdivideGrammarAndSelectionOverlap{Frontmost, FrontmostWithLongestEffectiveRange} are failing
