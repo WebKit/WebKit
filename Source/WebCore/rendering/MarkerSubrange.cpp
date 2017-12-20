@@ -76,12 +76,12 @@ Vector<MarkerSubrange> subdivide(const Vector<MarkerSubrange>& subranges, Overla
                 if (frontmost) {
                     if (overlapStrategy == OverlapStrategy::FrontmostWithLongestEffectiveRange && !result.isEmpty()) {
                         auto& previous = result.last();
-                        if (previous.endOffset == offsetSoFar && previous.type == offsets[frontmost.value()].subrange->type && previous.marker == offsets[frontmost.value()].subrange->marker)
+                        if (previous.endOffset == offsetSoFar && previous.type == offsets[*frontmost].subrange->type && previous.marker == offsets[*frontmost].subrange->marker)
                             previous.endOffset = offsets[i].value;
                         else
-                            result.append({ offsetSoFar, offsets[i].value, offsets[frontmost.value()].subrange->type, offsets[frontmost.value()].subrange->marker });
+                            result.append({ offsetSoFar, offsets[i].value, offsets[*frontmost].subrange->type, offsets[*frontmost].subrange->marker });
                     } else
-                        result.append({ offsetSoFar, offsets[i].value, offsets[frontmost.value()].subrange->type, offsets[frontmost.value()].subrange->marker });
+                        result.append({ offsetSoFar, offsets[i].value, offsets[*frontmost].subrange->type, offsets[*frontmost].subrange->marker });
                 }
             } else {
                 // The appended subranges may not be in paint order. We will fix this up at the end of this function.
