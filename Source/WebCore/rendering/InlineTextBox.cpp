@@ -849,8 +849,8 @@ Vector<MarkerSubrange> InlineTextBox::collectSubrangesForDocumentMarkers(TextPai
         case DocumentMarker::TextMatch:
             if (!renderer().frame().editor().markedTextMatchesAreHighlighted())
                 continue;
-            FALLTHROUGH;
 #if ENABLE(TELEPHONE_NUMBER_DETECTION)
+            FALLTHROUGH;
         case DocumentMarker::TelephoneNumber:
 #endif
             if (phase == TextPaintPhase::Foreground)
