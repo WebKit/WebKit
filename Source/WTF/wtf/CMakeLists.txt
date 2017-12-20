@@ -415,10 +415,10 @@ if (MSVC)
         VERBATIM)
 endif ()
 
-file(MAKE_DIRECTORY ${FORWARDING_HEADERS_DIR}/WTF/Scripts)
+file(MAKE_DIRECTORY ${FORWARDING_HEADERS_DIR}/wtf/Scripts)
 
 file(COPY
     ../Scripts/generate-unified-source-bundles.rb
     DESTINATION
-    ${FORWARDING_HEADERS_DIR}/WTF/Scripts
+    ${FORWARDING_HEADERS_DIR}/wtf/Scripts
 )

@@ -13,7 +13,7 @@ macro(WEBKIT_COMPUTE_SOURCES _framework)
     if (WIN32 AND INTERNAL_BUILD)
         set(WTF_SCRIPTS_DIR "${CMAKE_BINARY_DIR}/../include/private/WTF/Scripts")
     else ()
-        set(WTF_SCRIPTS_DIR "${FORWARDING_HEADERS_DIR}/WTF/Scripts")
+        set(WTF_SCRIPTS_DIR "${FORWARDING_HEADERS_DIR}/wtf/Scripts")
     endif ()
 
     execute_process(COMMAND ${RUBY_EXECUTABLE} ${WTF_SCRIPTS_DIR}/generate-unified-source-bundles.rb

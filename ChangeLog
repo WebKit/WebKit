@@ -1,3 +1,16 @@
+2017-12-20  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [CMake][WTF] Lowercase ForwardingHeaders directory name of WTF
+        https://bugs.webkit.org/show_bug.cgi?id=181022
+
+        Reviewed by Konstantin Tokarev.
+
+        ForwardingHeaders of WTF are included as <wtf/FooBar.h>. But, the
+        directory name was uppercase DerivedSources/ForwardingHeaders/WTF.
+        This confuses Ninja dependency tracking. It should be lowercase.
+
+        * Source/cmake/WebKitMacros.cmake: Renamed ForwardingHeaders directory name WTF to wtf.
+
 2017-12-16  Basuke Suzuki  <Basuke.Suzuki@sony.com>
 
         [WinCairo] Move the destination of WinCairoRequirements.zip into WebKitLibraries and register it and related files as git ignore files.
