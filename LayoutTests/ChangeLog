@@ -1,3 +1,12 @@
+2017-12-20  Matt Lewis  <jlewis3@apple.com>
+
+        Marked svg/animations/smil-leak-element-instances-noBaseValRef.svg as flaky on macOS WK1.
+        https://bugs.webkit.org/show_bug.cgi?id=180997
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations:
+
 2017-12-20  Ms2ger  <Ms2ger@igalia.com>
 
         Remove some obsolete test expectations for GTK.
