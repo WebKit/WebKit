@@ -1,3 +1,19 @@
+2017-12-19  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: add TestPage.debug() to inspect evaluations being sent to Inspector page
+        https://bugs.webkit.org/show_bug.cgi?id=181005
+
+        Reviewed by Joseph Pecoraro.
+
+        When TestPage.debug() is called, dump out all code that is sent to be evaluated in
+        the inspector page. This is useful for debugging initialization and InspectorTest.awaitEvent.
+
+        * http/tests/inspector/resources/inspector-test.js:
+        (runTest):
+        (TestPage.debug):
+        (TestPage.evaluateInWebInspector):
+        (TestPage.dispatchEventToFrontend):
+
 2017-12-19  Youenn Fablet  <youenn@apple.com>
 
         Layout Test imported/w3c/web-platform-tests/service-workers/service-worker/getregistrations.https.html is flaky

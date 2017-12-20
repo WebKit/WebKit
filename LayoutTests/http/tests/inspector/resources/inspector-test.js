@@ -97,8 +97,8 @@ function runTest()
     let initializationCodeString = `(${runInitializationMethodsInFrontend.toString()})([${TestPage._initializers}]);`;
     let testFunctionCodeString = `(${runTestMethodInFrontend.toString()})(${testFunction.toString()});`;
 
-    testRunner.evaluateInWebInspector(initializationCodeString);
-    testRunner.evaluateInWebInspector(testFunctionCodeString);
+    TestPage.evaluateInWebInspector(initializationCodeString);
+    TestPage.evaluateInWebInspector(testFunctionCodeString);
 }
 
 function runTestHTTPS()
@@ -139,6 +139,20 @@ TestPage.debugLog = function(message)
     window.alert(message);
 }
 
+// Use this to dump evaluations that are sent from the TestPage to the InspectorTest page.
+TestPage.debug = function()
+{
+    this.dumpInspectorPageEvaluations = true;
+}
+
+TestPage.evaluateInWebInspector = function(code)
+{
+    if (this.dumpInspectorPageEvaluations)
+        this.debugLog(code);
+
+    testRunner.evaluateInWebInspector(code);
+}
+
 // Add and clear test output from the results window.
 TestPage.addResult = function(text)
 {
@@ -162,7 +176,7 @@ TestPage.log = TestPage.addResult;
 TestPage.dispatchEventToFrontend = function(eventName, data)
 {
     let dispatchEventCodeString = `InspectorTest.dispatchEventToListeners(${JSON.stringify(eventName)}, ${JSON.stringify(data)});`;
-    testRunner.evaluateInWebInspector(dispatchEventCodeString);
+    this.evaluateInWebInspector(dispatchEventCodeString);
 };
 
 TestPage.allowUncaughtExceptions = false;
