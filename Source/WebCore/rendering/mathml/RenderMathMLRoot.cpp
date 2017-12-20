@@ -201,10 +201,9 @@ void RenderMathMLRoot::layoutBlock(bool relayoutChildren, LayoutUnit)
     LayoutUnit baseAscent, baseDescent;
     recomputeLogicalWidth();
     if (rootType() == RootType::SquareRoot) {
-        baseAscent = baseDescent;
-        RenderMathMLRow::computeLineVerticalStretch(baseAscent, baseDescent);
-        RenderMathMLRow::layoutRowItems(baseAscent, baseDescent);
-        m_baseWidth = logicalWidth();
+        stretchVerticalOperatorsAndLayoutChildren();
+        getContentBoundingBox(m_baseWidth, baseAscent, baseDescent);
+        layoutRowItems(m_baseWidth, baseAscent);
     } else {
         getBase().layoutIfNeeded();
         m_baseWidth = getBase().logicalWidth();

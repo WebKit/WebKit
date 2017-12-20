@@ -1,3 +1,16 @@
+2017-12-20  Frederic Wang  <fwang@igalia.com>
+
+        Split layout of RenderMathMLRow into smaller steps
+        https://bugs.webkit.org/show_bug.cgi?id=180348
+
+        Reviewed by Manuel Rego Casasnovas.
+
+        New test to verify that out-of-flow positioned children are not taken into account in the
+        calculation of the preferred width of the mrow element.
+
+        * mathml/mrow-preferred-width-with-out-of-flow-child-expected.html: Added.
+        * mathml/mrow-preferred-width-with-out-of-flow-child.html: Added.
+
 2017-12-20  Ms2ger  <Ms2ger@igalia.com>
 
         Make fast/css-generated-content/quotes-lang.html pass on GTK

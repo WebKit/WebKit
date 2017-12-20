@@ -173,11 +173,10 @@ void RenderMathMLMenclose::layoutBlock(bool relayoutChildren, LayoutUnit)
     if (!relayoutChildren && simplifiedLayout())
         return;
 
-    LayoutUnit contentAscent = 0;
-    LayoutUnit contentDescent = 0;
-    RenderMathMLRow::computeLineVerticalStretch(contentAscent, contentDescent);
-    RenderMathMLRow::layoutRowItems(contentAscent, contentDescent);
-    LayoutUnit contentWidth = logicalWidth();
+    LayoutUnit contentWidth, contentAscent, contentDescent;
+    stretchVerticalOperatorsAndLayoutChildren();
+    getContentBoundingBox(contentWidth, contentAscent, contentDescent);
+    layoutRowItems(contentWidth, contentAscent);
 
     SpaceAroundContent space = spaceAroundContent(contentWidth, contentAscent + contentDescent);
     setLogicalWidth(space.left + contentWidth + space.right);

@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>mrow preferred width with out-of-flow child</title>
+  </head>
+  <body>
+
+    <p>This test passes if the absolute positioned child is not taken in account in the preferred width computation. You'll see a blue rectangle of about 100px width.</p>
+
+    <table>
+      <tr>
+        <td style="background: blue">
+          <math>
+            <mspace style="position: absolute;" width="100px"></mspace>
+            <mspace width="100px"></mspace>
+          </math>
+        </td>
+      </tr>
+    </table>
+
+  </body>
+</html>
