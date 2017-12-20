@@ -32,6 +32,7 @@
 #include "FrameLoader.h"
 #include "MainFrame.h"
 #include <pal/SessionID.h>
+#include <wtf/MainThread.h>
 #include <wtf/RunLoop.h>
 
 namespace WebCore {
@@ -80,7 +81,7 @@ bool ServiceWorkerThreadProxy::postTaskForModeToWorkerGlobalScope(ScriptExecutio
 
 void ServiceWorkerThreadProxy::postTaskToLoader(ScriptExecutionContext::Task&& task)
 {
-    RunLoop::main().dispatch([task = WTFMove(task), this, protectedThis = makeRef(*this)] () mutable {
+    callOnMainThread([task = WTFMove(task), this, protectedThis = makeRef(*this)] () mutable {
         task.performTask(m_document.get());
     });
 }

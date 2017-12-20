@@ -1,3 +1,13 @@
+2017-12-20  Youenn Fablet  <youenn@apple.com>
+
+        LayoutTest imported/w3c/web-platform-tests/service-workers/cache-storage/serviceworker/cache-match.https.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=179137
+        <rdar://problem/35337335>
+
+        Reviewed by Chris Dumez.
+
+        * TestExpectations:
+
 2017-12-20  Alicia Boya García  <aboya@igalia.com>
 
         [GTK] Test gardening
