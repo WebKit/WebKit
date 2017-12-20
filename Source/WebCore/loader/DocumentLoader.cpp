@@ -890,7 +890,8 @@ void DocumentLoader::commitData(const char* bytes, size_t length)
                 m_frame->document()->setActiveServiceWorker(ServiceWorker::getOrCreate(*m_frame->document(), WTFMove(m_serviceWorkerRegistrationData->activeWorker.value())));
                 m_serviceWorkerRegistrationData = { };
             }
-            m_frame->document()->setServiceWorkerConnection(&ServiceWorkerProvider::singleton().serviceWorkerConnectionForSession(m_frame->page()->sessionID()));
+            if (SchemeRegistry::canServiceWorkersHandleURLScheme(m_frame->document()->url().protocol().toStringWithoutCopying()))
+                m_frame->document()->setServiceWorkerConnection(&ServiceWorkerProvider::singleton().serviceWorkerConnectionForSession(m_frame->page()->sessionID()));
         }
 #endif
         // Call receivedFirstData() exactly once per load. We should only reach this point multiple times
@@ -1568,7 +1569,8 @@ void DocumentLoader::startLoadingMainResource()
         RELEASE_LOG_IF_ALLOWED("startLoadingMainResource: Starting load (frame = %p, main = %d)", m_frame, m_frame->isMainFrame());
 
 #if ENABLE(SERVICE_WORKER)
-        auto tryLoadingThroughServiceWorker = !frameLoader()->isReloadingFromOrigin() && m_frame->page() && RuntimeEnabledFeatures::sharedFeatures().serviceWorkerEnabled();
+        // FIXME: Implement local URL interception by getting the service worker of the parent.
+        auto tryLoadingThroughServiceWorker = !frameLoader()->isReloadingFromOrigin() && m_frame->page() && RuntimeEnabledFeatures::sharedFeatures().serviceWorkerEnabled()            && SchemeRegistry::canServiceWorkersHandleURLScheme(request.url().protocol().toStringWithoutCopying());
         if (tryLoadingThroughServiceWorker) {
             auto origin = (!m_frame->isMainFrame() && m_frame->document()) ? makeRef(m_frame->document()->topOrigin()) : SecurityOrigin::create(request.url());
             auto& connection = ServiceWorkerProvider::singleton().serviceWorkerConnectionForSession(m_frame->page()->sessionID());
