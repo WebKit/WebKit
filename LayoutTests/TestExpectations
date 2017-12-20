@@ -165,7 +165,6 @@ imported/w3c/web-platform-tests/service-workers/service-worker/navigation-preloa
 imported/w3c/web-platform-tests/service-workers/service-worker/shared-worker-controlled.https.html [ Skip ]
 
 webkit.org/b/179342 http/tests/workers/service/registration-task-queue-scheduling-1.html [ Pass Failure ]
-http/tests/workers/service/service-worker-cache-api.https.html [ Pass Failure ]
 imported/w3c/web-platform-tests/service-workers/service-worker/about-blank-replacement.https.html [ Pass Failure ]
 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-canvas-tainting-cache.https.html [ DumpJSConsoleLogInStdErr Pass Failure ]
 webkit.org/b/179248 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-event-within-sw.https.html [ Pass Failure ]

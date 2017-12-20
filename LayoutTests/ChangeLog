@@ -1,3 +1,17 @@
+2017-12-20  Youenn Fablet  <youenn@apple.com>
+
+        LayoutTests/http/tests/workers/service/service-worker-cache-api.https.html is failing on most platforms
+        https://bugs.webkit.org/show_bug.cgi?id=181052
+
+        Reviewed by Chris Dumez.
+
+        Fixing buggy test: load was probably not intercepted.
+
+        * TestExpectations:
+        * http/tests/workers/service/resources/service-worker-cache-api.js: Removed.
+        * http/tests/workers/service/service-worker-cache-api.https-expected.txt:
+        * http/tests/workers/service/service-worker-cache-api.https.html:
+
 2017-12-20  Alicia Boya García  <aboya@igalia.com>
 
         [GTK] imported/w3c/web-platform-tests/fetch/api/basic/request-headers.any.html is failing

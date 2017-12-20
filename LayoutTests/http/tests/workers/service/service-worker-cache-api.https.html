@@ -1,8 +1,19 @@
 <html>
 <head>
 <script src="resources/sw-test-pre.js"></script>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
 </head>
 <body>
-<script src="resources/service-worker-cache-api.js"></script>
+<script>
+promise_test(async (test) => {
+    var frame = await interceptedFrame("resources/service-worker-cache-api-worker.js", "/workers/service/resources/");
+    var fetch = frame.contentWindow.fetch;
+
+    var response = await fetch("/resources/square100.png.fromserviceworker");
+    var buffer =  await response.arrayBuffer();
+    assert_equals(buffer.byteLength, 12940);
+}, "Testing cache API in service worker");
+</script>
 </body>
 </html>
