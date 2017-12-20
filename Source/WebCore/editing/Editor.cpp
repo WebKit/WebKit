@@ -109,11 +109,6 @@
 #include "ServicesOverlayController.h"
 #endif
 
-#if ENABLE(ALTERNATIVE_PRESENTATION_BUTTON_ELEMENT)
-#include "AlternativePresentationButtonElement.h"
-#include "AlternativePresentationButtonSubstitution.h"
-#endif
-
 namespace WebCore {
 
 static bool dispatchBeforeInputEvent(Element& element, const AtomicString& inputType, const String& data = { }, RefPtr<DataTransfer>&& dataTransfer = nullptr, const Vector<RefPtr<StaticRange>>& targetRanges = { }, bool cancelable = true)
@@ -1179,11 +1174,6 @@ void Editor::clear()
     m_customCompositionUnderlines.clear();
     m_shouldStyleWithCSS = false;
     m_defaultParagraphSeparator = EditorParagraphSeparatorIsDiv;
-#if ENABLE(ALTERNATIVE_PRESENTATION_BUTTON_ELEMENT)
-    m_alternativePresentationButtonElementToSubstitutionMap.clear();
-    m_alternativePresentationButtonIdentifierToElementMap.clear();
-    m_lastAlternativePresentationButtonSubstitution = nullptr;
-#endif
 }
 
 bool Editor::insertText(const String& text, Event* triggeringEvent, TextEventInputType inputType)
@@ -3822,66 +3812,6 @@ void Editor::insertAttachmentFromFile(const String& identifier, const Attachment
 }
 
 #endif // ENABLE(ATTACHMENT_ELEMENT)
-
-#if ENABLE(ALTERNATIVE_PRESENTATION_BUTTON_ELEMENT)
-
-void Editor::substituteWithAlternativePresentationButton(Vector<Ref<Element>>&& elements, const String& identifier)
-{
-    if (elements.isEmpty())
-        return;
-
-    // The implementation of the first element is exchanged for the alternative presentation button.
-    // All other elements are hidden.
-    Ref<Element> elementForAlternativePresentation = WTFMove(elements[0]);
-    elements.remove(0);
-
-    m_lastAlternativePresentationButtonIdentifier = identifier;
-    if (is<HTMLInputElement>(elementForAlternativePresentation))
-        m_lastAlternativePresentationButtonSubstitution = std::make_unique<AlternativePresentationButtonSubstitution>(downcast<HTMLInputElement>(elementForAlternativePresentation.get()), WTFMove(elements));
-    else {
-        // FIXME: This substitution is only safe to do if and only if elementForAlternativePresentation can support a user-
-        // agent shadow root and does not support an author shadow root. Not all elements meet this criterion (e.g. <details>).
-        // See <https://bugs.webkit.org/show_bug.cgi?id=180086> for more details.
-        m_lastAlternativePresentationButtonSubstitution = std::make_unique<AlternativePresentationButtonSubstitution>(elementForAlternativePresentation.get(), WTFMove(elements));
-    }
-    m_lastAlternativePresentationButtonSubstitution->apply();
-}
-
-void Editor::removeAlternativePresentationButton(const String& identifier)
-{
-    if (!m_alternativePresentationButtonIdentifierToElementMap.contains(identifier))
-        return;
-    auto* button = m_alternativePresentationButtonIdentifierToElementMap.take(identifier);
-    ASSERT(m_alternativePresentationButtonElementToSubstitutionMap.contains(button));
-    auto substitution = m_alternativePresentationButtonElementToSubstitutionMap.take(button);
-    substitution->unapply();
-}
-
-Vector<Ref<Element>> Editor::elementsReplacedByAlternativePresentationButton(const String& identifier)
-{
-    if (!m_alternativePresentationButtonIdentifierToElementMap.contains(identifier))
-        return { };
-    auto* button = m_alternativePresentationButtonIdentifierToElementMap.get(identifier);
-    ASSERT(m_alternativePresentationButtonElementToSubstitutionMap.contains(button));
-    auto substitution = m_alternativePresentationButtonElementToSubstitutionMap.get(button);
-    return substitution->replacedElements();
-}
-
-void Editor::didInsertAlternativePresentationButtonElement(AlternativePresentationButtonElement& button)
-{
-    ASSERT(!m_alternativePresentationButtonElementToSubstitutionMap.contains(&button));
-    ASSERT(!m_alternativePresentationButtonIdentifierToElementMap.contains(m_lastAlternativePresentationButtonIdentifier));
-    m_alternativePresentationButtonElementToSubstitutionMap.set(&button, WTFMove(m_lastAlternativePresentationButtonSubstitution));
-    m_alternativePresentationButtonIdentifierToElementMap.set(m_lastAlternativePresentationButtonIdentifier, &button);
-    button.setUniqueIdentifier(m_lastAlternativePresentationButtonIdentifier);
-}
-
-void Editor::didRemoveAlternativePresentationButtonElement(AlternativePresentationButtonElement& button)
-{
-    removeAlternativePresentationButton(button.uniqueIdentifier());
-}
-
-#endif // ENABLE(ALTERNATIVE_PRESENTATION_BUTTON_ELEMENT)
 
 void Editor::handleAcceptedCandidate(TextCheckingResult acceptedCandidate)
 {

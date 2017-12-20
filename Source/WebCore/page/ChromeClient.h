@@ -445,8 +445,6 @@ public:
 
     virtual void handleAutoFillButtonClick(HTMLInputElement&) { }
 
-    virtual void handleAlternativePresentationButtonClick(Node&) { }
-
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     virtual void addPlaybackTargetPickerClient(uint64_t /*contextId*/) { }
     virtual void removePlaybackTargetPickerClient(uint64_t /*contextId*/) { }

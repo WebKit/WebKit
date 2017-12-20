@@ -1189,18 +1189,6 @@ void WebChromeClient::handleAutoFillButtonClick(HTMLInputElement& inputElement)
     m_page.send(Messages::WebPageProxy::HandleAutoFillButtonClick(UserData(WebProcess::singleton().transformObjectsToHandles(userData.get()).get())));
 }
 
-void WebChromeClient::handleAlternativePresentationButtonClick(Node& node)
-{
-    RefPtr<API::Object> userData;
-
-    // Notify the bundle client.
-    auto nodeHandle = InjectedBundleNodeHandle::getOrCreate(node);
-    m_page.injectedBundleUIClient().didClickAlternativePresentationButton(m_page, nodeHandle.get(), userData);
-
-    // Notify the UIProcess.
-    m_page.send(Messages::WebPageProxy::HandleAlternativePresentationButtonClick(UserData(WebProcess::singleton().transformObjectsToHandles(userData.get()).get())));
-}
-
 #if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS)
 
 void WebChromeClient::addPlaybackTargetPickerClient(uint64_t contextId)

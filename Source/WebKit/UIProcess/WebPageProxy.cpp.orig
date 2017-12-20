@@ -128,6 +128,7 @@
 #include <WebCore/JSDOMExceptionHandling.h>
 #include <WebCore/LengthBox.h>
 #include <WebCore/MIMETypeRegistry.h>
+#include <WebCore/MediaStreamRequest.h>
 #include <WebCore/PerformanceLoggingClient.h>
 #include <WebCore/PublicSuffix.h>
 #include <WebCore/RenderEmbeddedObject.h>
@@ -190,10 +191,6 @@
 
 #if PLATFORM(IOS) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
 #include "PlaybackSessionManagerProxy.h"
-#endif
-
-#if ENABLE(MEDIA_STREAM)
-#include <WebCore/MediaConstraints.h>
 #endif
 
 // This controls what strategy we use for mouse wheel coalescing.
@@ -5990,19 +5987,18 @@ UserMediaPermissionRequestManagerProxy& WebPageProxy::userMediaPermissionRequest
 }
 #endif
 
-    void WebPageProxy::requestUserMediaPermissionForFrame(uint64_t userMediaID, uint64_t frameID, const WebCore::SecurityOriginData&  userMediaDocumentOriginData, const WebCore::SecurityOriginData& topLevelDocumentOriginData, const WebCore::MediaConstraints& audioConstraints, const WebCore::MediaConstraints& videoConstraints)
+void WebPageProxy::requestUserMediaPermissionForFrame(uint64_t userMediaID, uint64_t frameID, const WebCore::SecurityOriginData&  userMediaDocumentOriginData, const WebCore::SecurityOriginData& topLevelDocumentOriginData, const WebCore::MediaStreamRequest& request)
 {
 #if ENABLE(MEDIA_STREAM)
     MESSAGE_CHECK(m_process->webFrame(frameID));
 
-    userMediaPermissionRequestManager().requestUserMediaPermissionForFrame(userMediaID, frameID, userMediaDocumentOriginData.securityOrigin(), topLevelDocumentOriginData.securityOrigin(), audioConstraints, videoConstraints);
+    userMediaPermissionRequestManager().requestUserMediaPermissionForFrame(userMediaID, frameID, userMediaDocumentOriginData.securityOrigin(), topLevelDocumentOriginData.securityOrigin(), request);
 #else
     UNUSED_PARAM(userMediaID);
     UNUSED_PARAM(frameID);
     UNUSED_PARAM(userMediaDocumentOriginData);
     UNUSED_PARAM(topLevelDocumentOriginData);
-    UNUSED_PARAM(audioConstraints);
-    UNUSED_PARAM(videoConstraints);
+    UNUSED_PARAM(request);
 #endif
 }
 

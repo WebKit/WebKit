@@ -367,14 +367,6 @@ platform/mediastream/mac/WebAudioSourceProviderAVFObjC.mm
 
 platform/mediastream/libwebrtc/LibWebRTCProviderCocoa.cpp
 
-#if ENABLE_ALTERNATIVE_PRESENTATION_BUTTON_ELEMENT
-
-    editing/cocoa/AlternativePresentationButtonSubstitution.cpp
-    html/shadow/cocoa/AlternativePresentationButtonElement.cpp
-    html/shadow/cocoa/AlternativePresentationButtonInputType.cpp
-
-#endif
-
 #if ENABLE_APPLE_PAY
 
     Modules/applepay/ApplePayContactField.cpp

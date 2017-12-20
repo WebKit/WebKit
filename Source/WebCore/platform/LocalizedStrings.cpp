@@ -625,21 +625,6 @@ String AXAutoFillContactsLabel()
     return WEB_UI_STRING("contact info auto fill", "Label for the auto fill contacts button inside a text field.");
 }
 
-String AXAlternativePresentationButtonLabel()
-{
-    return WEB_UI_STRING("alternative presentation button", "Label for the alternative presentation button.");
-}
-
-String alternativePresentationButtonTitle()
-{
-    return WEB_UI_STRING("alternative presentation button title", "Title text for alternative presentation button");
-}
-
-String alternativePresentationButtonSubtitle()
-{
-    return WEB_UI_STRING("alternative presentation button subtitle", "Subtitle text for alternative presentation button");
-}
-
 String AXAutoFillStrongPasswordLabel()
 {
     return WEB_UI_STRING("strong password auto fill", "Label for the strong password auto fill button inside a text field.");

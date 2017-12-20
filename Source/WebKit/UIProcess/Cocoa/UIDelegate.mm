@@ -104,7 +104,6 @@ void UIDelegate::setDelegate(id <WKUIDelegate> delegate)
     m_delegateMethods.webViewRunJavaScriptTextInputPanelWithPromptDefaultTextInitiatedByFrameCompletionHandler = [delegate respondsToSelector:@selector(webView:runJavaScriptTextInputPanelWithPrompt:defaultText:initiatedByFrame:completionHandler:)];
     m_delegateMethods.webViewRunBeforeUnloadConfirmPanelWithMessageInitiatedByFrameCompletionHandler = [delegate respondsToSelector:@selector(_webView:runBeforeUnloadConfirmPanelWithMessage:initiatedByFrame:completionHandler:)];
     m_delegateMethods.webViewRequestGeolocationPermissionForFrameDecisionHandler = [delegate respondsToSelector:@selector(_webView:requestGeolocationPermissionForFrame:decisionHandler:)];
-    m_delegateMethods.webViewDidClickAlternativePresentationButtonWithUserInfo = [delegate respondsToSelector:@selector(_webView:didClickAlternativePresentationButtonWithUserInfo:)];
 
 #if PLATFORM(MAC)
     m_delegateMethods.showWebView = [delegate respondsToSelector:@selector(_showWebView:)];
@@ -384,18 +383,6 @@ void UIDelegate::UIClient::exceededDatabaseQuota(WebPageProxy*, WebFrameProxy*, 
         checker->didCallCompletionHandler();
         completionHandler(newQuota);
     }).get()];
-}
-
-void UIDelegate::UIClient::didClickAlternativePresentationButton(WebPageProxy&, API::Object* userInfo)
-{
-    if (!m_uiDelegate.m_delegateMethods.webViewDidClickAlternativePresentationButtonWithUserInfo)
-        return;
-
-    auto delegate = m_uiDelegate.m_delegate.get();
-    if (!delegate)
-        return;
-
-    [(id <WKUIDelegatePrivate>)delegate _webView:m_uiDelegate.m_webView didClickAlternativePresentationButtonWithUserInfo:userInfo ? static_cast<id <NSSecureCoding>>(userInfo->wrapper()) : nil];
 }
 
 #if PLATFORM(MAC)

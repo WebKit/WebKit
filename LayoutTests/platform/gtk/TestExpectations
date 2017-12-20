@@ -1195,10 +1195,6 @@ webkit.org/b/179989 fast/css3-text/css3-text-justify/getComputedStyle/getCompute
 webkit.org/b/179989 fast/css3-text/css3-text-align-last/getComputedStyle/getComputedStyle-text-align-last-inherited.html [ Failure ]
 webkit.org/b/179989 fast/css3-text/css3-text-align-last/getComputedStyle/getComputedStyle-text-align-last.html [ Failure ]
 
-# These tests rely on an iOS feature.
-webkit.org/b/180148 accessibility/alternative-presentation-button-input-type.html [ Skip ]
-webkit.org/b/180148 accessibility/alternative-presentation-button.html [ Skip ]
-
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Expected failures.
 #

@@ -12,9 +12,6 @@ editing/mac [ Pass ]
 fast/scrolling/latching [ Pass ]
 media/mac [ Pass ]
 
-fast/forms/alternative-presentation-button [ Pass ]
-accessibility/alternative-presentation-button-input-type.html [ Pass ]
-accessibility/alternative-presentation-button.html [ Pass ]
 fast/forms/search/search-padding-cancel-results-buttons.html [ Pass ]
 fast/forms/search/search-results-hidden-crash.html [ Pass ]
 

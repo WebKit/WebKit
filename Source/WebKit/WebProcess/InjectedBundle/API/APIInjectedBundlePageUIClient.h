@@ -88,8 +88,6 @@ public:
     virtual WTF::String plugInExtraScript() const { return emptyString(); }
 
     virtual void didClickAutoFillButton(WebKit::WebPage&, WebKit::InjectedBundleNodeHandle&, RefPtr<API::Object>&) { }
-
-    virtual void didClickAlternativePresentationButton(WebKit::WebPage&, WebKit::InjectedBundleNodeHandle&, RefPtr<API::Object>&) { }
 };
 
 } // namespace InjectedBundle

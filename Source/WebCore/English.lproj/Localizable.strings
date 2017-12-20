@@ -1246,15 +1246,6 @@
 /* Option in segmented control for choosing list type in text editing */
 "•" = "•";
 
-/* Label for the alternative presentation button. */
-"alternative presentation button" = "alternative presentation button";
-
-/* Alternative presentation button title. */
-"alternative presentation button title" = "alternative presentation button title";
-
-/* Alternative presentation button subtitle. */
-"alternative presentation button subtitle" = "alternative presentation button subtitle";
-
 /* Label for strong password. */
 "strong password" = "strong password";
 

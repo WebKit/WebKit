@@ -169,8 +169,6 @@ public:
 
     virtual void didClickAutoFillButton(WebKit::WebPageProxy&, Object*) { }
 
-    virtual void didClickAlternativePresentationButton(WebKit::WebPageProxy&, Object*) { }
-
     virtual void imageOrMediaDocumentSizeChanged(const WebCore::IntSize&) { }
 
     virtual void didExceedBackgroundResourceLimitWhileInForeground(WebKit::WebPageProxy&, WKResourceLimit) { }

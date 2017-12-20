@@ -636,12 +636,6 @@ public:
     MockPaymentCoordinator& mockPaymentCoordinator() const;
 #endif
 
-#if ENABLE(ALTERNATIVE_PRESENTATION_BUTTON_ELEMENT)
-    ExceptionOr<void> substituteWithAlternativePresentationButton(Vector<RefPtr<Element>>&&, const String&);
-    ExceptionOr<void> removeAlternativePresentationButton(const String&);
-    ExceptionOr<Vector<Ref<Element>>> elementsReplacedByAlternativePresentationButton(const String&);
-#endif
-
     String timelineDescription(AnimationTimeline&);
     void pauseTimeline(AnimationTimeline&);
     void setTimelineCurrentTime(AnimationTimeline&, double);

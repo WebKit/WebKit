@@ -523,43 +523,6 @@ TEST(WebKit, ClickAutoFillButton)
     [webView mouseDownAtPoint:buttonLocation simulatePressure:NO];
     [webView mouseUpAtPoint:buttonLocation];
     TestWebKitAPI::Util::run(&done);
-    readyForClick = false;
-}
-
-@interface AlternativePresentationButtonDelegate : NSObject <WKUIDelegatePrivate>
-@end
-
-@implementation AlternativePresentationButtonDelegate
-
-- (void)_webView:(WKWebView *)webView didClickAlternativePresentationButtonWithUserInfo:(id <NSSecureCoding>)userInfo
-{
-    ASSERT_TRUE([(id<NSObject>)userInfo isKindOfClass:[NSString class]]);
-    ASSERT_STREQ([(NSString*)userInfo UTF8String], "user data string");
-    done = true;
-}
-
-- (void)webView:(WKWebView *)webView runJavaScriptAlertPanelWithMessage:(NSString *)message initiatedByFrame:(WKFrameInfo *)frame completionHandler:(void (^)(void))completionHandler
-{
-    completionHandler();
-    ASSERT_STREQ(message.UTF8String, "ready for click!");
-    readyForClick = true;
-}
-
-@end
-
-TEST(WebKit, ClickAlternativePresentationButton)
-{
-    WKWebViewConfiguration *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"ClickAlternativePresentationButton"];
-
-    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration]);
-    auto delegate = adoptNS([[AlternativePresentationButtonDelegate alloc] init]);
-    [webView setUIDelegate:delegate.get()];
-    TestWebKitAPI::Util::run(&readyForClick);
-    NSPoint buttonLocation = NSMakePoint(130, 575);
-    [webView mouseDownAtPoint:buttonLocation simulatePressure:NO];
-    [webView mouseUpAtPoint:buttonLocation];
-    TestWebKitAPI::Util::run(&done);
-    readyForClick = false;
 }
 
 @interface AutoFillAvailableDelegate : NSObject <WKUIDelegatePrivate>

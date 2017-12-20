@@ -169,14 +169,6 @@ const AtomicString& week()
     return name;
 }
 
-#if ENABLE(ALTERNATIVE_PRESENTATION_BUTTON_ELEMENT)
-const AtomicString& alternativePresentationButton()
-{
-    static NeverDestroyed<AtomicString> name("alternative-presentation-button", AtomicString::ConstructFromLiteral);
-    return name;
-}
-#endif
-
 } // namespace WebCore::InputTypeNames
 
 } // namespace WebCore

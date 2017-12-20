@@ -1,3 +1,50 @@
+2017-12-20  Daniel Bates  <dabates@apple.com>
+
+        Remove Alternative Presentation Button
+        https://bugs.webkit.org/show_bug.cgi?id=180500
+        <rdar://problem/35891047>
+
+        Reviewed by Simon Fraser.
+
+        We no longer need the alternative presentation button.
+
+        * Configurations/FeatureDefines.xcconfig:
+        * UIProcess/API/APIUIClient.h:
+        (API::UIClient::didClickAlternativePresentationButton): Deleted.
+        * UIProcess/API/C/WKPageUIClient.h:
+        * UIProcess/API/Cocoa/WKUIDelegatePrivate.h:
+        * UIProcess/Cocoa/UIDelegate.h:
+        * UIProcess/Cocoa/UIDelegate.mm:
+        (WebKit::UIDelegate::setDelegate):
+        (WebKit::UIDelegate::UIClient::didClickAlternativePresentationButton): Deleted.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::handleAutoFillButtonClick):
+        (WebKit::WebPageProxy::handleAlternativePresentationButtonClick): Deleted.
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * WebProcess/InjectedBundle/API/APIInjectedBundlePageUIClient.h:
+        (API::InjectedBundle::PageUIClient::didClickAutoFillButton):
+        (API::InjectedBundle::PageUIClient::didClickAlternativePresentationButton): Deleted.
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInFrame.h:
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInFrame.mm:
+        (-[WKWebProcessPlugInFrame substituteElements:withAlternativePresentationButtonWithIdentifier:]): Deleted.
+        (-[WKWebProcessPlugInFrame removeAlternativePresentationButton:]): Deleted.
+        (-[WKWebProcessPlugInFrame elementsReplacedByAlternativePresentationButtonWithIdentifier:]): Deleted.
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInFramePrivate.h:
+        * WebProcess/InjectedBundle/API/c/WKBundleFrame.cpp:
+        (WKBundleFrameFocus):
+        (WKBundleSubstituteWithAlternativePresentationButton): Deleted.
+        (WKBundleRemoveAlternativePresentationButton): Deleted.
+        (WKBundleElementsReplacedByAlternativePresentationButton): Deleted.
+        * WebProcess/InjectedBundle/API/c/WKBundleFramePrivate.h:
+        * WebProcess/InjectedBundle/API/c/WKBundlePageUIClient.h:
+        * WebProcess/InjectedBundle/InjectedBundlePageUIClient.cpp:
+        (WebKit::InjectedBundlePageUIClient::didClickAlternativePresentationButton): Deleted.
+        * WebProcess/InjectedBundle/InjectedBundlePageUIClient.h:
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::handleAlternativePresentationButtonClick): Deleted.
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+
 2017-12-20  Andy Estes  <aestes@apple.com>
 
         [Apple Pay] Tell PassKit whether Apple Pay JS or Payment Request was used to start an Apple Pay session

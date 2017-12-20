@@ -1,3 +1,15 @@
+2017-12-20  Daniel Bates  <dabates@apple.com>
+
+        Remove Alternative Presentation Button
+        https://bugs.webkit.org/show_bug.cgi?id=180500
+        <rdar://problem/35891047>
+
+        Reviewed by Simon Fraser.
+
+        We no longer need the alternative presentation button.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2017-12-19  Saam Barati  <sbarati@apple.com>
 
         We forgot to do index masking for in bounds int32 arrays in the FTL

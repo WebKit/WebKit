@@ -54,8 +54,6 @@ class KillRing;
 
 namespace WebCore {
 
-class AlternativePresentationButtonElement;
-class AlternativePresentationButtonSubstitution;
 class AlternativeTextController;
 class ArchiveResource;
 class DataTransfer;
@@ -513,19 +511,6 @@ public:
     void didRemoveAttachmentElement(HTMLAttachmentElement&);
 #endif
 
-    // FIXME: Find a better place for this functionality.
-#if ENABLE(ALTERNATIVE_PRESENTATION_BUTTON_ELEMENT)
-    // FIXME: Remove the need to pass an identifier for the alternative presentation button.
-    WEBCORE_EXPORT void substituteWithAlternativePresentationButton(Vector<Ref<Element>>&&, const String&);
-    // FIXME: Have this take an AlternativePresentationButtonElement& instead of an identifier.
-    WEBCORE_EXPORT void removeAlternativePresentationButton(const String&);
-
-    WEBCORE_EXPORT Vector<Ref<Element>> elementsReplacedByAlternativePresentationButton(const String&);
-
-    void didInsertAlternativePresentationButtonElement(AlternativePresentationButtonElement&);
-    void didRemoveAlternativePresentationButtonElement(AlternativePresentationButtonElement&);
-#endif
-
 private:
     Document& document() const;
 
@@ -599,13 +584,6 @@ private:
 #if ENABLE(ATTACHMENT_ELEMENT)
     HashSet<String> m_insertedAttachmentIdentifiers;
     HashSet<String> m_removedAttachmentIdentifiers;
-#endif
-
-#if ENABLE(ALTERNATIVE_PRESENTATION_BUTTON_ELEMENT)
-    HashMap<AlternativePresentationButtonElement*, std::unique_ptr<AlternativePresentationButtonSubstitution>> m_alternativePresentationButtonElementToSubstitutionMap;
-    HashMap<String, AlternativePresentationButtonElement*> m_alternativePresentationButtonIdentifierToElementMap;
-    std::unique_ptr<AlternativePresentationButtonSubstitution> m_lastAlternativePresentationButtonSubstitution;
-    String m_lastAlternativePresentationButtonIdentifier;
 #endif
 
     VisibleSelection m_oldSelectionForEditorUIUpdate;

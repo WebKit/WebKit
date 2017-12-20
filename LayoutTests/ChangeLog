@@ -1,3 +1,29 @@
+2017-12-20  Daniel Bates  <dabates@apple.com>
+
+        Remove Alternative Presentation Button
+        https://bugs.webkit.org/show_bug.cgi?id=180500
+        <rdar://problem/35891047>
+
+        Reviewed by Simon Fraser.
+
+        We no longer need the alternative presentation button.
+
+        * TestExpectations:
+        * accessibility/alternative-presentation-button-expected.txt: Removed.
+        * accessibility/alternative-presentation-button-input-type-expected.txt: Removed.
+        * accessibility/alternative-presentation-button-input-type.html: Removed.
+        * accessibility/alternative-presentation-button.html: Removed.
+        * fast/forms/alternative-presentation-button/replace-and-remove-expected.html: Removed.
+        * fast/forms/alternative-presentation-button/replace-and-remove.html: Removed.
+        * fast/forms/alternative-presentation-button/replaced-elements-expected.txt: Removed.
+        * fast/forms/alternative-presentation-button/replaced-elements.html: Removed.
+        * fast/forms/alternative-presentation-button/replacement-expected.txt: Removed.
+        * fast/forms/alternative-presentation-button/replacement.html: Removed.
+        * platform/gtk/TestExpectations:
+        * platform/ios/TestExpectations:
+        * platform/ios/fast/forms/alternative-presentation-button/replacement-expected.txt: Removed.
+        * platform/mac/TestExpectations:
+
 2017-12-20  Chris Dumez  <cdumez@apple.com>
 
         Do not reuse resource for memory cache if selected service worker differs

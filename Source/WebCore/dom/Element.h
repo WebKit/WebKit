@@ -280,7 +280,6 @@ public:
 
     RefPtr<ShadowRoot> userAgentShadowRoot() const;
     WEBCORE_EXPORT ShadowRoot& ensureUserAgentShadowRoot();
-    void removeShadowRoot();
 
     void setIsDefinedCustomElement(JSCustomElementInterface&);
     void setIsFailedCustomElement(JSCustomElementInterface&);
@@ -636,6 +635,8 @@ private:
     // The cloneNode function is private so that non-virtual cloneElementWith/WithoutChildren are used instead.
     Ref<Node> cloneNodeInternal(Document&, CloningOperation) override;
     virtual Ref<Element> cloneElementWithoutAttributesAndChildren(Document&);
+
+    void removeShadowRoot();
 
     const RenderStyle& resolveComputedStyle();
     const RenderStyle& resolvePseudoElementStyle(PseudoId);
