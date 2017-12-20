@@ -6213,6 +6213,9 @@ void Document::webkitWillEnterFullScreenForElement(Element* element)
     m_fullScreenElement->setContainsFullScreenElementOnAncestorsCrossingFrameBoundaries(true);
 
     resolveStyle(ResolveStyleType::Rebuild);
+#if PLATFORM(IOS) && ENABLE(FULLSCREEN_API)
+    m_fullScreenChangeDelayTimer.startOneShot(0_s);
+#endif
 }
 
 void Document::webkitDidEnterFullScreenForElement(Element*)
@@ -6225,7 +6228,9 @@ void Document::webkitDidEnterFullScreenForElement(Element*)
 
     m_fullScreenElement->didBecomeFullscreenElement();
 
+#if !PLATFORM(IOS) || !ENABLE(FULLSCREEN_API)
     m_fullScreenChangeDelayTimer.startOneShot(0_s);
+#endif
 }
 
 void Document::webkitWillExitFullScreenForElement(Element*)
