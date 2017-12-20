@@ -24,7 +24,10 @@ editor.addEventListener('paste', (event) => {
 
 function notifyLoaded()
 {
-    webkit.messageHandlers.testHandler.postMessage('loaded');
+    if (window.webkit)
+        webkit.messageHandlers.testHandler.postMessage('loaded');
+    else
+        alert('loaded');
 }
 
 </script>

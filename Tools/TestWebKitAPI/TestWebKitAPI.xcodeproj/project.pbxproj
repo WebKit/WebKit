@@ -570,6 +570,7 @@
 		9B7D740F1F8378770006C432 /* paste-rtfd.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 9B7D740E1F8377E60006C432 /* paste-rtfd.html */; };
 		9BD4239A1E04BD9800200395 /* AttributedSubstringForProposedRangeWithImage.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9BD423991E04BD9800200395 /* AttributedSubstringForProposedRangeWithImage.mm */; };
 		9BD4239C1E04C01C00200395 /* chinese-character-with-image.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 9BD4239B1E04BFD000200395 /* chinese-character-with-image.html */; };
+		9BD5111C1FE8E11600D2B630 /* AccessingPastedImage.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9BD5111B1FE8E11600D2B630 /* AccessingPastedImage.mm */; };
 		9BD6D3A21F7B218300BD4962 /* sunset-in-cupertino-100px.tiff in Copy Resources */ = {isa = PBXBuildFile; fileRef = 9BD6D3A11F7B202100BD4962 /* sunset-in-cupertino-100px.tiff */; };
 		9BD6D3A31F7B218300BD4962 /* sunset-in-cupertino-200px.png in Copy Resources */ = {isa = PBXBuildFile; fileRef = 9BD6D3A01F7B202000BD4962 /* sunset-in-cupertino-200px.png */; };
 		9BD6D3A41F7B218300BD4962 /* sunset-in-cupertino-400px.gif in Copy Resources */ = {isa = PBXBuildFile; fileRef = 9BD6D39F1F7B202000BD4962 /* sunset-in-cupertino-400px.gif */; };
@@ -1567,6 +1568,7 @@
 		9B7D740E1F8377E60006C432 /* paste-rtfd.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "paste-rtfd.html"; sourceTree = "<group>"; };
 		9BD423991E04BD9800200395 /* AttributedSubstringForProposedRangeWithImage.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AttributedSubstringForProposedRangeWithImage.mm; sourceTree = "<group>"; };
 		9BD4239B1E04BFD000200395 /* chinese-character-with-image.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "chinese-character-with-image.html"; sourceTree = "<group>"; };
+		9BD5111B1FE8E11600D2B630 /* AccessingPastedImage.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = AccessingPastedImage.mm; sourceTree = "<group>"; };
 		9BD6D39E1F7B201E00BD4962 /* sunset-in-cupertino-600px.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "sunset-in-cupertino-600px.jpg"; sourceTree = "<group>"; };
 		9BD6D39F1F7B202000BD4962 /* sunset-in-cupertino-400px.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = "sunset-in-cupertino-400px.gif"; sourceTree = "<group>"; };
 		9BD6D3A01F7B202000BD4962 /* sunset-in-cupertino-200px.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "sunset-in-cupertino-200px.png"; sourceTree = "<group>"; };
@@ -2102,9 +2104,9 @@
 				CD9E292B1C90A71F000BB800 /* RequiresUserActionForPlayback.mm */,
 				51C8E1A41F26AC5400BF731B /* ResourceLoadStatistics.mm */,
 				A180C0F91EE67DF000468F47 /* RunOpenPanel.mm */,
+				51EB12931FDF050500A5A1BD /* ServiceWorkerBasic.mm */,
 				37BCA61B1B596BA9002012CA /* ShouldOpenExternalURLsInNewWindowActions.mm */,
 				2D9A53AE1B31FA8D0074D5AA /* ShrinkToFit.mm */,
-				51EB12931FDF050500A5A1BD /* ServiceWorkerBasic.mm */,
 				2DFF7B6C1DA487AF00814614 /* SnapshotStore.mm */,
 				515BE1701D428BD100DD7C68 /* StoreBlobThenDelete.mm */,
 				5CB40B4D1F4B98BE007DC7B9 /* UIDelegate.mm */,
@@ -2268,6 +2270,14 @@
 				37C7CC2B1EA4146B007BD956 /* WeakLinking.cpp */,
 			);
 			path = darwin;
+			sourceTree = "<group>";
+		};
+		9BD5111A1FE8E10200D2B630 /* mac */ = {
+			isa = PBXGroup;
+			children = (
+				9BD5111B1FE8E11600D2B630 /* AccessingPastedImage.mm */,
+			);
+			path = mac;
 			sourceTree = "<group>";
 		};
 		A13EBB441B87332B00097110 /* WebProcessPlugIn */ = {
@@ -2980,6 +2990,7 @@
 			isa = PBXGroup;
 			children = (
 				CDC8E4991BC728C000594FEC /* ios */,
+				9BD5111A1FE8E10200D2B630 /* mac */,
 			);
 			path = WebKitLegacy;
 			sourceTree = "<group>";
@@ -3195,7 +3206,6 @@
 				7C83DEA91D0A590C00FEBCF3 /* CString.cpp in Sources */,
 				7C83DEAD1D0A590C00FEBCF3 /* Deque.cpp in Sources */,
 				1AF7B21F1D6CD14D008C126C /* EnumTraits.cpp in Sources */,
-				FE05FAED1FDB510E00093230 /* PoisonedRefPtr.cpp in Sources */,
 				AD7C434D1DD2A54E0026888B /* Expected.cpp in Sources */,
 				9310CD381EF708FB0050FFE0 /* Function.cpp in Sources */,
 				6BFD294C1D5E6C1D008EC968 /* HashCountedSet.cpp in Sources */,
@@ -3213,7 +3223,6 @@
 				7C83DEED1D0A590C00FEBCF3 /* MathExtras.cpp in Sources */,
 				7C83DEEF1D0A590C00FEBCF3 /* MD5.cpp in Sources */,
 				7C83DEF11D0A590C00FEBCF3 /* MediaTime.cpp in Sources */,
-				FE05FAEC1FDB510A00093230 /* PoisonedRef.cpp in Sources */,
 				7C83DEF61D0A590C00FEBCF3 /* MetaAllocator.cpp in Sources */,
 				7C83DEFE1D0A590C00FEBCF3 /* NakedPtr.cpp in Sources */,
 				A57D54F31F338C3600A97AA7 /* NeverDestroyed.cpp in Sources */,
@@ -3222,6 +3231,8 @@
 				7C83DF021D0A590C00FEBCF3 /* OSObjectPtr.cpp in Sources */,
 				7C83DF591D0A590C00FEBCF3 /* ParkingLot.cpp in Sources */,
 				FE05FAEF1FE0645B00093230 /* Poisoned.cpp in Sources */,
+				FE05FAEC1FDB510A00093230 /* PoisonedRef.cpp in Sources */,
+				FE05FAED1FDB510E00093230 /* PoisonedRefPtr.cpp in Sources */,
 				53EC25411E96FD87000831B9 /* PriorityQueue.cpp in Sources */,
 				7C83DF131D0A590C00FEBCF3 /* RedBlackTree.cpp in Sources */,
 				7C83DF141D0A590C00FEBCF3 /* Ref.cpp in Sources */,
@@ -3276,6 +3287,7 @@
 				7CCE7EE41A411AE600447C4C /* AboutBlankLoad.cpp in Sources */,
 				7CCE7EB31A411A7E00447C4C /* AcceptsFirstMouse.mm in Sources */,
 				2E205BA41F527746005952DD /* AccessibilityTestsIOS.mm in Sources */,
+				9BD5111C1FE8E11600D2B630 /* AccessingPastedImage.mm in Sources */,
 				F45B63FE1F19D410009D38B9 /* ActionSheetTests.mm in Sources */,
 				37E7DD641EA06FF2009B396D /* AdditionalReadAccessAllowedURLs.mm in Sources */,
 				7A909A7D1D877480007E10F8 /* AffineTransform.cpp in Sources */,
@@ -3425,7 +3437,6 @@
 				5C0BF8931DD599BD00B00328 /* IsNavigationActionTrusted.mm in Sources */,
 				5C69BDD51F82A7EF000F4F4B /* JavaScriptDuringNavigation.mm in Sources */,
 				7CCE7EAD1A411A3400447C4C /* JavaScriptTest.cpp in Sources */,
-				51EB12941FDF052500A5A1BD /* ServiceWorkerBasic.mm in Sources */,
 				7CCE7EA51A411A0800447C4C /* JavaScriptTestMac.mm in Sources */,
 				7CCE7EC41A411A7E00447C4C /* JSWrapperForNodeInWebFrame.mm in Sources */,
 				7CCE7F061A411AE600447C4C /* LayoutMilestonesWithAllContentInFrame.cpp in Sources */,
@@ -3518,6 +3529,7 @@
 				7CCE7F121A411AE600447C4C /* ScrollPinningBehaviors.cpp in Sources */,
 				CE06DF9B1E1851F200E570C9 /* SecurityOrigin.cpp in Sources */,
 				5769C50B1D9B0002000847FB /* SerializedCryptoKeyWrap.mm in Sources */,
+				51EB12941FDF052500A5A1BD /* ServiceWorkerBasic.mm in Sources */,
 				7CCE7ECB1A411A7E00447C4C /* SetAndUpdateCacheModel.mm in Sources */,
 				7CCE7ECC1A411A7E00447C4C /* SetDocumentURI.mm in Sources */,
 				7C83E0521D0A641800FEBCF3 /* SharedBuffer.cpp in Sources */,

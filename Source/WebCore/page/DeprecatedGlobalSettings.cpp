@@ -86,6 +86,8 @@ bool DeprecatedGlobalSettings::gCustomPasteboardDataEnabled = false;
 
 bool DeprecatedGlobalSettings::defaultCustomPasteboardDataEnabled()
 {
+    if (!isInWebProcess())
+        return false;
 #if PLATFORM(IOS) && __IPHONE_OS_VERSION_MAX_ALLOWED >= 110300
     return IOSApplication::isMobileSafari() || dyld_get_program_sdk_version() >= DYLD_IOS_VERSION_11_3;
 #elif PLATFORM(MAC) && __MAC_OS_X_VERSION_MAX_ALLOWED >= 101300

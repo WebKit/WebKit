@@ -1,3 +1,21 @@
+2017-12-19  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Don't convert pasted content to use blob URL in WebKit1
+        https://bugs.webkit.org/show_bug.cgi?id=180969
+
+        Reviewed by Wenson Hsieh.
+
+        Added API tests to make sure we can access the images in the pasted content.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/paste-rtfd.html:
+        * TestWebKitAPI/Tests/WebKitLegacy/mac: Added.
+        * TestWebKitAPI/Tests/WebKitLegacy/mac/AccessingPastedImage.mm: Added.
+        (writeRTFDToPasteboard):
+        (-[SubresourceForBlobURLFrameLoadDelegate webView:didFinishLoadForFrame:]):
+        (-[SubresourceForBlobURLFrameLoadDelegate webView:runJavaScriptAlertPanelWithMessage:initiatedByFrame:]):
+        (TestWebKitAPI::TEST):
+
 2017-12-19  Daniel Bates  <dabates@apple.com>
 
         Implement InlineTextBox painting using marker subranges
