@@ -70,18 +70,24 @@ FetchBody FetchBody::extract(ScriptExecutionContext& context, Init&& value, Stri
     });
 }
 
-std::optional<FetchBody> FetchBody::fromFormData(FormData* formData)
+std::optional<FetchBody> FetchBody::fromFormData(FormData& formData)
 {
-    if (!formData || formData->isEmpty())
-        return std::nullopt;
+    ASSERT(!formData.isEmpty());
 
-    if (auto buffer = formData->asSharedBuffer()) {
+    if (auto buffer = formData.asSharedBuffer()) {
         FetchBody body;
         body.m_consumer.setData(buffer.releaseNonNull());
         return WTFMove(body);
     }
 
-    // FIXME: Support blob and form data bodies.
+    auto url = formData.asBlobURL();
+    if (!url.isNull()) {
+        // FIXME: Properly set mime type and size of the blob.
+        Ref<const Blob> blob = Blob::deserialize(url, { }, 0, { });
+        return FetchBody { WTFMove(blob) };
+    }
+
+    // FIXME: Support form data bodies.
     return std::nullopt;
 }
 

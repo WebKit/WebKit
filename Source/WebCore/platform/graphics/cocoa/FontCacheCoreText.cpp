@@ -910,7 +910,7 @@ public:
             auto familyNameString = folded.createCFString();
             RetainPtr<CFDictionaryRef> attributes;
 #if CAN_DISALLOW_USER_INSTALLED_FONTS
-            if (m_allowUserInstalledFonts == FontCache::AllowUserInstalledFonts::No) {
+            if (m_allowUserInstalledFonts == AllowUserInstalledFonts::No) {
                 CFTypeRef keys[] = { kCTFontFamilyNameAttribute, kCTFontUserInstalledAttribute };
                 CFTypeRef values[] = { familyNameString.get(), kCFBooleanFalse };
                 attributes = adoptCF(CFDictionaryCreate(kCFAllocatorDefault, keys, values, WTF_ARRAY_LENGTH(keys), &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
@@ -948,7 +948,7 @@ public:
 #endif
             RetainPtr<CFDictionaryRef> attributes;
 #if CAN_DISALLOW_USER_INSTALLED_FONTS
-            if (m_allowUserInstalledFonts == FontCache::AllowUserInstalledFonts::No) {
+            if (m_allowUserInstalledFonts == AllowUserInstalledFonts::No) {
                 CFTypeRef keys[] = { kCTFontEnabledAttribute, nameAttribute, kCTFontUserInstalledAttribute };
                 CFTypeRef values[] = { kCFBooleanTrue, postScriptNameString.get(), kCFBooleanFalse };
                 attributes = adoptCF(CFDictionaryCreate(kCFAllocatorDefault, keys, values, WTF_ARRAY_LENGTH(keys), &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));

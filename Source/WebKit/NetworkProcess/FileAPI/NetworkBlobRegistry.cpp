@@ -71,16 +71,19 @@ void NetworkBlobRegistry::registerBlobURL(NetworkConnectionToWebProcess* connect
     mapIterator->value.add(url);
 }
 
-void NetworkBlobRegistry::registerBlobURL(NetworkConnectionToWebProcess* connection, const WebCore::URL& url, const WebCore::URL& srcURL)
+void NetworkBlobRegistry::registerBlobURL(NetworkConnectionToWebProcess* connection, const WebCore::URL& url, const WebCore::URL& srcURL, bool shouldBypassConnectionCheck)
 {
     // The connection may not be registered if NetworkProcess prevously crashed for any reason.
     BlobForConnectionMap::iterator mapIterator = m_blobsForConnection.find(connection);
-    if (mapIterator == m_blobsForConnection.end())
-        return;
+    if (mapIterator == m_blobsForConnection.end()) {
+        if (!shouldBypassConnectionCheck)
+            return;
+        mapIterator = m_blobsForConnection.add(connection, HashSet<URL>()).iterator;
+    }
 
     blobRegistry().registerBlobURL(url, srcURL);
 
-    ASSERT(mapIterator->value.contains(srcURL));
+    ASSERT(shouldBypassConnectionCheck || mapIterator->value.contains(srcURL));
     mapIterator->value.add(url);
 }
 

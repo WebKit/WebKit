@@ -48,7 +48,7 @@ public:
 
     void registerFileBlobURL(NetworkConnectionToWebProcess*, const WebCore::URL&, const String& path, RefPtr<SandboxExtension>&&, const String& contentType);
     void registerBlobURL(NetworkConnectionToWebProcess*, const WebCore::URL&, Vector<WebCore::BlobPart>&&, const String& contentType);
-    void registerBlobURL(NetworkConnectionToWebProcess*, const WebCore::URL&, const WebCore::URL& srcURL);
+    void registerBlobURL(NetworkConnectionToWebProcess*, const WebCore::URL&, const WebCore::URL& srcURL, bool shouldBypassConnectionCheck);
     void registerBlobURLOptionallyFileBacked(NetworkConnectionToWebProcess*, const WebCore::URL&, const WebCore::URL& srcURL, const String& fileBackedPath, const String& contentType);
     void registerBlobURLForSlice(NetworkConnectionToWebProcess*, const WebCore::URL&, const WebCore::URL& srcURL, int64_t start, int64_t end);
     void unregisterBlobURL(NetworkConnectionToWebProcess*, const WebCore::URL&);

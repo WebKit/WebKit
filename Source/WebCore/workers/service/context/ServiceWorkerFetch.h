@@ -38,8 +38,8 @@ class FormData;
 class ResourceRequest;
 class ResourceResponse;
 struct ServiceWorkerClientIdentifier;
+class ServiceWorkerGlobalScope;
 class SharedBuffer;
-class WorkerGlobalScope;
 
 namespace ServiceWorkerFetch {
 class Client : public ThreadSafeRefCounted<Client> {
@@ -54,7 +54,7 @@ public:
     virtual void didNotHandle() = 0;
 };
 
-Ref<FetchEvent> dispatchFetchEvent(Ref<Client>&&, WorkerGlobalScope&, std::optional<ServiceWorkerClientIdentifier>, ResourceRequest&&, String&& referrer, FetchOptions&&);
+void dispatchFetchEvent(Ref<Client>&&, ServiceWorkerGlobalScope&, std::optional<ServiceWorkerClientIdentifier>, ResourceRequest&&, String&& referrer, FetchOptions&&);
 };
 
 } // namespace WebCore

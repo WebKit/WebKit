@@ -389,9 +389,9 @@ void NetworkConnectionToWebProcess::registerBlobURL(const URL& url, Vector<BlobP
     NetworkBlobRegistry::singleton().registerBlobURL(this, url, WTFMove(blobParts), contentType);
 }
 
-void NetworkConnectionToWebProcess::registerBlobURLFromURL(const URL& url, const URL& srcURL)
+void NetworkConnectionToWebProcess::registerBlobURLFromURL(const URL& url, const URL& srcURL, bool shouldBypassConnectionCheck)
 {
-    NetworkBlobRegistry::singleton().registerBlobURL(this, url, srcURL);
+    NetworkBlobRegistry::singleton().registerBlobURL(this, url, srcURL, shouldBypassConnectionCheck);
 }
 
 void NetworkConnectionToWebProcess::preregisterSandboxExtensionsForOptionallyFileBackedBlob(const Vector<String>& filePaths, SandboxExtension::HandleArray&& handles)

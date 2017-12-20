@@ -5,10 +5,10 @@ PASS event.request has the expected headers for same-origin POST.
 PASS event.request has the expected headers for cross-origin GET. 
 PASS event.request has the expected headers for cross-origin POST. 
 PASS FetchEvent#request.body contains XHR request data (string) 
-FAIL FetchEvent#request.body contains XHR request data (blob) promise_test: Unhandled rejection with value: object "Error: assert_equals: expected "test blob" but got """
+PASS FetchEvent#request.body contains XHR request data (blob) 
 PASS FetchEvent#request.method is set to XHR method 
 PASS XHR using OPTIONS method 
-FAIL XHR with form data promise_test: Unhandled rejection with value: object "Error: assert_true: form data response content is as expected expected true got false"
+FAIL XHR with form data promise_test: Unhandled rejection with value: object "Error: assert_equals: expected (string) "POST" but got (undefined) undefined"
 FAIL XHR with mode/credentials set promise_test: Unhandled rejection with value: object "Error: assert_equals: expected "include" but got "same-origin""
 PASS XHR to data URL 
 PASS restore global state 

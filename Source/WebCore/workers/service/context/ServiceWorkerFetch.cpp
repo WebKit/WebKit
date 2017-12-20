@@ -91,12 +91,23 @@ static void processResponse(Ref<Client>&& client, FetchResponse* response)
     });
 }
 
-Ref<FetchEvent> dispatchFetchEvent(Ref<Client>&& client, WorkerGlobalScope& globalScope, std::optional<ServiceWorkerClientIdentifier> clientId, ResourceRequest&& request, String&& referrer, FetchOptions&& options)
+void dispatchFetchEvent(Ref<Client>&& client, ServiceWorkerGlobalScope& globalScope, std::optional<ServiceWorkerClientIdentifier> clientId, ResourceRequest&& request, String&& referrer, FetchOptions&& options)
 {
     ASSERT(globalScope.isServiceWorkerGlobalScope());
 
     auto requestHeaders = FetchHeaders::create(FetchHeaders::Guard::Immutable, HTTPHeaderMap { request.httpHeaderFields() });
-    auto fetchRequest = FetchRequest::create(globalScope, FetchBody::fromFormData(request.httpBody()), WTFMove(requestHeaders),  WTFMove(request), WTFMove(options), WTFMove(referrer));
+
+    auto* formData = request.httpBody();
+    std::optional<FetchBody> body;
+    if (formData && !formData->isEmpty()) {
+        body = FetchBody::fromFormData(*formData);
+        if (!body) {
+            client->didNotHandle();
+            return;
+        }
+    }
+
+    auto fetchRequest = FetchRequest::create(globalScope, WTFMove(body), WTFMove(requestHeaders),  WTFMove(request), WTFMove(options), WTFMove(referrer));
 
     FetchEvent::Init init;
     init.request = WTFMove(fetchRequest);
@@ -118,12 +129,13 @@ Ref<FetchEvent> dispatchFetchEvent(Ref<Client>&& client, WorkerGlobalScope& glob
     if (!event->respondWithEntered()) {
         if (event->defaultPrevented()) {
             client->didFail();
-            return event;
+            return;
         }
         client->didNotHandle();
         // FIXME: Handle soft update.
     }
-    return event;
+
+    globalScope.updateExtendedEventsSet(event.ptr());
 }
 
 } // namespace ServiceWorkerFetch
