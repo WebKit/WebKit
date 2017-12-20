@@ -22,7 +22,7 @@
  */
 
 #include "config.h"
-#include "RenderTreeUpdaterListItem.h"
+#include "RenderTreeBuilderList.h"
 
 #include "RenderChildIterator.h"
 #include "RenderListMarker.h"
@@ -69,10 +69,13 @@ static RenderObject* firstNonMarkerChild(RenderBlock& parent)
     return child;
 }
 
-void RenderTreeUpdater::ListItem::updateMarker(RenderTreeBuilder& builder, RenderListItem& listItemRenderer)
+RenderTreeBuilder::List::List(RenderTreeBuilder& builder)
+    : m_builder(builder)
 {
-    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(!listItemRenderer.view().frameView().layoutContext().layoutState());
+}
 
+void RenderTreeBuilder::List::updateItemMarker(RenderListItem& listItemRenderer)
+{
     auto& style = listItemRenderer.style();
 
     if (style.listStyleType() == NoneListStyle && (!style.listStyleImage() || style.listStyleImage()->errorOccurred())) {
@@ -108,16 +111,17 @@ void RenderTreeUpdater::ListItem::updateMarker(RenderTreeBuilder& builder, Rende
             newParent = &listItemRenderer;
     }
 
-    if (newParent != currentParent) {
-        if (currentParent)
-            builder.insertChild(*newParent, currentParent->takeChild(*markerRenderer), firstNonMarkerChild(*newParent));
-        else
-            builder.insertChild(*newParent, WTFMove(newMarkerRenderer), firstNonMarkerChild(*newParent));
+    if (newParent == currentParent)
+        return;
 
-        // If current parent is an anonymous block that has lost all its children, destroy it.
-        if (currentParent && currentParent->isAnonymousBlock() && !currentParent->firstChild() && !downcast<RenderBlock>(*currentParent).continuation())
-            currentParent->removeFromParentAndDestroy();
-    }
+    if (currentParent)
+        m_builder.insertChild(*newParent, currentParent->takeChild(*markerRenderer), firstNonMarkerChild(*newParent));
+    else
+        m_builder.insertChild(*newParent, WTFMove(newMarkerRenderer), firstNonMarkerChild(*newParent));
+
+    // If current parent is an anonymous block that has lost all its children, destroy it.
+    if (currentParent && currentParent->isAnonymousBlock() && !currentParent->firstChild() && !downcast<RenderBlock>(*currentParent).continuation())
+        currentParent->removeFromParentAndDestroy();
 }
 
 }

@@ -33,6 +33,8 @@
 #include "RenderTableRow.h"
 #include "RenderText.h"
 #include "RenderTreeBuilderFirstLetter.h"
+#include "RenderTreeBuilderList.h"
+#include "RenderTreeBuilderMultiColumn.h"
 #include "RenderTreeBuilderTable.h"
 
 namespace WebCore {
@@ -42,6 +44,8 @@ RenderTreeBuilder* RenderTreeBuilder::s_current;
 RenderTreeBuilder::RenderTreeBuilder(RenderView& view)
     : m_view(view)
     , m_firstLetterBuilder(std::make_unique<FirstLetter>(*this))
+    , m_listBuilder(std::make_unique<List>(*this))
+    , m_multiColumnBuilder(std::make_unique<MultiColumn>(*this))
     , m_tableBuilder(std::make_unique<Table>(*this))
 {
     RELEASE_ASSERT(!s_current || &m_view != &s_current->m_view);
@@ -95,6 +99,10 @@ void RenderTreeBuilder::updateAfterDescendants(RenderElement& renderer)
 {
     if (is<RenderBlock>(renderer))
         firstLetterBuilder().updateAfterDescendants(downcast<RenderBlock>(renderer));
+    if (is<RenderListItem>(renderer))
+        listBuilder().updateItemMarker(downcast<RenderListItem>(renderer));
+    if (is<RenderBlockFlow>(renderer))
+        multiColumnBuilder().updateAfterDescendants(downcast<RenderBlockFlow>(renderer));
 }
 
 void RenderTreeBuilder::rubyRunInsertChild(RenderRubyRun& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild)

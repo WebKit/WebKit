@@ -25,19 +25,23 @@
 
 #pragma once
 
-#include "RenderTreeUpdater.h"
+#include "RenderTreeBuilder.h"
 
 namespace WebCore {
 
 class RenderBlockFlow;
 
-class RenderTreeUpdater::MultiColumn {
+class RenderTreeBuilder::MultiColumn {
 public:
-    static void update(RenderBlockFlow&);
+    MultiColumn(RenderTreeBuilder&);
+
+    void updateAfterDescendants(RenderBlockFlow&);
 
 private:
-    static void createFragmentedFlow(RenderBlockFlow&);
-    static void destroyFragmentedFlow(RenderBlockFlow&);
+    void createFragmentedFlow(RenderBlockFlow&);
+    void destroyFragmentedFlow(RenderBlockFlow&);
+
+    RenderTreeBuilder& m_builder;
 };
 
 }

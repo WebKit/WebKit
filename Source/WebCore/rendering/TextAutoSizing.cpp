@@ -37,8 +37,6 @@
 #include "RenderText.h"
 #include "RenderTextFragment.h"
 #include "RenderTreeBuilder.h"
-#include "RenderTreeBuilderFirstLetter.h"
-#include "RenderTreeUpdaterListItem.h"
 #include "StyleResolver.h"
 
 namespace WebCore {
@@ -162,8 +160,7 @@ auto TextAutoSizingValue::adjustTextNodeSizes() -> StillHasNodes
         newParentStyle.fontCascade().update(&node->document().fontSelector());
         parentRenderer->setStyle(WTFMove(newParentStyle));
 
-        if (is<RenderListItem>(*parentRenderer))
-            RenderTreeUpdater::ListItem::updateMarker(builder, downcast<RenderListItem>(*parentRenderer));
+        builder.updateAfterDescendants(*parentRenderer);
     }
 
     for (auto& node : m_autoSizedNodes) {

@@ -4582,8 +4582,8 @@
 		E47C392F1FE6E0F900BBBC6B /* RenderTreeUpdater.h in Headers */ = {isa = PBXBuildFile; fileRef = E47C392C1FE6E0DF00BBBC6B /* RenderTreeUpdater.h */; };
 		E47C39301FE6E0FD00BBBC6B /* RenderTreeBuilderFirstLetter.h in Headers */ = {isa = PBXBuildFile; fileRef = E47C39261FE6E0DC00BBBC6B /* RenderTreeBuilderFirstLetter.h */; };
 		E47C39311FE6E10200BBBC6B /* RenderTreeUpdaterGeneratedContent.h in Headers */ = {isa = PBXBuildFile; fileRef = E47C39251FE6E0DB00BBBC6B /* RenderTreeUpdaterGeneratedContent.h */; };
-		E47C39321FE6E10500BBBC6B /* RenderTreeUpdaterListItem.h in Headers */ = {isa = PBXBuildFile; fileRef = E47C39281FE6E0DD00BBBC6B /* RenderTreeUpdaterListItem.h */; };
-		E47C39331FE6E10800BBBC6B /* RenderTreeUpdaterMultiColumn.h in Headers */ = {isa = PBXBuildFile; fileRef = E47C39271FE6E0DC00BBBC6B /* RenderTreeUpdaterMultiColumn.h */; };
+		E47C39321FE6E10500BBBC6B /* RenderTreeBuilderList.h in Headers */ = {isa = PBXBuildFile; fileRef = E47C39281FE6E0DD00BBBC6B /* RenderTreeBuilderList.h */; };
+		E47C39331FE6E10800BBBC6B /* RenderTreeBuilderMultiColumn.h in Headers */ = {isa = PBXBuildFile; fileRef = E47C39271FE6E0DC00BBBC6B /* RenderTreeBuilderMultiColumn.h */; };
 		E47E276516036ED200EE2AFB /* ExtensionStyleSheets.h in Headers */ = {isa = PBXBuildFile; fileRef = E47E276416036ED200EE2AFB /* ExtensionStyleSheets.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E48137B91DB3B526005C59BF /* StyleValidity.h in Headers */ = {isa = PBXBuildFile; fileRef = E48137B81DB3B526005C59BF /* StyleValidity.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E48944A3180B57D800F165D8 /* SimpleLineLayout.h in Headers */ = {isa = PBXBuildFile; fileRef = E48944A1180B57D800F165D8 /* SimpleLineLayout.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -13912,15 +13912,15 @@
 		E47C39201FE6E0D900BBBC6B /* RenderTreeBuilder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderTreeBuilder.cpp; sourceTree = "<group>"; };
 		E47C39211FE6E0DA00BBBC6B /* RenderTreeBuilderFirstLetter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderTreeBuilderFirstLetter.cpp; sourceTree = "<group>"; };
 		E47C39221FE6E0DA00BBBC6B /* RenderTreeUpdaterGeneratedContent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderTreeUpdaterGeneratedContent.cpp; sourceTree = "<group>"; };
-		E47C39231FE6E0DA00BBBC6B /* RenderTreeUpdaterMultiColumn.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderTreeUpdaterMultiColumn.cpp; sourceTree = "<group>"; };
+		E47C39231FE6E0DA00BBBC6B /* RenderTreeBuilderMultiColumn.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderTreeBuilderMultiColumn.cpp; sourceTree = "<group>"; };
 		E47C39241FE6E0DB00BBBC6B /* RenderTreePosition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderTreePosition.h; sourceTree = "<group>"; };
 		E47C39251FE6E0DB00BBBC6B /* RenderTreeUpdaterGeneratedContent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderTreeUpdaterGeneratedContent.h; sourceTree = "<group>"; };
 		E47C39261FE6E0DC00BBBC6B /* RenderTreeBuilderFirstLetter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderTreeBuilderFirstLetter.h; sourceTree = "<group>"; };
-		E47C39271FE6E0DC00BBBC6B /* RenderTreeUpdaterMultiColumn.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderTreeUpdaterMultiColumn.h; sourceTree = "<group>"; };
-		E47C39281FE6E0DD00BBBC6B /* RenderTreeUpdaterListItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderTreeUpdaterListItem.h; sourceTree = "<group>"; };
+		E47C39271FE6E0DC00BBBC6B /* RenderTreeBuilderMultiColumn.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderTreeBuilderMultiColumn.h; sourceTree = "<group>"; };
+		E47C39281FE6E0DD00BBBC6B /* RenderTreeBuilderList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderTreeBuilderList.h; sourceTree = "<group>"; };
 		E47C39291FE6E0DE00BBBC6B /* RenderTreePosition.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderTreePosition.cpp; sourceTree = "<group>"; };
 		E47C392A1FE6E0DE00BBBC6B /* RenderTreeBuilder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderTreeBuilder.h; sourceTree = "<group>"; };
-		E47C392B1FE6E0DF00BBBC6B /* RenderTreeUpdaterListItem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderTreeUpdaterListItem.cpp; sourceTree = "<group>"; };
+		E47C392B1FE6E0DF00BBBC6B /* RenderTreeBuilderList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderTreeBuilderList.cpp; sourceTree = "<group>"; };
 		E47C392C1FE6E0DF00BBBC6B /* RenderTreeUpdater.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderTreeUpdater.h; sourceTree = "<group>"; };
 		E47E276416036ED200EE2AFB /* ExtensionStyleSheets.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExtensionStyleSheets.h; sourceTree = "<group>"; };
 		E47E276716036EDC00EE2AFB /* ExtensionStyleSheets.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ExtensionStyleSheets.cpp; sourceTree = "<group>"; };
@@ -24521,6 +24521,10 @@
 				E47C392A1FE6E0DE00BBBC6B /* RenderTreeBuilder.h */,
 				E47C39211FE6E0DA00BBBC6B /* RenderTreeBuilderFirstLetter.cpp */,
 				E47C39261FE6E0DC00BBBC6B /* RenderTreeBuilderFirstLetter.h */,
+				E47C392B1FE6E0DF00BBBC6B /* RenderTreeBuilderList.cpp */,
+				E47C39281FE6E0DD00BBBC6B /* RenderTreeBuilderList.h */,
+				E47C39231FE6E0DA00BBBC6B /* RenderTreeBuilderMultiColumn.cpp */,
+				E47C39271FE6E0DC00BBBC6B /* RenderTreeBuilderMultiColumn.h */,
 				119340761FE8B92300935F1E /* RenderTreeBuilderTable.cpp */,
 				119340771FE8B92300935F1E /* RenderTreeBuilderTable.h */,
 				E47C39291FE6E0DE00BBBC6B /* RenderTreePosition.cpp */,
@@ -24529,10 +24533,6 @@
 				E47C392C1FE6E0DF00BBBC6B /* RenderTreeUpdater.h */,
 				E47C39221FE6E0DA00BBBC6B /* RenderTreeUpdaterGeneratedContent.cpp */,
 				E47C39251FE6E0DB00BBBC6B /* RenderTreeUpdaterGeneratedContent.h */,
-				E47C392B1FE6E0DF00BBBC6B /* RenderTreeUpdaterListItem.cpp */,
-				E47C39281FE6E0DD00BBBC6B /* RenderTreeUpdaterListItem.h */,
-				E47C39231FE6E0DA00BBBC6B /* RenderTreeUpdaterMultiColumn.cpp */,
-				E47C39271FE6E0DC00BBBC6B /* RenderTreeUpdaterMultiColumn.h */,
 			);
 			path = updating;
 			sourceTree = "<group>";
@@ -28938,8 +28938,8 @@
 				E47C392E1FE6E0F700BBBC6B /* RenderTreePosition.h in Headers */,
 				E47C392F1FE6E0F900BBBC6B /* RenderTreeUpdater.h in Headers */,
 				E47C39311FE6E10200BBBC6B /* RenderTreeUpdaterGeneratedContent.h in Headers */,
-				E47C39321FE6E10500BBBC6B /* RenderTreeUpdaterListItem.h in Headers */,
-				E47C39331FE6E10800BBBC6B /* RenderTreeUpdaterMultiColumn.h in Headers */,
+				E47C39321FE6E10500BBBC6B /* RenderTreeBuilderList.h in Headers */,
+				E47C39331FE6E10800BBBC6B /* RenderTreeBuilderMultiColumn.h in Headers */,
 				E44614520CD68A3500FADA75 /* RenderVideo.h in Headers */,
 				BCEA4868097D93020094C9E4 /* RenderView.h in Headers */,
 				BE20507E18A458C20080647E /* RenderVTTCue.h in Headers */,

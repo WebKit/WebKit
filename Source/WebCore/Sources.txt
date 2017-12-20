@@ -1981,12 +1981,12 @@ rendering/svg/SVGTextQuery.cpp
 
 rendering/updating/RenderTreeBuilder.cpp
 rendering/updating/RenderTreeBuilderFirstLetter.cpp
+rendering/updating/RenderTreeBuilderList.cpp
+rendering/updating/RenderTreeBuilderMultiColumn.cpp
 rendering/updating/RenderTreeBuilderTable.cpp
 rendering/updating/RenderTreePosition.cpp
 rendering/updating/RenderTreeUpdater.cpp
 rendering/updating/RenderTreeUpdaterGeneratedContent.cpp
-rendering/updating/RenderTreeUpdaterListItem.cpp
-rendering/updating/RenderTreeUpdaterMultiColumn.cpp
 
 replay/UserInputBridge.cpp
 

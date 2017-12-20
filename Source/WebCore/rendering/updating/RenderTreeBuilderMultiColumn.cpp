@@ -22,7 +22,7 @@
  */
 
 #include "config.h"
-#include "RenderTreeUpdaterMultiColumn.h"
+#include "RenderTreeBuilderMultiColumn.h"
 
 #include "RenderBlockFlow.h"
 #include "RenderChildIterator.h"
@@ -33,7 +33,12 @@
 
 namespace WebCore {
 
-void RenderTreeUpdater::MultiColumn::update(RenderBlockFlow& flow)
+RenderTreeBuilder::MultiColumn::MultiColumn(RenderTreeBuilder& builder)
+    : m_builder(builder)
+{
+}
+
+void RenderTreeBuilder::MultiColumn::updateAfterDescendants(RenderBlockFlow& flow)
 {
     bool needsFragmentedFlow = flow.requiresColumns(flow.style().columnCount());
     bool hasFragmentedFlow = flow.multiColumnFlow();
@@ -48,7 +53,7 @@ void RenderTreeUpdater::MultiColumn::update(RenderBlockFlow& flow)
     }
 }
 
-void RenderTreeUpdater::MultiColumn::createFragmentedFlow(RenderBlockFlow& flow)
+void RenderTreeBuilder::MultiColumn::createFragmentedFlow(RenderBlockFlow& flow)
 {
     flow.setChildrenInline(false); // Do this to avoid wrapping inline children that are just going to move into the flow thread.
     flow.deleteLines();
@@ -74,14 +79,14 @@ void RenderTreeUpdater::MultiColumn::createFragmentedFlow(RenderBlockFlow& flow)
             auto& spannerOriginalParent = *placeholder->parent();
             // Detaching the spanner takes care of removing the placeholder (and merges the RenderMultiColumnSets).
             auto spannerToReInsert = spanner->parent()->takeChild(*spanner);
-            RenderTreeBuilder::current()->insertChild(spannerOriginalParent, WTFMove(spannerToReInsert));
+            m_builder.insertChild(spannerOriginalParent, WTFMove(spannerToReInsert));
         }
     }
 
     auto newFragmentedFlow = WebCore::createRenderer<RenderMultiColumnFlow>(flow.document(), RenderStyle::createAnonymousStyleWithDisplay(flow.style(), BLOCK));
     newFragmentedFlow->initializeStyle();
     auto& fragmentedFlow = *newFragmentedFlow;
-    flow.RenderBlock::addChild(*RenderTreeBuilder::current(), WTFMove(newFragmentedFlow));
+    flow.RenderBlock::addChild(m_builder, WTFMove(newFragmentedFlow));
 
     // Reparent children preceding the fragmented flow into the fragmented flow.
     flow.moveChildrenTo(&fragmentedFlow, flow.firstChild(), &fragmentedFlow, RenderBoxModelObject::NormalizeAfterInsertion::Yes);
@@ -96,7 +101,7 @@ void RenderTreeUpdater::MultiColumn::createFragmentedFlow(RenderBlockFlow& flow)
     flow.setMultiColumnFlow(fragmentedFlow);
 }
 
-void RenderTreeUpdater::MultiColumn::destroyFragmentedFlow(RenderBlockFlow& flow)
+void RenderTreeBuilder::MultiColumn::destroyFragmentedFlow(RenderBlockFlow& flow)
 {
     auto& multiColumnFlow = *flow.multiColumnFlow();
     multiColumnFlow.deleteLines();
@@ -122,7 +127,7 @@ void RenderTreeUpdater::MultiColumn::destroyFragmentedFlow(RenderBlockFlow& flow
     multiColumnFlow.moveAllChildrenTo(&flow, RenderBoxModelObject::NormalizeAfterInsertion::Yes);
     multiColumnFlow.removeFromParentAndDestroy();
     for (auto& parentAndSpanner : parentAndSpannerList)
-        RenderTreeBuilder::current()->insertChild(*parentAndSpanner.first, WTFMove(parentAndSpanner.second));
+        m_builder.insertChild(*parentAndSpanner.first, WTFMove(parentAndSpanner.second));
 }
 
 }

@@ -26,13 +26,18 @@
 #pragma once
 
 #include "RenderListItem.h"
-#include "RenderTreeUpdater.h"
+#include "RenderTreeBuilder.h"
 
 namespace WebCore {
 
-class RenderTreeUpdater::ListItem {
+class RenderTreeBuilder::List {
 public:
-    static void updateMarker(RenderTreeBuilder&, RenderListItem&);
+    List(RenderTreeBuilder&);
+
+    void updateItemMarker(RenderListItem&);
+
+private:
+    RenderTreeBuilder& m_builder;
 };
 
 }
