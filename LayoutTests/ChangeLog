@@ -1,3 +1,13 @@
+2017-12-20  Matt Lewis  <jlewis3@apple.com>
+
+        Marked two imported/w3c/web-platform-tests/service-workers/service-worker/ test as slow.
+        https://bugs.webkit.org/show_bug.cgi?id=180982
+        https://bugs.webkit.org/show_bug.cgi?id=179194
+
+        Unreviewed test expectations.
+
+        * platform/mac-wk2/TestExpectations:
+
 2017-12-20  Frederic Wang  <fwang@igalia.com>
 
         Split layout of RenderMathMLRow into smaller steps
