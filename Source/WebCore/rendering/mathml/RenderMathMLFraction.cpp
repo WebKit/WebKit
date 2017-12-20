@@ -68,25 +68,29 @@ RenderBox& RenderMathMLFraction::denominator() const
     return *firstChildBox()->nextSiblingBox();
 }
 
-void RenderMathMLFraction::updateLineThickness()
+LayoutUnit RenderMathMLFraction::defaultLineThickness() const
 {
-    // We first determine the default line thickness.
     const auto& primaryFont = style().fontCascade().primaryFont();
-    const auto* mathData = style().fontCascade().primaryFont().mathData();
-    if (mathData)
-        m_defaultLineThickness = mathData->getMathConstant(primaryFont, OpenTypeMathData::FractionRuleThickness);
-    else
-        m_defaultLineThickness = ruleThicknessFallback();
-
-    // Next we resolve the thickness using m_defaultLineThickness as the default value.
-    m_lineThickness = toUserUnits(element().lineThickness(), style(), m_defaultLineThickness);
-    if (m_lineThickness < 0)
-        m_lineThickness = 0;
+    if (const auto* mathData = primaryFont.mathData())
+        return mathData->getMathConstant(primaryFont, OpenTypeMathData::FractionRuleThickness);
+    return ruleThicknessFallback();
 }
 
-RenderMathMLFraction::FractionParameters RenderMathMLFraction::fractionParameters()
+LayoutUnit RenderMathMLFraction::lineThickness() const
 {
-    ASSERT(!isStack());
+    return std::max<LayoutUnit>(toUserUnits(element().lineThickness(), style(), defaultLineThickness()), 0);
+}
+
+float RenderMathMLFraction::relativeLineThickness() const
+{
+    if (LayoutUnit defaultThickness = defaultLineThickness())
+        return lineThickness() / defaultThickness;
+    return 0;
+}
+
+RenderMathMLFraction::FractionParameters RenderMathMLFraction::fractionParameters() const
+{
+    ASSERT(lineThickness());
     FractionParameters parameters;
 
     // We try and read constants to draw the fraction from the OpenType MATH and use fallback values otherwise.
@@ -111,9 +115,10 @@ RenderMathMLFraction::FractionParameters RenderMathMLFraction::fractionParameter
     return parameters;
 }
 
-RenderMathMLFraction::StackParameters RenderMathMLFraction::stackParameters()
+RenderMathMLFraction::StackParameters RenderMathMLFraction::stackParameters() const
 {
-    ASSERT(isStack());
+    ASSERT(!lineThickness());
+    ASSERT(isValid());
     StackParameters parameters;
     
     // We try and read constants to draw the stack from the OpenType MATH and use fallback values otherwise.
@@ -131,6 +136,17 @@ RenderMathMLFraction::StackParameters RenderMathMLFraction::stackParameters()
         // The MATH table specification does not suggest any values for shifts, so we leave them at zero.
         parameters.topShiftUp = 0;
         parameters.bottomShiftDown = 0;
+    }
+
+    LayoutUnit numeratorAscent = ascentForChild(numerator());
+    LayoutUnit numeratorDescent = numerator().logicalHeight() - numeratorAscent;
+    LayoutUnit denominatorAscent = ascentForChild(denominator());
+    LayoutUnit gap = parameters.topShiftUp - numeratorDescent + parameters.bottomShiftDown - denominatorAscent;
+    if (gap < parameters.gapMin) {
+        // If the gap is not large enough, we increase the shifts by the same value.
+        LayoutUnit delta = (parameters.gapMin - gap) / 2;
+        parameters.topShiftUp += delta;
+        parameters.bottomShiftDown += delta;
     }
 
     return parameters;
@@ -160,7 +176,7 @@ void RenderMathMLFraction::computePreferredLogicalWidths()
     setPreferredLogicalWidthsDirty(false);
 }
 
-LayoutUnit RenderMathMLFraction::horizontalOffset(RenderBox& child, MathMLFractionElement::FractionAlignment align)
+LayoutUnit RenderMathMLFraction::horizontalOffset(RenderBox& child, MathMLFractionElement::FractionAlignment align) const
 {
     switch (align) {
     case MathMLFractionElement::FractionAlignmentRight:
@@ -173,6 +189,22 @@ LayoutUnit RenderMathMLFraction::horizontalOffset(RenderBox& child, MathMLFracti
 
     ASSERT_NOT_REACHED();
     return LayoutUnit(0);
+}
+
+LayoutUnit RenderMathMLFraction::ascentOverHorizontalAxis() const
+{
+    ASSERT(isValid());
+
+    LayoutUnit numeratorAscent = ascentForChild(numerator());
+    if (LayoutUnit thickness = lineThickness()) {
+        // For normal fraction layout, the axis is the middle of the fraction bar.
+        FractionParameters parameters = fractionParameters();
+        return std::max(numerator().logicalHeight() + parameters.numeratorGapMin + thickness / 2, numeratorAscent + parameters.numeratorMinShiftUp);
+    }
+
+    // For stack layout, the axis is the middle of the gap between numerator and denonimator.
+    StackParameters parameters = stackParameters();
+    return numeratorAscent + parameters.topShiftUp;
 }
 
 void RenderMathMLFraction::layoutBlock(bool relayoutChildren, LayoutUnit)
@@ -192,38 +224,26 @@ void RenderMathMLFraction::layoutBlock(bool relayoutChildren, LayoutUnit)
 
     setLogicalWidth(std::max(numerator().logicalWidth(), denominator().logicalWidth()));
 
-    updateLineThickness();
     LayoutUnit verticalOffset = 0; // This is the top of the renderer.
     LayoutPoint numeratorLocation(horizontalOffset(numerator(), element().numeratorAlignment()), verticalOffset);
     numerator().setLocation(numeratorLocation);
 
-    LayoutUnit numeratorAscent = ascentForChild(numerator());
-    LayoutUnit numeratorDescent = numerator().logicalHeight() - numeratorAscent;
     LayoutUnit denominatorAscent = ascentForChild(denominator());
     LayoutUnit denominatorDescent = denominator().logicalHeight() - denominatorAscent;
-    if (isStack()) {
-        StackParameters parameters = stackParameters();
-        LayoutUnit gap = parameters.topShiftUp - numeratorDescent + parameters.bottomShiftDown - denominatorAscent;
-        if (gap < parameters.gapMin) {
-            // If the gap is not large enough, we increase the shifts by the same value.
-            LayoutUnit delta = (parameters.gapMin - gap) / 2;
-            parameters.topShiftUp += delta;
-            parameters.bottomShiftDown += delta;
-        }
-        verticalOffset += numeratorAscent + parameters.topShiftUp; // This is the middle of the stack gap.
-        m_ascent = verticalOffset + mathAxisHeight();
-        verticalOffset += parameters.bottomShiftDown - denominatorAscent;
-    } else {
+    LayoutUnit ascent = ascentOverHorizontalAxis();
+    verticalOffset += ascent;
+    if (LayoutUnit thickness = lineThickness()) {
         FractionParameters parameters = fractionParameters();
-        verticalOffset += std::max(numerator().logicalHeight() + parameters.numeratorGapMin + m_lineThickness / 2, numeratorAscent + parameters.numeratorMinShiftUp); // This is the middle of the fraction bar.
-        m_ascent = verticalOffset + mathAxisHeight();
-        verticalOffset += std::max(m_lineThickness / 2 + parameters.denominatorGapMin, parameters.denominatorMinShiftDown - denominatorAscent);
+        verticalOffset += std::max(thickness / 2 + parameters.denominatorGapMin, parameters.denominatorMinShiftDown - denominatorAscent);
+    } else {
+        StackParameters parameters = stackParameters();
+        verticalOffset += parameters.bottomShiftDown - denominatorAscent;
     }
 
     LayoutPoint denominatorLocation(horizontalOffset(denominator(), element().denominatorAlignment()), verticalOffset);
     denominator().setLocation(denominatorLocation);
 
-    verticalOffset = std::max(verticalOffset + denominator().logicalHeight(), m_ascent + denominatorDescent); // This is the bottom of our renderer.
+    verticalOffset = std::max(verticalOffset + denominator().logicalHeight(), ascent + mathAxisHeight() + denominatorDescent); // This is the bottom of our renderer.
     setLogicalHeight(verticalOffset);
 
     layoutPositionedObjects(relayoutChildren);
@@ -234,14 +254,15 @@ void RenderMathMLFraction::layoutBlock(bool relayoutChildren, LayoutUnit)
 void RenderMathMLFraction::paint(PaintInfo& info, const LayoutPoint& paintOffset)
 {
     RenderMathMLBlock::paint(info, paintOffset);
-    if (info.context().paintingDisabled() || info.phase != PaintPhaseForeground || style().visibility() != VISIBLE || !isValid() || isStack())
+    LayoutUnit thickness = lineThickness();
+    if (info.context().paintingDisabled() || info.phase != PaintPhaseForeground || style().visibility() != VISIBLE || !isValid() || !thickness)
         return;
 
-    IntPoint adjustedPaintOffset = roundedIntPoint(paintOffset + location() + LayoutPoint(0, m_ascent - mathAxisHeight()));
+    IntPoint adjustedPaintOffset = roundedIntPoint(paintOffset + location() + LayoutPoint(0, ascentOverHorizontalAxis()));
 
     GraphicsContextStateSaver stateSaver(info.context());
 
-    info.context().setStrokeThickness(m_lineThickness);
+    info.context().setStrokeThickness(thickness);
     info.context().setStrokeStyle(SolidStroke);
     info.context().setStrokeColor(style().visitedDependentColor(CSSPropertyColor));
     info.context().drawLine(adjustedPaintOffset, roundedIntPoint(LayoutPoint(adjustedPaintOffset.x() + logicalWidth(), adjustedPaintOffset.y())));
@@ -250,7 +271,7 @@ void RenderMathMLFraction::paint(PaintInfo& info, const LayoutPoint& paintOffset
 std::optional<int> RenderMathMLFraction::firstLineBaseline() const
 {
     if (isValid())
-        return std::optional<int>(std::lround(static_cast<float>(m_ascent)));
+        return std::optional<int>(std::lround(static_cast<float>(ascentOverHorizontalAxis() + mathAxisHeight())));
     return RenderMathMLBlock::firstLineBaseline();
 }
 

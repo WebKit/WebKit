@@ -41,7 +41,9 @@ class RenderMathMLFraction final : public RenderMathMLBlock {
 public:
     RenderMathMLFraction(MathMLFractionElement&, RenderStyle&&);
 
-    float relativeLineThickness() const { return m_defaultLineThickness ? m_lineThickness / m_defaultLineThickness : LayoutUnit(0); }
+    LayoutUnit defaultLineThickness() const;
+    LayoutUnit lineThickness() const;
+    float relativeLineThickness() const;
 
 private:
     bool isRenderMathMLFraction() const final { return true; }
@@ -55,29 +57,24 @@ private:
 
     MathMLFractionElement& element() const { return static_cast<MathMLFractionElement&>(nodeForNonAnonymous()); }
 
-    bool isStack() const { return !m_lineThickness; }
     bool isValid() const;
     RenderBox& numerator() const;
     RenderBox& denominator() const;
-    LayoutUnit horizontalOffset(RenderBox&, MathMLFractionElement::FractionAlignment);
-    void updateLineThickness();
+    LayoutUnit horizontalOffset(RenderBox&, MathMLFractionElement::FractionAlignment) const;
     struct FractionParameters {
         LayoutUnit numeratorGapMin;
         LayoutUnit denominatorGapMin;
         LayoutUnit numeratorMinShiftUp;
         LayoutUnit denominatorMinShiftDown;
     };
-    FractionParameters fractionParameters();
+    FractionParameters fractionParameters() const;
     struct StackParameters {
         LayoutUnit gapMin;
         LayoutUnit topShiftUp;
         LayoutUnit bottomShiftDown;
     };
-    StackParameters stackParameters();
-
-    LayoutUnit m_ascent;
-    LayoutUnit m_defaultLineThickness { 1 };
-    LayoutUnit m_lineThickness;
+    StackParameters stackParameters() const;
+    LayoutUnit ascentOverHorizontalAxis() const;
 };
 
 } // namespace WebCore
