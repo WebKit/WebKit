@@ -779,7 +779,7 @@ webkit.org/b/128172 fast/events/touch/multi-touch-inside-nested-iframes.html [ C
 webkit.org/b/128172 fast/events/touch/multi-touch-inside-iframes.html [ Timeout ]
 webkit.org/b/128172 fast/events/touch/basic-single-touch-events.html [ Crash Timeout ]
 webkit.org/b/128172 fast/events/touch/page-scaled-touch-gesture-click.html [ Timeout ]
-webkit.org/b/128172 fast/events/touch/touch-target.html [ Timeout ]
+webkit.org/b/128172 fast/events/touch/touch-target.html [ Crash Timeout ]
 webkit.org/b/128172 fast/events/touch/touch-target-limited.html [ Crash Timeout ]
 webkit.org/b/128172 fast/events/touch/send-oncancel-event.html [ Timeout ]
 
@@ -1200,6 +1200,10 @@ webkit.org/b/179989 fast/css3-text/css3-text-align-last/getComputedStyle/getComp
 #
 # Don't add anything above here without a comment explaining why the test should fail.
 #////////////////////////////////////////////////////////////////////////////////////////
+
+webkit.org/b/178781 http/tests/inspector/network/har/har-page.html [ Failure ]
+webkit.org/b/181029 imported/w3c/web-platform-tests/fetch/api/basic/request-headers.any.html [ Failure ]
+webkit.org/b/181029 imported/w3c/web-platform-tests/fetch/api/basic/request-headers.any.worker.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # 3. TESTS CRASHING
@@ -1901,6 +1905,10 @@ webkit.org/b/180369 http/tests/security/mixedContent/insecure-xhr-in-main-frame.
 webkit.org/b/180806 fast/html/menuitem-element.html [ Pass Crash ]
 
 webkit.org/b/179174 inspector/console/webcore-logging.html [ Failure Crash ]
+
+webkit.org/b/181030 wasm/iframe-postmessage.html [ Pass Failure ]
+webkit.org/b/179948 [ Release ] fast/hidpi/filters-reference.html [ Pass ImageOnlyFailure ]
+webkit.org/b/181031 fast/frames/crash-when-iframe-is-remove-in-eventhandler.html [ Pass Crash ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Flaky tests
