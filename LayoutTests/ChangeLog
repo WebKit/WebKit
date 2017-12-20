@@ -1,3 +1,14 @@
+2017-12-20  Chris Dumez  <cdumez@apple.com>
+
+        Do not reuse resource for memory cache if selected service worker differs
+        https://bugs.webkit.org/show_bug.cgi?id=181042
+
+        Reviewed by Youenn Fablet.
+
+        Drop test from flaky list now that it is consistently passing.
+
+        * TestExpectations:
+
 2017-12-20  Matt Lewis  <jlewis3@apple.com>
 
         Marked svg/animations/smil-leak-element-instances-noBaseValRef.svg as flaky on macOS WK1.

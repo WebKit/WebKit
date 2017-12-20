@@ -180,7 +180,6 @@ imported/w3c/web-platform-tests/service-workers/service-worker/performance-timel
 imported/w3c/web-platform-tests/service-workers/service-worker/registration-service-worker-attributes.https.html [ Pass Failure ]
 imported/w3c/web-platform-tests/service-workers/service-worker/service-worker-csp-connect.https.html [ Pass Failure ]
 imported/w3c/web-platform-tests/service-workers/service-worker/uncontrolled-page.https.html [ Pass Failure ]
-imported/w3c/web-platform-tests/service-workers/service-worker/unregister-controller.https.html [ Pass Failure ]
 imported/w3c/web-platform-tests/service-workers/service-worker/websocket.https.html [ Pass Failure ]
 imported/w3c/web-platform-tests/service-workers/service-worker/windowclient-navigate.https.html [ Pass Failure ]
 imported/w3c/web-platform-tests/streams/readable-byte-streams/detached-buffers.serviceworker.https.html [ Pass Failure ]

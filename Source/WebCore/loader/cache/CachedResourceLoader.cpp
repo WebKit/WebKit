@@ -1024,6 +1024,14 @@ CachedResourceLoader::RevalidationPolicy CachedResourceLoader::determineRevalida
     if (request.cachePolicy() == RefreshAnyCacheData)
         return Reload;
 
+#if ENABLE(SERVICE_WORKER)
+    // FIXME: We should validate/specify this behavior.
+    if (cachedResourceRequest.options().serviceWorkerIdentifier != existingResource->options().serviceWorkerIdentifier) {
+        LOG(ResourceLoading, "CachedResourceLoader::determineRevalidationPolicy reloading because selected service worker differs");
+        return Reload;
+    }
+#endif
+
     // We already have a preload going for this URL.
     if (forPreload == ForPreload::Yes && existingResource->isPreloaded())
         return Use;

@@ -234,7 +234,7 @@ public:
     DataBufferingPolicy dataBufferingPolicy() const { return m_options.dataBufferingPolicy; }
 
     bool allowsCaching() const { return m_options.cachingPolicy == CachingPolicy::AllowCaching; }
-    const FetchOptions& options() const { return m_options; }
+    const ResourceLoaderOptions& options() const { return m_options; }
 
     virtual void destroyDecodedData() { }
 
