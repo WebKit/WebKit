@@ -1570,7 +1570,7 @@ void DocumentLoader::startLoadingMainResource()
 
 #if ENABLE(SERVICE_WORKER)
         // FIXME: Implement local URL interception by getting the service worker of the parent.
-        auto tryLoadingThroughServiceWorker = !frameLoader()->isReloadingFromOrigin() && m_frame->page() && RuntimeEnabledFeatures::sharedFeatures().serviceWorkerEnabled()            && SchemeRegistry::canServiceWorkersHandleURLScheme(request.url().protocol().toStringWithoutCopying());
+        auto tryLoadingThroughServiceWorker = !frameLoader()->isReloadingFromOrigin() && m_frame->page() && RuntimeEnabledFeatures::sharedFeatures().serviceWorkerEnabled() && SchemeRegistry::canServiceWorkersHandleURLScheme(request.url().protocol().toStringWithoutCopying());
         if (tryLoadingThroughServiceWorker) {
             auto origin = (!m_frame->isMainFrame() && m_frame->document()) ? makeRef(m_frame->document()->topOrigin()) : SecurityOrigin::create(request.url());
             auto& connection = ServiceWorkerProvider::singleton().serviceWorkerConnectionForSession(m_frame->page()->sessionID());
