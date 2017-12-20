@@ -38,6 +38,8 @@
 #import <MobileCoreServices/MobileCoreServices.h>
 #endif
 
+#define USES_MODERN_ATTRIBUTED_STRING_CONVERSION ((PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300))
+
 #if WK_API_ENABLED
 
 @interface AttachmentUpdateObserver : NSObject <WKUIDelegatePrivate>
@@ -871,7 +873,13 @@ TEST(WKAttachmentTests, InsertPastedAttributedStringContainingMultipleAttachment
     EXPECT_EQ(3, [webView stringByEvaluatingJavaScript:@"document.querySelectorAll('attachment').length"].integerValue);
     EXPECT_WK_STREQ("image/png", [webView stringByEvaluatingJavaScript:@"document.querySelectorAll('attachment')[0].getAttribute('type')"]);
     EXPECT_WK_STREQ("application/pdf", [webView stringByEvaluatingJavaScript:@"document.querySelectorAll('attachment')[1].getAttribute('type')"]);
-    EXPECT_WK_STREQ("application/zip", [webView stringByEvaluatingJavaScript:@"document.querySelectorAll('attachment')[2].getAttribute('type')"]);
+
+    NSString *zipAttachmentType = [webView stringByEvaluatingJavaScript:@"document.querySelectorAll('attachment')[2].getAttribute('type')"];
+#if USES_MODERN_ATTRIBUTED_STRING_CONVERSION
+    EXPECT_WK_STREQ("application/zip", zipAttachmentType);
+#else
+    EXPECT_WK_STREQ("application/octet-stream", zipAttachmentType);
+#endif
 
     {
         ObserveAttachmentUpdatesForScope observer(webView.get());

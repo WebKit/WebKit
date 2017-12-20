@@ -1,3 +1,10 @@
+2017-12-19  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Unreviewed, rebaseline an API test result for El Capitan and Sierra.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WKAttachmentTests.mm:
+        (TestWebKitAPI::TEST):
+
 2017-12-19  Ryosuke Niwa  <rniwa@webkit.org>
 
         Don't convert pasted content to use blob URL in WebKit1
