@@ -127,9 +127,6 @@ ScriptExecutionContext::~ScriptExecutionContext()
     while (auto* destructionObserver = m_destructionObservers.takeAny())
         destructionObserver->contextDestroyed();
 
-    for (auto* messagePort : m_messagePorts)
-        messagePort->contextDestroyed();
-
 #if !ASSERT_DISABLED
     m_inScriptExecutionContextDestructor = false;
 #endif
@@ -309,11 +306,6 @@ void ScriptExecutionContext::stopActiveDOMObjects()
     }
 
     m_activeDOMObjectAdditionForbidden = false;
-
-    // FIXME: Make message ports be active DOM objects and let them implement stop instead
-    // of having this separate mechanism just for them.
-    for (auto* messagePort : m_messagePorts)
-        messagePort->close();
 }
 
 void ScriptExecutionContext::suspendActiveDOMObjectIfNeeded(ActiveDOMObject& activeDOMObject)
@@ -515,11 +507,6 @@ bool ScriptExecutionContext::hasPendingActivity() const
 
     for (auto* activeDOMObject : m_activeDOMObjects) {
         if (activeDOMObject->hasPendingActivity())
-            return true;
-    }
-
-    for (auto* messagePort : m_messagePorts) {
-        if (messagePort->hasPendingActivity())
             return true;
     }
 

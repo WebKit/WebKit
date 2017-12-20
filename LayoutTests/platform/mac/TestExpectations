@@ -541,9 +541,6 @@ fast/repaint/overflow-scroll-touch-repaint.html [ Skip ]
 webkit.org/b/27684 compositing/text-on-scaled-layer.html [ ImageOnlyFailure ]
 webkit.org/b/27684 compositing/text-on-scaled-surface.html [ ImageOnlyFailure ]
 
-# Asserts in MessagePort::contextDestroyed, but the assert usually gets attributed to later tests.
-webkit.org/b/94458 fast/events/message-port-constructor-for-deleted-document.html
-
 webkit.org/b/95501 http/tests/security/inactive-document-with-empty-security-origin.html [ Skip ]
 
 # Rendering/Layout issue of CJK vertical text with some fonts.

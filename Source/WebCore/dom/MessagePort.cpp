@@ -35,9 +35,10 @@
 namespace WebCore {
 
 MessagePort::MessagePort(ScriptExecutionContext& scriptExecutionContext)
-    : m_scriptExecutionContext(&scriptExecutionContext)
+    : ActiveDOMObject(&scriptExecutionContext)
 {
     m_scriptExecutionContext->createdMessagePort(*this);
+    suspendIfNeeded();
 
     // Don't need to call processMessagePortMessagesSoon() here, because the port will not be opened until start() is invoked.
 }
@@ -85,6 +86,9 @@ std::unique_ptr<MessagePortChannel> MessagePort::disentangle()
     // We can't receive any messages or generate any events after this, so remove ourselves from the list of active ports.
     ASSERT(m_scriptExecutionContext);
     m_scriptExecutionContext->destroyedMessagePort(*this);
+    m_scriptExecutionContext->willDestroyActiveDOMObject(*this);
+    m_scriptExecutionContext->willDestroyDestructionObserver(*this);
+
     m_scriptExecutionContext = nullptr;
 
     return WTFMove(m_entangledChannel);
@@ -161,7 +165,7 @@ void MessagePort::dispatchMessages()
     }
 }
 
-bool MessagePort::hasPendingActivity()
+bool MessagePort::hasPendingActivity() const
 {
     // The spec says that entangled message ports should always be treated as if they have a strong reference.
     // We'll also stipulate that the queue needs to be open (if the app drops its reference to the port before start()-ing it, then it's not really entangled as it's unreachable).
@@ -172,7 +176,7 @@ bool MessagePort::hasPendingActivity()
     return false;
 }
 
-MessagePort* MessagePort::locallyEntangledPort()
+MessagePort* MessagePort::locallyEntangledPort() const
 {
     return m_entangledChannel ? m_entangledChannel->locallyEntangledPort(m_scriptExecutionContext) : nullptr;
 }
@@ -216,6 +220,16 @@ bool MessagePort::addEventListener(const AtomicString& eventType, Ref<EventListe
     if (listener->isAttribute() && eventType == eventNames().messageEvent)
         start();
     return EventTargetWithInlineData::addEventListener(eventType, WTFMove(listener), options);
+}
+
+const char* MessagePort::activeDOMObjectName() const
+{
+    return "MessagePort";
+}
+
+bool MessagePort::canSuspendForDocumentSuspension() const
+{
+    return !hasPendingActivity() || (!m_started || m_closed);
 }
 
 } // namespace WebCore

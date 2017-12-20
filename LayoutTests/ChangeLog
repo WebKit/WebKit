@@ -1,3 +1,15 @@
+2017-12-20  Brady Eidson  <beidson@apple.com>
+
+        Assertion failure in MessagePort::contextDestroyed in http/tests/security/MessagePort/event-listener-context.html, usually attributed to later tests.
+        https://bugs.webkit.org/show_bug.cgi?id=94458
+
+        Reviewed by Chris Dumez.
+
+        * fast/events/message-port-constructor-for-deleted-document-expected.txt:
+        * fast/events/message-port-constructor-for-deleted-document.html:
+        * fast/events/resources/copy-of-message-port-context-destroyed.html: Added.
+        * platform/mac/TestExpectations: Reenable the now-reliable and now-passing test.
+
 2017-12-20  Youenn Fablet  <youenn@apple.com>
 
         LayoutTests/http/tests/workers/service/service-worker-cache-api.https.html is failing on most platforms

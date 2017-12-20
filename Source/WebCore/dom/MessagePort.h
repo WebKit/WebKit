@@ -26,6 +26,7 @@
 
 #pragma once
 
+#include "ActiveDOMObject.h"
 #include "EventTarget.h"
 #include "ExceptionOr.h"
 #include "MessagePortChannel.h"
@@ -40,7 +41,7 @@ namespace WebCore {
 
 class Frame;
 
-class MessagePort final : public RefCounted<MessagePort>, public EventTargetWithInlineData {
+class MessagePort final : public RefCounted<MessagePort>, public ActiveDOMObject, public EventTargetWithInlineData {
 public:
     static Ref<MessagePort> create(ScriptExecutionContext& scriptExecutionContext) { return adoptRef(*new MessagePort(scriptExecutionContext)); }
     virtual ~MessagePort();
@@ -60,29 +61,31 @@ public:
     void messageAvailable();
     bool started() const { return m_started; }
 
-    void contextDestroyed();
-
-    ScriptExecutionContext* scriptExecutionContext() const final { return m_scriptExecutionContext; }
-
     void dispatchMessages();
-
-    bool hasPendingActivity();
 
     // Returns null if there is no entangled port, or if the entangled port is run by a different thread.
     // This is used solely to enable a GC optimization. Some platforms may not be able to determine ownership
     // of the remote port (since it may live cross-process) - those platforms may always return null.
-    MessagePort* locallyEntangledPort();
+    MessagePort* locallyEntangledPort() const;
 
     using RefCounted::ref;
     using RefCounted::deref;
 
-private:
-    explicit MessagePort(ScriptExecutionContext&);
+    // ActiveDOMObject
+    const char* activeDOMObjectName() const final;
+    bool canSuspendForDocumentSuspension() const final;
+    void contextDestroyed() final;
+    void stop() final { close(); }
+    bool hasPendingActivity() const final;
 
+    // EventTargetWithInlineData.
+    EventTargetInterface eventTargetInterface() const final { return MessagePortEventTargetInterfaceType; }
+    ScriptExecutionContext* scriptExecutionContext() const final { return ActiveDOMObject::scriptExecutionContext(); }
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }
 
-    EventTargetInterface eventTargetInterface() const final { return MessagePortEventTargetInterfaceType; }
+private:
+    explicit MessagePort(ScriptExecutionContext&);
 
     bool addEventListener(const AtomicString& eventType, Ref<EventListener>&&, const AddEventListenerOptions&) final;
 
@@ -97,7 +100,6 @@ private:
     std::unique_ptr<MessagePortChannel> m_entangledChannel;
     bool m_started { false };
     bool m_closed { false };
-    ScriptExecutionContext* m_scriptExecutionContext;
 };
 
 } // namespace WebCore

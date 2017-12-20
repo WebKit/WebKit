@@ -1,0 +1,41 @@
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+var port;
+var gc_stuff = new Array();
+
+gc_and_crash = function() {
+    if (this.GCController)
+        GCController.collect();
+    else {
+        // V8 needs that many objects to run GC.
+        for(i = 0; i < 100000; i++) {
+            p = new Object();
+            gc_stuff.push(p);
+            gc_stuff.push(p + p);
+        }
+    }
+
+    // If the bug 43140 is regressed, this will crash, at least in v8-based ports.
+    port.start();
+
+    document.getElementById("log").innerText = "Didn't crash: SUCCESS";
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+function test() {
+    var iframe = document.getElementById("iframe");
+    var channel = new iframe.contentWindow.MessageChannel();
+    port = channel.port1;
+
+    iframe.onload = function() { gc_and_crash(); }
+    iframe.src = "data:text/html,<body>Hello!" ;
+}
+</script>
+<body onload="test()">
+<pre id=log></pre>
+<iframe style="display:none" id=iframe></iframe>
