@@ -174,7 +174,7 @@ TEST(MarkerSubrange, SubdivideSpellingAndGrammarComplicatedFrontmost)
         EXPECT_EQ(expectedSubranges[i], results[i]);
 }
 
-TEST(MarkerSubrange, SubdivideGrammarAndSelectionOverlapFrontmost)
+TEST(MarkerSubrange, DISABLED_SubdivideGrammarAndSelectionOverlapFrontmost)
 {
     Vector<MarkerSubrange> subranges {
         MarkerSubrange { 0, 40, MarkerSubrange::GrammarError },
@@ -193,7 +193,7 @@ TEST(MarkerSubrange, SubdivideGrammarAndSelectionOverlapFrontmost)
         EXPECT_EQ(expectedSubranges[i], results[i]);
 }
 
-TEST(MarkerSubrange, SubdivideGrammarAndSelectionOverlapFrontmostWithLongestEffectiveRange)
+TEST(MarkerSubrange, DISABLED_SubdivideGrammarAndSelectionOverlapFrontmostWithLongestEffectiveRange)
 {
     Vector<MarkerSubrange> subranges {
         MarkerSubrange { 0, 40, MarkerSubrange::GrammarError },
