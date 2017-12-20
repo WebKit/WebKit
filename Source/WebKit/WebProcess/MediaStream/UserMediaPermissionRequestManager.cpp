@@ -72,32 +72,29 @@ void UserMediaPermissionRequestManager::startUserMediaRequest(UserMediaRequest& 
         return;
     }
 
-    auto& pendingRequests = m_blockedRequests.add(document, Vector<RefPtr<UserMediaRequest>>()).iterator->value;
+    auto& pendingRequests = m_blockedUserMediaRequests.add(document, Vector<RefPtr<UserMediaRequest>>()).iterator->value;
     if (pendingRequests.isEmpty())
         document->addMediaCanStartListener(this);
     pendingRequests.append(&request);
 }
 
-void UserMediaPermissionRequestManager::sendUserMediaRequest(UserMediaRequest& request)
+void UserMediaPermissionRequestManager::sendUserMediaRequest(UserMediaRequest& userRequest)
 {
-    Document* document = request.document();
-    Frame* frame = document ? document->frame() : nullptr;
-
+    auto* frame = userRequest.document() ? userRequest.document()->frame() : nullptr;
     if (!frame) {
-        request.deny(UserMediaRequest::OtherFailure, emptyString());
+        userRequest.deny(UserMediaRequest::OtherFailure, emptyString());
         return;
     }
 
     uint64_t requestID = generateRequestID();
-    m_idToUserMediaRequestMap.add(requestID, &request);
-    m_userMediaRequestToIDMap.add(&request, requestID);
+    m_idToUserMediaRequestMap.add(requestID, &userRequest);
+    m_userMediaRequestToIDMap.add(&userRequest, requestID);
 
     WebFrame* webFrame = WebFrame::fromCoreFrame(*frame);
     ASSERT(webFrame);
 
-    SecurityOrigin* topLevelDocumentOrigin = request.topLevelDocumentOrigin();
-    ASSERT(topLevelDocumentOrigin);
-    m_page.send(Messages::WebPageProxy::RequestUserMediaPermissionForFrame(requestID, webFrame->frameID(), SecurityOriginData::fromSecurityOrigin(*request.userMediaDocumentOrigin()), SecurityOriginData::fromSecurityOrigin(*topLevelDocumentOrigin), request.audioConstraints(), request.videoConstraints()));
+    auto* topLevelDocumentOrigin = userRequest.topLevelDocumentOrigin();
+    m_page.send(Messages::WebPageProxy::RequestUserMediaPermissionForFrame(requestID, webFrame->frameID(), SecurityOriginData::fromSecurityOrigin(*userRequest.userMediaDocumentOrigin()), SecurityOriginData::fromSecurityOrigin(*topLevelDocumentOrigin), userRequest.request()));
 }
 
 void UserMediaPermissionRequestManager::cancelUserMediaRequest(UserMediaRequest& request)
@@ -113,10 +110,10 @@ void UserMediaPermissionRequestManager::cancelUserMediaRequest(UserMediaRequest&
 
 void UserMediaPermissionRequestManager::mediaCanStart(Document& document)
 {
-    auto pendingRequests = m_blockedRequests.take(&document);
+    auto pendingRequests = m_blockedUserMediaRequests.take(&document);
     while (!pendingRequests.isEmpty()) {
         if (!document.page()->canStartMedia()) {
-            m_blockedRequests.add(&document, pendingRequests);
+            m_blockedUserMediaRequests.add(&document, pendingRequests);
             document.addMediaCanStartListener(this);
             break;
         }
@@ -131,7 +128,7 @@ void UserMediaPermissionRequestManager::removeMediaRequestFromMaps(UserMediaRequ
     if (!document)
         return;
 
-    auto pendingRequests = m_blockedRequests.take(document);
+    auto pendingRequests = m_blockedUserMediaRequests.take(document);
     for (auto& pendingRequest : pendingRequests) {
         if (&request != pendingRequest.get())
             continue;
@@ -139,7 +136,7 @@ void UserMediaPermissionRequestManager::removeMediaRequestFromMaps(UserMediaRequ
         if (pendingRequests.isEmpty())
             request.document()->removeMediaCanStartListener(this);
         else
-            m_blockedRequests.add(request.document(), pendingRequests);
+            m_blockedUserMediaRequests.add(document, pendingRequests);
         break;
     }
 

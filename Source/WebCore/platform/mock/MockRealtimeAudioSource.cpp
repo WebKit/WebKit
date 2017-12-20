@@ -66,13 +66,6 @@ CaptureSourceOrError MockRealtimeAudioSource::create(const String& deviceID, con
 }
 #endif
 
-Ref<MockRealtimeAudioSource> MockRealtimeAudioSource::createMuted(const String& name)
-{
-    auto source = adoptRef(*new MockRealtimeAudioSource(String { }, name));
-    source->notifyMutedChange(true);
-    return source;
-}
-
 static MockRealtimeAudioSourceFactory& mockAudioCaptureSourceFactory()
 {
     static NeverDestroyed<MockRealtimeAudioSourceFactory> factory;
@@ -125,7 +118,7 @@ void MockRealtimeAudioSource::startProducingData()
 #endif
 
     if (!sampleRate())
-        setSampleRate(!deviceIndex() ? 44100 : 48000);
+        setSampleRate(device() == MockRealtimeMediaSource::MockDevice::Microphone1 ? 44100 : 48000);
 
     m_startTime = monotonicallyIncreasingTime();
     m_timer.startRepeating(renderInterval());

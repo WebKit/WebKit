@@ -47,7 +47,6 @@ class MockRealtimeVideoSource : public MockRealtimeMediaSource {
 public:
 
     static CaptureSourceOrError create(const String& deviceID, const String& name, const MediaConstraints*);
-    static Ref<MockRealtimeVideoSource> createMuted(const String& name);
 
     static VideoCaptureFactory& factory();
 

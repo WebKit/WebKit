@@ -40,65 +40,11 @@ using namespace WebCore;
 
 CaptureDeviceManager::~CaptureDeviceManager() = default;
 
-Vector<CaptureDevice> CaptureDeviceManager::getAudioSourcesInfo()
-{
-    Vector<CaptureDevice> sourcesInfo;
-    for (auto& captureDevice : captureDevices()) {
-        if (!captureDevice.enabled() || captureDevice.type() != CaptureDevice::DeviceType::Audio)
-            continue;
-
-        sourcesInfo.append(captureDevice);
-    }
-    LOG(Media, "CaptureDeviceManager::getSourcesInfo(%p), found %zu active devices", this, sourcesInfo.size());
-    return sourcesInfo;
-}
-
-Vector<CaptureDevice> CaptureDeviceManager::getVideoSourcesInfo()
-{
-    Vector<CaptureDevice> sourcesInfo;
-    for (auto& captureDevice : captureDevices()) {
-        if (!captureDevice.enabled() || captureDevice.type() != CaptureDevice::DeviceType::Video)
-            continue;
-
-        sourcesInfo.append(captureDevice);
-    }
-    LOG(Media, "CaptureDeviceManager::getSourcesInfo(%p), found %zu active devices", this, sourcesInfo.size());
-    return sourcesInfo;
-}
-
 CaptureDevice CaptureDeviceManager::captureDeviceFromPersistentID(const String& captureDeviceID)
 {
     for (auto& device : captureDevices()) {
         if (device.persistentId() == captureDeviceID)
             return device;
-    }
-
-    return { };
-}
-
-CaptureDevice CaptureDeviceManager::deviceWithUID(const String& deviceUID, RealtimeMediaSource::Type type)
-{
-    for (auto& captureDevice : captureDevices()) {
-        CaptureDevice::DeviceType deviceType;
-
-        switch (type) {
-        case RealtimeMediaSource::Type::None:
-            continue;
-        case RealtimeMediaSource::Type::Audio:
-            deviceType = CaptureDevice::DeviceType::Audio;
-            break;
-        case RealtimeMediaSource::Type::Video:
-            deviceType = CaptureDevice::DeviceType::Video;
-            break;
-        }
-
-        if (captureDevice.persistentId() != deviceUID || captureDevice.type() != deviceType)
-            continue;
-
-        if (!captureDevice.enabled())
-            continue;
-
-        return captureDevice;
     }
 
     return { };

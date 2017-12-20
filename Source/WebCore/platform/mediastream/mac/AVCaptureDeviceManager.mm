@@ -87,7 +87,8 @@ using namespace WebCore;
 
 namespace WebCore {
 
-Vector<CaptureDevice>& AVCaptureDeviceManager::captureDevices()
+
+Vector<CaptureDevice>& AVCaptureDeviceManager::captureDevicesInternal()
 {
     if (!isAvailable())
         return m_devices;
@@ -100,6 +101,11 @@ Vector<CaptureDevice>& AVCaptureDeviceManager::captureDevices()
     }
 
     return m_devices;
+}
+
+const Vector<CaptureDevice>& AVCaptureDeviceManager::captureDevices()
+{
+    return captureDevicesInternal();
 }
 
 inline static bool deviceIsAvailable(AVCaptureDeviceTypedef *device)
@@ -117,9 +123,9 @@ inline static bool deviceIsAvailable(AVCaptureDeviceTypedef *device)
 
 void AVCaptureDeviceManager::refreshAVCaptureDevicesOfType(CaptureDevice::DeviceType type)
 {
-    ASSERT(type == CaptureDevice::DeviceType::Video || type == CaptureDevice::DeviceType::Audio);
+    ASSERT(type == CaptureDevice::DeviceType::Camera || type == CaptureDevice::DeviceType::Microphone);
 
-    NSString *platformType = (type == CaptureDevice::DeviceType::Video) ? AVMediaTypeVideo : AVMediaTypeAudio;
+    NSString *platformType = (type == CaptureDevice::DeviceType::Camera) ? AVMediaTypeVideo : AVMediaTypeAudio;
 
     for (AVCaptureDeviceTypedef *platformDevice in [getAVCaptureDeviceClass() devices]) {
 
@@ -139,8 +145,7 @@ void AVCaptureDeviceManager::refreshAVCaptureDevicesOfType(CaptureDevice::Device
 
 void AVCaptureDeviceManager::refreshCaptureDevices()
 {
-    refreshAVCaptureDevicesOfType(CaptureDevice::DeviceType::Video);
-    refreshAVCaptureDevicesOfType(CaptureDevice::DeviceType::Audio);
+    refreshAVCaptureDevicesOfType(CaptureDevice::DeviceType::Camera);
 }
 
 bool AVCaptureDeviceManager::isAvailable()
@@ -165,22 +170,6 @@ AVCaptureDeviceManager::~AVCaptureDeviceManager()
     [m_objcObserver disconnect];
 }
 
-Vector<CaptureDevice> AVCaptureDeviceManager::getAudioSourcesInfo()
-{
-    if (!isAvailable())
-        return Vector<CaptureDevice>();
-
-    return CaptureDeviceManager::getAudioSourcesInfo();
-}
-
-Vector<CaptureDevice> AVCaptureDeviceManager::getVideoSourcesInfo()
-{
-    if (!isAvailable())
-        return Vector<CaptureDevice>();
-
-    return CaptureDeviceManager::getVideoSourcesInfo();
-}
-
 void AVCaptureDeviceManager::registerForDeviceNotifications()
 {
     [[NSNotificationCenter defaultCenter] addObserver:m_objcObserver.get() selector:@selector(deviceConnected:) name:AVCaptureDeviceWasConnectedNotification object:nil];
@@ -197,7 +186,7 @@ void AVCaptureDeviceManager::deviceConnected()
 
 void AVCaptureDeviceManager::deviceDisconnected(AVCaptureDeviceTypedef* device)
 {
-    Vector<CaptureDevice>& devices = captureDevices();
+    auto& devices = captureDevicesInternal();
 
     size_t count = devices.size();
     if (!count)

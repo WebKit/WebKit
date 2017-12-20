@@ -42,7 +42,6 @@ class MockRealtimeAudioSource : public MockRealtimeMediaSource {
 public:
 
     static CaptureSourceOrError create(const String& deviceID, const String& name, const MediaConstraints*);
-    static Ref<MockRealtimeAudioSource> createMuted(const String& name);
 
     static AudioCaptureFactory& factory();
 

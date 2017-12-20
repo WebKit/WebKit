@@ -76,7 +76,7 @@ std::optional<CoreAudioCaptureDevice> CoreAudioCaptureDevice::create(uint32_t de
 }
 
 CoreAudioCaptureDevice::CoreAudioCaptureDevice(uint32_t deviceID, const String& persistentID, const String& label)
-    : CaptureDevice(persistentID, CaptureDevice::DeviceType::Audio, label)
+    : CaptureDevice(persistentID, CaptureDevice::DeviceType::Microphone, label)
     , m_deviceID(deviceID)
 {
 }

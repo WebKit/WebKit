@@ -100,7 +100,12 @@ ExceptionOr<void> MediaDevices::getUserMedia(const StreamConstraints& constraint
     auto videoConstraints = createMediaConstraints(constraints.video);
     if (videoConstraints.isValid)
         videoConstraints.setDefaultVideoConstraints();
-    return UserMediaRequest::start(*document, WTFMove(audioConstraints), WTFMove(videoConstraints), WTFMove(promise));
+
+    auto request = UserMediaRequest::create(*document, { MediaStreamRequest::Type::UserMedia, WTFMove(audioConstraints), WTFMove(videoConstraints) }, WTFMove(promise));
+    if (request)
+        request->start();
+
+    return { };
 }
 
 void MediaDevices::enumerateDevices(EnumerateDevicesPromise&& promise) const

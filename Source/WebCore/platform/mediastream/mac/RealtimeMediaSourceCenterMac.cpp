@@ -49,7 +49,17 @@ class VideoCaptureSourceFactoryMac final : public RealtimeMediaSource::VideoCapt
 public:
     CaptureSourceOrError createVideoCaptureSource(const CaptureDevice& device, const MediaConstraints* constraints) final
     {
-        return AVVideoCaptureSource::create(device.persistentId(), constraints);
+        switch (device.type()) {
+        case CaptureDevice::DeviceType::Camera:
+            return AVVideoCaptureSource::create(device.persistentId(), constraints);
+            break;
+        case CaptureDevice::DeviceType::Microphone:
+        case CaptureDevice::DeviceType::Unknown:
+            ASSERT_NOT_REACHED();
+            break;
+        }
+
+        return { };
     }
 
 #if PLATFORM(IOS)

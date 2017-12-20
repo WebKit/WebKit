@@ -45,18 +45,60 @@
 
 namespace WebCore {
 
+struct MockDeviceInfo {
+    const char* id;
+    CaptureDevice::DeviceType type;
+    const char* name;
+    MockRealtimeMediaSource::MockDevice device;
+};
+
+static const HashMap<String, MockDeviceInfo>& deviceMap()
+{
+    static const auto infoMap = makeNeverDestroyed([] {
+        static const MockDeviceInfo devices[] = {
+            { "239c24b0-2b15-11e3-8224-0800200c9a66", CaptureDevice::DeviceType::Microphone, "Mock audio device 1", MockRealtimeMediaSource::MockDevice::Microphone1 },
+            { "239c24b1-2b15-11e3-8224-0800200c9a66", CaptureDevice::DeviceType::Microphone, "Mock audio device 2", MockRealtimeMediaSource::MockDevice::Microphone2 },
+
+            { "239c24b2-2b15-11e3-8224-0800200c9a66", CaptureDevice::DeviceType::Camera, "Mock video device 1", MockRealtimeMediaSource::MockDevice::Camera1 },
+            { "239c24b3-2b15-11e3-8224-0800200c9a66", CaptureDevice::DeviceType::Camera, "Mock video device 2", MockRealtimeMediaSource::MockDevice::Camera2 },
+        };
+
+        HashMap<String, MockDeviceInfo> map;
+        for (auto& info : devices)
+            map.add(ASCIILiteral(info.id), info);
+        return map;
+    }());
+
+    return infoMap;
+}
+
+std::optional<CaptureDevice> MockRealtimeMediaSource::captureDeviceWithPersistentID(CaptureDevice::DeviceType type, const String& id)
+{
+    ASSERT(!id.isEmpty());
+
+    auto map = deviceMap();
+    auto it = map.find(id);
+    if (it != map.end() && it->value.type == type) {
+        auto device = CaptureDevice(it->value.id, it->value.type, it->value.name);
+        device.setEnabled(true);
+        return WTFMove(device);
+    }
+
+    return std::nullopt;
+}
+
 Vector<CaptureDevice>& MockRealtimeMediaSource::audioDevices()
 {
     static auto info = makeNeverDestroyed([] {
         Vector<CaptureDevice> vector;
 
-        auto captureDevice = CaptureDevice("239c24b0-2b15-11e3-8224-0800200c9a66", CaptureDevice::DeviceType::Audio, "Mock audio device 1");
-        captureDevice.setEnabled(true);
-        vector.append(WTFMove(captureDevice));
+        auto captureDevice = captureDeviceWithPersistentID(CaptureDevice::DeviceType::Microphone, ASCIILiteral("239c24b0-2b15-11e3-8224-0800200c9a66"));
+        ASSERT(captureDevice);
+        vector.append(WTFMove(captureDevice.value()));
 
-        captureDevice = CaptureDevice("239c24b1-2b15-11e3-8224-0800200c9a66", CaptureDevice::DeviceType::Audio, "Mock audio device 2");
-        captureDevice.setEnabled(true);
-        vector.append(WTFMove(captureDevice));
+        captureDevice = captureDeviceWithPersistentID(CaptureDevice::DeviceType::Microphone, ASCIILiteral("239c24b1-2b15-11e3-8224-0800200c9a66"));
+        ASSERT(captureDevice);
+        vector.append(WTFMove(captureDevice.value()));
 
         return vector;
     }());
@@ -68,13 +110,13 @@ Vector<CaptureDevice>& MockRealtimeMediaSource::videoDevices()
     static auto info = makeNeverDestroyed([] {
         Vector<CaptureDevice> vector;
 
-        auto captureDevice = CaptureDevice("239c24b2-2b15-11e3-8224-0800200c9a66", CaptureDevice::DeviceType::Video, "Mock video device 1");
-        captureDevice.setEnabled(true);
-        vector.append(WTFMove(captureDevice));
+        auto captureDevice = captureDeviceWithPersistentID(CaptureDevice::DeviceType::Camera, ASCIILiteral("239c24b2-2b15-11e3-8224-0800200c9a66"));
+        ASSERT(captureDevice);
+        vector.append(WTFMove(captureDevice.value()));
 
-        captureDevice = CaptureDevice("239c24b3-2b15-11e3-8224-0800200c9a66", CaptureDevice::DeviceType::Video, "Mock video device 2");
-        captureDevice.setEnabled(true);
-        vector.append(WTFMove(captureDevice));
+        captureDevice = captureDeviceWithPersistentID(CaptureDevice::DeviceType::Camera, ASCIILiteral("239c24b3-2b15-11e3-8224-0800200c9a66"));
+        ASSERT(captureDevice);
+        vector.append(WTFMove(captureDevice.value()));
 
         return vector;
     }());
@@ -84,18 +126,14 @@ Vector<CaptureDevice>& MockRealtimeMediaSource::videoDevices()
 MockRealtimeMediaSource::MockRealtimeMediaSource(const String& id, RealtimeMediaSource::Type type, const String& name)
     : RealtimeMediaSource(id, type, name)
 {
-    switch (type) {
-    case RealtimeMediaSource::Type::Audio:
-        m_deviceIndex = name == audioDevices()[0].label() ? 0 : 1;
-        setPersistentID(String(audioDevices()[m_deviceIndex].persistentId()));
-        return;
-    case RealtimeMediaSource::Type::Video:
-        m_deviceIndex = name == videoDevices()[0].label() ? 0 : 1;
-        setPersistentID(String(videoDevices()[m_deviceIndex].persistentId()));
-        return;
-    case RealtimeMediaSource::Type::None:
-        ASSERT_NOT_REACHED();
-    }
+    ASSERT(type != RealtimeMediaSource::Type::None);
+
+    auto map = deviceMap();
+    auto it = map.find(id);
+    ASSERT(it != map.end());
+
+    m_device = it->value.device;
+    setPersistentID(String(id));
 }
 
 void MockRealtimeMediaSource::initializeCapabilities()

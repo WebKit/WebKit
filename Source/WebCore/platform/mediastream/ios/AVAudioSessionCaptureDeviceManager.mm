@@ -84,11 +84,21 @@ AVAudioSessionCaptureDeviceManager::~AVAudioSessionCaptureDeviceManager()
     m_listener = nullptr;
 }
 
-Vector<CaptureDevice>& AVAudioSessionCaptureDeviceManager::captureDevices()
+const Vector<CaptureDevice>& AVAudioSessionCaptureDeviceManager::captureDevices()
 {
     if (!m_devices)
         refreshAudioCaptureDevices();
     return m_devices.value();
+}
+
+std::optional<CaptureDevice> AVAudioSessionCaptureDeviceManager::captureDeviceWithPersistentID(CaptureDevice::DeviceType type, const String& deviceID)
+{
+    ASSERT_UNUSED(type, type == CaptureDevice::DeviceType::Microphone);
+    for (auto& device : captureDevices()) {
+        if (device.persistentId() == deviceID)
+            return device;
+    }
+    return std::nullopt;
 }
 
 Vector<AVAudioSessionCaptureDevice>& AVAudioSessionCaptureDeviceManager::audioSessionCaptureDevices()

@@ -32,6 +32,7 @@
 #include "Logging.h"
 #include <AudioUnit/AudioUnit.h>
 #include <CoreMedia/CMSync.h>
+#include <wtf/Assertions.h>
 #include <wtf/NeverDestroyed.h>
 
 #import <pal/cf/CoreMediaSoftLink.h>
@@ -44,10 +45,20 @@ CoreAudioCaptureDeviceManager& CoreAudioCaptureDeviceManager::singleton()
     return manager;
 }
 
-Vector<CaptureDevice>& CoreAudioCaptureDeviceManager::captureDevices()
+const Vector<CaptureDevice>& CoreAudioCaptureDeviceManager::captureDevices()
 {
     coreAudioCaptureDevices();
     return m_devices;
+}
+
+std::optional<CaptureDevice> CoreAudioCaptureDeviceManager::captureDeviceWithPersistentID(CaptureDevice::DeviceType type, const String& deviceID)
+{
+    ASSERT_UNUSED(type, type == CaptureDevice::DeviceType::Microphone);
+    for (auto& device : captureDevices()) {
+        if (device.persistentId() == deviceID)
+            return device;
+    }
+    return std::nullopt;
 }
 
 static bool deviceHasInputStreams(AudioObjectID deviceID)
@@ -140,7 +151,7 @@ void CoreAudioCaptureDeviceManager::refreshAudioCaptureDevices()
     m_devices = Vector<CaptureDevice>();
 
     for (auto &device : m_coreAudioCaptureDevices) {
-        CaptureDevice captureDevice(device.persistentId(), CaptureDevice::DeviceType::Audio, device.label());
+        CaptureDevice captureDevice(device.persistentId(), CaptureDevice::DeviceType::Microphone, device.label());
         captureDevice.setEnabled(device.enabled());
         m_devices.append(captureDevice);
     }

@@ -31,7 +31,7 @@ namespace WebCore {
 
 class CaptureDevice {
 public:
-    enum class DeviceType { Unknown, Audio, Video };
+    enum class DeviceType { Unknown, Microphone, Camera };
 
     CaptureDevice(const String& persistentId, DeviceType type, const String& label, const String& groupId = emptyString())
         : m_persistentId(persistentId)
@@ -44,16 +44,12 @@ public:
     CaptureDevice() = default;
 
     const String& persistentId() const { return m_persistentId; }
-    void setPersistentId(const String& id) { m_persistentId = id; }
 
     const String& label() const { return m_label; }
-    void setLabel(const String& label) { m_label = label; }
 
     const String& groupId() const { return m_groupId; }
-    void setGroupId(const String& id) { m_groupId = id; }
 
     DeviceType type() const { return m_type; }
-    void setType(DeviceType type) { m_type = type; }
 
     bool enabled() const { return m_enabled; }
     void setEnabled(bool enabled) { m_enabled = enabled; }

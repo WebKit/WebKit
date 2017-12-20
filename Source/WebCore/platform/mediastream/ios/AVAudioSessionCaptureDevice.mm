@@ -42,7 +42,7 @@ AVAudioSessionCaptureDevice AVAudioSessionCaptureDevice::create(AVAudioSessionPo
 }
 
 AVAudioSessionCaptureDevice::AVAudioSessionCaptureDevice(AVAudioSessionPortDescription* portDescription, const String& persistentID, const String& label)
-    : CaptureDevice(persistentID, CaptureDevice::DeviceType::Audio, label)
+    : CaptureDevice(persistentID, CaptureDevice::DeviceType::Microphone, label)
     , m_portDescription(portDescription)
 {
 }

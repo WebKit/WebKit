@@ -52,13 +52,17 @@ private:
     CaptureDeviceManager& audioCaptureDeviceManager() final { return m_audioCaptureDeviceManager; }
     CaptureDeviceManager& videoCaptureDeviceManager() final { return m_videoCaptureDeviceManager; }
 
+    static std::optional<CaptureDevice> captureDeviceWithPersistentID(CaptureDevice::DeviceType, const String&);
+
     class MockAudioCaptureDeviceManager final : public CaptureDeviceManager {
     private:
-        Vector<CaptureDevice>& captureDevices() final { return MockRealtimeMediaSource::audioDevices(); }
+        const Vector<CaptureDevice>& captureDevices() final { return MockRealtimeMediaSource::audioDevices(); }
+        std::optional<CaptureDevice> captureDeviceWithPersistentID(CaptureDevice::DeviceType type, const String& id) final { return MockRealtimeMediaSource::captureDeviceWithPersistentID(type, id); }
     };
     class MockVideoCaptureDeviceManager final : public CaptureDeviceManager {
     private:
-        Vector<CaptureDevice>& captureDevices() final { return MockRealtimeMediaSource::videoDevices(); }
+        const Vector<CaptureDevice>& captureDevices() final { return MockRealtimeMediaSource::videoDevices(); }
+        std::optional<CaptureDevice> captureDeviceWithPersistentID(CaptureDevice::DeviceType type, const String& id) final { return MockRealtimeMediaSource::captureDeviceWithPersistentID(type, id); }
     };
 
     MockAudioCaptureDeviceManager m_audioCaptureDeviceManager;

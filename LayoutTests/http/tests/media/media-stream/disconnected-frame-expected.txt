@@ -3,7 +3,7 @@ Tests that when a request is made on a UserMedia object and its Frame is disconn
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS No callbacks invoked
+PASS Promise rejected as expected.
 PASS successfullyParsed is true
 
 TEST COMPLETE

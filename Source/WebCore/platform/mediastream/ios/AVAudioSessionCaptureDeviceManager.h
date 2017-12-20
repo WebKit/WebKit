@@ -44,7 +44,8 @@ class AVAudioSessionCaptureDeviceManager final : public CaptureDeviceManager {
 public:
     static AVAudioSessionCaptureDeviceManager& singleton();
 
-    Vector<CaptureDevice>& captureDevices() final;
+    const Vector<CaptureDevice>& captureDevices() final;
+    std::optional<CaptureDevice> captureDeviceWithPersistentID(CaptureDevice::DeviceType, const String&);
 
     Vector<AVAudioSessionCaptureDevice>& audioSessionCaptureDevices();
     std::optional<AVAudioSessionCaptureDevice> audioSessionDeviceWithUID(const String&);

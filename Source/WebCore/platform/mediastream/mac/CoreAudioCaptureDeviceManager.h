@@ -43,9 +43,9 @@ class CoreAudioCaptureDeviceManager final : public CaptureDeviceManager {
 public:
     static CoreAudioCaptureDeviceManager& singleton();
 
-    Vector<CaptureDevice>& captureDevices() final;
+    const Vector<CaptureDevice>& captureDevices() final;
+    std::optional<CaptureDevice> captureDeviceWithPersistentID(CaptureDevice::DeviceType, const String&);
 
-    Vector<CoreAudioCaptureDevice>& coreAudioCaptureDevices();
     std::optional<CoreAudioCaptureDevice> coreAudioDeviceWithUID(const String&);
 
 private:
@@ -53,6 +53,7 @@ private:
     ~CoreAudioCaptureDeviceManager() = default;
     
     static OSStatus devicesChanged(AudioObjectID, UInt32, const AudioObjectPropertyAddress*, void*);
+    Vector<CoreAudioCaptureDevice>& coreAudioCaptureDevices();
 
     void refreshAudioCaptureDevices();
 

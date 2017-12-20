@@ -768,8 +768,8 @@ template<> struct EnumTraits<WebCore::CaptureDevice::DeviceType> {
     using values = EnumValues<
         WebCore::CaptureDevice::DeviceType,
         WebCore::CaptureDevice::DeviceType::Unknown,
-        WebCore::CaptureDevice::DeviceType::Audio,
-        WebCore::CaptureDevice::DeviceType::Video
+        WebCore::CaptureDevice::DeviceType::Microphone,
+        WebCore::CaptureDevice::DeviceType::Camera
     >;
 };
 template<> struct EnumTraits<WebCore::RealtimeMediaSource::Type> {

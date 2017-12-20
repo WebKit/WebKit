@@ -131,7 +131,7 @@ void MediaDevicesRequest::start()
                 continue;
 
             auto groupId = RealtimeMediaSourceCenter::singleton().hashStringWithSalt(deviceInfo.groupId(), deviceIdentifierHashSalt);
-            auto deviceType = deviceInfo.type() == CaptureDevice::DeviceType::Audio ? MediaDeviceInfo::Kind::Audioinput : MediaDeviceInfo::Kind::Videoinput;
+            auto deviceType = deviceInfo.type() == CaptureDevice::DeviceType::Microphone ? MediaDeviceInfo::Kind::Audioinput : MediaDeviceInfo::Kind::Videoinput;
             devices.append(MediaDeviceInfo::create(scriptExecutionContext(), label, id, groupId, deviceType));
         }
 

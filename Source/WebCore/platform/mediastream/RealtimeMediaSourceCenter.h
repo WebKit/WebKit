@@ -35,6 +35,7 @@
 #if ENABLE(MEDIA_STREAM)
 
 #include "ExceptionOr.h"
+#include "MediaStreamRequest.h"
 #include "RealtimeMediaSource.h"
 #include "RealtimeMediaSourceSupportedConstraints.h"
 #include <wtf/Function.h>
@@ -60,12 +61,13 @@ public:
 
     using ValidConstraintsHandler = WTF::Function<void(Vector<CaptureDevice>&& audioDeviceUIDs, Vector<CaptureDevice>&& videoDeviceUIDs, String&&)>;
     using InvalidConstraintsHandler = WTF::Function<void(const String& invalidConstraint)>;
-    virtual void validateRequestConstraints(ValidConstraintsHandler&&, InvalidConstraintsHandler&&, const MediaConstraints& audioConstraints, const MediaConstraints& videoConstraints, String&&);
+    virtual void validateRequestConstraints(ValidConstraintsHandler&&, InvalidConstraintsHandler&&, const MediaStreamRequest&, String&&);
 
     using NewMediaStreamHandler = WTF::Function<void(RefPtr<MediaStreamPrivate>&&)>;
-    virtual void createMediaStream(NewMediaStreamHandler&&, CaptureDevice&& audioDevice, CaptureDevice&& videoDevice, const MediaConstraints* audioConstraints, const MediaConstraints* videoConstraints);
+    virtual void createMediaStream(NewMediaStreamHandler&&, CaptureDevice&& audioDevice, CaptureDevice&& videoDevice, const MediaStreamRequest&);
 
     WEBCORE_EXPORT virtual Vector<CaptureDevice> getMediaStreamDevices();
+    WEBCORE_EXPORT std::optional<CaptureDevice> captureDeviceWithPersistentID(CaptureDevice::DeviceType, const String&);
     
     const RealtimeMediaSourceSupportedConstraints& supportedConstraints() { return m_supportedConstraints; }
 

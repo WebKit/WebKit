@@ -38,7 +38,6 @@ namespace WebCore {
 
 class RealtimeMediaSourceSettings {
 public:
-    enum SourceType { None, Camera, Microphone };
     enum VideoFacingMode { Unknown, User, Environment, Left, Right };
 
     static String facingMode(RealtimeMediaSourceSettings::VideoFacingMode);

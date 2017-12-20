@@ -276,7 +276,7 @@ messages -> WebPageProxy {
     
 #if ENABLE(MEDIA_STREAM)
     # MediaSteam messages
-    RequestUserMediaPermissionForFrame(uint64_t userMediaID, uint64_t frameID, struct WebCore::SecurityOriginData userMediaDocumentOriginIdentifier, struct WebCore::SecurityOriginData topLevelDocumentOriginIdentifier, struct WebCore::MediaConstraints audioConstraints, struct WebCore::MediaConstraints videoConstraints)
+    RequestUserMediaPermissionForFrame(uint64_t userMediaID, uint64_t frameID, struct WebCore::SecurityOriginData userMediaDocumentOriginIdentifier, struct WebCore::SecurityOriginData topLevelDocumentOriginIdentifier, struct WebCore::MediaStreamRequest request)
     EnumerateMediaDevicesForFrame(uint64_t userMediaID, uint64_t frameID, struct WebCore::SecurityOriginData userMediaDocumentOriginIdentifier, struct WebCore::SecurityOriginData topLevelDocumentOriginIdentifier)
 #endif
 
