@@ -1,3 +1,13 @@
+2017-12-19  Youenn Fablet  <youenn@apple.com>
+
+        Layout Test imported/w3c/web-platform-tests/service-workers/service-worker/getregistrations.https.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=180497
+        <rdar://problem/35947470>
+
+        Unreviewed.
+
+        * TestExpectations: Marking test as slow on Debug.
+
 2017-12-19  Brian Burg  <bburg@apple.com>
 
         Web Inspector: InspectorTest.expectException does not handle implicitly resolved async functions correctly
