@@ -661,8 +661,8 @@ storageBlockingPolicy:
   initial: SecurityOrigin::AllowAllStorage
   onChange: storageBlockingPolicyChanged
 
-shouldDisallowUserInstalledFonts:
-  initial: false
+shouldAllowUserInstalledFonts:
+  initial: true
   onChange: setNeedsRecalcStyleInAllFrames
 
 # Only set by Layout Tests.

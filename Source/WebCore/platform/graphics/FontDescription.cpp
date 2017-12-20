@@ -80,7 +80,7 @@ FontDescription::FontDescription()
     , m_variantEastAsianRuby(static_cast<unsigned>(FontVariantEastAsianRuby::Normal))
     , m_opticalSizing(static_cast<unsigned>(FontOpticalSizing::Enabled))
     , m_fontStyleAxis(FontCascadeDescription::initialFontStyleAxis() == FontStyleAxis::ital)
-    , m_mayRepresentUserInstalledFont(true)
+    , m_shouldAllowUserInstalledFonts(static_cast<unsigned>(AllowUserInstalledFonts::Yes))
 {
 }
 

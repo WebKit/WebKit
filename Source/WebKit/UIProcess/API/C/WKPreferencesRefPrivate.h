@@ -546,8 +546,8 @@ WK_EXPORT void WKPreferencesSetAccessibilityObjectModelEnabled(WKPreferencesRef,
 WK_EXPORT bool WKPreferencesGetAccessibilityObjectModelEnabled(WKPreferencesRef);
 
 // Defaults to false.
-WK_EXPORT void WKPreferencesSetShouldDisallowUserInstalledFonts(WKPreferencesRef, bool flag);
-WK_EXPORT bool WKPreferencesGetShouldDisallowUserInstalledFonts(WKPreferencesRef);
+WK_EXPORT void WKPreferencesSetShouldAllowUserInstalledFonts(WKPreferencesRef, bool flag);
+WK_EXPORT bool WKPreferencesGetShouldAllowUserInstalledFonts(WKPreferencesRef);
     
 #ifdef __cplusplus
 }

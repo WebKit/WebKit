@@ -1,3 +1,27 @@
+2017-12-19  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Refactor user-installed font setting for clarity
+        https://bugs.webkit.org/show_bug.cgi?id=181013
+
+        Reviewed by Simon Fraser.
+
+        There are no clients of this SPI yet, so we can rename it to remove the
+        grammatical negative.
+
+        * Shared/WebPreferences.yaml:
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetShouldAllowUserInstalledFonts):
+        (WKPreferencesGetShouldAllowUserInstalledFonts):
+        (WKPreferencesSetShouldDisallowUserInstalledFonts): Deleted.
+        (WKPreferencesGetShouldDisallowUserInstalledFonts): Deleted.
+        * UIProcess/API/C/WKPreferencesRefPrivate.h:
+        * UIProcess/API/Cocoa/WKPreferences.mm:
+        (-[WKPreferences _shouldAllowUserInstalledFonts]):
+        (-[WKPreferences _setShouldAllowUserInstalledFonts:]):
+        (-[WKPreferences _shouldDisallowUserInstalledFonts]): Deleted.
+        (-[WKPreferences _setShouldDisallowUserInstalledFonts:]): Deleted.
+        * UIProcess/API/Cocoa/WKPreferencesPrivate.h:
+
 2017-12-19  Eric Carlson  <eric.carlson@apple.com>
 
         [MediaStream] Clean up RealtimeMediaSource interfaces

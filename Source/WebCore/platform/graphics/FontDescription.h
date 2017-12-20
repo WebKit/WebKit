@@ -114,7 +114,7 @@ public:
     }
     FontOpticalSizing opticalSizing() const { return static_cast<FontOpticalSizing>(m_opticalSizing); }
     FontStyleAxis fontStyleAxis() const { return m_fontStyleAxis ? FontStyleAxis::ital : FontStyleAxis::slnt; }
-    bool mayRepresentUserInstalledFont() const { return m_mayRepresentUserInstalledFont; }
+    AllowUserInstalledFonts shouldAllowUserInstalledFonts() const { return static_cast<AllowUserInstalledFonts>(m_shouldAllowUserInstalledFonts); }
 
     void setComputedSize(float s) { m_computedSize = clampToFloat(s); }
     void setItalic(FontSelectionValue italic) { m_fontSelectionRequest.slope = italic; }
@@ -149,7 +149,7 @@ public:
     void setVariantEastAsianRuby(FontVariantEastAsianRuby variant) { m_variantEastAsianRuby = static_cast<unsigned>(variant); }
     void setOpticalSizing(FontOpticalSizing sizing) { m_opticalSizing = static_cast<unsigned>(sizing); }
     void setFontStyleAxis(FontStyleAxis axis) { m_fontStyleAxis = axis == FontStyleAxis::ital; }
-    void setMayRepresentUserInstalledFont(bool mayRepresentUserInstalledFont) { m_mayRepresentUserInstalledFont = mayRepresentUserInstalledFont; }
+    void setShouldAllowUserInstalledFonts(AllowUserInstalledFonts shouldAllowUserInstalledFonts) { m_shouldAllowUserInstalledFonts = static_cast<unsigned>(shouldAllowUserInstalledFonts); }
 
     static void invalidateCaches();
 
@@ -185,7 +185,7 @@ private:
     unsigned m_variantEastAsianRuby : 1; // FontVariantEastAsianRuby
     unsigned m_opticalSizing : 1; // FontOpticalSizing
     unsigned m_fontStyleAxis : 1; // Whether "font-style: italic" or "font-style: oblique 20deg" was specified
-    unsigned m_mayRepresentUserInstalledFont : 1; // If this description is allowed to match a user-installed font
+    unsigned m_shouldAllowUserInstalledFonts : 1; // AllowUserInstalledFonts: If this description is allowed to match a user-installed font
 };
 
 inline bool FontDescription::operator==(const FontDescription& other) const
@@ -220,7 +220,7 @@ inline bool FontDescription::operator==(const FontDescription& other) const
         && m_variantEastAsianRuby == other.m_variantEastAsianRuby
         && m_opticalSizing == other.m_opticalSizing
         && m_fontStyleAxis == other.m_fontStyleAxis
-        && m_mayRepresentUserInstalledFont == other.m_mayRepresentUserInstalledFont;
+        && m_shouldAllowUserInstalledFonts == other.m_shouldAllowUserInstalledFonts;
 }
 
 // FIXME: Move to a file of its own.
