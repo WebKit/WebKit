@@ -104,6 +104,7 @@ function test()
             input: `throw new Error(42)`,
             type: "object",
             subtype: "error",
+            thrown: true,
         },
     ];
 
@@ -139,12 +140,20 @@ function test()
         name: "evaluateInPage.RemoteObjects",
         async test() {
             for (let {input, type, subtype, thrown} of complexCases) {
-                let result = await InspectorTest.evaluateInPage(input);
                 InspectorTest.log(`Checking result of evaluating string: ${input}`);
-                InspectorTest.expectThat(result instanceof WI.RemoteObject, "Returned result should be a WI.RemoteObject.");
-                InspectorTest.expectFalse(result.hasValue(), "Non-primitive evaluation results should not have a marshalled value.");
-                InspectorTest.expectEqual(result.type, type, `Type of evaluation result should be '${type}'.`);
-                InspectorTest.expectEqual(result.subtype, subtype, `Subtype of evaluation result should be '${subtype}'.`);
+
+                if (thrown) {
+                    await InspectorTest.expectException(async () => {
+                        await InspectorTest.evaluateInPage(input);
+                    });
+                } else {
+                    let result = await InspectorTest.evaluateInPage(input);
+                    InspectorTest.expectThat(result instanceof WI.RemoteObject, "Returned result should be a WI.RemoteObject.");
+                    InspectorTest.expectFalse(result.hasValue(), "Non-primitive evaluation results should not have a marshalled value.");
+                    InspectorTest.expectEqual(result.type, type, `Type of evaluation result should be '${type}'.`);
+                    InspectorTest.expectEqual(result.subtype, subtype, `Subtype of evaluation result should be '${subtype}'.`);
+                }
+
                 InspectorTest.log("");
             }
         }

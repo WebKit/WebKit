@@ -89,17 +89,24 @@ FrontendTestHarness = class FrontendTestHarness extends TestHarness
         }
 
         // Return primitive values directly, otherwise return a WI.RemoteObject instance.
-        function resultObjectToReturn(result) {
+        function translateResult(result) {
             let remoteObject = WI.RemoteObject.fromPayload(result);
             return (!remoteObjectOnly && remoteObject.hasValue()) ? remoteObject.value : remoteObject;
         }
 
         let response = RuntimeAgent.evaluate.invoke({expression, objectGroup: "test", includeCommandLineAPI: false})
         if (callback && typeof callback === "function") {
-            response = response.then(({result, wasThrown}) => callback(null, resultObjectToReturn(result), wasThrown));
+            response = response.then(({result, wasThrown}) => callback(null, translateResult(result), wasThrown));
             response = response.catch((error) => callback(error, null, false));
-        } else
-            return response.then(({result}) => resultObjectToReturn(result));
+        } else {
+            // Turn a thrown Error result into a promise rejection.
+            return response.then(({result, wasThrown}) => {
+                result = translateResult(result);
+                if (result && wasThrown)
+                    return Promise.reject(new Error(result.description));
+                return Promise.resolve(result);
+            });
+        }
     }
 
     debug()

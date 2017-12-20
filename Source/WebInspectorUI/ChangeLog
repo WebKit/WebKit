@@ -1,3 +1,16 @@
+2017-12-19  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: InspectorTest.evaluateInPage should return a rejection if an error was thrown
+        https://bugs.webkit.org/show_bug.cgi?id=180956
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Test/FrontendTestHarness.js:
+        (FrontendTestHarness.prototype.evaluateInPage.translateResult): Renamed.
+        (FrontendTestHarness.prototype.evaluateInPage):
+        If the result was thrown, then reject with the error.
+        Rename the helper method to match the same one in RemoteObject.prototype.fetchProperties.
+
 2017-12-19  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Network Table - Redesign the waterfall popover showing timing data

@@ -142,9 +142,7 @@ PASS: Type of evaluation result should be 'object'.
 PASS: Subtype of evaluation result should be 'error'.
 
 Checking result of evaluating string: throw new Error(42)
-PASS: Returned result should be a WI.RemoteObject.
-PASS: Non-primitive evaluation results should not have a marshalled value.
-PASS: Type of evaluation result should be 'object'.
-PASS: Subtype of evaluation result should be 'error'.
+PASS: Should produce an exception.
+Error: Error: 42
 
 
