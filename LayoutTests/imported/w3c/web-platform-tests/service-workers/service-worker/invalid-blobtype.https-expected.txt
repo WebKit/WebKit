@@ -1,4 +1,3 @@
 
-
-FAIL Verify the response of FetchEvent using XMLHttpRequest assert_equals: expected "finish" but got "failure:Content-Type must be null."
+PASS Verify the response of FetchEvent using XMLHttpRequest 
 

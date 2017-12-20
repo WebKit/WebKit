@@ -29,7 +29,7 @@ promise_test(function(t) {
     return req.blob()
       .then(function(blob) {
           assert_equals(blob.type, '');
-          assert_equals(req.headers.get('Content-Type'), '');
+          assert_equals(req.headers.get('Content-Type'), null);
         });
   }, 'MIME type for Blob');
 

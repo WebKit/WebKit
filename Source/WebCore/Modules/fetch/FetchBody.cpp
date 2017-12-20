@@ -44,7 +44,8 @@ FetchBody FetchBody::extract(ScriptExecutionContext& context, Init&& value, Stri
 {
     return WTF::switchOn(value, [&](RefPtr<Blob>& value) mutable {
         Ref<const Blob> blob = value.releaseNonNull();
-        contentType = blob->type();
+        if (!blob->type().isEmpty())
+            contentType = blob->type();
         return FetchBody(WTFMove(blob));
     }, [&](RefPtr<DOMFormData>& value) mutable {
         Ref<DOMFormData> domFormData = value.releaseNonNull();
