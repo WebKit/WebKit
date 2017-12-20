@@ -26,7 +26,9 @@
 #include "config.h"
 #include "RenderTreeBuilderTable.h"
 
+#include "RenderTableCaption.h"
 #include "RenderTableCell.h"
+#include "RenderTableCol.h"
 #include "RenderTableRow.h"
 #include "RenderTreeBuilder.h"
 
@@ -115,6 +117,48 @@ RenderElement& RenderTreeBuilder::Table::findOrCreateParentForChild(RenderTableS
     m_builder.insertChild(parent, WTFMove(newRow), beforeChild);
     beforeChild = nullptr;
     return row;
+}
+
+RenderElement& RenderTreeBuilder::Table::findOrCreateParentForChild(RenderTable& parent, const RenderObject& child, RenderObject*& beforeChild)
+{
+    if (is<RenderTableCaption>(child) || is<RenderTableCol>(child) || is<RenderTableSection>(child))
+        return parent;
+
+    auto* lastChild = parent.lastChild();
+    if (!beforeChild && is<RenderTableSection>(lastChild) && lastChild->isAnonymous() && !lastChild->isBeforeContent())
+        return downcast<RenderElement>(*lastChild);
+
+    if (beforeChild && !beforeChild->isAnonymous() && beforeChild->parent() == &parent) {
+        auto* section = beforeChild->previousSibling();
+        if (is<RenderTableSection>(section) && section->isAnonymous()) {
+            beforeChild = nullptr;
+            return downcast<RenderElement>(*section);
+        }
+    }
+
+    auto* parentCandidate = beforeChild;
+    while (parentCandidate && parentCandidate->parent()->isAnonymous()
+        && !is<RenderTableSection>(*parentCandidate)
+        && parentCandidate->style().display() != TABLE_CAPTION
+        && parentCandidate->style().display() != TABLE_COLUMN_GROUP)
+        parentCandidate = parentCandidate->parent();
+
+    if (parentCandidate && is<RenderTableSection>(*parentCandidate) && parentCandidate->isAnonymous() && !parent.isAfterContent(parentCandidate)) {
+        if (beforeChild == parentCandidate)
+            beforeChild = downcast<RenderTableSection>(*parentCandidate).firstRow();
+        return downcast<RenderElement>(*parentCandidate);
+    }
+
+    if (beforeChild && !is<RenderTableSection>(*beforeChild)
+        && beforeChild->style().display() != TABLE_CAPTION
+        && beforeChild->style().display() != TABLE_COLUMN_GROUP)
+        beforeChild = nullptr;
+
+    auto newSection = RenderTableSection::createAnonymousWithParentRenderer(parent);
+    auto& section = *newSection;
+    m_builder.insertChild(parent, WTFMove(newSection), beforeChild);
+    beforeChild = nullptr;
+    return section;
 }
 
 }

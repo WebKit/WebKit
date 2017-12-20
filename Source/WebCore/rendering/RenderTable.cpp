@@ -135,13 +135,8 @@ static inline void resetSectionPointerIfNotBefore(WeakPtr<RenderTableSection>& s
 
 void RenderTable::addChild(RenderTreeBuilder& builder, RenderPtr<RenderObject> child, RenderObject* beforeChild)
 {
-    bool wrapInAnonymousSection = !child->isOutOfFlowPositioned();
-
-    if (is<RenderTableCaption>(*child))
-        wrapInAnonymousSection = false;
-    else if (is<RenderTableCol>(*child)) {
+    if (is<RenderTableCol>(*child)) {
         m_hasColElements = true;
-        wrapInAnonymousSection = false;
     } else if (is<RenderTableSection>(*child)) {
         switch (child->style().display()) {
             case TABLE_HEADER_GROUP:
@@ -153,13 +148,11 @@ void RenderTable::addChild(RenderTreeBuilder& builder, RenderPtr<RenderObject> c
                     if (!m_firstBody) 
                         m_firstBody = makeWeakPtr(downcast<RenderTableSection>(child.get()));
                 }
-                wrapInAnonymousSection = false;
                 break;
             case TABLE_FOOTER_GROUP:
                 resetSectionPointerIfNotBefore(m_foot, beforeChild);
                 if (!m_foot) {
                     m_foot = makeWeakPtr(downcast<RenderTableSection>(child.get()));
-                    wrapInAnonymousSection = false;
                     break;
                 }
                 FALLTHROUGH;
@@ -167,58 +160,19 @@ void RenderTable::addChild(RenderTreeBuilder& builder, RenderPtr<RenderObject> c
                 resetSectionPointerIfNotBefore(m_firstBody, beforeChild);
                 if (!m_firstBody)
                     m_firstBody = makeWeakPtr(downcast<RenderTableSection>(child.get()));
-                wrapInAnonymousSection = false;
                 break;
             default:
                 ASSERT_NOT_REACHED();
         }
-    } else if (is<RenderTableCell>(*child) || is<RenderTableRow>(*child))
-        wrapInAnonymousSection = true;
-    else
-        wrapInAnonymousSection = true;
+    }
 
     if (is<RenderTableSection>(*child))
         setNeedsSectionRecalc();
 
-    if (!wrapInAnonymousSection) {
-        if (beforeChild && beforeChild->parent() != this)
-            beforeChild = splitAnonymousBoxesAroundChild(beforeChild);
+    if (beforeChild && beforeChild->parent() != this)
+        beforeChild = splitAnonymousBoxesAroundChild(beforeChild);
 
-        RenderBox::addChild(builder, WTFMove(child), beforeChild);
-        return;
-    }
-
-    if (!beforeChild && is<RenderTableSection>(lastChild()) && lastChild()->isAnonymous() && !lastChild()->isBeforeContent()) {
-        builder.insertChild(downcast<RenderTableSection>(*lastChild()), WTFMove(child));
-        return;
-    }
-
-    if (beforeChild && !beforeChild->isAnonymous() && beforeChild->parent() == this) {
-        RenderObject* section = beforeChild->previousSibling();
-        if (is<RenderTableSection>(section) && section->isAnonymous()) {
-            builder.insertChild(downcast<RenderTableSection>(*section), WTFMove(child));
-            return;
-        }
-    }
-
-    RenderObject* lastBox = beforeChild;
-    while (lastBox && lastBox->parent()->isAnonymous() && !is<RenderTableSection>(*lastBox) && lastBox->style().display() != TABLE_CAPTION && lastBox->style().display() != TABLE_COLUMN_GROUP)
-        lastBox = lastBox->parent();
-    if (lastBox && lastBox->isAnonymous() && !isAfterContent(lastBox) && lastBox->isTableSection()) {
-        RenderTableSection& section = downcast<RenderTableSection>(*lastBox);
-        if (beforeChild == &section)
-            beforeChild = section.firstRow();
-        builder.insertChild(section, WTFMove(child), beforeChild);
-        return;
-    }
-
-    if (beforeChild && !is<RenderTableSection>(*beforeChild) && beforeChild->style().display() != TABLE_CAPTION && beforeChild->style().display() != TABLE_COLUMN_GROUP)
-        beforeChild = nullptr;
-
-    auto newSection = RenderTableSection::createAnonymousWithParentRenderer(*this);
-    auto& section = *newSection;
-    builder.insertChild(*this, WTFMove(newSection), beforeChild);
-    builder.insertChild(section, WTFMove(child));
+    RenderBox::addChild(builder, WTFMove(child), beforeChild);
 }
 
 void RenderTable::addCaption(RenderTableCaption& caption)
