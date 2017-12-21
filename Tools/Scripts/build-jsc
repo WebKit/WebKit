@@ -50,6 +50,7 @@ my $forceCLoop = 0;
 my $cli = 0;
 my $makeArgs = "";
 my @cmakeArgs;
+my $buildDir = "";
 my $copyLibraries = 1;
 my $startTime = time();
 
@@ -82,6 +83,7 @@ Usage: $programName [options] [options to pass to build system]
   --cli                         Build the new jsc command line interface (default: $cli)
   --makeargs=<arguments>        Optional Makefile flags
   --cmakeargs=<arguments>       One or more optional CMake flags (e.g. --cmakeargs="-DFOO=bar -DCMAKE_PREFIX_PATH=/usr/local")
+  --build-dir=<path>            Build out of tree in directory at <path>
 EOF
 
 my %options = (
@@ -93,7 +95,8 @@ my %options = (
     'cli!' => \$cli,
     'copy-libraries!' => \$copyLibraries,
     'makeargs=s' => \$makeArgs,
-    'cmakeargs=s' => \@cmakeArgs
+    'cmakeargs=s' => \@cmakeArgs,
+    'build-dir=s' => \$buildDir
 );
 
 foreach (@features) {
@@ -113,6 +116,11 @@ if ($showHelp) {
 
 if (isAppleWinWebKit()) {
     $ftlJIT = 0;
+}
+
+if ($buildDir && !isCMakeBuild()) {
+    print STDERR "--build-dir is currently only supported for cmake builds";
+    exit 1;
 }
 
 if (isJSCOnly() && isWindows()) {
@@ -135,6 +143,10 @@ if ($forceCLoop) {
 if (isCMakeBuild()) {
     push @cmakeArgs, $forceCLoop ? " -DENABLE_JIT=OFF" : " -DENABLE_JIT=ON";
     push @cmakeArgs, $ftlJIT ? " -DENABLE_FTL_JIT=ON" : " -DENABLE_FTL_JIT=OFF";
+    if ($buildDir) {
+        push @cmakeArgs, " " . sourceDir();
+        setBaseProductDir($buildDir);
+    }
 
     my @featureArgs = cMakeArgsFromFeatures();
 
