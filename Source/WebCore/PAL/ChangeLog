@@ -1,3 +1,25 @@
+2017-12-21  Brent Fulgham  <bfulgham@apple.com>
+
+        Adopt new secure coding APIs in WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=178484
+        <rdar://problem/34837193>
+
+        Reviewed by Eric Carlson.
+
+        Due to <rdar://problem/31376830 we cannot used SecureCoding on NSAttributedString
+        in some cases. Add a macro for OS revisions that do not support secure coding,
+        and use the standard unarchive operation for NSAttributedString in those cases.
+
+        Rename 'insecurelyUnarchiveObjectOfClassFromData' to 'insecurelyUnarchiveObjectFromData',
+        and move it earlier in the file so that it can be reused in 'unarchivedObjectOfClassFromData'.
+
+        * pal/spi/cocoa/NSKeyedArchiverSPI.h:
+        (insecurelyUnarchiveObjectFromData): Renamed from insecurelyUnarchiveObjectOfClassFromData.
+        (unarchivedObjectOfClassFromData): Renamed from 'securelyUnarchiveObjectOfClassFromData' and
+        modified to use 'insecurelyUnarchiveObjectFromData'.
+        (securelyUnarchiveObjectOfClassFromData): Deleted.
+        (insecurelyUnarchiveObjectOfClassFromData): Deleted.
+
 2017-12-21  Jeremy Jones  <jeremyj@apple.com>
 
         Element fullscreen interface should display the location

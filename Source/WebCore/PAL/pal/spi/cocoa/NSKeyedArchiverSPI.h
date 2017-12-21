@@ -31,6 +31,8 @@
 
 #define USE_SECURE_ARCHIVER_API ((PLATFORM(MAC) && __MAC_OS_X_VERSION_MAX_ALLOWED >= 101302 && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110200) || (PLATFORM(WATCHOS) && __WATCH_OS_VERSION_MIN_REQUIRED >= 40200) || (PLATFORM(TVOS) && __TV_OS_VERSION_MIN_REQUIRED >= 110200))
 
+#define USE_SECURE_ARCHIVER_FOR_ATTRIBUTED_STRING ((PLATFORM(MAC) && __MAC_OS_X_VERSION_MAX_ALLOWED >= 101302 && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 120000) || (PLATFORM(WATCHOS) && __WATCH_OS_VERSION_MIN_REQUIRED >= 50000) || (PLATFORM(TVOS) && __TV_OS_VERSION_MIN_REQUIRED >= 120000))
+
 #if USE(SECURE_ARCHIVER_API)
 #if USE(APPLE_INTERNAL_SDK)
 #import <Foundation/NSKeyedArchiver_Private.h>
@@ -82,26 +84,31 @@ inline NSData *_Nullable insecurelyArchivedDataWithRootObject(id _Nonnull object
 #endif
 }
 
-inline id _Nullable securelyUnarchiveObjectOfClassFromData(Class _Nonnull cls, NSData * _Nonnull data)
-{
-#if USE(SECURE_ARCHIVER_API)
-    NSError *error;
-    id value = [NSKeyedUnarchiver unarchivedObjectOfClass:cls fromData:data error:&error];
-    if (!data)
-        LOG_ERROR("Unable to unarchive data: %@", error);
-    return value;
-#else
-    UNUSED_PARAM(cls);
-    return [NSKeyedUnarchiver unarchiveObjectWithData:data];
-#endif
-}
-
-inline id _Nullable insecurelyUnarchiveObjectOfClassFromData(NSData * _Nonnull data)
+inline id _Nullable insecurelyUnarchiveObjectFromData(NSData * _Nonnull data)
 {
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
     return [NSKeyedUnarchiver unarchiveObjectWithData:data];
 #pragma clang diagnostic pop
+}
+
+inline id _Nullable unarchivedObjectOfClassFromData(Class _Nonnull cls, NSData * _Nonnull data)
+{
+#if USE(SECURE_ARCHIVER_API)
+#if !USE(SECURE_ARCHIVER_FOR_ATTRIBUTED_STRING)
+    // Remove this code when the fix from <rdar://problem/31376830> is deployed to all relevant build targets.
+    if (cls == [NSAttributedString class])
+        return insecurelyUnarchiveObjectFromData(data);
+#endif
+    NSError *error;
+    id value = [NSKeyedUnarchiver unarchivedObjectOfClass:cls fromData:data error:&error];
+    if (!value)
+        LOG_ERROR("Unable to unarchive data: %@", error);
+    return value;
+#else
+    UNUSED_PARAM(cls);
+    return insecurelyUnarchiveObjectFromData(data);
+#endif
 }
 
 inline RetainPtr<NSKeyedArchiver> secureArchiver()

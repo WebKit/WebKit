@@ -265,7 +265,7 @@ void PlatformPasteboard::write(const PasteboardWebContent& content)
         [representationsToRegister addData:content.dataInWebArchiveFormat->createNSData().get() forType:WebArchivePboardType];
 
     if (content.dataInAttributedStringFormat) {
-        NSAttributedString *attributedString = insecurelyUnarchiveObjectOfClassFromData(content.dataInAttributedStringFormat->createNSData().get());
+        NSAttributedString *attributedString = unarchivedObjectOfClassFromData([NSAttributedString class], content.dataInAttributedStringFormat->createNSData().get());
         if (attributedString)
             [representationsToRegister addRepresentingObject:attributedString];
     }
@@ -380,7 +380,7 @@ Vector<String> PlatformPasteboard::typesSafeForDOMToReadAndWrite(const String& o
         if (!provider.teamData.length)
             continue;
 
-        NSDictionary *teamDataObject = insecurelyUnarchiveObjectOfClassFromData(provider.teamData);
+        NSDictionary *teamDataObject = unarchivedObjectOfClassFromData([NSDictionary class], provider.teamData);
         if (!teamDataObject)
             continue;
 
@@ -445,7 +445,7 @@ long PlatformPasteboard::write(const PasteboardCustomData& data)
             NSMutableArray<NSString *> *typesAsNSArray = [NSMutableArray array];
             for (auto& type : data.orderedTypes)
                 [typesAsNSArray addObject:type];
-            [representationsToRegister setTeamData:insecurelyArchivedDataWithRootObject(@{ @(originKeyForTeamData) : data.origin, @(customTypesKeyForTeamData) : typesAsNSArray })];
+            [representationsToRegister setTeamData:securelyArchivedDataWithRootObject(@{ @(originKeyForTeamData) : data.origin, @(customTypesKeyForTeamData) : typesAsNSArray })];
             [representationsToRegister addData:serializedSharedBuffer.get() forType:@(PasteboardCustomData::cocoaType())];
         }
     }
