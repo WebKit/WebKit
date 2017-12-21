@@ -1716,6 +1716,11 @@ bool CSSPropertyAnimation::blendProperties(const CSSPropertyBlendingClient* anim
     return false;
 }
 
+bool CSSPropertyAnimation::isPropertyAnimatable(CSSPropertyID prop)
+{
+    return CSSPropertyAnimationWrapperMap::singleton().wrapperForProperty(prop);
+}
+
 bool CSSPropertyAnimation::animationOfPropertyIsAccelerated(CSSPropertyID prop)
 {
     AnimationPropertyWrapperBase* wrapper = CSSPropertyAnimationWrapperMap::singleton().wrapperForProperty(prop);

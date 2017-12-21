@@ -41,6 +41,31 @@ public:
     static ExceptionOr<Ref<KeyframeEffect>> create(JSC::ExecState&, Element*, JSC::Strong<JSC::JSObject>&&);
     ~KeyframeEffect() { }
 
+    enum class CompositeOperation { Replace, Add, Accumulate };
+
+    struct BasePropertyIndexedKeyframe {
+        Variant<std::nullptr_t, double, Vector<std::optional<double>>> offset;
+        Variant<String, Vector<String>> easing;
+        Variant<CompositeOperation, Vector<CompositeOperation>> composite;
+    };
+
+    struct PropertyAndValues {
+        CSSPropertyID property;
+        Vector<String> values;
+    };
+
+    struct KeyframeLikeObject {
+        BasePropertyIndexedKeyframe baseProperties;
+        Vector<PropertyAndValues> propertiesAndValues;
+    };
+
+    struct ProcessedKeyframe {
+        String easing;
+        std::optional<double> offset;
+        std::optional<CompositeOperation> composite;
+        HashMap<CSSPropertyID, String> cssPropertiesAndValues;
+    };
+
     Element* target() const { return m_target.get(); }
     ExceptionOr<void> setKeyframes(JSC::ExecState&, JSC::Strong<JSC::JSObject>&&);
     void getAnimatedStyle(std::unique_ptr<RenderStyle>& animatedStyle);
@@ -60,6 +85,8 @@ public:
 private:
     KeyframeEffect(Element*);
     ExceptionOr<void> processKeyframes(JSC::ExecState&, JSC::Strong<JSC::JSObject>&&);
+
+    void setAnimatedPropertiesInStyle(RenderStyle&, double);
     void computeStackingContextImpact();
     bool shouldRunAccelerated();
 

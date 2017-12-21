@@ -1,49 +1,53 @@
 
-FAIL Keyframes can be replaced with an empty keyframe Type error
-FAIL Keyframes can be replaced with a one property two value property-indexed keyframes specification Type error
-FAIL Keyframes can be replaced with a one shorthand property two value property-indexed keyframes specification Type error
-FAIL Keyframes can be replaced with a two property (one shorthand and one of its longhand components) two value property-indexed keyframes specification Type error
-FAIL Keyframes can be replaced with a two property two value property-indexed keyframes specification Type error
-FAIL Keyframes can be replaced with a two property property-indexed keyframes specification with different numbers of values Type error
-FAIL Keyframes can be replaced with a property-indexed keyframes specification with an invalid value Type error
-FAIL Keyframes can be replaced with a one property two value property-indexed keyframes specification that needs to stringify its values Type error
-FAIL Keyframes can be replaced with a property-indexed keyframes specification with a CSS variable reference Type error
-FAIL Keyframes can be replaced with a property-indexed keyframes specification with a CSS variable reference in a shorthand property Type error
-FAIL Keyframes can be replaced with a one property one value property-indexed keyframes specification Type error
-FAIL Keyframes can be replaced with a one property one non-array value property-indexed keyframes specification Type error
-FAIL Keyframes can be replaced with a one property two value property-indexed keyframes specification where the first value is invalid Type error
-FAIL Keyframes can be replaced with a one property two value property-indexed keyframes specification where the second value is invalid Type error
-FAIL Keyframes can be replaced with a one property one keyframe sequence Type error
-FAIL Keyframes can be replaced with a one property two keyframe sequence Type error
-FAIL Keyframes can be replaced with a two property two keyframe sequence Type error
-FAIL Keyframes can be replaced with a one shorthand property two keyframe sequence Type error
-FAIL Keyframes can be replaced with a two property (a shorthand and one of its component longhands) two keyframe sequence Type error
+FAIL Keyframes can be replaced with an empty keyframe effect.getKeyframes is not a function. (In 'effect.getKeyframes()', 'effect.getKeyframes' is undefined)
+FAIL Keyframes can be replaced with a one property two value property-indexed keyframes specification effect.getKeyframes is not a function. (In 'effect.getKeyframes()', 'effect.getKeyframes' is undefined)
+FAIL Keyframes can be replaced with a one shorthand property two value property-indexed keyframes specification effect.getKeyframes is not a function. (In 'effect.getKeyframes()', 'effect.getKeyframes' is undefined)
+FAIL Keyframes can be replaced with a two property (one shorthand and one of its longhand components) two value property-indexed keyframes specification effect.getKeyframes is not a function. (In 'effect.getKeyframes()', 'effect.getKeyframes' is undefined)
+FAIL Keyframes can be replaced with a two property two value property-indexed keyframes specification effect.getKeyframes is not a function. (In 'effect.getKeyframes()', 'effect.getKeyframes' is undefined)
+FAIL Keyframes can be replaced with a two property property-indexed keyframes specification with different numbers of values effect.getKeyframes is not a function. (In 'effect.getKeyframes()', 'effect.getKeyframes' is undefined)
+FAIL Keyframes can be replaced with a property-indexed keyframes specification with an invalid value effect.getKeyframes is not a function. (In 'effect.getKeyframes()', 'effect.getKeyframes' is undefined)
+FAIL Keyframes can be replaced with a one property two value property-indexed keyframes specification that needs to stringify its values effect.getKeyframes is not a function. (In 'effect.getKeyframes()', 'effect.getKeyframes' is undefined)
+FAIL Keyframes can be replaced with a property-indexed keyframes specification with a CSS variable reference effect.getKeyframes is not a function. (In 'effect.getKeyframes()', 'effect.getKeyframes' is undefined)
+FAIL Keyframes can be replaced with a property-indexed keyframes specification with a CSS variable reference in a shorthand property effect.getKeyframes is not a function. (In 'effect.getKeyframes()', 'effect.getKeyframes' is undefined)
+FAIL Keyframes can be replaced with a one property one value property-indexed keyframes specification effect.getKeyframes is not a function. (In 'effect.getKeyframes()', 'effect.getKeyframes' is undefined)
+FAIL Keyframes can be replaced with a one property one non-array value property-indexed keyframes specification effect.getKeyframes is not a function. (In 'effect.getKeyframes()', 'effect.getKeyframes' is undefined)
+FAIL Keyframes can be replaced with a one property two value property-indexed keyframes specification where the first value is invalid effect.getKeyframes is not a function. (In 'effect.getKeyframes()', 'effect.getKeyframes' is undefined)
+FAIL Keyframes can be replaced with a one property two value property-indexed keyframes specification where the second value is invalid effect.getKeyframes is not a function. (In 'effect.getKeyframes()', 'effect.getKeyframes' is undefined)
+FAIL Keyframes can be replaced with a one property one keyframe sequence effect.getKeyframes is not a function. (In 'effect.getKeyframes()', 'effect.getKeyframes' is undefined)
+FAIL Keyframes can be replaced with a one property two keyframe sequence effect.getKeyframes is not a function. (In 'effect.getKeyframes()', 'effect.getKeyframes' is undefined)
+FAIL Keyframes can be replaced with a two property two keyframe sequence effect.getKeyframes is not a function. (In 'effect.getKeyframes()', 'effect.getKeyframes' is undefined)
+FAIL Keyframes can be replaced with a one shorthand property two keyframe sequence effect.getKeyframes is not a function. (In 'effect.getKeyframes()', 'effect.getKeyframes' is undefined)
+FAIL Keyframes can be replaced with a two property (a shorthand and one of its component longhands) two keyframe sequence effect.getKeyframes is not a function. (In 'effect.getKeyframes()', 'effect.getKeyframes' is undefined)
 FAIL Keyframes can be replaced with a keyframe sequence with duplicate values for a given interior offset Type error
 FAIL Keyframes can be replaced with a keyframe sequence with duplicate values for offsets 0 and 1 Type error
 FAIL Keyframes can be replaced with a two property four keyframe sequence Type error
-FAIL Keyframes can be replaced with a single keyframe sequence with omitted offset Type error
-FAIL Keyframes can be replaced with a single keyframe sequence with null offset Type error
-FAIL Keyframes can be replaced with a single keyframe sequence with string offset Type error
-FAIL Keyframes can be replaced with a one property keyframe sequence with some omitted offsets Type error
-FAIL Keyframes can be replaced with a one property keyframe sequence with some null offsets Type error
-FAIL Keyframes can be replaced with a two property keyframe sequence with some omitted offsets Type error
-FAIL Keyframes can be replaced with a one property keyframe sequence with all omitted offsets Type error
+FAIL Keyframes can be replaced with a single keyframe sequence with omitted offset effect.getKeyframes is not a function. (In 'effect.getKeyframes()', 'effect.getKeyframes' is undefined)
+FAIL Keyframes can be replaced with a single keyframe sequence with null offset effect.getKeyframes is not a function. (In 'effect.getKeyframes()', 'effect.getKeyframes' is undefined)
+FAIL Keyframes can be replaced with a single keyframe sequence with string offset effect.getKeyframes is not a function. (In 'effect.getKeyframes()', 'effect.getKeyframes' is undefined)
+FAIL Keyframes can be replaced with a one property keyframe sequence with some omitted offsets effect.getKeyframes is not a function. (In 'effect.getKeyframes()', 'effect.getKeyframes' is undefined)
+FAIL Keyframes can be replaced with a one property keyframe sequence with some null offsets effect.getKeyframes is not a function. (In 'effect.getKeyframes()', 'effect.getKeyframes' is undefined)
+FAIL Keyframes can be replaced with a two property keyframe sequence with some omitted offsets effect.getKeyframes is not a function. (In 'effect.getKeyframes()', 'effect.getKeyframes' is undefined)
+FAIL Keyframes can be replaced with a one property keyframe sequence with all omitted offsets effect.getKeyframes is not a function. (In 'effect.getKeyframes()', 'effect.getKeyframes' is undefined)
 FAIL Keyframes can be replaced with a keyframe sequence with different easing values, but the same easing value for a given offset Type error
 FAIL Keyframes can be replaced with a keyframe sequence with different composite values, but the same composite value for a given offset Type error
-FAIL Keyframes can be replaced with a one property two keyframe sequence that needs to stringify its values Type error
-FAIL Keyframes can be replaced with a keyframe sequence with a CSS variable reference Type error
-FAIL Keyframes can be replaced with a keyframe sequence with a CSS variable reference in a shorthand property Type error
-FAIL Keyframes can be replaced with a keyframe sequence where shorthand precedes longhand Type error
-FAIL Keyframes can be replaced with a keyframe sequence where longhand precedes shorthand Type error
-FAIL Keyframes can be replaced with a keyframe sequence where lesser shorthand precedes greater shorthand Type error
-FAIL Keyframes can be replaced with a keyframe sequence where greater shorthand precedes lesser shorthand Type error
-FAIL Keyframes can be replaced with a two property keyframe sequence where one property is missing from the first keyframe Type error
-FAIL Keyframes can be replaced with a two property keyframe sequence where one property is missing from the last keyframe Type error
+FAIL Keyframes can be replaced with a one property two keyframe sequence that needs to stringify its values effect.getKeyframes is not a function. (In 'effect.getKeyframes()', 'effect.getKeyframes' is undefined)
+FAIL Keyframes can be replaced with a keyframe sequence with a CSS variable reference effect.getKeyframes is not a function. (In 'effect.getKeyframes()', 'effect.getKeyframes' is undefined)
+FAIL Keyframes can be replaced with a keyframe sequence with a CSS variable reference in a shorthand property effect.getKeyframes is not a function. (In 'effect.getKeyframes()', 'effect.getKeyframes' is undefined)
+FAIL Keyframes can be replaced with a keyframe sequence where shorthand precedes longhand effect.getKeyframes is not a function. (In 'effect.getKeyframes()', 'effect.getKeyframes' is undefined)
+FAIL Keyframes can be replaced with a keyframe sequence where longhand precedes shorthand effect.getKeyframes is not a function. (In 'effect.getKeyframes()', 'effect.getKeyframes' is undefined)
+FAIL Keyframes can be replaced with a keyframe sequence where lesser shorthand precedes greater shorthand effect.getKeyframes is not a function. (In 'effect.getKeyframes()', 'effect.getKeyframes' is undefined)
+FAIL Keyframes can be replaced with a keyframe sequence where greater shorthand precedes lesser shorthand effect.getKeyframes is not a function. (In 'effect.getKeyframes()', 'effect.getKeyframes' is undefined)
+FAIL Keyframes can be replaced with a two property keyframe sequence where one property is missing from the first keyframe effect.getKeyframes is not a function. (In 'effect.getKeyframes()', 'effect.getKeyframes' is undefined)
+FAIL Keyframes can be replaced with a two property keyframe sequence where one property is missing from the last keyframe effect.getKeyframes is not a function. (In 'effect.getKeyframes()', 'effect.getKeyframes' is undefined)
 FAIL Keyframes can be replaced with a keyframe sequence with repeated values at offset 1 with different easings Type error
-FAIL KeyframeEffect constructor throws with keyframes with an out-of-bounded positive offset Type error
-FAIL KeyframeEffect constructor throws with keyframes with an out-of-bounded negative offset Type error
-FAIL KeyframeEffect constructor throws with keyframes not loosely sorted by offset Type error
-FAIL KeyframeEffect constructor throws with property-indexed keyframes with an invalid easing value Type error
-FAIL KeyframeEffect constructor throws with a keyframe sequence with an invalid easing value Type error
-FAIL KeyframeEffect constructor throws with keyframes with an invalid composite value Type error
+PASS KeyframeEffect constructor throws with keyframes with an out-of-bounded positive offset 
+PASS KeyframeEffect constructor throws with keyframes with an out-of-bounded negative offset 
+PASS KeyframeEffect constructor throws with keyframes not loosely sorted by offset 
+FAIL KeyframeEffect constructor throws with property-indexed keyframes with an invalid easing value assert_throws: function "function () {
+      effect.setKeyframes(subtest.input);
+    }" did not throw
+FAIL KeyframeEffect constructor throws with a keyframe sequence with an invalid easing value assert_throws: function "function () {
+      effect.setKeyframes(subtest.input);
+    }" did not throw
+PASS KeyframeEffect constructor throws with keyframes with an invalid composite value 
 

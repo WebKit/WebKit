@@ -38,6 +38,7 @@ class RenderStyle;
 
 class CSSPropertyAnimation {
 public:
+    static bool isPropertyAnimatable(CSSPropertyID);
     static bool animationOfPropertyIsAccelerated(CSSPropertyID);
     static bool propertiesEqual(CSSPropertyID, const RenderStyle* a, const RenderStyle* b);
     static CSSPropertyID getPropertyAtIndex(int, bool& isShorthand);

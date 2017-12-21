@@ -1,3 +1,16 @@
+2017-12-21  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Complete support for keyframe animations
+        https://bugs.webkit.org/show_bug.cgi?id=179708
+
+        Reviewed by Dean Jackson.
+
+        Rebase some WPT expectations with progressions due to supporting all keyframes arguments.
+
+        * http/wpt/web-animations/interfaces/KeyframeEffect/constructor-expected.txt:
+        * http/wpt/web-animations/interfaces/KeyframeEffect/processing-a-keyframes-argument-002-expected.txt:
+        * http/wpt/web-animations/interfaces/KeyframeEffect/setKeyframes-expected.txt:
+
 2017-12-21  Ryan Haddad  <ryanhaddad@apple.com>
 
         Skip http/tests/resourceLoadStatistics/clear-in-memory-and-persistent-store-one-hour.html because it frequently times out.

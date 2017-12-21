@@ -250,6 +250,11 @@ static CSSPropertyInfo parseJavaScriptCSSPropertyName(const AtomicString& proper
 
 }
 
+CSSPropertyID CSSStyleDeclaration::getCSSPropertyIDFromJavaScriptPropertyName(const AtomicString& propertyName)
+{
+    return parseJavaScriptCSSPropertyName(propertyName).propertyID;
+}
+
 std::optional<Variant<String, double>> CSSStyleDeclaration::namedItem(const AtomicString& propertyName)
 {
     auto propertyInfo = parseJavaScriptCSSPropertyName(propertyName);

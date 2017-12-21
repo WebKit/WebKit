@@ -32,3 +32,11 @@
     readonly attribute Element? target;
     [MayThrowException, CallWith=ScriptState] void setKeyframes(object? keyframes);
 };
+
+enum CompositeOperation { "replace", "add", "accumulate" };
+
+dictionary BasePropertyIndexedKeyframe {
+    (double? or sequence<double?>) offset = [];
+    (DOMString or sequence<DOMString>) easing = [];
+    (CompositeOperation or sequence<CompositeOperation>) composite = [];
+};

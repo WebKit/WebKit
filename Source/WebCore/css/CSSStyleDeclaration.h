@@ -79,6 +79,7 @@ public:
     ExceptionOr<void> setNamedItem(const AtomicString& name, String value, bool& propertySupported);
     Vector<AtomicString> supportedPropertyNames() const;
 
+    static CSSPropertyID getCSSPropertyIDFromJavaScriptPropertyName(const AtomicString&);
 protected:
     CSSStyleDeclaration() = default;
 };
