@@ -43,11 +43,9 @@ Modules/cache/DOMWindowCaches.cpp
 Modules/cache/WorkerCacheStorageConnection.cpp
 Modules/cache/WorkerGlobalScopeCaches.cpp
 
-Modules/credentials/BasicCredential.cpp
-Modules/credentials/CredentialsContainer.cpp
-Modules/credentials/FederatedCredential.cpp
-Modules/credentials/NavigatorCredentials.cpp
-Modules/credentials/PasswordCredential.cpp
+Modules/credentialmanagement/BasicCredential.cpp
+Modules/credentialmanagement/CredentialsContainer.cpp
+Modules/credentialmanagement/NavigatorCredentials.cpp
 
 Modules/entriesapi/ErrorCallback.cpp
 Modules/entriesapi/DOMFileSystem.cpp
@@ -2379,9 +2377,7 @@ JSConvolverNode.cpp
 JSCoordinates.cpp
 JSCountQueuingStrategy.cpp
 JSCredentialCreationOptions.cpp
-JSCredentialData.cpp
 JSCredentialRequestOptions.cpp
-JSCredentialUserData.cpp
 JSCredentialsContainer.cpp
 JSCrypto.cpp
 JSCryptoAesKeyAlgorithm.cpp
@@ -2473,9 +2469,6 @@ JSEventTarget.cpp
 JSExtendableEvent.cpp
 JSExtendableEventInit.cpp
 JSExtendableMessageEvent.cpp
-JSFederatedCredential.cpp
-JSFederatedCredentialInit.cpp
-JSFederatedCredentialRequestOptions.cpp
 JSFetchBody.cpp
 JSFetchEvent.cpp
 JSFetchHeaders.cpp
@@ -2693,8 +2686,6 @@ JSOverflowEvent.cpp
 JSPageTransitionEvent.cpp
 JSPannerNode.cpp
 JSParentNode.cpp
-JSPasswordCredential.cpp
-JSPasswordCredentialData.cpp
 JSPath2D.cpp
 JSPaymentAddress.cpp
 JSPaymentComplete.cpp

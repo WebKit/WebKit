@@ -33,7 +33,7 @@ VPATH = \
     $(WebCore)/Modules/applepay/paymentrequest \
     $(WebCore)/Modules/beacon \
     $(WebCore)/Modules/cache \
-    $(WebCore)/Modules/credentials \
+    $(WebCore)/Modules/credentialmanagement \
     $(WebCore)/Modules/encryptedmedia \
     $(WebCore)/Modules/encryptedmedia/legacy \
     $(WebCore)/Modules/entriesapi \
@@ -119,18 +119,11 @@ JS_BINDING_IDLS = \
     $(WebCore)/Modules/cache/DOMCache.idl \
     $(WebCore)/Modules/cache/DOMCacheStorage.idl \
     $(WebCore)/Modules/cache/WorkerGlobalScopeCaches.idl \
-    $(WebCore)/Modules/credentials/BasicCredential.idl \
-    $(WebCore)/Modules/credentials/CredentialCreationOptions.idl \
-    $(WebCore)/Modules/credentials/CredentialData.idl \
-    $(WebCore)/Modules/credentials/CredentialRequestOptions.idl \
-    $(WebCore)/Modules/credentials/CredentialUserData.idl \
-    $(WebCore)/Modules/credentials/CredentialsContainer.idl \
-    $(WebCore)/Modules/credentials/FederatedCredential.idl \
-    $(WebCore)/Modules/credentials/FederatedCredentialRequestOptions.idl \
-    $(WebCore)/Modules/credentials/FederatedCredentialInit.idl \
-    $(WebCore)/Modules/credentials/NavigatorCredentials.idl \
-    $(WebCore)/Modules/credentials/PasswordCredential.idl \
-    $(WebCore)/Modules/credentials/PasswordCredentialData.idl \
+    $(WebCore)/Modules/credentialmanagement/BasicCredential.idl \
+    $(WebCore)/Modules/credentialmanagement/CredentialCreationOptions.idl \
+    $(WebCore)/Modules/credentialmanagement/CredentialRequestOptions.idl \
+    $(WebCore)/Modules/credentialmanagement/CredentialsContainer.idl \
+    $(WebCore)/Modules/credentialmanagement/NavigatorCredentials.idl \
     $(WebCore)/Modules/encryptedmedia/MediaKeyMessageEvent.idl \
     $(WebCore)/Modules/encryptedmedia/MediaKeySession.idl \
     $(WebCore)/Modules/encryptedmedia/MediaKeySessionType.idl \

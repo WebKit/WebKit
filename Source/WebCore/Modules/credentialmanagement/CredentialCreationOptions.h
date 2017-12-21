@@ -23,20 +23,11 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "FederatedCredential.h"
+#pragma once
 
 namespace WebCore {
 
-FederatedCredential::FederatedCredential(const FederatedCredentialInit& init)
-    : BasicCredential(init, Type::Password)
-    , m_name(init.name)
-    , m_iconURL(init.iconURL)
-    , m_provider(init.provider)
-    , m_protocol(init.protocol)
-{
-}
-
-FederatedCredential::~FederatedCredential() = default;
+struct CredentialCreationOptions {
+};
 
 } // namespace WebCore

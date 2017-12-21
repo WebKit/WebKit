@@ -23,36 +23,30 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
-
+#include "config.h"
 #include "BasicCredential.h"
-#include "CredentialUserData.h"
-#include "PasswordCredentialData.h"
 
 namespace WebCore {
 
-class HTMLFormElement;
+BasicCredential::BasicCredential(const String& id, Type type)
+    : m_id(id)
+    , m_type(type)
+{
+}
 
-class PasswordCredential : public BasicCredential, public CredentialUserData {
-public:
-    ~PasswordCredential() override;
+BasicCredential::~BasicCredential() = default;
 
-    static Ref<PasswordCredential> create(const PasswordCredentialData& data) { return adoptRef(*new PasswordCredential(data)); }
-    static Ref<PasswordCredential> create(const HTMLFormElement& form) { return adoptRef(*new PasswordCredential(form)); }
+String BasicCredential::type() const
+{
+    switch (m_type) {
+    case Type::Password:
+        return ASCIILiteral("password");
+    case Type::Federated:
+        return ASCIILiteral("federated");
+    }
 
-    const String& name() const override { return m_name; }
-
-    const String& iconURL() const override { return m_iconURL; }
-
-    const String& password() const { return m_password; }
-
-private:
-    PasswordCredential(const PasswordCredentialData&);
-    PasswordCredential(const HTMLFormElement&);
-
-    String m_name;
-    String m_iconURL;
-    String m_password;
-};
+    ASSERT_NOT_REACHED();
+    return emptyString();
+}
 
 } // namespace WebCore

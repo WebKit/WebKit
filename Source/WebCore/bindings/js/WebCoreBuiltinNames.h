@@ -52,7 +52,6 @@ namespace WebCore {
     macro(DocumentTimeline) \
     macro(ExtendableEvent) \
     macro(ExtendableMessageEvent) \
-    macro(FederatedCredential) \
     macro(FetchEvent) \
     macro(FileSystem) \
     macro(FileSystemDirectoryEntry) \
@@ -101,7 +100,6 @@ namespace WebCore {
     macro(NavigatorUserMedia) \
     macro(OffscreenCanvas) \
     macro(OffscreenCanvasRenderingContext2D) \
-    macro(PasswordCredential) \
     macro(PaymentAddress) \
     macro(PaymentRequest) \
     macro(PaymentRequestUpdateEvent) \

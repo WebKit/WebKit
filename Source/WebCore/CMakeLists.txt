@@ -23,7 +23,7 @@ set(WebCore_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/Modules/applepay"
     "${WEBCORE_DIR}/Modules/applepay/paymentrequest"
     "${WEBCORE_DIR}/Modules/cache"
-    "${WEBCORE_DIR}/Modules/credentials"
+    "${WEBCORE_DIR}/Modules/credentialmanagement"
     "${WEBCORE_DIR}/Modules/encryptedmedia"
     "${WEBCORE_DIR}/Modules/encryptedmedia/legacy"
     "${WEBCORE_DIR}/Modules/entriesapi"
@@ -206,18 +206,11 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/cache/DOMWindowCaches.idl
     Modules/cache/WorkerGlobalScopeCaches.idl
 
-    Modules/credentials/BasicCredential.idl
-    Modules/credentials/CredentialCreationOptions.idl
-    Modules/credentials/CredentialData.idl
-    Modules/credentials/CredentialRequestOptions.idl
-    Modules/credentials/CredentialUserData.idl
-    Modules/credentials/CredentialsContainer.idl
-    Modules/credentials/FederatedCredential.idl
-    Modules/credentials/FederatedCredentialInit.idl
-    Modules/credentials/FederatedCredentialRequestOptions.idl
-    Modules/credentials/NavigatorCredentials.idl
-    Modules/credentials/PasswordCredential.idl
-    Modules/credentials/PasswordCredentialData.idl
+    Modules/credentialmanagement/BasicCredential.idl
+    Modules/credentialmanagement/CredentialCreationOptions.idl
+    Modules/credentialmanagement/CredentialRequestOptions.idl
+    Modules/credentialmanagement/CredentialsContainer.idl
+    Modules/credentialmanagement/NavigatorCredentials.idl
 
     Modules/entriesapi/DOMFileSystem.idl
     Modules/entriesapi/ErrorCallback.idl

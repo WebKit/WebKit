@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Google Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,12 +23,31 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-[
-    EnabledAtRuntime=CredentialManagement,
-    Constructor(FederatedCredentialInit data),
-    Exposed=Window,
-] interface FederatedCredential : BasicCredential {
-    readonly attribute USVString provider;
-    readonly attribute DOMString? protocol;
+#pragma once
+
+#include <wtf/RefCounted.h>
+#include <wtf/text/WTFString.h>
+
+namespace WebCore {
+
+class BasicCredential : public RefCounted<BasicCredential> {
+public:
+    enum class Type {
+        Password,
+        Federated,
+    };
+
+    virtual ~BasicCredential();
+
+    const String& id() const { return m_id; }
+    String type() const;
+
+protected:
+    BasicCredential(const String&, Type);
+
+private:
+    String m_id;
+    Type m_type;
 };
-FederatedCredential implements CredentialUserData;
+
+} // namespace WebCore
