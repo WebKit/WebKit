@@ -5358,14 +5358,25 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
     case GetPropertyEnumerator: {
-        SpeculateCellOperand base(this, node->child1());
-        GPRFlushedCallResult result(this);
-        GPRReg resultGPR = result.gpr();
+        if (node->child1().useKind() == CellUse) {
+            SpeculateCellOperand base(this, node->child1());
+            GPRFlushedCallResult result(this);
+            GPRReg resultGPR = result.gpr();
 
-        flushRegisters();
-        callOperation(operationGetPropertyEnumerator, resultGPR, base.gpr());
-        m_jit.exceptionCheck();
-        cellResult(resultGPR, node);
+            flushRegisters();
+            callOperation(operationGetPropertyEnumeratorCell, resultGPR, base.gpr());
+            m_jit.exceptionCheck();
+            cellResult(resultGPR, node);
+        } else {
+            JSValueOperand base(this, node->child1());
+            GPRFlushedCallResult result(this);
+            GPRReg resultGPR = result.gpr();
+
+            flushRegisters();
+            callOperation(operationGetPropertyEnumerator, resultGPR, base.jsValueRegs());
+            m_jit.exceptionCheck();
+            cellResult(resultGPR, node);
+        }
         break;
     }
     case GetEnumeratorStructurePname:

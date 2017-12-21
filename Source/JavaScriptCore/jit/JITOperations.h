@@ -461,7 +461,8 @@ int32_t JIT_OPERATION operationCheckIfExceptionIsUncatchableAndNotifyProfiler(Ex
 int32_t JIT_OPERATION operationInstanceOfCustom(ExecState*, EncodedJSValue encodedValue, JSObject* constructor, EncodedJSValue encodedHasInstance) WTF_INTERNAL;
 
 EncodedJSValue JIT_OPERATION operationHasGenericProperty(ExecState*, EncodedJSValue, JSCell*);
-JSCell* JIT_OPERATION operationGetPropertyEnumerator(ExecState*, JSCell*);
+JSCell* JIT_OPERATION operationGetPropertyEnumeratorCell(ExecState*, JSCell*);
+JSCell* JIT_OPERATION operationGetPropertyEnumerator(ExecState*, EncodedJSValue);
 EncodedJSValue JIT_OPERATION operationNextEnumeratorPname(ExecState*, JSCell*, int32_t);
 JSCell* JIT_OPERATION operationToIndexString(ExecState*, int32_t);
 

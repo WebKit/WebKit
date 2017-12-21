@@ -1,3 +1,27 @@
+2017-12-20  Saam Barati  <sbarati@apple.com>
+
+        GetPropertyEnumerator in DFG/FTL should not unconditionally speculate cell
+        https://bugs.webkit.org/show_bug.cgi?id=181054
+
+        Reviewed by Mark Lam.
+
+        Speedometer's react subtest has a function that is in an OSR exit loop because
+        we used to unconditionally speculate cell for the operand to GetPropertyEnumerator.
+        This fix doesn't seem to speed up Speedometer at all, but it's good hygiene 
+        for our compiler to not have this pathology. This patch adds a generic
+        GetPropertyEnumerator to prevent the exit loop.
+
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetPropertyEnumerator):
+        * jit/JITOperations.cpp:
+        * jit/JITOperations.h:
+
 2017-12-20  Daniel Bates  <dabates@apple.com>
 
         Remove Alternative Presentation Button

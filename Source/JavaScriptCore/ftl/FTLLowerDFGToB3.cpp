@@ -9733,8 +9733,10 @@ private:
 
     void compileGetPropertyEnumerator()
     {
-        LValue base = lowCell(m_node->child1());
-        setJSValue(vmCall(Int64, m_out.operation(operationGetPropertyEnumerator), m_callFrame, base));
+        if (m_node->child1().useKind() == CellUse)
+            setJSValue(vmCall(Int64, m_out.operation(operationGetPropertyEnumeratorCell), m_callFrame, lowCell(m_node->child1())));
+        else
+            setJSValue(vmCall(Int64, m_out.operation(operationGetPropertyEnumerator), m_callFrame, lowJSValue(m_node->child1())));
     }
 
     void compileGetEnumeratorStructurePname()
