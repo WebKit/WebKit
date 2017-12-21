@@ -1,3 +1,16 @@
+2017-12-20  Matt Lewis  <jlewis3@apple.com>
+
+        Unreviewed, rolling out r226155.
+
+        This caused test failures.
+
+        Reverted changeset:
+
+        "Web Inspector: add TestPage.debug() to inspect evaluations
+        being sent to Inspector page"
+        https://bugs.webkit.org/show_bug.cgi?id=181005
+        https://trac.webkit.org/changeset/226155
+
 2017-12-20  Brady Eidson  <beidson@apple.com>
 
         Assertion failure in MessagePort::contextDestroyed in http/tests/security/MessagePort/event-listener-context.html, usually attributed to later tests.
