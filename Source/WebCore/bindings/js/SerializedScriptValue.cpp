@@ -1066,7 +1066,7 @@ private:
 
 #if ENABLE(WEBASSEMBLY)
             if (JSWebAssemblyModule* module = jsDynamicDowncast<JSWebAssemblyModule*>(vm, obj)) {
-                if (m_context != SerializationContext::WorkerPostMessage && m_context != SerializationContext::WindowPostMessage)
+                if (m_context != SerializationContext::WorkerPostMessage)
                     return false;
 
                 uint32_t index = m_wasmModules.size(); 
