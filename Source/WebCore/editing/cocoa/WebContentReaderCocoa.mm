@@ -303,19 +303,19 @@ RefPtr<DocumentFragment> createFragmentAndAddResources(Frame& frame, NSAttribute
         return WTFMove(fragmentAndResources.fragment);
     }
 
-    if (shouldReplaceRichContentWithAttachments())
+    if (shouldReplaceRichContentWithAttachments()) {
         replaceRichContentWithAttachments(*fragmentAndResources.fragment, fragmentAndResources.resources);
-    else {
-        HashMap<AtomicString, AtomicString> blobURLMap;
-        for (const Ref<ArchiveResource>& subresource : fragmentAndResources.resources) {
-            auto blob = Blob::create(subresource->data(), subresource->mimeType());
-            String blobURL = DOMURL::createObjectURL(document, blob);
-            blobURLMap.set(subresource->url().string(), blobURL);
-        }
-
-        replaceSubresourceURLs(*fragmentAndResources.fragment, WTFMove(blobURLMap));
+        return WTFMove(fragmentAndResources.fragment);
     }
 
+    HashMap<AtomicString, AtomicString> blobURLMap;
+    for (const Ref<ArchiveResource>& subresource : fragmentAndResources.resources) {
+        auto blob = Blob::create(subresource->data(), subresource->mimeType());
+        String blobURL = DOMURL::createObjectURL(document, blob);
+        blobURLMap.set(subresource->url().string(), blobURL);
+    }
+
+    replaceSubresourceURLs(*fragmentAndResources.fragment, WTFMove(blobURLMap));
     return WTFMove(fragmentAndResources.fragment);
 }
 
@@ -342,6 +342,17 @@ static std::optional<MarkupAndArchive> extractMarkupAndArchive(SharedBuffer& buf
     return MarkupAndArchive { String::fromUTF8(mainResource->data().data(), mainResource->data().size()), mainResource.releaseNonNull(), archive.releaseNonNull() };
 }
 
+static String markupForFragmentInDocument(Ref<DocumentFragment>&& fragment, Document& document)
+{
+    auto* bodyElement = document.body();
+    ASSERT(bodyElement);
+    bodyElement->appendChild(WTFMove(fragment));
+
+    auto range = Range::create(document);
+    range->selectNodeContents(*bodyElement);
+    return createMarkup(range.get(), nullptr, AnnotateForInterchange, false, ResolveNonLocalURLs);
+}
+
 static String sanitizeMarkupWithArchive(Document& destinationDocument, MarkupAndArchive& markupAndArchive, const std::function<bool(const String)>& canShowMIMETypeAsHTML)
 {
     auto page = createPageForSanitizingWebContent();
@@ -349,51 +360,46 @@ static String sanitizeMarkupWithArchive(Document& destinationDocument, MarkupAnd
     ASSERT(stagingDocument);
     auto fragment = createFragmentFromMarkup(*stagingDocument, markupAndArchive.markup, markupAndArchive.mainResource->url(), DisallowScriptingAndPluginContent);
 
-    if (shouldReplaceRichContentWithAttachments())
+    if (shouldReplaceRichContentWithAttachments()) {
         replaceRichContentWithAttachments(fragment, markupAndArchive.archive->subresources());
-    else {
-        HashMap<AtomicString, AtomicString> blobURLMap;
-        for (const Ref<ArchiveResource>& subresource : markupAndArchive.archive->subresources()) {
-            auto blob = Blob::create(subresource->data(), subresource->mimeType());
-            String blobURL = DOMURL::createObjectURL(destinationDocument, blob);
-            blobURLMap.set(subresource->url().string(), blobURL);
-        }
-
-        auto contentOrigin = SecurityOrigin::create(markupAndArchive.mainResource->url());
-        for (const Ref<Archive>& subframeArchive : markupAndArchive.archive->subframeArchives()) {
-            RefPtr<ArchiveResource> subframeMainResource = subframeArchive->mainResource();
-            if (!subframeMainResource)
-                continue;
-
-            auto type = subframeMainResource->mimeType();
-            if (!canShowMIMETypeAsHTML(type))
-                continue;
-
-            auto subframeURL = subframeMainResource->url();
-            MarkupAndArchive subframeContent = { String::fromUTF8(subframeMainResource->data().data(), subframeMainResource->data().size()),
-                subframeMainResource.releaseNonNull(), subframeArchive.copyRef() };
-            auto subframeMarkup = sanitizeMarkupWithArchive(destinationDocument, subframeContent, canShowMIMETypeAsHTML);
-
-            CString utf8 = subframeMarkup.utf8();
-            Vector<uint8_t> blobBuffer;
-            blobBuffer.reserveCapacity(utf8.length());
-            blobBuffer.append(reinterpret_cast<const uint8_t*>(utf8.data()), utf8.length());
-            auto blob = Blob::create(WTFMove(blobBuffer), type);
-
-            String subframeBlobURL = DOMURL::createObjectURL(destinationDocument, blob);
-            blobURLMap.set(subframeURL.string(), subframeBlobURL);
-        }
-
-        replaceSubresourceURLs(fragment.get(), WTFMove(blobURLMap));
+        return markupForFragmentInDocument(WTFMove(fragment), *stagingDocument);
     }
 
-    auto* bodyElement = stagingDocument->body();
-    ASSERT(bodyElement);
-    bodyElement->appendChild(fragment);
+    HashMap<AtomicString, AtomicString> blobURLMap;
+    for (const Ref<ArchiveResource>& subresource : markupAndArchive.archive->subresources()) {
+        auto blob = Blob::create(subresource->data(), subresource->mimeType());
+        String blobURL = DOMURL::createObjectURL(destinationDocument, blob);
+        blobURLMap.set(subresource->url().string(), blobURL);
+    }
 
-    auto range = Range::create(*stagingDocument);
-    range->selectNodeContents(*bodyElement);
-    return createMarkup(range.get(), nullptr, AnnotateForInterchange, false, ResolveNonLocalURLs);
+    auto contentOrigin = SecurityOrigin::create(markupAndArchive.mainResource->url());
+    for (const Ref<Archive>& subframeArchive : markupAndArchive.archive->subframeArchives()) {
+        RefPtr<ArchiveResource> subframeMainResource = subframeArchive->mainResource();
+        if (!subframeMainResource)
+            continue;
+
+        auto type = subframeMainResource->mimeType();
+        if (!canShowMIMETypeAsHTML(type))
+            continue;
+
+        auto subframeURL = subframeMainResource->url();
+        MarkupAndArchive subframeContent = { String::fromUTF8(subframeMainResource->data().data(), subframeMainResource->data().size()),
+            subframeMainResource.releaseNonNull(), subframeArchive.copyRef() };
+        auto subframeMarkup = sanitizeMarkupWithArchive(destinationDocument, subframeContent, canShowMIMETypeAsHTML);
+
+        CString utf8 = subframeMarkup.utf8();
+        Vector<uint8_t> blobBuffer;
+        blobBuffer.reserveCapacity(utf8.length());
+        blobBuffer.append(reinterpret_cast<const uint8_t*>(utf8.data()), utf8.length());
+        auto blob = Blob::create(WTFMove(blobBuffer), type);
+
+        String subframeBlobURL = DOMURL::createObjectURL(destinationDocument, blob);
+        blobURLMap.set(subframeURL.string(), subframeBlobURL);
+    }
+
+    replaceSubresourceURLs(fragment.get(), WTFMove(blobURLMap));
+
+    return markupForFragmentInDocument(WTFMove(fragment), *stagingDocument);
 }
 
 bool WebContentReader::readWebArchive(SharedBuffer& buffer)
@@ -572,10 +578,7 @@ bool WebContentReader::readImage(Ref<SharedBuffer>&& buffer, const String& type)
     else
         addFragment(createFragmentForImageAndURL(document, DOMURL::createObjectURL(document, blob)));
 
-    if (!fragment)
-        return false;
-
-    return true;
+    return fragment;
 }
 
 }
