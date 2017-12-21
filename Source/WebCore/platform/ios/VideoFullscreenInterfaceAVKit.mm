@@ -755,7 +755,7 @@ void VideoFullscreenInterfaceAVKit::exitFullscreen(const IntRect& finalRect)
             [m_playerViewController stopPictureInPicture];
         }];
     } else if (m_currentMode.isFullscreen()) {
-        [m_playerViewController exitFullScreenAnimated:YES completionHandler:[protectedThis = makeRefPtr(this), this] (BOOL, NSError*) () mutable {
+        [m_playerViewController exitFullScreenAnimated:YES completionHandler:[protectedThis = makeRefPtr(this), this] (BOOL, NSError*) mutable {
             m_exitCompleted = true;
 
             [CATransaction begin];
