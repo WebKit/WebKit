@@ -34,7 +34,7 @@
 namespace WebCore {
 
 struct MediaStreamRequest {
-    enum class Type { UserMedia };
+    enum class Type { UserMedia, DisplayMedia };
     Type type;
     MediaConstraints audioConstraints;
     MediaConstraints videoConstraints;
@@ -64,7 +64,7 @@ struct MediaStreamRequest {
 namespace WebCore {
 
 struct MediaStreamRequest {
-    enum class Type { UserMedia };
+    enum class Type { UserMedia, DisplayMedia };
     Type type;
 };
 
@@ -77,7 +77,8 @@ namespace WTF {
 template<> struct EnumTraits<WebCore::MediaStreamRequest> {
     using values = EnumValues<
         WebCore::MediaStreamRequest::Type,
-        WebCore::MediaStreamRequest::Type::UserMedia
+        WebCore::MediaStreamRequest::Type::UserMedia,
+        WebCore::MediaStreamRequest::Type::DisplayMedia
     >;
 };
 

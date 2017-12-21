@@ -106,6 +106,8 @@ public:
     void setMediaDevicesEnabled(bool isEnabled) { m_isMediaDevicesEnabled = isEnabled; }
     bool mediaStreamEnabled() const { return m_isMediaStreamEnabled; }
     void setMediaStreamEnabled(bool isEnabled) { m_isMediaStreamEnabled = isEnabled; }
+    bool screenCaptureEnabled() const { return m_isScreenCaptureEnabled; }
+    void setScreenCaptureEnabled(bool isEnabled) { m_isScreenCaptureEnabled = isEnabled; }
 #endif
 
 #if ENABLE(WEB_RTC)
@@ -265,6 +267,7 @@ private:
 #if ENABLE(MEDIA_STREAM)
     bool m_isMediaDevicesEnabled { false };
     bool m_isMediaStreamEnabled { true };
+    bool m_isScreenCaptureEnabled { false };
 #endif
 
 #if ENABLE(WEB_RTC)

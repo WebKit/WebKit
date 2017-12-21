@@ -60,6 +60,11 @@ public:
         case CaptureDevice::DeviceType::Camera:
             return MockRealtimeVideoSource::create(device.persistentId(), device.label(), constraints);
             break;
+
+        case CaptureDevice::DeviceType::Screen:
+        case CaptureDevice::DeviceType::Application:
+        case CaptureDevice::DeviceType::Window:
+        case CaptureDevice::DeviceType::Browser:
         case CaptureDevice::DeviceType::Microphone:
         case CaptureDevice::DeviceType::Unknown:
             ASSERT_NOT_REACHED();

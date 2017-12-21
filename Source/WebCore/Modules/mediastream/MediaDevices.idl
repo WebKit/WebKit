@@ -38,6 +38,7 @@
 
     MediaTrackSupportedConstraints getSupportedConstraints();
     [PrivateIdentifier, PublicIdentifier] Promise<MediaStream> getUserMedia(optional MediaStreamConstraints constraints);
+    [EnabledAtRuntime=ScreenCapture] Promise<MediaStream> getDisplayMedia(optional MediaStreamConstraints constraints);
 };
 
 [

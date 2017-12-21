@@ -53,8 +53,13 @@ public:
         case CaptureDevice::DeviceType::Camera:
             return AVVideoCaptureSource::create(device.persistentId(), constraints);
             break;
+        
         case CaptureDevice::DeviceType::Microphone:
-        case CaptureDevice::DeviceType::Unknown:
+        case CaptureDevice::DeviceType::Screen:
+        case CaptureDevice::DeviceType::Application:
+        case CaptureDevice::DeviceType::Window:
+        case CaptureDevice::DeviceType::Browser:
+        case CaptureDevice::DeviceType::Unknown:        
             ASSERT_NOT_REACHED();
             break;
         }

@@ -39,6 +39,7 @@
 #include "EventNames.h"
 #include "MediaDevicesRequest.h"
 #include "MediaTrackSupportedConstraints.h"
+#include "RuntimeEnabledFeatures.h"
 #include "UserMediaRequest.h"
 #include <wtf/RandomNumber.h>
 
@@ -108,6 +109,19 @@ ExceptionOr<void> MediaDevices::getUserMedia(const StreamConstraints& constraint
     return { };
 }
 
+ExceptionOr<void> MediaDevices::getDisplayMedia(const StreamConstraints& constraints, Promise&& promise) const
+{
+    auto* document = this->document();
+    if (!document)
+        return Exception { InvalidStateError };
+
+    auto request = UserMediaRequest::create(*document, { MediaStreamRequest::Type::DisplayMedia, createMediaConstraints(constraints.audio), createMediaConstraints(constraints.video) }, WTFMove(promise));
+    if (request)
+        request->start();
+
+    return { };
+}
+
 void MediaDevices::enumerateDevices(EnumerateDevicesPromise&& promise) const
 {
     auto* document = this->document();
@@ -131,6 +145,11 @@ MediaTrackSupportedConstraints MediaDevices::getSupportedConstraints()
     result.echoCancellation = supported.supportsEchoCancellation();
     result.deviceId = supported.supportsDeviceId();
     result.groupId = supported.supportsGroupId();
+    if (RuntimeEnabledFeatures::sharedFeatures().screenCaptureEnabled()) {
+        result.deviceId = supported.supportsDeviceId();
+        result.groupId = supported.supportsGroupId();
+    }
+
     return result;
 }
 

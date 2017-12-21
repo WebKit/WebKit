@@ -65,6 +65,7 @@ public:
         Variant<bool, MediaTrackConstraints> audio;
     };
     ExceptionOr<void> getUserMedia(const StreamConstraints&, Promise&&) const;
+    ExceptionOr<void> getDisplayMedia(const StreamConstraints&, Promise&&) const;
     void enumerateDevices(EnumerateDevicesPromise&&) const;
     MediaTrackSupportedConstraints getSupportedConstraints();
 

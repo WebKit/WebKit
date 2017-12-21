@@ -46,6 +46,8 @@ struct MediaTrackSupportedConstraints {
     bool echoCancellation;
     bool deviceId;
     bool groupId;
+    bool displaySurface;
+    bool logicalSurface;
 };
 
 } // namespace WebCore

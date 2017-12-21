@@ -171,6 +171,8 @@ static MediaTrackConstraintSetMap convertToInternalForm(ConstraintSetType setTyp
     // FIXME: add channelCount
     set(result, setType, "deviceId", MediaConstraintType::DeviceId, constraintSet.deviceId);
     set(result, setType, "groupId", MediaConstraintType::GroupId, constraintSet.groupId);
+    set(result, setType, "displaySurface", MediaConstraintType::DisplaySurface, constraintSet.displaySurface);
+    set(result, setType, "logicalSurface", MediaConstraintType::LogicalSurface, constraintSet.logicalSurface);
     return result;
 }
 

@@ -159,8 +159,26 @@ void UserMediaRequest::start()
 {
     ASSERT(m_scriptExecutionContext);
     if (!m_scriptExecutionContext) {
-        deny(MediaAccessDenialReason::UserMediaDisabled, emptyString());
+        deny(MediaAccessDenialReason::UserMediaDisabled);
         return;
+    }
+
+    if (m_request.type == MediaStreamRequest::Type::DisplayMedia) {
+        // https://w3c.github.io/mediacapture-screen-share/#constraints
+        // 5.2 Constraining Display Surface Selection
+        // The getDisplayMedia function does not permit the use of constraints for selection of a source as described
+        // in the getUserMedia() algorithm. Prior to invoking the getUserMedia() algorithm, if either of the video
+        // and audio attributes are set to a MediaTrackConstraints value (as opposed to being absent or set to a
+        // Boolean value), reject the promise with a InvalidAccessError and abort.
+        if (m_request.videoConstraints.isValid && !(m_request.videoConstraints.mandatoryConstraints.isEmpty() && m_request.videoConstraints.advancedConstraints.isEmpty())) {
+            deny(MediaAccessDenialReason::InvalidAccess);
+            return;
+        }
+
+        if (m_request.audioConstraints.isValid && !(m_request.audioConstraints.mandatoryConstraints.isEmpty() && m_request.audioConstraints.advancedConstraints.isEmpty())) {
+            deny(MediaAccessDenialReason::InvalidAccess);
+            return;
+        }
     }
 
     // https://w3c.github.io/mediacapture-main/getusermedia.html#dom-mediadevices-getusermedia()
@@ -171,7 +189,7 @@ void UserMediaRequest::start()
     //    "optional" occurs in the WebIDL due to WebIDL rules, but the argument must be supplied in order
     //    for the call to succeed.
     if (!m_request.audioConstraints.isValid && !m_request.videoConstraints.isValid) {
-        deny(MediaAccessDenialReason::NoConstraints, emptyString());
+        deny(MediaAccessDenialReason::NoConstraints);
         return;
     }
 
@@ -181,7 +199,7 @@ void UserMediaRequest::start()
     auto& document = downcast<Document>(*m_scriptExecutionContext);
     auto* controller = UserMediaController::from(document.page());
     if (!controller) {
-        deny(MediaAccessDenialReason::UserMediaDisabled, emptyString());
+        deny(MediaAccessDenialReason::UserMediaDisabled);
         return;
     }
 
@@ -192,7 +210,7 @@ void UserMediaRequest::start()
     //      the value NotAllowedError.
     String errorMessage;
     if (!canCallGetUserMedia(document, m_request.audioConstraints.isValid, m_request.videoConstraints.isValid, errorMessage)) {
-        deny(MediaAccessDenialReason::PermissionDenied, emptyString());
+        deny(MediaAccessDenialReason::PermissionDenied);
         document.domWindow()->printErrorMessage(errorMessage);
         return;
     }
@@ -209,14 +227,14 @@ void UserMediaRequest::allow(CaptureDevice&& audioDevice, CaptureDevice&& videoD
             return;
 
         if (!privateStream) {
-            deny(MediaAccessDenialReason::HardwareError, emptyString());
+            deny(MediaAccessDenialReason::HardwareError);
             return;
         }
         privateStream->monitorOrientation(downcast<Document>(m_scriptExecutionContext)->orientationNotifier());
 
         auto stream = MediaStream::create(*m_scriptExecutionContext, privateStream.releaseNonNull());
         if (stream->getTracks().isEmpty()) {
-            deny(MediaAccessDenialReason::HardwareError, emptyString());
+            deny(MediaAccessDenialReason::HardwareError);
             return;
         }
 
@@ -271,6 +289,10 @@ void UserMediaRequest::deny(MediaAccessDenialReason reason, const String& invali
     case MediaAccessDenialReason::PermissionDenied:
         RELEASE_LOG(MediaStream, "UserMediaRequest::deny - permission denied");
         m_promise.reject(NotAllowedError);
+        break;
+    case MediaAccessDenialReason::InvalidAccess:
+        RELEASE_LOG(MediaStream, "UserMediaRequest::deny - invalid access");
+        m_promise.reject(InvalidAccessError);
         break;
     }
 }

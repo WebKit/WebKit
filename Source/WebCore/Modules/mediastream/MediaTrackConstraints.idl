@@ -47,6 +47,9 @@
     // FIXME 169871: add channelCount
     ConstrainDOMString deviceId;
     ConstrainDOMString groupId;
+    ConstrainDOMString displaySurface;
+    ConstrainBoolean logicalSurface;
+
 };
 
 typedef (double or ConstrainDoubleRange) ConstrainDouble;

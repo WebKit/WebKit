@@ -361,10 +361,9 @@ double RealtimeMediaSource::fitnessDistance(const MediaConstraint& constraint)
         break;
     }
 
-    case MediaConstraintType::DeviceId: {
+    case MediaConstraintType::DeviceId:
         ASSERT_NOT_REACHED();
         break;
-    }
 
     case MediaConstraintType::GroupId: {
         ASSERT(constraint.isString());
@@ -374,6 +373,10 @@ double RealtimeMediaSource::fitnessDistance(const MediaConstraint& constraint)
         return downcast<StringConstraint>(constraint).fitnessDistance(settings().groupId());
         break;
     }
+
+    case MediaConstraintType::DisplaySurface:
+    case MediaConstraintType::LogicalSurface:
+        break;
 
     case MediaConstraintType::Unknown:
         // Unknown (or unsupported) constraints should be ignored.
@@ -512,6 +515,11 @@ void RealtimeMediaSource::applyConstraint(const MediaConstraint& constraint)
     case MediaConstraintType::GroupId:
         ASSERT(constraint.isString());
         // There is nothing to do here, neither can be changed.
+        break;
+
+    case MediaConstraintType::DisplaySurface:
+    case MediaConstraintType::LogicalSurface:
+        ASSERT(constraint.isBoolean());
         break;
 
     case MediaConstraintType::Unknown:
@@ -703,6 +711,15 @@ bool RealtimeMediaSource::supportsConstraint(const MediaConstraint& constraint) 
     case MediaConstraintType::GroupId:
         ASSERT(constraint.isString());
         return capabilities.supportsDeviceId();
+        break;
+
+    case MediaConstraintType::DisplaySurface:
+    case MediaConstraintType::LogicalSurface:
+        // https://www.w3.org/TR/screen-capture/#new-constraints-for-captured-display-surfaces
+        // 5.2.1 New Constraints for Captured Display Surfaces
+        // Since the source of media cannot be changed after a MediaStreamTrack has been returned,
+        // these constraints cannot be changed by an application.
+        return false;
         break;
 
     case MediaConstraintType::Unknown:

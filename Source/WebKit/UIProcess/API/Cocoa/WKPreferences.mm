@@ -582,6 +582,16 @@ static _WKStorageBlockingPolicy toAPI(WebCore::SecurityOrigin::StorageBlockingPo
     _preferences->setMediaDevicesEnabled(enabled);
 }
 
+- (BOOL)_screenCaptureEnabled
+{
+    return _preferences->screenCaptureEnabled();
+}
+
+- (void)_setScreenCaptureEnabled:(BOOL)enabled
+{
+    _preferences->setScreenCaptureEnabled(enabled);
+}
+
 - (BOOL)_mockCaptureDevicesEnabled
 {
     return _preferences->mockCaptureDevicesEnabled();

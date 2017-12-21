@@ -224,6 +224,8 @@ void InjectedBundle::overrideBoolPreferenceForTestRunner(WebPageGroupProxy* page
 #if ENABLE(MEDIA_STREAM)
     if (preference == "WebKitMediaDevicesEnabled")
         RuntimeEnabledFeatures::sharedFeatures().setMediaDevicesEnabled(enabled);
+    if (preference == "WebKitScreenCaptureEnabled")
+        RuntimeEnabledFeatures::sharedFeatures().setScreenCaptureEnabled(enabled);
 #endif
 
 #if ENABLE(WEB_RTC)

@@ -73,6 +73,8 @@ struct MediaTrackConstraintSet {
     std::optional<ConstrainBoolean> echoCancellation;
     std::optional<ConstrainDOMString> deviceId;
     std::optional<ConstrainDOMString> groupId;
+    std::optional<ConstrainDOMString> displaySurface;
+    std::optional<ConstrainBoolean> logicalSurface;
 };
 
 struct MediaTrackConstraints : MediaTrackConstraintSet {

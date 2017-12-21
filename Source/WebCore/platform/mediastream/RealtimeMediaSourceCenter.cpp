@@ -262,6 +262,14 @@ void RealtimeMediaSourceCenter::validateRequestConstraints(ValidConstraintsHandl
                     audioDeviceInfo.append({sourceOrError.captureSource->fitnessScore(), device});
             }
             break;
+        case CaptureDevice::DeviceType::Screen:
+        case CaptureDevice::DeviceType::Application:
+        case CaptureDevice::DeviceType::Window:
+        case CaptureDevice::DeviceType::Browser:
+            ASSERT(request.type == MediaStreamRequest::Type::DisplayMedia);
+            ASSERT(request.videoConstraints.mandatoryConstraints.isEmpty());
+            ASSERT(request.videoConstraints.advancedConstraints.isEmpty());
+            break;
         case CaptureDevice::DeviceType::Unknown:
             ASSERT_NOT_REACHED();
             break;
@@ -309,6 +317,10 @@ std::optional<CaptureDevice> RealtimeMediaSourceCenter::captureDeviceWithPersist
     case CaptureDevice::DeviceType::Microphone:
         return audioCaptureDeviceManager().captureDeviceWithPersistentID(type, id);
         break;
+    case CaptureDevice::DeviceType::Screen:
+    case CaptureDevice::DeviceType::Application:
+    case CaptureDevice::DeviceType::Window:
+    case CaptureDevice::DeviceType::Browser:
     case CaptureDevice::DeviceType::Unknown:
         ASSERT_NOT_REACHED();
         break;
