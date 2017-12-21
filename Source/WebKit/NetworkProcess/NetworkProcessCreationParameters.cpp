@@ -95,6 +95,9 @@ void NetworkProcessCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << languages;
     encoder << proxySettings;
 #endif
+#if HAVE(CFNETWORK_STORAGE_PARTITIONING) && !RELEASE_LOG_DISABLED
+    encoder << logCookieInformation;
+#endif
 #if OS(LINUX)
     encoder << memoryPressureMonitorHandle;
 #endif
@@ -224,6 +227,11 @@ bool NetworkProcessCreationParameters::decode(IPC::Decoder& decoder, NetworkProc
     if (!decoder.decode(result.languages))
         return false;
     if (!decoder.decode(result.proxySettings))
+        return false;
+#endif
+
+#if HAVE(CFNETWORK_STORAGE_PARTITIONING) && !RELEASE_LOG_DISABLED
+    if (!decoder.decode(result.logCookieInformation))
         return false;
 #endif
 

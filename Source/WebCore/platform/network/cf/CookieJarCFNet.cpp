@@ -70,15 +70,44 @@ namespace WebCore {
 
 static const CFStringRef s_setCookieKeyCF = CFSTR("Set-Cookie");
 static const CFStringRef s_cookieCF = CFSTR("Cookie");
+static const CFStringRef s_createdCF = CFSTR("Created");
 
 static inline RetainPtr<CFStringRef> cookieDomain(CFHTTPCookieRef cookie)
 {
     return adoptCF(CFHTTPCookieCopyDomain(cookie));
 }
 
+static double canonicalCookieTime(double time)
+{
+    if (!time)
+        return time;
+
+    return (time + kCFAbsoluteTimeIntervalSince1970) * 1000;
+}
+
+static double cookieCreatedTime(CFHTTPCookieRef cookie)
+{
+    RetainPtr<CFDictionaryRef> props = adoptCF(CFHTTPCookieCopyProperties(cookie));
+    auto value = CFDictionaryGetValue(props.get(), s_createdCF);
+
+    auto asNumber = dynamic_cf_cast<CFNumberRef>(value);
+    if (asNumber) {
+        double asDouble;
+        if (CFNumberGetValue(asNumber, kCFNumberFloat64Type, &asDouble))
+            return canonicalCookieTime(asDouble);
+        return 0.0;
+    }
+
+    auto asString = dynamic_cf_cast<CFStringRef>(value);
+    if (asString)
+        return canonicalCookieTime(CFStringGetDoubleValue(asString));
+
+    return 0.0;
+}
+
 static inline CFAbsoluteTime cookieExpirationTime(CFHTTPCookieRef cookie)
 {
-    return CFHTTPCookieGetExpirationTime(cookie);
+    return canonicalCookieTime(CFHTTPCookieGetExpirationTime(cookie));
 }
 
 static inline RetainPtr<CFStringRef> cookieName(CFHTTPCookieRef cookie)
@@ -228,7 +257,8 @@ bool getRawCookies(const NetworkStorageSession& session, const URL& firstParty, 
         String domain = cookieDomain(cookie).get();
         String path = cookiePath(cookie).get();
 
-        double expires = (cookieExpirationTime(cookie) + kCFAbsoluteTimeIntervalSince1970) * 1000;
+        double created = cookieCreatedTime(cookie);
+        double expires = cookieExpirationTime(cookie);
 
         bool httpOnly = CFHTTPCookieIsHTTPOnly(cookie);
         bool secure = CFHTTPCookieIsSecure(cookie);
@@ -238,7 +268,7 @@ bool getRawCookies(const NetworkStorageSession& session, const URL& firstParty, 
         URL commentURL;
         Vector<uint16_t> ports;
 
-        rawCookies.uncheckedAppend(Cookie(name, value, domain, path, expires, httpOnly, secure, session, comment, commentURL, ports));
+        rawCookies.uncheckedAppend(Cookie(name, value, domain, path, created, expires, httpOnly, secure, session, comment, commentURL, ports));
     }
 
     return true;

@@ -247,6 +247,10 @@ void NetworkProcess::initializeNetworkProcess(NetworkProcessCreationParameters&&
     if (parameters.shouldUseTestingNetworkSession)
         NetworkStorageSession::switchToNewTestingSession();
 
+#if HAVE(CFNETWORK_STORAGE_PARTITIONING) && !RELEASE_LOG_DISABLED
+    m_logCookieInformation = parameters.logCookieInformation;
+#endif
+
 #if USE(NETWORK_SESSION)
 #if ENABLE(LEGACY_CUSTOM_PROTOCOL_MANAGER)
     parameters.defaultSessionParameters.legacyCustomProtocolManager = supplement<LegacyCustomProtocolManager>();

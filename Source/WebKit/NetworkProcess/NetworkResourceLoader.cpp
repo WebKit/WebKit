@@ -49,6 +49,11 @@
 #include <wtf/CurrentTime.h>
 #include <wtf/RunLoop.h>
 
+#if HAVE(CFNETWORK_STORAGE_PARTITIONING) && !RELEASE_LOG_DISABLED
+#include <WebCore/NetworkStorageSession.h>
+#include <WebCore/PlatformCookieJar.h>
+#endif
+
 using namespace WebCore;
 
 #define RELEASE_LOG_IF_ALLOWED(fmt, ...) RELEASE_LOG_IF(isAlwaysOnLoggingAllowed(), Network, "%p - NetworkResourceLoader::" fmt, this, ##__VA_ARGS__)
@@ -395,6 +400,11 @@ void NetworkResourceLoader::didFinishLoading(const NetworkLoadMetrics& networkLo
         return;
     }
 
+#if HAVE(CFNETWORK_STORAGE_PARTITIONING) && !RELEASE_LOG_DISABLED
+    if (shouldLogCookieInformation())
+        logCookieInformation();
+#endif
+
     if (isSynchronous())
         sendReplyToSynchronousRequest(*m_synchronousLoadData, m_bufferedData.get());
     else {
@@ -596,6 +606,11 @@ void NetworkResourceLoader::sendResultForCacheEntry(std::unique_ptr<NetworkCache
     }
 #endif
 
+#if HAVE(CFNETWORK_STORAGE_PARTITIONING) && !RELEASE_LOG_DISABLED
+    if (shouldLogCookieInformation())
+        logCookieInformation();
+#endif
+
     WebCore::NetworkLoadMetrics networkLoadMetrics;
     networkLoadMetrics.markComplete();
     networkLoadMetrics.requestHeaderBytesSent = 0;
@@ -700,5 +715,57 @@ bool NetworkResourceLoader::shouldCaptureExtraNetworkLoadMetrics() const
 {
     return m_connection->captureExtraNetworkLoadMetricsEnabled();
 }
+
+#if HAVE(CFNETWORK_STORAGE_PARTITIONING) && !RELEASE_LOG_DISABLED
+bool NetworkResourceLoader::shouldLogCookieInformation() const
+{
+    return NetworkProcess::singleton().shouldLogCookieInformation();
+}
+
+void NetworkResourceLoader::logCookieInformation() const
+{
+    auto networkStorageSession = WebCore::NetworkStorageSession::storageSession(sessionID());
+    ASSERT(networkStorageSession);
+
+    auto url = originalRequest().url();
+    auto partition = WebCore::URL(ParsedURLString, networkStorageSession->cookieStoragePartition(originalRequest(), frameID(), pageID()));
+
+    Vector<WebCore::Cookie> cookies;
+    bool result = WebCore::getRawCookies(*networkStorageSession, partition, url, frameID(), pageID(), cookies);
+
+    if (result) {
+#define LOCAL_LOG(str, ...) \
+        RELEASE_LOG_IF_ALLOWED("logCookieInformation: pageID = %" PRIu64 ", frameID = %" PRIu64 ", resourceID = %" PRIu64 ": " str, pageID(), frameID(), identifier(), ##__VA_ARGS__)
+
+        LOCAL_LOG(R"({ "url": "%{public}s",)", url.string().utf8().data());
+        LOCAL_LOG(R"(  "partition": "%{public}s",)", partition.string().utf8().data());
+        LOCAL_LOG(R"(  "referer": "%{public}s",)", originalRequest().httpReferrer().utf8().data());
+        LOCAL_LOG(R"(  "cookies": [)");
+
+        auto size = cookies.size();
+        decltype(size) count = 0;
+        for (const auto& cookie : cookies) {
+            const char* trailingComma = ",";
+            if (++count == size)
+                trailingComma = "";
+
+            LOCAL_LOG(R"(  { "name": "%{public}s")", cookie.name.utf8().data());
+            LOCAL_LOG(R"(    "value": "%{public}s")", cookie.value.utf8().data());
+            LOCAL_LOG(R"(    "domain": "%{public}s")", cookie.domain.utf8().data());
+            LOCAL_LOG(R"(    "path": "%{public}s")", cookie.path.utf8().data());
+            LOCAL_LOG(R"(    "created": %f)", cookie.created);
+            LOCAL_LOG(R"(    "expires": %f)", cookie.expires);
+            LOCAL_LOG(R"(    "httpOnly": %{public}s)", cookie.httpOnly ? "true" : "false");
+            LOCAL_LOG(R"(    "secure": %{public}s)", cookie.secure ? "true" : "false");
+            LOCAL_LOG(R"(    "session": %{public}s)", cookie.session ? "true" : "false");
+            LOCAL_LOG(R"(    "comment": "%{public}s")", cookie.comment.utf8().data());
+            LOCAL_LOG(R"(    "commentURL": "%{public}s")", cookie.commentURL.string().utf8().data());
+            LOCAL_LOG(R"(  }%{public}s)", trailingComma);
+        }
+        LOCAL_LOG(R"(]})");
+#undef LOCAL_LOG
+    }
+}
+#endif
 
 } // namespace WebKit

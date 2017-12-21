@@ -1,3 +1,34 @@
+2017-12-21  Keith Rollin  <krollin@apple.com>
+
+        Add optional logging of per-resource cookie information
+        https://bugs.webkit.org/show_bug.cgi?id=180883
+        <rdar://problem/35802295>
+
+        Reviewed by Brent Fulgham.
+
+        In order to support the tracking of the efficacy of Intelligent
+        Tracking Protection, add some logging of the cookie information
+        associated with each loaded resource. This logging is off by default
+        and is enabled with `defaults write -g WebKitLogCookieInformation
+        -bool true`.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::initializeNetworkProcess):
+        * NetworkProcess/NetworkProcess.h:
+        (WebKit::NetworkProcess::shouldLogCookieInformation const):
+        * NetworkProcess/NetworkProcessCreationParameters.cpp:
+        (WebKit::NetworkProcessCreationParameters::encode const):
+        (WebKit::NetworkProcessCreationParameters::decode):
+        * NetworkProcess/NetworkProcessCreationParameters.h:
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::didFinishLoading):
+        (WebKit::NetworkResourceLoader::sendResultForCacheEntry):
+        (WebKit::NetworkResourceLoader::shouldLogCookieInformation const):
+        (WebKit::NetworkResourceLoader::logCookieInformation const):
+        * NetworkProcess/NetworkResourceLoader.h:
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::platformInitializeNetworkProcess):
+
 2017-12-21  Brent Fulgham  <bfulgham@apple.com>
 
         Unreviewed Debug build fix after r226217

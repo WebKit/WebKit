@@ -54,8 +54,25 @@ static NSString *portStringFromVector(const Vector<uint16_t>& ports)
     return string;
 }
 
+static double cookieCreated(NSHTTPCookie *cookie)
+{
+    id value = cookie.properties[@"Created"];
+
+    auto toCanonicalFormat = [](double referenceFormat) {
+        return 1000.0 * (referenceFormat + NSTimeIntervalSince1970);
+    };
+
+    if ([value isKindOfClass:[NSNumber class]])
+        return toCanonicalFormat(((NSNumber *)value).doubleValue);
+
+    if ([value isKindOfClass:[NSString class]])
+        return toCanonicalFormat(((NSString *)value).doubleValue);
+
+    return 0.0;
+}
+
 Cookie::Cookie(NSHTTPCookie *cookie)
-    : Cookie(cookie.name, cookie.value, cookie.domain, cookie.path, [cookie.expiresDate timeIntervalSince1970] * 1000.0,
+    : Cookie(cookie.name, cookie.value, cookie.domain, cookie.path, cookieCreated(cookie), [cookie.expiresDate timeIntervalSince1970] * 1000.0,
     cookie.HTTPOnly, cookie.secure, cookie.sessionOnly, cookie.comment, cookie.commentURL, portVectorFromList(cookie.portList))
 {
 }

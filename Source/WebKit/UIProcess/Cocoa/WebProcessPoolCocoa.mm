@@ -86,6 +86,10 @@ static NSString * const WebKitNetworkCacheEfficacyLoggingEnabledDefaultsKey = @"
 static NSString * const WebKitSuppressMemoryPressureHandlerDefaultsKey = @"WebKitSuppressMemoryPressureHandler";
 static NSString * const WebKitNetworkLoadThrottleLatencyMillisecondsDefaultsKey = @"WebKitNetworkLoadThrottleLatencyMilliseconds";
 
+#if HAVE(CFNETWORK_STORAGE_PARTITIONING) && !RELEASE_LOG_DISABLED
+static NSString * const WebKitLogCookieInformationDefaultsKey = @"WebKitLogCookieInformation";
+#endif
+
 #if ENABLE(NETWORK_CAPTURE)
 static NSString * const WebKitRecordReplayModeDefaultsKey = @"WebKitRecordReplayMode";
 static NSString * const WebKitRecordReplayCacheLocationDefaultsKey = @"WebKitRecordReplayCacheLocation";
@@ -307,6 +311,10 @@ void WebProcessPool::platformInitializeNetworkProcess(NetworkProcessCreationPara
 
     parameters.cookieStoragePartitioningEnabled = cookieStoragePartitioningEnabled();
     parameters.storageAccessAPIEnabled = storageAccessAPIEnabled();
+
+#if HAVE(CFNETWORK_STORAGE_PARTITIONING) && !RELEASE_LOG_DISABLED
+    parameters.logCookieInformation = [defaults boolForKey:WebKitLogCookieInformationDefaultsKey];
+#endif
 
 #if ENABLE(NETWORK_CAPTURE)
     parameters.recordReplayMode = [defaults stringForKey:WebKitRecordReplayModeDefaultsKey];

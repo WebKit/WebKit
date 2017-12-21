@@ -149,6 +149,10 @@ public:
 
     void preconnectTo(const WebCore::URL&, WebCore::StoredCredentialsPolicy);
 
+#if HAVE(CFNETWORK_STORAGE_PARTITIONING) && !RELEASE_LOG_DISABLED
+    bool shouldLogCookieInformation() const { return m_logCookieInformation; }
+#endif
+
 private:
     NetworkProcess();
     ~NetworkProcess();
@@ -243,6 +247,9 @@ private:
     bool m_diskCacheIsDisabledForTesting;
     bool m_canHandleHTTPSServerTrustEvaluation;
     Seconds m_loadThrottleLatency;
+#if HAVE(CFNETWORK_STORAGE_PARTITIONING) && !RELEASE_LOG_DISABLED
+    bool m_logCookieInformation { false };
+#endif
 
     RefPtr<NetworkCache::Cache> m_cache;
 

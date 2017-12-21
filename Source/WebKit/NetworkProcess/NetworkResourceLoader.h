@@ -134,6 +134,11 @@ private:
     void consumeSandboxExtensions();
     void invalidateSandboxExtensions();
 
+#if HAVE(CFNETWORK_STORAGE_PARTITIONING) && !RELEASE_LOG_DISABLED
+    bool shouldLogCookieInformation() const;
+    void logCookieInformation() const;
+#endif
+
     const NetworkResourceLoadParameters m_parameters;
 
     Ref<NetworkConnectionToWebProcess> m_connection;

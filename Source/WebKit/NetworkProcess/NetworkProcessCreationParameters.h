@@ -110,6 +110,10 @@ struct NetworkProcessCreationParameters {
     WebCore::SoupNetworkProxySettings proxySettings;
 #endif
 
+#if HAVE(CFNETWORK_STORAGE_PARTITIONING) && !RELEASE_LOG_DISABLED
+    bool logCookieInformation { false };
+#endif
+
 #if OS(LINUX)
     IPC::Attachment memoryPressureMonitorHandle;
 #endif
