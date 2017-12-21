@@ -3694,6 +3694,14 @@ void Internals::setPageDefersLoading(bool defersLoading)
         page->setDefersLoading(defersLoading);
 }
 
+ExceptionOr<bool> Internals::pageDefersLoading()
+{
+    Document* document = contextDocument();
+    if (!document || !document->page())
+        return Exception { InvalidAccessError };
+    return document->page()->defersLoading();
+}
+
 RefPtr<File> Internals::createFile(const String& path)
 {
     Document* document = contextDocument();

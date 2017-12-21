@@ -484,6 +484,7 @@ enum EventThrottlingBehavior {
     DOMString pageMediaState();
 
     void setPageDefersLoading(boolean defersLoading);
+    [MayThrowException] boolean pageDefersLoading();
 
     File? createFile(DOMString url);
     void queueMicroTask(long testNumber);

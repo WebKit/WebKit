@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test-pre.js"></script>
+<div id="editor" contenteditable>hello<img src="../resources/abe.png"></div>
+<script>
+
+description('This tests makes sure that pasting content while images are disabled does not enable deferred loading.')
+
+if (!window.internals)
+    testFailed('This test requires internals.settings');
+else {
+    jsTestIsAsync = true;
+
+    window.onload = () => {
+        editor.focus();
+        document.execCommand("selectAll");
+        evalAndLog('internals.settings.setImagesEnabled(false)');
+        evalAndLog('document.execCommand("copy")');
+        shouldBe('editor.querySelector("img").width', '76');
+        evalAndLog('setTimeout(waitForImagesToBeDisabled, 0)');
+    }
+
+    function waitForImagesToBeDisabled()
+    {
+        shouldBeFalse('internals.pageDefersLoading()');
+        evalAndLog('document.execCommand("paste")');
+        shouldBeFalse('internals.pageDefersLoading()');
+        finishJSTest();
+    }
+
+}
+
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

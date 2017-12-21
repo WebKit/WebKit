@@ -162,9 +162,9 @@ public:
 
     ~DeferredLoadingScope()
     {
-        if (m_didEnabledDeferredLoading)
-            m_cachedResourceLoader->setImagesEnabled(true);
         if (m_didDisableImage)
+            m_cachedResourceLoader->setImagesEnabled(true);
+        if (m_didEnabledDeferredLoading)
             m_frame->page()->setDefersLoading(false);
     }
 
