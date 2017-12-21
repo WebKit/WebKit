@@ -1,3 +1,12 @@
+2017-12-21  Josef Andersson  <josef.andersson@fripost.org>
+
+        Updated Swedish translation
+        https://bugs.webkit.org/show_bug.cgi?id=180823
+
+        Rubber-stamped by Michael Catanzaro.
+
+        * sv.po:
+
 2017-08-30  Rafael Fontenelle  <rafaelff@gnome.org>
 
         [l10n] [pt_BR] Updated Brazilian Portuguese translation
