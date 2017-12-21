@@ -1,3 +1,14 @@
+2017-12-21  Jeremy Jones  <jeremyj@apple.com>
+
+        Update FULLSCREEN_API feature defines.
+        https://bugs.webkit.org/show_bug.cgi?id=181015
+
+        Reviewed by Tim Horton.
+
+        Change enabled iphone sdk for FULLSCREEN_API.
+
+        * TestWebKitAPI/Configurations/FeatureDefines.xcconfig:
+
 2017-12-21  Don Olmstead  <don.olmstead@sony.com>
 
         [AppleWin] Auxiliary libraries should be updated within build-webkit
