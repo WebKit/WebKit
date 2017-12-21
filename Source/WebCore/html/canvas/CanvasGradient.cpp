@@ -46,7 +46,8 @@ ExceptionOr<void> CanvasGradient::addColorStop(float value, const String& colorS
     if (!(value >= 0 && value <= 1))
         return Exception { IndexSizeError };
 
-    // FIXME: Passing null for canvas means this won't work for current color. Is that OK?
+    // Passing null for canvas ensures that currentColor is treated as black,
+    // as required by the standard.
     Color color = parseColorOrCurrentColor(colorString, nullptr /*canvas*/);
     if (!color.isValid()) {
 #if ENABLE(DASHBOARD_SUPPORT)
