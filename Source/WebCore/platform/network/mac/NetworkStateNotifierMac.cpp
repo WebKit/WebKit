@@ -42,15 +42,23 @@ void NetworkStateNotifier::updateStateWithoutNotifying()
         return;
 
     for (CFIndex i = 0; i < CFArrayGetCount((CFArrayRef)netInterfaces); i++) {
-        auto interface = CFArrayGetValueAtIndex((CFArrayRef)netInterfaces, i);
-        if (CFGetTypeID(interface) != CFStringGetTypeID())
+        auto interfaceName = (CFStringRef)CFArrayGetValueAtIndex((CFArrayRef)netInterfaces, i);
+        if (CFGetTypeID(interfaceName) != CFStringGetTypeID())
             continue;
 
         // Ignore the loopback interface.
-        if (CFStringFind((CFStringRef)interface, CFSTR("lo"), kCFCompareAnchored).location != kCFNotFound)
+        if (CFStringHasPrefix(interfaceName, CFSTR("lo")))
             continue;
 
-        auto key = adoptCF(SCDynamicStoreKeyCreateNetworkInterfaceEntity(0, kSCDynamicStoreDomainState, (CFStringRef)interface, kSCEntNetIPv4));
+        // Ignore Parallels virtual interfaces on host machine as these are always up.
+        if (CFStringHasPrefix(interfaceName, CFSTR("vnic")))
+            continue;
+
+        // Ignore VMWare virtual interfaces on host machine as these are always up.
+        if (CFStringHasPrefix(interfaceName, CFSTR("vmnet")))
+            continue;
+
+        auto key = adoptCF(SCDynamicStoreKeyCreateNetworkInterfaceEntity(0, kSCDynamicStoreDomainState, interfaceName, kSCEntNetIPv4));
         auto keyList = adoptCF(SCDynamicStoreCopyKeyList(m_store.get(), key.get()));
         if (keyList && CFArrayGetCount(keyList.get())) {
             m_isOnLine = true;
