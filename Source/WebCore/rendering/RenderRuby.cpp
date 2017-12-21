@@ -61,22 +61,6 @@ static inline bool isAnonymousRubyInlineBlock(const RenderObject* object)
         && !is<RenderRubyRun>(*object);
 }
 
-static inline bool isRubyBeforeBlock(const RenderObject* object)
-{
-    return isAnonymousRubyInlineBlock(object)
-        && !object->previousSibling()
-        && downcast<RenderBlock>(*object).firstChild()
-        && downcast<RenderBlock>(*object).firstChild()->style().styleType() == BEFORE;
-}
-
-static inline bool isRubyAfterBlock(const RenderObject* object)
-{
-    return isAnonymousRubyInlineBlock(object)
-        && !object->nextSibling()
-        && downcast<RenderBlock>(*object).firstChild()
-        && downcast<RenderBlock>(*object).firstChild()->style().styleType() == AFTER;
-}
-
 #ifndef ASSERT_DISABLED
 static inline bool isRubyChildForNormalRemoval(const RenderObject& object)
 {
@@ -88,37 +72,6 @@ static inline bool isRubyChildForNormalRemoval(const RenderObject& object)
     || isAnonymousRubyInlineBlock(&object);
 }
 #endif
-
-static inline RenderBlock* rubyBeforeBlock(const RenderElement* ruby)
-{
-    RenderObject* child = ruby->firstChild();
-    return isRubyBeforeBlock(child) ? downcast<RenderBlock>(child) : nullptr;
-}
-
-static inline RenderBlock* rubyAfterBlock(const RenderElement* ruby)
-{
-    RenderObject* child = ruby->lastChild();
-    return isRubyAfterBlock(child) ? downcast<RenderBlock>(child) : nullptr;
-}
-
-static auto createAnonymousRubyInlineBlock(RenderObject& ruby)
-{
-    auto newBlock = createRenderer<RenderBlockFlow>(ruby.document(), RenderStyle::createAnonymousStyleWithDisplay(ruby.style(), INLINE_BLOCK));
-    newBlock->initializeStyle();
-    return newBlock;
-}
-
-static RenderRubyRun* lastRubyRun(const RenderElement* ruby)
-{
-    RenderObject* child = ruby->lastChild();
-    if (child && !is<RenderRubyRun>(*child))
-        child = child->previousSibling();
-    if (!is<RenderRubyRun>(child)) {
-        ASSERT(!child || child->isBeforeContent() || child == rubyBeforeBlock(ruby));
-        return nullptr;
-    }
-    return downcast<RenderRubyRun>(child);
-}
 
 static inline RenderRubyRun& findRubyRunParent(RenderObject& child)
 {
@@ -138,74 +91,6 @@ void RenderRubyAsInline::styleDidChange(StyleDifference diff, const RenderStyle*
 {
     RenderInline::styleDidChange(diff, oldStyle);
     propagateStyleToAnonymousChildren(PropagateToAllChildren);
-}
-
-void RenderRubyAsInline::addChild(RenderTreeBuilder& builder, RenderPtr<RenderObject> child, RenderObject* beforeChild)
-{
-    // Insert :before and :after content before/after the RenderRubyRun(s)
-    if (child->isBeforeContent()) {
-        if (child->isInline()) {
-            // Add generated inline content normally
-            RenderInline::addChild(builder, WTFMove(child), firstChild());
-        } else {
-            // Wrap non-inline content with an anonymous inline-block.
-            RenderBlock* beforeBlock = rubyBeforeBlock(this);
-            if (!beforeBlock) {
-                auto newBlock = createAnonymousRubyInlineBlock(*this);
-                beforeBlock = newBlock.get();
-                RenderInline::addChild(builder, WTFMove(newBlock), firstChild());
-            }
-            builder.insertChild(*beforeBlock, WTFMove(child));
-        }
-        return;
-    }
-    if (child->isAfterContent()) {
-        if (child->isInline()) {
-            // Add generated inline content normally
-            RenderInline::addChild(builder, WTFMove(child));
-        } else {
-            // Wrap non-inline content with an anonymous inline-block.
-            RenderBlock* afterBlock = rubyAfterBlock(this);
-            if (!afterBlock) {
-                auto newBlock = createAnonymousRubyInlineBlock(*this);
-                afterBlock = newBlock.get();
-                RenderInline::addChild(builder, WTFMove(newBlock));
-            }
-            builder.insertChild(*afterBlock, WTFMove(child));
-        }
-        return;
-    }
-
-    // If the child is a ruby run, just add it normally.
-    if (child->isRubyRun()) {
-        RenderInline::addChild(builder, WTFMove(child), beforeChild);
-        return;
-    }
-
-    if (beforeChild && !isAfterContent(beforeChild)) {
-        // insert child into run
-        ASSERT(!beforeChild->isRubyRun());
-        RenderElement* run = beforeChild->parent();
-        while (run && !run->isRubyRun())
-            run = run->parent();
-        if (run) {
-            builder.insertChild(*run, WTFMove(child), beforeChild);
-            return;
-        }
-        ASSERT_NOT_REACHED(); // beforeChild should always have a run as parent!
-        // Emergency fallback: fall through and just append.
-    }
-
-    // If the new child would be appended, try to add the child to the previous run
-    // if possible, or create a new run otherwise.
-    // (The RenderRubyRun object will handle the details)
-    RenderRubyRun* lastRun = lastRubyRun(this);
-    if (!lastRun || lastRun->hasRubyText()) {
-        auto newRun = RenderRubyRun::staticCreateRubyRun(this);
-        lastRun = newRun.get();
-        RenderInline::addChild(builder, WTFMove(newRun), beforeChild);
-    }
-    builder.insertChild(*lastRun, WTFMove(child));
 }
 
 RenderPtr<RenderObject> RenderRubyAsInline::takeChild(RenderObject& child)

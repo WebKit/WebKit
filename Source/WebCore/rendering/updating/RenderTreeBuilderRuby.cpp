@@ -218,6 +218,66 @@ RenderElement& RenderTreeBuilder::Ruby::findOrCreateParentForChild(RenderRubyAsB
     return *lastRun;
 }
 
+RenderElement& RenderTreeBuilder::Ruby::findOrCreateParentForChild(RenderRubyAsInline& parent, const RenderObject& child, RenderObject*& beforeChild)
+{
+    // Insert :before and :after content before/after the RenderRubyRun(s)
+    if (child.isBeforeContent()) {
+        // Add generated inline content normally
+        if (child.isInline())
+            return parent;
+        // Wrap non-inline content with an anonymous inline-block.
+        auto* beforeBlock = rubyBeforeBlock(&parent);
+        if (!beforeBlock) {
+            auto newBlock = createAnonymousRubyInlineBlock(parent);
+            beforeBlock = newBlock.get();
+            parent.RenderInline::addChild(m_builder, WTFMove(newBlock), parent.firstChild());
+        }
+        beforeChild = nullptr;
+        return *beforeBlock;
+    }
 
+    if (child.isAfterContent()) {
+        // Add generated inline content normally
+        if (child.isInline())
+            return parent;
+        // Wrap non-inline content with an anonymous inline-block.
+        auto* afterBlock = rubyAfterBlock(&parent);
+        if (!afterBlock) {
+            auto newBlock = createAnonymousRubyInlineBlock(parent);
+            afterBlock = newBlock.get();
+            parent.RenderInline::addChild(m_builder, WTFMove(newBlock));
+        }
+        beforeChild = nullptr;
+        return *afterBlock;
+    }
+
+    // If the child is a ruby run, just add it normally.
+    if (child.isRubyRun())
+        return parent;
+
+    if (beforeChild && !parent.isAfterContent(beforeChild)) {
+        // insert child into run
+        ASSERT(!beforeChild->isRubyRun());
+        auto* run = beforeChild->parent();
+        while (run && !run->isRubyRun())
+            run = run->parent();
+        if (run)
+            return *run;
+        ASSERT_NOT_REACHED(); // beforeChild should always have a run as parent!
+        // Emergency fallback: fall through and just append.
+    }
+
+    // If the new child would be appended, try to add the child to the previous run
+    // if possible, or create a new run otherwise.
+    // (The RenderRubyRun object will handle the details)
+    auto* lastRun = lastRubyRun(&parent);
+    if (!lastRun || lastRun->hasRubyText()) {
+        auto newRun = RenderRubyRun::staticCreateRubyRun(&parent);
+        lastRun = newRun.get();
+        parent.RenderInline::addChild(m_builder, WTFMove(newRun), beforeChild);
+    }
+    beforeChild = nullptr;
+    return *lastRun;
 }
 
+}
