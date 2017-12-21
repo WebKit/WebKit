@@ -83,6 +83,8 @@ namespace WebCore {
     macro(IntersectionObserver) \
     macro(IntersectionObserverEntry) \
     macro(KeyframeEffect) \
+    macro(MediaCapabilities) \
+    macro(MediaCapabilitiesInfo) \
     macro(MediaEncryptedEvent) \
     macro(MediaKeyMessageEvent) \
     macro(MediaKeySession) \
@@ -132,6 +134,7 @@ namespace WebCore {
     macro(ReadableStreamDefaultReader) \
     macro(Request) \
     macro(Response) \
+    macro(ScreenLuminance) \
     macro(ServiceWorker) \
     macro(ServiceWorkerContainer) \
     macro(ServiceWorkerGlobalScope) \

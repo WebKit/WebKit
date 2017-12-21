@@ -1,3 +1,18 @@
+2017-12-21  Jer Noble  <jer.noble@apple.com>
+
+        Add initial DOM support for Media Capabilities
+        https://bugs.webkit.org/show_bug.cgi?id=181064
+
+        Reviewed by Eric Carlson.
+
+        * fast/dom/navigator-detached-no-crash-expected.txt:
+        * media/mediacapabilities/mediacapabilities-types-expected.txt: Added.
+        * media/mediacapabilities/mediacapabilities-types.html: Added.
+        * platform/gtk/fast/dom/navigator-detached-no-crash-expected.txt:
+        * platform/mac-elcapitan-wk2/fast/dom/navigator-detached-no-crash-expected.txt:
+        * platform/mac-wk1/fast/dom/navigator-detached-no-crash-expected.txt:
+        * platform/win/fast/dom/navigator-detached-no-crash-expected.txt:
+
 2017-12-21  Ryan Haddad  <ryanhaddad@apple.com>
 
         Correct a TestExpectations entry after r226074.

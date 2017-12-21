@@ -1929,3 +1929,14 @@ bool WKPreferencesGetShouldAllowUserInstalledFonts(WKPreferencesRef preferencesR
 {
     return toImpl(preferencesRef)->shouldAllowUserInstalledFonts();
 }
+
+void WKPreferencesSetMediaCapabilitiesEnabled(WKPreferencesRef preferencesRef, bool enabled)
+{
+    toImpl(preferencesRef)->setMediaCapabilitiesEnabled(enabled);
+}
+
+bool WKPreferencesGetMediaCapabilitiesEnabled(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->mediaCapabilitiesEnabled();
+}
+

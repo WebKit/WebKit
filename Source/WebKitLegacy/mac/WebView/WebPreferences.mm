@@ -681,6 +681,7 @@ public:
         @NO, WebKitInspectorAdditionsEnabledPreferenceKey,
         (NSString *)Settings::defaultMediaContentTypesRequiringHardwareSupport(), WebKitMediaContentTypesRequiringHardwareSupportPreferenceKey,
         @NO, WebKitAccessibilityObjectModelEnabledPreferenceKey,
+        @NO, WebKitMediaCapabilitiesEnabledPreferenceKey,
         nil];
 
 #if !PLATFORM(IOS)
@@ -3276,6 +3277,15 @@ static NSString *classIBCreatorID = nil;
     [self _setBoolValue:flag forKey:WebKitAccessibilityObjectModelEnabledPreferenceKey];
 }
 
+- (BOOL)mediaCapabilitiesEnabled
+{
+    return [self _boolValueForKey:WebKitMediaCapabilitiesEnabledPreferenceKey];
+}
+
+- (void)setMediaCapabilitiesEnabled:(BOOL)flag
+{
+    [self _setBoolValue:flag forKey:WebKitMediaCapabilitiesEnabledPreferenceKey];
+}
 
 @end
 

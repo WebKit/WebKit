@@ -974,6 +974,7 @@ static void resetWebPreferencesToConsistentValues()
     [preferences setUserTimingEnabled:YES];
 
     [preferences setCacheAPIEnabled:NO];
+    preferences.mediaCapabilitiesEnabled = YES;
 
     [WebPreferences _clearNetworkLoaderSession];
     [WebPreferences _setCurrentNetworkLoaderSessionCookieAcceptPolicy:NSHTTPCookieAcceptPolicyOnlyFromMainDocumentDomain];

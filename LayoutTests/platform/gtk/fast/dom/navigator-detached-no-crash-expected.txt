@@ -8,6 +8,7 @@ navigator.cookieEnabled is OK
 navigator.getStorageUpdates() is OK
 navigator.javaEnabled() is OK
 navigator.language is OK
+navigator.mediaCapabilities is OK
 navigator.mimeTypes is OK
 navigator.onLine is OK
 navigator.platform is OK
@@ -25,6 +26,7 @@ navigator.cookieEnabled is OK
 navigator.getStorageUpdates() is OK
 navigator.javaEnabled() is OK
 navigator.language is OK
+navigator.mediaCapabilities is OK
 navigator.mimeTypes is OK
 navigator.onLine is OK
 navigator.platform is OK

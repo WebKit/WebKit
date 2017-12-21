@@ -137,6 +137,9 @@ Modules/indexeddb/shared/IDBTransactionInfo.cpp
 Modules/indexeddb/shared/InProcessIDBServer.cpp
 Modules/indexeddb/shared/IndexKey.cpp
 
+Modules/mediacapabilities/MediaCapabilities.cpp
+Modules/mediacapabilities/NavigatorMediaCapabilities.cpp
+
 Modules/mediacontrols/MediaControlsHost.cpp
 
 Modules/mediasession/HTMLMediaElementMediaSession.cpp
@@ -2304,6 +2307,7 @@ JSAttr.cpp
 JSAudioBuffer.cpp
 JSAudioBufferCallback.cpp
 JSAudioBufferSourceNode.cpp
+JSAudioConfiguration.cpp
 JSAudioContext.cpp
 JSAudioDestinationNode.cpp
 JSAudioListener.cpp
@@ -2619,11 +2623,17 @@ JSKeyboardEvent.cpp
 JSKeyframeEffect.cpp
 JSLocation.cpp
 JSLongRange.cpp
+JSMediaCapabilities.cpp
+JSMediaCapabilitiesInfo.cpp
 JSMediaController.cpp
 JSMediaControlsHost.cpp
+JSMediaDecodingConfiguration.cpp
+JSMediaDecodingType.cpp
 JSMediaDeviceInfo.cpp
 JSMediaDevices.cpp
 JSMediaElementAudioSourceNode.cpp
+JSMediaEncodingConfiguration.cpp
+JSMediaEncodingType.cpp
 JSMediaError.cpp
 JSMediaList.cpp
 JSMediaQueryList.cpp
@@ -2656,6 +2666,7 @@ JSNavigatorCredentials.cpp
 JSNavigatorGeolocation.cpp
 JSNavigatorID.cpp
 JSNavigatorLanguage.cpp
+JSNavigatorMediaCapabilities.cpp
 JSNavigatorMediaDevices.cpp
 JSNavigatorOnLine.cpp
 JSNavigatorServiceWorker.cpp
@@ -2917,6 +2928,7 @@ JSSVGViewSpec.cpp
 JSSVGZoomAndPan.cpp
 JSSVGZoomEvent.cpp
 JSScreen.cpp
+JSScreenLuminance.cpp
 JSScriptProcessorNode.cpp
 JSScrollToOptions.cpp
 JSSecurityPolicyViolationEvent.cpp
@@ -2969,6 +2981,7 @@ JSVRLayerInit.cpp
 JSVRPose.cpp
 JSVRStageParameters.cpp
 JSValidityState.cpp
+JSVideoConfiguration.cpp
 JSVideoPlaybackQuality.cpp
 JSVisibilityState.cpp
 JSVisualViewport.cpp

@@ -33,6 +33,7 @@ set(WebCore_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/Modules/indexeddb/client"
     "${WEBCORE_DIR}/Modules/indexeddb/server"
     "${WEBCORE_DIR}/Modules/indexeddb/shared"
+    "${WEBCORE_DIR}/Modules/mediacapabilities"
     "${WEBCORE_DIR}/Modules/mediacontrols/"
     "${WEBCORE_DIR}/Modules/mediasession"
     "${WEBCORE_DIR}/Modules/mediasource"
@@ -172,6 +173,7 @@ set(WebCore_IDL_INCLUDES
     Modules/fetch
     Modules/geolocation
     Modules/indexeddb
+    Modules/mediacapabilities
     Modules/mediasession
     Modules/mediastream
     Modules/notifications
@@ -265,6 +267,19 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/indexeddb/IDBTransactionMode.idl
     Modules/indexeddb/IDBVersionChangeEvent.idl
     Modules/indexeddb/WorkerGlobalScopeIndexedDatabase.idl
+
+    Modules/mediacapabilities/AudioConfiguration.idl
+    Modules/mediacapabilities/MediaCapabilities.idl
+    Modules/mediacapabilities/MediaCapabilitiesInfo.idl
+    Modules/mediacapabilities/MediaConfiguration.idl
+    Modules/mediacapabilities/MediaDecodingConfiguration.idl
+    Modules/mediacapabilities/MediaDecodingType.idl
+    Modules/mediacapabilities/MediaEncodingConfiguration.idl
+    Modules/mediacapabilities/MediaEncodingType.idl
+    Modules/mediacapabilities/NavigatorMediaCapabilities.idl
+    Modules/mediacapabilities/ScreenColorGamut.idl
+    Modules/mediacapabilities/ScreenLuminance.idl
+    Modules/mediacapabilities/VideoConfiguration.idl
 
     Modules/mediacontrols/MediaControlsHost.idl
 

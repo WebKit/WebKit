@@ -233,6 +233,9 @@ public:
     void setAccessibilityObjectModelEnabled(bool isEnabled) { m_accessibilityObjectModelEnabled = isEnabled; }
     bool accessibilityObjectModelEnabled() const { return m_accessibilityObjectModelEnabled; }
 
+    void setMediaCapabilitiesEnabled(bool isEnabled) { m_mediaCapabilitiesEnabled = isEnabled; }
+    bool mediaCapabilitiesEnabled() const { return m_mediaCapabilitiesEnabled; }
+
     WEBCORE_EXPORT static RuntimeEnabledFeatures& sharedFeatures();
 
 private:
@@ -357,6 +360,8 @@ private:
     bool m_webVREnabled { false };
 
     bool m_accessibilityObjectModelEnabled { false };
+
+    bool m_mediaCapabilitiesEnabled { false };
 
     friend class WTF::NeverDestroyed<RuntimeEnabledFeatures>;
 };

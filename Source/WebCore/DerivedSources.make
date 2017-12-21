@@ -42,6 +42,7 @@ VPATH = \
     $(WebCore)/Modules/geolocation \
     $(WebCore)/Modules/indexeddb \
     $(WebCore)/Modules/indieui \
+    $(WebCore)/Modules/mediacapabilities \
     $(WebCore)/Modules/mediacontrols \
     $(WebCore)/Modules/mediasession \
     $(WebCore)/Modules/mediasource \
@@ -193,6 +194,18 @@ JS_BINDING_IDLS = \
     $(WebCore)/Modules/indexeddb/IDBTransactionMode.idl \
     $(WebCore)/Modules/indexeddb/IDBVersionChangeEvent.idl \
     $(WebCore)/Modules/indexeddb/WorkerGlobalScopeIndexedDatabase.idl \
+    $(WebCore)/Modules/mediacapabilities/AudioConfiguration.idl \
+    $(WebCore)/Modules/mediacapabilities/MediaCapabilities.idl \
+    $(WebCore)/Modules/mediacapabilities/MediaCapabilitiesInfo.idl \
+    $(WebCore)/Modules/mediacapabilities/MediaConfiguration.idl \
+    $(WebCore)/Modules/mediacapabilities/MediaDecodingConfiguration.idl \
+    $(WebCore)/Modules/mediacapabilities/MediaDecodingType.idl \
+    $(WebCore)/Modules/mediacapabilities/MediaEncodingConfiguration.idl \
+    $(WebCore)/Modules/mediacapabilities/MediaEncodingType.idl \
+    $(WebCore)/Modules/mediacapabilities/NavigatorMediaCapabilities.idl \
+    $(WebCore)/Modules/mediacapabilities/ScreenColorGamut.idl \
+    $(WebCore)/Modules/mediacapabilities/ScreenLuminance.idl \
+    $(WebCore)/Modules/mediacapabilities/VideoConfiguration.idl \
     $(WebCore)/Modules/mediacontrols/MediaControlsHost.idl \
     $(WebCore)/Modules/mediasession/HTMLMediaElementMediaSession.idl \
     $(WebCore)/Modules/mediasession/MediaRemoteControls.idl \

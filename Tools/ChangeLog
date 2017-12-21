@@ -1,3 +1,15 @@
+2017-12-21  Jer Noble  <jer.noble@apple.com>
+
+        Add initial DOM support for Media Capabilities
+        https://bugs.webkit.org/show_bug.cgi?id=181064
+
+        Reviewed by Eric Carlson.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (resetWebPreferencesToConsistentValues):
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::resetPreferencesToConsistentValues):
+
 2017-12-21  Guillaume Emont  <guijemont@igalia.com>
 
         build-jsc: allow to build out of tree

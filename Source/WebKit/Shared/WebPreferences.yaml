@@ -1044,6 +1044,10 @@ ShouldAllowUserInstalledFonts:
   type: bool
   defaultValue: true
 
+MediaCapabilitiesEnabled:
+    type: bool
+    defaultValue: false
+    webcoreBinding: RuntimeEnabledFeatures
 
 # For experimental features:
 # The type should be boolean.
