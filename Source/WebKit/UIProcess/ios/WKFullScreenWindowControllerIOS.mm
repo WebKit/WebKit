@@ -35,16 +35,30 @@
 #import "WebFullScreenManagerProxy.h"
 #import "WebPageProxy.h"
 #import <Foundation/Foundation.h>
+#import <Security/SecCertificate.h>
+#import <Security/SecTrust.h>
 #import <UIKit/UIVisualEffectView.h>
 #import <WebCore/FloatRect.h>
 #import <WebCore/GeometryUtilities.h>
 #import <WebCore/IntRect.h>
+#import <WebCore/LocalizedStrings.h>
+#import <WebCore/WebCoreNSURLExtras.h>
+#import <pal/spi/cf/CFNetworkSPI.h>
+#import <pal/spi/cocoa/LinkPresentationSPI.h>
+#import <pal/spi/cocoa/NSStringSPI.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
+#import <wtf/SoftLinking.h>
+#import <wtf/spi/cocoa/SecuritySPI.h>
 
 using namespace WebKit;
 using namespace WebCore;
 
+SOFT_LINK_PRIVATE_FRAMEWORK_OPTIONAL(LinkPresentation)
+
 namespace WebKit {
+
+static const NSTimeInterval showHideAnimationDuration = 0.1;
+static const NSTimeInterval autoHideDelay = 4.0;
 
 static void replaceViewWithView(UIView *view, UIView *otherView)
 {
@@ -115,6 +129,7 @@ struct WKWebViewState {
     RetainPtr<UIView> _backgroundView;
     RetainPtr<UILongPressGestureRecognizer> _touchGestureRecognizer;
     RetainPtr<UIButton> _cancelButton;
+    RetainPtr<UIButton> _locationButton;
     RetainPtr<UIVisualEffectView> _visualEffectView;
 }
 
@@ -129,8 +144,17 @@ struct WKWebViewState {
 - (void)viewWillTransitionToSize:(CGSize)size withTransitionCoordinator:(id<UIViewControllerTransitionCoordinator>)coordinator
 {
     [super viewWillTransitionToSize:size withTransitionCoordinator:coordinator];
-    [self contentView].frame = self.view.bounds;
-    [(WKWebView *)[self contentView] _overrideLayoutParametersWithMinimumLayoutSize:size maximumUnobscuredSizeOverride:size];
+    [coordinator animateAlongsideTransition: ^(id<UIViewControllerTransitionCoordinatorContext> context) {
+
+        void (^webViewUpdateBlock)() = ^{
+            [(WKWebView *)[self contentView] _overrideLayoutParametersWithMinimumLayoutSize:size maximumUnobscuredSizeOverride:size];
+        };
+
+        [(WKWebView *)[self contentView] _beginAnimatedResizeWithUpdates:webViewUpdateBlock];
+        [(WKWebView *)[self contentView] _setInterfaceOrientationOverride:[UIApp statusBarOrientation]];
+    } completion:^(id <UIViewControllerTransitionCoordinatorContext>context) {
+        [(WKWebView *)[self contentView] _endAnimatedResize];
+    }];
 }
 
 + (void)configureView:(UIView *)view withBackgroundFillOfColor:(UIColor *)fillColor opacity:(CGFloat)opacity filter:(NSString *)filter
@@ -160,9 +184,6 @@ struct WKWebViewState {
 - (UIVisualEffectView *)visualEffectViewWithFrame:(CGRect)frame
 {
     RetainPtr<UIVisualEffectView> visualEffectView = adoptNS([[UIVisualEffectView alloc] initWithEffect:[UIVisualEffect emptyEffect]]);
-    [visualEffectView setFrame:frame];
-    [visualEffectView _setContinuousCornerRadius:((CGRectGetHeight([visualEffectView bounds]) > 40.0) ? 16.0 : 8.0)];
-    [visualEffectView setAutoresizingMask:(UIViewAutoresizingFlexibleRightMargin | UIViewAutoresizingFlexibleBottomMargin)];
     [self _updateTransparencyOfVisualEffectView:visualEffectView.get()];
 
     RetainPtr<UIView> backLayerTintView = adoptNS([[UIView alloc] initWithFrame:[visualEffectView bounds]]);
@@ -182,39 +203,131 @@ struct WKWebViewState {
     return visualEffectView.autorelease();
 }
 
+static UIEdgeInsets mirrorEdgeInsets(UIEdgeInsets insets)
+{
+    return UIEdgeInsetsMake(insets.top, insets.right, insets.bottom, insets.left);
+}
+
+- (void)_updateLayoutMargins
+{
+    UIView *view = [self view];
+    [view setPreservesSuperviewLayoutMargins:NO];
+
+    UIEdgeInsets targetInsets = [view safeAreaInsets];
+    targetInsets.top = std::max(targetInsets.top, 20.0);
+    [view setLayoutMargins:targetInsets];
+}
+
+- (void)viewDidLayoutSubviews
+{
+    [self _updateLayoutMargins];
+}
+
+-  (void)setLocation:(NSString *)locationName secure:(BOOL)secure trustedName:(BOOL)trustedName trustedSite:(BOOL)trustedSite
+{
+    UIColor *greenTint = [UIColor colorWithRed:100 / 255.0 green:175 / 255.0 blue:99 / 255.0 alpha:1.0];
+    UIColor *whiteTint = [UIColor whiteColor];
+
+    float hPadding = 14;
+    NSString *lockImageName = @"LockMini";
+
+    float lockSpacing = secure ? 10 : 0;
+
+    UIEdgeInsets locationContentEdgeInsets = UIEdgeInsetsMake(0, hPadding+lockSpacing, 0, hPadding);
+    UIEdgeInsets locationImageEdgeInsets = UIEdgeInsetsMake(0, -lockSpacing, 0, 0);
+
+    if ([UIView userInterfaceLayoutDirectionForSemanticContentAttribute:[[self view] semanticContentAttribute]] == UIUserInterfaceLayoutDirectionRightToLeft) {
+        locationContentEdgeInsets = mirrorEdgeInsets(locationContentEdgeInsets);
+        locationImageEdgeInsets = mirrorEdgeInsets(locationImageEdgeInsets);
+        [_locationButton setContentHorizontalAlignment:UIControlContentHorizontalAlignmentRight];
+    }
+
+    [_locationButton setTitleColor:(trustedName ? greenTint : whiteTint) forState:UIControlStateNormal];
+
+    if (secure) {
+        NSBundle *bundle = [NSBundle bundleForClass:[WKFullScreenWindowController class]];
+        UIImage *lockImage = [UIImage imageNamed:lockImageName inBundle:bundle compatibleWithTraitCollection:nil];
+        [_locationButton setImage:[lockImage imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate] forState:UIControlStateNormal];
+        [[_locationButton imageView] setTintColor:trustedSite ? greenTint : whiteTint];
+        [_locationButton setTintColor:trustedSite ? greenTint : whiteTint];
+    } else
+        [_locationButton setImage:nil forState:UIControlStateNormal];
+
+    [_locationButton setContentEdgeInsets:locationContentEdgeInsets];
+    [_locationButton setImageEdgeInsets:locationImageEdgeInsets];
+    [_locationButton setTitle:locationName forState:UIControlStateNormal];
+    [[_locationButton titleLabel] setLineBreakMode:NSLineBreakByTruncatingTail];
+    [[_locationButton titleLabel] setAdjustsFontSizeToFitWidth:NO];
+}
+
+- (void)createSubviews
+{
+    _visualEffectView = [self visualEffectViewWithFrame:CGRectMake(0, 0, 20, 20)];
+
+    [_visualEffectView setTranslatesAutoresizingMaskIntoConstraints:NO];
+    [[self view] addSubview:_visualEffectView.get()];
+
+    _cancelButton = [UIButton buttonWithType:UIButtonTypeSystem];
+    [_cancelButton setTranslatesAutoresizingMaskIntoConstraints:NO];
+    [_cancelButton setAdjustsImageWhenHighlighted:NO];
+    [_cancelButton setBackgroundColor: [UIColor blackColor]];
+    [[_cancelButton layer] setCompositingFilter:[CAFilter filterWithType:kCAFilterPlusL]];
+    [_cancelButton setTitle:WEB_UI_STRING("Done", "Text of button that exits element fullscreen.") forState:UIControlStateNormal];
+    [_cancelButton setTintColor:[UIColor whiteColor]];
+    [_cancelButton addTarget:self action:@selector(cancelAction:) forControlEvents:UIControlEventTouchUpInside];
+
+    [[self view] addSubview:_cancelButton.get()];
+
+    _locationButton = [UIButton buttonWithType:UIButtonTypeSystem];
+    [_locationButton setTranslatesAutoresizingMaskIntoConstraints:NO];
+    [_locationButton setAdjustsImageWhenHighlighted:NO];
+    [_locationButton setBackgroundColor:[UIColor blackColor]];
+    [[_locationButton layer] setCompositingFilter:[CAFilter filterWithType:kCAFilterPlusL]];
+    [[self view] addSubview:_locationButton.get()];
+
+    UILayoutGuide* containerGuide = [[self view] layoutMarginsGuide];
+
+    [[[_visualEffectView leftAnchor] constraintEqualToAnchor:[[self view] leftAnchor]] setActive:YES];
+    [[[_visualEffectView rightAnchor] constraintEqualToAnchor:[[self view] rightAnchor]] setActive:YES];
+    [[[_visualEffectView topAnchor] constraintEqualToAnchor:[[self view] topAnchor]] setActive:YES];
+    [[[_visualEffectView heightAnchor] constraintGreaterThanOrEqualToConstant:20] setActive:YES];
+
+    NSLayoutConstraint *bottom = [[_visualEffectView bottomAnchor] constraintEqualToAnchor:[containerGuide topAnchor]];
+    [bottom setPriority:UILayoutPriorityRequired - 1];
+    [bottom setActive:YES];
+
+    [[[_cancelButton leadingAnchor] constraintEqualToAnchor:[containerGuide leadingAnchor]] setActive:YES];
+    [[[_cancelButton topAnchor] constraintEqualToAnchor:[[self view] topAnchor]] setActive:YES];
+    [[[_cancelButton bottomAnchor] constraintEqualToAnchor:[_visualEffectView bottomAnchor]] setActive:YES];
+
+    [[[_locationButton heightAnchor] constraintEqualToConstant:20] setActive:YES];
+    [[[_locationButton bottomAnchor] constraintEqualToAnchor:[_visualEffectView bottomAnchor]] setActive:YES];
+    [[[_locationButton leadingAnchor] constraintGreaterThanOrEqualToAnchor:[_cancelButton trailingAnchor]] setActive:YES];
+    [[[_locationButton trailingAnchor] constraintLessThanOrEqualToAnchor:[[self view] trailingAnchor]] setActive:YES];
+    NSLayoutConstraint *centeringConstraint = [[_locationButton centerXAnchor] constraintEqualToAnchor:[[self view] centerXAnchor]];
+    [centeringConstraint setPriority:UILayoutPriorityDefaultLow];
+    [centeringConstraint setActive:YES];
+
+    [_visualEffectView setAlpha:0];
+    [_cancelButton setAlpha:0];
+    [_locationButton setAlpha:0];
+
+    [_visualEffectView setHidden:YES];
+    [_cancelButton setHidden:YES];
+    [_locationButton setHidden:YES];
+}
+
 - (void)loadView
 {
     [self setView:adoptNS([[UIView alloc] initWithFrame:CGRectMake(0, 0, 100, 100)]).get()];
     [[self view] setAutoresizingMask:(UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight)];
-
-    CGRect doneButtonRect = CGRectMake(10, 20, 60, 47);
-    
-    _visualEffectView = [self visualEffectViewWithFrame:doneButtonRect];
-    [_visualEffectView setAlpha:0];
-    [[self view] addSubview:_visualEffectView.get()];
-
-    _cancelButton = [UIButton buttonWithType:UIButtonTypeSystem];
-    [_cancelButton setAutoresizingMask:(UIViewAutoresizingFlexibleRightMargin | UIViewAutoresizingFlexibleBottomMargin)];
-    [_cancelButton setFrame:doneButtonRect];
-    [_cancelButton addTarget:self action:@selector(cancelAction:) forControlEvents:UIControlEventTouchUpInside];
-    [_cancelButton setAdjustsImageWhenHighlighted:NO];
-    [_cancelButton setBackgroundColor: [UIColor blackColor]];
-    [[_cancelButton layer] setCornerRadius:6];
-    [_cancelButton setAlpha:0];
-    NSBundle *bundle = [NSBundle bundleForClass:[WKFullScreenWindowController class]];
-    RetainPtr<UIImage> image = [UIImage imageNamed:@"Done" inBundle:bundle compatibleWithTraitCollection:nil];
-    [_cancelButton setImage:[image imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate] forState:UIControlStateNormal];
-
-    [_cancelButton setTintColor:[UIColor colorWithWhite:1.0 alpha:0.55]];
-    [[_cancelButton layer] setCompositingFilter:[CAFilter filterWithType:kCAFilterPlusL]];
-
-    [[self view] addSubview:_cancelButton.get()];
 
     _touchGestureRecognizer = adoptNS([[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(showCancelButton:)]);
     [_touchGestureRecognizer setDelegate:self];
     [_touchGestureRecognizer setCancelsTouchesInView:NO];
     [_touchGestureRecognizer setMinimumPressDuration:0];
     [[self view] addGestureRecognizer:_touchGestureRecognizer.get()];
+    [self createSubviews];
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -222,6 +335,11 @@ struct WKWebViewState {
     [[self contentView] setAutoresizingMask:(UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight)];
     [[self contentView] setFrame:[[self view] bounds]];
     [[self view] insertSubview:[self contentView] atIndex:0];
+}
+
+- (void)viewDidAppear:(BOOL)animated
+{
+    [self _updateLayoutMargins];
 }
 
 - (void)cancelAction:(id)sender
@@ -232,12 +350,14 @@ struct WKWebViewState {
 - (void)hideCancelButton
 {
     [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(hideCancelButton) object:nil];
-    [UIView animateWithDuration:0.2 animations:^{
+    [UIView animateWithDuration:showHideAnimationDuration animations:^{
         [_visualEffectView setAlpha:0];
         [_cancelButton setAlpha:0];
+        [_locationButton setAlpha:0];
     } completion:^(BOOL finished){
         if (finished) {
             [_cancelButton setHidden:YES];
+            [_locationButton setHidden:YES];
             [_visualEffectView setHidden:YES];
         }
     }];
@@ -246,12 +366,14 @@ struct WKWebViewState {
 - (void)showCancelButton:(id)sender
 {
     [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(hideCancelButton) object:nil];
-    [self performSelector:@selector(hideCancelButton) withObject:nil afterDelay:3.0];
-    [UIView animateWithDuration:0.2 animations: ^{
+    [self performSelector:@selector(hideCancelButton) withObject:nil afterDelay:autoHideDelay];
+    [UIView animateWithDuration:showHideAnimationDuration animations: ^{
         [_visualEffectView setHidden:NO];
         [_cancelButton setHidden:NO];
+        [_locationButton setHidden:NO];
         [_visualEffectView setAlpha:1];
         [_cancelButton setAlpha:1];
+        [_locationButton setAlpha:1];
     }];
 }
 
@@ -259,11 +381,6 @@ struct WKWebViewState {
 {
     [self setTarget:target];
     [self setAction:action];
-}
-
-- (BOOL)prefersStatusBarHidden
-{
-    return YES;
 }
 
 // MARK - UIGestureRecognizerDelegate
@@ -278,11 +395,19 @@ struct WKWebViewState {
 @interface _WKFullscreenRootViewController : UIViewController
 @end
 
-@implementation _WKFullscreenRootViewController : UIViewController
+@implementation _WKFullscreenRootViewController {
+    BOOL _showsStatusBar;
+}
+
+- (void)setShowsStatusBar:(BOOL)value
+{
+    _showsStatusBar = value;
+    [self setNeedsStatusBarAppearanceUpdate];
+}
 
 - (BOOL)prefersStatusBarHidden
 {
-    return YES;
+    return !_showsStatusBar;
 }
 
 @end
@@ -359,6 +484,7 @@ struct WKWebViewState {
     WKWebViewState _viewState;
 
     RetainPtr<UIWindow> _window;
+    RetainPtr<_WKFullscreenRootViewController> _rootViewController;
 
     RefPtr<WebKit::VoidCallback> _repaintCallback;
     RetainPtr<UIViewController> _viewControllerForPresentation;
@@ -366,6 +492,10 @@ struct WKWebViewState {
 
     CGRect _initialFrame;
     CGRect _finalFrame;
+
+    RetainPtr<NSString> _EVOrganizationName;
+    BOOL _EVOrganizationNameIsValid;
+
 }
 
 #pragma mark -
@@ -405,16 +535,100 @@ struct WKWebViewState {
 #pragma mark -
 #pragma mark Exposed Interface
 
+- (void)_invalidateEVOrganizationName
+{
+    _EVOrganizationName = nil;
+    _EVOrganizationNameIsValid = NO;
+}
+
+- (BOOL)isSecure
+{
+    return _webView.hasOnlySecureContent;
+}
+
+- (SecTrustRef)_serverTrust
+{
+    return _webView.serverTrust;
+}
+
+- (NSString *)_EVOrganizationName
+{
+    if (!self.isSecure)
+        return nil;
+
+    if (_EVOrganizationNameIsValid)
+        return _EVOrganizationName.get();
+
+    ASSERT(!_EVOrganizationName.get());
+    _EVOrganizationNameIsValid = YES;
+
+    SecTrustRef trust = [self _serverTrust];
+    if (!trust)
+        return nil;
+
+    NSDictionary *infoDictionary = [(__bridge NSDictionary *)SecTrustCopyInfo(trust) autorelease];
+    // If SecTrustCopyInfo returned NULL then it's likely that the SecTrustRef has not been evaluated
+    // and the only way to get the information we need is to call SecTrustEvaluate ourselves.
+    if (!infoDictionary) {
+        OSStatus err = SecTrustEvaluate(trust, NULL);
+        if (err == noErr)
+            infoDictionary = [(__bridge NSDictionary *)SecTrustCopyInfo(trust) autorelease];
+        if (!infoDictionary)
+            return nil;
+    }
+
+    // Make sure that the EV certificate is valid against our certificate chain.
+    id hasEV = [infoDictionary objectForKey:(__bridge NSString *)kSecTrustInfoExtendedValidationKey];
+    if (![hasEV isKindOfClass:[NSValue class]] || ![hasEV boolValue])
+        return nil;
+
+    // Make sure that we could contact revocation server and it is still valid.
+    id isNotRevoked = [infoDictionary objectForKey:(__bridge NSString *)kSecTrustInfoRevocationKey];
+    if (![isNotRevoked isKindOfClass:[NSValue class]] || ![isNotRevoked boolValue])
+        return nil;
+
+    _EVOrganizationName = [infoDictionary objectForKey:(__bridge NSString *)kSecTrustInfoCompanyNameKey];
+    return _EVOrganizationName.get();
+}
+
+- (void)updateLocationInfo
+{
+    NSURL* url = _webView._committedURL;
+
+    NSString *EVOrganizationName = [self _EVOrganizationName];
+    BOOL showsEVOrganizationName = [EVOrganizationName length] > 0;
+
+    NSString *domain = nil;
+
+    if (LinkPresentationLibrary())
+        domain = [url _lp_simplifiedDisplayString];
+    else
+        domain = userVisibleString(url);
+
+    NSString *text = nil;
+    if ([[url scheme] caseInsensitiveCompare:@"data"] == NSOrderedSame)
+        text = @"data:";
+    else if (showsEVOrganizationName)
+        text = EVOrganizationName;
+    else
+        text = domain;
+
+    [_fullscreenViewController setLocation:text secure:self.isSecure trustedName:showsEVOrganizationName trustedSite:!!EVOrganizationName];
+}
+
 - (void)enterFullScreen
 {
     if ([self isFullScreen])
         return;
 
+    [self _invalidateEVOrganizationName];
+
     _fullScreenState = WaitingToEnterFullScreen;
 
     _window = adoptNS([[UIWindow alloc] init]);
     [_window setBackgroundColor:[UIColor clearColor]];
-    [_window setRootViewController:adoptNS([[_WKFullscreenRootViewController alloc] init]).get()];
+    _rootViewController = adoptNS([[_WKFullscreenRootViewController alloc] init]);
+    [_window setRootViewController:_rootViewController.get()];
     [[_window rootViewController] setView:adoptNS([[UIView alloc] initWithFrame:[_window bounds]]).get()];
     [[[_window rootViewController] view] setBackgroundColor:[UIColor clearColor]];
     [[[_window rootViewController] view] setAutoresizingMask:(UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight)];
@@ -427,6 +641,7 @@ struct WKWebViewState {
     [_fullscreenViewController setModalPresentationStyle:UIModalPresentationCustom];
     [_fullscreenViewController setTarget:self action:@selector(requestExitFullScreen)];
     [[_fullscreenViewController view] setFrame:[[_viewControllerForPresentation view] bounds]];
+    [self updateLocationInfo];
 
     [self _manager]->saveScrollPosition();
 
@@ -461,6 +676,7 @@ struct WKWebViewState {
         [self _manager]->setAnimatingFullScreen(true);
 
         _repaintCallback = VoidCallback::create([protectedSelf = retainPtr(self), self](WebKit::CallbackBase::Error) {
+            _repaintCallback = nullptr;
             if (![_webView _page])
                 return;
 
@@ -489,11 +705,13 @@ struct WKWebViewState {
 
     [_window setWindowLevel:UIWindowLevelNormal];
     [_window makeKeyAndVisible];
+    [_rootViewController setShowsStatusBar:YES];
 
     [CATransaction commit];
 
     [_viewControllerForPresentation presentViewController:_fullscreenViewController.get() animated:YES completion:^{
         [self completedEnterFullScreen];
+        [_rootViewController setShowsStatusBar:NO];
     }];
 }
 
@@ -536,11 +754,13 @@ struct WKWebViewState {
     
     [_webView _page]->setSuppressVisibilityUpdates(true);
 
+    [_rootViewController setShowsStatusBar:YES];
     [_fullscreenViewController dismissViewControllerAnimated:YES completion:^{
         if (![_webView _page])
             return;
 
         [self completedExitFullScreen];
+        [_rootViewController setShowsStatusBar:NO];
     }];
 }
 

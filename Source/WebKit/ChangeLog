@@ -1,5 +1,45 @@
 2017-12-21  Jeremy Jones  <jeremyj@apple.com>
 
+        Element fullscreen interface should display the location
+        https://bugs.webkit.org/show_bug.cgi?id=181006
+        rdar://problem/36143176
+
+        Reviewed by Simon Fraser.
+
+        Show a short user visible location string with a lock if secure and green when trusted.
+
+        Includes other interface cleanup and tweaks.
+
+        * UIProcess/ios/WKFullScreenWindowControllerIOS.mm:
+        (-[_WKFullScreenViewController viewWillTransitionToSize:withTransitionCoordinator:]):
+        (-[_WKFullScreenViewController visualEffectViewWithFrame:]):
+        (mirrorEdgeInsets):
+        (-[_WKFullScreenViewController _updateLayoutMargins]):
+        (-[_WKFullScreenViewController viewDidLayoutSubviews]):
+        (-[_WKFullScreenViewController setLocation:secure:trustedName:trustedSite:]):
+        (-[_WKFullScreenViewController createSubviews]):
+        (-[_WKFullScreenViewController loadView]):
+        (-[_WKFullScreenViewController viewDidAppear:]):
+        (-[_WKFullScreenViewController hideCancelButton]):
+        (-[_WKFullScreenViewController showCancelButton:]):
+        (-[_WKFullscreenRootViewController setShowsStatusBar:]):
+        (-[_WKFullscreenRootViewController prefersStatusBarHidden]):
+        (-[WKFullScreenWindowController _invalidateEVOrganizationName]):
+        (-[WKFullScreenWindowController isSecure]):
+        (-[WKFullScreenWindowController _serverTrust]):
+        (-[WKFullScreenWindowController _EVOrganizationName]):
+        (-[WKFullScreenWindowController updateLocationInfo]):
+        (-[WKFullScreenWindowController enterFullScreen]):
+        (-[WKFullScreenWindowController beganEnterFullScreenWithInitialFrame:finalFrame:]):
+        (-[WKFullScreenWindowController beganExitFullScreenWithInitialFrame:finalFrame:]):
+        (-[_WKFullScreenViewController prefersStatusBarHidden]): Deleted.
+        * WebKit.xcassets/Done.imageset/Contents.json: Removed.
+        * WebKit.xcassets/LockMini.imageset/Contents.json: Added.
+        * WebKit.xcassets/LockMini.imageset/NavigationBarLockMini@2x.pdf: Copied from Source/WebKit/WebKit.xcassets/Done.imageset/Done.pdf.
+        * WebKit.xcassets/LockMini.imageset/NavigationBarLockMini@3x.pdf: Renamed from Source/WebKit/WebKit.xcassets/Done.imageset/Done.pdf.
+
+2017-12-21  Jeremy Jones  <jeremyj@apple.com>
+
         Enable picture-in-picture from inline element on suspend.
         https://bugs.webkit.org/show_bug.cgi?id=180942
         rdar://problem/34745234

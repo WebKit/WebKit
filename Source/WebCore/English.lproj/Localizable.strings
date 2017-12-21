@@ -1254,3 +1254,6 @@
 
 /* Label for the auto fill strong confirmation password button inside a text field. */
 "strong confirmation password auto fill" = "strong confirmation password auto fill";
+
+/* Text of button that exits element fullscreen. */
+"Done" = "Done";

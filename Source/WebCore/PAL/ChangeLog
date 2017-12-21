@@ -1,3 +1,15 @@
+2017-12-21  Jeremy Jones  <jeremyj@apple.com>
+
+        Element fullscreen interface should display the location
+        https://bugs.webkit.org/show_bug.cgi?id=181006
+        rdar://problem/36143176
+
+        Reviewed by Simon Fraser.
+
+        Add iOS availability check.
+
+        * pal/spi/cocoa/LinkPresentationSPI.h:
+
 2017-12-20  Daniel Bates  <dabates@apple.com>
 
         Remove Alternative Presentation Button

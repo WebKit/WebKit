@@ -81,4 +81,10 @@ CF_RETURNS_RETAINED CFDataRef SecTrustSerialize(SecTrustRef, CFErrorRef *);
 CF_RETURNS_RETAINED SecTrustRef SecTrustDeserialize(CFDataRef serializedTrust, CFErrorRef *);
 #endif
 
+CF_RETURNS_RETAINED CFDictionaryRef SecTrustCopyInfo(SecTrustRef);
+
+extern const CFStringRef kSecTrustInfoExtendedValidationKey;
+extern const CFStringRef kSecTrustInfoCompanyNameKey;
+extern const CFStringRef kSecTrustInfoRevocationKey;
+
 WTF_EXTERN_C_END
