@@ -1264,17 +1264,9 @@ JSCell* JIT_OPERATION operationNewRegexp(ExecState* exec, JSCell* regexpPtr)
     SuperSamplerScope superSamplerScope(false);
     VM& vm = exec->vm();
     NativeCallFrameTracer tracer(&vm, exec);
-    auto scope = DECLARE_THROW_SCOPE(vm);
 
     RegExp* regexp = static_cast<RegExp*>(regexpPtr);
-
-    // FIXME: If the RegExp is invalid, we should emit a different bytecode.
-    // https://bugs.webkit.org/show_bug.cgi?id=180970
-    if (!regexp->isValid()) {
-        throwException(exec, scope, createSyntaxError(exec, regexp->errorMessage()));
-        return nullptr;
-    }
-
+    ASSERT(regexp->isValid());
     return RegExpObject::create(vm, exec->lexicalGlobalObject()->regExpStructure(), regexp);
 }
 

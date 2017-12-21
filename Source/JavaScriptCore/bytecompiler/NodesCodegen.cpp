@@ -141,8 +141,14 @@ RegisterID* NumberNode::emitBytecode(BytecodeGenerator& generator, RegisterID* d
 RegisterID* RegExpNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
 {
     if (dst == generator.ignoredResult())
-        return 0;
-    return generator.emitNewRegExp(generator.finalDestination(dst), RegExp::create(*generator.vm(), m_pattern.string(), regExpFlags(m_flags.string())));
+        return nullptr;
+    RegExp* regExp = RegExp::create(*generator.vm(), m_pattern.string(), regExpFlags(m_flags.string()));
+    if (regExp->isValid())
+        return generator.emitNewRegExp(generator.finalDestination(dst), regExp);
+    const char* messageCharacters = regExp->errorMessage();
+    const Identifier& message = generator.parserArena().identifierArena().makeIdentifier(generator.vm(), bitwise_cast<const LChar*>(messageCharacters), strlen(messageCharacters));
+    generator.emitThrowStaticError(ErrorType::SyntaxError, message);
+    return generator.emitLoad(generator.finalDestination(dst), jsUndefined());
 }
 
 // ------------------------------ ThisNode -------------------------------------

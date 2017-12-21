@@ -552,11 +552,7 @@ LLINT_SLOW_PATH_DECL(slow_path_new_regexp)
 {
     LLINT_BEGIN();
     RegExp* regExp = exec->codeBlock()->regexp(pc[2].u.operand);
-
-    // FIXME: If the RegExp is invalid, we should emit a different bytecode.
-    // https://bugs.webkit.org/show_bug.cgi?id=180970
-    if (!regExp->isValid())
-        LLINT_THROW(createSyntaxError(exec, regExp->errorMessage()));
+    ASSERT(regExp->isValid());
     LLINT_RETURN(RegExpObject::create(vm, exec->lexicalGlobalObject()->regExpStructure(), regExp));
 }
 

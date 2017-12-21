@@ -10270,18 +10270,7 @@ private:
     {
         FrozenValue* regexp = m_node->cellOperand();
         ASSERT(regexp->cell()->inherits(vm(), RegExp::info()));
-
-        // FIXME: If the RegExp is invalid, we should emit a different bytecode.
-        // https://bugs.webkit.org/show_bug.cgi?id=180970
-        if (!m_node->castOperand<RegExp*>()->isValid()) {
-            LValue result = vmCall(
-                pointerType(),
-                m_out.operation(operationNewRegexp), m_callFrame,
-                frozenPointer(regexp));
-
-            setJSValue(result);
-            return;
-        }
+        ASSERT(m_node->castOperand<RegExp*>()->isValid());
 
         LBasicBlock slowCase = m_out.newBlock();
         LBasicBlock continuation = m_out.newBlock();

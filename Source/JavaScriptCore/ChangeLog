@@ -1,3 +1,24 @@
+2017-12-19  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Do not check isValid() in op_new_regexp
+        https://bugs.webkit.org/show_bug.cgi?id=180970
+
+        Reviewed by Saam Barati.
+
+        We should not check `isValid()` inside op_new_regexp.
+        This simplifies the semantics of NewRegexp node in DFG.
+
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::RegExpNode::emitBytecode):
+        * dfg/DFGMayExit.cpp:
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileNewRegexp):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNewRegexp):
+        * jit/JITOperations.cpp:
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+
 2017-12-20  Saam Barati  <sbarati@apple.com>
 
         GetPropertyEnumerator in DFG/FTL should not unconditionally speculate cell

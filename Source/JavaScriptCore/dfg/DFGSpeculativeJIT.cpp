@@ -9127,19 +9127,7 @@ void SpeculativeJIT::compileNewTypedArray(Node* node)
 void SpeculativeJIT::compileNewRegexp(Node* node)
 {
     RegExp* regexp = node->castOperand<RegExp*>();
-
-    // FIXME: If the RegExp is invalid, we should emit a different bytecode.
-    // https://bugs.webkit.org/show_bug.cgi?id=180970
-    if (!regexp->isValid()) {
-        flushRegisters();
-        GPRFlushedCallResult result(this);
-
-        callOperation(operationNewRegexp, result.gpr(), regexp);
-        m_jit.exceptionCheck();
-
-        cellResult(result.gpr(), node);
-        return;
-    }
+    ASSERT(regexp->isValid());
 
     GPRTemporary result(this);
     GPRTemporary scratch1(this);
