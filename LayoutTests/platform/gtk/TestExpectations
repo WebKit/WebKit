@@ -3062,8 +3062,6 @@ webkit.org/b/163823 media/context-menu-actions.html [ Failure ]
 webkit.org/b/163823 media/video-defaultmuted.html [ Failure ]
 webkit.org/b/163823 media/video-volume-slider.html [ Failure ]
 
-webkit.org/b/163826 storage/domstorage/events/basic-body-attribute.html [ Failure ]
-
 webkit.org/b/163827 storage/websql/quota-tracking.html [ Failure ]
 
 webkit.org/b/163830 svg/css/mix-blend-mode-background-root.svg [ ImageOnlyFailure ]

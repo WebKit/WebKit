@@ -1,3 +1,18 @@
+2017-12-21  Ms2ger  <Ms2ger@igalia.com>
+
+        REGRESSION(r207238): [GTK] Layout test storage/domstorage/events/basic-body-attribute.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=163826
+
+        Reviewed by Daniel Bates.
+
+        Update basic-body-attribute.html to the current standard.
+
+        * platform/gtk/TestExpectations:
+        * platform/win/TestExpectations:
+        * platform/wpe/TestExpectations:
+        * storage/domstorage/events/basic-body-attribute-expected.txt:
+        * storage/domstorage/events/basic-body-attribute.html:
+
 2017-12-20  Ryosuke Niwa  <rniwa@webkit.org>
 
         DeferredLoadingScope incorrectly disabled images or enables deferred loading

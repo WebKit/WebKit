@@ -794,7 +794,6 @@ Bug(WPE) fast/dom/getElementsByClassName [ Pass ]
 Bug(WPE) fast/dom/nodesFromRect [ Pass ]
 
 Bug(WPE) storage/indexeddb/modern/index-3-private.html [ Crash ]
-Bug(WPE) storage/domstorage/events/basic-body-attribute.html [ Failure ]
 Bug(WPE) storage/indexeddb/modern/date-basic-private.html [ Failure ]
 Bug(WPE) storage/indexeddb/modern/date-basic.html [ Failure ]
 Bug(WPE) storage/indexeddb/modern/get-keyrange-private.html [ Failure ]
