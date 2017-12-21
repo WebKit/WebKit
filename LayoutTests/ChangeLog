@@ -1,3 +1,12 @@
+2017-12-21  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Correct a TestExpectations entry after r226074.
+        https://bugs.webkit.org/show_bug.cgi?id=180703
+
+        Unreviewed test gardening.
+
+        * platform/wk2/TestExpectations:
+
 2017-12-21  Ms2ger  <Ms2ger@igalia.com>
 
         REGRESSION(r207238): [GTK] Layout test storage/domstorage/events/basic-body-attribute.html is failing
