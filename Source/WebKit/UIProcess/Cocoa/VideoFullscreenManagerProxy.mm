@@ -436,6 +436,9 @@ void VideoFullscreenManagerProxy::exitFullscreenWithoutAnimationToMode(uint64_t 
 }
 #endif
 
+#if !PLATFORM(IOS) || !ENABLE(FULLSCREEN_API)
+NO_RETURN_DUE_TO_ASSERT
+#endif
 void VideoFullscreenManagerProxy::setInlineRect(uint64_t contextId, const WebCore::IntRect& inlineRect, bool visible)
 {
 #if PLATFORM(IOS) && ENABLE(FULLSCREEN_API)
@@ -445,6 +448,9 @@ void VideoFullscreenManagerProxy::setInlineRect(uint64_t contextId, const WebCor
 #endif
 }
 
+#if !PLATFORM(IOS) || !ENABLE(FULLSCREEN_API)
+NO_RETURN_DUE_TO_ASSERT
+#endif
 void VideoFullscreenManagerProxy::setHasVideoContentLayer(uint64_t contextId, bool value)
 {
 #if PLATFORM(IOS) && ENABLE(FULLSCREEN_API)

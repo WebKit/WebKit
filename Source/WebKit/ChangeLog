@@ -1,3 +1,9 @@
+2017-12-21  Brent Fulgham  <bfulgham@apple.com>
+
+        Unreviewed Debug build fix after r226217
+
+        * UIProcess/Cocoa/VideoFullscreenManagerProxy.mm:
+
 2017-12-21  Jeremy Jones  <jeremyj@apple.com>
 
         Element fullscreen interface should display the location
