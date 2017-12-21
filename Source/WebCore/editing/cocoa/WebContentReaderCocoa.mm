@@ -77,83 +77,6 @@ SOFT_LINK(WebKitLegacy, _WebCreateFragment, void, (WebCore::Document& document, 
 
 namespace WebCore {
 
-#if ENABLE(ATTACHMENT_ELEMENT)
-
-struct AttachmentReplacementInfo {
-    AttachmentDisplayMode displayMode;
-    Ref<File> file;
-    Ref<Element> elementToReplace;
-};
-
-void replaceRichContentWithAttachmentsIfNecessary(DocumentFragment& fragment, BlobReplacementInfo&& replacementInfo)
-{
-    if (!RuntimeEnabledFeatures::sharedFeatures().attachmentElementEnabled() || replacementInfo.isEmpty())
-        return;
-
-    Vector<Ref<Element>> elementsToRemove;
-    Vector<AttachmentReplacementInfo> attachmentReplacementInfo;
-    for (auto& image : descendantsOfType<HTMLImageElement>(fragment)) {
-        auto url = image.attributeWithoutSynchronization(HTMLNames::srcAttr);
-        if (url.isEmpty())
-            continue;
-
-        auto blob = replacementInfo.blobURLToBlobMap.get(url);
-        if (!blob)
-            continue;
-
-        auto title = URLParser { replacementInfo.blobURLToReplacedURLMap.get(url) }.result().lastPathComponent();
-        if (title.isEmpty())
-            title = AtomicString("media");
-
-        attachmentReplacementInfo.append({ AttachmentDisplayMode::InPlace, File::create(*blob, title), image });
-    }
-
-    for (auto& object : descendantsOfType<HTMLObjectElement>(fragment)) {
-        auto url = object.attributeWithoutSynchronization(HTMLNames::dataAttr);
-        if (url.isEmpty()) {
-            elementsToRemove.append(object);
-            continue;
-        }
-
-        auto blob = replacementInfo.blobURLToBlobMap.get(url);
-        if (!blob) {
-            elementsToRemove.append(object);
-            continue;
-        }
-
-        auto title = URLParser { replacementInfo.blobURLToReplacedURLMap.get(url) }.result().lastPathComponent();
-        if (title.isEmpty())
-            title = AtomicString("file");
-
-        attachmentReplacementInfo.append({ AttachmentDisplayMode::AsIcon, File::create(*blob, title), object });
-    }
-
-    for (auto& info : attachmentReplacementInfo) {
-        auto file = WTFMove(info.file);
-        auto elementToReplace = WTFMove(info.elementToReplace);
-        auto parent = makeRefPtr(elementToReplace->parentNode());
-        if (!parent)
-            continue;
-
-        auto attachment = HTMLAttachmentElement::create(HTMLNames::attachmentTag, fragment.document());
-        attachment->setUniqueIdentifier(createCanonicalUUIDString());
-        attachment->setFile(WTFMove(file), HTMLAttachmentElement::UpdateDisplayAttributes::Yes);
-        attachment->updateDisplayMode(info.displayMode);
-        parent->replaceChild(attachment, elementToReplace);
-    }
-
-    for (auto& elementToRemove : elementsToRemove)
-        elementToRemove->remove();
-}
-
-#else
-
-void replaceRichContentWithAttachmentsIfNecessary(DocumentFragment&, HashMap<AtomicString, RefPtr<Blob>>&&)
-{
-}
-
-#endif
-
 #if (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300)
 
 static NSDictionary *attributesForAttributedStringConversion()
@@ -252,7 +175,113 @@ private:
     bool m_didDisableImage { false };
 };
 
-RefPtr<DocumentFragment> createFragmentAndAddResources(Frame& frame, NSAttributedString *string, BlobReplacementInfo& replacementInfo)
+static bool shouldReplaceRichContentWithAttachments()
+{
+#if ENABLE(ATTACHMENT_ELEMENT)
+    return RuntimeEnabledFeatures::sharedFeatures().attachmentElementEnabled();
+#else
+    return false;
+#endif
+}
+
+static Ref<DocumentFragment> createFragmentForImageAttachment(Document& document, Ref<Blob>&& blob)
+{
+#if ENABLE(ATTACHMENT_ELEMENT)
+    auto attachment = HTMLAttachmentElement::create(HTMLNames::attachmentTag, document);
+    attachment->setUniqueIdentifier(createCanonicalUUIDString());
+    attachment->setFile(File::create(blob, AtomicString("image")), HTMLAttachmentElement::UpdateDisplayAttributes::Yes);
+    attachment->updateDisplayMode(AttachmentDisplayMode::InPlace);
+
+    auto fragment = document.createDocumentFragment();
+    fragment->appendChild(attachment);
+
+    return fragment;
+#else
+    UNUSED_PARAM(blob);
+    return document.createDocumentFragment();
+#endif
+}
+
+static void replaceRichContentWithAttachments(DocumentFragment& fragment, const Vector<Ref<ArchiveResource>>& subresources)
+{
+#if ENABLE(ATTACHMENT_ELEMENT)
+    struct AttachmentReplacementInfo {
+        AttachmentDisplayMode displayMode;
+        Ref<File> file;
+        Ref<Element> elementToReplace;
+    };
+
+    ASSERT(RuntimeEnabledFeatures::sharedFeatures().attachmentElementEnabled());
+    if (subresources.isEmpty())
+        return;
+
+    // FIXME: Handle resources in subframe archives.
+    HashMap<AtomicString, Ref<Blob>> urlToBlobMap;
+    for (const Ref<ArchiveResource>& subresource : subresources)
+        urlToBlobMap.set(subresource->url().string(), Blob::create(subresource->data(), subresource->mimeType()));
+
+    Vector<Ref<Element>> elementsToRemove;
+    Vector<AttachmentReplacementInfo> attachmentReplacementInfo;
+    for (auto& image : descendantsOfType<HTMLImageElement>(fragment)) {
+        auto resourceURLString = image.attributeWithoutSynchronization(HTMLNames::srcAttr);
+        if (resourceURLString.isEmpty())
+            continue;
+
+        auto blob = urlToBlobMap.get(resourceURLString);
+        if (!blob)
+            continue;
+
+        auto title = URLParser { resourceURLString }.result().lastPathComponent();
+        if (title.isEmpty())
+            title = AtomicString("media");
+
+        attachmentReplacementInfo.append({ AttachmentDisplayMode::InPlace, File::create(*blob, title), image });
+    }
+
+    for (auto& object : descendantsOfType<HTMLObjectElement>(fragment)) {
+        auto resourceURLString = object.attributeWithoutSynchronization(HTMLNames::dataAttr);
+        if (resourceURLString.isEmpty()) {
+            elementsToRemove.append(object);
+            continue;
+        }
+
+        auto blob = urlToBlobMap.get(resourceURLString);
+        if (!blob) {
+            elementsToRemove.append(object);
+            continue;
+        }
+
+        auto title = URLParser { resourceURLString }.result().lastPathComponent();
+        if (title.isEmpty())
+            title = AtomicString("file");
+
+        attachmentReplacementInfo.append({ AttachmentDisplayMode::AsIcon, File::create(*blob, title), object });
+    }
+
+    for (auto& info : attachmentReplacementInfo) {
+        auto file = WTFMove(info.file);
+        auto elementToReplace = WTFMove(info.elementToReplace);
+        auto parent = makeRefPtr(elementToReplace->parentNode());
+        if (!parent)
+            continue;
+
+        auto attachment = HTMLAttachmentElement::create(HTMLNames::attachmentTag, fragment.document());
+        attachment->setUniqueIdentifier(createCanonicalUUIDString());
+        attachment->setFile(WTFMove(file), HTMLAttachmentElement::UpdateDisplayAttributes::Yes);
+        attachment->updateDisplayMode(info.displayMode);
+        parent->replaceChild(attachment, elementToReplace);
+    }
+
+    for (auto& elementToRemove : elementsToRemove)
+        elementToRemove->remove();
+#else
+    UNUSED_PARAM(fragment);
+    UNUSED_PARAM(subresources);
+#endif
+}
+
+
+RefPtr<DocumentFragment> createFragmentAndAddResources(Frame& frame, NSAttributedString *string)
 {
     if (!frame.page() || !frame.document())
         return nullptr;
@@ -274,15 +303,18 @@ RefPtr<DocumentFragment> createFragmentAndAddResources(Frame& frame, NSAttribute
         return WTFMove(fragmentAndResources.fragment);
     }
 
-    HashMap<AtomicString, AtomicString> blobURLMap;
-    for (const Ref<ArchiveResource>& subresource : fragmentAndResources.resources) {
-        auto blob = Blob::create(subresource->data(), subresource->mimeType());
-        String blobURL = DOMURL::createObjectURL(document, blob);
-        blobURLMap.set(subresource->url().string(), blobURL);
-        replacementInfo.blobURLToBlobMap.set(blobURL, WTFMove(blob));
-        replacementInfo.blobURLToReplacedURLMap.set(blobURL, subresource->url().string());
+    if (shouldReplaceRichContentWithAttachments())
+        replaceRichContentWithAttachments(*fragmentAndResources.fragment, fragmentAndResources.resources);
+    else {
+        HashMap<AtomicString, AtomicString> blobURLMap;
+        for (const Ref<ArchiveResource>& subresource : fragmentAndResources.resources) {
+            auto blob = Blob::create(subresource->data(), subresource->mimeType());
+            String blobURL = DOMURL::createObjectURL(document, blob);
+            blobURLMap.set(subresource->url().string(), blobURL);
+        }
+
+        replaceSubresourceURLs(*fragmentAndResources.fragment, WTFMove(blobURLMap));
     }
-    replaceSubresourceURLs(*fragmentAndResources.fragment, WTFMove(blobURLMap));
 
     return WTFMove(fragmentAndResources.fragment);
 }
@@ -310,50 +342,50 @@ static std::optional<MarkupAndArchive> extractMarkupAndArchive(SharedBuffer& buf
     return MarkupAndArchive { String::fromUTF8(mainResource->data().data(), mainResource->data().size()), mainResource.releaseNonNull(), archive.releaseNonNull() };
 }
 
-static String sanitizeMarkupWithArchive(Document& destinationDocument, MarkupAndArchive& markupAndArchive, const std::function<bool(const String)>& canShowMIMETypeAsHTML, BlobReplacementInfo& replacementInfo)
+static String sanitizeMarkupWithArchive(Document& destinationDocument, MarkupAndArchive& markupAndArchive, const std::function<bool(const String)>& canShowMIMETypeAsHTML)
 {
     auto page = createPageForSanitizingWebContent();
     Document* stagingDocument = page->mainFrame().document();
     ASSERT(stagingDocument);
     auto fragment = createFragmentFromMarkup(*stagingDocument, markupAndArchive.markup, markupAndArchive.mainResource->url(), DisallowScriptingAndPluginContent);
 
-    HashMap<AtomicString, AtomicString> blobURLMap;
-    for (const Ref<ArchiveResource>& subresource : markupAndArchive.archive->subresources()) {
-        auto blob = Blob::create(subresource->data(), subresource->mimeType());
-        String blobURL = DOMURL::createObjectURL(destinationDocument, blob);
-        blobURLMap.set(subresource->url().string(), blobURL);
-        replacementInfo.blobURLToBlobMap.set(blobURL, WTFMove(blob));
-        replacementInfo.blobURLToReplacedURLMap.set(blobURL, subresource->url().string());
+    if (shouldReplaceRichContentWithAttachments())
+        replaceRichContentWithAttachments(fragment, markupAndArchive.archive->subresources());
+    else {
+        HashMap<AtomicString, AtomicString> blobURLMap;
+        for (const Ref<ArchiveResource>& subresource : markupAndArchive.archive->subresources()) {
+            auto blob = Blob::create(subresource->data(), subresource->mimeType());
+            String blobURL = DOMURL::createObjectURL(destinationDocument, blob);
+            blobURLMap.set(subresource->url().string(), blobURL);
+        }
+
+        auto contentOrigin = SecurityOrigin::create(markupAndArchive.mainResource->url());
+        for (const Ref<Archive>& subframeArchive : markupAndArchive.archive->subframeArchives()) {
+            RefPtr<ArchiveResource> subframeMainResource = subframeArchive->mainResource();
+            if (!subframeMainResource)
+                continue;
+
+            auto type = subframeMainResource->mimeType();
+            if (!canShowMIMETypeAsHTML(type))
+                continue;
+
+            auto subframeURL = subframeMainResource->url();
+            MarkupAndArchive subframeContent = { String::fromUTF8(subframeMainResource->data().data(), subframeMainResource->data().size()),
+                subframeMainResource.releaseNonNull(), subframeArchive.copyRef() };
+            auto subframeMarkup = sanitizeMarkupWithArchive(destinationDocument, subframeContent, canShowMIMETypeAsHTML);
+
+            CString utf8 = subframeMarkup.utf8();
+            Vector<uint8_t> blobBuffer;
+            blobBuffer.reserveCapacity(utf8.length());
+            blobBuffer.append(reinterpret_cast<const uint8_t*>(utf8.data()), utf8.length());
+            auto blob = Blob::create(WTFMove(blobBuffer), type);
+
+            String subframeBlobURL = DOMURL::createObjectURL(destinationDocument, blob);
+            blobURLMap.set(subframeURL.string(), subframeBlobURL);
+        }
+
+        replaceSubresourceURLs(fragment.get(), WTFMove(blobURLMap));
     }
-
-    auto contentOrigin = SecurityOrigin::create(markupAndArchive.mainResource->url());
-    for (const Ref<Archive>& subframeArchive : markupAndArchive.archive->subframeArchives()) {
-        RefPtr<ArchiveResource> subframeMainResource = subframeArchive->mainResource();
-        if (!subframeMainResource)
-            continue;
-
-        auto type = subframeMainResource->mimeType();
-        if (!canShowMIMETypeAsHTML(type))
-            continue;
-
-        auto subframeURL = subframeMainResource->url();
-        MarkupAndArchive subframeContent = { String::fromUTF8(subframeMainResource->data().data(), subframeMainResource->data().size()),
-            subframeMainResource.releaseNonNull(), subframeArchive.copyRef() };
-        auto subframeMarkup = sanitizeMarkupWithArchive(destinationDocument, subframeContent, canShowMIMETypeAsHTML, replacementInfo);
-
-        CString utf8 = subframeMarkup.utf8();
-        Vector<uint8_t> blobBuffer;
-        blobBuffer.reserveCapacity(utf8.length());
-        blobBuffer.append(reinterpret_cast<const uint8_t*>(utf8.data()), utf8.length());
-        auto blob = Blob::create(WTFMove(blobBuffer), type);
-
-        String subframeBlobURL = DOMURL::createObjectURL(destinationDocument, blob);
-        blobURLMap.set(subframeURL.string(), subframeBlobURL);
-        replacementInfo.blobURLToBlobMap.set(subframeBlobURL, WTFMove(blob));
-        replacementInfo.blobURLToReplacedURLMap.set(subframeBlobURL, subframeURL.string());
-    }
-
-    replaceSubresourceURLs(fragment.get(), WTFMove(blobURLMap));
 
     auto* bodyElement = stagingDocument->body();
     ASSERT(bodyElement);
@@ -388,16 +420,14 @@ bool WebContentReader::readWebArchive(SharedBuffer& buffer)
         return true;
     }
 
-    BlobReplacementInfo replacementInfo;
     String sanitizedMarkup = sanitizeMarkupWithArchive(*frame.document(), *result, [&] (const String& type) {
         return frame.loader().client().canShowMIMETypeAsHTML(type);
-    }, replacementInfo);
+    });
     fragment = createFragmentFromMarkup(*frame.document(), sanitizedMarkup, blankURL(), DisallowScriptingAndPluginContent);
 
     if (!fragment)
         return false;
 
-    replaceRichContentWithAttachmentsIfNecessary(*fragment, WTFMove(replacementInfo));
     return true;
 }
 
@@ -417,10 +447,9 @@ bool WebContentMarkupReader::readWebArchive(SharedBuffer& buffer)
         return true;
     }
 
-    BlobReplacementInfo replacementInfo;
     markup = sanitizeMarkupWithArchive(*frame.document(), *result, [&] (const String& type) {
         return frame.loader().client().canShowMIMETypeAsHTML(type);
-    }, replacementInfo);
+    });
 
     return true;
 }
@@ -468,24 +497,13 @@ bool WebContentMarkupReader::readHTML(const String& string)
     return !markup.isEmpty();
 }
 
-static RefPtr<DocumentFragment> createFragmentFromAttributedString(Frame& frame, NSAttributedString *string)
-{
-    BlobReplacementInfo replacementInfo;
-    auto fragment = createFragmentAndAddResources(frame, string, replacementInfo);
-    if (!fragment)
-        return nullptr;
-
-    replaceRichContentWithAttachmentsIfNecessary(*fragment, WTFMove(replacementInfo));
-    return fragment;
-}
-
 bool WebContentReader::readRTFD(SharedBuffer& buffer)
 {
     if (frame.settings().preferMIMETypeForImages() || !frame.document())
         return false;
 
     auto string = adoptNS([[NSAttributedString alloc] initWithRTFD:buffer.createNSData().get() documentAttributes:nullptr]);
-    auto fragment = createFragmentFromAttributedString(frame, string.get());
+    auto fragment = createFragmentAndAddResources(frame, string.get());
     if (!fragment)
         return false;
     addFragment(fragment.releaseNonNull());
@@ -498,7 +516,7 @@ bool WebContentMarkupReader::readRTFD(SharedBuffer& buffer)
     if (!frame.document())
         return false;
     auto string = adoptNS([[NSAttributedString alloc] initWithRTFD:buffer.createNSData().get() documentAttributes:nullptr]);
-    auto fragment = createFragmentFromAttributedString(frame, string.get());
+    auto fragment = createFragmentAndAddResources(frame, string.get());
     if (!fragment)
         return false;
 
@@ -512,7 +530,7 @@ bool WebContentReader::readRTF(SharedBuffer& buffer)
         return false;
 
     auto string = adoptNS([[NSAttributedString alloc] initWithRTF:buffer.createNSData().get() documentAttributes:nullptr]);
-    auto fragment = createFragmentFromAttributedString(frame, string.get());
+    auto fragment = createFragmentAndAddResources(frame, string.get());
     if (!fragment)
         return false;
     addFragment(fragment.releaseNonNull());
@@ -525,7 +543,7 @@ bool WebContentMarkupReader::readRTF(SharedBuffer& buffer)
     if (!frame.document())
         return false;
     auto string = adoptNS([[NSAttributedString alloc] initWithRTF:buffer.createNSData().get() documentAttributes:nullptr]);
-    auto fragment = createFragmentFromAttributedString(frame, string.get());
+    auto fragment = createFragmentAndAddResources(frame, string.get());
     if (!fragment)
         return false;
     markup = createMarkup(*fragment);
@@ -548,13 +566,15 @@ bool WebContentReader::readImage(Ref<SharedBuffer>&& buffer, const String& type)
     auto blob = Blob::create(buffer.get(), type);
     ASSERT(frame.document());
     auto& document = *frame.document();
-    String blobURL = DOMURL::createObjectURL(document, blob);
-    addFragment(createFragmentForImageAndURL(document, blobURL));
+
+    if (shouldReplaceRichContentWithAttachments())
+        addFragment(createFragmentForImageAttachment(document, WTFMove(blob)));
+    else
+        addFragment(createFragmentForImageAndURL(document, DOMURL::createObjectURL(document, blob)));
 
     if (!fragment)
         return false;
 
-    replaceRichContentWithAttachmentsIfNecessary(*fragment, {{{ blobURL, WTFMove(blob) }}, { }});
     return true;
 }
 

@@ -222,9 +222,7 @@ void Editor::replaceSelectionWithAttributedString(NSAttributedString *attributed
         return;
 
     if (m_frame.selection().selection().isContentRichlyEditable()) {
-        BlobReplacementInfo replacementInfo;
-        if (auto fragment = createFragmentAndAddResources(m_frame, attributedString, replacementInfo)) {
-            replaceRichContentWithAttachmentsIfNecessary(*fragment, WTFMove(replacementInfo));
+        if (auto fragment = createFragmentAndAddResources(m_frame, attributedString)) {
             if (shouldInsertFragment(*fragment, selectedRange().get(), EditorInsertAction::Pasted))
                 pasteAsFragment(fragment.releaseNonNull(), false, false, mailBlockquoteHandling);
         }
