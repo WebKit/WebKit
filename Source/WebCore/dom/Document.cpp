@@ -7507,8 +7507,8 @@ void Document::requestStorageAccess(Ref<DeferredPromise>&& promise)
         return;
     }
     
-    // There has to be a sandbox and it has to allow the storage access API to be called.
-    if (sandboxFlags() == SandboxNone || isSandboxed(SandboxStorageAccessByUserActivation)) {
+    // If there is a sandbox, it has to allow the storage access API to be called.
+    if (sandboxFlags() != SandboxNone && isSandboxed(SandboxStorageAccessByUserActivation)) {
         promise->reject();
         return;
     }

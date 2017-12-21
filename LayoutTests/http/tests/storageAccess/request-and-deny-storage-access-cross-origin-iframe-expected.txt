@@ -1,4 +1,5 @@
-Tests that cross-origin iframe storage access is denied if the iframe is not sandboxed.
+CONFIRM: Do you want to use your localhost ID on 127.0.0.1?
+Tests that cross-origin iframe storage access is denied if the iframe is not sandboxed and the user declines.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 

@@ -1,5 +1,18 @@
 2017-12-21  John Wilander  <wilander@apple.com>
 
+        Storage Access API: Allow requests from non-sandboxed iframes
+        https://bugs.webkit.org/show_bug.cgi?id=181099
+        <rdar://problem/36184501>
+
+        Reviewed by Brent Fulgham.
+
+        * http/tests/storageAccess/request-and-deny-storage-access-cross-origin-iframe-expected.txt:
+        * http/tests/storageAccess/request-and-deny-storage-access-cross-origin-iframe.html:
+        * http/tests/storageAccess/request-and-grant-storage-access-cross-origin-non-sandboxed-iframe-expected.txt:
+        * http/tests/storageAccess/request-and-grant-storage-access-cross-origin-non-sandboxed-iframe.html:
+
+2017-12-21  John Wilander  <wilander@apple.com>
+
         Storage Access API: Make DocumentLoader::willSendRequest() and WebFrameLoaderClient::detachedFromParent2() tell the network process to get rid of any sub frame access entries
         https://bugs.webkit.org/show_bug.cgi?id=180728
         <rdar://problem/36009288>
