@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="/js-test-resources/js-test.js"></script>
+    <script src="/js-test-resources/ui-helper.js"></script>
+    <script>
+        description("Tests that a cross-origin iframe from a prevalent domain that is granted storage access and then is detached from the DOM does not have storage access.");
+        jsTestIsAsync = true;
+
+        window.addEventListener("message", receiveMessage, false);
+
+        function setEnableFeature(enable) {
+            if (!enable)
+                testRunner.statisticsResetToConsistentState();
+            internals.setResourceLoadStatisticsEnabled(enable);
+            testRunner.setCookieStoragePartitioningEnabled(enable);
+            testRunner.setStorageAccessAPIEnabled(enable);
+        }
+
+        function finishTest() {
+            setEnableFeature(false);
+            finishJSTest();
+        }
+
+        const iframeID = "TheIframeThatRequestsStorageAccess";
+        function askIframeIfItHasStorageAccess() {
+            var iframeContentWindow = document.getElementById(iframeID).contentWindow;
+            iframeContentWindow.postMessage("reportBackCookies", "http://localhost:8000");
+        }
+
+        function detachIframeAndAskWhetherItStillHasStorageAccess() {
+            var theIframe = document.getElementById(iframeID);
+            theIframe.onload = askIframeIfItHasStorageAccess;
+            document.getElementsByTagName('body')[0].appendChild(theIframe);
+        }
+
+        const expectedPassMessages = 2;
+        var passMessagesReceived = 0;
+        function receiveMessage(event) {
+            if (event.origin === "http://localhost:8000") {
+                if (event.data.indexOf("PASS") !== -1) {
+                    testPassed(event.data.replace("PASS ", ""));
+                    passMessagesReceived++;
+                    if (passMessagesReceived >= expectedPassMessages)
+                        finishTest();
+                    else
+                        detachIframeAndAskWhetherItStillHasStorageAccess();
+                } else {
+                    testFailed(event.data);
+                    finishTest();
+                }
+            } else {
+                testFailed("Received a message from an unexpected origin: " + event.origin);
+                finishTest();
+            }
+        }
+
+        function activateElement(elementId) {
+            var element = document.getElementById(elementId);
+            var centerX = element.offsetLeft + element.offsetWidth / 2;
+            var centerY = element.offsetTop + element.offsetHeight / 2;
+            UIHelper.activateAt(centerX, centerY).then(
+                function () {
+                    if (window.eventSender)
+                        eventSender.keyDown("escape");
+                    else {
+                        testFailed("No eventSender.");
+                        finishTest();
+                    }
+                },
+                function () {
+                    testFailed("Promise rejected.");
+                    finishTest();
+                }
+            );
+        }
+
+        function runTest() {
+            if (document.location.hash !== "#elementActivated") {
+                activateElement(iframeID);
+                document.location.hash = "elementActivated";
+            }
+        }
+
+        const hostUnderTest = "localhost:8000";
+        const statisticsUrl = "http://" + hostUnderTest;
+        if (document.location.hash !== "#firstPartyCookieSet" && document.location.hash !== "#elementActivated") {
+            setEnableFeature(true);
+            document.location.href = statisticsUrl + "/storageAccess/resources/set-cookie.php?name=firstPartyCookie&value=value#http://127.0.0.1:8000/storageAccess/request-and-grant-access-then-detach-should-not-have-access.html#firstPartyCookieSet";
+        } else {
+            testRunner.setStatisticsPrevalentResource(statisticsUrl, true);
+            if (!testRunner.isStatisticsPrevalentResource(statisticsUrl))
+                testFailed("Host did not get set as prevalent resource.");
+            testRunner.setStatisticsHasHadNonRecentUserInteraction(statisticsUrl, true);
+            if (!testRunner.isStatisticsHasHadUserInteraction(statisticsUrl))
+                testFailed("Host did not get logged for user interaction.");
+            testRunner.statisticsUpdateCookiePartitioning();
+        }
+    </script>
+</head>
+<body>
+<iframe sandbox="allow-storage-access-by-user-activation allow-scripts allow-same-origin allow-modals" onload="runTest()" id="TheIframeThatRequestsStorageAccess" src="http://localhost:8000/storageAccess/resources/request-storage-access-iframe.html#userShouldGrantAccess,userShouldBeConsulted,policyShouldGrantAccess"></iframe>
+</body>
+</html>

@@ -161,6 +161,7 @@ public:
     virtual void dispatchDidCancelClientRedirect() = 0;
     virtual void dispatchWillPerformClientRedirect(const URL&, double interval, double fireDate) = 0;
     virtual void dispatchDidChangeMainDocument() { }
+    virtual void dispatchWillChangeDocument() { }
     virtual void dispatchDidNavigateWithinPage() { }
     virtual void dispatchDidChangeLocationWithinPage() = 0;
     virtual void dispatchDidPushStateWithinPage() = 0;
@@ -363,6 +364,11 @@ public:
 
 #if ENABLE(APPLICATION_MANIFEST)
     virtual void finishedLoadingApplicationManifest(uint64_t, const std::optional<ApplicationManifest>&) { }
+#endif
+
+#if HAVE(CFNETWORK_STORAGE_PARTITIONING)
+    virtual bool hasFrameSpecificStorageAccess() { return false; }
+    virtual void setHasFrameSpecificStorageAccess(bool) { }
 #endif
 };
 

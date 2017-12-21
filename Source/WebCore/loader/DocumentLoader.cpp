@@ -534,6 +534,9 @@ void DocumentLoader::willSendRequest(ResourceRequest&& newRequest, const Resourc
     if (m_frame->isMainFrame())
         newRequest.setFirstPartyForCookies(newRequest.url());
 
+    if (!didReceiveRedirectResponse)
+        frameLoader()->client().dispatchWillChangeDocument();
+
     // If we're fielding a redirect in response to a POST, force a load from origin, since
     // this is a common site technique to return to a page viewing some data that the POST
     // just modified.

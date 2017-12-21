@@ -1253,6 +1253,7 @@ void WebChromeClient::didInvalidateDocumentMarkerRects()
     m_page.findController().didInvalidateDocumentMarkerRects();
 }
 
+#if HAVE(CFNETWORK_STORAGE_PARTITIONING)
 void WebChromeClient::hasStorageAccess(String&& subFrameHost, String&& topFrameHost, uint64_t frameID, uint64_t pageID, WTF::CompletionHandler<void (bool)>&& callback)
 {
     m_page.hasStorageAccess(WTFMove(subFrameHost), WTFMove(topFrameHost), frameID, pageID, WTFMove(callback));
@@ -1262,5 +1263,6 @@ void WebChromeClient::requestStorageAccess(String&& subFrameHost, String&& topFr
 {
     m_page.requestStorageAccess(WTFMove(subFrameHost), WTFMove(topFrameHost), frameID, pageID, WTFMove(callback));
 }
+#endif
 
 } // namespace WebKit

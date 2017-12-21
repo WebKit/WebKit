@@ -3,23 +3,40 @@
     <script>
         const policyShouldGrantAccess = document.location.hash === "#policyShouldGrantAccess";
 
+        function messageToTop(messagePrefix, fetchData) {
+            top.postMessage(messagePrefix + " document.cookie == " + document.cookie +
+                (fetchData ? ", cookies seen server-side == " + JSON.stringify(fetchData) : ""), "http://127.0.0.1:8000");
+        }
+
         function checkHasStorageAccess() {
             var promise = document.hasStorageAccess();
             promise.then(
                 function (hasAccess) {
                     if (hasAccess && policyShouldGrantAccess)
-                        top.postMessage("PASS Has storage access.", "http://127.0.0.1:8000");
+                        fetch("echo-incoming-cookies-as-json.php", { credentials: "same-origin" }).then(function(response) {
+                            return response.json();
+                        }).then(function(data) {
+                            messageToTop("PASS Has storage access.", data);
+                        }).catch(function(error) {
+                            console.log(error.message);
+                        });
                     else if (!hasAccess && !policyShouldGrantAccess)
-                        top.postMessage("PASS No storage access.", "http://127.0.0.1:8000");
+                        fetch("echo-incoming-cookies-as-json.php", { credentials: "same-origin" }).then(function(response) {
+                            return response.json();
+                        }).then(function(data) {
+                            messageToTop("PASS No storage access.", data);
+                        }).catch(function(error) {
+                            console.log(error.message);
+                        });
                     else
-                        top.postMessage("FAIL " +
+                        messageToTop("FAIL " +
                             (hasAccess ? "Storage " : "No storage ") +
                             "access when there should " +
                             (policyShouldGrantAccess ? "" : "not ") +
-                            "have been access.", "http://127.0.0.1:8000");
+                            "have been access.");
                 },
                 function (reason) {
-                    top.postMessage("FAIL document.hasStorageAccess() was rejected. Reason: " + reason, "http://127.0.0.1:8000");
+                    messageToTop("FAIL document.hasStorageAccess() was rejected. Reason: " + reason);
                 }
             );
         }

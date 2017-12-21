@@ -333,6 +333,15 @@ void NetworkStorageSession::setStorageAccessGranted(const String& resourceDomain
     }
 }
 
+void NetworkStorageSession::removeStorageAccess(uint64_t frameID, uint64_t pageID)
+{
+    auto iteration = m_framesGrantedStorageAccess.find(frameID);
+    if (iteration == m_framesGrantedStorageAccess.end())
+        return;
+    
+    iteration->value.remove(pageID);
+}
+    
 #endif // HAVE(CFNETWORK_STORAGE_PARTITIONING)
 
 #if !PLATFORM(COCOA)

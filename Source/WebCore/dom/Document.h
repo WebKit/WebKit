@@ -1699,6 +1699,11 @@ private:
 
     void didLogMessage(const WTFLogChannel&, WTFLogLevel, Vector<JSONLogValue>&&) final;
 
+#if HAVE(CFNETWORK_STORAGE_PARTITIONING)
+    bool hasFrameSpecificStorageAccess() const;
+    void setHasFrameSpecificStorageAccess(bool);
+#endif
+
 #if ENABLE(DEVICE_ORIENTATION) && PLATFORM(IOS)
     std::unique_ptr<DeviceMotionClient> m_deviceMotionClient;
     std::unique_ptr<DeviceMotionController> m_deviceMotionController;

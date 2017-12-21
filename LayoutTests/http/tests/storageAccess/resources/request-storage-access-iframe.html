@@ -5,11 +5,42 @@
         const userShouldGrantAccess = hashArguments[0] === "userShouldGrantAccess";
         const userShouldBeConsulted = hashArguments[1] === "userShouldBeConsulted";
         const policyShouldGrantAccess = hashArguments[2] === "policyShouldGrantAccess";
+        const isSameOriginIframe = hashArguments[3] === "isSameOriginIframe";
+        const originIsNull = hashArguments[4] === "originIsNull";
 
         if (internals && userShouldGrantAccess)
                 internals.setUserGrantsStorageAccess(true);
 
         var requestStorageAccessResolved;
+
+        function messageToTop(messagePrefix, fetchData) {
+            if (originIsNull) {
+                top.postMessage(messagePrefix, "http://127.0.0.1:8000");
+            } else {
+                top.postMessage(messagePrefix + " document.cookie == " + document.cookie +
+                    (fetchData ? ", cookies seen server-side == " + JSON.stringify(fetchData) : ""), "http://127.0.0.1:8000");
+            }
+        }
+
+        window.addEventListener("message", receiveMessage, false);
+
+        function receiveMessage(event) {
+            if (event.origin === "http://127.0.0.1:8000") {
+                if (event.data.indexOf("reportBackCookies") !== -1) {
+                    fetch("echo-incoming-cookies-as-json.php", { credentials: "same-origin" }).then(function(response) {
+                        return response.json();
+                    }).then(function(data) {
+                        messageToTop("PASS.", data);
+                    }).catch(function(error) {
+                        console.log(error.message);
+                    });
+                } else {
+                    messageToTop("FAIL Unknown request.");
+                }
+            } else {
+                messageToTop("Fail Received a message from an unexpected origin: " + event.origin);
+            }
+        }
 
         function makeRequestWithUserGesture() {
             var promise = document.requestStorageAccess();
@@ -32,23 +63,40 @@
                     if (requestStorageAccessResolved
                         && hasAccess
                         && (userShouldGrantAccess || !userShouldBeConsulted)
-                        && policyShouldGrantAccess)
-                        top.postMessage("PASS Storage access was granted.", "http://127.0.0.1:8000");
-                    else if (!hasAccess
+                        && policyShouldGrantAccess) {
+                        fetch("echo-incoming-cookies-as-json.php", { credentials: "same-origin" }).then(function(response) {
+                            return response.json();
+                        }).then(function(data) {
+                            messageToTop("PASS Storage access was granted.", data);
+                        }).catch(function(error) {
+                            console.log(error.message);
+                        });
+
+                    } else if (!hasAccess
                         && !requestStorageAccessResolved
-                        && ((!userShouldGrantAccess && userShouldBeConsulted) || !policyShouldGrantAccess))
-                        top.postMessage("PASS Storage access was denied.", "http://127.0.0.1:8000");
-                    else
-                        top.postMessage("FAIL Storage access was " +
+                        && ((!userShouldGrantAccess && userShouldBeConsulted) || !policyShouldGrantAccess)) {
+                        if (originIsNull) {
+                            messageToTop("PASS Storage access was denied for origin null.");
+                        } else {
+                            fetch("echo-incoming-cookies-as-json.php", { credentials: "same-origin" }).then(function(response) {
+                                return response.json();
+                            }).then(function(data) {
+                                messageToTop("PASS Storage access was denied.", data);
+                            }).catch(function(error) {
+                                console.log(error.message);
+                            });
+                        }
+                    } else
+                        messageToTop("FAIL Storage access was " +
                             (hasAccess ? "" : "not ") +
                             "granted and requestStorageAccessResolved was " +
                             (requestStorageAccessResolved ? "" : "not ") +
                             "granted but should " +
                             (userShouldGrantAccess && policyShouldGrantAccess ? "" : "not ") +
-                            "have been granted.", "http://127.0.0.1:8000");
+                            "have been granted.");
                 },
                 function (reason) {
-                    top.postMessage("FAIL document.hasStorageAccess() was rejected. Reason: " + reason, "http://127.0.0.1:8000");
+                    messageToTop("FAIL document.hasStorageAccess() was rejected. Reason: " + reason);
                 }
             );
         }

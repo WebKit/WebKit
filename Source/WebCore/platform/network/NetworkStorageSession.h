@@ -100,6 +100,7 @@ public:
     WEBCORE_EXPORT void removePrevalentDomains(const Vector<String>& domains);
     WEBCORE_EXPORT bool isStorageAccessGranted(const String& resourceDomain, const String& firstPartyDomain, uint64_t frameID, uint64_t pageID) const;
     WEBCORE_EXPORT void setStorageAccessGranted(const String& resourceDomain, const String& firstPartyDomain, uint64_t frameID, uint64_t pageID, bool value);
+    WEBCORE_EXPORT void removeStorageAccess(uint64_t frameID, uint64_t pageID);
 #endif
 #elif USE(SOUP)
     NetworkStorageSession(PAL::SessionID, std::unique_ptr<SoupNetworkSession>&&);

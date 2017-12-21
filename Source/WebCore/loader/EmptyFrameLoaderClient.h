@@ -200,6 +200,10 @@ class WEBCORE_EXPORT EmptyFrameLoaderClient : public FrameLoaderClient {
 #if USE(QUICK_LOOK)
     RefPtr<PreviewLoaderClient> createPreviewLoaderClient(const String&, const String&) final { return nullptr; }
 #endif
+#if HAVE(CFNETWORK_STORAGE_PARTITIONING)
+    bool hasFrameSpecificStorageAccess() final { return false; }
+    void setHasFrameSpecificStorageAccess(bool) final { }
+#endif
 };
 
 }

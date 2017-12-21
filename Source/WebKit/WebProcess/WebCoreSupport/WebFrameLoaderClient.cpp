@@ -166,6 +166,13 @@ void WebFrameLoaderClient::detachedFromParent2()
     if (!webPage)
         return;
 
+#if HAVE(CFNETWORK_STORAGE_PARTITIONING)
+    if (m_hasFrameSpecificStorageAccess) {
+        webPage->send(Messages::WebPageProxy::RemoveStorageAccess(frameID().value(), pageID().value()));
+        m_hasFrameSpecificStorageAccess = false;
+    }
+#endif
+
     RefPtr<API::Object> userData;
 
     // Notify the bundle client.
@@ -370,6 +377,23 @@ void WebFrameLoaderClient::dispatchDidChangeMainDocument()
         return;
 
     webPage->send(Messages::WebPageProxy::DidChangeMainDocument(m_frame->frameID()));
+}
+
+void WebFrameLoaderClient::dispatchWillChangeDocument()
+{
+#if HAVE(CFNETWORK_STORAGE_PARTITIONING)
+    if (m_frame->isMainFrame())
+        return;
+
+    WebPage* webPage = m_frame->page();
+    if (!webPage)
+        return;
+
+    if (m_hasFrameSpecificStorageAccess) {
+        webPage->send(Messages::WebPageProxy::RemoveStorageAccess(frameID().value(), pageID().value()));
+        m_hasFrameSpecificStorageAccess = false;
+    }
+#endif
 }
 
 void WebFrameLoaderClient::dispatchDidPushStateWithinPage()

@@ -488,7 +488,9 @@ messages -> WebPage LegacyReceiver {
     URLSchemeTaskDidReceiveData(uint64_t handlerIdentifier, uint64_t taskIdentifier, IPC::DataReference data)
     URLSchemeTaskDidComplete(uint64_t handlerIdentifier, uint64_t taskIdentifier, WebCore::ResourceError error)
 
+#if HAVE(CFNETWORK_STORAGE_PARTITIONING)
     StorageAccessResponse(bool wasGranted, uint64_t contextId)
+#endif
 
 #if ENABLE(ATTACHMENT_ELEMENT)
     InsertAttachment(String identifier, struct WebCore::AttachmentDisplayOptions options, String filename, std::optional<String> contentType, IPC::DataReference data, WebKit::CallbackID callbackID)

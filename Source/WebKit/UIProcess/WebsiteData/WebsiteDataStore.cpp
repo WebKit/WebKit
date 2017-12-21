@@ -1193,6 +1193,32 @@ void WebsiteDataStore::removePrevalentDomains(const Vector<String>& domains)
     for (auto& processPool : processPools())
         processPool->sendToNetworkingProcess(Messages::NetworkProcess::RemovePrevalentDomains(m_sessionID, domains));
 }
+
+void WebsiteDataStore::hasStorageAccess(String&& subFrameHost, String&& topFrameHost, uint64_t frameID, uint64_t pageID, WTF::CompletionHandler<void (bool)>&& callback)
+{
+    if (!resourceLoadStatisticsEnabled()) {
+        callback(false);
+        return;
+    }
+    
+    m_resourceLoadStatistics->hasStorageAccess(WTFMove(subFrameHost), WTFMove(topFrameHost), frameID, pageID, WTFMove(callback));
+}
+
+void WebsiteDataStore::requestStorageAccess(String&& subFrameHost, String&& topFrameHost, uint64_t frameID, uint64_t pageID, WTF::CompletionHandler<void (bool)>&& callback)
+{
+    if (!resourceLoadStatisticsEnabled()) {
+        callback(false);
+        return;
+    }
+    
+    m_resourceLoadStatistics->requestStorageAccess(WTFMove(subFrameHost), WTFMove(topFrameHost), frameID, pageID, WTFMove(callback));
+}
+
+void WebsiteDataStore::removeStorageAccess(uint64_t frameID, uint64_t pageID)
+{
+    for (auto& processPool : processPools())
+        processPool->networkProcess()->removeStorageAccess(m_sessionID, frameID, pageID);
+}
 #endif
 
 void WebsiteDataStore::networkProcessDidCrash()
@@ -1442,26 +1468,6 @@ void WebsiteDataStore::addPendingCookie(const WebCore::Cookie& cookie)
 void WebsiteDataStore::removePendingCookie(const WebCore::Cookie& cookie)
 {
     m_pendingCookies.remove(cookie);
-}
-
-void WebsiteDataStore::hasStorageAccess(String&& subFrameHost, String&& topFrameHost, uint64_t frameID, uint64_t pageID, WTF::CompletionHandler<void (bool)>&& callback)
-{
-    if (!resourceLoadStatisticsEnabled()) {
-        callback(false);
-        return;
-    }
-    
-    m_resourceLoadStatistics->hasStorageAccess(WTFMove(subFrameHost), WTFMove(topFrameHost), frameID, pageID, WTFMove(callback));
-}
-    
-void WebsiteDataStore::requestStorageAccess(String&& subFrameHost, String&& topFrameHost, uint64_t frameID, uint64_t pageID, WTF::CompletionHandler<void (bool)>&& callback)
-{
-    if (!resourceLoadStatisticsEnabled()) {
-        callback(false);
-        return;
-    }
-
-    m_resourceLoadStatistics->requestStorageAccess(WTFMove(subFrameHost), WTFMove(topFrameHost), frameID, pageID, WTFMove(callback));
 }
 
 #if !PLATFORM(COCOA)

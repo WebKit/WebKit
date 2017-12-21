@@ -1,3 +1,46 @@
+2017-12-21  John Wilander  <wilander@apple.com>
+
+        Storage Access API: Make DocumentLoader::willSendRequest() and WebFrameLoaderClient::detachedFromParent2() tell the network process to get rid of any sub frame access entries
+        https://bugs.webkit.org/show_bug.cgi?id=180728
+        <rdar://problem/36009288>
+
+        Reviewed by Youenn Fablet.
+
+        This change calls the network process to clear any storage access
+        entries when a subframe navigates or is detached.
+
+        * http/tests/storageAccess/has-storage-access-from-prevalent-domain-with-non-recent-user-interaction-expected.txt:
+        * http/tests/storageAccess/has-storage-access-from-prevalent-domain-with-recent-user-interaction-expected.txt:
+        * http/tests/storageAccess/request-and-deny-storage-access-cross-origin-iframe-expected.txt:
+        * http/tests/storageAccess/request-and-deny-storage-access-cross-origin-sandboxed-iframe-expected.txt:
+        * http/tests/storageAccess/request-and-grant-access-then-detach-should-not-have-access-expected.txt: Added.
+        * http/tests/storageAccess/request-and-grant-access-then-detach-should-not-have-access.html: Added.
+        * http/tests/storageAccess/request-and-grant-access-then-navigate-should-not-have-access-expected.txt: Added.
+        * http/tests/storageAccess/request-and-grant-access-then-navigate-should-not-have-access.html: Added.
+        * http/tests/storageAccess/request-and-grant-storage-access-cross-origin-non-sandboxed-iframe-expected.txt:
+        * http/tests/storageAccess/request-and-grant-storage-access-cross-origin-sandboxed-iframe-expected.txt:
+        * http/tests/storageAccess/request-and-grant-storage-access-cross-origin-sandboxed-iframe-from-prevalent-domain-with-non-recent-user-interaction-and-try-access-from-right-frame-expected.txt:
+        * http/tests/storageAccess/request-and-grant-storage-access-cross-origin-sandboxed-iframe-from-prevalent-domain-with-non-recent-user-interaction-and-try-access-from-right-frame.html:
+        * http/tests/storageAccess/request-and-grant-storage-access-cross-origin-sandboxed-iframe-from-prevalent-domain-with-non-recent-user-interaction-but-try-access-from-wrong-frame-expected.txt:
+        * http/tests/storageAccess/request-and-grant-storage-access-cross-origin-sandboxed-iframe-from-prevalent-domain-with-recent-user-interaction-expected.txt:
+        * http/tests/storageAccess/request-and-grant-storage-access-cross-origin-sandboxed-iframe-from-prevalent-domain-without-user-interaction-expected.txt:
+        * http/tests/storageAccess/request-and-grant-storage-access-cross-origin-sandboxed-nested-iframe-expected.txt:
+        * http/tests/storageAccess/request-storage-access-cross-origin-sandboxed-iframe-with-unique-origin-expected.txt:
+        * http/tests/storageAccess/request-storage-access-cross-origin-sandboxed-iframe-with-unique-origin.html:
+        * http/tests/storageAccess/request-storage-access-cross-origin-sandboxed-iframe-without-allow-token-expected.txt:
+        * http/tests/storageAccess/request-storage-access-same-origin-iframe-expected.txt:
+        * http/tests/storageAccess/request-storage-access-same-origin-sandboxed-iframe-expected.txt:
+        * http/tests/storageAccess/request-storage-access-same-origin-sandboxed-iframe-without-allow-token-expected.txt:
+        * http/tests/storageAccess/resources/echo-incoming-cookies-as-json.php: Added.
+        * http/tests/storageAccess/resources/has-storage-access-iframe.html:
+        * http/tests/storageAccess/resources/request-storage-access-iframe.html:
+        * http/tests/storageAccess/resources/self-navigating-frame-after-granted-access.html: Added.
+        * platform/wk2/TestExpectations:
+            Removed http/tests/storageAccess/request-storage-access-top-frame.html
+            because it now only passes on High Sierra+.
+        * platform/mac-wk2/TestExpectations:
+            Added the new tests as [ Pass ] on High Sierra+.
+
 2017-12-21  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Complete support for keyframe animations

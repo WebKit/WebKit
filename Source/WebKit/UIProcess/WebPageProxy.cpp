@@ -7182,6 +7182,7 @@ void WebPageProxy::stopURLSchemeTask(uint64_t handlerIdentifier, uint64_t taskId
     iterator->value->stopTask(*this, taskIdentifier);
 }
 
+#if HAVE(CFNETWORK_STORAGE_PARTITIONING)
 void WebPageProxy::hasStorageAccess(String&& subFrameHost, String&& topFrameHost, uint64_t frameID, uint64_t pageID, uint64_t webProcessContextId)
 {
     m_websiteDataStore->hasStorageAccess(WTFMove(subFrameHost), WTFMove(topFrameHost), frameID, pageID, [this, webProcessContextId] (bool hasAccess) {
@@ -7196,6 +7197,13 @@ void WebPageProxy::requestStorageAccess(String&& subFrameHost, String&& topFrame
         m_process->send(Messages::WebPage::StorageAccessResponse(wasGranted, webProcessContextId), m_pageID);
     });
 }
+
+void WebPageProxy::removeStorageAccess(uint64_t frameID, uint64_t pageID)
+{
+    ASSERT(pageID == m_pageID);
+    m_websiteDataStore->removeStorageAccess(frameID, pageID);
+}
+#endif
 
 #if PLATFORM(COCOA)
 void WebPageProxy::touchBarMenuDataChanged(const TouchBarMenuData& touchBarMenuData)

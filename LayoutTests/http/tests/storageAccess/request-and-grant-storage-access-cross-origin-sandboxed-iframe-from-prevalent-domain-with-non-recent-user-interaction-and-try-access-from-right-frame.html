@@ -114,7 +114,7 @@
                 case "#step7":
                     document.location.hash = "step8";
                     // Check that the first-party cookie gets sent for localhost under 127.0.0.1 since we're opening in the frame that was granted access.
-                    document.getElementById("TheIframeThatRequestsStorageAccess").src = thirdPartyBaseUrl + subPathToGetCookies + "&message=After access granted, should receive first-party cookie.";
+                    document.getElementById("TheIframeThatRequestsStorageAccess").src = thirdPartyBaseUrl + subPathToGetCookies + "&message=After the top frame navigates the sub frame, the sub frame should no longer have access to first-party cookies.";
                     break;
                 case "#step8":
                     setEnableFeature(false);

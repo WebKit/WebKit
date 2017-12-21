@@ -7432,7 +7432,8 @@ void Document::hasStorageAccess(Ref<DeferredPromise>&& promise)
 {
     ASSERT(settings().storageAccessAPIEnabled());
 
-    if (m_hasFrameSpecificStorageAccess) {
+#if HAVE(CFNETWORK_STORAGE_PARTITIONING)
+    if (hasFrameSpecificStorageAccess()) {
         promise->resolve<IDLBoolean>(true);
         return;
     }
@@ -7454,7 +7455,6 @@ void Document::hasStorageAccess(Ref<DeferredPromise>&& promise)
         return;
     }
 
-    ASSERT(m_frame);
     auto frameID = m_frame->loader().client().frameID();
     auto pageID = m_frame->loader().client().pageID();
     if (!frameID || !pageID) {
@@ -7474,6 +7474,7 @@ void Document::hasStorageAccess(Ref<DeferredPromise>&& promise)
         });
         return;
     }
+#endif
 
     promise->reject();
 }
@@ -7482,8 +7483,11 @@ void Document::requestStorageAccess(Ref<DeferredPromise>&& promise)
 {
     ASSERT(settings().storageAccessAPIEnabled());
     
-    if (m_hasFrameSpecificStorageAccess)
+#if HAVE(CFNETWORK_STORAGE_PARTITIONING)
+    if (hasFrameSpecificStorageAccess()) {
         promise->resolve();
+        return;
+    }
     
     if (!m_frame || securityOrigin().isUnique()) {
         promise->reject();
@@ -7546,16 +7550,29 @@ void Document::requestStorageAccess(Ref<DeferredPromise>&& promise)
                 return;
 
             if (wasGranted) {
-                document->m_hasFrameSpecificStorageAccess = true;
+                document->setHasFrameSpecificStorageAccess(true);
                 promise->resolve();
             } else
                 promise->reject();
         });
         return;
     }
-    
+#endif
+
     promise->reject();
 }
+
+#if HAVE(CFNETWORK_STORAGE_PARTITIONING)
+bool Document::hasFrameSpecificStorageAccess() const
+{
+    return m_frame->loader().client().hasFrameSpecificStorageAccess();
+}
+    
+void Document::setHasFrameSpecificStorageAccess(bool value)
+{
+    m_frame->loader().client().setHasFrameSpecificStorageAccess(value);
+}
+#endif
 
 void Document::setConsoleMessageListener(RefPtr<StringCallback>&& listener)
 {

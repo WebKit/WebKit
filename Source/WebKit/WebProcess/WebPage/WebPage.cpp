@@ -5798,6 +5798,7 @@ void WebPage::urlSchemeTaskDidComplete(uint64_t handlerIdentifier, uint64_t task
     handler->taskDidComplete(taskIdentifier, error);
 }
 
+#if HAVE(CFNETWORK_STORAGE_PARTITIONING)
 static uint64_t nextRequestStorageAccessContextId()
 {
     static uint64_t nextContextId = 0;
@@ -5832,6 +5833,7 @@ void WebPage::storageAccessResponse(bool wasGranted, uint64_t contextId)
     ASSERT(callback);
     callback(wasGranted);
 }
+#endif
 
 void WebPage::invokeSharedBufferCallback(RefPtr<SharedBuffer>&& buffer, CallbackID callbackID)
 {
