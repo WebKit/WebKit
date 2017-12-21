@@ -1,3 +1,14 @@
+2017-12-21  Jeremy Jones  <jeremyj@apple.com>
+
+        Second Build fix after r226223
+        https://bugs.webkit.org/show_bug.cgi?id=181089
+
+        Unreviewed.
+
+        * UIProcess/Cocoa/VideoFullscreenManagerProxy.mm:
+        (WebKit::VideoFullscreenManagerProxy::setInlineRect):
+        (WebKit::VideoFullscreenManagerProxy::setHasVideoContentLayer):
+
 2017-12-21  Jer Noble  <jer.noble@apple.com>
 
         Add initial DOM support for Media Capabilities

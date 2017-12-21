@@ -436,29 +436,31 @@ void VideoFullscreenManagerProxy::exitFullscreenWithoutAnimationToMode(uint64_t 
 }
 #endif
 
-#if !PLATFORM(IOS) || !ENABLE(FULLSCREEN_API)
-NO_RETURN_DUE_TO_ASSERT
-#endif
+#if PLATFORM(IOS) && ENABLE(FULLSCREEN_API)
+
 void VideoFullscreenManagerProxy::setInlineRect(uint64_t contextId, const WebCore::IntRect& inlineRect, bool visible)
 {
-#if PLATFORM(IOS) && ENABLE(FULLSCREEN_API)
     ensureInterface(contextId).setInlineRect(inlineRect, visible);
-#else
-    ASSERT_NOT_REACHED();
-#endif
 }
 
-#if !PLATFORM(IOS) || !ENABLE(FULLSCREEN_API)
-NO_RETURN_DUE_TO_ASSERT
-#endif
 void VideoFullscreenManagerProxy::setHasVideoContentLayer(uint64_t contextId, bool value)
 {
-#if PLATFORM(IOS) && ENABLE(FULLSCREEN_API)
     ensureInterface(contextId).setHasVideoContentLayer(value);
-#else
-    ASSERT_NOT_REACHED();
-#endif
 }
+
+#else
+
+NO_RETURN_DUE_TO_ASSERT void VideoFullscreenManagerProxy::setInlineRect(uint64_t, const WebCore::IntRect&, bool)
+{
+    ASSERT_NOT_REACHED();
+}
+
+NO_RETURN_DUE_TO_ASSERT void VideoFullscreenManagerProxy::setHasVideoContentLayer(uint64_t, bool)
+{
+    ASSERT_NOT_REACHED();
+}
+
+#endif
 
 void VideoFullscreenManagerProxy::cleanupFullscreen(uint64_t contextId)
 {
