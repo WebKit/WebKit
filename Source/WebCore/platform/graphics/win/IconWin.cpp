@@ -26,6 +26,7 @@
 #include "LocalWindowsContext.h"
 #include <windows.h>
 #include <wtf/text/WTFString.h>
+#include <wtf/text/win/WCharStringExtras.h>
 
 namespace WebCore {
 
@@ -53,7 +54,7 @@ RefPtr<Icon> Icon::createIconForFiles(const Vector<String>& filenames)
         memset(&sfi, 0, sizeof(sfi));
 
         String tmpFilename = filenames[0];
-        if (!SHGetFileInfo(tmpFilename.charactersWithNullTermination().data(), 0, &sfi, sizeof(sfi), SHGFI_ICON | SHGFI_SHELLICONSIZE | SHGFI_SMALLICON))
+        if (!SHGetFileInfo(stringToNullTerminatedWChar(tmpFilename).data(), 0, &sfi, sizeof(sfi), SHGFI_ICON | SHGFI_SHELLICONSIZE | SHGFI_SMALLICON))
             return 0;
 
         return adoptRef(new Icon(sfi.hIcon));

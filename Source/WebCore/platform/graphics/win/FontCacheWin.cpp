@@ -39,6 +39,7 @@
 #include <wtf/text/CString.h>
 #include <wtf/text/StringHash.h>
 #include <wtf/text/StringView.h>
+#include <wtf/text/win/WCharStringExtras.h>
 #include <wtf/win/GDIObject.h>
 
 #if USE(CG)
@@ -113,7 +114,7 @@ WEBCORE_EXPORT void appendLinkedFonts(WCHAR* linkedFonts, unsigned length, Vecto
         unsigned j = i;
         while (j < length && linkedFonts[j])
             j++;
-        result->append(String(linkedFonts + i, j - i));
+        result->append(wcharToString(linkedFonts + i, j - i));
         i = j + 1;
     }
 }
@@ -132,14 +133,14 @@ static const Vector<String>* getLinkedFonts(String& family)
         return result;
 
     DWORD linkedFontsBufferSize = 0;
-    if (::RegQueryValueEx(fontLinkKey, family.charactersWithNullTermination().data(), 0, nullptr, nullptr, &linkedFontsBufferSize) == ERROR_FILE_NOT_FOUND) {
+    if (::RegQueryValueEx(fontLinkKey, stringToNullTerminatedWChar(family).data(), 0, nullptr, nullptr, &linkedFontsBufferSize) == ERROR_FILE_NOT_FOUND) {
         WTFLogAlways("The font link key %s does not exist in the registry.", family.utf8().data());
         return result;
     }
 
     static const constexpr unsigned InitialBufferSize { 256 / sizeof(WCHAR) };
     Vector<WCHAR, InitialBufferSize> linkedFonts(roundUpToMultipleOf<sizeof(WCHAR)>(linkedFontsBufferSize) / sizeof(WCHAR));
-    if (::RegQueryValueEx(fontLinkKey, family.charactersWithNullTermination().data(), 0, nullptr, reinterpret_cast<BYTE*>(linkedFonts.data()), &linkedFontsBufferSize) == ERROR_SUCCESS) {
+    if (::RegQueryValueEx(fontLinkKey, stringToNullTerminatedWChar(family).data(), 0, nullptr, reinterpret_cast<BYTE*>(linkedFonts.data()), &linkedFontsBufferSize) == ERROR_SUCCESS) {
         unsigned length = linkedFontsBufferSize / sizeof(WCHAR);
         appendLinkedFonts(linkedFonts.data(), length, result);
     }
@@ -286,7 +287,7 @@ RefPtr<Font> FontCache::systemFallbackForCharacters(const FontDescription& descr
         SelectObject(hdc, hfont);
         WCHAR name[LF_FACESIZE];
         GetTextFace(hdc, LF_FACESIZE, name);
-        familyName = name;
+        familyName = nullTerminatedWCharToString(name);
 
         if (containsCharacter || currentFontContainsCharacter(hdc, character))
             break;
@@ -331,7 +332,7 @@ Vector<String> FontCache::systemFontFamilies()
 
 RefPtr<Font> FontCache::fontFromDescriptionAndLogFont(const FontDescription& fontDescription, const LOGFONT& font, AtomicString& outFontFamilyName)
 {
-    AtomicString familyName = String(font.lfFaceName, wcsnlen(font.lfFaceName, LF_FACESIZE));
+    AtomicString familyName = wcharToString(font.lfFaceName, wcsnlen(font.lfFaceName, LF_FACESIZE));
     RefPtr<Font> fontData = fontForFamily(fontDescription, familyName);
     if (fontData)
         outFontFamilyName = familyName;

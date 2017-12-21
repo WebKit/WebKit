@@ -51,6 +51,7 @@
 #include <wtf/WindowsExtras.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringView.h>
+#include <wtf/text/win/WCharStringExtras.h>
 #include <wtf/win/GDIObject.h>
 
 namespace WebCore {
@@ -339,7 +340,7 @@ void Pasteboard::read(PasteboardFileReader& reader)
         for (UINT i = 0; i < fileCount; i++) {
             if (!DragQueryFileW(hdrop, i, filename, WTF_ARRAY_LENGTH(filename)))
                 continue;
-            reader.readFilename(filename);
+            reader.readFilename(nullTerminatedWCharToString(filename));
         }
 
         GlobalUnlock(medium.hGlobal);
@@ -959,7 +960,7 @@ static HGLOBAL createGlobalHDropContent(const URL& url, String& fileName, Shared
         // windows does not enjoy a leading slash on paths
         if (localPath[0] == '/')
             localPath = localPath.substring(1);
-        const Vector<UChar>& localPathWide = localPath.charactersWithNullTermination();
+        auto localPathWide = stringToNullTerminatedWChar(localPath);
         LPCWSTR localPathStr = localPathWide.data();
         if (localPathStr && wcslen(localPathStr) + 1 < MAX_PATH)
             wcscpy_s(filePath, MAX_PATH, localPathStr);
@@ -970,7 +971,7 @@ static HGLOBAL createGlobalHDropContent(const URL& url, String& fileName, Shared
         WCHAR extension[MAX_PATH];
         if (!::GetTempPath(WTF_ARRAY_LENGTH(tempPath), tempPath))
             return 0;
-        if (!::PathAppend(tempPath, fileName.charactersWithNullTermination().data()))
+        if (!::PathAppend(tempPath, stringToNullTerminatedWChar(fileName).data()))
             return 0;
         LPCWSTR foundExtension = ::PathFindExtension(tempPath);
         if (foundExtension) {

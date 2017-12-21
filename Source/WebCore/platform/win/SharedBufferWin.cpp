@@ -30,6 +30,7 @@
 #include "config.h"
 #include "SharedBuffer.h"
 #include <wtf/text/CString.h>
+#include <wtf/text/win/WCharStringExtras.h>
 
 namespace WebCore {
 
@@ -39,7 +40,7 @@ RefPtr<SharedBuffer> SharedBuffer::createFromReadingFile(const String& filePath)
         return nullptr;
 
     String nullifiedPath = filePath;
-    HANDLE fileHandle = CreateFileW(nullifiedPath.charactersWithNullTermination().data(), GENERIC_READ, FILE_SHARE_READ, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
+    HANDLE fileHandle = CreateFileW(stringToNullTerminatedWChar(nullifiedPath).data(), GENERIC_READ, FILE_SHARE_READ, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
     if (fileHandle == INVALID_HANDLE_VALUE) {
         LOG_ERROR("Failed to open file %s to create shared buffer, GetLastError() = %u", filePath.ascii().data(), GetLastError());
         return nullptr;

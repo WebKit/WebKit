@@ -22,6 +22,7 @@
 
 #include <wtf/text/Base64.h>
 #include <wtf/text/CString.h>
+#include <wtf/text/win/WCharStringExtras.h>
 
 #include <windows.h>
 #include <wincrypt.h>
@@ -67,7 +68,7 @@ String WebCore::signedPublicKeyAndChallengeString(unsigned index, const String& 
         String localChallenge = challenge;
 
         // Windows API won't write to our buffer, although it's not declared with const.
-        const Vector<UChar>& localChallengeWide = localChallenge.charactersWithNullTermination();
+        auto localChallengeWide = stringToNullTerminatedWChar(localChallenge);
         requestInfo.pwszChallengeString = const_cast<wchar_t*>(localChallengeWide.data());
 
         CRYPT_ALGORITHM_IDENTIFIER signAlgo = { 0 };

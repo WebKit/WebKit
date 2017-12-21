@@ -40,6 +40,7 @@
 #include "TextRun.h"
 #include "WebCoreTextRenderer.h"
 #include <wtf/RetainPtr.h>
+#include <wtf/text/win/WCharStringExtras.h>
 #include <wtf/win/GDIObject.h>
 
 #include <windows.h>
@@ -74,8 +75,7 @@ DragImageRef createDragImageIconForCachedImageFilename(const String& filename)
 {
     SHFILEINFO shfi = {0};
     String fname = filename;
-    if (FAILED(SHGetFileInfo(static_cast<LPCWSTR>(fname.charactersWithNullTermination().data()), FILE_ATTRIBUTE_NORMAL,
-        &shfi, sizeof(shfi), SHGFI_ICON | SHGFI_USEFILEATTRIBUTES)))
+    if (FAILED(SHGetFileInfo(stringToNullTerminatedWChar(fname).data(), FILE_ATTRIBUTE_NORMAL, &shfi, sizeof(shfi), SHGFI_ICON | SHGFI_USEFILEATTRIBUTES)))
         return 0;
 
     ICONINFO iconInfo;
@@ -112,7 +112,7 @@ static FontCascade dragLabelFont(int size, bool bold, FontRenderingMode renderin
 
     FontCascadeDescription description;
     description.setWeight(bold ? boldWeightValue() : normalWeightValue());
-    description.setOneFamily(metrics.lfSmCaptionFont.lfFaceName);
+    description.setOneFamily(nullTerminatedWCharToString(metrics.lfSmCaptionFont.lfFaceName));
     description.setSpecifiedSize((float)size);
     description.setComputedSize((float)size);
     description.setRenderingMode(renderingMode);

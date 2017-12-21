@@ -37,7 +37,7 @@
 #include <wtf/Vector.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
-
+#include <wtf/text/win/WCharStringExtras.h>
 
 #if USE(CF)
 #include <CoreFoundation/CoreFoundation.h>
@@ -131,7 +131,7 @@ static bool getWebLocData(const DragDataMap* dataObject, String& url, String* ti
     if (!dataObject->contains(cfHDropFormat()->cfFormat))
         return false;
 
-    wcscpy(filename, dataObject->get(cfHDropFormat()->cfFormat)[0].charactersWithNullTermination().data());
+    wcscpy(filename, stringToNullTerminatedWChar(dataObject->get(cfHDropFormat()->cfFormat)[0]).data());
     if (_wcsicmp(PathFindExtensionW(filename), L".url"))
         return false;    
 
@@ -140,10 +140,10 @@ static bool getWebLocData(const DragDataMap* dataObject, String& url, String* ti
 
     if (title) {
         PathRemoveExtension(filename);
-        *title = filename;
+        *title = nullTerminatedWCharToString(filename);
     }
     
-    url = urlBuffer;
+    url = nullTerminatedWCharToString(urlBuffer);
     return true;
 #else
     return false;
@@ -180,7 +180,7 @@ HGLOBAL createGlobalData(const URL& url, const String& title)
 
     if (cbData) {
         PWSTR buffer = static_cast<PWSTR>(GlobalLock(cbData));
-        _snwprintf(buffer, size, L"%s\n%s", mutableURL.charactersWithNullTermination().data(), mutableTitle.charactersWithNullTermination().data());
+        _snwprintf(buffer, size, L"%s\n%s", stringToNullTerminatedWChar(mutableURL).data(), stringToNullTerminatedWChar(mutableTitle).data());
         GlobalUnlock(cbData);
     }
     return cbData;
@@ -397,7 +397,7 @@ void getFileDescriptorData(IDataObject* dataObject, int& size, String& pathname)
 
     FILEGROUPDESCRIPTOR* fgd = static_cast<FILEGROUPDESCRIPTOR*>(GlobalLock(store.hGlobal));
     size = fgd->fgd[0].nFileSizeLow;
-    pathname = fgd->fgd[0].cFileName;
+    pathname = nullTerminatedWCharToString(fgd->fgd[0].cFileName);
 
     GlobalUnlock(store.hGlobal);
     ::ReleaseStgMedium(&store);
@@ -520,9 +520,9 @@ String getURL(const DragDataMap* data, DragData::FilenameConversionPolicy filena
     if (!getDataMapItem(data, filenameWFormat(), stringData))
         getDataMapItem(data, filenameFormat(), stringData);
 
-    if (stringData.isEmpty() || (!PathFileExists(stringData.charactersWithNullTermination().data()) && !PathIsUNC(stringData.charactersWithNullTermination().data())))
+    if (stringData.isEmpty() || (!PathFileExists(stringToNullTerminatedWChar(stringData).data()) && !PathIsUNC(stringToNullTerminatedWChar(stringData).data())))
         return url;
-    RetainPtr<CFStringRef> pathAsCFString = adoptCF(CFStringCreateWithCharacters(kCFAllocatorDefault, (const UniChar *)stringData.charactersWithNullTermination().data(), wcslen(stringData.charactersWithNullTermination().data())));
+    RetainPtr<CFStringRef> pathAsCFString = adoptCF(CFStringCreateWithCharacters(kCFAllocatorDefault, (const UniChar *)stringToNullTerminatedWChar(stringData).data(), wcslen(stringToNullTerminatedWChar(stringData).data())));
     if (urlFromPath(pathAsCFString.get(), url) && title)
         *title = url;
 #endif
@@ -737,7 +737,7 @@ void getCFData(IDataObject* data, FORMATETC* format, Vector<String>& dataStrings
     for (UINT i = 0; i < fileCount; i++) {
         if (!DragQueryFileW(hdrop, i, filename, WTF_ARRAY_LENGTH(filename)))
             continue;
-        dataStrings.append(static_cast<UChar*>(filename));
+        dataStrings.append(nullTerminatedWCharToString(filename));
     }
 
     GlobalUnlock(store.hGlobal);
@@ -792,7 +792,7 @@ void setCFData(IDataObject* data, FORMATETC* format, const Vector<String>& dataS
     dropFiles->pFiles = sizeof(DROPFILES);
     dropFiles->fWide = TRUE;
     String filename = dataStrings.first();
-    wcscpy(reinterpret_cast<LPWSTR>(dropFiles + 1), filename.charactersWithNullTermination().data());    
+    wcscpy(reinterpret_cast<LPWSTR>(dropFiles + 1), stringToNullTerminatedWChar(filename).data());
     GlobalUnlock(medium.hGlobal);
     data->SetData(format, &medium, FALSE);
     ::GlobalFree(medium.hGlobal);

@@ -31,6 +31,7 @@
 #include <sys/types.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
+#include <wtf/text/win/WCharStringExtras.h>
 
 namespace WebCore {
 
@@ -60,7 +61,7 @@ bool appendResumeData(const char* resumeBytes, uint32_t resumeLength, const Stri
 
     String nullifiedPath = bundlePath;
     FILE* bundle = 0;
-    if (_wfopen_s(&bundle, nullifiedPath.charactersWithNullTermination().data(), TEXT("ab")) || !bundle) {
+    if (_wfopen_s(&bundle, stringToNullTerminatedWChar(nullifiedPath).data(), TEXT("ab")) || !bundle) {
         LOG_ERROR("Failed to open file %s to append resume data", bundlePath.ascii().data());
         return false;
     }
@@ -99,7 +100,7 @@ bool extractResumeData(const String& bundlePath, Vector<char>& resumeData)
     // Open a handle to the bundle file
     String nullifiedPath = bundlePath;
     FILE* bundle = 0;
-    if (_wfopen_s(&bundle, nullifiedPath.charactersWithNullTermination().data(), TEXT("r+b")) || !bundle) {
+    if (_wfopen_s(&bundle, stringToNullTerminatedWChar(nullifiedPath).data(), TEXT("r+b")) || !bundle) {
         LOG_ERROR("Failed to open file %s to get resume data", bundlePath.ascii().data());
         return false;
     }
