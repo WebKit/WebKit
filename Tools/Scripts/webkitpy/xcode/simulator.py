@@ -410,6 +410,16 @@ class Simulator(object):
             if identifier and runtime.identifier != identifier:
                 continue
             return runtime
+
+        # Allow for a partial version match
+        for runtime in self.runtimes:
+            if version and runtime.version not in version:
+                continue
+            if is_internal_runtime and runtime.is_internal_runtime != is_internal_runtime:
+                continue
+            if identifier and runtime.identifier != identifier:
+                continue
+            return runtime
         return None
 
     def find_device_by_udid(self, udid):
