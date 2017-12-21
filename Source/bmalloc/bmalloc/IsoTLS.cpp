@@ -31,6 +31,8 @@
 #include "IsoTLSInlines.h"
 #include "IsoTLSLayout.h"
 
+#include <stdio.h>
+
 namespace bmalloc {
 
 #if !HAVE_PTHREAD_MACHDEP_H
