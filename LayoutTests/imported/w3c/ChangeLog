@@ -1,3 +1,17 @@
+2017-12-21  Youenn Fablet  <youenn@apple.com>
+
+        LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/fetch-request-xhr.https.html is failing one test
+        https://bugs.webkit.org/show_bug.cgi?id=181072
+
+        Reviewed by Alex Christensen.
+
+        Test loads twice the same resource but the memory cache intercepts the second load and provides the first response.
+        Fixing the test by mandating the response to not be cacheable.
+
+        * web-platform-tests/service-workers/service-worker/fetch-request-xhr.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/resources/fetch-request-xhr-worker.js:
+        (event.respondWith.new.Promise):
+
 2017-12-20  Youenn Fablet  <youenn@apple.com>
 
         Support service worker interception of request with blob body
