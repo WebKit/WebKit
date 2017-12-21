@@ -114,7 +114,7 @@ void WebServiceWorkerFetchTaskClient::didFinishBlobLoading()
 {
     didFinish();
 
-    m_blobLoader = std::nullopt;
+    std::exchange(m_blobLoader, std::nullopt);
 }
 
 void WebServiceWorkerFetchTaskClient::didFail()
