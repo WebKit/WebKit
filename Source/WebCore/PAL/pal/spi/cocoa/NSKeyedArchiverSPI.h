@@ -92,21 +92,21 @@ inline id _Nullable insecurelyUnarchiveObjectFromData(NSData * _Nonnull data)
 #pragma clang diagnostic pop
 }
 
-inline id _Nullable unarchivedObjectOfClassFromData(Class _Nonnull cls, NSData * _Nonnull data)
+inline id _Nullable unarchivedObjectOfClassesFromData(NSSet<Class> * _Nonnull classes, NSData * _Nonnull data)
 {
 #if USE(SECURE_ARCHIVER_API)
 #if !USE(SECURE_ARCHIVER_FOR_ATTRIBUTED_STRING)
     // Remove this code when the fix from <rdar://problem/31376830> is deployed to all relevant build targets.
-    if (cls == [NSAttributedString class])
+    if ([classes containsObject:[NSAttributedString class]])
         return insecurelyUnarchiveObjectFromData(data);
 #endif
     NSError *error;
-    id value = [NSKeyedUnarchiver unarchivedObjectOfClass:cls fromData:data error:&error];
+    id value = [NSKeyedUnarchiver unarchivedObjectOfClasses:classes fromData:data error:&error];
     if (!value)
         LOG_ERROR("Unable to unarchive data: %@", error);
     return value;
 #else
-    UNUSED_PARAM(cls);
+    UNUSED_PARAM(classes);
     return insecurelyUnarchiveObjectFromData(data);
 #endif
 }

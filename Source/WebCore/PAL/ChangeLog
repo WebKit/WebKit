@@ -1,3 +1,16 @@
+2017-12-21  Brent Fulgham  <bfulgham@apple.com>
+
+        Unreviewed test fix after r226224.
+        <rdar://problem/36185975>
+
+        Pasteboard data is more than a dictionary. We have to whitelist NSString
+        and NSArray as well. Change method name to reflect that we take a whitelist
+        of classes that are allowed to be unarchived in the call.
+        
+        * pal/spi/cocoa/NSKeyedArchiverSPI.h:
+        (unarchivedObjectOfClassesFromData):
+        (unarchivedObjectOfClassFromData): Deleted.
+
 2017-12-21  Jeremy Jones  <jeremyj@apple.com>
 
         Update FULLSCREEN_API feature defines.

@@ -265,7 +265,7 @@ void PlatformPasteboard::write(const PasteboardWebContent& content)
         [representationsToRegister addData:content.dataInWebArchiveFormat->createNSData().get() forType:WebArchivePboardType];
 
     if (content.dataInAttributedStringFormat) {
-        NSAttributedString *attributedString = unarchivedObjectOfClassFromData([NSAttributedString class], content.dataInAttributedStringFormat->createNSData().get());
+        NSAttributedString *attributedString = unarchivedObjectOfClassesFromData([NSSet setWithObject:[NSAttributedString class]], content.dataInAttributedStringFormat->createNSData().get());
         if (attributedString)
             [representationsToRegister addRepresentingObject:attributedString];
     }
@@ -380,7 +380,7 @@ Vector<String> PlatformPasteboard::typesSafeForDOMToReadAndWrite(const String& o
         if (!provider.teamData.length)
             continue;
 
-        NSDictionary *teamDataObject = unarchivedObjectOfClassFromData([NSDictionary class], provider.teamData);
+        NSDictionary *teamDataObject = unarchivedObjectOfClassesFromData([NSSet setWithObjects:[NSDictionary class], [NSString class], [NSArray class], nil], provider.teamData);
         if (!teamDataObject)
             continue;
 
