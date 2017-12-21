@@ -26,7 +26,6 @@
 #include "config.h"
 
 #include "RefLogger.h"
-#include <mutex>
 #include <wtf/Poisoned.h>
 
 namespace TestWebKitAPI {

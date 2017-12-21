@@ -1,3 +1,25 @@
+2017-12-21  Mark Lam  <mark.lam@apple.com>
+
+        Add WTF::PoisonedUniquePtr to replace std::unique_ptr when poisoning is desired.
+        https://bugs.webkit.org/show_bug.cgi?id=181062
+        <rdar://problem/36167040>
+
+        Reviewed by Chris Dumez.
+
+        * TestWebKitAPI/CMakeLists.txt:
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+
+        * TestWebKitAPI/Tests/WTF/ConstExprPoisoned.cpp:
+        - Removed an unneeded #include.
+
+        * TestWebKitAPI/Tests/WTF/PoisonedUniquePtr.cpp: Added.
+        (TestWebKitAPI::TEST):
+        (TestWebKitAPI::poisonedPtrFoo):
+        * TestWebKitAPI/Tests/WTF/PoisonedUniquePtrForNonTriviallyDestructibleArrays.cpp: Added.
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WTF/PoisonedUniquePtrForTriviallyDestructibleArrays.cpp: Added.
+        (TestWebKitAPI::TEST):
+
 2017-12-21  Jeremy Jones  <jeremyj@apple.com>
 
         Update FULLSCREEN_API feature defines.

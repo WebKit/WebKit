@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <utility>
 #include <wtf/Assertions.h>
 
 #define ENABLE_POISON 1
@@ -216,7 +217,9 @@ WTF_EXPORT_PRIVATE uintptr_t makePoison();
 inline constexpr uintptr_t makePoison(uint32_t key)
 {
 #if ENABLE(POISON)
-    return static_cast<uintptr_t>(0x80000000 | key) << 32;
+    uintptr_t poison1 = static_cast<uintptr_t>(key) * 6906969069 + 1234567;
+    uintptr_t poison2 = static_cast<uintptr_t>(key) * 8253729 + 2396403;
+    return ((poison1 << 3) ^ (poison2 << 32)) | (static_cast<uintptr_t>(1) << 63);
 #else
     return (void)key, 0;
 #endif

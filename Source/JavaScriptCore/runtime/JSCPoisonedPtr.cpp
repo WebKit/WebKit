@@ -26,6 +26,8 @@
 #include "config.h"
 #include "JSCPoisonedPtr.h"
 
+#include <mutex>
+
 namespace JSC {
 
 uintptr_t g_globalDataPoison;

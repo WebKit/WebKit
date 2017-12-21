@@ -1,3 +1,34 @@
+2017-12-21  Mark Lam  <mark.lam@apple.com>
+
+        Add WTF::PoisonedUniquePtr to replace std::unique_ptr when poisoning is desired.
+        https://bugs.webkit.org/show_bug.cgi?id=181062
+        <rdar://problem/36167040>
+
+        Reviewed by Chris Dumez.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/CMakeLists.txt:
+        * wtf/PointerAsserts.cpp: Copied from Source/WTF/wtf/RefPtr.cpp.
+        - renamed file because we asserts all kinds of pointers in here, not just RefPtr.
+        
+        * wtf/Poisoned.h:
+        - added a missing #include.
+        - make constexpr poison values more scrambled.
+        (WTF::makePoison):
+
+        * wtf/PoisonedUniquePtr.h: Added.
+        (WTF::PoisonedUniquePtr::PoisonedUniquePtr):
+        (WTF::PoisonedUniquePtr::~PoisonedUniquePtr):
+        (WTF::PoisonedUniquePtr::create):
+        (WTF::PoisonedUniquePtr::operator=):
+        (WTF::PoisonedUniquePtr::get const):
+        (WTF::PoisonedUniquePtr::operator[] const):
+        (WTF::PoisonedUniquePtr::clear):
+        (WTF::PoisonedUniquePtr::destroy):
+        (WTF::PoisonedUniquePtr::clearWithoutDestroy):
+        (WTF::makePoisonedUnique):
+        * wtf/RefPtr.cpp: Removed.
+
 2017-12-21  Jeremy Jones  <jeremyj@apple.com>
 
         Element fullscreen interface should display the location

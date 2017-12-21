@@ -24,19 +24,26 @@
  */
 
 #include "config.h"
-#include "RefPtr.h"
 
-#include "Poisoned.h"
+#include <wtf/Poisoned.h>
+#include <wtf/PoisonedUniquePtr.h>
+#include <wtf/RefPtr.h>
 
 namespace WTF {
 
+namespace {
 struct DummyClass { };
+}
 
 static_assert(sizeof(Ref<DummyClass>) == sizeof(DummyClass*), "");
 static_assert(sizeof(PoisonedRef<0xffff, DummyClass>) == sizeof(DummyClass*), "");
 
 static_assert(sizeof(RefPtr<DummyClass>) == sizeof(DummyClass*), "");
 static_assert(sizeof(PoisonedRefPtr<0xffff, DummyClass>) == sizeof(DummyClass*), "");
+
+static_assert(sizeof(PoisonedUniquePtr<0xffff, DummyClass>) == sizeof(DummyClass*), "");
+static_assert(sizeof(PoisonedUniquePtr<0xffff, int[]>) == sizeof(int*), "");
+static_assert(sizeof(PoisonedUniquePtr<0xffff, DummyClass[]>) == sizeof(DummyClass*), "");
 
 } // namespace WTF
 

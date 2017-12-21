@@ -111,6 +111,7 @@ set(WTF_HEADERS
     Platform.h
     PlatformRegisters.h
     Poisoned.h
+    PoisonedUniquePtr.h
     PrintStream.h
     ProcessID.h
     RAMSize.h
@@ -262,6 +263,7 @@ set(WTF_SOURCES
     ParallelHelperPool.cpp
     ParallelJobsGeneric.cpp
     ParkingLot.cpp
+    PointerAsserts.cpp
     Poisoned.cpp
     PrintStream.cpp
     RAMSize.cpp
@@ -269,7 +271,6 @@ set(WTF_SOURCES
     RandomNumber.cpp
     ReadWriteLock.cpp
     RefCountedLeakCounter.cpp
-    RefPtr.cpp
     RunLoop.cpp
     SHA1.cpp
     Seconds.cpp

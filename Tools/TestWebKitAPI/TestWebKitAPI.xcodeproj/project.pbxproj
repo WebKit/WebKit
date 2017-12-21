@@ -762,6 +762,9 @@
 		FE05FAED1FDB510E00093230 /* PoisonedRefPtr.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE05FAEA1FDB510100093230 /* PoisonedRefPtr.cpp */; };
 		FE05FAEF1FE0645B00093230 /* Poisoned.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE05FAEE1FE0643D00093230 /* Poisoned.cpp */; };
 		FE05FAF11FE08CD400093230 /* ConstExprPoisoned.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE05FAF01FE08CCD00093230 /* ConstExprPoisoned.cpp */; };
+		FE05FB061FE84FB700093230 /* PoisonedUniquePtr.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE05FB051FE84FAE00093230 /* PoisonedUniquePtr.cpp */; };
+		FEC8F4E71FE9C9050056FD8A /* PoisonedUniquePtrForTriviallyDestructibleArrays.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FEC8F4E61FE9C8DE0056FD8A /* PoisonedUniquePtrForTriviallyDestructibleArrays.cpp */; };
+		FEC8F4EB1FE9F5AF0056FD8A /* PoisonedUniquePtrForNonTriviallyDestructibleArrays.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FEC8F4EA1FE9F5A70056FD8A /* PoisonedUniquePtrForNonTriviallyDestructibleArrays.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -1869,7 +1872,10 @@
 		FE05FAEB1FDB510200093230 /* PoisonedRef.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PoisonedRef.cpp; sourceTree = "<group>"; };
 		FE05FAEE1FE0643D00093230 /* Poisoned.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Poisoned.cpp; sourceTree = "<group>"; };
 		FE05FAF01FE08CCD00093230 /* ConstExprPoisoned.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ConstExprPoisoned.cpp; sourceTree = "<group>"; };
+		FE05FB051FE84FAE00093230 /* PoisonedUniquePtr.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PoisonedUniquePtr.cpp; sourceTree = "<group>"; };
 		FEB6F74E1B2BA44E009E4922 /* NakedPtr.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NakedPtr.cpp; sourceTree = "<group>"; };
+		FEC8F4E61FE9C8DE0056FD8A /* PoisonedUniquePtrForTriviallyDestructibleArrays.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PoisonedUniquePtrForTriviallyDestructibleArrays.cpp; sourceTree = "<group>"; };
+		FEC8F4EA1FE9F5A70056FD8A /* PoisonedUniquePtrForNonTriviallyDestructibleArrays.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PoisonedUniquePtrForNonTriviallyDestructibleArrays.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -2671,6 +2677,9 @@
 				FE05FAEE1FE0643D00093230 /* Poisoned.cpp */,
 				FE05FAEB1FDB510200093230 /* PoisonedRef.cpp */,
 				FE05FAEA1FDB510100093230 /* PoisonedRefPtr.cpp */,
+				FE05FB051FE84FAE00093230 /* PoisonedUniquePtr.cpp */,
+				FEC8F4EA1FE9F5A70056FD8A /* PoisonedUniquePtrForNonTriviallyDestructibleArrays.cpp */,
+				FEC8F4E61FE9C8DE0056FD8A /* PoisonedUniquePtrForTriviallyDestructibleArrays.cpp */,
 				53EC253F1E96BC80000831B9 /* PriorityQueue.cpp */,
 				0FC6C4CB141027E0005B7F0C /* RedBlackTree.cpp */,
 				93A427AA180DA26400CD24D7 /* Ref.cpp */,
@@ -3211,6 +3220,7 @@
 				7C83DED41D0A590C00FEBCF3 /* HashSet.cpp in Sources */,
 				7C83DEE01D0A590C00FEBCF3 /* IntegerToStringConversion.cpp in Sources */,
 				7A0509411FB9F06400B33FB8 /* JSONValue.cpp in Sources */,
+				FE05FB061FE84FB700093230 /* PoisonedUniquePtr.cpp in Sources */,
 				531C1D8E1DF8EF72006E979F /* LEBDecoder.cpp in Sources */,
 				A57D54F91F3397B400A97AA7 /* LifecycleLogger.cpp in Sources */,
 				93E2C5551FD3204100E1DF6A /* LineEnding.cpp in Sources */,
@@ -3247,6 +3257,7 @@
 				7C83DF321D0A590C00FEBCF3 /* StringBuilder.cpp in Sources */,
 				7CD4C26E1E2C0E6E00929470 /* StringConcatenate.cpp in Sources */,
 				7C83DF361D0A590C00FEBCF3 /* StringHasher.cpp in Sources */,
+				FEC8F4E71FE9C9050056FD8A /* PoisonedUniquePtrForTriviallyDestructibleArrays.cpp in Sources */,
 				7C83DF371D0A590C00FEBCF3 /* StringImpl.cpp in Sources */,
 				7C83DF381D0A590C00FEBCF3 /* StringOperators.cpp in Sources */,
 				7C83DF3A1D0A590C00FEBCF3 /* StringView.cpp in Sources */,
@@ -3255,6 +3266,7 @@
 				9329AA291DE3F81E003ABD07 /* TextBreakIterator.cpp in Sources */,
 				E3DEA8111F0A589000CBC2E8 /* ThreadGroup.cpp in Sources */,
 				E38A0D351FD50CC300E98C8B /* Threading.cpp in Sources */,
+				FEC8F4EB1FE9F5AF0056FD8A /* PoisonedUniquePtrForNonTriviallyDestructibleArrays.cpp in Sources */,
 				5311BD5E1EA9490E00525281 /* ThreadMessages.cpp in Sources */,
 				0F2C20B81DCD545000542D9E /* Time.cpp in Sources */,
 				7C83E03B1D0A602700FEBCF3 /* UtilitiesCocoa.mm in Sources */,
