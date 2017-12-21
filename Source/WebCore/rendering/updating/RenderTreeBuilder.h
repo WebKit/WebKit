@@ -51,13 +51,13 @@ private:
     class List;
     class MultiColumn;
     class Table;
-
-    void rubyRunInsertChild(RenderRubyRun&, RenderPtr<RenderObject> child, RenderObject* beforeChild);
+    class Ruby;
 
     FirstLetter& firstLetterBuilder() { return *m_firstLetterBuilder; }
     List& listBuilder() { return *m_listBuilder; }
     MultiColumn& multiColumnBuilder() { return *m_multiColumnBuilder; }
     Table& tableBuilder() { return *m_tableBuilder; }
+    Ruby& rubyBuilder() { return *m_rubyBuilder; }
 
     RenderView& m_view;
 
@@ -68,6 +68,8 @@ private:
     std::unique_ptr<List> m_listBuilder;
     std::unique_ptr<MultiColumn> m_multiColumnBuilder;
     std::unique_ptr<Table> m_tableBuilder;
+    std::unique_ptr<Ruby> m_rubyBuilder;
 };
 
 }
+
