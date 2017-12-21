@@ -1,3 +1,10 @@
+2017-12-21  Andy Estes  <aestes@apple.com>
+
+        Address additional review feedback after r226182.
+
+        * UIProcess/ApplePay/cocoa/WebPaymentCoordinatorProxyCocoa.mm:
+        (WebKit::toPKPaymentRequest):
+
 2017-12-21  Jeremy Jones  <jeremyj@apple.com>
 
         Update FULLSCREEN_API feature defines.
