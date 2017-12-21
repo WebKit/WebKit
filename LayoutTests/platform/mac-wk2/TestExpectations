@@ -825,7 +825,7 @@ webkit.org/b/177687 http/tests/inspector/network/resource-sizes-memory-cache.htm
 
 webkit.org/b/178472 http/tests/resourceLoadStatistics/prevalent-resource-handled-keydown.html [ Pass ]
 
-webkit.org/b/178536 [ HighSierra ] http/tests/resourceLoadStatistics/clear-in-memory-and-persistent-store-one-hour.html [ Pass Timeout ]
+webkit.org/b/178536 http/tests/resourceLoadStatistics/clear-in-memory-and-persistent-store-one-hour.html [ Skip ]
 
 webkit.org/b/176881 plugins/js-from-destroy.html [ Pass Failure ]
 
