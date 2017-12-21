@@ -29,7 +29,9 @@
 
 namespace WebCore {
 
+class RenderElement;
 class RenderObject;
+class RenderRubyAsBlock;
 class RenderRubyRun;
 class RenderTreeBuilder;
 
@@ -38,6 +40,7 @@ public:
     Ruby(RenderTreeBuilder&);
 
     void insertChild(RenderRubyRun& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild);
+    RenderElement& findOrCreateParentForChild(RenderRubyAsBlock& parent, const RenderObject& child, RenderObject*& beforeChild);
 
 private:
     RenderTreeBuilder& m_builder;

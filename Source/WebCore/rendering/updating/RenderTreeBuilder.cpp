@@ -92,6 +92,11 @@ void RenderTreeBuilder::insertChild(RenderElement& parent, RenderPtr<RenderObjec
         return;
     }
 
+    if (is<RenderRubyAsBlock>(parent)) {
+        insertRecursiveIfNeeded(rubyBuilder().findOrCreateParentForChild(downcast<RenderRubyAsBlock>(parent), *child, beforeChild));
+        return;
+    }
+
     if (is<RenderRubyRun>(parent)) {
         rubyBuilder().insertChild(downcast<RenderRubyRun>(parent), WTFMove(child), beforeChild);
         return;

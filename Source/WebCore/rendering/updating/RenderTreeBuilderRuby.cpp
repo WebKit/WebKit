@@ -26,9 +26,83 @@
 #include "config.h"
 #include "RenderTreeBuilderRuby.h"
 
+#include "RenderRubyRun.h"
 #include "RenderTreeBuilder.h"
 
 namespace WebCore {
+
+static inline bool isAnonymousRubyInlineBlock(const RenderObject* object)
+{
+    ASSERT(!object
+        || !isRuby(object->parent())
+        || is<RenderRubyRun>(*object)
+        || (object->isInline() && (object->isBeforeContent() || object->isAfterContent()))
+        || (object->isAnonymous() && is<RenderBlock>(*object) && object->style().display() == INLINE_BLOCK));
+
+    return object
+        && isRuby(object->parent())
+        && is<RenderBlock>(*object)
+        && !is<RenderRubyRun>(*object);
+}
+
+static inline bool isRubyBeforeBlock(const RenderObject* object)
+{
+    return isAnonymousRubyInlineBlock(object)
+        && !object->previousSibling()
+        && downcast<RenderBlock>(*object).firstChild()
+        && downcast<RenderBlock>(*object).firstChild()->style().styleType() == BEFORE;
+}
+
+static inline bool isRubyAfterBlock(const RenderObject* object)
+{
+    return isAnonymousRubyInlineBlock(object)
+        && !object->nextSibling()
+        && downcast<RenderBlock>(*object).firstChild()
+        && downcast<RenderBlock>(*object).firstChild()->style().styleType() == AFTER;
+}
+
+#ifndef ASSERT_DISABLED
+static inline bool isRubyChildForNormalRemoval(const RenderObject& object)
+{
+    return object.isRubyRun()
+    || object.isBeforeContent()
+    || object.isAfterContent()
+    || object.isRenderMultiColumnFlow()
+    || object.isRenderMultiColumnSet()
+    || isAnonymousRubyInlineBlock(&object);
+}
+#endif
+
+static inline RenderBlock* rubyBeforeBlock(const RenderElement* ruby)
+{
+    RenderObject* child = ruby->firstChild();
+    return isRubyBeforeBlock(child) ? downcast<RenderBlock>(child) : nullptr;
+}
+
+static inline RenderBlock* rubyAfterBlock(const RenderElement* ruby)
+{
+    RenderObject* child = ruby->lastChild();
+    return isRubyAfterBlock(child) ? downcast<RenderBlock>(child) : nullptr;
+}
+
+static auto createAnonymousRubyInlineBlock(RenderObject& ruby)
+{
+    auto newBlock = createRenderer<RenderBlockFlow>(ruby.document(), RenderStyle::createAnonymousStyleWithDisplay(ruby.style(), INLINE_BLOCK));
+    newBlock->initializeStyle();
+    return newBlock;
+}
+
+static RenderRubyRun* lastRubyRun(const RenderElement* ruby)
+{
+    RenderObject* child = ruby->lastChild();
+    if (child && !is<RenderRubyRun>(*child))
+        child = child->previousSibling();
+    if (!is<RenderRubyRun>(child)) {
+        ASSERT(!child || child->isBeforeContent() || child == rubyBeforeBlock(ruby));
+        return nullptr;
+    }
+    return downcast<RenderRubyRun>(child);
+}
 
 RenderTreeBuilder::Ruby::Ruby(RenderTreeBuilder& builder)
     : m_builder(builder)
@@ -81,6 +155,69 @@ void RenderTreeBuilder::Ruby::insertChild(RenderRubyRun& parent, RenderPtr<Rende
         beforeChild = nullptr;
     m_builder.insertChild(*parent.rubyBaseSafe(), WTFMove(child), beforeChild);
 }
+
+RenderElement& RenderTreeBuilder::Ruby::findOrCreateParentForChild(RenderRubyAsBlock& parent, const RenderObject& child, RenderObject*& beforeChild)
+{
+    // Insert :before and :after content before/after the RenderRubyRun(s)
+    if (child.isBeforeContent()) {
+        // Add generated inline content normally
+        if (child.isInline())
+            return parent;
+        // Wrap non-inline content in an anonymous inline-block.
+        auto* beforeBlock = rubyBeforeBlock(&parent);
+        if (!beforeBlock) {
+            auto newBlock = createAnonymousRubyInlineBlock(parent);
+            beforeBlock = newBlock.get();
+            parent.RenderBlockFlow::addChild(m_builder, WTFMove(newBlock), parent.firstChild());
+        }
+        beforeChild = nullptr;
+        return *beforeBlock;
+    }
+
+    if (child.isAfterContent()) {
+        // Add generated inline content normally
+        if (child.isInline())
+            return parent;
+        // Wrap non-inline content with an anonymous inline-block.
+        auto* afterBlock = rubyAfterBlock(&parent);
+        if (!afterBlock) {
+            auto newBlock = createAnonymousRubyInlineBlock(parent);
+            afterBlock = newBlock.get();
+            parent.RenderBlockFlow::addChild(m_builder, WTFMove(newBlock));
+        }
+        beforeChild = nullptr;
+        return *afterBlock;
+    }
+
+    // If the child is a ruby run, just add it normally.
+    if (child.isRubyRun())
+        return parent;
+
+    if (beforeChild && !parent.isAfterContent(beforeChild)) {
+        // insert child into run
+        ASSERT(!beforeChild->isRubyRun());
+        auto* run = beforeChild->parent();
+        while (run && !run->isRubyRun())
+            run = run->parent();
+        if (run)
+            return *run;
+        ASSERT_NOT_REACHED(); // beforeChild should always have a run as parent!
+        // Emergency fallback: fall through and just append.
+    }
+
+    // If the new child would be appended, try to add the child to the previous run
+    // if possible, or create a new run otherwise.
+    // (The RenderRubyRun object will handle the details)
+    auto* lastRun = lastRubyRun(&parent);
+    if (!lastRun || lastRun->hasRubyText()) {
+        auto newRun = RenderRubyRun::staticCreateRubyRun(&parent);
+        lastRun = newRun.get();
+        parent.RenderBlockFlow::addChild(m_builder, WTFMove(newRun), beforeChild);
+    }
+    beforeChild = nullptr;
+    return *lastRun;
+}
+
 
 }
 
