@@ -1,3 +1,18 @@
+2017-12-21  Guillaume Emont  <guijemont@igalia.com>
+
+        Skip slow jsc tests on embedded platforms
+        https://bugs.webkit.org/show_bug.cgi?id=180937
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        The tests typeProfiler/deltablue-for-of.js and
+        typeProfiler/getter-richards.js take a very long time in the
+        ftl-no-cjit-type-profiler-force-poly-proto on embedded platform, and
+        thus always timeout. They should be skipped on these platforms.
+
+        * typeProfiler/deltablue-for-of.js: Skip on arm*/mips.
+        * typeProfiler/getter-richards.js: Skip on arm*/mips.
+
 2017-12-19  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Do not check isValid() in op_new_regexp

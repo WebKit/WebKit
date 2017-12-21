@@ -1,4 +1,4 @@
-//@ if $buildType == "debug" then skip else runTypeProfiler end
+//@ if $buildType == "debug" or $architecture =~ /arm|mips/ then skip else runTypeProfiler end
 
 // Copyright 2008 the V8 project authors. All rights reserved.
 // Copyright 1996 John Maloney and Mario Wolczko.
