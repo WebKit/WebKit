@@ -23,6 +23,9 @@
 #if (PLATFORM(IOS) && HAVE(AVKIT)) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
 messages -> VideoFullscreenManager {
     RequestFullscreenMode(uint64_t contextId, WebCore::HTMLMediaElementEnums::VideoFullscreenMode videoFullscreenMode, bool finishedWithMedia)
+    RequestUpdateInlineRect(uint64_t contextId)
+    RequestVideoContentLayer(uint64_t contextId)
+    ReturnVideoContentLayer(uint64_t contextId)
     DidSetupFullscreen(uint64_t contextId)
     DidExitFullscreen(uint64_t contextId)
     DidEnterFullscreen(uint64_t contextId)

@@ -432,8 +432,7 @@ void VideoFullscreenInterfaceMac::setupFullscreen(NSView& layerHostedView, const
 
     [videoFullscreenInterfaceObjC() setUpPIPForVideoView:&layerHostedView withFrame:(NSRect)initialRect inWindow:parentWindow];
 
-    RefPtr<VideoFullscreenInterfaceMac> protectedThis(this);
-    dispatch_async(dispatch_get_main_queue(), [protectedThis, this] {
+    dispatch_async(dispatch_get_main_queue(), [protectedThis = makeRefPtr(this), this] {
         if (m_fullscreenChangeObserver)
             m_fullscreenChangeObserver->didSetupFullscreen();
     });

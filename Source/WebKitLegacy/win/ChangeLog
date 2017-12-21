@@ -1,3 +1,17 @@
+2017-12-21  Jeremy Jones  <jeremyj@apple.com>
+
+        Enable picture-in-picture from inline element on suspend.
+        https://bugs.webkit.org/show_bug.cgi?id=180942
+        rdar://problem/34745234
+
+        Reviewed by Jer Noble.
+
+        Update signature of enterVideoFullscreenForVideoElement.
+
+        * WebCoreSupport/WebChromeClient.cpp:
+        (WebChromeClient::enterVideoFullscreenForVideoElement):
+        * WebCoreSupport/WebChromeClient.h:
+
 2017-12-18  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [Win] SHOULD NEVER BE REACHED in WebFrameLoaderClient::pageID

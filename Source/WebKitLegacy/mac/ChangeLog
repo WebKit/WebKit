@@ -1,3 +1,17 @@
+2017-12-21  Jeremy Jones  <jeremyj@apple.com>
+
+        Enable picture-in-picture from inline element on suspend.
+        https://bugs.webkit.org/show_bug.cgi?id=180942
+        rdar://problem/34745234
+
+        Reviewed by Jer Noble.
+
+        Update signature of enterVideoFullscreenForVideoElement().
+
+        * WebCoreSupport/WebChromeClient.h:
+        * WebCoreSupport/WebChromeClient.mm:
+        (WebChromeClient::enterVideoFullscreenForVideoElement):
+
 2017-12-20  Daniel Bates  <dabates@apple.com>
 
         Remove Alternative Presentation Button

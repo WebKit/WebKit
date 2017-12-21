@@ -5840,7 +5840,7 @@ void HTMLMediaElement::enterFullscreen(VideoFullscreenMode mode)
     if (document().page() && is<HTMLVideoElement>(*this)) {
         HTMLVideoElement& asVideo = downcast<HTMLVideoElement>(*this);
         if (document().page()->chrome().client().supportsVideoFullscreen(m_videoFullscreenMode)) {
-            document().page()->chrome().client().enterVideoFullscreenForVideoElement(asVideo, m_videoFullscreenMode);
+            document().page()->chrome().client().enterVideoFullscreenForVideoElement(asVideo, m_videoFullscreenMode, m_videoFullscreenStandby);
             scheduleEvent(eventNames().webkitbeginfullscreenEvent);
         }
     }
@@ -5892,9 +5892,32 @@ void HTMLMediaElement::exitFullscreen()
     else
 #endif
     if (document().page()->chrome().client().supportsVideoFullscreen(oldVideoFullscreenMode)) {
-        document().page()->chrome().client().exitVideoFullscreenForVideoElement(downcast<HTMLVideoElement>(*this));
+        if (m_videoFullscreenStandby)
+            document().page()->chrome().client().enterVideoFullscreenForVideoElement(downcast<HTMLVideoElement>(*this), m_videoFullscreenMode, m_videoFullscreenStandby);
+        else
+            document().page()->chrome().client().exitVideoFullscreenForVideoElement(downcast<HTMLVideoElement>(*this));
         scheduleEvent(eventNames().webkitendfullscreenEvent);
     }
+}
+
+WEBCORE_EXPORT void HTMLMediaElement::setVideoFullscreenStandby(bool value)
+{
+    ASSERT(is<HTMLVideoElement>(*this));
+    if (m_videoFullscreenStandby == value)
+        return;
+
+    if (!document().page())
+        return;
+
+    if (!document().page()->chrome().client().supportsVideoFullscreenStandby())
+        return;
+
+    m_videoFullscreenStandby = value;
+
+    if (m_videoFullscreenStandby || m_videoFullscreenMode != VideoFullscreenModeNone)
+        document().page()->chrome().client().enterVideoFullscreenForVideoElement(downcast<HTMLVideoElement>(*this), m_videoFullscreenMode, m_videoFullscreenStandby);
+    else
+        document().page()->chrome().client().exitVideoFullscreenForVideoElement(downcast<HTMLVideoElement>(*this));
 }
 
 void HTMLMediaElement::willBecomeFullscreenElement()
@@ -7446,7 +7469,7 @@ bool HTMLMediaElement::shouldOverrideBackgroundPlaybackRestriction(PlatformMedia
         if (m_videoFullscreenMode & VideoFullscreenModePictureInPicture)
             return true;
 #if PLATFORM(IOS) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
-        if (m_videoFullscreenMode == VideoFullscreenModeStandard && supportsPictureInPicture() && isPlaying())
+        if (((m_videoFullscreenMode == VideoFullscreenModeStandard) || m_videoFullscreenStandby) && supportsPictureInPicture() && isPlaying())
             return true;
 #endif
     } else if (type == PlatformMediaSession::SuspendedUnderLock) {

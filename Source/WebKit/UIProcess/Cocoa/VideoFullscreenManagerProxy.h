@@ -87,6 +87,9 @@ private:
     WebCore::FloatSize videoDimensions() const override { return m_videoDimensions; }
 
     // VideoFullscreenChangeObserver
+    void requestUpdateInlineRect() override;
+    void requestVideoContentLayer() override;
+    void returnVideoContentLayer() override;
     void didSetupFullscreen() override;
     void didEnterFullscreen() override;
     void didExitFullscreen() override;
@@ -134,7 +137,9 @@ private:
     void removeClientForContext(uint64_t contextId);
 
     // Messages from VideoFullscreenManager
-    void setupFullscreenWithID(uint64_t contextId, uint32_t videoLayerID, const WebCore::IntRect& initialRect, float hostingScaleFactor, WebCore::HTMLMediaElementEnums::VideoFullscreenMode, bool allowsPictureInPicture);
+    void setupFullscreenWithID(uint64_t contextId, uint32_t videoLayerID, const WebCore::IntRect& initialRect, float hostingScaleFactor, WebCore::HTMLMediaElementEnums::VideoFullscreenMode, bool allowsPictureInPicture, bool standby);
+    void setInlineRect(uint64_t contextId, const WebCore::IntRect& inlineRect, bool visible);
+    void setHasVideoContentLayer(uint64_t contextId, bool value);
     void setHasVideo(uint64_t contextId, bool);
     void setVideoDimensions(uint64_t contextId, const WebCore::FloatSize&);
     void enterFullscreen(uint64_t contextId);
@@ -147,6 +152,9 @@ private:
 
     // Messages to VideoFullscreenManager
     void requestFullscreenMode(uint64_t contextId, WebCore::HTMLMediaElementEnums::VideoFullscreenMode, bool finishedWithMedia = false);
+    void requestUpdateInlineRect(uint64_t contextId);
+    void requestVideoContentLayer(uint64_t contextId);
+    void returnVideoContentLayer(uint64_t contextId);
     void didSetupFullscreen(uint64_t contextId);
     void didExitFullscreen(uint64_t contextId);
     void didEnterFullscreen(uint64_t contextId);

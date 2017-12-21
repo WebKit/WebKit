@@ -35,6 +35,7 @@
 #include <WebCore/Color.h>
 #include <WebCore/Element.h>
 #include <WebCore/FrameView.h>
+#include <WebCore/HTMLVideoElement.h>
 #include <WebCore/MainFrame.h>
 #include <WebCore/Page.h>
 #include <WebCore/RenderLayer.h>
@@ -42,6 +43,7 @@
 #include <WebCore/RenderObject.h>
 #include <WebCore/RenderView.h>
 #include <WebCore/Settings.h>
+#include <WebCore/TypedElementDescendantIterator.h>
 
 using namespace WebCore;
 
@@ -122,11 +124,20 @@ void WebFullScreenManager::didEnterFullScreen()
 {
     ASSERT(m_element);
     m_element->document().webkitDidEnterFullScreenForElement(m_element.get());
+
+    m_pipStandbyElement = descendantsOfType<HTMLVideoElement>(*m_element).first();
+    if (m_pipStandbyElement)
+        m_pipStandbyElement->setVideoFullscreenStandby(true);
 }
 
 void WebFullScreenManager::willExitFullScreen()
 {
     ASSERT(m_element);
+
+    if (m_pipStandbyElement)
+        m_pipStandbyElement->setVideoFullscreenStandby(false);
+    m_pipStandbyElement = nullptr;
+
     m_finalFrame = screenRectOfContents(m_element.get());
     m_element->document().webkitWillExitFullScreenForElement(m_element.get());
 #if !PLATFORM(IOS)

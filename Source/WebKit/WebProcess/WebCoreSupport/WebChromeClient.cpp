@@ -941,6 +941,11 @@ bool WebChromeClient::supportsVideoFullscreen(HTMLMediaElementEnums::VideoFullsc
     return m_page.videoFullscreenManager().supportsVideoFullscreen(mode);
 }
 
+bool WebChromeClient::supportsVideoFullscreenStandby()
+{
+    return m_page.videoFullscreenManager().supportsVideoFullscreenStandby();
+}
+
 void WebChromeClient::setUpPlaybackControlsManager(HTMLMediaElement& mediaElement)
 {
     m_page.playbackSessionManager().setUpPlaybackControlsManager(mediaElement);
@@ -951,10 +956,14 @@ void WebChromeClient::clearPlaybackControlsManager()
     m_page.playbackSessionManager().clearPlaybackControlsManager();
 }
 
-void WebChromeClient::enterVideoFullscreenForVideoElement(HTMLVideoElement& videoElement, HTMLMediaElementEnums::VideoFullscreenMode mode)
+void WebChromeClient::enterVideoFullscreenForVideoElement(HTMLVideoElement& videoElement, HTMLMediaElementEnums::VideoFullscreenMode mode, bool standby)
 {
+#if ENABLE(FULLSCREEN_API) && PLATFORM(IOS)
+    ASSERT(standby || mode != HTMLMediaElementEnums::VideoFullscreenModeNone);
+#else
     ASSERT(mode != HTMLMediaElementEnums::VideoFullscreenModeNone);
-    m_page.videoFullscreenManager().enterVideoFullscreenForVideoElement(videoElement, mode);
+#endif
+    m_page.videoFullscreenManager().enterVideoFullscreenForVideoElement(videoElement, mode, standby);
 }
 
 void WebChromeClient::exitVideoFullscreenForVideoElement(HTMLVideoElement& videoElement)

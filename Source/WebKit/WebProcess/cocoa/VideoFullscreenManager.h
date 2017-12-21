@@ -80,6 +80,9 @@ public:
     WebCore::HTMLMediaElementEnums::VideoFullscreenMode fullscreenMode() const { return m_fullscreenMode; }
     void setFullscreenMode(WebCore::HTMLMediaElementEnums::VideoFullscreenMode mode) { m_fullscreenMode = mode; }
 
+    bool fullscreenStandby() const { return m_fullscreenStandby; }
+    void setFullscreenStandby(bool value) { m_fullscreenStandby = value; }
+
     bool isFullscreen() const { return m_isFullscreen; }
     void setIsFullscreen(bool flag) { m_isFullscreen = flag; }
 
@@ -96,6 +99,7 @@ private:
     bool m_isAnimating { false };
     bool m_targetIsFullscreen { false };
     WebCore::HTMLMediaElementEnums::VideoFullscreenMode m_fullscreenMode { WebCore::HTMLMediaElementEnums::VideoFullscreenModeNone };
+    bool m_fullscreenStandby { false };
     bool m_isFullscreen { false };
 };
 
@@ -110,7 +114,8 @@ public:
 
     // Interface to ChromeClient
     bool supportsVideoFullscreen(WebCore::HTMLMediaElementEnums::VideoFullscreenMode) const;
-    void enterVideoFullscreenForVideoElement(WebCore::HTMLVideoElement&, WebCore::HTMLMediaElementEnums::VideoFullscreenMode);
+    bool supportsVideoFullscreenStandby() const;
+    void enterVideoFullscreenForVideoElement(WebCore::HTMLVideoElement&, WebCore::HTMLMediaElementEnums::VideoFullscreenMode, bool standby);
     void exitVideoFullscreenForVideoElement(WebCore::HTMLVideoElement&);
     void exitVideoFullscreenToModeWithoutAnimation(WebCore::HTMLVideoElement&, WebCore::HTMLMediaElementEnums::VideoFullscreenMode);
 
@@ -134,6 +139,9 @@ protected:
 
     // Messages from VideoFullscreenManagerProxy
     void requestFullscreenMode(uint64_t contextId, WebCore::HTMLMediaElementEnums::VideoFullscreenMode, bool finishedWithMedia);
+    void requestUpdateInlineRect(uint64_t contextId);
+    void requestVideoContentLayer(uint64_t contextId);
+    void returnVideoContentLayer(uint64_t contextId);
     void didSetupFullscreen(uint64_t contextId);
     void didExitFullscreen(uint64_t contextId);
     void didEnterFullscreen(uint64_t contextId);

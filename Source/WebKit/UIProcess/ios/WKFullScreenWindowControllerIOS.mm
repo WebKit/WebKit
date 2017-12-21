@@ -129,6 +129,7 @@ struct WKWebViewState {
 - (void)viewWillTransitionToSize:(CGSize)size withTransitionCoordinator:(id<UIViewControllerTransitionCoordinator>)coordinator
 {
     [super viewWillTransitionToSize:size withTransitionCoordinator:coordinator];
+    [self contentView].frame = self.view.bounds;
     [(WKWebView *)[self contentView] _overrideLayoutParametersWithMinimumLayoutSize:size maximumUnobscuredSizeOverride:size];
 }
 

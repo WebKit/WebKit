@@ -758,7 +758,7 @@ bool WebChromeClient::supportsVideoFullscreen(HTMLMediaElementEnums::VideoFullsc
     return true;
 }
 
-void WebChromeClient::enterVideoFullscreenForVideoElement(HTMLVideoElement& videoElement, HTMLMediaElementEnums::VideoFullscreenMode)
+void WebChromeClient::enterVideoFullscreenForVideoElement(HTMLVideoElement& videoElement, HTMLMediaElementEnums::VideoFullscreenMode, bool)
 {
     m_webView->enterVideoFullscreenForVideoElement(videoElement);
 }

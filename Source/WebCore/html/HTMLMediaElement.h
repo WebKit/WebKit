@@ -422,6 +422,7 @@ public:
     void enterFullscreen(VideoFullscreenMode);
     void enterFullscreen() override;
     WEBCORE_EXPORT void exitFullscreen();
+    WEBCORE_EXPORT void setVideoFullscreenStandby(bool);
 
     bool hasClosedCaptions() const override;
     bool closedCaptionsVisible() const override;
@@ -977,6 +978,7 @@ private:
     RefPtr<HTMLSourceElement> m_nextChildNodeToConsider;
 
     VideoFullscreenMode m_videoFullscreenMode { VideoFullscreenModeNone };
+    bool m_videoFullscreenStandby { false };
     bool m_preparedForInline;
     WTF::Function<void()> m_preparedForInlineCompletionHandler;
 

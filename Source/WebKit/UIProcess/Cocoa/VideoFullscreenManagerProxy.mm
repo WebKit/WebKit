@@ -167,6 +167,24 @@ bool VideoFullscreenModelContext::isVisible() const
     return m_manager ? m_manager->isVisible() : false;
 }
 
+void VideoFullscreenModelContext::requestUpdateInlineRect()
+{
+    if (m_manager)
+        m_manager->requestUpdateInlineRect(m_contextId);
+}
+
+void VideoFullscreenModelContext::requestVideoContentLayer()
+{
+    if (m_manager)
+        m_manager->requestVideoContentLayer(m_contextId);
+}
+
+void VideoFullscreenModelContext::returnVideoContentLayer()
+{
+    if (m_manager)
+        m_manager->returnVideoContentLayer(m_contextId);
+}
+
 void VideoFullscreenModelContext::didSetupFullscreen()
 {
     if (m_manager)
@@ -338,7 +356,7 @@ void VideoFullscreenManagerProxy::removeClientForContext(uint64_t contextId)
 
 #pragma mark Messages from VideoFullscreenManager
 
-void VideoFullscreenManagerProxy::setupFullscreenWithID(uint64_t contextId, uint32_t videoLayerID, const WebCore::IntRect& initialRect, float hostingDeviceScaleFactor, HTMLMediaElementEnums::VideoFullscreenMode videoFullscreenMode, bool allowsPictureInPicture)
+void VideoFullscreenManagerProxy::setupFullscreenWithID(uint64_t contextId, uint32_t videoLayerID, const WebCore::IntRect& initialRect, float hostingDeviceScaleFactor, HTMLMediaElementEnums::VideoFullscreenMode videoFullscreenMode, bool allowsPictureInPicture, bool standby)
 {
     ASSERT(videoLayerID);
     RefPtr<VideoFullscreenModelContext> model;
@@ -364,7 +382,7 @@ void VideoFullscreenManagerProxy::setupFullscreenWithID(uint64_t contextId, uint
 
 #if PLATFORM(IOS)
     UIView *parentView = downcast<RemoteLayerTreeDrawingAreaProxy>(*m_page->drawingArea()).remoteLayerTreeHost().rootLayer();
-    interface->setupFullscreen(*model->layerHostView(), initialRect, parentView, videoFullscreenMode, allowsPictureInPicture);
+    interface->setupFullscreen(*model->layerHostView(), initialRect, parentView, videoFullscreenMode, allowsPictureInPicture, standby);
 #else
     IntRect initialWindowRect;
     m_page->rootViewToWindow(initialRect, initialWindowRect);
@@ -418,6 +436,24 @@ void VideoFullscreenManagerProxy::exitFullscreenWithoutAnimationToMode(uint64_t 
 }
 #endif
 
+void VideoFullscreenManagerProxy::setInlineRect(uint64_t contextId, const WebCore::IntRect& inlineRect, bool visible)
+{
+#if PLATFORM(IOS) && ENABLE(FULLSCREEN_API)
+    ensureInterface(contextId).setInlineRect(inlineRect, visible);
+#else
+    ASSERT_NOT_REACHED();
+#endif
+}
+
+void VideoFullscreenManagerProxy::setHasVideoContentLayer(uint64_t contextId, bool value)
+{
+#if PLATFORM(IOS) && ENABLE(FULLSCREEN_API)
+    ensureInterface(contextId).setHasVideoContentLayer(value);
+#else
+    ASSERT_NOT_REACHED();
+#endif
+}
+
 void VideoFullscreenManagerProxy::cleanupFullscreen(uint64_t contextId)
 {
     ensureInterface(contextId).cleanupFullscreen();
@@ -441,6 +477,21 @@ void VideoFullscreenManagerProxy::preparedToReturnToInline(uint64_t contextId, b
 void VideoFullscreenManagerProxy::requestFullscreenMode(uint64_t contextId, WebCore::HTMLMediaElementEnums::VideoFullscreenMode mode, bool finishedWithMedia)
 {
     m_page->send(Messages::VideoFullscreenManager::RequestFullscreenMode(contextId, mode, finishedWithMedia), m_page->pageID());
+}
+
+void VideoFullscreenManagerProxy::requestUpdateInlineRect(uint64_t contextId)
+{
+    m_page->send(Messages::VideoFullscreenManager::RequestUpdateInlineRect(contextId), m_page->pageID());
+}
+
+void VideoFullscreenManagerProxy::requestVideoContentLayer(uint64_t contextId)
+{
+    m_page->send(Messages::VideoFullscreenManager::RequestVideoContentLayer(contextId), m_page->pageID());
+}
+
+void VideoFullscreenManagerProxy::returnVideoContentLayer(uint64_t contextId)
+{
+    m_page->send(Messages::VideoFullscreenManager::ReturnVideoContentLayer(contextId), m_page->pageID());
 }
 
 void VideoFullscreenManagerProxy::didSetupFullscreen(uint64_t contextId)
