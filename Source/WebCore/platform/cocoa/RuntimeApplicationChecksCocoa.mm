@@ -82,7 +82,7 @@ static bool applicationBundleIsEqualTo(const String& bundleIdentifierString)
 
 bool MacApplication::isSafari()
 {
-    static bool isSafari = applicationBundleIsEqualTo("com.apple.Safari");
+    static bool isSafari = applicationBundleIsEqualTo("com.apple.Safari") || applicationBundleIsEqualTo("com.apple.SafariTechnologyPreview");
     return isSafari;
 }
 
