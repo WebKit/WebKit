@@ -277,15 +277,14 @@ void UserMediaRequest::deny(MediaAccessDenialReason reason, const String& invali
 
 void UserMediaRequest::stop()
 {
-    auto& document = downcast<Document>(*m_scriptExecutionContext);
-    auto* controller = UserMediaController::from(document.page());
+    // Protecting 'it'this' since nulling m_pendingActivationMediaStream might destroy it.
+    Ref<UserMediaRequest> protectedThis(*this);
 
     m_pendingActivationMediaStream = nullptr;
-    if (!controller)
-        return;
 
-    Ref<UserMediaRequest> protectedThis(*this);
-    controller->cancelUserMediaAccessRequest(*this);
+    auto& document = downcast<Document>(*m_scriptExecutionContext);
+    if (auto* controller = UserMediaController::from(document.page()))
+        controller->cancelUserMediaAccessRequest(*this);
 }
 
 const char* UserMediaRequest::activeDOMObjectName() const
