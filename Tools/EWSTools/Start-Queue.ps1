@@ -83,7 +83,7 @@ while ($true) {
     Clean-PythonC;
     Clean-Git;
 
-    perl ./Tools/Scripts/update-webkit --no-auxiliary-libs;
+    perl ./Tools/Scripts/update-webkit;
     python ./Tools/Scripts/webkit-patch $queue --bot-id=$name --no-confirm --exit-after-iteration $iterations;
     python /Tools/BuildSlaveSupport/kill-old-processes
 }

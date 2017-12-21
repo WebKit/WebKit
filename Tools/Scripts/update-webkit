@@ -43,18 +43,11 @@ use webkitdirs;
 my $quiet = '';
 my $showHelp;
 
-# This call is needed to eat --wincairo argument and avoid unknown option error.
-# FIXME: Allow port options explicitly or make this script port-agnostic.
-determinePortName();
-
 chdirWebKit();
-
-my $auxiliaryLibs = 1;
 
 my $getOptionsResult = GetOptions(
     'h|help'  => \$showHelp,
     'q|quiet' => \$quiet,
-    'auxiliary-libs!' => \$auxiliaryLibs,
 );
 
 if (!$getOptionsResult || $showHelp) {
@@ -62,7 +55,6 @@ if (!$getOptionsResult || $showHelp) {
 Usage: @{[ basename($0) ]} [options]
   -h|--help                 show the help message
   -q|--quiet                pass -q to svn update for quiet updates
-  --[no-]auxiliary-libs     [don\'t] update the auxiliary libraries for Windows (default: update)
 __END__
     exit 1;
 }
@@ -76,15 +68,5 @@ push @svnOptions, qw(--accept postpone) if isSVNVersion16OrNewer();
 print "Updating OpenSource\n" unless $quiet;
 runSvnUpdateAndResolveChangeLogs(@svnOptions) if isSVN();
 runGitUpdate() if isGit();
-
-if (isAppleWinWebKit() && $auxiliaryLibs) {
-    system($^X, File::Spec->catfile("Tools", "Scripts", "update-webkit-auxiliary-libs")) == 0 or die;
-    if (isWinCairo()) {
-        # WinCairo shares the auxiliary libs from the Apple port.
-        system($^X, File::Spec->catfile("Tools", "Scripts", "update-webkit-wincairo-libs")) == 0 or die;
-    }
-}
-
-setupAppleWinEnv() if isAppleWinWebKit();
 
 exit 0;

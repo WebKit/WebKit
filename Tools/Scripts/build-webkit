@@ -244,6 +244,8 @@ if (isAppleCocoaWebKit()) {
     # Copy WebKitSupportLibrary to the correct location in WebKitLibraries so it can be found.
     # Will fail if WebKitSupportLibrary.zip is not in source root.
     (system("perl Tools/Scripts/update-webkit-support-libs") == 0) or die;
+    (system("perl Tools/Scripts/update-webkit-auxiliary-libs") == 0) or die;
+    setupAppleWinEnv()
 }
 
 if (isAnyWindows()) {
