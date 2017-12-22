@@ -27,6 +27,8 @@
 
 #if ENABLE(ATTACHMENT_ELEMENT)
 
+#include <wtf/Optional.h>
+
 namespace WebCore {
 
 enum class AttachmentDisplayMode {
