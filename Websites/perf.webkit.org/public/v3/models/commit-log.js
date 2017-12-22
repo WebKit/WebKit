@@ -12,6 +12,8 @@ class CommitLog extends DataModelObject {
         if (this._remoteId)
             this.ensureNamedStaticMap('remoteId')[this._remoteId] = this;
         this._ownedCommits = null;
+        this._ownerCommit = null;
+        this._ownedCommitByOwnedRepository = new Map;
     }
 
     updateSingleton(rawData)
@@ -36,13 +38,17 @@ class CommitLog extends DataModelObject {
     message() { return this._rawData['message']; }
     url() { return this._repository.urlForRevision(this._rawData['revision']); }
     ownsCommits() { return this._rawData['ownsCommits']; }
+    ownedCommits() { return this._ownedCommits; }
+    ownerCommit() { return this._ownerCommit; }
+
+    setOwnerCommits(ownerCommit) { this._ownerCommit = ownerCommit; }
 
     label()
     {
-        var revision = this.revision();
+        const revision = this.revision();
         if (parseInt(revision) == revision) // e.g. r12345
             return 'r' + revision;
-        else if (revision.length == 40) // e.g. git hash
+        if (revision.length == 40) // e.g. git hash
             return revision.substring(0, 8);
         return revision;
     }
@@ -59,12 +65,10 @@ class CommitLog extends DataModelObject {
 
         const to = this.revision();
         const from = previousCommit.revision();
-        let fromRevisionForURL = from;
         let label = null;
-        if (parseInt(from) == from) { // e.g. r12345.
-            fromRevisionForURL = (parseInt(from) + 1).toString;
+        if (parseInt(from) == from)// e.g. r12345.
             label = `r${from}-r${this.revision()}`;
-        } else if (to.length == 40) // e.g. git hash
+        else if (to.length == 40) // e.g. git hash
             label = `${from.substring(0, 8)}..${to.substring(0, 8)}`;
         else
             label = `${from} - ${to}`;
@@ -86,6 +90,8 @@ class CommitLog extends DataModelObject {
         });
     }
 
+    ownedCommitForOwnedRepository(ownedRepository) { return this._ownedCommitByOwnedRepository.get(ownedRepository); }
+
     fetchOwnedCommits()
     {
         if (!this.repository().ownedRepositories())
@@ -99,6 +105,10 @@ class CommitLog extends DataModelObject {
 
         return CommitLog.cachedFetch(`../api/commits/${this.repository().id()}/owned-commits?owner-revision=${escape(this.revision())}`).then((data) => {
             this._ownedCommits = CommitLog._constructFromRawData(data);
+            this._ownedCommits.forEach((ownedCommit) => {
+                ownedCommit.setOwnerCommits(this);
+                this._ownedCommitByOwnedRepository.set(ownedCommit.repository(), ownedCommit);
+            });
             return this._ownedCommits;
         });
     }
@@ -111,25 +121,27 @@ class CommitLog extends DataModelObject {
         return ownedCommitMap;
     }
 
-    static diffOwnedCommits(previousCommit, currentCommit)
+    static ownedCommitDifferenceForOwnerCommits(...commits)
     {
-        console.assert(previousCommit);
-        console.assert(currentCommit);
-        console.assert(previousCommit._ownedCommits);
-        console.assert(currentCommit._ownedCommits);
+        console.assert(commits.length >= 2);
 
-        const previousOwnedCommitMap = previousCommit._buildOwnedCommitMap();
-        const currentOwnedCommitMap = currentCommit._buildOwnedCommitMap();
-        const ownedCommitRepositories = new Set([...currentOwnedCommitMap.keys(), ...previousOwnedCommitMap.keys()]);
-        const difference = new Map;
-
-        ownedCommitRepositories.forEach((ownedCommitRepository) => {
-            const currentRevision = currentOwnedCommitMap.get(ownedCommitRepository);
-            const previousRevision = previousOwnedCommitMap.get(ownedCommitRepository);
-            if (currentRevision != previousRevision)
-                difference.set(ownedCommitRepository, [previousRevision, currentRevision]);
+        const ownedCommitRepositories = new Set;
+        const ownedCommitMapList = commits.map((commit) => {
+            console.assert(commit);
+            console.assert(commit._ownedCommits);
+            const ownedCommitMap = commit._buildOwnedCommitMap();
+            for (const repository of ownedCommitMap.keys())
+                ownedCommitRepositories.add(repository);
+            return ownedCommitMap;
         });
 
+        const difference = new Map;
+        ownedCommitRepositories.forEach((ownedCommitRepository) => {
+            const ownedCommits = ownedCommitMapList.map((ownedCommitMap) => ownedCommitMap.get(ownedCommitRepository));
+            const uniqueOwnedCommits = new Set(ownedCommits);
+            if (uniqueOwnedCommits.size > 1)
+                difference.set(ownedCommitRepository, ownedCommits);
+        });
         return difference;
     }
 

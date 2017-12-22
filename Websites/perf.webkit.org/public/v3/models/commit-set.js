@@ -70,8 +70,8 @@ class CommitSet extends DataModelObject {
     commitForRepository(repository) { return this._repositoryToCommitMap.get(repository); }
     ownerCommitForRepository(repository) { return this._repositoryToCommitOwnerMap.get(repository); }
     topLevelRepositories() { return Repository.sortByNamePreferringOnesWithURL(this._repositories.filter((repository) => !this.ownerRevisionForRepository(repository))); }
-
     ownedRepositoriesForOwnerRepository(repository) { return this._ownerRepositoryToOwnedRepositoriesMap.get(repository); }
+    commitForRepository(repository) { return this._repositoryToCommitMap.get(repository); }
 
     revisionForRepository(repository)
     {
@@ -248,8 +248,104 @@ class CustomCommitSet {
     }
 }
 
+class IntermediateCommitSet {
+
+    constructor(commitSet)
+    {
+        console.assert(commitSet instanceof CommitSet);
+        this._commitByRepository = new Map;
+        this._ownerToOwnedRepositories = new Map;
+        this._fetchingPromiseByRepository = new Map;
+
+        for (const repository of commitSet.repositories())
+            this.setCommitForRepository(repository, commitSet.commitForRepository(repository), commitSet.ownerCommitForRepository(repository));
+    }
+
+    fetchCommitLogs()
+    {
+        const fetchingPromises = [];
+        for (const [repository, commit] of this._commitByRepository)
+            fetchingPromises.push(this._fetchCommitLogAndOwnedCommits(repository, commit.revision()));
+        return Promise.all(fetchingPromises);
+    }
+
+    _fetchCommitLogAndOwnedCommits(repository, revision)
+    {
+        return CommitLog.fetchForSingleRevision(repository, revision).then((commits) => {
+            console.assert(commits.length === 1);
+            const commit = commits[0];
+            if (!commit.ownsCommits())
+                return commit;
+            return commit.fetchOwnedCommits().then(() => commit);
+        });
+    }
+
+    updateRevisionForOwnerRepository(repository, revision)
+    {
+        const fetchingPromise = this._fetchCommitLogAndOwnedCommits(repository, revision);
+        this._fetchingPromiseByRepository.set(repository, fetchingPromise);
+        return fetchingPromise.then((commit) => {
+            const currentFetchingPromise = this._fetchingPromiseByRepository.get(repository);
+            if (currentFetchingPromise !== fetchingPromise)
+                return;
+            this._fetchingPromiseByRepository.set(repository, null);
+            this.setCommitForRepository(repository, commit);
+        });
+    }
+
+    setCommitForRepository(repository, commit, ownerCommit = null)
+    {
+        console.assert(repository instanceof Repository);
+        console.assert(commit instanceof CommitLog);
+        this._commitByRepository.set(repository, commit);
+        if (!ownerCommit)
+            ownerCommit = commit.ownerCommit();
+        if (ownerCommit) {
+            const ownerRepository = ownerCommit.repository();
+            if (!this._ownerToOwnedRepositories.has(ownerRepository))
+                this._ownerToOwnedRepositories.set(ownerRepository, new Set);
+            const repositorySet = this._ownerToOwnedRepositories.get(ownerRepository);
+            repositorySet.add(repository);
+        }
+    }
+
+    removeCommitForRepository(repository)
+    {
+        console.assert(repository instanceof Repository);
+        this._fetchingPromiseByRepository.set(repository, null);
+        const ownerCommit = this.ownerCommitForRepository(repository);
+        if (ownerCommit) {
+            const repositorySet = this._ownerToOwnedRepositories.get(ownerCommit.repository());
+            console.assert(repositorySet.has(repository));
+            repositorySet.delete(repository);
+        } else if (this._ownerToOwnedRepositories.has(repository)) {
+            const ownedRepositories = this._ownerToOwnedRepositories.get(repository);
+            for (const ownedRepository of ownedRepositories)
+                this._commitByRepository.delete(ownedRepository);
+            this._ownerToOwnedRepositories.delete(repository);
+        }
+        this._commitByRepository.delete(repository);
+    }
+
+    ownsCommitsForRepository(repository) { return this.commitForRepository(repository).ownsCommits(); }
+
+    repositories() { return Array.from(this._commitByRepository.keys()); }
+    highestLevelRepositories() { return Repository.sortByNamePreferringOnesWithURL(this.repositories().filter((repository) => !this.ownerCommitForRepository(repository))); }
+    commitForRepository(repository) { return this._commitByRepository.get(repository); }
+    ownedRepositoriesForOwnerRepository(repository) { return this._ownerToOwnedRepositories.get(repository); }
+
+    ownerCommitForRepository(repository)
+    {
+        const commit = this._commitByRepository.get(repository);
+        if (!commit)
+            return null;
+        return commit.ownerCommit();
+    }
+}
+
 if (typeof module != 'undefined') {
     module.exports.CommitSet = CommitSet;
     module.exports.MeasurementCommitSet = MeasurementCommitSet;
     module.exports.CustomCommitSet = CustomCommitSet;
+    module.exports.IntermediateCommitSet = IntermediateCommitSet;
 }

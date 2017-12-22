@@ -1,3 +1,94 @@
+2017-12-21  Dewei Zhu  <dewei_zhu@apple.com>
+
+        Add UI for A/B testing on owned commits.
+        https://bugs.webkit.org/show_bug.cgi?id=177993
+
+        Reviewed by Ryosuke Niwa.
+
+        Customizable test group form should support specifying and A/B testing owned commits.
+        Introduce 'IntermediateCommitSet' to achieve the goal of specifying owned commits for A/B test.
+        In order to support configure A/B testing that may need to add/remove owned commits, CommitSet may be the
+        closest thing we can get. However, it is a subclass of DataModelObject, which means CommitSet is a representation
+        of 'commit_sets' table and can only be updated from server data. Thus, we want something like CustomCommitSet that
+        is not a representation of database table, but unlike CustomCommitSet, it should store information about commits
+        rather than a revision. As a result, IntermediateCommitSet is introduced. For a longer term, we may replace
+        CustomCommitSet with IntermediateCommitSet as it carries more information and could potentially simplify some
+        CustomCommitSet related APIs by using commit id instead of commit revision.
+        Extend ButtonBase class so that we can enable/disable a button.
+
+        * public/v3/components/button-base.js:
+        (ButtonBase):
+        (ButtonBase.prototype.setDisabled): Enable/disable a button.
+        (ButtonBase.prototype.render):
+        (ButtonBase.cssTemplate): Added css rule for disabled button.
+        * public/v3/components/combo-box.js: Added.
+        (ComboBox):
+        (ComboBox.prototype.didConstructShadowTree): Setup text field.
+        (ComboBox.prototype.render):
+        (ComboBox.prototype._candidateNameForCurrentIndex): Returns candidate name based on current index.
+        (ComboBox.prototype._candidateElementForCurrentIndex): Returns a list element based on current index.
+        (ComboBox.prototype._autoCompleteIfOnlyOneMatchingItem): Supports auto completion.
+        (ComboBox.prototype._moveCandidate): Supports arrow up/down.
+        (ComboBox.prototype._updateCandidateList): Hide/unhide candidate list and high-light selected candidate.
+        (ComboBox.prototype._renderCandidateList): Render candidate list base on value on text field.
+        (ComboBox.htmlTemplate):
+        (ComboBox.cssTemplate):
+        * public/v3/components/customizable-test-group-form.js:
+        (CustomizableTestGroupForm):
+        (CustomizableTestGroupForm.prototype.didConstructShadowTree): Only fetch the full commits when we about to create a customized A/B tests.
+        (CustomizableTestGroupForm.prototype._computeCommitSetMap): Compute the CustomCommitSet based on IntermediateCommitSet and
+        other revision related information in some map.
+        (CustomizableTestGroupForm.prototype.render):
+        (CustomizableTestGroupForm.prototype._renderCustomRevisionTable):
+        (CustomizableTestGroupForm.prototype._constructTableBodyList): This function builds table body for each highest level repository.
+        It will also include the owned repository rows in the same table body if the commits for highest level repository owns other commits.
+        (CustomizableTestGroupForm.prototype._constructTableRowForCommitsWithoutOwner): Build a table row for a highest level repository.
+        (CustomizableTestGroupForm.prototype._constructTableRowForCommitsWithOwner): Build a table row for repository with owner.
+        (CustomizableTestGroupForm.prototype._constructTableRowForIncompleteOwnedCommits): Build a table row for an unspecified repository.
+        (CustomizableTestGroupForm.prototype._constructRevisionRadioButtons): Update the logic to support build radio buttons for the owned repository rows.
+        (CustomizableTestGroupForm.cssTemplate):
+        * public/v3/components/minus-button.js: Added.
+        (MinusButton):
+        (MinusButton.buttonContent):
+        * public/v3/components/owned-commit-viewer.js:
+        (OwnedCommitViewer.prototype._renderOwnedCommitTable):
+        * public/v3/components/plus-button.js: Added.
+        (PlusButton):
+        (PlusButton.buttonContent):
+        * public/v3/index.html: Added new components.
+        * public/v3/models/commit-log.js: Added owner and owned commit information.
+        (CommitLog):
+        (CommitLog.prototype.ownedCommits): Returns a list of commits owned by current commit.
+        (CommitLog.prototype.ownerCommit): Return owner commit of current commit.
+        (CommitLog.prototype.setOwnerCommits): Set owner commit of current commit.
+        (CommitLog.prototype.label): Remove unnecessary 'else'.
+        (CommitLog.prototype.diff): Remove unused 'fromRevisionForURL' and tiny code cleanup.
+        (CommitLog.prototype.ownedCommitForOwnedRepository):
+        (CommitLog.prototype.fetchOwnedCommits): Sets the owner for those owned commits. The owner of a commit with multiple owner
+        commits will be overwritten by each time this function is called.
+        (CommitLog.ownedCommitDifferenceForOwnerCommits): A more generic version of diffOwnedCommits. diffOwnedCommits only accepts 2 commits,
+        but ownedCommitDifferenceForOwnerCommits supports multiple commits.
+        (CommitLog.diffOwnedCommits): Deleted and should use 'CommitLog.ownedCommitDifferenceForOwnerCommits' instead.
+        * public/v3/models/commit-set.js:
+        (CommitSet.prototype.topLevelRepositories):
+        (CommitSet.prototype.commitForRepository):
+        (IntermediateCommitSet): Take CommitSet as argument, note the commit from CommitSet doesn't contains full information of the commit.
+        Always call 'fetchFullCommits' once before any further usages.
+        (IntermediateCommitSet.prototype.fetchCommitLogs): Fetch all commits information in current commit set.
+        (IntermediateCommitSet.prototype._fetchCommitLogAndOwnedCommits): Fetch commit log and owned commits if necessary.
+        (IntermediateCommitSet.prototype.updateRevisionForOwnerRepository): Updates a commit for a repository by given a revision of the repository.
+        (IntermediateCommitSet.prototype.setCommitForRepository): Sets a commit for a repository in commit set.
+        (IntermediateCommitSet.prototype.removeCommitForRepository): Removes a commit for a repository in commit set.
+        (IntermediateCommitSet.prototype.ownsCommitsForRepository): Returns whether the commit for repository owns commits.
+        (IntermediateCommitSet.prototype.repositories): Returns all repositories in the commit set.
+        (IntermediateCommitSet.prototype.highestLevelRepositories): Returns all repositories those don't have an owner.
+        (IntermediateCommitSet.prototype.commitForRepository): Returns a commit for a given repository.
+        (IntermediateCommitSet.prototype.ownedRepositoriesForOwnerRepository): Returns all repositories owned by a given repository in current commit set.
+        (IntermediateCommitSet.prototype.ownerCommitForRepository): Returns owner commit for a given owned repository.
+        * tools/js/v3-models.js: Added import for 'IntermediateCommitSet'.
+        * unit-tests/commit-log-tests.js: Updated unittest which tests 'ownerCommit' function.
+        * unit-tests/commit-set-tests.js: Added unit tests for IntermediateCommitSet.
+
 2017-12-13  Dewei Zhu  <dewei_zhu@apple.com>
 
         Add a test freshness page.

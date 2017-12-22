@@ -16,7 +16,6 @@ importFromV3('models/build-request.js', 'BuildRequest');
 importFromV3('models/builder.js', 'Build');
 importFromV3('models/builder.js', 'Builder');
 importFromV3('models/commit-log.js', 'CommitLog');
-importFromV3('models/commit-set.js', 'CustomCommitSet')
 importFromV3('models/manifest.js', 'Manifest');
 importFromV3('models/measurement-adaptor.js', 'MeasurementAdaptor');
 importFromV3('models/measurement-cluster.js', 'MeasurementCluster');
@@ -27,6 +26,7 @@ importFromV3('models/repository.js', 'Repository');
 importFromV3('models/commit-set.js', 'MeasurementCommitSet');
 importFromV3('models/commit-set.js', 'CommitSet');
 importFromV3('models/commit-set.js', 'CustomCommitSet');
+importFromV3('models/commit-set.js', 'IntermediateCommitSet');
 importFromV3('models/test.js', 'Test');
 importFromV3('models/test-group.js', 'TestGroup');
 importFromV3('models/time-series.js', 'TimeSeries');

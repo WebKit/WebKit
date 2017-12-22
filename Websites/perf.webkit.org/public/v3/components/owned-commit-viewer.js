@@ -43,7 +43,7 @@ class OwnedCommitViewer extends ComponentBase {
         if (!previousOwnedCommits || !currentOwnedCommits)
             return;
 
-        const difference = CommitLog.diffOwnedCommits(this._previousCommit, this._currentCommit);
+        const difference = CommitLog.ownedCommitDifferenceForOwnerCommits(this._previousCommit, this._currentCommit);
         const sortedRepositories = Repository.sortByName([...difference.keys()]);
         const element = ComponentBase.createElement;
 

@@ -191,7 +191,8 @@ describe('CommitLog', function () {
         });
 
         it('should return owned-commit for a valid commit revision', () => {
-            const fetchingPromise = ownerCommit().fetchOwnedCommits();
+            const commit = ownerCommit();
+            const fetchingPromise = commit.fetchOwnedCommits();
             const requests = MockRemoteAPI.requests;
             assert.equal(requests.length, 1);
             assert.equal(requests[0].url, '../api/commits/111/owned-commits?owner-revision=10.11.4%2015E65');
@@ -208,6 +209,7 @@ describe('CommitLog', function () {
                 assert.equal(ownedCommits[0].repository(), MockModels.ownedRepository);
                 assert.equal(ownedCommits[0].revision(), '6f8b0dbbda95a440503b88db1dd03dad3a7b07fb');
                 assert.equal(ownedCommits[0].id(), 233);
+                assert.equal(ownedCommits[0].ownerCommit(), commit);
             });
         });
 
@@ -233,6 +235,7 @@ describe('CommitLog', function () {
                 assert.equal(ownedCommits[0].repository(), MockModels.ownedRepository);
                 assert.equal(ownedCommits[0].revision(), '6f8b0dbbda95a440503b88db1dd03dad3a7b07fb');
                 assert.equal(ownedCommits[0].id(), 233);
+                assert.equal(ownedCommits[0].ownerCommit(), commit);
                 return commit.fetchOwnedCommits();
             }).then((ownedCommits) => {
                 assert.equal(requests.length, 1);
@@ -241,12 +244,12 @@ describe('CommitLog', function () {
         });
     });
 
-    describe('diffOwnedCommits', () => {
+    describe('ownedCommitDifferenceForOwnerCommits', () => {
         beforeEach(() => {
             MockRemoteAPI.reset();
         });
 
-        it('should return difference between 2 owned-commits', () => {
+        it('should return difference between owned-commits of 2 owner commits', () => {
             const oneCommit = ownerCommit();
             const otherCommit = otherOwnerCommit();
             const fetchingPromise = oneCommit.fetchOwnedCommits();
@@ -267,7 +270,17 @@ describe('CommitLog', function () {
                 time: +(new Date('2016-05-13T00:55:57.841344Z')),
             }]});
 
-            return fetchingPromise.then(() => {
+            return fetchingPromise.then((ownedCommits) => {
+                assert.equal(ownedCommits.length, 2);
+                assert.equal(ownedCommits[0].repository(), MockModels.ownedRepository);
+                assert.equal(ownedCommits[0].revision(), '6f8b0dbbda95a440503b88db1dd03dad3a7b07fb');
+                assert.equal(ownedCommits[0].id(), 233);
+                assert.equal(ownedCommits[0].ownerCommit(), oneCommit);
+                assert.equal(ownedCommits[1].repository(), MockModels.webkitGit);
+                assert.equal(ownedCommits[1].revision(), '04a6c72038f0b771a19248ca2549e1258617b5fc');
+                assert.equal(ownedCommits[1].id(), 299);
+                assert.equal(ownedCommits[1].ownerCommit(), oneCommit);
+
                 const otherFetchingPromise = otherCommit.fetchOwnedCommits();
                 assert.equal(requests.length, 2);
                 assert.equal(requests[1].url, '../api/commits/111/owned-commits?owner-revision=10.11.4%2015E66');
@@ -286,8 +299,17 @@ describe('CommitLog', function () {
                 }]});
 
                 return otherFetchingPromise;
-            }).then(() => {
-                const difference = CommitLog.diffOwnedCommits(oneCommit, otherCommit);
+            }).then((ownedCommits) => {
+                assert.equal(ownedCommits.length, 2);
+                assert.equal(ownedCommits[0].repository(), MockModels.ownedRepository);
+                assert.equal(ownedCommits[0].revision(), 'd5099e03b482abdd77f6c4dcb875afd05bda5ab8');
+                assert.equal(ownedCommits[0].id(), 234);
+                assert.equal(ownedCommits[0].ownerCommit(), otherCommit);
+                assert.equal(ownedCommits[1].repository(), MockModels.webkitGit);
+                assert.equal(ownedCommits[1].revision(), '04a6c72038f0b771a19248ca2549e1258617b5fc');
+                assert.equal(ownedCommits[1].id(), 299);
+                assert.equal(ownedCommits[1].ownerCommit(), otherCommit);
+                const difference = CommitLog.ownedCommitDifferenceForOwnerCommits(oneCommit, otherCommit);
                 assert.equal(difference.size, 1);
                 assert.equal(difference.keys().next().value, MockModels.ownedRepository);
             });
