@@ -1,3 +1,57 @@
+2017-12-22  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [DFG] Cleaning up and unifying 32bit code more
+        https://bugs.webkit.org/show_bug.cgi?id=181124
+
+        Reviewed by Mark Lam.
+
+        This patch unifies DFG 32bit code into 64bit code more. In this patch, we move RegExp DFG nodes
+        from 32bit / 64bit code to the common code. We change some RegExp operations to returning JSCell*
+        instead of EncodedJSValue. This simplifies DFG implementation.
+
+        And we also move HasGenericProperty since we now have JSValueRegsFlushedCallResult. ToPrimive,
+        LogShadowChickenPrologue, and LogShadowChickenTail are almost the same in 32bit and 64bit.
+        Thus, it is unified easily.
+
+        And we also move some GPRFlushedCallResult from the original places to the places just after
+        `flushRegisters()` not to spill unnecessary registers.
+
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileRegExpExec):
+        (JSC::DFG::SpeculativeJIT::compileRegExpTest):
+        (JSC::DFG::SpeculativeJIT::compileStringReplace):
+        (JSC::DFG::SpeculativeJIT::compileHasGenericProperty):
+        (JSC::DFG::SpeculativeJIT::compileToPrimitive):
+        (JSC::DFG::SpeculativeJIT::compileLogShadowChickenPrologue):
+        (JSC::DFG::SpeculativeJIT::compileLogShadowChickenTail):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::callOperation):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::emitCall):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        (JSC::DFG::SpeculativeJIT::speculateDoubleRepAnyInt):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileStringReplace):
+        * jit/JITOperations.cpp:
+        * jit/JITOperations.h:
+        * runtime/StringPrototype.cpp:
+        (JSC::jsSpliceSubstrings):
+        (JSC::jsSpliceSubstringsWithSeparators):
+        (JSC::removeUsingRegExpSearch):
+        (JSC::replaceUsingRegExpSearch):
+        (JSC::operationStringProtoFuncReplaceRegExpEmptyStr):
+        (JSC::operationStringProtoFuncReplaceRegExpString):
+        (JSC::replaceUsingStringSearch):
+        (JSC::replace):
+        (JSC::stringProtoFuncReplaceUsingRegExp):
+        (JSC::stringProtoFuncReplaceUsingStringSearch):
+        (JSC::operationStringProtoFuncReplaceGeneric):
+        * runtime/StringPrototype.h:
+
 2017-12-22  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [GTK] Duplicated symbols in libjavascriptcoregtk and libwebkit2gtk can cause crashes in production builds

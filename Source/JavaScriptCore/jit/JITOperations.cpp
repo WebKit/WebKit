@@ -58,7 +58,6 @@
 #include "JSGeneratorFunction.h"
 #include "JSGlobalObjectFunctions.h"
 #include "JSLexicalEnvironment.h"
-#include "JSPropertyNameEnumerator.h"
 #include "JSWithScope.h"
 #include "ModuleProgramCodeBlock.h"
 #include "ObjectConstructor.h"
@@ -2370,66 +2369,6 @@ void JIT_OPERATION operationExceptionFuzz(ExecState* exec)
     void* returnPC = __builtin_return_address(0);
     doExceptionFuzzing(exec, scope, "JITOperations", returnPC);
 #endif // COMPILER(GCC_OR_CLANG)
-}
-
-EncodedJSValue JIT_OPERATION operationHasGenericProperty(ExecState* exec, EncodedJSValue encodedBaseValue, JSCell* propertyName)
-{
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(&vm, exec);
-    JSValue baseValue = JSValue::decode(encodedBaseValue);
-    if (baseValue.isUndefinedOrNull())
-        return JSValue::encode(jsBoolean(false));
-
-    JSObject* base = baseValue.toObject(exec);
-    if (!base)
-        return JSValue::encode(JSValue());
-    return JSValue::encode(jsBoolean(base->hasPropertyGeneric(exec, asString(propertyName)->toIdentifier(exec), PropertySlot::InternalMethodType::GetOwnProperty)));
-}
-
-JSCell* JIT_OPERATION operationGetPropertyEnumeratorCell(ExecState* exec, JSCell* cell)
-{
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(&vm, exec);
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    JSObject* base = cell->toObject(exec, exec->lexicalGlobalObject());
-    RETURN_IF_EXCEPTION(scope, { });
-
-    scope.release();
-    return propertyNameEnumerator(exec, base);
-}
-
-JSCell* JIT_OPERATION operationGetPropertyEnumerator(ExecState* exec, EncodedJSValue encodedBase)
-{
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(&vm, exec);
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    JSValue base = JSValue::decode(encodedBase);
-    if (base.isUndefinedOrNull())
-        return JSPropertyNameEnumerator::create(vm);
-
-    JSObject* baseObject = base.toObject(exec);
-    RETURN_IF_EXCEPTION(scope, { });
-
-    scope.release();
-    return propertyNameEnumerator(exec, baseObject);
-}
-
-EncodedJSValue JIT_OPERATION operationNextEnumeratorPname(ExecState* exec, JSCell* enumeratorCell, int32_t index)
-{
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(&vm, exec);
-    JSPropertyNameEnumerator* enumerator = jsCast<JSPropertyNameEnumerator*>(enumeratorCell);
-    JSString* propertyName = enumerator->propertyNameAtIndex(index);
-    return JSValue::encode(propertyName ? propertyName : jsNull());
-}
-
-JSCell* JIT_OPERATION operationToIndexString(ExecState* exec, int32_t index)
-{
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(&vm, exec);
-    return jsString(exec, Identifier::from(exec, index).string());
 }
 
 ALWAYS_INLINE static EncodedJSValue unprofiledAdd(ExecState* exec, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2)

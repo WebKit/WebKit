@@ -10320,7 +10320,7 @@ private:
                     LValue regExp = lowRegExpObject(m_node->child2());
 
                     LValue result = vmCall(
-                        Int64, m_out.operation(operationStringProtoFuncReplaceRegExpEmptyStr),
+                        pointerType(), m_out.operation(operationStringProtoFuncReplaceRegExpEmptyStr),
                         m_callFrame, string, regExp);
 
                     setJSValue(result);
@@ -10333,7 +10333,7 @@ private:
             LValue replace = lowString(m_node->child3());
 
             LValue result = vmCall(
-                Int64, m_out.operation(operationStringProtoFuncReplaceRegExpString),
+                pointerType(), m_out.operation(operationStringProtoFuncReplaceRegExpString),
                 m_callFrame, string, regExp, replace);
 
             setJSValue(result);
@@ -10347,7 +10347,7 @@ private:
             search = lowJSValue(m_node->child2());
 
         LValue result = vmCall(
-            Int64, m_out.operation(operationStringProtoFuncReplaceGeneric), m_callFrame,
+            pointerType(), m_out.operation(operationStringProtoFuncReplaceGeneric), m_callFrame,
             lowJSValue(m_node->child1()), search,
             lowJSValue(m_node->child3()));
 

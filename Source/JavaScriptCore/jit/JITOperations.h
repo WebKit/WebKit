@@ -220,6 +220,8 @@ typedef JSCell* (JIT_OPERATION *C_JITOperation_EJscI)(ExecState*, JSScope*, Uniq
 typedef JSCell* (JIT_OPERATION *C_JITOperation_ECJZ)(ExecState*, JSCell*, EncodedJSValue, int32_t);
 typedef JSCell* (JIT_OPERATION *C_JITOperation_ECJ)(ExecState*, JSCell*, EncodedJSValue);
 typedef JSCell* (JIT_OPERATION *C_JITOperation_ECO)(ExecState*, JSCell*, JSObject*);
+typedef JSCell* (JIT_OPERATION *C_JITOperation_EJssReo)(ExecState*, JSString*, RegExpObject*);
+typedef JSCell* (JIT_OPERATION *C_JITOperation_EJssReoJss)(ExecState*, JSString*, RegExpObject*, JSString*);
 typedef double (JIT_OPERATION *D_JITOperation_D)(double);
 typedef double (JIT_OPERATION *D_JITOperation_G)(JSGlobalObject*);
 typedef double (JIT_OPERATION *D_JITOperation_DD)(double, double);
@@ -459,12 +461,6 @@ void JIT_OPERATION operationExceptionFuzz(ExecState*);
 
 int32_t JIT_OPERATION operationCheckIfExceptionIsUncatchableAndNotifyProfiler(ExecState*);
 int32_t JIT_OPERATION operationInstanceOfCustom(ExecState*, EncodedJSValue encodedValue, JSObject* constructor, EncodedJSValue encodedHasInstance) WTF_INTERNAL;
-
-EncodedJSValue JIT_OPERATION operationHasGenericProperty(ExecState*, EncodedJSValue, JSCell*);
-JSCell* JIT_OPERATION operationGetPropertyEnumeratorCell(ExecState*, JSCell*);
-JSCell* JIT_OPERATION operationGetPropertyEnumerator(ExecState*, EncodedJSValue);
-EncodedJSValue JIT_OPERATION operationNextEnumeratorPname(ExecState*, JSCell*, int32_t);
-JSCell* JIT_OPERATION operationToIndexString(ExecState*, int32_t);
 
 EncodedJSValue JIT_OPERATION operationValueAdd(ExecState*, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2) WTF_INTERNAL;
 EncodedJSValue JIT_OPERATION operationValueAddProfiled(ExecState*, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2, ArithProfile*) WTF_INTERNAL;

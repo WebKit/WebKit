@@ -50,13 +50,13 @@ protected:
     void finishCreation(VM&, JSGlobalObject*, JSString*);
 };
 
-EncodedJSValue JIT_OPERATION operationStringProtoFuncReplaceGeneric(
+JSCell* JIT_OPERATION operationStringProtoFuncReplaceGeneric(
     ExecState*, EncodedJSValue thisValue, EncodedJSValue searchValue, EncodedJSValue replaceValue);
 
-EncodedJSValue JIT_OPERATION operationStringProtoFuncReplaceRegExpEmptyStr(
+JSCell* JIT_OPERATION operationStringProtoFuncReplaceRegExpEmptyStr(
     ExecState*, JSString* thisValue, RegExpObject* searchValue);
 
-EncodedJSValue JIT_OPERATION operationStringProtoFuncReplaceRegExpString(
+JSCell* JIT_OPERATION operationStringProtoFuncReplaceRegExpString(
     ExecState*, JSString* thisValue, RegExpObject* searchValue, JSString* replaceValue);
 
 String substituteBackreferences(const String& replacement, StringView source, const int* ovector, RegExp* reg);

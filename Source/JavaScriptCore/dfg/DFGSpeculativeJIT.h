@@ -1347,18 +1347,6 @@ public:
         return appendCallSetResult(operation, result);
     }
 
-    JITCompiler::Call callOperation(J_JITOperation_EGReoJ operation, GPRReg result, GPRReg arg1, GPRReg arg2, GPRReg arg3)
-    {
-        m_jit.setupArgumentsWithExecState(arg1, arg2, arg3);
-        return appendCallSetResult(operation, result);
-    }
-
-    JITCompiler::Call callOperation(J_JITOperation_EGReoJss operation, GPRReg result, GPRReg arg1, GPRReg arg2, GPRReg arg3)
-    {
-        m_jit.setupArgumentsWithExecState(arg1, arg2, arg3);
-        return appendCallSetResult(operation, result);
-    }
-
     JITCompiler::Call callOperation(V_JITOperation_EWs operation, WatchpointSet* watchpointSet)
     {
         m_jit.setupArgumentsWithExecState(TrustedImmPtr(watchpointSet));
@@ -1570,12 +1558,22 @@ public:
         m_jit.setupArgumentsWithExecState(arg1, arg2);
         return appendCallSetResult(operation, result);
     }
-    JITCompiler::Call callOperation(J_JITOperation_EJssReo operation, GPRReg result, GPRReg arg1, GPRReg arg2)
+    JITCompiler::Call callOperation(J_JITOperation_EGReoJ operation, JSValueRegs result, GPRReg arg1, GPRReg arg2, JSValueRegs arg3)
+    {
+        m_jit.setupArgumentsWithExecState(arg1, arg2, arg3.payloadGPR());
+        return appendCallSetResult(operation, result.payloadGPR());
+    }
+    JITCompiler::Call callOperation(J_JITOperation_EGReoJss operation, JSValueRegs result, GPRReg arg1, GPRReg arg2, GPRReg arg3)
+    {
+        m_jit.setupArgumentsWithExecState(arg1, arg2, arg3);
+        return appendCallSetResult(operation, result.payloadGPR());
+    }
+    JITCompiler::Call callOperation(C_JITOperation_EJssReo operation, GPRReg result, GPRReg arg1, GPRReg arg2)
     {
         m_jit.setupArgumentsWithExecState(arg1, arg2);
         return appendCallSetResult(operation, result);
     }
-    JITCompiler::Call callOperation(J_JITOperation_EJssReoJss operation, GPRReg result, GPRReg arg1, GPRReg arg2, GPRReg arg3)
+    JITCompiler::Call callOperation(C_JITOperation_EJssReoJss operation, GPRReg result, GPRReg arg1, GPRReg arg2, GPRReg arg3)
     {
         m_jit.setupArgumentsWithExecState(arg1, arg2, arg3);
         return appendCallSetResult(operation, result);
@@ -1826,14 +1824,14 @@ public:
     {
         return callOperation(operation, result, arg1.gpr(), arg2.gpr());
     }
-    JITCompiler::Call callOperation(S_JITOperation_EGJJ operation, GPRReg result, GPRReg arg1, GPRReg arg2, GPRReg arg3)
+    JITCompiler::Call callOperation(S_JITOperation_EGJJ operation, GPRReg result, GPRReg arg1, JSValueRegs arg2, JSValueRegs arg3)
     {
-        m_jit.setupArgumentsWithExecState(arg1, arg2, arg3);
+        m_jit.setupArgumentsWithExecState(arg1, arg2.payloadGPR(), arg3.payloadGPR());
         return appendCallSetResult(operation, result);
     }
-    JITCompiler::Call callOperation(S_JITOperation_EGReoJ operation, GPRReg result, GPRReg arg1, GPRReg arg2, GPRReg arg3)
+    JITCompiler::Call callOperation(S_JITOperation_EGReoJ operation, GPRReg result, GPRReg arg1, GPRReg arg2, JSValueRegs arg3)
     {
-        m_jit.setupArgumentsWithExecState(arg1, arg2, arg3);
+        m_jit.setupArgumentsWithExecState(arg1, arg2, arg3.payloadGPR());
         return appendCallSetResult(operation, result);
     }
     JITCompiler::Call callOperation(S_JITOperation_EGReoJss operation, GPRReg result, GPRReg arg1, GPRReg arg2, GPRReg arg3)
@@ -1872,10 +1870,10 @@ public:
         m_jit.setupArgumentsWithExecState(arg1, arg2);
         return appendCallSetResult(operation, result);
     }
-    JITCompiler::Call callOperation(J_JITOperation_EGJJ operation, GPRReg result, GPRReg arg1, GPRReg arg2, GPRReg arg3)
+    JITCompiler::Call callOperation(J_JITOperation_EGJJ operation, JSValueRegs result, GPRReg arg1, JSValueRegs arg2, JSValueRegs arg3)
     {
-        m_jit.setupArgumentsWithExecState(arg1, arg2, arg3);
-        return appendCallSetResult(operation, result);
+        m_jit.setupArgumentsWithExecState(arg1, arg2.payloadGPR(), arg3.payloadGPR());
+        return appendCallSetResult(operation, result.payloadGPR());
     }
     JITCompiler::Call callOperation(J_JITOperation_EJJ operation, GPRReg result, GPRReg arg1, int32_t imm)
     {
@@ -2247,15 +2245,15 @@ public:
         m_jit.setupArgumentsWithExecState(arg1, arg2);
         return appendCallSetResult(operation, result.payloadGPR(), result.tagGPR());
     }
-    JITCompiler::Call callOperation(J_JITOperation_EJssReo operation, JSValueRegs result, GPRReg arg1, GPRReg arg2)
+    JITCompiler::Call callOperation(C_JITOperation_EJssReo operation, GPRReg result, GPRReg arg1, GPRReg arg2)
     {
         m_jit.setupArgumentsWithExecState(arg1, arg2);
-        return appendCallSetResult(operation, result.payloadGPR(), result.tagGPR());
+        return appendCallSetResult(operation, result);
     }
-    JITCompiler::Call callOperation(J_JITOperation_EJssReoJss operation, JSValueRegs result, GPRReg arg1, GPRReg arg2, GPRReg arg3)
+    JITCompiler::Call callOperation(C_JITOperation_EJssReoJss operation, GPRReg result, GPRReg arg1, GPRReg arg2, GPRReg arg3)
     {
         m_jit.setupArgumentsWithExecState(arg1, arg2, arg3);
-        return appendCallSetResult(operation, result.payloadGPR(), result.tagGPR());
+        return appendCallSetResult(operation, result);
     }
     JITCompiler::Call callOperation(J_JITOperation_EPS operation, JSValueRegs result, void* pointer, size_t size)
     {
@@ -3051,7 +3049,9 @@ public:
     void compileArrayIndexOf(Node*);
     void compileArrayPush(Node*);
     void compileNotifyWrite(Node*);
-    bool compileRegExpExec(Node*);
+    void compileRegExpExec(Node*);
+    void compileRegExpTest(Node*);
+    void compileStringReplace(Node*);
     void compileIsObjectOrNull(Node*);
     void compileIsFunction(Node*);
     void compileTypeOf(Node*);
@@ -3078,6 +3078,7 @@ public:
     void compileThrow(Node*);
     void compileThrowStaticError(Node*);
     void compileGetEnumerableLength(Node*);
+    void compileHasGenericProperty(Node*);
     void compileToIndexString(Node*);
     void compilePutByIdWithThis(Node*);
     void compileHasStructureProperty(Node*);
@@ -3092,6 +3093,9 @@ public:
     void compileNewTypedArray(Node*);
     void compileCreateThis(Node*);
     void compileNewObject(Node*);
+    void compileToPrimitive(Node*);
+    void compileLogShadowChickenPrologue(Node*);
+    void compileLogShadowChickenTail(Node*);
 
     void moveTrueTo(GPRReg);
     void moveFalseTo(GPRReg);

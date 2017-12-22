@@ -55,6 +55,7 @@
 #include "JSGlobalObjectFunctions.h"
 #include "JSLexicalEnvironment.h"
 #include "JSMap.h"
+#include "JSPropertyNameEnumerator.h"
 #include "JSSet.h"
 #include "ObjectConstructor.h"
 #include "Operations.h"
@@ -1800,6 +1801,20 @@ char* JIT_OPERATION operationEnsureArrayStorage(ExecState* exec, JSCell* cell)
     return reinterpret_cast<char*>(asObject(cell)->ensureArrayStorage(vm));
 }
 
+EncodedJSValue JIT_OPERATION operationHasGenericProperty(ExecState* exec, EncodedJSValue encodedBaseValue, JSCell* propertyName)
+{
+    VM& vm = exec->vm();
+    NativeCallFrameTracer tracer(&vm, exec);
+    JSValue baseValue = JSValue::decode(encodedBaseValue);
+    if (baseValue.isUndefinedOrNull())
+        return JSValue::encode(jsBoolean(false));
+
+    JSObject* base = baseValue.toObject(exec);
+    if (!base)
+        return JSValue::encode(JSValue());
+    return JSValue::encode(jsBoolean(base->hasPropertyGeneric(exec, asString(propertyName)->toIdentifier(exec), PropertySlot::InternalMethodType::GetOwnProperty)));
+}
+
 EncodedJSValue JIT_OPERATION operationHasIndexedPropertyByInt(ExecState* exec, JSCell* baseCell, int32_t subscript, int32_t internalMethodType)
 {
     VM& vm = exec->vm();
@@ -1810,6 +1825,43 @@ EncodedJSValue JIT_OPERATION operationHasIndexedPropertyByInt(ExecState* exec, J
         return JSValue::encode(jsBoolean(object->hasPropertyGeneric(exec, Identifier::from(exec, subscript), static_cast<PropertySlot::InternalMethodType>(internalMethodType))));
     }
     return JSValue::encode(jsBoolean(object->hasPropertyGeneric(exec, subscript, static_cast<PropertySlot::InternalMethodType>(internalMethodType))));
+}
+
+JSCell* JIT_OPERATION operationGetPropertyEnumerator(ExecState* exec, EncodedJSValue encodedBase)
+{
+    VM& vm = exec->vm();
+    NativeCallFrameTracer tracer(&vm, exec);
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    JSValue base = JSValue::decode(encodedBase);
+    if (base.isUndefinedOrNull())
+        return JSPropertyNameEnumerator::create(vm);
+
+    JSObject* baseObject = base.toObject(exec);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    scope.release();
+    return propertyNameEnumerator(exec, baseObject);
+}
+
+JSCell* JIT_OPERATION operationGetPropertyEnumeratorCell(ExecState* exec, JSCell* cell)
+{
+    VM& vm = exec->vm();
+    NativeCallFrameTracer tracer(&vm, exec);
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    JSObject* base = cell->toObject(exec, exec->lexicalGlobalObject());
+    RETURN_IF_EXCEPTION(scope, { });
+
+    scope.release();
+    return propertyNameEnumerator(exec, base);
+}
+
+JSCell* JIT_OPERATION operationToIndexString(ExecState* exec, int32_t index)
+{
+    VM& vm = exec->vm();
+    NativeCallFrameTracer tracer(&vm, exec);
+    return jsString(exec, Identifier::from(exec, index).string());
 }
 
 StringImpl* JIT_OPERATION operationResolveRope(ExecState* exec, JSString* string)
