@@ -103,7 +103,7 @@ void SWContextManager::terminateWorker(ServiceWorkerIdentifier identifier, Funct
 
     serviceWorker->setTerminatingOrTerminated(true);
 
-    serviceWorker->thread().stop([this, identifier, serviceWorker = WTFMove(serviceWorker), completionHandler = WTFMove(completionHandler)]() mutable {
+    serviceWorker->thread().stop([identifier, serviceWorker = WTFMove(serviceWorker), completionHandler = WTFMove(completionHandler)]() mutable {
         if (auto* connection = SWContextManager::singleton().connection())
             connection->workerTerminated(identifier);
 
