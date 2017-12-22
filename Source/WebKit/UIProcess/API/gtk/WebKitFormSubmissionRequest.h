@@ -57,13 +57,18 @@ struct _WebKitFormSubmissionRequestClass {
 };
 
 WEBKIT_API GType
-webkit_form_submission_request_get_type        (void);
+webkit_form_submission_request_get_type         (void);
 
-WEBKIT_API GHashTable *
-webkit_form_submission_request_get_text_fields (WebKitFormSubmissionRequest *request);
+WEBKIT_DEPRECATED_FOR(webkit_form_submission_request_list_text_fields) GHashTable *
+webkit_form_submission_request_get_text_fields  (WebKitFormSubmissionRequest  *request);
+
+WEBKIT_API gboolean
+webkit_form_submission_request_list_text_fields (WebKitFormSubmissionRequest  *request,
+                                                 GPtrArray                   **field_names,
+                                                 GPtrArray                   **field_values);
 
 WEBKIT_API void
-webkit_form_submission_request_submit          (WebKitFormSubmissionRequest *request);
+webkit_form_submission_request_submit           (WebKitFormSubmissionRequest  *request);
 
 G_END_DECLS
 

@@ -475,10 +475,26 @@ public:
         quitMainLoop();
     }
 
-    GHashTable* waitUntilFormSubmittedAndGetTextFields()
+    GHashTable* getTextFieldsAsHashTable()
     {
-        g_main_loop_run(m_mainLoop);
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
         return webkit_form_submission_request_get_text_fields(m_request.get());
+#pragma GCC diagnostic pop
+    }
+
+    GPtrArray* getTextFieldNames()
+    {
+        GPtrArray* names;
+        webkit_form_submission_request_list_text_fields(m_request.get(), &names, nullptr);
+        return names;
+    }
+
+    GPtrArray* getTextFieldValues()
+    {
+        GPtrArray* values;
+        webkit_form_submission_request_list_text_fields(m_request.get(), nullptr, &values);
+        return values;
     }
 
     static gboolean doClickIdleCallback(FormClientTest* test)
@@ -492,6 +508,7 @@ public:
         m_submitPositionX = x;
         m_submitPositionY = y;
         g_idle_add(reinterpret_cast<GSourceFunc>(doClickIdleCallback), this);
+        g_main_loop_run(m_mainLoop);
     }
 
     int m_submitPositionX;
@@ -508,6 +525,8 @@ static void testWebViewSubmitForm(FormClientTest* test, gconstpointer)
         " <form action='#'>"
         "  <input type='text' name='text1' value='value1'>"
         "  <input type='text' name='text2' value='value2'>"
+        "  <input type='text' value='value3'>"
+        "  <input type='text' name='text2'>"
         "  <input type='password' name='password' value='secret'>"
         "  <textarea cols='5' rows='5' name='textarea'>Text</textarea>"
         "  <input type='hidden' name='hidden1' value='hidden1'>"
@@ -519,12 +538,31 @@ static void testWebViewSubmitForm(FormClientTest* test, gconstpointer)
     test->waitUntilLoadFinished();
 
     test->submitFormAtPosition(5, 5);
-    GHashTable* values = test->waitUntilFormSubmittedAndGetTextFields();
+    GHashTable* tableValues = test->getTextFieldsAsHashTable();
+    g_assert(tableValues);
+    g_assert_cmpuint(g_hash_table_size(tableValues), ==, 4);
+    g_assert_cmpstr(static_cast<char*>(g_hash_table_lookup(tableValues, "text1")), ==, "value1");
+    g_assert_cmpstr(static_cast<char*>(g_hash_table_lookup(tableValues, "")), ==, "value3");
+    g_assert_cmpstr(static_cast<char*>(g_hash_table_lookup(tableValues, "text2")), ==, "");
+    g_assert_cmpstr(static_cast<char*>(g_hash_table_lookup(tableValues, "password")), ==, "secret");
+
+    GPtrArray* names = test->getTextFieldNames();
+    g_assert(names);
+    g_assert_cmpuint(names->len, ==, 5);
+    g_assert_cmpstr(static_cast<char*>(names->pdata[0]), ==, "text1");
+    g_assert_cmpstr(static_cast<char*>(names->pdata[1]), ==, "text2");
+    g_assert_cmpstr(static_cast<char*>(names->pdata[2]), ==, "");
+    g_assert_cmpstr(static_cast<char*>(names->pdata[3]), ==, "text2");
+    g_assert_cmpstr(static_cast<char*>(names->pdata[4]), ==, "password");
+
+    GPtrArray* values = test->getTextFieldValues();
     g_assert(values);
-    g_assert_cmpuint(g_hash_table_size(values), ==, 3);
-    g_assert_cmpstr(static_cast<char*>(g_hash_table_lookup(values, "text1")), ==, "value1");
-    g_assert_cmpstr(static_cast<char*>(g_hash_table_lookup(values, "text2")), ==, "value2");
-    g_assert_cmpstr(static_cast<char*>(g_hash_table_lookup(values, "password")), ==, "secret");
+    g_assert_cmpuint(values->len, ==, 5);
+    g_assert_cmpstr(static_cast<char*>(values->pdata[0]), ==, "value1");
+    g_assert_cmpstr(static_cast<char*>(values->pdata[1]), ==, "value2");
+    g_assert_cmpstr(static_cast<char*>(values->pdata[2]), ==, "value3");
+    g_assert_cmpstr(static_cast<char*>(values->pdata[3]), ==, "");
+    g_assert_cmpstr(static_cast<char*>(values->pdata[4]), ==, "secret");
 }
 #endif // PLATFORM(GTK)
 

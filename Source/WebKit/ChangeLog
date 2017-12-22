@@ -1,3 +1,23 @@
+2017-12-21  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [WPE][GTK] Deprecate and replace webkit_form_submission_request_get_text_fields
+        https://bugs.webkit.org/show_bug.cgi?id=176725
+
+        Reviewed by Carlos Garcia Campos.
+
+        The problem is this function returns results in a GHashTable, but many fields can have the
+        same name, or no name at all, and those fields are currently just dropped. It's impossible
+        to fix, since the GHashTable is part of the API, so deprecate it and add a new function that
+        returns two GPtrArrays instead.
+
+        * UIProcess/API/glib/WebKitFormSubmissionRequest.cpp:
+        (webkitFormSubmissionRequestCreate):
+        (webkit_form_submission_request_get_text_fields):
+        (webkit_form_submission_request_list_text_fields):
+        * UIProcess/API/gtk/WebKitFormSubmissionRequest.h:
+        * UIProcess/API/gtk/docs/webkit2gtk-4.0-sections.txt:
+        * UIProcess/API/wpe/WebKitFormSubmissionRequest.h:
+
 2017-12-21  Youenn Fablet  <youenn@apple.com>
 
         ServiceWorkerThreadProxy should set the correct cookie and cache partitioning options

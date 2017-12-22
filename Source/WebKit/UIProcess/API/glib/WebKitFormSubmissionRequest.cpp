@@ -25,6 +25,7 @@
 #include "WebFormSubmissionListenerProxy.h"
 #include "WebKitFormSubmissionRequestPrivate.h"
 #include <wtf/glib/GRefPtr.h>
+#include <wtf/glib/GUniquePtr.h>
 #include <wtf/glib/WTFGType.h>
 #include <wtf/text/CString.h>
 
@@ -38,15 +39,15 @@ using namespace WebKit;
  * When a form is about to be submitted in a #WebKitWebView, the
  * #WebKitWebView::submit-form signal is emitted. Its request argument
  * contains information about the text fields of the form, that are
- * typically used to store login information, returned in a
- * #GHashTable by the webkit_form_submission_request_get_text_fields()
- * method, and you can finally submit the form with
- * webkit_form_submission_request_submit().
- *
+ * typically used to store login information, returned as lists by
+ * webkit_form_submission_request_list_text_fields(). You can submit the
+ * form with webkit_form_submission_request_submit().
  */
 
 struct _WebKitFormSubmissionRequestPrivate {
     RefPtr<WebFormSubmissionListenerProxy> listener;
+    GRefPtr<GPtrArray> textFieldNames;
+    GRefPtr<GPtrArray> textFieldValues;
     GRefPtr<GHashTable> values;
     bool handledRequest;
 };
@@ -74,9 +75,12 @@ WebKitFormSubmissionRequest* webkitFormSubmissionRequestCreate(const Vector<std:
 {
     WebKitFormSubmissionRequest* request = WEBKIT_FORM_SUBMISSION_REQUEST(g_object_new(WEBKIT_TYPE_FORM_SUBMISSION_REQUEST, nullptr));
     if (values.size()) {
-        request->priv->values = adoptGRef(g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free));
-        for (const auto& pair : values)
-            g_hash_table_insert(request->priv->values.get(), g_strdup(pair.first.utf8().data()), g_strdup(pair.second.utf8().data()));
+        request->priv->textFieldNames = adoptGRef(g_ptr_array_new_full(values.size(), g_free));
+        request->priv->textFieldValues = adoptGRef(g_ptr_array_new_full(values.size(), g_free));
+        for (size_t i = 0; i < values.size(); i++) {
+            g_ptr_array_add(request->priv->textFieldNames.get(), g_strdup(values[i].first.utf8().data()));
+            g_ptr_array_add(request->priv->textFieldValues.get(), g_strdup(values[i].second.utf8().data()));
+        }
     }
     request->priv->listener = WTFMove(listener);
     return request;
@@ -87,16 +91,60 @@ WebKitFormSubmissionRequest* webkitFormSubmissionRequestCreate(const Vector<std:
  * @request: a #WebKitFormSubmissionRequest
  *
  * Get a #GHashTable with the values of the text fields contained in the form
- * associated to @request.
+ * associated to @request. Note that fields will be missing if the form
+ * contains multiple text input elements with the same name, so this
+ * function does not reliably return all text fields.
  *
- * Returns: (transfer none): a #GHashTable with the form text fields, or %NULL if the
- *    form doesn't contain text fields.
+ * Returns: (allow-none) (transfer none): a #GHashTable with the form
+ *    text fields, or %NULL if the form doesn't contain text fields.
+ *
+ * Deprecated: 2.20. Use webkit_form_submission_request_list_text_fields() instead.
  */
 GHashTable* webkit_form_submission_request_get_text_fields(WebKitFormSubmissionRequest* request)
 {
     g_return_val_if_fail(WEBKIT_IS_FORM_SUBMISSION_REQUEST(request), nullptr);
 
+    if (!request->priv->values && request->priv->textFieldNames->len) {
+        request->priv->values = adoptGRef(g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free));
+        for (unsigned i = 0; i < request->priv->textFieldNames->len; i++) {
+            GUniquePtr<char> name(g_strdup(static_cast<char*>(request->priv->textFieldNames->pdata[i])));
+            GUniquePtr<char> value(g_strdup(static_cast<char*>(request->priv->textFieldValues->pdata[i])));
+            g_hash_table_insert(request->priv->values.get(), name.release(), value.release());
+        }
+    }
+
     return request->priv->values.get();
+}
+
+/**
+ * webkit_form_submission_request_list_text_fields:
+ * @request: a #WebKitFormSubmissionRequest
+ * @field_names: (out) (optional) (element-type utf8) (transfer none):
+ *    names of the text fields in the form
+ * @field_values: (out) (optional) (element-type utf8) (transfer none):
+ *    values of the text fields in the form
+ *
+ * Get lists with the names and values of the text fields contained in
+ * the form associated to @request. Note that names and values may be
+ * %NULL.
+ *
+ * If this function returns %FALSE, then both @field_names and
+ * @field_values will be empty.
+ *
+ * Returns: %TRUE if the form contains text fields, or %FALSE otherwise
+ *
+ * Since: 2.20
+ */
+gboolean webkit_form_submission_request_list_text_fields(WebKitFormSubmissionRequest* request, GPtrArray** fieldNames, GPtrArray** fieldValues)
+{
+    g_return_val_if_fail(WEBKIT_IS_FORM_SUBMISSION_REQUEST(request), FALSE);
+
+    if (fieldNames)
+        *fieldNames = request->priv->textFieldNames.get();
+    if (fieldValues)
+        *fieldValues = request->priv->textFieldValues.get();
+
+    return !!request->priv->textFieldNames->len;
 }
 
 /**

@@ -1238,6 +1238,7 @@ webkit_option_menu_item_get_type
 <FILE>WebKitFormSubmissionRequest</FILE>
 WebKitFormSubmissionRequest
 webkit_form_submission_request_get_text_fields
+webkit_form_submission_request_list_text_fields
 webkit_form_submission_request_submit
 
 <SUBSECTION Standard>
