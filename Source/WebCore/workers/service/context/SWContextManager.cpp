@@ -97,25 +97,22 @@ void SWContextManager::fireActivateEvent(ServiceWorkerIdentifier identifier)
 
 void SWContextManager::terminateWorker(ServiceWorkerIdentifier identifier, Function<void()>&& completionHandler)
 {
-    auto* serviceWorker = m_workerMap.get(identifier);
+    auto serviceWorker = m_workerMap.take(identifier);
     if (!serviceWorker)
         return;
 
     serviceWorker->setTerminatingOrTerminated(true);
 
-    serviceWorker->thread().stop([this, identifier, completionHandler = WTFMove(completionHandler)] {
+    serviceWorker->thread().stop([this, identifier, serviceWorker = WTFMove(serviceWorker), completionHandler = WTFMove(completionHandler)]() mutable {
         if (auto* connection = SWContextManager::singleton().connection())
             connection->workerTerminated(identifier);
 
         if (completionHandler)
             completionHandler();
         
-        auto worker = m_workerMap.take(identifier);
-        ASSERT(worker);
-        
         // Spin the runloop before releasing the worker thread proxy, as there would otherwise be
         // a race towards its destruction.
-        callOnMainThread([worker = WTFMove(worker)] { });
+        callOnMainThread([serviceWorker = WTFMove(serviceWorker)] { });
     });
 }
 
@@ -125,13 +122,16 @@ void SWContextManager::forEachServiceWorkerThread(const WTF::Function<void(Servi
         apply(*workerThread);
 }
 
-void SWContextManager::postTaskToServiceWorker(ServiceWorkerIdentifier identifier, WTF::Function<void(ServiceWorkerGlobalScope&)>&& task)
+bool SWContextManager::postTaskToServiceWorker(ServiceWorkerIdentifier identifier, WTF::Function<void(ServiceWorkerGlobalScope&)>&& task)
 {
-    if (auto* serviceWorker = m_workerMap.get(identifier)) {
-        serviceWorker->thread().runLoop().postTask([task = WTFMove(task)] (auto& context) {
-            task(downcast<ServiceWorkerGlobalScope>(context));
-        });
-    }
+    auto* serviceWorker = m_workerMap.get(identifier);
+    if (!serviceWorker)
+        return false;
+
+    serviceWorker->thread().runLoop().postTask([task = WTFMove(task)] (auto& context) {
+        task(downcast<ServiceWorkerGlobalScope>(context));
+    });
+    return true;
 }
 
 } // namespace WebCore

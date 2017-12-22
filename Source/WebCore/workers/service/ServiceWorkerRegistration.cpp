@@ -144,6 +144,19 @@ void ServiceWorkerRegistration::update(Ref<DeferredPromise>&& promise)
     m_container->updateRegistration(m_registrationData.scopeURL, newestWorker->scriptURL(), WorkerType::Classic, WTFMove(promise));
 }
 
+void ServiceWorkerRegistration::softUpdate()
+{
+    if (m_isStopped)
+        return;
+
+    auto* newestWorker = getNewestWorker();
+    if (!newestWorker)
+        return;
+
+    // FIXME: Support worker types.
+    m_container->updateRegistration(m_registrationData.scopeURL, newestWorker->scriptURL(), WorkerType::Classic, nullptr);
+}
+
 void ServiceWorkerRegistration::unregister(Ref<DeferredPromise>&& promise)
 {
     if (m_isStopped) {

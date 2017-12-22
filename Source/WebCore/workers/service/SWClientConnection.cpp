@@ -38,6 +38,7 @@
 #include "ServiceWorkerJobData.h"
 #include "ServiceWorkerRegistration.h"
 #include <wtf/CrossThreadCopier.h>
+#include <wtf/Scope.h>
 
 namespace WebCore {
 
@@ -63,12 +64,11 @@ void SWClientConnection::finishedFetchingScript(ServiceWorkerJob& job, const Str
     finishFetchingScriptInServer({ job.data().identifier(), job.data().registrationKey(), script, { } });
 }
 
-void SWClientConnection::failedFetchingScript(ServiceWorkerJob& job, const ResourceError& error)
+void SWClientConnection::failedFetchingScript(const ServiceWorkerJobDataIdentifier& jobDataIdentifier, const ServiceWorkerRegistrationKey& registrationKey, const ResourceError& error)
 {
     ASSERT(isMainThread());
-    ASSERT(m_scheduledJobs.get(job.identifier()) == &job);
 
-    finishFetchingScriptInServer({ job.data().identifier(), job.data().registrationKey(), { }, error });
+    finishFetchingScriptInServer({ jobDataIdentifier, registrationKey, { }, error });
 }
 
 void SWClientConnection::jobRejectedInServer(const ServiceWorkerJobDataIdentifier& jobDataIdentifier, const ExceptionData& exceptionData)
@@ -90,15 +90,23 @@ void SWClientConnection::registrationJobResolvedInServer(const ServiceWorkerJobD
 {
     ASSERT(isMainThread());
 
+    auto guard = WTF::makeScopeExit([this, shouldNotifyWhenResolved, registrationKey = registrationData.key] {
+        if (shouldNotifyWhenResolved == ShouldNotifyWhenResolved::Yes)
+            didResolveRegistrationPromise(registrationKey);
+    });
+
     auto job = m_scheduledJobs.take(jobDataIdentifier.jobIdentifier);
     if (!job) {
         LOG_ERROR("Job %s resolved in server, but was not found", jobDataIdentifier.loggingString().utf8().data());
         return;
     }
 
-    ScriptExecutionContext::postTaskTo(job->contextIdentifier(), [job, registrationData = registrationData.isolatedCopy(), shouldNotifyWhenResolved](ScriptExecutionContext&) mutable {
+    bool wasPosted = ScriptExecutionContext::postTaskTo(job->contextIdentifier(), [job, registrationData = registrationData.isolatedCopy(), shouldNotifyWhenResolved](ScriptExecutionContext&) mutable {
         job->resolvedWithRegistration(WTFMove(registrationData), shouldNotifyWhenResolved);
     });
+
+    if (wasPosted)
+        guard.release();
 }
 
 void SWClientConnection::unregistrationJobResolvedInServer(const ServiceWorkerJobDataIdentifier& jobDataIdentifier, bool unregistrationResult)
@@ -116,7 +124,7 @@ void SWClientConnection::unregistrationJobResolvedInServer(const ServiceWorkerJo
     });
 }
 
-void SWClientConnection::startScriptFetchForServer(const ServiceWorkerJobDataIdentifier& jobDataIdentifier, FetchOptions::Cache cachePolicy)
+void SWClientConnection::startScriptFetchForServer(const ServiceWorkerJobDataIdentifier& jobDataIdentifier, const ServiceWorkerRegistrationKey& registrationKey, FetchOptions::Cache cachePolicy)
 {
     ASSERT(isMainThread());
 
@@ -124,16 +132,15 @@ void SWClientConnection::startScriptFetchForServer(const ServiceWorkerJobDataIde
     if (!job) {
         LOG_ERROR("Job %s instructed to start fetch from server, but job was not found", jobDataIdentifier.loggingString().utf8().data());
 
-        // FIXME: Should message back to the server here to signal failure to fetch,
-        // but we currently need the registration key to do so, and don't have it here.
-        // In the future we'll refactor to have a global, cross-process job identifier that can be used to overcome this.
-
+        failedFetchingScript(jobDataIdentifier, registrationKey, ResourceError { errorDomainWebKitInternal, 0, URL(), ASCIILiteral("Failed to fetch service worker script") });
         return;
     }
 
-    ScriptExecutionContext::postTaskTo(job->contextIdentifier(), [job, cachePolicy](ScriptExecutionContext&) {
+    bool wasPosted = ScriptExecutionContext::postTaskTo(job->contextIdentifier(), [job, cachePolicy](ScriptExecutionContext&) {
         job->startScriptFetch(cachePolicy);
     });
+    if (!wasPosted)
+        failedFetchingScript(jobDataIdentifier, registrationKey, ResourceError { errorDomainWebKitInternal, 0, job->data().scriptURL, ASCIILiteral("Failed to fetch service worker script") });
 }
 
 void SWClientConnection::postMessageToServiceWorkerClient(DocumentIdentifier destinationContextIdentifier, Ref<SerializedScriptValue>&& message, ServiceWorkerData&& sourceData, const String& sourceOrigin)

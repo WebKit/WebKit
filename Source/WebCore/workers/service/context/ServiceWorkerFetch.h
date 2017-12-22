@@ -39,6 +39,7 @@ class ResourceRequest;
 class ResourceResponse;
 struct ServiceWorkerClientIdentifier;
 class ServiceWorkerGlobalScope;
+class ServiceWorkerGlobalScope;
 class SharedBuffer;
 
 namespace ServiceWorkerFetch {

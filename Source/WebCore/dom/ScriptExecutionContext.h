@@ -251,7 +251,7 @@ public:
 
     ServiceWorkerContainer* serviceWorkerContainer();
 
-    WEBCORE_EXPORT static void postTaskTo(const DocumentOrWorkerIdentifier&, WTF::Function<void(ScriptExecutionContext&)>&&);
+    WEBCORE_EXPORT static bool postTaskTo(const DocumentOrWorkerIdentifier&, WTF::Function<void(ScriptExecutionContext&)>&&);
 #endif
 
 protected:

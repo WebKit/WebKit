@@ -269,10 +269,8 @@ ExceptionOr<void> WorkerGlobalScope::importScripts(const Vector<String>& urls)
         // FIXME: Fully implement https://w3c.github.io/ServiceWorker/#importscripts.
         auto& serviceWorkerGlobalScope = downcast<ServiceWorkerGlobalScope>(*this);
         auto& registration = serviceWorkerGlobalScope.registration();
-        if (registration.updateViaCache() == ServiceWorkerUpdateViaCache::None
-            || (registration.lastUpdateTime() && (WallTime::now() - registration.lastUpdateTime()) > 86400_s)) {
+        if (registration.updateViaCache() == ServiceWorkerUpdateViaCache::None || registration.needsUpdate())
             cachePolicy = FetchOptions::Cache::NoCache;
-        }
     }
 #endif
 

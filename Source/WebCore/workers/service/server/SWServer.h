@@ -106,7 +106,7 @@ public:
         virtual void rejectJobInClient(const ServiceWorkerJobDataIdentifier&, const ExceptionData&) = 0;
         virtual void resolveRegistrationJobInClient(const ServiceWorkerJobDataIdentifier&, const ServiceWorkerRegistrationData&, ShouldNotifyWhenResolved) = 0;
         virtual void resolveUnregistrationJobInClient(const ServiceWorkerJobDataIdentifier&, const ServiceWorkerRegistrationKey&, bool registrationResult) = 0;
-        virtual void startScriptFetchInClient(const ServiceWorkerJobDataIdentifier&, FetchOptions::Cache) = 0;
+        virtual void startScriptFetchInClient(const ServiceWorkerJobDataIdentifier&, const ServiceWorkerRegistrationKey&, FetchOptions::Cache) = 0;
 
         struct RegistrationReadyRequest {
             SecurityOriginData topOrigin;

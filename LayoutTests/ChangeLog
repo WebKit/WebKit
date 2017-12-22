@@ -1,3 +1,15 @@
+2017-12-22  Chris Dumez  <cdumez@apple.com>
+
+        [Service Workers] Implement "Soft Update" algorithm
+        https://bugs.webkit.org/show_bug.cgi?id=180702
+        <rdar://problem/36163461>
+
+        Reviewed by Youenn Fablet.
+
+        Unskip soft update WPT test that no longer times out.
+
+        * TestExpectations:
+
 2017-12-21  Ryosuke Niwa  <rniwa@webkit.org>
 
         REGRESSION(r223678): Cannot copy & paste a web page content into Yahoo! Mail

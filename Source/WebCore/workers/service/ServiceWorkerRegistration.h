@@ -61,8 +61,12 @@ public:
     WallTime lastUpdateTime() const;
     void setLastUpdateTime(WallTime);
 
+    bool needsUpdate() const { return lastUpdateTime() && (WallTime::now() - lastUpdateTime()) > 86400_s; }
+
     void update(Ref<DeferredPromise>&&);
     void unregister(Ref<DeferredPromise>&&);
+
+    void softUpdate();
 
     using RefCounted::ref;
     using RefCounted::deref;

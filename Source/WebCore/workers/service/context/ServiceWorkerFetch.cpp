@@ -93,9 +93,10 @@ static void processResponse(Ref<Client>&& client, FetchResponse* response)
 
 void dispatchFetchEvent(Ref<Client>&& client, ServiceWorkerGlobalScope& globalScope, std::optional<ServiceWorkerClientIdentifier> clientId, ResourceRequest&& request, String&& referrer, FetchOptions&& options)
 {
-    ASSERT(globalScope.isServiceWorkerGlobalScope());
-
     auto requestHeaders = FetchHeaders::create(FetchHeaders::Guard::Immutable, HTTPHeaderMap { request.httpHeaderFields() });
+
+    bool isNavigation = options.mode == FetchOptions::Mode::Navigate;
+    bool isNonSubresourceRequest = WebCore::isNonSubresourceRequest(options.destination);
 
     auto* formData = request.httpBody();
     std::optional<FetchBody> body;
@@ -111,7 +112,7 @@ void dispatchFetchEvent(Ref<Client>&& client, ServiceWorkerGlobalScope& globalSc
 
     FetchEvent::Init init;
     init.request = WTFMove(fetchRequest);
-    if (options.mode == FetchOptions::Mode::Navigate) {
+    if (isNavigation) {
         // FIXME: Set reservedClientId.
         if (clientId)
             init.targetClientId = clientId->toString();
@@ -132,10 +133,13 @@ void dispatchFetchEvent(Ref<Client>&& client, ServiceWorkerGlobalScope& globalSc
             return;
         }
         client->didNotHandle();
-        // FIXME: Handle soft update.
     }
 
     globalScope.updateExtendedEventsSet(event.ptr());
+
+    auto& registration = globalScope.registration();
+    if (isNonSubresourceRequest || registration.needsUpdate())
+        registration.softUpdate();
 }
 
 } // namespace ServiceWorkerFetch

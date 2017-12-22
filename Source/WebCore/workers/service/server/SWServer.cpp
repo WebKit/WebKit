@@ -302,7 +302,7 @@ void SWServer::startScriptFetch(const ServiceWorkerJobData& jobData, FetchOption
     if (!connection)
         return;
 
-    connection->startScriptFetchInClient(jobData.identifier(), cachePolicy);
+    connection->startScriptFetchInClient(jobData.identifier(), jobData.registrationKey(), cachePolicy);
 }
 
 void SWServer::scriptFetchFinished(Connection& connection, const ServiceWorkerFetchResult& result)

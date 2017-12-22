@@ -38,7 +38,7 @@
 
 namespace WebCore {
 
-ServiceWorkerJob::ServiceWorkerJob(ServiceWorkerJobClient& client, Ref<DeferredPromise>&& promise, ServiceWorkerJobData&& jobData)
+ServiceWorkerJob::ServiceWorkerJob(ServiceWorkerJobClient& client, RefPtr<DeferredPromise>&& promise, ServiceWorkerJobData&& jobData)
     : m_client(client)
     , m_jobData(WTFMove(jobData))
     , m_promise(WTFMove(promise))
