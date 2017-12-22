@@ -938,10 +938,6 @@ if (COMPILER_IS_GCC_OR_CLANG AND NOT APPLE)
     target_link_libraries(WebKit -Wl,--start-group WebCore WebCoreDerivedSources -Wl,--end-group)
 endif ()
 
-if (WebKit_VERSION_SCRIPT)
-    WEBKIT_ADD_TARGET_PROPERTIES(WebKit LINK_FLAGS "${WebKit_VERSION_SCRIPT}")
-endif ()
-
 add_executable(WebProcess ${WebProcess_SOURCES})
 ADD_WEBKIT_PREFIX_HEADER(WebProcess)
 target_link_libraries(WebProcess ${WebProcess_LIBRARIES})

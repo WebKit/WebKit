@@ -50,9 +50,6 @@ include(GStreamerDependencies)
 
 WEBKIT_OPTION_END()
 
-set(JavaScriptCore_LIBRARY_TYPE STATIC)
-set(WebCore_LIBRARY_TYPE STATIC)
-
 find_package(Cairo 1.10.2 REQUIRED)
 find_package(Fontconfig 2.8.0 REQUIRED)
 find_package(Freetype2 2.4.2 REQUIRED)
@@ -112,9 +109,5 @@ set(FORWARDING_HEADERS_DIR ${DERIVED_SOURCES_DIR}/ForwardingHeaders)
 set(FORWARDING_HEADERS_WPE_DIR ${FORWARDING_HEADERS_DIR}/wpe)
 set(FORWARDING_HEADERS_WPE_EXTENSION_DIR ${FORWARDING_HEADERS_DIR}/wpe-webextension)
 set(DERIVED_SOURCES_WPE_API_DIR ${DERIVED_SOURCES_WEBKIT_DIR}/wpe)
-
-if (NOT DEVELOPER_MODE)
-    set(WebKit_VERSION_SCRIPT "-Wl,--version-script,${CMAKE_MODULE_PATH}/wpesymbols.filter")
-endif ()
 
 include(GStreamerChecks)

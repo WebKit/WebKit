@@ -48,8 +48,8 @@ endif ()
 
 # FIXME: JSCOnly on WIN32 seems to only work with fully static build
 # https://bugs.webkit.org/show_bug.cgi?id=172862
-if (ENABLE_STATIC_JSC OR WIN32)
-    set(JavaScriptCore_LIBRARY_TYPE STATIC)
+if (NOT ENABLE_STATIC_JSC AND NOT WIN32)
+    set(JavaScriptCore_LIBRARY_TYPE SHARED)
 endif ()
 
 if (WIN32)

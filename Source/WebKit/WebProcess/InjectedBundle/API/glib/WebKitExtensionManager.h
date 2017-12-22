@@ -38,9 +38,9 @@ class InjectedBundle;
 class WebKitExtensionManager {
     WTF_MAKE_NONCOPYABLE(WebKitExtensionManager);
 public:
-    static WebKitExtensionManager& singleton();
+    __attribute__((visibility("default"))) static WebKitExtensionManager& singleton();
 
-    void initialize(InjectedBundle*, API::Object*);
+    __attribute__((visibility("default"))) void initialize(InjectedBundle*, API::Object*);
 
 private:
     WebKitExtensionManager();

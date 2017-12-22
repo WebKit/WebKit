@@ -1,3 +1,23 @@
+2017-12-22  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [GTK] Duplicated symbols in libjavascriptcoregtk and libwebkit2gtk can cause crashes in production builds
+        https://bugs.webkit.org/show_bug.cgi?id=179914
+
+        Reviewed by Carlos Garcia Campos.
+
+        Mark a few InjectedBundle symbols with default visibility, so they don't get hidden by
+        -fvisibility=hidden. Also, remove Windows conditionals, since Windows is not supported by
+        any GLib ports.
+
+        Also, move the symbols map to here, and share it between WPE and GTK.
+
+        * CMakeLists.txt:
+        * PlatformGTK.cmake:
+        * PlatformWPE.cmake:
+        * WebProcess/InjectedBundle/API/glib/WebKitExtensionManager.h:
+        * WebProcess/InjectedBundle/API/glib/WebKitInjectedBundleMain.cpp:
+        * webkitglib-symbols.map: Renamed from Source/cmake/gtksymbols.filter.
+
 2017-12-21  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [WPE][GTK] Deprecate and replace webkit_form_submission_request_get_text_fields

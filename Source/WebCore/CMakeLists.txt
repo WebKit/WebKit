@@ -1993,7 +1993,7 @@ endif ()
 
 target_link_libraries(WebCore ${WebCore_LIBRARIES})
 
-if (SHARED_CORE)
+if (${WebCore_LIBRARY_TYPE} MATCHES "SHARED")
     set_target_properties(WebCore PROPERTIES VERSION ${PROJECT_VERSION} SOVERSION ${PROJECT_VERSION_MAJOR})
     install(TARGETS WebCore DESTINATION "${LIB_INSTALL_DIR}")
 endif ()

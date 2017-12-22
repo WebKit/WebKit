@@ -1,3 +1,57 @@
+2017-12-22  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [GTK] Duplicated symbols in libjavascriptcoregtk and libwebkit2gtk can cause crashes in production builds
+        https://bugs.webkit.org/show_bug.cgi?id=179914
+
+        Reviewed by Carlos Garcia Campos.
+
+        * CMakeLists.txt:
+        * Source/cmake/OptionsGTK.cmake:
+        * Source/cmake/OptionsJSCOnly.cmake:
+        * Source/cmake/OptionsMac.cmake:
+        * Source/cmake/OptionsWPE.cmake:
+        * Source/cmake/OptionsWin.cmake:
+        * Source/cmake/WebKitCompilerFlags.cmake:
+        * Source/cmake/wpesymbols.filter: Removed.
+
+2017-12-22  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [GTK] Duplicated symbols in libjavascriptcoregtk and libwebkit2gtk can cause crashes in production builds
+        https://bugs.webkit.org/show_bug.cgi?id=179914
+
+        Reviewed by Carlos Garcia Campos.
+
+        Let's build JSC as a static library, and link that static lib to *both* our shared
+        libjavascriptcoregtk and libwebkit2gtk. Then we can fix this and also filter out all the
+        private symbols that we're currently exposing in libjavascriptcoregtk, which wouldn't be
+        possible otherwise. The cost of this is disk space. I think this trade-off is reasonable,
+        because it's the best way I could think of that accomplishes all our goals: (a) install two
+        shared libs, (b) export only public API symbols, (c) does not require any linker hacks.
+
+        Additionally, build with -fvisibility=hidden so that the compiler knows that many symbols
+        will be stripped out. This should improve code generation. It's actually how WPE was
+        previously compiled, but I removed this when I added the version script for WPE, because I
+        thought it was redundant with the version script. It is not, and we should use both,
+        according to Ulrich Drepper's "How to Write Shared Libraries." We will use
+        -fvisibility=hidden on all ports; this should be fine, as long as export macros are used
+        where needed. This is actually a totally separate change, but it makes sense to do it now if
+        we consider this bug a catch-all "fix how we link WebKit" issue.
+
+        * CMakeLists.txt: Rejigger the default library types, and remove the SHARED_CORE option,
+          which is not likely to work properly in ports that are not expecting it. These changes are
+          only mildly-related and certainly not required, but it makes sense to clean them up now.
+        * Source/cmake/OptionsGTK.cmake: Don't set the version script here.
+        * Source/cmake/OptionsJSCOnly.cmake: Adjust to changes in default library types.
+        * Source/cmake/OptionsMac.cmake: Adjust to changes in default library types. Override the
+          library type variables only when required.
+        * Source/cmake/OptionsWPE.cmake: Overriding the library type variables is no longer
+          required. Also, don't set the version script here.
+        * Source/cmake/OptionsWin.cmake: Adjust to changes in default library types. Override the
+          library type variables only when required.
+        * Source/cmake/WebKitCompilerFlags.cmake: Build with -fvisibility=hidden,
+          -fvisibility-inlines-hidden, and -Wno-attributes.
+        * Source/cmake/wpesymbols.filter: Removed.
+
 2017-12-20  Don Olmstead  <don.olmstead@sony.com>
 
         [CMake][Win] Add a way to set CMAKE_IGNORE_PATH

@@ -1,5 +1,3 @@
-set(JavaScriptCore_OUTPUT_NAME javascriptcoregtk-${WEBKITGTK_API_VERSION})
-
 list(APPEND JavaScriptCore_UNIFIED_SOURCE_LIST_FILES
     "SourcesGTK.txt"
 )
@@ -52,3 +50,23 @@ list(APPEND JavaScriptCore_LIBRARIES
 list(APPEND JavaScriptCore_SYSTEM_INCLUDE_DIRECTORIES
     ${GLIB_INCLUDE_DIRS}
 )
+
+# Linking WebKit properly is extremely tricky. We need to build both a static library
+# and a shared library for JSC. See https://bugs.webkit.org/show_bug.cgi?id=179914.
+set(JavaScriptCoreGTK_LIBRARIES
+    JavaScriptCore${DEBUG_SUFFIX}
+)
+ADD_WHOLE_ARCHIVE_TO_LIBRARIES(JavaScriptCoreGTK_LIBRARIES)
+
+add_library(JavaScriptCoreGTK SHARED "${CMAKE_BINARY_DIR}/cmakeconfig.h")
+target_link_libraries(JavaScriptCoreGTK ${JavaScriptCoreGTK_LIBRARIES})
+set_target_properties(JavaScriptCoreGTK PROPERTIES OUTPUT_NAME javascriptcoregtk-${WEBKITGTK_API_VERSION})
+
+WEBKIT_POPULATE_LIBRARY_VERSION(JAVASCRIPTCORE)
+set_target_properties(JavaScriptCoreGTK PROPERTIES VERSION ${JAVASCRIPTCORE_VERSION} SOVERSION ${JAVASCRIPTCORE_VERSION_MAJOR})
+
+if (DEVELOPER_MODE)
+    WEBKIT_ADD_TARGET_PROPERTIES(JavaScriptCoreGTK LINK_FLAGS "-Wl,--version-script,${CMAKE_CURRENT_SOURCE_DIR}/javascriptcoregtk-symbols.map")
+endif ()
+
+install(TARGETS JavaScriptCoreGTK DESTINATION "${LIB_INSTALL_DIR}")

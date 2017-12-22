@@ -26,11 +26,7 @@
 
 using namespace WebKit;
 
-#if defined(WIN32) || defined(_WIN32)
-extern "C" __declspec(dllexport)
-#else
-extern "C"
-#endif
+extern "C" __attribute__((visibility("default")))
 void WKBundleInitialize(WKBundleRef bundle, WKTypeRef userData)
 {
     WebKitExtensionManager::singleton().initialize(toImpl(bundle), toImpl(userData));
