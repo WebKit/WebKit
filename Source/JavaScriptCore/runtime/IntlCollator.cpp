@@ -46,7 +46,7 @@ namespace JSC {
 
 const ClassInfo IntlCollator::s_info = { "Object", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(IntlCollator) };
 
-static const char* const relevantExtensionKeys[3] = { "co", "kn", "kf" };
+static const char* const relevantCollatorExtensionKeys[3] = { "co", "kn", "kf" };
 static const size_t indexOfExtensionKeyCo = 0;
 static const size_t indexOfExtensionKeyKn = 1;
 static const size_t indexOfExtensionKeyKf = 2;
@@ -260,7 +260,7 @@ void IntlCollator::initializeCollator(ExecState& state, JSValue locales, JSValue
     // 17. Let relevantExtensionKeys be the value of %Collator%.[[relevantExtensionKeys]].
     // 18. Let r be ResolveLocale(%Collator%.[[availableLocales]], requestedLocales, opt, relevantExtensionKeys, localeData).
     auto& availableLocales = state.jsCallee()->globalObject()->intlCollatorAvailableLocales();
-    auto result = resolveLocale(state, availableLocales, requestedLocales, opt, relevantExtensionKeys, WTF_ARRAY_LENGTH(relevantExtensionKeys), localeData);
+    auto result = resolveLocale(state, availableLocales, requestedLocales, opt, relevantCollatorExtensionKeys, WTF_ARRAY_LENGTH(relevantCollatorExtensionKeys), localeData);
 
     // 19. Set collator.[[locale]] to the value of r.[[locale]].
     m_locale = result.get(ASCIILiteral("locale"));

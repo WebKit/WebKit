@@ -1,3 +1,20 @@
+2017-12-22  Caio Lima  <ticaiolima@gmail.com>
+
+        [JSC] IntlCollator and IntlNumberFormat has static fields with same name
+        https://bugs.webkit.org/show_bug.cgi?id=181128
+
+        Reviewed by Yusuke Suzuki.
+
+        Minor fixes into IntlNumberFormat::initializeNumberFormat and
+        IntlCollator::initializeCollator that makes JSC unified sources
+        compile. These files were generating compilation error when placed at
+        the same UnifiedSource.cpp, because they had static variables with same name.
+
+        * runtime/IntlCollator.cpp:
+        (JSC::IntlCollator::initializeCollator):
+        * runtime/IntlNumberFormat.cpp:
+        (JSC::IntlNumberFormat::initializeNumberFormat):
+
 2017-12-22  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         generate_offset_extractor.rb should not print to stderr by default
