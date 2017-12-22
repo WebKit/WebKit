@@ -1,5 +1,18 @@
 2017-12-22  Wenson Hsieh  <wenson_hsieh@apple.com>
 
+        Unreviewed, fix build failures due to using deprecated AppKit symbols when building 32-bit
+
+        Wrap some more code in -Wdeprecated-declarations to try and fix the 32-bit build using the newest SDK.
+
+        * Carbon/CarbonWindowAdapter.mm:
+        (-[CarbonWindowAdapter setViewsNeedDisplay:]):
+        * Plugins/WebNetscapePluginView.mm:
+        (-[WebNetscapePluginView saveAndSetNewPortStateForUpdate:]):
+        (-[WebNetscapePluginView sendDrawRectEvent:]):
+        (-[WebNetscapePluginView drawRect:]):
+
+2017-12-22  Wenson Hsieh  <wenson_hsieh@apple.com>
+
         Fix build failures due to using deprecated AppKit symbols
         https://bugs.webkit.org/show_bug.cgi?id=181110
         <rdar://problem/36162865>

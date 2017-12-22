@@ -281,7 +281,10 @@ static OSStatus NSCarbonWindowHandleEvent(EventHandlerCallRef inEventHandlerCall
     // flushes it.
 
     if ([self windowNumber] != -1) {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
         CGContextRef cgContext = (CGContextRef)[[self _threadContext] graphicsPort];
+#pragma clang diagnostic pop
         CGContextSynchronize(cgContext);
     }
 }
