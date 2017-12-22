@@ -618,7 +618,7 @@ void WebProcessPool::establishWorkerContextConnectionToStorageProcess(StoragePro
 
     m_processes.append(WTFMove(serviceWorkerProcessProxy));
 
-    m_serviceWorkerProcess->start(m_defaultPageGroup->preferences().store(), sessionID);
+    m_serviceWorkerProcess->start(m_serviceWorkerPreferences ? m_serviceWorkerPreferences.value() : m_defaultPageGroup->preferences().store(), sessionID);
     if (!m_serviceWorkerUserAgent.isNull())
         m_serviceWorkerProcess->setUserAgent(m_serviceWorkerUserAgent);
 }
@@ -1064,6 +1064,14 @@ void WebProcessPool::pageAddedToProcess(WebPageProxy& page)
             ensureStorageProcessAndWebsiteDataStore(&page.websiteDataStore());
 #endif
     }
+
+#if ENABLE(SERVICE_WORKER)
+    if (!m_serviceWorkerPreferences) {
+        m_serviceWorkerPreferences = page.preferencesStore();
+        if (m_serviceWorkerProcess)
+            m_serviceWorkerProcess->updatePreferencesStore(m_serviceWorkerPreferences.value());
+    }
+#endif
 }
 
 void WebProcessPool::pageRemovedFromProcess(WebPageProxy& page)

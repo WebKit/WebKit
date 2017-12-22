@@ -1277,7 +1277,7 @@ void FrameLoader::loadURL(FrameLoadRequest&& frameLoadRequest, const String& ref
         addHTTPOriginIfNeeded(request, referrerOrigin->toString());
     }
     if (&m_frame.tree().top() != &m_frame)
-        request.setDomainForCachePartition(m_frame.tree().top().document()->securityOrigin().domainForCachePartition());
+        request.setDomainForCachePartition(m_frame.tree().top().document()->domainForCachePartition());
 
     addExtraFieldsToRequest(request, newLoadType, true);
     if (isReload(newLoadType))

@@ -60,7 +60,7 @@ public:
     void removeFrameLoaderClient(ServiceWorkerFrameLoaderClient&);
 
 private:
-    void updatePreferences(const WebPreferencesStore&);
+    void updatePreferencesStore(const WebPreferencesStore&);
 
     // WebCore::SWContextManager::Connection.
     void postMessageToServiceWorkerClient(const WebCore::ServiceWorkerClientIdentifier& destinationIdentifier, Ref<WebCore::SerializedScriptValue>&& message, WebCore::ServiceWorkerIdentifier sourceIdentifier, const String& sourceOrigin) final;
@@ -91,6 +91,8 @@ private:
     Ref<IPC::Connection> m_connectionToStorageProcess;
     uint64_t m_pageID { 0 };
     uint64_t m_previousServiceWorkerID { 0 };
+
+    WebCore::SecurityOrigin::StorageBlockingPolicy m_storageBlockingPolicy { WebCore::SecurityOrigin::StorageBlockingPolicy::AllowAllStorage };
 
     HashSet<std::unique_ptr<ServiceWorkerFrameLoaderClient>> m_loaders;
     HashMap<uint64_t, FindClientByIdentifierCallback> m_findClientByIdentifierRequests;

@@ -70,6 +70,11 @@ void ServiceWorkerProcessProxy::setUserAgent(const String& userAgent)
     send(Messages::WebSWContextManagerConnection::SetUserAgent { userAgent }, 0);
 }
 
+void ServiceWorkerProcessProxy::updatePreferencesStore(const WebPreferencesStore& store)
+{
+    send(Messages::WebSWContextManagerConnection::UpdatePreferencesStore { store }, 0);
+}
+
 void ServiceWorkerProcessProxy::didReceiveAuthenticationChallenge(uint64_t pageID, uint64_t frameID, Ref<AuthenticationChallengeProxy>&& challenge)
 {
     UNUSED_PARAM(pageID);

@@ -513,7 +513,7 @@ RefPtr<LegacyWebArchive> LegacyWebArchive::create(const String& markupString, Fr
                 }
 
                 ResourceRequest request(subresourceURL);
-                request.setDomainForCachePartition(frame.document()->topOrigin().domainForCachePartition());
+                request.setDomainForCachePartition(frame.document()->domainForCachePartition());
 
                 if (auto* cachedResource = MemoryCache::singleton().resourceForRequest(request, frame.page()->sessionID())) {
                     if (auto resource = ArchiveResource::create(cachedResource->resourceBuffer(), subresourceURL, cachedResource->response())) {

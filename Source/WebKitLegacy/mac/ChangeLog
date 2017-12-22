@@ -1,3 +1,13 @@
+2017-12-21  Youenn Fablet  <youenn@apple.com>
+
+        ServiceWorkerThreadProxy should set the correct cookie and cache partitioning options
+        https://bugs.webkit.org/show_bug.cgi?id=181000
+
+        Reviewed by Chris Dumez.
+
+        * Misc/WebCache.mm:
+        (+[WebCache addImageToCache:forURL:forFrame:]):
+
 2017-12-21  Jeremy Jones  <jeremyj@apple.com>
 
         Update FULLSCREEN_API feature defines.

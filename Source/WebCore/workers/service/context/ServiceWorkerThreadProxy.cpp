@@ -31,19 +31,39 @@
 #include "CacheStorageProvider.h"
 #include "FrameLoader.h"
 #include "MainFrame.h"
+#include "Settings.h"
 #include <pal/SessionID.h>
 #include <wtf/MainThread.h>
 #include <wtf/RunLoop.h>
 
 namespace WebCore {
 
-static inline UniqueRef<Page> createPageForServiceWorker(PageConfiguration&& configuration, const URL& url)
+URL static inline topOriginURL(const SecurityOrigin& origin)
+{
+    URL url;
+    url.setProtocol(origin.protocol());
+    url.setHost(origin.host());
+    if (origin.port())
+        url.setPort(*origin.port());
+    return url;
+}
+
+static inline UniqueRef<Page> createPageForServiceWorker(PageConfiguration&& configuration, const ServiceWorkerContextData& data, SecurityOrigin::StorageBlockingPolicy storageBlockingPolicy)
 {
     auto page = makeUniqueRef<Page>(WTFMove(configuration));
     auto& mainFrame = page->mainFrame();
     mainFrame.loader().initForSynthesizedDocument({ });
-    auto document = Document::createNonRenderedPlaceholder(&mainFrame, url);
+    auto document = Document::createNonRenderedPlaceholder(&mainFrame, data.scriptURL);
     document->createDOMWindow();
+
+    document->mutableSettings().setStorageBlockingPolicy(storageBlockingPolicy);
+    document->storageBlockingStateDidChange();
+
+    auto origin = data.registration.key.topOrigin().securityOrigin();
+    origin->setStorageBlockingPolicy(storageBlockingPolicy);
+
+    document->setFirstPartyForCookies(topOriginURL(origin));
+    document->setDomainForCachePartition(origin->domainForCachePartition());
     mainFrame.setDocument(WTFMove(document));
     return page;
 }
@@ -57,8 +77,8 @@ static inline IDBClient::IDBConnectionProxy* idbConnectionProxy(Document& docume
 #endif
 }
 
-ServiceWorkerThreadProxy::ServiceWorkerThreadProxy(PageConfiguration&& pageConfiguration, const ServiceWorkerContextData& data, PAL::SessionID sessionID, String&& userAgent, CacheStorageProvider& cacheStorageProvider)
-    : m_page(createPageForServiceWorker(WTFMove(pageConfiguration), data.scriptURL))
+ServiceWorkerThreadProxy::ServiceWorkerThreadProxy(PageConfiguration&& pageConfiguration, const ServiceWorkerContextData& data, PAL::SessionID sessionID, String&& userAgent, CacheStorageProvider& cacheStorageProvider, SecurityOrigin::StorageBlockingPolicy storageBlockingPolicy)
+    : m_page(createPageForServiceWorker(WTFMove(pageConfiguration), data, storageBlockingPolicy))
     , m_document(*m_page->mainFrame().document())
     , m_serviceWorkerThread(ServiceWorkerThread::create(data, sessionID, WTFMove(userAgent), *this, *this, idbConnectionProxy(m_document), m_document->socketProvider()))
     , m_cacheStorageProvider(cacheStorageProvider)

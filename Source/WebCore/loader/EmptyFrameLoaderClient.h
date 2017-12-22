@@ -52,7 +52,7 @@ class WEBCORE_EXPORT EmptyFrameLoaderClient : public FrameLoaderClient {
     void convertMainResourceLoadToDownload(DocumentLoader*, PAL::SessionID, const ResourceRequest&, const ResourceResponse&) final { }
 
     void assignIdentifierToInitialRequest(unsigned long, DocumentLoader*, const ResourceRequest&) final { }
-    bool shouldUseCredentialStorage(DocumentLoader*, unsigned long) final { return false; }
+    bool shouldUseCredentialStorage(DocumentLoader*, unsigned long) override { return false; }
     void dispatchWillSendRequest(DocumentLoader*, unsigned long, ResourceRequest&, const ResourceResponse&) final { }
     void dispatchDidReceiveAuthenticationChallenge(DocumentLoader*, unsigned long, const AuthenticationChallenge&) final { }
 #if USE(PROTECTION_SPACE_AUTH_CALLBACK)

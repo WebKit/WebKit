@@ -1263,6 +1263,8 @@ public:
     void getApplicationManifest(Function<void(const std::optional<WebCore::ApplicationManifest>&, CallbackBase::Error)>&&);
 #endif
 
+    WebPreferencesStore preferencesStore() const;
+
 private:
     WebPageProxy(PageClient&, WebProcessProxy&, uint64_t pageID, Ref<API::PageConfiguration>&&);
     void platformInitialize();
@@ -1654,8 +1656,6 @@ private:
 
     uint64_t generateNavigationID();
     API::DiagnosticLoggingClient* effectiveDiagnosticLoggingClient(WebCore::ShouldSample);
-
-    WebPreferencesStore preferencesStore() const;
 
     void dispatchActivityStateChange();
     void viewDidLeaveWindow();

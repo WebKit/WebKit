@@ -237,6 +237,9 @@ public:
 
     JSC::ExecState* execState();
 
+    WEBCORE_EXPORT String domainForCachePartition() const;
+    void setDomainForCachePartition(String&& domain) { m_domainForCachePartition = WTFMove(domain); }
+
 #if ENABLE(SERVICE_WORKER)
     bool hasServiceWorkerScheme();
     ServiceWorker* activeServiceWorker() const;
@@ -323,6 +326,8 @@ private:
     RefPtr<ServiceWorker> m_activeServiceWorker;
     HashMap<ServiceWorkerIdentifier, ServiceWorker*> m_serviceWorkers;
 #endif
+
+    String m_domainForCachePartition;
 };
 
 } // namespace WebCore

@@ -133,7 +133,7 @@ void CachedResourceRequest::upgradeInsecureRequestIfNeeded(Document& document)
 
 void CachedResourceRequest::setDomainForCachePartition(Document& document)
 {
-    m_resourceRequest.setDomainForCachePartition(document.topOrigin().domainForCachePartition());
+    m_resourceRequest.setDomainForCachePartition(document.domainForCachePartition());
 }
 
 void CachedResourceRequest::setDomainForCachePartition(const String& domain)

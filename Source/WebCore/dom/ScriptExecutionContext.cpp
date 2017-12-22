@@ -524,6 +524,11 @@ JSC::ExecState* ScriptExecutionContext::execState()
     return execStateFromWorkerGlobalScope(workerGlobalScope);
 }
 
+String ScriptExecutionContext::domainForCachePartition() const
+{
+    return m_domainForCachePartition.isNull() ? topOrigin().domainForCachePartition() : m_domainForCachePartition;
+}
+
 #if ENABLE(SERVICE_WORKER)
 
 bool ScriptExecutionContext::hasServiceWorkerScheme()

@@ -1598,7 +1598,7 @@ bool PluginView::getAuthenticationInfo(const ProtectionSpace& protectionSpace, S
     if (!contentDocument)
         return false;
 
-    String partitionName = contentDocument->topDocument().securityOrigin().domainForCachePartition();
+    String partitionName = contentDocument->topDocument().domainForCachePartition();
     Credential credential = CredentialStorage::defaultCredentialStorage().get(partitionName, protectionSpace);
     if (credential.isEmpty())
         credential = CredentialStorage::defaultCredentialStorage().getFromPersistentStorage(protectionSpace);

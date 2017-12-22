@@ -83,6 +83,8 @@ private:
 
     void frameLoaderDestroyed() final { m_connection.removeFrameLoaderClient(*this); }
 
+    bool shouldUseCredentialStorage(DocumentLoader*, unsigned long) final { return true; }
+
     PAL::SessionID sessionID() const final { return m_sessionID; }
     std::optional<uint64_t> pageID() const final { return m_pageID; }
     std::optional<uint64_t> frameID() const final { return m_frameID; }
@@ -100,16 +102,18 @@ WebSWContextManagerConnection::WebSWContextManagerConnection(Ref<IPC::Connection
     , m_pageID(pageID)
     , m_userAgent(standardUserAgentWithApplicationName({ }))
 {
-    updatePreferences(store);
+    updatePreferencesStore(store);
 }
 
 WebSWContextManagerConnection::~WebSWContextManagerConnection() = default;
 
-void WebSWContextManagerConnection::updatePreferences(const WebPreferencesStore& store)
+void WebSWContextManagerConnection::updatePreferencesStore(const WebPreferencesStore& store)
 {
     RuntimeEnabledFeatures::sharedFeatures().setServiceWorkerEnabled(true);
     RuntimeEnabledFeatures::sharedFeatures().setCacheAPIEnabled(store.getBoolValueForKey(WebPreferencesKey::cacheAPIEnabledKey()));
     RuntimeEnabledFeatures::sharedFeatures().setFetchAPIEnabled(store.getBoolValueForKey(WebPreferencesKey::fetchAPIEnabledKey()));
+
+    m_storageBlockingPolicy = static_cast<SecurityOrigin::StorageBlockingPolicy>(store.getUInt32ValueForKey(WebPreferencesKey::storageBlockingPolicyKey()));
 }
 
 void WebSWContextManagerConnection::installServiceWorker(const ServiceWorkerContextData& data, SessionID sessionID)
@@ -130,7 +134,7 @@ void WebSWContextManagerConnection::installServiceWorker(const ServiceWorkerCont
     pageConfiguration.loaderClientForMainFrame = frameLoaderClient.get();
     m_loaders.add(WTFMove(frameLoaderClient));
 
-    auto serviceWorkerThreadProxy = ServiceWorkerThreadProxy::create(WTFMove(pageConfiguration), data, sessionID, String { m_userAgent }, WebProcess::singleton().cacheStorageProvider());
+    auto serviceWorkerThreadProxy = ServiceWorkerThreadProxy::create(WTFMove(pageConfiguration), data, sessionID, String { m_userAgent }, WebProcess::singleton().cacheStorageProvider(), m_storageBlockingPolicy);
     SWContextManager::singleton().registerServiceWorkerThreadForInstall(WTFMove(serviceWorkerThreadProxy));
 
     LOG(ServiceWorker, "Context process PID: %i created worker thread\n", getpid());

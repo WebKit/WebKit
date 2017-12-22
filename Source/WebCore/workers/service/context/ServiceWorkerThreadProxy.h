@@ -30,6 +30,7 @@
 #include "CacheStorageConnection.h"
 #include "Document.h"
 #include "Page.h"
+#include "SecurityOrigin.h"
 #include "ServiceWorkerDebuggable.h"
 #include "ServiceWorkerIdentifier.h"
 #include "ServiceWorkerInspectorProxy.h"
@@ -64,7 +65,7 @@ public:
     WEBCORE_EXPORT std::unique_ptr<FetchLoader> createBlobLoader(FetchLoaderClient&, const URL&);
 
 private:
-    WEBCORE_EXPORT ServiceWorkerThreadProxy(PageConfiguration&&, const ServiceWorkerContextData&, PAL::SessionID, String&& userAgent, CacheStorageProvider&);
+    WEBCORE_EXPORT ServiceWorkerThreadProxy(PageConfiguration&&, const ServiceWorkerContextData&, PAL::SessionID, String&& userAgent, CacheStorageProvider&, SecurityOrigin::StorageBlockingPolicy);
 
     // WorkerLoaderProxy
     bool postTaskForModeToWorkerGlobalScope(ScriptExecutionContext::Task&&, const String& mode) final;

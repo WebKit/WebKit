@@ -505,6 +505,7 @@ private:
     bool m_waitingForWorkerContextProcessConnection { false };
     bool m_allowsAnySSLCertificateForServiceWorker { false };
     String m_serviceWorkerUserAgent;
+    std::optional<WebPreferencesStore> m_serviceWorkerPreferences;
 #endif
 
     Ref<WebPageGroup> m_defaultPageGroup;
