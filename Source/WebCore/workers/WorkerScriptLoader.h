@@ -60,6 +60,7 @@ public:
     String script();
     const URL& url() const { return m_url; }
     const URL& responseURL() const;
+    const String& responseMIMEType() const { return m_responseMIMEType; }
     bool failed() const { return m_failed; }
     unsigned long identifier() const { return m_identifier; }
     const ResourceError& error() const { return m_error; }
@@ -85,6 +86,7 @@ private:
     StringBuilder m_script;
     URL m_url;
     URL m_responseURL;
+    String m_responseMIMEType;
     unsigned long m_identifier { 0 };
     bool m_failed { false };
     bool m_finishing { false };

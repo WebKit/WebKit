@@ -33,6 +33,7 @@
 #include "IDBConnectionProxy.h"
 #include "ImageBitmapOptions.h"
 #include "InspectorInstrumentation.h"
+#include "MIMETypeRegistry.h"
 #include "Performance.h"
 #include "ScheduledAction.h"
 #include "ScriptSourceCode.h"
@@ -265,8 +266,10 @@ ExceptionOr<void> WorkerGlobalScope::importScripts(const Vector<String>& urls)
     FetchOptions::Cache cachePolicy = FetchOptions::Cache::Default;
 
 #if ENABLE(SERVICE_WORKER)
-    if (is<ServiceWorkerGlobalScope>(*this)) {
-        // FIXME: Fully implement https://w3c.github.io/ServiceWorker/#importscripts.
+    bool isServiceWorkerGlobalScope = is<ServiceWorkerGlobalScope>(*this);
+    if (isServiceWorkerGlobalScope) {
+        // FIXME: We need to add support for the 'imported scripts updated' flag as per:
+        // https://w3c.github.io/ServiceWorker/#importscripts
         auto& serviceWorkerGlobalScope = downcast<ServiceWorkerGlobalScope>(*this);
         auto& registration = serviceWorkerGlobalScope.registration();
         if (registration.updateViaCache() == ServiceWorkerUpdateViaCache::None || registration.needsUpdate())
@@ -286,6 +289,11 @@ ExceptionOr<void> WorkerGlobalScope::importScripts(const Vector<String>& urls)
         // If the fetching attempt failed, throw a NetworkError exception and abort all these steps.
         if (scriptLoader->failed())
             return Exception { NetworkError };
+
+#if ENABLE(SERVICE_WORKER)
+        if (isServiceWorkerGlobalScope && !MIMETypeRegistry::isSupportedJavaScriptMIMEType(scriptLoader->responseMIMEType()))
+            return Exception { NetworkError };
+#endif
 
         InspectorInstrumentation::scriptImported(*this, scriptLoader->identifier(), scriptLoader->script());
 
