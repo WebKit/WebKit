@@ -1,3 +1,32 @@
+2017-12-22  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [DFG] Add JSValueRegsFlushedCallResult
+        https://bugs.webkit.org/show_bug.cgi?id=181075
+
+        Reviewed by Mark Lam.
+
+        Add JSValueRegsFlushedCallResult, which is appropriate for the JSValueRegs result
+        of the function call after flushing. We can remove bunch of `#if USE(JSVALUE32_64)`
+        code and simplify them.
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileFromCharCode):
+        (JSC::DFG::SpeculativeJIT::compileGetByValForObjectWithString):
+        (JSC::DFG::SpeculativeJIT::compileGetByValForObjectWithSymbol):
+        (JSC::DFG::SpeculativeJIT::compileParseInt):
+        (JSC::DFG::SpeculativeJIT::emitUntypedBitOp):
+        (JSC::DFG::SpeculativeJIT::emitUntypedRightShiftBitOp):
+        (JSC::DFG::SpeculativeJIT::compileValueAdd):
+        (JSC::DFG::SpeculativeJIT::compileArithMul):
+        (JSC::DFG::SpeculativeJIT::compileArithDiv):
+        (JSC::DFG::SpeculativeJIT::compileArithRounding):
+        (JSC::DFG::SpeculativeJIT::compileResolveScopeForHoistingFuncDeclInEval):
+        (JSC::DFG::SpeculativeJIT::compileGetDynamicVar):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::callOperation):
+        (JSC::DFG::JSValueRegsFlushedCallResult::JSValueRegsFlushedCallResult):
+        (JSC::DFG::JSValueRegsFlushedCallResult::regs):
+
 2017-12-21  Saam Barati  <sbarati@apple.com>
 
         lowering get_by_val to GetById inside bytecode parser should check for BadType exit kind

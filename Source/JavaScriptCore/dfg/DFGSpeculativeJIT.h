@@ -1453,6 +1453,11 @@ public:
         m_jit.setupArgumentsWithExecState(arg1, arg2, TrustedImmPtr(uid));
         return appendCallSetResult(operation, result);
     }
+    JITCompiler::Call callOperation(J_JITOperation_EJscI operation, JSValueRegs result, GPRReg arg1, UniquedStringImpl* impl)
+    {
+        m_jit.setupArgumentsWithExecState(arg1, TrustedImmPtr(impl));
+        return appendCallSetResult(operation, result.payloadGPR());
+    }
     JITCompiler::Call callOperation(J_JITOperation_EJscI operation, GPRReg result, GPRReg arg1, UniquedStringImpl* impl)
     {
         m_jit.setupArgumentsWithExecState(arg1, TrustedImmPtr(impl));
@@ -1513,6 +1518,11 @@ public:
         m_jit.setupArgumentsWithExecState(arg1, arg2, TrustedImmPtr(impl), TrustedImm32(value));
         return appendCall(operation);
     }
+    JITCompiler::Call callOperation(J_JITOperation_EOIUi operation, JSValueRegs result, GPRReg arg1, UniquedStringImpl* impl, unsigned value)
+    {
+        m_jit.setupArgumentsWithExecState(arg1, TrustedImmPtr(impl), TrustedImm32(value));
+        return appendCallSetResult(operation, result.payloadGPR());
+    }
     JITCompiler::Call callOperation(J_JITOperation_EOIUi operation, GPRReg result, GPRReg arg1, UniquedStringImpl* impl, unsigned value)
     {
         m_jit.setupArgumentsWithExecState(arg1, TrustedImmPtr(impl), TrustedImm32(value));
@@ -1570,6 +1580,11 @@ public:
         m_jit.setupArgumentsWithExecState(arg1, arg2, arg3);
         return appendCallSetResult(operation, result);
     }
+    JITCompiler::Call callOperation(J_JITOperation_EJssZ operation, JSValueRegs result, GPRReg arg1, GPRReg arg2)
+    {
+        m_jit.setupArgumentsWithExecState(arg1, arg2);
+        return appendCallSetResult(operation, result.payloadGPR());
+    }
     JITCompiler::Call callOperation(J_JITOperation_EJssZ operation, GPRReg result, GPRReg arg1, GPRReg arg2)
     {
         m_jit.setupArgumentsWithExecState(arg1, arg2);
@@ -1625,9 +1640,14 @@ public:
         m_jit.setupArgumentsWithExecState(arg1, arg2);
         return appendCallSetResult(operation, result);
     }
-    JITCompiler::Call callOperation(J_JITOperation_EJZ operation, GPRReg result, GPRReg arg1, GPRReg arg2)
+    JITCompiler::Call callOperation(J_JITOperation_EJZ operation, JSValueRegs result, JSValueRegs arg1, GPRReg arg2)
     {
-        m_jit.setupArgumentsWithExecState(arg1, arg2);
+        m_jit.setupArgumentsWithExecState(arg1.payloadGPR(), arg2);
+        return appendCallSetResult(operation, result.payloadGPR());
+    }
+    JITCompiler::Call callOperation(J_JITOperation_EJZ operation, GPRReg result, JSValueRegs arg1, GPRReg arg2)
+    {
+        m_jit.setupArgumentsWithExecState(arg1.payloadGPR(), arg2);
         return appendCallSetResult(operation, result);
     }
     JITCompiler::Call callOperation(J_JITOperation_EJA operation, JSValueRegs result, JSValueRegs arg1, GPRReg arg2)
@@ -1870,6 +1890,11 @@ public:
     {
         m_jit.setupArgumentsWithExecState(arg1, arg2, arg3, arg4);
         return appendCallSetResult(operation, result);
+    }
+    JITCompiler::Call callOperation(J_JITOperation_ECC operation, JSValueRegs result, GPRReg arg1, GPRReg arg2)
+    {
+        m_jit.setupArgumentsWithExecState(arg1, arg2);
+        return appendCallSetResult(operation, result.payloadGPR());
     }
     JITCompiler::Call callOperation(J_JITOperation_ECC operation, GPRReg result, GPRReg arg1, GPRReg arg2)
     {
@@ -3672,6 +3697,36 @@ private:
         jit->lock(FPRInfo::returnValueFPR);
         return FPRInfo::returnValueFPR;
     }
+};
+
+class JSValueRegsFlushedCallResult {
+public:
+    JSValueRegsFlushedCallResult(SpeculativeJIT* jit)
+#if USE(JSVALUE64)
+        : m_gpr(jit)
+#else
+        : m_payloadGPR(jit)
+        , m_tagGPR(jit)
+#endif
+    {
+    }
+
+    JSValueRegs regs()
+    {
+#if USE(JSVALUE64)
+        return JSValueRegs { m_gpr.gpr() };
+#else
+        return JSValueRegs { m_tagGPR.gpr(), m_payloadGPR.gpr() };
+#endif
+    }
+
+private:
+#if USE(JSVALUE64)
+    GPRFlushedCallResult m_gpr;
+#else
+    GPRFlushedCallResult m_payloadGPR;
+    GPRFlushedCallResult2 m_tagGPR;
+#endif
 };
 
 
