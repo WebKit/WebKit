@@ -1,3 +1,117 @@
+2017-12-22  Jonathan Bedard  <jbedard@apple.com>
+
+        webkitpy: Refactor simulator code (Part 1)
+        https://bugs.webkit.org/show_bug.cgi?id=180555
+        <rdar://problem/36131381>
+
+        Reviewed by Alexey Proskuryakov.
+
+        The new SimulatedDeviceManager defined in this patch is designed to
+        act as a singleton. Consumers may request devices with certain
+        attributes, the the manager will then return a list of devices fulfilling the
+        request. The manager will pick between:
+                - Existing and booted simulators
+                - Existing simulators currently shut down
+                - Custom constructed simulators
+        These simulators will then be globally available.
+
+        This patch duplicates code in webkitpy/xcode/simulated_device.py,
+        webkitpy/xcode/simulator.py and webkitpy/port/ios_simulator.py. This duplicated
+        code will be removed in parts 2 and 3.
+
+        * Scripts/webkitpy/common/version_name_map.py:
+        (VersionNameMap.__init__): Add tvOS and watchOS.
+        * Scripts/webkitpy/xcode/device_type.py: Added.
+        (DeviceType): Holds the software and hardware information for a specific device.
+        Designed to allow for partial matching.
+        (DeviceType.from_string): Parses a string (such as iPhone 6s) into a DeviceType
+        object.
+        (DeviceType._define_software_variant_from_hardware_family): The software_variant
+        of a device can usually be implied from its hardware_family.
+        (DeviceType.check_consistency): Verify that the software_variant matches the
+        hardware_family and that software_version and hardware_variant have their
+        respective prerequisites.
+        (DeviceType.__init__):
+        (DeviceType.__str__): Converts a DeviceType object into a human readable string.
+        (DeviceType.__eq__): Compares two DeviceType objects treating None as a wildcard.
+        (DeviceType.__contains__): Allow partial version mapping.
+        * Scripts/webkitpy/xcode/device_type_unittest.py: Added.
+        (DeviceTypeTest):
+        (DeviceTypeTest.test_iphone_initialization):
+        (DeviceTypeTest.test_ipad_initialization):
+        (DeviceTypeTest.test_generic_ios_device):
+        (DeviceTypeTest.test_watch_initialization):
+        (DeviceTypeTest.test_tv_initialization):
+        (DeviceTypeTest.test_from_string):
+        (DeviceTypeTest.test_comparison):
+        (DeviceTypeTest.test_contained_in):
+        * Scripts/webkitpy/xcode/new_simulated_device.py: Added.
+        (DeviceRequest): Adds additional options to be used when requesting a device.
+        (DeviceRequest.__init__):
+        (SimulatedDeviceManager):
+        (SimulatedDeviceManager.Runtime): Representation of a supported simulated runtime.
+        Designed as an internal representation, not to be used outside this class.
+        (SimulatedDeviceManager.Runtime.__init__):
+        (SimulatedDeviceManager._create_runtimes): Extract a list of available runtimes.
+        (SimulatedDeviceManager._create_device_with_runtime): Return a new or existing device
+        with the provided runtime matching the provided dictionary.
+        (SimulatedDeviceManager.populate_available_devices): Use simctl to update the list of devices
+        available on this machine.
+        (SimulatedDeviceManager.available_devices): Populate the list of available device if empty
+        and return that list.
+        (SimulatedDeviceManager._find_exisiting_device_for_request): Return an existing device matching
+        the provided request if one exists.
+        (SimulatedDeviceManager._find_available_name): Given a name base, return a string which
+        does not match the name of an initialized device.
+        (SimulatedDeviceManager. get_runtime_for_device_type): Map device type to runtime object.
+        (SimulatedDeviceManager._disambiguate_device_type): The user may have requested a DeviceType
+        with only partial definitions. In this case, use existing runtimes and devices to generate
+        a DeviceType to build.
+        (SimulatedDeviceManager._get_device_identifier_for_type): Return a simctl device type string
+        given a DeviceType object.
+        (SimulatedDeviceManager._create_or_find_device_for_request): Given a DeviceRequest object,
+        either find an existing device which matches the request or create one matching
+        (SimulatedDeviceManager._does_fulfill_request): Given a device and list of requests, return
+        the request which the provided device matches, if there are any.
+        (SimulatedDeviceManager._wait_until_device_in_state): Wait until a device enters a specific
+        state.
+        (SimulatedDeviceManager.initialize_devices): Given a list of requests, return a list
+        of devices which fulfill the requests. This function will use both existing devices
+        and create devices. This function will also start the Simulator.app.
+        (SimulatedDeviceManager.max_supported_simulators): Uses the number of available cores,
+        maximum number of processes and the available RAM to calculate the number of
+        simulated devices this machine can support.
+        (SimulatorManager.swap): Shuts down the specified device and boots a new one which
+        matches the specified request.
+        (SimulatorManager.tear_down): Shut down any simulators managed by this class.
+        (SimulatedDevice):
+        (SimulatedDevice.DeviceState): Copied from webkitpy/xcode/simulator.py.
+        (SimulatedDevice.__init__):
+        (SimulatedDevice.state): Use the device's plist to determine the current state of
+        the device. Note that this function will cache the result for a second.
+        (SimulatedDevice.is_booted_or_booting):
+        (SimulatedDevice._shut_down): Shut down this device and remove it from the list of
+        initialized devices.
+        (SimulatedDevice._delete): Delete this device and remove it from the list of
+        available devices.
+        (SimulatedDevice._tear_down): Shut down and delete this device, if it is managed by
+        the SimulatorManager.
+        (SimulatedDevice.install_app): Copied from webkitpy/xcode/simulated_device.py.
+        (SimulatedDevice.launch_app): Ditto.
+        (SimulatedDevice.__eq__): Ditto.
+        (SimulatedDevice.__ne__): Ditto.
+        (SimulatedDevice.__repr__): Map state to string and include device type.
+        * Scripts/webkitpy/xcode/new_simulated_device_unittest.py: Added.
+        (SimulatedDeviceTest):
+        (SimulatedDeviceTest.reset_simulated_device_manager):
+        (SimulatedDeviceTest.tear_down):
+        (SimulatedDeviceTest.mock_host_for_simctl):
+        (device_by_criteria):
+        (test_available_devices):
+        (test_existing_simulator):
+        (change_state_to):
+        (test_swapping_devices):
+
 2017-12-21  Ling Ho <lingcherd_ho@apple.com>
 
         "Release 32-bit Build EWS" queue should be moved up to macOS High Sierra on Bot Watcher's Dashboard

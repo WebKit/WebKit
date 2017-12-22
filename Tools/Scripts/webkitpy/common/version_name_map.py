@@ -61,6 +61,8 @@ class VersionNameMap(object):
                 'Future': Version(10, 14),
             },
             'ios': self._automap_to_major_version('iOS', minimum=Version(10), maximum=Version(12)),
+            'tvos': self._automap_to_major_version('tvOS', minimum=Version(10), maximum=Version(12)),
+            'watchos': self._automap_to_major_version('watchOS', minimum=Version(1), maximum=Version(5)),
             'win': {
                 'Win10': Version(10),
                 '8.1': Version(6, 3),
