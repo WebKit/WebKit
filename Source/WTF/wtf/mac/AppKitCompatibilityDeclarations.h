@@ -28,27 +28,19 @@
 
 #import <Availability.h>
 
-#if __MAC_OS_X_VERSION_MAX_ALLOWED < 101200
-
+#if __MAC_OS_X_VERSION_MAX_ALLOWED < 101300
 #import <AppKit/AppKit.h>
+#endif
+
+#if __MAC_OS_X_VERSION_MAX_ALLOWED < 101200
 
 static const NSAlertStyle NSAlertStyleCritical = NSCriticalAlertStyle;
 static const NSAlertStyle NSAlertStyleInformational = NSInformationalAlertStyle;
 static const NSAlertStyle NSAlertStyleWarning = NSWarningAlertStyle;
 
-typedef NSInteger NSControlStateValue;
-static const NSControlStateValue NSControlStateValueMixed = NSMixedState;
-static const NSControlStateValue NSControlStateValueOff = NSOffState;
-static const NSControlStateValue NSControlStateValueOn = NSOnState;
-
 static const NSBezelStyle NSBezelStyleShadowlessSquare = NSShadowlessSquareBezelStyle;
 static const NSBezelStyle NSBezelStyleRounded = NSRoundedBezelStyle;
 static const NSBezelStyle NSBezelStyleRoundedDisclosure = NSRoundedDisclosureBezelStyle;
-
-static const NSLevelIndicatorStyle NSLevelIndicatorStyleRelevancy = NSRelevancyLevelIndicatorStyle;
-static const NSLevelIndicatorStyle NSLevelIndicatorStyleContinuousCapacity = NSContinuousCapacityLevelIndicatorStyle;
-static const NSLevelIndicatorStyle NSLevelIndicatorStyleDiscreteCapacity = NSDiscreteCapacityLevelIndicatorStyle;
-static const NSLevelIndicatorStyle NSLevelIndicatorStyleRating = NSRatingLevelIndicatorStyle;
 
 static const NSButtonType NSButtonTypeMomentaryLight = NSMomentaryLightButton;
 static const NSButtonType NSButtonTypePushOnPushOff = NSPushOnPushOffButton;
@@ -134,6 +126,20 @@ static const NSWindowStyleMask NSWindowStyleMaskTexturedBackground = NSTexturedB
 static const NSWindowStyleMask NSWindowStyleMaskTitled = NSTitledWindowMask;
 static const NSWindowStyleMask NSWindowStyleMaskUtilityWindow = NSUtilityWindowMask;
 
-#endif
+#endif // __MAC_OS_X_VERSION_MAX_ALLOWED < 101200
+
+#if __MAC_OS_X_VERSION_MAX_ALLOWED < 101300
+
+typedef NSInteger NSControlStateValue;
+static const NSControlStateValue NSControlStateValueMixed = NSMixedState;
+static const NSControlStateValue NSControlStateValueOff = NSOffState;
+static const NSControlStateValue NSControlStateValueOn = NSOnState;
+
+static const NSLevelIndicatorStyle NSLevelIndicatorStyleRelevancy = NSRelevancyLevelIndicatorStyle;
+static const NSLevelIndicatorStyle NSLevelIndicatorStyleContinuousCapacity = NSContinuousCapacityLevelIndicatorStyle;
+static const NSLevelIndicatorStyle NSLevelIndicatorStyleDiscreteCapacity = NSDiscreteCapacityLevelIndicatorStyle;
+static const NSLevelIndicatorStyle NSLevelIndicatorStyleRating = NSRatingLevelIndicatorStyle;
+
+#endif // __MAC_OS_X_VERSION_MAX_ALLOWED < 101300
 
 #endif // AppKitCompatibilityDeclarations_h
