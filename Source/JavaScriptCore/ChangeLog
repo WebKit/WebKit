@@ -1,3 +1,18 @@
+2017-12-21  Saam Barati  <sbarati@apple.com>
+
+        lowering get_by_val to GetById inside bytecode parser should check for BadType exit kind
+        https://bugs.webkit.org/show_bug.cgi?id=181112
+
+        Reviewed by Mark Lam.
+
+        The React subtest in Speedometer has a get_by_val it always converts
+        into a GetById in the DFG. This GetById always exits because of the incoming
+        identifier is a rope. This patch fixes this infinite exit loop
+        by only doing this transformation if we haven't exited due to BadType.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+
 2017-12-21  Mark Lam  <mark.lam@apple.com>
 
         Add WTF::PoisonedUniquePtr to replace std::unique_ptr when poisoning is desired.
