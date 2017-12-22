@@ -828,7 +828,7 @@ void RenderElement::propagateStyleToAnonymousChildren(StylePropagationType propa
         if (elementChild.isInFlowPositioned() && elementChild.isContinuation())
             newStyle.setPosition(elementChild.style().position());
 
-        updateAnonymousChildStyle(elementChild, newStyle);
+        updateAnonymousChildStyle(newStyle);
         
         elementChild.setStyle(WTFMove(newStyle));
     }

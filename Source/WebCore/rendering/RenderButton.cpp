@@ -63,17 +63,10 @@ bool RenderButton::hasLineIfEmpty() const
     return is<HTMLInputElement>(formControlElement());
 }
 
-void RenderButton::addChild(RenderTreeBuilder& builder, RenderPtr<RenderObject> newChild, RenderObject* beforeChild)
+void RenderButton::setInnerRenderer(RenderBlock& innerRenderer)
 {
-    if (!m_inner) {
-        // Create an anonymous block.
-        ASSERT(!firstChild());
-        auto newInner = createAnonymousBlock(style().display());
-        updateAnonymousChildStyle(*newInner, newInner->mutableStyle());
-        m_inner = makeWeakPtr(*newInner);
-        RenderFlexibleBox::addChild(builder, WTFMove(newInner));
-    }    
-    builder.insertChild(*m_inner, WTFMove(newChild), beforeChild);
+    ASSERT(!m_inner.get());
+    m_inner = makeWeakPtr(innerRenderer);
 }
 
 RenderPtr<RenderObject> RenderButton::takeChild(RenderObject& oldChild)
@@ -88,9 +81,8 @@ RenderPtr<RenderObject> RenderButton::takeChild(RenderObject& oldChild)
     return m_inner->takeChild(oldChild);
 }
     
-void RenderButton::updateAnonymousChildStyle(const RenderObject& child, RenderStyle& childStyle) const
+void RenderButton::updateAnonymousChildStyle(RenderStyle& childStyle) const
 {
-    ASSERT_UNUSED(child, !m_inner || &child == m_inner);
     childStyle.setFlexGrow(1.0f);
     // min-width: 0; is needed for correct shrinking.
     childStyle.setMinWidth(Length(0, Fixed));

@@ -26,6 +26,7 @@
 #include "config.h"
 #include "RenderTreeBuilder.h"
 
+#include "RenderButton.h"
 #include "RenderElement.h"
 #include "RenderRuby.h"
 #include "RenderRubyBase.h"
@@ -58,6 +59,19 @@ RenderTreeBuilder::RenderTreeBuilder(RenderView& view)
 RenderTreeBuilder::~RenderTreeBuilder()
 {
     s_current = m_previous;
+}
+
+static RenderBlock& createInnerRendererForButtonIfNeeded(RenderButton& button, RenderTreeBuilder& builder)
+{
+    auto* innerRenderer = button.innerRenderer();
+    if (innerRenderer)
+        return *innerRenderer;
+    auto wrapper = button.createAnonymousBlock(button.style().display());
+    innerRenderer = wrapper.get();
+    button.updateAnonymousChildStyle(wrapper->mutableStyle());
+    button.RenderFlexibleBox::addChild(builder, WTFMove(wrapper));
+    button.setInnerRenderer(*innerRenderer);
+    return *innerRenderer;
 }
 
 void RenderTreeBuilder::insertChild(RenderElement& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild)
@@ -107,6 +121,10 @@ void RenderTreeBuilder::insertChild(RenderElement& parent, RenderPtr<RenderObjec
         return;
     }
 
+    if (is<RenderButton>(parent)) {
+        insertRecursiveIfNeeded(createInnerRendererForButtonIfNeeded(downcast<RenderButton>(parent), *this));
+        return;
+    }
     parent.addChild(*this, WTFMove(child), beforeChild);
 }
 

@@ -220,7 +220,7 @@ public:
 
     // Called before anonymousChild.setStyle(). Override to set custom styles for
     // the child.
-    virtual void updateAnonymousChildStyle(const RenderObject&, RenderStyle&) const { };
+    virtual void updateAnonymousChildStyle(RenderStyle&) const { };
 
     void removeAnonymousWrappersForInlinesIfNecessary();
 
