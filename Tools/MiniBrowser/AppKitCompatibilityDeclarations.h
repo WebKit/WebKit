@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if __MAC_OS_X_VERSION_MAX_ALLOWED < 101200
+#if __MAC_OS_X_VERSION_MAX_ALLOWED < 101300
 
 #import <AppKit/AppKit.h>
 
