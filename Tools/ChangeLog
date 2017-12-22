@@ -1,3 +1,11 @@
+2017-12-21  Ling Ho <lingcherd_ho@apple.com>
+
+        "Release 32-bit Build EWS" queue should be moved up to macOS High Sierra on Bot Watcher's Dashboard
+        https://bugs.webkit.org/show_bug.cgi?id=181071
+
+        Reviewed by Alexey Proskuryakov.
+
+
 2017-12-21  Mark Lam  <mark.lam@apple.com>
 
         Add WTF::PoisonedUniquePtr to replace std::unique_ptr when poisoning is desired.

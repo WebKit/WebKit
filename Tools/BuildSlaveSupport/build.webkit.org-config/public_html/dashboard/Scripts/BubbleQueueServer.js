@@ -37,7 +37,7 @@ BubbleQueueServer = function()
         "mac-ews": {platform: Dashboard.Platform.MacOSXElCapitan, shortName: "mac", title: "WebKit1\xa0Release\xa0Tests\xa0EWS"},
         "mac-wk2-ews": {platform: Dashboard.Platform.MacOSXElCapitan, shortName: "mac-wk2", title: "WebKit2\xa0Release\xa0Tests\xa0EWS"},
         "mac-debug-ews": {platform: Dashboard.Platform.MacOSXElCapitan, shortName: "mac-debug", title: "WebKit1\xa0Debug\xa0Tests\xa0EWS"},
-        "mac-32bit-ews": {platform: Dashboard.Platform.MacOSXElCapitan, shortName: "mac-32bit", title: "Release\xa032\u2011bit\xa0Build\xa0EWS"},
+        "mac-32bit-ews": {platform: Dashboard.Platform.macOSHighSierra, shortName: "mac-32bit", title: "Release\xa032\u2011bit\xa0Build\xa0EWS"},
         "win-ews": {platform: Dashboard.Platform.Windows7, shortName: "win", title: "WebKit1\xa0Release\xa0Build\xa0EWS"}
     };
 
