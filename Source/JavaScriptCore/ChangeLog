@@ -2,6 +2,16 @@
 
         [GTK] Duplicated symbols in libjavascriptcoregtk and libwebkit2gtk can cause crashes in production builds
         https://bugs.webkit.org/show_bug.cgi?id=179914
+        <rdar://problem/36196039>
+
+        Unreviewed.
+
+        * PlatformGTK.cmake:
+
+2017-12-22  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [GTK] Duplicated symbols in libjavascriptcoregtk and libwebkit2gtk can cause crashes in production builds
+        https://bugs.webkit.org/show_bug.cgi?id=179914
 
         Reviewed by Carlos Garcia Campos.
 
