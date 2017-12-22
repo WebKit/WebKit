@@ -299,7 +299,7 @@ void UserMediaRequest::deny(MediaAccessDenialReason reason, const String& invali
 
 void UserMediaRequest::stop()
 {
-    // Protecting 'it'this' since nulling m_pendingActivationMediaStream might destroy it.
+    // Protecting 'this' since nulling m_pendingActivationMediaStream might destroy it.
     Ref<UserMediaRequest> protectedThis(*this);
 
     m_pendingActivationMediaStream = nullptr;
