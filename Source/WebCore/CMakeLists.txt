@@ -167,7 +167,7 @@ set(WebCore_IDL_INCLUDES
 
     Modules/airplay
     Modules/cache
-    Modules/credentials
+    Modules/credentialmanagement
     Modules/encryptedmedia/legacy
     Modules/entriesapi
     Modules/fetch
