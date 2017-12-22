@@ -1,3 +1,12 @@
+2017-12-21  John Wilander  <wilander@apple.com>
+
+        Skip http/tests/storageAccess/request-and-grant-storage-access-cross-origin-sandboxed-iframe-from-prevalent-domain-with-non-recent-user-interaction-and-try-access-from-right-frame.html
+        https://bugs.webkit.org/show_bug.cgi?id=181108
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
 2017-12-21  Jiewen Tan  <jiewen_tan@apple.com>
 
         Update Credential Management API for WebAuthentication
