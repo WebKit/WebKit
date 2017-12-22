@@ -286,7 +286,10 @@ static UInt32 GetBehaviors()
 static CGContextRef overrideCGContext(NSWindow *window, CGContextRef context)
 {
     NSWindowGraphicsContext *graphicsContext = (NSWindowGraphicsContext *)window.graphicsContext;
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     CGContextRef savedContext = (CGContextRef)graphicsContext.graphicsPort;
+#pragma clang diagnostic pop
     CGContextRetain(savedContext);
     [graphicsContext _web_setGraphicsPort:context];
     return savedContext;

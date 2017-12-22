@@ -1,5 +1,14 @@
 2017-12-22  Wenson Hsieh  <wenson_hsieh@apple.com>
 
+        Unreviewed, continue to fix build failures due to AppKit API deprecation
+
+        Wraps more code in -Wdeprecated-declarations.
+
+        * Carbon/HIWebView.mm:
+        (overrideCGContext):
+
+2017-12-22  Wenson Hsieh  <wenson_hsieh@apple.com>
+
         Unreviewed, fix build failures due to using deprecated AppKit symbols when building 32-bit
 
         Wrap some more code in -Wdeprecated-declarations to try and fix the 32-bit build using the newest SDK.
