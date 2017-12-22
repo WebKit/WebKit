@@ -5,22 +5,6 @@
 
         Reviewed by Carlos Garcia Campos.
 
-        * CMakeLists.txt:
-        * Source/cmake/OptionsGTK.cmake:
-        * Source/cmake/OptionsJSCOnly.cmake:
-        * Source/cmake/OptionsMac.cmake:
-        * Source/cmake/OptionsWPE.cmake:
-        * Source/cmake/OptionsWin.cmake:
-        * Source/cmake/WebKitCompilerFlags.cmake:
-        * Source/cmake/wpesymbols.filter: Removed.
-
-2017-12-22  Michael Catanzaro  <mcatanzaro@igalia.com>
-
-        [GTK] Duplicated symbols in libjavascriptcoregtk and libwebkit2gtk can cause crashes in production builds
-        https://bugs.webkit.org/show_bug.cgi?id=179914
-
-        Reviewed by Carlos Garcia Campos.
-
         Let's build JSC as a static library, and link that static lib to *both* our shared
         libjavascriptcoregtk and libwebkit2gtk. Then we can fix this and also filter out all the
         private symbols that we're currently exposing in libjavascriptcoregtk, which wouldn't be
