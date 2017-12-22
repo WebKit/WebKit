@@ -34,6 +34,7 @@
 #import "_WKExperimentalFeature.h"
 #import "_WKExperimentalFeatureInternal.h"
 #import <WebCore/SecurityOrigin.h>
+#import <WebCore/Settings.h>
 #import <wtf/RetainPtr.h>
 
 @implementation WKPreferences
@@ -675,6 +676,54 @@ static _WKStorageBlockingPolicy toAPI(WebCore::SecurityOrigin::StorageBlockingPo
 - (void)_setShouldAllowUserInstalledFonts:(BOOL)_shouldAllowUserInstalledFonts
 {
     _preferences->setShouldAllowUserInstalledFonts(_shouldAllowUserInstalledFonts);
+}
+
+static _WKEditableLinkBehavior toAPI(WebCore::EditableLinkBehavior behavior)
+{
+    switch (behavior) {
+    case WebCore::EditableLinkDefaultBehavior:
+        return _WKEditableLinkBehaviorDefault;
+    case WebCore::EditableLinkAlwaysLive:
+        return _WKEditableLinkBehaviorAlwaysLive;
+    case WebCore::EditableLinkOnlyLiveWithShiftKey:
+        return _WKEditableLinkBehaviorOnlyLiveWithShiftKey;
+    case WebCore::EditableLinkLiveWhenNotFocused:
+        return _WKEditableLinkBehaviorLiveWhenNotFocused;
+    case WebCore::EditableLinkNeverLive:
+        return _WKEditableLinkBehaviorNeverLive;
+    }
+    
+    ASSERT_NOT_REACHED();
+    return _WKEditableLinkBehaviorNeverLive;
+}
+
+static WebCore::EditableLinkBehavior toEditableLinkBehavior(_WKEditableLinkBehavior wkBehavior)
+{
+    switch (wkBehavior) {
+    case _WKEditableLinkBehaviorDefault:
+        return WebCore::EditableLinkDefaultBehavior;
+    case _WKEditableLinkBehaviorAlwaysLive:
+        return WebCore::EditableLinkAlwaysLive;
+    case _WKEditableLinkBehaviorOnlyLiveWithShiftKey:
+        return WebCore::EditableLinkOnlyLiveWithShiftKey;
+    case _WKEditableLinkBehaviorLiveWhenNotFocused:
+        return WebCore::EditableLinkLiveWhenNotFocused;
+    case _WKEditableLinkBehaviorNeverLive:
+        return WebCore::EditableLinkNeverLive;
+    }
+    
+    ASSERT_NOT_REACHED();
+    return WebCore::EditableLinkNeverLive;
+}
+
+- (_WKEditableLinkBehavior)_editableLinkBehavior
+{
+    return toAPI(static_cast<WebCore::EditableLinkBehavior>(_preferences->editableLinkBehavior()));
+}
+
+- (void)_setEditableLinkBehavior:(_WKEditableLinkBehavior)editableLinkBehavior
+{
+    _preferences->setEditableLinkBehavior(toEditableLinkBehavior(editableLinkBehavior));
 }
 
 #if PLATFORM(MAC)

@@ -1,3 +1,17 @@
+2017-12-21  Dan Bernstein  <mitz@apple.com>
+
+        WKPreferences doesn’t expose editable link behavior
+        https://bugs.webkit.org/show_bug.cgi?id=181111
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/API/Cocoa/WKPreferences.mm:
+        (toAPI): Added. Converts WebCore::EditableLinkBehavior to _WKEditableLinkBehavior.
+        (toEditableLinkBehavior): Added. Converts the other way.
+        (-[WKPreferences _editableLinkBehavior]): Added this getter.
+        (-[WKPreferences _setEditableLinkBehavior:]): Ditto.
+        * UIProcess/API/Cocoa/WKPreferencesPrivate.h: Declared new property.
+
 2017-12-21  Andy Estes  <aestes@apple.com>
 
         Address additional review feedback after r226182.
