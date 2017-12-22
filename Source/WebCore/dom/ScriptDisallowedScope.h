@@ -28,22 +28,22 @@
 
 namespace WebCore {
 
-class NoEventDispatchAssertion {
+class ScriptDisallowedScope {
 public:
-    // This variant is expensive. Use NoEventDispatchAssertion::InMainThread whenever possible.
-    NoEventDispatchAssertion()
+    // This variant is expensive. Use ScriptDisallowedScope::InMainThread whenever possible.
+    ScriptDisallowedScope()
     {
         if (!isMainThread())
             return;
         ++s_count;
     }
 
-    NoEventDispatchAssertion(const NoEventDispatchAssertion&)
-        : NoEventDispatchAssertion()
+    ScriptDisallowedScope(const ScriptDisallowedScope&)
+        : ScriptDisallowedScope()
     {
     }
 
-    ~NoEventDispatchAssertion()
+    ~ScriptDisallowedScope()
     {
         if (!isMainThread())
             return;
@@ -76,14 +76,14 @@ public:
         static bool isEventDispatchAllowedInSubtree(Node& node)
         {
 #if !ASSERT_DISABLED || ENABLE(SECURITY_ASSERTIONS)
-            return isEventAllowed() || EventAllowedScope::isAllowedNode(node);
+            return isScriptAllowed() || EventAllowedScope::isAllowedNode(node);
 #else
             UNUSED_PARAM(node);
             return true;
 #endif
         }
 
-        static bool isEventAllowed()
+        static bool isScriptAllowed()
         {
             ASSERT(isMainThread());
             return !s_count;

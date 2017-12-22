@@ -44,8 +44,8 @@
 #include "IgnoreOpensDuringUnloadCountIncrementer.h"
 #include "Logging.h"
 #include "MainFrame.h"
-#include "NoEventDispatchAssertion.h"
 #include "Page.h"
+#include "ScriptDisallowedScope.h"
 #include "Settings.h"
 #include "SubframeLoader.h"
 #include <wtf/MemoryPressureHandler.h>
@@ -423,7 +423,7 @@ void PageCache::addIfCacheable(HistoryItem& item, Page* page)
     setPageCacheState(*page, Document::InPageCache);
 
     // Make sure we no longer fire any JS events past this point.
-    NoEventDispatchAssertion::InMainThread assertNoEventDispatch;
+    ScriptDisallowedScope::InMainThread scriptDisallowedScope;
 
     item.m_cachedPage = std::make_unique<CachedPage>(*page);
     item.m_pruningReason = PruningReason::None;

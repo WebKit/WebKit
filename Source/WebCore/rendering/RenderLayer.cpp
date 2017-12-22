@@ -82,7 +82,6 @@
 #include "HitTestingTransformState.h"
 #include "Logging.h"
 #include "MainFrame.h"
-#include "NoEventDispatchAssertion.h"
 #include "OverflowEvent.h"
 #include "OverlapTestRequestClient.h"
 #include "Page.h"
@@ -111,6 +110,7 @@
 #include "RenderView.h"
 #include "SVGNames.h"
 #include "ScaleTransformOperation.h"
+#include "ScriptDisallowedScope.h"
 #include "ScrollAnimator.h"
 #include "Scrollbar.h"
 #include "ScrollbarTheme.h"
@@ -2587,7 +2587,7 @@ void RenderLayer::scrollRectToVisible(SelectionRevealMode revealMode, const Layo
 
             if (frameElementAndViewPermitScroll(frameElementBase, frameView)) {
                 // If this assertion fires we need to protect the ownerElement from being destroyed.
-                NoEventDispatchAssertion::InMainThread assertNoEventDispatch;
+                ScriptDisallowedScope::InMainThread scriptDisallowedScope;
 
                 LayoutRect viewRect = frameView.visibleContentRect(LegacyIOSDocumentVisibleRect);
                 LayoutRect exposeRect = getRectToExpose(viewRect, absoluteRect, insideFixed, alignX, alignY);

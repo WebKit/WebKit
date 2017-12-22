@@ -41,11 +41,11 @@
 #include "HTMLParserIdioms.h"
 #include "LayoutDisallowedScope.h"
 #include "Logging.h"
-#include "NoEventDispatchAssertion.h"
 #include "NodeTraversal.h"
 #include "Page.h"
 #include "RenderTextControlSingleLine.h"
 #include "RenderTheme.h"
+#include "ScriptDisallowedScope.h"
 #include "ShadowRoot.h"
 #include "Text.h"
 #include "TextControlInnerElements.h"
@@ -572,7 +572,7 @@ void HTMLTextFormControlElement::setInnerTextValue(const String& value)
 
         {
             // Events dispatched on the inner text element cannot execute arbitrary author scripts.
-            NoEventDispatchAssertion::EventAllowedScope allowedScope(*userAgentShadowRoot());
+            ScriptDisallowedScope::EventAllowedScope allowedScope(*userAgentShadowRoot());
 
             innerText->setInnerText(value);
 

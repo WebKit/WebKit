@@ -33,9 +33,9 @@
 #include "InspectorInstrumentation.h"
 #include "LayoutState.h"
 #include "Logging.h"
-#include "NoEventDispatchAssertion.h"
 #include "RenderElement.h"
 #include "RenderView.h"
+#include "ScriptDisallowedScope.h"
 #include "Settings.h"
 
 #include <wtf/SetForScope.h>
@@ -175,7 +175,7 @@ void LayoutContext::layout()
     }
     {
         SetForScope<LayoutPhase> layoutPhase(m_layoutPhase, LayoutPhase::InRenderTreeLayout);
-        NoEventDispatchAssertion::InMainThread noEventDispatchAssertion;
+        ScriptDisallowedScope::InMainThread scriptDisallowedScope;
         SubtreeLayoutStateMaintainer subtreeLayoutStateMaintainer(subtreeLayoutRoot());
         RenderView::RepaintRegionAccumulator repaintRegionAccumulator(renderView());
 #ifndef NDEBUG

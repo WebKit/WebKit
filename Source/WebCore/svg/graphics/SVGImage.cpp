@@ -43,7 +43,6 @@
 #include "JSDOMWindowBase.h"
 #include "LibWebRTCProvider.h"
 #include "MainFrame.h"
-#include "NoEventDispatchAssertion.h"
 #include "Page.h"
 #include "PageConfiguration.h"
 #include "RenderSVGRoot.h"
@@ -54,6 +53,7 @@
 #include "SVGImageClients.h"
 #include "SVGImageElement.h"
 #include "SVGSVGElement.h"
+#include "ScriptDisallowedScope.h"
 #include "Settings.h"
 #include "SocketProvider.h"
 #include <runtime/JSCInlines.h>
@@ -312,7 +312,7 @@ ImageDrawResult SVGImage::draw(GraphicsContext& context, const FloatRect& dstRec
     view->resize(containerSize());
 
     {
-        NoEventDispatchAssertion::DisableAssertionsInScope disabledScope;
+        ScriptDisallowedScope::DisableAssertionsInScope disabledScope;
         if (view->needsLayout())
             view->layoutContext().layout();
     }

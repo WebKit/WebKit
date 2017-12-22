@@ -34,10 +34,10 @@
 #include "HistoryController.h"
 #include "HistoryItem.h"
 #include "MainFrame.h"
-#include "NoEventDispatchAssertion.h"
 #include "Node.h"
 #include "Page.h"
 #include "PageTransitionEvent.h"
+#include "ScriptDisallowedScope.h"
 #include "Settings.h"
 #include "VisitedLinkState.h"
 #include <wtf/CurrentTime.h>
@@ -108,7 +108,7 @@ void CachedPage::restore(Page& page)
     {
         // Do not dispatch DOM events as their JavaScript listeners could cause the page to be put
         // into the page cache before we have finished restoring it from the page cache.
-        NoEventDispatchAssertion::InMainThread noEventDispatchAssertion;
+        ScriptDisallowedScope::InMainThread scriptDisallowedScope;
 
         m_cachedMainFrame->open();
     }

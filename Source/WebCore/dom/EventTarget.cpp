@@ -37,8 +37,8 @@
 #include "HTMLBodyElement.h"
 #include "InspectorInstrumentation.h"
 #include "JSEventListener.h"
-#include "NoEventDispatchAssertion.h"
 #include "ScriptController.h"
+#include "ScriptDisallowedScope.h"
 #include "WebKitAnimationEvent.h"
 #include "WebKitTransitionEvent.h"
 #include <wtf/MainThread.h>
@@ -215,7 +215,7 @@ static const AtomicString& legacyType(const Event& event)
 
 void EventTarget::fireEventListeners(Event& event)
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(NoEventDispatchAssertion::isEventAllowedInMainThread());
+    ASSERT_WITH_SECURITY_IMPLICATION(ScriptDisallowedScope::isEventAllowedInMainThread());
     ASSERT(event.isInitialized());
 
     auto* data = eventTargetData();

@@ -29,7 +29,7 @@
 #include "HTMLFrameOwnerElement.h"
 #include "HTMLTextAreaElement.h"
 #include "InspectorInstrumentation.h"
-#include "NoEventDispatchAssertion.h"
+#include "ScriptDisallowedScope.h"
 #include "ShadowRoot.h"
 #include "TypedElementDescendantIterator.h"
 
@@ -88,7 +88,7 @@ static void notifyNodeInsertedIntoTree(ContainerNode& parentOfInsertedTree, Node
 
 NodeVector notifyChildNodeInserted(ContainerNode& parentOfInsertedTree, Node& node)
 {
-    ASSERT(!NoEventDispatchAssertion::InMainThread::isEventAllowed());
+    ASSERT(!ScriptDisallowedScope::InMainThread::isScriptAllowed());
 
     InspectorInstrumentation::didInsertDOMNode(node.document(), node);
 
@@ -151,8 +151,8 @@ static void notifyNodeRemovedFromTree(ContainerNode& oldParentOfRemovedTree, Tre
 
 void notifyChildNodeRemoved(ContainerNode& oldParentOfRemovedTree, Node& child)
 {
-    // Assert that the caller of this function has an instance of NoEventDispatchAssertion.
-    ASSERT(!isMainThread() || !NoEventDispatchAssertion::InMainThread::isEventAllowed());
+    // Assert that the caller of this function has an instance of ScriptDisallowedScope.
+    ASSERT(!isMainThread() || !ScriptDisallowedScope::InMainThread::isScriptAllowed());
     ContainerChildRemovalScope removalScope(oldParentOfRemovedTree, child);
 
     // Tree scope has changed if the container node from which "node" is removed is in a document or a shadow root.

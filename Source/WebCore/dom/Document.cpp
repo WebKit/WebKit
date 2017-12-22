@@ -125,7 +125,7 @@
 #include "NavigationDisabler.h"
 #include "NavigationScheduler.h"
 #include "NestingLevelIncrementer.h"
-#include "NoEventDispatchAssertion.h"
+
 #include "NodeIterator.h"
 #include "NodeRareData.h"
 #include "NodeWithIndex.h"
@@ -166,6 +166,7 @@
 #include "SchemeRegistry.h"
 #include "ScopedEventQueue.h"
 #include "ScriptController.h"
+#include "ScriptDisallowedScope.h"
 #include "ScriptModuleLoader.h"
 #include "ScriptRunner.h"
 #include "ScriptSourceCode.h"
@@ -1806,7 +1807,7 @@ void Document::resolveStyle(ResolveStyleType type)
     // hits a null-dereference due to security code always assuming the document has a SecurityOrigin.
 
     {
-        NoEventDispatchAssertion::InMainThread noEventDispatchAssertion;
+        ScriptDisallowedScope::InMainThread scriptDisallowedScope;
         styleScope().flushPendingUpdate();
         frameView.willRecalcStyle();
     }
@@ -1817,7 +1818,7 @@ void Document::resolveStyle(ResolveStyleType type)
     {
         Style::PostResolutionCallbackDisabler disabler(*this);
         WidgetHierarchyUpdatesSuspensionScope suspendWidgetHierarchyUpdates;
-        NoEventDispatchAssertion::InMainThread noEventDispatchAssertion;
+        ScriptDisallowedScope::InMainThread scriptDisallowedScope;
 
         m_inStyleRecalc = true;
 
@@ -1936,7 +1937,7 @@ bool Document::needsStyleRecalc() const
 
 inline bool static isSafeToUpdateStyleOrLayout(FrameView* frameView)
 {
-    bool isSafeToExecuteScript = NoEventDispatchAssertion::InMainThread::isEventAllowed();
+    bool isSafeToExecuteScript = ScriptDisallowedScope::InMainThread::isScriptAllowed();
     bool isInFrameFlattening = frameView && frameView->isInChildFrameWithFrameFlattening();
     return isSafeToExecuteScript || isInFrameFlattening || !isInWebProcess();
 }
@@ -1945,7 +1946,7 @@ bool Document::updateStyleIfNeeded()
 {
     RefPtr<FrameView> frameView = view();
     {
-        NoEventDispatchAssertion::InMainThread noEventDispatchAssertion;
+        ScriptDisallowedScope::InMainThread scriptDisallowedScope;
         ASSERT(isMainThread());
         ASSERT(!frameView || !frameView->isPainting());
 
@@ -4121,7 +4122,7 @@ void Document::updateRangesAfterChildrenChanged(ContainerNode& container)
 
 void Document::nodeChildrenWillBeRemoved(ContainerNode& container)
 {
-    ASSERT(!NoEventDispatchAssertion::InMainThread::isEventAllowed());
+    ASSERT(!ScriptDisallowedScope::InMainThread::isScriptAllowed());
 
     removeFocusedNodeOfSubtree(container, true /* amongChildrenOnly */);
     removeFocusNavigationNodeOfSubtree(container, true /* amongChildrenOnly */);
@@ -4154,7 +4155,7 @@ void Document::nodeChildrenWillBeRemoved(ContainerNode& container)
 
 void Document::nodeWillBeRemoved(Node& node)
 {
-    ASSERT(!NoEventDispatchAssertion::InMainThread::isEventAllowed());
+    ASSERT(!ScriptDisallowedScope::InMainThread::isScriptAllowed());
 
     removeFocusedNodeOfSubtree(node);
     removeFocusNavigationNodeOfSubtree(node);
@@ -4298,7 +4299,7 @@ EventListener* Document::getWindowAttributeEventListener(const AtomicString& eve
 
 void Document::dispatchWindowEvent(Event& event, EventTarget* target)
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(NoEventDispatchAssertion::InMainThread::isEventAllowed());
+    ASSERT_WITH_SECURITY_IMPLICATION(ScriptDisallowedScope::InMainThread::isScriptAllowed());
     if (!m_domWindow)
         return;
     m_domWindow->dispatchEvent(event, target);
@@ -4306,7 +4307,7 @@ void Document::dispatchWindowEvent(Event& event, EventTarget* target)
 
 void Document::dispatchWindowLoadEvent()
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(NoEventDispatchAssertion::InMainThread::isEventAllowed());
+    ASSERT_WITH_SECURITY_IMPLICATION(ScriptDisallowedScope::InMainThread::isScriptAllowed());
     if (!m_domWindow)
         return;
     m_domWindow->dispatchLoadEvent();
@@ -5141,7 +5142,7 @@ void Document::applyPendingXSLTransformsTimerFired()
         return;
 
     m_hasPendingXSLTransforms = false;
-    ASSERT_WITH_SECURITY_IMPLICATION(NoEventDispatchAssertion::InMainThread::isEventAllowed());
+    ASSERT_WITH_SECURITY_IMPLICATION(ScriptDisallowedScope::InMainThread::isScriptAllowed());
     for (auto& processingInstruction : styleScope().collectXSLTransforms()) {
         ASSERT(processingInstruction->isXSL());
 

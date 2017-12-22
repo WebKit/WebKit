@@ -31,10 +31,10 @@
 
 #include "FontDescription.h"
 #include "FontPlatformData.h"
-#include "NoEventDispatchAssertion.h"
 #include "SVGDocument.h"
 #include "SVGFontElement.h"
 #include "SVGFontFaceElement.h"
+#include "ScriptDisallowedScope.h"
 #include "SharedBuffer.h"
 #include "TextResourceDecoder.h"
 #include "TypedElementDescendantIterator.h"
@@ -75,7 +75,7 @@ bool CachedSVGFont::ensureCustomFontData(const AtomicString& remoteURI)
             m_externalSVGDocument = SVGDocument::create(nullptr, URL());
             auto decoder = TextResourceDecoder::create("application/xml");
 
-            NoEventDispatchAssertion::EventAllowedScope allowedScope(*m_externalSVGDocument);
+            ScriptDisallowedScope::EventAllowedScope allowedScope(*m_externalSVGDocument);
 
             m_externalSVGDocument->setContent(decoder->decodeAndFlush(m_data->data(), m_data->size()));
             sawError = decoder->sawError();

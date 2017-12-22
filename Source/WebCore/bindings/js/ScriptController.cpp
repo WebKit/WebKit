@@ -43,12 +43,12 @@
 #include "ModuleFetchFailureKind.h"
 #include "ModuleFetchParameters.h"
 #include "NP_jsobject.h"
-#include "NoEventDispatchAssertion.h"
 #include "Page.h"
 #include "PageConsoleClient.h"
 #include "PageGroup.h"
 #include "PluginViewBase.h"
 #include "RuntimeApplicationChecks.h"
+#include "ScriptDisallowedScope.h"
 #include "ScriptSourceCode.h"
 #include "ScriptableDocumentParser.h"
 #include "Settings.h"
@@ -669,7 +669,7 @@ JSValue ScriptController::executeScriptInWorld(DOMWrapperWorld& world, const Str
 bool ScriptController::canExecuteScripts(ReasonForCallingCanExecuteScripts reason)
 {
     if (reason == AboutToExecuteScript)
-        RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(NoEventDispatchAssertion::InMainThread::isEventAllowed() || !isInWebProcess());
+        RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(ScriptDisallowedScope::InMainThread::isScriptAllowed() || !isInWebProcess());
 
     if (m_frame.document() && m_frame.document()->isSandboxed(SandboxScripts)) {
         // FIXME: This message should be moved off the console once a solution to https://bugs.webkit.org/show_bug.cgi?id=103274 exists.

@@ -37,8 +37,8 @@
 #include "Logging.h"
 #include "MainFrame.h"
 #include "MouseEvent.h"
-#include "NoEventDispatchAssertion.h"
 #include "ScopedEventQueue.h"
+#include "ScriptDisallowedScope.h"
 #include "ShadowRoot.h"
 #include "TextEvent.h"
 #include "TouchEvent.h"
@@ -130,7 +130,7 @@ static bool shouldSuppressEventDispatchInDOM(Node& node, Event& event)
 
 void EventDispatcher::dispatchEvent(Node& node, Event& event)
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(NoEventDispatchAssertion::InMainThread::isEventDispatchAllowedInSubtree(node));
+    ASSERT_WITH_SECURITY_IMPLICATION(ScriptDisallowedScope::InMainThread::isEventDispatchAllowedInSubtree(node));
     
     LOG(Events, "EventDispatcher::dispatchEvent %s on node %s", event.type().string().utf8().data(), node.nodeName().utf8().data());
 

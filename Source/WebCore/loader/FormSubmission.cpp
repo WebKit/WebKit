@@ -47,7 +47,7 @@
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
-#include "NoEventDispatchAssertion.h"
+#include "ScriptDisallowedScope.h"
 #include "TextEncoding.h"
 #include <wtf/CurrentTime.h>
 

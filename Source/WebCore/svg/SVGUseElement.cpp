@@ -31,13 +31,13 @@
 #include "ElementIterator.h"
 #include "Event.h"
 #include "EventNames.h"
-#include "NoEventDispatchAssertion.h"
 #include "RenderSVGResource.h"
 #include "RenderSVGTransformableContainer.h"
 #include "SVGDocumentExtensions.h"
 #include "SVGGElement.h"
 #include "SVGSVGElement.h"
 #include "SVGSymbolElement.h"
+#include "ScriptDisallowedScope.h"
 #include "ShadowRoot.h"
 #include "XLinkNames.h"
 
@@ -219,7 +219,7 @@ void SVGUseElement::clearShadowTree()
 {
     if (auto root = userAgentShadowRoot()) {
         // Safe because SVG use element's shadow tree is never used to fire synchronous events during layout or DOM mutations.
-        NoEventDispatchAssertion::EventAllowedScope scope(*root);
+        ScriptDisallowedScope::EventAllowedScope scope(*root);
         root->removeChildren();
     }
 }
