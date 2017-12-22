@@ -1,3 +1,21 @@
+2017-12-22  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Unreviewed, rolling out r225899
+        https://bugs.webkit.org/show_bug.cgi?id=180430
+
+        * media/content/encrypted/VideoClearKeyCenc.mp4: Removed.
+        * media/content/encrypted/segments/VideoClearKeyCenc-seg-0.mp4: Removed.
+        * media/encrypted-media/clearKey/clearKey-encrypted-cenc-event-expected.txt: Removed.
+        * media/encrypted-media/clearKey/clearKey-encrypted-cenc-event-mse-expected.txt: Removed.
+        * media/encrypted-media/clearKey/clearKey-encrypted-cenc-event-mse.html: Removed.
+        * media/encrypted-media/clearKey/clearKey-encrypted-cenc-event.html: Removed.
+        * media/encrypted-media/medias-enc.js: Removed.
+        * media/media-source/media-source-loader-simple.js: Removed.
+        * platform/gtk/TestExpectations:
+        * platform/mac-elcapitan/TestExpectations:
+        * platform/mac/TestExpectations:
+        * platform/wpe/TestExpectations:
+
 2017-12-22  Dan Bernstein  <mitz@apple.com>
 
         Crash beneath ScriptedAnimationController::serviceScriptedAnimations after a requestAnimationFrame callback removes the requesting iframe
