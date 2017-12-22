@@ -52,12 +52,14 @@ private:
     class MultiColumn;
     class Table;
     class Ruby;
+    class FormControls;
 
     FirstLetter& firstLetterBuilder() { return *m_firstLetterBuilder; }
     List& listBuilder() { return *m_listBuilder; }
     MultiColumn& multiColumnBuilder() { return *m_multiColumnBuilder; }
     Table& tableBuilder() { return *m_tableBuilder; }
     Ruby& rubyBuilder() { return *m_rubyBuilder; }
+    FormControls& formControlsBuilder() { return *m_formControlsBuilder; }
 
     RenderView& m_view;
 
@@ -69,6 +71,7 @@ private:
     std::unique_ptr<MultiColumn> m_multiColumnBuilder;
     std::unique_ptr<Table> m_tableBuilder;
     std::unique_ptr<Ruby> m_rubyBuilder;
+    std::unique_ptr<FormControls> m_formControlsBuilder;
 };
 
 }

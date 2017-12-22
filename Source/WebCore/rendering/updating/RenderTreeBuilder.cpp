@@ -34,6 +34,7 @@
 #include "RenderTableRow.h"
 #include "RenderText.h"
 #include "RenderTreeBuilderFirstLetter.h"
+#include "RenderTreeBuilderFormControls.h"
 #include "RenderTreeBuilderList.h"
 #include "RenderTreeBuilderMultiColumn.h"
 #include "RenderTreeBuilderRuby.h"
@@ -50,6 +51,7 @@ RenderTreeBuilder::RenderTreeBuilder(RenderView& view)
     , m_multiColumnBuilder(std::make_unique<MultiColumn>(*this))
     , m_tableBuilder(std::make_unique<Table>(*this))
     , m_rubyBuilder(std::make_unique<Ruby>(*this))
+    , m_formControlsBuilder(std::make_unique<FormControls>(*this))
 {
     RELEASE_ASSERT(!s_current || &m_view != &s_current->m_view);
     m_previous = s_current;
@@ -59,19 +61,6 @@ RenderTreeBuilder::RenderTreeBuilder(RenderView& view)
 RenderTreeBuilder::~RenderTreeBuilder()
 {
     s_current = m_previous;
-}
-
-static RenderBlock& createInnerRendererForButtonIfNeeded(RenderButton& button, RenderTreeBuilder& builder)
-{
-    auto* innerRenderer = button.innerRenderer();
-    if (innerRenderer)
-        return *innerRenderer;
-    auto wrapper = button.createAnonymousBlock(button.style().display());
-    innerRenderer = wrapper.get();
-    button.updateAnonymousChildStyle(wrapper->mutableStyle());
-    button.RenderFlexibleBox::addChild(builder, WTFMove(wrapper));
-    button.setInnerRenderer(*innerRenderer);
-    return *innerRenderer;
 }
 
 void RenderTreeBuilder::insertChild(RenderElement& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild)
@@ -122,9 +111,15 @@ void RenderTreeBuilder::insertChild(RenderElement& parent, RenderPtr<RenderObjec
     }
 
     if (is<RenderButton>(parent)) {
-        insertRecursiveIfNeeded(createInnerRendererForButtonIfNeeded(downcast<RenderButton>(parent), *this));
+        insertRecursiveIfNeeded(formControlsBuilder().createInnerRendererIfNeeded(downcast<RenderButton>(parent)));
         return;
     }
+
+    if (is<RenderMenuList>(parent)) {
+        insertRecursiveIfNeeded(formControlsBuilder().createInnerRendererIfNeeded(downcast<RenderMenuList>(parent)));
+        return;
+    }
+
     parent.addChild(*this, WTFMove(child), beforeChild);
 }
 
