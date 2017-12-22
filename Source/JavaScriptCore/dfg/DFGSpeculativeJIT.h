@@ -1463,9 +1463,9 @@ public:
         m_jit.setupArgumentsWithExecState(arg1, TrustedImmPtr(impl));
         return appendCallSetResult(operation, result);
     }
-    JITCompiler::Call callOperation(V_JITOperation_EJJJI operation, GPRReg arg1, GPRReg arg2, GPRReg arg3, UniquedStringImpl* uid)
+    JITCompiler::Call callOperation(V_JITOperation_EJJJI operation, JSValueRegs arg1, JSValueRegs arg2, JSValueRegs arg3, UniquedStringImpl* uid)
     {
-        m_jit.setupArgumentsWithExecState(arg1, arg2, arg3, TrustedImmPtr(uid));
+        m_jit.setupArgumentsWithExecState(arg1.payloadGPR(), arg2.payloadGPR(), arg3.payloadGPR(), TrustedImmPtr(uid));
         return appendCall(operation);
     }
     JITCompiler::Call callOperation(V_JITOperation_EJJJJ operation, GPRReg arg1, GPRReg arg2, GPRReg arg3, GPRReg arg4)
@@ -1640,6 +1640,16 @@ public:
         m_jit.setupArgumentsWithExecState(arg1, arg2);
         return appendCallSetResult(operation, result);
     }
+    JITCompiler::Call callOperation(J_JITOperation_EJC operation, GPRReg result, JSValueRegs arg1, GPRReg arg2)
+    {
+        m_jit.setupArgumentsWithExecState(arg1.payloadGPR(), arg2);
+        return appendCallSetResult(operation, result);
+    }
+    JITCompiler::Call callOperation(J_JITOperation_EJC operation, JSValueRegs result, JSValueRegs arg1, GPRReg arg2)
+    {
+        m_jit.setupArgumentsWithExecState(arg1.payloadGPR(), arg2);
+        return appendCallSetResult(operation, result.payloadGPR());
+    }
     JITCompiler::Call callOperation(J_JITOperation_EJZ operation, JSValueRegs result, JSValueRegs arg1, GPRReg arg2)
     {
         m_jit.setupArgumentsWithExecState(arg1.payloadGPR(), arg2);
@@ -1703,9 +1713,9 @@ public:
         return appendCallSetResult(operation, result);
     }
 
-    JITCompiler::Call callOperation(P_JITOperation_EStJ operation, GPRReg result, RegisteredStructure structure, GPRReg arg2)
+    JITCompiler::Call callOperation(P_JITOperation_EStJ operation, GPRReg result, RegisteredStructure structure, JSValueRegs arg2)
     {
-        m_jit.setupArgumentsWithExecState(TrustedImmPtr(structure), arg2);
+        m_jit.setupArgumentsWithExecState(TrustedImmPtr(structure), arg2.payloadGPR());
         return appendCallSetResult(operation, result);
     }
 
@@ -1746,9 +1756,9 @@ public:
         m_jit.setupArgumentsWithExecState(arg1.gpr());
         return appendCallSetResult(operation, result);
     }
-    JITCompiler::Call callOperation(C_JITOperation_EJJ operation, GPRReg result, GPRReg arg1, GPRReg arg2)
+    JITCompiler::Call callOperation(C_JITOperation_EJJ operation, GPRReg result, JSValueRegs arg1, JSValueRegs arg2)
     {
-        m_jit.setupArgumentsWithExecState(arg1, arg2);
+        m_jit.setupArgumentsWithExecState(arg1.payloadGPR(), arg2.payloadGPR());
         return appendCallSetResult(operation, result);
     }
     JITCompiler::Call callOperation(C_JITOperation_EJJC operation, GPRReg result, GPRReg arg1, GPRReg arg2, GPRReg arg3)
@@ -1756,9 +1766,9 @@ public:
         m_jit.setupArgumentsWithExecState(arg1, arg2, arg3);
         return appendCallSetResult(operation, result);
     }
-    JITCompiler::Call callOperation(C_JITOperation_EJJJ operation, GPRReg result, GPRReg arg1, GPRReg arg2, GPRReg arg3)
+    JITCompiler::Call callOperation(C_JITOperation_EJJJ operation, GPRReg result, JSValueRegs arg1, JSValueRegs arg2, JSValueRegs arg3)
     {
-        m_jit.setupArgumentsWithExecState(arg1, arg2, arg3);
+        m_jit.setupArgumentsWithExecState(arg1.payloadGPR(), arg2.payloadGPR(), arg3.payloadGPR());
         return appendCallSetResult(operation, result);
     }
     JITCompiler::Call callOperation(C_JITOperation_EJZ operation, GPRReg result, GPRReg arg1, GPRReg arg2)
@@ -2897,7 +2907,7 @@ public:
     void compileNumberToStringWithValidRadixConstant(Node*, int32_t radix);
     void compileNewStringObject(Node*);
     
-    void compileNewTypedArray(Node*);
+    void compileNewTypedArrayWithSize(Node*);
     
     void compileInt32Compare(Node*, MacroAssembler::RelationalCondition);
     void compileInt52Compare(Node*, MacroAssembler::RelationalCondition);
@@ -3067,6 +3077,21 @@ public:
     void compileToLowerCase(Node*);
     void compileThrow(Node*);
     void compileThrowStaticError(Node*);
+    void compileGetEnumerableLength(Node*);
+    void compileToIndexString(Node*);
+    void compilePutByIdWithThis(Node*);
+    void compileHasStructureProperty(Node*);
+    void compileGetPropertyEnumerator(Node*);
+    void compileGetEnumeratorPname(Node*);
+    void compileGetGetter(Node*);
+    void compileGetSetter(Node*);
+    void compileGetCallee(Node*);
+    void compileGetArgumentCountIncludingThis(Node*);
+    void compileStrCat(Node*);
+    void compileNewArrayWithSize(Node*);
+    void compileNewTypedArray(Node*);
+    void compileCreateThis(Node*);
+    void compileNewObject(Node*);
 
     void moveTrueTo(GPRReg);
     void moveFalseTo(GPRReg);

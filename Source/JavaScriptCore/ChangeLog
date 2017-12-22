@@ -1,5 +1,49 @@
 2017-12-22  Yusuke Suzuki  <utatane.tea@gmail.com>
 
+        [DFG] Unify bunch of DFG 32bit code into 64bit code
+        https://bugs.webkit.org/show_bug.cgi?id=181083
+
+        Reviewed by Mark Lam.
+
+        There are bunch of the completely same code in 32bit and 64bit DFG.
+        This is largely because of the old DFG code. At that time, we do not
+        have enough abstraction to describe them in one code. But now, we have
+        JSValueRegs, JSValueRegsTemporary etc. They allow DFG to write 32bit and
+        64bit handling in one code.
+
+        This patch unifies easy ones. This is nice since basically 32bit code is
+        a bit old and not maintained so much compared to 64bit. If we can drop
+        32bit specific code as much as possible, it would be nice. Furthermore,
+        we can find various mistakes in 32bit: For example, NewObject does not have
+        mutatorFence in 32bit while 64bit has it. This unification is a chance
+        to fix miscellaneous bugs in 32bit while reducing maintenance burden.
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileNewTypedArrayWithSize):
+        (JSC::DFG::SpeculativeJIT::compileGetEnumerableLength):
+        (JSC::DFG::SpeculativeJIT::compileToIndexString):
+        (JSC::DFG::SpeculativeJIT::compilePutByIdWithThis):
+        (JSC::DFG::SpeculativeJIT::compileHasStructureProperty):
+        (JSC::DFG::SpeculativeJIT::compileGetPropertyEnumerator):
+        (JSC::DFG::SpeculativeJIT::compileGetEnumeratorPname):
+        (JSC::DFG::SpeculativeJIT::compileGetGetter):
+        (JSC::DFG::SpeculativeJIT::compileGetSetter):
+        (JSC::DFG::SpeculativeJIT::compileGetCallee):
+        (JSC::DFG::SpeculativeJIT::compileGetArgumentCountIncludingThis):
+        (JSC::DFG::SpeculativeJIT::compileStrCat):
+        (JSC::DFG::SpeculativeJIT::compileNewArrayWithSize):
+        (JSC::DFG::SpeculativeJIT::compileNewTypedArray):
+        (JSC::DFG::SpeculativeJIT::compileCreateThis):
+        (JSC::DFG::SpeculativeJIT::compileNewObject):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::callOperation):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+
+2017-12-22  Yusuke Suzuki  <utatane.tea@gmail.com>
+
         [DFG] Add JSValueRegsFlushedCallResult
         https://bugs.webkit.org/show_bug.cgi?id=181075
 
