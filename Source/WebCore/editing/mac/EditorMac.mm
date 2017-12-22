@@ -38,6 +38,7 @@
 #import "HTMLConverter.h"
 #import "HTMLElement.h"
 #import "HTMLNames.h"
+#import "LegacyNSPasteboardTypes.h"
 #import "LegacyWebArchive.h"
 #import "Pasteboard.h"
 #import "PasteboardStrategy.h"
@@ -107,11 +108,11 @@ void Editor::takeFindStringFromSelection()
     }
 
     Vector<String> types;
-    types.append(String(NSStringPboardType));
+    types.append(String(legacyStringPasteboardType()));
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
     platformStrategies()->pasteboardStrategy()->setTypes(types, NSFindPboard);
-    platformStrategies()->pasteboardStrategy()->setStringForType(m_frame.displayStringModifiedByEncoding(selectedTextForDataTransfer()), NSStringPboardType, NSFindPboard);
+    platformStrategies()->pasteboardStrategy()->setStringForType(m_frame.displayStringModifiedByEncoding(selectedTextForDataTransfer()), legacyStringPasteboardType(), NSFindPboard);
 #pragma clang diagnostic pop
 }
 
@@ -203,10 +204,10 @@ RefPtr<SharedBuffer> Editor::dataSelectionForPasteboard(const String& pasteboard
     if (pasteboardType == WebArchivePboardType)
         return selectionInWebArchiveFormat();
 
-    if (pasteboardType == String(NSRTFDPboardType))
+    if (pasteboardType == String(legacyRTFDPasteboardType()))
        return dataInRTFDFormat(attributedStringFromRange(*adjustedSelectionRange()));
 
-    if (pasteboardType == String(NSRTFPboardType)) {
+    if (pasteboardType == String(legacyRTFPasteboardType())) {
         NSAttributedString* attributedString = attributedStringFromRange(*adjustedSelectionRange());
         // FIXME: Why is this attachment character stripping needed here, but not needed in writeSelectionToPasteboard?
         if ([attributedString containsAttachments])

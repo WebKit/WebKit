@@ -1,3 +1,65 @@
+2017-12-22  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Fix build failures due to using deprecated AppKit symbols
+        https://bugs.webkit.org/show_bug.cgi?id=181110
+        <rdar://problem/36162865>
+
+        Reviewed by Dan Bernstein and Tim Horton.
+
+        See WebCore ChangeLog for more details. Additionally makes a few minor adjustments to pass our style checker.
+
+        * Misc/WebKitNSStringExtras.mm:
+        (-[NSString _web_drawAtPoint:font:textColor:]):
+        * Misc/WebNSPasteboardExtras.h:
+        * Misc/WebNSPasteboardExtras.mm:
+        (+[NSPasteboard _web_writableTypesForURL]):
+        (_createWritableTypesForImageWithoutArchive):
+        (_createWritableTypesForImageWithArchive):
+        (+[NSPasteboard _web_dragTypesForURL]):
+        (-[NSPasteboard _web_bestURL]):
+        (-[NSPasteboard _web_writeURL:andTitle:types:]):
+        (+[NSPasteboard _web_setFindPasteboardString:withOwner:]):
+        (-[NSPasteboard _web_writeFileWrapperAsRTFDAttachment:]):
+        (-[NSPasteboard _web_writeImage:element:URL:title:archive:types:source:]):
+        (-[NSPasteboard _web_declareAndWriteDragImageForElement:URL:title:archive:source:]):
+        * Panels/WebAuthenticationPanel.m:
+        (-[WebAuthenticationPanel runAsModalDialogWithChallenge:]):
+        (-[WebAuthenticationPanel sheetDidEnd:returnCode:contextInfo:]):
+        * Plugins/Hosted/WebHostedNetscapePluginView.mm:
+        (-[WebHostedNetscapePluginView drawRect:]):
+        * WebInspector/WebNodeHighlightView.mm:
+        (-[WebNodeHighlightView drawRect:]):
+        * WebView/WebFrame.mm:
+        (-[WebFrame _updateBackgroundAndUpdatesWhileOffscreen]):
+        (-[WebFrame _drawRect:contentsOnly:]):
+        * WebView/WebHTMLView.mm:
+        (kit):
+        (-[WebHTMLView _documentFragmentFromPasteboard:inContext:allowPlainText:]):
+        (-[WebHTMLView _plainTextFromPasteboard:]):
+        (-[WebHTMLView _writeSelectionWithPasteboardTypes:toPasteboard:cachedAttributedString:]):
+        (+[WebHTMLView _insertablePasteboardTypes]):
+        (+[WebHTMLView _selectionPasteboardTypes]):
+        (-[WebHTMLView pasteboard:provideDataForType:]):
+        (-[WebHTMLView _writeSelectionToPasteboard:]):
+        (-[WebHTMLView _documentFragmentFromPasteboard:forType:inContext:subresources:]):
+        (-[WebHTMLView validRequestorForSendType:returnType:]):
+        (-[WebHTMLView validateUserInterfaceItemWithoutDelegate:]):
+        (createMenuItem):
+        (-[WebHTMLView _fontAttributesFromFontPasteboard]):
+        (-[WebHTMLView _colorAsString:]):
+        (-[WebHTMLView copyFont:]):
+        * WebView/WebPDFView.mm:
+        (-[WebPDFView _recursiveDisplayRectIfNeededIgnoringOpacity:isVisibleRect:rectIsVisibleRectForView:topView:]):
+        (-[WebPDFView _recursiveDisplayAllDirtyWithLockFocus:visRect:]):
+        (-[WebPDFView _recursive:displayRectIgnoringOpacity:inContext:topView:]):
+        (-[WebPDFView pasteboardTypesForSelection]):
+        (-[WebPDFView writeSelectionWithPasteboardTypes:toPasteboard:]):
+        * WebView/WebView.h:
+        * WebView/WebView.mm:
+        (-[WebView performDragOperation:]):
+        (-[WebView validateUserInterfaceItemWithoutDelegate:]):
+        (-[WebView _searchWithGoogleFromMenu:]):
+
 2017-12-21  Youenn Fablet  <youenn@apple.com>
 
         ServiceWorkerThreadProxy should set the correct cookie and cache partitioning options

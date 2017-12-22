@@ -445,7 +445,10 @@ static NSURL *createUniqueWebDataURL();
         if (FrameView* view = frame->view()) {
             view->setTransparent(!drawsBackground);
 #if !PLATFORM(IOS)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
             Color color = colorFromNSColor([backgroundColor colorUsingColorSpaceName:NSDeviceRGBColorSpace]);
+#pragma clang diagnostic pop
 #else
             Color color = Color(backgroundColor);
 #endif
@@ -621,7 +624,10 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
 #if !PLATFORM(IOS)
     ASSERT([[NSGraphicsContext currentContext] isFlipped]);
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     CGContextRef ctx = static_cast<CGContextRef>([[NSGraphicsContext currentContext] graphicsPort]);
+#pragma clang diagnostic pop
 #else
     CGContextRef ctx = WKGetCurrentGraphicsContext();
 #endif

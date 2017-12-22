@@ -233,7 +233,10 @@ void Widget::paint(GraphicsContext& p, const IntRect& r, SecurityOriginPaintPoli
     }
 
     CGContextRef cgContext = p.platformContext();
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     ASSERT(cgContext == [currentContext graphicsPort]);
+#pragma clang diagnostic pop
     CGContextSaveGState(cgContext);
 
     NSRect viewFrame = [view frame];
@@ -247,7 +250,10 @@ void Widget::paint(GraphicsContext& p, const IntRect& r, SecurityOriginPaintPoli
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
     {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
         NSGraphicsContext *nsContext = [NSGraphicsContext graphicsContextWithGraphicsPort:cgContext flipped:NO];
+#pragma clang diagnostic pop
         [view displayRectIgnoringOpacity:[view convertRect:r fromView:[view superview]] inContext:nsContext];
     }
     END_BLOCK_OBJC_EXCEPTIONS;

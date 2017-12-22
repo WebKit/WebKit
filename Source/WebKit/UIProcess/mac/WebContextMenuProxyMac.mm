@@ -139,7 +139,7 @@ using namespace WebCore;
         return;
     }
 
-    WebKit::WebContextMenuItemData item(ActionType, static_cast<ContextMenuAction>([sender tag]), [sender title], [sender isEnabled], [sender state] == NSOnState);
+    WebKit::WebContextMenuItemData item(ActionType, static_cast<ContextMenuAction>([sender tag]), [sender title], [sender isEnabled], [sender state] == NSControlStateValueOn);
     if (representedObject) {
         ASSERT([representedObject isKindOfClass:[WKUserDataWrapper class]]);
         item.setUserData([static_cast<WKUserDataWrapper *>(representedObject) userData]);
@@ -425,7 +425,7 @@ RetainPtr<NSMenuItem> WebContextMenuProxyMac::createContextMenuItem(const WebCon
 
         [menuItem setTag:item.action()];
         [menuItem setEnabled:item.enabled()];
-        [menuItem setState:item.checked() ? NSOnState : NSOffState];
+        [menuItem setState:item.checked() ? NSControlStateValueOn : NSControlStateValueOff];
         [menuItem setTarget:[WKMenuTarget sharedMenuTarget]];
         [menuItem setIdentifier:menuItemIdentifier(item.action())];
 

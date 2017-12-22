@@ -26,6 +26,7 @@
 #import "SettingsController.h"
 
 #import "AppDelegate.h"
+#import "AppKitCompatibilityDeclarations.h"
 #import "BrowserWindowController.h"
 #import <WebKit/WKPreferencesPrivate.h>
 
@@ -228,60 +229,60 @@ typedef NS_ENUM(NSInteger, DebugOverylayMenuItemTag) {
     SEL action = [menuItem action];
 
     if (action == @selector(toggleUseWebKit2ByDefault:))
-        [menuItem setState:[self useWebKit2ByDefault] ? NSOnState : NSOffState];
+        [menuItem setState:[self useWebKit2ByDefault] ? NSControlStateValueOn : NSControlStateValueOff];
     else if (action == @selector(toggleCreateEditorByDefault:))
-        [menuItem setState:[self createEditorByDefault] ? NSOnState : NSOffState];
+        [menuItem setState:[self createEditorByDefault] ? NSControlStateValueOn : NSControlStateValueOff];
     else if (action == @selector(toggleUseTransparentWindows:))
-        [menuItem setState:[self useTransparentWindows] ? NSOnState : NSOffState];
+        [menuItem setState:[self useTransparentWindows] ? NSControlStateValueOn : NSControlStateValueOff];
     else if (action == @selector(toggleUsePaginatedMode:))
-        [menuItem setState:[self usePaginatedMode] ? NSOnState : NSOffState];
+        [menuItem setState:[self usePaginatedMode] ? NSControlStateValueOn : NSControlStateValueOff];
     else if (action == @selector(toggleShowLayerBorders:))
-        [menuItem setState:[self layerBordersVisible] ? NSOnState : NSOffState];
+        [menuItem setState:[self layerBordersVisible] ? NSControlStateValueOn : NSControlStateValueOff];
     else if (action == @selector(toggleSimpleLineLayoutEnabled:))
-        [menuItem setState:[self simpleLineLayoutEnabled] ? NSOffState : NSOnState];
+        [menuItem setState:[self simpleLineLayoutEnabled] ? NSControlStateValueOff : NSControlStateValueOn];
     else if (action == @selector(toggleSimpleLineLayoutDebugBordersEnabled:))
-        [menuItem setState:[self simpleLineLayoutDebugBordersEnabled] ? NSOnState : NSOffState];
+        [menuItem setState:[self simpleLineLayoutDebugBordersEnabled] ? NSControlStateValueOn : NSControlStateValueOff];
     else if (action == @selector(toggleIncrementalRenderingSuppressed:))
-        [menuItem setState:[self incrementalRenderingSuppressed] ? NSOnState : NSOffState];
+        [menuItem setState:[self incrementalRenderingSuppressed] ? NSControlStateValueOn : NSControlStateValueOff];
     else if (action == @selector(toggleAcceleratedDrawingEnabled:))
-        [menuItem setState:[self acceleratedDrawingEnabled] ? NSOnState : NSOffState];
+        [menuItem setState:[self acceleratedDrawingEnabled] ? NSControlStateValueOn : NSControlStateValueOff];
     else if (action == @selector(toggleDisplayListDrawingEnabled:))
-        [menuItem setState:[self displayListDrawingEnabled] ? NSOnState : NSOffState];
+        [menuItem setState:[self displayListDrawingEnabled] ? NSControlStateValueOn : NSControlStateValueOff];
     else if (action == @selector(toggleSubpixelAntialiasedLayerTextEnabled:))
-        [menuItem setState:[self subpixelAntialiasedLayerTextEnabled] ? NSOnState : NSOffState];
+        [menuItem setState:[self subpixelAntialiasedLayerTextEnabled] ? NSControlStateValueOn : NSControlStateValueOff];
     else if (action == @selector(toggleResourceLoadStatisticsEnabled:))
-        [menuItem setState:[self resourceLoadStatisticsEnabled] ? NSOnState : NSOffState];
+        [menuItem setState:[self resourceLoadStatisticsEnabled] ? NSControlStateValueOn : NSControlStateValueOff];
     else if (action == @selector(toggleLargeImageAsyncDecodingEnabled:))
-        [menuItem setState:[self largeImageAsyncDecodingEnabled] ? NSOnState : NSOffState];
+        [menuItem setState:[self largeImageAsyncDecodingEnabled] ? NSControlStateValueOn : NSControlStateValueOff];
     else if (action == @selector(toggleAnimatedImageAsyncDecodingEnabled:))
-        [menuItem setState:[self animatedImageAsyncDecodingEnabled] ? NSOnState : NSOffState];
+        [menuItem setState:[self animatedImageAsyncDecodingEnabled] ? NSControlStateValueOn : NSControlStateValueOff];
     else if (action == @selector(toggleVisualViewportEnabled:))
-        [menuItem setState:[self visualViewportEnabled] ? NSOnState : NSOffState];
+        [menuItem setState:[self visualViewportEnabled] ? NSControlStateValueOn : NSControlStateValueOff];
     else if (action == @selector(toggleReserveSpaceForBanners:))
-        [menuItem setState:[self isSpaceReservedForBanners] ? NSOnState : NSOffState];
+        [menuItem setState:[self isSpaceReservedForBanners] ? NSControlStateValueOn : NSControlStateValueOff];
     else if (action == @selector(toggleShowTiledScrollingIndicator:))
-        [menuItem setState:[self tiledScrollingIndicatorVisible] ? NSOnState : NSOffState];
+        [menuItem setState:[self tiledScrollingIndicatorVisible] ? NSControlStateValueOn : NSControlStateValueOff];
     else if (action == @selector(toggleShowResourceUsageOverlay:))
-        [menuItem setState:[self resourceUsageOverlayVisible] ? NSOnState : NSOffState];
+        [menuItem setState:[self resourceUsageOverlayVisible] ? NSControlStateValueOn : NSControlStateValueOff];
     else if (action == @selector(toggleLoadsAllSiteIcons:))
-        [menuItem setState:[self loadsAllSiteIcons] ? NSOnState : NSOffState];
+        [menuItem setState:[self loadsAllSiteIcons] ? NSControlStateValueOn : NSControlStateValueOff];
     else if (action == @selector(toggleUsesGameControllerFramework:))
-        [menuItem setState:[self usesGameControllerFramework] ? NSOnState : NSOffState];
+        [menuItem setState:[self usesGameControllerFramework] ? NSControlStateValueOn : NSControlStateValueOff];
     else if (action == @selector(toggleNetworkCacheSpeculativeRevalidationDisabled:))
-        [menuItem setState:[self networkCacheSpeculativeRevalidationDisabled] ? NSOnState : NSOffState];
+        [menuItem setState:[self networkCacheSpeculativeRevalidationDisabled] ? NSControlStateValueOn : NSControlStateValueOff];
     else if (action == @selector(toggleUseUISideCompositing:))
-        [menuItem setState:[self useUISideCompositing] ? NSOnState : NSOffState];
+        [menuItem setState:[self useUISideCompositing] ? NSControlStateValueOn : NSControlStateValueOff];
     else if (action == @selector(togglePerWindowWebProcessesDisabled:))
-        [menuItem setState:[self perWindowWebProcessesDisabled] ? NSOnState : NSOffState];
+        [menuItem setState:[self perWindowWebProcessesDisabled] ? NSControlStateValueOn : NSControlStateValueOff];
     else if (action == @selector(toggleEnableSubPixelCSSOMMetrics:))
-        [menuItem setState:[self subPixelCSSOMMetricsEnabled] ? NSOnState : NSOffState];
+        [menuItem setState:[self subPixelCSSOMMetricsEnabled] ? NSControlStateValueOn : NSControlStateValueOff];
     else if (action == @selector(toggleDebugOverlay:))
-        [menuItem setState:[self debugOverlayVisible:menuItem] ? NSOnState : NSOffState];
+        [menuItem setState:[self debugOverlayVisible:menuItem] ? NSControlStateValueOn : NSControlStateValueOff];
 
 #if WK_API_ENABLED
     if (menuItem.tag == ExperimentalFeatureTag) {
         _WKExperimentalFeature *feature = menuItem.representedObject;
-        [menuItem setState:[defaultPreferences() _isEnabledForFeature:feature] ? NSOnState : NSOffState];
+        [menuItem setState:[defaultPreferences() _isEnabledForFeature:feature] ? NSControlStateValueOn : NSControlStateValueOff];
     }
 #endif
 

@@ -41,6 +41,7 @@
 #import <WebCore/CachedImage.h>
 #import <WebCore/Element.h>
 #import <WebCore/Image.h>
+#import <WebCore/LegacyNSPasteboardTypes.h>
 #import <WebCore/MIMETypeRegistry.h>
 #import <WebCore/RenderAttachment.h>
 #import <WebCore/RenderImage.h>
@@ -61,17 +62,17 @@ NSString *WebURLNamePboardType = @"public.url-name";
 {
     static NSArray *types = [[NSArray alloc] initWithObjects:
         WebURLsWithTitlesPboardType,
-        NSURLPboardType,
+        legacyURLPasteboardType(),
         WebURLPboardType,
         WebURLNamePboardType,
-        NSStringPboardType,
+        legacyStringPasteboardType(),
         nil];
     return types;
 }
 
 static inline NSArray *_createWritableTypesForImageWithoutArchive()
 {
-    NSMutableArray *types = [[NSMutableArray alloc] initWithObjects:NSTIFFPboardType, nil];
+    NSMutableArray *types = [[NSMutableArray alloc] initWithObjects:legacyTIFFPasteboardType(), nil];
     [types addObjectsFromArray:[NSPasteboard _web_writableTypesForURL]];
     return types;
 }
@@ -85,7 +86,7 @@ static NSArray *_writableTypesForImageWithoutArchive (void)
 static inline NSArray *_createWritableTypesForImageWithArchive()
 {
     NSMutableArray *types = [_writableTypesForImageWithoutArchive() mutableCopy];
-    [types addObject:NSRTFDPboardType];
+    [types addObject:legacyRTFDPasteboardType()];
     [types addObject:WebArchivePboardType];
     return types;
 }
@@ -107,13 +108,13 @@ static NSArray *_writableTypesForImageWithArchive (void)
 {
     return [NSArray arrayWithObjects:
         WebURLsWithTitlesPboardType,
-        NSURLPboardType,
+        legacyURLPasteboardType(),
         WebURLPboardType,
         WebURLNamePboardType,
-        NSStringPboardType,
-        NSFilenamesPboardType,
+        legacyStringPasteboardType(),
+        legacyFilenamesPasteboardType(),
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200
-        NSFilesPromisePboardType,
+        legacyFilesPromisePasteboardType(),
 #endif
         nil];
 }
@@ -122,7 +123,7 @@ static NSArray *_writableTypesForImageWithArchive (void)
 {
     NSArray *types = [self types];
 
-    if ([types containsObject:NSURLPboardType]) {
+    if ([types containsObject:legacyURLPasteboardType()]) {
         NSURL *URLFromPasteboard = [NSURL URLFromPasteboard:self];
         NSString *scheme = [URLFromPasteboard scheme];
         if ([scheme isEqualToString:@"http"] || [scheme isEqualToString:@"https"]) {
@@ -130,8 +131,8 @@ static NSArray *_writableTypesForImageWithArchive (void)
         }
     }
 
-    if ([types containsObject:NSStringPboardType]) {
-        NSString *URLString = [self stringForType:NSStringPboardType];
+    if ([types containsObject:legacyStringPasteboardType()]) {
+        NSString *URLString = [self stringForType:legacyStringPasteboardType()];
         if ([URLString _webkit_looksLikeAbsoluteURL]) {
             NSURL *URL = [[NSURL _webkit_URLWithUserTypedString:URLString] _webkit_canonicalize];
             if (URL) {
@@ -140,8 +141,8 @@ static NSArray *_writableTypesForImageWithArchive (void)
         }
     }
 
-    if ([types containsObject:NSFilenamesPboardType]) {
-        NSArray *files = [self propertyListForType:NSFilenamesPboardType];
+    if ([types containsObject:legacyFilenamesPasteboardType()]) {
+        NSArray *files = [self propertyListForType:legacyFilenamesPasteboardType()];
         // FIXME: Maybe it makes more sense to allow multiple files and only use the first one?
         if ([files count] == 1) {
             NSString *file = [files objectAtIndex:0];
@@ -169,14 +170,14 @@ static NSArray *_writableTypesForImageWithArchive (void)
             title = [URL _web_userVisibleString];
     }
     
-    if ([types containsObject:NSURLPboardType])
+    if ([types containsObject:legacyURLPasteboardType()])
         [URL writeToPasteboard:self];
     if ([types containsObject:WebURLPboardType])
         [self setString:[URL _web_originalDataAsString] forType:WebURLPboardType];
     if ([types containsObject:WebURLNamePboardType])
         [self setString:title forType:WebURLNamePboardType];
-    if ([types containsObject:NSStringPboardType])
-        [self setString:[URL _web_userVisibleString] forType:NSStringPboardType];
+    if ([types containsObject:legacyStringPasteboardType()])
+        [self setString:[URL _web_userVisibleString] forType:legacyStringPasteboardType()];
     if ([types containsObject:WebURLsWithTitlesPboardType])
         [WebURLsWithTitles writeURLs:[NSArray arrayWithObject:URL] andTitles:[NSArray arrayWithObject:title] toPasteboard:self];
 }
@@ -187,8 +188,8 @@ static NSArray *_writableTypesForImageWithArchive (void)
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
     NSPasteboard *findPasteboard = [NSPasteboard pasteboardWithName:NSFindPboard];
 #pragma clang diagnostic pop
-    [findPasteboard declareTypes:[NSArray arrayWithObject:NSStringPboardType] owner:owner];
-    [findPasteboard setString:string forType:NSStringPboardType];
+    [findPasteboard declareTypes:[NSArray arrayWithObject:legacyStringPasteboardType()] owner:owner];
+    [findPasteboard setString:string forType:legacyStringPasteboardType()];
     return [findPasteboard changeCount];
 }
 
@@ -200,7 +201,7 @@ static NSArray *_writableTypesForImageWithArchive (void)
     [attachment release];
     
     NSData *RTFDData = [string RTFDFromRange:NSMakeRange(0, [string length]) documentAttributes:@{ }];
-    [self setData:RTFDData forType:NSRTFDPboardType];
+    [self setData:RTFDData forType:legacyRTFDPasteboardType()];
 }
 
 
@@ -249,13 +250,13 @@ static CachedImage* imageFromElement(DOMElement *domElement)
 
     [self _web_writeURL:URL andTitle:title types:types];
     
-    if ([types containsObject:NSTIFFPboardType]) {
+    if ([types containsObject:legacyTIFFPasteboardType()]) {
         if (image)
-            [self setData:[image TIFFRepresentation] forType:NSTIFFPboardType];
+            [self setData:[image TIFFRepresentation] forType:legacyTIFFPasteboardType()];
         else if (source && element)
             [source setPromisedDragTIFFDataSource:imageFromElement(element)];
         else if (element)
-            [self setData:[element _imageTIFFRepresentation] forType:NSTIFFPboardType];
+            [self setData:[element _imageTIFFRepresentation] forType:legacyTIFFPasteboardType()];
     }
     
     if (archive) {
@@ -265,7 +266,7 @@ static CachedImage* imageFromElement(DOMElement *domElement)
     }
 
     // We should not have declared types that we aren't going to write (4031826).
-    ASSERT(![types containsObject:NSRTFDPboardType]);
+    ASSERT(![types containsObject:legacyRTFDPasteboardType()]);
     ASSERT(![types containsObject:WebArchivePboardType]);
 }
 
@@ -281,7 +282,7 @@ static CachedImage* imageFromElement(DOMElement *domElement)
 #pragma clang diagnostic pop
 
     NSString *extension = @"";
-    RetainPtr<NSMutableArray> types = adoptNS([[NSMutableArray alloc] initWithObjects:NSFilesPromisePboardType, nil]);
+    RetainPtr<NSMutableArray> types = adoptNS([[NSMutableArray alloc] initWithObjects:legacyFilesPromisePasteboardType(), nil]);
     if (auto* renderer = core(element)->renderer()) {
         if (is<RenderImage>(*renderer)) {
             if (auto* image = downcast<RenderImage>(*renderer).cachedImage()) {
@@ -300,7 +301,7 @@ static CachedImage* imageFromElement(DOMElement *domElement)
             [self declareTypes:types.get() owner:source];
             RetainPtr<NSMutableArray> paths = adoptNS([[NSMutableArray alloc] init]);
             [paths.get() addObject:title];
-            [self setPropertyList:paths.get() forType:NSFilenamesPboardType];
+            [self setPropertyList:paths.get() forType:legacyFilenamesPasteboardType()];
         }
 #endif
     }
@@ -308,7 +309,7 @@ static CachedImage* imageFromElement(DOMElement *domElement)
     [self _web_writeImage:nil element:element URL:URL title:title archive:archive types:types.get() source:source];
 
     NSArray *extensions = [[NSArray alloc] initWithObjects:extension, nil];
-    [self setPropertyList:extensions forType:NSFilesPromisePboardType];
+    [self setPropertyList:extensions forType:legacyFilesPromisePasteboardType()];
     [extensions release];
 
     return source;

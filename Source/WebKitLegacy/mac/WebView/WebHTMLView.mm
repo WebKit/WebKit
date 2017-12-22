@@ -104,6 +104,7 @@
 #import <WebCore/HitTestResult.h>
 #import <WebCore/Image.h>
 #import <WebCore/KeyboardEvent.h>
+#import <WebCore/LegacyNSPasteboardTypes.h>
 #import <WebCore/LegacyWebArchive.h>
 #import <WebCore/LocalizedStrings.h>
 #import <WebCore/MIMETypeRegistry.h>
@@ -987,18 +988,18 @@ struct WebHTMLViewInterpretKeyEventsParameters {
 
 #if PLATFORM(MAC)
 
-static NSCellStateValue kit(TriState state)
+static NSControlStateValue kit(TriState state)
 {
     switch (state) {
         case FalseTriState:
-            return NSOffState;
+            return NSControlStateValueOff;
         case TrueTriState:
-            return NSOnState;
+            return NSControlStateValueOn;
         case MixedTriState:
-            return NSMixedState;
+            return NSControlStateValueMixed;
     }
     ASSERT_NOT_REACHED();
-    return NSOffState;
+    return NSControlStateValueOff;
 }
 
 #endif
@@ -1140,83 +1141,40 @@ static NSCellStateValue kit(TriState state)
     return [elements autorelease];
 }
 
-- (DOMDocumentFragment *)_documentFragmentFromPasteboard:(NSPasteboard *)pasteboard
-                                               inContext:(DOMRange *)context
-                                          allowPlainText:(BOOL)allowPlainText
+- (DOMDocumentFragment *)_documentFragmentFromPasteboard:(NSPasteboard *)pasteboard inContext:(DOMRange *)context allowPlainText:(BOOL)allowPlainText
 {
     NSArray *types = [pasteboard types];
     DOMDocumentFragment *fragment = nil;
 
-    if ([types containsObject:WebArchivePboardType] &&
-        (fragment = [self _documentFragmentFromPasteboard:pasteboard 
-                                                  forType:WebArchivePboardType
-                                                inContext:context
-                                             subresources:0]))
-        return fragment;
-                                           
-    if ([types containsObject:NSFilenamesPboardType] &&
-        (fragment = [self _documentFragmentFromPasteboard:pasteboard 
-                                                  forType:NSFilenamesPboardType
-                                                inContext:context
-                                             subresources:0]))
-        return fragment;
-    
-    if ([types containsObject:NSHTMLPboardType] &&
-        (fragment = [self _documentFragmentFromPasteboard:pasteboard 
-                                                  forType:NSHTMLPboardType
-                                                inContext:context
-                                             subresources:0]))
-        return fragment;
-    
-    if ([types containsObject:NSRTFDPboardType] &&
-        (fragment = [self _documentFragmentFromPasteboard:pasteboard 
-                                                  forType:NSRTFDPboardType
-                                                inContext:context
-                                             subresources:0]))
-        return fragment;
-    
-    if ([types containsObject:NSRTFPboardType] &&
-        (fragment = [self _documentFragmentFromPasteboard:pasteboard 
-                                                  forType:NSRTFPboardType
-                                                inContext:context
-                                             subresources:0]))
+    if ([types containsObject:WebArchivePboardType] && (fragment = [self _documentFragmentFromPasteboard:pasteboard forType:WebArchivePboardType inContext:context subresources:0]))
         return fragment;
 
-    if ([types containsObject:NSTIFFPboardType] &&
-        (fragment = [self _documentFragmentFromPasteboard:pasteboard 
-                                                  forType:NSTIFFPboardType
-                                                inContext:context
-                                             subresources:0]))
+    if ([types containsObject:legacyFilenamesPasteboardType()] && (fragment = [self _documentFragmentFromPasteboard:pasteboard forType:legacyFilenamesPasteboardType() inContext:context subresources:0]))
+        return fragment;
+    
+    if ([types containsObject:legacyHTMLPasteboardType()] && (fragment = [self _documentFragmentFromPasteboard:pasteboard forType:legacyHTMLPasteboardType() inContext:context subresources:0]))
+        return fragment;
+    
+    if ([types containsObject:legacyRTFDPasteboardType()] && (fragment = [self _documentFragmentFromPasteboard:pasteboard forType:legacyRTFDPasteboardType() inContext:context subresources:0]))
+        return fragment;
+    
+    if ([types containsObject:legacyRTFPasteboardType()] && (fragment = [self _documentFragmentFromPasteboard:pasteboard forType:legacyRTFPasteboardType() inContext:context subresources:0]))
         return fragment;
 
-    if ([types containsObject:NSPDFPboardType] &&
-        (fragment = [self _documentFragmentFromPasteboard:pasteboard 
-                                                  forType:NSPDFPboardType
-                                                inContext:context
-                                             subresources:0]))
+    if ([types containsObject:legacyTIFFPasteboardType()] && (fragment = [self _documentFragmentFromPasteboard:pasteboard forType:legacyTIFFPasteboardType() inContext:context subresources:0]))
         return fragment;
 
-    if ([types containsObject:(NSString*)kUTTypePNG] &&
-        (fragment = [self _documentFragmentFromPasteboard:pasteboard 
-                                                  forType:(NSString*)kUTTypePNG
-                                                inContext:context
-                                             subresources:0]))
+    if ([types containsObject:legacyPDFPasteboardType()] && (fragment = [self _documentFragmentFromPasteboard:pasteboard forType:legacyPDFPasteboardType() inContext:context subresources:0]))
         return fragment;
-        
-    if ([types containsObject:NSURLPboardType] &&
-        (fragment = [self _documentFragmentFromPasteboard:pasteboard 
-                                                  forType:NSURLPboardType
-                                                inContext:context
-                                             subresources:0]))
+
+    if ([types containsObject:(NSString *)kUTTypePNG] && (fragment = [self _documentFragmentFromPasteboard:pasteboard forType:(NSString *)kUTTypePNG inContext:context subresources:0]))
         return fragment;
-        
-    if (allowPlainText && [types containsObject:NSStringPboardType] &&
-        (fragment = [self _documentFragmentFromPasteboard:pasteboard
-                                                  forType:NSStringPboardType
-                                                inContext:context
-                                             subresources:0])) {
+
+    if ([types containsObject:legacyURLPasteboardType()] && (fragment = [self _documentFragmentFromPasteboard:pasteboard forType:legacyURLPasteboardType() inContext:context subresources:0]))
         return fragment;
-    }
+
+    if (allowPlainText && [types containsObject:legacyStringPasteboardType()] && (fragment = [self _documentFragmentFromPasteboard:pasteboard forType:legacyStringPasteboardType() inContext:context subresources:0]))
+        return fragment;
     
     return nil;
 }
@@ -1225,19 +1183,19 @@ static NSCellStateValue kit(TriState state)
 {
     NSArray *types = [pasteboard types];
     
-    if ([types containsObject:NSStringPboardType])
-        return [[pasteboard stringForType:NSStringPboardType] precomposedStringWithCanonicalMapping];
+    if ([types containsObject:legacyStringPasteboardType()])
+        return [[pasteboard stringForType:legacyStringPasteboardType()] precomposedStringWithCanonicalMapping];
 
     RetainPtr<NSAttributedString> attributedString;
-    if ([types containsObject:NSRTFDPboardType])
-        attributedString = adoptNS([[NSAttributedString alloc] initWithRTFD:[pasteboard dataForType:NSRTFDPboardType] documentAttributes:NULL]);
-    if (attributedString == nil && [types containsObject:NSRTFPboardType])
-        attributedString = adoptNS([[NSAttributedString alloc] initWithRTF:[pasteboard dataForType:NSRTFPboardType] documentAttributes:NULL]);
+    if ([types containsObject:legacyRTFDPasteboardType()])
+        attributedString = adoptNS([[NSAttributedString alloc] initWithRTFD:[pasteboard dataForType:legacyRTFDPasteboardType()] documentAttributes:NULL]);
+    if (attributedString == nil && [types containsObject:legacyRTFPasteboardType()])
+        attributedString = adoptNS([[NSAttributedString alloc] initWithRTF:[pasteboard dataForType:legacyRTFPasteboardType()] documentAttributes:NULL]);
     if (attributedString)
         return [[[attributedString string] copy] autorelease];
 
-    if ([types containsObject:NSFilenamesPboardType]) {
-        if (NSString *string = [[pasteboard propertyListForType:NSFilenamesPboardType] componentsJoinedByString:@"\n"])
+    if ([types containsObject:legacyFilenamesPasteboardType()]) {
+        if (NSString *string = [[pasteboard propertyListForType:legacyFilenamesPasteboardType()] componentsJoinedByString:@"\n"])
             return string;
     }
 
@@ -1382,27 +1340,27 @@ static NSCellStateValue kit(TriState state)
     }
 
     // Put the attributed string on the pasteboard (RTF/RTFD format).
-    if ([types containsObject:NSRTFDPboardType]) {
+    if ([types containsObject:legacyRTFDPasteboardType()]) {
         if (attributedString == nil) {
             attributedString = [self selectedAttributedString];
         }        
         NSData *RTFDData = [attributedString RTFDFromRange:NSMakeRange(0, [attributedString length]) documentAttributes:@{ }];
-        [pasteboard setData:RTFDData forType:NSRTFDPboardType];
+        [pasteboard setData:RTFDData forType:legacyRTFDPasteboardType()];
     }        
-    if ([types containsObject:NSRTFPboardType]) {
+    if ([types containsObject:legacyRTFPasteboardType()]) {
         if (!attributedString)
             attributedString = [self selectedAttributedString];
         if ([attributedString containsAttachments])
             attributedString = attributedStringByStrippingAttachmentCharacters(attributedString);
         NSData *RTFData = [attributedString RTFFromRange:NSMakeRange(0, [attributedString length]) documentAttributes:@{ }];
-        [pasteboard setData:RTFData forType:NSRTFPboardType];
+        [pasteboard setData:RTFData forType:legacyRTFPasteboardType()];
     }
 
     // Put plain string on the pasteboard.
-    if ([types containsObject:NSStringPboardType]) {
+    if ([types containsObject:legacyStringPasteboardType()]) {
         // Map &nbsp; to a plain old space because this is better for source code, other browsers do it, and
         // because HTML forces content creators and editors to use this character any time they want two spaces in a row.
-        [pasteboard setString:[[self selectedString] stringByReplacingOccurrencesOfString:@"\u00A0" withString:@" "] forType:NSStringPboardType];
+        [pasteboard setString:[[self selectedString] stringByReplacingOccurrencesOfString:@"\u00A0" withString:@" "] forType:legacyStringPasteboardType()];
     }
 
     if ([self _canSmartCopyOrDelete] && [types containsObject:WebSmartPastePboardType])
@@ -2030,8 +1988,8 @@ static bool mouseEventIsPartOfClickOrDrag(NSEvent *event)
 {
     static NSArray *types = nil;
     if (!types) {
-        types = [[NSArray alloc] initWithObjects:WebArchivePboardType, NSHTMLPboardType, NSFilenamesPboardType, NSTIFFPboardType, NSPDFPboardType,
-            NSURLPboardType, NSRTFDPboardType, NSRTFPboardType, NSStringPboardType, NSColorPboardType, kUTTypePNG, nil];
+        types = [[NSArray alloc] initWithObjects:WebArchivePboardType, legacyHTMLPasteboardType(), legacyFilenamesPasteboardType(), legacyTIFFPasteboardType(), legacyPDFPasteboardType(),
+            legacyURLPasteboardType(), legacyRTFDPasteboardType(), legacyRTFPasteboardType(), legacyStringPasteboardType(), legacyColorPasteboardType(), kUTTypePNG, nil];
         CFRetain(types);
     }
     return types;
@@ -2040,7 +1998,7 @@ static bool mouseEventIsPartOfClickOrDrag(NSEvent *event)
 + (NSArray *)_selectionPasteboardTypes
 {
     // FIXME: We should put data for NSHTMLPboardType on the pasteboard but Microsoft Excel doesn't like our format of HTML (3640423).
-    return [NSArray arrayWithObjects:WebArchivePboardType, NSRTFDPboardType, NSRTFPboardType, NSStringPboardType, nil];
+    return [NSArray arrayWithObjects:WebArchivePboardType, legacyRTFDPasteboardType(), legacyRTFPasteboardType(), legacyStringPasteboardType(), nil];
 }
 
 - (void)pasteboardChangedOwner:(NSPasteboard *)pasteboard
@@ -2050,12 +2008,12 @@ static bool mouseEventIsPartOfClickOrDrag(NSEvent *event)
 
 - (void)pasteboard:(NSPasteboard *)pasteboard provideDataForType:(NSString *)type
 {
-    if ([type isEqualToString:NSRTFDPboardType] && [[pasteboard types] containsObject:WebArchivePboardType]) {
+    if ([type isEqualToString:legacyRTFDPasteboardType()] && [[pasteboard types] containsObject:WebArchivePboardType]) {
         auto archive = adoptNS([[WebArchive alloc] initWithData:[pasteboard dataForType:WebArchivePboardType]]);
-        [pasteboard _web_writePromisedRTFDFromArchive:archive.get() containsImage:[[pasteboard types] containsObject:NSTIFFPboardType]];
-    } else if ([type isEqualToString:NSTIFFPboardType] && _private->promisedDragTIFFDataSource) {
+        [pasteboard _web_writePromisedRTFDFromArchive:archive.get() containsImage:[[pasteboard types] containsObject:legacyTIFFPasteboardType()]];
+    } else if ([type isEqualToString:legacyTIFFPasteboardType()] && _private->promisedDragTIFFDataSource) {
         if (auto* image = _private->promisedDragTIFFDataSource->image())
-            [pasteboard setData:(NSData *)image->tiffRepresentation() forType:NSTIFFPboardType];
+            [pasteboard setData:(NSData *)image->tiffRepresentation() forType:legacyTIFFPasteboardType()];
         [self setPromisedDragTIFFDataSource:nullptr];
     }
 }
@@ -2298,7 +2256,7 @@ static bool mouseEventIsPartOfClickOrDrag(NSEvent *event)
     RetainPtr<NSMutableArray> mutableTypes;
     if (![attributedString containsAttachments]) {
         mutableTypes = adoptNS([types mutableCopy]);
-        [mutableTypes removeObject:NSRTFDPboardType];
+        [mutableTypes removeObject:legacyRTFDPasteboardType()];
         types = mutableTypes.get();
     }
 
@@ -2363,11 +2321,11 @@ static bool mouseEventIsPartOfClickOrDrag(NSEvent *event)
         return [[self _dataSource] _documentFragmentWithArchive:archive.get()];
     }
 
-    if ([pboardType isEqualToString:NSFilenamesPboardType])
-        return [self _documentFragmentWithPaths:[pasteboard propertyListForType:NSFilenamesPboardType]];
+    if ([pboardType isEqualToString:legacyFilenamesPasteboardType()])
+        return [self _documentFragmentWithPaths:[pasteboard propertyListForType:legacyFilenamesPasteboardType()]];
 
-    if ([pboardType isEqualToString:NSHTMLPboardType]) {
-        NSString *HTMLString = [pasteboard stringForType:NSHTMLPboardType];
+    if ([pboardType isEqualToString:legacyHTMLPasteboardType()]) {
+        NSString *HTMLString = [pasteboard stringForType:legacyHTMLPasteboardType()];
         // This is a hack to make Microsoft's HTML pasteboard data work. See 3778785.
         if ([HTMLString hasPrefix:@"Version:"]) {
             NSRange range = [HTMLString rangeOfString:@"<html" options:NSCaseInsensitiveSearch];
@@ -2379,12 +2337,12 @@ static bool mouseEventIsPartOfClickOrDrag(NSEvent *event)
         return [[self _frame] _documentFragmentWithMarkupString:HTMLString baseURLString:nil];
     }
 
-    if ([pboardType isEqualToString:NSRTFPboardType] || [pboardType isEqualToString:NSRTFDPboardType]) {
+    if ([pboardType isEqualToString:legacyRTFPasteboardType()] || [pboardType isEqualToString:legacyRTFDPasteboardType()]) {
         RetainPtr<NSAttributedString> string;
-        if ([pboardType isEqualToString:NSRTFDPboardType])
-            string = adoptNS([[NSAttributedString alloc] initWithRTFD:[pasteboard dataForType:NSRTFDPboardType] documentAttributes:NULL]);
+        if ([pboardType isEqualToString:legacyRTFDPasteboardType()])
+            string = adoptNS([[NSAttributedString alloc] initWithRTFD:[pasteboard dataForType:legacyRTFDPasteboardType()] documentAttributes:NULL]);
         if (!string)
-            string = adoptNS([[NSAttributedString alloc] initWithRTF:[pasteboard dataForType:NSRTFPboardType] documentAttributes:NULL]);
+            string = adoptNS([[NSAttributedString alloc] initWithRTF:[pasteboard dataForType:legacyRTFPasteboardType()] documentAttributes:NULL]);
         if (!string)
             return nil;
 
@@ -2412,14 +2370,14 @@ static bool mouseEventIsPartOfClickOrDrag(NSEvent *event)
         return fragment;
     }
 
-    if ([pboardType isEqualToString:NSTIFFPboardType])
-        return [self _web_documentFragmentFromPasteboard:pasteboard pasteboardType:NSTIFFPboardType imageMIMEType:@"image/tiff"];
-    if ([pboardType isEqualToString:NSPDFPboardType])
-        return [self _web_documentFragmentFromPasteboard:pasteboard pasteboardType:NSPDFPboardType imageMIMEType:@"application/pdf"];
+    if ([pboardType isEqualToString:legacyTIFFPasteboardType()])
+        return [self _web_documentFragmentFromPasteboard:pasteboard pasteboardType:legacyTIFFPasteboardType() imageMIMEType:@"image/tiff"];
+    if ([pboardType isEqualToString:legacyPDFPasteboardType()])
+        return [self _web_documentFragmentFromPasteboard:pasteboard pasteboardType:legacyPDFPasteboardType() imageMIMEType:@"application/pdf"];
     if ([pboardType isEqualToString:(NSString *)kUTTypePNG])
         return [self _web_documentFragmentFromPasteboard:pasteboard pasteboardType:(NSString *)kUTTypePNG imageMIMEType:@"image/png"];
 
-    if ([pboardType isEqualToString:NSURLPboardType]) {
+    if ([pboardType isEqualToString:legacyURLPasteboardType()]) {
         NSURL *URL = [NSURL URLFromPasteboard:pasteboard];
         DOMDocument* document = [[self _frame] DOMDocument];
         ASSERT(document);
@@ -2438,10 +2396,10 @@ static bool mouseEventIsPartOfClickOrDrag(NSEvent *event)
         return fragment;
     }
 
-    if ([pboardType isEqualToString:NSStringPboardType]) {
+    if ([pboardType isEqualToString:legacyStringPasteboardType()]) {
         if (!context)
             return nil;
-        return kit(createFragmentFromText(*core(context), [[pasteboard stringForType:NSStringPboardType] precomposedStringWithCanonicalMapping]).ptr());
+        return kit(createFragmentFromText(*core(context), [[pasteboard stringForType:legacyStringPasteboardType()] precomposedStringWithCanonicalMapping]).ptr());
     }
 
     return nil;
@@ -2897,7 +2855,7 @@ WEBCORE_COMMAND(toggleUnderline)
         isReturnTypeOK = YES;
     else if ([[[self class] _insertablePasteboardTypes] containsObject:returnType] && [self _isEditable]) {
         // We can insert strings in any editable context.  We can insert other types, like images, only in rich edit contexts.
-        isReturnTypeOK = [returnType isEqualToString:NSStringPboardType] || [self _canEditRichly];
+        isReturnTypeOK = [returnType isEqualToString:legacyStringPasteboardType()] || [self _canEditRichly];
     }
     if (isSendTypeOK && isReturnTypeOK)
         return self;
@@ -2982,7 +2940,7 @@ WEBCORE_COMMAND(toggleUnderline)
     if (action == @selector(makeBaseWritingDirectionNatural:)) {
         NSMenuItem *menuItem = (NSMenuItem *)item;
         if ([menuItem isKindOfClass:[NSMenuItem class]])
-            [menuItem setState:NSOffState];
+            [menuItem setState:NSControlStateValueOff];
         return NO;
     }
 
@@ -3043,7 +3001,7 @@ WEBCORE_COMMAND(toggleUnderline)
         // code checks the first responder.
         NSMenuItem *menuItem = (NSMenuItem *)item;
         if ([menuItem isKindOfClass:[NSMenuItem class]])
-            [menuItem setState:[self isGrammarCheckingEnabled] ? NSOnState : NSOffState];
+            [menuItem setState:[self isGrammarCheckingEnabled] ? NSControlStateValueOn : NSControlStateValueOff];
         return YES;
     }
 
@@ -3064,42 +3022,42 @@ WEBCORE_COMMAND(toggleUnderline)
     if (action == @selector(toggleSmartInsertDelete:)) {
         NSMenuItem *menuItem = (NSMenuItem *)item;
         if ([menuItem isKindOfClass:[NSMenuItem class]])
-            [menuItem setState:[self smartInsertDeleteEnabled] ? NSOnState : NSOffState];
+            [menuItem setState:[self smartInsertDeleteEnabled] ? NSControlStateValueOn : NSControlStateValueOff];
         return [self _canEdit];
     }
 
     if (action == @selector(toggleAutomaticQuoteSubstitution:)) {
         NSMenuItem *menuItem = (NSMenuItem *)item;
         if ([menuItem isKindOfClass:[NSMenuItem class]])
-            [menuItem setState:[self isAutomaticQuoteSubstitutionEnabled] ? NSOnState : NSOffState];
+            [menuItem setState:[self isAutomaticQuoteSubstitutionEnabled] ? NSControlStateValueOn : NSControlStateValueOff];
         return [self _canEdit];
     }
 
     if (action == @selector(toggleAutomaticLinkDetection:)) {
         NSMenuItem *menuItem = (NSMenuItem *)item;
         if ([menuItem isKindOfClass:[NSMenuItem class]])
-            [menuItem setState:[self isAutomaticLinkDetectionEnabled] ? NSOnState : NSOffState];
+            [menuItem setState:[self isAutomaticLinkDetectionEnabled] ? NSControlStateValueOn : NSControlStateValueOff];
         return [self _canEdit];
     }
 
     if (action == @selector(toggleAutomaticDashSubstitution:)) {
         NSMenuItem *menuItem = (NSMenuItem *)item;
         if ([menuItem isKindOfClass:[NSMenuItem class]])
-            [menuItem setState:[self isAutomaticDashSubstitutionEnabled] ? NSOnState : NSOffState];
+            [menuItem setState:[self isAutomaticDashSubstitutionEnabled] ? NSControlStateValueOn : NSControlStateValueOff];
         return [self _canEdit];
     }
 
     if (action == @selector(toggleAutomaticTextReplacement:)) {
         NSMenuItem *menuItem = (NSMenuItem *)item;
         if ([menuItem isKindOfClass:[NSMenuItem class]])
-            [menuItem setState:[self isAutomaticTextReplacementEnabled] ? NSOnState : NSOffState];
+            [menuItem setState:[self isAutomaticTextReplacementEnabled] ? NSControlStateValueOn : NSControlStateValueOff];
         return [self _canEdit];
     }
 
     if (action == @selector(toggleAutomaticSpellingCorrection:)) {
         NSMenuItem *menuItem = (NSMenuItem *)item;
         if ([menuItem isKindOfClass:[NSMenuItem class]])
-            [menuItem setState:[self isAutomaticSpellingCorrectionEnabled] ? NSOnState : NSOffState];
+            [menuItem setState:[self isAutomaticSpellingCorrectionEnabled] ? NSControlStateValueOn : NSControlStateValueOff];
         return [self _canEdit];
     }
 
@@ -3679,7 +3637,7 @@ static RetainPtr<NSMenuItem> createMenuItem(const HitTestResult& hitTestResult, 
         if (auto tag = toTag(item.action()))
             [menuItem setTag:*tag];
         [menuItem setEnabled:item.enabled()];
-        [menuItem setState:item.checked() ? NSOnState : NSOffState];
+        [menuItem setState:item.checked() ? NSControlStateValueOn : NSControlStateValueOff];
         [menuItem setTarget:[WebMenuTarget sharedMenuTarget]];
 
         return menuItem;
@@ -5110,7 +5068,7 @@ static RefPtr<KeyboardEvent> currentKeyboardEvent(Frame* coreFrame)
 #pragma clang diagnostic pop
     if (fontPasteboard == nil)
         return nil;
-    NSData *data = [fontPasteboard dataForType:NSFontPboardType];
+    NSData *data = [fontPasteboard dataForType:legacyFontPasteboardType()];
     if (data == nil || [data length] == 0)
         return nil;
     // NSTextView does something more efficient by parsing the attributes only, but that's not available in API.
@@ -5131,7 +5089,10 @@ static RefPtr<KeyboardEvent> currentKeyboardEvent(Frame* coreFrame)
 
 - (NSString *)_colorAsString:(NSColor *)color
 {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     NSColor *rgbColor = [color colorUsingColorSpaceName:NSDeviceRGBColorSpace];
+#pragma clang diagnostic pop
     // FIXME: If color is non-nil and rgbColor is nil, that means we got some kind
     // of fancy color that can't be converted to RGB. Changing that to "transparent"
     // might not be great, but it's probably OK.
@@ -5316,8 +5277,8 @@ static RefPtr<KeyboardEvent> currentKeyboardEvent(Frame* coreFrame)
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
     NSPasteboard *fontPasteboard = [NSPasteboard pasteboardWithName:NSFontPboard];
 #pragma clang diagnostic pop
-    [fontPasteboard declareTypes:[NSArray arrayWithObject:NSFontPboardType] owner:nil];
-    [fontPasteboard setData:[self _selectionStartFontAttributesAsRTF] forType:NSFontPboardType];
+    [fontPasteboard declareTypes:[NSArray arrayWithObject:legacyFontPasteboardType()] owner:nil];
+    [fontPasteboard setData:[self _selectionStartFontAttributesAsRTF] forType:legacyFontPasteboardType()];
 }
 
 - (void)pasteFont:(id)sender

@@ -231,7 +231,7 @@
     NSURLCredential *credential = nil;
 
     if ([[NSApplication sharedApplication] runModalForWindow:panel] == 0) {
-        credential = [[NSURLCredential alloc] initWithUser:[username stringValue] password:[password stringValue] persistence:([remember state] == NSOnState) ? NSURLCredentialPersistencePermanent : NSURLCredentialPersistenceForSession];
+        credential = [[NSURLCredential alloc] initWithUser:[username stringValue] password:[password stringValue] persistence:([remember state] == NSControlStateValueOn) ? NSURLCredentialPersistencePermanent : NSURLCredentialPersistenceForSession];
     }
 
     [callback performSelector:selector withObject:chall withObject:credential];
@@ -263,7 +263,7 @@
     ASSERT(challenge != nil);
 
     if (returnCode == 0) {
-        credential = [[NSURLCredential alloc] initWithUser:[username stringValue] password:[password stringValue] persistence:([remember state] == NSOnState) ? NSURLCredentialPersistencePermanent : NSURLCredentialPersistenceForSession];
+        credential = [[NSURLCredential alloc] initWithUser:[username stringValue] password:[password stringValue] persistence:([remember state] == NSControlStateValueOn) ? NSURLCredentialPersistencePermanent : NSURLCredentialPersistenceForSession];
     }
 
     // We take this tricky approach to nilling out and releasing the challenge

@@ -76,7 +76,10 @@ static RefPtr<ShareableBitmap> convertImageToBitmap(NSImage *image, const IntSiz
 
     RetainPtr<NSGraphicsContext> savedContext = [NSGraphicsContext currentContext];
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     [NSGraphicsContext setCurrentContext:[NSGraphicsContext graphicsContextWithGraphicsPort:graphicsContext->platformContext() flipped:YES]];
+#pragma clang diagnostic pop
     [image drawInRect:NSMakeRect(0, 0, bitmap->size().width(), bitmap->size().height()) fromRect:NSZeroRect operation:NSCompositingOperationSourceOver fraction:1 respectFlipped:YES hints:nil];
 
     [NSGraphicsContext setCurrentContext:savedContext.get()];

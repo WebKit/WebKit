@@ -31,6 +31,7 @@
 #import "DataReference.h"
 #import "WebContextMenuProxyMac.h"
 #import "WebPageProxy.h"
+#import <WebCore/LegacyNSPasteboardTypes.h>
 #import <pal/spi/mac/NSSharingServicePickerSPI.h>
 #import <pal/spi/mac/NSSharingServiceSPI.h>
 #import <wtf/text/WTFString.h>
@@ -111,7 +112,7 @@
         dataReference = IPC::DataReference(static_cast<const uint8_t*>([data bytes]), [data length]);
 
         types.append(NSPasteboardTypeRTFD);
-        types.append(NSRTFDPboardType);
+        types.append(WebCore::legacyRTFDPasteboardType());
     } else if ([item isKindOfClass:[NSData class]]) {
         NSData *data = (NSData *)item;
         RetainPtr<CGImageSourceRef> source = adoptCF(CGImageSourceCreateWithData((CFDataRef)data, NULL));

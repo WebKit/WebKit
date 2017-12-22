@@ -354,7 +354,10 @@ void GraphicsContext::drawLineForDocumentMarker(const FloatPoint& point, float w
 
         // FIXME: Rather than getting the NSImage and then picking the CGImage from it, we should do what iOS does and
         // just load the CGImage in the first place.
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
         CGImageRef cgImage = [image CGImageForProposedRect:&dotRect context:[NSGraphicsContext graphicsContextWithGraphicsPort:context flipped:NO] hints:nullptr];
+#pragma clang diagnostic pop
         CGContextDrawTiledImage(context, NSRectToCGRect(dotRect), cgImage);
     } else {
         CGContextSetFillColorWithColor(context, [fallbackColor CGColor]);

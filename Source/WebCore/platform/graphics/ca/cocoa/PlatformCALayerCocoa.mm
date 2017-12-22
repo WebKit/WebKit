@@ -1145,7 +1145,10 @@ void PlatformCALayer::drawLayerContents(CGContextRef context, WebCore::PlatformC
     
     // Set up an NSGraphicsContext for the context, so that parts of AppKit that rely on
     // the current NSGraphicsContext (e.g. NSCell drawing) get the right one.
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     NSGraphicsContext* layerContext = [NSGraphicsContext graphicsContextWithGraphicsPort:context flipped:YES];
+#pragma clang diagnostic pop
     [NSGraphicsContext setCurrentContext:layerContext];
 #endif
     

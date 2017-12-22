@@ -26,6 +26,7 @@
 #include "config.h"
 #include "Pasteboard.h"
 
+#include "LegacyNSPasteboardTypes.h"
 #include "PasteboardStrategy.h"
 #include "PlatformStrategies.h"
 #include "SharedBuffer.h"
@@ -38,6 +39,17 @@
 #endif
 
 namespace WebCore {
+
+#if PLATFORM(MAC)
+static NSBitmapImageFileType bitmapPNGFileType()
+{
+#if __MAC_OS_X_VERSION_MAX_ALLOWED >= 101200
+    return NSBitmapImageFileTypePNG;
+#else
+    return NSPNGFileType;
+#endif
+}
+#endif // PLATFORM(MAC)
 
 // Making this non-inline so that WebKit 2's decoding doesn't have to include SharedBuffer.h.
 PasteboardWebContent::PasteboardWebContent() = default;
@@ -59,7 +71,7 @@ enum class ImageType {
 static ImageType cocoaTypeToImageType(const String& cocoaType)
 {
 #if PLATFORM(MAC)
-    if (cocoaType == String(NSTIFFPboardType))
+    if (cocoaType == String(legacyTIFFPasteboardType()))
         return ImageType::TIFF;
 #endif
     if (cocoaType == String(kUTTypeTIFF))
@@ -172,7 +184,7 @@ Vector<String> Pasteboard::typesForLegacyUnsafeBindings()
 static Ref<SharedBuffer> convertTIFFToPNG(SharedBuffer& tiffBuffer)
 {
     auto image = adoptNS([[NSBitmapImageRep alloc] initWithData: tiffBuffer.createNSData().get()]);
-    NSData *pngData = [image representationUsingType:NSPNGFileType properties:@{ }];
+    NSData *pngData = [image representationUsingType:bitmapPNGFileType() properties:@{ }];
     return SharedBuffer::create(pngData);
 }
 #endif

@@ -36,6 +36,20 @@ static const NSAlertStyle NSAlertStyleCritical = NSCriticalAlertStyle;
 static const NSAlertStyle NSAlertStyleInformational = NSInformationalAlertStyle;
 static const NSAlertStyle NSAlertStyleWarning = NSWarningAlertStyle;
 
+typedef NSInteger NSControlStateValue;
+static const NSControlStateValue NSControlStateValueMixed = NSMixedState;
+static const NSControlStateValue NSControlStateValueOff = NSOffState;
+static const NSControlStateValue NSControlStateValueOn = NSOnState;
+
+static const NSBezelStyle NSBezelStyleShadowlessSquare = NSShadowlessSquareBezelStyle;
+static const NSBezelStyle NSBezelStyleRounded = NSRoundedBezelStyle;
+static const NSBezelStyle NSBezelStyleRoundedDisclosure = NSRoundedDisclosureBezelStyle;
+
+static const NSLevelIndicatorStyle NSLevelIndicatorStyleRelevancy = NSRelevancyLevelIndicatorStyle;
+static const NSLevelIndicatorStyle NSLevelIndicatorStyleContinuousCapacity = NSContinuousCapacityLevelIndicatorStyle;
+static const NSLevelIndicatorStyle NSLevelIndicatorStyleDiscreteCapacity = NSDiscreteCapacityLevelIndicatorStyle;
+static const NSLevelIndicatorStyle NSLevelIndicatorStyleRating = NSRatingLevelIndicatorStyle;
+
 static const NSButtonType NSButtonTypeMomentaryLight = NSMomentaryLightButton;
 static const NSButtonType NSButtonTypePushOnPushOff = NSPushOnPushOffButton;
 static const NSButtonType NSButtonTypeToggle = NSToggleButton;

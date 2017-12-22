@@ -28,6 +28,7 @@
 #if WK_API_ENABLED
 
 #import "AppDelegate.h"
+#import "AppKitCompatibilityDeclarations.h"
 #import "SettingsController.h"
 #import <WebKit/WKFrameInfo.h>
 #import <WebKit/WKInspector.h>
@@ -204,15 +205,15 @@ static BOOL areEssentiallyEqual(double a, double b)
     else if (action == @selector(removeReinsertWebView:))
         [menuItem setTitle:[_webView window] ? @"Remove Web View" : @"Insert Web View"];
     else if (action == @selector(toggleZoomMode:))
-        [menuItem setState:_zoomTextOnly ? NSOnState : NSOffState];
+        [menuItem setState:_zoomTextOnly ? NSControlStateValueOn : NSControlStateValueOff];
     else if (action == @selector(toggleEditable:))
-        [menuItem setState:self.isEditable ? NSOnState : NSOffState];
+        [menuItem setState:self.isEditable ? NSControlStateValueOn : NSControlStateValueOff];
     else if (action == @selector(showHideWebInspector:))
         [menuItem setTitle:WKInspectorIsVisible(WKPageGetInspector(_webView._pageRefForTransitionToWKWebView)) ? @"Close Web Inspector" : @"Show Web Inspector"];
     else if (action == @selector(toggleAlwaysShowsHorizontalScroller:))
-        menuItem.state = _webView._alwaysShowsHorizontalScroller ? NSOnState : NSOffState;
+        menuItem.state = _webView._alwaysShowsHorizontalScroller ? NSControlStateValueOn : NSControlStateValueOff;
     else if (action == @selector(toggleAlwaysShowsVerticalScroller:))
-        menuItem.state = _webView._alwaysShowsVerticalScroller ? NSOnState : NSOffState;
+        menuItem.state = _webView._alwaysShowsVerticalScroller ? NSControlStateValueOn : NSControlStateValueOff;
 
     if (action == @selector(setPageScale:))
         [menuItem setState:areEssentiallyEqual([_webView _pageScale], [self pageScaleForMenuItemTag:[menuItem tag]])];

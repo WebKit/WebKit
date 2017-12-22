@@ -1,3 +1,20 @@
+2017-12-22  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Fix build failures due to using deprecated AppKit symbols
+        https://bugs.webkit.org/show_bug.cgi?id=181110
+        <rdar://problem/36162865>
+
+        Reviewed by Dan Bernstein and Tim Horton.
+
+        When building with older macOS SDKs where some AppKit constants don't exist, define the modern constants to be
+        equal to their deprecated counterparts. This allows us to just have the modern types in WebKit sources while
+        avoiding breakage on old SDKs.
+
+        This, along with many other symbols in the compability header, can be removed once WebKit stops supporting macOS
+        10.11.
+
+        * wtf/mac/AppKitCompatibilityDeclarations.h:
+
 2017-12-21  Mark Lam  <mark.lam@apple.com>
 
         Add WTF::PoisonedUniquePtr to replace std::unique_ptr when poisoning is desired.

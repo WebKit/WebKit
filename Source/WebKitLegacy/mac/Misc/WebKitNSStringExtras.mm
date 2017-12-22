@@ -76,7 +76,10 @@ static bool canUseFastRenderer(const UniChar* buffer, unsigned length)
         point.y = CGCeiling(point.y);
 
         NSGraphicsContext *nsContext = [NSGraphicsContext currentContext];
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
         CGContextRef cgContext = static_cast<CGContextRef>([nsContext graphicsPort]);
+#pragma clang diagnostic pop
         GraphicsContext graphicsContext { cgContext };
 
         // WebCore requires a flipped graphics context.
@@ -88,7 +91,10 @@ static bool canUseFastRenderer(const UniChar* buffer, unsigned length)
         CGFloat green;
         CGFloat blue;
         CGFloat alpha;
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
         [[textColor colorUsingColorSpaceName:NSDeviceRGBColorSpace] getRed:&red green:&green blue:&blue alpha:&alpha];
+#pragma clang diagnostic pop
         graphicsContext.setFillColor(Color(static_cast<float>(red * 255), static_cast<float>(green * 255.0f), static_cast<float>(blue * 255.0f), static_cast<float>(alpha * 255.0f)));
         webCoreFont.drawText(graphicsContext, run, FloatPoint(point.x, flipped ? point.y : -point.y));
 

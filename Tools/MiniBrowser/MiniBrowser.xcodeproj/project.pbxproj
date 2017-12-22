@@ -81,6 +81,7 @@
 		BCA8CBDD11E578A000812FB7 /* Base.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Base.xcconfig; sourceTree = "<group>"; };
 		BCA8CBDE11E578A000812FB7 /* DebugRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = DebugRelease.xcconfig; sourceTree = "<group>"; };
 		BCA8CBDF11E578A000812FB7 /* MiniBrowser.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = MiniBrowser.xcconfig; sourceTree = "<group>"; };
+		F4E448E21FECEFE70097CED5 /* AppKitCompatibilityDeclarations.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppKitCompatibilityDeclarations.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -106,6 +107,7 @@
 			children = (
 				256AC3D80F4B6AC300CF3369 /* AppDelegate.h */,
 				256AC3D90F4B6AC300CF3369 /* AppDelegate.m */,
+				F4E448E21FECEFE70097CED5 /* AppKitCompatibilityDeclarations.h */,
 				0FE6439F161FA8940059E3FF /* BrowserWindowController.h */,
 				0FE643A0161FA8940059E3FF /* BrowserWindowController.m */,
 				7CA3793F1AC381C10079DC37 /* ExtensionManagerWindowController.h */,
@@ -128,8 +130,8 @@
 			isa = PBXGroup;
 			children = (
 				29B97324FDCFA39411CA2CEA /* AppKit.framework */,
-				29B97325FDCFA39411CA2CEA /* Foundation.framework */,
 				1AFFEF781860EE6800DA465E /* CoreData.framework */,
+				29B97325FDCFA39411CA2CEA /* Foundation.framework */,
 			);
 			name = "Other Frameworks";
 			sourceTree = "<group>";
@@ -172,8 +174,8 @@
 			isa = PBXGroup;
 			children = (
 				BC3294A2116A9852008635D0 /* BrowserWindow.xib */,
-				1DDD58150DA1D0A300B32029 /* MainMenu.xib */,
 				7CA379411AC381C10079DC37 /* ExtensionManagerWindowController.xib */,
+				1DDD58150DA1D0A300B32029 /* MainMenu.xib */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -181,8 +183,8 @@
 		29B97323FDCFA39411CA2CEA /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				1AFFEF761860EE6800DA465E /* Cocoa.framework */,
 				1058C7A2FEA54F0111CA2CBB /* Other Frameworks */,
+				1AFFEF761860EE6800DA465E /* Cocoa.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -312,10 +314,10 @@
 			files = (
 				256AC3DA0F4B6AC300CF3369 /* AppDelegate.m in Sources */,
 				0FE643A1161FA8940059E3FF /* BrowserWindowController.m in Sources */,
-				2DC37343198B62D300EC33E9 /* SettingsController.m in Sources */,
 				7CA379421AC381C10079DC37 /* ExtensionManagerWindowController.m in Sources */,
 				BC329487116A92E2008635D0 /* main.m in Sources */,
 				51E244FA11EFCE07008228D1 /* MBToolbarItem.m in Sources */,
+				2DC37343198B62D300EC33E9 /* SettingsController.m in Sources */,
 				0FE643A4161FAC660059E3FF /* WK1BrowserWindowController.m in Sources */,
 				BC329498116A941B008635D0 /* WK2BrowserWindowController.m in Sources */,
 			);

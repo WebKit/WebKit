@@ -448,7 +448,10 @@ static CFStringRef linkDestinationName(PDFDocument *document, PDFDestination *de
     }
 
     NSGraphicsContext *nsGraphicsContext = [NSGraphicsContext currentContext];
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     CGContextRef context = static_cast<CGContextRef>([nsGraphicsContext graphicsPort]);
+#pragma clang diagnostic pop
 
     CGContextSaveGState(context);
     CGContextTranslateCTM(context, point.x, point.y);
@@ -537,7 +540,10 @@ static CFStringRef linkDestinationName(PDFDocument *document, PDFDestination *de
     }
 
     RefPtr<ShareableBitmap> bitmap = pagePreviewIterator->value;
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     CGContextRef cgContext = static_cast<CGContextRef>([[NSGraphicsContext currentContext] graphicsPort]);
+#pragma clang diagnostic pop
 
     GraphicsContext context(cgContext);
     GraphicsContextStateSaver stateSaver(context);

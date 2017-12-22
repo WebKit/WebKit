@@ -177,10 +177,10 @@ typedef enum _NSSelectionAffinity {
 } NSSelectionAffinity;
 
 typedef enum _NSCellState {
-    NSMixedState = -1,
-    NSOffState   =  0,
-    NSOnState    =  1    
-} NSCellStateValue;
+    NSControlStateValueMixed = -1,
+    NSControlStateValueOff   =  0,
+    NSControlStateValueOn    =  1
+} NSControlStateValue;
 
 typedef enum _NSCompositingOperation {
     NSCompositeClear           = 0,

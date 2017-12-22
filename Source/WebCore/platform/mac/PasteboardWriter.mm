@@ -28,6 +28,7 @@
 
 #if PLATFORM(MAC)
 
+#import "LegacyNSPasteboardTypes.h"
 #import "Pasteboard.h"
 #import "PasteboardWriterData.h"
 #import "SharedBuffer.h"
@@ -78,11 +79,11 @@ RetainPtr<id <NSPasteboardWriting>> createPasteboardWriter(const PasteboardWrite
 
         // NSURLPboardType.
         if (NSURL *baseCocoaURL = cocoaURL.baseURL)
-            [pasteboardItem setPropertyList:@[ cocoaURL.relativeString, baseCocoaURL.absoluteString ] forType:toUTI(NSURLPboardType).get()];
+            [pasteboardItem setPropertyList:@[ cocoaURL.relativeString, baseCocoaURL.absoluteString ] forType:toUTI(WebCore::legacyURLPasteboardType()).get()];
         else if (cocoaURL)
-            [pasteboardItem setPropertyList:@[ cocoaURL.absoluteString, @"" ] forType:toUTI(NSURLPboardType).get()];
+            [pasteboardItem setPropertyList:@[ cocoaURL.absoluteString, @"" ] forType:toUTI(WebCore::legacyURLPasteboardType()).get()];
         else
-            [pasteboardItem setPropertyList:@[ @"", @"" ] forType:toUTI(NSURLPboardType).get()];
+            [pasteboardItem setPropertyList:@[ @"", @"" ] forType:toUTI(WebCore::legacyURLPasteboardType()).get()];
 
         if (cocoaURL.fileURL)
             [pasteboardItem setString:cocoaURL.absoluteString forType:(NSString *)kUTTypeFileURL];

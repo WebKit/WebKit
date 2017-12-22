@@ -131,7 +131,10 @@ static CGSConnectionID mainWindowServerConnectionID()
 static void setScaledFrameForWindow(NSWindow *window, NSRect scaleFrame, NSRect nonScaledFrame)
 {
     if (NSEqualRects(scaleFrame, nonScaledFrame)) {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wnonnull"
         CGSSetWindowWarp(mainWindowServerConnectionID(), window.windowNumber, 0, 0, nullptr);
+#pragma clang diagnostic pop
         return;
     }
     

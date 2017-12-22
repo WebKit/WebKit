@@ -793,7 +793,10 @@ static void AXAttributeStringSetFont(NSMutableAttributedString *attrString, NSSt
 static CGColorRef CreateCGColorIfDifferent(NSColor *nsColor, CGColorRef existingColor)
 {
     // get color information assuming NSDeviceRGBColorSpace
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     NSColor *rgbColor = [nsColor colorUsingColorSpaceName:NSDeviceRGBColorSpace];
+#pragma clang diagnostic pop
     if (rgbColor == nil)
         rgbColor = [NSColor blackColor];
     CGFloat components[4];

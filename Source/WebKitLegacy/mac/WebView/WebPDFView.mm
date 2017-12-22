@@ -57,11 +57,12 @@
 #import <WebCore/FrameLoader.h>
 #import <WebCore/HTMLFormElement.h>
 #import <WebCore/HTMLFrameOwnerElement.h>
-#import <WebCore/URL.h>
 #import <WebCore/KeyboardEvent.h>
+#import <WebCore/LegacyNSPasteboardTypes.h>
 #import <WebCore/MouseEvent.h>
 #import <WebCore/PlatformEventFactoryMac.h>
 #import <WebCore/RuntimeApplicationChecks.h>
+#import <WebCore/URL.h>
 #import <WebCore/WebNSAttributedStringExtras.h>
 #import <wtf/Assertions.h>
 #import <wtf/CurrentTime.h>
@@ -374,7 +375,10 @@ static BOOL _PDFSelectionsAreEqual(PDFSelection *selectionA, PDFSelection *selec
 
 - (void)_recursiveDisplayRectIfNeededIgnoringOpacity:(NSRect)rect isVisibleRect:(BOOL)isVisibleRect rectIsVisibleRectForView:(NSView *)visibleView topView:(BOOL)topView
 {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     CGContextRef context = (CGContextRef)[[NSGraphicsContext currentContext] graphicsPort];
+#pragma clang diagnostic pop
     
     bool allowsSmoothing = CGContextGetAllowsFontSmoothing(context);
     bool allowsSubpixelQuantization = CGContextGetAllowsFontSubpixelQuantization(context);
@@ -387,7 +391,10 @@ static BOOL _PDFSelectionsAreEqual(PDFSelection *selectionA, PDFSelection *selec
 
 - (void)_recursiveDisplayAllDirtyWithLockFocus:(BOOL)needsLockFocus visRect:(NSRect)visRect
 {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     CGContextRef context = (CGContextRef)[[NSGraphicsContext currentContext] graphicsPort];
+#pragma clang diagnostic pop
     
     bool allowsSmoothing = CGContextGetAllowsFontSmoothing(context);
     bool allowsSubpixelQuantization = CGContextGetAllowsFontSubpixelQuantization(context);
@@ -400,7 +407,10 @@ static BOOL _PDFSelectionsAreEqual(PDFSelection *selectionA, PDFSelection *selec
 
 - (void)_recursive:(BOOL)recurse displayRectIgnoringOpacity:(NSRect)displayRect inContext:(NSGraphicsContext *)graphicsContext topView:(BOOL)topView
 {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     CGContextRef context = (CGContextRef)[graphicsContext graphicsPort];
+#pragma clang diagnostic pop
     
     bool allowsSmoothing = CGContextGetAllowsFontSmoothing(context);
     bool allowsSubpixelQuantization = CGContextGetAllowsFontSubpixelQuantization(context);
@@ -969,28 +979,28 @@ static BOOL isFrameInRange(WebFrame *frame, DOMRange *range)
 
 - (NSArray *)pasteboardTypesForSelection
 {
-    return [NSArray arrayWithObjects:NSRTFDPboardType, NSRTFPboardType, NSStringPboardType, nil];
+    return [NSArray arrayWithObjects:legacyRTFDPasteboardType(), legacyRTFPasteboardType(), legacyStringPasteboardType(), nil];
 }
 
 - (void)writeSelectionWithPasteboardTypes:(NSArray *)types toPasteboard:(NSPasteboard *)pasteboard
 {
     NSAttributedString *attributedString = [self selectedAttributedString];
     
-    if ([types containsObject:NSRTFDPboardType]) {
+    if ([types containsObject:legacyRTFDPasteboardType()]) {
         NSData *RTFDData = [attributedString RTFDFromRange:NSMakeRange(0, [attributedString length]) documentAttributes:@{ }];
-        [pasteboard setData:RTFDData forType:NSRTFDPboardType];
+        [pasteboard setData:RTFDData forType:legacyRTFDPasteboardType()];
     }        
     
-    if ([types containsObject:NSRTFPboardType]) {
+    if ([types containsObject:legacyRTFPasteboardType()]) {
         if ([attributedString containsAttachments])
             attributedString = attributedStringByStrippingAttachmentCharacters(attributedString);
 
         NSData *RTFData = [attributedString RTFFromRange:NSMakeRange(0, [attributedString length]) documentAttributes:@{ }];
-        [pasteboard setData:RTFData forType:NSRTFPboardType];
+        [pasteboard setData:RTFData forType:legacyRTFPasteboardType()];
     }
     
-    if ([types containsObject:NSStringPboardType])
-        [pasteboard setString:[self selectedString] forType:NSStringPboardType];
+    if ([types containsObject:legacyStringPasteboardType()])
+        [pasteboard setString:[self selectedString] forType:legacyStringPasteboardType()];
 }
 
 // MARK: PDFView DELEGATE METHODS
