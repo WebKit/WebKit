@@ -1,3 +1,7 @@
+CONSOLE MESSAGE: line 1: Blocked a frame with origin "http://localhost:8000" from accessing a frame with origin "http://127.0.0.1:8000". Protocols, domains, and ports must match.
+CONSOLE MESSAGE: line 1: Blocked a frame with origin "http://localhost:8000" from accessing a frame with origin "http://localhost:8080". Protocols, domains, and ports must match.
+CONSOLE MESSAGE: line 1: Blocked a frame with origin "http://localhost:8000" from accessing a frame with origin "http://127.0.0.1:8000". Protocols, domains, and ports must match.
+CONSOLE MESSAGE: line 1: Blocked a frame with origin "http://localhost:8000" from accessing a frame with origin "http://localhost:8080". Protocols, domains, and ports must match.
 This tests copying and pasting HTML by the default action. WebKit should sanitize the HTML across origin.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
@@ -6,18 +10,28 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 html in DataTransfer
 PASS html.includes("hello") is true
 PASS fragment = (new DOMParser).parseFromString(html, "text/html"); img = fragment.querySelector("img"); !!img is true
-PASS new URL(img.src).protocol is "blob:"
-PASS new URL(fragment.querySelector(".same-origin-frame").src).protocol is "blob:"
-PASS new URL(fragment.querySelector(".cross-origin-frame").src).protocol is "blob:"
-PASS frames.length is 2
-PASS new URL(frames[0].src).protocol is "blob:"
-PASS frames[0].canAccessContentDocument is true
-PASS frames[0].hasImage is true
+PASS new URL(img.src).protocol is "http:"
+PASS new URL(fragment.querySelector(".same-origin-frame").src).protocol is "http:"
+PASS new URL(fragment.querySelector(".cross-origin-frame").src).protocol is "http:"
+PASS new URL(fragment.querySelector(".same-origin-frame-with-data-url").src).protocol is "http:"
+PASS new URL(fragment.querySelector(".cross-origin-frame-with-data-url").src).protocol is "http:"
+PASS frames.length is 4
+PASS new URL(frames[0].src).protocol is "http:"
+PASS frames[0].canAccessContentDocument is false
+PASS new URL(frames[0].imageSrc).protocol is "http:"
 PASS frames[0].imageWidth is 80
-PASS new URL(frames[1].src).protocol is "blob:"
-PASS frames[1].canAccessContentDocument is true
-PASS frames[1].hasImage is true
+PASS new URL(frames[1].src).protocol is "http:"
+PASS frames[1].canAccessContentDocument is false
+PASS new URL(frames[1].imageSrc).protocol is "http:"
 PASS frames[1].imageWidth is 80
+PASS new URL(frames[2].src).protocol is "http:"
+PASS frames[2].canAccessContentDocument is false
+PASS new URL(frames[2].imageSrc).protocol is "data:"
+PASS frames[2].imageWidth is 10
+PASS new URL(frames[3].src).protocol is "http:"
+PASS frames[3].canAccessContentDocument is false
+PASS new URL(frames[3].imageSrc).protocol is "data:"
+PASS frames[3].imageWidth is 10
 PASS successfullyParsed is true
 
 TEST COMPLETE

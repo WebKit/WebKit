@@ -12,6 +12,8 @@
     <img onclick="dangerousCode()" src="resources/apple.gif"><br>
     <iframe class="same-origin-frame" src="resources/content-to-copy.html" width=80 height=80></iframe>
     <iframe class="cross-origin-frame" src="http://localhost:8080/security/clipboard/resources/content-to-copy.html" width="100" height="100"></iframe>
+    <iframe class="same-origin-frame-with-data-url" src="resources/data-url-content-to-copy.html" width=80 height=80></iframe>
+    <iframe class="cross-origin-frame-with-data-url" src="http://localhost:8080/security/clipboard/resources/data-url-content-to-copy.html" width=80 height=80></iframe>
 </div>
 <iframe id="destinationFrame" src="http://localhost:8000/security/clipboard/resources/subdirectory/paste-html.html"></iframe>
 </div>
@@ -22,6 +24,8 @@ jsTestIsAsync = true;
 
 if (window.internals)
     internals.settings.setCustomPasteboardDataEnabled(true);
+
+setTimeout(finishJSTest, 3000);
 
 function runTest() {
     document.getElementById('source').focus();
@@ -39,20 +43,30 @@ window.onmessage = function (event) {
         debug('html in DataTransfer');
         shouldBeTrue('html.includes("hello")');
         shouldBeTrue('fragment = (new DOMParser).parseFromString(html, "text/html"); img = fragment.querySelector("img"); !!img');
-        shouldBeEqualToString('new URL(img.src).protocol', 'blob:');
-        shouldBeEqualToString('new URL(fragment.querySelector(".same-origin-frame").src).protocol', 'blob:');
-        shouldBeEqualToString('new URL(fragment.querySelector(".cross-origin-frame").src).protocol', 'blob:');
+        shouldBeEqualToString('new URL(img.src).protocol', 'http:');
+        shouldBeEqualToString('new URL(fragment.querySelector(".same-origin-frame").src).protocol', 'http:');
+        shouldBeEqualToString('new URL(fragment.querySelector(".cross-origin-frame").src).protocol', 'http:');
+        shouldBeEqualToString('new URL(fragment.querySelector(".same-origin-frame-with-data-url").src).protocol', 'http:');
+        shouldBeEqualToString('new URL(fragment.querySelector(".cross-origin-frame-with-data-url").src).protocol', 'http:');
     } else if (event.data.type == 'checkedState') {
         frames = event.data.frames;
-        shouldBe('frames.length', '2');
-        shouldBeEqualToString('new URL(frames[0].src).protocol', 'blob:');
-        shouldBeTrue('frames[0].canAccessContentDocument');
-        shouldBeTrue('frames[0].hasImage');
+        shouldBe('frames.length', '4');
+        shouldBeEqualToString('new URL(frames[0].src).protocol', 'http:');
+        shouldBeFalse('frames[0].canAccessContentDocument');
+        shouldBeEqualToString('new URL(frames[0].imageSrc).protocol', 'http:');
         shouldBe('frames[0].imageWidth', '80');
-        shouldBeEqualToString('new URL(frames[1].src).protocol', 'blob:');
-        shouldBeTrue('frames[1].canAccessContentDocument');
-        shouldBeTrue('frames[1].hasImage');
+        shouldBeEqualToString('new URL(frames[1].src).protocol', 'http:');
+        shouldBeFalse('frames[1].canAccessContentDocument');
+        shouldBeEqualToString('new URL(frames[1].imageSrc).protocol', 'http:');
         shouldBe('frames[1].imageWidth', '80');
+        shouldBeEqualToString('new URL(frames[2].src).protocol', 'http:');
+        shouldBeFalse('frames[2].canAccessContentDocument');
+        shouldBeEqualToString('new URL(frames[2].imageSrc).protocol', 'data:');
+        shouldBe('frames[2].imageWidth', '10');
+        shouldBeEqualToString('new URL(frames[3].src).protocol', 'http:');
+        shouldBeFalse('frames[3].canAccessContentDocument');
+        shouldBeEqualToString('new URL(frames[3].imageSrc).protocol', 'data:');
+        shouldBe('frames[3].imageWidth', '10');
         if (window.testRunner)
             container.remove();
         finishJSTest();

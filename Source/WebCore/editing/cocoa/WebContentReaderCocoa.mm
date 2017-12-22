@@ -353,6 +353,11 @@ static String markupForFragmentInDocument(Ref<DocumentFragment>&& fragment, Docu
     return createMarkup(range.get(), nullptr, AnnotateForInterchange, false, ResolveNonLocalURLs);
 }
 
+static bool shouldConvertToBlob(const URL& url)
+{
+    return !(url.protocolIsInHTTPFamily() || url.protocolIsData());
+}
+
 static String sanitizeMarkupWithArchive(Document& destinationDocument, MarkupAndArchive& markupAndArchive, const std::function<bool(const String)>& canShowMIMETypeAsHTML)
 {
     auto page = createPageForSanitizingWebContent();
@@ -367,9 +372,12 @@ static String sanitizeMarkupWithArchive(Document& destinationDocument, MarkupAnd
 
     HashMap<AtomicString, AtomicString> blobURLMap;
     for (const Ref<ArchiveResource>& subresource : markupAndArchive.archive->subresources()) {
+        auto& subresourceURL = subresource->url();
+        if (!shouldConvertToBlob(subresourceURL))
+            continue;
         auto blob = Blob::create(subresource->data(), subresource->mimeType());
         String blobURL = DOMURL::createObjectURL(destinationDocument, blob);
-        blobURLMap.set(subresource->url().string(), blobURL);
+        blobURLMap.set(subresourceURL.string(), blobURL);
     }
 
     auto contentOrigin = SecurityOrigin::create(markupAndArchive.mainResource->url());
@@ -383,6 +391,9 @@ static String sanitizeMarkupWithArchive(Document& destinationDocument, MarkupAnd
             continue;
 
         auto subframeURL = subframeMainResource->url();
+        if (!shouldConvertToBlob(subframeURL))
+            continue;
+
         MarkupAndArchive subframeContent = { String::fromUTF8(subframeMainResource->data().data(), subframeMainResource->data().size()),
             subframeMainResource.releaseNonNull(), subframeArchive.copyRef() };
         auto subframeMarkup = sanitizeMarkupWithArchive(destinationDocument, subframeContent, canShowMIMETypeAsHTML);

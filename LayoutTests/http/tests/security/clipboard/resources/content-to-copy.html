@@ -3,7 +3,10 @@
 <body>
 <img src="mozilla.gif">
 <script>
-window.onload = parent.postMessage({type: 'contentLoaded'}, '*');
+window.onload = () => {
+    const image = document.querySelector('img');
+    parent.postMessage({type: 'contentLoaded', imageSrc: image.src, imageWidth: image.width}, '*');
+}
 </script>
 </body>
 </html>

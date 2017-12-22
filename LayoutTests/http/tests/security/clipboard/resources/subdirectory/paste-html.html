@@ -2,53 +2,39 @@
 <html>
 <head>
 <script>
+let loadedContent = [];
 onmessage = function (event) {
     if (event.data.type == 'paste') {
         document.body.focus();
         document.execCommand('selectAll');
         if (window.testRunner)
             document.execCommand('paste');
+    } else if (event.data.type == 'contentLoaded') {
+        loadedContent.push(event.data);
+        checkIfLoadCompleted();
     }
 }
 
 let frames = [];
 function doPaste(event) {
     top.postMessage({type: 'pasted', html: event.clipboardData.getData('text/html')}, '*');
-    setTimeout(() => {
-        frames = Array.from(document.body.querySelectorAll('iframe'));
-
-        Promise.all(frames.map((frame) => {
-            return new Promise((resolve) => {
-                const waitForImage = () => {
-                    const img = frame.contentDocument.querySelector('img');
-                    if (img && !img.complete)
-                        img.onload = resolve;
-                    else
-                        resolve();
-                }
-
-                if (frame.contentDocument && (!frame.contentDocument.body || frame.contentDocument.body.innerHTML == ''))
-                    frame.onload = waitForImage;
-                else
-                    waitForImage();
-
-            });
-        })).then(checkState);
-    }, 0);
 }
 
-function checkState() {
+function checkIfLoadCompleted() {
+    const frames = Array.from(document.body.querySelectorAll('iframe'));
+    if (loadedContent.length < frames.length)
+        return;
+
     top.postMessage({
         type: 'checkedState',
         html: document.body.innerHTML,
-        frames: frames.map((frame) => {
-            const img = frame.contentDocument ? frame.contentDocument.querySelector('img') : null;
+        frames: frames.map((frame, i) => {
             return {
                 src: frame.src,
                 class: frame.className,
                 canAccessContentDocument: !!frame.contentDocument,
-                hasImage: !!img,
-                imageWidth: img ? img.width : null,
+                imageSrc: loadedContent[i].imageSrc,
+                imageWidth: loadedContent[i].imageWidth,
             }
         })}, '*');
 }

@@ -1,3 +1,22 @@
+2017-12-21  Ryosuke Niwa  <rniwa@webkit.org>
+
+        REGRESSION(r223678): Cannot copy & paste a web page content into Yahoo! Mail
+        https://bugs.webkit.org/show_bug.cgi?id=181114
+
+        Reviewed by Geoffrey Garen.
+
+        Updated http/tests/security/clipboard/copy-paste-html-cross-origin-iframe-across-origin.html to test the new behavior
+        whereby which HTTP/HTTPs and data URLs are not converted to blob URLs.
+
+        * http/tests/security/clipboard/copy-paste-html-across-origin-sanitizes-html.html:
+        * http/tests/security/clipboard/copy-paste-html-cross-origin-iframe-across-origin-expected.txt: Renamed.
+        * http/tests/security/clipboard/copy-paste-html-cross-origin-iframe-across-origin.html: Added more test cases for data URLs.
+        * http/tests/security/clipboard/resources/content-to-copy.html: Notify the parent that the page had finished loading.
+        * http/tests/security/clipboard/resources/data-url-content-to-copy.html: Added.
+        * http/tests/security/clipboard/resources/subdirectory/paste-html.html: Since we can no longer access contents
+        in the pasted frames but scripts DO run in the pasted cross-origin iframes, rely on those frames to postMessage
+        this frame when the image had finished loading.
+
 2017-12-21  John Wilander  <wilander@apple.com>
 
         Skip http/tests/storageAccess/request-and-grant-storage-access-cross-origin-sandboxed-iframe-from-prevalent-domain-with-non-recent-user-interaction-and-try-access-from-right-frame.html
