@@ -39,63 +39,41 @@
 
 namespace WebCore {
 
-    class MessagePort;
-    class MessagePortChannel;
-    class PlatformMessagePortChannel;
-    class ScriptExecutionContext;
+class MessagePort;
+class MessagePortChannel;
+class ScriptExecutionContext;
 
-    // The overwhelmingly common case is sending a single port, so handle that efficiently with an inline buffer of size 1.
-    typedef Vector<std::unique_ptr<MessagePortChannel>, 1> MessagePortChannelArray;
+// The overwhelmingly common case is sending a single port, so handle that efficiently with an inline buffer of size 1.
+typedef Vector<RefPtr<MessagePortChannel>, 1> MessagePortChannelArray;
 
-    // MessagePortChannel is a platform-independent interface to the remote side of a message channel.
-    // It acts as a wrapper around the platform-dependent PlatformMessagePortChannel implementation which ensures that the platform-dependent close() method is invoked before destruction.
-    class MessagePortChannel {
-        WTF_MAKE_NONCOPYABLE(MessagePortChannel); WTF_MAKE_FAST_ALLOCATED;
-    public:
-        struct EventData {
-            EventData(Ref<SerializedScriptValue>&& message, std::unique_ptr<MessagePortChannelArray>&& channels)
-                : message(WTFMove(message))
-                , channels(WTFMove(channels))
-            { }
+class MessagePortChannel : public ThreadSafeRefCounted<MessagePortChannel> {
+    WTF_MAKE_NONCOPYABLE(MessagePortChannel); WTF_MAKE_FAST_ALLOCATED;
+public:
+    struct EventData {
+        EventData(Ref<SerializedScriptValue>&& message, std::unique_ptr<MessagePortChannelArray>&& channels)
+            : message(WTFMove(message))
+            , channels(WTFMove(channels))
+        { }
 
-            Ref<SerializedScriptValue> message;
-            std::unique_ptr<MessagePortChannelArray> channels;
-        };
-
-        explicit MessagePortChannel(RefPtr<PlatformMessagePortChannel>&&);
-        static void createChannel(MessagePort*, MessagePort*);
-
-        // Entangles the channel with a port (called when a port has been cloned, after the clone has been marshaled to its new owning thread and is ready to receive messages).
-        // Returns false if the entanglement failed because the port was closed.
-        bool entangleIfOpen(MessagePort*);
-
-        // Disentangles the channel from a given port so it no longer forwards messages to the port. Called when the port is being cloned and no new owning thread has yet been established.
-        void disentangle();
-
-        // Closes the port (ensures that no further messages can be added to either queue).
-        void close();
-
-        // Used by MessagePort.postMessage() to prevent callers from passing a port's own entangled port.
-        bool isConnectedTo(MessagePort*);
-
-        // Returns true if the proxy currently contains messages for this port.
-        bool hasPendingActivity();
-
-        // Sends a message and optional cloned port to the remote port.
-        void postMessageToRemote(Ref<SerializedScriptValue>&&, std::unique_ptr<MessagePortChannelArray>&&);
-
-        // Extracts a message from the message queue for this port.
-        std::unique_ptr<EventData> takeMessageFromRemote();
-
-        Deque<std::unique_ptr<EventData>> takeAllMessagesFromRemote();
-
-        // Returns the entangled port if run by the same thread (see MessagePort::locallyEntangledPort() for more details).
-        MessagePort* locallyEntangledPort(const ScriptExecutionContext*);
-
-        WEBCORE_EXPORT ~MessagePortChannel();
-
-    private:
-        RefPtr<PlatformMessagePortChannel> m_channel;
+        Ref<SerializedScriptValue> message;
+        std::unique_ptr<MessagePortChannelArray> channels;
     };
+
+    MessagePortChannel();
+    virtual ~MessagePortChannel() { }
+
+    static void createChannelBetweenPorts(MessagePort&, MessagePort&);
+
+    void setRemotePort(MessagePort*);
+
+    virtual void postMessageToRemote(Ref<SerializedScriptValue>&&, std::unique_ptr<MessagePortChannelArray>&&) = 0;
+    virtual Deque<std::unique_ptr<EventData>> takeAllMessagesFromRemote() = 0;
+    virtual bool isConnectedTo(MessagePort&) = 0;
+    virtual bool entangleIfOpen(MessagePort&) = 0;
+    virtual void disentangle() = 0;
+    virtual bool hasPendingActivity() = 0;
+    virtual MessagePort* locallyEntangledPort(const ScriptExecutionContext*) = 0;
+    virtual void close() = 0;
+};
 
 } // namespace WebCore

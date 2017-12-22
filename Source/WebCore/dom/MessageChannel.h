@@ -31,22 +31,22 @@
 
 namespace WebCore {
 
-    class MessagePort;
-    class ScriptExecutionContext;
+class MessagePort;
+class ScriptExecutionContext;
 
-    class MessageChannel : public RefCounted<MessageChannel> {
-    public:
-        static Ref<MessageChannel> create(ScriptExecutionContext& context) { return adoptRef(*new MessageChannel(context)); }
-        ~MessageChannel();
+class MessageChannel : public RefCounted<MessageChannel> {
+public:
+    static Ref<MessageChannel> create(ScriptExecutionContext& context) { return adoptRef(*new MessageChannel(context)); }
+    ~MessageChannel();
 
-        MessagePort* port1() const { return m_port1.get(); }
-        MessagePort* port2() const { return m_port2.get(); }
+    MessagePort* port1() const { return m_port1.get(); }
+    MessagePort* port2() const { return m_port2.get(); }
 
-    private:
-        explicit MessageChannel(ScriptExecutionContext&);
+private:
+    explicit MessageChannel(ScriptExecutionContext&);
 
-        RefPtr<MessagePort> m_port1;
-        RefPtr<MessagePort> m_port2;
-    };
+    RefPtr<MessagePort> m_port1;
+    RefPtr<MessagePort> m_port2;
+};
 
 } // namespace WebCore

@@ -41,7 +41,7 @@ namespace WebCore {
 
 class Frame;
 
-class MessagePort final : public RefCounted<MessagePort>, public ActiveDOMObject, public EventTargetWithInlineData {
+class MessagePort final : public ThreadSafeRefCounted<MessagePort>, public ActiveDOMObject, public EventTargetWithInlineData {
 public:
     static Ref<MessagePort> create(ScriptExecutionContext& scriptExecutionContext) { return adoptRef(*new MessagePort(scriptExecutionContext)); }
     virtual ~MessagePort();
@@ -51,7 +51,7 @@ public:
     void start();
     void close();
 
-    void entangle(std::unique_ptr<MessagePortChannel>&&);
+    void entangle(RefPtr<MessagePortChannel>&&);
 
     // Returns nullptr if the passed-in vector is empty.
     static ExceptionOr<std::unique_ptr<MessagePortChannelArray>> disentanglePorts(Vector<RefPtr<MessagePort>>&&);
@@ -68,8 +68,8 @@ public:
     // of the remote port (since it may live cross-process) - those platforms may always return null.
     MessagePort* locallyEntangledPort() const;
 
-    using RefCounted::ref;
-    using RefCounted::deref;
+    using ThreadSafeRefCounted::ref;
+    using ThreadSafeRefCounted::deref;
 
     // ActiveDOMObject
     const char* activeDOMObjectName() const final;
@@ -89,7 +89,7 @@ private:
 
     bool addEventListener(const AtomicString& eventType, Ref<EventListener>&&, const AddEventListenerOptions&) final;
 
-    std::unique_ptr<MessagePortChannel> disentangle();
+    RefPtr<MessagePortChannel> disentangle();
 
     // A port starts out its life entangled, and remains entangled until it is closed or is cloned.
     bool isEntangled() const { return !m_closed && !isNeutered(); }
@@ -97,7 +97,8 @@ private:
     // A port gets neutered when it is transferred to a new owner via postMessage().
     bool isNeutered() const { return !m_entangledChannel; }
 
-    std::unique_ptr<MessagePortChannel> m_entangledChannel;
+    RefPtr<MessagePortChannel> m_entangledChannel;
+    RefPtr<MessagePort> m_messageProtector;
     bool m_started { false };
     bool m_closed { false };
 };

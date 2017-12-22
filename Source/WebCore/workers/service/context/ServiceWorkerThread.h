@@ -44,7 +44,7 @@ struct ServiceWorkerClientData;
 struct ServiceWorkerClientIdentifier;
 struct ServiceWorkerContextData;
 
-using MessagePortChannelArray = Vector<std::unique_ptr<MessagePortChannel>, 1>;
+using MessagePortChannelArray = Vector<RefPtr<MessagePortChannel>, 1>;
 
 class ServiceWorkerThread : public WorkerThread {
 public:

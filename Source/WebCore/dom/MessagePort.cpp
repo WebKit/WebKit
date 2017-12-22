@@ -65,7 +65,7 @@ ExceptionOr<void> MessagePort::postMessage(JSC::ExecState& state, JSC::JSValue m
     // Make sure we aren't connected to any of the passed-in ports.
     if (!ports.isEmpty()) {
         for (auto& dataPort : ports) {
-            if (dataPort == this || m_entangledChannel->isConnectedTo(dataPort.get()))
+            if (dataPort == this || m_entangledChannel->isConnectedTo(*dataPort))
                 return Exception { DataCloneError };
         }
         auto disentangleResult = MessagePort::disentanglePorts(WTFMove(ports));
@@ -77,7 +77,7 @@ ExceptionOr<void> MessagePort::postMessage(JSC::ExecState& state, JSC::JSValue m
     return { };
 }
 
-std::unique_ptr<MessagePortChannel> MessagePort::disentangle()
+RefPtr<MessagePortChannel> MessagePort::disentangle()
 {
     ASSERT(m_entangledChannel);
 
@@ -123,14 +123,14 @@ void MessagePort::close()
     m_closed = true;
 }
 
-void MessagePort::entangle(std::unique_ptr<MessagePortChannel>&& remote)
+void MessagePort::entangle(RefPtr<MessagePortChannel>&& remote)
 {
     // Only invoked to set our initial entanglement.
     ASSERT(!m_entangledChannel);
     ASSERT(m_scriptExecutionContext);
 
     // Don't entangle the ports if the channel is closed.
-    if (remote->entangleIfOpen(this))
+    if (remote->entangleIfOpen(*this))
         m_entangledChannel = WTFMove(remote);
 }
 
@@ -171,8 +171,10 @@ bool MessagePort::hasPendingActivity() const
     // We'll also stipulate that the queue needs to be open (if the app drops its reference to the port before start()-ing it, then it's not really entangled as it's unreachable).
     if (m_started && m_entangledChannel && m_entangledChannel->hasPendingActivity())
         return true;
+
     if (isEntangled() && !locallyEntangledPort())
         return true;
+
     return false;
 }
 
