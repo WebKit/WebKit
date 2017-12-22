@@ -1177,7 +1177,6 @@ webkit.org/b/180370 http/tests/images/image-supports-video.html [ Skip ]
 webkit.org/b/177633 editing/pasteboard/data-transfer-get-data-on-paste-rich-text.html [ Failure ]
 webkit.org/b/177633 editing/pasteboard/data-transfer-get-data-on-paste-plain-text.html [ Failure ]
 webkit.org/b/177633 editing/pasteboard/data-transfer-get-data-on-paste-custom.html [ Failure ]
-webkit.org/b/177633 http/tests/misc/copy-resolves-urls.html [ Failure ]
 webkit.org/b/177633 http/tests/security/clipboard/copy-paste-html-cross-origin-iframe-across-origin.html [ Skip ]
 webkit.org/b/177633 http/tests/security/clipboard/copy-paste-html-cross-origin-iframe-in-same-origin.html [ Skip ]
 
@@ -1200,8 +1199,6 @@ webkit.org/b/179989 fast/css3-text/css3-text-align-last/getComputedStyle/getComp
 #
 # Don't add anything above here without a comment explaining why the test should fail.
 #////////////////////////////////////////////////////////////////////////////////////////
-
-webkit.org/b/178781 http/tests/inspector/network/har/har-page.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # 3. TESTS CRASHING
@@ -1318,6 +1315,9 @@ webkit.org/b/180097 media/video-concurrent-visible-playback.html [ Crash Pass ]
 webkit.org/b/180098 security/isSecureContext-disabled.html [ Crash Pass ]
 
 webkit.org/b/180803 http/tests/media/hls/video-cookie.html [ Crash ]
+
+webkit.org/b/181138 fast/scrolling/rtl-scrollbars-animation-property.html [ Crash Pass ]
+webkit.org/b/181138 intersection-observer/intersection-observer-entry-interface.html [ Crash Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Crashing tests
@@ -1904,6 +1904,8 @@ webkit.org/b/179174 inspector/console/webcore-logging.html [ Failure Crash ]
 webkit.org/b/181030 wasm/iframe-postmessage.html [ Pass Failure ]
 webkit.org/b/179948 [ Release ] fast/hidpi/filters-reference.html [ Pass ImageOnlyFailure ]
 webkit.org/b/181031 fast/frames/crash-when-iframe-is-remove-in-eventhandler.html [ Pass Crash ]
+
+webkit.org/b/181139 imported/w3c/web-platform-tests/WebCryptoAPI/encrypt_decrypt/test_rsa_oaep.https.html [ Pass Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Flaky tests
@@ -2929,8 +2931,6 @@ webkit.org/b/179662 imported/w3c/web-platform-tests/XMLHttpRequest/status-basic.
 webkit.org/b/179662 imported/w3c/web-platform-tests/XMLHttpRequest/status-error.htm [ Failure ]
 imported/w3c/web-platform-tests/XMLHttpRequest/event-readystatechange-loaded.htm [ Slow ]
 
-imported/w3c/web-platform-tests/html/browsers/browsing-the-web/read-media/pageload-video.html [ Failure ]
-
 webkit.org/b/151267 imported/blink/compositing/squashing/squashing-reflection-disallowed.html [ ImageOnlyFailure ]
 webkit.org/b/151267 imported/blink/compositing/will-change/stacking-context-creation.html [ ImageOnlyFailure ]
 webkit.org/b/151267 imported/blink/css3/blending/mix-blend-mode-background-size.html [ ImageOnlyFailure ]
@@ -2950,21 +2950,12 @@ webkit.org/b/151267 imported/blink/scrollbars/avoid-double-scrollbars-when-html-
 webkit.org/b/151267 imported/blink/svg/animations/no-attr-radialgradient-spreadmethod.svg [ ImageOnlyFailure ]
 webkit.org/b/151267 imported/blink/svg/as-image/default-sans-serif-font.html [ ImageOnlyFailure ]
 webkit.org/b/151267 imported/blink/svg/canvas/canvas-draw-pattern-size.html [ ImageOnlyFailure ]
-webkit.org/b/151267 imported/blink/svg/custom/feDisplacementMap-invalid-selector.svg [ ImageOnlyFailure ]
-webkit.org/b/151267 imported/blink/svg/filters/big-viewbox.svg [ ImageOnlyFailure ]
 webkit.org/b/151267 imported/blink/svg/filters/feDropShadow-linearrgb-flood-color.svg [ ImageOnlyFailure ]
-webkit.org/b/151267 imported/blink/svg/filters/feOffset-nonuniform-scale.svg [ ImageOnlyFailure ]
-webkit.org/b/151267 imported/blink/svg/filters/filter-huge-clamping.svg [ ImageOnlyFailure ]
 webkit.org/b/151267 imported/blink/webexposed/webkit-focus-ring-exposed-to-quirks-mode.html [ ImageOnlyFailure ]
 
 webkit.org/b/152057 accessibility/textarea-selected-text-range.html [ Failure Timeout ]
 
 webkit.org/b/152788 imported/mozilla/svg/filter-scaled-02.html [ ImageOnlyFailure Pass ]
-webkit.org/b/152788 imported/mozilla/svg/image/image-filter-01.svg [ ImageOnlyFailure ]
-webkit.org/b/152788 svg/filters/color-space-conversion.svg [ ImageOnlyFailure ]
-webkit.org/b/152788 svg/filters/container-with-filters.svg [ ImageOnlyFailure ]
-webkit.org/b/152788 svg/filters/feComposite-background-rect-control-operators.svg [ ImageOnlyFailure ]
-webkit.org/b/152788 svg/filters/feDisplacementMap-filterUnits.svg [ ImageOnlyFailure ]
 
 webkit.org/b/152821 imported/w3c/css/css-multicol-1/multicol-basic-001.html [ ImageOnlyFailure ]
 webkit.org/b/152821 imported/w3c/css/css-multicol-1/multicol-basic-002.html [ ImageOnlyFailure ]
@@ -3165,11 +3156,10 @@ webkit.org/b/170053 media/video-load-require-user-gesture.html [ Failure Pass ]
 webkit.org/b/170335 canvas/philip/tests/2d.pattern.animated.gif.html [ Failure ]
 
 webkit.org/b/171598 accessibility/gtk/menu-list-unfocused-notifications.html [ Failure ]
-webkit.org/b/171726 imported/w3c/web-platform-tests/media-source/mediasource-redundant-seek.html [ Failure ]
-# Crash is bug #176020
-webkit.org/b/171726 imported/w3c/web-platform-tests/media-source/mediasource-removesourcebuffer.html [ Failure Crash ]
+
+webkit.org/b/176020 imported/w3c/web-platform-tests/media-source/mediasource-removesourcebuffer.html [ Crash Pass ]
+
 webkit.org/b/171726 imported/w3c/web-platform-tests/media-source/mediasource-seek-beyond-duration.html [ Failure ]
-webkit.org/b/171726 imported/w3c/web-platform-tests/media-source/mediasource-seek-during-pending-seek.html [ Failure ]
 webkit.org/b/171726 media/media-source/media-source-init-segment-duration.html [ Failure ]
 
 webkit.org/b/172270 fast/text/font-interstitial-invisible-width-while-loading.html [ Failure ]
@@ -3336,8 +3326,6 @@ webkit.org/b/177632 fast/text/flag-codepoint.html [ ImageOnlyFailure ]
 webkit.org/b/179052 compositing/contents-format/subpixel-antialiased-nested-layer.html [ Failure ]
 
 webkit.org/b/180371 fast/attachment/attachment-without-appearance.html [ ImageOnlyFailure ]
-
-webkit.org/b/180062 fast/text/user-installed-fonts [ ImageOnlyFailure ]
 
 webkit.org/b/180749 http/wpt/offscreen-canvas/transferToImageBitmap-webgl.html [ ImageOnlyFailure ]
 

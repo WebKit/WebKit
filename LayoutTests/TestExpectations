@@ -1648,3 +1648,4 @@ webkit.org/b/153152 http/tests/security/contentSecurityPolicy/manifest-src-allow
 webkit.org/b/153152 http/tests/security/contentSecurityPolicy/manifest-src-blocked.html [ Skip ]
 webkit.org/b/158205 applicationmanifest/ [ Skip ]
 
+webkit.org/b/178785 perf/object-keys.html [ Pass Failure ]
