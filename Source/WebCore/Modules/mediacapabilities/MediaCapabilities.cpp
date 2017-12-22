@@ -142,7 +142,7 @@ static bool isValidVideoConfiguration(const VideoConfiguration& configuration)
         return false;
 
     framerate = numerator / denominator;
-    if (!isfinite(framerate) || framerate <= 0)
+    if (!std::isfinite(framerate) || framerate <= 0)
         return false;
 
     // 3. Return true.
