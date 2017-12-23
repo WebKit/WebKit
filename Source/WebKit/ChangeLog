@@ -1,3 +1,15 @@
+2017-12-22  Jeff Miller  <jeffm@apple.com>
+
+        Allow WebsitePolicies API object to be bridged to _WKWebsitePolicies
+        https://bugs.webkit.org/show_bug.cgi?id=181135
+
+        Reviewed by Dan Bernstein.
+
+        _WKWebsitePolicies already wraps WebsitePolicies, we just never hooked this up in newObject().
+
+        * Shared/Cocoa/APIObject.mm:
+        (API::Object::newObject):
+
 2017-12-22  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Fix build failures due to using deprecated AppKit symbols

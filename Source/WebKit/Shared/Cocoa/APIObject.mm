@@ -80,6 +80,7 @@
 #import "_WKUserInitiatedActionInternal.h"
 #import "_WKUserStyleSheetInternal.h"
 #import "_WKVisitedLinkStoreInternal.h"
+#import "_WKWebsitePoliciesInternal.h"
 
 #if ENABLE(APPLICATION_MANIFEST)
 #import "_WKApplicationManifestInternal.h"
@@ -314,6 +315,10 @@ void* Object::newObject(size_t size, Type type)
 
     case Type::WebsiteDataStore:
         wrapper = [WKWebsiteDataStore alloc];
+        break;
+
+    case Type::WebsitePolicies:
+        wrapper = [_WKWebsitePolicies alloc];
         break;
 
     case Type::WindowFeatures:
