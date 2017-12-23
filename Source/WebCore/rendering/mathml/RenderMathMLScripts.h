@@ -42,7 +42,7 @@ class RenderMathMLScripts : public RenderMathMLBlock {
     WTF_MAKE_ISO_ALLOCATED(RenderMathMLScripts);
 public:
     RenderMathMLScripts(MathMLScriptsElement&, RenderStyle&&);
-    RenderMathMLOperator* unembellishedOperator() final;
+    RenderMathMLOperator* unembellishedOperator() const final;
 
 protected:
     bool isRenderMathMLScripts() const override { return true; }

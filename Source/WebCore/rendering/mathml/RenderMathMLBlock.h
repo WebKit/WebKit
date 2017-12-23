@@ -57,7 +57,7 @@ public:
     // embellished operator, and omits any embellishments.
     // FIXME: We don't yet handle all the cases in the MathML spec. See
     // https://bugs.webkit.org/show_bug.cgi?id=78617.
-    virtual RenderMathMLOperator* unembellishedOperator() { return 0; }
+    virtual RenderMathMLOperator* unembellishedOperator() const { return 0; }
 
     int baselinePosition(FontBaseline, bool firstLine, LineDirectionMode, LinePositionMode = PositionOnContainingLine) const override;
 

@@ -152,7 +152,7 @@ RenderMathMLFraction::StackParameters RenderMathMLFraction::stackParameters() co
     return parameters;
 }
 
-RenderMathMLOperator* RenderMathMLFraction::unembellishedOperator()
+RenderMathMLOperator* RenderMathMLFraction::unembellishedOperator() const
 {
     if (!isValid() || !is<RenderMathMLBlock>(numerator()))
         return nullptr;

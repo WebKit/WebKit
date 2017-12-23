@@ -53,7 +53,7 @@ private:
     void layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeight = 0) final;
     std::optional<int> firstLineBaseline() const final;
     void paint(PaintInfo&, const LayoutPoint&) final;
-    RenderMathMLOperator* unembellishedOperator() final;
+    RenderMathMLOperator* unembellishedOperator() const final;
 
     MathMLFractionElement& element() const { return static_cast<MathMLFractionElement&>(nodeForNonAnonymous()); }
 

@@ -50,6 +50,7 @@
         runCase(6, 'nested embellished op', 'red', 'op');
         runCase(7, 'nested non-munderover embellished op', 'red', 'op');
         runCase(8, 'simple stretchy under should equal over', 'red', 'op');
+        runCase(9, 'all stretchy embellished op', 'red', 'blue', 'bar');
         done();
       }
     </script>
@@ -139,6 +140,17 @@
         <mo id="8-op" lspace="0px" rspace="0px" stretchy="true">&#x219C;</mo>
         <mspace id="8-red" width="200px" height="10px" depth="10px" mathbackground="red"></mspace>
       </munderover>
+    </math>
+
+    <p>This test passes if you see both the red and blue things have the same width as the black bar.</p>
+    <math display="block">
+      <mover>
+        <mo id="9-blue" lspace="0px" rspace="0px" stretchy="true" mathbackground="blue">&#x219C;</mo>
+        <munder>
+          <mo id="9-red" lspace="0px" rspace="0px" stretchy="true" mathbackground="red">&#x219C;</mo>
+          <mspace id="9-bar" width="200px" height="10px" depth="10px" mathbackground="black"></mspace>
+        </munder>
+      </mover>
     </math>
   </body>
 </html>

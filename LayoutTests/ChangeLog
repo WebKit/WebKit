@@ -1,3 +1,18 @@
+2017-12-23  Minsheng Liu  <lambda@liu.ms>
+
+        Add comments and improve code styles for RenderMathMLUnderOver::stretchHorizontalOperatorsAndLayoutChildren() and related functions
+        https://bugs.webkit.org/show_bug.cgi?id=180923
+
+        Reviewed by Frédéric Wang.
+
+        Add one more case for the test "mathml/opentype/munderover-stretch-width.html" 
+        to handle the corner case where all components of <munderover>/<munder>/<mover> are stretchy.
+
+        Since there is no behavior change, no new test is required.
+
+        * mathml/opentype/munderover-stretch-width-expected.txt:
+        * mathml/opentype/munderover-stretch-width.html:
+
 2017-12-22  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Unreviewed GTK layout test gardening

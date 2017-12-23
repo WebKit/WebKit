@@ -59,7 +59,7 @@ ScriptType RenderMathMLScripts::scriptType() const
     return element().scriptType();
 }
 
-RenderMathMLOperator* RenderMathMLScripts::unembellishedOperator()
+RenderMathMLOperator* RenderMathMLScripts::unembellishedOperator() const
 {
     auto base = firstChildBox();
     if (!is<RenderMathMLBlock>(base))

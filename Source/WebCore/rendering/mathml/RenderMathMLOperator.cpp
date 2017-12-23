@@ -178,7 +178,7 @@ void RenderMathMLOperator::stretchTo(LayoutUnit width)
 void RenderMathMLOperator::resetStretchSize()
 {
     ASSERT(!isStretchWidthLocked());
-    
+
     if (isVertical()) {
         m_stretchHeightAboveBaseline = 0;
         m_stretchDepthBelowBaseline = 0;

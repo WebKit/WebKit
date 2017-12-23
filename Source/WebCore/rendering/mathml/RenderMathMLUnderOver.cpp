@@ -50,56 +50,74 @@ MathMLUnderOverElement& RenderMathMLUnderOver::element() const
     return static_cast<MathMLUnderOverElement&>(nodeForNonAnonymous());
 }
 
-static RenderMathMLOperator* toHorizontalStretchyOperator(RenderBox* box)
+static RenderMathMLOperator* horizontalStretchyOperator(const RenderBox& box)
 {
-    if (is<RenderMathMLBlock>(box)) {
-        if (auto renderOperator = downcast<RenderMathMLBlock>(*box).unembellishedOperator()) {
-            if (renderOperator->isStretchy() && !renderOperator->isVertical() && !renderOperator->isStretchWidthLocked())
-                return renderOperator;
-        }
-    }
-    return nullptr;
+    if (!is<RenderMathMLBlock>(box))
+        return nullptr;
+
+    auto* renderOperator = downcast<RenderMathMLBlock>(box).unembellishedOperator();
+    if (!renderOperator)
+        return nullptr;
+
+    if (!renderOperator->isStretchy() || renderOperator->isVertical() || renderOperator->isStretchWidthLocked())
+        return nullptr;
+
+    return renderOperator;
 }
-    
-static void fixLayoutAfterStretch(RenderBox* ancestor, RenderMathMLOperator* stretchyOperator)
+
+static void fixLayoutAfterStretch(RenderBox& ancestor, RenderMathMLOperator& stretchyOperator)
 {
-    stretchyOperator->setStretchWidthLocked(true);
-    stretchyOperator->setNeedsLayout();
-    ancestor->layoutIfNeeded();
-    stretchyOperator->setStretchWidthLocked(false);
+    stretchyOperator.setStretchWidthLocked(true);
+    stretchyOperator.setNeedsLayout();
+    ancestor.layoutIfNeeded();
+    stretchyOperator.setStretchWidthLocked(false);
 }
 
 void RenderMathMLUnderOver::stretchHorizontalOperatorsAndLayoutChildren()
 {
     ASSERT(isValid());
     ASSERT(needsLayout());
+
+    // We apply horizontal stretchy rules from the MathML spec (sections 3.2.5.8.3 and 3.2.5.8.4), which
+    // can be roughly summarized as "stretching opersators to the maximum widths of all children" and
+    // minor variations of that algorithm do not affect the result. However, the spec is a bit ambiguous
+    // for embellished operators (section 3.2.5.7.3) and different approaches can lead to significant
+    // stretch size differences. We made the following decisions:
+    // - The unstretched size is the embellished operator width with the <mo> at the core unstretched.
+    // - In general, the target size is just the maximum widths of non-stretchy children because the
+    // embellishments could make widths significantly larger.
+    // - In the edge case when all operators of stretchy, we follow the specification and take the
+    // maximum of all unstretched sizes.
+    // - The <mo> at the core is stretched to cover the target size, even if the embellished operator
+    // might become much wider.
     
     Vector<RenderBox*, 3> embellishedOperators;
     Vector<RenderMathMLOperator*, 3> stretchyOperators;
     bool isAllStretchyOperators = true;
     LayoutUnit stretchWidth = 0;
-    
+
     for (auto* child = firstChildBox(); child; child = child->nextSiblingBox()) {
-        if (auto* stretchyOperator = toHorizontalStretchyOperator(child)) {
+        if (auto* stretchyOperator = horizontalStretchyOperator(*child)) {
             embellishedOperators.append(child);
             stretchyOperators.append(stretchyOperator);
-            stretchyOperator->resetStretchSize();
-            fixLayoutAfterStretch(child, stretchyOperator);
         } else {
             isAllStretchyOperators = false;
             child->layoutIfNeeded();
             stretchWidth = std::max(stretchWidth, child->logicalWidth());
         }
     }
-    
+
     if (isAllStretchyOperators) {
-        for (auto* embellishedOperator : embellishedOperators)
-            stretchWidth = std::max(stretchWidth, embellishedOperator->logicalWidth());
+        for (size_t i = 0; i < embellishedOperators.size(); i++) {
+            stretchyOperators[i]->resetStretchSize();
+            fixLayoutAfterStretch(*embellishedOperators[i], *stretchyOperators[i]);
+            stretchWidth = std::max(stretchWidth, embellishedOperators[i]->logicalWidth());
+        }
     }
-    
+
     for (size_t i = 0; i < embellishedOperators.size(); i++) {
         stretchyOperators[i]->stretchTo(stretchWidth);
-        fixLayoutAfterStretch(embellishedOperators[i], stretchyOperators[i]);
+        fixLayoutAfterStretch(*embellishedOperators[i], *stretchyOperators[i]);
     }
 }
 
@@ -290,7 +308,7 @@ void RenderMathMLUnderOver::layoutBlock(bool relayoutChildren, LayoutUnit pageLo
     ASSERT(!base().needsLayout());
     ASSERT(scriptType() == ScriptType::Over || !under().needsLayout());
     ASSERT(scriptType() == ScriptType::Under || !over().needsLayout());
-    
+
     LayoutUnit logicalWidth = base().logicalWidth();
     if (scriptType() == ScriptType::Under || scriptType() == ScriptType::UnderOver)
         logicalWidth = std::max(logicalWidth, under().logicalWidth());

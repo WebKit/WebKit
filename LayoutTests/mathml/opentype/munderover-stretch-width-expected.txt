@@ -23,6 +23,10 @@ This test passes if you see the black thing has the same width as the red bar.
 This test passes if you see the black thing has the same width as the red bar.
 
 ↜
+This test passes if you see both the red and blue things have the same width as the black bar.
+
+↜
+↜
 
 PASS simple stretchy over 
 PASS simple stretchy under 
@@ -32,4 +36,5 @@ PASS unembellished op under with plain op over
 PASS nested embellished op 
 PASS nested non-munderover embellished op 
 PASS simple stretchy under should equal over 
+PASS all stretchy embellished op 
 
