@@ -51,7 +51,7 @@ enum {
 };
 typedef uint32_t WKSnapshotOptions;
 
-WK_EXPORT WKTypeID WKImageGetTypeID();
+WK_EXPORT WKTypeID WKImageGetTypeID(void);
 
 WK_EXPORT WKImageRef WKImageCreate(WKSize size, WKImageOptions options);
 

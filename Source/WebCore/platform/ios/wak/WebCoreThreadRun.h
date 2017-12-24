@@ -34,7 +34,7 @@ extern "C" {
 
 // On the web thread WebThreadRun just runs the block immediately.
 // On any other thread, it will queue the block for asynchronous execution on the web thread.
-WEBCORE_EXPORT void WebThreadRun(void (^block)());
+WEBCORE_EXPORT void WebThreadRun(void (^block)(void));
 
 #if defined(__cplusplus)
 } // extern "C"

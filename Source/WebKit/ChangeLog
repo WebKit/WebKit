@@ -1,5 +1,32 @@
 2017-12-24  David Kilzer  <ddkilzer@apple.com>
 
+        WebKit fixes to enable -Wstrict-prototypes for Safari
+        <https://webkit.org/b/181146>
+
+        Reviewed by Dan Bernstein.
+
+        * Shared/API/c/WKGeometry.cpp:
+        (WKSizeGetTypeID):
+        (WKPointGetTypeID):
+        (WKRectGetTypeID):
+        * Shared/API/c/WKGeometry.h:
+        (WKSizeGetTypeID):
+        (WKPointGetTypeID):
+        (WKRectGetTypeID):
+        * Shared/API/c/WKImage.cpp:
+        (WKImageGetTypeID):
+        * Shared/API/c/WKImage.h:
+        (WKImageGetTypeID):
+        - Add 'void' to C function declarations and implementations as
+          necessary.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView applyAutocorrection:toString:withCompletionHandler:]):
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        - Add 'void' to block declarations as necessary.
+
+2017-12-24  David Kilzer  <ddkilzer@apple.com>
+
         REGRESSION (r224313): Fix build warning when compiling WebKit.xcassets
         <https://webkit.org/b/181148>
 

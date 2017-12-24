@@ -76,9 +76,9 @@ WK_INLINE WKRect WKRectMake(double x, double y, double width, double height)
     return rect;
 }
 
-WK_EXPORT WKTypeID WKSizeGetTypeID();
-WK_EXPORT WKTypeID WKPointGetTypeID();
-WK_EXPORT WKTypeID WKRectGetTypeID();
+WK_EXPORT WKTypeID WKSizeGetTypeID(void);
+WK_EXPORT WKTypeID WKPointGetTypeID(void);
+WK_EXPORT WKTypeID WKRectGetTypeID(void);
 
 WK_EXPORT WKPointRef WKPointCreate(WKPoint point);
 WK_EXPORT WKSizeRef WKSizeCreate(WKSize size);

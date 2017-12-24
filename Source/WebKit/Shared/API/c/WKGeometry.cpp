@@ -31,17 +31,17 @@
 
 using namespace WebKit;
 
-WKTypeID WKSizeGetTypeID()
+WKTypeID WKSizeGetTypeID(void)
 {
     return toAPI(API::Size::APIType);
 }
 
-WKTypeID WKPointGetTypeID()
+WKTypeID WKPointGetTypeID(void)
 {
     return toAPI(API::Point::APIType);
 }
 
-WKTypeID WKRectGetTypeID()
+WKTypeID WKRectGetTypeID(void)
 {
     return toAPI(API::Rect::APIType);
 }

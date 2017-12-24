@@ -742,12 +742,12 @@ void WebThreadUnlock(void)
     ASSERT(!WebThreadIsCurrent());
 }
 
-void WebThreadLockFromAnyThread()
+void WebThreadLockFromAnyThread(void)
 {
     _WebThreadLockFromAnyThread(true);
 }
     
-void WebThreadLockFromAnyThreadNoLog()
+void WebThreadLockFromAnyThreadNoLog(void)
 {
     _WebThreadLockFromAnyThread(false);
 }
@@ -771,7 +771,7 @@ static void _WebThreadLockFromAnyThread(bool shouldLog)
     webThreadShouldYield = false;
 }
 
-void WebThreadUnlockFromAnyThread()
+void WebThreadUnlockFromAnyThread(void)
 {
     if (!webThreadStarted)
         return;
@@ -786,7 +786,7 @@ void WebThreadUnlockFromAnyThread()
     webLock.unlock();
 }
 
-void WebThreadUnlockGuardForMail()
+void WebThreadUnlockGuardForMail(void)
 {
     ASSERT(!WebThreadIsCurrent());
 

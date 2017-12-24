@@ -31,7 +31,7 @@
 
 using namespace WebKit;
 
-WKTypeID WKImageGetTypeID()
+WKTypeID WKImageGetTypeID(void)
 {
     return toAPI(WebImage::APIType);
 }

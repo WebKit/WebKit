@@ -67,41 +67,41 @@ private:
 
 class WebThreadBlock {
 public:
-    WebThreadBlock(void (^task)(), WebThreadBlockState* state)
-        : m_task(Block_copy(task))
+    WebThreadBlock(void (^block)(void), WebThreadBlockState* state)
+        : m_block(Block_copy(block))
         , m_state(state)
     {
     }
 
     WebThreadBlock(const WebThreadBlock& other)
-        : m_task(Block_copy(other.m_task))
+        : m_block(Block_copy(other.m_block))
         , m_state(other.m_state)
     {
     }
 
     WebThreadBlock& operator=(const WebThreadBlock& other)
     {
-        void (^oldTask)() = m_task;
-        m_task = Block_copy(other.m_task);
-        Block_release(oldTask);
+        void (^oldBlock)() = m_block;
+        m_block = Block_copy(other.m_block);
+        Block_release(oldBlock);
         m_state = other.m_state;
         return *this;
     }
 
     ~WebThreadBlock()
     {
-        Block_release(m_task);
+        Block_release(m_block);
     }
 
     void operator()() const
     {
-        m_task();
+        m_block();
         if (m_state)
             m_state->setCompleted();
     }
 
 private:
-    void (^m_task)();
+    void (^m_block)(void);
     WebThreadBlockState* m_state;
 };
 
@@ -133,10 +133,10 @@ static void HandleRunSource(void *info)
         block();
 }
 
-static void _WebThreadRun(void (^task)(), bool synchronous)
+static void _WebThreadRun(void (^block)(void), bool synchronous)
 {
     if (WebThreadIsCurrent() || !WebThreadIsEnabled()) {
-        task();
+        block();
         return;
     }
 
@@ -149,7 +149,7 @@ static void _WebThreadRun(void (^task)(), bool synchronous)
 
     {
         std::lock_guard<StaticLock> lock(runQueueMutex);
-        runQueue->append(WebThreadBlock(task, state));
+        runQueue->append(WebThreadBlock(block, state));
     }
 
     CFRunLoopSourceSignal(runSource);
@@ -161,9 +161,9 @@ static void _WebThreadRun(void (^task)(), bool synchronous)
     }
 }
 
-void WebThreadRun(void (^task)())
+void WebThreadRun(void (^block)(void))
 {
-    _WebThreadRun(task, false);
+    _WebThreadRun(block, false);
 }
 
 void WebThreadInitRunQueue()

@@ -377,7 +377,7 @@ typedef NS_OPTIONS(NSInteger, _WKRectEdge) {
 - (void)dismissFormAccessoryView WK_API_AVAILABLE(ios(10.3));
 - (void)selectFormAccessoryPickerRow:(int)rowIndex WK_API_AVAILABLE(ios(10.3));
 
-- (void)applyAutocorrection:(NSString *)newString toString:(NSString *)oldString withCompletionHandler:(void (^)())completionHandler WK_API_AVAILABLE(ios(11.0));
+- (void)applyAutocorrection:(NSString *)newString toString:(NSString *)oldString withCompletionHandler:(void (^)(void))completionHandler WK_API_AVAILABLE(ios(11.0));
 
 - (void)didStartFormControlInteraction WK_API_AVAILABLE(ios(10.3));
 - (void)didEndFormControlInteraction WK_API_AVAILABLE(ios(10.3));

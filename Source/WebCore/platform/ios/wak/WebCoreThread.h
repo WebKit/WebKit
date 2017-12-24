@@ -74,16 +74,16 @@ WEBCORE_EXPORT bool WebThreadNotCurrent(void);
     
 // These are for <rdar://problem/6817341> Many apps crashing calling -[UIFieldEditor text] in secondary thread
 // Don't use them to solve any random problems you might have.
-WEBCORE_EXPORT void WebThreadLockFromAnyThread();
-WEBCORE_EXPORT void WebThreadLockFromAnyThreadNoLog();
-WEBCORE_EXPORT void WebThreadUnlockFromAnyThread();
+WEBCORE_EXPORT void WebThreadLockFromAnyThread(void);
+WEBCORE_EXPORT void WebThreadLockFromAnyThreadNoLog(void);
+WEBCORE_EXPORT void WebThreadUnlockFromAnyThread(void);
 
 // This is for <rdar://problem/8005192> Mail entered a state where message subject and content isn't displayed.
 // It should only be used for MobileMail to work around <rdar://problem/8005192>.
-WEBCORE_EXPORT void WebThreadUnlockGuardForMail();
+WEBCORE_EXPORT void WebThreadUnlockGuardForMail(void);
 
 static inline bool WebThreadShouldYield(void) { return webThreadShouldYield; }
-static inline void WebThreadSetShouldYield() { webThreadShouldYield = true; }
+static inline void WebThreadSetShouldYield(void) { webThreadShouldYield = true; }
 
 WEBCORE_EXPORT NSRunLoop* WebThreadNSRunLoop(void);
 
