@@ -1,3 +1,9 @@
+2017-12-23  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Unreviewed GTK layout test gardening
+
+        * platform/gtk/TestExpectations:
+
 2017-12-23  Minsheng Liu  <lambda@liu.ms>
 
         Add comments and improve code styles for RenderMathMLUnderOver::stretchHorizontalOperatorsAndLayoutChildren() and related functions
