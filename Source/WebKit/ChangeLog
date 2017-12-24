@@ -1,3 +1,18 @@
+2017-12-24  David Kilzer  <ddkilzer@apple.com>
+
+        REGRESSION (r224313): Fix build warning when compiling WebKit.xcassets
+        <https://webkit.org/b/181148>
+
+        Reviewed by Dan Bernstein.
+
+        Fixes the following build warning:
+
+            Opensource/Source/WebKit/WebKit.xcassets: warning: Failed to read file attributes for "Opensource/Source/WebKit/WebKit.xcassets"
+                Failure Reason: No such file or directory
+
+        * WebKit.xcodeproj/project.pbxproj: Fix relative path with
+        case-insensitive filesystem and repository name assumptions.
+
 2017-12-22  Jeff Miller  <jeffm@apple.com>
 
         Allow WebsitePolicies API object to be bridged to _WKWebsitePolicies
