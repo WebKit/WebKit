@@ -42,4 +42,30 @@ AnimationEffectTiming::~AnimationEffectTiming()
 {
 }
 
+ExceptionOr<void> AnimationEffectTiming::setBindingsDuration(Variant<double, String>&& duration)
+{
+    // https://drafts.csswg.org/web-animations-1/#dom-animationeffecttimingreadonly-duration
+    // The iteration duration which is a real number greater than or equal to zero (including positive infinity)
+    // representing the time taken to complete a single iteration of the animation effect.
+    // In this level of this specification, the string value auto is equivalent to zero. This is a forwards-compatiblity
+    // measure since a future level of this specification will introduce group effects where the auto value expands to
+    // include the duration of the child effects.
+
+    if (WTF::holds_alternative<double>(duration)) {
+        auto durationAsDouble = WTF::get<double>(duration);
+        if (durationAsDouble < 0 || std::isnan(durationAsDouble))
+            return Exception { TypeError };
+        m_duration = Seconds::fromMilliseconds(durationAsDouble);
+        return { };
+    }
+
+    if (WTF::get<String>(duration) != "auto")
+        return Exception { TypeError };
+
+    m_duration = 0_s;
+
+    return { };
+}
+
+
 } // namespace WebCore

@@ -27,5 +27,5 @@
     EnabledAtRuntime=WebAnimations,
     ImplementationLacksVTable
 ] interface AnimationEffectTiming {
-    [ImplementedAs=bindingsDuration] attribute unrestricted double duration;
+    [MayThrowException, ImplementedAs=bindingsDuration] attribute (unrestricted double or DOMString) duration;
 };

@@ -4,7 +4,7 @@ FAIL At a frame boundary, the output of a frames timing function is the next fra
 FAIL For an input progress of 1.0, the output of a frames timing function is the final frame assert_equals: expected "100px" but got "auto"
 FAIL The number of frames is correctly reflected in the frames timing function output assert_equals: expected "0px" but got "auto"
 FAIL The number of frames is correctly reflected in the frames timing function output on CSS Transitions assert_equals: expected "0px" but got "100px"
-FAIL frames easing with input progress greater than 1 undefined is not a function (near '...target.animate...')
-FAIL frames easing with input progress greater than 1.5 undefined is not a function (near '...target.animate...')
-FAIL frames easing with input progress less than 0 undefined is not a function (near '...target.animate...')
+FAIL frames easing with input progress greater than 1 assert_equals: expected "100px" but got "0px"
+FAIL frames easing with input progress greater than 1.5 assert_equals: expected "300px" but got "0px"
+FAIL frames easing with input progress less than 0 assert_equals: expected "-100px" but got "0px"
 

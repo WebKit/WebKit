@@ -1,11 +1,13 @@
 
-FAIL Test default value createDiv(t).animate is not a function. (In 'createDiv(t).animate(null)', 'createDiv(t).animate' is undefined)
-FAIL set endDelay 123.45 div.animate is not a function. (In 'div.animate({ opacity: [ 0, 1 ] }, 2000)', 'div.animate' is undefined)
-FAIL set endDelay -1000 div.animate is not a function. (In 'div.animate({ opacity: [ 0, 1 ] }, 2000)', 'div.animate' is undefined)
-FAIL set endDelay Infinity div.animate is not a function. (In 'div.animate({ opacity: [ 0, 1 ] }, 2000)', 'div.animate' is undefined)
-FAIL set endDelay negative Infinity div.animate is not a function. (In 'div.animate({ opacity: [ 0, 1 ] }, 2000)', 'div.animate' is undefined)
-FAIL onfinish event is not fired duration endDelay div.animate is not a function. (In 'div.animate({ opacity: [ 0, 1 ] },
-                         { duration: 100000, endDelay: 50000 })', 'div.animate' is undefined)
-FAIL onfinish event is fired currentTime is after endTime div.animate is not a function. (In 'div.animate({ opacity: [ 0, 1 ] },
-                         { duration: 100000, endDelay: 30000 })', 'div.animate' is undefined)
+FAIL Test default value assert_equals: expected (number) 0 but got (undefined) undefined
+FAIL set endDelay 123.45 anim.effect.getComputedTiming is not a function. (In 'anim.effect.getComputedTiming()', 'anim.effect.getComputedTiming' is undefined)
+FAIL set endDelay -1000 anim.effect.getComputedTiming is not a function. (In 'anim.effect.getComputedTiming()', 'anim.effect.getComputedTiming' is undefined)
+FAIL set endDelay Infinity assert_throws: we can not assign Infinity to timing.endDelay function "function () {
+    anim.effect.timing.endDelay = Infinity;
+  }" did not throw
+FAIL set endDelay negative Infinity assert_throws: we can not assign negative Infinity to timing.endDelay function "function () {
+    anim.effect.timing.endDelay = -Infinity;
+  }" did not throw
+PASS onfinish event is not fired duration endDelay 
+FAIL onfinish event is fired currentTime is after endTime assert_unreached: onfinish event should not be fired during endDelay Reached unreachable code
 

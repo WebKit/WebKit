@@ -1,13 +1,11 @@
 
-FAIL Test default value createDiv(t).animate is not a function. (In 'createDiv(t).animate(null)', 'createDiv(t).animate' is undefined)
-FAIL set delay 100 div.animate is not a function. (In 'div.animate({ opacity: [ 0, 1 ] }, 100)', 'div.animate' is undefined)
-FAIL set delay -100 div.animate is not a function. (In 'div.animate({ opacity: [ 0, 1 ] }, 100)', 'div.animate' is undefined)
-FAIL Test adding a positive delay to an animation without a backwards fill makes it no longer active div.animate is not a function. (In 'div.animate({ opacity: [ 0, 1 ] }, 100)', 'div.animate' is undefined)
-FAIL Test seeking an animation by setting a negative delay div.animate is not a function. (In 'div.animate({ opacity: [ 0, 1 ] },
-                         { fill: 'both',
-                           duration: 100 })', 'div.animate' is undefined)
-FAIL Test finishing an animation using a large negative delay div.animate is not a function. (In 'div.animate({ opacity: [ 0, 1 ] },
-                         { fill: 'both',
-                           duration: 100 })', 'div.animate' is undefined)
-FAIL Setting invalid values should throw TypeError div.animate is not a function. (In 'div.animate(null)', 'div.animate' is undefined)
+FAIL Test default value assert_equals: expected (number) 0 but got (undefined) undefined
+FAIL set delay 100 anim.effect.getComputedTiming is not a function. (In 'anim.effect.getComputedTiming()', 'anim.effect.getComputedTiming' is undefined)
+FAIL set delay -100 anim.effect.getComputedTiming is not a function. (In 'anim.effect.getComputedTiming()', 'anim.effect.getComputedTiming' is undefined)
+FAIL Test adding a positive delay to an animation without a backwards fill makes it no longer active anim.effect.getComputedTiming is not a function. (In 'anim.effect.getComputedTiming()', 'anim.effect.getComputedTiming' is undefined)
+FAIL Test seeking an animation by setting a negative delay anim.effect.getComputedTiming is not a function. (In 'anim.effect.getComputedTiming()', 'anim.effect.getComputedTiming' is undefined)
+FAIL Test finishing an animation using a large negative delay anim.effect.getComputedTiming is not a function. (In 'anim.effect.getComputedTiming()', 'anim.effect.getComputedTiming' is undefined)
+FAIL Setting invalid values should throw TypeError assert_throws: setting NaN function "function () {
+      anim.effect.timing.delay = invalid;
+    }" did not throw
 

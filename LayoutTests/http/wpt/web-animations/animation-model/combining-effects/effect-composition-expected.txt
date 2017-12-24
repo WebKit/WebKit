@@ -1,24 +1,12 @@
 
-FAIL accumulate onto the base value div.animate is not a function. (In 'div.animate({ marginLeft: ['0px', '10px'], composite }, 100)', 'div.animate' is undefined)
-FAIL accumulate onto an underlying animation value div.animate is not a function. (In 'div.animate({ marginLeft: ['10px', '20px'],
-                             composite: 'replace' },
-                           100)', 'div.animate' is undefined)
-FAIL Composite when mixing accumulate and replace div.animate is not a function. (In 'div.animate([{ marginLeft: '10px', composite },
-                   { marginLeft: '30px', composite: 'replace' }],
-                  100)', 'div.animate' is undefined)
-FAIL accumulate specified on a keyframe overrides the composite mode of the effect undefined is not a function (near '...div.animate...')
-FAIL unspecified composite mode on a keyframe is overriden by setting accumulate of the effect div.animate is not a function. (In 'div.animate([{ marginLeft: '10px', composite: 'replace' },
-                   { marginLeft: '20px' }],
-                  100)', 'div.animate' is undefined)
-FAIL add onto the base value div.animate is not a function. (In 'div.animate({ marginLeft: ['0px', '10px'], composite }, 100)', 'div.animate' is undefined)
-FAIL add onto an underlying animation value div.animate is not a function. (In 'div.animate({ marginLeft: ['10px', '20px'],
-                             composite: 'replace' },
-                           100)', 'div.animate' is undefined)
-FAIL Composite when mixing add and replace div.animate is not a function. (In 'div.animate([{ marginLeft: '10px', composite },
-                   { marginLeft: '30px', composite: 'replace' }],
-                  100)', 'div.animate' is undefined)
-FAIL add specified on a keyframe overrides the composite mode of the effect undefined is not a function (near '...div.animate...')
-FAIL unspecified composite mode on a keyframe is overriden by setting add of the effect div.animate is not a function. (In 'div.animate([{ marginLeft: '10px', composite: 'replace' },
-                   { marginLeft: '20px' }],
-                  100)', 'div.animate' is undefined)
+FAIL accumulate onto the base value assert_equals: Animated margin-left style at 50% expected "15px" but got "5px"
+FAIL accumulate onto an underlying animation value assert_equals: Animated style at 50% expected "20px" but got "5px"
+FAIL Composite when mixing accumulate and replace assert_equals: Animated style at 50% expected "25px" but got "20px"
+FAIL accumulate specified on a keyframe overrides the composite mode of the effect assert_equals: Animated style at 50% expected "20px" but got "15px"
+FAIL unspecified composite mode on a keyframe is overriden by setting accumulate of the effect assert_equals: Animated style at 50% expected "20px" but got "15px"
+FAIL add onto the base value assert_equals: Animated margin-left style at 50% expected "15px" but got "5px"
+FAIL add onto an underlying animation value assert_equals: Animated style at 50% expected "20px" but got "5px"
+FAIL Composite when mixing add and replace assert_equals: Animated style at 50% expected "25px" but got "20px"
+FAIL add specified on a keyframe overrides the composite mode of the effect assert_equals: Animated style at 50% expected "20px" but got "15px"
+FAIL unspecified composite mode on a keyframe is overriden by setting add of the effect assert_equals: Animated style at 50% expected "20px" but got "15px"
 

@@ -72,6 +72,7 @@
 #include "InspectorInstrumentation.h"
 #include "JSLazyEventListener.h"
 #include "KeyboardEvent.h"
+#include "KeyframeEffect.h"
 #include "MainFrame.h"
 #include "MutationObserverInterestGroup.h"
 #include "MutationRecord.h"
@@ -102,6 +103,7 @@
 #include "StyleTreeResolver.h"
 #include "TextIterator.h"
 #include "VoidCallback.h"
+#include "WebAnimation.h"
 #include "WheelEvent.h"
 #include "XLinkNames.h"
 #include "XMLNSNames.h"
@@ -3685,6 +3687,32 @@ Element* Element::findAnchorElementForLink(String& outAnchorName)
     }
 
     return nullptr;
+}
+
+ExceptionOr<Ref<WebAnimation>> Element::animate(JSC::ExecState& state, JSC::Strong<JSC::JSObject>&& keyframes, std::optional<Variant<double, KeyframeAnimationOptions>>&& options)
+{
+    std::optional<Variant<double, KeyframeEffectOptions>> keyframeEffectOptions;
+    if (options) {
+        auto optionsValue = options.value();
+        Variant<double, KeyframeEffectOptions> keyframeEffectOptionsVariant;
+        if (WTF::holds_alternative<double>(optionsValue))
+            keyframeEffectOptionsVariant = WTF::get<double>(optionsValue);
+        else
+            keyframeEffectOptionsVariant = WTF::get<KeyframeAnimationOptions>(optionsValue);
+        keyframeEffectOptions = keyframeEffectOptionsVariant;
+    }
+
+    auto keyframeEffectResult = KeyframeEffect::create(state, this, WTFMove(keyframes), WTFMove(keyframeEffectOptions));
+    if (keyframeEffectResult.hasException())
+        return keyframeEffectResult.releaseException();
+
+    auto animation = WebAnimation::create(document(), &keyframeEffectResult.returnValue().get(), nullptr);
+
+    auto animationPlayResult = animation->play();
+    if (animationPlayResult.hasException())
+        return animationPlayResult.releaseException();
+
+    return WTFMove(animation);
 }
 
 Vector<RefPtr<WebAnimation>> Element::getAnimations()

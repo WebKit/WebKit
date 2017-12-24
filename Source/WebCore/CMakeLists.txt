@@ -433,11 +433,18 @@ set(WebCore_NON_SVG_IDL_FILES
     animation/Animatable.idl
     animation/AnimationEffect.idl
     animation/AnimationEffectTiming.idl
+    animation/AnimationEffectTimingProperties.idl
     animation/AnimationPlaybackEvent.idl
     animation/AnimationPlaybackEventInit.idl
     animation/AnimationTimeline.idl
+    animation/CompositeOperation.idl
     animation/DocumentTimeline.idl
+    animation/FillMode.idl
+    animation/IterationCompositeOperation.idl
+    animation/KeyframeAnimationOptions.idl
     animation/KeyframeEffect.idl
+    animation/KeyframeEffectOptions.idl
+    animation/PlaybackDirection.idl
     animation/WebAnimation.idl
 
     crypto/CryptoAlgorithmParameters.idl

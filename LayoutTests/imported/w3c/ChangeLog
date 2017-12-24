@@ -1,3 +1,18 @@
+2017-12-22  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Implement Element.animate()
+        https://bugs.webkit.org/show_bug.cgi?id=180402
+        <rdar://problem/35851353>
+
+        Reviewed by Dean Jackson.
+
+        Rebaselining a few tests using Element.animate(). They still fail, but no longer on
+        the Element.animate() calls.
+
+        * web-platform-tests/css-timing-1/cubic-bezier-timing-functions-output-expected.txt:
+        * web-platform-tests/css-timing-1/frames-timing-functions-output-expected.txt:
+        * web-platform-tests/css-timing-1/step-timing-functions-output-expected.txt:
+
 2017-12-22  Chris Dumez  <cdumez@apple.com>
 
         importScripts() inside a service worker should ensure that the response has a JavaScript MIME type

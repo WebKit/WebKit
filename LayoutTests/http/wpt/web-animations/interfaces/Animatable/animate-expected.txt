@@ -1,96 +1,157 @@
 
-FAIL Element.animate() creates an Animation object div.animate is not a function. (In 'div.animate(null)', 'div.animate' is undefined)
-FAIL Element.animate() creates an Animation object in the relevant realm of the target element undefined is not an object (evaluating 'Element.prototype.animate.call')
-FAIL Element.animate() creates an Animation object with a KeyframeEffect undefined is not an object (evaluating 'Element.prototype.animate.call')
-FAIL Element.animate() creates an Animation object with a KeyframeEffect that is created in the relevant realm of the target element undefined is not an object (evaluating 'Element.prototype.animate.call')
-FAIL Element.animate() creates an Animation object with a KeyframeEffect whose AnimationEffectTiming object is created in the relevant realm of the target element div.animate is not a function. (In 'div.animate(null)', 'div.animate' is undefined)
-FAIL Element.animate() accepts empty keyframe lists (input: []) div.animate is not a function. (In 'div.animate(subTest, 2000)', 'div.animate' is undefined)
-FAIL Element.animate() accepts empty keyframe lists (input: null) div.animate is not a function. (In 'div.animate(subTest, 2000)', 'div.animate' is undefined)
-FAIL Element.animate() accepts empty keyframe lists (input: undefined) div.animate is not a function. (In 'div.animate(subTest, 2000)', 'div.animate' is undefined)
-FAIL Element.animate() accepts a one property two value property-indexed keyframes specification div.animate is not a function. (In 'div.animate(subtest.input, 2000)', 'div.animate' is undefined)
-FAIL Element.animate() accepts a one shorthand property two value property-indexed keyframes specification div.animate is not a function. (In 'div.animate(subtest.input, 2000)', 'div.animate' is undefined)
-FAIL Element.animate() accepts a two property (one shorthand and one of its longhand components) two value property-indexed keyframes specification div.animate is not a function. (In 'div.animate(subtest.input, 2000)', 'div.animate' is undefined)
-FAIL Element.animate() accepts a two property two value property-indexed keyframes specification div.animate is not a function. (In 'div.animate(subtest.input, 2000)', 'div.animate' is undefined)
-FAIL Element.animate() accepts a two property property-indexed keyframes specification with different numbers of values div.animate is not a function. (In 'div.animate(subtest.input, 2000)', 'div.animate' is undefined)
-FAIL Element.animate() accepts a property-indexed keyframes specification with an invalid value div.animate is not a function. (In 'div.animate(subtest.input, 2000)', 'div.animate' is undefined)
-FAIL Element.animate() accepts a one property two value property-indexed keyframes specification that needs to stringify its values div.animate is not a function. (In 'div.animate(subtest.input, 2000)', 'div.animate' is undefined)
-FAIL Element.animate() accepts a property-indexed keyframes specification with a CSS variable reference div.animate is not a function. (In 'div.animate(subtest.input, 2000)', 'div.animate' is undefined)
-FAIL Element.animate() accepts a property-indexed keyframes specification with a CSS variable reference in a shorthand property div.animate is not a function. (In 'div.animate(subtest.input, 2000)', 'div.animate' is undefined)
-FAIL Element.animate() accepts a one property one value property-indexed keyframes specification div.animate is not a function. (In 'div.animate(subtest.input, 2000)', 'div.animate' is undefined)
-FAIL Element.animate() accepts a one property one non-array value property-indexed keyframes specification div.animate is not a function. (In 'div.animate(subtest.input, 2000)', 'div.animate' is undefined)
-FAIL Element.animate() accepts a one property two value property-indexed keyframes specification where the first value is invalid div.animate is not a function. (In 'div.animate(subtest.input, 2000)', 'div.animate' is undefined)
-FAIL Element.animate() accepts a one property two value property-indexed keyframes specification where the second value is invalid div.animate is not a function. (In 'div.animate(subtest.input, 2000)', 'div.animate' is undefined)
-FAIL Element.animate() accepts a one property one keyframe sequence div.animate is not a function. (In 'div.animate(subtest.input, 2000)', 'div.animate' is undefined)
-FAIL Element.animate() accepts a one property two keyframe sequence div.animate is not a function. (In 'div.animate(subtest.input, 2000)', 'div.animate' is undefined)
-FAIL Element.animate() accepts a two property two keyframe sequence div.animate is not a function. (In 'div.animate(subtest.input, 2000)', 'div.animate' is undefined)
-FAIL Element.animate() accepts a one shorthand property two keyframe sequence div.animate is not a function. (In 'div.animate(subtest.input, 2000)', 'div.animate' is undefined)
-FAIL Element.animate() accepts a two property (a shorthand and one of its component longhands) two keyframe sequence div.animate is not a function. (In 'div.animate(subtest.input, 2000)', 'div.animate' is undefined)
-FAIL Element.animate() accepts a keyframe sequence with duplicate values for a given interior offset div.animate is not a function. (In 'div.animate(subtest.input, 2000)', 'div.animate' is undefined)
-FAIL Element.animate() accepts a keyframe sequence with duplicate values for offsets 0 and 1 div.animate is not a function. (In 'div.animate(subtest.input, 2000)', 'div.animate' is undefined)
-FAIL Element.animate() accepts a two property four keyframe sequence div.animate is not a function. (In 'div.animate(subtest.input, 2000)', 'div.animate' is undefined)
-FAIL Element.animate() accepts a single keyframe sequence with omitted offset div.animate is not a function. (In 'div.animate(subtest.input, 2000)', 'div.animate' is undefined)
-FAIL Element.animate() accepts a single keyframe sequence with null offset div.animate is not a function. (In 'div.animate(subtest.input, 2000)', 'div.animate' is undefined)
-FAIL Element.animate() accepts a single keyframe sequence with string offset div.animate is not a function. (In 'div.animate(subtest.input, 2000)', 'div.animate' is undefined)
-FAIL Element.animate() accepts a one property keyframe sequence with some omitted offsets div.animate is not a function. (In 'div.animate(subtest.input, 2000)', 'div.animate' is undefined)
-FAIL Element.animate() accepts a one property keyframe sequence with some null offsets div.animate is not a function. (In 'div.animate(subtest.input, 2000)', 'div.animate' is undefined)
-FAIL Element.animate() accepts a two property keyframe sequence with some omitted offsets div.animate is not a function. (In 'div.animate(subtest.input, 2000)', 'div.animate' is undefined)
-FAIL Element.animate() accepts a one property keyframe sequence with all omitted offsets div.animate is not a function. (In 'div.animate(subtest.input, 2000)', 'div.animate' is undefined)
-FAIL Element.animate() accepts a keyframe sequence with different easing values, but the same easing value for a given offset div.animate is not a function. (In 'div.animate(subtest.input, 2000)', 'div.animate' is undefined)
-FAIL Element.animate() accepts a keyframe sequence with different composite values, but the same composite value for a given offset div.animate is not a function. (In 'div.animate(subtest.input, 2000)', 'div.animate' is undefined)
-FAIL Element.animate() accepts a one property two keyframe sequence that needs to stringify its values div.animate is not a function. (In 'div.animate(subtest.input, 2000)', 'div.animate' is undefined)
-FAIL Element.animate() accepts a keyframe sequence with a CSS variable reference div.animate is not a function. (In 'div.animate(subtest.input, 2000)', 'div.animate' is undefined)
-FAIL Element.animate() accepts a keyframe sequence with a CSS variable reference in a shorthand property div.animate is not a function. (In 'div.animate(subtest.input, 2000)', 'div.animate' is undefined)
-FAIL Element.animate() accepts a keyframe sequence where shorthand precedes longhand div.animate is not a function. (In 'div.animate(subtest.input, 2000)', 'div.animate' is undefined)
-FAIL Element.animate() accepts a keyframe sequence where longhand precedes shorthand div.animate is not a function. (In 'div.animate(subtest.input, 2000)', 'div.animate' is undefined)
-FAIL Element.animate() accepts a keyframe sequence where lesser shorthand precedes greater shorthand div.animate is not a function. (In 'div.animate(subtest.input, 2000)', 'div.animate' is undefined)
-FAIL Element.animate() accepts a keyframe sequence where greater shorthand precedes lesser shorthand div.animate is not a function. (In 'div.animate(subtest.input, 2000)', 'div.animate' is undefined)
-FAIL Element.animate() accepts a two property keyframe sequence where one property is missing from the first keyframe div.animate is not a function. (In 'div.animate(subtest.input, 2000)', 'div.animate' is undefined)
-FAIL Element.animate() accepts a two property keyframe sequence where one property is missing from the last keyframe div.animate is not a function. (In 'div.animate(subtest.input, 2000)', 'div.animate' is undefined)
-FAIL Element.animate() accepts a keyframe sequence with repeated values at offset 1 with different easings div.animate is not a function. (In 'div.animate(subtest.input, 2000)', 'div.animate' is undefined)
+PASS Element.animate() creates an Animation object 
+PASS Element.animate() creates an Animation object in the relevant realm of the target element 
+PASS Element.animate() creates an Animation object with a KeyframeEffect 
+PASS Element.animate() creates an Animation object with a KeyframeEffect that is created in the relevant realm of the target element 
+PASS Element.animate() creates an Animation object with a KeyframeEffect whose AnimationEffectTiming object is created in the relevant realm of the target element 
+PASS Element.animate() accepts empty keyframe lists (input: []) 
+PASS Element.animate() accepts empty keyframe lists (input: null) 
+PASS Element.animate() accepts empty keyframe lists (input: undefined) 
+FAIL Element.animate() accepts a one property two value property-indexed keyframes specification anim.effect.getKeyframes is not a function. (In 'anim.effect.getKeyframes()', 'anim.effect.getKeyframes' is undefined)
+FAIL Element.animate() accepts a one shorthand property two value property-indexed keyframes specification anim.effect.getKeyframes is not a function. (In 'anim.effect.getKeyframes()', 'anim.effect.getKeyframes' is undefined)
+FAIL Element.animate() accepts a two property (one shorthand and one of its longhand components) two value property-indexed keyframes specification anim.effect.getKeyframes is not a function. (In 'anim.effect.getKeyframes()', 'anim.effect.getKeyframes' is undefined)
+FAIL Element.animate() accepts a two property two value property-indexed keyframes specification anim.effect.getKeyframes is not a function. (In 'anim.effect.getKeyframes()', 'anim.effect.getKeyframes' is undefined)
+FAIL Element.animate() accepts a two property property-indexed keyframes specification with different numbers of values anim.effect.getKeyframes is not a function. (In 'anim.effect.getKeyframes()', 'anim.effect.getKeyframes' is undefined)
+FAIL Element.animate() accepts a property-indexed keyframes specification with an invalid value anim.effect.getKeyframes is not a function. (In 'anim.effect.getKeyframes()', 'anim.effect.getKeyframes' is undefined)
+FAIL Element.animate() accepts a one property two value property-indexed keyframes specification that needs to stringify its values anim.effect.getKeyframes is not a function. (In 'anim.effect.getKeyframes()', 'anim.effect.getKeyframes' is undefined)
+FAIL Element.animate() accepts a property-indexed keyframes specification with a CSS variable reference anim.effect.getKeyframes is not a function. (In 'anim.effect.getKeyframes()', 'anim.effect.getKeyframes' is undefined)
+FAIL Element.animate() accepts a property-indexed keyframes specification with a CSS variable reference in a shorthand property anim.effect.getKeyframes is not a function. (In 'anim.effect.getKeyframes()', 'anim.effect.getKeyframes' is undefined)
+FAIL Element.animate() accepts a one property one value property-indexed keyframes specification anim.effect.getKeyframes is not a function. (In 'anim.effect.getKeyframes()', 'anim.effect.getKeyframes' is undefined)
+FAIL Element.animate() accepts a one property one non-array value property-indexed keyframes specification anim.effect.getKeyframes is not a function. (In 'anim.effect.getKeyframes()', 'anim.effect.getKeyframes' is undefined)
+FAIL Element.animate() accepts a one property two value property-indexed keyframes specification where the first value is invalid anim.effect.getKeyframes is not a function. (In 'anim.effect.getKeyframes()', 'anim.effect.getKeyframes' is undefined)
+FAIL Element.animate() accepts a one property two value property-indexed keyframes specification where the second value is invalid anim.effect.getKeyframes is not a function. (In 'anim.effect.getKeyframes()', 'anim.effect.getKeyframes' is undefined)
+FAIL Element.animate() accepts a one property one keyframe sequence anim.effect.getKeyframes is not a function. (In 'anim.effect.getKeyframes()', 'anim.effect.getKeyframes' is undefined)
+FAIL Element.animate() accepts a one property two keyframe sequence anim.effect.getKeyframes is not a function. (In 'anim.effect.getKeyframes()', 'anim.effect.getKeyframes' is undefined)
+FAIL Element.animate() accepts a two property two keyframe sequence anim.effect.getKeyframes is not a function. (In 'anim.effect.getKeyframes()', 'anim.effect.getKeyframes' is undefined)
+FAIL Element.animate() accepts a one shorthand property two keyframe sequence anim.effect.getKeyframes is not a function. (In 'anim.effect.getKeyframes()', 'anim.effect.getKeyframes' is undefined)
+FAIL Element.animate() accepts a two property (a shorthand and one of its component longhands) two keyframe sequence anim.effect.getKeyframes is not a function. (In 'anim.effect.getKeyframes()', 'anim.effect.getKeyframes' is undefined)
+FAIL Element.animate() accepts a keyframe sequence with duplicate values for a given interior offset Type error
+FAIL Element.animate() accepts a keyframe sequence with duplicate values for offsets 0 and 1 Type error
+FAIL Element.animate() accepts a two property four keyframe sequence Type error
+FAIL Element.animate() accepts a single keyframe sequence with omitted offset anim.effect.getKeyframes is not a function. (In 'anim.effect.getKeyframes()', 'anim.effect.getKeyframes' is undefined)
+FAIL Element.animate() accepts a single keyframe sequence with null offset anim.effect.getKeyframes is not a function. (In 'anim.effect.getKeyframes()', 'anim.effect.getKeyframes' is undefined)
+FAIL Element.animate() accepts a single keyframe sequence with string offset anim.effect.getKeyframes is not a function. (In 'anim.effect.getKeyframes()', 'anim.effect.getKeyframes' is undefined)
+FAIL Element.animate() accepts a one property keyframe sequence with some omitted offsets anim.effect.getKeyframes is not a function. (In 'anim.effect.getKeyframes()', 'anim.effect.getKeyframes' is undefined)
+FAIL Element.animate() accepts a one property keyframe sequence with some null offsets anim.effect.getKeyframes is not a function. (In 'anim.effect.getKeyframes()', 'anim.effect.getKeyframes' is undefined)
+FAIL Element.animate() accepts a two property keyframe sequence with some omitted offsets anim.effect.getKeyframes is not a function. (In 'anim.effect.getKeyframes()', 'anim.effect.getKeyframes' is undefined)
+FAIL Element.animate() accepts a one property keyframe sequence with all omitted offsets anim.effect.getKeyframes is not a function. (In 'anim.effect.getKeyframes()', 'anim.effect.getKeyframes' is undefined)
+FAIL Element.animate() accepts a keyframe sequence with different easing values, but the same easing value for a given offset Type error
+FAIL Element.animate() accepts a keyframe sequence with different composite values, but the same composite value for a given offset Type error
+FAIL Element.animate() accepts a one property two keyframe sequence that needs to stringify its values anim.effect.getKeyframes is not a function. (In 'anim.effect.getKeyframes()', 'anim.effect.getKeyframes' is undefined)
+FAIL Element.animate() accepts a keyframe sequence with a CSS variable reference anim.effect.getKeyframes is not a function. (In 'anim.effect.getKeyframes()', 'anim.effect.getKeyframes' is undefined)
+FAIL Element.animate() accepts a keyframe sequence with a CSS variable reference in a shorthand property anim.effect.getKeyframes is not a function. (In 'anim.effect.getKeyframes()', 'anim.effect.getKeyframes' is undefined)
+FAIL Element.animate() accepts a keyframe sequence where shorthand precedes longhand anim.effect.getKeyframes is not a function. (In 'anim.effect.getKeyframes()', 'anim.effect.getKeyframes' is undefined)
+FAIL Element.animate() accepts a keyframe sequence where longhand precedes shorthand anim.effect.getKeyframes is not a function. (In 'anim.effect.getKeyframes()', 'anim.effect.getKeyframes' is undefined)
+FAIL Element.animate() accepts a keyframe sequence where lesser shorthand precedes greater shorthand anim.effect.getKeyframes is not a function. (In 'anim.effect.getKeyframes()', 'anim.effect.getKeyframes' is undefined)
+FAIL Element.animate() accepts a keyframe sequence where greater shorthand precedes lesser shorthand anim.effect.getKeyframes is not a function. (In 'anim.effect.getKeyframes()', 'anim.effect.getKeyframes' is undefined)
+FAIL Element.animate() accepts a two property keyframe sequence where one property is missing from the first keyframe anim.effect.getKeyframes is not a function. (In 'anim.effect.getKeyframes()', 'anim.effect.getKeyframes' is undefined)
+FAIL Element.animate() accepts a two property keyframe sequence where one property is missing from the last keyframe anim.effect.getKeyframes is not a function. (In 'anim.effect.getKeyframes()', 'anim.effect.getKeyframes' is undefined)
+FAIL Element.animate() accepts a keyframe sequence with repeated values at offset 1 with different easings Type error
 PASS Element.animate() does not accept keyframes with an out-of-bounded positive offset 
 PASS Element.animate() does not accept keyframes with an out-of-bounded negative offset 
 PASS Element.animate() does not accept keyframes not loosely sorted by offset 
-PASS Element.animate() does not accept property-indexed keyframes with an invalid easing value 
-PASS Element.animate() does not accept a keyframe sequence with an invalid easing value 
+FAIL Element.animate() does not accept property-indexed keyframes with an invalid easing value assert_throws: function "function () {
+      div.animate(subtest.input, 2000);
+    }" did not throw
+FAIL Element.animate() does not accept a keyframe sequence with an invalid easing value assert_throws: function "function () {
+      div.animate(subtest.input, 2000);
+    }" did not throw
 PASS Element.animate() does not accept keyframes with an invalid composite value 
-PASS Element.animate() does not accept invalid easing: '' 
-PASS Element.animate() does not accept invalid easing: '7' 
-PASS Element.animate() does not accept invalid easing: 'test' 
-PASS Element.animate() does not accept invalid easing: 'initial' 
-PASS Element.animate() does not accept invalid easing: 'inherit' 
-PASS Element.animate() does not accept invalid easing: 'unset' 
-PASS Element.animate() does not accept invalid easing: 'unrecognized' 
-PASS Element.animate() does not accept invalid easing: 'var(--x)' 
-PASS Element.animate() does not accept invalid easing: 'ease-in-out, ease-out' 
-PASS Element.animate() does not accept invalid easing: 'cubic-bezier(1.1, 0, 1, 1)' 
-PASS Element.animate() does not accept invalid easing: 'cubic-bezier(0, 0, 1.1, 1)' 
-PASS Element.animate() does not accept invalid easing: 'cubic-bezier(-0.1, 0, 1, 1)' 
-PASS Element.animate() does not accept invalid easing: 'cubic-bezier(0, 0, -0.1, 1)' 
-PASS Element.animate() does not accept invalid easing: 'cubic-bezier(0.1, 0, 4, 0.4)' 
-PASS Element.animate() does not accept invalid easing: 'steps(-1, start)' 
-PASS Element.animate() does not accept invalid easing: 'steps(0.1, start)' 
-PASS Element.animate() does not accept invalid easing: 'steps(3, nowhere)' 
-PASS Element.animate() does not accept invalid easing: 'steps(-3, end)' 
-PASS Element.animate() does not accept invalid easing: 'function (a){return a}' 
-PASS Element.animate() does not accept invalid easing: 'function (x){return x}' 
-PASS Element.animate() does not accept invalid easing: 'function(x, y){return 0.3}' 
-PASS Element.animate() does not accept invalid easing: 'frames(1)' 
-PASS Element.animate() does not accept invalid easing: 'frames' 
-PASS Element.animate() does not accept invalid easing: 'frames()' 
-PASS Element.animate() does not accept invalid easing: 'frames(,)' 
-PASS Element.animate() does not accept invalid easing: 'frames(a)' 
-PASS Element.animate() does not accept invalid easing: 'frames(2.0)' 
-PASS Element.animate() does not accept invalid easing: 'frames(2.5)' 
-PASS Element.animate() does not accept invalid easing: 'frames(2 3)' 
-FAIL Element.animate() accepts a double as an options argument div.animate is not a function. (In 'div.animate({ opacity: [ 0, 1 ] }, 2000)', 'div.animate' is undefined)
-FAIL Element.animate() accepts a KeyframeAnimationOptions argument div.animate is not a function. (In 'div.animate({ opacity: [ 0, 1 ] },
-                         { duration: Infinity, fill: 'forwards' })', 'div.animate' is undefined)
-FAIL Element.animate() accepts an absent options argument div.animate is not a function. (In 'div.animate({ opacity: [ 0, 1 ] })', 'div.animate' is undefined)
-FAIL Element.animate() correctly sets the id attribute when no id is specified div.animate is not a function. (In 'div.animate({ opacity: [ 0, 1 ] }, 2000)', 'div.animate' is undefined)
-FAIL Element.animate() correctly sets the id attribute div.animate is not a function. (In 'div.animate({ opacity: [ 0, 1 ] }, { id: 'test' })', 'div.animate' is undefined)
-FAIL Element.animate() correctly sets the Animation's timeline div.animate is not a function. (In 'div.animate({ opacity: [ 0, 1 ] }, 2000)', 'div.animate' is undefined)
-FAIL Element.animate() correctly sets the Animation's timeline when triggered on an element in a different document div.animate is not a function. (In 'div.animate({ opacity: [ 0, 1 ] }, 2000)', 'div.animate' is undefined)
-FAIL Element.animate() calls play on the Animation div.animate is not a function. (In 'div.animate({ opacity: [ 0, 1 ] }, 2000)', 'div.animate' is undefined)
-FAIL CSSPseudoElement.animate() creates an Animation object assert_true: expected true got false
-FAIL CSSPseudoElement.animate() creates an Animation object targeting to the correct CSSPseudoElement object assert_true: expected true got false
- 
+FAIL Element.animate() does not accept invalid easing: '' assert_throws: function "() => {
+      div.animate({ easing: invalidEasing }, 2000);
+    }" did not throw
+FAIL Element.animate() does not accept invalid easing: '7' assert_throws: function "() => {
+      div.animate({ easing: invalidEasing }, 2000);
+    }" did not throw
+FAIL Element.animate() does not accept invalid easing: 'test' assert_throws: function "() => {
+      div.animate({ easing: invalidEasing }, 2000);
+    }" did not throw
+FAIL Element.animate() does not accept invalid easing: 'initial' assert_throws: function "() => {
+      div.animate({ easing: invalidEasing }, 2000);
+    }" did not throw
+FAIL Element.animate() does not accept invalid easing: 'inherit' assert_throws: function "() => {
+      div.animate({ easing: invalidEasing }, 2000);
+    }" did not throw
+FAIL Element.animate() does not accept invalid easing: 'unset' assert_throws: function "() => {
+      div.animate({ easing: invalidEasing }, 2000);
+    }" did not throw
+FAIL Element.animate() does not accept invalid easing: 'unrecognized' assert_throws: function "() => {
+      div.animate({ easing: invalidEasing }, 2000);
+    }" did not throw
+FAIL Element.animate() does not accept invalid easing: 'var(--x)' assert_throws: function "() => {
+      div.animate({ easing: invalidEasing }, 2000);
+    }" did not throw
+FAIL Element.animate() does not accept invalid easing: 'ease-in-out, ease-out' assert_throws: function "() => {
+      div.animate({ easing: invalidEasing }, 2000);
+    }" did not throw
+FAIL Element.animate() does not accept invalid easing: 'cubic-bezier(1.1, 0, 1, 1)' assert_throws: function "() => {
+      div.animate({ easing: invalidEasing }, 2000);
+    }" did not throw
+FAIL Element.animate() does not accept invalid easing: 'cubic-bezier(0, 0, 1.1, 1)' assert_throws: function "() => {
+      div.animate({ easing: invalidEasing }, 2000);
+    }" did not throw
+FAIL Element.animate() does not accept invalid easing: 'cubic-bezier(-0.1, 0, 1, 1)' assert_throws: function "() => {
+      div.animate({ easing: invalidEasing }, 2000);
+    }" did not throw
+FAIL Element.animate() does not accept invalid easing: 'cubic-bezier(0, 0, -0.1, 1)' assert_throws: function "() => {
+      div.animate({ easing: invalidEasing }, 2000);
+    }" did not throw
+FAIL Element.animate() does not accept invalid easing: 'cubic-bezier(0.1, 0, 4, 0.4)' assert_throws: function "() => {
+      div.animate({ easing: invalidEasing }, 2000);
+    }" did not throw
+FAIL Element.animate() does not accept invalid easing: 'steps(-1, start)' assert_throws: function "() => {
+      div.animate({ easing: invalidEasing }, 2000);
+    }" did not throw
+FAIL Element.animate() does not accept invalid easing: 'steps(0.1, start)' assert_throws: function "() => {
+      div.animate({ easing: invalidEasing }, 2000);
+    }" did not throw
+FAIL Element.animate() does not accept invalid easing: 'steps(3, nowhere)' assert_throws: function "() => {
+      div.animate({ easing: invalidEasing }, 2000);
+    }" did not throw
+FAIL Element.animate() does not accept invalid easing: 'steps(-3, end)' assert_throws: function "() => {
+      div.animate({ easing: invalidEasing }, 2000);
+    }" did not throw
+FAIL Element.animate() does not accept invalid easing: 'function (a){return a}' assert_throws: function "() => {
+      div.animate({ easing: invalidEasing }, 2000);
+    }" did not throw
+FAIL Element.animate() does not accept invalid easing: 'function (x){return x}' assert_throws: function "() => {
+      div.animate({ easing: invalidEasing }, 2000);
+    }" did not throw
+FAIL Element.animate() does not accept invalid easing: 'function(x, y){return 0.3}' assert_throws: function "() => {
+      div.animate({ easing: invalidEasing }, 2000);
+    }" did not throw
+FAIL Element.animate() does not accept invalid easing: 'frames(1)' assert_throws: function "() => {
+      div.animate({ easing: invalidEasing }, 2000);
+    }" did not throw
+FAIL Element.animate() does not accept invalid easing: 'frames' assert_throws: function "() => {
+      div.animate({ easing: invalidEasing }, 2000);
+    }" did not throw
+FAIL Element.animate() does not accept invalid easing: 'frames()' assert_throws: function "() => {
+      div.animate({ easing: invalidEasing }, 2000);
+    }" did not throw
+FAIL Element.animate() does not accept invalid easing: 'frames(,)' assert_throws: function "() => {
+      div.animate({ easing: invalidEasing }, 2000);
+    }" did not throw
+FAIL Element.animate() does not accept invalid easing: 'frames(a)' assert_throws: function "() => {
+      div.animate({ easing: invalidEasing }, 2000);
+    }" did not throw
+FAIL Element.animate() does not accept invalid easing: 'frames(2.0)' assert_throws: function "() => {
+      div.animate({ easing: invalidEasing }, 2000);
+    }" did not throw
+FAIL Element.animate() does not accept invalid easing: 'frames(2.5)' assert_throws: function "() => {
+      div.animate({ easing: invalidEasing }, 2000);
+    }" did not throw
+FAIL Element.animate() does not accept invalid easing: 'frames(2 3)' assert_throws: function "() => {
+      div.animate({ easing: invalidEasing }, 2000);
+    }" did not throw
+FAIL Element.animate() accepts a double as an options argument assert_equals: expected (string) "auto" but got (undefined) undefined
+FAIL Element.animate() accepts a KeyframeAnimationOptions argument assert_equals: expected (string) "forwards" but got (undefined) undefined
+FAIL Element.animate() accepts an absent options argument assert_equals: expected (string) "auto" but got (number) 0
+FAIL Element.animate() correctly sets the id attribute when no id is specified assert_equals: expected (string) "" but got (undefined) undefined
+FAIL Element.animate() correctly sets the id attribute assert_equals: expected (string) "test" but got (undefined) undefined
+PASS Element.animate() correctly sets the Animation's timeline 
+PASS Element.animate() correctly sets the Animation's timeline when triggered on an element in a different document 
+FAIL Element.animate() calls play on the Animation assert_equals: expected "pending" but got "running"
+FAIL CSSPseudoElement.animate() creates an Animation object assert_equals: expected Element node <div class="pseudo"></div> but got null
+FAIL CSSPseudoElement.animate() creates an Animation object targeting to the correct CSSPseudoElement object assert_equals: expected Element node <div class="pseudo"></div> but got null
+

@@ -1,8 +1,7 @@
 
-FAIL pause() a running animation div.animate is not a function. (In 'div.animate({}, 1000 * MS_PER_SEC)', 'div.animate' is undefined)
-FAIL pause() from idle div.animate is not a function. (In 'div.animate({}, 1000 * MS_PER_SEC)', 'div.animate' is undefined)
-FAIL pause() from idle with a negative playbackRate div.animate is not a function. (In 'div.animate({}, 1000 * MS_PER_SEC)', 'div.animate' is undefined)
-FAIL pause() from idle with a negative playbackRate and endless effect div.animate is not a function. (In 'div.animate({}, {duration: 1000 * MS_PER_SEC,
-                                   iterations: Infinity})', 'div.animate' is undefined)
-FAIL pause() on a finished animation div.animate is not a function. (In 'div.animate({}, 1000 * MS_PER_SEC)', 'div.animate' is undefined)
+PASS pause() a running animation 
+FAIL pause() from idle assert_equals: initially pause-pending expected "pending" but got "paused"
+PASS pause() from idle with a negative playbackRate 
+FAIL pause() from idle with a negative playbackRate and endless effect assert_throws: Expect InvalidStateError exception on calling pause() from idle with a negative playbackRate and infinite-duration animation function "function () { animation.pause(); }" did not throw
+PASS pause() on a finished animation 
 

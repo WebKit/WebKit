@@ -1,3 +1,74 @@
+2017-12-22  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Implement Element.animate()
+        https://bugs.webkit.org/show_bug.cgi?id=180402
+        <rdar://problem/35851353>
+
+        Reviewed by Dean Jackson.
+
+        Turning on Element.animate() means that a ton of WPT tests that would immediately fail when Element.animate()
+        was used now progressed to either PASS, FAIL or TIMEOUT. We update the output to match the updated behavior
+        and TestExpectations for some cases of flaky outputs due to incomplete implementations that had not surfaced
+        until now.
+
+        We're also removing a Blink test that uses Web Animations to animate a bogus "rotate" property.
+
+        * TestExpectations:
+        * http/wpt/web-animations/animation-model/animation-types/discrete-animation-expected.txt:
+        * http/wpt/web-animations/animation-model/combining-effects/effect-composition-expected.txt:
+        * http/wpt/web-animations/animation-model/keyframe-effects/effect-value-context-expected.txt:
+        * http/wpt/web-animations/animation-model/keyframe-effects/effect-value-overlapping-keyframes-expected.txt:
+        * http/wpt/web-animations/animation-model/keyframe-effects/effect-value-transformed-distance-expected.txt:
+        * http/wpt/web-animations/animation-model/keyframe-effects/effect-value-visibility-expected.txt:
+        * http/wpt/web-animations/interfaces/Animatable/animate-expected.txt:
+        * http/wpt/web-animations/interfaces/Animatable/animate-no-browsing-context-expected.txt:
+        * http/wpt/web-animations/interfaces/Animatable/getAnimations-expected.txt:
+        * http/wpt/web-animations/interfaces/Animation/cancel-expected.txt:
+        * http/wpt/web-animations/interfaces/Animation/effect-expected.txt:
+        * http/wpt/web-animations/interfaces/Animation/finish-expected.txt:
+        * http/wpt/web-animations/interfaces/Animation/finished-expected.txt:
+        * http/wpt/web-animations/interfaces/Animation/id-expected.txt:
+        * http/wpt/web-animations/interfaces/Animation/oncancel-expected.txt:
+        * http/wpt/web-animations/interfaces/Animation/onfinish-expected.txt:
+        * http/wpt/web-animations/interfaces/Animation/pause-expected.txt:
+        * http/wpt/web-animations/interfaces/Animation/play-expected.txt:
+        * http/wpt/web-animations/interfaces/Animation/playState-expected.txt:
+        * http/wpt/web-animations/interfaces/Animation/playbackRate-expected.txt:
+        * http/wpt/web-animations/interfaces/Animation/ready-expected.txt:
+        * http/wpt/web-animations/interfaces/Animation/startTime-expected.txt:
+        * http/wpt/web-animations/interfaces/AnimationEffectTiming/delay-expected.txt:
+        * http/wpt/web-animations/interfaces/AnimationEffectTiming/direction-expected.txt:
+        * http/wpt/web-animations/interfaces/AnimationEffectTiming/duration-expected.txt:
+        * http/wpt/web-animations/interfaces/AnimationEffectTiming/easing-expected.txt:
+        * http/wpt/web-animations/interfaces/AnimationEffectTiming/endDelay-expected.txt:
+        * http/wpt/web-animations/interfaces/AnimationEffectTiming/fill-expected.txt:
+        * http/wpt/web-animations/interfaces/AnimationEffectTiming/getAnimations-expected.txt:
+        * http/wpt/web-animations/interfaces/AnimationEffectTiming/getComputedStyle-expected.txt:
+        * http/wpt/web-animations/interfaces/AnimationEffectTiming/iterationStart-expected.txt:
+        * http/wpt/web-animations/interfaces/AnimationEffectTiming/iterations-expected.txt:
+        * http/wpt/web-animations/interfaces/AnimationTimeline/document-timeline-expected.txt:
+        * http/wpt/web-animations/interfaces/Document/getAnimations-expected.txt:
+        * http/wpt/web-animations/interfaces/KeyframeEffect/composite-expected.txt:
+        * http/wpt/web-animations/interfaces/KeyframeEffect/iterationComposite-expected.txt:
+        * http/wpt/web-animations/interfaces/KeyframeEffect/setTarget-expected.txt:
+        * http/wpt/web-animations/timing-model/animation-effects/active-time-expected.txt:
+        * http/wpt/web-animations/timing-model/animation-effects/current-iteration-expected.txt:
+        * http/wpt/web-animations/timing-model/animation-effects/local-time-expected.txt:
+        * http/wpt/web-animations/timing-model/animation-effects/phases-and-states-expected.txt:
+        * http/wpt/web-animations/timing-model/animation-effects/simple-iteration-progress-expected.txt:
+        * http/wpt/web-animations/timing-model/animations/canceling-an-animation-expected.txt:
+        * http/wpt/web-animations/timing-model/animations/finishing-an-animation-expected.txt:
+        * http/wpt/web-animations/timing-model/animations/pausing-an-animation-expected.txt:
+        * http/wpt/web-animations/timing-model/animations/playing-an-animation-expected.txt:
+        * http/wpt/web-animations/timing-model/animations/reversing-an-animation-expected.txt:
+        * http/wpt/web-animations/timing-model/animations/set-the-animation-start-time-expected.txt:
+        * http/wpt/web-animations/timing-model/animations/set-the-target-effect-of-an-animation-expected.txt:
+        * http/wpt/web-animations/timing-model/animations/set-the-timeline-of-an-animation-expected.txt:
+        * http/wpt/web-animations/timing-model/animations/updating-the-finished-state-expected.txt:
+        * http/wpt/web-animations/timing-model/time-transformations/transformed-progress-expected.txt:
+        * imported/blink/virtual/threaded/animations/compositor-rotate-zero-degrees-expected.html: Removed.
+        * imported/blink/virtual/threaded/animations/compositor-rotate-zero-degrees.html: Removed.
+
 2017-12-23  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Unreviewed GTK layout test gardening

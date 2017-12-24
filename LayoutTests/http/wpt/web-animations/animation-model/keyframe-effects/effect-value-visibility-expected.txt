@@ -1,5 +1,4 @@
 
-FAIL Visibility clamping behavior div.animate is not a function. (In 'div.animate({ visibility: ['hidden','visible'] },
-                         { duration: 100 * MS_PER_SEC, fill: 'both' })', 'div.animate' is undefined)
-FAIL Visibility clamping behavior with an easing that has a negative component undefined is not a function (near '...div.animate...')
+FAIL Visibility clamping behavior assert_equals: Visibility when progress > 0 due to linear easing expected "visible" but got "hidden"
+FAIL Visibility clamping behavior with an easing that has a negative component assert_equals: Visibility when progress > 0 due to cubic-bezier easing expected "visible" but got "hidden"
 

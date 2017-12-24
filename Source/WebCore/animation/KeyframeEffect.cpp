@@ -119,7 +119,7 @@ static inline ExceptionOr<void> processIterableKeyframes(ExecState& state, Stron
 
         String easing = "linear";
         std::optional<double> offset;
-        std::optional<KeyframeEffect::CompositeOperation> composite;
+        std::optional<CompositeOperation> composite;
 
         for (size_t j = 0; j < numberOfProperties; ++j) {
             auto ownPropertyName = ownPropertyNames[j];
@@ -129,7 +129,7 @@ static inline ExceptionOr<void> processIterableKeyframes(ExecState& state, Stron
             else if (ownPropertyName == "offset")
                 offset = convert<IDLNullable<IDLDouble>>(state, ownPropertyRawValue);
             else if (ownPropertyName == "composite")
-                composite = convert<IDLEnumeration<KeyframeEffect::CompositeOperation>>(state, ownPropertyRawValue);
+                composite = convert<IDLEnumeration<CompositeOperation>>(state, ownPropertyRawValue);
             else {
                 auto cssPropertyId = IDLAttributeNameToAnimationPropertyName(ownPropertyName.string());
                 if (CSSPropertyAnimation::isPropertyAnimatable(cssPropertyId))
@@ -339,11 +339,11 @@ static inline ExceptionOr<void> processPropertyIndexedKeyframes(ExecState& state
         processedKeyframes[i].easing = easings[i];
 
     // 12. If the “composite” member of the property-indexed keyframe is not an empty sequence:
-    Vector<KeyframeEffect::CompositeOperation> compositeModes;
-    if (WTF::holds_alternative<Vector<KeyframeEffect::CompositeOperation>>(propertyIndexedKeyframe.baseProperties.composite))
-        compositeModes = WTF::get<Vector<KeyframeEffect::CompositeOperation>>(propertyIndexedKeyframe.baseProperties.composite);
-    else if (WTF::holds_alternative<KeyframeEffect::CompositeOperation>(propertyIndexedKeyframe.baseProperties.composite))
-        compositeModes.append(WTF::get<KeyframeEffect::CompositeOperation>(propertyIndexedKeyframe.baseProperties.composite));
+    Vector<CompositeOperation> compositeModes;
+    if (WTF::holds_alternative<Vector<CompositeOperation>>(propertyIndexedKeyframe.baseProperties.composite))
+        compositeModes = WTF::get<Vector<CompositeOperation>>(propertyIndexedKeyframe.baseProperties.composite);
+    else if (WTF::holds_alternative<CompositeOperation>(propertyIndexedKeyframe.baseProperties.composite))
+        compositeModes.append(WTF::get<CompositeOperation>(propertyIndexedKeyframe.baseProperties.composite));
     if (!compositeModes.isEmpty()) {
         // 1. Let composite modes be a sequence of composite operations assigned from the “composite” member of property-indexed keyframe. If that member is a single composite
         //    operation, let composite modes be a sequence of length one, with the value of the “composite” as its single item.
@@ -363,13 +363,25 @@ static inline ExceptionOr<void> processPropertyIndexedKeyframes(ExecState& state
     return { };
 }
 
-ExceptionOr<Ref<KeyframeEffect>> KeyframeEffect::create(ExecState& state, Element* target, Strong<JSObject>&& keyframes)
+ExceptionOr<Ref<KeyframeEffect>> KeyframeEffect::create(ExecState& state, Element* target, Strong<JSObject>&& keyframes, std::optional<Variant<double, KeyframeEffectOptions>>&& options)
 {
     auto keyframeEffect = adoptRef(*new KeyframeEffect(target));
 
     auto setKeyframesResult = keyframeEffect->setKeyframes(state, WTFMove(keyframes));
     if (setKeyframesResult.hasException())
         return setKeyframesResult.releaseException();
+
+    if (options) {
+        auto optionsValue = options.value();
+        Variant<double, String> bindingsDuration;
+        if (WTF::holds_alternative<double>(optionsValue))
+            bindingsDuration = WTF::get<double>(optionsValue);
+        else
+            bindingsDuration = WTF::get<KeyframeEffectOptions>(optionsValue).duration;
+        auto setBindingsDurationResult = keyframeEffect->timing()->setBindingsDuration(WTFMove(bindingsDuration));
+        if (setBindingsDurationResult.hasException())
+            return setBindingsDurationResult.releaseException();
+    }
 
     return WTFMove(keyframeEffect);
 }

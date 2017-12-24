@@ -1,19 +1,19 @@
 
-FAIL Test exceptions when finishing non-running animation div.animate is not a function. (In 'div.animate(gKeyFrames, 100 * MS_PER_SEC)', 'div.animate' is undefined)
-FAIL Test exceptions when finishing infinite animation div.animate is not a function. (In 'div.animate(gKeyFrames,
-                              {duration : 100 * MS_PER_SEC,
-                               iterations : Infinity})', 'div.animate' is undefined)
-FAIL Test finishing of animation div.animate is not a function. (In 'div.animate(gKeyFrames, 100 * MS_PER_SEC)', 'div.animate' is undefined)
-FAIL Test finishing of animation with a current time past the effect end div.animate is not a function. (In 'div.animate(gKeyFrames, 100 * MS_PER_SEC)', 'div.animate' is undefined)
-FAIL Test finishing of reversed animation div.animate is not a function. (In 'div.animate(gKeyFrames, 100 * MS_PER_SEC)', 'div.animate' is undefined)
-FAIL Test finishing of reversed animation with a current time less than zero div.animate is not a function. (In 'div.animate(gKeyFrames, 100 * MS_PER_SEC)', 'div.animate' is undefined)
-FAIL Test finish() while paused div.animate is not a function. (In 'div.animate(gKeyFrames, 100 * MS_PER_SEC)', 'div.animate' is undefined)
-FAIL Test finish() while pause-pending with positive playbackRate div.animate is not a function. (In 'div.animate(gKeyFrames, 100 * MS_PER_SEC)', 'div.animate' is undefined)
-FAIL Test finish() while pause-pending with negative playbackRate div.animate is not a function. (In 'div.animate(gKeyFrames, 100 * MS_PER_SEC)', 'div.animate' is undefined)
-FAIL Test finish() while play-pending div.animate is not a function. (In 'div.animate(gKeyFrames, 100 * MS_PER_SEC)', 'div.animate' is undefined)
-FAIL Test finish() during aborted pause div.animate is not a function. (In 'div.animate(gKeyFrames, 100 * MS_PER_SEC)', 'div.animate' is undefined)
-FAIL Test resetting of computed style div.animate is not a function. (In 'div.animate(gKeyFrames, 100 * MS_PER_SEC)', 'div.animate' is undefined)
-FAIL Test finish() resolves finished promise synchronously div.animate is not a function. (In 'div.animate(gKeyFrames, 100 * MS_PER_SEC)', 'div.animate' is undefined)
+PASS Test exceptions when finishing non-running animation 
+FAIL Test exceptions when finishing infinite animation assert_throws: function "function () {
+    animation.finish();
+  }" did not throw
+PASS Test finishing of animation 
+FAIL Test finishing of animation with a current time past the effect end animation.effect.getComputedTiming is not a function. (In 'animation.effect.getComputedTiming()', 'animation.effect.getComputedTiming' is undefined)
+FAIL Test finishing of reversed animation assert_equals: After finishing a reversed animation the currentTime should be set to zero expected 0 but got -0
+PASS Test finishing of reversed animation with a current time less than zero 
+PASS Test finish() while paused 
+PASS Test finish() while pause-pending with positive playbackRate 
+PASS Test finish() while pause-pending with negative playbackRate 
+PASS Test finish() while play-pending 
+PASS Test finish() during aborted pause 
+PASS Test resetting of computed style 
+PASS Test finish() resolves finished promise synchronously 
 FAIL Test finish() resolves finished promise synchronously with an animation without a target Can't find variable: KeyframeEffectReadOnly
 FAIL Test normally finished animation resolves finished promise synchronously with an animation without a target Can't find variable: KeyframeEffectReadOnly
 

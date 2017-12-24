@@ -1,7 +1,9 @@
 
-FAIL Test default value createDiv(t).animate is not a function. (In 'createDiv(t).animate(null)', 'createDiv(t).animate' is undefined)
-FAIL Test that changing the iterationStart affects computed timing when backwards-filling undefined is not a function (near '...div.animate...')
-FAIL Test that changing the iterationStart affects computed timing during the active phase undefined is not a function (near '...div.animate...')
-FAIL Test that changing the iterationStart affects computed timing when forwards-filling undefined is not a function (near '...div.animate...')
-FAIL Using invalid values should throw TypeError div.animate is not a function. (In 'div.animate(null)', 'div.animate' is undefined)
+FAIL Test default value assert_equals: expected (number) 0 but got (undefined) undefined
+FAIL Test that changing the iterationStart affects computed timing when backwards-filling anim.effect.getComputedTiming is not a function. (In 'anim.effect.getComputedTiming()', 'anim.effect.getComputedTiming' is undefined)
+FAIL Test that changing the iterationStart affects computed timing during the active phase anim.effect.getComputedTiming is not a function. (In 'anim.effect.getComputedTiming()', 'anim.effect.getComputedTiming' is undefined)
+FAIL Test that changing the iterationStart affects computed timing when forwards-filling anim.effect.getComputedTiming is not a function. (In 'anim.effect.getComputedTiming()', 'anim.effect.getComputedTiming' is undefined)
+FAIL Using invalid values should throw TypeError assert_throws: setting -1 function "function () {
+      anim.effect.timing.iterationStart = invalid;
+    }" did not throw
 

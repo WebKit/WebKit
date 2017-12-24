@@ -1,9 +1,9 @@
 
-FAIL Setting the start time of an animation without an active timeline assert_equals: Start time remains null after setting current time expected (object) null but got (number) -999.896
-FAIL Setting an unresolved start time an animation without an active timeline does not clear the current time assert_equals: Start time remains null after setting current time expected (object) null but got (number) -999.896
-FAIL Setting the start time clears the hold time assert_equals: Animation reports it is running after setting a resolved start time expected (string) "running" but got (undefined) undefined
-FAIL Setting an unresolved start time sets the hold time assert_equals: expected (string) "running" but got (undefined) undefined
-FAIL Setting the start time resolves a pending ready promise undefined is not an object (evaluating 'animation.ready.then')
-FAIL Setting the start time resolves a pending pause task undefined is not an object (evaluating 'animation.ready.then')
-FAIL Setting the start time updates the finished state assert_equals: Seeked to finished state using the startTime expected (string) "finished" but got (undefined) undefined
+FAIL Setting the start time of an animation without an active timeline assert_equals: Setting the start time clears the current time expected (object) null but got (number) 1000
+PASS Setting an unresolved start time an animation without an active timeline does not clear the current time 
+FAIL Setting the start time clears the hold time assert_approx_equals: The current time is calculated from the start time, not the hold time expected 2000 +/- 0.0005 but got 1000
+FAIL Setting an unresolved start time sets the hold time assert_approx_equals: Hold time is set after start time is made unresolved expected a number but got a "object"
+FAIL Setting the start time resolves a pending ready promise assert_equals: Animation is in play-pending state expected "pending" but got "running"
+FAIL Setting the start time resolves a pending pause task assert_equals: Animation is in pause-pending state expected "pending" but got "paused"
+FAIL Setting the start time updates the finished state animation.effect.getComputedTiming is not a function. (In 'animation.effect.getComputedTiming()', 'animation.effect.getComputedTiming' is undefined)
 

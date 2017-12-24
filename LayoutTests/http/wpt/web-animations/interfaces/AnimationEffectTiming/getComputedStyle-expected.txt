@@ -1,16 +1,12 @@
 
-FAIL changed duration immediately updates its computed styles div.animate is not a function. (In 'div.animate({ opacity: [ 0, 1 ] }, 100000)', 'div.animate' is undefined)
-FAIL changed iterations immediately updates its computed styles div.animate is not a function. (In 'div.animate({ opacity: [ 0, 1 ] }, 100000)', 'div.animate' is undefined)
-FAIL change currentTime when fill is none and endDelay is positive div.animate is not a function. (In 'div.animate({ opacity: [ 1, 0 ] },
-                         { duration: 10000, endDelay: 1000, fill: 'none' })', 'div.animate' is undefined)
-FAIL change currentTime when fill forwards and endDelay is positive undefined is not a function (near '...div.animate...')
-FAIL change currentTime when fill none and endDelay is negative div.animate is not a function. (In 'div.animate({ opacity: [ 1, 0 ] },
-                         { duration: 10000, endDelay: -5000, fill: 'none' })', 'div.animate' is undefined)
-FAIL change currentTime when fill forwards and endDelay is negative undefined is not a function (near '...div.animate...')
-FAIL change direction from "normal" to "reverse" div.animate is not a function. (In 'div.animate({ opacity: [ 0, 1 ] },
-                         { duration: 10000,
-                           direction: 'normal' })', 'div.animate' is undefined)
-FAIL change direction from "normal" to "alternate" undefined is not a function (near '...div.animate...')
-FAIL change direction from "normal" to "alternate-reverse" undefined is not a function (near '...div.animate...')
-FAIL change direction from "normal" to "reverse" when currentTime is 0 undefined is not a function (near '...div.animate...')
+FAIL changed duration immediately updates its computed styles assert_equals: set double duration expected "0.5" but got "1"
+FAIL changed iterations immediately updates its computed styles assert_equals: set 2 iterations expected "0" but got "1"
+FAIL change currentTime when fill is none and endDelay is positive assert_equals: set currentTime during duration expected "0.1" but got "0.10000000149011612"
+FAIL change currentTime when fill forwards and endDelay is positive assert_equals: set currentTime just a little before duration expected "0.0001" but got "0.00009999999747378752"
+FAIL change currentTime when fill none and endDelay is negative assert_equals: set currentTime before endTime expected "0.9" but got "0.8999999761581421"
+FAIL change currentTime when fill forwards and endDelay is negative assert_equals: set currentTime before endTime expected "0.9" but got "0.8999999761581421"
+FAIL change direction from "normal" to "reverse" assert_equals: change direction from "normal" to "reverse" expected "0.3" but got "0.699999988079071"
+FAIL change direction from "normal" to "alternate" assert_equals: change direction from "normal" to "alternate" expected "0.3" but got "1"
+FAIL change direction from "normal" to "alternate-reverse" assert_equals: change direction from "normal" to "alternate-reverse" expected "0.7" but got "1"
+FAIL change direction from "normal" to "reverse" when currentTime is 0 assert_equals: change direction from "normal" to "reverse" at the starting point expected "1" but got "0"
 

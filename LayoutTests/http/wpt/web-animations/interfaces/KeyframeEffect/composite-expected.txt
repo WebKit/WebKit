@@ -1,6 +1,6 @@
 
-FAIL Default value createDiv(t).animate is not a function. (In 'createDiv(t).animate(null)', 'createDiv(t).animate' is undefined)
-FAIL Change composite value createDiv(t).animate is not a function. (In 'createDiv(t).animate(null)', 'createDiv(t).animate' is undefined)
-FAIL Unspecified keyframe composite value when setting effect composite createDiv(t).animate is not a function. (In 'createDiv(t).animate({ left: '10px' })', 'createDiv(t).animate' is undefined)
-FAIL Specified keyframe composite value when setting effect composite createDiv(t).animate is not a function. (In 'createDiv(t).animate({ left: '10px', composite: 'replace' })', 'createDiv(t).animate' is undefined)
+FAIL Default value assert_equals: The default value should be replace expected (string) "replace" but got (undefined) undefined
+PASS Change composite value 
+FAIL Unspecified keyframe composite value when setting effect composite anim.effect.getKeyframes is not a function. (In 'anim.effect.getKeyframes()', 'anim.effect.getKeyframes' is undefined)
+FAIL Specified keyframe composite value when setting effect composite anim.effect.getKeyframes is not a function. (In 'anim.effect.getKeyframes()', 'anim.effect.getKeyframes' is undefined)
 

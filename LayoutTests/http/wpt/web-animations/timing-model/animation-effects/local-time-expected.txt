@@ -1,4 +1,4 @@
 
-FAIL Local time is current time for animation effects associated with an animation createDiv(t).animate is not a function. (In 'createDiv(t).animate(null, 10 * MS_PER_SEC)', 'createDiv(t).animate' is undefined)
+FAIL Local time is current time for animation effects associated with an animation anim.effect.getComputedTiming is not a function. (In 'anim.effect.getComputedTiming()', 'anim.effect.getComputedTiming' is undefined)
 FAIL Local time is unresolved for animation effects not associated with an animation effect.getComputedTiming is not a function. (In 'effect.getComputedTiming()', 'effect.getComputedTiming' is undefined)
 

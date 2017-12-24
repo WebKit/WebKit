@@ -355,11 +355,18 @@ JS_BINDING_IDLS = \
     $(WebCore)/animation/Animatable.idl \
     $(WebCore)/animation/AnimationEffect.idl \
     $(WebCore)/animation/AnimationEffectTiming.idl \
+    $(WebCore)/animation/AnimationEffectTimingProperties.idl \
     $(WebCore)/animation/AnimationPlaybackEvent.idl \
     $(WebCore)/animation/AnimationPlaybackEventInit.idl \
     $(WebCore)/animation/AnimationTimeline.idl \
+    $(WebCore)/animation/CompositeOperation.idl \
     $(WebCore)/animation/DocumentTimeline.idl \
+    $(WebCore)/animation/FillMode.idl \
+    $(WebCore)/animation/IterationCompositeOperation.idl \
+    $(WebCore)/animation/KeyframeAnimationOptions.idl \
     $(WebCore)/animation/KeyframeEffect.idl \
+    $(WebCore)/animation/KeyframeEffectOptions.idl \
+    $(WebCore)/animation/PlaybackDirection.idl \
     $(WebCore)/animation/WebAnimation.idl \
     $(WebCore)/crypto/CryptoAlgorithmParameters.idl \
     $(WebCore)/crypto/CryptoKey.idl \

@@ -69,7 +69,7 @@ void DocumentTimeline::detachFromDocument()
 
 std::optional<Seconds> DocumentTimeline::currentTime()
 {
-    if (m_paused || !m_document)
+    if (m_paused || !m_document || !m_document->domWindow())
         return AnimationTimeline::currentTime();
 
     if (!m_cachedCurrentTime) {

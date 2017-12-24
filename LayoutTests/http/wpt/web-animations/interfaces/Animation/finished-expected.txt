@@ -1,24 +1,26 @@
 
-FAIL Test pausing then playing does not change the finished promise div.animate is not a function. (In 'div.animate({}, 100 * MS_PER_SEC)', 'div.animate' is undefined)
-FAIL Test restarting a finished animation div.animate is not a function. (In 'div.animate({}, 100 * MS_PER_SEC)', 'div.animate' is undefined)
-FAIL Test restarting a reversed finished animation div.animate is not a function. (In 'div.animate({}, 100 * MS_PER_SEC)', 'div.animate' is undefined)
-FAIL Test redundant finishing of animation div.animate is not a function. (In 'div.animate({}, 100 * MS_PER_SEC)', 'div.animate' is undefined)
-FAIL Finished promise does not resolve when paused div.animate is not a function. (In 'div.animate({}, 100 * MS_PER_SEC)', 'div.animate' is undefined)
-FAIL Finished promise does not resolve when pause-pending div.animate is not a function. (In 'div.animate({}, 100 * MS_PER_SEC)', 'div.animate' is undefined)
-FAIL The finished promise is fulfilled with its Animation div.animate is not a function. (In 'div.animate({}, 100 * MS_PER_SEC)', 'div.animate' is undefined)
-FAIL finished promise is rejected when an animation is cancelled by calling cancel() div.animate is not a function. (In 'div.animate({}, 100 * MS_PER_SEC)', 'div.animate' is undefined)
-FAIL cancelling an already-finished animation replaces the finished promise div.animate is not a function. (In 'div.animate({}, 100 * MS_PER_SEC)', 'div.animate' is undefined)
-FAIL cancelling an idle animation still replaces the finished promise div.animate is not a function. (In 'div.animate({}, 100 * MS_PER_SEC)', 'div.animate' is undefined)
-FAIL Test finished promise changes for animation duration changes div.animate is not a function. (In 'div.animate({}, 100 * MS_PER_SEC)', 'div.animate' is undefined)
-FAIL Test finished promise changes when playbackRate == 0 div.animate is not a function. (In 'div.animate({}, 100 * MS_PER_SEC)', 'div.animate' is undefined)
-FAIL Test finished promise resolves when reaching to the natural boundary. div.animate is not a function. (In 'div.animate({}, 100 * MS_PER_SEC)', 'div.animate' is undefined)
-FAIL Test finished promise changes when a prior finished promise resolved and the animation falls out finished state div.animate is not a function. (In 'div.animate({}, 100 * MS_PER_SEC)', 'div.animate' is undefined)
-FAIL Test no new finished promise generated when finished state is checked asynchronously div.animate is not a function. (In 'div.animate({}, 100 * MS_PER_SEC)', 'div.animate' is undefined)
-FAIL Test new finished promise generated when finished state is checked synchronously div.animate is not a function. (In 'div.animate({}, 100 * MS_PER_SEC)', 'div.animate' is undefined)
-FAIL Test synchronous finished promise resolved even if finished state is changed soon div.animate is not a function. (In 'div.animate({}, 100 * MS_PER_SEC)', 'div.animate' is undefined)
-FAIL Test synchronous finished promise resolved even if asynchronous finished promise happens just before synchronous promise div.animate is not a function. (In 'div.animate({}, 100 * MS_PER_SEC)', 'div.animate' is undefined)
-FAIL Test finished promise is not resolved when the animation falls out finished state immediately div.animate is not a function. (In 'div.animate({}, 100 * MS_PER_SEC)', 'div.animate' is undefined)
-FAIL Test finished promise is not resolved once the animation falls out finished state even though the current finished promise is generated soon after animation state became finished div.animate is not a function. (In 'div.animate({}, 100 * MS_PER_SEC)', 'div.animate' is undefined)
-FAIL Finished promise should be resolved after the ready promise is resolved createDiv(t).animate is not a function. (In 'createDiv(t).animate(null, 100 * MS_PER_SEC)', 'createDiv(t).animate' is undefined)
-FAIL Finished promise should be rejected after the ready promise is rejected createDiv(t).animate is not a function. (In 'createDiv(t).animate(null, 100 * MS_PER_SEC)', 'createDiv(t).animate' is undefined)
+Harness Error (TIMEOUT), message = null
+
+PASS Test pausing then playing does not change the finished promise 
+PASS Test restarting a finished animation 
+TIMEOUT Test restarting a reversed finished animation Test timed out
+NOTRUN Test redundant finishing of animation 
+NOTRUN Finished promise does not resolve when paused 
+NOTRUN Finished promise does not resolve when pause-pending 
+NOTRUN The finished promise is fulfilled with its Animation 
+NOTRUN finished promise is rejected when an animation is cancelled by calling cancel() 
+NOTRUN cancelling an already-finished animation replaces the finished promise 
+NOTRUN cancelling an idle animation still replaces the finished promise 
+NOTRUN Test finished promise changes for animation duration changes 
+NOTRUN Test finished promise changes when playbackRate == 0 
+NOTRUN Test finished promise resolves when reaching to the natural boundary. 
+NOTRUN Test finished promise changes when a prior finished promise resolved and the animation falls out finished state 
+PASS Test no new finished promise generated when finished state is checked asynchronously 
+PASS Test new finished promise generated when finished state is checked synchronously 
+NOTRUN Test synchronous finished promise resolved even if finished state is changed soon 
+NOTRUN Test synchronous finished promise resolved even if asynchronous finished promise happens just before synchronous promise 
+NOTRUN Test finished promise is not resolved when the animation falls out finished state immediately 
+NOTRUN Test finished promise is not resolved once the animation falls out finished state even though the current finished promise is generated soon after animation state became finished 
+NOTRUN Finished promise should be resolved after the ready promise is resolved 
+NOTRUN Finished promise should be rejected after the ready promise is rejected 
 

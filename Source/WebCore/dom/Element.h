@@ -28,6 +28,7 @@
 #include "Document.h"
 #include "ElementData.h"
 #include "HTMLNames.h"
+#include "KeyframeAnimationOptions.h"
 #include "ScrollToOptions.h"
 #include "ScrollTypes.h"
 #include "ShadowRootMode.h"
@@ -556,6 +557,7 @@ public:
     AccessibleNode* existingAccessibleNode() const;
     AccessibleNode* accessibleNode();
 
+    ExceptionOr<Ref<WebAnimation>> animate(JSC::ExecState&, JSC::Strong<JSC::JSObject>&&, std::optional<Variant<double, KeyframeAnimationOptions>>&&);
     Vector<RefPtr<WebAnimation>> getAnimations();
 
 protected:

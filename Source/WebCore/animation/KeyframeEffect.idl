@@ -27,13 +27,11 @@
     EnabledAtRuntime=WebAnimations,
     ConstructorMayThrowException,
     ConstructorCallWith=ScriptState,
-    Constructor(Element? target, object? keyframes)
+    Constructor(Element? target, object? keyframes, optional (unrestricted double or KeyframeEffectOptions) options)
 ] interface KeyframeEffect : AnimationEffect {
     readonly attribute Element? target;
     [MayThrowException, CallWith=ScriptState] void setKeyframes(object? keyframes);
 };
-
-enum CompositeOperation { "replace", "add", "accumulate" };
 
 dictionary BasePropertyIndexedKeyframe {
     (double? or sequence<double?>) offset = [];

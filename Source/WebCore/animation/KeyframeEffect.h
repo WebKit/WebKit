@@ -26,7 +26,10 @@
 #pragma once
 
 #include "AnimationEffect.h"
+#include "AnimationEffectTimingProperties.h"
 #include "CSSPropertyBlendingClient.h"
+#include "CompositeOperation.h"
+#include "KeyframeEffectOptions.h"
 #include "KeyframeList.h"
 #include "RenderStyle.h"
 #include <wtf/Ref.h>
@@ -38,10 +41,8 @@ class Element;
 class KeyframeEffect final : public AnimationEffect
     , public CSSPropertyBlendingClient {
 public:
-    static ExceptionOr<Ref<KeyframeEffect>> create(JSC::ExecState&, Element*, JSC::Strong<JSC::JSObject>&&);
+    static ExceptionOr<Ref<KeyframeEffect>> create(JSC::ExecState&, Element*, JSC::Strong<JSC::JSObject>&&, std::optional<Variant<double, KeyframeEffectOptions>>&&);
     ~KeyframeEffect() { }
-
-    enum class CompositeOperation { Replace, Add, Accumulate };
 
     struct BasePropertyIndexedKeyframe {
         Variant<std::nullptr_t, double, Vector<std::optional<double>>> offset;

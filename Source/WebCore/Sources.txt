@@ -2299,6 +2299,7 @@ JSAnalyserNode.cpp
 JSAnimationEvent.cpp
 JSAnimationEffect.cpp
 JSAnimationEffectTiming.cpp
+JSAnimationEffectTimingProperties.cpp
 JSAnimationPlaybackEvent.cpp
 JSAnimationPlaybackEventInit.cpp
 JSAnimationTimeline.cpp
@@ -2374,6 +2375,7 @@ JSCloseEvent.cpp
 JSCommandLineAPIHost.cpp
 JSComment.cpp
 JSCompositionEvent.cpp
+JSCompositeOperation.cpp
 JSConvolverNode.cpp
 JSCoordinates.cpp
 JSCountQueuingStrategy.cpp
@@ -2493,6 +2495,7 @@ JSFileSystemEntriesCallback.cpp
 JSFileSystemEntry.cpp
 JSFileSystemEntryCallback.cpp
 JSFileSystemFileEntry.cpp
+JSFillMode.cpp
 JSFocusEvent.cpp
 JSFontFace.cpp
 JSFontFaceSet.cpp
@@ -2612,9 +2615,12 @@ JSInspectorFrontendHost.cpp
 JSIntersectionObserver.cpp
 JSIntersectionObserverCallback.cpp
 JSIntersectionObserverEntry.cpp
+JSIterationCompositeOperation.cpp
 JSJsonWebKey.cpp
 JSKeyboardEvent.cpp
+JSKeyframeAnimationOptions.cpp
 JSKeyframeEffect.cpp
+JSKeyframeEffectOptions.cpp
 JSLocation.cpp
 JSLongRange.cpp
 JSMediaCapabilities.cpp
@@ -2716,6 +2722,7 @@ JSPerformanceObserverEntryList.cpp
 JSPerformanceResourceTiming.cpp
 JSPerformanceTiming.cpp
 JSPeriodicWave.cpp
+JSPlaybackDirection.cpp
 JSPopStateEvent.cpp
 JSPositionCallback.cpp
 JSPositionError.cpp
