@@ -1155,8 +1155,10 @@ void DragController::doImageDrag(Element& element, const IntPoint& dragOrigin, c
     } else {
         if (CachedImage* cachedImage = getCachedImage(element)) {
             dragImage = DragImage { createDragImageIconForCachedImageFilename(cachedImage->response().suggestedFilename()) };
-            if (dragImage)
+            if (dragImage) {
+                dragImage = DragImage { platformAdjustDragImageForDeviceScaleFactor(dragImage.get(), m_page.deviceScaleFactor()) };
                 scaledOrigin = IntPoint(DragIconRightInset - dragImageSize(dragImage.get()).width(), DragIconBottomInset);
+            }
         }
     }
 
