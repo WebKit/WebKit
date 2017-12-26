@@ -1320,6 +1320,7 @@ webkit.org/b/180803 http/tests/media/hls/video-cookie.html [ Crash ]
 
 webkit.org/b/181138 fast/scrolling/rtl-scrollbars-animation-property.html [ Crash Failure ]
 webkit.org/b/181138 intersection-observer/intersection-observer-entry-interface.html [ Crash Pass ]
+webkit.org/b/181138 fast/html/menuitem-element.html [ Pass Crash ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Crashing tests
@@ -1898,8 +1899,6 @@ webkit.org/b/179756 imported/w3c/web-platform-tests/WebCryptoAPI/wrapKey_unwrapK
 webkit.org/b/180095 imported/w3c/web-platform-tests/WebCryptoAPI/sign_verify/test_rsa_pss.https.html [ Pass Failure ]
 
 webkit.org/b/180369 http/tests/security/mixedContent/insecure-xhr-in-main-frame.html [ Pass Crash ]
-
-webkit.org/b/180806 fast/html/menuitem-element.html [ Pass Crash ]
 
 webkit.org/b/179174 inspector/console/webcore-logging.html [ Failure Crash ]
 
