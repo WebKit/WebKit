@@ -4893,7 +4893,7 @@ void SpeculativeJIT::compile(Node* node)
         m_jit.exceptionCheck();
 #else
         GPRTemporary scratch(this);
-        JSValueRegsFlushedCallResult result(this);
+        JSValueRegsTemporary result(this);
 
         GPRReg scratchGPR = scratch.gpr();
         JSValueRegs resultRegs = result.regs();

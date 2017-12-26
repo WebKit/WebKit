@@ -1,3 +1,22 @@
+2017-12-26  Zan Dobersek  <zdobersek@igalia.com>
+
+        REGRESSION(r226269): 60 JSC test failures on ARMv7
+        https://bugs.webkit.org/show_bug.cgi?id=181163
+
+        Reviewed by Yusuke Suzuki.
+
+        In r226269, DFG::SpeculativeJIT::compile() changed behavior for the
+        GetDirectPname operation on non-x86 platforms, switching to using
+        GPRFlushedCallResult registers for the payload and tag pair of the
+        return value (through the JSValueRegsFlushedCallResult struct). This
+        tripped about 60 test cases on ARMv7.
+
+        As before this change, GPRTemporary registers should be used, but this
+        can now be done through a JSValueRegsTemporary object.
+
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+
 2017-12-22  Caio Lima  <ticaiolima@gmail.com>
 
         [JSC] IntlCollator and IntlNumberFormat has static fields with same name
