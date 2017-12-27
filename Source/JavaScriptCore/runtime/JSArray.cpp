@@ -339,7 +339,7 @@ bool JSArray::unshiftCountSlowCase(const AbstractLocker&, VM& vm, DeferGC&, bool
 
     unsigned length = storage->length();
     unsigned oldVectorLength = storage->vectorLength();
-    unsigned usedVectorLength = min(oldVectorLength, length);
+    unsigned usedVectorLength = std::min(oldVectorLength, length);
     ASSERT(usedVectorLength <= MAX_STORAGE_VECTOR_LENGTH);
     // Check that required vector length is possible, in an overflow-safe fashion.
     if (count > MAX_STORAGE_VECTOR_LENGTH - usedVectorLength)
@@ -353,7 +353,7 @@ bool JSArray::unshiftCountSlowCase(const AbstractLocker&, VM& vm, DeferGC&, bool
     // FIXME: This code should be fixed to avoid internal fragmentation. It's not super high
     // priority since increaseVectorLength() will "fix" any mistakes we make, but it would be cool
     // to get this right eventually.
-    unsigned desiredCapacity = min(MAX_STORAGE_VECTOR_LENGTH, max(BASE_ARRAY_STORAGE_VECTOR_LEN, requiredVectorLength) << 1);
+    unsigned desiredCapacity = std::min(MAX_STORAGE_VECTOR_LENGTH, std::max(BASE_ARRAY_STORAGE_VECTOR_LEN, requiredVectorLength) << 1);
 
     // Step 2:
     // We're either going to choose to allocate a new ArrayStorage, or we're going to reuse the existing one.
@@ -388,7 +388,7 @@ bool JSArray::unshiftCountSlowCase(const AbstractLocker&, VM& vm, DeferGC&, bool
         postCapacity = newStorageCapacity - requiredVectorLength;
     else if (length < storage->vectorLength()) {
         // Atomic decay, + the post-capacity cannot be greater than what is available.
-        postCapacity = min((storage->vectorLength() - length) >> 1, newStorageCapacity - requiredVectorLength);
+        postCapacity = std::min((storage->vectorLength() - length) >> 1, newStorageCapacity - requiredVectorLength);
         // If we're moving contents within the same allocation, the post-capacity is being reduced.
         ASSERT(newAllocBase != butterfly->base(structure) || postCapacity < storage->vectorLength() - length);
     }
@@ -444,7 +444,7 @@ bool JSArray::setLengthWithArrayStorage(ExecState* exec, unsigned newLength, boo
         if (newLength < length) {
             // Copy any keys we might be interested in into a vector.
             Vector<unsigned, 0, UnsafeVectorOverflow> keys;
-            keys.reserveInitialCapacity(min(map->size(), static_cast<size_t>(length - newLength)));
+            keys.reserveInitialCapacity(std::min(map->size(), static_cast<size_t>(length - newLength)));
             SparseArrayValueMap::const_iterator end = map->end();
             for (SparseArrayValueMap::const_iterator it = map->begin(); it != end; ++it) {
                 unsigned index = static_cast<unsigned>(it->key);
@@ -479,7 +479,7 @@ bool JSArray::setLengthWithArrayStorage(ExecState* exec, unsigned newLength, boo
 
     if (newLength < length) {
         // Delete properties from the vector.
-        unsigned usedVectorLength = min(length, storage->vectorLength());
+        unsigned usedVectorLength = std::min(length, storage->vectorLength());
         for (unsigned i = newLength; i < usedVectorLength; ++i) {
             WriteBarrier<Unknown>& valueSlot = storage->m_vector[i];
             bool hadValue = !!valueSlot;
@@ -800,7 +800,7 @@ bool JSArray::shiftCountWithArrayStorage(VM& vm, unsigned startIndex, unsigned c
     if (startIndex + count > vectorLength)
         count = vectorLength - startIndex;
     
-    unsigned usedVectorLength = min(vectorLength, oldLength);
+    unsigned usedVectorLength = std::min(vectorLength, oldLength);
     
     unsigned numElementsBeforeShiftRegion = startIndex;
     unsigned firstIndexAfterShiftRegion = startIndex + count;
@@ -1180,7 +1180,7 @@ void JSArray::fillArgList(ExecState* exec, MarkedArgumentBuffer& args)
         ArrayStorage* storage = butterfly->arrayStorage();
         
         vector = storage->m_vector;
-        vectorEnd = min(storage->length(), storage->vectorLength());
+        vectorEnd = std::min(storage->length(), storage->vectorLength());
         break;
     }
         
@@ -1252,7 +1252,7 @@ void JSArray::copyToArguments(ExecState* exec, VirtualRegister firstElementDest,
     case ARRAY_WITH_ARRAY_STORAGE_INDEXING_TYPES: {
         ArrayStorage* storage = butterfly->arrayStorage();
         vector = storage->m_vector;
-        vectorEnd = min(length, storage->vectorLength());
+        vectorEnd = std::min(length, storage->vectorLength());
         break;
     }
         

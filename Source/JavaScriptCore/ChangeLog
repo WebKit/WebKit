@@ -1,3 +1,19 @@
+2017-12-26  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        REGRESSION(r225769): Build error with constexpr std::max // std::min in libdstdc++4
+        https://bugs.webkit.org/show_bug.cgi?id=181160
+
+        Reviewed by Myles C. Maxfield.
+
+        Disambiguate usage of min and max (Use the version from stdlib).
+
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::unshiftCountSlowCase):
+        (JSC::JSArray::setLengthWithArrayStorage):
+        (JSC::JSArray::shiftCountWithArrayStorage):
+        (JSC::JSArray::fillArgList):
+        (JSC::JSArray::copyToArguments):
+
 2017-12-27  Zan Dobersek  <zdobersek@igalia.com>
 
         REGRESSION(r225913): about 30 JSC test failures on ARMv7

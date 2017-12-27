@@ -609,7 +609,7 @@ MediaTime MediaPlayerPrivateAVFoundationCF::currentMediaTime() const
 
     CMTime itemTime = AVCFPlayerItemGetCurrentTime(avPlayerItem(m_avfWrapper));
     if (CMTIME_IS_NUMERIC(itemTime))
-        return max(PAL::toMediaTime(itemTime), MediaTime::zeroTime());
+        return std::max(PAL::toMediaTime(itemTime), MediaTime::zeroTime());
 
     return MediaTime::zeroTime();
 }

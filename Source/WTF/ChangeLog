@@ -1,3 +1,18 @@
+2017-12-26  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        REGRESSION(r225769): Build error with constexpr std::max // std::min in libdstdc++4
+        https://bugs.webkit.org/show_bug.cgi?id=181160
+
+        Reviewed by Myles C. Maxfield.
+
+        In libstdc++-4 std::max and std::min are not annotated with constexpr.
+        This patch adds a WTF::min and WTF::max for using where a constexpr result is expected.
+        Related: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=60271
+
+        * wtf/StdLibExtras.h:
+        (WTF::min):
+        (WTF::max):
+
 2017-12-26  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Remove std::chrono completely

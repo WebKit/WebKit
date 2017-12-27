@@ -90,8 +90,6 @@ using JSC::JSValue;
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
 
-using std::min;
-
 using namespace WTF;
 
 namespace WebCore {
@@ -1078,7 +1076,7 @@ NPError PluginView::handlePost(const char* url, const char* target, uint32_t len
                 String contentLength = headerFields.get(HTTPHeaderName::ContentLength);
 
                 if (!contentLength.isNull())
-                    dataLength = min(contentLength.toInt(), (int)dataLength);
+                    dataLength = std::min(contentLength.toInt(), (int)dataLength);
                 headerFields.remove(HTTPHeaderName::ContentLength);
 
                 postData += location;
