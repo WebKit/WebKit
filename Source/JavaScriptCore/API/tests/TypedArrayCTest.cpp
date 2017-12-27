@@ -27,7 +27,7 @@
 #include "TypedArrayCTest.h"
 
 #include "JavaScript.h"
-#include <cmath.h>
+#include <cmath>
 #include <limits.h>
 #include <math.h>
 #include <stdio.h>
