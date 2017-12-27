@@ -1,3 +1,17 @@
+2017-12-26  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Remove std::chrono completely
+        https://bugs.webkit.org/show_bug.cgi?id=181165
+
+        Reviewed by Konstantin Tokarev.
+
+        WTF::currentCPUTime now returns WTF::Seconds.
+        We also add the implementaiton for Linux and FreeBSD.
+
+        * wtf/CurrentTime.cpp:
+        (WTF::currentCPUTime):
+        * wtf/CurrentTime.h:
+
 2017-12-22  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Unreviewed, try to fix the Sierra build after r226277.

@@ -33,6 +33,7 @@
 
 #include "config.h"
 #include "CurrentTime.h"
+#include "MonotonicTime.h"
 
 #include "Condition.h"
 #include "Lock.h"
@@ -280,7 +281,7 @@ double monotonicallyIncreasingTime()
 
 #endif
 
-std::chrono::microseconds currentCPUTime()
+Seconds currentCPUTime()
 {
 #if OS(DARWIN)
     mach_msg_type_number_t infoCount = THREAD_BASIC_INFO_COUNT;
@@ -291,7 +292,7 @@ std::chrono::microseconds currentCPUTime()
     thread_info(threadPort, THREAD_BASIC_INFO, reinterpret_cast<thread_info_t>(&info), &infoCount);
     mach_port_deallocate(mach_task_self(), threadPort);
 
-    return std::chrono::seconds(info.user_time.seconds + info.system_time.seconds) + std::chrono::microseconds(info.user_time.microseconds + info.system_time.microseconds);
+    return Seconds(info.user_time.seconds + info.system_time.seconds) + Seconds::fromMicroseconds(info.user_time.microseconds + info.system_time.microseconds);
 #elif OS(WINDOWS)
     union {
         FILETIME fileTime;
@@ -304,12 +305,16 @@ std::chrono::microseconds currentCPUTime()
     
     GetThreadTimes(GetCurrentThread(), &creationTime, &exitTime, &kernelTime.fileTime, &userTime.fileTime);
 
-    return std::chrono::microseconds((userTime.fileTimeAsLong + kernelTime.fileTimeAsLong) / 10);
+    return Seconds::fromMicroseconds((userTime.fileTimeAsLong + kernelTime.fileTimeAsLong) / 10);
+#elif OS(LINUX) || OS(FREEBSD) || OS(OPENBSD) || OS(NETBSD)
+    struct timespec ts { };
+    clock_gettime(CLOCK_THREAD_CPUTIME_ID, &ts);
+    return Seconds(ts.tv_sec) + Seconds::fromNanoseconds(ts.tv_nsec);
 #else
     // FIXME: We should return the time the current thread has spent executing.
 
-    static auto firstTime = std::chrono::steady_clock::now();
-    return std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - firstTime);
+    static MonotonicTime firstTime = MonotonicTime::now();
+    return MonotonicTime::now() - firstTime;
 #endif
 }
 

@@ -1,3 +1,40 @@
+2017-12-26  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Remove std::chrono completely
+        https://bugs.webkit.org/show_bug.cgi?id=181165
+
+        Reviewed by Konstantin Tokarev.
+
+        This patch removes std::chrono use completely from JSC.
+
+        * API/JSContextRef.cpp:
+        (JSContextGroupSetExecutionTimeLimit):
+        * API/tests/ExecutionTimeLimitTest.cpp:
+        (currentCPUTimeAsJSFunctionCallback):
+        (testExecutionTimeLimit):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::CodeBlock):
+        (JSC::timeToLive):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::timeSinceCreation):
+        * runtime/SamplingProfiler.cpp:
+        (JSC::SamplingProfiler::SamplingProfiler):
+        (JSC::SamplingProfiler::timerLoop):
+        (JSC::SamplingProfiler::takeSample):
+        (JSC::SamplingProfiler::reportTopFunctions):
+        (JSC::SamplingProfiler::reportTopBytecodes):
+        * runtime/SamplingProfiler.h:
+        (JSC::SamplingProfiler::setTimingInterval):
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        * runtime/Watchdog.cpp:
+        (JSC::Watchdog::Watchdog):
+        (JSC::Watchdog::setTimeLimit):
+        (JSC::Watchdog::shouldTerminate):
+        (JSC::Watchdog::startTimer):
+        (JSC::currentWallClockTime): Deleted.
+        * runtime/Watchdog.h:
+
 2017-12-26  Zan Dobersek  <zdobersek@igalia.com>
 
         REGRESSION(r226269): 60 JSC test failures on ARMv7

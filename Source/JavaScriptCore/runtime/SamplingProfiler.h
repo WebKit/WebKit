@@ -162,7 +162,7 @@ public:
     void shutdown();
     void visit(SlotVisitor&);
     Lock& getLock() { return m_lock; }
-    void setTimingInterval(std::chrono::microseconds interval) { m_timingInterval = interval; }
+    void setTimingInterval(Seconds interval) { m_timingInterval = interval; }
     JS_EXPORT_PRIVATE void start();
     void start(const AbstractLocker&);
     Vector<StackTrace> releaseStackTraces(const AbstractLocker&);
@@ -185,14 +185,14 @@ public:
 private:
     void createThreadIfNecessary(const AbstractLocker&);
     void timerLoop();
-    void takeSample(const AbstractLocker&, std::chrono::microseconds& stackTraceProcessingTime);
+    void takeSample(const AbstractLocker&, Seconds& stackTraceProcessingTime);
 
     VM& m_vm;
     WeakRandom m_weakRandom;
     RefPtr<Stopwatch> m_stopwatch;
     Vector<StackTrace> m_stackTraces;
     Vector<UnprocessedStackTrace> m_unprocessedStackTraces;
-    std::chrono::microseconds m_timingInterval;
+    Seconds m_timingInterval;
     double m_lastTime;
     Lock m_lock;
     RefPtr<Thread> m_thread;

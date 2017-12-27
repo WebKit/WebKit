@@ -939,10 +939,9 @@ private:
     void stronglyVisitWeakReferences(const ConcurrentJSLocker&, SlotVisitor&);
     void visitOSRExitTargets(const ConcurrentJSLocker&, SlotVisitor&);
 
-    std::chrono::milliseconds timeSinceCreation()
+    Seconds timeSinceCreation()
     {
-        return std::chrono::duration_cast<std::chrono::milliseconds>(
-            std::chrono::steady_clock::now() - m_creationTime);
+        return MonotonicTime::now() - m_creationTime;
     }
 
     void createRareDataIfNecessary()
@@ -1027,7 +1026,7 @@ private:
     uint16_t m_optimizationDelayCounter;
     uint16_t m_reoptimizationRetryCounter;
 
-    std::chrono::steady_clock::time_point m_creationTime;
+    MonotonicTime m_creationTime;
 
     std::unique_ptr<RareData> m_rareData;
 

@@ -278,7 +278,7 @@ SamplingProfiler::SamplingProfiler(VM& vm, RefPtr<Stopwatch>&& stopwatch)
     : m_vm(vm)
     , m_weakRandom()
     , m_stopwatch(WTFMove(stopwatch))
-    , m_timingInterval(std::chrono::microseconds(Options::sampleInterval()))
+    , m_timingInterval(Seconds::fromMicroseconds(Options::sampleInterval()))
     , m_isPaused(false)
     , m_isShutDown(false)
 {
@@ -310,7 +310,7 @@ void SamplingProfiler::createThreadIfNecessary(const AbstractLocker&)
 void SamplingProfiler::timerLoop()
 {
     while (true) {
-        std::chrono::microseconds stackTraceProcessingTime = std::chrono::microseconds(0);
+        Seconds stackTraceProcessingTime = 0_s;
         {
             LockHolder locker(m_lock);
             if (UNLIKELY(m_isShutDown))
@@ -327,12 +327,12 @@ void SamplingProfiler::timerLoop()
         // with some system process such as a scheduled context switch.
         // http://plv.colorado.edu/papers/mytkowicz-pldi10.pdf
         double randomSignedNumber = (m_weakRandom.get() * 2.0) - 1.0; // A random number between [-1, 1).
-        std::chrono::microseconds randomFluctuation = std::chrono::microseconds(static_cast<int64_t>(randomSignedNumber * static_cast<double>(m_timingInterval.count()) * 0.20l));
-        std::this_thread::sleep_for(m_timingInterval - std::min(m_timingInterval, stackTraceProcessingTime) + randomFluctuation);
+        Seconds randomFluctuation = m_timingInterval * 0.2 * randomSignedNumber;
+        WTF::sleep(m_timingInterval - std::min(m_timingInterval, stackTraceProcessingTime) + randomFluctuation);
     }
 }
 
-void SamplingProfiler::takeSample(const AbstractLocker&, std::chrono::microseconds& stackTraceProcessingTime)
+void SamplingProfiler::takeSample(const AbstractLocker&, Seconds& stackTraceProcessingTime)
 {
     ASSERT(m_lock.isLocked());
     if (m_vm.entryScope) {
@@ -392,7 +392,7 @@ void SamplingProfiler::takeSample(const AbstractLocker&, std::chrono::microsecon
 
             m_jscExecutionThread->resume();
 
-            auto startTime = std::chrono::steady_clock::now();
+            auto startTime = MonotonicTime::now();
             // We can now use data structures that malloc, and do other interesting things, again.
 
             // FIXME: It'd be interesting to take data about the program's state when
@@ -413,8 +413,8 @@ void SamplingProfiler::takeSample(const AbstractLocker&, std::chrono::microsecon
                     m_currentFrames.grow(m_currentFrames.size() * 1.25);
             }
 
-            auto endTime = std::chrono::steady_clock::now();
-            stackTraceProcessingTime = std::chrono::duration_cast<std::chrono::microseconds>(endTime - startTime);
+            auto endTime = MonotonicTime::now();
+            stackTraceProcessingTime = endTime - startTime;
         }
     }
 }
@@ -980,7 +980,7 @@ void SamplingProfiler::reportTopFunctions(PrintStream& out)
     };
 
     if (Options::samplingProfilerTopFunctionsCount()) {
-        out.print("\n\nSampling rate: ", m_timingInterval.count(), " microseconds\n");
+        out.print("\n\nSampling rate: ", m_timingInterval.microseconds(), " microseconds\n");
         out.print("Top functions as <numSamples  'functionName:sourceID'>\n");
         for (size_t i = 0; i < Options::samplingProfilerTopFunctionsCount(); i++) {
             auto pair = takeMax();
@@ -1053,7 +1053,7 @@ void SamplingProfiler::reportTopBytecodes(PrintStream& out)
     };
 
     if (Options::samplingProfilerTopBytecodesCount()) {
-        out.print("\n\nSampling rate: ", m_timingInterval.count(), " microseconds\n");
+        out.print("\n\nSampling rate: ", m_timingInterval.microseconds(), " microseconds\n");
         out.print("Hottest bytecodes as <numSamples   'functionName#hash:JITType:bytecodeIndex'>\n");
         for (size_t i = 0; i < Options::samplingProfilerTopBytecodesCount(); i++) {
             auto pair = takeMax();

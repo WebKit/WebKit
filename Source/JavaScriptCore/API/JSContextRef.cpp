@@ -99,9 +99,9 @@ void JSContextGroupSetExecutionTimeLimit(JSContextGroupRef group, double limit, 
     Watchdog& watchdog = vm.ensureWatchdog();
     if (callback) {
         void* callbackPtr = reinterpret_cast<void*>(callback);
-        watchdog.setTimeLimit(std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::duration<double>(limit)), internalScriptTimeoutCallback, callbackPtr, callbackData);
+        watchdog.setTimeLimit(Seconds { limit }, internalScriptTimeoutCallback, callbackPtr, callbackData);
     } else
-        watchdog.setTimeLimit(std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::duration<double>(limit)));
+        watchdog.setTimeLimit(Seconds { limit });
 }
 
 void JSContextGroupClearExecutionTimeLimit(JSContextGroupRef group)

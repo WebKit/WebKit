@@ -44,7 +44,7 @@ public:
     void willDestroyVM(VM*);
 
     typedef bool (*ShouldTerminateCallback)(ExecState*, void* data1, void* data2);
-    void setTimeLimit(std::chrono::microseconds limit, ShouldTerminateCallback = 0, void* data1 = 0, void* data2 = 0);
+    void setTimeLimit(Seconds limit, ShouldTerminateCallback = 0, void* data1 = 0, void* data2 = 0);
 
     bool shouldTerminate(ExecState*);
 
@@ -52,19 +52,19 @@ public:
     void enteredVM();
     void exitedVM();
 
-    static const std::chrono::microseconds noTimeLimit;
+    static const Seconds noTimeLimit;
 
 private:
-    void startTimer(std::chrono::microseconds timeLimit);
+    void startTimer(Seconds timeLimit);
     void stopTimer();
 
     Lock m_lock; // Guards access to m_vm.
     VM* m_vm;
 
-    std::chrono::microseconds m_timeLimit;
+    Seconds m_timeLimit;
 
-    std::chrono::microseconds m_cpuDeadline;
-    std::chrono::microseconds m_wallClockDeadline;
+    Seconds m_cpuDeadline;
+    MonotonicTime m_deadline;
 
     bool m_hasEnteredVM { false };
 

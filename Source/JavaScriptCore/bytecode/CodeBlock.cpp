@@ -328,7 +328,7 @@ CodeBlock::CodeBlock(VM* vm, Structure* structure, CopyParsedBlockTag, CodeBlock
     , m_osrExitCounter(0)
     , m_optimizationDelayCounter(0)
     , m_reoptimizationRetryCounter(0)
-    , m_creationTime(std::chrono::steady_clock::now())
+    , m_creationTime(MonotonicTime::now())
 {
     m_visitWeaklyHasBeenCalled = false;
 
@@ -386,7 +386,7 @@ CodeBlock::CodeBlock(VM* vm, Structure* structure, ScriptExecutable* ownerExecut
     , m_osrExitCounter(0)
     , m_optimizationDelayCounter(0)
     , m_reoptimizationRetryCounter(0)
-    , m_creationTime(std::chrono::steady_clock::now())
+    , m_creationTime(MonotonicTime::now())
 {
     m_visitWeaklyHasBeenCalled = false;
 
@@ -1089,36 +1089,36 @@ bool CodeBlock::shouldJettisonDueToWeakReference()
     return !Heap::isMarked(this);
 }
 
-static std::chrono::milliseconds timeToLive(JITCode::JITType jitType)
+static Seconds timeToLive(JITCode::JITType jitType)
 {
     if (UNLIKELY(Options::useEagerCodeBlockJettisonTiming())) {
         switch (jitType) {
         case JITCode::InterpreterThunk:
-            return std::chrono::milliseconds(10);
+            return 10_ms;
         case JITCode::BaselineJIT:
-            return std::chrono::milliseconds(10 + 20);
+            return 30_ms;
         case JITCode::DFGJIT:
-            return std::chrono::milliseconds(40);
+            return 40_ms;
         case JITCode::FTLJIT:
-            return std::chrono::milliseconds(120);
+            return 120_ms;
         default:
-            return std::chrono::milliseconds::max();
+            return Seconds::infinity();
         }
     }
 
     switch (jitType) {
     case JITCode::InterpreterThunk:
-        return std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::seconds(5));
+        return 5_s;
     case JITCode::BaselineJIT:
         // Effectively 10 additional seconds, since BaselineJIT and
         // InterpreterThunk share a CodeBlock.
-        return std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::seconds(5 + 10));
+        return 15_s;
     case JITCode::DFGJIT:
-        return std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::seconds(20));
+        return 20_s;
     case JITCode::FTLJIT:
-        return std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::seconds(60));
+        return 60_s;
     default:
-        return std::chrono::milliseconds::max();
+        return Seconds::infinity();
     }
 }
 

@@ -418,9 +418,8 @@ VM::VM(VMType vmType, HeapType heapType)
         setShouldBuildPCToCodeOriginMapping();
 
     if (Options::watchdog()) {
-        std::chrono::milliseconds timeoutMillis(Options::watchdog());
         Watchdog& watchdog = ensureWatchdog();
-        watchdog.setTimeLimit(timeoutMillis);
+        watchdog.setTimeLimit(Seconds::fromMilliseconds(Options::watchdog()));
     }
 
     // Make sure that any stubs that the JIT is going to use are initialized in non-compilation threads.
