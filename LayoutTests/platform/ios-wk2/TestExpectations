@@ -1291,3 +1291,5 @@ webkit.org/b/179176 [ Release ] svg/wicd/test-rightsizing-a.xhtml [ Pass Failure
 
 webkit.org/b/178195 accessibility/ios-simulator/video-elements-ios.html [ Pass Timeout ]
 
+webkit.org/b/181166 imported/w3c/web-platform-tests/service-workers/service-worker/register-same-scope-different-script-url.https.html [ Pass Failure ]
+

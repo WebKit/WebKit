@@ -853,3 +853,5 @@ webkit.org/b/179194 [ Debug ] imported/w3c/web-platform-tests/service-workers/se
 
 webkit.org/b/180982 [ Debug ] imported/w3c/web-platform-tests/service-workers/service-worker/registration-updateviacache.https.html [ Slow ]
 
+webkit.org/b/181166 imported/w3c/web-platform-tests/service-workers/service-worker/register-same-scope-different-script-url.https.html [ Pass Failure ]
+
