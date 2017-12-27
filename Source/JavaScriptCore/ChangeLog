@@ -1,5 +1,14 @@
 2017-12-27  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
+        Build fix after r226299 (2)
+        https://bugs.webkit.org/show_bug.cgi?id=181160
+
+        Unreviewed build fix.
+
+        * API/tests/TypedArrayCTest.cpp: Add missing header include.
+
+2017-12-27  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
         Build fix after r226299
         https://bugs.webkit.org/show_bug.cgi?id=181160
 
