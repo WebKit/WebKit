@@ -1,3 +1,17 @@
+2017-12-26  Dewei Zhu  <dewei_zhu@apple.com>
+
+        Test freshness page should use build time instead of commit time to determine the freshness of the data point.
+        https://bugs.webkit.org/show_bug.cgi?id=181156
+
+        Reviewed by Alexey Proskuryakov.
+
+        Build time is a better data point freshness indicator. Test freshness page is designed to highlight test failures.
+        Using commit time will result in including the compiling and test running time which does not quite match the
+        definition of data point fresshness.
+
+        * public/v3/pages/test-freshness-page.js:
+        (TestFreshnessPage.prototype._fetchTestResults): Use build time instead of commit time.
+
 2017-12-21  Dewei Zhu  <dewei_zhu@apple.com>
 
         Add UI for A/B testing on owned commits.

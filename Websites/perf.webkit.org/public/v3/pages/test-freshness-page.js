@@ -72,7 +72,7 @@ class TestFreshnessPage extends PageWithHeading {
 
                     let timeForLastDataPoint = startTime;
                     if (currentTimeSeries.lastPoint())
-                        timeForLastDataPoint = currentTimeSeries.lastPoint().time;
+                        timeForLastDataPoint = currentTimeSeries.lastPoint().build().buildTime();
 
                     lastDataPointByMetric.set(metric, {time: timeForLastDataPoint, hasCurrentDataPoint: !!currentTimeSeries.lastPoint()});
                     this.enqueueToRender();
