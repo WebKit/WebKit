@@ -1,3 +1,18 @@
+2017-12-27  Zan Dobersek  <zdobersek@igalia.com>
+
+        REGRESSION(r225913): about 30 JSC test failures on ARMv7
+        https://bugs.webkit.org/show_bug.cgi?id=181162
+
+        Reviewed by Michael Catanzaro.
+
+        Fast case in DFG::SpeculativeJIT::compileArraySlice() was enabled in
+        r225913 on all but 32-bit x86 platform. Other 32-bit platforms have the
+        same lack of GP registers, so the conditional is changed here to only
+        enable this optimization explicitly on ARM64 and x86-64.
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileArraySlice):
+
 2017-12-26  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Remove std::chrono completely

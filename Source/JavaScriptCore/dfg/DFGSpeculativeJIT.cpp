@@ -7635,7 +7635,7 @@ void SpeculativeJIT::compileArraySlice(Node* node)
         MacroAssembler::JumpList slowCases;
         m_jit.move(TrustedImmPtr(0), storageResultGPR);
         // X86 only has 6 GP registers, which is not enough for the fast case here. At least without custom code, which is not currently worth the extra code maintenance.
-        if (!isX86() || isX86_64()) {
+        if (isARM64() || isX86_64()) {
             GPRTemporary scratch(this);
             GPRTemporary scratch2(this);
             GPRTemporary indexingMask(this);
