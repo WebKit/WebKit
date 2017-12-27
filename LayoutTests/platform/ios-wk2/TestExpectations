@@ -1293,3 +1293,5 @@ webkit.org/b/178195 accessibility/ios-simulator/video-elements-ios.html [ Pass T
 
 webkit.org/b/181166 imported/w3c/web-platform-tests/service-workers/service-worker/register-same-scope-different-script-url.https.html [ Pass Failure ]
 
+webkit.org/181167 imported/w3c/web-platform-tests/service-workers/service-worker/ServiceWorkerGlobalScope/update.https.html [ Pass Failure ]
+
