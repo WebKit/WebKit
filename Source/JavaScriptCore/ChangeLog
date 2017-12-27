@@ -1,3 +1,13 @@
+2017-12-27  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        Build fix after r226299
+        https://bugs.webkit.org/show_bug.cgi?id=181160
+
+        Unreviewed build fix.
+
+        * API/tests/TypedArrayCTest.cpp:
+        (assertEqualsAsNumber): Disambiguate usage of isnan.
+
 2017-12-26  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         REGRESSION(r225769): Build error with constexpr std::max // std::min in libdstdc++4

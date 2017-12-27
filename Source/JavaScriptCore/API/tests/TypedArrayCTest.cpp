@@ -84,7 +84,7 @@ inline int unexpectedException(const char* name)
 static int assertEqualsAsNumber(JSGlobalContextRef context, JSValueRef value, double expectedValue)
 {
     double number = JSValueToNumber(context, value, nullptr);
-    if (number != expectedValue && !(isnan(number) && isnan(expectedValue))) {
+    if (number != expectedValue && !(std::isnan(number) && std::isnan(expectedValue))) {
         fprintf(stderr, "assertEqualsAsNumber FAILED: %p, %lf\n", value, expectedValue);
         return 1;
     }
