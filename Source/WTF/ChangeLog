@@ -1,3 +1,15 @@
+2017-12-27  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [WTF] Add clock_gettime based monotonicallyIncreasingTime implementation for Linux and BSDs
+        https://bugs.webkit.org/show_bug.cgi?id=181175
+
+        Reviewed by Michael Catanzaro.
+
+        Use platform-provided POSIX APIs to get monotonic time.
+
+        * wtf/CurrentTime.cpp:
+        (WTF::monotonicallyIncreasingTime):
+
 2017-12-26  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         REGRESSION(r225769): Build error with constexpr std::max // std::min in libdstdc++4
