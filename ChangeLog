@@ -1,3 +1,18 @@
+2017-12-28  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Win][CMake] Use add_custom_command to copy each forwarding header files
+        https://bugs.webkit.org/show_bug.cgi?id=180921
+
+        Reviewed by Brent Fulgham.
+
+        Modifying WTF header files didn't trigger the recompilation of
+        TestWTF because Ninja doesn't know which command generates the
+        forwarding header.
+
+        Use add_custom_command to copy each forwarding header files.
+
+        * Source/cmake/WebKitMacros.cmake: Added a new function WEBKIT_MAKE_FORWARDING_HEADERS.
+
 2017-12-22  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [GTK] Duplicated symbols in libjavascriptcoregtk and libwebkit2gtk can cause crashes in production builds

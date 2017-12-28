@@ -26,8 +26,20 @@ if (USE_CF)
     list(APPEND WTF_LIBRARIES ${COREFOUNDATION_LIBRARY})
 endif ()
 
-set(WTF_PRE_BUILD_COMMAND "${CMAKE_BINARY_DIR}/DerivedSources/WTF/preBuild.cmd")
-file(WRITE "${WTF_PRE_BUILD_COMMAND}" "@xcopy /y /s /d /f \"${WTF_DIR}/wtf/*.h\" \"${FORWARDING_HEADERS_DIR}/wtf\" >nul 2>nul\n@xcopy /y /s /d /f \"${DERIVED_SOURCES_DIR}/WTF/*.h\" \"${FORWARDING_HEADERS_DIR}/wtf\" >nul 2>nul\n")
-file(MAKE_DIRECTORY ${FORWARDING_HEADERS_DIR}/wtf)
+set(WTF_FORWARDING_HEADERS_DIRECTORIES
+    .
+    cf
+    dtoa
+    generic
+    persistence
+    spi
+    text
+    threads
+    unicode
+    win
+)
+WEBKIT_MAKE_FORWARDING_HEADERS(WTF
+    DESTINATION ${FORWARDING_HEADERS_DIR}/wtf
+    DIRECTORIES ${WTF_FORWARDING_HEADERS_DIRECTORIES})
 
 set(WTF_OUTPUT_NAME WTF${DEBUG_SUFFIX})

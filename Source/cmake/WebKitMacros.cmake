@@ -215,6 +215,79 @@ macro(WEBKIT_CREATE_FORWARDING_HEADERS _framework)
     endif ()
 endmacro()
 
+function(WEBKIT_MAKE_FORWARDING_HEADERS framework)
+    set(options FLATTENED)
+    set(oneValueArgs DESTINATION)
+    set(multiValueArgs DIRECTORIES EXTRA_DIRECTORIES DERIVED_SOURCE_DIRECTORIES FILES)
+    cmake_parse_arguments(opt "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+    set(headers ${opt_FILES})
+    if (opt_DESTINATION)
+        set(destination ${opt_DESTINATION})
+    else ()
+        set(destination ${FORWARDING_HEADERS_DIR}/${framework})
+    endif ()
+    file(MAKE_DIRECTORY ${destination})
+    foreach (dir IN LISTS opt_DIRECTORIES)
+        file(GLOB files RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} ${dir}/*.h)
+        list(APPEND headers ${files})
+    endforeach ()
+    set(fwd_headers)
+    foreach (header IN LISTS headers)
+        if (opt_FLATTENED)
+            get_filename_component(header_filename ${header} NAME)
+            set(fwd_header ${destination}/${header_filename})
+        else ()
+            get_filename_component(header_dir ${header} DIRECTORY)
+            file(MAKE_DIRECTORY ${destination}/${header_dir})
+            set(fwd_header ${destination}/${header})
+        endif ()
+        add_custom_command(OUTPUT ${fwd_header}
+            COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/${header} ${fwd_header}
+            MAIN_DEPENDENCY ${header}
+            VERBATIM
+        )
+        list(APPEND fwd_headers ${fwd_header})
+    endforeach ()
+    foreach (dir IN LISTS opt_EXTRA_DIRECTORIES)
+        set(dir ${CMAKE_CURRENT_SOURCE_DIR}/${dir})
+        file(GLOB_RECURSE files RELATIVE ${dir} ${dir}/*.h)
+        foreach (header IN LISTS files)
+            get_filename_component(header_dir ${header} DIRECTORY)
+            file(MAKE_DIRECTORY ${destination}/${header_dir})
+            set(fwd_header ${destination}/${header})
+            add_custom_command(OUTPUT ${fwd_header}
+                COMMAND ${CMAKE_COMMAND} -E copy ${dir}/${header} ${fwd_header}
+                MAIN_DEPENDENCY ${dir}/${header}
+                VERBATIM
+            )
+            list(APPEND fwd_headers ${fwd_header})
+        endforeach ()
+    endforeach ()
+    add_custom_target(${framework}ForwardingHeaders DEPENDS ${fwd_headers})
+    add_dependencies(${framework} ${framework}ForwardingHeaders)
+    if (opt_DERIVED_SOURCE_DIRECTORIES)
+        set(script ${CMAKE_CURRENT_BINARY_DIR}/makeForwardingHeaders.cmake)
+        set(content "")
+        foreach (dir IN LISTS opt_DERIVED_SOURCE_DIRECTORIES)
+            string(CONCAT content ${content}
+                "file(GLOB headers \"${dir}/*.h\")\n"
+                "foreach (header IN LISTS headers)\n"
+                "    get_filename_component(header_filename \${header} NAME)\n"
+                "    execute_process(COMMAND \${CMAKE_COMMAND} -E copy \${header} ${destination}/\${header_filename} RESULT_VARIABLE result)\n"
+                "    if (NOT \${result} EQUAL 0)\n"
+                "        message(FATAL_ERROR \"Failed to copy \${header}: \${result}\")\n"
+                "    endif ()\n"
+                "endforeach ()\n"
+            )
+        endforeach ()
+        file(WRITE ${script} ${content})
+        add_custom_command(TARGET ${framework} POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -P ${script}
+            VERBATIM
+        )
+    endif ()
+endfunction()
+
 # Helper macros for debugging CMake problems.
 macro(WEBKIT_DEBUG_DUMP_COMMANDS)
     set(CMAKE_VERBOSE_MAKEFILE ON)

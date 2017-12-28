@@ -313,17 +313,12 @@ if (WTF_PLATFORM_WIN_CAIRO AND EXISTS ${WEBKIT_LIBRARIES_DIR}/etc/ssl/cert.pem)
     )
 endif ()
 
-file(MAKE_DIRECTORY ${FORWARDING_HEADERS_DIR}/WebCore)
-
-set(WebCore_DERIVED_SOURCES_PRE_BUILD_COMMAND "${CMAKE_BINARY_DIR}/DerivedSources/WebCore/preBuild.cmd")
-file(WRITE "${WebCore_DERIVED_SOURCES_PRE_BUILD_COMMAND}" "@xcopy /y /s /d /f \"${WEBCORE_DIR}/ForwardingHeaders/*.h\" \"${FORWARDING_HEADERS_DIR}/WebCore\" >nul 2>nul\n")
-foreach (_directory ${WebCore_FORWARDING_HEADERS_DIRECTORIES})
-    file(APPEND "${WebCore_DERIVED_SOURCES_PRE_BUILD_COMMAND}" "@xcopy /y /d /f \"${WEBCORE_DIR}/${_directory}/*.h\" \"${FORWARDING_HEADERS_DIR}/WebCore\" >nul 2>nul\n")
-endforeach ()
-
-set(WebCore_POST_BUILD_COMMAND "${CMAKE_BINARY_DIR}/DerivedSources/WebCore/postBuild.cmd")
-file(WRITE "${WebCore_POST_BUILD_COMMAND}" "@xcopy /y /s /d /f \"${DERIVED_SOURCES_WEBCORE_DIR}/*.h\" \"${FORWARDING_HEADERS_DIR}/WebCore\" >nul 2>nul\n")
-file(APPEND "${WebCore_POST_BUILD_COMMAND}" "@xcopy /y /s /d /f \"${DERIVED_SOURCES_PAL_DIR}/*.h\" \"${FORWARDING_HEADERS_DIR}/WebCore\" >nul 2>nul\n")
+WEBKIT_MAKE_FORWARDING_HEADERS(WebCore
+    DIRECTORIES ${WebCore_FORWARDING_HEADERS_DIRECTORIES}
+    EXTRA_DIRECTORIES ForwardingHeaders
+    DERIVED_SOURCE_DIRECTORIES ${DERIVED_SOURCES_WEBCORE_DIR} ${DERIVED_SOURCES_PAL_DIR}
+    FLATTENED
+)
 
 set(WebCore_OUTPUT_NAME
     WebCore${DEBUG_SUFFIX}

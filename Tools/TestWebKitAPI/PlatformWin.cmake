@@ -2,11 +2,6 @@ set(TESTWEBKITAPI_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
 set(TESTWEBKITAPI_RUNTIME_OUTPUT_DIRECTORY_WTF "${TESTWEBKITAPI_RUNTIME_OUTPUT_DIRECTORY}")
 add_definitions(-DUSE_CONSOLE_ENTRY_POINT)
 
-add_custom_target(forwarding-headersWinForTestWebKitAPI
-    COMMAND ${CMAKE_BINARY_DIR}/DerivedSources/WebCore/preBuild.cmd VERBATIM
-)
-set(ForwardingHeadersForTestWebKitAPI_NAME forwarding-headersWinForTestWebKitAPI)
-
 if (${WTF_PLATFORM_WIN_CAIRO})
     add_definitions(-DWIN_CAIRO)
 endif ()
@@ -110,7 +105,7 @@ add_library(TestWTFLib SHARED
 )
 set_target_properties(TestWTFLib PROPERTIES OUTPUT_NAME "TestWTFLib")
 target_link_libraries(TestWTFLib ${test_wtf_LIBRARIES})
-add_dependencies(TestWTFLib ${ForwardingHeadersForTestWebKitAPI_NAME})
+add_dependencies(TestWTFLib WebCoreForwardingHeaders)
 
 set(test_wtf_LIBRARIES
     shlwapi
@@ -129,7 +124,6 @@ add_executable(TestWebCore
     ${TOOLS_DIR}/win/DLLLauncher/DLLLauncherMain.cpp
 )
 target_link_libraries(TestWebCore shlwapi)
-add_dependencies(TestWebCore ${ForwardingHeadersForTestWebKitAPI_NAME})
 
 
 add_test(TestWebCore ${TESTWEBKITAPI_RUNTIME_OUTPUT_DIRECTORY}/TestWebCore)
@@ -160,7 +154,6 @@ add_executable(TestWebKitLegacy
     ${TOOLS_DIR}/win/DLLLauncher/DLLLauncherMain.cpp
 )
 target_link_libraries(TestWebKitLegacy shlwapi)
-add_dependencies(TestWebKitLegacy ${ForwardingHeadersForTestWebKitAPI_NAME})
 
 add_test(TestWebKitLegacy ${TESTWEBKITAPI_RUNTIME_OUTPUT_DIRECTORY}/TestWebKitLegacy)
 set_tests_properties(TestWebKitLegacy PROPERTIES TIMEOUT 60)
