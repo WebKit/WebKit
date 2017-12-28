@@ -103,7 +103,7 @@ function asyncGeneratorReject(generator, exception)
 {
     "use strict";
 
-    @assert(generator.@asyncIteratorSymbol !== @undefined, "Generator is not an AsyncGenerator instance.");
+    @assert(typeof generator.@asyncGeneratorSuspendReason === "number", "Generator is not an AsyncGenerator instance.");
 
     const { promiseCapability } = @asyncGeneratorDequeue(generator);
     promiseCapability.@reject.@call(@undefined, exception);
@@ -116,7 +116,7 @@ function asyncGeneratorResolve(generator, value, done)
 {
     "use strict";
 
-    @assert(generator.@asyncIteratorSymbol !== @undefined, "Generator is not an AsyncGenerator instance.");
+    @assert(typeof generator.@asyncGeneratorSuspendReason === "number", "Generator is not an AsyncGenerator instance.");
 
     const { promiseCapability } = @asyncGeneratorDequeue(generator);
     promiseCapability.@resolve.@call(@undefined, { done, value: value });
@@ -203,7 +203,7 @@ function asyncGeneratorResumeNext(generator)
 {
     "use strict";
 
-    @assert(generator.@asyncIteratorSymbol !== @undefined, "Generator is not an AsyncGenerator instance");
+    @assert(typeof generator.@asyncGeneratorSuspendReason === "number", "Generator is not an AsyncGenerator instance.");
 
     let state = generator.@generatorState;
 

@@ -1,3 +1,13 @@
+2017-12-28  Saam Barati  <sbarati@apple.com>
+
+        Assertion used to determine if something is an async generator is wrong
+        https://bugs.webkit.org/show_bug.cgi?id=181168
+        <rdar://problem/35640560>
+
+        Reviewed by Yusuke Suzuki.
+
+        * stress/async-generator-assertion.js: Added.
+
 2017-12-21  Guillaume Emont  <guijemont@igalia.com>
 
         Skip stress/splay-flash-access tests on memory limited platforms

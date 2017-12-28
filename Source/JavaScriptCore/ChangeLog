@@ -1,3 +1,22 @@
+2017-12-28  Saam Barati  <sbarati@apple.com>
+
+        Assertion used to determine if something is an async generator is wrong
+        https://bugs.webkit.org/show_bug.cgi?id=181168
+        <rdar://problem/35640560>
+
+        Reviewed by Yusuke Suzuki.
+
+        Previous assertions were doing a get on the base value for @@asyncIterator.
+        This symbol is defined on AsyncGeneratorPrototype. The base value may change
+        its prototype, but it's still an async generator as far as our system is
+        concerned. This patch updates the assertion to check for a private property
+        on the base value.
+
+        * builtins/AsyncGeneratorPrototype.js:
+        (globalPrivate.asyncGeneratorReject):
+        (globalPrivate.asyncGeneratorResolve):
+        (globalPrivate.asyncGeneratorResumeNext):
+
 2017-12-27  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         Build fix after r226299 (3)
