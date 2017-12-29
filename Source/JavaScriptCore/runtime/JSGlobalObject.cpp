@@ -236,6 +236,34 @@ static EncodedJSValue JSC_HOST_CALL hasOwnLengthProperty(ExecState* exec)
     return JSValue::encode(jsBoolean(target->hasOwnProperty(exec, vm.propertyNames->length)));
 }
 
+#if !ASSERT_DISABLED
+static EncodedJSValue JSC_HOST_CALL assertCall(ExecState* exec)
+{
+    RELEASE_ASSERT(exec->argument(0).isBoolean());
+    if (exec->argument(0).asBoolean())
+        return JSValue::encode(jsUndefined());
+
+    bool iteratedOnce = false;
+    CodeBlock* codeBlock = nullptr;
+    unsigned line;
+    exec->iterate([&] (StackVisitor& visitor) {
+        if (!iteratedOnce) {
+            iteratedOnce = true;
+            return StackVisitor::Continue;
+        }
+
+        RELEASE_ASSERT(visitor->hasLineAndColumnInfo());
+        unsigned column;
+        visitor->computeLineAndColumn(line, column);
+        codeBlock = visitor->codeBlock();
+        return StackVisitor::Done;
+    });
+    RELEASE_ASSERT(!!codeBlock);
+    RELEASE_ASSERT_WITH_MESSAGE(false, "JS assertion failed at line %u in:\n%s\n", line, codeBlock->sourceCodeForTools().data());
+    return JSValue::encode(jsUndefined());
+}
+#endif
+
 } // namespace JSC
 
 #include "JSGlobalObject.lut.h"
@@ -882,6 +910,9 @@ putDirectWithoutTransition(vm, vm.propertyNames-> jsName, lowerName ## Construct
         GlobalPropertyInfo(vm.propertyNames->builtinNames().setBucketHeadPrivateName(), privateFuncSetBucketHead, PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly),
         GlobalPropertyInfo(vm.propertyNames->builtinNames().setBucketNextPrivateName(), privateFuncSetBucketNext, PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly),
         GlobalPropertyInfo(vm.propertyNames->builtinNames().setBucketKeyPrivateName(), privateFuncSetBucketKey, PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly),
+#if !ASSERT_DISABLED
+        GlobalPropertyInfo(vm.propertyNames->builtinNames().assertPrivateName(), JSFunction::create(vm, this, 1, String(), assertCall), PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly),
+#endif
     };
     addStaticGlobals(staticGlobals, WTF_ARRAY_LENGTH(staticGlobals));
     

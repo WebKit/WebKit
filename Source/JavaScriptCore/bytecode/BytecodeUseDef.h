@@ -57,7 +57,6 @@ void computeUsesForBytecodeOffset(Block* codeBlock, OpcodeID opcodeID, Instructi
     case op_super_sampler_begin:
     case op_super_sampler_end:
         return;
-    case op_assert:
     case op_get_scope:
     case op_to_this:
     case op_check_tdz:
@@ -333,7 +332,6 @@ void computeDefsForBytecodeOffset(Block* codeBlock, OpcodeID opcodeID, Instructi
     case op_end:
     case op_throw:
     case op_throw_static_error:
-    case op_assert:
     case op_debug:
     case op_ret:
     case op_jmp:

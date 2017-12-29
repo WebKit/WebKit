@@ -1594,13 +1594,6 @@ void BytecodeDumper<Block>::dumpBytecode(PrintStream& out, const typename Block:
         out.printf("%s, %d", debugHookName(debugHookType), hasBreakpointFlag);
         break;
     }
-    case op_assert: {
-        int condition = (++it)->u.operand;
-        int line = (++it)->u.operand;
-        printLocationAndOp(out, location, it, "assert");
-        out.printf("%s, %d", registerName(condition).data(), line);
-        break;
-    }
     case op_identity_with_profile: {
         int r0 = (++it)->u.operand;
         ++it; // Profile top half

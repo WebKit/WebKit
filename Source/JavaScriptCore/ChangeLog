@@ -1,3 +1,39 @@
+2017-12-28  Saam Barati  <sbarati@apple.com>
+
+        Remove op_assert and make @assert in builtins a function call so we have DFG/FTL coverage for builtins that use @assert in debug builds
+        https://bugs.webkit.org/show_bug.cgi?id=181176
+
+        Reviewed by Yusuke Suzuki.
+
+        Previously, op_assert was only implemented in the LLInt and baseline JIT. This
+        meant that any builtin that used @assert was not tiering up to the DFG/FTL
+        in debug builds. This patch changes @assert to just call a host function when
+        !ASSERT_DISABLED. It's a no-op when ASSERT_DISABLED. Now, builtins that use @assert
+        will tier up to the DFG/FTL on debug builds.
+
+        * builtins/BuiltinNames.h:
+        * bytecode/BytecodeDumper.cpp:
+        (JSC::BytecodeDumper<Block>::dumpBytecode):
+        * bytecode/BytecodeIntrinsicRegistry.h:
+        * bytecode/BytecodeList.json:
+        * bytecode/BytecodeUseDef.h:
+        (JSC::computeUsesForBytecodeOffset):
+        (JSC::computeDefsForBytecodeOffset):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitAssert): Deleted.
+        * bytecompiler/BytecodeGenerator.h:
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::FunctionCallResolveNode::emitBytecode):
+        (JSC::BytecodeIntrinsicNode::emit_intrinsic_assert): Deleted.
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        * llint/LowLevelInterpreter.asm:
+        * runtime/CommonSlowPaths.cpp:
+        * runtime/CommonSlowPaths.h:
+        * runtime/JSGlobalObject.cpp:
+        (JSC::assertCall):
+        (JSC::JSGlobalObject::init):
+
 2017-12-28  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [Win][CMake] Use add_custom_command to copy each forwarding header files

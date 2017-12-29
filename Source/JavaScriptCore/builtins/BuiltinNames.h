@@ -47,6 +47,7 @@ namespace JSC {
     macro(arrayIteratorNext) \
     macro(arrayIteratorIsDone) \
     macro(arrayIteratorKind) \
+    macro(assert) \
     macro(charCodeAt) \
     macro(executor) \
     macro(isView) \

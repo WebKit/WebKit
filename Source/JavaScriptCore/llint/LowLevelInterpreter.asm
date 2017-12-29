@@ -1789,12 +1789,6 @@ _llint_op_push_with_scope:
     dispatch(constexpr op_push_with_scope_length)
 
 
-_llint_op_assert:
-    traceExecution()
-    callOpcodeSlowPath(_slow_path_assert)
-    dispatch(constexpr op_assert_length)
-
-
 _llint_op_identity_with_profile:
     traceExecution()
     dispatch(constexpr op_identity_with_profile_length)
