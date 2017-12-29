@@ -60,8 +60,8 @@ void RenderTreeUpdater::GeneratedContent::updateQuotesUpTo(RenderQuote* lastQuot
     for (; it != end; ++it) {
         auto& quote = *it;
         // Quote character depends on quote depth so we chain the updates.
-        quote.updateRenderer(m_updater.m_builder, m_previousUpdatedQuote);
-        m_previousUpdatedQuote = &quote;
+        quote.updateRenderer(m_updater.m_builder, m_previousUpdatedQuote.get());
+        m_previousUpdatedQuote = makeWeakPtr(quote);
         if (&quote == lastQuote)
             return;
     }

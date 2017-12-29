@@ -49,7 +49,7 @@ private:
     bool needsPseudoElement(const std::optional<Style::ElementUpdate>&);
 
     RenderTreeUpdater& m_updater;
-    RenderQuote* m_previousUpdatedQuote { nullptr };
+    WeakPtr<RenderQuote> m_previousUpdatedQuote;
 };
 
 }
