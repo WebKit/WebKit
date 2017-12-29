@@ -28,6 +28,9 @@
 #import "ArgumentCodersCF.h"
 #import "SandboxUtilities.h"
 #import "XPCServiceEntryPoint.h"
+#import <WebCore/Process.h>
+
+using namespace WebCore;
 
 namespace WebKit {
 
@@ -78,6 +81,21 @@ bool XPCServiceInitializerDelegate::getClientIdentifier(String& clientIdentifier
     clientIdentifier = xpc_dictionary_get_string(m_initializerMessage, "client-identifier");
     if (clientIdentifier.isEmpty())
         return false;
+    return true;
+}
+
+bool XPCServiceInitializerDelegate::getProcessIdentifier(ProcessIdentifier& identifier)
+{
+    String processIdentifierString = xpc_dictionary_get_string(m_initializerMessage, "process-identifier");
+    if (processIdentifierString.isEmpty())
+        return false;
+
+    bool ok;
+    auto parsedIdentifier = processIdentifierString.toUInt64Strict(&ok);
+    if (!ok)
+        return false;
+
+    identifier = makeObjectIdentifier<ProcessIdentifierType>(parsedIdentifier);
     return true;
 }
 

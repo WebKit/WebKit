@@ -1431,6 +1431,7 @@ platform/PlatformSpeechSynthesisUtterance.cpp
 platform/PlatformSpeechSynthesisVoice.cpp
 platform/PlatformSpeechSynthesizer.cpp
 platform/PlatformStrategies.cpp
+platform/Process.cpp
 platform/RemoteCommandListener.cpp
 platform/RuntimeApplicationChecks.cpp
 platform/SchemeRegistry.cpp

@@ -49,6 +49,8 @@ ChildProcessProxy::~ChildProcessProxy()
 
 void ChildProcessProxy::getLaunchOptions(ProcessLauncher::LaunchOptions& launchOptions)
 {
+    launchOptions.processIdentifier = m_processIdentifier;
+
     if (const char* userDirectorySuffix = getenv("DIRHELPER_USER_DIR_SUFFIX"))
         launchOptions.extraInitializationData.add(ASCIILiteral("user-directory-suffix"), userDirectorySuffix);
 

@@ -54,6 +54,7 @@ public:
     virtual bool checkEntitlements();
 
     virtual bool getConnectionIdentifier(IPC::Connection::Identifier& identifier);
+    virtual bool getProcessIdentifier(WebCore::ProcessIdentifier&);
     virtual bool getClientIdentifier(String& clientIdentifier);
     virtual bool getClientProcessName(String& clientProcessName);
     virtual bool getExtraInitializationData(HashMap<String, String>& extraInitializationData);
@@ -89,6 +90,11 @@ void XPCServiceInitializer(OSObjectPtr<xpc_connection_t> connection, xpc_object_
 
     if (!delegate.getClientIdentifier(parameters.clientIdentifier))
         exit(EXIT_FAILURE);
+
+    WebCore::ProcessIdentifier processIdentifier;
+    if (!delegate.getProcessIdentifier(processIdentifier))
+        exit(EXIT_FAILURE);
+    parameters.processIdentifier = processIdentifier;
 
     if (!delegate.getClientProcessName(parameters.uiProcessName))
         exit(EXIT_FAILURE);

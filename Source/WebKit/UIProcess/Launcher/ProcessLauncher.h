@@ -26,6 +26,7 @@
 #pragma once
 
 #include "Connection.h"
+#include <WebCore/Process.h>
 #include <wtf/HashMap.h>
 #include <wtf/ProcessID.h>
 #include <wtf/RefPtr.h>
@@ -57,6 +58,7 @@ public:
 
     struct LaunchOptions {
         ProcessType processType;
+        WebCore::ProcessIdentifier processIdentifier;
         HashMap<String, String> extraInitializationData;
 
 #if ENABLE(DEVELOPER_MODE) && (PLATFORM(GTK) || PLATFORM(WPE))

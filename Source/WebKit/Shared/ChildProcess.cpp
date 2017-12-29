@@ -32,6 +32,8 @@
 #include <pal/SessionID.h>
 #include <unistd.h>
 
+using namespace WebCore;
+
 namespace WebKit {
 
 ChildProcess::ChildProcess()
@@ -62,6 +64,17 @@ static void didCloseOnConnectionWorkQueue(IPC::Connection*)
 
 void ChildProcess::initialize(const ChildProcessInitializationParameters& parameters)
 {
+#if PLATFORM(COCOA)
+    if (!parameters.processIdentifier)
+        RELEASE_ASSERT_WITH_MESSAGE(false, "Unable to initialize child process without a WebCore process identifier");
+#else
+    if (!parameters.processIdentifier)
+        LOG_ERROR("All child processes should have a WebCore::ProcessIdentifier vended by the UI process, but this one doesn't. This will cause things to break.");
+#endif
+
+    if (parameters.processIdentifier)
+        Process::setIdentifier(*parameters.processIdentifier);
+
     platformInitialize();
 
 #if PLATFORM(COCOA)

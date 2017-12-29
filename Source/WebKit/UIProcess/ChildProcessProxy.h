@@ -29,6 +29,7 @@
 #include "MessageReceiverMap.h"
 #include "ProcessLauncher.h"
 
+#include <WebCore/Process.h>
 #include <wtf/ProcessID.h>
 #include <wtf/SystemTracing.h>
 #include <wtf/ThreadSafeRefCounted.h>
@@ -80,6 +81,8 @@ public:
 
     void shutDownProcess();
 
+    WebCore::ProcessIdentifier coreProcessIdentifier() const { return m_processIdentifier; }
+
 protected:
     // ProcessLauncher::Client
     void didFinishLaunching(ProcessLauncher*, IPC::Connection::Identifier) override;
@@ -98,6 +101,7 @@ private:
     RefPtr<IPC::Connection> m_connection;
     IPC::MessageReceiverMap m_messageReceiverMap;
     bool m_alwaysRunsAtBackgroundPriority { false };
+    WebCore::ProcessIdentifier m_processIdentifier { generateObjectIdentifier<WebCore::ProcessIdentifierType>() };
 };
 
 template<typename T>

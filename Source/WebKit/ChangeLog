@@ -1,3 +1,30 @@
+2017-12-28  Brady Eidson  <beidson@apple.com>
+
+        Add a ProcessIdentifier, vended from the UI process, to each child process
+        https://bugs.webkit.org/show_bug.cgi?id=181155
+
+        Reviewed by Brent Fulgham.
+
+        * Shared/ChildProcess.cpp:
+        (WebKit::ChildProcess::initialize): Set the process-wide identifier if the initialization
+          parameters have it. Cocoa ASSERTS it exists; non-Cocoa platforms will have to figure this
+          out soon.
+        * Shared/ChildProcess.h:
+
+        * Shared/EntryPointUtilities/mac/XPCService/XPCServiceEntryPoint.h:
+        (WebKit::XPCServiceInitializer):
+        * Shared/EntryPointUtilities/mac/XPCService/XPCServiceEntryPoint.mm:
+        (WebKit::XPCServiceInitializerDelegate::getProcessIdentifier):
+
+        * UIProcess/ChildProcessProxy.cpp:
+        (WebKit::ChildProcessProxy::getLaunchOptions):
+        * UIProcess/ChildProcessProxy.h:
+        (WebKit::ChildProcessProxy::coreProcessIdentifier const):
+
+        * UIProcess/Launcher/ProcessLauncher.h:
+        * UIProcess/Launcher/mac/ProcessLauncherMac.mm:
+        (WebKit::ProcessLauncher::launchProcess):
+
 2017-12-28  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Remove std::chrono if it is not used for ArgumentCoder or PersistentCoder
