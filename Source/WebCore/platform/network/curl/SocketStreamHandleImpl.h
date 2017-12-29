@@ -42,6 +42,7 @@
 #include <wtf/Deque.h>
 #include <wtf/Lock.h>
 #include <wtf/RefCounted.h>
+#include <wtf/Seconds.h>
 #include <wtf/StreamBuffer.h>
 #include <wtf/Threading.h>
 
@@ -66,7 +67,7 @@ private:
 
     bool readData(CURL*);
     bool sendData(CURL*);
-    bool waitForAvailableData(CURL*, std::chrono::milliseconds selectTimeout);
+    bool waitForAvailableData(CURL*, Seconds selectTimeout);
 
     void startThread();
     void stopThread();

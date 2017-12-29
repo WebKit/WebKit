@@ -235,17 +235,16 @@ String ViewGestureController::SnapshotRemovalTracker::eventsDescription(Events e
 void ViewGestureController::SnapshotRemovalTracker::log(const String& log) const
 {
 #if !LOG_DISABLED
-    auto now = std::chrono::steady_clock::now();
-    double millisecondsSinceStart = std::chrono::duration_cast<std::chrono::duration<double, std::milli>>(now - m_startTime).count();
+    auto sinceStart = MonotonicTime::now() - m_startTime;
 #endif
-    LOG(ViewGestures, "Swipe Snapshot Removal (%0.2f ms) - %s", millisecondsSinceStart, log.utf8().data());
+    LOG(ViewGestures, "Swipe Snapshot Removal (%0.2f ms) - %s", sinceStart.milliseconds(), log.utf8().data());
 }
 
 void ViewGestureController::SnapshotRemovalTracker::start(Events desiredEvents, WTF::Function<void()>&& removalCallback)
 {
     m_outstandingEvents = desiredEvents;
     m_removalCallback = WTFMove(removalCallback);
-    m_startTime = std::chrono::steady_clock::now();
+    m_startTime = MonotonicTime::now();
 
     log("start");
 

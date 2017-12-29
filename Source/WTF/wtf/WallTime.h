@@ -44,41 +44,39 @@ public:
     static const ClockType clockType = ClockType::Wall;
     
     // This is the epoch. So, x.secondsSinceEpoch() should be the same as x - WallTime().
-    WallTime() { }
+    constexpr WallTime() { }
     
     // Call this if you know for sure that the double represents time according to
     // WTF::currentTime(). It must be in seconds and it must be from the same time source.
-    static WallTime fromRawSeconds(double value)
+    static constexpr WallTime fromRawSeconds(double value)
     {
-        WallTime result;
-        result.m_value = value;
-        return result;
+        return WallTime(value);
     }
     
     WTF_EXPORT_PRIVATE static WallTime now();
     
-    static WallTime infinity() { return fromRawSeconds(std::numeric_limits<double>::infinity()); }
+    static constexpr WallTime infinity() { return fromRawSeconds(std::numeric_limits<double>::infinity()); }
     
-    Seconds secondsSinceEpoch() const { return Seconds(m_value); }
+    constexpr Seconds secondsSinceEpoch() const { return Seconds(m_value); }
     
     WallTime approximateWallTime() const { return *this; }
     WTF_EXPORT_PRIVATE MonotonicTime approximateMonotonicTime() const;
     
-    explicit operator bool() const { return !!m_value; }
+    explicit constexpr operator bool() const { return !!m_value; }
     
-    WallTime operator+(Seconds other) const
+    constexpr WallTime operator+(Seconds other) const
     {
         return fromRawSeconds(m_value + other.value());
     }
     
-    WallTime operator-(Seconds other) const
+    constexpr WallTime operator-(Seconds other) const
     {
         return fromRawSeconds(m_value - other.value());
     }
     
     // Time is a scalar and scalars can be negated as this could arise from algebraic
     // transformations. So, we allow it.
-    WallTime operator-() const
+    constexpr WallTime operator-() const
     {
         return fromRawSeconds(-m_value);
     }
@@ -93,37 +91,37 @@ public:
         return *this = *this - other;
     }
     
-    Seconds operator-(WallTime other) const
+    constexpr Seconds operator-(WallTime other) const
     {
         return Seconds(m_value - other.m_value);
     }
     
-    bool operator==(WallTime other) const
+    constexpr bool operator==(WallTime other) const
     {
         return m_value == other.m_value;
     }
     
-    bool operator!=(WallTime other) const
+    constexpr bool operator!=(WallTime other) const
     {
         return m_value != other.m_value;
     }
     
-    bool operator<(WallTime other) const
+    constexpr bool operator<(WallTime other) const
     {
         return m_value < other.m_value;
     }
     
-    bool operator>(WallTime other) const
+    constexpr bool operator>(WallTime other) const
     {
         return m_value > other.m_value;
     }
     
-    bool operator<=(WallTime other) const
+    constexpr bool operator<=(WallTime other) const
     {
         return m_value <= other.m_value;
     }
     
-    bool operator>=(WallTime other) const
+    constexpr bool operator>=(WallTime other) const
     {
         return m_value >= other.m_value;
     }
@@ -131,6 +129,11 @@ public:
     WTF_EXPORT_PRIVATE void dump(PrintStream&) const;
     
 private:
+    constexpr WallTime(double rawValue)
+        : m_value(rawValue)
+    {
+    }
+
     double m_value { 0 };
 };
 

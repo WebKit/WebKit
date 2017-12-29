@@ -164,19 +164,19 @@ bool SocketStreamHandleImpl::sendData(CURL* curlHandle)
     return true;
 }
 
-bool SocketStreamHandleImpl::waitForAvailableData(CURL* curlHandle, std::chrono::milliseconds selectTimeout)
+bool SocketStreamHandleImpl::waitForAvailableData(CURL* curlHandle, Seconds selectTimeout)
 {
     ASSERT(!isMainThread());
 
-    std::chrono::microseconds usec = std::chrono::duration_cast<std::chrono::microseconds>(selectTimeout);
+    int64_t usec = selectTimeout.microsecondsAs<int64_t>();
 
     struct timeval timeout;
-    if (usec <= std::chrono::microseconds(0)) {
+    if (usec <= 0) {
         timeout.tv_sec = 0;
         timeout.tv_usec = 0;
     } else {
-        timeout.tv_sec = usec.count() / 1000000;
-        timeout.tv_usec = usec.count() % 1000000;
+        timeout.tv_sec = usec / 1000000;
+        timeout.tv_usec = usec % 1000000;
     }
 
     long socket;
@@ -233,7 +233,7 @@ void SocketStreamHandleImpl::startThread()
             sendData(curlHandle);
 
             // Wait until socket has available data
-            if (waitForAvailableData(curlHandle, std::chrono::milliseconds(20)))
+            if (waitForAvailableData(curlHandle, 20_ms))
                 readData(curlHandle);
         }
 

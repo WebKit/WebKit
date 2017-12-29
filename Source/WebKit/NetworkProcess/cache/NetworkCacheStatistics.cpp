@@ -93,7 +93,7 @@ void Statistics::initialize(const String& databasePath)
 {
     ASSERT(RunLoop::isMain());
 
-    auto startTime = std::chrono::system_clock::now();
+    auto startTime = WallTime::now();
 
     serialBackgroundIOQueue().dispatch([this, databasePath = databasePath.isolatedCopy(), networkCachePath = m_cache.recordsPath(), startTime] {
         WebCore::SQLiteTransactionInProgressAutoCounter transactionCounter;
@@ -121,20 +121,20 @@ void Statistics::initialize(const String& databasePath)
         m_approximateEntryCount = statement.getColumnInt(0);
 
 #if !LOG_DISABLED
-        auto elapsedMS = static_cast<int64_t>(std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now() - startTime).count());
+        auto elapsed = WallTime::now() - startTime;
 #else
         UNUSED_PARAM(startTime);
 #endif
-        LOG(NetworkCache, "(NetworkProcess) Network cache statistics database load complete, entries=%lu time=%" PRIi64 "ms", static_cast<size_t>(m_approximateEntryCount), elapsedMS);
+        LOG(NetworkCache, "(NetworkProcess) Network cache statistics database load complete, entries=%lu time=%" PRIi64 "ms", static_cast<size_t>(m_approximateEntryCount), elapsed.millisecondsAs<int64_t>());
 
         if (!m_approximateEntryCount) {
             bootstrapFromNetworkCache(networkCachePath);
 #if !LOG_DISABLED
-            elapsedMS = static_cast<int64_t>(std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now() - startTime).count());
+            elapsed = WallTime::now() - startTime;
 #else
             UNUSED_PARAM(startTime);
 #endif
-            LOG(NetworkCache, "(NetworkProcess) Network cache statistics database bootstrapping complete, entries=%lu time=%" PRIi64 "ms", static_cast<size_t>(m_approximateEntryCount), elapsedMS);
+            LOG(NetworkCache, "(NetworkProcess) Network cache statistics database bootstrapping complete, entries=%lu time=%" PRIi64 "ms", static_cast<size_t>(m_approximateEntryCount), elapsed.millisecondsAs<int64_t>());
         }
     });
 }

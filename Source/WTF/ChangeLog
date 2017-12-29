@@ -1,3 +1,31 @@
+2017-12-28  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Remove std::chrono if it is not used for ArgumentCoder or PersistentCoder
+        https://bugs.webkit.org/show_bug.cgi?id=181174
+
+        Reviewed by Konstantin Tokarev.
+
+        Make WallTime more constexpr friendly. This change is already applied to MonoTonicTime.
+
+        We would like to move std::{isfinite,isinf,isnan} overloadings from std:: to each class scope in a separate patch[1].
+
+        [1]: https://bugs.webkit.org/show_bug.cgi?id=181183
+
+        * wtf/WallTime.h:
+        (WTF::WallTime::WallTime):
+        (WTF::WallTime::fromRawSeconds):
+        (WTF::WallTime::infinity):
+        (WTF::WallTime::secondsSinceEpoch const):
+        (WTF::WallTime::operator bool const):
+        (WTF::WallTime::operator+ const):
+        (WTF::WallTime::operator- const):
+        (WTF::WallTime::operator== const):
+        (WTF::WallTime::operator!= const):
+        (WTF::WallTime::operator< const):
+        (WTF::WallTime::operator> const):
+        (WTF::WallTime::operator<= const):
+        (WTF::WallTime::operator>= const):
+
 2017-12-28  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [Win][CMake] Use add_custom_command to copy each forwarding header files

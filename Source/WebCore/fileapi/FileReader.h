@@ -36,7 +36,6 @@
 #include "FileError.h"
 #include "FileReaderLoader.h"
 #include "FileReaderLoaderClient.h"
-#include <chrono>
 
 namespace JSC {
 class ArrayBuffer;
@@ -102,7 +101,7 @@ private:
     String m_encoding;
     std::unique_ptr<FileReaderLoader> m_loader;
     RefPtr<FileError> m_error;
-    std::chrono::steady_clock::time_point m_lastProgressNotificationTime;
+    MonotonicTime m_lastProgressNotificationTime { MonotonicTime::nan() };
 };
 
 } // namespace WebCore

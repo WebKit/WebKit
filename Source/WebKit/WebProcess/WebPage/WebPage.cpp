@@ -5135,7 +5135,7 @@ void WebPage::didCommitLoad(WebFrame* frame)
 #endif
 
 #if USE(OS_STATE)
-    m_loadCommitTime = std::chrono::system_clock::now();
+    m_loadCommitTime = WallTime::now();
 #endif
 
     WebProcess::singleton().updateActivePages();

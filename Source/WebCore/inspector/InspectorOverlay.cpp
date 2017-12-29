@@ -63,7 +63,6 @@
 namespace WebCore {
 
 using namespace Inspector;
-using namespace std::literals::chrono_literals;
 
 static void contentsQuadToCoordinateSystem(const FrameView* mainView, const FrameView* view, FloatQuad& quad, InspectorOverlay::CoordinateSystem coordinateSystem)
 {
@@ -380,9 +379,9 @@ void InspectorOverlay::showPaintRect(const FloatRect& rect)
 
     IntRect rootRect = m_page.mainFrame().view()->contentsToRootView(enclosingIntRect(rect));
 
-    const auto removeDelay = 250ms;
+    const auto removeDelay = 250_ms;
 
-    std::chrono::steady_clock::time_point removeTime = std::chrono::steady_clock::now() + removeDelay;
+    MonotonicTime removeTime = MonotonicTime::now() + removeDelay;
     m_paintRects.append(TimeRectPair(removeTime, rootRect));
 
     if (!m_paintRectUpdateTimer.isActive()) {
@@ -396,7 +395,7 @@ void InspectorOverlay::showPaintRect(const FloatRect& rect)
 
 void InspectorOverlay::updatePaintRectsTimerFired()
 {
-    std::chrono::steady_clock::time_point now = std::chrono::steady_clock::now();
+    MonotonicTime now = MonotonicTime::now();
     bool rectsChanged = false;
     while (!m_paintRects.isEmpty() && m_paintRects.first().first < now) {
         m_paintRects.removeFirst();

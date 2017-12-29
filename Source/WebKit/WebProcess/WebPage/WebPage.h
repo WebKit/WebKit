@@ -1002,7 +1002,7 @@ public:
     void insertNewlineInQuotedContent();
 
 #if USE(OS_STATE)
-    std::chrono::system_clock::time_point loadCommitTime() const { return m_loadCommitTime; }
+    WallTime loadCommitTime() const { return m_loadCommitTime; }
 #endif
 
 #if ENABLE(GAMEPAD)
@@ -1655,7 +1655,7 @@ private:
 #endif
 
 #if USE(OS_STATE)
-    std::chrono::system_clock::time_point m_loadCommitTime;
+    WallTime m_loadCommitTime;
 #endif
 
     WebCore::UserInterfaceLayoutDirection m_userInterfaceLayoutDirection { WebCore::UserInterfaceLayoutDirection::LTR };

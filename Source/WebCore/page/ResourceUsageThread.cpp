@@ -107,21 +107,19 @@ void ResourceUsageThread::createThreadIfNeeded()
 
 NO_RETURN void ResourceUsageThread::threadBody()
 {
-    using namespace std::literals::chrono_literals;
-
     while (true) {
         // Only do work if we have observers.
         waitUntilObservers();
 
-        auto start = std::chrono::system_clock::now();
+        auto start = WallTime::now();
 
         ResourceUsageData data;
         platformThreadBody(m_vm, data);
         notifyObservers(WTFMove(data));
 
-        auto duration = std::chrono::system_clock::now() - start;
-        auto difference = 500ms - duration;
-        std::this_thread::sleep_for(difference);
+        auto duration = WallTime::now() - start;
+        auto difference = 500_ms - duration;
+        WTF::sleep(difference);
     }
 }
 

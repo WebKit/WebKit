@@ -348,7 +348,7 @@ void Cache::retrieve(const WebCore::ResourceRequest& request, const GlobalFrameI
     }
 #endif
 
-    auto startTime = std::chrono::system_clock::now();
+    auto startTime = WallTime::now();
     auto priority = static_cast<unsigned>(request.priority());
 
     m_storage->retrieve(storageKey, priority, [this, protectedThis = makeRef(*this), request, completionHandler = WTFMove(completionHandler), startTime, storageKey, frameID](auto record) {
@@ -378,8 +378,8 @@ void Cache::retrieve(const WebCore::ResourceRequest& request, const GlobalFrameI
         };
 
 #if !LOG_DISABLED
-        auto elapsedMS = static_cast<int64_t>(std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now() - startTime).count());
-        LOG(NetworkCache, "(NetworkProcess) retrieve complete useDecision=%d priority=%d time=%" PRIi64 "ms", static_cast<int>(useDecision), static_cast<int>(request.priority()), elapsedMS);
+        auto elapsed = WallTime::now() - startTime;
+        LOG(NetworkCache, "(NetworkProcess) retrieve complete useDecision=%d priority=%d time=%" PRIi64 "ms", static_cast<int>(useDecision), static_cast<int>(request.priority()), elapsed.millisecondsAs<int64_t>());
 #else
         UNUSED_PARAM(startTime);
 #endif

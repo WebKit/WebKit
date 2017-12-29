@@ -245,7 +245,7 @@ void WebProcess::registerWithStateDumper()
                 if (page->usesEphemeralSession())
                     continue;
 
-                NSDate* date = [NSDate dateWithTimeIntervalSince1970:std::chrono::system_clock::to_time_t(page->loadCommitTime())];
+                NSDate* date = [NSDate dateWithTimeIntervalSince1970:page->loadCommitTime().secondsSinceEpoch().seconds()];
                 [pageLoadTimes addObject:date];
             }
 
