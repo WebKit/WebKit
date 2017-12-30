@@ -37,7 +37,7 @@ JSType typeForTypedArrayType(TypedArrayType type)
     switch (type) {
     case NotTypedArray:
         RELEASE_ASSERT_NOT_REACHED();
-        return UnspecifiedType;
+        return Int8ArrayType;
     case TypeInt8:
         return Int8ArrayType;
     case TypeUint8:
@@ -61,7 +61,7 @@ JSType typeForTypedArrayType(TypedArrayType type)
 
     default:
         RELEASE_ASSERT_NOT_REACHED();
-        return UnspecifiedType;
+        return Int8ArrayType;
     }
 }
 

@@ -1,3 +1,17 @@
+2017-12-30  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Remove unused JSTypes
+        https://bugs.webkit.org/show_bug.cgi?id=181184
+
+        Reviewed by Saam Barati.
+
+        JSType includes some unused types such as NullType. They are for
+        primitive values in old days. But now JSType is only used for JSCells.
+
+        * runtime/JSType.h:
+        * runtime/TypedArrayType.cpp:
+        (JSC::typeForTypedArrayType):
+
 2017-12-28  Saam Barati  <sbarati@apple.com>
 
         Remove op_assert and make @assert in builtins a function call so we have DFG/FTL coverage for builtins that use @assert in debug builds

@@ -23,12 +23,6 @@
 namespace JSC {
 
 enum JSType : uint8_t {
-    UnspecifiedType,
-    UndefinedType,
-    BooleanType,
-    NumberType,
-    NullType,
-
     // The CellType value must come before any JSType that is a JSCell.
     CellType,
     StringType,
@@ -38,13 +32,13 @@ enum JSType : uint8_t {
     CustomGetterSetterType,
     APIValueWrapperType,
 
-    EvalExecutableType,
     ProgramExecutableType,
     ModuleProgramExecutableType,
+    EvalExecutableType,
     FunctionExecutableType,
-    WebAssemblyExecutableType,
 
     UnlinkedFunctionExecutableType,
+
     UnlinkedProgramCodeBlockType,
     UnlinkedModuleProgramCodeBlockType,
     UnlinkedEvalCodeBlockType,
@@ -68,6 +62,7 @@ enum JSType : uint8_t {
     WithScopeType,
     DirectArgumentsType,
     ScopedArgumentsType,
+    ClonedArgumentsType,
 
     ArrayType,
     DerivedArrayType,
@@ -101,9 +96,6 @@ enum JSType : uint8_t {
     JSWeakSetType,
 
     WebAssemblyFunctionType,
-
-    ClonedArgumentsType,
-
     WebAssemblyToJSCalleeType,
 
     LastJSCObjectType = WebAssemblyToJSCalleeType,
