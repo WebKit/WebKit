@@ -870,10 +870,6 @@ bool DragController::startDrag(Frame& src, const DragState& state, DragOperation
 
     URL linkURL = hitTestResult.absoluteLinkURL();
     URL imageURL = hitTestResult.absoluteImageURL();
-#if ENABLE(ATTACHMENT_ELEMENT)
-    URL attachmentURL = hitTestResult.absoluteAttachmentURL();
-    m_draggingAttachmentURL = URL();
-#endif
 
     IntPoint mouseDraggedPoint = src.view()->windowToContents(dragEvent.position());
 
@@ -1079,11 +1075,7 @@ bool DragController::startDrag(Frame& src, const DragState& state, DragOperation
         auto previousSelection = src.selection().selection();
         if (hasData == HasNonDefaultPasteboardData::No) {
             selectElement(element);
-            if (!attachmentURL.isEmpty()) {
-                // Use the attachment URL specified by the file attribute to populate the pasteboard.
-                m_draggingAttachmentURL = attachmentURL;
-                declareAndWriteAttachment(dataTransfer, element, attachmentURL);
-            } else if (src.editor().client()) {
+            if (src.editor().client()) {
 #if PLATFORM(COCOA)
                 // Otherwise, if no file URL is specified, call out to the injected bundle to populate the pasteboard with data.
                 auto& editor = src.editor();

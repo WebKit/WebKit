@@ -115,15 +115,6 @@ void WebPageProxy::setPromisedDataForImage(const String&, const SharedMemory::Ha
     notImplemented();
 }
 
-#if ENABLE(ATTACHMENT_ELEMENT)
-
-void WebPageProxy::setPromisedDataForAttachment(const String&, const String&, const String&, const String&, const String&, const String&)
-{
-    notImplemented();
-}
-
-#endif
-
 void WebPageProxy::setDragCaretRect(const IntRect& dragCaretRect)
 {
     if (m_currentDragCaretRect == dragCaretRect)

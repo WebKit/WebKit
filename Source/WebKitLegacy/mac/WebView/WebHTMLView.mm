@@ -4365,10 +4365,6 @@ static bool matchesExtensionOrEquivalent(NSString *filename, NSString *extension
         const URL& imageURL = page->dragController().draggingImageURL();
         if (!imageURL.isEmpty())
             draggingElementURL = imageURL;
-#if ENABLE(ATTACHMENT_ELEMENT)
-        else
-            draggingElementURL = page->dragController().draggingAttachmentURL();
-#endif
 
         wrapper = [[self _dataSource] _fileWrapperForURL:draggingElementURL];
     }

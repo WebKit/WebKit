@@ -44,9 +44,6 @@ public:
     void beginDrag(WebCore::DragItem, WebCore::Frame&, const WebCore::IntPoint& mouseDownPosition, const WebCore::IntPoint& mouseDraggedPosition, WebCore::DataTransfer&, WebCore::DragSourceAction) override;
 
     void declareAndWriteDragImage(const String& pasteboardName, WebCore::Element&, const WebCore::URL&, const String&, WebCore::Frame*) override;
-#if ENABLE(ATTACHMENT_ELEMENT)
-    void declareAndWriteAttachment(const String& pasteboardName, WebCore::Element&, const WebCore::URL&, const String& path, WebCore::Frame*) override;
-#endif
     void didConcludeEditDrag() override;
 private:
     WebView* m_webView;

@@ -364,13 +364,6 @@ void PageClientImpl::setPromisedDataForImage(const String& pasteboardName, Ref<S
     m_impl->setPromisedDataForImage(image.get(), filename, extension, title, url, visibleURL, archiveBuffer.get(), pasteboardName);
 }
 
-#if ENABLE(ATTACHMENT_ELEMENT)
-void PageClientImpl::setPromisedDataForAttachment(const String& pasteboardName, const String& filename, const String& extension, const String& title, const String& url, const String& visibleURL)
-{
-    m_impl->setPromisedDataForAttachment(filename, extension, title, url, visibleURL, pasteboardName);
-}
-#endif
-
 void PageClientImpl::updateSecureInputState()
 {
     m_impl->updateSecureInputState();

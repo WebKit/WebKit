@@ -115,19 +115,6 @@ static WebCore::CachedImage* cachedImage(Element& element)
     return image;
 }
 
-#if ENABLE(ATTACHMENT_ELEMENT)
-void WebDragClient::declareAndWriteAttachment(const String& pasteboardName, Element& element, const URL& url, const String& path, WebCore::Frame* frame)
-{
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    ASSERT(pasteboardName == String(NSDragPboard));
-#pragma clang diagnostic pop
-    
-    NSURL* nsURL = (NSURL *)url;
-    m_page->send(Messages::WebPageProxy::SetPromisedDataForAttachment(pasteboardName, String(nsURL.lastPathComponent), String(nsURL.pathExtension), path, String(nsURL.absoluteString), userVisibleString(nsURL)));
-}
-#endif
-
 void WebDragClient::declareAndWriteDragImage(const String& pasteboardName, Element& element, const URL& url, const String& label, Frame*)
 {
 #pragma clang diagnostic push
@@ -231,15 +218,6 @@ void WebDragClient::didConcludeEditDrag()
 {
     m_page->didConcludeEditDataInteraction();
 }
-
-#if ENABLE(ATTACHMENT_ELEMENT)
-
-void WebDragClient::declareAndWriteAttachment(const String&, Element&, const URL&, const String&, Frame*)
-{
-    notImplemented();
-}
-
-#endif
 
 #endif // PLATFORM(IOS)
 

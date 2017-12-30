@@ -3835,20 +3835,6 @@ void WebViewImpl::setPromisedDataForImage(WebCore::Image* image, NSString *filen
     m_promisedImage = image;
 }
 
-#if ENABLE(ATTACHMENT_ELEMENT)
-void WebViewImpl::setPromisedDataForAttachment(NSString *filename, NSString *extension, NSString *title, NSString *url, NSString *visibleURL, NSString *pasteboardName)
-{
-    NSPasteboard *pasteboard = [NSPasteboard pasteboardWithName:pasteboardName];
-    RetainPtr<NSMutableArray> types = adoptNS([[NSMutableArray alloc] initWithObjects:WebCore::legacyFilesPromisePasteboardType(), nil]);
-    [types addObjectsFromArray:PasteboardTypes::forURL()];
-    [pasteboard declareTypes:types.get() owner:m_view.getAutoreleased()];
-    setFileAndURLTypes(filename, extension, title, url, visibleURL, pasteboard);
-    [pasteboard setPropertyList:@[title] forType:WebCore::legacyFilenamesPasteboardType()];
-
-    m_promisedImage = nullptr;
-}
-#endif
-
 void WebViewImpl::pasteboardChangedOwner(NSPasteboard *pasteboard)
 {
     m_promisedImage = nullptr;

@@ -309,9 +309,6 @@ messages -> WebPageProxy {
 #if PLATFORM(COCOA) && ENABLE(DRAG_SUPPORT)
     StartDrag(struct WebCore::DragItem dragItem, WebKit::ShareableBitmap::Handle dragImage)
     SetPromisedDataForImage(String pasteboardName, WebKit::SharedMemory::Handle imageHandle, uint64_t imageSize, String filename, String extension, String title, String url, String visibleURL, WebKit::SharedMemory::Handle archiveHandle, uint64_t archiveSize)
-#if ENABLE(ATTACHMENT_ELEMENT)
-    SetPromisedDataForAttachment(String pasteboardName, String filename, String extension, String title, String url, String visibleURL)
-#endif
 #endif
 #if PLATFORM(GTK) && ENABLE(DRAG_SUPPORT)
     StartDrag(struct WebKit::WebSelectionData selection, uint64_t dragOperation, WebKit::ShareableBitmap::Handle dragImage)

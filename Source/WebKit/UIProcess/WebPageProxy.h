@@ -870,9 +870,6 @@ public:
     void startDrag(const WebCore::DragItem&, const ShareableBitmap::Handle& dragImageHandle);
     void setPromisedDataForImage(const String& pasteboardName, const SharedMemory::Handle& imageHandle, uint64_t imageSize, const String& filename, const String& extension,
                          const String& title, const String& url, const String& visibleURL, const SharedMemory::Handle& archiveHandle, uint64_t archiveSize);
-#if ENABLE(ATTACHMENT_ELEMENT)
-    void setPromisedDataForAttachment(const String& pasteboardName, const String& filename, const String& extension, const String& title, const String& url, const String& visibleURL);
-#endif
 #endif
 #if PLATFORM(GTK)
     void startDrag(WebSelectionData&&, uint64_t dragOperation, const ShareableBitmap::Handle& dragImage);

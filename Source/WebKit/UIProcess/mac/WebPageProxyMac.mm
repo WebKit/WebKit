@@ -290,14 +290,6 @@ void WebPageProxy::setPromisedDataForImage(const String& pasteboardName, const S
     m_pageClient.setPromisedDataForImage(pasteboardName, WTFMove(imageBuffer), filename, extension, title, url, visibleURL, WTFMove(archiveBuffer));
 }
 
-#if ENABLE(ATTACHMENT_ELEMENT)
-void WebPageProxy::setPromisedDataForAttachment(const String& pasteboardName, const String& filename, const String& extension, const String& title, const String& url, const String& visibleURL)
-{
-    MESSAGE_CHECK_URL(url);
-    MESSAGE_CHECK_URL(visibleURL);
-    m_pageClient.setPromisedDataForAttachment(pasteboardName, filename, extension, title, url, visibleURL);
-}
-#endif
 #endif
 
 void WebPageProxy::performDictionaryLookupAtLocation(const WebCore::FloatPoint& point)

@@ -105,9 +105,6 @@ public:
     WEBCORE_EXPORT URL absolutePDFURL() const;
     WEBCORE_EXPORT URL absoluteMediaURL() const;
     WEBCORE_EXPORT URL absoluteLinkURL() const;
-#if ENABLE(ATTACHMENT_ELEMENT)
-    WEBCORE_EXPORT URL absoluteAttachmentURL() const;
-#endif
     WEBCORE_EXPORT String textContent() const;
     bool isOverLink() const;
     WEBCORE_EXPORT bool isContentEditable() const;

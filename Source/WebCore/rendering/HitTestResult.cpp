@@ -341,30 +341,6 @@ IntRect HitTestResult::imageRect() const
     return m_innerNonSharedNode->renderBox()->absoluteContentQuad().enclosingBoundingBox();
 }
 
-#if ENABLE(ATTACHMENT_ELEMENT)
-URL HitTestResult::absoluteAttachmentURL() const
-{
-    if (!m_innerNonSharedNode)
-        return URL();
-    
-    if (!(m_innerNonSharedNode->renderer() && m_innerNonSharedNode->renderer()->isAttachment()))
-        return URL();
-    
-    if (!is<HTMLAttachmentElement>(*m_innerNonSharedNode))
-        return URL();
-    File* attachmentFile = downcast<HTMLAttachmentElement>(*m_innerNonSharedNode).file();
-    if (!attachmentFile)
-        return URL();
-    
-    auto filepath = attachmentFile->path();
-    if (!filepath.isEmpty())
-        return URL::fileURLWithFileSystemPath(filepath);
-
-    ASSERT(attachmentFile->url().protocolIsBlob());
-    return attachmentFile->url();
-}
-#endif
-
 URL HitTestResult::absoluteImageURL() const
 {
     if (!m_innerNonSharedNode)

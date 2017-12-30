@@ -169,15 +169,6 @@ void WebDragClient::declareAndWriteDragImage(const String& pasteboardName, Eleme
     [[NSPasteboard pasteboardWithName:pasteboardName] _web_declareAndWriteDragImageForElement:kit(&element) URL:url title:title archive:[kit(&element) webArchive] source:getTopHTMLView(frame)];
 }
 
-#if ENABLE(ATTACHMENT_ELEMENT)
-void WebDragClient::declareAndWriteAttachment(const String& pasteboardName, Element& element, const URL& url, const String& path, WebCore::Frame* frame)
-{
-    ASSERT(pasteboardName);
-    
-    [[NSPasteboard pasteboardWithName:pasteboardName] _web_declareAndWriteDragImageForElement:kit(&element) URL:url title:path archive:nil source:getTopHTMLView(frame)];
-}
-#endif
-
 #elif !ENABLE(DATA_INTERACTION)
 
 bool WebDragClient::useLegacyDragClient()
@@ -213,12 +204,6 @@ void WebDragClient::beginDrag(DragItem, Frame&, const IntPoint&, const IntPoint&
 void WebDragClient::declareAndWriteDragImage(const String&, Element&, const URL&, const String&, WebCore::Frame*)
 {
 }
-
-#if ENABLE(ATTACHMENT_ELEMENT)
-void WebDragClient::declareAndWriteAttachment(const String&, Element&, const URL&, const String&, WebCore::Frame*)
-{
-}
-#endif
 
 #endif
 
@@ -257,12 +242,6 @@ void WebDragClient::declareAndWriteDragImage(const String& pasteboardName, Eleme
     if (auto* frame = element.document().frame())
         frame->editor().writeImageToPasteboard(*Pasteboard::createForDragAndDrop(), element, url, label);
 }
-
-#if ENABLE(ATTACHMENT_ELEMENT)
-void WebDragClient::declareAndWriteAttachment(const String&, Element&, const URL&, const String&, Frame*)
-{
-}
-#endif
 
 void WebDragClient::didConcludeEditDrag()
 {

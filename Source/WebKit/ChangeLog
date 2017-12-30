@@ -1,3 +1,29 @@
+2017-12-30  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Attachment Support] Remove current macOS support for dragging file-backed attachments
+        https://bugs.webkit.org/show_bug.cgi?id=181188
+
+        Reviewed by Dan Bernstein.
+
+        See WebCore/ChangeLog for more detail.
+
+        * UIProcess/Cocoa/WebPageProxyCocoa.mm:
+        (WebKit::WebPageProxy::setPromisedDataForAttachment): Deleted.
+        * UIProcess/Cocoa/WebViewImpl.h:
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::setPromisedDataForAttachment): Deleted.
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/mac/PageClientImplMac.h:
+        * UIProcess/mac/PageClientImplMac.mm:
+        (WebKit::PageClientImpl::setPromisedDataForAttachment): Deleted.
+        * UIProcess/mac/WebPageProxyMac.mm:
+        (WebKit::WebPageProxy::setPromisedDataForAttachment): Deleted.
+        * WebProcess/WebCoreSupport/WebDragClient.h:
+        * WebProcess/WebCoreSupport/mac/WebDragClientMac.mm:
+        (WebKit::WebDragClient::declareAndWriteAttachment): Deleted.
+
 2017-12-28  Brady Eidson  <beidson@apple.com>
 
         Add a ProcessIdentifier, vended from the UI process, to each child process
