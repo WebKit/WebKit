@@ -7,6 +7,4 @@
     </filter>
 </defs>
 <rect x="0" y="0" width="400" height="400" filter="url(#filter)"/>
-<!-- Mask out a small difference in the bottom right corner -->
-<rect x="385" y="385" width="20" height="20" fill="black"/>
 </svg>

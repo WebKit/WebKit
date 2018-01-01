@@ -233,7 +233,7 @@ inline IntSize FELighting::LightingData::bottomRightNormal(int offset) const
     int top = static_cast<int>(pixels->item(offset + cAlphaChannelOffset));
     return {
         -topLeft + top - 2 * left + 2 * center,
-        topLeft - 2 * top + left + 2 * center
+        -topLeft - 2 * top + left + 2 * center
     };
 }
 
