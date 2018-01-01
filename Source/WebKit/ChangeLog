@@ -117,6 +117,21 @@
 
 2017-12-22  Jeff Miller  <jeffm@apple.com>
 
+        Update user-visible copyright strings to include 2018
+        https://bugs.webkit.org/show_bug.cgi?id=181141
+
+        Reviewed by Dan Bernstein.
+
+        * Info.plist:
+        * NetworkProcess/EntryPoint/mac/XPCService/NetworkService/Info-OSX.plist:
+        * NetworkProcess/EntryPoint/mac/XPCService/NetworkService/Info-iOS.plist:
+        * PluginProcess/EntryPoint/mac/XPCService/PluginService.32-64.Info.plist:
+        * StorageProcess/EntryPoint/mac/XPCService/StorageService/Info.plist:
+        * WebProcess/EntryPoint/mac/XPCService/WebContentService/Info-OSX.plist:
+        * WebProcess/EntryPoint/mac/XPCService/WebContentService/Info-iOS.plist:
+
+2017-12-22  Jeff Miller  <jeffm@apple.com>
+
         Allow WebsitePolicies API object to be bridged to _WKWebsitePolicies
         https://bugs.webkit.org/show_bug.cgi?id=181135
 
