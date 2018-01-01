@@ -27,6 +27,7 @@
 #include "config.h"
 #include "FELighting.h"
 
+#include "ColorUtilities.h"
 #include "FELightingNEON.h"
 #include <wtf/ParallelJobs.h>
 
@@ -397,7 +398,9 @@ bool FELighting::drawLighting(Uint8ClampedArray& pixels, int width, int height)
     data.widthMultipliedByPixelSize = width * cPixelSize;
     data.widthDecreasedByOne = width - 1;
     data.heightDecreasedByOne = height - 1;
-    paintingData.intialLightingData.colorVector = FloatPoint3D(m_lightingColor.red(), m_lightingColor.green(), m_lightingColor.blue());
+    
+    Color lightColor = (operatingColorSpace() == ColorSpaceLinearRGB) ? sRGBToLinearColor(m_lightingColor) : m_lightingColor;
+    paintingData.intialLightingData.colorVector = FloatPoint3D(lightColor.red(), lightColor.green(), lightColor.blue());
     m_lightSource->initPaintingData(paintingData);
 
     // Top left.

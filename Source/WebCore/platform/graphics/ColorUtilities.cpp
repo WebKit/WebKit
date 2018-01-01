@@ -26,6 +26,9 @@
 #include "config.h"
 #include "ColorUtilities.h"
 
+#include "Color.h"
+#include <wtf/MathExtras.h>
+
 namespace WebCore {
 
 ColorComponents::ColorComponents(const FloatComponents& floatComponents)
@@ -34,6 +37,45 @@ ColorComponents::ColorComponents(const FloatComponents& floatComponents)
     components[1] = clampedColorComponent(floatComponents.components[1]);
     components[2] = clampedColorComponent(floatComponents.components[2]);
     components[3] = clampedColorComponent(floatComponents.components[3]);
+}
+
+// These are the standard sRGB <-> linearRGB conversion functions (https://en.wikipedia.org/wiki/SRGB).
+float linearToSRGBColorComponent(float c)
+{
+    if (c < 0.0031308)
+        return 12.92 * c;
+
+    return clampTo<float>(1.055 * powf(c, 1.0 / 2.4) - 0.055, 0, 1);
+}
+
+float sRGBToLinearColorComponent(float c)
+{
+    if (c <= 0.04045)
+        return c / 12.92;
+
+    return clampTo<float>(powf((c + 0.055) / 1.055, 2.4), 0, 1);
+}
+
+Color linearToSRGBColor(const Color& color)
+{
+    float r, g, b, a;
+    color.getRGBA(r, g, b, a);
+    r = linearToSRGBColorComponent(r);
+    g = linearToSRGBColorComponent(g);
+    b = linearToSRGBColorComponent(b);
+
+    return Color(r, g, b, a);
+}
+
+Color sRGBToLinearColor(const Color& color)
+{
+    float r, g, b, a;
+    color.getRGBA(r, g, b, a);
+    r = sRGBToLinearColorComponent(r);
+    g = sRGBToLinearColorComponent(g);
+    b = sRGBToLinearColorComponent(b);
+
+    return Color(r, g, b, a);
 }
 
 } // namespace WebCore

@@ -1,3 +1,16 @@
+2017-12-30  Simon Fraser  <simon.fraser@apple.com>
+
+        SVG lighting colors need to be converted into linearSRGB
+        https://bugs.webkit.org/show_bug.cgi?id=181196
+
+        Reviewed by Dan Bates.
+
+        Compare a far-away green spotlight with a green flood. The bottom right pixel always
+        has the wrong color (webkit.org/b/181203), so mask it out.
+
+        * svg/filters/feSpotLight-color-expected.svg: Added.
+        * svg/filters/feSpotLight-color.svg: Added.
+
 2017-12-28  Zalan Bujtas  <zalan@apple.com>
 
         RenderTreeUpdater::GeneratedContent should hold a weak reference to RenderQuote.

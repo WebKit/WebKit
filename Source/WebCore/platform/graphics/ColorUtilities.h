@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "Color.h"
 #include <algorithm>
 #include <math.h>
 
@@ -146,6 +147,13 @@ inline unsigned byteOffsetOfPixel(unsigned x, unsigned y, unsigned rowBytes)
     const unsigned bytesPerPixel = 4;
     return x * bytesPerPixel + y * rowBytes;
 }
+
+// 0-1 components, result is clamped.
+float linearToSRGBColorComponent(float);
+float sRGBToLinearColorComponent(float);
+    
+Color linearToSRGBColor(const Color&);
+Color sRGBToLinearColor(const Color&);
 
 } // namespace WebCore
 
