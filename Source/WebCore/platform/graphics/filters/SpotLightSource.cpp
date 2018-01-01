@@ -104,7 +104,7 @@ LightSource::ComputedLightingData SpotLightSource::computePixelLightingData(cons
 
     return {
         lightVector,
-        paintingData.intialLightingData.colorVector * lightStrength,
+        paintingData.initialLightingData.colorVector * lightStrength,
         lightVectorLength
     };
 }

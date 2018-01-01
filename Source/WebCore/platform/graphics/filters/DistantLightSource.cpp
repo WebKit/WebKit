@@ -39,17 +39,17 @@ void DistantLightSource::initPaintingData(PaintingData& paintingData)
 {
     float azimuth = deg2rad(m_azimuth);
     float elevation = deg2rad(m_elevation);
-    paintingData.intialLightingData.lightVector = {
+    paintingData.initialLightingData.lightVector = {
         std::cos(azimuth) * std::cos(elevation),
         std::sin(azimuth) * std::cos(elevation),
         std::sin(elevation)
     };
-    paintingData.intialLightingData.lightVectorLength = 1;
+    paintingData.initialLightingData.lightVectorLength = 1;
 }
 
 LightSource::ComputedLightingData DistantLightSource::computePixelLightingData(const PaintingData& paintingData, int, int, float) const
 {
-    return paintingData.intialLightingData;
+    return paintingData.initialLightingData;
 }
 
 bool DistantLightSource::setAzimuth(float azimuth)

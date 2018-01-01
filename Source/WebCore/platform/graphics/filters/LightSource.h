@@ -47,7 +47,7 @@ public:
     };
 
     struct PaintingData {
-        ComputedLightingData intialLightingData;
+        ComputedLightingData initialLightingData;
         FloatPoint3D directionVector;
         float coneCutOffLimit;
         float coneFullLight;

@@ -400,7 +400,7 @@ bool FELighting::drawLighting(Uint8ClampedArray& pixels, int width, int height)
     data.heightDecreasedByOne = height - 1;
     
     Color lightColor = (operatingColorSpace() == ColorSpaceLinearRGB) ? sRGBToLinearColor(m_lightingColor) : m_lightingColor;
-    paintingData.intialLightingData.colorVector = FloatPoint3D(lightColor.red(), lightColor.green(), lightColor.blue());
+    paintingData.initialLightingData.colorVector = FloatPoint3D(lightColor.red(), lightColor.green(), lightColor.blue());
     m_lightSource->initPaintingData(paintingData);
 
     // Top left.

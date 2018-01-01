@@ -1,3 +1,15 @@
+2017-12-30  Simon Fraser  <simon.fraser@apple.com>
+
+        REGRESSION (r225122): fePointLights don't work
+        https://bugs.webkit.org/show_bug.cgi?id=181142
+
+        Reviewed by Dan Bates.
+
+        Ref test that compares a point light with a flood color.
+
+        * svg/filters/fePointLight-color-expected.svg: Added.
+        * svg/filters/fePointLight-color.svg: Added.
+
 2017-12-31  Simon Fraser  <simon.fraser@apple.com>
 
         Bottom right pixel of feDiffuseLighting has the wrong color
