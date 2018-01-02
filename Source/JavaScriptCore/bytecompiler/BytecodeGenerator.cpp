@@ -36,6 +36,7 @@
 #include "BuiltinNames.h"
 #include "BytecodeGeneratorification.h"
 #include "BytecodeLivenessAnalysis.h"
+#include "CatchScope.h"
 #include "DefinePropertyAttributes.h"
 #include "Interpreter.h"
 #include "JSAsyncGeneratorFunction.h"
@@ -3125,9 +3126,11 @@ RegisterID* BytecodeGenerator::emitNewObject(RegisterID* dst)
 JSValue BytecodeGenerator::addBigIntConstant(const Identifier& identifier, uint8_t radix)
 {
     return m_bigIntMap.ensure(BigIntMapEntry(identifier.impl(), radix), [&] {
+        auto scope = DECLARE_CATCH_SCOPE(*vm());
         JSBigInt* bigIntInMap = JSBigInt::parseInt(nullptr, *vm(), identifier.string(), radix);
         // FIXME: [ESNext] Enables a way to throw an error on ByteCodeGenerator step
         // https://bugs.webkit.org/show_bug.cgi?id=180139
+        scope.assertNoException();
         RELEASE_ASSERT(bigIntInMap);
         addConstantValue(bigIntInMap);
 

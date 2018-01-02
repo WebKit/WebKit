@@ -685,6 +685,9 @@ runtime/AtomicsObject.cpp
 runtime/AsyncFunctionConstructor.cpp
 runtime/AsyncFunctionPrototype.cpp
 runtime/BasicBlockLocation.cpp
+runtime/BigIntConstructor.cpp
+runtime/BigIntObject.cpp
+runtime/BigIntPrototype.cpp
 runtime/BooleanConstructor.cpp
 runtime/BooleanObject.cpp
 runtime/BooleanPrototype.cpp

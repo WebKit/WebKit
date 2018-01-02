@@ -200,6 +200,9 @@ ALWAYS_INLINE JSValue prototypeForLookupPrimitiveImpl(JSGlobalObject* globalObje
 
     if (structure->typeInfo().type() == StringType)
         return globalObject->stringPrototype();
+    
+    if (structure->typeInfo().type() == BigIntType)
+        return globalObject->bigIntPrototype();
 
     ASSERT(structure->typeInfo().type() == SymbolType);
     return globalObject->symbolPrototype();

@@ -141,6 +141,8 @@ OBJECT_LUT_HEADERS = \
     ArrayConstructor.lut.h \
     ArrayIteratorPrototype.lut.h \
     AsyncGeneratorPrototype.lut.h \
+    BigIntPrototype.lut.h \
+    BigIntConstructor.lut.h \
     BooleanPrototype.lut.h \
     DateConstructor.lut.h \
     DatePrototype.lut.h \

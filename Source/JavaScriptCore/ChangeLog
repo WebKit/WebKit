@@ -1,3 +1,83 @@
+2018-01-02  Caio Lima  <ticaiolima@gmail.com>
+
+        [ESNext][BigInt] Implement BigIntConstructor and BigIntPrototype
+        https://bugs.webkit.org/show_bug.cgi?id=175359
+
+        Reviewed by Yusuke Suzuki.
+
+        This patch is implementing BigIntConstructor and BigIntPrototype
+        following spec[1, 2]. As addition, we are also implementing BigIntObject
+        warapper to handle ToObject(v) abstract operation when "v" is a BigInt
+        primitive. With these classes, now it's possible to syntetize
+        BigInt.prototype and then call "toString", "valueOf" and
+        "toLocaleString" when the primitive is a BigInt.
+        BigIntConstructor exposes an API to parse other primitives such as
+        Number, Boolean and String to BigInt.
+        We decided to skip parseInt implementation, since it was removed from
+        spec.
+
+        [1] - https://tc39.github.io/proposal-bigint/#sec-bigint-constructor
+        [2] - https://tc39.github.io/proposal-bigint/#sec-properties-of-the-bigint-prototype-object 
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Sources.txt:
+        * jsc.cpp:
+        * runtime/BigIntConstructor.cpp: Added.
+        (JSC::BigIntConstructor::BigIntConstructor):
+        (JSC::BigIntConstructor::finishCreation):
+        (JSC::isSafeInteger):
+        (JSC::toBigInt):
+        (JSC::callBigIntConstructor):
+        (JSC::bigIntConstructorFuncAsUintN):
+        (JSC::bigIntConstructorFuncAsIntN):
+        * runtime/BigIntConstructor.h: Added.
+        (JSC::BigIntConstructor::create):
+        (JSC::BigIntConstructor::createStructure):
+        * runtime/BigIntObject.cpp: Added.
+        (JSC::BigIntObject::BigIntObject):
+        (JSC::BigIntObject::finishCreation):
+        (JSC::BigIntObject::toStringName):
+        (JSC::BigIntObject::defaultValue):
+        * runtime/BigIntObject.h: Added.
+        (JSC::BigIntObject::create):
+        (JSC::BigIntObject::internalValue const):
+        (JSC::BigIntObject::createStructure):
+        * runtime/BigIntPrototype.cpp: Added.
+        (JSC::BigIntPrototype::BigIntPrototype):
+        (JSC::BigIntPrototype::finishCreation):
+        (JSC::toThisBigIntValue):
+        (JSC::bigIntProtoFuncToString):
+        (JSC::bigIntProtoFuncToLocaleString):
+        (JSC::bigIntProtoFuncValueOf):
+        * runtime/BigIntPrototype.h: Added.
+        (JSC::BigIntPrototype::create):
+        (JSC::BigIntPrototype::createStructure):
+        * runtime/IntlCollator.cpp:
+        (JSC::IntlCollator::initializeCollator):
+        * runtime/IntlNumberFormat.cpp:
+        (JSC::IntlNumberFormat::initializeNumberFormat):
+        * runtime/JSBigInt.cpp:
+        (JSC::JSBigInt::createFrom):
+        (JSC::JSBigInt::parseInt):
+        (JSC::JSBigInt::toObject const):
+        * runtime/JSBigInt.h:
+        * runtime/JSCJSValue.cpp:
+        (JSC::JSValue::synthesizePrototype const):
+        * runtime/JSCPoisonedPtr.cpp:
+        * runtime/JSCell.cpp:
+        (JSC::JSCell::toObjectSlow const):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        (JSC::JSGlobalObject::visitChildren):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::bigIntPrototype const):
+        (JSC::JSGlobalObject::bigIntObjectStructure const):
+        * runtime/StructureCache.h:
+        * runtime/StructureInlines.h:
+        (JSC::prototypeForLookupPrimitiveImpl):
+
 2018-01-02  Tim Horton  <timothy_horton@apple.com>
 
         Fix the MathCommon build with a recent compiler

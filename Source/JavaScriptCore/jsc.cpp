@@ -40,6 +40,7 @@
 #include "JIT.h"
 #include "JSArray.h"
 #include "JSArrayBuffer.h"
+#include "JSBigInt.h"
 #include "JSCInlines.h"
 #include "JSFunction.h"
 #include "JSInternalPromise.h"

@@ -56,6 +56,8 @@ set(JavaScriptCore_OBJECT_LUT_SOURCES
     runtime/ArrayConstructor.cpp
     runtime/ArrayIteratorPrototype.cpp
     runtime/AsyncGeneratorPrototype.cpp
+    runtime/BigIntConstructor.cpp
+    runtime/BigIntPrototype.cpp
     runtime/BooleanPrototype.cpp
     runtime/DateConstructor.cpp
     runtime/DatePrototype.cpp

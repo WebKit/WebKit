@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2013-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Caio Lima <ticaiolima@gmail.com>
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,41 +21,42 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #pragma once
 
-#include "IndexingType.h"
-#include "JSTypeInfo.h"
-#include "PrototypeKey.h"
-#include "WeakGCMap.h"
-#include <wtf/TriState.h>
+#include "InternalFunction.h"
 
 namespace JSC {
 
-class FunctionExecutable;
-class JSGlobalObject;
-class JSObject;
-class Structure;
-class VM;
+class BigIntPrototype;
+class GetterSetter;
 
-// Tracks the canonical structure an object should be allocated with when inheriting from a given prototype.
-class StructureCache {
+class BigIntConstructor : public InternalFunction {
 public:
-    explicit StructureCache(VM& vm)
-        : m_structures(vm)
+    using Base = InternalFunction;
+    static const unsigned StructureFlags = Base::StructureFlags | HasStaticPropertyTable;
+
+    static BigIntConstructor* create(VM& vm, Structure* structure, BigIntPrototype* bigIntPrototype, GetterSetter*)
     {
+        BigIntConstructor* constructor = new (NotNull, allocateCell<BigIntConstructor>(vm.heap)) BigIntConstructor(vm, structure);
+        constructor->finishCreation(vm, bigIntPrototype);
+        return constructor;
     }
 
-    JS_EXPORT_PRIVATE Structure* emptyObjectStructureForPrototype(JSGlobalObject*, JSObject*, unsigned inlineCapacity, bool makePolyProtoStructure = false, FunctionExecutable* = nullptr);
-    JS_EXPORT_PRIVATE Structure* emptyStructureForPrototypeFromBaseStructure(JSGlobalObject*, JSObject*, Structure*);
+    DECLARE_INFO;
+
+    static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue proto)
+    {
+        return Structure::create(vm, globalObject, proto, TypeInfo(InternalFunctionType, StructureFlags), info());
+    }
+
+protected:
+    void finishCreation(VM&, BigIntPrototype*);
 
 private:
-    Structure* createEmptyStructure(JSGlobalObject*, JSObject* prototype, const TypeInfo&, const ClassInfo*, IndexingType, unsigned inlineCapacity, bool makePolyProtoStructure, FunctionExecutable*);
-
-    using StructureMap = WeakGCMap<PrototypeKey, Structure>;
-    StructureMap m_structures;
+    BigIntConstructor(VM&, Structure*);
 };
 
 } // namespace JSC

@@ -187,9 +187,8 @@ JSObject* JSCell::toObjectSlow(ExecState* exec, JSGlobalObject* globalObject) co
     ASSERT(!isObject());
     if (isString())
         return static_cast<const JSString*>(this)->toObject(exec, globalObject);
-    // FIXME: [ESNext][BigInt] Implement JSBigInt, BigIntConstructor and BigIntPrototype
-    // https://bugs.webkit.org/show_bug.cgi?id=175359
-    RELEASE_ASSERT(!isBigInt());
+    if (isBigInt())
+        return static_cast<const JSBigInt*>(this)->toObject(exec, globalObject);
     ASSERT(isSymbol());
     return static_cast<const Symbol*>(this)->toObject(exec, globalObject);
 }

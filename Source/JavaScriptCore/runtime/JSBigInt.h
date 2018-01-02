@@ -55,6 +55,11 @@ public:
     static JSBigInt* createZero(VM&);
     static JSBigInt* createWithLength(VM&, int length);
 
+    static JSBigInt* createFrom(VM&, int32_t value);
+    static JSBigInt* createFrom(VM&, uint32_t value);
+    static JSBigInt* createFrom(VM&, int64_t value);
+    static JSBigInt* createFrom(VM&, bool value);
+
     DECLARE_EXPORT_INFO;
 
     void finishCreation(VM&);
@@ -68,7 +73,8 @@ public:
     int length() const { return m_length; }
 
     static JSBigInt* parseInt(ExecState*, VM&, StringView, uint8_t radix);
-    
+    static JSBigInt* parseInt(ExecState*, StringView);
+
     std::optional<uint8_t> singleDigitValueForString();
     String toString(ExecState&, int radix);
     
@@ -76,6 +82,8 @@ public:
 
     bool getPrimitiveNumber(ExecState*, double& number, JSValue& result) const;
     double toNumber(ExecState*) const;
+
+    JSObject* toObject(ExecState*, JSGlobalObject*) const;
     
 private:
     using Digit = uintptr_t;
@@ -106,6 +114,9 @@ private:
     static String toStringGeneric(ExecState&, JSBigInt*, int radix);
 
     bool isZero();
+
+    template <typename CharType>
+    static JSBigInt* parseInt(ExecState*, CharType*  data, int length);
 
     template <typename CharType>
     static JSBigInt* parseInt(ExecState*, VM&, CharType* data, int length, int startIndex, int radix, bool allowEmptyString = true);

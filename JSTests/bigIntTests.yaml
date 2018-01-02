@@ -3,7 +3,8 @@
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
 # are met:
-# 1. Redistributions of source code must retain the above copyright #    notice, this list of conditions and the following disclaimer.
+# 1. Redistributions of source code must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
 # 2. Redistributions in binary form must reproduce the above copyright
 #    notice, this list of conditions and the following disclaimer in the
 #    documentation and/or other materials provided with the distribution.
@@ -40,5 +41,59 @@
   cmd: runBigIntEnabled
 
 - path: stress/big-int-function-apply.js
+  cmd: runBigIntEnabled
+
+- path: stress/big-int-as-key.js
+  cmd: runBigIntEnabled
+
+- path: stress/big-int-constructor-gc.js
+  cmd: runBigIntEnabled
+
+- path: stress/big-int-constructor-oom.js
+  cmd: runBigIntEnabled
+
+- path: stress/big-int-constructor-properties.js
+  cmd: runBigIntEnabled
+
+- path: stress/big-int-constructor-prototype-prop-descriptor.js
+  cmd: runBigIntEnabled
+
+- path: stress/big-int-constructor-prototype.js
+  cmd: runBigIntEnabled
+
+- path: stress/big-int-constructor.js
+  cmd: runBigIntEnabled
+
+- path: stress/big-int-length.js
+  cmd: runBigIntEnabled
+
+- path: stress/big-int-prop-descriptor.js
+  cmd: runBigIntEnabled
+
+- path: stress/big-int-proto-constructor.js
+  cmd: runBigIntEnabled
+
+- path: stress/big-int-proto-name.js
+  cmd: runBigIntEnabled
+
+- path: stress/big-int-prototype-properties.js
+  cmd: runBigIntEnabled
+
+- path: stress/big-int-prototype-proto.js
+  cmd: runBigIntEnabled
+
+- path: stress/big-int-prototype-symbol-to-string-tag.js
+  cmd: runBigIntEnabled
+
+- path: stress/big-int-prototype-to-string-apply.js
+  cmd: runBigIntEnabled
+
+- path: stress/big-int-to-object.js
+  cmd: runBigIntEnabled
+
+- path: stress/big-int-prototype-value-of.js
+  cmd: runBigIntEnabled
+
+- path: stress/big-int-to-string.js
   cmd: runBigIntEnabled
 

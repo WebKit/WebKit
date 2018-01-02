@@ -1,3 +1,31 @@
+2018-01-02  Caio Lima  <ticaiolima@gmail.com>
+
+        [ESNext][BigInt] Implement BigIntConstructor and BigIntPrototype
+        https://bugs.webkit.org/show_bug.cgi?id=175359
+
+        Reviewed by Yusuke Suzuki.
+
+        * bigIntTests.yaml:
+        * stress/big-int-as-key.js: Added.
+        * stress/big-int-constructor-gc.js: Added.
+        * stress/big-int-constructor-oom.js: Added.
+        * stress/big-int-constructor-properties.js: Added.
+        * stress/big-int-constructor-prototype-prop-descriptor.js: Added.
+        * stress/big-int-constructor-prototype.js: Added.
+        * stress/big-int-constructor.js: Added.
+        * stress/big-int-function-apply.js:
+        * stress/big-int-length.js: Added.
+        * stress/big-int-prop-descriptor.js: Added.
+        * stress/big-int-proto-constructor.js: Added.
+        * stress/big-int-proto-name.js: Added.
+        * stress/big-int-prototype-properties.js: Added.
+        * stress/big-int-prototype-proto.js: Added.
+        * stress/big-int-prototype-value-of.js: Added.
+        * stress/big-int-prototype-symbol-to-string-tag.js: Added.
+        * stress/big-int-prototype-to-string-apply.js: Added.
+        * stress/big-int-to-object.js: Added.
+        * stress/big-int-to-string.js: Added.
+
 2017-12-28  Saam Barati  <sbarati@apple.com>
 
         Assertion used to determine if something is an async generator is wrong

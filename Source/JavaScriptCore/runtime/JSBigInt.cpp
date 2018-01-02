@@ -47,6 +47,7 @@
 #include "config.h"
 #include "JSBigInt.h"
 
+#include "BigIntObject.h"
 #include "CatchScope.h"
 #include "JSCInlines.h"
 #include "MathCommon.h"
@@ -104,9 +105,90 @@ JSBigInt* JSBigInt::createWithLength(VM& vm, int length)
     bigInt->finishCreation(vm);
     return bigInt;
 }
+
 void JSBigInt::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
+}
+
+
+JSBigInt* JSBigInt::createFrom(VM& vm, int32_t value)
+{
+    if (!value)
+        return createZero(vm);
+    
+    JSBigInt* bigInt = createWithLength(vm, 1);
+    
+    if (value < 0) {
+        bigInt->setDigit(0, static_cast<Digit>(-1 * static_cast<int64_t>(value)));
+        bigInt->setSign(true);
+    } else {
+        bigInt->setDigit(0, static_cast<Digit>(value));
+        bigInt->setSign(false);
+    }
+
+    return bigInt;
+}
+
+JSBigInt* JSBigInt::createFrom(VM& vm, uint32_t value)
+{
+    if (!value)
+        return createZero(vm);
+    
+    JSBigInt* bigInt = createWithLength(vm, 1);
+    bigInt->setDigit(0, static_cast<Digit>(value));
+    bigInt->setSign(false);
+    return bigInt;
+}
+
+JSBigInt* JSBigInt::createFrom(VM& vm, int64_t value)
+{
+    if (!value)
+        return createZero(vm);
+    
+    if (sizeof(Digit) == 8) {
+        JSBigInt* bigInt = createWithLength(vm, 1);
+        
+        if (value < 0) {
+            bigInt->setDigit(0, static_cast<Digit>(static_cast<uint64_t>(-(value + 1)) + 1));
+            bigInt->setSign(true);
+        } else {
+            bigInt->setDigit(0, static_cast<Digit>(value));
+            bigInt->setSign(false);
+        }
+        
+        return bigInt;
+    }
+    
+    JSBigInt* bigInt = createWithLength(vm, 2);
+    
+    uint64_t tempValue;
+    bool sign = false;
+    if (value < 0) {
+        tempValue = static_cast<uint64_t>(-(value + 1)) + 1;
+        sign = true;
+    } else
+        tempValue = value;
+    
+    Digit lowBits  = static_cast<Digit>(tempValue & 0xffffffff);
+    Digit highBits = static_cast<Digit>((tempValue >> 32) & 0xffffffff);
+    
+    bigInt->setDigit(0, lowBits);
+    bigInt->setDigit(1, highBits);
+    bigInt->setSign(sign);
+    
+    return bigInt;
+}
+
+JSBigInt* JSBigInt::createFrom(VM& vm, bool value)
+{
+    if (!value)
+        return createZero(vm);
+    
+    JSBigInt* bigInt = createWithLength(vm, 1);
+    bigInt->setDigit(0, static_cast<Digit>(value));
+    bigInt->setSign(false);
+    return bigInt;
 }
 
 JSValue JSBigInt::toPrimitive(ExecState*, PreferredPrimitiveType) const
@@ -125,6 +207,13 @@ std::optional<uint8_t> JSBigInt::singleDigitValueForString()
             return static_cast<uint8_t>(rDigit);
     }
     return { };
+}
+
+JSBigInt* JSBigInt::parseInt(ExecState* state, StringView s)
+{
+    if (s.is8Bit())
+        return parseInt(state, s.characters8(), s.length());
+    return parseInt(state, s.characters16(), s.length());
 }
 
 JSBigInt* JSBigInt::parseInt(ExecState* state, VM& vm, StringView s, uint8_t radix)
@@ -630,13 +719,57 @@ size_t JSBigInt::offsetOfData()
 }
 
 template <typename CharType>
+JSBigInt* JSBigInt::parseInt(ExecState* state, CharType*  data, int length)
+{
+    VM& vm = state->vm();
+
+    int p = 0;
+    while (p < length && isStrWhiteSpace(data[p]))
+        ++p;
+
+    // Check Radix from frist characters
+    if (p + 1 < length && data[p] == '0') {
+        if (isASCIIAlphaCaselessEqual(data[p + 1], 'b'))
+            return parseInt(state, vm, data, length, p + 2, 2, false);
+        
+        if (isASCIIAlphaCaselessEqual(data[p + 1], 'x'))
+            return parseInt(state, vm, data, length, p + 2, 16, false);
+        
+        if (isASCIIAlphaCaselessEqual(data[p + 1], 'o'))
+            return parseInt(state, vm, data, length, p + 2, 8, false);
+    }
+
+    bool sign = false;
+    if (p < length) {
+        if (data[p] == '+')
+            ++p;
+        else if (data[p] == '-') {
+            sign = true;
+            ++p;
+        }
+    }
+
+    JSBigInt* result = parseInt(state, vm, data, length, p, 10);
+
+    if (result && !result->isZero())
+        result->setSign(sign);
+
+    return result;
+}
+
+template <typename CharType>
 JSBigInt* JSBigInt::parseInt(ExecState* state, VM& vm, CharType* data, int length, int startIndex, int radix, bool allowEmptyString)
 {
     ASSERT(length >= 0);
     int p = startIndex;
 
-    if (!allowEmptyString && startIndex == length)
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    if (!allowEmptyString && startIndex == length) {
+        ASSERT(state);
+        throwVMError(state, scope, createSyntaxError(state, "Failed to parse String to BigInt"));
         return nullptr;
+    }
 
     // Skipping leading zeros
     while (p < length && data[p] == '0')
@@ -656,7 +789,6 @@ JSBigInt* JSBigInt::parseInt(ExecState* state, VM& vm, CharType* data, int lengt
     int limita = 'a' + (radix - 10);
     int limitA = 'A' + (radix - 10);
 
-    auto scope = DECLARE_CATCH_SCOPE(vm);
     JSBigInt* result = allocateFor(state, vm, radix, length - p);
     RETURN_IF_EXCEPTION(scope, nullptr);
 
@@ -673,11 +805,14 @@ JSBigInt* JSBigInt::parseInt(ExecState* state, VM& vm, CharType* data, int lengt
         else
             break;
 
-        result->inplaceMultiplyAdd(static_cast<uintptr_t>(radix), static_cast<uintptr_t>(digit));
+        result->inplaceMultiplyAdd(static_cast<Digit>(radix), static_cast<Digit>(digit));
     }
 
     if (p == length)
         return result->rightTrim(vm);
+
+    ASSERT(state);
+    throwVMError(state, scope, createSyntaxError(state, "Failed to parse String to BigInt"));
 
     return nullptr;
 }
@@ -697,6 +832,11 @@ void JSBigInt::setDigit(int n, Digit value)
 {
     ASSERT(n >= 0 && n < length());
     dataStorage()[n] = value;
+}
+
+JSObject* JSBigInt::toObject(ExecState* exec, JSGlobalObject* globalObject) const
+{
+    return BigIntObject::create(exec->vm(), globalObject, const_cast<JSBigInt*>(this));
 }
 
 } // namespace JSC
