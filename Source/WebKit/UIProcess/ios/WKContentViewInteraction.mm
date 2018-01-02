@@ -310,7 +310,7 @@ const CGFloat minimumTapHighlightRadius = 2.0;
         [[_contentView formAccessoryView] showAutoFillButtonWithTitle:title];
     else
         [[_contentView formAccessoryView] hideAutoFillButton];
-    if (UICurrentUserInterfaceIdiomIsPad())
+    if (currentUserInterfaceIdiomIsPad())
         [_contentView reloadInputViews];
 }
 
@@ -1128,12 +1128,12 @@ static NSValue *nsSizeForTapHighlightBorderRadius(WebCore::IntSize borderRadius,
     case InputType::None:
         return NO;
     case InputType::Select:
-        return !UICurrentUserInterfaceIdiomIsPad();
+        return !currentUserInterfaceIdiomIsPad();
     case InputType::Date:
     case InputType::Month:
     case InputType::DateTimeLocal:
     case InputType::Time:
-        return !UICurrentUserInterfaceIdiomIsPad();
+        return !currentUserInterfaceIdiomIsPad();
     default:
         return !_assistedNodeInformation.isReadOnly;
     }
@@ -1155,7 +1155,7 @@ static NSValue *nsSizeForTapHighlightBorderRadius(WebCore::IntSize borderRadius,
                   fontSize:_assistedNodeInformation.nodeFontSize
               minimumScale:_assistedNodeInformation.minimumScaleFactor
               maximumScale:_assistedNodeInformation.maximumScaleFactorIgnoringAlwaysScalable
-              allowScaling:(_assistedNodeInformation.allowsUserScalingIgnoringAlwaysScalable && !UICurrentUserInterfaceIdiomIsPad())
+              allowScaling:(_assistedNodeInformation.allowsUserScalingIgnoringAlwaysScalable && !currentUserInterfaceIdiomIsPad())
                forceScroll:[self requiresAccessoryView]];
 
     _didAccessoryTabInitiateFocus = NO;
@@ -1873,7 +1873,7 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
     case InputType::Month:
     case InputType::Week:
     case InputType::Time:
-        return !UICurrentUserInterfaceIdiomIsPad();
+        return !currentUserInterfaceIdiomIsPad();
     }
 }
 
@@ -2951,7 +2951,7 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
     [_formAccessoryView setNextEnabled:_assistedNodeInformation.hasNextNode];
     [_formAccessoryView setPreviousEnabled:_assistedNodeInformation.hasPreviousNode];
 
-    if (UICurrentUserInterfaceIdiomIsPad())
+    if (currentUserInterfaceIdiomIsPad())
         [_formAccessoryView setClearVisible:NO];
     else {
         switch (_assistedNodeInformation.elementType) {

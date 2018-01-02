@@ -104,7 +104,7 @@ static const NSTimeInterval kMillisecondsPerSecond = 1000;
         break;
    }
 
-    CGSize size = UICurrentUserInterfaceIdiomIsPad() ? [UIPickerView defaultSizeForCurrentOrientation] : [UIKeyboard defaultSizeForInterfaceOrientation:[UIApp interfaceOrientation]];
+    CGSize size = currentUserInterfaceIdiomIsPad() ? [UIPickerView defaultSizeForCurrentOrientation] : [UIKeyboard defaultSizeForInterfaceOrientation:[UIApp interfaceOrientation]];
 
     _datePicker = adoptNS([[UIDatePicker alloc] initWithFrame:CGRectMake(0, 0, size.width, size.height)]);
     _datePicker.get().datePickerMode = mode;
@@ -254,7 +254,7 @@ static const NSTimeInterval kMillisecondsPerSecond = 1000;
         return nil;
     }
 
-    if (UICurrentUserInterfaceIdiomIsPad())
+    if (currentUserInterfaceIdiomIsPad())
         _control = adoptNS([[WKDateTimePopover alloc] initWithView:view datePickerMode:mode]);
     else
         _control = adoptNS([[WKDateTimePicker alloc] initWithView:view datePickerMode:mode]);

@@ -76,7 +76,7 @@ CGFloat adjustedFontSize(CGFloat textWidth, UIFont *font, CGFloat initialFontSiz
         }
     }
 
-    if (UICurrentUserInterfaceIdiomIsPad())
+    if (currentUserInterfaceIdiomIsPad())
         _control = adoptNS([[WKSelectPopover alloc] initWithView:view hasGroups:hasGroups]);
     else if (view.assistedNodeInformation.isMultiSelect || hasGroups)
         _control = adoptNS([[WKMultipleSelectPicker alloc] initWithView:view]);

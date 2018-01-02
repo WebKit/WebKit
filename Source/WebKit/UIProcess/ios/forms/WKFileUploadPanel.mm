@@ -423,7 +423,7 @@ static NSArray *UTIsForMIMETypes(NSArray *mimeTypes)
     
     // Use a popover on the iPad if the source type is not the camera.
     // The camera will use a fullscreen, modal view controller.
-    BOOL usePopover = UICurrentUserInterfaceIdiomIsPad() && sourceType != UIImagePickerControllerSourceTypeCamera;
+    BOOL usePopover = currentUserInterfaceIdiomIsPad() && sourceType != UIImagePickerControllerSourceTypeCamera;
     if (usePopover)
         [self _presentPopoverWithContentViewController:_imagePicker.get() animated:YES];
     else
@@ -434,7 +434,7 @@ static NSArray *UTIsForMIMETypes(NSArray *mimeTypes)
 
 - (void)_presentMenuOptionForCurrentInterfaceIdiom:(UIViewController *)viewController
 {
-    if (UICurrentUserInterfaceIdiomIsPad())
+    if (currentUserInterfaceIdiomIsPad())
         [self _presentPopoverWithContentViewController:viewController animated:YES];
     else
         [self _presentFullscreenViewController:viewController animated:YES];

@@ -168,8 +168,6 @@ typedef NS_ENUM(NSInteger, UIDatePickerPrivateMode)  {
 @property (nonatomic, readonly, getter=_contentWidth) CGFloat contentWidth;
 @end
 
-#define UICurrentUserInterfaceIdiomIsPad() ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad)
-
 @interface UIDevice ()
 @property (nonatomic, readonly, retain) NSString *buildVersion;
 @end
@@ -980,6 +978,18 @@ typedef NS_OPTIONS(NSUInteger, UIDragOperation)
 @property (nonatomic, assign) NSString *password;
 @end
 #endif
+
+static inline bool currentUserInterfaceIdiomIsPad()
+{
+    // This inline function exists to thwart unreachable code
+    // detection on platforms where UICurrentUserInterfaceIdiomIsPad
+    // is defined directly to false.
+#if USE(APPLE_INTERNAL_SDK)
+    return UICurrentUserInterfaceIdiomIsPad();
+#else
+    return [[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad;
+#endif
+}
 
 WTF_EXTERN_C_BEGIN
 

@@ -1,3 +1,35 @@
+2018-01-02  Tim Horton  <timothy_horton@apple.com>
+
+        Fix the build on platforms where UICurrentUserInterfaceIdiomIsPad is defined to false
+        https://bugs.webkit.org/show_bug.cgi?id=181218
+
+        Reviewed by Alex Christensen.
+
+        * Platform/spi/ios/UIKitSPI.h:
+        (currentUserInterfaceIdiomIsPad):
+        * UIProcess/ios/SmartMagnificationController.mm:
+        (WebKit::SmartMagnificationController::didCollectGeometryForSmartMagnificationGesture):
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKFormInputSession setAccessoryViewCustomButtonTitle:]):
+        (-[WKContentView _requiresKeyboardWhenFirstResponder]):
+        (-[WKContentView _displayFormNodeInputView]):
+        (-[WKContentView requiresAccessoryView]):
+        (-[WKContentView _updateAccessory]):
+        * UIProcess/ios/forms/WKAirPlayRoutePicker.mm:
+        (-[WKAirPlayRoutePicker show:fromRect:]):
+        * UIProcess/ios/forms/WKFileUploadPanel.mm:
+        (-[WKFileUploadPanel _showPhotoPickerWithSourceType:]):
+        (-[WKFileUploadPanel _presentMenuOptionForCurrentInterfaceIdiom:]):
+        * UIProcess/ios/forms/WKFormInputControl.mm:
+        (-[WKDateTimePicker initWithView:datePickerMode:]):
+        (-[WKFormInputControl initWithView:]):
+        * UIProcess/ios/forms/WKFormSelectControl.mm:
+        (-[WKFormSelectControl initWithView:]):
+        On platforms where UICurrentUserInterfaceIdiomIsPad is defined to false,
+        blocks that conditionally execute based on its value are unreachable.
+        This causes the compiler to complain. Hide it away inside an inline function
+        and make use of that everywhere we used to use the macro.
+
 2018-01-02  Alex Christensen  <achristensen@webkit.org>
 
         Remove SVN file accidentally added in r226160
