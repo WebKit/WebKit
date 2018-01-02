@@ -1,1 +1,23 @@
+2018-01-02  Oleksandr Skachkov  <gskachkov@gmail.com>
+
+        WebAssembly: sending module to iframe fails
+        https://bugs.webkit.org/show_bug.cgi?id=179263
+
+        Reviewed by JF Bastien.
+
+        Allow use WebAssembly.Module as input parameters for postMessage 
+        in window and iframe object. To prevent sending message to iframe
+        that is not ready, in iframe-* test we are waiting message from
+        iframe only after that we send message to it.   
+
+        Tests: wasm/iframe-parent-postmessage.html
+               wasm/iframe-postmessage.html
+               wasm/window-postmessage.html
+
+        * bindings/js/SerializedScriptValue.cpp:
+        (WebCore::CloneSerializer::dumpIfTerminal):
+        * bindings/js/SerializedScriptValue.h:
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::postMessage):
+
 == Rolled over to ChangeLog-2018-01-01 ==

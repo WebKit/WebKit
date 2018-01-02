@@ -1,3 +1,25 @@
+2018-01-02  Oleksandr Skachkov  <gskachkov@gmail.com>
+
+        WebAssembly: sending module to iframe fails
+        https://bugs.webkit.org/show_bug.cgi?id=179263
+
+        Reviewed by JF Bastien.
+
+        * platform/ios-simulator/TestExpectations:
+        * platform/win/TestExpectations:
+        * resources/wasm-builder.js: Renamed from LayoutTests/workers/wasm-resources/builder.js.
+        * wasm/iframe-parent-postmessage-expected.txt: Added.
+        * wasm/iframe-parent-postmessage.html: Added.
+        * wasm/iframe-postmessage-expected.txt: Added.
+        * wasm/iframe-postmessage.html: Added.
+        * wasm/resources/frame-parent.html: Added.
+        * wasm/resources/frame.html: Added.
+        * wasm/resources/load_wasm.js: Added.
+        (createWasmModule):
+        * wasm/window-postmessage-expected.txt: Added.
+        * wasm/window-postmessage.html: Added.
+        * workers/wasm-mem-post-message.html:
+
 2018-01-02  Ms2ger  <Ms2ger@igalia.com>
 
         [WPE] Update some test expectations
