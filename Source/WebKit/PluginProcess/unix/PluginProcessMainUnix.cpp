@@ -65,13 +65,13 @@ public:
 
     bool parseCommandLine(int argc, char** argv) override
     {
-        ASSERT(argc == 3);
-        if (argc != 3)
+        ASSERT(argc == 4);
+        if (argc != 4)
             return false;
 
-        if (!strcmp(argv[1], "-scanPlugin"))
+        if (!strcmp(argv[2], "-scanPlugin"))
 #if PLUGIN_ARCHITECTURE(UNIX)
-            exit(NetscapePluginModule::scanPlugin(argv[2]) ? EXIT_SUCCESS : EXIT_FAILURE);
+            exit(NetscapePluginModule::scanPlugin(argv[3]) ? EXIT_SUCCESS : EXIT_FAILURE);
 #else
             exit(EXIT_FAILURE);
 #endif
@@ -83,7 +83,7 @@ public:
         }
 #endif
 
-        m_parameters.extraInitializationData.add("plugin-path", argv[2]);
+        m_parameters.extraInitializationData.add("plugin-path", argv[3]);
         return ChildProcessMainBase::parseCommandLine(argc, argv);
     }
 };
