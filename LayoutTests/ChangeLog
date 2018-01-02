@@ -1,3 +1,9 @@
+2018-01-01  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Unreviewed, add some more GTK crash expectations
+
+        * platform/gtk/TestExpectations:
+
 2017-12-30  Simon Fraser  <simon.fraser@apple.com>
 
         REGRESSION (r225122): fePointLights don't work
