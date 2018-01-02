@@ -1,5 +1,17 @@
 2018-01-02  Alex Christensen  <achristensen@webkit.org>
 
+        Only use CookieStorageShim when we aren't using NetworkSession
+        https://bugs.webkit.org/show_bug.cgi?id=180766
+
+        Reviewed by Brent Fulgham.
+
+        * Shared/mac/CookieStorageShim.h:
+        * Shared/mac/CookieStorageShim.mm:
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::initializeWebProcess):
+
+2018-01-02  Alex Christensen  <achristensen@webkit.org>
+
         Clean up context menu code
         https://bugs.webkit.org/show_bug.cgi?id=181074
 

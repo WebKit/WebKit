@@ -23,8 +23,9 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CookieStorageShim_h
-#define CookieStorageShim_h
+#pragma once
+
+#if !USE(NETWORK_SESSION)
 
 #include <wtf/Noncopyable.h>
 #include <wtf/NeverDestroyed.h>
@@ -47,4 +48,4 @@ private:
 
 }
 
-#endif // CookieStorageShim_h
+#endif

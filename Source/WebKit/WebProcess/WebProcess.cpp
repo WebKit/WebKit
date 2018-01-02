@@ -385,7 +385,7 @@ void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters)
 
     ensureNetworkProcessConnection();
 
-#if PLATFORM(COCOA)
+#if PLATFORM(COCOA) && !USE(NETWORK_SESSION)
     CookieStorageShim::singleton().initialize();
 #endif
     setTerminationTimeout(parameters.terminationTimeout);
