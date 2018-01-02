@@ -1,3 +1,20 @@
+2018-01-02  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [WPE][GTK] Implement the assignment of ProcessIdentifiers to child processes
+        https://bugs.webkit.org/show_bug.cgi?id=181187
+
+        Reviewed by Brady Eidson.
+
+        * Shared/ChildProcess.cpp: Make the ProcessIdentifier mandatory.
+        (WebKit::ChildProcess::initialize):
+        * Shared/unix/ChildProcessMain.cpp: Initialize ChildProcessInitializationParameters with the
+        ProcessIdentifier.
+        (WebKit::ChildProcessMainBase::parseCommandLine):
+        * UIProcess/Launcher/glib/ProcessLauncherGLib.cpp: Copy the ProcessIdentifier from
+        LaunchOptions into argv.
+        (WebKit::ProcessLauncher::launchProcess):
+        * WebProcess/wpe/WebProcessMainWPE.cpp: Expect the WPE socket ID later in the command line.
+
 2018-01-02  Alex Christensen  <achristensen@webkit.org>
 
         Use new WebsiteDataStore passed in through decidePolicyForNavigation SPI

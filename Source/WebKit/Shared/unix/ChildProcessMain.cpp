@@ -26,17 +26,19 @@
 #include "config.h"
 #include "ChildProcessMain.h"
 
+#include <WebCore/Process.h>
 #include <stdlib.h>
 
 namespace WebKit {
 
 bool ChildProcessMainBase::parseCommandLine(int argc, char** argv)
 {
-    ASSERT(argc >= 2);
-    if (argc < 2)
+    ASSERT(argc >= 3);
+    if (argc < 3)
         return false;
 
-    m_parameters.connectionIdentifier = atoi(argv[1]);
+    m_parameters.processIdentifier = makeObjectIdentifier<WebCore::ProcessIdentifierType>(atoll(argv[1]));
+    m_parameters.connectionIdentifier = atoi(argv[2]);
     return true;
 }
 

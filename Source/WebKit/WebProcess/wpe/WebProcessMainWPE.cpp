@@ -52,14 +52,14 @@ public:
 
     bool parseCommandLine(int argc, char** argv) override
     {
-        ASSERT(argc == 3);
-        if (argc < 3)
+        ASSERT(argc == 4);
+        if (argc < 4)
             return false;
 
         if (!ChildProcessMainBase::parseCommandLine(argc, argv))
             return false;
 
-        int wpeFd = atoi(argv[2]);
+        int wpeFd = atoi(argv[3]);
         RunLoop::main().dispatch(
             [wpeFd] {
                 RELEASE_ASSERT(is<PlatformDisplayWPE>(PlatformDisplay::sharedDisplay()));
