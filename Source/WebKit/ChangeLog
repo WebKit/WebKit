@@ -1,5 +1,12 @@
 2018-01-02  Alex Christensen  <achristensen@webkit.org>
 
+        Remove SVN file accidentally added in r226160
+        https://bugs.webkit.org/show_bug.cgi?id=180934
+
+        * UIProcess/WebPageProxy.cpp.orig: Removed.
+
+2018-01-02  Alex Christensen  <achristensen@webkit.org>
+
         Use BlockPtrs and lambdas instead of new/delete to pass parameters to blocks in WebViewImpl::performDragOperation
         https://bugs.webkit.org/show_bug.cgi?id=180795
 
