@@ -1,1 +1,13 @@
+2018-01-02  Tim Horton  <timothy_horton@apple.com>
+
+        Fix the MathCommon build with a recent compiler
+        https://bugs.webkit.org/show_bug.cgi?id=181216
+
+        Reviewed by Sam Weinig.
+
+        * runtime/MathCommon.cpp:
+        (JSC::fdlibmPow):
+        This cast drops the 'const' qualifier from the pointer to 'one',
+        but it doesn't have to, and it makes the compiler sad.
+
 == Rolled over to ChangeLog-2018-01-01 ==
