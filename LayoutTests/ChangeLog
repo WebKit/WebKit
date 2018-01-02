@@ -1,3 +1,33 @@
+2018-01-02  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Update Credential Management API for WebAuthentication
+        https://bugs.webkit.org/show_bug.cgi?id=181082
+        <rdar://problem/36055239>
+
+        Reviewed by Brent Fulgham.
+
+        This patch moves original tests for Credential Management API to http/wpt/ to better integrate
+        with web-platform-tests infrastructure. Hopefully this will help us later on contribute tests
+        back to W3C.
+
+        * credentials/idlharness-expected.txt: Removed.
+        * credentials/idlharness.html: Removed.
+        * fast/dom/navigator-detached-no-crash-expected.txt:
+        * http/wpt/credential-management/credentialscontainer-create-basics.https-expected.txt: Added.
+        * http/wpt/credential-management/credentialscontainer-create-basics.https.html: Added.
+        * http/wpt/credential-management/credentialscontainer-get-basics.https-expected.txt: Added.
+        * http/wpt/credential-management/credentialscontainer-get-basics.https.html: Added.
+        * http/wpt/credential-management/credentialscontainer-preventSilentAccess-basics.https-expected.txt: Added.
+        * http/wpt/credential-management/credentialscontainer-preventSilentAccess-basics.https.html: Added.
+        * http/wpt/credential-management/idl.https-expected.txt: Added.
+        * http/wpt/credential-management/idl.https.html: Added.
+        * platform/gtk/TestExpectations:
+        * platform/gtk/fast/dom/navigator-detached-no-crash-expected.txt:
+        * platform/mac-elcapitan-wk2/fast/dom/navigator-detached-no-crash-expected.txt:
+        * platform/mac-wk1/fast/dom/navigator-detached-no-crash-expected.txt:
+        * platform/win/TestExpectations:
+        * platform/win/fast/dom/navigator-detached-no-crash-expected.txt:
+
 2018-01-02  Ms2ger  <Ms2ger@igalia.com>
 
         Remove obsolete expectations for updated imported/w3c/web-platform-tests/html/browsers/windows/browsing-context.html.

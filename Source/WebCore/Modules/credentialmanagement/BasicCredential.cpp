@@ -28,9 +28,10 @@
 
 namespace WebCore {
 
-BasicCredential::BasicCredential(const String& id, Type type)
+BasicCredential::BasicCredential(const String& id, Type type, Discovery discovery)
     : m_id(id)
     , m_type(type)
+    , m_discovery(discovery)
 {
 }
 
@@ -39,10 +40,8 @@ BasicCredential::~BasicCredential() = default;
 String BasicCredential::type() const
 {
     switch (m_type) {
-    case Type::Password:
-        return ASCIILiteral("password");
-    case Type::Federated:
-        return ASCIILiteral("federated");
+    case Type::PublicKey:
+        return ASCIILiteral("public-key");
     }
 
     ASSERT_NOT_REACHED();

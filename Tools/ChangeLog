@@ -1,3 +1,16 @@
+2018-01-02  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Update Credential Management API for WebAuthentication
+        https://bugs.webkit.org/show_bug.cgi?id=181082
+        <rdar://problem/36055239>
+
+        Reviewed by Brent Fulgham.
+
+        Enable Credential Management API for testing.
+
+        * DumpRenderTree/TestOptions.h:
+        * WebKitTestRunner/TestOptions.h:
+
 2018-01-02  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [GTK] Test /webkit2/WebKitWebExtension/form-controls-associated-signal is flaky

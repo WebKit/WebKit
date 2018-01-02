@@ -1,5 +1,4 @@
 /*
- * Copyright (C) 2017 Google Inc. All rights reserved.
  * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -24,7 +23,34 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-dictionary CredentialCreationOptions {
-    AbortSignal signal;
-    boolean publicKey; // fake for now
-};
+#include "config.h"
+#include "PublicKeyCredential.h"
+
+namespace WebCore {
+
+PublicKeyCredential::PublicKeyCredential(const String& id)
+    : BasicCredential(id, Type::PublicKey, Discovery::Remote)
+{
+}
+
+Vector<Ref<BasicCredential>> PublicKeyCredential::collectFromCredentialStore(CredentialRequestOptions&&, bool)
+{
+    return { };
+}
+
+ExceptionOr<RefPtr<BasicCredential>> PublicKeyCredential::discoverFromExternalSource(const CredentialRequestOptions&, bool)
+{
+    return Exception { NotSupportedError };
+}
+
+RefPtr<BasicCredential> PublicKeyCredential::store(RefPtr<BasicCredential>&&, bool)
+{
+    return nullptr;
+}
+
+ExceptionOr<RefPtr<BasicCredential>> PublicKeyCredential::create(const CredentialCreationOptions&, bool)
+{
+    return Exception { NotSupportedError };
+}
+
+}

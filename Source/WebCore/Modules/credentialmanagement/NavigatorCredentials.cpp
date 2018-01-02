@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2017 Google Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,8 +27,9 @@
 #include "config.h"
 #include "NavigatorCredentials.h"
 
+#include "Document.h"
+#include "Frame.h"
 #include "Navigator.h"
-
 
 namespace WebCore {
 
@@ -40,17 +42,19 @@ const char* NavigatorCredentials::supplementName()
     return "NavigatorCredentials";
 }
 
-CredentialsContainer* NavigatorCredentials::credentials()
+CredentialsContainer* NavigatorCredentials::credentials(WeakPtr<Document>&& document)
 {
     if (!m_credentialsContainer)
-        m_credentialsContainer = CredentialsContainer::create();
+        m_credentialsContainer = CredentialsContainer::create(WTFMove(document));
 
     return m_credentialsContainer.get();
 }
 
 CredentialsContainer* NavigatorCredentials::credentials(Navigator& navigator)
 {
-    return NavigatorCredentials::from(&navigator)->credentials();
+    if (!navigator.frame() || !navigator.frame()->document())
+        return nullptr;
+    return NavigatorCredentials::from(&navigator)->credentials(navigator.frame()->document()->createWeakPtr());
 }
 
 NavigatorCredentials* NavigatorCredentials::from(Navigator* navigator)

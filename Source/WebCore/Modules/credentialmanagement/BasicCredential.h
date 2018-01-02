@@ -25,29 +25,35 @@
 
 #pragma once
 
-#include <wtf/RefCounted.h>
+#include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-class BasicCredential : public RefCounted<BasicCredential> {
+class BasicCredential : public ThreadSafeRefCounted<BasicCredential> {
 public:
     enum class Type {
-        Password,
-        Federated,
+        PublicKey,
+    };
+
+    enum class Discovery {
+        CredentialStore,
+        Remote,
     };
 
     virtual ~BasicCredential();
 
     const String& id() const { return m_id; }
     String type() const;
+    Discovery discovery() const { return m_discovery; }
 
 protected:
-    BasicCredential(const String&, Type);
+    BasicCredential(const String&, Type, Discovery);
 
 private:
     String m_id;
     Type m_type;
+    Discovery m_discovery;
 };
 
 } // namespace WebCore

@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2017 Google Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,6 +28,7 @@
 
 #include "CredentialsContainer.h"
 #include "Supplementable.h"
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
@@ -37,11 +39,12 @@ public:
     NavigatorCredentials();
     virtual ~NavigatorCredentials();
 
-    CredentialsContainer* credentials();
+    static CredentialsContainer* credentials(Navigator&);
+
+private:
+    CredentialsContainer* credentials(WeakPtr<Document>&&);
 
     static NavigatorCredentials* from(Navigator*);
-    static CredentialsContainer* credentials(Navigator&);
-private:
     static const char* supplementName();
 
     RefPtr<CredentialsContainer> m_credentialsContainer;

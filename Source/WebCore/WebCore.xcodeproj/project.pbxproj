@@ -1662,6 +1662,8 @@
 		57C7A69F1E57917800C67D71 /* JSBasicCredential.h in Headers */ = {isa = PBXBuildFile; fileRef = 57C7A69D1E57910D00C67D71 /* JSBasicCredential.h */; };
 		57D0018D1DD5413200ED19D9 /* JSCryptoKeyUsage.h in Headers */ = {isa = PBXBuildFile; fileRef = 57D0018C1DD5413200ED19D9 /* JSCryptoKeyUsage.h */; };
 		57D846281FE8960500CA3682 /* NavigatorCredentials.h in Headers */ = {isa = PBXBuildFile; fileRef = 57D846261FE895F800CA3682 /* NavigatorCredentials.h */; };
+		57D8462E1FEAF69900CA3682 /* PublicKeyCredential.h in Headers */ = {isa = PBXBuildFile; fileRef = 57D8462B1FEAF68F00CA3682 /* PublicKeyCredential.h */; };
+		57D846351FEAFCD300CA3682 /* JSPublicKeyCredential.h in Headers */ = {isa = PBXBuildFile; fileRef = 57D846301FEAFC2F00CA3682 /* JSPublicKeyCredential.h */; };
 		57E1E5A31E8C91B500EE37C9 /* CryptoAlgorithmAES_CTR.h in Headers */ = {isa = PBXBuildFile; fileRef = 57E1E5A11E8C91B500EE37C9 /* CryptoAlgorithmAES_CTR.h */; };
 		57E1E5A71E8DBD3E00EE37C9 /* CryptoAlgorithmAesCtrParams.h in Headers */ = {isa = PBXBuildFile; fileRef = 57E1E5A61E8DBD3E00EE37C9 /* CryptoAlgorithmAesCtrParams.h */; };
 		57E1E5AD1E8DD09B00EE37C9 /* JSAesCtrParams.h in Headers */ = {isa = PBXBuildFile; fileRef = 57E1E5AB1E8DD09B00EE37C9 /* JSAesCtrParams.h */; };
@@ -8201,6 +8203,11 @@
 		57D846251FE895F600CA3682 /* NavigatorCredentials.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = NavigatorCredentials.idl; sourceTree = "<group>"; };
 		57D846261FE895F800CA3682 /* NavigatorCredentials.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NavigatorCredentials.h; sourceTree = "<group>"; };
 		57D846291FE99F6300CA3682 /* CredentialsContainer.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CredentialsContainer.idl; sourceTree = "<group>"; };
+		57D8462B1FEAF68F00CA3682 /* PublicKeyCredential.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PublicKeyCredential.h; sourceTree = "<group>"; };
+		57D8462C1FEAF68F00CA3682 /* PublicKeyCredential.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = PublicKeyCredential.cpp; sourceTree = "<group>"; };
+		57D8462D1FEAF68F00CA3682 /* PublicKeyCredential.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = PublicKeyCredential.idl; sourceTree = "<group>"; };
+		57D846301FEAFC2F00CA3682 /* JSPublicKeyCredential.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSPublicKeyCredential.h; sourceTree = "<group>"; };
+		57D846311FEAFC2F00CA3682 /* JSPublicKeyCredential.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSPublicKeyCredential.cpp; sourceTree = "<group>"; };
 		57E1E5A01E8C91B500EE37C9 /* CryptoAlgorithmAES_CTR.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CryptoAlgorithmAES_CTR.cpp; sourceTree = "<group>"; };
 		57E1E5A11E8C91B500EE37C9 /* CryptoAlgorithmAES_CTR.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CryptoAlgorithmAES_CTR.h; sourceTree = "<group>"; };
 		57E1E5A61E8DBD3E00EE37C9 /* CryptoAlgorithmAesCtrParams.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CryptoAlgorithmAesCtrParams.h; sourceTree = "<group>"; };
@@ -15310,6 +15317,7 @@
 				E1C8BE4B0E8BD0D10064CB7D /* Threads */,
 				BC9854530CD3DA8F00069BC1 /* Traversal */,
 				FDA15E7B12B03E04003A583A /* WebAudio */,
+				57D8462F1FEAFB0500CA3682 /* WebAuthN */,
 				5DA5E0F9102B950400088CF9 /* WebSockets */,
 				2DDE1CDC1F574A5600D1A365 /* WebVR */,
 				BC9854430CD3D9D000069BC1 /* Window */,
@@ -18044,6 +18052,25 @@
 			name = CredentialManagement;
 			sourceTree = "<group>";
 		};
+		57D8462A1FEAF57F00CA3682 /* webauthn */ = {
+			isa = PBXGroup;
+			children = (
+				57D8462C1FEAF68F00CA3682 /* PublicKeyCredential.cpp */,
+				57D8462B1FEAF68F00CA3682 /* PublicKeyCredential.h */,
+				57D8462D1FEAF68F00CA3682 /* PublicKeyCredential.idl */,
+			);
+			path = webauthn;
+			sourceTree = "<group>";
+		};
+		57D8462F1FEAFB0500CA3682 /* WebAuthN */ = {
+			isa = PBXGroup;
+			children = (
+				57D846311FEAFC2F00CA3682 /* JSPublicKeyCredential.cpp */,
+				57D846301FEAFC2F00CA3682 /* JSPublicKeyCredential.h */,
+			);
+			name = WebAuthN;
+			sourceTree = "<group>";
+		};
 		59B5977111086556007159E8 /* jsc */ = {
 			isa = PBXGroup;
 			children = (
@@ -20108,6 +20135,7 @@
 				AA2A5AB716A485A400975A25 /* speech */,
 				41A023EA1A39DB7900F722CF /* streams */,
 				FD315FA212B025B100C1A359 /* webaudio */,
+				57D8462A1FEAF57F00CA3682 /* webauthn */,
 				97BC69D51505F054001B74AC /* webdatabase */,
 				996E59DA1DF00D45006612B9 /* webdriver */,
 				97AABCF714FA09B5007457AE /* websockets */,
@@ -27961,6 +27989,7 @@
 				65DF320009D1CC60000BE325 /* JSProcessingInstruction.h in Headers */,
 				E44613EE0CD681BB00FADA75 /* JSProgressEvent.h in Headers */,
 				A578F43C1DE01423003DFC6A /* JSPromiseRejectionEvent.h in Headers */,
+				57D846351FEAFCD300CA3682 /* JSPublicKeyCredential.h in Headers */,
 				077664FD183E6B5C00133B92 /* JSQuickTimePluginReplacement.h in Headers */,
 				B658FFA21522EF3A00DD5595 /* JSRadioNodeList.h in Headers */,
 				65DF320209D1CC60000BE325 /* JSRange.h in Headers */,
@@ -28549,6 +28578,7 @@
 				E12719C70EEEC16800F61213 /* NavigatorBase.h in Headers */,
 				8321507E1F27EA1B0095B136 /* NavigatorBeacon.h in Headers */,
 				57D846281FE8960500CA3682 /* NavigatorCredentials.h in Headers */,
+				57D846281FE8960500CA3682 /* NavigatorCredentials.h in Headers */,
 				9711460414EF009A00674FD9 /* NavigatorGeolocation.h in Headers */,
 				5EA725D61ACABD5700EAD17B /* NavigatorMediaDevices.h in Headers */,
 				996E59DF1DF0128D006612B9 /* NavigatorWebDriver.h in Headers */,
@@ -28798,6 +28828,7 @@
 				51A052561058874000CC9E95 /* ProtectionSpaceHash.h in Headers */,
 				1AF8E11A1256592600230FF7 /* ProxyServer.h in Headers */,
 				FF945ECC161F7F3600971BC8 /* PseudoElement.h in Headers */,
+				57D8462E1FEAF69900CA3682 /* PublicKeyCredential.h in Headers */,
 				0081FF0016B0A2D3008AAA7A /* PublicSuffix.h in Headers */,
 				10FB084B14E15C7E00A3DB98 /* PublicURLManager.h in Headers */,
 				550A0BCA085F6039007353D6 /* QualifiedName.h in Headers */,

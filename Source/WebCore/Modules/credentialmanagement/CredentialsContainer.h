@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2017 Google Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,28 +26,43 @@
 
 #pragma once
 
-#include "CredentialCreationOptions.h"
-#include "CredentialRequestOptions.h"
 #include "JSDOMPromiseDeferred.h"
+#include <wtf/Function.h>
 #include <wtf/RefCounted.h>
+#include <wtf/WeakPtr.h>
+#include <wtf/WorkQueue.h>
 
 namespace WebCore {
 
 class BasicCredential;
+class Document;
+
+struct CredentialCreationOptions;
+struct CredentialRequestOptions;
 
 class CredentialsContainer : public RefCounted<CredentialsContainer> {
 public:
-    static Ref<CredentialsContainer> create() { return adoptRef(*new CredentialsContainer); }
+    static Ref<CredentialsContainer> create(WeakPtr<Document>&& document) { return adoptRef(*new CredentialsContainer(WTFMove(document))); }
 
-    void get(std::optional<CredentialRequestOptions>, DOMPromiseDeferred<IDLInterface<BasicCredential>>&&);
+    void get(CredentialRequestOptions&&, Ref<DeferredPromise>&&);
 
-    void store(const BasicCredential&, DOMPromiseDeferred<IDLInterface<BasicCredential>>&&);
+    void store(const BasicCredential&, Ref<DeferredPromise>&&);
 
-    void isCreate(std::optional<CredentialCreationOptions>, DOMPromiseDeferred<IDLInterface<BasicCredential>>&&);
+    void isCreate(CredentialCreationOptions&&, Ref<DeferredPromise>&&);
 
-    void preventSilentAccess(DOMPromiseDeferred<IDLInterface<BasicCredential>>&&);
+    void preventSilentAccess(Ref<DeferredPromise>&&);
+
 private:
-    CredentialsContainer() { }
+    CredentialsContainer(WeakPtr<Document>&&);
+
+    bool doesHaveSameOriginAsItsAncestors();
+    template<typename OperationType>
+    void dispatchTask(OperationType&&, Ref<DeferredPromise>&&);
+
+    WeakPtr<Document> m_document;
+    HashMap<DeferredPromise*, Ref<DeferredPromise>> m_pendingPromises;
+    Ref<WorkQueue> m_workQueue;
+    WeakPtrFactory<CredentialsContainer> m_weakPtrFactory;
 };
 
 } // namespace WebCore

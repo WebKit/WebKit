@@ -1,3 +1,64 @@
+2018-01-02  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Update Credential Management API for WebAuthentication
+        https://bugs.webkit.org/show_bug.cgi?id=181082
+        <rdar://problem/36055239>
+
+        Reviewed by Brent Fulgham.
+
+        Part 2/2
+
+        This patch implements Core API from Credential Management API: https://www.w3.org/TR/credential-management-1/#core.
+        which is required by WebAuthN. It also sets the CredentialManagement runtime flag to enable testing. Note that it
+        introduces a dummy PublicKeyCredential interface for testing functionalities of the Credential interface, which
+        cannot be instantiated.
+
+        Tests: http/wpt/credential-management/credentialscontainer-create-basics.https.html
+               http/wpt/credential-management/credentialscontainer-get-basics.https.html
+               http/wpt/credential-management/credentialscontainer-preventSilentAccess-basics.https.html
+               http/wpt/credential-management/idl.https.html
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * Modules/credentialmanagement/BasicCredential.cpp:
+        (WebCore::BasicCredential::BasicCredential):
+        (WebCore::BasicCredential::type const):
+        * Modules/credentialmanagement/BasicCredential.h:
+        (WebCore::BasicCredential::discovery const):
+        * Modules/credentialmanagement/BasicCredential.idl:
+        * Modules/credentialmanagement/CredentialCreationOptions.h:
+        * Modules/credentialmanagement/CredentialCreationOptions.idl:
+        * Modules/credentialmanagement/CredentialRequestOptions.h:
+        * Modules/credentialmanagement/CredentialRequestOptions.idl:
+        * Modules/credentialmanagement/CredentialsContainer.cpp:
+        (WebCore::CredentialsContainer::CredentialsContainer):
+        (WebCore::CredentialsContainer::isSameOriginWithItsAncestors):
+        (WebCore::CredentialsContainer::dispatchTask):
+        (WebCore::CredentialsContainer::get):
+        (WebCore::CredentialsContainer::store):
+        (WebCore::CredentialsContainer::isCreate):
+        (WebCore::CredentialsContainer::preventSilentAccess):
+        * Modules/credentialmanagement/CredentialsContainer.h:
+        (WebCore::CredentialsContainer::create):
+        (WebCore::CredentialsContainer::CredentialsContainer): Deleted.
+        * Modules/credentialmanagement/CredentialsContainer.idl:
+        * Modules/credentialmanagement/NavigatorCredentials.cpp:
+        (WebCore::NavigatorCredentials::credentials):
+        * Modules/credentialmanagement/NavigatorCredentials.h:
+        * Modules/credentialmanagement/NavigatorCredentials.idl:
+        * Modules/webauthn/PublicKeyCredential.cpp: Copied from Source/WebCore/Modules/credentialmanagement/BasicCredential.cpp.
+        (WebCore::PublicKeyCredential::PublicKeyCredential):
+        (WebCore::PublicKeyCredential::collectFromCredentialStore):
+        (WebCore::PublicKeyCredential::discoverFromExternalSource):
+        (WebCore::PublicKeyCredential::store):
+        (WebCore::PublicKeyCredential::create):
+        * Modules/webauthn/PublicKeyCredential.h: Copied from Source/WebCore/Modules/credentialmanagement/BasicCredential.cpp.
+        * Modules/webauthn/PublicKeyCredential.idl: Copied from Source/WebCore/Modules/credentialmanagement/BasicCredential.idl.
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/WebCoreBuiltinNames.h:
+        * page/RuntimeEnabledFeatures.h:
+
 2018-01-02  Oleksandr Skachkov  <gskachkov@gmail.com>
 
         WebAssembly: sending module to iframe fails
