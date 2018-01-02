@@ -47,14 +47,14 @@ class WebPageProxy;
 
 class WebContextMenuProxyMac : public WebContextMenuProxy {
 public:
-    static auto create(NSView* view, WebPageProxy& page, const ContextMenuContextData& context, const UserData& userData)
+    static auto create(NSView* view, WebPageProxy& page, ContextMenuContextData&& context, const UserData& userData)
     {
-        return adoptRef(*new WebContextMenuProxyMac(view, page, context, userData));
+        return adoptRef(*new WebContextMenuProxyMac(view, page, WTFMove(context), userData));
     }
     ~WebContextMenuProxyMac();
 
     void contextMenuItemSelected(const WebContextMenuItemData&);
-    void showContextMenuWithItems(const Vector<WebContextMenuItemData>&) override;
+    void showContextMenuWithItems(Vector<WebContextMenuItemData>&&) override;
 
 #if ENABLE(SERVICE_CONTROLS)
     void clearServicesMenu();
@@ -64,7 +64,7 @@ public:
     NSWindow *window() const;
 
 private:
-    WebContextMenuProxyMac(NSView*, WebPageProxy&, const ContextMenuContextData&, const UserData&);
+    WebContextMenuProxyMac(NSView*, WebPageProxy&, ContextMenuContextData&&, const UserData&);
     void show() override;
 
     RefPtr<WebContextMenuListenerProxy> m_contextMenuListener;

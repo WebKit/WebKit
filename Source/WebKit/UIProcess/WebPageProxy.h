@@ -1461,8 +1461,7 @@ private:
     void hidePopupMenu();
 
 #if ENABLE(CONTEXT_MENUS)
-    void showContextMenu(const ContextMenuContextData&, const UserData&);
-    void internalShowContextMenu(const ContextMenuContextData&, const UserData&);
+    void showContextMenu(ContextMenuContextData&&, const UserData&);
 #endif
 
 #if ENABLE(TELEPHONE_NUMBER_DETECTION)

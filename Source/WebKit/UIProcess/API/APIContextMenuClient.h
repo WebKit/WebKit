@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef APIContextMenuClient_h
-#define APIContextMenuClient_h
+#pragma once
 
 #if ENABLE(CONTEXT_MENUS)
 
@@ -52,10 +51,10 @@ class ContextMenuClient {
 public:
     virtual ~ContextMenuClient() { }
 
-    virtual bool getContextMenuFromProposedMenu(WebKit::WebPageProxy&, const Vector<RefPtr<WebKit::WebContextMenuItem>>& /* proposedMenu */, Vector<RefPtr<WebKit::WebContextMenuItem>>& /* customMenu */, const WebKit::WebHitTestResultData&, API::Object* /* userData */) { return false; }
-    virtual bool getContextMenuFromProposedMenuAsync(WebKit::WebPageProxy&, const Vector<RefPtr<WebKit::WebContextMenuItem>>& /* proposedMenu */, WebKit::WebContextMenuListenerProxy*, const WebKit::WebHitTestResultData&, API::Object* /* userData */) { return false; }
+    virtual bool getContextMenuFromProposedMenu(WebKit::WebPageProxy&, const Vector<Ref<WebKit::WebContextMenuItem>>& /* proposedMenu */, Vector<Ref<WebKit::WebContextMenuItem>>& /* customMenu */, const WebKit::WebHitTestResultData&, API::Object* /* userData */) { return false; }
+    virtual bool getContextMenuFromProposedMenuAsync(WebKit::WebPageProxy&, const Vector<Ref<WebKit::WebContextMenuItem>>& /* proposedMenu */, WebKit::WebContextMenuListenerProxy*, const WebKit::WebHitTestResultData&, API::Object* /* userData */) { return false; }
     virtual void customContextMenuItemSelected(WebKit::WebPageProxy&, const WebKit::WebContextMenuItemData&) { }
-    virtual bool showContextMenu(WebKit::WebPageProxy&, const WebCore::IntPoint&, const Vector<RefPtr<WebKit::WebContextMenuItem>>&) { return false; }
+    virtual bool showContextMenu(WebKit::WebPageProxy&, const WebCore::IntPoint&, const Vector<Ref<WebKit::WebContextMenuItem>>&) { return false; }
     virtual bool hideContextMenu(WebKit::WebPageProxy&) { return false; }
 
 #if PLATFORM(MAC)
@@ -66,4 +65,3 @@ public:
 } // namespace API
 
 #endif // ENABLE(CONTEXT_MENUS)
-#endif // APIContextMenuClient_h

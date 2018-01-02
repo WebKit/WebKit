@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,55 +23,26 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if ENABLE(CONTEXT_MENUS)
+#pragma once
 
-#include "config.h"
-#include "WebContextMenuListenerProxy.h"
-
-#include "APIArray.h"
-#include "WKAPICast.h"
-#include "WKArray.h"
-#include "WebContextMenuItem.h"
-#include "WebContextMenuItemData.h"
-
-using namespace WebCore;
+#include "WebContextMenuProxy.h"
 
 namespace WebKit {
 
-WebContextMenuListenerProxy::WebContextMenuListenerProxy(WebContextMenuProxy* contextMenuMac)
-    : m_contextMenuMac(contextMenuMac)
-{
-}
-
-WebContextMenuListenerProxy::~WebContextMenuListenerProxy()
-{
-}
-
-void WebContextMenuListenerProxy::useContextMenuItems(WKArrayRef items)
-{
-    if (!m_contextMenuMac)
-        return;
-
-    RefPtr<API::Array> array = toImpl(items);
-    size_t newSize = array ? array->size() : 0;
-    Vector<WebContextMenuItemData> dataItems;
-    dataItems.reserveInitialCapacity(newSize);
-    for (size_t i = 0; i < newSize; ++i) {
-        WebContextMenuItem* item = array->at<WebContextMenuItem>(i);
-        if (!item)
-            continue;
-
-        dataItems.uncheckedAppend(item->data());
+class WebContextMenuProxyWPE : public WebContextMenuProxy {
+public:
+    static auto create(ContextMenuContextData&& context, const UserData& userData)
+    {
+        return adoptRef(*new WebContextMenuProxyWPE(WTFMove(context), userData));
     }
 
-    m_contextMenuMac->showContextMenuWithItems(WTFMove(dataItems));
-}
+    void showContextMenuWithItems(Vector<WebContextMenuItemData>&&) final { }
+    void show() final { };
 
-void WebContextMenuListenerProxy::invalidate()
-{
-    m_contextMenuMac = nullptr;
-}
+private:
+    WebContextMenuProxyWPE(ContextMenuContextData&& context, const UserData& userData)
+        : WebContextMenuProxy(WTFMove(context), userData)
+    { }
+};
 
 } // namespace WebKit
-
-#endif // ENABLE(CONTEXT_MENUS)

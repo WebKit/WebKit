@@ -41,10 +41,10 @@ public:
 
     virtual void show() = 0;
 
-    virtual void showContextMenuWithItems(const Vector<WebContextMenuItemData>& items) = 0;
+    virtual void showContextMenuWithItems(Vector<WebContextMenuItemData>&&) = 0;
 
 protected:
-    WebContextMenuProxy(const ContextMenuContextData&, const UserData&);
+    WebContextMenuProxy(ContextMenuContextData&&, const UserData&);
 
     const ContextMenuContextData m_context;
     const UserData m_userData;

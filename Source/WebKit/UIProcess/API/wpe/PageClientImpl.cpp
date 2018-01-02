@@ -32,6 +32,7 @@
 #include "ScrollGestureController.h"
 #include "WPEView.h"
 #include "WebContextMenuProxy.h"
+#include "WebContextMenuProxyWPE.h"
 #include <WebCore/ActivityState.h>
 #include <WebCore/NotImplemented.h>
 
@@ -230,9 +231,9 @@ RefPtr<WebPopupMenuProxy> PageClientImpl::createPopupMenuProxy(WebPageProxy&)
 }
 
 #if ENABLE(CONTEXT_MENUS)
-RefPtr<WebContextMenuProxy> PageClientImpl::createContextMenuProxy(WebPageProxy&, const ContextMenuContextData&, const UserData&)
+Ref<WebContextMenuProxy> PageClientImpl::createContextMenuProxy(WebPageProxy&, ContextMenuContextData&& context, const UserData& userData)
 {
-    return nullptr;
+    return WebContextMenuProxyWPE::create(WTFMove(context), userData);
 }
 #endif
 

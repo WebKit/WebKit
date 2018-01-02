@@ -1,1 +1,49 @@
+2018-01-02  Alex Christensen  <achristensen@webkit.org>
+
+        Clean up context menu code
+        https://bugs.webkit.org/show_bug.cgi?id=181074
+
+        Reviewed by Brent Fulgham.
+
+        Use Ref instead of RefPtr where possible.
+        Use move semantics instead of copying from const references when possible.
+        Remove dead iOS code.  Reduce allocations.  Add stub for WPE.
+
+        * UIProcess/API/APIContextMenuClient.h:
+        (API::ContextMenuClient::getContextMenuFromProposedMenu):
+        (API::ContextMenuClient::getContextMenuFromProposedMenuAsync):
+        (API::ContextMenuClient::showContextMenu):
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetPageContextMenuClient):
+        * UIProcess/API/gtk/PageClientImpl.cpp:
+        (WebKit::PageClientImpl::createContextMenuProxy):
+        * UIProcess/API/gtk/PageClientImpl.h:
+        * UIProcess/PageClient.h:
+        * UIProcess/WebContextMenuListenerProxy.cpp:
+        (WebKit::WebContextMenuListenerProxy::useContextMenuItems):
+        * UIProcess/WebContextMenuProxy.cpp:
+        (WebKit::WebContextMenuProxy::WebContextMenuProxy):
+        * UIProcess/WebContextMenuProxy.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::showContextMenu):
+        (WebKit::WebPageProxy::internalShowContextMenu): Deleted.
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/gtk/WebContextMenuProxyGtk.cpp:
+        (WebKit::WebContextMenuProxyGtk::showContextMenuWithItems):
+        (WebKit::WebContextMenuProxyGtk::WebContextMenuProxyGtk):
+        * UIProcess/gtk/WebContextMenuProxyGtk.h:
+        (WebKit::WebContextMenuProxyGtk::create):
+        * UIProcess/ios/PageClientImplIOS.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::createContextMenuProxy): Deleted.
+        * UIProcess/mac/PageClientImplMac.h:
+        * UIProcess/mac/PageClientImplMac.mm:
+        (WebKit::PageClientImpl::createContextMenuProxy):
+        * UIProcess/mac/WebContextMenuProxyMac.h:
+        (WebKit::WebContextMenuProxyMac::create):
+        * UIProcess/mac/WebContextMenuProxyMac.mm:
+        (WebKit::WebContextMenuProxyMac::WebContextMenuProxyMac):
+        (WebKit::WebContextMenuProxyMac::showContextMenuWithItems):
+        (WebKit::WebContextMenuProxyMac::showContextMenu):
+
 == Rolled over to ChangeLog-2018-01-01 ==

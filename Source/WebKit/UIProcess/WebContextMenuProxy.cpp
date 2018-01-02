@@ -30,8 +30,8 @@
 
 namespace WebKit {
 
-WebContextMenuProxy::WebContextMenuProxy(const ContextMenuContextData& context, const UserData& userData)
-    : m_context(context)
+WebContextMenuProxy::WebContextMenuProxy(ContextMenuContextData&& context, const UserData& userData)
+    : m_context(WTFMove(context))
     , m_userData(userData)
 {
 }
