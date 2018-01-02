@@ -1,1 +1,18 @@
+2018-01-02  Alex Christensen  <achristensen@webkit.org>
+
+        Use new WebsiteDataStore passed in through decidePolicyForNavigation SPI
+        https://bugs.webkit.org/show_bug.cgi?id=180897
+        <rdar://problem/35535328>
+
+        Reviewed by Brent Fulgham.
+
+        Test two forms of storage to be sure we are using a different WebsiteDataStore: cookies and sessionStorage.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WebsitePolicies.mm:
+        (-[WebsitePoliciesWebsiteDataStoreDelegate _webView:decidePolicyForNavigationAction:decisionHandler:]):
+        (-[WebsitePoliciesWebsiteDataStoreDelegate webView:startURLSchemeTask:]):
+        (-[WebsitePoliciesWebsiteDataStoreDelegate webView:runJavaScriptAlertPanelWithMessage:initiatedByFrame:completionHandler:]):
+        (websiteDataStoreTestWebView):
+        (TEST):
+
 == Rolled over to ChangeLog-2018-01-01 ==

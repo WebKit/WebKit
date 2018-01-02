@@ -444,6 +444,13 @@ PAL::SessionID WebPageProxy::sessionID() const
     return m_websiteDataStore->sessionID();
 }
 
+void WebPageProxy::changeWebsiteDataStore(WebsiteDataStore& websiteDataStore)
+{
+    m_process->processPool().pageEndUsingWebsiteDataStore(*this);
+    m_websiteDataStore = websiteDataStore;
+    m_process->processPool().pageBeginUsingWebsiteDataStore(*this);
+}
+
 const API::PageConfiguration& WebPageProxy::configuration() const
 {
     return m_configuration.get();

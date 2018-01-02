@@ -360,7 +360,7 @@ void WebProcessProxy::addExistingWebPage(WebPageProxy& webPage, uint64_t pageID)
     ASSERT(!m_pageMap.contains(pageID));
     ASSERT(!globalPageMap().contains(pageID));
 
-    m_processPool->pageAddedToProcess(webPage);
+    m_processPool->pageBeginUsingWebsiteDataStore(webPage);
 
     m_pageMap.set(pageID, &webPage);
     globalPageMap().set(pageID, &webPage);
@@ -375,7 +375,7 @@ void WebProcessProxy::removeWebPage(WebPageProxy& webPage, uint64_t pageID)
     removedPage = globalPageMap().take(pageID);
     ASSERT_UNUSED(removedPage, removedPage == &webPage);
 
-    m_processPool->pageRemovedFromProcess(webPage);
+    m_processPool->pageEndUsingWebsiteDataStore(webPage);
 
     updateBackgroundResponsivenessTimer();
     

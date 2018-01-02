@@ -789,14 +789,15 @@ TEST(WebKit, CustomHeaderFields)
 
 static bool done;
 
-@interface WebsitePoliciesWebsiteDataStoreDelegate : NSObject <WKNavigationDelegatePrivate, WKURLSchemeHandler>
+@interface WebsitePoliciesWebsiteDataStoreDelegate : NSObject <WKNavigationDelegatePrivate, WKURLSchemeHandler, WKUIDelegate>
 @end
 
 @implementation WebsitePoliciesWebsiteDataStoreDelegate
 
 - (void)_webView:(WKWebView *)webView decidePolicyForNavigationAction:(WKNavigationAction *)navigationAction decisionHandler:(void (^)(WKNavigationActionPolicy, _WKWebsitePolicies *))decisionHandler
 {
-    if ([navigationAction.request.URL.path isEqualToString:@"/invalid"]) {
+    NSURL *url = navigationAction.request.URL;
+    if ([url.path isEqualToString:@"/invalid"]) {
         _WKWebsitePolicies *websitePolicies = [[[_WKWebsitePolicies alloc] init] autorelease];
         websitePolicies.websiteDataStore = [[[WKWebsiteDataStore alloc] _initWithConfiguration:[[[_WKWebsiteDataStoreConfiguration alloc] init] autorelease]] autorelease];
 
@@ -810,26 +811,52 @@ static bool done;
 
         done = true;
     }
+    if ([url.path isEqualToString:@"/checkStorage"] || [url.path isEqualToString:@"/checkCookies"]) {
+        _WKWebsitePolicies *websitePolicies = [[[_WKWebsitePolicies alloc] init] autorelease];
+        websitePolicies.websiteDataStore = [WKWebsiteDataStore nonPersistentDataStore];
+        decisionHandler(WKNavigationActionPolicyAllow, websitePolicies);
+    }
 }
 
-- (void)webView:(WKWebView *)webView startURLSchemeTask:(id <WKURLSchemeTask>)urlSchemeTask
+- (void)webView:(WKWebView *)webView startURLSchemeTask:(id <WKURLSchemeTask>)task
 {
+    NSURL *url = task.request.URL;
+    if ([url.path isEqualToString:@"/checkStorage"]) {
+        NSString *html = @"<script>var oldValue = window.sessionStorage['storageKey']; window.sessionStorage['storageKey'] = 'value'; alert('old value: <' + (oldValue ? 'fail' : '') + '>');</script>";
+        [task didReceiveResponse:[[NSURLResponse alloc] initWithURL:url MIMEType:@"text/html" expectedContentLength:html.length textEncodingName:nil]];
+        [task didReceiveData:[html dataUsingEncoding:NSUTF8StringEncoding]];
+        [task didFinish];
+    }
 }
 
 - (void)webView:(WKWebView *)webView stopURLSchemeTask:(id <WKURLSchemeTask>)urlSchemeTask
 {
 }
 
+- (void)webView:(WKWebView *)webView runJavaScriptAlertPanelWithMessage:(NSString *)message initiatedByFrame:(WKFrameInfo *)frame completionHandler:(void (^)(void))completionHandler
+{
+    EXPECT_STREQ(message.UTF8String, "old value: <>");
+    completionHandler();
+    done = true;
+}
+
 @end
 
-TEST(WebKit, UpdateWebsitePoliciesInvalid)
+RetainPtr<WKWebView> websiteDataStoreTestWebView()
 {
     auto delegate = adoptNS([[WebsitePoliciesWebsiteDataStoreDelegate alloc] init]);
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     [configuration setURLSchemeHandler:delegate.get() forURLScheme:@"test"];
+    [configuration setWebsiteDataStore:[WKWebsiteDataStore nonPersistentDataStore]];
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
     [webView setNavigationDelegate:delegate.get()];
+    [webView setUIDelegate:delegate.get()];
+    return webView;
+}
 
+TEST(WebKit, UpdateWebsitePoliciesInvalid)
+{
+    auto webView = websiteDataStoreTestWebView();
     auto policies = adoptNS([[_WKWebsitePolicies alloc] init]);
     [policies setWebsiteDataStore:[WKWebsiteDataStore nonPersistentDataStore]];
     bool sawException = false;
@@ -844,6 +871,15 @@ TEST(WebKit, UpdateWebsitePoliciesInvalid)
     TestWebKitAPI::Util::run(&done);
 }
 
-// FIXME: Use _WKWebsitePolicies.websiteDataStore and test that it is used.
+TEST(WebKit, WebsitePoliciesDataStore)
+{
+    auto cookieWebView = websiteDataStoreTestWebView();
+    NSString *alertOldCookie = @"<script>var oldCookie = document.cookie; document.cookie = 'key=value'; alert('old value: <' + oldCookie + '>');</script>";
+    [cookieWebView loadHTMLString:alertOldCookie baseURL:[NSURL URLWithString:@"http://example.com/checkCookies"]];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+    [cookieWebView loadHTMLString:alertOldCookie baseURL:[NSURL URLWithString:@"http://example.com/checkCookies"]];
+    TestWebKitAPI::Util::run(&done);
+}
 
 #endif // WK_API_ENABLED

@@ -1045,7 +1045,7 @@ void WebProcessPool::updateServiceWorkerUserAgent(const String& userAgent)
 }
 #endif
 
-void WebProcessPool::pageAddedToProcess(WebPageProxy& page)
+void WebProcessPool::pageBeginUsingWebsiteDataStore(WebPageProxy& page)
 {
     auto result = m_sessionToPagesMap.add(page.sessionID(), HashSet<WebPageProxy*>()).iterator->value.add(&page);
     ASSERT_UNUSED(result, result.isNewEntry);
@@ -1074,7 +1074,7 @@ void WebProcessPool::pageAddedToProcess(WebPageProxy& page)
 #endif
 }
 
-void WebProcessPool::pageRemovedFromProcess(WebPageProxy& page)
+void WebProcessPool::pageEndUsingWebsiteDataStore(WebPageProxy& page)
 {
     auto sessionID = page.sessionID();
     auto iterator = m_sessionToPagesMap.find(sessionID);

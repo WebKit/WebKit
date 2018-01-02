@@ -324,6 +324,7 @@ public:
     WebNavigationState& navigationState() { return *m_navigationState.get(); }
 
     WebsiteDataStore& websiteDataStore() { return m_websiteDataStore; }
+    void changeWebsiteDataStore(WebsiteDataStore&);
 
 #if ENABLE(DATA_DETECTION)
     NSArray *dataDetectionResults() { return m_dataDetectionResults.get(); }

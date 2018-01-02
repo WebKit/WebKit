@@ -33,6 +33,7 @@
 #import "APINavigationResponse.h"
 #import "APIString.h"
 #import "APIURL.h"
+#import "APIWebsiteDataStore.h"
 #import "AuthenticationDecisionListener.h"
 #import "CompletionHandlerCallChecker.h"
 #import "Logging.h"
@@ -460,7 +461,7 @@ void NavigationState::NavigationClient::decidePolicyForNavigationAction(WebPageP
     
     auto checker = CompletionHandlerCallChecker::create(navigationDelegate.get(), delegateHasWebsitePolicies ? @selector(_webView:decidePolicyForNavigationAction:decisionHandler:) : @selector(webView:decidePolicyForNavigationAction:decisionHandler:));
     
-    auto decisionHandlerWithPolicies = [localListener = WTFMove(listener), navigationAction = navigationAction.copyRef(), checker = WTFMove(checker), mainFrameURLString](WKNavigationActionPolicy actionPolicy, _WKWebsitePolicies *websitePolicies) mutable {
+    auto decisionHandlerWithPolicies = [localListener = WTFMove(listener), navigationAction = navigationAction.copyRef(), checker = WTFMove(checker), mainFrameURLString, webPageProxy = makeRef(webPageProxy)](WKNavigationActionPolicy actionPolicy, _WKWebsitePolicies *websitePolicies) mutable {
         if (checker->completionHandlerHasBeenCalled())
             return;
         checker->didCallCompletionHandler();
@@ -472,6 +473,7 @@ void NavigationState::NavigationClient::decidePolicyForNavigationAction(WebPageP
                 auto& sessionID = data->websiteDataStoreParameters->networkSessionParameters.sessionID;
                 if (!sessionID.isEphemeral() && sessionID != PAL::SessionID::defaultSessionID())
                     [NSException raise:NSInvalidArgumentException format:@"_WKWebsitePolicies.websiteDataStore must be nil, default, or non-persistent."];
+                webPageProxy->changeWebsiteDataStore(websitePolicies->_websitePolicies->websiteDataStore()->websiteDataStore());
             }
         }
 

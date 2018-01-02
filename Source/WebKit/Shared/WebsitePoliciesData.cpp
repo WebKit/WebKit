@@ -27,7 +27,10 @@
 #include "WebsitePoliciesData.h"
 
 #include "ArgumentCoders.h"
+#include "WebProcess.h"
 #include <WebCore/DocumentLoader.h>
+#include <WebCore/Frame.h>
+#include <WebCore/Page.h>
 
 namespace WebKit {
 
@@ -111,6 +114,16 @@ void WebsitePoliciesData::applyToDocumentLoader(WebsitePoliciesData&& websitePol
     case WebsiteAutoplayPolicy::Deny:
         documentLoader.setAutoplayPolicy(WebCore::AutoplayPolicy::Deny);
         break;
+    }
+    
+    if (websitePolicies.websiteDataStoreParameters) {
+        if (auto* frame = documentLoader.frame()) {
+            if (auto* page = frame->page()) {
+                auto sessionID = websitePolicies.websiteDataStoreParameters->networkSessionParameters.sessionID;
+                WebProcess::singleton().addWebsiteDataStore(WTFMove(*websitePolicies.websiteDataStoreParameters));
+                page->setSessionID(sessionID);
+            }
+        }
     }
 }
 

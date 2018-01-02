@@ -1,5 +1,32 @@
 2018-01-02  Alex Christensen  <achristensen@webkit.org>
 
+        Use new WebsiteDataStore passed in through decidePolicyForNavigation SPI
+        https://bugs.webkit.org/show_bug.cgi?id=180897
+        <rdar://problem/35535328>
+
+        Reviewed by Brent Fulgham.
+
+        * Shared/WebsitePoliciesData.cpp:
+        (WebKit::WebsitePoliciesData::applyToDocumentLoader):
+        * UIProcess/Cocoa/NavigationState.mm:
+        (WebKit::NavigationState::NavigationClient::decidePolicyForNavigationAction):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::changeWebsiteDataStore):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::pageBeginUsingWebsiteDataStore):
+        (WebKit::WebProcessPool::pageEndUsingWebsiteDataStore):
+        (WebKit::WebProcessPool::pageAddedToProcess): Deleted.
+        (WebKit::WebProcessPool::pageRemovedFromProcess): Deleted.
+        * UIProcess/WebProcessPool.h:
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::addExistingWebPage):
+        (WebKit::WebProcessProxy::removeWebPage):
+        * WebProcess/WebCoreSupport/mac/WebFrameNetworkingContext.mm:
+        (WebKit::WebFrameNetworkingContext::ensureWebsiteDataStoreSession):
+
+2018-01-02  Alex Christensen  <achristensen@webkit.org>
+
         Only use CookieStorageShim when we aren't using NetworkSession
         https://bugs.webkit.org/show_bug.cgi?id=180766
 

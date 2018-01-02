@@ -176,8 +176,8 @@ public:
 
     Ref<WebPageProxy> createWebPage(PageClient&, Ref<API::PageConfiguration>&&);
 
-    void pageAddedToProcess(WebPageProxy&);
-    void pageRemovedFromProcess(WebPageProxy&);
+    void pageBeginUsingWebsiteDataStore(WebPageProxy&);
+    void pageEndUsingWebsiteDataStore(WebPageProxy&);
 
     const String& injectedBundlePath() const { return m_configuration->injectedBundlePath(); }
 
