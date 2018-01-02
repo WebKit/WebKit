@@ -1,1 +1,11 @@
+2018-01-02  Ms2ger  <Ms2ger@igalia.com>
+
+        Update imported/w3c/web-platform-tests/html/browsers/windows/browsing-context.html from upstream wpt.
+        https://bugs.webkit.org/show_bug.cgi?id=172255
+
+        Unreviewed test gardening.
+
+        * web-platform-tests/html/browsers/windows/browsing-context-expected.txt: rebaseline.
+        * web-platform-tests/html/browsers/windows/browsing-context.html: update.
+
 == Rolled over to ChangeLog-2018-01-01 ==
