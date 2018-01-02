@@ -1,3 +1,13 @@
+2018-01-02  Alex Christensen  <achristensen@webkit.org>
+
+        Use BlockPtrs and lambdas instead of new/delete to pass parameters to blocks in WebViewImpl::performDragOperation
+        https://bugs.webkit.org/show_bug.cgi?id=180795
+
+        Reviewed by Brent Fulgham.
+
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::performDragOperation):
+
 2018-01-02  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [WPE][GTK] Implement the assignment of ProcessIdentifiers to child processes

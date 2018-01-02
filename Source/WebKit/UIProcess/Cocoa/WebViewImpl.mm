@@ -3690,7 +3690,7 @@ bool WebViewImpl::performDragOperation(id <NSDraggingInfo> draggingInfo)
 {
     WebCore::IntPoint client([m_view convertPoint:draggingInfo.draggingLocation fromView:nil]);
     WebCore::IntPoint global(WebCore::globalPoint(draggingInfo.draggingLocation, [m_view window]));
-    WebCore::DragData *dragData = new WebCore::DragData(draggingInfo, client, global, static_cast<WebCore::DragOperation>(draggingInfo.draggingSourceOperationMask), applicationFlagsForDrag(m_view.getAutoreleased(), draggingInfo));
+    WebCore::DragData dragData(draggingInfo, client, global, static_cast<WebCore::DragOperation>(draggingInfo.draggingSourceOperationMask), applicationFlagsForDrag(m_view.getAutoreleased(), draggingInfo));
 
     NSArray *types = draggingInfo.draggingPasteboard.types;
     SandboxExtension::Handle sandboxExtensionHandle;
@@ -3698,10 +3698,8 @@ bool WebViewImpl::performDragOperation(id <NSDraggingInfo> draggingInfo)
 
     if ([types containsObject:WebCore::legacyFilenamesPasteboardType()]) {
         NSArray *files = [draggingInfo.draggingPasteboard propertyListForType:WebCore::legacyFilenamesPasteboardType()];
-        if (![files isKindOfClass:[NSArray class]]) {
-            delete dragData;
+        if (![files isKindOfClass:[NSArray class]])
             return false;
-        }
 
         Vector<String> fileNames;
 
@@ -3712,45 +3710,40 @@ bool WebViewImpl::performDragOperation(id <NSDraggingInfo> draggingInfo)
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200
     else if (![types containsObject:PasteboardTypes::WebArchivePboardType] && [types containsObject:WebCore::legacyFilesPromisePasteboardType()]) {
         NSArray *files = [draggingInfo.draggingPasteboard propertyListForType:WebCore::legacyFilesPromisePasteboardType()];
-        if (![files isKindOfClass:[NSArray class]]) {
-            delete dragData;
+        if (![files isKindOfClass:[NSArray class]])
             return false;
-        }
         size_t fileCount = files.count;
-        Vector<String> *fileNames = new Vector<String>;
+        Vector<String> fileNames;
         NSURL *dropLocation = [NSURL fileURLWithPath:NSTemporaryDirectory() isDirectory:YES];
         String pasteboardName = draggingInfo.draggingPasteboard.name;
-        [draggingInfo enumerateDraggingItemsWithOptions:0 forView:m_view.getAutoreleased() classes:@[[NSFilePromiseReceiver class]] searchOptions:@{ } usingBlock:^(NSDraggingItem * __nonnull draggingItem, NSInteger idx, BOOL * __nonnull stop) {
+        [draggingInfo enumerateDraggingItemsWithOptions:0 forView:m_view.getAutoreleased() classes:@[[NSFilePromiseReceiver class]] searchOptions:@{ } usingBlock:BlockPtr<void (NSDraggingItem *, NSInteger, BOOL *)>::fromCallable([this, fileNames = WTFMove(fileNames), dropLocation = retainPtr(dropLocation), fileCount, dragData = WTFMove(dragData), pasteboardName](NSDraggingItem * __nonnull draggingItem, NSInteger idx, BOOL * __nonnull stop) mutable {
             NSFilePromiseReceiver *item = draggingItem.item;
             NSDictionary *options = @{ };
 
             RetainPtr<NSOperationQueue> queue = adoptNS([NSOperationQueue new]);
-            [item receivePromisedFilesAtDestination:dropLocation options:options operationQueue:queue.get() reader:^(NSURL * _Nonnull fileURL, NSError * _Nullable errorOrNil) {
+            [item receivePromisedFilesAtDestination:dropLocation.get() options:options operationQueue:queue.get() reader:BlockPtr<void(NSURL *, NSError *)>::fromCallable([this, fileNames = WTFMove(fileNames), fileCount, dragData = WTFMove(dragData), pasteboardName](NSURL * _Nonnull fileURL, NSError * _Nullable errorOrNil) mutable {
                 if (errorOrNil)
                     return;
 
-                dispatch_async(dispatch_get_main_queue(), [this, path = RetainPtr<NSString>(fileURL.path), fileNames, fileCount, dragData, pasteboardName] {
-                    fileNames->append(path.get());
-                    if (fileNames->size() == fileCount) {
+                dispatch_async(dispatch_get_main_queue(), BlockPtr<void()>::fromCallable([this, path = retainPtr(fileURL.path), fileNames, fileCount, dragData = WTFMove(dragData), pasteboardName]() mutable {
+                    fileNames.append(path.get());
+                    if (fileNames.size() == fileCount) {
                         SandboxExtension::Handle sandboxExtensionHandle;
                         SandboxExtension::HandleArray sandboxExtensionForUpload;
 
-                        m_page->createSandboxExtensionsIfNeeded(*fileNames, sandboxExtensionHandle, sandboxExtensionForUpload);
-                        dragData->setFileNames(*fileNames);
-                        m_page->performDragOperation(*dragData, pasteboardName, WTFMove(sandboxExtensionHandle), WTFMove(sandboxExtensionForUpload));
-                        delete dragData;
-                        delete fileNames;
+                        m_page->createSandboxExtensionsIfNeeded(fileNames, sandboxExtensionHandle, sandboxExtensionForUpload);
+                        dragData.setFileNames(fileNames);
+                        m_page->performDragOperation(dragData, pasteboardName, WTFMove(sandboxExtensionHandle), WTFMove(sandboxExtensionForUpload));
                     }
-                });
-            }];
-        }];
+                }).get());
+            }).get()];
+        }).get()];
 
         return true;
     }
 #endif
 
-    m_page->performDragOperation(*dragData, draggingInfo.draggingPasteboard.name, WTFMove(sandboxExtensionHandle), WTFMove(sandboxExtensionForUpload));
-    delete dragData;
+    m_page->performDragOperation(dragData, draggingInfo.draggingPasteboard.name, WTFMove(sandboxExtensionHandle), WTFMove(sandboxExtensionForUpload));
 
     return true;
 }
