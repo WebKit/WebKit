@@ -1,3 +1,13 @@
+2018-01-02  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Win] Web Inspector: Wrongly placed inspector highlight in HiDPI
+        https://bugs.webkit.org/show_bug.cgi?id=181173
+
+        Reviewed by Alex Christensen.
+
+        * WebNodeHighlight.cpp:
+        (WebNodeHighlight::update): Scale the GraphicsContext.
+
 2017-12-26  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         REGRESSION(r225769): Build error with constexpr std::max // std::min in libdstdc++4

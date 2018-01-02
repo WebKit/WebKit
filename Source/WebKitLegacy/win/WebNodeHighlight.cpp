@@ -157,6 +157,7 @@ void WebNodeHighlight::update()
     ::SelectObject(hdc.get(), hbmp.get());
 
     GraphicsContext context(hdc.get());
+    context.scale(m_inspectedWebView->page()->deviceScaleFactor());
     m_inspectedWebView->page()->inspectorController().drawHighlight(context);
 
     BLENDFUNCTION bf;
