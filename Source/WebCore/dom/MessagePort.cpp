@@ -34,9 +34,57 @@
 
 namespace WebCore {
 
-MessagePort::MessagePort(ScriptExecutionContext& scriptExecutionContext)
-    : ActiveDOMObject(&scriptExecutionContext)
+static HashMap<MessagePortIdentifier, MessagePort*>& allMessagePorts()
 {
+    static NeverDestroyed<HashMap<MessagePortIdentifier, MessagePort*>> map;
+    return map;
+}
+
+static Lock& allMessagePortsLock()
+{
+    static NeverDestroyed<Lock> lock;
+    return lock;
+}
+
+void MessagePort::ref() const
+{
+    ++m_refCount;
+}
+
+void MessagePort::deref() const
+{
+    // MessagePort::existingMessagePortForIdentifier() is unique in that it holds a raw pointer to a MessagePort
+    // but might create a RefPtr from it.
+    // If that happens on one thread at the same time that a MessagePort is being deref'ed and destroyed on a
+    // different thread then Bad Things could happen.
+    // This custom deref() function is designed to handle that contention by guaranteeing that nobody can be
+    // creating a RefPtr inside existingMessagePortForIdentifier while the object is mid-deletion.
+
+    if (!--m_refCount) {
+        Locker<Lock> locker(allMessagePortsLock());
+
+        if (m_refCount)
+            return;
+
+        allMessagePorts().remove(m_identifier);
+        delete this;
+    }
+}
+
+RefPtr<MessagePort> MessagePort::existingMessagePortForIdentifier(const MessagePortIdentifier& identifier)
+{
+    Locker<Lock> locker(allMessagePortsLock());
+
+    return allMessagePorts().get(identifier);
+}
+
+MessagePort::MessagePort(ScriptExecutionContext& scriptExecutionContext, const MessagePortIdentifier& identifier)
+    : ActiveDOMObject(&scriptExecutionContext)
+    , m_identifier(identifier)
+{
+    Locker<Lock> locker(allMessagePortsLock());
+    allMessagePorts().set(m_identifier, this);
+
     m_scriptExecutionContext->createdMessagePort(*this);
     suspendIfNeeded();
 
@@ -45,6 +93,8 @@ MessagePort::MessagePort(ScriptExecutionContext& scriptExecutionContext)
 
 MessagePort::~MessagePort()
 {
+    ASSERT(allMessagePortsLock().isLocked());
+
     close();
     if (m_scriptExecutionContext)
         m_scriptExecutionContext->destroyedMessagePort(*this);
@@ -65,9 +115,10 @@ ExceptionOr<void> MessagePort::postMessage(JSC::ExecState& state, JSC::JSValue m
     // Make sure we aren't connected to any of the passed-in ports.
     if (!ports.isEmpty()) {
         for (auto& dataPort : ports) {
-            if (dataPort == this || m_entangledChannel->isConnectedTo(*dataPort))
+            if (dataPort == this || m_entangledChannel->isConnectedTo(dataPort->identifier()))
                 return Exception { DataCloneError };
         }
+
         auto disentangleResult = MessagePort::disentanglePorts(WTFMove(ports));
         if (disentangleResult.hasException())
             return disentangleResult.releaseException();
@@ -123,14 +174,14 @@ void MessagePort::close()
     m_closed = true;
 }
 
-void MessagePort::entangle(RefPtr<MessagePortChannel>&& remote)
+void MessagePort::entangleWithRemote(RefPtr<MessagePortChannel>&& remote)
 {
     // Only invoked to set our initial entanglement.
     ASSERT(!m_entangledChannel);
     ASSERT(m_scriptExecutionContext);
 
     // Don't entangle the ports if the channel is closed.
-    if (remote->entangleIfOpen(*this))
+    if (remote->entangleWithRemoteIfOpen(m_identifier))
         m_entangledChannel = WTFMove(remote);
 }
 
@@ -210,8 +261,8 @@ Vector<RefPtr<MessagePort>> MessagePort::entanglePorts(ScriptExecutionContext& c
     Vector<RefPtr<MessagePort>> portArray;
     portArray.reserveInitialCapacity(channels->size());
     for (unsigned int i = 0; i < channels->size(); ++i) {
-        auto port = MessagePort::create(context);
-        port->entangle(WTFMove((*channels)[i]));
+        auto port = MessagePort::create(context, { Process::identifier(), generateObjectIdentifier<MessagePortIdentifier::PortIdentifierType>() });
+        port->entangleWithRemote(WTFMove((*channels)[i]));
         portArray.uncheckedAppend(WTFMove(port));
     }
     return portArray;

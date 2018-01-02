@@ -1456,6 +1456,7 @@
 		51F6456A1F4539C000B54DED /* ServiceWorkerJobType.h in Headers */ = {isa = PBXBuildFile; fileRef = 51F645651F45399F00B54DED /* ServiceWorkerJobType.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		51F645971F4A686F00B54DED /* SWServerRegistration.h in Headers */ = {isa = PBXBuildFile; fileRef = 51F645941F4A684F00B54DED /* SWServerRegistration.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		51F645D51FECDBCE00B54DED /* Process.h in Headers */ = {isa = PBXBuildFile; fileRef = 51F645D31FECDBC800B54DED /* Process.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		51F645E01FF4594E00B54DED /* MessagePortIdentifier.h in Headers */ = {isa = PBXBuildFile; fileRef = 51F645DE1FF4594B00B54DED /* MessagePortIdentifier.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		51F798F01BE880E7008AE491 /* IDBIndexInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 51F798EC1BE880D3008AE491 /* IDBIndexInfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		51F886C01F32923100C193EF /* JSNavigatorServiceWorker.h in Headers */ = {isa = PBXBuildFile; fileRef = 51F886BF1F32920700C193EF /* JSNavigatorServiceWorker.h */; };
 		51FA2D78152132B300C1BA0B /* DOMWindowExtension.h in Headers */ = {isa = PBXBuildFile; fileRef = 517FBA18151AA71B00B57959 /* DOMWindowExtension.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -7926,6 +7927,7 @@
 		51F645A31F4C000C00B54DED /* ExceptionData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ExceptionData.cpp; sourceTree = "<group>"; };
 		51F645D21FECDBC800B54DED /* Process.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Process.cpp; sourceTree = "<group>"; };
 		51F645D31FECDBC800B54DED /* Process.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Process.h; sourceTree = "<group>"; };
+		51F645DE1FF4594B00B54DED /* MessagePortIdentifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MessagePortIdentifier.h; sourceTree = "<group>"; };
 		51F6A3D50663BF04004D2919 /* HTMLCanvasElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLCanvasElement.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		51F6A3D60663BF04004D2919 /* HTMLCanvasElement.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = HTMLCanvasElement.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		51F798EB1BE880D3008AE491 /* IDBIndexInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDBIndexInfo.cpp; sourceTree = "<group>"; };
@@ -25513,6 +25515,7 @@
 				E1ADECC60E76AD1F004A1A5E /* MessagePort.idl */,
 				512B57BE1FE9902D000A1E5E /* MessagePortChannel.cpp */,
 				41BF700A0FE86F49005E8DEC /* MessagePortChannel.h */,
+				51F645DE1FF4594B00B54DED /* MessagePortIdentifier.h */,
 				CB8CF0151A934B43000D510B /* Microtasks.cpp */,
 				53B895AD19DC7C37009CAA93 /* Microtasks.h */,
 				E38D06091F8E811900649CF2 /* ModuleFetchParameters.h */,
@@ -28530,6 +28533,7 @@
 				75793E840D0CE0B3007FC0AC /* MessageEvent.h in Headers */,
 				E1ADECBF0E76ACF1004A1A5E /* MessagePort.h in Headers */,
 				41BF700C0FE86F49005E8DEC /* MessagePortChannel.h in Headers */,
+				51F645E01FF4594E00B54DED /* MessagePortIdentifier.h in Headers */,
 				53B895AF19DC7ED9009CAA93 /* Microtasks.h in Headers */,
 				BC772C4F0C4EB3040083285F /* MIMETypeRegistry.h in Headers */,
 				52F10866162B6DA8009AC81E /* MixedContentChecker.h in Headers */,

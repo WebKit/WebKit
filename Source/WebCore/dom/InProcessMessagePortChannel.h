@@ -38,8 +38,8 @@ public:
 
     void postMessageToRemote(Ref<SerializedScriptValue>&&, std::unique_ptr<MessagePortChannelArray>&&) final;
     Deque<std::unique_ptr<EventData>> takeAllMessagesFromRemote() final;
-    bool isConnectedTo(MessagePort&) final;
-    bool entangleIfOpen(MessagePort&) final;
+    bool isConnectedTo(const MessagePortIdentifier&) final;
+    bool entangleWithRemoteIfOpen(const MessagePortIdentifier&) final;
     void disentangle() final;
     bool hasPendingActivity() final;
     MessagePort* locallyEntangledPort(const ScriptExecutionContext*) final;

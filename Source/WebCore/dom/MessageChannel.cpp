@@ -33,8 +33,8 @@
 namespace WebCore {
 
 MessageChannel::MessageChannel(ScriptExecutionContext& context)
-    : m_port1(MessagePort::create(context))
-    , m_port2(MessagePort::create(context))
+    : m_port1(MessagePort::create(context, { Process::identifier(), generateObjectIdentifier<MessagePortIdentifier::PortIdentifierType>() }))
+    , m_port2(MessagePort::create(context, { Process::identifier(), generateObjectIdentifier<MessagePortIdentifier::PortIdentifierType>() }))
 {
     MessagePortChannel::createChannelBetweenPorts(*m_port1, *m_port2);
 }

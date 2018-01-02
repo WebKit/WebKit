@@ -30,6 +30,7 @@
 #include "EventTarget.h"
 #include "ExceptionOr.h"
 #include "MessagePortChannel.h"
+#include "MessagePortIdentifier.h"
 
 namespace JSC {
 class ExecState;
@@ -41,9 +42,9 @@ namespace WebCore {
 
 class Frame;
 
-class MessagePort final : public ThreadSafeRefCounted<MessagePort>, public ActiveDOMObject, public EventTargetWithInlineData {
+class MessagePort final : public ActiveDOMObject, public EventTargetWithInlineData {
 public:
-    static Ref<MessagePort> create(ScriptExecutionContext& scriptExecutionContext) { return adoptRef(*new MessagePort(scriptExecutionContext)); }
+    static Ref<MessagePort> create(ScriptExecutionContext& scriptExecutionContext, const MessagePortIdentifier& identifier) { return adoptRef(*new MessagePort(scriptExecutionContext, identifier)); }
     virtual ~MessagePort();
 
     ExceptionOr<void> postMessage(JSC::ExecState&, JSC::JSValue message, Vector<JSC::Strong<JSC::JSObject>>&&);
@@ -51,12 +52,12 @@ public:
     void start();
     void close();
 
-    void entangle(RefPtr<MessagePortChannel>&&);
+    void entangleWithRemote(RefPtr<MessagePortChannel>&&);
 
     // Returns nullptr if the passed-in vector is empty.
     static ExceptionOr<std::unique_ptr<MessagePortChannelArray>> disentanglePorts(Vector<RefPtr<MessagePort>>&&);
-
     static Vector<RefPtr<MessagePort>> entanglePorts(ScriptExecutionContext&, std::unique_ptr<MessagePortChannelArray>&&);
+    static RefPtr<MessagePort> existingMessagePortForIdentifier(const MessagePortIdentifier&);
 
     void messageAvailable();
     bool started() const { return m_started; }
@@ -68,8 +69,10 @@ public:
     // of the remote port (since it may live cross-process) - those platforms may always return null.
     MessagePort* locallyEntangledPort() const;
 
-    using ThreadSafeRefCounted::ref;
-    using ThreadSafeRefCounted::deref;
+    const MessagePortIdentifier& identifier() const { return m_identifier; }
+
+    void ref() const;
+    void deref() const;
 
     // ActiveDOMObject
     const char* activeDOMObjectName() const final;
@@ -85,7 +88,7 @@ public:
     void derefEventTarget() final { deref(); }
 
 private:
-    explicit MessagePort(ScriptExecutionContext&);
+    explicit MessagePort(ScriptExecutionContext&, const MessagePortIdentifier&);
 
     bool addEventListener(const AtomicString& eventType, Ref<EventListener>&&, const AddEventListenerOptions&) final;
 
@@ -101,6 +104,10 @@ private:
     RefPtr<MessagePort> m_messageProtector;
     bool m_started { false };
     bool m_closed { false };
+
+    MessagePortIdentifier m_identifier;
+
+    mutable std::atomic<unsigned> m_refCount { 1 };
 };
 
 } // namespace WebCore

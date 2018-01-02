@@ -43,6 +43,8 @@ class MessagePort;
 class MessagePortChannel;
 class ScriptExecutionContext;
 
+struct MessagePortIdentifier;
+
 // The overwhelmingly common case is sending a single port, so handle that efficiently with an inline buffer of size 1.
 typedef Vector<RefPtr<MessagePortChannel>, 1> MessagePortChannelArray;
 
@@ -64,12 +66,10 @@ public:
 
     static void createChannelBetweenPorts(MessagePort&, MessagePort&);
 
-    void setRemotePort(MessagePort*);
-
     virtual void postMessageToRemote(Ref<SerializedScriptValue>&&, std::unique_ptr<MessagePortChannelArray>&&) = 0;
     virtual Deque<std::unique_ptr<EventData>> takeAllMessagesFromRemote() = 0;
-    virtual bool isConnectedTo(MessagePort&) = 0;
-    virtual bool entangleIfOpen(MessagePort&) = 0;
+    virtual bool isConnectedTo(const MessagePortIdentifier&) = 0;
+    virtual bool entangleWithRemoteIfOpen(const MessagePortIdentifier&) = 0;
     virtual void disentangle() = 0;
     virtual bool hasPendingActivity() = 0;
     virtual MessagePort* locallyEntangledPort(const ScriptExecutionContext*) = 0;

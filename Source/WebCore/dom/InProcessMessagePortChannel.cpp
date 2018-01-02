@@ -42,8 +42,8 @@ void InProcessMessagePortChannel::createChannelBetweenPorts(MessagePort& port1, 
     channel1->m_entangledChannel = channel2.ptr();
     channel2->m_entangledChannel = channel1.ptr();
 
-    port1.entangle(WTFMove(channel2));
-    port2.entangle(WTFMove(channel1));
+    port1.entangleWithRemote(WTFMove(channel2));
+    port2.entangleWithRemote(WTFMove(channel1));
 }
 
 Ref<InProcessMessagePortChannel> InProcessMessagePortChannel::create(MessagePortQueue& incoming, MessagePortQueue& outgoing)
@@ -81,14 +81,14 @@ Deque<std::unique_ptr<MessagePortChannel::EventData>> InProcessMessagePortChanne
     return m_incomingQueue->takeAllMessages();
 }
 
-bool InProcessMessagePortChannel::isConnectedTo(MessagePort& port)
+bool InProcessMessagePortChannel::isConnectedTo(const MessagePortIdentifier& identifier)
 {
     // FIXME: What guarantees that the result remains the same after we release the lock?
     Locker<Lock> locker(m_lock);
-    return m_remotePort == &port;
+    return m_remotePort && m_remotePort->identifier() == identifier;
 }
 
-bool InProcessMessagePortChannel::entangleIfOpen(MessagePort& port)
+bool InProcessMessagePortChannel::entangleWithRemoteIfOpen(const MessagePortIdentifier& identifier)
 {
     // We can't call member functions on our remote pair while holding our mutex or we'll deadlock,
     // but we need to guard against the remote port getting closed/freed, so create a standalone reference.
@@ -101,7 +101,10 @@ bool InProcessMessagePortChannel::entangleIfOpen(MessagePort& port)
     if (!remote)
         return false;
 
-    remote->setRemotePort(&port);
+    auto entangledPort = MessagePort::existingMessagePortForIdentifier(identifier);
+    ASSERT(entangledPort);
+
+    remote->setRemotePort(entangledPort.get());
 
     return true;
 }

@@ -1,3 +1,59 @@
+2018-01-02  Brady Eidson  <beidson@apple.com>
+
+        Identify MessagePorts by a globally unique MessagePortIdentifier.
+        https://bugs.webkit.org/show_bug.cgi?id=181172
+
+        Reviewed by Alex Christensen.
+
+        No new tests (Behavior change covered by all existing tests).
+
+        This cleans up the abstract MessagePortChannel interface to be in terms of identifiers
+        instead of actual MessagePort objects.
+        
+        The identifiers are compounded with the current ProcessIdentifier meaning they are global
+        across all processes for the running UI process, enabling easy cross-process communication.
+        
+        (Actual cross-process communication comes in a followup)
+        
+        * WebCore.xcodeproj/project.pbxproj:
+        
+        * dom/InProcessMessagePortChannel.cpp:
+        (WebCore::InProcessMessagePortChannel::createChannelBetweenPorts):
+        (WebCore::InProcessMessagePortChannel::isConnectedTo):
+        (WebCore::InProcessMessagePortChannel::entangleWithRemoteIfOpen):
+        (WebCore::InProcessMessagePortChannel::entangleIfOpen): Deleted.
+        * dom/InProcessMessagePortChannel.h:
+        
+        * dom/MessageChannel.cpp:
+        (WebCore::MessageChannel::MessageChannel):
+        (WebCore::m_port2):
+        
+        * dom/MessagePort.cpp:
+        (WebCore::allMessagePortsLock):
+        (WebCore::MessagePort::ref const):
+        (WebCore::MessagePort::deref const):
+        (WebCore::MessagePort::existingMessagePortForIdentifier):
+        (WebCore::MessagePort::MessagePort):
+        (WebCore::MessagePort::~MessagePort):
+        (WebCore::MessagePort::postMessage):
+        (WebCore::MessagePort::entangleWithRemote):
+        (WebCore::MessagePort::entanglePorts):
+        (WebCore::MessagePort::entangle): Deleted.
+        * dom/MessagePort.h:
+        
+        * dom/MessagePortChannel.h:
+        
+        * dom/MessagePortIdentifier.h: Added.
+        (WebCore::operator==):
+        (WebCore::MessagePortIdentifier::encode const):
+        (WebCore::MessagePortIdentifier::decode):
+        (WebCore::MessagePortIdentifier::hash const):
+        (WTF::MessagePortIdentifierHash::hash):
+        (WTF::MessagePortIdentifierHash::equal):
+        (WTF::HashTraits<WebCore::MessagePortIdentifier>::emptyValue):
+        (WTF::HashTraits<WebCore::MessagePortIdentifier>::constructDeletedValue):
+        (WTF::HashTraits<WebCore::MessagePortIdentifier>::isDeletedValue):
+
 2018-01-02  Youenn Fablet  <youenn@apple.com>
 
         Memory cache should not reuse resources with different credential fetch option
