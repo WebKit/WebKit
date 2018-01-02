@@ -41,7 +41,6 @@ class GtkTestRunner(TestRunner):
         SkippedTest("WebKit2Gtk/TestCookieManager", "/webkit2/WebKitCookieManager/persistent-storage", "Test is flaky", 134580),
         SkippedTest("WebKit2Gtk/TestPrinting", "/webkit2/WebKitPrintOperation/custom-widget", "Test is flaky", 168196),
         SkippedTest("WebKit2Gtk/TestWebViewEditor", "/webkit2/WebKitWebView/editable/editable", "Test hits an assertion in Debug builds", 151654, "Debug"),
-        SkippedTest("WebKit2Gtk/TestWebExtensions", "/webkit2/WebKitWebExtension/form-controls-associated-signal", "Test is flaky", 168194),
         SkippedTest("WebKit2Gtk/TestWebExtensions", "/webkit2/WebKitWebView/install-missing-plugins-permission-request", "Test times out", 147822),
         SkippedTest("WebKit/TestWebKit", "WebKit.MouseMoveAfterCrash", "Test is flaky", 85066),
         SkippedTest("WebKit/TestWebKit", "WebKit.NewFirstVisuallyNonEmptyLayoutForImages", "Test is flaky", 85066),

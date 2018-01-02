@@ -223,7 +223,7 @@ static void didAssociateFormControlsCallback(GDBusConnection*, const char*, cons
 {
     const char* formIds;
     g_variant_get(result, "(&s)", &formIds);
-    g_assert(!g_strcmp0(formIds, FORM_ID FORM2_ID) || !g_strcmp0(formIds, INPUT_ID));
+    g_assert(!g_strcmp0(formIds, FORM_ID FORM2_ID) || !g_strcmp0(formIds, FORM2_ID FORM_ID) || !g_strcmp0(formIds, INPUT_ID));
 
     test->quitMainLoop();
 }

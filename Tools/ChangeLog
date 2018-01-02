@@ -1,3 +1,18 @@
+2018-01-02  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [GTK] Test /webkit2/WebKitWebExtension/form-controls-associated-signal is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=168194
+
+        Reviewed by Carlos Garcia Campos.
+
+        Fix an assertion and unskip the test. The order that form controls are associated is not
+        guaranteed.
+
+        * Scripts/run-gtk-tests:
+        (GtkTestRunner):
+        * TestWebKitAPI/Tests/WebKitGLib/TestWebExtensions.cpp:
+        (didAssociateFormControlsCallback):
+
 2018-01-02  Alex Christensen  <achristensen@webkit.org>
 
         Use new WebsiteDataStore passed in through decidePolicyForNavigation SPI
