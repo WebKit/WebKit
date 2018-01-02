@@ -1,4 +1,5 @@
 Blocked access to external URL https://www.localhost:9443/encrypted-media/encrypted-media-default-feature-policy.https.sub.html#iframe#encrypted-media
+Blocked access to external URL https://www.localhost:9443/encrypted-media/encrypted-media-default-feature-policy.https.sub.html#iframe#encrypted-media
 
 
 Harness Error (TIMEOUT), message = null
@@ -6,5 +7,5 @@ Harness Error (TIMEOUT), message = null
 PASS Default "encrypted-media" feature policy ["self"] allows the top-level document. 
 PASS Default "encrypted-media" feature policy ["self"] allows same-origin iframes. 
 TIMEOUT Default "encrypted-media" feature policy ["self"] disallows cross-origin iframes. Test timed out
-FAIL Feature policy "encrypted-media" can be enabled in cross-origin iframes using "allow" attribute. undefined is not an object (evaluating 'frame.allow.concat')
+TIMEOUT Feature policy "encrypted-media" can be enabled in cross-origin iframes using "allow" attribute. Test timed out
 

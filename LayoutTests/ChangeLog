@@ -1,1 +1,26 @@
+2018-01-02  Ms2ger  <Ms2ger@igalia.com>
+
+        [WPE] Update some test expectations
+        https://bugs.webkit.org/show_bug.cgi?id=181211
+
+        Unreviewed test gardening.
+
+        * platform/wpe/TestExpectations: disable more SW tests.
+        * platform/wpe/imported/w3c/web-platform-tests/2dcontext/imagebitmap/createImageBitmap-invalid-args-expected.txt:
+          rebaseline to match the features enabled on the bot.
+        * platform/wpe/imported/w3c/web-platform-tests/encrypted-media/encrypted-media-default-feature-policy.https.sub-expected.txt:
+          rebaseline for r225963.
+        * platform/wpe/imported/w3c/web-platform-tests/fetch/api/basic/request-headers.any-expected.txt:
+          rebaseline for r226162.
+        * platform/wpe/imported/w3c/web-platform-tests/fetch/api/basic/request-headers.any.worker-expected.txt:
+          rebaseline for r226162.
+        * platform/wpe/imported/w3c/web-platform-tests/html/dom/interfaces-expected.txt:
+          Added: rebaseline to match the features enabled on the bot.
+        * platform/wpe/imported/w3c/web-platform-tests/html/dom/reflection-embedded-expected.txt:
+          Added: rebaseline to match the features enabled on the bot.
+        * platform/wpe/imported/w3c/web-platform-tests/html/dom/reflection-forms-expected.txt:
+          Added: rebaseline to match the features enabled on the bot.
+        * platform/wpe/imported/w3c/web-platform-tests/html/dom/reflection-text-expected.txt:
+          Added: rebaseline to match the features enabled on the bot.
+
 == Rolled over to ChangeLog-2018-01-01 ==
