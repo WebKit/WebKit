@@ -692,7 +692,7 @@ void AccessCase::generateImpl(AccessGenerationState& state)
         if (m_type == Getter || m_type == Setter) {
             auto& access = this->as<GetterSetterAccessCase>();
             ASSERT(baseGPR != loadedValueGPR);
-            ASSERT(m_type != Setter || (baseGPR != valueRegsPayloadGPR && loadedValueGPR != valueRegsPayloadGPR));
+            ASSERT(m_type != Setter || valueRegsPayloadGPR != loadedValueGPR);
 
             // Create a JS call using a JS call inline cache. Assume that:
             //

@@ -1,3 +1,25 @@
+2018-01-02  Saam Barati  <sbarati@apple.com>
+
+        Incorrect assertion inside AccessCase
+        https://bugs.webkit.org/show_bug.cgi?id=181200
+        <rdar://problem/35494754>
+
+        Reviewed by Yusuke Suzuki.
+
+        Consider a PutById compiled to a setter in a function like so:
+        
+        ```
+        function foo(o) { o.f = o; }
+        ```
+        
+        The DFG will often assign the same registers to the baseGPR (o in o.f) and the
+        valueRegsPayloadGPR (o in the RHS). The code totally works when these are assigned
+        to the same register. However, we're asserting that they're not the same register.
+        This patch just removes this invalid assertion.
+
+        * bytecode/AccessCase.cpp:
+        (JSC::AccessCase::generateImpl):
+
 2018-01-02  Caio Lima  <ticaiolima@gmail.com>
 
         [ESNext][BigInt] Implement BigIntConstructor and BigIntPrototype
