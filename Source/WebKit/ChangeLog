@@ -1,3 +1,19 @@
+2018-01-02  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Attachment Support] Introduce data structures and IPC support for writing promised blobs
+        https://bugs.webkit.org/show_bug.cgi?id=181189
+
+        Reviewed by Tim Horton.
+
+        Add IPC support for PromisedBlobInfo and PromisedBlobData. See WebCore/ChangeLog for more detail.
+
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::ArgumentCoder<PromisedBlobData>::encode):
+        (IPC::ArgumentCoder<PromisedBlobData>::decode):
+        (IPC::ArgumentCoder<PromisedBlobInfo>::encode):
+        (IPC::ArgumentCoder<PromisedBlobInfo>::decode):
+        * Shared/WebCoreArgumentCoders.h:
+
 2018-01-02  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         REGRESSION(r223253): Broke ResourceLoadStatistics layout tests for non-Cocoa ports

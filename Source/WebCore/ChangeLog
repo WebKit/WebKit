@@ -1,3 +1,28 @@
+2018-01-02  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Attachment Support] Introduce data structures and IPC support for writing promised blobs
+        https://bugs.webkit.org/show_bug.cgi?id=181189
+
+        Reviewed by Tim Horton.
+
+        Introduces a new header containing structs to be used for writing blob data when dragging. PromisedBlobInfo
+        represents information needed to declare data on the pasteboard that will eventually be provided via a Blob.
+        This includes the type and filename of the Blob-backed content. PromisedBlobData represents information needed
+        to actually deliver the Blob's content to the platform, and is sent some time after its corresponding
+        PromisedBlobInfo. The content may either be in the form of a file path (as is the case using the previous
+        declareAndWriteAttachment codepath) or a data buffer (which we would use if the Blob is not already backed by a
+        file on disk).
+
+        No new tests, since there is no observable change in functionality yet.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/PromisedBlobInfo.h: Added.
+        (WebCore::PromisedBlobInfo::operator bool const):
+        (WebCore::PromisedBlobData::hasData const):
+        (WebCore::PromisedBlobData::hasFile const):
+        (WebCore::PromisedBlobData::operator bool const):
+        (WebCore::PromisedBlobData::fulfills const):
+
 2018-01-02  Brady Eidson  <beidson@apple.com>
 
         Make MessagePortChannel::takeAllMessagesFromRemote asynchronous.

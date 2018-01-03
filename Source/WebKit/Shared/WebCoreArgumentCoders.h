@@ -105,6 +105,8 @@ struct PasteboardImage;
 struct PasteboardCustomData;
 struct PasteboardURL;
 struct PluginInfo;
+struct PromisedBlobData;
+struct PromisedBlobInfo;
 struct RecentSearch;
 struct ResourceLoadStatistics;
 struct ScrollableAreaParameters;
@@ -694,6 +696,16 @@ template<> struct ArgumentCoder<WebCore::ScrollOffsetRange<float>> {
 template<> struct ArgumentCoder<WebCore::MediaSelectionOption> {
     static void encode(Encoder&, const WebCore::MediaSelectionOption&);
     static std::optional<WebCore::MediaSelectionOption> decode(Decoder&);
+};
+
+template<> struct ArgumentCoder<WebCore::PromisedBlobData> {
+    static void encode(Encoder&, const WebCore::PromisedBlobData&);
+    static bool decode(Decoder&, WebCore::PromisedBlobData&);
+};
+
+template<> struct ArgumentCoder<WebCore::PromisedBlobInfo> {
+    static void encode(Encoder&, const WebCore::PromisedBlobInfo&);
+    static bool decode(Decoder&, WebCore::PromisedBlobInfo&);
 };
 
 } // namespace IPC
