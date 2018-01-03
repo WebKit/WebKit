@@ -39,8 +39,7 @@ FileMonitor::FileMonitor(const String& path, Ref<WorkQueue>&& handlerQueue, WTF:
     if (path.isEmpty() || !m_modificationHandler)
         return;
 
-    BinarySemaphore semaphore;
-    m_handlerQueue->dispatch([&] {
+    Function<void ()> createPlatformMonitor = [&] {
         auto file = adoptGRef(g_file_new_for_path(FileSystem::fileSystemRepresentation(path).data()));
         GUniqueOutPtr<GError> error;
         m_platformMonitor = adoptGRef(g_file_monitor(file.get(), G_FILE_MONITOR_NONE, nullptr, &error.outPtr()));
@@ -48,6 +47,17 @@ FileMonitor::FileMonitor(const String& path, Ref<WorkQueue>&& handlerQueue, WTF:
             g_signal_connect(m_platformMonitor.get(), "changed", G_CALLBACK(fileChangedCallback), this);
         else
             WTFLogAlways("Failed to create a monitor for path %s: %s", path.utf8().data(), error->message);
+    };
+
+    // The monitor can be created in the work queue thread.
+    if (&m_handlerQueue->runLoop() == &RunLoop::current()) {
+        createPlatformMonitor();
+        return;
+    }
+
+    BinarySemaphore semaphore;
+    m_handlerQueue->dispatch([createPlatformMonitor = WTFMove(createPlatformMonitor), &semaphore] {
+        createPlatformMonitor();
         semaphore.signal();
     });
     semaphore.wait(WallTime::infinity());

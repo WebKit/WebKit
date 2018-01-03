@@ -1,5 +1,14 @@
 2018-01-03  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Unreviewed. Fix resource load stats tests on GLib based ports after r226355.
+
+        The monitor can be created in the work queue thread too.
+
+        * platform/glib/FileMonitorGLib.cpp:
+        (WebCore::FileMonitor::FileMonitor):
+
+2018-01-03  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] Crash destroying WebCore::FileMonitor
         https://bugs.webkit.org/show_bug.cgi?id=181138
 
