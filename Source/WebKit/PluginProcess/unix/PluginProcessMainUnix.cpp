@@ -65,17 +65,20 @@ public:
 
     bool parseCommandLine(int argc, char** argv) override
     {
-        ASSERT(argc == 4);
-        if (argc != 4)
+        ASSERT(argc > 2);
+        if (argc < 3)
             return false;
 
-        if (!strcmp(argv[2], "-scanPlugin"))
+        if (!strcmp(argv[1], "-scanPlugin")) {
+            ASSERT(argc == 3);
 #if PLUGIN_ARCHITECTURE(UNIX)
-            exit(NetscapePluginModule::scanPlugin(argv[3]) ? EXIT_SUCCESS : EXIT_FAILURE);
+            exit(NetscapePluginModule::scanPlugin(argv[2]) ? EXIT_SUCCESS : EXIT_FAILURE);
 #else
             exit(EXIT_FAILURE);
 #endif
+        }
 
+        ASSERT(argc == 4);
 #if PLATFORM(X11)
         if (WebCore::PlatformDisplay::sharedDisplay().type() == WebCore::PlatformDisplay::Type::X11) {
             auto* display = downcast<WebCore::PlatformDisplayX11>(WebCore::PlatformDisplay::sharedDisplay()).native();
