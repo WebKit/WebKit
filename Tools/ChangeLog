@@ -1,3 +1,18 @@
+2018-01-02  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Attachment Support] Don't Blob-convert images and attachments with https:, http: or data: urls
+        https://bugs.webkit.org/show_bug.cgi?id=181143
+        <rdar://problem/36200381>
+
+        Reviewed by Tim Horton.
+
+        Add a new API test to ensure that a copied image with a data URL does not get pasted as an attachment when
+        attachment elements are enabled.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/WKAttachmentTests.mm:
+        (TestWebKitAPI::TEST):
+
 2018-01-02  Jiewen Tan  <jiewen_tan@apple.com>
 
         Update Credential Management API for WebAuthentication

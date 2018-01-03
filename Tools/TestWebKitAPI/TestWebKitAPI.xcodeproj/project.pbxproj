@@ -738,6 +738,7 @@
 		F486B1D01F67952300F34BDD /* DataTransfer-setDragImage.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F486B1CF1F6794FF00F34BDD /* DataTransfer-setDragImage.html */; };
 		F4A32EC41F05F3850047C544 /* dragstart-change-selection-offscreen.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F4A32EC31F05F3780047C544 /* dragstart-change-selection-offscreen.html */; };
 		F4A32ECB1F0643370047C544 /* contenteditable-in-iframe.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F4A32ECA1F0642F40047C544 /* contenteditable-in-iframe.html */; };
+		F4A9202F1FEE34E900F59590 /* apple-data-url.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F4A9202E1FEE34C800F59590 /* apple-data-url.html */; };
 		F4AB578A1F65165400DB0DA1 /* custom-draggable-div.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F4AB57891F65164B00DB0DA1 /* custom-draggable-div.html */; };
 		F4B825D81EF4DBFB006E417F /* compressed-files.zip in Copy Resources */ = {isa = PBXBuildFile; fileRef = F4B825D61EF4DBD4006E417F /* compressed-files.zip */; };
 		F4BFA68E1E4AD08000154298 /* DragAndDropPasteboardTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = F4BFA68C1E4AD08000154298 /* DragAndDropPasteboardTests.mm */; };
@@ -833,6 +834,7 @@
 				1C2B81871C8925A000A5529F /* Ahem.ttf in Copy Resources */,
 				1A63479F183D72A4005B1707 /* all-content-in-one-iframe.html in Copy Resources */,
 				C25CCA0D1E5141840026CB8A /* AllAhem.svg in Copy Resources */,
+				F4A9202F1FEE34E900F59590 /* apple-data-url.html in Copy Resources */,
 				F46A095A1ED8A6E600D4AA55 /* apple.gif in Copy Resources */,
 				5C9E59411D3EB5AC00E3C62E /* ApplicationCache.db in Copy Resources */,
 				5C9E59421D3EB5AC00E3C62E /* ApplicationCache.db-shm in Copy Resources */,
@@ -1841,6 +1843,7 @@
 		F493247C1F44DF8D006F4336 /* UIKitSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UIKitSPI.h; sourceTree = "<group>"; };
 		F4A32EC31F05F3780047C544 /* dragstart-change-selection-offscreen.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "dragstart-change-selection-offscreen.html"; sourceTree = "<group>"; };
 		F4A32ECA1F0642F40047C544 /* contenteditable-in-iframe.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "contenteditable-in-iframe.html"; sourceTree = "<group>"; };
+		F4A9202E1FEE34C800F59590 /* apple-data-url.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "apple-data-url.html"; sourceTree = "<group>"; };
 		F4AB57891F65164B00DB0DA1 /* custom-draggable-div.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "custom-draggable-div.html"; sourceTree = "<group>"; };
 		F4B825D61EF4DBD4006E417F /* compressed-files.zip */ = {isa = PBXFileReference; lastKnownFileType = archive.zip; path = "compressed-files.zip"; sourceTree = "<group>"; };
 		F4BFA68C1E4AD08000154298 /* DragAndDropPasteboardTests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DragAndDropPasteboardTests.mm; sourceTree = "<group>"; };
@@ -2297,6 +2300,7 @@
 			isa = PBXGroup;
 			children = (
 				C25CCA0C1E5140E50026CB8A /* AllAhem.svg */,
+				F4A9202E1FEE34C800F59590 /* apple-data-url.html */,
 				F47D30EB1ED28619000482E1 /* apple.gif */,
 				5C9E593E1D3EB1DE00E3C62E /* ApplicationCache.db */,
 				5C9E593F1D3EB1DE00E3C62E /* ApplicationCache.db-shm */,
@@ -3220,7 +3224,6 @@
 				7C83DED41D0A590C00FEBCF3 /* HashSet.cpp in Sources */,
 				7C83DEE01D0A590C00FEBCF3 /* IntegerToStringConversion.cpp in Sources */,
 				7A0509411FB9F06400B33FB8 /* JSONValue.cpp in Sources */,
-				FE05FB061FE84FB700093230 /* PoisonedUniquePtr.cpp in Sources */,
 				531C1D8E1DF8EF72006E979F /* LEBDecoder.cpp in Sources */,
 				A57D54F91F3397B400A97AA7 /* LifecycleLogger.cpp in Sources */,
 				93E2C5551FD3204100E1DF6A /* LineEnding.cpp in Sources */,
@@ -3240,6 +3243,9 @@
 				FE05FAEF1FE0645B00093230 /* Poisoned.cpp in Sources */,
 				FE05FAEC1FDB510A00093230 /* PoisonedRef.cpp in Sources */,
 				FE05FAED1FDB510E00093230 /* PoisonedRefPtr.cpp in Sources */,
+				FE05FB061FE84FB700093230 /* PoisonedUniquePtr.cpp in Sources */,
+				FEC8F4EB1FE9F5AF0056FD8A /* PoisonedUniquePtrForNonTriviallyDestructibleArrays.cpp in Sources */,
+				FEC8F4E71FE9C9050056FD8A /* PoisonedUniquePtrForTriviallyDestructibleArrays.cpp in Sources */,
 				53EC25411E96FD87000831B9 /* PriorityQueue.cpp in Sources */,
 				7C83DF131D0A590C00FEBCF3 /* RedBlackTree.cpp in Sources */,
 				7C83DF141D0A590C00FEBCF3 /* Ref.cpp in Sources */,
@@ -3257,7 +3263,6 @@
 				7C83DF321D0A590C00FEBCF3 /* StringBuilder.cpp in Sources */,
 				7CD4C26E1E2C0E6E00929470 /* StringConcatenate.cpp in Sources */,
 				7C83DF361D0A590C00FEBCF3 /* StringHasher.cpp in Sources */,
-				FEC8F4E71FE9C9050056FD8A /* PoisonedUniquePtrForTriviallyDestructibleArrays.cpp in Sources */,
 				7C83DF371D0A590C00FEBCF3 /* StringImpl.cpp in Sources */,
 				7C83DF381D0A590C00FEBCF3 /* StringOperators.cpp in Sources */,
 				7C83DF3A1D0A590C00FEBCF3 /* StringView.cpp in Sources */,
@@ -3266,7 +3271,6 @@
 				9329AA291DE3F81E003ABD07 /* TextBreakIterator.cpp in Sources */,
 				E3DEA8111F0A589000CBC2E8 /* ThreadGroup.cpp in Sources */,
 				E38A0D351FD50CC300E98C8B /* Threading.cpp in Sources */,
-				FEC8F4EB1FE9F5AF0056FD8A /* PoisonedUniquePtrForNonTriviallyDestructibleArrays.cpp in Sources */,
 				5311BD5E1EA9490E00525281 /* ThreadMessages.cpp in Sources */,
 				0F2C20B81DCD545000542D9E /* Time.cpp in Sources */,
 				7C83E03B1D0A602700FEBCF3 /* UtilitiesCocoa.mm in Sources */,

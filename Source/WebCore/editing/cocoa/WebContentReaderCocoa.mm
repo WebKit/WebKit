@@ -175,6 +175,12 @@ private:
     bool m_didDisableImage { false };
 };
 
+
+static bool shouldConvertToBlob(const URL& url)
+{
+    return !(url.protocolIsInHTTPFamily() || url.protocolIsData());
+}
+
 static bool shouldReplaceRichContentWithAttachments()
 {
 #if ENABLE(ATTACHMENT_ELEMENT)
@@ -217,8 +223,11 @@ static void replaceRichContentWithAttachments(DocumentFragment& fragment, const 
 
     // FIXME: Handle resources in subframe archives.
     HashMap<AtomicString, Ref<Blob>> urlToBlobMap;
-    for (const Ref<ArchiveResource>& subresource : subresources)
-        urlToBlobMap.set(subresource->url().string(), Blob::create(subresource->data(), subresource->mimeType()));
+    for (const Ref<ArchiveResource>& subresource : subresources) {
+        auto& url = subresource->url();
+        if (shouldConvertToBlob(url))
+            urlToBlobMap.set(url.string(), Blob::create(subresource->data(), subresource->mimeType()));
+    }
 
     Vector<Ref<Element>> elementsToRemove;
     Vector<AttachmentReplacementInfo> attachmentReplacementInfo;
@@ -351,11 +360,6 @@ static String markupForFragmentInDocument(Ref<DocumentFragment>&& fragment, Docu
     auto range = Range::create(document);
     range->selectNodeContents(*bodyElement);
     return createMarkup(range.get(), nullptr, AnnotateForInterchange, false, ResolveNonLocalURLs);
-}
-
-static bool shouldConvertToBlob(const URL& url)
-{
-    return !(url.protocolIsInHTTPFamily() || url.protocolIsData());
 }
 
 static String sanitizeMarkupWithArchive(Document& destinationDocument, MarkupAndArchive& markupAndArchive, const std::function<bool(const String)>& canShowMIMETypeAsHTML)

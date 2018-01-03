@@ -893,6 +893,25 @@ TEST(WKAttachmentTests, InsertPastedAttributedStringContainingMultipleAttachment
     }
 }
 
+TEST(WKAttachmentTests, DoNotInsertDataURLImagesAsAttachments)
+{
+    auto webContentSourceView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 100, 100)]);
+    [webContentSourceView synchronouslyLoadTestPageNamed:@"apple-data-url"];
+    [webContentSourceView selectAll:nil];
+    [webContentSourceView _synchronouslyExecuteEditCommand:@"Copy" argument:nil];
+
+    auto webView = webViewForTestingAttachments();
+    {
+        ObserveAttachmentUpdatesForScope observer(webView.get());
+        [webView _synchronouslyExecuteEditCommand:@"Paste" argument:nil];
+        EXPECT_EQ(0U, observer.observer().inserted.count);
+    }
+
+    EXPECT_FALSE([webView stringByEvaluatingJavaScript:@"Boolean(document.querySelector('attachment'))"].boolValue);
+    EXPECT_EQ(1990, [webView stringByEvaluatingJavaScript:@"document.querySelector('img').src.length"].integerValue);
+    EXPECT_WK_STREQ("This is an apple", [webView stringByEvaluatingJavaScript:@"document.body.textContent"]);
+}
+
 #pragma mark - Platform-specific tests
 
 #if PLATFORM(MAC)

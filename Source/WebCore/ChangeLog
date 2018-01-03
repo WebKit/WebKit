@@ -1,3 +1,22 @@
+2018-01-02  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Attachment Support] Don't Blob-convert images and attachments with https:, http: or data: urls
+        https://bugs.webkit.org/show_bug.cgi?id=181143
+        <rdar://problem/36200381>
+
+        Reviewed by Tim Horton.
+
+        Clients such as Mail would expect pasting or dropping an image with src="https://..." to result in the source
+        URL being preserved (i.e. staying as remote images) instead of creating image attachments out of them. This
+        patch hooks into the shouldConvertToBlob() check added in r226272 so that it applies to attachment element
+        replacement as well.
+
+        Test: WKAttachmentTests.DoNotInsertDataURLImagesAsAttachments
+
+        * editing/cocoa/WebContentReaderCocoa.mm:
+        (WebCore::shouldConvertToBlob):
+        (WebCore::replaceRichContentWithAttachments):
+
 2018-01-02  Brady Eidson  <beidson@apple.com>
 
         Identify MessagePorts by a globally unique MessagePortIdentifier.
