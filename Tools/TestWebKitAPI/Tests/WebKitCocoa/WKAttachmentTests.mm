@@ -40,7 +40,7 @@
 
 #define USES_MODERN_ATTRIBUTED_STRING_CONVERSION ((PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300))
 
-#if WK_API_ENABLED
+#if WK_API_ENABLED && !PLATFORM(WATCHOS) && !PLATFORM(TVOS)
 
 @interface AttachmentUpdateObserver : NSObject <WKUIDelegatePrivate>
 @property (nonatomic, readonly) NSArray *inserted;
@@ -1014,4 +1014,4 @@ TEST(WKAttachmentTestsIOS, InsertDroppedAttributedStringContainingAttachment)
 
 } // namespace TestWebKitAPI
 
-#endif // WK_API_ENABLED
+#endif // WK_API_ENABLED && !PLATFORM(WATCHOS) && !PLATFORM(TVOS)
