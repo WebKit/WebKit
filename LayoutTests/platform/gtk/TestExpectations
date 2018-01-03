@@ -2286,9 +2286,6 @@ fast/layers/prevent-hit-test-during-layout.html [ Skip ]
 # This is a Mac specific feature
 webkit.org/b/168466 http/tests/security/bypassing-cors-checks-for-extension-urls.html [ Skip ]
 
-# Currently only has Objective-C API
-http/tests/resourceLoadStatistics [ Skip ]
-
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of tests with architecture-specific results
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -3336,6 +3333,8 @@ webkit.org/b/180802 imported/w3c/web-platform-tests/html/webappapis/system-state
 webkit.org/b/180803 imported/w3c/web-platform-tests/media-source/mediasource-duration-boundaryconditions.html [ Failure ]
 
 webkit.org/b/180805 inspector/canvas/requestContent-bitmaprenderer.html [ Failure ]
+
+webkit.org/b/175189 http/tests/resourceLoadStatistics/grandfathering.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of non-crashing, non-flaky tests failing

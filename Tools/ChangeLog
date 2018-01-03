@@ -1,3 +1,16 @@
+2018-01-02  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        REGRESSION(r223253): Broke ResourceLoadStatistics layout tests for non-Cocoa ports
+        https://bugs.webkit.org/show_bug.cgi?id=181231
+
+        Reviewed by Alex Christensen.
+
+        Implement TestController APIs needed by ResourceLoadStatistics tests.
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::isStatisticsRegisteredAsSubFrameUnder):
+        (WTR::TestController::isStatisticsRegisteredAsRedirectingTo):
+
 2018-01-02  Tim Horton  <timothy_horton@apple.com>
 
         Disable WKAttachmentTests if UIPasteboard.itemProviders is not available

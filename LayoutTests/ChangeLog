@@ -1,5 +1,17 @@
 2018-01-02  Michael Catanzaro  <mcatanzaro@igalia.com>
 
+        REGRESSION(r223253): Broke ResourceLoadStatistics layout tests for non-Cocoa ports
+        https://bugs.webkit.org/show_bug.cgi?id=181231
+
+        Reviewed by Alex Christensen.
+
+        Unskip the tests.
+
+        * platform/gtk/TestExpectations:
+        * platform/wpe/TestExpectations:
+
+2018-01-02  Michael Catanzaro  <mcatanzaro@igalia.com>
+
         Unreviewed WPE test gardening.
 
         * platform/wpe/TestExpectations:

@@ -1,3 +1,17 @@
+2018-01-02  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        REGRESSION(r223253): Broke ResourceLoadStatistics layout tests for non-Cocoa ports
+        https://bugs.webkit.org/show_bug.cgi?id=181231
+
+        Reviewed by Alex Christensen.
+
+        Add new C API for use by WebKitTestRunner.
+
+        * UIProcess/API/C/WKWebsiteDataStoreRef.cpp:
+        (WKWebsiteDataStoreIsStatisticsRegisteredAsSubFrameUnder):
+        (WKWebsiteDataStoreIsStatisticsRegisteredAsRedirectingTo):
+        * UIProcess/API/C/WKWebsiteDataStoreRef.h:
+
 2018-01-02  Jiewen Tan  <jiewen_tan@apple.com>
 
         Add a WebAuthentication runtime feature flag
