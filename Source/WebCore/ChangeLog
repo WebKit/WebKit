@@ -1,5 +1,21 @@
 2018-01-03  Philippe Normand  <pnormand@igalia.com>
 
+        [GStreamer] The bus synchronous handler should be in the base player class
+        https://bugs.webkit.org/show_bug.cgi?id=181237
+
+        Reviewed by Carlos Garcia Campos.
+
+        Because this is where video rendering is handled.
+
+        No new tests, this is only a refactoring.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::createGSTPlayBin):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp:
+        (WebCore::MediaPlayerPrivateGStreamerBase::setPipeline):
+
+2018-01-03  Philippe Normand  <pnormand@igalia.com>
+
         [GStreamer] move MediaSample implementation out of mse/
         https://bugs.webkit.org/show_bug.cgi?id=179165
 

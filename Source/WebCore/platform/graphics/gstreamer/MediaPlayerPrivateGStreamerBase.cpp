@@ -274,6 +274,18 @@ MediaPlayerPrivateGStreamerBase::~MediaPlayerPrivateGStreamerBase()
 void MediaPlayerPrivateGStreamerBase::setPipeline(GstElement* pipeline)
 {
     m_pipeline = pipeline;
+
+    GRefPtr<GstBus> bus = adoptGRef(gst_pipeline_get_bus(GST_PIPELINE(m_pipeline.get())));
+    gst_bus_set_sync_handler(bus.get(), [](GstBus*, GstMessage* message, gpointer userData) {
+        auto& player = *static_cast<MediaPlayerPrivateGStreamerBase*>(userData);
+
+        if (player.handleSyncMessage(message)) {
+            gst_message_unref(message);
+            return GST_BUS_DROP;
+        }
+
+        return GST_BUS_PASS;
+    }, this, nullptr);
 }
 
 #if ENABLE(ENCRYPTED_MEDIA)
