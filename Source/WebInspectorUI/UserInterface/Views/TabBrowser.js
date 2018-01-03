@@ -122,16 +122,13 @@ WI.TabBrowser = class TabBrowser extends WI.View
     {
         console.assert(!this.selectedTabContentView || this.selectedTabContentView === this._recentTabContentViews[0]);
 
-        for (var tabContentView of this._recentTabContentViews) {
+        for (let tabContentView of this._recentTabContentViews) {
             if (options.ignoreSearchTab && tabContentView instanceof WI.SearchTabContentView)
                 continue;
-
             if (options.ignoreNetworkTab && tabContentView instanceof WI.NetworkTabContentView)
                 continue;
-
             if (options.ignoreResourcesTab && tabContentView instanceof WI.ResourcesTabContentView)
                 continue;
-
             if (options.ignoreDebuggerTab && tabContentView instanceof WI.DebuggerTabContentView)
                 continue;
 

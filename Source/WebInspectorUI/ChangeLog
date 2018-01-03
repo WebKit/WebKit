@@ -1,1 +1,21 @@
+2018-01-02  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Clicking source location link in Console unexpectedly jumps to Network tab
+        https://bugs.webkit.org/show_bug.cgi?id=181229
+        <rdar://problem/36075219>
+
+        Reviewed by Matt Baker.
+
+        * UserInterface/Base/Main.js:
+        Cleanup linkifyURLAsNode. Ignore Search tab in generic handlePossibleLinkClick
+        when not already in the Search tab.
+
+        * UserInterface/Views/CallFrameView.js:
+        (WI.CallFrameView):
+        Ignore Search and Network tab in CallFrame links.
+
+        * UserInterface/Views/TabBrowser.js:
+        (WI.TabBrowser.prototype.bestTabContentViewForRepresentedObject):
+        Improve style.
+
 == Rolled over to ChangeLog-2018-01-01 ==

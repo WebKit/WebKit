@@ -37,7 +37,10 @@ WI.CallFrameView = class CallFrameView extends WI.Object
 
         var sourceCodeLocation = callFrame.sourceCodeLocation;
         if (sourceCodeLocation) {
-            WI.linkifyElement(callFrameElement, sourceCodeLocation);
+            WI.linkifyElement(callFrameElement, sourceCodeLocation, {
+                ignoreNetworkTab: true,
+                ignoreSearchTab: true,
+            });
 
             var linkElement = document.createElement("a");
             linkElement.classList.add("source-link");
