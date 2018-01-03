@@ -1,4 +1,7 @@
 
+
 PASS Setup worker 
 PASS Test self.clients.claim 
+PASS Test data URL frame 
+PASS Test blob URL frame 
 

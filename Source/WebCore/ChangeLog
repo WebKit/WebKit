@@ -1,3 +1,18 @@
+2018-01-03  Youenn Fablet  <youenn@apple.com>
+
+        Select service worker for documents with data/blob URLS
+        https://bugs.webkit.org/show_bug.cgi?id=181213
+
+        Reviewed by Alex Christensen.
+
+        Covered by updated test.
+
+        Reusing the service worker of the parent for blob/data URL documents.
+
+        * loader/DocumentLoader.cpp:
+        (WebCore::isLocalURL):
+        (WebCore::DocumentLoader::commitData):
+
 2018-01-03  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r226352.

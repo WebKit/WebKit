@@ -2,6 +2,7 @@
 <head>
 <script src="/resources/testharness.js"></script>
 <script src="/resources/testharnessreport.js"></script>
+<script src="resources/sw-test-pre.js"></script>
 </head>
 <body>
 <script>
@@ -47,6 +48,36 @@ promise_test(async (test) => {
     var text = await response.text();
     assert_equals(text, "PASS");
 }, "Test self.clients.claim");
+
+var htmlString = '<html><script>async function doTest() { ' +
+  '    var response = await fetch("https://127.0.0.1:8443/pinkelephant");' +
+  '    var text = await response.text();' +
+  '    window.parent.postMessage(text, "*");' +
+  '}' +
+  'doTest();' +
+  '</scr' + 'ipt></h' + 'tml>';
+
+promise_test(async (test) => {
+    var promise = new Promise((resolve, reject) => {
+        window.addEventListener("message", (event) => {
+            resolve(event.data);
+        }, false);
+        setTimeout(() => {  reject("Did not receive any message from iframe"); }, 5000);
+    });
+    var frame = await withFrame("data:text/html," + htmlString);
+    var result = await promise;
+    assert_equals(result, "PASS");
+}, "Test data URL frame");
+
+promise_test(async (test) => {
+    var blob = new Blob([''], {type: "text/html"});
+    var blobURL = URL.createObjectURL(blob);
+    var frame = await withFrame(blobURL);
+    var response = await frame.contentWindow.fetch("https://127.0.0.1:8443/pinkelephant");
+    var text = await response.text();
+    assert_equals(text, "PASS");
+}, "Test blob URL frame");
+
 </script>
 </body>
 </html>

@@ -863,6 +863,15 @@ void DocumentLoader::stopLoadingForPolicyChange()
     cancelMainResourceLoad(error);
 }
 
+#if ENABLE(SERVICE_WORKER)
+static inline bool isLocalURL(const URL& url)
+{
+    // https://fetch.spec.whatwg.org/#is-local
+    auto protocol = url.protocol().toStringWithoutCopying();
+    return equalLettersIgnoringASCIICase(protocol, "data") || equalLettersIgnoringASCIICase(protocol, "blob") || equalLettersIgnoringASCIICase(protocol, "about");
+}
+#endif
+
 void DocumentLoader::commitData(const char* bytes, size_t length)
 {
     if (!m_gotFirstByte) {
@@ -892,8 +901,12 @@ void DocumentLoader::commitData(const char* bytes, size_t length)
             if (m_serviceWorkerRegistrationData && m_serviceWorkerRegistrationData->activeWorker) {
                 m_frame->document()->setActiveServiceWorker(ServiceWorker::getOrCreate(*m_frame->document(), WTFMove(m_serviceWorkerRegistrationData->activeWorker.value())));
                 m_serviceWorkerRegistrationData = { };
+            } else if (isLocalURL(m_frame->document()->url())) {
+                if (auto* parent = m_frame->document()->parentDocument())
+                    m_frame->document()->setActiveServiceWorker(parent->activeServiceWorker());
             }
-            if (SchemeRegistry::canServiceWorkersHandleURLScheme(m_frame->document()->url().protocol().toStringWithoutCopying()))
+
+            if (m_frame->document()->activeServiceWorker() || SchemeRegistry::canServiceWorkersHandleURLScheme(m_frame->document()->url().protocol().toStringWithoutCopying()))
                 m_frame->document()->setServiceWorkerConnection(&ServiceWorkerProvider::singleton().serviceWorkerConnectionForSession(m_frame->page()->sessionID()));
         }
 #endif
