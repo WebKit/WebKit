@@ -1,3 +1,22 @@
+2018-01-03  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer] move MediaSample implementation out of mse/
+        https://bugs.webkit.org/show_bug.cgi?id=179165
+
+        Reviewed by Carlos Garcia Campos.
+
+        This module isn't specific to MSE and can potentially be reused
+        elsewhere, for WebRTC for instance. Additionally the
+        ::platformSample() method was implemented and the code was cleaned up.
+
+        * platform/GStreamer.cmake:
+        * platform/MediaSample.h:
+        * platform/graphics/gstreamer/GStreamerMediaSample.cpp: Renamed from Source/WebCore/platform/graphics/gstreamer/mse/GStreamerMediaSample.cpp.
+        (WebCore::GStreamerMediaSample::platformSample):
+        * platform/graphics/gstreamer/GStreamerMediaSample.h: Renamed from Source/WebCore/platform/graphics/gstreamer/mse/GStreamerMediaSample.h.
+        * platform/graphics/gstreamer/mse/PlaybackPipeline.cpp:
+        (WebCore::PlaybackPipeline::enqueueSample):
+
 2018-01-03  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix resource load stats tests on GLib based ports after r226355.

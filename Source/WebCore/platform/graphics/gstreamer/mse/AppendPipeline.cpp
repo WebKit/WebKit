@@ -27,7 +27,7 @@
 #include "GRefPtrGStreamer.h"
 #include "GStreamerEMEUtilities.h"
 #include "GStreamerMediaDescription.h"
-#include "GStreamerMediaSample.h"
+#include "MediaSampleGStreamer.h"
 #include "InbandTextTrackPrivateGStreamer.h"
 #include "MediaDescription.h"
 #include "SourceBufferPrivateGStreamer.h"
@@ -726,7 +726,7 @@ void AppendPipeline::appsinkNewSample(GstSample* sample)
             return;
         }
 
-        RefPtr<GStreamerMediaSample> mediaSample = WebCore::GStreamerMediaSample::create(sample, m_presentationSize, trackId());
+        RefPtr<MediaSampleGStreamer> mediaSample = WebCore::MediaSampleGStreamer::create(sample, m_presentationSize, trackId());
 
         GST_TRACE("append: trackId=%s PTS=%s DTS=%s DUR=%s presentationSize=%.0fx%.0f",
             mediaSample->trackID().string().utf8().data(),

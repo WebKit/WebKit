@@ -33,6 +33,7 @@
 #include <wtf/text/AtomicString.h>
 
 typedef struct opaqueCMSampleBuffer *CMSampleBufferRef;
+typedef struct _GstSample GstSample;
 
 namespace WebCore {
 
@@ -43,10 +44,12 @@ struct PlatformSample {
         None,
         MockSampleBoxType,
         CMSampleBufferType,
+        GStreamerSampleType,
     } type;
     union {
         MockSampleBox* mockSampleBox;
         CMSampleBufferRef cmSampleBuffer;
+        GstSample* gstSample;
     } sample;
 };
 

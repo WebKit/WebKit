@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2016 Metrological Group B.V.
- * Copyright (C) 2016 Igalia S.L
+ * Copyright (C) 2016, 2017, 2018 Igalia S.L
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -20,24 +20,23 @@
 
 #pragma once
 
-#if ENABLE(VIDEO) && USE(GSTREAMER) && ENABLE(MEDIA_SOURCE)
+#if ENABLE(VIDEO) && USE(GSTREAMER)
 
 #include "FloatSize.h"
 #include "GRefPtrGStreamer.h"
 #include "MediaSample.h"
-#include <gst/gst.h>
 #include <wtf/text/AtomicString.h>
 
 namespace WebCore {
 
-class GStreamerMediaSample : public MediaSample {
+class MediaSampleGStreamer final : public MediaSample {
 public:
-    static Ref<GStreamerMediaSample> create(GstSample* sample, const FloatSize& presentationSize, const AtomicString& trackId)
+    static Ref<MediaSampleGStreamer> create(GRefPtr<GstSample>&& sample, const FloatSize& presentationSize, const AtomicString& trackId)
     {
-        return adoptRef(*new GStreamerMediaSample(sample, presentationSize, trackId));
+        return adoptRef(*new MediaSampleGStreamer(WTFMove(sample), presentationSize, trackId));
     }
 
-    static Ref<GStreamerMediaSample> createFakeSample(GstCaps*, MediaTime pts, MediaTime dts, MediaTime duration, const FloatSize& presentationSize, const AtomicString& trackId);
+    static Ref<MediaSampleGStreamer> createFakeSample(GstCaps*, MediaTime pts, MediaTime dts, MediaTime duration, const FloatSize& presentationSize, const AtomicString& trackId);
 
     void applyPtsOffset(MediaTime);
     MediaTime presentationTime() const override { return m_pts; }
@@ -46,7 +45,6 @@ public:
     AtomicString trackID() const override { return m_trackId; }
     void setTrackID(const String& trackId) override { m_trackId = trackId; }
     size_t sizeInBytes() const override { return m_size; }
-    GstSample* sample() const { return m_sample.get(); }
     FloatSize presentationSize() const override { return m_presentationSize; }
     void offsetTimestampsBy(const MediaTime&) override;
     void setTimestamps(const MediaTime&, const MediaTime&) override { }
@@ -54,23 +52,24 @@ public:
     std::pair<RefPtr<MediaSample>, RefPtr<MediaSample>> divide(const MediaTime&) override  { return { nullptr, nullptr }; }
     Ref<MediaSample> createNonDisplayingCopy() const override;
     SampleFlags flags() const override { return m_flags; }
-    PlatformSample platformSample() override  { return PlatformSample(); }
+    PlatformSample platformSample() override;
     void dump(PrintStream&) const override { }
 
 private:
-    GStreamerMediaSample(GstSample*, const FloatSize& presentationSize, const AtomicString& trackId);
-    virtual ~GStreamerMediaSample() = default;
+    MediaSampleGStreamer(GRefPtr<GstSample>&&, const FloatSize& presentationSize, const AtomicString& trackId);
+    MediaSampleGStreamer(const FloatSize& presentationSize, const AtomicString& trackId);
+    virtual ~MediaSampleGStreamer() = default;
 
     MediaTime m_pts;
     MediaTime m_dts;
     MediaTime m_duration;
     AtomicString m_trackId;
-    size_t m_size;
+    size_t m_size { 0 };
     GRefPtr<GstSample> m_sample;
     FloatSize m_presentationSize;
-    MediaSample::SampleFlags m_flags;
+    MediaSample::SampleFlags m_flags { MediaSample::IsSync };
 };
 
 } // namespace WebCore.
 
-#endif // USE(GSTREAMER)
+#endif // ENABLE(VIDEO) && USE(GSTREAMER)

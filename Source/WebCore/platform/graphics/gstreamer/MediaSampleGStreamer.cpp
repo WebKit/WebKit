@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2016 Metrological Group B.V.
- * Copyright (C) 2016 Igalia S.L
+ * Copyright (C) 2016, 2017, 2018 Igalia S.L
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -19,29 +19,23 @@
  */
 
 #include "config.h"
-#include "GStreamerMediaSample.h"
+#include "MediaSampleGStreamer.h"
 
 #include "GStreamerUtilities.h"
 
-#if ENABLE(VIDEO) && USE(GSTREAMER) && ENABLE(MEDIA_SOURCE)
+#if ENABLE(VIDEO) && USE(GSTREAMER)
 
 namespace WebCore {
 
-GStreamerMediaSample::GStreamerMediaSample(GstSample* sample, const FloatSize& presentationSize, const AtomicString& trackId)
-    : MediaSample()
-    , m_pts(MediaTime::zeroTime())
+MediaSampleGStreamer::MediaSampleGStreamer(GRefPtr<GstSample>&& sample, const FloatSize& presentationSize, const AtomicString& trackId)
+    : m_pts(MediaTime::zeroTime())
     , m_dts(MediaTime::zeroTime())
     , m_duration(MediaTime::zeroTime())
     , m_trackId(trackId)
-    , m_size(0)
     , m_presentationSize(presentationSize)
-    , m_flags(MediaSample::IsSync)
 {
-
-    if (!sample)
-        return;
-
-    GstBuffer* buffer = gst_sample_get_buffer(sample);
+    ASSERT(sample);
+    GstBuffer* buffer = gst_sample_get_buffer(sample.get());
     if (!buffer)
         return;
 
@@ -67,9 +61,18 @@ GStreamerMediaSample::GStreamerMediaSample(GstSample* sample, const FloatSize& p
         m_flags = static_cast<MediaSample::SampleFlags>(m_flags | MediaSample::IsNonDisplaying);
 }
 
-Ref<GStreamerMediaSample> GStreamerMediaSample::createFakeSample(GstCaps*, MediaTime pts, MediaTime dts, MediaTime duration, const FloatSize& presentationSize, const AtomicString& trackId)
+MediaSampleGStreamer::MediaSampleGStreamer(const FloatSize& presentationSize, const AtomicString& trackId)
+    : m_pts(MediaTime::zeroTime())
+    , m_dts(MediaTime::zeroTime())
+    , m_duration(MediaTime::zeroTime())
+    , m_trackId(trackId)
+    , m_presentationSize(presentationSize)
 {
-    GStreamerMediaSample* gstreamerMediaSample = new GStreamerMediaSample(nullptr, presentationSize, trackId);
+}
+
+Ref<MediaSampleGStreamer> MediaSampleGStreamer::createFakeSample(GstCaps*, MediaTime pts, MediaTime dts, MediaTime duration, const FloatSize& presentationSize, const AtomicString& trackId)
+{
+    MediaSampleGStreamer* gstreamerMediaSample = new MediaSampleGStreamer(presentationSize, trackId);
     gstreamerMediaSample->m_pts = pts;
     gstreamerMediaSample->m_dts = dts;
     gstreamerMediaSample->m_duration = duration;
@@ -77,7 +80,7 @@ Ref<GStreamerMediaSample> GStreamerMediaSample::createFakeSample(GstCaps*, Media
     return adoptRef(*gstreamerMediaSample);
 }
 
-void GStreamerMediaSample::applyPtsOffset(MediaTime timestampOffset)
+void MediaSampleGStreamer::applyPtsOffset(MediaTime timestampOffset)
 {
     if (m_pts > timestampOffset) {
         m_duration = m_duration + (m_pts - timestampOffset);
@@ -85,20 +88,25 @@ void GStreamerMediaSample::applyPtsOffset(MediaTime timestampOffset)
     }
 }
 
-void GStreamerMediaSample::offsetTimestampsBy(const MediaTime& timestampOffset)
+void MediaSampleGStreamer::offsetTimestampsBy(const MediaTime& timestampOffset)
 {
     if (!timestampOffset)
         return;
     m_pts += timestampOffset;
     m_dts += timestampOffset;
-    GstBuffer* buffer = gst_sample_get_buffer(m_sample.get());
-    if (buffer) {
+    if (auto* buffer = gst_sample_get_buffer(m_sample.get())) {
         GST_BUFFER_PTS(buffer) = toGstClockTime(m_pts);
         GST_BUFFER_DTS(buffer) = toGstClockTime(m_dts);
     }
 }
 
-Ref<MediaSample> GStreamerMediaSample::createNonDisplayingCopy() const
+PlatformSample MediaSampleGStreamer::platformSample()
+{
+    PlatformSample sample = { PlatformSample::GStreamerSampleType, { .gstSample = m_sample.get() } };
+    return sample;
+}
+
+Ref<MediaSample> MediaSampleGStreamer::createNonDisplayingCopy() const
 {
     if (!m_sample)
         return createFakeSample(nullptr, m_pts, m_dts, m_duration, m_presentationSize, m_trackId);
@@ -112,9 +120,9 @@ Ref<MediaSample> GStreamerMediaSample::createNonDisplayingCopy() const
     GstStructure* info = originalInfo ? gst_structure_copy(originalInfo) : nullptr;
     GRefPtr<GstSample> sample = adoptGRef(gst_sample_new(buffer, caps, segment, info));
 
-    return adoptRef(*new GStreamerMediaSample(sample.get(), m_presentationSize, m_trackId));
+    return adoptRef(*new MediaSampleGStreamer(sample.get(), m_presentationSize, m_trackId));
 }
 
 } // namespace WebCore.
 
-#endif // USE(GSTREAMER)
+#endif // ENABLE(VIDEO) && USE(GSTREAMER)
