@@ -19,9 +19,12 @@
 
 #include "config.h"
 #include "SVGFEPointLightElement.h"
-#include "SVGNames.h"
 
+#include "GeometryUtilities.h"
 #include "PointLightSource.h"
+#include "SVGFilterBuilder.h"
+#include "SVGNames.h"
+#include <wtf/MathExtras.h>
 
 namespace WebCore {
 
@@ -36,9 +39,21 @@ Ref<SVGFEPointLightElement> SVGFEPointLightElement::create(const QualifiedName& 
     return adoptRef(*new SVGFEPointLightElement(tagName, document));
 }
 
-Ref<LightSource> SVGFEPointLightElement::lightSource() const
+Ref<LightSource> SVGFEPointLightElement::lightSource(SVGFilterBuilder& builder) const
 {
-    return PointLightSource::create(FloatPoint3D(x(), y(), z()));
+    FloatPoint3D position;
+    if (builder.primitiveUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX) {
+        FloatRect referenceBox = builder.targetBoundingBox();
+        
+        position.setX(referenceBox.x() + x() * referenceBox.width());
+        position.setY(referenceBox.y() + y() * referenceBox.height());
+
+        // https://www.w3.org/TR/SVG/filters.html#fePointLightZAttribute and https://www.w3.org/TR/SVG/coords.html#Units_viewport_percentage
+        position.setZ(z() * euclidianDistance(referenceBox.minXMinYCorner(), referenceBox.maxXMaxYCorner()) / sqrtOfTwoFloat);
+    } else
+        position = FloatPoint3D(x(), y(), z());
+    
+    return PointLightSource::create(position);
 }
 
 }

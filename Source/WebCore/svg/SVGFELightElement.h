@@ -27,11 +27,12 @@
 
 namespace WebCore {
 
+class SVGFilterBuilder;
+
 class SVGFELightElement : public SVGElement {
 public:
-    virtual Ref<LightSource> lightSource() const = 0;
+    virtual Ref<LightSource> lightSource(SVGFilterBuilder&) const = 0;
     static SVGFELightElement* findLightElement(const SVGElement*);
-    static RefPtr<LightSource> findLightSource(const SVGElement*);
 
 protected:
     SVGFELightElement(const QualifiedName&, Document&);

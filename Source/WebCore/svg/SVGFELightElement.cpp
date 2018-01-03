@@ -77,14 +77,6 @@ SVGFELightElement* SVGFELightElement::findLightElement(const SVGElement* svgElem
     return nullptr;
 }
 
-RefPtr<LightSource> SVGFELightElement::findLightSource(const SVGElement* svgElement)
-{
-    auto lightNode = makeRefPtr(findLightElement(svgElement));
-    if (!lightNode)
-        return 0;
-    return lightNode->lightSource();
-}
-
 void SVGFELightElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
     if (name == SVGNames::azimuthAttr) {

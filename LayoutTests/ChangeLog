@@ -1,3 +1,19 @@
+2018-01-03  Simon Fraser  <simon.fraser@apple.com>
+
+        feLighting is broken with primitiveUnits="objectBoundingBox"
+        https://bugs.webkit.org/show_bug.cgi?id=181197
+
+        Reviewed by Tim Horton.
+        
+        Ref tests with primitiveUnits=objectBoundingBox for feSpotLight and fePointLight.
+
+        * svg/filters/feDiffuseLighting-fePointLight-primitiveUnits-objectBoundingBox-expected.svg: Added.
+        * svg/filters/feDiffuseLighting-fePointLight-primitiveUnits-objectBoundingBox.svg: Added.
+        * svg/filters/feDiffuseLighting-feSpotLight-primitiveUnits-objectBoundingBox-expected.svg: Added.
+        * svg/filters/feDiffuseLighting-feSpotLight-primitiveUnits-objectBoundingBox.svg: Added.
+        * svg/filters/feSpecularLighting-fePointLight-primitiveUnits-objectBoundingBox-expected.svg: Added.
+        * svg/filters/feSpecularLighting-fePointLight-primitiveUnits-objectBoundingBox.svg: Added.
+
 2018-01-03  Antti Koivisto  <antti@apple.com>
 
         Crash beneath CSSValue::equals @ csas.cz

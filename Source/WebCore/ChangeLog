@@ -1,3 +1,54 @@
+2018-01-03  Simon Fraser  <simon.fraser@apple.com>
+
+        feLighting is broken with primitiveUnits="objectBoundingBox"
+        https://bugs.webkit.org/show_bug.cgi?id=181197
+
+        Reviewed by Tim Horton.
+
+        With <filter primitiveUnits="objectBoundingBox"> we need to convert the coordinates
+        of fePointLights and feSpotLights into user space coordinates. Following
+        https://www.w3.org/TR/SVG/filters.html#FilterElementPrimitiveUnitsAttribute
+        this is done by treating them as fractions of the bounding box on the referencing
+        element, with treatment for z following https://www.w3.org/TR/SVG/coords.html#Units_viewport_percentage
+        
+        To do this, store the bounds of the referencing elemenet on SVGFilterBuilder as
+        targetBoundingBox, and store the primitiveUnits type. Then do the conversion of lighting
+        coordinates in SVGFESpecularLightingElement::build() and SVGFEDiffuseLightingElement::build().
+
+        Remove SVGFELightElement::findLightSource(), since we need to be able to pass the SVGFilterBuilder
+        to the lightSource() function so hoist the code up.
+
+        Tests: svg/filters/feDiffuseLighting-fePointLight-primitiveUnits-objectBoundingBox-expected.svg
+               svg/filters/feDiffuseLighting-fePointLight-primitiveUnits-objectBoundingBox.svg
+               svg/filters/feDiffuseLighting-feSpotLight-primitiveUnits-objectBoundingBox-expected.svg
+               svg/filters/feDiffuseLighting-feSpotLight-primitiveUnits-objectBoundingBox.svg
+               svg/filters/feSpecularLighting-fePointLight-primitiveUnits-objectBoundingBox-expected.svg
+               svg/filters/feSpecularLighting-fePointLight-primitiveUnits-objectBoundingBox.svg
+
+        * rendering/svg/RenderSVGResourceFilter.cpp:
+        (WebCore::RenderSVGResourceFilter::buildPrimitives const):
+        * svg/SVGFEDiffuseLightingElement.cpp:
+        (WebCore::SVGFEDiffuseLightingElement::build):
+        * svg/SVGFEDistantLightElement.cpp:
+        (WebCore::SVGFEDistantLightElement::lightSource const):
+        * svg/SVGFEDistantLightElement.h:
+        * svg/SVGFELightElement.cpp:
+        (WebCore::SVGFELightElement::findLightSource): Deleted.
+        * svg/SVGFELightElement.h:
+        * svg/SVGFEPointLightElement.cpp:
+        (WebCore::SVGFEPointLightElement::lightSource const):
+        * svg/SVGFEPointLightElement.h:
+        * svg/SVGFESpecularLightingElement.cpp:
+        (WebCore::SVGFESpecularLightingElement::build):
+        * svg/SVGFESpotLightElement.cpp:
+        (WebCore::SVGFESpotLightElement::lightSource const):
+        * svg/SVGFESpotLightElement.h:
+        * svg/graphics/filters/SVGFilterBuilder.h:
+        (WebCore::SVGFilterBuilder::setTargetBoundingBox):
+        (WebCore::SVGFilterBuilder::targetBoundingBox const):
+        (WebCore::SVGFilterBuilder::primitiveUnits const):
+        (WebCore::SVGFilterBuilder::setPrimitiveUnits):
+
 2018-01-03  Antti Koivisto  <antti@apple.com>
 
         Crash beneath CSSValue::equals @ csas.cz

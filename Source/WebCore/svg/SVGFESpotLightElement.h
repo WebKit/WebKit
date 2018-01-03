@@ -30,7 +30,7 @@ public:
 private:
     SVGFESpotLightElement(const QualifiedName&, Document&);
 
-    Ref<LightSource> lightSource() const override;
+    Ref<LightSource> lightSource(SVGFilterBuilder&) const override;
 };
 
 } // namespace WebCore
