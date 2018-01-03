@@ -1,3 +1,15 @@
+2018-01-03  Per Arne Vollan  <pvollan@apple.com>
+
+        [Win][Debug] testapi link error.
+        https://bugs.webkit.org/show_bug.cgi?id=181247
+        <rdar://problem/36166729>
+
+        Reviewed by Brent Fulgham.
+
+        Do not set the runtime library compile flag for C files, it is already set to the correct value.
+ 
+        * shell/PlatformWin.cmake:
+
 2018-01-03  Robin Morisset  <rmorisset@apple.com>
 
         Inlining of a function that ends in op_unreachable crashes
