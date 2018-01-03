@@ -1,5 +1,14 @@
 2018-01-02  Mark Lam  <mark.lam@apple.com>
 
+        Refactoring: Rename DummyClass to DummyStruct because it's a struct.
+        https://bugs.webkit.org/show_bug.cgi?id=181230
+
+        Reviewed by JF Bastien.
+
+        * wtf/WTFAssertions.cpp:
+
+2018-01-02  Mark Lam  <mark.lam@apple.com>
+
         Ensure that poisoned pointers do not look like double or int32 JSValues.
         https://bugs.webkit.org/show_bug.cgi?id=181221
         <rdar://problem/36248638>

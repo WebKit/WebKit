@@ -32,7 +32,7 @@
 namespace WTF {
 
 namespace {
-struct DummyClass { };
+struct DummyStruct { };
 }
 
 #if ENABLE(POISON)
@@ -65,15 +65,15 @@ static_assert(!(makeConstExprPoison(1000000) & 0x3), "ensure bottom 2 alignment 
 static_assert(!(makeConstExprPoison(0xffffffff) & 0x3), "ensure bottom 2 alignment bits are available for use as flag bits.");
 #endif // ENABLE(POISON)
 
-static_assert(sizeof(Ref<DummyClass>) == sizeof(DummyClass*), "");
-static_assert(sizeof(PoisonedRef<0xffff, DummyClass>) == sizeof(DummyClass*), "");
+static_assert(sizeof(Ref<DummyStruct>) == sizeof(DummyStruct*), "");
+static_assert(sizeof(PoisonedRef<0xffff, DummyStruct>) == sizeof(DummyStruct*), "");
 
-static_assert(sizeof(RefPtr<DummyClass>) == sizeof(DummyClass*), "");
-static_assert(sizeof(PoisonedRefPtr<0xffff, DummyClass>) == sizeof(DummyClass*), "");
+static_assert(sizeof(RefPtr<DummyStruct>) == sizeof(DummyStruct*), "");
+static_assert(sizeof(PoisonedRefPtr<0xffff, DummyStruct>) == sizeof(DummyStruct*), "");
 
-static_assert(sizeof(PoisonedUniquePtr<0xffff, DummyClass>) == sizeof(DummyClass*), "");
+static_assert(sizeof(PoisonedUniquePtr<0xffff, DummyStruct>) == sizeof(DummyStruct*), "");
 static_assert(sizeof(PoisonedUniquePtr<0xffff, int[]>) == sizeof(int*), "");
-static_assert(sizeof(PoisonedUniquePtr<0xffff, DummyClass[]>) == sizeof(DummyClass*), "");
+static_assert(sizeof(PoisonedUniquePtr<0xffff, DummyStruct[]>) == sizeof(DummyStruct*), "");
 
 } // namespace WTF
 
