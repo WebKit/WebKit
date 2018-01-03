@@ -1,3 +1,14 @@
+2018-01-03  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Slow open time enumerating system fonts (FontCache::systemFontFamilies)
+        https://bugs.webkit.org/show_bug.cgi?id=180979
+        <rdar://problem/36146670>
+
+        Reviewed by Matt Baker.
+
+        * inspector/css/get-system-fonts.html:
+        Cleanup the test a bit.
+
 2018-01-03  Simon Fraser  <simon.fraser@apple.com>
 
         SVG lighting filter lights are in the wrong coordinate system
