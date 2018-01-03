@@ -1,3 +1,46 @@
+2018-01-02  Brent Fulgham  <bfulgham@apple.com>
+
+        [macOS, iOS] Adopt new secure coding APIs in WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=181085
+        <rdar://problem/34837397>
+
+        Reviewed by Tim Horton.
+
+        Update WebKit code to use NSSecureCoding when the underlying operating system supports it. Use new
+        wrapper functions so the same code can be built on all supported OS releases, while enabling
+        seure coding when possible.
+
+        Note that NSView-based classes cannot be migrated at present due to AppKit not supporting NSSecureCoding
+        in its class hierarchy.
+
+        Tested by exising TestWebKitAPI tests for Coding and data transfer.
+
+        * Platform/ios/AccessibilityIOS.mm:
+        (WebKit::newAccessibilityRemoteToken): Encode using NSSecureCoding.
+        * UIProcess/API/Cocoa/WKPreferences.h:
+        * UIProcess/API/Cocoa/WKPreferences.mm:
+        (+[WKPreferences supportsSecureCoding]): Added to enable NSSecureCoding.
+        * UIProcess/API/Cocoa/WKProcessPool.h:
+        * UIProcess/API/Cocoa/WKProcessPool.mm:
+        (+[WKProcessPool supportsSecureCoding]): Ditto.
+        * UIProcess/API/Cocoa/WKUserContentController.h:
+        * UIProcess/API/Cocoa/WKUserContentController.mm:
+        (+[WKUserContentController supportsSecureCoding]): Ditto.
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView initWithCoder:]): Use coding initialization that supports secure coding if
+        it is available in the supplied class.
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.h:
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.mm:
+        (+[WKWebViewConfiguration supportsSecureCoding]): Added to enable NSSecureCoding.
+        (-[WKWebViewConfiguration initWithCoder:]): Use secure coding when possible.
+        * UIProcess/API/Cocoa/WKWebsiteDataStore.h:
+        * UIProcess/API/Cocoa/WKWebsiteDataStore.mm:
+        (+[WKWebsiteDataStore supportsSecureCoding]): Added to enable NSSecureCoding.
+        * UIProcess/API/Cocoa/_WKApplicationManifest.h:
+        * UIProcess/API/Cocoa/_WKApplicationManifest.mm:
+        (+[_WKApplicationManifest supportsSecureCoding]): Added to enable NSSecureCoding.
+        (-[_WKApplicationManifest initWithCoder:]): Use secure coding when possible.
+
 2017-12-28  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Remove std::chrono completely

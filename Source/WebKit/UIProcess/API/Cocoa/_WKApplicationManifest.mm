@@ -30,19 +30,25 @@
 
 #import <WebCore/ApplicationManifest.h>
 #import <WebCore/ApplicationManifestParser.h>
+#import <pal/spi/cocoa/NSKeyedArchiverSPI.h>
 
 @implementation _WKApplicationManifest
 
 #if ENABLE(APPLICATION_MANIFEST)
 
++ (BOOL)supportsSecureCoding
+{
+    return YES;
+}
+
 - (instancetype)initWithCoder:(NSCoder *)aDecoder
 {
-    NSString *name = [aDecoder decodeObjectForKey:@"name"];
-    NSString *shortName = [aDecoder decodeObjectForKey:@"short_name"];
-    NSString *description = [aDecoder decodeObjectForKey:@"description"];
-    NSURL *scopeURL = [aDecoder decodeObjectForKey:@"scope"];
+    NSString *name = decodeObjectOfClassForKeyFromCoder([NSString class], @"name", aDecoder);
+    NSString *shortName = decodeObjectOfClassForKeyFromCoder([NSString class], @"short_name", aDecoder);
+    NSString *description = decodeObjectOfClassForKeyFromCoder([NSString class], @"description", aDecoder);
+    NSURL *scopeURL = decodeObjectOfClassForKeyFromCoder([NSURL class], @"scope", aDecoder);
     NSInteger display = [aDecoder decodeIntegerForKey:@"display"];
-    NSURL *startURL = [aDecoder decodeObjectForKey:@"start_url"];
+    NSURL *startURL = decodeObjectOfClassForKeyFromCoder([NSURL class], @"start_url", aDecoder);
 
     WebCore::ApplicationManifest coreApplicationManifest {
         WTF::String(name),

@@ -96,6 +96,11 @@ static WKProcessPool *sharedProcessPool;
     [super dealloc];
 }
 
++ (BOOL)supportsSecureCoding
+{
+    return YES;
+}
+
 - (void)encodeWithCoder:(NSCoder *)coder
 {
     if (self == sharedProcessPool) {

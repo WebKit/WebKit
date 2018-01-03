@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,7 +35,7 @@
  its web view configuration.
  */
 WK_CLASS_AVAILABLE(macosx(10.10), ios(8.0))
-@interface WKPreferences : NSObject <NSCoding>
+@interface WKPreferences : NSObject <NSSecureCoding>
 
 /*! @abstract The minimum font size in points.
  @discussion The default value is 0.

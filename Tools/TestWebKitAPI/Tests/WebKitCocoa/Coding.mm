@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,14 +28,19 @@
 #if WK_API_ENABLED
 
 #import <WebKit/WKProcessPoolPrivate.h>
+#import <pal/spi/cocoa/NSKeyedArchiverSPI.h>
 #import <wtf/RetainPtr.h>
 
 template<typename T>
 RetainPtr<T> encodeAndDecode(T* t)
 {
-    auto data = [NSKeyedArchiver archivedDataWithRootObject:t];
+    if ([t conformsToProtocol:@protocol(NSSecureCoding)]) {
+        auto data = securelyArchivedDataWithRootObject(t);
+        return unarchivedObjectOfClassesFromData([NSSet setWithObjects:[t class], nil], data);
+    }
 
-    return [NSKeyedUnarchiver unarchiveObjectWithData:data];
+    auto data = insecurelyArchivedDataWithRootObject(t);
+    return insecurelyUnarchiveObjectFromData(data);
 }
 
 TEST(Coding, WKPreferences)
@@ -161,11 +166,11 @@ TEST(Coding, WKWebView_SameConfiguration)
         auto a = adoptNS([[WKWebView alloc] initWithFrame:CGRectZero configuration:configuration.get()]);
         auto b = adoptNS([[WKWebView alloc] initWithFrame:CGRectZero configuration:configuration.get()]);
 
-        data = [NSKeyedArchiver archivedDataWithRootObject:@[a.get(), b.get()]];
+        data = securelyArchivedDataWithRootObject(@[a.get(), b.get()]);
     }
 
     // Then, decode and verify that the important configuration properties are the same.
-    NSArray *array = [NSKeyedUnarchiver unarchiveObjectWithData:data.get()];
+    NSArray *array = unarchivedObjectOfClassesFromData([NSSet setWithObject:[NSArray class]], data.get());
 
     WKWebView *aView = array[0];
     WKWebView *bView = array[1];

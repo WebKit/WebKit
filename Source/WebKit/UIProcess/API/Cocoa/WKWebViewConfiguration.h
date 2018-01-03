@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -92,7 +92,7 @@ typedef NS_OPTIONS(NSUInteger, WKAudiovisualMediaTypes) {
  @helps Contains properties used to configure a @link WKWebView @/link.
  */
 WK_CLASS_AVAILABLE(macosx(10.10), ios(8.0))
-@interface WKWebViewConfiguration : NSObject <NSCoding, NSCopying>
+@interface WKWebViewConfiguration : NSObject <NSSecureCoding, NSCopying>
 
 /*! @abstract The process pool from which to obtain the view's web content
  process.

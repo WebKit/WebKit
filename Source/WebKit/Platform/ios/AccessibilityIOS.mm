@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,7 +35,7 @@ NSData *newAccessibilityRemoteToken(NSUUID *uuid)
 {
     if (!uuid)
         return nil;
-    return insecurelyArchivedDataWithRootObject(@{ @"ax-pid" : @(getpid()), @"ax-uuid" : [uuid UUIDString], @"ax-register" : @YES });
+    return securelyArchivedDataWithRootObject(@{ @"ax-pid" : @(getpid()), @"ax-uuid" : [uuid UUIDString], @"ax-register" : @YES });
 }
 
 } // namespace WebKit

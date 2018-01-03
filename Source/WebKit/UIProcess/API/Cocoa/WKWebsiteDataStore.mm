@@ -59,6 +59,11 @@ using namespace WebCore;
     [super dealloc];
 }
 
++ (BOOL)supportsSecureCoding
+{
+    return YES;
+}
+
 - (instancetype)initWithCoder:(NSCoder *)coder
 {
     if (!(self = [super init]))

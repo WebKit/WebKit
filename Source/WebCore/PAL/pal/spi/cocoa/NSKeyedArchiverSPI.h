@@ -134,3 +134,12 @@ inline RetainPtr<NSKeyedUnarchiver> secureUnarchiverFromData(NSData *_Nonnull da
     return adoptNS(unarchiver);
 }
 
+inline id _Nullable decodeObjectOfClassForKeyFromCoder(Class _Nonnull cls, NSString * _Nonnull key, NSCoder * _Nonnull coder)
+{
+#if USE(SECURE_ARCHIVER_API)
+    return [coder decodeObjectOfClass:cls forKey:key];
+#else
+    UNUSED_PARAM(cls);
+    return [coder decodeObjectForKey:key];
+#endif
+}

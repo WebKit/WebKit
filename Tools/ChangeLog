@@ -1,3 +1,22 @@
+2018-01-02  Brent Fulgham  <bfulgham@apple.com>
+
+        [macOS, iOS] Adopt new secure coding APIs in WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=181085
+        <rdar://problem/34837397>
+
+        Reviewed by Tim Horton.
+
+        Update API tests to use secure coding wherever possible. Currently, NSView/UIView-based classes are not
+        capable of supporting NSSecureCoding, so pass through the current coding routines.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ApplicationManifest.mm: Updated for NSSecureCoding.
+        * TestWebKitAPI/Tests/WebKitCocoa/Coding.mm:
+        (encodeAndDecode): Check if class supports the NSSecureCoding protocol and use non-secure coding
+        routines if necessary.
+        (TEST): Updated for NSSecureCoding.
+        * TestWebKitAPI/Tests/mac/EarlyKVOCrash.mm:
+        (TestWebKitAPI::TEST): Updated for NSSecureCoding.
+
 2017-12-28  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Remove std::chrono completely

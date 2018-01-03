@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,6 +26,7 @@
 #import "config.h"
 
 #import <WebKit/WebView.h>
+#import <pal/spi/cocoa/NSKeyedArchiverSPI.h>
 #import <wtf/RetainPtr.h>
 
 @interface EarlyKVOCrashResponder : NSResponder {
@@ -85,8 +86,12 @@ TEST(WebKitLegacy, EarlyKVOCrash)
 
     [webView setNextResponder:earlyKVOCrashResponder.get()];
 
-    NSData *data = [NSKeyedArchiver archivedDataWithRootObject:@[ webView.get(), earlyKVOCrashResponder.get() ]];
-    [NSKeyedUnarchiver unarchiveObjectWithData:data];
+    auto data = securelyArchivedDataWithRootObject(@[webView.get(), earlyKVOCrashResponder.get()]);
+
+    if ([webView conformsToProtocol:@protocol(NSSecureCoding)])
+        unarchivedObjectOfClassesFromData([NSSet setWithObjects:[NSArray class], [WebView class], [EarlyKVOCrashResponder class], nil], data);
+    else
+        insecurelyUnarchiveObjectFromData(data);
 }
 
 } // namespace TestWebKitAPI

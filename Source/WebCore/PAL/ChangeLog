@@ -1,3 +1,17 @@
+2018-01-02  Brent Fulgham  <bfulgham@apple.com>
+
+        [macOS, iOS] Adopt new secure coding APIs in WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=181085
+        <rdar://problem/34837397>
+
+        Reviewed by Tim Horton.
+
+        Add a new helper function to allow WebKit code to use NSSecureCoding in more
+        places when the underlying operating system supports it.
+
+        * pal/spi/cocoa/NSKeyedArchiverSPI.h:
+        (decodeObjectOfClassForKeyFromCoder): New wrapper method.
+
 2017-12-21  Brent Fulgham  <bfulgham@apple.com>
 
         Unreviewed test fix after r226224.

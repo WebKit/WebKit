@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,6 +25,7 @@
 
 #import "config.h"
 #import "WKWebViewConfigurationInternal.h"
+#import <pal/spi/cocoa/NSKeyedArchiverSPI.h>
 
 #if WK_API_ENABLED
 
@@ -237,6 +238,11 @@ static _WKDragLiftDelay toDragLiftDelay(NSUInteger value)
     return [NSString stringWithFormat:@"<%@: %p; processPool = %@; preferences = %@>", NSStringFromClass(self.class), self, self.processPool, self.preferences];
 }
 
++ (BOOL)supportsSecureCoding
+{
+    return YES;
+}
+
 // FIXME: Encode the process pool, user content controller and website data store.
 
 - (void)encodeWithCoder:(NSCoder *)coder
@@ -269,13 +275,13 @@ static _WKDragLiftDelay toDragLiftDelay(NSUInteger value)
     if (!(self = [self init]))
         return nil;
 
-    self.processPool = [coder decodeObjectForKey:@"processPool"];
-    self.preferences = [coder decodeObjectForKey:@"preferences"];
-    self.userContentController = [coder decodeObjectForKey:@"userContentController"];
-    self.websiteDataStore = [coder decodeObjectForKey:@"websiteDataStore"];
+    self.processPool = decodeObjectOfClassForKeyFromCoder([WKProcessPool class], @"processPool", coder);
+    self.preferences = decodeObjectOfClassForKeyFromCoder([WKPreferences class], @"preferences", coder);
+    self.userContentController = decodeObjectOfClassForKeyFromCoder([WKUserContentController class], @"userContentController", coder);
+    self.websiteDataStore = decodeObjectOfClassForKeyFromCoder([WKWebsiteDataStore class], @"websiteDataStore", coder);
 
     self.suppressesIncrementalRendering = [coder decodeBoolForKey:@"suppressesIncrementalRendering"];
-    self.applicationNameForUserAgent = [coder decodeObjectForKey:@"applicationNameForUserAgent"];
+    self.applicationNameForUserAgent = decodeObjectOfClassForKeyFromCoder([NSString class], @"applicationNameForUserAgent", coder);
     self.allowsAirPlayForMediaPlayback = [coder decodeBoolForKey:@"allowsAirPlayForMediaPlayback"];
 
 #if PLATFORM(IOS)

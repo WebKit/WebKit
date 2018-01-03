@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -38,7 +38,7 @@ NS_ASSUME_NONNULL_BEGIN
  IndexedDB databases, and local storage.
  */
 WK_CLASS_AVAILABLE(macosx(10.11), ios(9.0))
-@interface WKWebsiteDataStore : NSObject <NSCoding>
+@interface WKWebsiteDataStore : NSObject <NSSecureCoding>
 
 /* @abstract Returns the default data store. */
 + (WKWebsiteDataStore *)defaultDataStore;
