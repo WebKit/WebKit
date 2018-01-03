@@ -375,10 +375,10 @@ WI.DebuggerSidebarPanel = class DebuggerSidebarPanel extends WI.NavigationSideba
             this._allUncaughtExceptionsBreakpointTreeElement.revealAndSelect();
         else if (cookie[WI.DebuggerSidebarPanel.SelectedAssertionsCookieKey])
             this._assertionsBreakpointTreeElement.revealAndSelect();
-        else if (cookie[WI.DebuggerSidebarPanel.SelectedAllRequestsCookieKey])
+        else if (cookie[WI.DebuggerSidebarPanel.SelectedAllRequestsCookieKey]) {
             if (this._xhrBreakpointTreeController)
                 this._xhrBreakpointTreeController.revealAndSelect(WI.domDebuggerManager.allRequestsBreakpoint);
-        else
+        } else
             super.restoreStateFromCookie(cookie, relaxedMatchDelay);
     }
 
