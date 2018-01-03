@@ -1878,8 +1878,6 @@ webkit.org/b/177940 workers/wasm-hashset.html [ Crash Timeout Pass ]
 
 webkit.org/b/179050 accessibility/aria-text-role.html [ Crash Pass ]
 
-webkit.org/b/179051 imported/w3c/web-platform-tests/2dcontext/imagebitmap/createImageBitmap-invalid-args.html [ Crash Failure ]
-
 webkit.org/b/179356 imported/w3c/web-platform-tests/mediacapture-fromelement/capture.html [ Failure Crash ]
 
 webkit.org/b/179443 imported/w3c/web-platform-tests/html/semantics/text-level-semantics/the-bdo-element/bdo-child.html [ Pass Timeout ]
