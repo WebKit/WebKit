@@ -166,6 +166,11 @@ void GraphicsLayer::willBeDestroyed()
     if (m_replicatedLayer)
         m_replicatedLayer->setReplicatedByLayer(0);
 
+    if (m_maskLayer) {
+        m_maskLayer->setParent(nullptr);
+        m_maskLayer->setIsMaskLayer(false);
+    }
+
     removeAllChildren();
     removeFromParent();
 }

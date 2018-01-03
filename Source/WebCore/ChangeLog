@@ -1,3 +1,18 @@
+2018-01-03  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        ASSERTION FAILED: !source || is<Target>(*source) in CoordinatedGraphicsLayer::removeFromParent
+        https://bugs.webkit.org/show_bug.cgi?id=166568
+
+        Reviewed by Simon Fraser.
+
+        When a GraphicsLayer has a mask layer, it fails to properly unparent the mask layer before
+        it is destroyed. This leaves the mask layer with a dangling parent pointer. Fix it, while
+        taking care not to introduce yet another virtual function call during the execution of the
+        destructor.
+
+        * platform/graphics/GraphicsLayer.cpp:
+        (WebCore::GraphicsLayer::willBeDestroyed):
+
 2018-01-03  Simon Fraser  <simon.fraser@apple.com>
 
         SVG lighting filter lights are in the wrong coordinate system
