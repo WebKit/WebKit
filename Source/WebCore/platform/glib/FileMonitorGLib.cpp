@@ -28,6 +28,7 @@
 
 #include "FileSystem.h"
 #include <wtf/glib/GUniquePtr.h>
+#include <wtf/threads/BinarySemaphore.h>
 
 namespace WebCore {
 
@@ -38,24 +39,32 @@ FileMonitor::FileMonitor(const String& path, Ref<WorkQueue>&& handlerQueue, WTF:
     if (path.isEmpty() || !m_modificationHandler)
         return;
 
-    m_cancellable = adoptGRef(g_cancellable_new());
-    m_handlerQueue->dispatch([this, cancellable = m_cancellable, path = path.isolatedCopy()] {
-        if (g_cancellable_is_cancelled(cancellable.get()))
-            return;
+    BinarySemaphore semaphore;
+    m_handlerQueue->dispatch([&] {
         auto file = adoptGRef(g_file_new_for_path(FileSystem::fileSystemRepresentation(path).data()));
         GUniqueOutPtr<GError> error;
-        m_platformMonitor = adoptGRef(g_file_monitor(file.get(), G_FILE_MONITOR_NONE, m_cancellable.get(), &error.outPtr()));
-        if (!m_platformMonitor) {
+        m_platformMonitor = adoptGRef(g_file_monitor(file.get(), G_FILE_MONITOR_NONE, nullptr, &error.outPtr()));
+        if (m_platformMonitor)
+            g_signal_connect(m_platformMonitor.get(), "changed", G_CALLBACK(fileChangedCallback), this);
+        else
             WTFLogAlways("Failed to create a monitor for path %s: %s", path.utf8().data(), error->message);
-            return;
-        }
-        g_signal_connect(m_platformMonitor.get(), "changed", G_CALLBACK(fileChangedCallback), this);
+        semaphore.signal();
     });
+    semaphore.wait(WallTime::infinity());
 }
 
 FileMonitor::~FileMonitor()
 {
-    g_cancellable_cancel(m_cancellable.get());
+    // The monitor can be destroyed in the work queue thread.
+    if (&m_handlerQueue->runLoop() == &RunLoop::current())
+        return;
+
+    BinarySemaphore semaphore;
+    m_handlerQueue->dispatch([&] {
+        m_platformMonitor = nullptr;
+        semaphore.signal();
+    });
+    semaphore.wait(WallTime::infinity());
 }
 
 void FileMonitor::fileChangedCallback(GFileMonitor*, GFile*, GFile*, GFileMonitorEvent event, FileMonitor* monitor)
@@ -76,14 +85,9 @@ void FileMonitor::fileChangedCallback(GFileMonitor*, GFile*, GFile*, GFileMonito
 void FileMonitor::didChange(FileChangeType type)
 {
     ASSERT(!isMainThread());
-    if (g_cancellable_is_cancelled(m_cancellable.get())) {
-        m_platformMonitor = nullptr;
-        return;
-    }
-
-    m_modificationHandler(type);
     if (type == FileChangeType::Removal)
         m_platformMonitor = nullptr;
+    m_modificationHandler(type);
 }
 
 } // namespace WebCore

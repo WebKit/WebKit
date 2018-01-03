@@ -1318,13 +1318,6 @@ webkit.org/b/180098 security/isSecureContext-disabled.html [ Crash Pass ]
 
 webkit.org/b/180803 http/tests/media/hls/video-cookie.html [ Crash ]
 
-webkit.org/b/181138 fast/scrolling/rtl-scrollbars-animation-property.html [ Crash Failure ]
-webkit.org/b/181138 intersection-observer/intersection-observer-entry-interface.html [ Crash Pass ]
-webkit.org/b/181138 fast/html/menuitem-element.html [ Pass Crash ]
-webkit.org/b/181138 fast/attachment/attachment-action.html [ Pass Crash ]
-webkit.org/b/181138 fast/canvas/2d.currentPoint.html [ Pass Crash ]
-webkit.org/b/181138 fast/text/international/system-language/arabic-glyph-cache-fill-combine.html [ Pass Crash ]
-
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Crashing tests
 #////////////////////////////////////////////////////////////////////////////////////////

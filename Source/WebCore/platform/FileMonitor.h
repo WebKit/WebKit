@@ -61,7 +61,6 @@ private:
     Ref<WorkQueue> m_handlerQueue;
     Function<void(FileChangeType)> m_modificationHandler;
     GRefPtr<GFileMonitor> m_platformMonitor;
-    GRefPtr<GCancellable> m_cancellable;
 #endif
 };
 

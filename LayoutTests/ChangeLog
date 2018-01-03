@@ -1,3 +1,14 @@
+2018-01-03  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Crash destroying WebCore::FileMonitor
+        https://bugs.webkit.org/show_bug.cgi?id=181138
+
+        Reviewed by Michael Catanzaro.
+
+        Remove test expectations associated to this bug.
+
+        * platform/gtk/TestExpectations:
+
 2018-01-02  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Slow open time enumerating system fonts (FontCache::systemFontFamilies)

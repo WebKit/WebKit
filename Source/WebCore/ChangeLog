@@ -1,3 +1,18 @@
+2018-01-03  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Crash destroying WebCore::FileMonitor
+        https://bugs.webkit.org/show_bug.cgi?id=181138
+
+        Reviewed by Michael Catanzaro.
+
+        Ensure that platform file monitor is always created and destroyed in the work queue thread synchronously.
+
+        * platform/FileMonitor.h:
+        * platform/glib/FileMonitorGLib.cpp:
+        (WebCore::FileMonitor::FileMonitor):
+        (WebCore::FileMonitor::~FileMonitor):
+        (WebCore::FileMonitor::didChange):
+
 2018-01-02  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Slow open time enumerating system fonts (FontCache::systemFontFamilies)
