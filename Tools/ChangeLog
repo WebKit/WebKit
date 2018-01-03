@@ -1,3 +1,11 @@
+2018-01-03  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Unreviewed, skip broken API test /webkit2/WebKitWebsiteData/ephemeral
+        https://bugs.webkit.org/show_bug.cgi?id=181136
+
+        * Scripts/run-gtk-tests:
+        (GtkTestRunner):
+
 2018-01-02  Brent Fulgham  <bfulgham@apple.com>
 
         [macOS, iOS] Adopt new secure coding APIs in WebKit
