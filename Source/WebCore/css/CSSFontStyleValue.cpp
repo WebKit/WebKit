@@ -44,10 +44,10 @@ String CSSFontStyleValue::customCSSText() const
 
 bool CSSFontStyleValue::equals(const CSSFontStyleValue& other) const
 {
-    if (!obliqueValue)
+    if (!obliqueValue && !other.obliqueValue)
         return fontStyleValue.get() == other.fontStyleValue.get();
     return fontStyleValue.get() == other.fontStyleValue.get()
-        && *obliqueValue == *other.obliqueValue;
+        && obliqueValue && other.obliqueValue && *obliqueValue == *other.obliqueValue;
 }
 
 }
