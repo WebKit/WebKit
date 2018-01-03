@@ -140,7 +140,7 @@ void WebCookieManagerProxy::deleteCookie(PAL::SessionID sessionID, const Cookie&
     processPool()->sendToNetworkingProcessRelaunchingIfNecessary(Messages::WebCookieManager::DeleteCookie(sessionID, cookie, callbackID));
 }
 
-void WebCookieManagerProxy::deleteAllCookiesModifiedSince(PAL::SessionID sessionID, std::chrono::system_clock::time_point time, Function<void (CallbackBase::Error)>&& callbackFunction)
+void WebCookieManagerProxy::deleteAllCookiesModifiedSince(PAL::SessionID sessionID, WallTime time, Function<void (CallbackBase::Error)>&& callbackFunction)
 {
     auto callbackID = m_callbacks.put(WTFMove(callbackFunction));
     processPool()->sendToNetworkingProcessRelaunchingIfNecessary(Messages::WebCookieManager::DeleteAllCookiesModifiedSince(sessionID, time, callbackID));

@@ -194,7 +194,7 @@ void Caches::clear(CompletionHandler<void()>&& completionHandler)
     if (m_engine)
         m_engine->removeFile(cachesListFilename(m_rootPath));
     if (m_storage) {
-        m_storage->clear(String { }, std::chrono::system_clock::time_point::min(), [protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)]() mutable {
+        m_storage->clear(String { }, -WallTime::infinity(), [protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)]() mutable {
             ASSERT(RunLoop::isMain());
             protectedThis->clearMemoryRepresentation();
             completionHandler();

@@ -92,7 +92,7 @@ void SearchPopupMenuWin::loadRecentSearches(const AtomicString& name, Vector<Rec
         CFStringRef item = (CFStringRef)CFArrayGetValueAtIndex(items.get(), i);
         if (CFGetTypeID(item) == CFStringGetTypeID()) {
             // We are choosing not to use or store search times on Windows at this time, so for now it's OK to use a "distant past" time as a placeholder.
-            searchItems.append({ String{ item }, std::chrono::system_clock::time_point::min() });
+            searchItems.append({ String{ item }, -WallTime::infinity() });
         }
     }
 #endif

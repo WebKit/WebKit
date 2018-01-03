@@ -1,3 +1,45 @@
+2017-12-28  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Remove std::chrono completely
+        https://bugs.webkit.org/show_bug.cgi?id=181186
+
+        Reviewed by Alex Christensen.
+
+        std::chrono's overflow unaware design is dangerous[1]. Even small code like
+        `condition.wait_for(std::chrono::seconds::max())` is broken in some platforms
+        due to overflow of std::chrono::time_point. So we intentionally avoid using
+        std::chrono, and use WallTime, MonotonicTime, Seconds instead.
+
+        This patch removes all the remaining use of std::chrono from WebKit tree.
+
+        [1]: https://lists.webkit.org/pipermail/webkit-dev/2016-May/028242.html
+
+        * wtf/CrossThreadCopier.h:
+        Remove std::chrono support from cross thread copiers.
+        * wtf/Forward.h:
+        * wtf/MonotonicTime.h:
+        (WTF::MonotonicTime::isolatedCopy const):
+        Add isolatedCopy function.
+        * wtf/RunLoop.h:
+        (WTF::RunLoop::TimerBase::startRepeating):
+        (WTF::RunLoop::TimerBase::startOneShot):
+        Just remove these helpers.
+        * wtf/Seconds.h:
+        (WTF::Seconds::isolatedCopy const):
+        Add isolatedCopy function.
+        * wtf/WallTime.h:
+        (WTF::WallTime::isolatedCopy const):
+        Add isolatedCopy function.
+        * wtf/persistence/PersistentCoders.h:
+        (WTF::Persistence::Coder<Seconds>::encode):
+        (WTF::Persistence::Coder<Seconds>::decode):
+        (WTF::Persistence::Coder<WallTime>::encode):
+        (WTF::Persistence::Coder<WallTime>::decode):
+        Add persistent coder support for Seconds and WallTime.
+        (WTF::Persistence::Coder<std::chrono::system_clock::time_point>::encode): Deleted.
+        (WTF::Persistence::Coder<std::chrono::system_clock::time_point>::decode): Deleted.
+        Remove std::chrono support from persistent coders.
+
 2018-01-02  Mark Lam  <mark.lam@apple.com>
 
         Refactoring: Rename DummyClass to DummyStruct because it's a struct.

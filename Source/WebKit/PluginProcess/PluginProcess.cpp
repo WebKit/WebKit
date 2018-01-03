@@ -192,13 +192,13 @@ void PluginProcess::getSitesWithData(uint64_t callbackID)
     parentProcessConnection()->send(Messages::PluginProcessProxy::DidGetSitesWithData(sites, callbackID), 0);
 }
 
-void PluginProcess::deleteWebsiteData(std::chrono::system_clock::time_point modifiedSince, uint64_t callbackID)
+void PluginProcess::deleteWebsiteData(WallTime modifiedSince, uint64_t callbackID)
 {
     if (auto* module = netscapePluginModule()) {
-        auto currentTime = std::chrono::system_clock::now();
+        auto currentTime = WallTime::now();
 
         if (currentTime > modifiedSince) {
-            uint64_t maximumAge = std::chrono::duration_cast<std::chrono::seconds>(currentTime - modifiedSince).count();
+            uint64_t maximumAge = (currentTime - modifiedSince).secondsAs<uint64_t>();
 
             module->clearSiteData(String(), NP_CLEAR_ALL, maximumAge);
         }

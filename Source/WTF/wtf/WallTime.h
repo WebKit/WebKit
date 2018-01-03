@@ -128,6 +128,10 @@ public:
     
     WTF_EXPORT_PRIVATE void dump(PrintStream&) const;
     
+    WallTime isolatedCopy() const
+    {
+        return *this;
+    }
 private:
     constexpr WallTime(double rawValue)
         : m_value(rawValue)

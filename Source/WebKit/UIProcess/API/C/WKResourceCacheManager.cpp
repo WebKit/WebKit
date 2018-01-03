@@ -90,5 +90,5 @@ void WKResourceCacheManagerClearCacheForOrigin(WKResourceCacheManagerRef cacheMa
 void WKResourceCacheManagerClearCacheForAllOrigins(WKResourceCacheManagerRef cacheManager, WKResourceCachesToClear cachesToClear)
 {
     auto& websiteDataStore = toImpl(reinterpret_cast<WKWebsiteDataStoreRef>(cacheManager))->websiteDataStore();
-    websiteDataStore.removeData(toWebsiteDataTypes(cachesToClear), std::chrono::system_clock::time_point::min(), [] { });
+    websiteDataStore.removeData(toWebsiteDataTypes(cachesToClear), -WallTime::infinity(), [] { });
 }

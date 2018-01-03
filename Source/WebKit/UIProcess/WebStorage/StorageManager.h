@@ -29,7 +29,6 @@
 #include "LocalStorageDatabaseTracker.h"
 #include <WebCore/SecurityOriginData.h>
 #include <WebCore/SecurityOriginHash.h>
-#include <chrono>
 #include <wtf/Forward.h>
 #include <wtf/Function.h>
 #include <wtf/HashSet.h>
@@ -66,7 +65,7 @@ public:
     void getLocalStorageOrigins(Function<void(HashSet<WebCore::SecurityOriginData>&&)>&& completionHandler);
     void deleteLocalStorageEntriesForOrigin(WebCore::SecurityOriginData&&);
 
-    void deleteLocalStorageOriginsModifiedSince(std::chrono::system_clock::time_point, Function<void()>&& completionHandler);
+    void deleteLocalStorageOriginsModifiedSince(WallTime, Function<void()>&& completionHandler);
     void deleteLocalStorageEntriesForOrigins(const Vector<WebCore::SecurityOriginData>&, Function<void()>&& completionHandler);
 
     void getLocalStorageOriginDetails(Function<void(Vector<LocalStorageDatabaseTracker::OriginDetails>)>&& completionHandler);

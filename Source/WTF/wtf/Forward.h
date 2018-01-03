@@ -35,15 +35,18 @@ class CString;
 class CrashOnOverflow;
 class FunctionDispatcher;
 class Hasher;
+class MonotonicTime;
 class OrdinalNumber;
 class PrintStream;
 class SHA1;
+class Seconds;
 class String;
 class StringBuilder;
 class StringImpl;
 class StringView;
 class TextPosition;
 class TextStream;
+class WallTime;
 
 struct FastMalloc;
 

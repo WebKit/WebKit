@@ -322,7 +322,7 @@ private:
     virtual void checkNotify();
     virtual bool mayTryReplaceEncodedData() const { return false; }
 
-    std::chrono::microseconds freshnessLifetime(const ResourceResponse&) const;
+    Seconds freshnessLifetime(const ResourceResponse&) const;
 
     void addAdditionalRequestHeaders(CachedResourceLoader&);
     void failBeforeStarting();
@@ -330,7 +330,7 @@ private:
     HashMap<CachedResourceClient*, std::unique_ptr<Callback>> m_clientsAwaitingCallback;
     PAL::SessionID m_sessionID;
     ResourceLoadPriority m_loadPriority;
-    std::chrono::system_clock::time_point m_responseTimestamp;
+    WallTime m_responseTimestamp;
 
     String m_fragmentIdentifierForRequest;
 

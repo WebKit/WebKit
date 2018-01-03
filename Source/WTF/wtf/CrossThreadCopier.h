@@ -95,14 +95,6 @@ template<typename T> struct CrossThreadCopierBase<false, true, T> {
     }
 };
 
-template<> struct CrossThreadCopierBase<false, false, std::chrono::system_clock::time_point> {
-    typedef std::chrono::system_clock::time_point Type;
-    static Type copy(const Type& source)
-    {
-        return source;
-    }
-};
-
 template<> struct CrossThreadCopierBase<false, false, WTF::ASCIILiteral> {
     typedef WTF::ASCIILiteral Type;
     static Type copy(const Type& source)

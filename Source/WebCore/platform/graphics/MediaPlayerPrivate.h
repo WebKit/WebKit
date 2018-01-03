@@ -219,7 +219,7 @@ public:
     virtual unsigned videoDecodedByteCount() const { return 0; }
 
     HashSet<RefPtr<SecurityOrigin>> originsInMediaCache(const String&) { return { }; }
-    void clearMediaCache(const String&, std::chrono::system_clock::time_point) { }
+    void clearMediaCache(const String&, WallTime) { }
     void clearMediaCacheForOrigins(const String&, const HashSet<RefPtr<SecurityOrigin>>&) { }
 
     virtual void setPrivateBrowsingMode(bool) { }

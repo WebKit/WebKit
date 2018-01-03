@@ -773,7 +773,7 @@ void DatabaseTracker::deleteAllDatabasesImmediately()
         deleteOrigin(origin, DeletionMode::Immediate);
 }
 
-void DatabaseTracker::deleteDatabasesModifiedSince(std::chrono::system_clock::time_point time)
+void DatabaseTracker::deleteDatabasesModifiedSince(WallTime time)
 {
     for (auto& origin : origins()) {
         Vector<String> databaseNames = this->databaseNames(origin);
@@ -786,11 +786,11 @@ void DatabaseTracker::deleteDatabasesModifiedSince(std::chrono::system_clock::ti
             // from the tracker database. We want to delete all of the information associated with this
             // database from the tracker database, so still add its name to databaseNamesToDelete.
             if (FileSystem::fileExists(fullPath)) {
-                time_t modificationTime;
-                if (!FileSystem::getFileModificationTime(fullPath, modificationTime))
+                auto modificationTime = FileSystem::getFileModificationTime(fullPath);
+                if (!modificationTime)
                     continue;
 
-                if (modificationTime < std::chrono::system_clock::to_time_t(time))
+                if (modificationTime.value() < time)
                     continue;
             }
 

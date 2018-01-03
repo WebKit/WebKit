@@ -104,7 +104,7 @@ FileTimes fileTimes(const String& path)
     struct stat fileInfo;
     if (stat(WebCore::FileSystem::fileSystemRepresentation(path).data(), &fileInfo))
         return { };
-    return { std::chrono::system_clock::from_time_t(fileInfo.st_birthtime), std::chrono::system_clock::from_time_t(fileInfo.st_mtime) };
+    return { WallTime::fromRawSeconds(fileInfo.st_birthtime), WallTime::fromRawSeconds(fileInfo.st_mtime) };
 #elif USE(SOUP)
     // There's no st_birthtime in some operating systems like Linux, so we use xattrs to set/get the creation time.
     GRefPtr<GFile> file = adoptGRef(g_file_new_for_path(WebCore::FileSystem::fileSystemRepresentation(path).data()));
@@ -114,8 +114,8 @@ FileTimes fileTimes(const String& path)
     const char* birthtimeString = g_file_info_get_attribute_string(fileInfo.get(), "xattr::birthtime");
     if (!birthtimeString)
         return { };
-    return { std::chrono::system_clock::from_time_t(g_ascii_strtoull(birthtimeString, nullptr, 10)),
-        std::chrono::system_clock::from_time_t(g_file_info_get_attribute_uint64(fileInfo.get(), "time::modified")) };
+    return { WallTime::fromRawSeconds(g_ascii_strtoull(birthtimeString, nullptr, 10)),
+        WallTime::fromRawSeconds(g_file_info_get_attribute_uint64(fileInfo.get(), "time::modified")) };
 #endif
 }
 
@@ -124,7 +124,7 @@ void updateFileModificationTimeIfNeeded(const String& path)
     auto times = fileTimes(path);
     if (times.creation != times.modification) {
         // Don't update more than once per hour.
-        if (std::chrono::system_clock::now() - times.modification < std::chrono::hours(1))
+        if (WallTime::now() - times.modification < 1_h)
             return;
     }
     // This really updates both the access time and the modification time.

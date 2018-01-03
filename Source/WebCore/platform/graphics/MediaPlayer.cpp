@@ -1130,7 +1130,7 @@ HashSet<RefPtr<SecurityOrigin>> MediaPlayer::originsInMediaCache(const String& p
     return origins;
 }
 
-void MediaPlayer::clearMediaCache(const String& path, std::chrono::system_clock::time_point modifiedSince)
+void MediaPlayer::clearMediaCache(const String& path, WallTime modifiedSince)
 {
     for (auto& engine : installedMediaEngines()) {
         if (engine.clearMediaCache)

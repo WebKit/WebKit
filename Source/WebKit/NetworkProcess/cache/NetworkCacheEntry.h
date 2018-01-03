@@ -52,7 +52,7 @@ public:
     static std::unique_ptr<Entry> decodeStorageRecord(const Storage::Record&);
 
     const Key& key() const { return m_key; }
-    std::chrono::system_clock::time_point timeStamp() const { return m_timeStamp; }
+    WallTime timeStamp() const { return m_timeStamp; }
     const WebCore::ResourceResponse& response() const { return m_response; }
     const Vector<std::pair<String, String>>& varyingRequestHeaders() const { return m_varyingRequestHeaders; }
 
@@ -77,7 +77,7 @@ private:
 #endif
 
     Key m_key;
-    std::chrono::system_clock::time_point m_timeStamp;
+    WallTime m_timeStamp;
     WebCore::ResourceResponse m_response;
     Vector<std::pair<String, String>> m_varyingRequestHeaders;
 

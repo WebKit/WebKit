@@ -127,7 +127,7 @@ CachedResource::CachedResource(CachedResourceRequest&& request, Type type, PAL::
     , m_decodedDataDeletionTimer(*this, &CachedResource::destroyDecodedData, deadDecodedDataDeletionIntervalForResourceType(type))
     , m_sessionID(sessionID)
     , m_loadPriority(defaultPriorityForResourceType(type))
-    , m_responseTimestamp(std::chrono::system_clock::now())
+    , m_responseTimestamp(WallTime::now())
     , m_fragmentIdentifierForRequest(request.releaseFragmentIdentifier())
     , m_origin(request.releaseOrigin())
     , m_initiatorName(request.initiatorName())
@@ -155,7 +155,7 @@ CachedResource::CachedResource(const URL& url, Type type, PAL::SessionID session
     : m_resourceRequest(url)
     , m_decodedDataDeletionTimer(*this, &CachedResource::destroyDecodedData, deadDecodedDataDeletionIntervalForResourceType(type))
     , m_sessionID(sessionID)
-    , m_responseTimestamp(std::chrono::system_clock::now())
+    , m_responseTimestamp(WallTime::now())
     , m_fragmentIdentifierForRequest(CachedResourceRequest::splitFragmentIdentifierFromRequestURL(m_resourceRequest))
     , m_type(type)
     , m_status(Cached)
@@ -437,10 +437,8 @@ static inline bool shouldCacheSchemeIndefinitely(StringView scheme)
     return equalLettersIgnoringASCIICase(scheme, "data");
 }
 
-std::chrono::microseconds CachedResource::freshnessLifetime(const ResourceResponse& response) const
+Seconds CachedResource::freshnessLifetime(const ResourceResponse& response) const
 {
-    using namespace std::literals::chrono_literals;
-
     if (!response.url().protocolIsInHTTPFamily()) {
         StringView protocol = response.url().protocol();
         if (!shouldCacheSchemeIndefinitely(protocol)) {
@@ -448,10 +446,10 @@ std::chrono::microseconds CachedResource::freshnessLifetime(const ResourceRespon
             // FIXME: We should not cache subresources either, but when we tried this
             // it caused performance and flakiness issues in our test infrastructure.
             if (m_type == MainResource || SchemeRegistry::shouldAlwaysRevalidateURLScheme(protocol.toStringWithoutCopying()))
-                return 0us;
+                return 0_us;
         }
 
-        return std::chrono::microseconds::max();
+        return Seconds::infinity();
     }
 
     return computeFreshnessLifetimeForHTTPFamily(response, m_responseTimestamp);
@@ -487,7 +485,7 @@ void CachedResource::setResponse(const ResourceResponse& response)
 void CachedResource::responseReceived(const ResourceResponse& response)
 {
     setResponse(response);
-    m_responseTimestamp = std::chrono::system_clock::now();
+    m_responseTimestamp = WallTime::now();
     String encoding = response.textEncodingName();
     if (!encoding.isNull())
         setEncoding(encoding);
@@ -765,7 +763,7 @@ void CachedResource::switchClientsToRevalidatedResource()
 
 void CachedResource::updateResponseAfterRevalidation(const ResourceResponse& validatingResponse)
 {
-    m_responseTimestamp = std::chrono::system_clock::now();
+    m_responseTimestamp = WallTime::now();
 
     updateResponseHeadersAfterRevalidation(m_response, validatingResponse);
 }

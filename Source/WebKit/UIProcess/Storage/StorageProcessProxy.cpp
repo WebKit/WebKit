@@ -93,7 +93,7 @@ void StorageProcessProxy::fetchWebsiteData(PAL::SessionID sessionID, OptionSet<W
     send(Messages::StorageProcess::FetchWebsiteData(sessionID, dataTypes, callbackID), 0);
 }
 
-void StorageProcessProxy::deleteWebsiteData(PAL::SessionID sessionID, OptionSet<WebsiteDataType> dataTypes, std::chrono::system_clock::time_point modifiedSince, WTF::Function<void ()>&& completionHandler)
+void StorageProcessProxy::deleteWebsiteData(PAL::SessionID sessionID, OptionSet<WebsiteDataType> dataTypes, WallTime modifiedSince, WTF::Function<void ()>&& completionHandler)
 {
     auto callbackID = generateCallbackID();
 

@@ -209,6 +209,11 @@ public:
     
     WTF_EXPORT_PRIVATE void dump(PrintStream&) const;
     
+    Seconds isolatedCopy() const
+    {
+        return *this;
+    }
+
 private:
     double m_value { 0 };
 };

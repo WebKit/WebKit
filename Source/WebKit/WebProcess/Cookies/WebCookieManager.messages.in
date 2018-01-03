@@ -33,7 +33,7 @@
     void GetAllCookies(PAL::SessionID sessionID, WebKit::CallbackID callbackID)
     void GetCookies(PAL::SessionID sessionID, WebCore::URL url, WebKit::CallbackID callbackID)
     void DeleteCookie(PAL::SessionID sessionID, struct WebCore::Cookie cookie, WebKit::CallbackID callbackID)
-    void DeleteAllCookiesModifiedSince(PAL::SessionID sessionID, std::chrono::system_clock::time_point time, WebKit::CallbackID callbackID)
+    void DeleteAllCookiesModifiedSince(PAL::SessionID sessionID, WallTime time, WebKit::CallbackID callbackID)
 
     void SetHTTPCookieAcceptPolicy(uint32_t policy, WebKit::OptionalCallbackID callbackID)
     void GetHTTPCookieAcceptPolicy(WebKit::CallbackID callbackID)

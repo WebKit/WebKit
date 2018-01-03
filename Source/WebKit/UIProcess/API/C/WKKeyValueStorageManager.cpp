@@ -128,5 +128,5 @@ void WKKeyValueStorageManagerDeleteAllEntries(WKKeyValueStorageManagerRef keyVal
     if (!storageManager)
         return;
 
-    storageManager->deleteLocalStorageOriginsModifiedSince(std::chrono::system_clock::time_point::min(), [] { });
+    storageManager->deleteLocalStorageOriginsModifiedSince(-WallTime::infinity(), [] { });
 }

@@ -142,7 +142,7 @@ static std::optional<time_t> fileModificationTime(const String& filePath)
     return time;
 }
 
-Vector<SecurityOriginData> LocalStorageDatabaseTracker::deleteDatabasesModifiedSince(std::chrono::system_clock::time_point time)
+Vector<SecurityOriginData> LocalStorageDatabaseTracker::deleteDatabasesModifiedSince(WallTime time)
 {
     ASSERT(!RunLoop::isMain());
     importOriginIdentifiers();
@@ -151,11 +151,11 @@ Vector<SecurityOriginData> LocalStorageDatabaseTracker::deleteDatabasesModifiedS
     for (const String& origin : m_origins) {
         String filePath = pathForDatabaseWithOriginIdentifier(origin);
 
-        auto modificationTime = fileModificationTime(filePath);
+        auto modificationTime = FileSystem::getFileModificationTime(filePath);
         if (!modificationTime)
             continue;
 
-        if (modificationTime.value() >= std::chrono::system_clock::to_time_t(time))
+        if (modificationTime.value() >= time)
             originIdentifiersToDelete.append(origin);
     }
 

@@ -75,8 +75,9 @@ void WebPageProxy::loadRecentSearches(const String&, Vector<WebCore::RecentSearc
     notImplemented();
 }
 
-void WebsiteDataStore::platformRemoveRecentSearches(std::chrono::system_clock::time_point oldestTimeToRemove)
+void WebsiteDataStore::platformRemoveRecentSearches(WallTime oldestTimeToRemove)
 {
+    UNUSED_PARAM(oldestTimeToRemove);
     notImplemented();
 }
 

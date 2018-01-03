@@ -133,7 +133,7 @@ static uint32_t lastModifiedDateMS(const ResourceResponse& response)
     if (!lastModified)
         return 0;
 
-    return std::chrono::duration_cast<std::chrono::milliseconds>(lastModified.value().time_since_epoch()).count();
+    return lastModified.value().secondsSinceEpoch().millisecondsAs<uint32_t>();
 }
 
 void PluginStream::startStream()

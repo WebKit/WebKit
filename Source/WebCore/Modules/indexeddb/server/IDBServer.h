@@ -101,7 +101,7 @@ public:
 
     std::unique_ptr<IDBBackingStore> createBackingStore(const IDBDatabaseIdentifier&);
 
-    WEBCORE_EXPORT void closeAndDeleteDatabasesModifiedSince(std::chrono::system_clock::time_point, Function<void ()>&& completionHandler);
+    WEBCORE_EXPORT void closeAndDeleteDatabasesModifiedSince(WallTime, Function<void ()>&& completionHandler);
     WEBCORE_EXPORT void closeAndDeleteDatabasesForOrigins(const Vector<SecurityOriginData>&, Function<void ()>&& completionHandler);
 
 private:
@@ -113,7 +113,7 @@ private:
     void performGetAllDatabaseNames(uint64_t serverConnectionIdentifier, const SecurityOriginData& mainFrameOrigin, const SecurityOriginData& openingOrigin, uint64_t callbackID);
     void didGetAllDatabaseNames(uint64_t serverConnectionIdentifier, uint64_t callbackID, const Vector<String>& databaseNames);
 
-    void performCloseAndDeleteDatabasesModifiedSince(std::chrono::system_clock::time_point, uint64_t callbackID);
+    void performCloseAndDeleteDatabasesModifiedSince(WallTime, uint64_t callbackID);
     void performCloseAndDeleteDatabasesForOrigins(const Vector<SecurityOriginData>&, uint64_t callbackID);
     void didPerformCloseAndDeleteDatabases(uint64_t callbackID);
 

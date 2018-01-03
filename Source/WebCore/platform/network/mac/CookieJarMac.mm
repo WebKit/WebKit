@@ -377,12 +377,12 @@ void deleteCookiesForHostnames(const NetworkStorageSession& session, const Vecto
     END_BLOCK_OBJC_EXCEPTIONS;
 }
 
-void deleteAllCookiesModifiedSince(const NetworkStorageSession& session, std::chrono::system_clock::time_point timePoint)
+void deleteAllCookiesModifiedSince(const NetworkStorageSession& session, WallTime timePoint)
 {
     if (![NSHTTPCookieStorage instancesRespondToSelector:@selector(removeCookiesSinceDate:)])
         return;
 
-    NSTimeInterval timeInterval = std::chrono::duration_cast<std::chrono::duration<double>>(timePoint.time_since_epoch()).count();
+    NSTimeInterval timeInterval = timePoint.secondsSinceEpoch().seconds();
     NSDate *date = [NSDate dateWithTimeIntervalSince1970:timeInterval];
 
     auto *storage = session.nsCookieStorage();

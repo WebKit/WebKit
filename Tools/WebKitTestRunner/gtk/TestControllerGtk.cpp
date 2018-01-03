@@ -78,12 +78,9 @@ void TestController::platformRunUntil(bool&, double timeout)
 {
     if (timeout > 0) {
         // FIXME: This conversion is now repeated in several places, it should be moved to a common place in WTF and used everywhere.
-        auto timeoutDuration = std::chrono::duration<double>(timeout);
-        auto safeDuration = std::chrono::microseconds::max();
-        if (timeoutDuration < safeDuration)
-            safeDuration = std::chrono::duration_cast<std::chrono::microseconds>(timeoutDuration);
+        auto timeoutDuration = Seconds { timeout };
         gint64 currentTime = g_get_monotonic_time();
-        gint64 targetTime = currentTime + std::min<gint64>(G_MAXINT64 - currentTime, safeDuration.count());
+        gint64 targetTime = currentTime + std::min<gint64>(G_MAXINT64 - currentTime, timeoutDuration.microsecondsAs<int64_t>());
         ASSERT(targetTime >= currentTime);
         g_source_set_ready_time(timeoutSource(), targetTime);
     } else

@@ -35,6 +35,7 @@
 #include <wtf/Forward.h>
 #include <wtf/OptionSet.h>
 #include <wtf/Vector.h>
+#include <wtf/WallTime.h>
 #include <wtf/text/WTFString.h>
 
 #if USE(CF)
@@ -104,6 +105,7 @@ WEBCORE_EXPORT bool moveFile(const String& oldPath, const String& newPath);
 WEBCORE_EXPORT bool getFileSize(const String&, long long& result);
 WEBCORE_EXPORT bool getFileSize(PlatformFileHandle, long long& result);
 WEBCORE_EXPORT bool getFileModificationTime(const String&, time_t& result);
+WEBCORE_EXPORT std::optional<WallTime> getFileModificationTime(const String&);
 WEBCORE_EXPORT bool getFileCreationTime(const String&, time_t& result); // Not all platforms store file creation time.
 WEBCORE_EXPORT std::optional<FileMetadata> fileMetadata(const String& path);
 WEBCORE_EXPORT std::optional<FileMetadata> fileMetadataFollowingSymlinks(const String& path);

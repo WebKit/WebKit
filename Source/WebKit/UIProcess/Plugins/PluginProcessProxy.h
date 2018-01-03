@@ -79,7 +79,7 @@ public:
     void getPluginProcessConnection(Ref<Messages::WebProcessProxy::GetPluginProcessConnection::DelayedReply>&&);
 
     void fetchWebsiteData(WTF::Function<void (Vector<String>)>&& completionHandler);
-    void deleteWebsiteData(std::chrono::system_clock::time_point modifiedSince, WTF::Function<void ()>&& completionHandler);
+    void deleteWebsiteData(WallTime modifiedSince, WTF::Function<void ()>&& completionHandler);
     void deleteWebsiteDataForHostNames(const Vector<String>& hostNames, WTF::Function<void ()>&& completionHandler);
 
     bool isValid() const { return m_connection; }
@@ -155,7 +155,7 @@ private:
     HashMap<uint64_t, WTF::Function<void (Vector<String>)>> m_pendingFetchWebsiteDataCallbacks;
 
     struct DeleteWebsiteDataRequest {
-        std::chrono::system_clock::time_point modifiedSince;
+        WallTime modifiedSince;
         uint64_t callbackID;
     };
     Vector<DeleteWebsiteDataRequest> m_pendingDeleteWebsiteDataRequests;

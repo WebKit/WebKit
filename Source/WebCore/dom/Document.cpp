@@ -4625,8 +4625,7 @@ ExceptionOr<void> Document::setDomain(const String& newDomain)
 // http://www.whatwg.org/specs/web-apps/current-work/#dom-document-lastmodified
 String Document::lastModified()
 {
-    using namespace std::chrono;
-    std::optional<system_clock::time_point> dateTime;
+    std::optional<WallTime> dateTime;
     if (m_frame && loader())
         dateTime = loader()->response().lastModified();
 
@@ -4634,9 +4633,9 @@ String Document::lastModified()
     // specification tells us to read the last modification date from the file
     // system.
     if (!dateTime)
-        dateTime = system_clock::now();
+        dateTime = WallTime::now();
 
-    auto ctime = system_clock::to_time_t(dateTime.value());
+    auto ctime = dateTime.value().secondsSinceEpoch().secondsAs<time_t>();
     auto localDateTime = std::localtime(&ctime);
     return String::format("%02d/%02d/%04d %02d:%02d:%02d", localDateTime->tm_mon + 1, localDateTime->tm_mday, 1900 + localDateTime->tm_year, localDateTime->tm_hour, localDateTime->tm_min, localDateTime->tm_sec);
 }

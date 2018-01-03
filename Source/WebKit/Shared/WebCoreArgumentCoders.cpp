@@ -80,7 +80,6 @@
 #include <pal/SessionID.h>
 #include <wtf/MonotonicTime.h>
 #include <wtf/Seconds.h>
-#include <wtf/WallTime.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringHash.h>
 
@@ -159,21 +158,6 @@ bool ArgumentCoder<MonotonicTime>::decode(Decoder& decoder, MonotonicTime& time)
         return false;
 
     time = MonotonicTime::fromRawSeconds(value);
-    return true;
-}
-
-void ArgumentCoder<WallTime>::encode(Encoder& encoder, const WallTime& time)
-{
-    encoder << time.secondsSinceEpoch().value();
-}
-
-bool ArgumentCoder<WallTime>::decode(Decoder& decoder, WallTime& time)
-{
-    double value;
-    if (!decoder.decode(value))
-        return false;
-
-    time = WallTime::fromRawSeconds(value);
     return true;
 }
 
@@ -855,7 +839,7 @@ std::optional<RecentSearch> ArgumentCoder<RecentSearch>::decode(Decoder& decoder
     if (!string)
         return std::nullopt;
     
-    std::optional<std::chrono::system_clock::time_point> time;
+    std::optional<WallTime> time;
     decoder >> time;
     if (!time)
         return std::nullopt;

@@ -51,7 +51,7 @@ namespace WebKit {
 RemoteLayerBackingStore::RemoteLayerBackingStore(PlatformCALayerRemote* layer)
     : m_layer(layer)
     , m_isOpaque(false)
-    , m_lastDisplayTime(std::chrono::steady_clock::time_point::min())
+    , m_lastDisplayTime(-MonotonicTime::infinity())
 {
     if (!m_layer)
         return;
@@ -226,7 +226,7 @@ bool RemoteLayerBackingStore::display()
 {
     ASSERT(!m_frontContextPendingFlush);
 
-    m_lastDisplayTime = std::chrono::steady_clock::now();
+    m_lastDisplayTime = MonotonicTime::now();
 
     bool needToEncodeBackingStore = false;
     if (RemoteLayerTreeContext* context = m_layer->context())

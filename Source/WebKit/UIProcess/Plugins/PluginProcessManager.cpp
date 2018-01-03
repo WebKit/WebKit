@@ -109,7 +109,7 @@ void PluginProcessManager::fetchWebsiteData(const PluginModuleInfo& plugin, Opti
     pluginProcess->fetchWebsiteData(WTFMove(completionHandler));
 }
 
-void PluginProcessManager::deleteWebsiteData(const PluginModuleInfo& plugin, std::chrono::system_clock::time_point modifiedSince, WTF::Function<void ()>&& completionHandler)
+void PluginProcessManager::deleteWebsiteData(const PluginModuleInfo& plugin, WallTime modifiedSince, WTF::Function<void ()>&& completionHandler)
 {
     PluginProcessProxy* pluginProcess = getOrCreatePluginProcess(pluginProcessToken(plugin, PluginProcessTypeNormal, PluginProcessSandboxPolicyNormal));
     pluginProcess->deleteWebsiteData(modifiedSince, WTFMove(completionHandler));

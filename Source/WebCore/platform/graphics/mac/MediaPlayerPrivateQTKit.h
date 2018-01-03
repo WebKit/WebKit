@@ -69,7 +69,7 @@ private:
     static MediaPlayer::SupportsType supportsType(const MediaEngineSupportParameters&);
 
     static HashSet<RefPtr<SecurityOrigin>> originsInMediaCache(const String&);
-    static void clearMediaCache(const String&, std::chrono::system_clock::time_point modifiedSince);
+    static void clearMediaCache(const String&, WallTime modifiedSince);
     static void clearMediaCacheForOrigins(const String&, const HashSet<RefPtr<SecurityOrigin>>&);
     static bool isAvailable();
 

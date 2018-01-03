@@ -137,6 +137,10 @@ public:
     
     WTF_EXPORT_PRIVATE void dump(PrintStream&) const;
 
+    MonotonicTime isolatedCopy() const
+    {
+        return *this;
+    }
 private:
     constexpr MonotonicTime(double rawValue)
         : m_value(rawValue)

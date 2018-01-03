@@ -36,21 +36,19 @@
 
 namespace WebCore {
 
-using namespace std::literals::chrono_literals;
-
 // These values are at the discretion of the user agent.
-static const auto defaultPreflightCacheTimeout = 5s;
-static const auto maxPreflightCacheTimeout = 600s; // Should be short enough to minimize the risk of using a poisoned cache after switching to a secure network.
+static const auto defaultPreflightCacheTimeout = 5_s;
+static const auto maxPreflightCacheTimeout = 600_s; // Should be short enough to minimize the risk of using a poisoned cache after switching to a secure network.
 
 CrossOriginPreflightResultCache::CrossOriginPreflightResultCache()
 {
 }
 
-static bool parseAccessControlMaxAge(const String& string, std::chrono::seconds& expiryDelta)
+static bool parseAccessControlMaxAge(const String& string, Seconds& expiryDelta)
 {
     // FIXME: this will not do the correct thing for a number starting with a '+'
     bool ok = false;
-    expiryDelta = std::chrono::seconds(string.toUIntStrict(&ok));
+    expiryDelta = Seconds(static_cast<double>(string.toUIntStrict(&ok)));
     return ok;
 }
 
@@ -106,14 +104,14 @@ bool CrossOriginPreflightResultCacheItem::parse(const ResourceResponse& response
         return false;
     }
 
-    std::chrono::seconds expiryDelta;
+    Seconds expiryDelta = 0_s;
     if (parseAccessControlMaxAge(response.httpHeaderField(HTTPHeaderName::AccessControlMaxAge), expiryDelta)) {
         if (expiryDelta > maxPreflightCacheTimeout)
             expiryDelta = maxPreflightCacheTimeout;
     } else
         expiryDelta = defaultPreflightCacheTimeout;
 
-    m_absoluteExpiryTime = std::chrono::steady_clock::now() + expiryDelta;
+    m_absoluteExpiryTime = MonotonicTime::now() + expiryDelta;
     return true;
 }
 
@@ -142,7 +140,7 @@ bool CrossOriginPreflightResultCacheItem::allowsCrossOriginHeaders(const HTTPHea
 bool CrossOriginPreflightResultCacheItem::allowsRequest(StoredCredentialsPolicy storedCredentialsPolicy, const String& method, const HTTPHeaderMap& requestHeaders) const
 {
     String ignoredExplanation;
-    if (m_absoluteExpiryTime < std::chrono::steady_clock::now())
+    if (m_absoluteExpiryTime < MonotonicTime::now())
         return false;
     if (storedCredentialsPolicy == StoredCredentialsPolicy::Use && m_storedCredentialsPolicy == StoredCredentialsPolicy::DoNotUse)
         return false;

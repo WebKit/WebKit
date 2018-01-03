@@ -220,10 +220,10 @@ void deleteAllCookies(const NetworkStorageSession& session)
     }
 }
 
-void deleteAllCookiesModifiedSince(const NetworkStorageSession& session, std::chrono::system_clock::time_point timestamp)
+void deleteAllCookiesModifiedSince(const NetworkStorageSession& session, WallTime timestamp)
 {
     // FIXME: Add support for deleting cookies modified since the given timestamp. It should probably be added to libsoup.
-    if (timestamp == std::chrono::system_clock::from_time_t(0))
+    if (timestamp == WallTime::fromRawSeconds(0))
         deleteAllCookies(session);
     else
         g_warning("Deleting cookies modified since a given time span is not supported yet");

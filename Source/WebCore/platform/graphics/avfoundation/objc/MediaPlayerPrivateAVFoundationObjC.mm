@@ -423,15 +423,13 @@ HashSet<RefPtr<SecurityOrigin>> MediaPlayerPrivateAVFoundationObjC::originsInMed
     return origins;
 }
 
-static std::chrono::system_clock::time_point toSystemClockTime(NSDate *date)
+static WallTime toSystemClockTime(NSDate *date)
 {
     ASSERT(date);
-    using namespace std::chrono;
-
-    return system_clock::time_point(duration_cast<system_clock::duration>(duration<double>(date.timeIntervalSince1970)));
+    return WallTime::fromRawSeconds(date.timeIntervalSince1970);
 }
 
-void MediaPlayerPrivateAVFoundationObjC::clearMediaCache(const String& path, std::chrono::system_clock::time_point modifiedSince)
+void MediaPlayerPrivateAVFoundationObjC::clearMediaCache(const String& path, WallTime modifiedSince)
 {
     AVAssetCacheType* assetCache = assetCacheForPath(path);
     
@@ -443,7 +441,7 @@ void MediaPlayerPrivateAVFoundationObjC::clearMediaCache(const String& path, std
     NSFileManager *fileManager = [NSFileManager defaultManager];
     NSURL *baseURL = [assetCache URL];
 
-    if (modifiedSince <= std::chrono::system_clock::time_point { }) {
+    if (modifiedSince <= WallTime::fromRawSeconds(0)) {
         [fileManager removeItemAtURL:baseURL error:nil];
         return;
     }

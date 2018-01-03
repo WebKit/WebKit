@@ -30,7 +30,7 @@
 #include <WebCore/IOSurface.h>
 #include <WebCore/MachSendRight.h>
 #include <WebCore/Region.h>
-#include <chrono>
+#include <wtf/MonotonicTime.h>
 
 OBJC_CLASS CALayer;
 
@@ -92,7 +92,7 @@ public:
 
     bool setBufferVolatility(BufferType, bool isVolatile);
 
-    std::chrono::steady_clock::time_point lastDisplayTime() const { return m_lastDisplayTime; }
+    MonotonicTime lastDisplayTime() const { return m_lastDisplayTime; }
 
 private:
     void drawInContext(WebCore::GraphicsContext&, CGImageRef backImage);
@@ -149,7 +149,7 @@ private:
 
     WebCore::RepaintRectList m_paintingRects;
 
-    std::chrono::steady_clock::time_point m_lastDisplayTime;
+    MonotonicTime m_lastDisplayTime;
 };
 
 } // namespace WebKit

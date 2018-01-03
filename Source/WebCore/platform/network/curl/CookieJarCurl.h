@@ -37,7 +37,7 @@ public:
     virtual void getHostnamesWithCookies(const NetworkStorageSession&, HashSet<String>& hostnames) = 0;
     virtual void deleteCookiesForHostnames(const NetworkStorageSession&, const Vector<String>& cookieHostNames) = 0;
     virtual void deleteAllCookies(const NetworkStorageSession&) = 0;
-    virtual void deleteAllCookiesModifiedSince(const NetworkStorageSession&, std::chrono::system_clock::time_point) = 0;
+    virtual void deleteAllCookiesModifiedSince(const NetworkStorageSession&, WallTime) = 0;
 };
 
 class CookieJarCurlFileSystem : public CookieJarCurl {
@@ -50,7 +50,7 @@ class CookieJarCurlFileSystem : public CookieJarCurl {
     void getHostnamesWithCookies(const NetworkStorageSession&, HashSet<String>& hostnames) override;
     void deleteCookiesForHostnames(const NetworkStorageSession&, const Vector<String>& cookieHostNames) override;
     void deleteAllCookies(const NetworkStorageSession&) override;
-    void deleteAllCookiesModifiedSince(const NetworkStorageSession&, std::chrono::system_clock::time_point) override;
+    void deleteAllCookiesModifiedSince(const NetworkStorageSession&, WallTime) override;
 };
 
 } // namespace WebCore

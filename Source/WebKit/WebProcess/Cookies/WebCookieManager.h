@@ -31,7 +31,6 @@
 #include "NetworkProcessSupplement.h"
 #include "OptionalCallbackID.h"
 #include "WebProcessSupplement.h"
-#include <chrono>
 #include <pal/SessionID.h>
 #include <stdint.h>
 #include <wtf/Forward.h>
@@ -74,7 +73,7 @@ private:
     void deleteCookie(PAL::SessionID, const WebCore::Cookie&, CallbackID);
     void deleteCookiesForHostname(PAL::SessionID, const String&);
     void deleteAllCookies(PAL::SessionID);
-    void deleteAllCookiesModifiedSince(PAL::SessionID, std::chrono::system_clock::time_point, CallbackID);
+    void deleteAllCookiesModifiedSince(PAL::SessionID, WallTime, CallbackID);
 
     void setCookie(PAL::SessionID, const WebCore::Cookie&, CallbackID);
     void setCookies(PAL::SessionID, const Vector<WebCore::Cookie>&, const WebCore::URL&, const WebCore::URL& mainDocumentURL, CallbackID);

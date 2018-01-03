@@ -65,5 +65,5 @@ void WKApplicationCacheManagerDeleteEntriesForOrigin(WKApplicationCacheManagerRe
 void WKApplicationCacheManagerDeleteAllEntries(WKApplicationCacheManagerRef applicationCacheManager)
 {
     auto& websiteDataStore = toImpl(reinterpret_cast<WKWebsiteDataStoreRef>(applicationCacheManager))->websiteDataStore();
-    websiteDataStore.removeData(WebsiteDataType::OfflineWebApplicationCache, std::chrono::system_clock::time_point::min(), [] { });
+    websiteDataStore.removeData(WebsiteDataType::OfflineWebApplicationCache, -WallTime::infinity(), [] { });
 }

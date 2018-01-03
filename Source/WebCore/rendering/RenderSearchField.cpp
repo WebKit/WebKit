@@ -100,7 +100,7 @@ void RenderSearchField::addSearchResult()
         return recentSearch.string == value;
     });
 
-    RecentSearch recentSearch = { value, std::chrono::system_clock::now() };
+    RecentSearch recentSearch = { value, WallTime::now() };
     m_recentSearches.insert(0, recentSearch);
     while (static_cast<int>(m_recentSearches.size()) > inputElement().maxResults())
         m_recentSearches.removeLast();

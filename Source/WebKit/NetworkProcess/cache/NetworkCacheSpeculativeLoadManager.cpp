@@ -46,7 +46,6 @@ namespace WebKit {
 namespace NetworkCache {
 
 using namespace WebCore;
-using namespace std::literals::chrono_literals;
 
 static const Seconds preloadedEntryLifetime { 10_s };
 
@@ -111,14 +110,14 @@ static inline ResourceRequest constructRevalidationRequest(const Key& key, const
     return revalidationRequest;
 }
 
-static bool responseNeedsRevalidation(const ResourceResponse& response, std::chrono::system_clock::time_point timestamp)
+static bool responseNeedsRevalidation(const ResourceResponse& response, WallTime timestamp)
 {
     if (response.cacheControlContainsNoCache())
         return true;
 
     auto age = computeCurrentAge(response, timestamp);
     auto lifetime = computeFreshnessLifetimeForHTTPFamily(response, timestamp);
-    return age - lifetime > 0ms;
+    return age - lifetime > 0_ms;
 }
 
 class SpeculativeLoadManager::ExpiringEntry {
@@ -495,24 +494,24 @@ static bool canRevalidate(const SubresourceInfo& subresourceInfo, const Entry* e
         return true;
     
     auto seenAge = subresourceInfo.lastSeen() - subresourceInfo.firstSeen();
-    if (seenAge == 0ms) {
+    if (seenAge == 0_ms) {
         LOG(NetworkCacheSpeculativePreloading, "Speculative load: Seen only once");
         return false;
     }
     
-    auto now = std::chrono::system_clock::now();
+    auto now = WallTime::now();
     auto firstSeenAge = now - subresourceInfo.firstSeen();
     auto lastSeenAge = now - subresourceInfo.lastSeen();
     // Sanity check.
-    if (seenAge <= 0ms || firstSeenAge <= 0ms || lastSeenAge <= 0ms)
+    if (seenAge <= 0_ms || firstSeenAge <= 0_ms || lastSeenAge <= 0_ms)
         return false;
     
     // Load full resources speculatively if they seem to stay the same.
     const auto minimumAgeRatioToLoad = 2. / 3;
     const auto recentMinimumAgeRatioToLoad = 1. / 3;
-    const auto recentThreshold = 5min;
+    const auto recentThreshold = 5_min;
     
-    auto ageRatio = std::chrono::duration_cast<std::chrono::duration<double>>(seenAge) / firstSeenAge;
+    auto ageRatio = seenAge / firstSeenAge;
     auto minimumAgeRatio = lastSeenAge > recentThreshold ? minimumAgeRatioToLoad : recentMinimumAgeRatioToLoad;
     
     LOG(NetworkCacheSpeculativePreloading, "Speculative load: ok=%d ageRatio=%f entry=%d", ageRatio > minimumAgeRatio, ageRatio, !!entry);

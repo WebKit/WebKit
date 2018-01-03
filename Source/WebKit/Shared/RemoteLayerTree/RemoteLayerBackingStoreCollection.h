@@ -63,7 +63,7 @@ private:
     };
     typedef unsigned VolatilityMarkingFlags;
     bool markBackingStoreVolatileImmediately(RemoteLayerBackingStore&, VolatilityMarkingFlags = 0);
-    bool markBackingStoreVolatile(RemoteLayerBackingStore&, std::chrono::steady_clock::time_point now);
+    bool markBackingStoreVolatile(RemoteLayerBackingStore&, MonotonicTime now);
 
     HashSet<RemoteLayerBackingStore*> m_liveBackingStore;
     HashSet<RemoteLayerBackingStore*> m_unparentedBackingStore;

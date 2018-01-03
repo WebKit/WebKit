@@ -117,7 +117,7 @@ public:
     void remove(const Vector<Key>&, Function<void ()>&&);
 
     void clear();
-    void clear(std::chrono::system_clock::time_point modifiedSince, Function<void ()>&& completionHandler);
+    void clear(WallTime modifiedSince, Function<void ()>&& completionHandler);
 
     void retrieveData(const DataKey&, Function<void (const uint8_t* data, size_t size)>);
     void storeData(const DataKey&,  const uint8_t* data, size_t);

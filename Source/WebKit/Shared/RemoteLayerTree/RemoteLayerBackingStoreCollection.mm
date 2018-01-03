@@ -30,10 +30,8 @@
 #import "RemoteLayerBackingStore.h"
 #import "RemoteLayerTreeContext.h"
 
-using namespace std::literals::chrono_literals;
-
-const std::chrono::seconds volatileBackingStoreAgeThreshold = 1s;
-const std::chrono::milliseconds volatileSecondaryBackingStoreAgeThreshold = 200ms;
+const Seconds volatileBackingStoreAgeThreshold = 1_s;
+const Seconds volatileSecondaryBackingStoreAgeThreshold = 200_ms;
 const Seconds volatilityTimerInterval = 200_ms;
 
 namespace WebKit {
@@ -122,7 +120,7 @@ bool RemoteLayerBackingStoreCollection::markBackingStoreVolatileImmediately(Remo
     return successfullyMadeBackingStoreVolatile;
 }
 
-bool RemoteLayerBackingStoreCollection::markBackingStoreVolatile(RemoteLayerBackingStore& backingStore, std::chrono::steady_clock::time_point now)
+bool RemoteLayerBackingStoreCollection::markBackingStoreVolatile(RemoteLayerBackingStore& backingStore, MonotonicTime now)
 {
     if (now - backingStore.lastDisplayTime() < volatileBackingStoreAgeThreshold) {
         if (now - backingStore.lastDisplayTime() >= volatileSecondaryBackingStoreAgeThreshold)
@@ -166,7 +164,7 @@ void RemoteLayerBackingStoreCollection::volatilityTimerFired()
 {
     bool successfullyMadeBackingStoreVolatile = true;
 
-    auto now = std::chrono::steady_clock::now();
+    auto now = MonotonicTime::now();
     for (const auto& backingStore : m_liveBackingStore)
         successfullyMadeBackingStoreVolatile &= markBackingStoreVolatile(*backingStore, now);
 

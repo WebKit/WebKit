@@ -30,6 +30,7 @@
 #include <wtf/Optional.h>
 #include <wtf/RefPtr.h>
 #include <wtf/ThreadSafeRefCounted.h>
+#include <wtf/WallTime.h>
 #include <wtf/WorkQueue.h>
 #include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>
@@ -55,7 +56,7 @@ public:
     void deleteAllDatabases();
 
     // Returns a vector of the origins whose databases have been deleted.
-    Vector<WebCore::SecurityOriginData> deleteDatabasesModifiedSince(std::chrono::system_clock::time_point);
+    Vector<WebCore::SecurityOriginData> deleteDatabasesModifiedSince(WallTime);
 
     Vector<WebCore::SecurityOriginData> origins() const;
 

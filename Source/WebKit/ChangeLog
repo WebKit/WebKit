@@ -1,3 +1,164 @@
+2017-12-28  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Remove std::chrono completely
+        https://bugs.webkit.org/show_bug.cgi?id=181186
+
+        Reviewed by Alex Christensen.
+
+        Use MonotonicTime, WallTime, and Seconds instead.
+        Changes are mechanical ones.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::deleteWebsiteData):
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in:
+        * NetworkProcess/cache/CacheStorageEngineCaches.cpp:
+        (WebKit::CacheStorage::Caches::clear):
+        * NetworkProcess/cache/NetworkCache.cpp:
+        (WebKit::NetworkCache::responseHasExpired):
+        (WebKit::NetworkCache::responseNeedsRevalidation):
+        (WebKit::NetworkCache::makeStoreDecision):
+        (WebKit::NetworkCache::Cache::clear):
+        (WebKit::NetworkCache::Cache::storeData):
+        * NetworkProcess/cache/NetworkCache.h:
+        * NetworkProcess/cache/NetworkCacheEntry.cpp:
+        (WebKit::NetworkCache::Entry::Entry):
+        (WebKit::NetworkCache::Entry::asJSON const):
+        * NetworkProcess/cache/NetworkCacheEntry.h:
+        (WebKit::NetworkCache::Entry::timeStamp const):
+        * NetworkProcess/cache/NetworkCacheFileSystem.cpp:
+        (WebKit::NetworkCache::fileTimes):
+        (WebKit::NetworkCache::updateFileModificationTimeIfNeeded):
+        * NetworkProcess/cache/NetworkCacheFileSystem.h:
+        * NetworkProcess/cache/NetworkCacheIOChannelSoup.cpp:
+        (WebKit::NetworkCache::IOChannel::IOChannel):
+        * NetworkProcess/cache/NetworkCacheSpeculativeLoadManager.cpp:
+        (WebKit::NetworkCache::responseNeedsRevalidation):
+        (WebKit::NetworkCache::canRevalidate):
+        * NetworkProcess/cache/NetworkCacheStorage.cpp:
+        (WebKit::NetworkCache::Storage::readRecord):
+        (WebKit::NetworkCache::Storage::clear):
+        (WebKit::NetworkCache::computeRecordWorth):
+        * NetworkProcess/cache/NetworkCacheStorage.h:
+        Bump the cache version. We now change the data in persistent cache.
+        * NetworkProcess/cache/NetworkCacheSubresourcesEntry.cpp:
+        (WebKit::NetworkCache::SubresourceInfo::SubresourceInfo):
+        (WebKit::NetworkCache::SubresourcesEntry::SubresourcesEntry):
+        * NetworkProcess/cache/NetworkCacheSubresourcesEntry.h:
+        (WebKit::NetworkCache::SubresourceInfo::lastSeen const):
+        (WebKit::NetworkCache::SubresourceInfo::firstSeen const):
+        (WebKit::NetworkCache::SubresourcesEntry::timeStamp const):
+        * NetworkProcess/cocoa/NetworkProcessCocoa.mm:
+        (WebKit::NetworkProcess::clearHSTSCache):
+        (WebKit::clearNSURLCache):
+        (WebKit::NetworkProcess::clearDiskCache):
+        * NetworkProcess/curl/NetworkProcessCurl.cpp:
+        (WebKit::NetworkProcess::clearDiskCache):
+        * NetworkProcess/mac/NetworkProcessMac.mm:
+        (WebKit::NetworkProcess::clearCacheForAllOrigins):
+        * NetworkProcess/soup/NetworkProcessSoup.cpp:
+        (WebKit::NetworkProcess::clearCacheForAllOrigins):
+        (WebKit::NetworkProcess::clearDiskCache):
+        * Platform/IPC/ArgumentCoders.cpp:
+        (IPC::ArgumentCoder<WallTime>::encode):
+        (IPC::ArgumentCoder<WallTime>::decode):
+        (IPC::ArgumentCoder<std::chrono::system_clock::time_point>::encode): Deleted.
+        (IPC::ArgumentCoder<std::chrono::system_clock::time_point>::decode): Deleted.
+        * Platform/IPC/ArgumentCoders.h:
+        * PluginProcess/PluginProcess.cpp:
+        (WebKit::PluginProcess::deleteWebsiteData):
+        * PluginProcess/PluginProcess.h:
+        * PluginProcess/PluginProcess.messages.in:
+        * Scripts/webkit/messages.py:
+        (headers_for_type):
+        * Shared/RemoteLayerTree/RemoteLayerBackingStore.h:
+        (WebKit::RemoteLayerBackingStore::lastDisplayTime const):
+        * Shared/RemoteLayerTree/RemoteLayerBackingStore.mm:
+        (WebKit::RemoteLayerBackingStore::RemoteLayerBackingStore):
+        (WebKit::RemoteLayerBackingStore::display):
+        * Shared/RemoteLayerTree/RemoteLayerBackingStoreCollection.h:
+        * Shared/RemoteLayerTree/RemoteLayerBackingStoreCollection.mm:
+        (WebKit::RemoteLayerBackingStoreCollection::markBackingStoreVolatile):
+        (WebKit::RemoteLayerBackingStoreCollection::volatilityTimerFired):
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::ArgumentCoder<RecentSearch>::decode):
+        (IPC::ArgumentCoder<WallTime>::encode): Deleted.
+        (IPC::ArgumentCoder<WallTime>::decode): Deleted.
+        * Shared/WebCoreArgumentCoders.h:
+        * StorageProcess/StorageProcess.cpp:
+        (WebKit::StorageProcess::deleteWebsiteData):
+        * StorageProcess/StorageProcess.h:
+        * StorageProcess/StorageProcess.messages.in:
+        * UIProcess/API/C/WKApplicationCacheManager.cpp:
+        (WKApplicationCacheManagerDeleteAllEntries):
+        * UIProcess/API/C/WKCookieManager.cpp:
+        (WKCookieManagerDeleteAllCookiesModifiedAfterDate):
+        * UIProcess/API/C/WKKeyValueStorageManager.cpp:
+        (WKKeyValueStorageManagerDeleteAllEntries):
+        * UIProcess/API/C/WKResourceCacheManager.cpp:
+        (WKResourceCacheManagerClearCacheForAllOrigins):
+        * UIProcess/API/C/WKWebsiteDataStoreRef.cpp:
+        (WKWebsiteDataStoreStatisticsClearInMemoryAndPersistentStoreModifiedSinceHours):
+        (WKWebsiteDataStoreStatisticsClearThroughWebsiteDataRemoval):
+        (WKWebsiteDataStoreRemoveAllFetchCaches):
+        (WKWebsiteDataStoreRemoveAllIndexedDatabases):
+        (WKWebsiteDataStoreRemoveAllServiceWorkerRegistrations):
+        * UIProcess/API/Cocoa/WKWebsiteDataStore.mm:
+        (toSystemClockTime):
+        (-[WKWebsiteDataStore _resourceLoadStatisticsClearInMemoryAndPersistentStoreModifiedSinceHours:]):
+        * UIProcess/API/glib/WebKitWebContext.cpp:
+        (webkit_web_context_clear_cache):
+        * UIProcess/API/glib/WebKitWebsiteDataManager.cpp:
+        (webkit_website_data_manager_clear):
+        * UIProcess/DrawingAreaProxy.h:
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::deleteWebsiteData):
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/Plugins/PluginProcessManager.cpp:
+        (WebKit::PluginProcessManager::deleteWebsiteData):
+        * UIProcess/Plugins/PluginProcessManager.h:
+        * UIProcess/Plugins/PluginProcessProxy.cpp:
+        (WebKit::PluginProcessProxy::deleteWebsiteData):
+        * UIProcess/Plugins/PluginProcessProxy.h:
+        * UIProcess/Storage/StorageProcessProxy.cpp:
+        (WebKit::StorageProcessProxy::deleteWebsiteData):
+        * UIProcess/Storage/StorageProcessProxy.h:
+        * UIProcess/WebCookieManagerProxy.cpp:
+        (WebKit::WebCookieManagerProxy::deleteAllCookiesModifiedSince):
+        * UIProcess/WebCookieManagerProxy.h:
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::deleteWebsiteData):
+        * UIProcess/WebProcessProxy.h:
+        * UIProcess/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::scheduleClearInMemoryAndPersistent):
+        * UIProcess/WebResourceLoadStatisticsStore.h:
+        * UIProcess/WebStorage/LocalStorageDatabaseTracker.cpp:
+        (WebKit::LocalStorageDatabaseTracker::deleteDatabasesModifiedSince):
+        * UIProcess/WebStorage/LocalStorageDatabaseTracker.h:
+        * UIProcess/WebStorage/StorageManager.cpp:
+        (WebKit::StorageManager::deleteLocalStorageOriginsModifiedSince):
+        * UIProcess/WebStorage/StorageManager.h:
+        * UIProcess/WebsiteData/Cocoa/WebsiteDataStoreCocoa.mm:
+        (WebKit::WebsiteDataStore::platformRemoveRecentSearches):
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::removeData):
+        (WebKit::WebsiteDataStore::removeMediaKeys):
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+        * UIProcess/gtk/WebPageProxyGtk.cpp:
+        (WebKit::WebsiteDataStore::platformRemoveRecentSearches):
+        * UIProcess/wpe/WebPageProxyWPE.cpp:
+        (WebKit::WebsiteDataStore::platformRemoveRecentSearches):
+        * WebProcess/Cookies/WebCookieManager.cpp:
+        (WebKit::WebCookieManager::deleteAllCookiesModifiedSince):
+        * WebProcess/Cookies/WebCookieManager.h:
+        * WebProcess/Cookies/WebCookieManager.messages.in:
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::lastModifiedDateMS):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::deleteWebsiteData):
+        * WebProcess/WebProcess.h:
+        * WebProcess/WebProcess.messages.in:
+
 2018-01-02  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Attachment Support] Introduce data structures and IPC support for writing promised blobs

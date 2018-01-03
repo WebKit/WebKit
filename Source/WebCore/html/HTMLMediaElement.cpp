@@ -6188,7 +6188,7 @@ HashSet<RefPtr<SecurityOrigin>> HTMLMediaElement::originsInMediaCache(const Stri
     return MediaPlayer::originsInMediaCache(path);
 }
 
-void HTMLMediaElement::clearMediaCache(const String& path, std::chrono::system_clock::time_point modifiedSince)
+void HTMLMediaElement::clearMediaCache(const String& path, WallTime modifiedSince)
 {
     MediaPlayer::clearMediaCache(path, modifiedSince);
 }

@@ -31,8 +31,6 @@
 #include "Logging.h"
 #include "NetworkCacheCoders.h"
 
-using namespace std::chrono;
-
 namespace WebKit {
 namespace NetworkCache {
 
@@ -114,7 +112,7 @@ SubresourcesEntry::SubresourcesEntry(const Storage::Record& storageEntry)
 
 SubresourceInfo::SubresourceInfo(const Key& key, const WebCore::ResourceRequest& request, const SubresourceInfo* previousInfo)
     : m_key(key)
-    , m_lastSeen(std::chrono::system_clock::now())
+    , m_lastSeen(WallTime::now())
     , m_firstSeen(previousInfo ? previousInfo->firstSeen() : m_lastSeen)
     , m_isTransient(!previousInfo)
     , m_firstPartyForCookies(request.firstPartyForCookies())
@@ -158,7 +156,7 @@ static Vector<SubresourceInfo> makeSubresourceInfoVector(const Vector<std::uniqu
 
 SubresourcesEntry::SubresourcesEntry(Key&& key, const Vector<std::unique_ptr<SubresourceLoad>>& subresourceLoads)
     : m_key(WTFMove(key))
-    , m_timeStamp(std::chrono::system_clock::now())
+    , m_timeStamp(WallTime::now())
     , m_subresources(makeSubresourceInfoVector(subresourceLoads, nullptr))
 {
     ASSERT(m_key.type() == "SubResources");

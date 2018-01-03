@@ -38,8 +38,6 @@
 
 namespace WebCore {
 
-using namespace std::literals::chrono_literals;
-
 // These response headers are not copied from a revalidated response to the
 // cached response headers. For compatibility, this list is based on Chromium's
 // net/http/http_response_headers.cc.
@@ -99,27 +97,23 @@ void updateResponseHeadersAfterRevalidation(ResourceResponse& response, const Re
     }
 }
 
-std::chrono::microseconds computeCurrentAge(const ResourceResponse& response, std::chrono::system_clock::time_point responseTime)
+Seconds computeCurrentAge(const ResourceResponse& response, WallTime responseTime)
 {
-    using namespace std::chrono;
-
     // Age calculation:
     // http://tools.ietf.org/html/rfc7234#section-4.2.3
     // No compensation for latency as that is not terribly important in practice.
     auto dateValue = response.date();
-    auto apparentAge = dateValue ? std::max(0us, duration_cast<microseconds>(responseTime - *dateValue)) : 0us;
-    auto ageValue = response.age().value_or(0us);
+    auto apparentAge = dateValue ? std::max(0_us, responseTime - *dateValue) : 0_us;
+    auto ageValue = response.age().value_or(0_us);
     auto correctedInitialAge = std::max(apparentAge, ageValue);
-    auto residentTime = duration_cast<microseconds>(system_clock::now() - responseTime);
+    auto residentTime = WallTime::now() - responseTime;
     return correctedInitialAge + residentTime;
 }
 
-std::chrono::microseconds computeFreshnessLifetimeForHTTPFamily(const ResourceResponse& response, std::chrono::system_clock::time_point responseTime)
+Seconds computeFreshnessLifetimeForHTTPFamily(const ResourceResponse& response, WallTime responseTime)
 {
-    using namespace std::chrono;
-
     if (!response.url().protocolIsInHTTPFamily())
-        return 0us;
+        return 0_us;
 
     // Freshness Lifetime:
     // http://tools.ietf.org/html/rfc7234#section-4.2.1
@@ -130,27 +124,25 @@ std::chrono::microseconds computeFreshnessLifetimeForHTTPFamily(const ResourceRe
     auto date = response.date();
     auto effectiveDate = date.value_or(responseTime);
     if (auto expires = response.expires())
-        return duration_cast<microseconds>(*expires - effectiveDate);
+        return *expires - effectiveDate;
 
     // Implicit lifetime.
     switch (response.httpStatusCode()) {
     case 301: // Moved Permanently
     case 410: // Gone
         // These are semantically permanent and so get long implicit lifetime.
-        return 365 * 24h;
+        return 24_h * 365;
     default:
         // Heuristic Freshness:
         // http://tools.ietf.org/html/rfc7234#section-4.2.2
         if (auto lastModified = response.lastModified())
-            return duration_cast<microseconds>((effectiveDate - *lastModified) * 0.1);
-        return 0us;
+            return (effectiveDate - *lastModified) * 0.1;
+        return 0_us;
     }
 }
 
 void updateRedirectChainStatus(RedirectChainCacheStatus& redirectChainCacheStatus, const ResourceResponse& response)
 {
-    using namespace std::chrono;
-
     if (redirectChainCacheStatus.status == RedirectChainCacheStatus::NotCachedRedirection)
         return;
     if (response.cacheControlContainsNoStore() || response.cacheControlContainsNoCache() || response.cacheControlContainsMustRevalidate()) {
@@ -159,7 +151,7 @@ void updateRedirectChainStatus(RedirectChainCacheStatus& redirectChainCacheStatu
     }
 
     redirectChainCacheStatus.status = RedirectChainCacheStatus::CachedRedirection;
-    auto responseTimestamp = system_clock::now();
+    auto responseTimestamp = WallTime::now();
     // Store the nearest end of cache validity date
     auto endOfValidity = responseTimestamp + computeFreshnessLifetimeForHTTPFamily(response, responseTimestamp) - computeCurrentAge(response, responseTimestamp);
     redirectChainCacheStatus.endOfValidity = std::min(redirectChainCacheStatus.endOfValidity, endOfValidity);
@@ -173,7 +165,7 @@ bool redirectChainAllowsReuse(RedirectChainCacheStatus redirectChainCacheStatus,
     case RedirectChainCacheStatus::NotCachedRedirection:
         return false;
     case RedirectChainCacheStatus::CachedRedirection:
-        return reuseExpiredRedirection || std::chrono::system_clock::now() <= redirectChainCacheStatus.endOfValidity;
+        return reuseExpiredRedirection || WallTime::now() <= redirectChainCacheStatus.endOfValidity;
     }
     ASSERT_NOT_REACHED();
     return false;
@@ -279,8 +271,6 @@ static Vector<std::pair<String, String>> parseCacheHeader(const String& header)
 
 CacheControlDirectives parseCacheControlDirectives(const HTTPHeaderMap& headers)
 {
-    using namespace std::chrono;
-
     CacheControlDirectives result;
 
     String cacheControlValue = headers.get(HTTPHeaderName::CacheControl);
@@ -306,7 +296,7 @@ CacheControlDirectives parseCacheControlDirectives(const HTTPHeaderMap& headers)
                 bool ok;
                 double maxAge = directives[i].second.toDouble(&ok);
                 if (ok)
-                    result.maxAge = duration_cast<microseconds>(duration<double>(maxAge));
+                    result.maxAge = Seconds { maxAge };
             } else if (equalLettersIgnoringASCIICase(directives[i].first, "max-stale")) {
                 // https://tools.ietf.org/html/rfc7234#section-5.2.1.2
                 if (result.maxStale) {
@@ -315,13 +305,13 @@ CacheControlDirectives parseCacheControlDirectives(const HTTPHeaderMap& headers)
                 }
                 if (directives[i].second.isEmpty()) {
                     // if no value is assigned to max-stale, then the client is willing to accept a stale response of any age.
-                    result.maxStale = microseconds::max();
+                    result.maxStale = Seconds::infinity();
                     continue;
                 }
                 bool ok;
                 double maxStale = directives[i].second.toDouble(&ok);
                 if (ok)
-                    result.maxStale = duration_cast<microseconds>(duration<double>(maxStale));
+                    result.maxStale = Seconds { maxStale };
             } else if (equalLettersIgnoringASCIICase(directives[i].first, "immutable"))
                 result.immutable = true;
         }

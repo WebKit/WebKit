@@ -618,7 +618,7 @@ void StorageManager::deleteLocalStorageEntriesForOrigin(SecurityOriginData&& sec
     });
 }
 
-void StorageManager::deleteLocalStorageOriginsModifiedSince(std::chrono::system_clock::time_point time, Function<void()>&& completionHandler)
+void StorageManager::deleteLocalStorageOriginsModifiedSince(WallTime time, Function<void()>&& completionHandler)
 {
     m_queue->dispatch([this, protectedThis = makeRef(*this), time, completionHandler = WTFMove(completionHandler)]() mutable {
         auto deletedOrigins = m_localStorageDatabaseTracker->deleteDatabasesModifiedSince(time);

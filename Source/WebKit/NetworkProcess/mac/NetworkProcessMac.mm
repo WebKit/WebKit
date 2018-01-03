@@ -127,7 +127,7 @@ void NetworkProcess::clearCacheForAllOrigins(uint32_t cachesToClear)
     if (resourceCachesToClear == InMemoryResourceCachesOnly)
         return;
 
-    clearDiskCache(std::chrono::system_clock::time_point::min(), [] { });
+    clearDiskCache(-WallTime::infinity(), [] { });
 }
 
 void NetworkProcess::platformTerminate()

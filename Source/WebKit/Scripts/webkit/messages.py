@@ -361,6 +361,9 @@ def headers_for_type(type):
     header_infos_and_types = class_template_headers(type)
 
     special_cases = {
+        'MonotonicTime': ['<wtf/MonotonicTime.h>'],
+        'Seconds': ['<wtf/Seconds.h>'],
+        'WallTime': ['<wtf/WallTime.h>'],
         'String': ['<wtf/text/WTFString.h>'],
         'PAL::SessionID': ['<pal/SessionID.h>'],
         'WebCore::AttachmentDisplayOptions': ['<WebCore/AttachmentTypes.h>'],
@@ -410,7 +413,6 @@ def headers_for_type(type):
         'struct WebKit::WebUserScriptData': ['"WebUserContentControllerDataTypes.h"'],
         'struct WebKit::WebUserStyleSheetData': ['"WebUserContentControllerDataTypes.h"'],
         'struct WebKit::WebScriptMessageHandlerData': ['"WebUserContentControllerDataTypes.h"'],
-        'std::chrono::system_clock::time_point': ['<chrono>'],
     }
 
     headers = []

@@ -33,6 +33,7 @@
 #include "ParsedContentRange.h"
 #include "URL.h"
 #include <wtf/SHA1.h>
+#include <wtf/WallTime.h>
 
 namespace WebCore {
 
@@ -130,11 +131,11 @@ public:
     WEBCORE_EXPORT bool cacheControlContainsMustRevalidate() const;
     WEBCORE_EXPORT bool cacheControlContainsImmutable() const;
     WEBCORE_EXPORT bool hasCacheValidatorFields() const;
-    WEBCORE_EXPORT std::optional<std::chrono::microseconds> cacheControlMaxAge() const;
-    WEBCORE_EXPORT std::optional<std::chrono::system_clock::time_point> date() const;
-    WEBCORE_EXPORT std::optional<std::chrono::microseconds> age() const;
-    WEBCORE_EXPORT std::optional<std::chrono::system_clock::time_point> expires() const;
-    WEBCORE_EXPORT std::optional<std::chrono::system_clock::time_point> lastModified() const;
+    WEBCORE_EXPORT std::optional<Seconds> cacheControlMaxAge() const;
+    WEBCORE_EXPORT std::optional<WallTime> date() const;
+    WEBCORE_EXPORT std::optional<Seconds> age() const;
+    WEBCORE_EXPORT std::optional<WallTime> expires() const;
+    WEBCORE_EXPORT std::optional<WallTime> lastModified() const;
     ParsedContentRange& contentRange() const;
 
     enum class Source { Unknown, Network, DiskCache, DiskCacheAfterValidation, MemoryCache, MemoryCacheAfterValidation, ServiceWorker };
@@ -211,10 +212,10 @@ protected:
     int m_httpStatusCode;
 
 private:
-    mutable std::optional<std::chrono::microseconds> m_age;
-    mutable std::optional<std::chrono::system_clock::time_point> m_date;
-    mutable std::optional<std::chrono::system_clock::time_point> m_expires;
-    mutable std::optional<std::chrono::system_clock::time_point> m_lastModified;
+    mutable std::optional<Seconds> m_age;
+    mutable std::optional<WallTime> m_date;
+    mutable std::optional<WallTime> m_expires;
+    mutable std::optional<WallTime> m_lastModified;
     mutable ParsedContentRange m_contentRange;
     mutable CacheControlDirectives m_cacheControlDirectives;
 

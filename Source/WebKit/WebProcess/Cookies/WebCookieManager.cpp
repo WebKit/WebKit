@@ -84,7 +84,7 @@ void WebCookieManager::deleteCookie(PAL::SessionID sessionID, const Cookie& cook
     m_process.send(Messages::WebCookieManagerProxy::DidDeleteCookies(callbackID), 0);
 }
 
-void WebCookieManager::deleteAllCookiesModifiedSince(PAL::SessionID sessionID, std::chrono::system_clock::time_point time, CallbackID callbackID)
+void WebCookieManager::deleteAllCookiesModifiedSince(PAL::SessionID sessionID, WallTime time, CallbackID callbackID)
 {
     if (auto* storageSession = NetworkStorageSession::storageSession(sessionID))
         WebCore::deleteAllCookiesModifiedSince(*storageSession, time);

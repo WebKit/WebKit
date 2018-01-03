@@ -46,8 +46,8 @@ public:
     SubresourceInfo(const Key&, const WebCore::ResourceRequest&, const SubresourceInfo* previousInfo);
 
     const Key& key() const { return m_key; }
-    std::chrono::system_clock::time_point lastSeen() const { return m_lastSeen; }
-    std::chrono::system_clock::time_point firstSeen() const { return m_firstSeen; }
+    WallTime lastSeen() const { return m_lastSeen; }
+    WallTime firstSeen() const { return m_firstSeen; }
 
     bool isTransient() const { return m_isTransient; }
     const WebCore::URL& firstPartyForCookies() const { ASSERT(!m_isTransient); return m_firstPartyForCookies; }
@@ -58,8 +58,8 @@ public:
 
 private:
     Key m_key;
-    std::chrono::system_clock::time_point m_lastSeen;
-    std::chrono::system_clock::time_point m_firstSeen;
+    WallTime m_lastSeen;
+    WallTime m_firstSeen;
     bool m_isTransient { false };
     WebCore::URL m_firstPartyForCookies;
     WebCore::HTTPHeaderMap m_requestHeaders;
@@ -88,14 +88,14 @@ public:
     static std::unique_ptr<SubresourcesEntry> decodeStorageRecord(const Storage::Record&);
 
     const Key& key() const { return m_key; }
-    std::chrono::system_clock::time_point timeStamp() const { return m_timeStamp; }
+    WallTime timeStamp() const { return m_timeStamp; }
     const Vector<SubresourceInfo>& subresources() const { return m_subresources; }
 
     void updateSubresourceLoads(const Vector<std::unique_ptr<SubresourceLoad>>&);
 
 private:
     Key m_key;
-    std::chrono::system_clock::time_point m_timeStamp;
+    WallTime m_timeStamp;
     Vector<SubresourceInfo> m_subresources;
 };
 

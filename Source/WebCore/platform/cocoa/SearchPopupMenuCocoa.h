@@ -32,7 +32,7 @@ namespace WebCore {
 
 WEBCORE_EXPORT void saveRecentSearches(const String& name, const Vector<RecentSearch>&);
 WEBCORE_EXPORT Vector<RecentSearch> loadRecentSearches(const String& name);
-WEBCORE_EXPORT void removeRecentlyModifiedRecentSearches(std::chrono::system_clock::time_point);
+WEBCORE_EXPORT void removeRecentlyModifiedRecentSearches(WallTime);
 
 }
 

@@ -26,8 +26,6 @@
 #import "config.h"
 #import "SearchPopupMenuCocoa.h"
 
-using namespace std::chrono;
-
 namespace WebCore {
 
 static NSString * const dateKey = @"date";
@@ -54,16 +52,15 @@ static RetainPtr<NSMutableDictionary> readSearchFieldRecentSearchesPlist()
     return adoptNS([[NSMutableDictionary alloc] initWithContentsOfFile:searchFieldRecentSearchesPlistPath()]);
 }
 
-static system_clock::time_point toSystemClockTime(NSDate *date)
+static WallTime toSystemClockTime(NSDate *date)
 {
     ASSERT(date);
-
-    return system_clock::time_point(duration_cast<system_clock::duration>(duration<double>(date.timeIntervalSince1970)));
+    return WallTime::fromRawSeconds(date.timeIntervalSince1970);
 }
 
-static NSDate *toNSDateFromSystemClock(system_clock::time_point time)
+static NSDate *toNSDateFromSystemClock(WallTime time)
 {
-    return [NSDate dateWithTimeIntervalSince1970:duration_cast<duration<double>>(time.time_since_epoch()).count()];
+    return [NSDate dateWithTimeIntervalSince1970:time.secondsSinceEpoch().seconds()];
 }
 
 static NSMutableArray *typeCheckedRecentSearchesArray(NSMutableDictionary *itemsDictionary, NSString *name)
@@ -200,7 +197,7 @@ Vector<RecentSearch> loadRecentSearches(const String& name)
     return searchItems;
 }
 
-void removeRecentlyModifiedRecentSearches(std::chrono::system_clock::time_point oldestTimeToRemove)
+void removeRecentlyModifiedRecentSearches(WallTime oldestTimeToRemove)
 {
     NSDate *date = toNSDateFromSystemClock(oldestTimeToRemove);
     auto recentSearchesPlist = typeCheckedRecentSearchesRemovingRecentSearchesAddedAfterDate(date);

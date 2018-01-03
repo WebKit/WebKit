@@ -339,7 +339,7 @@ void CookieJarCurlFileSystem::deleteAllCookies(const NetworkStorageSession&)
     // FIXME: Not yet implemented
 }
 
-void CookieJarCurlFileSystem::deleteAllCookiesModifiedSince(const NetworkStorageSession&, std::chrono::system_clock::time_point)
+void CookieJarCurlFileSystem::deleteAllCookiesModifiedSince(const NetworkStorageSession&, WallTime)
 {
     // FIXME: Not yet implemented
 }
@@ -391,7 +391,7 @@ void deleteAllCookies(const NetworkStorageSession& session)
     CurlContext::singleton().cookieJar().deleteAllCookies(session);
 }
 
-void deleteAllCookiesModifiedSince(const NetworkStorageSession& session, std::chrono::system_clock::time_point since)
+void deleteAllCookiesModifiedSince(const NetworkStorageSession& session, WallTime since)
 {
     CurlContext::singleton().cookieJar().deleteAllCookiesModifiedSince(session, since);
 }

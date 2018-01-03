@@ -33,7 +33,6 @@
 #include <WebCore/FloatRect.h>
 #include <WebCore/IntRect.h>
 #include <WebCore/IntSize.h>
-#include <chrono>
 #include <stdint.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/RunLoop.h>

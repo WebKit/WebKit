@@ -85,10 +85,8 @@ public:
         WTF_EXPORT_PRIVATE virtual ~TimerBase();
 
         void startRepeating(double repeatInterval) { startInternal(repeatInterval, true); }
-        void startRepeating(std::chrono::milliseconds repeatInterval) { startRepeating(repeatInterval.count() * 0.001); }
         void startRepeating(Seconds repeatInterval) { startRepeating(repeatInterval.value()); }
         void startOneShot(double interval) { startInternal(interval, false); }
-        void startOneShot(std::chrono::milliseconds interval) { startOneShot(interval.count() * 0.001); }
         void startOneShot(Seconds interval) { startOneShot(interval.value()); }
 
         WTF_EXPORT_PRIVATE void stop();

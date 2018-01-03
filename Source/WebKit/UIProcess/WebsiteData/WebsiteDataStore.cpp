@@ -630,7 +630,7 @@ static ProcessAccessType computeWebProcessAccessTypeForDataRemoval(OptionSet<Web
     return processAccessType;
 }
 
-void WebsiteDataStore::removeData(OptionSet<WebsiteDataType> dataTypes, std::chrono::system_clock::time_point modifiedSince, Function<void()>&& completionHandler)
+void WebsiteDataStore::removeData(OptionSet<WebsiteDataType> dataTypes, WallTime modifiedSince, Function<void()>&& completionHandler)
 {
     struct CallbackAggregator : ThreadSafeRefCounted<CallbackAggregator> {
         explicit CallbackAggregator(Function<void()>&& completionHandler)
@@ -810,13 +810,13 @@ void WebsiteDataStore::removeData(OptionSet<WebsiteDataType> dataTypes, std::chr
     if (dataTypes.contains(WebsiteDataType::PlugInData) && isPersistent()) {
         class State {
         public:
-            static void deleteData(Ref<CallbackAggregator>&& callbackAggregator, Vector<PluginModuleInfo>&& plugins, std::chrono::system_clock::time_point modifiedSince)
+            static void deleteData(Ref<CallbackAggregator>&& callbackAggregator, Vector<PluginModuleInfo>&& plugins, WallTime modifiedSince)
             {
                 new State(WTFMove(callbackAggregator), WTFMove(plugins), modifiedSince);
             }
 
         private:
-            State(Ref<CallbackAggregator>&& callbackAggregator, Vector<PluginModuleInfo>&& plugins, std::chrono::system_clock::time_point modifiedSince)
+            State(Ref<CallbackAggregator>&& callbackAggregator, Vector<PluginModuleInfo>&& plugins, WallTime modifiedSince)
                 : m_callbackAggregator(WTFMove(callbackAggregator))
                 , m_plugins(WTFMove(plugins))
                 , m_modifiedSince(modifiedSince)
@@ -848,7 +848,7 @@ void WebsiteDataStore::removeData(OptionSet<WebsiteDataType> dataTypes, std::chr
 
             Ref<CallbackAggregator> m_callbackAggregator;
             Vector<PluginModuleInfo> m_plugins;
-            std::chrono::system_clock::time_point m_modifiedSince;
+            WallTime m_modifiedSince;
         };
 
         State::deleteData(*callbackAggregator, plugins(), modifiedSince);
@@ -1344,18 +1344,18 @@ Vector<WebCore::SecurityOriginData> WebsiteDataStore::mediaKeyOrigins(const Stri
     return origins;
 }
 
-void WebsiteDataStore::removeMediaKeys(const String& mediaKeysStorageDirectory, std::chrono::system_clock::time_point modifiedSince)
+void WebsiteDataStore::removeMediaKeys(const String& mediaKeysStorageDirectory, WallTime modifiedSince)
 {
     ASSERT(!mediaKeysStorageDirectory.isEmpty());
 
     for (const auto& mediaKeyDirectory : WebCore::FileSystem::listDirectory(mediaKeysStorageDirectory, "*")) {
         auto mediaKeyFile = computeMediaKeyFile(mediaKeyDirectory);
 
-        time_t modificationTime;
-        if (!WebCore::FileSystem::getFileModificationTime(mediaKeyFile, modificationTime))
+        auto modificationTime = WebCore::FileSystem::getFileModificationTime(mediaKeyFile);
+        if (!modificationTime)
             continue;
 
-        if (std::chrono::system_clock::from_time_t(modificationTime) < modifiedSince)
+        if (modificationTime.value() < modifiedSince)
             continue;
 
         WebCore::FileSystem::deleteFile(mediaKeyFile);

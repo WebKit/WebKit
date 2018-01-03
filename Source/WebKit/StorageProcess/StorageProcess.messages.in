@@ -28,7 +28,7 @@ messages -> StorageProcess LegacyReceiver {
     CreateStorageToWebProcessConnection(bool isServiceWorkerProcess)
 
     FetchWebsiteData(PAL::SessionID sessionID, OptionSet<WebKit::WebsiteDataType> websiteDataTypes, uint64_t callbackID)
-    DeleteWebsiteData(PAL::SessionID sessionID, OptionSet<WebKit::WebsiteDataType> websiteDataTypes, std::chrono::system_clock::time_point modifiedSince, uint64_t callbackID)
+    DeleteWebsiteData(PAL::SessionID sessionID, OptionSet<WebKit::WebsiteDataType> websiteDataTypes, WallTime modifiedSince, uint64_t callbackID)
     DeleteWebsiteDataForOrigins(PAL::SessionID sessionID, OptionSet<WebKit::WebsiteDataType> websiteDataTypes, Vector<WebCore::SecurityOriginData> origins, uint64_t callbackID)
 #if ENABLE(SANDBOX_EXTENSIONS)
     GrantSandboxExtensionsForBlobs(Vector<String> paths, WebKit::SandboxExtension::HandleArray extensions)

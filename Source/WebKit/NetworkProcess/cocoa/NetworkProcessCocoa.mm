@@ -166,20 +166,20 @@ RetainPtr<CFDataRef> NetworkProcess::sourceApplicationAuditData() const
 #endif
 }
 
-void NetworkProcess::clearHSTSCache(WebCore::NetworkStorageSession& session, std::chrono::system_clock::time_point modifiedSince)
+void NetworkProcess::clearHSTSCache(WebCore::NetworkStorageSession& session, WallTime modifiedSince)
 {
-    NSTimeInterval timeInterval = std::chrono::duration_cast<std::chrono::duration<double>>(modifiedSince.time_since_epoch()).count();
+    NSTimeInterval timeInterval = modifiedSince.secondsSinceEpoch().seconds();
     NSDate *date = [NSDate dateWithTimeIntervalSince1970:timeInterval];
 
     _CFNetworkResetHSTSHostsSinceDate(session.platformSession(), (__bridge CFDateRef)date);
 }
 
-static void clearNSURLCache(dispatch_group_t group, std::chrono::system_clock::time_point modifiedSince, Function<void ()>&& completionHandler)
+static void clearNSURLCache(dispatch_group_t group, WallTime modifiedSince, Function<void ()>&& completionHandler)
 {
     dispatch_group_async(group, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), BlockPtr<void()>::fromCallable([modifiedSince, completionHandler = WTFMove(completionHandler)] () mutable {
         NSURLCache *cache = [NSURLCache sharedURLCache];
 
-        NSTimeInterval timeInterval = std::chrono::duration_cast<std::chrono::duration<double>>(modifiedSince.time_since_epoch()).count();
+        NSTimeInterval timeInterval = modifiedSince.secondsSinceEpoch().seconds();
         NSDate *date = [NSDate dateWithTimeIntervalSince1970:timeInterval];
         [cache removeCachedResponsesSinceDate:date];
 
@@ -189,7 +189,7 @@ static void clearNSURLCache(dispatch_group_t group, std::chrono::system_clock::t
     }).get());
 }
 
-void NetworkProcess::clearDiskCache(std::chrono::system_clock::time_point modifiedSince, Function<void ()>&& completionHandler)
+void NetworkProcess::clearDiskCache(WallTime modifiedSince, Function<void ()>&& completionHandler)
 {
     if (!m_clearCacheDispatchGroup)
         m_clearCacheDispatchGroup = dispatch_group_create();

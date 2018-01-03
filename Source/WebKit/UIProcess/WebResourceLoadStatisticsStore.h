@@ -120,7 +120,7 @@ public:
         Yes,
     };
     void scheduleClearInMemoryAndPersistent(ShouldGrandfather);
-    void scheduleClearInMemoryAndPersistent(std::chrono::system_clock::time_point modifiedSince, ShouldGrandfather);
+    void scheduleClearInMemoryAndPersistent(WallTime modifiedSince, ShouldGrandfather);
 
     void setTimeToLiveUserInteraction(Seconds);
     void setTimeToLiveCookiePartitionFree(Seconds);

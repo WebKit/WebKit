@@ -879,7 +879,7 @@ void webkit_website_data_manager_clear(WebKitWebsiteDataManager* manager, WebKit
 {
     g_return_if_fail(WEBKIT_IS_WEBSITE_DATA_MANAGER(manager));
 
-    std::chrono::system_clock::time_point timePoint = timeSpan ? std::chrono::system_clock::now() - std::chrono::microseconds(timeSpan) : std::chrono::system_clock::from_time_t(0);
+    WallTime timePoint = timeSpan ? WallTime::now() - Seconds::fromMicroseconds(timeSpan) : WallTime::fromRawSeconds(0);
     GRefPtr<GTask> task = adoptGRef(g_task_new(manager, cancellable, callback, userData));
     manager->priv->websiteDataStore->websiteDataStore().removeData(toWebsiteDataTypes(types), timePoint, [task = WTFMove(task)] {
         g_task_return_boolean(task.get(), TRUE);

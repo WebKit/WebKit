@@ -766,7 +766,7 @@ void webkit_web_context_clear_cache(WebKitWebContext* context)
     websiteDataTypes |= WebsiteDataType::MemoryCache;
     websiteDataTypes |= WebsiteDataType::DiskCache;
     auto& websiteDataStore = webkitWebsiteDataManagerGetDataStore(context->priv->websiteDataManager.get()).websiteDataStore();
-    websiteDataStore.removeData(websiteDataTypes, std::chrono::system_clock::time_point::min(), [] { });
+    websiteDataStore.removeData(websiteDataTypes, -WallTime::infinity(), [] { });
 }
 
 /**

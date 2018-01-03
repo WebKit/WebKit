@@ -1399,7 +1399,7 @@ HashSet<RefPtr<SecurityOrigin>> MediaPlayerPrivateQTKit::originsInMediaCache(con
     return origins;
 }
 
-void MediaPlayerPrivateQTKit::clearMediaCache(const String&, std::chrono::system_clock::time_point)
+void MediaPlayerPrivateQTKit::clearMediaCache(const String&, WallTime)
 {
     LOG(Media, "MediaPlayerPrivateQTKit::clearMediaCache()");
     [[QTUtilities qtUtilities] clearDownloadCache];

@@ -129,7 +129,7 @@ void PluginProcessProxy::fetchWebsiteData(WTF::Function<void (Vector<String>)>&&
     m_connection->send(Messages::PluginProcess::GetSitesWithData(callbackID), 0);
 }
 
-void PluginProcessProxy::deleteWebsiteData(std::chrono::system_clock::time_point modifiedSince, WTF::Function<void ()>&& completionHandler)
+void PluginProcessProxy::deleteWebsiteData(WallTime modifiedSince, WTF::Function<void ()>&& completionHandler)
 {
     uint64_t callbackID = generateCallbackID();
     m_pendingDeleteWebsiteDataCallbacks.set(callbackID, WTFMove(completionHandler));

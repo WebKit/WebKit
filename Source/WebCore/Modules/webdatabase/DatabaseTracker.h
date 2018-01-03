@@ -36,6 +36,7 @@
 #include <wtf/HashCountedSet.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
+#include <wtf/WallTime.h>
 #include <wtf/text/StringHash.h>
 
 namespace WebCore {
@@ -89,7 +90,7 @@ public:
     RefPtr<OriginLock> originLockFor(const SecurityOriginData&);
 
     WEBCORE_EXPORT void deleteAllDatabasesImmediately();
-    WEBCORE_EXPORT void deleteDatabasesModifiedSince(std::chrono::system_clock::time_point);
+    WEBCORE_EXPORT void deleteDatabasesModifiedSince(WallTime);
     WEBCORE_EXPORT bool deleteOrigin(const SecurityOriginData&);
     WEBCORE_EXPORT bool deleteDatabase(const SecurityOriginData&, const String& name);
 

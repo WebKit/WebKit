@@ -48,7 +48,6 @@
 #include <notify.h>
 #endif
 
-using namespace std::literals::chrono_literals;
 using namespace WebCore::FileSystem;
 
 namespace WebKit {
@@ -154,7 +153,7 @@ static bool cachePolicyAllowsExpired(WebCore::ResourceRequestCachePolicy policy)
     return false;
 }
 
-static bool responseHasExpired(const WebCore::ResourceResponse& response, std::chrono::system_clock::time_point timestamp, std::optional<std::chrono::microseconds> maxStale)
+static bool responseHasExpired(const WebCore::ResourceResponse& response, WallTime timestamp, std::optional<Seconds> maxStale)
 {
     if (response.cacheControlContainsNoCache())
         return true;
@@ -162,7 +161,7 @@ static bool responseHasExpired(const WebCore::ResourceResponse& response, std::c
     auto age = WebCore::computeCurrentAge(response, timestamp);
     auto lifetime = WebCore::computeFreshnessLifetimeForHTTPFamily(response, timestamp);
 
-    auto maximumStaleness = maxStale ? maxStale.value() : 0ms;
+    auto maximumStaleness = maxStale ? maxStale.value() : 0_ms;
     bool hasExpired = age - lifetime > maximumStaleness;
 
 #ifndef LOG_DISABLED
@@ -173,13 +172,13 @@ static bool responseHasExpired(const WebCore::ResourceResponse& response, std::c
     return hasExpired;
 }
 
-static bool responseNeedsRevalidation(const WebCore::ResourceResponse& response, const WebCore::ResourceRequest& request, std::chrono::system_clock::time_point timestamp)
+static bool responseNeedsRevalidation(const WebCore::ResourceResponse& response, const WebCore::ResourceRequest& request, WallTime timestamp)
 {
     auto requestDirectives = WebCore::parseCacheControlDirectives(request.httpHeaderFields());
     if (requestDirectives.noCache)
         return true;
     // For requests we ignore max-age values other than zero.
-    if (requestDirectives.maxAge && requestDirectives.maxAge.value() == 0ms)
+    if (requestDirectives.maxAge && requestDirectives.maxAge.value() == 0_ms)
         return true;
 
     return responseHasExpired(response, timestamp, requestDirectives.maxStale);
@@ -279,8 +278,8 @@ static StoreDecision makeStoreDecision(const WebCore::ResourceRequest& originalR
     bool isMainResource = originalRequest.requester() == WebCore::ResourceRequest::Requester::Main;
     bool storeUnconditionallyForHistoryNavigation = isMainResource || originalRequest.priority() == WebCore::ResourceLoadPriority::VeryHigh;
     if (!storeUnconditionallyForHistoryNavigation) {
-        auto now = std::chrono::system_clock::now();
-        bool hasNonZeroLifetime = !response.cacheControlContainsNoCache() && WebCore::computeFreshnessLifetimeForHTTPFamily(response, now) > 0ms;
+        auto now = WallTime::now();
+        bool hasNonZeroLifetime = !response.cacheControlContainsNoCache() && WebCore::computeFreshnessLifetimeForHTTPFamily(response, now) > 0_ms;
 
         bool possiblyReusable = response.hasCacheValidatorFields() || hasNonZeroLifetime;
         if (!possiblyReusable)
@@ -598,7 +597,7 @@ void Cache::deleteDumpFile()
     });
 }
 
-void Cache::clear(std::chrono::system_clock::time_point modifiedSince, Function<void ()>&& completionHandler)
+void Cache::clear(WallTime modifiedSince, Function<void ()>&& completionHandler)
 {
     LOG(NetworkCache, "(NetworkProcess) clearing cache");
 
@@ -613,7 +612,7 @@ void Cache::clear(std::chrono::system_clock::time_point modifiedSince, Function<
 
 void Cache::clear()
 {
-    clear(std::chrono::system_clock::time_point::min(), nullptr);
+    clear(-WallTime::infinity(), nullptr);
 }
 
 String Cache::recordsPath() const
@@ -637,7 +636,7 @@ void Cache::retrieveData(const DataKey& dataKey, Function<void (const uint8_t* d
 void Cache::storeData(const DataKey& dataKey, const uint8_t* data, size_t size)
 {
     Key key { dataKey, m_storage->salt() };
-    Storage::Record record { key, std::chrono::system_clock::now(), { }, Data { data, size }, { } };
+    Storage::Record record { key, WallTime::now(), { }, Data { data, size }, { } };
     m_storage->store(record, { });
 }
 

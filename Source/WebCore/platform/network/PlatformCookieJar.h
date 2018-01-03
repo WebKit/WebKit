@@ -25,9 +25,9 @@
 
 #pragma once
 
-#include <chrono>
 #include <wtf/Forward.h>
 #include <wtf/HashSet.h>
+#include <wtf/WallTime.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -50,6 +50,6 @@ WEBCORE_EXPORT void deleteCookie(const NetworkStorageSession&, const URL&, const
 WEBCORE_EXPORT void getHostnamesWithCookies(const NetworkStorageSession&, HashSet<String>& hostnames);
 WEBCORE_EXPORT void deleteCookiesForHostnames(const NetworkStorageSession&, const Vector<String>& cookieHostNames);
 WEBCORE_EXPORT void deleteAllCookies(const NetworkStorageSession&);
-WEBCORE_EXPORT void deleteAllCookiesModifiedSince(const NetworkStorageSession&, std::chrono::system_clock::time_point);
+WEBCORE_EXPORT void deleteAllCookiesModifiedSince(const NetworkStorageSession&, WallTime);
 
 }

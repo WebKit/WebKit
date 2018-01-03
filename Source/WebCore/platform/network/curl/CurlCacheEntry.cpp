@@ -52,7 +52,7 @@ CurlCacheEntry::CurlCacheEntry(const String& url, ResourceHandle* job, const Str
     , m_contentFilename(cacheDir)
     , m_contentFile(FileSystem::invalidPlatformFileHandle)
     , m_entrySize(0)
-    , m_expireDate(-1)
+    , m_expireDate(WallTime::fromRawSeconds(-1))
     , m_headerParsed(false)
     , m_isLoading(false)
     , m_job(job)
@@ -87,7 +87,7 @@ bool CurlCacheEntry::isCached()
             return false;
     }
 
-    if (m_expireDate < currentTimeMS()) {
+    if (m_expireDate < WallTime::now()) {
         m_headerParsed = false;
         return false;
     }
@@ -272,18 +272,16 @@ void CurlCacheEntry::invalidate()
 
 bool CurlCacheEntry::parseResponseHeaders(const ResourceResponse& response)
 {
-    using namespace std::chrono;
-
     if (response.cacheControlContainsNoCache() || response.cacheControlContainsNoStore() || !response.hasCacheValidatorFields())
         return false;
 
-    double fileTime;
+    WallTime fileTime;
     time_t fileModificationDate;
 
-    if (FileSystem::getFileModificationTime(m_headerFilename, fileModificationDate))
-        fileTime = difftime(fileModificationDate, 0) * 1000.0;
+    if (auto fileTimeFromFile = FileSystem::getFileModificationTime(m_headerFilename))
+        fileTime = fileTimeFromFile.value();
     else
-        fileTime = currentTimeMS(); // GMT
+        fileTime = WallTime::now(); // GMT
 
     auto maxAge = response.cacheControlMaxAge();
     auto lastModificationDate = response.lastModified();
@@ -292,24 +290,19 @@ bool CurlCacheEntry::parseResponseHeaders(const ResourceResponse& response)
 
     if (maxAge && !response.cacheControlContainsMustRevalidate()) {
         // When both the cache entry and the response contain max-age, the lesser one takes priority
-        auto maxAgeMS = duration_cast<milliseconds>(maxAge.value()).count();
-        double expires = fileTime + maxAgeMS;
-        if (m_expireDate == -1 || m_expireDate > expires)
+        WallTime expires = fileTime + *maxAge;
+        if (m_expireDate == WallTime::fromRawSeconds(-1) || m_expireDate > expires)
             m_expireDate = expires;
     } else if (responseDate && expirationDate) {
-        auto expirationDateMS = duration_cast<milliseconds>(expirationDate.value().time_since_epoch()).count();
-        auto responseDateMS = duration_cast<milliseconds>(responseDate.value().time_since_epoch()).count();
-        if (expirationDateMS >= responseDateMS)
-            m_expireDate = fileTime + (expirationDateMS - responseDateMS);
+        if (*expirationDate >= *responseDate)
+            m_expireDate = fileTime + (*expirationDate - *responseDate);
     }
     // If there is no lifetime information
-    if (m_expireDate == -1) {
-        if (lastModificationDate) {
-            auto lastModificationDateMS = duration_cast<milliseconds>(lastModificationDate.value().time_since_epoch()).count();
-            m_expireDate = fileTime + (fileTime - lastModificationDateMS) * 0.1;
-        }
+    if (m_expireDate == WallTime::fromRawSeconds(-1)) {
+        if (lastModificationDate)
+            m_expireDate = fileTime + (fileTime - *lastModificationDate) * 0.1;
         else
-            m_expireDate = 0;
+            m_expireDate = WallTime::fromRawSeconds(0);
     }
 
     String etag = response.httpHeaderField(HTTPHeaderName::ETag);

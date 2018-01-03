@@ -59,6 +59,6 @@ WebCore::IDBClient::IDBConnectionToServer& WebDatabaseProvider::idbConnectionToS
 void WebDatabaseProvider::deleteAllDatabases()
 {
     for (auto& server : m_idbServerMap.values())
-        server->idbServer().closeAndDeleteDatabasesModifiedSince(std::chrono::system_clock::time_point::min(), [] { });
+        server->idbServer().closeAndDeleteDatabasesModifiedSince(-WallTime::infinity(), [] { });
 }
 #endif

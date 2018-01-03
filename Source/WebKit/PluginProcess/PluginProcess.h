@@ -94,7 +94,7 @@ private:
     void createWebProcessConnection();
 
     void getSitesWithData(uint64_t callbackID);
-    void deleteWebsiteData(std::chrono::system_clock::time_point modifiedSince, uint64_t callbackID);
+    void deleteWebsiteData(WallTime modifiedSince, uint64_t callbackID);
     void deleteWebsiteDataForHostNames(const Vector<String>& hostNames, uint64_t callbackID);
 
     void platformInitializePluginProcess(PluginProcessCreationParameters&&);

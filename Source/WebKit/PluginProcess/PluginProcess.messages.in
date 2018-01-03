@@ -35,7 +35,7 @@ messages -> PluginProcess LegacyReceiver {
     # DidGetSitesWithData message with the sites.
     GetSitesWithData(uint64_t callbackID)
 
-    DeleteWebsiteData(std::chrono::system_clock::time_point modifiedSince, uint64_t callbackID)
+    DeleteWebsiteData(WallTime modifiedSince, uint64_t callbackID)
     DeleteWebsiteDataForHostNames(Vector<String> hostNames, uint64_t callbackID)
 
     SetProcessSuppressionEnabled(bool flag)

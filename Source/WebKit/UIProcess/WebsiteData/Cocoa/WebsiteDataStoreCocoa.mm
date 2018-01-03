@@ -129,7 +129,7 @@ void WebsiteDataStore::platformDestroy()
     }
 }
 
-void WebsiteDataStore::platformRemoveRecentSearches(std::chrono::system_clock::time_point oldestTimeToRemove)
+void WebsiteDataStore::platformRemoveRecentSearches(WallTime oldestTimeToRemove)
 {
     WebCore::removeRecentlyModifiedRecentSearches(oldestTimeToRemove);
 }

@@ -1,3 +1,101 @@
+2017-12-28  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Remove std::chrono completely
+        https://bugs.webkit.org/show_bug.cgi?id=181186
+
+        Reviewed by Alex Christensen.
+
+        Use MonotonicTime, WallTime, and Seconds instead.
+        Changes are mechanical ones. But persistent network cache data is changed.
+        So we bump the version number of the cache storage.
+
+        * Modules/indexeddb/server/IDBServer.cpp:
+        (WebCore::IDBServer::IDBServer::closeAndDeleteDatabasesModifiedSince):
+        (WebCore::IDBServer::removeAllDatabasesForOriginPath):
+        (WebCore::IDBServer::IDBServer::performCloseAndDeleteDatabasesModifiedSince):
+        (WebCore::IDBServer::IDBServer::performCloseAndDeleteDatabasesForOrigins):
+        * Modules/indexeddb/server/IDBServer.h:
+        * Modules/webdatabase/DatabaseTracker.cpp:
+        (WebCore::DatabaseTracker::deleteDatabasesModifiedSince):
+        * Modules/webdatabase/DatabaseTracker.h:
+        * dom/Document.cpp:
+        (WebCore::Document::lastModified):
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::clearMediaCache):
+        * html/HTMLMediaElement.h:
+        (WebCore::HTMLMediaElement::clearMediaCache):
+        * loader/CrossOriginPreflightResultCache.cpp:
+        (WebCore::parseAccessControlMaxAge):
+        (WebCore::CrossOriginPreflightResultCacheItem::parse):
+        (WebCore::CrossOriginPreflightResultCacheItem::allowsRequest const):
+        * loader/CrossOriginPreflightResultCache.h:
+        * loader/cache/CachedResource.cpp:
+        (WebCore::CachedResource::CachedResource):
+        (WebCore::CachedResource::freshnessLifetime const):
+        (WebCore::CachedResource::responseReceived):
+        (WebCore::CachedResource::updateResponseAfterRevalidation):
+        * loader/cache/CachedResource.h:
+        * platform/FileSystem.cpp:
+        (WebCore::FileSystem::getFileModificationTime):
+        * platform/FileSystem.h:
+        * platform/SearchPopupMenu.h:
+        * platform/cocoa/SearchPopupMenuCocoa.h:
+        * platform/cocoa/SearchPopupMenuCocoa.mm:
+        (WebCore::toSystemClockTime):
+        (WebCore::toNSDateFromSystemClock):
+        (WebCore::removeRecentlyModifiedRecentSearches):
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::MediaPlayer::clearMediaCache):
+        * platform/graphics/MediaPlayer.h:
+        * platform/graphics/MediaPlayerPrivate.h:
+        (WebCore::MediaPlayerPrivateInterface::clearMediaCache):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::toSystemClockTime):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::clearMediaCache):
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.h:
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.mm:
+        (WebCore::MediaPlayerPrivateQTKit::clearMediaCache):
+        * platform/network/CacheValidation.cpp:
+        (WebCore::computeCurrentAge):
+        (WebCore::computeFreshnessLifetimeForHTTPFamily):
+        (WebCore::updateRedirectChainStatus):
+        (WebCore::redirectChainAllowsReuse):
+        (WebCore::parseCacheControlDirectives):
+        * platform/network/CacheValidation.h:
+        (WebCore::RedirectChainCacheStatus::RedirectChainCacheStatus):
+        * platform/network/HTTPParsers.cpp:
+        (WebCore::parseHTTPDate):
+        * platform/network/HTTPParsers.h:
+        * platform/network/PlatformCookieJar.h:
+        * platform/network/ResourceResponseBase.cpp:
+        (WebCore::ResourceResponseBase::cacheControlMaxAge const):
+        (WebCore::parseDateValueInHeader):
+        (WebCore::ResourceResponseBase::date const):
+        (WebCore::ResourceResponseBase::age const):
+        (WebCore::ResourceResponseBase::expires const):
+        (WebCore::ResourceResponseBase::lastModified const):
+        * platform/network/ResourceResponseBase.h:
+        * platform/network/cf/CookieJarCFNet.cpp:
+        (WebCore::deleteAllCookiesModifiedSince):
+        * platform/network/curl/CookieJarCurl.cpp:
+        (WebCore::CookieJarCurlFileSystem::deleteAllCookiesModifiedSince):
+        (WebCore::deleteAllCookiesModifiedSince):
+        * platform/network/curl/CookieJarCurl.h:
+        * platform/network/curl/CurlCacheEntry.cpp:
+        (WebCore::CurlCacheEntry::CurlCacheEntry):
+        (WebCore::CurlCacheEntry::isCached):
+        (WebCore::CurlCacheEntry::parseResponseHeaders):
+        * platform/network/curl/CurlCacheEntry.h:
+        * platform/network/mac/CookieJarMac.mm:
+        (WebCore::deleteAllCookiesModifiedSince):
+        * platform/network/soup/CookieJarSoup.cpp:
+        (WebCore::deleteAllCookiesModifiedSince):
+        * platform/win/SearchPopupMenuWin.cpp:
+        (WebCore::SearchPopupMenuWin::loadRecentSearches):
+        * rendering/RenderSearchField.cpp:
+        (WebCore::RenderSearchField::addSearchResult):
+
 2018-01-02  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Attachment Support] Introduce data structures and IPC support for writing promised blobs

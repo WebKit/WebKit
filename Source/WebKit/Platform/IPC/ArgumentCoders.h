@@ -27,10 +27,10 @@
 
 #include "Decoder.h"
 #include "Encoder.h"
-#include <chrono>
 #include <utility>
 #include <wtf/Forward.h>
 #include <wtf/SHA1.h>
+#include <wtf/WallTime.h>
 
 namespace IPC {
 
@@ -210,23 +210,6 @@ template<typename... Elements> struct ArgumentCoder<std::tuple<Elements...>> {
     }
 };
 
-
-template<typename Rep, typename Period> struct ArgumentCoder<std::chrono::duration<Rep, Period>> {
-    static void encode(Encoder& encoder, const std::chrono::duration<Rep, Period>& duration)
-    {
-        static_assert(std::is_integral<Rep>::value && std::is_signed<Rep>::value && sizeof(Rep) <= sizeof(int64_t), "Serialization of this Rep type is not supported yet. Only signed integer type which can be fit in an int64_t is currently supported.");
-        encoder << static_cast<int64_t>(duration.count());
-    }
-
-    static bool decode(Decoder& decoder, std::chrono::duration<Rep, Period>& result)
-    {
-        int64_t count;
-        if (!decoder.decode(count))
-            return false;
-        result = std::chrono::duration<Rep, Period>(static_cast<Rep>(count));
-        return true;
-    }
-};
 
 template<typename KeyType, typename ValueType> struct ArgumentCoder<WTF::KeyValuePair<KeyType, ValueType>> {
     static void encode(Encoder& encoder, const WTF::KeyValuePair<KeyType, ValueType>& pair)
@@ -518,10 +501,10 @@ template<typename ValueType, typename ErrorType> struct ArgumentCoder<Expected<V
     }
 };
 
-template<> struct ArgumentCoder<std::chrono::system_clock::time_point> {
-    static void encode(Encoder&, const std::chrono::system_clock::time_point&);
-    static bool decode(Decoder&, std::chrono::system_clock::time_point&);
-    static std::optional<std::chrono::system_clock::time_point> decode(Decoder&);
+template<> struct ArgumentCoder<WallTime> {
+    static void encode(Encoder&, const WallTime&);
+    static bool decode(Decoder&, WallTime&);
+    static std::optional<WallTime> decode(Decoder&);
 };
 
 template<> struct ArgumentCoder<AtomicString> {

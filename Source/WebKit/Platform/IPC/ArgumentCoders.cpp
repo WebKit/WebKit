@@ -32,30 +32,30 @@
 
 namespace IPC {
 
-void ArgumentCoder<std::chrono::system_clock::time_point>::encode(IPC::Encoder& encoder, const std::chrono::system_clock::time_point& timePoint)
+void ArgumentCoder<WallTime>::encode(Encoder& encoder, const WallTime& time)
 {
-    encoder << static_cast<int64_t>(timePoint.time_since_epoch().count());
+    encoder << time.secondsSinceEpoch().value();
 }
 
-bool ArgumentCoder<std::chrono::system_clock::time_point>::decode(Decoder& decoder, std::chrono::system_clock::time_point& result)
+bool ArgumentCoder<WallTime>::decode(Decoder& decoder, WallTime& time)
 {
-    int64_t time;
-    if (!decoder.decode(time))
+    double value;
+    if (!decoder.decode(value))
         return false;
 
-    result = std::chrono::system_clock::time_point(std::chrono::system_clock::duration(static_cast<std::chrono::system_clock::rep>(time)));
+    time = WallTime::fromRawSeconds(value);
     return true;
 }
 
-std::optional<std::chrono::system_clock::time_point> ArgumentCoder<std::chrono::system_clock::time_point>::decode(Decoder& decoder)
+std::optional<WallTime> ArgumentCoder<WallTime>::decode(Decoder& decoder)
 {
-    std::optional<int64_t> time;
+    std::optional<double> time;
     decoder >> time;
     if (!time)
         return std::nullopt;
-    return { std::chrono::system_clock::time_point { std::chrono::system_clock::duration(static_cast<std::chrono::system_clock::rep>(*time)) }};
+    return WallTime::fromRawSeconds(*time);
 }
-    
+
 void ArgumentCoder<AtomicString>::encode(Encoder& encoder, const AtomicString& atomicString)
 {
     encoder << atomicString.string();

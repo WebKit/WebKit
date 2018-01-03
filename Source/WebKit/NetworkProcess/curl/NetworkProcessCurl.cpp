@@ -63,7 +63,7 @@ void NetworkProcess::clearCacheForAllOrigins(uint32_t cachesToClear)
     notImplemented();
 }
 
-void NetworkProcess::clearDiskCache(std::chrono::system_clock::time_point, Function<void()>&&)
+void NetworkProcess::clearDiskCache(WallTime, Function<void()>&&)
 {
     notImplemented();
 }

@@ -32,6 +32,7 @@
 #include <wtf/SHA1.h>
 #include <wtf/Seconds.h>
 #include <wtf/Vector.h>
+#include <wtf/WallTime.h>
 #include <wtf/persistence/PersistentDecoder.h>
 #include <wtf/persistence/PersistentEncoder.h>
 
@@ -56,23 +57,6 @@ template<typename T, typename U> struct Coder<std::pair<T, U>> {
 
         pair.first = first;
         pair.second = second;
-        return true;
-    }
-};
-
-template<typename Rep, typename Period> struct Coder<std::chrono::duration<Rep, Period>> {
-    static void encode(Encoder& encoder, const std::chrono::duration<Rep, Period>& duration)
-    {
-        static_assert(std::is_integral<Rep>::value && std::is_signed<Rep>::value && sizeof(Rep) <= sizeof(int64_t), "Serialization of this Rep type is not supported yet. Only signed integer type which can be fit in an int64_t is currently supported.");
-        encoder << static_cast<int64_t>(duration.count());
-    }
-
-    static bool decode(Decoder& decoder, std::chrono::duration<Rep, Period>& result)
-    {
-        int64_t count;
-        if (!decoder.decode(count))
-            return false;
-        result = std::chrono::duration<Rep, Period>(static_cast<Rep>(count));
         return true;
     }
 };
@@ -262,23 +246,6 @@ template<typename KeyArg, typename HashArg, typename KeyTraitsArg> struct Coder<
     }
 };
 
-template<> struct Coder<std::chrono::system_clock::time_point> {
-    static void encode(Encoder& encoder, const std::chrono::system_clock::time_point& timePoint)
-    {
-        encoder << static_cast<int64_t>(timePoint.time_since_epoch().count());
-    }
-    
-    static bool decode(Decoder& decoder, std::chrono::system_clock::time_point& result)
-    {
-        int64_t time;
-        if (!decoder.decode(time))
-            return false;
-
-        result = std::chrono::system_clock::time_point(std::chrono::system_clock::duration(static_cast<std::chrono::system_clock::rep>(time)));
-        return true;
-    }
-};
-
 template<> struct Coder<Seconds> {
     static void encode(Encoder& encoder, const Seconds& seconds)
     {
@@ -292,6 +259,23 @@ template<> struct Coder<Seconds> {
             return false;
 
         result = Seconds(value);
+        return true;
+    }
+};
+
+template<> struct Coder<WallTime> {
+    static void encode(Encoder& encoder, const WallTime& time)
+    {
+        encoder << time.secondsSinceEpoch().value();
+    }
+
+    static bool decode(Decoder& decoder, WallTime& result)
+    {
+        double value;
+        if (!decoder.decode(value))
+            return false;
+
+        result = WallTime::fromRawSeconds(value);
         return true;
     }
 };

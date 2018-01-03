@@ -78,7 +78,7 @@ private:
     FileSystem::PlatformFileHandle m_contentFile;
 
     size_t m_entrySize;
-    double m_expireDate;
+    WallTime m_expireDate;
     bool m_headerParsed;
     bool m_isLoading;
     ListHashSet<ResourceHandle*> m_clients;

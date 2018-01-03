@@ -28,7 +28,6 @@
 
 #include "StoredCredentialsPolicy.h"
 #include "URLHash.h"
-#include <chrono>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/text/StringHash.h>
@@ -55,7 +54,7 @@ private:
     // FIXME: A better solution to holding onto the absolute expiration time might be
     // to start a timer for the expiration delta that removes this from the cache when
     // it fires.
-    std::chrono::steady_clock::time_point m_absoluteExpiryTime;
+    MonotonicTime m_absoluteExpiryTime;
     StoredCredentialsPolicy m_storedCredentialsPolicy;
     HashSet<String> m_methods;
     HashSet<String, ASCIICaseInsensitiveHash> m_headers;
