@@ -57,7 +57,9 @@
 #if PLATFORM(GTK)
 #include "WebKitDOMDocumentPrivate.h"
 #include "WebKitDOMElementPrivate.h"
+#include "WebKitDOMHTMLFormElementPrivate.h"
 #include "WebKitWebHitTestResultPrivate.h"
+#include "WebKitWebProcessEnumTypes.h"
 #endif
 
 using namespace WebKit;
@@ -72,6 +74,7 @@ enum {
     CONSOLE_MESSAGE_SENT,
 #if PLATFORM(GTK)
     FORM_CONTROLS_ASSOCIATED,
+    WILL_SUBMIT_FORM,
 #endif
 
     LAST_SIGNAL
@@ -380,6 +383,16 @@ public:
     {
     }
 
+    void willSubmitForm(WebPage*, HTMLFormElement* formElement, WebFrame* frame, WebFrame* sourceFrame, const Vector<std::pair<String, String>>& values, RefPtr<API::Object>&) override
+    {
+        fireFormSubmissionEvent(WEBKIT_FORM_SUBMISSION_WILL_COMPLETE, formElement, frame, sourceFrame, values);
+    }
+
+    void willSendSubmitEvent(WebPage*, HTMLFormElement* formElement, WebFrame* frame, WebFrame* sourceFrame, const Vector<std::pair<String, String>>& values) override
+    {
+        fireFormSubmissionEvent(WEBKIT_FORM_SUBMISSION_WILL_SEND_DOM_EVENT, formElement, frame, sourceFrame, values);
+    }
+
     void didAssociateFormControls(WebPage*, const Vector<RefPtr<Element>>& elements) override
     {
         GRefPtr<GPtrArray> formElements = adoptGRef(g_ptr_array_sized_new(elements.size()));
@@ -392,6 +405,21 @@ public:
     bool shouldNotifyOnFormChanges(WebPage*) override { return true; }
 
 private:
+    void fireFormSubmissionEvent(WebKitFormSubmissionStep step, HTMLFormElement* formElement, WebFrame* frame, WebFrame* sourceFrame, const Vector<std::pair<String, String>>& values)
+    {
+        WebKitFrame* webkitTargetFrame = webkitFrameGetOrCreate(frame);
+        WebKitFrame* webkitSourceFrame = webkitFrameGetOrCreate(sourceFrame);
+
+        GRefPtr<GPtrArray> textFieldNames = adoptGRef(g_ptr_array_new_full(values.size(), g_free));
+        GRefPtr<GPtrArray> textFieldValues = adoptGRef(g_ptr_array_new_full(values.size(), g_free));
+        for (auto& pair : values) {
+            g_ptr_array_add(textFieldNames.get(), g_strdup(pair.first.utf8().data()));
+            g_ptr_array_add(textFieldValues.get(), g_strdup(pair.second.utf8().data()));
+        }
+
+        g_signal_emit(m_webPage, signals[WILL_SUBMIT_FORM], 0, WebKit::kit(formElement), step, webkitSourceFrame, webkitTargetFrame, textFieldNames.get(), textFieldValues.get());
+    }
+
     WebKitWebPage* m_webPage;
 };
 #endif
@@ -558,6 +586,65 @@ static void webkit_web_page_class_init(WebKitWebPageClass* klass)
         0, 0, nullptr,
         g_cclosure_marshal_VOID__BOXED,
         G_TYPE_NONE, 1,
+        G_TYPE_PTR_ARRAY);
+
+    /**
+     * WebKitWebPage::will-submit-form:
+     * @web_page: the #WebKitWebPage on which the signal is emitted
+     * @form: the #WebKitDOMHTMLFormElement to be submitted
+     * @step: a #WebKitFormSubmissionEventType indicating the current
+     * stage of form submission
+     * @source_frame: the #WebKitFrame containing the form to be
+     * submitted
+     * @target_frame: the #WebKitFrame containing the form's target,
+     * which may be the same as @source_frame if no target was specified
+     * @text_field_names: (element-type utf8) (transfer none): names of
+     * the form's text fields
+     * @text_field_values: (element-type utf8) (transfer none): values
+     * of the form's text fields
+     *
+     * This signal is emitted to indicate various points during form
+     * submission. @step indicates the current stage of form submission.
+     *
+     * If this signal is emitted with %WEBKIT_FORM_SUBMISSION_WILL_SEND_DOM_EVENT,
+     * then the DOM submit event is about to be emitted. JavaScript code
+     * may rely on the submit event to detect that the user has clicked
+     * on a submit button, and to possibly cancel the form submission
+     * before %WEBKIT_FORM_SUBMISSION_WILL_COMPLETE. However, beware
+     * that, for historical reasons, the submit event is not emitted at
+     * all if the form submission is triggered by JavaScript. For these
+     * reasons, %WEBKIT_FORM_SUBMISSION_WILL_SEND_DOM_EVENT may not
+     * be used to reliably detect whether a form will be submitted.
+     * Instead, use it to detect if a user has clicked on a form's
+     * submit button even if JavaScript later cancels the form
+     * submission, or to read the values of the form's fields even if
+     * JavaScript later clears certain fields before submitting. This
+     * may be needed, for example, to implement a robust browser
+     * password manager, as some misguided websites may use such
+     * techniques to attempt to thwart password managers.
+     *
+     * If this signal is emitted with %WEBKIT_FORM_SUBMISSION_WILL_COMPLETE,
+     * the form will imminently be submitted. It can no longer be
+     * cancelled. This event always occurs immediately before a form is
+     * submitted to its target, so use this event to reliably detect
+     * when a form is submitted. This event occurs after
+     * %WEBKIT_FORM_SUBMISSION_WILL_SEND_DOM_EVENT if that event is
+     * emitted.
+     *
+     * Since: 2.20
+     */
+    signals[WILL_SUBMIT_FORM] = g_signal_new(
+        "will-submit-form",
+        G_TYPE_FROM_CLASS(klass),
+        G_SIGNAL_RUN_LAST,
+        0, 0, nullptr,
+        g_cclosure_marshal_generic,
+        G_TYPE_NONE, 6,
+        WEBKIT_DOM_TYPE_HTML_FORM_ELEMENT,
+        WEBKIT_TYPE_FORM_SUBMISSION_STEP,
+        WEBKIT_TYPE_FRAME,
+        WEBKIT_TYPE_FRAME,
+        G_TYPE_PTR_ARRAY,
         G_TYPE_PTR_ARRAY);
 #endif
 }

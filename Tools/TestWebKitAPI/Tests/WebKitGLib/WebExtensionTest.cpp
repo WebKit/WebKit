@@ -61,6 +61,20 @@ static const char introspectionXML[] =
     "  <signal name='FormControlsAssociated'>"
     "   <arg type='s' name='formIds' direction='out'/>"
     "  </signal>"
+    "  <signal name='FormSubmissionWillSendDOMEvent'>"
+    "    <arg type='s' name='formID' direction='out'/>"
+    "    <arg type='s' name='textFieldNames' direction='out'/>"
+    "    <arg type='s' name='textFieldValues' direction='out'/>"
+    "    <arg type='b' name='targetFrameIsMainFrame' direction='out'/>"
+    "    <arg type='b' name='sourceFrameIsMainFrame' direction='out'/>"
+    "  </signal>"
+    "  <signal name='FormSubmissionWillComplete'>"
+    "    <arg type='s' name='formID' direction='out'/>"
+    "    <arg type='s' name='textFieldNames' direction='out'/>"
+    "    <arg type='s' name='textFieldValues' direction='out'/>"
+    "    <arg type='b' name='targetFrameIsMainFrame' direction='out'/>"
+    "    <arg type='b' name='sourceFrameIsMainFrame' direction='out'/>"
+    "  </signal>"
     "  <signal name='URIChanged'>"
     "   <arg type='s' name='uri' direction='out'/>"
     "  </signal>"
@@ -71,11 +85,15 @@ static const char introspectionXML[] =
 typedef enum {
     DocumentLoadedSignal,
     URIChangedSignal,
+#if PLATFORM(GTK)
     FormControlsAssociatedSignal,
+    FormSubmissionWillSendDOMEventSignal,
+    FormSubmissionWillCompleteSignal,
+#endif
 } DelayedSignalType;
 
 struct DelayedSignal {
-    DelayedSignal(DelayedSignalType type)
+    explicit DelayedSignal(DelayedSignalType type)
         : type(type)
     {
     }
@@ -86,8 +104,22 @@ struct DelayedSignal {
     {
     }
 
+    DelayedSignal(DelayedSignalType type, const char* str, const char* str2, const char* str3, gboolean b, gboolean b2)
+        : type(type)
+        , str(str)
+        , str2(str2)
+        , str3(str3)
+        , b(b)
+        , b2(b2)
+    {
+    }
+
     DelayedSignalType type;
     CString str;
+    CString str2;
+    CString str3;
+    gboolean b;
+    gboolean b2;
 };
 
 Deque<DelayedSignal> delayedSignalsQueue;
@@ -308,6 +340,58 @@ static void formControlsAssociatedCallback(WebKitWebPage* webPage, GPtrArray* fo
     else
         delayedSignalsQueue.append(DelayedSignal(FormControlsAssociatedSignal, formIds.get()));
 }
+
+static void emitFormSubmissionEvent(GDBusConnection* connection, const char* methodName, const char* formID, const char* names, const char* values, gboolean targetFrameIsMainFrame, gboolean sourceFrameIsMainFrame)
+{
+    bool ok = g_dbus_connection_emit_signal(
+        connection,
+        nullptr,
+        "/org/webkit/gtk/WebExtensionTest",
+        "org.webkit.gtk.WebExtensionTest",
+        methodName,
+        g_variant_new("(sssbb)", formID, names, values, targetFrameIsMainFrame, sourceFrameIsMainFrame),
+        nullptr);
+    g_assert(ok);
+}
+
+static void handleFormSubmissionCallback(WebKitWebPage* webPage, DelayedSignalType delayedSignalType, const char* methodName, WebKitDOMHTMLFormElement* formElement, WebKitFrame* sourceFrame, WebKitFrame* targetFrame, GPtrArray* textFieldNames, GPtrArray* textFieldValues, WebKitWebExtension* extension)
+{
+    GString* namesBuilder = g_string_new(nullptr);
+    for (guint i = 0; i < textFieldNames->len; ++i) {
+        auto* name = static_cast<char*>(g_ptr_array_index(textFieldNames, i));
+        g_string_append(namesBuilder, name);
+        g_string_append_c(namesBuilder, ',');
+    }
+    GUniquePtr<char> names(g_string_free(namesBuilder, FALSE));
+
+    GString* valuesBuilder = g_string_new(nullptr);
+    for (guint i = 0; i < textFieldValues->len; ++i) {
+        auto* value = static_cast<char*>(g_ptr_array_index(textFieldValues, i));
+        g_string_append(valuesBuilder, value);
+        g_string_append_c(valuesBuilder, ',');
+    }
+    GUniquePtr<char> values(g_string_free(valuesBuilder, FALSE));
+
+    gpointer data = g_object_get_data(G_OBJECT(extension), "dbus-connection");
+    if (data)
+        emitFormSubmissionEvent(G_DBUS_CONNECTION(data), methodName, webkit_dom_element_get_id(WEBKIT_DOM_ELEMENT(formElement)), names.get(), values.get(), webkit_frame_is_main_frame(targetFrame), webkit_frame_is_main_frame(sourceFrame));
+    else
+        delayedSignalsQueue.append(DelayedSignal(delayedSignalType, webkit_dom_element_get_id(WEBKIT_DOM_ELEMENT(formElement)), names.get(), values.get(), webkit_frame_is_main_frame(targetFrame), webkit_frame_is_main_frame(sourceFrame)));
+}
+
+static void willSubmitFormCallback(WebKitWebPage* webPage, WebKitDOMHTMLFormElement* formElement, WebKitFormSubmissionStep step, WebKitFrame* sourceFrame, WebKitFrame* targetFrame, GPtrArray* textFieldNames, GPtrArray* textFieldValues, WebKitWebExtension* extension)
+{
+    switch (step) {
+    case WEBKIT_FORM_SUBMISSION_WILL_SEND_DOM_EVENT:
+        handleFormSubmissionCallback(webPage, FormSubmissionWillSendDOMEventSignal, "FormSubmissionWillSendDOMEvent", formElement, sourceFrame, targetFrame, textFieldNames, textFieldValues, extension);
+        break;
+    case WEBKIT_FORM_SUBMISSION_WILL_COMPLETE:
+        handleFormSubmissionCallback(webPage, FormSubmissionWillCompleteSignal, "FormSubmissionWillComplete", formElement, sourceFrame, targetFrame, textFieldNames, textFieldValues, extension);
+        break;
+    default:
+        g_assert_not_reached();
+    }
+}
 #endif
 
 static void pageCreatedCallback(WebKitWebExtension* extension, WebKitWebPage* webPage, gpointer)
@@ -319,6 +403,7 @@ static void pageCreatedCallback(WebKitWebExtension* extension, WebKitWebPage* we
 #if PLATFORM(GTK)
     g_signal_connect(webPage, "context-menu", G_CALLBACK(contextMenuCallback), nullptr);
     g_signal_connect(webPage, "form-controls-associated", G_CALLBACK(formControlsAssociatedCallback), extension);
+    g_signal_connect(webPage, "will-submit-form", G_CALLBACK(willSubmitFormCallback), extension);
 #endif
 }
 
@@ -445,13 +530,18 @@ static void busAcquiredCallback(GDBusConnection* connection, const char* name, g
         case URIChangedSignal:
             emitURIChanged(connection, delayedSignal.str.data());
             break;
-        case FormControlsAssociatedSignal:
 #if PLATFORM(GTK)
+        case FormControlsAssociatedSignal:
             emitFormControlsAssociated(connection, delayedSignal.str.data());
-#elif PLATFORM(WPE)
-            g_assert_not_reached();
-#endif
             break;
+        case FormSubmissionWillCompleteSignal:
+            emitFormSubmissionEvent(connection, "FormSubmissionWillComplete", delayedSignal.str.data(), delayedSignal.str2.data(), delayedSignal.str3.data(), delayedSignal.b, delayedSignal.b2);
+            break;
+        case FormSubmissionWillSendDOMEventSignal:
+            emitFormSubmissionEvent(connection, "FormSubmissionWillSendDOMEvent", delayedSignal.str.data(), delayedSignal.str2.data(), delayedSignal.str3.data(), delayedSignal.b, delayedSignal.b2);
+            break;
+#endif
+            g_assert_not_reached();
         }
     }
 }

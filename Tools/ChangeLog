@@ -1,5 +1,30 @@
 2018-01-03  Michael Catanzaro  <mcatanzaro@igalia.com>
 
+        [GTK] Add web process API to detect when form is submitted via JavaScript
+        https://bugs.webkit.org/show_bug.cgi?id=173915
+
+        Reviewed by Carlos Garcia Campos.
+
+        Test it.
+
+        * TestWebKitAPI/Tests/WebKitGLib/TestWebExtensions.cpp:
+        (FormSubmissionTest::FormSubmissionTest):
+        (FormSubmissionTest::~FormSubmissionTest):
+        (FormSubmissionTest::testFormSubmissionResult):
+        (FormSubmissionTest::willSendDOMEventCallback):
+        (FormSubmissionTest::willCompleteCallback):
+        (FormSubmissionTest::runJavaScriptAndWaitUntilFormSubmitted):
+        (testWebExtensionFormSubmissionSteps):
+        (beforeAll):
+        * TestWebKitAPI/Tests/WebKitGLib/WebExtensionTest.cpp:
+        (DelayedSignal::DelayedSignal):
+        (emitFormSubmissionEvent):
+        (handleFormSubmissionCallback):
+        (willSubmitFormCallback):
+        (pageCreatedCallback):
+
+2018-01-03  Michael Catanzaro  <mcatanzaro@igalia.com>
+
         Unreviewed, skip broken API test /webkit2/WebKitWebsiteData/databases
         https://bugs.webkit.org/show_bug.cgi?id=181251
 

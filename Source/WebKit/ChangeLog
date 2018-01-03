@@ -1,3 +1,50 @@
+2018-01-03  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [GTK] Add web process API to detect when form is submitted via JavaScript
+        https://bugs.webkit.org/show_bug.cgi?id=173915
+
+        Reviewed by Carlos Garcia Campos.
+
+        Epiphany relies on the DOM submit event to detect when a form has been submitted. However,
+        for historical reasons, the submit event is not emitted when a form is submitted by
+        JavaScript. It is therefore not currently possible for a web browser to reliably detect form
+        submission and not possible to implement a robust password storage feature. In order to
+        avoid this problem, this patch adds a new WebKitWebPage signal, will-submit-form, that
+        browsers can use in preference to a DOM event listener.
+
+        Unfortunately, this signal is not available for WPE because it depends on the DOM API.
+
+        There are two submission events, WEBKIT_FORM_SUBMISSION_WILL_SEND_DOM_EVENT and
+        WEBKIT_FORM_SUBMISSION_WILL_COMPLETE. WEBKIT_FORM_SUBMISSION_WILL_SEND_DOM_EVENT
+        occurs earlier than WEBKIT_FORM_SUBMISSION_WILL_COMPLETE and can be used to retrieve form
+        values before websites receive the DOM submit event. This is useful as some websites like
+        to delete form values right before a submit would normally happen in order to attempt to
+        defeat browser password managers. There are two tricks to note: JavaScript can cancel form
+        submission immediately after this event occurs (by returning false in an onsubmit handler),
+        and, for historical reasons, this event will not occur at all when form submission is
+        triggered by JavaScript. WEBKIT_FORM_SUBMISSION_WILL_COMPLETE occurs next, and is more
+        straightforward: it is always emitted when a form is about to be submitted, when it is too
+        late to cancel.
+
+        The recommended way to reliably retrieve password form values would be to watch for both
+        events, use the form value detected in WEBKIT_FORM_SUBMISSION_WILL_SEND_DOM_EVENT
+        if that event is emitted, and use the value detected later in
+        WEBKIT_FORM_SUBMISSION_WILL_COMPLETE otherwise.
+
+        Since one of the signal arguments is an enum, we now have to run glib-mkenums for the web
+        process API. And that has resulted in this patch also adding GType goo for
+        WebKitConsoleMessageLevel and WebKitConsoleMessageSource that was previously missing. Any
+        applications that for some unlikely reason want to use these enums in properties or signals
+        will be happy.
+
+        * PlatformGTK.cmake:
+        * UIProcess/API/gtk/docs/webkit2gtk-4.0-sections.txt:
+        * WebProcess/InjectedBundle/API/glib/WebKitWebPage.cpp:
+        (webkit_web_page_class_init):
+        * WebProcess/InjectedBundle/API/gtk/WebKitWebPage.h:
+        * WebProcess/InjectedBundle/API/gtk/WebKitWebProcessEnumTypes.cpp.template: Added.
+        * WebProcess/InjectedBundle/API/gtk/WebKitWebProcessEnumTypes.h.template: Added.
+
 2018-01-03  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Really fix plugin process after r226327.

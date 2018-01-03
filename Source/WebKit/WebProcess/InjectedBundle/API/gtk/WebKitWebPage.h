@@ -46,6 +46,23 @@ typedef struct _WebKitWebPagePrivate WebKitWebPagePrivate;
 /* Forward declarations */
 typedef struct _WebKitWebEditor      WebKitWebEditor;
 
+/**
+ * WebKitFormSubmissionStep:
+ * @WEBKIT_FORM_SUBMISSION_WILL_SEND_DOM_EVENT: indicates the form's
+ * DOM submit event is about to be emitted.
+ * @WEBKIT_FORM_SUBMISSION_WILL_COMPLETE: indicates the form is about
+ * to be submitted.
+ *
+ * Used to indicate a particular stage in form submission. See
+ * #WebKitWebPage::will-submit-form.
+ *
+ * Since: 2.20
+ */
+typedef enum {
+    WEBKIT_FORM_SUBMISSION_WILL_SEND_DOM_EVENT,
+    WEBKIT_FORM_SUBMISSION_WILL_COMPLETE,
+} WebKitFormSubmissionStep;
+
 struct _WebKitWebPage {
     GObject parent;
 

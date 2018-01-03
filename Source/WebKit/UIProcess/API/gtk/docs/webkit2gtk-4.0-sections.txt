@@ -1438,6 +1438,7 @@ webkit_web_extension_get_type
 <SECTION>
 <FILE>WebKitWebPage</FILE>
 WebKitWebPage
+WebKitFormSubmissionStep
 webkit_web_page_get_dom_document
 webkit_web_page_get_id
 webkit_web_page_get_uri
@@ -1452,10 +1453,12 @@ WEBKIT_IS_WEB_PAGE
 WEBKIT_WEB_PAGE_CLASS
 WEBKIT_IS_WEB_PAGE_CLASS
 WEBKIT_WEB_PAGE_GET_CLASS
+WEBKIT_TYPE_FORM_SUBMISSION_STEP
 
 <SUBSECTION Private>
 WebKitWebPagePrivate
 webkit_web_page_get_type
+webkit_form_submission_step_get_type
 </SECTION>
 
 <SECTION>
@@ -1553,9 +1556,13 @@ webkit_console_message_get_source_id
 
 <SUBSECTION Standard>
 WEBKIT_TYPE_CONSOLE_MESSAGE
+WEBKIT_TYPE_CONSOLE_MESSAGE_LEVEL
+WEBKIT_TYPE_CONSOLE_MESSAGE_SOURCE
 
 <SUBSECTION Private>
 webkit_console_message_get_type
+webkit_console_message_level_get_type
+webkit_console_message_source_get_type
 </SECTION>
 
 <SECTION>
