@@ -1,3 +1,17 @@
+2018-01-03  Brent Fulgham  <bfulgham@apple.com>
+
+        [macOS] Constant frame dropping during Flash video playback
+        https://bugs.webkit.org/show_bug.cgi?id=181249
+        <rdar://problem/34843448>
+
+        Reviewed by Eric Carlson.
+
+        Review of logs during jerky flash video playback shows a few IOKit properties are being blocked by the sandbox,
+        which prevents some high-efficiency codecs from being used. Add 'AppleGVAKeyDoesNotExist', 'IODVDBundleName', and
+        'IOGVA*Encode' to the whitelist.
+
+        * PluginProcess/mac/com.apple.WebKit.plugin-common.sb.in:
+
 2018-01-03  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [GTK] Add web process API to detect when form is submitted via JavaScript
