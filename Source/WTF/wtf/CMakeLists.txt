@@ -263,7 +263,6 @@ set(WTF_SOURCES
     ParallelHelperPool.cpp
     ParallelJobsGeneric.cpp
     ParkingLot.cpp
-    PointerAsserts.cpp
     Poisoned.cpp
     PrintStream.cpp
     RAMSize.cpp
@@ -285,6 +284,7 @@ set(WTF_SOURCES
     TimeWithDynamicClockType.cpp
     TimingScope.cpp
     UUID.cpp
+    WTFAssertions.cpp
     WallTime.cpp
     WordLock.cpp
     WorkQueue.cpp

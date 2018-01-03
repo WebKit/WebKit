@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,22 +32,29 @@ namespace WTF {
 
 uintptr_t makePoison()
 {
-    uintptr_t key = cryptographicallyRandomNumber();
+    uintptr_t poison = 0;
 #if ENABLE(POISON)
-    key = (key << 32) ^ (static_cast<uintptr_t>(cryptographicallyRandomNumber()) << 3);
-    // Ensure that the poisoned bits (pointer ^ key) do not make a valid pointer and
-    // cannot be 0. We ensure that it is zero so that the poisoned bits can also be
-    // used for a notmal zero check without needing to decoded first.
-    key |= (static_cast<uintptr_t>(0x1) << 63);
-    // Ensure that the bottom alignment bits are still 0 so that the poisoned bits will
+    do {
+        poison = cryptographicallyRandomNumber();
+        poison = (poison << 16) ^ (static_cast<uintptr_t>(cryptographicallyRandomNumber()) << 3);
+    } while (!(poison >> 32)); // Ensure that bits 32-47 are not completely 0.
+
+    // Ensure that the poisoned bits (pointer ^ poison) looks like a valid pointer.
+    RELEASE_ASSERT(poison && !(poison >> 48));
+
+    // Ensure that the poisoned bits (pointer ^ poison) cannot be 0. This is so that the poisoned
+    // bits can also be used for a normal zero check without needing to be decoded first.
+    poison |= (1 << 2);
+
+    // Ensure that the bottom 2 alignment bits are still 0 so that the poisoned bits will
     // still preserve the properties of a pointer where these bits are expected to be 0.
     // This allows the poisoned bits to be used in place of the pointer by clients that
     // rely on this property of pointers and sets flags in the low bits.
-    key &= ~static_cast<uintptr_t>(0x7);
-#else
-    key = 0; // Poisoning is not supported on 32-bit or non-darwin platforms yet.
+    // Note: a regular pointer has 3 alignment bits, but the poisoned bits need to use one
+    // (see above). Hence, clients can only use 2 bits for flags.
+    RELEASE_ASSERT(!(poison & 0x3));
 #endif
-    return key;
+    return poison;
 }
 
 } // namespace WTF

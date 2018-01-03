@@ -150,7 +150,7 @@
 		E3A32BC41FC830E2007D7E76 /* JSValueMalloc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3A32BC21FC830E2007D7E76 /* JSValueMalloc.cpp */; };
 		E4A0AD391A96245500536DF6 /* WorkQueue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4A0AD371A96245500536DF6 /* WorkQueue.cpp */; };
 		E4A0AD3D1A96253C00536DF6 /* WorkQueueCocoa.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4A0AD3C1A96253C00536DF6 /* WorkQueueCocoa.cpp */; };
-		FE05FAFF1FE5007500093230 /* PointerAsserts.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE05FAFE1FE5007500093230 /* PointerAsserts.cpp */; };
+		FE05FAFF1FE5007500093230 /* WTFAssertions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE05FAFE1FE5007500093230 /* WTFAssertions.cpp */; };
 		FE85416E1FBE285D008DA5DA /* Poisoned.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE85416C1FBE285B008DA5DA /* Poisoned.cpp */; };
 		FEDACD3D1630F83F00C69634 /* StackStats.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FEDACD3B1630F83F00C69634 /* StackStats.cpp */; };
 /* End PBXBuildFile section */
@@ -619,7 +619,7 @@
 		EF7D6CD59D8642A8A0DA86AD /* StackTrace.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StackTrace.h; sourceTree = "<group>"; };
 		F72BBDB107FA424886178B9E /* SymbolImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SymbolImpl.cpp; sourceTree = "<group>"; };
 		FE05FAE61FDB214300093230 /* DumbPtrTraits.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DumbPtrTraits.h; sourceTree = "<group>"; };
-		FE05FAFE1FE5007500093230 /* PointerAsserts.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PointerAsserts.cpp; sourceTree = "<group>"; };
+		FE05FAFE1FE5007500093230 /* WTFAssertions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WTFAssertions.cpp; sourceTree = "<group>"; };
 		FE05FB041FE8453200093230 /* PoisonedUniquePtr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PoisonedUniquePtr.h; sourceTree = "<group>"; };
 		FE8225301B2A1E5B00BA68FD /* NakedPtr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NakedPtr.h; sourceTree = "<group>"; };
 		FE85416C1FBE285B008DA5DA /* Poisoned.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Poisoned.cpp; sourceTree = "<group>"; };
@@ -983,7 +983,6 @@
 				0F824A651B7443A0002E345D /* ParkingLot.h */,
 				A876DBD7151816E500DADB95 /* Platform.h */,
 				E3200AB41E9A536D003B59D2 /* PlatformRegisters.h */,
-				FE05FAFE1FE5007500093230 /* PointerAsserts.cpp */,
 				0FF860941BCCBD740045127F /* PointerComparison.h */,
 				FE85416C1FBE285B008DA5DA /* Poisoned.cpp */,
 				FE85416D1FBE285C008DA5DA /* Poisoned.h */,
@@ -1089,6 +1088,7 @@
 				A8A47370151A825B004123FF /* Vector.h */,
 				A8A47371151A825B004123FF /* VectorTraits.h */,
 				A8A47372151A825B004123FF /* VMTags.h */,
+				FE05FAFE1FE5007500093230 /* WTFAssertions.cpp */,
 				0F66B2881DC97BAB004A1D3F /* WallTime.cpp */,
 				0F66B2891DC97BAB004A1D3F /* WallTime.h */,
 				974CFC8D16A4F327006D5404 /* WeakPtr.h */,
@@ -1420,7 +1420,7 @@
 				0F66B28A1DC97BAB004A1D3F /* ClockType.cpp in Sources */,
 				A8A47460151A825B004123FF /* CollatorDefault.cpp in Sources */,
 				A8A47463151A825B004123FF /* CollatorICU.cpp in Sources */,
-				FE05FAFF1FE5007500093230 /* PointerAsserts.cpp in Sources */,
+				FE05FAFF1FE5007500093230 /* WTFAssertions.cpp in Sources */,
 				0F8F2B92172E0103007DBDA5 /* CompilationThread.cpp in Sources */,
 				0F30CB5A1FCDF134004B5323 /* ConcurrentPtrHashSet.cpp in Sources */,
 				0F8E85DB1FD485B000691889 /* CountingLock.cpp in Sources */,

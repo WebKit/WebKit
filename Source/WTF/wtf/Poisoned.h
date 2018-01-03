@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -214,12 +214,16 @@ inline void swap(PoisonedImpl<K1, k1, T1>& a, PoisonedImpl<K2, k2, T2>& b)
 
 WTF_EXPORT_PRIVATE uintptr_t makePoison();
 
-inline constexpr uintptr_t makePoison(uint32_t key)
+inline constexpr uintptr_t makeConstExprPoison(uint32_t key)
 {
 #if ENABLE(POISON)
-    uintptr_t poison1 = static_cast<uintptr_t>(key) * 6906969069 + 1234567;
-    uintptr_t poison2 = static_cast<uintptr_t>(key) * 8253729 + 2396403;
-    return ((poison1 << 3) ^ (poison2 << 32)) | (static_cast<uintptr_t>(1) << 63);
+    uintptr_t uintptrKey = key;
+    uintptr_t poison1 = uintptrKey * 6906969069 + 1234567;
+    uintptr_t poison2 = uintptrKey * 8253729 + 2396403;
+    uintptr_t poison = (poison1 << 3) ^ (poison2 << 16);
+    poison &= ~(static_cast<uintptr_t>(0xffff) << 48); // Ensure that poisoned bits look like a pointer.
+    poison |= (1 << 2); // Ensure that poisoned bits cannot be 0.
+    return poison;
 #else
     return (void)key, 0;
 #endif
@@ -229,7 +233,7 @@ template<uintptr_t& key, typename T>
 using Poisoned = PoisonedImpl<uintptr_t&, key, T>;
 
 template<uint32_t key, typename T>
-using ConstExprPoisoned = PoisonedImpl<uintptr_t, makePoison(key), T>;
+using ConstExprPoisoned = PoisonedImpl<uintptr_t, makeConstExprPoison(key), T>;
 
 template<uint32_t key, typename T>
 struct ConstExprPoisonedPtrTraits {

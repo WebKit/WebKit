@@ -1,3 +1,41 @@
+2018-01-02  Mark Lam  <mark.lam@apple.com>
+
+        Ensure that poisoned pointers do not look like double or int32 JSValues.
+        https://bugs.webkit.org/show_bug.cgi?id=181221
+        <rdar://problem/36248638>
+
+        Reviewed by JF Bastien.
+
+        Changed poison values to ensure that poisoned bits (i.e. pointer ^ poison)
+        satisfies the following conditions:
+        1. bits 48-63 are 0: this ensures that poisoned bits look like a pointer and
+           not a double or int32 JSValue.
+        2. bits 32-47 are not completely 0.
+        3. bit 2 is never 0: this ensures that the poisoned value of a non-null pointer
+           will never be null.
+        4. bit 0-1 is always 0: this ensures that clients can still use the 2 bottom
+           bits of the poisoned value as flag bits (just like they were able to do with
+           pointer values).  The only difference is that bit 2 can no longer be used for
+           flag bits because poisoned values need it to always be set.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/CMakeLists.txt:
+        * wtf/PointerAsserts.cpp: Removed.
+
+        * wtf/Poisoned.cpp:
+        (WTF::makePoison):
+        - Updated to satisfy the above requirements.
+        
+        * wtf/Poisoned.h:
+        (WTF::makeConstExprPoison):
+        (WTF::makePoison): Deleted.
+
+        * wtf/WTFAssertions.cpp: Copied from Source/WTF/wtf/PointerAsserts.cpp.
+        - Renamed from PointerAsserts.cpp because we assert more things than just
+          pointers here.
+        - Added some assertions to test makeConstExprPoison() to ensure that it satisfies
+          the above requirements.
+
 2017-12-28  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Remove std::chrono if it is not used for ArgumentCoder or PersistentCoder
