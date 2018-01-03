@@ -136,6 +136,10 @@ public:
 
     FloatRect effectBoundaries() const { return m_effectBoundaries; }
     void setEffectBoundaries(const FloatRect& effectBoundaries) { m_effectBoundaries = effectBoundaries; }
+    
+    void setUnclippedAbsoluteSubregion(const FloatRect& r) { m_absoluteUnclippedSubregion = r; }
+    
+    FloatPoint mapPointFromUserSpaceToBuffer(FloatPoint) const;
 
     Filter& filter() { return m_filter; }
     const Filter& filter() const { return m_filter; }
@@ -208,6 +212,9 @@ private:
     // x, y, width and height of the actual SVGFE*Element. Is needed to determine the subregion of the
     // filter primitive on a later step.
     FloatRect m_effectBoundaries;
+    
+    // filterPrimitiveSubregion mapped to absolute coordinates before clipping.
+    FloatRect m_absoluteUnclippedSubregion;
 
     bool m_alphaImage { false };
     bool m_hasX { false };

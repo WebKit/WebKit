@@ -40,9 +40,14 @@ namespace WebCore {
 // according to the SVG 1.1 SE light regression tests
 static const float antiAliasTreshold = 0.016f;
 
-void SpotLightSource::initPaintingData(PaintingData& paintingData)
+void SpotLightSource::initPaintingData(const FilterEffect& filterEffect, PaintingData& paintingData)
 {
-    paintingData.directionVector = m_direction - m_position;
+    m_bufferPosition.setXY(filterEffect.mapPointFromUserSpaceToBuffer(m_userSpacePosition.xy()));
+    // To scale Z, map a point offset from m_userSpacePosition in the x direction by z.
+    FloatPoint mappedZ = filterEffect.mapPointFromUserSpaceToBuffer({ m_userSpacePosition.x() + m_userSpacePosition.z(), m_userSpacePosition.y() });
+    m_bufferPosition.setZ(mappedZ.x() - m_bufferPosition.x());
+    
+    paintingData.directionVector = m_userSpacePointsAt - m_userSpacePosition;
     paintingData.directionVector.normalize();
 
     if (!m_limitingConeAngle) {
@@ -70,9 +75,9 @@ void SpotLightSource::initPaintingData(PaintingData& paintingData)
 LightSource::ComputedLightingData SpotLightSource::computePixelLightingData(const PaintingData& paintingData, int x, int y, float z) const
 {
     FloatPoint3D lightVector = {
-        m_position.x() - x,
-        m_position.y() - y,
-        m_position.z() - z
+        m_bufferPosition.x() - x,
+        m_bufferPosition.y() - y,
+        m_bufferPosition.z() - z
     };
     float lightVectorLength = lightVector.length();
 
@@ -111,49 +116,49 @@ LightSource::ComputedLightingData SpotLightSource::computePixelLightingData(cons
 
 bool SpotLightSource::setX(float x)
 {
-    if (m_position.x() == x)
+    if (m_userSpacePosition.x() == x)
         return false;
-    m_position.setX(x);
+    m_userSpacePosition.setX(x);
     return true;
 }
 
 bool SpotLightSource::setY(float y)
 {
-    if (m_position.y() == y)
+    if (m_userSpacePosition.y() == y)
         return false;
-    m_position.setY(y);
+    m_userSpacePosition.setY(y);
     return true;
 }
 
 bool SpotLightSource::setZ(float z)
 {
-    if (m_position.z() == z)
+    if (m_userSpacePosition.z() == z)
         return false;
-    m_position.setZ(z);
+    m_userSpacePosition.setZ(z);
     return true;
 }
 
 bool SpotLightSource::setPointsAtX(float pointsAtX)
 {
-    if (m_direction.x() == pointsAtX)
+    if (m_userSpacePointsAt.x() == pointsAtX)
         return false;
-    m_direction.setX(pointsAtX);
+    m_userSpacePointsAt.setX(pointsAtX);
     return true;
 }
 
 bool SpotLightSource::setPointsAtY(float pointsAtY)
 {
-    if (m_direction.y() == pointsAtY)
+    if (m_userSpacePointsAt.y() == pointsAtY)
         return false;
-    m_direction.setY(pointsAtY);
+    m_userSpacePointsAt.setY(pointsAtY);
     return true;
 }
 
 bool SpotLightSource::setPointsAtZ(float pointsAtZ)
 {
-    if (m_direction.z() == pointsAtZ)
+    if (m_userSpacePointsAt.z() == pointsAtZ)
         return false;
-    m_direction.setZ(pointsAtZ);
+    m_userSpacePointsAt.setZ(pointsAtZ);
     return true;
 }
 

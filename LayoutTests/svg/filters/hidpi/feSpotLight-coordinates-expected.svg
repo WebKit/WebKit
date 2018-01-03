@@ -1,0 +1,10 @@
+<svg width="500px" height="610px" xmlns="http://www.w3.org/2000/svg">
+<defs>
+    <filter id="filter" filterUnits="objectBoundingBox">
+        <feFlood x="-120" y="85"/>
+    </filter>
+</defs>
+<rect x="110" y="150" width="450" height="320" fill="none" filter="url(#filter)"/>
+<ellipse cx="220" cy="270" rx="95" ry="55" fill="rgb(0, 255, 0)" style="transform: rotate(50deg); transform-origin: 50% 50%; transform-box: fill-box;"/>
+<ellipse cx="220" cy="270" rx="100" ry="60" fill="none" stroke="gray" stroke-width="20" style="transform: rotate(50deg); transform-origin: 50% 50%; transform-box: fill-box;"/>
+</svg>

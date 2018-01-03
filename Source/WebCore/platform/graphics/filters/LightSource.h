@@ -38,6 +38,8 @@ enum LightType {
     LS_SPOT
 };
 
+class FilterEffect;
+
 class LightSource : public RefCounted<LightSource> {
 public:
     struct ComputedLightingData {
@@ -63,19 +65,23 @@ public:
     LightType type() const { return m_type; }
     virtual WTF::TextStream& externalRepresentation(WTF::TextStream&) const = 0;
 
-    virtual void initPaintingData(PaintingData&) = 0;
+    virtual void initPaintingData(const FilterEffect&, PaintingData&) = 0;
     // z is a float number, since it is the alpha value scaled by a user
-    // specified "surfaceScale" constant, which type is <number> in the SVG standard
+    // specified "surfaceScale" constant, which type is <number> in the SVG standard.
+    // x and y are in the coordinates of the FilterEffect's buffer.
     virtual ComputedLightingData computePixelLightingData(const PaintingData&, int x, int y, float z) const = 0;
 
     virtual bool setAzimuth(float) { return false; }
     virtual bool setElevation(float) { return false; }
+    
+    // These are in user space coordinates.
     virtual bool setX(float) { return false; }
     virtual bool setY(float) { return false; }
     virtual bool setZ(float) { return false; }
     virtual bool setPointsAtX(float) { return false; }
     virtual bool setPointsAtY(float) { return false; }
     virtual bool setPointsAtZ(float) { return false; }
+    
     virtual bool setSpecularExponent(float) { return false; }
     virtual bool setLimitingConeAngle(float) { return false; }
 

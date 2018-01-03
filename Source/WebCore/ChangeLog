@@ -1,3 +1,76 @@
+2018-01-03  Simon Fraser  <simon.fraser@apple.com>
+
+        SVG lighting filter lights are in the wrong coordinate system
+        https://bugs.webkit.org/show_bug.cgi?id=181147
+
+        Reviewed by Zalan Bujtas.
+
+        Point and spot light coordinates weren't being converted into buffer-relative
+        coordinates before being fed into the lighting math, resulting in incorrect light
+        rendering on Retina devices, and when the filter primitive region was clipped.
+
+        Fix by storing absoluteUnclippedSubregion on FilterEffect, which allows us to map
+        lighting points from user space coordinates into the coordinates of the buffer being
+        used for rendering. Also scale the light z coordinate by doing a dummy point mapping in x.
+
+        Rename members of PointLightSource and SpotLightSource to make it clear which coordinate
+        system they are in.
+
+        Tests include HiDPI tests.
+
+        Tests: svg/filters/fePointLight-coordinates-expected.svg
+               svg/filters/fePointLight-coordinates.svg
+               svg/filters/feSpotLight-coordinates-expected.svg
+               svg/filters/feSpotLight-coordinates.svg
+               svg/filters/hidpi/fePointLight-coordinates-expected.svg
+               svg/filters/hidpi/fePointLight-coordinates.svg
+               svg/filters/hidpi/feSpotLight-coordinates-expected.svg
+               svg/filters/hidpi/feSpotLight-coordinates.svg
+
+        * platform/graphics/FloatPoint3D.h: Make it easy to get and set the X and Y coords as a FloatPoint.
+        (WebCore::FloatPoint3D::xy const):
+        (WebCore::FloatPoint3D::setXY):
+        * platform/graphics/GeometryUtilities.cpp:
+        (WebCore::mapPoint):
+        (WebCore::mapRect):
+        * platform/graphics/GeometryUtilities.h: Helper to make a point between rects.
+        * platform/graphics/filters/DistantLightSource.cpp:
+        (WebCore::DistantLightSource::initPaintingData):
+        * platform/graphics/filters/DistantLightSource.h:
+        * platform/graphics/filters/FELighting.cpp:
+        (WebCore::FELighting::drawLighting):
+        * platform/graphics/filters/FilterEffect.cpp:
+        (WebCore::FilterEffect::mapPointFromUserSpaceToBuffer const):
+        * platform/graphics/filters/FilterEffect.h:
+        (WebCore::FilterEffect::setUnclippedAbsoluteSubregion):
+        * platform/graphics/filters/LightSource.h:
+        * platform/graphics/filters/PointLightSource.cpp:
+        (WebCore::PointLightSource::initPaintingData):
+        (WebCore::PointLightSource::computePixelLightingData const):
+        (WebCore::PointLightSource::setX):
+        (WebCore::PointLightSource::setY):
+        (WebCore::PointLightSource::setZ):
+        * platform/graphics/filters/PointLightSource.h:
+        (WebCore::PointLightSource::position const):
+        (WebCore::PointLightSource::PointLightSource):
+        * platform/graphics/filters/SpotLightSource.cpp:
+        (WebCore::SpotLightSource::initPaintingData):
+        (WebCore::SpotLightSource::computePixelLightingData const):
+        (WebCore::SpotLightSource::setX):
+        (WebCore::SpotLightSource::setY):
+        (WebCore::SpotLightSource::setZ):
+        (WebCore::SpotLightSource::setPointsAtX):
+        (WebCore::SpotLightSource::setPointsAtY):
+        (WebCore::SpotLightSource::setPointsAtZ):
+        * platform/graphics/filters/SpotLightSource.h:
+        (WebCore::SpotLightSource::position const):
+        (WebCore::SpotLightSource::direction const):
+        (WebCore::SpotLightSource::SpotLightSource):
+        * rendering/svg/RenderSVGResourceFilter.cpp:
+        (WebCore::RenderSVGResourceFilter::buildPrimitives const):
+        * rendering/svg/RenderSVGResourceFilterPrimitive.cpp:
+        (WebCore::RenderSVGResourceFilterPrimitive::determineFilterPrimitiveSubregion):
+
 2018-01-03  Youenn Fablet  <youenn@apple.com>
 
         Select service worker for documents with data/blob URLS

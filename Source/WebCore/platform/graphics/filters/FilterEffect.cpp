@@ -25,6 +25,7 @@
 #include "FilterEffect.h"
 
 #include "Filter.h"
+#include "GeometryUtilities.h"
 #include "ImageBuffer.h"
 #include "Logging.h"
 #include <runtime/JSCInlines.h>
@@ -64,6 +65,13 @@ void FilterEffect::clipAbsolutePaintRect()
         m_absolutePaintRect.intersect(enclosingIntRect(m_maxEffectRect));
     else
         m_absolutePaintRect.unite(enclosingIntRect(m_maxEffectRect));
+}
+
+FloatPoint FilterEffect::mapPointFromUserSpaceToBuffer(FloatPoint userSpacePoint) const
+{
+    FloatPoint absolutePoint = mapPoint(userSpacePoint, m_filterPrimitiveSubregion, m_absoluteUnclippedSubregion);
+    absolutePoint.moveBy(-m_absolutePaintRect.location());
+    return absolutePoint;
 }
 
 IntRect FilterEffect::requestedRegionOfInputImageData(const IntRect& effectRect) const

@@ -34,12 +34,12 @@ public:
         return adoptRef(*new PointLightSource(position));
     }
 
-    const FloatPoint3D& position() const { return m_position; }
+    const FloatPoint3D& position() const { return m_userSpacePosition; }
     bool setX(float) override;
     bool setY(float) override;
     bool setZ(float) override;
 
-    void initPaintingData(PaintingData&) override;
+    void initPaintingData(const FilterEffect&, PaintingData&) override;
     ComputedLightingData computePixelLightingData(const PaintingData&, int x, int y, float z) const final;
 
     WTF::TextStream& externalRepresentation(WTF::TextStream&) const override;
@@ -47,11 +47,12 @@ public:
 private:
     PointLightSource(const FloatPoint3D& position)
         : LightSource(LS_POINT)
-        , m_position(position)
+        , m_userSpacePosition(position)
     {
     }
 
-    FloatPoint3D m_position;
+    FloatPoint3D m_userSpacePosition;
+    FloatPoint3D m_bufferPosition;
 };
 
 } // namespace WebCore

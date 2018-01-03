@@ -1,3 +1,19 @@
+2018-01-03  Simon Fraser  <simon.fraser@apple.com>
+
+        SVG lighting filter lights are in the wrong coordinate system
+        https://bugs.webkit.org/show_bug.cgi?id=181147
+
+        Reviewed by Zalan Bujtas.
+
+        * svg/filters/fePointLight-coordinates-expected.svg: Added.
+        * svg/filters/fePointLight-coordinates.svg: Added.
+        * svg/filters/feSpotLight-coordinates-expected.svg: Added.
+        * svg/filters/feSpotLight-coordinates.svg: Added.
+        * svg/filters/hidpi/fePointLight-coordinates-expected.svg: Added.
+        * svg/filters/hidpi/fePointLight-coordinates.svg: Added.
+        * svg/filters/hidpi/feSpotLight-coordinates-expected.svg: Added.
+        * svg/filters/hidpi/feSpotLight-coordinates.svg: Added.
+
 2018-01-03  Youenn Fablet  <youenn@apple.com>
 
         Select service worker for documents with data/blob URLS

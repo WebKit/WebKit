@@ -96,6 +96,20 @@ FloatRect unionRect(const Vector<FloatRect>& rects)
     return result;
 }
 
+FloatPoint mapPoint(FloatPoint p, const FloatRect& srcRect, const FloatRect& destRect)
+{
+    if (!srcRect.width() || !srcRect.height())
+        return p;
+
+    float widthScale = destRect.width() / srcRect.width();
+    float heightScale = destRect.height() / srcRect.height();
+
+    return {
+        destRect.x() + (p.x() - srcRect.x()) * widthScale,
+        destRect.y() + (p.y() - srcRect.y()) * heightScale
+    };
+}
+
 FloatRect mapRect(const FloatRect& r, const FloatRect& srcRect, const FloatRect& destRect)
 {
     if (!srcRect.width() || !srcRect.height())
@@ -103,9 +117,12 @@ FloatRect mapRect(const FloatRect& r, const FloatRect& srcRect, const FloatRect&
 
     float widthScale = destRect.width() / srcRect.width();
     float heightScale = destRect.height() / srcRect.height();
-    return FloatRect(destRect.x() + (r.x() - srcRect.x()) * widthScale,
+    return {
+        destRect.x() + (r.x() - srcRect.x()) * widthScale,
         destRect.y() + (r.y() - srcRect.y()) * heightScale,
-        r.width() * widthScale, r.height() * heightScale);
+        r.width() * widthScale,
+        r.height() * heightScale
+    };
 }
 
 FloatRect largestRectWithAspectRatioInsideRect(float aspectRatio, const FloatRect& srcRect)

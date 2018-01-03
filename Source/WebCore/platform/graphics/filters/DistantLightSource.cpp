@@ -35,7 +35,7 @@
 
 namespace WebCore {
 
-void DistantLightSource::initPaintingData(PaintingData& paintingData)
+void DistantLightSource::initPaintingData(const FilterEffect&, PaintingData& paintingData)
 {
     float azimuth = deg2rad(m_azimuth);
     float elevation = deg2rad(m_elevation);
