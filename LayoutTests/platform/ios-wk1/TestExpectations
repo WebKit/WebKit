@@ -876,9 +876,6 @@ fast/transforms/transformed-focused-text-input.html [ Failure ]
 fast/writing-mode/Kusa-Makura-background-canvas.html [ Failure ]
 http/tests/navigation/page-cache-iframe-no-current-historyItem.html [ Failure ]
 
-# XMLHttpRequest tests that fail
-webkit.org/b/82672 http/tests/xmlhttprequest/range-test.html [ Failure ]
-
 # JavaScripts tests that fail:
 js/dom/deep-recursion-test.html [ Failure ]
 
@@ -1906,3 +1903,6 @@ webkit.org/b/178490 fast/text/scroll-text-overflow-ellipsis.html [ Skip ]
 
 # User-installed fonts test infrastructure is not present in WK1
 webkit.org/b/180062 fast/text/user-installed-fonts [ ImageOnlyFailure ]
+
+# rdar://problem/34716163 Breaks subsequent tests using response.xml
+http/tests/xmlhttprequest/range-test.html [ Skip ]
