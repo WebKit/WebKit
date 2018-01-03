@@ -37,7 +37,7 @@ public:
     ~InProcessMessagePortChannel() final;
 
     void postMessageToRemote(Ref<SerializedScriptValue>&&, std::unique_ptr<MessagePortChannelArray>&&) final;
-    Deque<std::unique_ptr<EventData>> takeAllMessagesFromRemote() final;
+    void takeAllMessagesFromRemote(CompletionHandler<void(Deque<std::unique_ptr<EventData>>&&)>&&) final;
     bool isConnectedTo(const MessagePortIdentifier&) final;
     bool entangleWithRemoteIfOpen(const MessagePortIdentifier&) final;
     void disentangle() final;

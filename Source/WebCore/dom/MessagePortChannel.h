@@ -67,7 +67,7 @@ public:
     static void createChannelBetweenPorts(MessagePort&, MessagePort&);
 
     virtual void postMessageToRemote(Ref<SerializedScriptValue>&&, std::unique_ptr<MessagePortChannelArray>&&) = 0;
-    virtual Deque<std::unique_ptr<EventData>> takeAllMessagesFromRemote() = 0;
+    virtual void takeAllMessagesFromRemote(CompletionHandler<void(Deque<std::unique_ptr<EventData>>&&)>&&) = 0;
     virtual bool isConnectedTo(const MessagePortIdentifier&) = 0;
     virtual bool entangleWithRemoteIfOpen(const MessagePortIdentifier&) = 0;
     virtual void disentangle() = 0;

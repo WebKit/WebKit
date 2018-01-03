@@ -203,17 +203,19 @@ void MessagePort::dispatchMessages()
     if (!m_entangledChannel)
         return;
 
-    bool contextIsWorker = is<WorkerGlobalScope>(*m_scriptExecutionContext);
-
-    auto pendingMessages = m_entangledChannel->takeAllMessagesFromRemote();
-    for (auto& message : pendingMessages) {
-        // close() in Worker onmessage handler should prevent next message from dispatching.
-        if (contextIsWorker && downcast<WorkerGlobalScope>(*m_scriptExecutionContext).isClosing())
+    m_entangledChannel->takeAllMessagesFromRemote([this, protectedThis = makeRef(*this)](Deque<std::unique_ptr<MessagePortChannel::EventData>>&& messages) {
+        if (!m_scriptExecutionContext)
             return;
 
-        auto ports = MessagePort::entanglePorts(*m_scriptExecutionContext, WTFMove(message->channels));
-        dispatchEvent(MessageEvent::create(WTFMove(ports), WTFMove(message->message)));
-    }
+        bool contextIsWorker = is<WorkerGlobalScope>(*m_scriptExecutionContext);
+        for (auto& message : messages) {
+            // close() in Worker onmessage handler should prevent next message from dispatching.
+            if (contextIsWorker && downcast<WorkerGlobalScope>(*m_scriptExecutionContext).isClosing())
+                return;
+            auto ports = MessagePort::entanglePorts(*m_scriptExecutionContext, WTFMove(message->channels));
+            dispatchEvent(MessageEvent::create(WTFMove(ports), WTFMove(message->message)));
+        }
+    });
 }
 
 bool MessagePort::hasPendingActivity() const

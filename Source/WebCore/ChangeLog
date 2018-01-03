@@ -1,3 +1,24 @@
+2018-01-02  Brady Eidson  <beidson@apple.com>
+
+        Make MessagePortChannel::takeAllMessagesFromRemote asynchronous.
+        https://bugs.webkit.org/show_bug.cgi?id=181205
+
+        Reviewed by Alex Christensen.
+
+        No new tests (No behavior change)
+
+        This is needed for the ongoing WK2 MessagePort work.
+
+        For WK1 in-process MessagePorts it is still synchronous; no behavior change.
+
+        * dom/InProcessMessagePortChannel.cpp:
+        (WebCore::InProcessMessagePortChannel::takeAllMessagesFromRemote):
+        * dom/InProcessMessagePortChannel.h:
+
+        * dom/MessagePort.cpp:
+        (WebCore::MessagePort::dispatchMessages):
+        * dom/MessagePortChannel.h:
+
 2018-01-02  Jiewen Tan  <jiewen_tan@apple.com>
 
         Add a WebAuthentication runtime feature flag

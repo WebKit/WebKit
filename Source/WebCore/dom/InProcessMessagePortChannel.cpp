@@ -27,6 +27,7 @@
 #include "InProcessMessagePortChannel.h"
 
 #include "MessagePort.h"
+#include <wtf/CompletionHandler.h>
 #include <wtf/Locker.h>
 
 namespace WebCore {
@@ -75,10 +76,15 @@ void InProcessMessagePortChannel::postMessageToRemote(Ref<SerializedScriptValue>
         m_remotePort->messageAvailable();
 }
 
-Deque<std::unique_ptr<MessagePortChannel::EventData>> InProcessMessagePortChannel::takeAllMessagesFromRemote()
+void InProcessMessagePortChannel::takeAllMessagesFromRemote(CompletionHandler<void(Deque<std::unique_ptr<EventData>>&&)>&& callback)
 {
-    Locker<Lock> locker(m_lock);
-    return m_incomingQueue->takeAllMessages();
+    Deque<std::unique_ptr<EventData>> messages;
+    {
+        Locker<Lock> locker(m_lock);
+        messages = m_incomingQueue->takeAllMessages();
+    }
+
+    callback(WTFMove(messages));
 }
 
 bool InProcessMessagePortChannel::isConnectedTo(const MessagePortIdentifier& identifier)
