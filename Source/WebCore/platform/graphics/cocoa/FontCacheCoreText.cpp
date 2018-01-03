@@ -413,18 +413,12 @@ static VariationDefaultsMap defaultVariationValues(CTFontRef font)
     return result;
 }
 
-static inline bool fontNameIsSystemFont(CFStringRef fontName)
-{
-    return CFStringGetLength(fontName) > 0 && CFStringGetCharacterAtIndex(fontName, 0) == '.';
-}
-
 static inline bool fontIsSystemFont(CTFontRef font)
 {
     if (CTFontDescriptorIsSystemUIFont(adoptCF(CTFontCopyFontDescriptor(font)).get()))
         return true;
-
     auto name = adoptCF(CTFontCopyPostScriptName(font));
-    return fontNameIsSystemFont(name.get());
+    return CFStringGetLength(name.get()) > 0 && CFStringGetCharacterAtIndex(name.get(), 0) == '.';
 }
 
 // These values were calculated by performing a linear regression on the CSS weights/widths/slopes and Core Text weights/widths/slopes of San Francisco.
@@ -737,24 +731,25 @@ void FontCache::platformInit()
 
 Vector<String> FontCache::systemFontFamilies()
 {
-    Vector<String> fontFamilies;
+    // FIXME: <rdar://problem/21890188>
+    auto attributes = adoptCF(CFDictionaryCreate(kCFAllocatorDefault, nullptr, nullptr, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
+    auto emptyFontDescriptor = adoptCF(CTFontDescriptorCreateWithAttributes(attributes.get()));
+    auto matchedDescriptors = adoptCF(CTFontDescriptorCreateMatchingFontDescriptors(emptyFontDescriptor.get(), nullptr));
+    if (!matchedDescriptors)
+        return { };
 
-    auto availableFontFamilies = adoptCF(CTFontManagerCopyAvailableFontFamilyNames());
-    CFIndex count = CFArrayGetCount(availableFontFamilies.get());
-    for (CFIndex i = 0; i < count; ++i) {
-        CFStringRef fontName = static_cast<CFStringRef>(CFArrayGetValueAtIndex(availableFontFamilies.get(), i));
-        if (CFGetTypeID(fontName) != CFStringGetTypeID()) {
-            ASSERT_NOT_REACHED();
-            continue;
-        }
+    CFIndex numMatches = CFArrayGetCount(matchedDescriptors.get());
+    if (!numMatches)
+        return { };
 
-        if (fontNameIsSystemFont(fontName))
-            continue;
-
-        fontFamilies.append(fontName);
+    HashSet<String> visited;
+    for (CFIndex i = 0; i < numMatches; ++i) {
+        auto fontDescriptor = static_cast<CTFontDescriptorRef>(CFArrayGetValueAtIndex(matchedDescriptors.get(), i));
+        if (auto familyName = adoptCF(static_cast<CFStringRef>(CTFontDescriptorCopyAttribute(fontDescriptor, kCTFontFamilyNameAttribute))))
+            visited.add(familyName.get());
     }
 
-    return fontFamilies;
+    return copyToVector(visited);
 }
 
 static CTFontSymbolicTraits computeTraits(const FontDescription& fontDescription)
