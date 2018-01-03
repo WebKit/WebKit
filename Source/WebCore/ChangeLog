@@ -1,3 +1,12 @@
+2018-01-02  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Unreviewed, fix GCC warning by using #include
+        https://bugs.webkit.org/show_bug.cgi?id=181189
+
+        This file is included in C++ files. Use #include instead of #import to suppress warning in GCC.
+
+        * platform/PromisedBlobInfo.h:
+
 2017-12-28  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Remove std::chrono completely

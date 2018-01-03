@@ -25,7 +25,7 @@
 
 #pragma once
 
-#import <WebCore/SharedBuffer.h>
+#include <WebCore/SharedBuffer.h>
 
 namespace WebCore {
 
