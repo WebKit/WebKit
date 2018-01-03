@@ -703,11 +703,11 @@ InputEventsEnabled:
   humanReadableDescription: "Enable InputEvents support"
   webcoreBinding: RuntimeEnabledFeatures
 
-CredentialManagementEnabled:
+WebAuthenticationEnabled:
   type: bool
   defaultValue: false
-  humanReadableName: "Credential Management"
-  humanReadableDescription: "Enable Credential Management support"
+  humanReadableName: "Web Authentication"
+  humanReadableDescription: "Enable Web Authentication support"
   webcoreBinding: RuntimeEnabledFeatures
 
 ModernMediaControlsEnabled:

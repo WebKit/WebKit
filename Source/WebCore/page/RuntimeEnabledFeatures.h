@@ -90,8 +90,8 @@ public:
     void setModernMediaControlsEnabled(bool areEnabled) { m_areModernMediaControlsEnabled = areEnabled; }
     bool modernMediaControlsEnabled() const { return m_areModernMediaControlsEnabled; }
 
-    void setCredentialManagementEnabled(bool isEnabled) { m_isCredentialManagementEnabled = isEnabled; }
-    bool credentialManagementEnabled() const { return m_isCredentialManagementEnabled; }
+    void setWebAuthenticationEnabled(bool isEnabled) { m_isWebAuthenticationEnabled = isEnabled; }
+    bool webAuthenticationEnabled() const { return m_isWebAuthenticationEnabled; }
 
     void setIsSecureContextAttributeEnabled(bool isEnabled) { m_isSecureContextAttributeEnabled = isEnabled; }
     bool isSecureContextAttributeEnabled() const { return m_isSecureContextAttributeEnabled; }
@@ -248,7 +248,7 @@ private:
     bool m_isResourceTimingEnabled { false };
     bool m_isUserTimingEnabled { false };
     bool m_isInteractiveFormValidationEnabled { false };
-    bool m_isCredentialManagementEnabled { false };
+    bool m_isWebAuthenticationEnabled { false };
     bool m_isSecureContextAttributeEnabled { false };
 
     bool m_isDisplayContentsEnabled { true };

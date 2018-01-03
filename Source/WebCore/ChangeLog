@@ -1,3 +1,26 @@
+2018-01-02  Jiewen Tan  <jiewen_tan@apple.com>
+
+        Add a WebAuthentication runtime feature flag
+        https://bugs.webkit.org/show_bug.cgi?id=181220
+        <rdar://problem/36055305>
+
+        Reviewed by Brent Fulgham.
+
+        This patch basically renames the CredentialManagement runtime feature flag into
+        WebAuthentication runtime feature flag.
+
+        No tests.
+
+        * Modules/credentialmanagement/BasicCredential.idl:
+        * Modules/credentialmanagement/CredentialsContainer.idl:
+        * Modules/credentialmanagement/NavigatorCredentials.idl:
+        * Modules/webauthn/PublicKeyCredential.idl:
+        * page/RuntimeEnabledFeatures.h:
+        (WebCore::RuntimeEnabledFeatures::setWebAuthenticationEnabled):
+        (WebCore::RuntimeEnabledFeatures::webAuthenticationEnabled const):
+        (WebCore::RuntimeEnabledFeatures::setCredentialManagementEnabled): Deleted.
+        (WebCore::RuntimeEnabledFeatures::credentialManagementEnabled const): Deleted.
+
 2018-01-02  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Attachment Support] Don't Blob-convert images and attachments with https:, http: or data: urls

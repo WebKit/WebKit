@@ -666,7 +666,7 @@ public:
         @YES, WebKitDisplayContentsEnabledPreferenceKey,
         @NO, WebKitUserTimingEnabledPreferenceKey,
         @NO, WebKitResourceTimingEnabledPreferenceKey,
-        @NO, WebKitCredentialManagementEnabledPreferenceKey,
+        @NO, WebKitWebAuthenticationEnabledPreferenceKey,
         @NO, WebKitMediaUserGestureInheritsFromDocument,
         @NO, WebKitIsSecureContextAttributeEnabledPreferenceKey,
 #if PLATFORM(IOS)
@@ -3155,14 +3155,14 @@ static NSString *classIBCreatorID = nil;
     [self _setBoolValue:flag forKey:WebKitResourceTimingEnabledPreferenceKey];
 }
 
-- (BOOL)credentialManagementEnabled
+- (BOOL)webAuthenticationEnabled
 {
-    return [self _boolValueForKey:WebKitCredentialManagementEnabledPreferenceKey];
+    return [self _boolValueForKey:WebKitWebAuthenticationEnabledPreferenceKey];
 }
 
-- (void)setCredentialManagementEnabled:(BOOL)flag
+- (void)setWebAuthenticationEnabled:(BOOL)flag
 {
-    [self _setBoolValue:flag forKey:WebKitCredentialManagementEnabledPreferenceKey];
+    [self _setBoolValue:flag forKey:WebKitWebAuthenticationEnabledPreferenceKey];
 }
 
 - (BOOL)mediaUserGestureInheritsFromDocument
