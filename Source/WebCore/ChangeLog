@@ -1,3 +1,15 @@
+2018-01-04  Youenn Fablet  <youenn@apple.com>
+
+        FetchResponse should set its internal response text encoding name
+        https://bugs.webkit.org/show_bug.cgi?id=181284
+
+        Reviewed by Alex Christensen.
+
+        Covered by rebased test.
+
+        * Modules/fetch/FetchResponse.cpp:
+        (WebCore::FetchResponse::create): Set response text encoding based on content type charset.
+
 2018-01-04  John Wilander  <wilander@apple.com>
 
         Storage Access API: Remove JavaScript confirm() prompt from Document::requestStorageAccess()

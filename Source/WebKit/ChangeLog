@@ -1,5 +1,15 @@
 2018-01-04  Youenn Fablet  <youenn@apple.com>
 
+        FetchResponse should set its internal response text encoding name
+        https://bugs.webkit.org/show_bug.cgi?id=181284
+
+        Reviewed by Alex Christensen.
+
+        * WebProcess/Storage/ServiceWorkerClientFetch.cpp:
+        (WebKit::ServiceWorkerClientFetch::didReceiveResponse): Set default encoding to UTF-8.
+
+2018-01-04  Youenn Fablet  <youenn@apple.com>
+
         Implement Cache API partitioning based on ClientOrigin
         https://bugs.webkit.org/show_bug.cgi?id=181240
 

@@ -1,7 +1,7 @@
 
 
 FAIL Service Worker headers in the request of a fetch event assert_unreached: unexpected rejection: assert_true: request specifies "Upgrade-Insecure Requests header as inserted by Fetch expected true got false Reached unreachable code
-FAIL Service Worker responds to fetch event with string assert_unreached: unexpected rejection: assert_equals: The character set of the response created with a string should be UTF-8 expected "UTF-8" but got "windows-1252" Reached unreachable code
+PASS Service Worker responds to fetch event with string 
 PASS Service Worker responds to fetch event with blob body 
 PASS Service Worker responds to fetch event with the referrer URL 
 PASS Service Worker responds to fetch event with an existing client id 

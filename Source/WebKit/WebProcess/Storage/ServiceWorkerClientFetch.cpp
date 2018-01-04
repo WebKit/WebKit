@@ -127,8 +127,10 @@ void ServiceWorkerClientFetch::didReceiveResponse(ResourceResponse&& response)
     // In case of main resource and mime type is the default one, we set it to text/html to pass more service worker WPT tests.
     // FIXME: We should refine our MIME type sniffing strategy for synthetic responses.
     if (m_loader->originalRequest().requester() == ResourceRequest::Requester::Main) {
-        if (response.mimeType() == defaultMIMEType())
+        if (response.mimeType() == defaultMIMEType()) {
             response.setMimeType(ASCIILiteral("text/html"));
+            response.setTextEncodingName(ASCIILiteral("UTF-8"));
+        }
     }
     response.setSource(ResourceResponse::Source::ServiceWorker);
 
