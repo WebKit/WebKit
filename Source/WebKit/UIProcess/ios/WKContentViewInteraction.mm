@@ -72,6 +72,7 @@
 #import <WebCore/Pasteboard.h>
 #import <WebCore/Path.h>
 #import <WebCore/PathUtilities.h>
+#import <WebCore/PromisedBlobInfo.h>
 #import <WebCore/RuntimeApplicationChecks.h>
 #import <WebCore/Scrollbar.h>
 #import <WebCore/TextIndicator.h>
@@ -4467,6 +4468,12 @@ static NSArray<UIItemProvider *> *extractItemProvidersFromDropSession(id <UIDrop
     }
 
     [_editDropCaretView updateToPosition:[WKTextPosition textPositionWithRect:rect]];
+}
+
+- (void)_prepareToDragPromisedBlob:(const PromisedBlobInfo&)info
+{
+    // FIXME: Add iOS support for dragging promised blob data as file promises.
+    UNUSED_PARAM(info);
 }
 
 - (WKDragDestinationAction)_dragDestinationActionForDropSession:(id <UIDropSession>)session

@@ -509,6 +509,10 @@ public:
     WEBCORE_EXPORT void insertAttachment(const String& identifier, const AttachmentDisplayOptions&, const String& filename, Ref<SharedBuffer>&& data, std::optional<String> contentType = std::nullopt);
     void didInsertAttachmentElement(HTMLAttachmentElement&);
     void didRemoveAttachmentElement(HTMLAttachmentElement&);
+
+#if PLATFORM(COCOA)
+    void getPasteboardTypesAndDataForAttachment(HTMLAttachmentElement&, Vector<String>& outTypes, Vector<RefPtr<SharedBuffer>>& outData);
+#endif
 #endif
 
 private:

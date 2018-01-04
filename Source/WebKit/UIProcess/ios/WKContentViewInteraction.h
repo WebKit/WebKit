@@ -59,6 +59,7 @@ class Color;
 class FloatQuad;
 class IntSize;
 class SelectionRect;
+struct PromisedBlobInfo;
 }
 
 #if ENABLE(DRAG_SUPPORT)
@@ -326,6 +327,7 @@ FOR_EACH_WKCONTENTVIEW_ACTION(DECLARE_WKCONTENTVIEW_ACTION_FOR_WEB_VIEW)
 - (void)_startDrag:(RetainPtr<CGImageRef>)image item:(const WebCore::DragItem&)item;
 - (void)_didConcludeEditDataInteraction:(std::optional<WebCore::TextIndicatorData>)data;
 - (void)_didChangeDataInteractionCaretRect:(CGRect)previousRect currentRect:(CGRect)rect;
+- (void)_prepareToDragPromisedBlob:(const WebCore::PromisedBlobInfo&)info;
 #endif
 
 @end

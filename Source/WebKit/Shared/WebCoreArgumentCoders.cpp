@@ -146,6 +146,33 @@ static bool decodeSharedBuffer(Decoder& decoder, RefPtr<SharedBuffer>& buffer)
     return true;
 }
 
+static void encodeTypesAndData(Encoder& encoder, const Vector<String>& types, const Vector<RefPtr<SharedBuffer>>& data)
+{
+    ASSERT(types.size() == data.size());
+    encoder << types;
+    encoder << static_cast<uint64_t>(data.size());
+    for (auto& buffer : data)
+        encodeSharedBuffer(encoder, buffer.get());
+}
+
+static bool decodeTypesAndData(Decoder& decoder, Vector<String>& types, Vector<RefPtr<SharedBuffer>>& data)
+{
+    if (!decoder.decode(types))
+        return false;
+
+    uint64_t dataSize;
+    if (!decoder.decode(dataSize))
+        return false;
+
+    ASSERT(dataSize == types.size());
+
+    data.resize(dataSize);
+    for (auto& buffer : data)
+        decodeSharedBuffer(decoder, buffer);
+
+    return true;
+}
+
 void ArgumentCoder<MonotonicTime>::encode(Encoder& encoder, const MonotonicTime& time)
 {
     encoder << time.secondsSinceEpoch().value();
@@ -1649,33 +1676,6 @@ bool ArgumentCoder<PasteboardURL>::decode(Decoder& decoder, PasteboardURL& conte
     return true;
 }
 
-static void encodeClientTypesAndData(Encoder& encoder, const Vector<String>& types, const Vector<RefPtr<SharedBuffer>>& data)
-{
-    ASSERT(types.size() == data.size());
-    encoder << types;
-    encoder << static_cast<uint64_t>(data.size());
-    for (auto& buffer : data)
-        encodeSharedBuffer(encoder, buffer.get());
-}
-
-static bool decodeClientTypesAndData(Decoder& decoder, Vector<String>& types, Vector<RefPtr<SharedBuffer>>& data)
-{
-    if (!decoder.decode(types))
-        return false;
-
-    uint64_t dataSize;
-    if (!decoder.decode(dataSize))
-        return false;
-
-    ASSERT(dataSize == types.size());
-
-    data.resize(dataSize);
-    for (auto& buffer : data)
-        decodeSharedBuffer(decoder, buffer);
-
-    return true;
-}
-
 void ArgumentCoder<PasteboardWebContent>::encode(Encoder& encoder, const PasteboardWebContent& content)
 {
     encoder << content.contentOrigin;
@@ -1688,7 +1688,7 @@ void ArgumentCoder<PasteboardWebContent>::encode(Encoder& encoder, const Pastebo
     encodeSharedBuffer(encoder, content.dataInRTFFormat.get());
     encodeSharedBuffer(encoder, content.dataInAttributedStringFormat.get());
 
-    encodeClientTypesAndData(encoder, content.clientTypes, content.clientData);
+    encodeTypesAndData(encoder, content.clientTypes, content.clientData);
 }
 
 bool ArgumentCoder<PasteboardWebContent>::decode(Decoder& decoder, PasteboardWebContent& content)
@@ -1709,7 +1709,7 @@ bool ArgumentCoder<PasteboardWebContent>::decode(Decoder& decoder, PasteboardWeb
         return false;
     if (!decodeSharedBuffer(decoder, content.dataInAttributedStringFormat))
         return false;
-    if (!decodeClientTypesAndData(decoder, content.clientTypes, content.clientData))
+    if (!decodeTypesAndData(decoder, content.clientTypes, content.clientData))
         return false;
     return true;
 }
@@ -1724,7 +1724,7 @@ void ArgumentCoder<PasteboardImage>::encode(Encoder& encoder, const PasteboardIm
     encoder << pasteboardImage.imageSize;
     if (pasteboardImage.resourceData)
         encodeSharedBuffer(encoder, pasteboardImage.resourceData.get());
-    encodeClientTypesAndData(encoder, pasteboardImage.clientTypes, pasteboardImage.clientData);
+    encodeTypesAndData(encoder, pasteboardImage.clientTypes, pasteboardImage.clientData);
 }
 
 bool ArgumentCoder<PasteboardImage>::decode(Decoder& decoder, PasteboardImage& pasteboardImage)
@@ -1743,7 +1743,7 @@ bool ArgumentCoder<PasteboardImage>::decode(Decoder& decoder, PasteboardImage& p
         return false;
     if (!decodeSharedBuffer(decoder, pasteboardImage.resourceData))
         return false;
-    if (!decodeClientTypesAndData(decoder, pasteboardImage.clientTypes, pasteboardImage.clientData))
+    if (!decodeTypesAndData(decoder, pasteboardImage.clientTypes, pasteboardImage.clientData))
         return false;
     return true;
 }
@@ -2814,6 +2814,7 @@ void ArgumentCoder<PromisedBlobInfo>::encode(Encoder& encoder, const PromisedBlo
     encoder << info.contentType;
     encoder << info.filename;
     encoder.encodeEnum(info.blobType);
+    encodeTypesAndData(encoder, info.additionalTypes, info.additionalData);
 }
 
 bool ArgumentCoder<PromisedBlobInfo>::decode(Decoder& decoder, PromisedBlobInfo& info)
@@ -2828,6 +2829,9 @@ bool ArgumentCoder<PromisedBlobInfo>::decode(Decoder& decoder, PromisedBlobInfo&
         return false;
 
     if (!decoder.decode(info.blobType))
+        return false;
+
+    if (!decodeTypesAndData(decoder, info.additionalTypes, info.additionalData))
         return false;
 
     return true;

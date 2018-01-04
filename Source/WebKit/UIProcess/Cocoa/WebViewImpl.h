@@ -33,6 +33,7 @@
 #include "WeakObjCPtr.h"
 #include "WebPageProxy.h"
 #include "_WKOverlayScrollbarStyle.h"
+#include <WebCore/PromisedBlobInfo.h>
 #include <WebCore/TextIndicatorWindow.h>
 #include <WebCore/UserInterfaceLayoutDirection.h>
 #include <pal/spi/cocoa/AVKitSPI.h>
@@ -533,6 +534,8 @@ public:
     void updateTouchBarAndRefreshTextBarIdentifiers();
     void setIsCustomizingTouchBar(bool isCustomizingTouchBar) { m_isCustomizingTouchBar = isCustomizingTouchBar; };
 #endif // HAVE(TOUCH_BAR)
+
+    void prepareToDragPromisedBlob(const WebCore::PromisedBlobInfo&);
 
 private:
 #if HAVE(TOUCH_BAR)

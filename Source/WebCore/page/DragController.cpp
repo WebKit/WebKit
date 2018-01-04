@@ -45,6 +45,7 @@
 #include "EditorClient.h"
 #include "ElementAncestorIterator.h"
 #include "EventHandler.h"
+#include "File.h"
 #include "FloatRect.h"
 #include "FocusController.h"
 #include "FrameLoadRequest.h"
@@ -68,6 +69,7 @@
 #include "PluginDocument.h"
 #include "PluginViewBase.h"
 #include "Position.h"
+#include "PromisedBlobInfo.h"
 #include "RenderAttachment.h"
 #include "RenderFileUploadControl.h"
 #include "RenderImage.h"
@@ -1067,7 +1069,8 @@ bool DragController::startDrag(Frame& src, const DragState& state, DragOperation
 
 #if ENABLE(ATTACHMENT_ELEMENT)
     if (is<HTMLAttachmentElement>(element) && m_dragSourceAction & DragSourceActionAttachment) {
-        auto* attachmentRenderer = downcast<HTMLAttachmentElement>(element).attachmentRenderer();
+        auto& attachment = downcast<HTMLAttachmentElement>(element);
+        auto* attachmentRenderer = attachment.attachmentRenderer();
         if (!attachmentRenderer)
             return false;
 
@@ -1075,7 +1078,7 @@ bool DragController::startDrag(Frame& src, const DragState& state, DragOperation
         auto previousSelection = src.selection().selection();
         if (hasData == HasNonDefaultPasteboardData::No) {
             selectElement(element);
-            if (src.editor().client()) {
+            if (!dragAttachmentElement(src, attachment) && src.editor().client()) {
 #if PLATFORM(COCOA)
                 // Otherwise, if no file URL is specified, call out to the injected bundle to populate the pasteboard with data.
                 auto& editor = src.editor();
@@ -1270,6 +1273,31 @@ bool DragController::shouldUseCachedImageForDragImage(const Image& image) const
     return image.size().height() * image.size().width() <= MaxOriginalImageArea;
 #endif
 }
+
+#if ENABLE(ATTACHMENT_ELEMENT)
+
+bool DragController::dragAttachmentElement(Frame& frame, HTMLAttachmentElement& attachment)
+{
+    if (!attachment.file())
+        return false;
+
+    Vector<String> additionalTypes;
+    Vector<RefPtr<SharedBuffer>> additionalData;
+#if PLATFORM(COCOA)
+    if (frame.editor().client())
+        frame.editor().getPasteboardTypesAndDataForAttachment(attachment, additionalTypes, additionalData);
+#endif
+
+    auto& file = *attachment.file();
+    auto blobURL = file.url().string();
+    bool isFileBacked = !file.path().isEmpty();
+    auto blobType = isFileBacked ? PromisedBlobType::FileBacked : PromisedBlobType::DataBacked;
+    m_client.prepareToDragPromisedBlob({ blobURL, file.type(), file.name(), blobType, additionalTypes, additionalData });
+
+    return true;
+}
+
+#endif // ENABLE(ATTACHMENT_ELEMENT)
 
 #endif // ENABLE(DRAG_SUPPORT)
 

@@ -34,6 +34,10 @@
 OBJC_CLASS WKContentView;
 OBJC_CLASS WKEditorUndoTargetObjC;
 
+namespace WebCore {
+struct PromisedBlobInfo;
+}
+
 namespace WebKit {
     
 class PageClientImpl : public PageClientImplCocoa
@@ -203,6 +207,8 @@ private:
     void didConcludeEditDataInteraction(std::optional<WebCore::TextIndicatorData>) override;
     void didChangeDataInteractionCaretRect(const WebCore::IntRect& previousCaretRect, const WebCore::IntRect& caretRect) override;
 #endif
+
+    void prepareToDragPromisedBlob(const WebCore::PromisedBlobInfo&) final;
 
     WKContentView *m_contentView;
     RetainPtr<WKEditorUndoTargetObjC> m_undoTarget;

@@ -52,6 +52,7 @@
 #import "_WKDownloadInternal.h"
 #import <WebCore/NotImplemented.h>
 #import <WebCore/PlatformScreen.h>
+#import <WebCore/PromisedBlobInfo.h>
 #import <WebCore/SharedBuffer.h>
 #import <WebCore/TextIndicator.h>
 #import <WebCore/ValidationBubble.h>
@@ -812,6 +813,11 @@ void PageClientImpl::requestPasswordForQuickLookDocument(const String& fileName,
     NavigationState::fromWebPage(*m_webView->_page).didRequestPasswordForQuickLookDocument();
 }
 #endif
+
+void PageClientImpl::prepareToDragPromisedBlob(const WebCore::PromisedBlobInfo& info)
+{
+    [m_contentView _prepareToDragPromisedBlob:info];
+}
 
 } // namespace WebKit
 

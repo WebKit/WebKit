@@ -134,6 +134,7 @@ class EmptyDragClient final : public DragClient {
     DragSourceAction dragSourceActionMaskForPoint(const IntPoint&) final { return DragSourceActionNone; }
     void startDrag(DragItem, DataTransfer&, Frame&) final { }
     void dragControllerDestroyed() final { }
+    void prepareToDragPromisedBlob(const PromisedBlobInfo&) final { }
 };
 
 #endif // ENABLE(DRAG_SUPPORT)

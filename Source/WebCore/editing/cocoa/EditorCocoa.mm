@@ -40,6 +40,7 @@
 #import "Frame.h"
 #import "FrameLoader.h"
 #import "FrameSelection.h"
+#import "HTMLAttachmentElement.h"
 #import "HTMLConverter.h"
 #import "HTMLImageElement.h"
 #import "HTMLSpanElement.h"
@@ -151,6 +152,20 @@ String Editor::selectionInHTMLFormat()
         return createMarkup(*range, nullptr, AnnotateForInterchange, false, ResolveNonLocalURLs);
     return { };
 }
+
+#if ENABLE(ATTACHMENT_ELEMENT)
+
+void Editor::getPasteboardTypesAndDataForAttachment(HTMLAttachmentElement& attachment, Vector<String>& outTypes, Vector<RefPtr<SharedBuffer>>& outData)
+{
+    auto attachmentRange = Range::create(attachment.document(), { &attachment, Position::PositionIsBeforeAnchor }, { &attachment, Position::PositionIsAfterAnchor });
+    client()->getClientPasteboardDataForRange(attachmentRange.ptr(), outTypes, outData);
+    if (auto archive = LegacyWebArchive::create(attachmentRange.ptr())) {
+        outTypes.append(WebArchivePboardType);
+        outData.append(SharedBuffer::create(archive->rawDataRepresentation().get()));
+    }
+}
+
+#endif
 
 void Editor::writeSelectionToPasteboard(Pasteboard& pasteboard)
 {

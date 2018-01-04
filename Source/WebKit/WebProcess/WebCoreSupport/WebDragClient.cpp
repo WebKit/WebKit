@@ -66,6 +66,11 @@ void WebDragClient::dragControllerDestroyed()
     delete this;
 }
 
+void WebDragClient::prepareToDragPromisedBlob(const WebCore::PromisedBlobInfo& info)
+{
+    m_page->prepareToDragPromisedBlob(info);
+}
+
 } // namespace WebKit
 
 #endif // ENABLE(DRAG_SUPPORT)

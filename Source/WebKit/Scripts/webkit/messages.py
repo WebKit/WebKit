@@ -376,7 +376,6 @@ def headers_for_type(type):
         'WebCore::IncludeSecureCookies': ['<WebCore/CookiesStrategy.h>'],
         'WebCore::KeyframeValueList': ['<WebCore/GraphicsLayer.h>'],
         'WebCore::KeypressCommand': ['<WebCore/KeyboardEvent.h>'],
-        'WebCore::MediaConstraints': ['<WebCore/MediaConstraints.h>'],
         'WebCore::PasteboardCustomData': ['<WebCore/Pasteboard.h>'],
         'WebCore::PasteboardImage': ['<WebCore/Pasteboard.h>'],
         'WebCore::PasteboardURL': ['<WebCore/Pasteboard.h>'],

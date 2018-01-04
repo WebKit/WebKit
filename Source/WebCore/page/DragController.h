@@ -40,6 +40,7 @@ class DragData;
 class Element;
 class Frame;
 class FrameSelection;
+class HTMLAttachmentElement;
 class HTMLInputElement;
 class IntRect;
 class Page;
@@ -129,6 +130,10 @@ struct DragState;
 
         void cleanupAfterSystemDrag();
         void declareAndWriteDragImage(DataTransfer&, Element&, const URL&, const String& label);
+
+#if ENABLE(ATTACHMENT_ELEMENT)
+        bool dragAttachmentElement(Frame&, HTMLAttachmentElement&);
+#endif
         Page& m_page;
         DragClient& m_client;
 

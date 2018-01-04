@@ -1,3 +1,21 @@
+2018-01-03  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Attachment Support] Add plumbing for starting a drag with promised blob data
+        https://bugs.webkit.org/show_bug.cgi?id=181201
+
+        Reviewed by Tim Horton.
+
+        Remove a WK1 LayoutTest testing drag and drop of an attachment element into a contenteditable. This test no
+        longer passes because the implementation of attachment dragging on macOS is not yet implemented. Subsequent
+        patches will test this scenario once again, but as a WK2 macOS drag and drop API test.
+
+        * editing/pasteboard/drag-and-drop-attachment-contenteditable-expected.txt: Removed.
+        * editing/pasteboard/drag-and-drop-attachment-contenteditable.html: Removed.
+        * platform/gtk/TestExpectations:
+        * platform/ios/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+        * platform/win/TestExpectations:
+
 2018-01-03  John Wilander  <wilander@apple.com>
 
         Storage Access API: Refactor XPC for access removal to go straight from the web process to the network process

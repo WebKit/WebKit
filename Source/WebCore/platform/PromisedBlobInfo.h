@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include <WebCore/SharedBuffer.h>
+#include "SharedBuffer.h"
 
 namespace WebCore {
 
@@ -36,6 +36,9 @@ struct PromisedBlobInfo {
     String contentType;
     String filename;
     PromisedBlobType blobType;
+
+    Vector<String> additionalTypes;
+    Vector<RefPtr<SharedBuffer>> additionalData;
 
     operator bool() const { return !blobURL.isEmpty(); }
 };

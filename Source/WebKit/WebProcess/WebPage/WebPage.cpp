@@ -173,6 +173,7 @@
 #include <WebCore/PlatformKeyboardEvent.h>
 #include <WebCore/PluginDocument.h>
 #include <WebCore/PrintContext.h>
+#include <WebCore/PromisedBlobInfo.h>
 #include <WebCore/Range.h>
 #include <WebCore/RenderLayer.h>
 #include <WebCore/RenderTreeAsText.h>
@@ -3287,6 +3288,11 @@ bool WebPage::handleEditingKeyboardEvent(KeyboardEvent* evt)
 #endif
 
 #if ENABLE(DRAG_SUPPORT)
+
+void WebPage::prepareToDragPromisedBlob(const WebCore::PromisedBlobInfo& info)
+{
+    send(Messages::WebPageProxy::PrepareToDragPromisedBlob(info));
+}
 
 #if PLATFORM(GTK)
 void WebPage::performDragControllerAction(DragControllerAction action, const IntPoint& clientPosition, const IntPoint& globalPosition, uint64_t draggingSourceOperationMask, WebSelectionData&& selection, uint32_t flags)
