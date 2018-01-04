@@ -53,7 +53,7 @@ CacheStorageEngineConnection::~CacheStorageEngineConnection()
     }
 }
 
-void CacheStorageEngineConnection::open(PAL::SessionID sessionID, uint64_t requestIdentifier, const String& origin, const String& cacheName)
+void CacheStorageEngineConnection::open(PAL::SessionID sessionID, uint64_t requestIdentifier, const WebCore::ClientOrigin& origin, const String& cacheName)
 {
     Engine::from(sessionID).open(origin, cacheName, [connection = makeRef(m_connection.connection()), sessionID, requestIdentifier](const CacheIdentifierOrError& result) {
         connection->send(Messages::WebCacheStorageConnection::OpenCompleted(requestIdentifier, result), sessionID.sessionID());
@@ -67,7 +67,7 @@ void CacheStorageEngineConnection::remove(PAL::SessionID sessionID, uint64_t req
     });
 }
 
-void CacheStorageEngineConnection::caches(PAL::SessionID sessionID, uint64_t requestIdentifier, const String& origin, uint64_t updateCounter)
+void CacheStorageEngineConnection::caches(PAL::SessionID sessionID, uint64_t requestIdentifier, const WebCore::ClientOrigin& origin, uint64_t updateCounter)
 {
     Engine::from(sessionID).retrieveCaches(origin, updateCounter, [connection = makeRef(m_connection.connection()), sessionID, origin, requestIdentifier](CacheInfosOrError&& result) {
         connection->send(Messages::WebCacheStorageConnection::UpdateCaches(requestIdentifier, result), sessionID.sessionID());
@@ -127,7 +127,7 @@ void CacheStorageEngineConnection::dereference(PAL::SessionID sessionID, uint64_
     references.remove(referenceResult);
 }
 
-void CacheStorageEngineConnection::clearMemoryRepresentation(PAL::SessionID sessionID, uint64_t requestIdentifier, const String& origin)
+void CacheStorageEngineConnection::clearMemoryRepresentation(PAL::SessionID sessionID, uint64_t requestIdentifier, const WebCore::ClientOrigin& origin)
 {
     Engine::from(sessionID).clearMemoryRepresentation(origin, [connection = makeRef(m_connection.connection()), sessionID, requestIdentifier] (std::optional<Error>&& error) {
         connection->send(Messages::WebCacheStorageConnection::ClearMemoryRepresentationCompleted(requestIdentifier, error), sessionID.sessionID());

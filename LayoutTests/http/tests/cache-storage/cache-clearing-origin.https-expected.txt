@@ -1,4 +1,5 @@
 
-PASS Cleaning existing caches 
+
+PASS Create a cache storage from localhost and clear it 
 PASS Clearing disk cache of a given origin 
 

@@ -52,9 +52,9 @@ private:
     IPC::Connection& connection();
 
     // WebCore::CacheStorageConnection
-    void doOpen(uint64_t requestIdentifier, const String& origin, const String& cacheName) final;
+    void doOpen(uint64_t requestIdentifier, const WebCore::ClientOrigin&, const String& cacheName) final;
     void doRemove(uint64_t requestIdentifier, uint64_t cacheIdentifier) final;
-    void doRetrieveCaches(uint64_t requestIdentifier, const String& origin, uint64_t updateCounter) final;
+    void doRetrieveCaches(uint64_t requestIdentifier, const WebCore::ClientOrigin&, uint64_t updateCounter) final;
 
     void doRetrieveRecords(uint64_t requestIdentifier, uint64_t cacheIdentifier, const WebCore::URL&) final;
     void doBatchDeleteOperation(uint64_t requestIdentifier, uint64_t cacheIdentifier, const WebCore::ResourceRequest&, WebCore::CacheQueryOptions&&) final;
@@ -63,7 +63,7 @@ private:
     void reference(uint64_t cacheIdentifier) final;
     void dereference(uint64_t cacheIdentifier) final;
 
-    void clearMemoryRepresentation(const String& origin, WebCore::DOMCacheEngine::CompletionCallback&&) final;
+    void clearMemoryRepresentation(const WebCore::ClientOrigin&, WebCore::DOMCacheEngine::CompletionCallback&&) final;
     void engineRepresentation(WTF::Function<void(const String&)>&&) final;
 
     void openCompleted(uint64_t requestIdentifier, const WebCore::DOMCacheEngine::CacheIdentifierOrError&);

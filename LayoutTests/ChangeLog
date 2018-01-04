@@ -1,3 +1,17 @@
+2018-01-04  Youenn Fablet  <youenn@apple.com>
+
+        Implement Cache API partitioning based on ClientOrigin
+        https://bugs.webkit.org/show_bug.cgi?id=181240
+
+        Reviewed by Alex Christensen.
+
+        Beefing up test to ensure that client and top origins are taken into consideration.
+
+        * http/tests/cache-storage/cache-origins.https-expected.txt:
+        * http/tests/cache-storage/cache-origins.https.html:
+        * http/tests/cache-storage/cache-clearing-origin.https-expected.txt:
+        * http/tests/cache-storage/cache-clearing-origin.https.html:
+
 2018-01-03  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Attachment Support] Add plumbing for starting a drag with promised blob data

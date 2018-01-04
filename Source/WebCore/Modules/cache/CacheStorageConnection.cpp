@@ -33,7 +33,7 @@
 namespace WebCore {
 using namespace WebCore::DOMCacheEngine;
 
-void CacheStorageConnection::open(const String& origin, const String& cacheName, CacheIdentifierCallback&& callback)
+void CacheStorageConnection::open(const ClientOrigin& origin, const String& cacheName, CacheIdentifierCallback&& callback)
 {
     uint64_t requestIdentifier = ++m_lastRequestIdentifier;
     m_openAndRemoveCachePendingRequests.add(requestIdentifier, WTFMove(callback));
@@ -49,7 +49,7 @@ void CacheStorageConnection::remove(uint64_t cacheIdentifier, CacheIdentifierCal
     doRemove(requestIdentifier, cacheIdentifier);
 }
 
-void CacheStorageConnection::retrieveCaches(const String& origin, uint64_t updateCounter, CacheInfosCallback&& callback)
+void CacheStorageConnection::retrieveCaches(const ClientOrigin& origin, uint64_t updateCounter, CacheInfosCallback&& callback)
 {
     uint64_t requestIdentifier = ++m_lastRequestIdentifier;
     m_retrieveCachesPendingRequests.add(requestIdentifier, WTFMove(callback));
