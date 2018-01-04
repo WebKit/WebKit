@@ -229,6 +229,16 @@ sub setOutputFormatOption($$)
     $outputFormat = $value;
 }
 
+sub shouldShowSubsequentLine($)
+{
+    my ($line) = @_;
+
+    return 1 if $line =~ /referenced from:$/;
+    return 1 if $line =~ /(note:|error:)/;
+    
+    return 0;
+}
+
 sub shouldIgnoreLine($$)
 {
     my ($previousLine, $line) = @_;
@@ -281,7 +291,7 @@ sub shouldIgnoreLine($$)
         return 1 if $line =~ /which.exe bash/;
     } else {
         return 1 if $line =~ /^(touch|perl|cat|rm -f|bison|flex|python|\/usr\/bin\/g\+\+|\/bin\/ln|gperf|echo|sed|if \[ \-f|WebCore\/generate-export-file|write-file|chmod) /;
-        return 1 if $line =~ /^    / && $previousLine !~ /referenced from:$/;
+        return 1 if $line =~ /^    / && !shouldShowSubsequentLine($previousLine);
         return 1 if $line =~ /^printf /;
         return 1 if $line =~ /^offlineasm: Nothing changed/;
     }

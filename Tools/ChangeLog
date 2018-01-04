@@ -1,3 +1,17 @@
+2018-01-03  Simon Fraser  <simon.fraser@apple.com>
+
+        filter-build-webkit filters out useful compiler error lines
+        https://bugs.webkit.org/show_bug.cgi?id=179864
+
+        Reviewed by Tim Horton.
+
+        Don't filter out lines that contain information about build errors by always showing lines
+        after a line that contains "note:" or "error:".
+
+        * Scripts/filter-build-webkit:
+        (shouldShowSubsequentLine):
+        (shouldIgnoreLine):
+
 2018-01-03  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         REGRESSION(r226366): [GTK] Broke TestBackForwardList and TestWebKitWebView
