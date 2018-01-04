@@ -32,6 +32,7 @@
 #include <fcntl.h>
 #include <sys/mman.h>
 #include <sys/stat.h>
+#include <unistd.h>
 #include <wtf/RunLoop.h>
 #include <wtf/SHA1.h>
 

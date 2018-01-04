@@ -1,3 +1,13 @@
+2018-01-04  Stephan Szabo  <stephan.szabo@sony.com>
+
+        NetworkProcess cache files use functions from unistd.h without explicitly including it
+        https://bugs.webkit.org/show_bug.cgi?id=181261
+
+        Reviewed by Alex Christensen.
+
+        * NetworkProcess/cache/NetworkCacheBlobStorage.cpp:
+        * NetworkProcess/cache/NetworkCacheData.cpp:
+
 2018-01-04  Keith Rollin  <krollin@apple.com>
 
         Add commas
