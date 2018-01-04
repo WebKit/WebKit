@@ -325,7 +325,7 @@ WI.ContentBrowser = class ContentBrowser extends WI.View
             return;
 
         currentContentView.automaticallyRevealFirstSearchResult = false;
-        currentContentView.searchCleared();
+        currentContentView.searchHidden();
     }
 
     _contentViewNumberOfSearchResultsDidChange(event)

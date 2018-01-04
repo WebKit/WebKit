@@ -406,12 +406,10 @@ WI.TextEditor = class TextEditor extends WI.View
 
     searchCleared()
     {
-        function clearResults() {
-            for (var i = 0; i < this._searchResults.length; ++i)
-                this._searchResults[i].clear();
-        }
-
-        this._codeMirror.operation(clearResults.bind(this));
+        this._codeMirror.operation(() => {
+            for (let searchResult of this._searchResults)
+                searchResult.clear();
+        });
 
         this._searchQuery = null;
         this._searchResults = [];

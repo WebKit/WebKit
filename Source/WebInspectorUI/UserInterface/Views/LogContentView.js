@@ -1076,6 +1076,11 @@ WI.LogContentView = class LogContentView extends WI.ContentView
         }
     }
 
+    searchHidden()
+    {
+        this.searchCleared();
+    }
+
     searchCleared()
     {
         this.performSearch("");

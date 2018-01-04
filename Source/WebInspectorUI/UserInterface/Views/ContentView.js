@@ -445,6 +445,11 @@ WI.ContentView = class ContentView extends WI.View
         // Implemented by subclasses.
     }
 
+    searchHidden()
+    {
+        // Implemented by subclasses.
+    }
+
     searchCleared()
     {
         // Implemented by subclasses.

@@ -1,3 +1,34 @@
+2018-01-04  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: ⌘G / ⇧⌘G text search does not working after closing find banner
+        https://bugs.webkit.org/show_bug.cgi?id=181280
+        <rdar://problem/36291175>
+
+        Reviewed by Matt Baker.
+
+        * UserInterface/Views/ContentBrowser.js:
+        (WI.ContentBrowser.prototype._findBannerDidHide):
+        When the find banner is hidden trigger a new ContentView method,
+        searchHidden instead of the destructive searchCleared. This allows
+        most content views (text editors, DOM tree, Network Headers view)
+        to keep their populated search results.
+
+        * UserInterface/Views/ContentView.js:
+        (WI.ContentView.prototype.searchHidden):
+        * UserInterface/Views/LogContentView.js:
+        (WI.LogContentView.prototype.searchHidden):
+        By default searchHidden does nothing. The Console's LogContentView
+        treats the find banner differently and clears its search results.
+
+        * UserInterface/Views/TextEditor.js:
+        (WI.TextEditor.prototype.searchCleared):
+        Modernize some code while working in this area.
+
+        * UserInterface/Views/Main.css:
+        (.bouncy-highlight):
+        Ensure black text on yellow background in the bouncy highlight. In the
+        DOM Tree it could have been white if the find banner was closed.
+
 2018-01-03  Ting-Wei Lan  <lantw44@gmail.com>
 
         Replace hard-coded paths in shebangs with #!/usr/bin/env
