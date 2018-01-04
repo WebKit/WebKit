@@ -71,3 +71,7 @@ inline GstClockTime toGstClockTime(const MediaTime &mediaTime)
 
 bool gstRegistryHasElementForMediaType(GList* elementFactories, const char* capsString);
 }
+
+#ifndef GST_BUFFER_DTS_OR_PTS
+#define GST_BUFFER_DTS_OR_PTS(buffer) (GST_BUFFER_DTS_IS_VALID(buffer) ? GST_BUFFER_DTS(buffer) : GST_BUFFER_PTS(buffer))
+#endif

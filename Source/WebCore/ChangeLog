@@ -1,3 +1,11 @@
+2018-01-04  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, GTK build fix attempt after r226357
+
+        * platform/graphics/gstreamer/GStreamerUtilities.h: The
+        GST_BUFFER_DTS_OR_PTS macro was added in GStreamer 1.8 but old
+        versions of Debian might not have this release yet.
+
 2018-01-04  Youenn Fablet  <youenn@apple.com>
 
         Implement Cache API partitioning based on ClientOrigin
