@@ -1,3 +1,22 @@
+2018-01-03  James Craig  <jcraig@apple.com>
+
+        AX: when invert colors is on, double-invert certain media elements in UserAgentStyleSheet
+        https://bugs.webkit.org/show_bug.cgi?id=168447
+        <rdar://problem/30559874>
+
+        Reviewed by Simon Fraser.
+
+        Double-invert video when platform "invert colors" setting is enabled. Behavior matches 
+        current "Smart Invert" feature of Safari Reader on macOS/iOS and other iOS native apps.
+
+        * TestExpectations: Platform setting only available on Mac and iOS.
+        * accessibility/smart-invert-expected.txt: Added. 
+        * accessibility/smart-invert-reference-expected.html: Added.
+        * accessibility/smart-invert-reference.html: Added. Ref to ensure invert and blur filters render as expected.
+        * accessibility/smart-invert.html: Added. Computed expectatons of filter property text values.
+        * platform/ios-wk2/TestExpectations: Runs on iOS.
+        * platform/mac-wk2/TestExpectations: Runs on Mac.
+
 2018-01-03  Alexey Proskuryakov  <ap@apple.com>
 
         Update expectations for some range tests.

@@ -1,0 +1,31 @@
+<html>
+<head>
+<title>Smart Invert Images and Video Test</title>
+<style type="text/css">
+    /* Testing explicit author overrides. */
+    .invert { filter: invert(1); }
+    .no-invert { filter: none; }
+    .preserve-filter { filter: blur(3px); }
+    #result { position: absolute; top: -5000px; }
+</style>
+</head>
+<body>
+
+  <img src="../compositing/resources/simple_image.png" alt="">
+  <picture><img class="fallback" src="../compositing/resources/simple_image.png" alt=""></picture>
+  <video class="invert" poster="../compositing/resources/simple_image.png"></video>
+  <video class="invert" poster="../compositing/resources/simple_image.png" controls></video>
+  <br>
+  <img class="no-invert" src="../compositing/resources/simple_image.png">
+  <picture class="no-invert"><img class="fallback" src="../compositing/resources/simple_image.png" alt=""></picture>
+  <video class="no-invert" poster="../compositing/resources/simple_image.png"></video>
+  <video class="no-invert" poster="../compositing/resources/simple_image.png" controls></video>
+  <br>
+  <img class="preserve-filter" src="../compositing/resources/simple_image.png" alt="">
+  <picture class="preserve-filter"><img class="fallback" src="../compositing/resources/simple_image.png" alt=""></picture>
+  <video class="preserve-filter" poster="../compositing/resources/simple_image.png"></video>
+  <video class="preserve-filter" poster="../compositing/resources/simple_image.png" controls></video>
+  
+  <div id="result"></div>
+</body>
+</html>
