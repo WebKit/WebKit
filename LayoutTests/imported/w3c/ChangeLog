@@ -1,3 +1,17 @@
+2018-01-04  Youenn Fablet  <youenn@apple.com>
+
+        Implement  https://fetch.spec.whatwg.org/#main-fetch default referrer policy setting
+        https://bugs.webkit.org/show_bug.cgi?id=181239
+
+        Reviewed by Alex Christensen.
+
+        Updated test to output more tests for better error reporting.
+        Also updated to relax the settings so that HTTP loads are done even though the page is HTTPS.
+        Updated referrer computation since it should be done based on the fetch context and not its parent context.
+
+        * web-platform-tests/service-workers/service-worker/fetch-event-referrer-policy.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/fetch-event-referrer-policy.https.html:
+
 2018-01-02  Youenn Fablet  <youenn@apple.com>
 
         Memory cache should not reuse resources with different credential fetch option

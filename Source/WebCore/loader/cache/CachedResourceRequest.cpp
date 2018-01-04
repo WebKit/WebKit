@@ -223,7 +223,13 @@ void CachedResourceRequest::applyBlockedStatus(const ContentExtensions::BlockedS
 
 #endif
 
-void CachedResourceRequest::updateReferrerOriginAndUserAgentHeaders(FrameLoader& frameLoader, ReferrerPolicy defaultPolicy)
+void CachedResourceRequest::updateReferrerPolicy(ReferrerPolicy defaultPolicy)
+{
+    if (m_options.referrerPolicy == ReferrerPolicy::EmptyString)
+        m_options.referrerPolicy = defaultPolicy;
+}
+
+void CachedResourceRequest::updateReferrerOriginAndUserAgentHeaders(FrameLoader& frameLoader)
 {
     // Implementing step 7 to 9 of https://fetch.spec.whatwg.org/#http-network-or-cache-fetch
 
@@ -236,15 +242,7 @@ void CachedResourceRequest::updateReferrerOriginAndUserAgentHeaders(FrameLoader&
         outgoingOrigin = frameLoader.outgoingOrigin();
     }
 
-    switch (m_options.referrerPolicy) {
-    case ReferrerPolicy::EmptyString:
-        outgoingReferrer = SecurityPolicy::generateReferrerHeader(defaultPolicy, m_resourceRequest.url(), outgoingReferrer);
-        break;
-    default:
-        outgoingReferrer = SecurityPolicy::generateReferrerHeader(m_options.referrerPolicy, m_resourceRequest.url(), outgoingReferrer);
-        break;
-    };
-
+    outgoingReferrer = SecurityPolicy::generateReferrerHeader(m_options.referrerPolicy, m_resourceRequest.url(), outgoingReferrer);
     if (outgoingReferrer.isEmpty())
         m_resourceRequest.clearHTTPReferrer();
     else

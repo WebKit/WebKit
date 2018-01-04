@@ -1,3 +1,24 @@
+2018-01-04  Youenn Fablet  <youenn@apple.com>
+
+        Implement  https://fetch.spec.whatwg.org/#main-fetch default referrer policy setting
+        https://bugs.webkit.org/show_bug.cgi?id=181239
+
+        Reviewed by Alex Christensen.
+
+        Covered by updated and rebased test.
+
+        Setting the request referrer policy to the Document referrer policy if no one is set.
+        If Document has no referrer policy, use no-referrer-when-downgrade as per the spec.
+
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::updateHTTPRequestHeaders):
+        (WebCore::CachedResourceLoader::requestResource):
+        * loader/cache/CachedResourceLoader.h:
+        * loader/cache/CachedResourceRequest.cpp:
+        (WebCore::CachedResourceRequest::updateReferrerPolicy):
+        (WebCore::CachedResourceRequest::updateReferrerOriginAndUserAgentHeaders):
+        * loader/cache/CachedResourceRequest.h:
+
 2018-01-03  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Attachment Support] Create attachment elements when dropping files on iOS

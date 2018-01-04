@@ -75,7 +75,8 @@ public:
     void setAsPotentiallyCrossOrigin(const String&, Document&);
     void updateForAccessControl(Document&);
 
-    void updateReferrerOriginAndUserAgentHeaders(FrameLoader&, ReferrerPolicy);
+    void updateReferrerPolicy(ReferrerPolicy);
+    void updateReferrerOriginAndUserAgentHeaders(FrameLoader&);
     void upgradeInsecureRequestIfNeeded(Document&);
     void setAcceptHeaderIfNone(CachedResource::Type);
     void updateAccordingCacheMode();

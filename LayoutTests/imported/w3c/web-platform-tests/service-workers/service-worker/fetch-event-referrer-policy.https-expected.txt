@@ -1,4 +1,76 @@
+CONSOLE MESSAGE: line 32: The page at https://localhost:9443/service-workers/service-worker/fetch-event-referrer-policy.https.html was allowed to display insecure content from http://localhost:8800/service-workers/service-worker//resources/simple.html?referrerFull.
+
+CONSOLE MESSAGE: line 54: The page at https://localhost:9443/service-workers/service-worker/fetch-event-referrer-policy.https.html was allowed to display insecure content from http://localhost:8800/service-workers/service-worker//resources/simple.html?referrerFull.
+
+CONSOLE MESSAGE: line 76: The page at https://localhost:9443/service-workers/service-worker/fetch-event-referrer-policy.https.html was allowed to display insecure content from http://localhost:8800/service-workers/service-worker//resources/simple.html?referrerFull.
+
+CONSOLE MESSAGE: line 98: The page at https://localhost:9443/service-workers/service-worker/fetch-event-referrer-policy.https.html was allowed to display insecure content from http://localhost:8800/service-workers/service-worker//resources/simple.html?referrerFull.
+
+CONSOLE MESSAGE: line 120: The page at https://localhost:9443/service-workers/service-worker/fetch-event-referrer-policy.https.html was allowed to display insecure content from http://localhost:8800/service-workers/service-worker//resources/simple.html?referrerFull.
+
+CONSOLE MESSAGE: line 132: The page at https://localhost:9443/service-workers/service-worker/fetch-event-referrer-policy.https.html was allowed to display insecure content from http://localhost:8800/service-workers/service-worker//resources/simple.html?referrerFull.
+
+CONSOLE MESSAGE: line 197: The page at https://localhost:9443/service-workers/service-worker/fetch-event-referrer-policy.https.html was allowed to display insecure content from http://localhost:8800/service-workers/service-worker//resources/simple.html?referrerFull.
+
+CONSOLE MESSAGE: line 231: The page at https://localhost:9443/service-workers/service-worker/fetch-event-referrer-policy.https.html was allowed to display insecure content from http://localhost:8800/service-workers/service-worker//resources/simple.html?referrerFull.
+
+CONSOLE MESSAGE: line 32: The page at https://localhost:9443/service-workers/service-worker/fetch-event-referrer-policy.https.html was allowed to display insecure content from http://localhost:8800/service-workers/service-worker//resources/simple.html?referrerFull.
+
+CONSOLE MESSAGE: line 54: The page at https://localhost:9443/service-workers/service-worker/fetch-event-referrer-policy.https.html was allowed to display insecure content from http://localhost:8800/service-workers/service-worker//resources/simple.html?referrerFull.
+
+CONSOLE MESSAGE: line 76: The page at https://localhost:9443/service-workers/service-worker/fetch-event-referrer-policy.https.html was allowed to display insecure content from http://localhost:8800/service-workers/service-worker//resources/simple.html?referrerFull.
+
+CONSOLE MESSAGE: line 98: The page at https://localhost:9443/service-workers/service-worker/fetch-event-referrer-policy.https.html was allowed to display insecure content from http://localhost:8800/service-workers/service-worker//resources/simple.html?referrerFull.
+
+CONSOLE MESSAGE: line 120: The page at https://localhost:9443/service-workers/service-worker/fetch-event-referrer-policy.https.html was allowed to display insecure content from http://localhost:8800/service-workers/service-worker//resources/simple.html?referrerFull.
+
+CONSOLE MESSAGE: line 132: The page at https://localhost:9443/service-workers/service-worker/fetch-event-referrer-policy.https.html was allowed to display insecure content from http://localhost:8800/service-workers/service-worker//resources/simple.html?referrerFull.
+
+CONSOLE MESSAGE: line 197: The page at https://localhost:9443/service-workers/service-worker/fetch-event-referrer-policy.https.html was allowed to display insecure content from http://localhost:8800/service-workers/service-worker//resources/simple.html?referrerFull.
+
+CONSOLE MESSAGE: line 231: The page at https://localhost:9443/service-workers/service-worker/fetch-event-referrer-policy.https.html was allowed to display insecure content from http://localhost:8800/service-workers/service-worker//resources/simple.html?referrerFull.
 
 
-FAIL Service Worker responds to fetch event with the referrer policy assert_unreached: unexpected rejection: assert_equals: Service Worker should respond to fetch with the default referrer policy expected "ReferrerPolicy: no-referrer-when-downgrade" but got "ReferrerPolicy: " Reached unreachable code
+PASS Service Worker responds to fetch event with the referrer policy 
+PASS Service Worker should respond to fetch with the default referrer policy 
+PASS Service Worker should respond to fetch with the referrer URL when a member of RequestInit is present - Default Referrer 
+PASS Service Worker should respond to fetch with no referrer when a member of RequestInit is present with an HTTP request - Default Referrer 
+PASS Service Worker should respond to fetch with the referrer with "" - Default Referrer 
+PASS Service Worker should respond to fetch with no referrer with "" - Default Referrer 
+PASS Service Worker should respond to fetch with the referrer origin with "origin" and a same origin request - Default Referrer 
+PASS Service Worker should respond to fetch with the referrer origin with "origin" and a cross origin request - Default Referrer 
+PASS Service Worker should respond to fetch with the referrer URL with "origin-when-cross-origin" and a same origin request - Default Referrer 
+PASS Service Worker should respond to fetch with the referrer origin with "origin-when-cross-origin" and a cross origin request - Default Referrer 
+PASS Service Worker should respond to fetch with no referrer with "no-referrer-when-downgrade" and a same origin request - Default Referrer 
+PASS Service Worker should respond to fetch with no referrer with "no-referrer-when-downgrade" and an HTTP request - Default Referrer 
+PASS Service Worker should respond to fetch with no referrer with "unsafe-url" - Default Referrer 
+PASS Service Worker should respond to fetch with no referrer URL with "no-referrer" - Default Referrer 
+PASS Service Worker should respond to fetch with referrer URL with "same-origin" and a same origin request - Default Referrer 
+PASS Service Worker should respond to fetch with no referrer with "same-origin" and cross origin request - Default Referrer 
+PASS Service Worker should respond to fetch with the referrer origin  with "strict-origin" and a HTTPS cross origin request - Default Referrer 
+PASS Service Worker should respond to fetch with the referrer origin with "strict-origin" and a same origin request - Default Referrer 
+PASS Service Worker should respond to fetch with no referrer with "strict-origin" and a HTTP request - Default Referrer 
+PASS Service Worker should respond to fetch with the referrer URL with "strict-origin-when-cross-origin" and a same origin request - Default Referrer 
+PASS Service Worker should respond to fetch with the referrer origin with "strict-origin-when-cross-origin" and a HTTPS cross origin request - Default Referrer 
+PASS Service Worker should respond to fetch with no referrer with "strict-origin-when-cross-origin" and a HTTP request - Default Referrer 
+PASS Service Worker should respond to fetch with the referrer URL when a member of RequestInit is present - Custom Referrer 
+PASS Service Worker should respond to fetch with no referrer when a member of RequestInit is present with an HTTP request - Custom Referrer 
+PASS Service Worker should respond to fetch with the referrer with "" - Custom Referrer 
+PASS Service Worker should respond to fetch with no referrer with "" - Custom Referrer 
+PASS Service Worker should respond to fetch with the referrer origin with "origin" and a same origin request - Custom Referrer 
+PASS Service Worker should respond to fetch with the referrer origin with "origin" and a cross origin request - Custom Referrer 
+PASS Service Worker should respond to fetch with the referrer URL with "origin-when-cross-origin" and a same origin request - Custom Referrer 
+PASS Service Worker should respond to fetch with the referrer origin with "origin-when-cross-origin" and a cross origin request - Custom Referrer 
+PASS Service Worker should respond to fetch with no referrer with "no-referrer-when-downgrade" and a same origin request - Custom Referrer 
+PASS Service Worker should respond to fetch with no referrer with "no-referrer-when-downgrade" and an HTTP request - Custom Referrer 
+PASS Service Worker should respond to fetch with no referrer with "unsafe-url" - Custom Referrer 
+PASS Service Worker should respond to fetch with no referrer URL with "no-referrer" - Custom Referrer 
+PASS Service Worker should respond to fetch with referrer URL with "same-origin" and a same origin request - Custom Referrer 
+PASS Service Worker should respond to fetch with no referrer with "same-origin" and cross origin request - Custom Referrer 
+PASS Service Worker should respond to fetch with the referrer origin  with "strict-origin" and a HTTPS cross origin request - Custom Referrer 
+PASS Service Worker should respond to fetch with the referrer origin with "strict-origin" and a same origin request - Custom Referrer 
+PASS Service Worker should respond to fetch with no referrer with "strict-origin" and a HTTP request - Custom Referrer 
+PASS Service Worker should respond to fetch with the referrer URL with "strict-origin-when-cross-origin" and a same origin request - Custom Referrer 
+PASS Service Worker should respond to fetch with the referrer origin with "strict-origin-when-cross-origin" and a HTTPS cross origin request - Custom Referrer 
+PASS Service Worker should respond to fetch with no referrer with "strict-origin-when-cross-origin" and a HTTP request - Custom Referrer 
 
