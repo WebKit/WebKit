@@ -1,3 +1,28 @@
+2018-01-04  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Create parallel SlotVisitors apriori
+        https://bugs.webkit.org/show_bug.cgi?id=180907
+
+        Reviewed by Saam Barati.
+
+        The number of SlotVisitors are capped with the number of HeapHelperPool's threads + 2.
+        If we create these SlotVisitors apriori, we do not need to create SlotVisitors dynamically.
+        Then we do not need to grab locks while iterating all the SlotVisitors.
+
+        In addition, we do not need to consider the case that the number of SlotVisitors increases
+        after setting up VisitCounters in MarkingConstraintSolver since the number of SlotVisitors
+        does not increase any more.
+
+        * heap/Heap.cpp:
+        (JSC::Heap::Heap):
+        (JSC::Heap::runBeginPhase):
+        * heap/Heap.h:
+        * heap/HeapInlines.h:
+        (JSC::Heap::forEachSlotVisitor):
+        (JSC::Heap::numberOfSlotVisitors): Deleted.
+        * heap/MarkingConstraintSolver.cpp:
+        (JSC::MarkingConstraintSolver::didVisitSomething const):
+
 2018-01-03  Ting-Wei Lan  <lantw44@gmail.com>
 
         Replace hard-coded paths in shebangs with #!/usr/bin/env
