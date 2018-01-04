@@ -39,6 +39,12 @@
     return self;
 }
 
+- (void)dealloc
+{
+    [_snapshotWidth release];
+
+    [super dealloc];
+}
 
 - (id)copyWithZone:(NSZone *)zone
 {

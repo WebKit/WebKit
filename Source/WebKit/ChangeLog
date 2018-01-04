@@ -1,3 +1,14 @@
+2018-01-03  David Kilzer  <ddkilzer@apple.com>
+
+        REGRESSION (r212929): WKSnapshotConfiguration may leak an NSNumber when deallocated
+        <https://webkit.org/b/181274>
+
+        Reviewed by Joseph Pecoraro.
+
+        * UIProcess/API/Cocoa/WKSnapshotConfiguration.mm:
+        (-[WKSnapshotConfiguration dealloc]): Implement method and
+        release _snapshotWidth.
+
 2018-01-03  John Wilander  <wilander@apple.com>
 
         Storage Access API: Refactor XPC for access removal to go straight from the web process to the network process
