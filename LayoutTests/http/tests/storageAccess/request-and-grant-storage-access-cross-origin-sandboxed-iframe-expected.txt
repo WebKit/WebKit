@@ -1,4 +1,3 @@
-CONFIRM: Do you want to use your localhost ID on 127.0.0.1?
 Tests that cross-origin iframe storage access is granted if the iframe is sandboxed, has the allow token, and the user opts in.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

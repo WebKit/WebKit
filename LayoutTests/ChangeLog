@@ -1,3 +1,30 @@
+2018-01-04  John Wilander  <wilander@apple.com>
+
+        Storage Access API: Remove JavaScript confirm() prompt from Document::requestStorageAccess()
+        https://bugs.webkit.org/show_bug.cgi?id=181276
+        <rdar://problem/36290463>
+
+        Reviewed by Alex Christensen.
+
+        Two test cases are deleted since the user has no way
+        to deny access through a prompt anymore. The rest
+        are updated to not expect a "CONFIRM:..." text output.
+
+        * http/tests/storageAccess/request-and-deny-storage-access-cross-origin-iframe-expected.txt: Removed.
+        * http/tests/storageAccess/request-and-deny-storage-access-cross-origin-iframe.html: Removed.
+        * http/tests/storageAccess/request-and-deny-storage-access-cross-origin-sandboxed-iframe-expected.txt: Removed.
+        * http/tests/storageAccess/request-and-deny-storage-access-cross-origin-sandboxed-iframe.html: Removed.
+        * http/tests/storageAccess/request-and-grant-access-then-detach-should-not-have-access-expected.txt:
+        * http/tests/storageAccess/request-and-grant-access-then-navigate-should-not-have-access-expected.txt:
+        * http/tests/storageAccess/request-and-grant-storage-access-cross-origin-non-sandboxed-iframe-expected.txt:
+        * http/tests/storageAccess/request-and-grant-storage-access-cross-origin-sandboxed-iframe-expected.txt:
+        * http/tests/storageAccess/request-and-grant-storage-access-cross-origin-sandboxed-iframe-from-prevalent-domain-with-non-recent-user-interaction-and-try-access-from-right-frame-expected.txt:
+        * http/tests/storageAccess/request-and-grant-storage-access-cross-origin-sandboxed-iframe-from-prevalent-domain-with-non-recent-user-interaction-but-try-access-from-wrong-frame-expected.txt:
+        * http/tests/storageAccess/request-and-grant-storage-access-cross-origin-sandboxed-iframe-from-prevalent-domain-with-recent-user-interaction-expected.txt:
+        * http/tests/storageAccess/request-and-grant-storage-access-cross-origin-sandboxed-iframe-from-prevalent-domain-without-user-interaction-expected.txt:
+        * platform/mac-wk2/TestExpectations:
+            Removed entries for the deleted test cases.
+
 2018-01-04  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Issues with Ahem's ex / x-height

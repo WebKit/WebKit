@@ -7526,40 +7526,29 @@ void Document::requestStorageAccess(Ref<DeferredPromise>&& promise)
     
     auto iframeHost = securityOrigin.host();
     auto topHost = topSecurityOrigin.host();
-    StringBuilder builder;
-    builder.appendLiteral("Do you want to use your ");
-    builder.append(iframeHost);
-    builder.appendLiteral(" ID on ");
-    builder.append(topHost);
-    builder.appendLiteral("?");
-    Page* page = this->page();
 
-    ASSERT(m_frame);
+    Page* page = this->page();
     auto frameID = m_frame->loader().client().frameID();
     auto pageID = m_frame->loader().client().pageID();
-    if (!frameID || !pageID) {
+    if (!page || !frameID || !pageID) {
         promise->reject();
         return;
     }
 
-    // FIXME: Don't use runJavaScriptConfirm because it responds synchronously.
-    if ((page && page->chrome().runJavaScriptConfirm(*m_frame, builder.toString())) || m_grantStorageAccessOverride) {
-        page->chrome().client().requestStorageAccess(WTFMove(iframeHost), WTFMove(topHost), frameID.value(), pageID.value(), [documentReference = m_weakFactory.createWeakPtr(*this), promise = WTFMove(promise)] (bool wasGranted) {
-            Document* document = documentReference.get();
-            if (!document)
-                return;
-
-            if (wasGranted) {
-                document->setHasFrameSpecificStorageAccess(true);
-                promise->resolve();
-            } else
-                promise->reject();
-        });
-        return;
-    }
-#endif
-
+    page->chrome().client().requestStorageAccess(WTFMove(iframeHost), WTFMove(topHost), frameID.value(), pageID.value(), [documentReference = m_weakFactory.createWeakPtr(*this), promise = WTFMove(promise)] (bool wasGranted) {
+        Document* document = documentReference.get();
+        if (!document)
+            return;
+        
+        if (wasGranted) {
+            document->setHasFrameSpecificStorageAccess(true);
+            promise->resolve();
+        } else
+            promise->reject();
+    });
+#else
     promise->reject();
+#endif
 }
 
 #if HAVE(CFNETWORK_STORAGE_PARTITIONING)
