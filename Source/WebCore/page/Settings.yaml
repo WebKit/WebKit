@@ -579,7 +579,7 @@ allowMediaContentTypesRequiringHardwareSupportAsFallback:
   initial: false
 
 storageAccessAPIEnabled:
-  initial: false
+  initial: true
 
 timeWithoutMouseMovementBeforeHidingControls:
   type: Seconds

@@ -1,3 +1,15 @@
+2018-01-04  John Wilander  <wilander@apple.com>
+
+        Storage Access API: Turn feature on by default in Settings.yaml
+        https://bugs.webkit.org/show_bug.cgi?id=181298
+        <rdar://problem/36302506>
+
+        Reviewed by Brent Fulgham.
+
+        No new tests. This is just a feature settings change.
+
+        * page/Settings.yaml:
+
 2018-01-04  Zalan Bujtas  <zalan@apple.com>
 
         WebContent process crashes while loading https://www.classicspecs.com
