@@ -1,7 +1,5 @@
 /*
- * Copyright (C) 2013 Google Inc. All rights reserved.
- * Copyright (C) 2013 Apple Inc.  All rights reserved.
- * Copyright (C) 2013 Nokia Corporation and/or its subsidiary(-ies).
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,25 +24,56 @@
  */
 
 #include "config.h"
-#include "MockRealtimeMediaSourceCenter.h"
+#include "DisplayCaptureManagerCocoa.h"
 
 #if ENABLE(MEDIA_STREAM)
 
 #include "Logging.h"
-#include "MockRealtimeAudioSource.h"
-#include "MockRealtimeVideoSource.h"
 #include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
-void MockRealtimeMediaSourceCenter::setMockRealtimeMediaSourceCenterEnabled(bool enabled)
+DisplayCaptureManagerCocoa& DisplayCaptureManagerCocoa::singleton()
 {
-    static NeverDestroyed<MockRealtimeMediaSourceCenter> center;
-    static bool active = false;
-    if (active != enabled) {
-        active = enabled;
-        RealtimeMediaSourceCenter::setSharedStreamCenterOverride(enabled ? &center.get() : nullptr);
+    static NeverDestroyed<DisplayCaptureManagerCocoa> manager;
+    return manager.get();
+}
+
+DisplayCaptureManagerCocoa::~DisplayCaptureManagerCocoa()
+{
+}
+
+const Vector<CaptureDevice>& DisplayCaptureManagerCocoa::captureDevices()
+{
+    return m_displays;
+}
+
+std::optional<CaptureDevice> DisplayCaptureManagerCocoa::screenCaptureDeviceWithPersistentID(const String& deviceID)
+{
+    UNUSED_PARAM(deviceID);
+    return std::nullopt;
+}
+
+std::optional<CaptureDevice> DisplayCaptureManagerCocoa::captureDeviceWithPersistentID(CaptureDevice::DeviceType type, const String& id)
+{
+    switch (type) {
+    case CaptureDevice::DeviceType::Screen:
+        return screenCaptureDeviceWithPersistentID(id);
+        break;
+            
+    case CaptureDevice::DeviceType::Application:
+    case CaptureDevice::DeviceType::Window:
+    case CaptureDevice::DeviceType::Browser:
+        break;
+
+    case CaptureDevice::DeviceType::Camera:
+    case CaptureDevice::DeviceType::Microphone:
+    case CaptureDevice::DeviceType::Unknown:
+        ASSERT_NOT_REACHED();
+        break;
     }
+
+    return std::nullopt;
 }
 
 } // namespace WebCore

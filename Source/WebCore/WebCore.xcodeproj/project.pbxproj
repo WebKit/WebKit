@@ -5217,6 +5217,10 @@
 		079F5E4B0F3BEBEA005E0782 /* MediaPlayerPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaPlayerPrivate.h; sourceTree = "<group>"; };
 		07A6D1E91491137700051D0C /* MediaFragmentURIParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaFragmentURIParser.cpp; sourceTree = "<group>"; };
 		07A6D1EA1491137700051D0C /* MediaFragmentURIParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaFragmentURIParser.h; sourceTree = "<group>"; };
+		07A6D8471FEB700B006441DE /* DisplayCaptureSourceCocoa.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DisplayCaptureSourceCocoa.cpp; sourceTree = "<group>"; };
+		07A6D8481FEB700B006441DE /* DisplayCaptureManagerCocoa.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DisplayCaptureManagerCocoa.cpp; sourceTree = "<group>"; };
+		07A6D8491FEB700C006441DE /* DisplayCaptureManagerCocoa.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DisplayCaptureManagerCocoa.h; sourceTree = "<group>"; };
+		07A6D84A1FEB700D006441DE /* DisplayCaptureSourceCocoa.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DisplayCaptureSourceCocoa.h; sourceTree = "<group>"; };
 		07AA6B69166D019500D45671 /* InbandTextTrackPrivateAVFObjC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InbandTextTrackPrivateAVFObjC.h; sourceTree = "<group>"; };
 		07AA6B6A166D019500D45671 /* InbandTextTrackPrivateAVFObjC.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = InbandTextTrackPrivateAVFObjC.mm; sourceTree = "<group>"; };
 		07AB996518DA3C010018771E /* RTCConfiguration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTCConfiguration.h; sourceTree = "<group>"; };
@@ -14826,6 +14830,10 @@
 				3F8020341E9E381D00DEC61D /* CoreAudioCaptureDeviceManager.h */,
 				3F3BB5821E709EE400C701F2 /* CoreAudioCaptureSource.cpp */,
 				3F3BB5831E709EE400C701F2 /* CoreAudioCaptureSource.h */,
+				07A6D8481FEB700B006441DE /* DisplayCaptureManagerCocoa.cpp */,
+				07A6D8491FEB700C006441DE /* DisplayCaptureManagerCocoa.h */,
+				07A6D8471FEB700B006441DE /* DisplayCaptureSourceCocoa.cpp */,
+				07A6D84A1FEB700D006441DE /* DisplayCaptureSourceCocoa.h */,
 				0744ECEB1E0C4AE5000D0944 /* MockRealtimeAudioSourceMac.h */,
 				0744ECEC1E0C4AE5000D0944 /* MockRealtimeAudioSourceMac.mm */,
 				07EE76ED1BEA619800F89133 /* MockRealtimeVideoSourceMac.h */,

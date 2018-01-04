@@ -122,7 +122,7 @@ void UserMediaPermissionRequestManagerProxy::userMediaAccessWasDenied(uint64_t u
         return;
 
     if (reason == UserMediaPermissionRequestProxy::UserMediaAccessDenialReason::PermissionDenied)
-        m_deniedRequests.append(DeniedRequest { request->mainFrameID(), request->userMediaDocumentSecurityOrigin(), request->topLevelDocumentSecurityOrigin(), request->requiresAudio(), request->requiresVideo() });
+        m_deniedRequests.append(DeniedRequest { request->mainFrameID(), request->userMediaDocumentSecurityOrigin(), request->topLevelDocumentSecurityOrigin(), request->requiresAudioCapture(), request->requiresVideoCapture() });
 
     denyRequest(userMediaID, reason, emptyString());
 }
@@ -178,6 +178,8 @@ const UserMediaPermissionRequestProxy* UserMediaPermissionRequestManagerProxy::s
     bool checkForAudio = needsAudio;
     bool checkForVideo = needsVideo;
     for (const auto& grantedRequest : m_grantedRequests) {
+        if (grantedRequest->requiresDisplayCapture())
+            continue;
         if (!grantedRequest->userMediaDocumentSecurityOrigin().isSameSchemeHostPort(userMediaDocumentOrigin))
             continue;
         if (!grantedRequest->topLevelDocumentSecurityOrigin().isSameSchemeHostPort(topLevelDocumentOrigin))
@@ -185,10 +187,10 @@ const UserMediaPermissionRequestProxy* UserMediaPermissionRequestManagerProxy::s
         if (grantedRequest->frameID() != frameID)
             continue;
 
-        if (grantedRequest->requiresVideo())
+        if (grantedRequest->requiresVideoCapture())
             checkForVideo = false;
 
-        if (grantedRequest->requiresAudio())
+        if (grantedRequest->requiresAudioCapture())
             checkForAudio = false;
 
         if (checkForVideo || checkForAudio)

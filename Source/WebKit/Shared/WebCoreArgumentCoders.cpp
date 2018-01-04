@@ -2598,47 +2598,6 @@ bool ArgumentCoder<MediaConstraints>::decode(Decoder& decoder, WebCore::MediaCon
         && decoder.decode(constraints.deviceIDHashSalt)
         && decoder.decode(constraints.isValid);
 }
-
-void ArgumentCoder<CaptureDevice>::encode(Encoder& encoder, const WebCore::CaptureDevice& device)
-{
-    encoder << device.persistentId();
-    encoder << device.label();
-    encoder << device.groupId();
-    encoder << device.enabled();
-    encoder.encodeEnum(device.type());
-}
-
-std::optional<CaptureDevice> ArgumentCoder<CaptureDevice>::decode(Decoder& decoder)
-{
-    std::optional<String> persistentId;
-    decoder >> persistentId;
-    if (!persistentId)
-        return std::nullopt;
-
-    std::optional<String> label;
-    decoder >> label;
-    if (!label)
-        return std::nullopt;
-
-    std::optional<String> groupId;
-    decoder >> groupId;
-    if (!groupId)
-        return std::nullopt;
-
-    std::optional<bool> enabled;
-    decoder >> enabled;
-    if (!enabled)
-        return std::nullopt;
-
-    std::optional<CaptureDevice::DeviceType> type;
-    decoder >> type;
-    if (!type)
-        return std::nullopt;
-
-    std::optional<CaptureDevice> device = {{ WTFMove(*persistentId), WTFMove(*type), WTFMove(*label), WTFMove(*groupId) }};
-    device->setEnabled(*enabled);
-    return device;
-}
 #endif
 
 #if ENABLE(INDEXED_DATABASE)

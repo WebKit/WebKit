@@ -89,9 +89,17 @@ public:
     const AtomicString& groupId() const { return m_groupId; }
     void setGroupId(const AtomicString& groupId) { m_groupId = groupId; }
 
+    enum class DisplaySurfaceType {
+        Monitor,
+        Window,
+        Application,
+        Browser,
+        Invalid,
+    };
+
     bool supportsDisplaySurface() const { return m_supportedConstraints.supportsDisplaySurface(); }
-    const AtomicString& displaySurface() const { return m_displaySurface; }
-    void setDisplaySurface(const AtomicString& displaySurface) { m_displaySurface = displaySurface; }
+    DisplaySurfaceType displaySurface() const { return m_displaySurface; }
+    void setDisplaySurface(DisplaySurfaceType displaySurface) { m_displaySurface = displaySurface; }
 
     bool supportsLogicalSurface() const { return m_supportedConstraints.supportsLogicalSurface(); }
     bool logicalSurface() const { return m_logicalSurface; }
@@ -121,7 +129,7 @@ private:
     AtomicString m_groupId;
     AtomicString m_label;
 
-    AtomicString m_displaySurface;
+    DisplaySurfaceType m_displaySurface { DisplaySurfaceType::Invalid };
     bool m_logicalSurface { 0 };
 
     RealtimeMediaSourceSupportedConstraints m_supportedConstraints;

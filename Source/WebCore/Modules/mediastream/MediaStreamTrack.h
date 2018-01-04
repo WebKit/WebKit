@@ -95,6 +95,8 @@ public:
         std::optional<int> sampleRate;
         std::optional<int> sampleSize;
         std::optional<bool> echoCancellation;
+        std::optional<bool> displaySurface;
+        String logicalSurface;
         String deviceId;
         String groupId;
     };

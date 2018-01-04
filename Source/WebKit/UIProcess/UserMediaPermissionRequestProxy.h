@@ -49,8 +49,9 @@ public:
 
     void invalidate();
 
-    bool requiresAudio() const { return m_eligibleAudioDevices.size(); }
-    bool requiresVideo() const { return m_eligibleVideoDevices.size(); }
+    bool requiresAudioCapture() const { return m_eligibleAudioDevices.size(); }
+    bool requiresVideoCapture() const { return !requiresDisplayCapture() && m_eligibleVideoDevices.size(); }
+    bool requiresDisplayCapture() const { return m_request.type == WebCore::MediaStreamRequest::Type::DisplayMedia && m_eligibleVideoDevices.size(); }
 
     Vector<String> videoDeviceUIDs() const;
     Vector<String> audioDeviceUIDs() const;

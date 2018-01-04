@@ -140,6 +140,10 @@ Vector<CaptureDevice> RealtimeMediaSourceCenter::getMediaStreamDevices()
         if (device.enabled())
             result.append(device);
     }
+    for (auto& device : displayCaptureDeviceManager().captureDevices()) {
+        if (device.enabled())
+            result.append(device);
+    }
 
     return result;
 }
@@ -248,13 +252,15 @@ void RealtimeMediaSourceCenter::validateRequestConstraints(ValidConstraintsHandl
         String invalidConstraint;
         CaptureSourceOrError sourceOrError;
         switch (device.type()) {
-        case CaptureDevice::DeviceType::Camera:
-            if (request.type == MediaStreamRequest::Type::UserMedia && request.videoConstraints.isValid) {
-                auto sourceOrError = videoFactory().createVideoCaptureSource(device, { });
-                if (sourceOrError && sourceOrError.captureSource->supportsConstraints(request.videoConstraints, invalidConstraint))
-                    videoDeviceInfo.append({sourceOrError.captureSource->fitnessScore(), device});
-            }
+        case CaptureDevice::DeviceType::Camera: {
+            if (request.type != MediaStreamRequest::Type::UserMedia || !request.videoConstraints.isValid)
+                continue;
+
+            auto sourceOrError = videoFactory().createVideoCaptureSource(device, { });
+            if (sourceOrError && sourceOrError.captureSource->supportsConstraints(request.videoConstraints, invalidConstraint))
+                videoDeviceInfo.append({sourceOrError.captureSource->fitnessScore(), device});
             break;
+        }
         case CaptureDevice::DeviceType::Microphone:
             if (request.audioConstraints.isValid) {
                 auto sourceOrError = audioFactory().createAudioCaptureSource(device, { });
@@ -265,11 +271,19 @@ void RealtimeMediaSourceCenter::validateRequestConstraints(ValidConstraintsHandl
         case CaptureDevice::DeviceType::Screen:
         case CaptureDevice::DeviceType::Application:
         case CaptureDevice::DeviceType::Window:
-        case CaptureDevice::DeviceType::Browser:
-            ASSERT(request.type == MediaStreamRequest::Type::DisplayMedia);
-            ASSERT(request.videoConstraints.mandatoryConstraints.isEmpty());
+        case CaptureDevice::DeviceType::Browser: {
+            if (request.type != MediaStreamRequest::Type::DisplayMedia)
+                continue;
+            ASSERT(request.audioConstraints.mandatoryConstraints.isEmpty());
             ASSERT(request.videoConstraints.advancedConstraints.isEmpty());
+            if (!request.videoConstraints.isValid || !request.videoConstraints.advancedConstraints.isEmpty() || !request.videoConstraints.mandatoryConstraints.isEmpty())
+                continue;
+
+            auto sourceOrError = videoFactory().createVideoCaptureSource(device, { });
+            if (sourceOrError && sourceOrError.captureSource->supportsConstraints(request.videoConstraints, invalidConstraint))
+                videoDeviceInfo.append({sourceOrError.captureSource->fitnessScore(), device});
             break;
+        }
         case CaptureDevice::DeviceType::Unknown:
             ASSERT_NOT_REACHED();
             break;
@@ -321,6 +335,8 @@ std::optional<CaptureDevice> RealtimeMediaSourceCenter::captureDeviceWithPersist
     case CaptureDevice::DeviceType::Application:
     case CaptureDevice::DeviceType::Window:
     case CaptureDevice::DeviceType::Browser:
+        return displayCaptureDeviceManager().captureDeviceWithPersistentID(type, id);
+        break;
     case CaptureDevice::DeviceType::Unknown:
         ASSERT_NOT_REACHED();
         break;

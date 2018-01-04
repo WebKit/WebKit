@@ -44,10 +44,11 @@ public:
 
     static Vector<CaptureDevice>& audioDevices();
     static Vector<CaptureDevice>& videoDevices();
+    static Vector<CaptureDevice>& displayDevices();
 
     static std::optional<CaptureDevice> captureDeviceWithPersistentID(CaptureDevice::DeviceType, const String&);
 
-    enum class MockDevice { Invalid, Microphone1, Microphone2, Camera1, Camera2 };
+    enum class MockDevice { Invalid, Microphone1, Microphone2, Camera1, Camera2, Screen1, Screen2 };
 
 protected:
     MockRealtimeMediaSource(const String& id, Type, const String& name);

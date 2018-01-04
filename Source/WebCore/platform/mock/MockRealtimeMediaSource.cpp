@@ -61,6 +61,9 @@ static const HashMap<String, MockDeviceInfo>& deviceMap()
 
             { "239c24b2-2b15-11e3-8224-0800200c9a66", CaptureDevice::DeviceType::Camera, "Mock video device 1", MockRealtimeMediaSource::MockDevice::Camera1 },
             { "239c24b3-2b15-11e3-8224-0800200c9a66", CaptureDevice::DeviceType::Camera, "Mock video device 2", MockRealtimeMediaSource::MockDevice::Camera2 },
+
+            { "SCREEN-1", CaptureDevice::DeviceType::Screen, "Mock screen device 1", MockRealtimeMediaSource::MockDevice::Screen1 },
+            { "SCREEN-2", CaptureDevice::DeviceType::Screen, "Mock screen device 2", MockRealtimeMediaSource::MockDevice::Screen2 },
         };
 
         HashMap<String, MockDeviceInfo> map;
@@ -121,6 +124,25 @@ Vector<CaptureDevice>& MockRealtimeMediaSource::videoDevices()
         return vector;
     }());
     return info;
+}
+
+Vector<CaptureDevice>& MockRealtimeMediaSource::displayDevices()
+{
+    static auto devices = makeNeverDestroyed([] {
+        Vector<CaptureDevice> vector;
+
+        auto captureDevice = captureDeviceWithPersistentID(CaptureDevice::DeviceType::Screen, ASCIILiteral("SCREEN-1"));
+        ASSERT(captureDevice);
+        vector.append(WTFMove(captureDevice.value()));
+
+        captureDevice = captureDeviceWithPersistentID(CaptureDevice::DeviceType::Screen, ASCIILiteral("SCREEN-2"));
+        ASSERT(captureDevice);
+        vector.append(WTFMove(captureDevice.value()));
+
+        return vector;
+    }());
+
+    return devices;
 }
 
 MockRealtimeMediaSource::MockRealtimeMediaSource(const String& id, RealtimeMediaSource::Type type, const String& name)

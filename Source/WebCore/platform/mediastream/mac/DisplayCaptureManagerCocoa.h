@@ -1,7 +1,5 @@
 /*
- * Copyright (C) 2013 Google Inc. All rights reserved.
- * Copyright (C) 2013 Apple Inc.  All rights reserved.
- * Copyright (C) 2013 Nokia Corporation and/or its subsidiary(-ies).
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,27 +23,28 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "MockRealtimeMediaSourceCenter.h"
+#pragma once
 
 #if ENABLE(MEDIA_STREAM)
 
-#include "Logging.h"
-#include "MockRealtimeAudioSource.h"
-#include "MockRealtimeVideoSource.h"
-#include <wtf/NeverDestroyed.h>
+#include "CaptureDeviceManager.h"
 
 namespace WebCore {
 
-void MockRealtimeMediaSourceCenter::setMockRealtimeMediaSourceCenterEnabled(bool enabled)
-{
-    static NeverDestroyed<MockRealtimeMediaSourceCenter> center;
-    static bool active = false;
-    if (active != enabled) {
-        active = enabled;
-        RealtimeMediaSourceCenter::setSharedStreamCenterOverride(enabled ? &center.get() : nullptr);
-    }
-}
+class DisplayCaptureManagerCocoa final : public CaptureDeviceManager {
+public:
+    static DisplayCaptureManagerCocoa& singleton();
+    DisplayCaptureManagerCocoa() = default;
+
+private:
+    virtual ~DisplayCaptureManagerCocoa();
+
+    const Vector<CaptureDevice>& captureDevices() final;
+    std::optional<CaptureDevice> captureDeviceWithPersistentID(CaptureDevice::DeviceType, const String&) final;
+    std::optional<CaptureDevice> screenCaptureDeviceWithPersistentID(const String&);
+
+    Vector<CaptureDevice> m_displays;
+};
 
 } // namespace WebCore
 

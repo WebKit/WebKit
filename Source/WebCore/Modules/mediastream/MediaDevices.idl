@@ -47,3 +47,13 @@
     (boolean or MediaTrackConstraints) video = false;
     (boolean or MediaTrackConstraints) audio = false;
 };
+
+[
+    Conditional=MEDIA_STREAM,
+    EnabledAtRuntime=ScreenCapture
+] enum DisplayCaptureSurfaceType {
+    "monitor",
+    "window",
+    "application",
+    "browser"
+};

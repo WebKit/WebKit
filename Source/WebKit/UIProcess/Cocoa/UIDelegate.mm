@@ -793,8 +793,8 @@ static void requestUserMediaAuthorizationForDevices(const WebFrameProxy& frame, 
             protectedRequest->deny(UserMediaPermissionRequestProxy::UserMediaAccessDenialReason::PermissionDenied);
             return;
         }
-        const String& videoDeviceUID = protectedRequest->requiresVideo() ? protectedRequest->videoDeviceUIDs().first() : String();
-        const String& audioDeviceUID = protectedRequest->requiresAudio() ? protectedRequest->audioDeviceUIDs().first() : String();
+        const String& videoDeviceUID = (protectedRequest->requiresVideoCapture() || protectedRequest->requiresDisplayCapture()) ? protectedRequest->videoDeviceUIDs().first() : String();
+        const String& audioDeviceUID = protectedRequest->requiresAudioCapture() ? protectedRequest->audioDeviceUIDs().first() : String();
         protectedRequest->allow(audioDeviceUID, videoDeviceUID);
     });
 
@@ -803,10 +803,14 @@ static void requestUserMediaAuthorizationForDevices(const WebFrameProxy& frame, 
     WebCore::URL mainFrameURL(WebCore::URL(), mainFrame->url());
 
     _WKCaptureDevices devices = 0;
-    if (request.requiresAudio())
+    if (request.requiresAudioCapture())
         devices |= _WKCaptureDeviceMicrophone;
-    if (request.requiresVideo())
+    if (request.requiresVideoCapture())
         devices |= _WKCaptureDeviceCamera;
+    if (request.requiresDisplayCapture()) {
+        devices |= _WKCaptureDeviceDisplay;
+        ASSERT(!(devices & _WKCaptureDeviceCamera));
+    }
 
     auto protectedWebView = RetainPtr<WKWebView>(&webView);
     [delegate _webView:protectedWebView.get() requestUserMediaAuthorizationForDevices:devices url:requestFrameURL mainFrameURL:mainFrameURL decisionHandler:decisionHandler.get()];
@@ -820,9 +824,10 @@ bool UIDelegate::UIClient::decidePolicyForUserMediaPermissionRequest(WebPageProx
         return true;
     }
 
-    bool requiresAudio = request.requiresAudio();
-    bool requiresVideo = request.requiresVideo();
-    if (!requiresAudio && !requiresVideo) {
+    bool requiresAudioCapture = request.requiresAudioCapture();
+    bool requiresVideoCapture = request.requiresVideoCapture();
+    bool requiresDisplayCapture = request.requiresDisplayCapture();
+    if (!requiresAudioCapture && !requiresVideoCapture && !requiresDisplayCapture) {
         request.deny(UserMediaPermissionRequestProxy::UserMediaAccessDenialReason::NoConstraints);
         return true;
     }
@@ -830,7 +835,7 @@ bool UIDelegate::UIClient::decidePolicyForUserMediaPermissionRequest(WebPageProx
 #if PLATFORM(IOS)
     auto requestCameraAuthorization = BlockPtr<void()>::fromCallable([this, &frame, protectedRequest = makeRef(request), webView = RetainPtr<WKWebView>(m_uiDelegate.m_webView)]() {
 
-        if (!protectedRequest->requiresVideo()) {
+        if (!protectedRequest->requiresVideoCapture()) {
             requestUserMediaAuthorizationForDevices(frame, protectedRequest, (id <WKUIDelegatePrivate>)m_uiDelegate.m_delegate.get(), *webView.get());
             return;
         }
@@ -857,7 +862,7 @@ bool UIDelegate::UIClient::decidePolicyForUserMediaPermissionRequest(WebPageProx
         }
     });
 
-    if (requiresAudio) {
+    if (requiresAudioCapture) {
         AVAuthorizationStatus microphoneAuthorizationStatus = [getAVCaptureDeviceClass() authorizationStatusForMediaType:getAVMediaTypeAudio()];
         switch (microphoneAuthorizationStatus) {
         case AVAuthorizationStatusAuthorized:

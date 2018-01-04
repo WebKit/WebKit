@@ -1,3 +1,91 @@
+2018-01-04  Eric Carlson  <eric.carlson@apple.com>
+
+        [MediaStream] Add Mock screen capture source
+        https://bugs.webkit.org/show_bug.cgi?id=181291
+        <rdar://problem/36298164>
+
+        Reviewed by Dean Jackson.
+
+        Tests:  http/tests/media/media-stream/get-display-media-prompt.html
+                GetDisplayMediaTest.BasicPrompt
+                GetDisplayMediaTest.Constraints
+
+        * Modules/mediastream/MediaDevices.cpp:
+        (WebCore::MediaDevices::MediaDevices): Add static_assert to ensure MediaDevices::DisplayCaptureSurfaceType
+        and RealtimeMediaSourceSettings::DisplaySurfaceType values are equivalent.
+        (WebCore::MediaDevices::getSupportedConstraints): Remove bogus code.
+        * Modules/mediastream/MediaDevices.h: Add DisplayCaptureSurfaceType.
+        * Modules/mediastream/MediaDevices.idl: Ditto.
+
+        * Modules/mediastream/MediaStreamTrack.cpp:
+        (WebCore::MediaStreamTrack::getSettings const): Add a FIXME.
+        * Modules/mediastream/MediaStreamTrack.h: Add displaySurface and logicalSurface.
+
+        * Modules/mediastream/MediaTrackSupportedConstraints.h: Remove displaySurface and logicalSurface.
+        * Modules/mediastream/MediaTrackSupportedConstraints.idl:
+
+        * SourcesCocoa.txt: Add DisplayCaptureManagerCocoa.cpp and DisplayCaptureSourceCocoa.cpp.
+
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+
+        * platform/mediastream/CaptureDevice.h:
+        (WebCore::CaptureDevice::encode const): Add.
+        (WebCore::CaptureDevice::decode):
+
+        * platform/mediastream/RealtimeMediaSourceCenter.cpp:
+        (WebCore::RealtimeMediaSourceCenter::getMediaStreamDevices): Include display capture "devices".
+        (WebCore::RealtimeMediaSourceCenter::validateRequestConstraints): Deal with display capture devices.
+        (WebCore::RealtimeMediaSourceCenter::captureDeviceWithPersistentID): Ditto.
+        * platform/mediastream/RealtimeMediaSourceCenter.h:
+
+        * platform/mediastream/RealtimeMediaSourceSettings.h:
+        (WebCore::RealtimeMediaSourceSettings::displaySurface const): Return a DisplaySurfaceType.
+        (WebCore::RealtimeMediaSourceSettings::setDisplaySurface): Take a DisplaySurfaceType.
+
+        * platform/mediastream/mac/DisplayCaptureManagerCocoa.cpp:
+        (WebCore::DisplayCaptureManagerCocoa::singleton):
+        (WebCore::DisplayCaptureManagerCocoa::~DisplayCaptureManagerCocoa):
+        (WebCore::DisplayCaptureManagerCocoa::captureDevices):
+        (WebCore::DisplayCaptureManagerCocoa::screenCaptureDeviceWithPersistentID):
+        (WebCore::DisplayCaptureManagerCocoa::captureDeviceWithPersistentID):
+        * platform/mediastream/mac/DisplayCaptureManagerCocoa.h:
+
+        * platform/mediastream/mac/DisplayCaptureSourceCocoa.cpp: Added.
+        (WebCore::DisplayCaptureSourceCocoa::DisplayCaptureSourceCocoa):
+        (WebCore::DisplayCaptureSourceCocoa::~DisplayCaptureSourceCocoa):
+        (WebCore::DisplayCaptureSourceCocoa::capabilities const):
+        (WebCore::DisplayCaptureSourceCocoa::settings const):
+        (WebCore::DisplayCaptureSourceCocoa::settingsDidChange):
+        (WebCore::DisplayCaptureSourceCocoa::startProducingData):
+        (WebCore::DisplayCaptureSourceCocoa::stopProducingData):
+        (WebCore::DisplayCaptureSourceCocoa::elapsedTime):
+        (WebCore::DisplayCaptureSourceCocoa::applyFrameRate):
+        (WebCore::DisplayCaptureSourceCocoa::emitFrame):
+        * platform/mediastream/mac/DisplayCaptureSourceCocoa.h:
+
+        * platform/mediastream/mac/RealtimeMediaSourceCenterMac.cpp:
+        (WebCore::RealtimeMediaSourceCenterMac::displayCaptureDeviceManager): New.
+        * platform/mediastream/mac/RealtimeMediaSourceCenterMac.h:
+
+        * platform/mock/MockRealtimeMediaSource.cpp:
+        (WebCore::deviceMap): Add screen capture "devices".
+        (WebCore::MockRealtimeMediaSource::displayDevices): New.
+        * platform/mock/MockRealtimeMediaSource.h:
+
+        * platform/mock/MockRealtimeMediaSourceCenter.cpp: Clean up includes.
+        * platform/mock/MockRealtimeMediaSourceCenter.h:
+
+        * platform/mock/MockRealtimeVideoSource.cpp:
+        (WebCore::MockRealtimeVideoSource::MockRealtimeVideoSource): Mock two screen devices.
+        (WebCore::MockRealtimeVideoSource::updateSettings): Deal with mock screens.
+        (WebCore::MockRealtimeVideoSource::initializeCapabilities): Ditto.
+        (WebCore::MockRealtimeVideoSource::initializeSupportedConstraints): Ditto.
+        (WebCore::MockRealtimeVideoSource::drawText): Ditto.
+        (WebCore::MockRealtimeVideoSource::generateFrame): Ditto.
+        * platform/mock/MockRealtimeVideoSource.h:
+        (WebCore::MockRealtimeVideoSource::mockCamera const):
+        (WebCore::MockRealtimeVideoSource::mockScreen const):
+
 2018-01-04  Youenn Fablet  <youenn@apple.com>
 
         FetchResponse should set its internal response text encoding name

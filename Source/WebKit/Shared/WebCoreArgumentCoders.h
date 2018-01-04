@@ -28,7 +28,6 @@
 #include "ArgumentCoders.h"
 #include <WebCore/AutoplayEvent.h>
 #include <WebCore/CacheStorageConnection.h>
-#include <WebCore/CaptureDevice.h>
 #include <WebCore/ColorSpace.h>
 #include <WebCore/DiagnosticLoggingClient.h>
 #include <WebCore/FrameLoaderTypes.h>
@@ -152,7 +151,6 @@ class MediaSessionMetadata;
 #endif
 
 #if ENABLE(MEDIA_STREAM)
-class CaptureDevice;
 struct MediaConstraints;
 #endif
 
@@ -648,11 +646,6 @@ template<> struct ArgumentCoder<WebCore::MediaConstraints> {
     static void encode(Encoder&, const WebCore::MediaConstraints&);
     static bool decode(Decoder&, WebCore::MediaConstraints&);
 };
-
-template<> struct ArgumentCoder<WebCore::CaptureDevice> {
-    static void encode(Encoder&, const WebCore::CaptureDevice&);
-    static std::optional<WebCore::CaptureDevice> decode(Decoder&);
-};
 #endif
 
 #if ENABLE(INDEXED_DATABASE)
@@ -770,14 +763,6 @@ template<> struct EnumTraits<WebCore::IndexedDB::GetAllType> {
 #endif
 
 #if ENABLE(MEDIA_STREAM)
-template<> struct EnumTraits<WebCore::CaptureDevice::DeviceType> {
-    using values = EnumValues<
-        WebCore::CaptureDevice::DeviceType,
-        WebCore::CaptureDevice::DeviceType::Unknown,
-        WebCore::CaptureDevice::DeviceType::Microphone,
-        WebCore::CaptureDevice::DeviceType::Camera
-    >;
-};
 template<> struct EnumTraits<WebCore::RealtimeMediaSource::Type> {
     using values = EnumValues<
         WebCore::RealtimeMediaSource::Type,

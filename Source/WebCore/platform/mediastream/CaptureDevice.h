@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <wtf/EnumTraits.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -56,6 +57,51 @@ public:
 
     explicit operator bool() const { return m_type != DeviceType::Unknown; }
 
+#if ENABLE(MEDIA_STREAM)
+    template<class Encoder>
+    void encode(Encoder& encoder) const
+    {
+        encoder << m_persistentId;
+        encoder << m_label;
+        encoder << m_groupId;
+        encoder << m_enabled;
+        encoder.encodeEnum(m_type);
+    }
+
+    template <class Decoder>
+    static std::optional<CaptureDevice> decode(Decoder& decoder)
+    {
+        std::optional<String> persistentId;
+        decoder >> persistentId;
+        if (!persistentId)
+            return std::nullopt;
+
+        std::optional<String> label;
+        decoder >> label;
+        if (!label)
+            return std::nullopt;
+
+        std::optional<String> groupId;
+        decoder >> groupId;
+        if (!groupId)
+            return std::nullopt;
+
+        std::optional<bool> enabled;
+        decoder >> enabled;
+        if (!enabled)
+            return std::nullopt;
+
+        std::optional<CaptureDevice::DeviceType> type;
+        decoder >> type;
+        if (!type)
+            return std::nullopt;
+
+        std::optional<CaptureDevice> device = {{ WTFMove(*persistentId), WTFMove(*type), WTFMove(*label), WTFMove(*groupId) }};
+        device->setEnabled(*enabled);
+        return device;
+    }
+#endif
+
 private:
     String m_persistentId;
     DeviceType m_type { DeviceType::Unknown };
@@ -65,4 +111,23 @@ private:
 };
 
 } // namespace WebCore
+
+#if ENABLE(MEDIA_STREAM)
+namespace WTF {
+
+template<> struct EnumTraits<WebCore::CaptureDevice::DeviceType> {
+    using values = EnumValues<
+        WebCore::CaptureDevice::DeviceType,
+        WebCore::CaptureDevice::DeviceType::Unknown,
+        WebCore::CaptureDevice::DeviceType::Microphone,
+        WebCore::CaptureDevice::DeviceType::Camera,
+        WebCore::CaptureDevice::DeviceType::Screen,
+        WebCore::CaptureDevice::DeviceType::Application,
+        WebCore::CaptureDevice::DeviceType::Window,
+        WebCore::CaptureDevice::DeviceType::Browser
+    >;
+};
+
+} // namespace WTF
+#endif
 

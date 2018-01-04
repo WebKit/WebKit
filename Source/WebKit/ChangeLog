@@ -1,3 +1,37 @@
+2018-01-04  Eric Carlson  <eric.carlson@apple.com>
+
+        [MediaStream] Add Mock screen capture source
+        https://bugs.webkit.org/show_bug.cgi?id=181291
+        <rdar://problem/36298164>
+
+        Reviewed by Dean Jackson.
+
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::ArgumentCoder<MediaConstraints>::decode):
+        (IPC::ArgumentCoder<CaptureDevice>::encode): Deleted, moved to CaptureDevice.h
+        (IPC::ArgumentCoder<CaptureDevice>::decode): Ditto.
+        * Shared/WebCoreArgumentCoders.h:
+
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h: Add _WKCaptureDeviceDisplay.
+        * UIProcess/Cocoa/UIDelegate.mm:
+        (WebKit::requestUserMediaAuthorizationForDevices): Deal with display capture.
+        (WebKit::UIDelegate::UIClient::decidePolicyForUserMediaPermissionRequest): Ditto.
+
+        * UIProcess/UserMediaPermissionRequestManagerProxy.cpp:
+        (WebKit::UserMediaPermissionRequestManagerProxy::userMediaAccessWasDenied): requiresAudio -> requiresAudioCapture.
+        (WebKit::UserMediaPermissionRequestManagerProxy::searchForGrantedRequest const): Never reuse
+        a previously granted display capture request.
+
+        * UIProcess/UserMediaPermissionRequestProxy.cpp:
+        (WebKit::UserMediaPermissionRequestProxy::allow): Search the eligible devices instead of asking
+        the source center to find devices.
+        * UIProcess/UserMediaPermissionRequestProxy.h:
+        (WebKit::UserMediaPermissionRequestProxy::requiresAudioCapture const): Renamed.
+        (WebKit::UserMediaPermissionRequestProxy::requiresVideoCapture const): Ditto.
+        (WebKit::UserMediaPermissionRequestProxy::requiresDisplayCapture const): New.
+        (WebKit::UserMediaPermissionRequestProxy::requiresAudio const): Deleted.
+        (WebKit::UserMediaPermissionRequestProxy::requiresVideo const): Deleted.
+
 2018-01-04  Youenn Fablet  <youenn@apple.com>
 
         FetchResponse should set its internal response text encoding name

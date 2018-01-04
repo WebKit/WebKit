@@ -52,23 +52,30 @@ void UserMediaPermissionRequestProxy::allow(const String& audioDeviceUID, const 
         return;
 
 #if ENABLE(MEDIA_STREAM)
-
-    auto& sourceCenter = RealtimeMediaSourceCenter::singleton();
     CaptureDevice audioDevice;
     if (!audioDeviceUID.isEmpty()) {
-        auto device = sourceCenter.captureDeviceWithPersistentID(WebCore::CaptureDevice::DeviceType::Microphone, audioDeviceUID);
-        ASSERT(device && device.value().enabled());
-        if (device)
-            audioDevice = device.value();
+        size_t index = m_eligibleAudioDevices.findMatching([&](const auto& device) {
+            return device.persistentId() == audioDeviceUID;
+        });
+        ASSERT(index != notFound);
+
+        if (index != notFound)
+            audioDevice = m_eligibleAudioDevices[index];
+
+        ASSERT(audioDevice.enabled());
     }
 
     CaptureDevice videoDevice;
     if (!videoDeviceUID.isEmpty()) {
-        auto device = sourceCenter.captureDeviceWithPersistentID(WebCore::CaptureDevice::DeviceType::Camera, videoDeviceUID);
+        size_t index = m_eligibleVideoDevices.findMatching([&](const auto& device) {
+            return device.persistentId() == videoDeviceUID;
+        });
+        ASSERT(index != notFound);
 
-        ASSERT(device && device.value().enabled());
-        if (device)
-            videoDevice = device.value();
+        if (index != notFound)
+            videoDevice = m_eligibleVideoDevices[index];
+
+        ASSERT(videoDevice.enabled());
     }
 
     m_manager->userMediaAccessWasGranted(m_userMediaID, WTFMove(audioDevice), WTFMove(videoDevice));

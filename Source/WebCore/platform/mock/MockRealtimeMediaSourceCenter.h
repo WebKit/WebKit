@@ -51,6 +51,7 @@ private:
 
     CaptureDeviceManager& audioCaptureDeviceManager() final { return m_audioCaptureDeviceManager; }
     CaptureDeviceManager& videoCaptureDeviceManager() final { return m_videoCaptureDeviceManager; }
+    CaptureDeviceManager& displayCaptureDeviceManager() final { return m_displayCaptureDeviceManager; }
 
     static std::optional<CaptureDevice> captureDeviceWithPersistentID(CaptureDevice::DeviceType, const String&);
 
@@ -64,9 +65,15 @@ private:
         const Vector<CaptureDevice>& captureDevices() final { return MockRealtimeMediaSource::videoDevices(); }
         std::optional<CaptureDevice> captureDeviceWithPersistentID(CaptureDevice::DeviceType type, const String& id) final { return MockRealtimeMediaSource::captureDeviceWithPersistentID(type, id); }
     };
+    class MockDisplayCaptureDeviceManager final : public CaptureDeviceManager {
+    private:
+        const Vector<CaptureDevice>& captureDevices() final { return MockRealtimeMediaSource::displayDevices(); }
+        std::optional<CaptureDevice> captureDeviceWithPersistentID(CaptureDevice::DeviceType type, const String& id) final { return MockRealtimeMediaSource::captureDeviceWithPersistentID(type, id); }
+    };
 
     MockAudioCaptureDeviceManager m_audioCaptureDeviceManager;
     MockVideoCaptureDeviceManager m_videoCaptureDeviceManager;
+    MockDisplayCaptureDeviceManager m_displayCaptureDeviceManager;
 };
 
 }

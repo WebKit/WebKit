@@ -1,7 +1,5 @@
 /*
- * Copyright (C) 2013 Google Inc. All rights reserved.
- * Copyright (C) 2013 Apple Inc.  All rights reserved.
- * Copyright (C) 2013 Nokia Corporation and/or its subsidiary(-ies).
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,27 +23,58 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "MockRealtimeMediaSourceCenter.h"
+#pragma once
 
 #if ENABLE(MEDIA_STREAM)
 
-#include "Logging.h"
-#include "MockRealtimeAudioSource.h"
-#include "MockRealtimeVideoSource.h"
-#include <wtf/NeverDestroyed.h>
+#include "CaptureDevice.h"
+#include "RealtimeMediaSource.h"
+#include <wtf/RefCounted.h>
+#include <wtf/RefPtr.h>
+#include <wtf/RunLoop.h>
+#include <wtf/text/WTFString.h>
+
+namespace WTF {
+class MediaTime;
+}
 
 namespace WebCore {
 
-void MockRealtimeMediaSourceCenter::setMockRealtimeMediaSourceCenterEnabled(bool enabled)
-{
-    static NeverDestroyed<MockRealtimeMediaSourceCenter> center;
-    static bool active = false;
-    if (active != enabled) {
-        active = enabled;
-        RealtimeMediaSourceCenter::setSharedStreamCenterOverride(enabled ? &center.get() : nullptr);
-    }
-}
+class CaptureDeviceInfo;
+
+class DisplayCaptureSourceCocoa : public RealtimeMediaSource {
+public:
+
+protected:
+    DisplayCaptureSourceCocoa(const String& name);
+    virtual ~DisplayCaptureSourceCocoa();
+
+    virtual void generateFrame() = 0;
+    void startProducingData() override;
+    void stopProducingData() override;
+
+    double elapsedTime();
+    bool applyFrameRate(double) override;
+
+private:
+
+    bool isCaptureSource() const final { return true; }
+
+    const RealtimeMediaSourceCapabilities& capabilities() const final;
+    const RealtimeMediaSourceSettings& settings() const final;
+    void settingsDidChange() final;
+
+    void emitFrame();
+
+    mutable std::optional<RealtimeMediaSourceCapabilities> m_capabilities;
+    mutable std::optional<RealtimeMediaSourceSettings> m_currentSettings;
+    RealtimeMediaSourceSupportedConstraints m_supportedConstraints;
+
+    double m_startTime { NAN };
+    double m_elapsedTime { 0 };
+
+    RunLoop::Timer<DisplayCaptureSourceCocoa> m_timer;
+};
 
 } // namespace WebCore
 

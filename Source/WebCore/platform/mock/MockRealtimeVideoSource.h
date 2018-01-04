@@ -83,6 +83,9 @@ private:
 
     void delaySamples(float) override;
 
+    bool mockCamera() const { return device() == MockDevice::Camera1 || device() == MockDevice::Camera2; }
+    bool mockScreen() const { return device() == MockDevice::Screen1 || device() == MockDevice::Screen2; }
+
     float m_baseFontSize { 0 };
     float m_bipBopFontSize { 0 };
     float m_statsFontSize { 0 };

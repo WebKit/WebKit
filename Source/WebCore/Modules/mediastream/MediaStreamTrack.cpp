@@ -170,6 +170,9 @@ MediaStreamTrack::TrackSettings MediaStreamTrack::getSettings(Document& document
         result.deviceId = RealtimeMediaSourceCenter::singleton().hashStringWithSalt(settings.deviceId(), document.deviceIDHashSalt());
     if (settings.supportsGroupId())
         result.groupId = RealtimeMediaSourceCenter::singleton().hashStringWithSalt(settings.groupId(), document.deviceIDHashSalt());
+
+    // FIXME: shouldn't this include displaySurface and logicalSurface?
+
     return result;
 }
 

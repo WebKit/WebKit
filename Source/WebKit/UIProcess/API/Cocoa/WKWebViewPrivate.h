@@ -59,6 +59,7 @@ typedef NS_OPTIONS(NSInteger, _WKMediaMutedState) {
 typedef NS_OPTIONS(NSUInteger, _WKCaptureDevices) {
     _WKCaptureDeviceMicrophone = 1 << 0,
     _WKCaptureDeviceCamera = 1 << 1,
+    _WKCaptureDeviceDisplay = 1 << 2,
 } WK_API_AVAILABLE(macosx(10.13), ios(11.0));
 
 #if TARGET_OS_IPHONE
