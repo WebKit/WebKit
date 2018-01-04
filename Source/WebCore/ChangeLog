@@ -1,3 +1,18 @@
+2018-01-04  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Issues with Ahem's ex / x-height
+        https://bugs.webkit.org/show_bug.cgi?id=180581
+
+        Reviewed by Michael Catanzaro.
+
+        Get the x-height value from the TT_OS2 table if available.
+
+        Fixes: fast/text/break-word-pre-wrap.html
+               imported/w3c/web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-shape-arguments-000.html
+
+        * platform/graphics/freetype/SimpleFontDataFreeType.cpp:
+        (WebCore::Font::platformInit):
+
 2018-01-04  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, GTK build fix attempt after r226357

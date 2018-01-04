@@ -83,6 +83,7 @@ void Font::platformInit()
     float descent = narrowPrecisionToFloat(fontExtents.descent);
     float capHeight = narrowPrecisionToFloat(fontExtents.height);
     float lineGap = narrowPrecisionToFloat(fontExtents.height - fontExtents.ascent - fontExtents.descent);
+    std::optional<float> xHeight;
 
     {
         CairoFtFaceLocker cairoFtFaceLocker(m_platformData.scaledFont());
@@ -92,16 +93,23 @@ void Font::platformInit()
         if (freeTypeFace && freeTypeFace->face_flags & FT_FACE_FLAG_SCALABLE) {
             if (auto* OS2Table = static_cast<TT_OS2*>(FT_Get_Sfnt_Table(freeTypeFace, ft_sfnt_os2))) {
                 const FT_Short kUseTypoMetricsMask = 1 << 7;
+                // FT_Size_Metrics::y_scale is in 16.16 fixed point format.
+                // Its (fractional) value is a factor that converts vertical metrics from design units to units of 1/64 pixels.
+                double yscale = (freeTypeFace->size->metrics.y_scale / 65536.0) / 64.0;
                 if (OS2Table->fsSelection & kUseTypoMetricsMask) {
-                    // FT_Size_Metrics::y_scale is in 16.16 fixed point format.
-                    // Its (fractional) value is a factor that converts vertical metrics from design units to units of 1/64 pixels.
-                    double yscale = (freeTypeFace->size->metrics.y_scale / 65536.0) / 64.0;
                     ascent = narrowPrecisionToFloat(yscale * OS2Table->sTypoAscender);
                     descent = -narrowPrecisionToFloat(yscale * OS2Table->sTypoDescender);
                     lineGap = narrowPrecisionToFloat(yscale * OS2Table->sTypoLineGap);
                 }
+                xHeight = narrowPrecisionToFloat(yscale * OS2Table->sxHeight);
             }
         }
+    }
+
+    if (!xHeight) {
+        cairo_text_extents_t textExtents;
+        cairo_scaled_font_text_extents(m_platformData.scaledFont(), "x", &textExtents);
+        xHeight = narrowPrecisionToFloat((platformData().orientation() == Horizontal) ? textExtents.height : textExtents.width);
     }
 
     m_fontMetrics.setAscent(ascent);
@@ -109,11 +117,9 @@ void Font::platformInit()
     m_fontMetrics.setCapHeight(capHeight);
     m_fontMetrics.setLineSpacing(lroundf(ascent) + lroundf(descent) + lroundf(lineGap));
     m_fontMetrics.setLineGap(lineGap);
+    m_fontMetrics.setXHeight(xHeight.value());
 
     cairo_text_extents_t textExtents;
-    cairo_scaled_font_text_extents(m_platformData.scaledFont(), "x", &textExtents);
-    m_fontMetrics.setXHeight(narrowPrecisionToFloat((platformData().orientation() == Horizontal) ? textExtents.height : textExtents.width));
-
     cairo_scaled_font_text_extents(m_platformData.scaledFont(), " ", &textExtents);
     m_spaceWidth = narrowPrecisionToFloat((platformData().orientation() == Horizontal) ? textExtents.x_advance : -textExtents.y_advance);
 

@@ -2683,7 +2683,6 @@ webkit.org/b/120839 animations/cross-fade-background-image.html [ ImageOnlyFailu
 
 webkit.org/b/121905 fast/images/exif-orientation.html [ Failure ]
 
-webkit.org/b/180581 fast/text/break-word-pre-wrap.html [ ImageOnlyFailure ]
 webkit.org/b/180581 css3/shapes/shape-outside/values/shape-margin-001.html [ Failure ]
 webkit.org/b/180581 css3/shapes/shape-outside/values/shape-outside-circle-004.html [ Failure ]
 webkit.org/b/180581 css3/shapes/shape-outside/values/shape-outside-circle-005.html [ Failure ]
@@ -2699,7 +2698,6 @@ webkit.org/b/180581 imported/w3c/web-platform-tests/css/css-shapes-1/shape-outsi
 webkit.org/b/180581 imported/w3c/web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-ellipse-005.html [ Failure ]
 webkit.org/b/180581 imported/w3c/web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-inset-003.html [ Failure ]
 webkit.org/b/180581 imported/w3c/web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-polygon-004.html [ Failure ]
-webkit.org/b/180581 imported/w3c/web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-shape-arguments-000.html [ Failure ]
 
 webkit.org/b/124507 fast/css3-text/css3-text-decoration/text-decoration-skip/text-decoration-skip-ink.html [ ImageOnlyFailure ]
 webkit.org/b/139486 fast/css3-text/css3-text-decoration/text-decoration-skip/decoration-skip-crash-fallback-svg.html [ ImageOnlyFailure ]

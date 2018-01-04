@@ -39,8 +39,8 @@ layer at (0,0) size 785x914
         RenderText {#text} at (0,0) size 581x17
           text run at (0,0) width 581: "This words in this sentence should have extra space between them."
       RenderBlock {P} at (0,434) size 769x18
-        RenderText {#text} at (0,0) size 501x17
-          text run at (0,0) width 501: "This words in this sentence should have extra space between them."
+        RenderText {#text} at (0,0) size 495x17
+          text run at (0,0) width 495: "This words in this sentence should have extra space between them."
       RenderBlock {P} at (0,468) size 769x36
         RenderText {#text} at (0,0) size 751x17
           text run at (0,0) width 751: "This words in this sentence should have extra space between them, but the last few words in the sentence"
@@ -83,8 +83,8 @@ layer at (0,0) size 785x914
                 RenderText {#text} at (0,0) size 581x17
                   text run at (0,0) width 581: "This words in this sentence should have extra space between them."
               RenderBlock {P} at (4,208) size 747x18
-                RenderText {#text} at (0,0) size 501x17
-                  text run at (0,0) width 501: "This words in this sentence should have extra space between them."
+                RenderText {#text} at (0,0) size 495x17
+                  text run at (0,0) width 495: "This words in this sentence should have extra space between them."
               RenderBlock {P} at (4,242) size 747x36
                 RenderText {#text} at (0,0) size 688x35
                   text run at (0,0) width 688: "This words in this sentence should have extra space between them, but the last few words in the"

@@ -1,3 +1,118 @@
+2018-01-04  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Issues with Ahem's ex / x-height
+        https://bugs.webkit.org/show_bug.cgi?id=180581
+
+        Reviewed by Michael Catanzaro.
+
+        Unskip two tests that are now passing and rebaseline others.
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk/css1/font_properties/font_size-expected.png:
+        * platform/gtk/css1/font_properties/font_size-expected.txt:
+        * platform/gtk/css1/text_properties/letter_spacing-expected.png:
+        * platform/gtk/css1/text_properties/letter_spacing-expected.txt:
+        * platform/gtk/css1/text_properties/line_height-expected.png:
+        * platform/gtk/css1/text_properties/line_height-expected.txt:
+        * platform/gtk/css1/text_properties/text_indent-expected.png:
+        * platform/gtk/css1/text_properties/text_indent-expected.txt:
+        * platform/gtk/css1/text_properties/word_spacing-expected.png:
+        * platform/gtk/css1/text_properties/word_spacing-expected.txt:
+        * platform/gtk/css1/units/length_units-expected.png:
+        * platform/gtk/css1/units/length_units-expected.txt:
+        * platform/gtk/css2.1/t040302-c61-ex-len-00-b-a-expected.png:
+        * platform/gtk/css2.1/t040302-c61-ex-len-00-b-a-expected.txt:
+        * platform/gtk/css2.1/t040302-c61-rel-len-00-b-ag-expected.png:
+        * platform/gtk/css2.1/t040302-c61-rel-len-00-b-ag-expected.txt:
+        * platform/gtk/css2.1/t1008-c44-ln-box-02-d-ag-expected.png:
+        * platform/gtk/css2.1/t1008-c44-ln-box-02-d-ag-expected.txt:
+        * platform/gtk/css2.1/t100801-c544-valgn-01-d-ag-expected.png:
+        * platform/gtk/css2.1/t100801-c544-valgn-01-d-ag-expected.txt:
+        * platform/gtk/css2.1/t100801-c544-valgn-03-d-agi-expected.png:
+        * platform/gtk/css2.1/t100801-c544-valgn-03-d-agi-expected.txt:
+        * platform/gtk/css2.1/t100801-c548-ln-ht-02-b-ag-expected.png:
+        * platform/gtk/css2.1/t100801-c548-ln-ht-02-b-ag-expected.txt:
+        * platform/gtk/css2.1/t1507-c526-font-sz-02-b-a-expected.png:
+        * platform/gtk/css2.1/t1507-c526-font-sz-02-b-a-expected.txt:
+        * platform/gtk/css2.1/t1601-c547-indent-00-b-a-expected.png:
+        * platform/gtk/css2.1/t1601-c547-indent-00-b-a-expected.txt:
+        * platform/gtk/css2.1/t1604-c542-letter-sp-00-b-a-expected.png:
+        * platform/gtk/css2.1/t1604-c542-letter-sp-00-b-a-expected.txt:
+        * platform/gtk/editing/selection/caret-ltr-2-expected.png:
+        * platform/gtk/editing/selection/caret-ltr-2-expected.txt:
+        * platform/gtk/editing/selection/caret-ltr-2-left-expected.png:
+        * platform/gtk/editing/selection/caret-ltr-2-left-expected.txt:
+        * platform/gtk/editing/selection/caret-ltr-expected.png:
+        * platform/gtk/editing/selection/caret-ltr-expected.txt:
+        * platform/gtk/editing/selection/caret-ltr-right-expected.png:
+        * platform/gtk/editing/selection/caret-ltr-right-expected.txt:
+        * platform/gtk/editing/selection/caret-rtl-2-expected.png:
+        * platform/gtk/editing/selection/caret-rtl-2-expected.txt:
+        * platform/gtk/editing/selection/caret-rtl-2-left-expected.png:
+        * platform/gtk/editing/selection/caret-rtl-2-left-expected.txt:
+        * platform/gtk/editing/selection/caret-rtl-expected.png:
+        * platform/gtk/editing/selection/caret-rtl-expected.txt:
+        * platform/gtk/editing/selection/caret-rtl-right-expected.png:
+        * platform/gtk/editing/selection/caret-rtl-right-expected.txt:
+        * platform/gtk/editing/selection/select-across-readonly-input-1-expected.png:
+        * platform/gtk/editing/selection/select-across-readonly-input-1-expected.txt:
+        * platform/gtk/editing/selection/select-across-readonly-input-2-expected.png:
+        * platform/gtk/editing/selection/select-across-readonly-input-2-expected.txt:
+        * platform/gtk/editing/selection/select-across-readonly-input-3-expected.png:
+        * platform/gtk/editing/selection/select-across-readonly-input-3-expected.txt:
+        * platform/gtk/editing/selection/select-across-readonly-input-4-expected.png:
+        * platform/gtk/editing/selection/select-across-readonly-input-4-expected.txt:
+        * platform/gtk/editing/selection/select-across-readonly-input-5-expected.png:
+        * platform/gtk/editing/selection/select-across-readonly-input-5-expected.txt:
+        * platform/gtk/editing/selection/vertical-lr-ltr-extend-line-backward-br-expected.png:
+        * platform/gtk/editing/selection/vertical-lr-ltr-extend-line-backward-br-expected.txt:
+        * platform/gtk/editing/selection/vertical-lr-ltr-extend-line-forward-br-expected.png:
+        * platform/gtk/editing/selection/vertical-lr-ltr-extend-line-forward-br-expected.txt:
+        * platform/gtk/editing/selection/vertical-rl-ltr-extend-line-backward-br-expected.png:
+        * platform/gtk/editing/selection/vertical-rl-ltr-extend-line-backward-br-expected.txt:
+        * platform/gtk/editing/selection/vertical-rl-ltr-extend-line-backward-p-expected.png:
+        * platform/gtk/editing/selection/vertical-rl-ltr-extend-line-backward-p-expected.txt:
+        * platform/gtk/editing/selection/vertical-rl-ltr-extend-line-forward-br-expected.png:
+        * platform/gtk/editing/selection/vertical-rl-ltr-extend-line-forward-br-expected.txt:
+        * platform/gtk/editing/selection/vertical-rl-ltr-extend-line-forward-p-expected.png:
+        * platform/gtk/editing/selection/vertical-rl-ltr-extend-line-forward-p-expected.txt:
+        * platform/gtk/editing/selection/vertical-rl-rtl-extend-line-backward-br-expected.png:
+        * platform/gtk/editing/selection/vertical-rl-rtl-extend-line-backward-br-expected.txt:
+        * platform/gtk/editing/selection/vertical-rl-rtl-extend-line-backward-p-expected.png:
+        * platform/gtk/editing/selection/vertical-rl-rtl-extend-line-backward-p-expected.txt:
+        * platform/gtk/editing/selection/vertical-rl-rtl-extend-line-forward-br-expected.png:
+        * platform/gtk/editing/selection/vertical-rl-rtl-extend-line-forward-br-expected.txt:
+        * platform/gtk/editing/selection/vertical-rl-rtl-extend-line-forward-p-expected.png:
+        * platform/gtk/editing/selection/vertical-rl-rtl-extend-line-forward-p-expected.txt:
+        * platform/gtk/fast/css/bidi-override-in-anonymous-block-expected.png:
+        * platform/gtk/fast/css/bidi-override-in-anonymous-block-expected.txt:
+        * platform/gtk/fast/css/ex-after-font-variant-expected.png:
+        * platform/gtk/fast/css/ex-after-font-variant-expected.txt:
+        * platform/gtk/fast/forms/auto-fill-button/input-strong-confirmation-password-auto-fill-button-expected.txt:
+        * platform/gtk/fast/forms/auto-fill-button/input-strong-password-auto-fill-button-expected.txt:
+        * platform/gtk/fast/forms/minWidthPercent-expected.png:
+        * platform/gtk/fast/forms/minWidthPercent-expected.txt:
+        * platform/gtk/fast/lists/008-expected.png:
+        * platform/gtk/fast/lists/008-expected.txt:
+        * platform/gtk/fast/lists/008-vertical-expected.png:
+        * platform/gtk/fast/lists/008-vertical-expected.txt:
+        * platform/gtk/fast/overflow/overflow-rtl-expected.png:
+        * platform/gtk/fast/overflow/overflow-rtl-expected.txt:
+        * platform/gtk/fast/overflow/overflow-rtl-vertical-expected.png:
+        * platform/gtk/fast/overflow/overflow-rtl-vertical-expected.txt:
+        * platform/gtk/fast/text/vertical-rl-rtl-linebreak-expected.png:
+        * platform/gtk/fast/text/vertical-rl-rtl-linebreak-expected.txt:
+        * platform/gtk/svg/W3C-SVG-1.1-SE/coords-units-03-b-expected.png:
+        * platform/gtk/svg/W3C-SVG-1.1-SE/coords-units-03-b-expected.txt:
+        * platform/gtk/svg/W3C-SVG-1.1/coords-units-03-b-expected.png:
+        * platform/gtk/svg/W3C-SVG-1.1/coords-units-03-b-expected.txt: Added.
+        * platform/gtk/svg/custom/alignment-baseline-modes-expected.png:
+        * platform/gtk/svg/custom/alignment-baseline-modes-expected.txt:
+        * platform/gtk/svg/custom/dominant-baseline-modes-expected.png:
+        * platform/gtk/svg/custom/dominant-baseline-modes-expected.txt:
+        * platform/gtk/tables/mozilla/bugs/bug55527-expected.png:
+        * platform/gtk/tables/mozilla/bugs/bug55527-expected.txt:
+
 2018-01-04  Minsheng Liu  <lambda@liu.ms>
 
         Add a test to ensure <mo> paints its leading and trailing space as specified in its attributes.
