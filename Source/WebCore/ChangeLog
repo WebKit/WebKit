@@ -1,3 +1,17 @@
+2018-01-03  Youenn Fablet  <youenn@apple.com>
+
+        LayoutTest http/tests/media/media-stream/disconnected-frame.html to consistently fail an assertion: !m_adoptionIsRequired
+        https://bugs.webkit.org/show_bug.cgi?id=181264
+
+        Reviewed by Eric Carlson.
+
+        Covered by http/tests/media/media-stream/disconnected-frame.html not crashing anymore in Debug builds.
+        Calling suspendIfNeeded in create method instead of constructor.
+
+        * Modules/mediastream/UserMediaRequest.cpp:
+        (WebCore::UserMediaRequest::create):
+        (WebCore::UserMediaRequest::UserMediaRequest):
+
 2018-01-03  Antti Koivisto  <antti@apple.com>
 
         Remove DeprecatedCSSOMValue::equals
