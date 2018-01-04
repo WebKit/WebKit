@@ -1,4 +1,4 @@
-//@ if $buildType == "debug" then skip else runBigIntEnabled end
+//@ if $buildType == "debug" or $memoryLimited then skip else runBigIntEnabled end
 
 function assert(a) {
     if (!a)

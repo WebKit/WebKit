@@ -1,3 +1,13 @@
+2018-01-03  Caio Lima  <ticaiolima@gmail.com>
+
+        [ESNext][BigInt] Failing test stress/big-int-constructor-oom.js into MIPS
+        https://bugs.webkit.org/show_bug.cgi?id=181258
+
+        Reviewed by Antonio Gomes.
+
+        * stress/big-int-constructor-gc.js:
+        * stress/big-int-constructor-oom.js:
+
 2018-01-03  Robin Morisset  <rmorisset@apple.com>
 
         Inlining of a function that ends in op_unreachable crashes

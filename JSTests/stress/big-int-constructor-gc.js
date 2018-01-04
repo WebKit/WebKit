@@ -1,8 +1,8 @@
 //@ runBigIntEnabled
 
-function assert(a) {
-    if (!a)
-        throw new Error("Bad assertion");
+function assert(expected, value) {
+    if (expected !== value)
+        throw new Error("Bad assertion. Expected: " + expected + " and value was: " + value);
 }
 
 let arr = [];
@@ -14,6 +14,6 @@ for (let i = 0; i < 1000000; i++) {
 gc();
 
 for (let i = 0; i < 1000000; i++) {
-    assert(arr[i].toString() === i.toString());
+    assert(i.toString(), arr[i].toString());
 }
 
