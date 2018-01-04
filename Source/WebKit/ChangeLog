@@ -1,3 +1,14 @@
+2018-01-03  David Kilzer  <ddkilzer@apple.com>
+
+        com.apple.WebKit.Networking crash in com.apple.Foundation: -[__NSOperationInternal _start:]
+        <https://webkit.org/b/181272>
+        <rdar://problem/35657310>
+
+        Reviewed by Alex Christensen.
+
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (downgradeRequest): Remove unnecessary -autorelease.
+
 2018-01-03  Brent Fulgham  <bfulgham@apple.com>
 
         [macOS] Constant frame dropping during Flash video playback

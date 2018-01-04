@@ -170,7 +170,7 @@ static NSURLRequest* downgradeRequest(NSURLRequest *request)
 {
     NSMutableURLRequest *nsMutableRequest = [[request mutableCopy] autorelease];
     if ([nsMutableRequest.URL.scheme isEqualToString:@"https"]) {
-        NSURLComponents *components = [[NSURLComponents componentsWithURL:nsMutableRequest.URL resolvingAgainstBaseURL:NO] autorelease];
+        NSURLComponents *components = [NSURLComponents componentsWithURL:nsMutableRequest.URL resolvingAgainstBaseURL:NO];
         components.scheme = @"http";
         [nsMutableRequest setURL:components.URL];
         ASSERT([nsMutableRequest.URL.scheme isEqualToString:@"http"]);
