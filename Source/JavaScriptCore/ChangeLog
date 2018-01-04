@@ -1,5 +1,16 @@
 2018-01-04  Yusuke Suzuki  <utatane.tea@gmail.com>
 
+        [FTL] Optimize ObjectAllocationSinking mergePointerSets by using removeIf
+        https://bugs.webkit.org/show_bug.cgi?id=180238
+
+        Reviewed by Saam Barati.
+
+        We can optimize ObjectAllocationSinking a bit by using removeIf.
+
+        * dfg/DFGObjectAllocationSinkingPhase.cpp:
+
+2018-01-04  Yusuke Suzuki  <utatane.tea@gmail.com>
+
         [JSC] Create parallel SlotVisitors apriori
         https://bugs.webkit.org/show_bug.cgi?id=180907
 
