@@ -1,5 +1,22 @@
 2018-01-03  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: "Log Value" context menu is sometimes unavailable
+        https://bugs.webkit.org/show_bug.cgi?id=181278
+        <rdar://problem/36281649>
+
+        Reviewed by Devin Rousso.
+
+        * UserInterface/Views/ObjectPreviewView.css:
+        (.object-preview > .title):
+        * UserInterface/Views/ObjectTreeView.css:
+        (.object-tree.expanded > .title):
+        Make the expanded object title information 16px tall to match ObjectTree
+        tree element row heights. This eliminates the floating console message
+        location from overlapping the first ObjectTree's TreeElement and causing
+        truncation and other behavior issues (like Context Menu identification).
+
+2018-01-03  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: RTL - DOM Tree Element selection doesn't work
         https://bugs.webkit.org/show_bug.cgi?id=181275
         <rdar://problem/36290450>

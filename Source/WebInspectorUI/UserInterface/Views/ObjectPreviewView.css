@@ -43,3 +43,7 @@
     font-style: normal;
     color: var(--console-secondary-text-color);
 }
+
+.object-preview > .title {
+    line-height: 16px;
+}

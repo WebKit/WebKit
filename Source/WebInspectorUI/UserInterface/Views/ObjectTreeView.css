@@ -65,6 +65,10 @@
     font-style: normal;
 }
 
+.object-tree.expanded > .title {
+    line-height: 16px;
+}
+
 .object-tree.lossless-preview > :matches(.title, .object-preview)::before {
     background: none;
     width: 0px;
