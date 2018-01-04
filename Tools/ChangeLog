@@ -1,3 +1,11 @@
+2018-01-04  Lucas Forschler  <lforschler@apple.com>
+
+        <rdar://problem/36300930> Change proxy server setting on master config to reach s3 servers
+
+        Reviewed by Ling Ho.
+
+        * BuildSlaveSupport/build.webkit.org-config/steps.py:
+
 2018-01-03  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Attachment Support] Create attachment elements when dropping files on iOS

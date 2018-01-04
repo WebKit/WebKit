@@ -32,7 +32,7 @@ import json
 import cStringIO
 import urllib
 
-APPLE_WEBKIT_AWS_PROXY = "http://54.190.50.182:873"
+APPLE_WEBKIT_AWS_PROXY = "http://proxy01.webkit.org:3128"
 S3URL = "https://s3-us-west-2.amazonaws.com/"
 WithProperties = properties.WithProperties
 
