@@ -1,3 +1,4 @@
+//@ skip
 var dv = new DataView(new SharedArrayBuffer(128));
 var i8a = new Int8Array(new SharedArrayBuffer(128));
 var i16a = new Int16Array(new SharedArrayBuffer(128));

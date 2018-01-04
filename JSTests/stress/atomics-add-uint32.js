@@ -1,3 +1,4 @@
+//@ skip
 var sab = new SharedArrayBuffer(4);
 var a = new Uint32Array(sab);
 var result = Atomics.add(a, 0, 4000000000);

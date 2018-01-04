@@ -1,3 +1,4 @@
+//@ skip
 // This is a basic test of SharedArrayBuffer API as we understand it.
 
 if (SharedArrayBuffer == ArrayBuffer)

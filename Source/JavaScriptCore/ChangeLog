@@ -1,5 +1,22 @@
 2018-01-03  Michael Saboff  <msaboff@apple.com>
 
+        Disable SharedArrayBuffers from Web API
+        https://bugs.webkit.org/show_bug.cgi?id=181266
+
+        Reviewed by Saam Barati.
+
+        Removed SharedArrayBuffer prototype and structure from GlobalObject creation
+        to disable.
+
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        (JSC::JSGlobalObject::visitChildren):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::arrayBufferPrototype const):
+        (JSC::JSGlobalObject::arrayBufferStructure const):
+
+2018-01-03  Michael Saboff  <msaboff@apple.com>
+
         Add "noInline" to $vm
         https://bugs.webkit.org/show_bug.cgi?id=181265
 

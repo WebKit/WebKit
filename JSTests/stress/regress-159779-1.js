@@ -1,3 +1,4 @@
+//@ skip
 //@ defaultRunNoisyTest
 
 var jsStrictMode = false;

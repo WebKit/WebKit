@@ -1,3 +1,4 @@
+//@ skip
 var heap = new SharedArrayBuffer(4096);
 var Uint8ArrayView = new Uint8Array(heap);
 

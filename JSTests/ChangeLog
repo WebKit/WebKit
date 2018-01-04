@@ -1,3 +1,25 @@
+2018-01-03  Michael Saboff  <msaboff@apple.com>
+
+        Disable SharedArrayBuffers from Web API
+        https://bugs.webkit.org/show_bug.cgi?id=181266
+
+        Reviewed by Saam Barati.
+
+        Disabled SharedArrayBuffer tests.
+
+        * stress/SharedArrayBuffer-opt.js:
+        * stress/SharedArrayBuffer.js:
+        * stress/array-buffer-byte-length.js:
+        * stress/atomics-add-uint32.js:
+        * stress/atomics-known-int-use.js:
+        * stress/atomics-neg-zero.js:
+        * stress/atomics-store-return.js:
+        * stress/lars-sab-workers.js:
+        * stress/regress-159779-1.js:
+        * stress/regress-159779-2.js:
+        * stress/regress-170473.js:
+        * test262.yaml:
+
 2018-01-03  Caio Lima  <ticaiolima@gmail.com>
 
         [ESNext][BigInt] Failing test stress/big-int-constructor-oom.js into MIPS

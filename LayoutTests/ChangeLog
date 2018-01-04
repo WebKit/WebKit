@@ -1,3 +1,14 @@
+2018-01-03  Michael Saboff  <msaboff@apple.com>
+
+        Disable SharedArrayBuffers from Web API
+        https://bugs.webkit.org/show_bug.cgi?id=181266
+
+        Reviewed by Saam Barati.
+
+        Disabled SharedArrayBuffer tests.
+
+        * TestExpectations:
+
 2018-01-03  James Craig  <jcraig@apple.com>
 
         AX: when invert colors is on, double-invert certain media elements in UserAgentStyleSheet

@@ -1252,6 +1252,20 @@ webkit.org/b/159370 [ Debug ] fast/history/page-cache-destroy-document.html [ Sk
 # This test is just way too slow.
 workers/bomb-with-v8.html [ Skip ]
 
+# Disable the SharedArrayBuffers tests
+imported/blink/fast/beacon/beacon-basic.html [ Skip ]
+imported/w3c/web-platform-tests/html/webappapis/scripting/processing-model-2/integration-with-the-javascript-agent-formalism/canblock-dedicatedworker.html [ Skip ]
+imported/w3c/web-platform-tests/html/webappapis/scripting/processing-model-2/integration-with-the-javascript-agent-formalism/canblock-serviceworker.https.html [ Skip ]
+imported/w3c/web-platform-tests/html/webappapis/scripting/processing-model-2/integration-with-the-javascript-agent-formalism/canblock-window.html [ Skip ]
+js/shared-array-buffer-webgl.html [ Skip ]
+workers/sab/cascade_lock.html [ Skip ]
+workers/sab/multi-memory-multi-buffer.html [ Skip ]
+workers/sab/multi-memory.html [ Skip ]
+workers/sab/no-transfer.html [ Skip ]
+workers/sab/postMessage-clones.html [ Skip ]
+workers/sab/postMessage-transfer-type-error.html [ Skip ]
+workers/sab/sent-from-worker-no-transfer.html [ Skip ]
+
 # These tests are slow by design.
 workers/wasm-hashset-many.html [ Slow ]
 workers/wasm-hashset-many-2.html [ Slow ]

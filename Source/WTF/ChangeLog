@@ -1,3 +1,14 @@
+2018-01-03  Michael Saboff  <msaboff@apple.com>
+
+        Disable SharedArrayBuffers from Web API
+        https://bugs.webkit.org/show_bug.cgi?id=181266
+
+        Reviewed by Saam Barati.
+
+        Turn off SharedArrayBuffers using a compile time flag ENABLE_SHARED_ARRAY_BUFFER.
+
+        * wtf/Platform.h:
+
 2017-12-28  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Remove std::chrono completely
