@@ -1,3 +1,22 @@
+2018-01-03  Simon Fraser  <simon.fraser@apple.com>
+
+        Remove the 'resolutionScale' parameter from ImageBufferDataCG get/putBytes
+        https://bugs.webkit.org/show_bug.cgi?id=181268
+
+        Reviewed by Alex Christensen.
+
+        These functions were always called with resolutionScale=1.
+
+        * platform/graphics/cg/ImageBufferCG.cpp:
+        (WebCore::ImageBuffer::getUnmultipliedImageData const):
+        (WebCore::ImageBuffer::getPremultipliedImageData const):
+        (WebCore::ImageBuffer::putByteArray):
+        * platform/graphics/cg/ImageBufferDataCG.cpp:
+        (WebCore::ImageBufferData::getData const):
+        (WebCore::ImageBufferData::putData):
+        (WebCore::affineWarpBufferData): Deleted.
+        * platform/graphics/cg/ImageBufferDataCG.h:
+
 2018-01-03  John Wilander  <wilander@apple.com>
 
         Storage Access API: Refactor XPC for access removal to go straight from the web process to the network process

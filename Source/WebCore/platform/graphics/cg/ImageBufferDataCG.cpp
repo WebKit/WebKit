@@ -51,8 +51,7 @@
 
 namespace WebCore {
 
-#if USE(ACCELERATE)
-#if USE_ARGB32 || USE(IOSURFACE_CANVAS_BACKING_STORE)
+#if USE(ACCELERATE) && (USE_ARGB32 || USE(IOSURFACE_CANVAS_BACKING_STORE))
 static void unpremultiplyBufferData(const vImage_Buffer& src, const vImage_Buffer& dest)
 {
     ASSERT(src.data);
@@ -78,20 +77,7 @@ static void premultiplyBufferData(const vImage_Buffer& src, const vImage_Buffer&
     const uint8_t map[4] = { 2, 1, 0, 3 };
     vImagePermuteChannels_ARGB8888(&dest, &dest, map, kvImageNoFlags);
 }
-#endif // USE_ARGB32 || USE(IOSURFACE_CANVAS_BACKING_STORE)
-
-#if !PLATFORM(IOS_SIMULATOR)
-static void affineWarpBufferData(const vImage_Buffer& src, const vImage_Buffer& dest, float scale)
-{
-    ASSERT(src.data);
-    ASSERT(dest.data);
-
-    vImage_AffineTransform scaleTransform = { scale, 0, 0, scale, 0, 0 }; // FIXME: Add subpixel translation.
-    Pixel_8888 backgroundColor;
-    vImageAffineWarp_ARGB8888(&src, &dest, 0, &scaleTransform, backgroundColor, kvImageEdgeExtend);
-}
-#endif // !PLATFORM(IOS_SIMULATOR)
-#endif // USE(ACCELERATE)
+#endif // USE(ACCELERATE) && (USE_ARGB32 || USE(IOSURFACE_CANVAS_BACKING_STORE))
 
 static inline void transferData(void* output, void* input, int width, int height, size_t inputBytesPerRow)
 {
@@ -139,8 +125,7 @@ Vector<uint8_t> ImageBufferData::toBGRAData(bool accelerateRendering, int width,
     return result;
 }
 
-
-RefPtr<Uint8ClampedArray> ImageBufferData::getData(AlphaPremultiplication outputFormat, const IntRect& rect, const IntSize& size, bool accelerateRendering, float resolutionScale) const
+RefPtr<Uint8ClampedArray> ImageBufferData::getData(AlphaPremultiplication outputFormat, const IntRect& rect, const IntSize& size, bool accelerateRendering) const
 {
     Checked<unsigned, RecordOverflow> area = 4;
     area *= rect.width();
@@ -154,9 +139,7 @@ RefPtr<Uint8ClampedArray> ImageBufferData::getData(AlphaPremultiplication output
         return nullptr;
 
     Checked<int> endx = rect.maxX();
-    endx *= ceilf(resolutionScale);
     Checked<int> endy = rect.maxY();
-    endy *= resolutionScale;
     if (rect.x() < 0 || rect.y() < 0 || endx.unsafeGet() > size.width() || endy.unsafeGet() > size.height())
         result->zeroFill();
     
@@ -168,8 +151,7 @@ RefPtr<Uint8ClampedArray> ImageBufferData::getData(AlphaPremultiplication output
         destx = -originx;
         originx = 0;
     }
-    destw = std::min<int>(destw.unsafeGet(), ceilf(size.width() / resolutionScale) - originx);
-    originx *= resolutionScale;
+    destw = std::min<int>(destw.unsafeGet(), size.width() - originx);
     if (endx.unsafeGet() > size.width())
         endx = size.width();
     Checked<int> width = endx - originx;
@@ -182,8 +164,7 @@ RefPtr<Uint8ClampedArray> ImageBufferData::getData(AlphaPremultiplication output
         desty = -originy;
         originy = 0;
     }
-    desth = std::min<int>(desth.unsafeGet(), ceilf(size.height() / resolutionScale) - originy);
-    originy *= resolutionScale;
+    desth = std::min<int>(desth.unsafeGet(), size.height() - originy);
     if (endy.unsafeGet() > size.height())
         endy = size.height();
     Checked<int> height = endy - originy;
@@ -222,32 +203,12 @@ RefPtr<Uint8ClampedArray> ImageBufferData::getData(AlphaPremultiplication output
 #if USE_ARGB32
             unpremultiplyBufferData(src, dest);
 #else
-            if (resolutionScale != 1) {
-                affineWarpBufferData(src, dest, 1 / resolutionScale);
-                // The unpremultiplying will be done in-place.
-                src = dest;
-            }
-
             vImageUnpremultiplyData_RGBA8888(&src, &dest, kvImageNoFlags);
 #endif
 
             return result;
         }
 #endif
-        if (resolutionScale != 1) {
-            RetainPtr<CGContextRef> sourceContext = adoptCF(CGBitmapContextCreate(srcRows, width.unsafeGet(), height.unsafeGet(), 8, srcBytesPerRow, colorSpace, kCGImageAlphaPremultipliedLast));
-            RetainPtr<CGImageRef> sourceImage = adoptCF(CGBitmapContextCreateImage(sourceContext.get()));
-            RetainPtr<CGContextRef> destinationContext = adoptCF(CGBitmapContextCreate(destRows, destw.unsafeGet(), desth.unsafeGet(), 8, destBytesPerRow, colorSpace, kCGImageAlphaPremultipliedLast));
-            CGContextSetBlendMode(destinationContext.get(), kCGBlendModeCopy);
-            CGContextDrawImage(destinationContext.get(), CGRectMake(0, 0, width.unsafeGet() / resolutionScale, height.unsafeGet() / resolutionScale), sourceImage.get()); // FIXME: Add subpixel translation.
-            if (outputFormat == AlphaPremultiplication::Premultiplied)
-                return result;
-
-            srcRows = destRows;
-            srcBytesPerRow = destBytesPerRow;
-            width = destw;
-            height = desth;
-        }
         if (outputFormat == AlphaPremultiplication::Unpremultiplied) {
             if ((width * 4).hasOverflowed())
                 CRASH();
@@ -318,12 +279,6 @@ RefPtr<Uint8ClampedArray> ImageBufferData::getData(AlphaPremultiplication output
         dest.rowBytes = destBytesPerRow;
         dest.data = destRows;
 
-        if (resolutionScale != 1) {
-            affineWarpBufferData(src, dest, 1 / resolutionScale);
-            // The unpremultiplying and channel-swapping will be done in-place.
-            src = dest;
-        }
-
         if (outputFormat == AlphaPremultiplication::Unpremultiplied)
             unpremultiplyBufferData(src, dest);
         else {
@@ -332,19 +287,6 @@ RefPtr<Uint8ClampedArray> ImageBufferData::getData(AlphaPremultiplication output
             vImagePermuteChannels_ARGB8888(&src, &dest, map, kvImageNoFlags);
         }
 #else
-        if (resolutionScale != 1) {
-            RetainPtr<CGContextRef> sourceContext = adoptCF(CGBitmapContextCreate(srcRows, width.unsafeGet(), height.unsafeGet(), 8, srcBytesPerRow, colorSpace, kCGImageAlphaPremultipliedLast));
-            RetainPtr<CGImageRef> sourceImage = adoptCF(CGBitmapContextCreateImage(sourceContext.get()));
-            RetainPtr<CGContextRef> destinationContext = adoptCF(CGBitmapContextCreate(destRows, destw.unsafeGet(), desth.unsafeGet(), 8, destBytesPerRow, colorSpace, kCGImageAlphaPremultipliedLast));
-            CGContextSetBlendMode(destinationContext.get(), kCGBlendModeCopy);
-            CGContextDrawImage(destinationContext.get(), CGRectMake(0, 0, width.unsafeGet() / resolutionScale, height.unsafeGet() / resolutionScale), sourceImage.get()); // FIXME: Add subpixel translation.
-
-            srcRows = destRows;
-            srcBytesPerRow = destBytesPerRow;
-            width = destw;
-            height = desth;
-        }
-        
         if ((width * 4).hasOverflowed())
             CRASH();
 
@@ -392,7 +334,7 @@ RefPtr<Uint8ClampedArray> ImageBufferData::getData(AlphaPremultiplication output
     return result;
 }
 
-void ImageBufferData::putData(const Uint8ClampedArray& source, AlphaPremultiplication sourceFormat, const IntSize& sourceSize, const IntRect& sourceRect, const IntPoint& destPoint, const IntSize& size, bool accelerateRendering, float resolutionScale)
+void ImageBufferData::putData(const Uint8ClampedArray& source, AlphaPremultiplication sourceFormat, const IntSize& sourceSize, const IntRect& sourceRect, const IntPoint& destPoint, const IntSize& size, bool accelerateRendering)
 {
 #if ASSERT_DISABLED
     UNUSED_PARAM(size);
@@ -403,14 +345,12 @@ void ImageBufferData::putData(const Uint8ClampedArray& source, AlphaPremultiplic
     
     Checked<int> originx = sourceRect.x();
     Checked<int> destx = (Checked<int>(destPoint.x()) + sourceRect.x());
-    destx *= resolutionScale;
     ASSERT(destx.unsafeGet() >= 0);
     ASSERT(destx.unsafeGet() < size.width());
     ASSERT(originx.unsafeGet() >= 0);
     ASSERT(originx.unsafeGet() <= sourceRect.maxX());
     
     Checked<int> endx = (Checked<int>(destPoint.x()) + sourceRect.maxX());
-    endx *= resolutionScale;
     ASSERT(endx.unsafeGet() <= size.width());
     
     Checked<int> width = sourceRect.width();
@@ -418,14 +358,12 @@ void ImageBufferData::putData(const Uint8ClampedArray& source, AlphaPremultiplic
 
     Checked<int> originy = sourceRect.y();
     Checked<int> desty = (Checked<int>(destPoint.y()) + sourceRect.y());
-    desty *= resolutionScale;
     ASSERT(desty.unsafeGet() >= 0);
     ASSERT(desty.unsafeGet() < size.height());
     ASSERT(originy.unsafeGet() >= 0);
     ASSERT(originy.unsafeGet() <= sourceRect.maxY());
     
     Checked<int> endy = (Checked<int>(destPoint.y()) + sourceRect.maxY());
-    endy *= resolutionScale;
     ASSERT(endy.unsafeGet() <= size.height());
 
     Checked<int> height = sourceRect.height();
@@ -464,32 +402,11 @@ void ImageBufferData::putData(const Uint8ClampedArray& source, AlphaPremultiplic
 #if USE_ARGB32
             premultiplyBufferData(src, dest);
 #else
-            if (resolutionScale != 1) {
-                affineWarpBufferData(src, dest, resolutionScale);
-                // The premultiplying will be done in-place.
-                src = dest;
-            }
-
             vImagePremultiplyData_RGBA8888(&src, &dest, kvImageNoFlags);
 #endif
             return;
         }
 #endif
-        if (resolutionScale != 1) {
-            RetainPtr<CGContextRef> sourceContext = adoptCF(CGBitmapContextCreate(const_cast<uint8_t*>(srcRows), width.unsafeGet(), height.unsafeGet(), 8, srcBytesPerRow, colorSpace, kCGImageAlphaPremultipliedLast));
-            RetainPtr<CGImageRef> sourceImage = adoptCF(CGBitmapContextCreateImage(sourceContext.get()));
-            RetainPtr<CGContextRef> destinationContext = adoptCF(CGBitmapContextCreate(destRows, destw.unsafeGet(), desth.unsafeGet(), 8, destBytesPerRow, colorSpace, kCGImageAlphaPremultipliedLast));
-            CGContextSetBlendMode(destinationContext.get(), kCGBlendModeCopy);
-            CGContextDrawImage(destinationContext.get(), CGRectMake(0, 0, width.unsafeGet() / resolutionScale, height.unsafeGet() / resolutionScale), sourceImage.get()); // FIXME: Add subpixel translation.
-            if (sourceFormat == AlphaPremultiplication::Premultiplied)
-                return;
-
-            // The premultiplying will be done in-place.
-            srcRows = destRows;
-            srcBytesPerRow = destBytesPerRow;
-            width = destw;
-            height = desth;
-        }
 
         for (int y = 0; y < height.unsafeGet(); ++y) {
             for (int x = 0; x < width.unsafeGet(); x++) {
@@ -540,12 +457,6 @@ void ImageBufferData::putData(const Uint8ClampedArray& source, AlphaPremultiplic
         dest.rowBytes = destBytesPerRow;
         dest.data = destRows;
 
-        if (resolutionScale != 1) {
-            affineWarpBufferData(src, dest, resolutionScale);
-            // The unpremultiplying and channel-swapping will be done in-place.
-            src = dest;
-        }
-
         if (sourceFormat == AlphaPremultiplication::Unpremultiplied)
             premultiplyBufferData(src, dest);
         else {
@@ -554,19 +465,6 @@ void ImageBufferData::putData(const Uint8ClampedArray& source, AlphaPremultiplic
             vImagePermuteChannels_ARGB8888(&src, &dest, map, kvImageNoFlags);
         }
 #else
-        if (resolutionScale != 1) {
-            RetainPtr<CGContextRef> sourceContext = adoptCF(CGBitmapContextCreate(reinterpret_cast<void*>(const_cast<uint8_t*>(srcRows)), width.unsafeGet(), height.unsafeGet(), 8, srcBytesPerRow, colorSpace, kCGImageAlphaPremultipliedLast));
-            RetainPtr<CGImageRef> sourceImage = adoptCF(CGBitmapContextCreateImage(sourceContext.get()));
-            RetainPtr<CGContextRef> destinationContext = adoptCF(CGBitmapContextCreate(destRows, destw.unsafeGet(), desth.unsafeGet(), 8, destBytesPerRow, colorSpace, kCGImageAlphaPremultipliedLast));
-            CGContextSetBlendMode(destinationContext.get(), kCGBlendModeCopy);
-            CGContextDrawImage(destinationContext.get(), CGRectMake(0, 0, width.unsafeGet() / resolutionScale, height.unsafeGet() / resolutionScale), sourceImage.get()); // FIXME: Add subpixel translation.
-
-            srcRows = const_cast<const uint8_t*>(destRows);
-            srcBytesPerRow = destBytesPerRow;
-            width = destw;
-            height = desth;
-        }
-
         for (int y = 0; y < height.unsafeGet(); ++y) {
             for (int x = 0; x < width.unsafeGet(); x++) {
                 int basex = x * 4;
