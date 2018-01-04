@@ -30,27 +30,6 @@
 #include "DeprecatedCSSOMValueList.h"
 
 namespace WebCore {
-    
-template<class ChildClassType>
-inline static bool compareCSSOMValues(const DeprecatedCSSOMValue& first, const DeprecatedCSSOMValue& second)
-{
-    return static_cast<const ChildClassType&>(first).equals(static_cast<const ChildClassType&>(second));
-}
-
-bool DeprecatedCSSOMValue::equals(const DeprecatedCSSOMValue& other) const
-{
-    if (m_classType == other.m_classType) {
-        switch (m_classType) {
-        case DeprecatedComplexValueClass:
-            return compareCSSOMValues<DeprecatedCSSOMComplexValue>(*this, other);
-        case DeprecatedPrimitiveValueClass:
-            return compareCSSOMValues<DeprecatedCSSOMPrimitiveValue>(*this, other);
-        case DeprecatedValueListClass:
-            return compareCSSOMValues<DeprecatedCSSOMValueList>(*this, other);
-        }
-    }
-    return false;
-}
 
 void DeprecatedCSSOMValue::destroy()
 {

@@ -37,7 +37,6 @@ public:
         return adoptRef(*new DeprecatedCSSOMValueList(value, owner));
     }
     
-    bool equals(const DeprecatedCSSOMValueList& other) const;
     unsigned cssValueType() const { return CSS_VALUE_LIST; }
     String cssText() const;
     

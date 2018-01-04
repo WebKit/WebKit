@@ -30,21 +30,6 @@
 
 namespace WebCore {
 
-bool DeprecatedCSSOMValueList::equals(const DeprecatedCSSOMValueList& other) const
-{
-    if (m_valueListSeparator != other.m_valueListSeparator)
-        return false;
-    
-    if (m_values.size() != other.m_values.size())
-        return false;
-    
-    for (unsigned i = 0, size = m_values.size(); i < size; ++i) {
-        if (!m_values[i].get().equals(other.m_values[i]))
-            return false;
-    }
-    return true;
-}
-
 String DeprecatedCSSOMValueList::cssText() const
 {
     StringBuilder result;

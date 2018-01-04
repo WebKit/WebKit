@@ -1,3 +1,22 @@
+2018-01-03  Antti Koivisto  <antti@apple.com>
+
+        Remove DeprecatedCSSOMValue::equals
+        https://bugs.webkit.org/show_bug.cgi?id=181241
+
+        Reviewed by Zalan Bujtas.
+
+        This is dead code.
+
+        * css/DeprecatedCSSOMValue.cpp:
+        (WebCore::compareCSSOMValues): Deleted.
+        (WebCore::DeprecatedCSSOMValue::equals const): Deleted.
+        * css/DeprecatedCSSOMValue.h:
+        (WebCore::DeprecatedCSSOMValue::operator== const): Deleted.
+        (WebCore::DeprecatedCSSOMComplexValue::equals const): Deleted.
+        * css/DeprecatedCSSOMValueList.cpp:
+        (WebCore::DeprecatedCSSOMValueList::equals const): Deleted.
+        * css/DeprecatedCSSOMValueList.h:
+
 2018-01-03  Simon Fraser  <simon.fraser@apple.com>
 
         feLighting is broken with primitiveUnits="objectBoundingBox"

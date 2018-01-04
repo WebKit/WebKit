@@ -58,9 +58,6 @@ public:
     WEBCORE_EXPORT String cssText() const;
     ExceptionOr<void> setCssText(const String&) { return { }; } // Will never implement.
 
-    bool equals(const DeprecatedCSSOMValue& other) const;
-    bool operator==(const DeprecatedCSSOMValue& other) const { return equals(other); }
-
     bool isComplexValue() const { return m_classType == DeprecatedComplexValueClass; }
     bool isPrimitiveValue() const { return m_classType == DeprecatedPrimitiveValueClass; }
     bool isValueList() const { return m_classType == DeprecatedValueListClass; }
@@ -104,7 +101,6 @@ public:
         return adoptRef(*new DeprecatedCSSOMComplexValue(value, owner));
     }
 
-    bool equals(const DeprecatedCSSOMComplexValue& other) const { return m_value->equals(other.m_value); }
     String cssText() const { return m_value->cssText(); }
 
     unsigned cssValueType() const { return m_value->cssValueType(); }
