@@ -3135,6 +3135,7 @@ bool JSObject::increaseVectorLength(VM& vm, unsigned newLength)
         for (unsigned i = vectorLength; i < availableVectorLength; ++i)
             storage->m_vector[i].clear();
         storage->setVectorLength(availableVectorLength);
+        m_butterflyIndexingMask = storage->butterfly()->computeIndexingMask();
         return true;
     }
     

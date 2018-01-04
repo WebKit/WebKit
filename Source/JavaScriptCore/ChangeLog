@@ -1,3 +1,17 @@
+2018-01-04  Keith Miller  <keith_miller@apple.com>
+
+        Array Storage operations sometimes did not update the indexing mask correctly.
+        https://bugs.webkit.org/show_bug.cgi?id=181301
+
+        Reviewed by Mark Lam.
+
+        I will add tests in a follow up patch. See: https://bugs.webkit.org/show_bug.cgi?id=181303
+
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::shiftCountWithArrayStorage):
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::increaseVectorLength):
+
 2018-01-04  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [DFG] Define defs for MapSet/SetAdd to participate in CSE

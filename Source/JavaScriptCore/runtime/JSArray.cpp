@@ -835,13 +835,13 @@ bool JSArray::shiftCountWithArrayStorage(VM& vm, unsigned startIndex, unsigned c
         // the start of the Butterfly, which needs to point at the first indexed property in the used
         // portion of the vector.
         Butterfly* butterfly = this->butterfly()->shift(structure(), count);
-        setButterfly(vm, butterfly);
         storage = butterfly->arrayStorage();
         storage->m_indexBias += count;
 
         // Since we're consuming part of the vector by moving its beginning to the left,
         // we need to modify the vector length appropriately.
         storage->setVectorLength(vectorLength - count);
+        setButterfly(vm, butterfly);
     } else {
         // The number of elements before the shift region is greater than or equal to the number 
         // of elements after the shift region, so we move the elements after the shift region to the left.
