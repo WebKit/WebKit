@@ -69,8 +69,7 @@ void ServiceWorkerClientFetch::start()
     auto referrer = request.httpReferrer();
 
     // We are intercepting fetch calls after going through the HTTP layer, which may add some specific headers.
-    if (options.mode == FetchOptions::Mode::Cors)
-        cleanHTTPRequestHeadersForAccessControl(request, options.httpHeadersToKeep);
+    cleanHTTPRequestHeadersForAccessControl(request, options.httpHeadersToKeep);
 
     ASSERT(options.serviceWorkersMode != ServiceWorkersMode::None);
     m_connection->startFetch(m_loader->identifier(), options.serviceWorkerIdentifier.value(), request, options, referrer);
@@ -87,7 +86,8 @@ std::optional<ResourceError> ServiceWorkerClientFetch::validateResponse(const Re
     if (options.mode != FetchOptions::Mode::NoCors && response.tainting() == ResourceResponse::Tainting::Opaque)
         return ResourceError { errorDomainWebKitInternal, 0, response.url(), ASCIILiteral("Response served by service worker is opaque"), ResourceError::Type::AccessControl };
 
-    if (options.redirect != FetchOptions::Redirect::Manual && response.tainting() == ResourceResponse::Tainting::Opaqueredirect)
+    // Navigate mode induces manual redirect.
+    if (options.redirect != FetchOptions::Redirect::Manual && options.mode != FetchOptions::Mode::Navigate && response.tainting() == ResourceResponse::Tainting::Opaqueredirect)
         return ResourceError { errorDomainWebKitInternal, 0, response.url(), ASCIILiteral("Response served by service worker is opaque redirect"), ResourceError::Type::AccessControl };
 
     if (options.redirect != FetchOptions::Redirect::Follow && response.isRedirected())
@@ -100,7 +100,14 @@ void ServiceWorkerClientFetch::didReceiveResponse(ResourceResponse&& response)
 {
     auto protectedThis = makeRef(*this);
 
-    if (response.isRedirection() && response.tainting() != ResourceResponse::Tainting::Opaqueredirect) {
+    if (auto error = validateResponse(response)) {
+        m_loader->didFail(error.value());
+        if (auto callback = WTFMove(m_callback))
+            callback(Result::Succeeded);
+        return;
+    }
+
+    if (response.isRedirection()) {
         m_redirectionStatus = RedirectionStatus::Receiving;
         // FIXME: Get shouldClearReferrerOnHTTPSToHTTPRedirect value from
         m_loader->willSendRequest(m_loader->request().redirectedRequest(response, m_shouldClearReferrerOnHTTPSToHTTPRedirect), response, [protectedThis = makeRef(*this), this](ResourceRequest&& request) {
@@ -114,13 +121,6 @@ void ServiceWorkerClientFetch::didReceiveResponse(ResourceResponse&& response)
             }
             m_redirectionStatus = RedirectionStatus::Following;
         });
-        return;
-    }
-
-    if (auto error = validateResponse(response)) {
-        m_loader->didFail(error.value());
-        if (auto callback = WTFMove(m_callback))
-            callback(Result::Succeeded);
         return;
     }
 

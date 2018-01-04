@@ -135,7 +135,7 @@ HTTPHeaderNameSet httpHeadersToKeepFromCleaning(const HTTPHeaderMap& headers)
 void cleanHTTPRequestHeadersForAccessControl(ResourceRequest& request, const HashSet<HTTPHeaderName, WTF::IntHash<HTTPHeaderName>, WTF::StrongEnumHashTraits<HTTPHeaderName>>& headersToKeep)
 {
     // Remove headers that may have been added by the network layer that cause access control to fail.
-    if (!headersToKeep.contains(HTTPHeaderName::ContentType))
+    if (!headersToKeep.contains(HTTPHeaderName::ContentType) && !isCrossOriginSafeRequestHeader(HTTPHeaderName::ContentType, request.httpContentType()))
         request.clearHTTPContentType();
     if (!headersToKeep.contains(HTTPHeaderName::Referer))
         request.clearHTTPReferrer();

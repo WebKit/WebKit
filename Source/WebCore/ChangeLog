@@ -1,5 +1,20 @@
 2018-01-04  Youenn Fablet  <youenn@apple.com>
 
+        Service Worker should expose redirect mode for navigation loads as manual
+        https://bugs.webkit.org/show_bug.cgi?id=181067
+
+        Reviewed by Alex Christensen.
+
+        Covered by rebased tests.
+
+        * loader/CrossOriginAccessControl.cpp: Removing ContentType header only if affecting CORS checks.
+        This allows extending header filtering in service worker to all modes, including Navigate.
+        * workers/service/context/ServiceWorkerFetch.cpp:
+        (WebCore::ServiceWorkerFetch::dispatchFetchEvent): Ideally, document loading code should set redirect to manual.
+        Since it is not the case yet and that would require changes to various places, manual is set before exposing the corresponding fetch event.
+
+2018-01-04  Youenn Fablet  <youenn@apple.com>
+
         ServiceWorkerThreadProxy::postTaskForModeToWorkerGlobalScope should be a no-op if worker is being terminated
         https://bugs.webkit.org/show_bug.cgi?id=181245
 

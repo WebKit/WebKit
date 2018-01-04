@@ -1,5 +1,18 @@
 2018-01-04  Youenn Fablet  <youenn@apple.com>
 
+        Service Worker should expose redirect mode for navigation loads as manual
+        https://bugs.webkit.org/show_bug.cgi?id=181067
+
+        Reviewed by Alex Christensen.
+
+        Updating test to match the latest fetch spec.
+
+        * web-platform-tests/service-workers/service-worker/navigation-redirect-to-http.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/request-end-to-end.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/request-end-to-end.https.html:
+
+2018-01-04  Youenn Fablet  <youenn@apple.com>
+
         Implement  https://fetch.spec.whatwg.org/#main-fetch default referrer policy setting
         https://bugs.webkit.org/show_bug.cgi?id=181239
 

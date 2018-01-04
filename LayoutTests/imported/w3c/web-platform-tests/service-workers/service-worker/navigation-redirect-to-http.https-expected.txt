@@ -1,3 +1,3 @@
 
-FAIL Verify Service Worker can receive HTTP opaqueredirect response. assert_equals: expected "OK" but got "Failed in SW: Error: assert_equals: The redirect mode of navigation request must be manual. expected \"manual\" but got \"follow\""
+PASS Verify Service Worker can receive HTTP opaqueredirect response. 
 

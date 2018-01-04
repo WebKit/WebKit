@@ -107,6 +107,9 @@ void dispatchFetchEvent(Ref<Client>&& client, ServiceWorkerGlobalScope& globalSc
             return;
         }
     }
+    // FIXME: loading code should set redirect mode to manual.
+    if (isNavigation)
+        options.redirect = FetchOptions::Redirect::Manual;
 
     auto fetchRequest = FetchRequest::create(globalScope, WTFMove(body), WTFMove(requestHeaders),  WTFMove(request), WTFMove(options), WTFMove(referrer));
 
