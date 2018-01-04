@@ -249,4 +249,37 @@ TEST(WebKit, OverrideLayoutSizeIsRestoredAfterProcessRelaunch)
     TestWebKitAPI::Util::run(&didReadLayoutSize);
 }
 
+TEST(WebKit, OverrideLayoutSizeIsRestoredAfterChangingDuringProcessRelaunch)
+{
+    auto webView = createAnimatedResizeWebView();
+    [webView setUIDelegate:webView.get()];
+
+    [webView _overrideLayoutParametersWithMinimumLayoutSize:CGSizeMake(100, 100) maximumUnobscuredSizeOverride:CGSizeMake(100, 100)];
+
+    [webView loadHTMLString:@"<head><meta name='viewport' content='initial-scale=1'></head>" baseURL:nil];
+    [webView _test_waitForDidFinishNavigation];
+
+    auto window = adoptNS([[UIWindow alloc] initWithFrame:CGRectMake(0, 0, 800, 600)]);
+    [window addSubview:webView.get()];
+    [window setHidden:NO];
+
+    [webView _killWebContentProcessAndResetState];
+    [webView _overrideLayoutParametersWithMinimumLayoutSize:CGSizeMake(200, 50) maximumUnobscuredSizeOverride:CGSizeMake(200, 50)];
+
+    [webView loadHTMLString:@"<head><meta name='viewport' content='initial-scale=1'></head>" baseURL:nil];
+    [webView _test_waitForDidFinishNavigation];
+
+    __block bool didReadLayoutSize = false;
+    [webView evaluateJavaScript:@"[window.innerWidth, window.innerHeight]" completionHandler:^(id value, NSError *error) {
+        CGFloat innerWidth = [[value objectAtIndex:0] floatValue];
+        CGFloat innerHeight = [[value objectAtIndex:1] floatValue];
+
+        EXPECT_EQ(innerWidth, 200);
+        EXPECT_EQ(innerHeight, 50);
+
+        didReadLayoutSize = true;
+    }];
+    TestWebKitAPI::Util::run(&didReadLayoutSize);
+}
+
 #endif

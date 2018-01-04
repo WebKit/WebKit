@@ -583,6 +583,11 @@ WebPage::WebPage(uint64_t pageID, WebPageCreationParameters&& parameters)
 #if ENABLE(CONTENT_EXTENSIONS)
     m_userContentController->addContentRuleLists(parameters.contentRuleLists);
 #endif
+
+#if PLATFORM(IOS)
+    setViewportConfigurationMinimumLayoutSize(parameters.viewportConfigurationMinimumLayoutSize);
+    setMaximumUnobscuredSize(parameters.maximumUnobscuredSize);
+#endif
 }
 
 #if ENABLE(WEB_RTC)

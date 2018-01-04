@@ -1,3 +1,45 @@
+2018-01-04  Tim Horton  <timothy_horton@apple.com>
+
+        WKWebView loses minimum layout size overrides that happen while the process is terminated
+        https://bugs.webkit.org/show_bug.cgi?id=181306
+        <rdar://problem/34398288>
+
+        Reviewed by Dan Bernstein.
+
+        * Shared/WebPageCreationParameters.cpp:
+        (WebKit::WebPageCreationParameters::encode const):
+        (WebKit::WebPageCreationParameters::decode):
+        * Shared/WebPageCreationParameters.h:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _didRelaunchProcess]): Deleted.
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::creationParameters):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::didRelaunchProcess):
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::setViewportConfigurationMinimumLayoutSize):
+        (WebKit::WebPageProxy::setForceAlwaysUserScalable):
+        (WebKit::WebPageProxy::setMaximumUnobscuredSize):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage):
+        Pass the current viewport minimum layout size and maximum unobscured size
+        in the WebPageCreationParameters instead of re-sending them in _didRelaunchProcess.
+
+        The previous approach was problematic when _dispatchSetMinimumLayoutSize:
+        was changed to not re-send identical updates, because if the client calls 
+        _overrideLayoutParametersWithMinimumLayoutSize before the Web Content process
+        is re-launched (after terminating), we would cache the size, attempt to send it,
+        fail silently (because the process is not launched), and then in _didRelaunchProcess
+        we would choose not to re-send (after the process is successfully relaunched)
+        because we think we already sent the new value.
+
+        Add isValid() checks to our message sends. Ideally send() would assert
+        if the process is not alive to avoid problems like this, but it doesn't (yet).
+
+        Get rid of WKWebView's _didRelaunchProcess, because it does nothing now.
+
 2018-01-04  Stephan Szabo  <stephan.szabo@sony.com>
 
         NetworkProcess cache files use functions from unistd.h without explicitly including it

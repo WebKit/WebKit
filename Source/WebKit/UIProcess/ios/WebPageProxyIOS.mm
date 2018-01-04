@@ -333,7 +333,10 @@ void WebPageProxy::synchronizeDynamicViewportUpdate()
 
 void WebPageProxy::setViewportConfigurationMinimumLayoutSize(const WebCore::FloatSize& size)
 {
-    m_process->send(Messages::WebPage::SetViewportConfigurationMinimumLayoutSize(size), m_pageID);
+    m_viewportConfigurationMinimumLayoutSize = size;
+
+    if (isValid())
+        m_process->send(Messages::WebPage::SetViewportConfigurationMinimumLayoutSize(size), m_pageID);
 }
 
 void WebPageProxy::setForceAlwaysUserScalable(bool userScalable)
@@ -341,12 +344,17 @@ void WebPageProxy::setForceAlwaysUserScalable(bool userScalable)
     if (m_forceAlwaysUserScalable == userScalable)
         return;
     m_forceAlwaysUserScalable = userScalable;
-    m_process->send(Messages::WebPage::SetForceAlwaysUserScalable(userScalable), m_pageID);
+
+    if (isValid())
+        m_process->send(Messages::WebPage::SetForceAlwaysUserScalable(userScalable), m_pageID);
 }
 
 void WebPageProxy::setMaximumUnobscuredSize(const WebCore::FloatSize& size)
 {
-    m_process->send(Messages::WebPage::SetMaximumUnobscuredSize(size), m_pageID);
+    m_maximumUnobscuredSize = size;
+
+    if (isValid())
+        m_process->send(Messages::WebPage::SetMaximumUnobscuredSize(size), m_pageID);
 }
 
 void WebPageProxy::setDeviceOrientation(int32_t deviceOrientation)

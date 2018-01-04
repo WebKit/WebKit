@@ -4155,15 +4155,6 @@ static int32_t activeOrientation(WKWebView *webView)
 
 #endif
 
-- (void)_didRelaunchProcess
-{
-#if PLATFORM(IOS)
-    CGRect bounds = self.bounds;
-    [self _dispatchSetMinimumLayoutSize:activeMinimumLayoutSize(self, bounds)];
-    [self _dispatchSetMaximumUnobscuredSize:activeMaximumUnobscuredSize(self, bounds)];
-#endif
-}
-
 - (NSData *)_sessionStateData
 {
     WebKit::SessionState sessionState = _page->sessionState();

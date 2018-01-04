@@ -211,7 +211,6 @@ void PageClientImpl::processDidExit()
 void PageClientImpl::didRelaunchProcess()
 {
     [m_contentView _didRelaunchProcess];
-    [m_webView _didRelaunchProcess];
 }
 
 void PageClientImpl::pageClosed()

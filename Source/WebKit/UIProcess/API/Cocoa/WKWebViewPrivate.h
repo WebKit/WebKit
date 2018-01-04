@@ -239,7 +239,6 @@ typedef NS_OPTIONS(NSInteger, _WKRectEdge) {
 - (void)_setOverlaidAccessoryViewsInset:(CGSize)inset;
 
 - (void)_killWebContentProcess;
-- (void)_didRelaunchProcess;
 
 // Puts the view into a state where being taken out of the view hierarchy and resigning first responder
 // will not count as becoming inactive and unfocused. The returned block must be called to exit the state.

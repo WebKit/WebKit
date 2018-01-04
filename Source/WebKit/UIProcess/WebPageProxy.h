@@ -2064,6 +2064,8 @@ private:
     bool m_hasDeferredStartAssistingNode { false };
     std::unique_ptr<NodeAssistanceArguments> m_deferredNodeAssistanceArguments;
     bool m_forceAlwaysUserScalable { false };
+    WebCore::FloatSize m_viewportConfigurationMinimumLayoutSize;
+    WebCore::FloatSize m_maximumUnobscuredSize;
 #endif
 
 #if ENABLE(POINTER_LOCK)
