@@ -1,3 +1,18 @@
+2018-01-04  Minsheng Liu  <lambda@liu.ms>
+
+        Add a test to ensure <mo> paints its leading and trailing space as specified in its attributes.
+        https://bugs.webkit.org/show_bug.cgi?id=170272
+
+        Reviewed by Frédéric Wang.
+
+        A reference test is added to ensure <mo> paints its leading and trailing space as specified in its attributes.
+
+        The bug itself is fixed as a part of 179682.
+        https://bugs.webkit.org/show_bug.cgi?id=179682
+
+        * mathml/presentation/mo-paint-lspace-rspace-expected.html: Added.
+        * mathml/presentation/mo-paint-lspace-rspace.html: Added.
+
 2018-01-04  Youenn Fablet  <youenn@apple.com>
 
         Implement Cache API partitioning based on ClientOrigin
