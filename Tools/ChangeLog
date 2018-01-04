@@ -1,5 +1,18 @@
 2018-01-03  Michael Catanzaro  <mcatanzaro@igalia.com>
 
+        REGRESSION(r226366): [GTK] Broke TestBackForwardList and TestWebKitWebView
+        https://bugs.webkit.org/show_bug.cgi?id=173915
+
+        Unreviewed follow-up. Fix /webkit2/WebKitWebView/session-state-with-form-data and
+        /webkit2/WebKitWebView/submit-form. The form ID may be NULL, but we can't put NULL into a
+        GVariant unless we use maybe types, and maybe types are incompatible with D-Bus. So use an
+        empty string in this case.
+
+        * TestWebKitAPI/Tests/WebKitGLib/WebExtensionTest.cpp:
+        (emitFormSubmissionEvent):
+
+2018-01-03  Michael Catanzaro  <mcatanzaro@igalia.com>
+
         [GTK] Add web process API to detect when form is submitted via JavaScript
         https://bugs.webkit.org/show_bug.cgi?id=173915
 

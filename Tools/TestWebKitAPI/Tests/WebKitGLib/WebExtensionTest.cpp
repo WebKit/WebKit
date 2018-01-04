@@ -349,7 +349,7 @@ static void emitFormSubmissionEvent(GDBusConnection* connection, const char* met
         "/org/webkit/gtk/WebExtensionTest",
         "org.webkit.gtk.WebExtensionTest",
         methodName,
-        g_variant_new("(sssbb)", formID, names, values, targetFrameIsMainFrame, sourceFrameIsMainFrame),
+        g_variant_new("(sssbb)", formID ? formID : "", names, values, targetFrameIsMainFrame, sourceFrameIsMainFrame),
         nullptr);
     g_assert(ok);
 }
