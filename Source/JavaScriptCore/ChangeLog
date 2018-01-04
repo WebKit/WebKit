@@ -1,3 +1,18 @@
+2018-01-03  Saam Barati  <sbarati@apple.com>
+
+        Fix BytecodeParser op_catch assert to work with useProfiler=1
+        https://bugs.webkit.org/show_bug.cgi?id=181260
+
+        Reviewed by Keith Miller.
+
+        op_catch was asserting that the current block was empty. This is only true
+        if the profiler isn't enabled. When the profiler is enabled, we will
+        insert a CountExecution node before each bytecode. This patch fixes the
+        assert to work with the profiler.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+
 2018-01-03  Per Arne Vollan  <pvollan@apple.com>
 
         [Win][Debug] testapi link error.

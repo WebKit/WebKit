@@ -5410,7 +5410,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
                 NEXT_OPCODE(op_catch);
             }
 
-            RELEASE_ASSERT(!m_currentBlock->size());
+            RELEASE_ASSERT(!m_currentBlock->size() || (m_graph.compilation() && m_currentBlock->size() == 1 && m_currentBlock->at(0)->op() == CountExecution));
 
             ValueProfileAndOperandBuffer* buffer = static_cast<ValueProfileAndOperandBuffer*>(currentInstruction[3].u.pointer);
 
