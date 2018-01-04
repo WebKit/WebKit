@@ -1,4 +1,4 @@
-#!/usr/bin/perl -w
+#!/usr/bin/env perl
 #
 # Copyright (C) 2010 Chris Jerdonek (chris.jerdonek@gmail.com)
 #

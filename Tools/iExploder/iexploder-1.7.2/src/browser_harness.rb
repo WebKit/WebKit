@@ -1,4 +1,4 @@
-#!/usr/bin/ruby
+#!/usr/bin/env ruby
 # iExploder browser Harness  (test a single web browser)
 #
 # Copyright 2010 Thomas Stromberg - All Rights Reserved.

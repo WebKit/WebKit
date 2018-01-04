@@ -1,4 +1,4 @@
-#!/usr/bin/ruby
+#!/usr/bin/env ruby
 # iExploder - Generates bad HTML files to perform QA for web browsers.
 #
 # Copyright 2010 Thomas Stromberg - All Rights Reserved.

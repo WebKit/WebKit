@@ -1,4 +1,4 @@
-#!/usr/bin/perl -w
+#!/usr/bin/env perl
 #
 # Copyright (C) 2013 Nokia Corporation and/or its subsidiary(-ies).
 #

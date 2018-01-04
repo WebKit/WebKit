@@ -1,4 +1,4 @@
-#!/usr/bin/perl -w
+#!/usr/bin/env perl
 
 # Copyright (C) 2015 Apple Inc. All rights reserved.
 #
@@ -24,6 +24,7 @@
 # THE POSSIBILITY OF SUCH DAMAGE.
 
 use strict;
+use warnings;
 use Getopt::Long;
 use File::Basename;
 use File::Path;

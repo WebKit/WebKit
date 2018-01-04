@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # This script needs to be run with root rights.
 if [ $UID -ne 0 ]; then

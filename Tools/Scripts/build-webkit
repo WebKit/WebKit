@@ -1,4 +1,4 @@
-#!/usr/bin/perl -w
+#!/usr/bin/env perl
 
 # Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014 Apple Inc. All rights reserved.
 # Copyright (C) 2009 Google Inc. All rights reserved.
@@ -33,6 +33,7 @@
 # Build script wrapper for the WebKit Open Source Project.
 
 use strict;
+use warnings;
 use File::Basename;
 use File::Find;
 use File::Spec;

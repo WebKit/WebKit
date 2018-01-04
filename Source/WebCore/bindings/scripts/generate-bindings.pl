@@ -1,4 +1,4 @@
-#!/usr/bin/perl -w
+#!/usr/bin/env perl
 #
 # Copyright (C) 2005 Apple Inc.
 # Copyright (C) 2006 Anders Carlsson <andersca@mac.com>
@@ -29,6 +29,7 @@
 # <rdar://problems/4251781&4251785>
 
 use strict;
+use warnings;
 use FindBin;
 use lib '.', $FindBin::Bin;
 

@@ -1,4 +1,4 @@
-#!/usr/bin/ruby
+#!/usr/bin/env ruby
 # Gives you information about the most recent crash for each application
 # that has crashed within the last 2 days
 

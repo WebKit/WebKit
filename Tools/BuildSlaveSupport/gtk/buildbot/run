@@ -1,4 +1,4 @@
-#! /bin/bash
+#! /usr/bin/env bash
 #
 # Copyright (C) 2010 Igalia S.L. All rights reserved.
 #

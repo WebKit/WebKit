@@ -1,4 +1,4 @@
-#!/usr/bin/perl -w
+#!/usr/bin/env perl
 
 # Copyright (C) 2007 Apple Inc. All rights reserved.
 #
@@ -29,6 +29,7 @@
 # Script to run Safari in the platform's debugger for the WebKit Open Source Project.
 
 use strict;
+use warnings;
 use FindBin;
 use lib $FindBin::Bin;
 use webkitdirs;

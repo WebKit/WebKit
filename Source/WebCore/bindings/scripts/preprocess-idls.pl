@@ -1,4 +1,4 @@
-#!/usr/bin/perl -w
+#!/usr/bin/env perl
 #
 # Copyright (C) 2011 Google Inc.  All rights reserved.
 #
@@ -19,6 +19,7 @@
 #
 
 use strict;
+use warnings;
 use FindBin;
 use lib $FindBin::Bin;
 

@@ -1,4 +1,4 @@
-#!/usr/bin/perl -w
+#!/usr/bin/env perl
 
 # Copyright (C) 2006 Apple Inc.  All rights reserved.
 #
@@ -28,6 +28,8 @@
 
 # Used for helping remove extra blank lines from files when processing.
 # see split-class for an example usage (or other scripts in bugzilla)
+
+use warnings;
 
 BEGIN {
    use Exporter   ();

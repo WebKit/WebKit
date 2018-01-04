@@ -1,4 +1,4 @@
-#!/usr/bin/perl -w
+#!/usr/bin/env perl
 #
 # Copyright (C) 2012 Daniel Bates (dbates@intudata.com). All rights reserved.
 #

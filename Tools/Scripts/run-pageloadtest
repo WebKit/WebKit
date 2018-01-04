@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/bin/env perl
 
 # Copyright (C) 2006 Eric Seidel (eric@webkit.org)
 # Copyright (C) 2014 Apple Inc. All rights reserved.

@@ -1,4 +1,4 @@
-#!/usr/bin/perl -w
+#!/usr/bin/env perl
 
 # Copyright 2009 Apple Inc. All rights reserved.
 #
@@ -26,6 +26,7 @@
 # Helper script to add includes to source files.
 
 use strict;
+use warnings;
 
 my $headerPattern = '[\"<][A-Za-z][A-Za-z0-9_/]+(\.h)?[\">]'; # " Make Xcode formatter happy.
 

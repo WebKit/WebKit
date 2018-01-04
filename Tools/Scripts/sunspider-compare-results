@@ -1,4 +1,4 @@
-#!/usr/bin/perl -w
+#!/usr/bin/env perl
 
 # Copyright (C) 2007 Apple Inc. All rights reserved.
 # Copyright (C) 2007 Eric Seidel <eric@webkit.org>
@@ -25,6 +25,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
 
 use strict;
+use warnings;
 use File::Spec;
 use FindBin;
 use Getopt::Long qw(:config pass_through);

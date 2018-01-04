@@ -1,4 +1,4 @@
-#!/usr/bin/perl -w
+#!/usr/bin/env perl
 
 # Copyright (C) 2011 Adam Barth <abarth@webkit.org>
 #
@@ -25,6 +25,7 @@
 #
 
 use strict;
+use warnings;
 
 use Config;
 use Getopt::Long;

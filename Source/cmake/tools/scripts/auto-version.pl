@@ -1,6 +1,7 @@
-#!/usr/bin/perl -w
+#!/usr/bin/env perl
 
 use strict;
+use warnings;
 use File::Path qw(make_path);
 use File::Spec;
 use File::Basename;

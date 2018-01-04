@@ -1,4 +1,4 @@
-#!/usr/bin/perl -w
+#!/usr/bin/env perl
 
 # Copyright (C) 2011 Apple Inc.  All rights reserved.
 #
@@ -29,6 +29,7 @@
 # Script to run the WebKit Open Source Project Regular Expression functional tests.
 
 use strict;
+use warnings;
 use FindBin;
 use Getopt::Long qw(:config pass_through);
 use lib $FindBin::Bin;

@@ -1,4 +1,4 @@
-#!/usr/bin/perl -w
+#!/usr/bin/env perl
 
 # Copyright (C) 2005, 2007, 2013 Apple Inc. All rights reserved.
 # Copyright (C) 2007 Staikos Computing Services, Inc.  <info@staikos.net>

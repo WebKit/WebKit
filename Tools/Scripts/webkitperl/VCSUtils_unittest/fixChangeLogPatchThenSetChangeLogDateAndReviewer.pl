@@ -1,4 +1,4 @@
-#!/usr/bin/perl -w
+#!/usr/bin/env perl
 #
 # Copyright (C) 2010 Chris Jerdonek (cjerdonek@webkit.org)
 # Copyright (C) 2010 Research In Motion Limited. All rights reserved.

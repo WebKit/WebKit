@@ -1,4 +1,4 @@
-#!/usr/bin/perl -w
+#!/usr/bin/env perl
 
 # Copyright (C) 2006, 2007, 2009, 2010, 2013 Apple Inc. All rights reserved.
 #
@@ -43,6 +43,7 @@
 # The exceptions file has a list of strings in quotes, filenames, and filename/string pairs separated by :.
 
 use strict;
+use warnings;
 use File::Compare;
 use File::Copy;
 use FindBin;

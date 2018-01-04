@@ -1,3 +1,12 @@
+2018-01-03  Ting-Wei Lan  <lantw44@gmail.com>
+
+        Replace hard-coded paths in shebangs with #!/usr/bin/env
+        https://bugs.webkit.org/show_bug.cgi?id=181040
+
+        Reviewed by Alex Christensen.
+
+        * AVFoundationSupport.py:
+
 2018-01-03  Per Arne Vollan  <pvollan@apple.com>
 
         [Win] WebKitLegacy compile error.

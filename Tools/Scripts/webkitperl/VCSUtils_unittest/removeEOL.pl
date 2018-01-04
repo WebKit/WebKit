@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/bin/env perl
 #
 # Copyright (C) Research In Motion Limited 2010. All rights reserved.
 #

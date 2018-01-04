@@ -1,4 +1,4 @@
-#!/usr/bin/perl -w
+#!/usr/bin/env perl
 
 # Copyright (C) 2010 Google Inc. All rights reserved.
 # Copyright (C) 2013, 2015 Apple Inc. All rights reserved.
@@ -29,6 +29,7 @@
 
 # A script to expose WebKit's build directory detection logic to non-perl scripts.
 
+use warnings;
 use FindBin;
 use Getopt::Long;
 

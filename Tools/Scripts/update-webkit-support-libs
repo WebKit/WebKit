@@ -1,4 +1,4 @@
-#!/usr/bin/perl -w
+#!/usr/bin/env perl
 
 # Copyright (C) 2005, 2006, 2007 Apple Inc.  All rights reserved.
 # Copyright (C) Research In Motion Limited 2010. All rights reserved.

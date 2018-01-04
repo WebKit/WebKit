@@ -1,4 +1,4 @@
-#!/usr/bin/perl -w
+#!/usr/bin/env perl
 
 # Copyright (C) 2006, 2008 Apple Inc. All rights reserved.
 #
@@ -29,6 +29,7 @@
 # Script to do file renaming.
 
 use strict;
+use warnings;
 use File::Find;
 use FindBin;
 use lib $FindBin::Bin;

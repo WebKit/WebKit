@@ -1,4 +1,4 @@
-#!/usr/bin/perl -w
+#!/usr/bin/env perl
 
 # Copyright (C) 2007, 2008, 2009, 2010 Apple Inc.  All rights reserved.
 #
@@ -29,6 +29,7 @@
 # Script to sort "children" and "files" sections in Xcode project.pbxproj files
 
 use strict;
+use warnings;
 
 use File::Basename;
 use File::Spec;

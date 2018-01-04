@@ -1,4 +1,4 @@
-#!/usr/bin/perl -w
+#!/usr/bin/env perl
 
 # Copyright (C) 2005-2009, 2013, 2014 Apple Inc. All rights reserved.
 # Copyright (C) 2009 Google Inc. All rights reserved.
@@ -31,6 +31,7 @@
 # Update script for WebKit Open Source Project.
 
 use strict;
+use warnings;
 use FindBin;
 use lib $FindBin::Bin;
 use File::Basename;

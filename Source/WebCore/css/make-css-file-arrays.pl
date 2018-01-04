@@ -1,4 +1,4 @@
-#!/usr/bin/perl -w
+#!/usr/bin/env perl
 #
 #  Copyright (C) 2006 Apple Inc.
 #
@@ -21,6 +21,7 @@
 # Usage: make-css-file-arrays.pl <header> <output> <input> ...
 
 use strict;
+use warnings;
 use FindBin;
 use lib "$FindBin::Bin/../bindings/scripts";
 

@@ -1,4 +1,4 @@
-#!/usr/bin/ruby
+#!/usr/bin/env ruby
 # showtest.rb - simple CLI interface to grab a testcase
 #####################
 #

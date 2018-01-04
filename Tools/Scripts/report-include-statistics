@@ -1,4 +1,4 @@
-#!/usr/bin/perl -w
+#!/usr/bin/env perl
 
 # Copyright (C) 2005, 2006 Apple Inc.  All rights reserved.
 #
@@ -29,6 +29,7 @@
 # "report-include-statistics" script for WebKit Open Source Project
 
 use strict;
+use warnings;
 use File::Find;
 
 find(\&wanted, @ARGV ? @ARGV : ".");

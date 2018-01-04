@@ -1,4 +1,4 @@
-#!/usr/bin/perl -w
+#!/usr/bin/env perl
 #
 # Copyright (C) Research in Motion Limited 2010. All Rights Reserved.
 # Copyright (C) 2010 Chris Jerdonek (chris.jerdonek@gmail.com)

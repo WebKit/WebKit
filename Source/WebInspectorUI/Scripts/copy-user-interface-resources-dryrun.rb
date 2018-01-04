@@ -1,4 +1,4 @@
-#!/usr/bin/ruby
+#!/usr/bin/env ruby
 
 # Copyright (C) 2015 Apple Inc. All rights reserved.
 #

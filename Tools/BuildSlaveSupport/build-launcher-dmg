@@ -1,4 +1,4 @@
-#!/usr/bin/perl -w
+#!/usr/bin/env perl
 
 # Copyright (C) 2006 Apple Inc.  All rights reserved.
 # Copyright (C) 2006 Mark Rowe <opendarwin.org@bdash.net.nz>.  All rights reserved.
@@ -30,6 +30,7 @@
 # Script used by build slaves to create a disk-image containing WebKit.app.
 
 use strict;
+use warnings;
 
 use File::Basename;
 use Getopt::Long;

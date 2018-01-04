@@ -1,4 +1,4 @@
-#!/usr/bin/ruby
+#!/usr/bin/env ruby
 # lasthit, part of iExploder
 # 
 # Shows statistics about recent agents that have tested with iExploder. 
