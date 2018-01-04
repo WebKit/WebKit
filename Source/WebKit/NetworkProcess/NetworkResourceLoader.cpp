@@ -749,16 +749,16 @@ void NetworkResourceLoader::logCookieInformation() const
             if (++count == size)
                 trailingComma = "";
 
-            LOCAL_LOG(R"(  { "name": "%{public}s")", cookie.name.utf8().data());
-            LOCAL_LOG(R"(    "value": "%{public}s")", cookie.value.utf8().data());
-            LOCAL_LOG(R"(    "domain": "%{public}s")", cookie.domain.utf8().data());
-            LOCAL_LOG(R"(    "path": "%{public}s")", cookie.path.utf8().data());
-            LOCAL_LOG(R"(    "created": %f)", cookie.created);
-            LOCAL_LOG(R"(    "expires": %f)", cookie.expires);
-            LOCAL_LOG(R"(    "httpOnly": %{public}s)", cookie.httpOnly ? "true" : "false");
-            LOCAL_LOG(R"(    "secure": %{public}s)", cookie.secure ? "true" : "false");
-            LOCAL_LOG(R"(    "session": %{public}s)", cookie.session ? "true" : "false");
-            LOCAL_LOG(R"(    "comment": "%{public}s")", cookie.comment.utf8().data());
+            LOCAL_LOG(R"(  { "name": "%{public}s",)", cookie.name.utf8().data());
+            LOCAL_LOG(R"(    "value": "%{public}s",)", cookie.value.utf8().data());
+            LOCAL_LOG(R"(    "domain": "%{public}s",)", cookie.domain.utf8().data());
+            LOCAL_LOG(R"(    "path": "%{public}s",)", cookie.path.utf8().data());
+            LOCAL_LOG(R"(    "created": %f,)", cookie.created);
+            LOCAL_LOG(R"(    "expires": %f,)", cookie.expires);
+            LOCAL_LOG(R"(    "httpOnly": %{public}s,)", cookie.httpOnly ? "true" : "false");
+            LOCAL_LOG(R"(    "secure": %{public}s,)", cookie.secure ? "true" : "false");
+            LOCAL_LOG(R"(    "session": %{public}s,)", cookie.session ? "true" : "false");
+            LOCAL_LOG(R"(    "comment": "%{public}s",)", cookie.comment.utf8().data());
             LOCAL_LOG(R"(    "commentURL": "%{public}s")", cookie.commentURL.string().utf8().data());
             LOCAL_LOG(R"(  }%{public}s)", trailingComma);
         }
