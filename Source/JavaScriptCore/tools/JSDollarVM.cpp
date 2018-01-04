@@ -1118,7 +1118,6 @@ static EncodedJSValue JSC_HOST_CALL functionCpuClflush(ExecState* exec)
         case ALL_INT32_INDEXING_TYPES:
         case ALL_CONTIGUOUS_INDEXING_TYPES:
         case ALL_DOUBLE_INDEXING_TYPES:
-            toFlush.append(bitwise_cast<char*>(object) + JSObject::butterflyOffset());
             toFlush.append(bitwise_cast<char*>(object->butterfly()) + Butterfly::offsetOfVectorLength());
             toFlush.append(bitwise_cast<char*>(object->butterfly()) + Butterfly::offsetOfPublicLength());
         }
