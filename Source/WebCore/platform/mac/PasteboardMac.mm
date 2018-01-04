@@ -350,7 +350,7 @@ void Pasteboard::read(PasteboardWebContentReader& reader)
     if (types.contains(String(legacyFilenamesPasteboardType()))) {
         Vector<String> paths;
         strategy.getPathnamesForType(paths, legacyFilenamesPasteboardType(), m_pasteboardName);
-        if (m_changeCount != changeCount() || reader.readFilenames(paths))
+        if (m_changeCount != changeCount() || reader.readFilePaths(paths))
             return;
     }
 
@@ -554,7 +554,7 @@ void Pasteboard::writeString(const String& type, const String& data)
     }
 }
 
-Vector<String> Pasteboard::readFilenames()
+Vector<String> Pasteboard::readFilePaths()
 {
     // FIXME: Seems silly to convert paths to URLs and then back to paths. Does that do anything helpful?
     Vector<String> absoluteURLs = absoluteURLsFromPasteboardFilenames(m_pasteboardName);

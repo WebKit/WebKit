@@ -191,7 +191,7 @@ static Ref<SharedBuffer> convertTIFFToPNG(SharedBuffer& tiffBuffer)
 
 void Pasteboard::read(PasteboardFileReader& reader)
 {
-    auto filenames = readFilenames();
+    auto filenames = readFilePaths();
     if (!filenames.isEmpty()) {
         for (auto& filename : filenames)
             reader.readFilename(filename);

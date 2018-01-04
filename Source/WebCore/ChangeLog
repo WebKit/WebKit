@@ -1,3 +1,139 @@
+2018-01-03  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Attachment Support] Create attachment elements when dropping files on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=181192
+        <rdar://problem/36280945>
+
+        Reviewed by Tim Horton.
+
+        Implements support for dropping data as attachment elements on iOS. See comments below for more detail.
+
+        Tests:  WKAttachmentTests.InsertDroppedRichAndPlainTextFilesAsAttachments
+                WKAttachmentTests.InsertDroppedZipArchiveAsAttachment
+                WKAttachmentTests.InsertDroppedItemProvidersInOrder
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * editing/WebContentReader.cpp:
+        (WebCore::WebContentReader::ensureFragment):
+
+        Add a new helper to create the WebContentReader's fragment, if it hasn't already been created.
+
+        * editing/WebContentReader.h:
+        * editing/cocoa/WebContentReaderCocoa.mm:
+        (WebCore::WebContentReader::readFilePaths):
+
+        Rename readFilenames to readFilePaths (which better reflects its parameters, which are file paths). Also, move
+        the implementation of readFilePaths to shared iOS/macOS code in WebContentReaderCocoa, and remove the stub
+        implementation on iOS.
+
+        There's a bit of code here that I kept macOS-only which deals with inserting file paths as plain text in
+        editable areas, but it's unclear to me why and if WebKit clients currently find this useful, so I left a FIXME
+        to investigate removing this altogether. Code for handling this plain text insertion of file paths on Mac was
+        introduced in r67403.
+
+        * editing/ios/WebContentReaderIOS.mm:
+        (WebCore::WebContentReader::readFilenames): Deleted.
+        * editing/mac/WebContentReaderMac.mm:
+        (WebCore::WebContentReader::readFilenames): Deleted.
+        * page/mac/DragControllerMac.mm:
+        (WebCore::DragController::updateSupportedTypeIdentifiersForDragHandlingMethod const):
+
+        Teach DragController to accept all types conforming to "public.item" and "public.content" on iOS, only when
+        attachment elements are enabled. This allows us to load content from item providers that we otherwise would not
+        have loaded, since we now have the ability to fall back to attachment element insertion if the type is not have
+        a default representation using standard web content.
+
+        * platform/Pasteboard.h:
+        * platform/PasteboardItemInfo.h: Added.
+        (WebCore::PasteboardItemInfo::encode const):
+        (WebCore::PasteboardItemInfo::decode):
+
+        Add PasteboardItemInfo, a struct that describes an item on the pasteboard. Also, implement encoding and decoding
+        support for PasteboardItemInfo. So far, the item info only describes file information about the pasteboard item,
+        and flags indicating whether the item prefers attachment or inline presentation.
+
+        * platform/PasteboardStrategy.h:
+
+        Replace getFilenamesForDataInteraction with informationForItemAtIndex. Instead of returning all of the file
+        paths associated with any item on the pasteboard, fetch a PasteboardItemInfo at a given item index, which
+        includes information about the file path as well as some other metadata we'll need when deciding how to read
+        pasteboard contents as a document fragment.
+
+        * platform/PlatformPasteboard.h:
+        * platform/cocoa/PasteboardCocoa.mm:
+        (WebCore::Pasteboard::read):
+        * platform/ios/AbstractPasteboard.h:
+        * platform/ios/PasteboardIOS.mm:
+        (WebCore::Pasteboard::read):
+        (WebCore::Pasteboard::readRespectingUTIFidelities):
+
+        Teach the iOS Pasteboard to read web content using attachment elements, if enabled. There are two scenarios in
+        which we would want to insert an attachment element:
+        (1) The item provider uses a preferred presentation style of attachment, in which case we bail out of trying to
+            handle the drop using the default mechanisms, and simply insert it as an attachment. We need this to deal
+            with the case where we drop text or HTML files from the Files app, so that we don't try and insert the
+            contents of the text or HTML as inline web content.
+        (2) The item provider doesn't have a preferred attachment presentation style, but there's nothing WebKit would
+            otherwise do with the dropped content, so insert an attachment element as a fallback. Examples where this is
+            relevant are dropping a PDF or ZIP archive without attachment presentation style explicitly set.
+        We first check if we fall into case (1). If so, we can bail early by inserting an attachment; otherwise, we
+        proceed normally and see if we can read the contents of the drop as web content. If, at the end of default drop
+        handling, we don't still have a way to represent the dropped content, enter case (2).
+
+        (WebCore::Pasteboard::readFilePaths):
+        (WebCore::Pasteboard::readFilenames): Deleted.
+
+        Rename readFilenames to readFilePaths, and reimplement it using informationForItemAtIndex.
+
+        * platform/ios/PlatformPasteboardIOS.mm:
+        (WebCore::pasteboardItemPresentationStyle):
+        (WebCore::PlatformPasteboard::informationForItemAtIndex):
+        (WebCore::PlatformPasteboard::filenamesForDataInteraction): Deleted.
+
+        Implement informationForItemAtIndex and remove filenamesForDataInteraction. As before, we ask the pasteboard
+        (i.e. WebItemProviderPasteboard) for information about dropped file URLs. This time, we limit this to a single
+        file, so we don't end up creating multiple attachment elements for each representation of a single item
+        provider. See below for -preferredFileUploadURLAtIndex:fileType: for more detail.
+
+        * platform/ios/WebItemProviderPasteboard.h:
+        * platform/ios/WebItemProviderPasteboard.mm:
+        (-[WebItemProviderLoadResult initWithItemProvider:typesToLoad:]):
+        (-[WebItemProviderLoadResult canBeRepresentedAsFileUpload]):
+
+        Remove this synthesized instance variable and instead just check the item provider's preferredPresentationStyle.
+
+        (-[WebItemProviderLoadResult description]):
+
+        Add a verbose -description to the load result object. Useful for debugging what was content was loaded from an
+        item provider on drop.
+
+        (-[WebItemProviderPasteboard preferredFileUploadURLAtIndex:fileType:]):
+
+        Return the highest fidelity loaded type identifier for a given item.
+
+        (-[WebItemProviderPasteboard allDroppedFileURLs]):
+        (-[WebItemProviderPasteboard typeIdentifiersToLoadForRegisteredTypeIdentfiers:]):
+
+        Prefer flat RTFD to RTFD. In the case where attachments are enabled and we're accepting all types of content
+        using attachment elements as a fallback representation, if the source writes attributed strings to the
+        pasteboard with com.apple.rtfd at a higher fidelity than com.apple.flat-rtfd, we'll end up loading only
+        com.apple.rtfd and dropping the text as an attachment element because we cannot convert the dropped content to
+        markup. Instead, if flat RTFD is present in the item provider, always prefer that over RTFD so that dropping as
+        regular web content isn't overridden when attachment elements are enabled.
+
+        (-[WebItemProviderPasteboard doAfterLoadingProvidedContentIntoFileURLs:synchronousTimeout:]):
+        (-[WebItemProviderPasteboard droppedFileURLs]): Deleted.
+        * platform/mac/DragDataMac.mm:
+        (WebCore::DragData::containsCompatibleContent const):
+
+        DragData::containsCompatibleContent should be true when attachment elements are enabled, and there are files we
+        can drop as attachment elements.
+
+        * platform/mac/PasteboardMac.mm:
+        (WebCore::Pasteboard::read):
+        (WebCore::Pasteboard::readFilePaths):
+        (WebCore::Pasteboard::readFilenames): Deleted.
+
 2018-01-03  Ting-Wei Lan  <lantw44@gmail.com>
 
         Replace hard-coded paths in shebangs with #!/usr/bin/env

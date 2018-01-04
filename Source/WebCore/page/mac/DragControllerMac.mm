@@ -45,6 +45,7 @@
 #import "PasteboardStrategy.h"
 #import "PlatformStrategies.h"
 #import "Range.h"
+#import "RuntimeEnabledFeatures.h"
 
 #if ENABLE(DATA_INTERACTION)
 #import <MobileCoreServices/MobileCoreServices.h>
@@ -125,8 +126,14 @@ void DragController::updateSupportedTypeIdentifiersForDragHandlingMethod(DragHan
         supportedTypes.append(kUTTypePlainText);
         break;
     case DragHandlingMethod::EditRichText:
-        for (NSString *type in Pasteboard::supportedWebContentPasteboardTypes())
-            supportedTypes.append(type);
+        if (RuntimeEnabledFeatures::sharedFeatures().attachmentElementEnabled()) {
+            supportedTypes.append(WebArchivePboardType);
+            supportedTypes.append(kUTTypeContent);
+            supportedTypes.append(kUTTypeItem);
+        } else {
+            for (NSString *type in Pasteboard::supportedWebContentPasteboardTypes())
+                supportedTypes.append(type);
+        }
         break;
     default:
         for (NSString *type in Pasteboard::supportedFileUploadPasteboardTypes())

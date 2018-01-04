@@ -31,6 +31,7 @@
 #import "PasteboardStrategy.h"
 #import "PlatformPasteboard.h"
 #import "PlatformStrategies.h"
+#import "RuntimeEnabledFeatures.h"
 #import "SharedBuffer.h"
 #import "URL.h"
 #import "UTIUtilities.h"
@@ -244,10 +245,10 @@ void Pasteboard::read(PasteboardWebContentReader& reader)
 
     for (int i = 0; i < numberOfItems; i++) {
         for (int typeIndex = 0; typeIndex < numberOfTypes; typeIndex++) {
-            auto result = readPasteboardWebContentDataForType(reader, strategy, [types objectAtIndex:typeIndex], i);
-            if (result == ReaderResult::PasteboardWasChangedExternally)
+            auto itemResult = readPasteboardWebContentDataForType(reader, strategy, [types objectAtIndex:typeIndex], i);
+            if (itemResult == ReaderResult::PasteboardWasChangedExternally)
                 return;
-            if (result == ReaderResult::ReadType)
+            if (itemResult == ReaderResult::ReadType)
                 break;
         }
     }
@@ -266,17 +267,30 @@ void Pasteboard::readRespectingUTIFidelities(PasteboardWebContentReader& reader)
     ASSERT(respectsUTIFidelities());
     auto& strategy = *platformStrategies()->pasteboardStrategy();
     for (NSUInteger index = 0, numberOfItems = strategy.getPasteboardItemsCount(m_pasteboardName); index < numberOfItems; ++index) {
+#if ENABLE(ATTACHMENT_ELEMENT)
+        auto info = strategy.informationForItemAtIndex(index, m_pasteboardName);
+        bool canReadAttachment = RuntimeEnabledFeatures::sharedFeatures().attachmentElementEnabled() && !info.pathForFileUpload.isEmpty();
+        if (canReadAttachment && info.preferredPresentationStyle == PasteboardItemPresentationStyle::Attachment) {
+            reader.readFilePaths({ info.pathForFileUpload });
+            continue;
+        }
+#endif
         // Try to read data from each type identifier that this pasteboard item supports, and WebKit also recognizes. Type identifiers are
         // read in order of fidelity, as specified by each pasteboard item.
         Vector<String> typesForItemInOrderOfFidelity;
         strategy.getTypesByFidelityForItemAtIndex(typesForItemInOrderOfFidelity, index, m_pasteboardName);
+        ReaderResult result = ReaderResult::DidNotReadType;
         for (auto& type : typesForItemInOrderOfFidelity) {
-            auto result = readPasteboardWebContentDataForType(reader, strategy, type, index);
+            result = readPasteboardWebContentDataForType(reader, strategy, type, index);
             if (result == ReaderResult::PasteboardWasChangedExternally)
                 return;
             if (result == ReaderResult::ReadType)
                 break;
         }
+#if ENABLE(ATTACHMENT_ELEMENT)
+        if (canReadAttachment && result == ReaderResult::DidNotReadType)
+            reader.readFilePaths({ info.pathForFileUpload });
+#endif
     }
 }
 
@@ -405,12 +419,17 @@ void Pasteboard::writeString(const String& type, const String& data)
     platformStrategies()->pasteboardStrategy()->writeToPasteboard(cocoaType.get(), data, m_pasteboardName);
 }
 
-Vector<String> Pasteboard::readFilenames()
+Vector<String> Pasteboard::readFilePaths()
 {
-    Vector<String> filenames;
-    // Currently, data interaction is the only case on iOS where the pasteboard may contain relevant filenames.
-    platformStrategies()->pasteboardStrategy()->getFilenamesForDataInteraction(filenames, m_pasteboardName);
-    return filenames;
+    Vector<String> filePaths;
+    auto& strategy = *platformStrategies()->pasteboardStrategy();
+    for (NSUInteger index = 0, numberOfItems = strategy.getPasteboardItemsCount(m_pasteboardName); index < numberOfItems; ++index) {
+        // Currently, drag and drop is the only case on iOS where the "pasteboard" may contain file paths.
+        auto filePath = strategy.informationForItemAtIndex(index, m_pasteboardName).pathForFileUpload;
+        if (!filePath.isEmpty())
+            filePaths.append(WTFMove(filePath));
+    }
+    return filePaths;
 }
 
 }

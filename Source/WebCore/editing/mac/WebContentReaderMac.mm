@@ -38,48 +38,14 @@
 #import "FrameLoader.h"
 #import "FrameLoaderClient.h"
 #import "HTMLAnchorElement.h"
-#import "HTMLAttachmentElement.h"
 #import "HTMLNames.h"
 #import "LegacyWebArchive.h"
-#import "MIMETypeRegistry.h"
-#import "RuntimeEnabledFeatures.h"
 #import "Settings.h"
 #import "Text.h"
 #import "WebCoreNSURLExtras.h"
 #import "markup.h"
-#import <wtf/UUID.h>
 
 namespace WebCore {
-
-bool WebContentReader::readFilenames(const Vector<String>& paths)
-{
-    if (paths.isEmpty())
-        return false;
-
-    if (!frame.document())
-        return false;
-    Document& document = *frame.document();
-
-    fragment = document.createDocumentFragment();
-
-    for (auto& text : paths) {
-#if ENABLE(ATTACHMENT_ELEMENT)
-        if (RuntimeEnabledFeatures::sharedFeatures().attachmentElementEnabled()) {
-            auto attachment = HTMLAttachmentElement::create(HTMLNames::attachmentTag, document);
-            attachment->setUniqueIdentifier(createCanonicalUUIDString());
-            attachment->setFile(File::create([NSURL fileURLWithPath:text].path), HTMLAttachmentElement::UpdateDisplayAttributes::Yes);
-            fragment->appendChild(attachment);
-            continue;
-        }
-#else
-        auto paragraph = createDefaultParagraphElement(document);
-        paragraph->appendChild(document.createTextNode(userVisibleString([NSURL fileURLWithPath:text])));
-        fragment->appendChild(paragraph);
-#endif
-    }
-
-    return true;
-}
 
 bool WebContentReader::readURL(const URL& url, const String& title)
 {

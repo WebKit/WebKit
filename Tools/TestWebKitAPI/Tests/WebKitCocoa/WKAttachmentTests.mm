@@ -321,6 +321,24 @@ static _WKAttachmentDisplayOptions *displayOptionsWithMode(_WKAttachmentDisplayM
 
 #pragma mark - Platform testing helper functions
 
+#if PLATFORM(IOS)
+
+typedef void(^ItemProviderDataLoadHandler)(NSData *, NSError *);
+
+@implementation NSItemProvider (AttachmentTesting)
+
+- (void)registerData:(NSData *)data type:(NSString *)type
+{
+    [self registerDataRepresentationForTypeIdentifier:type visibility:NSItemProviderRepresentationVisibilityAll loadHandler:[protectedData = retainPtr(data)] (ItemProviderDataLoadHandler completionHandler) -> NSProgress * {
+        completionHandler(protectedData.get(), nil);
+        return nil;
+    }];
+}
+
+@end
+
+#endif // PLATFORM(IOS)
+
 void platformCopyRichTextWithMultipleAttachments()
 {
     auto image = adoptNS([[NSTextAttachment alloc] initWithData:testImageData() ofType:(NSString *)kUTTypePNG]);
@@ -363,8 +381,6 @@ void platformCopyRichTextWithImage()
 #endif
 }
 
-typedef void(^ItemProviderDataLoadHandler)(NSData *, NSError *);
-
 void platformCopyPNG()
 {
 #if PLATFORM(MAC)
@@ -375,10 +391,7 @@ void platformCopyPNG()
     UIPasteboard *pasteboard = [UIPasteboard generalPasteboard];
     auto item = adoptNS([[UIItemProvider alloc] init]);
     [item setPreferredPresentationStyle:UIPreferredPresentationStyleAttachment];
-    [item registerDataRepresentationForTypeIdentifier:(NSString *)kUTTypePNG visibility:NSItemProviderRepresentationVisibilityAll loadHandler:[] (ItemProviderDataLoadHandler completionHandler) -> NSProgress * {
-        completionHandler(testImageData(), nil);
-        return nil;
-    }];
+    [item registerData:testImageData() type:(NSString *)kUTTypePNG];
     pasteboard.itemProviders = @[ item.get() ];
 #endif
 }
@@ -960,11 +973,7 @@ TEST(WKAttachmentTestsIOS, InsertDroppedImageAsAttachment)
     auto webView = webViewForTestingAttachments();
     auto draggingSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
     auto item = adoptNS([[NSItemProvider alloc] init]);
-    [item setPreferredPresentationStyle:UIPreferredPresentationStyleAttachment];
-    [item registerDataRepresentationForTypeIdentifier:(NSString *)kUTTypePNG visibility:NSItemProviderRepresentationVisibilityAll loadHandler:[] (ItemProviderDataLoadHandler completionHandler) -> NSProgress * {
-        completionHandler(testImageData(), nil);
-        return nil;
-    }];
+    [item registerData:testImageData() type:(NSString *)kUTTypePNG];
     [draggingSimulator setExternalItemProviders:@[ item.get() ]];
     [draggingSimulator runFrom:CGPointZero to:CGPointMake(50, 50)];
 
@@ -1008,6 +1017,115 @@ TEST(WKAttachmentTestsIOS, InsertDroppedAttributedStringContainingAttachment)
         [webView _synchronouslyExecuteEditCommand:@"DeleteBackward" argument:nil];
         observer.expectAttachmentUpdates(@[attachment.get()], @[]);
     }
+}
+
+TEST(WKAttachmentTestsIOS, InsertDroppedRichAndPlainTextFilesAsAttachments)
+{
+    // Here, both rich text and plain text are content types that WebKit already understands how to insert in editable
+    // areas in the absence of attachment elements. However, due to the explicitly set attachment presentation style
+    // on the item providers, we should instead treat them as dropped files and insert attachment elements.
+    // This exercises the scenario of dragging rich and plain text files from Files to Mail.
+    auto richTextItem = adoptNS([[NSItemProvider alloc] init]);
+    auto richText = adoptNS([[NSAttributedString alloc] initWithString:@"Hello world" attributes:@{ NSFontAttributeName: [UIFont boldSystemFontOfSize:12] }]);
+    [richTextItem setPreferredPresentationStyle:UIPreferredPresentationStyleAttachment];
+    [richTextItem registerObject:richText.get() visibility:NSItemProviderRepresentationVisibilityAll];
+    [richTextItem setSuggestedName:@"hello.rtf"];
+
+    auto plainTextItem = adoptNS([[NSItemProvider alloc] init]);
+    [plainTextItem setPreferredPresentationStyle:UIPreferredPresentationStyleAttachment];
+    [plainTextItem registerObject:@"Hello world" visibility:NSItemProviderRepresentationVisibilityAll];
+    [plainTextItem setSuggestedName:@"world.txt"];
+
+    auto webView = webViewForTestingAttachments();
+    auto draggingSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
+    [draggingSimulator setExternalItemProviders:@[ richTextItem.get(), plainTextItem.get() ]];
+    [draggingSimulator runFrom:CGPointZero to:CGPointMake(50, 50)];
+
+    EXPECT_EQ(2U, [draggingSimulator insertedAttachments].count);
+    EXPECT_EQ(0U, [draggingSimulator removedAttachments].count);
+
+    for (_WKAttachment *attachment in [draggingSimulator insertedAttachments]) {
+        NSError *error = nil;
+        EXPECT_GT([attachment synchronouslyRequestData:&error].length, 0U);
+        EXPECT_TRUE(!error);
+        if (error)
+            NSLog(@"Error: %@", error);
+    }
+
+    EXPECT_EQ(2, [webView stringByEvaluatingJavaScript:@"document.querySelectorAll('attachment').length"].intValue);
+    EXPECT_WK_STREQ("hello.rtf", [webView stringByEvaluatingJavaScript:@"document.querySelectorAll('attachment')[0].getAttribute('title')"]);
+    EXPECT_WK_STREQ("text/rtf", [webView stringByEvaluatingJavaScript:@"document.querySelectorAll('attachment')[0].getAttribute('type')"]);
+    EXPECT_WK_STREQ("world.txt", [webView stringByEvaluatingJavaScript:@"document.querySelectorAll('attachment')[1].getAttribute('title')"]);
+    EXPECT_WK_STREQ("text/plain", [webView stringByEvaluatingJavaScript:@"document.querySelectorAll('attachment')[1].getAttribute('type')"]);
+}
+
+TEST(WKAttachmentTestsIOS, InsertDroppedZipArchiveAsAttachment)
+{
+    // Since WebKit doesn't have any default DOM representation for ZIP archives, we should fall back to inserting
+    // attachment elements. This exercises the flow of dragging a ZIP file from an app that doesn't specify a preferred
+    // presentation style (e.g. Notes) into Mail.
+    auto item = adoptNS([[NSItemProvider alloc] init]);
+    NSData *data = testZIPData();
+    [item registerData:data type:(NSString *)kUTTypeZipArchive];
+    [item setSuggestedName:@"archive.zip"];
+
+    auto webView = webViewForTestingAttachments();
+    auto draggingSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
+    [draggingSimulator setExternalItemProviders:@[ item.get() ]];
+    [draggingSimulator runFrom:CGPointZero to:CGPointMake(50, 50)];
+
+    EXPECT_EQ(1U, [draggingSimulator insertedAttachments].count);
+    EXPECT_EQ(0U, [draggingSimulator removedAttachments].count);
+    [[draggingSimulator insertedAttachments].firstObject expectRequestedDataToBe:data];
+    EXPECT_EQ(1, [webView stringByEvaluatingJavaScript:@"document.querySelectorAll('attachment').length"].intValue);
+    EXPECT_WK_STREQ("archive.zip", [webView valueOfAttribute:@"title" forQuerySelector:@"attachment"]);
+    EXPECT_WK_STREQ("application/zip", [webView valueOfAttribute:@"type" forQuerySelector:@"attachment"]);
+}
+
+TEST(WKAttachmentTestsIOS, InsertDroppedItemProvidersInOrder)
+{
+    // Tests that item providers are inserted in the order they are specified. In this case, the two inserted attachments
+    // should be separated by a link.
+    auto firstAttachmentItem = adoptNS([[NSItemProvider alloc] init]);
+    [firstAttachmentItem setPreferredPresentationStyle:UIPreferredPresentationStyleAttachment];
+    [firstAttachmentItem registerObject:@"FIRST" visibility:NSItemProviderRepresentationVisibilityAll];
+    [firstAttachmentItem setSuggestedName:@"first.txt"];
+
+    auto inlineTextItem = adoptNS([[NSItemProvider alloc] init]);
+    auto appleURL = retainPtr([NSURL URLWithString:@"https://www.apple.com/"]);
+    [inlineTextItem registerObject:appleURL.get() visibility:NSItemProviderRepresentationVisibilityAll];
+
+    auto secondAttachmentItem = adoptNS([[NSItemProvider alloc] init]);
+    [secondAttachmentItem registerData:testPDFData() type:(NSString *)kUTTypePDF];
+    [secondAttachmentItem setSuggestedName:@"second.pdf"];
+
+    auto webView = webViewForTestingAttachments();
+    auto draggingSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
+    [draggingSimulator setExternalItemProviders:@[ firstAttachmentItem.get(), inlineTextItem.get(), secondAttachmentItem.get() ]];
+    [draggingSimulator runFrom:CGPointZero to:CGPointMake(50, 50)];
+
+    EXPECT_EQ(2U, [draggingSimulator insertedAttachments].count);
+    EXPECT_EQ(0U, [draggingSimulator removedAttachments].count);
+
+    for (_WKAttachment *attachment in [draggingSimulator insertedAttachments]) {
+        NSError *error = nil;
+        EXPECT_GT([attachment synchronouslyRequestData:&error].length, 0U);
+        EXPECT_TRUE(!error);
+        if (error)
+            NSLog(@"Error: %@", error);
+    }
+
+    NSArray *observedElementTags = (NSArray *)[webView objectByEvaluatingJavaScript:@"Array.from(document.body.children).map(e => e.tagName)"];
+    NSArray *expectedElementTags = @[ @"ATTACHMENT", @"A", @"ATTACHMENT" ];
+    EXPECT_TRUE([observedElementTags isEqualToArray:expectedElementTags]);
+    if (![observedElementTags isEqualToArray:expectedElementTags])
+        NSLog(@"Observed elements: %@ did not match expectations: %@", observedElementTags, expectedElementTags);
+
+    EXPECT_WK_STREQ("first.txt", [webView stringByEvaluatingJavaScript:@"document.querySelectorAll('attachment')[0].getAttribute('title')"]);
+    EXPECT_WK_STREQ("text/plain", [webView stringByEvaluatingJavaScript:@"document.querySelectorAll('attachment')[0].getAttribute('type')"]);
+    EXPECT_WK_STREQ([appleURL absoluteString], [webView valueOfAttribute:@"href" forQuerySelector:@"a"]);
+    EXPECT_WK_STREQ("second.pdf", [webView stringByEvaluatingJavaScript:@"document.querySelectorAll('attachment')[1].getAttribute('title')"]);
+    EXPECT_WK_STREQ("application/pdf", [webView stringByEvaluatingJavaScript:@"document.querySelectorAll('attachment')[1].getAttribute('type')"]);
 }
 
 #endif // PLATFORM(IOS)

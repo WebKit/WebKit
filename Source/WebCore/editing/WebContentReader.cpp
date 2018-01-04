@@ -31,6 +31,14 @@
 
 namespace WebCore {
 
+DocumentFragment& WebContentReader::ensureFragment()
+{
+    ASSERT(frame.document());
+    if (!fragment)
+        fragment = frame.document()->createDocumentFragment();
+    return *fragment;
+}
+
 void WebContentReader::addFragment(Ref<DocumentFragment>&& newFragment)
 {
     if (!fragment)

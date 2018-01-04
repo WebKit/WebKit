@@ -26,6 +26,7 @@
 #pragma once
 
 #include "DragImage.h"
+#include "PasteboardItemInfo.h"
 #include "URL.h"
 #include <wtf/HashMap.h>
 #include <wtf/ListHashSet.h>
@@ -134,7 +135,7 @@ public:
 
 #if PLATFORM(COCOA)
     virtual bool readWebArchive(SharedBuffer&) = 0;
-    virtual bool readFilenames(const Vector<String>&) = 0;
+    virtual bool readFilePaths(const Vector<String>&) = 0;
     virtual bool readHTML(const String&) = 0;
     virtual bool readRTFD(SharedBuffer&) = 0;
     virtual bool readRTF(SharedBuffer&) = 0;
@@ -290,7 +291,7 @@ private:
 #endif
 
 #if PLATFORM(COCOA)
-    Vector<String> readFilenames();
+    Vector<String> readFilePaths();
     String readPlatformValueAsString(const String& domType, long changeCount, const String& pasteboardName);
     static void addHTMLClipboardTypesForCocoaType(ListHashSet<String>& resultTypes, const String& cocoaType);
     String readStringForPlatformType(const String&);

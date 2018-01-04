@@ -243,9 +243,13 @@ static UIPreferredPresentationStyle uiPreferredPresentationStyle(WebPreferredPre
     _fileURLs = adoptNS([[NSMutableDictionary alloc] init]);
     _itemProvider = itemProvider;
     _typesToLoad = typesToLoad;
-    _canBeRepresentedAsFileUpload = itemProvider.preferredPresentationStyle != UIPreferredPresentationStyleInline;
 
     return self;
+}
+
+- (BOOL)canBeRepresentedAsFileUpload
+{
+    return [_itemProvider preferredPresentationStyle] != UIPreferredPresentationStyleInline;
 }
 
 - (NSArray<NSString *> *)typesToLoad
@@ -276,6 +280,26 @@ static UIPreferredPresentationStyle uiPreferredPresentationStyle(WebPreferredPre
 - (NSItemProvider *)itemProvider
 {
     return _itemProvider.get();
+}
+
+- (NSString *)description
+{
+    __block NSMutableString *description = [NSMutableString string];
+    [description appendFormat:@"<%@: %p typesToLoad: [ ", [self class], self];
+    [_typesToLoad enumerateObjectsUsingBlock:^(NSString *type, NSUInteger index, BOOL *) {
+        [description appendString:type];
+        if (index + 1 < [_typesToLoad count])
+            [description appendString:@", "];
+    }];
+    [description appendFormat:@" ] fileURLs: { "];
+    __block NSUInteger index = 0;
+    [_fileURLs enumerateKeysAndObjectsUsingBlock:^(NSString *type, NSURL *url, BOOL *) {
+        [description appendFormat:@"%@ => \"%@\"", type, url.path];
+        if (++index < [_fileURLs count])
+            [description appendString:@", "];
+    }];
+    [description appendFormat:@" }>"];
+    return description;
 }
 
 @end
@@ -470,7 +494,38 @@ static Class classForTypeIdentifier(NSString *typeIdentifier, NSString *&outType
     return _changeCount;
 }
 
-- (NSArray<NSURL *> *)droppedFileURLs
+- (NSURL *)preferredFileUploadURLAtIndex:(NSUInteger)index fileType:(NSString **)outFileType
+{
+    if (outFileType)
+        *outFileType = nil;
+
+    if (index >= _loadResults.size())
+        return nil;
+
+    auto result = _loadResults[index];
+    if (![result canBeRepresentedAsFileUpload])
+        return nil;
+
+    NSItemProvider *itemProvider = [result itemProvider];
+    for (NSString *registeredTypeIdentifier in itemProvider.registeredTypeIdentifiers) {
+        // Search for the highest fidelity non-private type identifier we loaded from the item provider.
+        if (!UTTypeIsDeclared((CFStringRef)registeredTypeIdentifier) && !UTTypeIsDynamic((CFStringRef)registeredTypeIdentifier))
+            continue;
+
+        for (NSString *loadedTypeIdentifier in [result loadedTypeIdentifiers]) {
+            if (!UTTypeConformsTo((CFStringRef)registeredTypeIdentifier, (CFStringRef)loadedTypeIdentifier))
+                continue;
+
+            if (outFileType)
+                *outFileType = loadedTypeIdentifier;
+            return [result fileURLForType:loadedTypeIdentifier];
+        }
+    }
+
+    return nil;
+}
+
+- (NSArray<NSURL *> *)allDroppedFileURLs
 {
     NSMutableArray<NSURL *> *fileURLs = [NSMutableArray array];
     for (auto loadResult : _loadResults) {
@@ -539,8 +594,19 @@ static NSURL *linkTemporaryItemProviderFilesToDropStagingDirectory(NSURL *url, N
     NSMutableSet *typesToLoad = [NSMutableSet set];
     NSString *highestFidelityContentType = nil;
 
+    BOOL containsFlatRTFD = [registeredTypeIdentifiers containsObject:(NSString *)kUTTypeFlatRTFD];
     // First, we want to either load the highest fidelity supported type or the highest fidelity generic content type.
     for (NSString *registeredTypeIdentifier in registeredTypeIdentifiers) {
+        if (containsFlatRTFD && [registeredTypeIdentifier isEqualToString:(NSString *)kUTTypeRTFD]) {
+            // In the case where attachments are enabled and we're accepting all types of content using attachment
+            // elements as a fallback representation, if the source writes attributed strings to the pasteboard with
+            // com.apple.rtfd at a higher fidelity than com.apple.flat-rtfd, we'll end up loading only com.apple.rtfd
+            // and dropping the text as an attachment element because we cannot convert the dropped content to markup.
+            // Instead, if flat RTFD is present in the item provider, always prefer that over RTFD so that dropping as
+            // regular web content isn't overridden by enabling attachment elements.
+            continue;
+        }
+
         if (typeConformsToTypes(registeredTypeIdentifier, _supportedTypeIdentifiers.get())) {
             [typesToLoad addObject:registeredTypeIdentifier];
             break;
@@ -626,7 +692,7 @@ static NSURL *linkTemporaryItemProviderFilesToDropStagingDirectory(NSURL *url, N
                 retainedSelf->_loadResults.append(loadResult);
         }
 
-        completionBlock([retainedSelf droppedFileURLs]);
+        completionBlock([retainedSelf allDroppedFileURLs]);
     };
 
     if (synchronousTimeout > 0 && !dispatch_group_wait(synchronousFileLoadingGroup.get(), dispatch_time(DISPATCH_TIME_NOW, synchronousTimeout * NSEC_PER_SEC))) {

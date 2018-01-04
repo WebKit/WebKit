@@ -34,6 +34,7 @@
 #import "PasteboardStrategy.h"
 #import "PlatformPasteboard.h"
 #import "PlatformStrategies.h"
+#import "RuntimeEnabledFeatures.h"
 #import "WebCoreNSURLExtras.h"
 
 #if PLATFORM(IOS)
@@ -219,6 +220,9 @@ bool DragData::containsCompatibleContent(DraggingPurpose purpose) const
 {
     if (purpose == DraggingPurpose::ForFileUpload)
         return containsFiles();
+
+    if (purpose == DraggingPurpose::ForEditing && RuntimeEnabledFeatures::sharedFeatures().attachmentElementEnabled() && containsFiles())
+        return true;
 
     Vector<String> types;
     platformStrategies()->pasteboardStrategy()->getTypes(types, m_pasteboardName);

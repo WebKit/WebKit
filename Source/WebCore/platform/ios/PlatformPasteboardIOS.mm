@@ -102,17 +102,48 @@ int PlatformPasteboard::numberOfFiles() const
     return [m_pasteboard respondsToSelector:@selector(numberOfFiles)] ? [m_pasteboard numberOfFiles] : 0;
 }
 
-Vector<String> PlatformPasteboard::filenamesForDataInteraction()
+#if PASTEBOARD_SUPPORTS_ITEM_PROVIDERS
+
+static PasteboardItemPresentationStyle pasteboardItemPresentationStyle(UIPreferredPresentationStyle style)
 {
-    if (![m_pasteboard respondsToSelector:@selector(droppedFileURLs)])
+    switch (style) {
+    case UIPreferredPresentationStyleUnspecified:
+        return PasteboardItemPresentationStyle::Unspecified;
+    case UIPreferredPresentationStyleInline:
+        return PasteboardItemPresentationStyle::Inline;
+    case UIPreferredPresentationStyleAttachment:
+        return PasteboardItemPresentationStyle::Attachment;
+    default:
+        ASSERT_NOT_REACHED();
+        return PasteboardItemPresentationStyle::Unspecified;
+    }
+}
+
+PasteboardItemInfo PlatformPasteboard::informationForItemAtIndex(int index)
+{
+    if (index >= [m_pasteboard numberOfItems])
         return { };
 
-    Vector<String> filenames;
-    for (NSURL *fileURL in [m_pasteboard droppedFileURLs])
-        filenames.append(fileURL.path);
+    PasteboardItemInfo info;
+    if ([m_pasteboard respondsToSelector:@selector(preferredFileUploadURLAtIndex:fileType:)]) {
+        NSString *fileType = nil;
+        info.pathForFileUpload = [m_pasteboard preferredFileUploadURLAtIndex:index fileType:&fileType].path;
+        info.contentTypeForFileUpload = fileType;
+    }
 
-    return filenames;
+    NSItemProvider *itemProvider = [[m_pasteboard itemProviders] objectAtIndex:index];
+    info.preferredPresentationStyle = pasteboardItemPresentationStyle(itemProvider.preferredPresentationStyle);
+    return info;
 }
+
+#else
+
+PasteboardItemInfo PlatformPasteboard::informationForItemAtIndex(int)
+{
+    return { };
+}
+
+#endif
 
 static bool pasteboardMayContainFilePaths(id<AbstractPasteboard> pasteboard)
 {

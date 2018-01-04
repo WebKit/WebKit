@@ -47,11 +47,6 @@
 
 namespace WebCore {
 
-bool WebContentReader::readFilenames(const Vector<String>&)
-{
-    return false;
-}
-
 bool WebContentReader::readURL(const URL& url, const String& title)
 {
     if (url.isEmpty())

@@ -32,6 +32,7 @@
 #import <WebCore/Color.h>
 #import <WebCore/MainFrame.h>
 #import <WebCore/NetworkStorageSession.h>
+#import <WebCore/PasteboardItemInfo.h>
 #import <WebCore/PlatformCookieJar.h>
 #import <WebCore/PlatformPasteboard.h>
 #import <WebCore/SharedBuffer.h>
@@ -239,8 +240,8 @@ String WebPlatformStrategies::readStringFromPasteboard(int index, const String& 
     return PlatformPasteboard(pasteboardName).readString(index, type);
 }
 
-void WebPlatformStrategies::getFilenamesForDataInteraction(Vector<String>& filenames, const String& pasteboardName)
+WebCore::PasteboardItemInfo WebPlatformStrategies::informationForItemAtIndex(int index, const String& pasteboardName)
 {
-    filenames = PlatformPasteboard(pasteboardName).filenamesForDataInteraction();
+    return PlatformPasteboard(pasteboardName).informationForItemAtIndex(index);
 }
 #endif // PLATFORM(IOS)

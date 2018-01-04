@@ -1,3 +1,45 @@
+2018-01-03  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Attachment Support] Create attachment elements when dropping files on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=181192
+        <rdar://problem/36280945>
+
+        Reviewed by Tim Horton.
+
+        Adds 3 new API tests to exercise different use cases of dropping content as attachment elements when the runtime
+        switch is enabled. See below for more details.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WKAttachmentTests.mm:
+        (-[NSItemProvider registerData:type:]):
+        (platformCopyPNG):
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/ios/DataInteractionTests.mm:
+
+        Fix some currently failing iOS drag and drop tests. In this case, there's no reason RTFD should appear in the
+        source item provider when dragging rich text *without* attachments, so this should have been a check for just
+        kUTTypeRTF instead.
+
+        (TestWebKitAPI::TEST):
+
+        Tests a few cases of inserting attachment elements via drop:
+        1.  We should distinguish between drops containing rich/plain text files from just dropping rich/plain text.
+            Instead of inserting the contents as inline web content, this should generate attachment elements.
+        2.  Test the fallback mechanism for inserting attachment elements. If the preferred presentation style is not
+            explicitly set, but there's nothing WebKit would otherwise do with the dropped content, then we should fall
+            back to inserting the content as an attachment.
+        3.  Test that if multiple attachments and inline item providers are present, WebKit will respect the order in
+            which they were inserted by the source (as opposed to, for instance, putting all of the attachments in front
+            or at the end).
+
+        * TestWebKitAPI/cocoa/TestWKWebView.h:
+        * TestWebKitAPI/cocoa/TestWKWebView.mm:
+        (-[TestWKWebView objectByEvaluatingJavaScript:]):
+
+        Add a helper method to return an object that represents the result of evaluating some given script, and rewrite
+        -stringByEvaluatingJavaScript to just turn around and call this.
+
+        (-[TestWKWebView stringByEvaluatingJavaScript:]):
+
 2018-01-03  Ting-Wei Lan  <lantw44@gmail.com>
 
         Replace hard-coded paths in shebangs with #!/usr/bin/env
