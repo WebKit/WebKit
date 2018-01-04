@@ -1,3 +1,27 @@
+2018-01-04  Zalan Bujtas  <zalan@apple.com>
+
+        WebContent process crashes while loading https://www.classicspecs.com
+        https://bugs.webkit.org/show_bug.cgi?id=181290
+        <rdar://problem/36225906>
+
+        Reviewed by Simon Fraser.
+
+        Floats can overhang multiple blocks (they are called intruding floats).
+        Each block keeps track of such intruding floats. When an overhanging float box is destroyed,
+        we need to deregister it from all those blocks. We do it by walking up the ancestor block chain
+        and check if the parent (grandparent etc) block still contains this float. Once we find the topmost block, 
+        we start deregistering it by traversing back on the descendant blocks.
+        Normally we do it in RenderElement::takeChildInternal right before the box is getting detached.
+        However in certain cases (like when the float's parent happens to be an anonymous wrapper)
+        by the time we get to ::takeChildInternal the subtree is already detached and we can't access all the
+        ancestors.
+        This patch ensure that the floating box is still attached during de-registration. 
+
+        Test: fast/block/float/crash-when-intruding-float-has-anonymous-parent-and-detach.html
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::removeFromParentAndDestroyCleaningUpAnonymousWrappers):
+
 2018-01-04  Eric Carlson  <eric.carlson@apple.com>
 
         [MediaStream] Add Mock screen capture source

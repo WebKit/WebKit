@@ -1496,8 +1496,10 @@ void RenderObject::removeFromParentAndDestroyCleaningUpAnonymousWrappers()
         return;
     }
 
+    // Remove intruding floats from sibling blocks before detaching.
+    if (is<RenderBox>(*this) && isFloatingOrOutOfFlowPositioned())
+        downcast<RenderBox>(*this).removeFloatingOrPositionedChildFromBlockLists();
     auto& destroyRoot = findDestroyRootIncludingAnonymous(*this);
-
     if (is<RenderTableRow>(destroyRoot))
         downcast<RenderTableRow>(destroyRoot).collapseAndDestroyAnonymousSiblingRows();
 
