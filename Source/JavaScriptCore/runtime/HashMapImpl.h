@@ -469,16 +469,17 @@ public:
             rehash(exec);
     }
 
-    ALWAYS_INLINE void addNormalized(ExecState* exec, JSValue key, JSValue value, uint32_t hash)
+    ALWAYS_INLINE HashMapBucketType* addNormalized(ExecState* exec, JSValue key, JSValue value, uint32_t hash)
     {
         ASSERT_WITH_MESSAGE(normalizeMapKey(key) == key, "We expect normalized values flowing into this function.");
         ASSERT_WITH_MESSAGE(jsMapHash(exec, exec->vm(), key) == hash, "We expect hash value is what we expect.");
 
-        addNormalizedInternal(exec->vm(), key, value, hash, [&] (HashMapBucketType* bucket) {
+        auto* bucket = addNormalizedInternal(exec->vm(), key, value, hash, [&] (HashMapBucketType* bucket) {
             return !isDeleted(bucket) && areKeysEqual(exec, key, bucket->key());
         });
         if (shouldRehashAfterAdd())
             rehash(exec);
+        return bucket;
     }
 
     ALWAYS_INLINE bool remove(ExecState* exec, JSValue key)
@@ -606,7 +607,7 @@ private:
     }
 
     template<typename CanUseBucket>
-    ALWAYS_INLINE void addNormalizedInternal(VM& vm, JSValue key, JSValue value, uint32_t hash, const CanUseBucket& canUseBucket)
+    ALWAYS_INLINE HashMapBucketType* addNormalizedInternal(VM& vm, JSValue key, JSValue value, uint32_t hash, const CanUseBucket& canUseBucket)
     {
         ASSERT_WITH_MESSAGE(normalizeMapKey(key) == key, "We expect normalized values flowing into this function.");
 
@@ -617,7 +618,7 @@ private:
         while (!isEmpty(bucket)) {
             if (canUseBucket(bucket)) {
                 bucket->setValue(vm, value);
-                return;
+                return bucket;
             }
             index = (index + 1) & mask;
             bucket = buffer[index];
@@ -635,6 +636,7 @@ private:
         newEntry->setNext(vm, newTail);
 
         ++m_keyCount;
+        return newEntry;
     }
 
     ALWAYS_INLINE HashMapBucketType** findBucketAlreadyHashedAndNormalized(ExecState* exec, JSValue key, uint32_t hash)

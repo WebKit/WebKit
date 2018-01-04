@@ -1,5 +1,38 @@
 2018-01-04  Yusuke Suzuki  <utatane.tea@gmail.com>
 
+        [DFG] Define defs for MapSet/SetAdd to participate in CSE
+        https://bugs.webkit.org/show_bug.cgi?id=179911
+
+        Reviewed by Saam Barati.
+
+        With this patch, our MapSet and SetAdd DFG nodes participate in CSE.
+        To handle a bit tricky DFG Map operation nodes, MapSet and SetAdd
+        produce added bucket as its result. Subsequent GetMapBucket will
+        be removed by CSE.
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileSetAdd):
+        (JSC::DFG::SpeculativeJIT::compileMapSet):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::callOperation):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileSetAdd):
+        (JSC::FTL::DFG::LowerDFGToB3::compileMapSet):
+        * jit/JITOperations.h:
+        * runtime/HashMapImpl.h:
+        (JSC::HashMapImpl::addNormalized):
+        (JSC::HashMapImpl::addNormalizedInternal):
+
+2018-01-04  Yusuke Suzuki  <utatane.tea@gmail.com>
+
         [JSC] Remove LocalScope
         https://bugs.webkit.org/show_bug.cgi?id=181206
 

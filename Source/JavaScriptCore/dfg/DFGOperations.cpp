@@ -2625,18 +2625,24 @@ JSCell* JIT_OPERATION operationJSSetFindBucket(ExecState* exec, JSCell* map, Enc
     return *bucket;
 }
 
-void JIT_OPERATION operationSetAdd(ExecState* exec, JSCell* set, EncodedJSValue key, int32_t hash)
+JSCell* JIT_OPERATION operationSetAdd(ExecState* exec, JSCell* set, EncodedJSValue key, int32_t hash)
 {
     VM& vm = exec->vm();
     NativeCallFrameTracer tracer(&vm, exec);
-    jsCast<JSSet*>(set)->addNormalized(exec, JSValue::decode(key), JSValue(), hash);
+    auto* bucket = jsCast<JSSet*>(set)->addNormalized(exec, JSValue::decode(key), JSValue(), hash);
+    if (!bucket)
+        return vm.sentinelSetBucket.get();
+    return bucket;
 }
 
-void JIT_OPERATION operationMapSet(ExecState* exec, JSCell* map, EncodedJSValue key, EncodedJSValue value, int32_t hash)
+JSCell* JIT_OPERATION operationMapSet(ExecState* exec, JSCell* map, EncodedJSValue key, EncodedJSValue value, int32_t hash)
 {
     VM& vm = exec->vm();
     NativeCallFrameTracer tracer(&vm, exec);
-    jsCast<JSMap*>(map)->addNormalized(exec, JSValue::decode(key), JSValue::decode(value), hash);
+    auto* bucket = jsCast<JSMap*>(map)->addNormalized(exec, JSValue::decode(key), JSValue::decode(value), hash);
+    if (!bucket)
+        return vm.sentinelMapBucket.get();
+    return bucket;
 }
 
 EncodedJSValue JIT_OPERATION operationGetPrototypeOfObject(ExecState* exec, JSObject* thisObject)

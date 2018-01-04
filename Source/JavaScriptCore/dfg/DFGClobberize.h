@@ -1650,16 +1650,18 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
     }
 
     case SetAdd: {
-        // FIXME: Define defs for them to participate in CSE.
-        // https://bugs.webkit.org/show_bug.cgi?id=179911
+        Edge& mapEdge = node->child1();
+        Edge& keyEdge = node->child2();
         write(JSSetFields);
+        def(HeapLocation(MapBucketLoc, JSSetFields, mapEdge, keyEdge), LazyNode(node));
         return;
     }
 
     case MapSet: {
-        // FIXME: Define defs for them to participate in CSE.
-        // https://bugs.webkit.org/show_bug.cgi?id=179911
+        Edge& mapEdge = graph.varArgChild(node, 0);
+        Edge& keyEdge = graph.varArgChild(node, 1);
         write(JSMapFields);
+        def(HeapLocation(MapBucketLoc, JSMapFields, mapEdge, keyEdge), LazyNode(node));
         return;
     }
 

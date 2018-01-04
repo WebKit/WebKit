@@ -1,3 +1,21 @@
+2018-01-04  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [DFG] Define defs for MapSet/SetAdd to participate in CSE
+        https://bugs.webkit.org/show_bug.cgi?id=179911
+
+        Reviewed by Saam Barati.
+
+        In addition to these tests, map-set-cse.js and set-add-cse.js work.
+
+        * stress/map-set-change-get.js: Added.
+        (shouldBe):
+        (test):
+        * stress/map-set-create-bucket.js: Added.
+        (shouldBe):
+        (test):
+        * stress/set-add-create-bucket.js: Added.
+        (shouldBe):
+
 2018-01-03  Michael Saboff  <msaboff@apple.com>
 
         Disable SharedArrayBuffers from Web API

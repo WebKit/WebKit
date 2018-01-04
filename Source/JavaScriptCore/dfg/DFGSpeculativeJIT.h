@@ -1416,6 +1416,16 @@ public:
         m_jit.setupArgumentsWithExecState(arg1, arg2, arg3);
         return appendCallSetResult(operation, result);
     }
+    JITCompiler::Call callOperation(C_JITOperation_ECJZ operation, GPRReg result, GPRReg arg1, JSValueRegs arg2, GPRReg arg3)
+    {
+        m_jit.setupArgumentsWithExecState(arg1, arg2.payloadGPR(), arg3);
+        return appendCallSetResult(operation, result);
+    }
+    JITCompiler::Call callOperation(C_JITOperation_ECJJZ operation, GPRReg result, GPRReg arg1, JSValueRegs arg2, JSValueRegs arg3, GPRReg arg4)
+    {
+        m_jit.setupArgumentsWithExecState(arg1, arg2.payloadGPR(), arg3.payloadGPR(), arg4);
+        return appendCallSetResult(operation, result);
+    }
     JITCompiler::Call callOperation(C_JITOperation_ECJ operation, GPRReg result, GPRReg arg1, JSValueRegs arg2)
     {
         m_jit.setupArgumentsWithExecState(arg1, arg2.gpr());
@@ -2064,6 +2074,11 @@ public:
     JITCompiler::Call callOperation(C_JITOperation_ECJZ operation, GPRReg result, GPRReg arg1, JSValueRegs arg2, GPRReg arg3)
     {
         m_jit.setupArgumentsWithExecState(arg1, arg2.payloadGPR(), arg2.tagGPR(), arg3);
+        return appendCallSetResult(operation, result);
+    }
+    JITCompiler::Call callOperation(C_JITOperation_ECJJZ operation, GPRReg result, GPRReg arg1, JSValueRegs arg2, JSValueRegs arg3, GPRReg arg4)
+    {
+        m_jit.setupArgumentsWithExecState(arg1, arg2.payloadGPR(), arg2.tagGPR(), arg3.payloadGPR(), arg3.tagGPR(), arg4);
         return appendCallSetResult(operation, result);
     }
     JITCompiler::Call callOperation(C_JITOperation_ECJ operation, GPRReg result, GPRReg arg1, JSValueRegs arg2)

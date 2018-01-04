@@ -773,6 +773,8 @@ private:
         case GetMapBucket:
         case GetMapBucketHead:
         case GetMapBucketNext:
+        case SetAdd:
+        case MapSet:
             setPrediction(SpecCellOther);
             break;
 
@@ -1181,8 +1183,6 @@ private:
         case PutDynamicVar:
         case NukeStructureAndSetButterfly:
         case InitializeEntrypointArguments:
-        case SetAdd:
-        case MapSet:
             break;
             
         // This gets ignored because it only pretends to produce a value.

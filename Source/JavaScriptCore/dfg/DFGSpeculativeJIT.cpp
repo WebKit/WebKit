@@ -11513,9 +11513,11 @@ void SpeculativeJIT::compileSetAdd(Node* node)
     speculateSetObject(node->child1(), setGPR);
 
     flushRegisters();
-    callOperation(operationSetAdd, setGPR, keyRegs, hashGPR);
+    GPRFlushedCallResult result(this);
+    GPRReg resultGPR = result.gpr();
+    callOperation(operationSetAdd, resultGPR, setGPR, keyRegs, hashGPR);
     m_jit.exceptionCheck();
-    noResult(node);
+    cellResult(resultGPR, node);
 }
 
 void SpeculativeJIT::compileMapSet(Node* node)
@@ -11533,9 +11535,11 @@ void SpeculativeJIT::compileMapSet(Node* node)
     speculateMapObject(m_jit.graph().varArgChild(node, 0), mapGPR);
 
     flushRegisters();
-    callOperation(operationMapSet, mapGPR, keyRegs, valueRegs, hashGPR);
+    GPRFlushedCallResult result(this);
+    GPRReg resultGPR = result.gpr();
+    callOperation(operationMapSet, resultGPR, mapGPR, keyRegs, valueRegs, hashGPR);
     m_jit.exceptionCheck();
-    noResult(node);
+    cellResult(resultGPR, node);
 }
 
 void SpeculativeJIT::compileWeakMapGet(Node* node)

@@ -142,8 +142,6 @@ void JIT_OPERATION operationDefineAccessorProperty(ExecState*, JSObject*, Encode
 void JIT_OPERATION operationDefineAccessorPropertyString(ExecState*, JSObject*, JSString*, JSObject*, JSObject*, int32_t) WTF_INTERNAL;
 void JIT_OPERATION operationDefineAccessorPropertyStringIdent(ExecState*, JSObject*, UniquedStringImpl*, JSObject*, JSObject*, int32_t) WTF_INTERNAL;
 void JIT_OPERATION operationDefineAccessorPropertySymbol(ExecState*, JSObject*, Symbol*, JSObject*, JSObject*, int32_t) WTF_INTERNAL;
-void JIT_OPERATION operationSetAdd(ExecState*, JSCell*, EncodedJSValue, int32_t) WTF_INTERNAL;
-void JIT_OPERATION operationMapSet(ExecState*, JSCell*, EncodedJSValue, EncodedJSValue, int32_t) WTF_INTERNAL;
 EncodedJSValue JIT_OPERATION operationArrayPush(ExecState*, EncodedJSValue encodedValue, JSArray*) WTF_INTERNAL;
 EncodedJSValue JIT_OPERATION operationArrayPushMultiple(ExecState*, JSArray*, void* buffer, int32_t elementCount) WTF_INTERNAL;
 EncodedJSValue JIT_OPERATION operationArrayPushDouble(ExecState*, double value, JSArray*) WTF_INTERNAL;
@@ -167,6 +165,8 @@ JSCell* JIT_OPERATION operationCreateClonedArgumentsDuringExit(ExecState*, Inlin
 JSCell* JIT_OPERATION operationCreateClonedArguments(ExecState*, Structure*, Register* argumentStart, int32_t length, JSFunction* callee);
 JSCell* JIT_OPERATION operationCreateRest(ExecState*, Register* argumentStart, unsigned numberOfArgumentsToSkip, unsigned arraySize);
 JSCell* JIT_OPERATION operationNewArrayBuffer(ExecState*, Structure*, JSCell*, size_t) WTF_INTERNAL;
+JSCell* JIT_OPERATION operationSetAdd(ExecState*, JSCell*, EncodedJSValue, int32_t) WTF_INTERNAL;
+JSCell* JIT_OPERATION operationMapSet(ExecState*, JSCell*, EncodedJSValue, EncodedJSValue, int32_t) WTF_INTERNAL;
 double JIT_OPERATION operationFModOnInts(int32_t, int32_t) WTF_INTERNAL;
 size_t JIT_OPERATION operationObjectIsObject(ExecState*, JSGlobalObject*, JSCell*) WTF_INTERNAL;
 size_t JIT_OPERATION operationObjectIsFunction(ExecState*, JSGlobalObject*, JSCell*) WTF_INTERNAL;

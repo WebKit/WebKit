@@ -8996,7 +8996,7 @@ private:
         LValue key = lowJSValue(m_node->child2());
         LValue hash = lowInt32(m_node->child3());
 
-        vmCall(Void, m_out.operation(operationSetAdd), m_callFrame, set, key, hash);
+        setJSValue(vmCall(pointerType(), m_out.operation(operationSetAdd), m_callFrame, set, key, hash));
     }
 
     void compileMapSet()
@@ -9006,7 +9006,7 @@ private:
         LValue value = lowJSValue(m_graph.varArgChild(m_node, 2));
         LValue hash = lowInt32(m_graph.varArgChild(m_node, 3));
 
-        vmCall(Void, m_out.operation(operationMapSet), m_callFrame, map, key, value, hash);
+        setJSValue(vmCall(pointerType(), m_out.operation(operationMapSet), m_callFrame, map, key, value, hash));
     }
 
     void compileWeakMapGet()
