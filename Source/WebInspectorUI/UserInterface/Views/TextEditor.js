@@ -129,7 +129,15 @@ WI.TextEditor = class TextEditor extends WI.View
             if (this._initialStringNotSet) {
                 this._codeMirror.clearHistory();
                 this._codeMirror.markClean();
+
                 this._initialStringNotSet = false;
+
+                // There may have been an attempt at a search before the initial string was set. If so, reperform it now that we have content.
+                if (this._searchQuery) {
+                    let query = this._searchQuery;
+                    this._searchQuery = null;
+                    this.performSearch(query);
+                }
             }
 
             // Update the execution line now that we might have content for that line.
@@ -293,6 +301,10 @@ WI.TextEditor = class TextEditor extends WI.View
         this.searchCleared();
 
         this._searchQuery = query;
+
+        // Defer until the initial string is set.
+        if (this._initialStringNotSet)
+            return;
 
         // Allow subclasses to handle the searching if they have a better way.
         // If we are formatted, just use CodeMirror's search.
