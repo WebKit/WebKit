@@ -70,6 +70,8 @@ public:
     void didFinishLoading(unsigned long identifier) override;
     void didFail(const ResourceError&) override;
 
+    void cancel();
+
 private:
     friend class WTF::RefCounted<WorkerScriptLoader>;
 

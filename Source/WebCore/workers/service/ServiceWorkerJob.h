@@ -70,6 +70,8 @@ public:
 
     const DocumentOrWorkerIdentifier& contextIdentifier() { return m_contextIdentifier; }
 
+    void cancelPendingLoad();
+
 private:
     ServiceWorkerJob(ServiceWorkerJobClient&, RefPtr<DeferredPromise>&&, ServiceWorkerJobData&&);
 

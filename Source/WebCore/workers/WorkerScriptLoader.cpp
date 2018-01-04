@@ -194,11 +194,22 @@ String WorkerScriptLoader::script()
 
 void WorkerScriptLoader::notifyFinished()
 {
+    m_threadableLoader = nullptr;
     if (!m_client || m_finishing)
         return;
 
     m_finishing = true;
     m_client->notifyFinished();
+}
+
+void WorkerScriptLoader::cancel()
+{
+    if (!m_threadableLoader)
+        return;
+
+    m_client = nullptr;
+    m_threadableLoader->cancel();
+    m_threadableLoader = nullptr;
 }
 
 } // namespace WebCore

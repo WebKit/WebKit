@@ -579,6 +579,8 @@ void ServiceWorkerContainer::stop()
     m_isStopped = true;
     removeAllEventListeners();
     m_pendingPromises.clear();
+    for (auto& job : m_jobMap.values())
+        job->cancelPendingLoad();
 }
 
 DocumentOrWorkerIdentifier ServiceWorkerContainer::contextIdentifier()

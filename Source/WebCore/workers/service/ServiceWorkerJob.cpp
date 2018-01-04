@@ -152,6 +152,14 @@ void ServiceWorkerJob::notifyFinished()
     m_scriptLoader = nullptr;
 }
 
+void ServiceWorkerJob::cancelPendingLoad()
+{
+    if (!m_scriptLoader)
+        return;
+    m_scriptLoader->cancel();
+    m_scriptLoader = nullptr;
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(SERVICE_WORKER)
