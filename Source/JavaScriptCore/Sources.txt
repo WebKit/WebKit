@@ -484,7 +484,6 @@ heap/GCLogging.cpp
 heap/GCRequest.cpp
 heap/GigacageAlignedMemoryAllocator.cpp
 heap/HandleSet.cpp
-heap/HandleStack.cpp
 heap/Heap.cpp
 heap/HeapCell.cpp
 heap/HeapCellType.cpp

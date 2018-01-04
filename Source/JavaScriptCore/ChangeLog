@@ -1,5 +1,46 @@
 2018-01-04  Yusuke Suzuki  <utatane.tea@gmail.com>
 
+        [JSC] Remove LocalScope
+        https://bugs.webkit.org/show_bug.cgi?id=181206
+
+        Reviewed by Geoffrey Garen.
+
+        The last user of HandleStack and LocalScope is JSON. But MarkedArgumentBuffer is enough for their use.
+        This patch changes JSON parsing and stringifying to using MarkedArgumentBuffer. And remove HandleStack
+        and LocalScope.
+
+        We make Stringifier and Walker WTF_FORBID_HEAP_ALLOCATION to place them on the stack. So they can hold
+        JSObject* directly in their fields.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Sources.txt:
+        * heap/HandleStack.cpp: Removed.
+        * heap/HandleStack.h: Removed.
+        * heap/Heap.cpp:
+        (JSC::Heap::addCoreConstraints):
+        * heap/Heap.h:
+        (JSC::Heap::handleSet):
+        (JSC::Heap::handleStack): Deleted.
+        * heap/Local.h: Removed.
+        * heap/LocalScope.h: Removed.
+        * runtime/JSONObject.cpp:
+        (JSC::Stringifier::Holder::object const):
+        (JSC::gap):
+        (JSC::Stringifier::Stringifier):
+        (JSC::Stringifier::stringify):
+        (JSC::Stringifier::appendStringifiedValue):
+        (JSC::Stringifier::Holder::Holder):
+        (JSC::Stringifier::Holder::appendNextProperty):
+        (JSC::Walker::Walker):
+        (JSC::Walker::callReviver):
+        (JSC::Walker::walk):
+        (JSC::JSONProtoFuncParse):
+        (JSC::JSONProtoFuncStringify):
+        (JSC::JSONParse):
+        (JSC::JSONStringify):
+
+2018-01-04  Yusuke Suzuki  <utatane.tea@gmail.com>
+
         [FTL] Optimize ObjectAllocationSinking mergePointerSets by using removeIf
         https://bugs.webkit.org/show_bug.cgi?id=180238
 

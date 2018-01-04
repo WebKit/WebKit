@@ -2665,7 +2665,6 @@ void Heap::addCoreConstraints()
         "Sh", "Strong Handles",
         [this] (SlotVisitor& slotVisitor) {
             m_handleSet.visitStrongHandles(slotVisitor);
-            m_handleStack.visit(slotVisitor);
         },
         ConstraintVolatility::GreyedByExecution);
     
