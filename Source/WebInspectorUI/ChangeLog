@@ -1,3 +1,35 @@
+2018-01-04  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: add RemoteObject.fetchProperties and some basic tests for RemoteObject API
+        https://bugs.webkit.org/show_bug.cgi?id=180945
+
+        Reviewed by Joseph Pecoraro.
+
+        Add a new method, fetchProperties, which async fetches an arbitrary list of properties
+        from a RemoteObject. This is intended for writing tests and other quick evaluations,
+        so it has some behaviors that are suitable in these situations:
+        - If the evaluation throws an exception, the result will reject with that exception.
+        - If there is a protocol error for some reason, the result will reject with an exception.
+        - Non-string and non-number keys cause an exception, as this is probably not intended.
+        - Does not accept a callback, returns a promise only. New code should use async.
+
+        For full fidelity introspection of property descriptors, clients should use the existing
+        getOwnPropertyDescriptor[s] class of methods.
+
+        * UserInterface/Protocol/RemoteObject.js:
+        (WI.RemoteObject.prototype.async.fetchProperties): Added.
+        - Validate specified keys and remove duplicates.
+        - Request properties one-by-one to avoid fetching all descriptors and dealing with previews.
+        - Unwrap returned primitive values to avoid unnecessary munging in tests.
+
+        (WI.RemoteObject.prototype.getProperty):
+        - Rework this to return a promise if no callback was supplied.
+        - Introduce stricter property type checking to avoid unintended mistakes.
+
+        (WI.RemoteObject.prototype.callFunction):
+        - Rework this to return a promise if no callback was supplied.
+        - Turn thrown exceptions and protocol errors into rejected promises.
+
 2018-01-04  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: ⌘G / ⇧⌘G text search does not working after closing find banner

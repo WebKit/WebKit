@@ -1,5 +1,19 @@
 2018-01-04  Brian Burg  <bburg@apple.com>
 
+        Web Inspector: add RemoteObject.fetchProperties and some basic tests for RemoteObject API
+        https://bugs.webkit.org/show_bug.cgi?id=180945
+
+        Reviewed by Joseph Pecoraro.
+
+        Add new test coverage for existing RemoteObject.prototype.getProperty.
+        Add new test coverage for new method RemoteObject.prototype.fetchProperties.
+        I didn't add test coverage for callFunction, as I had to stop somewhere.
+
+        * inspector/model/remote-object-api-expected.txt: Added.
+        * inspector/model/remote-object-api.html: Added.
+
+2018-01-04  Brian Burg  <bburg@apple.com>
+
         Web Inspector: add TestPage.debug() to inspect evaluations being sent to Inspector page
         https://bugs.webkit.org/show_bug.cgi?id=181005
 

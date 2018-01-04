@@ -462,29 +462,73 @@ WI.RemoteObject = class RemoteObject
             callback(0);
     }
 
-    getProperty(propertyName, callback)
+    async fetchProperties(propertyNames, resultObject={})
+    {
+        let seenPropertyNames = new Set;
+        let requestedValues = [];
+        for (let propertyName of propertyNames) {
+            // Check this here, otherwise things like '{}' would be valid Set keys.
+            if (typeof propertyName !== "string" && typeof propertyName !== "number")
+                throw new Error(`Tried to get property using key is not a string or number: ${propertyName}`);
+
+            if (seenPropertyNames.has(propertyName))
+                continue;
+
+            seenPropertyNames.add(propertyName);
+            requestedValues.push(this.getProperty(propertyName));
+        }
+
+        // Return primitive values directly, otherwise return a WI.RemoteObject instance.
+        function maybeUnwrapValue(remoteObject) {
+            return remoteObject.hasValue() ? remoteObject.value : remoteObject;
+        }
+
+        // Request property values one by one, since returning an array of property
+        // values would then be subject to arbitrary object preview size limits.
+        let fetchedKeys = Array.from(seenPropertyNames);
+        let fetchedValues = await Promise.all(requestedValues);
+        for (let i = 0; i < fetchedKeys.length; ++i)
+            resultObject[fetchedKeys[i]] = maybeUnwrapValue(fetchedValues[i]);
+
+        return resultObject;
+    }
+
+    getProperty(propertyName, callback = null)
     {
         function inspectedPage_object_getProperty(property) {
+            if (typeof property !== "string" && typeof property !== "number")
+                throw new Error(`Tried to get property using key is not a string or number: ${property}`);
+
             return this[property];
         }
 
-        this.callFunction(inspectedPage_object_getProperty, [propertyName], true, callback);
+        if (callback && typeof callback === "function")
+            this.callFunction(inspectedPage_object_getProperty, [propertyName], true, callback);
+        else
+            return this.callFunction(inspectedPage_object_getProperty, [propertyName], true);
     }
 
-    callFunction(functionDeclaration, args, generatePreview, callback)
+    callFunction(functionDeclaration, args, generatePreview, callback = null)
     {
-        function mycallback(error, result, wasThrown)
-        {
-            result = result ? WI.RemoteObject.fromPayload(result, this._target) : null;
-
-            if (callback && typeof callback === "function")
-                callback(error, result, wasThrown);
-        }
+        let translateResult = (result) => result ? WI.RemoteObject.fromPayload(result, this._target) : null;
 
         if (args)
             args = args.map(WI.RemoteObject.createCallArgument);
 
-        this._target.RuntimeAgent.callFunctionOn(this._objectId, appendWebInspectorSourceURL(functionDeclaration.toString()), args, true, undefined, !!generatePreview, mycallback.bind(this));
+        if (callback && typeof callback === "function") {
+            this._target.RuntimeAgent.callFunctionOn(this._objectId, appendWebInspectorSourceURL(functionDeclaration.toString()), args, true, undefined, !!generatePreview, (error, result, wasThrown) => {
+                callback(error, translateResult(result), wasThrown);
+            });
+        } else {
+            // Protocol errors and results that were thrown should cause promise rejection with the same.
+            return this._target.RuntimeAgent.callFunctionOn(this._objectId, appendWebInspectorSourceURL(functionDeclaration.toString()), args, true, undefined, !!generatePreview)
+                .then(({result, wasThrown}) => {
+                    result = translateResult(result);
+                    if (result && wasThrown)
+                        return Promise.reject(result);
+                    return Promise.resolve(result);
+                });
+        }
     }
 
     callFunctionJSON(functionDeclaration, args, callback)

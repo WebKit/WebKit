@@ -1,0 +1,62 @@
+Testing basic API and convenience methods of RemoteObject.
+
+
+== Running test suite: RemoteObject.API
+-- Running test case: RemoteObject.getProperty.SuccessWithCallback.String
+PASS: Should not have a thrown exception.
+PASS: Fetched property should have a primitive value.
+PASS: Fetched property value should be as expected.
+
+-- Running test case: RemoteObject.getProperty.SuccessWithCallback.Number
+PASS: Should not have a thrown exception.
+PASS: Fetched property should have a primitive value.
+PASS: Fetched property value should be as expected.
+
+-- Running test case: RemoteObject.getProperty.NotFoundWithCallback
+PASS: Should not have a thrown exception.
+PASS: Fetched property should have a primitive value.
+PASS: Fetched property value should be as expected.
+
+-- Running test case: RemoteObject.getProperty.FailureWithCallback
+PASS: Should have a thrown exception.
+PASS: Fetched property should not have a primitive value.
+PASS: Fetched property value should have type `object`.
+PASS: Fetched property value should have subtype `error`.
+
+-- Running test case: RemoteObject.getProperty.SuccessWithPromise.String
+PASS: Fetched property should have a primitive value.
+PASS: Fetched property value should be as expected.
+
+-- Running test case: RemoteObject.getProperty.SuccessWithPromise.Number
+PASS: Fetched property should have a primitive value.
+PASS: Fetched property value should be as expected.
+
+-- Running test case: RemoteObject.getProperty.FailureWithPromise
+PASS: Should produce an exception.
+[object Object]
+
+-- Running test case: RemoteObject.fetchProperties.Success
+PASS: Result object should contain three keys.
+PASS: Result object should contain fetched property 'name'.
+PASS: Result object should contain fetched property 'size'.
+PASS: Result object should contain fetched property 'data'.
+
+-- Running test case: RemoteObject.fetchProperties.SuccessWithDuplicateKey
+PASS: Result object should contain three keys.
+PASS: Result object should contain fetched property 'name'.
+PASS: Result object should contain fetched property 'size'.
+PASS: Result object should contain fetched property 'data'.
+
+-- Running test case: RemoteObject.fetchProperties.SuccessWithOutputObject
+PASS: Resolved value should be the passed-in result object.
+PASS: Result object should contain fetched property 'name'.
+PASS: Result object should contain fetched property 'size'.
+PASS: Result object should contain fetched property 'data'.
+PASS: Fetched property 'name' should equal 'Favorites'.
+PASS: Fetched property 'size' should equal '456'.
+PASS: Fetched property 'data' should be a WI.RemoteObject.
+
+-- Running test case: RemoteObject.fetchProperties.FailureWithInvalidKey
+PASS: Should produce an exception.
+Error: Tried to get property using key is not a string or number: [object Object]
+
