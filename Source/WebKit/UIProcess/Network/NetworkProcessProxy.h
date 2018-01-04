@@ -80,7 +80,6 @@ public:
 #if HAVE(CFNETWORK_STORAGE_PARTITIONING)
     void hasStorageAccessForPrevalentDomains(PAL::SessionID, const String& resourceDomain, const String& firstPartyDomain, uint64_t frameID, uint64_t pageID, CompletionHandler<void(bool)>&& callback);
     void updateStorageAccessForPrevalentDomains(PAL::SessionID, const String& resourceDomain, const String& firstPartyDomain, uint64_t frameID, uint64_t pageID, bool value, CompletionHandler<void(bool)>&& callback);
-    void removeStorageAccess(PAL::SessionID, uint64_t frameID, uint64_t pageID);
 #endif
 
     void processReadyToSuspend();

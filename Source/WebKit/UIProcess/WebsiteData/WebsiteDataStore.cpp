@@ -1213,12 +1213,6 @@ void WebsiteDataStore::requestStorageAccess(String&& subFrameHost, String&& topF
     
     m_resourceLoadStatistics->requestStorageAccess(WTFMove(subFrameHost), WTFMove(topFrameHost), frameID, pageID, WTFMove(callback));
 }
-
-void WebsiteDataStore::removeStorageAccess(uint64_t frameID, uint64_t pageID)
-{
-    for (auto& processPool : processPools())
-        processPool->networkProcess()->removeStorageAccess(m_sessionID, frameID, pageID);
-}
 #endif
 
 void WebsiteDataStore::networkProcessDidCrash()

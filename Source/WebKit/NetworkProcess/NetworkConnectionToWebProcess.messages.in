@@ -57,4 +57,6 @@ messages -> NetworkConnectionToWebProcess LegacyReceiver {
     CreateSocketStream(WebCore::URL url, PAL::SessionID sessionID, String cachePartition, uint64_t identifier)
 
     EnsureLegacyPrivateBrowsingSession()
+
+    RemoveStorageAccess(PAL::SessionID sessionID, uint64_t frameID, uint64_t pageID);
 }

@@ -424,11 +424,6 @@ void NetworkProcessProxy::updateStorageAccessForPrevalentDomains(PAL::SessionID 
     send(Messages::NetworkProcess::UpdateStorageAccessForPrevalentDomains(sessionID, resourceDomain, firstPartyDomain, frameID, pageID, value, contextId), 0);
 }
 
-void NetworkProcessProxy::removeStorageAccess(PAL::SessionID sessionID, uint64_t frameID, uint64_t pageID)
-{
-    send(Messages::NetworkProcess::RemoveStorageAccess(sessionID, frameID, pageID), 0);
-}
-
 void NetworkProcessProxy::storageAccessRequestResult(bool wasGranted, uint64_t contextId)
 {
     auto callback = m_storageAccessResponseCallbackMap.take(contextId);

@@ -36,6 +36,8 @@
 #include "InjectedBundleDOMWindowExtension.h"
 #include "InjectedBundleNavigationAction.h"
 #include "NavigationActionData.h"
+#include "NetworkConnectionToWebProcessMessages.h"
+#include "NetworkProcessConnection.h"
 #include "PluginView.h"
 #include "UserData.h"
 #include "WKBundleAPICast.h"
@@ -168,7 +170,7 @@ void WebFrameLoaderClient::detachedFromParent2()
 
 #if HAVE(CFNETWORK_STORAGE_PARTITIONING)
     if (m_hasFrameSpecificStorageAccess) {
-        webPage->send(Messages::WebPageProxy::RemoveStorageAccess(frameID().value(), pageID().value()));
+        WebProcess::singleton().ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::RemoveStorageAccess(sessionID(), frameID().value(), pageID().value()), 0);
         m_hasFrameSpecificStorageAccess = false;
     }
 #endif
@@ -390,7 +392,7 @@ void WebFrameLoaderClient::dispatchWillChangeDocument()
         return;
 
     if (m_hasFrameSpecificStorageAccess) {
-        webPage->send(Messages::WebPageProxy::RemoveStorageAccess(frameID().value(), pageID().value()));
+        WebProcess::singleton().ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::RemoveStorageAccess(sessionID(), frameID().value(), pageID().value()), 0);
         m_hasFrameSpecificStorageAccess = false;
     }
 #endif

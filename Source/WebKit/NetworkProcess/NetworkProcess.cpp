@@ -360,14 +360,6 @@ void NetworkProcess::updateStorageAccessForPrevalentDomains(PAL::SessionID sessi
     parentProcessConnection()->send(Messages::NetworkProcessProxy::StorageAccessRequestResult(isStorageGranted, contextId), 0);
 }
 
-void NetworkProcess::removeStorageAccess(PAL::SessionID sessionID, uint64_t frameID, uint64_t pageID)
-{
-    if (auto* networkStorageSession = NetworkStorageSession::storageSession(sessionID))
-        networkStorageSession->removeStorageAccess(frameID, pageID);
-    else
-        ASSERT_NOT_REACHED();
-}
-
 void NetworkProcess::removePrevalentDomains(PAL::SessionID sessionID, const Vector<String>& domains)
 {
     if (auto* networkStorageSession = NetworkStorageSession::storageSession(sessionID))

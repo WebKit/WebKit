@@ -196,7 +196,7 @@ String NetworkStorageSession::cookieStoragePartition(const URL& firstPartyForCoo
     if (firstPartyDomain == resourceDomain)
         return emptyString();
 
-    if (storageAccessAPIEnabled && frameID && pageID && isStorageAccessGranted(resourceDomain, firstPartyDomain, frameID.value(), pageID.value()))
+    if (frameID && pageID && isStorageAccessGranted(resourceDomain, firstPartyDomain, frameID.value(), pageID.value()))
         return emptyString();
 
     return firstPartyDomain;

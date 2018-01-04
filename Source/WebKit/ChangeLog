@@ -1,3 +1,45 @@
+2018-01-03  John Wilander  <wilander@apple.com>
+
+        Storage Access API: Refactor XPC for access removal to go straight from the web process to the network process
+        https://bugs.webkit.org/show_bug.cgi?id=181270
+        <rdar://problem/36289544>
+
+        Reviewed by Alex Christensen.
+
+        This change refactors how the web process tells the network process
+        to remove storage access. Previously, this was done over the UI process
+        just like requests for storage access. But since no further reasoning
+        is needed, the message should go straight from the web process to the
+        network process for performance reasons and to minimize the risk of a
+        race.
+
+        As a consequence, the XPC code for storage access removal in the UI
+        process is deleted.
+
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::removeStorageAccess):
+        * NetworkProcess/NetworkConnectionToWebProcess.h:
+        * NetworkProcess/NetworkConnectionToWebProcess.messages.in:
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::removeStorageAccess): Deleted.
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in:
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::removeStorageAccess): Deleted.
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::requestStorageAccess):
+        (WebKit::WebPageProxy::removeStorageAccess): Deleted.
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::requestStorageAccess):
+        (WebKit::WebsiteDataStore::removeStorageAccess): Deleted.
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::detachedFromParent2):
+        (WebKit::WebFrameLoaderClient::dispatchWillChangeDocument):
+
 2018-01-03  David Kilzer  <ddkilzer@apple.com>
 
         com.apple.WebKit.Networking crash in com.apple.Foundation: -[__NSOperationInternal _start:]

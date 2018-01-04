@@ -1,3 +1,30 @@
+2018-01-03  John Wilander  <wilander@apple.com>
+
+        Storage Access API: Refactor XPC for access removal to go straight from the web process to the network process
+        https://bugs.webkit.org/show_bug.cgi?id=181270
+        <rdar://problem/36289544>
+
+        Reviewed by Alex Christensen.
+
+        No new tests. Existing test re-enabled.
+
+        This change refactors how the web process tells the network process
+        to remove storage access. Previously, this was done over the UI process
+        just like requests for storage access. But since no further reasoning
+        is needed, the message should go straight from the web process to the
+        network process for performance reasons and to minimize the risk of a
+        race.
+
+        As a consequence, the XPC code for storage access removal in the UI
+        process is deleted.
+
+        * platform/network/cf/NetworkStorageSessionCFNet.cpp:
+        (WebCore::NetworkStorageSession::cookieStoragePartition const):
+            Removes the storageAccessAPIEnabled check since the flag
+            doesn't get propagated when the network process is created.
+            Figuring this out will take some work which is unnecessary
+            when we already gate access to the feature in Document.idl.
+
 2018-01-03  James Craig  <jcraig@apple.com>
 
         AX: when invert colors is on, double-invert certain media elements in UserAgentStyleSheet

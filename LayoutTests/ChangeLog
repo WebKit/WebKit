@@ -1,3 +1,24 @@
+2018-01-03  John Wilander  <wilander@apple.com>
+
+        Storage Access API: Refactor XPC for access removal to go straight from the web process to the network process
+        https://bugs.webkit.org/show_bug.cgi?id=181270
+        <rdar://problem/36289544>
+
+        Reviewed by Alex Christensen.
+
+        This change refactors how the web process tells the network process
+        to remove storage access. Previously, this was done over the UI process
+        just like requests for storage access. But since no further reasoning
+        is needed, the message should go straight from the web process to the
+        network process for performance reasons and to minimize the risk of a
+        race.
+
+        As a consequence, the XPC code for storage access removal in the UI
+        process is deleted.
+
+        * platform/mac-wk2/TestExpectations:
+            Re-enables the test for this code path.
+
 2018-01-03  Michael Saboff  <msaboff@apple.com>
 
         Disable SharedArrayBuffers from Web API

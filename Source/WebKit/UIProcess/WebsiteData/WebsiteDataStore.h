@@ -123,7 +123,6 @@ public:
     void removePrevalentDomains(const Vector<String>& domains);
     void hasStorageAccess(String&& subFrameHost, String&& topFrameHost, uint64_t frameID, uint64_t pageID, WTF::CompletionHandler<void (bool)>&& callback);
     void requestStorageAccess(String&& subFrameHost, String&& topFrameHost, uint64_t frameID, uint64_t pageID, WTF::CompletionHandler<void (bool)>&& callback);
-    void removeStorageAccess(uint64_t frameID, uint64_t pageID);
 #endif
     void networkProcessDidCrash();
     void resolveDirectoriesIfNecessary();

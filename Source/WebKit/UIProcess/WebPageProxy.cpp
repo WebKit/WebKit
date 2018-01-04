@@ -7197,12 +7197,6 @@ void WebPageProxy::requestStorageAccess(String&& subFrameHost, String&& topFrame
         m_process->send(Messages::WebPage::StorageAccessResponse(wasGranted, webProcessContextId), m_pageID);
     });
 }
-
-void WebPageProxy::removeStorageAccess(uint64_t frameID, uint64_t pageID)
-{
-    ASSERT(pageID == m_pageID);
-    m_websiteDataStore->removeStorageAccess(frameID, pageID);
-}
 #endif
 
 #if PLATFORM(COCOA)

@@ -761,6 +761,7 @@ http/tests/resourceLoadStatistics/user-interaction-reported-after-website-data-r
 [ HighSierra+ ] http/tests/storageAccess/request-storage-access-same-origin-sandboxed-iframe.html [ Pass ]
 [ HighSierra+ ] http/tests/storageAccess/request-and-grant-storage-access-cross-origin-sandboxed-nested-iframe.html [ Pass ]
 [ HighSierra+ ] http/tests/storageAccess/request-and-grant-storage-access-cross-origin-sandboxed-iframe-from-prevalent-domain-with-recent-user-interaction.html [ Pass ]
+[ HighSierra+ ] http/tests/storageAccess/request-and-grant-storage-access-cross-origin-sandboxed-iframe-from-prevalent-domain-with-non-recent-user-interaction-and-try-access-from-right-frame.html [ Pass ]
 [ HighSierra+ ] http/tests/storageAccess/request-and-grant-storage-access-cross-origin-sandboxed-iframe-from-prevalent-domain-with-non-recent-user-interaction-but-try-access-from-wrong-frame.html [ Pass ]
 [ HighSierra+ ] http/tests/storageAccess/request-and-grant-storage-access-cross-origin-sandboxed-iframe-from-prevalent-domain-without-user-interaction.html [ Pass ]
 [ HighSierra+ ] http/tests/storageAccess/request-storage-access-top-frame.html [ Pass ]
