@@ -1,5 +1,19 @@
 2018-01-03  Michael Saboff  <msaboff@apple.com>
 
+        Add "noInline" to $vm
+        https://bugs.webkit.org/show_bug.cgi?id=181265
+
+        Reviewed by Mark Lam.
+
+        This would be useful for web based tests.
+
+        * tools/JSDollarVM.cpp:
+        (JSC::getExecutableForFunction):
+        (JSC::functionNoInline):
+        (JSC::JSDollarVM::finishCreation):
+
+2018-01-03  Michael Saboff  <msaboff@apple.com>
+
         Remove unnecessary flushing of Butterfly pointer in functionCpuClflush()
         https://bugs.webkit.org/show_bug.cgi?id=181263
 
