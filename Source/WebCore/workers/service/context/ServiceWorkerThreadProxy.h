@@ -60,7 +60,7 @@ public:
     ServiceWorkerInspectorProxy& inspectorProxy() { return m_inspectorProxy; }
 
     bool isTerminatingOrTerminated() const { return m_isTerminatingOrTerminated; }
-    void setTerminatingOrTerminated(bool terminating) { m_isTerminatingOrTerminated = terminating; }
+    void setAsTerminatingOrTerminated() { m_isTerminatingOrTerminated = true; }
 
     WEBCORE_EXPORT std::unique_ptr<FetchLoader> createBlobLoader(FetchLoaderClient&, const URL&);
 

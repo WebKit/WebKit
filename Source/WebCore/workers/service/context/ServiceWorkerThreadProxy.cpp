@@ -94,7 +94,9 @@ ServiceWorkerThreadProxy::ServiceWorkerThreadProxy(PageConfiguration&& pageConfi
 
 bool ServiceWorkerThreadProxy::postTaskForModeToWorkerGlobalScope(ScriptExecutionContext::Task&& task, const String& mode)
 {
-    // FIXME: Handle termination case.
+    if (m_isTerminatingOrTerminated)
+        return false;
+
     m_serviceWorkerThread->runLoop().postTaskForMode(WTFMove(task), mode);
     return true;
 }
