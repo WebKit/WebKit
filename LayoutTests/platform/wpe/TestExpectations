@@ -84,8 +84,6 @@ Bug(WPE) canvas/philip/tests/2d.text.draw.space.collapse.space.html [ Failure ]
 Bug(WPE) canvas/philip/tests/2d.text.draw.space.collapse.start.html [ Failure ]
 Bug(WPE) canvas/philip/tests/2d.text.measure.width.space.html [ Failure ]
 
-Bug(WPE) css2.1/20110323/c541-word-sp-000.htm [ ImageOnlyFailure ]
-Bug(WPE) css2.1/20110323/vertical-align-boxes-001.htm [ ImageOnlyFailure ]
 # Incorrect upstream, but seem to pass on the bots, possibly with a broken baseline.
 # https://github.com/w3c/web-platform-tests/issues/8407
 css2.1/20110323/replaced-intrinsic-001.htm [ Pass ]
