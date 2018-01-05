@@ -1,5 +1,17 @@
 2018-01-05  Don Olmstead  <don.olmstead@sony.com>
 
+        [curl] Can't load file:// URL with a URL fragment identifier
+        https://bugs.webkit.org/show_bug.cgi?id=181170
+
+        Reviewed by Alex Christensen.
+
+        No new tests. No change in behavior.
+
+        * platform/network/curl/CurlRequest.cpp:
+        (WebCore::CurlRequest::invokeDidReceiveResponseForFile):
+
+2018-01-05  Don Olmstead  <don.olmstead@sony.com>
+
         TextCodec uses std::array but does not include it
         https://bugs.webkit.org/show_bug.cgi?id=181340
 

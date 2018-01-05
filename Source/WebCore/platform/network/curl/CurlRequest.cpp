@@ -504,7 +504,7 @@ void CurlRequest::invokeDidReceiveResponseForFile(URL& url)
     m_response.statusCode = 200;
 
     // Determine the MIME type based on the path.
-    m_response.headers.append(String("Content-Type: " + MIMETypeRegistry::getMIMETypeForPath(m_response.url)));
+    m_response.headers.append(String("Content-Type: " + MIMETypeRegistry::getMIMETypeForPath(m_response.url.path())));
 
     if (!m_isSyncRequest) {
         // DidReceiveResponse must not be called immediately
