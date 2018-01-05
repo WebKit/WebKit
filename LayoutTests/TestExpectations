@@ -164,6 +164,7 @@ imported/w3c/web-platform-tests/service-workers/service-worker/client-navigate.h
 # Unsupported features: SharedWorker, NavigationPreload
 imported/w3c/web-platform-tests/service-workers/service-worker/navigation-preload [ Skip ]
 imported/w3c/web-platform-tests/service-workers/service-worker/shared-worker-controlled.https.html [ Skip ]
+imported/w3c/web-platform-tests/service-workers/service-worker/claim-shared-worker-fetch.https.html [ Skip ]
 
 webkit.org/b/179342 http/tests/workers/service/registration-task-queue-scheduling-1.html [ Pass Failure ]
 imported/w3c/web-platform-tests/service-workers/service-worker/about-blank-replacement.https.html [ Pass Failure ]
