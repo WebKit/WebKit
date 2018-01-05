@@ -1,3 +1,16 @@
+2018-01-05  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        REGRESSION(r226306)[Win][CMake] Unnecessary recompilations triggered by unconditionally copied header files of DerivedSources
+        https://bugs.webkit.org/show_bug.cgi?id=181324
+
+        Reviewed by Konstantin Tokarev.
+
+        r226306 changed to use cmake -E copy to copy header files of
+        DerivedSources. This command copies files unconditionally, then
+        introduced unnecessary recompilations.
+
+        * Source/cmake/WebKitMacros.cmake: Use copy_if_different instead of copy.
+
 2018-01-03  Ting-Wei Lan  <lantw44@gmail.com>
 
         Replace hard-coded paths in shebangs with #!/usr/bin/env

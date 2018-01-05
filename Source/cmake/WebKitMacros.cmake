@@ -273,7 +273,7 @@ function(WEBKIT_MAKE_FORWARDING_HEADERS framework)
                 "file(GLOB headers \"${dir}/*.h\")\n"
                 "foreach (header IN LISTS headers)\n"
                 "    get_filename_component(header_filename \${header} NAME)\n"
-                "    execute_process(COMMAND \${CMAKE_COMMAND} -E copy \${header} ${destination}/\${header_filename} RESULT_VARIABLE result)\n"
+                "    execute_process(COMMAND \${CMAKE_COMMAND} -E copy_if_different \${header} ${destination}/\${header_filename} RESULT_VARIABLE result)\n"
                 "    if (NOT \${result} EQUAL 0)\n"
                 "        message(FATAL_ERROR \"Failed to copy \${header}: \${result}\")\n"
                 "    endif ()\n"
