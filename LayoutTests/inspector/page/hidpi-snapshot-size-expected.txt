@@ -1,0 +1,8 @@
+Test for Page.snapshotNode on HiDPI systems.
+
+
+== Running test suite: Page.snapshotNode
+-- Running test case: SnapshotPreservesPageResolution
+PASS: Screenshot's width in pixels should be (CSS pixel width) * devicePixelRatio.
+PASS: Screenshot's height in pixels should be (CSS pixel height) * devicePixelRatio.
+

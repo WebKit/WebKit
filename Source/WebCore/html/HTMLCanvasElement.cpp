@@ -682,7 +682,7 @@ void HTMLCanvasElement::makePresentationCopy()
 {
     if (!m_presentedImage) {
         // The buffer contains the last presented data, so save a copy of it.
-        m_presentedImage = buffer()->copyImage(CopyBackingStore, Unscaled);
+        m_presentedImage = buffer()->copyImage(CopyBackingStore, PreserveResolution::Yes);
     }
 }
 
@@ -1028,7 +1028,7 @@ Image* HTMLCanvasElement::copiedImage() const
     if (!m_copiedImage && buffer()) {
         if (m_context)
             m_context->paintRenderingResultsToCanvas();
-        m_copiedImage = buffer()->copyImage(CopyBackingStore, Unscaled);
+        m_copiedImage = buffer()->copyImage(CopyBackingStore, PreserveResolution::Yes);
     }
     return m_copiedImage.get();
 }

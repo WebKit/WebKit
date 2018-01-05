@@ -411,14 +411,26 @@ WI.DOMTreeManager = class DOMTreeManager extends WI.Object
         }
     }
 
-    querySelector(nodeId, selectors, callback)
+    querySelector(nodeOrNodeId, selector, callback)
     {
-        DOMAgent.querySelector(nodeId, selectors, this._wrapClientCallback(callback));
+        let nodeId = nodeOrNodeId instanceof WI.DOMNode ? nodeOrNodeId.id : nodeOrNodeId;
+        console.assert(typeof nodeId === "number");
+
+        if (typeof callback === "function")
+            DOMAgent.querySelector(nodeId, selector, this._wrapClientCallback(callback));
+        else
+            return DOMAgent.querySelector(nodeId, selector).then(({nodeId}) => nodeId);
     }
 
-    querySelectorAll(nodeId, selectors, callback)
+    querySelectorAll(nodeOrNodeId, selector, callback)
     {
-        DOMAgent.querySelectorAll(nodeId, selectors, this._wrapClientCallback(callback));
+        let nodeId = nodeOrNodeId instanceof WI.DOMNode ? nodeOrNodeId.id : nodeOrNodeId;
+        console.assert(typeof nodeId === "number");
+
+        if (typeof callback === "function")
+            DOMAgent.querySelectorAll(nodeId, selector, this._wrapClientCallback(callback));
+        else
+            return DOMAgent.querySelectorAll(nodeId, selector).then(({nodeIds}) => nodeIds);
     }
 
     highlightDOMNode(nodeId, mode)

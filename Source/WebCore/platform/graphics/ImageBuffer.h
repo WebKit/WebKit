@@ -55,9 +55,9 @@ enum BackingStoreCopy {
     DontCopyBackingStore // Subsequent draws may affect the copy.
 };
 
-enum ScaleBehavior {
-    Scaled,
-    Unscaled
+enum class PreserveResolution {
+    No,
+    Yes,
 };
 
 class ImageBuffer {
@@ -90,8 +90,8 @@ public:
 
     WEBCORE_EXPORT GraphicsContext& context() const;
 
-    WEBCORE_EXPORT RefPtr<Image> copyImage(BackingStoreCopy = CopyBackingStore, ScaleBehavior = Scaled) const;
-    WEBCORE_EXPORT static RefPtr<Image> sinkIntoImage(std::unique_ptr<ImageBuffer>, ScaleBehavior = Scaled);
+    WEBCORE_EXPORT RefPtr<Image> copyImage(BackingStoreCopy = CopyBackingStore, PreserveResolution = PreserveResolution::No) const;
+    WEBCORE_EXPORT static RefPtr<Image> sinkIntoImage(std::unique_ptr<ImageBuffer>, PreserveResolution = PreserveResolution::No);
     // Give hints on the faster copyImage Mode, return DontCopyBackingStore if it supports the DontCopyBackingStore behavior
     // or return CopyBackingStore if it doesn't.  
     static BackingStoreCopy fastCopyImageMode();
@@ -104,8 +104,8 @@ public:
     void putByteArray(const Uint8ClampedArray&, AlphaPremultiplication bufferFormat, const IntSize& sourceSize, const IntRect& sourceRect, const IntPoint& destPoint, CoordinateSystem = LogicalCoordinateSystem);
     
     void convertToLuminanceMask();
-    
-    String toDataURL(const String& mimeType, std::optional<double> quality = std::nullopt, CoordinateSystem = LogicalCoordinateSystem) const;
+
+    String toDataURL(const String& mimeType, std::optional<double> quality = std::nullopt, PreserveResolution = PreserveResolution::No) const;
     Vector<uint8_t> toData(const String& mimeType, std::optional<double> quality = std::nullopt) const;
     Vector<uint8_t> toBGRAData() const;
 
@@ -167,7 +167,7 @@ private:
     WEBCORE_EXPORT ImageBuffer(const FloatSize&, float resolutionScale, ColorSpace, RenderingMode, bool& success);
 #if USE(CG)
     ImageBuffer(const FloatSize&, float resolutionScale, CGColorSpaceRef, RenderingMode, bool& success);
-    RetainPtr<CFDataRef> toCFData(const String& mimeType, std::optional<double> quality) const;
+    RetainPtr<CFDataRef> toCFData(const String& mimeType, std::optional<double> quality, PreserveResolution) const;
 #elif USE(DIRECT2D)
     ImageBuffer(const FloatSize&, float resolutionScale, ColorSpace, RenderingMode, const GraphicsContext*, bool& success);
 #endif

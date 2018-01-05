@@ -1,3 +1,64 @@
+2018-01-04  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: Capture Element Screenshot looks fuzzy
+        https://bugs.webkit.org/show_bug.cgi?id=175734
+        <rdar://problem/33803377>
+
+        Reviewed by Joseph Pecoraro and Simon Fraser.
+
+        Screenshots taken by Web Inspector were being downscaled from the
+        internal size to the logical size, causing them to be blurry when
+        later upscaled to the internal size.
+
+        Replace ScaleBehavior { Scaled, Unscaled } with PreserveResolution { No, Yes }.
+        This is a lot less confusing to read both inside ImageBuffer and at its use sites.
+
+        Remove unused CoordinateSystem argument for ImageBuffer::toDataURL,
+        and replace it with PreserveResolution. Plumb PreserveResolution into toCFData
+        so that PreserveResolution::Yes will preserve the internal size of
+        the image buffer, just as it does in other methods that take PreserveResolution.
+
+        At the use site in InspectorPageAgent, always request PreserveResolution::Yes snapshots
+        when taking an element screenshot. For now, keep using downscaled (smaller)
+        snapshots when capturing canvas previews, as the previews are not full-size.
+
+        Test: inspector/page/hidpi-snapshot-size.html
+
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::makePresentationCopy):
+        (WebCore::HTMLCanvasElement::copiedImage const):
+        * html/canvas/CanvasRenderingContext2DBase.cpp:
+        (WebCore::CanvasRenderingContext2DBase::createPattern):
+        * inspector/agents/InspectorPageAgent.cpp:
+        (WebCore::InspectorPageAgent::snapshotNode):
+        (WebCore::InspectorPageAgent::snapshotRect):
+        * page/TextIndicator.cpp:
+        (WebCore::takeSnapshot):
+        * platform/DragImage.cpp:
+        (WebCore::createDragImageFromSnapshot):
+        * platform/graphics/BitmapImage.cpp:
+        (WebCore::BitmapImage::drawPattern):
+        * platform/graphics/ImageBuffer.h:
+        * platform/graphics/cairo/ImageBufferCairo.cpp:
+        (WebCore::ImageBuffer::sinkIntoImage):
+        (WebCore::ImageBuffer::copyImage const):
+        (WebCore::ImageBuffer::toDataURL const):
+        * platform/graphics/cg/ImageBufferCG.cpp:
+        (WebCore::createBitmapImageAfterScalingIfNeeded):
+        (WebCore::ImageBuffer::copyImage const):
+        (WebCore::ImageBuffer::sinkIntoImage):
+        (WebCore::ImageBuffer::toDataURL const):
+        (WebCore::ImageBuffer::toData const):
+        (WebCore::ImageBuffer::toCFData const):
+        * platform/graphics/gtk/ImageBufferGtk.cpp:
+        (WebCore::ImageBuffer::toDataURL const):
+        * platform/graphics/win/ImageBufferDirect2D.cpp:
+        (WebCore::ImageBuffer::copyImage const):
+        (WebCore::ImageBuffer::sinkIntoImage):
+        (WebCore::ImageBuffer::toDataURL const):
+        * svg/graphics/SVGImage.cpp:
+        (WebCore::SVGImage::drawPatternForContainer):
+
 2018-01-04  John Wilander  <wilander@apple.com>
 
         Storage Access API: Turn feature on by default in Settings.yaml

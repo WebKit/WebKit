@@ -824,7 +824,7 @@ void InspectorPageAgent::snapshotNode(ErrorString& errorString, int nodeId, Stri
         return;
     }
 
-    *outDataURL = snapshot->toDataURL(ASCIILiteral("image/png"));
+    *outDataURL = snapshot->toDataURL(ASCIILiteral("image/png"), std::nullopt, PreserveResolution::Yes);
 }
 
 void InspectorPageAgent::snapshotRect(ErrorString& errorString, int x, int y, int width, int height, const String& coordinateSystem, String* outDataURL)
@@ -843,7 +843,7 @@ void InspectorPageAgent::snapshotRect(ErrorString& errorString, int x, int y, in
         return;
     }
 
-    *outDataURL = snapshot->toDataURL(ASCIILiteral("image/png"));
+    *outDataURL = snapshot->toDataURL(ASCIILiteral("image/png"), std::nullopt, PreserveResolution::Yes);
 }
 
 void InspectorPageAgent::archive(ErrorString& errorString, String* data)

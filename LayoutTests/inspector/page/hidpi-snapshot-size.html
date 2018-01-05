@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function prepareAndRunTest()
+{
+    window.snapshotElement = document.getElementById("element-to-snapshot");
+
+    runTest();
+}
+
+function test()
+{
+    // A PNG file starts with the bytes 89 50 4E 47 0D 01 1A 0A, followed by the
+    // IHDR chunk that contains the size. IHDR's content starts with a 4-byte width
+    // and a 4-byte height, so a PNG's width and height are always bytes 16-24.
+    function sizeOfPNGFromDataURL(dataURL) {
+        let base64 = dataURL.substr(dataURL.indexOf(',') + 1);
+        const header = atob(base64.slice(0, 50)).slice(16, 24);
+        const uint8 = Uint8Array.from(header, c => c.charCodeAt(0));
+        const dataView = new DataView(uint8.buffer);
+
+        return {width: dataView.getInt32(0), height: dataView.getInt32(4)};
+    }
+
+    let documentNode;
+
+    let suite = InspectorTest.createAsyncSuite("Page.snapshotNode");
+
+    suite.addTestCase({
+        name: "SnapshotPreservesPageResolution",
+        description: "Verify that a node snapshot is not scaled down to CSS pixels.",
+        async test() {
+            let targetNodeId = await WI.domTreeManager.querySelector(documentNode.id, "#element-to-snapshot");
+            let {dataURL} = await PageAgent.snapshotNode(targetNodeId);
+            let devicePixelRatio = await InspectorTest.evaluateInPage(`window.devicePixelRatio`);
+            let elementBounds = await InspectorTest.evaluateInPage(`window.snapshotElement.getBoundingClientRect()`)
+                .then((object) => object.fetchProperties(["width", "height"]));
+
+            // Peek into the data URL's raw PNG data to get the size. For various reasons,
+            // setting the 'src' attribute of an <img> element is unreliable under WKTR.
+            let screenshotSize = sizeOfPNGFromDataURL(dataURL);
+
+            // On a @2x machine, the screenshot should be twice the real pixel size as the CSS pixel size.
+            InspectorTest.expectEqual(screenshotSize.width, elementBounds.width * devicePixelRatio, "Screenshot's width in pixels should be (CSS pixel width) * devicePixelRatio.");
+            InspectorTest.expectEqual(screenshotSize.height, elementBounds.height * devicePixelRatio, "Screenshot's height in pixels should be (CSS pixel height) * devicePixelRatio.");
+        }
+    });
+
+    WI.domTreeManager.requestDocument((node) => {
+        documentNode = node;
+        suite.runTestCasesAndFinish();
+    });
+}
+</script>
+</head>
+<body onload="prepareAndRunTest()">
+<p id="element-to-snapshot" style="height: 198px; width: 198px; border: 1px solid black;">Test for Page.snapshotNode on HiDPI systems.</p>
+</body>
+</html>

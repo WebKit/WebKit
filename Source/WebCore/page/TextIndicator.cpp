@@ -154,7 +154,7 @@ static RefPtr<Image> takeSnapshot(Frame& frame, IntRect rect, SnapshotOptions op
     if (!buffer)
         return nullptr;
     scaleFactor = buffer->resolutionScale();
-    return ImageBuffer::sinkIntoImage(WTFMove(buffer), Unscaled);
+    return ImageBuffer::sinkIntoImage(WTFMove(buffer), PreserveResolution::Yes);
 }
 
 static bool takeSnapshots(TextIndicatorData& data, Frame& frame, IntRect snapshotRect, const Vector<FloatRect>& clipRectsInDocumentCoordinates)

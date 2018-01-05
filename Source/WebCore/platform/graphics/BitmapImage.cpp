@@ -310,7 +310,7 @@ void BitmapImage::drawPattern(GraphicsContext& ctxt, const FloatRect& destRect, 
         setImageObserver(observer);
         buffer->convertToLuminanceMask();
 
-        m_cachedImage = buffer->copyImage(DontCopyBackingStore, Unscaled);
+        m_cachedImage = buffer->copyImage(DontCopyBackingStore, PreserveResolution::Yes);
         if (!m_cachedImage)
             return;
     }

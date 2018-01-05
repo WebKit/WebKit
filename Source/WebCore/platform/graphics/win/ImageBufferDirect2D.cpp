@@ -137,13 +137,13 @@ void ImageBuffer::flushContext() const
     context().flush();
 }
 
-RefPtr<Image> ImageBuffer::copyImage(BackingStoreCopy copyBehavior, ScaleBehavior scaleBehavior) const
+RefPtr<Image> ImageBuffer::copyImage(BackingStoreCopy copyBehavior, PreserveResolution) const
 {
     notImplemented();
     return nullptr;
 }
 
-RefPtr<Image> ImageBuffer::sinkIntoImage(std::unique_ptr<ImageBuffer> imageBuffer, ScaleBehavior scaleBehavior)
+RefPtr<Image> ImageBuffer::sinkIntoImage(std::unique_ptr<ImageBuffer> imageBuffer, PreserveResolution)
 {
     IntSize internalSize = imageBuffer->internalSize();
     IntSize logicalSize = imageBuffer->logicalSize();
@@ -258,7 +258,7 @@ void ImageBuffer::putByteArray(const Uint8ClampedArray& source, AlphaPremultipli
     m_data.putData(source, bufferFormat, scaledSourceSize, scaledSourceRect, destPoint, internalSize(), context().isAcceleratedContext(), 1);
 }
 
-String ImageBuffer::toDataURL(const String&, std::optional<double>, CoordinateSystem) const
+String ImageBuffer::toDataURL(const String&, std::optional<double>, PreserveResolution) const
 {
     notImplemented();
     return ASCIILiteral("data:,");
