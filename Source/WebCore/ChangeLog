@@ -1,3 +1,58 @@
+2018-01-05  Eric Carlson  <eric.carlson@apple.com>
+
+        [MediaStream] Add Mac screen capture source
+        https://bugs.webkit.org/show_bug.cgi?id=181333
+        <rdar://problem/36323219>
+
+        Reviewed by Dean Jackson.
+
+        * SourcesCocoa.txt: Add ScreenDisplayCaptureSourceMac.mm.
+
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+
+        * platform/cocoa/CoreVideoSoftLink.cpp: Declare new constants used.
+        * platform/cocoa/CoreVideoSoftLink.h:
+
+        * platform/mediastream/mac/DisplayCaptureManagerCocoa.cpp:
+        (WebCore::displayReconfigurationCallBack): Call refreshCaptureDevices.
+        (WebCore::DisplayCaptureManagerCocoa::~DisplayCaptureManagerCocoa): Unregister for display
+        reconfiguration callbacks.
+        (WebCore::DisplayCaptureManagerCocoa::captureDevices): Register for display reconfigrations.
+        (WebCore::DisplayCaptureManagerCocoa::refreshCaptureDevices): Use CGActiveDisplayList to
+        get list of active screens.
+        (WebCore::DisplayCaptureManagerCocoa::screenCaptureDeviceWithPersistentID): Validate screen
+        ID, return CaptureDevice.
+        * platform/mediastream/mac/DisplayCaptureManagerCocoa.h:
+
+        * platform/mediastream/mac/RealtimeMediaSourceCenterMac.cpp:
+        (WebCore::VideoCaptureSourceFactoryMac::createVideoCaptureSource): Deal with screen capture
+        on macOS.
+
+        Implement Mac screen capture with CGDisplayStream.
+        * platform/mediastream/mac/ScreenDisplayCaptureSourceMac.h: Added.
+        (WebCore::ScreenDisplayCaptureSourceMac::DisplaySurface::~DisplaySurface):
+        (WebCore::ScreenDisplayCaptureSourceMac::DisplaySurface::operator=):
+        (WebCore::ScreenDisplayCaptureSourceMac::DisplaySurface::ioSurface const):
+        * platform/mediastream/mac/ScreenDisplayCaptureSourceMac.mm: Added.
+        (WebCore::roundUpToMacroblockMultiple):
+        (WebCore::ScreenDisplayCaptureSourceMac::updateDisplayID):
+        (WebCore::ScreenDisplayCaptureSourceMac::create):
+        (WebCore::ScreenDisplayCaptureSourceMac::ScreenDisplayCaptureSourceMac):
+        (WebCore::ScreenDisplayCaptureSourceMac::~ScreenDisplayCaptureSourceMac):
+        (WebCore::ScreenDisplayCaptureSourceMac::createDisplayStream):
+        (WebCore::ScreenDisplayCaptureSourceMac::startProducingData):
+        (WebCore::ScreenDisplayCaptureSourceMac::stopProducingData):
+        (WebCore::ScreenDisplayCaptureSourceMac::sampleBufferFromPixelBuffer):
+        (WebCore::ScreenDisplayCaptureSourceMac::pixelBufferFromIOSurface):
+        (WebCore::ScreenDisplayCaptureSourceMac::generateFrame):
+        (WebCore::ScreenDisplayCaptureSourceMac::startDisplayStream):
+        (WebCore::ScreenDisplayCaptureSourceMac::applySize):
+        (WebCore::ScreenDisplayCaptureSourceMac::applyFrameRate):
+        (WebCore::ScreenDisplayCaptureSourceMac::commitConfiguration):
+        (WebCore::ScreenDisplayCaptureSourceMac::displayWasReconfigured):
+        (WebCore::ScreenDisplayCaptureSourceMac::displayReconfigurationCallBack):
+        (WebCore::ScreenDisplayCaptureSourceMac::frameAvailable):
+
 2018-01-05  Don Olmstead  <don.olmstead@sony.com>
 
         [curl] Can't load file:// URL with a URL fragment identifier

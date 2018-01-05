@@ -296,6 +296,10 @@ CGError CGSGetScreenRectForWindow(CGSConnectionID, CGSWindowID, CGRect *);
 CGError CGSRegisterConnectionNotifyProc(CGSConnectionID, CGSNotifyConnectionProcPtr, CGSNotificationType, void* arg);
 CGError CGSRegisterNotifyProc(CGSNotifyProcPtr, CGSNotificationType, void* arg);
 bool ColorSyncProfileIsWideGamut(ColorSyncProfileRef);
+
+size_t CGDisplayModeGetPixelsWide(CGDisplayModeRef);
+size_t CGDisplayModeGetPixelsHigh(CGDisplayModeRef);
+
 #endif
 
 WTF_EXTERN_C_END

@@ -36,6 +36,8 @@ public:
     static DisplayCaptureManagerCocoa& singleton();
     DisplayCaptureManagerCocoa() = default;
 
+    void refreshCaptureDevices() final;
+
 private:
     virtual ~DisplayCaptureManagerCocoa();
 
@@ -43,7 +45,13 @@ private:
     std::optional<CaptureDevice> captureDeviceWithPersistentID(CaptureDevice::DeviceType, const String&) final;
     std::optional<CaptureDevice> screenCaptureDeviceWithPersistentID(const String&);
 
+    struct CGDisplayCaptureDevice {
+        uint32_t cgDirectDisplayID;
+        uint32_t cgOpenGLDisplayMask;
+    };
+    Vector<CGDisplayCaptureDevice> m_displaysInternal;
     Vector<CaptureDevice> m_displays;
+    bool m_observingDisplayChanges { false };
 };
 
 } // namespace WebCore

@@ -31,7 +31,20 @@
 #include "Logging.h"
 #include <wtf/NeverDestroyed.h>
 
+#if PLATFORM(MAC)
+#include "ScreenDisplayCaptureSourceMac.h"
+#include <CoreGraphics/CGDirectDisplay.h>
+#endif
+
 namespace WebCore {
+
+#if PLATFORM(MAC)
+static void displayReconfigurationCallBack(CGDirectDisplayID, CGDisplayChangeSummaryFlags, void* userInfo)
+{
+    if (userInfo)
+        reinterpret_cast<DisplayCaptureManagerCocoa*>(userInfo)->refreshCaptureDevices();
+}
+#endif
 
 DisplayCaptureManagerCocoa& DisplayCaptureManagerCocoa::singleton()
 {
@@ -41,17 +54,102 @@ DisplayCaptureManagerCocoa& DisplayCaptureManagerCocoa::singleton()
 
 DisplayCaptureManagerCocoa::~DisplayCaptureManagerCocoa()
 {
+#if PLATFORM(MAC)
+    if (m_observingDisplayChanges)
+        CGDisplayRemoveReconfigurationCallback(displayReconfigurationCallBack, this);
+#endif
 }
 
 const Vector<CaptureDevice>& DisplayCaptureManagerCocoa::captureDevices()
 {
+    static bool initialized;
+    if (!initialized) {
+        refreshCaptureDevices();
+
+#if PLATFORM(MAC)
+        CGDisplayRegisterReconfigurationCallback(displayReconfigurationCallBack, this);
+#endif
+
+        m_observingDisplayChanges = true;
+        initialized = true;
+    };
+    
     return m_displays;
+}
+
+void DisplayCaptureManagerCocoa::refreshCaptureDevices()
+{
+#if PLATFORM(MAC)
+    uint32_t displayCount = 0;
+    auto err = CGGetActiveDisplayList(0, nullptr, &displayCount);
+    if (err) {
+        RELEASE_LOG(Media, "CGGetActiveDisplayList() returned error %d when trying to get display count", (int)err);
+        return;
+    }
+
+    if (!displayCount) {
+        RELEASE_LOG(Media, "CGGetActiveDisplayList() returned a display count of 0");
+        return;
+    }
+
+    CGDirectDisplayID activeDisplays[displayCount];
+    err = CGGetActiveDisplayList(displayCount, &(activeDisplays[0]), &displayCount);
+    if (err) {
+        RELEASE_LOG(Media, "CGGetActiveDisplayList() returned error %d when trying to get the active display list", (int)err);
+        return;
+    }
+
+    bool haveDeviceChanges = false;
+    for (auto displayID : activeDisplays) {
+        if (std::any_of(m_displaysInternal.begin(), m_displaysInternal.end(), [displayID](auto& device) { return device.cgDirectDisplayID == displayID; }))
+            continue;
+        haveDeviceChanges = true;
+        m_displaysInternal.append({ displayID, CGDisplayIDToOpenGLDisplayMask(displayID) });
+    }
+
+    for (auto& display : m_displaysInternal) {
+        auto displayMask = CGDisplayIDToOpenGLDisplayMask(display.cgDirectDisplayID);
+        if (display.cgOpenGLDisplayMask != displayMask) {
+            display.cgOpenGLDisplayMask = displayMask;
+            haveDeviceChanges = true;
+        }
+    }
+
+    if (!haveDeviceChanges)
+        return;
+
+    int count = 0;
+    m_displays = Vector<CaptureDevice>();
+    for (auto& device : m_displaysInternal) {
+        CaptureDevice displayDevice(String::number(device.cgDirectDisplayID), CaptureDevice::DeviceType::Screen, makeString("Screen ", String::number(count++)));
+        displayDevice.setEnabled(device.cgOpenGLDisplayMask);
+        m_displays.append(WTFMove(displayDevice));
+    }
+#endif
 }
 
 std::optional<CaptureDevice> DisplayCaptureManagerCocoa::screenCaptureDeviceWithPersistentID(const String& deviceID)
 {
+#if PLATFORM(MAC)
+    bool ok;
+    auto displayID = deviceID.toUIntStrict(&ok);
+    if (!ok) {
+        RELEASE_LOG(Media, "Display ID does not convert to 32-bit integer");
+        return std::nullopt;
+    }
+
+    auto actualDisplayID = ScreenDisplayCaptureSourceMac::updateDisplayID(displayID);
+    if (!actualDisplayID)
+        return std::nullopt;
+
+    auto device = CaptureDevice(String::number(actualDisplayID.value()), CaptureDevice::DeviceType::Screen, ASCIILiteral("ScreenCaptureDevice"));
+    device.setEnabled(true);
+
+    return device;
+#else
     UNUSED_PARAM(deviceID);
     return std::nullopt;
+#endif
 }
 
 std::optional<CaptureDevice> DisplayCaptureManagerCocoa::captureDeviceWithPersistentID(CaptureDevice::DeviceType type, const String& id)

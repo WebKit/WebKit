@@ -41,6 +41,7 @@
 #include "DisplayCaptureManagerCocoa.h"
 #include "Logging.h"
 #include "MediaStreamPrivate.h"
+#include "ScreenDisplayCaptureSourceMac.h"
 #include <wtf/MainThread.h>
 
 namespace WebCore {
@@ -55,6 +56,10 @@ public:
             return AVVideoCaptureSource::create(device.persistentId(), constraints);
             break;
         case CaptureDevice::DeviceType::Screen:
+#if PLATFORM(MAC)
+            return ScreenDisplayCaptureSourceMac::create(device.persistentId(), constraints);
+            break;
+#endif
         case CaptureDevice::DeviceType::Application:
         case CaptureDevice::DeviceType::Window:
         case CaptureDevice::DeviceType::Browser:
