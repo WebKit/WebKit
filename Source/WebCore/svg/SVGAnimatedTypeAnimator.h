@@ -127,10 +127,14 @@ protected:
     {
         ASSERT(animatedTypes[0].properties.size() == 2);
         ASSERT(type.type() == m_type);
+        auto* firstProperty = castAnimatedPropertyToActualType<AnimValType1>(animatedTypes[0].properties[0].get());
+        auto* secondProperty =  castAnimatedPropertyToActualType<AnimValType2>(animatedTypes[0].properties[1].get());
+        firstProperty->synchronizeWrappersIfNeeded();
+        secondProperty->synchronizeWrappersIfNeeded();
 
         std::pair<typename AnimValType1::ContentType, typename AnimValType2::ContentType>& animatedTypeValue = (type.*getter)();
-        animatedTypeValue.first = castAnimatedPropertyToActualType<AnimValType1>(animatedTypes[0].properties[0].get())->currentBaseValue();
-        animatedTypeValue.second = castAnimatedPropertyToActualType<AnimValType2>(animatedTypes[0].properties[1].get())->currentBaseValue();
+        animatedTypeValue.first = firstProperty->currentBaseValue();
+        animatedTypeValue.second = secondProperty->currentBaseValue();
 
         executeAction<AnimValType1>(StartAnimationAction, animatedTypes, 0, &animatedTypeValue.first);
         executeAction<AnimValType2>(StartAnimationAction, animatedTypes, 1, &animatedTypeValue.second);

@@ -1,3 +1,24 @@
+2018-01-05  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        SVGAnimatedListPropertyTearOff::synchronizeWrappersIfNeeded() should do nothing if the property is not animating
+        https://bugs.webkit.org/show_bug.cgi?id=181316
+        <rdar://problem/36147545>
+
+        Reviewed by Simon Fraser.
+
+        This is a speculative change to fix a crash which appeared after r226065.
+        The crash is very intermittent and sometimes very hard to reproduce. The
+        basic code analysis did not show how this crash can even happen.
+
+        * svg/SVGAnimatedTypeAnimator.h:
+        (WebCore::SVGAnimatedTypeAnimator::resetFromBaseValues): For SVG property
+        with two values, e.g. <SVGAngleValue, SVGMarkerOrientType>,  we need to
+        detach the wrappers of the animated property if the animated values are
+        going to change. This is similar to what we did in resetFromBaseValue().
+
+        * svg/properties/SVGAnimatedListPropertyTearOff.h:
+        (WebCore::SVGAnimatedListPropertyTearOff::synchronizeWrappersIfNeeded):
+
 2018-01-05  Matt Lewis  <jlewis3@apple.com>
 
         Unreviewed, rolling out r226401.
