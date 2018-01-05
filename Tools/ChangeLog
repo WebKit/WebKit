@@ -1,3 +1,17 @@
+2018-01-04  Jonathan Bedard  <jbedard@apple.com>
+
+        REGRESSION (r226395): test-webkitperl test expectations incorrect
+        https://bugs.webkit.org/show_bug.cgi?id=181307
+        <rdar://problem/36306558>
+
+        Rubber-stamped by Aakash Jain.
+
+        r226395 added two lines towards the beginning of
+        Scripts/webkitperl/prepare-ChangeLog_unittest/resources/perl_unittests.pl, the line
+        numbers in the test expectations need to update.
+
+        * Scripts/webkitperl/prepare-ChangeLog_unittest/resources/perl_unittests-expected.txt:
+
 2018-01-04  Tim Horton  <timothy_horton@apple.com>
 
         WKWebView loses minimum layout size overrides that happen while the process is terminated
