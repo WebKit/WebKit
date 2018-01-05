@@ -1,3 +1,32 @@
+2018-01-04  Saam Barati  <sbarati@apple.com>
+
+        Add a new pattern matching rule to Graph::methodOfGettingAValueProfileFor for SetLocal(@nodeWithHeapPrediction)
+        https://bugs.webkit.org/show_bug.cgi?id=181296
+
+        Reviewed by Filip Pizlo.
+
+        Inside Speedometer's Ember test, there is a recompile loop like:
+        a: GetByVal(..., semanticOriginX)
+        b: SetLocal(Cell:@a, semanticOriginX)
+        
+        where the cell check always fails. For reasons I didn't investigate, the
+        baseline JIT's value profiling doesn't accurately capture the GetByVal's
+        result.
+        
+        However, when compiling this cell speculation check in the DFG, we get a null
+        MethodOfGettingAValueProfile inside Graph::methodOfGettingAValueProfileFor for
+        this IR pattern because both @a and @b have the same semantic origin. We
+        should not follow the same semantic origin heuristic when dealing with
+        SetLocal since SetLocal(@nodeWithHeapPrediction) is such a common IR pattern.
+        For patterns like this, we introduce a new heuristic: @NodeThatDoesNotProduceAValue(@nodeWithHeapPrediction).
+        For this IR pattern, we will update the value profile for the semantic origin
+        for @nodeWithHeapPrediction. So, for the Speedometer example above, we
+        will correctly update the GetByVal's value profile, which will prevent
+        an OSR exit loop.
+
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::methodOfGettingAValueProfileFor):
+
 2018-01-04  Keith Miller  <keith_miller@apple.com>
 
         Array Storage operations sometimes did not update the indexing mask correctly.

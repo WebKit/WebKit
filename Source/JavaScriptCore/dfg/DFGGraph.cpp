@@ -1617,9 +1617,11 @@ ControlEquivalenceAnalysis& Graph::ensureControlEquivalenceAnalysis()
 
 MethodOfGettingAValueProfile Graph::methodOfGettingAValueProfileFor(Node* currentNode, Node* operandNode)
 {
+    // This represents IR like `CurrentNode(@operandNode)`. For example: `GetByVal(..., Int32:@GetLocal)`.
+
     for (Node* node = operandNode; node;) {
         // currentNode is null when we're doing speculation checks for checkArgumentTypes().
-        if (!currentNode || node->origin.semantic != currentNode->origin.semantic) {
+        if (!currentNode || node->origin.semantic != currentNode->origin.semantic || !currentNode->hasResult()) {
             CodeBlock* profiledBlock = baselineCodeBlockFor(node->origin.semantic);
 
             if (node->accessesStack(*this)) {
