@@ -1,3 +1,13 @@
+2018-01-04  Keith Miller  <keith_miller@apple.com>
+
+        TypedArrays and Wasm should use index masking.
+        https://bugs.webkit.org/show_bug.cgi?id=181313
+
+        Reviewed by Michael Saboff.
+
+        * wtf/MathExtras.h:
+        (WTF::computeIndexingMask):
+
 2018-01-03  Michael Saboff  <msaboff@apple.com>
 
         Disable SharedArrayBuffers from Web API

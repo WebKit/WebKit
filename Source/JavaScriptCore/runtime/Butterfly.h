@@ -123,8 +123,7 @@ public:
     void setPublicLength(uint32_t value) { indexingHeader()->setPublicLength(value); }
     void setVectorLength(uint32_t value) { indexingHeader()->setVectorLength(value); }
 
-    static uint32_t computeIndexingMaskForVectorLength(uint32_t vectorLength) { return static_cast<uint64_t>(static_cast<uint32_t>(-1)) >> std::clz(vectorLength); }
-    uint32_t computeIndexingMask() const { return computeIndexingMaskForVectorLength(vectorLength()); }
+    uint32_t computeIndexingMask() const { return WTF::computeIndexingMask(vectorLength()); }
 
     template<typename T>
     T* indexingPayload() { return reinterpret_cast_ptr<T*>(this); }

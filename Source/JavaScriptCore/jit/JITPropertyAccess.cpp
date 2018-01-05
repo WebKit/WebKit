@@ -1478,7 +1478,7 @@ JIT::JumpList JIT::emitIntTypedArrayGetByVal(Instruction*, PatchableJump& badTyp
     slowCases.append(branch32(AboveOrEqual, property, Address(base, JSArrayBufferView::offsetOfLength())));
     loadPtr(Address(base, JSArrayBufferView::offsetOfVector()), scratch);
     cageConditionally(Gigacage::Primitive, scratch, scratch2);
-    
+
     switch (elementSize(type)) {
     case 1:
         if (JSC::isSigned(type))

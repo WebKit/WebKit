@@ -3302,7 +3302,7 @@ void SpeculativeJIT::compile(Node* node)
         
         JITCompiler::Label loop = m_jit.label();
         
-        loadFromIntTypedArray(storageGPR, indexGPR, oldValueGPR, type);
+        loadFromIntTypedArray(baseGPR, storageGPR, indexGPR, oldValueGPR, type);
         m_jit.move(oldValueGPR, newValueGPR);
         m_jit.move(oldValueGPR, resultGPR);
         

@@ -85,6 +85,7 @@ public:
 
     static ptrdiff_t offsetOfMemory() { return OBJECT_OFFSETOF(Memory, m_memory); }
     static ptrdiff_t offsetOfSize() { return OBJECT_OFFSETOF(Memory, m_size); }
+    static ptrdiff_t offsetOfIndexingMask() { return OBJECT_OFFSETOF(Memory, m_indexingMask); }
 
 private:
     Memory();
@@ -94,6 +95,7 @@ private:
     // FIXME: we cache these on the instances to avoid a load on instance->instance calls. This will require updating all the instances when grow is called. https://bugs.webkit.org/show_bug.cgi?id=177305
     void* m_memory { nullptr };
     size_t m_size { 0 };
+    size_t m_indexingMask { 0 };
     PageCount m_initial;
     PageCount m_maximum;
     size_t m_mappedCapacity { 0 };

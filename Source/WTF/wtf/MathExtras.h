@@ -473,6 +473,13 @@ inline bool rangesOverlap(T leftMin, T leftMax, T rightMin, T rightMax)
     return nonEmptyRangesOverlap(leftMin, leftMax, rightMin, rightMax);
 }
 
+// This mask is not necessarily the minimal mask, specifically if size is
+// a power of 2. It has the advantage that it's fast to compute, however.
+inline uint32_t computeIndexingMask(uint32_t size)
+{
+    return static_cast<uint64_t>(static_cast<uint32_t>(-1)) >> std::clz(size);
+}
+
 } // namespace WTF
 
 #endif // #ifndef WTF_MathExtras_h

@@ -1,3 +1,72 @@
+2018-01-04  Keith Miller  <keith_miller@apple.com>
+
+        TypedArrays and Wasm should use index masking.
+        https://bugs.webkit.org/show_bug.cgi?id=181313
+
+        Reviewed by Michael Saboff.
+
+        We should have index masking for our TypedArray code in the
+        DFG/FTL and for Wasm when doing bounds checking. Index masking for
+        Wasm is added to the WasmBoundsCheckValue. Since we don't CSE any
+        WasmBoundsCheckValues we don't need to worry about combining a
+        bounds check for a load and a store. I went with fusing the
+        pointer masking in the WasmBoundsCheckValue since it should reduce
+        additional compiler overhead.
+
+        * b3/B3LowerToAir.cpp:
+        * b3/B3Validate.cpp:
+        * b3/B3WasmBoundsCheckValue.cpp:
+        (JSC::B3::WasmBoundsCheckValue::WasmBoundsCheckValue):
+        (JSC::B3::WasmBoundsCheckValue::dumpMeta const):
+        * b3/B3WasmBoundsCheckValue.h:
+        (JSC::B3::WasmBoundsCheckValue::pinnedIndexingMask const):
+        * b3/air/AirCustom.h:
+        (JSC::B3::Air::WasmBoundsCheckCustom::generate):
+        * b3/testb3.cpp:
+        (JSC::B3::testWasmBoundsCheck):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::emitAllocateRawObject):
+        (JSC::DFG::SpeculativeJIT::loadFromIntTypedArray):
+        (JSC::DFG::SpeculativeJIT::compileGetByValOnIntTypedArray):
+        (JSC::DFG::SpeculativeJIT::compileGetByValOnFloatTypedArray):
+        (JSC::DFG::SpeculativeJIT::compileNewTypedArrayWithSize):
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileAtomicsReadModifyWrite):
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetByVal):
+        (JSC::FTL::DFG::LowerDFGToB3::compileNewTypedArray):
+        (JSC::FTL::DFG::LowerDFGToB3::pointerIntoTypedArray):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emitIntTypedArrayGetByVal):
+        * runtime/Butterfly.h:
+        (JSC::Butterfly::computeIndexingMask const):
+        (JSC::Butterfly::computeIndexingMaskForVectorLength): Deleted.
+        * runtime/JSArrayBufferView.cpp:
+        (JSC::JSArrayBufferView::JSArrayBufferView):
+        * wasm/WasmB3IRGenerator.cpp:
+        (JSC::Wasm::B3IRGenerator::B3IRGenerator):
+        (JSC::Wasm::B3IRGenerator::restoreWebAssemblyGlobalState):
+        (JSC::Wasm::B3IRGenerator::emitCheckAndPreparePointer):
+        (JSC::Wasm::B3IRGenerator::load):
+        (JSC::Wasm::B3IRGenerator::store):
+        (JSC::Wasm::B3IRGenerator::addCallIndirect):
+        * wasm/WasmBinding.cpp:
+        (JSC::Wasm::wasmToWasm):
+        * wasm/WasmMemory.cpp:
+        (JSC::Wasm::Memory::Memory):
+        (JSC::Wasm::Memory::grow):
+        * wasm/WasmMemory.h:
+        (JSC::Wasm::Memory::offsetOfIndexingMask):
+        * wasm/WasmMemoryInformation.cpp:
+        (JSC::Wasm::PinnedRegisterInfo::get):
+        (JSC::Wasm::PinnedRegisterInfo::PinnedRegisterInfo):
+        * wasm/WasmMemoryInformation.h:
+        (JSC::Wasm::PinnedRegisterInfo::toSave const):
+        * wasm/js/JSToWasm.cpp:
+        (JSC::Wasm::createJSToWasmWrapper):
+
 2018-01-05  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r226434.

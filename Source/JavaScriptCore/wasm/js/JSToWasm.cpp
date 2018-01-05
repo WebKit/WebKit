@@ -181,6 +181,7 @@ std::unique_ptr<InternalFunction> createJSToWasmWrapper(CompilationContext& comp
         }
 
         if (mode != MemoryMode::Signaling) {
+            jit.loadPtr(CCallHelpers::Address(baseMemory, Wasm::Memory::offsetOfIndexingMask()), pinnedRegs.indexingMask);
             const auto& sizeRegs = pinnedRegs.sizeRegisters;
             ASSERT(sizeRegs.size() >= 1);
             ASSERT(!sizeRegs[0].sizeOffset); // The following code assumes we start at 0, and calculates subsequent size registers relative to 0.

@@ -3153,9 +3153,10 @@ private:
         LValue args[2];
         for (unsigned i = numExtraArgs; i--;)
             args[i] = getIntTypedArrayStoreOperand(argEdges[i]);
+        LValue base = lowCell(baseEdge);
         LValue storage = lowStorage(storageEdge);
-        
-        TypedPointer pointer = pointerIntoTypedArray(storage, index, type);
+
+        TypedPointer pointer = pointerIntoTypedArray(base, storage, index, type);
         Width width = widthForBytes(elementSize(type));
         
         LValue atomicValue;
@@ -3900,13 +3901,14 @@ private:
         }
             
         default: {
+            LValue base = lowCell(m_node->child1());
             LValue index = lowInt32(m_node->child2());
             LValue storage = lowStorage(m_node->child3());
             
             TypedArrayType type = m_node->arrayMode().typedArrayType();
             
             if (isTypedView(type)) {
-                TypedPointer pointer = pointerIntoTypedArray(storage, index, type);
+                TypedPointer pointer = pointerIntoTypedArray(base, storage, index, type);
                 
                 if (isInt(type)) {
                     LValue result = loadFromIntTypedArray(pointer, type);
@@ -5580,8 +5582,9 @@ private:
 
             ValueFromBlock haveStorage = m_out.anchor(storage);
 
+            LValue indexingMask = computeButterflyIndexingMask(size);
             LValue fastResultValue =
-                allocateObject<JSArrayBufferView>(structure, m_out.intPtrZero, m_out.int32Zero, slowCase);
+                allocateObject<JSArrayBufferView>(structure, m_out.intPtrZero, indexingMask, slowCase);
 
             m_out.storePtr(storage, fastResultValue, m_heaps.JSArrayBufferView_vector);
             m_out.store32(size, fastResultValue, m_heaps.JSArrayBufferView_length);
@@ -13141,9 +13144,10 @@ private:
         functor(TypeofType::Undefined);
     }
     
-    TypedPointer pointerIntoTypedArray(LValue storage, LValue index, TypedArrayType type)
+    TypedPointer pointerIntoTypedArray(LValue base, LValue storage, LValue index, TypedArrayType type)
     {
-        LValue offset = m_out.shl(m_out.zeroExtPtr(index), m_out.constIntPtr(logElementSize(type)));
+        LValue mask = m_out.load32(base, m_heaps.JSObject_butterflyMask);
+        LValue offset = m_out.shl(m_out.zeroExtPtr(m_out.bitAnd(mask, index)), m_out.constIntPtr(logElementSize(type)));
         return TypedPointer(
             m_heaps.typedArrayProperties,
             m_out.add(

@@ -3245,9 +3245,10 @@ private:
             WasmBoundsCheckValue* value = m_value->as<WasmBoundsCheckValue>();
 
             Value* ptr = value->child(0);
+            Tmp pointer = tmp(ptr);
 
             Arg ptrPlusImm = m_code.newTmp(GP);
-            append(Inst(Move32, value, tmp(ptr), ptrPlusImm));
+            append(Inst(Move32, value, pointer, ptrPlusImm));
             if (value->offset()) {
                 if (imm(value->offset()))
                     append(Add64, imm(value->offset()), ptrPlusImm);
@@ -3261,7 +3262,7 @@ private:
             Arg limit;
             switch (value->boundsType()) {
             case WasmBoundsCheckValue::Type::Pinned:
-                limit = Arg(value->bounds().pinned);
+                limit = Arg(value->bounds().pinnedSize);
                 break;
 
             case WasmBoundsCheckValue::Type::Maximum:
@@ -3274,6 +3275,10 @@ private:
             }
 
             append(Inst(Air::WasmBoundsCheck, value, ptrPlusImm, limit));
+            // Hypothetically, this could write to the pointer value. Which we didn't claim we did but since we assume the indexing mask
+            // should not actually change the value of the pointer we should be OK.
+            if (value->pinnedIndexingMask() != InvalidGPRReg)
+                append(And32, Arg(value->pinnedIndexingMask()), pointer, pointer);
             return;
         }
 

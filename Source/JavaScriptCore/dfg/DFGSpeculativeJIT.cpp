@@ -130,7 +130,7 @@ void SpeculativeJIT::emitAllocateRawObject(GPRReg resultGPR, RegisteredStructure
     MarkedAllocator* allocatorPtr = subspaceFor<JSFinalObject>(*m_jit.vm())->allocatorForNonVirtual(allocationSize, AllocatorForMode::AllocatorIfExists);
     if (allocatorPtr) {
         m_jit.move(TrustedImmPtr(allocatorPtr), scratchGPR);
-        uint32_t mask = Butterfly::computeIndexingMaskForVectorLength(vectorLength);
+        uint32_t mask = WTF::computeIndexingMask(vectorLength);
         emitAllocateJSObject(resultGPR, allocatorPtr, scratchGPR, TrustedImmPtr(structure), storageGPR, TrustedImm32(mask), scratch2GPR, slowCases);
         m_jit.emitInitializeInlineStorage(resultGPR, structure->inlineCapacity());
     } else
@@ -2854,8 +2854,9 @@ JITCompiler::Jump SpeculativeJIT::jumpForTypedArrayIsNeuteredIfOutOfBounds(Node*
     return done;
 }
 
-void SpeculativeJIT::loadFromIntTypedArray(GPRReg storageReg, GPRReg propertyReg, GPRReg resultReg, TypedArrayType type)
+void SpeculativeJIT::loadFromIntTypedArray(GPRReg baseReg, GPRReg storageReg, GPRReg propertyReg, GPRReg resultReg, TypedArrayType type)
 {
+    m_jit.and32(MacroAssembler::Address(baseReg, JSObject::butterflyIndexingMaskOffset()), propertyReg);
     switch (elementSize(type)) {
     case 1:
         if (isSigned(type))
@@ -2925,7 +2926,7 @@ void SpeculativeJIT::compileGetByValOnIntTypedArray(Node* node, TypedArrayType t
     ASSERT(node->arrayMode().alreadyChecked(m_jit.graph(), node, m_state.forNode(node->child1())));
 
     emitTypedArrayBoundsCheck(node, baseReg, propertyReg);
-    loadFromIntTypedArray(storageReg, propertyReg, resultReg, type);
+    loadFromIntTypedArray(baseReg, storageReg, propertyReg, resultReg, type);
     bool canSpeculate = true;
     setIntTypedArrayLoadResult(node, resultReg, type, canSpeculate);
 }
@@ -3157,6 +3158,7 @@ void SpeculativeJIT::compileGetByValOnFloatTypedArray(Node* node, TypedArrayType
     FPRTemporary result(this);
     FPRReg resultReg = result.fpr();
     emitTypedArrayBoundsCheck(node, baseReg, propertyReg);
+    m_jit.and32(MacroAssembler::Address(baseReg, JSObject::butterflyIndexingMaskOffset()), propertyReg);
     switch (elementSize(type)) {
     case 4:
         m_jit.loadFloat(MacroAssembler::BaseIndex(storageReg, propertyReg, MacroAssembler::TimesFour), resultReg);
@@ -8989,10 +8991,12 @@ void SpeculativeJIT::compileNewTypedArrayWithSize(Node* node)
     
     GPRTemporary result(this);
     GPRTemporary storage(this);
+    GPRTemporary indexingMask(this);
     GPRTemporary scratch(this);
     GPRTemporary scratch2(this);
     GPRReg resultGPR = result.gpr();
     GPRReg storageGPR = storage.gpr();
+    GPRReg indexingMaskGPR = indexingMask.gpr();
     GPRReg scratchGPR = scratch.gpr();
     GPRReg scratchGPR2 = scratch2.gpr();
     
@@ -9035,11 +9039,11 @@ void SpeculativeJIT::compileNewTypedArrayWithSize(Node* node)
     done.link(&m_jit);
 
     auto butterfly = TrustedImmPtr(nullptr);
-    auto mask = TrustedImm32(0);
+    m_jit.emitComputeButterflyIndexingMask(sizeGPR, scratchGPR, indexingMaskGPR);
     emitAllocateJSObject<JSArrayBufferView>(
-        resultGPR, TrustedImmPtr(structure), butterfly, mask, scratchGPR, scratchGPR2,
+        resultGPR, TrustedImmPtr(structure), butterfly, indexingMaskGPR, scratchGPR, scratchGPR2,
         slowCases);
-    
+
     m_jit.storePtr(
         storageGPR,
         MacroAssembler::Address(resultGPR, JSArrayBufferView::offsetOfVector()));
