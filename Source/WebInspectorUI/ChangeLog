@@ -1,3 +1,24 @@
+2018-01-04  Joseph Pecoraro  <pecoraro@apple.com>
+
+        REGRESSION (r225709): Web Inspector: CSS Source maps not loading
+        https://bugs.webkit.org/show_bug.cgi?id=181314
+        <rdar://problem/36177620>
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Controllers/SourceMapManager.js:
+        (WI.SourceMapManager.prototype._loadAndParseSourceMap):
+        * UserInterface/Models/SourceMapResource.js:
+        (WI.SourceMapResource.prototype.requestContentFromBackend):
+        Correct this so that we only fall back to a reasonable frame id
+        if we couldn't determine a frame id from earlier. Previously this
+        was incorrectly clearing the frame id if we had gotten it earlier.
+
+        * UserInterface/Test.html:
+        * UserInterface/Test/Test.js:
+        (WI.loaded):
+        Add SourceMap related files for tests.
+
 2018-01-04  Brian Burg  <bburg@apple.com>
 
         Web Inspector: Capture Element Screenshot looks fuzzy

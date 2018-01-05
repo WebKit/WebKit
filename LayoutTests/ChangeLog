@@ -1,3 +1,23 @@
+2018-01-04  Joseph Pecoraro  <pecoraro@apple.com>
+
+        REGRESSION (r225709): Web Inspector: CSS Source maps not loading
+        https://bugs.webkit.org/show_bug.cgi?id=181314
+        <rdar://problem/36177620>
+
+        Reviewed by Brian Burg.
+
+        * http/tests/inspector/network/resources/script-with-sourcemap.js: Added.
+        * http/tests/inspector/network/resources/script-with-sourcemap.js.map: Added.
+        * http/tests/inspector/network/resources/stylesheet-with-sourcemap.css: Added.
+        * http/tests/inspector/network/resources/stylesheet-with-sourcemap.css.map: Added.
+        * http/tests/inspector/network/resources/stylesheet-with-sourcemap.scss: Added.
+        Add a real script minified with a source map.
+        Add a real scss stylesheet compiled to css with a source map.
+
+        * http/tests/inspector/network/source-map-loads-expected.txt: Added.
+        * http/tests/inspector/network/source-map-loads.html: Added.
+        Test that we load source maps for resources with sourceMappingURL directives.
+
 2018-01-04  Chris Fleizach  <cfleizach@apple.com>
 
         AX: Implement updated CSS3 Speech for 'speak' and 'speak-as' properties
