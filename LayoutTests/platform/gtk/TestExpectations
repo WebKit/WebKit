@@ -2601,8 +2601,6 @@ webkit.org/b/86443 plugins/npruntime/delete-plugin-within-hasProperty-return-fal
 webkit.org/b/86443 plugins/npruntime/delete-plugin-within-hasProperty-return-true.html [ Failure ]
 webkit.org/b/86443 plugins/npruntime/delete-plugin-within-setProperty.html [ Failure ]
 
-webkit.org/b/86971 svg/hittest/svg-shapes-non-scale-stroke.html [ Failure ]
-
 webkit.org/b/51027 [ Release ] plugins/refcount-leaks.html [ Failure ]
 
 # Failing after r121121 on both GTK and EFL

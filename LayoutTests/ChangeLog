@@ -1,5 +1,14 @@
 2018-01-05  Claudio Saavedra  <csaavedra@igalia.com>
 
+        [WPE][GTK] Unreviewed gardening
+
+        Unskip svg/hittest/svg-shapes-non-scale-stroke.html, passing after
+        r226443.
+        * platform/gtk/TestExpectations:
+        * platform/wpe/TestExpectations:
+
+2018-01-05  Claudio Saavedra  <csaavedra@igalia.com>
+
         [WPE] Unreviewed gardening
 
         * platform/wpe/TestExpectations: Unskip two tests passing after r226404.
