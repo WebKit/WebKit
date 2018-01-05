@@ -1,3 +1,30 @@
+2018-01-05  Claudio Saavedra  <csaavedra@igalia.com>
+
+        [WPE] Rebaseline test expectations after r226404
+
+        Unreviewed gardening.
+
+        * platform/wpe/css1/font_properties/font_size-expected.txt:
+        * platform/wpe/css1/text_properties/letter_spacing-expected.txt:
+        * platform/wpe/css1/text_properties/line_height-expected.txt:
+        * platform/wpe/css1/text_properties/text_indent-expected.txt:
+        * platform/wpe/css1/text_properties/word_spacing-expected.txt:
+        * platform/wpe/css1/units/length_units-expected.txt:
+        * platform/wpe/css2.1/t040302-c61-ex-len-00-b-a-expected.txt:
+        * platform/wpe/css2.1/t040302-c61-rel-len-00-b-ag-expected.txt:
+        * platform/wpe/css2.1/t1008-c44-ln-box-02-d-ag-expected.txt:
+        * platform/wpe/css2.1/t100801-c544-valgn-01-d-ag-expected.txt:
+        * platform/wpe/css2.1/t100801-c544-valgn-03-d-agi-expected.txt:
+        * platform/wpe/css2.1/t100801-c548-ln-ht-02-b-ag-expected.txt:
+        * platform/wpe/css2.1/t1507-c526-font-sz-02-b-a-expected.txt:
+        * platform/wpe/css2.1/t1601-c547-indent-00-b-a-expected.txt:
+        * platform/wpe/css2.1/t1604-c542-letter-sp-00-b-a-expected.txt:
+        * platform/wpe/svg/W3C-SVG-1.1-SE/coords-units-03-b-expected.txt:
+        * platform/wpe/svg/W3C-SVG-1.1/coords-units-03-b-expected.txt:
+        * platform/wpe/svg/custom/alignment-baseline-modes-expected.txt:
+        * platform/wpe/svg/custom/dominant-baseline-modes-expected.txt:
+        * platform/wpe/tables/mozilla/bugs/bug55527-expected.txt:
+
 2018-01-05  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [Cairo] Canvas: Path::clear should clear its transform

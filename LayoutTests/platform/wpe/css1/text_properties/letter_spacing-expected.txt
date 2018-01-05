@@ -48,9 +48,9 @@ layer at (0,0) size 785x1378
           text run at (0,18) width 703: "should have extra space between"
           text run at (0,36) width 115: "them."
       RenderBlock {P} at (0,596) size 769x36
-        RenderText {#text} at (0,0) size 747x35
-          text run at (0,0) width 747: "This letters in this sentence should have extra space"
-          text run at (0,18) width 196: "between them."
+        RenderText {#text} at (0,0) size 713x35
+          text run at (0,0) width 713: "This letters in this sentence should have extra space"
+          text run at (0,18) width 188: "between them."
       RenderBlock {P} at (0,648) size 769x36
         RenderText {#text} at (0,0) size 754x35
           text run at (0,0) width 754: "This letters in this sentence should have extra space between them,"
@@ -107,9 +107,9 @@ layer at (0,0) size 785x1378
                   text run at (0,18) width 703: "should have extra space between"
                   text run at (0,36) width 115: "them."
               RenderBlock {P} at (4,370) size 747x36
-                RenderText {#text} at (0,0) size 747x35
-                  text run at (0,0) width 747: "This letters in this sentence should have extra space"
-                  text run at (0,18) width 196: "between them."
+                RenderText {#text} at (0,0) size 713x35
+                  text run at (0,0) width 713: "This letters in this sentence should have extra space"
+                  text run at (0,18) width 188: "between them."
               RenderBlock {P} at (4,422) size 747x36
                 RenderText {#text} at (0,0) size 685x35
                   text run at (0,0) width 685: "This letters in this sentence should have extra space between"
