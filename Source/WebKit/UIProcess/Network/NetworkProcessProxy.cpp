@@ -245,6 +245,10 @@ void NetworkProcessProxy::didClose(IPC::Connection&)
 
     m_tokenForHoldingLockedFiles = nullptr;
 
+    for (auto& callback : m_writeBlobToFilePathCallbackMap.values())
+        callback(false);
+    m_writeBlobToFilePathCallbackMap.clear();
+
     // This may cause us to be deleted.
     networkProcessCrashed();
 }
@@ -456,6 +460,30 @@ void NetworkProcessProxy::sendProcessDidResume()
 {
     if (canSendMessage())
         send(Messages::NetworkProcess::ProcessDidResume(), 0);
+}
+
+void NetworkProcessProxy::writeBlobToFilePath(const WebCore::URL& url, const String& path, CompletionHandler<void(bool)>&& callback)
+{
+    if (!canSendMessage()) {
+        callback(false);
+        return;
+    }
+
+    static uint64_t writeBlobToFilePathCallbackIdentifiers = 0;
+    uint64_t callbackID = ++writeBlobToFilePathCallbackIdentifiers;
+    m_writeBlobToFilePathCallbackMap.add(callbackID, WTFMove(callback));
+
+    SandboxExtension::Handle handleForWriting;
+    SandboxExtension::createHandle(path, SandboxExtension::Type::ReadWrite, handleForWriting);
+    send(Messages::NetworkProcess::WriteBlobToFilePath(url, path, handleForWriting, callbackID), 0);
+}
+
+void NetworkProcessProxy::didWriteBlobToFilePath(bool success, uint64_t callbackID)
+{
+    if (auto handler = m_writeBlobToFilePathCallbackMap.take(callbackID))
+        handler(success);
+    else
+        ASSERT_NOT_REACHED();
 }
 
 void NetworkProcessProxy::processReadyToSuspend()

@@ -79,6 +79,8 @@ messages -> NetworkProcess LegacyReceiver {
 
     DidGrantSandboxExtensionsToStorageProcessForBlobs(uint64_t requestID)
 
+    WriteBlobToFilePath(WebCore::URL blobURL, String path, WebKit::SandboxExtension::Handle handle, uint64_t callbackID)
+
     PreconnectTo(WebCore::URL url, enum WebCore::StoredCredentialsPolicy storedCredentialsPolicy);
 
 #if HAVE(CFNETWORK_STORAGE_PARTITIONING)

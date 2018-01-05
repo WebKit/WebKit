@@ -140,6 +140,25 @@ void NetworkBlobRegistry::writeBlobsToTemporaryFiles(const Vector<String>& blobU
     blobRegistry().writeBlobsToTemporaryFiles(blobURLs, WTFMove(completionHandler));
 }
 
+void NetworkBlobRegistry::writeBlobToFilePath(const URL& blobURL, const String& path, Function<void(bool success)>&& completionHandler)
+{
+    if (!blobRegistry().isBlobRegistryImpl()) {
+        completionHandler(false);
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    auto blobFiles = filesInBlob({ ParsedURLString, blobURL });
+    for (auto& file : blobFiles)
+        file->prepareForFileAccess();
+
+    static_cast<BlobRegistryImpl&>(blobRegistry()).writeBlobToFilePath(blobURL, path, [blobFiles = WTFMove(blobFiles), completionHandler = WTFMove(completionHandler)] (bool success) {
+        for (auto& file : blobFiles)
+            file->revokeFileAccess();
+        completionHandler(success);
+    });
+}
+
 void NetworkBlobRegistry::connectionToWebProcessDidClose(NetworkConnectionToWebProcess* connection)
 {
     if (!m_blobsForConnection.contains(connection))
@@ -155,12 +174,17 @@ void NetworkBlobRegistry::connectionToWebProcessDidClose(NetworkConnectionToWebP
 Vector<RefPtr<BlobDataFileReference>> NetworkBlobRegistry::filesInBlob(NetworkConnectionToWebProcess& connection, const WebCore::URL& url)
 {
     if (!m_blobsForConnection.contains(&connection) || !m_blobsForConnection.find(&connection)->value.contains(url))
-        return Vector<RefPtr<BlobDataFileReference>>();
+        return { };
 
+    return filesInBlob(url);
+}
+
+Vector<RefPtr<BlobDataFileReference>> NetworkBlobRegistry::filesInBlob(const URL& url)
+{
     ASSERT(blobRegistry().isBlobRegistryImpl());
     BlobData* blobData = static_cast<BlobRegistryImpl&>(blobRegistry()).getBlobDataFromURL(url);
     if (!blobData)
-        return Vector<RefPtr<BlobDataFileReference>>();
+        return { };
 
     Vector<RefPtr<BlobDataFileReference>> result;
     for (const BlobDataItem& item : blobData->items()) {

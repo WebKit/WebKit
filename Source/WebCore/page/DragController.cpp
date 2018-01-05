@@ -1289,10 +1289,7 @@ bool DragController::dragAttachmentElement(Frame& frame, HTMLAttachmentElement& 
 #endif
 
     auto& file = *attachment.file();
-    auto blobURL = file.url().string();
-    bool isFileBacked = !file.path().isEmpty();
-    auto blobType = isFileBacked ? PromisedBlobType::FileBacked : PromisedBlobType::DataBacked;
-    m_client.prepareToDragPromisedBlob({ blobURL, file.type(), file.name(), blobType, additionalTypes, additionalData });
+    m_client.prepareToDragPromisedBlob({ file.url(), file.type(), file.name(), additionalTypes, additionalData });
 
     return true;
 }

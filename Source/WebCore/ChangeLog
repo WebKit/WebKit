@@ -1,3 +1,43 @@
+2018-01-05  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Attachment Support] Add a way to write blob data to a file URL from the UI process
+        https://bugs.webkit.org/show_bug.cgi?id=181236
+
+        Reviewed by Brady Eidson.
+
+        Add support for writing a blob to a designated file path. See comments below for more detail. No new tests, as
+        there change in behavior yet. See part 2: https://bugs.webkit.org/show_bug.cgi?id=181199.
+
+        * page/DragController.cpp:
+        (WebCore::DragController::dragAttachmentElement):
+        * platform/PromisedBlobInfo.h:
+
+        Remove PromisedBlobData entirely. This was added with the premise of having the web process deliver blob data to
+        the UI process. However, the new approach I'm taking just has the UI process tell the network process to write
+        a blob to a given location, so a data structure to deliver blob data over IPC is no longer necessary.
+
+        (WebCore::PromisedBlobData::hasData const): Deleted.
+        (WebCore::PromisedBlobData::hasFile const): Deleted.
+        (WebCore::PromisedBlobData::operator bool const): Deleted.
+        (WebCore::PromisedBlobData::fulfills const): Deleted.
+        * platform/network/BlobRegistryImpl.cpp:
+        (WebCore::BlobRegistryImpl::populateBlobsForFileWriting):
+
+        Introduce a new helper to build a list of blob data for file writing.
+
+        (WebCore::writeFilePathsOrDataBuffersToFile):
+
+        Introduce a new static helper to write blob data (a list of file paths and data buffers) to a given file handle.
+        Automatically closes the given file handle upon exit.
+
+        (WebCore::BlobRegistryImpl::writeBlobsToTemporaryFiles):
+        (WebCore::BlobRegistryImpl::writeBlobToFilePath):
+
+        Pull out common logic in writeBlobsToTemporaryFiles and writeBlobToFilePath into helper methods (see above), and
+        refactor both methods to use the helpers.
+
+        * platform/network/BlobRegistryImpl.h:
+
 2018-01-05  Alex Christensen  <achristensen@webkit.org>
 
         Forbid < and > in URL hosts

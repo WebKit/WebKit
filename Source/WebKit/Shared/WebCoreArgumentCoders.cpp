@@ -2746,33 +2746,11 @@ std::optional<MediaSelectionOption> ArgumentCoder<MediaSelectionOption>::decode(
     return {{ WTFMove(*displayName), WTFMove(*type) }};
 }
 
-void ArgumentCoder<PromisedBlobData>::encode(Encoder& encoder, const PromisedBlobData& data)
-{
-    encoder << data.blobURL;
-    encoder << data.filePath;
-    encodeSharedBuffer(encoder, data.data.get());
-}
-
-bool ArgumentCoder<PromisedBlobData>::decode(Decoder& decoder, PromisedBlobData& data)
-{
-    if (!decoder.decode(data.blobURL))
-        return false;
-
-    if (!decoder.decode(data.filePath))
-        return false;
-
-    if (!decodeSharedBuffer(decoder, data.data))
-        return false;
-
-    return true;
-}
-
 void ArgumentCoder<PromisedBlobInfo>::encode(Encoder& encoder, const PromisedBlobInfo& info)
 {
     encoder << info.blobURL;
     encoder << info.contentType;
     encoder << info.filename;
-    encoder.encodeEnum(info.blobType);
     encodeTypesAndData(encoder, info.additionalTypes, info.additionalData);
 }
 
@@ -2785,9 +2763,6 @@ bool ArgumentCoder<PromisedBlobInfo>::decode(Decoder& decoder, PromisedBlobInfo&
         return false;
 
     if (!decoder.decode(info.filename))
-        return false;
-
-    if (!decoder.decode(info.blobType))
         return false;
 
     if (!decodeTypesAndData(decoder, info.additionalTypes, info.additionalData))

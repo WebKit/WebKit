@@ -36,6 +36,7 @@
 #include "LegacyCustomProtocolManager.h"
 #endif
 #include "Logging.h"
+#include "NetworkBlobRegistry.h"
 #include "NetworkConnectionToWebProcess.h"
 #include "NetworkProcessCreationParameters.h"
 #include "NetworkProcessPlatformStrategies.h"
@@ -330,6 +331,21 @@ void NetworkProcess::didGrantSandboxExtensionsToStorageProcessForBlobs(uint64_t 
 {
     if (auto handler = m_sandboxExtensionForBlobsCompletionHandlers.take(requestID))
         handler();
+}
+
+void NetworkProcess::writeBlobToFilePath(const WebCore::URL& url, const String& path, SandboxExtension::Handle&& handleForWriting, uint64_t requestID)
+{
+    auto extension = SandboxExtension::create(WTFMove(handleForWriting));
+    if (!extension) {
+        parentProcessConnection()->send(Messages::NetworkProcessProxy::DidWriteBlobToFilePath(false, requestID), 0);
+        return;
+    }
+
+    extension->consume();
+    NetworkBlobRegistry::singleton().writeBlobToFilePath(url, path, [this, extension = WTFMove(extension), requestID] (bool success) {
+        extension->revoke();
+        parentProcessConnection()->send(Messages::NetworkProcessProxy::DidWriteBlobToFilePath(success, requestID), 0);
+    });
 }
 
 #if HAVE(CFNETWORK_STORAGE_PARTITIONING)

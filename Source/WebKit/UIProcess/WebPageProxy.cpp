@@ -67,6 +67,7 @@
 #include "NativeWebWheelEvent.h"
 #include "NavigationActionData.h"
 #include "NetworkProcessMessages.h"
+#include "NetworkProcessProxy.h"
 #include "NotificationPermissionRequest.h"
 #include "NotificationPermissionRequestManager.h"
 #include "OptionalCallbackID.h"
@@ -7280,6 +7281,16 @@ void WebPageProxy::didRemoveAttachment(const String& identifier)
 }
 
 #endif // ENABLE(ATTACHMENT_ELEMENT)
+
+void WebPageProxy::writeBlobToFilePath(const URL& url, const String& path, Function<void(bool success)>&& callback)
+{
+    if (!isValid()) {
+        callback(false);
+        return;
+    }
+
+    m_process->processPool().ensureNetworkProcess().writeBlobToFilePath(url, path, WTFMove(callback));
+}
 
 #if ENABLE(APPLICATION_MANIFEST)
 void WebPageProxy::getApplicationManifest(Function<void(const std::optional<WebCore::ApplicationManifest>&, CallbackBase::Error)>&& callbackFunction)

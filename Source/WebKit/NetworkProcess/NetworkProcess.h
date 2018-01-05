@@ -225,6 +225,8 @@ private:
 
     void didGrantSandboxExtensionsToStorageProcessForBlobs(uint64_t requestID);
 
+    void writeBlobToFilePath(const WebCore::URL&, const String& path, SandboxExtension::Handle&&, uint64_t requestID);
+
 #if USE(SOUP)
     void setIgnoreTLSErrors(bool);
     void userPreferredLanguagesChanged(const Vector<String>&);

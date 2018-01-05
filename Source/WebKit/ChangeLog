@@ -1,3 +1,55 @@
+2018-01-05  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Attachment Support] Add a way to write blob data to a file URL from the UI process
+        https://bugs.webkit.org/show_bug.cgi?id=181236
+
+        Reviewed by Brady Eidson.
+
+        Add support for writing a blob to a designated file path. In WebKit, this is mainly plumbing writeBlobToFilePath
+        through WebPageProxy to the network process.
+
+        * NetworkProcess/FileAPI/NetworkBlobRegistry.cpp:
+        (WebKit::NetworkBlobRegistry::writeBlobToFilePath):
+
+        Call out to the BlobRegistryImpl to write blobs to the file path. Additionally grant sandbox extensions for any
+        file-backed blob parts corresponding to the given blob URL.
+
+        (WebKit::NetworkBlobRegistry::filesInBlob):
+
+        Introduce a version of filesInBlob that doesn't check against the NetworkConnectionToWebProcess. This is used
+        when the UI process is the driver for writing a blob.
+
+        * NetworkProcess/FileAPI/NetworkBlobRegistry.h:
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::writeBlobToFilePath):
+
+        Temporarily grant sandbox access to the given file path.
+
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in:
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::ArgumentCoder<PromisedBlobInfo>::encode):
+        (IPC::ArgumentCoder<PromisedBlobInfo>::decode):
+        (IPC::ArgumentCoder<PromisedBlobData>::encode): Deleted.
+        (IPC::ArgumentCoder<PromisedBlobData>::decode): Deleted.
+
+        Remove PromisedBlobData (see WebCore/ChangeLog for more information).
+
+        * Shared/WebCoreArgumentCoders.h:
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::didClose):
+
+        If the network process is terminated, flush any pending callbacks in m_writeBlobToFilePathCallbackMap, passing
+        in a failure result (success := false) and clearing the callback map.
+
+        (WebKit::NetworkProcessProxy::writeBlobToFilePath):
+        (WebKit::NetworkProcessProxy::didWriteBlobToFilePath):
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/Network/NetworkProcessProxy.messages.in:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::writeBlobToFilePath):
+        * UIProcess/WebPageProxy.h:
+
 2018-01-05  Dan Bernstein  <mitz@apple.com>
 
         Add injected bundle equivalents of DOMHTMLDocument (DOMHTMLDocumentExtensions)

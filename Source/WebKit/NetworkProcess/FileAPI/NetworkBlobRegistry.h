@@ -54,10 +54,12 @@ public:
     void unregisterBlobURL(NetworkConnectionToWebProcess*, const WebCore::URL&);
     uint64_t blobSize(NetworkConnectionToWebProcess*, const WebCore::URL&);
     void writeBlobsToTemporaryFiles(const Vector<String>& blobURLs, Function<void (const Vector<String>&)>&& completionHandler);
+    void writeBlobToFilePath(const WebCore::URL& blobURL, const String& path, Function<void(bool success)>&& completionHandler);
 
     void connectionToWebProcessDidClose(NetworkConnectionToWebProcess*);
 
     Vector<RefPtr<WebCore::BlobDataFileReference>> filesInBlob(NetworkConnectionToWebProcess&, const WebCore::URL&);
+    Vector<RefPtr<WebCore::BlobDataFileReference>> filesInBlob(const WebCore::URL&);
 
 private:
     ~NetworkBlobRegistry();

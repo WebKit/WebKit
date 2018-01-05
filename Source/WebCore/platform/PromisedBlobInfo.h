@@ -25,17 +25,15 @@
 
 #pragma once
 
-#include "SharedBuffer.h"
-
 namespace WebCore {
 
-enum class PromisedBlobType { DataBacked, FileBacked };
+class SharedBuffer;
+class URL;
 
 struct PromisedBlobInfo {
-    String blobURL;
+    URL blobURL;
     String contentType;
     String filename;
-    PromisedBlobType blobType;
 
     Vector<String> additionalTypes;
     Vector<RefPtr<SharedBuffer>> additionalData;
@@ -43,29 +41,5 @@ struct PromisedBlobInfo {
     operator bool() const { return !blobURL.isEmpty(); }
 };
 
-struct PromisedBlobData {
-    String blobURL;
-    String filePath;
-    RefPtr<SharedBuffer> data;
-
-    bool hasData() const { return data; }
-    bool hasFile() const { return !filePath.isEmpty(); }
-    operator bool() const { return !blobURL.isEmpty(); }
-    bool fulfills(const PromisedBlobInfo& info) const { return *this && blobURL == info.blobURL; }
-};
-
 } // namespace WebCore
 
-namespace WTF {
-
-template<typename> struct EnumTraits;
-template<typename E, E...> struct EnumValues;
-
-template<> struct EnumTraits<WebCore::PromisedBlobType> {
-    using values = EnumValues<WebCore::PromisedBlobType,
-    WebCore::PromisedBlobType::DataBacked,
-    WebCore::PromisedBlobType::FileBacked
-    >;
-};
-
-} // namespace WTF

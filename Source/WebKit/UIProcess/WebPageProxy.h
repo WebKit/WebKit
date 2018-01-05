@@ -1262,6 +1262,8 @@ public:
     void getApplicationManifest(Function<void(const std::optional<WebCore::ApplicationManifest>&, CallbackBase::Error)>&&);
 #endif
 
+    void writeBlobToFilePath(const WebCore::URL& blobURL, const String& path, Function<void(bool success)>&&);
+
     WebPreferencesStore preferencesStore() const;
 
 private:
