@@ -1,3 +1,17 @@
+2018-01-04  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r226405.
+        https://bugs.webkit.org/show_bug.cgi?id=181318
+
+        Speculative rollout due to Octane/SplayLatency,Octane/Splay
+        regressions (Requested by yusukesuzuki on #webkit).
+
+        Reverted changeset:
+
+        "[JSC] Create parallel SlotVisitors apriori"
+        https://bugs.webkit.org/show_bug.cgi?id=180907
+        https://trac.webkit.org/changeset/226405
+
 2018-01-04  Saam Barati  <sbarati@apple.com>
 
         Do value profiling in to_this

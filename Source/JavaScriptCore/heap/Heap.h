@@ -370,6 +370,7 @@ public:
 
     template<typename Func>
     void forEachSlotVisitor(const Func&);
+    unsigned numberOfSlotVisitors();
 
 private:
     friend class AllocatingScope;
