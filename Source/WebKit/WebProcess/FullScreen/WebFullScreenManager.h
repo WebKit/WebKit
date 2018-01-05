@@ -83,7 +83,9 @@ protected:
     float m_topContentInset;
     RefPtr<WebPage> m_page;
     RefPtr<WebCore::Element> m_element;
+#if ENABLE(VIDEO)
     RefPtr<WebCore::HTMLVideoElement> m_pipStandbyElement;
+#endif
 };
 
 } // namespace WebKit

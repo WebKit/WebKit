@@ -125,18 +125,22 @@ void WebFullScreenManager::didEnterFullScreen()
     ASSERT(m_element);
     m_element->document().webkitDidEnterFullScreenForElement(m_element.get());
 
+#if ENABLE(VIDEO)
     m_pipStandbyElement = descendantsOfType<HTMLVideoElement>(*m_element).first();
     if (m_pipStandbyElement)
         m_pipStandbyElement->setVideoFullscreenStandby(true);
+#endif
 }
 
 void WebFullScreenManager::willExitFullScreen()
 {
     ASSERT(m_element);
 
+#if ENABLE(VIDEO)
     if (m_pipStandbyElement)
         m_pipStandbyElement->setVideoFullscreenStandby(false);
     m_pipStandbyElement = nullptr;
+#endif
 
     m_finalFrame = screenRectOfContents(m_element.get());
     m_element->document().webkitWillExitFullScreenForElement(m_element.get());

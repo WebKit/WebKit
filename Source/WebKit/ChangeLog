@@ -1,3 +1,15 @@
+2018-01-05  Don Olmstead  <don.olmstead@sony.com>
+
+        WebFullScreenManager should compile when ENABLE(VIDEO) is off
+        https://bugs.webkit.org/show_bug.cgi?id=181338
+
+        Reviewed by Alex Christensen.
+
+        * WebProcess/FullScreen/WebFullScreenManager.cpp:
+        (WebKit::WebFullScreenManager::didEnterFullScreen):
+        (WebKit::WebFullScreenManager::willExitFullScreen):
+        * WebProcess/FullScreen/WebFullScreenManager.h:
+
 2018-01-05  Andy Estes  <aestes@apple.com>
 
         [Apple Pay] Disable Apple Pay on platforms that don't have PassKit.framework
