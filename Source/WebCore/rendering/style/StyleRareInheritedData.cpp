@@ -86,7 +86,7 @@ StyleRareInheritedData::StyleRareInheritedData()
     , nbspMode(NBNORMAL)
     , lineBreak(LineBreakAuto)
     , userSelect(RenderStyle::initialUserSelect())
-    , speak(SpeakNormal)
+    , speakAs(SpeakNormal)
     , hyphens(HyphensManual)
     , textEmphasisFill(TextEmphasisFillFilled)
     , textEmphasisMark(TextEmphasisMarkNone)
@@ -178,7 +178,7 @@ inline StyleRareInheritedData::StyleRareInheritedData(const StyleRareInheritedDa
     , nbspMode(o.nbspMode)
     , lineBreak(o.lineBreak)
     , userSelect(o.userSelect)
-    , speak(o.speak)
+    , speakAs(o.speakAs)
     , hyphens(o.hyphens)
     , textEmphasisFill(o.textEmphasisFill)
     , textEmphasisMark(o.textEmphasisMark)
@@ -287,7 +287,7 @@ bool StyleRareInheritedData::operator==(const StyleRareInheritedData& o) const
         && textSizeAdjust == o.textSizeAdjust
 #endif
         && userSelect == o.userSelect
-        && speak == o.speak
+        && speakAs == o.speakAs
         && hyphens == o.hyphens
         && hyphenationLimitBefore == o.hyphenationLimitBefore
         && hyphenationLimitAfter == o.hyphenationLimitAfter

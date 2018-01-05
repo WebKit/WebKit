@@ -146,6 +146,8 @@ public:
 
     static HangingPunctuation convertHangingPunctuation(StyleResolver&, const CSSValue&);
 
+    static ESpeakAs convertSpeakAs(StyleResolver&, const CSSValue&);
+
     static Length convertPositionComponentX(StyleResolver&, const CSSValue&);
     static Length convertPositionComponentY(StyleResolver&, const CSSValue&);
     
@@ -1514,6 +1516,16 @@ inline BreakInside StyleBuilderConverter::convertColumnBreakInside(StyleResolver
     if (primitiveValue.valueID() == CSSValueAvoid)
         return AvoidColumnBreakInside;
     return primitiveValue;
+}
+    
+inline ESpeakAs StyleBuilderConverter::convertSpeakAs(StyleResolver&, const CSSValue& value)
+{
+    ESpeakAs result = RenderStyle::initialSpeakAs();
+    if (is<CSSValueList>(value)) {
+        for (auto& currentValue : downcast<CSSValueList>(value))
+            result |= downcast<CSSPrimitiveValue>(currentValue.get());
+    }
+    return result;
 }
 
 inline HangingPunctuation StyleBuilderConverter::convertHangingPunctuation(StyleResolver&, const CSSValue& value)

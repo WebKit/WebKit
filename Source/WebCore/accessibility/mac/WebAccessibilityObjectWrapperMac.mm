@@ -3168,24 +3168,8 @@ static NSString* roleValueToNSString(AccessibilityRole value)
         return [NSValue valueWithPoint:m_object->clickPoint()];
     
     // This is used by DRT to verify CSS3 speech works.
-    if ([attributeName isEqualToString:@"AXDRTSpeechAttribute"]) {
-        ESpeak speakProperty = m_object->speakProperty();
-        switch (speakProperty) {
-            case SpeakNone:
-                return @"none";
-            case SpeakSpellOut:
-                return @"spell-out";
-            case SpeakDigits:
-                return @"digits";
-            case SpeakLiteralPunctuation:
-                return @"literal-punctuation";
-            case SpeakNoPunctuation:
-                return @"no-punctuation";
-            default:
-            case SpeakNormal:
-                return @"normal";
-        }
-    }
+    if ([attributeName isEqualToString:@"AXDRTSpeechAttribute"])
+        return [self baseAccessibilitySpeechHint];
     
     // Used by DRT to find an accessible node by its element id.
     if ([attributeName isEqualToString:@"AXDRTElementIdAttribute"])

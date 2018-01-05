@@ -53,7 +53,7 @@ interface AccessibilityUIElement {
     readonly attribute DOMString helpText;
     readonly attribute DOMString valueDescription;
     readonly attribute DOMString url;
-    readonly attribute DOMString speak;
+    readonly attribute DOMString speakAs;
     readonly attribute DOMString orientation;
     readonly attribute long insertionPointLineNumber;
     readonly attribute DOMString selectedTextRange;

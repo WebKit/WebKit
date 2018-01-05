@@ -3567,6 +3567,52 @@ static RefPtr<CSSValue> consumeInitialLetter(CSSParserTokenRange& range)
     return createPrimitiveValuePair(position.releaseNonNull(), WTFMove(height));
 }
 
+static RefPtr<CSSValue> consumeSpeakAs(CSSParserTokenRange& range)
+{
+    if (range.peek().id() == CSSValueNone)
+        return consumeIdent(range);
+    
+    RefPtr<CSSValueList> list = CSSValueList::createSpaceSeparated();
+    std::bitset<numCSSValueKeywords> seenValues;
+    
+    bool seenNormal = false;
+    bool seenSpellOut = false;
+    bool seenLiteralPunctuation = false;
+    bool seenNoPunctuation = false;
+
+    // normal | spell-out || digits || [ literal-punctuation | no-punctuation ]
+    while (!range.atEnd()) {
+        CSSValueID valueID = range.peek().id();
+        if ((valueID == CSSValueNormal && seenSpellOut)
+            || (valueID == CSSValueSpellOut && seenNormal)
+            || (valueID == CSSValueLiteralPunctuation && seenNoPunctuation)
+            || (valueID == CSSValueNoPunctuation && seenLiteralPunctuation))
+            return nullptr;
+        RefPtr<CSSValue> ident = consumeIdent<CSSValueNormal, CSSValueSpellOut, CSSValueDigits, CSSValueLiteralPunctuation, CSSValueNoPunctuation>(range);
+        if (!ident)
+            return nullptr;
+        switch (valueID) {
+        case CSSValueNormal:
+            seenNormal = true;
+            break;
+        case CSSValueSpellOut:
+            seenSpellOut = true;
+            break;
+        case CSSValueLiteralPunctuation:
+            seenLiteralPunctuation = true;
+            break;
+        case CSSValueNoPunctuation:
+            seenNoPunctuation = true;
+            break;
+        default:
+            break;
+        }
+        list->append(ident.releaseNonNull());
+    }
+    
+    return list->length() ? list : nullptr;
+}
+    
 static RefPtr<CSSValue> consumeHangingPunctuation(CSSParserTokenRange& range)
 {
     if (range.peek().id() == CSSValueNone)
@@ -4238,6 +4284,8 @@ RefPtr<CSSValue> CSSPropertyParser::parseSingleValue(CSSPropertyID property, CSS
         return consumeLineGrid(m_range);
     case CSSPropertyWebkitInitialLetter:
         return consumeInitialLetter(m_range);
+    case CSSPropertySpeakAs:
+        return consumeSpeakAs(m_range);
     case CSSPropertyHangingPunctuation:
         return consumeHangingPunctuation(m_range);
     case CSSPropertyWebkitMarqueeIncrement:

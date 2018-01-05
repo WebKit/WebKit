@@ -745,7 +745,7 @@ public:
     float imageResolution() const { return m_rareInheritedData->imageResolution; }
 #endif
     
-    ESpeak speak() const { return static_cast<ESpeak>(m_rareInheritedData->speak); }
+    ESpeakAs speakAs() const { return static_cast<ESpeakAs>(m_rareInheritedData->speakAs); }
 
     FilterOperations& mutableFilter() { return m_rareNonInheritedData.access().filter.access().operations; }
     const FilterOperations& filter() const { return m_rareNonInheritedData->filter->operations; }
@@ -1142,7 +1142,7 @@ public:
     void setTransformOriginZ(float f) { SET_NESTED_VAR(m_rareNonInheritedData, transform, z, f); }
     void setTransformBox(TransformBox box) { SET_NESTED_VAR(m_rareNonInheritedData, transform, transformBox, box); }
 
-    void setSpeak(ESpeak s) { SET_VAR(m_rareInheritedData, speak, s); }
+    void setSpeakAs(ESpeakAs s) { SET_VAR(m_rareInheritedData, speakAs, s); }
     void setTextCombine(TextCombine v) { SET_VAR(m_rareNonInheritedData, textCombine, v); }
     void setTextDecorationColor(const Color& c) { SET_VAR(m_rareNonInheritedData, textDecorationColor, c); }
     void setTextEmphasisColor(const Color& c) { SET_VAR(m_rareInheritedData, textEmphasisColor, c); }
@@ -1514,7 +1514,7 @@ public:
     static EOverflowWrap initialOverflowWrap() { return NormalOverflowWrap; }
     static ENBSPMode initialNBSPMode() { return NBNORMAL; }
     static LineBreak initialLineBreak() { return LineBreakAuto; }
-    static ESpeak initialSpeak() { return SpeakNormal; }
+    static ESpeakAs initialSpeakAs() { return SpeakNormal; }
     static Hyphens initialHyphens() { return HyphensManual; }
     static short initialHyphenationLimitBefore() { return -1; }
     static short initialHyphenationLimitAfter() { return -1; }

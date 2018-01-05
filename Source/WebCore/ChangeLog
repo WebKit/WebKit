@@ -1,3 +1,59 @@
+2018-01-04  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: Implement updated CSS3 Speech for 'speak' and 'speak-as' properties
+        https://bugs.webkit.org/show_bug.cgi?id=180361
+
+        Reviewed by Zalan Bujtas.
+
+        Change speak -> speakAs, and allow a combination of properties.
+
+        Tests: Updated accessibility/mac/css-speech-speak.html
+
+        * accessibility/AccessibilityObject.h:
+        (WebCore::AccessibilityObject::speakAsProperty const):
+        (WebCore::AccessibilityObject::speakProperty const): Deleted.
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::speakAsProperty const):
+        (WebCore::AccessibilityRenderObject::speakProperty const): Deleted.
+        * accessibility/AccessibilityRenderObject.h:
+        * accessibility/ios/WebAccessibilityObjectWrapperIOS.mm:
+        (-[WebAccessibilityObjectWrapper accessibilitySpeechHint]):
+        * accessibility/mac/WebAccessibilityObjectWrapperBase.h:
+        * accessibility/mac/WebAccessibilityObjectWrapperBase.mm:
+        (-[WebAccessibilityObjectWrapperBase baseAccessibilitySpeechHint]):
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (-[WebAccessibilityObjectWrapper accessibilityAttributeValue:]):
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::speakAsToCSSValue):
+        (WebCore::ComputedStyleExtractor::propertyValue):
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        (WebCore::CSSPrimitiveValue::operator ESpeakAs const):
+        (WebCore::CSSPrimitiveValue::operator ESpeak const): Deleted.
+        * css/CSSProperties.json:
+        * css/StyleBuilderConverter.h:
+        (WebCore::StyleBuilderConverter::convertSpeakAs):
+        * css/parser/CSSParserFastPaths.cpp:
+        (WebCore::CSSParserFastPaths::isValidKeywordPropertyAndValue):
+        (WebCore::CSSParserFastPaths::isKeywordPropertyID):
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::consumeSpeakAs):
+        (WebCore::CSSPropertyParser::parseSingleValue):
+        * rendering/style/RenderStyle.h:
+        (WebCore::RenderStyle::speakAs const):
+        (WebCore::RenderStyle::setSpeakAs):
+        (WebCore::RenderStyle::initialSpeakAs):
+        (WebCore::RenderStyle::speak const): Deleted.
+        (WebCore::RenderStyle::setSpeak): Deleted.
+        (WebCore::RenderStyle::initialSpeak): Deleted.
+        * rendering/style/RenderStyleConstants.h:
+        (WebCore::operator| ):
+        (WebCore::operator|= ):
+        * rendering/style/StyleRareInheritedData.cpp:
+        (WebCore::StyleRareInheritedData::StyleRareInheritedData):
+        (WebCore::StyleRareInheritedData::operator== const):
+        * rendering/style/StyleRareInheritedData.h:
+
 2018-01-04  Brian Burg  <bburg@apple.com>
 
         Web Inspector: Capture Element Screenshot looks fuzzy

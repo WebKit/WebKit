@@ -173,7 +173,7 @@ public:
     JSStringRef classList() const;
 
     // CSS3-speech properties.
-    JSStringRef speak();
+    JSStringRef speakAs();
     
     // Table-specific attributes
     JSStringRef attributesOfColumnHeaders();

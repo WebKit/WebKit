@@ -178,8 +178,6 @@ rect: style.getPropertyValue(resize) : none
 rect: style.getPropertyCSSValue(resize) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(right) : auto
 rect: style.getPropertyCSSValue(right) : [object CSSPrimitiveValue]
-rect: style.getPropertyValue(speak) : normal
-rect: style.getPropertyCSSValue(speak) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(table-layout) : auto
 rect: style.getPropertyCSSValue(table-layout) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(tab-size) : 8
@@ -732,8 +730,6 @@ g: style.getPropertyValue(resize) : none
 g: style.getPropertyCSSValue(resize) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(right) : auto
 g: style.getPropertyCSSValue(right) : [object CSSPrimitiveValue]
-g: style.getPropertyValue(speak) : normal
-g: style.getPropertyCSSValue(speak) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(table-layout) : auto
 g: style.getPropertyCSSValue(table-layout) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(tab-size) : 8

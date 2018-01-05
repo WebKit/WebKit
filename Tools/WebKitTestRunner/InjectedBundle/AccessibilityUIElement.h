@@ -168,7 +168,7 @@ public:
     JSRetainPtr<JSStringRef> classList() const;
 
     // CSS3-speech properties.
-    JSRetainPtr<JSStringRef> speak();
+    JSRetainPtr<JSStringRef> speakAs();
     
     // Table-specific attributes
     JSRetainPtr<JSStringRef> attributesOfColumnHeaders();

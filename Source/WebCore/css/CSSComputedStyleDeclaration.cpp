@@ -205,7 +205,7 @@ static const CSSPropertyID computedProperties[] = {
     CSSPropertyPosition,
     CSSPropertyResize,
     CSSPropertyRight,
-    CSSPropertySpeak,
+    CSSPropertySpeakAs,
     CSSPropertyTableLayout,
     CSSPropertyTabSize,
     CSSPropertyTextAlign,
@@ -1827,6 +1827,25 @@ static Ref<CSSValue> renderEmphasisPositionFlagsToCSSValue(TextEmphasisPosition 
     return WTFMove(list);
 }
 
+static Ref<CSSValue> speakAsToCSSValue(ESpeakAs speakAs)
+{
+    auto& cssValuePool = CSSValuePool::singleton();
+    auto list = CSSValueList::createSpaceSeparated();
+    if (speakAs & SpeakNormal)
+        list->append(cssValuePool.createIdentifierValue(CSSValueNormal));
+    if (speakAs & SpeakSpellOut)
+        list->append(cssValuePool.createIdentifierValue(CSSValueSpellOut));
+    if (speakAs & SpeakDigits)
+        list->append(cssValuePool.createIdentifierValue(CSSValueDigits));
+    if (speakAs & SpeakLiteralPunctuation)
+        list->append(cssValuePool.createIdentifierValue(CSSValueLiteralPunctuation));
+    if (speakAs & SpeakNoPunctuation)
+        list->append(cssValuePool.createIdentifierValue(CSSValueNoPunctuation));
+    if (!list->length())
+        return cssValuePool.createIdentifierValue(CSSValueNormal);
+    return WTFMove(list);
+}
+    
 static Ref<CSSValue> hangingPunctuationToCSSValue(HangingPunctuation hangingPunctuation)
 {
     auto& cssValuePool = CSSValuePool::singleton();
@@ -3694,8 +3713,8 @@ RefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propertyID,
             rect->setLeft(autoOrZoomAdjustedValue(style->clip().left(), *style));
             return cssValuePool.createValue(WTFMove(rect));
         }
-        case CSSPropertySpeak:
-            return cssValuePool.createValue(style->speak());
+        case CSSPropertySpeakAs:
+            return speakAsToCSSValue(style->speakAs());
         case CSSPropertyTransform:
             return computedTransform(renderer, *style);
         case CSSPropertyTransformBox:

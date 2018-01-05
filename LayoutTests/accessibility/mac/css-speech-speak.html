@@ -3,26 +3,28 @@
 <head>
 <script src="../../resources/js-test-pre.js"></script>
 <style>
-div.speech-none { speak: none; }
-div.speech-normal { speak: normal; }
-div.speech-spellout { speak: spell-out; }
-div.speech-digits { speak: digits; }
-div.speech-literalpunc { speak: literal-punctuation; }
-div.speech-nopunc { speak: no-punctuation; }
+div.speech-normal { speak-as: normal; }
+div.speech-spellout { speak-as: spell-out; }
+div.speech-digits { speak-as: digits; }
+div.speech-literalpunc { speak-as: literal-punctuation; }
+div.speech-nopunc { speak-as: no-punctuation; }
+div.digits-and-literal { speak-as: digits literal-punctuation; }
+div.spell-and-literal { speak-as: spell-out literal-punctuation; }
 </style>
 </head>
 <body id="body">
 
 
 <div tabindex="0" id="initial" >Initial</div>
-<div tabindex="0" id="speech-none" class="speech-none">No speech</div>
 <div tabindex="0" id="speech-normal" class="speech-normal">Normal</div>
 <div tabindex="0" id="speech-spellout" class="speech-spellout">Spellout</div>
 <div tabindex="0" id="speech-digits" class="speech-digits">Digits</div>
 <div tabindex="0" id="speech-literalpunc" class="speech-literalpunc">Literal</div>
 <div tabindex="0" id="speech-nopunc" class="speech-nopunc">No punctuation</div>
+<div tabindex="0" id="speech-digits-and-literal" class="digits-and-literal">Digits and Literal</div>
+<div tabindex="0" id="speech-spell-and-literal" class="spell-and-literal">Spell and Literal</div>
 
-<div style='speak: digits;'>
+<div style='speak-as: digits;'>
  <div>
   <div>
     <a id="testlink" tabindex="0" href="#">test</a>
@@ -35,33 +37,36 @@ div.speech-nopunc { speak: no-punctuation; }
 
 <script>
 
-    description("This tests that using the CSS3-speech property 'speak' works as from a WebCore level (not a platform level, that is up to the platforms)");
+    description("This tests that using the CSS3-speech property 'speak-as' works as from a WebCore level (not a platform level, that is up to the platforms)");
 
     if (window.accessibilityController) {
 
           document.getElementById("initial").focus();
-          shouldBe("accessibilityController.focusedElement.childAtIndex(0).speak", "'normal'");
-
-          document.getElementById("speech-none").focus();
-          shouldBe("accessibilityController.focusedElement.childAtIndex(0).speak", "'none'");
+          shouldBe("accessibilityController.focusedElement.childAtIndex(0).speakAs", "'normal'");
 
           document.getElementById("speech-normal").focus();
-          shouldBe("accessibilityController.focusedElement.childAtIndex(0).speak", "'normal'");
+          shouldBe("accessibilityController.focusedElement.childAtIndex(0).speakAs", "'normal'");
 
           document.getElementById("speech-spellout").focus();
-          shouldBe("accessibilityController.focusedElement.childAtIndex(0).speak", "'spell-out'");
+          shouldBe("accessibilityController.focusedElement.childAtIndex(0).speakAs", "'spell-out'");
 
           document.getElementById("speech-digits").focus();
-          shouldBe("accessibilityController.focusedElement.childAtIndex(0).speak", "'digits'");
+          shouldBe("accessibilityController.focusedElement.childAtIndex(0).speakAs", "'normal, digits'");
 
           document.getElementById("speech-literalpunc").focus();
-          shouldBe("accessibilityController.focusedElement.childAtIndex(0).speak", "'literal-punctuation'");
+          shouldBe("accessibilityController.focusedElement.childAtIndex(0).speakAs", "'normal, literal-punctuation'");
 
           document.getElementById("speech-nopunc").focus();
-          shouldBe("accessibilityController.focusedElement.childAtIndex(0).speak", "'no-punctuation'");
+          shouldBe("accessibilityController.focusedElement.childAtIndex(0).speakAs", "'normal, no-punctuation'");
+
+          document.getElementById("speech-digits-and-literal").focus();
+          shouldBe("accessibilityController.focusedElement.childAtIndex(0).speakAs", "'normal, digits, literal-punctuation'");
+
+          document.getElementById("speech-spell-and-literal").focus();
+          shouldBe("accessibilityController.focusedElement.childAtIndex(0).speakAs", "'spell-out, literal-punctuation'");
 
           document.getElementById("testlink").focus();
-          shouldBe("accessibilityController.focusedElement.childAtIndex(0).speak", "'digits'");
+          shouldBe("accessibilityController.focusedElement.childAtIndex(0).speakAs", "'normal, digits'");
     }
 
 </script>

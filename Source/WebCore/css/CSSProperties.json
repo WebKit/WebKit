@@ -3085,19 +3085,14 @@
                 "obsolete-url": "https://www.w3.org/TR/SVG11/painting.html#StrokeWidthProperty"
             }
         },
-        "speak": {
+        "speak-as": {
             "inherited": true,
-            "values": [
-                "none",
-                "normal",
-                "spell-out",
-                "digits",
-                "literal-punctuation",
-                "no-punctuation"
-            ],
+            "codegen-properties": {
+                "converter": "SpeakAs"
+            },
             "specification": {
                 "category": "css-speech",
-                "url": "https://www.w3.org/TR/css3-speech/#speak"
+                "url": "https://www.w3.org/TR/css3-speech/#speak-as"
             }
         },
         "table-layout": {

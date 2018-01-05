@@ -2843,28 +2843,12 @@ static void AXAttributedStringAppendText(NSMutableAttributedString* attrString, 
     return m_object->getAttribute(HTMLNames::idAttr);
 }
 
-- (NSString *)accessibilitySpeechHint
+- (NSArray<NSString *> *)accessibilitySpeechHint
 {
     if (![self _prepareAccessibilityCall])
         return nil;
 
-    switch (m_object->speakProperty()) {
-    default:
-    case SpeakNormal:
-        return @"normal";
-    case SpeakNone:
-        return @"none";
-    case SpeakSpellOut:
-        return @"spell-out";
-    case SpeakDigits:
-        return @"digits";
-    case SpeakLiteralPunctuation:
-        return @"literal-punctuation";
-    case SpeakNoPunctuation:
-        return @"no-punctuation";
-    }
-    
-    return nil;
+    return [self baseAccessibilitySpeechHint];
 }
 
 - (BOOL)accessibilityARIAIsBusy

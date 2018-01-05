@@ -944,12 +944,12 @@ AccessibilityObject* AccessibilityRenderObject::internalLinkElement() const
     return firstAccessibleObjectFromNode(linkedNode);
 }
 
-ESpeak AccessibilityRenderObject::speakProperty() const
+ESpeakAs AccessibilityRenderObject::speakAsProperty() const
 {
     if (!m_renderer)
-        return AccessibilityObject::speakProperty();
+        return AccessibilityObject::speakAsProperty();
     
-    return m_renderer->style().speak();
+    return m_renderer->style().speakAs();
 }
     
 void AccessibilityRenderObject::addRadioButtonGroupChildren(AccessibilityObject* parent, AccessibilityChildrenVector& linkedUIElements) const

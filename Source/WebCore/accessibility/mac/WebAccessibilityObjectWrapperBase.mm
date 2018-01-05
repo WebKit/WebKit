@@ -403,6 +403,25 @@ NSArray *convertToNSArray(const AccessibilityObject::AccessibilityChildrenVector
     return returnText;
 }
 
+- (NSArray<NSString *> *)baseAccessibilitySpeechHint
+{
+    ESpeakAs speak = m_object->speakAsProperty();
+    NSMutableArray<NSString *> *hints = [NSMutableArray array];
+    if (speak & SpeakSpellOut)
+        [hints addObject:@"spell-out"];
+    else
+        [hints addObject:@"normal"];
+
+    if (speak & SpeakDigits)
+        [hints addObject:@"digits"];
+    if (speak & SpeakLiteralPunctuation)
+        [hints addObject:@"literal-punctuation"];
+    if (speak & SpeakNoPunctuation)
+        [hints addObject:@"no-punctuation"];
+    
+    return hints;
+}
+
 - (NSString *)baseAccessibilityHelpText
 {
     Vector<AccessibilityText> textOrder;

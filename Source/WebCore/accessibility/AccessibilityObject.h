@@ -1004,7 +1004,7 @@ public:
     bool supportsARIAAttributes() const;
     
     // CSS3 Speech properties.
-    virtual ESpeak speakProperty() const { return SpeakNormal; }
+    virtual ESpeakAs speakAsProperty() const { return SpeakNormal; }
 
     // Make this object visible by scrolling as many nested scrollable views as needed.
     virtual void scrollToMakeVisible() const;
