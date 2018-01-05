@@ -3836,3 +3836,7 @@ webkit.org/b/179767 http/wpt/offscreen-canvas/getContext-webgl.html [ Failure ]
 
 # User-installed font infrastructure is ony present on certain OSes.
 webkit.org/b/180062 fast/text/user-installed-fonts [ ImageOnlyFailure ]
+
+webkit.org/b/181346 mathml/opentype/horizontal-munderover.html [ Failure ]
+webkit.org/b/181346 mathml/opentype/horizontal.html [ Failure ]
+webkit.org/b/181346 mathml/opentype/opentype-stretchy-horizontal.html [ Failure ]
