@@ -9182,7 +9182,10 @@ bool LayerFlushController::flushLayers()
         // AppKit may have disabled screen updates, thinking an upcoming window flush will re-enable them.
         // In case setNeedsDisplayInRect() has prevented the window from needing to be flushed, re-enable screen
         // updates here.
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
         if (![window isFlushWindowDisabled])
+#pragma clang diagnostic pop
             [window _enableScreenUpdatesIfNeeded];
 #endif
 

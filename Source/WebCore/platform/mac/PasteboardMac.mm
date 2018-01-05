@@ -596,7 +596,10 @@ static void setDragImageImpl(NSImage *image, NSPoint offset)
     RetainPtr<NSBitmapImageRep> bitmapImage;
     if (!imageRep || ![imageRep isKindOfClass:[NSBitmapImageRep class]] || !NSEqualSizes(imageRep.size, imageSize)) {
         [image lockFocus];
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
         bitmapImage = adoptNS([[NSBitmapImageRep alloc] initWithFocusedViewRect:*(NSRect*)&imageRect]);
+#pragma clang diagnostic pop
         [image unlockFocus];
         
         // we may have to flip the bits we just read if the image was flipped since it means the cache was also

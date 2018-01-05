@@ -1,3 +1,12 @@
+2018-01-05  Dan Bernstein  <mitz@apple.com>
+
+        Fixed the build following AppKit API deprecations in a recent SDKs
+
+        * platform/mac/PasteboardMac.mm:
+        (WebCore::setDragImageImpl): Suppressed deprecation warnings.
+        * platform/mac/WidgetMac.mm:
+        (WebCore::Widget::paint): Ditto.
+
 2018-01-05  Joseph Pecoraro  <pecoraro@apple.com>
 
         ServiceWorkers: Enable UserTiming / ResourceTiming

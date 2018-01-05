@@ -206,7 +206,10 @@ void Widget::paint(GraphicsContext& p, const IntRect& r, SecurityOriginPaintPoli
     Ref<Widget> protectedThis(*this);
 
     NSGraphicsContext *currentContext = [NSGraphicsContext currentContext];
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     if (currentContext == [[view window] graphicsContext] || ![currentContext isDrawingToScreen]) {
+#pragma clang diagnostic pop
         // This is the common case of drawing into a window or an inclusive layer, or printing.
         BEGIN_BLOCK_OBJC_EXCEPTIONS;
         [view displayRectIgnoringOpacity:[view convertRect:r fromView:[view superview]]];

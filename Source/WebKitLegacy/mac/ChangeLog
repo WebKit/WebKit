@@ -1,3 +1,19 @@
+2018-01-05  Dan Bernstein  <mitz@apple.com>
+
+        Fixed the build following AppKit API deprecations in a recent SDKs
+
+        * WebView/WebFullScreenController.mm:
+        (-[WebFullScreenController enterFullScreen:]): Suppressed deprecation warnings.
+        (-[WebFullScreenController exitFullScreen]): Ditto.
+        (-[WebFullScreenController _startEnterFullScreenAnimationWithDuration:]): Ditto.
+        (-[WebFullScreenController _startExitFullScreenAnimationWithDuration:]): Ditto.
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView drawRect:]): Ditto.
+        (-[WebHTMLView _endPrintModeAndRestoreWindowAutodisplay]): Ditto.
+        (-[WebHTMLView knowsPageRange:]): Ditto.
+        * WebView/WebView.mm:
+        (LayerFlushController::flushLayers): Ditto.
+
 2018-01-03  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Attachment Support] Create attachment elements when dropping files on iOS
