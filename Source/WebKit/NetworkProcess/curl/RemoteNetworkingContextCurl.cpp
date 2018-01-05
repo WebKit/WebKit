@@ -47,11 +47,6 @@ bool RemoteNetworkingContext::isValid() const
     return true;
 }
 
-void RemoteNetworkingContext::ensurePrivateBrowsingSession(WebsiteDataStoreParameters&&)
-{
-    notImplemented();
-}
-
 void RemoteNetworkingContext::ensureWebsiteDataStoreSession(WebsiteDataStoreParameters&&)
 {
     notImplemented();
@@ -60,11 +55,6 @@ void RemoteNetworkingContext::ensureWebsiteDataStoreSession(WebsiteDataStorePara
 NetworkStorageSession& RemoteNetworkingContext::storageSession() const
 {
     return NetworkStorageSession::defaultStorageSession();
-}
-
-ResourceError RemoteNetworkingContext::blockedError(const ResourceRequest& request) const
-{
-    return ResourceError();
 }
 
 }
