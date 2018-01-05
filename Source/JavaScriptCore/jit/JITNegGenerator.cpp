@@ -64,7 +64,7 @@ JITMathICInlineResult JITNegGenerator::generateInline(CCallHelpers& jit, MathICG
     }
     if (observedTypes.isOnlyNumber()) {
         state.slowPathJumps.append(jit.branchIfInt32(m_src));
-        state.slowPathJumps.append(jit.branchIfNotNumber(m_src, m_scratchGPR));
+        state.slowPathJumps.append(jit.branchIfNotNumber(m_src));
 #if USE(JSVALUE64)
         if (m_src.payloadGPR() != m_result.payloadGPR()) {
             jit.move(CCallHelpers::TrustedImm64(static_cast<int64_t>(1ull << 63)), m_result.payloadGPR());
@@ -74,6 +74,7 @@ JITMathICInlineResult JITNegGenerator::generateInline(CCallHelpers& jit, MathICG
             jit.xor64(m_scratchGPR, m_result.payloadGPR());
         }
 #else
+        UNUSED_PARAM(m_scratchGPR);
         jit.moveValueRegs(m_src, m_result);
         jit.xor32(CCallHelpers::TrustedImm32(1 << 31), m_result.tagGPR());
 #endif
@@ -106,7 +107,7 @@ bool JITNegGenerator::generateFastPath(CCallHelpers& jit, CCallHelpers::JumpList
     endJumpList.append(jit.jump());
 
     srcNotInt.link(&jit);
-    slowPathJumpList.append(jit.branchIfNotNumber(m_src, m_scratchGPR));
+    slowPathJumpList.append(jit.branchIfNotNumber(m_src));
 
     // For a double, all we need to do is to invert the sign bit.
 #if USE(JSVALUE64)

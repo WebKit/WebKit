@@ -273,8 +273,7 @@ void JIT::emit_op_is_number(Instruction* currentInstruction)
     int value = currentInstruction[2].u.operand;
     
     emitLoadTag(value, regT0);
-    add32(TrustedImm32(1), regT0);
-    compare32(Below, regT0, TrustedImm32(JSValue::LowestTag + 1), regT0);
+    compare32(BelowOrEqual, regT0, TrustedImm32(JSValue::LowestTag), regT0);
     emitStoreBool(dst, regT0);
 }
 
@@ -401,7 +400,7 @@ void JIT::emit_op_jeq_null(Instruction* currentInstruction)
 
     // Now handle the immediate cases - undefined & null
     isImmediate.link(this);
-    ASSERT((JSValue::UndefinedTag + 1 == JSValue::NullTag) && (JSValue::NullTag & 0x1));
+    static_assert((JSValue::UndefinedTag + 1 == JSValue::NullTag) && (JSValue::NullTag & 0x1), "");
     or32(TrustedImm32(1), regT1);
     addJump(branch32(Equal, regT1, TrustedImm32(JSValue::NullTag)), target);
 
@@ -427,7 +426,7 @@ void JIT::emit_op_jneq_null(Instruction* currentInstruction)
     // Now handle the immediate cases - undefined & null
     isImmediate.link(this);
 
-    ASSERT((JSValue::UndefinedTag + 1 == JSValue::NullTag) && (JSValue::NullTag & 0x1));
+    static_assert((JSValue::UndefinedTag + 1 == JSValue::NullTag) && (JSValue::NullTag & 0x1), "");
     or32(TrustedImm32(1), regT1);
     addJump(branch32(NotEqual, regT1, TrustedImm32(JSValue::NullTag)), target);
 
@@ -654,9 +653,7 @@ void JIT::emit_op_to_number(Instruction* currentInstruction)
 
     emitLoad(src, regT1, regT0);
 
-    Jump isInt32 = branch32(Equal, regT1, TrustedImm32(JSValue::Int32Tag));
-    addSlowCase(branch32(AboveOrEqual, regT1, TrustedImm32(JSValue::LowestTag)));
-    isInt32.link(this);
+    addSlowCase(branch32(Above, regT1, TrustedImm32(JSValue::LowestTag)));
 
     emitValueProfilingSite();
     if (src != dst)
@@ -1113,10 +1110,9 @@ void JIT::emit_op_profile_type(Instruction* currentInstruction)
         jumpToEnd.append(branch32(Equal, regT3, TrustedImm32(JSValue::BooleanTag)));
     else if (cachedTypeLocation->m_lastSeenType == TypeAnyInt)
         jumpToEnd.append(branch32(Equal, regT3, TrustedImm32(JSValue::Int32Tag)));
-    else if (cachedTypeLocation->m_lastSeenType == TypeNumber) {
-        jumpToEnd.append(branch32(Below, regT3, TrustedImm32(JSValue::LowestTag)));
-        jumpToEnd.append(branch32(Equal, regT3, TrustedImm32(JSValue::Int32Tag)));
-    } else if (cachedTypeLocation->m_lastSeenType == TypeString) {
+    else if (cachedTypeLocation->m_lastSeenType == TypeNumber)
+        jumpToEnd.append(branch32(BelowOrEqual, regT3, TrustedImm32(JSValue::LowestTag)));
+    else if (cachedTypeLocation->m_lastSeenType == TypeString) {
         Jump isNotCell = branch32(NotEqual, regT3, TrustedImm32(JSValue::CellTag));
         jumpToEnd.append(branch8(Equal, Address(regT0, JSCell::typeInfoTypeOffset()), TrustedImm32(StringType)));
         isNotCell.link(this);

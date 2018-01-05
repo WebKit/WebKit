@@ -731,7 +731,29 @@ public:
         return branch32(NotEqual, tempGPR, TrustedImm32(JSValue::NullTag));
 #endif
     }
+
+    Jump branchIfMisc(JSValueRegs regs)
+    {
+#if USE(JSVALUE64)
+        return branch64(BelowOrEqual, regs.gpr(), TrustedImm64(TagBitTypeOther | TagBitBool | TagBitUndefined));
+#else
+        static_assert(static_cast<unsigned>(JSValue::NullTag) >= static_cast<unsigned>(JSValue::BooleanTag), "");
+        static_assert(static_cast<unsigned>(JSValue::UndefinedTag) >= static_cast<unsigned>(JSValue::BooleanTag), "");
+        return branch32(AboveOrEqual, regs.tagGPR(), TrustedImm32(JSValue::BooleanTag));
+#endif
+    }
     
+    Jump branchIfNotMisc(JSValueRegs regs)
+    {
+#if USE(JSVALUE64)
+        return branch64(Above, regs.gpr(), TrustedImm64(TagBitTypeOther | TagBitBool | TagBitUndefined));
+#else
+        static_assert(static_cast<unsigned>(JSValue::NullTag) >= static_cast<unsigned>(JSValue::BooleanTag), "");
+        static_assert(static_cast<unsigned>(JSValue::UndefinedTag) >= static_cast<unsigned>(JSValue::BooleanTag), "");
+        return branch32(Below, regs.tagGPR(), TrustedImm32(JSValue::BooleanTag));
+#endif
+    }
+
     Jump branchIfInt32(JSValueRegs regs, TagRegistersMode mode = HaveTagRegisters)
     {
 #if USE(JSVALUE64)
@@ -763,16 +785,13 @@ public:
 #endif
     }
 
-    // Note that the tempGPR is not used in 64-bit mode.
-    Jump branchIfNumber(JSValueRegs regs, GPRReg tempGPR, TagRegistersMode mode = HaveTagRegisters)
+    Jump branchIfNumber(JSValueRegs regs, TagRegistersMode mode = HaveTagRegisters)
     {
 #if USE(JSVALUE64)
-        UNUSED_PARAM(tempGPR);
         return branchIfNumber(regs.gpr(), mode);
 #else
         UNUSED_PARAM(mode);
-        add32(TrustedImm32(1), regs.tagGPR(), tempGPR);
-        return branch32(Below, tempGPR, TrustedImm32(JSValue::LowestTag + 1));
+        return branch32(BelowOrEqual, regs.tagGPR(), TrustedImm32(JSValue::LowestTag));
 #endif
     }
 
@@ -785,16 +804,13 @@ public:
     }
 #endif
     
-    // Note that the tempGPR is not used in 64-bit mode.
-    Jump branchIfNotNumber(JSValueRegs regs, GPRReg tempGPR, TagRegistersMode mode = HaveTagRegisters)
+    Jump branchIfNotNumber(JSValueRegs regs, TagRegistersMode mode = HaveTagRegisters)
     {
 #if USE(JSVALUE64)
-        UNUSED_PARAM(tempGPR);
         return branchIfNotNumber(regs.gpr(), mode);
 #else
         UNUSED_PARAM(mode);
-        add32(TrustedImm32(1), regs.tagGPR(), tempGPR);
-        return branch32(AboveOrEqual, tempGPR, TrustedImm32(JSValue::LowestTag + 1));
+        return branch32(Above, regs.tagGPR(), TrustedImm32(JSValue::LowestTag));
 #endif
     }
 
@@ -815,7 +831,7 @@ public:
         return branchTest64(Zero, regs.gpr(), TrustedImm64(TagTypeNumber));
 #else
         UNUSED_PARAM(mode);
-        return branch32(AboveOrEqual, regs.tagGPR(), TrustedImm32(JSValue::LowestTag));
+        return branch32(Above, regs.tagGPR(), TrustedImm32(JSValue::LowestTag));
 #endif
     }
 
@@ -1462,7 +1478,7 @@ public:
         
         notCell.link(this);
 
-        Jump notNumber = branchIfNotNumber(regs, tempGPR);
+        Jump notNumber = branchIfNotNumber(regs);
         functor(TypeofType::Number, false);
         notNumber.link(this);
         

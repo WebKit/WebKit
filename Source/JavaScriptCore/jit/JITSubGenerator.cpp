@@ -51,9 +51,9 @@ JITMathICInlineResult JITSubGenerator::generateInline(CCallHelpers& jit, MathICG
             return JITMathICInlineResult::DontGenerate;
 
         if (!m_leftOperand.definitelyIsNumber())
-            state.slowPathJumps.append(jit.branchIfNotNumber(m_left, m_scratchGPR));
+            state.slowPathJumps.append(jit.branchIfNotNumber(m_left));
         if (!m_rightOperand.definitelyIsNumber())
-            state.slowPathJumps.append(jit.branchIfNotNumber(m_right, m_scratchGPR));
+            state.slowPathJumps.append(jit.branchIfNotNumber(m_right));
         state.slowPathJumps.append(jit.branchIfInt32(m_left));
         state.slowPathJumps.append(jit.branchIfInt32(m_right));
         jit.unboxDoubleNonDestructive(m_left, m_leftFPR, m_scratchGPR, m_scratchFPR);
@@ -107,9 +107,9 @@ bool JITSubGenerator::generateFastPath(CCallHelpers& jit, CCallHelpers::JumpList
 
     leftNotInt.link(&jit);
     if (!m_leftOperand.definitelyIsNumber())
-        slowPathJumpList.append(jit.branchIfNotNumber(m_left, m_scratchGPR));
+        slowPathJumpList.append(jit.branchIfNotNumber(m_left));
     if (!m_rightOperand.definitelyIsNumber())
-        slowPathJumpList.append(jit.branchIfNotNumber(m_right, m_scratchGPR));
+        slowPathJumpList.append(jit.branchIfNotNumber(m_right));
 
     jit.unboxDoubleNonDestructive(m_left, m_leftFPR, m_scratchGPR, m_scratchFPR);
     CCallHelpers::Jump rightIsDouble = jit.branchIfNotInt32(m_right);
@@ -119,7 +119,7 @@ bool JITSubGenerator::generateFastPath(CCallHelpers& jit, CCallHelpers::JumpList
 
     rightNotInt.link(&jit);
     if (!m_rightOperand.definitelyIsNumber())
-        slowPathJumpList.append(jit.branchIfNotNumber(m_right, m_scratchGPR));
+        slowPathJumpList.append(jit.branchIfNotNumber(m_right));
 
     jit.convertInt32ToDouble(m_left.payloadGPR(), m_leftFPR);
 

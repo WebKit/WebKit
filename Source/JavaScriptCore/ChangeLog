@@ -1,3 +1,80 @@
+2018-01-04  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [DFG] Unify ToNumber implementation in 32bit and 64bit by changing 32bit Int32Tag and LowestTag
+        https://bugs.webkit.org/show_bug.cgi?id=181134
+
+        Reviewed by Mark Lam.
+
+        We would like to unify DFG ToNumber implementation in 32bit and 64bit. One problem is that
+        branchIfNumber signature is different between 32bit and 64bit. 32bit implementation requires
+        an additional scratch register. We do not want to allocate an unnecessary register in 64bit
+        implementation.
+
+        This patch removes the additional register in branchIfNumber/branchIfNotNumber in both 32bit
+        and 64bit implementation. To achieve this goal, we change Int32Tag and LowestTag order. By
+        setting Int32Tag as LowestTag, we can query whether the given tag is a number by checking
+        `<= LowestTag(Int32Tag)`.
+
+        We also change the order of UndefinedTag, NullTag, and BooleanTag to keep `(UndefinedTag | 1) == NullTag`.
+
+        We also clean up speculateMisc implementation by adding branchIfMisc/branchIfNotMisc.
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileValueToInt32):
+        (JSC::DFG::SpeculativeJIT::compileDoubleRep):
+        (JSC::DFG::SpeculativeJIT::speculateNumber):
+        (JSC::DFG::SpeculativeJIT::speculateMisc):
+        (JSC::DFG::SpeculativeJIT::compileNormalizeMapKey):
+        (JSC::DFG::SpeculativeJIT::compileToNumber):
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::nonSpeculativeNonPeepholeCompareNullOrUndefined):
+        (JSC::DFG::SpeculativeJIT::nonSpeculativePeepholeBranchNullOrUndefined):
+        (JSC::DFG::SpeculativeJIT::compileObjectOrOtherLogicalNot):
+        (JSC::DFG::SpeculativeJIT::emitObjectOrOtherBranch):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * jit/AssemblyHelpers.cpp:
+        (JSC::AssemblyHelpers::branchIfNotType):
+        (JSC::AssemblyHelpers::jitAssertIsJSNumber):
+        (JSC::AssemblyHelpers::emitConvertValueToBoolean):
+        * jit/AssemblyHelpers.h:
+        (JSC::AssemblyHelpers::branchIfMisc):
+        (JSC::AssemblyHelpers::branchIfNotMisc):
+        (JSC::AssemblyHelpers::branchIfNumber):
+        (JSC::AssemblyHelpers::branchIfNotNumber):
+        (JSC::AssemblyHelpers::branchIfNotDoubleKnownNotInt32):
+        (JSC::AssemblyHelpers::emitTypeOf):
+        * jit/JITAddGenerator.cpp:
+        (JSC::JITAddGenerator::generateFastPath):
+        * jit/JITArithmetic32_64.cpp:
+        (JSC::JIT::emitBinaryDoubleOp):
+        * jit/JITDivGenerator.cpp:
+        (JSC::JITDivGenerator::loadOperand):
+        * jit/JITMulGenerator.cpp:
+        (JSC::JITMulGenerator::generateInline):
+        (JSC::JITMulGenerator::generateFastPath):
+        * jit/JITNegGenerator.cpp:
+        (JSC::JITNegGenerator::generateInline):
+        (JSC::JITNegGenerator::generateFastPath):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_is_number):
+        (JSC::JIT::emit_op_jeq_null):
+        (JSC::JIT::emit_op_jneq_null):
+        (JSC::JIT::emit_op_to_number):
+        (JSC::JIT::emit_op_profile_type):
+        * jit/JITRightShiftGenerator.cpp:
+        (JSC::JITRightShiftGenerator::generateFastPath):
+        * jit/JITSubGenerator.cpp:
+        (JSC::JITSubGenerator::generateInline):
+        (JSC::JITSubGenerator::generateFastPath):
+        * llint/LLIntData.cpp:
+        (JSC::LLInt::Data::performAssertions):
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter32_64.asm:
+        * runtime/JSCJSValue.h:
+
 2018-01-04  JF Bastien  <jfbastien@apple.com>
 
         Add assembler support for x86 lfence and sfence

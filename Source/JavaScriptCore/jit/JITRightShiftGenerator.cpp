@@ -67,7 +67,7 @@ void JITRightShiftGenerator::generateFastPath(CCallHelpers& jit)
             // Try to do (doubleVar >> intConstant).
             notInt.link(&jit);
 
-            m_slowPathJumpList.append(jit.branchIfNotNumber(m_left, m_scratchGPR));
+            m_slowPathJumpList.append(jit.branchIfNotNumber(m_left));
 
             jit.unboxDoubleNonDestructive(m_left, m_leftFPR, m_scratchGPR, m_scratchFPR);
             m_slowPathJumpList.append(jit.branchTruncateDoubleToInt32(m_leftFPR, m_scratchGPR));
@@ -120,7 +120,7 @@ void JITRightShiftGenerator::generateFastPath(CCallHelpers& jit)
             // Try to do (doubleVar >> intVar).
             leftNotInt.link(&jit);
 
-            m_slowPathJumpList.append(jit.branchIfNotNumber(m_left, m_scratchGPR));
+            m_slowPathJumpList.append(jit.branchIfNotNumber(m_left));
             jit.unboxDoubleNonDestructive(m_left, m_leftFPR, m_scratchGPR, m_scratchFPR);
             m_slowPathJumpList.append(jit.branchTruncateDoubleToInt32(m_leftFPR, m_scratchGPR));
 

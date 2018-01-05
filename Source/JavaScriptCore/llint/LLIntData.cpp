@@ -117,16 +117,7 @@ void Data::performAssertions(VM& vm)
     ASSERT(OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.tag) == 4);
     ASSERT(OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload) == 0);
 #endif
-#if USE(JSVALUE32_64)
-    STATIC_ASSERT(JSValue::Int32Tag == static_cast<unsigned>(-1));
-    STATIC_ASSERT(JSValue::BooleanTag == static_cast<unsigned>(-2));
-    STATIC_ASSERT(JSValue::NullTag == static_cast<unsigned>(-3));
-    STATIC_ASSERT(JSValue::UndefinedTag == static_cast<unsigned>(-4));
-    STATIC_ASSERT(JSValue::CellTag == static_cast<unsigned>(-5));
-    STATIC_ASSERT(JSValue::EmptyValueTag == static_cast<unsigned>(-6));
-    STATIC_ASSERT(JSValue::DeletedValueTag == static_cast<unsigned>(-7));
-    STATIC_ASSERT(JSValue::LowestTag == static_cast<unsigned>(-7));
-#else
+#if USE(JSVALUE64)
     STATIC_ASSERT(TagBitTypeOther == 0x2);
     STATIC_ASSERT(TagBitBool == 0x4);
     STATIC_ASSERT(TagBitUndefined == 0x8);

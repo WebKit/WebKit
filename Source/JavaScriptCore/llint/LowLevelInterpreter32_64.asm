@@ -914,9 +914,8 @@ _llint_op_to_number:
     loadi 8[PC], t0
     loadi 4[PC], t1
     loadConstantOrVariable(t0, t2, t3)
-    bieq t2, Int32Tag, .opToNumberIsInt
-    biaeq t2, LowestTag, .opToNumberSlow
-.opToNumberIsInt:
+    bia t2, Int32Tag, .opToNumberSlow
+.opToNumberIsNumber:
     storei t2, TagOffset[cfr, t1, 8]
     storei t3, PayloadOffset[cfr, t1, 8]
     valueProfile(t2, t3, 12, t1)
@@ -1274,8 +1273,7 @@ _llint_op_is_number:
     loadi 4[PC], t2
     loadConstantOrVariableTag(t1, t0)
     storei BooleanTag, TagOffset[cfr, t2, 8]
-    addi 1, t0
-    cib t0, LowestTag + 1, t1
+    cibeq t0, LowestTag, t1
     storei t1, PayloadOffset[cfr, t2, 8]
     dispatch(constexpr op_is_number_length)
 
@@ -1492,13 +1490,7 @@ _llint_op_put_by_id:
     bilt t1, PutByIdSecondaryTypeInt32, .opPutByIdTypeCheckLessThanInt32
 
     # We are either Int32 or Number.
-    bieq t1, PutByIdSecondaryTypeNumber, .opPutByIdTypeCheckNumber
-
-    bieq t2, Int32Tag, .opPutByIdDoneCheckingTypes
-    jmp .opPutByIdSlow
-
-.opPutByIdTypeCheckNumber:
-    bib t2, LowestTag + 1, .opPutByIdDoneCheckingTypes
+    bibeq t2, LowestTag, .opPutByIdDoneCheckingTypes
     jmp .opPutByIdSlow
 
 .opPutByIdTypeCheckLessThanInt32:

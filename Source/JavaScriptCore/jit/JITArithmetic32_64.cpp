@@ -178,7 +178,7 @@ void JIT::emitBinaryDoubleOp(OpcodeID opcodeID, int dst, int op1, int op2, Opera
 
         // Verify Op1 is double.
         if (!types.first().definitelyIsNumber())
-            addSlowCase(branch32(Above, regT1, TrustedImm32(JSValue::LowestTag)));
+            addSlowCase(branch32(AboveOrEqual, regT1, TrustedImm32(JSValue::LowestTag)));
 
         if (!op2IsInRegisters)
             emitLoad(op2, regT3, regT2);
@@ -251,7 +251,7 @@ void JIT::emitBinaryDoubleOp(OpcodeID opcodeID, int dst, int op1, int op2, Opera
 
         // Verify op2 is double.
         if (!types.second().definitelyIsNumber())
-            addSlowCase(branch32(Above, regT3, TrustedImm32(JSValue::LowestTag)));
+            addSlowCase(branch32(AboveOrEqual, regT3, TrustedImm32(JSValue::LowestTag)));
 
         // Do the math.
         switch (opcodeID) {

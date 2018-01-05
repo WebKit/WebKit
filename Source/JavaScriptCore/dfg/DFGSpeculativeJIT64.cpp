@@ -3665,36 +3665,7 @@ void SpeculativeJIT::compile(Node* node)
     }
 
     case ToNumber: {
-        JSValueOperand argument(this, node->child1());
-        GPRTemporary result(this, Reuse, argument);
-
-        GPRReg argumentGPR = argument.gpr();
-        GPRReg resultGPR = result.gpr();
-
-        argument.use();
-
-        // We have several attempts to remove ToNumber. But ToNumber still exists.
-        // It means that converting non-numbers to numbers by this ToNumber is not rare.
-        // Instead of the slow path generator, we emit callOperation here.
-        if (!(m_state.forNode(node->child1()).m_type & SpecBytecodeNumber)) {
-            flushRegisters();
-            callOperation(operationToNumber, resultGPR, argumentGPR);
-            m_jit.exceptionCheck();
-        } else {
-            MacroAssembler::Jump notNumber = m_jit.branchIfNotNumber(argumentGPR);
-            m_jit.move(argumentGPR, resultGPR);
-            MacroAssembler::Jump done = m_jit.jump();
-
-            notNumber.link(&m_jit);
-            silentSpillAllRegisters(resultGPR);
-            callOperation(operationToNumber, resultGPR, argumentGPR);
-            silentFillAllRegisters();
-            m_jit.exceptionCheck();
-
-            done.link(&m_jit);
-        }
-
-        jsValueResult(resultGPR, node, UseChildrenCalledExplicitly);
+        compileToNumber(node);
         break;
     }
         
