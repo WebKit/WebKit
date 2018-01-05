@@ -1,3 +1,13 @@
+2018-01-05  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Cairo] Canvas: Path::clear should clear its transform
+        https://bugs.webkit.org/show_bug.cgi?id=181320
+
+        Reviewed by Carlos Garcia Campos.
+
+        * fast/canvas/reset-scaling-by-height-change-expected.txt: Added.
+        * fast/canvas/reset-scaling-by-height-change.html: Added.
+
 2018-01-04  Joseph Pecoraro  <pecoraro@apple.com>
 
         REGRESSION (r225709): Web Inspector: CSS Source maps not loading

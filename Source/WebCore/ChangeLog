@@ -1,3 +1,18 @@
+2018-01-05  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Cairo] Canvas: Path::clear should clear its transform
+        https://bugs.webkit.org/show_bug.cgi?id=181320
+
+        Reviewed by Carlos Garcia Campos.
+
+        Path of Cairo port has its cairo context. Path::clear() didn't
+        clear the transform matrix of the context.
+
+        Test: fast/canvas/reset-scaling-by-height-change.html
+
+        * platform/graphics/cairo/PathCairo.cpp:
+        (WebCore::Path::clear): Reset the transform matrix of Path.
+
 2018-01-04  Devin Rousso  <webkit@devinrousso.com>
 
         Web Inspector: replace HTMLCanvasElement with CanvasRenderingContext for instrumentation logic
