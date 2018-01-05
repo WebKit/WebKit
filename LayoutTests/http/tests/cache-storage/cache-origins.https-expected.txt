@@ -1,7 +1,5 @@
   
 
 PASS Create a cache storage and look at the representation 
-PASS Verifying that two caches are created on two different client origins 
-PASS Verifying that caches are clustered per client origin. 
-PASS Verifying that clearing caches for an origin will clear both top origin and client origin caches. 
+PASS Caches from different origins should not mix 
 

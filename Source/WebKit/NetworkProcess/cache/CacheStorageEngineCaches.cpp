@@ -50,7 +50,7 @@ static inline String cachesOriginFilename(const String& cachesRootPath)
     return WebCore::FileSystem::pathByAppendingComponent(cachesRootPath, ASCIILiteral("origin"));
 }
 
-void Caches::retrieveOriginFromDirectory(const String& folderPath, WorkQueue& queue, WTF::CompletionHandler<void(std::optional<WebCore::ClientOrigin>&&)>&& completionHandler)
+void Caches::retrieveOriginFromDirectory(const String& folderPath, WorkQueue& queue, WTF::CompletionHandler<void(std::optional<WebCore::SecurityOriginData>&&)>&& completionHandler)
 {
     queue.dispatch([completionHandler = WTFMove(completionHandler), folderPath = folderPath.isolatedCopy()]() mutable {
         if (!WebCore::FileSystem::fileExists(cachesListFilename(folderPath))) {
@@ -72,9 +72,9 @@ void Caches::retrieveOriginFromDirectory(const String& folderPath, WorkQueue& qu
     });
 }
 
-Caches::Caches(Engine& engine, WebCore::ClientOrigin&& origin, String&& rootPath, uint64_t quota)
+Caches::Caches(Engine& engine, String&& origin, String&& rootPath, uint64_t quota)
     : m_engine(&engine)
-    , m_origin(WTFMove(origin))
+    , m_origin(WebCore::SecurityOriginData::fromSecurityOrigin(WebCore::SecurityOrigin::createFromString(origin)))
     , m_rootPath(WTFMove(rootPath))
     , m_quota(quota)
 {
@@ -83,36 +83,27 @@ Caches::Caches(Engine& engine, WebCore::ClientOrigin&& origin, String&& rootPath
 void Caches::storeOrigin(CompletionCallback&& completionHandler)
 {
     WTF::Persistence::Encoder encoder;
-    encoder << m_origin.topOrigin.protocol;
-    encoder << m_origin.topOrigin.host;
-    encoder << m_origin.topOrigin.port;
-    encoder << m_origin.clientOrigin.protocol;
-    encoder << m_origin.clientOrigin.host;
-    encoder << m_origin.clientOrigin.port;
+    encoder << m_origin.protocol;
+    encoder << m_origin.host;
+    encoder << m_origin.port;
     m_engine->writeFile(cachesOriginFilename(m_rootPath), Data { encoder.buffer(), encoder.bufferSize() }, [protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)] (std::optional<Error>&& error) mutable {
         completionHandler(WTFMove(error));
     });
 }
 
-std::optional<WebCore::ClientOrigin> Caches::readOrigin(const Data& data)
+std::optional<WebCore::SecurityOriginData> Caches::readOrigin(const Data& data)
 {
     // FIXME: We should be able to use modern decoders for persistent data.
-    WebCore::SecurityOriginData topOrigin, clientOrigin;
+    WebCore::SecurityOriginData origin;
     WTF::Persistence::Decoder decoder(data.data(), data.size());
 
-    if (!decoder.decode(topOrigin.protocol))
+    if (!decoder.decode(origin.protocol))
         return std::nullopt;
-    if (!decoder.decode(topOrigin.host))
+    if (!decoder.decode(origin.host))
         return std::nullopt;
-    if (!decoder.decode(topOrigin.port))
+    if (!decoder.decode(origin.port))
         return std::nullopt;
-    if (!decoder.decode(clientOrigin.protocol))
-        return std::nullopt;
-    if (!decoder.decode(clientOrigin.host))
-        return std::nullopt;
-    if (!decoder.decode(clientOrigin.port))
-        return std::nullopt;
-    return WebCore::ClientOrigin { WTFMove(topOrigin), WTFMove(clientOrigin) };
+    return WTFMove(origin);
 }
 
 void Caches::initialize(WebCore::DOMCacheEngine::CompletionCallback&& callback)

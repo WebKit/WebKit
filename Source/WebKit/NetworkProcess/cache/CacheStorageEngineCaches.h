@@ -27,7 +27,7 @@
 
 #include "CacheStorageEngineCache.h"
 #include "NetworkCacheStorage.h"
-#include <WebCore/ClientOrigin.h>
+#include <WebCore/SecurityOriginData.h>
 #include <wtf/CompletionHandler.h>
 
 namespace WebKit {
@@ -38,9 +38,9 @@ class Engine;
 
 class Caches : public RefCounted<Caches> {
 public:
-    static Ref<Caches> create(Engine& engine, WebCore::ClientOrigin&& origin, String&& rootPath, uint64_t quota) { return adoptRef(*new Caches { engine, WTFMove(origin), WTFMove(rootPath), quota }); }
+    static Ref<Caches> create(Engine& engine, String&& origin, String&& rootPath, uint64_t quota) { return adoptRef(*new Caches { engine, WTFMove(origin), WTFMove(rootPath), quota }); }
 
-    static void retrieveOriginFromDirectory(const String& folderPath, WorkQueue&, WTF::CompletionHandler<void(std::optional<WebCore::ClientOrigin>&&)>&&);
+    static void retrieveOriginFromDirectory(const String& folderPath, WorkQueue&, WTF::CompletionHandler<void(std::optional<WebCore::SecurityOriginData>&&)>&&);
 
     void initialize(WebCore::DOMCacheEngine::CompletionCallback&&);
     void open(const String& name, WebCore::DOMCacheEngine::CacheIdentifierCallback&&);
@@ -66,7 +66,7 @@ public:
     void removeRecord(const RecordInformation&);
 
     const NetworkCache::Salt& salt() const;
-    const WebCore::ClientOrigin& origin() const { return m_origin; }
+    const WebCore::SecurityOriginData& origin() const { return m_origin; }
 
     bool shouldPersist() const { return !m_rootPath.isNull(); }
 
@@ -76,14 +76,14 @@ public:
     uint64_t storageSize() const;
 
 private:
-    Caches(Engine&, WebCore::ClientOrigin&&, String&& rootPath, uint64_t quota);
+    Caches(Engine&, String&& origin, String&& rootPath, uint64_t quota);
 
     void initializeSize(WebCore::DOMCacheEngine::CompletionCallback&&);
     void readCachesFromDisk(WTF::Function<void(Expected<Vector<Cache>, WebCore::DOMCacheEngine::Error>&&)>&&);
     void writeCachesToDisk(WebCore::DOMCacheEngine::CompletionCallback&&);
 
     void storeOrigin(WebCore::DOMCacheEngine::CompletionCallback&&);
-    static std::optional<WebCore::ClientOrigin> readOrigin(const NetworkCache::Data&);
+    static std::optional<WebCore::SecurityOriginData> readOrigin(const NetworkCache::Data&);
 
     Cache* find(const String& name);
 
@@ -93,7 +93,7 @@ private:
     bool m_isInitialized { false };
     Engine* m_engine { nullptr };
     uint64_t m_updateCounter { 0 };
-    WebCore::ClientOrigin m_origin;
+    WebCore::SecurityOriginData m_origin;
     String m_rootPath;
     uint64_t m_quota { 0 };
     uint64_t m_size { 0 };

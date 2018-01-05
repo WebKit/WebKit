@@ -48,10 +48,12 @@ SecurityOriginData SecurityOriginData::fromSecurityOrigin(const SecurityOrigin& 
     return securityOriginData;
 }
 
-String SecurityOriginData::toString() const
+#if !LOG_DISABLED
+String SecurityOriginData::debugString() const
 {
     return makeString(protocol, "://", host, ":", String::number(port.value_or(0)));
 }
+#endif
 
 SecurityOriginData SecurityOriginData::fromFrame(Frame* frame)
 {

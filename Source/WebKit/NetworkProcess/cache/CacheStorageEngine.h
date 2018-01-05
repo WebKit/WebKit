@@ -28,7 +28,6 @@
 #include "CacheStorageEngineCaches.h"
 #include "NetworkCacheData.h"
 #include "WebsiteData.h"
-#include <WebCore/ClientOrigin.h>
 #include <wtf/HashMap.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/WorkQueue.h>
@@ -64,9 +63,9 @@ public:
 
     bool shouldPersist() const { return !!m_ioQueue;}
 
-    void open(const WebCore::ClientOrigin&, const String& cacheName, WebCore::DOMCacheEngine::CacheIdentifierCallback&&);
+    void open(const String& origin, const String& cacheName, WebCore::DOMCacheEngine::CacheIdentifierCallback&&);
     void remove(uint64_t cacheIdentifier, WebCore::DOMCacheEngine::CacheIdentifierCallback&&);
-    void retrieveCaches(const WebCore::ClientOrigin&, uint64_t updateCounter, WebCore::DOMCacheEngine::CacheInfosCallback&&);
+    void retrieveCaches(const String& origin, uint64_t updateCounter, WebCore::DOMCacheEngine::CacheInfosCallback&&);
 
     void retrieveRecords(uint64_t cacheIdentifier, WebCore::URL&&, WebCore::DOMCacheEngine::RecordsCallback&&);
     void putRecords(uint64_t cacheIdentifier, Vector<WebCore::DOMCacheEngine::Record>&&, WebCore::DOMCacheEngine::RecordIdentifiersCallback&&);
@@ -83,17 +82,19 @@ public:
     const NetworkCache::Salt& salt() const { return m_salt.value(); }
     uint64_t nextCacheIdentifier() { return ++m_nextCacheIdentifier; }
 
-    void clearMemoryRepresentation(const WebCore::ClientOrigin&, WebCore::DOMCacheEngine::CompletionCallback&&);
+    void removeCaches(const String& origin);
+
+    void clearMemoryRepresentation(const String& origin, WebCore::DOMCacheEngine::CompletionCallback&&);
     String representation();
 
     void clearAllCaches(WTF::CallbackAggregator&);
-    void clearCachesForOrigin(const WebCore::SecurityOriginData&, WTF::CallbackAggregator&);
+    void clearCachesForOrigin(const String& origin, WTF::CallbackAggregator&);
 
 private:
     static Engine& defaultEngine();
     explicit Engine(String&& rootPath);
 
-    String cachesRootPath(const WebCore::ClientOrigin&);
+    String cachesRootPath(const String& origin);
 
     void fetchEntries(bool /* shouldComputeSize */, WTF::CompletionHandler<void(Vector<WebsiteData::Entry>)>&&);
 
@@ -101,7 +102,7 @@ private:
 
     using CachesOrError = Expected<std::reference_wrapper<Caches>, WebCore::DOMCacheEngine::Error>;
     using CachesCallback = WTF::Function<void(CachesOrError&&)>;
-    void readCachesFromDisk(const WebCore::ClientOrigin&, CachesCallback&&);
+    void readCachesFromDisk(const String& origin, CachesCallback&&);
 
     using CacheOrError = Expected<std::reference_wrapper<Cache>, WebCore::DOMCacheEngine::Error>;
     using CacheCallback = WTF::Function<void(CacheOrError&&)>;
@@ -109,7 +110,7 @@ private:
 
     Cache* cache(uint64_t cacheIdentifier);
 
-    HashMap<WebCore::ClientOrigin, RefPtr<Caches>> m_caches;
+    HashMap<String, Ref<Caches>> m_caches;
     uint64_t m_nextCacheIdentifier { 0 };
     String m_rootPath;
     RefPtr<WorkQueue> m_ioQueue;

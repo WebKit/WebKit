@@ -109,7 +109,7 @@ WorkerCacheStorageConnection::~WorkerCacheStorageConnection()
         callOnMainThread([mainThreadConnection = WTFMove(m_mainThreadConnection)]() mutable { });
 }
 
-void WorkerCacheStorageConnection::doOpen(uint64_t requestIdentifier, const ClientOrigin& origin, const String& cacheName)
+void WorkerCacheStorageConnection::doOpen(uint64_t requestIdentifier, const String& origin, const String& cacheName)
 {
     callOnMainThread([workerThread = makeRef(m_scope.thread()), mainThreadConnection = m_mainThreadConnection, requestIdentifier, origin = origin.isolatedCopy(), cacheName = cacheName.isolatedCopy()] () mutable {
         mainThreadConnection->open(origin, cacheName, [workerThread = WTFMove(workerThread), requestIdentifier] (const CacheIdentifierOrError& result) mutable {
@@ -132,7 +132,7 @@ void WorkerCacheStorageConnection::doRemove(uint64_t requestIdentifier, uint64_t
     });
 }
 
-void WorkerCacheStorageConnection::doRetrieveCaches(uint64_t requestIdentifier, const ClientOrigin& origin, uint64_t updateCounter)
+void WorkerCacheStorageConnection::doRetrieveCaches(uint64_t requestIdentifier, const String& origin, uint64_t updateCounter)
 {
     callOnMainThread([workerThread = makeRef(m_scope.thread()), mainThreadConnection = m_mainThreadConnection, requestIdentifier, origin = origin.isolatedCopy(), updateCounter] () mutable {
         mainThreadConnection->retrieveCaches(origin, updateCounter, [workerThread = WTFMove(workerThread), requestIdentifier] (CacheInfosOrError&& result) mutable {
