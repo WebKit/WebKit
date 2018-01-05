@@ -1023,20 +1023,17 @@ void MediaPlayerPrivateGStreamer::handleMessage(GstMessage* message)
             }
         }
 #if ENABLE(VIDEO_TRACK) && USE(GSTREAMER_MPEGTS)
-        else {
-            GstMpegtsSection* section = gst_message_parse_mpegts_section(message);
-            if (section) {
-                processMpegTsSection(section);
-                gst_mpegts_section_unref(section);
-            }
-#if ENABLE(ENCRYPTED_MEDIA)
-            else if (gst_structure_has_name(structure, "drm-key-needed")) {
-                GST_DEBUG("drm-key-needed message from %s", GST_MESSAGE_SRC_NAME(message));
-                GRefPtr<GstEvent> event;
-                gst_structure_get(structure, "event", GST_TYPE_EVENT, &event.outPtr(), nullptr);
-                handleProtectionEvent(event.get());
-            }
+        else if (GstMpegtsSection* section = gst_message_parse_mpegts_section(message)) {
+            processMpegTsSection(section);
+            gst_mpegts_section_unref(section);
+        }
 #endif
+#if ENABLE(ENCRYPTED_MEDIA)
+        else if (gst_structure_has_name(structure, "drm-key-needed")) {
+            GST_DEBUG("drm-key-needed message from %s", GST_MESSAGE_SRC_NAME(message));
+            GRefPtr<GstEvent> event;
+            gst_structure_get(structure, "event", GST_TYPE_EVENT, &event.outPtr(), nullptr);
+            handleProtectionEvent(event.get());
         }
 #endif
         break;
