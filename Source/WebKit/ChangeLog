@@ -1,3 +1,13 @@
+2018-01-04  Don Olmstead  <don.olmstead@sony.com>
+
+        [Curl] Fix compilation error in WebFrameNetworkingContext
+        https://bugs.webkit.org/show_bug.cgi?id=181312
+
+        Reviewed by Alex Christensen.
+
+        * WebProcess/WebCoreSupport/curl/WebFrameNetworkingContext.cpp:
+        (WebKit::WebFrameNetworkingContext::ensureWebsiteDataStoreSession):
+
 2018-01-04  Tim Horton  <timothy_horton@apple.com>
 
         WKWebView loses minimum layout size overrides that happen while the process is terminated

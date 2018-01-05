@@ -40,7 +40,7 @@ using namespace WebCore;
 
 namespace WebKit {
 
-void WebFrameNetworkingContext::ensureWebsiteDataStoreSession(WebsiteDataStoreParameters&&)
+void WebFrameNetworkingContext::ensureWebsiteDataStoreSession(WebsiteDataStoreParameters&& parameters)
 {
     auto sessionID = parameters.networkSessionParameters.sessionID;
     ASSERT(isMainThread());
