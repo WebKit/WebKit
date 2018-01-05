@@ -78,10 +78,16 @@ static BOOL isForcingPreviewUpdate;
 
 - (void)_setAutodisplay:(BOOL)newState
 {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     if (!newState && [[_wkView window] isAutodisplay])
+#pragma clang diagnostic pop
         [_wkView displayIfNeeded];
     
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     [[_wkView window] setAutodisplay:newState];
+#pragma clang diagnostic pop
 
     // For some reason, painting doesn't happen for a long time without this call, <rdar://problem/8975229>.
     if (newState)

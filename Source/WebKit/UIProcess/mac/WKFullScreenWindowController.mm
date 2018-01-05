@@ -227,7 +227,10 @@ static RetainPtr<CGImageRef> createImageWithCopiedData(CGImageRef sourceImage)
 
     // Screen updates to be re-enabled in _startEnterFullScreenAnimationWithDuration:
     NSDisableScreenUpdates();
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     [[self window] setAutodisplay:NO];
+#pragma clang diagnostic pop
 
     [self _manager]->saveScrollPosition();
     _savedTopContentInset = _page->topContentInset();
@@ -303,7 +306,10 @@ static const float minVideoWidth = 480 + 20 + 20; // Note: Keep in sync with med
         // Transition to fullscreen failed. Clean up.
         _fullScreenState = NotInFullScreen;
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
         [[self window] setAutodisplay:YES];
+#pragma clang diagnostic pop
         _page->setSuppressVisibilityUpdates(false);
 
         NSResponder *firstResponder = [[self window] firstResponder];
@@ -340,7 +346,10 @@ static const float minVideoWidth = 480 + 20 + 20; // Note: Keep in sync with med
 
     // Screen updates to be re-enabled in _startExitFullScreenAnimationWithDuration: or beganExitFullScreenWithInitialFrame:finalFrame:
     NSDisableScreenUpdates();
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     [[self window] setAutodisplay:NO];
+#pragma clang diagnostic pop
 
     // See the related comment in enterFullScreen:
     // We will resume the normal behavior in _startExitFullScreenAnimationWithDuration:
@@ -400,7 +409,10 @@ static const float minVideoWidth = 480 + 20 + 20; // Note: Keep in sync with med
     NSView *contentView = [[self window] contentView];
     contentView.hidden = YES;
     [_backgroundView.get().layer removeAllAnimations];
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     [[_webViewPlaceholder window] setAutodisplay:NO];
+#pragma clang diagnostic pop
 
     [self _replaceView:_webViewPlaceholder.get() with:_webView];
     BEGIN_BLOCK_OBJC_EXCEPTIONS
@@ -433,7 +445,10 @@ static const float minVideoWidth = 480 + 20 + 20; // Note: Keep in sync with med
 - (void)completeFinishExitFullScreenAnimationAfterRepaint
 {
     _repaintCallback = nullptr;
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     [[_webView window] setAutodisplay:YES];
+#pragma clang diagnostic pop
     [[_webView window] displayIfNeeded];
     _page->setSuppressVisibilityUpdates(false);
     NSEnableScreenUpdates();
@@ -627,7 +642,10 @@ static CAAnimation *fadeAnimation(CFTimeInterval duration, AnimationDirection di
     [window makeFirstResponder:_webView];
 
     _page->setSuppressVisibilityUpdates(false);
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     [[self window] setAutodisplay:YES];
+#pragma clang diagnostic pop
     [[self window] displayIfNeeded];
     NSEnableScreenUpdates();
 }
@@ -652,7 +670,10 @@ static CAAnimation *fadeAnimation(CFTimeInterval duration, AnimationDirection di
     [_backgroundView.get().layer addAnimation:fadeAnimation(duration, AnimateOut) forKey:@"fullscreen"];
 
     _page->setSuppressVisibilityUpdates(false);
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     [[self window] setAutodisplay:YES];
+#pragma clang diagnostic pop
     [[self window] displayIfNeeded];
     NSEnableScreenUpdates();
 }

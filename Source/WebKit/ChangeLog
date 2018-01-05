@@ -1,3 +1,18 @@
+2018-01-05  Dan Bernstein  <mitz@apple.com>
+
+        Fixed the build following AppKit API deprecations in a recent SDKs
+
+        * UIProcess/mac/WKFullScreenWindowController.mm:
+        (-[WKFullScreenWindowController enterFullScreen:]): Suppressed deprecation warnings.
+        (-[WKFullScreenWindowController finishedEnterFullScreenAnimation:]): Ditto.
+        (-[WKFullScreenWindowController exitFullScreen]): Ditto.
+        (-[WKFullScreenWindowController finishedExitFullScreenAnimation:]): Ditto.
+        (-[WKFullScreenWindowController completeFinishExitFullScreenAnimationAfterRepaint]): Ditto.
+        (-[WKFullScreenWindowController _startEnterFullScreenAnimationWithDuration:]): Ditto.
+        (-[WKFullScreenWindowController _startExitFullScreenAnimationWithDuration:]): Ditto.
+        * UIProcess/mac/WKPrintingView.mm:
+        (-[WKPrintingView _setAutodisplay:]): Ditto.
+
 2018-01-05  Matt Lewis  <jlewis3@apple.com>
 
         Unreviewed, rolling out r226401.
