@@ -1,3 +1,146 @@
+2018-01-04  Devin Rousso  <webkit@devinrousso.com>
+
+        Web Inspector: replace HTMLCanvasElement with CanvasRenderingContext for instrumentation logic
+        https://bugs.webkit.org/show_bug.cgi?id=180770
+
+        Reviewed by Joseph Pecoraro.
+
+        No change in functionality.
+
+        * html/HTMLCanvasElement.h:
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::createContext2d):
+        (WebCore::HTMLCanvasElement::createContextWebGL):
+        (WebCore::HTMLCanvasElement::createContextWebGPU):
+        (WebCore::HTMLCanvasElement::createContextBitmapRenderer):
+        (WebCore::HTMLCanvasElement::reset):
+        (WebCore::HTMLCanvasElement::paint):
+        (WebCore::HTMLCanvasElement::setImageBuffer const):
+        (WebCore::HTMLCanvasElement::addObserver): Deleted.
+        (WebCore::HTMLCanvasElement::removeObserver): Deleted.
+        (WebCore::HTMLCanvasElement::cssCanvasClients): Deleted.
+        (WebCore::HTMLCanvasElement::notifyObserversCanvasChanged): Deleted.
+        * html/OffscreenCanvas.h:
+        * html/canvas/CanvasRenderingContext.h:
+        * html/canvas/CanvasRenderingContext.cpp:
+        * html/canvas/CanvasRenderingContext2D.h:
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::create):
+        * html/canvas/CanvasRenderingContext2DBase.h:
+        * html/canvas/ImageBitmapRenderingContext.h:
+        * html/canvas/ImageBitmapRenderingContext.cpp:
+        (WebCore::ImageBitmapRenderingContext::create):
+        * html/canvas/WebGL2RenderingContext.h:
+        * html/canvas/WebGL2RenderingContext.cpp:
+        (WebCore::WebGL2RenderingContext::create):
+        * html/canvas/WebGLRenderingContext.h:
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::create):
+        * html/canvas/WebGLRenderingContextBase.h:
+        * html/canvas/WebGLRenderingContextBase.cpp:
+        (WebCore::WebGLRenderingContextBase::create):
+        * html/canvas/WebGPURenderingContext.cpp:
+        (WebCore::WebGPURenderingContext::create):
+        Instead of adding didCreateCanvasRenderingContext calls at the construction sites of each
+        context, we can make the constructors private and force the usage of static `create` functions.
+        This way, we have access to the fully constructed object and have a guaranteed path for creation.
+
+        * html/CanvasBase.h:
+        * html/CanvasBase.cpp:
+        (WebCore::CanvasBase::~CanvasBase):
+        (WebCore::CanvasBase::renderingContext const):
+        (WebCore::CanvasBase::addObserver):
+        (WebCore::CanvasBase::removeObserver):
+        (WebCore::CanvasBase::notifyObserversCanvasChanged):
+        (WebCore::CanvasBase::notifyObserversCanvasResized):
+        (WebCore::CanvasBase::notifyObserversCanvasDestroyed):
+        (WebCore::CanvasBase::cssCanvasClients const):
+        * Modules/mediastream/CanvasCaptureMediaStreamTrack.h:
+        * Modules/mediastream/CanvasCaptureMediaStreamTrack.cpp:
+        (WebCore::CanvasCaptureMediaStreamTrack::Source::canvasDestroyed):
+        (WebCore::CanvasCaptureMediaStreamTrack::Source::canvasResized):
+        (WebCore::CanvasCaptureMediaStreamTrack::Source::canvasChanged):
+        * css/CSSCanvasValue.h:
+        Move the CanvasObserver class to CanvasBase so that it can also be used for OffscreenCanvas.
+
+        * inspector/InspectorInstrumentation.h:
+        (WebCore::InspectorInstrumentation::didChangeCSSCanvasClientNodes):
+        (WebCore::InspectorInstrumentation::didCreateCanvasRenderingContext):
+        (WebCore::InspectorInstrumentation::didChangeCanvasMemory):
+        (WebCore::InspectorInstrumentation::recordCanvasAction):
+        (WebCore::InspectorInstrumentation::didFinishRecordingCanvasFrame):
+        (WebCore::InspectorInstrumentation::didEnableExtension):
+        (WebCore::InspectorInstrumentation::didCreateProgram):
+        (WebCore::InspectorInstrumentation::willDeleteProgram):
+        (WebCore::InspectorInstrumentation::isShaderProgramDisabled):
+        (WebCore::InspectorInstrumentation::consoleStartRecordingCanvas):
+        (WebCore::InspectorInstrumentation::didCreateCSSCanvas): Deleted.
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::consoleStartRecordingCanvasImpl):
+        (WebCore::InspectorInstrumentation::didChangeCSSCanvasClientNodesImpl):
+        (WebCore::InspectorInstrumentation::didCreateCanvasRenderingContextImpl):
+        (WebCore::InspectorInstrumentation::didChangeCanvasMemoryImpl):
+        (WebCore::InspectorInstrumentation::didFinishRecordingCanvasFrameImpl):
+        (WebCore::InspectorInstrumentation::didEnableExtensionImpl):
+        (WebCore::InspectorInstrumentation::didCreateProgramImpl):
+        (WebCore::InspectorInstrumentation::didCreateCSSCanvasImpl): Deleted.
+
+        * inspector/agents/InspectorCanvasAgent.h:
+        * inspector/agents/InspectorCanvasAgent.cpp:
+        (WebCore::InspectorCanvasAgent::enable):
+        (WebCore::InspectorCanvasAgent::requestNode):
+        (WebCore::InspectorCanvasAgent::requestContent):
+        (WebCore::InspectorCanvasAgent::requestCSSCanvasClientNodes):
+        (WebCore::contextAsScriptValue):
+        (WebCore::InspectorCanvasAgent::resolveCanvasContext):
+        (WebCore::InspectorCanvasAgent::startRecording):
+        (WebCore::InspectorCanvasAgent::stopRecording):
+        (WebCore::InspectorCanvasAgent::updateShader):
+        (WebCore::InspectorCanvasAgent::frameNavigated):
+        (WebCore::InspectorCanvasAgent::didChangeCSSCanvasClientNodes):
+        (WebCore::InspectorCanvasAgent::didCreateCanvasRenderingContext):
+        (WebCore::InspectorCanvasAgent::didChangeCanvasMemory):
+        (WebCore::InspectorCanvasAgent::recordCanvasAction):
+        (WebCore::InspectorCanvasAgent::canvasDestroyed):
+        (WebCore::InspectorCanvasAgent::didFinishRecordingCanvasFrame):
+        (WebCore::InspectorCanvasAgent::consoleStartRecordingCanvas):
+        (WebCore::InspectorCanvasAgent::didEnableExtension):
+        (WebCore::InspectorCanvasAgent::didCreateProgram):
+        (WebCore::InspectorCanvasAgent::canvasRecordingTimerFired):
+        (WebCore::InspectorCanvasAgent::clearCanvasData):
+        (WebCore::InspectorCanvasAgent::unbindCanvas):
+        (WebCore::InspectorCanvasAgent::findInspectorCanvas):
+        (WebCore::InspectorCanvasAgent::unbindProgram):
+        (WebCore::InspectorCanvasAgent::didCreateCSSCanvas): Deleted.
+
+        * inspector/InspectorCanvas.h:
+        * inspector/InspectorCanvas.cpp:
+        (WebCore::InspectorCanvas::create):
+        (WebCore::InspectorCanvas::InspectorCanvas):
+        (WebCore::InspectorCanvas::canvasElement):
+        (WebCore::InspectorCanvas::resetRecordingData):
+        (WebCore::InspectorCanvas::recordAction):
+        (WebCore::InspectorCanvas::buildObjectForCanvas):
+        (WebCore::InspectorCanvas::getCanvasContentAsDataURL):
+        (WebCore::InspectorCanvas::buildInitialState):
+        (WebCore::InspectorCanvas::~InspectorCanvas): Deleted.
+
+        * inspector/InspectorShaderProgram.h:
+        * inspector/InspectorShaderProgram.cpp:
+        (WebCore::InspectorShaderProgram::context const):
+
+        * page/PageConsoleClient.cpp:
+        (WebCore::PageConsoleClient::record):
+        (WebCore::PageConsoleClient::recordEnd):
+
+        * dom/Document.h:
+        * dom/Document.cpp:
+        (WebCore::Document::getCSSCanvasElement):
+        (WebCore::Document::nameForCSSCanvasElement const):
+        We have no reason to save the CSS canvas name for each InspectorCanvas object, so instead we
+        can just query for the name based on the CanvasRenderingContext's HTMLCanvasElement (assuming
+        it is not an OffscreenCanvas) when we need it.
+
 2018-01-04  Chris Fleizach  <cfleizach@apple.com>
 
         AX: Implement updated CSS3 Speech for 'speak' and 'speak-as' properties

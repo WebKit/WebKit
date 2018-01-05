@@ -1,3 +1,16 @@
+2018-01-04  Devin Rousso  <webkit@devinrousso.com>
+
+        Web Inspector: replace HTMLCanvasElement with CanvasRenderingContext for instrumentation logic
+        https://bugs.webkit.org/show_bug.cgi?id=180770
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Models/Canvas.js:
+        (WI.Canvas.fromPayload):
+        (WI.Canvas.prototype.get contextType):
+        (WI.Canvas.prototype.saveIdentityToCookie):
+        (WI.Canvas.prototype.get frame): Deleted.
+
 2018-01-04  Joseph Pecoraro  <pecoraro@apple.com>
 
         REGRESSION (r225709): Web Inspector: CSS Source maps not loading

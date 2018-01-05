@@ -438,10 +438,10 @@ std::unique_ptr<WebGLRenderingContextBase> WebGLRenderingContextBase::create(Can
         std::unique_ptr<WebGLRenderingContextBase> renderingContext = nullptr;
 #if ENABLE(WEBGL2)
         if (type == "webgl2")
-            renderingContext = std::make_unique<WebGL2RenderingContext>(canvas, attributes);
+            renderingContext = WebGL2RenderingContext::create(canvas, attributes);
         else
 #endif
-            renderingContext = std::make_unique<WebGLRenderingContext>(canvas, attributes);
+            renderingContext = WebGLRenderingContext::create(canvas, attributes);
         renderingContext->suspendIfNeeded();
         return renderingContext;
     }
@@ -467,10 +467,10 @@ std::unique_ptr<WebGLRenderingContextBase> WebGLRenderingContextBase::create(Can
     std::unique_ptr<WebGLRenderingContextBase> renderingContext;
 #if ENABLE(WEBGL2)
     if (type == "webgl2")
-        renderingContext = std::make_unique<WebGL2RenderingContext>(canvas, context.releaseNonNull(), attributes);
+        renderingContext = WebGL2RenderingContext::create(canvas, context.releaseNonNull(), attributes);
     else
 #endif
-        renderingContext = std::make_unique<WebGLRenderingContext>(canvas, context.releaseNonNull(), attributes);
+        renderingContext = WebGLRenderingContext::create(canvas, context.releaseNonNull(), attributes);
     renderingContext->suspendIfNeeded();
 
     return renderingContext;

@@ -25,18 +25,33 @@
 
 #pragma once
 
+#include <wtf/HashSet.h>
 #include <wtf/TypeCasts.h>
 
 namespace WebCore {
 
-class HTMLCanvasElement;
+class CanvasBase;
+class CanvasRenderingContext;
+class Element;
 class IntSize;
+class FloatRect;
 class ScriptExecutionContext;
 class SecurityOrigin;
 
+class CanvasObserver {
+public:
+    virtual ~CanvasObserver() = default;
+
+    virtual bool isCanvasObserverProxy() const { return false; }
+
+    virtual void canvasChanged(CanvasBase&, const FloatRect& changedRect) = 0;
+    virtual void canvasResized(CanvasBase&) = 0;
+    virtual void canvasDestroyed(CanvasBase&) = 0;
+};
+
 class CanvasBase {
 public:
-    virtual ~CanvasBase() = default;
+    virtual ~CanvasBase();
 
     virtual void refCanvasBase() = 0;
     virtual void derefCanvasBase() = 0;
@@ -56,12 +71,25 @@ public:
     virtual SecurityOrigin* securityOrigin() const { return nullptr; }
     ScriptExecutionContext* scriptExecutionContext() const { return m_scriptExecutionContext; }
 
+    CanvasRenderingContext* renderingContext() const;
+
+    void addObserver(CanvasObserver&);
+    void removeObserver(CanvasObserver&);
+    void notifyObserversCanvasChanged(const FloatRect&);
+    void notifyObserversCanvasResized();
+    void notifyObserversCanvasDestroyed();
+
+    HashSet<Element*> cssCanvasClients() const;
+
 protected:
     CanvasBase(ScriptExecutionContext*);
+
+    std::unique_ptr<CanvasRenderingContext> m_context;
 
 private:
     bool m_originClean { true };
     ScriptExecutionContext* m_scriptExecutionContext;
+    HashSet<CanvasObserver*> m_observers;
 };
 
 } // namespace WebCore

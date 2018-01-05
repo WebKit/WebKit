@@ -26,7 +26,7 @@
 
 #if ENABLE(MEDIA_STREAM)
 
-#include "HTMLCanvasElement.h"
+#include "CanvasBase.h"
 #include "MediaStreamTrack.h"
 #include "Timer.h"
 #include <wtf/TypeCasts.h>
@@ -58,9 +58,9 @@ private:
         Source(HTMLCanvasElement&, std::optional<double>&&);
 
         // CanvasObserver API
-        void canvasChanged(HTMLCanvasElement&, const FloatRect&) final;
-        void canvasResized(HTMLCanvasElement&) final;
-        void canvasDestroyed(HTMLCanvasElement&) final;
+        void canvasChanged(CanvasBase&, const FloatRect&) final;
+        void canvasResized(CanvasBase&) final;
+        void canvasDestroyed(CanvasBase&) final;
 
         // RealtimeMediaSource API
         void startProducingData() final;

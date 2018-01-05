@@ -25,8 +25,8 @@
 
 #pragma once
 
+#include "CanvasBase.h"
 #include "GraphicsLayer.h"
-#include "HTMLCanvasElement.h"
 #include "ScriptWrappable.h"
 #include <wtf/Noncopyable.h>
 #include <wtf/text/StringHash.h>

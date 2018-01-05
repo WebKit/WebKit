@@ -26,7 +26,7 @@
 #pragma once
 
 #include "CallTracerTypes.h"
-#include "HTMLCanvasElement.h"
+#include "CanvasBase.h"
 #include "InspectorCanvas.h"
 #include "InspectorWebAgentBase.h"
 #include "Timer.h"
@@ -81,13 +81,13 @@ public:
 
     // InspectorInstrumentation
     void frameNavigated(Frame&);
-    void didCreateCSSCanvas(HTMLCanvasElement&, const String&);
-    void didChangeCSSCanvasClientNodes(HTMLCanvasElement&);
-    void didCreateCanvasRenderingContext(HTMLCanvasElement&);
-    void didChangeCanvasMemory(HTMLCanvasElement&);
+    void didChangeCSSCanvasClientNodes(CanvasBase&);
+    void didCreateCanvasRenderingContext(CanvasRenderingContext&);
+    void willDestroyCanvasRenderingContext(CanvasRenderingContext&);
+    void didChangeCanvasMemory(CanvasRenderingContext&);
     void recordCanvasAction(CanvasRenderingContext&, const String&, Vector<RecordCanvasActionVariant>&& = { });
-    void didFinishRecordingCanvasFrame(HTMLCanvasElement&, bool forceDispatch = false);
-    void consoleStartRecordingCanvas(HTMLCanvasElement&, JSC::ExecState&, JSC::JSObject* options);
+    void didFinishRecordingCanvasFrame(CanvasRenderingContext&, bool forceDispatch = false);
+    void consoleStartRecordingCanvas(CanvasRenderingContext&, JSC::ExecState&, JSC::JSObject* options);
 #if ENABLE(WEBGL)
     void didEnableExtension(WebGLRenderingContextBase&, const String&);
     void didCreateProgram(WebGLRenderingContextBase&, WebGLProgram&);
@@ -96,9 +96,9 @@ public:
 #endif
 
     // CanvasObserver
-    void canvasChanged(HTMLCanvasElement&, const FloatRect&) override { }
-    void canvasResized(HTMLCanvasElement&) override { }
-    void canvasDestroyed(HTMLCanvasElement&) override;
+    void canvasChanged(CanvasBase&, const FloatRect&) override { }
+    void canvasResized(CanvasBase&) override { }
+    void canvasDestroyed(CanvasBase&) override;
 
 private:
     void canvasDestroyedTimerFired();
@@ -106,7 +106,7 @@ private:
     void clearCanvasData();
     String unbindCanvas(InspectorCanvas&);
     InspectorCanvas* assertInspectorCanvas(ErrorString&, const String& identifier);
-    InspectorCanvas* findInspectorCanvas(HTMLCanvasElement&);
+    InspectorCanvas* findInspectorCanvas(CanvasRenderingContext&);
 #if ENABLE(WEBGL)
     String unbindProgram(InspectorShaderProgram&);
     InspectorShaderProgram* assertInspectorProgram(ErrorString&, const String& identifier);
@@ -119,7 +119,6 @@ private:
     RefPtr<Inspector::CanvasBackendDispatcher> m_backendDispatcher;
     Inspector::InjectedScriptManager& m_injectedScriptManager;
     HashMap<String, RefPtr<InspectorCanvas>> m_identifierToInspectorCanvas;
-    HashMap<HTMLCanvasElement*, String> m_canvasToCSSCanvasName;
     Vector<String> m_removedCanvasIdentifiers;
     Timer m_canvasDestroyedTimer;
     Timer m_canvasRecordingTimer;

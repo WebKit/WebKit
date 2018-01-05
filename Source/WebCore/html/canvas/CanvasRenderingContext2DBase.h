@@ -61,6 +61,7 @@ class HTMLVideoElement;
 class ImageBitmap;
 class ImageData;
 class Path2D;
+class RenderStyle;
 class TextMetrics;
 
 struct DOMMatrix2DInit;

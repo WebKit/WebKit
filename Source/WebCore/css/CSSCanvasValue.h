@@ -26,12 +26,13 @@
 #pragma once
 
 #include "CSSImageGeneratorValue.h"
+#include "CanvasBase.h"
 #include "HTMLCanvasElement.h"
+#include "RenderElement.h"
 
 namespace WebCore {
 
 class Document;
-class HTMLCanvasElement;
 
 class CSSCanvasValue final : public CSSImageGeneratorValue {
 public:
@@ -60,26 +61,25 @@ public:
         {
         }
 
-        virtual ~CanvasObserverProxy()
-        {
-        }
-
         bool isCanvasObserverProxy() const final { return true; }
 
         const CSSCanvasValue& ownerValue() const { return m_ownerValue; }
 
     private:
-        void canvasChanged(HTMLCanvasElement& canvas, const FloatRect& changedRect) final
+        void canvasChanged(CanvasBase& canvasBase, const FloatRect& changedRect) final
         {
-            m_ownerValue.canvasChanged(canvas, changedRect);
+            ASSERT(is<HTMLCanvasElement>(canvasBase));
+            m_ownerValue.canvasChanged(downcast<HTMLCanvasElement>(canvasBase), changedRect);
         }
-        void canvasResized(HTMLCanvasElement& canvas) final
+        void canvasResized(CanvasBase& canvasBase) final
         {
-            m_ownerValue.canvasResized(canvas);
+            ASSERT(is<HTMLCanvasElement>(canvasBase));
+            m_ownerValue.canvasResized(downcast<HTMLCanvasElement>(canvasBase));
         }
-        void canvasDestroyed(HTMLCanvasElement& canvas) final
+        void canvasDestroyed(CanvasBase& canvasBase) final
         {
-            m_ownerValue.canvasDestroyed(canvas);
+            ASSERT(is<HTMLCanvasElement>(canvasBase));
+            m_ownerValue.canvasDestroyed(downcast<HTMLCanvasElement>(canvasBase));
         }
 
         CSSCanvasValue& m_ownerValue;

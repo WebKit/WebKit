@@ -28,6 +28,7 @@
 #if ENABLE(WEBGL)
 
 #include "ActivityStateChangeObserver.h"
+#include "ExceptionOr.h"
 #include "GPUBasedCanvasRenderingContext.h"
 #include "GraphicsContext3D.h"
 #include "ImageBuffer.h"
@@ -42,6 +43,7 @@
 #include "WebGLTexture.h"
 #include "WebGLVertexArrayObjectOES.h"
 #include <memory>
+#include <runtime/ConsoleTypes.h>
 
 #if ENABLE(WEBGL2)
 #include "WebGLVertexArrayObject.h"

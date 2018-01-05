@@ -26,13 +26,79 @@
 #include "config.h"
 #include "CanvasBase.h"
 
-#include "HTMLCanvasElement.h"
+#include "CSSCanvasValue.h"
+#include "CanvasRenderingContext.h"
+#include "Element.h"
+#include "FloatRect.h"
+#include "InspectorInstrumentation.h"
 
 namespace WebCore {
 
 CanvasBase::CanvasBase(ScriptExecutionContext* scriptExecutionContext)
     : m_scriptExecutionContext(scriptExecutionContext)
 {
+}
+
+CanvasBase::~CanvasBase()
+{
+    notifyObserversCanvasDestroyed();
+}
+
+CanvasRenderingContext* CanvasBase::renderingContext() const
+{
+    return m_context.get();
+}
+
+void CanvasBase::addObserver(CanvasObserver& observer)
+{
+    m_observers.add(&observer);
+
+    if (is<CSSCanvasValue::CanvasObserverProxy>(observer))
+        InspectorInstrumentation::didChangeCSSCanvasClientNodes(*this);
+}
+
+void CanvasBase::removeObserver(CanvasObserver& observer)
+{
+    m_observers.remove(&observer);
+
+    if (is<CSSCanvasValue::CanvasObserverProxy>(observer))
+        InspectorInstrumentation::didChangeCSSCanvasClientNodes(*this);
+}
+
+void CanvasBase::notifyObserversCanvasChanged(const FloatRect& rect)
+{
+    for (auto& observer : m_observers)
+        observer->canvasChanged(*this, rect);
+}
+
+void CanvasBase::notifyObserversCanvasResized()
+{
+    for (auto& observer : m_observers)
+        observer->canvasResized(*this);
+}
+
+void CanvasBase::notifyObserversCanvasDestroyed()
+{
+    for (auto& observer : m_observers)
+        observer->canvasDestroyed(*this);
+
+    m_observers.clear();
+}
+
+HashSet<Element*> CanvasBase::cssCanvasClients() const
+{
+    HashSet<Element*> cssCanvasClients;
+    for (auto& observer : m_observers) {
+        if (!is<CSSCanvasValue::CanvasObserverProxy>(observer))
+            continue;
+
+        auto clients = downcast<CSSCanvasValue::CanvasObserverProxy>(observer)->ownerValue().clients();
+        for (auto& entry : clients) {
+            if (RefPtr<Element> element = entry.key->element())
+                cssCanvasClients.add(element.get());
+        }
+    }
+    return cssCanvasClients;
 }
 
 }

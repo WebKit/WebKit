@@ -26,7 +26,6 @@
 #pragma once
 
 #include "CanvasBase.h"
-#include "CanvasRenderingContext.h"
 #include "EventTarget.h"
 #include "ExceptionOr.h"
 #include "IntSize.h"
@@ -60,7 +59,7 @@ public:
     };
 
     static Ref<OffscreenCanvas> create(ScriptExecutionContext&, unsigned width, unsigned height);
-    ~OffscreenCanvas();
+    virtual ~OffscreenCanvas();
 
     unsigned width() const final;
     void setWidth(unsigned);
@@ -95,7 +94,6 @@ private:
     void derefCanvasBase() final { deref(); }
 
     IntSize m_size;
-    std::unique_ptr<CanvasRenderingContext> m_context;
 };
 
 }

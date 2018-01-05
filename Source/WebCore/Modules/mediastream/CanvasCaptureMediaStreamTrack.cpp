@@ -26,6 +26,7 @@
 #include "CanvasCaptureMediaStreamTrack.h"
 
 #include "GraphicsContext.h"
+#include "HTMLCanvasElement.h"
 #include "WebGLRenderingContextBase.h"
 
 #if ENABLE(MEDIA_STREAM)
@@ -101,7 +102,7 @@ void CanvasCaptureMediaStreamTrack::Source::requestFrameTimerFired()
     requestFrame();
 }
 
-void CanvasCaptureMediaStreamTrack::Source::canvasDestroyed(HTMLCanvasElement& canvas)
+void CanvasCaptureMediaStreamTrack::Source::canvasDestroyed(CanvasBase& canvas)
 {
     ASSERT_UNUSED(canvas, m_canvas == &canvas);
 
@@ -109,7 +110,7 @@ void CanvasCaptureMediaStreamTrack::Source::canvasDestroyed(HTMLCanvasElement& c
     m_canvas = nullptr;
 }
 
-void CanvasCaptureMediaStreamTrack::Source::canvasResized(HTMLCanvasElement& canvas)
+void CanvasCaptureMediaStreamTrack::Source::canvasResized(CanvasBase& canvas)
 {
     ASSERT_UNUSED(canvas, m_canvas == &canvas);
 
@@ -119,7 +120,7 @@ void CanvasCaptureMediaStreamTrack::Source::canvasResized(HTMLCanvasElement& can
     settingsDidChange();
 }
 
-void CanvasCaptureMediaStreamTrack::Source::canvasChanged(HTMLCanvasElement& canvas, const FloatRect&)
+void CanvasCaptureMediaStreamTrack::Source::canvasChanged(CanvasBase& canvas, const FloatRect&)
 {
     ASSERT_UNUSED(canvas, m_canvas == &canvas);
 
@@ -129,7 +130,7 @@ void CanvasCaptureMediaStreamTrack::Source::canvasChanged(HTMLCanvasElement& can
     if (is<WebGLRenderingContextBase>(canvas.renderingContext())) {
         auto& context = downcast<WebGLRenderingContextBase>(*canvas.renderingContext());
         if (!context.isPreservingDrawingBuffer()) {
-            canvas.document().addConsoleMessage(MessageSource::JS, MessageLevel::Warning, ASCIILiteral("Turning drawing buffer preservation for the WebGL canvas being captured"));
+            canvas.scriptExecutionContext()->addConsoleMessage(MessageSource::JS, MessageLevel::Warning, ASCIILiteral("Turning drawing buffer preservation for the WebGL canvas being captured"));
             context.setPreserveDrawingBuffer(true);
         }
     }

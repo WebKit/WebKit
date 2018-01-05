@@ -28,6 +28,7 @@
 #if ENABLE(WEBGL2)
 
 #include "WebGLRenderingContextBase.h"
+#include <memory>
 
 namespace WebCore {
 
@@ -39,8 +40,8 @@ class WebGLVertexArrayObject;
 
 class WebGL2RenderingContext final : public WebGLRenderingContextBase {
 public:
-    WebGL2RenderingContext(CanvasBase&, WebGLContextAttributes);
-    WebGL2RenderingContext(CanvasBase&, Ref<GraphicsContext3D>&&, WebGLContextAttributes);
+    static std::unique_ptr<WebGL2RenderingContext> create(CanvasBase&, GraphicsContext3DAttributes);
+    static std::unique_ptr<WebGL2RenderingContext> create(CanvasBase&, Ref<GraphicsContext3D>&&, GraphicsContext3DAttributes);
 
     // Buffer objects
     using WebGLRenderingContextBase::bufferData;
@@ -204,6 +205,9 @@ public:
     void hint(GC3Denum target, GC3Denum mode) final;
 
 private:
+    WebGL2RenderingContext(CanvasBase&, GraphicsContext3DAttributes);
+    WebGL2RenderingContext(CanvasBase&, Ref<GraphicsContext3D>&&, GraphicsContext3DAttributes);
+
     bool isWebGL2() const final { return true; }
 
     void initializeVertexArrayObjects() final;

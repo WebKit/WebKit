@@ -34,7 +34,6 @@
 #include "IntSize.h"
 #include <memory>
 #include <wtf/Forward.h>
-#include <wtf/HashSet.h>
 
 #if ENABLE(WEBGL)
 #include "WebGLContextAttributes.h"
@@ -44,10 +43,8 @@ namespace WebCore {
 
 class BlobCallback;
 class CanvasRenderingContext2D;
-class CanvasRenderingContext;
 class GraphicsContext;
 class GraphicsContextStateSaver;
-class HTMLCanvasElement;
 class Image;
 class ImageBuffer;
 class ImageData;
@@ -61,26 +58,11 @@ namespace DisplayList {
 using AsTextFlags = unsigned;
 }
 
-class CanvasObserver {
-public:
-    virtual ~CanvasObserver() = default;
-
-    virtual bool isCanvasObserverProxy() const { return false; }
-
-    virtual void canvasChanged(HTMLCanvasElement&, const FloatRect& changedRect) = 0;
-    virtual void canvasResized(HTMLCanvasElement&) = 0;
-    virtual void canvasDestroyed(HTMLCanvasElement&) = 0;
-};
-
 class HTMLCanvasElement final : public HTMLElement, public CanvasBase {
 public:
     static Ref<HTMLCanvasElement> create(Document&);
     static Ref<HTMLCanvasElement> create(const QualifiedName&, Document&);
     virtual ~HTMLCanvasElement();
-
-    void addObserver(CanvasObserver&);
-    void removeObserver(CanvasObserver&);
-    HashSet<Element*> cssCanvasClients() const;
 
     unsigned width() const final { return size().width(); }
     unsigned height() const final { return size().height(); }
@@ -130,14 +112,11 @@ public:
 
     // Used for rendering
     void didDraw(const FloatRect&);
-    void notifyObserversCanvasChanged(const FloatRect&);
 
     void paint(GraphicsContext&, const LayoutRect&);
 
     GraphicsContext* drawingContext() const;
     GraphicsContext* existingDrawingContext() const;
-
-    CanvasRenderingContext* renderingContext() const { return m_context.get(); }
 
 #if ENABLE(MEDIA_STREAM)
     RefPtr<MediaSample> toMediaSample();
@@ -198,9 +177,6 @@ private:
 
     void refCanvasBase() final { HTMLElement::ref(); }
     void derefCanvasBase() final { HTMLElement::deref(); }
-
-    HashSet<CanvasObserver*> m_observers;
-    std::unique_ptr<CanvasRenderingContext> m_context;
 
     FloatRect m_dirtyRect;
     mutable IntSize m_size;
