@@ -39,7 +39,7 @@
 #import <wtf/SoftLinking.h>
 
 #if PLATFORM(MAC)
-SOFT_LINK_PRIVATE_FRAMEWORK(PassKit)
+SOFT_LINK_PRIVATE_FRAMEWORK_OPTIONAL(PassKit)
 #else
 SOFT_LINK_FRAMEWORK(PassKit)
 #endif
@@ -849,12 +849,24 @@ void WebPaymentCoordinatorProxy::platformCompletePaymentMethodSelection(const st
 
 Vector<String> WebPaymentCoordinatorProxy::availablePaymentNetworks()
 {
+    if (!platformSupportsPayments())
+        return { };
+
     NSArray<PKPaymentNetwork> *availableNetworks = [getPKPaymentRequestClass() availableNetworks];
     Vector<String> result;
     result.reserveInitialCapacity(availableNetworks.count);
     for (PKPaymentNetwork network in availableNetworks)
         result.uncheckedAppend(network);
     return result;
+}
+
+bool WebPaymentCoordinatorProxy::platformSupportsPayments()
+{
+#if PLATFORM(MAC)
+    return PassKitLibrary();
+#else
+    return true;
+#endif
 }
 
 } // namespace WebKit

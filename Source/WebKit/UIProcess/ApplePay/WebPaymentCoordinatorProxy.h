@@ -69,6 +69,7 @@ public:
 
     void hidePaymentUI();
 
+    static bool platformSupportsPayments();
     static Vector<String> availablePaymentNetworks();
 
 private:

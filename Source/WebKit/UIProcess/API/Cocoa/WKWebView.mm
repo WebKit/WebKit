@@ -74,6 +74,7 @@
 #import "WebFullScreenManagerProxy.h"
 #import "WebPageGroup.h"
 #import "WebPageProxy.h"
+#import "WebPaymentCoordinatorProxy.h"
 #import "WebPreferencesKeys.h"
 #import "WebProcessPool.h"
 #import "WebProcessProxy.h"
@@ -588,7 +589,8 @@ static void validate(WKWebViewConfiguration *configuration)
 #endif
 
 #if ENABLE(APPLE_PAY)
-    pageConfiguration->preferenceValues().set(WebKit::WebPreferencesKey::applePayEnabledKey(), WebKit::WebPreferencesStore::Value(!![_configuration _applePayEnabled]));
+    bool applePayEnabled = [_configuration _applePayEnabled] && WebKit::WebPaymentCoordinatorProxy::platformSupportsPayments();
+    pageConfiguration->preferenceValues().set(WebKit::WebPreferencesKey::applePayEnabledKey(), WebKit::WebPreferencesStore::Value(applePayEnabled));
 #endif
 
     pageConfiguration->preferenceValues().set(WebKit::WebPreferencesKey::needsStorageAccessFromFileURLsQuirkKey(), WebKit::WebPreferencesStore::Value(!![_configuration _needsStorageAccessFromFileURLsQuirk]));
