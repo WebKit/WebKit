@@ -1,3 +1,13 @@
+2018-01-04  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed GTK+ build fix.
+
+        * UIProcess/API/glib/WebKitUserMediaPermissionRequest.cpp:
+        (webkit_user_media_permission_is_for_audio_device):
+        Call UserMediaPermissionRequestProxy::requiresAudioCapture().
+        (webkit_user_media_permission_is_for_video_device):
+        Call UserMediaPermissionRequestProxy::requiresVideoCapture().
+
 2018-01-04  Don Olmstead  <don.olmstead@sony.com>
 
         [Curl] Fix compilation error in WebFrameNetworkingContext
