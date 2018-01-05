@@ -1,3 +1,12 @@
+2018-01-05  Chris Fleizach  <cfleizach@apple.com>
+
+        iOS: Build fix after r226432.
+        
+        Unreviewed. Stop duplicating speakAs symbols for iOS.
+
+        * DumpRenderTree/AccessibilityUIElement.cpp:
+        (AccessibilityUIElement::speakAs):
+
 2018-01-05  Javier Fernandez  <jfernandez@igalia.com>
 
         Unreviewed, added myself as WebKit reviewer
