@@ -1,3 +1,21 @@
+2018-01-04  JF Bastien  <jfbastien@apple.com>
+
+        Add assembler support for x86 lfence and sfence
+        https://bugs.webkit.org/show_bug.cgi?id=181311
+        <rdar://problem/36301780>
+
+        Reviewed by Michael Saboff.
+
+        Useful for testing performance of serializing instructions (hint:
+        it's not good).
+
+        * assembler/MacroAssemblerX86Common.h:
+        (JSC::MacroAssemblerX86Common::lfence):
+        (JSC::MacroAssemblerX86Common::sfence):
+        * assembler/X86Assembler.h:
+        (JSC::X86Assembler::lfence):
+        (JSC::X86Assembler::sfence):
+
 2018-01-04  Saam Barati  <sbarati@apple.com>
 
         Add a new pattern matching rule to Graph::methodOfGettingAValueProfileFor for SetLocal(@nodeWithHeapPrediction)

@@ -344,7 +344,9 @@ private:
     typedef enum {
         OP3_ROUNDSS_VssWssIb = 0x0A,
         OP3_ROUNDSD_VsdWsdIb = 0x0B,
+        OP3_LFENCE           = 0xE8,
         OP3_MFENCE           = 0xF0,
+        OP3_SFENCE           = 0xF8,
     } ThreeByteOpcodeID;
 
     struct VexPrefix {
@@ -3541,10 +3543,20 @@ public:
         m_formatter.twoByteOp64(OP2_XADD, src, base, index, scale, offset);
     }
 #endif // CPU(X86_64)
-    
+
+    void lfence()
+    {
+        m_formatter.threeByteOp(OP2_3BYTE_ESCAPE_AE, OP3_LFENCE);
+    }
+
     void mfence()
     {
         m_formatter.threeByteOp(OP2_3BYTE_ESCAPE_AE, OP3_MFENCE);
+    }
+
+    void sfence()
+    {
+        m_formatter.threeByteOp(OP2_3BYTE_ESCAPE_AE, OP3_SFENCE);
     }
 
     void rdtsc()

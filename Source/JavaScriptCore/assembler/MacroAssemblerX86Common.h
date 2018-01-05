@@ -3886,9 +3886,19 @@ public:
         s_avxCheckState = (flags & (1 << 28)) ? CPUIDCheckState::Set : CPUIDCheckState::Clear;
     }
 
+    void lfence()
+    {
+        m_assembler.lfence();
+    }
+
     void mfence()
     {
         m_assembler.mfence();
+    }
+
+    void sfence()
+    {
+        m_assembler.sfence();
     }
 
     void rdtsc()
