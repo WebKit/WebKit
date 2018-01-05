@@ -1,6 +1,6 @@
 
 
-FAIL Service Worker headers in the request of a fetch event assert_unreached: unexpected rejection: assert_true: request specifies "Upgrade-Insecure Requests header as inserted by Fetch expected true got false Reached unreachable code
+PASS Service Worker headers in the request of a fetch event 
 PASS Service Worker responds to fetch event with string 
 PASS Service Worker responds to fetch event with blob body 
 PASS Service Worker responds to fetch event with the referrer URL 
