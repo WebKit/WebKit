@@ -194,14 +194,14 @@ if JSVALUE64
     const TagTypeNumber   = 0xffff000000000000
     const TagMask         = TagTypeNumber | TagBitTypeOther
 else
-    const NullTag = constexpr JSValue::NullTag
-    const UndefinedTag = constexpr JSValue::UndefinedTag
-    const BooleanTag = constexpr JSValue::BooleanTag
-    const CellTag = constexpr JSValue::CellTag
-    const EmptyValueTag = constexpr JSValue::EmptyValueTag
-    const DeletedValueTag = constexpr JSValue::DeletedValueTag
-    const Int32Tag = constexpr JSValue::Int32Tag
-    const LowestTag = constexpr JSValue::LowestTag
+    const Int32Tag = -1
+    const BooleanTag = -2
+    const NullTag = -3
+    const UndefinedTag = -4
+    const CellTag = -5
+    const EmptyValueTag = -6
+    const DeletedValueTag = -7
+    const LowestTag = DeletedValueTag
 end
 
 # PutByIdFlags data

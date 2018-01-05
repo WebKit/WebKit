@@ -2427,7 +2427,7 @@ void SpeculativeJIT::compileValueToInt32(Node* node)
                             MacroAssembler::AboveOrEqual, tagGPR,
                             TrustedImm32(JSValue::LowestTag)));
                 } else {
-                    JITCompiler::Jump isDouble = m_jit.branch32(MacroAssembler::Below, tagGPR, TrustedImm32(JSValue::LowestTag));
+                    JITCompiler::Jump isNumber = m_jit.branch32(MacroAssembler::Below, tagGPR, TrustedImm32(JSValue::LowestTag));
                     
                     DFG_TYPE_CHECK(
                         op1.jsValueRegs(), node->child1(), ~SpecCell,
@@ -2442,7 +2442,7 @@ void SpeculativeJIT::compileValueToInt32(Node* node)
                     m_jit.move(payloadGPR, resultGpr);
                     converted.append(m_jit.jump());
                     
-                    isDouble.link(&m_jit);
+                    isNumber.link(&m_jit);
                 }
 
                 unboxDouble(tagGPR, payloadGPR, fpr, scratch.fpr());
@@ -2644,7 +2644,7 @@ void SpeculativeJIT::compileDoubleRep(Node* node)
             MacroAssembler::Equal, op1TagGPR, TrustedImm32(JSValue::Int32Tag));
 
         if (node->child1().useKind() == NotCellUse) {
-            JITCompiler::Jump isDouble = m_jit.branch32(JITCompiler::Below, op1TagGPR, JITCompiler::TrustedImm32(JSValue::LowestTag));
+            JITCompiler::Jump isNumber = m_jit.branch32(JITCompiler::Below, op1TagGPR, JITCompiler::TrustedImm32(JSValue::LowestTag + 1));
             JITCompiler::Jump isUndefined = m_jit.branch32(JITCompiler::Equal, op1TagGPR, TrustedImm32(JSValue::UndefinedTag));
 
             static const double zero = 0;
@@ -2666,7 +2666,7 @@ void SpeculativeJIT::compileDoubleRep(Node* node)
             m_jit.loadDouble(TrustedImmPtr(&NaN), resultFPR);
             done.append(m_jit.jump());
 
-            isDouble.link(&m_jit);
+            isNumber.link(&m_jit);
         } else if (needsTypeCheck(node->child1(), SpecBytecodeNumber)) {
             typeCheck(
                 JSValueRegs(op1TagGPR, op1PayloadGPR), node->child1(), SpecBytecodeNumber,
@@ -9127,8 +9127,20 @@ void SpeculativeJIT::speculateNumber(Edge edge)
         return;
     
     JSValueOperand value(this, edge, ManualOperandSpeculation);
-    JSValueRegs valueRegs = value.jsValueRegs();
-    DFG_TYPE_CHECK(valueRegs, edge, SpecBytecodeNumber, m_jit.branchIfNotNumber(valueRegs));
+#if USE(JSVALUE64)
+    GPRReg gpr = value.gpr();
+    typeCheck(
+        JSValueRegs(gpr), edge, SpecBytecodeNumber,
+        m_jit.branchTest64(MacroAssembler::Zero, gpr, GPRInfo::tagTypeNumberRegister));
+#else
+    GPRReg tagGPR = value.tagGPR();
+    DFG_TYPE_CHECK(
+        value.jsValueRegs(), edge, ~SpecInt32Only,
+        m_jit.branch32(MacroAssembler::Equal, tagGPR, TrustedImm32(JSValue::Int32Tag)));
+    DFG_TYPE_CHECK(
+        value.jsValueRegs(), edge, SpecBytecodeNumber,
+        m_jit.branch32(MacroAssembler::AboveOrEqual, tagGPR, TrustedImm32(JSValue::LowestTag)));
+#endif
 }
 
 void SpeculativeJIT::speculateRealNumber(Edge edge)
@@ -9594,7 +9606,18 @@ void SpeculativeJIT::speculateOther(Edge edge)
 
 void SpeculativeJIT::speculateMisc(Edge edge, JSValueRegs regs)
 {
-    DFG_TYPE_CHECK(regs, edge, SpecMisc, m_jit.branchIfNotMisc(regs));
+#if USE(JSVALUE64)
+    DFG_TYPE_CHECK(
+        regs, edge, SpecMisc,
+        m_jit.branch64(MacroAssembler::Above, regs.gpr(), MacroAssembler::TrustedImm64(TagBitTypeOther | TagBitBool | TagBitUndefined)));
+#else
+    DFG_TYPE_CHECK(
+        regs, edge, ~SpecInt32Only,
+        m_jit.branch32(MacroAssembler::Equal, regs.tagGPR(), MacroAssembler::TrustedImm32(JSValue::Int32Tag)));
+    DFG_TYPE_CHECK(
+        regs, edge, SpecMisc,
+        m_jit.branch32(MacroAssembler::Below, regs.tagGPR(), MacroAssembler::TrustedImm32(JSValue::UndefinedTag)));
+#endif
 }
 
 void SpeculativeJIT::speculateMisc(Edge edge)
@@ -10907,7 +10930,7 @@ void SpeculativeJIT::compileNormalizeMapKey(Node* node)
 
     CCallHelpers::JumpList passThroughCases;
 
-    passThroughCases.append(m_jit.branchIfNotNumber(keyRegs));
+    passThroughCases.append(m_jit.branchIfNotNumber(keyRegs, scratchGPR));
     passThroughCases.append(m_jit.branchIfInt32(keyRegs));
 
 #if USE(JSVALUE64)
@@ -11429,42 +11452,6 @@ void SpeculativeJIT::compileToPrimitive(Node* node)
     addSlowPathGenerator(slowPathCall(notPrimitive, this, operationToPrimitive, resultRegs, argumentRegs));
 
     jsValueResult(resultRegs, node, DataFormatJS, UseChildrenCalledExplicitly);
-}
-
-void SpeculativeJIT::compileToNumber(Node* node)
-{
-    JSValueOperand argument(this, node->child1());
-    JSValueRegs argumentRegs = argument.jsValueRegs();
-
-    // We have several attempts to remove ToNumber. But ToNumber still exists.
-    // It means that converting non-numbers to numbers by this ToNumber is not rare.
-    // Instead of the slow path generator, we emit callOperation here.
-    if (!(m_state.forNode(node->child1()).m_type & SpecBytecodeNumber)) {
-        flushRegisters();
-        JSValueRegsFlushedCallResult result(this);
-        JSValueRegs resultRegs = result.regs();
-        callOperation(operationToNumber, resultRegs, argumentRegs);
-        m_jit.exceptionCheck();
-        jsValueResult(resultRegs, node);
-        return;
-    }
-
-    JSValueRegsTemporary result(this, Reuse, argument);
-    JSValueRegs resultRegs = result.regs();
-
-    auto notNumber = m_jit.branchIfNotNumber(argumentRegs);
-    m_jit.moveValueRegs(argumentRegs, resultRegs);
-    auto done = m_jit.jump();
-
-    notNumber.link(&m_jit);
-    silentSpillAllRegisters(resultRegs);
-    callOperation(operationToNumber, resultRegs, argumentRegs);
-    silentFillAllRegisters();
-    m_jit.exceptionCheck();
-
-    done.link(&m_jit);
-
-    jsValueResult(resultRegs, node);
 }
 
 void SpeculativeJIT::compileLogShadowChickenPrologue(Node* node)

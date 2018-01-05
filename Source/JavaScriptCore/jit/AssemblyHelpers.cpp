@@ -87,7 +87,7 @@ AssemblyHelpers::JumpList AssemblyHelpers::branchIfNotType(
         break;
 
     case InferredType::Number:
-        result.append(branchIfNotNumber(regs, mode));
+        result.append(branchIfNotNumber(regs, tempGPR, mode));
         break;
 
     case InferredType::String:
@@ -260,9 +260,11 @@ void AssemblyHelpers::jitAssertIsJSInt32(GPRReg gpr)
 
 void AssemblyHelpers::jitAssertIsJSNumber(GPRReg gpr)
 {
-    Jump checkJSNumber = branch32(BelowOrEqual, gpr, TrustedImm32(JSValue::LowestTag));
+    Jump checkJSInt32 = branch32(Equal, gpr, TrustedImm32(JSValue::Int32Tag));
+    Jump checkJSDouble = branch32(Below, gpr, TrustedImm32(JSValue::LowestTag));
     abortWithReason(AHIsNotJSNumber);
-    checkJSNumber.link(this);
+    checkJSInt32.link(this);
+    checkJSDouble.link(this);
 }
 
 void AssemblyHelpers::jitAssertIsJSDouble(GPRReg gpr)
@@ -719,7 +721,12 @@ void AssemblyHelpers::emitConvertValueToBoolean(VM& vm, JSValueRegs value, GPRRe
     done.append(jump());
 
     notBoolean.link(this);
-    auto isNotNumber = branchIfNotNumber(value);
+#if USE(JSVALUE64)
+    auto isNotNumber = branchIfNotNumber(value.gpr());
+#else
+    ASSERT(scratch != InvalidGPRReg);
+    auto isNotNumber = branchIfNotNumber(value, scratch);
+#endif
     auto isDouble = branchIfNotInt32(value);
 
     // It's an int32.

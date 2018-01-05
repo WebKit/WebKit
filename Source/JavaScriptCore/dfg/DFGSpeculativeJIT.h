@@ -3109,7 +3109,6 @@ public:
     void compileCreateThis(Node*);
     void compileNewObject(Node*);
     void compileToPrimitive(Node*);
-    void compileToNumber(Node*);
     void compileLogShadowChickenPrologue(Node*);
     void compileLogShadowChickenTail(Node*);
 

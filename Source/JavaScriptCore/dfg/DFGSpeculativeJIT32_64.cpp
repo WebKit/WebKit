@@ -346,7 +346,7 @@ void SpeculativeJIT::nonSpeculativeNonPeepholeCompareNullOrUndefined(Edge operan
         
         notCell.link(&m_jit);
         // null or undefined?
-        static_assert((JSValue::UndefinedTag | 1) == JSValue::NullTag, "");
+        COMPILE_ASSERT((JSValue::UndefinedTag | 1) == JSValue::NullTag, UndefinedTag_OR_1_EQUALS_NullTag);
         m_jit.or32(TrustedImm32(1), argTagGPR, resultPayloadGPR);
         m_jit.compare32(JITCompiler::Equal, resultPayloadGPR, TrustedImm32(JSValue::NullTag), resultPayloadGPR);
 
@@ -410,7 +410,7 @@ void SpeculativeJIT::nonSpeculativePeepholeBranchNullOrUndefined(Edge operand, N
         
         notCell.link(&m_jit);
         // null or undefined?
-        static_assert((JSValue::UndefinedTag | 1) == JSValue::NullTag, "");
+        COMPILE_ASSERT((JSValue::UndefinedTag | 1) == JSValue::NullTag, UndefinedTag_OR_1_EQUALS_NullTag);
         m_jit.or32(TrustedImm32(1), argTagGPR, resultGPR);
         branch32(invert ? JITCompiler::NotEqual : JITCompiler::Equal, resultGPR, JITCompiler::TrustedImm32(JSValue::NullTag), taken);
     }
@@ -1781,7 +1781,7 @@ void SpeculativeJIT::compileObjectOrOtherLogicalNot(Edge nodeUse)
     
     notCell.link(&m_jit);
  
-    static_assert((JSValue::UndefinedTag | 1) == JSValue::NullTag, "");
+    COMPILE_ASSERT((JSValue::UndefinedTag | 1) == JSValue::NullTag, UndefinedTag_OR_1_EQUALS_NullTag);
     if (needsTypeCheck(nodeUse, SpecCell | SpecOther)) {
         m_jit.or32(TrustedImm32(1), valueTagGPR, resultPayloadGPR);
         typeCheck(
@@ -1899,7 +1899,7 @@ void SpeculativeJIT::emitObjectOrOtherBranch(Edge nodeUse, BasicBlock* taken, Ba
     
     notCell.link(&m_jit);
     
-    static_assert((JSValue::UndefinedTag | 1) == JSValue::NullTag, "");
+    COMPILE_ASSERT((JSValue::UndefinedTag | 1) == JSValue::NullTag, UndefinedTag_OR_1_EQUALS_NullTag);
     if (needsTypeCheck(nodeUse, SpecCell | SpecOther)) {
         m_jit.or32(TrustedImm32(1), valueTagGPR, scratchGPR);
         typeCheck(
@@ -3450,7 +3450,44 @@ void SpeculativeJIT::compile(Node* node)
     }
 
     case ToNumber: {
-        compileToNumber(node);
+        JSValueOperand argument(this, node->child1());
+        GPRTemporary resultTag(this, Reuse, argument, TagWord);
+        GPRTemporary resultPayload(this, Reuse, argument, PayloadWord);
+
+        GPRReg argumentPayloadGPR = argument.payloadGPR();
+        GPRReg argumentTagGPR = argument.tagGPR();
+        JSValueRegs argumentRegs = argument.jsValueRegs();
+        JSValueRegs resultRegs(resultTag.gpr(), resultPayload.gpr());
+
+        argument.use();
+
+        // We have several attempts to remove ToNumber. But ToNumber still exists.
+        // It means that converting non-numbers to numbers by this ToNumber is not rare.
+        // Instead of the slow path generator, we emit callOperation here.
+        if (!(m_state.forNode(node->child1()).m_type & SpecBytecodeNumber)) {
+            flushRegisters();
+            callOperation(operationToNumber, resultRegs, argumentRegs);
+            m_jit.exceptionCheck();
+        } else {
+            MacroAssembler::Jump notNumber;
+            {
+                GPRTemporary scratch(this);
+                notNumber = m_jit.branchIfNotNumber(argument.jsValueRegs(), scratch.gpr());
+            }
+            m_jit.move(argumentTagGPR, resultRegs.tagGPR());
+            m_jit.move(argumentPayloadGPR, resultRegs.payloadGPR());
+            MacroAssembler::Jump done = m_jit.jump();
+
+            notNumber.link(&m_jit);
+            silentSpillAllRegisters(resultRegs);
+            callOperation(operationToNumber, resultRegs, argumentRegs);
+            silentFillAllRegisters();
+            m_jit.exceptionCheck();
+
+            done.link(&m_jit);
+        }
+
+        jsValueResult(resultRegs.tagGPR(), resultRegs.payloadGPR(), node, UseChildrenCalledExplicitly);
         break;
     }
         
@@ -4348,7 +4385,8 @@ void SpeculativeJIT::compile(Node* node)
         JSValueOperand value(this, node->child1());
         GPRTemporary result(this, Reuse, value, TagWord);
         
-        m_jit.compare32(JITCompiler::BelowOrEqual, result.gpr(), JITCompiler::TrustedImm32(JSValue::LowestTag), result.gpr());
+        m_jit.add32(TrustedImm32(1), value.tagGPR(), result.gpr());
+        m_jit.compare32(JITCompiler::Below, result.gpr(), JITCompiler::TrustedImm32(JSValue::LowestTag + 1), result.gpr());
         booleanResult(result.gpr(), node);
         break;
     }
