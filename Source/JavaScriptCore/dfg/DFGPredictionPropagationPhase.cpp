@@ -442,13 +442,13 @@ private:
             }
 
             SpeculatedType prediction = node->child1()->prediction();
-            if (prediction) {
+            if (ecmaMode == StrictMode)
+                changed |= mergePrediction(node->getHeapPrediction());
+            else if (prediction) {
                 if (prediction & ~SpecObject) {
                     // Wrapper objects are created only in sloppy mode.
-                    if (ecmaMode != StrictMode) {
-                        prediction &= SpecObject;
-                        prediction = mergeSpeculations(prediction, SpecObjectOther);
-                    }
+                    prediction &= SpecObject;
+                    prediction = mergeSpeculations(prediction, SpecObjectOther);
                 }
                 changed |= mergePrediction(prediction);
             }

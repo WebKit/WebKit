@@ -267,7 +267,13 @@ SLOW_PATH_DECL(slow_path_to_this)
         pc[3].u.toThisStatus = ToThisConflicted;
         pc[2].u.structure.clear();
     }
-    RETURN(v1.toThis(exec, exec->codeBlock()->isStrictMode() ? StrictMode : NotStrictMode));
+    // Note: We only need to do this value profiling here on the slow path. The fast path
+    // just returns the input to to_this if the structure check succeeds. If the structure
+    // check succeeds, doing value profiling here is equivalent to doing it with a potentially
+    // different object that still has the same structure on the fast path since it'll produce
+    // the same SpeculatedType. Therefore, we don't need to worry about value profiling on the
+    // fast path.
+    RETURN_PROFILED(op_to_this, v1.toThis(exec, exec->codeBlock()->isStrictMode() ? StrictMode : NotStrictMode));
 }
 
 SLOW_PATH_DECL(slow_path_throw_tdz_error)

@@ -4360,7 +4360,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
                     || m_inlineStackTop->m_profiledBlock->couldTakeSlowCase(m_currentIndex)
                     || m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadCache)
                     || (op1->op() == GetLocal && op1->variableAccessData()->structureCheckHoistingFailed())) {
-                    setThis(addToGraph(ToThis, op1));
+                    setThis(addToGraph(ToThis, OpInfo(), OpInfo(getPrediction()), op1));
                 } else {
                     addToGraph(
                         CheckStructure,

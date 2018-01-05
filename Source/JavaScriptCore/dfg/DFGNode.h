@@ -1593,6 +1593,7 @@ public:
         case AtomicsXor:
         case GetDynamicVar:
         case ExtractValueFromWeakMapGet:
+        case ToThis:
             return true;
         default:
             return false;

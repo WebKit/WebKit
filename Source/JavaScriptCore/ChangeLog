@@ -1,3 +1,41 @@
+2018-01-04  Saam Barati  <sbarati@apple.com>
+
+        Do value profiling in to_this
+        https://bugs.webkit.org/show_bug.cgi?id=181299
+
+        Reviewed by Filip Pizlo.
+
+        This patch adds value profiling to to_this. We use the result of the value
+        profiling only for strict mode code when we don't predict that the input is
+        of a specific type. This helps when the input is SpecCellOther. Such cells
+        might implement a custom ToThis, which can produce an arbitrary result. Before
+        this patch, in prediction propagation, we were saying that a ToThis with a
+        SpecCellOther input also produced SpecCellOther. However, this is incorrect,
+        given that the input may implement ToThis that produces an arbitrary result.
+        This is seen inside Speedometer. This patch fixes an OSR exit loop in Speedometer.
+        
+        Interestingly, this patch only does value profiling on the slow path. The fast
+        path of to_this in the LLInt/baseline just perform a structure check. If it
+        passes, the result is the same as the input. Therefore, doing value profiling
+        from the fast path wouldn't actually produce new information for the ValueProfile.
+
+        * bytecode/BytecodeDumper.cpp:
+        (JSC::BytecodeDumper<Block>::dumpBytecode):
+        * bytecode/BytecodeList.json:
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::finishCreation):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        (JSC::BytecodeGenerator::emitToThis):
+        * bytecompiler/BytecodeGenerator.h:
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::hasHeapPrediction):
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::SLOW_PATH_DECL):
+
 2018-01-04  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [DFG] Unify ToNumber implementation in 32bit and 64bit by changing 32bit Int32Tag and LowestTag

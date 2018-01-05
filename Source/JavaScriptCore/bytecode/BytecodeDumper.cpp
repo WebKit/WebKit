@@ -705,6 +705,7 @@ void BytecodeDumper<Block>::dumpBytecode(PrintStream& out, const typename Block:
         if (structure)
             out.print(", cache(struct = ", RawPointer(structure), ")");
         out.print(", ", getToThisStatus(*(++it)));
+        dumpValueProfiling(out, it, hasPrintedProfiling);
         break;
     }
     case op_check_tdz: {

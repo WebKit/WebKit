@@ -589,11 +589,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
 
         // FIXME: Emit to_this only when Generator uses it.
         // https://bugs.webkit.org/show_bug.cgi?id=151586
-        m_codeBlock->addPropertyAccessInstruction(instructions().size());
-        emitOpcode(op_to_this);
-        instructions().append(kill(&m_thisRegister));
-        instructions().append(0);
-        instructions().append(0);
+        emitToThis();
 
         emitMove(m_generatorRegister, &m_calleeRegister);
         emitCreateThis(m_generatorRegister);
@@ -611,11 +607,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
         if (parseMode != SourceParseMode::AsyncArrowFunctionMode) {
             // FIXME: Emit to_this only when AsyncFunctionBody uses it.
             // https://bugs.webkit.org/show_bug.cgi?id=151586
-            m_codeBlock->addPropertyAccessInstruction(instructions().size());
-            emitOpcode(op_to_this);
-            instructions().append(kill(&m_thisRegister));
-            instructions().append(0);
-            instructions().append(0);
+            emitToThis();
         }
 
         emitNewObject(m_generatorRegister);
@@ -677,13 +669,8 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
                     shouldEmitToThis = true;
                 }
 
-                if (shouldEmitToThis) {
-                    m_codeBlock->addPropertyAccessInstruction(instructions().size());
-                    emitOpcode(op_to_this);
-                    instructions().append(kill(&m_thisRegister));
-                    instructions().append(0);
-                    instructions().append(0);
-                }
+                if (shouldEmitToThis)
+                    emitToThis();
             }
         }
         break;
@@ -5224,6 +5211,16 @@ void IndexedForInContext::finalize(BytecodeGenerator& generator)
         // not the indexed one.
         generator.instructions()[instIndex + 3].u.operand = propertyRegIndex;
     }
+}
+
+void BytecodeGenerator::emitToThis()
+{
+    m_codeBlock->addPropertyAccessInstruction(instructions().size());
+    UnlinkedValueProfile profile = emitProfiledOpcode(op_to_this);
+    instructions().append(kill(&m_thisRegister));
+    instructions().append(0);
+    instructions().append(0);
+    instructions().append(profile);
 }
 
 } // namespace JSC
