@@ -26,6 +26,7 @@
 
 #pragma once
 
+#include <array>
 #include <memory>
 #include <pal/text/UnencodableHandling.h>
 #include <unicode/umachine.h>
