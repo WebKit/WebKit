@@ -1,3 +1,17 @@
+2018-01-05  Dan Bernstein  <mitz@apple.com>
+
+        Add injected bundle equivalents of DOMHTMLDocument (DOMHTMLDocumentExtensions)
+        https://bugs.webkit.org/show_bug.cgi?id=181345
+
+        Reviewed by Tim Horton.
+
+        * WebProcess/InjectedBundle/API/mac/WKDOMDocument.h: Declared new methods.
+        * WebProcess/InjectedBundle/API/mac/WKDOMDocument.mm:
+        (-[WKDOMDocument createDocumentFragmentWithMarkupString:baseURL:]): Added. Calls WebCore’s
+          createFragmentFromMarkup.
+        (-[WKDOMDocument createDocumentFragmentWithText:]): Added. Calls WebCore’s
+          createFragmentFromText.
+
 2018-01-05  Don Olmstead  <don.olmstead@sony.com>
 
         [Curl] Add implementation stubs for Network Cache

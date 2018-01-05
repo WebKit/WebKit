@@ -30,8 +30,10 @@
 
 #import "WKDOMInternals.h"
 #import <WebCore/Document.h>
+#import <WebCore/DocumentFragment.h>
 #import <WebCore/HTMLElement.h>
 #import <WebCore/Text.h>
+#import <WebCore/markup.h>
 
 @implementation WKDOMDocument
 
@@ -52,6 +54,16 @@
 - (WKDOMElement *)body
 {
     return WebKit::toWKDOMElement(downcast<WebCore::Document>(*_impl).bodyOrFrameset());
+}
+
+- (WKDOMNode *)createDocumentFragmentWithMarkupString:(NSString *)markupString baseURL:(NSURL *)baseURL
+{
+    return WebKit::toWKDOMNode(createFragmentFromMarkup(downcast<WebCore::Document>(*_impl), markupString, baseURL.absoluteString).ptr());
+}
+
+- (WKDOMNode *)createDocumentFragmentWithText:(NSString *)text
+{
+    return WebKit::toWKDOMNode(createFragmentFromText(downcast<WebCore::Document>(*_impl).createRange().get(), text).ptr());
 }
 
 @end

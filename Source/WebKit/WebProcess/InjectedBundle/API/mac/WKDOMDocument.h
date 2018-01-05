@@ -37,6 +37,8 @@ WK_CLASS_AVAILABLE(macosx(10.10), ios(8.0))
 
 - (WKDOMElement *)createElement:(NSString *)tagName;
 - (WKDOMText *)createTextNode:(NSString *)data;
+- (WKDOMNode *)createDocumentFragmentWithMarkupString:(NSString *)markupString baseURL:(NSURL *)baseURL WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
+- (WKDOMNode *)createDocumentFragmentWithText:(NSString *)text WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 @property(readonly) WKDOMElement *body;
 
