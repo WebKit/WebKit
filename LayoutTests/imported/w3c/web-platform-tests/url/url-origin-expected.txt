@@ -252,7 +252,7 @@ PASS Origin parsing: <data:/../> against <about:blank>
 PASS Origin parsing: <javascript:/../> against <about:blank> 
 FAIL Origin parsing: <mailto:/../> against <about:blank> assert_equals: origin expected "null" but got "mailto://"
 FAIL Origin parsing: <sc://ñ.test/> against <about:blank> assert_equals: origin expected "null" but got "sc://%c3%b1.test"
-FAIL Origin parsing: <sc://!"$&'()*+,-.;<=>^_`{|}~/> against <about:blank> assert_equals: origin expected "null" but got "sc://%1f!\"$&'()*+,-.;<=>^_`{|}~"
+FAIL Origin parsing: <sc://!"$&'()*+,-.;<=>^_`{|}~/> against <about:blank> Type error
 FAIL Origin parsing: <x> against <sc://ñ> assert_equals: origin expected "null" but got "sc://%c3%b1"
 FAIL Origin parsing: <sc:\../> against <about:blank> assert_equals: origin expected "null" but got "sc://"
 FAIL Origin parsing: <sc::a@example.net> against <about:blank> assert_equals: origin expected "null" but got "sc://"

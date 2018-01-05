@@ -1,3 +1,19 @@
+2018-01-05  Alex Christensen  <achristensen@webkit.org>
+
+        Forbid < and > in URL hosts
+        https://bugs.webkit.org/show_bug.cgi?id=181308
+        <rdar://problem/36012757>
+
+        Reviewed by Tim Horton.
+
+        https://url.spec.whatwg.org/#forbidden-host-code-point does not include these characters yet, but I think it should.
+        Firefox fails to parse URLs with < or > in the host.  Chrome percent encodes them.  Safari needs to do something.
+        The web platform tests are unclear on this case, and they will need to be updated with the specification.
+        They do show a change in behavior, though.
+
+        * platform/URLParser.cpp:
+        Add < and > to the list of forbidden host code points.
+
 2018-01-05  Eric Carlson  <eric.carlson@apple.com>
 
         [MediaStream] Add Mac screen capture source

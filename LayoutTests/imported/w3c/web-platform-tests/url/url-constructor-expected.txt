@@ -346,7 +346,7 @@ PASS Parsing: <data:/../> against <about:blank>
 PASS Parsing: <javascript:/../> against <about:blank> 
 PASS Parsing: <mailto:/../> against <about:blank> 
 PASS Parsing: <sc://ñ.test/> against <about:blank> 
-PASS Parsing: <sc://!"$&'()*+,-.;<=>^_`{|}~/> against <about:blank> 
+FAIL Parsing: <sc://!"$&'()*+,-.;<=>^_`{|}~/> against <about:blank> Type error
 PASS Parsing: <sc://\0/> against <about:blank> 
 PASS Parsing: <sc:// /> against <about:blank> 
 PASS Parsing: <sc://%/> against <about:blank> 

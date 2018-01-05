@@ -340,7 +340,7 @@ PASS Parsing: <data:/../> against <about:blank>
 PASS Parsing: <javascript:/../> against <about:blank> 
 PASS Parsing: <mailto:/../> against <about:blank> 
 PASS Parsing: <sc://ñ.test/> against <about:blank> 
-PASS Parsing: <sc://!"$&'()*+,-.;<=>^_`{|}~/> against <about:blank> 
+FAIL Parsing: <sc://!"$&'()*+,-.;<=>^_`{|}~/> against <about:blank> assert_equals: href expected "sc://%1F!\"$&'()*+,-.;<=>^_`{|}~/" but got "sc://\x1f!\"$&'()*+,-.;<=>^_`{|}~/"
 PASS Parsing: <sc://\0/> against <about:blank> 
 PASS Parsing: <sc:// /> against <about:blank> 
 PASS Parsing: <sc://%/> against <about:blank> 

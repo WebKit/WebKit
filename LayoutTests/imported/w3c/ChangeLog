@@ -1,3 +1,18 @@
+2018-01-05  Alex Christensen  <achristensen@webkit.org>
+
+        Forbid < and > in URL hosts
+        https://bugs.webkit.org/show_bug.cgi?id=181308
+        <rdar://problem/36012757>
+
+        Reviewed by Tim Horton.
+
+        * web-platform-tests/url/a-element-expected.txt:
+        * web-platform-tests/url/a-element-origin-expected.txt:
+        * web-platform-tests/url/a-element-origin-xhtml-expected.txt:
+        * web-platform-tests/url/a-element-xhtml-expected.txt:
+        * web-platform-tests/url/url-constructor-expected.txt:
+        * web-platform-tests/url/url-origin-expected.txt:
+
 2018-01-05  Youenn Fablet  <youenn@apple.com>
 
         Skip LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/claim-shared-worker-fetch.https.html
