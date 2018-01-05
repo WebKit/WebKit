@@ -1,3 +1,9 @@
+2018-01-05  Javier Fernandez  <jfernandez@igalia.com>
+
+        Unreviewed, added myself as WebKit reviewer
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2018-01-05  Claudio Saavedra  <csaavedra@igalia.com>
 
         WPE: Build fix after r226432.
