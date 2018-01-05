@@ -1,5 +1,32 @@
 2018-01-05  Don Olmstead  <don.olmstead@sony.com>
 
+        [Curl] Add implementation stubs for Network Cache
+        https://bugs.webkit.org/show_bug.cgi?id=181343
+
+        Reviewed by Alex Christensen.
+
+        * NetworkProcess/cache/NetworkCacheCodersCurl.cpp: Added.
+        (WTF::Persistence::Coder<WebCore::CertificateInfo>::encode):
+        (WTF::Persistence::Coder<WebCore::CertificateInfo>::decode):
+        * NetworkProcess/cache/NetworkCacheDataCurl.cpp: Added.
+        (WebKit::NetworkCache::Data::Data):
+        (WebKit::NetworkCache::Data::empty):
+        (WebKit::NetworkCache::Data::data const):
+        (WebKit::NetworkCache::Data::isNull const):
+        (WebKit::NetworkCache::Data::apply const):
+        (WebKit::NetworkCache::Data::subrange const):
+        (WebKit::NetworkCache::concatenate):
+        (WebKit::NetworkCache::Data::adoptMap):
+        * NetworkProcess/cache/NetworkCacheIOChannelCurl.cpp: Added.
+        (WebKit::NetworkCache::IOChannel::IOChannel):
+        (WebKit::NetworkCache::IOChannel::~IOChannel):
+        (WebKit::NetworkCache::IOChannel::open):
+        (WebKit::NetworkCache::IOChannel::read):
+        (WebKit::NetworkCache::IOChannel::write):
+        * PlatformWin.cmake:
+
+2018-01-05  Don Olmstead  <don.olmstead@sony.com>
+
         [Curl] Update method declarations in WebKit
         https://bugs.webkit.org/show_bug.cgi?id=181342
 

@@ -11,6 +11,10 @@ add_definitions(-DBUILDING_WEBKIT)
 list(APPEND WebKit_SOURCES
     NetworkProcess/Downloads/curl/DownloadCurl.cpp
 
+    NetworkProcess/cache/NetworkCacheCodersCurl.cpp
+    NetworkProcess/cache/NetworkCacheDataCurl.cpp
+    NetworkProcess/cache/NetworkCacheIOChannelCurl.cpp
+
     NetworkProcess/curl/NetworkProcessCurl.cpp
     NetworkProcess/curl/RemoteNetworkingContextCurl.cpp
 
