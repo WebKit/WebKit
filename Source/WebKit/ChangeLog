@@ -1,3 +1,15 @@
+2018-01-05  Joseph Pecoraro  <pecoraro@apple.com>
+
+        ServiceWorkers: Enable UserTiming / ResourceTiming
+        https://bugs.webkit.org/show_bug.cgi?id=181297
+        <rdar://problem/36307306>
+
+        Reviewed by Youenn Fablet.
+
+        * WebProcess/Storage/WebSWContextManagerConnection.cpp:
+        (WebKit::WebSWContextManagerConnection::updatePreferencesStore):
+        Enable Resource Timing / User Timing for the ServiceWorker process.
+
 2018-01-04  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed GTK+ build fix.

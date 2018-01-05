@@ -85,7 +85,6 @@ ResourceTiming::ResourceTiming(CachedResource& resource, const String& initiator
     , m_networkLoadMetrics(networkLoadMetrics)
     , m_allowTimingDetails(passesTimingAllowCheck(resource.response(), securityOrigin))
 {
-    m_networkLoadMetrics.clearNonTimingData();
 }
 
 ResourceTiming::ResourceTiming(const URL& url, const String& initiator, const LoadTiming& loadTiming, const NetworkLoadMetrics& networkLoadMetrics, const ResourceResponse& response, const SecurityOrigin& securityOrigin)
@@ -95,7 +94,6 @@ ResourceTiming::ResourceTiming(const URL& url, const String& initiator, const Lo
     , m_networkLoadMetrics(networkLoadMetrics)
     , m_allowTimingDetails(passesTimingAllowCheck(response, securityOrigin))
 {
-    m_networkLoadMetrics.clearNonTimingData();
 }
 
 ResourceTiming ResourceTiming::isolatedCopy() const

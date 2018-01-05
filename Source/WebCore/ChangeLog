@@ -1,3 +1,25 @@
+2018-01-05  Joseph Pecoraro  <pecoraro@apple.com>
+
+        ServiceWorkers: Enable UserTiming / ResourceTiming
+        https://bugs.webkit.org/show_bug.cgi?id=181297
+        <rdar://problem/36307306>
+
+        Reviewed by Youenn Fablet.
+
+        Tests: http/tests/workers/service/service-worker-resource-timing.https.html
+               http/tests/workers/service/service-worker-user-timing.https.html
+
+        * loader/ResourceTiming.cpp:
+        (WebCore::ResourceTiming::ResourceTiming):
+        We used to clear extra NetworkLoadMetrics data early on. However,
+        for Workers we want to pass the complete NetworkLoadMetrics to
+        the Worker so that a Worker inspector has access to it.
+
+        * page/PerformanceResourceTiming.cpp:
+        (WebCore::PerformanceResourceTiming::PerformanceResourceTiming):
+        Instead move the clearing of extra data to here, when the NetworkLoadMetrics
+        have finally settled into being used only for a performance entry.
+
 2018-01-04  Philippe Normand  <pnormand@igalia.com>
 
         [EME][GStreamer] Fix wrong ifdef

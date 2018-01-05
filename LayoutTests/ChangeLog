@@ -1,3 +1,26 @@
+2018-01-05  Joseph Pecoraro  <pecoraro@apple.com>
+
+        ServiceWorkers: Enable UserTiming / ResourceTiming
+        https://bugs.webkit.org/show_bug.cgi?id=181297
+        <rdar://problem/36307306>
+
+        Reviewed by Youenn Fablet.
+
+        * http/tests/workers/service/resources/data1.txt: Added.
+        * http/tests/workers/service/resources/data2.txt: Added.
+        Resources to load from a service-worker.
+
+        * http/tests/workers/service/resources/service-worker-resource-timing.js: Added.
+        * http/tests/workers/service/service-worker-resource-timing.https-expected.txt: Added.
+        * http/tests/workers/service/service-worker-resource-timing.https.html: Added.
+        Test that a ServiceWorker can produce resource entries for a few
+        different kinds of loads (CacheStorage load, and a fetch).
+
+        * http/tests/workers/service/resources/service-worker-user-timing.js: Added.
+        * http/tests/workers/service/service-worker-user-timing.https-expected.txt: Added.
+        * http/tests/workers/service/service-worker-user-timing.https.html: Added.
+        Test that a ServiceWorker can produce a mark/measure entries.
+
 2018-01-05  Claudio Saavedra  <csaavedra@igalia.com>
 
         [WPE][GTK] Unreviewed gardening

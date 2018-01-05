@@ -1,0 +1,46 @@
+<html>
+<head>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+</head>
+<body>
+<script>
+let activeWorker;
+let scope = "/workers/service/resources/";
+
+promise_test(async (test) => {
+    let registration = await navigator.serviceWorker.getRegistration(scope);
+    if (registration && registration.scope.endsWith(scope))
+        await registration.unregister();
+
+    registration = await navigator.serviceWorker.register("resources/service-worker-user-timing.js", {scope});
+    activeWorker = registration.active;
+    if (activeWorker)
+        return;
+
+    activeWorker = registration.installing;
+    return new Promise((resolve) => {
+        activeWorker.addEventListener("statechange", () => {
+            if (activeWorker.state === "activated")
+                resolve();
+        });
+    });
+}, "Setup worker");
+
+promise_test(async (test) => {
+    activeWorker.postMessage("TEST-USER-TIMING");
+    await new Promise((resolve, reject) => {
+        navigator.serviceWorker.addEventListener("message", test.step_func((event) => {
+            let entries = JSON.parse(event.data.entries);
+            assert_equals(entries.length, 2);
+            assert_equals(entries[0].entryType, "mark");
+            assert_equals(entries[0].name, "test-mark");
+            assert_equals(entries[1].entryType, "measure");
+            assert_equals(entries[1].name, "test-measure");
+            resolve();
+        }));
+    });
+}, "Verify service worker had 2 UserTiming entries");
+</script>
+</body>
+</html>

@@ -112,6 +112,8 @@ void WebSWContextManagerConnection::updatePreferencesStore(const WebPreferencesS
     RuntimeEnabledFeatures::sharedFeatures().setServiceWorkerEnabled(true);
     RuntimeEnabledFeatures::sharedFeatures().setCacheAPIEnabled(store.getBoolValueForKey(WebPreferencesKey::cacheAPIEnabledKey()));
     RuntimeEnabledFeatures::sharedFeatures().setFetchAPIEnabled(store.getBoolValueForKey(WebPreferencesKey::fetchAPIEnabledKey()));
+    RuntimeEnabledFeatures::sharedFeatures().setUserTimingEnabled(store.getBoolValueForKey(WebPreferencesKey::userTimingEnabledKey()));
+    RuntimeEnabledFeatures::sharedFeatures().setResourceTimingEnabled(store.getBoolValueForKey(WebPreferencesKey::resourceTimingEnabledKey()));
 
     m_storageBlockingPolicy = static_cast<SecurityOrigin::StorageBlockingPolicy>(store.getUInt32ValueForKey(WebPreferencesKey::storageBlockingPolicyKey()));
 }
