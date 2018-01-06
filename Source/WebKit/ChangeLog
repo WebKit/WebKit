@@ -1,3 +1,34 @@
+2018-01-05  Megan Gardner  <megan_gardner@apple.com>
+
+        Show Keyboard when re-launching WKWebView with a previously focused element
+        https://bugs.webkit.org/show_bug.cgi?id=181353
+
+        Reviewed by Tim Horton.
+
+        When relaunching an app with a WKWebView, restore the keyboard if there was a previously
+        focused element that was being assisted. The element was already being tracked, we just
+        needed to not bail on showing the keyboard for instances where it was a state change that
+        caused the element to be refocused.
+
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/ios/PageClientImplIOS.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::startAssistingNode):
+        * UIProcess/ios/WKContentView.h:
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _startAssistingNode:userIsInteracting:blurPreviousNode:changingActivityState:userObject:]):
+        (-[WKContentView _startAssistingNode:userIsInteracting:blurPreviousNode:userObject:]): Deleted.
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::startAutoscrollAtPosition):
+        (WebKit::WebPageProxy::startAssistingNode):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::setActivityState):
+        (WebKit::WebPage::elementDidFocus):
+        * WebProcess/WebPage/WebPage.h:
+
 2018-01-05  Alex Christensen  <achristensen@webkit.org>
 
         Restrict navigation-time WKWebsiteDataStore swapping to main frame navigations

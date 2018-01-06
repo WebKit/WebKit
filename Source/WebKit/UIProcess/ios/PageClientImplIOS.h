@@ -125,7 +125,7 @@ private:
     void restorePageState(std::optional<WebCore::FloatPoint>, const WebCore::FloatPoint&, const WebCore::FloatBoxExtent&, double) override;
     void restorePageCenterAndScale(std::optional<WebCore::FloatPoint>, double) override;
 
-    void startAssistingNode(const AssistedNodeInformation&, bool userIsInteracting, bool blurPreviousNode, API::Object* userData) override;
+    void startAssistingNode(const AssistedNodeInformation&, bool userIsInteracting, bool blurPreviousNode, bool changingActivityState, API::Object* userData) override;
     void stopAssistingNode() override;
     bool isAssistingNode() override;
     void selectionDidChange() override;

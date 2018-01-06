@@ -290,7 +290,7 @@ public:
     virtual void restorePageState(std::optional<WebCore::FloatPoint> scrollPosition, const WebCore::FloatPoint& scrollOrigin, const WebCore::FloatBoxExtent& obscuredInsetsOnSave, double scale) = 0;
     virtual void restorePageCenterAndScale(std::optional<WebCore::FloatPoint> center, double scale) = 0;
 
-    virtual void startAssistingNode(const AssistedNodeInformation&, bool userIsInteracting, bool blurPreviousNode, API::Object* userData) = 0;
+    virtual void startAssistingNode(const AssistedNodeInformation&, bool userIsInteracting, bool blurPreviousNode, bool changingActivityState, API::Object* userData) = 0;
     virtual void stopAssistingNode() = 0;
     virtual bool isAssistingNode() = 0;
     virtual bool interpretKeyEvent(const NativeWebKeyboardEvent&, bool isCharEvent) = 0;

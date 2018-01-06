@@ -284,6 +284,7 @@ struct NodeAssistanceArguments {
     AssistedNodeInformation m_nodeInformation;
     bool m_userIsInteracting;
     bool m_blurPreviousNode;
+    bool m_changingActivityState;
     RefPtr<API::Object> m_userData;
 };
 
@@ -1600,7 +1601,7 @@ private:
 
     void didGetTapHighlightGeometries(uint64_t requestID, const WebCore::Color& color, const Vector<WebCore::FloatQuad>& geometries, const WebCore::IntSize& topLeftRadius, const WebCore::IntSize& topRightRadius, const WebCore::IntSize& bottomLeftRadius, const WebCore::IntSize& bottomRightRadius);
 
-    void startAssistingNode(const AssistedNodeInformation&, bool userIsInteracting, bool blurPreviousNode, const UserData&);
+    void startAssistingNode(const AssistedNodeInformation&, bool userIsInteracting, bool blurPreviousNode, bool changingActivityState, const UserData&);
     void stopAssistingNode();
 
     void showInspectorHighlight(const WebCore::Highlight&);

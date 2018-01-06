@@ -3865,7 +3865,7 @@ static bool isAssistableInputType(InputType type)
     return false;
 }
 
-- (void)_startAssistingNode:(const AssistedNodeInformation&)information userIsInteracting:(BOOL)userIsInteracting blurPreviousNode:(BOOL)blurPreviousNode userObject:(NSObject <NSSecureCoding> *)userObject
+- (void)_startAssistingNode:(const AssistedNodeInformation&)information userIsInteracting:(BOOL)userIsInteracting blurPreviousNode:(BOOL)blurPreviousNode changingActivityState:(BOOL)changingActivityState userObject:(NSObject <NSSecureCoding> *)userObject
 {
     _inputViewUpdateDeferrer = nullptr;
 
@@ -3877,7 +3877,7 @@ static bool isAssistableInputType(InputType type)
         shouldShowKeyboard = [inputDelegate _webView:_webView focusShouldStartInputSession:focusedElementInfo.get()];
     else {
         // The default behavior is to allow node assistance if the user is interacting or the keyboard is already active.
-        shouldShowKeyboard = userIsInteracting || _textSelectionAssistant;
+        shouldShowKeyboard = userIsInteracting || _textSelectionAssistant || changingActivityState;
 #if ENABLE(DATA_INTERACTION)
         shouldShowKeyboard |= _dragDropInteractionState.isPerformingDrop();
 #endif

@@ -534,7 +534,7 @@ void PageClientImpl::restorePageCenterAndScale(std::optional<WebCore::FloatPoint
     [m_webView _restorePageStateToUnobscuredCenter:center scale:scale];
 }
 
-void PageClientImpl::startAssistingNode(const AssistedNodeInformation& nodeInformation, bool userIsInteracting, bool blurPreviousNode, API::Object* userData)
+void PageClientImpl::startAssistingNode(const AssistedNodeInformation& nodeInformation, bool userIsInteracting, bool blurPreviousNode, bool changingActivityState, API::Object* userData)
 {
     MESSAGE_CHECK(!userData || userData->type() == API::Object::Type::Data);
 
@@ -549,7 +549,7 @@ void PageClientImpl::startAssistingNode(const AssistedNodeInformation& nodeInfor
         }
     }
 
-    [m_contentView _startAssistingNode:nodeInformation userIsInteracting:userIsInteracting blurPreviousNode:blurPreviousNode userObject:userObject];
+    [m_contentView _startAssistingNode:nodeInformation userIsInteracting:userIsInteracting blurPreviousNode:blurPreviousNode changingActivityState:changingActivityState userObject:userObject];
 }
 
 bool PageClientImpl::isAssistingNode()

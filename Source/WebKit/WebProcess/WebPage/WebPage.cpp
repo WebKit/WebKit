@@ -2723,7 +2723,11 @@ void WebPage::setActivityState(ActivityState::Flags activityState, bool wantsDid
     if (changed)
         updateThrottleState();
 
-    m_page->setActivityState(activityState);
+    {
+        SetForScope<bool> currentlyChangingActivityState { m_changingActivityState, true };
+        m_page->setActivityState(activityState);
+    }
+    
     for (auto* pluginView : m_pluginViews)
         pluginView->activityStateDidChange(changed);
 
@@ -4874,7 +4878,7 @@ void WebPage::elementDidFocus(WebCore::Node* node)
 
         m_formClient->willBeginInputSession(this, downcast<Element>(node), WebFrame::fromCoreFrame(*node->document().frame()), m_userIsInteracting, userData);
 
-        send(Messages::WebPageProxy::StartAssistingNode(information, m_userIsInteracting, m_hasPendingBlurNotification, UserData(WebProcess::singleton().transformObjectsToHandles(userData.get()).get())));
+        send(Messages::WebPageProxy::StartAssistingNode(information, m_userIsInteracting, m_hasPendingBlurNotification, m_changingActivityState, UserData(WebProcess::singleton().transformObjectsToHandles(userData.get()).get())));
 #elif PLATFORM(MAC)
         if (node->hasTagName(WebCore::HTMLNames::selectTag))
             send(Messages::WebPageProxy::SetEditableElementIsFocused(false));

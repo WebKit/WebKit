@@ -398,7 +398,8 @@ void WebPageProxy::didCommitLayerTree(const WebKit::RemoteLayerTreeTransaction& 
     }
 
     if (m_hasDeferredStartAssistingNode) {
-        m_pageClient.startAssistingNode(m_deferredNodeAssistanceArguments->m_nodeInformation, m_deferredNodeAssistanceArguments->m_userIsInteracting, m_deferredNodeAssistanceArguments->m_blurPreviousNode, m_deferredNodeAssistanceArguments->m_userData.get());
+        m_pageClient.startAssistingNode(m_deferredNodeAssistanceArguments->m_nodeInformation, m_deferredNodeAssistanceArguments->m_userIsInteracting, m_deferredNodeAssistanceArguments->m_blurPreviousNode,
+            m_deferredNodeAssistanceArguments->m_changingActivityState, m_deferredNodeAssistanceArguments->m_userData.get());
         m_hasDeferredStartAssistingNode = false;
         m_deferredNodeAssistanceArguments = nullptr;
     }
@@ -897,16 +898,16 @@ void WebPageProxy::didGetTapHighlightGeometries(uint64_t requestID, const WebCor
     m_pageClient.didGetTapHighlightGeometries(requestID, color, highlightedQuads, topLeftRadius, topRightRadius, bottomLeftRadius, bottomRightRadius);
 }
 
-void WebPageProxy::startAssistingNode(const AssistedNodeInformation& information, bool userIsInteracting, bool blurPreviousNode, const UserData& userData)
+void WebPageProxy::startAssistingNode(const AssistedNodeInformation& information, bool userIsInteracting, bool blurPreviousNode, bool changingActivityState, const UserData& userData)
 {
     API::Object* userDataObject = process().transformHandlesToObjects(userData.object()).get();
     if (m_editorState.isMissingPostLayoutData) {
-        m_deferredNodeAssistanceArguments = std::make_unique<NodeAssistanceArguments>(NodeAssistanceArguments { information, userIsInteracting, blurPreviousNode, userDataObject });
+        m_deferredNodeAssistanceArguments = std::make_unique<NodeAssistanceArguments>(NodeAssistanceArguments { information, userIsInteracting, blurPreviousNode, changingActivityState, userDataObject });
         m_hasDeferredStartAssistingNode = true;
         return;
     }
 
-    m_pageClient.startAssistingNode(information, userIsInteracting, blurPreviousNode, userDataObject);
+    m_pageClient.startAssistingNode(information, userIsInteracting, blurPreviousNode, changingActivityState, userDataObject);
 }
 
 void WebPageProxy::stopAssistingNode()
