@@ -1,3 +1,9 @@
+2018-01-05  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, attempt to fix test262 after r226386.
+
+        * test262.yaml:
+
 2018-01-04  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [DFG] Define defs for MapSet/SetAdd to participate in CSE
