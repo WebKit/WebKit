@@ -1,3 +1,12 @@
+2017-12-21  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Mark fast/workers/worker-terminate.html as flaky.
+        https://bugs.webkit.org/show_bug.cgi?id=181098
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
 2018-01-05  Per Arne Vollan  <pvollan@apple.com>
 
         Mark mathml/opentype/horizontal-munderover.html as failure on Windows.
