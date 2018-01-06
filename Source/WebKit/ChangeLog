@@ -1,5 +1,19 @@
 2018-01-05  Alex Christensen  <achristensen@webkit.org>
 
+        Restrict navigation-time WKWebsiteDataStore swapping to main frame navigations
+        https://bugs.webkit.org/show_bug.cgi?id=181217
+
+        Reviewed by Tim Horton.
+
+        If we swap during an iframe navigation, then we get a page in a strange state.
+        The intent of the main frame navigation WKWebsiteDataStore swap is that
+        that is a time when we can change storages without a page in an inconsistent state.
+
+        * UIProcess/Cocoa/NavigationState.mm:
+        (WebKit::NavigationState::NavigationClient::decidePolicyForNavigationAction):
+
+2018-01-05  Alex Christensen  <achristensen@webkit.org>
+
         Add WKBundleFrameCreateFrameHandle
         https://bugs.webkit.org/show_bug.cgi?id=181232
         <rdar://problem/35926696>

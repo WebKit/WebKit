@@ -811,10 +811,24 @@ static bool done;
 
         done = true;
     }
-    if ([url.path isEqualToString:@"/checkStorage"] || [url.path isEqualToString:@"/checkCookies"]) {
+    if ([url.path isEqualToString:@"/checkStorage"]
+        || [url.path isEqualToString:@"/checkCookies"]
+        || [url.path isEqualToString:@"/mainFrame"]) {
         _WKWebsitePolicies *websitePolicies = [[[_WKWebsitePolicies alloc] init] autorelease];
         websitePolicies.websiteDataStore = [WKWebsiteDataStore nonPersistentDataStore];
         decisionHandler(WKNavigationActionPolicyAllow, websitePolicies);
+    }
+    if ([url.path isEqualToString:@"/subFrame"]) {
+        _WKWebsitePolicies *websitePolicies = [[[_WKWebsitePolicies alloc] init] autorelease];
+        websitePolicies.websiteDataStore = [WKWebsiteDataStore nonPersistentDataStore];
+        bool sawException = false;
+        @try {
+            decisionHandler(WKNavigationActionPolicyCancel, websitePolicies);
+        } @catch (NSException *exception) {
+            sawException = true;
+        }
+        EXPECT_TRUE(sawException);
+        done = true;
     }
 }
 
@@ -868,6 +882,10 @@ TEST(WebKit, UpdateWebsitePoliciesInvalid)
     EXPECT_TRUE(sawException);
     
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"test:///invalid"]]];
+    TestWebKitAPI::Util::run(&done);
+    
+    done = false;
+    [webView loadHTMLString:@"<iframe src='subFrame'></iframe>" baseURL:[NSURL URLWithString:@"http://webkit.org/mainFrame"]];
     TestWebKitAPI::Util::run(&done);
 }
 

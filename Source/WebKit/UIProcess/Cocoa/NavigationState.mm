@@ -417,6 +417,7 @@ static void tryAppLink(Ref<API::NavigationAction>&& navigationAction, const Stri
 void NavigationState::NavigationClient::decidePolicyForNavigationAction(WebPageProxy& webPageProxy, Ref<API::NavigationAction>&& navigationAction, Ref<WebFramePolicyListenerProxy>&& listener, API::Object* userInfo)
 {
     String mainFrameURLString = webPageProxy.mainFrame()->url();
+    bool subframeNavigation = navigationAction->targetFrame() && !navigationAction->targetFrame()->isMainFrame();
 
     if (!m_navigationState.m_navigationDelegateMethods.webViewDecidePolicyForNavigationActionDecisionHandler
         && !m_navigationState.m_navigationDelegateMethods.webViewDecidePolicyForNavigationActionDecisionHandlerWebsitePolicies
@@ -461,7 +462,7 @@ void NavigationState::NavigationClient::decidePolicyForNavigationAction(WebPageP
     
     auto checker = CompletionHandlerCallChecker::create(navigationDelegate.get(), delegateHasWebsitePolicies ? @selector(_webView:decidePolicyForNavigationAction:decisionHandler:) : @selector(webView:decidePolicyForNavigationAction:decisionHandler:));
     
-    auto decisionHandlerWithPolicies = [localListener = WTFMove(listener), navigationAction = navigationAction.copyRef(), checker = WTFMove(checker), mainFrameURLString, webPageProxy = makeRef(webPageProxy)](WKNavigationActionPolicy actionPolicy, _WKWebsitePolicies *websitePolicies) mutable {
+    auto decisionHandlerWithPolicies = [localListener = WTFMove(listener), navigationAction = navigationAction.copyRef(), checker = WTFMove(checker), mainFrameURLString, webPageProxy = makeRef(webPageProxy), subframeNavigation](WKNavigationActionPolicy actionPolicy, _WKWebsitePolicies *websitePolicies) mutable {
         if (checker->completionHandlerHasBeenCalled())
             return;
         checker->didCallCompletionHandler();
@@ -473,6 +474,9 @@ void NavigationState::NavigationClient::decidePolicyForNavigationAction(WebPageP
                 auto& sessionID = data->websiteDataStoreParameters->networkSessionParameters.sessionID;
                 if (!sessionID.isEphemeral() && sessionID != PAL::SessionID::defaultSessionID())
                     [NSException raise:NSInvalidArgumentException format:@"_WKWebsitePolicies.websiteDataStore must be nil, default, or non-persistent."];
+                if (subframeNavigation)
+                    [NSException raise:NSInvalidArgumentException format:@"_WKWebsitePolicies.websiteDataStore must be nil for subframe navigations."];
+
                 webPageProxy->changeWebsiteDataStore(websitePolicies->_websitePolicies->websiteDataStore()->websiteDataStore());
             }
         }
