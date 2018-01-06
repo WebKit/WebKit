@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -117,7 +117,9 @@ std::unique_ptr<InternalFunction> createJSToWasmWrapper(CompilationContext& comp
         // Wasm::Context*'s instance.
         if (!Context::useFastTLS()) {
             jit.loadPtr(CCallHelpers::Address(GPRInfo::callFrameRegister, jsOffset), wasmContextInstanceGPR);
-            jit.loadPtr(CCallHelpers::Address(wasmContextInstanceGPR, JSWebAssemblyInstance::offsetOfInstance()), wasmContextInstanceGPR);
+            jit.loadPtr(CCallHelpers::Address(wasmContextInstanceGPR, JSWebAssemblyInstance::offsetOfPoisonedInstance()), wasmContextInstanceGPR);
+            jit.move(CCallHelpers::TrustedImm64(makeConstExprPoison(JSWebAssemblyInstancePoison)), scratchReg);
+            jit.xor64(scratchReg, wasmContextInstanceGPR);
             jsOffset += sizeof(EncodedJSValue);
         }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,6 +27,7 @@
 
 #if ENABLE(WEBASSEMBLY)
 
+#include "JSCPoison.h"
 #include "JSDestructibleObject.h"
 #include "JSObject.h"
 #include "WasmLimits.h"
@@ -34,6 +35,7 @@
 #include "WebAssemblyWrapperFunction.h"
 #include "WebAssemblyFunction.h"
 #include <wtf/MallocPtr.h>
+#include <wtf/Ref.h>
 
 namespace JSC {
 
@@ -63,7 +65,7 @@ private:
     static void destroy(JSCell*);
     static void visitChildren(JSCell*, SlotVisitor&);
 
-    Ref<Wasm::Table> m_table;
+    PoisonedRef<JSWebAssemblyTablePoison, Wasm::Table> m_table;
     MallocPtr<WriteBarrier<JSObject>> m_jsFunctions;
 };
 

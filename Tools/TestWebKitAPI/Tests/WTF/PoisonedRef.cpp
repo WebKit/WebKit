@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -189,6 +189,32 @@ TEST(WTF_PoisonedRef, Swap)
         EXPECT_EQ(&a, p1.ptr());
         EXPECT_EQ(&b, p2.ptr());
         swap(p1, p2);
+        EXPECT_EQ(&b, p1.ptr());
+        EXPECT_EQ(&a, p2.ptr());
+        log() << "| ";
+    }
+    EXPECT_STREQ("ref(a) ref(b) | | deref(a) deref(b) ", takeLogStr().c_str());
+
+    {
+        PoisonedRef<PoisonF, RefLogger> p1(a);
+        Ref<RefLogger> p2(b);
+        log() << "| ";
+        EXPECT_EQ(&a, p1.ptr());
+        EXPECT_EQ(&b, p2.ptr());
+        swap(p1, p2);
+        EXPECT_EQ(&b, p1.ptr());
+        EXPECT_EQ(&a, p2.ptr());
+        log() << "| ";
+    }
+    EXPECT_STREQ("ref(a) ref(b) | | deref(a) deref(b) ", takeLogStr().c_str());
+
+    {
+        PoisonedRef<PoisonF, RefLogger> p1(a);
+        Ref<RefLogger> p2(b);
+        log() << "| ";
+        EXPECT_EQ(&a, p1.ptr());
+        EXPECT_EQ(&b, p2.ptr());
+        p1.swap(p2);
         EXPECT_EQ(&b, p1.ptr());
         EXPECT_EQ(&a, p2.ptr());
         log() << "| ";

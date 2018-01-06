@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -336,6 +336,30 @@ TEST(WTF_ConstExprPoisoned, Swap)
         ASSERT_TRUE(p3.bits() != p4.bits());
         ASSERT_TRUE(p1.bits() == p3.bits());
         ASSERT_TRUE(p2.bits() != p4.bits());
+    }
+
+    {
+        ConstExprPoisoned<PoisonA, RefLogger*> p1(&a);
+        RefLogger* p2(&b);
+        ASSERT_EQ(&a, p1.unpoisoned());
+        ASSERT_EQ(&b, p2);
+        swap(p1, p2);
+        ASSERT_EQ(&b, p1.unpoisoned());
+        ASSERT_EQ(&a, p2);
+
+        ASSERT_TRUE(p1.bits() != bitwise_cast<uintptr_t>(p2));
+    }
+
+    {
+        ConstExprPoisoned<PoisonA, RefLogger*> p1(&a);
+        RefLogger* p2(&b);
+        ASSERT_EQ(&a, p1.unpoisoned());
+        ASSERT_EQ(&b, p2);
+        p1.swap(p2);
+        ASSERT_EQ(&b, p1.unpoisoned());
+        ASSERT_EQ(&a, p2);
+
+        ASSERT_TRUE(p1.bits() != bitwise_cast<uintptr_t>(p2));
     }
 }
 

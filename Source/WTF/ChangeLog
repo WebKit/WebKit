@@ -1,3 +1,18 @@
+2018-01-05  JF Bastien  <jfbastien@apple.com>
+
+        WebAssembly: poison JS object's secrets
+        https://bugs.webkit.org/show_bug.cgi?id=181339
+        <rdar://problem/36325001>
+
+        Reviewed by Mark Lam.
+
+        swapping a poisoned pointer with a non-poisoned one (as is done in
+        JSWebAssembyMemory::adopt) was missing.
+
+        * wtf/Poisoned.h:
+        (WTF::PoisonedImpl::swap):
+        (WTF::ConstExprPoisonedPtrTraits::swap):
+
 2018-01-05  David Kilzer  <ddkilzer@apple.com>
 
         Re-enable -Wcast-qual in WebCore for Apple ports

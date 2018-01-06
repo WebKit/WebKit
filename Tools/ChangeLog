@@ -1,3 +1,20 @@
+2018-01-05  JF Bastien  <jfbastien@apple.com>
+
+        WebAssembly: poison JS object's secrets
+        https://bugs.webkit.org/show_bug.cgi?id=181339
+        <rdar://problem/36325001>
+
+        Reviewed by Mark Lam.
+
+        Update tests for swap(Poisoned<k, T>, T*)
+
+        * TestWebKitAPI/Tests/WTF/ConstExprPoisoned.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WTF/Poisoned.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WTF/PoisonedRef.cpp:
+        (TestWebKitAPI::TEST):
+
 2018-01-05  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         REGRESSION(r226396) DataInteractionTests: ContentEditableToContentEditable and ContentEditableToTextarea are failing

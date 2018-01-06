@@ -182,6 +182,13 @@ public:
         o = t2;
     }
 
+    void swap(T& t2)
+    {
+        T t1 = this->unpoisoned();
+        std::swap(t1, t2);
+        m_poisonedBits = poison(t1);
+    }
+
     template<class U>
     T exchange(U&& newValue)
     {
@@ -208,6 +215,12 @@ private:
 
 template<typename K1, K1 k1, typename T1, typename K2, K2 k2, typename T2>
 inline void swap(PoisonedImpl<K1, k1, T1>& a, PoisonedImpl<K2, k2, T2>& b)
+{
+    a.swap(b);
+}
+
+template<typename K1, K1 k1, typename T1>
+inline void swap(PoisonedImpl<K1, k1, T1>& a, T1& b)
 {
     a.swap(b);
 }
@@ -241,6 +254,9 @@ struct ConstExprPoisonedPtrTraits {
 
     template<class U> static ALWAYS_INLINE T* exchange(StorageType& ptr, U&& newValue) { return ptr.exchange(newValue); }
 
+    template<typename K1, K1 k1, typename T1>
+    static ALWAYS_INLINE void swap(PoisonedImpl<K1, k1, T1>& a, T1& b) { a.swap(b); }
+
     template<typename K1, K1 k1, typename T1, typename K2, K2 k2, typename T2>
     static ALWAYS_INLINE void swap(PoisonedImpl<K1, k1, T1>& a, PoisonedImpl<K2, k2, T2>& b) { a.swap(b); }
 
@@ -252,5 +268,5 @@ struct ConstExprPoisonedPtrTraits {
 using WTF::ConstExprPoisoned;
 using WTF::Poisoned;
 using WTF::PoisonedBits;
+using WTF::makeConstExprPoison;
 using WTF::makePoison;
-

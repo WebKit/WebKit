@@ -1,3 +1,30 @@
+2018-01-05  JF Bastien  <jfbastien@apple.com>
+
+        WebAssembly: poison JS object's secrets
+        https://bugs.webkit.org/show_bug.cgi?id=181339
+        <rdar://problem/36325001>
+
+        Reviewed by Mark Lam.
+
+        Separating WebAssembly's JS objects from their non-JS
+        implementation means that all interesting information lives
+        outside of the JS object itself. This patch poisons each JS
+        object's pointer to non-JS implementation using the poisoning
+        mechanism and a unique key per JS object type origin.
+
+        * runtime/JSCPoison.h:
+        * wasm/js/JSToWasm.cpp:
+        (JSC::Wasm::createJSToWasmWrapper): JS -> wasm stores the JS
+        object in a stack slot when fast TLS is disabled. This requires
+        that we unpoison the Wasm::Instance.
+        * wasm/js/JSWebAssemblyCodeBlock.h:
+        * wasm/js/JSWebAssemblyInstance.h:
+        (JSC::JSWebAssemblyInstance::offsetOfPoisonedInstance): renamed to
+        be explicit that the pointer is poisoned.
+        * wasm/js/JSWebAssemblyMemory.h:
+        * wasm/js/JSWebAssemblyModule.h:
+        * wasm/js/JSWebAssemblyTable.h:
+
 2018-01-05  Michael Saboff  <msaboff@apple.com>
 
         Add ability to disable indexed property masking for testing
