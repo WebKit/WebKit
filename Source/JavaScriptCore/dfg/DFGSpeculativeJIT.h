@@ -3317,6 +3317,11 @@ public:
     Node* m_currentNode;
     NodeType m_lastGeneratedNode;
     unsigned m_indexInBlock;
+
+    enum IndexMaskingMode { IndexMaskingDisabled, IndexMaskingEnabled };
+    
+    IndexMaskingMode m_indexMaskingMode;
+
     // Virtual and physical register maps.
     Vector<GenerationInfo, 32> m_generationInfo;
     RegisterBank<GPRInfo> m_gprs;

@@ -149,6 +149,7 @@ public:
         , m_availabilityCalculator(m_graph)
         , m_state(state.graph)
         , m_interpreter(state.graph, m_state)
+        , m_indexMaskingMode(Options::disableSpectreMitigations() ? IndexMaskingDisabled : IndexMaskingEnabled)
     {
     }
     
@@ -11071,6 +11072,9 @@ private:
 
     TypedPointer maskedIndex(IndexedAbstractHeap& heap, LValue storage, LValue index, LValue baseObject, Edge edge, ptrdiff_t offset = 0)
     {
+        if (m_indexMaskingMode == IndexMaskingDisabled)
+            return baseIndex(heap, storage, index, edge, offset);
+
         LValue mask = m_out.zeroExtPtr(m_out.load32(baseObject, m_heaps.JSObject_butterflyMask));
         return m_out.baseIndex(
             heap, storage, m_out.zeroExtPtr(index), provenValue(edge), offset, mask);
@@ -13146,8 +13150,10 @@ private:
     
     TypedPointer pointerIntoTypedArray(LValue base, LValue storage, LValue index, TypedArrayType type)
     {
-        LValue mask = m_out.load32(base, m_heaps.JSObject_butterflyMask);
-        LValue offset = m_out.shl(m_out.zeroExtPtr(m_out.bitAnd(mask, index)), m_out.constIntPtr(logElementSize(type)));
+        if (m_indexMaskingMode == IndexMaskingEnabled)
+            index = m_out.bitAnd(index, m_out.load32(base, m_heaps.JSObject_butterflyMask));
+        LValue offset = m_out.shl(m_out.zeroExtPtr(index), m_out.constIntPtr(logElementSize(type)));
+
         return TypedPointer(
             m_heaps.typedArrayProperties,
             m_out.add(
@@ -15702,6 +15708,10 @@ private:
     DFG::BasicBlock* m_highBlock;
     DFG::BasicBlock* m_nextHighBlock;
     LBasicBlock m_nextLowBlock;
+
+    enum IndexMaskingMode { IndexMaskingDisabled, IndexMaskingEnabled };
+
+    IndexMaskingMode m_indexMaskingMode;
 
     NodeOrigin m_origin;
     unsigned m_nodeIndex;

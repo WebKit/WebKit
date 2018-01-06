@@ -1,5 +1,39 @@
 2018-01-05  Michael Saboff  <msaboff@apple.com>
 
+        Add ability to disable indexed property masking for testing
+        https://bugs.webkit.org/show_bug.cgi?id=181350
+
+        Reviewed by Keith Miller.
+
+        Made the masking of indexed properties runtime controllable via a new JSC::Option
+        named disableSpectreMitigations.  This is done to test the efficacy of that mitigation.
+
+        The new option has a generic name as it will probably be used to disable future mitigations.
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::SpeculativeJIT):
+        (JSC::DFG::SpeculativeJIT::loadFromIntTypedArray):
+        (JSC::DFG::SpeculativeJIT::compileGetByValOnFloatTypedArray):
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::LowerDFGToB3):
+        (JSC::FTL::DFG::LowerDFGToB3::maskedIndex):
+        (JSC::FTL::DFG::LowerDFGToB3::pointerIntoTypedArray):
+        * jit/JIT.cpp:
+        (JSC::JIT::JIT):
+        * jit/JIT.h:
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emitDoubleLoad):
+        (JSC::JIT::emitContiguousLoad):
+        (JSC::JIT::emitArrayStorageLoad):
+        * runtime/Options.h:
+        * wasm/WasmB3IRGenerator.cpp:
+        (JSC::Wasm::B3IRGenerator::emitCheckAndPreparePointer):
+
+2018-01-05  Michael Saboff  <msaboff@apple.com>
+
         Allow JSC Config Files to set Restricted Options
         https://bugs.webkit.org/show_bug.cgi?id=181352
 

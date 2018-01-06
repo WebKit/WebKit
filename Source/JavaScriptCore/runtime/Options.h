@@ -458,6 +458,8 @@ constexpr bool enableAsyncIteration = false;
     \
     v(bool, useWebAssembly, true, Normal, "Expose the WebAssembly global object.") \
     \
+    v(bool, disableSpectreMitigations, false, Restricted, "Disable Spectre mitigations.") \
+    \
     v(bool, useAsyncIterator, enableAsyncIteration, Normal, "Allow to use Async Iterator in JS.") \
     \
     v(bool, failToCompileWebAssemblyCode, false, Normal, "If true, no Wasm::Plan will sucessfully compile a function.") \
