@@ -1,3 +1,22 @@
+2018-01-05  Alex Christensen  <achristensen@webkit.org>
+
+        Add WKBundleFrameCreateFrameHandle
+        https://bugs.webkit.org/show_bug.cgi?id=181232
+        <rdar://problem/35926696>
+
+        Reviewed by Tim Horton.
+
+        InjectedBundle clients wanting to sent a _WKFrameHandle cannot without this function.
+        Before, they would just send the WKBundleFrameRef which would be changed into a WKFrameRef
+        in the UIProcess by WebProcessProxy::transformHandlesToObjects, but there is no ObjC equivalent
+        of WKFrameRef, so we were just getting a WKObject when we wanted a _WKFrameHandle.
+        We can't change WebProcessProxy::transformHandlesToObjects without being incompatible with the 
+        existing C API, so let's add a way for clients to say "I want a _WKFrameHandle".
+
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.cpp:
+        (WKBundleFrameCreateFrameHandle):
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.h:
+
 2018-01-05  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Attachment Support] Add a way to write blob data to a file URL from the UI process

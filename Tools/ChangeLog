@@ -1,3 +1,19 @@
+2018-01-05  Alex Christensen  <achristensen@webkit.org>
+
+        Add WKBundleFrameCreateFrameHandle
+        https://bugs.webkit.org/show_bug.cgi?id=181232
+        <rdar://problem/35926696>
+
+        Reviewed by Tim Horton.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/FrameHandleSerialization.mm: Added.
+        (mouseDidMoveOverElement):
+        (-[FrameHandleSerialization webProcessPlugIn:didCreateBrowserContextController:]):
+        * TestWebKitAPI/Tests/WebKitCocoa/UIDelegate.mm:
+        (-[MouseMoveOverElementDelegate _webView:mouseDidMoveOverElement:withFlags:userInfo:]):
+        (TEST):
+
 2018-01-05  Chris Fleizach  <cfleizach@apple.com>
 
         iOS: Build fix after r226432.

@@ -474,6 +474,7 @@ TEST(WebKit, ToolbarVisible)
     EXPECT_STREQ(hitTestResult.linkLabel.UTF8String, "link label");
     EXPECT_STREQ(hitTestResult.linkTitle.UTF8String, "link title");
     EXPECT_EQ(flags, NSEventModifierFlagShift);
+    EXPECT_STREQ(NSStringFromClass([(NSObject *)userInfo class]).UTF8String, "_WKFrameHandle");
     done = true;
 }
 
@@ -481,7 +482,8 @@ TEST(WebKit, ToolbarVisible)
 
 TEST(WebKit, MouseMoveOverElement)
 {
-    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600)]);
+    WKWebViewConfiguration *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"FrameHandleSerialization"];
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration]);
     [webView setUIDelegate:[[[MouseMoveOverElementDelegate alloc] init] autorelease]];
     [webView synchronouslyLoadHTMLString:@"<a href='http://example.com/path' title='link title'>link label</a>"];
     [webView mouseMoveToPoint:NSMakePoint(20, 600 - 20) withFlags:NSEventModifierFlagShift];
