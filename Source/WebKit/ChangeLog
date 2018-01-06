@@ -1,3 +1,28 @@
+2018-01-05  Dan Bernstein  <mitz@apple.com>
+
+        REGRESSION (r226218): iOS-only assets are installed on macOS
+        https://bugs.webkit.org/show_bug.cgi?id=181362
+
+        Reviewed by Anders Carlsson.
+
+        * Configurations/WebKit.xcconfig: Exclude everything under Resources/ios when not targeting
+          iOS.
+
+        * Resources/ios: Added.
+        * Resources/ios/iOS.xcassets: Moved from Source/WebKit/WebKit.xcassets.
+        * Resources/ios/iOS.xcassets/LockMini.imageset/NavigationBarLockMini@2x.pdf: Set the
+          svn:mime-type property.
+        * Resources/ios/iOS.xcassets/LockMini.imageset/NavigationBarLockMini@3x.pdf: Ditto.
+
+        * Resources/mac: Added.
+        * Resources/mac/mediaIcon.pdf: Moved here…
+        * Resources/mediaIcon.pdf: …from here.
+
+        * WebKit.xcassets: Moved under Resources/ios.
+
+        * WebKit.xcodeproj/project.pbxproj: Created an ios group under the Resources group, and
+          cleaned up the mac group. Removed the Recovered References group.
+
 2018-01-05  John Wilander  <wilander@apple.com>
 
         Storage Access API: Refactor to make naming accurate and explicit, simplify access table, and prepare for access removal for page
