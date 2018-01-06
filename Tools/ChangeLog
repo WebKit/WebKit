@@ -1,3 +1,9 @@
+2018-01-06  Julien Brianceau  <julien.brianceau@gmail.com>
+
+        Unreviewed, remove my Cisco email from contributors.json
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2018-01-05  JF Bastien  <jfbastien@apple.com>
 
         WebAssembly: poison JS object's secrets
