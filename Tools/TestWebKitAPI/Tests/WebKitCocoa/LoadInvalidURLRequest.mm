@@ -54,8 +54,8 @@ static NSURL *literalURL(const char* literal)
 
 - (void)webView:(WKWebView *)webView didFailProvisionalNavigation:(WKNavigation *)navigation withError:(NSError *)error
 {
-    EXPECT_WK_STREQ(error.domain, @"NSURLErrorDomain");
-    EXPECT_EQ(error.code, -1003);
+    EXPECT_WK_STREQ(error.domain, @"WebKitErrorDomain");
+    EXPECT_EQ(error.code, 101);
     EXPECT_TRUE([error.userInfo[@"NSErrorFailingURLKey"] isEqual:literalURL(literal)]);
 
     didFailProvisionalLoad = true;

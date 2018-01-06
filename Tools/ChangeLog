@@ -1,5 +1,14 @@
 2018-01-05  Alex Christensen  <achristensen@webkit.org>
 
+        Rebase API test after r226469
+        https://bugs.webkit.org/show_bug.cgi?id=181308
+
+        * TestWebKitAPI/Tests/WebKitCocoa/LoadInvalidURLRequest.mm:
+        (-[LoadInvalidURLNavigationActionDelegate webView:didFailProvisionalNavigation:withError:]):
+        A URL with < or > in it is now recognized as invalid by WebKit.  This is intentional, and matches our behavior before enabling the new URLParser.
+
+2018-01-05  Alex Christensen  <achristensen@webkit.org>
+
         Restrict navigation-time WKWebsiteDataStore swapping to main frame navigations
         https://bugs.webkit.org/show_bug.cgi?id=181217
 
