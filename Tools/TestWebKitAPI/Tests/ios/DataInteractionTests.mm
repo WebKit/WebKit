@@ -344,7 +344,12 @@ TEST(DataInteractionTests, ContentEditableToContentEditable)
     EXPECT_TRUE([observedEventNames containsObject:DataInteractionOverEventName]);
     EXPECT_TRUE([observedEventNames containsObject:DataInteractionPerformOperationEventName]);
     checkSelectionRectsWithLogging(@[ makeCGRectValue(1, 201, 961, 227) ], [dataInteractionSimulator finalSelectionRects]);
-    checkTypeIdentifierPrecedesOtherTypeIdentifier(dataInteractionSimulator.get(), (NSString *)kUTTypeRTF, (NSString *)kUTTypeUTF8PlainText);
+#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 120000
+    NSString *richTextTypeIdentifier = (NSString *)kUTTypeRTF;
+#else
+    NSString *richTextTypeIdentifier = (NSString *)kUTTypeRTFD;
+#endif
+    checkTypeIdentifierPrecedesOtherTypeIdentifier(dataInteractionSimulator.get(), richTextTypeIdentifier, (NSString *)kUTTypeUTF8PlainText);
 }
 
 TEST(DataInteractionTests, ContentEditableToTextarea)
@@ -364,7 +369,12 @@ TEST(DataInteractionTests, ContentEditableToTextarea)
     EXPECT_TRUE([observedEventNames containsObject:DataInteractionOverEventName]);
     EXPECT_TRUE([observedEventNames containsObject:DataInteractionPerformOperationEventName]);
     checkSelectionRectsWithLogging(@[ makeCGRectValue(6, 203, 990, 232) ], [dataInteractionSimulator finalSelectionRects]);
-    checkTypeIdentifierPrecedesOtherTypeIdentifier(dataInteractionSimulator.get(), (NSString *)kUTTypeRTF, (NSString *)kUTTypeUTF8PlainText);
+#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 120000
+    NSString *richTextTypeIdentifier = (NSString *)kUTTypeRTF;
+#else
+    NSString *richTextTypeIdentifier = (NSString *)kUTTypeRTFD;
+#endif
+    checkTypeIdentifierPrecedesOtherTypeIdentifier(dataInteractionSimulator.get(), richTextTypeIdentifier, (NSString *)kUTTypeUTF8PlainText);
 }
 
 TEST(DataInteractionTests, ContentEditableMoveParagraphs)
