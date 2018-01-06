@@ -101,7 +101,7 @@ public:
     WEBCORE_EXPORT RetainPtr<CGImageRef> createImage();
     WEBCORE_EXPORT static RetainPtr<CGImageRef> sinkIntoImage(std::unique_ptr<IOSurface>);
 
-    id asLayerContents() const { return (id)(CFTypeRef)m_surface.get(); }
+    id asLayerContents() const { return reinterpret_cast<id>(m_surface.get()); }
     IOSurfaceRef surface() const { return m_surface.get(); }
     WEBCORE_EXPORT GraphicsContext& ensureGraphicsContext();
     WEBCORE_EXPORT CGContextRef ensurePlatformContext();

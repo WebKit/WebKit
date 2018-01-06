@@ -33,6 +33,7 @@
 #include "Logging.h"
 #include "MediaSampleAVFObjC.h"
 #include <webrtc/sdk/objc/Framework/Classes/Video/corevideo_frame_buffer.h>
+#include <wtf/cf/TypeCastsCF.h>
 
 #include <pal/cf/CoreMediaSoftLink.h>
 #include "CoreVideoSoftLink.h"
@@ -124,7 +125,7 @@ void RealtimeIncomingVideoSourceCocoa::OnFrame(const webrtc::VideoFrame& frame)
 
     CFArrayRef attachmentsArray = CMSampleBufferGetSampleAttachmentsArray(sampleBuffer, true);
     for (CFIndex i = 0; i < CFArrayGetCount(attachmentsArray); ++i) {
-        CFMutableDictionaryRef attachments = (CFMutableDictionaryRef)CFArrayGetValueAtIndex(attachmentsArray, i);
+        CFMutableDictionaryRef attachments = checked_cf_cast<CFMutableDictionaryRef>(CFArrayGetValueAtIndex(attachmentsArray, i));
         CFDictionarySetValue(attachments, kCMSampleAttachmentKey_DisplayImmediately, kCFBooleanTrue);
     }
 

@@ -36,7 +36,10 @@
 #import <wtf/AutodrainedPool.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/StdLibExtras.h>
+#import <wtf/cf/TypeCastsCF.h>
 #import <wtf/text/StringView.h>
+
+WTF_DECLARE_CF_TYPE_TRAIT(SecTrust);
 
 namespace WebCore {
 
@@ -88,8 +91,7 @@ CertificateInfo ResourceResponse::platformCertificateInfo() const
     auto trustValue = CFDictionaryGetValue(context, kCFStreamPropertySSLPeerTrust);
     if (!trustValue)
         return { };
-    ASSERT(CFGetTypeID(trustValue) == SecTrustGetTypeID());
-    auto trust = (SecTrustRef)trustValue;
+    auto trust = checked_cf_cast<SecTrustRef>(trustValue);
 
     SecTrustResultType trustResultType;
     OSStatus result = SecTrustGetTrustResult(trust, &trustResultType);

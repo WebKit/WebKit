@@ -1,3 +1,102 @@
+2018-01-05  David Kilzer  <ddkilzer@apple.com>
+
+        Re-enable -Wcast-qual in WebCore for Apple ports
+        <https://webkit.org/b/177895>
+        <rdar://problem/34960830>
+
+        Reviewed by Joseph Pecoraro.
+
+        * Configurations/Base.xcconfig:
+        (WARNING_CFLAGS): Remove FIXME and add -Wcast-qual back to
+        arguments.
+
+        * crypto/mac/SerializedCryptoKeyWrapMac.mm:
+        (WebCore::createAndStoreMasterKey):
+        - Use checked_cf_cast<SecACLRef>().
+
+        * editing/cocoa/DataDetection.mm:
+        (WebCore::detectItemAtPositionWithRange):
+        - Manually cast CFTypeRef to DDResultRef until
+          DDResultGetTypeID() is available as SPI.
+
+        * platform/gamepad/mac/HIDGamepad.cpp:
+        (WebCore::HIDGamepad::initElementsFromArray):
+        - Use checked_cf_cast<IOHIDElementRef>().
+
+        * platform/graphics/avfoundation/objc/MediaSampleAVFObjC.mm:
+        (WebCore::MediaSampleAVFObjC::createImageSample):
+        (WebCore::CMSampleBufferIsRandomAccess):
+        (WebCore::CMSampleBufferIsNonDisplaying):
+        (WebCore::MediaSampleAVFObjC::createNonDisplayingCopy const):
+        - Use checked_cf_cast<CFMutableDictionaryRef>() and
+          checked_cf_cast<CFDictionaryRef>().
+
+        * platform/graphics/cocoa/IOSurface.h:
+        (WebCore::IOSurface::asLayerContents):
+        - Use reinterpret_cast<id>() to cast from IOSurfaceRef to id.
+
+        * platform/graphics/cocoa/WebCoreDecompressionSession.mm:
+        (WebCore::WebCoreDecompressionSession::getFirstVideoFrame):
+        (WebCore::WebCoreDecompressionSession::automaticDequeue):
+        (WebCore::WebCoreDecompressionSession::imageForTime):
+        (WebCore::WebCoreDecompressionSession::getDecodeTime):
+        (WebCore::WebCoreDecompressionSession::getPresentationTime):
+        (WebCore::WebCoreDecompressionSession::getDuration):
+        - Use checked_cf_cast<CMSampleBufferRef>().
+
+        * platform/graphics/Font.h:
+        (WebCore::Font::m_kernedCFStringAttributes):
+        (WebCore::Font::m_nonKernedCFStringAttributes):
+        - Change type from RetainPtr<CFDictionaryRef> to
+          RetainPtr<CFMutableDictionaryRef> since that's what they are.
+        * platform/graphics/mac/SimpleFontDataCoreText.cpp:
+        (WebCore::Font::getCFStringAttributes const):
+        - Replace local `mutableAttributes` variable with
+          `attributesDictionary.get()` since it returns the correct type
+          now.
+
+        * platform/ios/wak/WAKView.mm:
+        (-[WAKView _initWithViewRef:]):
+        (_WAKCopyWrapper):
+        * platform/ios/wak/WKView.mm:
+        (_WKViewClearSuperview):
+        (WKViewFirstChild):
+        (WKViewNextSibling):
+        - Use static_cast<WKViewRef>(const_cast<void*>()) to convert
+          const void* variable to WKViewRef.
+
+        * platform/mac/PasteboardMac.mm:
+        (WebCore::flipImageSpec):
+        (WebCore::setDragImageImpl):
+        - Use const_cast<> to remove 'const' modifier from
+          unsigned char pointers.  This regressed while -Wcast-qual was
+          disabled for WebCore.
+
+        * platform/mac/SSLKeyGeneratorMac.mm:
+        (WebCore::signedPublicKeyAndChallengeString):
+        - Use checked_cf_cast<SecACLRef>().
+
+        * platform/mediastream/mac/RealtimeIncomingVideoSourceCocoa.cpp:
+        (WebCore::RealtimeIncomingVideoSourceCocoa::OnFrame):
+        - Use checked_cf_cast<CFMutableDictionaryRef>().
+
+        * platform/network/cf/SocketStreamHandleImplCFNet.cpp:
+        (WebCore::copyCONNECTProxyResponse):
+        - Use checked_cf_cast<CFHTTPMessageRef>().
+
+        * platform/network/cocoa/ResourceResponseCocoa.mm:
+        (WebCore::ResourceResponse::platformCertificateInfo const):
+        - Use checked_cf_cast<SecTrustRef>().
+
+        * platform/network/mac/CertificateInfoMac.mm:
+        (WebCore::CertificateInfo::containsNonRootSHA1SignedCertificate const):
+        (WebCore::CertificateInfo::dump const):
+        - Use checked_cf_cast<SecCertificateRef>().
+
+        * testing/cocoa/WebArchiveDumpSupport.mm:
+        (WebCoreTestSupport::createCFURLResponseFromResponseData):
+        - Use checked_cf_cast<>() for CFMutable* types.
+
 2018-01-05  John Wilander  <wilander@apple.com>
 
         Storage Access API: Refactor to make naming accurate and explicit, simplify access table, and prepare for access removal for page

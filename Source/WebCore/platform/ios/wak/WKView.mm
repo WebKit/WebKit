@@ -73,7 +73,7 @@ void _WKViewSetWindow (WKViewRef view, WAKWindow *window)
 static void _WKViewClearSuperview(const void *value, void *context)
 {
     UNUSED_PARAM(context);
-    _WKViewSetSuperview((WKViewRef)value, 0);
+    _WKViewSetSuperview(static_cast<WKViewRef>(const_cast<void*>(value)), 0);
 }
 
 static void _WKViewDealloc (WKObjectRef v)
@@ -105,7 +105,7 @@ WKClassInfo WKViewClassInfo = { &WKObjectClass, "WKView", _WKViewDealloc };
 
 WKViewRef WKViewCreateWithFrame (CGRect frame, WKViewContext *context)
 {
-    WKViewRef view = (WKViewRef)WKCreateObjectWithSize (sizeof(struct _WKView), &WKViewClassInfo);
+    WKViewRef view = static_cast<WKViewRef>(const_cast<void*>(WKCreateObjectWithSize(sizeof(struct _WKView), &WKViewClassInfo)));
     if (!view)
         return 0;
     
@@ -468,7 +468,7 @@ WKViewRef WKViewFirstChild (WKViewRef view)
     if (!count)
         return 0;
         
-    return (const WKViewRef)CFArrayGetValueAtIndex (sv, 0);
+    return static_cast<WKViewRef>(const_cast<void*>(CFArrayGetValueAtIndex(sv, 0)));
 }
 
 WKViewRef WKViewNextSibling (WKViewRef view)
@@ -495,7 +495,7 @@ WKViewRef WKViewNextSibling (WKViewRef view)
     if (thisIndex+1 >= count)
         return 0;
         
-    return (const WKViewRef)CFArrayGetValueAtIndex (svs, thisIndex+1);
+    return static_cast<WKViewRef>(const_cast<void*>(CFArrayGetValueAtIndex(svs, thisIndex + 1)));
 }
 
 // To remove, see: <rdar://problem/10360425> Remove WKViewTraverseNext from Skankphone

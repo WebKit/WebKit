@@ -575,7 +575,7 @@ static void flipImageSpec(CoreDragImageSpec* imageSpec)
     int planes = imageSpec->isPlanar ? imageSpec->samplesPerPixel : 1;
 
     for (int p = 0; p < planes; ++p) {
-        unsigned char* topRow = (unsigned char*)imageSpec->data[p];
+        unsigned char* topRow = const_cast<unsigned char*>(imageSpec->data[p]);
         unsigned char* botRow = topRow + (imageSpec->pixelsHigh - 1) * imageSpec->bytesPerRow;
         for (int i = 0; i < imageSpec->pixelsHigh / 2; ++i, topRow += imageSpec->bytesPerRow, botRow -= imageSpec->bytesPerRow) {
             bcopy(topRow, tempRow, imageSpec->bytesPerRow);
@@ -624,7 +624,7 @@ static void setDragImageImpl(NSImage *image, NSPoint offset)
     imageSpec.bytesPerRow = [bitmapImage bytesPerRow];
     imageSpec.isPlanar = [bitmapImage isPlanar];
     imageSpec.hasAlpha = [bitmapImage hasAlpha];
-    [bitmapImage getBitmapDataPlanes:(unsigned char**)imageSpec.data];
+    [bitmapImage getBitmapDataPlanes:const_cast<unsigned char**>(imageSpec.data)];
 
     // if image was flipped, we have an upside down bitmap since the cache is rendered flipped
     if (flipImage)

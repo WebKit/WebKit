@@ -78,7 +78,8 @@ static RetainPtr<DDActionContext> detectItemAtPositionWithRange(VisiblePosition 
     RefPtr<Range> mainResultRange;
     CFIndex resultCount = CFArrayGetCount(results.get());
     for (CFIndex i = 0; i < resultCount; i++) {
-        DDResultRef result = (DDResultRef)CFArrayGetValueAtIndex(results.get(), i);
+        // FIXME: <rdar://problem/36241894> Implement checked cast for DDResultRef once DDResultGetTypeID() is available
+        DDResultRef result = static_cast<DDResultRef>(const_cast<CF_BRIDGED_TYPE(id) void*>(CFArrayGetValueAtIndex(results.get(), i)));
         CFRange resultRangeInContext = DDResultGetRange(result);
         if (hitLocation >= resultRangeInContext.location && (hitLocation - resultRangeInContext.location) < resultRangeInContext.length) {
             mainResult = result;

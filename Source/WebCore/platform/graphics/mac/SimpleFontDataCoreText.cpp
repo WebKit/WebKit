@@ -42,18 +42,17 @@ CFDictionaryRef Font::getCFStringAttributes(bool enableKerning, FontOrientation 
         return attributesDictionary.get();
 
     attributesDictionary = adoptCF(CFDictionaryCreateMutable(kCFAllocatorDefault, 4, &kCFCopyStringDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
-    CFMutableDictionaryRef mutableAttributes = (CFMutableDictionaryRef)attributesDictionary.get();
 
-    CFDictionarySetValue(mutableAttributes, kCTFontAttributeName, platformData().ctFont());
+    CFDictionarySetValue(attributesDictionary.get(), kCTFontAttributeName, platformData().ctFont());
 
     if (!enableKerning) {
         const float zero = 0;
         static CFNumberRef zeroKerningValue = CFNumberCreate(kCFAllocatorDefault, kCFNumberFloatType, &zero);
-        CFDictionarySetValue(mutableAttributes, kCTKernAttributeName, zeroKerningValue);
+        CFDictionarySetValue(attributesDictionary.get(), kCTKernAttributeName, zeroKerningValue);
     }
 
     if (orientation == Vertical)
-        CFDictionarySetValue(mutableAttributes, kCTVerticalFormsAttributeName, kCFBooleanTrue);
+        CFDictionarySetValue(attributesDictionary.get(), kCTVerticalFormsAttributeName, kCFBooleanTrue);
 
     return attributesDictionary.get();
 }

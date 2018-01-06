@@ -33,8 +33,11 @@
 #import <Security/SecEncodeTransform.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/Scope.h>
+#import <wtf/cf/TypeCastsCF.h>
 #import <wtf/spi/cocoa/SecuritySPI.h>
 #import <wtf/text/Base64.h>
+
+WTF_DECLARE_CF_TYPE_TRAIT(SecACL);
 
 namespace WebCore {
 
@@ -138,7 +141,7 @@ static String signedPublicKeyAndChallengeString(unsigned keySize, const CString&
         return String();
     RetainPtr<CFArrayRef> acls = adoptCF(aclsRef);
 
-    SecACLRef acl = (SecACLRef)(CFArrayGetValueAtIndex(acls.get(), 0));
+    SecACLRef acl = checked_cf_cast<SecACLRef>(CFArrayGetValueAtIndex(acls.get(), 0));
 
     // Passing nullptr to SecTrustedApplicationCreateFromPath tells that function to assume the application bundle.
     SecTrustedApplicationRef trustedAppRef { nullptr };

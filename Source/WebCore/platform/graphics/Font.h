@@ -289,8 +289,8 @@ private:
 #endif
 
 #if PLATFORM(COCOA)
-    mutable RetainPtr<CFDictionaryRef> m_nonKernedCFStringAttributes;
-    mutable RetainPtr<CFDictionaryRef> m_kernedCFStringAttributes;
+    mutable RetainPtr<CFMutableDictionaryRef> m_nonKernedCFStringAttributes;
+    mutable RetainPtr<CFMutableDictionaryRef> m_kernedCFStringAttributes;
     mutable std::optional<BitVector> m_glyphsSupportedBySmallCaps;
     mutable std::optional<BitVector> m_glyphsSupportedByAllSmallCaps;
     mutable std::optional<BitVector> m_glyphsSupportedByPetiteCaps;

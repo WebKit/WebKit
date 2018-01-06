@@ -27,7 +27,10 @@
 #import "CertificateInfo.h"
 
 #import "NotImplemented.h"
+#import <wtf/cf/TypeCastsCF.h>
 #import <wtf/spi/cocoa/SecuritySPI.h>
+
+WTF_DECLARE_CF_TYPE_TRAIT(SecCertificate);
 
 namespace WebCore {
 
@@ -84,7 +87,7 @@ bool CertificateInfo::containsNonRootSHA1SignedCertificate() const
     if (m_certificateChain) {
         // Allow only the root certificate (the last in the chain) to be SHA1.
         for (CFIndex i = 0, size = CFArrayGetCount(m_certificateChain.get()) - 1; i < size; ++i) {
-            auto certificate = (SecCertificateRef)CFArrayGetValueAtIndex(m_certificateChain.get(), i);
+            auto certificate = checked_cf_cast<SecCertificateRef>(CFArrayGetValueAtIndex(m_certificateChain.get(), i));
             if (SecCertificateGetSignatureHashAlgorithm(certificate) == kSecSignatureHashAlgorithmSHA1)
                 return true;
         }
@@ -117,7 +120,7 @@ void CertificateInfo::dump() const
         NSLog(@"CertificateInfo (Certificate Chain)\n");
         NSLog(@"  Entries: %ld\n", entries);
         for (CFIndex i = 0; i < entries; ++i) {
-            RetainPtr<CFStringRef> summary = adoptCF(SecCertificateCopySubjectSummary((SecCertificateRef)CFArrayGetValueAtIndex(m_certificateChain.get(), i)));
+            RetainPtr<CFStringRef> summary = adoptCF(SecCertificateCopySubjectSummary(checked_cf_cast<SecCertificateRef>(CFArrayGetValueAtIndex(m_certificateChain.get(), i))));
             NSLog(@"  %@", (NSString *)summary.get());
         }
 

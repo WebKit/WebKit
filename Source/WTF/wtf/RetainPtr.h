@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2005, 2006, 2007, 2008, 2010, 2013, 2014 Apple Inc. All rights reserved.
+ *  Copyright (C) 2005-2018 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -35,6 +35,10 @@
 
 #ifdef __OBJC__
 #import <Foundation/Foundation.h>
+#endif
+
+#ifndef CF_BRIDGED_TYPE
+#define CF_BRIDGED_TYPE(T)
 #endif
 
 #ifndef CF_RELEASES_ARGUMENT
@@ -116,14 +120,14 @@ private:
     typename std::enable_if<std::is_convertible<U, id>::value, PtrType>::type
     fromStorageTypeHelper(StorageType ptr) const
     {
-        return (__bridge PtrType)ptr;
+        return (__bridge PtrType)const_cast<CF_BRIDGED_TYPE(id) void*>(ptr);
     }
 
     template<typename U>
     typename std::enable_if<!std::is_convertible<U, id>::value, PtrType>::type
     fromStorageTypeHelper(StorageType ptr) const
     {
-        return (PtrType)ptr;
+        return (PtrType)const_cast<CF_BRIDGED_TYPE(id) void*>(ptr);
     }
 
     PtrType fromStorageType(StorageType ptr) const { return fromStorageTypeHelper<PtrType>(ptr); }
@@ -132,11 +136,7 @@ private:
 #else
     PtrType fromStorageType(StorageType ptr) const
     {
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wcast-qual"
-        // FIXME: Bug 177895: Re-enable -Wcast-qual for Apple ports.
-        return (PtrType)ptr;
-#pragma clang diagnostic pop
+        return (PtrType)const_cast<CF_BRIDGED_TYPE(id) void*>(ptr);
     }
     StorageType toStorageType(PtrType ptr) const { return (StorageType)ptr; }
 #endif

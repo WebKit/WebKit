@@ -38,13 +38,17 @@
 #import <wtf/MediaTime.h>
 #import <wtf/StringPrintStream.h>
 #import <wtf/Vector.h>
+#import <wtf/cf/TypeCastsCF.h>
 
 #import <pal/cf/CoreMediaSoftLink.h>
 #import "CoreVideoSoftLink.h"
 #import "VideoToolboxSoftLink.h"
 
-namespace WebCore {
 using namespace PAL;
+
+WTF_DECLARE_CF_TYPE_TRAIT(CMSampleBuffer);
+
+namespace WebCore {
 
 WebCoreDecompressionSession::WebCoreDecompressionSession(Mode mode)
     : m_mode(mode)
@@ -322,7 +326,7 @@ RetainPtr<CVPixelBufferRef> WebCoreDecompressionSession::getFirstVideoFrame()
     if (!m_producerQueue || CMBufferQueueIsEmpty(m_producerQueue.get()))
         return nullptr;
 
-    RetainPtr<CMSampleBufferRef> currentSample = adoptCF((CMSampleBufferRef)CMBufferQueueDequeueAndRetain(m_producerQueue.get()));
+    RetainPtr<CMSampleBufferRef> currentSample = adoptCF(checked_cf_cast<CMSampleBufferRef>(CMBufferQueueDequeueAndRetain(m_producerQueue.get())));
     RetainPtr<CVPixelBufferRef> imageBuffer = (CVPixelBufferRef)CMSampleBufferGetImageBuffer(currentSample.get());
     ASSERT(CFGetTypeID(imageBuffer.get()) == CVPixelBufferGetTypeID());
 
@@ -342,7 +346,7 @@ void WebCoreDecompressionSession::automaticDequeue()
     MediaTime nextFireTime = MediaTime::positiveInfiniteTime();
     bool releasedImageBuffers = false;
 
-    while (CMSampleBufferRef firstSample = (CMSampleBufferRef)CMBufferQueueGetHead(m_producerQueue.get())) {
+    while (CMSampleBufferRef firstSample = checked_cf_cast<CMSampleBufferRef>(CMBufferQueueGetHead(m_producerQueue.get()))) {
         MediaTime presentationTimestamp = PAL::toMediaTime(CMSampleBufferGetPresentationTimeStamp(firstSample));
         MediaTime duration = PAL::toMediaTime(CMSampleBufferGetDuration(firstSample));
         MediaTime presentationEndTimestamp = presentationTimestamp + duration;
@@ -481,7 +485,7 @@ RetainPtr<CVPixelBufferRef> WebCoreDecompressionSession::imageForTime(const Medi
 
     bool releasedImageBuffers = false;
 
-    while (CMSampleBufferRef firstSample = (CMSampleBufferRef)CMBufferQueueGetHead(m_producerQueue.get())) {
+    while (CMSampleBufferRef firstSample = checked_cf_cast<CMSampleBufferRef>(CMBufferQueueGetHead(m_producerQueue.get()))) {
         MediaTime presentationTimestamp = PAL::toMediaTime(CMSampleBufferGetPresentationTimeStamp(firstSample));
         MediaTime duration = PAL::toMediaTime(CMSampleBufferGetDuration(firstSample));
         MediaTime presentationEndTimestamp = presentationTimestamp + duration;
@@ -493,7 +497,7 @@ RetainPtr<CVPixelBufferRef> WebCoreDecompressionSession::imageForTime(const Medi
             continue;
         }
 
-        RetainPtr<CMSampleBufferRef> currentSample = adoptCF((CMSampleBufferRef)CMBufferQueueDequeueAndRetain(m_producerQueue.get()));
+        RetainPtr<CMSampleBufferRef> currentSample = adoptCF(checked_cf_cast<CMSampleBufferRef>(CMBufferQueueDequeueAndRetain(m_producerQueue.get())));
         RetainPtr<CVPixelBufferRef> imageBuffer = (CVPixelBufferRef)CMSampleBufferGetImageBuffer(currentSample.get());
         ASSERT(CFGetTypeID(imageBuffer.get()) == CVPixelBufferGetTypeID());
 
@@ -531,22 +535,19 @@ void WebCoreDecompressionSession::flush()
 
 CMTime WebCoreDecompressionSession::getDecodeTime(CMBufferRef buf, void*)
 {
-    ASSERT(CFGetTypeID(buf) == CMSampleBufferGetTypeID());
-    CMSampleBufferRef sample = (CMSampleBufferRef)(buf);
+    CMSampleBufferRef sample = checked_cf_cast<CMSampleBufferRef>(buf);
     return CMSampleBufferGetDecodeTimeStamp(sample);
 }
 
 CMTime WebCoreDecompressionSession::getPresentationTime(CMBufferRef buf, void*)
 {
-    ASSERT(CFGetTypeID(buf) == CMSampleBufferGetTypeID());
-    CMSampleBufferRef sample = (CMSampleBufferRef)(buf);
+    CMSampleBufferRef sample = checked_cf_cast<CMSampleBufferRef>(buf);
     return CMSampleBufferGetPresentationTimeStamp(sample);
 }
 
 CMTime WebCoreDecompressionSession::getDuration(CMBufferRef buf, void*)
 {
-    ASSERT(CFGetTypeID(buf) == CMSampleBufferGetTypeID());
-    CMSampleBufferRef sample = (CMSampleBufferRef)(buf);
+    CMSampleBufferRef sample = checked_cf_cast<CMSampleBufferRef>(buf);
     return CMSampleBufferGetDuration(sample);
 }
 

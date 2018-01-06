@@ -45,6 +45,7 @@
 #include <wtf/Lock.h>
 #include <wtf/MainThread.h>
 #include <wtf/SoftLinking.h>
+#include <wtf/cf/TypeCastsCF.h>
 #include <wtf/text/WTFString.h>
 
 #if PLATFORM(WIN)
@@ -65,6 +66,8 @@ extern "C" const CFStringRef _kCFStreamSocketSetNoDelay;
 SOFT_LINK_LIBRARY(CFNetwork);
 SOFT_LINK_OPTIONAL(CFNetwork, _CFHTTPMessageSetResponseProxyURL, void, __cdecl, (CFHTTPMessageRef, CFURLRef));
 #endif
+
+WTF_DECLARE_CF_TYPE_TRAIT(CFHTTPMessage);
 
 namespace WebCore {
 
@@ -505,7 +508,7 @@ static void setResponseProxyURL(CFHTTPMessageRef message, CFURLRef proxyURL)
 
 static RetainPtr<CFHTTPMessageRef> copyCONNECTProxyResponse(CFReadStreamRef stream, CFURLRef responseURL, CFStringRef proxyHost, CFNumberRef proxyPort)
 {
-    auto message = adoptCF((CFHTTPMessageRef)CFReadStreamCopyProperty(stream, kCFStreamPropertyCONNECTResponse));
+    auto message = adoptCF(checked_cf_cast<CFHTTPMessageRef>(CFReadStreamCopyProperty(stream, kCFStreamPropertyCONNECTResponse)));
     // CFNetwork needs URL to be set on response in order to handle authentication - even though it doesn't seem to make sense to provide ultimate target URL when authenticating to a proxy.
     // This is set by CFNetwork internally for normal HTTP responses, but not for proxies.
     _CFHTTPMessageSetResponseURL(message.get(), responseURL);

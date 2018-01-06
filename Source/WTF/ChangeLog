@@ -1,3 +1,39 @@
+2018-01-05  David Kilzer  <ddkilzer@apple.com>
+
+        Re-enable -Wcast-qual in WebCore for Apple ports
+        <https://webkit.org/b/177895>
+        <rdar://problem/34960830>
+
+        Reviewed by Joseph Pecoraro.
+
+        * wtf/RetainPtr.h:
+        (WTF::RetainPtr::fromStorageTypeHelper const): Add const_cast<>
+        operator here since some CFTypes are not defined as const
+        pointers, which triggers a warning in C++ source with
+        -Wcast-qual when casting from CFTypeRef back to the original
+        type.  Note that we use const_cast<CF_BRIDGED_TYPE(id) void*>()
+        here (and in TypeCastsCF.h below) since this is what CFTypeRef
+        is defined as in CFBase.h, but without the 'const' modifier.
+        (WTF::RetainPtr::fromStorageType const): Ditto.
+
+        * wtf/cf/TypeCastsCF.h: Use #pragma once.
+        (WTF_DECLARE_CF_TYPE_TRAIT): Rename from DECLARE_CF_TYPE_TRAIT.
+        Don't #undef it so that it can be used in other source files.
+        (WTF_DECLARE_CF_MUTABLE_TYPE_TRAIT): Add new macro that is used
+        for declaring CFMutable types.  The CFTypeID for CF_Foo_ and
+        CFMutable_Foo_ are the same, so we have to use a different macro
+        to declare type traits for those types.
+        (WTF::dynamic_cf_cast): Add assertion to catch issues in Debug
+        builds.
+        (WTF::checked_cf_cast): Inline code from WTF::dynamic_cf_cast
+        and change behavior to be more consistent between Debug and
+        Release builds, as well as other "checked" functions.
+        Previously this function would return nullptr in Release builds
+        if nullptr or the wrong type of object was passed in, but crash
+        in both cases on Debug builds.  The new behavior always returns
+        nullptr if nullptr was passed in (but never crashes), and always
+        crashes if the wrong type of object is passed in.
+
 2018-01-04  Keith Miller  <keith_miller@apple.com>
 
         TypedArrays and Wasm should use index masking.

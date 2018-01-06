@@ -221,7 +221,7 @@ static void invalidateGStateCallback(WKViewRef view)
     if (!self)
         return nil;
 
-    viewRef = (WKViewRef)WKRetain (viewR);
+    viewRef = static_cast<WKViewRef>(const_cast<void*>(WKRetain(viewR)));
     viewRef->wrapper = (void *)self;
 
     return self;
@@ -288,7 +288,7 @@ static void _WAKCopyWrapper(const void *value, void *context)
         return;
     
     NSMutableArray *array = (NSMutableArray *)context;
-    WAKView *view = WAKViewForWKViewRef((WKViewRef)value);
+    WAKView *view = WAKViewForWKViewRef(static_cast<WKViewRef>(const_cast<void*>(value)));
     if (view)
         [array addObject:view];
 }
