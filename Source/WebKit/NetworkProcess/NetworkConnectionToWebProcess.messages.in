@@ -58,5 +58,5 @@ messages -> NetworkConnectionToWebProcess LegacyReceiver {
 
     EnsureLegacyPrivateBrowsingSession()
 
-    RemoveStorageAccess(PAL::SessionID sessionID, uint64_t frameID, uint64_t pageID);
+    RemoveStorageAccessForFrame(PAL::SessionID sessionID, uint64_t frameID, uint64_t pageID);
 }

@@ -1,3 +1,44 @@
+2018-01-05  John Wilander  <wilander@apple.com>
+
+        Storage Access API: Refactor to make naming accurate and explicit, simplify access table, and prepare for access removal for page
+        https://bugs.webkit.org/show_bug.cgi?id=181357
+        <rdar://problem/36331031>
+
+        Reviewed by Alex Christensen.
+
+        No new tests. The only changed functionality that isn't covered
+        by existing tests is cross-origin iframes in the same partition
+        should be handled as already having access. This cannot be
+        tested in layout tests since they don't support subdomains.
+
+        This change does the following:
+        - Changes function and message names to reflect how this feature
+          was eventually implemented, i.e. access per frame.
+        - Makes it explicit that the UI process is only involved in
+          granting storage access and not removing storage access.
+          The latter is done directly by the web process.
+        - Simplifies the network process' entry map since only needs to
+          be able to give access to one domain in one frame at a time.
+          Access goes away on frame navigation so there can only be one
+          domain at a time per frame. Also, the map now uses pageIDs as
+          main keys to prepare for efficient access removal for all
+          frames under a page.
+        - Fixes a bug in so that a cross-origin iframe with the same
+          partition as the top frame correctly is handled as already
+          having access.
+
+        * platform/network/NetworkStorageSession.h:
+        * platform/network/cf/NetworkStorageSessionCFNet.cpp:
+        (WebCore::NetworkStorageSession::cookieStoragePartition const):
+            The only change here is the changed named of the call to
+            NetworkStorageSession::hasStorageAccessForFrame().
+        (WebCore::NetworkStorageSession::hasStorageAccessForFrame const):
+        (WebCore::NetworkStorageSession::grantStorageAccessForFrame):
+        (WebCore::NetworkStorageSession::removeStorageAccessForFrame):
+        (WebCore::NetworkStorageSession::isStorageAccessGranted const): Deleted.
+        (WebCore::NetworkStorageSession::setStorageAccessGranted): Deleted.
+        (WebCore::NetworkStorageSession::removeStorageAccess): Deleted.
+
 2018-01-05  Youenn Fablet  <youenn@apple.com>
 
         Implement Cache API partitioning based on ClientOrigin

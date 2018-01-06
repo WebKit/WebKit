@@ -1,3 +1,61 @@
+2018-01-05  John Wilander  <wilander@apple.com>
+
+        Storage Access API: Refactor to make naming accurate and explicit, simplify access table, and prepare for access removal for page
+        https://bugs.webkit.org/show_bug.cgi?id=181357
+        <rdar://problem/36331031>
+
+        Reviewed by Alex Christensen.
+
+        This change does the following:
+        - Changes function and message names to reflect how this feature
+          was eventually implemented, i.e. access per frame.
+        - Makes it explicit that the UI process is only involved in
+          granting storage access and not removing storage access.
+          The latter is done directly by the web process.
+        - Simplifies the network process' entry map since only needs to
+          be able to give access to one domain in one frame at a time.
+          Access goes away on frame navigation so there can only be one
+          domain at a time per frame. Also, the map now uses pageIDs as
+          main keys to prepare for efficient access removal for all
+          frames under a page.
+        - Fixes a bug in so that a cross-origin iframe with the same
+          partition as the top frame correctly is handled as already
+          having access.
+
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::removeStorageAccessForFrame):
+        (WebKit::NetworkConnectionToWebProcess::removeStorageAccess): Deleted.
+        * NetworkProcess/NetworkConnectionToWebProcess.h:
+        * NetworkProcess/NetworkConnectionToWebProcess.messages.in:
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::hasStorageAccessForFrame):
+        (WebKit::NetworkProcess::grantStorageAccessForFrame):
+        (WebKit::NetworkProcess::hasStorageAccessForPrevalentDomains): Deleted.
+        (WebKit::NetworkProcess::updateStorageAccessForPrevalentDomains): Deleted.
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in:
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::hasStorageAccessForFrame):
+        (WebKit::NetworkProcessProxy::grantStorageAccessForFrame):
+        (WebKit::NetworkProcessProxy::hasStorageAccessForPrevalentDomains): Deleted.
+        (WebKit::NetworkProcessProxy::updateStorageAccessForPrevalentDomains): Deleted.
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::WebResourceLoadStatisticsStore):
+        (WebKit::WebResourceLoadStatisticsStore::hasStorageAccess):
+        (WebKit::WebResourceLoadStatisticsStore::requestStorageAccess):
+        * UIProcess/WebResourceLoadStatisticsStore.h:
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::hasStorageAccessForFrameHandler):
+        (WebKit::WebsiteDataStore::grantStorageAccessForFrameHandler):
+        (WebKit::WebsiteDataStore::enableResourceLoadStatisticsAndSetTestingCallback):
+        (WebKit::WebsiteDataStore::hasStorageAccessForPrevalentDomainsHandler): Deleted.
+        (WebKit::WebsiteDataStore::updateStorageAccessForPrevalentDomainsHandler): Deleted.
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::detachedFromParent2):
+        (WebKit::WebFrameLoaderClient::dispatchWillChangeDocument):
+
 2018-01-05  Youenn Fablet  <youenn@apple.com>
 
         Implement Cache API partitioning based on ClientOrigin

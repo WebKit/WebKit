@@ -170,7 +170,7 @@ void WebFrameLoaderClient::detachedFromParent2()
 
 #if HAVE(CFNETWORK_STORAGE_PARTITIONING)
     if (m_hasFrameSpecificStorageAccess) {
-        WebProcess::singleton().ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::RemoveStorageAccess(sessionID(), frameID().value(), pageID().value()), 0);
+        WebProcess::singleton().ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::RemoveStorageAccessForFrame(sessionID(), frameID().value(), pageID().value()), 0);
         m_hasFrameSpecificStorageAccess = false;
     }
 #endif
@@ -392,7 +392,7 @@ void WebFrameLoaderClient::dispatchWillChangeDocument()
         return;
 
     if (m_hasFrameSpecificStorageAccess) {
-        WebProcess::singleton().ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::RemoveStorageAccess(sessionID(), frameID().value(), pageID().value()), 0);
+        WebProcess::singleton().ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::RemoveStorageAccessForFrame(sessionID(), frameID().value(), pageID().value()), 0);
         m_hasFrameSpecificStorageAccess = false;
     }
 #endif

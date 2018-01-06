@@ -133,7 +133,7 @@ private:
 
     CacheStorageEngineConnection& cacheStorageConnection();
 
-    void removeStorageAccess(PAL::SessionID, uint64_t frameID, uint64_t pageID);
+    void removeStorageAccessForFrame(PAL::SessionID, uint64_t frameID, uint64_t pageID);
 
     Ref<IPC::Connection> m_connection;
 

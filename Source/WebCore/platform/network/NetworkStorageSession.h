@@ -98,9 +98,9 @@ public:
     String cookieStoragePartition(const URL& firstPartyForCookies, const URL& resource, std::optional<uint64_t> frameID, std::optional<uint64_t> pageID) const;
     WEBCORE_EXPORT void setPrevalentDomainsToPartitionOrBlockCookies(const Vector<String>& domainsToPartition, const Vector<String>& domainsToBlock, const Vector<String>& domainsToNeitherPartitionNorBlock, bool clearFirst);
     WEBCORE_EXPORT void removePrevalentDomains(const Vector<String>& domains);
-    WEBCORE_EXPORT bool isStorageAccessGranted(const String& resourceDomain, const String& firstPartyDomain, uint64_t frameID, uint64_t pageID) const;
-    WEBCORE_EXPORT void setStorageAccessGranted(const String& resourceDomain, const String& firstPartyDomain, uint64_t frameID, uint64_t pageID, bool value);
-    WEBCORE_EXPORT void removeStorageAccess(uint64_t frameID, uint64_t pageID);
+    WEBCORE_EXPORT bool hasStorageAccessForFrame(const String& resourceDomain, const String& firstPartyDomain, uint64_t frameID, uint64_t pageID) const;
+    WEBCORE_EXPORT void grantStorageAccessForFrame(const String& resourceDomain, const String& firstPartyDomain, uint64_t frameID, uint64_t pageID);
+    WEBCORE_EXPORT void removeStorageAccessForFrame(uint64_t frameID, uint64_t pageID);
 #endif
 #elif USE(SOUP)
     NetworkStorageSession(PAL::SessionID, std::unique_ptr<SoupNetworkSession>&&);
@@ -159,7 +159,7 @@ private:
     bool shouldBlockThirdPartyCookies(const String& topPrivatelyControlledDomain) const;
     HashSet<String> m_topPrivatelyControlledDomainsToPartition;
     HashSet<String> m_topPrivatelyControlledDomainsToBlock;
-    HashMap<uint64_t, HashMap<uint64_t, HashSet<String>, DefaultHash<uint64_t>::Hash, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>>, DefaultHash<uint64_t>::Hash, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>> m_framesGrantedStorageAccess;
+    HashMap<uint64_t, HashMap<uint64_t, String, DefaultHash<uint64_t>::Hash, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>>, DefaultHash<uint64_t>::Hash, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>> m_framesGrantedStorageAccess;
 #endif
 
 #if PLATFORM(COCOA)

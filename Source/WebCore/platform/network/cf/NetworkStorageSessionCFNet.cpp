@@ -196,7 +196,7 @@ String NetworkStorageSession::cookieStoragePartition(const URL& firstPartyForCoo
     if (firstPartyDomain == resourceDomain)
         return emptyString();
 
-    if (frameID && pageID && isStorageAccessGranted(resourceDomain, firstPartyDomain, frameID.value(), pageID.value()))
+    if (frameID && pageID && hasStorageAccessForFrame(resourceDomain, firstPartyDomain, frameID.value(), pageID.value()))
         return emptyString();
 
     return firstPartyDomain;
@@ -283,65 +283,45 @@ void NetworkStorageSession::removePrevalentDomains(const Vector<String>& domains
     }
 }
 
-bool NetworkStorageSession::isStorageAccessGranted(const String& resourceDomain, const String& firstPartyDomain, uint64_t frameID, uint64_t pageID) const
+bool NetworkStorageSession::hasStorageAccessForFrame(const String& resourceDomain, const String& firstPartyDomain, uint64_t frameID, uint64_t pageID) const
 {
     UNUSED_PARAM(firstPartyDomain);
 
-    auto it1 = m_framesGrantedStorageAccess.find(frameID);
+    auto it1 = m_framesGrantedStorageAccess.find(pageID);
     if (it1 == m_framesGrantedStorageAccess.end())
         return false;
 
-    auto it2 = it1->value.find(pageID);
+    auto it2 = it1->value.find(frameID);
     if (it2 == it1->value.end())
         return false;
     
-    return it2->value.contains(resourceDomain);
+    return it2->value == resourceDomain;
 }
 
-void NetworkStorageSession::setStorageAccessGranted(const String& resourceDomain, const String& firstPartyDomain, uint64_t frameID, uint64_t pageID, bool value)
+void NetworkStorageSession::grantStorageAccessForFrame(const String& resourceDomain, const String& firstPartyDomain, uint64_t frameID, uint64_t pageID)
 {
     UNUSED_PARAM(firstPartyDomain);
 
-    auto it1 = m_framesGrantedStorageAccess.find(frameID);
-    if (value) {
-        if (it1 == m_framesGrantedStorageAccess.end()) {
-            HashMap<uint64_t, HashSet<String>, DefaultHash<uint64_t>::Hash, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>> entry;
-            entry.add(pageID, HashSet<String>({ resourceDomain }));
-            m_framesGrantedStorageAccess.add(frameID, entry);
-        } else {
-            auto it2 = it1->value.find(pageID);
-            if (it2 == it1->value.end())
-                it1->value.add(pageID, HashSet<String>({ resourceDomain }));
-            else
-                it2->value.add(resourceDomain);
-        }
+    auto it1 = m_framesGrantedStorageAccess.find(pageID);
+    if (it1 == m_framesGrantedStorageAccess.end()) {
+        HashMap<uint64_t, String, DefaultHash<uint64_t>::Hash, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>> entry;
+        entry.add(frameID, resourceDomain);
+        m_framesGrantedStorageAccess.add(pageID, entry);
     } else {
-        if (it1 == m_framesGrantedStorageAccess.end())
-            return;
-
-        auto it2 = it1->value.find(pageID);
-        if (it2 == it1->value.end())
-            return;
-
-        it2->value.remove(resourceDomain);
-
-        if (it2->value.isEmpty())
-            it1->value.remove(pageID);
-
-        if (it1->value.isEmpty())
-            m_framesGrantedStorageAccess.remove(frameID);
+        auto it2 = it1->value.find(frameID);
+        it2->value = resourceDomain;
     }
 }
 
-void NetworkStorageSession::removeStorageAccess(uint64_t frameID, uint64_t pageID)
+void NetworkStorageSession::removeStorageAccessForFrame(uint64_t frameID, uint64_t pageID)
 {
-    auto iteration = m_framesGrantedStorageAccess.find(frameID);
+    auto iteration = m_framesGrantedStorageAccess.find(pageID);
     if (iteration == m_framesGrantedStorageAccess.end())
         return;
-    
-    iteration->value.remove(pageID);
+
+    iteration->value.remove(frameID);
 }
-    
+
 #endif // HAVE(CFNETWORK_STORAGE_PARTITIONING)
 
 #if !PLATFORM(COCOA)

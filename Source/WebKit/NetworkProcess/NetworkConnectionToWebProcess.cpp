@@ -471,10 +471,10 @@ void NetworkConnectionToWebProcess::ensureLegacyPrivateBrowsingSession()
     NetworkProcess::singleton().addWebsiteDataStore(WebsiteDataStoreParameters::legacyPrivateSessionParameters());
 }
 
-void NetworkConnectionToWebProcess::removeStorageAccess(PAL::SessionID sessionID, uint64_t frameID, uint64_t pageID)
+void NetworkConnectionToWebProcess::removeStorageAccessForFrame(PAL::SessionID sessionID, uint64_t frameID, uint64_t pageID)
 {
 #if HAVE(CFNETWORK_STORAGE_PARTITIONING)
-    storageSession(sessionID).removeStorageAccess(frameID, pageID);
+    storageSession(sessionID).removeStorageAccessForFrame(frameID, pageID);
 #else
     UNUSED_PARAM(sessionID);
     UNUSED_PARAM(frameID);
