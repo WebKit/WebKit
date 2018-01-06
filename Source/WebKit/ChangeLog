@@ -1,3 +1,56 @@
+2018-01-05  Youenn Fablet  <youenn@apple.com>
+
+        Implement Cache API partitioning based on ClientOrigin
+        https://bugs.webkit.org/show_bug.cgi?id=181240
+
+        Reviewed by Alex Christensen.
+
+        open and retrieveCaches now take a ClientOrigin instead of a String.
+        Updated cache filesystem path computation to take both client origin and top origin.
+
+        When clearing an origin, caches whose client origin or top origin matches the origin are cleared.
+        Caches are added to the web site data of their client origin with their corresponding cache size.
+        Caches are added to the web site data of their top origin with a size equal to 0.
+
+        Updated memory representation dumping used for test to include both top and client origins.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::deleteWebsiteDataForOrigins):
+        * NetworkProcess/cache/CacheStorageEngine.cpp:
+        (WebKit::CacheStorage::Engine::cachesRootPath):
+        (WebKit::CacheStorage::Engine::open):
+        (WebKit::CacheStorage::Engine::remove):
+        (WebKit::CacheStorage::Engine::retrieveCaches):
+        (WebKit::CacheStorage::Engine::readCachesFromDisk):
+        (WebKit::CacheStorage::Engine::removeCaches):
+        (WebKit::CacheStorage::Engine::fetchEntries):
+        (WebKit::CacheStorage::Engine::clearCachesForOrigin):
+        (WebKit::CacheStorage::Engine::clearMemoryRepresentation):
+        (WebKit::CacheStorage::Engine::representation):
+        * NetworkProcess/cache/CacheStorageEngine.h:
+        * NetworkProcess/cache/CacheStorageEngineCache.cpp:
+        (WebKit::CacheStorage::Cache::Cache):
+        * NetworkProcess/cache/CacheStorageEngineCaches.cpp:
+        (WebKit::CacheStorage::Caches::retrieveOriginFromDirectory):
+        (WebKit::CacheStorage::Caches::Caches):
+        (WebKit::CacheStorage::Caches::storeOrigin):
+        (WebKit::CacheStorage::Caches::readOrigin):
+        (WebKit::CacheStorage::Caches::open):
+        * NetworkProcess/cache/CacheStorageEngineCaches.h:
+        (WebKit::CacheStorage::Caches::create):
+        (WebKit::CacheStorage::Caches::origin const):
+        * NetworkProcess/cache/CacheStorageEngineConnection.cpp:
+        (WebKit::CacheStorageEngineConnection::open):
+        (WebKit::CacheStorageEngineConnection::caches):
+        (WebKit::CacheStorageEngineConnection::clearMemoryRepresentation):
+        * NetworkProcess/cache/CacheStorageEngineConnection.h:
+        * NetworkProcess/cache/CacheStorageEngineConnection.messages.in:
+        * WebProcess/Cache/WebCacheStorageConnection.cpp:
+        (WebKit::WebCacheStorageConnection::doOpen):
+        (WebKit::WebCacheStorageConnection::doRetrieveCaches):
+        (WebKit::WebCacheStorageConnection::clearMemoryRepresentation):
+        * WebProcess/Cache/WebCacheStorageConnection.h:
+
 2018-01-05  Megan Gardner  <megan_gardner@apple.com>
 
         Show Keyboard when re-launching WKWebView with a previously focused element

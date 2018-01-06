@@ -1,3 +1,48 @@
+2018-01-05  Youenn Fablet  <youenn@apple.com>
+
+        Implement Cache API partitioning based on ClientOrigin
+        https://bugs.webkit.org/show_bug.cgi?id=181240
+
+        Reviewed by Alex Christensen.
+
+        Covered by updated tests.
+
+        Previously, cache storage was partitioned according the origin of the client, represented as a String.
+        We now partition according both client and top origins, represented as a ClientOrigin
+
+        Minor refactoring to use more makePendingActivity.
+        Added support for IPC serialization of ClientOrigin.
+        Added SecurityOriginData::toString which is used by WebKit2 Cache Storage implementation.
+
+        * Modules/cache/CacheStorageConnection.cpp:
+        (WebCore::CacheStorageConnection::open):
+        (WebCore::CacheStorageConnection::retrieveCaches):
+        * Modules/cache/CacheStorageConnection.h:
+        (WebCore::CacheStorageConnection::clearMemoryRepresentation):
+        (WebCore::CacheStorageConnection::doOpen):
+        (WebCore::CacheStorageConnection::doRetrieveCaches):
+        * Modules/cache/DOMCacheStorage.cpp:
+        (WebCore::DOMCacheStorage::origin const):
+        (WebCore::DOMCacheStorage::retrieveCaches):
+        (WebCore::DOMCacheStorage::open):
+        (WebCore::DOMCacheStorage::remove):
+        * Modules/cache/DOMCacheStorage.h:
+        * Modules/cache/WorkerCacheStorageConnection.cpp:
+        (WebCore::WorkerCacheStorageConnection::doOpen):
+        (WebCore::WorkerCacheStorageConnection::doRetrieveCaches):
+        * Modules/cache/WorkerCacheStorageConnection.h:
+        * page/ClientOrigin.h:
+        (WebCore::ClientOrigin::isolatedCopy const):
+        (WebCore::ClientOrigin::encode const):
+        (WebCore::ClientOrigin::decode):
+        * page/SecurityOriginData.cpp:
+        (WebCore::SecurityOriginData::toString const):
+        (WebCore::SecurityOriginData::debugString const): Deleted.
+        * page/SecurityOriginData.h:
+        (WebCore::SecurityOriginData::debugString const):
+        * testing/Internals.cpp:
+        (WebCore::Internals::clearCacheStorageMemoryRepresentation):
+
 2018-01-05  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Attachment Support] Add a way to write blob data to a file URL from the UI process

@@ -52,9 +52,11 @@ private:
     const char* activeDOMObjectName() const final;
     bool canSuspendForDocumentSuspension() const final;
 
+    void doOpen(const String& name, DOMPromiseDeferred<IDLInterface<DOMCache>>&&);
+    void doRemove(const String&, DOMPromiseDeferred<IDLBoolean>&&);
     void retrieveCaches(WTF::Function<void(std::optional<Exception>&&)>&&);
     Ref<DOMCache> findCacheOrCreate(DOMCacheEngine::CacheInfo&&);
-    String origin() const;
+    std::optional<ClientOrigin> origin() const;
 
     Vector<Ref<DOMCache>> m_caches;
     uint64_t m_updateCounter { 0 };

@@ -77,8 +77,10 @@ struct SecurityOriginData {
         return protocol.isHashTableDeletedValue();
     }
     
+    WEBCORE_EXPORT String toString() const;
+
 #if !LOG_DISABLED
-    WEBCORE_EXPORT String debugString() const;
+    String debugString() const { return toString(); }
 #endif
 };
 

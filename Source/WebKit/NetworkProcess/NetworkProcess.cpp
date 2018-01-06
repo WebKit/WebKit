@@ -531,10 +531,8 @@ void NetworkProcess::deleteWebsiteDataForOrigins(PAL::SessionID sessionID, Optio
     });
 
     if (websiteDataTypes.contains(WebsiteDataType::DOMCache)) {
-        for (auto& originData : originDatas) {
-            auto origin = originData.securityOrigin()->toString();
-            CacheStorage::Engine::from(sessionID).clearCachesForOrigin(origin, clearTasksHandler);
-        }
+        for (auto& originData : originDatas)
+            CacheStorage::Engine::from(sessionID).clearCachesForOrigin(originData, clearTasksHandler);
     }
 
     if (websiteDataTypes.contains(WebsiteDataType::DiskCache) && !sessionID.isEphemeral())

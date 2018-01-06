@@ -42,9 +42,9 @@ private:
     explicit WorkerCacheStorageConnection(WorkerGlobalScope&);
 
     // WebCore::CacheStorageConnection.
-    void doOpen(uint64_t requestIdentifier, const String& origin, const String& cacheName) final;
+    void doOpen(uint64_t requestIdentifier, const ClientOrigin&, const String& cacheName) final;
     void doRemove(uint64_t requestIdentifier, uint64_t cacheIdentifier) final;
-    void doRetrieveCaches(uint64_t requestIdentifier, const String& origin, uint64_t updateCounter) final;
+    void doRetrieveCaches(uint64_t requestIdentifier, const ClientOrigin&, uint64_t updateCounter) final;
 
     void doRetrieveRecords(uint64_t requestIdentifier, uint64_t cacheIdentifier, const URL&) final;
 

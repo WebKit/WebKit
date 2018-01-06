@@ -24,11 +24,11 @@ messages -> CacheStorageEngineConnection {
     Reference(PAL::SessionID sessionID, uint64_t cacheIdentifier);
     Dereference(PAL::SessionID sessionID, uint64_t cacheIdentifier);
 
-    Open(PAL::SessionID sessionID, uint64_t requestIdentifier, String origin, String cacheName);
+    Open(PAL::SessionID sessionID, uint64_t requestIdentifier, struct WebCore::ClientOrigin origin, String cacheName);
     Remove(PAL::SessionID sessionID, uint64_t requestIdentifier, uint64_t cacheIdentifier);
-    Caches(PAL::SessionID sessionID, uint64_t requestIdentifier, String origin, uint64_t updateCounter);
+    Caches(PAL::SessionID sessionID, uint64_t requestIdentifier, struct WebCore::ClientOrigin origin, uint64_t updateCounter);
 
-    ClearMemoryRepresentation(PAL::SessionID sessionID, uint64_t requestIdentifier, String origin);
+    ClearMemoryRepresentation(PAL::SessionID sessionID, uint64_t requestIdentifier, struct WebCore::ClientOrigin origin);
     EngineRepresentation(PAL::SessionID sessionID, uint64_t requestIdentifier);
 
     RetrieveRecords(PAL::SessionID sessionID, uint64_t requestIdentifier, uint64_t cacheIdentifier, WebCore::URL url);

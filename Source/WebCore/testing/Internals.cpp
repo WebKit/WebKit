@@ -45,6 +45,7 @@
 #include "CachedImage.h"
 #include "CachedResourceLoader.h"
 #include "Chrome.h"
+#include "ClientOrigin.h"
 #include "ComposedTreeIterator.h"
 #include "Cursor.h"
 #include "DOMRect.h"
@@ -4248,7 +4249,7 @@ void Internals::clearCacheStorageMemoryRepresentation(DOMPromiseDeferred<void>&&
         if (!m_cacheStorageConnection)
             return;
     }
-    m_cacheStorageConnection->clearMemoryRepresentation(document->securityOrigin().toString(), [promise = WTFMove(promise)](std::optional<DOMCacheEngine::Error>&& result) mutable {
+    m_cacheStorageConnection->clearMemoryRepresentation(ClientOrigin { SecurityOriginData::fromSecurityOrigin(document->topOrigin()), SecurityOriginData::fromSecurityOrigin(document->securityOrigin()) }, [promise = WTFMove(promise)] (auto && result) mutable {
         ASSERT_UNUSED(result, !result);
         promise.resolve();
     });

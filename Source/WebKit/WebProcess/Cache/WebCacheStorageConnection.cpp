@@ -56,7 +56,7 @@ IPC::Connection& WebCacheStorageConnection::connection()
     return WebProcess::singleton().ensureNetworkProcessConnection().connection();
 }
 
-void WebCacheStorageConnection::doOpen(uint64_t requestIdentifier, const String& origin, const String& cacheName)
+void WebCacheStorageConnection::doOpen(uint64_t requestIdentifier, const WebCore::ClientOrigin& origin, const String& cacheName)
 {
     connection().send(Messages::CacheStorageEngineConnection::Open(m_sessionID, requestIdentifier, origin, cacheName), 0);
 }
@@ -66,7 +66,7 @@ void WebCacheStorageConnection::doRemove(uint64_t requestIdentifier, uint64_t ca
     connection().send(Messages::CacheStorageEngineConnection::Remove(m_sessionID, requestIdentifier, cacheIdentifier), 0);
 }
 
-void WebCacheStorageConnection::doRetrieveCaches(uint64_t requestIdentifier, const String& origin, uint64_t updateCounter)
+void WebCacheStorageConnection::doRetrieveCaches(uint64_t requestIdentifier, const WebCore::ClientOrigin& origin, uint64_t updateCounter)
 {
     connection().send(Messages::CacheStorageEngineConnection::Caches(m_sessionID, requestIdentifier, origin, updateCounter), 0);
 }
@@ -126,7 +126,7 @@ void WebCacheStorageConnection::putRecordsCompleted(uint64_t requestIdentifier, 
     CacheStorageConnection::putRecordsCompleted(requestIdentifier, WTFMove(result));
 }
 
-void WebCacheStorageConnection::clearMemoryRepresentation(const String& origin, CompletionCallback&& callback)
+void WebCacheStorageConnection::clearMemoryRepresentation(const WebCore::ClientOrigin& origin, CompletionCallback&& callback)
 {
     uint64_t requestIdentifier = ++m_engineRepresentationNextIdentifier;
     m_clearRepresentationCallbacks.set(requestIdentifier, WTFMove(callback));
