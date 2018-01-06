@@ -568,6 +568,15 @@ int PhysicalSocket::TranslateOption(Option opt, int* slevel, int* sopt) {
       *sopt = IP_MTU_DISCOVER;
       break;
 #endif
+    case OPT_ISDEFUNCT:
+#if defined(SO_ISDEFUNCT)
+      *slevel = SOL_SOCKET;
+      *sopt = SO_ISDEFUNCT;
+      break;
+#else
+      return -1;
+#endif
+      break;
     case OPT_RCVBUF:
       *slevel = SOL_SOCKET;
       *sopt = SO_RCVBUF;

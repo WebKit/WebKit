@@ -191,6 +191,11 @@ void AsyncTCPSocketBase::OnReadEvent(AsyncSocket* socket) {
       // TODO(stefan): Do something better like forwarding the error
       // to the user.
       LOG(LS_ERROR) << "TCP accept failed with error " << socket_->GetError();
+#if defined(WEBRTC_IOS)
+      int is_defunct = 0;
+      if (!socket->GetOption(Socket::OPT_ISDEFUNCT, &is_defunct) && is_defunct)
+        SignalClose(this, -1);
+#endif
       return;
     }
 

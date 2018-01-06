@@ -1,3 +1,19 @@
+2018-01-05  Youenn Fablet  <youenn@apple.com>
+
+        Close WebRTC sockets when marked as defunct
+        https://bugs.webkit.org/show_bug.cgi?id=177324
+        rdar://problem/35244931
+
+        Reviewed by Eric Carlson.
+
+        In case selected sockets return an error when trying to accept an incoming socket,
+        check whether the socket is defunct or not.
+        If so, close it properly.
+
+        * Source/webrtc/base/asynctcpsocket.cc:
+        * Source/webrtc/base/physicalsocketserver.cc:
+        * Source/webrtc/base/socket.h:
+
 2017-12-15  Dan Bernstein  <mitz@apple.com>
 
         libwebrtc installs an extra copy of encoder_vcp.h under /usr/local/include
