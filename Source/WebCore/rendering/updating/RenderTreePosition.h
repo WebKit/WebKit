@@ -40,13 +40,13 @@ public:
     }
     RenderTreePosition(RenderElement& parent, RenderObject* nextSibling)
         : m_parent(parent)
-        , m_nextSibling(nextSibling)
+        , m_nextSibling(makeWeakPtr(nextSibling))
         , m_hasValidNextSibling(true)
     {
     }
 
     RenderElement& parent() const { return m_parent; }
-    RenderObject* nextSibling() const { ASSERT(m_hasValidNextSibling); return m_nextSibling; }
+    RenderObject* nextSibling() const { ASSERT(m_hasValidNextSibling); return m_nextSibling.get(); }
 
     void computeNextSibling(const Node&);
     void moveToLastChild();
@@ -57,7 +57,7 @@ public:
 
 private:
     RenderElement& m_parent;
-    RenderObject* m_nextSibling { nullptr };
+    WeakPtr<RenderObject> m_nextSibling { nullptr };
     bool m_hasValidNextSibling { false };
 #if !ASSERT_DISABLED
     unsigned m_assertionLimitCounter { 0 };
