@@ -466,6 +466,7 @@ void ConfigFile::parse()
 
         if (!jscOptionsBuilder.isEmpty()) {
             const char* optionsStr = jscOptionsBuilder.toString().utf8().data();
+            Options::enableRestrictedOptions(true);
             Options::setOptions(optionsStr);
         }
     } else

@@ -1,3 +1,13 @@
+2018-01-05  Michael Saboff  <msaboff@apple.com>
+
+        Allow JSC Config Files to set Restricted Options
+        https://bugs.webkit.org/show_bug.cgi?id=181352
+
+        Reviewed by Mark Lam.
+
+        * runtime/ConfigFile.cpp:
+        (JSC::ConfigFile::parse):
+
 2018-01-04  Keith Miller  <keith_miller@apple.com>
 
         TypedArrays and Wasm should use index masking.
