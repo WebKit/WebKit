@@ -1,3 +1,14 @@
+2018-01-05  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Add another Protocol Version
+        https://bugs.webkit.org/show_bug.cgi?id=181354
+        <rdar://problem/35432817>
+
+        Reviewed by Matt Baker.
+
+        * UserInterface/Protocol/Legacy/11.3/InspectorBackendCommands.js: Added.
+        * Versions/Inspector-iOS-11.3.json: Added.
+
 2018-01-04  Devin Rousso  <webkit@devinrousso.com>
 
         Web Inspector: replace HTMLCanvasElement with CanvasRenderingContext for instrumentation logic
