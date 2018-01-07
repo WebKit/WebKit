@@ -806,6 +806,7 @@ if (UNIX)
         if (SHM_OPEN_REQUIRES_LIBRT)
             list(APPEND WebKit_LIBRARIES rt)
         endif ()
+        unset(CMAKE_REQUIRED_LIBRARIES)
     endif ()
 endif ()
 
