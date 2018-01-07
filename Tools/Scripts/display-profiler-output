@@ -650,6 +650,10 @@ def summary(mode, order)
             b.totalMaxTopExecutionCount <=> a.totalMaxTopExecutionCount
         when :machine
             b.totalMaxBottomExecutionCount <=> a.totalMaxBottomExecutionCount
+        when :exits
+            b.totalExitCount <=> a.totalExitCount
+        when :compiles
+            b.compilations.size <=> a.compilations.size
         else
             raise
         end
@@ -777,6 +781,10 @@ def executeCommand(*commandArray)
     when "full", "f"
         if args[0] and (args[0] == "m" or args[0] == "machine")
             summary(:full, :machine)
+        elsif args[0] and (args[0] == "e" or args[0] == "exits")
+            summary(:full, :exits)
+        elsif args[0] and (args[0] == "c" or args[0] == "compiles")
+            summary(:full, :compiles)
         else
             summary(:full, :bytecode)
         end
