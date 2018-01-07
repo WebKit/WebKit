@@ -90,31 +90,6 @@ class WebGLUniformLocation;
 class HTMLVideoElement;
 #endif
 
-inline void clip1D(GC3Dint start, GC3Dsizei range, GC3Dsizei sourceRange, GC3Dint* clippedStart, GC3Dsizei* clippedRange)
-{
-    ASSERT(clippedStart && clippedRange);
-    if (start < 0) {
-        range += start;
-        start = 0;
-    }
-    GC3Dint end = start + range;
-    if (end > sourceRange)
-        range -= end - sourceRange;
-    *clippedStart = start;
-    *clippedRange = range;
-}
-
-// Returns false if no clipping is necessary, i.e., x, y, width, height stay the same.
-inline bool clip2D(GC3Dint x, GC3Dint y, GC3Dsizei width, GC3Dsizei height,
-    GC3Dsizei sourceWidth, GC3Dsizei sourceHeight,
-    GC3Dint* clippedX, GC3Dint* clippedY, GC3Dsizei* clippedWidth, GC3Dsizei*clippedHeight)
-{
-    ASSERT(clippedX && clippedY && clippedWidth && clippedHeight);
-    clip1D(x, width, sourceWidth, clippedX, clippedWidth);
-    clip1D(y, height, sourceHeight, clippedY, clippedHeight);
-    return (*clippedX != x || *clippedY != y || *clippedWidth != width || *clippedHeight != height);
-}
-
 using WebGLCanvas = WTF::Variant<RefPtr<HTMLCanvasElement>, RefPtr<OffscreenCanvas>>;
 
 class WebGLRenderingContextBase : public GPUBasedCanvasRenderingContext, private ActivityStateChangeObserver {

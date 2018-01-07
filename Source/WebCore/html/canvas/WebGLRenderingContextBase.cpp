@@ -331,6 +331,41 @@ namespace {
     }
 } // namespace anonymous
 
+// Returns false if no clipping is necessary, i.e., x, y, width, height stay the same.
+static bool clip2D(GC3Dint x, GC3Dint y, GC3Dsizei width, GC3Dsizei height,
+    GC3Dsizei sourceWidth, GC3Dsizei sourceHeight,
+    GC3Dint* clippedX, GC3Dint* clippedY, GC3Dsizei* clippedWidth, GC3Dsizei*clippedHeight)
+{
+    ASSERT(clippedX && clippedY && clippedWidth && clippedHeight);
+
+    GC3Dint left = std::max(x, 0);
+    GC3Dint top = std::max(y, 0);
+    GC3Dint right = 0;
+    GC3Dint bottom = 0;
+
+    Checked<GC3Dint, RecordOverflow> checkedInputRight = Checked<GC3Dint>(x) + Checked<GC3Dsizei>(width);
+    Checked<GC3Dint, RecordOverflow> checkedInputBottom = Checked<GC3Dint>(y) + Checked<GC3Dsizei>(height);
+    if (!checkedInputRight.hasOverflowed() && !checkedInputBottom.hasOverflowed()) {
+        right = std::min(checkedInputRight.unsafeGet(), sourceWidth);
+        bottom = std::min(checkedInputBottom.unsafeGet(), sourceHeight);
+    }
+
+    if (left >= right || top >= bottom) {
+        *clippedX = 0;
+        *clippedY = 0;
+        *clippedWidth = 0;
+        *clippedHeight = 0;
+        return true;
+    }
+
+    *clippedX = left;
+    *clippedY = top;
+    *clippedWidth = right - left;
+    *clippedHeight = bottom - top;
+
+    return (*clippedX != x || *clippedY != y || *clippedWidth != width || *clippedHeight != height);
+}
+
 class WebGLRenderingContextLostCallback : public GraphicsContext3D::ContextLostCallback {
     WTF_MAKE_FAST_ALLOCATED;
 public:
