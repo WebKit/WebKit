@@ -595,6 +595,8 @@ public:
     void setHasFlippedBlockRenderers(bool b) { m_hasFlippedBlockRenderers = b; }
 
     void updateWidgetPositions();
+    void scheduleUpdateWidgetPositions();
+
     void didAddWidgetToRenderTree(Widget&);
     void willRemoveWidgetFromRenderTree(Widget&);
 
@@ -742,6 +744,9 @@ private:
     void updateEmbeddedObjectsTimerFired();
     bool updateEmbeddedObjects();
     void updateEmbeddedObject(RenderEmbeddedObject&);
+
+    void updateWidgetPositionsTimerFired();
+
     void scrollToAnchor();
     void scrollPositionChanged(const ScrollPosition& oldPosition, const ScrollPosition& newPosition);
     void scrollableAreaSetChanged();
@@ -792,6 +797,8 @@ private:
     bool m_contentIsOpaque;
 
     Timer m_updateEmbeddedObjectsTimer;
+    Timer m_updateWidgetPositionsTimer;
+
     bool m_firstLayoutCallbackPending;
 
     bool m_isTransparent;

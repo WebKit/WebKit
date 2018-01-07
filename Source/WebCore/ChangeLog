@@ -1,3 +1,31 @@
+2018-01-06  Simon Fraser  <simon.fraser@apple.com>
+
+        Crash under RenderLayer::scrollTo() with marquee
+        https://bugs.webkit.org/show_bug.cgi?id=181349
+        rdar://problem/36190168
+
+        Reviewed by Zalan Bujtas.
+
+        Don't call updateWidgetPositions() synchonously during RenderLayer scrolling, because it
+        can run arbitrary script which may trigger destruction of this RenderLayer.
+
+        Instead, queue up updateWidgetPositions() on a zero-delay timer.
+
+        Under some circumstances this may allow a paint to occur before the widgets have been
+        updated (which could be fixed with a more invasive change), but in practice I saw no
+        painting issues with plug-ins or iframes inside overflow scroll, in WebKit or LegacyWebKit.
+
+        Test: fast/scrolling/marquee-scroll-crash.html
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::FrameView):
+        (WebCore::FrameView::updateWidgetPositions):
+        (WebCore::FrameView::scheduleUpdateWidgetPositions):
+        (WebCore::FrameView::updateWidgetPositionsTimerFired):
+        * page/FrameView.h:
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::scrollTo):
+
 2018-01-05  Dean Jackson  <dino@apple.com>
 
         Accurately clip copyTexImage2D and copyTexSubImage2D
