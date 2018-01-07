@@ -1969,7 +1969,6 @@ bool Document::updateStyleIfNeeded()
 void Document::updateLayout()
 {
     ASSERT(isMainThread());
-    ASSERT(LayoutDisallowedScope::isLayoutAllowed());
 
     RefPtr<FrameView> frameView = view();
     if (frameView && frameView->layoutContext().isInRenderTreeLayout()) {
@@ -6645,6 +6644,8 @@ LayoutRect Document::absoluteEventHandlerBounds(bool& includesFixedPositionEleme
 
 Document::RegionFixedPair Document::absoluteRegionForEventTargets(const EventTargetSet* targets)
 {
+    LayoutDisallowedScope layoutDisallowedScope(LayoutDisallowedScope::Reason::ReentrancyAvoidance);
+
     if (!targets)
         return RegionFixedPair(Region(), false);
 

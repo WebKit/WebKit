@@ -1,5 +1,37 @@
 2018-01-06  Simon Fraser  <simon.fraser@apple.com>
 
+        Possible crash computing event regions
+        https://bugs.webkit.org/show_bug.cgi?id=181368
+        rdar://problem/34847081
+
+        Reviewed by Zalan Bujtas.
+
+        Don't trigger layout in Element::absoluteEventHandlerBounds(), since this can run arbirary script
+        which might delete elements or re-enter Document::absoluteRegionForEventTargets().
+
+        It's OK to not trigger layout, because if layout is dirty, the next layout will update event regions again.
+
+        Add a LayoutDisallowedScope to check that Document::absoluteRegionForEventTargets() doesn't
+        trigger layout, and move the check for LayoutDisallowedScope::isLayoutAllowed() from Document::updateLayout()
+        to LayoutContext::layout(), since some layouts don't happen via the former (e.g. the one being removed here).
+
+        The test checks that the assertion does not fire. I was not able to get a reliable test for any crash.
+
+        Test: fast/events/event-handler-regions-layout.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::updateLayout):
+        (WebCore::Document::absoluteRegionForEventTargets):
+        * dom/Element.cpp:
+        (WebCore::Element::absoluteEventHandlerBounds):
+        * page/LayoutContext.cpp:
+        (WebCore::LayoutContext::layout):
+        * rendering/LayoutDisallowedScope.h: Move the #ifdefs around to avoid defining the enum twice.
+        (WebCore::LayoutDisallowedScope::LayoutDisallowedScope):
+        (WebCore::LayoutDisallowedScope::isLayoutAllowed):
+
+2018-01-06  Simon Fraser  <simon.fraser@apple.com>
+
         Crash under RenderLayer::scrollTo() with marquee
         https://bugs.webkit.org/show_bug.cgi?id=181349
         rdar://problem/36190168

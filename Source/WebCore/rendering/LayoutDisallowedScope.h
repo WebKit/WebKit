@@ -27,11 +27,14 @@
 
 namespace WebCore {
 
-#if !ASSERT_DISABLED
-
 class LayoutDisallowedScope {
 public:
-    enum class Reason { PerformanceOptimization };
+    enum class Reason { PerformanceOptimization, ReentrancyAvoidance };
+
+#if ASSERT_DISABLED
+    LayoutDisallowedScope(Reason) { }
+    static bool isLayoutAllowed() { return true; }
+#else
     LayoutDisallowedScope(Reason)
         : m_previousAssertion(s_currentAssertion)
     {
@@ -48,17 +51,7 @@ public:
 private:
     LayoutDisallowedScope* m_previousAssertion;
     static LayoutDisallowedScope* s_currentAssertion;
-};
-
-#else
-
-class LayoutDisallowedScope {
-public:
-    enum class Reason { PerformanceOptimization };
-    LayoutDisallowedScope(Reason) { }
-    static bool isLayoutAllowed() { return true; }
-};
-
 #endif
+};
 
 }
