@@ -7,13 +7,13 @@ PASS functionCaller1 === functionCaller2 is true
 PASS functionCaller1 === functionArguments1 is true
 PASS argumentsCaller1 is undefined
 PASS functionCaller1 === argumentsCallee1 is true
-PASS functionCaller1 === boundCaller1 is true
-PASS functionCaller1 === boundArguments1 is true
+PASS boundCaller1 is undefined
+PASS boundArguments1 is undefined
 PASS functionCaller2 === functionArguments2 is true
 PASS argumentsCaller2 is undefined
 PASS functionCaller2 === argumentsCallee2 is true
-PASS functionCaller2 === boundCaller2 is true
-PASS functionCaller2 === boundArguments2 is true
+PASS boundCaller2 is undefined
+PASS boundArguments2 is undefined
 PASS successfullyParsed is true
 
 TEST COMPLETE

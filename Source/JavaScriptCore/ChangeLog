@@ -1,3 +1,18 @@
+2018-01-06  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Object.getOwnPropertyNames includes "arguments" and "caller" for bound functions
+        https://bugs.webkit.org/show_bug.cgi?id=181321
+
+        Reviewed by Saam Barati.
+
+        According to ECMA262 16.2[1], functions created using the bind method must not have
+        "caller" and "arguments" own properties.
+
+        [1]: https://tc39.github.io/ecma262/#sec-forbidden-extensions
+
+        * runtime/JSBoundFunction.cpp:
+        (JSC::JSBoundFunction::finishCreation):
+
 2018-01-05  JF Bastien  <jfbastien@apple.com>
 
         WebAssembly: poison JS object's secrets

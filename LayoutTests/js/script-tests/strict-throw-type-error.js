@@ -16,8 +16,8 @@ var functionCaller1 = getter(strictArgumentsFunction1.__proto__, "caller");
 var functionArguments1 = getter(strictArgumentsFunction1.__proto__, "arguments");
 var argumentsCaller1 = Object.getOwnPropertyDescriptor(strictArguments1, "caller");
 var argumentsCallee1 = getter(strictArguments1, "callee");
-var boundCaller1 = getter(boundFunction1, "caller");
-var boundArguments1 = getter(boundFunction1, "arguments");
+var boundCaller1 = Object.getOwnPropertyDescriptor(boundFunction1, "caller");
+var boundArguments1 = Object.getOwnPropertyDescriptor(boundFunction1, "arguments");
 
 function strictArgumentsFunction2()
 {
@@ -30,21 +30,21 @@ var functionCaller2 = getter(strictArgumentsFunction2.__proto__, "caller");
 var functionArguments2 = getter(strictArgumentsFunction2.__proto__, "arguments");
 var argumentsCaller2 = Object.getOwnPropertyDescriptor(strictArguments2, "caller");
 var argumentsCallee2 = getter(strictArguments2, "callee");
-var boundCaller2 = getter(boundFunction2, "caller");
-var boundArguments2 = getter(boundFunction2, "arguments");
+var boundCaller2 = Object.getOwnPropertyDescriptor(boundFunction2, "caller");
+var boundArguments2 = Object.getOwnPropertyDescriptor(boundFunction2, "arguments");
 
 shouldBeTrue('functionCaller1 === functionCaller2');
 
 shouldBeTrue('functionCaller1 === functionArguments1');
 shouldBe('argumentsCaller1', 'undefined');
 shouldBeTrue('functionCaller1 === argumentsCallee1');
-shouldBeTrue('functionCaller1 === boundCaller1');
-shouldBeTrue('functionCaller1 === boundArguments1');
+shouldBe('boundCaller1', 'undefined');
+shouldBe('boundArguments1', 'undefined');
 
 shouldBeTrue('functionCaller2 === functionArguments2');
 shouldBe('argumentsCaller2', 'undefined');
 shouldBeTrue('functionCaller2 === argumentsCallee2');
-shouldBeTrue('functionCaller2 === boundCaller2');
-shouldBeTrue('functionCaller2 === boundArguments2');
+shouldBe('boundCaller2', 'undefined');
+shouldBe('boundArguments2', 'undefined');
 
 successfullyParsed = true;

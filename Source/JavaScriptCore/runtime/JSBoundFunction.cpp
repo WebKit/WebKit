@@ -225,9 +225,6 @@ void JSBoundFunction::finishCreation(VM& vm, NativeExecutable* executable, int l
     String name; // We lazily create our 'name' string property.
     Base::finishCreation(vm, executable, length, name);
     ASSERT(inherits(vm, info()));
-
-    putDirectNonIndexAccessor(vm, vm.propertyNames->arguments, globalObject()->throwTypeErrorArgumentsCalleeAndCallerGetterSetter(), PropertyAttribute::DontDelete | PropertyAttribute::DontEnum | PropertyAttribute::Accessor);
-    putDirectNonIndexAccessor(vm, vm.propertyNames->caller, globalObject()->throwTypeErrorArgumentsCalleeAndCallerGetterSetter(), PropertyAttribute::DontDelete | PropertyAttribute::DontEnum | PropertyAttribute::Accessor);
 }
 
 void JSBoundFunction::visitChildren(JSCell* cell, SlotVisitor& visitor)
