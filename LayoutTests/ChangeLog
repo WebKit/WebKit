@@ -1,5 +1,11 @@
 2018-01-08  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Unreviewed GTK gardening. Rebaseline test again after r226500.
+
+        * platform/gtk/imported/w3c/web-platform-tests/2dcontext/imagebitmap/createImageBitmap-invalid-args-expected.txt:
+
+2018-01-08  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Unreviewed GTK gardening. Partially revert r224460.
 
         Two tests were incorrectly rebaselined in r224460.
