@@ -370,7 +370,7 @@ public:
     ExecutableBase* ownerExecutable() const { return m_ownerExecutable.get(); }
     ScriptExecutable* ownerScriptExecutable() const { return jsCast<ScriptExecutable*>(m_ownerExecutable.get()); }
 
-    VM* vm() const { return m_vm.unpoisoned(); }
+    VM* vm() const { return m_poisonedVM.unpoisoned(); }
 
     void setThisRegister(VirtualRegister thisRegister) { m_thisRegister = thisRegister; }
     VirtualRegister thisRegister() const { return m_thisRegister; }
@@ -548,7 +548,7 @@ public:
     {
         unsigned result = m_constantRegisters.size();
         m_constantRegisters.append(WriteBarrier<Unknown>());
-        m_constantRegisters.last().set(*m_vm, this, v);
+        m_constantRegisters.last().set(*m_poisonedVM, this, v);
         m_constantsSourceCodeRepresentation.append(SourceCodeRepresentation::Other);
         return result;
     }
@@ -577,7 +577,7 @@ public:
     const Vector<BitVector>& bitVectors() const { return m_unlinkedCode->bitVectors(); }
     const BitVector& bitVector(size_t i) { return m_unlinkedCode->bitVector(i); }
 
-    Heap* heap() const { return &m_vm->heap; }
+    Heap* heap() const { return &m_poisonedVM->heap; }
     JSGlobalObject* globalObject() { return m_globalObject.get(); }
 
     JSGlobalObject* globalObjectFor(CodeOrigin);
@@ -936,7 +936,7 @@ private:
     void replaceConstant(int index, JSValue value)
     {
         ASSERT(isConstantRegisterIndex(index) && static_cast<size_t>(index - FirstConstantRegisterIndex) < m_constantRegisters.size());
-        m_constantRegisters[index - FirstConstantRegisterIndex].set(*m_vm, this, value);
+        m_constantRegisters[index - FirstConstantRegisterIndex].set(*m_poisonedVM, this, value);
     }
 
     bool shouldVisitStrongly(const ConcurrentJSLocker&);
@@ -982,7 +982,7 @@ private:
         };
     };
     WriteBarrier<ExecutableBase> m_ownerExecutable;
-    ConstExprPoisoned<CodeBlockPoison, VM*> m_vm;
+    ConstExprPoisoned<CodeBlockPoison, VM*> m_poisonedVM;
 
     PoisonedRefCountedArray<CodeBlockPoison, Instruction> m_instructions;
     VirtualRegister m_thisRegister;

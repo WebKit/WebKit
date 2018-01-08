@@ -1,3 +1,28 @@
+2018-01-08  Mark Lam  <mark.lam@apple.com>
+
+        Rename CodeBlock::m_vm to CodeBlock::m_poisonedVM.
+        https://bugs.webkit.org/show_bug.cgi?id=181403
+        <rdar://problem/36359789>
+
+        Rubber-stamped by JF Bastien.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::CodeBlock):
+        (JSC::CodeBlock::~CodeBlock):
+        (JSC::CodeBlock::setConstantRegisters):
+        (JSC::CodeBlock::propagateTransitions):
+        (JSC::CodeBlock::finalizeLLIntInlineCaches):
+        (JSC::CodeBlock::jettison):
+        (JSC::CodeBlock::predictedMachineCodeSize):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::vm const):
+        (JSC::CodeBlock::addConstant):
+        (JSC::CodeBlock::heap const):
+        (JSC::CodeBlock::replaceConstant):
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+
 2018-01-07  Mark Lam  <mark.lam@apple.com>
 
         Apply poisoning to more pointers in JSC.
