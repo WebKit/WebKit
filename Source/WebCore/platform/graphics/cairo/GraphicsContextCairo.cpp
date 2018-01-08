@@ -678,7 +678,8 @@ void GraphicsContext::fillRectWithRoundedHole(const FloatRect& rect, const Float
     }
 
     ASSERT(hasPlatformContext());
-    Cairo::fillRectWithRoundedHole(*platformContext(), rect, roundedHoleRect, state(), *this);
+    auto& state = this->state();
+    Cairo::fillRectWithRoundedHole(*platformContext(), rect, roundedHoleRect, state, Cairo::ShadowBlurUsage(state), *this);
 }
 
 void GraphicsContext::drawPattern(Image& image, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, CompositeOperator compositeOperator, BlendMode blendMode)

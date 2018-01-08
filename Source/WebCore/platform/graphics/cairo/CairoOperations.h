@@ -77,6 +77,16 @@ bool isAcceleratedContext(PlatformContextCairo&);
 
 } // namespace State
 
+struct ShadowBlurUsage {
+    explicit ShadowBlurUsage(const GraphicsContextState&);
+
+    bool required(PlatformContextCairo&) const;
+
+    Color shadowColor;
+    float shadowBlur { 0 };
+    bool shadowsIgnoreTransforms { false };
+};
+
 void setLineCap(PlatformContextCairo&, LineCap);
 void setLineDash(PlatformContextCairo&, const DashArray&, float);
 void setLineJoin(PlatformContextCairo&, LineJoin);
@@ -86,13 +96,13 @@ void fillRect(PlatformContextCairo&, const FloatRect&, const GraphicsContextStat
 void fillRect(PlatformContextCairo&, const FloatRect&, const Color&, bool, GraphicsContext&);
 void fillRect(PlatformContextCairo&, const FloatRect&, cairo_pattern_t*);
 void fillRoundedRect(PlatformContextCairo&, const FloatRoundedRect&, const Color&, bool, GraphicsContext&);
-void fillRectWithRoundedHole(PlatformContextCairo&, const FloatRect&, const FloatRoundedRect&, const GraphicsContextState&, GraphicsContext&);
+void fillRectWithRoundedHole(PlatformContextCairo&, const FloatRect&, const FloatRoundedRect&, const GraphicsContextState&, const ShadowBlurUsage&, GraphicsContext&);
 void fillPath(PlatformContextCairo&, const Path&, const GraphicsContextState&, GraphicsContext&);
 void strokeRect(PlatformContextCairo&, const FloatRect&, float, const GraphicsContextState&, GraphicsContext&);
 void strokePath(PlatformContextCairo&, const Path&, const GraphicsContextState&, GraphicsContext&);
 void clearRect(PlatformContextCairo&, const FloatRect&);
 
-void drawGlyphs(PlatformContextCairo&, const GraphicsContextState&, const FloatPoint&, cairo_scaled_font_t*, double, const Vector<cairo_glyph_t>&, float, GraphicsContext&);
+void drawGlyphs(PlatformContextCairo&, const GraphicsContextState&, const ShadowBlurUsage&, const FloatPoint&, cairo_scaled_font_t*, double, const Vector<cairo_glyph_t>&, float, GraphicsContext&);
 
 void drawNativeImage(PlatformContextCairo&, cairo_surface_t*, const FloatRect&, const FloatRect&, CompositeOperator, BlendMode, ImageOrientation, GraphicsContext&);
 void drawPattern(PlatformContextCairo&, cairo_surface_t*, const IntSize&, const FloatRect&, const FloatRect&, const AffineTransform&, const FloatPoint&, CompositeOperator, BlendMode);

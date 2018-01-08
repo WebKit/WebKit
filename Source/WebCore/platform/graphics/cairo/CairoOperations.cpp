@@ -165,25 +165,6 @@ static inline StrokeStyle focusRingStrokeStyle()
 #endif
 }
 
-static bool mustUseShadowBlur(PlatformContextCairo& platformContext, const GraphicsContextState& state)
-{
-    // We can't avoid ShadowBlur if the shadow has blur.
-    if (state.shadowColor.isVisible() && state.shadowBlur)
-        return true;
-
-    // We can avoid ShadowBlur and optimize, since we're not drawing on a
-    // canvas and box shadows are affected by the transformation matrix.
-    if (!state.shadowsIgnoreTransforms)
-        return false;
-
-    // We can avoid ShadowBlur, since there are no transformations to apply to the canvas.
-    if (State::getCTM(platformContext).isIdentity())
-        return false;
-
-    // Otherwise, no chance avoiding ShadowBlur.
-    return true;
-}
-
 static void drawGlyphsToContext(cairo_t* context, cairo_scaled_font_t* scaledFont, double syntheticBoldOffset, const Vector<cairo_glyph_t>& glyphs)
 {
     cairo_matrix_t originalTransform;
@@ -201,14 +182,14 @@ static void drawGlyphsToContext(cairo_t* context, cairo_scaled_font_t* scaledFon
     }
 }
 
-static void drawGlyphsShadow(PlatformContextCairo& platformContext, const GraphicsContextState& state, const FloatPoint& point, cairo_scaled_font_t* scaledFont, double syntheticBoldOffset, const Vector<cairo_glyph_t>& glyphs, GraphicsContext& targetContext)
+static void drawGlyphsShadow(PlatformContextCairo& platformContext, const GraphicsContextState& state, const ShadowBlurUsage& shadowBlurUsage, const FloatPoint& point, cairo_scaled_font_t* scaledFont, double syntheticBoldOffset, const Vector<cairo_glyph_t>& glyphs, GraphicsContext& targetContext)
 {
     ShadowBlur& shadow = platformContext.shadowBlur();
 
     if (!(state.textDrawingMode & TextModeFill) || shadow.type() == ShadowBlur::NoShadow)
         return;
 
-    if (!mustUseShadowBlur(platformContext, state)) {
+    if (!shadowBlurUsage.required(platformContext)) {
         // Optimize non-blurry shadows, by just drawing text without the ShadowBlur.
         cairo_t* context = platformContext.cr();
         cairo_save(context);
@@ -461,6 +442,32 @@ bool isAcceleratedContext(PlatformContextCairo& platformContext)
 
 } // namespace State
 
+ShadowBlurUsage::ShadowBlurUsage(const GraphicsContextState& state)
+    : shadowColor(state.shadowColor)
+    , shadowBlur(state.shadowBlur)
+    , shadowsIgnoreTransforms(state.shadowsIgnoreTransforms)
+{
+}
+
+bool ShadowBlurUsage::required(PlatformContextCairo& platformContext) const
+{
+    // We can't avoid ShadowBlur if the shadow has blur.
+    if (shadowColor.isVisible() && shadowBlur)
+        return true;
+
+    // We can avoid ShadowBlur and optimize, since we're not drawing on a
+    // canvas and box shadows are affected by the transformation matrix.
+    if (!shadowsIgnoreTransforms)
+        return false;
+
+    // We can avoid ShadowBlur, since there are no transformations to apply to the canvas.
+    if (State::getCTM(platformContext).isIdentity())
+        return false;
+
+    // Otherwise, no chance avoiding ShadowBlur.
+    return true;
+}
+
 void setLineCap(PlatformContextCairo& platformContext, LineCap lineCap)
 {
     cairo_line_cap_t cairoCap;
@@ -551,11 +558,11 @@ void fillRoundedRect(PlatformContextCairo& platformContext, const FloatRoundedRe
     cairo_restore(cr);
 }
 
-void fillRectWithRoundedHole(PlatformContextCairo& platformContext, const FloatRect& rect, const FloatRoundedRect& roundedHoleRect, const GraphicsContextState& contextState, GraphicsContext& targetContext)
+void fillRectWithRoundedHole(PlatformContextCairo& platformContext, const FloatRect& rect, const FloatRoundedRect& roundedHoleRect, const GraphicsContextState& contextState, const ShadowBlurUsage& shadowBlurUsage, GraphicsContext& targetContext)
 {
     // FIXME: this should leverage the specified color.
 
-    if (mustUseShadowBlur(platformContext, contextState))
+    if (shadowBlurUsage.required(platformContext))
         platformContext.shadowBlur().drawInsetShadow(targetContext, rect, roundedHoleRect);
 
     Path path;
@@ -617,9 +624,9 @@ void clearRect(PlatformContextCairo& platformContext, const FloatRect& rect)
     cairo_restore(cr);
 }
 
-void drawGlyphs(PlatformContextCairo& platformContext, const GraphicsContextState& state, const FloatPoint& point, cairo_scaled_font_t* scaledFont, double syntheticBoldOffset, const Vector<cairo_glyph_t>& glyphs, float xOffset, GraphicsContext& targetContext)
+void drawGlyphs(PlatformContextCairo& platformContext, const GraphicsContextState& state, const ShadowBlurUsage& shadowBlurUsage, const FloatPoint& point, cairo_scaled_font_t* scaledFont, double syntheticBoldOffset, const Vector<cairo_glyph_t>& glyphs, float xOffset, GraphicsContext& targetContext)
 {
-    drawGlyphsShadow(platformContext, state, point, scaledFont, syntheticBoldOffset, glyphs, targetContext);
+    drawGlyphsShadow(platformContext, state, shadowBlurUsage, point, scaledFont, syntheticBoldOffset, glyphs, targetContext);
 
     cairo_t* cr = platformContext.cr();
     cairo_save(cr);

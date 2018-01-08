@@ -1,3 +1,43 @@
+2018-01-08  Zan Dobersek  <zdobersek@igalia.com>
+
+        [Cairo] Contain shadow blur requirement state in a separate object
+        https://bugs.webkit.org/show_bug.cgi?id=181380
+
+        Reviewed by Carlos Garcia Campos.
+
+        Instead of picking up the necessary state parameters from a
+        GraphicsContextState object, store the necessary parameters in a helper
+        ShadowBlurUsage struct. Mimicking the mustUseShadowBlur() function that
+        is being removed, values of the shadow color, shadow blur, and shadow
+        transform ignorance are stored there. Additionally, the required()
+        method accepts a PlatformContextCairo object through which it can
+        retrieve the current CTM and determine whether it's an identity, finally
+        deciding whether shadow blur can or cannot be ignored.
+
+        Goal of this change is to limit usage of GraphicsContextState directly
+        in operations implemented inside the Cairo namespace. Instead, the
+        state parameters should be passed directly, or an equivalent but limited
+        state object should be constructed for invocation of such operations.
+
+        This is likely only an intermediate solution. It's possible it will be
+        replaced by a more complete shadow state struct that would be used for
+        any operation that is required to draw shadows, if necessary.
+
+        No new tests -- no change in functionality.
+
+        * platform/graphics/cairo/CairoOperations.cpp:
+        (WebCore::Cairo::drawGlyphsShadow):
+        (WebCore::Cairo::ShadowBlurUsage::ShadowBlurUsage):
+        (WebCore::Cairo::ShadowBlurUsage::required const):
+        (WebCore::Cairo::fillRectWithRoundedHole):
+        (WebCore::Cairo::drawGlyphs):
+        (WebCore::Cairo::mustUseShadowBlur): Deleted.
+        * platform/graphics/cairo/CairoOperations.h:
+        * platform/graphics/cairo/FontCairo.cpp:
+        (WebCore::FontCascade::drawGlyphs):
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        (WebCore::GraphicsContext::fillRectWithRoundedHole):
+
 2018-01-08  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer][Soup] Remove dead getCreateOrReadBuffer code path
