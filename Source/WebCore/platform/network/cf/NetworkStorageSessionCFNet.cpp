@@ -322,6 +322,11 @@ void NetworkStorageSession::removeStorageAccessForFrame(uint64_t frameID, uint64
     iteration->value.remove(frameID);
 }
 
+void NetworkStorageSession::removeStorageAccessForAllFramesOnPage(uint64_t pageID)
+{
+    m_framesGrantedStorageAccess.remove(pageID);
+}
+
 #endif // HAVE(CFNETWORK_STORAGE_PARTITIONING)
 
 #if !PLATFORM(COCOA)

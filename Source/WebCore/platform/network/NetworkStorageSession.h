@@ -101,6 +101,7 @@ public:
     WEBCORE_EXPORT bool hasStorageAccessForFrame(const String& resourceDomain, const String& firstPartyDomain, uint64_t frameID, uint64_t pageID) const;
     WEBCORE_EXPORT void grantStorageAccessForFrame(const String& resourceDomain, const String& firstPartyDomain, uint64_t frameID, uint64_t pageID);
     WEBCORE_EXPORT void removeStorageAccessForFrame(uint64_t frameID, uint64_t pageID);
+    WEBCORE_EXPORT void removeStorageAccessForAllFramesOnPage(uint64_t pageID);
 #endif
 #elif USE(SOUP)
     NetworkStorageSession(PAL::SessionID, std::unique_ptr<SoupNetworkSession>&&);
