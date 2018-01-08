@@ -909,12 +909,16 @@ Node::InsertedIntoAncestorResult HTMLMediaElement::insertedIntoAncestor(Insertio
     INFO_LOG(LOGIDENTIFIER);
 
     HTMLElement::insertedIntoAncestor(insertionType, parentOfInsertedTree);
-    if (insertionType.connectedToDocument) {
+    if (insertionType.connectedToDocument)
         m_inActiveDocument = true;
 
-        if (m_networkState == NETWORK_EMPTY && !attributeWithoutSynchronization(srcAttr).isEmpty())
-            prepareForLoad();
-    }
+    return InsertedIntoAncestorResult::NeedsPostInsertionCallback;
+}
+
+void HTMLMediaElement::didFinishInsertingNode()
+{
+    if (m_inActiveDocument && m_networkState == NETWORK_EMPTY && !attributeWithoutSynchronization(srcAttr).isEmpty())
+        prepareForLoad();
 
     if (!m_explicitlyMuted) {
         m_explicitlyMuted = true;
@@ -922,11 +926,6 @@ Node::InsertedIntoAncestorResult HTMLMediaElement::insertedIntoAncestor(Insertio
         m_mediaSession->canProduceAudioChanged();
     }
 
-    return InsertedIntoAncestorResult::NeedsPostInsertionCallback;
-}
-
-void HTMLMediaElement::didFinishInsertingNode()
-{
     configureMediaControls();
 }
 

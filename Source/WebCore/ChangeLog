@@ -1,3 +1,15 @@
+2018-01-08  Jer Noble  <jer.noble@apple.com>
+
+        REGRESSION: [iOS] ASSERTION FAILED: !node.isConnected() in WebCore::notifyNodeInsertedIntoDocument
+        https://bugs.webkit.org/show_bug.cgi?id=181091
+
+        Reviewed by Darin Adler.
+
+        Move the work previously performed in insertedIntoAncestor() into didFinishInsertingNode().
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::prepareForLoad):
+
 2018-01-08  Zan Dobersek  <zdobersek@igalia.com>
 
         [Cairo] Use isolated fill and stroke source containers
