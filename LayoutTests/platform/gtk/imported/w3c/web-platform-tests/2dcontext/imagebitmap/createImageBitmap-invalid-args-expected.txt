@@ -17,7 +17,7 @@ PASS createImageBitmap with a ImageData source and sh set to 0 rejects with a Ra
 FAIL createImageBitmap with a ImageData source and oversized (unallocatable) crop region rejects with an InvalidStateError DOMException. assert_throws: function "function () { throw e }" threw object "TypeError: createImageBitmap with ImageData is not implemented" ("TypeError") expected object "InvalidStateError" ("InvalidStateError")
 PASS createImageBitmap with a ImageBitmap source and sw set to 0 rejects with a RangeError. 
 PASS createImageBitmap with a ImageBitmap source and sh set to 0 rejects with a RangeError. 
-FAIL createImageBitmap with a ImageBitmap source and oversized (unallocatable) crop region rejects with an InvalidStateError DOMException. assert_throws: function "function () { throw e }" threw object "TypeError: createImageBitmap with ImageBitmap is not implemented" ("TypeError") expected object "InvalidStateError" ("InvalidStateError")
+FAIL createImageBitmap with a ImageBitmap source and oversized (unallocatable) crop region rejects with an InvalidStateError DOMException. assert_unreached: Should have rejected: undefined Reached unreachable code
 PASS createImageBitmap with a Blob source and sw set to 0 rejects with a RangeError. 
 PASS createImageBitmap with a Blob source and sh set to 0 rejects with a RangeError. 
 FAIL createImageBitmap with a Blob source and oversized (unallocatable) crop region rejects with an InvalidStateError DOMException. assert_throws: function "function () { throw e }" threw object "TypeError: createImageBitmap with ArrayBuffer or Blob is not implemented" ("TypeError") expected object "InvalidStateError" ("InvalidStateError")

@@ -394,25 +394,44 @@ void ImageBitmap::createPromise(ScriptExecutionContext&, RefPtr<HTMLVideoElement
 
 void ImageBitmap::createPromise(ScriptExecutionContext&, RefPtr<ImageBitmap>& existingImageBitmap, ImageBitmapOptions&& options, std::optional<IntRect> rect, ImageBitmap::Promise&& promise)
 {
-    UNUSED_PARAM(existingImageBitmap);
-    UNUSED_PARAM(options);
-    UNUSED_PARAM(rect);
-
     // 2. If image's [[Detached]] internal slot value is true, return a promise
     //    rejected with an "InvalidStateError" DOMException and abort these steps.
+    if (existingImageBitmap->isDetached() || !existingImageBitmap->buffer()) {
+        promise.reject(InvalidStateError, "Cannot create ImageBitmap from a detached ImageBitmap");
+        return;
+    }
 
     // 3. Create a new ImageBitmap object.
+    auto imageBitmap = create();
 
     // 4. Let the ImageBitmap object's bitmap data be a copy of the image argument's
     //    bitmap data, cropped to the source rectangle with formatting.
+    auto sourceRectangle = croppedSourceRectangleWithFormatting(existingImageBitmap->buffer()->logicalSize(), options, WTFMove(rect));
+    if (sourceRectangle.hasException()) {
+        promise.reject(sourceRectangle.releaseException());
+        return;
+    }
+
+    auto outputSize = outputSizeForSourceRectangle(sourceRectangle.returnValue(), options);
+    auto bitmapData = ImageBuffer::create(FloatSize(outputSize.width(), outputSize.height()), bufferRenderingMode);
+
+    auto imageForRender = existingImageBitmap->buffer()->copyImage();
+
+    FloatRect destRect(FloatPoint(), outputSize);
+    ImagePaintingOptions paintingOptions;
+    paintingOptions.m_interpolationQuality = interpolationQualityForResizeQuality(options.resizeQuality);
+
+    bitmapData->context().drawImage(*imageForRender, destRect, sourceRectangle.releaseReturnValue(), paintingOptions);
+
+    imageBitmap->m_bitmapData = WTFMove(bitmapData);
 
     // 5. Set the origin-clean flag of the ImageBitmap object's bitmap to the same
     //    value as the origin-clean flag of the bitmap of the image argument.
+    imageBitmap->m_originClean = existingImageBitmap->originClean();
 
     // 6. Return a new promise, but continue running these steps in parallel.
-
     // 7. Resolve the promise with the new ImageBitmap object as the value.
-    promise.reject(TypeError, "createImageBitmap with ImageBitmap is not implemented");
+    promise.resolve(WTFMove(imageBitmap));
 }
 
 class PendingImageBitmap final : public ActiveDOMObject, public FileReaderLoaderClient {
