@@ -338,8 +338,10 @@ public:
     WriteBarrier<Structure> m_moduleLoaderStructure;
     WriteBarrier<JSArrayBufferPrototype> m_arrayBufferPrototype;
     WriteBarrier<Structure> m_arrayBufferStructure;
+#if ENABLE(SHARED_ARRAY_BUFFER)
     WriteBarrier<JSArrayBufferPrototype> m_sharedArrayBufferPrototype;
     WriteBarrier<Structure> m_sharedArrayBufferStructure;
+#endif
 
 #define DEFINE_STORAGE_FOR_SIMPLE_TYPE(capitalName, lowerName, properName, instanceType, jsName, prototypeBase) \
     WriteBarrier<capitalName ## Prototype> m_ ## lowerName ## Prototype; \
@@ -670,8 +672,13 @@ public:
         switch (sharingMode) {
         case ArrayBufferSharingMode::Default:
             return m_arrayBufferPrototype.get();
+#if ENABLE(SHARED_ARRAY_BUFFER)
         case ArrayBufferSharingMode::Shared:
             return m_sharedArrayBufferPrototype.get();
+#else
+        default:
+            return m_arrayBufferPrototype.get();
+#endif
         }
     }
     Structure* arrayBufferStructure(ArrayBufferSharingMode sharingMode) const
@@ -679,8 +686,13 @@ public:
         switch (sharingMode) {
         case ArrayBufferSharingMode::Default:
             return m_arrayBufferStructure.get();
+#if ENABLE(SHARED_ARRAY_BUFFER)
         case ArrayBufferSharingMode::Shared:
             return m_sharedArrayBufferStructure.get();
+#else
+        default:
+            return m_arrayBufferStructure.get();
+#endif
         }
         RELEASE_ASSERT_NOT_REACHED();
         return nullptr;
