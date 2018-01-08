@@ -35,6 +35,7 @@
 #include "Logging.h"
 #include "MediaStreamEvent.h"
 #include "NotImplemented.h"
+#include "Performance.h"
 #include "PlatformStrategies.h"
 #include "RTCDataChannel.h"
 #include "RTCDataChannelEvent.h"
@@ -50,6 +51,7 @@
 #include <webrtc/p2p/base/basicpacketsocketfactory.h>
 #include <webrtc/p2p/client/basicportallocator.h>
 #include <webrtc/pc/peerconnectionfactory.h>
+#include <wtf/CurrentTime.h>
 #include <wtf/MainThread.h>
 
 #include "CoreMediaSoftLink.h"
@@ -303,7 +305,7 @@ static inline String fromStdString(const std::string& value)
 
 static inline void fillRTCStats(RTCStatsReport::Stats& stats, const webrtc::RTCStats& rtcStats)
 {
-    stats.timestamp = rtcStats.timestamp_us() / 1000.0;
+    stats.timestamp = Performance::reduceTimeResolution(Seconds::fromMicroseconds(rtcStats.timestamp_us())).milliseconds();
     stats.id = fromStdString(rtcStats.id());
 }
 
