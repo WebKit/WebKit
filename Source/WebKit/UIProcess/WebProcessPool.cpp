@@ -1458,6 +1458,9 @@ void WebProcessPool::terminateServiceWorkerProcess()
     if (!m_serviceWorkerProcess)
         return;
 
+#ifndef NDEBUG
+    auto protectedThis = makeRef(*this);
+#endif
     m_serviceWorkerProcess->requestTermination(ProcessTerminationReason::RequestedByClient);
     ASSERT(!m_processes.contains(m_serviceWorkerProcess));
     ASSERT(!m_serviceWorkerProcess);
