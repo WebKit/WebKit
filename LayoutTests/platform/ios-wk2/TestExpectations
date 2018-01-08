@@ -1295,3 +1295,5 @@ webkit.org/b/181166 imported/w3c/web-platform-tests/service-workers/service-work
 
 webkit.org/181167 imported/w3c/web-platform-tests/service-workers/service-worker/ServiceWorkerGlobalScope/update.https.html [ Pass Failure ]
 
+webkit.org/181087 imported/w3c/web-platform-tests/service-workers/service-worker/register-closed-window.https.html [ Pass Failure ]
+
