@@ -2258,7 +2258,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     _isSilverlight = [_pluginPackage.get() bundleIdentifier] == "com.microsoft.SilverlightPlugin";
 
     [[self class] setCurrentPluginView:self];
-    NPError npErr = [_pluginPackage.get() pluginFuncs]->newp((char *)[_MIMEType.get() cString], plugin, _mode, argsCount, cAttributes, cValues, NULL);
+    NPError npErr = [_pluginPackage.get() pluginFuncs]->newp(const_cast<char*>([_MIMEType.get() cString]), plugin, _mode, argsCount, cAttributes, cValues, NULL);
     [[self class] setCurrentPluginView:nil];
     LOG(Plugins, "NPP_New: %d", npErr);
     return npErr;

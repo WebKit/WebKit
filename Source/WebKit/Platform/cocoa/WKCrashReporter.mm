@@ -38,14 +38,13 @@ namespace WebKit {
 
 void setCrashReportApplicationSpecificInformation(CFStringRef infoString)
 {
+    if (char* oldMessage = const_cast<char*>(CRGetCrashLogMessage()))
+        free(oldMessage);
+
     if (!infoString) {
         CRSetCrashLogMessage(nullptr);
         return;
     }
-
-    char* oldMessage = (char*)CRGetCrashLogMessage();
-    if (oldMessage)
-        free(oldMessage);
 
     // We have to copy the string, because CRSetCrashLogMessage doesn't copy the data.
     char* lastInfoChars = strdup([(NSString *)infoString UTF8String]);

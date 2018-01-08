@@ -87,7 +87,10 @@ static void
 PoolCleaner( EventLoopTimerRef inTimer, EventLoopIdleTimerMessage inState, void *inUserData )
 {
     if ( inState == kEventLoopIdleTimerStarted ) {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wcast-qual"
         CFStringRef mode = CFRunLoopCopyCurrentMode( (CFRunLoopRef)GetCFRunLoopFromEventLoop( GetCurrentEventLoop() ));
+#pragma clang diagnostic pop
         EventLoopRef thisLoop = GetCurrentEventLoop ();
         if ( CFEqual( mode, kCFRunLoopDefaultMode ) && thisLoop == poolLoop) {
             unsigned currentNumPools = getNSAutoreleasePoolCount()-1;            

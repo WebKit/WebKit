@@ -29,8 +29,11 @@
 #if PLATFORM(COCOA)
 #include <Security/SecCertificate.h>
 #include <Security/SecTrust.h>
+#include <wtf/cf/TypeCastsCF.h>
 #include <wtf/spi/cocoa/SecuritySPI.h>
 #endif
+
+WTF_DECLARE_CF_TYPE_TRAIT(SecCertificate);
 
 namespace WTF {
 namespace Persistence {
@@ -105,9 +108,7 @@ static void encodeCertificateChain(Encoder& encoder, CFArrayRef certificateChain
 
     for (CFIndex i = 0; i < size; ++i) {
         ASSERT(values[i]);
-        ASSERT(CFGetTypeID(values[i]) == SecCertificateGetTypeID());
-
-        auto data = adoptCF(SecCertificateCopyData((SecCertificateRef)values[i]));
+        auto data = adoptCF(SecCertificateCopyData(checked_cf_cast<SecCertificateRef>(values[i])));
         encodeCFData(encoder, data.get());
     }
 }

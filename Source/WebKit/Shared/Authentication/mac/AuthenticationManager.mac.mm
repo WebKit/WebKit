@@ -32,6 +32,9 @@
 #include <WebCore/AuthenticationChallenge.h>
 #include <WebCore/CertificateInfo.h>
 #include <WebCore/NotImplemented.h>
+#include <wtf/cf/TypeCastsCF.h>
+
+WTF_DECLARE_CF_TYPE_TRAIT(SecCertificate);
 
 using namespace WebCore;
 
@@ -45,7 +48,7 @@ static SecCertificateRef leafCertificate(const CertificateInfo& certificateInfo)
 #endif
     ASSERT(certificateInfo.type() == CertificateInfo::Type::CertificateChain);
     ASSERT(CFArrayGetCount(certificateInfo.certificateChain()));
-    return (SecCertificateRef)CFArrayGetValueAtIndex(certificateInfo.certificateChain(), 0);
+    return checked_cf_cast<SecCertificateRef>(CFArrayGetValueAtIndex(certificateInfo.certificateChain(), 0));
 }
 
 static NSArray *chain(const CertificateInfo& certificateInfo)

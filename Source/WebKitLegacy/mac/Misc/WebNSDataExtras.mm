@@ -1,29 +1,26 @@
 /*
- * Copyright (C) 2005 Apple Inc.  All rights reserved.
+ * Copyright (C) 2005-2018 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
  * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
  *
- * 1.  Redistributions of source code must retain the above copyright
- *     notice, this list of conditions and the following disclaimer. 
- * 2.  Redistributions in binary form must reproduce the above copyright
- *     notice, this list of conditions and the following disclaimer in the
- *     documentation and/or other materials provided with the distribution. 
- * 3.  Neither the name of Apple Inc. ("Apple") nor the names of
- *     its contributors may be used to endorse or promote products derived
- *     from this software without specific prior written permission. 
- *
- * THIS SOFTWARE IS PROVIDED BY APPLE AND ITS CONTRIBUTORS "AS IS" AND ANY
- * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
- * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
- * DISCLAIMED. IN NO EVENT SHALL APPLE OR ITS CONTRIBUTORS BE LIABLE FOR ANY
- * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
- * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
- * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
- * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #import <WebKitLegacy/WebNSDataExtras.h>
@@ -44,8 +41,8 @@
 
     CFIndex i; 
     CFIndex len = CFStringGetLength(name);
-    char *charPtr = NULL;
-    UniChar *uniCharPtr = NULL;
+    char* charPtr = nullptr;
+    UniChar* uniCharPtr = nullptr;
     Boolean useUniCharPtr = FALSE;
     Boolean shouldCapitalize = TRUE;
     Boolean somethingChanged = FALSE;
@@ -67,12 +64,12 @@
                 if (CFStringGetBytes(name, CFRangeMake(0, len), kCFStringEncodingISOLatin1, 0, FALSE, NULL, 0, NULL) == len) {
                     // Can be encoded in ISOLatin1
                     useUniCharPtr = FALSE;
-                    charPtr = CFAllocatorAllocate(NULL, len + 1, 0);
+                    charPtr = static_cast<char*>(CFAllocatorAllocate(kCFAllocatorDefault, len + 1, 0));
                     CFStringGetCString(name, charPtr, len+1, kCFStringEncodingISOLatin1);
                 } 
                 else {
                     useUniCharPtr = TRUE;
-                    uniCharPtr = CFAllocatorAllocate(NULL, len * sizeof(UniChar), 0);
+                    uniCharPtr = static_cast<UniChar*>(CFAllocatorAllocate(kCFAllocatorDefault, len * sizeof(UniChar), 0));
                     CFStringGetCharacters(name, CFRangeMake(0, len), uniCharPtr);
                 }
             }
@@ -112,18 +109,18 @@
 -(NSString *)_webkit_guessedMIMETypeForXML
 {
     NSUInteger length = [self length];
-    const UInt8 *bytes = [self bytes];
+    const UInt8* bytes = static_cast<const UInt8*>([self bytes]);
     
 #define CHANNEL_TAG_LENGTH 7
     
-    const char *p = (const char *)bytes;
-    int remaining = MIN(length, WEB_GUESS_MIME_TYPE_PEEK_LENGTH) - (CHANNEL_TAG_LENGTH - 1);
+    const char* p = reinterpret_cast<const char*>(bytes);
+    int remaining = std::min<NSUInteger>(length, WEB_GUESS_MIME_TYPE_PEEK_LENGTH) - (CHANNEL_TAG_LENGTH - 1);
     
     BOOL foundRDF = false;
     
     while (remaining > 0) {
         // Look for a "<".
-        const char *hit = memchr(p, '<', remaining);
+        const char* hit = static_cast<const char*>(memchr(p, '<', remaining));
         if (!hit) {
             break;
         }
@@ -172,13 +169,13 @@
         return MIMEType;
     
     NSUInteger length = [self length];
-    const char *bytes = [self bytes];
+    const char* bytes = static_cast<const char*>([self bytes]);
     
-    const char *p = bytes;
-    int remaining = MIN(length, WEB_GUESS_MIME_TYPE_PEEK_LENGTH) - (SCRIPT_TAG_LENGTH - 1);
+    const char* p = bytes;
+    int remaining = std::min<NSUInteger>(length, WEB_GUESS_MIME_TYPE_PEEK_LENGTH) - (SCRIPT_TAG_LENGTH - 1);
     while (remaining > 0) {
         // Look for a "<".
-        const char *hit = memchr(p, '<', remaining);
+        const char* hit = static_cast<const char*>(memchr(p, '<', remaining));
         if (!hit) {
             break;
         }
@@ -199,12 +196,12 @@
     // Test for a broken server which has sent the content type as part of the content.
     // This code could be improved to look for other mime types.
     p = bytes;
-    remaining = MIN(length, WEB_GUESS_MIME_TYPE_PEEK_LENGTH) - (TEXT_HTML_LENGTH - 1);
+    remaining = std::min<NSUInteger>(length, WEB_GUESS_MIME_TYPE_PEEK_LENGTH) - (TEXT_HTML_LENGTH - 1);
     while (remaining > 0) {
         // Look for a "t" or "T".
-        const char *hit = NULL;
-        const char *lowerhit = memchr(p, 't', remaining);
-        const char *upperhit = memchr(p, 'T', remaining);
+        const char* hit = nullptr;
+        const char* lowerhit = static_cast<const char*>(memchr(p, 't', remaining));
+        const char* upperhit = static_cast<const char*>(memchr(p, 'T', remaining));
         if (!lowerhit && !upperhit) {
             break;
         }
@@ -215,7 +212,7 @@
             hit = lowerhit;
         }
         else {
-            hit = MIN(lowerhit, upperhit);
+            hit = std::min<const char*>(lowerhit, upperhit);
         }
         
         // If we found a "t/T", look for "text/html".
@@ -272,7 +269,7 @@
 {
     ASSERT(string);
     
-    const char *bytes = [self bytes];
+    const char* bytes = static_cast<const char*>([self bytes]);
     return strncasecmp(bytes, string, [self length]) == 0;
 }
 
@@ -310,7 +307,7 @@ static const UInt8 *_findEOL(const UInt8 *bytes, CFIndex len) {
 {
     NSMutableDictionary *headerFields = [NSMutableDictionary dictionary];
 
-    const UInt8 *bytes = [self bytes];
+    const UInt8* bytes = static_cast<const UInt8*>([self bytes]);
     NSUInteger length = [self length];
     NSString *lastKey = nil;
     const UInt8 *eol;

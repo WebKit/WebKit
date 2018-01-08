@@ -1055,7 +1055,7 @@ bool WebChromeClient::wrapCryptoKey(const Vector<uint8_t>& key, Vector<uint8_t>&
     SEL selector = @selector(webCryptoMasterKeyForWebView:);
     if ([[m_webView UIDelegate] respondsToSelector:selector]) {
         NSData *keyData = CallUIDelegate(m_webView, selector);
-        masterKey.append((uint8_t*)[keyData bytes], [keyData length]);
+        masterKey.append(static_cast<uint8_t*>(const_cast<void*>([keyData bytes])), [keyData length]);
     } else if (!getDefaultWebCryptoMasterKey(masterKey))
         return false;
 
@@ -1068,7 +1068,7 @@ bool WebChromeClient::unwrapCryptoKey(const Vector<uint8_t>& wrappedKey, Vector<
     SEL selector = @selector(webCryptoMasterKeyForWebView:);
     if ([[m_webView UIDelegate] respondsToSelector:selector]) {
         NSData *keyData = CallUIDelegate(m_webView, selector);
-        masterKey.append((uint8_t*)[keyData bytes], [keyData length]);
+        masterKey.append(static_cast<uint8_t*>(const_cast<void*>([keyData bytes])), [keyData length]);
     } else if (!getDefaultWebCryptoMasterKey(masterKey))
         return false;
 

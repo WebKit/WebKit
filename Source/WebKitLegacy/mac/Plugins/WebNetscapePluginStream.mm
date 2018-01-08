@@ -537,7 +537,7 @@ void WebNetscapePluginStream::deliverData()
             deliveryBytes = std::min(deliveryBytes, totalBytes - totalBytesDelivered);
             NSData *subdata = [m_deliveryData.get() subdataWithRange:NSMakeRange(totalBytesDelivered, deliveryBytes)];
             PluginStopDeferrer deferrer(m_pluginView.get());
-            deliveryBytes = m_pluginFuncs->write(m_plugin, &m_stream, m_offset, [subdata length], (void *)[subdata bytes]);
+            deliveryBytes = m_pluginFuncs->write(m_plugin, &m_stream, m_offset, [subdata length], const_cast<void*>([subdata bytes]));
             if (deliveryBytes < 0) {
                 // Netscape documentation says that a negative result from NPP_Write means cancel the load.
                 cancelLoadAndDestroyStreamWithError(pluginCancelledConnectionError());
@@ -553,7 +553,7 @@ void WebNetscapePluginStream::deliverData()
     if (totalBytesDelivered > 0) {
         if (totalBytesDelivered < totalBytes) {
             NSMutableData *newDeliveryData = [[NSMutableData alloc] initWithCapacity:totalBytes - totalBytesDelivered];
-            [newDeliveryData appendBytes:(char *)[m_deliveryData.get() bytes] + totalBytesDelivered length:totalBytes - totalBytesDelivered];
+            [newDeliveryData appendBytes:static_cast<char*>(const_cast<void*>([m_deliveryData.get() bytes])) + totalBytesDelivered length:totalBytes - totalBytesDelivered];
             
             m_deliveryData = adoptNS(newDeliveryData);
         } else {

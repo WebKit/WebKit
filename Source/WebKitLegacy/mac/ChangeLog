@@ -1,3 +1,92 @@
+2018-01-07  David Kilzer  <ddkilzer@apple.com>
+
+        Enable -Wcast-qual for WebInspectorUI, WebKitLegacy, WebKit projects
+        <https://webkit.org/b/181256>
+        <rdar://problem/36281730>
+
+        Reviewed by Darin Adler.
+
+        * Carbon/CarbonUtils.m:
+        (PoolCleaner):
+        - Use #pragmas to ignore -Wcast-qual warnings when using a
+          C-style cast from CFTypeRef to CFRunloopRef.
+        * Carbon/CarbonWindowFrame.m:
+        (-[CarbonWindowFrame title]):
+        - Use #pragmas to ignore -Wcast-qual warnings when using a
+          C-style cast from CFStringRef to NSString *.
+        * Carbon/HIViewAdapter.m:
+        (+[HIViewAdapter getHIViewForNSView:]):
+        - Use #pragmas to ignore -Wcast-qual warnings when using a
+          C-style cast from CFTypeRef to HIViewRef.
+        * Configurations/Base.xcconfig:
+        (WARNING_CFLAGS): Add -Wcast-qual.
+        * Misc/WebElementDictionary.mm:
+        (-[WebElementDictionary objectForKey:]):
+        - Use static_cast<SEL>(const_cast<void*>()) to fix
+          warning.
+        * Misc/WebNSDataExtras.mm: Renamed from Source/WebKitLegacy/mac/Misc/WebNSDataExtras.m.
+        (-[NSString _web_capitalizeRFC822HeaderFieldName]):
+        (-[NSData _webkit_guessedMIMETypeForXML]):
+        (-[NSData _webkit_guessedMIMEType]):
+        (-[NSData _web_isCaseInsensitiveEqualToCString:]):
+        (_findEOL):
+        (-[NSData _webkit_parseRFC822HeaderFields]):
+        (-[NSData _web_startsWithBlankLine]):
+        (-[NSData _web_locationAfterFirstBlankLine]):
+        - Rename WebNSDataExtras.m to WebNSDataExtras.mm and change file
+          type to Objective-C++.  This fixes the warnings about
+          discarding the `const` modifier when casing from CFStringRef
+          to NSString * because in older clang versions, -Wcast-qual was
+          completely broken when compiling C++ and Objective-C++ source
+          files.  In newer clang versions, discarding the `const`
+          modifier for toll-free bridged types is ignored when compiling
+          Objective-C++ source.
+        - Update copyright and license header.
+        - Use reinterpret_cast<> and static_cast<> to fix warnings
+          unrelated to (NSString *) C-style casts.
+        - Replace use of MIN() macro with std::min<> template functions.
+        - Fix location of `*` for local variables modified above.
+        * Plugins/Hosted/NetscapePluginHostManager.mm:
+        (WebKit::NetscapePluginHostManager::spawnPluginHost):
+        (WebKit::NetscapePluginHostManager::initializeVendorPort):
+        (WebKit::NetscapePluginHostManager::instantiatePlugin):
+        - Use static_cast<uint8_t*>(const_cast<void*>()) to fix
+          warnings.
+        * Plugins/Hosted/NetscapePluginHostProxy.mm:
+        (WebKit::NetscapePluginHostProxy::NetscapePluginHostProxy):
+        - Use reinterpret_cast<mig_subsystem_t>(const_cast<struct WKWebKitPluginClient_subsystem*>())
+          to fix warning.
+        * Plugins/Hosted/ProxyInstance.mm:
+        (WebKit::ProxyInstance::invoke):
+        - Use static_cast<char*>(const_cast<void*>()) to fix
+          warning when using -[NSData bytes].
+        (WebKit::ProxyInstance::fieldValue const):
+        - Use reinterpret_cast<char*>(const_cast<unsigned char*>())
+          to fix warning when using CFDataGetBytePtr().
+        * Plugins/Hosted/WebTextInputWindowController.m:
+        (-[WebTextInputPanel _interpretKeyEvent:string:]):
+        - Use #pragma to ignore -Wcast-qual warning since there
+          is not a good way to avoid this warning in Objective-C.
+        * Plugins/WebNetscapePluginStream.mm:
+        (WebNetscapePluginStream::deliverData):
+        - Use const_cast<void*>() to fix warning when using
+          -[NSData bytes].
+        * Plugins/WebNetscapePluginView.mm:
+        (-[WebNetscapePluginView _createPlugin]):
+        - Change C-style cast to const_cast<char*>() to fix
+          warning.
+        * WebCoreSupport/WebChromeClient.mm:
+        (WebChromeClient::wrapCryptoKey const):
+        (WebChromeClient::unwrapCryptoKey const):
+        - Change C-style cast to
+          static_cast<uint8_t*>(const_cast<void*>() to fix
+          warning.
+        * WebView/WebPDFView.mm:
+        (_applicationInfoForMIMEType):
+        - Change local variable type from 'NSURL *' to
+          'CFURLRef' to fix warning.  Cast back to 'NSURL *'
+          when calling -[NSURL path].
+
 2018-01-05  Dan Bernstein  <mitz@apple.com>
 
         Fixed the build following AppKit API deprecations in a recent SDKs

@@ -88,7 +88,10 @@ static NSView *_webkit_NSView_nextValidKeyView(id self, SEL _cmd);
 
 + (HIViewRef)getHIViewForNSView:(NSView*)inView
 {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wcast-qual"
     return sViewMap ? (HIViewRef)CFDictionaryGetValue(sViewMap, inView) : NULL;
+#pragma clang diagnostic pop
 }
 
 + (void)unbindNSView:(NSView*)inView

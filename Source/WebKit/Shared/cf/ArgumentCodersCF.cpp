@@ -175,24 +175,24 @@ void encode(Encoder& encoder, CFTypeRef typeRef)
         encode(encoder, static_cast<CFURLRef>(typeRef));
         return;
     case SecCertificate:
-        encode(encoder, (SecCertificateRef)typeRef);
+        encode(encoder, static_cast<SecCertificateRef>(const_cast<void*>(typeRef)));
         return;
     case SecIdentity:
-        encode(encoder, (SecIdentityRef)(typeRef));
+        encode(encoder, static_cast<SecIdentityRef>(const_cast<void*>(typeRef)));
         return;
 #if HAVE(SEC_KEYCHAIN)
     case SecKeychainItem:
-        encode(encoder, (SecKeychainItemRef)typeRef);
+        encode(encoder, static_cast<SecKeychainItemRef>(const_cast<void*>(typeRef)));
         return;
 #endif
 #if HAVE(SEC_ACCESS_CONTROL)
     case SecAccessControl:
-        encode(encoder, (SecAccessControlRef)typeRef);
+        encode(encoder, static_cast<SecAccessControlRef>(const_cast<void*>(typeRef)));
         return;
 #endif
 #if HAVE(SEC_TRUST_SERIALIZATION)
     case SecTrust:
-        encode(encoder, (SecTrustRef)typeRef);
+        encode(encoder, static_cast<SecTrustRef>(const_cast<void*>(typeRef)));
         return;
 #endif
     case Null:

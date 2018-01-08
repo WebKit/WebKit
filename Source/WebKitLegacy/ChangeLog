@@ -1,3 +1,16 @@
+2018-01-07  David Kilzer  <ddkilzer@apple.com>
+
+        Enable -Wcast-qual for WebInspectorUI, WebKitLegacy, WebKit projects
+        <https://webkit.org/b/181256>
+        <rdar://problem/36281730>
+
+        Reviewed by Darin Adler.
+
+        * PlatformMac.cmake:
+        * WebKitLegacy.xcodeproj/project.pbxproj:
+        - Rename WebNSDataExtras.m to WebNSDataExtras.mm and change file
+          type to Objective-C++.
+
 2018-01-03  Ting-Wei Lan  <lantw44@gmail.com>
 
         Replace hard-coded paths in shebangs with #!/usr/bin/env

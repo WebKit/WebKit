@@ -129,17 +129,17 @@ extern "C" NSString *_NSPathForSystemFramework(NSString *framework);
 
 static void _applicationInfoForMIMEType(NSString *type, NSString **name, NSImage **image)
 {
-    NSURL *appURL = nil;
+    CFURLRef appURL = nullptr;
 
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    OSStatus error = LSCopyApplicationForMIMEType((CFStringRef)type, kLSRolesAll, (CFURLRef *)&appURL);
+    OSStatus error = LSCopyApplicationForMIMEType((CFStringRef)type, kLSRolesAll, &appURL);
 #pragma clang diagnostic pop
     if (error != noErr)
         return;
     
-    NSString *appPath = [appURL path];
-    CFRelease (appURL);
+    NSString *appPath = [(NSURL *)appURL path];
+    CFRelease(appURL);
     
     *image = [[NSWorkspace sharedWorkspace] iconForFile:appPath];  
     [*image setSize:NSMakeSize(16.f,16.f)];  

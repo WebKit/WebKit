@@ -400,8 +400,9 @@ static bool decodeNSError(Decoder& decoder, RetainPtr<NSError>& nsError)
         if (!decodeNSError(decoder, underlyingNSError))
             return false;
 
-        userInfo = adoptCF(CFDictionaryCreateMutableCopy(kCFAllocatorDefault, CFDictionaryGetCount(userInfo.get()) + 1, userInfo.get()));
-        CFDictionarySetValue((CFMutableDictionaryRef)userInfo.get(), NSUnderlyingErrorKey, underlyingNSError.get());
+        auto mutableUserInfo = adoptCF(CFDictionaryCreateMutableCopy(kCFAllocatorDefault, CFDictionaryGetCount(userInfo.get()) + 1, userInfo.get()));
+        CFDictionarySetValue(mutableUserInfo.get(), NSUnderlyingErrorKey, underlyingNSError.get());
+        userInfo = WTFMove(mutableUserInfo);
     }
 
     nsError = adoptNS([[NSError alloc] initWithDomain:domain code:code userInfo:(NSDictionary *)userInfo.get()]);

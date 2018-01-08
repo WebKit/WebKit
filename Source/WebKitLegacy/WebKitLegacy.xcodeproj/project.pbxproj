@@ -325,7 +325,7 @@
 		9398110A0824BF01008DF038 /* WebDefaultUIDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 515E27D00458CA4B00CA2D3A /* WebDefaultUIDelegate.mm */; };
 		939811120824BF01008DF038 /* WebNSURLExtras.mm in Sources */ = {isa = PBXBuildFile; fileRef = BE6DC39A04C62C4E004D0EF6 /* WebNSURLExtras.mm */; };
 		939811130824BF01008DF038 /* WebHistory.mm in Sources */ = {isa = PBXBuildFile; fileRef = 65DA2608052CC18700A97B31 /* WebHistory.mm */; };
-		939811150824BF01008DF038 /* WebNSDataExtras.m in Sources */ = {isa = PBXBuildFile; fileRef = BECD142A0565830A005BB09C /* WebNSDataExtras.m */; };
+		939811150824BF01008DF038 /* WebNSDataExtras.mm in Sources */ = {isa = PBXBuildFile; fileRef = BECD142A0565830A005BB09C /* WebNSDataExtras.mm */; };
 		939811160824BF01008DF038 /* WebNSEventExtras.m in Sources */ = {isa = PBXBuildFile; fileRef = BE887C00056D3A6E009BB3E7 /* WebNSEventExtras.m */; };
 		939811190824BF01008DF038 /* WebNSPrintOperationExtras.m in Sources */ = {isa = PBXBuildFile; fileRef = EDD1A5C705C83987008E3150 /* WebNSPrintOperationExtras.m */; };
 		9398111A0824BF01008DF038 /* WebResource.mm in Sources */ = {isa = PBXBuildFile; fileRef = 84311A1305EAAAF00088EDA4 /* WebResource.mm */; };
@@ -1515,7 +1515,7 @@
 		BE95BEE505FD0805006E1513 /* WebDefaultEditingDelegate.m */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = WebDefaultEditingDelegate.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		BE95BEE605FD0805006E1513 /* WebDefaultEditingDelegate.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebDefaultEditingDelegate.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		BECD14290565830A005BB09C /* WebNSDataExtras.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebNSDataExtras.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		BECD142A0565830A005BB09C /* WebNSDataExtras.m */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = WebNSDataExtras.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
+		BECD142A0565830A005BB09C /* WebNSDataExtras.mm */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.objcpp; path = WebNSDataExtras.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		BEE18F990472B73200CA289C /* WebLocalizableStrings.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebLocalizableStrings.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		C0167BF60D7F5DD00028696E /* WebScriptDebugger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebScriptDebugger.h; sourceTree = "<group>"; };
 		C0167BF70D7F5DD00028696E /* WebScriptDebugger.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebScriptDebugger.mm; sourceTree = "<group>"; };
@@ -1794,7 +1794,7 @@
 				9345DDB20365FFD0008635CE /* WebNSControlExtras.h */,
 				9345DDB30365FFD0008635CE /* WebNSControlExtras.m */,
 				BECD14290565830A005BB09C /* WebNSDataExtras.h */,
-				BECD142A0565830A005BB09C /* WebNSDataExtras.m */,
+				BECD142A0565830A005BB09C /* WebNSDataExtras.mm */,
 				ED7F6D8A0980683500C235ED /* WebNSDataExtrasPrivate.h */,
 				65488D9F084FBCCB00831AD0 /* WebNSDictionaryExtras.h */,
 				65488DA0084FBCCB00831AD0 /* WebNSDictionaryExtras.m */,
@@ -3618,7 +3618,7 @@
 				312E2FE614E48182007CCA18 /* WebNotification.mm in Sources */,
 				31C11A6F1476552E0049A4CC /* WebNotificationClient.mm in Sources */,
 				939810C60824BF01008DF038 /* WebNSControlExtras.m in Sources */,
-				939811150824BF01008DF038 /* WebNSDataExtras.m in Sources */,
+				939811150824BF01008DF038 /* WebNSDataExtras.mm in Sources */,
 				65488DA2084FBCCB00831AD0 /* WebNSDictionaryExtras.m in Sources */,
 				939811160824BF01008DF038 /* WebNSEventExtras.m in Sources */,
 				65EEDE58084FFC9E0002DB25 /* WebNSFileManagerExtras.mm in Sources */,

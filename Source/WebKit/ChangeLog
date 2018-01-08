@@ -1,3 +1,42 @@
+2018-01-07  David Kilzer  <ddkilzer@apple.com>
+
+        Enable -Wcast-qual for WebInspectorUI, WebKitLegacy, WebKit projects
+        <https://webkit.org/b/181256>
+        <rdar://problem/36281730>
+
+        Reviewed by Darin Adler.
+
+        * Configurations/Base.xcconfig:
+        (WARNING_CFLAGS): Add -Wcast-qual.
+        * NetworkProcess/cache/NetworkCacheCodersCocoa.cpp:
+        (WTF::Persistence::encodeCertificateChain): Include
+        TypeCastsCF.h from WTF, and use
+        checked_cf_cast<SecCertificateRef>() to fix warning.
+        * Platform/cocoa/WKCrashReporter.mm:
+        (WebKit::setCrashReportApplicationSpecificInformation):
+        - Move `oldMessage` check above nullptr check to fix a leak when
+          passing in nullptr after previously setting the crash string.
+        - Change C-style cast to const_cast<char*>() to fix warning.
+        * PluginProcess/mac/PluginProcessShim.mm:
+        (WebKit::shim_shmat): Change C-style cast to
+        const_cast<void*>() to fix warning.
+        * Shared/Authentication/mac/AuthenticationManager.mac.mm:
+        (WebKit::leafCertificate): Include TypeCastsCF.h from
+        WTF, and use checked_cf_cast<SecCertificateRef>() to fix
+        warning.
+        * Shared/cf/ArgumentCodersCF.cpp:
+        (IPC::encode): Use static_cast<>(const_cast<void*>() to
+        fix warnings since the CFTypeID has already been
+        checked.
+        * Shared/mac/WebCoreArgumentCodersMac.mm:
+        (IPC::decodeNSError): Use an `auto` variable to hold the
+        CFMutableDictionaryRef, then WTFMove() to assign it back to
+        `userInfo`.
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::takeWindowSnapshot): Include TypeCastsCF.h from
+        WTF, and use checked_cf_cast<CGImageRef>() to fix
+        warning.
+
 2018-01-07  Konstantin Tokarev  <annulen@yandex.ru>
 
         [cmake] Unset CMAKE_REQUIRED_LIBRARIES after check_function_exists test

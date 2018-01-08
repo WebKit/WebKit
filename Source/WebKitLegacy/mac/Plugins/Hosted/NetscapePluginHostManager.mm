@@ -192,7 +192,7 @@ bool NetscapePluginHostManager::spawnPluginHost(const String& pluginPath, cpu_ty
     GetCurrentProcess(&psn);
 #pragma clang diagnostic pop
 
-    kr = _WKPHCheckInWithPluginHost(pluginHostPort, (uint8_t*)[data bytes], [data length], clientPort, psn.highLongOfPSN, psn.lowLongOfPSN, renderServerPort,
+    kr = _WKPHCheckInWithPluginHost(pluginHostPort, static_cast<uint8_t*>(const_cast<void*>([data bytes])), [data length], clientPort, psn.highLongOfPSN, psn.lowLongOfPSN, renderServerPort,
                                     &pluginHostPSN.highLongOfPSN, &pluginHostPSN.lowLongOfPSN);
     
     if (kr != KERN_SUCCESS) {
@@ -219,7 +219,7 @@ bool NetscapePluginHostManager::initializeVendorPort()
     NSData *appNameData = [[[NSProcessInfo processInfo] processName] dataUsingEncoding:NSUTF8StringEncoding];
     
     // Tell the plug-in agent that we exist.
-    if (_WKPACheckInApplication(pluginAgentPort, (uint8_t*)[appNameData bytes], [appNameData length], &m_pluginVendorPort) != KERN_SUCCESS)
+    if (_WKPACheckInApplication(pluginAgentPort, static_cast<uint8_t*>(const_cast<void*>([appNameData bytes])), [appNameData length], &m_pluginVendorPort) != KERN_SUCCESS)
         return false;
 
     // FIXME: Should we add a notification for when the vendor port dies?
@@ -273,7 +273,7 @@ RefPtr<NetscapePluginInstanceProxy> NetscapePluginHostManager::instantiatePlugin
     
     RefPtr<NetscapePluginInstanceProxy> instance = NetscapePluginInstanceProxy::create(hostProxy, pluginView, fullFrame);
     uint32_t requestID = instance->nextRequestID();
-    kern_return_t kr = _WKPHInstantiatePlugin(hostProxy->port(), requestID, (uint8_t*)[data bytes], [data length], instance->pluginID());
+    kern_return_t kr = _WKPHInstantiatePlugin(hostProxy->port(), requestID, static_cast<uint8_t*>(const_cast<void*>([data bytes])), [data length], instance->pluginID());
     if (kr == MACH_SEND_INVALID_DEST) {
         // Invalidate the instance.
         instance->invalidate();
@@ -287,7 +287,7 @@ RefPtr<NetscapePluginInstanceProxy> NetscapePluginHostManager::instantiatePlugin
         // Create a new instance.
         instance = NetscapePluginInstanceProxy::create(hostProxy, pluginView, fullFrame);
         requestID = instance->nextRequestID();
-        _WKPHInstantiatePlugin(hostProxy->port(), requestID, (uint8_t*)[data bytes], [data length], instance->pluginID());
+        _WKPHInstantiatePlugin(hostProxy->port(), requestID, static_cast<uint8_t*>(const_cast<void*>([data bytes])), [data length], instance->pluginID());
     }
 
     auto reply = instance->waitForReply<NetscapePluginInstanceProxy::InstantiatePluginReply>(requestID);

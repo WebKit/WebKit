@@ -115,7 +115,10 @@
 
     // Let TSM know that a bottom input window would be created for marked text.
     // FIXME: Can be removed once we can rely on __NSUsesFloatingInputWindow (or a better API) being available everywhere.
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wcast-qual"
     EventRef carbonEvent = (EventRef)[event eventRef];
+#pragma clang diagnostic pop
     if (carbonEvent) {
         Boolean ignorePAH = true;
         SetEventParameter(carbonEvent, 'iPAH', typeBoolean, sizeof(ignorePAH), &ignorePAH);

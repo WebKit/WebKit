@@ -240,7 +240,7 @@ static void* shim_shmat(int sharedMemoryIdentifier, const void* requestedSharedA
         }
     } else {
         descriptorPtr->mmapedSize = (descriptorPtr->requestedSize + PAGE_SIZE) & ~(PAGE_SIZE - 1);
-        mappedAddress = descriptorPtr->mmapedAddress = mmap((void*)requestedSharedAddress,
+        mappedAddress = descriptorPtr->mmapedAddress = mmap(const_cast<void*>(requestedSharedAddress),
             descriptorPtr->mmapedSize, PROT_READ | PROT_WRITE, MAP_ANON | MAP_PRIVATE, -1, 0);
         descriptorPtr->referenceCount++;
     }

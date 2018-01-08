@@ -191,7 +191,7 @@ list(APPEND WebKitLegacy_SOURCES
     mac/Misc/WebLocalizableStrings.mm
     mac/Misc/WebLocalizableStringsInternal.mm
     mac/Misc/WebNSControlExtras.m
-    mac/Misc/WebNSDataExtras.m
+    mac/Misc/WebNSDataExtras.mm
     mac/Misc/WebNSDictionaryExtras.m
     mac/Misc/WebNSEventExtras.m
     mac/Misc/WebNSFileManagerExtras.mm
@@ -372,7 +372,6 @@ set(C99_FILES
     mac/Misc/WebKitSystemBits.m
     mac/Misc/WebNSArrayExtras.m
     mac/Misc/WebNSControlExtras.m
-    mac/Misc/WebNSDataExtras.m
     mac/Misc/WebNSDictionaryExtras.m
     mac/Misc/WebNSEventExtras.m
     mac/Misc/WebNSImageExtras.m

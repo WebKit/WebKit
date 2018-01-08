@@ -148,7 +148,7 @@ static void cacheValueForKey(const void *key, const void *value, void *self)
     if (value || _cacheComplete || [_nilValues containsObject:key])
         return value;
 
-    SEL selector = (SEL)CFDictionaryGetValue(lookupTable, key);
+    SEL selector = static_cast<SEL>(const_cast<void*>(CFDictionaryGetValue(lookupTable, key)));
     if (!selector)
         return nil;
     value = [self performSelector:selector];
