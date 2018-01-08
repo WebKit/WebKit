@@ -1,3 +1,19 @@
+2017-12-19  Jason Marcell  <jmarcell@apple.com>
+
+        Apply patch. rdar://problem/36116696
+
+    Disable/remove SharedArrayBuffers from Web API
+    rdar://problem/36077849
+
+    Removed SharedArrayBuffer prototype and structure to disable.
+
+    * runtime/JSGlobalObject.cpp:
+    (JSC::JSGlobalObject::init):
+    (JSC::JSGlobalObject::visitChildren):
+    * runtime/JSGlobalObject.h:
+    (JSC::JSGlobalObject::arrayBufferPrototype const):
+    (JSC::JSGlobalObject::arrayBufferStructure const):
+
 2017-11-06  Jason Marcell  <jmarcell@apple.com>
 
         Cherry-pick r224426. rdar://problem/35364690
