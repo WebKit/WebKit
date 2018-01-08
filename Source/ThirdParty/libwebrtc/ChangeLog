@@ -1,3 +1,16 @@
+2018-01-08  David Kilzer  <ddkilzer@apple.com>
+
+        libwebrtc: Fix 'ld: warning: cannot export hidden symbol' messages
+        <https://webkit.org/b/181378>
+
+        Reviewed by Youenn Fablet.
+
+        * Configurations/libwebrtc.iOS.exp:
+        * Configurations/libwebrtc.iOSsim.exp:
+        * Configurations/libwebrtc.mac.exp:
+        - Remove 117 symbols that are not currently exported.  These
+          warnings only appear in Release and Production builds.
+
 2018-01-05  Youenn Fablet  <youenn@apple.com>
 
         Close WebRTC sockets when marked as defunct
