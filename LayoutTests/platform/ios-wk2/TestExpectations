@@ -15,8 +15,6 @@ scrollingcoordinator/ios [ Pass ]
 tiled-drawing/ios [ Pass ]
 editing/selection/character-granularity-rect.html [ Pass ]
 
-accessibility/smart-invert.html [ Pass ]
-accessibility/smart-invert-reference.html [ Pass ]
 fast/media/mq-inverted-colors-live-update.html [ Pass ]
 fast/media/mq-inverted-colors-live-update-in-subframes.html [ Pass ]
 fast/media/mq-monochrome-live-update.html [ Pass ]

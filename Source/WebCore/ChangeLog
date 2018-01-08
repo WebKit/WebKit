@@ -1,3 +1,16 @@
+2018-01-08  Matt Lewis  <jlewis3@apple.com>
+
+        Unreviewed, rolling out r226385.
+
+        The test introduced with this was a flaky since being added.
+
+        Reverted changeset:
+
+        "AX: when invert colors is on, double-invert certain media
+        elements in UserAgentStyleSheet"
+        https://bugs.webkit.org/show_bug.cgi?id=168447
+        https://trac.webkit.org/changeset/226385
+
 2018-01-08  Youenn Fablet  <youenn@apple.com>
 
         SWClientConnection should not keep references to service worker jobs

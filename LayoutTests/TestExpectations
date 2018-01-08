@@ -118,8 +118,6 @@ editing/selection/character-granularity-rect.html [ Skip ]
 editing/input/focus-change-with-marked-text.html [ Skip ]
 
 # These only run on Mac and iOS WK2
-accessibility/smart-invert.html [ Skip ]
-accessibility/smart-invert-reference.html [ Skip ]
 fast/media/mq-inverted-colors-live-update.html [ Skip ]
 fast/media/mq-inverted-colors-live-update-in-subframes.html [ Skip ]
 fast/media/mq-monochrome-live-update.html [ Skip ]

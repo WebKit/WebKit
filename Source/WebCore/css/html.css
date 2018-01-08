@@ -1236,7 +1236,3 @@ attachment {
 
 /* noscript is handled internally, as it depends on settings. */
 
-/* Default support for "Smart Invert" where all content color except media is inverted. */ 
-@media (inverted-colors) {
-    video { filter: invert(100%); }  /* Only videos double-inverted for now. */
-}
