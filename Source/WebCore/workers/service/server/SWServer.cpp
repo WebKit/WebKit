@@ -273,7 +273,7 @@ void SWServer::rejectJob(const ServiceWorkerJobData& jobData, const ExceptionDat
     if (!connection)
         return;
 
-    connection->rejectJobInClient(jobData.identifier(), exceptionData);
+    connection->rejectJobInClient(jobData.identifier().jobIdentifier, exceptionData);
 }
 
 void SWServer::resolveRegistrationJob(const ServiceWorkerJobData& jobData, const ServiceWorkerRegistrationData& registrationData, ShouldNotifyWhenResolved shouldNotifyWhenResolved)
@@ -283,7 +283,7 @@ void SWServer::resolveRegistrationJob(const ServiceWorkerJobData& jobData, const
     if (!connection)
         return;
 
-    connection->resolveRegistrationJobInClient(jobData.identifier(), registrationData, shouldNotifyWhenResolved);
+    connection->resolveRegistrationJobInClient(jobData.identifier().jobIdentifier, registrationData, shouldNotifyWhenResolved);
 }
 
 void SWServer::resolveUnregistrationJob(const ServiceWorkerJobData& jobData, const ServiceWorkerRegistrationKey& registrationKey, bool unregistrationResult)
@@ -292,7 +292,7 @@ void SWServer::resolveUnregistrationJob(const ServiceWorkerJobData& jobData, con
     if (!connection)
         return;
 
-    connection->resolveUnregistrationJobInClient(jobData.identifier(), registrationKey, unregistrationResult);
+    connection->resolveUnregistrationJobInClient(jobData.identifier().jobIdentifier, registrationKey, unregistrationResult);
 }
 
 void SWServer::startScriptFetch(const ServiceWorkerJobData& jobData, FetchOptions::Cache cachePolicy)
@@ -302,7 +302,7 @@ void SWServer::startScriptFetch(const ServiceWorkerJobData& jobData, FetchOption
     if (!connection)
         return;
 
-    connection->startScriptFetchInClient(jobData.identifier(), jobData.registrationKey(), cachePolicy);
+    connection->startScriptFetchInClient(jobData.identifier().jobIdentifier, jobData.registrationKey(), cachePolicy);
 }
 
 void SWServer::scriptFetchFinished(Connection& connection, const ServiceWorkerFetchResult& result)

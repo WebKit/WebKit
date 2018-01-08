@@ -1,3 +1,23 @@
+2018-01-08  Youenn Fablet  <youenn@apple.com>
+
+        SWClientConnection should not keep references to service worker jobs
+        https://bugs.webkit.org/show_bug.cgi?id=181381
+
+        Reviewed by Chris Dumez.
+
+        Updated IPC handling based on WebCore refactoring.
+
+        * Scripts/webkit/messages.py:
+        (forward_declarations_and_headers):
+        (headers_for_type):
+        * StorageProcess/ServiceWorker/WebSWServerConnection.cpp:
+        (WebKit::WebSWServerConnection::rejectJobInClient):
+        (WebKit::WebSWServerConnection::resolveRegistrationJobInClient):
+        (WebKit::WebSWServerConnection::resolveUnregistrationJobInClient):
+        (WebKit::WebSWServerConnection::startScriptFetchInClient):
+        * StorageProcess/ServiceWorker/WebSWServerConnection.h:
+        * WebProcess/Storage/WebSWClientConnection.messages.in:
+
 2018-01-08  Joseph Pecoraro  <pecoraro@apple.com>
 
         [Cocoa] Web Inspector: Provide a way for clients to check if an NSWindow is a Web Inspector window

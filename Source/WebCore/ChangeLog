@@ -1,3 +1,41 @@
+2018-01-08  Youenn Fablet  <youenn@apple.com>
+
+        SWClientConnection should not keep references to service worker jobs
+        https://bugs.webkit.org/show_bug.cgi?id=181381
+
+        Reviewed by Chris Dumez.
+
+        Difficult to test determiniscally but corresponding crash log should no longer happen in debug builds.
+
+        Stopped passing ServiceWorkerJob references from ServiceWorkerContainer (potentially in service worker thread) to SWClientConnection (main thread).
+        Instead pass job identifiers and related data to the main thread.
+
+        Minor refactoring to use ServiceWorkerJobIdentifier instead of ServiceWorkerJobDataIdentifier which contains more data than needed.
+
+        * workers/service/SWClientConnection.cpp:
+        (WebCore::SWClientConnection::scheduleJob):
+        (WebCore::SWClientConnection::failedFetchingScript):
+        (WebCore::SWClientConnection::postTaskForJob):
+        (WebCore::SWClientConnection::jobRejectedInServer):
+        (WebCore::SWClientConnection::registrationJobResolvedInServer):
+        (WebCore::SWClientConnection::unregistrationJobResolvedInServer):
+        (WebCore::SWClientConnection::startScriptFetchForServer):
+        (WebCore::SWClientConnection::clearPendingJobs):
+        (WebCore::SWClientConnection::finishedFetchingScript): Deleted.
+        * workers/service/SWClientConnection.h:
+        * workers/service/ServiceWorkerContainer.cpp:
+        (WebCore::ServiceWorkerContainer::scheduleJob):
+        (WebCore::ServiceWorkerContainer::startScriptFetchForJob):
+        (WebCore::ServiceWorkerContainer::jobFinishedLoadingScript):
+        (WebCore::ServiceWorkerContainer::jobFailedLoadingScript):
+        * workers/service/ServiceWorkerContainer.h:
+        * workers/service/server/SWServer.cpp:
+        (WebCore::SWServer::rejectJob):
+        (WebCore::SWServer::resolveRegistrationJob):
+        (WebCore::SWServer::resolveUnregistrationJob):
+        (WebCore::SWServer::startScriptFetch):
+        * workers/service/server/SWServer.h:
+
 2018-01-08  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Copying, pasting, and then deleting an attachment element breaks attachment data requests
