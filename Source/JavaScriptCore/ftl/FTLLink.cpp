@@ -170,7 +170,7 @@ void link(State& state)
             }
             linkBuffer->link(callArityCheck, codeBlock->m_isConstructor ? operationConstructArityCheck : operationCallArityCheck);
             linkBuffer->link(callLookupExceptionHandlerFromCallerFrame, lookupExceptionHandlerFromCallerFrame);
-            linkBuffer->link(callArityFixup, FunctionPtr((vm.getCTIStub(arityFixupGenerator)).code().executableAddress()));
+            linkBuffer->link(callArityFixup, FunctionPtr((vm.getCTIStub(arityFixupGenerator)).code()));
             linkBuffer->link(mainPathJumps, CodeLocationLabel(bitwise_cast<void*>(state.generatedFunction)));
         }
         

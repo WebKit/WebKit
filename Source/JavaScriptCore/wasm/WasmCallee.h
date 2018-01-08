@@ -50,7 +50,7 @@ public:
         return adoptRef(*callee);
     }
 
-    void* entrypoint() const { return m_entrypoint.compilation->code().executableAddress(); }
+    MacroAssemblerCodePtr entrypoint() const { return m_entrypoint.compilation->code(); }
 
     RegisterAtOffsetList* calleeSaveRegisters() { return &m_entrypoint.calleeSaveRegisters; }
     IndexOrName indexOrName() const { return m_indexOrName; }

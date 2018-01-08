@@ -97,6 +97,7 @@ set(WTF_HEADERS
     ParkingLot.h
     Platform.h
     PlatformRegisters.h
+    Poisoned.h
     PrintStream.h
     ProcessID.h
     RAMSize.h
@@ -233,6 +234,7 @@ set(WTF_SOURCES
     ParallelHelperPool.cpp
     ParallelJobsGeneric.cpp
     ParkingLot.cpp
+    Poisoned.cpp
     PrintStream.cpp
     RAMSize.cpp
     RandomDevice.cpp

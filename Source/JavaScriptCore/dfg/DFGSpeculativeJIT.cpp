@@ -867,8 +867,8 @@ void SpeculativeJIT::checkArray(Node* node)
         m_jit.branchPtr(
             MacroAssembler::NotEqual,
             MacroAssembler::Address(temp.gpr(), Structure::classInfoOffset()),
-            TrustedImmPtr(expectedClassInfo)));
-    
+            TrustedImmPtr(PoisonedClassInfoPtr(expectedClassInfo).bits())));
+
     noResult(m_currentNode);
 }
 
@@ -8129,6 +8129,10 @@ void SpeculativeJIT::compileCheckSubClass(Node* node)
 
         m_jit.emitLoadStructure(*m_jit.vm(), baseGPR, otherGPR, specifiedGPR);
         m_jit.loadPtr(CCallHelpers::Address(otherGPR, Structure::classInfoOffset()), otherGPR);
+#if USE(JSVALUE64)
+        m_jit.move(CCallHelpers::TrustedImm64(g_globalDataPoison), specifiedGPR);
+        m_jit.xor64(specifiedGPR, otherGPR);
+#endif
         m_jit.move(CCallHelpers::TrustedImmPtr(node->classInfo()), specifiedGPR);
 
         CCallHelpers::Label loop = m_jit.label();
@@ -8418,7 +8422,7 @@ void SpeculativeJIT::compileNewStringObject(Node* node)
         slowPath);
     
     m_jit.storePtr(
-        TrustedImmPtr(StringObject::info()),
+        TrustedImmPtr(PoisonedClassInfoPtr(StringObject::info()).bits()),
         JITCompiler::Address(resultGPR, JSDestructibleObject::classInfoOffset()));
 #if USE(JSVALUE64)
     m_jit.store64(
@@ -9124,7 +9128,7 @@ void SpeculativeJIT::speculate(Node*, Edge edge)
 }
 
 void SpeculativeJIT::emitSwitchIntJump(
-    SwitchData* data, GPRReg value, GPRReg scratch)
+    SwitchData* data, GPRReg value, GPRReg scratch, GPRReg poisonScratch)
 {
     SimpleJumpTable& table = m_jit.codeBlock()->switchJumpTable(data->switchTableIndex);
     table.ensureCTITable();
@@ -9132,8 +9136,16 @@ void SpeculativeJIT::emitSwitchIntJump(
     addBranch(
         m_jit.branch32(JITCompiler::AboveOrEqual, value, Imm32(table.ctiOffsets.size())),
         data->fallThrough.block);
+    UNUSED_PARAM(poisonScratch); // Placate the 32-bit build.
+#if USE(JSVALUE64)
+    m_jit.move(TrustedImm64(g_jitCodePoison), poisonScratch);
+#endif
     m_jit.move(TrustedImmPtr(table.ctiOffsets.begin()), scratch);
     m_jit.loadPtr(JITCompiler::BaseIndex(scratch, value, JITCompiler::timesPtr()), scratch);
+    
+#if USE(JSVALUE64)
+    m_jit.xor64(poisonScratch, scratch);
+#endif
     m_jit.jump(scratch);
     data->didUseJumpTable = true;
 }
@@ -9144,7 +9156,8 @@ void SpeculativeJIT::emitSwitchImm(Node* node, SwitchData* data)
     case Int32Use: {
         SpeculateInt32Operand value(this, node->child1());
         GPRTemporary temp(this);
-        emitSwitchIntJump(data, value.gpr(), temp.gpr());
+        GPRTemporary temp2(this);
+        emitSwitchIntJump(data, value.gpr(), temp.gpr(), temp2.gpr());
         noResult(node);
         break;
     }
@@ -9152,15 +9165,17 @@ void SpeculativeJIT::emitSwitchImm(Node* node, SwitchData* data)
     case UntypedUse: {
         JSValueOperand value(this, node->child1());
         GPRTemporary temp(this);
+        GPRTemporary temp2(this);
         JSValueRegs valueRegs = value.jsValueRegs();
         GPRReg scratch = temp.gpr();
-        
+        GPRReg scratch2 = temp2.gpr();
+
         value.use();
         
 #if USE(JSVALUE64)
         JITCompiler::Jump notInt = m_jit.branch64(
             JITCompiler::Below, valueRegs.gpr(), GPRInfo::tagTypeNumberRegister);
-        emitSwitchIntJump(data, valueRegs.gpr(), scratch);
+        emitSwitchIntJump(data, valueRegs.gpr(), scratch, scratch2);
         notInt.link(&m_jit);
         addBranch(
             m_jit.branchTest64(
@@ -9173,7 +9188,7 @@ void SpeculativeJIT::emitSwitchImm(Node* node, SwitchData* data)
 #else
         JITCompiler::Jump notInt = m_jit.branch32(
             JITCompiler::NotEqual, valueRegs.tagGPR(), TrustedImm32(JSValue::Int32Tag));
-        emitSwitchIntJump(data, valueRegs.payloadGPR(), scratch);
+        emitSwitchIntJump(data, valueRegs.payloadGPR(), scratch, scratch2);
         notInt.link(&m_jit);
         addBranch(
             m_jit.branch32(
@@ -9197,7 +9212,7 @@ void SpeculativeJIT::emitSwitchImm(Node* node, SwitchData* data)
 }
 
 void SpeculativeJIT::emitSwitchCharStringJump(
-    SwitchData* data, GPRReg value, GPRReg scratch)
+    SwitchData* data, GPRReg value, GPRReg scratch, GPRReg scratch2)
 {
     addBranch(
         m_jit.branch32(
@@ -9228,7 +9243,7 @@ void SpeculativeJIT::emitSwitchCharStringJump(
     m_jit.load8(MacroAssembler::Address(value), scratch);
     
     ready.link(&m_jit);
-    emitSwitchIntJump(data, scratch, value);
+    emitSwitchIntJump(data, scratch, value, scratch2);
 }
 
 void SpeculativeJIT::emitSwitchChar(Node* node, SwitchData* data)
@@ -9237,14 +9252,16 @@ void SpeculativeJIT::emitSwitchChar(Node* node, SwitchData* data)
     case StringUse: {
         SpeculateCellOperand op1(this, node->child1());
         GPRTemporary temp(this);
-        
+        GPRTemporary temp2(this);
+
         GPRReg op1GPR = op1.gpr();
         GPRReg tempGPR = temp.gpr();
-        
+        GPRReg temp2GPR = temp2.gpr();
+
         op1.use();
 
         speculateString(node->child1(), op1GPR);
-        emitSwitchCharStringJump(data, op1GPR, tempGPR);
+        emitSwitchCharStringJump(data, op1GPR, tempGPR, temp2GPR);
         noResult(node, UseChildrenCalledExplicitly);
         break;
     }
@@ -9252,17 +9269,19 @@ void SpeculativeJIT::emitSwitchChar(Node* node, SwitchData* data)
     case UntypedUse: {
         JSValueOperand op1(this, node->child1());
         GPRTemporary temp(this);
-        
+        GPRTemporary temp2(this);
+
         JSValueRegs op1Regs = op1.jsValueRegs();
         GPRReg tempGPR = temp.gpr();
-        
+        GPRReg temp2GPR = temp2.gpr();
+
         op1.use();
         
         addBranch(m_jit.branchIfNotCell(op1Regs), data->fallThrough.block);
         
         addBranch(m_jit.branchIfNotString(op1Regs.payloadGPR()), data->fallThrough.block);
         
-        emitSwitchCharStringJump(data, op1Regs.payloadGPR(), tempGPR);
+        emitSwitchCharStringJump(data, op1Regs.payloadGPR(), tempGPR, temp2GPR);
         noResult(node, UseChildrenCalledExplicitly);
         break;
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2009-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -164,55 +164,55 @@ public:
 inline CodeLocationInstruction CodeLocationCommon::instructionAtOffset(int offset)
 {
     ASSERT_VALID_CODE_OFFSET(offset);
-    return CodeLocationInstruction(reinterpret_cast<char*>(dataLocation()) + offset);
+    return CodeLocationInstruction(dataLocation<char*>() + offset);
 }
 
 inline CodeLocationLabel CodeLocationCommon::labelAtOffset(int offset)
 {
     ASSERT_VALID_CODE_OFFSET(offset);
-    return CodeLocationLabel(reinterpret_cast<char*>(dataLocation()) + offset);
+    return CodeLocationLabel(dataLocation<char*>() + offset);
 }
 
 inline CodeLocationJump CodeLocationCommon::jumpAtOffset(int offset)
 {
     ASSERT_VALID_CODE_OFFSET(offset);
-    return CodeLocationJump(reinterpret_cast<char*>(dataLocation()) + offset);
+    return CodeLocationJump(dataLocation<char*>() + offset);
 }
 
 inline CodeLocationCall CodeLocationCommon::callAtOffset(int offset)
 {
     ASSERT_VALID_CODE_OFFSET(offset);
-    return CodeLocationCall(reinterpret_cast<char*>(dataLocation()) + offset);
+    return CodeLocationCall(dataLocation<char*>() + offset);
 }
 
 inline CodeLocationNearCall CodeLocationCommon::nearCallAtOffset(int offset, NearCallMode callMode)
 {
     ASSERT_VALID_CODE_OFFSET(offset);
-    return CodeLocationNearCall(reinterpret_cast<char*>(dataLocation()) + offset, callMode);
+    return CodeLocationNearCall(dataLocation<char*>() + offset, callMode);
 }
 
 inline CodeLocationDataLabelPtr CodeLocationCommon::dataLabelPtrAtOffset(int offset)
 {
     ASSERT_VALID_CODE_OFFSET(offset);
-    return CodeLocationDataLabelPtr(reinterpret_cast<char*>(dataLocation()) + offset);
+    return CodeLocationDataLabelPtr(dataLocation<char*>() + offset);
 }
 
 inline CodeLocationDataLabel32 CodeLocationCommon::dataLabel32AtOffset(int offset)
 {
     ASSERT_VALID_CODE_OFFSET(offset);
-    return CodeLocationDataLabel32(reinterpret_cast<char*>(dataLocation()) + offset);
+    return CodeLocationDataLabel32(dataLocation<char*>() + offset);
 }
 
 inline CodeLocationDataLabelCompact CodeLocationCommon::dataLabelCompactAtOffset(int offset)
 {
     ASSERT_VALID_CODE_OFFSET(offset);
-    return CodeLocationDataLabelCompact(reinterpret_cast<char*>(dataLocation()) + offset);
+    return CodeLocationDataLabelCompact(dataLocation<char*>() + offset);
 }
 
 inline CodeLocationConvertibleLoad CodeLocationCommon::convertibleLoadAtOffset(int offset)
 {
     ASSERT_VALID_CODE_OFFSET(offset);
-    return CodeLocationConvertibleLoad(reinterpret_cast<char*>(dataLocation()) + offset);
+    return CodeLocationConvertibleLoad(dataLocation<char*>() + offset);
 }
 
 } // namespace JSC

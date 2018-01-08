@@ -1,3 +1,821 @@
+2017-12-19  Jason Marcell  <jmarcell@apple.com>
+
+        Apply patch. rdar://problem/36113352
+
+    Cherry-pick r225363, r225437, r225632, r225659, r225697, r225857. rdar://problem/36085975
+    
+        Also merged offlineasm parts of r220184 and r222549.  These changes are required
+        to support the code in cherry-picked revisions above.
+    
+    2017-11-30  Mark Lam  <mark.lam@apple.com>
+    
+            Let's scramble MacroAssemblerCodePtr values.
+            https://bugs.webkit.org/show_bug.cgi?id=180169
+            <rdar://problem/35758340>
+    
+            Reviewed by Filip Pizlo, Saam Barati, and JF Bastien.
+    
+            1. MacroAssemblerCodePtr now stores a ScrambledPtr instead of a void*.
+    
+            2. MacroAssemblerCodePtr's executableAddress() and dataLocation() now take a
+               template argument type that will be used to cast the result.  This makes the
+               client code that uses these functions a little less verbose.
+    
+            3. Change the code base in general to minimize passing void* code pointers around.
+               We now pass MacroAssemblerCodePtr as much as possible, and descramble it only
+               at the last moment when we need the underlying code pointer.
+    
+            4. Added some MasmScrambledPtr paranoid asserts that are disabled (not built) by
+               default.  I'm leaving them in because they are instrumental in finding bugs
+               where not all MacroAssemblerCodePtr values were not scrambled as expected.
+               I expect them to be useful in the near future as we add more scrambling.
+    
+            5. Also disable the casting operator on MacroAssemblerCodePtr (except for
+               explicit casts to a boolean).  This ensures that clients will always explicitly
+               use scrambledBits() or executableAddress() to get a value based on which value
+               they actually need.
+    
+            5. Added currentThread() id to the logging in LLIntSlowPath trace functions.
+               This was helpful when debugging tests that ran multiple VMs concurrently on
+               different threads.
+    
+            MacroAssemblerCodePtr is currently supported on 64-bit builds (including the
+            CLoop).  It is not yet supported in 32-bit and Windows because we don't
+            currently have a way to read a global variable from their LLInt code.
+    
+            * assembler/AbstractMacroAssembler.h:
+            (JSC::AbstractMacroAssembler::differenceBetweenCodePtr):
+            (JSC::AbstractMacroAssembler::linkPointer):
+            * assembler/CodeLocation.h:
+            (JSC::CodeLocationCommon::instructionAtOffset):
+            (JSC::CodeLocationCommon::labelAtOffset):
+            (JSC::CodeLocationCommon::jumpAtOffset):
+            (JSC::CodeLocationCommon::callAtOffset):
+            (JSC::CodeLocationCommon::nearCallAtOffset):
+            (JSC::CodeLocationCommon::dataLabelPtrAtOffset):
+            (JSC::CodeLocationCommon::dataLabel32AtOffset):
+            (JSC::CodeLocationCommon::dataLabelCompactAtOffset):
+            (JSC::CodeLocationCommon::convertibleLoadAtOffset):
+            * assembler/LinkBuffer.cpp:
+            (JSC::LinkBuffer::finalizeCodeWithDisassembly):
+            * assembler/LinkBuffer.h:
+            (JSC::LinkBuffer::link):
+            (JSC::LinkBuffer::patch):
+            * assembler/MacroAssemblerCodeRef.cpp:
+            (JSC::MacroAssemblerCodePtr::initialize):
+            * assembler/MacroAssemblerCodeRef.h:
+            (JSC::FunctionPtr::FunctionPtr):
+            (JSC::FunctionPtr::value const):
+            (JSC::FunctionPtr::executableAddress const):
+            (JSC::ReturnAddressPtr::ReturnAddressPtr):
+            (JSC::ReturnAddressPtr::value const):
+            (JSC::MacroAssemblerCodePtr::MacroAssemblerCodePtr):
+            (JSC::MacroAssemblerCodePtr::createFromExecutableAddress):
+            (JSC::MacroAssemblerCodePtr::scrambledPtr const):
+            (JSC::MacroAssemblerCodePtr:: const):
+            (JSC::MacroAssemblerCodePtr::operator! const):
+            (JSC::MacroAssemblerCodePtr::operator bool const):
+            (JSC::MacroAssemblerCodePtr::operator== const):
+            (JSC::MacroAssemblerCodePtr::hash const):
+            (JSC::MacroAssemblerCodePtr::emptyValue):
+            (JSC::MacroAssemblerCodePtr::deletedValue):
+            (JSC::MacroAssemblerCodePtr::executableAddress const): Deleted.
+            (JSC::MacroAssemblerCodePtr::dataLocation const): Deleted.
+            * b3/B3LowerMacros.cpp:
+            * b3/testb3.cpp:
+            (JSC::B3::testInterpreter):
+            * dfg/DFGDisassembler.cpp:
+            (JSC::DFG::Disassembler::dumpDisassembly):
+            * dfg/DFGJITCompiler.cpp:
+            (JSC::DFG::JITCompiler::link):
+            (JSC::DFG::JITCompiler::compileFunction):
+            * dfg/DFGOperations.cpp:
+            * dfg/DFGSpeculativeJIT.cpp:
+            (JSC::DFG::SpeculativeJIT::emitSwitchIntJump):
+            (JSC::DFG::SpeculativeJIT::emitSwitchImm):
+            (JSC::DFG::SpeculativeJIT::emitSwitchCharStringJump):
+            (JSC::DFG::SpeculativeJIT::emitSwitchChar):
+            * dfg/DFGSpeculativeJIT.h:
+            * disassembler/Disassembler.cpp:
+            (JSC::disassemble):
+            * disassembler/UDis86Disassembler.cpp:
+            (JSC::tryToDisassembleWithUDis86):
+            * ftl/FTLCompile.cpp:
+            (JSC::FTL::compile):
+            * ftl/FTLJITCode.cpp:
+            (JSC::FTL::JITCode::executableAddressAtOffset):
+            * ftl/FTLLink.cpp:
+            (JSC::FTL::link):
+            * ftl/FTLLowerDFGToB3.cpp:
+            (JSC::FTL::DFG::LowerDFGToB3::compileMathIC):
+            (JSC::FTL::DFG::LowerDFGToB3::compileCallOrConstruct):
+            (JSC::FTL::DFG::LowerDFGToB3::compileTailCall):
+            (JSC::FTL::DFG::LowerDFGToB3::compileCallOrConstructVarargsSpread):
+            (JSC::FTL::DFG::LowerDFGToB3::compileCallOrConstructVarargs):
+            * interpreter/InterpreterInlines.h:
+            (JSC::Interpreter::getOpcodeID):
+            * jit/JITArithmetic.cpp:
+            (JSC::JIT::emitMathICFast):
+            (JSC::JIT::emitMathICSlow):
+            * jit/JITCode.cpp:
+            (JSC::JITCodeWithCodeRef::executableAddressAtOffset):
+            (JSC::JITCodeWithCodeRef::dataAddressAtOffset):
+            (JSC::JITCodeWithCodeRef::offsetOf):
+            * jit/JITDisassembler.cpp:
+            (JSC::JITDisassembler::dumpDisassembly):
+            * jit/PCToCodeOriginMap.cpp:
+            (JSC::PCToCodeOriginMap::PCToCodeOriginMap):
+            * jit/Repatch.cpp:
+            (JSC::ftlThunkAwareRepatchCall):
+            * jit/ThunkGenerators.cpp:
+            (JSC::virtualThunkFor):
+            (JSC::boundThisNoArgsFunctionCallGenerator):
+            * llint/LLIntSlowPaths.cpp:
+            (JSC::LLInt::llint_trace_operand):
+            (JSC::LLInt::llint_trace_value):
+            (JSC::LLInt::handleHostCall):
+            (JSC::LLInt::setUpCall):
+            * llint/LowLevelInterpreter64.asm:
+            * offlineasm/cloop.rb:
+            * runtime/InitializeThreading.cpp:
+            (JSC::initializeThreading):
+            * wasm/WasmBBQPlan.cpp:
+            (JSC::Wasm::BBQPlan::complete):
+            * wasm/WasmCallee.h:
+            (JSC::Wasm::Callee::entrypoint const):
+            * wasm/WasmCodeBlock.cpp:
+            (JSC::Wasm::CodeBlock::CodeBlock):
+            * wasm/WasmOMGPlan.cpp:
+            (JSC::Wasm::OMGPlan::work):
+            * wasm/js/WasmToJS.cpp:
+            (JSC::Wasm::wasmToJS):
+            * wasm/js/WebAssemblyFunction.cpp:
+            (JSC::callWebAssemblyFunction):
+            * wasm/js/WebAssemblyFunction.h:
+            * wasm/js/WebAssemblyWrapperFunction.cpp:
+            (JSC::WebAssemblyWrapperFunction::create):
+    
+    2017-12-01  Mark Lam  <mark.lam@apple.com>
+    
+            Let's scramble ClassInfo pointers in cells.
+            https://bugs.webkit.org/show_bug.cgi?id=180291
+            <rdar://problem/35807620>
+    
+            Reviewed by JF Bastien.
+    
+            * API/JSCallbackObject.h:
+            * API/JSObjectRef.cpp:
+            (classInfoPrivate):
+            * JavaScriptCore.xcodeproj/project.pbxproj:
+            * Sources.txt:
+            * assembler/MacroAssemblerCodeRef.cpp:
+            (JSC::MacroAssemblerCodePtr::initialize): Deleted.
+            * assembler/MacroAssemblerCodeRef.h:
+            (JSC::MacroAssemblerCodePtr:: const):
+            (JSC::MacroAssemblerCodePtr::hash const):
+            * dfg/DFGSpeculativeJIT.cpp:
+            (JSC::DFG::SpeculativeJIT::checkArray):
+            (JSC::DFG::SpeculativeJIT::compileCheckSubClass):
+            (JSC::DFG::SpeculativeJIT::compileNewStringObject):
+            * ftl/FTLLowerDFGToB3.cpp:
+            (JSC::FTL::DFG::LowerDFGToB3::compileNewStringObject):
+            (JSC::FTL::DFG::LowerDFGToB3::compileCheckSubClass):
+            * jit/AssemblyHelpers.h:
+            (JSC::AssemblyHelpers::emitAllocateDestructibleObject):
+            * jit/SpecializedThunkJIT.h:
+            (JSC::SpecializedThunkJIT::loadArgumentWithSpecificClass):
+            * runtime/InitializeThreading.cpp:
+            (JSC::initializeThreading):
+            * runtime/JSCScrambledPtr.cpp: Added.
+            (JSC::initializeScrambledPtrKeys):
+            * runtime/JSCScrambledPtr.h: Added.
+            * runtime/JSDestructibleObject.h:
+            (JSC::JSDestructibleObject::classInfo const):
+            * runtime/JSSegmentedVariableObject.h:
+            (JSC::JSSegmentedVariableObject::classInfo const):
+            * runtime/Structure.h:
+            * runtime/VM.h:
+    
+    2017-12-07  Mark Lam  <mark.lam@apple.com>
+    
+            [Re-landing r225620] Refactoring: Rename ScrambledPtr to Poisoned.
+            https://bugs.webkit.org/show_bug.cgi?id=180514
+    
+            Reviewed by Saam Barati and JF Bastien.
+    
+            Re-landing r225620 with speculative build fix for GCC 7.
+    
+            * API/JSCallbackObject.h:
+            * API/JSObjectRef.cpp:
+            (classInfoPrivate):
+            * JavaScriptCore.xcodeproj/project.pbxproj:
+            * Sources.txt:
+            * assembler/MacroAssemblerCodeRef.h:
+            (JSC::FunctionPtr::FunctionPtr):
+            (JSC::FunctionPtr::value const):
+            (JSC::FunctionPtr::executableAddress const):
+            (JSC::ReturnAddressPtr::ReturnAddressPtr):
+            (JSC::ReturnAddressPtr::value const):
+            (JSC::MacroAssemblerCodePtr::MacroAssemblerCodePtr):
+            (JSC::MacroAssemblerCodePtr::createFromExecutableAddress):
+            (JSC::MacroAssemblerCodePtr::poisonedPtr const):
+            (JSC::MacroAssemblerCodePtr:: const):
+            (JSC::MacroAssemblerCodePtr::operator! const):
+            (JSC::MacroAssemblerCodePtr::operator== const):
+            (JSC::MacroAssemblerCodePtr::emptyValue):
+            (JSC::MacroAssemblerCodePtr::deletedValue):
+            (JSC::MacroAssemblerCodePtr::scrambledPtr const): Deleted.
+            * b3/B3LowerMacros.cpp:
+            * b3/testb3.cpp:
+            (JSC::B3::testInterpreter):
+            * dfg/DFGSpeculativeJIT.cpp:
+            (JSC::DFG::SpeculativeJIT::checkArray):
+            (JSC::DFG::SpeculativeJIT::compileCheckSubClass):
+            (JSC::DFG::SpeculativeJIT::compileNewStringObject):
+            (JSC::DFG::SpeculativeJIT::emitSwitchIntJump):
+            * ftl/FTLLowerDFGToB3.cpp:
+            (JSC::FTL::DFG::LowerDFGToB3::compileNewStringObject):
+            (JSC::FTL::DFG::LowerDFGToB3::compileCheckSubClass):
+            * jit/AssemblyHelpers.h:
+            (JSC::AssemblyHelpers::emitAllocateDestructibleObject):
+            * jit/SpecializedThunkJIT.h:
+            (JSC::SpecializedThunkJIT::loadArgumentWithSpecificClass):
+            * jit/ThunkGenerators.cpp:
+            (JSC::virtualThunkFor):
+            (JSC::boundThisNoArgsFunctionCallGenerator):
+            * llint/LLIntSlowPaths.cpp:
+            (JSC::LLInt::handleHostCall):
+            (JSC::LLInt::setUpCall):
+            * llint/LowLevelInterpreter64.asm:
+            * runtime/InitializeThreading.cpp:
+            (JSC::initializeThreading):
+            * runtime/JSCPoisonedPtr.cpp: Copied from Source/JavaScriptCore/runtime/JSCScrambledPtr.cpp.
+            (JSC::initializePoison):
+            (JSC::initializeScrambledPtrKeys): Deleted.
+            * runtime/JSCPoisonedPtr.h: Copied from Source/JavaScriptCore/runtime/JSCScrambledPtr.h.
+            * runtime/JSCScrambledPtr.cpp: Removed.
+            * runtime/JSCScrambledPtr.h: Removed.
+            * runtime/JSDestructibleObject.h:
+            (JSC::JSDestructibleObject::classInfo const):
+            * runtime/JSSegmentedVariableObject.h:
+            (JSC::JSSegmentedVariableObject::classInfo const):
+            * runtime/Structure.h:
+            * runtime/VM.h:
+    
+    2017-12-07  Mark Lam  <mark.lam@apple.com>
+    
+            Apply poisoning to some native code pointers.
+            https://bugs.webkit.org/show_bug.cgi?id=180541
+            <rdar://problem/35916875>
+    
+            Reviewed by Filip Pizlo.
+    
+            Renamed g_classInfoPoison to g_globalDataPoison.
+            Renamed g_masmPoison to g_jitCodePoison.
+            Introduced g_nativeCodePoison.
+            Applied g_nativeCodePoison to poisoning some native code pointers.
+    
+            Introduced non-random Int32 poison values (in JSCPoison.h) for use with pointers
+            to malloc allocated data structures (where needed).
+    
+            * API/JSCallbackFunction.h:
+            (JSC::JSCallbackFunction::functionCallback):
+            * JavaScriptCore.xcodeproj/project.pbxproj:
+            * jit/ThunkGenerators.cpp:
+            (JSC::nativeForGenerator):
+            * llint/LowLevelInterpreter64.asm:
+            * runtime/CustomGetterSetter.h:
+            (JSC::CustomGetterSetter::getter const):
+            (JSC::CustomGetterSetter::setter const):
+            * runtime/InternalFunction.cpp:
+            (JSC::InternalFunction::getCallData):
+            (JSC::InternalFunction::getConstructData):
+            * runtime/InternalFunction.h:
+            (JSC::InternalFunction::nativeFunctionFor):
+            * runtime/JSCPoison.h: Added.
+            * runtime/JSCPoisonedPtr.cpp:
+            (JSC::initializePoison):
+            * runtime/JSCPoisonedPtr.h:
+            * runtime/Lookup.h:
+            * runtime/NativeExecutable.cpp:
+            (JSC::NativeExecutable::hashFor const):
+            * runtime/NativeExecutable.h:
+            * runtime/Structure.cpp:
+            (JSC::StructureTransitionTable::setSingleTransition):
+            * runtime/StructureTransitionTable.h:
+            (JSC::StructureTransitionTable::StructureTransitionTable):
+            (JSC::StructureTransitionTable::isUsingSingleSlot const):
+            (JSC::StructureTransitionTable::map const):
+            (JSC::StructureTransitionTable::weakImpl const):
+            (JSC::StructureTransitionTable::setMap):
+    
+    2017-12-08  Mark Lam  <mark.lam@apple.com>
+    
+            Need to unpoison native function pointers for CLoop.
+            https://bugs.webkit.org/show_bug.cgi?id=180601
+            <rdar://problem/35942028>
+    
+            Reviewed by JF Bastien.
+    
+            * llint/LowLevelInterpreter64.asm:
+    
+    2017-12-13  Mark Lam  <mark.lam@apple.com>
+    
+            Fill out some Poisoned APIs, fix some bugs, and add some tests.
+            https://bugs.webkit.org/show_bug.cgi?id=180724
+            <rdar://problem/36006884>
+    
+            Reviewed by JF Bastien.
+    
+            * runtime/StructureTransitionTable.h:
+    
+    2017-12-18  Jason Marcell  <jmarcell@apple.com>
+    
+        Apply patch. rdar://problem/36113365
+    
+        Cherry-pick r225363, r225437, r225632, r225659, r225697, r225857. rdar://problem/36085975
+    
+    2017-11-30  Mark Lam  <mark.lam@apple.com>
+    
+            Let's scramble MacroAssemblerCodePtr values.
+            https://bugs.webkit.org/show_bug.cgi?id=180169
+            <rdar://problem/35758340>
+    
+            Reviewed by Filip Pizlo, Saam Barati, and JF Bastien.
+    
+            Introduce a ScrambledPtr class to facilitate scrambling.
+    
+            * WTF.xcodeproj/project.pbxproj:
+            * wtf/CMakeLists.txt:
+            * wtf/ScrambledPtr.cpp: Added.
+            (WTF::makeScrambledPtrKey):
+            * wtf/ScrambledPtr.h: Added.
+            (WTF::ScrambledPtr::ScrambledPtr):
+            (WTF::ScrambledPtr::paranoidAssertIsScrambled const):
+            (WTF::ScrambledPtr::paranoidAssertIsNotScrambled const):
+            (WTF::ScrambledPtr:: const):
+            (WTF::ScrambledPtr::operator-> const):
+            (WTF::ScrambledPtr::scrambledBits const):
+            (WTF::ScrambledPtr::operator! const):
+            (WTF::ScrambledPtr::operator bool const):
+            (WTF::ScrambledPtr::operator== const):
+            (WTF::ScrambledPtr::operator==):
+            (WTF::ScrambledPtr::scramble):
+            (WTF::ScrambledPtr::descramble):
+    
+    2017-12-01  Mark Lam  <mark.lam@apple.com>
+    
+            Let's scramble ClassInfo pointers in cells.
+            https://bugs.webkit.org/show_bug.cgi?id=180291
+            <rdar://problem/35807620>
+    
+            Reviewed by JF Bastien.
+    
+            * wtf/ScrambledPtr.h:
+            (WTF::ScrambledPtr::descrambled const):
+            (WTF::ScrambledPtr::bits const):
+            (WTF::ScrambledPtr::operator==):
+            (WTF::ScrambledPtr::operator=):
+            (WTF::ScrambledPtr::scramble):
+            (WTF::ScrambledPtr::descramble):
+            (WTF::ScrambledPtr:: const): Deleted.
+            (WTF::ScrambledPtr::scrambledBits const): Deleted.
+    
+    2017-12-07  Mark Lam  <mark.lam@apple.com>
+    
+            [Re-landing r225620] Refactoring: Rename ScrambledPtr to Poisoned.
+            https://bugs.webkit.org/show_bug.cgi?id=180514
+    
+            Reviewed by Saam Barati and JF Bastien.
+    
+            Re-landing r225620 with speculative build fix for GCC 7.
+    
+            * WTF.xcodeproj/project.pbxproj:
+            * wtf/CMakeLists.txt:
+            * wtf/Poisoned.cpp: Copied from Source/WTF/wtf/ScrambledPtr.cpp.
+            (WTF::makePoison):
+            (WTF::makeScrambledPtrKey): Deleted.
+            * wtf/Poisoned.h: Copied from Source/WTF/wtf/ScrambledPtr.h.
+            (WTF::PoisonedImpl::PoisonedImpl):
+            (WTF::PoisonedImpl::assertIsPoisoned const):
+            (WTF::PoisonedImpl::assertIsNotPoisoned const):
+            (WTF::PoisonedImpl::unpoisoned const):
+            (WTF::PoisonedImpl::operator-> const):
+            (WTF::PoisonedImpl::bits const):
+            (WTF::PoisonedImpl::operator! const):
+            (WTF::PoisonedImpl::operator bool const):
+            (WTF::PoisonedImpl::operator== const):
+            (WTF::PoisonedImpl::operator==):
+            (WTF::PoisonedImpl::operator=):
+            (WTF::PoisonedImpl::poison):
+            (WTF::PoisonedImpl::unpoison):
+            (WTF::ScrambledPtr::ScrambledPtr): Deleted.
+            (WTF::ScrambledPtr::assertIsScrambled const): Deleted.
+            (WTF::ScrambledPtr::assertIsNotScrambled const): Deleted.
+            (WTF::ScrambledPtr::descrambled const): Deleted.
+            (WTF::ScrambledPtr::operator-> const): Deleted.
+            (WTF::ScrambledPtr::bits const): Deleted.
+            (WTF::ScrambledPtr::operator! const): Deleted.
+            (WTF::ScrambledPtr::operator bool const): Deleted.
+            (WTF::ScrambledPtr::operator== const): Deleted.
+            (WTF::ScrambledPtr::operator==): Deleted.
+            (WTF::ScrambledPtr::operator=): Deleted.
+            (WTF::ScrambledPtr::scramble): Deleted.
+            (WTF::ScrambledPtr::descramble): Deleted.
+            * wtf/ScrambledPtr.cpp: Removed.
+            * wtf/ScrambledPtr.h: Removed.
+    
+    2017-12-07  Mark Lam  <mark.lam@apple.com>
+    
+            Apply poisoning to some native code pointers.
+            https://bugs.webkit.org/show_bug.cgi?id=180541
+            <rdar://problem/35916875>
+    
+            Reviewed by Filip Pizlo.
+    
+            Ensure that the resultant poisoned bits still looks like a pointer in that its
+            bottom bits are 0, just like the alignment bits of a pointer.  This allows the
+            client to use the bottom bits of the poisoned bits as flag bits just like the
+            client was previously able to do with pointer values.
+    
+            Note: we only ensure that the bottom alignment bits of the generated poison
+            value is 0.  We're not masking out the poisoned bits.  This means that the bottom
+            bits of the poisoned bits will only be null if the original pointer is aligned.
+            Hence, if the client applies the poison to an unaligned pointer, we do not lose
+            any information on the low bits.
+    
+            Also removed 2 wrong assertions in PoisonedImpl's constructors.  We were
+            asserting that Poisoned will never be used with a null value, but that's invalid.
+            We do want to allow a null value so that we don't have to constantly do null
+            checks in the clients.  This was uncovered by some layout tests.
+    
+            * wtf/Poisoned.cpp:
+            (WTF::makePoison):
+            * wtf/Poisoned.h:
+            (WTF::PoisonedImpl::PoisonedImpl):
+    
+    2017-12-13  Mark Lam  <mark.lam@apple.com>
+    
+            Fill out some Poisoned APIs, fix some bugs, and add some tests.
+            https://bugs.webkit.org/show_bug.cgi?id=180724
+            <rdar://problem/36006884>
+    
+            Reviewed by JF Bastien.
+    
+            Also rename Int32Poisoned to ConstExprPoisoned.  The key it takes is actually a
+            uint32_t.  So, Int32 is really a misnomer.  In addition, the key needs to be a
+            constexpr.  So, ConstExprPoisoned is a better name for it.
+    
+            * wtf/Poisoned.cpp:
+            (WTF::makePoison):
+            * wtf/Poisoned.h:
+            (WTF::PoisonedImplHelper::asReference):
+            (WTF::PoisonedImpl::PoisonedImpl):
+            (WTF::PoisonedImpl::clear):
+            (WTF::PoisonedImpl::operator* const):
+            (WTF::PoisonedImpl::operator-> const):
+            (WTF::PoisonedImpl::operator== const):
+            (WTF::PoisonedImpl::operator!= const):
+            (WTF::PoisonedImpl::operator< const):
+            (WTF::PoisonedImpl::operator<= const):
+            (WTF::PoisonedImpl::operator> const):
+            (WTF::PoisonedImpl::operator>= const):
+            (WTF::PoisonedImpl::operator=):
+            (WTF::PoisonedImpl::swap):
+            (WTF::PoisonedImpl::exchange):
+            (WTF::swap):
+            (WTF::makePoison):
+            (WTF::PoisonedImpl::operator==): Deleted.
+
+    2017-12-18  Mark Lam  <mark.lam@apple.com>
+
+            Cherry-pick r225363, r225437, r225632, r225659, r225697, r225857. rdar://problem/36085975
+
+            Also merged offlineasm parts of r220184 and r222549.  These changes are required
+            to support the code in cherry-picked revisions above.
+
+        2017-11-30  Mark Lam  <mark.lam@apple.com>
+
+                Let's scramble MacroAssemblerCodePtr values.
+                https://bugs.webkit.org/show_bug.cgi?id=180169
+                <rdar://problem/35758340>
+
+                Reviewed by Filip Pizlo, Saam Barati, and JF Bastien.
+
+                1. MacroAssemblerCodePtr now stores a ScrambledPtr instead of a void*.
+
+                2. MacroAssemblerCodePtr's executableAddress() and dataLocation() now take a
+                   template argument type that will be used to cast the result.  This makes the
+                   client code that uses these functions a little less verbose.
+
+                3. Change the code base in general to minimize passing void* code pointers around.
+                   We now pass MacroAssemblerCodePtr as much as possible, and descramble it only
+                   at the last moment when we need the underlying code pointer.
+
+                4. Added some MasmScrambledPtr paranoid asserts that are disabled (not built) by
+                   default.  I'm leaving them in because they are instrumental in finding bugs
+                   where not all MacroAssemblerCodePtr values were not scrambled as expected.
+                   I expect them to be useful in the near future as we add more scrambling.
+
+                5. Also disable the casting operator on MacroAssemblerCodePtr (except for
+                   explicit casts to a boolean).  This ensures that clients will always explicitly
+                   use scrambledBits() or executableAddress() to get a value based on which value
+                   they actually need.
+
+                5. Added currentThread() id to the logging in LLIntSlowPath trace functions.
+                   This was helpful when debugging tests that ran multiple VMs concurrently on
+                   different threads.
+
+                MacroAssemblerCodePtr is currently supported on 64-bit builds (including the
+                CLoop).  It is not yet supported in 32-bit and Windows because we don't
+                currently have a way to read a global variable from their LLInt code.
+
+                * assembler/AbstractMacroAssembler.h:
+                (JSC::AbstractMacroAssembler::differenceBetweenCodePtr):
+                (JSC::AbstractMacroAssembler::linkPointer):
+                * assembler/CodeLocation.h:
+                (JSC::CodeLocationCommon::instructionAtOffset):
+                (JSC::CodeLocationCommon::labelAtOffset):
+                (JSC::CodeLocationCommon::jumpAtOffset):
+                (JSC::CodeLocationCommon::callAtOffset):
+                (JSC::CodeLocationCommon::nearCallAtOffset):
+                (JSC::CodeLocationCommon::dataLabelPtrAtOffset):
+                (JSC::CodeLocationCommon::dataLabel32AtOffset):
+                (JSC::CodeLocationCommon::dataLabelCompactAtOffset):
+                (JSC::CodeLocationCommon::convertibleLoadAtOffset):
+                * assembler/LinkBuffer.cpp:
+                (JSC::LinkBuffer::finalizeCodeWithDisassembly):
+                * assembler/LinkBuffer.h:
+                (JSC::LinkBuffer::link):
+                (JSC::LinkBuffer::patch):
+                * assembler/MacroAssemblerCodeRef.cpp:
+                (JSC::MacroAssemblerCodePtr::initialize):
+                * assembler/MacroAssemblerCodeRef.h:
+                (JSC::FunctionPtr::FunctionPtr):
+                (JSC::FunctionPtr::value const):
+                (JSC::FunctionPtr::executableAddress const):
+                (JSC::ReturnAddressPtr::ReturnAddressPtr):
+                (JSC::ReturnAddressPtr::value const):
+                (JSC::MacroAssemblerCodePtr::MacroAssemblerCodePtr):
+                (JSC::MacroAssemblerCodePtr::createFromExecutableAddress):
+                (JSC::MacroAssemblerCodePtr::scrambledPtr const):
+                (JSC::MacroAssemblerCodePtr:: const):
+                (JSC::MacroAssemblerCodePtr::operator! const):
+                (JSC::MacroAssemblerCodePtr::operator bool const):
+                (JSC::MacroAssemblerCodePtr::operator== const):
+                (JSC::MacroAssemblerCodePtr::hash const):
+                (JSC::MacroAssemblerCodePtr::emptyValue):
+                (JSC::MacroAssemblerCodePtr::deletedValue):
+                (JSC::MacroAssemblerCodePtr::executableAddress const): Deleted.
+                (JSC::MacroAssemblerCodePtr::dataLocation const): Deleted.
+                * b3/B3LowerMacros.cpp:
+                * b3/testb3.cpp:
+                (JSC::B3::testInterpreter):
+                * dfg/DFGDisassembler.cpp:
+                (JSC::DFG::Disassembler::dumpDisassembly):
+                * dfg/DFGJITCompiler.cpp:
+                (JSC::DFG::JITCompiler::link):
+                (JSC::DFG::JITCompiler::compileFunction):
+                * dfg/DFGOperations.cpp:
+                * dfg/DFGSpeculativeJIT.cpp:
+                (JSC::DFG::SpeculativeJIT::emitSwitchIntJump):
+                (JSC::DFG::SpeculativeJIT::emitSwitchImm):
+                (JSC::DFG::SpeculativeJIT::emitSwitchCharStringJump):
+                (JSC::DFG::SpeculativeJIT::emitSwitchChar):
+                * dfg/DFGSpeculativeJIT.h:
+                * disassembler/Disassembler.cpp:
+                (JSC::disassemble):
+                * disassembler/UDis86Disassembler.cpp:
+                (JSC::tryToDisassembleWithUDis86):
+                * ftl/FTLCompile.cpp:
+                (JSC::FTL::compile):
+                * ftl/FTLJITCode.cpp:
+                (JSC::FTL::JITCode::executableAddressAtOffset):
+                * ftl/FTLLink.cpp:
+                (JSC::FTL::link):
+                * ftl/FTLLowerDFGToB3.cpp:
+                (JSC::FTL::DFG::LowerDFGToB3::compileMathIC):
+                (JSC::FTL::DFG::LowerDFGToB3::compileCallOrConstruct):
+                (JSC::FTL::DFG::LowerDFGToB3::compileTailCall):
+                (JSC::FTL::DFG::LowerDFGToB3::compileCallOrConstructVarargsSpread):
+                (JSC::FTL::DFG::LowerDFGToB3::compileCallOrConstructVarargs):
+                * interpreter/InterpreterInlines.h:
+                (JSC::Interpreter::getOpcodeID):
+                * jit/JITArithmetic.cpp:
+                (JSC::JIT::emitMathICFast):
+                (JSC::JIT::emitMathICSlow):
+                * jit/JITCode.cpp:
+                (JSC::JITCodeWithCodeRef::executableAddressAtOffset):
+                (JSC::JITCodeWithCodeRef::dataAddressAtOffset):
+                (JSC::JITCodeWithCodeRef::offsetOf):
+                * jit/JITDisassembler.cpp:
+                (JSC::JITDisassembler::dumpDisassembly):
+                * jit/PCToCodeOriginMap.cpp:
+                (JSC::PCToCodeOriginMap::PCToCodeOriginMap):
+                * jit/Repatch.cpp:
+                (JSC::ftlThunkAwareRepatchCall):
+                * jit/ThunkGenerators.cpp:
+                (JSC::virtualThunkFor):
+                (JSC::boundThisNoArgsFunctionCallGenerator):
+                * llint/LLIntSlowPaths.cpp:
+                (JSC::LLInt::llint_trace_operand):
+                (JSC::LLInt::llint_trace_value):
+                (JSC::LLInt::handleHostCall):
+                (JSC::LLInt::setUpCall):
+                * llint/LowLevelInterpreter64.asm:
+                * offlineasm/cloop.rb:
+                * runtime/InitializeThreading.cpp:
+                (JSC::initializeThreading):
+                * wasm/WasmBBQPlan.cpp:
+                (JSC::Wasm::BBQPlan::complete):
+                * wasm/WasmCallee.h:
+                (JSC::Wasm::Callee::entrypoint const):
+                * wasm/WasmCodeBlock.cpp:
+                (JSC::Wasm::CodeBlock::CodeBlock):
+                * wasm/WasmOMGPlan.cpp:
+                (JSC::Wasm::OMGPlan::work):
+                * wasm/js/WasmToJS.cpp:
+                (JSC::Wasm::wasmToJS):
+                * wasm/js/WebAssemblyFunction.cpp:
+                (JSC::callWebAssemblyFunction):
+                * wasm/js/WebAssemblyFunction.h:
+                * wasm/js/WebAssemblyWrapperFunction.cpp:
+                (JSC::WebAssemblyWrapperFunction::create):
+
+        2017-12-01  Mark Lam  <mark.lam@apple.com>
+
+                Let's scramble ClassInfo pointers in cells.
+                https://bugs.webkit.org/show_bug.cgi?id=180291
+                <rdar://problem/35807620>
+
+                Reviewed by JF Bastien.
+
+                * API/JSCallbackObject.h:
+                * API/JSObjectRef.cpp:
+                (classInfoPrivate):
+                * JavaScriptCore.xcodeproj/project.pbxproj:
+                * Sources.txt:
+                * assembler/MacroAssemblerCodeRef.cpp:
+                (JSC::MacroAssemblerCodePtr::initialize): Deleted.
+                * assembler/MacroAssemblerCodeRef.h:
+                (JSC::MacroAssemblerCodePtr:: const):
+                (JSC::MacroAssemblerCodePtr::hash const):
+                * dfg/DFGSpeculativeJIT.cpp:
+                (JSC::DFG::SpeculativeJIT::checkArray):
+                (JSC::DFG::SpeculativeJIT::compileCheckSubClass):
+                (JSC::DFG::SpeculativeJIT::compileNewStringObject):
+                * ftl/FTLLowerDFGToB3.cpp:
+                (JSC::FTL::DFG::LowerDFGToB3::compileNewStringObject):
+                (JSC::FTL::DFG::LowerDFGToB3::compileCheckSubClass):
+                * jit/AssemblyHelpers.h:
+                (JSC::AssemblyHelpers::emitAllocateDestructibleObject):
+                * jit/SpecializedThunkJIT.h:
+                (JSC::SpecializedThunkJIT::loadArgumentWithSpecificClass):
+                * runtime/InitializeThreading.cpp:
+                (JSC::initializeThreading):
+                * runtime/JSCScrambledPtr.cpp: Added.
+                (JSC::initializeScrambledPtrKeys):
+                * runtime/JSCScrambledPtr.h: Added.
+                * runtime/JSDestructibleObject.h:
+                (JSC::JSDestructibleObject::classInfo const):
+                * runtime/JSSegmentedVariableObject.h:
+                (JSC::JSSegmentedVariableObject::classInfo const):
+                * runtime/Structure.h:
+                * runtime/VM.h:
+
+        2017-12-07  Mark Lam  <mark.lam@apple.com>
+
+                [Re-landing r225620] Refactoring: Rename ScrambledPtr to Poisoned.
+                https://bugs.webkit.org/show_bug.cgi?id=180514
+
+                Reviewed by Saam Barati and JF Bastien.
+
+                Re-landing r225620 with speculative build fix for GCC 7.
+
+                * API/JSCallbackObject.h:
+                * API/JSObjectRef.cpp:
+                (classInfoPrivate):
+                * JavaScriptCore.xcodeproj/project.pbxproj:
+                * Sources.txt:
+                * assembler/MacroAssemblerCodeRef.h:
+                (JSC::FunctionPtr::FunctionPtr):
+                (JSC::FunctionPtr::value const):
+                (JSC::FunctionPtr::executableAddress const):
+                (JSC::ReturnAddressPtr::ReturnAddressPtr):
+                (JSC::ReturnAddressPtr::value const):
+                (JSC::MacroAssemblerCodePtr::MacroAssemblerCodePtr):
+                (JSC::MacroAssemblerCodePtr::createFromExecutableAddress):
+                (JSC::MacroAssemblerCodePtr::poisonedPtr const):
+                (JSC::MacroAssemblerCodePtr:: const):
+                (JSC::MacroAssemblerCodePtr::operator! const):
+                (JSC::MacroAssemblerCodePtr::operator== const):
+                (JSC::MacroAssemblerCodePtr::emptyValue):
+                (JSC::MacroAssemblerCodePtr::deletedValue):
+                (JSC::MacroAssemblerCodePtr::scrambledPtr const): Deleted.
+                * b3/B3LowerMacros.cpp:
+                * b3/testb3.cpp:
+                (JSC::B3::testInterpreter):
+                * dfg/DFGSpeculativeJIT.cpp:
+                (JSC::DFG::SpeculativeJIT::checkArray):
+                (JSC::DFG::SpeculativeJIT::compileCheckSubClass):
+                (JSC::DFG::SpeculativeJIT::compileNewStringObject):
+                (JSC::DFG::SpeculativeJIT::emitSwitchIntJump):
+                * ftl/FTLLowerDFGToB3.cpp:
+                (JSC::FTL::DFG::LowerDFGToB3::compileNewStringObject):
+                (JSC::FTL::DFG::LowerDFGToB3::compileCheckSubClass):
+                * jit/AssemblyHelpers.h:
+                (JSC::AssemblyHelpers::emitAllocateDestructibleObject):
+                * jit/SpecializedThunkJIT.h:
+                (JSC::SpecializedThunkJIT::loadArgumentWithSpecificClass):
+                * jit/ThunkGenerators.cpp:
+                (JSC::virtualThunkFor):
+                (JSC::boundThisNoArgsFunctionCallGenerator):
+                * llint/LLIntSlowPaths.cpp:
+                (JSC::LLInt::handleHostCall):
+                (JSC::LLInt::setUpCall):
+                * llint/LowLevelInterpreter64.asm:
+                * runtime/InitializeThreading.cpp:
+                (JSC::initializeThreading):
+                * runtime/JSCPoisonedPtr.cpp: Copied from Source/JavaScriptCore/runtime/JSCScrambledPtr.cpp.
+                (JSC::initializePoison):
+                (JSC::initializeScrambledPtrKeys): Deleted.
+                * runtime/JSCPoisonedPtr.h: Copied from Source/JavaScriptCore/runtime/JSCScrambledPtr.h.
+                * runtime/JSCScrambledPtr.cpp: Removed.
+                * runtime/JSCScrambledPtr.h: Removed.
+                * runtime/JSDestructibleObject.h:
+                (JSC::JSDestructibleObject::classInfo const):
+                * runtime/JSSegmentedVariableObject.h:
+                (JSC::JSSegmentedVariableObject::classInfo const):
+                * runtime/Structure.h:
+                * runtime/VM.h:
+
+        2017-12-07  Mark Lam  <mark.lam@apple.com>
+
+                Apply poisoning to some native code pointers.
+                https://bugs.webkit.org/show_bug.cgi?id=180541
+                <rdar://problem/35916875>
+
+                Reviewed by Filip Pizlo.
+
+                Renamed g_classInfoPoison to g_globalDataPoison.
+                Renamed g_masmPoison to g_jitCodePoison.
+                Introduced g_nativeCodePoison.
+                Applied g_nativeCodePoison to poisoning some native code pointers.
+
+                Introduced non-random Int32 poison values (in JSCPoison.h) for use with pointers
+                to malloc allocated data structures (where needed).
+
+                * API/JSCallbackFunction.h:
+                (JSC::JSCallbackFunction::functionCallback):
+                * JavaScriptCore.xcodeproj/project.pbxproj:
+                * jit/ThunkGenerators.cpp:
+                (JSC::nativeForGenerator):
+                * llint/LowLevelInterpreter64.asm:
+                * runtime/CustomGetterSetter.h:
+                (JSC::CustomGetterSetter::getter const):
+                (JSC::CustomGetterSetter::setter const):
+                * runtime/InternalFunction.cpp:
+                (JSC::InternalFunction::getCallData):
+                (JSC::InternalFunction::getConstructData):
+                * runtime/InternalFunction.h:
+                (JSC::InternalFunction::nativeFunctionFor):
+                * runtime/JSCPoison.h: Added.
+                * runtime/JSCPoisonedPtr.cpp:
+                (JSC::initializePoison):
+                * runtime/JSCPoisonedPtr.h:
+                * runtime/Lookup.h:
+                * runtime/NativeExecutable.cpp:
+                (JSC::NativeExecutable::hashFor const):
+                * runtime/NativeExecutable.h:
+                * runtime/Structure.cpp:
+                (JSC::StructureTransitionTable::setSingleTransition):
+                * runtime/StructureTransitionTable.h:
+                (JSC::StructureTransitionTable::StructureTransitionTable):
+                (JSC::StructureTransitionTable::isUsingSingleSlot const):
+                (JSC::StructureTransitionTable::map const):
+                (JSC::StructureTransitionTable::weakImpl const):
+                (JSC::StructureTransitionTable::setMap):
+
+        2017-12-08  Mark Lam  <mark.lam@apple.com>
+
+                Need to unpoison native function pointers for CLoop.
+                https://bugs.webkit.org/show_bug.cgi?id=180601
+                <rdar://problem/35942028>
+
+                Reviewed by JF Bastien.
+
+                * llint/LowLevelInterpreter64.asm:
+
+        2017-12-13  Mark Lam  <mark.lam@apple.com>
+
+                Fill out some Poisoned APIs, fix some bugs, and add some tests.
+                https://bugs.webkit.org/show_bug.cgi?id=180724
+                <rdar://problem/36006884>
+
+                Reviewed by JF Bastien.
+
+                * runtime/StructureTransitionTable.h:
+
 2017-12-18  Jason Marcell  <jmarcell@apple.com>
 
         Apply patch. rdar://problem/36113365
