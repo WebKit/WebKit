@@ -49,6 +49,11 @@
 #import <wtf/RetainPtr.h>
 #import <wtf/Vector.h>
 
+// All of UIPDFPage* are deprecated, so just ignore deprecated declarations
+// in this file until we switch off them.
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+
 using namespace WebCore;
 using namespace WebKit;
 
@@ -884,5 +889,7 @@ static NSStringCompareOptions stringCompareOptions(_WKFindOptions options)
 }
 
 @end
+
+#pragma clang diagnostic pop
 
 #endif /* PLATFORM(IOS) */

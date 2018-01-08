@@ -1,3 +1,14 @@
+2018-01-08  Tim Horton  <timothy_horton@apple.com>
+
+        Build fix for WKPDFView
+        https://bugs.webkit.org/show_bug.cgi?id=181399
+        <rdar://problem/36311915>
+
+        Reviewed by Simon Fraser.
+
+        * UIProcess/ios/WKPDFView.mm:
+        Disable deprecation warnings in this whole file.
+
 2018-01-08  Youenn Fablet  <youenn@apple.com>
 
         Caches::writeCachesToDisk should assert that it is initialized
