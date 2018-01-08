@@ -1987,6 +1987,7 @@ rendering/updating/RenderTreeBuilder.cpp
 rendering/updating/RenderTreeBuilderBlock.cpp
 rendering/updating/RenderTreeBuilderFirstLetter.cpp
 rendering/updating/RenderTreeBuilderFormControls.cpp
+rendering/updating/RenderTreeBuilderInline.cpp
 rendering/updating/RenderTreeBuilderList.cpp
 rendering/updating/RenderTreeBuilderMultiColumn.cpp
 rendering/updating/RenderTreeBuilderRuby.cpp

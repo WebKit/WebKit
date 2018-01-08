@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,26 +25,24 @@
 
 #pragma once
 
-#include "RenderTreeUpdater.h"
+#include "RenderTreeBuilder.h"
 
 namespace WebCore {
 
-class RenderElement;
-class RenderObject;
-class RenderTable;
-class RenderTableSection;
-class RenderTableRow;
-class RenderTreeBuilder;
-
-class RenderTreeBuilder::Table {
+class RenderTreeBuilder::Inline {
 public:
-    Table(RenderTreeBuilder&);
+    Inline(RenderTreeBuilder&);
 
-    RenderElement& findOrCreateParentForChild(RenderTableRow& parent, const RenderObject& child, RenderObject*& beforeChild);
-    RenderElement& findOrCreateParentForChild(RenderTableSection& parent, const RenderObject& child, RenderObject*& beforeChild);
-    RenderElement& findOrCreateParentForChild(RenderTable& parent, const RenderObject& child, RenderObject*& beforeChild);
+    void insertChild(RenderInline& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild);
+    void insertChildIgnoringContinuation(RenderInline& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild);
+
+    // Make this private once all the mutation code is in RenderTreeBuilder.
+    void splitFlow(RenderInline& parent, RenderObject* beforeChild, RenderPtr<RenderBlock> newBlockBox, RenderPtr<RenderObject> child, RenderBoxModelObject* oldCont);
 
 private:
+    void insertChildToContinuation(RenderInline& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild);
+    void splitInlines(RenderInline& parent, RenderBlock* fromBlock, RenderBlock* toBlock, RenderBlock* middleBlock, RenderObject* beforeChild, RenderBoxModelObject* oldCont);
+
     RenderTreeBuilder& m_builder;
 };
 
