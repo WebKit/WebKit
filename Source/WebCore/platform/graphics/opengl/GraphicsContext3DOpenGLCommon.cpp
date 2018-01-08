@@ -397,7 +397,7 @@ bool GraphicsContext3D::checkVaryingsPacking(Platform3DObject vertexShader, Plat
         variables.push_back(varyingSymbol);
 
     GC3Dint maxVaryingVectors = 0;
-#if !PLATFORM(IOS) && !((PLATFORM(WIN) || PLATFORM(GTK) || PLATFORM(WPE)) && USE(OPENGL_ES_2))
+#if !PLATFORM(IOS) && !USE(OPENGL_ES_2)
     GC3Dint maxVaryingFloats = 0;
     ::glGetIntegerv(GL_MAX_VARYING_FLOATS, &maxVaryingFloats);
     maxVaryingVectors = maxVaryingFloats / 4;

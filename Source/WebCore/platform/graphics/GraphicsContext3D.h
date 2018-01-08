@@ -61,7 +61,7 @@
 OBJC_CLASS CALayer;
 OBJC_CLASS WebGLLayer;
 typedef struct __IOSurface* IOSurfaceRef;
-#elif PLATFORM(GTK) || PLATFORM(WIN_CAIRO) || PLATFORM(WPE)
+#else
 typedef unsigned int GLuint;
 #endif
 
@@ -1402,7 +1402,7 @@ private:
 
     std::unique_ptr<ShaderNameHash> nameHashMapForShaders;
 
-#if ((PLATFORM(GTK) || PLATFORM(WIN) || PLATFORM(WPE)) && USE(OPENGL_ES_2))
+#if USE(OPENGL_ES_2)
     friend class Extensions3DOpenGLES;
     std::unique_ptr<Extensions3DOpenGLES> m_extensions;
 #else

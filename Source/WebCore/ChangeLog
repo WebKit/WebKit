@@ -1,3 +1,19 @@
+2018-01-08  Don Olmstead  <don.olmstead@sony.com>
+
+        Simplify platform checks in Graphics Context
+        https://bugs.webkit.org/show_bug.cgi?id=181344
+
+        Reviewed by Alex Christensen.
+
+        No new tests. No change in behavior.
+
+        * platform/graphics/ANGLEWebKitBridge.h:
+        * platform/graphics/GLContext.h:
+        * platform/graphics/GraphicsContext3D.h:
+        * platform/graphics/OpenGLESShims.h:
+        * platform/graphics/opengl/GraphicsContext3DOpenGLCommon.cpp:
+        (WebCore::GraphicsContext3D::checkVaryingsPacking const):
+
 2018-01-08  Zalan Bujtas  <zalan@apple.com>
 
         [RenderTreeBuilder] Move SVG addChild logic to RenderTreeBuilder

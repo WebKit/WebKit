@@ -29,10 +29,8 @@
 // FIXME: For now default to the GBM EGL platform, but this should really be
 // somehow deducible from the build configuration.
 #define __GBM__ 1
-#include <EGL/eglplatform.h>
-#else
-#include "eglplatform.h"
 #endif // PLATFORM(WPE)
+#include <EGL/eglplatform.h>
 typedef EGLNativeWindowType GLNativeWindowType;
 #else // !USE(EGL) || PLATFORM(GTK)
 typedef uint64_t GLNativeWindowType;

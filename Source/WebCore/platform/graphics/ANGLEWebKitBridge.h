@@ -41,14 +41,12 @@
 #include <OpenGL/gl.h>
 #elif PLATFORM(WIN)
 #include "OpenGLESShims.h"
-#elif PLATFORM(GTK) || PLATFORM(WPE)
-#if USE(LIBEPOXY)
+#elif USE(LIBEPOXY)
 // <epoxy/gl.h> already included above.
 #elif USE(OPENGL_ES_2)
 #include <GLES2/gl2.h>
 #else
 #include "OpenGLShims.h"
-#endif
 #endif
 
 namespace WebCore {
