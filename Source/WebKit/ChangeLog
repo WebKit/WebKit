@@ -1,3 +1,9 @@
+2018-01-08  Frederic Wang  <fwang@igalia.com>
+
+        Unreviewed build fix after r226211.
+
+        * UIProcess/API/Cocoa/WKPreferencesPrivate.h: Use WK_IOS_TBA for iOS.
+
 2018-01-08  Youenn Fablet  <youenn@apple.com>
 
         navigator.onLine does not work inside service workers
