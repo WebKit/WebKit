@@ -35,6 +35,7 @@
 #include "RenderSVGResource.h"
 #include "RenderSVGResourceContainer.h"
 #include "RenderSVGResourceFilter.h"
+#include "RenderTreeBuilder.h"
 #include "RenderView.h"
 #include "SVGImage.h"
 #include "SVGRenderingContext.h"
@@ -304,9 +305,7 @@ void RenderSVGRoot::styleDidChange(StyleDifference diff, const RenderStyle* oldS
 
 void RenderSVGRoot::addChild(RenderTreeBuilder& builder, RenderPtr<RenderObject> newChild, RenderObject* beforeChild)
 {
-    auto& child = *newChild;
-    RenderReplaced::addChild(builder, WTFMove(newChild), beforeChild);
-    SVGResourcesCache::clientWasAddedToTree(child);
+    builder.insertChildToSVGRoot(*this, WTFMove(newChild), beforeChild);
 }
 
 RenderPtr<RenderObject> RenderSVGRoot::takeChild(RenderObject& child)

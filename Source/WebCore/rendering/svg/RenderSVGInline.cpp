@@ -125,12 +125,7 @@ void RenderSVGInline::updateFromStyle()
 
 void RenderSVGInline::addChild(RenderTreeBuilder& builder, RenderPtr<RenderObject> newChild, RenderObject* beforeChild)
 {
-    auto& child = *newChild;
-    RenderInline::addChild(builder, WTFMove(newChild), beforeChild);
-    SVGResourcesCache::clientWasAddedToTree(child);
-
-    if (auto* textAncestor = RenderSVGText::locateRenderSVGTextAncestor(*this))
-        textAncestor->subtreeChildWasAdded(&child);
+    builder.insertChildToSVGInline(*this, WTFMove(newChild), beforeChild);
 }
 
 RenderPtr<RenderObject> RenderSVGInline::takeChild(RenderObject& child)

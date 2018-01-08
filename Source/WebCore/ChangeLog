@@ -1,3 +1,39 @@
+2018-01-08  Zalan Bujtas  <zalan@apple.com>
+
+        [RenderTreeBuilder] Move SVG addChild logic to RenderTreeBuilder
+        https://bugs.webkit.org/show_bug.cgi?id=181405
+        <rdar://problem/36360476>
+
+        Reviewed by Antti Koivisto.
+
+        This is about moving the code, no cleanup and/or normalization (unfortunately it also means
+        some temporary changes).  
+
+        No change in functionality.
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * rendering/svg/RenderSVGContainer.cpp:
+        (WebCore::RenderSVGContainer::addChild):
+        * rendering/svg/RenderSVGInline.cpp:
+        (WebCore::RenderSVGInline::addChild):
+        * rendering/svg/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::addChild):
+        * rendering/svg/RenderSVGText.cpp:
+        (WebCore::RenderSVGText::addChild):
+        * rendering/updating/RenderTreeBuilder.cpp:
+        (WebCore::RenderTreeBuilder::RenderTreeBuilder):
+        (WebCore::RenderTreeBuilder::insertChildToSVGContainer):
+        (WebCore::RenderTreeBuilder::insertChildToSVGInline):
+        (WebCore::RenderTreeBuilder::insertChildToSVGRoot):
+        (WebCore::RenderTreeBuilder::insertChildToSVGText):
+        * rendering/updating/RenderTreeBuilder.h:
+        (WebCore::RenderTreeBuilder::SVGBuilder):
+        * rendering/updating/RenderTreeBuilderSVG.cpp: Added.
+        (WebCore::RenderTreeBuilder::SVG::SVG):
+        (WebCore::RenderTreeBuilder::SVG::insertChild):
+        * rendering/updating/RenderTreeBuilderSVG.h: Added.
+
 2018-01-08  John Wilander  <wilander@apple.com>
 
         Storage Access API: Remove access for all frames under a page when the page is closed

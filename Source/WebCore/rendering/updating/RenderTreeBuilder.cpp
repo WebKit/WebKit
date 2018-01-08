@@ -41,6 +41,7 @@
 #include "RenderTreeBuilderList.h"
 #include "RenderTreeBuilderMultiColumn.h"
 #include "RenderTreeBuilderRuby.h"
+#include "RenderTreeBuilderSVG.h"
 #include "RenderTreeBuilderTable.h"
 
 namespace WebCore {
@@ -110,6 +111,7 @@ RenderTreeBuilder::RenderTreeBuilder(RenderView& view)
     , m_blockBuilder(std::make_unique<Block>(*this))
     , m_blockFlowBuilder(std::make_unique<BlockFlow>(*this))
     , m_inlineBuilder(std::make_unique<Inline>(*this))
+    , m_svgBuilder(std::make_unique<SVG>(*this))
 {
     RELEASE_ASSERT(!s_current || &m_view != &s_current->m_view);
     m_previous = s_current;
@@ -283,6 +285,26 @@ void RenderTreeBuilder::insertChildToRenderInline(RenderInline& parent, RenderPt
 void RenderTreeBuilder::insertChildToRenderInlineIgnoringContinuation(RenderInline& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild)
 {
     inlineBuilder().insertChildIgnoringContinuation(parent, WTFMove(child), beforeChild);
+}
+
+void RenderTreeBuilder::insertChildToSVGContainer(RenderSVGContainer& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild)
+{
+    svgBuilder().insertChild(parent, WTFMove(child), beforeChild);
+}
+
+void RenderTreeBuilder::insertChildToSVGInline(RenderSVGInline& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild)
+{
+    svgBuilder().insertChild(parent, WTFMove(child), beforeChild);
+}
+
+void RenderTreeBuilder::insertChildToSVGRoot(RenderSVGRoot& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild)
+{
+    svgBuilder().insertChild(parent, WTFMove(child), beforeChild);
+}
+
+void RenderTreeBuilder::insertChildToSVGText(RenderSVGText& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild)
+{
+    svgBuilder().insertChild(parent, WTFMove(child), beforeChild);
 }
 
 void RenderTreeBuilder::splitFlow(RenderInline& parent, RenderObject* beforeChild, RenderPtr<RenderBlock> newBlockBox, RenderPtr<RenderObject> child, RenderBoxModelObject* oldCont)

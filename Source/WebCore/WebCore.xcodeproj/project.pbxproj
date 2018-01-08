@@ -5595,6 +5595,8 @@
 		11C5F1182003E7760001AE60 /* RenderTreeBuilderInline.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderTreeBuilderInline.h; sourceTree = "<group>"; };
 		11C5F11D2003F69E0001AE60 /* RenderTreeBuilderBlockFlow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderTreeBuilderBlockFlow.h; sourceTree = "<group>"; };
 		11C5F11F2003F69F0001AE60 /* RenderTreeBuilderBlockFlow.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderTreeBuilderBlockFlow.cpp; sourceTree = "<group>"; };
+		11C5F12A2004231D0001AE60 /* RenderTreeBuilderSVG.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderTreeBuilderSVG.h; sourceTree = "<group>"; };
+		11C5F12C2004231E0001AE60 /* RenderTreeBuilderSVG.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderTreeBuilderSVG.cpp; sourceTree = "<group>"; };
 		11E067EB1E62461300162D16 /* SimpleLineLayoutCoverage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SimpleLineLayoutCoverage.cpp; sourceTree = "<group>"; };
 		11E067ED1E6246E500162D16 /* SimpleLineLayoutCoverage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SimpleLineLayoutCoverage.h; sourceTree = "<group>"; };
 		1400D7A717136EA70077CE05 /* ScriptWrappableInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptWrappableInlines.h; sourceTree = "<group>"; };
@@ -24649,6 +24651,8 @@
 				E47C39271FE6E0DC00BBBC6B /* RenderTreeBuilderMultiColumn.h */,
 				119340871FEB355D00935F1E /* RenderTreeBuilderRuby.cpp */,
 				119340881FEB355D00935F1E /* RenderTreeBuilderRuby.h */,
+				11C5F12C2004231E0001AE60 /* RenderTreeBuilderSVG.cpp */,
+				11C5F12A2004231D0001AE60 /* RenderTreeBuilderSVG.h */,
 				119340761FE8B92300935F1E /* RenderTreeBuilderTable.cpp */,
 				119340771FE8B92300935F1E /* RenderTreeBuilderTable.h */,
 				E47C39291FE6E0DE00BBBC6B /* RenderTreePosition.cpp */,

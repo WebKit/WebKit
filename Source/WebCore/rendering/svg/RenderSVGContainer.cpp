@@ -30,6 +30,7 @@
 #include "LayoutRepainter.h"
 #include "RenderIterator.h"
 #include "RenderSVGResourceFilter.h"
+#include "RenderTreeBuilder.h"
 #include "RenderView.h"
 #include "SVGRenderingContext.h"
 #include "SVGResources.h"
@@ -91,9 +92,7 @@ void RenderSVGContainer::layout()
 
 void RenderSVGContainer::addChild(RenderTreeBuilder& builder, RenderPtr<RenderObject> newChild, RenderObject* beforeChild)
 {
-    auto& child = *newChild;
-    RenderSVGModelObject::addChild(builder, WTFMove(newChild), beforeChild);
-    SVGResourcesCache::clientWasAddedToTree(child);
+    builder.insertChildToSVGContainer(*this, WTFMove(newChild), beforeChild);
 }
 
 RenderPtr<RenderObject> RenderSVGContainer::takeChild(RenderObject& child)

@@ -30,6 +30,10 @@
 namespace WebCore {
 
 class RenderRubyRun;
+class RenderSVGContainer;
+class RenderSVGInline;
+class RenderSVGRoot;
+class RenderSVGText;
 class RenderTreeUpdater;
 
 class RenderTreeBuilder {
@@ -52,6 +56,10 @@ public:
     void insertChildToRenderBlockFlow(RenderBlockFlow& parent, RenderPtr<RenderObject>, RenderObject* beforeChild = nullptr);
     void insertChildToRenderInline(RenderInline& parent, RenderPtr<RenderObject>, RenderObject* beforeChild = nullptr);
     void insertChildToRenderInlineIgnoringContinuation(RenderInline& parent, RenderPtr<RenderObject>, RenderObject* beforeChild = nullptr);
+    void insertChildToSVGContainer(RenderSVGContainer& parent, RenderPtr<RenderObject>, RenderObject* beforeChild = nullptr);
+    void insertChildToSVGInline(RenderSVGInline& parent, RenderPtr<RenderObject>, RenderObject* beforeChild = nullptr);
+    void insertChildToSVGRoot(RenderSVGRoot& parent, RenderPtr<RenderObject>, RenderObject* beforeChild = nullptr);
+    void insertChildToSVGText(RenderSVGText& parent, RenderPtr<RenderObject>, RenderObject* beforeChild = nullptr);
 
     void makeChildrenNonInline(RenderBlock& parent, RenderObject* insertionPoint = nullptr);
     RenderObject* splitAnonymousBoxesAroundChild(RenderBox& parent, RenderObject* beforeChild);
@@ -67,6 +75,7 @@ private:
     class Block;
     class BlockFlow;
     class Inline;
+    class SVG;
 
     FirstLetter& firstLetterBuilder() { return *m_firstLetterBuilder; }
     List& listBuilder() { return *m_listBuilder; }
@@ -77,6 +86,7 @@ private:
     Block& blockBuilder() { return *m_blockBuilder; }
     BlockFlow& blockFlowBuilder() { return *m_blockFlowBuilder; }
     Inline& inlineBuilder() { return *m_inlineBuilder; }
+    SVG& svgBuilder() { return *m_svgBuilder; }
 
     RenderView& m_view;
 
@@ -92,6 +102,7 @@ private:
     std::unique_ptr<Block> m_blockBuilder;
     std::unique_ptr<BlockFlow> m_blockFlowBuilder;
     std::unique_ptr<Inline> m_inlineBuilder;
+    std::unique_ptr<SVG> m_svgBuilder;
 };
 
 }
