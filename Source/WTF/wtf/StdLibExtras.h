@@ -519,6 +519,23 @@ template<class B0, class B1, class B2, class... Bn> struct wtf_conjunction_impl<
 template<class... _Args> struct conjunction : wtf_conjunction_impl<_Args...> { };
 #endif
 
+enum class ZeroStatus {
+    MayBeZero,
+    NonZero
+};
+
+constexpr size_t clz(uint32_t value, ZeroStatus mightBeZero = ZeroStatus::MayBeZero)
+{
+    if (mightBeZero == ZeroStatus::MayBeZero && value) {
+#if COMPILER(MSVC)
+        return __lzcnt(value);
+#else
+        return __builtin_clz(value);
+#endif
+    }
+    return 32;
+}
+
 } // namespace std
 
 #define WTFMove(value) std::move<WTF::CheckMoveParameter>(value)

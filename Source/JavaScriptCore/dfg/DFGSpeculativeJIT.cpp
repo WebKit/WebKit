@@ -2727,8 +2727,9 @@ JITCompiler::Jump SpeculativeJIT::jumpForTypedArrayIsNeuteredIfOutOfBounds(Node*
     return done;
 }
 
-void SpeculativeJIT::loadFromIntTypedArray(GPRReg storageReg, GPRReg propertyReg, GPRReg resultReg, TypedArrayType type)
+void SpeculativeJIT::loadFromIntTypedArray(GPRReg baseReg, GPRReg storageReg, GPRReg propertyReg, GPRReg resultReg, TypedArrayType type)
 {
+    m_jit.and32(MacroAssembler::Address(baseReg, JSArrayBufferView::offsetOfIndexingMask()), propertyReg);
     switch (elementSize(type)) {
     case 1:
         if (isSigned(type))
@@ -2798,7 +2799,7 @@ void SpeculativeJIT::compileGetByValOnIntTypedArray(Node* node, TypedArrayType t
     ASSERT(node->arrayMode().alreadyChecked(m_jit.graph(), node, m_state.forNode(node->child1())));
 
     emitTypedArrayBoundsCheck(node, baseReg, propertyReg);
-    loadFromIntTypedArray(storageReg, propertyReg, resultReg, type);
+    loadFromIntTypedArray(baseReg, storageReg, propertyReg, resultReg, type);
     bool canSpeculate = true;
     setIntTypedArrayLoadResult(node, resultReg, type, canSpeculate);
 }
@@ -3030,6 +3031,7 @@ void SpeculativeJIT::compileGetByValOnFloatTypedArray(Node* node, TypedArrayType
     FPRTemporary result(this);
     FPRReg resultReg = result.fpr();
     emitTypedArrayBoundsCheck(node, baseReg, propertyReg);
+    m_jit.and32(MacroAssembler::Address(baseReg, JSArrayBufferView::offsetOfIndexingMask()), propertyReg);
     switch (elementSize(type)) {
     case 4:
         m_jit.loadFloat(MacroAssembler::BaseIndex(storageReg, propertyReg, MacroAssembler::TimesFour), resultReg);
@@ -8498,13 +8500,17 @@ void SpeculativeJIT::compileNewTypedArray(Node* node)
     emitAllocateJSObject<JSArrayBufferView>(
         resultGPR, TrustedImmPtr(structure), TrustedImmPtr(0), scratchGPR, scratchGPR2,
         slowCases);
-    
+
+    m_jit.emitComputeButterflyIndexingMask(sizeGPR, scratchGPR, scratchGPR2);
     m_jit.storePtr(
         storageGPR,
         MacroAssembler::Address(resultGPR, JSArrayBufferView::offsetOfVector()));
     m_jit.store32(
         sizeGPR,
         MacroAssembler::Address(resultGPR, JSArrayBufferView::offsetOfLength()));
+    m_jit.store32(
+        scratchGPR2,
+        MacroAssembler::Address(resultGPR, JSArrayBufferView::offsetOfIndexingMask()));
     m_jit.store32(
         TrustedImm32(FastTypedArray),
         MacroAssembler::Address(resultGPR, JSArrayBufferView::offsetOfMode()));
