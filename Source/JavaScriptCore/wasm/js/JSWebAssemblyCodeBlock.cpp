@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -51,6 +51,8 @@ JSWebAssemblyCodeBlock::JSWebAssemblyCodeBlock(VM& vm, Ref<Wasm::CodeBlock>&& co
     : Base(vm, vm.webAssemblyCodeBlockStructure.get())
     , m_codeBlock(WTFMove(codeBlock))
 {
+    m_unconditionalFinalizer = PoisonedUniquePtr<JSWebAssemblyCodeBlockPoison, UnconditionalFinalizer>::create(*this);
+
     // FIXME: We should not need to do this synchronously.
     // https://bugs.webkit.org/show_bug.cgi?id=170567
     m_wasmToJSExitStubs.reserveCapacity(m_codeBlock->functionImportCount());
@@ -92,15 +94,13 @@ void JSWebAssemblyCodeBlock::visitChildren(JSCell* cell, SlotVisitor& visitor)
 
     Base::visitChildren(thisObject, visitor);
 
-    visitor.addUnconditionalFinalizer(&thisObject->m_unconditionalFinalizer);
+    visitor.addUnconditionalFinalizer(thisObject->m_unconditionalFinalizer.get());
 }
 
 void JSWebAssemblyCodeBlock::UnconditionalFinalizer::finalizeUnconditionally()
 {
-    JSWebAssemblyCodeBlock* thisObject = bitwise_cast<JSWebAssemblyCodeBlock*>(
-        bitwise_cast<char*>(this) - OBJECT_OFFSETOF(JSWebAssemblyCodeBlock, m_unconditionalFinalizer));
-    for (auto iter = thisObject->m_callLinkInfos.begin(); !!iter; ++iter)
-        (*iter)->visitWeak(*thisObject->vm());
+    for (auto iter = codeBlock.m_callLinkInfos.begin(); !!iter; ++iter)
+        (*iter)->visitWeak(*codeBlock.vm());
 }
 
 } // namespace JSC

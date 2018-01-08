@@ -1,4 +1,4 @@
-# Copyright (C) 2011-2017 Apple Inc. All rights reserved.
+# Copyright (C) 2011-2018 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -202,6 +202,10 @@ else
     const EmptyValueTag = -6
     const DeletedValueTag = -7
     const LowestTag = DeletedValueTag
+end
+
+if POISON
+    const CodeBlockPoison = constexpr CodeBlock::s_poison
 end
 
 # PutByIdFlags data
@@ -752,6 +756,12 @@ macro preserveReturnAddressAfterCall(destinationRegister)
     end
 end
 
+macro unpoison(poison, field)
+    if POISON
+        xorp poison, field
+    end
+end
+
 macro functionPrologue()
     if X86 or X86_WIN or X86_64 or X86_64_WIN
         push cfr
@@ -1014,6 +1024,7 @@ macro prologue(codeBlockGetter, codeBlockSetter, osrSlowPath, traceSlowPath)
     # Set up the PC.
     if JSVALUE64
         loadp CodeBlock::m_instructions[t1], PB
+        unpoison(CodeBlockPoison, PB)
         move 0, PC
     else
         loadp CodeBlock::m_instructions[t1], PC
@@ -1024,6 +1035,7 @@ macro prologue(codeBlockGetter, codeBlockSetter, osrSlowPath, traceSlowPath)
     subp cfr, t0, t0
     bpa t0, cfr, .needStackCheck
     loadp CodeBlock::m_vm[t1], t2
+    unpoison(CodeBlockPoison, t2)
     if C_LOOP
         bpbeq VM::m_cloopStackLimit[t2], t0, .stackHeightOK
     else
@@ -1611,6 +1623,7 @@ _llint_op_check_traps:
     traceExecution()
     loadp CodeBlock[cfr], t1
     loadp CodeBlock::m_vm[t1], t1
+    unpoison(CodeBlockPoison, t1)
     loadb VM::m_traps+VMTraps::m_needTrapHandling[t1], t0
     btpnz t0, .handleTraps
 .afterHandlingTraps:
@@ -1626,6 +1639,7 @@ _llint_op_check_traps:
 macro acquireShadowChickenPacket(slow)
     loadp CodeBlock[cfr], t1
     loadp CodeBlock::m_vm[t1], t1
+    unpoison(CodeBlockPoison, t1)
     loadp VM::m_shadowChicken[t1], t2
     loadp ShadowChicken::m_logCursor[t2], t0
     bpaeq t0, ShadowChicken::m_logEnd[t2], slow

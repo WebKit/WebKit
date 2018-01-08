@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,10 +31,10 @@
 
 namespace WTF {
 
-template<typename ElementType, typename KeyType, typename HashArg, typename KeyGetterFunctor>
-void toHashMap(Bag<ElementType>& bag, KeyGetterFunctor& getKey, HashMap<KeyType, ElementType*, HashArg>& result)
+template<typename ElementType, typename BagPtrTraits, typename KeyType, typename HashArg, typename KeyGetterFunctor>
+void toHashMap(Bag<ElementType, BagPtrTraits>& bag, KeyGetterFunctor& getKey, HashMap<KeyType, ElementType*, HashArg>& result)
 {
-    for (typename Bag<ElementType>::iterator iter = bag.begin(); !!iter; ++iter) {
+    for (typename Bag<ElementType, BagPtrTraits>::iterator iter = bag.begin(); !!iter; ++iter) {
         ElementType* element = *iter;
         KeyType key = getKey(*element);
         result.add(key, element);

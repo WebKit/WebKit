@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2013, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,6 +28,7 @@
 
 #pragma once
 
+#include "JSCPoison.h"
 #include "SourceProvider.h"
 #include <wtf/RefPtr.h>
 
@@ -98,9 +99,9 @@ namespace JSC {
         int length() const { return m_endOffset - m_startOffset; }
 
     protected:
-        // FIXME: Make it Ref<SourceProvidier>.
+        // FIXME: Make it PoisonedRef<SourceProvidier>.
         // https://bugs.webkit.org/show_bug.cgi?id=168325
-        RefPtr<SourceProvider> m_provider;
+        PoisonedRefPtr<UnlinkedSourceCodePoison, SourceProvider> m_provider;
         int m_startOffset;
         int m_endOffset;
     };

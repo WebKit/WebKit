@@ -1,3 +1,65 @@
+2018-01-07  Mark Lam  <mark.lam@apple.com>
+
+        Apply poisoning to more pointers in JSC.
+        https://bugs.webkit.org/show_bug.cgi?id=181096
+        <rdar://problem/36182970>
+
+        Reviewed by JF Bastien.
+
+        * assembler/MacroAssembler.h:
+        (JSC::MacroAssembler::xorPtr):
+        * assembler/MacroAssemblerARM64.h:
+        (JSC::MacroAssemblerARM64::xor64):
+        * assembler/MacroAssemblerX86_64.h:
+        (JSC::MacroAssemblerX86_64::xor64):
+        - Add xorPtr implementation.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::inferredName const):
+        (JSC::CodeBlock::CodeBlock):
+        (JSC::CodeBlock::finishCreation):
+        (JSC::CodeBlock::~CodeBlock):
+        (JSC::CodeBlock::setConstantRegisters):
+        (JSC::CodeBlock::visitWeakly):
+        (JSC::CodeBlock::visitChildren):
+        (JSC::CodeBlock::propagateTransitions):
+        (JSC::CodeBlock::WeakReferenceHarvester::visitWeakReferences):
+        (JSC::CodeBlock::finalizeLLIntInlineCaches):
+        (JSC::CodeBlock::finalizeBaselineJITInlineCaches):
+        (JSC::CodeBlock::UnconditionalFinalizer::finalizeUnconditionally):
+        (JSC::CodeBlock::jettison):
+        (JSC::CodeBlock::predictedMachineCodeSize):
+        (JSC::CodeBlock::findPC):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::UnconditionalFinalizer::UnconditionalFinalizer):
+        (JSC::CodeBlock::WeakReferenceHarvester::WeakReferenceHarvester):
+        (JSC::CodeBlock::stubInfoBegin):
+        (JSC::CodeBlock::stubInfoEnd):
+        (JSC::CodeBlock::callLinkInfosBegin):
+        (JSC::CodeBlock::callLinkInfosEnd):
+        (JSC::CodeBlock::instructions):
+        (JSC::CodeBlock::instructions const):
+        (JSC::CodeBlock::vm const):
+        * dfg/DFGOSRExitCompilerCommon.h:
+        (JSC::DFG::adjustFrameAndStackInOSRExitCompilerThunk):
+        * jit/JIT.h:
+        * llint/LLIntOfflineAsmConfig.h:
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * parser/UnlinkedSourceCode.h:
+        * runtime/JSCPoison.h:
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        * runtime/JSGlobalObject.h:
+        * runtime/JSScriptFetchParameters.h:
+        * runtime/JSScriptFetcher.h:
+        * runtime/StructureTransitionTable.h:
+        * wasm/js/JSWebAssemblyCodeBlock.cpp:
+        (JSC::JSWebAssemblyCodeBlock::JSWebAssemblyCodeBlock):
+        (JSC::JSWebAssemblyCodeBlock::visitChildren):
+        (JSC::JSWebAssemblyCodeBlock::UnconditionalFinalizer::finalizeUnconditionally):
+        * wasm/js/JSWebAssemblyCodeBlock.h:
+
 2018-01-06  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Object.getOwnPropertyNames includes "arguments" and "caller" for bound functions

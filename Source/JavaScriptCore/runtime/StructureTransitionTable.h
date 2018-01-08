@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -187,8 +187,8 @@ public:
 
 private:
     friend class SingleSlotTransitionWeakOwner;
-    using PoisonedTransitionMapPtr = ConstExprPoisoned<TransitionMapPoison, TransitionMap*>;
-    using PoisonedWeakImplPtr = ConstExprPoisoned<WeakImplPoison, WeakImpl*>;
+    using PoisonedTransitionMapPtr = ConstExprPoisoned<StructureTransitionTablePoison, TransitionMap*>;
+    using PoisonedWeakImplPtr = ConstExprPoisoned<StructureTransitionTablePoison, WeakImpl*>;
 
     bool isUsingSingleSlot() const
     {

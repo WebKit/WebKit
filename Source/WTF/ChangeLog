@@ -1,3 +1,43 @@
+2018-01-07  Mark Lam  <mark.lam@apple.com>
+
+        Apply poisoning to more pointers in JSC.
+        https://bugs.webkit.org/show_bug.cgi?id=181096
+        <rdar://problem/36182970>
+
+        Reviewed by JF Bastien.
+
+        Added support for PoisonedBag and PoisonedRefCountedArray.
+
+        * wtf/Bag.h:
+        (WTF::Private::BagNode::BagNode):
+        (WTF::Bag::Bag):
+        (WTF::Bag::operator=):
+        (WTF::Bag::clear):
+        (WTF::Bag::add):
+        (WTF::Bag::begin):
+        (WTF::Bag::unwrappedHead):
+        (WTF::Bag::Node::Node): Deleted.
+        * wtf/BagToHashMap.h:
+        (WTF::toHashMap):
+        * wtf/Poisoned.h:
+        (WTF::constExprPoisonRandom):
+        (WTF::makeConstExprPoison):
+        * wtf/RefCountedArray.h:
+        (WTF::RefCountedArray::RefCountedArray):
+        (WTF::RefCountedArray::clone const):
+        (WTF::RefCountedArray::operator=):
+        (WTF::RefCountedArray::~RefCountedArray):
+        (WTF::RefCountedArray::refCount const):
+        (WTF::RefCountedArray::size const):
+        (WTF::RefCountedArray::data):
+        (WTF::RefCountedArray::begin):
+        (WTF::RefCountedArray::end):
+        (WTF::RefCountedArray::data const):
+        (WTF::RefCountedArray::begin const):
+        (WTF::RefCountedArray::operator== const):
+        (WTF::RefCountedArray::Header::fromPayload):
+        * wtf/WTFAssertions.cpp:
+
 2018-01-05  JF Bastien  <jfbastien@apple.com>
 
         WebAssembly: poison JS object's secrets

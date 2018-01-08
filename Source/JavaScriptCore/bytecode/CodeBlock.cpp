@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2018 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Cameron Zwarich <cwzwarich@uwaterloo.ca>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -307,12 +307,12 @@ CodeBlock::CodeBlock(VM* vm, Structure* structure, CopyParsedBlockTag, CodeBlock
     , m_isConstructor(other.m_isConstructor)
     , m_isStrictMode(other.m_isStrictMode)
     , m_codeType(other.m_codeType)
-    , m_unlinkedCode(*other.m_vm, this, other.m_unlinkedCode.get())
+    , m_unlinkedCode(*other.vm(), this, other.m_unlinkedCode.get())
     , m_numberOfArgumentsToSkip(other.m_numberOfArgumentsToSkip)
     , m_hasDebuggerStatement(false)
     , m_steppingMode(SteppingModeDisabled)
     , m_numBreakpoints(0)
-    , m_ownerExecutable(*other.m_vm, this, other.m_ownerExecutable.get())
+    , m_ownerExecutable(*other.vm(), this, other.m_ownerExecutable.get())
     , m_vm(other.m_vm)
     , m_instructions(other.m_instructions)
     , m_thisRegister(other.m_thisRegister)
@@ -329,6 +329,8 @@ CodeBlock::CodeBlock(VM* vm, Structure* structure, CopyParsedBlockTag, CodeBlock
     , m_optimizationDelayCounter(0)
     , m_reoptimizationRetryCounter(0)
     , m_creationTime(MonotonicTime::now())
+    , m_unconditionalFinalizer(makePoisonedUnique<UnconditionalFinalizer>(*this))
+    , m_weakReferenceHarvester(makePoisonedUnique<WeakReferenceHarvester>(*this))
 {
     m_visitWeaklyHasBeenCalled = false;
 
@@ -387,6 +389,8 @@ CodeBlock::CodeBlock(VM* vm, Structure* structure, ScriptExecutable* ownerExecut
     , m_optimizationDelayCounter(0)
     , m_reoptimizationRetryCounter(0)
     , m_creationTime(MonotonicTime::now())
+    , m_unconditionalFinalizer(makePoisonedUnique<UnconditionalFinalizer>(*this))
+    , m_weakReferenceHarvester(makePoisonedUnique<WeakReferenceHarvester>(*this))
 {
     m_visitWeaklyHasBeenCalled = false;
 
@@ -422,19 +426,19 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
     RETURN_IF_EXCEPTION(throwScope, false);
 
     if (unlinkedCodeBlock->usesGlobalObject())
-        m_constantRegisters[unlinkedCodeBlock->globalObjectRegister().toConstantIndex()].set(*m_vm, this, m_globalObject.get());
+        m_constantRegisters[unlinkedCodeBlock->globalObjectRegister().toConstantIndex()].set(vm, this, m_globalObject.get());
 
     for (unsigned i = 0; i < LinkTimeConstantCount; i++) {
         LinkTimeConstant type = static_cast<LinkTimeConstant>(i);
         if (unsigned registerIndex = unlinkedCodeBlock->registerIndexForLinkTimeConstant(type))
-            m_constantRegisters[registerIndex].set(*m_vm, this, m_globalObject->jsCellForLinkTimeConstant(type));
+            m_constantRegisters[registerIndex].set(vm, this, m_globalObject->jsCellForLinkTimeConstant(type));
     }
 
     // We already have the cloned symbol table for the module environment since we need to instantiate
     // the module environments before linking the code block. We replace the stored symbol table with the already cloned one.
     if (UnlinkedModuleProgramCodeBlock* unlinkedModuleProgramCodeBlock = jsDynamicCast<UnlinkedModuleProgramCodeBlock*>(vm, unlinkedCodeBlock)) {
         SymbolTable* clonedSymbolTable = jsCast<ModuleProgramExecutable*>(ownerExecutable)->moduleEnvironmentSymbolTable();
-        if (m_vm->typeProfiler()) {
+        if (vm.typeProfiler()) {
             ConcurrentJSLocker locker(clonedSymbolTable->m_lock);
             clonedSymbolTable->prepareForTypeProfiling(locker);
         }
@@ -447,7 +451,7 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
         UnlinkedFunctionExecutable* unlinkedExecutable = unlinkedCodeBlock->functionDecl(i);
         if (shouldUpdateFunctionHasExecutedCache)
             vm.functionHasExecutedCache()->insertUnexecutedRange(ownerExecutable->sourceID(), unlinkedExecutable->typeProfilingStartOffset(), unlinkedExecutable->typeProfilingEndOffset());
-        m_functionDecls[i].set(*m_vm, this, unlinkedExecutable->link(*m_vm, ownerExecutable->source()));
+        m_functionDecls[i].set(vm, this, unlinkedExecutable->link(vm, ownerExecutable->source()));
     }
 
     m_functionExprs = RefCountedArray<WriteBarrier<FunctionExecutable>>(unlinkedCodeBlock->numberOfFunctionExprs());
@@ -455,7 +459,7 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
         UnlinkedFunctionExecutable* unlinkedExecutable = unlinkedCodeBlock->functionExpr(i);
         if (shouldUpdateFunctionHasExecutedCache)
             vm.functionHasExecutedCache()->insertUnexecutedRange(ownerExecutable->sourceID(), unlinkedExecutable->typeProfilingStartOffset(), unlinkedExecutable->typeProfilingEndOffset());
-        m_functionExprs[i].set(*m_vm, this, unlinkedExecutable->link(*m_vm, ownerExecutable->source()));
+        m_functionExprs[i].set(vm, this, unlinkedExecutable->link(vm, ownerExecutable->source()));
     }
 
     if (unlinkedCodeBlock->hasRareData()) {
@@ -853,8 +857,9 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
 
 CodeBlock::~CodeBlock()
 {
-    if (UNLIKELY(m_vm->m_perBytecodeProfiler))
-        m_vm->m_perBytecodeProfiler->notifyDestruction(this);
+    VM& vm = *m_vm;
+    if (UNLIKELY(vm.m_perBytecodeProfiler))
+        vm.m_perBytecodeProfiler->notifyDestruction(this);
 
     if (unlinkedCodeBlock()->didOptimize() == MixedTriState)
         unlinkedCodeBlock()->setDidOptimize(FalseTriState);
@@ -876,7 +881,7 @@ CodeBlock::~CodeBlock()
     // destructors.
 
 #if ENABLE(JIT)
-    for (Bag<StructureStubInfo>::iterator iter = m_stubInfos.begin(); !!iter; ++iter) {
+    for (auto iter = m_stubInfos.begin(); !!iter; ++iter) {
         StructureStubInfo* stub = *iter;
         stub->aboutToDie();
         stub->deref();
@@ -909,37 +914,38 @@ void CodeBlock::setConstantIdentifierSetRegisters(VM& vm, const Vector<ConstantI
 
 void CodeBlock::setConstantRegisters(const Vector<WriteBarrier<Unknown>>& constants, const Vector<SourceCodeRepresentation>& constantsSourceCodeRepresentation)
 {
-    auto scope = DECLARE_THROW_SCOPE(*m_vm);
+    VM& vm = *m_vm;
+    auto scope = DECLARE_THROW_SCOPE(vm);
     JSGlobalObject* globalObject = m_globalObject.get();
     ExecState* exec = globalObject->globalExec();
 
     ASSERT(constants.size() == constantsSourceCodeRepresentation.size());
     size_t count = constants.size();
     m_constantRegisters.resizeToFit(count);
-    bool hasTypeProfiler = !!m_vm->typeProfiler();
+    bool hasTypeProfiler = !!vm.typeProfiler();
     for (size_t i = 0; i < count; i++) {
         JSValue constant = constants[i].get();
 
         if (!constant.isEmpty()) {
-            if (SymbolTable* symbolTable = jsDynamicCast<SymbolTable*>(*m_vm, constant)) {
+            if (SymbolTable* symbolTable = jsDynamicCast<SymbolTable*>(vm, constant)) {
                 if (hasTypeProfiler) {
                     ConcurrentJSLocker locker(symbolTable->m_lock);
                     symbolTable->prepareForTypeProfiling(locker);
                 }
 
-                SymbolTable* clone = symbolTable->cloneScopePart(*m_vm);
+                SymbolTable* clone = symbolTable->cloneScopePart(vm);
                 if (wasCompiledWithDebuggingOpcodes())
                     clone->setRareDataCodeBlock(this);
 
                 constant = clone;
-            } else if (isTemplateRegistryKey(*m_vm, constant)) {
+            } else if (isTemplateRegistryKey(vm, constant)) {
                 auto* templateObject = globalObject->templateRegistry().getTemplateObject(exec, jsCast<JSTemplateRegistryKey*>(constant));
                 RETURN_IF_EXCEPTION(scope, void());
                 constant = templateObject;
             }
         }
 
-        m_constantRegisters[i].set(*m_vm, this, constant);
+        m_constantRegisters[i].set(vm, this, constant);
     }
 
     m_constantsSourceCodeRepresentation = constantsSourceCodeRepresentation;
@@ -989,7 +995,7 @@ void CodeBlock::visitWeakly(SlotVisitor& visitor)
     // and jettisoning. The probability of us wanting to do at least one of those things
     // is probably quite close to 1. So we add one no matter what and when it runs, it
     // figures out whether it has any work to do.
-    visitor.addUnconditionalFinalizer(&m_unconditionalFinalizer);
+    visitor.addUnconditionalFinalizer(m_unconditionalFinalizer.get());
 
     if (!JITCode::isOptimizingJIT(jitType()))
         return;
@@ -1001,7 +1007,7 @@ void CodeBlock::visitWeakly(SlotVisitor& visitor)
     // There are two things that we use weak reference harvesters for: DFG fixpoint for
     // jettisoning, and trying to find structures that would be live based on some
     // inline cache. So it makes sense to register them regardless.
-    visitor.addWeakReferenceHarvester(&m_weakReferenceHarvester);
+    visitor.addWeakReferenceHarvester(m_weakReferenceHarvester.get());
 
 #if ENABLE(DFG_JIT)
     // We get here if we're live in the sense that our owner executable is live,
@@ -1045,7 +1051,7 @@ void CodeBlock::visitChildren(SlotVisitor& visitor)
     // and jettisoning. The probability of us wanting to do at least one of those things
     // is probably quite close to 1. So we add one no matter what and when it runs, it
     // figures out whether it has any work to do.
-    visitor.addUnconditionalFinalizer(&m_unconditionalFinalizer);
+    visitor.addUnconditionalFinalizer(m_unconditionalFinalizer.get());
 
     if (CodeBlock* otherBlock = specialOSREntryBlockOrNull())
         visitor.appendUnbarriered(otherBlock);
@@ -1161,6 +1167,7 @@ void CodeBlock::propagateTransitions(const ConcurrentJSLocker&, SlotVisitor& vis
     if (m_allTransitionsHaveBeenMarked)
         return;
 
+    VM& vm = *m_vm;
     bool allAreMarkedSoFar = true;
         
     if (jitType() == JITCode::InterpreterThunk) {
@@ -1174,9 +1181,9 @@ void CodeBlock::propagateTransitions(const ConcurrentJSLocker&, SlotVisitor& vis
                 if (!oldStructureID || !newStructureID)
                     break;
                 Structure* oldStructure =
-                    m_vm->heap.structureIDTable().get(oldStructureID);
+                    vm.heap.structureIDTable().get(oldStructureID);
                 Structure* newStructure =
-                    m_vm->heap.structureIDTable().get(newStructureID);
+                    vm.heap.structureIDTable().get(newStructureID);
                 if (Heap::isMarked(oldStructure))
                     visitor.appendUnbarriered(newStructure);
                 else
@@ -1191,7 +1198,7 @@ void CodeBlock::propagateTransitions(const ConcurrentJSLocker&, SlotVisitor& vis
 
 #if ENABLE(JIT)
     if (JITCode::isJIT(jitType())) {
-        for (Bag<StructureStubInfo>::iterator iter = m_stubInfos.begin(); !!iter; ++iter)
+        for (auto iter = m_stubInfos.begin(); !!iter; ++iter)
             allAreMarkedSoFar &= (*iter)->propagateTransitions(visitor);
     }
 #endif // ENABLE(JIT)
@@ -1279,12 +1286,8 @@ void CodeBlock::determineLiveness(const ConcurrentJSLocker&, SlotVisitor& visito
 
 void CodeBlock::WeakReferenceHarvester::visitWeakReferences(SlotVisitor& visitor)
 {
-    CodeBlock* codeBlock =
-        bitwise_cast<CodeBlock*>(
-            bitwise_cast<char*>(this) - OBJECT_OFFSETOF(CodeBlock, m_weakReferenceHarvester));
-    
-    codeBlock->propagateTransitions(NoLockingNecessary, visitor);
-    codeBlock->determineLiveness(NoLockingNecessary, visitor);
+    codeBlock.propagateTransitions(NoLockingNecessary, visitor);
+    codeBlock.determineLiveness(NoLockingNecessary, visitor);
 }
 
 void CodeBlock::clearLLIntGetByIdCache(Instruction* instruction)
@@ -1297,6 +1300,7 @@ void CodeBlock::clearLLIntGetByIdCache(Instruction* instruction)
 
 void CodeBlock::finalizeLLIntInlineCaches()
 {
+    VM& vm = *m_vm;
     const Vector<unsigned>& propertyAccessInstructions = m_unlinkedCode->propertyAccessInstructions();
     for (size_t size = propertyAccessInstructions.size(), i = 0; i < size; ++i) {
         Instruction* curInstruction = &instructions()[propertyAccessInstructions[i]];
@@ -1305,7 +1309,7 @@ void CodeBlock::finalizeLLIntInlineCaches()
         case op_get_by_id_proto_load:
         case op_get_by_id_unset: {
             StructureID oldStructureID = curInstruction[4].u.structureID;
-            if (!oldStructureID || Heap::isMarked(m_vm->heap.structureIDTable().get(oldStructureID)))
+            if (!oldStructureID || Heap::isMarked(vm.heap.structureIDTable().get(oldStructureID)))
                 break;
             if (Options::verboseOSR())
                 dataLogF("Clearing LLInt property access.\n");
@@ -1316,9 +1320,9 @@ void CodeBlock::finalizeLLIntInlineCaches()
             StructureID oldStructureID = curInstruction[4].u.structureID;
             StructureID newStructureID = curInstruction[6].u.structureID;
             StructureChain* chain = curInstruction[7].u.structureChain.get();
-            if ((!oldStructureID || Heap::isMarked(m_vm->heap.structureIDTable().get(oldStructureID))) &&
-                (!newStructureID || Heap::isMarked(m_vm->heap.structureIDTable().get(newStructureID))) &&
-                (!chain || Heap::isMarked(chain)))
+            if ((!oldStructureID || Heap::isMarked(vm.heap.structureIDTable().get(oldStructureID)))
+                && (!newStructureID || Heap::isMarked(vm.heap.structureIDTable().get(newStructureID)))
+                && (!chain || Heap::isMarked(chain)))
                 break;
             if (Options::verboseOSR())
                 dataLogF("Clearing LLInt put transition.\n");
@@ -1410,7 +1414,7 @@ void CodeBlock::finalizeBaselineJITInlineCaches()
     for (auto iter = callLinkInfosBegin(); !!iter; ++iter)
         (*iter)->visitWeak(*vm());
 
-    for (Bag<StructureStubInfo>::iterator iter = m_stubInfos.begin(); !!iter; ++iter) {
+    for (auto iter = m_stubInfos.begin(); !!iter; ++iter) {
         StructureStubInfo& stubInfo = **iter;
         stubInfo.visitWeakReferences(this);
     }
@@ -1419,25 +1423,22 @@ void CodeBlock::finalizeBaselineJITInlineCaches()
 
 void CodeBlock::UnconditionalFinalizer::finalizeUnconditionally()
 {
-    CodeBlock* codeBlock = bitwise_cast<CodeBlock*>(
-        bitwise_cast<char*>(this) - OBJECT_OFFSETOF(CodeBlock, m_unconditionalFinalizer));
+    codeBlock.updateAllPredictions();
     
-    codeBlock->updateAllPredictions();
-    
-    if (!Heap::isMarked(codeBlock)) {
-        if (codeBlock->shouldJettisonDueToWeakReference())
-            codeBlock->jettison(Profiler::JettisonDueToWeakReference);
+    if (!Heap::isMarked(&codeBlock)) {
+        if (codeBlock.shouldJettisonDueToWeakReference())
+            codeBlock.jettison(Profiler::JettisonDueToWeakReference);
         else
-            codeBlock->jettison(Profiler::JettisonDueToOldAge);
+            codeBlock.jettison(Profiler::JettisonDueToOldAge);
         return;
     }
 
-    if (JITCode::couldBeInterpreted(codeBlock->jitType()))
-        codeBlock->finalizeLLIntInlineCaches();
+    if (JITCode::couldBeInterpreted(codeBlock.jitType()))
+        codeBlock.finalizeLLIntInlineCaches();
 
 #if ENABLE(JIT)
-    if (!!codeBlock->jitCode())
-        codeBlock->finalizeBaselineJITInlineCaches();
+    if (!!codeBlock.jitCode())
+        codeBlock.finalizeBaselineJITInlineCaches();
 #endif
 }
 
@@ -1959,6 +1960,7 @@ void CodeBlock::jettison(Profiler::JettisonReason reason, ReoptimizationMode mod
     }
 #endif // ENABLE(DFG_JIT)
 
+    VM& vm = *m_vm;
     DeferGCForAWhile deferGC(*heap());
     
     // We want to accomplish two things here:
@@ -1975,7 +1977,7 @@ void CodeBlock::jettison(Profiler::JettisonReason reason, ReoptimizationMode mod
         // This accomplishes (1), and does its own book-keeping about whether it has already happened.
         if (!jitCode()->dfgCommon()->invalidate()) {
             // We've already been invalidated.
-            RELEASE_ASSERT(this != replacement() || (m_vm->heap.isCurrentThreadBusy() && !Heap::isMarked(ownerScriptExecutable())));
+            RELEASE_ASSERT(this != replacement() || (vm.heap.isCurrentThreadBusy() && !Heap::isMarked(ownerScriptExecutable())));
             return;
         }
     }
@@ -2007,12 +2009,11 @@ void CodeBlock::jettison(Profiler::JettisonReason reason, ReoptimizationMode mod
 
     // Jettison can happen during GC. We don't want to install code to a dead executable
     // because that would add a dead object to the remembered set.
-    if (m_vm->heap.isCurrentThreadBusy() && !Heap::isMarked(ownerScriptExecutable()))
+    if (vm.heap.isCurrentThreadBusy() && !Heap::isMarked(ownerScriptExecutable()))
         return;
 
     // This accomplishes (2).
-    ownerScriptExecutable()->installCode(
-        *m_vm, alternative(), codeType(), specializationKind());
+    ownerScriptExecutable()->installCode(vm, alternative(), codeType(), specializationKind());
 
 #if ENABLE(DFG_JIT)
     if (DFG::shouldDumpDisassembly())
@@ -2767,18 +2768,19 @@ int CodeBlock::stackPointerOffset()
 
 size_t CodeBlock::predictedMachineCodeSize()
 {
+    VM* vm = m_vm.unpoisoned();
     // This will be called from CodeBlock::CodeBlock before either m_vm or the
     // instructions have been initialized. It's OK to return 0 because what will really
     // matter is the recomputation of this value when the slow path is triggered.
-    if (!m_vm)
+    if (!vm)
         return 0;
     
-    if (!*m_vm->machineCodeBytesPerBytecodeWordForBaselineJIT)
+    if (!*vm->machineCodeBytesPerBytecodeWordForBaselineJIT)
         return 0; // It's as good of a prediction as we'll get.
     
     // Be conservative: return a size that will be an overestimation 84% of the time.
-    double multiplier = m_vm->machineCodeBytesPerBytecodeWordForBaselineJIT->mean() +
-        m_vm->machineCodeBytesPerBytecodeWordForBaselineJIT->standardDeviation();
+    double multiplier = vm->machineCodeBytesPerBytecodeWordForBaselineJIT->mean() +
+        vm->machineCodeBytesPerBytecodeWordForBaselineJIT->standardDeviation();
     
     // Be paranoid: silently reject bogus multipiers. Silently doing the "wrong" thing
     // here is OK, since this whole method is just a heuristic.
@@ -3066,7 +3068,7 @@ std::optional<CodeOrigin> CodeBlock::findPC(void* pc)
             return codeOrigin;
     }
 
-    for (Bag<StructureStubInfo>::iterator iter = m_stubInfos.begin(); !!iter; ++iter) {
+    for (auto iter = m_stubInfos.begin(); !!iter; ++iter) {
         StructureStubInfo* stub = *iter;
         if (stub->containsPC(pc))
             return std::optional<CodeOrigin>(stub->codeOrigin);

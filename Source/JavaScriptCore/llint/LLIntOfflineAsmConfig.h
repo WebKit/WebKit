@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,6 +28,7 @@
 #include "LLIntCommon.h"
 #include <wtf/Assertions.h>
 #include <wtf/Gigacage.h>
+#include <wtf/Poisoned.h>
 
 #if !ENABLE(JIT)
 #define OFFLINE_ASM_C_LOOP 1
@@ -140,6 +141,12 @@
 #define OFFLINE_ASM_JSVALUE64 1
 #else
 #define OFFLINE_ASM_JSVALUE64 0
+#endif
+
+#if ENABLE(POISON)
+#define OFFLINE_ASM_POISON 1
+#else
+#define OFFLINE_ASM_POISON 0
 #endif
 
 #if !ASSERT_DISABLED
