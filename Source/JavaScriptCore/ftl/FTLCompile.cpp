@@ -151,8 +151,8 @@ void compile(State& state, Safepoint::Result& safepointResult)
     if (vm.shouldBuilderPCToCodeOriginMapping())
         codeBlock->setPCToCodeOriginMap(std::make_unique<PCToCodeOriginMap>(PCToCodeOriginMapBuilder(vm, WTFMove(originMap)), *state.finalizer->b3CodeLinkBuffer));
 
-    state.generatedFunction = bitwise_cast<GeneratedFunction>(
-        state.finalizer->b3CodeLinkBuffer->entrypoint().executableAddress());
+    CodeLocationLabel label = state.finalizer->b3CodeLinkBuffer->entrypoint();
+    state.generatedFunction = label.executableAddress<GeneratedFunction>();
     state.jitCode->initializeB3Byproducts(state.proc->releaseByproducts());
 
     if (B3::Air::Disassembler* disassembler = state.proc->code().disassembler()) {

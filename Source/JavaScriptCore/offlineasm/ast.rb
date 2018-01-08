@@ -928,7 +928,7 @@ class Instruction < Node
         when "globalAnnotation"
             $asm.putGlobalAnnotation
         when "emit"
-          $asm.puts "#{operands[0].dump}"
+            $asm.puts "#{operands[0].dump}"
         else
             raise "Unhandled opcode #{opcode} at #{codeOriginString}"
         end
@@ -1080,10 +1080,18 @@ end
 
 class LabelReference < Node
     attr_reader :label
+    attr_accessor :offset
     
     def initialize(codeOrigin, label)
         super(codeOrigin)
         @label = label
+        @offset = 0
+    end
+    
+    def plusOffset(additionalOffset)
+        result = LabelReference.new(codeOrigin, label)
+        result.offset = @offset + additionalOffset
+        result
     end
     
     def children

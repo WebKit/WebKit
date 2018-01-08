@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009, 2010, 2012-2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2009-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -130,7 +130,7 @@ public:
     
     void link(Call call, CodeLocationLabel label)
     {
-        link(call, FunctionPtr(label.executableAddress()));
+        link(call, FunctionPtr(label));
     }
     
     void link(Jump jump, CodeLocationLabel label)
@@ -154,7 +154,7 @@ public:
     void patch(DataLabelPtr label, CodeLocationLabel value)
     {
         AssemblerLabel target = applyOffset(label.m_label);
-        MacroAssembler::linkPointer(code(), target, value.executableAddress());
+        MacroAssembler::linkPointer(code(), target, value);
     }
 
     // These methods are used to obtain handles to allow the code to be relinked / repatched later.

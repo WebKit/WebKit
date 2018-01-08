@@ -70,7 +70,7 @@ LinkBuffer::CodeRef LinkBuffer::finalizeCodeWithDisassembly(const char* format, 
     va_end(argList);
     out.printf(":\n");
 
-    out.printf("    Code at [%p, %p):\n", result.code().executableAddress(), static_cast<char*>(result.code().executableAddress()) + result.size());
+    out.printf("    Code at [%p, %p):\n", result.code().executableAddress(), result.code().executableAddress<char*>() + result.size());
     
     CString header = out.toCString();
     

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2009, 2012-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -428,7 +428,7 @@ public:
 
     void setObjectToStringValue(ExecState*, VM&, JSString* value, PropertySlot toStringTagSymbolSlot);
 
-    const ClassInfo* classInfo() const { return m_classInfo; }
+    const ClassInfo* classInfo() const { return m_classInfo.unpoisoned(); }
 
     static ptrdiff_t structureIDOffset()
     {
@@ -771,7 +771,7 @@ private:
 
     RefPtr<UniquedStringImpl> m_nameInPrevious;
 
-    const ClassInfo* m_classInfo;
+    PoisonedClassInfoPtr m_classInfo;
 
     StructureTransitionTable m_transitionTable;
 

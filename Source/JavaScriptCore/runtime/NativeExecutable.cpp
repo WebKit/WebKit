@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009, 2010, 2013, 2015-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2009-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -79,10 +79,10 @@ NativeExecutable::NativeExecutable(VM& vm, NativeFunction function, NativeFuncti
 CodeBlockHash NativeExecutable::hashFor(CodeSpecializationKind kind) const
 {
     if (kind == CodeForCall)
-        return CodeBlockHash(static_cast<unsigned>(bitwise_cast<size_t>(m_function)));
-    
+        return CodeBlockHash(m_function.bits());
+
     RELEASE_ASSERT(kind == CodeForConstruct);
-    return CodeBlockHash(static_cast<unsigned>(bitwise_cast<size_t>(m_constructor)));
+    return CodeBlockHash(m_constructor.bits());
 }
 
 } // namespace JSC

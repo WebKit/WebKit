@@ -43,7 +43,7 @@ public:
         return &vm.destructibleObjectSpace;
     }
 
-    const ClassInfo* classInfo() const { return m_classInfo; }
+    const ClassInfo* classInfo() const { return m_classInfo.unpoisoned(); }
     
     static ptrdiff_t classInfoOffset() { return OBJECT_OFFSETOF(JSDestructibleObject, m_classInfo); }
 
@@ -56,7 +56,7 @@ protected:
     }
 
 private:
-    const ClassInfo* m_classInfo;
+    PoisonedClassInfoPtr m_classInfo;
 };
 
 } // namespace JSC
