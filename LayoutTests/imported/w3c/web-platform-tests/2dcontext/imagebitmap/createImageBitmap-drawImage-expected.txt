@@ -1,10 +1,18 @@
 
 Harness Error (TIMEOUT), message = null
 
-PASS createImageBitmap from a HTMLImageElement, and drawImage on the created ImageBitmap 
-FAIL createImageBitmap from a Blob, and drawImage on the created ImageBitmap promise_test: Unhandled rejection with value: object "TypeError: createImageBitmap with ArrayBuffer or Blob is not implemented"
-PASS createImageBitmap from a HTMLCanvasElement, and drawImage on the created ImageBitmap 
-PASS createImageBitmap from an ImageBitmap, and drawImage on the created ImageBitmap 
-FAIL createImageBitmap from an ImageData, and drawImage on the created ImageBitmap promise_test: Unhandled rejection with value: object "TypeError: createImageBitmap with ImageData is not implemented"
-TIMEOUT createImageBitmap from a HTMLVideoElement, and drawImage on the created ImageBitmap Test timed out
+PASS createImageBitmap from an HTMLCanvasElement, and drawImage on the created ImageBitmap 
+FAIL createImageBitmap from an HTMLCanvasElement with negative sw/sh, and drawImage on the created ImageBitmap promise_test: Unhandled rejection with value: object "RangeError: Cannot create ImageBitmap with a negative width or height"
+TIMEOUT createImageBitmap from an HTMLVideoElement, and drawImage on the created ImageBitmap Test timed out
+NOTRUN createImageBitmap from an HTMLVideoElement with negative sw/sh, and drawImage on the created ImageBitmap 
+NOTRUN createImageBitmap from an HTMLImageElement, and drawImage on the created ImageBitmap 
+NOTRUN createImageBitmap from an HTMLImageElement with negative sw/sh, and drawImage on the created ImageBitmap 
+NOTRUN createImageBitmap from an OffscreenCanvas, and drawImage on the created ImageBitmap 
+NOTRUN createImageBitmap from an OffscreenCanvas with negative sw/sh, and drawImage on the created ImageBitmap 
+NOTRUN createImageBitmap from an ImageData, and drawImage on the created ImageBitmap 
+NOTRUN createImageBitmap from an ImageData with negative sw/sh, and drawImage on the created ImageBitmap 
+NOTRUN createImageBitmap from an ImageBitmap, and drawImage on the created ImageBitmap 
+NOTRUN createImageBitmap from an ImageBitmap with negative sw/sh, and drawImage on the created ImageBitmap 
+NOTRUN createImageBitmap from a Blob, and drawImage on the created ImageBitmap 
+NOTRUN createImageBitmap from a Blob with negative sw/sh, and drawImage on the created ImageBitmap 
 

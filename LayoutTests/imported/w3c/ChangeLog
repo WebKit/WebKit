@@ -1,3 +1,16 @@
+2018-01-08  Ms2ger  <Ms2ger@igalia.com>
+
+        Update imagebitmap tests.
+        https://bugs.webkit.org/show_bug.cgi?id=181379
+
+        Unreviewed test gardening.
+
+        * web-platform-tests/2dcontext/imagebitmap/common.js:
+        * web-platform-tests/2dcontext/imagebitmap/createImageBitmap-drawImage-expected.txt:
+        * web-platform-tests/2dcontext/imagebitmap/createImageBitmap-drawImage.html:
+        * web-platform-tests/2dcontext/imagebitmap/createImageBitmap-invalid-args-expected.txt:
+        * web-platform-tests/2dcontext/imagebitmap/createImageBitmap-invalid-args.html:
+
 2018-01-07  Ms2ger  <Ms2ger@igalia.com>
 
         Implement createImageBitmap(ImageBitmap)

@@ -1,31 +1,34 @@
-CONSOLE MESSAGE: line 167: Canvas area exceeds the maximum limit (width * height > 268435456).
+CONSOLE MESSAGE: line 114: Canvas area exceeds the maximum limit (width * height > 268435456).
 
-PASS createImageBitmap with a HTMLImageElement source and sw set to 0 rejects with a RangeError. 
-PASS createImageBitmap with a HTMLImageElement source and sh set to 0 rejects with a RangeError. 
-FAIL createImageBitmap with a HTMLImageElement source and oversized (unallocatable) crop region rejects with an InvalidStateError DOMException. assert_unreached: Should have rejected: undefined Reached unreachable code
-PASS createImageBitmap with a HTMLVideoElement source and sw set to 0 rejects with a RangeError. 
-PASS createImageBitmap with a HTMLVideoElement source and sh set to 0 rejects with a RangeError. 
-FAIL createImageBitmap with a HTMLVideoElement source and oversized (unallocatable) crop region rejects with an InvalidStateError DOMException. assert_throws: function "function () { throw e }" threw object "TypeError: createImageBitmap with HTMLVideoElement is not implemented" ("TypeError") expected object "InvalidStateError" ("InvalidStateError")
-PASS createImageBitmap with a HTMLCanvasElement source and sw set to 0 rejects with a RangeError. 
-PASS createImageBitmap with a HTMLCanvasElement source and sh set to 0 rejects with a RangeError. 
-FAIL createImageBitmap with a HTMLCanvasElement source and oversized (unallocatable) crop region rejects with an InvalidStateError DOMException. assert_unreached: Should have rejected: undefined Reached unreachable code
-FAIL createImageBitmap with a OffscreenCanvas source and sw set to 0 rejects with a RangeError. assert_throws: function "function () { throw e }" threw object "TypeError: Type error" ("TypeError") expected object "RangeError" ("RangeError")
-FAIL createImageBitmap with a OffscreenCanvas source and sh set to 0 rejects with a RangeError. assert_throws: function "function () { throw e }" threw object "TypeError: Type error" ("TypeError") expected object "RangeError" ("RangeError")
-FAIL createImageBitmap with a OffscreenCanvas source and oversized (unallocatable) crop region rejects with an InvalidStateError DOMException. assert_throws: function "function () { throw e }" threw object "TypeError: Type error" ("TypeError") expected object "InvalidStateError" ("InvalidStateError")
-PASS createImageBitmap with a ImageData source and sw set to 0 rejects with a RangeError. 
-PASS createImageBitmap with a ImageData source and sh set to 0 rejects with a RangeError. 
-FAIL createImageBitmap with a ImageData source and oversized (unallocatable) crop region rejects with an InvalidStateError DOMException. assert_throws: function "function () { throw e }" threw object "TypeError: createImageBitmap with ImageData is not implemented" ("TypeError") expected object "InvalidStateError" ("InvalidStateError")
-PASS createImageBitmap with a ImageBitmap source and sw set to 0 rejects with a RangeError. 
-PASS createImageBitmap with a ImageBitmap source and sh set to 0 rejects with a RangeError. 
-FAIL createImageBitmap with a ImageBitmap source and oversized (unallocatable) crop region rejects with an InvalidStateError DOMException. assert_unreached: Should have rejected: undefined Reached unreachable code
-PASS createImageBitmap with a Blob source and sw set to 0 rejects with a RangeError. 
-PASS createImageBitmap with a Blob source and sh set to 0 rejects with a RangeError. 
-FAIL createImageBitmap with a Blob source and oversized (unallocatable) crop region rejects with an InvalidStateError DOMException. assert_throws: function "function () { throw e }" threw object "TypeError: createImageBitmap with ArrayBuffer or Blob is not implemented" ("TypeError") expected object "InvalidStateError" ("InvalidStateError")
-PASS createImageBitmap with undefined image source rejects with a TypeError. 
-PASS createImageBitmap with null image source rejects with a TypeError. 
-PASS createImageBitmap with empty image source rejects with a InvalidStateError. 
-FAIL createImageBitmap with empty video source rejects with a InvalidStateError. assert_throws: function "function () { throw e }" threw object "TypeError: createImageBitmap with HTMLVideoElement is not implemented" ("TypeError") expected object "InvalidStateError" ("InvalidStateError")
-PASS createImageBitmap with an oversized canvas source rejects with a RangeError. 
-FAIL createImageBitmap with an invalid OffscreenCanvas source rejects with a RangeError. assert_throws: function "function () { throw e }" threw object "TypeError: Type error" ("TypeError") expected object "InvalidStateError" ("InvalidStateError")
-FAIL createImageBitmap with an undecodable blob source rejects with an InvalidStateError. assert_throws: function "function () { throw e }" threw object "TypeError: createImageBitmap with ArrayBuffer or Blob is not implemented" ("TypeError") expected object "InvalidStateError" ("InvalidStateError")
+PASS createImageBitmap with a an HTMLCanvasElement source and sw set to 0 
+PASS createImageBitmap with a an HTMLCanvasElement source and sh set to 0 
+FAIL createImageBitmap with a an HTMLCanvasElement source and oversized (unallocatable) crop region assert_unreached: Should have rejected: undefined Reached unreachable code
+PASS createImageBitmap with a an HTMLVideoElement source and sw set to 0 
+PASS createImageBitmap with a an HTMLVideoElement source and sh set to 0 
+FAIL createImageBitmap with a an HTMLVideoElement source and oversized (unallocatable) crop region assert_throws: function "function () { throw e }" threw object "TypeError: createImageBitmap with HTMLVideoElement is not implemented" ("TypeError") expected object "InvalidStateError" ("InvalidStateError")
+PASS createImageBitmap with a an HTMLImageElement source and sw set to 0 
+PASS createImageBitmap with a an HTMLImageElement source and sh set to 0 
+FAIL createImageBitmap with a an HTMLImageElement source and oversized (unallocatable) crop region assert_unreached: Should have rejected: undefined Reached unreachable code
+FAIL createImageBitmap with a an OffscreenCanvas source and sw set to 0 promise_test: Unhandled rejection with value: object "TypeError: null is not an object (evaluating 'testCtx.fillStyle = "rgb(255, 0, 0)"')"
+FAIL createImageBitmap with a an OffscreenCanvas source and sh set to 0 promise_test: Unhandled rejection with value: object "TypeError: null is not an object (evaluating 'testCtx.fillStyle = "rgb(255, 0, 0)"')"
+FAIL createImageBitmap with a an OffscreenCanvas source and oversized (unallocatable) crop region promise_test: Unhandled rejection with value: object "TypeError: null is not an object (evaluating 'testCtx.fillStyle = "rgb(255, 0, 0)"')"
+PASS createImageBitmap with a an ImageData source and sw set to 0 
+PASS createImageBitmap with a an ImageData source and sh set to 0 
+FAIL createImageBitmap with a an ImageData source and oversized (unallocatable) crop region assert_throws: function "function () { throw e }" threw object "TypeError: createImageBitmap with ImageData is not implemented" ("TypeError") expected object "InvalidStateError" ("InvalidStateError")
+PASS createImageBitmap with a an ImageBitmap source and sw set to 0 
+PASS createImageBitmap with a an ImageBitmap source and sh set to 0 
+FAIL createImageBitmap with a an ImageBitmap source and oversized (unallocatable) crop region assert_unreached: Should have rejected: undefined Reached unreachable code
+PASS createImageBitmap with a a Blob source and sw set to 0 
+PASS createImageBitmap with a a Blob source and sh set to 0 
+FAIL createImageBitmap with a a Blob source and oversized (unallocatable) crop region assert_throws: function "function () { throw e }" threw object "TypeError: createImageBitmap with ArrayBuffer or Blob is not implemented" ("TypeError") expected object "InvalidStateError" ("InvalidStateError")
+PASS createImageBitmap with undefined image source. 
+PASS createImageBitmap with null image source. 
+PASS createImageBitmap with empty image source. 
+FAIL createImageBitmap with empty video source. assert_throws: function "function () { throw e }" threw object "TypeError: createImageBitmap with HTMLVideoElement is not implemented" that is not a DOMException InvalidStateError: property "code" is equal to undefined, expected 11
+PASS createImageBitmap with an oversized canvas source. 
+FAIL createImageBitmap with an invalid OffscreenCanvas source. assert_throws: function "function () { throw e }" threw object "TypeError: Type error" that is not a DOMException InvalidStateError: property "code" is equal to undefined, expected 11
+FAIL createImageBitmap with an undecodable blob source. assert_throws: function "function () { throw e }" threw object "TypeError: createImageBitmap with ArrayBuffer or Blob is not implemented" that is not a DOMException InvalidStateError: property "code" is equal to undefined, expected 11
+PASS createImageBitmap with a broken image source. 
+FAIL createImageBitmap with an available but undecodable image source. promise_test: Unhandled rejection with value: object "[object Event]"
+PASS createImageBitmap with a closed ImageBitmap. 
 

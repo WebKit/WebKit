@@ -1,32 +1,35 @@
 
 Harness Error (TIMEOUT), message = null
 
-PASS createImageBitmap with a HTMLImageElement source and sw set to 0 rejects with a RangeError. 
-PASS createImageBitmap with a HTMLImageElement source and sh set to 0 rejects with a RangeError. 
-FAIL createImageBitmap with a HTMLImageElement source and oversized (unallocatable) crop region rejects with an InvalidStateError DOMException. assert_unreached: Should have rejected: undefined Reached unreachable code
-TIMEOUT createImageBitmap with a HTMLVideoElement source and sw set to 0 rejects with a RangeError. Test timed out
-NOTRUN createImageBitmap with a HTMLVideoElement source and sh set to 0 rejects with a RangeError. 
-NOTRUN createImageBitmap with a HTMLVideoElement source and oversized (unallocatable) crop region rejects with an InvalidStateError DOMException. 
-NOTRUN createImageBitmap with a HTMLCanvasElement source and sw set to 0 rejects with a RangeError. 
-NOTRUN createImageBitmap with a HTMLCanvasElement source and sh set to 0 rejects with a RangeError. 
-NOTRUN createImageBitmap with a HTMLCanvasElement source and oversized (unallocatable) crop region rejects with an InvalidStateError DOMException. 
-NOTRUN createImageBitmap with a OffscreenCanvas source and sw set to 0 rejects with a RangeError. 
-NOTRUN createImageBitmap with a OffscreenCanvas source and sh set to 0 rejects with a RangeError. 
-NOTRUN createImageBitmap with a OffscreenCanvas source and oversized (unallocatable) crop region rejects with an InvalidStateError DOMException. 
-NOTRUN createImageBitmap with a ImageData source and sw set to 0 rejects with a RangeError. 
-NOTRUN createImageBitmap with a ImageData source and sh set to 0 rejects with a RangeError. 
-NOTRUN createImageBitmap with a ImageData source and oversized (unallocatable) crop region rejects with an InvalidStateError DOMException. 
-NOTRUN createImageBitmap with a ImageBitmap source and sw set to 0 rejects with a RangeError. 
-NOTRUN createImageBitmap with a ImageBitmap source and sh set to 0 rejects with a RangeError. 
-NOTRUN createImageBitmap with a ImageBitmap source and oversized (unallocatable) crop region rejects with an InvalidStateError DOMException. 
-NOTRUN createImageBitmap with a Blob source and sw set to 0 rejects with a RangeError. 
-NOTRUN createImageBitmap with a Blob source and sh set to 0 rejects with a RangeError. 
-NOTRUN createImageBitmap with a Blob source and oversized (unallocatable) crop region rejects with an InvalidStateError DOMException. 
-NOTRUN createImageBitmap with undefined image source rejects with a TypeError. 
-NOTRUN createImageBitmap with null image source rejects with a TypeError. 
-NOTRUN createImageBitmap with empty image source rejects with a InvalidStateError. 
-NOTRUN createImageBitmap with empty video source rejects with a InvalidStateError. 
-NOTRUN createImageBitmap with an oversized canvas source rejects with a RangeError. 
-NOTRUN createImageBitmap with an invalid OffscreenCanvas source rejects with a RangeError. 
-NOTRUN createImageBitmap with an undecodable blob source rejects with an InvalidStateError. 
+PASS createImageBitmap with a an HTMLCanvasElement source and sw set to 0 
+PASS createImageBitmap with a an HTMLCanvasElement source and sh set to 0 
+FAIL createImageBitmap with a an HTMLCanvasElement source and oversized (unallocatable) crop region assert_unreached: Should have rejected: undefined Reached unreachable code
+TIMEOUT createImageBitmap with a an HTMLVideoElement source and sw set to 0 Test timed out
+NOTRUN createImageBitmap with a an HTMLVideoElement source and sh set to 0 
+NOTRUN createImageBitmap with a an HTMLVideoElement source and oversized (unallocatable) crop region 
+NOTRUN createImageBitmap with a an HTMLImageElement source and sw set to 0 
+NOTRUN createImageBitmap with a an HTMLImageElement source and sh set to 0 
+NOTRUN createImageBitmap with a an HTMLImageElement source and oversized (unallocatable) crop region 
+NOTRUN createImageBitmap with a an OffscreenCanvas source and sw set to 0 
+NOTRUN createImageBitmap with a an OffscreenCanvas source and sh set to 0 
+NOTRUN createImageBitmap with a an OffscreenCanvas source and oversized (unallocatable) crop region 
+NOTRUN createImageBitmap with a an ImageData source and sw set to 0 
+NOTRUN createImageBitmap with a an ImageData source and sh set to 0 
+NOTRUN createImageBitmap with a an ImageData source and oversized (unallocatable) crop region 
+NOTRUN createImageBitmap with a an ImageBitmap source and sw set to 0 
+NOTRUN createImageBitmap with a an ImageBitmap source and sh set to 0 
+NOTRUN createImageBitmap with a an ImageBitmap source and oversized (unallocatable) crop region 
+NOTRUN createImageBitmap with a a Blob source and sw set to 0 
+NOTRUN createImageBitmap with a a Blob source and sh set to 0 
+NOTRUN createImageBitmap with a a Blob source and oversized (unallocatable) crop region 
+NOTRUN createImageBitmap with undefined image source. 
+NOTRUN createImageBitmap with null image source. 
+NOTRUN createImageBitmap with empty image source. 
+NOTRUN createImageBitmap with empty video source. 
+NOTRUN createImageBitmap with an oversized canvas source. 
+NOTRUN createImageBitmap with an invalid OffscreenCanvas source. 
+NOTRUN createImageBitmap with an undecodable blob source. 
+NOTRUN createImageBitmap with a broken image source. 
+NOTRUN createImageBitmap with an available but undecodable image source. 
+NOTRUN createImageBitmap with a closed ImageBitmap. 
 
