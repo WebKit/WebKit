@@ -371,6 +371,7 @@ void Caches::readCachesFromDisk(WTF::Function<void(Expected<Vector<Cache>, Error
 
 void Caches::writeCachesToDisk(CompletionCallback&& callback)
 {
+    ASSERT(m_isInitialized);
     if (!shouldPersist()) {
         callback(std::nullopt);
         return;
