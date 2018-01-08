@@ -49,12 +49,12 @@ public:
     // These functions are temporary until after all block/inline/continuation code is moved over.
     void insertChildToRenderBlock(RenderBlock& parent, RenderPtr<RenderObject>, RenderObject* beforeChild = nullptr);
     void insertChildToRenderBlockIgnoringContinuation(RenderBlock& parent, RenderPtr<RenderObject>, RenderObject* beforeChild = nullptr);
-    void makeChildrenNonInline(RenderBlock& parent, RenderObject* insertionPoint = nullptr);
-    RenderObject* splitAnonymousBoxesAroundChild(RenderBox& parent, RenderObject* beforeChild);
-
-    // These functions are temporary until after all block/inline/continuation code is moved over.
+    void insertChildToRenderBlockFlow(RenderBlockFlow& parent, RenderPtr<RenderObject>, RenderObject* beforeChild = nullptr);
     void insertChildToRenderInline(RenderInline& parent, RenderPtr<RenderObject>, RenderObject* beforeChild = nullptr);
     void insertChildToRenderInlineIgnoringContinuation(RenderInline& parent, RenderPtr<RenderObject>, RenderObject* beforeChild = nullptr);
+
+    void makeChildrenNonInline(RenderBlock& parent, RenderObject* insertionPoint = nullptr);
+    RenderObject* splitAnonymousBoxesAroundChild(RenderBox& parent, RenderObject* beforeChild);
     void splitFlow(RenderInline& parent, RenderObject* beforeChild, RenderPtr<RenderBlock> newBlockBox, RenderPtr<RenderObject> child, RenderBoxModelObject* oldCont);
 
 private:
@@ -65,6 +65,7 @@ private:
     class Ruby;
     class FormControls;
     class Block;
+    class BlockFlow;
     class Inline;
 
     FirstLetter& firstLetterBuilder() { return *m_firstLetterBuilder; }
@@ -74,6 +75,7 @@ private:
     Ruby& rubyBuilder() { return *m_rubyBuilder; }
     FormControls& formControlsBuilder() { return *m_formControlsBuilder; }
     Block& blockBuilder() { return *m_blockBuilder; }
+    BlockFlow& blockFlowBuilder() { return *m_blockFlowBuilder; }
     Inline& inlineBuilder() { return *m_inlineBuilder; }
 
     RenderView& m_view;
@@ -88,6 +90,7 @@ private:
     std::unique_ptr<Ruby> m_rubyBuilder;
     std::unique_ptr<FormControls> m_formControlsBuilder;
     std::unique_ptr<Block> m_blockBuilder;
+    std::unique_ptr<BlockFlow> m_blockFlowBuilder;
     std::unique_ptr<Inline> m_inlineBuilder;
 };
 

@@ -1,3 +1,30 @@
+2018-01-08  Zalan Bujtas  <zalan@apple.com>
+
+        [RenderTreeBuilder] Move RenderBlockFlow addChild logic to RenderTreeBuilder
+        https://bugs.webkit.org/show_bug.cgi?id=181348
+        <rdar://problem/36328117>
+
+        Reviewed by Antti Koivisto.
+
+        This is about moving the code, no cleanup and/or normalization (unfortunately it also means
+        some temporary changes).  
+
+        No change in functionality.
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::addChild):
+        * rendering/updating/RenderTreeBuilder.cpp:
+        (WebCore::RenderTreeBuilder::RenderTreeBuilder):
+        (WebCore::RenderTreeBuilder::insertChildToRenderBlockFlow):
+        * rendering/updating/RenderTreeBuilder.h:
+        (WebCore::RenderTreeBuilder::blockFlowBuilder):
+        * rendering/updating/RenderTreeBuilderBlockFlow.cpp: Added.
+        (WebCore::RenderTreeBuilder::BlockFlow::BlockFlow):
+        (WebCore::RenderTreeBuilder::BlockFlow::insertChild):
+        * rendering/updating/RenderTreeBuilderBlockFlow.h: Added.
+
 2018-01-08  Youenn Fablet  <youenn@apple.com>
 
         Add CSP support to service workers

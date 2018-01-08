@@ -26,6 +26,8 @@
 #include "config.h"
 #include "RenderTreeBuilderRuby.h"
 
+#include "RenderRuby.h"
+#include "RenderRubyBase.h"
 #include "RenderRubyRun.h"
 #include "RenderTreeBuilder.h"
 
@@ -168,7 +170,7 @@ RenderElement& RenderTreeBuilder::Ruby::findOrCreateParentForChild(RenderRubyAsB
         if (!beforeBlock) {
             auto newBlock = createAnonymousRubyInlineBlock(parent);
             beforeBlock = newBlock.get();
-            parent.RenderBlockFlow::addChild(m_builder, WTFMove(newBlock), parent.firstChild());
+            m_builder.insertChildToRenderBlockFlow(parent, WTFMove(newBlock), parent.firstChild());
         }
         beforeChild = nullptr;
         return *beforeBlock;
@@ -183,7 +185,7 @@ RenderElement& RenderTreeBuilder::Ruby::findOrCreateParentForChild(RenderRubyAsB
         if (!afterBlock) {
             auto newBlock = createAnonymousRubyInlineBlock(parent);
             afterBlock = newBlock.get();
-            parent.RenderBlockFlow::addChild(m_builder, WTFMove(newBlock));
+            m_builder.insertChildToRenderBlockFlow(parent, WTFMove(newBlock));
         }
         beforeChild = nullptr;
         return *afterBlock;
@@ -212,7 +214,7 @@ RenderElement& RenderTreeBuilder::Ruby::findOrCreateParentForChild(RenderRubyAsB
     if (!lastRun || lastRun->hasRubyText()) {
         auto newRun = RenderRubyRun::staticCreateRubyRun(&parent);
         lastRun = newRun.get();
-        parent.RenderBlockFlow::addChild(m_builder, WTFMove(newRun), beforeChild);
+        m_builder.insertChildToRenderBlockFlow(parent, WTFMove(newRun), beforeChild);
     }
     beforeChild = nullptr;
     return *lastRun;

@@ -34,6 +34,7 @@
 #include "RenderTableRow.h"
 #include "RenderText.h"
 #include "RenderTreeBuilderBlock.h"
+#include "RenderTreeBuilderBlockFlow.h"
 #include "RenderTreeBuilderFirstLetter.h"
 #include "RenderTreeBuilderFormControls.h"
 #include "RenderTreeBuilderInline.h"
@@ -98,7 +99,6 @@ static void getInlineRun(RenderObject* start, RenderObject* boundary, RenderObje
     } while (!sawInline);
 }
 
-
 RenderTreeBuilder::RenderTreeBuilder(RenderView& view)
     : m_view(view)
     , m_firstLetterBuilder(std::make_unique<FirstLetter>(*this))
@@ -108,6 +108,7 @@ RenderTreeBuilder::RenderTreeBuilder(RenderView& view)
     , m_rubyBuilder(std::make_unique<Ruby>(*this))
     , m_formControlsBuilder(std::make_unique<FormControls>(*this))
     , m_blockBuilder(std::make_unique<Block>(*this))
+    , m_blockFlowBuilder(std::make_unique<BlockFlow>(*this))
     , m_inlineBuilder(std::make_unique<Inline>(*this))
 {
     RELEASE_ASSERT(!s_current || &m_view != &s_current->m_view);
@@ -287,6 +288,11 @@ void RenderTreeBuilder::insertChildToRenderInlineIgnoringContinuation(RenderInli
 void RenderTreeBuilder::splitFlow(RenderInline& parent, RenderObject* beforeChild, RenderPtr<RenderBlock> newBlockBox, RenderPtr<RenderObject> child, RenderBoxModelObject* oldCont)
 {
     inlineBuilder().splitFlow(parent, beforeChild, WTFMove(newBlockBox), WTFMove(child), oldCont);
+}
+
+void RenderTreeBuilder::insertChildToRenderBlockFlow(RenderBlockFlow& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild)
+{
+    blockFlowBuilder().insertChild(parent, WTFMove(child), beforeChild);
 }
 
 void RenderTreeBuilder::updateAfterDescendants(RenderElement& renderer)

@@ -3831,12 +3831,7 @@ void RenderBlockFlow::layoutExcludedChildren(bool relayoutChildren)
 
 void RenderBlockFlow::addChild(RenderTreeBuilder& builder, RenderPtr<RenderObject> newChild, RenderObject* beforeChild)
 {
-    if (multiColumnFlow() && (!isFieldset() || !newChild->isLegend()))
-        return builder.insertChild(*multiColumnFlow(), WTFMove(newChild), beforeChild);
-    auto* beforeChildOrPlaceholder = beforeChild;
-    if (auto* containingFragmentedFlow = enclosingFragmentedFlow())
-        beforeChildOrPlaceholder = containingFragmentedFlow->resolveMovedChild(beforeChild);
-    RenderBlock::addChild(builder, WTFMove(newChild), beforeChildOrPlaceholder);
+    builder.insertChildToRenderBlockFlow(*this, WTFMove(newChild), beforeChild);
 }
 
 RenderPtr<RenderObject> RenderBlockFlow::takeChild(RenderObject& oldChild)
