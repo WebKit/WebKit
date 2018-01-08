@@ -1442,10 +1442,20 @@ public:
 
     void emitComputeButterflyIndexingMask(GPRReg vectorLengthGPR, GPRReg scratchGPR, GPRReg resultGPR)
     {
+        ASSERT(scratchGPR != resultGPR);
+        Jump done;
+        if (isX86() && !isX86_64()) {
+            Jump nonZero = branchTest32(NonZero, vectorLengthGPR);
+            move(TrustedImm32(0), resultGPR);
+            done = jump();
+            nonZero.link(this);
+        }
         // If vectorLength == 0 then clz will return 32 on both ARM and x86. On 64-bit systems, we can then do a 64-bit right shift on a 32-bit -1 to get a 0 mask for zero vectorLength. On 32-bit ARM, shift masks with 0xff, which means it will still create a 0 mask.
         countLeadingZeros32(vectorLengthGPR, scratchGPR);
         move(TrustedImm32(-1), resultGPR);
-        urshift64(scratchGPR, resultGPR);
+        urshiftPtr(scratchGPR, resultGPR);
+        if (done.isSet())
+            done.link(this);
     }
 
     // Call this if you know that the value held in allocatorGPR is non-null. This DOES NOT mean
