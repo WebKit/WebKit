@@ -1,5 +1,23 @@
 2017-12-18  Jason Marcell  <jmarcell@apple.com>
 
+        Apply patch. rdar://problem/36116390
+
+    2017-12-17  Keith Miller  <keith_miller@apple.com>
+
+            Use index masking for TypedArrays and and Wasm.
+            https://bugs.webkit.org/show_bug.cgi?id=180920
+
+            Reviewed by Filip Pizlo.
+
+            Copy things from ToT that we will need for a branch.
+
+            * wtf/MathExtras.h:
+            (WTF::computeIndexingMask):
+            * wtf/StdLibExtras.h:
+            (std::clz):
+
+2017-12-18  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r226068. rdar://problem/36116392
 
     2017-12-16  Filip Pizlo  <fpizlo@apple.com>

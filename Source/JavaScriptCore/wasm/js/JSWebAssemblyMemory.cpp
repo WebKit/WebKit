@@ -68,6 +68,7 @@ JSWebAssemblyMemory::JSWebAssemblyMemory(VM& vm, Structure* structure, Ref<Wasm:
     ASSERT(m_memory->refCount() == 1);
     m_memoryBase = m_memory->memory();
     m_memorySize = m_memory->size();
+    m_indexingMask = m_memory->indexingMask();
 }
 
 JSArrayBuffer* JSWebAssemblyMemory::buffer(VM& vm, JSGlobalObject* globalObject)
@@ -116,6 +117,7 @@ Wasm::PageCount JSWebAssemblyMemory::grow(VM& vm, ExecState* exec, uint32_t delt
         }
         m_memoryBase = memory().memory();
         m_memorySize = memory().size();
+        m_memorySize = memory().indexingMask();
     }
 
     // We need to clear out the old array buffer because it might now be pointing

@@ -495,6 +495,11 @@ inline bool rangesOverlap(T leftMin, T leftMax, T rightMin, T rightMax)
     return nonEmptyRangesOverlap(leftMin, leftMax, rightMin, rightMax);
 }
 
+inline uint32_t computeIndexingMask(uint32_t size)
+{
+    return static_cast<uint64_t>(static_cast<uint32_t>(-1)) >> std::clz(size);
+}
+
 } // namespace WTF
 
 #endif // #ifndef WTF_MathExtras_h
