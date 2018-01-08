@@ -54,6 +54,7 @@ public:
     {
         return adoptRef(*new ServiceWorkerThreadProxy(std::forward<Args>(args)...));
     }
+    ~ServiceWorkerThreadProxy();
 
     ServiceWorkerIdentifier identifier() const { return m_serviceWorkerThread->identifier(); }
     ServiceWorkerThread& thread() { return m_serviceWorkerThread.get(); }
@@ -64,8 +65,13 @@ public:
 
     WEBCORE_EXPORT std::unique_ptr<FetchLoader> createBlobLoader(FetchLoaderClient&, const URL&);
 
+    // Public only for testing purposes.
+    WEBCORE_TESTSUPPORT_EXPORT void notifyNetworkStateChange(bool isOnline);
+
 private:
     WEBCORE_EXPORT ServiceWorkerThreadProxy(PageConfiguration&&, const ServiceWorkerContextData&, PAL::SessionID, String&& userAgent, CacheStorageProvider&, SecurityOrigin::StorageBlockingPolicy);
+
+    WEBCORE_EXPORT static void networkStateChanged(bool isOnLine);
 
     // WorkerLoaderProxy
     bool postTaskForModeToWorkerGlobalScope(ScriptExecutionContext::Task&&, const String& mode) final;

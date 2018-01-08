@@ -1,3 +1,50 @@
+2018-01-08  Youenn Fablet  <youenn@apple.com>
+
+        navigator.onLine does not work inside service workers
+        https://bugs.webkit.org/show_bug.cgi?id=181079
+        <rdar://problem/36178606>
+
+        Reviewed by Darin Adler.
+
+        Test: http/wpt/service-workers/online.https.html
+
+        Added support for onLine by reusing a similar implementation as regular workers.
+        Added ServiceWorkerInternals as an interface for an object exposed as self.internals in WTR.
+        This object has currently one method to trigger change in the online/offline status.
+        This allows writing a test for the onLine feature.
+
+        Note that self.internals is inserted asynchronously after the script was evaluated.
+        When writing a worker script using self.internals, one must make sure to use self.internals when initialized.
+        online-worker.js for instance makes use of self.internals in a postMessage callback.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/WorkerScriptController.h:
+        * dom/ScriptExecutionContext.h:
+        * testing/ServiceWorkerInternals.cpp: Added.
+        (WebCore::ServiceWorkerInternals::ServiceWorkerInternals):
+        (WebCore::ServiceWorkerInternals::setOnline):
+        * testing/ServiceWorkerInternals.h: Added.
+        * testing/ServiceWorkerInternals.idl: Added.
+        * testing/js/WebCoreTestSupport.cpp:
+        (WebCoreTestSupport::setupNewlyCreateServiceWorker):
+        * testing/js/WebCoreTestSupport.h:
+        * workers/service/context/SWContextManager.cpp:
+        (WebCore::SWContextManager::registerServiceWorkerThreadForInstall):
+        (WebCore::SWContextManager::startedServiceWorker):
+        * workers/service/context/SWContextManager.h:
+        (WebCore::SWContextManager::setServiceWorkerCreationCallback):
+        (WebCore::SWContextManager::workerByID):
+        * workers/service/context/ServiceWorkerThread.cpp:
+        (WebCore::ServiceWorkerThread::ServiceWorkerThread):
+        * workers/service/context/ServiceWorkerThreadProxy.cpp:
+        (WebCore::ServiceWorkerThreadProxy::ServiceWorkerThreadProxy):
+        (WebCore::ServiceWorkerThreadProxy::~ServiceWorkerThreadProxy):
+        (WebCore::ServiceWorkerThreadProxy::networkStateChanged):
+        (WebCore::ServiceWorkerThreadProxy::notifyNetworkStateChange):
+        * workers/service/context/ServiceWorkerThreadProxy.h:
+
 2018-01-08  Zan Dobersek  <zdobersek@igalia.com>
 
         [Cairo] Contain shadow blur requirement state in a separate object

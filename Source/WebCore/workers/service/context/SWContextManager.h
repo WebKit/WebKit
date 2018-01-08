@@ -76,11 +76,19 @@ public:
 
     WEBCORE_EXPORT bool postTaskToServiceWorker(ServiceWorkerIdentifier, WTF::Function<void(ServiceWorkerGlobalScope&)>&&);
 
+    using ServiceWorkerCreationCallback = void(uint64_t);
+    void setServiceWorkerCreationCallback(ServiceWorkerCreationCallback* callback) { m_serviceWorkerCreationCallback = callback; }
+
+    ServiceWorkerThreadProxy* workerByID(ServiceWorkerIdentifier identifier) { return m_workerMap.get(identifier); }
+
 private:
     SWContextManager() = default;
 
+    void startedServiceWorker(std::optional<ServiceWorkerJobDataIdentifier>, ServiceWorkerIdentifier, const String& exceptionMessage);
+
     HashMap<ServiceWorkerIdentifier, RefPtr<ServiceWorkerThreadProxy>> m_workerMap;
     std::unique_ptr<Connection> m_connection;
+    ServiceWorkerCreationCallback* m_serviceWorkerCreationCallback { nullptr };
 };
 
 } // namespace WebCore

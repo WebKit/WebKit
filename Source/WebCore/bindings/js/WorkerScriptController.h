@@ -94,7 +94,7 @@ private:
         if (!m_workerGlobalScopeWrapper)
             initScript();
     }
-    void initScript();
+    WEBCORE_EXPORT void initScript();
 
     RefPtr<JSC::VM> m_vm;
     WorkerGlobalScope* m_workerGlobalScope;

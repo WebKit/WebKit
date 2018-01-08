@@ -1,5 +1,19 @@
 2018-01-08  Youenn Fablet  <youenn@apple.com>
 
+        navigator.onLine does not work inside service workers
+        https://bugs.webkit.org/show_bug.cgi?id=181079
+        <rdar://problem/36178606>
+
+        Reviewed by Darin Adler.
+
+        * http/wpt/service-workers/online-worker.js: Added.
+        (async.waitForOnlineEvent):
+        (async.doTest):
+        * http/wpt/service-workers/online.https-expected.txt: Added.
+        * http/wpt/service-workers/online.https.html: Added.
+
+2018-01-08  Youenn Fablet  <youenn@apple.com>
+
         imported/w3c/web-platform-tests/service-workers/service-worker/interfaces-sw.https.html is slow in Debug
         https://bugs.webkit.org/show_bug.cgi?id=181382
 

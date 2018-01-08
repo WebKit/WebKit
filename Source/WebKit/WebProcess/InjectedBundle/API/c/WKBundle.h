@@ -71,6 +71,7 @@ typedef struct WKBundleClientV1 {
 WK_EXPORT WKTypeID WKBundleGetTypeID();
 
 WK_EXPORT void WKBundleSetClient(WKBundleRef bundle, WKBundleClientBase* client);
+WK_EXPORT void WKBundleSetServiceWorkerProxyCreationCallback(WKBundleRef bundle, void (*)(uint64_t));
 
 WK_EXPORT void WKBundlePostMessage(WKBundleRef bundle, WKStringRef messageName, WKTypeRef messageBody);
 WK_EXPORT void WKBundlePostSynchronousMessage(WKBundleRef bundle, WKStringRef messageName, WKTypeRef messageBody, WKTypeRef* returnData);

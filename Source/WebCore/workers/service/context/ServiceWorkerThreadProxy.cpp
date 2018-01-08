@@ -77,6 +77,12 @@ static inline IDBClient::IDBConnectionProxy* idbConnectionProxy(Document& docume
 #endif
 }
 
+static HashSet<ServiceWorkerThreadProxy*>& allServiceWorkerThreadProxies()
+{
+    static NeverDestroyed<HashSet<ServiceWorkerThreadProxy*>> set;
+    return set;
+}
+
 ServiceWorkerThreadProxy::ServiceWorkerThreadProxy(PageConfiguration&& pageConfiguration, const ServiceWorkerContextData& data, PAL::SessionID sessionID, String&& userAgent, CacheStorageProvider& cacheStorageProvider, SecurityOrigin::StorageBlockingPolicy storageBlockingPolicy)
     : m_page(createPageForServiceWorker(WTFMove(pageConfiguration), data, storageBlockingPolicy))
     , m_document(*m_page->mainFrame().document())
@@ -85,11 +91,26 @@ ServiceWorkerThreadProxy::ServiceWorkerThreadProxy(PageConfiguration&& pageConfi
     , m_sessionID(sessionID)
     , m_inspectorProxy(*this)
 {
+    static bool addedListener;
+    if (!addedListener) {
+        NetworkStateNotifier::singleton().addListener(&networkStateChanged);
+        addedListener = true;
+    }
+
+    ASSERT(!allServiceWorkerThreadProxies().contains(this));
+    allServiceWorkerThreadProxies().add(this);
+
 #if ENABLE(REMOTE_INSPECTOR)
     m_remoteDebuggable = std::make_unique<ServiceWorkerDebuggable>(*this, data);
     m_remoteDebuggable->setRemoteDebuggingAllowed(true);
     m_remoteDebuggable->init();
 #endif
+}
+
+ServiceWorkerThreadProxy::~ServiceWorkerThreadProxy()
+{
+    ASSERT(allServiceWorkerThreadProxies().contains(this));
+    allServiceWorkerThreadProxies().remove(this);
 }
 
 bool ServiceWorkerThreadProxy::postTaskForModeToWorkerGlobalScope(ScriptExecutionContext::Task&& task, const String& mode)
@@ -139,6 +160,24 @@ std::unique_ptr<FetchLoader> ServiceWorkerThreadProxy::createBlobLoader(FetchLoa
     if (!loader->isStarted())
         return nullptr;
     return loader;
+}
+
+void ServiceWorkerThreadProxy::networkStateChanged(bool isOnLine)
+{
+    for (auto* proxy : allServiceWorkerThreadProxies())
+        proxy->notifyNetworkStateChange(isOnLine);
+}
+
+void ServiceWorkerThreadProxy::notifyNetworkStateChange(bool isOnline)
+{
+    if (m_isTerminatingOrTerminated)
+        return;
+
+    postTaskForModeToWorkerGlobalScope([isOnline] (ScriptExecutionContext& context) {
+        auto& globalScope = downcast<WorkerGlobalScope>(context);
+        globalScope.setIsOnline(isOnline);
+        globalScope.dispatchEvent(Event::create(isOnline ? eventNames().onlineEvent : eventNames().offlineEvent, false, false));
+    }, WorkerRunLoop::defaultMode());
 }
 
 } // namespace WebCore

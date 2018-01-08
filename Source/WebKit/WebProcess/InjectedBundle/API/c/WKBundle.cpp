@@ -40,6 +40,7 @@
 #include "WebPageGroupProxy.h"
 #include <WebCore/DatabaseTracker.h>
 #include <WebCore/ResourceLoadObserver.h>
+#include <WebCore/ServiceWorkerThreadProxy.h>
 
 using namespace WebCore;
 using namespace WebKit;
@@ -52,6 +53,11 @@ WKTypeID WKBundleGetTypeID()
 void WKBundleSetClient(WKBundleRef bundleRef, WKBundleClientBase *wkClient)
 {
     toImpl(bundleRef)->setClient(std::make_unique<InjectedBundleClient>(wkClient));
+}
+
+void WKBundleSetServiceWorkerProxyCreationCallback(WKBundleRef bundleRef, void (*callback)(uint64_t))
+{
+    toImpl(bundleRef)->setServiceWorkerProxyCreationCallback(callback);
 }
 
 void WKBundlePostMessage(WKBundleRef bundleRef, WKStringRef messageNameRef, WKTypeRef messageBodyRef)

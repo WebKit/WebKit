@@ -87,6 +87,7 @@ public:
     void setClient(std::unique_ptr<API::InjectedBundle::Client>&&);
     void postMessage(const String&, API::Object*);
     void postSynchronousMessage(const String&, API::Object*, RefPtr<API::Object>& returnData);
+    void setServiceWorkerProxyCreationCallback(void (*)(uint64_t));
 
     WebConnection* webConnectionToUIProcess() const;
 

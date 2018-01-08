@@ -1549,6 +1549,7 @@ set(WebCoreTestSupport_IDL_FILES
     testing/MockCDMFactory.idl
     testing/MockContentFilterSettings.idl
     testing/MockPageOverlay.idl
+    testing/ServiceWorkerInternals.idl
     testing/TypeConversions.idl
 )
 
@@ -1568,7 +1569,7 @@ list(APPEND WebCoreTestSupport_SOURCES
     testing/MockGamepadProvider.cpp
     testing/MockPageOverlay.cpp
     testing/MockPageOverlayClient.cpp
-
+    testing/ServiceWorkerInternals.cpp
     testing/js/WebCoreTestSupport.cpp
 )
 

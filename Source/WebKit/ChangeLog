@@ -1,3 +1,21 @@
+2018-01-08  Youenn Fablet  <youenn@apple.com>
+
+        navigator.onLine does not work inside service workers
+        https://bugs.webkit.org/show_bug.cgi?id=181079
+        <rdar://problem/36178606>
+
+        Reviewed by Darin Adler.
+
+        Added support for a callback called for each service worker proxy creation.
+        Callback is used by WTR to inject a self.internals object used for testing.
+
+        * WebProcess/InjectedBundle/API/c/WKBundle.cpp:
+        (WKBundleSetServiceWorkerProxyCreationCallback):
+        * WebProcess/InjectedBundle/API/c/WKBundle.h:
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::setServiceWorkerProxyCreationCallback):
+        * WebProcess/InjectedBundle/InjectedBundle.h:
+
 2018-01-07  David Kilzer  <ddkilzer@apple.com>
 
         Enable -Wcast-qual for WebInspectorUI, WebKitLegacy, WebKit projects
