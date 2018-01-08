@@ -39,6 +39,9 @@
 #import <pal/spi/mac/QuickDrawSPI.h>
 #import <wtf/Assertions.h>
 #import <wtf/ObjcRuntimeExtras.h>
+#import <wtf/cf/TypeCastsCF.h>
+
+WTF_DECLARE_CF_TYPE_TRAIT(CFRunLoop);
 
 @interface NSWindow (AppKitSecretsHIWebViewKnows)
 - (void)_removeWindowRef;
@@ -1439,7 +1442,7 @@ static void StartUpdateObserver(HIWebView* view)
     context.release = nullptr;
     context.copyDescription = nullptr;
 
-    mainRunLoop = (CFRunLoopRef)GetCFRunLoopFromEventLoop(GetMainEventLoop());
+    mainRunLoop = checked_cf_cast<CFRunLoopRef>(GetCFRunLoopFromEventLoop(GetMainEventLoop()));
     observer = CFRunLoopObserverCreate(nullptr, kCFRunLoopEntry | kCFRunLoopBeforeWaiting, true, 0, UpdateObserver, &context);
     CFRunLoopAddObserver(mainRunLoop, observer, kCFRunLoopCommonModes); 
 
