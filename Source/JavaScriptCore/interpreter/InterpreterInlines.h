@@ -47,7 +47,7 @@ inline OpcodeID Interpreter::getOpcodeID(Opcode opcode)
     // the LLInt code for the opcode (see the EMBED_OPCODE_ID_IF_NEEDED macro
     // in LowLevelInterpreter.cpp).
     MacroAssemblerCodePtr codePtr(reinterpret_cast<void*>(opcode));
-    int32_t* opcodeIDAddress = reinterpret_cast<int32_t*>(codePtr.dataLocation()) - 1;
+    int32_t* opcodeIDAddress = codePtr.dataLocation<int32_t*>() - 1;
     OpcodeID opcodeID = static_cast<OpcodeID>(*opcodeIDAddress);
     ASSERT(opcodeID < NUMBER_OF_BYTECODE_IDS);
     return opcodeID;

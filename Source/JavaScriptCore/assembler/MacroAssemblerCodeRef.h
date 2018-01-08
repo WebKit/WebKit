@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009, 2012, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2009-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,6 +26,7 @@
 #pragma once
 
 #include "ExecutableAllocator.h"
+#include "JSCPoisonedPtr.h"
 #include <wtf/DataLog.h>
 #include <wtf/PrintStream.h>
 #include <wtf/RefPtr.h>
@@ -50,6 +51,8 @@
 
 namespace JSC {
 
+class MacroAssemblerCodePtr;
+
 enum OpcodeID : unsigned;
 
 // FunctionPtr:
@@ -58,15 +61,13 @@ enum OpcodeID : unsigned;
 // (particularly, the stub functions).
 class FunctionPtr {
 public:
-    FunctionPtr()
-        : m_value(0)
-    {
-    }
+    FunctionPtr() { }
 
     template<typename returnType>
     FunctionPtr(returnType(*value)())
         : m_value((void*)value)
     {
+        PoisonedMasmPtr::assertIsNotPoisoned(m_value);
         ASSERT_VALID_CODE_POINTER(m_value);
     }
 
@@ -74,6 +75,7 @@ public:
     FunctionPtr(returnType(*value)(argType1))
         : m_value((void*)value)
     {
+        PoisonedMasmPtr::assertIsNotPoisoned(m_value);
         ASSERT_VALID_CODE_POINTER(m_value);
     }
 
@@ -81,6 +83,7 @@ public:
     FunctionPtr(returnType(*value)(argType1, argType2))
         : m_value((void*)value)
     {
+        PoisonedMasmPtr::assertIsNotPoisoned(m_value);
         ASSERT_VALID_CODE_POINTER(m_value);
     }
 
@@ -88,6 +91,7 @@ public:
     FunctionPtr(returnType(*value)(argType1, argType2, argType3))
         : m_value((void*)value)
     {
+        PoisonedMasmPtr::assertIsNotPoisoned(m_value);
         ASSERT_VALID_CODE_POINTER(m_value);
     }
 
@@ -95,6 +99,7 @@ public:
     FunctionPtr(returnType(*value)(argType1, argType2, argType3, argType4))
         : m_value((void*)value)
     {
+        PoisonedMasmPtr::assertIsNotPoisoned(m_value);
         ASSERT_VALID_CODE_POINTER(m_value);
     }
 
@@ -102,6 +107,7 @@ public:
     FunctionPtr(returnType(*value)(argType1, argType2, argType3, argType4, argType5))
         : m_value((void*)value)
     {
+        PoisonedMasmPtr::assertIsNotPoisoned(m_value);
         ASSERT_VALID_CODE_POINTER(m_value);
     }
 
@@ -109,6 +115,7 @@ public:
     FunctionPtr(returnType(*value)(argType1, argType2, argType3, argType4, argType5, argType6))
         : m_value((void*)value)
     {
+        PoisonedMasmPtr::assertIsNotPoisoned(m_value);
         ASSERT_VALID_CODE_POINTER(m_value);
     }
 // MSVC doesn't seem to treat functions with different calling conventions as
@@ -119,6 +126,7 @@ public:
     FunctionPtr(returnType (CDECL *value)())
         : m_value((void*)value)
     {
+        PoisonedMasmPtr::assertIsNotPoisoned(m_value);
         ASSERT_VALID_CODE_POINTER(m_value);
     }
 
@@ -126,6 +134,7 @@ public:
     FunctionPtr(returnType (CDECL *value)(argType1))
         : m_value((void*)value)
     {
+        PoisonedMasmPtr::assertIsNotPoisoned(m_value);
         ASSERT_VALID_CODE_POINTER(m_value);
     }
 
@@ -133,6 +142,7 @@ public:
     FunctionPtr(returnType (CDECL *value)(argType1, argType2))
         : m_value((void*)value)
     {
+        PoisonedMasmPtr::assertIsNotPoisoned(m_value);
         ASSERT_VALID_CODE_POINTER(m_value);
     }
 
@@ -140,6 +150,7 @@ public:
     FunctionPtr(returnType (CDECL *value)(argType1, argType2, argType3))
         : m_value((void*)value)
     {
+        PoisonedMasmPtr::assertIsNotPoisoned(m_value);
         ASSERT_VALID_CODE_POINTER(m_value);
     }
 
@@ -147,6 +158,7 @@ public:
     FunctionPtr(returnType (CDECL *value)(argType1, argType2, argType3, argType4))
         : m_value((void*)value)
     {
+        PoisonedMasmPtr::assertIsNotPoisoned(m_value);
         ASSERT_VALID_CODE_POINTER(m_value);
     }
 #endif
@@ -157,6 +169,7 @@ public:
     FunctionPtr(returnType (FASTCALL *value)())
         : m_value((void*)value)
     {
+        PoisonedMasmPtr::assertIsNotPoisoned(m_value);
         ASSERT_VALID_CODE_POINTER(m_value);
     }
 
@@ -164,6 +177,7 @@ public:
     FunctionPtr(returnType (FASTCALL *value)(argType1))
         : m_value((void*)value)
     {
+        PoisonedMasmPtr::assertIsNotPoisoned(m_value);
         ASSERT_VALID_CODE_POINTER(m_value);
     }
 
@@ -171,6 +185,7 @@ public:
     FunctionPtr(returnType (FASTCALL *value)(argType1, argType2))
         : m_value((void*)value)
     {
+        PoisonedMasmPtr::assertIsNotPoisoned(m_value);
         ASSERT_VALID_CODE_POINTER(m_value);
     }
 
@@ -178,6 +193,7 @@ public:
     FunctionPtr(returnType (FASTCALL *value)(argType1, argType2, argType3))
         : m_value((void*)value)
     {
+        PoisonedMasmPtr::assertIsNotPoisoned(m_value);
         ASSERT_VALID_CODE_POINTER(m_value);
     }
 
@@ -185,6 +201,7 @@ public:
     FunctionPtr(returnType (FASTCALL *value)(argType1, argType2, argType3, argType4))
         : m_value((void*)value)
     {
+        PoisonedMasmPtr::assertIsNotPoisoned(m_value);
         ASSERT_VALID_CODE_POINTER(m_value);
     }
 #endif
@@ -196,15 +213,25 @@ public:
         // (I guess on RVTC function pointers have a different constness to GCC/MSVC?)
         : m_value((void*)value)
     {
+        PoisonedMasmPtr::assertIsNotPoisoned(m_value);
         ASSERT_VALID_CODE_POINTER(m_value);
     }
 
-    void* value() const { return m_value; }
-    void* executableAddress() const { return m_value; }
+    explicit FunctionPtr(MacroAssemblerCodePtr);
 
+    void* value() const
+    {
+        PoisonedMasmPtr::assertIsNotPoisoned(m_value);
+        return m_value;
+    }
+    void* executableAddress() const
+    {
+        PoisonedMasmPtr::assertIsNotPoisoned(m_value);
+        return m_value;
+    }
 
 private:
-    void* m_value;
+    void* m_value { nullptr };
 };
 
 // ReturnAddressPtr:
@@ -215,24 +242,27 @@ private:
 // that is the source of the return address.
 class ReturnAddressPtr {
 public:
-    ReturnAddressPtr()
-        : m_value(0)
-    {
-    }
+    ReturnAddressPtr() { }
 
     explicit ReturnAddressPtr(void* value)
         : m_value(value)
     {
+        PoisonedMasmPtr::assertIsNotPoisoned(m_value);
         ASSERT_VALID_CODE_POINTER(m_value);
     }
 
     explicit ReturnAddressPtr(FunctionPtr function)
         : m_value(function.value())
     {
+        PoisonedMasmPtr::assertIsNotPoisoned(m_value);
         ASSERT_VALID_CODE_POINTER(m_value);
     }
 
-    void* value() const { return m_value; }
+    void* value() const
+    {
+        PoisonedMasmPtr::assertIsNotPoisoned(m_value);
+        return m_value;
+    }
     
     void dump(PrintStream& out) const
     {
@@ -240,7 +270,7 @@ public:
     }
 
 private:
-    void* m_value;
+    void* m_value { nullptr };
 };
 
 // MacroAssemblerCodePtr:
@@ -248,10 +278,7 @@ private:
 // MacroAssemblerCodePtr should be used to wrap pointers to JIT generated code.
 class MacroAssemblerCodePtr {
 public:
-    MacroAssemblerCodePtr()
-        : m_value(0)
-    {
-    }
+    MacroAssemblerCodePtr() { }
 
     explicit MacroAssemblerCodePtr(void* value)
 #if CPU(ARM_THUMB2)
@@ -261,14 +288,18 @@ public:
         : m_value(value)
 #endif
     {
+        m_value.assertIsPoisoned();
+        ASSERT(value);
         ASSERT_VALID_CODE_POINTER(m_value);
     }
     
     static MacroAssemblerCodePtr createFromExecutableAddress(void* value)
     {
+        ASSERT(value);
         ASSERT_VALID_CODE_POINTER(value);
         MacroAssemblerCodePtr result;
-        result.m_value = value;
+        result.m_value = PoisonedMasmPtr(value);
+        result.m_value.assertIsPoisoned();
         return result;
     }
 
@@ -277,23 +308,63 @@ public:
     explicit MacroAssemblerCodePtr(ReturnAddressPtr ra)
         : m_value(ra.value())
     {
+        ASSERT(ra.value());
+        m_value.assertIsPoisoned();
         ASSERT_VALID_CODE_POINTER(m_value);
     }
 
-    void* executableAddress() const { return m_value; }
+    PoisonedMasmPtr poisonedPtr() const { return m_value; }
+
+    template<typename T = void*>
+    T executableAddress() const
+    {
+        m_value.assertIsPoisoned();
+        return m_value.unpoisoned<T>();
+    }
 #if CPU(ARM_THUMB2)
     // To use this pointer as a data address remove the decoration.
-    void* dataLocation() const { ASSERT_VALID_CODE_POINTER(m_value); return reinterpret_cast<char*>(m_value) - 1; }
+    template<typename T = void*>
+    T dataLocation() const
+    {
+        m_value.assertIsPoisoned();
+        ASSERT_VALID_CODE_POINTER(m_value);
+        return bitwise_cast<T>(m_value ? m_value.unpoisoned<char*>() - 1 : nullptr);
+    }
 #else
-    void* dataLocation() const { ASSERT_VALID_CODE_POINTER(m_value); return m_value; }
+    template<typename T = void*>
+    T dataLocation() const
+    {
+        m_value.assertIsPoisoned();
+        ASSERT_VALID_CODE_POINTER(m_value);
+        return m_value.unpoisoned<T>();
+    }
 #endif
 
-    explicit operator bool() const { return m_value; }
+    bool operator!() const
+    {
+#if ENABLE(POISON_ASSERTS)
+        if (!isEmptyValue() && !isDeletedValue())
+            m_value.assertIsPoisoned();
+#endif
+        return !m_value;
+    }
+    explicit operator bool() const { return !(!*this); }
     
     bool operator==(const MacroAssemblerCodePtr& other) const
     {
+#if ENABLE(POISON_ASSERTS)
+        if (!isEmptyValue() && !isDeletedValue())
+            m_value.assertIsPoisoned();
+        if (!other.isEmptyValue() && !other.isDeletedValue())
+            other.m_value.assertIsPoisoned();
+#endif
         return m_value == other.m_value;
     }
+
+    // Disallow any casting operations (except for booleans). Instead, the client
+    // should be asking for poisonedPtr() or executableAddress() explicitly.
+    template<typename T, typename = std::enable_if_t<!std::is_same<T, bool>::value>>
+    operator T() = delete;
 
     void dumpWithName(const char* name, PrintStream& out) const;
     
@@ -304,24 +375,24 @@ public:
     
     MacroAssemblerCodePtr(EmptyValueTag)
         : m_value(emptyValue())
-    {
-    }
+    { }
     
     MacroAssemblerCodePtr(DeletedValueTag)
         : m_value(deletedValue())
-    {
-    }
+    { }
     
     bool isEmptyValue() const { return m_value == emptyValue(); }
     bool isDeletedValue() const { return m_value == deletedValue(); }
-    
-    unsigned hash() const { return PtrHash<void*>::hash(m_value); }
+
+    unsigned hash() const { return IntHash<uintptr_t>::hash(m_value.bits()); }
+
+    static void initialize();
 
 private:
-    static void* emptyValue() { return bitwise_cast<void*>(static_cast<intptr_t>(1)); }
-    static void* deletedValue() { return bitwise_cast<void*>(static_cast<intptr_t>(2)); }
-    
-    void* m_value;
+    static PoisonedMasmPtr emptyValue() { return PoisonedMasmPtr(1); }
+    static PoisonedMasmPtr deletedValue() { return PoisonedMasmPtr(2); }
+
+    PoisonedMasmPtr m_value;
 };
 
 struct MacroAssemblerCodePtrHash {
@@ -404,6 +475,13 @@ private:
     MacroAssemblerCodePtr m_codePtr;
     RefPtr<ExecutableMemoryHandle> m_executableMemory;
 };
+
+inline FunctionPtr::FunctionPtr(MacroAssemblerCodePtr ptr)
+    : m_value(ptr.executableAddress())
+{
+    PoisonedMasmPtr::assertIsNotPoisoned(m_value);
+    ASSERT_VALID_CODE_POINTER(m_value);
+}
 
 } // namespace JSC
 

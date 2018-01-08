@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2012, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -127,20 +127,20 @@ JITCodeWithCodeRef::~JITCodeWithCodeRef()
 void* JITCodeWithCodeRef::executableAddressAtOffset(size_t offset)
 {
     RELEASE_ASSERT(m_ref);
-    return reinterpret_cast<char*>(m_ref.code().executableAddress()) + offset;
+    return m_ref.code().executableAddress<char*>() + offset;
 }
 
 void* JITCodeWithCodeRef::dataAddressAtOffset(size_t offset)
 {
     RELEASE_ASSERT(m_ref);
     ASSERT(offset <= size()); // use <= instead of < because it is valid to ask for an address at the exclusive end of the code.
-    return reinterpret_cast<char*>(m_ref.code().dataLocation()) + offset;
+    return m_ref.code().dataLocation<char*>() + offset;
 }
 
 unsigned JITCodeWithCodeRef::offsetOf(void* pointerIntoCode)
 {
     RELEASE_ASSERT(m_ref);
-    intptr_t result = reinterpret_cast<intptr_t>(pointerIntoCode) - reinterpret_cast<intptr_t>(m_ref.code().executableAddress());
+    intptr_t result = reinterpret_cast<intptr_t>(pointerIntoCode) - m_ref.code().executableAddress<intptr_t>();
     ASSERT(static_cast<intptr_t>(static_cast<unsigned>(result)) == result);
     return static_cast<unsigned>(result);
 }

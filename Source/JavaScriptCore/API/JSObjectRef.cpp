@@ -392,7 +392,7 @@ static const ClassInfo* classInfoPrivate(JSObject* jsObject)
     if (vm.currentlyDestructingCallbackObject != jsObject)
         return jsObject->classInfo(vm);
 
-    return vm.currentlyDestructingCallbackObjectClassInfo;
+    return vm.currentlyDestructingCallbackObjectClassInfo.unpoisoned();
 }
 
 void* JSObjectGetPrivate(JSObjectRef object)
