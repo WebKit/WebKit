@@ -140,7 +140,7 @@ void RenderTableSection::addChild(RenderTreeBuilder& builder, RenderPtr<RenderOb
         setRowLogicalHeightToRowStyleLogicalHeightIfNotRelative(m_grid[insertionRow]);
 
     if (beforeChild && beforeChild->parent() != this)
-        beforeChild = splitAnonymousBoxesAroundChild(beforeChild);
+        beforeChild = builder.splitAnonymousBoxesAroundChild(*this, beforeChild);
 
     ASSERT(!beforeChild || is<RenderTableRow>(*beforeChild));
     RenderBox::addChild(builder, WTFMove(child), beforeChild);

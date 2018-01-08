@@ -61,7 +61,7 @@ void RenderRubyBase::moveChildren(RenderRubyBase* toBase, RenderObject* beforeCh
     ASSERT_ARG(toBase, toBase);
 
     if (beforeChild && beforeChild->parent() != this)
-        beforeChild = splitAnonymousBoxesAroundChild(beforeChild);
+        beforeChild = RenderTreeBuilder::current()->splitAnonymousBoxesAroundChild(*this, beforeChild);
 
     if (childrenInline())
         moveInlineChildren(toBase, beforeChild);
@@ -115,7 +115,7 @@ void RenderRubyBase::moveBlockChildren(RenderRubyBase* toBase, RenderObject* bef
         return;
 
     if (toBase->childrenInline())
-        toBase->makeChildrenNonInline();
+        RenderTreeBuilder::current()->makeChildrenNonInline(*toBase);
 
     // If an anonymous block would be put next to another such block, then merge those.
     RenderObject* firstChildHere = firstChild();

@@ -114,7 +114,7 @@ const BorderValue& RenderTableRow::borderAdjoiningEndCell(const RenderTableCell&
 void RenderTableRow::addChild(RenderTreeBuilder& builder, RenderPtr<RenderObject> child, RenderObject* beforeChild)
 {
     if (beforeChild && beforeChild->parent() != this)
-        beforeChild = splitAnonymousBoxesAroundChild(beforeChild);    
+        beforeChild = builder.splitAnonymousBoxesAroundChild(*this, beforeChild);    
 
     // Generated content can result in us having a null section so make sure to null check our parent.
     if (auto* section = this->section())

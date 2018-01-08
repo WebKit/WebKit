@@ -170,7 +170,7 @@ void RenderTable::addChild(RenderTreeBuilder& builder, RenderPtr<RenderObject> c
         setNeedsSectionRecalc();
 
     if (beforeChild && beforeChild->parent() != this)
-        beforeChild = splitAnonymousBoxesAroundChild(beforeChild);
+        beforeChild = builder.splitAnonymousBoxesAroundChild(*this, beforeChild);
 
     RenderBox::addChild(builder, WTFMove(child), beforeChild);
 }

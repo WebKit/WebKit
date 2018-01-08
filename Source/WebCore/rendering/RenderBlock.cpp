@@ -446,71 +446,6 @@ void RenderBlock::styleDidChange(StyleDifference diff, const RenderStyle* oldSty
     setShouldForceRelayoutChildren(oldStyle && diff == StyleDifferenceLayout && needsLayout() && borderOrPaddingLogicalWidthChanged(*oldStyle, style()));
 }
 
-RenderBlock* RenderBlock::continuationBefore(RenderObject* beforeChild)
-{
-    if (beforeChild && beforeChild->parent() == this)
-        return this;
-
-    RenderBlock* nextToLast = this;
-    RenderBlock* last = this;
-    for (auto* current = downcast<RenderBlock>(continuation()); current; current = downcast<RenderBlock>(current->continuation())) {
-        if (beforeChild && beforeChild->parent() == current) {
-            if (current->firstChild() == beforeChild)
-                return last;
-            return current;
-        }
-
-        nextToLast = last;
-        last = current;
-    }
-
-    if (!beforeChild && !last->firstChild())
-        return nextToLast;
-    return last;
-}
-
-void RenderBlock::addChildToContinuation(RenderTreeBuilder& builder, RenderPtr<RenderObject> newChild, RenderObject* beforeChild)
-{
-    RenderBlock* flow = continuationBefore(beforeChild);
-    ASSERT(!beforeChild || is<RenderBlock>(*beforeChild->parent()));
-    RenderBoxModelObject* beforeChildParent = nullptr;
-    if (beforeChild)
-        beforeChildParent = downcast<RenderBoxModelObject>(beforeChild->parent());
-    else {
-        RenderBoxModelObject* continuation = flow->continuation();
-        if (continuation)
-            beforeChildParent = continuation;
-        else
-            beforeChildParent = flow;
-    }
-
-    if (newChild->isFloatingOrOutOfFlowPositioned()) {
-        beforeChildParent->addChildIgnoringContinuation(builder, WTFMove(newChild), beforeChild);
-        return;
-    }
-
-    bool childIsNormal = newChild->isInline() || !newChild->style().columnSpan();
-    bool bcpIsNormal = beforeChildParent->isInline() || !beforeChildParent->style().columnSpan();
-    bool flowIsNormal = flow->isInline() || !flow->style().columnSpan();
-
-    if (flow == beforeChildParent) {
-        flow->addChildIgnoringContinuation(builder, WTFMove(newChild), beforeChild);
-        return;
-    }
-    
-    // The goal here is to match up if we can, so that we can coalesce and create the
-    // minimal # of continuations needed for the inline.
-    if (childIsNormal == bcpIsNormal) {
-        beforeChildParent->addChildIgnoringContinuation(builder, WTFMove(newChild), beforeChild);
-        return;
-    }
-    if (flowIsNormal == childIsNormal) {
-        flow->addChildIgnoringContinuation(builder, WTFMove(newChild), 0); // Just treat like an append.
-        return;
-    }
-    beforeChildParent->addChildIgnoringContinuation(builder, WTFMove(newChild), beforeChild);
-}
-
 RenderPtr<RenderBlock> RenderBlock::clone() const
 {
     RenderPtr<RenderBlock> cloneBlock;
@@ -533,188 +468,18 @@ RenderPtr<RenderBlock> RenderBlock::clone() const
 
 void RenderBlock::addChild(RenderTreeBuilder& builder, RenderPtr<RenderObject> newChild, RenderObject* beforeChild)
 {
-    if (continuation() && !isAnonymousBlock())
-        addChildToContinuation(builder, WTFMove(newChild), beforeChild);
-    else
-        addChildIgnoringContinuation(builder, WTFMove(newChild), beforeChild);
+    builder.insertChildToRenderBlock(*this, WTFMove(newChild), beforeChild);
 }
 
 void RenderBlock::addChildIgnoringContinuation(RenderTreeBuilder& builder, RenderPtr<RenderObject> newChild, RenderObject* beforeChild)
 {
-    if (beforeChild && beforeChild->parent() != this) {
-        RenderElement* beforeChildContainer = beforeChild->parent();
-        while (beforeChildContainer->parent() != this)
-            beforeChildContainer = beforeChildContainer->parent();
-        ASSERT(beforeChildContainer);
-
-        if (beforeChildContainer->isAnonymous()) {
-            RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(!beforeChildContainer->isInline());
-
-            // If the requested beforeChild is not one of our children, then this is because
-            // there is an anonymous container within this object that contains the beforeChild.
-            RenderElement* beforeChildAnonymousContainer = beforeChildContainer;
-            if (beforeChildAnonymousContainer->isAnonymousBlock()
-#if ENABLE(FULLSCREEN_API)
-                // Full screen renderers and full screen placeholders act as anonymous blocks, not tables:
-                || beforeChildAnonymousContainer->isRenderFullScreen()
-                || beforeChildAnonymousContainer->isRenderFullScreenPlaceholder()
-#endif
-                ) {
-                // Insert the child into the anonymous block box instead of here.
-                if (newChild->isInline() || beforeChild->parent()->firstChild() != beforeChild)
-                    builder.insertChild(*beforeChild->parent(), WTFMove(newChild), beforeChild);
-                else
-                    builder.insertChild(*this, WTFMove(newChild), beforeChild->parent());
-                return;
-            }
-
-            ASSERT(beforeChildAnonymousContainer->isTable());
-
-            if (newChild->isTablePart()) {
-                // Insert into the anonymous table.
-                builder.insertChild(*beforeChildAnonymousContainer, WTFMove(newChild), beforeChild);
-                return;
-            }
-
-            beforeChild = splitAnonymousBoxesAroundChild(beforeChild);
-
-            RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(beforeChild->parent() == this);
-        }
-    }
-
-    bool madeBoxesNonInline = false;
-
-    // A block has to either have all of its children inline, or all of its children as blocks.
-    // So, if our children are currently inline and a block child has to be inserted, we move all our
-    // inline children into anonymous block boxes.
-    if (childrenInline() && !newChild->isInline() && !newChild->isFloatingOrOutOfFlowPositioned()) {
-        // This is a block with inline content. Wrap the inline content in anonymous blocks.
-        makeChildrenNonInline(beforeChild);
-        madeBoxesNonInline = true;
-
-        if (beforeChild && beforeChild->parent() != this) {
-            beforeChild = beforeChild->parent();
-            ASSERT(beforeChild->isAnonymousBlock());
-            ASSERT(beforeChild->parent() == this);
-        }
-    } else if (!childrenInline() && (newChild->isFloatingOrOutOfFlowPositioned() || newChild->isInline())) {
-        // If we're inserting an inline child but all of our children are blocks, then we have to make sure
-        // it is put into an anomyous block box. We try to use an existing anonymous box if possible, otherwise
-        // a new one is created and inserted into our list of children in the appropriate position.
-        RenderObject* afterChild = beforeChild ? beforeChild->previousSibling() : lastChild();
-
-        if (afterChild && afterChild->isAnonymousBlock()) {
-            builder.insertChild(downcast<RenderBlock>(*afterChild), WTFMove(newChild));
-            return;
-        }
-
-        if (newChild->isInline()) {
-            // No suitable existing anonymous box - create a new one.
-            auto newBox = createAnonymousBlock();
-            auto& box = *newBox;
-            RenderBox::addChild(builder, WTFMove(newBox), beforeChild);
-            builder.insertChild(box, WTFMove(newChild));
-            return;
-        }
-    }
-
-    invalidateLineLayoutPath();
-
-    RenderBox::addChild(builder, WTFMove(newChild), beforeChild);
- 
-    if (madeBoxesNonInline && is<RenderBlock>(parent()) && isAnonymousBlock())
-        downcast<RenderBlock>(*parent()).removeLeftoverAnonymousBlock(this);
-    // this object may be dead here
-}
-
-static void getInlineRun(RenderObject* start, RenderObject* boundary,
-                         RenderObject*& inlineRunStart,
-                         RenderObject*& inlineRunEnd)
-{
-    // Beginning at |start| we find the largest contiguous run of inlines that
-    // we can.  We denote the run with start and end points, |inlineRunStart|
-    // and |inlineRunEnd|.  Note that these two values may be the same if
-    // we encounter only one inline.
-    //
-    // We skip any non-inlines we encounter as long as we haven't found any
-    // inlines yet.
-    //
-    // |boundary| indicates a non-inclusive boundary point.  Regardless of whether |boundary|
-    // is inline or not, we will not include it in a run with inlines before it.  It's as though we encountered
-    // a non-inline.
-    
-    // Start by skipping as many non-inlines as we can.
-    RenderObject * curr = start;
-    bool sawInline;
-    do {
-        while (curr && !(curr->isInline() || curr->isFloatingOrOutOfFlowPositioned()))
-            curr = curr->nextSibling();
-        
-        inlineRunStart = inlineRunEnd = curr;
-        
-        if (!curr)
-            return; // No more inline children to be found.
-        
-        sawInline = curr->isInline();
-        
-        curr = curr->nextSibling();
-        while (curr && (curr->isInline() || curr->isFloatingOrOutOfFlowPositioned()) && (curr != boundary)) {
-            inlineRunEnd = curr;
-            if (curr->isInline())
-                sawInline = true;
-            curr = curr->nextSibling();
-        }
-    } while (!sawInline);
+    builder.insertChildToRenderBlockIgnoringContinuation(*this, WTFMove(newChild), beforeChild);
 }
 
 void RenderBlock::deleteLines()
 {
     if (AXObjectCache* cache = document().existingAXObjectCache())
         cache->deferRecomputeIsIgnored(element());
-}
-
-void RenderBlock::makeChildrenNonInline(RenderObject* insertionPoint)
-{    
-    // makeChildrenNonInline takes a block whose children are *all* inline and it
-    // makes sure that inline children are coalesced under anonymous
-    // blocks.  If |insertionPoint| is defined, then it represents the insertion point for
-    // the new block child that is causing us to have to wrap all the inlines.  This
-    // means that we cannot coalesce inlines before |insertionPoint| with inlines following
-    // |insertionPoint|, because the new child is going to be inserted in between the inlines,
-    // splitting them.
-    ASSERT(isInlineBlockOrInlineTable() || !isInline());
-    ASSERT(!insertionPoint || insertionPoint->parent() == this);
-
-    setChildrenInline(false);
-
-    RenderObject* child = firstChild();
-    if (!child)
-        return;
-
-    deleteLines();
-
-    while (child) {
-        RenderObject* inlineRunStart;
-        RenderObject* inlineRunEnd;
-        getInlineRun(child, insertionPoint, inlineRunStart, inlineRunEnd);
-
-        if (!inlineRunStart)
-            break;
-
-        child = inlineRunEnd->nextSibling();
-
-        auto newBlock = createAnonymousBlock();
-        auto& block = *newBlock;
-        insertChildInternal(WTFMove(newBlock), inlineRunStart);
-        moveChildrenTo(&block, inlineRunStart, child, RenderBoxModelObject::NormalizeAfterInsertion::No);
-    }
-
-#ifndef NDEBUG
-    for (RenderObject* c = firstChild(); c; c = c->nextSibling())
-        ASSERT(!c->isInline());
-#endif
-
-    repaint();
 }
 
 void RenderBlock::removeLeftoverAnonymousBlock(RenderBlock* child)
@@ -3212,7 +2977,7 @@ const RenderStyle& RenderBlock::outlineStyleForRepaint() const
 
 void RenderBlock::childBecameNonInline(RenderElement&)
 {
-    makeChildrenNonInline();
+    RenderTreeBuilder::current()->makeChildrenNonInline(*this);
     if (isAnonymousBlock() && is<RenderBlock>(parent()))
         downcast<RenderBlock>(*parent()).removeLeftoverAnonymousBlock(this);
     // |this| may be dead here

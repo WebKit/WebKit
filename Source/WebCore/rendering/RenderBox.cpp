@@ -4904,57 +4904,6 @@ bool RenderBox::hasRelativeLogicalWidth() const
         || style().logicalMaxWidth().isPercentOrCalculated();
 }
 
-static void markBoxForRelayoutAfterSplit(RenderBox& box)
-{
-    // FIXME: The table code should handle that automatically. If not,
-    // we should fix it and remove the table part checks.
-    if (is<RenderTable>(box)) {
-        // Because we may have added some sections with already computed column structures, we need to
-        // sync the table structure with them now. This avoids crashes when adding new cells to the table.
-        downcast<RenderTable>(box).forceSectionsRecalc();
-    } else if (is<RenderTableSection>(box))
-        downcast<RenderTableSection>(box).setNeedsCellRecalc();
-
-    box.setNeedsLayoutAndPrefWidthsRecalc();
-}
-
-RenderObject* RenderBox::splitAnonymousBoxesAroundChild(RenderObject* beforeChild)
-{
-    bool didSplitParentAnonymousBoxes = false;
-
-    while (beforeChild->parent() != this) {
-        auto& boxToSplit = downcast<RenderBox>(*beforeChild->parent());
-        if (boxToSplit.firstChild() != beforeChild && boxToSplit.isAnonymous()) {
-            didSplitParentAnonymousBoxes = true;
-
-            // We have to split the parent box into two boxes and move children
-            // from |beforeChild| to end into the new post box.
-            auto newPostBox = boxToSplit.createAnonymousBoxWithSameTypeAs(*this);
-            auto& postBox = *newPostBox;
-            postBox.setChildrenInline(boxToSplit.childrenInline());
-            RenderBox* parentBox = downcast<RenderBox>(boxToSplit.parent());
-            // We need to invalidate the |parentBox| before inserting the new node
-            // so that the table repainting logic knows the structure is dirty.
-            // See for example RenderTableCell:clippedOverflowRectForRepaint.
-            markBoxForRelayoutAfterSplit(*parentBox);
-            parentBox->insertChildInternal(WTFMove(newPostBox), boxToSplit.nextSibling());
-            boxToSplit.moveChildrenTo(&postBox, beforeChild, nullptr, RenderBoxModelObject::NormalizeAfterInsertion::Yes);
-
-            markBoxForRelayoutAfterSplit(boxToSplit);
-            markBoxForRelayoutAfterSplit(postBox);
-
-            beforeChild = &postBox;
-        } else
-            beforeChild = &boxToSplit;
-    }
-
-    if (didSplitParentAnonymousBoxes)
-        markBoxForRelayoutAfterSplit(*this);
-
-    ASSERT(beforeChild->parent() == this);
-    return beforeChild;
-}
-
 LayoutUnit RenderBox::offsetFromLogicalTopOfFirstPage() const
 {
     auto* layoutState = view().frameView().layoutContext().layoutState();

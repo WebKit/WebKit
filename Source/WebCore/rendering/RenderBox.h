@@ -665,8 +665,6 @@ protected:
 
     void paintRootBoxFillLayers(const PaintInfo&);
 
-    RenderObject* splitAnonymousBoxesAroundChild(RenderObject* beforeChild);
-
     bool skipContainingBlockForPercentHeightCalculation(const RenderBox& containingBlock, bool isPerpendicularWritingMode) const;
 
 private:

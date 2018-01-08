@@ -46,6 +46,12 @@ public:
     // FIXME: Remove.
     static RenderTreeBuilder* current() { return s_current; }
 
+    // These functions are temporary until after all block/inline/continuation code is moved over.
+    void insertChildToRenderBlock(RenderBlock& parent, RenderPtr<RenderObject>, RenderObject* beforeChild = nullptr);
+    void insertChildToRenderBlockIgnoringContinuation(RenderBlock& parent, RenderPtr<RenderObject>, RenderObject* beforeChild = nullptr);
+    void makeChildrenNonInline(RenderBlock& parent, RenderObject* insertionPoint = nullptr);
+    RenderObject* splitAnonymousBoxesAroundChild(RenderBox& parent, RenderObject* beforeChild);
+
 private:
     class FirstLetter;
     class List;
@@ -53,6 +59,7 @@ private:
     class Table;
     class Ruby;
     class FormControls;
+    class Block;
 
     FirstLetter& firstLetterBuilder() { return *m_firstLetterBuilder; }
     List& listBuilder() { return *m_listBuilder; }
@@ -60,6 +67,7 @@ private:
     Table& tableBuilder() { return *m_tableBuilder; }
     Ruby& rubyBuilder() { return *m_rubyBuilder; }
     FormControls& formControlsBuilder() { return *m_formControlsBuilder; }
+    Block& blockBuilder() { return *m_blockBuilder; }
 
     RenderView& m_view;
 
@@ -72,6 +80,7 @@ private:
     std::unique_ptr<Table> m_tableBuilder;
     std::unique_ptr<Ruby> m_rubyBuilder;
     std::unique_ptr<FormControls> m_formControlsBuilder;
+    std::unique_ptr<Block> m_blockBuilder;
 };
 
 }

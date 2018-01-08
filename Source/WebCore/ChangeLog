@@ -1,3 +1,58 @@
+2018-01-08  Zalan Bujtas  <zalan@apple.com>
+
+        [RenderTreeBuilder] Move RenderBlock addChild logic to RenderTreeBuilder
+        https://bugs.webkit.org/show_bug.cgi?id=181319
+        <rdar://problem/36313464>
+
+        Reviewed by Antti Koivisto.
+
+        This is about moving the code, no cleanup and/or normalization (unfortunately it also means
+        some temporary changes).  
+
+        No change in functionality.
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::addChild):
+        (WebCore::RenderBlock::addChildIgnoringContinuation):
+        (WebCore::RenderBlock::childBecameNonInline):
+        (WebCore::RenderBlock::continuationBefore): Deleted.
+        (WebCore::RenderBlock::addChildToContinuation): Deleted.
+        (WebCore::getInlineRun): Deleted.
+        (WebCore::RenderBlock::makeChildrenNonInline): Deleted.
+        * rendering/RenderBlock.h:
+        * rendering/RenderBox.cpp:
+        (WebCore::markBoxForRelayoutAfterSplit): Deleted.
+        (WebCore::RenderBox::splitAnonymousBoxesAroundChild): Deleted.
+        * rendering/RenderBox.h:
+        * rendering/RenderRubyBase.cpp:
+        (WebCore::RenderRubyBase::moveChildren):
+        (WebCore::RenderRubyBase::moveBlockChildren):
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::addChild):
+        * rendering/RenderTableRow.cpp:
+        (WebCore::RenderTableRow::addChild):
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::addChild):
+        * rendering/updating/RenderTreeBuilder.cpp:
+        (WebCore::markBoxForRelayoutAfterSplit):
+        (WebCore::getInlineRun):
+        (WebCore::RenderTreeBuilder::RenderTreeBuilder):
+        (WebCore::RenderTreeBuilder::insertChildToRenderBlock):
+        (WebCore::RenderTreeBuilder::insertChildToRenderBlockIgnoringContinuation):
+        (WebCore::RenderTreeBuilder::makeChildrenNonInline):
+        (WebCore::RenderTreeBuilder::splitAnonymousBoxesAroundChild):
+        * rendering/updating/RenderTreeBuilder.h:
+        (WebCore::RenderTreeBuilder::blockBuilder):
+        * rendering/updating/RenderTreeBuilderBlock.cpp: Added.
+        (WebCore::continuationBefore):
+        (WebCore::RenderTreeBuilder::Block::Block):
+        (WebCore::RenderTreeBuilder::Block::insertChild):
+        (WebCore::RenderTreeBuilder::Block::insertChildToContinuation):
+        (WebCore::RenderTreeBuilder::Block::insertChildIgnoringContinuation):
+        * rendering/updating/RenderTreeBuilderBlock.h: Added.
+        
 2018-01-08  Jeremy Jones  <jeremyj@apple.com>
 
         Standard controls sometimes say video is in pip when it isnt.

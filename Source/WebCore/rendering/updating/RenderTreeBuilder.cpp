@@ -33,6 +33,7 @@
 #include "RenderRubyRun.h"
 #include "RenderTableRow.h"
 #include "RenderText.h"
+#include "RenderTreeBuilderBlock.h"
 #include "RenderTreeBuilderFirstLetter.h"
 #include "RenderTreeBuilderFormControls.h"
 #include "RenderTreeBuilderList.h"
@@ -44,6 +45,59 @@ namespace WebCore {
 
 RenderTreeBuilder* RenderTreeBuilder::s_current;
 
+static void markBoxForRelayoutAfterSplit(RenderBox& box)
+{
+    // FIXME: The table code should handle that automatically. If not,
+    // we should fix it and remove the table part checks.
+    if (is<RenderTable>(box)) {
+        // Because we may have added some sections with already computed column structures, we need to
+        // sync the table structure with them now. This avoids crashes when adding new cells to the table.
+        downcast<RenderTable>(box).forceSectionsRecalc();
+    } else if (is<RenderTableSection>(box))
+        downcast<RenderTableSection>(box).setNeedsCellRecalc();
+
+    box.setNeedsLayoutAndPrefWidthsRecalc();
+}
+
+static void getInlineRun(RenderObject* start, RenderObject* boundary, RenderObject*& inlineRunStart, RenderObject*& inlineRunEnd)
+{
+    // Beginning at |start| we find the largest contiguous run of inlines that
+    // we can. We denote the run with start and end points, |inlineRunStart|
+    // and |inlineRunEnd|. Note that these two values may be the same if
+    // we encounter only one inline.
+    //
+    // We skip any non-inlines we encounter as long as we haven't found any
+    // inlines yet.
+    //
+    // |boundary| indicates a non-inclusive boundary point. Regardless of whether |boundary|
+    // is inline or not, we will not include it in a run with inlines before it. It's as though we encountered
+    // a non-inline.
+
+    // Start by skipping as many non-inlines as we can.
+    auto* curr = start;
+    bool sawInline;
+    do {
+        while (curr && !(curr->isInline() || curr->isFloatingOrOutOfFlowPositioned()))
+            curr = curr->nextSibling();
+
+        inlineRunStart = inlineRunEnd = curr;
+
+        if (!curr)
+            return; // No more inline children to be found.
+
+        sawInline = curr->isInline();
+
+        curr = curr->nextSibling();
+        while (curr && (curr->isInline() || curr->isFloatingOrOutOfFlowPositioned()) && (curr != boundary)) {
+            inlineRunEnd = curr;
+            if (curr->isInline())
+                sawInline = true;
+            curr = curr->nextSibling();
+        }
+    } while (!sawInline);
+}
+
+
 RenderTreeBuilder::RenderTreeBuilder(RenderView& view)
     : m_view(view)
     , m_firstLetterBuilder(std::make_unique<FirstLetter>(*this))
@@ -52,6 +106,7 @@ RenderTreeBuilder::RenderTreeBuilder(RenderView& view)
     , m_tableBuilder(std::make_unique<Table>(*this))
     , m_rubyBuilder(std::make_unique<Ruby>(*this))
     , m_formControlsBuilder(std::make_unique<FormControls>(*this))
+    , m_blockBuilder(std::make_unique<Block>(*this))
 {
     RELEASE_ASSERT(!s_current || &m_view != &s_current->m_view);
     m_previous = s_current;
@@ -126,6 +181,95 @@ void RenderTreeBuilder::insertChild(RenderElement& parent, RenderPtr<RenderObjec
 void RenderTreeBuilder::insertChild(RenderTreePosition& position, RenderPtr<RenderObject> child)
 {
     insertChild(position.parent(), WTFMove(child), position.nextSibling());
+}
+
+void RenderTreeBuilder::insertChildToRenderBlock(RenderBlock& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild)
+{
+    blockBuilder().insertChild(parent, WTFMove(child), beforeChild);
+}
+
+void RenderTreeBuilder::insertChildToRenderBlockIgnoringContinuation(RenderBlock& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild)
+{
+    blockBuilder().insertChildIgnoringContinuation(parent, WTFMove(child), beforeChild);
+}
+
+void RenderTreeBuilder::makeChildrenNonInline(RenderBlock& parent, RenderObject* insertionPoint)
+{
+    // makeChildrenNonInline takes a block whose children are *all* inline and it
+    // makes sure that inline children are coalesced under anonymous
+    // blocks. If |insertionPoint| is defined, then it represents the insertion point for
+    // the new block child that is causing us to have to wrap all the inlines. This
+    // means that we cannot coalesce inlines before |insertionPoint| with inlines following
+    // |insertionPoint|, because the new child is going to be inserted in between the inlines,
+    // splitting them.
+    ASSERT(parent.isInlineBlockOrInlineTable() || !parent.isInline());
+    ASSERT(!insertionPoint || insertionPoint->parent() == &parent);
+
+    parent.setChildrenInline(false);
+
+    auto* child = parent.firstChild();
+    if (!child)
+        return;
+
+    parent.deleteLines();
+
+    while (child) {
+        RenderObject* inlineRunStart = nullptr;
+        RenderObject* inlineRunEnd = nullptr;
+        getInlineRun(child, insertionPoint, inlineRunStart, inlineRunEnd);
+
+        if (!inlineRunStart)
+            break;
+
+        child = inlineRunEnd->nextSibling();
+
+        auto newBlock = parent.createAnonymousBlock();
+        auto& block = *newBlock;
+        parent.insertChildInternal(WTFMove(newBlock), inlineRunStart);
+        parent.moveChildrenTo(&block, inlineRunStart, child, RenderBoxModelObject::NormalizeAfterInsertion::No);
+    }
+#ifndef NDEBUG
+    for (RenderObject* c = parent.firstChild(); c; c = c->nextSibling())
+        ASSERT(!c->isInline());
+#endif
+    parent.repaint();
+}
+
+RenderObject* RenderTreeBuilder::splitAnonymousBoxesAroundChild(RenderBox& parent, RenderObject* beforeChild)
+{
+    bool didSplitParentAnonymousBoxes = false;
+
+    while (beforeChild->parent() != &parent) {
+        auto& boxToSplit = downcast<RenderBox>(*beforeChild->parent());
+        if (boxToSplit.firstChild() != beforeChild && boxToSplit.isAnonymous()) {
+            didSplitParentAnonymousBoxes = true;
+
+            // We have to split the parent box into two boxes and move children
+            // from |beforeChild| to end into the new post box.
+            auto newPostBox = boxToSplit.createAnonymousBoxWithSameTypeAs(parent);
+            auto& postBox = *newPostBox;
+            postBox.setChildrenInline(boxToSplit.childrenInline());
+            RenderBox* parentBox = downcast<RenderBox>(boxToSplit.parent());
+            // We need to invalidate the |parentBox| before inserting the new node
+            // so that the table repainting logic knows the structure is dirty.
+            // See for example RenderTableCell:clippedOverflowRectForRepaint.
+            markBoxForRelayoutAfterSplit(*parentBox);
+            parentBox->insertChildInternal(WTFMove(newPostBox), boxToSplit.nextSibling());
+            boxToSplit.moveChildrenTo(&postBox, beforeChild, nullptr, RenderBoxModelObject::NormalizeAfterInsertion::Yes);
+
+            markBoxForRelayoutAfterSplit(boxToSplit);
+            markBoxForRelayoutAfterSplit(postBox);
+
+            beforeChild = &postBox;
+        } else
+            beforeChild = &boxToSplit;
+    }
+
+    if (didSplitParentAnonymousBoxes)
+        markBoxForRelayoutAfterSplit(parent);
+
+    ASSERT(beforeChild->parent() == &parent);
+    return beforeChild;
 }
 
 void RenderTreeBuilder::updateAfterDescendants(RenderElement& renderer)
