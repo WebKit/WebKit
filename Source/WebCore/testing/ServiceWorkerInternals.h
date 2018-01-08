@@ -27,10 +27,15 @@
 
 #if ENABLE(SERVICE_WORKER)
 
+#include "JSDOMPromiseDeferred.h"
 #include "ServiceWorkerIdentifier.h"
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
+
+class FetchEvent;
+class FetchResponse;
+class ScriptExecutionContext;
 
 class WEBCORE_EXPORT ServiceWorkerInternals : public RefCounted<ServiceWorkerInternals> {
 public:
@@ -38,6 +43,8 @@ public:
     ~ServiceWorkerInternals();
 
     void setOnline(bool isOnline);
+    void waitForFetchEventToFinish(FetchEvent&, DOMPromiseDeferred<IDLInterface<FetchResponse>>&&);
+    Ref<FetchEvent> createBeingDispatchedFetchEvent(ScriptExecutionContext&);
 
 private:
     explicit ServiceWorkerInternals(ServiceWorkerIdentifier);

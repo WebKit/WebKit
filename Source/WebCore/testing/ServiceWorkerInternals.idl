@@ -30,4 +30,6 @@
     NoInterfaceObject,
 ] interface ServiceWorkerInternals {
     void setOnline(boolean isOnline);
+    Promise<Response> waitForFetchEventToFinish(FetchEvent event);
+    [CallWith=ScriptExecutionContext] FetchEvent createBeingDispatchedFetchEvent();
 };
