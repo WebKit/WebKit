@@ -32,6 +32,7 @@
 
 namespace WebCore {
 
+class ContentSecurityPolicyResponseHeaders;
 class Exception;
 class ResourceError;
 class ServiceWorkerJob;
@@ -48,7 +49,7 @@ public:
     virtual void jobResolvedWithRegistration(ServiceWorkerJob&, ServiceWorkerRegistrationData&&, ShouldNotifyWhenResolved) = 0;
     virtual void jobResolvedWithUnregistrationResult(ServiceWorkerJob&, bool unregistrationResult) = 0;
     virtual void startScriptFetchForJob(ServiceWorkerJob&, FetchOptions::Cache) = 0;
-    virtual void jobFinishedLoadingScript(ServiceWorkerJob&, const String&) = 0;
+    virtual void jobFinishedLoadingScript(ServiceWorkerJob&, const String& script, const ContentSecurityPolicyResponseHeaders&) = 0;
     virtual void jobFailedLoadingScript(ServiceWorkerJob&, const ResourceError&, std::optional<Exception>&&) = 0;
 
     virtual SWServerConnectionIdentifier connectionIdentifier() = 0;

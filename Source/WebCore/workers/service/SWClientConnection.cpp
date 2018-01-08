@@ -56,19 +56,19 @@ void SWClientConnection::scheduleJob(ServiceWorkerJob& job)
     scheduleJobInServer(job.data());
 }
 
-void SWClientConnection::finishedFetchingScript(ServiceWorkerJob& job, const String& script)
+void SWClientConnection::finishedFetchingScript(ServiceWorkerJob& job, const String& script, const ContentSecurityPolicyResponseHeaders& contentSecurityPolicy)
 {
     ASSERT(isMainThread());
     ASSERT(m_scheduledJobs.get(job.identifier()) == &job);
 
-    finishFetchingScriptInServer({ job.data().identifier(), job.data().registrationKey(), script, { } });
+    finishFetchingScriptInServer({ job.data().identifier(), job.data().registrationKey(), script, contentSecurityPolicy, { } });
 }
 
 void SWClientConnection::failedFetchingScript(const ServiceWorkerJobDataIdentifier& jobDataIdentifier, const ServiceWorkerRegistrationKey& registrationKey, const ResourceError& error)
 {
     ASSERT(isMainThread());
 
-    finishFetchingScriptInServer({ jobDataIdentifier, registrationKey, { }, error });
+    finishFetchingScriptInServer({ jobDataIdentifier, registrationKey, { }, { }, error });
 }
 
 void SWClientConnection::jobRejectedInServer(const ServiceWorkerJobDataIdentifier& jobDataIdentifier, const ExceptionData& exceptionData)

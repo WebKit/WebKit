@@ -1,5 +1,67 @@
 2018-01-08  Youenn Fablet  <youenn@apple.com>
 
+        Add CSP support to service workers
+        https://bugs.webkit.org/show_bug.cgi?id=181385
+
+        Reviewed by Chris Dumez.
+
+        Covered by rebased tests.
+
+        Added recovery of CSP information from WorkerScriptLoader.
+        Added plumbing to pass the CSP information to Service Workers.
+        Added persistency support for the CSP information.
+
+        * workers/WorkerScriptLoader.cpp:
+        (WebCore::WorkerScriptLoader::loadAsynchronously):
+        (WebCore::WorkerScriptLoader::didReceiveResponse):
+        * workers/WorkerScriptLoader.h:
+        (WebCore::WorkerScriptLoader::contentSecurityPolicy const):
+        * workers/service/SWClientConnection.cpp:
+        (WebCore::SWClientConnection::finishedFetchingScript):
+        (WebCore::SWClientConnection::failedFetchingScript):
+        * workers/service/SWClientConnection.h:
+        * workers/service/ServiceWorkerContainer.cpp:
+        (WebCore::ServiceWorkerContainer::addRegistration):
+        (WebCore::ServiceWorkerContainer::jobFailedWithException):
+        (WebCore::ServiceWorkerContainer::jobResolvedWithRegistration):
+        (WebCore::ServiceWorkerContainer::jobFinishedLoadingScript):
+        * workers/service/ServiceWorkerContainer.h:
+        * workers/service/ServiceWorkerContextData.cpp:
+        (WebCore::ServiceWorkerContextData::isolatedCopy const):
+        * workers/service/ServiceWorkerContextData.h:
+        (WebCore::ServiceWorkerContextData::encode const):
+        (WebCore::ServiceWorkerContextData::decode):
+        * workers/service/ServiceWorkerFetchResult.h:
+        (WebCore::ServiceWorkerFetchResult::encode const):
+        (WebCore::ServiceWorkerFetchResult::decode):
+        * workers/service/ServiceWorkerGlobalScope.cpp:
+        (WebCore::ServiceWorkerGlobalScope::create):
+        * workers/service/ServiceWorkerGlobalScope.h:
+        * workers/service/ServiceWorkerJob.cpp:
+        (WebCore::ServiceWorkerJob::notifyFinished):
+        * workers/service/ServiceWorkerJobClient.h:
+        * workers/service/context/ServiceWorkerThread.cpp:
+        (WebCore::ServiceWorkerThread::ServiceWorkerThread):
+        (WebCore::ServiceWorkerThread::createWorkerGlobalScope):
+        * workers/service/server/RegistrationDatabase.cpp:
+        (WebCore::v1RecordsTableSchema):
+        (WebCore::RegistrationDatabase::openSQLiteDatabase):
+        (WebCore::RegistrationDatabase::doPushChanges):
+        (WebCore::RegistrationDatabase::importRecords):
+        * workers/service/server/SWServer.cpp:
+        (WebCore::SWServer::updateWorker):
+        (WebCore::SWServer::installContextData):
+        * workers/service/server/SWServer.h:
+        * workers/service/server/SWServerJobQueue.cpp:
+        (WebCore::SWServerJobQueue::scriptFetchFinished):
+        * workers/service/server/SWServerWorker.cpp:
+        (WebCore::SWServerWorker::SWServerWorker):
+        (WebCore::m_contentSecurityPolicy):
+        (WebCore::SWServerWorker::contextData const):
+        * workers/service/server/SWServerWorker.h:
+
+2018-01-08  Youenn Fablet  <youenn@apple.com>
+
         Use no-cache fetch mode when loading main documents with location.reload()
         https://bugs.webkit.org/show_bug.cgi?id=181285
 

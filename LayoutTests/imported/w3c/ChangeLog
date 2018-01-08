@@ -1,5 +1,16 @@
 2018-01-08  Youenn Fablet  <youenn@apple.com>
 
+        Add CSP support to service workers
+        https://bugs.webkit.org/show_bug.cgi?id=181385
+
+        Reviewed by Chris Dumez.
+
+        * web-platform-tests/service-workers/service-worker/service-worker-csp-connect.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/service-worker-csp-default.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/service-worker-csp-script.https-expected.txt:
+
+2018-01-08  Youenn Fablet  <youenn@apple.com>
+
         Use no-cache fetch mode when loading main documents with location.reload()
         https://bugs.webkit.org/show_bug.cgi?id=181285
 

@@ -468,7 +468,7 @@ void ServiceWorkerContainer::startScriptFetchForJob(ServiceWorkerJob& job, Fetch
     job.fetchScriptWithContext(*context, cachePolicy);
 }
 
-void ServiceWorkerContainer::jobFinishedLoadingScript(ServiceWorkerJob& job, const String& script)
+void ServiceWorkerContainer::jobFinishedLoadingScript(ServiceWorkerJob& job, const String& script, const ContentSecurityPolicyResponseHeaders& contentSecurityPolicy)
 {
 #ifndef NDEBUG
     ASSERT(m_creationThread.ptr() == &Thread::current());
@@ -476,8 +476,8 @@ void ServiceWorkerContainer::jobFinishedLoadingScript(ServiceWorkerJob& job, con
 
     LOG(ServiceWorker, "SeviceWorkerContainer %p finished fetching script for job %s", this, job.identifier().loggingString().utf8().data());
 
-    callOnMainThread([connection = m_swConnection, job = makeRef(job), script = script.isolatedCopy()] {
-        connection->finishedFetchingScript(job, script);
+    callOnMainThread([connection = m_swConnection, job = makeRef(job), script = script.isolatedCopy(), contentSecurityPolicy = contentSecurityPolicy.isolatedCopy()] {
+        connection->finishedFetchingScript(job, script, contentSecurityPolicy);
     });
 }
 

@@ -104,7 +104,7 @@ public:
     const ClientOrigin& origin() const;
 
 private:
-    SWServerWorker(SWServer&, SWServerRegistration&, SWServerToContextConnectionIdentifier, const URL&, const String& script, WorkerType, ServiceWorkerIdentifier);
+    SWServerWorker(SWServer&, SWServerRegistration&, SWServerToContextConnectionIdentifier, const URL&, const String& script, const ContentSecurityPolicyResponseHeaders&,  WorkerType, ServiceWorkerIdentifier);
 
     void callWhenActivatedHandler(bool success);
 
@@ -113,6 +113,7 @@ private:
     SWServerToContextConnectionIdentifier m_contextConnectionIdentifier;
     ServiceWorkerData m_data;
     String m_script;
+    ContentSecurityPolicyResponseHeaders m_contentSecurityPolicy;
     bool m_hasPendingEvents { false };
     State m_state { State::NotRunning };
     mutable std::optional<ClientOrigin> m_origin;

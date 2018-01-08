@@ -69,7 +69,7 @@ public:
     virtual void removeServiceWorkerRegistrationInServer(ServiceWorkerRegistrationIdentifier) = 0;
 
     void scheduleJob(ServiceWorkerJob&);
-    void finishedFetchingScript(ServiceWorkerJob&, const String&);
+    void finishedFetchingScript(ServiceWorkerJob&, const String& script, const ContentSecurityPolicyResponseHeaders&);
     void failedFetchingScript(const ServiceWorkerJobDataIdentifier&, const ServiceWorkerRegistrationKey&, const ResourceError&);
 
     virtual void didResolveRegistrationPromise(const ServiceWorkerRegistrationKey&) = 0;
