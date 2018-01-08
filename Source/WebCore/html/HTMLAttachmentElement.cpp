@@ -182,16 +182,6 @@ void HTMLAttachmentElement::parseAttribute(const QualifiedName& name, const Atom
     HTMLElement::parseAttribute(name, value);
 }
 
-String HTMLAttachmentElement::uniqueIdentifier() const
-{
-    return attributeWithoutSynchronization(HTMLNames::webkitattachmentidAttr);
-}
-
-void HTMLAttachmentElement::setUniqueIdentifier(const String& identifier)
-{
-    setAttributeWithoutSynchronization(HTMLNames::webkitattachmentidAttr, identifier);
-}
-
 String HTMLAttachmentElement::attachmentTitle() const
 {
     auto& title = attributeWithoutSynchronization(titleAttr);

@@ -7600,8 +7600,10 @@ Vector<RefPtr<WebAnimation>> Document::getAnimations()
 void Document::didInsertAttachmentElement(HTMLAttachmentElement& attachment)
 {
     auto identifier = attachment.uniqueIdentifier();
-    if (!identifier)
-        return;
+    if (identifier.isEmpty() || m_attachmentIdentifierToElementMap.contains(identifier)) {
+        identifier = createCanonicalUUIDString();
+        attachment.setUniqueIdentifier(identifier);
+    }
 
     m_attachmentIdentifierToElementMap.set(identifier, attachment);
 

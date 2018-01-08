@@ -1,3 +1,18 @@
+2018-01-08  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Copying, pasting, and then deleting an attachment element breaks attachment data requests
+        https://bugs.webkit.org/show_bug.cgi?id=181365
+        <rdar://problem/36340647>
+
+        Reviewed by Tim Horton.
+
+        Adds two new attachment API tests to verify that copying and pasting an existing attachment inserts an
+        attachment element that may be edited independently of the original attachment. See WebCore/ChangeLog for more
+        detail.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WKAttachmentTests.mm:
+        (TestWebKitAPI::TEST):
+
 2018-01-08  Youenn Fablet  <youenn@apple.com>
 
         navigator.onLine does not work inside service workers

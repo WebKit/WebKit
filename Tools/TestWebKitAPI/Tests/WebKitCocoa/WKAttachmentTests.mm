@@ -447,6 +447,7 @@ TEST(WKAttachmentTests, AttachmentElementInsertion)
     [secondAttachment expectRequestedDataToBe:testImageData()];
     EXPECT_FALSE([webView hasAttribute:@"webkitattachmentbloburl" forQuerySelector:@"attachment"]);
     EXPECT_FALSE([webView hasAttribute:@"webkitattachmentpath" forQuerySelector:@"attachment"]);
+    EXPECT_FALSE([webView hasAttribute:@"webkitattachmentid" forQuerySelector:@"attachment"]);
 }
 
 TEST(WKAttachmentTests, AttachmentUpdatesWhenInsertingAndDeletingNewline)
@@ -514,6 +515,7 @@ TEST(WKAttachmentTests, AttachmentUpdatesWhenChangingFontStyles)
     [attachment expectRequestedDataToBe:testHTMLData()];
     EXPECT_FALSE([webView hasAttribute:@"webkitattachmentbloburl" forQuerySelector:@"attachment"]);
     EXPECT_FALSE([webView hasAttribute:@"webkitattachmentpath" forQuerySelector:@"attachment"]);
+    EXPECT_FALSE([webView hasAttribute:@"webkitattachmentid" forQuerySelector:@"attachment"]);
 
     // Inserting text should delete the current selection, removing the attachment in the process.
     [webView expectUpdatesAfterCommand:@"InsertText" withArgument:@"foo" expectedRemovals:@[attachment.get()] expectedInsertions:@[]];
@@ -537,6 +539,7 @@ TEST(WKAttachmentTests, AttachmentUpdatesWhenInsertingLists)
     [attachment expectRequestedDataToBe:testHTMLData()];
     EXPECT_FALSE([webView hasAttribute:@"webkitattachmentbloburl" forQuerySelector:@"attachment"]);
     EXPECT_FALSE([webView hasAttribute:@"webkitattachmentpath" forQuerySelector:@"attachment"]);
+    EXPECT_FALSE([webView hasAttribute:@"webkitattachmentid" forQuerySelector:@"attachment"]);
 }
 
 TEST(WKAttachmentTests, AttachmentUpdatesWhenInsertingRichMarkup)
@@ -545,12 +548,13 @@ TEST(WKAttachmentTests, AttachmentUpdatesWhenInsertingRichMarkup)
     RetainPtr<_WKAttachment> attachment;
     {
         ObserveAttachmentUpdatesForScope observer(webView.get());
-        [webView _synchronouslyExecuteEditCommand:@"InsertHTML" argument:@"<div><strong><attachment title='a' webkitattachmentid='a06fec41-9aa0-4c2c-ba3a-0149b54aad99'></attachment></strong></div>"];
+        [webView _synchronouslyExecuteEditCommand:@"InsertHTML" argument:@"<div><strong><attachment title='a'></attachment></strong></div>"];
         attachment = observer.observer().inserted[0];
         observer.expectAttachmentUpdates(@[ ], @[attachment.get()]);
     }
     EXPECT_FALSE([webView hasAttribute:@"webkitattachmentbloburl" forQuerySelector:@"attachment"]);
     EXPECT_FALSE([webView hasAttribute:@"webkitattachmentpath" forQuerySelector:@"attachment"]);
+    EXPECT_FALSE([webView hasAttribute:@"webkitattachmentid" forQuerySelector:@"attachment"]);
     {
         ObserveAttachmentUpdatesForScope observer(webView.get());
         [webView stringByEvaluatingJavaScript:@"document.querySelector('attachment').remove()"];
@@ -585,6 +589,7 @@ TEST(WKAttachmentTests, AttachmentUpdatesWhenCuttingAndPasting)
     [attachment expectRequestedDataToBe:testHTMLData()];
     EXPECT_FALSE([webView hasAttribute:@"webkitattachmentbloburl" forQuerySelector:@"attachment"]);
     EXPECT_FALSE([webView hasAttribute:@"webkitattachmentpath" forQuerySelector:@"attachment"]);
+    EXPECT_FALSE([webView hasAttribute:@"webkitattachmentid" forQuerySelector:@"attachment"]);
 }
 
 TEST(WKAttachmentTests, AttachmentDataForEmptyFile)
@@ -923,6 +928,71 @@ TEST(WKAttachmentTests, DoNotInsertDataURLImagesAsAttachments)
     EXPECT_FALSE([webView stringByEvaluatingJavaScript:@"Boolean(document.querySelector('attachment'))"].boolValue);
     EXPECT_EQ(1990, [webView stringByEvaluatingJavaScript:@"document.querySelector('img').src.length"].integerValue);
     EXPECT_WK_STREQ("This is an apple", [webView stringByEvaluatingJavaScript:@"document.body.textContent"]);
+}
+
+TEST(WKAttachmentTests, InsertAndRemoveDuplicateAttachment)
+{
+    auto webView = webViewForTestingAttachments();
+    RetainPtr<NSData> data = testHTMLData();
+    RetainPtr<_WKAttachment> originalAttachment;
+    RetainPtr<_WKAttachment> pastedAttachment;
+    {
+        ObserveAttachmentUpdatesForScope observer(webView.get());
+        originalAttachment = [webView synchronouslyInsertAttachmentWithFilename:@"foo.txt" contentType:@"text/plain" data:data.get() options:nil];
+        EXPECT_EQ(0U, observer.observer().removed.count);
+        observer.expectAttachmentUpdates(@[], @[originalAttachment.get()]);
+    }
+    [webView selectAll:nil];
+    [webView _executeEditCommand:@"Copy" argument:nil completion:nil];
+    [webView evaluateJavaScript:@"getSelection().collapseToEnd()" completionHandler:nil];
+    {
+        ObserveAttachmentUpdatesForScope observer(webView.get());
+        [webView _synchronouslyExecuteEditCommand:@"Paste" argument:nil];
+        EXPECT_EQ(0U, observer.observer().removed.count);
+        EXPECT_EQ(1U, observer.observer().inserted.count);
+        pastedAttachment = observer.observer().inserted.firstObject;
+        EXPECT_FALSE([pastedAttachment isEqual:originalAttachment.get()]);
+    }
+    {
+        ObserveAttachmentUpdatesForScope observer(webView.get());
+        [webView _synchronouslyExecuteEditCommand:@"DeleteBackward" argument:nil];
+        observer.expectAttachmentUpdates(@[pastedAttachment.get()], @[]);
+        [originalAttachment expectRequestedDataToBe:data.get()];
+    }
+    {
+        ObserveAttachmentUpdatesForScope observer(webView.get());
+        [webView _synchronouslyExecuteEditCommand:@"DeleteBackward" argument:nil];
+        observer.expectAttachmentUpdates(@[originalAttachment.get()], @[]);
+    }
+}
+
+TEST(WKAttachmentTests, InsertDuplicateAttachmentAndUpdateData)
+{
+    auto webView = webViewForTestingAttachments();
+    RetainPtr<NSData> originalData = testHTMLData();
+    RetainPtr<_WKAttachment> originalAttachment;
+    RetainPtr<_WKAttachment> pastedAttachment;
+    {
+        ObserveAttachmentUpdatesForScope observer(webView.get());
+        originalAttachment = [webView synchronouslyInsertAttachmentWithFilename:@"foo.txt" contentType:@"text/plain" data:originalData.get() options:nil];
+        EXPECT_EQ(0U, observer.observer().removed.count);
+        observer.expectAttachmentUpdates(@[], @[originalAttachment.get()]);
+    }
+    [webView selectAll:nil];
+    [webView _executeEditCommand:@"Copy" argument:nil completion:nil];
+    [webView evaluateJavaScript:@"getSelection().collapseToEnd()" completionHandler:nil];
+    {
+        ObserveAttachmentUpdatesForScope observer(webView.get());
+        [webView _synchronouslyExecuteEditCommand:@"Paste" argument:nil];
+        EXPECT_EQ(0U, observer.observer().removed.count);
+        EXPECT_EQ(1U, observer.observer().inserted.count);
+        pastedAttachment = observer.observer().inserted.firstObject;
+        EXPECT_FALSE([pastedAttachment isEqual:originalAttachment.get()]);
+    }
+    auto updatedData = retainPtr([@"HELLO WORLD" dataUsingEncoding:NSUTF8StringEncoding]);
+    [originalAttachment synchronouslySetData:updatedData.get() newContentType:nil newFilename:nil error:nil];
+    [originalAttachment expectRequestedDataToBe:updatedData.get()];
+    [pastedAttachment expectRequestedDataToBe:originalData.get()];
 }
 
 #pragma mark - Platform-specific tests

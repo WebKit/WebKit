@@ -49,8 +49,8 @@ public:
     enum class UpdateDisplayAttributes { No, Yes };
     void setFile(RefPtr<File>&&, UpdateDisplayAttributes = UpdateDisplayAttributes::No);
 
-    WEBCORE_EXPORT String uniqueIdentifier() const;
-    void setUniqueIdentifier(const String&);
+    String uniqueIdentifier() const { return m_uniqueIdentifier; }
+    void setUniqueIdentifier(const String& uniqueIdentifier) { m_uniqueIdentifier = uniqueIdentifier; }
 
     WEBCORE_EXPORT void updateDisplayMode(AttachmentDisplayMode);
     WEBCORE_EXPORT void updateFileWithData(Ref<SharedBuffer>&& data, std::optional<String>&& newContentType = std::nullopt, std::optional<String>&& newFilename = std::nullopt);
@@ -100,6 +100,7 @@ private:
     
     RefPtr<File> m_file;
     Vector<std::unique_ptr<AttachmentDataReader>> m_attachmentReaders;
+    String m_uniqueIdentifier;
 };
 
 } // namespace WebCore

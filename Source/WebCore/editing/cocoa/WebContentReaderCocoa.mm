@@ -59,7 +59,6 @@
 #import "markup.h"
 #import <pal/spi/cocoa/NSAttributedStringSPI.h>
 #import <wtf/SoftLinking.h>
-#import <wtf/UUID.h>
 
 #if (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300)
 @interface NSAttributedString ()
@@ -194,7 +193,6 @@ static Ref<DocumentFragment> createFragmentForImageAttachment(Document& document
 {
 #if ENABLE(ATTACHMENT_ELEMENT)
     auto attachment = HTMLAttachmentElement::create(HTMLNames::attachmentTag, document);
-    attachment->setUniqueIdentifier(createCanonicalUUIDString());
     attachment->setFile(File::create(blob, AtomicString("image")), HTMLAttachmentElement::UpdateDisplayAttributes::Yes);
     attachment->updateDisplayMode(AttachmentDisplayMode::InPlace);
 
@@ -275,7 +273,6 @@ static void replaceRichContentWithAttachments(DocumentFragment& fragment, const 
             continue;
 
         auto attachment = HTMLAttachmentElement::create(HTMLNames::attachmentTag, fragment.document());
-        attachment->setUniqueIdentifier(createCanonicalUUIDString());
         attachment->setFile(WTFMove(file), HTMLAttachmentElement::UpdateDisplayAttributes::Yes);
         attachment->updateDisplayMode(info.displayMode);
         parent->replaceChild(attachment, elementToReplace);
@@ -607,7 +604,6 @@ bool WebContentReader::readFilePaths(const Vector<String>& paths)
 #if ENABLE(ATTACHMENT_ELEMENT)
         if (RuntimeEnabledFeatures::sharedFeatures().attachmentElementEnabled()) {
             auto attachment = HTMLAttachmentElement::create(HTMLNames::attachmentTag, document);
-            attachment->setUniqueIdentifier(createCanonicalUUIDString());
             attachment->setFile(File::create(path), HTMLAttachmentElement::UpdateDisplayAttributes::Yes);
             ensureFragment().appendChild(attachment);
             readAnyFilePath = true;

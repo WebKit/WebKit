@@ -1,3 +1,64 @@
+2018-01-08  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Copying, pasting, and then deleting an attachment element breaks attachment data requests
+        https://bugs.webkit.org/show_bug.cgi?id=181365
+        <rdar://problem/36340647>
+
+        Reviewed by Tim Horton.
+
+        Currently, copying and pasting an attachment element within the same document and then deleting backwards to
+        remove the pasted attachment element causes the original attachment element to be inaccessible via SPI. This is
+        because there are now two different attachment elements with the same unique identifier, such that Document,
+        which keeps a map of all unique attachment identifiers to attachment elements, will lose track of the original
+        attachment element.
+
+        To fix this, we ensure that attachment elements should always have unique identifiers when they are inserted
+        into the document. We make several small adjustments to accomplish this:
+
+        1.  First, refactor HTMLAttachmentElement's unique identifier so that it no longer depends on the value of the
+            "webkitattachmentid" attribute, and is instead just a member of HTMLAttachmentElement that is not exposed to
+            DOM bindings. This means setting and querying an attachment element's uniqueIdentifier can be done without
+            triggering any side effects, such as layout or mutation events.
+
+        2.  Next, make "webkitattachmentid" a temporary attribute similar to "webkitattachmentpath" and
+            "webkitattachmentbloburl", so that it is added only when generating a markup fragment for editing, and
+            removed upon deserialization.
+
+        3.  Lastly, shift the responsibility of assigning a unique identifier to an attachment away from places where we
+            create attachment elements, and instead have Document enforce this when an attachment element is inserted.
+
+        Tests:  WKAttachmentTests.InsertAndRemoveDuplicateAttachment
+                WKAttachmentTests.InsertDuplicateAttachmentAndUpdateData
+
+        * dom/Document.cpp:
+        (WebCore::Document::didInsertAttachmentElement):
+
+        Assign the unique identifier of an attachment element that has been inserted. If the identifier already tracks
+        an existing attachment element in the document or is missing, reassign the identifier to a new value.
+
+        * editing/cocoa/WebContentReaderCocoa.mm:
+        (WebCore::createFragmentForImageAttachment):
+        (WebCore::replaceRichContentWithAttachments):
+        (WebCore::WebContentReader::readFilePaths):
+
+        Remove calls to setUniqueIdentifier here, since Document will assign a unique identifier upon insertion.
+
+        * editing/markup.cpp:
+        (WebCore::StyledMarkupAccumulator::appendCustomAttributes):
+        (WebCore::createFragmentFromMarkup):
+
+        Set the attachment's unique identifier to the value of the "webkitattachmentid" attribute. When moving existing
+        attachments around in the DOM without duplication, this ensures that the attachment will be removed and
+        reinserted in the document without triggering removal and insertion client delegate methods.
+
+        When pasting an attachment element that has the same identifier as an existing attachment, we let Document
+        realize that the attachment identifier already exists, and reassign it to a unique value.
+
+        * html/HTMLAttachmentElement.cpp:
+        (WebCore::HTMLAttachmentElement::uniqueIdentifier const): Deleted.
+        (WebCore::HTMLAttachmentElement::setUniqueIdentifier): Deleted.
+        * html/HTMLAttachmentElement.h:
+
 2018-01-08  Zalan Bujtas  <zalan@apple.com>
 
         [RenderTreeBuilder] Move RenderBlockFlow addChild logic to RenderTreeBuilder

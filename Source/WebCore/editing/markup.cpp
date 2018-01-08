@@ -378,6 +378,7 @@ void StyledMarkupAccumulator::appendCustomAttributes(StringBuilder& out, const E
         return;
     
     const HTMLAttachmentElement& attachment = downcast<HTMLAttachmentElement>(element);
+    appendAttribute(out, element, { webkitattachmentidAttr, attachment.uniqueIdentifier() }, namespaces);
     if (auto* file = attachment.file()) {
         // These attributes are only intended for File deserialization, and are removed from the generated attachment
         // element after we've deserialized and set its backing File.
@@ -767,12 +768,16 @@ Ref<DocumentFragment> createFragmentFromMarkup(Document& document, const String&
         attachments.append(attachment);
 
     for (auto& attachment : attachments) {
+        attachment->setUniqueIdentifier(attachment->attributeWithoutSynchronization(webkitattachmentidAttr));
+
         auto attachmentPath = attachment->attachmentPath();
         auto blobURL = attachment->blobURL();
         if (!attachmentPath.isEmpty())
             attachment->setFile(File::create(attachmentPath));
         else if (!blobURL.isEmpty())
             attachment->setFile(File::deserialize({ }, blobURL, attachment->attachmentType(), attachment->attachmentTitle()));
+
+        attachment->removeAttribute(webkitattachmentidAttr);
         attachment->removeAttribute(webkitattachmentpathAttr);
         attachment->removeAttribute(webkitattachmentbloburlAttr);
     }
