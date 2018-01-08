@@ -1,3 +1,71 @@
+2018-01-08  Zan Dobersek  <zdobersek@igalia.com>
+
+        [Cairo] Use isolated fill and stroke source containers
+        https://bugs.webkit.org/show_bug.cgi?id=181386
+
+        Reviewed by Carlos Garcia Campos.
+
+        Generate fill and stroke source objects upon invocation of various Cairo
+        operations, initializing necessary data from the GraphicsContextState
+        object.
+
+        Cairo::FillSource and Cairo::StrokeSource structs are introduced, both
+        being default-constructible as well as providing a constructor that
+        accepts a GraphicsContextState object from which the appropriate
+        resources are created.
+
+        The FillSource and StrokeSource objects are then passed to
+        PlatformContextCairo's prepareForFilling() and prepareForStroking()
+        methods. Here the helper prepareCairoContextSource() function is now
+        invoked with cairo_pattern_t objects as pattern or gradient sources, or
+        the source color if neither cairo_pattern_t object is specified.
+
+        The FillSource and StrokeSource constructors mimic the previous behavior
+        of prepareCairoContextSource(). In case the source is a Pattern object,
+        a cairo_pattern_t object is created from that. In case of FillSource,
+        we also retrieve pattern size, transform and repetition information. In
+        case the source os a Gradient object, we create a 'base' cairo_pattern_t
+        object for a completely opaque alpha channel. Additionally, if the alpha
+        value on the state is not 1, we create an alpha-adjusted cairo_pattern_t
+        that is potentially used for any filling or stroking operation that has
+        to preserve transparency. If neither Pattern or Gradient objects are set
+        on the GraphicsContextState, we default to the current fill or stroke
+        color.
+
+        Overall, there's no change in behavior, this is simply a refactoring
+        that enables us to construct Cairo objects for filling and stroking
+        sources at the time of Cairo operation dispatch, instead of pulling down
+        GraphicsContextState deeper into the Cairo-specific code.
+
+        No new tests -- no change in functionality.
+
+        * platform/graphics/cairo/CairoOperations.cpp:
+        (WebCore::Cairo::drawPathShadow):
+        (WebCore::Cairo::fillCurrentCairoPath):
+        (WebCore::Cairo::FillSource::FillSource):
+        (WebCore::Cairo::StrokeSource::StrokeSource):
+        (WebCore::Cairo::fillRect):
+        (WebCore::Cairo::fillRectWithRoundedHole):
+        (WebCore::Cairo::fillPath):
+        (WebCore::Cairo::strokeRect):
+        (WebCore::Cairo::strokePath):
+        (WebCore::Cairo::drawGlyphs):
+        * platform/graphics/cairo/CairoOperations.h:
+        * platform/graphics/cairo/FontCairo.cpp:
+        (WebCore::FontCascade::drawGlyphs):
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        (WebCore::GraphicsContext::fillPath):
+        (WebCore::GraphicsContext::strokePath):
+        (WebCore::GraphicsContext::fillRect):
+        (WebCore::GraphicsContext::strokeRect):
+        (WebCore::GraphicsContext::fillRectWithRoundedHole):
+        * platform/graphics/cairo/PlatformContextCairo.cpp:
+        (WebCore::prepareCairoContextSource):
+        (WebCore::PlatformContextCairo::prepareForFilling):
+        (WebCore::PlatformContextCairo::prepareForStroking):
+        (WebCore::PlatformContextCairo::clipForPatternFilling):
+        * platform/graphics/cairo/PlatformContextCairo.h:
+
 2018-01-08  Youenn Fablet  <youenn@apple.com>
 
         navigator.onLine does not work inside service workers

@@ -188,7 +188,7 @@ void GraphicsContext::fillPath(const Path& path)
     }
 
     ASSERT(hasPlatformContext());
-    Cairo::fillPath(*platformContext(), path, state(), *this);
+    Cairo::fillPath(*platformContext(), path, Cairo::FillSource(state()), *this);
 }
 
 void GraphicsContext::strokePath(const Path& path)
@@ -202,7 +202,7 @@ void GraphicsContext::strokePath(const Path& path)
     }
 
     ASSERT(hasPlatformContext());
-    Cairo::strokePath(*platformContext(), path, state(), *this);
+    Cairo::strokePath(*platformContext(), path, Cairo::StrokeSource(state()), *this);
 }
 
 void GraphicsContext::fillRect(const FloatRect& rect)
@@ -216,7 +216,7 @@ void GraphicsContext::fillRect(const FloatRect& rect)
     }
 
     ASSERT(hasPlatformContext());
-    Cairo::fillRect(*platformContext(), rect, state(), *this);
+    Cairo::fillRect(*platformContext(), rect, Cairo::FillSource(state()), *this);
 }
 
 void GraphicsContext::fillRect(const FloatRect& rect, const Color& color)
@@ -523,7 +523,7 @@ void GraphicsContext::strokeRect(const FloatRect& rect, float lineWidth)
     }
 
     ASSERT(hasPlatformContext());
-    Cairo::strokeRect(*platformContext(), rect, lineWidth, state(), *this);
+    Cairo::strokeRect(*platformContext(), rect, lineWidth, Cairo::StrokeSource(state()), *this);
 }
 
 void GraphicsContext::setLineCap(LineCap lineCap)
@@ -679,7 +679,7 @@ void GraphicsContext::fillRectWithRoundedHole(const FloatRect& rect, const Float
 
     ASSERT(hasPlatformContext());
     auto& state = this->state();
-    Cairo::fillRectWithRoundedHole(*platformContext(), rect, roundedHoleRect, state, Cairo::ShadowBlurUsage(state), *this);
+    Cairo::fillRectWithRoundedHole(*platformContext(), rect, roundedHoleRect, Cairo::FillSource(state), Cairo::ShadowBlurUsage(state), *this);
 }
 
 void GraphicsContext::drawPattern(Image& image, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, CompositeOperator compositeOperator, BlendMode blendMode)

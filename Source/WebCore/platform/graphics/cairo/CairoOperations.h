@@ -77,6 +77,38 @@ bool isAcceleratedContext(PlatformContextCairo&);
 
 } // namespace State
 
+struct FillSource {
+    FillSource() = default;
+    explicit FillSource(const GraphicsContextState&);
+
+    struct {
+        RefPtr<cairo_pattern_t> object;
+        FloatSize size;
+        AffineTransform transform;
+        bool repeatX { false };
+        bool repeatY { false };
+    } pattern;
+    struct {
+        RefPtr<cairo_pattern_t> base;
+        RefPtr<cairo_pattern_t> alphaAdjusted;
+    } gradient;
+    Color color;
+
+    WindRule fillRule;
+};
+
+struct StrokeSource {
+    StrokeSource() = default;
+    explicit StrokeSource(const GraphicsContextState&);
+
+    RefPtr<cairo_pattern_t> pattern;
+    struct {
+        RefPtr<cairo_pattern_t> base;
+        RefPtr<cairo_pattern_t> alphaAdjusted;
+    } gradient;
+    Color color;
+};
+
 struct ShadowBlurUsage {
     explicit ShadowBlurUsage(const GraphicsContextState&);
 
@@ -92,17 +124,17 @@ void setLineDash(PlatformContextCairo&, const DashArray&, float);
 void setLineJoin(PlatformContextCairo&, LineJoin);
 void setMiterLimit(PlatformContextCairo&, float);
 
-void fillRect(PlatformContextCairo&, const FloatRect&, const GraphicsContextState&, GraphicsContext&);
+void fillRect(PlatformContextCairo&, const FloatRect&, const FillSource&, GraphicsContext&);
 void fillRect(PlatformContextCairo&, const FloatRect&, const Color&, bool, GraphicsContext&);
 void fillRect(PlatformContextCairo&, const FloatRect&, cairo_pattern_t*);
 void fillRoundedRect(PlatformContextCairo&, const FloatRoundedRect&, const Color&, bool, GraphicsContext&);
-void fillRectWithRoundedHole(PlatformContextCairo&, const FloatRect&, const FloatRoundedRect&, const GraphicsContextState&, const ShadowBlurUsage&, GraphicsContext&);
-void fillPath(PlatformContextCairo&, const Path&, const GraphicsContextState&, GraphicsContext&);
-void strokeRect(PlatformContextCairo&, const FloatRect&, float, const GraphicsContextState&, GraphicsContext&);
-void strokePath(PlatformContextCairo&, const Path&, const GraphicsContextState&, GraphicsContext&);
+void fillRectWithRoundedHole(PlatformContextCairo&, const FloatRect&, const FloatRoundedRect&, const FillSource&, const ShadowBlurUsage&, GraphicsContext&);
+void fillPath(PlatformContextCairo&, const Path&, const FillSource&, GraphicsContext&);
+void strokeRect(PlatformContextCairo&, const FloatRect&, float, const StrokeSource&, GraphicsContext&);
+void strokePath(PlatformContextCairo&, const Path&, const StrokeSource&, GraphicsContext&);
 void clearRect(PlatformContextCairo&, const FloatRect&);
 
-void drawGlyphs(PlatformContextCairo&, const GraphicsContextState&, const ShadowBlurUsage&, const FloatPoint&, cairo_scaled_font_t*, double, const Vector<cairo_glyph_t>&, float, GraphicsContext&);
+void drawGlyphs(PlatformContextCairo&, const GraphicsContextState&, const FillSource&, const StrokeSource&, const ShadowBlurUsage&, const FloatPoint&, cairo_scaled_font_t*, double, const Vector<cairo_glyph_t>&, float, GraphicsContext&);
 
 void drawNativeImage(PlatformContextCairo&, cairo_surface_t*, const FloatRect&, const FloatRect&, CompositeOperator, BlendMode, ImageOrientation, GraphicsContext&);
 void drawPattern(PlatformContextCairo&, cairo_surface_t*, const IntSize&, const FloatRect&, const FloatRect&, const AffineTransform&, const FloatPoint&, CompositeOperator, BlendMode);

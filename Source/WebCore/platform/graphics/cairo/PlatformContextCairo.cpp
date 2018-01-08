@@ -264,16 +264,17 @@ static inline void reduceSourceByAlpha(cairo_t* cr, float alpha)
     cairo_pop_group_to_source(cr);
 }
 
-static void prepareCairoContextSource(cairo_t* cr, Pattern* pattern, Gradient* gradient, const Color& color, float globalAlpha)
+static void prepareCairoContextSource(cairo_t* cr, cairo_pattern_t* pattern, cairo_pattern_t* gradient, const Color& color, float globalAlpha)
 {
     if (pattern) {
-        RefPtr<cairo_pattern_t> cairoPattern = adoptRef(pattern->createPlatformPattern(AffineTransform()));
-        cairo_set_source(cr, cairoPattern.get());
+        // Pattern source
+        cairo_set_source(cr, pattern);
         reduceSourceByAlpha(cr, globalAlpha);
     } else if (gradient) {
-        RefPtr<cairo_pattern_t> cairoPattern = adoptRef(gradient->createPlatformGradient(globalAlpha));
-        cairo_set_source(cr, cairoPattern.get());
-    } else { // Solid color source.
+        // Gradient source
+        cairo_set_source(cr, gradient);
+    } else {
+        // Solid color source
         if (globalAlpha < 1)
             setSourceRGBAFromColor(cr, colorWithOverrideAlpha(color.rgb(), color.alpha() / 255.f * globalAlpha));
         else
@@ -281,32 +282,39 @@ static void prepareCairoContextSource(cairo_t* cr, Pattern* pattern, Gradient* g
     }
 }
 
-void PlatformContextCairo::prepareForFilling(const GraphicsContextState& state, PatternAdjustment patternAdjustment)
+void PlatformContextCairo::prepareForFilling(const Cairo::FillSource& fillSource, PatternAdjustment patternAdjustment)
 {
-    cairo_set_fill_rule(m_cr.get(), state.fillRule == RULE_EVENODD ?  CAIRO_FILL_RULE_EVEN_ODD : CAIRO_FILL_RULE_WINDING);
-    prepareCairoContextSource(m_cr.get(),
-                              state.fillPattern.get(),
-                              state.fillGradient.get(),
-                              state.fillColor,
-                              patternAdjustment == AdjustPatternForGlobalAlpha ? globalAlpha() : 1);
+    cairo_set_fill_rule(m_cr.get(), fillSource.fillRule == RULE_EVENODD ? CAIRO_FILL_RULE_EVEN_ODD : CAIRO_FILL_RULE_WINDING);
 
-    if (state.fillPattern)
-        clipForPatternFilling(state);
+    bool adjustForAlpha = patternAdjustment == AdjustPatternForGlobalAlpha;
+
+    auto* gradient = fillSource.gradient.base.get();
+    if (adjustForAlpha && fillSource.gradient.alphaAdjusted)
+        gradient = fillSource.gradient.alphaAdjusted.get();
+
+    prepareCairoContextSource(m_cr.get(), fillSource.pattern.object.get(), gradient,
+        fillSource.color, adjustForAlpha ? globalAlpha() : 1);
+
+    if (fillSource.pattern.object) {
+        clipForPatternFilling(fillSource.pattern.size, fillSource.pattern.transform,
+            fillSource.pattern.repeatX, fillSource.pattern.repeatY);
+    }
 }
 
-void PlatformContextCairo::prepareForStroking(const GraphicsContextState& state, AlphaPreservation alphaPreservation)
+void PlatformContextCairo::prepareForStroking(const Cairo::StrokeSource& strokeSource, AlphaPreservation alphaPreservation)
 {
-    prepareCairoContextSource(m_cr.get(),
-                              state.strokePattern.get(),
-                              state.strokeGradient.get(),
-                              state.strokeColor,
-                              alphaPreservation == PreserveAlpha ? globalAlpha() : 1);
+    bool preserveAlpha = alphaPreservation == PreserveAlpha;
+
+    auto* gradient = strokeSource.gradient.base.get();
+    if (preserveAlpha && strokeSource.gradient.alphaAdjusted)
+        gradient = strokeSource.gradient.alphaAdjusted.get();
+
+    prepareCairoContextSource(m_cr.get(), strokeSource.pattern.get(), gradient,
+        strokeSource.color, preserveAlpha ? globalAlpha() : 1);
 }
 
-void PlatformContextCairo::clipForPatternFilling(const GraphicsContextState& state)
+void PlatformContextCairo::clipForPatternFilling(const FloatSize& patternSize, const AffineTransform& patternTransform, bool repeatX, bool repeatY)
 {
-    ASSERT(state.fillPattern);
-
     // Hold current cairo path in a variable for restoring it after configuring the pattern clip rectangle.
     auto currentPath = cairo_copy_path(m_cr.get());
     cairo_new_path(m_cr.get());
@@ -317,12 +325,7 @@ void PlatformContextCairo::clipForPatternFilling(const GraphicsContextState& sta
     cairo_clip_extents(m_cr.get(), &x1, &y1, &x2, &y2);
     FloatRect clipRect(x1, y1, x2 - x1, y2 - y1);
 
-    auto& patternImage = state.fillPattern->tileImage();
-    const AffineTransform& patternTransform = state.fillPattern->patternSpaceTransform();
-    FloatRect patternRect = patternTransform.mapRect(FloatRect(0, 0, patternImage.width(), patternImage.height()));
-
-    bool repeatX = state.fillPattern->repeatX();
-    bool repeatY = state.fillPattern->repeatY();
+    FloatRect patternRect = patternTransform.mapRect(FloatRect(FloatPoint(), patternSize));
 
     if (!repeatX) {
         clipRect.setX(patternRect.x());

@@ -37,6 +37,11 @@ namespace WebCore {
 class GraphicsContextPlatformPrivate;
 struct GraphicsContextState;
 
+namespace Cairo {
+struct FillSource;
+struct StrokeSource;
+}
+
 // Much like PlatformContextSkia in the Skia port, this class holds information that
 // would normally be private to GraphicsContext, except that we want to allow access
 // to it in Font and Image code. This allows us to separate the concerns of Cairo-specific
@@ -69,13 +74,13 @@ public:
     InterpolationQuality imageInterpolationQuality() const;
 
     enum PatternAdjustment { NoAdjustment, AdjustPatternForGlobalAlpha };
-    void prepareForFilling(const GraphicsContextState&, PatternAdjustment);
+    void prepareForFilling(const Cairo::FillSource&, PatternAdjustment);
 
     enum AlphaPreservation { DoNotPreserveAlpha, PreserveAlpha };
-    void prepareForStroking(const GraphicsContextState&, AlphaPreservation = PreserveAlpha);
+    void prepareForStroking(const Cairo::StrokeSource&, AlphaPreservation);
 
 private:
-    void clipForPatternFilling(const GraphicsContextState&);
+    void clipForPatternFilling(const FloatSize&, const AffineTransform&, bool, bool);
 
     RefPtr<cairo_t> m_cr;
 
