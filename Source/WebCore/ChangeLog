@@ -1,3 +1,37 @@
+2018-01-08  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer][Soup] Remove dead getCreateOrReadBuffer code path
+        https://bugs.webkit.org/show_bug.cgi?id=181376
+
+        Reviewed by Carlos Garcia Campos.
+
+        This code path is no longer used now that the GStreamer HTTP
+        source element uses data coming directly from the network process.
+
+        * SourcesGTK.txt:
+        * SourcesWPE.txt:
+        * loader/MediaResourceLoader.cpp:
+        (WebCore::MediaResource::getOrCreateReadBuffer): Deleted.
+        * loader/MediaResourceLoader.h:
+        * loader/SubresourceLoader.h:
+        * loader/cache/CachedRawResource.h:
+        * loader/cache/CachedRawResourceClient.h:
+        (WebCore::CachedRawResourceClient::finishedTimingForWorkerLoad):
+        (WebCore::CachedRawResourceClient::getOrCreateReadBuffer): Deleted.
+        * loader/cache/CachedResource.h:
+        (WebCore::CachedResource::getOrCreateReadBuffer): Deleted.
+        * loader/soup/CachedRawResourceSoup.cpp: Removed.
+        * loader/soup/SubresourceLoaderSoup.cpp: Removed.
+        * platform/graphics/PlatformMediaResourceLoader.h:
+        (WebCore::PlatformMediaResourceClient::loadFinished):
+        (WebCore::PlatformMediaResourceClient::getOrCreateReadBuffer): Deleted.
+        * platform/graphics/gstreamer/WebKitWebSourceGStreamer.cpp:
+        (CachedResourceStreamingClient::getOrCreateReadBuffer): Deleted.
+        * platform/network/ResourceHandleClient.h:
+        (WebCore::ResourceHandleClient::getOrCreateReadBuffer): Deleted.
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::ResourceHandle::ensureReadBuffer):
+
 2018-01-08  Zan Dobersek  <zdobersek@igalia.com> and Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GStreamer] use FastMalloc-based GstAllocator

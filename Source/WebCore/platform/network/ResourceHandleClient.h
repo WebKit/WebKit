@@ -91,10 +91,6 @@ public:
     WEBCORE_EXPORT virtual void willCacheResponseAsync(ResourceHandle*, NSCachedURLResponse *);
 #endif
 
-#if USE(SOUP)
-    virtual char* getOrCreateReadBuffer(size_t /*requestedLength*/, size_t& /*actualLength*/) { return 0; }
-#endif
-
     virtual bool shouldUseCredentialStorage(ResourceHandle*) { return false; }
     virtual void didReceiveAuthenticationChallenge(ResourceHandle*, const AuthenticationChallenge&) { }
     virtual void receivedCancellation(ResourceHandle*, const AuthenticationChallenge&) { }

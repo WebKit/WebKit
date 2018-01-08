@@ -26,9 +26,6 @@ accessibility/wpe/AccessibilityObjectWPE.cpp
 
 editing/wpe/EditorWPE.cpp
 
-loader/soup/CachedRawResourceSoup.cpp
-loader/soup/SubresourceLoaderSoup.cpp
-
 page/linux/ResourceUsageOverlayLinux.cpp
 page/linux/ResourceUsageThreadLinux.cpp
 

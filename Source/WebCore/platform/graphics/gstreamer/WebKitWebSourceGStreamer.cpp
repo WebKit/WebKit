@@ -57,9 +57,6 @@ public:
     CachedResourceStreamingClient(WebKitWebSrc*, ResourceRequest&&);
     virtual ~CachedResourceStreamingClient();
 private:
-#if USE(SOUP)
-    char* getOrCreateReadBuffer(PlatformMediaResource&, size_t requestedSize, size_t& actualSize) override;
-#endif
     // PlatformMediaResourceClient virtual methods.
     void responseReceived(PlatformMediaResource&, const ResourceResponse&) override;
     void dataReceived(PlatformMediaResource&, const char*, int) override;
@@ -764,25 +761,6 @@ CachedResourceStreamingClient::CachedResourceStreamingClient(WebKitWebSrc* src, 
 }
 
 CachedResourceStreamingClient::~CachedResourceStreamingClient() = default;
-
-#if USE(SOUP)
-char* CachedResourceStreamingClient::getOrCreateReadBuffer(PlatformMediaResource&, size_t requestedSize, size_t& actualSize)
-{
-    WebKitWebSrc* src = WEBKIT_WEB_SRC(m_src.get());
-    WebKitWebSrcPrivate* priv = src->priv;
-
-    ASSERT(!priv->buffer);
-
-    GstBuffer* buffer = gst_buffer_new_and_alloc(requestedSize);
-
-    mapGstBuffer(buffer, GST_MAP_WRITE);
-
-    priv->buffer = adoptGRef(buffer);
-
-    actualSize = gst_buffer_get_size(buffer);
-    return getGstBufferDataPointer(buffer);
-}
-#endif
 
 void CachedResourceStreamingClient::responseReceived(PlatformMediaResource&, const ResourceResponse& response)
 {

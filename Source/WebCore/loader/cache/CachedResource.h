@@ -279,10 +279,6 @@ public:
     WEBCORE_EXPORT void tryReplaceEncodedData(SharedBuffer&);
 #endif
 
-#if USE(SOUP)
-    virtual char* getOrCreateReadBuffer(size_t /* requestedSize */, size_t& /* actualSize */) { return nullptr; }
-#endif
-
     unsigned long identifierForLoadWithoutResourceLoader() const { return m_identifierForLoadWithoutResourceLoader; }
     static ResourceLoadPriority defaultPriorityForResourceType(Type);
 

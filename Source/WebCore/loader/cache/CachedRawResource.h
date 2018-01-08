@@ -73,10 +73,6 @@ private:
     std::optional<SharedBufferDataView> calculateIncrementalDataChunk(const SharedBuffer*) const;
     void notifyClientsDataWasReceived(const char* data, unsigned length);
 
-#if USE(SOUP)
-    char* getOrCreateReadBuffer(size_t requestedSize, size_t& actualSize) override;
-#endif
-
     unsigned long m_identifier;
     bool m_allowEncodedDataReplacement;
 

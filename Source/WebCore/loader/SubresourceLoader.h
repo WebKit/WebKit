@@ -82,10 +82,6 @@ private:
 
     void releaseResources() override;
 
-#if USE(SOUP)
-    char* getOrCreateReadBuffer(size_t requestedSize, size_t& actualSize) override;
-#endif
-
     bool checkForHTTPStatusCodeError();
     bool checkResponseCrossOriginAccessControl(const ResourceResponse&, String&);
     bool checkRedirectionCrossOriginAccessControl(const ResourceRequest& previousRequest, const ResourceResponse&, ResourceRequest& newRequest, String&);

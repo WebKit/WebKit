@@ -51,9 +51,6 @@ public:
     virtual void accessControlCheckFailed(PlatformMediaResource&, const ResourceError&) { }
     virtual void loadFailed(PlatformMediaResource&, const ResourceError&) { }
     virtual void loadFinished(PlatformMediaResource&) { }
-#if USE(SOUP)
-    virtual char* getOrCreateReadBuffer(PlatformMediaResource&, size_t /*requestedSize*/, size_t& /*actualSize*/) { return nullptr; };
-#endif
 };
 
 class PlatformMediaResourceLoader : public ThreadSafeRefCounted<PlatformMediaResourceLoader> {

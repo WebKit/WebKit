@@ -88,9 +88,6 @@ public:
     void dataSent(CachedResource&, unsigned long long, unsigned long long) override;
     void dataReceived(CachedResource&, const char*, int) override;
     void notifyFinished(CachedResource&) override;
-#if USE(SOUP)
-    char* getOrCreateReadBuffer(CachedResource&, size_t /*requestedSize*/, size_t& /*actualSize*/) override;
-#endif
 
 private:
     MediaResource(MediaResourceLoader&, CachedResourceHandle<CachedRawResource>);

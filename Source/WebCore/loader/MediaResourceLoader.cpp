@@ -217,14 +217,6 @@ void MediaResource::notifyFinished(CachedResource& resource)
     stop();
 }
 
-#if USE(SOUP)
-char* MediaResource::getOrCreateReadBuffer(CachedResource& resource, size_t requestedSize, size_t& actualSize)
-{
-    ASSERT_UNUSED(resource, &resource == m_resource);
-    return m_client ? m_client->getOrCreateReadBuffer(*this, requestedSize, actualSize) : nullptr;
-}
-#endif
-
 } // namespace WebCore
 
 #endif
