@@ -1,5 +1,22 @@
 2018-01-08  David Kilzer  <ddkilzer@apple.com>
 
+        Fix check-webkit-style issues with WebNSDataExtras.mm
+        <https://webkit.org/b/181369>
+
+        Reviewed by Alex Christensen.
+
+        * Misc/WebNSDataExtras.mm:
+        (-[NSString _web_capitalizeRFC822HeaderFieldName]):
+        (-[NSData _webkit_guessedMIMETypeForXML]):
+        (-[NSData _webkit_guessedMIMEType]):
+        (-[NSData _web_isCaseInsensitiveEqualToCString:]):
+        (_findEOL):
+        (-[NSData _webkit_parseRFC822HeaderFields]):
+        (-[NSData _web_locationAfterFirstBlankLine]):
+        - Fix all the check-webkit-style warnings.
+
+2018-01-08  David Kilzer  <ddkilzer@apple.com>
+
         Build fix #2: Enable -Wcast-qual for WebInspectorUI, WebKitLegacy, WebKit projects
         <https://webkit.org/b/181256>
         <rdar://problem/36281730>

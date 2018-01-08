@@ -34,27 +34,25 @@
 
 @implementation NSString (WebNSDataExtrasInternal)
 
--(NSString *)_web_capitalizeRFC822HeaderFieldName
+- (NSString *)_web_capitalizeRFC822HeaderFieldName
 {
     CFStringRef name = (CFStringRef)self;
     NSString *result = nil;
 
-    CFIndex i; 
     CFIndex len = CFStringGetLength(name);
     char* charPtr = nullptr;
     UniChar* uniCharPtr = nullptr;
     Boolean useUniCharPtr = FALSE;
     Boolean shouldCapitalize = TRUE;
     Boolean somethingChanged = FALSE;
-    
-    for (i = 0; i < len; i ++) {
+
+    for (CFIndex i = 0; i < len; i ++) {
         UniChar ch = CFStringGetCharacterAtIndex(name, i);
         Boolean replace = FALSE;
         if (shouldCapitalize && ch >= 'a' && ch <= 'z') {
             ch = ch + 'A' - 'a';
             replace = TRUE;
-        } 
-        else if (!shouldCapitalize && ch >= 'A' && ch <= 'Z') {
+        } else if (!shouldCapitalize && ch >= 'A' && ch <= 'Z') {
             ch = ch + 'a' - 'A';
             replace = TRUE;
         }
@@ -66,39 +64,30 @@
                     useUniCharPtr = FALSE;
                     charPtr = static_cast<char*>(CFAllocatorAllocate(kCFAllocatorDefault, len + 1, 0));
                     CFStringGetCString(name, charPtr, len+1, kCFStringEncodingISOLatin1);
-                } 
-                else {
+                } else {
                     useUniCharPtr = TRUE;
                     uniCharPtr = static_cast<UniChar*>(CFAllocatorAllocate(kCFAllocatorDefault, len * sizeof(UniChar), 0));
                     CFStringGetCharacters(name, CFRangeMake(0, len), uniCharPtr);
                 }
             }
-            if (useUniCharPtr) {
+            if (useUniCharPtr)
                 uniCharPtr[i] = ch;
-            } 
-            else {
+            else
                 charPtr[i] = ch;
-            }
         }
-        if (ch == '-') {
+        if (ch == '-')
             shouldCapitalize = TRUE;
-        } 
-        else {
+        else
             shouldCapitalize = FALSE;
-        }
     }
     if (somethingChanged) {
-        if (useUniCharPtr) {
+        if (useUniCharPtr)
             result = (NSString *)CFStringCreateWithCharactersNoCopy(NULL, uniCharPtr, len, NULL);
-        } 
-        else {
+        else
             result = (NSString *)CFStringCreateWithCStringNoCopy(NULL, charPtr, kCFStringEncodingISOLatin1, NULL);
-        }
-    } 
-    else {
+    } else
         result = [self retain];
-    }
-    
+
     return [result autorelease];
 }
 
@@ -106,25 +95,24 @@
 
 @implementation NSData (WebKitExtras)
 
--(NSString *)_webkit_guessedMIMETypeForXML
+- (NSString *)_webkit_guessedMIMETypeForXML
 {
     NSUInteger length = [self length];
     const UInt8* bytes = static_cast<const UInt8*>([self bytes]);
-    
+
 #define CHANNEL_TAG_LENGTH 7
-    
+
     const char* p = reinterpret_cast<const char*>(bytes);
     int remaining = std::min<NSUInteger>(length, WEB_GUESS_MIME_TYPE_PEEK_LENGTH) - (CHANNEL_TAG_LENGTH - 1);
-    
+
     BOOL foundRDF = false;
-    
+
     while (remaining > 0) {
         // Look for a "<".
         const char* hit = static_cast<const char*>(memchr(p, '<', remaining));
-        if (!hit) {
+        if (!hit)
             break;
-        }
-        
+
         // We are trying to identify RSS or Atom. RSS has a top-level
         // element of either <rss> or <rdf>. However, there are
         // non-RSS RDF files, so in the case of <rdf> we further look
@@ -133,66 +121,63 @@
         // starting with <? or <! can precede the root element. We
         // bail if we don't find an <rss>, <feed> or <rdf> element
         // right after those.
-        
+
         if (foundRDF) {
-            if (strncasecmp(hit, "<channel", strlen("<channel")) == 0) {
+            if (!strncasecmp(hit, "<channel", strlen("<channel")))
                 return @"application/rss+xml";
-            }
-        } else if (strncasecmp(hit, "<rdf", strlen("<rdf")) == 0) {
+        } else if (!strncasecmp(hit, "<rdf", strlen("<rdf")))
             foundRDF = TRUE;
-        } else if (strncasecmp(hit, "<rss", strlen("<rss")) == 0) {
+        else if (!strncasecmp(hit, "<rss", strlen("<rss")))
             return @"application/rss+xml";
-        } else if (strncasecmp(hit, "<feed", strlen("<feed")) == 0) {
+        else if (!strncasecmp(hit, "<feed", strlen("<feed")))
             return @"application/atom+xml";
-        } else if (strncasecmp(hit, "<?", strlen("<?")) != 0 && strncasecmp(hit, "<!", strlen("<!")) != 0) {
+        else if (strncasecmp(hit, "<?", strlen("<?")) && strncasecmp(hit, "<!", strlen("<!")))
             return nil;
-        }
-        
+
         // Skip the "<" and continue.
         remaining -= (hit + 1) - p;
         p = hit + 1;
     }
-    
+
     return nil;
 }
 
--(NSString *)_webkit_guessedMIMEType
+- (NSString *)_webkit_guessedMIMEType
 {
 #define JPEG_MAGIC_NUMBER_LENGTH 4
 #define SCRIPT_TAG_LENGTH 7
 #define TEXT_HTML_LENGTH 9
 #define VCARD_HEADER_LENGTH 11
 #define VCAL_HEADER_LENGTH 15
-    
+
     NSString *MIMEType = [self _webkit_guessedMIMETypeForXML];
     if ([MIMEType length])
         return MIMEType;
-    
+
     NSUInteger length = [self length];
     const char* bytes = static_cast<const char*>([self bytes]);
-    
+
     const char* p = bytes;
     int remaining = std::min<NSUInteger>(length, WEB_GUESS_MIME_TYPE_PEEK_LENGTH) - (SCRIPT_TAG_LENGTH - 1);
     while (remaining > 0) {
         // Look for a "<".
         const char* hit = static_cast<const char*>(memchr(p, '<', remaining));
-        if (!hit) {
+        if (!hit)
             break;
-        }
-        
+
         // If we found a "<", look for "<html>" or "<a " or "<script".
-        if (strncasecmp(hit, "<html>",  strlen("<html>")) == 0 ||
-            strncasecmp(hit, "<a ",     strlen("<a ")) == 0 ||
-            strncasecmp(hit, "<script", strlen("<script")) == 0 ||
-            strncasecmp(hit, "<title>", strlen("<title>")) == 0) {
+        if (!strncasecmp(hit, "<html>", strlen("<html>"))
+            || !strncasecmp(hit, "<a ", strlen("<a "))
+            || !strncasecmp(hit, "<script", strlen("<script"))
+            || !strncasecmp(hit, "<title>", strlen("<title>"))) {
             return @"text/html";
         }
-        
+
         // Skip the "<" and continue.
         remaining -= (hit + 1) - p;
         p = hit + 1;
     }
-    
+
     // Test for a broken server which has sent the content type as part of the content.
     // This code could be improved to look for other mime types.
     p = bytes;
@@ -202,62 +187,54 @@
         const char* hit = nullptr;
         const char* lowerhit = static_cast<const char*>(memchr(p, 't', remaining));
         const char* upperhit = static_cast<const char*>(memchr(p, 'T', remaining));
-        if (!lowerhit && !upperhit) {
+        if (!lowerhit && !upperhit)
             break;
-        }
-        if (!lowerhit) {
+
+        if (!lowerhit)
             hit = upperhit;
-        }
-        else if (!upperhit) {
+        else if (!upperhit)
             hit = lowerhit;
-        }
-        else {
+        else
             hit = std::min<const char*>(lowerhit, upperhit);
-        }
-        
+
         // If we found a "t/T", look for "text/html".
-        if (strncasecmp(hit, "text/html", TEXT_HTML_LENGTH) == 0) {
+        if (!strncasecmp(hit, "text/html", TEXT_HTML_LENGTH))
             return @"text/html";
-        }
-        
+
         // Skip the "t/T" and continue.
         remaining -= (hit + 1) - p;
         p = hit + 1;
     }
-    
-    if ((length >= VCARD_HEADER_LENGTH) && strncmp(bytes, "BEGIN:VCARD", VCARD_HEADER_LENGTH) == 0) {
+
+    if ((length >= VCARD_HEADER_LENGTH) && !strncmp(bytes, "BEGIN:VCARD", VCARD_HEADER_LENGTH))
         return @"text/vcard";
-    }
-    if ((length >= VCAL_HEADER_LENGTH) && strncmp(bytes, "BEGIN:VCALENDAR", VCAL_HEADER_LENGTH) == 0) {
+    if ((length >= VCAL_HEADER_LENGTH) && !strncmp(bytes, "BEGIN:VCALENDAR", VCAL_HEADER_LENGTH))
         return @"text/calendar";
-    }
-    
+
     // Test for plain text.
     NSUInteger i;
     for (i = 0; i < length; ++i) {
         char c = bytes[i];
-        if ((c < 0x20 || c > 0x7E) && (c != '\t' && c != '\r' && c != '\n')) {
+        if ((c < 0x20 || c > 0x7E) && (c != '\t' && c != '\r' && c != '\n'))
             break;
-        }
     }
     if (i == length) {
         // Didn't encounter any bad characters, looks like plain text.
         return @"text/plain";
     }
-    
+
     // Looks like this is a binary file.
-    
+
     // Sniff for the JPEG magic number.
-    if ((length >= JPEG_MAGIC_NUMBER_LENGTH) && strncmp(bytes, "\xFF\xD8\xFF\xE0", JPEG_MAGIC_NUMBER_LENGTH) == 0) {
+    if ((length >= JPEG_MAGIC_NUMBER_LENGTH) && !strncmp(bytes, "\xFF\xD8\xFF\xE0", JPEG_MAGIC_NUMBER_LENGTH))
         return @"image/jpeg";
-    }
-    
+
 #undef JPEG_MAGIC_NUMBER_LENGTH
 #undef SCRIPT_TAG_LENGTH
 #undef TEXT_HTML_LENGTH
 #undef VCARD_HEADER_LENGTH
 #undef VCAL_HEADER_LENGTH
-    
+
     return nil;
 }
 
@@ -265,45 +242,44 @@
 
 @implementation NSData (WebNSDataExtras)
 
--(BOOL)_web_isCaseInsensitiveEqualToCString:(const char *)string
+- (BOOL)_web_isCaseInsensitiveEqualToCString:(const char *)string
 {
     ASSERT(string);
-    
+
     const char* bytes = static_cast<const char*>([self bytes]);
-    return strncasecmp(bytes, string, [self length]) == 0;
+    return !strncasecmp(bytes, string, [self length]);
 }
 
-static const UInt8 *_findEOL(const UInt8 *bytes, CFIndex len) {
-    
+static const UInt8 *_findEOL(const UInt8 *bytes, CFIndex len)
+{
     // According to the HTTP specification EOL is defined as
-    // a CRLF pair.  Unfortunately, some servers will use LF
-    // instead.  Worse yet, some servers will use a combination
+    // a CRLF pair. Unfortunately, some servers will use LF
+    // instead. Worse yet, some servers will use a combination
     // of both (e.g. <header>CRLFLF<body>), so findEOL needs
-    // to be more forgiving.  It will now accept CRLF, LF, or
+    // to be more forgiving. It will now accept CRLF, LF, or
     // CR.
     //
     // It returns NULL if EOL is not found or it will return
     // a pointer to the first terminating character.
-    CFIndex i;
-    for (i = 0;  i < len; i++)
-    {
+    for (CFIndex i = 0;  i < len; i++) {
         UInt8 c = bytes[i];
-        if ('\n' == c) return bytes + i;
-        if ('\r' == c)
-        {
+        if ('\n' == c)
+            return bytes + i;
+        if ('\r' == c) {
             // Check to see if spanning buffer bounds
-            // (CRLF is across reads).  If so, wait for
+            // (CRLF is across reads). If so, wait for
             // next read.
-            if (i + 1 == len) break;
-                
+            if (i + 1 == len)
+                break;
+
             return bytes + i;
         }
     }
-    
-    return NULL;
+
+    return nullptr;
 }
 
--(NSMutableDictionary *)_webkit_parseRFC822HeaderFields
+- (NSMutableDictionary *)_webkit_parseRFC822HeaderFields
 {
     NSMutableDictionary *headerFields = [NSMutableDictionary dictionary];
 
@@ -319,70 +295,60 @@ static const UInt8 *_findEOL(const UInt8 *bytes, CFIndex len) {
 
         // Move bytes to the character after the terminator as returned by _findEOL.
         bytes = eol + 1;
-        if (('\r' == *eol) && ('\n' == *bytes)) {
+        if (('\r' == *eol) && ('\n' == *bytes))
             bytes++; // Safe since _findEOL won't return a spanning CRLF.
-        }
 
         length -= (bytes - line);
-        if (lineLength == 0) {
+        if (!lineLength) {
             // Blank line; we're at the end of the header
             break;
         }
-        else if (*line == ' ' || *line == '\t') {
+        if (*line == ' ' || *line == '\t') {
             // Continuation of the previous header
             if (!lastKey) {
                 // malformed header; ignore it and continue
                 continue;
             }
-            else {
-                // Merge the continuation of the previous header
-                NSString *currentValue = [headerFields objectForKey:lastKey];
-                NSString *newValue = (NSString *)CFStringCreateWithBytes(NULL, line, lineLength, kCFStringEncodingISOLatin1, FALSE);
-                ASSERT(currentValue);
-                ASSERT(newValue);
-                NSString *mergedValue = [[NSString alloc] initWithFormat:@"%@%@", currentValue, newValue];
-                [headerFields setObject:(NSString *)mergedValue forKey:lastKey];
-                [newValue release];
-                [mergedValue release];
-                // Note: currentValue is autoreleased
-            }
-        }
-        else {
+            // Merge the continuation of the previous header
+            NSString *currentValue = [headerFields objectForKey:lastKey];
+            NSString *newValue = (NSString *)CFStringCreateWithBytes(NULL, line, lineLength, kCFStringEncodingISOLatin1, FALSE);
+            ASSERT(currentValue);
+            ASSERT(newValue);
+            NSString *mergedValue = [[NSString alloc] initWithFormat:@"%@%@", currentValue, newValue];
+            [headerFields setObject:(NSString *)mergedValue forKey:lastKey];
+            [newValue release];
+            [mergedValue release];
+            // Note: currentValue is autoreleased
+        } else {
             // Brand new header
             const UInt8 *colon;
-            for (colon = line; *colon != ':' && colon != eol; colon ++) {
-                // empty loop
-            }
+            for (colon = line; *colon != ':' && colon != eol; colon++) { }
             if (colon == eol) {
                 // malformed header; ignore it and continue
                 continue;
             }
-            else {
-                lastKey = (NSString *)CFStringCreateWithBytes(NULL, line, colon - line, kCFStringEncodingISOLatin1, FALSE);
-                [lastKey autorelease];
-                NSString *value = [lastKey _web_capitalizeRFC822HeaderFieldName];
-                lastKey = value;
-                for (colon++; colon != eol; colon++) {
-                    if (*colon != ' ' && *colon != '\t') {
-                        break;
-                    }
-                }
-                if (colon == eol) {
-                    value = [[NSString alloc] initWithString:@""];
-                    [value autorelease];
-                }
-                else {
-                    value = (NSString *)CFStringCreateWithBytes(NULL, colon, eol-colon, kCFStringEncodingISOLatin1, FALSE);
-                    [value autorelease];
-                }
-                NSString *oldValue = [headerFields objectForKey:lastKey];
-                if (oldValue) {
-                    NSString *newValue = [[NSString alloc] initWithFormat:@"%@, %@", oldValue, value];
-                    value = newValue;
-                    [newValue autorelease];
-                }
-                [headerFields setObject:(NSString *)value forKey:lastKey];
+            lastKey = (NSString *)CFStringCreateWithBytes(NULL, line, colon - line, kCFStringEncodingISOLatin1, FALSE);
+            [lastKey autorelease];
+            NSString *value = [lastKey _web_capitalizeRFC822HeaderFieldName];
+            lastKey = value;
+            for (colon++; colon != eol; colon++) {
+                if (*colon != ' ' && *colon != '\t')
+                    break;
             }
+            if (colon == eol) {
+                value = [[NSString alloc] initWithString:@""];
+                [value autorelease];
+            } else {
+                value = (NSString *)CFStringCreateWithBytes(NULL, colon, eol-colon, kCFStringEncodingISOLatin1, FALSE);
+                [value autorelease];
+            }
+            NSString *oldValue = [headerFields objectForKey:lastKey];
+            if (oldValue) {
+                NSString *newValue = [[NSString alloc] initWithFormat:@"%@, %@", oldValue, value];
+                value = newValue;
+                [newValue autorelease];
+            }
+            [headerFields setObject:(NSString *)value forKey:lastKey];
         }
     }
 
@@ -398,24 +364,24 @@ static const UInt8 *_findEOL(const UInt8 *bytes, CFIndex len) {
 {
     const char *bytes = (const char *)[self bytes];
     NSUInteger length = [self length];
-    
+
     unsigned i;
     for (i = 0; i < length - 4; i++) {
-        
+
         //  Support for Acrobat. It sends "\n\n".
-        if (bytes[i] == '\n' && bytes[i+1] == '\n') {
+        if (bytes[i] == '\n' && bytes[i+1] == '\n')
             return i+2;
-        }
-        
+
         // Returns the position after 2 CRLF's or 1 CRLF if it is the first line.
         if (bytes[i] == '\r' && bytes[i+1] == '\n') {
             i += 2;
-            if (i == 2) {
+            if (i == 2)
                 return i;
-            } else if (bytes[i] == '\n') {
+            if (bytes[i] == '\n') {
                 // Support for Director. It sends "\r\n\n" (3880387).
                 return i+1;
-            } else if (bytes[i] == '\r' && bytes[i+1] == '\n') {
+            }
+            if (bytes[i] == '\r' && bytes[i+1] == '\n') {
                 // Support for Flash. It sends "\r\n\r\n" (3758113).
                 return i+2;
             }
