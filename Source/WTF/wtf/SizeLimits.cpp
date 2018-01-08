@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -62,14 +63,22 @@ struct SameSizeAsVectorWithInlineCapacity;
 
 template<typename T>
 struct SameSizeAsVectorWithInlineCapacity<T, 0> {
+    WTF_MAKE_NONCOPYABLE(SameSizeAsVectorWithInlineCapacity);
+public:
     void* bufferPointer;
     unsigned capacity;
     unsigned size;
+    unsigned mask;
+};
+
+template<typename T>
+struct SameSizeAsVectorWithInlineCapacityBase : SameSizeAsVectorWithInlineCapacity<T> {
 };
 
 template<typename T, unsigned inlineCapacity>
-struct SameSizeAsVectorWithInlineCapacity {
-    SameSizeAsVectorWithInlineCapacity<T, 0> baseCapacity;
+struct SameSizeAsVectorWithInlineCapacity : SameSizeAsVectorWithInlineCapacityBase<T> {
+    WTF_MAKE_NONCOPYABLE(SameSizeAsVectorWithInlineCapacity);
+public:
     typename std::aligned_storage<sizeof(T), std::alignment_of<T>::value>::type inlineBuffer[inlineCapacity];
 };
 

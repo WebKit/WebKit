@@ -156,6 +156,8 @@ private:
 
     void initialize(const LChar*, unsigned length);
     void initialize(const UChar*, unsigned length);
+    void initialize(const LChar*, unsigned length, unsigned mask);
+    void initialize(const UChar*, unsigned length, unsigned mask);
 
 #if CHECK_STRINGVIEW_LIFETIME
     WTF_EXPORT_STRING_API bool underlyingStringIsValid() const;
@@ -170,6 +172,7 @@ private:
 
     const void* m_characters { nullptr };
     unsigned m_length { 0 };
+    unsigned m_mask { 0 };
     bool m_is8Bit { true };
 
 #if CHECK_STRINGVIEW_LIFETIME
@@ -222,6 +225,7 @@ inline StringView::~StringView()
 inline StringView::StringView(StringView&& other)
     : m_characters(other.m_characters)
     , m_length(other.m_length)
+    , m_mask(other.m_mask)
     , m_is8Bit(other.m_is8Bit)
 {
     ASSERT(other.underlyingStringIsValid());
@@ -235,6 +239,7 @@ inline StringView::StringView(StringView&& other)
 inline StringView::StringView(const StringView& other)
     : m_characters(other.m_characters)
     , m_length(other.m_length)
+    , m_mask(other.m_mask)
     , m_is8Bit(other.m_is8Bit)
 {
     ASSERT(other.underlyingStringIsValid());
@@ -248,6 +253,7 @@ inline StringView& StringView::operator=(StringView&& other)
 
     m_characters = other.m_characters;
     m_length = other.m_length;
+    m_mask = other.m_mask;
     m_is8Bit = other.m_is8Bit;
 
     other.clear();
@@ -264,6 +270,7 @@ inline StringView& StringView::operator=(const StringView& other)
 
     m_characters = other.m_characters;
     m_length = other.m_length;
+    m_mask = other.m_mask;
     m_is8Bit = other.m_is8Bit;
 
     setUnderlyingString(other);
@@ -274,15 +281,27 @@ inline StringView& StringView::operator=(const StringView& other)
 
 inline void StringView::initialize(const LChar* characters, unsigned length)
 {
-    m_characters = characters;
-    m_length = length;
-    m_is8Bit = true;
+    initialize(characters, length, maskForSize(length));
 }
 
 inline void StringView::initialize(const UChar* characters, unsigned length)
 {
+    initialize(characters, length, maskForSize(length));
+}
+
+inline void StringView::initialize(const LChar* characters, unsigned length, unsigned mask)
+{
     m_characters = characters;
     m_length = length;
+    m_mask = mask;
+    m_is8Bit = true;
+}
+
+inline void StringView::initialize(const UChar* characters, unsigned length, unsigned mask)
+{
+    m_characters = characters;
+    m_length = length;
+    m_mask = mask;
     m_is8Bit = false;
 }
 
@@ -305,9 +324,9 @@ inline StringView::StringView(const StringImpl& string)
 {
     setUnderlyingString(&string);
     if (string.is8Bit())
-        initialize(string.characters8(), string.length());
+        initialize(string.characters8(), string.length(), string.mask());
     else
-        initialize(string.characters16(), string.length());
+        initialize(string.characters16(), string.length(), string.mask());
 }
 
 inline StringView::StringView(const StringImpl* string)
@@ -317,9 +336,9 @@ inline StringView::StringView(const StringImpl* string)
 
     setUnderlyingString(string);
     if (string->is8Bit())
-        initialize(string->characters8(), string->length());
+        initialize(string->characters8(), string->length(), string->mask());
     else
-        initialize(string->characters16(), string->length());
+        initialize(string->characters16(), string->length(), string->mask());
 }
 
 inline StringView::StringView(const String& string)
@@ -330,10 +349,10 @@ inline StringView::StringView(const String& string)
         return;
     }
     if (string.is8Bit()) {
-        initialize(string.characters8(), string.length());
+        initialize(string.characters8(), string.length(), string.mask());
         return;
     }
-    initialize(string.characters16(), string.length());
+    initialize(string.characters16(), string.length(), string.mask());
 }
 
 inline StringView::StringView(const AtomicString& atomicString)
@@ -345,6 +364,7 @@ inline void StringView::clear()
 {
     m_characters = nullptr;
     m_length = 0;
+    m_mask = 0;
     m_is8Bit = true;
 }
 
@@ -433,8 +453,8 @@ inline UChar StringView::operator[](unsigned index) const
 {
     ASSERT(index < length());
     if (is8Bit())
-        return characters8()[index];
-    return characters16()[index];
+        return characters8()[index & m_mask];
+    return characters16()[index & m_mask];
 }
 
 inline bool StringView::contains(UChar character) const
