@@ -1,3 +1,12 @@
+2018-01-08  Matt Lewis  <jlewis3@apple.com>
+
+        Marked http/wpt/cache-storage/cache-put-stream.https.any.html as flaky on macOS WK2.
+        https://bugs.webkit.org/show_bug.cgi?id=181107
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
 2018-01-08  Basuke Suzuki  <Basuke.Suzuki@sony.com>
 
         [WinCairo] Add default port TestExpectations for wincairo
