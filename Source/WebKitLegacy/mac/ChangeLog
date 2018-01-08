@@ -1,5 +1,19 @@
 2018-01-08  David Kilzer  <ddkilzer@apple.com>
 
+        Build fix #2: Enable -Wcast-qual for WebInspectorUI, WebKitLegacy, WebKit projects
+        <https://webkit.org/b/181256>
+        <rdar://problem/36281730>
+
+        * Plugins/WebNetscapePluginEventHandlerCocoa.mm:
+        (WebNetscapePluginEventHandlerCocoa::handleTSMEvent):
+        - Use reinterpret_cast<NPNSString*>(const_cast<CFMutableStringRef>())
+          to avoid warnings from casting CFStringRef to NPNSString*.
+          Note that CFMutableStringRef is the same as CFStringRef
+          without the const modifier, hence its use in the const_cast<>
+          above.
+
+2018-01-08  David Kilzer  <ddkilzer@apple.com>
+
         Build fix: Enable -Wcast-qual for WebInspectorUI, WebKitLegacy, WebKit projects
         <https://webkit.org/b/181256>
         <rdar://problem/36281730>

@@ -291,7 +291,7 @@ OSStatus WebNetscapePluginEventHandlerCocoa::handleTSMEvent(EventRef eventRef)
     NPCocoaEvent event;
     
     initializeEvent(&event, NPCocoaEventTextInput);
-    event.data.text.text = (NPNSString*)text.get();
+    event.data.text.text = reinterpret_cast<NPNSString*>(const_cast<CFMutableStringRef>(text.get()));
     
     sendEvent(&event);
 
