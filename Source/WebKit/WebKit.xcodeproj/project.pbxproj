@@ -1561,6 +1561,10 @@
 		A55BA8361BA3E70D007CD33D /* WebInspectorFrontendAPIDispatcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A55BA8321BA3E6FA007CD33D /* WebInspectorFrontendAPIDispatcher.cpp */; };
 		A58B6F0818FCA733008CBA53 /* WKFileUploadPanel.h in Headers */ = {isa = PBXBuildFile; fileRef = A58B6F0618FCA733008CBA53 /* WKFileUploadPanel.h */; };
 		A58B6F0918FCA733008CBA53 /* WKFileUploadPanel.mm in Sources */ = {isa = PBXBuildFile; fileRef = A58B6F0718FCA733008CBA53 /* WKFileUploadPanel.mm */; };
+		A5C0F0A72000654D00536536 /* _WKNSWindowExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = A5C0F0A62000654400536536 /* _WKNSWindowExtras.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A5C0F0A82000655100536536 /* _WKNSWindowExtras.mm in Sources */ = {isa = PBXBuildFile; fileRef = A5C0F0A52000654400536536 /* _WKNSWindowExtras.mm */; };
+		A5C0F0AB2000658200536536 /* WKInspectorWindow.h in Headers */ = {isa = PBXBuildFile; fileRef = A5C0F0AA2000656E00536536 /* WKInspectorWindow.h */; };
+		A5C0F0AC2000658500536536 /* WKInspectorWindow.mm in Sources */ = {isa = PBXBuildFile; fileRef = A5C0F0A92000656E00536536 /* WKInspectorWindow.mm */; };
 		A5D3504E1D78F5B3005124A9 /* RemoteWebInspectorProxyMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = A5D3504D1D78F0D2005124A9 /* RemoteWebInspectorProxyMac.mm */; };
 		A5EFD38C16B0E88C00B2F0E8 /* WKPageVisibilityTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = A5EFD38B16B0E88C00B2F0E8 /* WKPageVisibilityTypes.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A78CCDDA193AC9F4005ECC25 /* com.apple.WebKit.Databases.sb in CopyFiles */ = {isa = PBXBuildFile; fileRef = A78CCDD7193AC9E3005ECC25 /* com.apple.WebKit.Databases.sb */; };
@@ -3986,6 +3990,10 @@
 		A55BA8331BA3E6FA007CD33D /* WebInspectorFrontendAPIDispatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebInspectorFrontendAPIDispatcher.h; sourceTree = "<group>"; };
 		A58B6F0618FCA733008CBA53 /* WKFileUploadPanel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WKFileUploadPanel.h; path = ios/forms/WKFileUploadPanel.h; sourceTree = "<group>"; };
 		A58B6F0718FCA733008CBA53 /* WKFileUploadPanel.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WKFileUploadPanel.mm; path = ios/forms/WKFileUploadPanel.mm; sourceTree = "<group>"; };
+		A5C0F0A52000654400536536 /* _WKNSWindowExtras.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = _WKNSWindowExtras.mm; sourceTree = "<group>"; };
+		A5C0F0A62000654400536536 /* _WKNSWindowExtras.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKNSWindowExtras.h; sourceTree = "<group>"; };
+		A5C0F0A92000656E00536536 /* WKInspectorWindow.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKInspectorWindow.mm; sourceTree = "<group>"; };
+		A5C0F0AA2000656E00536536 /* WKInspectorWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKInspectorWindow.h; sourceTree = "<group>"; };
 		A5D3504D1D78F0D2005124A9 /* RemoteWebInspectorProxyMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = RemoteWebInspectorProxyMac.mm; sourceTree = "<group>"; };
 		A5EFD38B16B0E88C00B2F0E8 /* WKPageVisibilityTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKPageVisibilityTypes.h; sourceTree = "<group>"; };
 		A72D5D7F1236CBA800A88B15 /* APISerializedScriptValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APISerializedScriptValue.h; sourceTree = "<group>"; };
@@ -6068,6 +6076,8 @@
 				93A88B3A1BC710D900ABA5C2 /* _WKHitTestResultInternal.h */,
 				A118A9F11908B8EA00F7C92B /* _WKNSFileManagerExtras.h */,
 				A118A9F01908B8EA00F7C92B /* _WKNSFileManagerExtras.mm */,
+				A5C0F0A62000654400536536 /* _WKNSWindowExtras.h */,
+				A5C0F0A52000654400536536 /* _WKNSWindowExtras.mm */,
 				1A9E328B182165A900F5D04C /* _WKRemoteObjectInterface.h */,
 				1A9E328C182165A900F5D04C /* _WKRemoteObjectInterface.mm */,
 				1AABFE391829C1ED005B070E /* _WKRemoteObjectInterfaceInternal.h */,
@@ -7926,6 +7936,8 @@
 				9321D5871A38EE74008052BE /* WKImmediateActionController.mm */,
 				994BADF11F7D77EA00B571E7 /* WKInspectorViewController.h */,
 				994BADF21F7D77EB00B571E7 /* WKInspectorViewController.mm */,
+				A5C0F0AA2000656E00536536 /* WKInspectorWindow.h */,
+				A5C0F0A92000656E00536536 /* WKInspectorWindow.mm */,
 				A518B5D01FE1D55B00F9FA28 /* WKInspectorWKWebView.h */,
 				A518B5D11FE1D55B00F9FA28 /* WKInspectorWKWebView.mm */,
 				0FCB4E5C18BBE3D9000FCFC9 /* WKPrintingView.h */,
@@ -8518,6 +8530,7 @@
 				2D790A9D1AD7050D00AB90B3 /* _WKLayoutMode.h in Headers */,
 				510F59111DDE297000412FF5 /* _WKLinkIconParameters.h in Headers */,
 				A118A9F31908B8EA00F7C92B /* _WKNSFileManagerExtras.h in Headers */,
+				A5C0F0A72000654D00536536 /* _WKNSWindowExtras.h in Headers */,
 				9323611E1B015DA800FA9232 /* _WKOverlayScrollbarStyle.h in Headers */,
 				1A43E82A188F3CDC009E4D30 /* _WKProcessPoolConfiguration.h in Headers */,
 				7C89D2D71A6C6BE6003A5FDE /* _WKProcessPoolConfigurationInternal.h in Headers */,
@@ -9347,6 +9360,7 @@
 				A54293A4195A43DA002782C7 /* WKInspectorNodeSearchGestureRecognizer.h in Headers */,
 				6EE849C81368D9390038D481 /* WKInspectorPrivateMac.h in Headers */,
 				994BADF41F7D781400B571E7 /* WKInspectorViewController.h in Headers */,
+				A5C0F0AB2000658200536536 /* WKInspectorWindow.h in Headers */,
 				A518B5D21FE1D55B00F9FA28 /* WKInspectorWKWebView.h in Headers */,
 				51A9E10B1315CD18009E7031 /* WKKeyValueStorageManager.h in Headers */,
 				2D790A9F1AD7164900AB90B3 /* WKLayoutMode.h in Headers */,
@@ -10147,6 +10161,7 @@
 				93A88B391BC70F3F00ABA5C2 /* _WKHitTestResult.mm in Sources */,
 				510F59121DDE297700412FF5 /* _WKLinkIconParameters.mm in Sources */,
 				A118A9F21908B8EA00F7C92B /* _WKNSFileManagerExtras.mm in Sources */,
+				A5C0F0A82000655100536536 /* _WKNSWindowExtras.mm in Sources */,
 				1A43E829188F3CDC009E4D30 /* _WKProcessPoolConfiguration.mm in Sources */,
 				1A9E328E182165A900F5D04C /* _WKRemoteObjectInterface.mm in Sources */,
 				1A9E328A1821636900F5D04C /* _WKRemoteObjectRegistry.mm in Sources */,
@@ -10969,6 +10984,7 @@
 				0F3C725C196F605200AEDD0C /* WKInspectorHighlightView.mm in Sources */,
 				A54293A5195A43DD002782C7 /* WKInspectorNodeSearchGestureRecognizer.mm in Sources */,
 				994BADF31F7D781100B571E7 /* WKInspectorViewController.mm in Sources */,
+				A5C0F0AC2000658500536536 /* WKInspectorWindow.mm in Sources */,
 				A518B5D31FE1D55B00F9FA28 /* WKInspectorWKWebView.mm in Sources */,
 				51A9E10A1315CD18009E7031 /* WKKeyValueStorageManager.cpp in Sources */,
 				C98C48A91B6FD5B500145103 /* WKMediaSessionFocusManager.cpp in Sources */,

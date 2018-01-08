@@ -1,3 +1,27 @@
+2018-01-08  Joseph Pecoraro  <pecoraro@apple.com>
+
+        [Cocoa] Web Inspector: Provide a way for clients to check if an NSWindow is a Web Inspector window
+        https://bugs.webkit.org/show_bug.cgi?id=181361
+        <rdar://problem/36332865>
+
+        Reviewed by Darin Adler.
+
+        * WebKit.xcodeproj/project.pbxproj:
+        New files.
+
+        * Shared/API/Cocoa/_WKNSWindowExtras.h: Added.
+        * Shared/API/Cocoa/_WKNSWindowExtras.mm: Added.
+        (-[NSWindow _web_isWebInspectorWindow]):
+        Method to determing if a window is being used for Web Inspector content.
+
+        * UIProcess/mac/WKInspectorWindow.h: Added.
+        * UIProcess/mac/WKInspectorWindow.mm: Added.
+        Named subclass so we can use isKindOfClass.
+
+        * UIProcess/mac/WebInspectorProxyMac.mm:
+        (WebKit::WebInspectorProxy::createFrontendWindow):
+        Use the named subclass.
+
 2018-01-08  Tim Horton  <timothy_horton@apple.com>
 
         Build fix for WKPDFView
