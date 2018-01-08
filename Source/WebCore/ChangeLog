@@ -1,3 +1,14 @@
+2018-01-08  Jeremy Jones  <jeremyj@apple.com>
+
+        Standard controls sometimes say video is in pip when it isnt.
+        https://bugs.webkit.org/show_bug.cgi?id=181095
+        rdar://problem/36182687
+
+        Reviewed by Eric Carlson.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::exitFullscreen):
+
 2018-01-08  Jer Noble  <jer.noble@apple.com>
 
         REGRESSION: [iOS] ASSERTION FAILED: !node.isConnected() in WebCore::notifyNodeInsertedIntoDocument
