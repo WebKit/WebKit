@@ -129,6 +129,7 @@ JSArrayBufferView::ConstructionContext::ConstructionContext(
 JSArrayBufferView::JSArrayBufferView(VM& vm, ConstructionContext& context)
     : Base(vm, context.structure(), context.butterfly())
     , m_length(context.length())
+    , m_indexingMask(WTF::computeIndexingMask(context.length()))
     , m_mode(context.mode())
 {
     m_vector.setWithoutBarrier(context.vector());

@@ -343,7 +343,7 @@ struct WasmBoundsCheckCustom : public CommonCustomBase<WasmBoundsCheckCustom> {
                 outOfBounds.link(&jit);
                 switch (value->boundsType()) {
                 case WasmBoundsCheckValue::Type::Pinned:
-                    context.code->wasmBoundsCheckGenerator()->run(jit, value->bounds().pinned);
+                    context.code->wasmBoundsCheckGenerator()->run(jit, value->bounds().pinnedSize);
                     break;
 
                 case WasmBoundsCheckValue::Type::Maximum:
