@@ -414,7 +414,7 @@ private:
     void updateContentsNeedsDisplay();
     void updateAcceleratesDrawing();
     void updateSupportsSubpixelAntialiasedText();
-    void updateDebugBorder();
+    void updateDebugIndicators();
     void updateTiles();
     void updateContentsScale(float pageScaleFactor);
     void updateCustomAppearance();

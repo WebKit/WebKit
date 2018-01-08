@@ -1,3 +1,14 @@
+2018-01-08  Antti Koivisto  <antti@apple.com>
+
+        REGRESSION (r219145): Toggling layer borders on a static document no longer works immediately
+        https://bugs.webkit.org/show_bug.cgi?id=176260
+        <rdar://problem/34219966>
+
+        Reviewed by Simon Fraser.
+
+        * compositing/debug-borders-dynamic-expected.html: Added.
+        * compositing/debug-borders-dynamic.html: Added.
+
 2018-01-08  Yacine Bandou  <yacine.bandou_ext@softathome.com>
 
         [EME] Add layout test for InitData and InitDataType in CENC encrypted event
