@@ -29,15 +29,12 @@
 import getpass
 import logging
 import os
-import platform
 import re
 import shlex
 import subprocess
-import sys
 import webbrowser
 
-from webkitpy.common.system.executive import Executive
-from webkitpy.common.system.platforminfo import PlatformInfo
+from .platforminfo import PlatformInfo
 
 
 _log = logging.getLogger(__name__)
@@ -46,7 +43,7 @@ _log = logging.getLogger(__name__)
 try:
     import readline
 except ImportError:
-    if not sys.platform.startswith('win32'):
+    if not PlatformInfo().is_native_win():
         # There is no readline module for win32, not much to do except cry.
         _log.warn("Unable to import readline.")
 
@@ -58,7 +55,7 @@ class User(object):
     def __init__(self, platforminfo=None):
         # We cannot get the PlatformInfo object from a SystemHost because
         # User is part of SystemHost itself.
-        self._platforminfo = platforminfo or PlatformInfo(sys, platform, Executive())
+        self._platforminfo = platforminfo or PlatformInfo()
 
     # FIXME: These are @classmethods because bugzilla.py doesn't have a Tool object (thus no User instance).
     @classmethod

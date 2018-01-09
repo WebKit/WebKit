@@ -1,3 +1,32 @@
+2018-01-09  Basuke Suzuki  <Basuke.Suzuki@sony.com>
+
+        [webkitpy] PlatformInfo should have default argument for casual use
+        https://bugs.webkit.org/show_bug.cgi?id=180827
+
+        Reviewed by David Kilzer.
+
+        PlatformInfo should be the only way to check platform specific thing instead
+        of sys.platform or other various checks. If there is something you want to check,
+        it should be placed in PlatformInfo.
+
+        Currently to instantiate PlatformInfo, it requires arguments, which is usually
+        sys, platform and Executive(). They are straight forward and should be handled
+        by default arguments. Then we can instantiate PlatformInfo more casual.
+
+        * Scripts/webkitpy/common/system/platforminfo.py:
+        (PlatformInfo): Use relative module path import
+        (PlatformInfo.__init__):
+        (PlatformInfo.executive): Lazy instantiation of Executive()
+        (PlatformInfo.total_bytes_memory): Accessing via above property
+        (PlatformInfo.xcode_sdk_version): Ditto
+        (PlatformInfo.xcode_simctl_list): Ditto
+        (PlatformInfo.xcode_version): Ditto
+        (PlatformInfo._win_version_str): Ditto
+        * Scripts/webkitpy/common/system/systemhost.py:
+        (SystemHost.__init__):
+        * Scripts/webkitpy/common/system/user.py:
+        (User.__init__):
+
 2018-01-09  Yoshiaki Jitsukawa  <Yoshiaki.Jitsukawa@sony.com>
 
         [Win] Remove workaround for Bug 176442 after stopping MSVC 2015 support
