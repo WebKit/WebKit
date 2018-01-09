@@ -1,4 +1,13 @@
 =================
+WebKitGTK+ 2.19.5
+=================
+
+What's new in WebKitGTK+ 2.19.4?
+
+  - This is a follow up release to export webkit_dom_dom_window_webkit_message_handlers_post_message() symbol that
+    was hidden in 2.19.4 by mistake.
+
+=================
 WebKitGTK+ 2.19.4
 =================
 
