@@ -78,6 +78,7 @@ namespace WebCore {
     M(PopupBlocking) \
     M(Progress) \
     M(RemoteInspector) \
+    M(RequestAnimationFrame) \
     M(ResourceLoading) \
     M(ResourceLoadObserver) \
     M(ResourceLoadStatistics) \

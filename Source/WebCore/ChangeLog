@@ -1,3 +1,26 @@
+2018-01-09  Jer Noble  <jer.noble@apple.com>
+
+        Many CVDisplayLink threads created and destroyed while watching a YouTube video
+        https://bugs.webkit.org/show_bug.cgi?id=181396
+
+        Reviewed by Simon Fraser.
+
+        When watching some YouTube videos (or any video with default controls), event handlers for
+        the "timeupdate" event which use rAF will cause the underlying platform objects to be
+        destroyed in between "timeupdate" events being fired, since they occur every 250ms, and rAF
+        objects are destroyed every 166ms (or 10/60hz). Update this constant to destroy the
+        underlying objects every 333ms (or 20/60hz) so that this common pattern doesn't lead to
+        excessive rAF platform object turnover.
+
+        * platform/Logging.h:
+        * platform/graphics/DisplayRefreshMonitor.h:
+        (WebCore::DisplayRefreshMonitor::shouldBeTerminated const):
+        * platform/graphics/DisplayRefreshMonitor.cpp:
+        (WebCore::DisplayRefreshMonitor::displayDidRefresh):
+        * platform/graphics/DisplayRefreshMonitorManager.cpp:
+        (WebCore::DisplayRefreshMonitorManager::createMonitorForClient):
+        (WebCore::DisplayRefreshMonitorManager::displayDidRefresh):
+
 2018-01-09  Zalan Bujtas  <zalan@apple.com>
 
         [RenderTreeBuilder] Move RenderElement addChild mutation logic to RenderTreeBuilder
