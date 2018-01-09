@@ -1,3 +1,13 @@
+2018-01-09  Yoshiaki Jitsukawa  <Yoshiaki.Jitsukawa@sony.com>
+
+        [Win] Remove workaround for Bug 176442 after stopping MSVC 2015 support
+        https://bugs.webkit.org/show_bug.cgi?id=176443
+
+        Reviewed by Darin Adler.
+
+        * TestWebKitAPI/Tests/WTF/PriorityQueue.cpp:
+        (TEST):
+
 2018-01-09  Frederic Wang  <fwang@igalia.com.fr>
 
         check-webkit-style: Verify syntax for WK_API_AVAILABLE

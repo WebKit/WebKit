@@ -56,11 +56,7 @@ static T dequeue(PriorityQueue<T, isHigherPriority>& queue)
 TEST(WTF_PriorityQueue, Basic)
 {
     const unsigned numElements = 10;
-#if defined(_MSC_VER) && _MSC_VER < 1910 // FIXME: Remove this workaround after we drop MSVC 2015 support (https://bugs.webkit.org/show_bug.cgi?id=176443).
-    PriorityQueue<unsigned, isLessThan<unsigned>> queue;
-#else
     PriorityQueue<unsigned> queue;
-#endif
 
     EXPECT_EQ(0_z, queue.size());
     EXPECT_TRUE(queue.isEmpty());
@@ -80,11 +76,7 @@ TEST(WTF_PriorityQueue, Basic)
 TEST(WTF_PriorityQueue, CustomPriorityFunction)
 {
     const unsigned numElements = 10;
-#if defined(_MSC_VER) && _MSC_VER < 1910 // FIXME: Remove this workaround after we drop MSVC 2015 support (https://bugs.webkit.org/show_bug.cgi?id=176443).
-    PriorityQueue<unsigned, isGreaterThan<unsigned>> queue;
-#else
     PriorityQueue<unsigned, &isGreaterThan<unsigned>> queue;
-#endif
 
     EXPECT_EQ(0_z, queue.size());
     EXPECT_TRUE(queue.isEmpty());
@@ -114,11 +106,7 @@ struct CompareMove {
 
 TEST(WTF_PriorityQueue, MoveOnly)
 {
-#if defined(_MSC_VER) && _MSC_VER < 1910 // FIXME: Remove this workaround after we drop MSVC 2015 support (https://bugs.webkit.org/show_bug.cgi?id=176443).
-    PriorityQueue<MoveOnly, &CompareMove<isLessThan<unsigned>>::compare> queue;
-#else
     PriorityQueue<MoveOnly, &CompareMove<&isLessThan<unsigned>>::compare> queue;
-#endif
 
     Vector<unsigned> values = { 23, 54, 4, 8, 1, 2, 4, 0 };
     Vector<unsigned> sorted = values;
@@ -135,11 +123,7 @@ TEST(WTF_PriorityQueue, MoveOnly)
 
 TEST(WTF_PriorityQueue, DecreaseKey)
 {
-#if defined(_MSC_VER) && _MSC_VER < 1910 // FIXME: Remove this workaround after we drop MSVC 2015 support (https://bugs.webkit.org/show_bug.cgi?id=176443).
-    PriorityQueue<MoveOnly, &CompareMove<isLessThan<unsigned>>::compare> queue;
-#else
     PriorityQueue<MoveOnly, &CompareMove<&isLessThan<unsigned>>::compare> queue;
-#endif
 
     Vector<unsigned> values = { 23, 54, 4, 8, 1, 2, 4, 0 };
     Vector<unsigned> sorted = values;
@@ -165,11 +149,7 @@ TEST(WTF_PriorityQueue, DecreaseKey)
 
 TEST(WTF_PriorityQueue, IncreaseKey)
 {
-#if defined(_MSC_VER) && _MSC_VER < 1910 // FIXME: Remove this workaround after we drop MSVC 2015 support (https://bugs.webkit.org/show_bug.cgi?id=176443).
-    PriorityQueue<MoveOnly, &CompareMove<isGreaterThan<unsigned>>::compare> queue;
-#else
     PriorityQueue<MoveOnly, &CompareMove<&isGreaterThan<unsigned>>::compare> queue;
-#endif
 
     Vector<unsigned> values = { 23, 54, 4, 8, 1, 2, 4, 0 };
     Vector<unsigned> sorted = values;
@@ -195,11 +175,7 @@ TEST(WTF_PriorityQueue, IncreaseKey)
 
 TEST(WTF_PriorityQueue, Iteration)
 {
-#if defined(_MSC_VER) && _MSC_VER < 1910 // FIXME: Remove this workaround after we drop MSVC 2015 support (https://bugs.webkit.org/show_bug.cgi?id=176443).
-    PriorityQueue<MoveOnly, CompareMove<isGreaterThan<unsigned>>::compare> queue;
-#else
     PriorityQueue<MoveOnly, &CompareMove<&isGreaterThan<unsigned>>::compare> queue;
-#endif
 
     Vector<unsigned> values = { 23, 54, 4, 8, 1, 2, 4, 0 };
     Vector<unsigned> sorted = values;
@@ -231,11 +207,7 @@ TEST(WTF_PriorityQueue, RandomActions)
         return randomNumber;
     };
 
-#if defined(_MSC_VER) && _MSC_VER < 1910 // FIXME: Remove this workaround after we drop MSVC 2015 support (https://bugs.webkit.org/show_bug.cgi?id=176443).
-    PriorityQueue<uint64_t, isLessThan<uint64_t>> queue;
-#else
     PriorityQueue<uint64_t> queue;
-#endif
     Vector<uint64_t> values;
 
     enum Cases {
