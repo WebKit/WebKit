@@ -1,3 +1,16 @@
+2018-01-09  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        REGRESSION(r224460): Text fields sometimes get "messed up"
+        https://bugs.webkit.org/show_bug.cgi?id=181115
+
+        Reviewed by Zalan Bujtas.
+
+        Add the scroll position to paint offset before computing the clip rectangle. Before r224460, scroll position was
+        substracted after the clip rectangle was computed.
+
+        * rendering/LayoutState.cpp:
+        (WebCore::LayoutState::computeClipRect):
+
 2018-01-09  Ali Juma  <ajuma@chromium.org>
 
         Implement VisualViewport API events
