@@ -1,3 +1,20 @@
+2018-01-09  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Release assert in addResourceTiming when a cache resource is requested during style recalc
+        https://bugs.webkit.org/show_bug.cgi?id=181137
+        <rdar://problem/35666574>
+
+        Reviewed by Simon Fraser.
+
+        Added a regression test for the crash.
+
+        Also fixed test cases in rt-performance-extensions.js which were incorrectly asserting and assuming that
+        resourcetimingbufferfull event will be fired when there are exactly the same number of entries as the buffer size.
+
+        * http/tests/performance/performance-resource-timing-resourcetimingbufferfull -crash-expected.txt: Added.
+        * http/tests/performance/performance-resource-timing-resourcetimingbufferfull-crash.html: Added.
+        * http/wpt/resource-timing/rt-performance-extensions.js: Fixed the test cases.
+
 2018-01-08  Chris Nardi  <csnardi1@gmail.com>
 
         ::first-letter incorrectly selects grapheme pairs

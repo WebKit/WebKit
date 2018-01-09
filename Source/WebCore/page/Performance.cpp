@@ -52,6 +52,7 @@ namespace WebCore {
 
 Performance::Performance(ScriptExecutionContext& context, MonotonicTime timeOrigin)
     : ContextDestructionObserver(&context)
+    , m_resourceTimingBufferFullTimer(*this, &Performance::resourceTimingBufferFullTimerFired)
     , m_timeOrigin(timeOrigin)
     , m_performanceTimelineTaskQueue(context)
 {
@@ -166,31 +167,79 @@ Vector<RefPtr<PerformanceEntry>> Performance::getEntriesByName(const String& nam
 void Performance::clearResourceTimings()
 {
     m_resourceTimingBuffer.clear();
+    m_resourceTimingBufferFullFlag = false;
 }
 
 void Performance::setResourceTimingBufferSize(unsigned size)
 {
     m_resourceTimingBufferSize = size;
+    m_resourceTimingBufferFullFlag = false;
 }
 
 void Performance::addResourceTiming(ResourceTiming&& resourceTiming)
 {
-    RefPtr<PerformanceResourceTiming> entry = PerformanceResourceTiming::create(m_timeOrigin, WTFMove(resourceTiming));
+    auto entry = PerformanceResourceTiming::create(m_timeOrigin, WTFMove(resourceTiming));
 
-    queueEntry(*entry);
-
-    if (isResourceTimingBufferFull())
+    if (m_waitingForBackupBufferToBeProcessed) {
+        m_backupResourceTimingBuffer.append(WTFMove(entry));
         return;
+    }
 
-    m_resourceTimingBuffer.append(entry);
+    if (m_resourceTimingBufferFullFlag) {
+        // We fired resourcetimingbufferfull evnet but the author script didn't clear the buffer.
+        // Notify performance observers but don't add it to the buffer.
+        queueEntry(entry.get());
+        return;
+    }
 
-    if (isResourceTimingBufferFull())
-        dispatchEvent(Event::create(eventNames().resourcetimingbufferfullEvent, true, false));
+    if (isResourceTimingBufferFull()) {
+        ASSERT(!m_resourceTimingBufferFullTimer.isActive());
+        m_backupResourceTimingBuffer.append(WTFMove(entry));
+        m_waitingForBackupBufferToBeProcessed = true;
+        m_resourceTimingBufferFullTimer.startOneShot(0_s);
+        return;
+    }
+
+    queueEntry(entry.get());
+    m_resourceTimingBuffer.append(WTFMove(entry));
 }
 
 bool Performance::isResourceTimingBufferFull() const
 {
     return m_resourceTimingBuffer.size() >= m_resourceTimingBufferSize;
+}
+
+void Performance::resourceTimingBufferFullTimerFired()
+{
+    while (!m_backupResourceTimingBuffer.isEmpty()) {
+        auto backupBuffer = WTFMove(m_backupResourceTimingBuffer);
+
+        m_resourceTimingBufferFullFlag = true;
+        dispatchEvent(Event::create(eventNames().resourcetimingbufferfullEvent, true, false));
+
+        RELEASE_ASSERT(m_resourceTimingBufferSize >= m_resourceTimingBuffer.size());
+        unsigned remainingBufferSize = m_resourceTimingBufferSize - m_resourceTimingBuffer.size();
+        bool bufferIsStillFullAfterDispatchingEvent = !remainingBufferSize;
+        if (bufferIsStillFullAfterDispatchingEvent) {
+            for (auto& entry : backupBuffer)
+                queueEntry(*entry);
+            // Dispatching resourcetimingbufferfull event may have inserted more entries.
+            for (auto& entry : m_backupResourceTimingBuffer)
+                queueEntry(*entry);
+            break;
+        }
+
+        unsigned i = 0;
+        for (auto& entry : backupBuffer) {
+            if (i < remainingBufferSize) {
+                m_resourceTimingBuffer.append(entry.copyRef());
+                queueEntry(*entry);
+            } else
+                m_backupResourceTimingBuffer.append(entry.copyRef());
+            i++;
+        }
+    }
+    m_waitingForBackupBufferToBeProcessed = false;
 }
 
 ExceptionOr<void> Performance::mark(const String& markName)

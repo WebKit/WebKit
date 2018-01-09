@@ -1,3 +1,38 @@
+2018-01-09  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Release assert in addResourceTiming when a cache resource is requested during style recalc
+        https://bugs.webkit.org/show_bug.cgi?id=181137
+        <rdar://problem/35666574>
+
+        Reviewed by Simon Fraser.
+
+        Make the dispatching of resourcetimingbufferfull event asynchronous to avoid dispatching it
+        synchronously during a style resolution when CachedResourceLoader::requestImage requests
+        a previously loaded image.
+
+        We now schedule a timer when the resource timing buffer becomes full, and dispatch the event
+        when the timer fires. Meanwhile, we have a backup buffer to which additional resource timing
+        entries would be added. Once the event is dispatched, we refill the buffer exposed to author
+        scripts. When refilling the buffer results in it becoming full again, we keep repeating the
+        process of firing resourcetimingbufferfull and re-filling the buffer until either we stop
+        making progress (i.e. the script didn't increase the number of empty entires in the buffer)
+        or the backup buffer (at the time we started this process) becomes empty.
+
+        Also fixed a bug that we were firing resourcetimingbufferfull event when the last entry that
+        fits within the buffer size was added instead of when an entry is being added to an already
+        full buffer. To make this work, the patch introduces m_resourceTimingBufferFullFlag,
+        representing the concept "resource timing buffer full" flag in the resource timing specification.
+
+        Test: http/tests/performance/performance-resource-timing-resourcetimingbufferfull-crash.html
+
+        * page/Performance.cpp:
+        (WebCore::Performance::Performance):
+        (WebCore::Performance::clearResourceTimings):
+        (WebCore::Performance::setResourceTimingBufferSize):
+        (WebCore::Performance::addResourceTiming):
+        (WebCore::Performance::resourceTimingBufferFullTimerFired):
+        * page/Performance.h:
+
 2018-01-08  Chris Nardi  <csnardi1@gmail.com>
 
         ::first-letter incorrectly selects grapheme pairs

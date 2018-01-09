@@ -66,7 +66,7 @@ promise_test(function(t) {
     return loadResources(3).then(function(entries) {
         assert_equals(entries.length, 3, "context should have observed 3 resources");
         assert_equals(performance.getEntriesByType("resource").length, 3, "context global buffer should be full at 3 resources");
-        assert_true(bufferFullEventDispatched, "context should not have dispatched buffer full event");
+        assert_false(bufferFullEventDispatched, "context should not have dispatched buffer full event");
     });
 }, "resourcetimingbufferfull event should not trigger if exactly the BufferSizeLimit number of resources are added to the buffer", {timeout: 3000});
 
@@ -98,8 +98,8 @@ promise_test(function(t) {
         bufferFullEvent = event;
     };
 
-    return loadResources(1).then(function(entries) {
-        assert_equals(entries.length, 1, "context should have observed 1 resource");
+    return loadResources(2).then(function(entries) {
+        assert_equals(entries.length, 2, "context should have observed 1 resource");
         assert_equals(performance.getEntriesByType("resource").length, 1, "context global buffer should be full at 1 resource");
         assert_equals(bufferFullEvent.target, performance, "event should dispatch at the performance object");
         assert_true(bufferFullEvent.bubbles, "event should bubble");
