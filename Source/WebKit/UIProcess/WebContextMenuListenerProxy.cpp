@@ -47,24 +47,12 @@ WebContextMenuListenerProxy::~WebContextMenuListenerProxy()
 {
 }
 
-void WebContextMenuListenerProxy::useContextMenuItems(WKArrayRef items)
+void WebContextMenuListenerProxy::useContextMenuItems(Vector<Ref<WebContextMenuItem>>&& items)
 {
     if (!m_contextMenuMac)
         return;
 
-    RefPtr<API::Array> array = toImpl(items);
-    size_t newSize = array ? array->size() : 0;
-    Vector<WebContextMenuItemData> dataItems;
-    dataItems.reserveInitialCapacity(newSize);
-    for (size_t i = 0; i < newSize; ++i) {
-        WebContextMenuItem* item = array->at<WebContextMenuItem>(i);
-        if (!item)
-            continue;
-
-        dataItems.uncheckedAppend(item->data());
-    }
-
-    m_contextMenuMac->showContextMenuWithItems(WTFMove(dataItems));
+    m_contextMenuMac->showContextMenuWithItems(WTFMove(items));
 }
 
 void WebContextMenuListenerProxy::invalidate()

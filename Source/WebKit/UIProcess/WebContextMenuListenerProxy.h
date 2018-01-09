@@ -44,7 +44,7 @@ public:
 
     virtual ~WebContextMenuListenerProxy();
 
-    void useContextMenuItems(WKArrayRef items);
+    void useContextMenuItems(Vector<Ref<WebContextMenuItem>>&&);
 
     void invalidate();
 private:

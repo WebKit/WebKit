@@ -1,3 +1,24 @@
+2018-01-08  Alex Christensen  <achristensen@webkit.org>
+
+        Pass around Vector<Ref<WebContextMenuItem>> instead of WKArrayRef or Vector<WebContextMenuItemData>
+        https://bugs.webkit.org/show_bug.cgi?id=181419
+
+        Reviewed by Tim Horton.
+
+        Passing a WKArrayRef to an API object is messy and was preventing me from moving things around and making ObjC SPI.
+        No change in behavior.  Just using different layering abstractions for the same data.
+
+        * UIProcess/API/C/WKContextMenuListener.cpp:
+        (WKContextMenuListenerUseContextMenuItems):
+        * UIProcess/WebContextMenuListenerProxy.cpp:
+        (WebKit::WebContextMenuListenerProxy::useContextMenuItems):
+        * UIProcess/WebContextMenuListenerProxy.h:
+        * UIProcess/WebContextMenuProxy.h:
+        * UIProcess/mac/WebContextMenuProxyMac.h:
+        * UIProcess/mac/WebContextMenuProxyMac.mm:
+        (WebKit::WebContextMenuProxyMac::showContextMenuWithItems):
+        (WebKit::WebContextMenuProxyMac::showContextMenu):
+
 2018-01-08  John Wilander  <wilander@apple.com>
 
         Storage Access API: Remove access for all frames under a page when the page is closed

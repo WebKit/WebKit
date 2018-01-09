@@ -26,7 +26,9 @@
 #include "config.h"
 #include "WKContextMenuListener.h"
 
+#include "APIArray.h"
 #include "WKAPICast.h"
+#include "WebContextMenuItem.h"
 #include "WebContextMenuListenerProxy.h"
 
 using namespace WebKit;
@@ -40,10 +42,22 @@ WKTypeID WKContextMenuListenerGetTypeID()
 #endif
 }
 
-void WKContextMenuListenerUseContextMenuItems(WKContextMenuListenerRef listenerRef, WKArrayRef items)
+void WKContextMenuListenerUseContextMenuItems(WKContextMenuListenerRef listenerRef, WKArrayRef arrayRef)
 {
 #if ENABLE(CONTEXT_MENUS)
-    toImpl(listenerRef)->useContextMenuItems(items);
+    RefPtr<API::Array> array = toImpl(arrayRef);
+    size_t newSize = array ? array->size() : 0;
+    Vector<Ref<WebContextMenuItem>> items;
+    items.reserveInitialCapacity(newSize);
+    for (size_t i = 0; i < newSize; ++i) {
+        WebContextMenuItem* item = array->at<WebContextMenuItem>(i);
+        if (!item)
+            continue;
+        
+        items.uncheckedAppend(*item);
+    }
+
+    toImpl(listenerRef)->useContextMenuItems(WTFMove(items));
 #else
     UNUSED_PARAM(listenerRef);
     UNUSED_PARAM(items);
