@@ -454,49 +454,13 @@ void RenderElement::setStyle(RenderStyle&& style, StyleDifference minimalStyleDi
     }
 }
 
-bool RenderElement::childRequiresTable(const RenderObject& child) const
-{
-    if (is<RenderTableCol>(child)) {
-        const RenderTableCol& newTableColumn = downcast<RenderTableCol>(child);
-        bool isColumnInColumnGroup = newTableColumn.isTableColumn() && is<RenderTableCol>(*this);
-        return !is<RenderTable>(*this) && !isColumnInColumnGroup;
-    }
-    if (is<RenderTableCaption>(child))
-        return !is<RenderTable>(*this);
-
-    if (is<RenderTableSection>(child))
-        return !is<RenderTable>(*this);
-
-    if (is<RenderTableRow>(child))
-        return !is<RenderTableSection>(*this);
-
-    if (is<RenderTableCell>(child))
-        return !is<RenderTableRow>(*this);
-
-    return false;
-}
-
 void RenderElement::addChild(RenderTreeBuilder& builder, RenderPtr<RenderObject> newChild, RenderObject* beforeChild)
 {
     auto& child = *newChild;
-    if (childRequiresTable(child)) {
-        RenderTable* table;
-        RenderObject* afterChild = beforeChild ? beforeChild->previousSibling() : m_lastChild;
-        if (afterChild && afterChild->isAnonymous() && is<RenderTable>(*afterChild) && !afterChild->isBeforeContent())
-            table = downcast<RenderTable>(afterChild);
-        else {
-            auto newTable = RenderTable::createAnonymousWithParentRenderer(*this);
-            table = newTable.get();
-            builder.insertChild(*this, WTFMove(newTable), beforeChild);
-        }
-
-        builder.insertChild(*table, WTFMove(newChild));
-    } else
-        insertChildInternal(WTFMove(newChild), beforeChild);
+    builder.insertChildToRenderElement(*this, WTFMove(newChild), beforeChild);
 
     if (is<RenderText>(child))
         downcast<RenderText>(child).styleDidChange(StyleDifferenceEqual, nullptr);
-
     // SVG creates renderers for <g display="none">, as SVG requires children of hidden
     // <g>s to have renderers - at least that's how our implementation works. Consider:
     // <g display="none"><foreignObject><body style="position: relative">FOO...
@@ -507,7 +471,6 @@ void RenderElement::addChild(RenderTreeBuilder& builder, RenderPtr<RenderObject>
     // and stop creating layers at all for these cases - they're not used anyways.
     if (child.hasLayer() && !layerCreationAllowedForSubtree())
         downcast<RenderLayerModelObject>(child).layer()->removeOnlyThisLayer();
-
     SVGRenderSupport::childAdded(*this, child);
 }
 

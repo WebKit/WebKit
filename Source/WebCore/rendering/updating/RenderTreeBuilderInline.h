@@ -42,6 +42,7 @@ public:
 private:
     void insertChildToContinuation(RenderInline& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild);
     void splitInlines(RenderInline& parent, RenderBlock* fromBlock, RenderBlock* toBlock, RenderBlock* middleBlock, RenderObject* beforeChild, RenderBoxModelObject* oldCont);
+    bool newChildIsInline(const RenderInline& parent, const RenderObject& child);
 
     RenderTreeBuilder& m_builder;
 };

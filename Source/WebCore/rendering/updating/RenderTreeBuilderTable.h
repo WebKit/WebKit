@@ -48,6 +48,8 @@ public:
     void insertChild(RenderTableSection& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild);
     void insertChild(RenderTableRow& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild);
 
+    bool childRequiresTable(const RenderElement& parent, const RenderObject& child);
+
 private:
     RenderTreeBuilder& m_builder;
 };

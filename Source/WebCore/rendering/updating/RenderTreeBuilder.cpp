@@ -192,6 +192,25 @@ void RenderTreeBuilder::insertChild(RenderTreePosition& position, RenderPtr<Rend
     insertChild(position.parent(), WTFMove(child), position.nextSibling());
 }
 
+void RenderTreeBuilder::insertChildToRenderElement(RenderElement& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild)
+{
+    if (tableBuilder().childRequiresTable(parent, *child)) {
+        RenderTable* table;
+        RenderObject* afterChild = beforeChild ? beforeChild->previousSibling() : parent.lastChild();
+        if (afterChild && afterChild->isAnonymous() && is<RenderTable>(*afterChild) && !afterChild->isBeforeContent())
+            table = downcast<RenderTable>(afterChild);
+        else {
+            auto newTable = RenderTable::createAnonymousWithParentRenderer(parent);
+            table = newTable.get();
+            insertChild(parent, WTFMove(newTable), beforeChild);
+        }
+
+        insertChild(*table, WTFMove(child));
+        return;
+    }
+    parent.RenderElement::insertChildInternal(WTFMove(child), beforeChild);
+}
+
 void RenderTreeBuilder::insertChildToRenderBlock(RenderBlock& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild)
 {
     blockBuilder().insertChild(parent, WTFMove(child), beforeChild);

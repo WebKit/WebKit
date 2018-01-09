@@ -204,8 +204,6 @@ public:
     const RenderElement* enclosingRendererWithTextDecoration(TextDecoration, bool firstLine) const;
     void drawLineForBoxSide(GraphicsContext&, const FloatRect&, BoxSide, Color, EBorderStyle, float adjacentWidth1, float adjacentWidth2, bool antialias = false) const;
 
-    bool childRequiresTable(const RenderObject& child) const;
-
 #if ENABLE(TEXT_AUTOSIZING)
     void adjustComputedFontSizesOnBlocks(float size, float visibleWidth);
     WEBCORE_EXPORT void resetTextAutosizing();

@@ -55,6 +55,7 @@ public:
     static RenderTreeBuilder* current() { return s_current; }
 
     // These functions are temporary until after all block/inline/continuation code is moved over.
+    void insertChildToRenderElement(RenderElement& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild = nullptr);
     void insertChildToRenderBlock(RenderBlock& parent, RenderPtr<RenderObject>, RenderObject* beforeChild = nullptr);
     void insertChildToRenderBlockIgnoringContinuation(RenderBlock& parent, RenderPtr<RenderObject>, RenderObject* beforeChild = nullptr);
     void insertChildToRenderBlockFlow(RenderBlockFlow& parent, RenderPtr<RenderObject>, RenderObject* beforeChild = nullptr);
@@ -69,6 +70,7 @@ public:
     void insertChildToRenderTableRow(RenderTableRow& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild = nullptr);
     void insertChildToRenderMathMLFenced(RenderMathMLFenced& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild = nullptr);
 
+    bool childRequiresTable(const RenderElement& parent, const RenderObject& child);
     void makeChildrenNonInline(RenderBlock& parent, RenderObject* insertionPoint = nullptr);
     RenderObject* splitAnonymousBoxesAroundChild(RenderBox& parent, RenderObject* beforeChild);
     void splitFlow(RenderInline& parent, RenderObject* beforeChild, RenderPtr<RenderBlock> newBlockBox, RenderPtr<RenderObject> child, RenderBoxModelObject* oldCont);

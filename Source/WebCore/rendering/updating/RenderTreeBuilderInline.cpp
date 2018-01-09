@@ -86,12 +86,6 @@ static RenderPtr<RenderInline> cloneAsContinuation(RenderInline& renderer)
     return cloneInline;
 }
 
-static bool newChildIsInline(const RenderObject& child, const RenderInline& parent)
-{
-    // inline parent generates inline-table.
-    return child.isInline() | (parent.childRequiresTable(child) && parent.style().display() == INLINE);
-}
-
 static RenderElement* inFlowPositionedInlineAncestor(RenderElement& renderer)
 {
     auto* ancestor = &renderer;
@@ -151,7 +145,7 @@ void RenderTreeBuilder::Inline::insertChildToContinuation(RenderInline& parent, 
         return flow->addChildIgnoringContinuation(m_builder, WTFMove(child), beforeChild);
     // A continuation always consists of two potential candidates: an inline or an anonymous
     // block box holding block children.
-    bool childInline = newChildIsInline(*child, parent);
+    bool childInline = newChildIsInline(parent, *child);
     // The goal here is to match up if we can, so that we can coalesce and create the
     // minimal # of continuations needed for the inline.
     if (childInline == beforeChildAncestor->isInline())
@@ -167,7 +161,7 @@ void RenderTreeBuilder::Inline::insertChildIgnoringContinuation(RenderInline& pa
     if (!beforeChild && parent.isAfterContent(parent.lastChild()))
         beforeChild = parent.lastChild();
 
-    bool childInline = newChildIsInline(*child, parent);
+    bool childInline = newChildIsInline(parent, *child);
     // This code is for the old block-inside-inline model that uses continuations.
     if (!childInline && !child->isFloatingOrOutOfFlowPositioned()) {
         // We are placing a block inside an inline. We have to perform a split of this
@@ -379,5 +373,10 @@ void RenderTreeBuilder::Inline::splitInlines(RenderInline& parent, RenderBlock* 
     }
 }
 
+bool RenderTreeBuilder::Inline::newChildIsInline(const RenderInline& parent, const RenderObject& child)
+{
+    // inline parent generates inline-table.
+    return child.isInline() || (m_builder.tableBuilder().childRequiresTable(parent, child) && parent.style().display() == INLINE);
 }
 
+}

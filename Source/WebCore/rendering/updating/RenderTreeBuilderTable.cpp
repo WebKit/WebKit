@@ -187,4 +187,26 @@ void RenderTreeBuilder::Table::insertChild(RenderTable& parent, RenderPtr<Render
     parent.RenderBox::addChild(m_builder, WTFMove(child), beforeChild);
 }
 
+bool RenderTreeBuilder::Table::childRequiresTable(const RenderElement& parent, const RenderObject& child)
+{
+    if (is<RenderTableCol>(child)) {
+        const RenderTableCol& newTableColumn = downcast<RenderTableCol>(child);
+        bool isColumnInColumnGroup = newTableColumn.isTableColumn() && is<RenderTableCol>(parent);
+        return !is<RenderTable>(parent) && !isColumnInColumnGroup;
+    }
+    if (is<RenderTableCaption>(child))
+        return !is<RenderTable>(parent);
+
+    if (is<RenderTableSection>(child))
+        return !is<RenderTable>(parent);
+
+    if (is<RenderTableRow>(child))
+        return !is<RenderTableSection>(parent);
+
+    if (is<RenderTableCell>(child))
+        return !is<RenderTableRow>(parent);
+
+    return false;
+}
+
 }

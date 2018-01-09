@@ -1,3 +1,31 @@
+2018-01-09  Zalan Bujtas  <zalan@apple.com>
+
+        [RenderTreeBuilder] Move RenderElement addChild mutation logic to RenderTreeBuilder
+        https://bugs.webkit.org/show_bug.cgi?id=181451
+        <rdar://problem/36385562>
+
+        Reviewed by Antti Koivisto.
+
+        This is about moving code, no cleanup and/or normalization (unfortunately it also means
+        some temporary changes).  
+
+        No change in functionality.
+
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::addChild):
+        (WebCore::RenderElement::childRequiresTable const): Deleted.
+        * rendering/RenderElement.h:
+        * rendering/updating/RenderTreeBuilder.cpp:
+        (WebCore::RenderTreeBuilder::insertChildToRenderElement):
+        (WebCore::RenderTreeBuilder::childRequiresTable):
+        * rendering/updating/RenderTreeBuilder.h:
+        * rendering/updating/RenderTreeBuilderInline.cpp:
+        (WebCore::RenderTreeBuilder::Inline::insertChildToContinuation):
+        (WebCore::RenderTreeBuilder::Inline::insertChildIgnoringContinuation):
+        (WebCore::RenderTreeBuilder::Inline::newChildIsInline):
+        (WebCore::newChildIsInline): Deleted.
+        * rendering/updating/RenderTreeBuilderInline.h:
+
 2018-01-09  Matt Lewis  <jlewis3@apple.com>
 
         Unreviewed, rolling out r226531.
