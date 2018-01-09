@@ -1,3 +1,68 @@
+2018-01-08  Darin Adler  <darin@apple.com>
+
+        Special list-item counter starts from an incorrect number for ::before and ::after
+        https://bugs.webkit.org/show_bug.cgi?id=181084
+
+        Reviewed by Zalan Bujtas.
+
+        Test: fast/css/counters/counter-list-item.html
+
+        * Sources.txt: Removed CounterDirectives.cpp.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::counterToCSSValue): Updated for changes to the CounterDirectives struct.
+        * css/StyleBuilderCustom.h:
+        (WebCore::StyleBuilderCustom::applyInheritCounter): Ditto.
+        (WebCore::StyleBuilderCustom::applyValueCounter): Ditto.
+
+        * html/HTMLLIElement.cpp:
+        (WebCore::HTMLLIElement::parseValue): Call setExplicitValue(std::nullopt) instead
+        of clearExplicitValue since we are using std::optional now.
+
+        * rendering/RenderCounter.cpp:
+        (WebCore::listItemCounterDirectives): Added. Computes the counter directives that
+        express the effects on the list-item counter from list item and list elements.
+        Used something as close to what the CSS 3 draft says as possible. This uses a
+        negative increment when creating a list to counteract the positive increment done
+        by a list element, except in the case of an unordered list. This is where the bug
+        fix actually lies. Also fixed handling of reversed ordered lists at the same time.
+        (WebCore::planCounter): Refactored to use the function above. Also changed the
+        code to pay attention to both the counter directives and the implicit ones from
+        list item and list elements, getting as close as possible to what the specification
+        seems to call for.
+
+        * rendering/RenderListItem.cpp:
+        (WebCore::RenderListItem::RenderListItem): Since we are using std::optional and no
+        longer using bit fields, simplified the constructor for each list item.
+        (WebCore::RenderListItem::calcValue const): Deleted.
+        (WebCore::RenderListItem::updateValueNow const): Merged in all the code from the
+        old calcValue function, but it is also simpler now since m_value is std::optional.
+        (WebCore::RenderListItem::updateValue): Updated to use std::optional.
+        (WebCore::RenderListItem::setExplicitValue): Ditto.
+        (WebCore::RenderListItem::clearExplicitValue): Deleted.
+        (WebCore::RenderListItem::updateListMarkerNumbers): Updated to use std::optional.
+        (WebCore::RenderListItem::isInReversedOrderedList const): Added. This is used by
+        the counter code so it can decrement instead of incrementing.
+
+        * rendering/RenderListItem.h: Updated to use std::optional. Also marked functions
+        final instead of override and initialized m_notInList after making it not be a
+        bitfield any more.
+
+        * rendering/style/CounterDirectives.cpp: Removed.
+        * rendering/style/CounterDirectives.h: Removed most of the CounterDirectives
+        class and replaced it with a struct with two std::optional. Added an addClamped
+        function so the counter code can share it with the addIncrementValue function.
+        If we want to make a faster version that doesn't use double, we can come back
+        and do that. Also moved the == function to the header since the implementation
+        is so trivial.
+
+        * rendering/style/StyleAllInOne.cpp: Removed CounterDirectives.cpp.
+
+        * rendering/style/StyleRareNonInheritedData.cpp:
+        (WebCore::StyleRareNonInheritedData::StyleRareNonInheritedData): Updated to
+        use std::make_unique directly instead of using a clone function.
+
 2018-01-08  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Attachment Support] Expose HTMLAttachmentElement.uniqueIdentifier to bindings

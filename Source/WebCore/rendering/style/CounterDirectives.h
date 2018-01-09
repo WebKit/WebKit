@@ -2,7 +2,7 @@
  * Copyright (C) 2000 Lars Knoll (knoll@kde.org)
  *           (C) 2000 Antti Koivisto (koivisto@kde.org)
  *           (C) 2000 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2003, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2003-2018 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Graham Dennis (graham.dennis@gmail.com)
  *
  * This library is free software; you can redistribute it and/or
@@ -32,77 +32,22 @@
 
 namespace WebCore {
 
-class CounterDirectives {
-public:
-    CounterDirectives()
-        : m_isResetSet(false)
-        , m_isIncrementSet(false)
-        , m_resetValue(0)
-        , m_incrementValue(0)
-    {
-    }
+struct CounterDirectives {
+    std::optional<int> resetValue;
+    std::optional<int> incrementValue;
 
-    // FIXME: The code duplication here could possibly be replaced by using two
-    // maps, or by using a container that held two generic Directive objects.
-
-    bool isReset() const { return m_isResetSet; }
-    int resetValue() const { return m_resetValue; }
-    void setResetValue(int value)
-    {
-        m_resetValue = value;
-        m_isResetSet = true;
-    }
-    void clearReset()
-    {
-        m_resetValue = 0;
-        m_isResetSet = false;
-    }
-    void inheritReset(CounterDirectives& parent)
-    {
-        m_resetValue = parent.m_resetValue;
-        m_isResetSet = parent.m_isResetSet;
-    }
-
-    bool isIncrement() const { return m_isIncrementSet; }
-    int incrementValue() const { return m_incrementValue; }
-    void addIncrementValue(int value)
-    {
-        m_incrementValue = clampToInteger((double)m_incrementValue + value);
-        m_isIncrementSet = true;
-    }
-    void clearIncrement()
-    {
-        m_incrementValue = 0;
-        m_isIncrementSet = false;
-    }
-    void inheritIncrement(CounterDirectives& parent)
-    {
-        m_incrementValue = parent.m_incrementValue;
-        m_isIncrementSet = parent.m_isIncrementSet;
-    }
-
-    bool isDefined() const { return isReset() || isIncrement(); }
-
-    int combinedValue() const
-    {
-        ASSERT(m_isResetSet || !m_resetValue);
-        ASSERT(m_isIncrementSet || !m_incrementValue);
-        // FIXME: Shouldn't allow overflow here.
-        return m_resetValue + m_incrementValue;
-    }
-
-private:
-    bool m_isResetSet;
-    bool m_isIncrementSet;
-    int m_resetValue;
-    int m_incrementValue;
+    void addIncrementValue(int additionalIncrement) { incrementValue = addClamped(incrementValue.value_or(0), additionalIncrement); }
+    static int addClamped(int a, int b) { return clampToInteger(static_cast<double>(a) + b);  }
 };
 
 bool operator==(const CounterDirectives&, const CounterDirectives&);
 inline bool operator!=(const CounterDirectives& a, const CounterDirectives& b) { return !(a == b); }
 
-typedef HashMap<AtomicString, CounterDirectives> CounterDirectiveMap;
+using CounterDirectiveMap = HashMap<AtomicString, CounterDirectives>;
 
-std::unique_ptr<CounterDirectiveMap> clone(const CounterDirectiveMap&);
+inline bool operator==(const CounterDirectives& a, const CounterDirectives& b)
+{
+    return a.incrementValue == b.incrementValue && a.resetValue == b.resetValue;
+}
 
 } // namespace WebCore

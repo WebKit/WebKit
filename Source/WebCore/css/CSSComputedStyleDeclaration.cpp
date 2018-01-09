@@ -1937,10 +1937,10 @@ static Ref<CSSValue> counterToCSSValue(const RenderStyle& style, CSSPropertyID p
 
     auto& cssValuePool = CSSValuePool::singleton();
     auto list = CSSValueList::createSpaceSeparated();
-    for (CounterDirectiveMap::const_iterator it = map->begin(); it != map->end(); ++it) {
-        list->append(cssValuePool.createValue(it->key, CSSPrimitiveValue::CSS_STRING));
-        short number = propertyID == CSSPropertyCounterIncrement ? it->value.incrementValue() : it->value.resetValue();
-        list->append(cssValuePool.createValue((double)number, CSSPrimitiveValue::CSS_NUMBER));
+    for (auto& keyValue : *map) {
+        list->append(cssValuePool.createValue(keyValue.key, CSSPrimitiveValue::CSS_STRING));
+        double number = (propertyID == CSSPropertyCounterIncrement ? keyValue.value.incrementValue : keyValue.value.resetValue).value_or(0);
+        list->append(cssValuePool.createValue(number, CSSPrimitiveValue::CSS_NUMBER));
     }
     return WTFMove(list);
 }

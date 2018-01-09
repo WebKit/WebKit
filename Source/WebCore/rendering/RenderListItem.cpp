@@ -1,7 +1,7 @@
-/**
+/*
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
- * Copyright (C) 2003, 2004, 2005, 2006, 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2003-2018 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Andrew Wellington (proton@wiretapped.net)
  *
  * This library is free software; you can redistribute it and/or
@@ -51,9 +51,6 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(RenderListItem);
 
 RenderListItem::RenderListItem(Element& element, RenderStyle&& style)
     : RenderBlockFlow(element, WTFMove(style))
-    , m_hasExplicitValue(false)
-    , m_isValueUpToDate(false)
-    , m_notInList(false)
 {
     setInline(false);
 }
@@ -195,38 +192,30 @@ unsigned RenderListItem::itemCountForOrderedList(const HTMLOListElement& listNod
     return itemCount;
 }
 
-inline int RenderListItem::calcValue() const
-{
-    if (m_hasExplicitValue)
-        return m_explicitValue;
-
-    Element* list = enclosingList(*this);
-    HTMLOListElement* oListElement = is<HTMLOListElement>(list) ? downcast<HTMLOListElement>(list) : nullptr;
-    int valueStep = 1;
-    if (oListElement && oListElement->isReversed())
-        valueStep = -1;
-
-    // FIXME: This recurses to a possible depth of the length of the list.
-    // That's not good -- we need to change this to an iterative algorithm.
-    if (RenderListItem* previousItem = previousListItem(list, *this))
-        return previousItem->value() + valueStep;
-
-    if (oListElement)
-        return oListElement->start();
-
-    return 1;
-}
-
 void RenderListItem::updateValueNow() const
 {
-    m_value = calcValue();
-    m_isValueUpToDate = true;
+    auto* list = enclosingList(*this);
+    auto* orderedList = is<HTMLOListElement>(list) ? downcast<HTMLOListElement>(list) : nullptr;
+
+    // FIXME: This recurses to a possible depth of the length of the list.
+    // That's not good, and we can and should change this to an iterative algorithm.
+    if (auto* previousItem = previousListItem(list, *this)) {
+        m_value = previousItem->value() + (orderedList && orderedList->isReversed() ? -1 : 1);
+        return;
+    }
+
+    if (orderedList) {
+        m_value = orderedList->start();
+        return;
+    }
+
+    m_value = 1;
 }
 
 void RenderListItem::updateValue()
 {
-    if (!m_hasExplicitValue) {
-        m_isValueUpToDate = false;
+    if (!m_explicitValue) {
+        m_value = std::nullopt;
         if (m_marker)
             m_marker->setNeedsLayoutAndPrefWidthsRecalc();
     }
@@ -391,22 +380,12 @@ void RenderListItem::explicitValueChanged()
         item->updateValue();
 }
 
-void RenderListItem::setExplicitValue(int value)
+void RenderListItem::setExplicitValue(std::optional<int> value)
 {
-    if (m_hasExplicitValue && m_explicitValue == value)
+    if (m_explicitValue == value)
         return;
     m_explicitValue = value;
     m_value = value;
-    m_hasExplicitValue = true;
-    explicitValueChanged();
-}
-
-void RenderListItem::clearExplicitValue()
-{
-    if (!m_hasExplicitValue)
-        return;
-    m_hasExplicitValue = false;
-    m_isValueUpToDate = false;
     explicitValueChanged();
 }
 
@@ -429,7 +408,7 @@ void RenderListItem::updateListMarkerNumbers()
         isListReversed = oListElement.isReversed();
     }
     for (RenderListItem* item = previousOrNextItem(isListReversed, *listNode, *this); item; item = previousOrNextItem(isListReversed, *listNode, *item)) {
-        if (!item->m_isValueUpToDate) {
+        if (!item->m_value) {
             // If an item has been marked for update before, we can safely
             // assume that all the following ones have too.
             // This gives us the opportunity to stop here and avoid
@@ -438,6 +417,13 @@ void RenderListItem::updateListMarkerNumbers()
         }
         item->updateValue();
     }
+}
+
+bool RenderListItem::isInReversedOrderedList() const
+{
+    auto* list = enclosingList(*this);
+    auto* orderedList = is<HTMLOListElement>(list) ? downcast<HTMLOListElement>(list) : nullptr;
+    return orderedList && orderedList->isReversed();
 }
 
 } // namespace WebCore

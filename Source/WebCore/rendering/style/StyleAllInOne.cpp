@@ -27,7 +27,6 @@
 
 #include "BasicShapes.cpp"
 #include "ContentData.cpp"
-#include "CounterDirectives.cpp"
 #include "FillLayer.cpp"
 #include "GridPositionsResolver.cpp"
 #include "KeyframeList.cpp"

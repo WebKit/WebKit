@@ -1140,9 +1140,9 @@ inline void StyleBuilderCustom::applyInheritCounter(StyleResolver& styleResolver
     for (auto& keyValue : const_cast<RenderStyle*>(styleResolver.parentStyle())->accessCounterDirectives()) {
         CounterDirectives& directives = map.add(keyValue.key, CounterDirectives()).iterator->value;
         if (counterBehavior == Reset)
-            directives.inheritReset(keyValue.value);
+            directives.resetValue = keyValue.value.resetValue;
         else
-            directives.inheritIncrement(keyValue.value);
+            directives.incrementValue = keyValue.value.incrementValue;
     }
 }
 
@@ -1157,9 +1157,9 @@ inline void StyleBuilderCustom::applyValueCounter(StyleResolver& styleResolver, 
     CounterDirectiveMap& map = styleResolver.style()->accessCounterDirectives();
     for (auto& keyValue : map) {
         if (counterBehavior == Reset)
-            keyValue.value.clearReset();
+            keyValue.value.resetValue = std::nullopt;
         else
-            keyValue.value.clearIncrement();
+            keyValue.value.incrementValue = std::nullopt;
     }
 
     if (setCounterIncrementToNone)
@@ -1174,7 +1174,7 @@ inline void StyleBuilderCustom::applyValueCounter(StyleResolver& styleResolver, 
         int value = pair->second()->intValue();
         CounterDirectives& directives = map.add(identifier, CounterDirectives()).iterator->value;
         if (counterBehavior == Reset)
-            directives.setResetValue(value);
+            directives.resetValue = value;
         else
             directives.addIncrementValue(value);
     }

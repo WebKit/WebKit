@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
- * Copyright (C) 2003, 2004, 2005, 2006, 2007, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2003-2018 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -34,15 +34,14 @@ class RenderListItem final : public RenderBlockFlow {
 public:
     RenderListItem(Element&, RenderStyle&&);
     virtual ~RenderListItem();
+
     Element& element() const { return downcast<Element>(nodeForNonAnonymous()); }
 
-    int value() const { if (!m_isValueUpToDate) updateValueNow(); return m_value; }
+    int value() const;
     void updateValue();
 
-    bool hasExplicitValue() const { return m_hasExplicitValue; }
-    int explicitValue() const { return m_explicitValue; }
-    void setExplicitValue(int value);
-    void clearExplicitValue();
+    std::optional<int> explicitValue() const { return m_explicitValue; }
+    void setExplicitValue(std::optional<int>);
 
     void setNotInList(bool notInList) { m_notInList = notInList; }
     bool notInList() const { return m_notInList; }
@@ -60,39 +59,44 @@ public:
     RenderListMarker* markerRenderer() const { return m_marker.get(); }
     void setMarkerRenderer(RenderListMarker& marker) { m_marker = makeWeakPtr(marker); }
 
+    bool isInReversedOrderedList() const;
+
 private:
-    void willBeDestroyed() override;
+    void willBeDestroyed() final;
 
-    const char* renderName() const override { return "RenderListItem"; }
+    const char* renderName() const final { return "RenderListItem"; }
 
-    bool isListItem() const override { return true; }
+    bool isListItem() const final { return true; }
     
-    void insertedIntoTree() override;
-    void willBeRemovedFromTree() override;
+    void insertedIntoTree() final;
+    void willBeRemovedFromTree() final;
 
-    void paint(PaintInfo&, const LayoutPoint&) override;
+    void paint(PaintInfo&, const LayoutPoint&) final;
 
-    void layout() override;
+    void layout() final;
 
     void positionListMarker();
 
-    void addOverflowFromChildren() override;
-    void computePreferredLogicalWidths() override;
+    void addOverflowFromChildren() final;
+    void computePreferredLogicalWidths() final;
 
-    inline int calcValue() const;
     void updateValueNow() const;
     void explicitValueChanged();
 
-
-    int m_explicitValue;
+    std::optional<int> m_explicitValue;
     WeakPtr<RenderListMarker> m_marker;
-    mutable int m_value;
-    bool m_hasExplicitValue : 1;
-    mutable bool m_isValueUpToDate : 1;
-    bool m_notInList : 1;
+    mutable std::optional<int> m_value;
+    bool m_notInList { false };
 };
 
 bool isHTMLListElement(const Node&);
+
+inline int RenderListItem::value() const
+{
+    if (!m_value)
+        updateValueNow();
+    return m_value.value();
+}
 
 } // namespace WebCore
 

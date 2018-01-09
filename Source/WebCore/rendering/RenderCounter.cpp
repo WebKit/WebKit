@@ -1,6 +1,6 @@
-/**
+/*
  * Copyright (C) 2004 Allan Sandfeld Jensen (kde@carewolf.com)
- * Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2018 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -106,6 +106,26 @@ static RenderElement* nextInPreOrder(const RenderElement& renderer, const Elemen
     return next ? next->renderer() : nullptr;
 }
 
+static CounterDirectives listItemCounterDirectives(RenderElement& renderer)
+{
+    CounterDirectives directives;
+    if (is<RenderListItem>(renderer)) {
+        auto& item = downcast<RenderListItem>(renderer);
+        if (auto explicitValue = item.explicitValue())
+            directives.resetValue = explicitValue.value();
+        else
+            directives.addIncrementValue(item.isInReversedOrderedList() ? -1 : 1);
+    } else if (auto element = renderer.element()) {
+        if (is<HTMLOListElement>(*element)) {
+            auto& list = downcast<HTMLOListElement>(*element);
+            directives.resetValue = list.start();
+            directives.addIncrementValue(list.isReversed() ? 1 : -1);
+        } else if (element->hasTagName(ulTag) || element->hasTagName(menuTag) || element->hasTagName(dirTag))
+            directives.resetValue = 0;
+    }
+    return directives;
+}
+
 static bool planCounter(RenderElement& renderer, const AtomicString& identifier, bool& isReset, int& value)
 {
     // We must have a generating node or else we cannot have a counter.
@@ -113,7 +133,7 @@ static bool planCounter(RenderElement& renderer, const AtomicString& identifier,
     if (!generatingElement)
         return false;
 
-    const RenderStyle& style = renderer.style();
+    auto& style = renderer.style();
 
     switch (style.styleType()) {
     case NOPSEUDO:
@@ -129,38 +149,26 @@ static bool planCounter(RenderElement& renderer, const AtomicString& identifier,
         return false; // Counters are forbidden from all other pseudo elements.
     }
 
-    const CounterDirectives directives = style.getCounterDirectives(identifier);
-    if (directives.isDefined()) {
-        value = directives.combinedValue();
-        isReset = directives.isReset();
-        return true;
-    }
+    auto directives = style.getCounterDirectives(identifier);
 
     if (identifier == "list-item") {
-        if (is<RenderListItem>(renderer)) {
-            if (downcast<RenderListItem>(renderer).hasExplicitValue()) {
-                value = downcast<RenderListItem>(renderer).explicitValue();
-                isReset = true;
-                return true;
-            }
-            value = 1;
-            isReset = false;
-            return true;
-        }
-        if (Element* element = renderer.element()) {
-            if (is<HTMLOListElement>(*element)) {
-                value = downcast<HTMLOListElement>(*element).start();
-                isReset = true;
-                return true;
-            }
-            if (element->hasTagName(ulTag) || element->hasTagName(menuTag) || element->hasTagName(dirTag)) {
-                value = 0;
-                isReset = true;
-                return true;
-            }
-        }
+        auto itemDirectives = listItemCounterDirectives(renderer);
+        if (!directives.resetValue)
+            directives.resetValue = itemDirectives.resetValue;
+        if (!directives.incrementValue)
+            directives.incrementValue = itemDirectives.incrementValue;
     }
 
+    if (directives.resetValue) {
+        value = CounterDirectives::addClamped(directives.resetValue.value(), directives.incrementValue.value_or(0));
+        isReset = true;
+        return true;
+    }
+    if (directives.incrementValue) {
+        value = directives.incrementValue.value();
+        isReset = false;
+        return true;
+    }
     return false;
 }
 

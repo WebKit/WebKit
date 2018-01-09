@@ -12355,7 +12355,6 @@
 		BC5EB8B70E8201BD00B25965 /* StyleDeprecatedFlexibleBoxData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StyleDeprecatedFlexibleBoxData.h; sourceTree = "<group>"; };
 		BC5EB8C10E82031B00B25965 /* ShadowData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ShadowData.cpp; sourceTree = "<group>"; };
 		BC5EB8C20E82031B00B25965 /* ShadowData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShadowData.h; sourceTree = "<group>"; };
-		BC5EB94E0E82056B00B25965 /* CounterDirectives.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CounterDirectives.cpp; sourceTree = "<group>"; };
 		BC5EB94F0E82056B00B25965 /* CounterDirectives.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CounterDirectives.h; sourceTree = "<group>"; };
 		BC5EB9780E82069200B25965 /* CounterContent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CounterContent.h; sourceTree = "<group>"; };
 		BC5EB97E0E82072500B25965 /* ContentData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ContentData.cpp; sourceTree = "<group>"; };
@@ -23297,7 +23296,6 @@
 				BC5EB97E0E82072500B25965 /* ContentData.cpp */,
 				BC5EB97F0E82072500B25965 /* ContentData.h */,
 				BC5EB9780E82069200B25965 /* CounterContent.h */,
-				BC5EB94E0E82056B00B25965 /* CounterDirectives.cpp */,
 				BC5EB94F0E82056B00B25965 /* CounterDirectives.h */,
 				BC2272A10E82E87C00E7F975 /* CursorData.h */,
 				BC2272AC0E82E8F300E7F975 /* CursorList.h */,
