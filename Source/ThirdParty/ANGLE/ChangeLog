@@ -1,3 +1,11 @@
+2018-01-09  Dan Bernstein  <mitz@apple.com>
+
+        Removed some empty directories that were left behind
+
+        * src/third_party/murmurhash: Removed.
+        * third_party: Removed.
+        * third_party/deqp: Removed.
+
 2017-12-14  David Kilzer  <ddkilzer@apple.com>
 
         Enable -Wstrict-prototypes for WebKit

@@ -1,3 +1,10 @@
+2018-01-09  Dan Bernstein  <mitz@apple.com>
+
+        Removed some empty directories that were left behind
+
+        * WebProcess/Cookies/cf: Removed.
+        * WebProcess/ios: Removed.
+
 2018-01-09  Paul Knight  <pknight@apple.com>
 
         Don't record dynamic spelling corrections while in an ephemeral browsing session

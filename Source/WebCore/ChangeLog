@@ -1,3 +1,12 @@
+2018-01-09  Dan Bernstein  <mitz@apple.com>
+
+        Removed some empty directories that were left behind
+
+        * Modules/indieui: Removed.
+        * Modules/vibration: Removed.
+        * platform/graphics/ca/mac: Removed.
+        * platform/mediastream/gstreamer: Removed.
+
 2018-01-09  Antoine Quint  <graouts@apple.com>
 
         Refactor timing function solving code
