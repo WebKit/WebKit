@@ -365,10 +365,12 @@ void HTMLLinkElement::removedFromAncestor(RemovalType removalType, ContainerNode
 
     m_linkLoader.cancelLoad();
 
+    bool wasLoading = styleSheetIsLoading();
+
     if (m_sheet)
         clearSheet();
 
-    if (styleSheetIsLoading())
+    if (wasLoading)
         removePendingSheet();
     
     if (m_styleScope) {
