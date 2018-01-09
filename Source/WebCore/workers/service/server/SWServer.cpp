@@ -273,7 +273,7 @@ void SWServer::rejectJob(const ServiceWorkerJobData& jobData, const ExceptionDat
     if (!connection)
         return;
 
-    connection->rejectJobInClient(jobData.identifier().jobIdentifier, exceptionData);
+    connection->rejectJobInClient(jobData.identifier(), exceptionData);
 }
 
 void SWServer::resolveRegistrationJob(const ServiceWorkerJobData& jobData, const ServiceWorkerRegistrationData& registrationData, ShouldNotifyWhenResolved shouldNotifyWhenResolved)
@@ -283,7 +283,7 @@ void SWServer::resolveRegistrationJob(const ServiceWorkerJobData& jobData, const
     if (!connection)
         return;
 
-    connection->resolveRegistrationJobInClient(jobData.identifier().jobIdentifier, registrationData, shouldNotifyWhenResolved);
+    connection->resolveRegistrationJobInClient(jobData.identifier(), registrationData, shouldNotifyWhenResolved);
 }
 
 void SWServer::resolveUnregistrationJob(const ServiceWorkerJobData& jobData, const ServiceWorkerRegistrationKey& registrationKey, bool unregistrationResult)
@@ -292,7 +292,7 @@ void SWServer::resolveUnregistrationJob(const ServiceWorkerJobData& jobData, con
     if (!connection)
         return;
 
-    connection->resolveUnregistrationJobInClient(jobData.identifier().jobIdentifier, registrationKey, unregistrationResult);
+    connection->resolveUnregistrationJobInClient(jobData.identifier(), registrationKey, unregistrationResult);
 }
 
 void SWServer::startScriptFetch(const ServiceWorkerJobData& jobData, FetchOptions::Cache cachePolicy)
@@ -302,7 +302,7 @@ void SWServer::startScriptFetch(const ServiceWorkerJobData& jobData, FetchOption
     if (!connection)
         return;
 
-    connection->startScriptFetchInClient(jobData.identifier().jobIdentifier, jobData.registrationKey(), cachePolicy);
+    connection->startScriptFetchInClient(jobData.identifier(), jobData.registrationKey(), cachePolicy);
 }
 
 void SWServer::scriptFetchFinished(Connection& connection, const ServiceWorkerFetchResult& result)
@@ -431,10 +431,10 @@ void SWServer::removeClientServiceWorkerRegistration(Connection& connection, Ser
     registration->removeClientServiceWorkerRegistration(connection.identifier());
 }
 
-void SWServer::updateWorker(Connection&, const ServiceWorkerJobDataIdentifier& jobDataIdentifier, SWServerRegistration& registration, const URL& url, const String& script, const ContentSecurityPolicyResponseHeaders& contentSecurityPolicy, WorkerType type)
+void SWServer::updateWorker(Connection&, const ServiceWorkerJobDataIdentifier& jobDataIdentifier, SWServerRegistration& registration, const URL& url, const String& script, WorkerType type)
 {
     registration.setLastUpdateTime(WallTime::now());
-    tryInstallContextData({ jobDataIdentifier, registration.data(), generateObjectIdentifier<ServiceWorkerIdentifierType>(), script, contentSecurityPolicy, url, type, false });
+    tryInstallContextData({ jobDataIdentifier, registration.data(), generateObjectIdentifier<ServiceWorkerIdentifierType>(), script, url, type, false });
 }
 
 void SWServer::tryInstallContextData(ServiceWorkerContextData&& data)
@@ -478,7 +478,7 @@ void SWServer::installContextData(const ServiceWorkerContextData& data)
     auto* registration = m_registrations.get(data.registration.key);
     RELEASE_ASSERT(registration);
 
-    auto worker = SWServerWorker::create(*this, *registration, connection->identifier(), data.scriptURL, data.script, data.contentSecurityPolicy, data.workerType, data.serviceWorkerIdentifier);
+    auto worker = SWServerWorker::create(*this, *registration, connection->identifier(), data.scriptURL, data.script, data.workerType, data.serviceWorkerIdentifier);
 
     // We don't immediately launch all workers that were just read in from disk,
     // as it is unlikely they will be needed immediately.

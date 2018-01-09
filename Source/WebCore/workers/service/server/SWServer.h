@@ -103,10 +103,10 @@ public:
 
     private:
         // Messages to the client WebProcess
-        virtual void rejectJobInClient(ServiceWorkerJobIdentifier, const ExceptionData&) = 0;
-        virtual void resolveRegistrationJobInClient(ServiceWorkerJobIdentifier, const ServiceWorkerRegistrationData&, ShouldNotifyWhenResolved) = 0;
-        virtual void resolveUnregistrationJobInClient(ServiceWorkerJobIdentifier, const ServiceWorkerRegistrationKey&, bool registrationResult) = 0;
-        virtual void startScriptFetchInClient(ServiceWorkerJobIdentifier, const ServiceWorkerRegistrationKey&, FetchOptions::Cache) = 0;
+        virtual void rejectJobInClient(const ServiceWorkerJobDataIdentifier&, const ExceptionData&) = 0;
+        virtual void resolveRegistrationJobInClient(const ServiceWorkerJobDataIdentifier&, const ServiceWorkerRegistrationData&, ShouldNotifyWhenResolved) = 0;
+        virtual void resolveUnregistrationJobInClient(const ServiceWorkerJobDataIdentifier&, const ServiceWorkerRegistrationKey&, bool registrationResult) = 0;
+        virtual void startScriptFetchInClient(const ServiceWorkerJobDataIdentifier&, const ServiceWorkerRegistrationKey&, FetchOptions::Cache) = 0;
 
         struct RegistrationReadyRequest {
             SecurityOriginData topOrigin;
@@ -140,7 +140,7 @@ public:
     void postTask(CrossThreadTask&&);
     void postTaskReply(CrossThreadTask&&);
 
-    void updateWorker(Connection&, const ServiceWorkerJobDataIdentifier&, SWServerRegistration&, const URL&, const String& script, const ContentSecurityPolicyResponseHeaders&, WorkerType);
+    void updateWorker(Connection&, const ServiceWorkerJobDataIdentifier&, SWServerRegistration&, const URL&, const String& script, WorkerType);
     void terminateWorker(SWServerWorker&);
     void syncTerminateWorker(SWServerWorker&);
     void fireInstallEvent(SWServerWorker&);

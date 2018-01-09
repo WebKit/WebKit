@@ -25,7 +25,6 @@
 
 #pragma once
 
-#include "ContentSecurityPolicyResponseHeaders.h"
 #include "ServiceWorkerIdentifier.h"
 #include "ServiceWorkerJobDataIdentifier.h"
 #include "ServiceWorkerRegistrationData.h"
@@ -41,11 +40,10 @@ struct ServiceWorkerContextData {
     ServiceWorkerRegistrationData registration;
     ServiceWorkerIdentifier serviceWorkerIdentifier;
     String script;
-    ContentSecurityPolicyResponseHeaders contentSecurityPolicy;
     URL scriptURL;
     WorkerType workerType;
     bool loadedFromDisk;
-
+    
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static std::optional<ServiceWorkerContextData> decode(Decoder&);
     
@@ -55,7 +53,7 @@ struct ServiceWorkerContextData {
 template<class Encoder>
 void ServiceWorkerContextData::encode(Encoder& encoder) const
 {
-    encoder << jobDataIdentifier << registration << serviceWorkerIdentifier << script << contentSecurityPolicy << scriptURL << workerType << loadedFromDisk;
+    encoder << jobDataIdentifier << registration << serviceWorkerIdentifier << script << scriptURL << workerType << loadedFromDisk;
 }
 
 template<class Decoder>
@@ -78,11 +76,7 @@ std::optional<ServiceWorkerContextData> ServiceWorkerContextData::decode(Decoder
     String script;
     if (!decoder.decode(script))
         return std::nullopt;
-
-    ContentSecurityPolicyResponseHeaders contentSecurityPolicy;
-    if (!decoder.decode(contentSecurityPolicy))
-        return std::nullopt;
-
+    
     URL scriptURL;
     if (!decoder.decode(scriptURL))
         return std::nullopt;
@@ -95,7 +89,7 @@ std::optional<ServiceWorkerContextData> ServiceWorkerContextData::decode(Decoder
     if (!decoder.decode(loadedFromDisk))
         return std::nullopt;
 
-    return {{ WTFMove(*jobDataIdentifier), WTFMove(*registration), WTFMove(*serviceWorkerIdentifier), WTFMove(script), WTFMove(contentSecurityPolicy), WTFMove(scriptURL), workerType, loadedFromDisk }};
+    return {{ WTFMove(*jobDataIdentifier), WTFMove(*registration), WTFMove(*serviceWorkerIdentifier), WTFMove(script), WTFMove(scriptURL), workerType, loadedFromDisk}};
 }
 
 } // namespace WebCore

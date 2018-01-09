@@ -68,8 +68,9 @@ public:
     virtual void addServiceWorkerRegistrationInServer(ServiceWorkerRegistrationIdentifier) = 0;
     virtual void removeServiceWorkerRegistrationInServer(ServiceWorkerRegistrationIdentifier) = 0;
 
-    void scheduleJob(DocumentOrWorkerIdentifier, const ServiceWorkerJobData&);
-    void failedFetchingScript(ServiceWorkerJobIdentifier, const ServiceWorkerRegistrationKey&, const ResourceError&);
+    void scheduleJob(ServiceWorkerJob&);
+    void finishedFetchingScript(ServiceWorkerJob&, const String&);
+    void failedFetchingScript(const ServiceWorkerJobDataIdentifier&, const ServiceWorkerRegistrationKey&, const ResourceError&);
 
     virtual void didResolveRegistrationPromise(const ServiceWorkerRegistrationKey&) = 0;
 
@@ -82,15 +83,13 @@ public:
     virtual void registerServiceWorkerClient(const SecurityOrigin& topOrigin, const ServiceWorkerClientData&, const std::optional<ServiceWorkerIdentifier>&) = 0;
     virtual void unregisterServiceWorkerClient(DocumentIdentifier) = 0;
 
-    virtual void finishFetchingScriptInServer(const ServiceWorkerFetchResult&) = 0;
-
 protected:
     WEBCORE_EXPORT SWClientConnection();
 
-    WEBCORE_EXPORT void jobRejectedInServer(ServiceWorkerJobIdentifier, const ExceptionData&);
-    WEBCORE_EXPORT void registrationJobResolvedInServer(ServiceWorkerJobIdentifier, ServiceWorkerRegistrationData&&, ShouldNotifyWhenResolved);
-    WEBCORE_EXPORT void unregistrationJobResolvedInServer(ServiceWorkerJobIdentifier, bool unregistrationResult);
-    WEBCORE_EXPORT void startScriptFetchForServer(ServiceWorkerJobIdentifier, const ServiceWorkerRegistrationKey&, FetchOptions::Cache);
+    WEBCORE_EXPORT void jobRejectedInServer(const ServiceWorkerJobDataIdentifier&, const ExceptionData&);
+    WEBCORE_EXPORT void registrationJobResolvedInServer(const ServiceWorkerJobDataIdentifier&, ServiceWorkerRegistrationData&&, ShouldNotifyWhenResolved);
+    WEBCORE_EXPORT void unregistrationJobResolvedInServer(const ServiceWorkerJobDataIdentifier&, bool unregistrationResult);
+    WEBCORE_EXPORT void startScriptFetchForServer(const ServiceWorkerJobDataIdentifier&, const ServiceWorkerRegistrationKey&, FetchOptions::Cache);
     WEBCORE_EXPORT void postMessageToServiceWorkerClient(DocumentIdentifier destinationContextIdentifier, Ref<SerializedScriptValue>&& message, ServiceWorkerData&& source, const String& sourceOrigin);
     WEBCORE_EXPORT void updateRegistrationState(ServiceWorkerRegistrationIdentifier, ServiceWorkerRegistrationState, const std::optional<ServiceWorkerData>&);
     WEBCORE_EXPORT void updateWorkerState(ServiceWorkerIdentifier, ServiceWorkerState);
@@ -103,11 +102,9 @@ protected:
 
 private:
     virtual void scheduleJobInServer(const ServiceWorkerJobData&) = 0;
+    virtual void finishFetchingScriptInServer(const ServiceWorkerFetchResult&) = 0;
 
-    enum class IsJobComplete { No, Yes };
-    bool postTaskForJob(ServiceWorkerJobIdentifier, IsJobComplete, WTF::Function<void(ServiceWorkerJob&)>&&);
-
-    HashMap<ServiceWorkerJobIdentifier, DocumentOrWorkerIdentifier> m_scheduledJobSources;
+    HashMap<ServiceWorkerJobIdentifier, RefPtr<ServiceWorkerJob>> m_scheduledJobs;
 };
 
 } // namespace WebCore

@@ -1,3 +1,22 @@
+2018-01-08  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r226532 and r226540.
+        https://bugs.webkit.org/show_bug.cgi?id=181422
+
+        jessie says basic browsing does not seem to work (Requested by
+        alexchristensen on #webkit).
+
+        Reverted changesets:
+
+        "Add CSP support to service workers"
+        https://bugs.webkit.org/show_bug.cgi?id=181385
+        https://trac.webkit.org/changeset/226532
+
+        "SWClientConnection should not keep references to service
+        worker jobs"
+        https://bugs.webkit.org/show_bug.cgi?id=181381
+        https://trac.webkit.org/changeset/226540
+
 2018-01-08  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Attachment Support] Expose file name and content type of WKAttachment

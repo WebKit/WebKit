@@ -26,7 +26,6 @@
 
 #pragma once
 
-#include "ContentSecurityPolicyResponseHeaders.h"
 #include "ResourceError.h"
 #include "ResourceRequest.h"
 #include "ThreadableLoader.h"
@@ -59,7 +58,6 @@ public:
     void notifyError();
 
     String script();
-    const ContentSecurityPolicyResponseHeaders& contentSecurityPolicy() const { return m_contentSecurityPolicy; }
     const URL& url() const { return m_url; }
     const URL& responseURL() const;
     const String& responseMIMEType() const { return m_responseMIMEType; }
@@ -91,7 +89,6 @@ private:
     URL m_url;
     URL m_responseURL;
     String m_responseMIMEType;
-    ContentSecurityPolicyResponseHeaders m_contentSecurityPolicy;
     unsigned long m_identifier { 0 };
     bool m_failed { false };
     bool m_finishing { false };

@@ -42,7 +42,6 @@
 #include "ScriptExecutionContext.h"
 #include "SecurityOrigin.h"
 #include "ServiceWorker.h"
-#include "ServiceWorkerFetchResult.h"
 #include "ServiceWorkerGlobalScope.h"
 #include "ServiceWorkerJob.h"
 #include "ServiceWorkerJobData.h"
@@ -224,12 +223,11 @@ void ServiceWorkerContainer::scheduleJob(Ref<ServiceWorkerJob>&& job)
 
     setPendingActivity(this);
 
-    auto jobData = job->data();
-    auto result = m_jobMap.add(job->identifier(), WTFMove(job));
+    auto result = m_jobMap.add(job->identifier(), job.copyRef());
     ASSERT_UNUSED(result, result.isNewEntry);
 
-    callOnMainThread([connection = m_swConnection, contextIdentifier = this->contextIdentifier(), jobData = WTFMove(jobData)] {
-        connection->scheduleJob(contextIdentifier, jobData);
+    callOnMainThread([connection = m_swConnection, job = WTFMove(job)] {
+        connection->scheduleJob(job);
     });
 }
 
@@ -460,8 +458,8 @@ void ServiceWorkerContainer::startScriptFetchForJob(ServiceWorkerJob& job, Fetch
     auto* context = scriptExecutionContext();
     if (!context) {
         LOG_ERROR("ServiceWorkerContainer::jobResolvedWithRegistration called but the container's ScriptExecutionContext is gone");
-        callOnMainThread([connection = m_swConnection, jobIdentifier = job.identifier(), registrationKey = job.data().registrationKey(), scriptURL = job.data().scriptURL.isolatedCopy()] {
-            connection->failedFetchingScript(jobIdentifier, registrationKey, { errorDomainWebKitInternal, 0, scriptURL, ASCIILiteral("Attempt to fetch service worker script with no ScriptExecutionContext") });
+        callOnMainThread([connection = m_swConnection, job = makeRef(job)] {
+            connection->failedFetchingScript(job->data().identifier(), job->data().registrationKey(), { errorDomainWebKitInternal, 0, job->data().scriptURL, ASCIILiteral("Attempt to fetch service worker script with no ScriptExecutionContext") });
         });
         jobDidFinish(job);
         return;
@@ -470,7 +468,7 @@ void ServiceWorkerContainer::startScriptFetchForJob(ServiceWorkerJob& job, Fetch
     job.fetchScriptWithContext(*context, cachePolicy);
 }
 
-void ServiceWorkerContainer::jobFinishedLoadingScript(ServiceWorkerJob& job, const String& script, const ContentSecurityPolicyResponseHeaders& contentSecurityPolicy)
+void ServiceWorkerContainer::jobFinishedLoadingScript(ServiceWorkerJob& job, const String& script)
 {
 #ifndef NDEBUG
     ASSERT(m_creationThread.ptr() == &Thread::current());
@@ -478,8 +476,8 @@ void ServiceWorkerContainer::jobFinishedLoadingScript(ServiceWorkerJob& job, con
 
     LOG(ServiceWorker, "SeviceWorkerContainer %p finished fetching script for job %s", this, job.identifier().loggingString().utf8().data());
 
-    callOnMainThread([connection = m_swConnection, jobDataIdentifier = job.data().identifier(), registrationKey = job.data().registrationKey(), script = script.isolatedCopy(), contentSecurityPolicy = contentSecurityPolicy.isolatedCopy()] {
-        connection->finishFetchingScriptInServer({ jobDataIdentifier, registrationKey, script, contentSecurityPolicy, { } });
+    callOnMainThread([connection = m_swConnection, job = makeRef(job), script = script.isolatedCopy()] {
+        connection->finishedFetchingScript(job, script);
     });
 }
 
@@ -495,8 +493,8 @@ void ServiceWorkerContainer::jobFailedLoadingScript(ServiceWorkerJob& job, const
     if (exception && job.promise())
         job.promise()->reject(*exception);
 
-    callOnMainThread([connection = m_swConnection, jobIdentifier = job.identifier(), registrationKey = job.data().registrationKey(), error = error.isolatedCopy()] {
-        connection->failedFetchingScript(jobIdentifier, registrationKey, error);
+    callOnMainThread([connection = m_swConnection, job = makeRef(job), error = error.isolatedCopy()] {
+        connection->failedFetchingScript(job->data().identifier(), job->data().registrationKey(), error);
     });
 }
 

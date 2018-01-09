@@ -134,7 +134,6 @@ void WorkerScriptLoader::didReceiveResponse(unsigned long identifier, const Reso
     m_responseURL = response.url();
     m_responseMIMEType = response.mimeType();
     m_responseEncoding = response.textEncodingName();
-    m_contentSecurityPolicy = ContentSecurityPolicyResponseHeaders { response };
     if (m_client)
         m_client->didReceiveResponse(identifier, response);
 }

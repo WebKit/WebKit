@@ -40,15 +40,12 @@
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/Scope.h>
-#include <wtf/persistence/PersistentCoders.h>
-#include <wtf/persistence/PersistentDecoder.h>
-#include <wtf/persistence/PersistentEncoder.h>
 
 namespace WebCore {
 
 static const String v1RecordsTableSchema(const String& tableName)
 {
-    return makeString("CREATE TABLE ", tableName, " (key TEXT NOT NULL ON CONFLICT FAIL UNIQUE ON CONFLICT REPLACE, origin TEXT NOT NULL ON CONFLICT FAIL, scopeURL TEXT NOT NULL ON CONFLICT FAIL, topOrigin TEXT NOT NULL ON CONFLICT FAIL, lastUpdateCheckTime DOUBLE NOT NULL ON CONFLICT FAIL, updateViaCache TEXT NOT NULL ON CONFLICT FAIL, scriptURL TEXT NOT NULL ON CONFLICT FAIL, script TEXT NOT NULL ON CONFLICT FAIL, workerType TEXT NOT NULL ON CONFLICT FAIL, contentSecurityPolicy BLOB NOT NULL ON CONFLICT FAIL)");
+    return makeString("CREATE TABLE ", tableName, " (key TEXT NOT NULL ON CONFLICT FAIL UNIQUE ON CONFLICT REPLACE, origin TEXT NOT NULL ON CONFLICT FAIL, scopeURL TEXT NOT NULL ON CONFLICT FAIL, topOrigin TEXT NOT NULL ON CONFLICT FAIL, lastUpdateCheckTime DOUBLE NOT NULL ON CONFLICT FAIL, updateViaCache TEXT NOT NULL ON CONFLICT FAIL, scriptURL TEXT NOT NULL ON CONFLICT FAIL, script TEXT NOT NULL ON CONFLICT FAIL, workerType TEXT NOT NULL ON CONFLICT FAIL)");
 }
 
 static const String v1RecordsTableSchema()
@@ -121,7 +118,7 @@ void RegistrationDatabase::openSQLiteDatabase(const String& fullFilename)
     errorMessage = importRecords();
     if (!errorMessage.isNull())
         return;
-
+    
     scopeExit.release();
 }
 
@@ -261,7 +258,7 @@ void RegistrationDatabase::doPushChanges(Vector<ServiceWorkerContextData>&& data
     SQLiteTransaction transaction(*m_database);
     transaction.begin();
 
-    SQLiteStatement sql(*m_database, ASCIILiteral("INSERT INTO Records VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"));
+    SQLiteStatement sql(*m_database, ASCIILiteral("INSERT INTO Records VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"));
     if (sql.prepare() != SQLITE_OK) {
         RELEASE_LOG_ERROR(ServiceWorker, "Failed to prepare statement to store registration data into records table (%i) - %s", m_database->lastError(), m_database->lastErrorMsg());
         return;
@@ -280,9 +277,6 @@ void RegistrationDatabase::doPushChanges(Vector<ServiceWorkerContextData>&& data
             continue;
         }
 
-        WTF::Persistence::Encoder encoder;
-        data.contentSecurityPolicy.encode(encoder);
-
         if (sql.bindText(1, data.registration.key.toDatabaseKey()) != SQLITE_OK
             || sql.bindText(2, data.registration.scopeURL.protocolHostAndPort()) != SQLITE_OK
             || sql.bindText(3, data.registration.scopeURL.path()) != SQLITE_OK
@@ -292,7 +286,6 @@ void RegistrationDatabase::doPushChanges(Vector<ServiceWorkerContextData>&& data
             || sql.bindText(7, data.scriptURL.string()) != SQLITE_OK
             || sql.bindText(8, data.script) != SQLITE_OK
             || sql.bindText(9, workerTypeToString(data.workerType)) != SQLITE_OK
-            || sql.bindBlob(10, encoder.buffer(), encoder.bufferSize()) != SQLITE_OK
             || sql.step() != SQLITE_DONE) {
             RELEASE_LOG_ERROR(ServiceWorker, "Failed to store registration data into records table (%i) - %s", m_database->lastError(), m_database->lastErrorMsg());
             return;
@@ -325,13 +318,6 @@ String RegistrationDatabase::importRecords()
         auto script = sql.getColumnText(7);
         auto workerType = stringToWorkerType(sql.getColumnText(8));
 
-        Vector<uint8_t> contentSecurityPolicyData;
-        sql.getColumnBlobAsVector(9, contentSecurityPolicyData);
-        WTF::Persistence::Decoder decoder(contentSecurityPolicyData.data(), contentSecurityPolicyData.size());
-        ContentSecurityPolicyResponseHeaders contentSecurityPolicy;
-        if (contentSecurityPolicyData.size() && !ContentSecurityPolicyResponseHeaders::decode(decoder, contentSecurityPolicy))
-            continue;
-
         // Validate the input for this registration.
         // If any part of this input is invalid, let's skip this registration.
         // FIXME: Should we return an error skipping *all* registrations?
@@ -342,7 +328,7 @@ String RegistrationDatabase::importRecords()
         auto registrationIdentifier = generateObjectIdentifier<ServiceWorkerRegistrationIdentifierType>();
         auto serviceWorkerData = ServiceWorkerData { workerIdentifier, scriptURL, ServiceWorkerState::Activated, *workerType, registrationIdentifier };
         auto registration = ServiceWorkerRegistrationData { WTFMove(*key), registrationIdentifier, URL(originURL, scopePath), *updateViaCache, lastUpdateCheckTime, std::nullopt, std::nullopt, WTFMove(serviceWorkerData) };
-        auto contextData = ServiceWorkerContextData { std::nullopt, WTFMove(registration), workerIdentifier, WTFMove(script), WTFMove(contentSecurityPolicy), WTFMove(scriptURL), *workerType, true };
+        auto contextData = ServiceWorkerContextData { std::nullopt, WTFMove(registration), workerIdentifier, WTFMove(script), WTFMove(scriptURL), *workerType, true };
 
         postTaskReply(createCrossThreadTask(*this, &RegistrationDatabase::addRegistrationToStore, WTFMove(contextData)));
     }

@@ -38,6 +38,7 @@
 #include "ServiceWorkerJobData.h"
 #include "ServiceWorkerRegistration.h"
 #include <wtf/CrossThreadCopier.h>
+#include <wtf/Scope.h>
 
 namespace WebCore {
 
@@ -45,76 +46,102 @@ SWClientConnection::SWClientConnection() = default;
 
 SWClientConnection::~SWClientConnection() = default;
 
-void SWClientConnection::scheduleJob(DocumentOrWorkerIdentifier contextIdentifier, const ServiceWorkerJobData& jobData)
+void SWClientConnection::scheduleJob(ServiceWorkerJob& job)
 {
     ASSERT(isMainThread());
 
-    auto addResult = m_scheduledJobSources.add(jobData.identifier().jobIdentifier, contextIdentifier);
+    auto addResult = m_scheduledJobs.add(job.identifier(), &job);
     ASSERT_UNUSED(addResult, addResult.isNewEntry);
 
-    scheduleJobInServer(jobData);
+    scheduleJobInServer(job.data());
 }
 
-void SWClientConnection::failedFetchingScript(ServiceWorkerJobIdentifier jobIdentifier, const ServiceWorkerRegistrationKey& registrationKey, const ResourceError& error)
+void SWClientConnection::finishedFetchingScript(ServiceWorkerJob& job, const String& script)
+{
+    ASSERT(isMainThread());
+    ASSERT(m_scheduledJobs.get(job.identifier()) == &job);
+
+    finishFetchingScriptInServer({ job.data().identifier(), job.data().registrationKey(), script, { } });
+}
+
+void SWClientConnection::failedFetchingScript(const ServiceWorkerJobDataIdentifier& jobDataIdentifier, const ServiceWorkerRegistrationKey& registrationKey, const ResourceError& error)
 {
     ASSERT(isMainThread());
 
-    finishFetchingScriptInServer({ { serverConnectionIdentifier(), jobIdentifier }, registrationKey, { }, { }, error });
+    finishFetchingScriptInServer({ jobDataIdentifier, registrationKey, { }, error });
 }
 
-bool SWClientConnection::postTaskForJob(ServiceWorkerJobIdentifier jobIdentifier, IsJobComplete isJobComplete, WTF::Function<void(ServiceWorkerJob&)>&& task)
+void SWClientConnection::jobRejectedInServer(const ServiceWorkerJobDataIdentifier& jobDataIdentifier, const ExceptionData& exceptionData)
 {
     ASSERT(isMainThread());
 
-    auto iterator = m_scheduledJobSources.find(jobIdentifier);
-    if (iterator == m_scheduledJobSources.end()) {
-        LOG_ERROR("Job %s was not found", jobIdentifier.loggingString().utf8().data());
-        return false;
+    auto job = m_scheduledJobs.take(jobDataIdentifier.jobIdentifier);
+    if (!job) {
+        LOG_ERROR("Job %s rejected from server, but was not found", jobDataIdentifier.loggingString().utf8().data());
+        return;
     }
-    auto isPosted = ScriptExecutionContext::postTaskTo(iterator->value, [jobIdentifier, task = WTFMove(task)] (ScriptExecutionContext& context) mutable {
-        if (auto* container = context.serviceWorkerContainer()) {
-            if (auto* job = container->job(jobIdentifier))
-                task(*job);
-        }
+
+    ScriptExecutionContext::postTaskTo(job->contextIdentifier(), [job, exceptionData = exceptionData.isolatedCopy()](ScriptExecutionContext&) {
+        job->failedWithException(exceptionData.toException());
     });
-    if (isJobComplete == IsJobComplete::Yes)
-        m_scheduledJobSources.remove(iterator);
-    return isPosted;
 }
 
-void SWClientConnection::jobRejectedInServer(ServiceWorkerJobIdentifier jobIdentifier, const ExceptionData& exceptionData)
+void SWClientConnection::registrationJobResolvedInServer(const ServiceWorkerJobDataIdentifier& jobDataIdentifier, ServiceWorkerRegistrationData&& registrationData, ShouldNotifyWhenResolved shouldNotifyWhenResolved)
 {
-    postTaskForJob(jobIdentifier, IsJobComplete::Yes, [exceptionData = exceptionData.isolatedCopy()] (auto& job) {
-        job.failedWithException(exceptionData.toException());
+    ASSERT(isMainThread());
+
+    auto guard = WTF::makeScopeExit([this, shouldNotifyWhenResolved, registrationKey = registrationData.key] {
+        if (shouldNotifyWhenResolved == ShouldNotifyWhenResolved::Yes)
+            didResolveRegistrationPromise(registrationKey);
     });
+
+    auto job = m_scheduledJobs.take(jobDataIdentifier.jobIdentifier);
+    if (!job) {
+        LOG_ERROR("Job %s resolved in server, but was not found", jobDataIdentifier.loggingString().utf8().data());
+        return;
+    }
+
+    bool wasPosted = ScriptExecutionContext::postTaskTo(job->contextIdentifier(), [job, registrationData = registrationData.isolatedCopy(), shouldNotifyWhenResolved](ScriptExecutionContext&) mutable {
+        job->resolvedWithRegistration(WTFMove(registrationData), shouldNotifyWhenResolved);
+    });
+
+    if (wasPosted)
+        guard.release();
 }
 
-void SWClientConnection::registrationJobResolvedInServer(ServiceWorkerJobIdentifier jobIdentifier, ServiceWorkerRegistrationData&& registrationData, ShouldNotifyWhenResolved shouldNotifyWhenResolved)
+void SWClientConnection::unregistrationJobResolvedInServer(const ServiceWorkerJobDataIdentifier& jobDataIdentifier, bool unregistrationResult)
 {
-    bool isPosted = postTaskForJob(jobIdentifier, IsJobComplete::Yes, [registrationData = registrationData.isolatedCopy(), shouldNotifyWhenResolved] (auto& job) mutable {
-        job.resolvedWithRegistration(WTFMove(registrationData), shouldNotifyWhenResolved);
-    });
+    ASSERT(isMainThread());
 
-    if (!isPosted && shouldNotifyWhenResolved == ShouldNotifyWhenResolved::Yes)
-        didResolveRegistrationPromise(registrationData.key);
+    auto job = m_scheduledJobs.take(jobDataIdentifier.jobIdentifier);
+    if (!job) {
+        LOG_ERROR("Job %s resolved in server, but was not found", jobDataIdentifier.loggingString().utf8().data());
+        return;
+    }
+
+    ScriptExecutionContext::postTaskTo(job->contextIdentifier(), [job, unregistrationResult](ScriptExecutionContext&) {
+        job->resolvedWithUnregistrationResult(unregistrationResult);
+    });
 }
 
-void SWClientConnection::unregistrationJobResolvedInServer(ServiceWorkerJobIdentifier jobIdentifier, bool unregistrationResult)
+void SWClientConnection::startScriptFetchForServer(const ServiceWorkerJobDataIdentifier& jobDataIdentifier, const ServiceWorkerRegistrationKey& registrationKey, FetchOptions::Cache cachePolicy)
 {
-    postTaskForJob(jobIdentifier, IsJobComplete::Yes, [unregistrationResult] (auto& job) {
-        job.resolvedWithUnregistrationResult(unregistrationResult);
-    });
-}
+    ASSERT(isMainThread());
 
-void SWClientConnection::startScriptFetchForServer(ServiceWorkerJobIdentifier jobIdentifier, const ServiceWorkerRegistrationKey& registrationKey, FetchOptions::Cache cachePolicy)
-{
-    bool isPosted = postTaskForJob(jobIdentifier, IsJobComplete::No, [cachePolicy] (auto& job) {
-        job.startScriptFetch(cachePolicy);
-    });
-    if (!isPosted)
-        failedFetchingScript(jobIdentifier, registrationKey, ResourceError { errorDomainWebKitInternal, 0, { }, makeString("Failed to fetch script for service worker with scope ", registrationKey.scope().string()) });
-}
+    auto job = m_scheduledJobs.get(jobDataIdentifier.jobIdentifier);
+    if (!job) {
+        LOG_ERROR("Job %s instructed to start fetch from server, but job was not found", jobDataIdentifier.loggingString().utf8().data());
 
+        failedFetchingScript(jobDataIdentifier, registrationKey, ResourceError { errorDomainWebKitInternal, 0, URL(), ASCIILiteral("Failed to fetch service worker script") });
+        return;
+    }
+
+    bool wasPosted = ScriptExecutionContext::postTaskTo(job->contextIdentifier(), [job, cachePolicy](ScriptExecutionContext&) {
+        job->startScriptFetch(cachePolicy);
+    });
+    if (!wasPosted)
+        failedFetchingScript(jobDataIdentifier, registrationKey, ResourceError { errorDomainWebKitInternal, 0, job->data().scriptURL, ASCIILiteral("Failed to fetch service worker script") });
+}
 
 void SWClientConnection::postMessageToServiceWorkerClient(DocumentIdentifier destinationContextIdentifier, Ref<SerializedScriptValue>&& message, ServiceWorkerData&& sourceData, const String& sourceOrigin)
 {
@@ -251,13 +278,10 @@ void SWClientConnection::clearPendingJobs()
 {
     ASSERT(isMainThread());
 
-    auto jobSources = WTFMove(m_scheduledJobSources);
-    for (auto& keyValue : jobSources) {
-        ScriptExecutionContext::postTaskTo(keyValue.value, [identifier = keyValue.key] (auto& context) {
-            if (auto* container = context.serviceWorkerContainer()) {
-                if (auto* job = container->job(identifier))
-                    job->failedWithException(Exception { TypeError, ASCIILiteral("Internal error") });
-            }
+    auto jobs = WTFMove(m_scheduledJobs);
+    for (auto& job : jobs.values()) {
+        ScriptExecutionContext::postTaskTo(job->contextIdentifier(), [job](ScriptExecutionContext&) {
+            job->failedWithException(Exception { TypeError, ASCIILiteral("Internal error") });
         });
     }
 }

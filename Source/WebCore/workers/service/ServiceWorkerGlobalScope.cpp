@@ -38,13 +38,6 @@
 
 namespace WebCore {
 
-Ref<ServiceWorkerGlobalScope> ServiceWorkerGlobalScope::create(const ServiceWorkerContextData& data, const URL& url, const String& identifier, const String& userAgent, bool isOnline, ServiceWorkerThread& thread, const ContentSecurityPolicyResponseHeaders& contentSecurityPolicy, bool shouldBypassMainWorldContentSecurityPolicy, Ref<SecurityOrigin>&& topOrigin, MonotonicTime timeOrigin, IDBClient::IDBConnectionProxy* connectionProxy, SocketProvider* socketProvider, PAL::SessionID sessionID)
-{
-    auto scope = adoptRef(*new ServiceWorkerGlobalScope { data, url, identifier, userAgent, isOnline, thread, shouldBypassMainWorldContentSecurityPolicy, WTFMove(topOrigin), timeOrigin, connectionProxy, socketProvider, sessionID });
-    scope->applyContentSecurityPolicyResponseHeaders(contentSecurityPolicy);
-    return scope;
-}
-
 ServiceWorkerGlobalScope::ServiceWorkerGlobalScope(const ServiceWorkerContextData& data, const URL& url, const String& identifier, const String& userAgent, bool isOnline, ServiceWorkerThread& thread, bool shouldBypassMainWorldContentSecurityPolicy, Ref<SecurityOrigin>&& topOrigin, MonotonicTime timeOrigin, IDBClient::IDBConnectionProxy* connectionProxy, SocketProvider* socketProvider, PAL::SessionID sessionID)
     : WorkerGlobalScope(url, identifier, userAgent, isOnline, thread, shouldBypassMainWorldContentSecurityPolicy, WTFMove(topOrigin), timeOrigin, connectionProxy, socketProvider, sessionID)
     , m_contextData(crossThreadCopy(data))

@@ -27,7 +27,6 @@
 
 #if ENABLE(SERVICE_WORKER)
 
-#include "ContentSecurityPolicyResponseHeaders.h"
 #include "ResourceError.h"
 #include "ServiceWorkerRegistrationKey.h"
 #include "ServiceWorkerTypes.h"
@@ -38,7 +37,6 @@ struct ServiceWorkerFetchResult {
     ServiceWorkerJobDataIdentifier jobDataIdentifier;
     ServiceWorkerRegistrationKey registrationKey;
     String script;
-    ContentSecurityPolicyResponseHeaders contentSecurityPolicy;
     ResourceError scriptError;
 
     template<class Encoder> void encode(Encoder&) const;
@@ -48,7 +46,7 @@ struct ServiceWorkerFetchResult {
 template<class Encoder>
 void ServiceWorkerFetchResult::encode(Encoder& encoder) const
 {
-    encoder << jobDataIdentifier << registrationKey << script << contentSecurityPolicy << scriptError;
+    encoder << jobDataIdentifier << registrationKey << script << scriptError;
 }
 
 template<class Decoder>
@@ -66,8 +64,6 @@ bool ServiceWorkerFetchResult::decode(Decoder& decoder, ServiceWorkerFetchResult
     std::swap(*registrationKey, result.registrationKey);
 
     if (!decoder.decode(result.script))
-        return false;
-    if (!decoder.decode(result.contentSecurityPolicy))
         return false;
     if (!decoder.decode(result.scriptError))
         return false;

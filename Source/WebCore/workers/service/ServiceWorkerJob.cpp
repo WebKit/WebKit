@@ -142,7 +142,7 @@ void ServiceWorkerJob::notifyFinished()
     ASSERT(m_scriptLoader);
     
     if (!m_scriptLoader->failed())
-        m_client->jobFinishedLoadingScript(*this, m_scriptLoader->script(), m_scriptLoader->contentSecurityPolicy());
+        m_client->jobFinishedLoadingScript(*this, m_scriptLoader->script());
     else {
         auto& error =  m_scriptLoader->error();
         ASSERT(!error.isNull());
