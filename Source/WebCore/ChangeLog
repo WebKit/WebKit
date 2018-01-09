@@ -1,3 +1,18 @@
+2018-01-08  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Attachment Support] Expose HTMLAttachmentElement.uniqueIdentifier to bindings
+        https://bugs.webkit.org/show_bug.cgi?id=181420
+        <rdar://problem/36365827>
+
+        Reviewed by Alex Christensen.
+
+        Add a new IDL definition for uniqueIdentifier on HTMLAttachmentElement. This allows clients to relate attachment
+        elements in the DOM to _WKAttachments delivered via Objective-C SPI.
+
+        Adjusted existing tests in WKAttachmentTests.
+
+        * html/HTMLAttachmentElement.idl:
+
 2018-01-08  Don Olmstead  <don.olmstead@sony.com>
 
         AccessibilityARIAGrid does not compile when accessibility is disabled

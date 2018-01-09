@@ -570,6 +570,7 @@ TEST(WKAttachmentTests, AttachmentUpdatesWhenInsertingRichMarkup)
     EXPECT_FALSE([webView hasAttribute:@"webkitattachmentbloburl" forQuerySelector:@"attachment"]);
     EXPECT_FALSE([webView hasAttribute:@"webkitattachmentpath" forQuerySelector:@"attachment"]);
     EXPECT_FALSE([webView hasAttribute:@"webkitattachmentid" forQuerySelector:@"attachment"]);
+    EXPECT_WK_STREQ([attachment uniqueIdentifier], [webView stringByEvaluatingJavaScript:@"document.querySelector('attachment').uniqueIdentifier"]);
     {
         ObserveAttachmentUpdatesForScope observer(webView.get());
         [webView stringByEvaluatingJavaScript:@"document.querySelector('attachment').remove()"];
@@ -589,6 +590,7 @@ TEST(WKAttachmentTests, AttachmentUpdatesWhenCuttingAndPasting)
         observer.expectAttachmentUpdates(@[], @[attachment.get()]);
     }
     [attachment expectRequestedDataToBe:testHTMLData()];
+    EXPECT_WK_STREQ([attachment uniqueIdentifier], [webView stringByEvaluatingJavaScript:@"document.querySelector('attachment').uniqueIdentifier"]);
     [webView _synchronouslyExecuteEditCommand:@"SelectAll" argument:nil];
     {
         ObserveAttachmentUpdatesForScope observer(webView.get());
@@ -617,6 +619,7 @@ TEST(WKAttachmentTests, AttachmentDataForEmptyFile)
         observer.expectAttachmentUpdates(@[], @[attachment.get()]);
     }
     [attachment expectRequestedDataToBe:[NSData data]];
+    EXPECT_WK_STREQ([attachment uniqueIdentifier], [webView stringByEvaluatingJavaScript:@"document.querySelector('attachment').uniqueIdentifier"]);
     {
         ObserveAttachmentUpdatesForScope scope(webView.get());
         [webView _synchronouslyExecuteEditCommand:@"DeleteBackward" argument:nil];
@@ -697,6 +700,7 @@ TEST(WKAttachmentTests, InPlaceImageAttachmentParagraphInsertion)
     [webView expectUpdatesAfterCommand:@"DeleteBackward" withArgument:nil expectedRemovals:@[] expectedInsertions:@[]];
 
     [attachment expectRequestedDataToBe:imageData.get()];
+    EXPECT_WK_STREQ([attachment uniqueIdentifier], [webView stringByEvaluatingJavaScript:@"document.querySelector('attachment').uniqueIdentifier"]);
     [webView waitForAttachmentElementSizeToBecome:CGSizeMake(215, 174)];
 
     [webView expectUpdatesAfterCommand:@"DeleteForward" withArgument:nil expectedRemovals:@[attachment.get()] expectedInsertions:@[]];
@@ -843,6 +847,7 @@ TEST(WKAttachmentTests, InsertPastedImageAsAttachment)
     auto size = platformImageWithData([attachment synchronouslyRequestData:nil]).size;
     EXPECT_EQ(215., size.width);
     EXPECT_EQ(174., size.height);
+    EXPECT_WK_STREQ([attachment uniqueIdentifier], [webView stringByEvaluatingJavaScript:@"document.querySelector('attachment').uniqueIdentifier"]);
 
     {
         ObserveAttachmentUpdatesForScope observer(webView.get());
@@ -869,6 +874,7 @@ TEST(WKAttachmentTests, InsertPastedAttributedStringContainingImage)
     [attachment expectRequestedDataToBe:testImageData()];
     EXPECT_WK_STREQ("Lorem ipsum  dolor sit amet.", [webView stringByEvaluatingJavaScript:@"document.body.textContent"]);
     EXPECT_WK_STREQ("image/png", [webView valueOfAttribute:@"type" forQuerySelector:@"attachment"]);
+    EXPECT_WK_STREQ([attachment uniqueIdentifier], [webView stringByEvaluatingJavaScript:@"document.querySelector('attachment').uniqueIdentifier"]);
 
     {
         ObserveAttachmentUpdatesForScope observer(webView.get());
@@ -913,6 +919,10 @@ TEST(WKAttachmentTests, InsertPastedAttributedStringContainingMultipleAttachment
 #else
     EXPECT_WK_STREQ("application/octet-stream", zipAttachmentType);
 #endif
+
+    EXPECT_WK_STREQ([imageAttachment uniqueIdentifier], [webView stringByEvaluatingJavaScript:@"document.querySelectorAll('attachment')[0].uniqueIdentifier"]);
+    EXPECT_WK_STREQ([pdfAttachment uniqueIdentifier], [webView stringByEvaluatingJavaScript:@"document.querySelectorAll('attachment')[1].uniqueIdentifier"]);
+    EXPECT_WK_STREQ([zipAttachment uniqueIdentifier], [webView stringByEvaluatingJavaScript:@"document.querySelectorAll('attachment')[2].uniqueIdentifier"]);
 
     {
         ObserveAttachmentUpdatesForScope observer(webView.get());

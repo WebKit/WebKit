@@ -1,3 +1,17 @@
+2018-01-08  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Attachment Support] Expose HTMLAttachmentElement.uniqueIdentifier to bindings
+        https://bugs.webkit.org/show_bug.cgi?id=181420
+        <rdar://problem/36365827>
+
+        Reviewed by Alex Christensen.
+
+        Adjusts some existing API tests to verify that attachment elements' uniqueIdentifiers match the uniqueIdentifier
+        of corresponding _WKAttachments.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WKAttachmentTests.mm:
+        (TestWebKitAPI::TEST):
+
 2018-01-08  Alex Christensen  <achristensen@webkit.org>
 
         Add WKNavigationDelegate SPI exposing WebProcess crash reason
