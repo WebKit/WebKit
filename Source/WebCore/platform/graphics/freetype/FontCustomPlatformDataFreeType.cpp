@@ -26,6 +26,8 @@
 #include "SharedBuffer.h"
 #include <cairo-ft.h>
 #include <cairo.h>
+#include <ft2build.h>
+#include FT_MODULE_H
 
 namespace WebCore {
 
@@ -59,10 +61,39 @@ FontPlatformData FontCustomPlatformData::fontPlatformData(const FontDescription&
     return FontPlatformData(m_fontFace, description, bold, italic);
 }
 
+static bool initializeFreeTypeLibrary(FT_Library& library)
+{
+    // https://www.freetype.org/freetype2/docs/design/design-4.html
+    // https://lists.nongnu.org/archive/html/freetype-devel/2004-10/msg00022.html
+
+    FT_Memory memory = bitwise_cast<FT_Memory>(ft_smalloc(sizeof(*memory)));
+    if (!memory)
+        return false;
+
+    memory->user = nullptr;
+    memory->alloc = [](FT_Memory, long size) -> void* {
+        return fastMalloc(size);
+    };
+    memory->free = [](FT_Memory, void* block) -> void {
+        fastFree(block);
+    };
+    memory->realloc = [](FT_Memory, long, long newSize, void* block) -> void* {
+        return fastRealloc(block, newSize);
+    };
+
+    if (FT_New_Library(memory, &library)) {
+        ft_sfree(memory);
+        return false;
+    }
+
+    FT_Add_Default_Modules(library);
+    return true;
+}
+
 std::unique_ptr<FontCustomPlatformData> createFontCustomPlatformData(SharedBuffer& buffer)
 {
     static FT_Library library;
-    if (!library && FT_Init_FreeType(&library)) {
+    if (!library && !initializeFreeTypeLibrary(library)) {
         library = nullptr;
         return nullptr;
     }

@@ -1,3 +1,16 @@
+2018-01-09  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [FreeType] Use FastMalloc for FreeType
+        https://bugs.webkit.org/show_bug.cgi?id=181387
+
+        Reviewed by Michael Catanzaro.
+
+        Add custom memory allocator for FreeType to use FastMalloc.
+
+        * platform/graphics/freetype/FontCustomPlatformDataFreeType.cpp:
+        (WebCore::initializeFreeTypeLibrary):
+        (WebCore::createFontCustomPlatformData):
+
 2018-01-09  Zalan Bujtas  <zalan@apple.com>
 
         [RenderTreeBuilder] Move RenderTable* addChild mutation logic to RenderTreeBuilder
