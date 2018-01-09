@@ -1,3 +1,12 @@
+2018-01-08  Don Olmstead  <don.olmstead@sony.com>
+
+        Add WTF_EXPORTs to UniStdExtras
+        https://bugs.webkit.org/show_bug.cgi?id=181415
+
+        Reviewed by Alex Christensen.
+
+        * wtf/UniStdExtras.h:
+
 2018-01-07  Mark Lam  <mark.lam@apple.com>
 
         Apply poisoning to more pointers in JSC.
