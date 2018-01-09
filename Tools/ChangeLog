@@ -1,3 +1,7 @@
+2018-01-09  Jason Marcell  <jmarcell@apple.com>
+
+        Revert r226450. rdar://problem/10353542
+
 2018-01-08  Youenn Fablet  <youenn@apple.com>
 
         navigator.onLine does not work inside service workers

@@ -1538,7 +1538,6 @@ AccessibilityUIElement AccessibilityUIElement::uiElementAttributeValue(JSStringR
 #endif
 
 #if !PLATFORM(MAC) && !PLATFORM(IOS)
-JSStringRef AccessibilityUIElement::speakAs() { return nullptr; }
 JSStringRef AccessibilityUIElement::pathDescription() const { return 0; }
 void AccessibilityUIElement::setValue(JSStringRef) { }
 #endif
@@ -1557,6 +1556,7 @@ bool AccessibilityUIElement::isEqual(AccessibilityUIElement* otherElement)
 #endif
 
 #if !PLATFORM(MAC)
+JSStringRef AccessibilityUIElement::speakAs() { return nullptr; }
 void AccessibilityUIElement::setBoolAttributeValue(JSStringRef, bool) { }
 #endif
 
