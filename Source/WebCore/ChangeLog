@@ -1,3 +1,27 @@
+2018-01-08  Michael Saboff  <msaboff@apple.com>
+
+        Add a DOM gadget for Spectre testing
+        https://bugs.webkit.org/show_bug.cgi?id=181351
+
+        Reviewed by Saam Barati.
+
+        This change is used to test Spectre mitigations.
+
+        Added a side data array to the Comment DOM node to test for Spectre issues in
+        the DOM layer.  This additional functionality is disabled by default and must
+        be enabled through the JSC option "enableSpectreGadgets".
+
+        * dom/Comment.cpp:
+        (WebCore::Comment::Comment):
+        (WebCore::Comment::setReadLength):
+        (WebCore::Comment::charCodeAt):
+        (WebCore::Comment::clflushReadLength):
+        * dom/Comment.h:
+        * dom/Comment.idl:
+        * page/RuntimeEnabledFeatures.cpp:
+        (WebCore::RuntimeEnabledFeatures::spectreGadgetsEnabled const):
+        * page/RuntimeEnabledFeatures.h:
+
 2018-01-08  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         A canvas should not be tainted if it draws a data URL SVGImage with a <foreignObject>

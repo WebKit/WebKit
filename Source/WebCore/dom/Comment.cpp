@@ -23,12 +23,27 @@
 #include "Comment.h"
 
 #include "Document.h"
+#include "RuntimeEnabledFeatures.h"
 
 namespace WebCore {
+
+static constexpr unsigned s_maxDataLength = 100u;
 
 inline Comment::Comment(Document& document, const String& text)
     : CharacterData(document, text, CreateOther)
 {
+    if (RuntimeEnabledFeatures::sharedFeatures().spectreGadgetsEnabled()) {
+        setReadLength(text.length());
+        m_data.resize(s_maxDataLength);
+        m_data.fill(0);
+        m_dataPtr = m_data.data();
+
+        for (size_t i = 0; i < m_readLength; i++)
+            m_data[i] = text.characterAt(i);
+    } else {
+        setReadLength(0);
+        m_dataPtr = nullptr;
+    }
 }
 
 Ref<Comment> Comment::create(Document& document, const String& text)
@@ -54,6 +69,29 @@ Ref<Node> Comment::cloneNodeInternal(Document& targetDocument, CloningOperation)
 bool Comment::childTypeAllowed(NodeType) const
 {
     return false;
+}
+
+void Comment::setReadLength(unsigned readLength)
+{
+    m_readLength = std::min(readLength, s_maxDataLength);
+}
+
+unsigned Comment::charCodeAt(unsigned index)
+{
+    if (index < m_readLength)
+        return m_dataPtr[index];
+
+    return 0;
+}
+
+void Comment::clflushReadLength()
+{
+    auto clflush = [] (void* ptr) {
+        char* ptrToFlush = static_cast<char*>(ptr);
+        asm volatile ("clflush %0" :: "m"(*ptrToFlush) : "memory");
+    };
+
+    clflush(&m_readLength);
 }
 
 } // namespace WebCore

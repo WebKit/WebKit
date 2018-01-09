@@ -22,5 +22,8 @@
     ConstructorCallWith=Document,
     JSGenerateToJSObject
 ] interface Comment : CharacterData {
+    [EnabledAtRuntime=SpectreGadgets] void setReadLength(unsigned long readLength);
+    [EnabledAtRuntime=SpectreGadgets] unsigned long charCodeAt(unsigned long index);
+    [EnabledAtRuntime=SpectreGadgets] void clflushReadLength();
 };
 

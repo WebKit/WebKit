@@ -1,3 +1,15 @@
+2018-01-08  Michael Saboff  <msaboff@apple.com>
+
+        Add a DOM gadget for Spectre testing
+        https://bugs.webkit.org/show_bug.cgi?id=181351
+
+        Reviewed by Michael Saboff.
+
+        Added a new JSC::Option named enableSpectreGadgets to enable any gadgets added to test
+        Spectre mitigations.
+
+        * runtime/Options.h:
+
 2018-01-08  Mark Lam  <mark.lam@apple.com>
 
         Rename CodeBlock::m_vm to CodeBlock::m_poisonedVM.
