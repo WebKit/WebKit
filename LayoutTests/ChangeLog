@@ -1,5 +1,17 @@
 2018-01-09  Ali Juma  <ajuma@chromium.org>
 
+        Mark imported/w3c/web-platform-tests/viewport/viewport-resize-event-on-load-overflowing-page.html as flaky
+        https://bugs.webkit.org/show_bug.cgi?id=181436
+
+        Reviewed by Frédéric Wang.
+
+        Test gardening.
+
+        * TestExpectations:
+        Mark test that seems to have timing issues as flaky.
+
+2018-01-09  Ali Juma  <ajuma@chromium.org>
+
         Implement VisualViewport API events
         https://bugs.webkit.org/show_bug.cgi?id=179386
 
