@@ -1,3 +1,66 @@
+2018-01-08  JF Bastien  <jfbastien@apple.com>
+
+        WebAssembly: mask indexed accesses to Table
+        https://bugs.webkit.org/show_bug.cgi?id=181412
+        <rdar://problem/36363236>
+
+        Reviewed by Saam Barati.
+
+        WebAssembly Table indexed accesses are user-controlled and
+        bounds-checked. Force allocations of Table data to be a
+        power-of-two, and explicitly mask accesses after bounds-check
+        branches.
+
+        Rename misleading usage of "size" when "length" of a Table was
+        intended.
+
+        Rename the Spectre option from "disable" to "enable".
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::SpeculativeJIT):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::LowerDFGToB3):
+        * jit/JIT.cpp:
+        (JSC::JIT::JIT):
+        * runtime/Options.h:
+        * wasm/WasmB3IRGenerator.cpp:
+        (JSC::Wasm::B3IRGenerator::emitCheckAndPreparePointer):
+        (JSC::Wasm::B3IRGenerator::addCallIndirect):
+        * wasm/WasmTable.cpp:
+        (JSC::Wasm::Table::allocatedLength):
+        (JSC::Wasm::Table::setLength):
+        (JSC::Wasm::Table::create):
+        (JSC::Wasm::Table::Table):
+        (JSC::Wasm::Table::grow):
+        (JSC::Wasm::Table::clearFunction):
+        (JSC::Wasm::Table::setFunction):
+        * wasm/WasmTable.h:
+        (JSC::Wasm::Table::length const):
+        (JSC::Wasm::Table::offsetOfLength):
+        (JSC::Wasm::Table::offsetOfMask):
+        (JSC::Wasm::Table::mask const):
+        (JSC::Wasm::Table::isValidLength):
+        * wasm/js/JSWebAssemblyInstance.cpp:
+        (JSC::JSWebAssemblyInstance::create):
+        * wasm/js/JSWebAssemblyTable.cpp:
+        (JSC::JSWebAssemblyTable::JSWebAssemblyTable):
+        (JSC::JSWebAssemblyTable::visitChildren):
+        (JSC::JSWebAssemblyTable::grow):
+        (JSC::JSWebAssemblyTable::getFunction):
+        (JSC::JSWebAssemblyTable::clearFunction):
+        (JSC::JSWebAssemblyTable::setFunction):
+        * wasm/js/JSWebAssemblyTable.h:
+        (JSC::JSWebAssemblyTable::isValidLength):
+        (JSC::JSWebAssemblyTable::length const):
+        (JSC::JSWebAssemblyTable::allocatedLength const):
+        * wasm/js/WebAssemblyModuleRecord.cpp:
+        (JSC::WebAssemblyModuleRecord::evaluate):
+        * wasm/js/WebAssemblyTablePrototype.cpp:
+        (JSC::webAssemblyTableProtoFuncLength):
+        (JSC::webAssemblyTableProtoFuncGrow):
+        (JSC::webAssemblyTableProtoFuncGet):
+        (JSC::webAssemblyTableProtoFuncSet):
+
 2018-01-08  Michael Saboff  <msaboff@apple.com>
 
         Add a DOM gadget for Spectre testing

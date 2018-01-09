@@ -1,3 +1,16 @@
+2018-01-08  JF Bastien  <jfbastien@apple.com>
+
+        WebAssembly: mask indexed accesses to Table
+        https://bugs.webkit.org/show_bug.cgi?id=181412
+        <rdar://problem/36363236>
+
+        Reviewed by Saam Barati.
+
+        Update error messages.
+
+        * wasm/js-api/table.js:
+        (assert.throws.WebAssembly.Table.prototype.grow):
+
 2018-01-08  Ryan Haddad  <ryanhaddad@apple.com>
 
         Disable SharedArrayBuffer tests missed in r226386.

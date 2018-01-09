@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,9 +34,22 @@
 
 namespace JSC { namespace Wasm {
 
+uint32_t Table::allocatedLength(uint32_t length)
+{
+    return WTF::roundUpToPowerOfTwo(length);
+}
+
+void Table::setLength(uint32_t length)
+{
+    m_length = length;
+    m_mask = WTF::maskForSize(length);
+    ASSERT(isValidLength(length));
+    ASSERT(m_mask == WTF::maskForSize(allocatedLength(length)));
+}
+
 RefPtr<Table> Table::create(uint32_t initial, std::optional<uint32_t> maximum)
 {
-    if (!isValidSize(initial))
+    if (!isValidLength(initial))
         return nullptr;
     return adoptRef(new (NotNull, fastMalloc(sizeof(Table))) Table(initial, maximum));
 }
@@ -47,16 +60,16 @@ Table::~Table()
 
 Table::Table(uint32_t initial, std::optional<uint32_t> maximum)
 {
-    m_size = initial;
+    setLength(initial);
     m_maximum = maximum;
-    ASSERT(isValidSize(m_size));
-    ASSERT(!m_maximum || *m_maximum >= m_size);
+    ASSERT(!m_maximum || *m_maximum >= m_length);
 
     // FIXME: It might be worth trying to pre-allocate maximum here. The spec recommends doing so.
     // But for now, we're not doing that.
-    m_functions = MallocPtr<Wasm::CallableFunction>::malloc((sizeof(Wasm::CallableFunction) * Checked<size_t>(size())).unsafeGet());
-    m_instances = MallocPtr<Instance*>::malloc((sizeof(Instance*) * Checked<size_t>(size())).unsafeGet());
-    for (uint32_t i = 0; i < size(); ++i) {
+    m_functions = MallocPtr<Wasm::CallableFunction>::malloc((sizeof(Wasm::CallableFunction) * Checked<size_t>(allocatedLength(m_length))).unsafeGet());
+    // FIXME this over-allocates and could be smarter about not committing all of that memory https://bugs.webkit.org/show_bug.cgi?id=181425
+    m_instances = MallocPtr<Instance*>::malloc((sizeof(Instance*) * Checked<size_t>(allocatedLength(m_length))).unsafeGet());
+    for (uint32_t i = 0; i < allocatedLength(m_length); ++i) {
         new (&m_functions.get()[i]) CallableFunction();
         ASSERT(m_functions.get()[i].signatureIndex == Wasm::Signature::invalidIndex); // We rely on this in compiled code.
         m_instances.get()[i] = nullptr;
@@ -66,28 +79,31 @@ Table::Table(uint32_t initial, std::optional<uint32_t> maximum)
 std::optional<uint32_t> Table::grow(uint32_t delta)
 {
     if (delta == 0)
-        return size();
+        return length();
 
     using Checked = Checked<uint32_t, RecordOverflow>;
-    Checked newSizeChecked = size();
-    newSizeChecked += delta;
-    uint32_t newSize;
-    if (newSizeChecked.safeGet(newSize) == CheckedState::DidOverflow)
+    Checked newLengthChecked = length();
+    newLengthChecked += delta;
+    uint32_t newLength;
+    if (newLengthChecked.safeGet(newLength) == CheckedState::DidOverflow)
         return std::nullopt;
 
-    if (maximum() && newSize > *maximum())
+    if (maximum() && newLength > *maximum())
         return std::nullopt;
-    if (!isValidSize(newSize))
+    if (!isValidLength(newLength))
         return std::nullopt;
 
     auto checkedGrow = [&] (auto& container) {
-        Checked reallocSizeChecked = newSizeChecked;
-        reallocSizeChecked *= sizeof(*container.get());
-        uint32_t reallocSize;
-        if (reallocSizeChecked.safeGet(reallocSize) == CheckedState::DidOverflow)
-            return false;
-        container.realloc(reallocSize);
-        for (uint32_t i = m_size; i < newSize; ++i)
+        if (newLengthChecked.unsafeGet() > allocatedLength(m_length)) {
+            Checked reallocSizeChecked = allocatedLength(newLengthChecked.unsafeGet());
+            reallocSizeChecked *= sizeof(*container.get());
+            uint32_t reallocSize;
+            if (reallocSizeChecked.safeGet(reallocSize) == CheckedState::DidOverflow)
+                return false;
+            // FIXME this over-allocates and could be smarter about not committing all of that memory https://bugs.webkit.org/show_bug.cgi?id=181425
+            container.realloc(reallocSize);
+        }
+        for (uint32_t i = m_length; i < allocatedLength(newLength); ++i)
             new (&container.get()[i]) std::remove_reference_t<decltype(*container.get())>();
         return true;
     };
@@ -97,24 +113,24 @@ std::optional<uint32_t> Table::grow(uint32_t delta)
     if (!checkedGrow(m_instances))
         return std::nullopt;
 
-    m_size = newSize;
+    setLength(newLength);
 
-    return newSize;
+    return newLength;
 }
 
 void Table::clearFunction(uint32_t index)
 {
-    RELEASE_ASSERT(index < size());
-    m_functions.get()[index] = Wasm::CallableFunction();
-    ASSERT(m_functions.get()[index].signatureIndex == Wasm::Signature::invalidIndex); // We rely on this in compiled code.
-    m_instances.get()[index] = nullptr;
+    RELEASE_ASSERT(index < length());
+    m_functions.get()[index & m_mask] = Wasm::CallableFunction();
+    ASSERT(m_functions.get()[index & m_mask].signatureIndex == Wasm::Signature::invalidIndex); // We rely on this in compiled code.
+    m_instances.get()[index & m_mask] = nullptr;
 }
 
 void Table::setFunction(uint32_t index, CallableFunction function, Instance* instance)
 {
-    RELEASE_ASSERT(index < size());
-    m_functions.get()[index] = function;
-    m_instances.get()[index] = instance;
+    RELEASE_ASSERT(index < length());
+    m_functions.get()[index & m_mask] = function;
+    m_instances.get()[index & m_mask] = instance;
 }
 
 } } // namespace JSC::Table

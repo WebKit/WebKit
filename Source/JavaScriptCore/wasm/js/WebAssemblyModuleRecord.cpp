@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -268,7 +268,7 @@ JSValue WebAssemblyModuleRecord::evaluate(ExecState* exec)
     // Validation of all element ranges comes before all Table and Memory initialization.
     forEachElement([&] (const Wasm::Element& element, uint32_t tableIndex) {
         uint64_t lastWrittenIndex = static_cast<uint64_t>(tableIndex) + static_cast<uint64_t>(element.functionIndices.size()) - 1;
-        if (UNLIKELY(lastWrittenIndex >= table->size()))
+        if (UNLIKELY(lastWrittenIndex >= table->length()))
             exception = JSValue(throwException(exec, scope, createJSWebAssemblyLinkError(exec, vm, ASCIILiteral("Element is trying to set an out of bounds table index"))));
     });
 

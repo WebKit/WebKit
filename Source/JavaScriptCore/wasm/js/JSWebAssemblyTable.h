@@ -48,9 +48,10 @@ public:
 
     DECLARE_INFO;
 
-    static bool isValidSize(uint32_t size) { return Wasm::Table::isValidSize(size); }
+    static bool isValidLength(uint32_t length) { return Wasm::Table::isValidLength(length); }
     std::optional<uint32_t> maximum() const { return m_table->maximum(); }
-    uint32_t size() const { return m_table->size(); }
+    uint32_t length() const { return m_table->length(); }
+    uint32_t allocatedLength() const { return m_table->allocatedLength(length()); }
     bool grow(uint32_t delta) WARN_UNUSED_RETURN;
     JSObject* getFunction(uint32_t);
     void clearFunction(uint32_t);

@@ -243,14 +243,14 @@ assert.throws(() => WebAssembly.Table.prototype.grow(undefined), TypeError, `exp
 
     {
         const table = new WebAssembly.Table({element: "anyfunc", initial: 20});
-        assert.throws(() => table.get(20), RangeError, "WebAssembly.Table.prototype.get expects an integer less than the size of the table");
+        assert.throws(() => table.get(20), RangeError, "WebAssembly.Table.prototype.get expects an integer less than the length of the table");
         for (let i = 0; i < 20; i++)
             assert.eq(table.get(i), null);
     }
 
     {
         const table = new WebAssembly.Table({element: "anyfunc", initial: 20});
-        assert.throws(() => table.set(20, null), RangeError, "WebAssembly.Table.prototype.set expects an integer less than the size of the table");
+        assert.throws(() => table.set(20, null), RangeError, "WebAssembly.Table.prototype.set expects an integer less than the length of the table");
         for (let i = 0; i < 20; i++)
             table.set(i, null);
     }
