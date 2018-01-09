@@ -33,7 +33,6 @@
 #include "RuntimeEnabledFeatures.h"
 
 #include "MediaPlayer.h"
-#include <JavaScriptCore/Options.h>
 #include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
@@ -50,11 +49,6 @@ RuntimeEnabledFeatures& RuntimeEnabledFeatures::sharedFeatures()
     static NeverDestroyed<RuntimeEnabledFeatures> runtimeEnabledFeatures;
 
     return runtimeEnabledFeatures;
-}
-
-bool RuntimeEnabledFeatures::spectreGadgetsEnabled() const
-{
-    return JSC::Options::enableSpectreGadgets();
 }
 
 #if ENABLE(VIDEO)

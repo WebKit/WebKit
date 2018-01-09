@@ -1,3 +1,12 @@
+2018-01-09  Michael Saboff  <msaboff@apple.com>
+
+        Unreviewed, rolling out r226600 and r226603
+        https://bugs.webkit.org/show_bug.cgi?id=181351
+
+        Add a DOM gadget for Spectre testing
+
+        * runtime/Options.h:
+
 2018-01-09  Saam Barati  <sbarati@apple.com>
 
         Reduce graph size by replacing terminal nodes in blocks that have a ForceOSRExit with Unreachable

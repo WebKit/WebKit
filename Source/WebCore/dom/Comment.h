@@ -30,10 +30,6 @@ class Comment final : public CharacterData {
 public:
     static Ref<Comment> create(Document&, const String&);
 
-    void setReadLength(unsigned);
-    unsigned charCodeAt(unsigned);
-    void clflushReadLength();
-
 private:
     Comment(Document&, const String&);
 
@@ -41,10 +37,6 @@ private:
     NodeType nodeType() const override;
     Ref<Node> cloneNodeInternal(Document&, CloningOperation) override;
     bool childTypeAllowed(NodeType) const override;
-
-    Vector<int32_t> m_data;
-    size_t m_readLength;
-    int32_t* m_dataPtr;
 };
 
 } // namespace WebCore

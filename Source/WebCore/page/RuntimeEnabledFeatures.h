@@ -220,8 +220,6 @@ public:
     void setServiceWorkerEnabled(bool isEnabled) { m_serviceWorkerEnabled = isEnabled; }
 #endif
 
-    bool spectreGadgetsEnabled() const;
-
 #if ENABLE(VIDEO)
     bool audioEnabled() const;
 #endif
