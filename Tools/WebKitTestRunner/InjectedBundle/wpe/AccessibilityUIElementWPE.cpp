@@ -435,7 +435,7 @@ int AccessibilityUIElement::hierarchicalLevel() const
     return 0;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElement::speakAs()
+JSRetainPtr<JSStringRef> AccessibilityUIElement::speak()
 {
     notImplemented();
     return nullptr;
