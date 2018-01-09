@@ -1,3 +1,16 @@
+2018-01-09  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Check Image::m_image is not null in ImageLoader::decode()
+        https://bugs.webkit.org/show_bug.cgi?id=180386
+        <rdar://problem/34634483>
+
+        Reviewed by Tim Horton.
+
+        Ensure ImageLoader::m_image is not null before referencing it.
+
+        * loader/ImageLoader.cpp:
+        (WebCore::ImageLoader::decode):
+
 2018-01-09  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [FreeType] Use FastMalloc for FreeType

@@ -1,3 +1,16 @@
+2018-01-09  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Check Image::m_image is not null in ImageLoader::decode()
+        https://bugs.webkit.org/show_bug.cgi?id=180386
+        <rdar://problem/34634483>
+
+        Reviewed by Tim Horton.
+
+        Add a new rejected case for decoding an image with an invalid URL.
+
+        * fast/images/decode-static-image-reject-expected.txt:
+        * fast/images/decode-static-image-reject.html:
+
 2018-01-09  Ali Juma  <ajuma@chromium.org>
 
         Mark imported/w3c/web-platform-tests/viewport/viewport-resize-event-on-load-overflowing-page.html as flaky
