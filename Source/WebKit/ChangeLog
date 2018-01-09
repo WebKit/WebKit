@@ -1,3 +1,10 @@
+2018-01-08  Ryosuke Niwa  <rniwa@webkit.org>
+
+        iOS build fix attempt after r226602.
+
+        * UIProcess/API/C/WKContextMenuListener.cpp:
+        (WKContextMenuListenerUseContextMenuItems):
+
 2018-01-08  Alex Christensen  <achristensen@webkit.org>
 
         Add SPI for WKOpenPanelParameters._acceptedMIMETypes and _acceptedFileExtensions

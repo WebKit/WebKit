@@ -60,6 +60,6 @@ void WKContextMenuListenerUseContextMenuItems(WKContextMenuListenerRef listenerR
     toImpl(listenerRef)->useContextMenuItems(WTFMove(items));
 #else
     UNUSED_PARAM(listenerRef);
-    UNUSED_PARAM(items);
+    UNUSED_PARAM(arrayRef);
 #endif
 }
