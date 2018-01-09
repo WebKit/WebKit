@@ -25,11 +25,11 @@
 
 #pragma once
 
+#include "CurlFormDataStream.h"
 #include "CurlRequestSchedulerClient.h"
 #include "CurlResponse.h"
 #include "CurlSSLVerifier.h"
 #include "FileSystem.h"
-#include "FormDataStreamCurl.h"
 #include "NetworkLoadMetrics.h"
 #include "ResourceRequest.h"
 #include <wtf/Noncopyable.h>
@@ -104,10 +104,9 @@ private:
     void finalizeTransfer();
 
     // For POST and PUT method 
-    void resolveBlobReferences(ResourceRequest&);
     void setupPOST(ResourceRequest&);
     void setupPUT(ResourceRequest&);
-    void setupFormData(ResourceRequest&, bool);
+    void setupSendData(bool forPutMethod);
 
     // Processing for DidReceiveResponse
     bool needToInvokeDidReceiveResponse() const { return !m_didNotifyResponse || !m_didReturnFromNotify; }
@@ -142,8 +141,7 @@ private:
     bool m_shouldSuspend { false };
 
     std::unique_ptr<CurlHandle> m_curlHandle;
-    std::unique_ptr<FormDataStream> m_formDataStream;
-    Vector<char> m_postBuffer;
+    CurlFormDataStream m_formDataStream;
     CurlSSLVerifier m_sslVerifier;
 
     CurlResponse m_response;

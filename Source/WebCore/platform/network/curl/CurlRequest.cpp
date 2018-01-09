@@ -40,11 +40,11 @@ namespace WebCore {
 CurlRequest::CurlRequest(const ResourceRequest&request, CurlRequestClient* client, bool shouldSuspend)
     : m_request(request.isolatedCopy())
     , m_shouldSuspend(shouldSuspend)
+    , m_formDataStream(m_request.httpBody())
 {
     ASSERT(isMainThread());
 
     setClient(client);
-    resolveBlobReferences(m_request);
 }
 
 void CurlRequest::setUserPass(const String& user, const String& password)
@@ -235,24 +235,26 @@ CURLcode CurlRequest::willSetupSslCtx(void* sslCtx)
 // Iterate through FormData elements and upload files.
 // Carefully respect the given buffer size and fill the rest of the data at the next calls.
 
-size_t CurlRequest::willSendData(char* ptr, size_t blockSize, size_t numberOfBlocks)
+size_t CurlRequest::willSendData(char* buffer, size_t blockSize, size_t numberOfBlocks)
 {
     if (isCompletedOrCancelled())
         return CURL_READFUNC_ABORT;
 
     if (!blockSize || !numberOfBlocks)
-        return 0;
+        return CURL_READFUNC_ABORT;
 
-    if (!m_formDataStream || !m_formDataStream->hasMoreElements())
-        return 0;
+    // Check for overflow.
+    if (blockSize > (std::numeric_limits<size_t>::max() / numberOfBlocks))
+        return CURL_READFUNC_ABORT;
 
-    auto sendBytes = m_formDataStream->read(ptr, blockSize, numberOfBlocks);
+    size_t bufferSize = blockSize * numberOfBlocks;
+    auto sendBytes = m_formDataStream.read(buffer, bufferSize);
     if (!sendBytes) {
         // Something went wrong so error the job.
         return CURL_READFUNC_ABORT;
     }
 
-    return sendBytes;
+    return *sendBytes;
 }
 
 // This is being called for each HTTP header in the response. This includes '\r\n'
@@ -394,22 +396,9 @@ void CurlRequest::didCancelTransfer()
 
 void CurlRequest::finalizeTransfer()
 {
-    m_formDataStream = nullptr;
     closeDownloadFile();
+    m_formDataStream.clean();
     m_curlHandle = nullptr;
-}
-
-void CurlRequest::resolveBlobReferences(ResourceRequest& request)
-{
-    ASSERT(isMainThread());
-
-    auto body = request.httpBody();
-    if (!body || body->isEmpty())
-        return;
-
-    // Resolve the blob elements so the formData can correctly report it's size.
-    RefPtr<FormData> formData = body->resolveBlobReferences();
-    request.setHTTPBody(WTFMove(formData));
 }
 
 void CurlRequest::setupPUT(ResourceRequest& request)
@@ -419,73 +408,41 @@ void CurlRequest::setupPUT(ResourceRequest& request)
     // Disable the Expect: 100 continue header
     m_curlHandle->removeRequestHeader("Expect");
 
-    auto body = request.httpBody();
-    if (!body || body->isEmpty())
+    auto elementSize = m_formDataStream.elementSize();
+    if (!elementSize)
         return;
 
-    setupFormData(request, false);
+    setupSendData(true);
 }
 
 void CurlRequest::setupPOST(ResourceRequest& request)
 {
     m_curlHandle->enableHttpPostRequest();
 
-    auto body = request.httpBody();
-    if (!body || body->isEmpty())
-        return;
-
-    auto numElements = body->elements().size();
-    if (!numElements)
+    auto elementSize = m_formDataStream.elementSize();
+    if (!elementSize)
         return;
 
     // Do not stream for simple POST data
-    if (numElements == 1) {
-        m_postBuffer = body->flatten();
-        if (m_postBuffer.size())
-            m_curlHandle->setPostFields(m_postBuffer.data(), m_postBuffer.size());
+    if (elementSize == 1) {
+        auto postData = m_formDataStream.getPostData();
+        if (postData && postData->size())
+            m_curlHandle->setPostFields(postData->data(), postData->size());
     } else
-        setupFormData(request, true);
+        setupSendData(false);
 }
 
-void CurlRequest::setupFormData(ResourceRequest& request, bool isPostRequest)
+void CurlRequest::setupSendData(bool forPutMethod)
 {
-    static auto maxCurlOffT = CurlHandle::maxCurlOffT();
-
-    // Obtain the total size of the form data
-    curl_off_t size = 0;
-    bool chunkedTransfer = false;
-    auto elements = request.httpBody()->elements();
-
-    for (auto element : elements) {
-        if (element.m_type == FormDataElement::Type::EncodedFile) {
-            long long fileSizeResult;
-            if (FileSystem::getFileSize(element.m_filename, fileSizeResult)) {
-                if (fileSizeResult > maxCurlOffT) {
-                    // File size is too big for specifying it to cURL
-                    chunkedTransfer = true;
-                    break;
-                }
-                size += fileSizeResult;
-            } else {
-                chunkedTransfer = true;
-                break;
-            }
-        } else
-            size += element.m_data.size();
-    }
-
-    // cURL guesses that we want chunked encoding as long as we specify the header
-    if (chunkedTransfer)
+    // curl guesses that we want chunked encoding as long as we specify the header
+    if (m_formDataStream.shouldUseChunkTransfer())
         m_curlHandle->appendRequestHeader("Transfer-Encoding: chunked");
     else {
-        if (isPostRequest)
-            m_curlHandle->setPostFieldLarge(size);
+        if (forPutMethod)
+            m_curlHandle->setInFileSizeLarge(static_cast<curl_off_t>(m_formDataStream.totalSize()));
         else
-            m_curlHandle->setInFileSizeLarge(size);
+            m_curlHandle->setPostFieldLarge(static_cast<curl_off_t>(m_formDataStream.totalSize()));
     }
-
-    m_formDataStream = std::make_unique<FormDataStream>();
-    m_formDataStream->setHTTPBody(request.httpBody());
 
     m_curlHandle->setReadCallbackFunction(willSendDataCallback, this);
 }

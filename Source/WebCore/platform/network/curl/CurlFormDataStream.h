@@ -26,29 +26,46 @@
 
 #pragma once
 
-#include <stdio.h>
+#include "FileSystem.h"
+#include "FormData.h"
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
-class FormData;
-
-class FormDataStream {
+class CurlFormDataStream {
 public:
-    FormDataStream() = default;
-    ~FormDataStream();
+    CurlFormDataStream(const FormData*);
+    ~CurlFormDataStream();
 
-    void setHTTPBody(FormData* formData) { m_formData = formData; }
-    size_t read(void* ptr, size_t blockSize, size_t numberOfBlocks);
-    bool hasMoreElements() const;
+    void clean();
+
+    size_t elementSize() { return m_formData ? m_formData->elements().size() : 0; }
+
+    std::optional<const Vector<char>&> getPostData();
+    bool shouldUseChunkTransfer();
+    unsigned long long totalSize();
+
+    std::optional<size_t> read(char*, size_t);
+    unsigned long long totalReadSize() { return m_totalReadSize; }
 
 private:
-    // We can hold a weak reference to our ResourceRequest as it holds a strong reference
-    // to us through its owner.
-    FormData* m_formData { };
+    void computeContentLength();
 
-    FILE* m_file { };
-    size_t m_formDataElementIndex { 0 };
-    size_t m_formDataElementDataOffset { 0 };
+    std::optional<size_t> readFromFile(const FormDataElement&, char*, size_t);
+    std::optional<size_t> readFromData(const FormDataElement&, char*, size_t);
+
+    RefPtr<FormData> m_formData;
+
+    std::unique_ptr<Vector<char>> m_postData;
+    bool m_isContentLengthUpdated { false };
+    bool m_shouldUseChunkTransfer { false };
+    unsigned long long m_totalSize { 0 };
+    unsigned long long m_totalReadSize { 0 };
+
+    size_t m_elementPosition { 0 };
+
+    FileSystem::PlatformFileHandle m_fileHandle { FileSystem::invalidPlatformFileHandle };
+    size_t m_dataOffset { 0 };
 };
 
 } // namespace WebCore

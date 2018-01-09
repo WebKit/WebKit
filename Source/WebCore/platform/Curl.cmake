@@ -11,12 +11,12 @@ list(APPEND WebCore_SOURCES
     platform/network/curl/CurlCacheManager.cpp
     platform/network/curl/CurlContext.cpp
     platform/network/curl/CurlDownload.cpp
+    platform/network/curl/CurlFormDataStream.cpp
     platform/network/curl/CurlRequest.cpp
     platform/network/curl/CurlRequestScheduler.cpp
     platform/network/curl/CurlSSLHandle.cpp
     platform/network/curl/CurlSSLVerifier.cpp
     platform/network/curl/DNSCurl.cpp
-    platform/network/curl/FormDataStreamCurl.cpp
     platform/network/curl/MultipartHandle.cpp
     platform/network/curl/NetworkStorageSessionCurl.cpp
     platform/network/curl/ProxyServerCurl.cpp
