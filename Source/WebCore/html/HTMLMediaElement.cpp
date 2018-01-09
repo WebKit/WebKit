@@ -4848,6 +4848,9 @@ void HTMLMediaElement::mediaPlayerPlaybackStateChanged(MediaPlayer*)
         pauseInternal();
     else
         playInternal();
+
+    updateSleepDisabling();
+
     endProcessingMediaPlayerCallback();
 }
 
@@ -5021,6 +5024,8 @@ void HTMLMediaElement::mediaPlayerCharacteristicChanged(MediaPlayer*)
     m_hasEverHadVideo |= hasVideo();
 
     m_mediaSession->canProduceAudioChanged();
+
+    updateSleepDisabling();
 
     endProcessingMediaPlayerCallback();
 }
@@ -6636,8 +6641,7 @@ static inline bool isRemoteMediaStreamVideoTrack(RefPtr<MediaStreamTrack>& item)
 
 HTMLMediaElement::SleepType HTMLMediaElement::shouldDisableSleep() const
 {
-    // See https://bugs.webkit.org/show_bug.cgi?id=180197 before removing this guard.
-#if !PLATFORM(COCOA)
+#if !PLATFORM(COCOA) && !PLATFORM(GTK) && !PLATFORM(WPE)
     return SleepType::None;
 #endif
     if (!m_player || m_player->paused() || loop())

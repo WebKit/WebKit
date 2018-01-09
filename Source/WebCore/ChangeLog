@@ -1,5 +1,23 @@
 2018-01-09  Philippe Normand  <pnormand@igalia.com>
 
+        [GStreamer] Ensure SleepDisabler is not held by pages in page cache
+        https://bugs.webkit.org/show_bug.cgi?id=180197
+
+        Reviewed by Eric Carlson.
+
+        The sleep disabler is now checked again whenever the media player
+        playback state or other characteristic has changed in the media
+        engine.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::mediaPlayerPlaybackStateChanged):
+        Check if the sleep disabler state needs to be updated or not.
+        (WebCore::HTMLMediaElement::mediaPlayerCharacteristicChanged): Ditto.
+        (WebCore::HTMLMediaElement::shouldDisableSleep const): Enable
+        sleep disabler for GTK and WPE ports.
+
+2018-01-09  Philippe Normand  <pnormand@igalia.com>
+
         [GStreamer] Missing notifications to player client
         https://bugs.webkit.org/show_bug.cgi?id=181432
 
