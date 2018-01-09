@@ -1,3 +1,14 @@
+2018-01-08  Alex Christensen  <achristensen@webkit.org>
+
+        Add SPI for WKOpenPanelParameters._acceptedMIMETypes and _acceptedFileExtensions
+        https://bugs.webkit.org/show_bug.cgi?id=181408
+        <rdar://problem/35884960>
+
+        Reviewed by Tim Horton.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/RunOpenPanel.mm:
+        (-[RunOpenPanelUIDelegate webView:runOpenPanelWithParameters:initiatedByFrame:completionHandler:]):
+
 2018-01-08  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Attachment Support] Expose file name and content type of WKAttachment

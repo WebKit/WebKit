@@ -28,6 +28,8 @@
 
 #if WK_API_ENABLED && PLATFORM(MAC)
 
+#import "WKNSArray.h"
+
 @implementation WKOpenPanelParameters
 
 - (BOOL)allowsMultipleSelection
@@ -45,6 +47,20 @@
 - (API::Object&)_apiObject
 {
     return *_openPanelParameters;
+}
+
+@end
+
+@implementation WKOpenPanelParameters (WKPrivate)
+
+- (NSArray<NSString *> *)_acceptedMIMETypes
+{
+    return wrapper(_openPanelParameters->acceptMIMETypes());
+}
+
+- (NSArray<NSString *> *)_acceptedFileExtensions
+{
+    return wrapper(_openPanelParameters->acceptFileExtensions());
 }
 
 @end

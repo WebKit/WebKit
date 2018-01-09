@@ -31,6 +31,7 @@
 #import "TestNavigationDelegate.h"
 #import "Utilities.h"
 #import <AppKit/AppKit.h>
+#import <WebKit/WKOpenPanelParametersPrivate.h>
 #import <WebKit/WebKit.h>
 #import <wtf/RetainPtr.h>
 
@@ -44,6 +45,10 @@ static NSString * const expectedFileName = @"这是中文";
 
 - (void)webView:(WKWebView *)webView runOpenPanelWithParameters:(WKOpenPanelParameters *)parameters initiatedByFrame:(WKFrameInfo *)frame completionHandler:(void (^)(NSArray<NSURL *> * _Nullable))completionHandler
 {
+    EXPECT_FALSE(parameters.allowsMultipleSelection);
+    EXPECT_FALSE(parameters.allowsDirectories);
+    EXPECT_EQ(0ull, parameters._acceptedMIMETypes.count);
+    EXPECT_EQ(0ull, parameters._acceptedFileExtensions.count);
     completionHandler(@[ [NSURL fileURLWithPath:[NSTemporaryDirectory() stringByAppendingPathComponent:expectedFileName]] ]);
     fileSelected = true;
 }

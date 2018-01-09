@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,28 +23,15 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "WKOpenPanelParametersPrivate.h"
+#import <WebKit/WKOpenPanelParameters.h>
 
-#if WK_API_ENABLED && PLATFORM(MAC)
+#if WK_API_ENABLED && !TARGET_OS_IPHONE
 
-#import "APIOpenPanelParameters.h"
-#import "WKObject.h"
+@interface WKOpenPanelParameters (WKPrivate)
 
-namespace API {
+@property (nonatomic, readonly, copy) NSArray<NSString *> *_acceptedMIMETypes WK_API_AVAILABLE(macosx(WK_MAC_TBA));
+@property (nonatomic, readonly, copy) NSArray<NSString *> *_acceptedFileExtensions WK_API_AVAILABLE(macosx(WK_MAC_TBA));
 
-inline WKOpenPanelParameters *wrapper(OpenPanelParameters& openPanelParameters)
-{
-    ASSERT([openPanelParameters.wrapper() isKindOfClass:[WKOpenPanelParameters class]]);
-
-    return (WKOpenPanelParameters *)openPanelParameters.wrapper();
-}
-
-}
-
-@interface WKOpenPanelParameters () <WKObject> {
-@package
-    API::ObjectStorage<API::OpenPanelParameters> _openPanelParameters;
-}
 @end
 
 #endif

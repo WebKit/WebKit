@@ -1203,6 +1203,7 @@
 		5C19A5211FD0B29A00EEA323 /* URLSchemeTaskParameters.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C19A51E1FD0B14600EEA323 /* URLSchemeTaskParameters.cpp */; };
 		5C20CB9D1BB0DCFA00895BB1 /* NetworkSessionCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5C20CB9B1BB0DCD200895BB1 /* NetworkSessionCocoa.mm */; };
 		5C20CBA01BB1ECD800895BB1 /* NetworkSession.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C20CB9E1BB0DD1800895BB1 /* NetworkSession.h */; };
+		5C26958520043212005C439B /* WKOpenPanelParametersPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C26958420042F12005C439B /* WKOpenPanelParametersPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5C298DA01C3DF02100470AFE /* PendingDownload.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C298D9E1C3DEF2900470AFE /* PendingDownload.h */; };
 		5C3AEA8F1FE1F21F002318D3 /* WebsitePoliciesData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C3AEA8E1FE1F1DF002318D3 /* WebsitePoliciesData.cpp */; };
 		5C62FDF91EFC271C00CE072E /* WKURLSchemeTaskPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C62FDF81EFC263C00CE072E /* WKURLSchemeTaskPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -3597,6 +3598,7 @@
 		5C19A51F1FD0B14700EEA323 /* URLSchemeTaskParameters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = URLSchemeTaskParameters.h; sourceTree = "<group>"; };
 		5C20CB9B1BB0DCD200895BB1 /* NetworkSessionCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = NetworkSessionCocoa.mm; path = NetworkProcess/cocoa/NetworkSessionCocoa.mm; sourceTree = "<group>"; };
 		5C20CB9E1BB0DD1800895BB1 /* NetworkSession.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NetworkSession.h; path = NetworkProcess/NetworkSession.h; sourceTree = "<group>"; };
+		5C26958420042F12005C439B /* WKOpenPanelParametersPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKOpenPanelParametersPrivate.h; sourceTree = "<group>"; };
 		5C298D9E1C3DEF2900470AFE /* PendingDownload.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PendingDownload.h; path = NetworkProcess/Downloads/PendingDownload.h; sourceTree = "<group>"; };
 		5C3AEA8E1FE1F1DF002318D3 /* WebsitePoliciesData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebsitePoliciesData.cpp; sourceTree = "<group>"; };
 		5C62FDF81EFC263C00CE072E /* WKURLSchemeTaskPrivate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WKURLSchemeTaskPrivate.h; sourceTree = "<group>"; };
@@ -5960,6 +5962,7 @@
 				1ACC50F01CBC381D003C7D03 /* WKOpenPanelParameters.h */,
 				1ACC50EF1CBC381D003C7D03 /* WKOpenPanelParameters.mm */,
 				1A67CD2D1CBC513F00BFE3EA /* WKOpenPanelParametersInternal.h */,
+				5C26958420042F12005C439B /* WKOpenPanelParametersPrivate.h */,
 				1AFDD3161891C94700153970 /* WKPreferences.h */,
 				1AFDD3181891CA1200153970 /* WKPreferences.mm */,
 				1A3C887F18A5ABAE00C4C962 /* WKPreferencesInternal.h */,
@@ -9406,6 +9409,7 @@
 				378E1A40181EDA010031007A /* WKObject.h in Headers */,
 				1ACC50F21CBC381D003C7D03 /* WKOpenPanelParameters.h in Headers */,
 				1A67CD2E1CBC513F00BFE3EA /* WKOpenPanelParametersInternal.h in Headers */,
+				5C26958520043212005C439B /* WKOpenPanelParametersPrivate.h in Headers */,
 				BC857FE612B843D800EDEB2E /* WKOpenPanelParametersRef.h in Headers */,
 				BC1DFE8F12B31CA8005DF730 /* WKOpenPanelResultListener.h in Headers */,
 				BCD597D7112B56DC00EC8C23 /* WKPage.h in Headers */,
