@@ -185,6 +185,7 @@ void NavigationState::setNavigationDelegate(id <WKNavigationDelegate> delegate)
     m_navigationDelegateMethods.webViewWillGoToBackForwardListItemInPageCache = [delegate respondsToSelector:@selector(_webView:willGoToBackForwardListItem:inPageCache:)];
     m_navigationDelegateMethods.webViewDidFailToInitializePlugInWithInfo = [delegate respondsToSelector:@selector(_webView:didFailToInitializePlugInWithInfo:)];
     m_navigationDelegateMethods.webViewBackForwardListItemAddedRemoved = [delegate respondsToSelector:@selector(_webView:backForwardListItemAdded:removed:)];
+    m_navigationDelegateMethods.webViewDecidePolicyForPluginLoadWithCurrentPolicyPluginInfoUnavailabilityDescription = [delegate respondsToSelector:@selector(_webView:decidePolicyForPluginLoadWithCurrentPolicy:pluginInfo:unavailabilityDescription:)];
 #endif
 }
 
@@ -310,6 +311,50 @@ bool NavigationState::NavigationClient::didFailToInitializePlugIn(WebPageProxy&,
     
     [(id <WKNavigationDelegatePrivate>)navigationDelegate _webView:m_navigationState.m_webView didFailToInitializePlugInWithInfo:wrapper(info)];
     return true;
+}
+
+static WebKit::PluginModuleLoadPolicy pluginModuleLoadPolicy(_WKPluginModuleLoadPolicy policy)
+{
+    switch (policy) {
+    case _WKPluginModuleLoadPolicyLoadNormally:
+        return WebKit::PluginModuleLoadNormally;
+    case _WKPluginModuleLoadPolicyLoadUnsandboxed:
+        return WebKit::PluginModuleLoadUnsandboxed;
+    case _WKPluginModuleLoadPolicyBlockedForSecurity:
+        return WebKit::PluginModuleBlockedForSecurity;
+    case _WKPluginModuleLoadPolicyBlockedForCompatibility:
+        return WebKit::PluginModuleBlockedForCompatibility;
+    }
+    ASSERT_NOT_REACHED();
+    return WebKit::PluginModuleLoadNormally;
+}
+
+static _WKPluginModuleLoadPolicy wkPluginModuleLoadPolicy(WebKit::PluginModuleLoadPolicy policy)
+{
+    switch (policy) {
+    case WebKit::PluginModuleLoadNormally:
+        return _WKPluginModuleLoadPolicyLoadNormally;
+    case WebKit::PluginModuleLoadUnsandboxed:
+        return _WKPluginModuleLoadPolicyLoadUnsandboxed;
+    case WebKit::PluginModuleBlockedForSecurity:
+        return _WKPluginModuleLoadPolicyBlockedForSecurity;
+    case WebKit::PluginModuleBlockedForCompatibility:
+        return _WKPluginModuleLoadPolicyBlockedForCompatibility;
+    }
+    ASSERT_NOT_REACHED();
+    return _WKPluginModuleLoadPolicyLoadNormally;
+}
+
+WebKit::PluginModuleLoadPolicy NavigationState::NavigationClient::decidePolicyForPluginLoad(WebKit::WebPageProxy&, WebKit::PluginModuleLoadPolicy currentPluginLoadPolicy, API::Dictionary& pluginInformation, WTF::String& unavailabilityDescription)
+{
+    if (!m_navigationState.m_navigationDelegateMethods.webViewDecidePolicyForPluginLoadWithCurrentPolicyPluginInfoUnavailabilityDescription)
+        return currentPluginLoadPolicy;
+    
+    auto navigationDelegate = m_navigationState.m_navigationDelegate.get();
+    if (!navigationDelegate)
+        return currentPluginLoadPolicy;
+
+    return pluginModuleLoadPolicy([(id <WKNavigationDelegatePrivate>)navigationDelegate _webView:m_navigationState.m_webView decidePolicyForPluginLoadWithCurrentPolicy:wkPluginModuleLoadPolicy(currentPluginLoadPolicy) pluginInfo:wrapper(pluginInformation) unavailabilityDescription:unavailabilityDescription]);
 }
 
 inline WebCore::WebGLLoadPolicy toWebCoreWebGLLoadPolicy(_WKWebGLLoadPolicy policy)

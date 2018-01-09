@@ -39,6 +39,13 @@ typedef NS_ENUM(NSInteger, _WKWebGLLoadPolicy) {
     _WKWebGLLoadPolicyAllowCreation,
     _WKWebGLLoadPolicyPendingCreation,
 } WK_API_AVAILABLE(macosx(WK_MAC_TBA));
+
+typedef NS_ENUM(NSInteger, _WKPluginModuleLoadPolicy) {
+    _WKPluginModuleLoadPolicyLoadNormally,
+    _WKPluginModuleLoadPolicyLoadUnsandboxed,
+    _WKPluginModuleLoadPolicyBlockedForSecurity,
+    _WKPluginModuleLoadPolicyBlockedForCompatibility,
+} WK_API_AVAILABLE(macosx(WK_MAC_TBA));
 #endif
 
 static const WKNavigationActionPolicy _WKNavigationActionPolicyDownload = (WKNavigationActionPolicy)(WKNavigationActionPolicyAllow + 1);
@@ -92,6 +99,7 @@ static const WKNavigationResponsePolicy _WKNavigationResponsePolicyBecomeDownloa
 - (void)_webView:(WKWebView *)webView resolveWebGLLoadPolicyForURL:(NSURL *)url decisionHandler:(void (^)(_WKWebGLLoadPolicy))decisionHandler WK_API_AVAILABLE(macosx(WK_MAC_TBA));
 - (void)_webView:(WKWebView *)webView willGoToBackForwardListItem:(WKBackForwardListItem *)item inPageCache:(BOOL)inPageCache WK_API_AVAILABLE(macosx(WK_MAC_TBA));
 - (void)_webView:(WKWebView *)webView didFailToInitializePlugInWithInfo:(NSDictionary *)info WK_API_AVAILABLE(macosx(WK_MAC_TBA));
+- (_WKPluginModuleLoadPolicy)_webView:(WKWebView *)webView decidePolicyForPluginLoadWithCurrentPolicy:(_WKPluginModuleLoadPolicy)policy pluginInfo:(NSDictionary *)info unavailabilityDescription:(NSString *)unavailabilityDescription WK_API_AVAILABLE(macosx(WK_MAC_TBA));
 - (void)_webView:(WKWebView *)webView backForwardListItemAdded:(WKBackForwardListItem *)itemAdded removed:(NSArray<WKBackForwardListItem *> *)itemsRemoved WK_API_AVAILABLE(macosx(WK_MAC_TBA));
 #endif
 

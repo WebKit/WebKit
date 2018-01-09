@@ -1,3 +1,25 @@
+2018-01-08  Alex Christensen  <achristensen@webkit.org>
+
+        Make ObjC SPI equivalent to WKPageNavigationClient.decidePolicyForPluginLoad
+        https://bugs.webkit.org/show_bug.cgi?id=181413
+        <rdar://problem/36169005>
+
+        Reviewed by Wenson Hsieh.
+
+        * UIProcess/API/APINavigationClient.h:
+        (API::NavigationClient::decidePolicyForPluginLoad):
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetPageNavigationClient):
+        * UIProcess/API/Cocoa/WKNavigationDelegatePrivate.h:
+        * UIProcess/Cocoa/NavigationState.h:
+        * UIProcess/Cocoa/NavigationState.mm:
+        (WebKit::NavigationState::setNavigationDelegate):
+        (WebKit::toPluginModuleLoadPolicy):
+        (WebKit::toWKPluginModuleLoadPolicy):
+        (WebKit::NavigationState::NavigationClient::decidePolicyForPluginLoad):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::findPlugin):
+
 2018-01-08  Ryosuke Niwa  <rniwa@webkit.org>
 
         iOS build fix attempt after r226602.
