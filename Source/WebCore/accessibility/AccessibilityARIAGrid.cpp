@@ -35,6 +35,7 @@
 #include "AccessibilityTableColumn.h"
 #include "AccessibilityTableHeaderContainer.h"
 #include "AccessibilityTableRow.h"
+#include "AccessibleNode.h"
 #include "RenderObject.h"
 #include "RenderTableSection.h"
 
