@@ -198,6 +198,8 @@ void setupNewlyCreatedServiceWorker(uint64_t serviceWorkerIdentifier)
         auto* contextWrapper = script->workerGlobalScopeWrapper();
         contextWrapper->putDirect(state.vm(), Identifier::fromString(&state, Internals::internalsId), toJS(&state, contextWrapper, ServiceWorkerInternals::create(identifier)));
     });
+#else
+    UNUSED_PARAM(serviceWorkerIdentifier);
 #endif
 }
 

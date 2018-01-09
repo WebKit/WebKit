@@ -1,3 +1,10 @@
+2018-01-09  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Unreviewed, silence -Wunused-parameter warning
+
+        * testing/js/WebCoreTestSupport.cpp:
+        (WebCoreTestSupport::setupNewlyCreatedServiceWorker):
+
 2018-01-09  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Check Image::m_image is not null in ImageLoader::decode()
