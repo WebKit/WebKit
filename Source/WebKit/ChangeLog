@@ -1,3 +1,18 @@
+2018-01-09  Alex Christensen  <achristensen@webkit.org>
+
+        WKOpenPanelParameters SPI should return autoreleased objects
+        https://bugs.webkit.org/show_bug.cgi?id=181457
+        <rdar://problem/35884960>
+
+        Reviewed by Tim Horton.
+
+        In r226607 I made a mistake by returning an object that has been released.
+        I instead follow a pattern of leaking and autoreleasing that we use elsewhere in the ObjC API.
+
+        * UIProcess/API/Cocoa/WKOpenPanelParameters.mm:
+        (-[WKOpenPanelParameters _acceptedMIMETypes]):
+        (-[WKOpenPanelParameters _acceptedFileExtensions]):
+
 2018-01-09  Dan Bernstein  <mitz@apple.com>
 
         Removed some empty directories that were left behind

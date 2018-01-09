@@ -55,12 +55,12 @@
 
 - (NSArray<NSString *> *)_acceptedMIMETypes
 {
-    return wrapper(_openPanelParameters->acceptMIMETypes());
+    return [wrapper(_openPanelParameters->acceptMIMETypes().leakRef()) autorelease];
 }
 
 - (NSArray<NSString *> *)_acceptedFileExtensions
 {
-    return wrapper(_openPanelParameters->acceptFileExtensions());
+    return [wrapper(_openPanelParameters->acceptFileExtensions().leakRef()) autorelease];
 }
 
 @end
