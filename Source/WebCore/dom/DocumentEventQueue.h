@@ -48,6 +48,8 @@ public:
     void close() override;
 
     void enqueueOrDispatchScrollEvent(Node&);
+    void enqueueScrollEvent(EventTarget&, bool bubbles, bool cancelable);
+    void enqueueResizeEvent(EventTarget&, bool bubbles, bool cancelable);
 
 private:
     void pendingEventTimerFired();
@@ -58,7 +60,8 @@ private:
     Document& m_document;
     std::unique_ptr<Timer> m_pendingEventTimer;
     ListHashSet<RefPtr<Event>> m_queuedEvents;
-    HashSet<Node*> m_nodesWithQueuedScrollEvents;
+    HashSet<EventTarget*> m_targetsWithQueuedScrollEvents;
+    HashSet<EventTarget*> m_targetsWithQueuedResizeEvents;
     bool m_isClosed;
 };
 

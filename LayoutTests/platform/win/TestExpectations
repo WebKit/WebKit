@@ -629,7 +629,9 @@ webkit.org/b/158836 imported/w3c/web-platform-tests/encrypted-media [ Skip ]
 http/wpt/credential-management/ [ Skip ]
 
 # UIScriptController::zoomToScale is not implemented on Windows.
+webkit.org/b/180424 fast/visual-viewport/resize-event-fired.html [ Skip ]
 webkit.org/b/180424 fast/visual-viewport/rtl-zoomed-rects.html [ Skip ]
+webkit.org/b/180424 fast/visual-viewport/scroll-event-fired.html [ Skip ]
 webkit.org/b/180424 fast/visual-viewport/viewport-dimensions-exclude-custom-scrollbars.html [ Skip ]
 webkit.org/b/180424 fast/visual-viewport/viewport-dimensions-exclude-scrollbars.html [ Skip ]
 webkit.org/b/180424 fast/visual-viewport/viewport-dimensions-iframe.html [ Skip ]

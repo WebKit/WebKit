@@ -825,7 +825,8 @@ public:
         FORCEWILLBEGIN_LISTENER              = 1 << 13,
         FORCECHANGED_LISTENER                = 1 << 14,
         FORCEDOWN_LISTENER                   = 1 << 15,
-        FORCEUP_LISTENER                     = 1 << 16
+        FORCEUP_LISTENER                     = 1 << 16,
+        RESIZE_LISTENER                      = 1 << 17
     };
 
     bool hasListenerType(ListenerType listenerType) const { return (m_listenerTypes & listenerType); }

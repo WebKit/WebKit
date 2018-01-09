@@ -4464,6 +4464,8 @@ void Document::addListenerTypeIfNeeded(const AtomicString& eventType)
         addListenerType(FORCEDOWN_LISTENER);
     else if (eventType == eventNames().webkitmouseforceupEvent)
         addListenerType(FORCEUP_LISTENER);
+    else if (eventType == eventNames().resizeEvent)
+        addListenerType(RESIZE_LISTENER);
 }
 
 CSSStyleDeclaration* Document::getOverrideStyle(Element*, const String&)

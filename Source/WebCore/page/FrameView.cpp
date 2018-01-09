@@ -94,6 +94,7 @@
 #include "StyleScope.h"
 #include "TextResourceDecoder.h"
 #include "TiledBacking.h"
+#include "VisualViewport.h"
 #include "WheelEventTestTrigger.h"
 #include <wtf/text/TextStream.h>
 
@@ -1673,6 +1674,10 @@ void FrameView::updateLayoutViewport()
             LayoutPoint newOrigin = computeLayoutViewportOrigin(visualViewportRect(), minStableLayoutViewportOrigin(), maxStableLayoutViewportOrigin(), layoutViewport, StickToDocumentBounds);
             setLayoutViewportOverrideRect(LayoutRect(newOrigin, m_layoutViewportOverrideRect.value().size()));
         }
+        if (frame().settings().visualViewportAPIEnabled()) {
+            if (Document* document = frame().document())
+                document->domWindow()->visualViewport()->update();
+        }
         return;
     }
 
@@ -1680,6 +1685,10 @@ void FrameView::updateLayoutViewport()
     if (newLayoutViewportOrigin != m_layoutViewportOrigin) {
         setBaseLayoutViewportOrigin(newLayoutViewportOrigin);
         LOG_WITH_STREAM(Scrolling, stream << "layoutViewport changed to " << layoutViewportRect());
+    }
+    if (frame().settings().visualViewportAPIEnabled()) {
+        if (Document* document = frame().document())
+            document->domWindow()->visualViewport()->update();
     }
 }
 

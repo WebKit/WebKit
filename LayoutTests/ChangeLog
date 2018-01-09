@@ -1,3 +1,27 @@
+2018-01-09  Ali Juma  <ajuma@chromium.org>
+
+        Implement VisualViewport API events
+        https://bugs.webkit.org/show_bug.cgi?id=179386
+
+        Reviewed by Frédéric Wang.
+
+        Add tests for Visual Viewport API events. Test that a resize event is fired after
+        pinch zoom and after window resize, and test that a scroll event is fired when the
+        visual viewport is scrolled.
+
+        * fast/visual-viewport/resize-event-fired-expected.txt: Added.
+        * fast/visual-viewport/resize-event-fired-window-resized-expected.txt: Added.
+        * fast/visual-viewport/resize-event-fired-window-resized.html: Added.
+        * fast/visual-viewport/resize-event-fired.html: Added.
+        * fast/visual-viewport/scroll-event-fired-expected.txt: Added.
+        * fast/visual-viewport/scroll-event-fired.html: Added.
+        * platform/gtk/TestExpectations:
+        Skipped tests that use UIScriptController::zoomToScale, since this isn't implemented on GTK.
+        * platform/ios/TestExpectations:
+        Skipped test that resizes a window, since this isn't supported on iOS.
+        * platform/win/TestExpectations:
+        Skipped tests that use UIScriptController::zoomToScale, since this isn't implemented on Windows.
+
 2018-01-09  Ryosuke Niwa  <rniwa@webkit.org>
 
         Release assert in addResourceTiming when a cache resource is requested during style recalc

@@ -1,3 +1,17 @@
+2018-01-09  Ali Juma  <ajuma@chromium.org>
+
+        Implement VisualViewport API events
+        https://bugs.webkit.org/show_bug.cgi?id=179386
+
+        Reviewed by Frédéric Wang.
+
+        Change the default value of the VisualViewportAPI experimental feature flag to
+        DEFAULT_EXPERIMENTAL_FEATURES_ENABLED. This patch completes the implementation
+        of this feature as specified by https://wicg.github.io/visual-viewport/, so this
+        feature is now ready for wider testing.
+
+        * Shared/WebPreferences.yaml:
+
 2018-01-08  Alex Christensen  <achristensen@webkit.org>
 
         Add WKNavigationDelegate SPI exposing WebProcess crash reason

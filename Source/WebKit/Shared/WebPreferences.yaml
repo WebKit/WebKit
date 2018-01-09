@@ -1146,7 +1146,7 @@ SubresourceIntegrityEnabled:
 
 VisualViewportAPIEnabled:
   type: bool
-  defaultValue: false
+  defaultValue: DEFAULT_EXPERIMENTAL_FEATURES_ENABLED
   humanReadableName: "VisualViewportAPI"
   humanReadableDescription: "Enable Visual Viewport API"
   category: experimental

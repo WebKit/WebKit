@@ -1,3 +1,14 @@
+2018-01-09  Ali Juma  <ajuma@chromium.org>
+
+        Implement VisualViewport API events
+        https://bugs.webkit.org/show_bug.cgi?id=179386
+
+        Reviewed by Frédéric Wang.
+
+        Update expectation for a viewport WPT that now passes.
+
+        * web-platform-tests/viewport/viewport-resize-event-on-load-overflowing-page-expected.txt:
+
 2018-01-08  Chris Nardi  <csnardi1@gmail.com>
 
         ::first-letter incorrectly selects grapheme pairs

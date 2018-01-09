@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<style>
+  body {
+    height: 2000px;
+    width: 2000px;
+  }
+</style>
+
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script>
+    var pageScaleFactor = 2;
+
+    if (window.internals)
+        internals.settings.setVisualViewportEnabled(true);
+
+    var test = async_test('Verify a resize event gets fired on window.visualViewport after pinch-zoom');
+
+    function resizeHandler() {
+        test.done();
+    }
+
+    function getUIScript() {
+        return `(function() {
+            uiController.zoomToScale(${pageScaleFactor}, function() {
+                uiController.uiScriptComplete(uiController.zoomScale);
+            });
+        })();`;
+    }
+
+    window.onload = function() {
+        window.visualViewport.addEventListener('resize', resizeHandler);
+        testRunner.runUIScript(getUIScript(), function() {});
+    };
+</script>

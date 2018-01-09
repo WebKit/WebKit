@@ -1,3 +1,56 @@
+2018-01-09  Ali Juma  <ajuma@chromium.org>
+
+        Implement VisualViewport API events
+        https://bugs.webkit.org/show_bug.cgi?id=179386
+
+        Reviewed by Frédéric Wang.
+
+        Implement the events (resize and scroll) defined by the Visual Viewport API
+        (https://wicg.github.io/visual-viewport/#events).
+
+        This is behind the VisualViewportAPI experimental feature flag.
+
+        In order to detect when events need to be fired, change the computation of
+        Visual Viewport attributes to happen whenever the layout viewport is updated
+        rather than only on-demand.
+
+        Tests: fast/visual-viewport/resize-event-fired-window-resized.html
+               fast/visual-viewport/resize-event-fired.html
+               fast/visual-viewport/scroll-event-fired.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::addListenerTypeIfNeeded):
+        Add support for tracking resize event listeners.
+        * dom/Document.h:
+        * dom/DocumentEventQueue.cpp:
+        (WebCore::DocumentEventQueue::enqueueOrDispatchScrollEvent):
+        (WebCore::DocumentEventQueue::enqueueScrollEvent):
+        Factored out of enqueueOrDispatchScrollEvent so that this logic can be reused
+        for Visual Viewport scroll events.
+        (WebCore::DocumentEventQueue::enqueueResizeEvent):
+        (WebCore::DocumentEventQueue::pendingEventTimerFired):
+        * dom/DocumentEventQueue.h:
+        * page/FrameView.cpp:
+        (WebCore::FrameView::updateLayoutViewport):
+        * page/VisualViewport.cpp:
+        (WebCore::VisualViewport::addEventListener):
+        (WebCore::layoutIfNonNull):
+        (WebCore::VisualViewport::offsetLeft const):
+        Remove attribute computation logic since this now happens during update().
+        (WebCore::VisualViewport::offsetTop const): Ditto.
+        (WebCore::VisualViewport::pageLeft const): Ditto.
+        (WebCore::VisualViewport::pageTop const): Ditto.
+        (WebCore::VisualViewport::width const): Ditto.
+        (WebCore::VisualViewport::height const): Ditto.
+        (WebCore::VisualViewport::scale const):
+        (WebCore::VisualViewport::update):
+        Added. Computes all of the Visual Viewport attributes and determines
+        whether events need to be fired.
+        (WebCore::VisualViewport::enqueueResizeEvent):
+        (WebCore::VisualViewport::enqueueScrollEvent):
+        (WebCore::getFrameViewAndLayoutIfNonNull): Deleted.
+        * page/VisualViewport.h:
+
 2018-01-09  Yacine Bandou  <yacine.bandou_ext@softathome.com>
 
         [EME] Add the CENC initData support in ClearKey CDM

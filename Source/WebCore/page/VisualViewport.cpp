@@ -29,6 +29,9 @@
 #include "ContextDestructionObserver.h"
 #include "DOMWindow.h"
 #include "Document.h"
+#include "DocumentEventQueue.h"
+#include "Event.h"
+#include "EventNames.h"
 #include "Frame.h"
 #include "FrameView.h"
 #include "Page.h"
@@ -52,56 +55,74 @@ ScriptExecutionContext* VisualViewport::scriptExecutionContext() const
     return static_cast<ContextDestructionObserver*>(m_associatedDOMWindow)->scriptExecutionContext();
 }
 
-static FrameView* getFrameViewAndLayoutIfNonNull(Frame* frame)
+bool VisualViewport::addEventListener(const AtomicString& eventType, Ref<EventListener>&& listener, const AddEventListenerOptions& options)
 {
-    auto* view = frame ? frame->view() : nullptr;
-    if (view) {
-        ASSERT(frame->pageZoomFactor());
-        frame->document()->updateLayoutIgnorePendingStylesheets(Document::RunPostLayoutTasks::Synchronously);
-    }
-    return view;
+    if (!EventTarget::addEventListener(eventType, WTFMove(listener), options))
+        return false;
+
+    if (m_frame)
+        m_frame->document()->addListenerTypeIfNeeded(eventType);
+    return true;
+}
+
+void VisualViewport::updateFrameLayout() const
+{
+    ASSERT(m_frame);
+    m_frame->document()->updateLayoutIgnorePendingStylesheets(Document::RunPostLayoutTasks::Synchronously);
 }
 
 double VisualViewport::offsetLeft() const
 {
-    if (auto* view = getFrameViewAndLayoutIfNonNull(m_frame))
-        return (view->visualViewportRect().x() - view->layoutViewportRect().x()) / m_frame->pageZoomFactor();
-    return 0;
+    if (!m_frame)
+        return 0;
+
+    updateFrameLayout();
+    return m_offsetLeft;
 }
 
 double VisualViewport::offsetTop() const
 {
-    if (auto* view = getFrameViewAndLayoutIfNonNull(m_frame))
-        return (view->visualViewportRect().y() - view->layoutViewportRect().y()) / m_frame->pageZoomFactor();
-    return 0;
+    if (!m_frame)
+        return 0;
+
+    updateFrameLayout();
+    return m_offsetTop;
 }
 
 double VisualViewport::pageLeft() const
 {
-    if (auto* view = getFrameViewAndLayoutIfNonNull(m_frame))
-        return view->visualViewportRect().x() / m_frame->pageZoomFactor();
-    return 0;
+    if (!m_frame)
+        return 0;
+
+    updateFrameLayout();
+    return m_pageLeft;
 }
 
 double VisualViewport::pageTop() const
 {
-    if (auto* view = getFrameViewAndLayoutIfNonNull(m_frame))
-        return view->visualViewportRect().y() / m_frame->pageZoomFactor();
-    return 0;
+    if (!m_frame)
+        return 0;
+
+    updateFrameLayout();
+    return m_pageTop;
 }
 
 double VisualViewport::width() const
 {
-    if (auto* view = getFrameViewAndLayoutIfNonNull(m_frame))
-        return view->visualViewportRect().width() / m_frame->pageZoomFactor();
-    return 0;
+    if (!m_frame)
+        return 0;
+
+    updateFrameLayout();
+    return m_width;
 }
 
 double VisualViewport::height() const
 {
-    if (auto* view = getFrameViewAndLayoutIfNonNull(m_frame))
-        return view->visualViewportRect().height() / m_frame->pageZoomFactor();
-    return 0;
+    if (!m_frame)
+        return 0;
+
+    updateFrameLayout();
+    return m_height;
 }
 
 double VisualViewport::scale() const
@@ -110,11 +131,68 @@ double VisualViewport::scale() const
     if (!m_frame || !m_frame->isMainFrame())
         return 1;
 
-    if (auto* page = m_frame->page()) {
-        m_frame->document()->updateLayoutIgnorePendingStylesheets(Document::RunPostLayoutTasks::Synchronously);
-        return page->pageScaleFactor();
+    updateFrameLayout();
+    return m_scale;
+}
+
+void VisualViewport::update()
+{
+    double offsetLeft = 0;
+    double offsetTop = 0;
+    m_pageLeft = 0;
+    m_pageTop = 0;
+    double width = 0;
+    double height = 0;
+    double scale = 1;
+
+    if (m_frame) {
+        if (auto* view = m_frame->view()) {
+            auto visualViewportRect = view->visualViewportRect();
+            auto layoutViewportRect = view->layoutViewportRect();
+            auto pageZoomFactor = m_frame->pageZoomFactor();
+            ASSERT(pageZoomFactor);
+            offsetLeft = (visualViewportRect.x() - layoutViewportRect.x()) / pageZoomFactor;
+            offsetTop = (visualViewportRect.y() - layoutViewportRect.y()) / pageZoomFactor;
+            m_pageLeft = visualViewportRect.x() / pageZoomFactor;
+            m_pageTop = visualViewportRect.y() / pageZoomFactor;
+            width = visualViewportRect.width() / pageZoomFactor;
+            height = visualViewportRect.height() / pageZoomFactor;
+        }
+        if (auto* page = m_frame->page())
+            scale = page->pageScaleFactor();
     }
-    return 1;
+
+    if (m_offsetLeft != offsetLeft || m_offsetTop != offsetTop) {
+        enqueueScrollEvent();
+        m_offsetLeft = offsetLeft;
+        m_offsetTop = offsetTop;
+    }
+    if (m_width != width || m_height != height || m_scale != scale) {
+        enqueueResizeEvent();
+        m_width = width;
+        m_height = height;
+        m_scale = scale;
+    }
+}
+
+void VisualViewport::enqueueResizeEvent()
+{
+    if (!m_frame)
+        return;
+
+    bool bubbles = false;
+    bool cancelable = false;
+    m_frame->document()->eventQueue().enqueueResizeEvent(*this, bubbles, cancelable);
+}
+
+void VisualViewport::enqueueScrollEvent()
+{
+    if (!m_frame)
+        return;
+
+    bool bubbles = false;
+    bool cancelable = false;
+    m_frame->document()->eventQueue().enqueueScrollEvent(*this, bubbles, cancelable);
 }
 
 } // namespace WebCore
