@@ -41,6 +41,7 @@
 #include "RenderTreeBuilderFormControls.h"
 #include "RenderTreeBuilderInline.h"
 #include "RenderTreeBuilderList.h"
+#include "RenderTreeBuilderMathML.h"
 #include "RenderTreeBuilderMultiColumn.h"
 #include "RenderTreeBuilderRuby.h"
 #include "RenderTreeBuilderSVG.h"
@@ -114,6 +115,7 @@ RenderTreeBuilder::RenderTreeBuilder(RenderView& view)
     , m_blockFlowBuilder(std::make_unique<BlockFlow>(*this))
     , m_inlineBuilder(std::make_unique<Inline>(*this))
     , m_svgBuilder(std::make_unique<SVG>(*this))
+    , m_mathMLBuilder(std::make_unique<MathML>(*this))
 {
     RELEASE_ASSERT(!s_current || &m_view != &s_current->m_view);
     m_previous = s_current;
@@ -332,6 +334,11 @@ void RenderTreeBuilder::splitFlow(RenderInline& parent, RenderObject* beforeChil
 void RenderTreeBuilder::insertChildToRenderBlockFlow(RenderBlockFlow& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild)
 {
     blockFlowBuilder().insertChild(parent, WTFMove(child), beforeChild);
+}
+
+void RenderTreeBuilder::insertChildToRenderMathMLFenced(RenderMathMLFenced& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild)
+{
+    mathMLBuilder().insertChild(parent, WTFMove(child), beforeChild);
 }
 
 void RenderTreeBuilder::updateAfterDescendants(RenderElement& renderer)

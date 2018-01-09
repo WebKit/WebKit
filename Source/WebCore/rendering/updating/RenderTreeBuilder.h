@@ -29,6 +29,7 @@
 
 namespace WebCore {
 
+class RenderMathMLFenced;
 class RenderRubyRun;
 class RenderSVGContainer;
 class RenderSVGInline;
@@ -66,6 +67,7 @@ public:
     void insertChildToRenderTable(RenderTable& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild = nullptr);
     void insertChildToRenderTableSection(RenderTableSection& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild = nullptr);
     void insertChildToRenderTableRow(RenderTableRow& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild = nullptr);
+    void insertChildToRenderMathMLFenced(RenderMathMLFenced& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild = nullptr);
 
     void makeChildrenNonInline(RenderBlock& parent, RenderObject* insertionPoint = nullptr);
     RenderObject* splitAnonymousBoxesAroundChild(RenderBox& parent, RenderObject* beforeChild);
@@ -82,6 +84,7 @@ private:
     class BlockFlow;
     class Inline;
     class SVG;
+    class MathML;
 
     FirstLetter& firstLetterBuilder() { return *m_firstLetterBuilder; }
     List& listBuilder() { return *m_listBuilder; }
@@ -93,6 +96,7 @@ private:
     BlockFlow& blockFlowBuilder() { return *m_blockFlowBuilder; }
     Inline& inlineBuilder() { return *m_inlineBuilder; }
     SVG& svgBuilder() { return *m_svgBuilder; }
+    MathML& mathMLBuilder() { return *m_mathMLBuilder; }
 
     RenderView& m_view;
 
@@ -109,6 +113,7 @@ private:
     std::unique_ptr<BlockFlow> m_blockFlowBuilder;
     std::unique_ptr<Inline> m_inlineBuilder;
     std::unique_ptr<SVG> m_svgBuilder;
+    std::unique_ptr<MathML> m_mathMLBuilder;
 };
 
 }
