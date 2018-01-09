@@ -186,6 +186,7 @@ def forward_declarations_and_headers(receiver):
     no_forward_declaration_types = frozenset([
         'WebCore::DocumentIdentifier',
         'WebCore::ServiceWorkerIdentifier',
+        'WebCore::ServiceWorkerJobIdentifier',
         'WebCore::ServiceWorkerOrClientData',
         'WebCore::ServiceWorkerOrClientIdentifier',
         'WebCore::ServiceWorkerRegistrationIdentifier',
@@ -387,6 +388,7 @@ def headers_for_type(type):
         'WebCore::PolicyAction': ['<WebCore/FrameLoaderTypes.h>'],
         'WebCore::RecentSearch': ['<WebCore/SearchPopupMenu.h>'],
         'WebCore::SWServerConnectionIdentifier': ['<WebCore/ServiceWorkerTypes.h>'],
+        'WebCore::ServiceWorkerJobIdentifier': ['<WebCore/ServiceWorkerTypes.h>'],
         'WebCore::ServiceWorkerOrClientData': ['<WebCore/ServiceWorkerTypes.h>', '<WebCore/ServiceWorkerClientData.h>', '<WebCore/ServiceWorkerData.h>'],
         'WebCore::ServiceWorkerOrClientIdentifier': ['<WebCore/ServiceWorkerTypes.h>', '<WebCore/ServiceWorkerClientIdentifier.h>'],
         'WebCore::ServiceWorkerRegistrationIdentifier': ['<WebCore/ServiceWorkerTypes.h>'],

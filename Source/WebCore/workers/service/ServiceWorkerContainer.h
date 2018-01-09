@@ -75,6 +75,8 @@ public:
     void addRegistration(ServiceWorkerRegistration&);
     void removeRegistration(ServiceWorkerRegistration&);
 
+    ServiceWorkerJob* job(ServiceWorkerJobIdentifier identifier) { return m_jobMap.get(identifier); }
+
     void startMessages();
 
     void ref() final { refEventTarget(); }

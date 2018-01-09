@@ -24,10 +24,10 @@
 
 messages -> WebSWClientConnection {
     # When possible, these messages can be implemented directly by WebCore::SWServer::Connection
-    JobRejectedInServer(struct WebCore::ServiceWorkerJobDataIdentifier jobDataIdentifier, struct WebCore::ExceptionData exception)
-    RegistrationJobResolvedInServer(struct WebCore::ServiceWorkerJobDataIdentifier jobDataIdentifier, struct WebCore::ServiceWorkerRegistrationData registration, enum WebCore::ShouldNotifyWhenResolved shouldNotifyWhenResolved)
-    UnregistrationJobResolvedInServer(struct WebCore::ServiceWorkerJobDataIdentifier jobDataIdentifier, bool unregistrationResult)
-    StartScriptFetchForServer(struct WebCore::ServiceWorkerJobDataIdentifier jobDataIdentifier, WebCore::ServiceWorkerRegistrationKey registrationKey, WebCore::FetchOptions::Cache cachePolicy)
+    JobRejectedInServer(WebCore::ServiceWorkerJobIdentifier jobDataIdentifier, struct WebCore::ExceptionData exception)
+    RegistrationJobResolvedInServer(WebCore::ServiceWorkerJobIdentifier jobDataIdentifier, struct WebCore::ServiceWorkerRegistrationData registration, enum WebCore::ShouldNotifyWhenResolved shouldNotifyWhenResolved)
+    UnregistrationJobResolvedInServer(WebCore::ServiceWorkerJobIdentifier jobDataIdentifier, bool unregistrationResult)
+    StartScriptFetchForServer(WebCore::ServiceWorkerJobIdentifier jobDataIdentifier, WebCore::ServiceWorkerRegistrationKey registrationKey, WebCore::FetchOptions::Cache cachePolicy)
     UpdateRegistrationState(WebCore::ServiceWorkerRegistrationIdentifier identifier, enum WebCore::ServiceWorkerRegistrationState state, std::optional<WebCore::ServiceWorkerData> serviceWorkerIdentifier)
     UpdateWorkerState(WebCore::ServiceWorkerIdentifier serviceWorkerIdentifier, enum WebCore::ServiceWorkerState state)
     FireUpdateFoundEvent(WebCore::ServiceWorkerRegistrationIdentifier identifier)
