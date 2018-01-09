@@ -137,9 +137,13 @@ self.addEventListener('fetch', function(event) {
               return cache.match(request);
             }).then(function(cached) {
               cachedResponse = cached;
+              return cache.delete(request.url);
+            }).then(function() {
               return self.caches.delete(cacheName);
             }).then(function() {
-               resolve(cachedResponse);
+              resolve(cachedResponse);
+            }).catch((e) => {
+              reject(e);
             });
           } else {
             resolve(response);

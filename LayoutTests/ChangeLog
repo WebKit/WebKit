@@ -1,5 +1,14 @@
 2018-01-09  Youenn Fablet  <youenn@apple.com>
 
+        Make imported/w3c/web-platform-tests/service-workers/service-worker/fetch-canvas-tainting-cache.https.html robust to quota error
+        https://bugs.webkit.org/show_bug.cgi?id=181404
+
+        Reviewed by Alex Christensen.
+
+        * TestExpectations:
+
+2018-01-09  Youenn Fablet  <youenn@apple.com>
+
         [iOS Debug WK2] Layout Test imported/w3c/web-platform-tests/service-workers/service-worker/register-closed-window.https.html is flaky
         https://bugs.webkit.org/show_bug.cgi?id=181087
         <rdar://problem/36188109>

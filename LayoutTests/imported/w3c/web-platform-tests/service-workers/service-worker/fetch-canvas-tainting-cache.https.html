@@ -23,7 +23,11 @@ async_test(function(t) {
           return new Promise(function(resolve, reject) {
               var channel = new MessageChannel();
               channel.port1.onmessage = t.step_func(function(e) {
-                  assert_equals(e.data.results, 'finish');
+                  for (var result of e.data.results) {
+                      test(() => {
+                        assert_equals(result.result, "PASS");
+                      }, result.name);
+                  }
                   frame.remove();
                   service_worker_unregister_and_done(t, SCOPE);
                 });
