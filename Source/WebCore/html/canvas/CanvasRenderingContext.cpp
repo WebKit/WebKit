@@ -81,6 +81,9 @@ bool CanvasRenderingContext::wouldTaintOrigin(const HTMLImageElement* element)
     if (!image)
         return false;
 
+    if (image->sourceURL().protocolIsData())
+        return false;
+    
     if (!image->hasSingleSecurityOrigin())
         return true;
 

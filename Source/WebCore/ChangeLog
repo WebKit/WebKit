@@ -1,3 +1,22 @@
+2018-01-08  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        A canvas should not be tainted if it draws a data URL SVGImage with a <foreignObject>
+        https://bugs.webkit.org/show_bug.cgi?id=180301
+
+        Reviewed by Dean Jackson.
+
+        Don't taint the canvas if it draws a data URL SVGImage with a <foreignObject>.
+        There should not be a cross-origin data leak in this case.
+
+        Tests: svg/as-image/svg-canvas-data-url-svg-with-feimage-not-tainted.html
+               svg/as-image/svg-canvas-data-url-svg-with-foreign-object-not-tainted.html
+               svg/as-image/svg-canvas-data-url-svg-with-image-not-tainted.html
+
+        * html/ImageBitmap.cpp:
+        (WebCore::taintsOrigin):
+        * html/canvas/CanvasRenderingContext.cpp:
+        (WebCore::CanvasRenderingContext::wouldTaintOrigin):
+
 2018-01-08  Don Olmstead  <don.olmstead@sony.com>
 
         Simplify platform checks in Graphics Context
