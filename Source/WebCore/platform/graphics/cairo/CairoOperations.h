@@ -134,16 +134,16 @@ void strokeRect(PlatformContextCairo&, const FloatRect&, float, const StrokeSour
 void strokePath(PlatformContextCairo&, const Path&, const StrokeSource&, GraphicsContext&);
 void clearRect(PlatformContextCairo&, const FloatRect&);
 
-void drawGlyphs(PlatformContextCairo&, const GraphicsContextState&, const FillSource&, const StrokeSource&, const ShadowBlurUsage&, const FloatPoint&, cairo_scaled_font_t*, double, const Vector<cairo_glyph_t>&, float, GraphicsContext&);
+void drawGlyphs(PlatformContextCairo&, const FillSource&, const StrokeSource&, const ShadowBlurUsage&, const FloatPoint&, cairo_scaled_font_t*, double, const Vector<cairo_glyph_t>&, float, TextDrawingModeFlags, float, const FloatSize&, const Color&, GraphicsContext&);
 
 void drawNativeImage(PlatformContextCairo&, cairo_surface_t*, const FloatRect&, const FloatRect&, CompositeOperator, BlendMode, ImageOrientation, GraphicsContext&);
 void drawPattern(PlatformContextCairo&, cairo_surface_t*, const IntSize&, const FloatRect&, const FloatRect&, const AffineTransform&, const FloatPoint&, CompositeOperator, BlendMode);
 
-void drawRect(PlatformContextCairo&, const FloatRect&, float, const GraphicsContextState&);
-void drawLine(PlatformContextCairo&, const FloatPoint&, const FloatPoint&, const GraphicsContextState&);
+void drawRect(PlatformContextCairo&, const FloatRect&, float, const Color&, StrokeStyle, const Color&);
+void drawLine(PlatformContextCairo&, const FloatPoint&, const FloatPoint&, StrokeStyle, const Color&, float, bool);
 void drawLinesForText(PlatformContextCairo&, const FloatPoint&, const DashArray&, bool, bool, const Color&, float);
 void drawLineForDocumentMarker(PlatformContextCairo&, const FloatPoint&, float, GraphicsContext::DocumentMarkerLineStyle);
-void drawEllipse(PlatformContextCairo&, const FloatRect&, const GraphicsContextState&);
+void drawEllipse(PlatformContextCairo&, const FloatRect&, const Color&, StrokeStyle, const Color&, float);
 
 void drawFocusRing(PlatformContextCairo&, const Path&, float, const Color&);
 void drawFocusRing(PlatformContextCairo&, const Vector<FloatRect>&, float, const Color&);

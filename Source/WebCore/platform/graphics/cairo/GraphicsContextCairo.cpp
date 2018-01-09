@@ -127,7 +127,8 @@ void GraphicsContext::drawRect(const FloatRect& rect, float borderThickness)
 
     ASSERT(!rect.isEmpty());
     ASSERT(hasPlatformContext());
-    Cairo::drawRect(*platformContext(), rect, borderThickness, state());
+    auto& state = this->state();
+    Cairo::drawRect(*platformContext(), rect, borderThickness, state.fillColor, state.strokeStyle, state.strokeColor);
 }
 
 void GraphicsContext::drawNativeImage(const NativeImagePtr& image, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& srcRect, CompositeOperator compositeOperator, BlendMode blendMode, ImageOrientation orientation)
@@ -159,7 +160,8 @@ void GraphicsContext::drawLine(const FloatPoint& point1, const FloatPoint& point
     }
 
     ASSERT(hasPlatformContext());
-    Cairo::drawLine(*platformContext(), point1, point2, state());
+    auto& state = this->state();
+    Cairo::drawLine(*platformContext(), point1, point2, state.strokeStyle, state.strokeColor, state.strokeThickness, state.shouldAntialias);
 }
 
 // This method is only used to draw the little circles used in lists.
@@ -174,7 +176,8 @@ void GraphicsContext::drawEllipse(const FloatRect& rect)
     }
 
     ASSERT(hasPlatformContext());
-    Cairo::drawEllipse(*platformContext(), rect, state());
+    auto& state = this->state();
+    Cairo::drawEllipse(*platformContext(), rect, state.fillColor, state.strokeStyle, state.strokeColor, state.strokeThickness);
 }
 
 void GraphicsContext::fillPath(const Path& path)
