@@ -1,3 +1,13 @@
+2018-01-09  Youenn Fablet  <youenn@apple.com>
+
+        [iOS Debug WK2] Layout Test imported/w3c/web-platform-tests/service-workers/service-worker/register-closed-window.https.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=181087
+        <rdar://problem/36188109>
+
+        Reviewed by Chris Dumez.
+
+        * platform/ios-wk2/TestExpectations: Removed flaky expectation.
+
 2018-01-09  Yacine Bandou  <yacine.bandou_ext@softathome.com>
 
         [EME] Add layout test for clearKey CENC message event

@@ -1,5 +1,18 @@
 2018-01-09  Youenn Fablet  <youenn@apple.com>
 
+        [iOS Debug WK2] Layout Test imported/w3c/web-platform-tests/service-workers/service-worker/register-closed-window.https.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=181087
+        <rdar://problem/36188109>
+
+        Reviewed by Chris Dumez.
+
+        Updated test to get a more deterministic output.
+
+        * web-platform-tests/service-workers/service-worker/register-closed-window.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/resources/register-closed-window-iframe.html:
+
+2018-01-09  Youenn Fablet  <youenn@apple.com>
+
         Add CSP support to service workers
         https://bugs.webkit.org/show_bug.cgi?id=181385
 
