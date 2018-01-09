@@ -1,3 +1,33 @@
+2018-01-09  Antoine Quint  <graouts@apple.com>
+
+        Refactor timing function solving code
+        https://bugs.webkit.org/show_bug.cgi?id=181428
+
+        Reviewed by Dean Jackson.
+
+        We have duplicated code to solve "cubic" and "steps" timing functions in AnimationBase and TextureMapperAnimation,
+        and we will soon need similar code to deal with timing functions in Web Animations. We move this code into TimingFunction
+        with a single transformTime() function that can be called directly on the timing function rather than having callers
+        figure out what type timing functions are to solve them.
+
+        No test as there shouldn't be any behavior change.
+
+        * page/animation/AnimationBase.cpp:
+        (WebCore::AnimationBase::progress const):
+        (WebCore::solveEpsilon): Deleted.
+        (WebCore::solveCubicBezierFunction): Deleted.
+        (WebCore::solveStepsFunction): Deleted.
+        (WebCore::solveSpringFunction): Deleted.
+        * platform/animation/TimingFunction.cpp:
+        (WebCore::TimingFunction::transformTime const):
+        * platform/animation/TimingFunction.h:
+        * platform/graphics/texmap/TextureMapperAnimation.cpp:
+        (WebCore::TextureMapperAnimation::apply):
+        (WebCore::solveEpsilon): Deleted.
+        (WebCore::solveCubicBezierFunction): Deleted.
+        (WebCore::solveStepsFunction): Deleted.
+        (WebCore::applyTimingFunction): Deleted.
+
 2018-01-09  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Unreviewed, silence -Wunused-parameter warning

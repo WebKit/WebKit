@@ -21,7 +21,6 @@
 #include "TextureMapperAnimation.h"
 
 #include "LayoutSize.h"
-#include "UnitBezier.h"
 #include <wtf/CurrentTime.h>
 
 namespace WebCore {
@@ -107,38 +106,6 @@ static float applyOpacityAnimation(float fromOpacity, float toOpacity, double pr
         return fromOpacity;
 
     return fromOpacity + progress * (toOpacity - fromOpacity);
-}
-
-static inline double solveEpsilon(double duration)
-{
-    return 1.0 / (200.0 * duration);
-}
-
-static inline double solveCubicBezierFunction(double p1x, double p1y, double p2x, double p2y, double t, double duration)
-{
-    return UnitBezier(p1x, p1y, p2x, p2y).solve(t, solveEpsilon(duration));
-}
-
-static inline double solveStepsFunction(int numSteps, bool stepAtStart, double t)
-{
-    if (stepAtStart)
-        return std::min(1.0, (floor(numSteps * t) + 1) / numSteps);
-    return floor(numSteps * t) / numSteps;
-}
-
-static inline float applyTimingFunction(const TimingFunction& timingFunction, float progress, double duration)
-{
-    if (timingFunction.isCubicBezierTimingFunction()) {
-        auto& ctf = static_cast<const CubicBezierTimingFunction&>(timingFunction);
-        return solveCubicBezierFunction(ctf.x1(), ctf.y1(), ctf.x2(), ctf.y2(), progress, duration);
-    }
-
-    if (timingFunction.isStepsTimingFunction()) {
-        auto& stf = static_cast<const StepsTimingFunction&>(timingFunction);
-        return solveStepsFunction(stf.numberOfSteps(), stf.stepAtStart(), double(progress));
-    }
-
-    return progress;
 }
 
 static TransformationMatrix applyTransformAnimation(const TransformOperations& from, const TransformOperations& to, double progress, const FloatSize& boxSize, bool listsMatch)
@@ -252,7 +219,7 @@ void TextureMapperAnimation::apply(Client& client)
     }
     if (m_keyframes.size() == 2) {
         auto& timingFunction = timingFunctionForAnimationValue(m_keyframes.at(0), *m_animation);
-        normalizedValue = applyTimingFunction(timingFunction, normalizedValue, m_animation->duration());
+        normalizedValue = timingFunction.transformTime(normalizedValue, m_animation->duration());
         applyInternal(client, m_keyframes.at(0), m_keyframes.at(1), normalizedValue);
         return;
     }
@@ -265,7 +232,7 @@ void TextureMapperAnimation::apply(Client& client)
 
         normalizedValue = (normalizedValue - from.keyTime()) / (to.keyTime() - from.keyTime());
         auto& timingFunction = timingFunctionForAnimationValue(from, *m_animation);
-        normalizedValue = applyTimingFunction(timingFunction, normalizedValue, m_animation->duration());
+        normalizedValue = timingFunction.transformTime(normalizedValue, m_animation->duration());
         applyInternal(client, from, to, normalizedValue);
         break;
     }

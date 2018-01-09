@@ -26,6 +26,8 @@
 #include "config.h"
 #include "TimingFunction.h"
 
+#include "SpringSolver.h"
+#include "UnitBezier.h"
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
@@ -53,6 +55,35 @@ TextStream& operator<<(TextStream& ts, const TimingFunction& timingFunction)
     }
     }
     return ts;
+}
+
+double TimingFunction::transformTime(double inputTime, double duration) const
+{
+    switch (m_type) {
+    case TimingFunction::CubicBezierFunction: {
+        auto& function = *static_cast<const CubicBezierTimingFunction*>(this);
+        // The epsilon value we pass to UnitBezier::solve given that the animation is going to run over |dur| seconds. The longer the
+        // animation, the more precision we need in the timing function result to avoid ugly discontinuities.
+        auto epsilon = 1.0 / (200.0 * duration);
+        return UnitBezier(function.x1(), function.y1(), function.x2(), function.y2()).solve(inputTime, epsilon);
+    }
+    case TimingFunction::StepsFunction: {
+        auto& function = *static_cast<const StepsTimingFunction*>(this);
+        auto numberOfSteps = function.numberOfSteps();
+        if (function.stepAtStart())
+            return std::min(1.0, (std::floor(numberOfSteps * inputTime) + 1) / numberOfSteps);
+        return std::floor(numberOfSteps * inputTime) / numberOfSteps;
+    }
+    case TimingFunction::SpringFunction: {
+        auto& function = *static_cast<const SpringTimingFunction*>(this);
+        return SpringSolver(function.mass(), function.stiffness(), function.damping(), function.initialVelocity()).solve(inputTime * duration);
+    }
+    case TimingFunction::LinearFunction:
+        return inputTime;
+    }
+
+    ASSERT_NOT_REACHED();
+    return 0;
 }
 
 } // namespace WebCore

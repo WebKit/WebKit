@@ -40,41 +40,11 @@
 #include "RenderBox.h"
 #include "RenderStyle.h"
 #include "RenderView.h"
-#include "SpringSolver.h"
-#include "UnitBezier.h"
 #include <algorithm>
 #include <wtf/CurrentTime.h>
 #include <wtf/Ref.h>
 
 namespace WebCore {
-
-// The epsilon value we pass to UnitBezier::solve given that the animation is going to run over |dur| seconds. The longer the
-// animation, the more precision we need in the timing function result to avoid ugly discontinuities.
-static inline double solveEpsilon(double duration)
-{
-    return 1.0 / (200.0 * duration);
-}
-
-static inline double solveCubicBezierFunction(double p1x, double p1y, double p2x, double p2y, double t, double duration)
-{
-    // Convert from input time to parametric value in curve, then from
-    // that to output time.
-    UnitBezier bezier(p1x, p1y, p2x, p2y);
-    return bezier.solve(t, solveEpsilon(duration));
-}
-
-static inline double solveStepsFunction(int numSteps, bool stepAtStart, double t)
-{
-    if (stepAtStart)
-        return std::min(1.0, (floor(numSteps * t) + 1) / numSteps);
-    return floor(numSteps * t) / numSteps;
-}
-
-static inline double solveSpringFunction(double mass, double stiffness, double damping, double initialVelocity, double t, double duration)
-{
-    SpringSolver solver(mass, stiffness, damping, initialVelocity);
-    return solver.solve(t * duration);
-}
 
 AnimationBase::AnimationBase(const Animation& animation, Element& element, CompositeAnimation& compositeAnimation)
     : m_element(&element)
@@ -683,25 +653,7 @@ double AnimationBase::progress(double scale, double offset, const TimingFunction
     if (!timingFunction)
         timingFunction = m_animation->timingFunction();
 
-    switch (timingFunction->type()) {
-    case TimingFunction::CubicBezierFunction: {
-        auto& function = *static_cast<const CubicBezierTimingFunction*>(timingFunction);
-        return solveCubicBezierFunction(function.x1(), function.y1(), function.x2(), function.y2(), fractionalTime, m_animation->duration());
-    }
-    case TimingFunction::StepsFunction: {
-        auto& function = *static_cast<const StepsTimingFunction*>(timingFunction);
-        return solveStepsFunction(function.numberOfSteps(), function.stepAtStart(), fractionalTime);
-    }
-    case TimingFunction::SpringFunction: {
-        auto& function = *static_cast<const SpringTimingFunction*>(timingFunction);
-        return solveSpringFunction(function.mass(), function.stiffness(), function.damping(), function.initialVelocity(), fractionalTime, m_animation->duration());
-    }
-    case TimingFunction::LinearFunction:
-        return fractionalTime;
-    }
-
-    ASSERT_NOT_REACHED();
-    return 0;
+    return timingFunction->transformTime(fractionalTime, m_animation->duration());
 }
 
 void AnimationBase::getTimeToNextEvent(Seconds& time, bool& isLooping) const

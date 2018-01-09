@@ -50,6 +50,8 @@ public:
     virtual bool operator==(const TimingFunction&) const = 0;
     bool operator!=(const TimingFunction& other) const { return !(*this == other); }
 
+    double transformTime(double, double) const;
+
 protected:
     explicit TimingFunction(TimingFunctionType type)
         : m_type(type)
