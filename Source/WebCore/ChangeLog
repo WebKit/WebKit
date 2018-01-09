@@ -1,3 +1,24 @@
+2018-01-09  Antoine Quint  <graouts@apple.com>
+
+        Provide a method to obtain a CSS value from a RenderStyle by CSSPropertyID
+        https://bugs.webkit.org/show_bug.cgi?id=181429
+
+        Reviewed by Antti Koivisto.
+
+        The KeyframeEffect.getKeyframes() method from Web Animations requires that we return all styles applied at a given
+        animation effect keyframe. When we parse keyframes, we create RenderStyle objects that are stored in a KeyframeList,
+        as well as a list of CSSPropertyIDs that are animated. In order to provide the list of animated properties and their
+        values when calling getKeyframes(), we need to be able to read back from the RenderStyle we create. As a first step
+        towards this goal, we factor some code in ComputedStyleExtractor::propertyValue() out into a new method
+        ComputedStyleExtractor::valueForPropertyinStyle() which takes in an explicit RenderStyle.
+
+        No test as this is simply refactoring that doesn't change or add behavior.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::ComputedStyleExtractor::propertyValue):
+        (WebCore::ComputedStyleExtractor::valueForPropertyinStyle):
+        * css/CSSComputedStyleDeclaration.h:
+
 2018-01-09  Youenn Fablet  <youenn@apple.com>
 
         SWClientConnection should not keep references to service worker jobs

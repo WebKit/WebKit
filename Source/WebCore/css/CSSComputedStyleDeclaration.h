@@ -55,6 +55,7 @@ public:
     ComputedStyleExtractor(Element*, bool allowVisitedStyle = false, PseudoId = NOPSEUDO);
 
     RefPtr<CSSValue> propertyValue(CSSPropertyID, EUpdateLayout = UpdateLayout);
+    RefPtr<CSSValue> valueForPropertyinStyle(const RenderStyle&, CSSPropertyID, RenderElement* = nullptr);
     String customPropertyText(const String& propertyName);
     RefPtr<CSSValue> customPropertyValue(const String& propertyName);
 
