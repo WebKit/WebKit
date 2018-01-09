@@ -1,3 +1,12 @@
+2018-01-08  Saam Barati  <sbarati@apple.com>
+
+        Speculative build fix after r226600. We only use clflush on x86 and the `asm volatile` syntax is not available in the Windows build.
+
+        No new tests because this is a build fix.
+
+        * dom/Comment.cpp:
+        (WebCore::Comment::clflushReadLength):
+
 2018-01-08  Michael Saboff  <msaboff@apple.com>
 
         Add a DOM gadget for Spectre testing

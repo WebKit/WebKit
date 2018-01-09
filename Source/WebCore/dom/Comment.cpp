@@ -86,12 +86,14 @@ unsigned Comment::charCodeAt(unsigned index)
 
 void Comment::clflushReadLength()
 {
+#if CPU(X86_64) && !OS(WINDOWS)
     auto clflush = [] (void* ptr) {
         char* ptrToFlush = static_cast<char*>(ptr);
         asm volatile ("clflush %0" :: "m"(*ptrToFlush) : "memory");
     };
 
     clflush(&m_readLength);
+#endif
 }
 
 } // namespace WebCore
