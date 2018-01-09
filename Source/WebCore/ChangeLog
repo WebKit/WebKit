@@ -1,3 +1,25 @@
+2018-01-09  Yacine Bandou  <yacine.bandou_ext@softathome.com>
+
+        [EME] Add the CENC initData support in ClearKey CDM
+        https://bugs.webkit.org/show_bug.cgi?id=180081
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Add the "cenc" initDataType support in ClearKey CDM.
+        Parse the CENC initData and extract the KIDs by following the W3C spec
+        https://www.w3.org/TR/eme-initdata-cenc/#common-system
+
+        Tests: media/encrypted-media/clearKey/clearKey-message-cenc-event.html
+               media/encrypted-media/clearKey/clearKey-message-cenc-event-mse.html
+
+        * platform/encryptedmedia/clearkey/CDMClearKey.cpp:
+        (WebCore::extractKeyidsLocationFromCencInitData):
+        (WebCore::isCencInitData):
+        (WebCore::extractKeyidsFromCencInitData):
+        (WebCore::CDMPrivateClearKey::supportsInitDataType const):
+        (WebCore::CDMPrivateClearKey::supportsInitData const):
+        (WebCore::CDMInstanceClearKey::requestLicense):
+
 2018-01-09  Zan Dobersek  <zdobersek@igalia.com>
 
         [Cairo] Pass state values directly to Cairo operations

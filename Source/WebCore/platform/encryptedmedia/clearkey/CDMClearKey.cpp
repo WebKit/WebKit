@@ -43,6 +43,12 @@
 
 namespace WebCore {
 
+// ClearKey CENC SystemID.
+// https://www.w3.org/TR/eme-initdata-cenc/#common-system
+const uint8_t clearKeyCencSystemId[] = { 0x10, 0x77, 0xef, 0xec, 0xc0, 0xb2, 0x4d, 0x02, 0xac, 0xe3, 0x3c, 0x1e, 0x52, 0xe2, 0xfb, 0x4b };
+const unsigned clearKeyCencSystemIdSize = sizeof(clearKeyCencSystemId);
+const unsigned keyIdSize = 16;
+
 class ClearKeyState {
     using KeyStore = HashMap<String, Vector<CDMInstanceClearKey::Key>>;
 
@@ -140,6 +146,119 @@ static bool parseLicenseReleaseAcknowledgementFormat(const JSON::Object& root)
     return true;
 }
 
+// https://www.w3.org/TR/eme-initdata-cenc/#common-system
+// 4.1 Definition
+// The SystemID is 1077efec-c0b2-4d02-ace3-3c1e52e2fb4b.
+// The PSSH box format is as follows. It follows version 1 of the 'pssh' box as defined in [CENC].
+// pssh = [
+// 0x00, 0x00, 0x00, 0x4c, 0x70, 0x73, 0x73, 0x68, // BMFF box header (76 bytes, 'pssh')
+// 0x01, 0x00, 0x00, 0x00,                         // Full box header (version = 1, flags = 0)
+// 0x10, 0x77, 0xef, 0xec, 0xc0, 0xb2, 0x4d, 0x02, // SystemID
+// 0xac, 0xe3, 0x3c, 0x1e, 0x52, 0xe2, 0xfb, 0x4b,
+// 0x00, 0x00, 0x00, 0x02,                         // KidCount (2)
+// 0x30, 0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, // First KID ("0123456789012345")
+// 0x38, 0x39, 0x30, 0x31, 0x32, 0x33, 0x34, 0x35,
+// 0x41, 0x42, 0x43, 0x44, 0x45, 0x46, 0x47, 0x48, // Second KID ("ABCDEFGHIJKLMNOP")
+// 0x49, 0x4a, 0x4b, 0x4c, 0x4d, 0x4e, 0x4f, 0x50,
+// 0x00, 0x00, 0x00, 0x00,                         // Size of Data (0)
+// ];
+
+// This function extracts the KeyIds count and the location of the first KeyId in initData buffer.
+static std::pair<unsigned, unsigned> extractKeyidsLocationFromCencInitData(const SharedBuffer& initData)
+{
+    std::pair<unsigned, unsigned> keyIdsMap(0, 0);
+
+    // Check the initData size.
+    if (initData.isEmpty() || initData.size() > std::numeric_limits<unsigned>::max())
+        return keyIdsMap;
+
+    const char* data = initData.data();
+    unsigned initDataSize = initData.size();
+    unsigned index = 0;
+    unsigned psshSize = 0;
+
+    // Search in the concatenated or the simple InitData, the ClearKey PSSH.
+    bool foundPssh = false;
+    while (true) {
+
+        // Check the overflow InitData.
+        if (index + 12 + clearKeyCencSystemIdSize >= initDataSize)
+            return keyIdsMap;
+
+        psshSize = data[index + 2] * 256 + data[index + 3];
+
+        // 12 = BMFF box header + Full box header.
+        if (!memcmp(&data[index + 12], clearKeyCencSystemId, clearKeyCencSystemIdSize)) {
+            foundPssh = true;
+            break;
+        }
+        index += psshSize;
+    }
+
+    // Check if the InitData contains the ClearKey PSSH.
+    if (!foundPssh)
+        return keyIdsMap;
+
+    index += (12 + clearKeyCencSystemIdSize); // 12 (BMFF box header + Full box header) + SystemID size.
+
+    // Check the overflow.
+    if (index + 3 >= initDataSize)
+        return keyIdsMap;
+
+    keyIdsMap.first = data[index + 3]; // Read the KeyIdsCount.
+    index += 4; // KeyIdsCount size.
+
+    // Check the overflow.
+    if ((index + (keyIdsMap.first * keyIdSize)) >= initDataSize)
+        return keyIdsMap;
+
+    keyIdsMap.second = index; // The location of the first KeyId in initData.
+
+    return keyIdsMap;
+}
+
+// This function checks if the initData sharedBuffer is a valid CENC initData.
+static bool isCencInitData(const SharedBuffer& initData)
+{
+    std::pair<unsigned, unsigned> keyIdsMap = extractKeyidsLocationFromCencInitData(initData);
+    return ((keyIdsMap.first) && (keyIdsMap.second));
+}
+
+static Ref<SharedBuffer> extractKeyidsFromCencInitData(const SharedBuffer& initData)
+{
+    Ref<SharedBuffer> keyIds = SharedBuffer::create();
+
+    std::pair<unsigned, unsigned> keyIdsMap = extractKeyidsLocationFromCencInitData(initData);
+    unsigned keyIdCount = keyIdsMap.first;
+    unsigned index = keyIdsMap.second;
+
+    // Check if initData is a valid CENC initData.
+    if (!keyIdCount || !index)
+        return keyIds;
+
+    const char* data = initData.data();
+
+    auto object = JSON::Object::create();
+    auto keyIdsArray = JSON::Array::create();
+
+    // Read the KeyId
+    // 9.1.3 License Request Format
+    // This section describes the format of the license request provided to the application via the message attribute of the message event.
+    // The format is a JSON object containing the following members:
+    // "kids"
+    // An array of key IDs. Each element of the array is the base64url encoding of the octet sequence containing the key ID value.
+    for (unsigned i = 0; i < keyIdCount; i++) {
+        String keyId = WTF::base64URLEncode(&data[index], keyIdSize);
+        keyIdsArray->pushString(keyId);
+        index += keyIdSize;
+    }
+
+    object->setArray("kids", WTFMove(keyIdsArray));
+    CString jsonData = object->toJSONString().utf8();
+    keyIds->append(jsonData.data(), jsonData.length());
+    return keyIds;
+}
+
 CDMFactoryClearKey& CDMFactoryClearKey::singleton()
 {
     static NeverDestroyed<CDMFactoryClearKey> s_factory;
@@ -170,8 +289,8 @@ CDMPrivateClearKey::~CDMPrivateClearKey() = default;
 
 bool CDMPrivateClearKey::supportsInitDataType(const AtomicString& initDataType) const
 {
-    // `keyids` is the only supported init data type.
-    return equalLettersIgnoringASCIICase(initDataType, "keyids");
+    // `keyids` and 'cenc' are the only supported init data type.
+    return (equalLettersIgnoringASCIICase(initDataType, "keyids") || equalLettersIgnoringASCIICase(initDataType, "cenc"));
 }
 
 static bool containsPersistentLicenseType(const Vector<CDMSessionType>& types)
@@ -274,15 +393,15 @@ bool CDMPrivateClearKey::supportsSessions() const
 
 bool CDMPrivateClearKey::supportsInitData(const AtomicString& initDataType, const SharedBuffer& initData) const
 {
-    // Fail for init data types other than 'keyids'.
-    if (!equalLettersIgnoringASCIICase(initDataType, "keyids"))
-        return false;
+    // Validate the initData buffer as an JSON object in keyids case.
+    if (equalLettersIgnoringASCIICase(initDataType, "keyids") && parseJSONObject(initData))
+        return true;
 
-    // Validate the initData buffer as an JSON object.
-    if (!parseJSONObject(initData))
-        return false;
+    // Validate the initData buffer as CENC initData.
+    if (equalLettersIgnoringASCIICase(initDataType, "cenc") && isCencInitData(initData))
+        return true;
 
-    return true;
+    return false;
 }
 
 RefPtr<SharedBuffer> CDMPrivateClearKey::sanitizeResponse(const SharedBuffer& response) const
@@ -340,10 +459,13 @@ CDMInstance::SuccessValue CDMInstanceClearKey::setStorageDirectory(const String&
     return storageDirectory.isEmpty() ? Succeeded : Failed;
 }
 
-void CDMInstanceClearKey::requestLicense(LicenseType, const AtomicString&, Ref<SharedBuffer>&& initData, LicenseCallback callback)
+void CDMInstanceClearKey::requestLicense(LicenseType, const AtomicString& initDataType, Ref<SharedBuffer>&& initData, LicenseCallback callback)
 {
     static uint32_t s_sessionIdValue = 0;
     ++s_sessionIdValue;
+
+    if (equalLettersIgnoringASCIICase(initDataType, "cenc"))
+        initData = extractKeyidsFromCencInitData(initData.get());
 
     callOnMainThread(
         [weakThis = m_weakPtrFactory.createWeakPtr(*this), callback = WTFMove(callback), initData = WTFMove(initData), sessionIdValue = s_sessionIdValue]() mutable {
