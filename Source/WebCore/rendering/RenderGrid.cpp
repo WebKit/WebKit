@@ -35,6 +35,7 @@
 #include "LayoutState.h"
 #include "RenderChildIterator.h"
 #include "RenderLayer.h"
+#include "RenderTreeBuilder.h"
 #include "RenderView.h"
 #include <cstdlib>
 #include <wtf/IsoMallocInlines.h>
@@ -72,7 +73,7 @@ RenderGrid::~RenderGrid() = default;
 void RenderGrid::addChild(RenderTreeBuilder& builder, RenderPtr<RenderObject> newChild, RenderObject* beforeChild)
 {
     auto& child = *newChild;
-    RenderBlock::addChild(builder, WTFMove(newChild), beforeChild);
+    builder.insertChildToRenderBlock(*this, WTFMove(newChild), beforeChild);
 
     // Positioned grid items do not take up space or otherwise participate in the layout of the grid,
     // for that reason we don't need to mark the grid as dirty when they are added.

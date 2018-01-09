@@ -298,7 +298,7 @@ RenderObject* RenderMultiColumnFlow::processPossibleSpannerDescendant(RenderObje
         
         // This is a guard to stop an ancestor flow thread from processing the spanner.
         gShiftingSpanner = true;
-        multicolContainer->RenderBlock::addChild(*RenderTreeBuilder::current(), WTFMove(takenDescendant), insertBeforeMulticolChild);
+        RenderTreeBuilder::current()->insertChildToRenderBlock(*multicolContainer, WTFMove(takenDescendant), insertBeforeMulticolChild);
         gShiftingSpanner = false;
         
         // The spanner has now been moved out from the flow thread, but we don't want to
@@ -335,7 +335,7 @@ RenderObject* RenderMultiColumnFlow::processPossibleSpannerDescendant(RenderObje
     auto newSet = createRenderer<RenderMultiColumnSet>(*this, RenderStyle::createAnonymousStyleWithDisplay(multicolContainer->style(), BLOCK));
     newSet->initializeStyle();
     auto& set = *newSet;
-    multicolContainer->RenderBlock::addChild(*RenderTreeBuilder::current(), WTFMove(newSet), insertBeforeMulticolChild);
+    RenderTreeBuilder::current()->insertChildToRenderBlock(*multicolContainer, WTFMove(newSet), insertBeforeMulticolChild);
     invalidateFragments();
 
     // We cannot handle immediate column set siblings at the moment (and there's no need for

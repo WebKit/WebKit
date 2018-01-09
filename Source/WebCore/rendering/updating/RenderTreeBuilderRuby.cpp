@@ -232,7 +232,7 @@ RenderElement& RenderTreeBuilder::Ruby::findOrCreateParentForChild(RenderRubyAsI
         if (!beforeBlock) {
             auto newBlock = createAnonymousRubyInlineBlock(parent);
             beforeBlock = newBlock.get();
-            parent.RenderInline::addChild(m_builder, WTFMove(newBlock), parent.firstChild());
+            m_builder.insertChildToRenderInline(parent, WTFMove(newBlock), parent.firstChild());
         }
         beforeChild = nullptr;
         return *beforeBlock;
@@ -247,7 +247,7 @@ RenderElement& RenderTreeBuilder::Ruby::findOrCreateParentForChild(RenderRubyAsI
         if (!afterBlock) {
             auto newBlock = createAnonymousRubyInlineBlock(parent);
             afterBlock = newBlock.get();
-            parent.RenderInline::addChild(m_builder, WTFMove(newBlock));
+            m_builder.insertChildToRenderInline(parent, WTFMove(newBlock));
         }
         beforeChild = nullptr;
         return *afterBlock;
@@ -276,7 +276,7 @@ RenderElement& RenderTreeBuilder::Ruby::findOrCreateParentForChild(RenderRubyAsI
     if (!lastRun || lastRun->hasRubyText()) {
         auto newRun = RenderRubyRun::staticCreateRubyRun(&parent);
         lastRun = newRun.get();
-        parent.RenderInline::addChild(m_builder, WTFMove(newRun), beforeChild);
+        m_builder.insertChildToRenderInline(parent, WTFMove(newRun), beforeChild);
     }
     beforeChild = nullptr;
     return *lastRun;

@@ -93,7 +93,7 @@ RenderRubyBase* RenderRubyRun::rubyBaseSafe()
     if (!base) {
         auto newBase = createRubyBase();
         base = newBase.get();
-        RenderBlockFlow::addChild(*RenderTreeBuilder::current(), WTFMove(newBase));
+        RenderTreeBuilder::current()->insertChildToRenderBlockFlow(*this, WTFMove(newBase));
     }
     return base;
 }

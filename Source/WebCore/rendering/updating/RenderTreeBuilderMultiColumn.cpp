@@ -86,7 +86,7 @@ void RenderTreeBuilder::MultiColumn::createFragmentedFlow(RenderBlockFlow& flow)
     auto newFragmentedFlow = WebCore::createRenderer<RenderMultiColumnFlow>(flow.document(), RenderStyle::createAnonymousStyleWithDisplay(flow.style(), BLOCK));
     newFragmentedFlow->initializeStyle();
     auto& fragmentedFlow = *newFragmentedFlow;
-    flow.RenderBlock::addChild(m_builder, WTFMove(newFragmentedFlow));
+    m_builder.insertChildToRenderBlock(flow, WTFMove(newFragmentedFlow));
 
     // Reparent children preceding the fragmented flow into the fragmented flow.
     flow.moveChildrenTo(&fragmentedFlow, flow.firstChild(), &fragmentedFlow, RenderBoxModelObject::NormalizeAfterInsertion::Yes);
