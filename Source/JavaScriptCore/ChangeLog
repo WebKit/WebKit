@@ -1,3 +1,18 @@
+2018-01-08  Zan Dobersek  <zdobersek@igalia.com>
+
+        REGRESSION(r225913): about 30 JSC test failures on ARMv7
+        https://bugs.webkit.org/show_bug.cgi?id=181162
+        <rdar://problem/36261349>
+
+        Unreviewed follow-up to r226298. Enable the fast case in
+        DFG::SpeculativeJIT::compileArraySlice() for any 64-bit platform,
+        assuming in good faith that enough GP registers are available on any
+        such configuration. The accompanying comment is adjusted to describe
+        this assumption.
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileArraySlice):
+
 2018-01-08  JF Bastien  <jfbastien@apple.com>
 
         WebAssembly: mask indexed accesses to Table
