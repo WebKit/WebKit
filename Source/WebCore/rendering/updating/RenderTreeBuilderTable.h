@@ -44,6 +44,10 @@ public:
     RenderElement& findOrCreateParentForChild(RenderTableSection& parent, const RenderObject& child, RenderObject*& beforeChild);
     RenderElement& findOrCreateParentForChild(RenderTable& parent, const RenderObject& child, RenderObject*& beforeChild);
 
+    void insertChild(RenderTable& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild);
+    void insertChild(RenderTableSection& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild);
+    void insertChild(RenderTableRow& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild);
+
 private:
     RenderTreeBuilder& m_builder;
 };

@@ -31,7 +31,9 @@
 #include "RenderRuby.h"
 #include "RenderRubyBase.h"
 #include "RenderRubyRun.h"
+#include "RenderTable.h"
 #include "RenderTableRow.h"
+#include "RenderTableSection.h"
 #include "RenderText.h"
 #include "RenderTreeBuilderBlock.h"
 #include "RenderTreeBuilderBlockFlow.h"
@@ -305,6 +307,21 @@ void RenderTreeBuilder::insertChildToSVGRoot(RenderSVGRoot& parent, RenderPtr<Re
 void RenderTreeBuilder::insertChildToSVGText(RenderSVGText& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild)
 {
     svgBuilder().insertChild(parent, WTFMove(child), beforeChild);
+}
+
+void RenderTreeBuilder::insertChildToRenderTable(RenderTable& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild)
+{
+    tableBuilder().insertChild(parent, WTFMove(child), beforeChild);
+}
+
+void RenderTreeBuilder::insertChildToRenderTableSection(RenderTableSection& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild)
+{
+    tableBuilder().insertChild(parent, WTFMove(child), beforeChild);
+}
+
+void RenderTreeBuilder::insertChildToRenderTableRow(RenderTableRow& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild)
+{
+    tableBuilder().insertChild(parent, WTFMove(child), beforeChild);
 }
 
 void RenderTreeBuilder::splitFlow(RenderInline& parent, RenderObject* beforeChild, RenderPtr<RenderBlock> newBlockBox, RenderPtr<RenderObject> child, RenderBoxModelObject* oldCont)

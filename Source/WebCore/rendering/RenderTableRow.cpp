@@ -113,19 +113,16 @@ const BorderValue& RenderTableRow::borderAdjoiningEndCell(const RenderTableCell&
 
 void RenderTableRow::addChild(RenderTreeBuilder& builder, RenderPtr<RenderObject> child, RenderObject* beforeChild)
 {
-    if (beforeChild && beforeChild->parent() != this)
-        beforeChild = builder.splitAnonymousBoxesAroundChild(*this, beforeChild);    
+    auto& childToAdd = *child;
+    builder.insertChildToRenderTableRow(*this, WTFMove(child), beforeChild);
 
     // Generated content can result in us having a null section so make sure to null check our parent.
-    if (auto* section = this->section())
-        section->addCell(&downcast<RenderTableCell>(*child), this);
-
-    ASSERT(!beforeChild || is<RenderTableCell>(*beforeChild));
-    RenderBox::addChild(builder, WTFMove(child), beforeChild);
-
-    if (beforeChild || nextRow())
-        section()->setNeedsCellRecalc();
-    if (RenderTable* table = this->table())
+    if (auto* section = this->section()) {
+        section->addCell(&downcast<RenderTableCell>(childToAdd), this);
+        if (beforeChild || nextRow())
+            section->setNeedsCellRecalc();
+    }
+    if (auto* table = this->table())
         table->invalidateCollapsedBorders();
 }
 

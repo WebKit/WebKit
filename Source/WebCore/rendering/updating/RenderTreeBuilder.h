@@ -34,6 +34,9 @@ class RenderSVGContainer;
 class RenderSVGInline;
 class RenderSVGRoot;
 class RenderSVGText;
+class RenderTable;
+class RenderTableRow;
+class RenderTableSection;
 class RenderTreeUpdater;
 
 class RenderTreeBuilder {
@@ -60,6 +63,9 @@ public:
     void insertChildToSVGInline(RenderSVGInline& parent, RenderPtr<RenderObject>, RenderObject* beforeChild = nullptr);
     void insertChildToSVGRoot(RenderSVGRoot& parent, RenderPtr<RenderObject>, RenderObject* beforeChild = nullptr);
     void insertChildToSVGText(RenderSVGText& parent, RenderPtr<RenderObject>, RenderObject* beforeChild = nullptr);
+    void insertChildToRenderTable(RenderTable& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild = nullptr);
+    void insertChildToRenderTableSection(RenderTableSection& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild = nullptr);
+    void insertChildToRenderTableRow(RenderTableRow& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild = nullptr);
 
     void makeChildrenNonInline(RenderBlock& parent, RenderObject* insertionPoint = nullptr);
     RenderObject* splitAnonymousBoxesAroundChild(RenderBox& parent, RenderObject* beforeChild);

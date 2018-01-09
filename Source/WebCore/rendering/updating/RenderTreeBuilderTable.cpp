@@ -161,4 +161,30 @@ RenderElement& RenderTreeBuilder::Table::findOrCreateParentForChild(RenderTable&
     return section;
 }
 
+void RenderTreeBuilder::Table::insertChild(RenderTableRow& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild)
+{
+    if (beforeChild && beforeChild->parent() != &parent)
+        beforeChild = m_builder.splitAnonymousBoxesAroundChild(parent, beforeChild);
+
+    ASSERT(!beforeChild || is<RenderTableCell>(*beforeChild));
+    parent.RenderBox::addChild(m_builder, WTFMove(child), beforeChild);
+}
+
+void RenderTreeBuilder::Table::insertChild(RenderTableSection& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild)
+{
+    if (beforeChild && beforeChild->parent() != &parent)
+        beforeChild = m_builder.splitAnonymousBoxesAroundChild(parent, beforeChild);
+
+    ASSERT(!beforeChild || is<RenderTableRow>(*beforeChild));
+    parent.RenderBox::addChild(m_builder, WTFMove(child), beforeChild);
+}
+
+void RenderTreeBuilder::Table::insertChild(RenderTable& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild)
+{
+    if (beforeChild && beforeChild->parent() != &parent)
+        beforeChild = m_builder.splitAnonymousBoxesAroundChild(parent, beforeChild);
+
+    parent.RenderBox::addChild(m_builder, WTFMove(child), beforeChild);
+}
+
 }

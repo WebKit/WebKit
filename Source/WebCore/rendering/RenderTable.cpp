@@ -169,10 +169,7 @@ void RenderTable::addChild(RenderTreeBuilder& builder, RenderPtr<RenderObject> c
     if (is<RenderTableSection>(*child))
         setNeedsSectionRecalc();
 
-    if (beforeChild && beforeChild->parent() != this)
-        beforeChild = builder.splitAnonymousBoxesAroundChild(*this, beforeChild);
-
-    RenderBox::addChild(builder, WTFMove(child), beforeChild);
+    builder.insertChildToRenderTable(*this, WTFMove(child), beforeChild);
 }
 
 void RenderTable::addCaption(RenderTableCaption& caption)
