@@ -1193,12 +1193,10 @@ void FrameLoader::loadFrameRequest(FrameLoadRequest&& request, Event* event, For
         referrer = String();
 
     FrameLoadType loadType;
-    if (request.resourceRequest().cachePolicy() == RefreshAnyCacheData)
+    if (request.resourceRequest().cachePolicy() == ReloadIgnoringCacheData)
         loadType = FrameLoadType::Reload;
     else if (request.lockBackForwardList() == LockBackForwardList::Yes)
         loadType = FrameLoadType::RedirectWithLockedBackForwardList;
-    else if (request.resourceRequest().cachePolicy() == ReloadIgnoringCacheData)
-        loadType = FrameLoadType::ReloadFromOrigin;
     else
         loadType = FrameLoadType::Standard;
 
@@ -1283,7 +1281,7 @@ void FrameLoader::loadURL(FrameLoadRequest&& frameLoadRequest, const String& ref
 
     addExtraFieldsToRequest(request, newLoadType, true);
     if (isReload(newLoadType))
-        request.setCachePolicy(RefreshAnyCacheData);
+        request.setCachePolicy(ReloadIgnoringCacheData);
 
     ASSERT(newLoadType != FrameLoadType::Same);
 
@@ -1418,7 +1416,7 @@ void FrameLoader::load(DocumentLoader* newDocumentLoader)
     FrameLoadType type;
 
     if (shouldTreatURLAsSameAsCurrent(newDocumentLoader->originalRequest().url())) {
-        r.setCachePolicy(RefreshAnyCacheData);
+        r.setCachePolicy(ReloadIgnoringCacheData);
         type = FrameLoadType::Same;
     } else if (shouldTreatURLAsSameAsCurrent(newDocumentLoader->unreachableURL()) && m_loadType == FrameLoadType::Reload)
         type = FrameLoadType::Reload;
@@ -1643,7 +1641,8 @@ void FrameLoader::reload(OptionSet<ReloadOption> options)
     
     ResourceRequest& request = loader->request();
 
-    request.setCachePolicy(RefreshAnyCacheData);
+    // FIXME: We don't have a mechanism to revalidate the main resource without reloading at the moment.
+    request.setCachePolicy(ReloadIgnoringCacheData);
 
     // If we're about to re-post, set up action so the application can warn the user.
     if (request.httpMethod() == "POST")
@@ -2615,13 +2614,13 @@ ResourceRequestCachePolicy FrameLoader::defaultRequestCachingPolicy(const Resour
 
     if (isMainResource) {
         if (isReload(loadType) || request.isConditional())
-            return loadType == FrameLoadType::ReloadFromOrigin ? ReloadIgnoringCacheData : RefreshAnyCacheData;
+            return ReloadIgnoringCacheData;
 
         return UseProtocolCachePolicy;
     }
 
     if (request.isConditional())
-        return RefreshAnyCacheData;
+        return ReloadIgnoringCacheData;
 
     if (documentLoader()->isLoadingInAPISense()) {
         // If we inherit cache policy from a main resource, we use the DocumentLoader's
@@ -3479,10 +3478,8 @@ void FrameLoader::loadDifferentDocumentItem(HistoryItem& item, FrameLoadType loa
     } else {
         switch (loadType) {
         case FrameLoadType::Reload:
-        case FrameLoadType::ReloadExpiredOnly:
-            request.setCachePolicy(RefreshAnyCacheData);
-            break;
         case FrameLoadType::ReloadFromOrigin:
+        case FrameLoadType::ReloadExpiredOnly:
             request.setCachePolicy(ReloadIgnoringCacheData);
             break;
         case FrameLoadType::Back:
