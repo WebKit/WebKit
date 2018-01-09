@@ -1,5 +1,17 @@
 2018-01-08  Alex Christensen  <achristensen@webkit.org>
 
+        Add WKNavigationDelegate SPI exposing WebProcess crash reason
+        https://bugs.webkit.org/show_bug.cgi?id=181410
+        <rdar://problem/36167199>
+
+        Reviewed by Wenson Hsieh.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/Navigation.mm:
+        (-[CrashReasonDelegate _webView:webContentProcessDidTerminateWithReason:]):
+        (TEST):
+
+2018-01-08  Alex Christensen  <achristensen@webkit.org>
+
         Add SPI for WKOpenPanelParameters._acceptedMIMETypes and _acceptedFileExtensions
         https://bugs.webkit.org/show_bug.cgi?id=181408
         <rdar://problem/35884960>

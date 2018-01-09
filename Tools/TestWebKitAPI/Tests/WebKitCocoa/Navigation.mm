@@ -144,6 +144,32 @@ TEST(WKNavigation, DidFailProvisionalNavigation)
     TestWebKitAPI::Util::run(&isDone);
 }
 
+@interface CrashReasonDelegate : NSObject <WKNavigationDelegate>
+@end
+
+@implementation CrashReasonDelegate
+
+- (void)_webView:(WKWebView *)webView webContentProcessDidTerminateWithReason:(_WKProcessTerminationReason)reason
+{
+    EXPECT_EQ(reason, _WKProcessTerminationReasonRequestedByClient);
+    isDone = true;
+}
+
+@end
+
+TEST(WKNavigation, CrashReason)
+{
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+    
+    auto delegate = adoptNS([[CrashReasonDelegate alloc] init]);
+    [webView setNavigationDelegate:delegate.get()];
+    
+    [webView loadHTMLString:@"<html>start the web process</html>" baseURL:[NSURL URLWithString:@"https://webkit.org/"]];
+    [webView _killWebContentProcessAndResetState];
+    
+    TestWebKitAPI::Util::run(&isDone);
+}
+
 @interface DecidePolicyForPageCacheNavigationDelegate : NSObject <WKNavigationDelegate>
 @property (nonatomic) BOOL decidedPolicyForBackForwardNavigation;
 @end

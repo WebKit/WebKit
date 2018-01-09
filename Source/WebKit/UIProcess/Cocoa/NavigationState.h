@@ -198,6 +198,7 @@ private:
         bool webViewRenderingProgressDidChange : 1;
         bool webViewDidReceiveAuthenticationChallengeCompletionHandler : 1;
         bool webViewWebContentProcessDidTerminate : 1;
+        bool webViewWebContentProcessDidTerminateWithReason : 1;
         bool webViewCanAuthenticateAgainstProtectionSpace : 1;
         bool webViewDidReceiveAuthenticationChallenge : 1;
         bool webViewWebProcessDidCrash : 1;

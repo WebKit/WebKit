@@ -1,5 +1,22 @@
 2018-01-08  Alex Christensen  <achristensen@webkit.org>
 
+        Add WKNavigationDelegate SPI exposing WebProcess crash reason
+        https://bugs.webkit.org/show_bug.cgi?id=181410
+        <rdar://problem/36167199>
+
+        Reviewed by Wenson Hsieh.
+
+        We exposed it in the C SPI.
+
+        * UIProcess/API/Cocoa/WKNavigationDelegatePrivate.h:
+        * UIProcess/Cocoa/NavigationState.h:
+        * UIProcess/Cocoa/NavigationState.mm:
+        (WebKit::NavigationState::setNavigationDelegate):
+        (WebKit::toWKProcessTerminationReason):
+        (WebKit::NavigationState::NavigationClient::processDidTerminate):
+
+2018-01-08  Alex Christensen  <achristensen@webkit.org>
+
         Make ObjC SPI equivalent to WKPageNavigationClient.decidePolicyForPluginLoad
         https://bugs.webkit.org/show_bug.cgi?id=181413
         <rdar://problem/36169005>

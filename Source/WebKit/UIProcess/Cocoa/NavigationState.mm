@@ -162,6 +162,7 @@ void NavigationState::setNavigationDelegate(id <WKNavigationDelegate> delegate)
     m_navigationDelegateMethods.webViewRenderingProgressDidChange = [delegate respondsToSelector:@selector(_webView:renderingProgressDidChange:)];
     m_navigationDelegateMethods.webViewDidReceiveAuthenticationChallengeCompletionHandler = [delegate respondsToSelector:@selector(webView:didReceiveAuthenticationChallenge:completionHandler:)];
     m_navigationDelegateMethods.webViewWebContentProcessDidTerminate = [delegate respondsToSelector:@selector(webViewWebContentProcessDidTerminate:)];
+    m_navigationDelegateMethods.webViewWebContentProcessDidTerminateWithReason = [delegate respondsToSelector:@selector(_webView:webContentProcessDidTerminateWithReason:)];
     m_navigationDelegateMethods.webViewCanAuthenticateAgainstProtectionSpace = [delegate respondsToSelector:@selector(_webView:canAuthenticateAgainstProtectionSpace:)];
     m_navigationDelegateMethods.webViewDidReceiveAuthenticationChallenge = [delegate respondsToSelector:@selector(_webView:didReceiveAuthenticationChallenge:)];
     m_navigationDelegateMethods.webViewWebProcessDidCrash = [delegate respondsToSelector:@selector(_webViewWebProcessDidCrash:)];
@@ -939,14 +940,37 @@ void NavigationState::NavigationClient::didReceiveAuthenticationChallenge(WebPag
 #pragma clang diagnostic pop
 }
 
-void NavigationState::NavigationClient::processDidTerminate(WebPageProxy& page, ProcessTerminationReason)
+static _WKProcessTerminationReason wkProcessTerminationReason(ProcessTerminationReason reason)
 {
-    if (!m_navigationState.m_navigationDelegateMethods.webViewWebContentProcessDidTerminate && !m_navigationState.m_navigationDelegateMethods.webViewWebProcessDidCrash)
+    switch (reason) {
+    case ProcessTerminationReason::ExceededMemoryLimit:
+        return _WKProcessTerminationReasonExceededMemoryLimit;
+    case ProcessTerminationReason::ExceededCPULimit:
+        return _WKProcessTerminationReasonExceededCPULimit;
+    case ProcessTerminationReason::RequestedByClient:
+        return _WKProcessTerminationReasonRequestedByClient;
+    case ProcessTerminationReason::Crash:
+        return _WKProcessTerminationReasonCrash;
+    }
+    ASSERT_NOT_REACHED();
+    return _WKProcessTerminationReasonCrash;
+}
+
+void NavigationState::NavigationClient::processDidTerminate(WebPageProxy& page, ProcessTerminationReason reason)
+{
+    if (!m_navigationState.m_navigationDelegateMethods.webViewWebContentProcessDidTerminate
+        && !m_navigationState.m_navigationDelegateMethods.webViewWebContentProcessDidTerminateWithReason
+        && !m_navigationState.m_navigationDelegateMethods.webViewWebProcessDidCrash)
         return;
 
     auto navigationDelegate = m_navigationState.m_navigationDelegate.get();
     if (!navigationDelegate)
         return;
+
+    if (m_navigationState.m_navigationDelegateMethods.webViewWebContentProcessDidTerminateWithReason) {
+        [static_cast<id <WKNavigationDelegatePrivate>>(navigationDelegate.get()) _webView:m_navigationState.m_webView webContentProcessDidTerminateWithReason:wkProcessTerminationReason(reason)];
+        return;
+    }
 
     // We prefer webViewWebContentProcessDidTerminate: over _webViewWebProcessDidCrash:.
     if (m_navigationState.m_navigationDelegateMethods.webViewWebContentProcessDidTerminate) {
@@ -954,8 +978,8 @@ void NavigationState::NavigationClient::processDidTerminate(WebPageProxy& page, 
         return;
     }
 
-    if (m_navigationState.m_navigationDelegateMethods.webViewWebProcessDidCrash)
-        [static_cast<id <WKNavigationDelegatePrivate>>(navigationDelegate.get()) _webViewWebProcessDidCrash:m_navigationState.m_webView];
+    ASSERT(m_navigationState.m_navigationDelegateMethods.webViewWebProcessDidCrash);
+    [static_cast<id <WKNavigationDelegatePrivate>>(navigationDelegate.get()) _webViewWebProcessDidCrash:m_navigationState.m_webView];
 }
 
 void NavigationState::NavigationClient::processDidBecomeResponsive(WebPageProxy& page)
