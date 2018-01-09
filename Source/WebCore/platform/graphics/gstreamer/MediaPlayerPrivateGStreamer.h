@@ -190,6 +190,8 @@ protected:
     mutable MediaTime m_durationAtEOS;
     bool m_paused;
     float m_playbackRate;
+    GstState m_currentState;
+    GstState m_oldState;
     GstState m_requestedState;
     bool m_resetPipeline;
     bool m_seeking;
