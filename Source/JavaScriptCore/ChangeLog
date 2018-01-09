@@ -1,3 +1,38 @@
+2018-01-09  Saam Barati  <sbarati@apple.com>
+
+        Reduce graph size by replacing terminal nodes in blocks that have a ForceOSRExit with Unreachable
+        https://bugs.webkit.org/show_bug.cgi?id=181409
+
+        Reviewed by Keith Miller.
+
+        When I was looking at profiler data for Speedometer, I noticed that one of
+        the hottest functions in Speedometer is around 1100 bytecode operations long.
+        Only about 100 of those bytecode ops ever execute. However, we ended up
+        spending a lot of time compiling basic blocks that never executed. We often
+        plant ForceOSRExit nodes when we parse bytecodes that have a null value profile.
+        This is the case when such a node never executes.
+        
+        This patch makes it so that anytime a block has a ForceOSRExit, we replace its
+        terminal node with an Unreachable node (and remove all nodes after the
+        ForceOSRExit). This will cut down on graph size when such a block dominates
+        other blocks in the CFG. This allows us to get rid of huge chunks of the CFG
+        in certain programs. When doing this transformation, we also insert
+        Flushes/PhantomLocals to ensure we can recover values that are bytecode
+        live-in to the ForceOSRExit.
+        
+        Using ForceOSRExit as the signal for this is a bit of a hack. It definitely
+        does not get rid of all the CFG that it could. If we decide it's worth
+        it, we could use additional inputs into this mechanism. For example, we could
+        profile if a basic block ever executes inside the LLInt/Baseline, and
+        remove parts of the CFG based on that.
+        
+        When running Speedometer with the concurrent JIT turned off, this patch
+        improves DFG/FTL compile times by around 5%.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::addToGraph):
+        (JSC::DFG::ByteCodeParser::parse):
+
 2018-01-09  Mark Lam  <mark.lam@apple.com>
 
         ASSERTION FAILED: pair.second->m_type & PropertyNode::Getter

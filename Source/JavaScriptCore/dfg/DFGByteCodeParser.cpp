@@ -694,7 +694,10 @@ private:
     
     Node* addToGraph(Node* node)
     {
+        m_hasAnyForceOSRExits |= (node->op() == ForceOSRExit);
+
         VERBOSE_LOG("        appended ", node, " ", Graph::opName(node->op()), "\n");
+
         m_currentBlock->append(node);
         if (clobbersExitState(m_graph, node))
             m_exitOK = false;
@@ -1141,6 +1144,7 @@ private:
     
     Instruction* m_currentInstruction;
     bool m_hasDebuggerEnabled;
+    bool m_hasAnyForceOSRExits { false };
 };
 
 BasicBlock* ByteCodeParser::allocateTargetableBlock(unsigned bytecodeIndex)
@@ -6558,6 +6562,67 @@ void ByteCodeParser::parse()
     
     parseCodeBlock();
     linkBlocks(inlineStackEntry.m_unlinkedBlocks, inlineStackEntry.m_blockLinkingTargets);
+
+    if (m_hasAnyForceOSRExits) {
+        InsertionSet insertionSet(m_graph);
+        Operands<VariableAccessData*> mapping(OperandsLike, m_graph.block(0)->variablesAtHead);
+
+        for (BasicBlock* block : m_graph.blocksInNaturalOrder()) {
+            mapping.fill(nullptr);
+            if (validationEnabled()) {
+                // Verify that it's correct to fill mapping with nullptr.
+                for (unsigned i = 0; i < block->variablesAtHead.size(); ++i) {
+                    Node* node = block->variablesAtHead.at(i);
+                    RELEASE_ASSERT(!node);
+                }
+            }
+
+            for (unsigned nodeIndex = 0; nodeIndex < block->size(); ++nodeIndex) {
+                Node* node = block->at(nodeIndex);
+
+                if (node->hasVariableAccessData(m_graph))
+                    mapping.operand(node->local()) = node->variableAccessData();
+
+                if (node->op() == ForceOSRExit) {
+                    NodeOrigin endOrigin = node->origin.withExitOK(true);
+
+                    if (validationEnabled()) {
+                        // This verifies that we don't need to change any of the successors's predecessor
+                        // list after planting the Unreachable below. At this point in the bytecode
+                        // parser, we haven't linked up the predecessor lists yet.
+                        for (BasicBlock* successor : block->successors())
+                            RELEASE_ASSERT(successor->predecessors.isEmpty());
+                    }
+
+                    block->resize(nodeIndex + 1);
+
+                    insertionSet.insertNode(block->size(), SpecNone, ExitOK, endOrigin);
+                    m_graph.forAllLiveInBytecode(endOrigin.semantic, [&] (VirtualRegister operand) {
+                        VariableAccessData* variable = mapping.operand(operand);
+                        if (!variable)
+                            variable = newVariableAccessData(operand);
+
+                        auto op = PhantomLocal;
+                        if ((m_graph.needsScopeRegister() && operand == m_codeBlock->scopeRegister())
+                            || (operand.isArgument() && (operand != virtualRegisterForArgument(0) || m_graph.needsFlushedThis()))) {
+                            op = Flush;
+                        }
+                        insertionSet.insertNode(block->size(), SpecNone, op, endOrigin, OpInfo(variable));
+                    });
+
+                    insertionSet.insertNode(block->size(), SpecNone, Unreachable, endOrigin);
+                    insertionSet.execute(block);
+                    break;
+                }
+            }
+        }
+    } else if (validationEnabled()) {
+        // Ensure our bookkeeping for ForceOSRExit nodes is working.
+        for (BasicBlock* block : m_graph.blocksInNaturalOrder()) {
+            for (Node* node : *block)
+                RELEASE_ASSERT(node->op() != ForceOSRExit);
+        }
+    }
 
     m_graph.determineReachability();
     m_graph.killUnreachableBlocks();
