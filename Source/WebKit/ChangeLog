@@ -1,3 +1,64 @@
+2018-01-08  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Attachment Support] Expose file name and content type of WKAttachment
+        https://bugs.webkit.org/show_bug.cgi?id=181390
+        <rdar://problem/36336837>
+
+        Reviewed by Tim Horton.
+
+        Add support for -[_WKAttachment requestInfo:], which fetches a snapshot of the attachment's state. This API is
+        meant to be a replacement for -requestData: that provides additional metadata about the attachment.
+
+        * Scripts/webkit/messages.py:
+        (headers_for_type):
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::ArgumentCoder<AttachmentInfo>::encode):
+        (IPC::ArgumentCoder<AttachmentInfo>::decode):
+        * Shared/WebCoreArgumentCoders.h:
+
+        Add IPC support for AttachmentInfo. Note that instead of using (encode|decode)SharedBuffer, we send and receive
+        data references to the shared buffer.
+
+        * UIProcess/API/APIAttachment.cpp:
+        (API::Attachment::requestInfo):
+        (API::Attachment::requestData): Deleted.
+        * UIProcess/API/APIAttachment.h:
+
+        Change requestData to requestInfo.
+
+        * UIProcess/API/Cocoa/_WKAttachment.h:
+        * UIProcess/API/Cocoa/_WKAttachment.mm:
+        (-[_WKAttachmentInfo initWithInfo:]):
+        (-[_WKAttachmentInfo data]):
+        (-[_WKAttachmentInfo name]):
+        (-[_WKAttachmentInfo filePath]):
+        (-[_WKAttachmentInfo contentType]):
+        (-[_WKAttachment requestInfo:]):
+        (-[_WKAttachment requestData:]):
+
+        Implement -requestInfo: by calling into APIAttachment, and reimplement -requestData: in terms of -requestInfo:.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::attachmentInfoCallback):
+        (WebKit::WebPageProxy::requestAttachmentInfo):
+        (WebKit::WebPageProxy::sharedBufferCallback): Deleted.
+        (WebKit::WebPageProxy::requestAttachmentData): Deleted.
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+
+        Rename the SharedBufferCallback IPC message to AttachmentInfoCallback, and make it conditional on
+        ATTACHMENT_ELEMENT. Rename requestAttachmentData to requestAttachmentInfo.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::requestAttachmentInfo):
+        (WebKit::WebPage::invokeSharedBufferCallback): Deleted.
+        (WebKit::WebPage::requestAttachmentData): Deleted.
+
+        Rename requestAttachmentData to requestAttachmentInfo and adopt HTMLAttachmentElement::requestInfo.
+
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2018-01-08  Alex Christensen  <achristensen@webkit.org>
 
         Pass around Vector<Ref<WebContextMenuItem>> instead of WKArrayRef or Vector<WebContextMenuItemData>

@@ -64,7 +64,7 @@ public:
 
     RenderAttachment* attachmentRenderer() const;
 
-    WEBCORE_EXPORT void requestData(Function<void(RefPtr<SharedBuffer>&&)>&& callback);
+    WEBCORE_EXPORT void requestInfo(Function<void(const AttachmentInfo&)>&& callback);
     void destroyReader(AttachmentDataReader&);
 
 private:

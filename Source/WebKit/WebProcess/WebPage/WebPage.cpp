@@ -5856,14 +5856,6 @@ void WebPage::storageAccessResponse(bool wasGranted, uint64_t contextId)
 }
 #endif
 
-void WebPage::invokeSharedBufferCallback(RefPtr<SharedBuffer>&& buffer, CallbackID callbackID)
-{
-    if (buffer)
-        send(Messages::WebPageProxy::SharedBufferCallback(IPC::SharedBufferDataReference { buffer.get() }, false, callbackID));
-    else
-        send(Messages::WebPageProxy::SharedBufferCallback({ }, true, callbackID));
-}
-
 #if ENABLE(ATTACHMENT_ELEMENT)
 
 void WebPage::insertAttachment(const String& identifier, const AttachmentDisplayOptions& options, const String& filename, std::optional<String> contentType, const IPC::DataReference& data, CallbackID callbackID)
@@ -5873,19 +5865,16 @@ void WebPage::insertAttachment(const String& identifier, const AttachmentDisplay
     send(Messages::WebPageProxy::VoidCallback(callbackID));
 }
 
-void WebPage::requestAttachmentData(const String& identifier, CallbackID callbackID)
+void WebPage::requestAttachmentInfo(const String& identifier, CallbackID callbackID)
 {
     auto attachment = attachmentElementWithIdentifier(identifier);
     if (!attachment) {
-        invokeSharedBufferCallback({ }, callbackID);
+        send(Messages::WebPageProxy::AttachmentInfoCallback({ }, callbackID));
         return;
     }
 
-    attachment->requestData([callbackID, protectedThis = makeRef(*this), protectedAttachment = WTFMove(attachment)] (RefPtr<SharedBuffer>&& buffer) {
-        if (buffer)
-            protectedThis->invokeSharedBufferCallback(WTFMove(buffer), callbackID);
-        else
-            protectedThis->invokeSharedBufferCallback({ }, callbackID);
+    attachment->requestInfo([callbackID, protectedThis = makeRef(*this), protectedAttachment = WTFMove(attachment)] (const AttachmentInfo& info) {
+        protectedThis->send(Messages::WebPageProxy::AttachmentInfoCallback(info, callbackID));
     });
 }
 

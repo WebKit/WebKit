@@ -5206,22 +5206,21 @@ void WebPageProxy::voidCallback(CallbackID callbackID)
     callback->performCallback();
 }
 
-void WebPageProxy::sharedBufferCallback(const IPC::DataReference& dataReference, bool isNull, CallbackID callbackID)
+#if ENABLE(ATTACHMENT_ELEMENT)
+
+void WebPageProxy::attachmentInfoCallback(const WebCore::AttachmentInfo& info, CallbackID callbackID)
 {
-    auto callback = m_callbacks.take<SharedBufferCallback>(callbackID);
+    auto callback = m_callbacks.take<AttachmentInfoCallback>(callbackID);
     if (!callback) {
         ASSERT_NOT_REACHED();
         return;
     }
 
-    if (isNull) {
-        ASSERT(dataReference.isEmpty());
-        callback->performCallbackWithReturnValue(nullptr);
-        return;
-    }
-
-    callback->performCallbackWithReturnValue(SharedBuffer::create(dataReference.data(), dataReference.size()));
+    MESSAGE_CHECK_URL(info.filePath);
+    callback->performCallbackWithReturnValue(info);
 }
+
+#endif
 
 void WebPageProxy::dataCallback(const IPC::DataReference& dataReference, CallbackID callbackID)
 {
@@ -7237,15 +7236,15 @@ void WebPageProxy::insertAttachment(const String& identifier, const AttachmentDi
     m_process->send(Messages::WebPage::InsertAttachment(identifier, options, filename, contentType, IPC::SharedBufferDataReference { &data }, callbackID), m_pageID);
 }
 
-void WebPageProxy::requestAttachmentData(const String& identifier, Function<void(RefPtr<SharedBuffer>, CallbackBase::Error)>&& callback)
+void WebPageProxy::requestAttachmentInfo(const String& identifier, Function<void(const AttachmentInfo&, CallbackBase::Error)>&& callback)
 {
     if (!isValid()) {
-        callback(nullptr, CallbackBase::Error::OwnerWasInvalidated);
+        callback({ }, CallbackBase::Error::OwnerWasInvalidated);
         return;
     }
 
     auto callbackID = m_callbacks.put(WTFMove(callback), m_process->throttler().backgroundActivityToken());
-    m_process->send(Messages::WebPage::RequestAttachmentData(identifier, callbackID), m_pageID);
+    m_process->send(Messages::WebPage::RequestAttachmentInfo(identifier, callbackID), m_pageID);
 }
 
 void WebPageProxy::setAttachmentDisplayOptions(const String& identifier, AttachmentDisplayOptions options, Function<void(CallbackBase::Error)>&& callback)

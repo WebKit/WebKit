@@ -48,12 +48,12 @@ Attachment::~Attachment()
 {
 }
 
-void Attachment::requestData(Function<void(RefPtr<WebCore::SharedBuffer>, WebKit::CallbackBase::Error)>&& callback)
+void Attachment::requestInfo(Function<void(const WebCore::AttachmentInfo&, WebKit::CallbackBase::Error)>&& callback)
 {
     if (m_webPage)
-        m_webPage->requestAttachmentData(m_identifier, WTFMove(callback));
+        m_webPage->requestAttachmentInfo(m_identifier, WTFMove(callback));
     else
-        callback(nullptr, WebKit::CallbackBase::Error::OwnerWasInvalidated);
+        callback({ }, WebKit::CallbackBase::Error::OwnerWasInvalidated);
 }
 
 void Attachment::setDisplayOptions(WebCore::AttachmentDisplayOptions options, Function<void(WebKit::CallbackBase::Error)>&& callback)

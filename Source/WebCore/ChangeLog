@@ -1,3 +1,44 @@
+2018-01-08  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Attachment Support] Expose file name and content type of WKAttachment
+        https://bugs.webkit.org/show_bug.cgi?id=181390
+        <rdar://problem/36336837>
+
+        Reviewed by Tim Horton.
+
+        Add new structs in AttachmentTypes.h and refactor HTMLAttachmentElement::requestData to requestInfo. See below
+        for more details. Augmented existing API tests in WKAttachmentTests.
+
+        * html/AttachmentTypes.h:
+
+        Add a struct to represent a snapshot of information about an attachment element.
+
+        * html/HTMLAttachmentElement.cpp:
+        (WebCore::HTMLAttachmentElement::requestInfo):
+        (WebCore::HTMLAttachmentElement::requestData): Deleted.
+        * html/HTMLAttachmentElement.h:
+
+        Change requestData to requestInfo. Instead of fetching and delivering data via callback, requestInfo returns an
+        AttachmentInfo.
+
+        * rendering/RenderThemeIOS.mm:
+        (WebCore::RenderAttachmentInfo::addLine):
+        (WebCore::RenderAttachmentInfo::buildWrappedLines):
+        (WebCore::RenderAttachmentInfo::buildSingleLine):
+        (WebCore::RenderAttachmentInfo::RenderAttachmentInfo):
+        (WebCore::RenderThemeIOS::attachmentBaseline const):
+        (WebCore::paintAttachmentIcon):
+        (WebCore::paintAttachmentText):
+        (WebCore::paintAttachmentProgress):
+        (WebCore::attachmentBorderPath):
+        (WebCore::RenderThemeIOS::paintAttachment):
+        (WebCore::AttachmentInfo::addLine): Deleted.
+        (WebCore::AttachmentInfo::buildWrappedLines): Deleted.
+        (WebCore::AttachmentInfo::buildSingleLine): Deleted.
+        (WebCore::AttachmentInfo::AttachmentInfo): Deleted.
+
+        Rename AttachmentInfo to RenderAttachmentInfo to resolve a name conflict with the new AttachmentInfo struct.
+
 2018-01-08  Saam Barati  <sbarati@apple.com>
 
         Speculative build fix after r226600. We only use clflush on x86 and the `asm volatile` syntax is not available in the Windows build.

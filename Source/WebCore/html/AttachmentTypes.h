@@ -28,8 +28,11 @@
 #if ENABLE(ATTACHMENT_ELEMENT)
 
 #include <wtf/Optional.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
+
+class SharedBuffer;
 
 enum class AttachmentDisplayMode {
     Auto,
@@ -57,6 +60,13 @@ template<class Decoder> inline std::optional<AttachmentDisplayOptions> Attachmen
 
     return {{ mode }};
 }
+
+struct AttachmentInfo {
+    String contentType;
+    String name;
+    String filePath;
+    RefPtr<SharedBuffer> data;
+};
 
 } // namespace WebCore
 

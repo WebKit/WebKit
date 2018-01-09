@@ -89,6 +89,7 @@ class TransformationMatrix;
 class UserStyleSheet;
 class URL;
 
+struct AttachmentInfo;
 struct CacheQueryOptions;
 struct CompositionUnderline;
 struct DictationAlternative;
@@ -688,6 +689,15 @@ template<> struct ArgumentCoder<WebCore::PromisedBlobInfo> {
     static void encode(Encoder&, const WebCore::PromisedBlobInfo&);
     static bool decode(Decoder&, WebCore::PromisedBlobInfo&);
 };
+
+#if ENABLE(ATTACHMENT_ELEMENT)
+
+template<> struct ArgumentCoder<WebCore::AttachmentInfo> {
+    static void encode(Encoder&, const WebCore::AttachmentInfo&);
+    static bool decode(Decoder&, WebCore::AttachmentInfo&);
+};
+
+#endif
 
 } // namespace IPC
 

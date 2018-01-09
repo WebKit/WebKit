@@ -271,13 +271,13 @@ static _WKAttachmentDisplayOptions *displayOptionsWithMode(_WKAttachmentDisplayM
         *error = resultError.autorelease();
 }
 
-- (NSData *)synchronouslyRequestData:(NSError **)error
+- (_WKAttachmentInfo *)synchronouslyRequestInfo:(NSError **)error
 {
-    __block RetainPtr<NSData> result;
+    __block RetainPtr<_WKAttachmentInfo> result;
     __block RetainPtr<NSError> resultError;
     __block bool done = false;
-    [self requestData:^(NSData *data, NSError *error) {
-        result = data;
+    [self requestInfo:^(_WKAttachmentInfo *info, NSError *error) {
+        result = info;
         resultError = error;
         done = true;
     }];
@@ -288,6 +288,11 @@ static _WKAttachmentDisplayOptions *displayOptionsWithMode(_WKAttachmentDisplayM
         *error = resultError.autorelease();
 
     return result.autorelease();
+}
+
+- (NSData *)synchronouslyRequestData:(NSError **)error
+{
+    return [self synchronouslyRequestInfo:error].data;
 }
 
 - (void)synchronouslySetData:(NSData *)data newContentType:(NSString *)newContentType newFilename:(NSString *)newFilename error:(NSError **)error
@@ -307,13 +312,14 @@ static _WKAttachmentDisplayOptions *displayOptionsWithMode(_WKAttachmentDisplayM
 
 - (void)expectRequestedDataToBe:(NSData *)expectedData
 {
-    NSError *dataRequestError = nil;
-    NSData *observedData = [self synchronouslyRequestData:&dataRequestError];
-    BOOL observedDataIsEqualToExpectedData = [observedData isEqualToData:expectedData] || observedData == expectedData;
+    NSError *requestError = nil;
+    _WKAttachmentInfo *info = [self synchronouslyRequestInfo:&requestError];
+
+    BOOL observedDataIsEqualToExpectedData = [info.data isEqualToData:expectedData] || info.data == expectedData;
     EXPECT_TRUE(observedDataIsEqualToExpectedData);
     if (!observedDataIsEqualToExpectedData) {
-        NSLog(@"Expected data: %@ but observed: %@ for %@", [expectedData shortDescription], [observedData shortDescription], self);
-        NSLog(@"Observed error: %@ while reading data for %@", dataRequestError, self);
+        NSLog(@"Expected data: %@ but observed: %@ for %@", [expectedData shortDescription], [info.data shortDescription], self);
+        NSLog(@"Observed error: %@ while reading data for %@", requestError, self);
     }
 }
 
@@ -430,7 +436,11 @@ TEST(WKAttachmentTests, AttachmentElementInsertion)
         observer.expectAttachmentUpdates(@[ ], @[ firstAttachment.get() ]);
     }
 
-    [firstAttachment expectRequestedDataToBe:testHTMLData()];
+    _WKAttachmentInfo *info = [firstAttachment synchronouslyRequestInfo:nil];
+    EXPECT_TRUE([info.data isEqualToData:testHTMLData()]);
+    EXPECT_TRUE([info.contentType isEqualToString:@"text/html"]);
+    EXPECT_TRUE([info.name isEqualToString:@"foo"]);
+    EXPECT_EQ(info.filePath.length, 0U);
 
     {
         ObserveAttachmentUpdatesForScope scope(webView.get());
@@ -465,7 +475,12 @@ TEST(WKAttachmentTests, AttachmentUpdatesWhenInsertingAndDeletingNewline)
     [webView expectUpdatesAfterCommand:@"InsertParagraph" withArgument:nil expectedRemovals:@[] expectedInsertions:@[]];
 
     [webView expectUpdatesAfterCommand:@"DeleteBackward" withArgument:nil expectedRemovals:@[] expectedInsertions:@[]];
-    [attachment expectRequestedDataToBe:testHTMLData()];
+
+    _WKAttachmentInfo *info = [attachment synchronouslyRequestInfo:nil];
+    EXPECT_TRUE([info.data isEqualToData:testHTMLData()]);
+    EXPECT_TRUE([info.contentType isEqualToString:@"text/plain"]);
+    EXPECT_TRUE([info.name isEqualToString:@"foo.txt"]);
+    EXPECT_EQ(info.filePath.length, 0U);
 
     [webView expectUpdatesAfterCommand:@"DeleteForward" withArgument:nil expectedRemovals:@[attachment.get()] expectedInsertions:@[]];
     [attachment expectRequestedDataToBe:nil];
@@ -623,13 +638,13 @@ TEST(WKAttachmentTests, MultipleSimultaneousAttachmentDataRequests)
     __block RetainPtr<NSData> dataForFirstRequest;
     __block RetainPtr<NSData> dataForSecondRequest;
     __block bool done = false;
-    [attachment requestData:^(NSData *data, NSError *error) {
+    [attachment requestInfo:^(_WKAttachmentInfo *info, NSError *error) {
         EXPECT_TRUE(!error);
-        dataForFirstRequest = data;
+        dataForFirstRequest = info.data;
     }];
-    [attachment requestData:^(NSData *data, NSError *error) {
+    [attachment requestInfo:^(_WKAttachmentInfo *info, NSError *error) {
         EXPECT_TRUE(!error);
-        dataForSecondRequest = data;
+        dataForSecondRequest = info.data;
         done = true;
     }];
 
@@ -1022,6 +1037,11 @@ TEST(WKAttachmentTestsMac, InsertPastedFileURLsAsAttachments)
     EXPECT_WK_STREQ("test.pdf", [webView stringByEvaluatingJavaScript:@"document.querySelectorAll('attachment')[0].getAttribute('title')"]);
     EXPECT_WK_STREQ("image/png", [webView stringByEvaluatingJavaScript:@"document.querySelectorAll('attachment')[1].getAttribute('type')"]);
     EXPECT_WK_STREQ("icon.png", [webView stringByEvaluatingJavaScript:@"document.querySelectorAll('attachment')[1].getAttribute('title')"]);
+
+    for (_WKAttachment *attachment in insertedAttachments.get()) {
+        _WKAttachmentInfo *info = [attachment synchronouslyRequestInfo:nil];
+        EXPECT_GT(info.filePath.length, 0U);
+    }
 
     {
         ObserveAttachmentUpdatesForScope observer(webView.get());

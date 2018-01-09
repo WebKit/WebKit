@@ -296,12 +296,16 @@ void HTMLAttachmentElement::populateShadowRootIfNecessary()
     }
 }
 
-void HTMLAttachmentElement::requestData(Function<void(RefPtr<SharedBuffer>&&)>&& callback)
+void HTMLAttachmentElement::requestInfo(Function<void(const AttachmentInfo&)>&& callback)
 {
-    if (m_file)
-        m_attachmentReaders.append(AttachmentDataReader::create(*this, WTFMove(callback)));
-    else
-        callback(nullptr);
+    if (!m_file) {
+        callback({ });
+        return;
+    }
+
+    m_attachmentReaders.append(AttachmentDataReader::create(*this, [protectedFile = makeRef(*m_file), callback = WTFMove(callback)] (RefPtr<SharedBuffer>&& data) {
+        callback({ protectedFile->type(), protectedFile->name(), protectedFile->path(), WTFMove(data) });
+    }));
 }
 
 void HTMLAttachmentElement::destroyReader(AttachmentDataReader& finishedReader)

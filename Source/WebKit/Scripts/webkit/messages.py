@@ -368,6 +368,7 @@ def headers_for_type(type):
         'String': ['<wtf/text/WTFString.h>'],
         'PAL::SessionID': ['<pal/SessionID.h>'],
         'WebCore::AttachmentDisplayOptions': ['<WebCore/AttachmentTypes.h>'],
+        'WebCore::AttachmentInfo': ['<WebCore/AttachmentTypes.h>'],
         'WebCore::AutoplayEventFlags': ['<WebCore/AutoplayEvent.h>'],
         'WebCore::ExceptionDetails': ['<WebCore/JSDOMExceptionHandling.h>'],
         'WebCore::FileChooserSettings': ['<WebCore/FileChooser.h>'],

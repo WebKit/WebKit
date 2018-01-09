@@ -1485,8 +1485,8 @@ static UIColor *attachmentTitleColor() { return [getUIColorClass() systemGrayCol
 static RetainPtr<CTFontRef> attachmentSubtitleFont() { return attachmentTitleFont(); }
 static UIColor *attachmentSubtitleColor() { return [getUIColorClass() systemGrayColor]; }
 
-struct AttachmentInfo {
-    explicit AttachmentInfo(const RenderAttachment&);
+struct RenderAttachmentInfo {
+    explicit RenderAttachmentInfo(const RenderAttachment&);
 
     FloatRect iconRect;
     FloatRect attachmentRect;
@@ -1514,7 +1514,7 @@ private:
     void addLine(CTLineRef);
 };
 
-void AttachmentInfo::addLine(CTLineRef line)
+void RenderAttachmentInfo::addLine(CTLineRef line)
 {
     CGRect lineBounds = CTLineGetBoundsWithOptions(line, kCTLineBoundsExcludeTypographicLeading);
     CGFloat trailingWhitespaceWidth = CTLineGetTrailingWhitespaceWidth(line);
@@ -1529,7 +1529,7 @@ void AttachmentInfo::addLine(CTLineRef line)
     lines.append(labelLine);
 }
 
-void AttachmentInfo::buildWrappedLines(const String& text, CTFontRef font, UIColor *color, unsigned maximumLineCount)
+void RenderAttachmentInfo::buildWrappedLines(const String& text, CTFontRef font, UIColor *color, unsigned maximumLineCount)
 {
     if (text.isEmpty())
         return;
@@ -1578,7 +1578,7 @@ void AttachmentInfo::buildWrappedLines(const String& text, CTFontRef font, UICol
     addLine(truncatedLine.get());
 }
 
-void AttachmentInfo::buildSingleLine(const String& text, CTFontRef font, UIColor *color)
+void RenderAttachmentInfo::buildSingleLine(const String& text, CTFontRef font, UIColor *color)
 {
     if (text.isEmpty())
         return;
@@ -1653,7 +1653,7 @@ static RetainPtr<UIImage> iconForAttachment(const RenderAttachment& attachment, 
     return result;
 }
 
-AttachmentInfo::AttachmentInfo(const RenderAttachment& attachment)
+RenderAttachmentInfo::RenderAttachmentInfo(const RenderAttachment& attachment)
 {
     attachmentRect = FloatRect(0, 0, attachment.width().toFloat(), attachment.height().toFloat());
 
@@ -1703,11 +1703,11 @@ LayoutSize RenderThemeIOS::attachmentIntrinsicSize(const RenderAttachment&) cons
 
 int RenderThemeIOS::attachmentBaseline(const RenderAttachment& attachment) const
 {
-    AttachmentInfo info(attachment);
+    RenderAttachmentInfo info(attachment);
     return info.baseline;
 }
 
-static void paintAttachmentIcon(GraphicsContext& context, AttachmentInfo& info)
+static void paintAttachmentIcon(GraphicsContext& context, RenderAttachmentInfo& info)
 {
     if (!info.icon)
         return;
@@ -1719,7 +1719,7 @@ static void paintAttachmentIcon(GraphicsContext& context, AttachmentInfo& info)
     context.drawImage(*iconImage, info.iconRect);
 }
 
-static void paintAttachmentText(GraphicsContext& context, AttachmentInfo& info)
+static void paintAttachmentText(GraphicsContext& context, RenderAttachmentInfo& info)
 {
     for (const auto& line : info.lines) {
         GraphicsContextStateSaver saver(context);
@@ -1732,7 +1732,7 @@ static void paintAttachmentText(GraphicsContext& context, AttachmentInfo& info)
     }
 }
 
-static void paintAttachmentProgress(GraphicsContext& context, AttachmentInfo& info)
+static void paintAttachmentProgress(GraphicsContext& context, RenderAttachmentInfo& info)
 {
     GraphicsContextStateSaver saver(context);
 
@@ -1751,7 +1751,7 @@ static void paintAttachmentProgress(GraphicsContext& context, AttachmentInfo& in
     context.fillPath(progressPath);
 }
 
-static Path attachmentBorderPath(AttachmentInfo& info)
+static Path attachmentBorderPath(RenderAttachmentInfo& info)
 {
     Path borderPath;
     borderPath.addRoundedRect(info.attachmentRect, FloatSize(attachmentBorderRadius, attachmentBorderRadius));
@@ -1772,7 +1772,7 @@ bool RenderThemeIOS::paintAttachment(const RenderObject& renderer, const PaintIn
 
     const RenderAttachment& attachment = downcast<RenderAttachment>(renderer);
 
-    AttachmentInfo info(attachment);
+    RenderAttachmentInfo info(attachment);
 
     GraphicsContext& context = paintInfo.context();
     GraphicsContextStateSaver saver(context);

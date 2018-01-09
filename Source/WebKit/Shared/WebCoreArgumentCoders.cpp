@@ -28,6 +28,7 @@
 
 #include "DataReference.h"
 #include "ShareableBitmap.h"
+#include <WebCore/AttachmentTypes.h>
 #include <WebCore/AuthenticationChallenge.h>
 #include <WebCore/BlobPart.h>
 #include <WebCore/CacheQueryOptions.h>
@@ -2770,5 +2771,44 @@ bool ArgumentCoder<PromisedBlobInfo>::decode(Decoder& decoder, PromisedBlobInfo&
 
     return true;
 }
+
+#if ENABLE(ATTACHMENT_ELEMENT)
+
+void ArgumentCoder<AttachmentInfo>::encode(Encoder& encoder, const AttachmentInfo& info)
+{
+    bool dataIsNull = !info.data;
+    encoder << info.contentType << info.name << info.filePath << dataIsNull;
+    if (!dataIsNull) {
+        SharedBufferDataReference dataReference { info.data.get() };
+        encoder << static_cast<DataReference&>(dataReference);
+    }
+}
+
+bool ArgumentCoder<AttachmentInfo>::decode(Decoder& decoder, AttachmentInfo& info)
+{
+    if (!decoder.decode(info.contentType))
+        return false;
+
+    if (!decoder.decode(info.name))
+        return false;
+
+    if (!decoder.decode(info.filePath))
+        return false;
+
+    bool dataIsNull = true;
+    if (!decoder.decode(dataIsNull))
+        return false;
+
+    if (!dataIsNull) {
+        DataReference dataReference;
+        if (!decoder.decode(dataReference))
+            return false;
+        info.data = SharedBuffer::create(dataReference.data(), dataReference.size());
+    }
+
+    return true;
+}
+
+#endif // ENABLE(ATTACHMENT_ELEMENT)
 
 } // namespace IPC
