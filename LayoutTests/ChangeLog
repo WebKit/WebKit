@@ -1,3 +1,35 @@
+2018-01-09  Yacine Bandou  <yacine.bandou_ext@softathome.com>
+
+        [EME] Add layout test for clearKey CENC message event
+        https://bugs.webkit.org/show_bug.cgi?id=180928
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Tests the reception of clearKey message event after the encrypted event and checks its KeyID.
+        There are two tests: one with MSE playback and another with regular playback.
+
+        * media/encrypted-media/clearKey/clearKey-message-cenc-event-expected.txt: Added.
+        * media/encrypted-media/clearKey/clearKey-message-cenc-event-mse-expected.txt: Added.
+        * media/encrypted-media/clearKey/clearKey-message-cenc-event-mse.html: Added.
+            Test with MSE playback.
+        * media/encrypted-media/clearKey/clearKey-message-cenc-event.html: Added.
+            Test with regular playback.
+        * media/encrypted-media/clearKey/encrypted-media-clearKey-handler.js: Added.
+            This JavaScript file provides a simple clearKey EME implementation, checks the EME support, handles the "encrypted", "message" and 
+            "keystatuseschange" events, and updates the CDM session with the right keys.
+            This implementation allows to play an encrypted media (video or audio or both), it is used in this test by overloading the "onMessage" callback 
+            by an other function that checks the 'message' event and stops the test.
+        * media/encrypted-media/medias-enc.js:
+            I take this opportunity to introduce some fixes:
+            Rename "mimetype" field to "mimeType", this field is only used in "clearKey-encrypted-cenc-event-mse.html",
+            thus it is easy to change it now.
+            Change the KeyID of the encrypted video with the right value, it is used for first time in this test.
+        * media/media-source/media-source-loader-simple.js:
+            Use "mimeType" instead of "mimetype" as it is modified in "medias-enc.js".
+        * platform/gtk/TestExpectations:
+        * platform/mac/TestExpectations:
+        * platform/wpe/TestExpectations:
+
 2018-01-09  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Check Image::m_image is not null in ImageLoader::decode()

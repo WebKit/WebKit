@@ -73,7 +73,7 @@ function MediaSourceLoaderSimple(video)
 MediaSourceLoaderSimple.prototype = {
     createSourceBuffer : function(media, maxSeg)
     {
-        var sb = this.ms.addSourceBuffer(media.mimetype);
+        let sb = this.ms.addSourceBuffer(media.mimeType);
         var sbBase = new SourceBufferLoaderSimple(sb, this.ms, media, maxSeg);
         sbBase.start();
     },
