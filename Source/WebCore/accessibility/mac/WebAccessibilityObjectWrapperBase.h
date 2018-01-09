@@ -55,7 +55,6 @@ class VisiblePosition;
 - (NSString *)baseAccessibilityTitle;
 - (NSString *)baseAccessibilityDescription;
 - (NSString *)baseAccessibilityHelpText;
-- (NSArray<NSString *> *)baseAccessibilitySpeechHint;
 
 - (NSString *)ariaLandmarkRoleDescription;
 

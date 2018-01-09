@@ -3819,11 +3819,14 @@ template<> inline CSSPrimitiveValue::operator LineAlign() const
     return LineAlignNone;
 }
 
-template<> inline CSSPrimitiveValue::CSSPrimitiveValue(ESpeakAs e)
+template<> inline CSSPrimitiveValue::CSSPrimitiveValue(ESpeak e)
     : CSSValue(PrimitiveClass)
 {
     m_primitiveUnitType = CSS_VALUE_ID;
     switch (e) {
+    case SpeakNone:
+        m_value.valueID = CSSValueNone;
+        break;
     case SpeakNormal:
         m_value.valueID = CSSValueNormal;
         break;
@@ -3873,11 +3876,13 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(Order e)
     }
 }
 
-template<> inline CSSPrimitiveValue::operator ESpeakAs() const
+template<> inline CSSPrimitiveValue::operator ESpeak() const
 {
     ASSERT(isValueID());
 
     switch (m_value.valueID) {
+    case CSSValueNone:
+        return SpeakNone;
     case CSSValueNormal:
         return SpeakNormal;
     case CSSValueSpellOut:

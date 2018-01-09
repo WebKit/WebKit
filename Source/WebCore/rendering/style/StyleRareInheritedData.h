@@ -95,7 +95,7 @@ public:
     unsigned lineBreak : 3; // LineBreak
     unsigned userSelect : 2; // EUserSelect
     unsigned colorSpace : 1; // ColorSpace
-    unsigned speakAs : 4; // ESpeakAs
+    unsigned speak : 3; // ESpeak
     unsigned hyphens : 2; // Hyphens
     unsigned textEmphasisFill : 1; // TextEmphasisFill
     unsigned textEmphasisMark : 3; // TextEmphasisMark

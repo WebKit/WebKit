@@ -1688,7 +1688,7 @@ int AccessibilityUIElement::hierarchicalLevel() const
     return 0;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElement::speakAs()
+JSRetainPtr<JSStringRef> AccessibilityUIElement::speak()
 {
     // FIXME: implement
     return JSStringCreateWithCharacters(0, 0);

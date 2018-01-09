@@ -1,3 +1,7 @@
+2018-01-09  Jason Marcell  <jmarcell@apple.com>
+
+        Revert r226432. rdar://problem/10353542
+
 2018-01-08  Jeremy Jones  <jeremyj@apple.com>
 
         Standard controls sometimes say video is in pip when it isnt.

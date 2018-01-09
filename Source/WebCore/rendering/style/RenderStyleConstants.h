@@ -596,15 +596,7 @@ enum ELineClampType { LineClampLineCount, LineClampPercentage };
 
 enum Hyphens { HyphensNone, HyphensManual, HyphensAuto };
 
-enum ESpeakAs {
-    SpeakNormal = 0,
-    SpeakSpellOut = 1 << 0,
-    SpeakDigits = 1 << 1,
-    SpeakLiteralPunctuation = 1 << 2,
-    SpeakNoPunctuation = 1 << 3
-};
-inline ESpeakAs operator| (ESpeakAs a, ESpeakAs b) { return ESpeakAs(int(a) | int(b)); }
-inline ESpeakAs& operator|= (ESpeakAs& a, ESpeakAs b) { return a = a | b; }
+enum ESpeak { SpeakNone, SpeakNormal, SpeakSpellOut, SpeakDigits, SpeakLiteralPunctuation, SpeakNoPunctuation };
 
 enum TextEmphasisFill { TextEmphasisFillFilled, TextEmphasisFillOpen };
 

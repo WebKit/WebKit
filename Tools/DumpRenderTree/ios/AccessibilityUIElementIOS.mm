@@ -101,7 +101,6 @@ AccessibilityUIElement::~AccessibilityUIElement()
 - (BOOL)accessibilityIsExpanded;
 - (NSUInteger)accessibilityBlockquoteLevel;
 - (NSArray *)accessibilityFindMatchingObjects:(NSDictionary *)parameters;
-- (NSArray *)accessibilitySpeechHint;
 
 // TextMarker related
 - (NSArray *)textMarkerRange;
@@ -356,11 +355,6 @@ void AccessibilityUIElement::increaseTextSelection()
 void AccessibilityUIElement::decreaseTextSelection()
 {
     [m_element accessibilityModifySelection:WebCore::CharacterGranularity increase:NO];    
-}
-
-JSStringRef AccessibilityUIElement::speakAs()
-{
-    return [[[m_element accessibilitySpeechHint] componentsJoinedByString:@", "] createJSStringRef];
 }
 
 JSStringRef AccessibilityUIElement::stringForSelection() 

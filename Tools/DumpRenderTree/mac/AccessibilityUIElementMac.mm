@@ -894,12 +894,12 @@ int AccessibilityUIElement::hierarchicalLevel() const
     return 0;
 }
 
-JSStringRef AccessibilityUIElement::speakAs()
+JSStringRef AccessibilityUIElement::speak()
 {
     BEGIN_AX_OBJC_EXCEPTIONS
     id value = [m_element accessibilityAttributeValue:@"AXDRTSpeechAttribute"];
-    if ([value isKindOfClass:[NSArray class]])
-        return [[value componentsJoinedByString:@", "] createJSStringRef];
+    if ([value isKindOfClass:[NSString class]])
+        return [value createJSStringRef];
     END_AX_OBJC_EXCEPTIONS
         
     return nullptr;

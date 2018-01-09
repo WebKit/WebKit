@@ -1003,12 +1003,12 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::classList() const
     return nullptr;
 }
 
-JSRetainPtr<JSStringRef> AccessibilityUIElement::speakAs()
+JSRetainPtr<JSStringRef> AccessibilityUIElement::speak()
 {
     BEGIN_AX_OBJC_EXCEPTIONS
     id value = [m_element accessibilityAttributeValue:@"AXDRTSpeechAttribute"];
-    if ([value isKindOfClass:[NSArray class]])
-        return [[(NSArray *)value componentsJoinedByString:@", "] createJSStringRef];
+    if ([value isKindOfClass:[NSString class]])
+        return [value createJSStringRef];
     END_AX_OBJC_EXCEPTIONS
         
     return nullptr;
