@@ -1,3 +1,26 @@
+2018-01-09  Paul Knight  <pknight@apple.com>
+
+        Don't record dynamic spelling corrections while in an ephemeral browsing session
+        https://bugs.webkit.org/show_bug.cgi?id=181417
+        <rdar://problem/33309104>
+
+        Dynamic spelling correction responses are kept on disk. Avoid recording
+        these responses when in an ephemeral session.
+
+        Reviewed by Tim Horton and Wenson Hsieh.
+
+        * UIProcess/mac/CorrectionPanel.h:
+        * UIProcess/mac/CorrectionPanel.mm:
+        (WebKit::CorrectionPanel::recordAutocorrectionResponse):
+            Add a WebViewImpl parameter so we can query the current session.
+            Return early before recording the response if the session is
+            ephemeral.
+        (WebKit::CorrectionPanel::handleAcceptedReplacement):
+            Update a caller to include the new parameter.
+        * UIProcess/mac/PageClientImplMac.mm:
+        (WebKit::PageClientImpl::recordAutocorrectionResponse):
+            Ditto.
+
 2018-01-09  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Update OptionsGTK.cmake and NEWS for 2.19.5 release.
