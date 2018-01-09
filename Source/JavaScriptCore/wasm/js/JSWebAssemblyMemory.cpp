@@ -117,7 +117,7 @@ Wasm::PageCount JSWebAssemblyMemory::grow(VM& vm, ExecState* exec, uint32_t delt
         }
         m_memoryBase = memory().memory();
         m_memorySize = memory().size();
-        m_memorySize = memory().indexingMask();
+        m_indexingMask = memory().indexingMask();
     }
 
     // We need to clear out the old array buffer because it might now be pointing
