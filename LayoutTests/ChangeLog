@@ -1,3 +1,11 @@
+2018-01-09  Matt Lewis  <jlewis3@apple.com>
+
+        Fixed test expectaions.
+
+        Unreviewed test gardening.
+
+        * platform/ios-wk2/TestExpectations:
+
 2018-01-09  Antti Koivisto  <antti@apple.com>
 
         Blank page except for inner iframes because pending stylesheets cause style.isNotFinal() to be true
