@@ -1,3 +1,23 @@
+2018-01-09  Mark Lam  <mark.lam@apple.com>
+
+        ASSERTION FAILED: pair.second->m_type & PropertyNode::Getter
+        https://bugs.webkit.org/show_bug.cgi?id=181388
+        <rdar://problem/36349351>
+
+        Reviewed by Saam Barati.
+
+        When there are duplicate setters or getters, we may end up overwriting a getter
+        with a setter, or vice versa.  This patch adds tracking for getters/setters that
+        have been overwritten with duplicates and ignore them.
+
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::PropertyListNode::emitBytecode):
+        * parser/NodeConstructors.h:
+        (JSC::PropertyNode::PropertyNode):
+        * parser/Nodes.h:
+        (JSC::PropertyNode::isOverriddenByDuplicate const):
+        (JSC::PropertyNode::setIsOverriddenByDuplicate):
+
 2018-01-08  Zan Dobersek  <zdobersek@igalia.com>
 
         REGRESSION(r225913): about 30 JSC test failures on ARMv7

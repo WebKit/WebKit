@@ -1,3 +1,13 @@
+2018-01-09  Mark Lam  <mark.lam@apple.com>
+
+        ASSERTION FAILED: pair.second->m_type & PropertyNode::Getter
+        https://bugs.webkit.org/show_bug.cgi?id=181388
+        <rdar://problem/36349351>
+
+        Reviewed by Saam Barati.
+
+        * stress/regress-181388.js: Added.
+
 2018-01-08  JF Bastien  <jfbastien@apple.com>
 
         WebAssembly: mask indexed accesses to Table
