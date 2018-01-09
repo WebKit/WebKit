@@ -21,6 +21,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo-4/first-letter-002.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo-4/first-letter-003-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo-4/first-letter-003.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo-4/first-letter-004-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo-4/first-letter-004.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo-4/marker-and-other-pseudo-elements-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo-4/marker-and-other-pseudo-elements.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo-4/marker-color-expected.html

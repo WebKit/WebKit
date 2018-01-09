@@ -91,12 +91,12 @@ static RenderStyle styleForFirstLetter(const RenderBlock& firstLetterBlock, cons
 // CSS 2.1 http://www.w3.org/TR/CSS21/selector.html#first-letter
 // "Punctuation (i.e, characters defined in Unicode [UNICODE] in the "open" (Ps), "close" (Pe),
 // "initial" (Pi). "final" (Pf) and "other" (Po) punctuation classes), that precedes or follows the first letter should be included"
-static inline bool isPunctuationForFirstLetter(UChar c)
+static inline bool isPunctuationForFirstLetter(UChar32 c)
 {
     return U_GET_GC_MASK(c) & (U_GC_PS_MASK | U_GC_PE_MASK | U_GC_PI_MASK | U_GC_PF_MASK | U_GC_PO_MASK);
 }
 
-static inline bool shouldSkipForFirstLetter(UChar c)
+static inline bool shouldSkipForFirstLetter(UChar32 c)
 {
     return isSpaceOrNewline(c) || c == noBreakSpace || isPunctuationForFirstLetter(c);
 }
@@ -218,22 +218,25 @@ void RenderTreeBuilder::FirstLetter::createRenderers(RenderBlock& firstLetterBlo
         unsigned length = 0;
 
         // Account for leading spaces and punctuation.
-        while (length < oldText.length() && shouldSkipForFirstLetter(oldText[length]))
-            length++;
+        while (length < oldText.length() && shouldSkipForFirstLetter(oldText.characterStartingAt(length)))
+            length += numCharactersInGraphemeClusters(StringView(oldText).substring(length), 1);
 
         // Account for first grapheme cluster.
         length += numCharactersInGraphemeClusters(StringView(oldText).substring(length), 1);
 
         // Keep looking for whitespace and allowed punctuation, but avoid
         // accumulating just whitespace into the :first-letter.
-        for (unsigned scanLength = length; scanLength < oldText.length(); ++scanLength) {
-            UChar c = oldText[scanLength];
+        unsigned numCharacters = 0;
+        for (unsigned scanLength = length; scanLength < oldText.length(); scanLength += numCharacters) {
+            UChar32 c = oldText.characterStartingAt(scanLength);
 
             if (!shouldSkipForFirstLetter(c))
                 break;
 
+            numCharacters = numCharactersInGraphemeClusters(StringView(oldText).substring(scanLength), 1);
+
             if (isPunctuationForFirstLetter(c))
-                length = scanLength + 1;
+                length = scanLength + numCharacters;
         }
 
         auto* textNode = currentTextChild.textNode();

@@ -1,3 +1,21 @@
+2018-01-08  Chris Nardi  <csnardi1@gmail.com>
+
+        ::first-letter incorrectly selects grapheme pairs
+        https://bugs.webkit.org/show_bug.cgi?id=181315
+
+        Reviewed by Darin Adler.
+
+        Grapheme pairs were incorrectly selected by ::first-letter. This
+        change fixes their selection.
+
+        Tests: Updated fast/css/first-letter-punctuation.html and imported
+        LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo-4/first-letter-004.html
+
+        * rendering/updating/RenderTreeBuilderFirstLetter.cpp:
+        (WebCore::isPunctuationForFirstLetter):
+        (WebCore::shouldSkipForFirstLetter):
+        (WebCore::RenderTreeBuilder::FirstLetter::createRenderers):
+
 2018-01-08  Darin Adler  <darin@apple.com>
 
         Special list-item counter starts from an incorrect number for ::before and ::after
