@@ -5433,6 +5433,12 @@ class WebKitStyleTest(CppStyleTestBase):
         self.assert_lint('o = foo(b ? bar() : baz());', '')
         self.assert_lint('MYMACRO(a ? b() : c);', '')
 
+    def test_min_versions_of_wk_api_available(self):
+        self.assert_lint('WK_API_AVAILABLE(macosx(1.2.3), ios(3.4.5))', '')  # version numbers are OK.
+        self.assert_lint('WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA))', '')  # WK_MAC_TBA and WK_IOS_TBA are OK.
+        self.assert_lint('WK_API_AVAILABLE(macosx(WK_IOS_TBA), ios(3.4.5))', 'WK_IOS_TBA is neither a version number nor WK_MAC_TBA  [build/wk_api_available] [5]')
+        self.assert_lint('WK_API_AVAILABLE(macosx(1.2.3), ios(WK_MAC_TBA))', 'WK_MAC_TBA is neither a version number nor WK_IOS_TBA  [build/wk_api_available] [5]')
+
     def test_other(self):
         # FIXME: Implement this.
         pass

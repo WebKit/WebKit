@@ -2767,6 +2767,27 @@ def get_line_width(line):
     return len(line)
 
 
+def check_min_versions_of_wk_api_available(clean_lines, line_number, error):
+    """Checks the min version numbers of WK_API_AVAILABLE
+
+    Args:
+      clean_lines: A CleansedLines instance containing the file.
+      line_number: The number of the line to check.
+      error: The function to call with any errors found.
+    """
+
+    line = clean_lines.elided[line_number]  # Get rid of comments and strings.
+
+    wk_api_available = search(r'WK_API_AVAILABLE\(macosx\(([^\)]+)\), ios\(([^\)]+)\)\)', line)
+    if wk_api_available:
+        macosxMinVersion = wk_api_available.group(1)
+        if not match(r'^([\d\.]+|WK_MAC_TBA)$', macosxMinVersion):
+            error(line_number, 'build/wk_api_available', 5, '%s is neither a version number nor WK_MAC_TBA' % macosxMinVersion)
+
+        iosMinVersion = wk_api_available.group(2)
+        if not match(r'^([\d\.]+|WK_IOS_TBA)$', iosMinVersion):
+            error(line_number, 'build/wk_api_available', 5, '%s is neither a version number nor WK_IOS_TBA' % iosMinVersion)
+
 def check_style(clean_lines, line_number, file_extension, class_state, file_state, enum_state, error):
     """Checks rules from the 'C++ style rules' section of cppguide.html.
 
@@ -2842,6 +2863,7 @@ def check_style(clean_lines, line_number, file_extension, class_state, file_stat
     check_soft_link_class_alloc(clean_lines, line_number, error)
     check_indentation_amount(clean_lines, line_number, error)
     check_enum_casing(clean_lines, line_number, enum_state, error)
+    check_min_versions_of_wk_api_available(clean_lines, line_number, error)
 
 
 _RE_PATTERN_INCLUDE_NEW_STYLE = re.compile(r'#(?:include|import) +"[^/]+\.h"')
@@ -3892,6 +3914,7 @@ class CppChecker(object):
         'build/using_std',
         'build/using_namespace',
         'build/cpp_comment',
+        'build/wk_api_available',
         'legal/copyright',
         'readability/braces',
         'readability/casting',

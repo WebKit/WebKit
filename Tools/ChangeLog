@@ -1,3 +1,23 @@
+2018-01-09  Frederic Wang  <fwang@igalia.com.fr>
+
+        check-webkit-style: Verify syntax for WK_API_AVAILABLE
+        https://bugs.webkit.org/show_bug.cgi?id=181394
+
+        Reviewed by Darin Adler.
+
+        A common syntax error for WK_API_AVAILABLE is to write ios(WK_MAC_TBA)
+        as the second parameter instead of ios(WK_IOS_TBA). This generally
+        builds for iOS on EWS but not when using the public SDK. See r224057,
+        r223207 and r226211 for example. This patch adds a basic style check
+        for that macro to prevent this kind of mistake.
+
+        * Scripts/webkitpy/style/checkers/cpp.py:
+        (check_min_versions_of_wk_api_available): New function to verify the parameters of WX_API_AVAILABLE.
+        (check_style): Run new style check.
+        (CppChecker): Add build type for the new style check.
+        * Scripts/webkitpy/style/checkers/cpp_unittest.py:
+        (WebKitStyleTest.test_min_versions_of_wk_api_available): Add tests for the new style check.
+
 2018-01-08  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Attachment Support] Expose HTMLAttachmentElement.uniqueIdentifier to bindings
