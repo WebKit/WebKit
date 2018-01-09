@@ -37,7 +37,7 @@ public:
     virtual ~TextureMapperBackingStore() = default;
 
 protected:
-    static unsigned calculateExposedTileEdges(const FloatRect& totalRect, const FloatRect& tileRect);
+    WEBCORE_EXPORT static unsigned calculateExposedTileEdges(const FloatRect& totalRect, const FloatRect& tileRect);
 };
 
 }

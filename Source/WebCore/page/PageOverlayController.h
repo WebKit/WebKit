@@ -65,7 +65,7 @@ public:
     void didChangeViewSize();
     void didChangeDocumentSize();
     void didChangeSettings();
-    void didChangeDeviceScaleFactor();
+    WEBCORE_EXPORT void didChangeDeviceScaleFactor();
     void didChangeViewExposedRect();
     void didScrollFrame(Frame&);
 

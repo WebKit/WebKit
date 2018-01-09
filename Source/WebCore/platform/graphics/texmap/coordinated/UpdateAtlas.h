@@ -43,13 +43,13 @@ public:
         virtual void removeUpdateAtlas(ID) = 0;
     };
 
-    UpdateAtlas(Client&, const IntSize&, Nicosia::Buffer::Flags);
-    ~UpdateAtlas();
+    WEBCORE_EXPORT UpdateAtlas(Client&, const IntSize&, Nicosia::Buffer::Flags);
+    WEBCORE_EXPORT ~UpdateAtlas();
 
     const IntSize& size() const { return m_buffer->size(); }
 
-    RefPtr<Nicosia::Buffer> getCoordinatedBuffer(const IntSize&, uint32_t&, IntRect&);
-    void didSwapBuffers();
+    WEBCORE_EXPORT RefPtr<Nicosia::Buffer> getCoordinatedBuffer(const IntSize&, uint32_t&, IntRect&);
+    WEBCORE_EXPORT void didSwapBuffers();
     bool supportsAlpha() const { return m_buffer->supportsAlpha(); }
 
     void addTimeInactive(double seconds)

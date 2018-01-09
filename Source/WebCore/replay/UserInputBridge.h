@@ -68,7 +68,7 @@ public:
     void focusSetActive(bool active, InputSource source = InputSource::User);
     void focusSetFocused(bool focused, InputSource source = InputSource::User);
     WEBCORE_EXPORT bool scrollRecursively(ScrollDirection, ScrollGranularity, InputSource source = InputSource::User);
-    bool logicalScrollRecursively(ScrollLogicalDirection, ScrollGranularity, InputSource source = InputSource::User);
+    WEBCORE_EXPORT bool logicalScrollRecursively(ScrollLogicalDirection, ScrollGranularity, InputSource source = InputSource::User);
 
     // Navigation APIs.
     WEBCORE_EXPORT void loadRequest(FrameLoadRequest&&, InputSource = InputSource::User);

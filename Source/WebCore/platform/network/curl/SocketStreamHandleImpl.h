@@ -56,10 +56,10 @@ public:
 
     virtual ~SocketStreamHandleImpl();
 
-    void platformSend(const char* data, size_t length, Function<void(bool)>&&) final;
-    void platformClose() final;
+    WEBCORE_EXPORT void platformSend(const char* data, size_t length, Function<void(bool)>&&) final;
+    WEBCORE_EXPORT void platformClose() final;
 private:
-    SocketStreamHandleImpl(const URL&, SocketStreamHandleClient&);
+    WEBCORE_EXPORT SocketStreamHandleImpl(const URL&, SocketStreamHandleClient&);
 
     size_t bufferedAmount() final;
     std::optional<size_t> platformSendInternal(const char*, size_t);

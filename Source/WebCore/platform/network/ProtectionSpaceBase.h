@@ -67,7 +67,7 @@ public:
     WEBCORE_EXPORT const String& realm() const;
     WEBCORE_EXPORT ProtectionSpaceAuthenticationScheme authenticationScheme() const;
     
-    bool receivesCredentialSecurely() const;
+    WEBCORE_EXPORT bool receivesCredentialSecurely() const;
     WEBCORE_EXPORT bool isPasswordBased() const;
 
     bool encodingRequiresPlatformData() const { return false; }

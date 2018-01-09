@@ -178,7 +178,7 @@ public:
 
     void setSubMenu(ContextMenu*);
 
-    ContextMenuItem(ContextMenuAction, const String&, bool enabled, bool checked, const Vector<ContextMenuItem>& subMenuItems);
+    WEBCORE_EXPORT ContextMenuItem(ContextMenuAction, const String&, bool enabled, bool checked, const Vector<ContextMenuItem>& subMenuItems);
     ContextMenuItem();
 
     bool isNull() const;

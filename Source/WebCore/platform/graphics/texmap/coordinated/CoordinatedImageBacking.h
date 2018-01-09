@@ -41,7 +41,7 @@ class Buffer;
 
 namespace WebCore {
 
-class CoordinatedImageBacking : public RefCounted<CoordinatedImageBacking> {
+class WEBCORE_EXPORT CoordinatedImageBacking : public RefCounted<CoordinatedImageBacking> {
 public:
     class Client {
     public:

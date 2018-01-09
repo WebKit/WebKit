@@ -45,7 +45,7 @@ namespace WebCore {
 class GLContext {
     WTF_MAKE_NONCOPYABLE(GLContext); WTF_MAKE_FAST_ALLOCATED;
 public:
-    static std::unique_ptr<GLContext> createContextForWindow(GLNativeWindowType windowHandle, PlatformDisplay* = nullptr);
+    WEBCORE_EXPORT static std::unique_ptr<GLContext> createContextForWindow(GLNativeWindowType windowHandle, PlatformDisplay* = nullptr);
     static std::unique_ptr<GLContext> createOffscreenContext(PlatformDisplay* = nullptr);
     static std::unique_ptr<GLContext> createSharingContext(PlatformDisplay&);
     static GLContext* current();

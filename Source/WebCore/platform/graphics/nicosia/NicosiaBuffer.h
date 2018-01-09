@@ -43,8 +43,8 @@ public:
     };
     using Flags = unsigned;
 
-    static Ref<Buffer> create(const WebCore::IntSize&, Flags);
-    ~Buffer();
+    WEBCORE_EXPORT static Ref<Buffer> create(const WebCore::IntSize&, Flags);
+    WEBCORE_EXPORT ~Buffer();
 
     bool supportsAlpha() const { return m_flags & SupportsAlpha; }
     const WebCore::IntSize& size() const { return m_size; }

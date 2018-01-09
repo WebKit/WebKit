@@ -42,7 +42,7 @@ enum CredentialPersistence {
 class CredentialBase {
 
 public:
-    bool isEmpty() const;
+    WEBCORE_EXPORT bool isEmpty() const;
     
     WEBCORE_EXPORT const String& user() const;
     WEBCORE_EXPORT const String& password() const;

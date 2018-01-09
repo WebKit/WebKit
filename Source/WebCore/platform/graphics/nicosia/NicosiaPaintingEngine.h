@@ -43,7 +43,7 @@ class Buffer;
 class PaintingEngine {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static std::unique_ptr<PaintingEngine> create();
+    WEBCORE_EXPORT static std::unique_ptr<PaintingEngine> create();
 
     virtual ~PaintingEngine() = default;
 

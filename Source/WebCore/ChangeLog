@@ -1,3 +1,74 @@
+2018-01-09  Don Olmstead  <don.olmstead@sony.com>
+
+        Add additional WEBCORE_EXPORTs
+        https://bugs.webkit.org/show_bug.cgi?id=181414
+
+        Reviewed by Alex Christensen.
+
+        No new tests. No change in behavior.
+
+        * dom/Document.h:
+        * dom/ViewportArguments.h:
+        * page/DOMWindow.h:
+        * page/FrameView.h:
+        * page/PageOverlayController.h:
+        * platform/ContextMenuItem.h:
+        * platform/Pasteboard.h:
+        * platform/SharedBuffer.h:
+        * platform/UserAgent.h:
+        * platform/graphics/GLContext.h:
+        * platform/graphics/GraphicsContext.h:
+        * platform/graphics/GraphicsLayerTransform.h:
+        * platform/graphics/PlatformDisplay.h:
+        * platform/graphics/cairo/BackingStoreBackendCairoImpl.h:
+        * platform/graphics/cairo/PlatformContextCairo.h:
+        * platform/graphics/cairo/RefPtrCairo.h:
+        * platform/graphics/nicosia/NicosiaBuffer.h:
+        * platform/graphics/nicosia/NicosiaPaintingEngine.h:
+        * platform/graphics/texmap/TextureMapper.h:
+        * platform/graphics/texmap/TextureMapperAnimation.h:
+        * platform/graphics/texmap/TextureMapperBackingStore.h:
+        * platform/graphics/texmap/TextureMapperFPSCounter.h:
+        * platform/graphics/texmap/TextureMapperLayer.h:
+        (WebCore::TextureMapperLayer::TextureMapperLayer): Deleted.
+        (WebCore::TextureMapperLayer::setID): Deleted.
+        (WebCore::TextureMapperLayer::id): Deleted.
+        (WebCore::TextureMapperLayer:: const): Deleted.
+        (WebCore::TextureMapperLayer::setScrollClient): Deleted.
+        (WebCore::TextureMapperLayer::setIsScrollable): Deleted.
+        (WebCore::TextureMapperLayer::isScrollable const): Deleted.
+        (WebCore::TextureMapperLayer::textureMapper const): Deleted.
+        (WebCore::TextureMapperLayer::setTextureMapper): Deleted.
+        (WebCore::TextureMapperLayer::drawsContent const): Deleted.
+        (WebCore::TextureMapperLayer::contentsAreVisible const): Deleted.
+        (WebCore::TextureMapperLayer::size const): Deleted.
+        (WebCore::TextureMapperLayer::opacity const): Deleted.
+        (WebCore::TextureMapperLayer::transform const): Deleted.
+        (WebCore::TextureMapperLayer::hasFilters const): Deleted.
+        (WebCore::TextureMapperLayer::isShowingRepaintCounter const): Deleted.
+        (WebCore::TextureMapperLayer::fixedToViewport const): Deleted.
+        (WebCore::TextureMapperLayer::rootLayer const): Deleted.
+        (WebCore::TextureMapperLayer::texture): Deleted.
+        (WebCore::TextureMapperLayer::adjustedPosition const): Deleted.
+        (WebCore::TextureMapperLayer::layerRect const): Deleted.
+        (WebCore::TextureMapperLayer::State::State): Deleted.
+        * platform/graphics/texmap/TextureMapperPlatformLayerProxy.h:
+        * platform/graphics/texmap/TextureMapperTile.h:
+        * platform/graphics/texmap/coordinated/CoordinatedGraphicsLayer.h:
+        (WebCore::CoordinatedGraphicsLayer::isScrollable const): Deleted.
+        (WebCore::CoordinatedGraphicsLayer::id const): Deleted.
+        (WebCore::CoordinatedGraphicsLayer::coverRect const): Deleted.
+        (WebCore::CoordinatedGraphicsLayer::fixedToViewport const): Deleted.
+        * platform/graphics/texmap/coordinated/CoordinatedImageBacking.h:
+        (WebCore::CoordinatedImageBacking::id const): Deleted.
+        * platform/graphics/texmap/coordinated/TiledBackingStore.h:
+        * platform/graphics/texmap/coordinated/UpdateAtlas.h:
+        * platform/network/AuthenticationChallengeBase.h:
+        * platform/network/CredentialBase.h:
+        * platform/network/ProtectionSpaceBase.h:
+        * platform/network/curl/SocketStreamHandleImpl.h:
+        * replay/UserInputBridge.h:
+
 2018-01-09  Basuke Suzuki  <Basuke.Suzuki@sony.com>
 
         [Curl] Move FormData related tasks into new CurlFormDataStream class.

@@ -58,7 +58,7 @@ public:
     virtual void syncLayerState(CoordinatedLayerID, CoordinatedGraphicsLayerState&) = 0;
 };
 
-class CoordinatedGraphicsLayer : public GraphicsLayer
+class WEBCORE_EXPORT CoordinatedGraphicsLayer : public GraphicsLayer
     , public TiledBackingStoreClient
     , public CoordinatedImageBacking::Host {
 public:

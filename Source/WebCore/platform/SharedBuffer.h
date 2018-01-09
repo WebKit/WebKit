@@ -103,8 +103,8 @@ public:
     // To modify or combine the data, allocate a new DataSegment.
     class DataSegment : public ThreadSafeRefCounted<DataSegment> {
     public:
-        const char* data() const;
-        size_t size() const;
+        WEBCORE_EXPORT const char* data() const;
+        WEBCORE_EXPORT size_t size() const;
 
         static Ref<DataSegment> create(Vector<char>&& data) { return adoptRef(*new DataSegment(WTFMove(data))); }
 #if USE(CF)

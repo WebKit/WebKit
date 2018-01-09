@@ -577,7 +577,7 @@ public:
 #endif // OS(WINDOWS)
 
 #if USE(CAIRO)
-    GraphicsContext(cairo_t*);
+    WEBCORE_EXPORT GraphicsContext(cairo_t*);
 #endif
 
     static void adjustLineToPixelBoundaries(FloatPoint& p1, FloatPoint& p2, float strokeWidth, StrokeStyle);

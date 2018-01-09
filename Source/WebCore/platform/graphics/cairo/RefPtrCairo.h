@@ -39,10 +39,10 @@ typedef struct _FcConfig FcConfig;
 namespace WTF {
 
 template<> void refIfNotNull(cairo_t* ptr);
-template<> void derefIfNotNull(cairo_t* ptr);
+template<> WEBCORE_EXPORT void derefIfNotNull(cairo_t* ptr);
 
 template<> void refIfNotNull(cairo_surface_t* ptr);
-template<> void derefIfNotNull(cairo_surface_t* ptr);
+template<> WEBCORE_EXPORT void derefIfNotNull(cairo_surface_t* ptr);
 
 template<> void refIfNotNull(cairo_font_face_t* ptr);
 template<> void derefIfNotNull(cairo_font_face_t* ptr);

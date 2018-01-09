@@ -26,7 +26,7 @@ namespace WebCore {
 
 class BackingStoreBackendCairoImpl final : public BackingStoreBackendCairo {
 public:
-    BackingStoreBackendCairoImpl(const IntSize&, float deviceScaleFactor);
+    WEBCORE_EXPORT BackingStoreBackendCairoImpl(const IntSize&, float deviceScaleFactor);
     virtual ~BackingStoreBackendCairoImpl();
 
 private:

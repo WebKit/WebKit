@@ -52,7 +52,7 @@ public:
 
     typedef unsigned PaintFlags;
 
-    static std::unique_ptr<TextureMapper> create();
+    WEBCORE_EXPORT static std::unique_ptr<TextureMapper> create();
 
     explicit TextureMapper();
     virtual ~TextureMapper();

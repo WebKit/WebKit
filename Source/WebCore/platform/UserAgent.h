@@ -36,8 +36,8 @@
 namespace WebCore {
 class URL;
 
-String standardUserAgent(const String& applicationName = emptyString(), const String& applicationVersion = emptyString());
-String standardUserAgentForURL(const URL&);
+WEBCORE_EXPORT String standardUserAgent(const String& applicationName = emptyString(), const String& applicationVersion = emptyString());
+WEBCORE_EXPORT String standardUserAgentForURL(const URL&);
 
 }
 

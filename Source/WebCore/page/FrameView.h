@@ -219,7 +219,7 @@ public:
     float visibleContentScaleFactor() const final;
 
 #if USE(COORDINATED_GRAPHICS)
-    void setFixedVisibleContentRect(const IntRect&) final;
+    WEBCORE_EXPORT void setFixedVisibleContentRect(const IntRect&) final;
 #endif
     WEBCORE_EXPORT void setScrollPosition(const ScrollPosition&) final;
     void updateLayerPositionsAfterScrolling() final;

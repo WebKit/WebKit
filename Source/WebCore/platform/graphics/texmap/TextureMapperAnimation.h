@@ -41,7 +41,7 @@ public:
         : m_keyframes(AnimatedPropertyInvalid)
     { }
     TextureMapperAnimation(const String&, const KeyframeValueList&, const FloatSize&, const Animation&, bool, double, double, AnimationState);
-    TextureMapperAnimation(const TextureMapperAnimation&);
+    WEBCORE_EXPORT TextureMapperAnimation(const TextureMapperAnimation&);
 
     void apply(Client&);
     void pause(double);

@@ -33,8 +33,8 @@ class TextureMapperFPSCounter {
     WTF_MAKE_NONCOPYABLE(TextureMapperFPSCounter);
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    TextureMapperFPSCounter();
-    void updateFPSAndDisplay(TextureMapper&, const FloatPoint& = FloatPoint::zero(), const TransformationMatrix& = TransformationMatrix());
+    WEBCORE_EXPORT TextureMapperFPSCounter();
+    WEBCORE_EXPORT void updateFPSAndDisplay(TextureMapper&, const FloatPoint& = FloatPoint::zero(), const TransformationMatrix& = TransformationMatrix());
 
 private:
     bool m_isShowingFPS;

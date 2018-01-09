@@ -51,7 +51,7 @@ public:
 
     void invalidate(const IntRect& dirtyRect);
 
-    IntRect mapToContents(const IntRect&) const;
+    WEBCORE_EXPORT IntRect mapToContents(const IntRect&) const;
     IntRect mapFromContents(const IntRect&) const;
 
     IntRect tileRectForCoordinate(const Tile::Coordinate&) const;

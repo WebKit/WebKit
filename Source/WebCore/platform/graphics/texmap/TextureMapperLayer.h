@@ -34,7 +34,7 @@ class Region;
 class TextureMapperPaintOptions;
 class TextureMapperPlatformLayer;
 
-class TextureMapperLayer : public TextureMapperAnimation::Client {
+class WEBCORE_EXPORT TextureMapperLayer : public TextureMapperAnimation::Client {
     WTF_MAKE_NONCOPYABLE(TextureMapperLayer);
     WTF_MAKE_FAST_ALLOCATED;
 public:
