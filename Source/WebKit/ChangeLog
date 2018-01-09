@@ -1,3 +1,15 @@
+2018-01-09  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Missing symbols exported in 2.19.4
+        https://bugs.webkit.org/show_bug.cgi?id=181433
+
+        Reviewed by Michael Catanzaro.
+
+        Add missing WEBKIT_API to webkit_dom_dom_window_webkit_message_handlers_post_message().
+
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDOMWindow.h:
+        * webkitglib-symbols.map: Remove webkit_media_player_debug from local.
+
 2018-01-09  Youenn Fablet  <youenn@apple.com>
 
         SWClientConnection should not keep references to service worker jobs

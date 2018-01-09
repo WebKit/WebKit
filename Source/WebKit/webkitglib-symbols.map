@@ -10,6 +10,5 @@ global:
     "WebKit::WebKitExtensionManager::initialize(WebKit::InjectedBundle*, API::Object*)";
   };
 local:
-  webkit_media_player_debug;
   *;
 };

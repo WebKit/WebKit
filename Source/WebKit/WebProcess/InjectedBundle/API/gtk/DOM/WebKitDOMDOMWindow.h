@@ -602,7 +602,8 @@ webkit_dom_dom_window_get_orientation(WebKitDOMDOMWindow* self);
  *
  * Since: 2.8
  */
-gboolean webkit_dom_dom_window_webkit_message_handlers_post_message(WebKitDOMDOMWindow* window, const gchar* handler, const gchar* message);
+WEBKIT_API gboolean
+webkit_dom_dom_window_webkit_message_handlers_post_message(WebKitDOMDOMWindow* window, const gchar* handler, const gchar* message);
 
 G_END_DECLS
 
