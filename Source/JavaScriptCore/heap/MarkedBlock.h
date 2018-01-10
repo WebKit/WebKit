@@ -300,8 +300,6 @@ public:
     const Bitmap<atomsPerBlock>& marks() const;
     
     CountingLock& lock() { return m_lock; }
-    
-    Subspace* subspace() const { return m_subspace; }
 
 private:
     static const size_t atomAlignmentMask = atomSize - 1;
@@ -321,7 +319,6 @@ private:
         
     Handle& m_handle;
     VM* m_vm;
-    Subspace* m_subspace;
 
     CountingLock m_lock;
     

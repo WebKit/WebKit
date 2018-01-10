@@ -89,8 +89,8 @@ void ScriptExecutable::installCode(VM& vm, CodeBlock* genericCodeBlock, CodeType
         
         ASSERT(kind == CodeForCall);
         
-        oldCodeBlock = ExecutableToCodeBlockEdge::deactivateAndUnwrap(executable->m_programCodeBlock.get());
-        executable->m_programCodeBlock.setMayBeNull(vm, this, ExecutableToCodeBlockEdge::wrapAndActivate(codeBlock));
+        oldCodeBlock = executable->m_programCodeBlock.get();
+        executable->m_programCodeBlock.setMayBeNull(vm, this, codeBlock);
         break;
     }
 
@@ -100,8 +100,8 @@ void ScriptExecutable::installCode(VM& vm, CodeBlock* genericCodeBlock, CodeType
 
         ASSERT(kind == CodeForCall);
 
-        oldCodeBlock = ExecutableToCodeBlockEdge::deactivateAndUnwrap(executable->m_moduleProgramCodeBlock.get());
-        executable->m_moduleProgramCodeBlock.setMayBeNull(vm, this, ExecutableToCodeBlockEdge::wrapAndActivate(codeBlock));
+        oldCodeBlock = executable->m_moduleProgramCodeBlock.get();
+        executable->m_moduleProgramCodeBlock.setMayBeNull(vm, this, codeBlock);
         break;
     }
 
@@ -111,8 +111,8 @@ void ScriptExecutable::installCode(VM& vm, CodeBlock* genericCodeBlock, CodeType
         
         ASSERT(kind == CodeForCall);
         
-        oldCodeBlock = ExecutableToCodeBlockEdge::deactivateAndUnwrap(executable->m_evalCodeBlock.get());
-        executable->m_evalCodeBlock.setMayBeNull(vm, this, ExecutableToCodeBlockEdge::wrapAndActivate(codeBlock));
+        oldCodeBlock = executable->m_evalCodeBlock.get();
+        executable->m_evalCodeBlock.setMayBeNull(vm, this, codeBlock);
         break;
     }
         
@@ -122,12 +122,12 @@ void ScriptExecutable::installCode(VM& vm, CodeBlock* genericCodeBlock, CodeType
         
         switch (kind) {
         case CodeForCall:
-            oldCodeBlock = ExecutableToCodeBlockEdge::deactivateAndUnwrap(executable->m_codeBlockForCall.get());
-            executable->m_codeBlockForCall.setMayBeNull(vm, this, ExecutableToCodeBlockEdge::wrapAndActivate(codeBlock));
+            oldCodeBlock = executable->m_codeBlockForCall.get();
+            executable->m_codeBlockForCall.setMayBeNull(vm, this, codeBlock);
             break;
         case CodeForConstruct:
-            oldCodeBlock = ExecutableToCodeBlockEdge::deactivateAndUnwrap(executable->m_codeBlockForConstruct.get());
-            executable->m_codeBlockForConstruct.setMayBeNull(vm, this, ExecutableToCodeBlockEdge::wrapAndActivate(codeBlock));
+            oldCodeBlock = executable->m_codeBlockForConstruct.get();
+            executable->m_codeBlockForConstruct.setMayBeNull(vm, this, codeBlock);
             break;
         }
         break;
@@ -268,7 +268,7 @@ CodeBlock* ScriptExecutable::newReplacementCodeBlockFor(
         RELEASE_ASSERT(kind == CodeForCall);
         EvalExecutable* executable = jsCast<EvalExecutable*>(this);
         EvalCodeBlock* baseline = static_cast<EvalCodeBlock*>(
-            executable->codeBlock()->baselineVersion());
+            executable->m_evalCodeBlock->baselineVersion());
         EvalCodeBlock* result = EvalCodeBlock::create(&vm,
             CodeBlock::CopyParsedBlock, *baseline);
         result->setAlternative(vm, baseline);
@@ -279,7 +279,7 @@ CodeBlock* ScriptExecutable::newReplacementCodeBlockFor(
         RELEASE_ASSERT(kind == CodeForCall);
         ProgramExecutable* executable = jsCast<ProgramExecutable*>(this);
         ProgramCodeBlock* baseline = static_cast<ProgramCodeBlock*>(
-            executable->codeBlock()->baselineVersion());
+            executable->m_programCodeBlock->baselineVersion());
         ProgramCodeBlock* result = ProgramCodeBlock::create(&vm,
             CodeBlock::CopyParsedBlock, *baseline);
         result->setAlternative(vm, baseline);
@@ -290,7 +290,7 @@ CodeBlock* ScriptExecutable::newReplacementCodeBlockFor(
         RELEASE_ASSERT(kind == CodeForCall);
         ModuleProgramExecutable* executable = jsCast<ModuleProgramExecutable*>(this);
         ModuleProgramCodeBlock* baseline = static_cast<ModuleProgramCodeBlock*>(
-            executable->codeBlock()->baselineVersion());
+            executable->m_moduleProgramCodeBlock->baselineVersion());
         ModuleProgramCodeBlock* result = ModuleProgramCodeBlock::create(&vm,
             CodeBlock::CopyParsedBlock, *baseline);
         result->setAlternative(vm, baseline);

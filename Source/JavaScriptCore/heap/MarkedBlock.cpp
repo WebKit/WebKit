@@ -329,7 +329,6 @@ void MarkedBlock::Handle::didAddToAllocator(MarkedAllocator* allocator, size_t i
     
     m_index = index;
     m_allocator = allocator;
-    m_block->m_subspace = allocator->subspace();
     
     size_t cellSize = allocator->cellSize();
     m_atomsPerCell = (cellSize + atomSize - 1) / atomSize;
@@ -357,7 +356,6 @@ void MarkedBlock::Handle::didRemoveFromAllocator()
     
     m_index = std::numeric_limits<size_t>::max();
     m_allocator = nullptr;
-    m_block->m_subspace = nullptr;
 }
 
 #if !ASSERT_DISABLED

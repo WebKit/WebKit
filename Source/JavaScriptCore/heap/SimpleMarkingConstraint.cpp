@@ -31,9 +31,8 @@ namespace JSC {
 SimpleMarkingConstraint::SimpleMarkingConstraint(
     CString abbreviatedName, CString name,
     ::Function<void(SlotVisitor&)> executeFunction,
-    ConstraintVolatility volatility, ConstraintConcurrency concurrency,
-    ConstraintParallelism parallelism)
-    : MarkingConstraint(WTFMove(abbreviatedName), WTFMove(name), volatility, concurrency, parallelism)
+    ConstraintVolatility volatility, ConstraintConcurrency concurrency)
+    : MarkingConstraint(WTFMove(abbreviatedName), WTFMove(name), volatility, concurrency, ConstraintParallelism::Sequential)
     , m_executeFunction(WTFMove(executeFunction))
 {
 }
@@ -42,9 +41,10 @@ SimpleMarkingConstraint::~SimpleMarkingConstraint()
 {
 }
 
-void SimpleMarkingConstraint::executeImpl(SlotVisitor& visitor)
+ConstraintParallelism SimpleMarkingConstraint::executeImpl(SlotVisitor& visitor)
 {
     m_executeFunction(visitor);
+    return ConstraintParallelism::Sequential;
 }
 
 } // namespace JSC

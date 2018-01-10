@@ -38,7 +38,7 @@ public:
     
 protected:
     void prepareToExecuteImpl(const AbstractLocker& constraintSolvingLocker, SlotVisitor&) override;
-    void executeImpl(SlotVisitor&) override;
+    ConstraintParallelism executeImpl(SlotVisitor&) override;
     
 private:
     Heap& m_heap;

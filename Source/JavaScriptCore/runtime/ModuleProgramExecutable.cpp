@@ -93,7 +93,8 @@ void ModuleProgramExecutable::visitChildren(JSCell* cell, SlotVisitor& visitor)
     ScriptExecutable::visitChildren(thisObject, visitor);
     visitor.append(thisObject->m_unlinkedModuleProgramCodeBlock);
     visitor.append(thisObject->m_moduleEnvironmentSymbolTable);
-    visitor.append(thisObject->m_moduleProgramCodeBlock);
+    if (ModuleProgramCodeBlock* moduleProgramCodeBlock = thisObject->m_moduleProgramCodeBlock.get())
+        moduleProgramCodeBlock->visitWeakly(visitor);
 }
 
 } // namespace JSC

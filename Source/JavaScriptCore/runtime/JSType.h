@@ -43,8 +43,6 @@ enum JSType : uint8_t {
     UnlinkedModuleProgramCodeBlockType,
     UnlinkedEvalCodeBlockType,
     UnlinkedFunctionCodeBlockType,
-        
-    CodeBlockType,
 
     JSFixedArrayType,
     JSSourceCodeType,

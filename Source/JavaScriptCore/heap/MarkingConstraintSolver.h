@@ -64,36 +64,18 @@ public:
     
     void execute(MarkingConstraint&);
     
-    // Parallel constraints can add parallel tasks.
-    void addParallelTask(RefPtr<SharedTask<void(SlotVisitor&)>>, MarkingConstraint&);
-    
 private:
     void runExecutionThread(SlotVisitor&, SchedulerPreference, ScopedLambda<std::optional<unsigned>()> pickNext);
     
-    struct TaskWithConstraint {
-        TaskWithConstraint() { }
-        
-        TaskWithConstraint(RefPtr<SharedTask<void(SlotVisitor&)>> task, MarkingConstraint* constraint)
-            : task(WTFMove(task))
-            , constraint(constraint)
-        {
-        }
-        
-        bool operator==(const TaskWithConstraint& other) const
-        {
-            return task == other.task
-                && constraint == other.constraint;
-        }
-        
-        RefPtr<SharedTask<void(SlotVisitor&)>> task;
-        MarkingConstraint* constraint { nullptr };
-    };
-    
+    void didExecute(ConstraintParallelism, unsigned index);
+
     Heap& m_heap;
     SlotVisitor& m_mainVisitor;
     MarkingConstraintSet& m_set;
     BitVector m_executed;
-    Deque<TaskWithConstraint, 32> m_toExecuteInParallel;
+    Deque<unsigned, 32> m_toExecuteInParallel;
+    BitVector m_toExecuteInParallelSet;
+    Vector<unsigned, 32> m_didExecuteInParallel;
     Vector<unsigned, 32> m_toExecuteSequentially;
     Lock m_lock;
     Condition m_condition;

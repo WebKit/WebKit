@@ -171,16 +171,17 @@ auto VMInspector::codeBlockForMachinePC(const VMInspector::Locker&, void* machin
                 // If the codeBlock is a replacement codeBlock which is in the process of being
                 // compiled, its jitCode will be null, and we can disregard it as a match for
                 // the machinePC we're searching for.
-                return;
+                return false;
             }
 
             if (!JITCode::isJIT(jitCode->jitType()))
-                return;
+                return false;
 
             if (jitCode->contains(machinePC)) {
                 codeBlock = cb;
-                return;
+                return true;
             }
+            return false;
         });
         if (codeBlock)
             return FunctorStatus::Done;
@@ -275,10 +276,11 @@ bool VMInspector::isValidCodeBlock(ExecState* exec, CodeBlock* candidate)
         {
         }
 
-        void operator()(CodeBlock* codeBlock) const
+        bool operator()(CodeBlock* codeBlock) const
         {
             if (codeBlock == candidate)
                 found = true;
+            return found;
         }
 
         CodeBlock* candidate;

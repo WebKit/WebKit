@@ -136,7 +136,7 @@ void Subspace::forEachLiveCell(const Func& func)
     forEachMarkedBlock(
         [&] (MarkedBlock::Handle* handle) {
             handle->forEachLiveCell(
-                [&] (size_t, HeapCell* cell, HeapCell::Kind kind) -> IterationStatus {
+                [&] (HeapCell* cell, HeapCell::Kind kind) -> IterationStatus { 
                     func(cell, kind);
                     return IterationStatus::Continue;
                 });

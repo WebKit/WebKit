@@ -46,17 +46,7 @@ public:
         CString name,
         ::Function<void(SlotVisitor&)>,
         ConstraintVolatility,
-        ConstraintConcurrency = ConstraintConcurrency::Concurrent,
-        ConstraintParallelism = ConstraintParallelism::Sequential);
-    
-    void add(
-        CString abbreviatedName, CString name,
-        ::Function<void(SlotVisitor&)> func,
-        ConstraintVolatility volatility,
-        ConstraintParallelism parallelism)
-    {
-        add(abbreviatedName, name, WTFMove(func), volatility, ConstraintConcurrency::Concurrent, parallelism);
-    }
+        ConstraintConcurrency = ConstraintConcurrency::Concurrent);
     
     void add(std::unique_ptr<MarkingConstraint>);
     

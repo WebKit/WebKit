@@ -483,12 +483,6 @@ inline IterationStatus MarkedBlock::Handle::forEachLiveCell(const Functor& funct
     // happen, we will just overlook objects. I think that because of how aboutToMarkSlow() does things,
     // a race ought to mean that it just returns false when it should have returned true - but this is
     // something that would have to be verified carefully.
-    //
-    // NOTE: Some users of forEachLiveCell require that their callback is called exactly once for
-    // each live cell. We could optimize this function for those users by using a slow loop if the
-    // block is in marks-mean-live mode. That would only affect blocks that had partial survivors
-    // during the last collection and no survivors (yet) during this collection.
-    //
     // https://bugs.webkit.org/show_bug.cgi?id=180315
     
     HeapCell::Kind kind = m_attributes.cellKind;
@@ -497,7 +491,7 @@ inline IterationStatus MarkedBlock::Handle::forEachLiveCell(const Functor& funct
         if (!isLive(cell))
             continue;
 
-        if (functor(i, cell, kind) == IterationStatus::Done)
+        if (functor(cell, kind) == IterationStatus::Done)
             return IterationStatus::Done;
     }
     return IterationStatus::Continue;

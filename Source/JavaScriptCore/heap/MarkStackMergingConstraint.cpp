@@ -54,10 +54,11 @@ void MarkStackMergingConstraint::prepareToExecuteImpl(const AbstractLocker&, Slo
         dataLog("(", size, ")");
 }
 
-void MarkStackMergingConstraint::executeImpl(SlotVisitor& visitor)
+ConstraintParallelism MarkStackMergingConstraint::executeImpl(SlotVisitor& visitor)
 {
     m_heap.m_mutatorMarkStack->transferTo(visitor.mutatorMarkStack());
     m_heap.m_raceMarkStack->transferTo(visitor.mutatorMarkStack());
+    return ConstraintParallelism::Sequential;
 }
 
 } // namespace JSC

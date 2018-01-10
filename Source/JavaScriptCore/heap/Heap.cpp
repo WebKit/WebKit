@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2003-2018 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003-2017 Apple Inc. All rights reserved.
  *  Copyright (C) 2007 Eric Seidel <eric@webkit.org>
  *
  *  This library is free software; you can redistribute it and/or
@@ -367,8 +367,6 @@ void Heap::lastChanceToFinalize()
         dataLog("[GC<", RawPointer(this), ">: shutdown ");
     }
     
-    m_isShuttingDown = true;
-    
     RELEASE_ASSERT(!m_vm->entryScope);
     RELEASE_ASSERT(m_mutatorState == MutatorState::Running);
     
@@ -438,6 +436,7 @@ void Heap::lastChanceToFinalize()
         dataLog("5 ");
     
     m_arrayBuffers.lastChanceToFinalize();
+    m_codeBlocks->lastChanceToFinalize(*m_vm);
     m_objectSpace.stopAllocating();
     m_objectSpace.lastChanceToFinalize();
     releaseDelayedReleasedObjects();
@@ -559,7 +558,7 @@ void Heap::addReference(JSCell* cell, ArrayBuffer* buffer)
 }
 
 template<typename CellType, typename CellSet>
-void Heap::finalizeMarkedUnconditionalFinalizers(CellSet& cellSet)
+void Heap::finalizeUnconditionalFinalizers(CellSet& cellSet)
 {
     cellSet.forEachMarkedCell(
         [&] (HeapCell* cell, HeapCell::Kind) {
@@ -567,17 +566,21 @@ void Heap::finalizeMarkedUnconditionalFinalizers(CellSet& cellSet)
         });
 }
 
+template<typename CellType>
+void Heap::finalizeUnconditionalFinalizersInIsoSubspace()
+{
+    JSC::subspaceFor<CellType>(*vm())->forEachMarkedCell(
+        [&] (HeapCell* cell, HeapCell::Kind) {
+            static_cast<CellType*>(cell)->finalizeUnconditionally(*vm());
+        });
+}
+
 void Heap::finalizeUnconditionalFinalizers()
 {
-    finalizeMarkedUnconditionalFinalizers<InferredType>(vm()->inferredTypesWithFinalizers);
-    finalizeMarkedUnconditionalFinalizers<InferredValue>(vm()->inferredValuesWithFinalizers);
-    vm()->forEachCodeBlockSpace(
-        [&] (auto& space) {
-            this->finalizeMarkedUnconditionalFinalizers<CodeBlock>(space.finalizerSet);
-        });
-    finalizeMarkedUnconditionalFinalizers<ExecutableToCodeBlockEdge>(vm()->executableToCodeBlockEdgesWithFinalizers);
-    finalizeMarkedUnconditionalFinalizers<JSWeakSet>(vm()->weakSetSpace);
-    finalizeMarkedUnconditionalFinalizers<JSWeakMap>(vm()->weakMapSpace);
+    finalizeUnconditionalFinalizers<InferredType>(vm()->inferredTypesWithFinalizers);
+    finalizeUnconditionalFinalizers<InferredValue>(vm()->inferredValuesWithFinalizers);
+    finalizeUnconditionalFinalizersInIsoSubspace<JSWeakSet>();
+    finalizeUnconditionalFinalizersInIsoSubspace<JSWeakMap>();
     
     while (m_unconditionalFinalizers.hasNext()) {
         UnconditionalFinalizer* finalizer = m_unconditionalFinalizers.removeNext();
@@ -674,6 +677,8 @@ void Heap::gatherScratchBufferRoots(ConservativeRoots& roots)
 void Heap::beginMarking()
 {
     TimingScope timingScope(*this, "Heap::beginMarking");
+    if (m_collectionScope == CollectionScope::Full)
+        m_codeBlocks->clearMarksForFullCollection();
     m_jitStubRoutines->clearMarks();
     m_objectSpace.beginMarking();
     setMutatorShouldBeFenced(true);
@@ -934,6 +939,7 @@ void Heap::clearUnmarkedExecutables()
 void Heap::deleteUnmarkedCompiledCode()
 {
     clearUnmarkedExecutables();
+    m_codeBlocks->deleteUnmarkedAndUnreferenced(*m_vm, *m_lastCollectionScope);
     m_jitStubRoutines->deleteUnmarkedJettisonedStubRoutines();
 }
 
@@ -2082,8 +2088,12 @@ void Heap::waitForCollection(Ticket ticket)
 void Heap::sweepInFinalize()
 {
     m_objectSpace.sweepLargeAllocations();
-    vm()->forEachCodeBlockSpace([] (auto& space) { space.space.sweep(); });
-    vm()->eagerlySweptDestructibleObjectSpace.sweep();
+    
+    auto sweepBlock = [&] (MarkedBlock::Handle* handle) {
+        handle->sweep(nullptr);
+    };
+    
+    vm()->eagerlySweptDestructibleObjectSpace.forEachMarkedBlock(sweepBlock);
 }
 
 void Heap::suspendCompilerThreads()
@@ -2458,7 +2468,7 @@ size_t Heap::bytesVisited()
     return result;
 }
 
-void Heap::forEachCodeBlockImpl(const ScopedLambda<void(CodeBlock*)>& func)
+void Heap::forEachCodeBlockImpl(const ScopedLambda<bool(CodeBlock*)>& func)
 {
     // We don't know the full set of CodeBlocks until compilation has terminated.
     completeAllJITPlans();
@@ -2466,7 +2476,7 @@ void Heap::forEachCodeBlockImpl(const ScopedLambda<void(CodeBlock*)>& func)
     return m_codeBlocks->iterate(func);
 }
 
-void Heap::forEachCodeBlockIgnoringJITPlansImpl(const AbstractLocker& locker, const ScopedLambda<void(CodeBlock*)>& func)
+void Heap::forEachCodeBlockIgnoringJITPlansImpl(const AbstractLocker& locker, const ScopedLambda<bool(CodeBlock*)>& func)
 {
     return m_codeBlocks->iterate(locker, func);
 }
@@ -2702,26 +2712,6 @@ void Heap::addCoreConstraints()
                 current->visitWeakReferences(slotVisitor);
         },
         ConstraintVolatility::GreyedByMarking);
-    
-    m_constraintSet->add(
-        "O", "Output",
-        [] (SlotVisitor& slotVisitor) {
-            VM& vm = slotVisitor.vm();
-            
-            auto callOutputConstraint = [] (SlotVisitor& slotVisitor, HeapCell* heapCell, HeapCell::Kind) {
-                VM& vm = slotVisitor.vm();
-                JSCell* cell = static_cast<JSCell*>(heapCell);
-                cell->methodTable(vm)->visitOutputConstraints(cell, slotVisitor);
-            };
-            
-            auto add = [&] (auto& set) {
-                slotVisitor.addParallelConstraintTask(set.forEachMarkedCellInParallel(callOutputConstraint));
-            };
-            
-            add(vm.executableToCodeBlockEdgesWithConstraints);
-        },
-        ConstraintVolatility::GreyedByMarking,
-        ConstraintParallelism::Parallel);
     
 #if ENABLE(DFG_JIT)
     m_constraintSet->add(

@@ -144,12 +144,12 @@ inline void Heap::mutatorFence()
 
 template<typename Functor> inline void Heap::forEachCodeBlock(const Functor& func)
 {
-    forEachCodeBlockImpl(scopedLambdaRef<void(CodeBlock*)>(func));
+    forEachCodeBlockImpl(scopedLambdaRef<bool(CodeBlock*)>(func));
 }
 
 template<typename Functor> inline void Heap::forEachCodeBlockIgnoringJITPlans(const AbstractLocker& codeBlockSetLocker, const Functor& func)
 {
-    forEachCodeBlockIgnoringJITPlansImpl(codeBlockSetLocker, scopedLambdaRef<void(CodeBlock*)>(func));
+    forEachCodeBlockIgnoringJITPlansImpl(codeBlockSetLocker, scopedLambdaRef<bool(CodeBlock*)>(func));
 }
 
 template<typename Functor> inline void Heap::forEachProtectedCell(const Functor& functor)

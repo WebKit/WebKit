@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2009, 2010, 2013, 2015-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -68,16 +68,16 @@ void FunctionExecutable::destroy(JSCell* cell)
 
 FunctionCodeBlock* FunctionExecutable::baselineCodeBlockFor(CodeSpecializationKind kind)
 {
-    ExecutableToCodeBlockEdge* edge;
+    FunctionCodeBlock* result;
     if (kind == CodeForCall)
-        edge = m_codeBlockForCall.get();
+        result = m_codeBlockForCall.get();
     else {
         RELEASE_ASSERT(kind == CodeForConstruct);
-        edge = m_codeBlockForConstruct.get();
+        result = m_codeBlockForConstruct.get();
     }
-    if (!edge)
+    if (!result)
         return 0;
-    return static_cast<FunctionCodeBlock*>(edge->codeBlock()->baselineAlternative());
+    return static_cast<FunctionCodeBlock*>(result->baselineAlternative());
 }
 
 void FunctionExecutable::visitChildren(JSCell* cell, SlotVisitor& visitor)
@@ -85,8 +85,10 @@ void FunctionExecutable::visitChildren(JSCell* cell, SlotVisitor& visitor)
     FunctionExecutable* thisObject = jsCast<FunctionExecutable*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     ScriptExecutable::visitChildren(thisObject, visitor);
-    visitor.append(thisObject->m_codeBlockForCall);
-    visitor.append(thisObject->m_codeBlockForConstruct);
+    if (FunctionCodeBlock* codeBlockForCall = thisObject->m_codeBlockForCall.get())
+        codeBlockForCall->visitWeakly(visitor);
+    if (FunctionCodeBlock* codeBlockForConstruct = thisObject->m_codeBlockForConstruct.get())
+        codeBlockForConstruct->visitWeakly(visitor);
     visitor.append(thisObject->m_unlinkedExecutable);
     visitor.append(thisObject->m_singletonFunction);
     visitor.append(thisObject->m_cachedPolyProtoStructure);

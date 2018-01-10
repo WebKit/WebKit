@@ -31,30 +31,20 @@
 namespace JSC {
 
 // This allows for an informal way to define constraints. Just pass a lambda to the constructor. The only
-// downside is that this makes it hard for constraints to override any functions in MarkingConstraint
-// other than executeImpl. In those cases, just subclass MarkingConstraint.
+// downside is that this makes it hard for constraints to be stateful, which is necessary for them to be
+// parallel. In those cases, it's easier to just subclass MarkingConstraint.
 class SimpleMarkingConstraint : public MarkingConstraint {
 public:
     JS_EXPORT_PRIVATE SimpleMarkingConstraint(
         CString abbreviatedName, CString name,
         ::Function<void(SlotVisitor&)>,
         ConstraintVolatility,
-        ConstraintConcurrency = ConstraintConcurrency::Concurrent,
-        ConstraintParallelism = ConstraintParallelism::Sequential);
-    
-    SimpleMarkingConstraint(
-        CString abbreviatedName, CString name,
-        ::Function<void(SlotVisitor&)> func,
-        ConstraintVolatility volatility,
-        ConstraintParallelism parallelism)
-        : SimpleMarkingConstraint(abbreviatedName, name, WTFMove(func), volatility, ConstraintConcurrency::Concurrent, parallelism)
-    {
-    }
+        ConstraintConcurrency = ConstraintConcurrency::Concurrent);
     
     JS_EXPORT_PRIVATE ~SimpleMarkingConstraint();
     
 private:
-    void executeImpl(SlotVisitor&) override;
+    ConstraintParallelism executeImpl(SlotVisitor&) override;
 
     ::Function<void(SlotVisitor&)> m_executeFunction;
 };

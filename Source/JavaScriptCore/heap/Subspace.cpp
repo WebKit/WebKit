@@ -126,14 +126,6 @@ RefPtr<SharedTask<MarkedBlock::Handle*()>> Subspace::parallelNotEmptyMarkedBlock
         });
 }
 
-void Subspace::sweep()
-{
-    forEachAllocator(
-        [&] (MarkedAllocator& allocator) {
-            allocator.sweep();
-        });
-}
-
 void Subspace::didResizeBits(size_t)
 {
 }
