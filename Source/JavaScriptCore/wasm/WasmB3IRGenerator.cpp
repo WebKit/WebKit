@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -650,7 +650,7 @@ inline Value* B3IRGenerator::emitCheckAndPreparePointer(ExpressionType pointer, 
         // We're not using signal handling at all, we must therefore check that no memory access exceeds the current memory size.
         ASSERT(m_memorySizeGPR);
         ASSERT(sizeOfOperation + offset > offset);
-        GPRReg indexingMask = (shouldMask == ShouldMask::Yes && !Options::disableSpectreMitigations()) ? m_indexingMaskGPR : InvalidGPRReg;
+        GPRReg indexingMask = (shouldMask == ShouldMask::Yes && Options::enableSpectreMitigations()) ? m_indexingMaskGPR : InvalidGPRReg;
         m_currentBlock->appendNew<WasmBoundsCheckValue>(m_proc, origin(), m_memorySizeGPR, indexingMask, pointer, sizeOfOperation + offset - 1);
         break;
     }
@@ -1200,7 +1200,8 @@ auto B3IRGenerator::addCallIndirect(const Signature& signature, Vector<Expressio
 
     ExpressionType callableFunctionBuffer;
     ExpressionType instancesBuffer;
-    ExpressionType callableFunctionBufferSize;
+    ExpressionType callableFunctionBufferLength;
+    ExpressionType mask;
     {
         ExpressionType table = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), origin(),
             instanceValue(), safeCast<int32_t>(Instance::offsetOfTable()));
@@ -1208,57 +1209,66 @@ auto B3IRGenerator::addCallIndirect(const Signature& signature, Vector<Expressio
             table, safeCast<int32_t>(Table::offsetOfFunctions()));
         instancesBuffer = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), origin(),
             table, safeCast<int32_t>(Table::offsetOfInstances()));
-        callableFunctionBufferSize = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, Int32, origin(),
-            table, safeCast<int32_t>(Table::offsetOfSize()));
+        callableFunctionBufferLength = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, Int32, origin(),
+            table, safeCast<int32_t>(Table::offsetOfLength()));
+        mask = m_currentBlock->appendNew<Value>(m_proc, ZExt32, origin(),
+            m_currentBlock->appendNew<MemoryValue>(m_proc, Load, Int32, origin(),
+                table, safeCast<int32_t>(Table::offsetOfMask())));
     }
 
     // Check the index we are looking for is valid.
     {
         CheckValue* check = m_currentBlock->appendNew<CheckValue>(m_proc, Check, origin(),
-            m_currentBlock->appendNew<Value>(m_proc, AboveEqual, origin(), calleeIndex, callableFunctionBufferSize));
+            m_currentBlock->appendNew<Value>(m_proc, AboveEqual, origin(), calleeIndex, callableFunctionBufferLength));
 
         check->setGenerator([=] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
             this->emitExceptionCheck(jit, ExceptionType::OutOfBoundsCallIndirect);
         });
     }
 
-    // Compute the offset in the table index space we are looking for.
-    ExpressionType offset = m_currentBlock->appendNew<Value>(m_proc, Mul, origin(),
-        m_currentBlock->appendNew<Value>(m_proc, ZExt32, origin(), calleeIndex),
-        constant(pointerType(), sizeof(CallableFunction)));
-    ExpressionType callableFunction = m_currentBlock->appendNew<Value>(m_proc, Add, origin(), callableFunctionBuffer, offset);
+    calleeIndex = m_currentBlock->appendNew<Value>(m_proc, ZExt32, origin(), calleeIndex);
 
-    // Check that the CallableFunction is initialized. We trap if it isn't. An "invalid" SignatureIndex indicates it's not initialized.
-    // FIXME: when we have trap handlers, we can just let the call fail because Signature::invalidIndex is 0. https://bugs.webkit.org/show_bug.cgi?id=177210
-    static_assert(sizeof(CallableFunction::signatureIndex) == sizeof(uint32_t), "Load codegen assumes i32");
-    ExpressionType calleeSignatureIndex = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, Int32, origin(), callableFunction, safeCast<int32_t>(OBJECT_OFFSETOF(CallableFunction, signatureIndex)));
+    if (Options::enableSpectreMitigations())
+        calleeIndex = m_currentBlock->appendNew<Value>(m_proc, BitAnd, origin(), mask, calleeIndex);
+
+    ExpressionType callableFunction;
     {
-        CheckValue* check = m_currentBlock->appendNew<CheckValue>(m_proc, Check, origin(),
-            m_currentBlock->appendNew<Value>(m_proc, Equal, origin(),
-                calleeSignatureIndex,
-                m_currentBlock->appendNew<Const32Value>(m_proc, origin(), Signature::invalidIndex)));
+        // Compute the offset in the table index space we are looking for.
+        ExpressionType offset = m_currentBlock->appendNew<Value>(m_proc, Mul, origin(),
+            calleeIndex, constant(pointerType(), sizeof(CallableFunction)));
+        callableFunction = m_currentBlock->appendNew<Value>(m_proc, Add, origin(), callableFunctionBuffer, offset);
 
-        check->setGenerator([=] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
-            this->emitExceptionCheck(jit, ExceptionType::NullTableEntry);
-        });
-    }
+        // Check that the CallableFunction is initialized. We trap if it isn't. An "invalid" SignatureIndex indicates it's not initialized.
+        // FIXME: when we have trap handlers, we can just let the call fail because Signature::invalidIndex is 0. https://bugs.webkit.org/show_bug.cgi?id=177210
+        static_assert(sizeof(CallableFunction::signatureIndex) == sizeof(uint32_t), "Load codegen assumes i32");
+        ExpressionType calleeSignatureIndex = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, Int32, origin(), callableFunction, safeCast<int32_t>(OBJECT_OFFSETOF(CallableFunction, signatureIndex)));
+        {
+            CheckValue* check = m_currentBlock->appendNew<CheckValue>(m_proc, Check, origin(),
+                m_currentBlock->appendNew<Value>(m_proc, Equal, origin(),
+                    calleeSignatureIndex,
+                    m_currentBlock->appendNew<Const32Value>(m_proc, origin(), Signature::invalidIndex)));
 
-    // Check the signature matches the value we expect.
-    {
-        ExpressionType expectedSignatureIndex = m_currentBlock->appendNew<Const32Value>(m_proc, origin(), SignatureInformation::get(signature));
-        CheckValue* check = m_currentBlock->appendNew<CheckValue>(m_proc, Check, origin(),
-            m_currentBlock->appendNew<Value>(m_proc, NotEqual, origin(), calleeSignatureIndex, expectedSignatureIndex));
+            check->setGenerator([=] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
+                this->emitExceptionCheck(jit, ExceptionType::NullTableEntry);
+            });
+        }
 
-        check->setGenerator([=] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
-            this->emitExceptionCheck(jit, ExceptionType::BadSignature);
-        });
+        // Check the signature matches the value we expect.
+        {
+            ExpressionType expectedSignatureIndex = m_currentBlock->appendNew<Const32Value>(m_proc, origin(), SignatureInformation::get(signature));
+            CheckValue* check = m_currentBlock->appendNew<CheckValue>(m_proc, Check, origin(),
+                m_currentBlock->appendNew<Value>(m_proc, NotEqual, origin(), calleeSignatureIndex, expectedSignatureIndex));
+
+            check->setGenerator([=] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
+                this->emitExceptionCheck(jit, ExceptionType::BadSignature);
+            });
+        }
     }
 
     // Do a context switch if needed.
     {
         Value* offset = m_currentBlock->appendNew<Value>(m_proc, Mul, origin(),
-            m_currentBlock->appendNew<Value>(m_proc, ZExt32, origin(), calleeIndex),
-            constant(pointerType(), sizeof(Instance*)));
+            calleeIndex, constant(pointerType(), sizeof(Instance*)));
         Value* newContextInstance = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), origin(),
             m_currentBlock->appendNew<Value>(m_proc, Add, origin(), instancesBuffer, offset));
 

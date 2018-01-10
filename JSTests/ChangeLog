@@ -1,3 +1,20 @@
+2018-01-09  Jason Marcell  <jmarcell@apple.com>
+
+        Cherry-pick r226615. rdar://problem/36392328
+
+    2018-01-08  JF Bastien  <jfbastien@apple.com>
+
+            WebAssembly: mask indexed accesses to Table
+            https://bugs.webkit.org/show_bug.cgi?id=181412
+            <rdar://problem/36363236>
+
+            Reviewed by Saam Barati.
+
+            Update error messages.
+
+            * wasm/js-api/table.js:
+            (assert.throws.WebAssembly.Table.prototype.grow):
+
 2018-01-06  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Object.getOwnPropertyNames includes "arguments" and "caller" for bound functions

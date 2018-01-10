@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -149,7 +149,7 @@ public:
         , m_availabilityCalculator(m_graph)
         , m_state(state.graph)
         , m_interpreter(state.graph, m_state)
-        , m_indexMaskingMode(Options::disableSpectreMitigations() ? IndexMaskingDisabled : IndexMaskingEnabled)
+        , m_indexMaskingMode(Options::enableSpectreMitigations() ?  IndexMaskingEnabled : IndexMaskingDisabled)
     {
     }
     
