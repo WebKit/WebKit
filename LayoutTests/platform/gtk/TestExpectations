@@ -2101,6 +2101,7 @@ webkit.org/b/136674 media/track/track-cue-rendering-with-padding.html [ Timeout 
 webkit.org/b/137698 media/video-controls-drag.html [ Timeout ]
 
 webkit.org/b/181471 media/video-interruption-with-resume-allowing-play.html [ Timeout ]
+webkit.org/b/181471 media/media-playback-page-visibility.html [ Failure ]
 
 webkit.org/b/137131 inspector/debugger [ Skip ]
 webkit.org/b/147518 inspector/dom [ Skip ]
