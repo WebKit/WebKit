@@ -1,4 +1,15 @@
 ==================
+WebKitGTK+  2.18.5
+==================
+
+What's new in WebKitGTK+ 2.18.4?
+
+  - Disable SharedArrayBuffers from Web API.
+  - Reduce the precision of "high" resolution time to 1ms.
+  - Fix API documentation generation with newer gtk-doc.
+  - Security fixes: includes improvements to mitigate the effects of Spectre (CVE-2017-5753 and CVE-2017-5715).
+
+==================
 WebKitGTK+  2.18.4
 ==================
 
