@@ -79,6 +79,10 @@ class WebDriverTestRunnerW3C(object):
                 tests.append(path)
         return tests
 
+    def _subtest_name(self, subtest):
+        path, test = subtest.split('::', 1)
+        return os.path.basename(path) + '::' + test
+
     def run(self, tests=[]):
         self._server.start()
 
@@ -92,7 +96,7 @@ class WebDriverTestRunnerW3C(object):
                 result = WebDriverTestResult(test_name, *harness_result)
                 if harness_result[0] == 'OK':
                     for subtest, status, message, backtrace in test_results:
-                        result.add_subtest_results(os.path.basename(subtest), status, message, backtrace)
+                        result.add_subtest_results(self._subtest_name(subtest), status, message, backtrace)
                 else:
                     # FIXME: handle other results.
                     pass
