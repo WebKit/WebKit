@@ -1,3 +1,14 @@
+2018-01-10  Matt Lewis  <jlewis3@apple.com>
+
+        Adjusted expectations for webrtc/video-unmute.html.
+        https://bugs.webkit.org/show_bug.cgi?id=172879
+
+        Unreviewed test gardening.
+
+        * platform/ios-simulator-wk2/TestExpectations:
+        * platform/ios-wk2/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+
 2018-01-10  Youenn Fablet  <youenn@apple.com>
 
         Skip http/wpt/service-workers/fetchEvent.https.html in Debug

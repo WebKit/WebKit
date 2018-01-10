@@ -26,8 +26,6 @@ svg/custom/manually-parsed-svg-allowed-in-dashboard.html [ Failure ]
 svg/custom/svg-allowed-in-dashboard-object.html [ Failure ]
 http/tests/xmlhttprequest/svg-created-by-xhr-allowed-in-dashboard.html [ Failure ]
 
-webkit.org/b/172879 webrtc/video-unmute.html [ Pass Timeout ]
-
 webkit.org/b/174100 webgl/1.0.2/conformance/glsl/misc/shader-with-non-reserved-words.html [ Skip ]
 
 webkit.org/b/173010 js/slow-stress/Int32Array-alloc-huge.html [ Pass Timeout ]
