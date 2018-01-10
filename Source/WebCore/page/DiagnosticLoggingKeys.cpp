@@ -475,11 +475,6 @@ String DiagnosticLoggingKeys::diskCacheAfterValidationKey()
     return ASCIILiteral("diskCacheAfterValidation");
 }
 
-String DiagnosticLoggingKeys::serviceWorkerKey()
-{
-    return ASCIILiteral("serviceWorker");
-}
-
 String DiagnosticLoggingKeys::reloadKey()
 {
     return ASCIILiteral("reload");
@@ -533,6 +528,11 @@ String DiagnosticLoggingKeys::sameLoadKey()
 String DiagnosticLoggingKeys::scriptKey()
 {
     return ASCIILiteral("script");
+}
+
+String DiagnosticLoggingKeys::serviceWorkerKey()
+{
+    return ASCIILiteral("serviceWorker");
 }
 
 String DiagnosticLoggingKeys::streamingMedia()
