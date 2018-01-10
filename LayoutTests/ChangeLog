@@ -1,3 +1,14 @@
+2018-01-10  Per Arne Vollan  <pvollan@apple.com>
+
+        [Win] Rebaseline tests after r225366.
+
+        Unreviewed test gardening.
+
+        * platform/win/svg/custom/feComponentTransfer-Discrete-expected.txt:
+        * platform/win/svg/custom/feComponentTransfer-Gamma-expected.txt:
+        * platform/win/svg/custom/feComponentTransfer-Linear-expected.txt:
+        * platform/win/svg/custom/feComponentTransfer-Table-expected.txt:
+
 2018-01-10  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed GTK gardening
