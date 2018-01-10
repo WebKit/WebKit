@@ -42,9 +42,9 @@ class OutputCapture(object):
     def stream_wrapper(stream):
         return StringIO()
 
-    def __init__(self):
+    def __init__(self, log_level=logging.INFO):
         self.saved_outputs = dict()
-        self._log_level = logging.INFO
+        self._log_level = log_level
 
     def set_log_level(self, log_level):
         self._log_level = log_level

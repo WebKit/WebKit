@@ -20,6 +20,7 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import logging
 import optparse
 import unittest
 
@@ -28,7 +29,7 @@ import webkitpy.style.checker as checker
 from main import change_directory
 from webkitpy.common.host import Host
 from webkitpy.common.system.filesystem_mock import MockFileSystem
-from webkitpy.common.system.outputcapture import OutputCaptureScope
+from webkitpy.common.system.outputcapture import OutputCapture, OutputCaptureScope
 from webkitpy.common.system.logtesting import LogTesting
 from webkitpy.style.checker import StyleProcessor
 from webkitpy.style.filereader import TextFileReader
@@ -115,7 +116,7 @@ class ExpectationLinterInStyleCheckerTest(unittest.TestCase):
     def test_no_linter_errors(self):
         host = self._generate_testing_host()
 
-        scope = OutputCaptureScope()
+        scope = OutputCaptureScope(OutputCapture(logging.ERROR))
         with scope:
             file_reader = self._generate_file_reader(host.filesystem)
             file_reader.do_association_check('/mock-checkout', host)
@@ -127,7 +128,7 @@ class ExpectationLinterInStyleCheckerTest(unittest.TestCase):
             '# TestExpectations\ncss1/test.html [ Failure ]\ncss1/test.html [ Failure ]\n'}
         host = self._generate_testing_host(files)
 
-        scope = OutputCaptureScope()
+        scope = OutputCaptureScope(OutputCapture(logging.ERROR))
         with scope:
             file_reader = self._generate_file_reader(host.filesystem)
             file_reader.process_file('/mock-checkout/LayoutTests/TestExpectations', line_numbers=[1, 2, 3])
@@ -142,7 +143,7 @@ class ExpectationLinterInStyleCheckerTest(unittest.TestCase):
             '# TestExpectations\ncss1/test.html [ Failure ]\ncss1/test.html [ Failure ]\n'}
         host = self._generate_testing_host(files)
 
-        scope = OutputCaptureScope()
+        scope = OutputCaptureScope(OutputCapture(logging.ERROR))
         with scope:
             file_reader = self._generate_file_reader(host.filesystem)
             file_reader.process_paths(['/mock-checkout/LayoutTests/platform/ios/TestExpectations'])
@@ -155,7 +156,7 @@ class ExpectationLinterInStyleCheckerTest(unittest.TestCase):
             '# TestExpectations\ncss1/test.html [ Failure ]\ncss1/test.html [ Failure ]\n'}
         host = self._generate_testing_host(files)
 
-        scope = OutputCaptureScope()
+        scope = OutputCaptureScope(OutputCapture(logging.ERROR))
         with scope:
             file_reader = self._generate_file_reader(host.filesystem)
             file_reader.process_file('/mock-checkout/LayoutTests/TestExpectations', line_numbers=[1])
@@ -168,7 +169,7 @@ class ExpectationLinterInStyleCheckerTest(unittest.TestCase):
                 '# TestExpectations\ncss1/test.html [ Failure ]\ncss1/test.html [ Failure ]\n'}
         host = self._generate_testing_host(files)
 
-        scope = OutputCaptureScope()
+        scope = OutputCaptureScope(OutputCapture(logging.ERROR))
         with scope:
             file_reader = self._generate_file_reader(host.filesystem)
             file_reader.process_file('/mock-checkout/LayoutTests/TestExpectations')
@@ -181,7 +182,7 @@ class ExpectationLinterInStyleCheckerTest(unittest.TestCase):
             '# TestExpectations\ncss1/test.html [ Failure ]\ncss1/test.html [ Failure ]\n'}
         host = self._generate_testing_host(files)
 
-        scope = OutputCaptureScope()
+        scope = OutputCaptureScope(OutputCapture(logging.ERROR))
         with scope:
             file_reader = self._generate_file_reader(host.filesystem)
             file_reader.process_file('/mock-checkout/LayoutTests/TestExpectations', line_numbers=[1, 2, 3])
@@ -193,9 +194,8 @@ class ExpectationLinterInStyleCheckerTest(unittest.TestCase):
             '/mock-checkout/LayoutTests/TestExpectations':
             '# TestExpectations\ncss1/deleted-test.html [ Failure ]\n'}
         host = self._generate_testing_host(files)
-        host = self._generate_testing_host(files)
 
-        scope = OutputCaptureScope()
+        scope = OutputCaptureScope(OutputCapture(logging.ERROR))
         with scope:
             file_reader = self._generate_file_reader(host.filesystem)
             file_reader.delete_file('/mock-checkout/LayoutTests/css1/deleted-test.html')
@@ -210,7 +210,7 @@ class ExpectationLinterInStyleCheckerTest(unittest.TestCase):
             '# TestExpectations\ncss1/deleted-test.html [ Failure ]\n'}
         host = self._generate_testing_host(files)
 
-        scope = OutputCaptureScope()
+        scope = OutputCaptureScope(OutputCapture(logging.ERROR))
         with scope:
             file_reader = self._generate_file_reader(host.filesystem)
             file_reader.delete_file('/mock-checkout/LayoutTests/css1/other-deleted-test.html')

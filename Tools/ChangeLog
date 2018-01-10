@@ -1,3 +1,25 @@
+2018-01-10  Jonathan Bedard  <jbedard@apple.com>
+
+        REGRESSION (r226715): ignore WARNING output in linter tests
+        https://bugs.webkit.org/show_bug.cgi?id=181486
+        <rdar://problem/36408847>
+
+        Reviewed by Aakash Jain.
+
+        Linter unit tests should not be interested in logs at the the INFO or WARNING levels.
+
+        * Scripts/webkitpy/common/system/outputcapture.py:
+        (OutputCapture.__init__): Pass logging level to be captured.
+        * Scripts/webkitpy/style/main_unittest.py:
+        (ExpectationLinterInStyleCheckerTest.test_no_linter_errors): Capture logging at the ERROR level.
+        (ExpectationLinterInStyleCheckerTest.test_linter_duplicate_line): Ditto.
+        (ExpectationLinterInStyleCheckerTest.test_linter_duplicate_line_no_edit): Ditto.
+        (ExpectationLinterInStyleCheckerTest.test_linter_duplicate_line_edit_in_file): Ditto.
+        (ExpectationLinterInStyleCheckerTest.test_linter_duplicate_line_only_deletes): Ditto.
+        (ExpectationLinterInStyleCheckerTest.test_linter_added_file_with_error): Ditto.
+        (ExpectationLinterInStyleCheckerTest.test_linter_deleted_file): Ditto.
+        (ExpectationLinterInStyleCheckerTest.test_linter_deleted_file_no_edit): Ditto.
+
 2018-01-10  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         Add a JSCOnly MIPS buildbot
