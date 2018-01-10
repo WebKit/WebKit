@@ -1,5 +1,17 @@
 2018-01-10  Jonathan Bedard  <jbedard@apple.com>
 
+        Follow-up fix to r226715
+        https://bugs.webkit.org/show_bug.cgi?id=180555
+        <rdar://problem/36131381>
+
+        Unreviewed infrastructure fix.
+
+        * Scripts/webkitpy/xcode/new_simulated_device.py:
+        (SimulatedDeviceManager._create_or_find_device_for_request): Use _delete instead
+        of delete.
+
+2018-01-10  Jonathan Bedard  <jbedard@apple.com>
+
         webkitpy: Refactor simulator code (Part 2)
         https://bugs.webkit.org/show_bug.cgi?id=180555
         <rdar://problem/36131381>

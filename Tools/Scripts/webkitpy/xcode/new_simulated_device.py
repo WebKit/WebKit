@@ -246,7 +246,7 @@ class SimulatedDeviceManager(object):
 
         for device in SimulatedDeviceManager.available_devices(host):
             if device.platform_device.name == name:
-                device.platform_device.delete()
+                device.platform_device._delete()
                 break
 
         _log.debug("Creating device '{}', of type {}".format(name, device_type))
