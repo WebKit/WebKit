@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009, 2010, 2013-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2009-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "ExecutableToCodeBlockEdge.h"
 #include "ScriptExecutable.h"
 
 namespace JSC {
@@ -55,7 +56,7 @@ public:
 
     ProgramCodeBlock* codeBlock()
     {
-        return m_programCodeBlock.get();
+        return bitwise_cast<ProgramCodeBlock*>(ExecutableToCodeBlockEdge::unwrap(m_programCodeBlock.get()));
     }
 
     JSObject* checkSyntax(ExecState*);
@@ -83,7 +84,7 @@ private:
     static void visitChildren(JSCell*, SlotVisitor&);
 
     WriteBarrier<UnlinkedProgramCodeBlock> m_unlinkedProgramCodeBlock;
-    WriteBarrier<ProgramCodeBlock> m_programCodeBlock;
+    WriteBarrier<ExecutableToCodeBlockEdge> m_programCodeBlock;
 };
 
 } // namespace JSC

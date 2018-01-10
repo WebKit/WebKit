@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "ExecutableToCodeBlockEdge.h"
 #include "ScriptExecutable.h"
 #include "UnlinkedEvalCodeBlock.h"
 
@@ -40,7 +41,7 @@ public:
     
     EvalCodeBlock* codeBlock()
     {
-        return m_evalCodeBlock.get();
+        return bitwise_cast<EvalCodeBlock*>(ExecutableToCodeBlockEdge::unwrap(m_evalCodeBlock.get()));
     }
 
     Ref<JITCode> generatedJITCode()
@@ -70,7 +71,7 @@ protected:
 
     static void visitChildren(JSCell*, SlotVisitor&);
 
-    WriteBarrier<EvalCodeBlock> m_evalCodeBlock;
+    WriteBarrier<ExecutableToCodeBlockEdge> m_evalCodeBlock;
     WriteBarrier<UnlinkedEvalCodeBlock> m_unlinkedEvalCodeBlock;
 };
 

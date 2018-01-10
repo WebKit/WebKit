@@ -66,14 +66,16 @@ public:
                     LargeAllocation::fromCell(pointer),
                     [] (LargeAllocation** ptr) -> LargeAllocation* { return *ptr; });
                 if (result) {
-                    if (result > heap.objectSpace().largeAllocationsForThisCollectionBegin()
-                        && result[-1]->contains(pointer))
-                        func(result[-1]->cell());
-                    if (result[0]->contains(pointer))
-                        func(result[0]->cell());
-                    if (result + 1 < heap.objectSpace().largeAllocationsForThisCollectionEnd()
-                        && result[1]->contains(pointer))
-                        func(result[1]->cell());
+                    auto attemptLarge = [&] (LargeAllocation* allocation) {
+                        if (allocation->contains(pointer))
+                            func(allocation->cell(), allocation->attributes().cellKind);
+                    };
+                    
+                    if (result > heap.objectSpace().largeAllocationsForThisCollectionBegin())
+                        attemptLarge(result[-1]);
+                    attemptLarge(result[0]);
+                    if (result + 1 < heap.objectSpace().largeAllocationsForThisCollectionEnd())
+                        attemptLarge(result[1]);
                 }
             }
         }
@@ -89,7 +91,7 @@ public:
                 && previousCandidate->handle().cellKind() == HeapCell::Auxiliary) {
                 previousPointer = static_cast<char*>(previousCandidate->handle().cellAlign(previousPointer));
                 if (previousCandidate->handle().isLiveCell(markingVersion, newlyAllocatedVersion, isMarking, previousPointer))
-                    func(previousPointer);
+                    func(previousPointer, previousCandidate->handle().cellKind());
             }
         }
     
@@ -100,10 +102,12 @@ public:
     
         if (!set.contains(candidate))
             return;
+
+        HeapCell::Kind cellKind = candidate->handle().cellKind();
         
         auto tryPointer = [&] (void* pointer) {
             if (candidate->handle().isLiveCell(markingVersion, newlyAllocatedVersion, isMarking, pointer))
-                func(pointer);
+                func(pointer, cellKind);
         };
     
         if (candidate->handle().cellKind() == HeapCell::JSCell) {

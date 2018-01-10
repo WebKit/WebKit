@@ -1,3 +1,15 @@
+2018-01-04  Filip Pizlo  <fpizlo@apple.com>
+
+        CodeBlocks should be in IsoSubspaces
+        https://bugs.webkit.org/show_bug.cgi?id=180884
+
+        Reviewed by Saam Barati.
+        
+        Deque<>::contains() is helpful for a debug ASSERT.
+
+        * wtf/Deque.h:
+        (WTF::inlineCapacity>::contains):
+
 2018-01-08  Don Olmstead  <don.olmstead@sony.com>
 
         Add WTF_EXPORTs to UniStdExtras

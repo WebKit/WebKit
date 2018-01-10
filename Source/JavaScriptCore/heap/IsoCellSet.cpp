@@ -46,6 +46,41 @@ IsoCellSet::~IsoCellSet()
         BasicRawSentinelNode<IsoCellSet>::remove();
 }
 
+RefPtr<SharedTask<MarkedBlock::Handle*()>> IsoCellSet::parallelNotEmptyMarkedBlockSource()
+{
+    class Task : public SharedTask<MarkedBlock::Handle*()> {
+    public:
+        Task(IsoCellSet& set)
+            : m_set(set)
+            , m_allocator(set.m_subspace.m_allocator)
+        {
+        }
+        
+        MarkedBlock::Handle* run() override
+        {
+            if (m_done)
+                return nullptr;
+            auto locker = holdLock(m_lock);
+            auto bits = m_allocator.m_markingNotEmpty & m_set.m_blocksWithBits;
+            m_index = bits.findBit(m_index, true);
+            if (m_index >= m_allocator.m_blocks.size()) {
+                m_done = true;
+                return nullptr;
+            }
+            return m_allocator.m_blocks[m_index++];
+        }
+        
+    private:
+        IsoCellSet& m_set;
+        MarkedAllocator& m_allocator;
+        size_t m_index { 0 };
+        Lock m_lock;
+        bool m_done { false };
+    };
+    
+    return adoptRef(new Task(*this));
+}
+
 NEVER_INLINE Bitmap<MarkedBlock::atomsPerBlock>* IsoCellSet::addSlow(size_t blockIndex)
 {
     auto locker = holdLock(m_subspace.m_allocator.m_bitvectorLock);

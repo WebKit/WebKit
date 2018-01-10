@@ -786,4 +786,13 @@ MarkStackArray& SlotVisitor::correspondingGlobalStack(MarkStackArray& stack)
     return *m_heap.m_sharedMutatorMarkStack;
 }
 
+void SlotVisitor::addParallelConstraintTask(RefPtr<SharedTask<void(SlotVisitor&)>> task)
+{
+    RELEASE_ASSERT(m_currentSolver);
+    RELEASE_ASSERT(m_currentConstraint);
+    RELEASE_ASSERT(task);
+    
+    m_currentSolver->addParallelTask(task, *m_currentConstraint);
+}
+
 } // namespace JSC

@@ -90,5 +90,12 @@ ALWAYS_INLINE HeapCell::Kind HeapCell::cellKind() const
     return allocatorAttributes().cellKind;
 }
 
+ALWAYS_INLINE Subspace* HeapCell::subspace() const
+{
+    if (isLargeAllocation())
+        return largeAllocation().subspace();
+    return markedBlock().subspace();
+}
+
 } // namespace JSC
 

@@ -39,7 +39,6 @@ public:
     ~ConservativeRoots();
 
     void add(void* begin, void* end);
-    void add(void* begin, void* end, JITStubRoutineSet&);
     void add(void* begin, void* end, JITStubRoutineSet&, CodeBlockSet&);
     
     size_t size();

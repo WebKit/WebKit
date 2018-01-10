@@ -1,3 +1,224 @@
+2018-01-04  Filip Pizlo  <fpizlo@apple.com>
+
+        CodeBlocks should be in IsoSubspaces
+        https://bugs.webkit.org/show_bug.cgi?id=180884
+
+        Reviewed by Saam Barati.
+        
+        This moves CodeBlocks into IsoSubspaces. Doing so means that we no longer need to have the
+        special CodeBlockSet HashSets of new and old CodeBlocks. We also no longer use
+        WeakReferenceHarvester or UnconditionalFinalizer. Instead:
+        
+        - Code block sweeping is now just eager sweeping. This means that it automatically takes
+          advantage of our unswept set, which roughly corresponds to what CodeBlockSet used to use
+          its eden set for.
+        
+        - Those idea of Executable "weakly visiting" the CodeBlock is replaced by Executable
+          marking a ExecutableToCodeBlockEdge object. That object being marked corresponds to what
+          we used to call CodeBlock "having been weakly visited". This means that CodeBlockSet no
+          longer has to clear the set of weakly visited code blocks. This also means that
+          determining CodeBlock liveness, propagating CodeBlock transitions, and jettisoning
+          CodeBlocks during GC are now the edge's job. The edge is also in an IsoSubspace and it
+          has IsoCellSets to tell us which edges have output constraints (what we used to call
+          CodeBlock's weak reference harvester) and which have unconditional finalizers.
+        
+        - CodeBlock now uses an IsoCellSet to tell if it has an unconditional finalizer.
+        
+        - CodeBlockSet still exists!  It has one unified HashSet of CodeBlocks that we use to
+          handle requests from the sampler, debugger, and other facilities. They may want to ask
+          if some pointer corresponds to a CodeBlock during stages of execution during which the
+          GC is unable to answer isLive() queries. The trickiest is the sampling profiler thread.
+          There is no way that the GC's isLive could tell us of a CodeBlock that had already been
+          allocated has now been full constructed.
+        
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Sources.txt:
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::CodeBlock):
+        (JSC::CodeBlock::finishCreation):
+        (JSC::CodeBlock::finishCreationCommon):
+        (JSC::CodeBlock::~CodeBlock):
+        (JSC::CodeBlock::visitChildren):
+        (JSC::CodeBlock::propagateTransitions):
+        (JSC::CodeBlock::determineLiveness):
+        (JSC::CodeBlock::finalizeUnconditionally):
+        (JSC::CodeBlock::stronglyVisitStrongReferences):
+        (JSC::CodeBlock::hasInstalledVMTrapBreakpoints const):
+        (JSC::CodeBlock::installVMTrapBreakpoints):
+        (JSC::CodeBlock::dumpMathICStats):
+        (JSC::CodeBlock::visitWeakly): Deleted.
+        (JSC::CodeBlock::WeakReferenceHarvester::visitWeakReferences): Deleted.
+        (JSC::CodeBlock::UnconditionalFinalizer::finalizeUnconditionally): Deleted.
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::subspaceFor):
+        (JSC::CodeBlock::ownerEdge const):
+        (JSC::CodeBlock::clearVisitWeaklyHasBeenCalled): Deleted.
+        * bytecode/EvalCodeBlock.h:
+        (JSC::EvalCodeBlock::create): Deleted.
+        (JSC::EvalCodeBlock::createStructure): Deleted.
+        (JSC::EvalCodeBlock::variable): Deleted.
+        (JSC::EvalCodeBlock::numVariables): Deleted.
+        (JSC::EvalCodeBlock::functionHoistingCandidate): Deleted.
+        (JSC::EvalCodeBlock::numFunctionHoistingCandidates): Deleted.
+        (JSC::EvalCodeBlock::EvalCodeBlock): Deleted.
+        (JSC::EvalCodeBlock::unlinkedEvalCodeBlock const): Deleted.
+        * bytecode/ExecutableToCodeBlockEdge.cpp: Added.
+        (JSC::ExecutableToCodeBlockEdge::createStructure):
+        (JSC::ExecutableToCodeBlockEdge::create):
+        (JSC::ExecutableToCodeBlockEdge::visitChildren):
+        (JSC::ExecutableToCodeBlockEdge::visitOutputConstraints):
+        (JSC::ExecutableToCodeBlockEdge::finalizeUnconditionally):
+        (JSC::ExecutableToCodeBlockEdge::activate):
+        (JSC::ExecutableToCodeBlockEdge::deactivate):
+        (JSC::ExecutableToCodeBlockEdge::deactivateAndUnwrap):
+        (JSC::ExecutableToCodeBlockEdge::wrap):
+        (JSC::ExecutableToCodeBlockEdge::wrapAndActivate):
+        (JSC::ExecutableToCodeBlockEdge::ExecutableToCodeBlockEdge):
+        (JSC::ExecutableToCodeBlockEdge::runConstraint):
+        * bytecode/ExecutableToCodeBlockEdge.h: Added.
+        (JSC::ExecutableToCodeBlockEdge::subspaceFor):
+        (JSC::ExecutableToCodeBlockEdge::codeBlock const):
+        (JSC::ExecutableToCodeBlockEdge::unwrap):
+        * bytecode/FunctionCodeBlock.h:
+        (JSC::FunctionCodeBlock::subspaceFor):
+        (JSC::FunctionCodeBlock::createStructure):
+        * bytecode/ModuleProgramCodeBlock.h:
+        (JSC::ModuleProgramCodeBlock::create): Deleted.
+        (JSC::ModuleProgramCodeBlock::createStructure): Deleted.
+        (JSC::ModuleProgramCodeBlock::ModuleProgramCodeBlock): Deleted.
+        * bytecode/ProgramCodeBlock.h:
+        (JSC::ProgramCodeBlock::create): Deleted.
+        (JSC::ProgramCodeBlock::createStructure): Deleted.
+        (JSC::ProgramCodeBlock::ProgramCodeBlock): Deleted.
+        * debugger/Debugger.cpp:
+        (JSC::Debugger::SetSteppingModeFunctor::operator() const):
+        (JSC::Debugger::ToggleBreakpointFunctor::operator() const):
+        (JSC::Debugger::ClearCodeBlockDebuggerRequestsFunctor::operator() const):
+        (JSC::Debugger::ClearDebuggerRequestsFunctor::operator() const):
+        * heap/CodeBlockSet.cpp:
+        (JSC::CodeBlockSet::contains):
+        (JSC::CodeBlockSet::dump const):
+        (JSC::CodeBlockSet::add):
+        (JSC::CodeBlockSet::remove):
+        (JSC::CodeBlockSet::promoteYoungCodeBlocks): Deleted.
+        (JSC::CodeBlockSet::clearMarksForFullCollection): Deleted.
+        (JSC::CodeBlockSet::lastChanceToFinalize): Deleted.
+        (JSC::CodeBlockSet::deleteUnmarkedAndUnreferenced): Deleted.
+        * heap/CodeBlockSet.h:
+        * heap/CodeBlockSetInlines.h:
+        (JSC::CodeBlockSet::iterate):
+        (JSC::CodeBlockSet::iterateViaSubspaces):
+        * heap/ConservativeRoots.cpp:
+        (JSC::ConservativeRoots::genericAddPointer):
+        (JSC::DummyMarkHook::markKnownJSCell):
+        (JSC::CompositeMarkHook::mark):
+        (JSC::CompositeMarkHook::markKnownJSCell):
+        * heap/ConservativeRoots.h:
+        * heap/Heap.cpp:
+        (JSC::Heap::lastChanceToFinalize):
+        (JSC::Heap::finalizeMarkedUnconditionalFinalizers):
+        (JSC::Heap::finalizeUnconditionalFinalizers):
+        (JSC::Heap::beginMarking):
+        (JSC::Heap::deleteUnmarkedCompiledCode):
+        (JSC::Heap::sweepInFinalize):
+        (JSC::Heap::forEachCodeBlockImpl):
+        (JSC::Heap::forEachCodeBlockIgnoringJITPlansImpl):
+        (JSC::Heap::addCoreConstraints):
+        (JSC::Heap::finalizeUnconditionalFinalizersInIsoSubspace): Deleted.
+        * heap/Heap.h:
+        * heap/HeapCell.h:
+        * heap/HeapCellInlines.h:
+        (JSC::HeapCell::subspace const):
+        * heap/HeapInlines.h:
+        (JSC::Heap::forEachCodeBlock):
+        (JSC::Heap::forEachCodeBlockIgnoringJITPlans):
+        * heap/HeapUtil.h:
+        (JSC::HeapUtil::findGCObjectPointersForMarking):
+        * heap/IsoCellSet.cpp:
+        (JSC::IsoCellSet::parallelNotEmptyMarkedBlockSource):
+        * heap/IsoCellSet.h:
+        * heap/IsoCellSetInlines.h:
+        (JSC::IsoCellSet::forEachMarkedCellInParallel):
+        (JSC::IsoCellSet::forEachLiveCell):
+        * heap/LargeAllocation.h:
+        (JSC::LargeAllocation::subspace const):
+        * heap/MarkStackMergingConstraint.cpp:
+        (JSC::MarkStackMergingConstraint::executeImpl):
+        * heap/MarkStackMergingConstraint.h:
+        * heap/MarkedAllocator.cpp:
+        (JSC::MarkedAllocator::parallelNotEmptyBlockSource):
+        * heap/MarkedBlock.cpp:
+        (JSC::MarkedBlock::Handle::didAddToAllocator):
+        (JSC::MarkedBlock::Handle::didRemoveFromAllocator):
+        * heap/MarkedBlock.h:
+        (JSC::MarkedBlock::subspace const):
+        * heap/MarkedBlockInlines.h:
+        (JSC::MarkedBlock::Handle::forEachLiveCell):
+        * heap/MarkedSpaceInlines.h:
+        (JSC::MarkedSpace::forEachLiveCell):
+        * heap/MarkingConstraint.cpp:
+        (JSC::MarkingConstraint::execute):
+        (JSC::MarkingConstraint::doParallelWork):
+        (JSC::MarkingConstraint::finishParallelWork): Deleted.
+        (JSC::MarkingConstraint::doParallelWorkImpl): Deleted.
+        (JSC::MarkingConstraint::finishParallelWorkImpl): Deleted.
+        * heap/MarkingConstraint.h:
+        * heap/MarkingConstraintSet.cpp:
+        (JSC::MarkingConstraintSet::add):
+        * heap/MarkingConstraintSet.h:
+        (JSC::MarkingConstraintSet::add):
+        * heap/MarkingConstraintSolver.cpp:
+        (JSC::MarkingConstraintSolver::execute):
+        (JSC::MarkingConstraintSolver::addParallelTask):
+        (JSC::MarkingConstraintSolver::runExecutionThread):
+        (JSC::MarkingConstraintSolver::didExecute): Deleted.
+        * heap/MarkingConstraintSolver.h:
+        (JSC::MarkingConstraintSolver::TaskWithConstraint::TaskWithConstraint):
+        (JSC::MarkingConstraintSolver::TaskWithConstraint::operator== const):
+        * heap/SimpleMarkingConstraint.cpp:
+        (JSC::SimpleMarkingConstraint::SimpleMarkingConstraint):
+        (JSC::SimpleMarkingConstraint::executeImpl):
+        * heap/SimpleMarkingConstraint.h:
+        (JSC::SimpleMarkingConstraint::SimpleMarkingConstraint):
+        * heap/SlotVisitor.cpp:
+        (JSC::SlotVisitor::addParallelConstraintTask):
+        * heap/SlotVisitor.h:
+        * heap/Subspace.cpp:
+        (JSC::Subspace::sweep):
+        * heap/Subspace.h:
+        * heap/SubspaceInlines.h:
+        (JSC::Subspace::forEachLiveCell):
+        * llint/LowLevelInterpreter.asm:
+        * runtime/EvalExecutable.cpp:
+        (JSC::EvalExecutable::visitChildren):
+        * runtime/EvalExecutable.h:
+        (JSC::EvalExecutable::codeBlock):
+        * runtime/FunctionExecutable.cpp:
+        (JSC::FunctionExecutable::baselineCodeBlockFor):
+        (JSC::FunctionExecutable::visitChildren):
+        * runtime/FunctionExecutable.h:
+        * runtime/JSType.h:
+        * runtime/ModuleProgramExecutable.cpp:
+        (JSC::ModuleProgramExecutable::visitChildren):
+        * runtime/ModuleProgramExecutable.h:
+        * runtime/ProgramExecutable.cpp:
+        (JSC::ProgramExecutable::visitChildren):
+        * runtime/ProgramExecutable.h:
+        * runtime/ScriptExecutable.cpp:
+        (JSC::ScriptExecutable::installCode):
+        (JSC::ScriptExecutable::newReplacementCodeBlockFor):
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        * runtime/VM.h:
+        (JSC::VM::SpaceAndFinalizerSet::SpaceAndFinalizerSet):
+        (JSC::VM::SpaceAndFinalizerSet::finalizerSetFor):
+        (JSC::VM::forEachCodeBlockSpace):
+        * runtime/VMTraps.cpp:
+        (JSC::VMTraps::handleTraps):
+        * tools/VMInspector.cpp:
+        (JSC::VMInspector::codeBlockForMachinePC):
+        (JSC::VMInspector::isValidCodeBlock):
+
 2018-01-09  Michael Saboff  <msaboff@apple.com>
 
         Unreviewed, rolling out r226600 and r226603

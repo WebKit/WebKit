@@ -78,10 +78,6 @@ void MarkingConstraintSolver::execute(SchedulerPreference preference, ScopedLamb
     RELEASE_ASSERT(!m_pickNextIsStillActive);
     RELEASE_ASSERT(!m_numThreadsThatMayProduceWork);
         
-    for (unsigned indexToRun : m_didExecuteInParallel)
-        m_set.m_set[indexToRun]->finishParallelWork(m_mainVisitor);
-    m_didExecuteInParallel.clear();
-    
     if (!m_toExecuteSequentially.isEmpty()) {
         for (unsigned indexToRun : m_toExecuteSequentially)
             execute(*m_set.m_set[indexToRun]);
@@ -89,7 +85,6 @@ void MarkingConstraintSolver::execute(SchedulerPreference preference, ScopedLamb
     }
         
     RELEASE_ASSERT(m_toExecuteInParallel.isEmpty());
-    RELEASE_ASSERT(!m_toExecuteInParallelSet.bitCount());
 }
 
 void MarkingConstraintSolver::drain(BitVector& unexecuted)
@@ -156,15 +151,23 @@ void MarkingConstraintSolver::execute(MarkingConstraint& constraint)
         return;
     
     constraint.prepareToExecute(NoLockingNecessary, m_mainVisitor);
-    ConstraintParallelism parallelism = constraint.execute(m_mainVisitor);
-    didExecute(parallelism, constraint.index());
+    constraint.execute(m_mainVisitor);
+    m_executed.set(constraint.index());
+}
+
+void MarkingConstraintSolver::addParallelTask(RefPtr<SharedTask<void(SlotVisitor&)>> task, MarkingConstraint& constraint)
+{
+    auto locker = holdLock(m_lock);
+    m_toExecuteInParallel.append(TaskWithConstraint(WTFMove(task), &constraint));
 }
 
 void MarkingConstraintSolver::runExecutionThread(SlotVisitor& visitor, SchedulerPreference preference, ScopedLambda<std::optional<unsigned>()> pickNext)
 {
     for (;;) {
         bool doParallelWorkMode;
-        unsigned indexToRun;
+        MarkingConstraint* constraint = nullptr;
+        unsigned indexToRun = UINT_MAX;
+        TaskWithConstraint task;
         {
             auto locker = holdLock(m_lock);
                         
@@ -173,11 +176,12 @@ void MarkingConstraintSolver::runExecutionThread(SlotVisitor& visitor, Scheduler
                     if (m_toExecuteInParallel.isEmpty())
                         return false;
                     
-                    indexToRun = m_toExecuteInParallel.first();
+                    task = m_toExecuteInParallel.first();
+                    constraint = task.constraint;
                     doParallelWorkMode = true;
                     return true;
                 };
-                            
+                
                 auto tryNextConstraint = [&] () -> bool {
                     if (!m_pickNextIsStillActive)
                         return false;
@@ -192,16 +196,17 @@ void MarkingConstraintSolver::runExecutionThread(SlotVisitor& visitor, Scheduler
                         if (m_executed.get(*pickResult))
                             continue;
                                     
-                        MarkingConstraint& constraint = *m_set.m_set[*pickResult];
-                        if (constraint.concurrency() == ConstraintConcurrency::Sequential) {
+                        MarkingConstraint& candidateConstraint = *m_set.m_set[*pickResult];
+                        if (candidateConstraint.concurrency() == ConstraintConcurrency::Sequential) {
                             m_toExecuteSequentially.append(*pickResult);
                             continue;
                         }
-                        if (constraint.parallelism() == ConstraintParallelism::Parallel)
+                        if (candidateConstraint.parallelism() == ConstraintParallelism::Parallel)
                             m_numThreadsThatMayProduceWork++;
                         indexToRun = *pickResult;
+                        constraint = &candidateConstraint;
                         doParallelWorkMode = false;
-                        constraint.prepareToExecute(locker, visitor);
+                        constraint->prepareToExecute(locker, visitor);
                         return true;
                     }
                 };
@@ -226,47 +231,37 @@ void MarkingConstraintSolver::runExecutionThread(SlotVisitor& visitor, Scheduler
             }
         }
                     
-        ConstraintParallelism parallelism = ConstraintParallelism::Sequential;
-                    
-        MarkingConstraint& constraint = *m_set.m_set[indexToRun];
-                    
         if (doParallelWorkMode)
-            constraint.doParallelWork(visitor);
-        else
-            parallelism = constraint.execute(visitor);
-                    
+            constraint->doParallelWork(visitor, *task.task);
+        else {
+            if (constraint->parallelism() == ConstraintParallelism::Parallel) {
+                visitor.m_currentConstraint = constraint;
+                visitor.m_currentSolver = this;
+            }
+            
+            constraint->execute(visitor);
+            
+            visitor.m_currentConstraint = nullptr;
+            visitor.m_currentSolver = nullptr;
+        }
+        
         {
             auto locker = holdLock(m_lock);
-                        
+            
             if (doParallelWorkMode) {
-                if (m_toExecuteInParallelSet.get(indexToRun)) {
-                    m_didExecuteInParallel.append(indexToRun);
-                                
-                    m_toExecuteInParallel.takeFirst(
-                        [&] (unsigned value) { return value == indexToRun; });
-                    m_toExecuteInParallelSet.clear(indexToRun);
-                }
+                if (!m_toExecuteInParallel.isEmpty()
+                    && task == m_toExecuteInParallel.first())
+                    m_toExecuteInParallel.takeFirst();
+                else
+                    ASSERT(!m_toExecuteInParallel.contains(task));
             } else {
-                if (constraint.parallelism() == ConstraintParallelism::Parallel)
+                if (constraint->parallelism() == ConstraintParallelism::Parallel)
                     m_numThreadsThatMayProduceWork--;
                 m_executed.set(indexToRun);
-                if (parallelism == ConstraintParallelism::Parallel) {
-                    m_toExecuteInParallel.append(indexToRun);
-                    m_toExecuteInParallelSet.set(indexToRun);
-                }
             }
                         
             m_condition.notifyAll();
         }
-    }
-}
-
-void MarkingConstraintSolver::didExecute(ConstraintParallelism parallelism, unsigned index)
-{
-    m_executed.set(index);
-    if (parallelism == ConstraintParallelism::Parallel) {
-        m_toExecuteInParallel.append(index);
-        m_toExecuteInParallelSet.set(index);
     }
 }
 

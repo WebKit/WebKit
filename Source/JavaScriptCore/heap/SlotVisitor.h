@@ -40,6 +40,7 @@ class Heap;
 class HeapCell;
 class HeapSnapshotBuilder;
 class MarkedBlock;
+class MarkingConstraintSolver;
 class UnconditionalFinalizer;
 template<typename T> class Weak;
 class WeakReferenceHarvester;
@@ -170,9 +171,12 @@ public:
     void donateAll();
     
     const char* codeName() const { return m_codeName.data(); }
+    
+    JS_EXPORT_PRIVATE void addParallelConstraintTask(RefPtr<SharedTask<void(SlotVisitor&)>>);
 
 private:
     friend class ParallelModeEnabler;
+    friend class MarkingConstraintSolver;
     
     void appendJSCellOrAuxiliary(HeapCell*);
 
@@ -228,6 +232,9 @@ private:
     Lock m_rightToRun;
     
     CString m_codeName;
+    
+    MarkingConstraint* m_currentConstraint { nullptr };
+    MarkingConstraintSolver* m_currentSolver { nullptr };
     
 public:
 #if !ASSERT_DISABLED

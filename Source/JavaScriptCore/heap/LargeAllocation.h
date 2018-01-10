@@ -58,6 +58,8 @@ public:
         return bitwise_cast<uintptr_t>(cell) & halfAlignment;
     }
     
+    Subspace* subspace() const { return m_subspace; }
+    
     void lastChanceToFinalize();
     
     Heap* heap() const { return m_weakSet.heap(); }
