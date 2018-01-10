@@ -350,6 +350,11 @@ void RenderTreeBuilder::splitFlow(RenderInline& parent, RenderObject* beforeChil
     inlineBuilder().splitFlow(parent, beforeChild, WTFMove(newBlockBox), WTFMove(child), oldCont);
 }
 
+void RenderTreeBuilder::moveRubyChildren(RenderRubyBase& from, RenderRubyBase& to)
+{
+    rubyBuilder().moveChildren(from, to);
+}
+
 void RenderTreeBuilder::insertChildToRenderBlockFlow(RenderBlockFlow& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild)
 {
     blockFlowBuilder().insertChild(parent, WTFMove(child), beforeChild);

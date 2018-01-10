@@ -30,6 +30,7 @@
 namespace WebCore {
 
 class RenderMathMLFenced;
+class RenderRubyBase;
 class RenderRubyRun;
 class RenderSVGContainer;
 class RenderSVGInline;
@@ -74,6 +75,7 @@ public:
     void makeChildrenNonInline(RenderBlock& parent, RenderObject* insertionPoint = nullptr);
     RenderObject* splitAnonymousBoxesAroundChild(RenderBox& parent, RenderObject* beforeChild);
     void splitFlow(RenderInline& parent, RenderObject* beforeChild, RenderPtr<RenderBlock> newBlockBox, RenderPtr<RenderObject> child, RenderBoxModelObject* oldCont);
+    void moveRubyChildren(RenderRubyBase& from, RenderRubyBase& to);
 
 private:
     class FirstLetter;

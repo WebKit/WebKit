@@ -111,6 +111,80 @@ RenderTreeBuilder::Ruby::Ruby(RenderTreeBuilder& builder)
 {
 }
 
+void RenderTreeBuilder::Ruby::moveInlineChildren(RenderRubyBase& from, RenderRubyBase& to, RenderObject* beforeChild)
+{
+    ASSERT(from.childrenInline());
+
+    if (!from.firstChild())
+        return;
+
+    RenderBlock* toBlock = nullptr;
+    if (to.childrenInline()) {
+        // The standard and easy case: move the children into the target base
+        toBlock = &to;
+    } else {
+        // We need to wrap the inline objects into an anonymous block.
+        // If toBase has a suitable block, we re-use it, otherwise create a new one.
+        auto* lastChild = to.lastChild();
+        if (lastChild && lastChild->isAnonymousBlock() && lastChild->childrenInline())
+            toBlock = downcast<RenderBlock>(lastChild);
+        else {
+            auto newToBlock = to.createAnonymousBlock();
+            toBlock = newToBlock.get();
+            to.insertChildInternal(WTFMove(newToBlock), nullptr);
+        }
+    }
+    // Move our inline children into the target block we determined above.
+    from.moveChildrenTo(toBlock, from.firstChild(), beforeChild, RenderBoxModelObject::NormalizeAfterInsertion::No);
+}
+
+void RenderTreeBuilder::Ruby::moveBlockChildren(RenderRubyBase& from, RenderRubyBase& to, RenderObject* beforeChild)
+{
+    ASSERT(!from.childrenInline());
+
+    if (!from.firstChild())
+        return;
+
+    if (to.childrenInline())
+        m_builder.makeChildrenNonInline(to);
+
+    // If an anonymous block would be put next to another such block, then merge those.
+    auto* firstChildHere = from.firstChild();
+    auto* lastChildThere = to.lastChild();
+    if (firstChildHere->isAnonymousBlock() && firstChildHere->childrenInline()
+        && lastChildThere && lastChildThere->isAnonymousBlock() && lastChildThere->childrenInline()) {
+        auto* anonBlockHere = downcast<RenderBlock>(firstChildHere);
+        auto* anonBlockThere = downcast<RenderBlock>(lastChildThere);
+        anonBlockHere->moveAllChildrenTo(anonBlockThere, RenderBoxModelObject::NormalizeAfterInsertion::Yes);
+        anonBlockHere->deleteLines();
+        anonBlockHere->removeFromParentAndDestroy();
+    }
+    // Move all remaining children normally.
+    from.moveChildrenTo(&to, from.firstChild(), beforeChild, RenderBoxModelObject::NormalizeAfterInsertion::No);
+}
+
+void RenderTreeBuilder::Ruby::moveChildren(RenderRubyBase& from, RenderRubyBase& to)
+{
+    moveChildrenInternal(from, to);
+    from.addFloatsToNewParent(to);
+}
+
+void RenderTreeBuilder::Ruby::moveChildrenInternal(RenderRubyBase& from, RenderRubyBase& to, RenderObject* beforeChild)
+{
+    // This function removes all children that are before (!) beforeChild
+    // and appends them to toBase.
+    if (beforeChild && beforeChild->parent() != &from)
+        beforeChild = m_builder.splitAnonymousBoxesAroundChild(from, beforeChild);
+
+    if (from.childrenInline())
+        moveInlineChildren(from, to, beforeChild);
+    else
+        moveBlockChildren(from, to, beforeChild);
+
+    from.setNeedsLayoutAndPrefWidthsRecalc();
+    to.setNeedsLayoutAndPrefWidthsRecalc();
+}
+
 void RenderTreeBuilder::Ruby::insertChild(RenderRubyRun& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild)
 {
     if (child->isRubyText()) {
@@ -147,7 +221,7 @@ void RenderTreeBuilder::Ruby::insertChild(RenderRubyRun& parent, RenderPtr<Rende
             auto& run = *newRun;
             m_builder.insertChild(*ruby, WTFMove(newRun), &parent);
             m_builder.insertChild(run, WTFMove(child));
-            parent.rubyBaseSafe()->moveChildren(run.rubyBaseSafe(), beforeChild);
+            moveChildrenInternal(*parent.rubyBaseSafe(), *run.rubyBaseSafe(), beforeChild);
         }
         return;
     }

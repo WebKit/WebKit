@@ -394,6 +394,8 @@ public:
     // column balancer to help set a good minimum column height.
     void updateMinimumPageHeight(LayoutUnit offset, LayoutUnit minHeight);
 
+    void addFloatsToNewParent(RenderBlockFlow& toBlockFlow) const;
+
 protected:
     void computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const override;
     
@@ -453,8 +455,6 @@ protected:
     bool isTopLayoutOverflowAllowed() const override;
     bool isLeftLayoutOverflowAllowed() const override;
 
-    void addFloatsToNewParent(RenderBlockFlow& toBlockFlow) const;
-    
     virtual void computeColumnCountAndWidth();
 
     virtual void cachePriorCharactersIfNeeded(const LazyLineBreakIterator&) {};

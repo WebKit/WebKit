@@ -59,20 +59,11 @@ public:
     
     void cachePriorCharactersIfNeeded(const LazyLineBreakIterator&) override;
 
-    void moveChildren(RenderRubyBase* toBase, RenderObject* beforeChild = 0);
-
 private:
     bool isRubyBase() const override { return true; }
     bool isChildAllowed(const RenderObject&, const RenderStyle&) const override;
     ETextAlign textAlignmentForLine(bool endsWithSoftBreak) const override;
     void adjustInlineDirectionLineBounds(int expansionOpportunityCount, float& logicalLeft, float& logicalWidth) const override;
-    void mergeChildrenWithBase(RenderRubyBase& toBlock);
-
-    void moveInlineChildren(RenderRubyBase* toBase, RenderObject* beforeChild = 0);
-    void moveBlockChildren(RenderRubyBase* toBase, RenderObject* beforeChild = 0);
-
-    // Allow RenderRubyRun to manipulate the children within ruby bases.
-    friend class RenderRubyRun;
 
     float m_initialOffset;
     unsigned m_isAfterExpansion : 1;

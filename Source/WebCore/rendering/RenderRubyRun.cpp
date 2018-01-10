@@ -121,7 +121,7 @@ RenderPtr<RenderObject> RenderRubyRun::takeChild(RenderObject& child)
             if (rightRun.hasRubyBase()) {
                 RenderRubyBase* rightBase = rightRun.rubyBaseSafe();
                 // Collect all children in a single base, then swap the bases.
-                rightBase->mergeChildrenWithBase(*base);
+                RenderTreeBuilder::current()->moveRubyChildren(*rightBase, *base);
                 moveChildTo(&rightRun, base, RenderBoxModelObject::NormalizeAfterInsertion::No);
                 rightRun.moveChildTo(this, rightBase, RenderBoxModelObject::NormalizeAfterInsertion::No);
                 // The now empty ruby base will be removed below.
