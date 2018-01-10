@@ -1,4 +1,4 @@
 
-FAIL Animation.id initial value assert_equals: id for Animation is initially empty expected (string) "" but got (undefined) undefined
+PASS Animation.id initial value 
 PASS Animation.id setter 
 

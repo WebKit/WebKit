@@ -49,6 +49,9 @@ public:
     static Ref<WebAnimation> create(Document&, AnimationEffect*, AnimationTimeline*);
     ~WebAnimation();
 
+    const String& id() const { return m_id; }
+    void setId(const String& id) { m_id = id; }
+
     AnimationEffect* effect() const { return m_effect.get(); }
     void setEffect(RefPtr<AnimationEffect>&&);
     AnimationTimeline* timeline() const { return m_timeline.get(); }
@@ -123,6 +126,7 @@ private:
     void runPendingPlayTask();
     void resetPendingTasks();
     
+    String m_id;
     RefPtr<AnimationEffect> m_effect;
     RefPtr<AnimationTimeline> m_timeline;
     std::optional<Seconds> m_previousCurrentTime;

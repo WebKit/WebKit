@@ -1,3 +1,19 @@
+2018-01-09  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Expose the id property on Animation
+        https://bugs.webkit.org/show_bug.cgi?id=181450
+        <rdar://problem/36383600>
+
+        Reviewed by Dean Jackson.
+
+        Expose the "id" property on Animation and handle the "id" property on the optional KeyframeAnimationOptions object
+        passed to Element.animate(). All of the WPT tests related to this property are now passing.
+
+        * animation/WebAnimation.h:
+        * animation/WebAnimation.idl:
+        * dom/Element.cpp:
+        (WebCore::Element::animate):
+
 2018-01-09  Chris Dumez  <cdumez@apple.com>
 
         Make service workers behave correctly with regards to Page Cache
