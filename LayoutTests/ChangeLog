@@ -1,3 +1,13 @@
+2018-01-10  Antti Koivisto  <antti@apple.com>
+
+        Invalidate current element style on class change accurately
+        https://bugs.webkit.org/show_bug.cgi?id=181210
+
+        Reviewed by Zalan Bujtas.
+
+        * fast/css/set-inline-style-recalc-expected.txt:
+        * fast/css/set-inline-style-recalc.html:
+
 2018-01-09  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Expose the id property on Animation

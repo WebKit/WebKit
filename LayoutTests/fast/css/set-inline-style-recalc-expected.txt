@@ -14,7 +14,7 @@ PASS numStyleRecalcs is 1
 PASS numStyleRecalcs is 0
 PASS numStyleRecalcs is 1
 PASS numStyleRecalcs is 0
-PASS numStyleRecalcs is 1
+PASS numStyleRecalcs is 0
 PASS successfullyParsed is true
 
 TEST COMPLETE

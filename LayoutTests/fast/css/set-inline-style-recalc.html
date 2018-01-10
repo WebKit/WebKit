@@ -69,7 +69,7 @@ shouldBe("numStyleRecalcs", "1");
 numStyleRecalcs = setStyleAndForceLayout(function() { testContainer.classList.add('foo'); });
 shouldBe("numStyleRecalcs", "0");
 numStyleRecalcs = setStyleAndForceLayout(function() { testContainer.classList.add('bar'); });
-shouldBe("numStyleRecalcs", "1");
+shouldBe("numStyleRecalcs", "0");
 
 document.body.removeChild(testContainer);
 </script>

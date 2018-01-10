@@ -167,20 +167,27 @@ void DocumentRuleSets::collectFeatures() const
     m_siblingRuleSet = makeRuleSet(m_features.siblingRules);
     m_uncommonAttributeRuleSet = makeRuleSet(m_features.uncommonAttributeRules);
 
+    m_subjectClassRuleSets.clear();
     m_ancestorClassRuleSets.clear();
     m_ancestorAttributeRuleSetsForHTML.clear();
 
     m_features.shrinkToFit();
 }
 
+RuleSet* DocumentRuleSets::subjectClassRules(const AtomicString& className) const
+{
+    return m_subjectClassRuleSets.ensure(className, [&] {
+        auto* rules = m_features.subjectClassRules.get(className);
+        return rules ? makeRuleSet(*rules) : nullptr;
+    }).iterator->value.get();
+}
+
 RuleSet* DocumentRuleSets::ancestorClassRules(const AtomicString& className) const
 {
-    auto addResult = m_ancestorClassRuleSets.add(className, nullptr);
-    if (addResult.isNewEntry) {
-        if (auto* rules = m_features.ancestorClassRules.get(className))
-            addResult.iterator->value = makeRuleSet(*rules);
-    }
-    return addResult.iterator->value.get();
+    return m_ancestorClassRuleSets.ensure(className, [&] {
+        auto* rules = m_features.ancestorClassRules.get(className);
+        return rules ? makeRuleSet(*rules) : nullptr;
+    }).iterator->value.get();
 }
 
 const DocumentRuleSets::AttributeRules* DocumentRuleSets::ancestorAttributeRulesForHTML(const AtomicString& attributeName) const

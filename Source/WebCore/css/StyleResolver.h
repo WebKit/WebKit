@@ -192,7 +192,6 @@ public:
     Color colorFromPrimitiveValue(const CSSPrimitiveValue&, bool forVisitedLink = false) const;
 
     bool hasSelectorForId(const AtomicString&) const;
-    bool hasSelectorForClass(const AtomicString&) const;
     bool hasSelectorForAttribute(const Element&, const AtomicString&) const;
 
 #if ENABLE(CSS_DEVICE_ADAPTATION)
@@ -519,12 +518,6 @@ inline bool StyleResolver::hasSelectorForAttribute(const Element& element, const
     if (element.isHTMLElement())
         return m_ruleSets.features().attributeCanonicalLocalNamesInRules.contains(attributeName);
     return m_ruleSets.features().attributeLocalNamesInRules.contains(attributeName);
-}
-
-inline bool StyleResolver::hasSelectorForClass(const AtomicString& classValue) const
-{
-    ASSERT(!classValue.isEmpty());
-    return m_ruleSets.features().classesInRules.contains(classValue);
 }
 
 inline bool StyleResolver::hasSelectorForId(const AtomicString& idValue) const

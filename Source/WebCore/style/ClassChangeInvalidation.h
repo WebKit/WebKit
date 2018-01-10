@@ -42,13 +42,13 @@ public:
     ~ClassChangeInvalidation();
 
 private:
-    void invalidateStyle(const SpaceSplitString& oldClasses, const SpaceSplitString& newClasses);
-    void invalidateDescendantStyle();
+    void computeInvalidation(const SpaceSplitString& oldClasses, const SpaceSplitString& newClasses);
+    void invalidateStyleWithRuleSets();
 
     const bool m_isEnabled;
     Element& m_element;
 
-    Vector<const RuleSet*, 4> m_descendantInvalidationRuleSets;
+    Vector<const RuleSet*, 4> m_invalidationRuleSets;
 };
 
 inline ClassChangeInvalidation::ClassChangeInvalidation(Element& element, const SpaceSplitString& oldClasses, const SpaceSplitString& newClasses)
@@ -58,15 +58,15 @@ inline ClassChangeInvalidation::ClassChangeInvalidation(Element& element, const 
 {
     if (!m_isEnabled)
         return;
-    invalidateStyle(oldClasses, newClasses);
-    invalidateDescendantStyle();
+    computeInvalidation(oldClasses, newClasses);
+    invalidateStyleWithRuleSets();
 }
 
 inline ClassChangeInvalidation::~ClassChangeInvalidation()
 {
     if (!m_isEnabled)
         return;
-    invalidateDescendantStyle();
+    invalidateStyleWithRuleSets();
 }
 
 }

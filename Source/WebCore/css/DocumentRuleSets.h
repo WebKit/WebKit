@@ -50,6 +50,7 @@ public:
     const RuleFeatureSet& features() const;
     RuleSet* sibling() const { return m_siblingRuleSet.get(); }
     RuleSet* uncommonAttribute() const { return m_uncommonAttributeRuleSet.get(); }
+    RuleSet* subjectClassRules(const AtomicString& className) const;
     RuleSet* ancestorClassRules(const AtomicString& className) const;
 
     struct AttributeRules {
@@ -90,6 +91,7 @@ private:
     mutable unsigned m_userAgentMediaQueryRuleCountOnUpdate { 0 };
     mutable std::unique_ptr<RuleSet> m_siblingRuleSet;
     mutable std::unique_ptr<RuleSet> m_uncommonAttributeRuleSet;
+    mutable HashMap<AtomicString, std::unique_ptr<RuleSet>> m_subjectClassRuleSets;
     mutable HashMap<AtomicString, std::unique_ptr<RuleSet>> m_ancestorClassRuleSets;
     mutable HashMap<AtomicString, std::unique_ptr<AttributeRules>> m_ancestorAttributeRuleSetsForHTML;
 };
