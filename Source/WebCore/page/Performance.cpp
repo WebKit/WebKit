@@ -77,7 +77,7 @@ double Performance::now() const
 
 Seconds Performance::reduceTimeResolution(Seconds seconds)
 {
-    double resolution = (100_us).seconds();
+    double resolution = (1000_us).seconds();
     double reduced = std::floor(seconds.seconds() / resolution) * resolution;
     return Seconds(reduced);
 }
