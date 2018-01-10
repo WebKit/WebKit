@@ -43,10 +43,7 @@ class ServiceWorkerThread;
 
 class ServiceWorkerGlobalScope final : public WorkerGlobalScope {
 public:
-    template<typename... Args> static Ref<ServiceWorkerGlobalScope> create(Args&&... args)
-    {
-        return adoptRef(*new ServiceWorkerGlobalScope(std::forward<Args>(args)...));
-    }
+    static Ref<ServiceWorkerGlobalScope> create(const ServiceWorkerContextData&, const URL&, const String& identifier, const String& userAgent, bool isOnline, ServiceWorkerThread&, const ContentSecurityPolicyResponseHeaders&, bool shouldBypassMainWorldContentSecurityPolicy, Ref<SecurityOrigin>&& topOrigin, MonotonicTime timeOrigin, IDBClient::IDBConnectionProxy*, SocketProvider*, PAL::SessionID);
 
     ~ServiceWorkerGlobalScope();
 

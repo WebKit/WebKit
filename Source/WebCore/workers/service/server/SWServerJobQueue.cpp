@@ -96,7 +96,7 @@ void SWServerJobQueue::scriptFetchFinished(SWServer::Connection& connection, con
     }
 
     // FIXME: Support the proper worker type (classic vs module)
-    m_server.updateWorker(connection, job.identifier(), *registration, job.scriptURL, result.script, WorkerType::Classic);
+    m_server.updateWorker(connection, job.identifier(), *registration, job.scriptURL, result.script, result.contentSecurityPolicy, WorkerType::Classic);
 }
 
 // https://w3c.github.io/ServiceWorker/#update-algorithm
