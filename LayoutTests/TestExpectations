@@ -280,6 +280,9 @@ imported/w3c/web-platform-tests/fetch/api/abort/general.any.worker.html [ Skip ]
 # Not supported
 imported/w3c/web-platform-tests/background-fetch [ Skip ]
 
+# This is a resources folder.
+http/tests/workers/service/other_resources [ Skip ]
+
 # We fail this reftest
 webkit.org/b/179881 imported/w3c/web-platform-tests/encoding/eof-shift_jis.html [ ImageOnlyFailure ]
 

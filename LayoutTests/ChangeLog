@@ -1,3 +1,11 @@
+2018-01-10  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, skip http/tests/workers/service/other_resources folder.
+
+        It is a resources folder and does not contain tests.
+
+        * TestExpectations:
+
 2018-01-10  Per Arne Vollan  <pvollan@apple.com>
 
         [Win] Rebaseline tests after r225366.
