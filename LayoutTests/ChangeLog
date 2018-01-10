@@ -1,3 +1,18 @@
+2018-01-09  Chris Dumez  <cdumez@apple.com>
+
+        We should not return undefined for most properties of a detached Window
+        https://bugs.webkit.org/show_bug.cgi?id=181416
+        <rdar://problem/36162489>
+
+        Reviewed by Ryosuke Niwa.
+
+        Update existing tests to reflect behavior change.
+
+        * fast/dom/Window/orphaned-frame-access-expected.txt:
+        * fast/dom/Window/orphaned-frame-access.html:
+        * fast/frames/detached-frame-property-expected.txt:
+        * fast/frames/detached-frame-property.html:
+
 2018-01-09  Darin Adler  <darin@apple.com>
 
         Further refinement to list item and counter code after "list-item" counter fix

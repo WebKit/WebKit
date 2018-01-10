@@ -2,7 +2,7 @@
 
 Harness Error (TIMEOUT), message = null
 
-FAIL Discarding the browsing context must not change window.customElements assert_equals: expected (object) object "[object CustomElementRegistry]" but got (undefined) undefined
+PASS Discarding the browsing context must not change window.customElements 
 FAIL Navigating from the initial about:blank must not replace window.customElements assert_equals: expected object "[object CustomElementRegistry]" but got object "[object CustomElementRegistry]"
 FAIL document.open() must replace window.customElements assert_not_equals: got disallowed value object "[object CustomElementRegistry]"
 
