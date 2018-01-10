@@ -37,22 +37,21 @@ function responded()
 	if (window.popupTimestamp < window.thisTimestamp)
 		alert("Popup should not have popped up before this main window");
 	else
-		alert("Done");
+		alert("PASS");
 	
 	finishSWTest();
 }
 
 for (var i = 0; i < 1000; ++i) {
-	navigator.serviceWorker.register("resources/empty-worker.js", { })
+	navigator.serviceWorker.register("http://localhost:8000/workers/service/resources/empty-worker.js", { })
 	.then(function(r) {
 		console.log("Original window resolved successfully (unexpected)")
 		finishSWTest();
 	}, function(e) {
-		if (e+"" != "UnknownError: Script URL http://127.0.0.1:8000/workers/service/resources/empty-worker.js fetched with 41 characters, but we're not using the result yet") {
+		if (e.name != "SecurityError") {
 			alert("Unexpected error received from server: " + e);
 			finishSWTest();
 		}
-		
 		responded();
 	})
 }

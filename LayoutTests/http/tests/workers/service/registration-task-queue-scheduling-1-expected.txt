@@ -1,2 +1,2 @@
-CONSOLE MESSAGE: line 48: Original window resolved successfully (unexpected)
+ALERT: PASS
 

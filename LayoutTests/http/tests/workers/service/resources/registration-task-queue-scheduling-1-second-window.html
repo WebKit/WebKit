@@ -4,7 +4,7 @@ if (!window.opener)
 	alert("This HTML file should not be opened directly")
 
 for (var i = 0; i < 1000; ++i) {
-	navigator.serviceWorker.register("empty-worker.js", { })
+	navigator.serviceWorker.register("http://127.0.0.1:8000/workers/service/resources/empty-worker.js", { })
 	.then(function(r) {
 		alert("Popup window resolved successfully (unexpected)")
 		opener.postMessage("done", "*");

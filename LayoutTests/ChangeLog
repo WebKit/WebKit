@@ -1,5 +1,24 @@
 2018-01-10  Chris Dumez  <cdumez@apple.com>
 
+        REGRESSION (r224301?): LayoutTest http/tests/workers/service/registration-task-queue-scheduling-1.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=179342
+        <rdar://problem/35478161>
+
+        Reviewed by Youenn Fablet.
+
+        * TestExpectations:
+        Unmark the test as flaky.
+
+        * http/tests/workers/service/registration-task-queue-scheduling-1-expected.txt:
+        * http/tests/workers/service/resources/registration-task-queue-scheduling-1-second-window.html:
+        * http/tests/workers/service/resources/registration-task-queue-scheduling-1.js:
+        Update test to register a scriptURL that actually fails. When registration succeeds, the test
+        logs lines indicating that registration succeeded unexpectedly. Also, when registration
+        succeeds, the registration of the top frame are no longer guaranteed to be resolved before
+        the ones of the subframe (because it involves things like network loads).
+
+2018-01-10  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed, skip http/tests/workers/service/other_resources folder.
 
         It is a resources folder and does not contain tests.
