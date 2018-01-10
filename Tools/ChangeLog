@@ -1,3 +1,17 @@
+2018-01-09  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        font-display:fallback can cause a visual flash (which is supposed to be impossible)
+        https://bugs.webkit.org/show_bug.cgi?id=181374
+
+        Reviewed by Simon Fraser.
+
+        The test requires Palatino.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (allowedFontFamilySet):
+        * WebKitTestRunner/mac/TestControllerMac.mm:
+        (WTR::allowedFontFamilySet):
+
 2018-01-09  Saam Barati  <sbarati@apple.com>
 
         Give some slack in display-profiler-outputs computation of the terminal window's number of columns

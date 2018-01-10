@@ -621,6 +621,7 @@ ALWAYS_INLINE float textWidth(RenderText& text, unsigned from, unsigned len, con
     const RenderStyle& style = text.style();
 
     GlyphOverflow glyphOverflow;
+    // FIXME: This is not the right level of abstraction for isFixedPitch. Font fallback may make it such that the fixed pitch font is never actually used!
     if (isFixedPitch || (!from && len == text.text().length()) || style.hasTextCombine())
         return text.width(from, len, font, xPos, &fallbackFonts, &glyphOverflow);
 

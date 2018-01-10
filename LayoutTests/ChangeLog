@@ -1,3 +1,28 @@
+2018-01-09  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        font-display:fallback can cause a visual flash (which is supposed to be impossible)
+        https://bugs.webkit.org/show_bug.cgi?id=181374
+
+        Reviewed by Simon Fraser.
+
+        Move font-display tests into their common subfolder.
+
+        * fast/text/font-display/block-finish-expected.html: Renamed from LayoutTests/fast/text/loading-block-finish-expected.html.
+        * fast/text/font-display/block-finish.html: Renamed from LayoutTests/fast/text/loading-block-finish.html.
+        * fast/text/font-display/block-nofinish-expected.html: Renamed from LayoutTests/fast/text/loading-block-nofinish-expected.html.
+        * fast/text/font-display/block-nofinish.html: Renamed from LayoutTests/fast/text/loading-block-nofinish.html.
+        * fast/text/font-display/failure-finish-expected.html: Renamed from LayoutTests/fast/text/loading-failure-finish-expected.html.
+        * fast/text/font-display/failure-finish.html: Renamed from LayoutTests/fast/text/loading-failure-finish.html.
+        * fast/text/font-display/failure-nofinish-expected.html: Renamed from LayoutTests/fast/text/loading-failure-nofinish-expected.html.
+        * fast/text/font-display/failure-nofinish.html: Renamed from LayoutTests/fast/text/loading-failure-nofinish.html.
+        * fast/text/font-display/swap-finish-expected.html: Renamed from LayoutTests/fast/text/loading-swap-finish-expected.html.
+        * fast/text/font-display/swap-finish.html: Renamed from LayoutTests/fast/text/loading-swap-finish.html.
+        * fast/text/font-display/swap-nofinish-expected.html: Renamed from LayoutTests/fast/text/loading-swap-nofinish-expected.html.
+        * fast/text/font-display/swap-nofinish.html: Renamed from LayoutTests/fast/text/loading-swap-nofinish.html.
+        * fast/text/font-display/swap-flash-expected.html: Added.
+        * fast/text/font-display/swap-flash.html: Added.
+        * platform/win/TestExpectations:
+
 2018-01-09  Matt Lewis  <jlewis3@apple.com>
 
         Fixed test expectaions.

@@ -3789,10 +3789,10 @@ webkit.org/b/177626 fast/dom/HTMLLinkElement/preconnect-support.html  [ Skip ]
 webkit.org/b/177626 http/tests/preconnect/link-rel-preconnect-http.html [ Skip ]
 webkit.org/b/177626 http/tests/preconnect/link-rel-preconnect-https.html [ Skip ]
 
-webkit.org/b/177964 fast/text/loading-block-nofinish.html [ Pass ImageOnlyFailure ]
-webkit.org/b/177964 fast/text/loading-failure-finish.html [ Pass ImageOnlyFailure ]
-webkit.org/b/177964 fast/text/loading-failure-nofinish.html [ Pass ImageOnlyFailure ]
-webkit.org/b/177964 fast/text/loading-swap-nofinish.html [ Pass ImageOnlyFailure ]
+webkit.org/b/177964 fast/text/font-display/block-nofinish.html [ Pass ImageOnlyFailure ]
+webkit.org/b/177964 fast/text/font-display/failure-finish.html [ Pass ImageOnlyFailure ]
+webkit.org/b/177964 fast/text/font-display/failure-nofinish.html [ Pass ImageOnlyFailure ]
+webkit.org/b/177964 fast/text/font-display/swap-nofinish.html [ Pass ImageOnlyFailure ]
 
 # xhtml tests are failing on some of the EWS bots.
 webkit.org/b/178230 fast/xmlhttprequest/xmlhttprequest-get.xhtml [ Failure ]

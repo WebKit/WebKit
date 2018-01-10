@@ -126,9 +126,21 @@ inline const Font& FontCascadeFonts::primaryFont(const FontCascadeDescription& d
     ASSERT(isMainThread());
     if (!m_cachedPrimaryFont) {
         auto& primaryRanges = realizeFallbackRangesAt(description, 0);
-        m_cachedPrimaryFont = primaryRanges.fontForCharacter(' ');
+        m_cachedPrimaryFont = primaryRanges.glyphDataForCharacter(' ', ExternalResourceDownloadPolicy::Allow).font;
         if (!m_cachedPrimaryFont)
             m_cachedPrimaryFont = &primaryRanges.fontForFirstRange();
+        else if (m_cachedPrimaryFont->isInterstitial()) {
+            for (unsigned index = 1; ; ++index) {
+                auto& localRanges = realizeFallbackRangesAt(description, index);
+                if (localRanges.isNull())
+                    break;
+                auto* font = localRanges.glyphDataForCharacter(' ', ExternalResourceDownloadPolicy::Forbid).font;
+                if (font && !font->isInterstitial()) {
+                    m_cachedPrimaryFont = font;
+                    break;
+                }
+            }
+        }
     }
     return *m_cachedPrimaryFont;
 }

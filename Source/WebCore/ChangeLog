@@ -1,3 +1,33 @@
+2018-01-09  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        font-display:fallback can cause a visual flash (which is supposed to be impossible)
+        https://bugs.webkit.org/show_bug.cgi?id=181374
+
+        Reviewed by Simon Fraser.
+
+        A FontCascade represents an entire font-family fallback list, but sometimes we need to pull out a single
+        representative font from the list to calculate things like line height. Previously, if the first item in
+        the font-family list was in the middle of being downloaded, this representative font was hardcoded to be
+        Times. However, when actually laying out and drawing the glyphs, we have logic to skip the interstitial
+        Times if there are any installed fonts present in the font-family list (so you wouldn't ever actually
+        see Times). This means that line height (among other things) was being calculated as if Times was used,
+        but in reality, some other font from the font-family list was being used.
+
+        Alone, this isn't a huge problem, but font-display:fallback makes a font transition between "timed out"
+        and "failed," and when the font hits the failed state, the representative font skips over the cancelled
+        item and hits the next item in the fallback list. This means that line heights will change, which causes
+        a visual flash, even when font-display:fallback is specified.
+
+        The solution is simply to educate the logic which identifies this representative font so that it
+        understands what to do for currently-loading fonts.
+
+        Tests: fast/text/font-display/swap-flash.html
+
+        * platform/graphics/FontCascadeFonts.h:
+        (WebCore::FontCascadeFonts::primaryFont):
+        * rendering/line/BreakingContext.h:
+        (WebCore::textWidth):
+
 2018-01-04  Filip Pizlo  <fpizlo@apple.com>
 
         CodeBlocks should be in IsoSubspaces

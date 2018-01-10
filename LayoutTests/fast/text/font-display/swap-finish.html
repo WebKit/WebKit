@@ -1,10 +1,16 @@
 <!DOCTYPE html>
 <html>
 <head>
+<script>
+if (window.internals) {
+    internals.settings.setFontLoadTimingOverride("Swap");
+    internals.settings.setShouldIgnoreFontLoadCompletions(false);
+}
+</script>
 <style>
 @font-face {
     font-family: "MyFont";
-    src: url("../../resources/Ahem.ttf") format("truetype");
+    src: url("../../../resources/Ahem.ttf") format("truetype");
 }
 </style>
 </head>
