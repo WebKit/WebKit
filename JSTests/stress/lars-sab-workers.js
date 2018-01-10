@@ -1,4 +1,4 @@
-//@ defaultRunNoisyTest
+//@ skip
 
 var sab = new SharedArrayBuffer(100 * 4);
 
