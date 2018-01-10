@@ -76,24 +76,24 @@ void WebSWServerConnection::disconnectedFromWebProcess()
     notImplemented();
 }
 
-void WebSWServerConnection::rejectJobInClient(const ServiceWorkerJobDataIdentifier& jobDataIdentifier, const ExceptionData& exceptionData)
+void WebSWServerConnection::rejectJobInClient(ServiceWorkerJobIdentifier jobIdentifier, const ExceptionData& exceptionData)
 {
-    send(Messages::WebSWClientConnection::JobRejectedInServer(jobDataIdentifier, exceptionData));
+    send(Messages::WebSWClientConnection::JobRejectedInServer(jobIdentifier, exceptionData));
 }
 
-void WebSWServerConnection::resolveRegistrationJobInClient(const ServiceWorkerJobDataIdentifier& jobDataIdentifier, const ServiceWorkerRegistrationData& registrationData, ShouldNotifyWhenResolved shouldNotifyWhenResolved)
+void WebSWServerConnection::resolveRegistrationJobInClient(ServiceWorkerJobIdentifier jobIdentifier, const ServiceWorkerRegistrationData& registrationData, ShouldNotifyWhenResolved shouldNotifyWhenResolved)
 {
-    send(Messages::WebSWClientConnection::RegistrationJobResolvedInServer(jobDataIdentifier, registrationData, shouldNotifyWhenResolved));
+    send(Messages::WebSWClientConnection::RegistrationJobResolvedInServer(jobIdentifier, registrationData, shouldNotifyWhenResolved));
 }
 
-void WebSWServerConnection::resolveUnregistrationJobInClient(const ServiceWorkerJobDataIdentifier& jobDataIdentifier, const ServiceWorkerRegistrationKey& registrationKey, bool unregistrationResult)
+void WebSWServerConnection::resolveUnregistrationJobInClient(ServiceWorkerJobIdentifier jobIdentifier, const ServiceWorkerRegistrationKey& registrationKey, bool unregistrationResult)
 {
-    send(Messages::WebSWClientConnection::UnregistrationJobResolvedInServer(jobDataIdentifier, unregistrationResult));
+    send(Messages::WebSWClientConnection::UnregistrationJobResolvedInServer(jobIdentifier, unregistrationResult));
 }
 
-void WebSWServerConnection::startScriptFetchInClient(const ServiceWorkerJobDataIdentifier& jobDataIdentifier, const ServiceWorkerRegistrationKey& registrationKey, FetchOptions::Cache cachePolicy)
+void WebSWServerConnection::startScriptFetchInClient(ServiceWorkerJobIdentifier jobIdentifier, const ServiceWorkerRegistrationKey& registrationKey, FetchOptions::Cache cachePolicy)
 {
-    send(Messages::WebSWClientConnection::StartScriptFetchForServer(jobDataIdentifier, registrationKey, cachePolicy));
+    send(Messages::WebSWClientConnection::StartScriptFetchForServer(jobIdentifier, registrationKey, cachePolicy));
 }
 
 void WebSWServerConnection::updateRegistrationStateInClient(ServiceWorkerRegistrationIdentifier identifier, ServiceWorkerRegistrationState state, const std::optional<ServiceWorkerData>& serviceWorkerData)

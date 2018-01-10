@@ -1,5 +1,29 @@
 2018-01-09  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r226626. rdar://problem/36392359
+
+    2018-01-09  Youenn Fablet  <youenn@apple.com>
+
+            SWClientConnection should not keep references to service worker jobs
+            https://bugs.webkit.org/show_bug.cgi?id=181381
+
+            Reviewed by Chris Dumez.
+
+            Updated IPC handling based on WebCore refactoring.
+
+            * Scripts/webkit/messages.py:
+            (forward_declarations_and_headers):
+            (headers_for_type):
+            * StorageProcess/ServiceWorker/WebSWServerConnection.cpp:
+            (WebKit::WebSWServerConnection::rejectJobInClient):
+            (WebKit::WebSWServerConnection::resolveRegistrationJobInClient):
+            (WebKit::WebSWServerConnection::resolveUnregistrationJobInClient):
+            (WebKit::WebSWServerConnection::startScriptFetchInClient):
+            * StorageProcess/ServiceWorker/WebSWServerConnection.h:
+            * WebProcess/Storage/WebSWClientConnection.messages.in:
+
+2018-01-09  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r226542. rdar://problem/36392364
 
     2018-01-08  John Wilander  <wilander@apple.com>
