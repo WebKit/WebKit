@@ -2705,7 +2705,7 @@ void Heap::addCoreConstraints()
     
     m_constraintSet->add(
         "O", "Output",
-        [this] (SlotVisitor& slotVisitor) {
+        [] (SlotVisitor& slotVisitor) {
             VM& vm = slotVisitor.vm();
             
             auto callOutputConstraint = [] (SlotVisitor& slotVisitor, HeapCell* heapCell, HeapCell::Kind) {
