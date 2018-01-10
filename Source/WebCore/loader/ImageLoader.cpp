@@ -412,12 +412,12 @@ void ImageLoader::decode()
         return;
     }
 
-    Image* image = m_image->image();
-    if (!image || m_image->errorOccurred()) {
+    if (!m_image || !m_image->image() || m_image->errorOccurred()) {
         decodeError("Loading error.");
         return;
     }
 
+    Image* image = m_image->image();
     if (!image->isBitmapImage()) {
         decodeError("Invalid image type.");
         return;

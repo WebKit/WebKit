@@ -21,6 +21,11 @@
         })
         .catch(reason => {
             debug("Failed to decode image with unsupported image format. Result is: " + reason);
+            image.src = "https://server:80a80/";
+            return image.decode();
+        })
+        .catch(reason => {
+            debug("Failed to decode image with invalid URL. Result is: " + reason);
             finishJSTest();
         });
     </script>

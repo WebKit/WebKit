@@ -1,5 +1,22 @@
 2018-01-09  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r226638. rdar://problem/36392286
+
+    2018-01-09  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+            Check Image::m_image is not null in ImageLoader::decode()
+            https://bugs.webkit.org/show_bug.cgi?id=180386
+            <rdar://problem/34634483>
+
+            Reviewed by Tim Horton.
+
+            Ensure ImageLoader::m_image is not null before referencing it.
+
+            * loader/ImageLoader.cpp:
+            (WebCore::ImageLoader::decode):
+
+2018-01-09  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r226628. rdar://problem/36392341
 
     2018-01-09  Youenn Fablet  <youenn@apple.com>
