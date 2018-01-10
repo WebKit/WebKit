@@ -1,3 +1,9 @@
+2018-01-10  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, updating expectations for media test timing out on GTK
+
+        * platform/gtk/TestExpectations:
+
 2018-01-10  Antti Koivisto  <antti@apple.com>
 
         Invalidate current element style on class change accurately
