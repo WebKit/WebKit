@@ -1,3 +1,15 @@
+2018-01-10  Jonathan Bedard  <jbedard@apple.com>
+
+        REGRESSION (r226715): don't re-check number of simulators in child processes
+        https://bugs.webkit.org/show_bug.cgi?id=181484
+        <rdar://problem/36407151>
+
+        Reviewed by Aakash Jain.
+
+        * Scripts/webkitpy/port/ios_simulator.py:
+        (IOSSimulatorPort.__init__): Skip the number of simulators check if simulators
+        are already initialized.
+
 2018-01-10  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r226667 and r226673.

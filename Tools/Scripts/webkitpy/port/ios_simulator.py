@@ -50,7 +50,7 @@ class IOSSimulatorPort(IOSPort):
         self._device_class = optional_device_class if optional_device_class else self.DEFAULT_DEVICE_CLASS
         _log.debug('IOSSimulatorPort _device_class is %s', self._device_class)
 
-        if self.get_option('child_processes', self.default_child_processes()) > SimulatedDeviceManager.max_supported_simulators(self.host):
+        if not SimulatedDeviceManager.INITIALIZED_DEVICES and self.get_option('child_processes', self.default_child_processes()) > SimulatedDeviceManager.max_supported_simulators(self.host):
             _log.warn('The specified number of Simulated devices to be used is greater than the number supported by this machine.')
 
     def _device_for_worker_number_map(self):
