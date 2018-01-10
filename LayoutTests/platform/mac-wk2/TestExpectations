@@ -861,3 +861,5 @@ webkit.org/b/181107 http/wpt/cache-storage/cache-put-stream.https.any.html [ Pas
 
 webkit.org/b/181392 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-waits-for-activate.https.html [ Pass Failure ]
 
+webkit.org/b/181097 http/tests/workers/service/service-worker-importScript.html [ Pass Failure ]
+
