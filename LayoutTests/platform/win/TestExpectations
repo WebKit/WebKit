@@ -3842,3 +3842,5 @@ webkit.org/b/180062 fast/text/user-installed-fonts [ ImageOnlyFailure ]
 webkit.org/b/181346 mathml/opentype/horizontal-munderover.html [ Failure ]
 webkit.org/b/181346 mathml/opentype/horizontal.html [ Failure ]
 webkit.org/b/181346 mathml/opentype/opentype-stretchy-horizontal.html [ Failure ]
+
+webkit.org/b/181501 accessibility/table-header-calculation-for-header-rows.html [ Failure ]
