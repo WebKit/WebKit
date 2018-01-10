@@ -47,9 +47,6 @@ class IOSDevicePort(IOSPort):
             return apple_additions().ios_device_default_child_processes(self)
         return 1
 
-    def using_multiple_devices(self):
-        return True
-
     def _device_for_worker_number_map(self):
         if not apple_additions():
             raise RuntimeError(self.NO_ON_DEVICE_TESTING)

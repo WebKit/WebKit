@@ -44,7 +44,6 @@ class IOSPort(DarwinPort):
         super(IOSPort, self).__init__(host, port_name, **kwargs)
         self._test_runner_process_constructor = SimulatorProcess
         self._printing_cmd_line = False
-        self._current_device = None
 
     def _device_for_worker_number_map(self):
         raise NotImplementedError
@@ -79,9 +78,6 @@ class IOSPort(DarwinPort):
     def child_processes(self):
         return int(self.get_option('child_processes'))
 
-    def using_multiple_devices(self):
-        return False
-
     def _testing_device(self, number):
         device = self._device_for_worker_number_map()[number]
         if not device:
@@ -92,10 +88,7 @@ class IOSPort(DarwinPort):
     def target_host(self, worker_number=None):
         if self._printing_cmd_line or worker_number is None:
             return self.host
-        # When using simulated devices, this means webkitpy is managing the devices.
-        if self.using_multiple_devices():
-            return self._testing_device(worker_number)
-        return self._current_device
+        return self._testing_device(worker_number)
 
     @memoized
     def default_baseline_search_path(self):

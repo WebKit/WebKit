@@ -104,7 +104,7 @@ class Manager(object):
 
     def _custom_device_for_test(self, test):
         for device_class in self._port.CUSTOM_DEVICE_CLASSES:
-            directory_suffix = device_class + self._port.TEST_PATH_SEPARATOR
+            directory_suffix = device_class.lower().replace(' ', '') + self._port.TEST_PATH_SEPARATOR
             if directory_suffix in test:
                 return device_class
         return None

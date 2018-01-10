@@ -1,3 +1,67 @@
+2018-01-10  Jonathan Bedard  <jbedard@apple.com>
+
+        webkitpy: Refactor simulator code (Part 2)
+        https://bugs.webkit.org/show_bug.cgi?id=180555
+        <rdar://problem/36131381>
+
+        Reviewed by Aakash Jain.
+
+        The patch leverages the SimulatedDeviceManager when running layout tests.
+        This patch is primarily code removal, since much of the IOSSimulatorPort
+        was dedicated to managing simulators. The removed code is either now owned by the
+        SimulatedDeviceManager (and committed in Part 1) or supported a technique to
+        boot multiple simulators which was made obsolete in Xcode 9.
+
+        * Scripts/webkitpy/layout_tests/controllers/manager.py:
+        (Manager._custom_device_for_test.in): Device names now have spaces in them,
+        strip those spaces.
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+        (parse_args): Remove '--runtime' flag, this is achieved with the --version flag.
+        * Scripts/webkitpy/port/ios.py:
+        (IOSPort.__init__): The _current_device idiom is no longer required since the
+        SimulatedDeviceManager keeps track of any previously booted devices.
+        (IOSPort.target_host): Even when only a single device is used, it will be accessed
+        through the array of managed devices.
+        (IOSPort.using_multiple_devices): Deleted.
+        * Scripts/webkitpy/port/ios_device.py:
+        (IOSDevicePort.using_multiple_devices): Deleted.
+        * Scripts/webkitpy/port/ios_simulator.py:
+        (IOSSimulatorPort): Remove constants required to manage simulators, change device
+        class strings so they can be parsed by the DeviceType class.
+        (IOSSimulatorPort.__init__): Determine the number of processes to use by checking
+        the number of simulators currently booted, the number of child processes specified
+        and the maximum number of simulators supported by this system.
+        (IOSSimulatorPort._device_for_worker_number_map):Return the array of initialized
+        devices owned by the SimulatedDeviceManager.
+        (IOSSimulatorPort.ios_version): Remove support for the --runtime option.
+        (IOSSimulatorPort.default_child_processes): Use the SimulatedDeviceManager to check
+        the maximum number of supported simulators on this system.
+        (IOSSimulatorPort._create_devices): Construct a list of device requests with a
+        request for each child process and send this list to the SimulatedDeviceManager to
+        initialize the devices.
+        (IOSSimulatorPort.clean_up_test_run):
+        (IOSSimulatorPort.check_sys_deps): Check that there are simulators running the
+        specified version of iOS.
+        (IOSSimulatorPort.reset_preferences):
+        (IOSSimulatorPort.simulator_runtime): Deleted.
+        (IOSSimulatorPort.simulator_device_type): Deleted.
+        (IOSSimulatorPort._teardown_managed_simulators): Deleted.
+        (IOSSimulatorPort.use_multiple_simulator_apps): Deleted.
+        (IOSSimulatorPort._create_simulators): Deleted.
+        (IOSSimulatorPort._quit_ios_simulator): Deleted.
+        (IOSSimulatorPort._using_dedicated_simulators): Deleted.
+        (IOSSimulatorPort.using_multiple_devices): Deleted.
+        (IOSSimulatorPort._create_device): Deleted.
+        (IOSSimulatorPort.get_simulator_path): Deleted.
+        (IOSSimulatorPort._createSimulatorApps): Deleted.
+        (IOSSimulatorPort._createSimulatorApp): Deleted.
+        * Scripts/webkitpy/tool/commands/rebaseline_unittest.py:
+        (TestRebaseline.test_rebaseline): Filter out commands run when determining the
+        maximum number of simulators run on this system.
+        (TestRebaselineExpectations.test_rebaseline_expectations): Ditto.
+        * Scripts/webkitpy/xcode/new_simulated_device.py:
+        (SimulatedDeviceManager._does_fulfill_request): Fixed log statement.
+
 2018-01-10  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         WebDriver: run-webdriver-tests doesn't handle test names with a '/' correctly
