@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -807,6 +807,12 @@ public:
     void xor64(TrustedImm32 imm, RegisterID srcDest)
     {
         m_assembler.xorq_ir(imm.m_value, srcDest);
+    }
+
+    void xor64(TrustedImm64 imm, RegisterID srcDest)
+    {
+        move(imm, scratchRegister());
+        xor64(scratchRegister(), srcDest);
     }
 
     void not64(RegisterID srcDest)

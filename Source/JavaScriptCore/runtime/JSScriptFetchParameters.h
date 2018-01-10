@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2017 Yusuke Suzuki <utatane.tea@gmail.com>
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,9 +26,11 @@
 
 #pragma once
 
+#include "JSCPoison.h"
 #include "JSGlobalObject.h"
 #include "JSObject.h"
 #include "ScriptFetchParameters.h"
+#include <wtf/Ref.h>
 
 namespace JSC {
 
@@ -71,7 +74,7 @@ private:
     {
     }
 
-    Ref<ScriptFetchParameters> m_parameters;
+    PoisonedRef<JSScriptFetchParametersPoison, ScriptFetchParameters> m_parameters;
 };
 
 } // namespace JSC

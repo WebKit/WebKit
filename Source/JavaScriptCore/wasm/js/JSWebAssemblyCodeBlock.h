@@ -37,6 +37,7 @@
 #include "WasmFormat.h"
 #include "WasmModule.h"
 #include <wtf/Bag.h>
+#include <wtf/PoisonedUniquePtr.h>
 #include <wtf/Ref.h>
 #include <wtf/Vector.h>
 
@@ -88,13 +89,17 @@ private:
     static void destroy(JSCell*);
     static void visitChildren(JSCell*, SlotVisitor&);
 
-    class UnconditionalFinalizer : public JSC::UnconditionalFinalizer {
+    struct UnconditionalFinalizer : public JSC::UnconditionalFinalizer {
+        UnconditionalFinalizer(JSWebAssemblyCodeBlock& codeBlock)
+            : codeBlock(codeBlock)
+        { }
         void finalizeUnconditionally() override;
+        JSWebAssemblyCodeBlock& codeBlock;
     };
 
     PoisonedRef<JSWebAssemblyCodeBlockPoison, Wasm::CodeBlock> m_codeBlock;
     Vector<MacroAssemblerCodeRef> m_wasmToJSExitStubs;
-    UnconditionalFinalizer m_unconditionalFinalizer;
+    PoisonedUniquePtr<JSWebAssemblyCodeBlockPoison, UnconditionalFinalizer> m_unconditionalFinalizer;
     Bag<CallLinkInfo> m_callLinkInfos;
     String m_errorMessage;
 };

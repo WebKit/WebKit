@@ -25,14 +25,17 @@
 
 #include "config.h"
 
+#include <wtf/Bag.h>
 #include <wtf/Poisoned.h>
 #include <wtf/PoisonedUniquePtr.h>
+#include <wtf/RefCountedArray.h>
 #include <wtf/RefPtr.h>
 
 namespace WTF {
 
 namespace {
 struct DummyStruct { };
+const uint32_t dummyPoison = 0xffff;
 }
 
 #if ENABLE(POISON)
@@ -65,15 +68,21 @@ static_assert(!(makeConstExprPoison(1000000) & 0x3), "ensure bottom 2 alignment 
 static_assert(!(makeConstExprPoison(0xffffffff) & 0x3), "ensure bottom 2 alignment bits are available for use as flag bits.");
 #endif // ENABLE(POISON)
 
+static_assert(sizeof(Bag<DummyStruct>) == sizeof(void*), "");
+static_assert(sizeof(PoisonedBag<dummyPoison, DummyStruct>) == sizeof(void*), "");
+
 static_assert(sizeof(Ref<DummyStruct>) == sizeof(DummyStruct*), "");
-static_assert(sizeof(PoisonedRef<0xffff, DummyStruct>) == sizeof(DummyStruct*), "");
+static_assert(sizeof(PoisonedRef<dummyPoison, DummyStruct>) == sizeof(DummyStruct*), "");
 
 static_assert(sizeof(RefPtr<DummyStruct>) == sizeof(DummyStruct*), "");
-static_assert(sizeof(PoisonedRefPtr<0xffff, DummyStruct>) == sizeof(DummyStruct*), "");
+static_assert(sizeof(PoisonedRefPtr<dummyPoison, DummyStruct>) == sizeof(DummyStruct*), "");
 
-static_assert(sizeof(PoisonedUniquePtr<0xffff, DummyStruct>) == sizeof(DummyStruct*), "");
-static_assert(sizeof(PoisonedUniquePtr<0xffff, int[]>) == sizeof(int*), "");
-static_assert(sizeof(PoisonedUniquePtr<0xffff, DummyStruct[]>) == sizeof(DummyStruct*), "");
+static_assert(sizeof(PoisonedUniquePtr<dummyPoison, DummyStruct>) == sizeof(DummyStruct*), "");
+static_assert(sizeof(PoisonedUniquePtr<dummyPoison, int[]>) == sizeof(int*), "");
+static_assert(sizeof(PoisonedUniquePtr<dummyPoison, DummyStruct[]>) == sizeof(DummyStruct*), "");
 
+static_assert(sizeof(RefCountedArray<DummyStruct>) == sizeof(void*), "");
+static_assert(sizeof(PoisonedRefCountedArray<dummyPoison, DummyStruct>) == sizeof(void*), "");
+    
 } // namespace WTF
 

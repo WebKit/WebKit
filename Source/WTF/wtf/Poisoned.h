@@ -87,6 +87,7 @@ asReference(T ptr) { return *ptr; }
 
 } // namespace PoisonedImplHelper
 
+// FIXME: once we have C++17, we can make the key of type auto and remove the need for KeyType.
 template<typename KeyType, KeyType key, typename T, typename = std::enable_if_t<std::is_pointer<T>::value>>
 class PoisonedImpl {
 public:
@@ -227,13 +228,20 @@ inline void swap(PoisonedImpl<K1, k1, T1>& a, T1& b)
 
 WTF_EXPORT_PRIVATE uintptr_t makePoison();
 
+#if ENABLE(POISON)
+// FIXME: once we have C++17, we can make this a lambda in makeConstExprPoison().
+inline constexpr uintptr_t constExprPoisonRandom(uintptr_t seed)
+{
+    uintptr_t result1 = seed * 6906969069 + 1234567;
+    uintptr_t result2 = seed * 8253729 + 2396403;
+    return (result1 << 3) ^ (result2 << 16);
+}
+#endif
+
 inline constexpr uintptr_t makeConstExprPoison(uint32_t key)
 {
 #if ENABLE(POISON)
-    uintptr_t uintptrKey = key;
-    uintptr_t poison1 = uintptrKey * 6906969069 + 1234567;
-    uintptr_t poison2 = uintptrKey * 8253729 + 2396403;
-    uintptr_t poison = (poison1 << 3) ^ (poison2 << 16);
+    uintptr_t poison = constExprPoisonRandom(key);
     poison &= ~(static_cast<uintptr_t>(0xffff) << 48); // Ensure that poisoned bits look like a pointer.
     poison |= (1 << 2); // Ensure that poisoned bits cannot be 0.
     return poison;

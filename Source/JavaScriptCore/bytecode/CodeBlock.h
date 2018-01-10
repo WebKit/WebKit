@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2018 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Cameron Zwarich <cwzwarich@uwaterloo.ca>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -50,6 +50,7 @@
 #include "Instruction.h"
 #include "JITCode.h"
 #include "JITMathICForwards.h"
+#include "JSCPoison.h"
 #include "JSCell.h"
 #include "JSGlobalObject.h"
 #include "JumpTable.h"
@@ -106,12 +107,20 @@ class CodeBlock : public JSCell {
     friend class JIT;
     friend class LLIntOffsetsExtractor;
 
-    class UnconditionalFinalizer : public JSC::UnconditionalFinalizer { 
+    struct UnconditionalFinalizer : public JSC::UnconditionalFinalizer {
+        UnconditionalFinalizer(CodeBlock& codeBlock)
+            : codeBlock(codeBlock)
+        { }
         void finalizeUnconditionally() override;
+        CodeBlock& codeBlock;
     };
 
-    class WeakReferenceHarvester : public JSC::WeakReferenceHarvester {
+    struct WeakReferenceHarvester : public JSC::WeakReferenceHarvester {
+        WeakReferenceHarvester(CodeBlock& codeBlock)
+            : codeBlock(codeBlock)
+        { }
         void visitWeakReferences(SlotVisitor&) override;
+        CodeBlock& codeBlock;
     };
 
 public:
@@ -255,9 +264,9 @@ public:
     JITMulIC* addJITMulIC(ArithProfile*);
     JITNegIC* addJITNegIC(ArithProfile*);
     JITSubIC* addJITSubIC(ArithProfile*);
-    Bag<StructureStubInfo>::iterator stubInfoBegin() { return m_stubInfos.begin(); }
-    Bag<StructureStubInfo>::iterator stubInfoEnd() { return m_stubInfos.end(); }
-    
+    auto stubInfoBegin() { return m_stubInfos.begin(); }
+    auto stubInfoEnd() { return m_stubInfos.end(); }
+
     // O(n) operation. Use getStubInfoMap() unless you really only intend to get one
     // stub info.
     StructureStubInfo* findStubInfo(CodeOrigin);
@@ -265,8 +274,8 @@ public:
     ByValInfo* addByValInfo();
 
     CallLinkInfo* addCallLinkInfo();
-    Bag<CallLinkInfo>::iterator callLinkInfosBegin() { return m_callLinkInfos.begin(); }
-    Bag<CallLinkInfo>::iterator callLinkInfosEnd() { return m_callLinkInfos.end(); }
+    auto callLinkInfosBegin() { return m_callLinkInfos.begin(); }
+    auto callLinkInfosEnd() { return m_callLinkInfos.end(); }
 
     // This is a slow function call used primarily for compiling OSR exits in the case
     // that there had been inlining. Chances are if you want to use this, you're really
@@ -308,11 +317,11 @@ public:
     }
 
     typedef JSC::Instruction Instruction;
-    typedef RefCountedArray<Instruction>& UnpackedInstructions;
+    typedef PoisonedRefCountedArray<CodeBlockPoison, Instruction>& UnpackedInstructions;
 
     unsigned numberOfInstructions() const { return m_instructions.size(); }
-    RefCountedArray<Instruction>& instructions() { return m_instructions; }
-    const RefCountedArray<Instruction>& instructions() const { return m_instructions; }
+    PoisonedRefCountedArray<CodeBlockPoison, Instruction>& instructions() { return m_instructions; }
+    const PoisonedRefCountedArray<CodeBlockPoison, Instruction>& instructions() const { return m_instructions; }
 
     size_t predictedMachineCodeSize();
 
@@ -361,7 +370,7 @@ public:
     ExecutableBase* ownerExecutable() const { return m_ownerExecutable.get(); }
     ScriptExecutable* ownerScriptExecutable() const { return jsCast<ScriptExecutable*>(m_ownerExecutable.get()); }
 
-    VM* vm() const { return m_vm; }
+    VM* vm() const { return m_vm.unpoisoned(); }
 
     void setThisRegister(VirtualRegister thisRegister) { m_thisRegister = thisRegister; }
     VirtualRegister thisRegister() const { return m_thisRegister; }
@@ -895,6 +904,8 @@ public:
 
     bool hasTailCalls() const { return m_unlinkedCode->hasTailCalls(); }
 
+    static constexpr uintptr_t s_poison = makeConstExprPoison(CodeBlockPoison);
+
 protected:
     void finalizeLLIntInlineCaches();
     void finalizeBaselineJITInlineCaches();
@@ -953,6 +964,12 @@ private:
     void insertBasicBlockBoundariesForControlFlowProfiler(RefCountedArray<Instruction>&);
     void ensureCatchLivenessIsComputedForBytecodeOffsetSlow(unsigned);
 
+    template<typename T, typename... Arguments, typename Enable = void>
+    static PoisonedUniquePtr<CodeBlockPoison, T> makePoisonedUnique(Arguments&&... arguments)
+    {
+        return WTF::makePoisonedUnique<CodeBlockPoison, T>(std::forward<Arguments>(arguments)...);
+    }
+
     WriteBarrier<UnlinkedCodeBlock> m_unlinkedCode;
     int m_numParameters;
     int m_numberOfArgumentsToSkip { 0 };
@@ -965,30 +982,30 @@ private:
         };
     };
     WriteBarrier<ExecutableBase> m_ownerExecutable;
-    VM* m_vm;
+    ConstExprPoisoned<CodeBlockPoison, VM*> m_vm;
 
-    RefCountedArray<Instruction> m_instructions;
+    PoisonedRefCountedArray<CodeBlockPoison, Instruction> m_instructions;
     VirtualRegister m_thisRegister;
     VirtualRegister m_scopeRegister;
     mutable CodeBlockHash m_hash;
 
-    RefPtr<SourceProvider> m_source;
+    PoisonedRefPtr<CodeBlockPoison, SourceProvider> m_source;
     unsigned m_sourceOffset;
     unsigned m_firstLineColumnOffset;
 
     RefCountedArray<LLIntCallLinkInfo> m_llintCallLinkInfos;
     SentinelLinkedList<LLIntCallLinkInfo, BasicRawSentinelNode<LLIntCallLinkInfo>> m_incomingLLIntCalls;
     StructureWatchpointMap m_llintGetByIdWatchpointMap;
-    RefPtr<JITCode> m_jitCode;
+    PoisonedRefPtr<CodeBlockPoison, JITCode> m_jitCode;
 #if ENABLE(JIT)
     std::unique_ptr<RegisterAtOffsetList> m_calleeSaveRegisters;
-    Bag<StructureStubInfo> m_stubInfos;
-    Bag<JITAddIC> m_addICs;
-    Bag<JITMulIC> m_mulICs;
-    Bag<JITNegIC> m_negICs;
-    Bag<JITSubIC> m_subICs;
-    Bag<ByValInfo> m_byValInfos;
-    Bag<CallLinkInfo> m_callLinkInfos;
+    PoisonedBag<CodeBlockPoison, StructureStubInfo> m_stubInfos;
+    PoisonedBag<CodeBlockPoison, JITAddIC> m_addICs;
+    PoisonedBag<CodeBlockPoison, JITMulIC> m_mulICs;
+    PoisonedBag<CodeBlockPoison, JITNegIC> m_negICs;
+    PoisonedBag<CodeBlockPoison, JITSubIC> m_subICs;
+    PoisonedBag<CodeBlockPoison, ByValInfo> m_byValInfos;
+    PoisonedBag<CodeBlockPoison, CallLinkInfo> m_callLinkInfos;
     SentinelLinkedList<CallLinkInfo, BasicRawSentinelNode<CallLinkInfo>> m_incomingCalls;
     SentinelLinkedList<PolymorphicCallNode, BasicRawSentinelNode<PolymorphicCallNode>> m_incomingPolymorphicCalls;
     std::unique_ptr<PCToCodeOriginMap> m_pcToCodeOriginMap;
@@ -1030,8 +1047,8 @@ private:
 
     std::unique_ptr<RareData> m_rareData;
 
-    UnconditionalFinalizer m_unconditionalFinalizer;
-    WeakReferenceHarvester m_weakReferenceHarvester;
+    PoisonedUniquePtr<CodeBlockPoison, UnconditionalFinalizer> m_unconditionalFinalizer;
+    PoisonedUniquePtr<CodeBlockPoison, WeakReferenceHarvester> m_weakReferenceHarvester;
 };
 
 inline Register& ExecState::r(int index)
