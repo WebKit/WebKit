@@ -1793,7 +1793,7 @@ void GraphicsLayerCA::commitLayerChangesBeforeSublayers(CommitState& commitState
         updateSupportsSubpixelAntialiasedText();
 
     if (m_uncommittedChanges & DebugIndicatorsChanged)
-        updateDebugBorder();
+        updateDebugIndicators();
 
     if (m_uncommittedChanges & CustomAppearanceChanged)
         updateCustomAppearance();
@@ -2351,7 +2351,7 @@ static Color cloneLayerDebugBorderColor(bool showingBorders)
     return showingBorders ? Color(255, 122, 251) : Color();
 }
 
-void GraphicsLayerCA::updateDebugBorder()
+void GraphicsLayerCA::updateDebugIndicators()
 {
     Color borderColor;
     float width = 0;
@@ -2359,6 +2359,9 @@ void GraphicsLayerCA::updateDebugBorder()
     bool showDebugBorders = isShowingDebugBorder();
     if (showDebugBorders)
         getDebugBorderInfo(borderColor, width);
+
+    // Paint repaint counter.
+    m_layer->setNeedsDisplay();
 
     setLayerDebugBorder(*m_layer, borderColor, width);
     if (m_contentsLayer)
