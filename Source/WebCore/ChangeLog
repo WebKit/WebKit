@@ -1,3 +1,23 @@
+2018-01-10  Youenn Fablet  <youenn@apple.com>
+
+        Add Service Worker CSP persistency
+        https://bugs.webkit.org/show_bug.cgi?id=181434
+
+        Reviewed by Alex Christensen.
+
+        Covered by manual testing.
+        Future work on service worker test infrastructure should allow automating such tests.
+
+        Add support for service worker CSP data persistency.
+        Add a version parameter to increment each time the schema is changing.
+        This allows the same store to be used by multiple WebKits.
+
+        * workers/service/server/RegistrationDatabase.cpp:
+        (WebCore::v1RecordsTableSchema):
+        (WebCore::RegistrationDatabase::openSQLiteDatabase):
+        (WebCore::RegistrationDatabase::doPushChanges):
+        (WebCore::RegistrationDatabase::importRecords):
+
 2018-01-10  Antti Koivisto  <antti@apple.com>
 
         Invalidate current element style on class change accurately
