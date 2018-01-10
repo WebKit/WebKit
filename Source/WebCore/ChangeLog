@@ -1,5 +1,25 @@
 2018-01-09  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r226542. rdar://problem/36392364
+
+    2018-01-08  John Wilander  <wilander@apple.com>
+
+            Storage Access API: Remove access for all frames under a page when the page is closed
+            https://bugs.webkit.org/show_bug.cgi?id=181398
+            <rdar://problem/36357879>
+
+            Reviewed by Alex Christensen.
+
+            No new tests. Discussed with Alex Christensen and we concluded that
+            both a layout test and an API test would require a lot of work and
+            we have existing tests for clearing out storage access for frames.
+
+            * platform/network/NetworkStorageSession.h:
+            * platform/network/cf/NetworkStorageSessionCFNet.cpp:
+            (WebCore::NetworkStorageSession::removeStorageAccessForAllFramesOnPage):
+
+2018-01-09  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r226526. rdar://problem/36392384
 
     2018-01-08  Youenn Fablet  <youenn@apple.com>

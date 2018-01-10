@@ -482,4 +482,14 @@ void NetworkConnectionToWebProcess::removeStorageAccessForFrame(PAL::SessionID s
 #endif
 }
 
+void NetworkConnectionToWebProcess::removeStorageAccessForAllFramesOnPage(PAL::SessionID sessionID, uint64_t pageID)
+{
+#if HAVE(CFNETWORK_STORAGE_PARTITIONING)
+    storageSession(sessionID).removeStorageAccessForAllFramesOnPage(pageID);
+#else
+    UNUSED_PARAM(sessionID);
+    UNUSED_PARAM(pageID);
+#endif
+}
+
 } // namespace WebKit
