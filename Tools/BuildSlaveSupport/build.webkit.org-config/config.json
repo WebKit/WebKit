@@ -90,6 +90,7 @@
                     { "name": "jsconly-linux-szeged-slave-1", "platform": "jsc-only" },
                     { "name": "jsconly-linux-szeged-slave-2", "platform": "jsc-only" },
                     { "name": "jsconly-linux-szeged-slave-3", "platform": "jsc-only" },
+                    { "name": "jsconly-linux-igalia-bot-1", "platform": "jsc-only" },
 
                     { "name": "wpe-linux-bot-1", "platform": "wpe" },
                     { "name": "wpe-linux-bot-2", "platform": "wpe" }
@@ -381,6 +382,11 @@
                       "platform": "jsc-only", "configuration": "release", "architectures": ["armv7"],
                       "SVNMirror": "svn://webkit.inf.u-szeged.hu/webkit/",
                       "slavenames": ["jsconly-linux-szeged-slave-3"]
+                    },
+                    {
+                      "name": "JSCOnly Linux MIPS32el Release", "type": "BuildAndRemoteJSCTests", "builddir": "jsconly-linux-mips32el-release",
+                      "platform": "jsc-only", "configuration": "release", "architectures": ["mips"],
+                      "slavenames": ["jsconly-linux-igalia-bot-1"]
                     },
                     {
                       "name": "WPE Linux 64-bit Release (Build)", "type": "Build", "builddir": "wpe-linux-64-release",
