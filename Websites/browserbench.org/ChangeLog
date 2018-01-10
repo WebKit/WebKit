@@ -1,3 +1,11 @@
+2018-01-09  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Merge the latest version of Speedometer 2.0 to browserbench.org against at r226694.
+
+        Rubber-stamped by Keith Miller.
+
+        * Speedometer2.0: Replaced with PerformanceTests/Speedometer.
+
 2017-09-28  Ryosuke Niwa  <rniwa@webkit.org>
 
         Merge the latest version of Speedometer 2.0 to browserbench.org against at r222534.
