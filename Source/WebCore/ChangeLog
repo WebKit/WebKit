@@ -1,3 +1,10 @@
+2018-01-10  Antti Koivisto  <antti@apple.com>
+
+        Try to fix windows build.
+
+        * css/RuleFeature.cpp:
+        (WebCore::RuleFeatureSet::computeNextMatchElement):
+
 2018-01-10  Zalan Bujtas  <zalan@apple.com>
 
         [RenderTreeBuilder] Move RenderRuby's moveChildren logic to RenderTreeBuilder

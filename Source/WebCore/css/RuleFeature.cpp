@@ -65,6 +65,8 @@ RuleFeatureSet::MatchElement RuleFeatureSet::computeNextMatchElement(MatchElemen
     case CSSSelector::ShadowDescendant:
         return MatchElement::Host;
     };
+    ASSERT_NOT_REACHED();
+    return matchElement;
 };
 
 RuleFeatureSet::MatchElement RuleFeatureSet::computeSubSelectorMatchElement(MatchElement matchElement, const CSSSelector& selector)
