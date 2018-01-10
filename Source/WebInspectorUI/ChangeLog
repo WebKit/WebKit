@@ -1,3 +1,15 @@
+2018-01-10  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Should not try to autocomplete subsections of a string
+        https://bugs.webkit.org/show_bug.cgi?id=181461
+        <rdar://problem/36369421>
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Controllers/CodeMirrorCompletionController.js:
+        (WI.CodeMirrorCompletionController.prototype._completeAtCurrentPosition):
+        Disable autocompletion within strings.
+
 2018-01-09  Joseph Pecoraro  <pecoraro@apple.com>
 
         REGRESSION(r201855): Web Inspector: Should see "length" autocompletion suggestion on a string literal

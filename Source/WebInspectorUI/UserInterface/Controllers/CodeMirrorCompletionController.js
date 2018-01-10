@@ -475,8 +475,8 @@ WI.CodeMirrorCompletionController = class CodeMirrorCompletionController extends
         var cursor = this._codeMirror.getCursor();
         var token = this._codeMirror.getTokenAt(cursor);
 
-        // Don't try to complete inside comments.
-        if (token.type && /\bcomment\b/.test(token.type)) {
+        // Don't try to complete inside comments or strings.
+        if (token.type && /\b(comment|string)\b/.test(token.type)) {
             this.hideCompletions();
             return;
         }
