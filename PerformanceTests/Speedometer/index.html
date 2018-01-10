@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <title>Speedometer 1.0</title>
+    <title>Speedometer 2.0</title>
     <link rel="stylesheet" href="resources/main.css">
     <script src="resources/main.js" defer></script>
     <script src="resources/benchmark-runner.js" defer></script>
@@ -60,15 +60,17 @@
     </section>
 
     <section id="about">
-        <h1>About Speedometer</h1>
+        <h1>About Speedometer 2.0</h1>
 
-        <p>Speedometer measures simulated user interactions in web applications.</p>
+        <p>Speedometer tests a browser's Web app responsiveness by timing simulated user interactions.</p>
 
         <p>
-            The current benchmark uses TodoMVC to simulate user actions for adding, completing, and removing to-do items.
-            Speedometer repeats the same actions using DOM APIs &mdash;
-            a core set of web platform APIs used extensively in web applications &mdash;
-            as well as six popular JavaScript frameworks: Ember.js, Backbone.js, jQuery, AngularJS, React, and Flight.
+            This benchmark simulates user actions for adding, completing, and removing to-do items using multiple examples in TodoMVC.
+            Each example in TodoMVC implements the same todo application using DOM APIs in different ways.
+            Some call DOM APIs directly from ECMAScript 5 (ES5), ECMASCript 2015 (ES6), ES6 transpiled to ES5, and Elm transpiled to ES5.
+            Others use one of eleven popular JavaScript frameworks: React, React with Redux, Ember.js, Backbone.js,
+            AngularJS, (new) Angular, Vue.js, jQuery, Preact, Inferno, and Flight.
+
             Many of these frameworks are used on the most popular websites in the world, such as Facebook and Twitter.
             The performance of these types of operations depends on the speed of the DOM APIs, the JavaScript engine,
             CSS style resolution, layout, and other technologies.
@@ -82,17 +84,22 @@
         </p>
 
         <p>
-            Some browser engines use an optimization strategy of doing some work asynchronously to reduce the run time of synchronous operations.
+            Modern browser engines execute some work asynchronously as an optimization strategy to reduce the run time of synchronous operations.
             While returning control back to JavaScript execution as soon as possible is worth pursuing,
-            a holistic, accurate measurement of web application performance involves measuring
-            when these related, asynchronous computations actually complete.
-            Thus, Speedometer measures the time browser spends executing those asynchronous tasks in Speedometer,
-            estimated as the time between when a zero-second delay timer is scheduled and when it is fired.</p>
+            the run time cost of such an asynchronous work should still be taken into a holistic measurement of web application performance.
+            In addition, some modern JavaScript frameworks such as Vue.js and Preact call into DOM APIs asynchronously as an optimization technique.
+            Speedometer approximates the run time of this asynchronous work in the UI thread with a zero-second timer
+            that is scheduled immediately after each execution of synchronous operations.
+        </p>
+
+        <p>
+            Speedometer does not attempt to measure concurrent asynchronous work that does not directly impact the UI thread,
+            which tends not to affect app responsiveness.
+        </p>
 
         <p class="note">
-            <strong>Note:</strong> Speedometer is not meant to compare the performance of different JavaScript frameworks.
-            The mechanism we use to simulate user actions is different for each framework,
-            and we’re forcing frameworks to do more work synchronously than needed in some cases to ensure run time can be measured.
+            <strong>Note:</strong> Speedometer should not be used as a way to compare the performance of different JavaScript frameworks
+            as work load differs greatly in each framework.
         </p>
     </section>
 </main>
