@@ -1,3 +1,19 @@
+2018-01-09  Joseph Pecoraro  <pecoraro@apple.com>
+
+        REGRESSION(r201855): Web Inspector: Should see "length" autocompletion suggestion on a string literal
+        https://bugs.webkit.org/show_bug.cgi?id=181462
+        <rdar://problem/36390699>
+
+        Reviewed by Matt Baker.
+
+        * UserInterface/Controllers/JavaScriptRuntimeCompletionProvider.js:
+        (WI.JavaScriptRuntimeCompletionProvider.prototype.completionControllerCompletionsNeeded.inspectedPage_evalResult_getCompletions):
+        This is code that runs on the inspected target, which may have an old version of
+        WebKit/JavaScriptCore, so don't use new syntax like this.
+
+        (WI.JavaScriptRuntimeCompletionProvider.prototype.completionControllerCompletionsNeeded):
+        We intended to return the result by as a JSON value instead of a RemoteObject.
+
 2018-01-09  Ross Kirsling  <ross.kirsling@sony.com>
 
         Web Inspector: Layers sidebar shows popover on selection even when collapsed
