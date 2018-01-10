@@ -482,7 +482,7 @@ end
 
 macro structureIDToStructureWithScratch(structureIDThenStructure, scratch)
     loadp CodeBlock[cfr], scratch
-    loadp CodeBlock::m_vm[scratch], scratch
+    loadp CodeBlock::m_poisonedVM[scratch], scratch
     unpoison(CodeBlockPoison, scratch)
     loadp VM::heap + Heap::m_structureIDTable + StructureIDTable::m_table[scratch], scratch
     loadp [scratch, structureIDThenStructure, 8], structureIDThenStructure
@@ -496,7 +496,7 @@ end
 macro loadStructureAndClobberFirstArg(cell, structure)
     loadi JSCell::m_structureID[cell], structure
     loadp CodeBlock[cfr], cell
-    loadp CodeBlock::m_vm[cell], cell
+    loadp CodeBlock::m_poisonedVM[cell], cell
     unpoison(CodeBlockPoison, cell)
     loadp VM::heap + Heap::m_structureIDTable + StructureIDTable::m_table[cell], cell
     loadp [cell, structure, 8], structure
@@ -2499,7 +2499,7 @@ _llint_op_get_parent_scope:
 _llint_op_profile_type:
     traceExecution()
     loadp CodeBlock[cfr], t1
-    loadp CodeBlock::m_vm[t1], t1
+    loadp CodeBlock::m_poisonedVM[t1], t1
     unpoison(CodeBlockPoison, t1)
     # t1 is holding the pointer to the typeProfilerLog.
     loadp VM::m_typeProfilerLog[t1], t1

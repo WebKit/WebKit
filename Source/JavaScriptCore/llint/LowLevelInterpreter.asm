@@ -204,9 +204,7 @@ else
     const LowestTag = DeletedValueTag
 end
 
-if POISON
-    const CodeBlockPoison = constexpr CodeBlock::s_poison
-end
+const CodeBlockPoison = constexpr CodeBlock::s_poison
 
 # PutByIdFlags data
 const PutByIdPrimaryTypeMask = constexpr PutByIdPrimaryTypeMask
@@ -1034,7 +1032,7 @@ macro prologue(codeBlockGetter, codeBlockSetter, osrSlowPath, traceSlowPath)
     getFrameRegisterSizeForCodeBlock(t1, t0)
     subp cfr, t0, t0
     bpa t0, cfr, .needStackCheck
-    loadp CodeBlock::m_vm[t1], t2
+    loadp CodeBlock::m_poisonedVM[t1], t2
     unpoison(CodeBlockPoison, t2)
     if C_LOOP
         bpbeq VM::m_cloopStackLimit[t2], t0, .stackHeightOK
@@ -1622,7 +1620,7 @@ _llint_op_loop_hint:
 _llint_op_check_traps:
     traceExecution()
     loadp CodeBlock[cfr], t1
-    loadp CodeBlock::m_vm[t1], t1
+    loadp CodeBlock::m_poisonedVM[t1], t1
     unpoison(CodeBlockPoison, t1)
     loadb VM::m_traps+VMTraps::m_needTrapHandling[t1], t0
     btpnz t0, .handleTraps
@@ -1638,7 +1636,7 @@ _llint_op_check_traps:
 # Returns the packet pointer in t0.
 macro acquireShadowChickenPacket(slow)
     loadp CodeBlock[cfr], t1
-    loadp CodeBlock::m_vm[t1], t1
+    loadp CodeBlock::m_poisonedVM[t1], t1
     unpoison(CodeBlockPoison, t1)
     loadp VM::m_shadowChicken[t1], t2
     loadp ShadowChicken::m_logCursor[t2], t0

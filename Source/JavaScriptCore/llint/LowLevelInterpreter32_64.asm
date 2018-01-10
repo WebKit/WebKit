@@ -1,4 +1,4 @@
-# Copyright (C) 2011-2017 Apple Inc. All rights reserved.
+# Copyright (C) 2011-2018 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -2529,7 +2529,8 @@ _llint_op_get_parent_scope:
 _llint_op_profile_type:
     traceExecution()
     loadp CodeBlock[cfr], t1
-    loadp CodeBlock::m_vm[t1], t1
+    loadp CodeBlock::m_poisonedVM[t1], t1
+    unpoison(CodeBlockPoison, t1)
     # t1 is holding the pointer to the typeProfilerLog.
     loadp VM::m_typeProfilerLog[t1], t1
 
