@@ -123,7 +123,8 @@ void LayoutState::computeClipRect(const LayoutState& ancestor, RenderBox& render
     if (!renderer.hasOverflowClip())
         return;
 
-    LayoutRect clipRect(toLayoutPoint(m_paintOffset) + renderer.view().frameView().layoutContext().layoutDelta(), renderer.cachedSizeForOverflowClip());
+    auto paintOffsetForClipRect = toLayoutPoint(m_paintOffset + toLayoutSize(renderer.scrollPosition()));
+    LayoutRect clipRect(paintOffsetForClipRect + renderer.view().frameView().layoutContext().layoutDelta(), renderer.cachedSizeForOverflowClip());
     if (m_clipped)
         m_clipRect.intersect(clipRect);
     else
