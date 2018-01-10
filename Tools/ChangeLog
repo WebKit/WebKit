@@ -1,3 +1,12 @@
+2018-01-09  Andy Estes  <aestes@apple.com>
+
+        [Xcode] Use the Apple Internal SDK if available when building ImageDiff
+        https://bugs.webkit.org/show_bug.cgi?id=181459
+
+        Reviewed by Dan Bernstein.
+
+        * ImageDiff/cg/Configurations/Base.xcconfig:
+
 2018-01-09  Myles C. Maxfield  <mmaxfield@apple.com>
 
         font-display:fallback can cause a visual flash (which is supposed to be impossible)
