@@ -581,12 +581,16 @@ bool MediaPlayerPrivateGStreamer::paused() const
         return true;
     }
 
-    if (m_playbackRatePause)
+    if (m_playbackRatePause) {
+        GST_DEBUG("Playback rate is 0, simulating PAUSED state");
         return false;
+    }
 
     GstState state;
     gst_element_get_state(m_pipeline.get(), &state, nullptr, 0);
-    return state <= GST_STATE_PAUSED;
+    bool paused = state <= GST_STATE_PAUSED;
+    GST_DEBUG("Paused state: %s", paused ? "enabled":"disabled");
+    return paused;
 }
 
 bool MediaPlayerPrivateGStreamer::seeking() const
@@ -917,7 +921,7 @@ void MediaPlayerPrivateGStreamer::handleMessage(GstMessage* message)
     // We ignore state changes from internal elements. They are forwarded to playbin2 anyway.
     bool messageSourceIsPlaybin = GST_MESSAGE_SRC(message) == reinterpret_cast<GstObject*>(m_pipeline.get());
 
-    GST_DEBUG("Message %s received from element %s", GST_MESSAGE_TYPE_NAME(message), GST_MESSAGE_SRC_NAME(message));
+    GST_LOG("Message %s received from element %s", GST_MESSAGE_TYPE_NAME(message), GST_MESSAGE_SRC_NAME(message));
     switch (GST_MESSAGE_TYPE(message)) {
     case GST_MESSAGE_ERROR:
         if (m_resetPipeline || m_missingPluginsCallback || m_errorOccured)
@@ -1288,7 +1292,7 @@ MediaTime MediaPlayerPrivateGStreamer::maxTimeLoaded() const
     MediaTime loaded = m_maxTimeLoaded;
     if (m_isEndReached)
         loaded = durationMediaTime();
-    GST_DEBUG("maxTimeLoaded: %s", toString(loaded).utf8().data());
+    GST_LOG("maxTimeLoaded: %s", toString(loaded).utf8().data());
     return loaded;
 }
 
@@ -1299,7 +1303,7 @@ bool MediaPlayerPrivateGStreamer::didLoadingProgress() const
     MediaTime currentMaxTimeLoaded = maxTimeLoaded();
     bool didLoadingProgress = currentMaxTimeLoaded != m_maxTimeLoadedAtLastDidLoadingProgress;
     m_maxTimeLoadedAtLastDidLoadingProgress = currentMaxTimeLoaded;
-    GST_DEBUG("didLoadingProgress: %d", didLoadingProgress);
+    GST_LOG("didLoadingProgress: %d", didLoadingProgress);
     return didLoadingProgress;
 }
 
@@ -1500,9 +1504,15 @@ void MediaPlayerPrivateGStreamer::updateStates()
     MediaPlayer::NetworkState oldNetworkState = m_networkState;
     MediaPlayer::ReadyState oldReadyState = m_readyState;
     GstState pending;
+    GstState state;
+    bool stateReallyChanged = false;
 
-    m_oldState = m_currentState;
-    GstStateChangeReturn getStateResult = gst_element_get_state(m_pipeline.get(), &m_currentState, &pending, 250 * GST_NSECOND);
+    GstStateChangeReturn getStateResult = gst_element_get_state(m_pipeline.get(), &state, &pending, 250 * GST_NSECOND);
+    if (state != m_currentState) {
+        m_oldState = m_currentState;
+        m_currentState = state;
+        stateReallyChanged = true;
+    }
 
     bool shouldUpdatePlaybackState = false;
     switch (getStateResult) {
@@ -1581,8 +1591,12 @@ void MediaPlayerPrivateGStreamer::updateStates()
             shouldUpdatePlaybackState = true;
             GST_INFO("Requested state change to %s was completed", gst_element_state_get_name(m_currentState));
         }
-        if ((m_oldState != m_currentState) && ((m_oldState > GST_STATE_READY && m_currentState > GST_STATE_READY)
-            || (m_currentState < GST_STATE_PLAYING && m_oldState > GST_STATE_READY))) {
+
+        // Emit play state change notification only when going to PLAYING so that
+        // the media element gets a chance to enable its page sleep disabler.
+        // Emitting this notification in more cases triggers unwanted code paths
+        // and test timeouts.
+        if (stateReallyChanged && (m_oldState != m_currentState) && (m_oldState == GST_STATE_PAUSED && m_currentState == GST_STATE_PLAYING)) {
             GST_INFO("Playback state changed from %s to %s. Notifying the media player client", gst_element_state_get_name(m_oldState), gst_element_state_get_name(m_currentState));
             shouldUpdatePlaybackState = true;
         }
@@ -1785,6 +1799,8 @@ void MediaPlayerPrivateGStreamer::durationChanged()
 
 void MediaPlayerPrivateGStreamer::loadingFailed(MediaPlayer::NetworkState error)
 {
+    GST_WARNING("Loading failed, error: %d", error);
+
     m_errorOccured = true;
     if (m_networkState != error) {
         m_networkState = error;

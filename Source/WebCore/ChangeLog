@@ -1,3 +1,24 @@
+2018-01-10  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer] REGRESSION(r226629): broke media/video-interruption-with-resume-allowing-play.html
+        https://bugs.webkit.org/show_bug.cgi?id=181471
+        <rdar://problem/36402323>
+
+        Reviewed by Carlos Garcia Campos.
+
+        This patch mainly reduces the amount of playback state changes
+        emitted by the GStreamer player to its client. Emitting those
+        notifications too often has bad side effects.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::paused const): Add debug messages.
+        (WebCore::MediaPlayerPrivateGStreamer::handleMessage): This debug message appears too much. Demote.
+        (WebCore::MediaPlayerPrivateGStreamer::maxTimeLoaded const): Ditto.
+        (WebCore::MediaPlayerPrivateGStreamer::didLoadingProgress const): Ditto.
+        (WebCore::MediaPlayerPrivateGStreamer::updateStates): Try to emit
+        playback state change notification only when going to PLAYING.
+        (WebCore::MediaPlayerPrivateGStreamer::loadingFailed): Add warning message.
+
 2018-01-10  Youenn Fablet  <youenn@apple.com>
 
         Add Service Worker CSP persistency
