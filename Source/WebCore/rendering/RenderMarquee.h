@@ -58,18 +58,8 @@ public:
     explicit RenderMarquee(RenderLayer*);
     ~RenderMarquee();
 
-    int speed() const { return m_speed; }
-    int marqueeSpeed() const;
-
-    EMarqueeDirection reverseDirection() const { return static_cast<EMarqueeDirection>(-direction()); }
-    EMarqueeDirection direction() const;
-
     bool isHorizontal() const;
 
-    int computePosition(EMarqueeDirection, bool stopAtClientEdge);
-
-    void setEnd(int end) { m_end = end; }
-    
     void start();
     void suspend();
     void stop();
@@ -78,6 +68,16 @@ public:
     void updateMarqueePosition();
 
 private:
+
+    int speed() const { return m_speed; }
+    int marqueeSpeed() const;
+
+    MarqueeDirection direction() const;
+
+    int computePosition(MarqueeDirection, bool stopAtClientEdge);
+
+    void setEnd(int end) { m_end = end; }
+
     void timerFired();
 
     RenderLayer* m_layer;
@@ -88,10 +88,10 @@ private:
     int m_end { 0 };
     int m_speed { 0 };
     Length m_height;
-    bool m_reset: 1;
-    bool m_suspended : 1;
-    bool m_stopped : 1;
-    EMarqueeDirection m_direction : 4; // Not unsigned because EMarqueeDirection has negative values
+    MarqueeDirection m_direction { MarqueeDirection::Auto };
+    bool m_reset { false };
+    bool m_suspended { false };
+    bool m_stopped { false };
 };
 
 } // namespace WebCore

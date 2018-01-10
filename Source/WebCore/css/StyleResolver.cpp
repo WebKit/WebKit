@@ -957,7 +957,7 @@ void StyleResolver::adjustRenderStyle(RenderStyle& style, const RenderStyle& par
             style.setOverflowX(OHIDDEN);
             style.setOverflowY(OHIDDEN);
 
-            bool isVertical = style.marqueeDirection() == MUP || style.marqueeDirection() == MDOWN;
+            bool isVertical = style.marqueeDirection() == MarqueeDirection::Up || style.marqueeDirection() == MarqueeDirection::Down;
             // Make horizontal marquees not wrap.
             if (!isVertical) {
                 style.setWhiteSpace(NOWRAP);

@@ -575,8 +575,8 @@ public:
     const Length& marqueeIncrement() const { return m_rareNonInheritedData->marquee->increment; }
     int marqueeSpeed() const { return m_rareNonInheritedData->marquee->speed; }
     int marqueeLoopCount() const { return m_rareNonInheritedData->marquee->loops; }
-    EMarqueeBehavior marqueeBehavior() const { return static_cast<EMarqueeBehavior>(m_rareNonInheritedData->marquee->behavior); }
-    EMarqueeDirection marqueeDirection() const { return static_cast<EMarqueeDirection>(m_rareNonInheritedData->marquee->direction); }
+    MarqueeBehavior marqueeBehavior() const { return static_cast<MarqueeBehavior>(m_rareNonInheritedData->marquee->behavior); }
+    MarqueeDirection marqueeDirection() const { return static_cast<MarqueeDirection>(m_rareNonInheritedData->marquee->direction); }
     EUserModify userModify() const { return static_cast<EUserModify>(m_rareInheritedData->userModify); }
     EUserDrag userDrag() const { return static_cast<EUserDrag>(m_rareNonInheritedData->userDrag); }
     EUserSelect userSelect() const { return static_cast<EUserSelect>(m_rareInheritedData->userSelect); }
@@ -1100,8 +1100,8 @@ public:
 
     void setMarqueeIncrement(Length&& length) { SET_NESTED_VAR(m_rareNonInheritedData, marquee, increment, WTFMove(length)); }
     void setMarqueeSpeed(int f) { SET_NESTED_VAR(m_rareNonInheritedData, marquee, speed, f); }
-    void setMarqueeDirection(EMarqueeDirection d) { SET_NESTED_VAR(m_rareNonInheritedData, marquee, direction, d); }
-    void setMarqueeBehavior(EMarqueeBehavior b) { SET_NESTED_VAR(m_rareNonInheritedData, marquee, behavior, b); }
+    void setMarqueeDirection(MarqueeDirection d) { SET_NESTED_VAR(m_rareNonInheritedData, marquee, direction, static_cast<unsigned>(d)); }
+    void setMarqueeBehavior(MarqueeBehavior b) { SET_NESTED_VAR(m_rareNonInheritedData, marquee, behavior, static_cast<unsigned>(b)); }
     void setMarqueeLoopCount(int i) { SET_NESTED_VAR(m_rareNonInheritedData, marquee, loops, i); }
     void setUserModify(EUserModify u) { SET_VAR(m_rareInheritedData, userModify, u); }
     void setUserDrag(EUserDrag d) { SET_VAR(m_rareNonInheritedData, userDrag, d); }
@@ -1502,8 +1502,8 @@ public:
     static int initialMarqueeLoopCount() { return -1; }
     static int initialMarqueeSpeed() { return 85; }
     static Length initialMarqueeIncrement() { return Length(6, Fixed); }
-    static EMarqueeBehavior initialMarqueeBehavior() { return MSCROLL; }
-    static EMarqueeDirection initialMarqueeDirection() { return MAUTO; }
+    static MarqueeBehavior initialMarqueeBehavior() { return MarqueeBehavior::Scroll; }
+    static MarqueeDirection initialMarqueeDirection() { return MarqueeDirection::Auto; }
     static EUserModify initialUserModify() { return READ_ONLY; }
     static EUserDrag initialUserDrag() { return DRAG_AUTO; }
     static EUserSelect initialUserSelect() { return SELECT_TEXT; }

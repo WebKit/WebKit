@@ -2508,13 +2508,13 @@ bool RenderBox::sizesLogicalWidthToFitContent(SizeType widthType) const
         return true;
 
     // Children of a horizontal marquee do not fill the container by default.
-    // FIXME: Need to deal with MAUTO value properly.  It could be vertical.
+    // FIXME: Need to deal with MarqueeDirection::Auto value properly. It could be vertical.
     // FIXME: Think about block-flow here.  Need to find out how marquee direction relates to
     // block-flow (as well as how marquee overflow should relate to block flow).
     // https://bugs.webkit.org/show_bug.cgi?id=46472
     if (parent()->isHTMLMarquee()) {
-        EMarqueeDirection dir = parent()->style().marqueeDirection();
-        if (dir == MAUTO || dir == MFORWARD || dir == MBACKWARD || dir == MLEFT || dir == MRIGHT)
+        MarqueeDirection dir = parent()->style().marqueeDirection();
+        if (dir == MarqueeDirection::Auto || dir == MarqueeDirection::Forward || dir == MarqueeDirection::Backward || dir == MarqueeDirection::Left || dir == MarqueeDirection::Right)
             return true;
     }
 

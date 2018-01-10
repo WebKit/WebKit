@@ -47,8 +47,8 @@ public:
 
     int loops; // -1 means infinite.
 
-    unsigned behavior : 2; // EMarqueeBehavior 
-    EMarqueeDirection direction : 3; // not unsigned because EMarqueeDirection has negative values
+    unsigned behavior : 2; // MarqueeBehavior 
+    unsigned direction : 3; // MarqueeDirection
 
 private:
     StyleMarqueeData();

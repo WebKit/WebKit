@@ -30,8 +30,8 @@ StyleMarqueeData::StyleMarqueeData()
     : increment(RenderStyle::initialMarqueeIncrement())
     , speed(RenderStyle::initialMarqueeSpeed())
     , loops(RenderStyle::initialMarqueeLoopCount())
-    , behavior(RenderStyle::initialMarqueeBehavior())
-    , direction(RenderStyle::initialMarqueeDirection())
+    , behavior(static_cast<unsigned>(RenderStyle::initialMarqueeBehavior()))
+    , direction(static_cast<unsigned>(RenderStyle::initialMarqueeDirection()))
 {
 }
 

@@ -1,3 +1,55 @@
+2018-01-08  Simon Fraser  <simon.fraser@apple.com>
+
+        Clean up Marquee-related enums
+        https://bugs.webkit.org/show_bug.cgi?id=181347
+
+        Reviewed by Anders Carlsson.
+
+        Modernize EMarqueeBehavior and EMarqueeDirection enums. Stop using the weird negative
+        values in the MarqueeDirection and do manual reverse direction mapping.
+
+        Make some member functions of RenderMarquee private.
+
+        Stop using bitfields in RenderMarquee because the memory saving is not worth it, and doing so
+        allows us to use modern initialization.
+
+        No behavior change.
+
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        (WebCore::CSSPrimitiveValue::operator MarqueeBehavior const):
+        (WebCore::CSSPrimitiveValue::operator MarqueeDirection const):
+        (WebCore::CSSPrimitiveValue::operator EMarqueeBehavior const): Deleted.
+        (WebCore::CSSPrimitiveValue::operator EMarqueeDirection const): Deleted.
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::adjustRenderStyle):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::sizesLogicalWidthToFitContent const):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::calculateClipRects const):
+        * rendering/RenderMarquee.cpp:
+        (WebCore::RenderMarquee::RenderMarquee):
+        (WebCore::reverseDirection):
+        (WebCore::RenderMarquee::direction const):
+        (WebCore::RenderMarquee::isHorizontal const):
+        (WebCore::RenderMarquee::computePosition):
+        (WebCore::RenderMarquee::start):
+        (WebCore::RenderMarquee::updateMarqueePosition):
+        (WebCore::RenderMarquee::updateMarqueeStyle):
+        (WebCore::RenderMarquee::timerFired):
+        * rendering/RenderMarquee.h:
+        * rendering/style/RenderStyle.h:
+        (WebCore::RenderStyle::marqueeBehavior const):
+        (WebCore::RenderStyle::marqueeDirection const):
+        (WebCore::RenderStyle::setMarqueeDirection):
+        (WebCore::RenderStyle::setMarqueeBehavior):
+        (WebCore::RenderStyle::initialMarqueeBehavior):
+        (WebCore::RenderStyle::initialMarqueeDirection):
+        * rendering/style/RenderStyleConstants.h:
+        * rendering/style/StyleMarqueeData.cpp:
+        (WebCore::StyleMarqueeData::StyleMarqueeData):
+        * rendering/style/StyleMarqueeData.h:
+
 2018-01-09  Jer Noble  <jer.noble@apple.com>
 
         Many CVDisplayLink threads created and destroyed while watching a YouTube video
