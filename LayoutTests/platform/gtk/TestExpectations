@@ -2617,9 +2617,6 @@ webkit.org/b/89845 fast/forms/input-set-composition-scroll.html [ Failure ]
 # This failure appears to be GTK-specific
 webkit.org/b/91319 css2.1/20110323/vertical-align-boxes-001.htm [ ImageOnlyFailure ]
 
-# This has always failed on Gtk/Efl - exposed by bug 89826
-webkit.org/b/94009 css2.1/20110323/c541-word-sp-000.htm [ ImageOnlyFailure ]
-
 webkit.org/b/80129 fast/frames/flattening/frameset-flattening-advanced.html [ Failure ]
 
 webkit.org/b/89663 editing/deleting/delete-3800834-fix.html [ Failure ]
