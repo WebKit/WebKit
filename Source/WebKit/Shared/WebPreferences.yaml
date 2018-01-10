@@ -1132,7 +1132,7 @@ ServiceWorkersEnabled:
 
 StorageAccessAPIEnabled:
   type: bool
-  defaultValue: false
+  defaultValue: true
   humanReadableName: "Storage Access API"
   humanReadableDescription: "Enable Storage Access API"
   category: experimental

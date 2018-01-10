@@ -1,5 +1,18 @@
 2018-01-09  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r226669. rdar://problem/36393011
+
+    2018-01-09  John Wilander  <wilander@apple.com>
+
+            Storage Access API: Turn feature on by default in WebPreferences.yaml
+            https://bugs.webkit.org/show_bug.cgi?id=181458
+
+            Reviewed by Brent Fulgham.
+
+            * Shared/WebPreferences.yaml:
+
+2018-01-09  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r226626. rdar://problem/36392359
 
     2018-01-09  Youenn Fablet  <youenn@apple.com>
