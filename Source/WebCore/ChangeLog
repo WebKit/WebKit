@@ -1,5 +1,19 @@
 2018-01-10  Antti Koivisto  <antti@apple.com>
 
+        REGRESSION(r225650): The scores of MotionMark tests Multiply and Leaves dropped by 8%
+        https://bugs.webkit.org/show_bug.cgi?id=181460
+        <rdar://problem/36379776>
+
+        Reviewed by Ryosuke Niwa.
+
+        * css/parser/CSSParser.cpp:
+        (WebCore::CSSParserContext::CSSParserContext):
+
+        Don't do the expensive security origin test if the sheet base URL and document URL are identical.
+        This is true for inline style and inline stylesheets.
+
+2018-01-10  Antti Koivisto  <antti@apple.com>
+
         Try to fix windows build.
 
         * css/RuleFeature.cpp:
