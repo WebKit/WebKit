@@ -1,107 +1,53 @@
-<!DOCTYPE html>
+<html>
+<head>
 <title>Service Worker Fetch Event</title>
 <script src="/resources/testharness.js"></script>
 <script src="/resources/testharnessreport.js"></script>
-<script src="/WebKit/resources/gc.js"></script>
+</head>
+<body>
 <script>
-// FIXME: Should be run on a service worker.
-test(() => {
-    var event = internals.createBeingDispatchedFetchEvent();
-    event.respondWith(undefined);
-    assert_throws('InvalidStateError', () => event.respondWith(undefined));
-}, "FetchEvent respondWith should throw if called twice");
+var scope = "";
+var activeWorker;
 
-test(() => {
-    var event = new FetchEvent('FetchEvent', { request : new Request('test') });
-    event.request.value = 1;
-    gc();
-    assert_equals(event.request.value, 1);
-}, "FetchEvent request is SameObject");
+promise_test(async (test) => {
+    var registration = await navigator.serviceWorker.register("fetchEvent-worker.js", { scope : scope });
+    activeWorker = registration.active;
+    if (activeWorker)
+        return;
+    activeWorker = registration.installing;
+    return new Promise(resolve => {
+        activeWorker.addEventListener('statechange', () => {
+            if (activeWorker.state === "activated")
+                resolve();
+        });
+    });
+}, "Setup worker");
 
-promise_test(async t => {
-    if (!window.internals)
-          return Promise.reject("test require internals");
-    var event = internals.createBeingDispatchedFetchEvent();
-    var promise = internals.waitForFetchEventToFinish(event);
-    event.respondWith(undefined);
-    return promise_rejects(t, new TypeError, promise);
-}, "FetchEvent should be in error if responding with undefined");
+function doTest(name, title)
+{
+    promise_test(async (test) => {
+        var promise = new Promise((resolve, reject) => {
+            navigator.serviceWorker.addEventListener("message", (event) => {
+                resolve(event.data);
+            });
+            setTimeout(() => reject("No response message from service worker"), 5000);
+        });
 
-promise_test(async t => {
-    if (!window.internals)
-        return Promise.reject("test require internals");
-    var event = internals.createBeingDispatchedFetchEvent();
-    var promise = internals.waitForFetchEventToFinish(event);
-    event.respondWith(new Request(''));
-    return promise_rejects(t, new TypeError, promise);
-}, "FetchEvent should be in error if not responding with a Response");
+        activeWorker.postMessage(name);
+        var result = await promise;
 
-promise_test(async t => {
-    if (!window.internals)
-        return Promise.reject("test require internals");
-    var event = internals.createBeingDispatchedFetchEvent();
-    var promise = internals.waitForFetchEventToFinish(event);
-    event.respondWith(new Promise((resolve, reject) => {
-        resolve(new Request(''));
-    }));
-    return promise_rejects(t, new TypeError, promise);
-}, "FetchEvent should be in error if responding with a Promise that does not resolve to a Response");
+        assert_equals(result, "PASS");
+    }, title);
+}
 
-promise_test(async t => {
-    if (!window.internals)
-        return Promise.reject("test require internals");
-    var event = internals.createBeingDispatchedFetchEvent();
-    var promise = internals.waitForFetchEventToFinish(event);
-    event.respondWith(new Promise((resolve, reject) => {
-        reject('not good');
-    }));
-    return promise_rejects(t, new TypeError, promise);
-}, "FetchEvent should be in error if responding with a Promise that rejects");
+doTest("respond-twice", "FetchEvent respondWith should throw if called twice");
+doTest("request-sameobject", "FetchEvent request is SameObject");
+doTest("respond-undefined", "FetchEvent should be in error if responding with undefined");
+doTest("respond-not-response", "FetchEvent should be in error if not responding with a Response");
+doTest("respond-promise-not-response", "FetchEvent should be in error if responding with a Promise that does not resolve to a Response");
+doTest("respond-promise-reject", "FetchEvent should be in error if responding with a Promise that rejects");
+doTest("respond-promise-response", "FetchEvent should resolve when responding with a Response");
 
-promise_test(async t => {
-    if (!window.internals)
-         return Promise.reject("test require internals");
-    var event = internals.createBeingDispatchedFetchEvent();
-    var response = new Response;
-    event.respondWith(response);
-    assert_true(response === await internals.waitForFetchEventToFinish(event));
-}, "FetchEvent should resolve when responding with a Response");
-
-// Duplicate test from WPT. To be removed once WPT service worker tests are active.
-test(function() {
-    var req = new Request('http://localhost:8800/',
-                          {method: 'POST',
-                           headers: [['Content-Type', 'Text/Html']]});
-    assert_equals(
-      new ExtendableEvent('ExtendableEvent').type,
-      'ExtendableEvent', 'Type of ExtendableEvent should be ExtendableEvent');
-    assert_throws(new TypeError, function() {
-        new FetchEvent('FetchEvent');
-    }, 'FetchEvent constructor with one argument throws');
-    assert_throws(new TypeError, function() {
-        new FetchEvent('FetchEvent', {});
-    }, 'FetchEvent constructor with empty init dict throws');
-    assert_throws(new TypeError, function() {
-        new FetchEvent('FetchEvent', {request: null});
-    }, 'FetchEvent constructor with null request member throws');
-    assert_equals(
-      new FetchEvent('FetchEvent', {request: req}).type,
-      'FetchEvent', 'Type of FetchEvent should be FetchEvent');
-    assert_equals(
-      new FetchEvent('FetchEvent', {request: req}).cancelable,
-      false, 'Default FetchEvent.cancelable should be false');
-    assert_equals(
-      new FetchEvent('FetchEvent', {request: req}).bubbles,
-      false, 'Default FetchEvent.bubbles should be false');
-    assert_equals(
-      new FetchEvent('FetchEvent', {request: req, cancelable: false}).cancelable,
-      false, 'FetchEvent.cancelable should be false');
-    assert_equals(
-      new FetchEvent('FetchEvent', {request: req, clientId : 'test-client-id'}).clientId, 'test-client-id',
-      'FetchEvent.clientId with option {clientId : "test-client-id"} should be "test-client-id"');
-    assert_equals(
-      new FetchEvent('FetchEvent', {request : req, isReload : true}).request.url,
-      'http://localhost:8800/',
-      'FetchEvent.request.url should return the value it was initialized to');
-  }, 'Event constructors');
 </script>
+</body>
+</html>

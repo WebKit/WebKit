@@ -1,5 +1,21 @@
 2018-01-09  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r226526. rdar://problem/36392384
+
+    2018-01-08  Youenn Fablet  <youenn@apple.com>
+
+            Stop exposing fetch and extendable events to window
+            https://bugs.webkit.org/show_bug.cgi?id=181325
+
+            Reviewed by Chris Dumez.
+
+            * http/wpt/service-workers/extendableEvent.https-expected.txt:
+            * http/wpt/service-workers/extendableEvent.https.html:
+            * http/wpt/service-workers/fetchEvent.https-expected.txt:
+            * http/wpt/service-workers/fetchEvent.https.html:
+
+2018-01-09  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r226521. rdar://problem/36392339
 
     2018-01-08  Antti Koivisto  <antti@apple.com>

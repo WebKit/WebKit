@@ -1,31 +1,48 @@
-<!DOCTYPE html>
+<html>
+<head>
 <title>Service Worker Extendable Event</title>
 <script src="/resources/testharness.js"></script>
 <script src="/resources/testharnessreport.js"></script>
+</head>
+<body>
 <script>
-// FIXME: Should be run on a service worker.
-test(() => {
-    if (!window.internals)
-        return Promise.reject("test require internals");
-    var event = new ExtendableEvent('ExtendableEvent', {});
-    assert_throws('InvalidStateError', () => event.waitUntil(new Request('')));
-}, "ExtendableEvent waitUntil should support non promise parameters");
+var scope = "";
+var activeWorker;
 
-test(function() {
-    assert_equals(
-      new ExtendableEvent('ExtendableEvent').type,
-      'ExtendableEvent', 'Type of ExtendableEvent should be ExtendableEvent');
-    assert_equals(
-      new ExtendableEvent('ExtendableEvent', {}).type,
-      'ExtendableEvent', 'Type of ExtendableEvent should be ExtendableEvent');
-    assert_equals(
-      new ExtendableEvent('ExtendableEvent', {}).cancelable,
-      false, 'Default ExtendableEvent.cancelable should be false');
-    assert_equals(
-      new ExtendableEvent('ExtendableEvent', {}).bubbles,
-      false, 'Default ExtendableEvent.bubbles should be false');
-    assert_equals(
-      new ExtendableEvent('ExtendableEvent', {cancelable: false}).cancelable,
-      false, 'ExtendableEvent.cancelable should be false');
-  }, 'Event constructors');
+promise_test(async (test) => {
+    var registration = await navigator.serviceWorker.register("extendableEvent-worker.js", { scope : scope });
+    activeWorker = registration.active;
+    if (activeWorker)
+        return;
+    activeWorker = registration.installing;
+    return new Promise(resolve => {
+        activeWorker.addEventListener('statechange', () => {
+            if (activeWorker.state === "activated")
+                resolve();
+        });
+    });
+}, "Setup worker");
+
+function doTest(name, title)
+{
+    promise_test(async (test) => {
+        var promise = new Promise((resolve, reject) => {
+            navigator.serviceWorker.addEventListener("message", (event) => {
+                resolve(event.data);
+            });
+            setTimeout(() => reject("No response message from service worker"), 5000);
+        });
+
+        activeWorker.postMessage(name);
+        var result = await promise;
+
+        assert_equals(result, "PASS");
+    }, title);
+}
+
+doTest("waitUntil-non-promise-parameters", "ExtendableEvent waitUntil should support non promise parameters");
+doTest("extendable-event", "Event constructors");
+
 </script>
+</body>
+</html>

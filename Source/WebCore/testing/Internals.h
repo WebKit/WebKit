@@ -52,7 +52,6 @@ class DOMWindow;
 class Document;
 class Element;
 class ExtendableEvent;
-class FetchEvent;
 class FetchResponse;
 class File;
 class Frame;
@@ -626,8 +625,6 @@ public:
     void setConsoleMessageListener(RefPtr<StringCallback>&&);
 
 #if ENABLE(SERVICE_WORKER)
-    void waitForFetchEventToFinish(FetchEvent&, DOMPromiseDeferred<IDLInterface<FetchResponse>>&&);
-    Ref<FetchEvent> createBeingDispatchedFetchEvent(ScriptExecutionContext&);
     using HasRegistrationPromise = DOMPromiseDeferred<IDLBoolean>;
     void hasServiceWorkerRegistration(const String& clientURL, HasRegistrationPromise&&);
     void terminateServiceWorker(ServiceWorker&);

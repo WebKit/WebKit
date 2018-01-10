@@ -62,7 +62,7 @@
 #include "EventHandler.h"
 #include "ExtendableEvent.h"
 #include "ExtensionStyleSheets.h"
-#include "FetchEvent.h"
+#include "FetchResponse.h"
 #include "File.h"
 #include "FontCache.h"
 #include "FormController.h"
@@ -91,7 +91,6 @@
 #include "InstrumentingAgents.h"
 #include "IntRect.h"
 #include "InternalSettings.h"
-#include "JSFetchResponse.h"
 #include "JSImageData.h"
 #include "LibWebRTCProvider.h"
 #include "MainFrame.h"
@@ -4291,23 +4290,6 @@ uint64_t Internals::responseSizeWithPadding(FetchResponse& response) const
 }
 
 #if ENABLE(SERVICE_WORKER)
-void Internals::waitForFetchEventToFinish(FetchEvent& event, DOMPromiseDeferred<IDLInterface<FetchResponse>>&& promise)
-{
-    event.onResponse([promise = WTFMove(promise), event = makeRef(event)] (FetchResponse* response) mutable {
-        if (response)
-            promise.resolve(*response);
-        else
-            promise.reject(TypeError, ASCIILiteral("fetch event responded with error"));
-    });
-}
-
-Ref<FetchEvent> Internals::createBeingDispatchedFetchEvent(ScriptExecutionContext& context)
-{
-    auto event = FetchEvent::createForTesting(context);
-    event->setEventPhase(Event::CAPTURING_PHASE);
-    return event;
-}
-
 void Internals::hasServiceWorkerRegistration(const String& clientURL, HasRegistrationPromise&& promise)
 {
     if (!contextDocument())

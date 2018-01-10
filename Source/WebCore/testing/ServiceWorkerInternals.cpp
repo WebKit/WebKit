@@ -28,6 +28,8 @@
 
 #if ENABLE(SERVICE_WORKER)
 
+#include "FetchEvent.h"
+#include "JSFetchResponse.h"
 #include "SWContextManager.h"
 
 namespace WebCore {
@@ -45,6 +47,23 @@ void ServiceWorkerInternals::setOnline(bool isOnline)
         if (auto* proxy = SWContextManager::singleton().workerByID(identifier))
             proxy->notifyNetworkStateChange(isOnline);
     });
+}
+
+void ServiceWorkerInternals::waitForFetchEventToFinish(FetchEvent& event, DOMPromiseDeferred<IDLInterface<FetchResponse>>&& promise)
+{
+    event.onResponse([promise = WTFMove(promise), event = makeRef(event)] (FetchResponse* response) mutable {
+        if (response)
+            promise.resolve(*response);
+        else
+            promise.reject(TypeError, ASCIILiteral("fetch event responded with error"));
+    });
+}
+
+Ref<FetchEvent> ServiceWorkerInternals::createBeingDispatchedFetchEvent(ScriptExecutionContext& context)
+{
+    auto event = FetchEvent::createForTesting(context);
+    event->setEventPhase(Event::CAPTURING_PHASE);
+    return event;
 }
 
 } // namespace WebCore

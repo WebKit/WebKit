@@ -23,12 +23,11 @@
 * THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-// FIXME: Should be exposed on ServiceWorker only.
 [
     Constructor(DOMString type, optional ExtendableEventInit eventInitDict),
     Conditional=SERVICE_WORKER,
     EnabledAtRuntime=ServiceWorker,
-    Exposed=(ServiceWorker,Window),
+    Exposed=(ServiceWorker),
     ExportMacro=WEBCORE_EXPORT,
     JSGenerateToNativeObject,
 ] interface ExtendableEvent : Event {
