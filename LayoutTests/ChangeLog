@@ -1,3 +1,11 @@
+2018-01-10  Per Arne Vollan  <pvollan@apple.com>
+
+        [Win] Rebaseline test after r225366.
+
+        Unreviewed test gardening.
+
+        * platform/win/svg/W3C-SVG-1.1/filters-comptran-01-b-expected.txt:
+
 2018-01-10  Chris Dumez  <cdumez@apple.com>
 
         REGRESSION (r224301?): LayoutTest http/tests/workers/service/registration-task-queue-scheduling-1.html is a flaky failure
