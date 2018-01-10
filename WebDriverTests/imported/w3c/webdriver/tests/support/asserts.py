@@ -1,5 +1,6 @@
 from webdriver import Element, WebDriverException
 
+
 # WebDriver specification ID: dfn-error-response-data
 errors = {
     "element click intercepted": 400,
@@ -31,6 +32,7 @@ errors = {
     "unknown method": 405,
     "unsupported operation": 500,
 }
+
 
 # WebDriver specification ID: dfn-send-an-error
 #
@@ -98,7 +100,7 @@ def assert_dialog_handled(session, expected_text):
     except:
         assert (result.status == 200 and
                 result.body["value"] != expected_text), (
-               "Dialog with text '%s' was not handled." % expected_text)
+            "Dialog with text '%s' was not handled." % expected_text)
 
 
 def assert_same_element(session, a, b):
@@ -123,7 +125,7 @@ def assert_same_element(session, a, b):
         return
 
     message = ("Expected element references to describe the same element, " +
-        "but they did not.")
+               "but they did not.")
 
     # Attempt to provide more information, accounting for possible errors such
     # as stale element references or not visible elements.

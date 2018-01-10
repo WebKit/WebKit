@@ -113,7 +113,7 @@ class TestExecutor(object):
         :param browser: ExecutorBrowser instance providing properties of the
                         browser that will be tested.
         :param server_config: Dictionary of wptserve server configuration of the
-                              form stored in TestEnvironment.external_config
+                              form stored in TestEnvironment.config
         :param timeout_multiplier: Multiplier relative to base timeout to use
                                    when setting test timeout.
         """
