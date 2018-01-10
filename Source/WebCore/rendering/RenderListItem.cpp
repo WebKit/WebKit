@@ -31,15 +31,9 @@
 #include "HTMLUListElement.h"
 #include "InlineElementBox.h"
 #include "PseudoElement.h"
-#include "RenderChildIterator.h"
-#include "RenderInline.h"
-#include "RenderListMarker.h"
 #include "RenderView.h"
 #include "StyleInheritedData.h"
 #include <wtf/IsoMallocInlines.h>
-#if !ASSERT_DISABLED
-#include <wtf/SetForScope.h>
-#endif
 #include <wtf/StackStats.h>
 #include <wtf/StdLibExtras.h>
 
@@ -82,7 +76,6 @@ RenderStyle RenderListItem::computeMarkerStyle() const
     fontDescription.setVariantNumericSpacing(FontVariantNumericSpacing::TabularNumbers);
     parentStyle.setFontDescription(fontDescription);
     parentStyle.fontCascade().update(&document().fontSelector());
-
     if (auto markerStyle = getCachedPseudoStyle(MARKER, &parentStyle))
         return RenderStyle::clone(*markerStyle);
     auto markerStyle = RenderStyle::create();
@@ -112,82 +105,102 @@ bool isHTMLListElement(const Node& node)
 // Returns the enclosing list with respect to the DOM order.
 static Element* enclosingList(const RenderListItem& listItem)
 {
-    Element& listItemElement = listItem.element();
-    Element* parent = is<PseudoElement>(listItemElement) ? downcast<PseudoElement>(listItemElement).hostElement() : listItemElement.parentElement();
-    Element* firstNode = parent;
-    // We use parentNode because the enclosing list could be a ShadowRoot that's not Element.
-    for (; parent; parent = parent->parentElement()) {
-        if (isHTMLListElement(*parent))
-            return parent;
+    auto& element = listItem.element();
+    auto* parent = is<PseudoElement>(element) ? downcast<PseudoElement>(element).hostElement() : element.parentElement();
+    for (auto* ancestor = parent; ancestor; ancestor = ancestor->parentElement()) {
+        if (isHTMLListElement(*ancestor))
+            return ancestor;
     }
 
-    // If there's no actual <ul> or <ol> list element, then the first found
-    // node acts as our list for purposes of determining what other list items
-    // should be numbered as part of the same list.
-    return firstNode;
+    // If there's no actual list element, then the parent element acts as our
+    // list for purposes of determining what other list items should be numbered as
+    // part of the same list.
+    return parent;
 }
 
-// Returns the next list item with respect to the DOM order.
-static RenderListItem* nextListItem(const Element& listNode, const Element& element)
+static RenderListItem* nextListItemHelper(const Element& list, const Element& element)
 {
-    for (const Element* next = ElementTraversal::nextIncludingPseudo(element, &listNode); next; ) {
-        auto* renderer = next->renderer();
-        if (!renderer || isHTMLListElement(*next)) {
-            // We've found a nested, independent list or an unrendered Element : nothing to do here.
-            next = ElementTraversal::nextIncludingPseudoSkippingChildren(*next, &listNode);
+    auto* current = &element;
+    auto advance = [&] {
+        current = ElementTraversal::nextIncludingPseudo(*current, &list);
+    };
+    advance();
+    while (current) {
+        auto* renderer = current->renderer();
+        if (!is<RenderListItem>(renderer)) {
+            advance();
+            continue;
+        }
+        auto& item = downcast<RenderListItem>(*renderer);
+        auto* otherList = enclosingList(item);
+        if (!otherList) {
+            advance();
             continue;
         }
 
-        if (is<RenderListItem>(*renderer))
-            return downcast<RenderListItem>(renderer);
-
-        next = ElementTraversal::nextIncludingPseudo(*next, &listNode);
-    }
-
-    return nullptr;
-}
-
-static inline RenderListItem* nextListItem(const Element& listNode, const RenderListItem& item)
-{
-    return nextListItem(listNode, item.element());
-}
-
-static inline RenderListItem* nextListItem(const Element& listNode)
-{
-    return nextListItem(listNode, listNode);
-}
-
-// Returns the previous list item with respect to the DOM order.
-static RenderListItem* previousListItem(const Element* listNode, const RenderListItem& item)
-{
-    for (const Element* current = ElementTraversal::previousIncludingPseudo(item.element(), listNode); current; current = ElementTraversal::previousIncludingPseudo(*current, listNode)) {
-        RenderElement* renderer = current->renderer();
-        if (!is<RenderListItem>(renderer))
-            continue;
-        Element* otherList = enclosingList(downcast<RenderListItem>(*renderer));
         // This item is part of our current list, so it's what we're looking for.
-        if (listNode == otherList)
-            return downcast<RenderListItem>(renderer);
-        // We found ourself inside another list; lets skip the rest of it.
-        // Use nextIncludingPseudo() here because the other list itself may actually
-        // be a list item itself. We need to examine it, so we do this to counteract
-        // the previousIncludingPseudo() that will be done by the loop.
-        if (otherList)
-            current = ElementTraversal::nextIncludingPseudo(*otherList);
+        if (&list == otherList)
+            return &item;
+
+        // We found ourself inside another list; skip the rest of its contents.
+        current = ElementTraversal::nextIncludingPseudoSkippingChildren(*current, &list);
+    }
+
+    return nullptr;
+}
+
+static inline RenderListItem* nextListItem(const Element& list, const RenderListItem& item)
+{
+    return nextListItemHelper(list, item.element());
+}
+
+static inline RenderListItem* firstListItem(const Element& list)
+{
+    return nextListItemHelper(list, list);
+}
+
+static RenderListItem* previousListItem(const Element& list, const RenderListItem& item)
+{
+    auto* current = &item.element();
+    auto advance = [&] {
+        current = ElementTraversal::previousIncludingPseudo(*current, &list);
+    };
+    advance();
+    while (current) {
+        auto* renderer = current->renderer();
+        if (!is<RenderListItem>(renderer)) {
+            advance();
+            continue;
+        }
+        auto& item = downcast<RenderListItem>(*renderer);
+        auto* otherList = enclosingList(item);
+        if (!otherList) {
+            advance();
+            continue;
+        }
+
+        // This item is part of our current list, so we found what we're looking for.
+        if (&list == otherList)
+            return &item;
+
+        // We found ourself inside another list; skip the rest of its contents by
+        // advancing to it. However, since the list itself might be a list item,
+        // don't advance past it.
+        current = otherList;
     }
     return nullptr;
 }
 
-void RenderListItem::updateItemValuesForOrderedList(const HTMLOListElement& listNode)
+void RenderListItem::updateItemValuesForOrderedList(const HTMLOListElement& list)
 {
-    for (RenderListItem* listItem = nextListItem(listNode); listItem; listItem = nextListItem(listNode, *listItem))
+    for (auto* listItem = firstListItem(list); listItem; listItem = nextListItem(list, *listItem))
         listItem->updateValue();
 }
 
-unsigned RenderListItem::itemCountForOrderedList(const HTMLOListElement& listNode)
+unsigned RenderListItem::itemCountForOrderedList(const HTMLOListElement& list)
 {
     unsigned itemCount = 0;
-    for (RenderListItem* listItem = nextListItem(listNode); listItem; listItem = nextListItem(listNode, *listItem))
+    for (auto* listItem = firstListItem(list); listItem; listItem = nextListItem(list, *listItem))
         ++itemCount;
     return itemCount;
 }
@@ -197,24 +210,33 @@ void RenderListItem::updateValueNow() const
     auto* list = enclosingList(*this);
     auto* orderedList = is<HTMLOListElement>(list) ? downcast<HTMLOListElement>(list) : nullptr;
 
-    // FIXME: This recurses to a possible depth of the length of the list.
-    // That's not good, and we can and should change this to an iterative algorithm.
-    if (auto* previousItem = previousListItem(list, *this)) {
-        m_value = previousItem->value() + (orderedList && orderedList->isReversed() ? -1 : 1);
-        return;
+    // The start item is either the closest item before this one in the list that already has a value,
+    // or the first item in the list if none have before this have values yet.
+    auto* startItem = this;
+    if (list) {
+        auto* item = this;
+        while ((item = previousListItem(*list, *item))) {
+            startItem = item;
+            if (item->m_value)
+                break;
+        }
     }
 
-    if (orderedList) {
-        m_value = orderedList->start();
-        return;
-    }
+    auto& startValue = startItem->m_value;
+    if (!startValue)
+        startValue = orderedList ? orderedList->start() : 1;
+    int value = *startValue;
+    int increment = (orderedList && orderedList->isReversed()) ? -1 : 1;
 
-    m_value = 1;
+    for (auto* item = startItem; item != this; ) {
+        item = nextListItem(*list, *item);
+        item->m_value = (value += increment);
+    }
 }
 
 void RenderListItem::updateValue()
 {
-    if (!m_explicitValue) {
+    if (!m_valueWasSetExplicitly) {
         m_value = std::nullopt;
         if (m_marker)
             m_marker->setNeedsLayoutAndPrefWidthsRecalc();
@@ -373,57 +395,53 @@ void RenderListItem::explicitValueChanged()
         m_marker->setNeedsLayoutAndPrefWidthsRecalc();
 
     updateValue();
-    Element* listNode = enclosingList(*this);
-    if (!listNode)
+    auto* list = enclosingList(*this);
+    if (!list)
         return;
-    for (RenderListItem* item = nextListItem(*listNode, *this); item; item = nextListItem(*listNode, *item))
+    auto* item = this;
+    while ((item = nextListItem(*list, *item)))
         item->updateValue();
 }
 
 void RenderListItem::setExplicitValue(std::optional<int> value)
 {
-    if (m_explicitValue == value)
-        return;
-    m_explicitValue = value;
+    if (!value) {
+        if (!m_valueWasSetExplicitly)
+            return;
+    } else {
+        if (m_valueWasSetExplicitly && m_value == value)
+            return;
+    }
+    m_valueWasSetExplicitly = value.has_value();
     m_value = value;
     explicitValueChanged();
 }
 
-static inline RenderListItem* previousOrNextItem(bool isListReversed, Element& list, RenderListItem& item)
-{
-    return isListReversed ? previousListItem(&list, item) : nextListItem(list, item);
-}
-
 void RenderListItem::updateListMarkerNumbers()
 {
-    Element* listNode = enclosingList(*this);
-    // The list node can be the shadow root which has no renderer.
-    if (!listNode)
+    auto* list = enclosingList(*this);
+    if (!list)
         return;
 
-    bool isListReversed = false;
-    if (is<HTMLOListElement>(*listNode)) {
-        HTMLOListElement& oListElement = downcast<HTMLOListElement>(*listNode);
-        oListElement.itemCountChanged();
-        isListReversed = oListElement.isReversed();
+    bool isInReversedOrderedList = false;
+    if (is<HTMLOListElement>(*list)) {
+        auto& orderedList = downcast<HTMLOListElement>(*list);
+        orderedList.itemCountChanged();
+        isInReversedOrderedList = orderedList.isReversed();
     }
-    for (RenderListItem* item = previousOrNextItem(isListReversed, *listNode, *this); item; item = previousOrNextItem(isListReversed, *listNode, *item)) {
-        if (!item->m_value) {
-            // If an item has been marked for update before, we can safely
-            // assume that all the following ones have too.
-            // This gives us the opportunity to stop here and avoid
-            // marking the same nodes again.
-            break;
-        }
+
+    // If an item has been marked for update before, we know that all following items have, too.
+    // This gives us the opportunity to stop and avoid marking the same nodes again.
+    auto* item = this;
+    auto subsequentListItem = isInReversedOrderedList ? previousListItem : nextListItem;
+    while ((item = subsequentListItem(*list, *item)) && item->m_value)
         item->updateValue();
-    }
 }
 
 bool RenderListItem::isInReversedOrderedList() const
 {
     auto* list = enclosingList(*this);
-    auto* orderedList = is<HTMLOListElement>(list) ? downcast<HTMLOListElement>(list) : nullptr;
-    return orderedList && orderedList->isReversed();
+    return is<HTMLOListElement>(list) && downcast<HTMLOListElement>(*list).isReversed();
 }
 
 } // namespace WebCore

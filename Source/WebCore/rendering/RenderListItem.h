@@ -40,7 +40,7 @@ public:
     int value() const;
     void updateValue();
 
-    std::optional<int> explicitValue() const { return m_explicitValue; }
+    std::optional<int> explicitValue() const { return m_valueWasSetExplicitly ? m_value : std::nullopt; }
     void setExplicitValue(std::optional<int>);
 
     void setNotInList(bool notInList) { m_notInList = notInList; }
@@ -83,9 +83,9 @@ private:
     void updateValueNow() const;
     void explicitValueChanged();
 
-    std::optional<int> m_explicitValue;
     WeakPtr<RenderListMarker> m_marker;
     mutable std::optional<int> m_value;
+    bool m_valueWasSetExplicitly { false };
     bool m_notInList { false };
 };
 

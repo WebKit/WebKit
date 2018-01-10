@@ -1,3 +1,88 @@
+2018-01-09  Darin Adler  <darin@apple.com>
+
+        Further refinement to list item and counter code after "list-item" counter fix
+        https://bugs.webkit.org/show_bug.cgi?id=181426
+
+        Reviewed by Zalan Bujtas.
+
+        * css/StyleBuilderCustom.h:
+        (WebCore::StyleBuilderCustom::applyInheritCounter): Use auto.
+        (WebCore::StyleBuilderCustom::applyValueCounter): Use auto, removed unneeded
+        null checks for things that can never be null, moved the saturated addition
+        here and got rid of the addIncrementValue function from CounterDirectives.
+        Use the saturatedAddition function from SaturatedArithmetic.h instead of the
+        much less efficient one that did the same thing, CounterDirectives::addClamped.
+
+        * rendering/RenderCounter.cpp:
+        (WebCore::listItemCounterDirectives): Use aggregate syntax for the return
+        statements.
+        (WebCore::planCounter): Changed to use a struct return value instead of two
+        out arguments. Use the saturatedAddition function from SaturatedArithmetic.h
+        instead of the much less efficient one that did the same thing,
+        CounterDirectives::addClamped.
+        (WebCore::findPlaceForCounter): Changed to use a struct return value instead
+        of two out arguments.
+        (WebCore::makeCounterNode): Updated for the above changes. Changed code to
+        use add instead of both get and set. Updated to keep the counter maps inside
+        the values of the "map of maps" instead of using a unique_ptr and allocating
+        each one on the heap.
+        (WebCore::destroyCounterNodeWithoutMapRemoval): Changed argument to a reference
+        instead of a pointer. Updated for changes to the map. Use RefPtr more
+        consistently.
+        (WebCore::RenderCounter::destroyCounterNodes): Use iterators less.
+        (WebCore::RenderCounter::destroyCounterNode): Ditto.
+        (WebCore::RenderCounter::rendererRemovedFromTree): Add a check of
+        hasCounterNodeMap here before calling destroyCounterNodes, so that function
+        can assume the flag is true (both other callers already check it).
+        (WebCore::updateCounters): Use auto and update for changes above.
+        (WebCore::RenderCounter::rendererStyleChanged): Use modern for loops instead
+        of iterators.
+        (showCounterRendererTree): Use auto and udpate for changes above.
+
+        * rendering/RenderListItem.cpp:
+        (WebCore::enclosingList): Stop referring to elements as "nodes". Changed
+        the local variable names for clarity.
+        (WebCore::nextListItemHelper): Renamed from nextListItem since it's not
+        intended to be called directly and we want to use a function pointer to
+        nextListItem. Fixed the algorithm to correctly handle ad hoc "lists" that
+        are not actually HTML list elements, using the definition in the enclosingList
+        function as the previousListItem function already did.
+        (WebCore::nextListItem): Updated for name changes.
+        (WebCore::firstListItem): Renamed from nextListItem for clarity.
+        (WebCore::previousListItem): Rewrote loop so it doesn't have to do things
+        so strangely when we find another list.
+        (WebCore::RenderListItem::updateItemValuesForOrderedList): Use auto and
+        update local variable names.
+        (WebCore::RenderListItem::itemCountForOrderedList): Ditto.
+        (WebCore::RenderListItem::updateValueNow const): Rewrote to use an iterative
+        algorithm instead of a recursive one. Fixes the FIXME here.
+        (WebCore::RenderListItem::updateValue): Use m_valueWasSetExplicitly
+        instead of m_explicitValue.
+        (WebCore::RenderListItem::explicitValueChanged): Use auto and simplified
+        the loop a bit.
+        (WebCore::RenderListItem::setExplicitValue): Set m_valueWasSetExplicitly
+        instead of m_explicitValue.
+        (WebCore::previousOrNextItem): Deleted.
+        (WebCore::RenderListItem::updateListMarkerNumbers): Streamlined the loop
+        a bit and used a fucntion pointer to handle the two different directions.
+        (WebCore::RenderListItem::isInReversedOrderedList const): Simplified by
+        getting rid of an unneeded use of pointers and local variables.
+
+        * rendering/RenderListItem.h: Use a boolean, m_valueWasSetExplicitly,
+        instead of a separate optional m_explicitValue.
+
+        * rendering/style/CounterDirectives.h: Since all the code in this file was
+        rewritten, removed old copyrights. Deleted the addIncrementValue function,
+        since it is clear enough in the one call site in the style builder.
+        Deleted the addClamped function because it was just a much slower
+        version of the saturatedAddition function. Made == and != into constexpr
+        functions since they are simple enough to be.
+
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::getCounterDirectives const): Deleted. Caller can
+        handle this just fine without a helper function.
+        * rendering/style/RenderStyle.h: Ditto.
+
 2018-01-09  Myles C. Maxfield  <mmaxfield@apple.com>
 
         font-display:fallback can cause a visual flash (which is supposed to be impossible)

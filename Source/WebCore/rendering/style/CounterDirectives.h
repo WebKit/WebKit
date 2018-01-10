@@ -1,9 +1,5 @@
 /*
- * Copyright (C) 2000 Lars Knoll (knoll@kde.org)
- *           (C) 2000 Antti Koivisto (koivisto@kde.org)
- *           (C) 2000 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2003-2018 Apple Inc. All rights reserved.
- * Copyright (C) 2006 Graham Dennis (graham.dennis@gmail.com)
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -24,10 +20,7 @@
 
 #pragma once
 
-#include <memory>
 #include <wtf/HashMap.h>
-#include <wtf/MathExtras.h>
-#include <wtf/text/AtomicString.h>
 #include <wtf/text/AtomicStringHash.h>
 
 namespace WebCore {
@@ -35,19 +28,18 @@ namespace WebCore {
 struct CounterDirectives {
     std::optional<int> resetValue;
     std::optional<int> incrementValue;
-
-    void addIncrementValue(int additionalIncrement) { incrementValue = addClamped(incrementValue.value_or(0), additionalIncrement); }
-    static int addClamped(int a, int b) { return clampToInteger(static_cast<double>(a) + b);  }
 };
 
-bool operator==(const CounterDirectives&, const CounterDirectives&);
-inline bool operator!=(const CounterDirectives& a, const CounterDirectives& b) { return !(a == b); }
-
-using CounterDirectiveMap = HashMap<AtomicString, CounterDirectives>;
-
-inline bool operator==(const CounterDirectives& a, const CounterDirectives& b)
+constexpr bool operator==(const CounterDirectives& a, const CounterDirectives& b)
 {
     return a.incrementValue == b.incrementValue && a.resetValue == b.resetValue;
 }
+
+constexpr bool operator!=(const CounterDirectives& a, const CounterDirectives& b)
+{
+    return !(a == b);
+}
+
+using CounterDirectiveMap = HashMap<AtomicString, CounterDirectives>;
 
 } // namespace WebCore

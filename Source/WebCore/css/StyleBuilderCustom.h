@@ -1136,9 +1136,9 @@ inline void StyleBuilderCustom::applyValueWebkitTextEmphasisStyle(StyleResolver&
 template <StyleBuilderCustom::CounterBehavior counterBehavior>
 inline void StyleBuilderCustom::applyInheritCounter(StyleResolver& styleResolver)
 {
-    CounterDirectiveMap& map = styleResolver.style()->accessCounterDirectives();
+    auto& map = styleResolver.style()->accessCounterDirectives();
     for (auto& keyValue : const_cast<RenderStyle*>(styleResolver.parentStyle())->accessCounterDirectives()) {
-        CounterDirectives& directives = map.add(keyValue.key, CounterDirectives()).iterator->value;
+        auto& directives = map.add(keyValue.key, CounterDirectives { }).iterator->value;
         if (counterBehavior == Reset)
             directives.resetValue = keyValue.value.resetValue;
         else
@@ -1167,16 +1167,13 @@ inline void StyleBuilderCustom::applyValueCounter(StyleResolver& styleResolver, 
 
     for (auto& item : downcast<CSSValueList>(value)) {
         Pair* pair = downcast<CSSPrimitiveValue>(item.get()).pairValue();
-        if (!pair || !pair->first() || !pair->second())
-            continue;
-
         AtomicString identifier = pair->first()->stringValue();
         int value = pair->second()->intValue();
-        CounterDirectives& directives = map.add(identifier, CounterDirectives()).iterator->value;
+        auto& directives = map.add(identifier, CounterDirectives { }).iterator->value;
         if (counterBehavior == Reset)
             directives.resetValue = value;
         else
-            directives.addIncrementValue(value);
+            directives.incrementValue = saturatedAddition(directives.incrementValue.value_or(0), value);
     }
 }
 
