@@ -1,3 +1,17 @@
+2018-01-11  Ali Juma  <ajuma@chromium.org>
+
+        window.visualViewport should behave as [SameObject]
+        https://bugs.webkit.org/show_bug.cgi?id=181548
+
+        Reviewed by Chris Dumez.
+
+        Add 'GenerateIsReachable' to VisualViewport so that window.visualViewport's
+        JS wrapper object doesn't get garbage collected too soon.
+
+        Test: fast/visual-viewport/visual-viewport-same-object.html
+
+        * page/VisualViewport.idl:
+
 2018-01-11  Basuke Suzuki  <Basuke.Suzuki@sony.com>
 
         [Curl] Extract multipart handling from ResourceHandle to CurlRequest.

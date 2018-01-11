@@ -25,7 +25,8 @@
 
 // https://wicg.github.io/ViewportAPI/spec.html
 [
-EnabledBySetting=VisualViewportAPI
+EnabledBySetting=VisualViewportAPI,
+GenerateIsReachable=ImplFrame
 ]
 interface VisualViewport : EventTarget {
     readonly attribute double offsetLeft;

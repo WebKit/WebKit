@@ -1,3 +1,13 @@
+2018-01-11  Ali Juma  <ajuma@chromium.org>
+
+        window.visualViewport should behave as [SameObject]
+        https://bugs.webkit.org/show_bug.cgi?id=181548
+
+        Reviewed by Chris Dumez.
+
+        * fast/visual-viewport/visual-viewport-same-object-expected.txt: Added.
+        * fast/visual-viewport/visual-viewport-same-object.html: Added.
+
 2018-01-11  Youenn Fablet  <youenn@apple.com>
 
         imported/w3c/web-platform-tests/service-workers/service-worker/multiple-update.https.html is slow on Debug
