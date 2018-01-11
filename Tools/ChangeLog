@@ -1,3 +1,11 @@
+2018-01-11  Ling Ho  <lingcherd_ho@apple.com>
+
+        Move Commit Queue and EWS Queues to Sierra on Bot Watcher's Dasboard
+        https://bugs.webkit.org/show_bug.cgi?id=181492
+        <rdar://problem/36359679>
+
+        Reviewed by Alexey Proskuryakov. 
+
 2018-01-10  Adrian Perez de Castro  <aperez@igalia.com>
 
         [GTK] Tools/gtk/install-dependencies: Packages geoclue, ruby-highline, xorg-utils do not exist in Arch Linux

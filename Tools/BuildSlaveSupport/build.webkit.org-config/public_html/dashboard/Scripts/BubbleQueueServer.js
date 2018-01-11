@@ -26,17 +26,17 @@
 BubbleQueueServer = function()
 {
     const queueInfo = {
-        "commit-queue": {platform: Dashboard.Platform.MacOSXElCapitan, shortName: "commit", title: "Commit Queue"},
+        "commit-queue": {platform: Dashboard.Platform.macOSSierra, shortName: "commit", title: "Commit Queue"},
         "style-queue": {shortName: "style", title: "Style Checker Queue"},
         "gtk-wk2-ews": {platform: Dashboard.Platform.LinuxGTK, shortName: "gtk-wk2", title: "WebKit2\xa0Release\xa0Build\xa0EWS"},
         "ios-ews": {platform: Dashboard.Platform.iOS11Device, shortName: "ios", title: "Release\xa0Build\xa0EWS"},
         "ios-sim-ews": {platform: Dashboard.Platform.iOS11Simulator, shortName: "ios-sim", title: "WebKit2\xa0Release\xa0Tests\xa0EWS"},
         "bindings-ews": {platform: Dashboard.Platform.MacOSXElCapitan, shortName: "bindings", title: "Bindings\xa0EWS"},
         "webkitpy-ews": {platform: Dashboard.Platform.MacOSXElCapitan, shortName: "webkitpy", title: "Webkitpy\xa0EWS"},
-        "jsc-ews": {platform: Dashboard.Platform.MacOSXElCapitan, shortName: "jsc", title: "Release\xa0JSC\xa0Tests\xa0EWS"},
-        "mac-ews": {platform: Dashboard.Platform.MacOSXElCapitan, shortName: "mac", title: "WebKit1\xa0Release\xa0Tests\xa0EWS"},
-        "mac-wk2-ews": {platform: Dashboard.Platform.MacOSXElCapitan, shortName: "mac-wk2", title: "WebKit2\xa0Release\xa0Tests\xa0EWS"},
-        "mac-debug-ews": {platform: Dashboard.Platform.MacOSXElCapitan, shortName: "mac-debug", title: "WebKit1\xa0Debug\xa0Tests\xa0EWS"},
+        "jsc-ews": {platform: Dashboard.Platform.macOSSierra, shortName: "jsc", title: "Release\xa0JSC\xa0Tests\xa0EWS"},
+        "mac-ews": {platform: Dashboard.Platform.macOSSierra, shortName: "mac", title: "WebKit1\xa0Release\xa0Tests\xa0EWS"},
+        "mac-wk2-ews": {platform: Dashboard.Platform.macOSSierra, shortName: "mac-wk2", title: "WebKit2\xa0Release\xa0Tests\xa0EWS"},
+        "mac-debug-ews": {platform: Dashboard.Platform.macOSSierra, shortName: "mac-debug", title: "WebKit1\xa0Debug\xa0Tests\xa0EWS"},
         "mac-32bit-ews": {platform: Dashboard.Platform.macOSHighSierra, shortName: "mac-32bit", title: "Release\xa032\u2011bit\xa0Build\xa0EWS"},
         "win-ews": {platform: Dashboard.Platform.Windows7, shortName: "win", title: "WebKit1\xa0Release\xa0Build\xa0EWS"}
     };
