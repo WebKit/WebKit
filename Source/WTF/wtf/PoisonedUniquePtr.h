@@ -25,11 +25,10 @@
 
 #pragma once
 
-#include <wtf/FastMalloc.h>
-#include <wtf/Poisoned.h>
-
 #include <cstddef>
 #include <memory>
+#include <wtf/FastMalloc.h>
+#include <wtf/Poisoned.h>
 
 namespace WTF {
 

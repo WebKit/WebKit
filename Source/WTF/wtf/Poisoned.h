@@ -25,10 +25,9 @@
 
 #pragma once
 
-#include <wtf/Assertions.h>
-
 #include <cstddef>
 #include <utility>
+#include <wtf/Assertions.h>
 
 #define ENABLE_POISON 1
 #define ENABLE_POISON_ASSERTS 0

@@ -1,3 +1,16 @@
+2018-01-11  JF Bastien  <jfbastien@apple.com>
+
+        NFC reorder headers
+        https://bugs.webkit.org/show_bug.cgi?id=181521
+
+        Reviewed by Darin Adler.
+
+        Follow-up on r226752. I misunderstood the header include order
+        style. No functional change.
+
+        * wtf/Poisoned.h:
+        * wtf/PoisonedUniquePtr.h:
+
 2018-01-10  JF Bastien  <jfbastien@apple.com>
 
         Poison small JSObject derivatives which only contain pointers
