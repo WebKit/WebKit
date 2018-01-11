@@ -1,3 +1,12 @@
+2018-01-11  Youenn Fablet  <youenn@apple.com>
+
+        Redirected iframe loading with Request.redirect=follow should fail
+        https://bugs.webkit.org/show_bug.cgi?id=181491
+
+        Reviewed by Alex Christensen.
+
+        * TestExpectations:
+
 2018-01-10  Simon Fraser  <simon.fraser@apple.com>
 
         On macOS, getBoundingClientRect gives incorrect values when pinch-zoomed

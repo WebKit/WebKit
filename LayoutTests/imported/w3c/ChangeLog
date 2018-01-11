@@ -1,3 +1,16 @@
+2018-01-11  Youenn Fablet  <youenn@apple.com>
+
+        Redirected iframe loading with Request.redirect=follow should fail
+        https://bugs.webkit.org/show_bug.cgi?id=181491
+
+        Reviewed by Alex Christensen.
+
+        Updated tests to output a more deterministic output, more debuggable.
+        Made use of media.js to allow loading either oga or mp3 when oga is not supported.
+
+        * web-platform-tests/service-workers/service-worker/fetch-request-redirect.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/fetch-request-redirect.https.html:
+
 2018-01-10  Youenn Fablet  <youenn@apple.com>
 
         Use no-cache fetch mode when loading main documents with location.reload()
