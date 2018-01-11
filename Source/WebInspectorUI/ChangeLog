@@ -1,3 +1,12 @@
+2018-01-11  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Remove unused variable in WI.DebuggerSidebarPanel
+        https://bugs.webkit.org/show_bug.cgi?id=181517
+
+        Reviewed by Matt Baker.
+
+        * UserInterface/Views/DebuggerSidebarPanel.js:
+
 2018-01-10  Joseph Pecoraro  <pecoraro@apple.com>
 
         REGRESSION(r218975): Web Inspector: Add back NavigationSidebarPanel initialization parameter used by SearchSidebarPanel (top overflow shadow)
