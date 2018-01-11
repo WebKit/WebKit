@@ -128,6 +128,8 @@ struct DragState;
 #endif
         }
 
+        String platformContentTypeForBlobType(const String& type) const;
+
         void cleanupAfterSystemDrag();
         void declareAndWriteDragImage(DataTransfer&, Element&, const URL&, const String& label);
 

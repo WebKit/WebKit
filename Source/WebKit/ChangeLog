@@ -1,3 +1,47 @@
+2018-01-11  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Attachment Support] Support dragging attachment elements out as files on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=181199
+        <rdar://problem/36299316>
+
+        Reviewed by Tim Horton, Andy Estes and Joseph Pecoraro.
+
+        Implement support for registering and beginning a drag with promised blob info. See below for more detail.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKDragSessionContext addTemporaryDirectory:]):
+        (-[WKDragSessionContext cleanUpTemporaryDirectories]):
+
+        Introduce WKDragSessionContext, which represents the localContext of a UIDragSession initiated in WebKit. The
+        blob promise dragging codepath uses this to register temporary directories when saving blob data to a location
+        on disk; when all data transfers are finished, or if the drag interaction is being reset, we then use
+        -cleanUpTemporaryDirectories to remove each temporary directory.
+
+        (existingLocalDragSessionContext):
+        (ensureLocalDragSessionContext):
+
+        Helper methods to set the UIDragSession's localContext to a WKDragSessionContext and query for any existing
+        context.
+
+        (-[WKContentView cleanupInteraction]):
+
+        Before the content view's UIDragInteraction goes away, clean up any temporary directories added to the
+        UIDragSession.
+
+        (-[WKContentView _prepareToDragPromisedBlob:]):
+
+        When dragging with a promised blob, register a new item provider on the pasteboard representing the blob data,
+        along with any additional metadata associated with the blob. For the promise callback, call out to the network
+        process to write the blob data to a temporary path; when done, call the NSItemProvider's completion handler with
+        the temporary blob data location.
+
+        (-[WKContentView _itemsForBeginningOrAddingToSessionWithRegistrationList:stagedDragSource:]):
+        (-[WKContentView dragInteraction:sessionDidTransferItems:]):
+
+        Use this delegate hook as an opportunity to remove any temporary directories created when promised blob data is
+        requested upon drop. Since we know the drag session that has finished transferring data, we simply ask its local
+        context (a WKDragSessionContext) to remove any temporary filepaths it has created.
+
 2018-01-10  Jeff Miller  <jeffm@apple.com>
 
         -[WKWebView _web_gestureEventWasNotHandledByWebCore:] should call -_gestureEventWasNotHandledByWebCore:

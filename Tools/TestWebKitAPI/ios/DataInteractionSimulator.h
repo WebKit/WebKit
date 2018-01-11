@@ -90,12 +90,9 @@
 @end
 
 @interface MockDropSession : MockDragDropSession <UIDropSession>
-@property (nonatomic, strong) id localContext;
 @end
 
 @interface MockDragSession : MockDragDropSession <UIDragSession>
-@property (nonatomic, strong) id localContext;
-@property (nonatomic, strong) id context;
 @end
 
 extern NSString * const DataInteractionEnterEventName;
@@ -142,10 +139,11 @@ typedef NS_ENUM(NSInteger, DataInteractionPhase) {
     RetainPtr<NSMutableArray<_WKAttachment *>> _removedAttachments;
 
     bool _isDoneWaitingForInputSession;
-    BOOL _shouldPerformOperation;
     double _currentProgress;
     bool _isDoneWithCurrentRun;
     DataInteractionPhase _phase;
+
+    RetainPtr<UIDropProposal> _currentDropProposal;
 }
 
 - (instancetype)initWithWebView:(TestWKWebView *)webView;
@@ -153,6 +151,7 @@ typedef NS_ENUM(NSInteger, DataInteractionPhase) {
 - (void)runFrom:(CGPoint)startLocation to:(CGPoint)endLocation;
 - (void)runFrom:(CGPoint)startLocation to:(CGPoint)endLocation additionalItemRequestLocations:(ProgressToCGPointValueMap)additionalItemRequestLocations;
 - (void)waitForInputSession;
+- (void)endDataTransfer;
 
 @property (nonatomic) BOOL allowsFocusToStartInputSession;
 @property (nonatomic) BOOL shouldEnsureUIApplication;

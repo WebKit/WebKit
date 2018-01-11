@@ -1,3 +1,39 @@
+2018-01-11  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Attachment Support] Support dragging attachment elements out as files on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=181199
+        <rdar://problem/36299316>
+
+        Reviewed by Tim Horton, Andy Estes and Joseph Pecoraro.
+
+        Add support in the drag and drop simulator for testing blob-backed attachment element dragging, and also add new
+        attachment API tests.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WKAttachmentTests.mm:
+        (-[NSItemProvider expectType:withData:]):
+        (TestWebKitAPI::TEST):
+
+        Add two new WKAttachmentTests to exercise dragging data- and file-backed blobs via attachment elements. These
+        tests first insert attachments via drop or WKWebView SPI, and then drag these attachments out and use the
+        -expectType:withData: helper to inspect the item providers created from the drag source.
+
+        * TestWebKitAPI/Tests/ios/DataInteractionTests.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/ios/DataInteractionSimulator.h:
+        * TestWebKitAPI/ios/DataInteractionSimulator.mm:
+        (-[MockDragSession localContext]):
+        (-[MockDragSession setLocalContext:]):
+        (-[DataInteractionSimulator _resetSimulatedState]):
+        (-[DataInteractionSimulator simulateAllTouchesCanceled:]):
+        (-[DataInteractionSimulator _concludeDataInteractionAndPerformOperationIfNecessary]):
+        (-[DataInteractionSimulator _advanceProgress]):
+        (-[DataInteractionSimulator endDataTransfer]):
+
+        Make some tweaks to the iOS drag and drop simulator. In particular, this patch (1) adds a new hook to tell
+        WebKit that data transfers have been completed, (2) fixes incorrect drop proposal handling when returning
+        UIDropOperationForbidden by replacing _shouldPerformOperation with a UIDropProposal, and (3) teach the
+        MockDragSession to hold on to a localContext.
+
 2018-01-11  Ali Juma  <ajuma@chromium.org>
 
         Unreviewed. Add Ali Juma as contributor

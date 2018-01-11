@@ -40,19 +40,22 @@ typedef NS_ENUM(NSInteger, WebPreferredPresentationStyle) {
 
 NS_ASSUME_NONNULL_BEGIN
 
-/*! A WebItemProviderRegistrationInfo represents a single call to register something to an item provider.
- @discussion Either the representing object exists and the type identifier and data are nil, or the
- representing object is nil and the type identifier and data exist. The former represents a call to
- register an entire UIItemProviderWriting-conformant object to the item provider, while the latter
- represents a call to register only a data representation for the given type identifier.
+/*! A WebItemProviderRegistrar encapsulates a single call to register something to an item provider.
+ @discussion Classes that implement this protocol each represent a different way of writing data to
+ an item provider. Some examples include setting a chunk of data corresponding to a type identifier,
+ or registering a NSItemProviderWriting-conformant object, or registering a type to a promised file
+ where the data has been written.
  */
-WEBCORE_EXPORT @interface WebItemProviderRegistrationInfo : NSObject
+@protocol WebItemProviderRegistrar <NSObject>
+- (void)registerItemProvider:(NSItemProvider *)itemProvider;
 
-@property (nonatomic, readonly, nullable, strong) id <UIItemProviderWriting> representingObject;
-@property (nonatomic, readonly, nullable, strong) NSString *typeIdentifier;
-@property (nonatomic, readonly, nullable, strong) NSData *data;
-
+@optional
+@property (nonatomic, readonly) id <NSItemProviderWriting> representingObjectForClient;
+@property (nonatomic, readonly) NSString *typeIdentifierForClient;
+@property (nonatomic, readonly) NSData *dataForClient;
 @end
+
+typedef void(^WebItemProviderFileCallback)(NSURL * _Nullable, NSError * _Nullable);
 
 /*! A WebItemProviderRegistrationInfoList represents a series of registration calls used to set up a
  single item provider.
@@ -65,6 +68,7 @@ WEBCORE_EXPORT @interface WebItemProviderRegistrationInfoList : NSObject
 
 - (void)addRepresentingObject:(id <UIItemProviderWriting>)object;
 - (void)addData:(NSData *)data forType:(NSString *)typeIdentifier;
+- (void)addPromisedType:(NSString *)typeIdentifier fileCallback:(void(^)(WebItemProviderFileCallback))callback;
 
 @property (nonatomic) CGSize preferredPresentationSize;
 @property (nonatomic, copy) NSString *suggestedName;
@@ -74,8 +78,8 @@ WEBCORE_EXPORT @interface WebItemProviderRegistrationInfoList : NSObject
 @property (nonatomic, copy) NSData *teamData;
 
 - (NSUInteger)numberOfItems;
-- (nullable WebItemProviderRegistrationInfo *)itemAtIndex:(NSUInteger)index;
-- (void)enumerateItems:(void(^)(WebItemProviderRegistrationInfo *item, NSUInteger index))block;
+- (nullable id <WebItemProviderRegistrar>)itemAtIndex:(NSUInteger)index;
+- (void)enumerateItems:(void(^)(id <WebItemProviderRegistrar> item, NSUInteger index))block;
 
 @end
 

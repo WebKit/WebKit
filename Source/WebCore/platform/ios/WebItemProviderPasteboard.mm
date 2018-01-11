@@ -48,38 +48,31 @@ SOFT_LINK_CLASS(UIKit, UIImage)
 SOFT_LINK_CLASS(UIKit, UIItemProvider)
 
 typedef void(^ItemProviderDataLoadCompletionHandler)(NSData *, NSError *);
+typedef void(^ItemProviderFileLoadCompletionHandler)(NSURL *, BOOL, NSError *);
 typedef NSMutableDictionary<NSString *, NSURL *> TypeToFileURLMap;
 
 using WebCore::Pasteboard;
 using WebCore::PasteboardCustomData;
-@interface WebItemProviderRegistrationInfo ()
-{
-    RetainPtr<id <UIItemProviderWriting>> _representingObject;
+
+@interface WebItemProviderDataRegistrar : NSObject <WebItemProviderRegistrar>
+- (instancetype)initWithData:(NSData *)data type:(NSString *)utiType;
+@property (nonatomic, readonly) NSString *typeIdentifier;
+@property (nonatomic, readonly) NSData *data;
+@end
+
+@implementation WebItemProviderDataRegistrar {
     RetainPtr<NSString> _typeIdentifier;
     RetainPtr<NSData> _data;
 }
-@end
 
-@implementation WebItemProviderRegistrationInfo
-
-- (instancetype)initWithRepresentingObject:(id <UIItemProviderWriting>)representingObject typeIdentifier:(NSString *)typeIdentifier data:(NSData *)data
+- (instancetype)initWithData:(NSData *)data type:(NSString *)utiType
 {
-    if (representingObject)
-        ASSERT(!typeIdentifier && !data);
-    else
-        ASSERT(typeIdentifier && data);
+    if (!(self = [super init]))
+        return nil;
 
-    if (self = [super init]) {
-        _representingObject = representingObject;
-        _typeIdentifier = typeIdentifier;
-        _data = data;
-    }
+    _data = data;
+    _typeIdentifier = utiType;
     return self;
-}
-
-- (id <UIItemProviderWriting>)representingObject
-{
-    return _representingObject.get();
 }
 
 - (NSString *)typeIdentifier
@@ -90,6 +83,111 @@ using WebCore::PasteboardCustomData;
 - (NSData *)data
 {
     return _data.get();
+}
+
+- (NSString *)typeIdentifierForClient
+{
+    return self.typeIdentifier;
+}
+
+- (NSData *)dataForClient
+{
+    return self.data;
+}
+
+- (void)registerItemProvider:(NSItemProvider *)itemProvider
+{
+    [itemProvider registerDataRepresentationForTypeIdentifier:self.typeIdentifier visibility:UIItemProviderRepresentationOptionsVisibilityAll loadHandler:[itemData = _data] (ItemProviderDataLoadCompletionHandler completionHandler) -> NSProgress * {
+        completionHandler(itemData.get(), nil);
+        return nil;
+    }];
+}
+
+- (NSString *)description
+{
+    return [NSString stringWithFormat:@"(%@ => %tu bytes)", _typeIdentifier.get(), [_data length]];
+}
+
+@end
+
+@interface WebItemProviderWritableObjectRegistrar : NSObject <WebItemProviderRegistrar>
+- (instancetype)initWithObject:(id <UIItemProviderWriting>)representingObject;
+@property (nonatomic, readonly) id <UIItemProviderWriting> representingObject;
+@end
+
+@implementation WebItemProviderWritableObjectRegistrar {
+    RetainPtr<id <UIItemProviderWriting>> _representingObject;
+}
+
+- (instancetype)initWithObject:(id <UIItemProviderWriting>)representingObject
+{
+    if (!(self = [super init]))
+        return nil;
+
+    _representingObject = representingObject;
+    return self;
+}
+
+- (id <UIItemProviderWriting>)representingObject
+{
+    return _representingObject.get();
+}
+
+- (id <NSItemProviderWriting>)representingObjectForClient
+{
+    return self.representingObject;
+}
+
+- (void)registerItemProvider:(NSItemProvider *)itemProvider
+{
+    [itemProvider registerObject:self.representingObject visibility:UIItemProviderRepresentationOptionsVisibilityAll];
+}
+
+- (NSString *)description
+{
+    return [NSString stringWithFormat:@"(%@)", [_representingObject class]];
+}
+
+@end
+
+@interface WebItemProviderPromisedFileRegistrar : NSObject <WebItemProviderRegistrar>
+- (instancetype)initWithType:(NSString *)utiType callback:(void(^)(WebItemProviderFileCallback))callback;
+@property (nonatomic, readonly) NSString *typeIdentifier;
+@end
+
+@implementation WebItemProviderPromisedFileRegistrar {
+    RetainPtr<NSString> _typeIdentifier;
+    BlockPtr<void(WebItemProviderFileCallback)> _callback;
+}
+
+- (instancetype)initWithType:(NSString *)utiType callback:(void(^)(WebItemProviderFileCallback))callback
+{
+    if (!(self = [super init]))
+        return nil;
+
+    _typeIdentifier = utiType;
+    _callback = callback;
+    return self;
+}
+
+- (void)registerItemProvider:(NSItemProvider *)itemProvider
+{
+    [itemProvider registerFileRepresentationForTypeIdentifier:_typeIdentifier.get() fileOptions:0 visibility:NSItemProviderRepresentationVisibilityAll loadHandler:[callback = _callback] (ItemProviderFileLoadCompletionHandler completionHandler) -> NSProgress * {
+        callback([protectedCompletionHandler = makeBlockPtr(completionHandler)] (NSURL *fileURL, NSError *error) {
+            protectedCompletionHandler(fileURL, NO, error);
+        });
+        return nil;
+    }];
+}
+
+- (NSString *)typeIdentifier
+{
+    return _typeIdentifier.get();
+}
+
+- (NSString *)description
+{
+    return [NSString stringWithFormat:@"(file promise: %@)", _typeIdentifier.get()];
 }
 
 @end
@@ -121,13 +219,21 @@ using WebCore::PasteboardCustomData;
 
 - (void)addData:(NSData *)data forType:(NSString *)typeIdentifier
 {
-    [_representations addObject:[[[WebItemProviderRegistrationInfo alloc] initWithRepresentingObject:nil typeIdentifier:typeIdentifier data:data] autorelease]];
+    auto representation = adoptNS([[WebItemProviderDataRegistrar alloc] initWithData:data type:typeIdentifier]);
+    [_representations addObject:representation.get()];
 }
 
 - (void)addRepresentingObject:(id <UIItemProviderWriting>)object
 {
     ASSERT([object conformsToProtocol:@protocol(UIItemProviderWriting)]);
-    [_representations addObject:[[[WebItemProviderRegistrationInfo alloc] initWithRepresentingObject:object typeIdentifier:nil data:nil] autorelease]];
+    auto representation = adoptNS([[WebItemProviderWritableObjectRegistrar alloc] initWithObject:object]);
+    [_representations addObject:representation.get()];
+}
+
+- (void)addPromisedType:(NSString *)typeIdentifier fileCallback:(void(^)(WebItemProviderFileCallback))callback
+{
+    auto representation = adoptNS([[WebItemProviderPromisedFileRegistrar alloc] initWithType:typeIdentifier callback:callback]);
+    [_representations addObject:representation.get()];
 }
 
 - (NSUInteger)numberOfItems
@@ -135,7 +241,7 @@ using WebCore::PasteboardCustomData;
     return [_representations count];
 }
 
-- (WebItemProviderRegistrationInfo *)itemAtIndex:(NSUInteger)index
+- (id <WebItemProviderRegistrar>)itemAtIndex:(NSUInteger)index
 {
     if (index >= self.numberOfItems)
         return nil;
@@ -143,7 +249,7 @@ using WebCore::PasteboardCustomData;
     return [_representations objectAtIndex:index];
 }
 
-- (void)enumerateItems:(void (^)(WebItemProviderRegistrationInfo *, NSUInteger))block
+- (void)enumerateItems:(void (^)(id <WebItemProviderRegistrar>, NSUInteger))block
 {
     for (NSUInteger index = 0; index < self.numberOfItems; ++index)
         block([self itemAtIndex:index], index);
@@ -170,21 +276,8 @@ static UIPreferredPresentationStyle uiPreferredPresentationStyle(WebPreferredPre
         return nil;
 
     auto itemProvider = adoptNS([allocUIItemProviderInstance() init]);
-    for (WebItemProviderRegistrationInfo *representation in _representations.get()) {
-        if (representation.representingObject) {
-            [itemProvider registerObject:representation.representingObject visibility:UIItemProviderRepresentationOptionsVisibilityAll];
-            continue;
-        }
-
-        if (!representation.typeIdentifier.length || !representation.data.length)
-            continue;
-
-        RetainPtr<NSData> itemData = representation.data;
-        [itemProvider registerDataRepresentationForTypeIdentifier:representation.typeIdentifier visibility:UIItemProviderRepresentationOptionsVisibilityAll loadHandler:[itemData] (ItemProviderDataLoadCompletionHandler completionHandler) -> NSProgress * {
-            completionHandler(itemData.get(), nil);
-            return nil;
-        }];
-    }
+    for (id <WebItemProviderRegistrar> representation in _representations.get())
+        [representation registerItemProvider:itemProvider.get()];
     [itemProvider setPreferredPresentationSize:self.preferredPresentationSize];
     [itemProvider setSuggestedName:self.suggestedName];
     [itemProvider setPreferredPresentationStyle:uiPreferredPresentationStyle(self.preferredPresentationStyle)];
@@ -196,14 +289,10 @@ static UIPreferredPresentationStyle uiPreferredPresentationStyle(WebPreferredPre
 {
     __block NSMutableString *description = [NSMutableString string];
     [description appendFormat:@"<%@: %p", [self class], self];
-    [self enumerateItems:^(WebItemProviderRegistrationInfo *item, NSUInteger index) {
+    [self enumerateItems:^(id <WebItemProviderRegistrar> item, NSUInteger index) {
         if (index)
-            [description appendString:@","];
-
-        if (item.representingObject)
-            [description appendFormat:@" (%@: %p)", [item.representingObject class], item.representingObject];
-        else
-            [description appendFormat:@" ('%@' => %tu bytes)", item.typeIdentifier, item.data.length];
+            [description appendString:@", "];
+        [description appendString:[item description]];
     }];
     [description appendString:@">"];
     return description;

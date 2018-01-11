@@ -341,6 +341,28 @@ typedef void(^ItemProviderDataLoadHandler)(NSData *, NSError *);
     }];
 }
 
+- (void)expectType:(NSString *)type withData:(NSData *)expectedData
+{
+    BOOL containsType = [self.registeredTypeIdentifiers containsObject:type];
+    EXPECT_TRUE(containsType);
+    if (!containsType) {
+        NSLog(@"Expected: %@ to contain %@", self, type);
+        return;
+    }
+
+    __block bool done = false;
+    [self loadDataRepresentationForTypeIdentifier:type completionHandler:^(NSData *observedData, NSError *error) {
+        EXPECT_TRUE([observedData isEqualToData:expectedData]);
+        if (![observedData isEqualToData:expectedData])
+            NSLog(@"Expected data: <%tu bytes> to be equal to data: <%tu bytes>", observedData.length, expectedData.length);
+        EXPECT_TRUE(!error);
+        if (error)
+            NSLog(@"Encountered error when loading data: %@", error);
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+}
+
 @end
 
 #endif // PLATFORM(IOS)
@@ -1226,6 +1248,67 @@ TEST(WKAttachmentTestsIOS, InsertDroppedItemProvidersInOrder)
     EXPECT_WK_STREQ([appleURL absoluteString], [webView valueOfAttribute:@"href" forQuerySelector:@"a"]);
     EXPECT_WK_STREQ("second.pdf", [webView stringByEvaluatingJavaScript:@"document.querySelectorAll('attachment')[1].getAttribute('title')"]);
     EXPECT_WK_STREQ("application/pdf", [webView stringByEvaluatingJavaScript:@"document.querySelectorAll('attachment')[1].getAttribute('type')"]);
+}
+
+TEST(WKAttachmentTestsIOS, DragAttachmentInsertedAsFile)
+{
+    auto item = adoptNS([[NSItemProvider alloc] init]);
+    auto data = retainPtr(testPDFData());
+    [item registerData:data.get() type:(NSString *)kUTTypePDF];
+    [item setSuggestedName:@"document.pdf"];
+
+    auto webView = webViewForTestingAttachments();
+    auto draggingSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
+    [draggingSimulator setExternalItemProviders:@[ item.get() ]];
+    [draggingSimulator runFrom:CGPointZero to:CGPointMake(50, 50)];
+
+    // First, verify that the attachment was successfully dropped.
+    EXPECT_EQ(1U, [draggingSimulator insertedAttachments].count);
+    _WKAttachment *attachment = [draggingSimulator insertedAttachments].firstObject;
+    [attachment expectRequestedDataToBe:data.get()];
+    EXPECT_WK_STREQ("document.pdf", [webView valueOfAttribute:@"title" forQuerySelector:@"attachment"]);
+    EXPECT_WK_STREQ("application/pdf", [webView valueOfAttribute:@"type" forQuerySelector:@"attachment"]);
+
+    [webView evaluateJavaScript:@"getSelection().removeAllRanges()" completionHandler:nil];
+    [draggingSimulator setExternalItemProviders:@[ ]];
+    [draggingSimulator runFrom:CGPointMake(25, 25) to:CGPointMake(-100, -100)];
+
+    // Next, verify that dragging the attachment produces an item provider with a PDF attachment.
+    EXPECT_EQ(1U, [draggingSimulator sourceItemProviders].count);
+    NSItemProvider *itemProvider = [draggingSimulator sourceItemProviders].firstObject;
+    EXPECT_EQ(UIPreferredPresentationStyleAttachment, itemProvider.preferredPresentationStyle);
+    [itemProvider expectType:(NSString *)kUTTypePDF withData:data.get()];
+    EXPECT_WK_STREQ("document.pdf", [itemProvider suggestedName]);
+    [draggingSimulator endDataTransfer];
+}
+
+TEST(WKAttachmentTestsIOS, DragAttachmentInsertedAsData)
+{
+    auto webView = webViewForTestingAttachments();
+    auto data = retainPtr(testPDFData());
+    RetainPtr<_WKAttachment> attachment;
+    {
+        ObserveAttachmentUpdatesForScope observer(webView.get());
+        attachment = [webView synchronouslyInsertAttachmentWithFilename:@"document.pdf" contentType:@"application/pdf" data:data.get() options:displayOptionsWithMode(_WKAttachmentDisplayModeAsIcon)];
+        observer.expectAttachmentUpdates(@[], @[attachment.get()]);
+    }
+
+    // First, verify that the attachment was successfully inserted from raw data.
+    [attachment expectRequestedDataToBe:data.get()];
+    EXPECT_WK_STREQ("document.pdf", [webView valueOfAttribute:@"title" forQuerySelector:@"attachment"]);
+    EXPECT_WK_STREQ("application/pdf", [webView valueOfAttribute:@"type" forQuerySelector:@"attachment"]);
+
+    [webView evaluateJavaScript:@"getSelection().removeAllRanges()" completionHandler:nil];
+    auto draggingSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
+    [draggingSimulator runFrom:CGPointMake(25, 25) to:CGPointMake(-100, -100)];
+
+    // Next, verify that dragging the attachment produces an item provider with a PDF attachment.
+    EXPECT_EQ(1U, [draggingSimulator sourceItemProviders].count);
+    NSItemProvider *itemProvider = [draggingSimulator sourceItemProviders].firstObject;
+    EXPECT_EQ(UIPreferredPresentationStyleAttachment, itemProvider.preferredPresentationStyle);
+    [itemProvider expectType:(NSString *)kUTTypePDF withData:data.get()];
+    EXPECT_WK_STREQ("document.pdf", [itemProvider suggestedName]);
+    [draggingSimulator endDataTransfer];
 }
 
 #endif // PLATFORM(IOS)

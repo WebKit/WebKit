@@ -1274,6 +1274,15 @@ bool DragController::shouldUseCachedImageForDragImage(const Image& image) const
 #endif
 }
 
+#if !PLATFORM(COCOA)
+
+String DragController::platformContentTypeForBlobType(const String& type) const
+{
+    return type;
+}
+
+#endif
+
 #if ENABLE(ATTACHMENT_ELEMENT)
 
 bool DragController::dragAttachmentElement(Frame& frame, HTMLAttachmentElement& attachment)
@@ -1289,7 +1298,7 @@ bool DragController::dragAttachmentElement(Frame& frame, HTMLAttachmentElement& 
 #endif
 
     auto& file = *attachment.file();
-    m_client.prepareToDragPromisedBlob({ file.url(), file.type(), file.name(), additionalTypes, additionalData });
+    m_client.prepareToDragPromisedBlob({ file.url(), platformContentTypeForBlobType(file.type()), file.name(), WTFMove(additionalTypes), WTFMove(additionalData) });
 
     return true;
 }

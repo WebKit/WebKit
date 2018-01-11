@@ -1,3 +1,75 @@
+2018-01-11  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Attachment Support] Support dragging attachment elements out as files on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=181199
+        <rdar://problem/36299316>
+
+        Reviewed by Tim Horton, Andy Estes and Joseph Pecoraro.
+
+        Adds support for dragging "files" (i.e. creating item providers with preferred attachment presentation styles)
+        from attachment elements on iOS for Mail. See below for more detail.
+
+        Tests:  WKAttachmentTestsIOS.DragAttachmentInsertedAsData
+                WKAttachmentTestsIOS.DragAttachmentInsertedAsFile
+
+        * page/DragController.cpp:
+        (WebCore::DragController::platformContentTypeForBlobType const):
+        (WebCore::DragController::dragAttachmentElement):
+        * page/DragController.h:
+        * page/mac/DragControllerMac.mm:
+        (WebCore::DragController::platformContentTypeForBlobType const):
+
+        Add a private method to convert the type of a promised blob to a platform type. For Cocoa platforms, this
+        converts the blob type (either a UTI or a MIME type) to a UTI for the platform to consume.
+
+        * platform/ios/WebItemProviderPasteboard.h:
+        * platform/ios/WebItemProviderPasteboard.mm:
+
+        Refactor WebItemProviderRegistrationInfo. WebItemProviderRegistrationInfo currently encapsulates a single item
+        provider registration call, and contains either a type identifier and data buffer, or an NSItemProviderWriting-
+        conformant object. To register an item provider using a WebItemProviderRegistrationInfo, the item provider
+        pasteboard currently checks to see whether the info contains an object or a type and data.
+
+        This patch removes WebItemProviderRegistrationInfo and replaces it with WebItemProviderDataRegistrar. Objects
+        that implement this protocol know how to take an NSItemProvider and register data to it. So far, there are
+        three implementations below.
+
+        (-[WebItemProviderDataRegistrar initWithData:type:]):
+        (-[WebItemProviderDataRegistrar typeIdentifier]):
+        (-[WebItemProviderDataRegistrar data]):
+        (-[WebItemProviderDataRegistrar typeIdentifierForClient]):
+        (-[WebItemProviderDataRegistrar dataForClient]):
+        (-[WebItemProviderDataRegistrar registerItemProvider:]):
+        (-[WebItemProviderDataRegistrar description]):
+
+        A data registrar takes a UTI and data buffer, and registers the UTI to the data. This replaces a
+        WebItemProviderRegistrationInfo with both a type and data, but no representing object.
+
+        (-[WebItemProviderWritableObjectRegistrar initWithObject:]):
+        (-[WebItemProviderWritableObjectRegistrar representingObjectForClient]):
+        (-[WebItemProviderWritableObjectRegistrar registerItemProvider:]):
+        (-[WebItemProviderWritableObjectRegistrar description]):
+
+        The writable object registrar writes an NSItemProviderWriting-conformant object to an item provider. This
+        replaces a WebItemProviderRegistrationInfo with only a representing object.
+
+        (-[WebItemProviderPromisedFileRegistrar initWithType:callback:]):
+        (-[WebItemProviderPromisedFileRegistrar registerItemProvider:]):
+        (-[WebItemProviderPromisedFileRegistrar description]):
+        (-[WebItemProviderRegistrationInfoList addData:forType:]):
+        (-[WebItemProviderRegistrationInfoList addRepresentingObject:]):
+        (-[WebItemProviderRegistrationInfoList addPromisedType:fileCallback:]):
+
+        Helper methods to add new registrars to a registration info list.
+
+        (-[WebItemProviderRegistrationInfoList itemAtIndex:]):
+        (-[WebItemProviderRegistrationInfoList enumerateItems:]):
+        (-[WebItemProviderRegistrationInfoList itemProvider]):
+        (-[WebItemProviderRegistrationInfoList description]):
+        (-[WebItemProviderRegistrationInfo initWithRepresentingObject:typeIdentifier:data:]): Deleted.
+        (-[WebItemProviderRegistrationInfo representingObject]): Deleted.
+        (-[WebItemProviderRegistrationInfo typeIdentifier]): Deleted.
+
 2018-01-11  Michael Saboff  <msaboff@apple.com>
 
         Add a DOM gadget for Spectre testing

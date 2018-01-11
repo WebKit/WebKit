@@ -1119,7 +1119,7 @@ TEST(DataInteractionTests, OverrideDataInteractionOperation)
     [dataInteractionSimulator setOverrideDataInteractionOperationBlock:^NSUInteger(NSUInteger operation, id session)
     {
         EXPECT_EQ(0U, operation);
-        return 1;
+        return UIDropOperationCopy;
     }];
     [dataInteractionSimulator setDataInteractionOperationCompletionBlock:^(BOOL handled, NSArray *itemProviders) {
         EXPECT_FALSE(handled);
