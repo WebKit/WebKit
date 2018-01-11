@@ -460,6 +460,8 @@ constexpr bool enableAsyncIteration = false;
     \
     v(bool, enableSpectreMitigations, true, Restricted, "Enable Spectre mitigations.") \
     \
+    v(bool, enableSpectreGadgets, false, Restricted, "enable gadgets to test Spectre mitigations.") \
+    \
     v(bool, useAsyncIterator, enableAsyncIteration, Normal, "Allow to use Async Iterator in JS.") \
     \
     v(bool, failToCompileWebAssemblyCode, false, Normal, "If true, no Wasm::Plan will sucessfully compile a function.") \

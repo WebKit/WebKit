@@ -1792,6 +1792,7 @@
 		656D373F0ADBA5DE00A4554D /* ResourceLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = 656D37270ADBA5DE00A4554D /* ResourceLoader.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		656D37430ADBA5DE00A4554D /* NetscapePlugInStreamLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = 656D372B0ADBA5DE00A4554D /* NetscapePlugInStreamLoader.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		656D37480ADBA5DE00A4554D /* SubresourceLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = 656D37300ADBA5DE00A4554D /* SubresourceLoader.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		657AFAFC20047A2900509464 /* SpectreGadget.h in Headers */ = {isa = PBXBuildFile; fileRef = 657AFAF82004789900509464 /* SpectreGadget.h */; };
 		658436860AE01B7400E53753 /* FrameLoadRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 658436850AE01B7400E53753 /* FrameLoadRequest.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		6593923809AE4346002C531F /* URL.h in Headers */ = {isa = PBXBuildFile; fileRef = 6593923609AE4346002C531F /* URL.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		659A7D130B6DB4D9001155B3 /* SubstituteData.h in Headers */ = {isa = PBXBuildFile; fileRef = 659A7D120B6DB4D9001155B3 /* SubstituteData.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -8506,6 +8507,9 @@
 		656D37270ADBA5DE00A4554D /* ResourceLoader.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = ResourceLoader.h; sourceTree = "<group>"; };
 		656D372B0ADBA5DE00A4554D /* NetscapePlugInStreamLoader.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = NetscapePlugInStreamLoader.h; sourceTree = "<group>"; };
 		656D37300ADBA5DE00A4554D /* SubresourceLoader.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SubresourceLoader.h; sourceTree = "<group>"; };
+		657AFAF82004789900509464 /* SpectreGadget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpectreGadget.h; sourceTree = "<group>"; };
+		657AFAFA2004789A00509464 /* SpectreGadget.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SpectreGadget.idl; sourceTree = "<group>"; };
+		657AFAFB2004789A00509464 /* SpectreGadget.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SpectreGadget.cpp; sourceTree = "<group>"; };
 		658436850AE01B7400E53753 /* FrameLoadRequest.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = FrameLoadRequest.h; sourceTree = "<group>"; };
 		6593923509AE4346002C531F /* URL.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = URL.cpp; sourceTree = "<group>"; };
 		6593923609AE4346002C531F /* URL.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = URL.h; sourceTree = "<group>"; };
@@ -25700,6 +25704,9 @@
 				9B532EA21BA928570038A827 /* SlotAssignment.h */,
 				D01A27AB10C9BFD800026A42 /* SpaceSplitString.cpp */,
 				D01A27AC10C9BFD800026A42 /* SpaceSplitString.h */,
+				657AFAFB2004789A00509464 /* SpectreGadget.cpp */,
+				657AFAF82004789900509464 /* SpectreGadget.h */,
+				657AFAFA2004789A00509464 /* SpectreGadget.idl */,
 				BC7FA62C0D1F0EFF00DB22A9 /* StaticNodeList.cpp */,
 				BC7FA62B0D1F0EFF00DB22A9 /* StaticNodeList.h */,
 				F44EBBDA1DB5DD9D00277334 /* StaticRange.cpp */,
@@ -29349,6 +29356,7 @@
 				84A81F420FC7E02700955300 /* SourceGraphic.h in Headers */,
 				D01A27AE10C9BFD800026A42 /* SpaceSplitString.h in Headers */,
 				626CDE0F1140424C001E5A68 /* SpatialNavigation.h in Headers */,
+				657AFAFC20047A2900509464 /* SpectreGadget.h in Headers */,
 				AA2A5AD416A4861100975A25 /* SpeechSynthesis.h in Headers */,
 				AA2A5AD216A4860A00975A25 /* SpeechSynthesisEvent.h in Headers */,
 				AA2A5AD016A4860400975A25 /* SpeechSynthesisUtterance.h in Headers */,

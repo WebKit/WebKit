@@ -139,6 +139,7 @@ namespace WebCore {
     macro(ServiceWorkerGlobalScope) \
     macro(ServiceWorkerRegistration) \
     macro(ShadowRoot) \
+    macro(SpectreGadget) \
     macro(StaticRange) \
     macro(VRDisplay) \
     macro(VRDisplayCapabilities) \

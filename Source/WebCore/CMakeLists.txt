@@ -596,6 +596,7 @@ set(WebCore_NON_SVG_IDL_FILES
     dom/ShadowRoot.idl
     dom/ShadowRootMode.idl
     dom/Slotable.idl
+    dom/SpectreGadget.idl
     dom/StaticRange.idl
     dom/StringCallback.idl
     dom/Text.idl
