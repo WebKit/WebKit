@@ -168,7 +168,6 @@ list(APPEND WebKit_SOURCES
 
     UIProcess/HighPerformanceGraphicsUsageSampler.cpp
     UIProcess/PerActivityStateCPUUsageSampler.cpp
-    UIProcess/WebContextMenuListenerProxy.cpp
     UIProcess/WebResourceLoadStatisticsStore.cpp
     UIProcess/WebResourceLoadStatisticsTelemetry.cpp
 
