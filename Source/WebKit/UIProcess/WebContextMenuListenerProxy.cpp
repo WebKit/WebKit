@@ -23,10 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if ENABLE(CONTEXT_MENUS)
-
 #include "config.h"
 #include "WebContextMenuListenerProxy.h"
+
+#if ENABLE(CONTEXT_MENUS)
 
 #include "APIArray.h"
 #include "WKAPICast.h"
