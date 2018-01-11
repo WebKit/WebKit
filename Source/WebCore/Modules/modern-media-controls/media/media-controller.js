@@ -158,7 +158,7 @@ class MediaController
             scheduler.flushScheduledLayoutCallbacks();
         } else if (event.currentTarget === this.media) {
             this._updateControlsIfNeeded();
-            this._updateSupportingObjectsEnabledState();
+            this._updateiOSFullscreenProperties();
             if (event.type === "webkitpresentationmodechanged")
                 this._returnMediaLayerToInlineIfNeeded();
         } else if (event.type === "keydown" && this.isFullscreen && event.key === " ") {
@@ -286,17 +286,20 @@ class MediaController
         this.host.textTrackContainer.classList.toggle("visible-controls-bar", !this.controls.faded);
     }
 
-    _updateSupportingObjectsEnabledState()
+    _updateiOSFullscreenProperties()
     {
         // On iOS, we want to make sure not to update controls when we're in fullscreen since the UI
         // will be completely invisible.
         if (!(this.layoutTraits & LayoutTraits.iOS))
             return;
 
-        if (this.isFullscreen)
+        const isFullscreen = this.isFullscreen;
+        if (isFullscreen)
             this._supportingObjects.forEach(supportingObject => supportingObject.disable());
         else
             this._supportingObjects.forEach(supportingObject => supportingObject.enable());
+
+        this.controls.visible = !isFullscreen;
     }
 
 }

@@ -1,3 +1,21 @@
+2018-01-11  Antoine Quint  <graouts@apple.com>
+
+        [iOS] There should be no controls markup generated in fullscreen
+        https://bugs.webkit.org/show_bug.cgi?id=181540
+        <rdar://problem/35060379>
+
+        Reviewed by Eric Carlson.
+
+        We completely forgo the display of any content when fullscreen on iOS by setting the
+        "visible" flag to "false" on the MediaControls, which will prevent any DOM content from
+        being added.
+
+        * Modules/modern-media-controls/media/media-controller.js:
+        (MediaController.prototype.handleEvent):
+        (MediaController.prototype._updateiOSFullscreenProperties):
+        (MediaController):
+        (MediaController.prototype._updateSupportingObjectsEnabledState): Deleted.
+
 2018-01-11  Alex Christensen  <achristensen@webkit.org>
 
         Revert changes accidentally committed with r226789.

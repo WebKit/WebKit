@@ -8,16 +8,11 @@ Obtained a 'play' event.
 
 Entering fullscreen.
 
-Obtained a webkitpresentationmodechanged event
-media.webkitDisplayingFullscreen = true.
+Entered fullscreen
 PASS media.paused is false
+PASS window.internals.shadowRoot(media).querySelector('.media-controls').childElementCount became 0
 
-Time progressed.
-PASS elapsedTimeWhenEnteringFullscreen === elapsedTime() is true
-
-Obtained a webkitpresentationmodechanged event
-media.webkitDisplayingFullscreen = false.
-PASS elapsedTimeWhenEnteringFullscreen === elapsedTime() became false
+Exited fullscreen
 
 PASS successfullyParsed is true
 
