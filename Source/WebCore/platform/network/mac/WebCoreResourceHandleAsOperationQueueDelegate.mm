@@ -42,6 +42,18 @@
 
 using namespace WebCore;
 
+static bool scheduledWithCustomRunLoopMode(SchedulePairHashSet* pairs)
+{
+    if (!pairs)
+        return false;
+    for (auto& pair : *pairs) {
+        auto mode = pair->mode();
+        if (mode != kCFRunLoopCommonModes && mode != kCFRunLoopDefaultMode)
+            return true;
+    }
+    return false;
+}
+
 @implementation WebCoreResourceHandleAsOperationQueueDelegate
 
 - (void)callFunctionOnMainThread:(Function<void()>&&)function
@@ -52,7 +64,7 @@ using namespace WebCore;
 
     // This is the common case.
     SchedulePairHashSet* pairs = m_handle && m_handle->context() ? m_handle->context()->scheduledRunLoopPairs() : nullptr;
-    if (!pairs || pairs->isEmpty()) {
+    if (!scheduledWithCustomRunLoopMode(pairs)) {
 #if PLATFORM(MAC)
         return dispatch_async(dispatch_get_main_queue(), BlockPtr<void()>::fromCallable(WTFMove(function)).get());
 #else

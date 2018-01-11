@@ -1,3 +1,16 @@
+2018-01-11  Alex Christensen  <achristensen@webkit.org>
+
+        Revert changes accidentally committed with r226789.
+        https://bugs.webkit.org/show_bug.cgi?id=181423
+
+        I had some local changes I did not mean to commit.
+
+        * platform/network/mac/WebCoreResourceHandleAsOperationQueueDelegate.mm:
+        (scheduledWithCustomRunLoopMode):
+        (-[WebCoreResourceHandleAsOperationQueueDelegate callFunctionOnMainThread:]):
+        (WebCore::if): Deleted.
+        (WebCore::>::fromCallable): Deleted.
+
 2018-01-10  Simon Fraser  <simon.fraser@apple.com>
 
         On macOS, getBoundingClientRect gives incorrect values when pinch-zoomed
