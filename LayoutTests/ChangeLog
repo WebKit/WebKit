@@ -1,3 +1,11 @@
+2018-01-11  Matt Lewis  <jlewis3@apple.com>
+
+        Rebaseline of media/event-queue-crash.html after r226785
+        
+        Unreviewed test gardening.
+
+        * media/event-queue-crash-expected.txt:
+
 2018-01-11  Zalan Bujtas  <zalan@apple.com>
 
         RenderTreeUpdater::current() returns null_ptr when mutation is done through Document::resolveStyle.
