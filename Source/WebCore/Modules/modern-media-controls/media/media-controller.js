@@ -124,8 +124,14 @@ class MediaController
         this.controls.usesLTRUserInterfaceLayoutDirection = flag;
     }
 
+    mediaControlsVisibilityDidChange()
+    {
+        this._controlsUserVisibilityDidChange();
+    }
+
     mediaControlsFadedStateDidChange()
     {
+        this._controlsUserVisibilityDidChange();
         this._updateTextTracksClassList();
     }
 
@@ -284,6 +290,14 @@ class MediaController
             return;
 
         this.host.textTrackContainer.classList.toggle("visible-controls-bar", !this.controls.faded);
+    }
+
+    _controlsUserVisibilityDidChange()
+    {
+        if (!this.controls || !this._supportingObjects)
+            return;
+
+        this._supportingObjects.forEach(supportingObject => supportingObject.controlsUserVisibilityDidChange());
     }
 
     _updateiOSFullscreenProperties()

@@ -86,6 +86,9 @@ class MediaControls extends LayoutNode
 
         if (flag)
             this.layout();
+
+        if (this.delegate && typeof this.delegate.mediaControlsVisibilityDidChange === "function")
+            this.delegate.mediaControlsVisibilityDidChange();
     }
 
     get faded()

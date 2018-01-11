@@ -1,0 +1,28 @@
+Testing AirPlaySupport stops listening to webkitplaybacktargetavailabilitychanged events when the controls are not visible to the user.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Starting test.
+PASS controls.visible is true
+PASS controls.faded is false
+
+Now we wait for the controls to fade after a period of inactivity.
+PASS controls.faded became true
+
+Before turning AirPlay routes on, we check the AirPlay control state.
+PASS controls.airplayButton.enabled is false
+
+Making AirPlay routes available.
+PASS controls.airplayButton.enabled is false
+
+We pause the media so that controls can show again.
+
+Media paused, the AirPlay button should be enabled now that controls are visible.
+PASS controls.faded is false
+PASS controls.airplayButton.enabled became true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
