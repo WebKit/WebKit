@@ -1,3 +1,15 @@
+2018-01-11  Philippe Normand  <pnormand@igalia.com>
+
+        [GTK] media/muted-video-is-playing-audio.html is timing out
+        https://bugs.webkit.org/show_bug.cgi?id=163781
+
+        Reviewed by Carlos Garcia Campos.
+
+        The test should un-mute the page because the IsPlayingAudio flag indirectly depends on this.
+
+        * media/muted-video-is-playing-audio.html: Un-mute the page.
+        * platform/gtk/TestExpectations: Unflag now-passing test.
+
 2018-01-10  Andy Estes  <aestes@apple.com>
 
         [Payment Request] Rename ApplePayMerchantValidationEvent to MerchantValidationEvent

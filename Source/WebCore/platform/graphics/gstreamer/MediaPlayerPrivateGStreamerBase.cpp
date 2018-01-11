@@ -614,6 +614,7 @@ void MediaPlayerPrivateGStreamerBase::setMuted(bool muted)
     if (!m_volumeElement)
         return;
 
+    GST_INFO("Set muted to %d", muted);
     g_object_set(m_volumeElement.get(), "mute", muted, nullptr);
 }
 

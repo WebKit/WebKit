@@ -12,6 +12,10 @@
 
             jsTestIsAsync = true;
 
+            // Un-mute audio on the page before starting the test.
+            if (window.internals)
+                internals.setPageMuted("");
+
             function testUnmutingVideo()
             {
                 run("video.muted = false");

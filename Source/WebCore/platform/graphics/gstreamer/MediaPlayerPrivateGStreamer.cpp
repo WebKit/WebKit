@@ -613,6 +613,8 @@ void MediaPlayerPrivateGStreamer::notifyPlayerOfVideo()
     GstElement* element = useMediaSource ? m_source.get() : m_pipeline.get();
     g_object_get(element, "n-video", &numTracks, nullptr);
 
+    GST_INFO("Media has %d video tracks", numTracks);
+
     bool oldHasVideo = m_hasVideo;
     m_hasVideo = numTracks > 0;
     if (oldHasVideo != m_hasVideo)
@@ -682,6 +684,7 @@ void MediaPlayerPrivateGStreamer::notifyPlayerOfAudio()
     GstElement* element = useMediaSource ? m_source.get() : m_pipeline.get();
     g_object_get(element, "n-audio", &numTracks, nullptr);
 
+    GST_INFO("Media has %d audio tracks", numTracks);
     bool oldHasAudio = m_hasAudio;
     m_hasAudio = numTracks > 0;
     if (oldHasAudio != m_hasAudio)

@@ -1,3 +1,16 @@
+2018-01-11  Philippe Normand  <pnormand@igalia.com>
+
+        [GTK] media/muted-video-is-playing-audio.html is timing out
+        https://bugs.webkit.org/show_bug.cgi?id=163781
+
+        Reviewed by Carlos Garcia Campos.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::notifyPlayerOfVideo): Sprinkle some debugging.
+        (WebCore::MediaPlayerPrivateGStreamer::notifyPlayerOfAudio): Ditto.
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp:
+        (WebCore::MediaPlayerPrivateGStreamerBase::setMuted): Ditto.
+
 2018-01-10  Andy Estes  <aestes@apple.com>
 
         [Payment Request] Rename ApplePayMerchantValidationEvent to MerchantValidationEvent
