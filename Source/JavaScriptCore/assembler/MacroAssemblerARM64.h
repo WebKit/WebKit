@@ -364,7 +364,7 @@ public:
 
     void and32(Address src, RegisterID dest)
     {
-        load32(src, dataTempRegister);
+        load32(src, getCachedDataTempRegisterIDAndInvalidate());
         and32(dataTempRegister, dest);
     }
 
