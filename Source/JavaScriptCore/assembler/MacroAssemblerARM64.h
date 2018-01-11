@@ -1105,13 +1105,13 @@ public:
 
     void abortWithReason(AbortReason reason)
     {
-        move(TrustedImm32(reason), dataTempRegister);
+        move(TrustedImm32(reason), getCachedDataTempRegisterIDAndInvalidate());
         breakpoint();
     }
 
     void abortWithReason(AbortReason reason, intptr_t misc)
     {
-        move(TrustedImm64(misc), memoryTempRegister);
+        move(TrustedImm64(misc), getCachedMemoryTempRegisterIDAndInvalidate());
         abortWithReason(reason);
     }
 
@@ -2201,7 +2201,7 @@ public:
     
     void pushToSaveImmediateWithoutTouchingRegisters(TrustedImm32 imm)
     {
-        RegisterID reg = dataTempRegister;
+        RegisterID reg = getCachedDataTempRegisterIDAndInvalidate();
         pushPair(reg, reg);
         move(imm, reg);
         store64(reg, stackPointerRegister);

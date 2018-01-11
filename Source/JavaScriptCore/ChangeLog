@@ -1,3 +1,16 @@
+2018-01-11  Michael Saboff  <msaboff@apple.com>
+
+        Ensure there are no unsafe uses of MacroAssemblerARM64::dataTempRegister
+        https://bugs.webkit.org/show_bug.cgi?id=181512
+
+        Reviewed by Saam Barati.
+
+        * assembler/MacroAssemblerARM64.h:
+        (JSC::MacroAssemblerARM64::abortWithReason):
+        (JSC::MacroAssemblerARM64::pushToSaveImmediateWithoutTouchingRegisters):
+        All current uses of dataTempRegister in these functions are safe, but it makes sense to
+        fix them in case they might be used elsewhere.
+
 2018-01-04  Filip Pizlo  <fpizlo@apple.com>
 
         CodeBlocks should be in IsoSubspaces
