@@ -285,7 +285,11 @@ void RenderMenuList::setText(const String& s)
     else {
         auto newButtonText = createRenderer<RenderText>(document(), textToUse);
         m_buttonText = makeWeakPtr(*newButtonText);
-        RenderTreeBuilder::current()->insertChild(*this, WTFMove(newButtonText));
+        // FIXME: This mutation should go through the normal RenderTreeBuilder path.
+        if (RenderTreeBuilder::current())
+            RenderTreeBuilder::current()->insertChild(*this, WTFMove(newButtonText));
+        else
+            RenderTreeBuilder(*document().renderView()).insertChild(*this, WTFMove(newButtonText));
     }
 
     adjustInnerStyle();

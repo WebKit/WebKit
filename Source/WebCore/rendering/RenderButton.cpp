@@ -116,7 +116,11 @@ void RenderButton::setText(const String& str)
     if (!m_buttonText) {
         auto newButtonText = createRenderer<RenderTextFragment>(document(), str);
         m_buttonText = makeWeakPtr(*newButtonText);
-        RenderTreeBuilder::current()->insertChild(*this, WTFMove(newButtonText));
+        // FIXME: This mutation should go through the normal RenderTreeBuilder path.
+        if (RenderTreeBuilder::current())
+            RenderTreeBuilder::current()->insertChild(*this, WTFMove(newButtonText));
+        else
+            RenderTreeBuilder(*document().renderView()).insertChild(*this, WTFMove(newButtonText));
         return;
     }
 

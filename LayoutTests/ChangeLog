@@ -1,3 +1,14 @@
+2018-01-11  Zalan Bujtas  <zalan@apple.com>
+
+        RenderTreeUpdater::current() returns null_ptr when mutation is done through Document::resolveStyle.
+        https://bugs.webkit.org/show_bug.cgi?id=181513
+        <rdar://problem/36367085>
+
+        Reviewed by Antti Koivisto.
+
+        * fast/forms/button-set-text-crash-expected.txt: Added.
+        * fast/forms/button-set-text-crash.html: Added.
+
 2018-01-11  Antoine Quint  <graouts@apple.com>
 
         Only listen to webkitplaybacktargetavailabilitychanged when media controls are visible to the user
