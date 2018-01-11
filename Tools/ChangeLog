@@ -1,3 +1,17 @@
+2018-01-10  Chris Dumez  <cdumez@apple.com>
+
+        Multiple http/wpt/beacon/contentextensions/ test are flaky.
+        https://bugs.webkit.org/show_bug.cgi?id=179256
+        <rdar://problem/35401978>
+
+        Reviewed by Alex Christensen.
+
+        Update WebKitTestRunner to set a temporary path for content extensions so that its WKTR
+        instance gets its own folder to avoid conflicts and flakiness.
+
+        * WebKitTestRunner/mac/TestControllerMac.mm:
+        (WTR::TestController::platformConfigureViewForTest):
+
 2018-01-10  Tim Horton  <timothy_horton@apple.com>
 
         REGRESSION (r213590): Swipe from edge to go to previous page is significantly slower than tapping back button on Twitter
