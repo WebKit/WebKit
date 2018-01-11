@@ -1,3 +1,51 @@
+2018-01-11  Basuke Suzuki  <Basuke.Suzuki@sony.com>
+
+        [Curl] Extract multipart handling from ResourceHandle to CurlRequest.
+        https://bugs.webkit.org/show_bug.cgi?id=181506
+
+        Reviewed by Alex Christensen.
+
+        Rename old MultipartHandle class to CurlMultipartHandle and modernize it. Also move the responsibility 
+        of handling multi part from ResourceHandle to CurlRequest. This is required for upcoming NetworkLoadTask.
+
+        No new tests because no new behavior.
+
+        * platform/Curl.cmake:
+        * platform/network/curl/CurlMultipartHandle.cpp: Renamed from Source/WebCore/platform/network/curl/MultipartHandle.cpp.
+        (WebCore::CurlMultipartHandle::createIfNeeded):
+        (WebCore::CurlMultipartHandle::extractBoundary):
+        (WebCore::CurlMultipartHandle::extractBoundaryFromContentType):
+        (WebCore::CurlMultipartHandle::CurlMultipartHandle):
+        (WebCore::CurlMultipartHandle::didReceiveData):
+        (WebCore::CurlMultipartHandle::didComplete):
+        (WebCore::CurlMultipartHandle::processContent):
+        (WebCore::CurlMultipartHandle::checkForBoundary):
+        (WebCore::CurlMultipartHandle::matchedLength):
+        (WebCore::CurlMultipartHandle::parseHeadersIfPossible):
+        * platform/network/curl/CurlMultipartHandle.h: Renamed from Source/WebCore/platform/network/curl/MultipartHandle.h.
+        (WebCore::CurlMultipartHandle::~CurlMultipartHandle):
+        * platform/network/curl/CurlMultipartHandleClient.h: Added.
+        (WebCore::CurlMultipartHandleClient::~CurlMultipartHandleClient):
+        * platform/network/curl/CurlRequest.cpp:
+        (WebCore::CurlRequest::CurlRequest):
+        (WebCore::CurlRequest::didReceiveHeader):
+        (WebCore::CurlRequest::didReceiveData):
+        (WebCore::CurlRequest::didReceiveHeaderFromMultipart):
+        (WebCore::CurlRequest::didReceiveDataFromMultipart):
+        (WebCore::CurlRequest::didCompleteTransfer):
+        (WebCore::CurlRequest::finalizeTransfer):
+        (WebCore::CurlRequest::invokeDidReceiveResponseForFile):
+        (WebCore::CurlRequest::invokeDidReceiveResponse):
+        (WebCore::CurlRequest::completeDidReceiveResponse):
+        * platform/network/curl/CurlRequest.h:
+        (WebCore::CurlRequest::create):
+        * platform/network/curl/ResourceHandleCurlDelegate.cpp:
+        (WebCore::ResourceHandleCurlDelegate::createCurlRequest):
+        (WebCore::ResourceHandleCurlDelegate::curlDidReceiveResponse):
+        (WebCore::ResourceHandleCurlDelegate::curlDidReceiveBuffer):
+        (WebCore::ResourceHandleCurlDelegate::curlDidComplete):
+        * platform/network/curl/ResourceHandleCurlDelegate.h:
+
 2018-01-11  Zalan Bujtas  <zalan@apple.com>
 
         RenderTreeUpdater::current() returns null_ptr when mutation is done through Document::resolveStyle.

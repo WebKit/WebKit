@@ -37,9 +37,10 @@
 
 namespace WebCore {
 
-CurlRequest::CurlRequest(const ResourceRequest&request, CurlRequestClient* client, bool shouldSuspend)
+CurlRequest::CurlRequest(const ResourceRequest&request, CurlRequestClient* client, bool shouldSuspend, bool enableMultipart)
     : m_request(request.isolatedCopy())
     , m_shouldSuspend(shouldSuspend)
+    , m_enableMultipart(enableMultipart)
     , m_formDataStream(m_request.httpBody())
 {
     ASSERT(isMainThread());
@@ -276,6 +277,7 @@ size_t CurlRequest::didReceiveHeader(String&& header)
     if (m_didReceiveResponse) {
         m_didReceiveResponse = false;
         m_response = CurlResponse { };
+        m_multipartHandle = nullptr;
     }
 
     auto receiveBytes = static_cast<size_t>(header.length());
@@ -314,6 +316,9 @@ size_t CurlRequest::didReceiveHeader(String&& header)
     if (auto metrics = m_curlHandle->getNetworkLoadMetrics())
         m_networkLoadMetrics = *metrics;
 
+    if (m_enableMultipart)
+        m_multipartHandle = CurlMultipartHandle::createIfNeeded(*this, m_response);
+
     // Response will send at didReceiveData() or didCompleteTransfer()
     // to receive continueDidRceiveResponse() for asynchronously.
 
@@ -331,13 +336,13 @@ size_t CurlRequest::didReceiveData(Ref<SharedBuffer>&& buffer)
         if (!m_isSyncRequest) {
             // For asynchronous, pause until completeDidReceiveResponse() is called.
             setCallbackPaused(true);
-            invokeDidReceiveResponse(Action::ReceiveData);
+            invokeDidReceiveResponse(m_response, Action::ReceiveData);
             return CURL_WRITEFUNC_PAUSE;
         }
 
         // For synchronous, completeDidReceiveResponse() is called in invokeDidReceiveResponse().
         // In this case, pause is unnecessary.
-        invokeDidReceiveResponse(Action::None);
+        invokeDidReceiveResponse(m_response, Action::None);
     }
 
     auto receiveBytes = buffer->size();
@@ -345,13 +350,47 @@ size_t CurlRequest::didReceiveData(Ref<SharedBuffer>&& buffer)
     writeDataToDownloadFileIfEnabled(buffer);
 
     if (receiveBytes) {
+        if (m_multipartHandle)
+            m_multipartHandle->didReceiveData(buffer);
+        else {
+            callClient([this, buffer = WTFMove(buffer)](CurlRequestClient* client) mutable {
+                if (client)
+                    client->curlDidReceiveBuffer(WTFMove(buffer));
+            });
+        }
+    }
+
+    return receiveBytes;
+}
+
+void CurlRequest::didReceiveHeaderFromMultipart(const Vector<String>& headers)
+{
+    if (isCompletedOrCancelled())
+        return;
+
+    CurlResponse response = m_response.isolatedCopy();
+    response.expectedContentLength = 0;
+    response.headers.clear();
+
+    for (auto header : headers)
+        response.headers.append(header);
+
+    invokeDidReceiveResponse(response, Action::None);
+}
+
+void CurlRequest::didReceiveDataFromMultipart(Ref<SharedBuffer>&& buffer)
+{
+    if (isCompletedOrCancelled())
+        return;
+
+    auto receiveBytes = buffer->size();
+
+    if (receiveBytes) {
         callClient([this, buffer = WTFMove(buffer)](CurlRequestClient* client) mutable {
             if (client)
                 client->curlDidReceiveBuffer(WTFMove(buffer));
         });
     }
-
-    return receiveBytes;
 }
 
 void CurlRequest::didCompleteTransfer(CURLcode result)
@@ -367,8 +406,11 @@ void CurlRequest::didCompleteTransfer(CURLcode result)
             // When completeDidReceiveResponse() is called, didCompleteTransfer() will be called again.
 
             m_finishedResultCode = result;
-            invokeDidReceiveResponse(Action::FinishTransfer);
+            invokeDidReceiveResponse(m_response, Action::FinishTransfer);
         } else {
+            if (m_multipartHandle)
+                m_multipartHandle->didComplete();
+
             if (auto metrics = m_curlHandle->getNetworkLoadMetrics())
                 m_networkLoadMetrics = *metrics;
 
@@ -401,6 +443,7 @@ void CurlRequest::finalizeTransfer()
 {
     closeDownloadFile();
     m_formDataStream.clean();
+    m_multipartHandle = nullptr;
     m_curlHandle = nullptr;
 }
 
@@ -469,22 +512,22 @@ void CurlRequest::invokeDidReceiveResponseForFile(URL& url)
     if (!m_isSyncRequest) {
         // DidReceiveResponse must not be called immediately
         CurlRequestScheduler::singleton().callOnWorkerThread([protectedThis = makeRef(*this)]() {
-            protectedThis->invokeDidReceiveResponse(Action::StartTransfer);
+            protectedThis->invokeDidReceiveResponse(protectedThis->m_response, Action::StartTransfer);
         });
     } else {
         // For synchronous, completeDidReceiveResponse() is called in platformContinueSynchronousDidReceiveResponse().
-        invokeDidReceiveResponse(Action::None);
+        invokeDidReceiveResponse(m_response, Action::None);
     }
 }
 
-void CurlRequest::invokeDidReceiveResponse(Action behaviorAfterInvoke)
+void CurlRequest::invokeDidReceiveResponse(const CurlResponse& response, Action behaviorAfterInvoke)
 {
-    ASSERT(!m_didNotifyResponse);
+    ASSERT(!m_didNotifyResponse || m_multipartHandle);
 
     m_didNotifyResponse = true;
     m_actionAfterInvoke = behaviorAfterInvoke;
 
-    callClient([this, response = m_response.isolatedCopy()](CurlRequestClient* client) {
+    callClient([this, response = response.isolatedCopy()](CurlRequestClient* client) {
         if (client)
             client->curlDidReceiveResponse(response);
     });
@@ -494,7 +537,7 @@ void CurlRequest::completeDidReceiveResponse()
 {
     ASSERT(isMainThread());
     ASSERT(m_didNotifyResponse);
-    ASSERT(!m_didReturnFromNotify);
+    ASSERT(!m_didReturnFromNotify || m_multipartHandle);
 
     if (isCancelled())
         return;

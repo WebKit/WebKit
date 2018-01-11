@@ -35,7 +35,6 @@
 namespace WebCore {
 
 class CurlRequest;
-class MultipartHandle;
 class ResourceHandle;
 class ResourceResponse;
 
@@ -84,7 +83,6 @@ private:
 
     // Used by main thread.
     ResourceHandle* m_handle;
-    std::unique_ptr<MultipartHandle> m_multipartHandle;
     unsigned m_authFailureCount { 0 };
     unsigned m_redirectCount { 0 };
 

@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2004, 2006 Apple Inc.  All rights reserved.
  * Copyright (C) 2005, 2006 Michael Emmel mike.emmel@gmail.com
- * Copyright (C) 2017 Sony Interactive Entertainment Inc.
+ * Copyright (C) 2018 Sony Interactive Entertainment Inc.
  * All rights reserved.
  * Copyright (C) 2017 NAVER Corp. All rights reserved.
  *
@@ -37,7 +37,6 @@
 #include "CurlCacheManager.h"
 #include "CurlRequest.h"
 #include "HTTPParsers.h"
-#include "MultipartHandle.h"
 #include "ResourceHandleInternal.h"
 #include "SharedBuffer.h"
 #include "TextEncoding.h"
@@ -169,7 +168,8 @@ Ref<CurlRequest> ResourceHandleCurlDelegate::createCurlRequest(ResourceRequest& 
         }
     }
 
-    return CurlRequest::create(request, this, m_defersLoading);
+    CurlRequest::ShouldSuspend shouldSuspend = m_defersLoading ? CurlRequest::ShouldSuspend::Yes : CurlRequest::ShouldSuspend::No;
+    return CurlRequest::create(request, this, shouldSuspend, CurlRequest::EnableMultipart::Yes);
 }
 
 bool ResourceHandleCurlDelegate::cancelledOrClientless()
@@ -192,13 +192,6 @@ void ResourceHandleCurlDelegate::curlDidReceiveResponse(const CurlResponse& rece
 
     if (m_curlRequest)
         m_handle->getInternal()->m_response.setDeprecatedNetworkLoadMetrics(m_curlRequest->getNetworkLoadMetrics());
-
-    if (response().isMultipart()) {
-        String boundary;
-        bool parsed = MultipartHandle::extractBoundary(response().httpHeaderField(HTTPHeaderName::ContentType), boundary);
-        if (parsed)
-            m_multipartHandle = std::make_unique<MultipartHandle>(m_handle, boundary);
-    }
 
     if (response().shouldRedirect()) {
         willSendRequest();
@@ -239,12 +232,8 @@ void ResourceHandleCurlDelegate::curlDidReceiveBuffer(Ref<SharedBuffer>&& buffer
     if (cancelledOrClientless())
         return;
 
-    if (m_multipartHandle)
-        m_multipartHandle->contentReceived(buffer->data(), buffer->size());
-    else if (m_handle->client()) {
-        CurlCacheManager::singleton().didReceiveData(*m_handle, buffer->data(), buffer->size());
-        m_handle->client()->didReceiveBuffer(m_handle, WTFMove(buffer), buffer->size());
-    }
+    CurlCacheManager::singleton().didReceiveData(*m_handle, buffer->data(), buffer->size());
+    m_handle->client()->didReceiveBuffer(m_handle, WTFMove(buffer), buffer->size());
 }
 
 void ResourceHandleCurlDelegate::curlDidComplete()
@@ -256,9 +245,6 @@ void ResourceHandleCurlDelegate::curlDidComplete()
 
     if (m_curlRequest)
         m_handle->getInternal()->m_response.setDeprecatedNetworkLoadMetrics(m_curlRequest->getNetworkLoadMetrics());
-
-    if (m_multipartHandle)
-        m_multipartHandle->contentEnded();
 
     if (m_handle->client()) {
         CurlCacheManager::singleton().didFinishLoading(*m_handle);

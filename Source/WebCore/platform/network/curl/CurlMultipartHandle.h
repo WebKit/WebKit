@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2013 University of Szeged
+ * Copyright (C) 2018 Sony Interactive Entertainment Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -26,32 +27,27 @@
 
 #pragma once
 
-#include "HTTPHeaderMap.h"
-#include "ResourceHandle.h"
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-class MultipartHandle {
+class CurlMultipartHandleClient;
+class CurlResponse;
+class SharedBuffer;
+
+class CurlMultipartHandle {
 public:
-    static bool extractBoundary(const String& contentType, String& boundary);
+    static std::unique_ptr<CurlMultipartHandle> createIfNeeded(CurlMultipartHandleClient&, const CurlResponse&);
 
-    MultipartHandle(ResourceHandle* handle, const String& boundary)
-        : m_resourceHandle(handle)
-        , m_boundary("--" + boundary)
-        , m_boundaryLength(m_boundary.length())
-        , m_state(CheckBoundary)
-    {
-    }
+    CurlMultipartHandle(CurlMultipartHandleClient&, const String&);
+    ~CurlMultipartHandle() { }
 
-    ~MultipartHandle() = default;
-
-    void contentReceived(const char* data, size_t length);
-    void contentEnded();
+    void didReceiveData(const SharedBuffer&);
+    void didComplete();
 
 private:
-    enum MultipartHandleState {
+    enum class State {
         CheckBoundary,
         InBoundary,
         InHeader,
@@ -60,22 +56,21 @@ private:
         End
     };
 
-    void didReceiveData(size_t length);
-    void didReceiveResponse();
+    static std::optional<String> extractBoundary(const CurlResponse&);
+    static std::optional<String> extractBoundaryFromContentType(const String&);
 
-    bool matchForBoundary(const char* data, size_t position, size_t& matchedLength);
-    inline bool checkForBoundary(size_t& boundaryStartPosition, size_t& lastPartialMatchPosition);
-    bool parseHeadersIfPossible();
     bool processContent();
+    bool checkForBoundary(size_t& boundaryStartPosition, size_t& lastPartialMatchPosition);
+    size_t matchedLength(const char* data);
+    bool parseHeadersIfPossible();
 
-    ResourceHandle* m_resourceHandle;
+    CurlMultipartHandleClient& m_client;
+
     String m_boundary;
-    size_t m_boundaryLength;
-
     Vector<char> m_buffer;
-    HTTPHeaderMap m_headers;
+    Vector<String> m_headers;
 
-    MultipartHandleState m_state;
+    State m_state { State::CheckBoundary };
 };
 
 } // namespace WebCore
