@@ -1687,4 +1687,3 @@ imported/w3c/web-platform-tests/workers/worker-performance.worker.html [ Pass Fa
 
 media/event-queue-crash.html [ DumpJSConsoleLogInStdErr ]
 
-webkit.org/b/181222 http/tests/workers/service/cors-image-fetch.html [ Skip ]
