@@ -75,6 +75,8 @@ public:
     reverse_iterator rend() { return reverse_iterator(begin()); }
     const_reverse_iterator rbegin() const { return const_reverse_iterator(end()); }
     const_reverse_iterator rend() const { return const_reverse_iterator(begin()); }
+    
+    template<typename U> bool contains(const U&);
 
     T& first() { ASSERT(m_start != m_end); return m_buffer.buffer()[m_start]; }
     const T& first() const { ASSERT(m_start != m_end); return m_buffer.buffer()[m_start]; }
@@ -435,6 +437,17 @@ void Deque<T, inlineCapacity>::expandCapacity()
     }
     m_buffer.deallocateBuffer(oldBuffer);
     checkValidity();
+}
+
+template<typename T, size_t inlineCapacity>
+template<typename U>
+bool Deque<T, inlineCapacity>::contains(const U& searchValue)
+{
+    for (auto& value : *this) {
+        if (value == searchValue)
+            return true;
+    }
+    return false;
 }
 
 template<typename T, size_t inlineCapacity>

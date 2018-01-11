@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009, 2010, 2013-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2009-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "ExecutableToCodeBlockEdge.h"
 #include "ScriptExecutable.h"
 
 namespace JSC {
@@ -47,7 +48,7 @@ public:
 
     ModuleProgramCodeBlock* codeBlock()
     {
-        return m_moduleProgramCodeBlock.get();
+        return bitwise_cast<ModuleProgramCodeBlock*>(ExecutableToCodeBlockEdge::unwrap(m_moduleProgramCodeBlock.get()));
     }
 
     Ref<JITCode> generatedJITCode()
@@ -78,7 +79,7 @@ private:
 
     WriteBarrier<UnlinkedModuleProgramCodeBlock> m_unlinkedModuleProgramCodeBlock;
     WriteBarrier<SymbolTable> m_moduleEnvironmentSymbolTable;
-    WriteBarrier<ModuleProgramCodeBlock> m_moduleProgramCodeBlock;
+    WriteBarrier<ExecutableToCodeBlockEdge> m_moduleProgramCodeBlock;
 };
 
 } // namespace JSC

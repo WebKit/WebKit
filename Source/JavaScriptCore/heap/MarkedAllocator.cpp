@@ -458,10 +458,14 @@ RefPtr<SharedTask<MarkedBlock::Handle*()>> MarkedAllocator::parallelNotEmptyBloc
         
         MarkedBlock::Handle* run() override
         {
+            if (m_done)
+                return nullptr;
             auto locker = holdLock(m_lock);
             m_index = m_allocator.m_markingNotEmpty.findBit(m_index, true);
-            if (m_index >= m_allocator.m_blocks.size())
+            if (m_index >= m_allocator.m_blocks.size()) {
+                m_done = true;
                 return nullptr;
+            }
             return m_allocator.m_blocks[m_index++];
         }
         
@@ -469,6 +473,7 @@ RefPtr<SharedTask<MarkedBlock::Handle*()>> MarkedAllocator::parallelNotEmptyBloc
         MarkedAllocator& m_allocator;
         size_t m_index { 0 };
         Lock m_lock;
+        bool m_done { false };
     };
     
     return adoptRef(new Task(*this));

@@ -49,24 +49,7 @@ public:
     CodeBlockSet();
     ~CodeBlockSet();
 
-    void lastChanceToFinalize(VM&);
-    
-    // Add a CodeBlock. This is only called by CodeBlock constructors.
-    void add(CodeBlock*);
-    
-    // Clear all mark bits for all CodeBlocks.
-    void clearMarksForFullCollection();
-
-    // Mark a pointer that may be a CodeBlock that belongs to the set of DFG
-    // blocks. This is defined in CodeBlock.h.
-private:
     void mark(const AbstractLocker&, CodeBlock* candidateCodeBlock);
-public:
-    void mark(const AbstractLocker&, void* candidateCodeBlock);
-    
-    // Delete all code blocks that are only referenced by this set (i.e. owned
-    // by this set), and that have not been marked.
-    void deleteUnmarkedAndUnreferenced(VM&, CollectionScope);
     
     void clearCurrentlyExecuting();
 
@@ -78,16 +61,18 @@ public:
     // visited.
     template<typename Functor> void iterate(const Functor&);
     template<typename Functor> void iterate(const AbstractLocker&, const Functor&);
+
+    template<typename Functor> void iterateViaSubspaces(VM&, const Functor&);
     
     template<typename Functor> void iterateCurrentlyExecuting(const Functor&);
     
     void dump(PrintStream&) const;
+    
+    void add(CodeBlock*);
+    void remove(CodeBlock*);
 
 private:
-    void promoteYoungCodeBlocks(const AbstractLocker&);
-
-    HashSet<CodeBlock*> m_oldCodeBlocks;
-    HashSet<CodeBlock*> m_newCodeBlocks;
+    HashSet<CodeBlock*> m_codeBlocks;
     HashSet<CodeBlock*> m_currentlyExecuting;
     Lock m_lock;
 };

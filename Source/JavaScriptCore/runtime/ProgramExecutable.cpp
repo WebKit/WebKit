@@ -209,8 +209,7 @@ void ProgramExecutable::visitChildren(JSCell* cell, SlotVisitor& visitor)
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     ScriptExecutable::visitChildren(thisObject, visitor);
     visitor.append(thisObject->m_unlinkedProgramCodeBlock);
-    if (ProgramCodeBlock* programCodeBlock = thisObject->m_programCodeBlock.get())
-        programCodeBlock->visitWeakly(visitor);
+    visitor.append(thisObject->m_programCodeBlock);
 }
 
 } // namespace JSC

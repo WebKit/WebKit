@@ -230,7 +230,6 @@ public:
 
                         codeBlock->jettison(Profiler::JettisonDueToVMTraps);
                     }
-                    return false;
                 });
                 RELEASE_ASSERT(sawCurrentCodeBlock);
                 
@@ -341,7 +340,6 @@ void VMTraps::handleTraps(ExecState* exec, VMTraps::Mask mask)
             // We want to jettison all code blocks that have vm traps breakpoints, otherwise we could hit them later.
             if (codeBlock->hasInstalledVMTrapBreakpoints())
                 codeBlock->jettison(Profiler::JettisonDueToVMTraps);
-            return false;
         });
     }
 

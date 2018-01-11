@@ -51,19 +51,13 @@ void MarkingConstraint::resetStats()
     m_lastVisitCount = 0;
 }
 
-ConstraintParallelism MarkingConstraint::execute(SlotVisitor& visitor)
+void MarkingConstraint::execute(SlotVisitor& visitor)
 {
     VisitCounter visitCounter(visitor);
-    ConstraintParallelism result = executeImpl(visitor);
+    executeImpl(visitor);
     m_lastVisitCount += visitCounter.visitCount();
     if (verboseMarkingConstraint && visitCounter.visitCount())
         dataLog("(", abbreviatedName(), " visited ", visitCounter.visitCount(), " in execute)");
-    if (result == ConstraintParallelism::Parallel) {
-        // It's illegal to produce parallel work if you haven't advertised it upfront because the solver
-        // has optimizations for constraints that promise to never produce parallel work.
-        RELEASE_ASSERT(m_parallelism == ConstraintParallelism::Parallel);
-    }
-    return result;
 }
 
 double MarkingConstraint::quickWorkEstimate(SlotVisitor&)
@@ -87,10 +81,10 @@ void MarkingConstraint::prepareToExecute(const AbstractLocker& constraintSolving
         dataLog("(", abbreviatedName(), " visited ", visitCounter.visitCount(), " in prepareToExecute)");
 }
 
-void MarkingConstraint::doParallelWork(SlotVisitor& visitor)
+void MarkingConstraint::doParallelWork(SlotVisitor& visitor, SharedTask<void(SlotVisitor&)>& task)
 {
     VisitCounter visitCounter(visitor);
-    doParallelWorkImpl(visitor);
+    task.run(visitor);
     if (verboseMarkingConstraint && visitCounter.visitCount())
         dataLog("(", abbreviatedName(), " visited ", visitCounter.visitCount(), " in doParallelWork)");
     {
@@ -99,25 +93,7 @@ void MarkingConstraint::doParallelWork(SlotVisitor& visitor)
     }
 }
 
-void MarkingConstraint::finishParallelWork(SlotVisitor& visitor)
-{
-    VisitCounter visitCounter(visitor);
-    finishParallelWorkImpl(visitor);
-    m_lastVisitCount += visitCounter.visitCount();
-    if (verboseMarkingConstraint && visitCounter.visitCount())
-        dataLog("(", abbreviatedName(), " visited ", visitCounter.visitCount(), " in finishParallelWork)");
-}
-
 void MarkingConstraint::prepareToExecuteImpl(const AbstractLocker&, SlotVisitor&)
-{
-}
-
-void MarkingConstraint::doParallelWorkImpl(SlotVisitor&)
-{
-    UNREACHABLE_FOR_PLATFORM();
-}
-
-void MarkingConstraint::finishParallelWorkImpl(SlotVisitor&)
 {
 }
 

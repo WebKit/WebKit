@@ -167,6 +167,8 @@ public:
 
     void notifyIsSafeToCollect();
     bool isSafeToCollect() const { return m_isSafeToCollect; }
+    
+    bool isShuttingDown() const { return m_isShuttingDown; }
 
     JS_EXPORT_PRIVATE bool isHeapSnapshotting() const;
 
@@ -496,11 +498,8 @@ private:
     void harvestWeakReferences();
 
     template<typename CellType, typename CellSet>
-    void finalizeUnconditionalFinalizers(CellSet&);
+    void finalizeMarkedUnconditionalFinalizers(CellSet&);
 
-    template<typename CellType>
-    void finalizeUnconditionalFinalizersInIsoSubspace();
-    
     void finalizeUnconditionalFinalizers();
     
     void clearUnmarkedExecutables();
@@ -527,8 +526,8 @@ private:
     size_t visitCount();
     size_t bytesVisited();
     
-    void forEachCodeBlockImpl(const ScopedLambda<bool(CodeBlock*)>&);
-    void forEachCodeBlockIgnoringJITPlansImpl(const AbstractLocker& codeBlockSetLocker, const ScopedLambda<bool(CodeBlock*)>&);
+    void forEachCodeBlockImpl(const ScopedLambda<void(CodeBlock*)>&);
+    void forEachCodeBlockIgnoringJITPlansImpl(const AbstractLocker& codeBlockSetLocker, const ScopedLambda<void(CodeBlock*)>&);
     
     void setMutatorShouldBeFenced(bool value);
     
@@ -609,6 +608,7 @@ private:
     FinalizerOwner m_finalizerOwner;
     
     bool m_isSafeToCollect;
+    bool m_isShuttingDown { false };
 
     bool m_mutatorShouldBeFenced { Options::forceFencedBarrier() };
     unsigned m_barrierThreshold { Options::forceFencedBarrier() ? tautologicalThreshold : blackThreshold };

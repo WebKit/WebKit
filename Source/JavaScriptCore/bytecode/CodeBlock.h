@@ -87,6 +87,7 @@ struct OSRExitState;
 class BytecodeLivenessAnalysis;
 class CodeBlockSet;
 class ExecState;
+class ExecutableToCodeBlockEdge;
 class JSModuleEnvironment;
 class LLIntOffsetsExtractor;
 class PCToCodeOriginMap;
@@ -107,27 +108,15 @@ class CodeBlock : public JSCell {
     friend class JIT;
     friend class LLIntOffsetsExtractor;
 
-    struct UnconditionalFinalizer : public JSC::UnconditionalFinalizer {
-        UnconditionalFinalizer(CodeBlock& codeBlock)
-            : codeBlock(codeBlock)
-        { }
-        void finalizeUnconditionally() override;
-        CodeBlock& codeBlock;
-    };
-
-    struct WeakReferenceHarvester : public JSC::WeakReferenceHarvester {
-        WeakReferenceHarvester(CodeBlock& codeBlock)
-            : codeBlock(codeBlock)
-        { }
-        void visitWeakReferences(SlotVisitor&) override;
-        CodeBlock& codeBlock;
-    };
-
 public:
 
     enum CopyParsedBlockTag { CopyParsedBlock };
 
     static const unsigned StructureFlags = Base::StructureFlags | StructureIsImmortal;
+    static const bool needsDestruction = true;
+
+    template<typename>
+    static void subspaceFor(VM&) { }
 
     DECLARE_INFO;
 
@@ -137,6 +126,8 @@ protected:
 
     void finishCreation(VM&, CopyParsedBlockTag, CodeBlock& other);
     bool finishCreation(VM&, ScriptExecutable* ownerExecutable, UnlinkedCodeBlock*, JSScope*);
+    
+    void finishCreationCommon(VM&);
 
     WriteBarrier<JSGlobalObject> m_globalObject;
 
@@ -200,8 +191,7 @@ public:
     static size_t estimatedSize(JSCell*);
     static void visitChildren(JSCell*, SlotVisitor&);
     void visitChildren(SlotVisitor&);
-    void visitWeakly(SlotVisitor&);
-    void clearVisitWeaklyHasBeenCalled();
+    void finalizeUnconditionally(VM&);
 
     void dumpSource();
     void dumpSource(PrintStream&);
@@ -369,6 +359,8 @@ public:
     
     ExecutableBase* ownerExecutable() const { return m_ownerExecutable.get(); }
     ScriptExecutable* ownerScriptExecutable() const { return jsCast<ScriptExecutable*>(m_ownerExecutable.get()); }
+    
+    ExecutableToCodeBlockEdge* ownerEdge() const { return m_ownerEdge.get(); }
 
     VM* vm() const { return m_poisonedVM.unpoisoned(); }
 
@@ -829,8 +821,6 @@ public:
     // concurrent compilation threads finish what they're doing.
     mutable ConcurrentJSLock m_lock;
 
-    bool m_visitWeaklyHasBeenCalled;
-
     bool m_shouldAlwaysBeInlined; // Not a bitfield because the JIT wants to store to it.
 
 #if ENABLE(JIT)
@@ -918,6 +908,7 @@ protected:
 
 private:
     friend class CodeBlockSet;
+    friend class ExecutableToCodeBlockEdge;
 
     BytecodeLivenessAnalysis& livenessAnalysisSlow();
     
@@ -982,6 +973,7 @@ private:
         };
     };
     WriteBarrier<ExecutableBase> m_ownerExecutable;
+    WriteBarrier<ExecutableToCodeBlockEdge> m_ownerEdge;
     ConstExprPoisoned<CodeBlockPoison, VM*> m_poisonedVM;
 
     PoisonedRefCountedArray<CodeBlockPoison, Instruction> m_instructions;
@@ -1046,9 +1038,6 @@ private:
     MonotonicTime m_creationTime;
 
     std::unique_ptr<RareData> m_rareData;
-
-    PoisonedUniquePtr<CodeBlockPoison, UnconditionalFinalizer> m_unconditionalFinalizer;
-    PoisonedUniquePtr<CodeBlockPoison, WeakReferenceHarvester> m_weakReferenceHarvester;
 };
 
 inline Register& ExecState::r(int index)
@@ -1073,11 +1062,6 @@ inline Register& ExecState::uncheckedR(int index)
 inline Register& ExecState::uncheckedR(VirtualRegister reg)
 {
     return uncheckedR(reg.offset());
-}
-
-inline void CodeBlock::clearVisitWeaklyHasBeenCalled()
-{
-    m_visitWeaklyHasBeenCalled = false;
 }
 
 template <typename ExecutableType>

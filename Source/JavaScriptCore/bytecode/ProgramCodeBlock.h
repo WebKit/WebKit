@@ -34,10 +34,16 @@
 
 namespace JSC {
 
-class ProgramCodeBlock : public GlobalCodeBlock {
+class ProgramCodeBlock final : public GlobalCodeBlock {
 public:
     typedef GlobalCodeBlock Base;
     DECLARE_INFO;
+
+    template<typename>
+    static IsoSubspace* subspaceFor(VM& vm)
+    {
+        return &vm.programCodeBlockSpace.space;
+    }
 
     static ProgramCodeBlock* create(VM* vm, CopyParsedBlockTag, ProgramCodeBlock& other)
     {
@@ -59,7 +65,7 @@ public:
 
     static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
     {
-        return Structure::create(vm, globalObject, prototype, TypeInfo(CellType, StructureFlags), info());
+        return Structure::create(vm, globalObject, prototype, TypeInfo(CodeBlockType, StructureFlags), info());
     }
 
 private:

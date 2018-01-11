@@ -210,6 +210,7 @@ bytecode/DeferredCompilationCallback.cpp
 bytecode/DeferredSourceDump.cpp
 bytecode/DirectEvalCodeCache.cpp
 bytecode/EvalCodeBlock.cpp
+bytecode/ExecutableToCodeBlockEdge.cpp
 bytecode/ExecutionCounter.cpp
 bytecode/ExitKind.cpp
 bytecode/ExitingJITType.cpp

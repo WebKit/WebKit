@@ -44,6 +44,7 @@
 #include "ErrorInstance.h"
 #include "EvalCodeBlock.h"
 #include "Exception.h"
+#include "ExecutableToCodeBlockEdge.h"
 #include "FTLThunks.h"
 #include "FastMallocAlignedMemoryAllocator.h"
 #include "FunctionCodeBlock.h"
@@ -249,6 +250,7 @@ VM::VM(VMType vmType, HeapType heapType)
     , webAssemblyCodeBlockSpace("JSWebAssemblyCodeBlockSpace", heap, webAssemblyCodeBlockHeapCellType.get(), fastMallocAllocator.get())
 #endif
     , directEvalExecutableSpace ISO_SUBSPACE_INIT(heap, destructibleCellHeapCellType.get(), DirectEvalExecutable)
+    , executableToCodeBlockEdgeSpace ISO_SUBSPACE_INIT(heap, cellHeapCellType.get(), ExecutableToCodeBlockEdge)
     , functionExecutableSpace ISO_SUBSPACE_INIT(heap, destructibleCellHeapCellType.get(), FunctionExecutable)
     , indirectEvalExecutableSpace ISO_SUBSPACE_INIT(heap, destructibleCellHeapCellType.get(), IndirectEvalExecutable)
     , inferredTypeSpace ISO_SUBSPACE_INIT(heap, destructibleCellHeapCellType.get(), InferredType)
@@ -261,8 +263,14 @@ VM::VM(VMType vmType, HeapType heapType)
     , structureSpace ISO_SUBSPACE_INIT(heap, destructibleCellHeapCellType.get(), Structure)
     , weakSetSpace ISO_SUBSPACE_INIT(heap, destructibleObjectHeapCellType.get(), JSWeakSet)
     , weakMapSpace ISO_SUBSPACE_INIT(heap, destructibleObjectHeapCellType.get(), JSWeakMap)
+    , executableToCodeBlockEdgesWithConstraints(executableToCodeBlockEdgeSpace)
+    , executableToCodeBlockEdgesWithFinalizers(executableToCodeBlockEdgeSpace)
     , inferredTypesWithFinalizers(inferredTypeSpace)
     , inferredValuesWithFinalizers(inferredValueSpace)
+    , evalCodeBlockSpace ISO_SUBSPACE_INIT(heap, destructibleCellHeapCellType.get(), EvalCodeBlock)
+    , functionCodeBlockSpace ISO_SUBSPACE_INIT(heap, destructibleCellHeapCellType.get(), FunctionCodeBlock)
+    , moduleProgramCodeBlockSpace ISO_SUBSPACE_INIT(heap, destructibleCellHeapCellType.get(), ModuleProgramCodeBlock)
+    , programCodeBlockSpace ISO_SUBSPACE_INIT(heap, destructibleCellHeapCellType.get(), ProgramCodeBlock)
     , vmType(vmType)
     , clientData(0)
     , topEntryFrame(nullptr)
@@ -352,6 +360,7 @@ VM::VM(VMType vmType, HeapType heapType)
     setIteratorStructure.set(*this, JSSetIterator::createStructure(*this, 0, jsNull()));
     mapIteratorStructure.set(*this, JSMapIterator::createStructure(*this, 0, jsNull()));
     bigIntStructure.set(*this, JSBigInt::createStructure(*this, 0, jsNull()));
+    executableToCodeBlockEdgeStructure.set(*this, ExecutableToCodeBlockEdge::createStructure(*this, nullptr, jsNull()));
 
     sentinelSetBucket.set(*this, JSSet::BucketType::createSentinel(*this));
     sentinelMapBucket.set(*this, JSMap::BucketType::createSentinel(*this));
