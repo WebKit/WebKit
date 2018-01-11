@@ -269,7 +269,7 @@ function installDependenciesWithPacman {
         atk \
         enchant \
         faad2 \
-        geoclue \
+        geoclue2 \
         gobject-introspection \
         mesa \
         mesa-libgl \
@@ -308,8 +308,7 @@ function installDependenciesWithPacman {
         wayland"
 
     # These are dependencies necessary for running tests.
-    # Note: apache-mod_bw is available in the AUR, but the main repos
-    #       could not find ruby-json
+    # Note: apache-mod_bw, ruby-json, and ruby-highline are available in the AUR
     packages="$packages \
         apache \
         curl \
@@ -323,7 +322,6 @@ function installDependenciesWithPacman {
         python-gobject \
         python2-psutil \
         ruby \
-        ruby-highline \
         weston \
         xorg-server-xvfb"
 
@@ -371,7 +369,6 @@ function installDependenciesWithPacman {
         xorg-font-utils \
         xorg-util-macros \
         xtrans \
-        xorg-utils \
         yasm"
 
     # These are dependencies necessary for using webkit-patch
@@ -379,9 +376,26 @@ function installDependenciesWithPacman {
         svn"
     pacman -S --needed $packages
 
-    echo "You will also need to follow the instructions on the Arch Wiki to make"
-    echo "'python' call python2 in the webkit folder"
-    echo "https://wiki.archlinux.org/index.php/Python#Dealing_with_version_problem_in_build_scripts"
+	cat <<-EOF
+
+The following packages are available from AUR, and needed for running tests:
+
+    apache-mod_bw ruby-json ruby-highline
+
+Instructions on how to use the AUR can be found on the Arch Wiki:
+
+    https://wiki.archlinux.org/index.php/Arch_User_Repository
+
+You will also need to follow the instructions on the wiki to make 'python'
+call python2 in the WebKit folder:
+
+    https://wiki.archlinux.org/index.php/Python#Dealing_with_version_problem_in_build_scripts
+
+Alternatively, you may use a Python 2.x virtualenv while hacking on WebKitGTK+:
+
+    https://wiki.archlinux.org/index.php/Python/Virtual_environment
+
+EOF
 }
 
 function installDependenciesWithDnf {
