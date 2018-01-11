@@ -1,3 +1,17 @@
+2018-01-11  Saam Barati  <sbarati@apple.com>
+
+        Our for-in caching is wrong when we add indexed properties on things in the prototype chain
+        https://bugs.webkit.org/show_bug.cgi?id=181508
+
+        Reviewed by Yusuke Suzuki.
+
+        * stress/for-in-prototype-with-indexed-properties-should-prevent-caching.js: Added.
+        (assert):
+        (test1.foo):
+        (test1):
+        (test2.foo):
+        (test2):
+
 2018-01-09  Mark Lam  <mark.lam@apple.com>
 
         ASSERTION FAILED: pair.second->m_type & PropertyNode::Getter

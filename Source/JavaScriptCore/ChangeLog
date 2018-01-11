@@ -1,3 +1,22 @@
+2018-01-11  Saam Barati  <sbarati@apple.com>
+
+        Our for-in caching is wrong when we add indexed properties on things in the prototype chain
+        https://bugs.webkit.org/show_bug.cgi?id=181508
+
+        Reviewed by Yusuke Suzuki.
+
+        Our for-in caching would cache structure chains that had prototypes with
+        indexed properties. Clearly this is wrong. This caching breaks when a prototype
+        adds new indexed properties. We would continue to enumerate the old cached
+        state of properties, and not include the new indexed properties.
+        
+        The old code used to prevent caching only if the base structure had
+        indexed properties. This patch extends it to prevent caching if the
+        base, or any structure in the prototype chain, has indexed properties.
+
+        * runtime/Structure.cpp:
+        (JSC::Structure::canCachePropertyNameEnumerator const):
+
 2018-01-10  JF Bastien  <jfbastien@apple.com>
 
         Poison small JSObject derivatives which only contain pointers
