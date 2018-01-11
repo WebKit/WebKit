@@ -1,3 +1,21 @@
+2018-01-10  Andy Estes  <aestes@apple.com>
+
+        [Payment Request] Rename ApplePayMerchantValidationEvent to MerchantValidationEvent
+        https://bugs.webkit.org/show_bug.cgi?id=181437
+        <rdar://problem/36376481>
+
+        Reviewed by Tim Horton.
+
+        * http/tests/paymentrequest/payment-request-change-shipping-address.https.html:
+        * http/tests/paymentrequest/payment-request-change-shipping-option.https.html:
+        * http/tests/paymentrequest/payment-request-merchant-validation.https-expected.txt: Added.
+        * http/tests/paymentrequest/payment-request-merchant-validation.https.html: Added.
+        * http/tests/paymentrequest/resources/helpers.js:
+        (async.getPaymentRequestResponse):
+        * http/tests/paymentrequest/updateWith-method-pmi-handling.https.html:
+        * http/tests/ssl/applepay/ApplePayMerchantValidationEvent.https-expected.txt: Removed.
+        * http/tests/ssl/applepay/ApplePayMerchantValidationEvent.https.html: Removed.
+
 2018-01-10  Ryan Haddad  <ryanhaddad@apple.com>
 
         Update TestExpectations for http/tests/misc/submit-post-keygen.html.

@@ -80,6 +80,7 @@ public:
     void shippingAddressChanged(Ref<PaymentAddress>&&);
     void shippingOptionChanged(const String& shippingOption);
     ExceptionOr<void> updateWith(Event&, Ref<DOMPromise>&&);
+    ExceptionOr<void> completeMerchantValidation(Event&, Ref<DOMPromise>&&);
     void accept(const String& methodName, JSC::Strong<JSC::JSObject>&& details, Ref<PaymentAddress>&& shippingAddress, const String& payerName, const String& payerEmail, const String& payerPhone);
     void complete(std::optional<PaymentComplete>&&);
     void cancel();
@@ -120,6 +121,7 @@ private:
     std::optional<ShowPromise> m_showPromise;
     RefPtr<PaymentHandler> m_activePaymentHandler;
     RefPtr<DOMPromise> m_detailsPromise;
+    RefPtr<DOMPromise> m_merchantSessionPromise;
     bool m_isUpdating { false };
 };
 

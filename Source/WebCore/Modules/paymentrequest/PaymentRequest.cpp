@@ -562,6 +562,34 @@ ExceptionOr<void> PaymentRequest::updateWith(Event& event, Ref<DOMPromise>&& pro
     return { };
 }
 
+ExceptionOr<void> PaymentRequest::completeMerchantValidation(Event& event, Ref<DOMPromise>&& merchantSessionPromise)
+{
+    if (m_state != State::Interactive)
+        return Exception { InvalidStateError };
+
+    event.stopPropagation();
+    event.stopImmediatePropagation();
+
+    m_merchantSessionPromise = WTFMove(merchantSessionPromise);
+    m_merchantSessionPromise->whenSettled([this, protectedThis = makeRefPtr(this)]() {
+        if (m_state != State::Interactive)
+            return;
+
+        if (m_merchantSessionPromise->status() == DOMPromise::Status::Rejected) {
+            stop();
+            return;
+        }
+
+        auto exception = m_activePaymentHandler->merchantValidationCompleted(m_merchantSessionPromise->result());
+        if (exception.hasException()) {
+            abortWithException(exception.releaseException());
+            return;
+        }
+    });
+
+    return { };
+}
+
 void PaymentRequest::settleDetailsPromise(const AtomicString& type)
 {
     auto scopeExit = makeScopeExit([&] {

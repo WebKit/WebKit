@@ -53,7 +53,6 @@ namespace WebCore {
     macro(animationend) \
     macro(animationiteration) \
     macro(animationstart) \
-    macro(applepayvalidatemerchant) \
     macro(audioend) \
     macro(audioprocess) \
     macro(audiostart) \
@@ -153,6 +152,7 @@ namespace WebCore {
     macro(loadingerror) \
     macro(loadstart) \
     macro(mark) \
+    macro(merchantvalidation) \
     macro(message) \
     macro(messageerror) \
     macro(mousedown) \

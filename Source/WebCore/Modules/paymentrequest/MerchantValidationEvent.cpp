@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,34 +23,48 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "MerchantValidationEvent.h"
 
-#if ENABLE(APPLE_PAY) && ENABLE(PAYMENT_REQUEST)
+#if ENABLE(PAYMENT_REQUEST)
 
-#include "ApplePayValidateMerchantEvent.h"
-
-namespace JSC {
-class JSValue;
-}
+#include "PaymentRequest.h"
 
 namespace WebCore {
 
-class Document;
+Ref<MerchantValidationEvent> MerchantValidationEvent::create(const AtomicString& type, const URL& validationURL, PaymentRequest& paymentRequest)
+{
+    return adoptRef(*new MerchantValidationEvent(type, validationURL, paymentRequest));
+}
 
-class ApplePayMerchantValidationEvent final : public ApplePayValidateMerchantEvent {
-public:
-    static Ref<ApplePayMerchantValidationEvent> create(const AtomicString&, const URL&);
-    ExceptionOr<void> complete(Document&, JSC::JSValue);
+MerchantValidationEvent::MerchantValidationEvent(const AtomicString& type, const URL& validationURL, PaymentRequest& paymentRequest)
+    : Event { type, false, false }
+    , m_validationURL { validationURL }
+    , m_paymentRequest { paymentRequest }
+{
+}
 
-private:
-    ApplePayMerchantValidationEvent(const AtomicString&, const URL&);
+EventInterface MerchantValidationEvent::eventInterface() const
+{
+    return MerchantValidationEventInterfaceType;
+}
 
-    // Event
-    EventInterface eventInterface() const final;
+ExceptionOr<void> MerchantValidationEvent::complete(Ref<DOMPromise>&& merchantSessionPromise)
+{
+    if (!isTrusted())
+        return Exception { InvalidStateError };
 
-    bool m_isCompleted { false };
-};
+    if (m_isCompleted)
+        return Exception { InvalidStateError };
+
+    auto exception = m_paymentRequest->completeMerchantValidation(*this, WTFMove(merchantSessionPromise));
+    if (exception.hasException())
+        return exception.releaseException();
+
+    m_isCompleted = true;
+    return { };
+}
 
 } // namespace WebCore
 
-#endif // ENABLE(APPLE_PAY) && ENABLE(PAYMENT_REQUEST)
+#endif // ENABLE(PAYMENT_REQUEST)

@@ -1,3 +1,36 @@
+2018-01-10  Andy Estes  <aestes@apple.com>
+
+        [Payment Request] Rename ApplePayMerchantValidationEvent to MerchantValidationEvent
+        https://bugs.webkit.org/show_bug.cgi?id=181437
+        <rdar://problem/36376481>
+
+        Reviewed by Tim Horton.
+        
+        Renamed ApplePayMerchantValidationEvent to MerchantValidationEvent and changed complete() to accept a Promise.
+
+        Test: http/tests/paymentrequest/payment-request-merchant-validation.https.html
+
+        * DerivedSources.make:
+        * Modules/applepay/paymentrequest/ApplePayPaymentHandler.cpp:
+        (WebCore::ApplePayPaymentHandler::merchantValidationCompleted):
+        (WebCore::ApplePayPaymentHandler::validateMerchant):
+        * Modules/applepay/paymentrequest/ApplePayPaymentHandler.h:
+        * Modules/paymentrequest/MerchantValidationEvent.cpp: Renamed from Source/WebCore/Modules/applepay/paymentrequest/ApplePayMerchantValidationEvent.cpp.
+        (WebCore::MerchantValidationEvent::create):
+        (WebCore::MerchantValidationEvent::MerchantValidationEvent):
+        (WebCore::MerchantValidationEvent::eventInterface const):
+        (WebCore::MerchantValidationEvent::complete):
+        * Modules/paymentrequest/MerchantValidationEvent.h: Renamed from Source/WebCore/Modules/applepay/paymentrequest/ApplePayMerchantValidationEvent.h.
+        * Modules/paymentrequest/MerchantValidationEvent.idl: Renamed from Source/WebCore/Modules/applepay/paymentrequest/ApplePayMerchantValidationEvent.idl.
+        * Modules/paymentrequest/PaymentHandler.h:
+        * Modules/paymentrequest/PaymentRequest.cpp:
+        (WebCore::PaymentRequest::completeMerchantValidation):
+        * Modules/paymentrequest/PaymentRequest.h:
+        * Modules/paymentrequest/PaymentRequest.idl:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/EventNames.h:
+        * dom/EventNames.in:
+
 2018-01-10  Basuke Suzuki  <Basuke.Suzuki@sony.com>
 
         [Curl] Cross-protocol, cross-site scripting (XPXSS) using HTML forms

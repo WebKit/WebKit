@@ -59,7 +59,7 @@ function testShippingOptionChanged() {
       detailsWithShippingOptions,
       requestShipping
     );
-    request.onapplepayvalidatemerchant = event => {
+    request.onmerchantvalidation = event => {
         event.complete({ });
         internals.mockPaymentCoordinator.changeShippingOption("valid-1");
     };

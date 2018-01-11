@@ -65,7 +65,7 @@ function testShippingAddressChange() {
       null,
       "request.shippingAddress must initially be null"
     );
-    request.onapplepayvalidatemerchant = event => {
+    request.onmerchantvalidation = event => {
         event.complete({ });
     };
     const listenerPromise = new Promise(resolve => {
