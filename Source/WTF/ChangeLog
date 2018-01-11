@@ -1,3 +1,21 @@
+2018-01-11  Filip Pizlo  <fpizlo@apple.com>
+
+        Reserve a fast TLS key for GC TLC
+        https://bugs.webkit.org/show_bug.cgi?id=181539
+
+        Reviewed by Alexey Proskuryakov.
+        
+        Who knew that thread-local caches would be a mitigation for timing attacks. Here's how it
+        works: if we have TLCs then we can "context switch" them when we "context switch" origins. 
+        This allows us to put some minimal distance between objects from different origins, which
+        gives us the ability to allow small overflows when doing certain bounds checks without
+        creating a useful Spectre information leak.
+        
+        So I think that means we have to implement thread-local caches (also known as thread-local
+        allocation buffers, but I prefer the TLC terminology).
+
+        * wtf/FastTLS.h:
+
 2018-01-04  Filip Pizlo  <fpizlo@apple.com>
 
         CodeBlocks should be in IsoSubspaces

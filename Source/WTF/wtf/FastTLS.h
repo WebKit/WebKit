@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -45,7 +45,8 @@ namespace WTF {
 
 #define WTF_THREAD_DATA_KEY WTF_FAST_TLS_KEY0
 #define WTF_WASM_CONTEXT_KEY WTF_FAST_TLS_KEY1
-#define WTF_TESTING_KEY WTF_FAST_TLS_KEY2
+#define WTF_TESTING_KEY WTF_WASM_CONTEXT_KEY // So far, this key is only used in places that don't do WebAssembly, so it's OK that they share the same key.
+#define WTF_GC_TLC_KEY WTF_FAST_TLS_KEY2
 
 #if ENABLE(FAST_TLS_JIT)
 inline unsigned fastTLSOffsetForKey(unsigned long slot)
