@@ -1,3 +1,20 @@
+2018-01-10  Simon Fraser  <simon.fraser@apple.com>
+
+        On macOS, getBoundingClientRect gives incorrect values when pinch-zoomed
+        https://bugs.webkit.org/show_bug.cgi?id=181511
+        rdar://problem/33741427
+
+        Reviewed by Zalan Bujtas.
+        
+        When reverting "client coordinates are relative to layout viewport" in r219829
+        I broke documentToClientOffset() on macOS by failing to take pinch zoom scale into
+        account (frameScaleFactor() is always 1 on iOs, so this bug doesn't manifest there).
+
+        Covered by existing tests.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::documentToClientOffset const):
+
 2018-01-11  Youenn Fablet  <youenn@apple.com>
 
         Replace WebRTCLegacyAPIDisabled by WebRTCLegacyAPIEnabled and switch off WebRTC legacy flag by default

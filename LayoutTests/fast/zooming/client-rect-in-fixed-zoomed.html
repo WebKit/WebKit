@@ -40,7 +40,7 @@
             var box = document.getElementById('box');
             clientRect = box.getBoundingClientRect();
             
-            shouldBe('JSON.stringify(clientRect)', 'JSON.stringify({x: 22, y: 32, width: 20, height: 10, top: 32, right: 42, bottom:42, left: 22})');
+            shouldBe('JSON.stringify(clientRect)', 'JSON.stringify({x: 22, y: -108, width: 20, height: 10, top: -108, right: 42, bottom:-98, left: 22})');
             
             finishJSTest();
         }

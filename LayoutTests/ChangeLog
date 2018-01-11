@@ -1,3 +1,21 @@
+2018-01-10  Simon Fraser  <simon.fraser@apple.com>
+
+        On macOS, getBoundingClientRect gives incorrect values when pinch-zoomed
+        https://bugs.webkit.org/show_bug.cgi?id=181511
+        rdar://problem/33741427
+
+        Reviewed by Zalan Bujtas.
+
+        New results in tests that get client coordinates after zooming.
+
+        * fast/visual-viewport/client-coordinates-relative-to-layout-viewport-expected.txt:
+        * fast/visual-viewport/client-rects-relative-to-layout-viewport-expected.txt:
+        * fast/visual-viewport/client-rects-relative-to-layout-viewport-zoomed.html:
+        * fast/visual-viewport/zoomed-fixed-expected.txt:
+        * fast/visual-viewport/zoomed-fixed-header-and-footer-expected.txt:
+        * fast/zooming/client-rect-in-fixed-zoomed-expected.txt:
+        * fast/zooming/client-rect-in-fixed-zoomed.html: Change the test to create passing results.
+
 2018-01-11  Eric Carlson  <eric.carlson@apple.com>
 
         Layout Test media/event-queue-crash.html is flaky
