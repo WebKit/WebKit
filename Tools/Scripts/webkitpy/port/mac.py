@@ -70,7 +70,7 @@ class MacPort(DarwinPort):
     @memoized
     def default_baseline_search_path(self):
         version_name_map = VersionNameMap.map(self.host.platform)
-        if self._os_version < self.VERSION_MIN or self._os_version > self.VERSION_MAX:
+        if self._os_version < self.VERSION_MIN or self._os_version >= self.VERSION_MAX:
             version_fallback = [self._os_version]
         else:
             sorted_versions = sorted(version_name_map.mapping_for_platform(platform=self.port_name).values())

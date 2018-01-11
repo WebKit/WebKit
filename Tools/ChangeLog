@@ -1,3 +1,15 @@
+2018-01-11  Jonathan Bedard  <jbedard@apple.com>
+
+        REGRESSION(r225856): Incorrectly managing 'future' baseline_search_paths. 
+        https://bugs.webkit.org/show_bug.cgi?id=179621
+        <rdar://problem/35589585>
+
+        Unreviewed infrastructure fix.
+
+        * Scripts/webkitpy/port/mac.py:
+        (MacPort.default_baseline_search_path): Include 'future' in the version_fallback
+        list if we are the VERSION_MAX, which usually corresponds with future.
+
 2018-01-11  Filip Pizlo  <fpizlo@apple.com>
 
         CodeBlocks should be in IsoSubspaces
