@@ -178,8 +178,10 @@ private:
     void performKeyboardInteractions(Vector<KeyboardInteraction>&&, Function<void (CommandResult&&)>&&);
 
     std::unique_ptr<SessionHost> m_host;
-    Timeouts m_timeouts;
     String m_id;
+    Seconds m_scriptTimeout;
+    Seconds m_pageLoadTimeout;
+    Seconds m_implicitWaitTimeout;
     std::optional<String> m_toplevelBrowsingContext;
     std::optional<String> m_currentBrowsingContext;
 };

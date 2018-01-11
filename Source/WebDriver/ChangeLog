@@ -1,3 +1,37 @@
+2018-01-11  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        WebDriver: implement get timeouts command
+        https://bugs.webkit.org/show_bug.cgi?id=181524
+
+        Reviewed by Žan Doberšek.
+
+        8.4 Get Timeouts
+        https://w3c.github.io/webdriver/webdriver-spec.html#get-timeouts
+
+        Also simplify the way timeouts are handled in Session. Stop using Timeouts struct, because once the session is
+        created the timeouts are no longer optional, they have a default value. Use individual members instead that are
+        initialized to their default values on construction and only overriden by capabilities or set timeouts command.
+
+        Fixes: imported/w3c/webdriver/tests/sessions/get_timeouts.py::test_get_timeouts
+               imported/w3c/webdriver/tests/sessions/get_timeouts.py::test_get_default_timeouts
+               imported/w3c/webdriver/tests/sessions/get_timeouts.py::test_get_new_timeouts
+
+        * Session.cpp:
+        (WebDriver::Session::Session):
+        (WebDriver::Session::getTimeouts):
+        (WebDriver::Session::setTimeouts):
+        (WebDriver::Session::go):
+        (WebDriver::Session::back):
+        (WebDriver::Session::forward):
+        (WebDriver::Session::refresh):
+        (WebDriver::Session::findElements):
+        (WebDriver::Session::waitForNavigationToComplete):
+        (WebDriver::Session::executeScript):
+        * Session.h:
+        * WebDriverService.cpp:
+        (WebDriver::WebDriverService::getTimeouts):
+        * WebDriverService.h:
+
 2018-01-10  Zan Dobersek  <zdobersek@igalia.com>
 
         WebDriver: deserializeTimeouts() shouldn't reject double timeout values
