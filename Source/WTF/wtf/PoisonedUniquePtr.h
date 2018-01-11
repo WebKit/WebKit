@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,6 +28,9 @@
 #include <wtf/FastMalloc.h>
 #include <wtf/Poisoned.h>
 
+#include <cstddef>
+#include <memory>
+
 namespace WTF {
 
 template<uint32_t key, typename T, typename Enable = void>
@@ -36,8 +39,15 @@ class PoisonedUniquePtr : public ConstExprPoisoned<key, T*> {
     using Base = ConstExprPoisoned<key, T*>;
 public:
     PoisonedUniquePtr() = default;
+    PoisonedUniquePtr(std::nullptr_t) : Base() { }
     PoisonedUniquePtr(T* ptr) : Base(ptr) { }
     PoisonedUniquePtr(PoisonedUniquePtr&& ptr) : Base(WTFMove(ptr)) { ptr.clearWithoutDestroy(); }
+    PoisonedUniquePtr(std::unique_ptr<T>&& unique) : PoisonedUniquePtr(unique.release()) { }
+
+    template<typename U, typename = std::enable_if_t<std::is_base_of<T, U>::value>>
+    PoisonedUniquePtr(std::unique_ptr<U>&& unique)
+        : Base(unique.release())
+    { }
 
     template<uint32_t key2, typename U, typename = std::enable_if_t<std::is_base_of<T, U>::value>>
     PoisonedUniquePtr(PoisonedUniquePtr<key2, U>&& ptr)
@@ -62,6 +72,21 @@ public:
             this->clear();
             this->Base::operator=(ptr);
         }
+        return *this;
+    }
+
+    PoisonedUniquePtr& operator=(std::unique_ptr<T>&& unique)
+    {
+        this->clear();
+        this->Base::operator=(unique.release());
+        return *this;
+    }
+
+    template<typename U, typename = std::enable_if_t<std::is_base_of<T, U>::value>>
+    PoisonedUniquePtr& operator=(std::unique_ptr<U>&& unique)
+    {
+        this->clear();
+        this->Base::operator=(unique.release());
         return *this;
     }
 
@@ -113,8 +138,10 @@ class PoisonedUniquePtr<key, T[]> : public ConstExprPoisoned<key, T*> {
     using Base = ConstExprPoisoned<key, T*>;
 public:
     PoisonedUniquePtr() = default;
+    PoisonedUniquePtr(std::nullptr_t) : Base() { }
     PoisonedUniquePtr(T* ptr) : Base(ptr) { }
     PoisonedUniquePtr(PoisonedUniquePtr&& ptr) : Base(WTFMove(ptr)) { ptr.clearWithoutDestroy(); }
+    PoisonedUniquePtr(std::unique_ptr<T[]>&& unique) : PoisonedUniquePtr(unique.release()) { }
 
     template<uint32_t key2>
     PoisonedUniquePtr(PoisonedUniquePtr<key2, T[]>&& ptr)
@@ -142,6 +169,13 @@ public:
             this->clear();
             this->Base::operator=(ptr);
         }
+        return *this;
+    }
+    
+    PoisonedUniquePtr& operator=(std::unique_ptr<T[]>&& unique)
+    {
+        this->clear();
+        this->Base::operator=(unique.release());
         return *this;
     }
 

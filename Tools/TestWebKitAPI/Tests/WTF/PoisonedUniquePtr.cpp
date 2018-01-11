@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -63,6 +63,11 @@ TEST(WTF_PoisonedUniquePtr, Basic)
 {
     {
         PoisonedUniquePtr<PoisonA, Logger> empty;
+        ASSERT_EQ(nullptr, empty.unpoisoned());
+        ASSERT_EQ(0u, empty.bits());
+    }
+    {
+        PoisonedUniquePtr<PoisonA, Logger> empty(nullptr);
         ASSERT_EQ(nullptr, empty.unpoisoned());
         ASSERT_EQ(0u, empty.bits());
     }
@@ -162,6 +167,26 @@ TEST(WTF_PoisonedUniquePtr, Basic)
             ASSERT_EQ(bName, &ptr->name);
         }
         ASSERT_EQ(1, bDestructCount);
+
+        int uniqueDestructCount = 0;
+        const char* uniqueName = "unique";
+        {
+            PoisonedUniquePtr<PoisonA, DerivedLogger> ptr = std::make_unique<DerivedLogger>(uniqueName, uniqueDestructCount);
+            ASSERT_EQ(0, uniqueDestructCount);
+            ASSERT_TRUE(nullptr != ptr.unpoisoned());
+            ASSERT_EQ(uniqueName, &ptr->name);
+        }
+        ASSERT_EQ(1, uniqueDestructCount);
+
+        int uniqueDerivedDestructCount = 0;
+        const char* uniqueDerivedName = "unique derived";
+        {
+            PoisonedUniquePtr<PoisonA, Logger> ptr = std::make_unique<DerivedLogger>(uniqueDerivedName, uniqueDerivedDestructCount);
+            ASSERT_EQ(0, uniqueDerivedDestructCount);
+            ASSERT_TRUE(nullptr != ptr.unpoisoned());
+            ASSERT_EQ(uniqueDerivedName, &ptr->name);
+        }
+        ASSERT_EQ(1, uniqueDerivedDestructCount);
     }
 
     {

@@ -53,8 +53,15 @@ TEST(WTF_Poisoned, Basic)
     initializeTestPoison();
     DerivedRefLogger a("a");
 
-    Poisoned<g_testPoisonA, RefLogger*> empty;
-    ASSERT_EQ(nullptr, empty.unpoisoned());
+    {
+        Poisoned<g_testPoisonA, RefLogger*> empty;
+        ASSERT_EQ(nullptr, empty.unpoisoned());
+    }
+
+    {
+        Poisoned<g_testPoisonA, RefLogger*> empty(nullptr);
+        ASSERT_EQ(nullptr, empty.unpoisoned());
+    }
 
     {
         Poisoned<g_testPoisonA, RefLogger*> ptr(&a);

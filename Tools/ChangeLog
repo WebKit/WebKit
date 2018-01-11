@@ -1,3 +1,21 @@
+2018-01-10  JF Bastien  <jfbastien@apple.com>
+
+        Poison small JSObject derivatives which only contain pointers
+        https://bugs.webkit.org/show_bug.cgi?id=181483
+        <rdar://problem/36407127>
+
+        Reviewed by Mark Lam.
+
+        Test the new move-assign and move-copy from unique_ptr, as well as
+        nullptr_t ctors.
+
+        * TestWebKitAPI/Tests/WTF/Poisoned.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WTF/PoisonedUniquePtr.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WTF/PoisonedUniquePtrForTriviallyDestructibleArrays.cpp:
+        (TestWebKitAPI::TEST):
+
 2018-01-10  Chris Dumez  <cdumez@apple.com>
 
         Multiple http/wpt/beacon/contentextensions/ test are flaky.

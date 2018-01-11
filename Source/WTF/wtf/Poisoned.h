@@ -25,8 +25,10 @@
 
 #pragma once
 
-#include <utility>
 #include <wtf/Assertions.h>
+
+#include <cstddef>
+#include <utility>
 
 #define ENABLE_POISON 1
 #define ENABLE_POISON_ASSERTS 0
@@ -92,6 +94,8 @@ template<typename KeyType, KeyType key, typename T, typename = std::enable_if_t<
 class PoisonedImpl {
 public:
     PoisonedImpl() { }
+
+    PoisonedImpl(std::nullptr_t) { }
 
     PoisonedImpl(T ptr)
         : m_poisonedBits(poison(ptr))

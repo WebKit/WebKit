@@ -1,3 +1,38 @@
+2018-01-10  JF Bastien  <jfbastien@apple.com>
+
+        Poison small JSObject derivatives which only contain pointers
+        https://bugs.webkit.org/show_bug.cgi?id=181483
+        <rdar://problem/36407127>
+
+        Reviewed by Mark Lam.
+
+        I wrote a script that finds interesting things to poison or
+        generally harden. These stood out because they derive from
+        JSObject and only contain a few pointer or pointer-like fields,
+        and could therefore just be poisoned. This also requires some
+        template "improvements" to our poisoning machinery. Worth noting
+        is that I'm making PoisonedUniquePtr move-assignable and
+        move-constructible from unique_ptr, which makes it a better
+        drop-in replacement because we don't need to use
+        makePoisonedUniquePtr. This means function-locals can be
+        unique_ptr and get the nice RAII pattern, and once the function is
+        done you can just move to the class' PoisonedUniquePtr without
+        worrying.
+
+        * API/JSAPIWrapperObject.h:
+        (JSC::JSAPIWrapperObject::wrappedObject):
+        * API/JSAPIWrapperObject.mm:
+        (JSC::JSAPIWrapperObject::JSAPIWrapperObject):
+        * API/JSCallbackObject.h:
+        * runtime/ArrayPrototype.h:
+        * runtime/DateInstance.h:
+        * runtime/JSArrayBuffer.cpp:
+        (JSC::JSArrayBuffer::finishCreation):
+        (JSC::JSArrayBuffer::isShared const):
+        (JSC::JSArrayBuffer::sharingMode const):
+        * runtime/JSArrayBuffer.h:
+        * runtime/JSCPoison.h:
+
 2018-01-10  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r226667 and r226673.

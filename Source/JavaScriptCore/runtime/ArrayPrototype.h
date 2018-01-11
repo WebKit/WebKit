@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- *  Copyright (C) 2007, 2011, 2015 Apple Inc. All rights reserved.
+ *  Copyright (C) 2007-2018 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -21,6 +21,8 @@
 #pragma once
 
 #include "JSArray.h"
+#include "JSCPoison.h"
+#include <wtf/PoisonedUniquePtr.h>
 
 namespace JSC {
 
@@ -60,8 +62,8 @@ protected:
 private:
     // This bit is set if any user modifies the constructor property Array.prototype. This is used to optimize species creation for JSArrays.
     friend ArrayPrototypeAdaptiveInferredPropertyWatchpoint;
-    std::unique_ptr<ArrayPrototypeAdaptiveInferredPropertyWatchpoint> m_constructorWatchpoint;
-    std::unique_ptr<ArrayPrototypeAdaptiveInferredPropertyWatchpoint> m_constructorSpeciesWatchpoint;
+    PoisonedUniquePtr<ArrayPrototypePoison, ArrayPrototypeAdaptiveInferredPropertyWatchpoint> m_constructorWatchpoint;
+    PoisonedUniquePtr<ArrayPrototypePoison, ArrayPrototypeAdaptiveInferredPropertyWatchpoint> m_constructorSpeciesWatchpoint;
 };
 
 EncodedJSValue JSC_HOST_CALL arrayProtoFuncToString(ExecState*);

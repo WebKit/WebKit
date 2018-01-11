@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -50,6 +50,11 @@ TEST(WTF_PoisonedUniquePtrForTriviallyDestructibleArrays, Basic)
 {
     {
         PoisonedUniquePtr<PoisonA, int[]> empty;
+        ASSERT_EQ(nullptr, empty.unpoisoned());
+        ASSERT_EQ(0u, empty.bits());
+    }
+    {
+        PoisonedUniquePtr<PoisonA, int[]> empty(nullptr);
         ASSERT_EQ(nullptr, empty.unpoisoned());
         ASSERT_EQ(0u, empty.bits());
     }
