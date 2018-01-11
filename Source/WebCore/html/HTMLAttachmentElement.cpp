@@ -283,6 +283,7 @@ void HTMLAttachmentElement::populateShadowRootIfNecessary()
         auto image = ensureInnerImage();
         if (image->attributeWithoutSynchronization(srcAttr).isEmpty()) {
             image->setAttributeWithoutSynchronization(srcAttr, DOMURL::createObjectURL(document(), *m_file));
+            image->setAttributeWithoutSynchronization(draggableAttr, AtomicString("false"));
             image->setInlineStyleProperty(CSSPropertyDisplay, CSSValueInline, true);
         }
 

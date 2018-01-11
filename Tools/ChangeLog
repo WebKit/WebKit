@@ -1,3 +1,18 @@
+2018-01-11  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Attachment Support] Support moving attachment elements in editable areas using drag and drop
+        https://bugs.webkit.org/show_bug.cgi?id=181337
+        <rdar://problem/36324813>
+
+        Reviewed by Tim Horton.
+
+        Add 3 new API tests for attachment element dragging.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WKAttachmentTests.mm:
+        (-[TestWKWebView expectElementTag:toComeBefore:]):
+        (-[NSItemProvider expectType:withData:]):
+        (TestWebKitAPI::TEST):
+
 2018-01-11  Jonathan Bedard  <jbedard@apple.com>
 
         REGRESSION(r225856): Incorrectly managing 'future' baseline_search_paths. 

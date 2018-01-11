@@ -159,10 +159,11 @@ void Editor::getPasteboardTypesAndDataForAttachment(HTMLAttachmentElement& attac
 {
     auto attachmentRange = Range::create(attachment.document(), { &attachment, Position::PositionIsBeforeAnchor }, { &attachment, Position::PositionIsAfterAnchor });
     client()->getClientPasteboardDataForRange(attachmentRange.ptr(), outTypes, outData);
-    if (auto archive = LegacyWebArchive::create(attachmentRange.ptr())) {
-        outTypes.append(WebArchivePboardType);
-        outData.append(SharedBuffer::create(archive->rawDataRepresentation().get()));
-    }
+    // FIXME: We should additionally write the attachment as a web archive here, such that drag and drop within the
+    // same page doesn't destroy and recreate attachments unnecessarily. This is also needed to preserve the attachment
+    // display mode when dragging and dropping or cutting and pasting. For the time being, this is disabled because
+    // inserting attachment elements from web archive data sometimes causes attachment data to be lost; this requires
+    // further investigation.
 }
 
 #endif

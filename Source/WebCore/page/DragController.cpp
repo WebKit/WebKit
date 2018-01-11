@@ -719,24 +719,39 @@ static bool imageElementIsDraggable(const HTMLImageElement& image, const Frame& 
     return cachedImage && !cachedImage->errorOccurred() && cachedImage->imageForRenderer(renderer);
 }
 
+#if ENABLE(ATTACHMENT_ELEMENT)
+
+static RefPtr<HTMLAttachmentElement> enclosingAttachmentElement(Element& element)
+{
+    if (is<HTMLAttachmentElement>(element))
+        return downcast<HTMLAttachmentElement>(&element);
+
+    if (is<HTMLAttachmentElement>(element.parentOrShadowHostElement()))
+        return downcast<HTMLAttachmentElement>(element.parentOrShadowHostElement());
+
+    return { };
+}
+
+#endif
+
 Element* DragController::draggableElement(const Frame* sourceFrame, Element* startElement, const IntPoint& dragOrigin, DragState& state) const
 {
     state.type = (sourceFrame->selection().contains(dragOrigin)) ? DragSourceActionSelection : DragSourceActionNone;
     if (!startElement)
         return nullptr;
 #if ENABLE(ATTACHMENT_ELEMENT)
-    if (is<HTMLAttachmentElement>(startElement)) {
+    if (auto attachment = enclosingAttachmentElement(*startElement)) {
         auto selection = sourceFrame->selection().selection();
-        bool isSingleAttachmentSelection = selection.start() == Position(startElement, Position::PositionIsBeforeAnchor) && selection.end() == Position(startElement, Position::PositionIsAfterAnchor);
+        bool isSingleAttachmentSelection = selection.start() == Position(attachment.get(), Position::PositionIsBeforeAnchor) && selection.end() == Position(attachment.get(), Position::PositionIsAfterAnchor);
         bool isAttachmentElementInCurrentSelection = false;
         if (auto selectedRange = selection.toNormalizedRange()) {
-            auto compareResult = selectedRange->compareNode(*startElement);
+            auto compareResult = selectedRange->compareNode(*attachment);
             isAttachmentElementInCurrentSelection = !compareResult.hasException() && compareResult.releaseReturnValue() == Range::NODE_INSIDE;
         }
 
         if (!isAttachmentElementInCurrentSelection || isSingleAttachmentSelection) {
             state.type = DragSourceActionAttachment;
-            return startElement;
+            return attachment.get();
         }
     }
 #endif
@@ -856,6 +871,9 @@ bool DragController::startDrag(Frame& src, const DragState& state, DragOperation
     bool includeShadowDOM = false;
 #if ENABLE(VIDEO)
     includeShadowDOM = state.source->isMediaElement();
+#endif
+#if ENABLE(ATTACHMENT_ELEMENT)
+    includeShadowDOM = includeShadowDOM || is<HTMLAttachmentElement>(state.source.get());
 #endif
     bool sourceContainsHitNode;
     if (!includeShadowDOM)
@@ -1071,17 +1089,15 @@ bool DragController::startDrag(Frame& src, const DragState& state, DragOperation
     if (is<HTMLAttachmentElement>(element) && m_dragSourceAction & DragSourceActionAttachment) {
         auto& attachment = downcast<HTMLAttachmentElement>(element);
         auto* attachmentRenderer = attachment.attachmentRenderer();
-        if (!attachmentRenderer)
-            return false;
 
         src.editor().setIgnoreSelectionChanges(true);
         auto previousSelection = src.selection().selection();
-        if (hasData == HasNonDefaultPasteboardData::No) {
-            selectElement(element);
-            if (!dragAttachmentElement(src, attachment) && src.editor().client()) {
+        selectElement(element);
+        if (hasData == HasNonDefaultPasteboardData::No && !dragAttachmentElement(src, attachment)) {
+            auto& editor = src.editor();
+            if (editor.client()) {
 #if PLATFORM(COCOA)
                 // Otherwise, if no file URL is specified, call out to the injected bundle to populate the pasteboard with data.
-                auto& editor = src.editor();
                 editor.willWriteSelectionToPasteboard(src.selection().toNormalizedRange().get());
                 editor.writeSelectionToPasteboard(dataTransfer.pasteboard());
                 editor.didWriteSelectionToPasteboard();
@@ -1093,16 +1109,19 @@ bool DragController::startDrag(Frame& src, const DragState& state, DragOperation
         
         if (!dragImage) {
             TextIndicatorData textIndicator;
-            attachmentRenderer->setShouldDrawBorder(false);
+            if (attachmentRenderer)
+                attachmentRenderer->setShouldDrawBorder(false);
             dragImage = DragImage { dissolveDragImageToFraction(createDragImageForSelection(src, textIndicator), DragImageAlpha) };
-            attachmentRenderer->setShouldDrawBorder(true);
+            if (attachmentRenderer)
+                attachmentRenderer->setShouldDrawBorder(true);
             if (textIndicator.contentImage)
                 dragImage.setIndicatorData(textIndicator);
             dragLoc = dragLocForSelectionDrag(src);
             m_dragOffset = IntPoint(dragOrigin.x() - dragLoc.x(), dragOrigin.y() - dragLoc.y());
         }
         doSystemDrag(WTFMove(dragImage), dragLoc, dragOrigin, src, state);
-        src.selection().setSelection(previousSelection);
+        if (!element.isContentRichlyEditable())
+            src.selection().setSelection(previousSelection);
         src.editor().setIgnoreSelectionChanges(false);
         return true;
     }

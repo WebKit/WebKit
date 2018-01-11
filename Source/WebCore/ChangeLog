@@ -1,3 +1,50 @@
+2018-01-11  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Attachment Support] Support moving attachment elements in editable areas using drag and drop
+        https://bugs.webkit.org/show_bug.cgi?id=181337
+        <rdar://problem/36324813>
+
+        Reviewed by Tim Horton.
+
+        Makes slight adjustments to attachment-specific drag and drop logic to ensure that moving attachments via drag
+        and drop behaves correctly. See per-change comments for more detail.
+
+        Tests:  WKAttachmentTests.DragInPlaceVideoAttachmentElement
+                WKAttachmentTests.MoveAttachmentElementAsIconByDragging
+                WKAttachmentTests.MoveInPlaceAttachmentElementByDragging
+
+        * editing/cocoa/EditorCocoa.mm:
+        (WebCore::Editor::getPasteboardTypesAndDataForAttachment):
+
+        Stop vending the private web archive pasteboard type for attachments, for now. This works around issues where an
+        attachment element that is dragged and dropped within the same page may lose its blob backing data if we try to
+        remove and insert it as a fragment from the archive. Providing a web archive would allow us to avoid destroying
+        and recreating an attachment element when dragging within the same page, but this is a nice-to-have optimization
+        we can re-enable after investigation in a subsequent patch.
+
+        * html/HTMLAttachmentElement.cpp:
+        (WebCore::HTMLAttachmentElement::populateShadowRootIfNecessary):
+
+        Add `draggable=false` to the image element of an in-place attachment element.
+
+        * page/DragController.cpp:
+        (WebCore::enclosingAttachmentElement):
+        (WebCore::DragController::draggableElement const):
+
+        Tweak single-selected-attachment handling to account for in-place attachments. Since the hit-tested node is
+        inside the shadow subtree of the attachment element, the condition needs to check for the startElement as well
+        as the startElement's shadow host.
+
+        (WebCore::DragController::startDrag):
+
+        Make two tweaks here. First, don't require a RenderAttachment to drag an attachment element (this is required
+        for dragging in-place attachments). This was added in r217083 to address <rdar://problem/32282831>, but is no
+        longer correct, since attachments may now be displayed in-place.
+
+        Secondly, only restore the previous selection if the attachment is in a richly contenteditable area. This was
+        added to prevent the selection highlight from appearing in when dragging non-editable attachment elements in the
+        Mail viewer. However, to allow drag moves to occur, we need the selection to persist after drag start.
+
 2018-01-04  Filip Pizlo  <fpizlo@apple.com>
 
         CodeBlocks should be in IsoSubspaces

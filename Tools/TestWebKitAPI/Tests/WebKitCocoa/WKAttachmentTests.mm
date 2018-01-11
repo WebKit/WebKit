@@ -184,6 +184,22 @@ static _WKAttachmentDisplayOptions *displayOptionsWithMode(_WKAttachmentDisplayM
 
 @implementation TestWKWebView (AttachmentTesting)
 
+- (void)expectElementTag:(NSString *)tagName toComeBefore:(NSString *)otherTagName
+{
+    NSArray *tagsInBody = [self objectByEvaluatingJavaScript:@"Array.from(document.body.getElementsByTagName('*')).map(e => e.tagName)"];
+    BOOL success = [tagsInBody containsObject:tagName] && [tagsInBody containsObject:otherTagName];
+    if (success) {
+        NSUInteger index = [tagsInBody indexOfObject:tagName];
+        NSUInteger otherIndex = [tagsInBody indexOfObjectWithOptions:NSEnumerationReverse passingTest:[&] (NSString *tag, NSUInteger, BOOL *) {
+            return [tag isEqualToString:otherTagName];
+        }];
+        success = index < otherIndex;
+    }
+    EXPECT_TRUE(success);
+    if (!success)
+        NSLog(@"Expected %@ to come before %@ in tags: %@", tagName, otherTagName, tagsInBody);
+}
+
 - (BOOL)_synchronouslyExecuteEditCommand:(NSString *)command argument:(NSString *)argument
 {
     __block bool done = false;
@@ -1308,6 +1324,91 @@ TEST(WKAttachmentTestsIOS, DragAttachmentInsertedAsData)
     EXPECT_EQ(UIPreferredPresentationStyleAttachment, itemProvider.preferredPresentationStyle);
     [itemProvider expectType:(NSString *)kUTTypePDF withData:data.get()];
     EXPECT_WK_STREQ("document.pdf", [itemProvider suggestedName]);
+    [draggingSimulator endDataTransfer];
+}
+
+TEST(WKAttachmentTestsIOS, DragInPlaceVideoAttachmentElement)
+{
+    auto webView = webViewForTestingAttachments();
+    auto data = retainPtr(testVideoData());
+    RetainPtr<_WKAttachment> attachment;
+    {
+        ObserveAttachmentUpdatesForScope observer(webView.get());
+        attachment = [webView synchronouslyInsertAttachmentWithFilename:@"video.mp4" contentType:@"video/mp4" data:data.get() options:displayOptionsWithMode(_WKAttachmentDisplayModeInPlace)];
+        observer.expectAttachmentUpdates(@[], @[attachment.get()]);
+    }
+
+    [webView waitForAttachmentElementSizeToBecome:CGSizeMake(320, 240)];
+    [attachment expectRequestedDataToBe:data.get()];
+    EXPECT_WK_STREQ("video.mp4", [webView valueOfAttribute:@"title" forQuerySelector:@"attachment"]);
+    EXPECT_WK_STREQ("video/mp4", [webView valueOfAttribute:@"type" forQuerySelector:@"attachment"]);
+
+    [webView evaluateJavaScript:@"getSelection().removeAllRanges()" completionHandler:nil];
+    auto draggingSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
+    [draggingSimulator runFrom:CGPointMake(25, 25) to:CGPointMake(-100, -100)];
+
+    EXPECT_EQ(1U, [draggingSimulator sourceItemProviders].count);
+    NSItemProvider *itemProvider = [draggingSimulator sourceItemProviders].firstObject;
+    EXPECT_EQ(UIPreferredPresentationStyleAttachment, itemProvider.preferredPresentationStyle);
+    [itemProvider expectType:(NSString *)kUTTypeMPEG4 withData:data.get()];
+    EXPECT_WK_STREQ("video.mp4", [itemProvider suggestedName]);
+    [draggingSimulator endDataTransfer];
+}
+
+TEST(WKAttachmentTestsIOS, MoveAttachmentElementAsIconByDragging)
+{
+    auto webView = webViewForTestingAttachments();
+    auto data = retainPtr(testPDFData());
+    RetainPtr<_WKAttachment> attachment;
+    {
+        ObserveAttachmentUpdatesForScope observer(webView.get());
+        attachment = [webView synchronouslyInsertAttachmentWithFilename:@"document.pdf" contentType:@"application/pdf" data:data.get() options:displayOptionsWithMode(_WKAttachmentDisplayModeAsIcon)];
+        observer.expectAttachmentUpdates(@[], @[attachment.get()]);
+    }
+
+    [webView _executeEditCommand:@"InsertParagraph" argument:nil completion:nil];
+    [webView _executeEditCommand:@"InsertHTML" argument:@"<strong>text</strong>" completion:nil];
+    [webView _synchronouslyExecuteEditCommand:@"InsertParagraph" argument:nil];
+    [webView expectElementTag:@"ATTACHMENT" toComeBefore:@"STRONG"];
+
+    auto draggingSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
+    [draggingSimulator runFrom:CGPointMake(25, 25) to:CGPointMake(25, 125)];
+
+    attachment = [[draggingSimulator insertedAttachments] firstObject];
+    [attachment expectRequestedDataToBe:data.get()];
+    EXPECT_WK_STREQ("document.pdf", [webView valueOfAttribute:@"title" forQuerySelector:@"attachment"]);
+    EXPECT_WK_STREQ("application/pdf", [webView valueOfAttribute:@"type" forQuerySelector:@"attachment"]);
+
+    [webView expectElementTag:@"STRONG" toComeBefore:@"ATTACHMENT"];
+    [draggingSimulator endDataTransfer];
+}
+
+TEST(WKAttachmentTestsIOS, MoveInPlaceAttachmentElementByDragging)
+{
+    auto webView = webViewForTestingAttachments();
+    auto data = retainPtr(testImageData());
+    RetainPtr<_WKAttachment> attachment;
+    {
+        ObserveAttachmentUpdatesForScope observer(webView.get());
+        attachment = [webView synchronouslyInsertAttachmentWithFilename:@"icon.png" contentType:@"image/png" data:data.get() options:displayOptionsWithMode(_WKAttachmentDisplayModeInPlace)];
+        observer.expectAttachmentUpdates(@[], @[attachment.get()]);
+    }
+
+    [webView waitForAttachmentElementSizeToBecome:CGSizeMake(215, 174)];
+    [webView _executeEditCommand:@"InsertParagraph" argument:nil completion:nil];
+    [webView _executeEditCommand:@"InsertHTML" argument:@"<strong>text</strong>" completion:nil];
+    [webView _synchronouslyExecuteEditCommand:@"InsertParagraph" argument:nil];
+    [webView expectElementTag:@"ATTACHMENT" toComeBefore:@"STRONG"];
+
+    auto draggingSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
+    [draggingSimulator runFrom:CGPointMake(25, 25) to:CGPointMake(25, 125)];
+
+    attachment = [[draggingSimulator insertedAttachments] firstObject];
+    [attachment expectRequestedDataToBe:data.get()];
+    EXPECT_WK_STREQ("icon.png", [webView valueOfAttribute:@"title" forQuerySelector:@"attachment"]);
+    EXPECT_WK_STREQ("image/png", [webView valueOfAttribute:@"type" forQuerySelector:@"attachment"]);
+
+    [webView expectElementTag:@"STRONG" toComeBefore:@"ATTACHMENT"];
     [draggingSimulator endDataTransfer];
 }
 
