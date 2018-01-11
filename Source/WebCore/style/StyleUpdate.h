@@ -57,17 +57,21 @@ struct ElementUpdate {
     bool recompositeLayer { false };
 };
 
+enum class DescendantsToResolve { None, ChildrenWithExplicitInherit, Children, All };
+
 struct ElementUpdates {
 #if !COMPILER_SUPPORTS(NSDMI_FOR_AGGREGATES)
     ElementUpdates() = default;
-    ElementUpdates(ElementUpdate update, std::optional<ElementUpdate> beforePseudoElementUpdate, std::optional<ElementUpdate> afterPseudoElementUpdate)
+    ElementUpdates(ElementUpdate update, DescendantsToResolve descendantsToResolve, std::optional<ElementUpdate> beforePseudoElementUpdate, std::optional<ElementUpdate> afterPseudoElementUpdate)
         : update { WTFMove(update) }
+        , descendantsToResolve(descendantsToResolve)
         , beforePseudoElementUpdate { WTFMove(beforePseudoElementUpdate) }
         , afterPseudoElementUpdate { WTFMove(afterPseudoElementUpdate) }
     {
     }
 #endif
     ElementUpdate update;
+    DescendantsToResolve descendantsToResolve { DescendantsToResolve::None };
     std::optional<ElementUpdate> beforePseudoElementUpdate;
     std::optional<ElementUpdate> afterPseudoElementUpdate;
 };

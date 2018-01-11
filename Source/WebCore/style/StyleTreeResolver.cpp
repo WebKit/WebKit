@@ -88,10 +88,11 @@ TreeResolver::Parent::Parent(Document& document)
 {
 }
 
-TreeResolver::Parent::Parent(Element& element, const RenderStyle& style, Change change)
+TreeResolver::Parent::Parent(Element& element, const RenderStyle& style, Change change, DescendantsToResolve descendantsToResolve)
     : element(&element)
     , style(style)
     , change(change)
+    , descendantsToResolve(descendantsToResolve)
 {
 }
 
@@ -176,6 +177,26 @@ static const RenderStyle* renderOrDisplayContentsStyle(const Element& element)
     return nullptr;
 }
 
+static DescendantsToResolve computeDescendantsToResolve(Change change, Validity validity, DescendantsToResolve parentDescendantsToResolve)
+{
+    if (parentDescendantsToResolve == DescendantsToResolve::All)
+        return DescendantsToResolve::All;
+    if (validity >= Validity::SubtreeInvalid)
+        return DescendantsToResolve::All;
+    switch (change) {
+    case NoChange:
+        return DescendantsToResolve::None;
+    case NoInherit:
+        return DescendantsToResolve::ChildrenWithExplicitInherit;
+    case Inherit:
+        return DescendantsToResolve::Children;
+    case Detach:
+        return DescendantsToResolve::All;
+    };
+    ASSERT_NOT_REACHED();
+    return DescendantsToResolve::None;
+};
+
 ElementUpdates TreeResolver::resolveElement(Element& element)
 {
     if (m_didSeePendingStylesheet && !element.renderer() && !m_document.isIgnoringPendingStylesheets()) {
@@ -196,6 +217,7 @@ ElementUpdates TreeResolver::resolveElement(Element& element)
     }
 
     auto update = createAnimatedElementUpdate(WTFMove(newStyle), element, parent().change);
+    auto descendantsToResolve = computeDescendantsToResolve(update.change, element.styleValidity(), parent().descendantsToResolve);
 
     if (&element == m_document.documentElement()) {
         m_documentElementStyle = RenderStyle::clonePtr(*update.style);
@@ -205,7 +227,7 @@ ElementUpdates TreeResolver::resolveElement(Element& element)
             // "rem" units are relative to the document element's font size so we need to recompute everything.
             // In practice this is rare.
             scope().styleResolver.invalidateMatchedPropertiesCache();
-            update.change = std::max(update.change, Force);
+            descendantsToResolve = DescendantsToResolve::All;
         }
     }
 
@@ -216,14 +238,16 @@ ElementUpdates TreeResolver::resolveElement(Element& element)
 
     // FIXME: These elements should not change renderer based on appearance property.
     if (element.hasTagName(HTMLNames::meterTag) || is<HTMLProgressElement>(element)) {
-        if (existingStyle && update.style->appearance() != existingStyle->appearance())
+        if (existingStyle && update.style->appearance() != existingStyle->appearance()) {
             update.change = Detach;
+            descendantsToResolve = DescendantsToResolve::All;
+        }
     }
 
     auto beforeUpdate = resolvePseudoStyle(element, update, BEFORE);
     auto afterUpdate = resolvePseudoStyle(element, update, AFTER);
 
-    return { WTFMove(update), WTFMove(beforeUpdate), WTFMove(afterUpdate) };
+    return { WTFMove(update), descendantsToResolve, WTFMove(beforeUpdate), WTFMove(afterUpdate) };
 }
 
 ElementUpdate TreeResolver::resolvePseudoStyle(Element& element, const ElementUpdate& elementUpdate, PseudoId pseudoId)
@@ -288,21 +312,19 @@ ElementUpdate TreeResolver::createAnimatedElementUpdate(std::unique_ptr<RenderSt
     auto change = oldStyle ? determineChange(*oldStyle, *newStyle) : Detach;
 
     auto validity = element.styleValidity();
-    if (validity >= Validity::SubtreeInvalid)
-        change = std::max(change, validity == Validity::SubtreeAndRenderersInvalid ? Detach : Force);
-    if (parentChange >= Force)
-        change = std::max(change, parentChange);
+    if (validity >= Validity::SubtreeAndRenderersInvalid || parentChange == Detach)
+        change = Detach;
 
     bool shouldRecompositeLayer = element.styleResolutionShouldRecompositeLayer() || animationUpdate.stateChanged;
 
     return { WTFMove(newStyle), change, shouldRecompositeLayer };
 }
 
-void TreeResolver::pushParent(Element& element, const RenderStyle& style, Change change)
+void TreeResolver::pushParent(Element& element, const RenderStyle& style, Change change, DescendantsToResolve descendantsToResolve)
 {
     scope().selectorFilter.pushParent(&element);
 
-    Parent parent(element, style, change);
+    Parent parent(element, style, change, descendantsToResolve);
 
     if (auto* shadowRoot = element.shadowRoot()) {
         pushScope(*shadowRoot);
@@ -347,22 +369,26 @@ static bool shouldResolvePseudoElement(const PseudoElement* pseudoElement)
     return pseudoElement->needsStyleRecalc();
 }
 
-static bool shouldResolveElement(const Element& element, Style::Change parentChange)
+static bool shouldResolveElement(const Element& element, DescendantsToResolve parentDescendantsToResolve)
 {
-    if (parentChange >= Inherit)
-        return true;
-    if (parentChange == NoInherit) {
-        auto* existingStyle = renderOrDisplayContentsStyle(element);
-        if (existingStyle && existingStyle->hasExplicitlyInheritedProperties())
-            return true;
-    }
-    if (element.needsStyleRecalc())
+    if (element.styleValidity() != Validity::Valid)
         return true;
     if (shouldResolvePseudoElement(element.beforePseudoElement()))
         return true;
     if (shouldResolvePseudoElement(element.afterPseudoElement()))
         return true;
 
+    switch (parentDescendantsToResolve) {
+    case DescendantsToResolve::None:
+        return false;
+    case DescendantsToResolve::Children:
+    case DescendantsToResolve::All:
+        return true;
+    case DescendantsToResolve::ChildrenWithExplicitInherit:
+        auto* existingStyle = renderOrDisplayContentsStyle(element);
+        return existingStyle && existingStyle->hasExplicitlyInheritedProperties();
+    };
+    ASSERT_NOT_REACHED();
     return false;
 }
 
@@ -452,8 +478,9 @@ void TreeResolver::resolveComposedTree()
 
         auto* style = renderOrDisplayContentsStyle(element);
         auto change = NoChange;
+        auto descendantsToResolve = DescendantsToResolve::None;
 
-        bool shouldResolve = shouldResolveElement(element, parent.change) || affectedByPreviousSibling;
+        bool shouldResolve = shouldResolveElement(element, parent.descendantsToResolve) || affectedByPreviousSibling;
         if (shouldResolve) {
             if (!element.hasDisplayContents())
                 element.resetComputedStyle();
@@ -469,9 +496,10 @@ void TreeResolver::resolveComposedTree()
 
             style = elementUpdates.update.style.get();
             change = elementUpdates.update.change;
+            descendantsToResolve = elementUpdates.descendantsToResolve;
 
-            if (affectedByPreviousSibling && change != Detach)
-                change = Force;
+            if (affectedByPreviousSibling)
+                descendantsToResolve = DescendantsToResolve::All;
 
             if (elementUpdates.update.style)
                 m_update->addElement(element, parent.element, WTFMove(elementUpdates));
@@ -484,7 +512,7 @@ void TreeResolver::resolveComposedTree()
             element.clearChildNeedsStyleRecalc();
         }
 
-        bool shouldIterateChildren = style && (element.childNeedsStyleRecalc() || change != NoChange);
+        bool shouldIterateChildren = style && (element.childNeedsStyleRecalc() || descendantsToResolve != DescendantsToResolve::None);
 
         if (!m_didSeePendingStylesheet)
             m_didSeePendingStylesheet = hasLoadingStylesheet(m_document.styleScope(), element, !shouldIterateChildren);
@@ -494,7 +522,7 @@ void TreeResolver::resolveComposedTree()
             continue;
         }
 
-        pushParent(element, *style, change);
+        pushParent(element, *style, change, descendantsToResolve);
 
         it.traverseNext();
     }

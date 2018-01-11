@@ -1,3 +1,38 @@
+2018-01-11  Antti Koivisto  <antti@apple.com>
+
+        Don't call RenderElement::setStyle when nothing changes
+        https://bugs.webkit.org/show_bug.cgi?id=181530
+
+        Reviewed by Zalan Bujtas.
+
+        * style/StyleChange.h:
+
+        Remove 'Force' value. This essentially meant 'compute style for all descendants and call setStyle unconditionally'.
+        Using this value lost information about whether anything actually changed in a particular style as it was automatically
+        inherited by all descendants. The 'compute all descendants' part of the behavior is what is actually needed.
+
+        Instead add separate DescendantsToResolve enum for communicating what else to compute.
+
+        * style/StyleTreeResolver.cpp:
+        (WebCore::Style::TreeResolver::Parent::Parent):
+        (WebCore::Style::computeDescendantsToResolve):
+
+            Figure out which descendants will need resolving based on how the current elements style changed.
+
+        (WebCore::Style::TreeResolver::resolveElement):
+        (WebCore::Style::TreeResolver::createAnimatedElementUpdate):
+        (WebCore::Style::TreeResolver::pushParent):
+        (WebCore::Style::shouldResolveElement):
+
+            Use DescendantsToResolve as input.
+
+        (WebCore::Style::TreeResolver::resolveComposedTree):
+        * style/StyleTreeResolver.h:
+        * style/StyleUpdate.h:
+        (WebCore::Style::ElementUpdates::ElementUpdates):
+
+            Add DescendantsToResolve.
+
 2018-01-11  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Send PromisedBlobInfo to the client through DragItem instead of DragClient::prepareToDragPromisedBlob
