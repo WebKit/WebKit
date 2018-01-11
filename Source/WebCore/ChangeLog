@@ -1,3 +1,32 @@
+2018-01-10  Youenn Fablet  <youenn@apple.com>
+
+        Use no-cache fetch mode when loading main documents with location.reload()
+        https://bugs.webkit.org/show_bug.cgi?id=181285
+
+        Reviewed by Alex Christensen.
+
+        Covered by rebased tests.
+
+        Start to translate cache policy used for navigation as FetchOptions::Cache.
+        This allows ensuring service workers receive the right cache mode when intercepting navigation loads.
+        To not change current navigation behavior, ReturnCacheDataElseLoad and ReturnCacheDataDontLoad still trigger default fetch cache mode.
+
+        For Reload and ReloadExpiredOnly frame load types, using no-cache mode is more efficient than reload mode,
+        as a conditional request will be sent if possible. This applies to location.reload which is consistent with other browsers.
+        Keep reload mode for ReloadFromOrigin.
+
+        * loader/DocumentLoader.cpp:
+        (WebCore::toFetchOptionsCache):
+        (WebCore::DocumentLoader::loadMainResource):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::loadFrameRequest):
+        (WebCore::FrameLoader::loadURL):
+        (WebCore::FrameLoader::load):
+        (WebCore::FrameLoader::reload):
+        (WebCore::FrameLoader::defaultRequestCachingPolicy):
+        (WebCore::FrameLoader::loadDifferentDocumentItem):
+        * loader/NavigationScheduler.cpp:
+
 2018-01-10  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r226667 and r226673.

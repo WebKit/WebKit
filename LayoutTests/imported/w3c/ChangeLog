@@ -1,3 +1,12 @@
+2018-01-10  Youenn Fablet  <youenn@apple.com>
+
+        Use no-cache fetch mode when loading main documents with location.reload()
+        https://bugs.webkit.org/show_bug.cgi?id=181285
+
+        Reviewed by Alex Christensen.
+
+        * web-platform-tests/service-workers/service-worker/fetch-event.https-expected.txt:
+
 2018-01-09  Chris Dumez  <cdumez@apple.com>
 
         We should not return undefined for most properties of a detached Window
