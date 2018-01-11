@@ -867,3 +867,4 @@ webkit.org/b/181097 http/tests/workers/service/service-worker-importScript.html 
 
 webkit.org/b/172879 webrtc/video-unmute.html [ Skip ]
 
+webkit.org/b/181502 swipe/pushstate-with-manual-scrollrestoration.html [ Failure ]
