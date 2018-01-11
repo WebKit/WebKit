@@ -1416,12 +1416,12 @@ bool WKPreferencesGetPeerConnectionEnabled(WKPreferencesRef preferencesRef)
 
 void WKPreferencesSetWebRTCLegacyAPIEnabled(WKPreferencesRef preferencesRef, bool enabled)
 {
-    toImpl(preferencesRef)->setWebRTCLegacyAPIDisabled(!enabled);
+    toImpl(preferencesRef)->setWebRTCLegacyAPIEnabled(enabled);
 }
 
 bool WKPreferencesGetWebRTCLegacyAPIEnabled(WKPreferencesRef preferencesRef)
 {
-    return !toImpl(preferencesRef)->webRTCLegacyAPIDisabled();
+    return toImpl(preferencesRef)->webRTCLegacyAPIEnabled();
 }
 
 void WKPreferencesSetSpatialNavigationEnabled(WKPreferencesRef preferencesRef, bool enabled)

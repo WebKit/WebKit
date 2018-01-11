@@ -277,7 +277,7 @@ private:
 
 #if ENABLE(WEB_RTC)
     bool m_isPeerConnectionEnabled { true };
-    bool m_webRTCLegacyAPIEnabled { true };
+    bool m_webRTCLegacyAPIEnabled { false };
 #endif
 
 #if ENABLE(LEGACY_CSS_VENDOR_PREFIXES)

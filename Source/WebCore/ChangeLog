@@ -1,3 +1,14 @@
+2018-01-11  Youenn Fablet  <youenn@apple.com>
+
+        Replace WebRTCLegacyAPIDisabled by WebRTCLegacyAPIEnabled and switch off WebRTC legacy flag by default
+        https://bugs.webkit.org/show_bug.cgi?id=181480
+
+        Reviewed by Eric Carlson.
+
+        No change of behavior.
+
+        * page/RuntimeEnabledFeatures.h: Set default value to false.
+
 2018-01-11  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Attachment Support] Support moving attachment elements in editable areas using drag and drop

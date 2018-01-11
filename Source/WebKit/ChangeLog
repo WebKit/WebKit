@@ -1,3 +1,25 @@
+2018-01-11  Youenn Fablet  <youenn@apple.com>
+
+        Replace WebRTCLegacyAPIDisabled by WebRTCLegacyAPIEnabled and switch off WebRTC legacy flag by default
+        https://bugs.webkit.org/show_bug.cgi?id=181480
+
+        Reviewed by Eric Carlson.
+
+        Renaming preference to WebRTCLegacyAPIEnabled for simplification and removing it from experimental feature.
+        Set it to off by default.
+
+        * Shared/WebPreferences.yaml:
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetWebRTCLegacyAPIEnabled):
+        (WKPreferencesGetWebRTCLegacyAPIEnabled):
+        * UIProcess/API/Cocoa/WKPreferences.mm:
+        (-[WKPreferences _webRTCLegacyAPIEnabled]):
+        (-[WKPreferences _setWebRTCLegacyAPIEnabled:]):
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::ensureNetworkProcess):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences):
+
 2018-01-11  Alex Christensen  <achristensen@webkit.org>
 
         Merge sync and async code paths for getting context menus

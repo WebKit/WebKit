@@ -660,12 +660,12 @@ static _WKStorageBlockingPolicy toAPI(WebCore::SecurityOrigin::StorageBlockingPo
 
 - (BOOL)_webRTCLegacyAPIEnabled
 {
-    return !_preferences->webRTCLegacyAPIDisabled();
+    return _preferences->webRTCLegacyAPIEnabled();
 }
 
 - (void)_setWebRTCLegacyAPIEnabled:(BOOL)enabled
 {
-    _preferences->setWebRTCLegacyAPIDisabled(!enabled);
+    _preferences->setWebRTCLegacyAPIEnabled(enabled);
 }
 
 - (void)_setJavaScriptCanAccessClipboard:(BOOL)javaScriptCanAccessClipboard
