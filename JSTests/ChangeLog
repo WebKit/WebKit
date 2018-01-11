@@ -1,5 +1,15 @@
 2018-01-11  Saam Barati  <sbarati@apple.com>
 
+        JITMathIC code in the FTL is wrong when code gets duplicated
+        https://bugs.webkit.org/show_bug.cgi?id=181525
+        <rdar://problem/36351993>
+
+        Reviewed by Michael Saboff and Keith Miller.
+
+        * stress/allow-math-ic-b3-code-duplication.js: Added.
+
+2018-01-11  Saam Barati  <sbarati@apple.com>
+
         Our for-in caching is wrong when we add indexed properties on things in the prototype chain
         https://bugs.webkit.org/show_bug.cgi?id=181508
 

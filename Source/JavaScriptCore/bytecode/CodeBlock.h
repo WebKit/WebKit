@@ -249,11 +249,24 @@ public:
     void getByValInfoMap(ByValInfoMap& result);
     
 #if ENABLE(JIT)
-    StructureStubInfo* addStubInfo(AccessType);
     JITAddIC* addJITAddIC(ArithProfile*);
     JITMulIC* addJITMulIC(ArithProfile*);
     JITNegIC* addJITNegIC(ArithProfile*);
     JITSubIC* addJITSubIC(ArithProfile*);
+
+    template <typename Generator, typename = typename std::enable_if<std::is_same<Generator, JITAddGenerator>::value>::type>
+    JITAddIC* addMathIC(ArithProfile* profile) { return addJITAddIC(profile); }
+
+    template <typename Generator, typename = typename std::enable_if<std::is_same<Generator, JITMulGenerator>::value>::type>
+    JITMulIC* addMathIC(ArithProfile* profile) { return addJITMulIC(profile); }
+
+    template <typename Generator, typename = typename std::enable_if<std::is_same<Generator, JITNegGenerator>::value>::type>
+    JITNegIC* addMathIC(ArithProfile* profile) { return addJITNegIC(profile); }
+
+    template <typename Generator, typename = typename std::enable_if<std::is_same<Generator, JITSubGenerator>::value>::type>
+    JITSubIC* addMathIC(ArithProfile* profile) { return addJITSubIC(profile); }
+
+    StructureStubInfo* addStubInfo(AccessType);
     auto stubInfoBegin() { return m_stubInfos.begin(); }
     auto stubInfoEnd() { return m_stubInfos.end(); }
 
