@@ -318,7 +318,7 @@ static std::optional<WebCore::ScrollbarOverlayStyle> toCoreScrollbarStyle(_WKOve
     WebCore::FloatBoxExtent _obscuredInsetsWhenSaved;
 
     std::optional<WebCore::FloatPoint> _unobscuredCenterToRestore;
-    uint64_t _firstTransactionIDAfterPageRestore;
+    std::optional<uint64_t> _firstTransactionIDAfterPageRestore;
     double _scaleToRestore;
 
     std::unique_ptr<WebKit::ViewGestureController> _gestureController;
@@ -1615,7 +1615,7 @@ static WebCore::Color scrollViewBackgroundColor(WKWebView *webView)
     _frozenUnobscuredContentRect = std::nullopt;
 
     _firstPaintAfterCommitLoadTransactionID = 0;
-    _firstTransactionIDAfterPageRestore = 0;
+    _firstTransactionIDAfterPageRestore = std::nullopt;
     _resizeAnimationTransformTransactionID = std::nullopt;
 
     _hasScheduledVisibleRectUpdate = NO;
@@ -1737,8 +1737,7 @@ static inline bool areEssentiallyEqualAsFloat(float a, float b)
         needUpdateVisibleContentRects = true;
     }
 
-    if (layerTreeTransaction.transactionID() >= _firstTransactionIDAfterPageRestore) {
-        bool shouldRestoreScrollPosition = false;
+    if (_firstTransactionIDAfterPageRestore && layerTreeTransaction.transactionID() >= _firstTransactionIDAfterPageRestore.value()) {
         if (_scrollOffsetToRestore) {
             WebCore::FloatPoint scaledScrollOffset = _scrollOffsetToRestore.value();
             _scrollOffsetToRestore = std::nullopt;
@@ -1749,8 +1748,6 @@ static inline bool areEssentiallyEqualAsFloat(float a, float b)
 
                 changeContentOffsetBoundedInValidRange(_scrollView.get(), contentOffsetInScrollViewCoordinates);
                 _commitDidRestoreScrollPosition = YES;
-
-                shouldRestoreScrollPosition = true;
             }
 
             needUpdateVisibleContentRects = true;
@@ -1769,15 +1766,15 @@ static inline bool areEssentiallyEqualAsFloat(float a, float b)
                 topLeftInDocumentCoordinates.moveBy(WebCore::FloatPoint(-_obscuredInsets.left, -_obscuredInsets.top));
 
                 changeContentOffsetBoundedInValidRange(_scrollView.get(), topLeftInDocumentCoordinates);
-
-                shouldRestoreScrollPosition = true;
             }
 
             needUpdateVisibleContentRects = true;
         }
 
-        if (shouldRestoreScrollPosition && _gestureController)
+        if (_gestureController)
             _gestureController->didRestoreScrollPosition();
+
+        _firstTransactionIDAfterPageRestore = std::nullopt;
     }
 
     if (needUpdateVisibleContentRects)
@@ -6166,6 +6163,28 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
 }
 
 #endif // PLATFORM(IOS)
+
+- (BOOL)_beginBackSwipeForTesting
+{
+#if PLATFORM(MAC)
+    return _impl->beginBackSwipeForTesting();
+#else
+    if (!_gestureController)
+        return NO;
+    return _gestureController->beginSimulatedSwipeInDirectionForTesting(WebKit::ViewGestureController::SwipeDirection::Back);
+#endif
+}
+
+- (BOOL)_completeBackSwipeForTesting
+{
+#if PLATFORM(MAC)
+    return _impl->completeBackSwipeForTesting();
+#else
+    if (!_gestureController)
+        return NO;
+    return _gestureController->completeSimulatedSwipeInDirectionForTesting(WebKit::ViewGestureController::SwipeDirection::Back);
+#endif
+}
 
 @end
 

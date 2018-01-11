@@ -135,6 +135,10 @@ public:
 
     void removeSwipeSnapshot();
 
+    // Testing
+    bool beginSimulatedSwipeInDirectionForTesting(SwipeDirection);
+    bool completeSimulatedSwipeInDirectionForTesting(SwipeDirection);
+
 private:
     // IPC::MessageReceiver.
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;

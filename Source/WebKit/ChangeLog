@@ -1,3 +1,48 @@
+2018-01-10  Tim Horton  <timothy_horton@apple.com>
+
+        REGRESSION (r213590): Swipe from edge to go to previous page is significantly slower than tapping back button on Twitter
+        https://bugs.webkit.org/show_bug.cgi?id=181269
+        <rdar://problem/35110344>
+
+        Reviewed by Simon Fraser.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _processDidExit]):
+        (-[WKWebView _didCommitLayerTree:]):
+        When swiping to a page that set history.scrollRestoration = "manual",
+        we will never restore the scroll position. We will still restore
+        "state", but won't have a location. Currently, the code assumes that
+        it should wait to remove the swipe snapshot until the scroll position
+        is restored. Instead, wait until the "state" is restored, whether
+        or not that includes a scroll position/center point restoration.
+
+        Do this by making _firstTransactionIDAfterPageRestore an optional,
+        and reset it after it fires, so that we only run the restoration code
+        in _didCommitLayerTree for the first commit after state restoration,
+        not all subsequent commits. Then, tell ViewGestureController that
+        the scroll position has been restored even if the page opted out.
+
+        The reason that this is specific to pushState is that normal,
+        non-same-document loads bail from waiting for the scroll position
+        restoration in VGC::didReachMainFrameLoadTerminalState() (see the long
+        comment there for an explanation).
+
+        (-[WKWebView _beginBackSwipeForTesting]):
+        (-[WKWebView _completeBackSwipeForTesting]):
+        * Platform/spi/ios/UIKitSPI.h:
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * UIProcess/Cocoa/ViewGestureController.h:
+        * UIProcess/ios/ViewGestureControllerIOS.mm:
+        (-[WKSwipeTransitionController transitionForDirection:]):
+        (WebKit::ViewGestureController::beginSimulatedSwipeInDirectionForTesting):
+        (WebKit::ViewGestureController::completeSimulatedSwipeInDirectionForTesting):
+        * UIProcess/mac/ViewGestureControllerMac.mm:
+        (WebKit::ViewGestureController::beginSimulatedSwipeInDirectionForTesting):
+        (WebKit::ViewGestureController::completeSimulatedSwipeInDirectionForTesting):
+        Add a mechanism to forcefully test swipe back. Instead of simulating
+        events like on Mac, we just talk to the UIKit internals and force
+        the interaction to start, pause, and then complete when we want.
+
 2018-01-10  Brent Fulgham  <bfulgham@apple.com>
 
         Use protectedThis for the 'updatePrevalentDomainsToPartitionOrBlockCookies' lambda

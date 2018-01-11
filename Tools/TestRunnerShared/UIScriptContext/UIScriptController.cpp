@@ -457,6 +457,14 @@ void UIScriptController::addViewToWindow(JSValueRef)
 {
 }
 
+void UIScriptController::beginBackSwipe(JSValueRef callback)
+{
+}
+
+void UIScriptController::completeBackSwipe(JSValueRef callback)
+{
+}
+
 #endif // !PLATFORM(COCOA)
 
 #if !PLATFORM(MAC)
@@ -466,14 +474,6 @@ void UIScriptController::overridePreference(JSStringRef, JSStringRef)
 }
 
 void UIScriptController::replaceTextAtRange(JSStringRef, int, int)
-{
-}
-
-void UIScriptController::beginBackSwipe(JSValueRef callback)
-{
-}
-
-void UIScriptController::completeBackSwipe(JSValueRef callback)
 {
 }
 

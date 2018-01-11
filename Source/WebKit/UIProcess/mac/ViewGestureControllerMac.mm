@@ -43,6 +43,7 @@
 #import "WebProcessProxy.h"
 #import <Cocoa/Cocoa.h>
 #import <WebCore/IOSurface.h>
+#import <WebCore/NotImplemented.h>
 #import <WebCore/WebActionDisablingCALayerDelegate.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <pal/spi/mac/NSEventSPI.h>
@@ -818,6 +819,18 @@ double ViewGestureController::magnification() const
         return m_magnification;
 
     return m_webPageProxy.pageScaleFactor();
+}
+
+bool ViewGestureController::beginSimulatedSwipeInDirectionForTesting(SwipeDirection)
+{
+    notImplemented();
+    return false;
+}
+
+bool ViewGestureController::completeSimulatedSwipeInDirectionForTesting(SwipeDirection)
+{
+    notImplemented();
+    return false;
 }
 
 } // namespace WebKit

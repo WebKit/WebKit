@@ -1761,3 +1761,5 @@ webkit.org/b/180560 accessibility/mac/html5-input-number.html [ Pass Failure ]
 webkit.org/b/180675 accessibility/mac/search-field-cancel-button.html [ Pass Failure ]
 
 webkit.org/b/181098 fast/workers/worker-terminate.html [ Pass Timeout ]
+
+webkit.org/b/181502 swipe/pushstate-with-manual-scrollrestoration.html [ Failure ]

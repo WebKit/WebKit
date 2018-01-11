@@ -4943,6 +4943,20 @@ void WebViewImpl::setUserInterfaceLayoutDirection(NSUserInterfaceLayoutDirection
     m_page->setUserInterfaceLayoutDirection(toUserInterfaceLayoutDirection(direction));
 }
 
+bool WebViewImpl::beginBackSwipeForTesting()
+{
+    if (!m_gestureController)
+        return false;
+    return m_gestureController->beginSimulatedSwipeInDirectionForTesting(ViewGestureController::SwipeDirection::Back);
+}
+
+bool WebViewImpl::completeBackSwipeForTesting()
+{
+    if (!m_gestureController)
+        return false;
+    return m_gestureController->completeSimulatedSwipeInDirectionForTesting(ViewGestureController::SwipeDirection::Back);
+}
+
 } // namespace WebKit
 
 #endif // PLATFORM(MAC)
