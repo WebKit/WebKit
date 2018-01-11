@@ -11,15 +11,17 @@
 <script src="../../resources/js-test-pre.js"></script>
 <img src="../../resources/square100.png">
 <script>
-    var foundResource = 0;
+    var foundResources = [];
     var runTest = function() {
         var resources = performance.getEntriesByType('resource');
         for (var i = 0; i < resources.length; ++i) {
-            console.log("entry: " + resources[i].name);
             if (resources[i].name.indexOf("square") != -1)
-                ++foundResource;
+                foundResources.push(resources[i].name);
         };
-        shouldBe("foundResource", "2");
+        shouldBe("foundResources.length", "2");
+        if (foundResources.length !== 2) {
+            console.log(foundResources);
+        }
         if (window.testRunner)
             testRunner.notifyDone();
     };

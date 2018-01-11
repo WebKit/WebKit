@@ -410,16 +410,16 @@ void beforeAll()
     kServer = new WebKitTestServer();
     kServer->run(serverCallback);
 
-    AuthenticationTest::add("WebKitWebView", "authentication-request", testWebViewAuthenticationRequest);
-    AuthenticationTest::add("WebKitWebView", "authentication-cancel", testWebViewAuthenticationCancel);
-    AuthenticationTest::add("WebKitWebView", "authentication-load-cancelled", testWebViewAuthenticationLoadCancelled);
-    AuthenticationTest::add("WebKitWebView", "authentication-success", testWebViewAuthenticationSuccess);
-    AuthenticationTest::add("WebKitWebView", "authentication-failure", testWebViewAuthenticationFailure);
-    AuthenticationTest::add("WebKitWebView", "authentication-no-credential", testWebViewAuthenticationNoCredential);
-    AuthenticationTest::add("WebKitWebView", "authentication-storage", testWebViewAuthenticationStorage);
-    AuthenticationTest::add("WebKitWebView", "authentication-empty-realm", testWebViewAuthenticationEmptyRealm);
-    ProxyAuthenticationTest::add("WebKitWebView", "authentication-proxy", testWebViewAuthenticationProxy);
-    ProxyAuthenticationTest::add("WebKitWebView", "authentication-proxy-https", testWebViewAuthenticationProxyHTTPS);
+    AuthenticationTest::add("Authentication", "authentication-request", testWebViewAuthenticationRequest);
+    AuthenticationTest::add("Authentication", "authentication-cancel", testWebViewAuthenticationCancel);
+    AuthenticationTest::add("Authentication", "authentication-load-cancelled", testWebViewAuthenticationLoadCancelled);
+    AuthenticationTest::add("Authentication", "authentication-success", testWebViewAuthenticationSuccess);
+    AuthenticationTest::add("Authentication", "authentication-failure", testWebViewAuthenticationFailure);
+    AuthenticationTest::add("Authentication", "authentication-no-credential", testWebViewAuthenticationNoCredential);
+    AuthenticationTest::add("Authentication", "authentication-storage", testWebViewAuthenticationStorage);
+    AuthenticationTest::add("Authentication", "authentication-empty-realm", testWebViewAuthenticationEmptyRealm);
+    ProxyAuthenticationTest::add("Authentication", "authentication-proxy", testWebViewAuthenticationProxy);
+    ProxyAuthenticationTest::add("Authentication", "authentication-proxy-https", testWebViewAuthenticationProxyHTTPS);
 }
 
 void afterAll()

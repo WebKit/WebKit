@@ -1,6 +1,3 @@
 CONSOLE MESSAGE: line 9: current entries: 0
-CONSOLE MESSAGE: line 18: entry: http://127.0.0.1:8000/resources/js-test-pre.js
-CONSOLE MESSAGE: line 18: entry: http://127.0.0.1:8000/resources/square100.png
-CONSOLE MESSAGE: line 18: entry: http://127.0.0.1:8000/resources/square100.png
-PASS foundResource is 2
+PASS foundResources.length is 2
 

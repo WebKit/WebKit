@@ -125,7 +125,7 @@ static void testWebKitConsoleMessageJavaScriptException(ConsoleMessageTest* test
 static void testWebKitConsoleMessageNetworkError(ConsoleMessageTest* test, gconstpointer)
 {
     ConsoleMessageTest::ConsoleMessage referenceMessage = { ConsoleMessageTest::MessageSource::Network, ConsoleMessageTest::MessageLevel::Error,
-        "Failed to load resource: The resource at “/org/webkit/glib/tests/not-found.css” does not exist", 0, "resource:///org/webkit/glib/tests/not-found.css" };
+        "Failed to load resource: The resource at '/org/webkit/glib/tests/not-found.css' does not exist", 0, "resource:///org/webkit/glib/tests/not-found.css" };
     test->loadHtml("<html><head><link rel='stylesheet' href='not-found.css' type='text/css'></head><body></body></html>", "resource:///org/webkit/glib/tests/");
     test->waitUntilConsoleMessageReceived();
     g_assert(test->m_consoleMessage == referenceMessage);

@@ -1,3 +1,20 @@
+2018-01-11  Ms2ger  <Ms2ger@igalia.com>
+
+        Test gardening for GTK.
+        https://bugs.webkit.org/show_bug.cgi?id=181477
+
+        Unreviewed test gardening.
+
+        * http/tests/performance/performance-resource-timing-cached-entries-expected.txt:
+        * http/tests/performance/performance-resource-timing-cached-entries.html:
+          The code to debug this test's flakiness made it more flaky, as the
+          resources are not logged in a consistent order. This ensures they are
+          logged only in case of failure.
+        * platform/gtk/TestExpectations:
+          - svg/custom/non-scaling-stroke.svg was fixed in r226443.
+          - imported/w3c/web-platform-tests/css/css-shapes-1/shape-outside/values/shape-margin-001.html
+            was fixed in r226404.
+
 2018-01-11  Miguel Gomez  <magomez@igalia.com>
 
         Unreviewed GTK+ and WPE gardening after r226773.

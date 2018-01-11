@@ -2587,8 +2587,6 @@ webkit.org/b/74282 editing/pasteboard/emacs-ctrl-k-with-move.html [ Failure ]
 
 webkit.org/b/81320 editing/pasteboard/copy-two-pasteboard-types-both-work.html [ Failure ]
 
-webkit.org/b/86971 svg/custom/non-scaling-stroke.svg [ Failure ]
-
 webkit.org/b/84679 css3/zoom-coords.xhtml [ Failure ]
 
 webkit.org/b/84694 fast/events/selectstart-by-double-triple-clicks.html [ Failure ]
@@ -2688,7 +2686,6 @@ webkit.org/b/180581 css3/shapes/shape-outside/values/shape-outside-ellipse-005.h
 webkit.org/b/180581 css3/shapes/shape-outside/values/shape-outside-inset-003.html [ Failure ]
 webkit.org/b/180581 css3/shapes/shape-outside/values/shape-outside-polygon-004.html [ Failure ]
 webkit.org/b/180581 css3/shapes/shape-outside/values/shape-outside-shape-arguments-000.html [ Failure ]
-webkit.org/b/180581 imported/w3c/web-platform-tests/css/css-shapes-1/shape-outside/values/shape-margin-001.html [ Failure ]
 webkit.org/b/180581 imported/w3c/web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-circle-004.html [ Failure ]
 webkit.org/b/180581 imported/w3c/web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-circle-005.html [ Failure ]
 webkit.org/b/180581 imported/w3c/web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-ellipse-004.html [ Failure ]
