@@ -28,6 +28,7 @@
 #if USE(CURL)
 #include "ResourceResponse.h"
 
+#include "CurlContext.h"
 #include "CurlResponse.h"
 #include "HTTPParsers.h"
 
@@ -84,6 +85,22 @@ ResourceResponse::ResourceResponse(const CurlResponse& response)
     for (const auto& header : response.headers)
         appendHTTPHeaderField(header);
 
+    switch (response.httpVersion) {
+    case CURL_HTTP_VERSION_1_0:
+        setHTTPVersion("HTTP/1.0");
+        break;
+    case CURL_HTTP_VERSION_1_1:
+        setHTTPVersion("HTTP/1.1");
+        break;
+    case CURL_HTTP_VERSION_2_0:
+    case CURL_HTTP_VERSION_2TLS:
+    case CURL_HTTP_VERSION_2_PRIOR_KNOWLEDGE:
+        setHTTPVersion("HTTP/2");
+        break;
+    case CURL_HTTP_VERSION_NONE:
+    default:
+        break;
+    }
     setMimeType(extractMIMETypeFromMediaType(httpHeaderField(HTTPHeaderName::ContentType)).convertToASCIILowercase());
     setTextEncodingName(extractCharsetFromMediaType(httpHeaderField(HTTPHeaderName::ContentType)));
 }
@@ -114,9 +131,6 @@ void ResourceResponse::setStatusLine(const String& header)
 
     // Extract the http version
     if (httpVersionEndPosition != notFound) {
-        auto httpVersion = statusLine.left(httpVersionEndPosition);
-        setHTTPVersion(httpVersion.stripWhiteSpace());
-
         statusLine = statusLine.substring(httpVersionEndPosition + 1).stripWhiteSpace();
         statusCodeEndPosition = statusLine.find(' ');
     }

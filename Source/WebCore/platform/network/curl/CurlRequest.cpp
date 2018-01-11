@@ -308,6 +308,9 @@ size_t CurlRequest::didReceiveHeader(String&& header)
     if (auto auth = m_curlHandle->getHttpAuthAvail())
         m_response.availableHttpAuth = *auth;
 
+    if (auto version = m_curlHandle->getHttpVersion())
+        m_response.httpVersion = *version;
+
     if (auto metrics = m_curlHandle->getNetworkLoadMetrics())
         m_networkLoadMetrics = *metrics;
 

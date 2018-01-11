@@ -272,6 +272,7 @@ public:
     std::optional<long> getHttpConnectCode();
     std::optional<long long> getContentLength();
     std::optional<long> getHttpAuthAvail();
+    std::optional<long> getHttpVersion();
     std::optional<NetworkLoadMetrics> getNetworkLoadMetrics();
 
     static long long maxCurlOffT();

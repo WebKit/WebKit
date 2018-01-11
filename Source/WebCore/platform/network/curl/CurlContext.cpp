@@ -594,6 +594,19 @@ std::optional<long> CurlHandle::getHttpAuthAvail()
     return httpAuthAvailable;
 }
 
+std::optional<long> CurlHandle::getHttpVersion()
+{
+    if (!m_handle)
+        return std::nullopt;
+
+    long version;
+    CURLcode errorCode = curl_easy_getinfo(m_handle, CURLINFO_HTTP_VERSION, &version);
+    if (errorCode != CURLE_OK)
+        return std::nullopt;
+
+    return version;
+}
+
 std::optional<NetworkLoadMetrics> CurlHandle::getNetworkLoadMetrics()
 {
     double nameLookup = 0.0;
