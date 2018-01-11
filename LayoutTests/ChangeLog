@@ -1,3 +1,14 @@
+2018-01-11  Ms2ger  <Ms2ger@igalia.com>
+
+        [GTK] Enable css2.1/20110323/vertical-align-boxes-001.htm.
+        https://bugs.webkit.org/show_bug.cgi?id=91339
+
+        Unreviewed test gardening.
+
+        It was fixed in r226404.
+
+        * platform/gtk/TestExpectations:
+
 2018-01-11  Youenn Fablet  <youenn@apple.com>
 
         LayoutTests/http/tests/workers/service/resources/service-worker-importScript.js does not need to register two service workers
