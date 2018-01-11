@@ -1401,7 +1401,7 @@ void WebsiteDataStore::enableResourceLoadStatisticsAndSetTestingCallback(Functio
     }
 
 #if HAVE(CFNETWORK_STORAGE_PARTITIONING)
-    m_resourceLoadStatistics = WebResourceLoadStatisticsStore::create(m_configuration.resourceLoadStatisticsDirectory, WTFMove(callback), [this] (const Vector<String>& domainsToPartition, const Vector<String>& domainsToBlock, const Vector<String>& domainsToNeitherPartitionNorBlock, ShouldClearFirst shouldClearFirst) {
+    m_resourceLoadStatistics = WebResourceLoadStatisticsStore::create(m_configuration.resourceLoadStatisticsDirectory, WTFMove(callback), [this, protectedThis = makeRef(*this)] (const Vector<String>& domainsToPartition, const Vector<String>& domainsToBlock, const Vector<String>& domainsToNeitherPartitionNorBlock, ShouldClearFirst shouldClearFirst) {
         updatePrevalentDomainsToPartitionOrBlockCookies(domainsToPartition, domainsToBlock, domainsToNeitherPartitionNorBlock, shouldClearFirst);
     }, [this, protectedThis = makeRef(*this)] (const String& resourceDomain, const String& firstPartyDomain, uint64_t frameID, uint64_t pageID, WTF::CompletionHandler<void(bool hasAccess)>&& callback) {
         hasStorageAccessForFrameHandler(resourceDomain, firstPartyDomain, frameID, pageID, WTFMove(callback));

@@ -1,3 +1,17 @@
+2018-01-10  Brent Fulgham  <bfulgham@apple.com>
+
+        Use protectedThis for the 'updatePrevalentDomainsToPartitionOrBlockCookies' lambda
+        https://bugs.webkit.org/show_bug.cgi?id=181452
+        <rdar://problem/36416912>
+        
+        Reviewed by Chris Dumez.
+
+        We forgot to use a 'protectedThis' back in r225006 for one of the lambdas used by
+        the WebsiteDataStore for processing.
+
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::enableResourceLoadStatisticsAndSetTestingCallback):
+
 2018-01-09  John Wilander  <wilander@apple.com>
 
         Storage Access API: Turn feature on by default in WebPreferences.yaml
