@@ -373,7 +373,7 @@ WI.contentLoaded = function()
     this._togglePreviousDockConfigurationKeyboardShortcut = new WI.KeyboardShortcut(WI.KeyboardShortcut.Modifier.CommandOrControl | WI.KeyboardShortcut.Modifier.Shift, "D", this._togglePreviousDockConfiguration.bind(this));
 
     let reloadToolTip;
-    if (WI.debuggableType === WI.DebuggableType.JavaScript)
+    if (WI.sharedApp.debuggableType === WI.DebuggableType.JavaScript)
         reloadToolTip = WI.UIString("Restart (%s)").format(this._reloadPageKeyboardShortcut.displayName);
     else
         reloadToolTip = WI.UIString("Reload page (%s)\nReload page ignoring cache (%s)").format(this._reloadPageKeyboardShortcut.displayName, this._reloadPageFromOriginKeyboardShortcut.displayName);

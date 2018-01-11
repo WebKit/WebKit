@@ -1,3 +1,15 @@
+2018-01-10  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Incorrect check with WI.debuggableType
+        https://bugs.webkit.org/show_bug.cgi?id=181515
+        <rdar://problem/36425509>
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Base/Main.js:
+        (WI.contentLoaded):
+        This moved to WI.sharedApp a while ago.
+
 2018-01-10  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Canvas tab: throttle recording slider updates
