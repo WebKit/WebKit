@@ -1,3 +1,15 @@
+2018-01-11  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        Add the new JSCOnly bot to the scheduler.
+        https://bugs.webkit.org/show_bug.cgi?id=181487
+
+        Unreviewed follow-up patch after r226729
+
+        On r226729 I missed to add the new JSCOnly bot the default scheduler.
+        This is needed to make the bot automatically pick each commit for testing.
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json:
+
 2018-01-11  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Attachment Support] Support dragging attachment elements out as files on iOS
