@@ -199,6 +199,7 @@ public:
     }
 
 private:
+    constexpr static PoisonedBits poison(std::nullptr_t) { return 0; }
 #if ENABLE(POISON)
     template<typename U>
     ALWAYS_INLINE static PoisonedBits poison(U ptr) { return ptr ? bitwise_cast<PoisonedBits>(ptr) ^ key : 0; }

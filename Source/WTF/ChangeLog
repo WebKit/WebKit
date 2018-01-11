@@ -1,3 +1,13 @@
+2018-01-10  Don Olmstead  <don.olmstead@sony.com>
+
+        Add nullptr_t specialization of poison
+        https://bugs.webkit.org/show_bug.cgi?id=181469
+
+        Reviewed by JF Bastien.
+
+        * wtf/Poisoned.h:
+        (WTF::PoisonedImpl::poison):
+
 2018-01-10  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r226667 and r226673.
