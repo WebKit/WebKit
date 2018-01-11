@@ -69,12 +69,7 @@ Ref<RTCPeerConnection> RTCPeerConnection::create(ScriptExecutionContext& context
     // Let's make it uncollectable until the pc is closed by JS or the page stops it.
     if (!peerConnection->isClosed()) {
         peerConnection->setPendingActivity(peerConnection.ptr());
-
-        // ICE candidate filtering can only be disabled for connections from documents that have the same origin as the top document,
-        // or if the page was set to disable it.
-        auto& document = downcast<Document>(context);
-        auto* page = document.page();
-        if (page && (!page->shouldEnableICECandidateFilteringByDefault() || document.origin() == document.topDocument().origin()))
+        if (auto* page = downcast<Document>(context).page())
             peerConnection->registerToController(page->rtcController());
     }
     return peerConnection;

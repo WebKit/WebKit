@@ -2330,7 +2330,7 @@ void Page::disableICECandidateFiltering()
 {
     m_shouldEnableICECandidateFilteringByDefault = false;
 #if ENABLE(WEB_RTC)
-    m_rtcController.disableICECandidateFiltering();
+    m_rtcController.disableICECandidateFilteringForAllOrigins();
 #endif
 }
 

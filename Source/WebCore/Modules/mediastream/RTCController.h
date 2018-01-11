@@ -24,10 +24,12 @@
 
 #pragma once
 
+#include "SecurityOrigin.h"
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
+class Document;
 class RTCPeerConnection;
 
 class RTCController {
@@ -42,10 +44,19 @@ public:
     void add(RTCPeerConnection&);
     void remove(RTCPeerConnection&);
 
-    WEBCORE_EXPORT void disableICECandidateFiltering();
+    WEBCORE_EXPORT void disableICECandidateFilteringForAllOrigins();
+    WEBCORE_EXPORT void disableICECandidateFilteringForDocument(Document&);
     WEBCORE_EXPORT void enableICECandidateFiltering();
 
 private:
+
+    bool shouldDisableICECandidateFiltering(Document&);
+
+    struct PeerConnectionOrigin {
+        Ref<SecurityOrigin> topOrigin;
+        Ref<SecurityOrigin> clientOrigin;
+    };
+    Vector<PeerConnectionOrigin> m_filteringDisabledOrigins;
     Vector<std::reference_wrapper<RTCPeerConnection>> m_peerConnections;
     bool m_shouldFilterICECandidates { true };
 #endif

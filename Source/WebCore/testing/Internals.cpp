@@ -1316,7 +1316,7 @@ void Internals::setICECandidateFiltering(bool enabled)
     if (enabled)
         rtcController.enableICECandidateFiltering();
     else
-        rtcController.disableICECandidateFiltering();
+        rtcController.disableICECandidateFilteringForAllOrigins();
 }
 
 void Internals::setEnumeratingAllNetworkInterfacesEnabled(bool enabled)

@@ -1,3 +1,14 @@
+2018-01-11  Youenn Fablet  <youenn@apple.com>
+
+        RTCController should disable ICE candidate filtering in case of getUserMedia based on the RTCPerrConnection origin
+        https://bugs.webkit.org/show_bug.cgi?id=180851
+
+        Reviewed by Eric Carlson.
+
+        * http/wpt/webrtc/resources/third-party-frame-ice-candidate-filtering-iframe.html: Added.
+        * http/wpt/webrtc/third-party-frame-ice-candidate-filtering-expected.txt: Added.
+        * http/wpt/webrtc/third-party-frame-ice-candidate-filtering.html: Added.
+
 2018-01-11  Ali Juma  <ajuma@chromium.org>
 
         window.visualViewport should behave as [SameObject]
