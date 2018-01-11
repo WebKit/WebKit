@@ -361,6 +361,14 @@
       ],
       "status" : "reviewer"
    },
+   "Ali Juma" : {
+      "emails" : [
+         "ajuma@chromium.org"
+      ],
+      "nicks" : [
+         "ajuma"
+      ]
+   },
    "Alice Boxhall" : {
       "emails" : [
          "aboxhall@chromium.org"

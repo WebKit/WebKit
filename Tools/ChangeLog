@@ -1,3 +1,9 @@
+2018-01-11  Ali Juma  <ajuma@chromium.org>
+
+        Unreviewed. Add Ali Juma as contributor
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2018-01-11  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Update Selenium WebDriver imported tests.
