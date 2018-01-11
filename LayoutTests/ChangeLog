@@ -1,3 +1,12 @@
+2018-01-10  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Skip http/tests/workers/service/cors-image-fetch.html.
+        https://bugs.webkit.org/show_bug.cgi?id=181222
+
+        Unreviewed test gardening.
+
+        * TestExpectations:
+
 2018-01-10  Youenn Fablet  <youenn@apple.com>
 
         Use no-cache fetch mode when loading main documents with location.reload()
