@@ -67,6 +67,7 @@
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <pal/spi/cocoa/pthreadSPI.h>
 #import <pal/spi/mac/NSAccessibilitySPI.h>
+#import <pal/spi/mac/NSApplicationSPI.h>
 #import <runtime/ConfigFile.h>
 #import <stdio.h>
 
@@ -168,6 +169,15 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters&& par
     Method methodToPatch = class_getInstanceMethod([NSApplication class], @selector(accessibilityFocusedUIElement));
     method_setImplementation(methodToPatch, (IMP)NSApplicationAccessibilityFocusedUIElement);
 #endif
+    
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
+    // Need to initialize accessibility for VoiceOver to work when the WebContent process is using NSRunLoop.
+    // Currently, it is also needed to allocate and initialize an NSApplication object.
+    // FIXME: Remove the following line when rdar://problem/36323569 is fixed.
+    [NSApplication sharedApplication];
+    [NSApplication _accessibilityInitialize];
+#endif
+    
     _CFNetworkSetATSContext(parameters.networkATSContext.get());
 
 #if TARGET_OS_IPHONE

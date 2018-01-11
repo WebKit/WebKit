@@ -1,3 +1,22 @@
+2018-01-09  Per Arne Vollan  <pvollan@apple.com>
+
+        VoiceOver does not work when the WebContent process is using NSRunLoop.
+        https://bugs.webkit.org/show_bug.cgi?id=181331
+        <rdar://problem/36408004>
+
+        Reviewed by Brent Fulgham.
+
+        When the WebContent process is using NSRunLoop instead of the NSApplication run loop,
+        accessibility must be initialized for VoiceOver to work. This patch also switches to
+        using NSRunLoop in the WebContent process.
+
+        * Configurations/WebContentService.xcconfig:
+        * Platform/IPC/mac/ConnectionMac.mm:
+        (IPC::AccessibilityProcessSuspendedNotification): Remove unneccessary workaround.
+        * WebProcess/EntryPoint/mac/XPCService/WebContentService/Info-OSX.plist: Switch to NSRunLoop.
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::WebProcess::platformInitializeProcess): Initialize accessibility.
+
 2018-01-11  Don Olmstead  <don.olmstead@sony.com>
 
         WebContextMenuListenerProxy.cpp not including config on first line

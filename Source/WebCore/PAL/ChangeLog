@@ -1,3 +1,15 @@
+2018-01-10  Per Arne Vollan  <pvollan@apple.com>
+
+        VoiceOver does not work when the WebContent process is using NSRunLoop.
+        https://bugs.webkit.org/show_bug.cgi?id=181331
+        <rdar://problem/36408004>
+
+        Reviewed by Brent Fulgham.
+
+        Add NSApplication class method to initialize accessibility.
+
+        * pal/spi/mac/NSApplicationSPI.h:
+
 2018-01-05  Eric Carlson  <eric.carlson@apple.com>
 
         [MediaStream] Add Mac screen capture source
