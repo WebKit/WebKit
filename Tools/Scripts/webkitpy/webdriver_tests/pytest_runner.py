@@ -132,10 +132,11 @@ def collect(directory, args):
     with open(os.devnull, 'wb') as devnull:
         sys.stdout = devnull
         with TemporaryDirectory() as cache_directory:
-            pytest.main(args + ['--collect-only',
-                                '--basetemp', cache_directory,
-                                directory],
-                        plugins=[collect_recorder])
+            cmd = ['--collect-only',
+                   '--basetemp=%s' % cache_directory]
+            cmd.extend(args)
+            cmd.append(directory)
+            pytest.main(cmd, plugins=[collect_recorder])
     sys.stdout = stdout
     return collect_recorder.tests
 
@@ -149,15 +150,16 @@ def run(path, args, timeout, env={}):
 
     with TemporaryDirectory() as cache_directory:
         try:
-            result = pytest.main(args + ['--verbose',
-                                         '--capture=no',
-                                         '--basetemp', cache_directory,
-                                         '--showlocals',
-                                         '--timeout=%s' % timeout,
-                                         '-p', 'no:cacheprovider',
-                                         '-p', 'pytest_timeout',
-                                         path],
-                                 plugins=[harness_recorder, subtests_recorder])
+            cmd = ['--verbose',
+                   '--capture=no',
+                   '--basetemp=%s' % cache_directory,
+                   '--showlocals',
+                   '--timeout=%s' % timeout,
+                   '-p', 'no:cacheprovider',
+                   '-p', 'pytest_timeout']
+            cmd.extend(args)
+            cmd.append(path)
+            result = pytest.main(cmd, plugins=[harness_recorder, subtests_recorder])
             if result == EXIT_INTERNALERROR:
                 harness_recorder.outcome = ('ERROR', None)
         except Exception as e:

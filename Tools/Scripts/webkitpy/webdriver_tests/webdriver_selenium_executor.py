@@ -41,18 +41,16 @@ _log = logging.getLogger(__name__)
 class WebDriverSeleniumExecutor(object):
 
     def __init__(self, driver, display_driver):
-        self._env = {}
-        self._env['WD_DRIVER_PATH'] = driver.binary_path()
-        browser_path = driver.browser_path()
-        if browser_path:
-            self._env['WD_BROWSER_PATH'] = browser_path
-        browser_args = driver.browser_args()
-        if browser_args:
-            self._env['WD_BROWSER_ARGS'] = ' '.join(browser_args)
-        self._env.update(display_driver._setup_environ_for_test())
+        self._env = display_driver._setup_environ_for_test()
         self._env.update(driver.browser_env())
 
-        self._args = ['--driver=%s' % driver.selenium_name()]
+        self._args = ['--driver=%s' % driver.selenium_name(), '--driver-binary=%s' % driver.binary_path().encode()]
+        browser_path = driver.browser_path().encode()
+        if browser_path:
+            self._args.extend(['--browser-binary=%s' % browser_path])
+        browser_args = driver.browser_args()
+        if browser_args:
+            self._args.extend(['--browser-args=%s' % ' '.join(browser_args)])
 
         if pytest_runner is None:
             do_delayed_imports()

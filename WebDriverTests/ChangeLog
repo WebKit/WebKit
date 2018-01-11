@@ -1,3 +1,35 @@
+2018-01-11  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Update Selenium WebDriver imported tests.
+
+        * imported/selenium/importer.json:
+        * imported/selenium/py/conftest.py:
+        * imported/selenium/py/selenium/__init__.py:
+        * imported/selenium/py/selenium/webdriver/__init__.py:
+        * imported/selenium/py/selenium/webdriver/common/action_chains.py:
+        * imported/selenium/py/selenium/webdriver/common/service.py:
+        * imported/selenium/py/selenium/webdriver/remote/remote_connection.py:
+        * imported/selenium/py/selenium/webdriver/remote/switch_to.py:
+        * imported/selenium/py/selenium/webdriver/remote/webdriver.py:
+        * imported/selenium/py/selenium/webdriver/remote/webelement.py:
+        * imported/selenium/py/selenium/webdriver/support/expected_conditions.py:
+        * imported/selenium/py/selenium/webdriver/webkitgtk/options.py:
+        * imported/selenium/py/test/selenium/webdriver/common/alerts_tests.py:
+        * imported/selenium/py/test/selenium/webdriver/common/api_example_tests.py:
+        * imported/selenium/py/test/selenium/webdriver/common/appcache_tests.py:
+        * imported/selenium/py/test/selenium/webdriver/common/driver_element_finding_tests.py:
+        * imported/selenium/py/test/selenium/webdriver/common/executing_async_javascript_tests.py:
+        * imported/selenium/py/test/selenium/webdriver/common/frame_switching_tests.py:
+        * imported/selenium/py/test/selenium/webdriver/common/interactions_tests.py:
+        * imported/selenium/py/test/selenium/webdriver/common/page_load_timeout_tests.py:
+        * imported/selenium/py/test/selenium/webdriver/common/position_and_size_tests.py:
+        * imported/selenium/py/test/selenium/webdriver/common/rendered_webelement_tests.py:
+        * imported/selenium/py/test/selenium/webdriver/common/select_class_tests.py:
+        * imported/selenium/py/test/selenium/webdriver/common/visibility_tests.py:
+        * imported/selenium/py/test/selenium/webdriver/common/w3c_interaction_tests.py:
+        * imported/selenium/py/test/selenium/webdriver/common/webdriverwait_tests.py:
+        * imported/selenium/py/test/selenium/webdriver/common/window_tests.py:
+
 2018-01-10  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Update W3C WebDriver imported tests.
