@@ -612,7 +612,7 @@ webkit.org/b/112176 fast/css/sticky/sticky-both-sides.html [ ImageOnlyFailure Pa
 # Once the bug 112176 is fixed, potentially restore the following test expectations.
 
 # Always very slow, frequently timing out (only on bots, not locally).
-webkit.org/b/121331 [ ElCapitan ] http/tests/misc/submit-post-keygen.html [ Pass Failure Timeout ]
+webkit.org/b/121331 [ Sierra ] http/tests/misc/submit-post-keygen.html [ Pass Timeout ]
 
 # isProtocolHandlerRegistered() isn't supported yet.
 webkit.org/b/92749 fast/dom/NavigatorContentUtils/is-protocol-handler-registered.html [ Skip ]
