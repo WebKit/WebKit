@@ -4327,6 +4327,9 @@ static BOOL shouldEnableDragInteractionForPolicy(_WKDragInteractionPolicy policy
 {
     ASSERT(item.sourceAction != DragSourceActionNone);
 
+    if (item.promisedBlob)
+        [self _prepareToDragPromisedBlob:item.promisedBlob];
+
     auto dragImage = adoptNS([[UIImage alloc] initWithCGImage:image.get() scale:_page->deviceScaleFactor() orientation:UIImageOrientationUp]);
     _dragDropInteractionState.stageDragItem(item, dragImage.get());
 }

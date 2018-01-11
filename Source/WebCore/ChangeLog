@@ -1,3 +1,27 @@
+2018-01-11  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Send PromisedBlobInfo to the client through DragItem instead of DragClient::prepareToDragPromisedBlob
+        https://bugs.webkit.org/show_bug.cgi?id=181497
+
+        Reviewed by Tim Horton.
+
+        Refactor drag initiation with DOMFile-backed attachment elements. See WebKit ChangeLog for more information. No
+        change in behavior; promised blob dragging covered by WKAttachment API tests.
+
+        * loader/EmptyClients.cpp:
+        * page/DragClient.h:
+        (WebCore::DragClient::prepareToDragPromisedBlob): Deleted.
+        * page/DragController.cpp:
+        (WebCore::DragController::startDrag):
+        (WebCore::DragController::doImageDrag):
+        (WebCore::DragController::doSystemDrag):
+        (WebCore::DragController::promisedBlobInfo):
+        (WebCore::DragController::dragAttachmentElement): Deleted.
+        * page/DragController.h:
+        * platform/DragItem.h:
+        (WebCore::DragItem::encode const):
+        (WebCore::DragItem::decode):
+
 2018-01-11  Youenn Fablet  <youenn@apple.com>
 
         RTCController should disable ICE candidate filtering in case of getUserMedia based on the RTCPerrConnection origin

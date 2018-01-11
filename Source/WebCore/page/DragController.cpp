@@ -983,7 +983,7 @@ bool DragController::startDrag(Frame& src, const DragState& state, DragOperation
             return false;
 
         if (mustUseLegacyDragClient) {
-            doSystemDrag(WTFMove(dragImage), dragLoc, dragOrigin, src, state);
+            doSystemDrag(WTFMove(dragImage), dragLoc, dragOrigin, src, state, { });
             return true;
         }
 
@@ -1019,7 +1019,7 @@ bool DragController::startDrag(Frame& src, const DragState& state, DragOperation
             doImageDrag(element, dragOrigin, hitTestResult.imageRect(), src, m_dragOffset, state);
         else {
             // DHTML defined drag image
-            doSystemDrag(WTFMove(dragImage), dragLoc, dragOrigin, src, state);
+            doSystemDrag(WTFMove(dragImage), dragLoc, dragOrigin, src, state, { });
         }
 
         return true;
@@ -1071,7 +1071,7 @@ bool DragController::startDrag(Frame& src, const DragState& state, DragOperation
         }
 
         if (mustUseLegacyDragClient) {
-            doSystemDrag(WTFMove(dragImage), dragLoc, dragOrigin, src, state);
+            doSystemDrag(WTFMove(dragImage), dragLoc, dragOrigin, src, state, { });
             return true;
         }
 
@@ -1093,9 +1093,12 @@ bool DragController::startDrag(Frame& src, const DragState& state, DragOperation
         src.editor().setIgnoreSelectionChanges(true);
         auto previousSelection = src.selection().selection();
         selectElement(element);
-        if (hasData == HasNonDefaultPasteboardData::No && !dragAttachmentElement(src, attachment)) {
+
+        PromisedBlobInfo promisedBlob;
+        if (hasData == HasNonDefaultPasteboardData::No) {
+            promisedBlob = promisedBlobInfo(src, attachment);
             auto& editor = src.editor();
-            if (editor.client()) {
+            if (!promisedBlob && editor.client()) {
 #if PLATFORM(COCOA)
                 // Otherwise, if no file URL is specified, call out to the injected bundle to populate the pasteboard with data.
                 editor.willWriteSelectionToPasteboard(src.selection().toNormalizedRange().get());
@@ -1119,7 +1122,7 @@ bool DragController::startDrag(Frame& src, const DragState& state, DragOperation
             dragLoc = dragLocForSelectionDrag(src);
             m_dragOffset = IntPoint(dragOrigin.x() - dragLoc.x(), dragOrigin.y() - dragLoc.y());
         }
-        doSystemDrag(WTFMove(dragImage), dragLoc, dragOrigin, src, state);
+        doSystemDrag(WTFMove(dragImage), dragLoc, dragOrigin, src, state, WTFMove(promisedBlob));
         if (!element.isContentRichlyEditable())
             src.selection().setSelection(previousSelection);
         src.editor().setIgnoreSelectionChanges(false);
@@ -1130,7 +1133,7 @@ bool DragController::startDrag(Frame& src, const DragState& state, DragOperation
     if (state.type == DragSourceActionDHTML && dragImage) {
         ASSERT(m_dragSourceAction & DragSourceActionDHTML);
         m_client.willPerformDragSourceAction(DragSourceActionDHTML, dragOrigin, dataTransfer);
-        doSystemDrag(WTFMove(dragImage), dragLoc, dragOrigin, src, state);
+        doSystemDrag(WTFMove(dragImage), dragLoc, dragOrigin, src, state, { });
         return true;
     }
 
@@ -1180,7 +1183,7 @@ void DragController::doImageDrag(Element& element, const IntPoint& dragOrigin, c
         return;
 
     dragImageOffset = mouseDownPoint + scaledOrigin;
-    doSystemDrag(WTFMove(dragImage), dragImageOffset, dragOrigin, frame, state);
+    doSystemDrag(WTFMove(dragImage), dragImageOffset, dragOrigin, frame, state, { });
 }
 
 void DragController::beginDrag(DragItem dragItem, Frame& frame, const IntPoint& mouseDownPoint, const IntPoint& mouseDraggedPoint, DataTransfer& dataTransfer, DragSourceAction dragSourceAction)
@@ -1207,7 +1210,7 @@ void DragController::beginDrag(DragItem dragItem, Frame& frame, const IntPoint& 
     cleanupAfterSystemDrag();
 }
 
-void DragController::doSystemDrag(DragImage image, const IntPoint& dragLoc, const IntPoint& eventPos, Frame& frame, const DragState& state)
+void DragController::doSystemDrag(DragImage image, const IntPoint& dragLoc, const IntPoint& eventPos, Frame& frame, const DragState& state, PromisedBlobInfo&& promisedBlob)
 {
     m_didInitiateDrag = true;
     m_dragInitiator = frame.document();
@@ -1218,6 +1221,7 @@ void DragController::doSystemDrag(DragImage image, const IntPoint& dragLoc, cons
     DragItem item;
     item.image = WTFMove(image);
     item.sourceAction = state.type;
+    item.promisedBlob = WTFMove(promisedBlob);
 
     auto eventPositionInRootViewCoordinates = frame.view()->contentsToRootView(eventPos);
     auto dragLocationInRootViewCoordinates = frame.view()->contentsToRootView(dragLoc);
@@ -1304,10 +1308,10 @@ String DragController::platformContentTypeForBlobType(const String& type) const
 
 #if ENABLE(ATTACHMENT_ELEMENT)
 
-bool DragController::dragAttachmentElement(Frame& frame, HTMLAttachmentElement& attachment)
+PromisedBlobInfo DragController::promisedBlobInfo(Frame& frame, HTMLAttachmentElement& attachment)
 {
     if (!attachment.file())
-        return false;
+        return { };
 
     Vector<String> additionalTypes;
     Vector<RefPtr<SharedBuffer>> additionalData;
@@ -1317,9 +1321,7 @@ bool DragController::dragAttachmentElement(Frame& frame, HTMLAttachmentElement& 
 #endif
 
     auto& file = *attachment.file();
-    m_client.prepareToDragPromisedBlob({ file.url(), platformContentTypeForBlobType(file.type()), file.name(), WTFMove(additionalTypes), WTFMove(additionalData) });
-
-    return true;
+    return { file.url(), platformContentTypeForBlobType(file.type()), file.name(), WTFMove(additionalTypes), WTFMove(additionalData) };
 }
 
 #endif // ENABLE(ATTACHMENT_ELEMENT)

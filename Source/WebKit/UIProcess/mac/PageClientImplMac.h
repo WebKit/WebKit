@@ -250,8 +250,6 @@ private:
 
     void didRestoreScrollPosition() override;
     bool windowIsFrontWindowUnderMouse(const NativeWebMouseEvent&) override;
-
-    void prepareToDragPromisedBlob(const WebCore::PromisedBlobInfo&) final;
 };
 
 } // namespace WebKit

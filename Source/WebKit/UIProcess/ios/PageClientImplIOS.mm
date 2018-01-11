@@ -813,11 +813,6 @@ void PageClientImpl::requestPasswordForQuickLookDocument(const String& fileName,
 }
 #endif
 
-void PageClientImpl::prepareToDragPromisedBlob(const WebCore::PromisedBlobInfo& info)
-{
-    [m_contentView _prepareToDragPromisedBlob:info];
-}
-
 } // namespace WebKit
 
 #endif // PLATFORM(IOS)

@@ -535,8 +535,6 @@ public:
     void setIsCustomizingTouchBar(bool isCustomizingTouchBar) { m_isCustomizingTouchBar = isCustomizingTouchBar; };
 #endif // HAVE(TOUCH_BAR)
 
-    void prepareToDragPromisedBlob(const WebCore::PromisedBlobInfo&);
-
     bool beginBackSwipeForTesting();
     bool completeBackSwipeForTesting();
 

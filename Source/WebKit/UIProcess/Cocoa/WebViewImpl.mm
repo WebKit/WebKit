@@ -3769,12 +3769,6 @@ void WebViewImpl::registerDraggedTypes()
     [m_view registerForDraggedTypes:[types allObjects]];
 }
 
-void WebViewImpl::prepareToDragPromisedBlob(const WebCore::PromisedBlobInfo& info)
-{
-    // FIXME: Add macOS support for dragging promised blob data as file promises.
-    UNUSED_PARAM(info);
-}
-
 #endif // ENABLE(DRAG_SUPPORT)
 
 void WebViewImpl::startWindowDrag()

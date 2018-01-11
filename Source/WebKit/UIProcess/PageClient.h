@@ -193,8 +193,6 @@ public:
     virtual void setPromisedDataForImage(const String& pasteboardName, Ref<WebCore::SharedBuffer>&& imageBuffer, const String& filename, const String& extension, const String& title, const String& url, const String& visibleUrl, RefPtr<WebCore::SharedBuffer>&& archiveBuffer) = 0;
 #endif
 
-    virtual void prepareToDragPromisedBlob(const WebCore::PromisedBlobInfo&) { }
-
     virtual WebCore::FloatRect convertToDeviceSpace(const WebCore::FloatRect&) = 0;
     virtual WebCore::FloatRect convertToUserSpace(const WebCore::FloatRect&) = 0;
     virtual WebCore::IntPoint screenToRootView(const WebCore::IntPoint&) = 0;

@@ -877,11 +877,6 @@ WebCore::UserInterfaceLayoutDirection PageClientImpl::userInterfaceLayoutDirecti
     return (m_view.userInterfaceLayoutDirection == NSUserInterfaceLayoutDirectionLeftToRight) ? WebCore::UserInterfaceLayoutDirection::LTR : WebCore::UserInterfaceLayoutDirection::RTL;
 }
 
-void PageClientImpl::prepareToDragPromisedBlob(const WebCore::PromisedBlobInfo& info)
-{
-    m_impl->prepareToDragPromisedBlob(info);
-}
-
 } // namespace WebKit
 
 #endif // PLATFORM(MAC)

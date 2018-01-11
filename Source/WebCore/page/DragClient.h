@@ -61,8 +61,6 @@ public:
     virtual void declareAndWriteDragImage(const String&, Element&, const URL&, const String&, Frame*) { }
 #endif
 
-    virtual void prepareToDragPromisedBlob(const PromisedBlobInfo&) { }
-
     virtual ~DragClient() = default;
 };
     

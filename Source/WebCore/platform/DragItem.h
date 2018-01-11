@@ -30,6 +30,7 @@
 #include "IntPoint.h"
 #include "IntRect.h"
 #include "PasteboardWriterData.h"
+#include "PromisedBlobInfo.h"
 
 namespace WebCore {
 
@@ -49,6 +50,7 @@ struct DragItem final {
     IntRect dragPreviewFrameInRootViewCoordinates;
 
     PasteboardWriterData data;
+    PromisedBlobInfo promisedBlob;
 
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static bool decode(Decoder&, DragItem&);
@@ -65,6 +67,7 @@ void DragItem::encode(Encoder& encoder) const
     encoder << hasIndicatorData;
     if (hasIndicatorData)
         encoder << image.indicatorData().value();
+    encoder << promisedBlob;
 }
 
 template<class Decoder>
@@ -98,6 +101,8 @@ bool DragItem::decode(Decoder& decoder, DragItem& result)
             return false;
         result.image.setIndicatorData(*indicatorData);
     }
+    if (!decoder.decode(result.promisedBlob))
+        return false;
     return true;
 }
 

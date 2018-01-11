@@ -513,6 +513,4 @@ messages -> WebPageProxy {
     DidInsertAttachment(String identifier)
     DidRemoveAttachment(String identifier)
 #endif
-
-    PrepareToDragPromisedBlob(struct WebCore::PromisedBlobInfo blobInfo)
 }

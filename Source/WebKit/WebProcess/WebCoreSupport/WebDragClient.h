@@ -53,8 +53,6 @@ private:
     void declareAndWriteDragImage(const String& pasteboardName, WebCore::Element&, const WebCore::URL&, const String&, WebCore::Frame*) override;
 #endif
 
-    void prepareToDragPromisedBlob(const WebCore::PromisedBlobInfo&) final;
-
     void dragControllerDestroyed() override;
 
     WebPage* m_page;

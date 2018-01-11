@@ -778,8 +778,6 @@ public:
     void willStartDrag() { ASSERT(!m_isStartingDrag); m_isStartingDrag = true; }
     void didStartDrag();
     void dragCancelled();
-
-    void prepareToDragPromisedBlob(const WebCore::PromisedBlobInfo&);
 #endif
 
     void beginPrinting(uint64_t frameID, const PrintInfo&);

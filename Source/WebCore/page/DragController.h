@@ -48,6 +48,7 @@ class PlatformMouseEvent;
 
 struct DragItem;
 struct DragState;
+struct PromisedBlobInfo;
 
     class DragController {
         WTF_MAKE_NONCOPYABLE(DragController); WTF_MAKE_FAST_ALLOCATED;
@@ -115,7 +116,7 @@ struct DragState;
         bool shouldUseCachedImageForDragImage(const Image&) const;
 
         void doImageDrag(Element&, const IntPoint&, const IntRect&, Frame&, IntPoint&, const DragState&);
-        void doSystemDrag(DragImage, const IntPoint&, const IntPoint&, Frame&, const DragState&);
+        void doSystemDrag(DragImage, const IntPoint&, const IntPoint&, Frame&, const DragState&, PromisedBlobInfo&&);
 
         void beginDrag(DragItem, Frame&, const IntPoint& mouseDownPoint, const IntPoint& mouseDraggedPoint, DataTransfer&, DragSourceAction);
 
@@ -134,7 +135,7 @@ struct DragState;
         void declareAndWriteDragImage(DataTransfer&, Element&, const URL&, const String& label);
 
 #if ENABLE(ATTACHMENT_ELEMENT)
-        bool dragAttachmentElement(Frame&, HTMLAttachmentElement&);
+        PromisedBlobInfo promisedBlobInfo(Frame&, HTMLAttachmentElement&);
 #endif
         Page& m_page;
         DragClient& m_client;

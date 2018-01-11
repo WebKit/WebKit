@@ -25,9 +25,10 @@
 
 #pragma once
 
+#include "SharedBuffer.h"
+
 namespace WebCore {
 
-class SharedBuffer;
 class URL;
 
 struct PromisedBlobInfo {

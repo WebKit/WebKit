@@ -7201,11 +7201,6 @@ void WebPageProxy::requestStorageAccess(String&& subFrameHost, String&& topFrame
 }
 #endif
 
-void WebPageProxy::prepareToDragPromisedBlob(const PromisedBlobInfo& info)
-{
-    m_pageClient.prepareToDragPromisedBlob(info);
-}
-
 #if PLATFORM(COCOA)
 void WebPageProxy::touchBarMenuDataChanged(const TouchBarMenuData& touchBarMenuData)
 {

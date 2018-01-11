@@ -3298,11 +3298,6 @@ bool WebPage::handleEditingKeyboardEvent(KeyboardEvent* evt)
 
 #if ENABLE(DRAG_SUPPORT)
 
-void WebPage::prepareToDragPromisedBlob(const WebCore::PromisedBlobInfo& info)
-{
-    send(Messages::WebPageProxy::PrepareToDragPromisedBlob(info));
-}
-
 #if PLATFORM(GTK)
 void WebPage::performDragControllerAction(DragControllerAction action, const IntPoint& clientPosition, const IntPoint& globalPosition, uint64_t draggingSourceOperationMask, WebSelectionData&& selection, uint32_t flags)
 {
