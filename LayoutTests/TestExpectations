@@ -1685,4 +1685,6 @@ webkit.org/b/178785 perf/object-keys.html [ Pass Failure ]
 # There is a bug in the test
 imported/w3c/web-platform-tests/workers/worker-performance.worker.html [ Pass Failure ]
 
+media/event-queue-crash.html [ DumpJSConsoleLogInStdErr ]
+
 webkit.org/b/181222 http/tests/workers/service/cors-image-fetch.html [ Skip ]
