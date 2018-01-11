@@ -39,7 +39,7 @@
 + (BOOL)isSelectorExcludedFromWebScript:(SEL)aSelector
 {
     if (aSelector == @selector(insertText:)
-        || aSelector == @selector(setMarkedText:selectedFrom:length:)
+        || aSelector == @selector(setMarkedText:selectedFrom:length:suppressUnderline:)
         || aSelector == @selector(markedRange))
         return NO;
 
@@ -50,7 +50,7 @@
 {
     if (aSelector == @selector(insertText:))
         return @"insertText";
-    if (aSelector == @selector(setMarkedText:selectedFrom:length:))
+    if (aSelector == @selector(setMarkedText:selectedFrom:length:suppressUnderline:))
         return @"setMarkedText";
     if (aSelector == @selector(markedRange))
         return @"markedRange";
@@ -83,7 +83,7 @@
     [[webView mainFrame] confirmMarkedText:text];
 }
 
-- (void)setMarkedText:(NSString *)text selectedFrom:(NSInteger)selectionStart length:(NSInteger)selectionLength
+- (void)setMarkedText:(NSString *)text selectedFrom:(NSInteger)selectionStart length:(NSInteger)selectionLength suppressUnderline:(BOOL)suppressUnderline
 {
     if (selectionStart == -1)
         selectionStart = NSNotFound;

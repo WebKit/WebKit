@@ -1,3 +1,18 @@
+2018-01-10  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        REGRESSION(r222507): Composition highlight doesn't render when using IME
+        https://bugs.webkit.org/show_bug.cgi?id=181485
+        <rdar://problem/35896516>
+
+        Reviewed by Ryosuke Niwa.
+
+        Fixes the order of arguments passed to paintTextSubrangeBackground from paintCompositionBackground.
+
+        Test: editing/marked-text-appearance.html
+
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::paintCompositionBackground):
+
 2018-01-10  Youenn Fablet  <youenn@apple.com>
 
         Use no-cache fetch mode when loading main documents with location.reload()

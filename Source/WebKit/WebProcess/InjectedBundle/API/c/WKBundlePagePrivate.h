@@ -72,7 +72,7 @@ WK_EXPORT bool WKBundlePageIsTrackingRepaints(WKBundlePageRef page);
 WK_EXPORT void WKBundlePageResetTrackedRepaints(WKBundlePageRef page);
 WK_EXPORT WKArrayRef WKBundlePageCopyTrackedRepaintRects(WKBundlePageRef page);
 
-WK_EXPORT void WKBundlePageSetComposition(WKBundlePageRef page, WKStringRef text, int from, int length);
+WK_EXPORT void WKBundlePageSetComposition(WKBundlePageRef page, WKStringRef text, int from, int length, bool suppressUnderline);
 WK_EXPORT bool WKBundlePageHasComposition(WKBundlePageRef page);
 WK_EXPORT void WKBundlePageConfirmComposition(WKBundlePageRef page);
 WK_EXPORT void WKBundlePageConfirmCompositionWithText(WKBundlePageRef page, WKStringRef text);

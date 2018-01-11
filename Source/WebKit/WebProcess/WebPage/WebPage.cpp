@@ -4417,14 +4417,16 @@ void WebPage::simulateMouseMotion(WebCore::IntPoint position, WallTime time)
     mouseEvent(WebMouseEvent(WebMouseEvent::MouseMove, WebMouseEvent::NoButton, 0, position, position, 0, 0, 0, 0, WebMouseEvent::Modifiers(), time, 0, WebMouseEvent::NoTap));
 }
 
-void WebPage::setCompositionForTesting(const String& compositionString, uint64_t from, uint64_t length)
+void WebPage::setCompositionForTesting(const String& compositionString, uint64_t from, uint64_t length, bool suppressUnderline)
 {
     Frame& frame = m_page->focusController().focusedOrMainFrame();
     if (!frame.editor().canEdit())
         return;
 
     Vector<CompositionUnderline> underlines;
-    underlines.append(CompositionUnderline(0, compositionString.length(), CompositionUnderlineColor::TextColor, Color(Color::black), false));
+    if (!suppressUnderline)
+        underlines.append(CompositionUnderline(0, compositionString.length(), CompositionUnderlineColor::TextColor, Color(Color::black), false));
+
     frame.editor().setComposition(compositionString, underlines, from, from + length);
 }
 

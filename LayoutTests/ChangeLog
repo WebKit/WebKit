@@ -1,3 +1,17 @@
+2018-01-10  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        REGRESSION(r222507): Composition highlight doesn't render when using IME
+        https://bugs.webkit.org/show_bug.cgi?id=181485
+        <rdar://problem/35896516>
+
+        Reviewed by Ryosuke Niwa.
+
+        Add a new layout test to ensure that in the absence of custom composition underlines, a marked composition
+        string appears different once it is confirmed.
+
+        * editing/marked-text-appearance-expected-mismatch.html: Added.
+        * editing/marked-text-appearance.html: Added.
+
 2018-01-10  Chris Dumez  <cdumez@apple.com>
 
         Multiple http/wpt/beacon/contentextensions/ test are flaky.

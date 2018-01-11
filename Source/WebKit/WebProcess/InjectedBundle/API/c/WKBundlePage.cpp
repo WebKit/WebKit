@@ -540,9 +540,9 @@ WKArrayRef WKBundlePageCopyTrackedRepaintRects(WKBundlePageRef pageRef)
     return toAPI(&toImpl(pageRef)->trackedRepaintRects().leakRef());
 }
 
-void WKBundlePageSetComposition(WKBundlePageRef pageRef, WKStringRef text, int from, int length)
+void WKBundlePageSetComposition(WKBundlePageRef pageRef, WKStringRef text, int from, int length, bool suppressUnderline)
 {
-    toImpl(pageRef)->setCompositionForTesting(toWTFString(text), from, length);
+    toImpl(pageRef)->setCompositionForTesting(toWTFString(text), from, length, suppressUnderline);
 }
 
 bool WKBundlePageHasComposition(WKBundlePageRef pageRef)
