@@ -3853,7 +3853,7 @@ WEBCORE_COMMAND(yankAndSelect)
 
 - (void)_web_gestureEventWasNotHandledByWebCore:(NSEvent *)event
 {
-    _impl->gestureEventWasNotHandledByWebCoreFromViewOnly(event);
+    [self _gestureEventWasNotHandledByWebCore:event];
 }
 
 #endif // PLATFORM(MAC)
