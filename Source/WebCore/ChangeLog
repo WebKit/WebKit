@@ -1,3 +1,35 @@
+2018-01-11  Dean Jackson  <dino@apple.com>
+
+        [WebGL] Simulated vertexAttrib0 can sometimes cause OUT_OF_MEMORY errors
+        https://bugs.webkit.org/show_bug.cgi?id=181558
+        <rdar://problem/36189833>
+
+        Reviewed by Eric Carlson.
+
+        Very large element indices in the ELEMENT_ARRAY_BUFFER meant that
+        our simulated vertexAttrib0 buffer might be too large. We need
+        to check for out-of-memory, but we can also detect some of the issues
+        earlier in our validation code. Additionally, make sure that we don't
+        accidentally cast an unsigned to a signed.
+
+        Test: fast/canvas/webgl/simulated-vertexAttrib0-invalid-indicies.html
+
+        * html/canvas/WebGL2RenderingContext.cpp:
+        (WebCore::WebGL2RenderingContext::validateIndexArrayConservative): Update validation
+        code to look for overflow, rather than relying on looking for sign changes.
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::validateIndexArrayConservative): Ditto.
+        * html/canvas/WebGLRenderingContextBase.cpp:
+        (WebCore::WebGLRenderingContextBase::validateIndexArrayPrecise):
+        (WebCore::WebGLRenderingContextBase::drawArrays): Check that we were able to simulate.
+        (WebCore::WebGLRenderingContextBase::drawElements):
+        (WebCore::WebGLRenderingContextBase::validateSimulatedVertexAttrib0): Update validation code, and
+        use GC3Duint, since that's what the indicies are.
+        (WebCore::WebGLRenderingContextBase::simulateVertexAttrib0): Ditto.
+        (WebCore::WebGLRenderingContextBase::drawArraysInstanced): Check that we were able to simulate.
+        (WebCore::WebGLRenderingContextBase::drawElementsInstanced):
+        * html/canvas/WebGLRenderingContextBase.h:
+
 2018-01-11  Chris Dumez  <cdumez@apple.com>
 
         ASSERTION FAILED: registration in WebCore::SWServerWorker::skipWaiting()
