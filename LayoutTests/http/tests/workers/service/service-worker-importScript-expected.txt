@@ -1,5 +1,4 @@
-Registering service worker
-Registered service worker
-Status is no status
+
+Status is unknown url
 PASS
 
