@@ -1763,3 +1763,5 @@ webkit.org/b/180675 accessibility/mac/search-field-cancel-button.html [ Pass Fai
 webkit.org/b/181098 fast/workers/worker-terminate.html [ Pass Timeout ]
 
 webkit.org/b/181502 swipe/pushstate-with-manual-scrollrestoration.html [ Failure ]
+
+webkit.org/b/181479 http/tests/misc/slow-loading-animated-image.html [ Pass ImageOnlyFailure ]
