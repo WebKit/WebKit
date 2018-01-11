@@ -1,3 +1,14 @@
+2018-01-10  Per Arne Vollan  <pvollan@apple.com>
+
+        [Win] WebKitLegacy should be a dll, not a static library.
+        https://bugs.webkit.org/show_bug.cgi?id=181500
+
+        Reviewed by Alex Christensen.
+
+        Set WebKitLegacy library type to shared.
+
+        * Source/cmake/OptionsWin.cmake:
+
 2018-01-09  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Update OptionsGTK.cmake and NEWS for 2.19.5 release.
