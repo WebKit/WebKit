@@ -3168,6 +3168,11 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
 
+    case RegExpMatchFast: {
+        compileRegExpMatchFast(node);
+        break;
+    }
+
     case StringReplace:
     case StringReplaceRegExp: {
         compileStringReplace(node);

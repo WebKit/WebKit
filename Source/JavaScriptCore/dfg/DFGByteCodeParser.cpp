@@ -2620,6 +2620,15 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, int resultOperand, Intrin
         return true;
     }
 
+    case RegExpMatchFastIntrinsic: {
+        RELEASE_ASSERT(argumentCountIncludingThis == 2);
+
+        insertChecks();
+        Node* regExpMatch = addToGraph(RegExpMatchFast, OpInfo(0), OpInfo(prediction), addToGraph(GetGlobalObject, callee), get(virtualRegisterForArgument(0, registerOffset)), get(virtualRegisterForArgument(1, registerOffset)));
+        set(VirtualRegister(resultOperand), regExpMatch);
+        return true;
+    }
+
     case ObjectGetPrototypeOfIntrinsic: {
         if (argumentCountIncludingThis != 2)
             return false;

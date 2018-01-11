@@ -1023,6 +1023,18 @@ EncodedJSValue JIT_OPERATION operationRegExpExecGeneric(ExecState* exec, JSGloba
     return JSValue::encode(asRegExpObject(base)->exec(exec, globalObject, input));
 }
 
+EncodedJSValue JIT_OPERATION operationRegExpMatchFastString(ExecState* exec, JSGlobalObject* globalObject, RegExpObject* regExpObject, JSString* argument)
+{
+    SuperSamplerScope superSamplerScope(false);
+
+    VM& vm = globalObject->vm();
+    NativeCallFrameTracer tracer(&vm, exec);
+
+    if (!regExpObject->regExp()->global())
+        return JSValue::encode(regExpObject->execInline(exec, globalObject, argument));
+    return JSValue::encode(regExpObject->matchGlobal(exec, globalObject, argument));
+}
+
 EncodedJSValue JIT_OPERATION operationParseIntNoRadixGeneric(ExecState* exec, EncodedJSValue value)
 {
     VM& vm = exec->vm();

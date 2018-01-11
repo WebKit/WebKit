@@ -1182,6 +1182,9 @@ private:
         case RegExpTest:
             compileRegExpTest();
             break;
+        case RegExpMatchFast:
+            compileRegExpMatchFast();
+            break;
         case NewRegexp:
             compileNewRegexp();
             break;
@@ -10268,6 +10271,17 @@ private:
             Int32, m_out.operation(operationRegExpTestGeneric), m_callFrame, globalObject, base,
             argument);
         setBoolean(result);
+    }
+
+    void compileRegExpMatchFast()
+    {
+        LValue globalObject = lowCell(m_node->child1());
+        LValue base = lowRegExpObject(m_node->child2());
+        LValue argument = lowString(m_node->child3());
+        LValue result = vmCall(
+            Int64, m_out.operation(operationRegExpMatchFastString), m_callFrame, globalObject,
+            base, argument);
+        setJSValue(result);
     }
 
     void compileNewRegexp()

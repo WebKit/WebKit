@@ -1095,6 +1095,13 @@ private:
             break;
         }
 
+        case RegExpMatchFast: {
+            fixEdge<KnownCellUse>(node->child1());
+            fixEdge<RegExpObjectUse>(node->child2());
+            fixEdge<StringUse>(node->child3());
+            break;
+        }
+
         case StringReplace:
         case StringReplaceRegExp: {
             if (node->child2()->shouldSpeculateString()) {

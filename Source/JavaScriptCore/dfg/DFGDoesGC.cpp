@@ -137,6 +137,7 @@ bool doesGC(Graph& graph, Node* node)
     case CheckStringIdent:
     case RegExpExec:
     case RegExpTest:
+    case RegExpMatchFast:
     case CompareLess:
     case CompareLessEq:
     case CompareGreater:

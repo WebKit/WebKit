@@ -3065,6 +3065,7 @@ public:
     void compileArrayPush(Node*);
     void compileNotifyWrite(Node*);
     void compileRegExpExec(Node*);
+    void compileRegExpMatchFast(Node*);
     void compileRegExpTest(Node*);
     void compileStringReplace(Node*);
     void compileIsObjectOrNull(Node*);

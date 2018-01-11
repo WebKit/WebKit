@@ -276,6 +276,7 @@ inline CapabilityLevel canCompile(Node* node)
     case GetRestLength:
     case RegExpExec:
     case RegExpTest:
+    case RegExpMatchFast:
     case NewRegexp:
     case StringReplace:
     case StringReplaceRegExp: 

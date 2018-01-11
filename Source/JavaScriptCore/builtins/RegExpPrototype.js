@@ -79,21 +79,10 @@ function hasObservableSideEffectsForRegExpMatch(regexp) {
     return !@isRegExpObject(regexp);
 }
 
-@overriddenName="[Symbol.match]"
-function match(strArg)
+@globalPrivate
+function matchSlow(regexp, str)
 {
     "use strict";
-
-    if (!@isObject(this))
-        @throwTypeError("RegExp.prototype.@@match requires that |this| be an Object");
-
-    let regexp = this;
-
-    // Check for observable side effects and call the fast path if there aren't any.
-    if (!@hasObservableSideEffectsForRegExpMatch(regexp))
-        return @regExpMatchFast.@call(regexp, strArg);
-
-    let str = @toString(strArg);
 
     if (!regexp.global)
         return @regExpExec(regexp, str);
@@ -129,6 +118,22 @@ function match(strArg)
 
         resultList.@push(resultString);
     }
+}
+
+@overriddenName="[Symbol.match]"
+function match(strArg)
+{
+    "use strict";
+
+    if (!@isObject(this))
+        @throwTypeError("RegExp.prototype.@@match requires that |this| be an Object");
+
+    let str = @toString(strArg);
+
+    // Check for observable side effects and call the fast path if there aren't any.
+    if (!@hasObservableSideEffectsForRegExpMatch(this))
+        return @regExpMatchFast.@call(this, str);
+    return @matchSlow(this, str);
 }
 
 @overriddenName="[Symbol.replace]"

@@ -1570,6 +1570,7 @@ public:
         case ArrayPush:
         case RegExpExec:
         case RegExpTest:
+        case RegExpMatchFast:
         case GetGlobalVar:
         case GetGlobalLexicalVariable:
         case StringReplace:

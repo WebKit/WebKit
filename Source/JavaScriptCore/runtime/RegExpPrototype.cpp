@@ -131,22 +131,11 @@ EncodedJSValue JSC_HOST_CALL regExpProtoFuncExec(ExecState* exec)
 
 EncodedJSValue JSC_HOST_CALL regExpProtoFuncMatchFast(ExecState* exec)
 {
-    VM& vm = exec->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    JSValue thisValue = exec->thisValue();
-    if (!thisValue.inherits(vm, RegExpObject::info()))
-        return throwVMTypeError(exec, scope);
-    JSString* string = exec->argument(0).toStringOrNull(exec);
-    EXCEPTION_ASSERT(!!scope.exception() == !string);
-    if (!string)
-        return encodedJSValue();
-    if (!asRegExpObject(thisValue)->regExp()->global()) {
-        scope.release();
-        return JSValue::encode(asRegExpObject(thisValue)->exec(exec, exec->lexicalGlobalObject(), string));
-    }
-    scope.release();
-    return JSValue::encode(asRegExpObject(thisValue)->matchGlobal(exec, exec->lexicalGlobalObject(), string));
+    RegExpObject* thisObject = asRegExpObject(exec->thisValue());
+    JSString* string = jsCast<JSString*>(exec->uncheckedArgument(0));
+    if (!thisObject->regExp()->global())
+        return JSValue::encode(thisObject->exec(exec, exec->lexicalGlobalObject(), string));
+    return JSValue::encode(thisObject->matchGlobal(exec, exec->lexicalGlobalObject(), string));
 }
 
 EncodedJSValue JSC_HOST_CALL regExpProtoFuncCompile(ExecState* exec)

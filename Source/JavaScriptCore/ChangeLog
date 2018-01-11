@@ -1,3 +1,66 @@
+2018-01-11  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [DFG][FTL] regExpMatchFast should be handled
+        https://bugs.webkit.org/show_bug.cgi?id=180988
+
+        Reviewed by Mark Lam.
+
+        RegExp.prototype.@@match has a fast path, @regExpMatchFast. This patch annotates this function
+        with RegExpMatchFastIntrinsic, and introduces RegExpMatch DFG node. This paves the way to
+        make NewRegexp PhantomNewRegexp if it is not used except for setting/getting its lastIndex property.
+
+        To improve RegExp.prototype.@@match's performance more, we make this builtin function small by moving
+        slow path part to `@matchSlow()` private function.
+
+        It improves SixSpeed regex-u.{es5,es6} largely since they stress String.prototype.match, which calls
+        this regExpMatchFast function.
+
+                                 baseline                  patched
+
+        regex-u.es5          55.3835+-6.3002     ^     36.2431+-2.0797        ^ definitely 1.5281x faster
+        regex-u.es6         110.4624+-6.2896     ^     94.1012+-7.2433        ^ definitely 1.1739x faster
+
+        * builtins/RegExpPrototype.js:
+        (globalPrivate.matchSlow):
+        (overriddenName.string_appeared_here.match):
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleIntrinsicCall):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::hasHeapPrediction):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileRegExpMatch):
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNode):
+        (JSC::FTL::DFG::LowerDFGToB3::compileRegExpMatch):
+        * runtime/Intrinsic.cpp:
+        (JSC::intrinsicName):
+        * runtime/Intrinsic.h:
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        * runtime/RegExpPrototype.cpp:
+        (JSC::regExpProtoFuncMatchFast):
+
 2018-01-11  Saam Barati  <sbarati@apple.com>
 
         Our for-in caching is wrong when we add indexed properties on things in the prototype chain
