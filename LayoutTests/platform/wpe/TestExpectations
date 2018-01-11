@@ -1159,3 +1159,10 @@ webkit.org/b/181224 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4
 webkit.org/b/181225 media/encrypted-media/mock-MediaKeySystemAccess.html [ Crash ]
 
 webkit.org/b/175189 http/tests/resourceLoadStatistics/grandfathering.html [ Failure ]
+
+webkit.org/b/181532 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-unique-origin.html [ Failure ]
+webkit.org/b/181532 imported/w3c/web-platform-tests/encrypted-media/clearkey-generate-request-disallowed-input.html [ Timeout ]
+
+webkit.org/b/181533 imported/w3c/web-platform-tests/fetch/api/cors/cors-filtering.html [ Pass Failure ]
+
+webkit.org/b/181534 imported/w3c/web-platform-tests/fetch/api/cors/cors-filtering.html [ Pass Failure ]

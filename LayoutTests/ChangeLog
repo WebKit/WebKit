@@ -1,3 +1,10 @@
+2018-01-11  Miguel Gomez  <magomez@igalia.com>
+
+        Unreviewed GTK+ and WPE gardening after r226773.
+
+        * platform/gtk/TestExpectations:
+        * platform/wpe/TestExpectations:
+
 2018-01-11  Ms2ger  <Ms2ger@igalia.com>
 
         [GTK] Enable css2.1/20110323/vertical-align-boxes-001.htm.
