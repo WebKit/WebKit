@@ -1,3 +1,26 @@
+2018-01-10  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Canvas tab: throttle recording slider updates
+        https://bugs.webkit.org/show_bug.cgi?id=180839
+        <rdar://problem/36057849>
+
+        Reviewed by Joseph Pecoraro
+
+        * UserInterface/Base/Utilities.js:
+        Add Object.throttle and Function.cancelThrottle. Repeated calls to a
+        function on a throttled object are delayed, so that the function isn't
+        invoked more frequently than the specified delay value.
+
+        For a description of throttling behavior see:
+          - http://www.chrislondon.co/throttling-vs-debouncing
+          - http://benalman.com/projects/jquery-throttle-debounce-plugin
+
+        * UserInterface/Views/RecordingContentView.js:
+        (WI.RecordingContentView.prototype.updateActionIndex):
+        Throttle frequency of canvas snapshot creation to 200ms.
+        (WI.RecordingContentView.prototype.hidden):
+        Prevent trailing edge call after hiding the view.
+
 2018-01-10  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Should not try to autocomplete subsections of a string

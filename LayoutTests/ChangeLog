@@ -1,3 +1,15 @@
+2018-01-10  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Canvas tab: throttle recording slider updates
+        https://bugs.webkit.org/show_bug.cgi?id=180839
+        <rdar://problem/36057849>
+
+        Reviewed by Joseph Pecoraro
+
+        * inspector/unit-tests/throttle-expected.txt: Added.
+        * inspector/unit-tests/throttle.html: Added.
+        Added function throttling tests.
+
 2018-01-10  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         REGRESSION(r222507): Composition highlight doesn't render when using IME
