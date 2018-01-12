@@ -1,3 +1,24 @@
+2018-01-11  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Cocoa] Star character disappears when bolded
+        https://bugs.webkit.org/show_bug.cgi?id=181568
+        <rdar://problem/18755569>
+
+        Reviewed by Simon Fraser.
+
+        We had some code in ComplexTextController to ask the FontCache for a font, given the name
+        of a particular font CoreText used inside a CTRun. This is wrong for two reasons: fonts
+        are not identifiable by PostScript name (in the general case), and because the lookup
+        procedure requires a FontDescription, the result may yield a font that is not the one
+        looked up. The goal of this code was simply to preserve the rendering mode of the font,
+        but we removed support for these rendering modes years ago. So the solution is to skip
+        that lookup and use the CoreText font directly.
+
+        Test: fast/text/unknown-font.html
+
+        * platform/graphics/mac/ComplexTextControllerCoreText.mm:
+        (WebCore::ComplexTextController::collectComplexTextRunsForCharacters):
+
 2018-01-11  Keith Rollin  <krollin@apple.com>
 
         Add optional logging of ITP-related user interaction information

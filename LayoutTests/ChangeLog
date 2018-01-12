@@ -1,3 +1,14 @@
+2018-01-11  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Cocoa] Star character disappears when bolded
+        https://bugs.webkit.org/show_bug.cgi?id=181568
+        <rdar://problem/18755569>
+
+        Reviewed by Simon Fraser.
+
+        * fast/text/unknown-font-expected-mismatch.html: Added.
+        * fast/text/unknown-font.html: Added.
+
 2018-01-11  James Craig  <jcraig@apple.com>
 
         AX: when invert colors is on, double-invert video elements in UserAgentStyleSheet
