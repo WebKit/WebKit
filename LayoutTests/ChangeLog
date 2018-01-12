@@ -1,5 +1,18 @@
 2018-01-11  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r226818. rdar://problem/36458899
+
+    2018-01-11  Alex Christensen  <achristensen@webkit.org>
+
+            REGRESSION(r225003): Loading hangs in environments where dispatch_async does not work
+            https://bugs.webkit.org/show_bug.cgi?id=181553
+
+            Reviewed by Eric Carlson.
+
+            * media/video-src-remove.html:
+
+2018-01-11  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r226804. rdar://problem/36450810
 
     2018-01-11  Youenn Fablet  <youenn@apple.com>

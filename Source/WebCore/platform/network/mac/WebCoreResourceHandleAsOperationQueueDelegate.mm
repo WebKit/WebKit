@@ -64,13 +64,8 @@ static bool scheduledWithCustomRunLoopMode(SchedulePairHashSet* pairs)
 
     // This is the common case.
     SchedulePairHashSet* pairs = m_handle && m_handle->context() ? m_handle->context()->scheduledRunLoopPairs() : nullptr;
-    if (!scheduledWithCustomRunLoopMode(pairs)) {
-#if PLATFORM(MAC)
-        return dispatch_async(dispatch_get_main_queue(), BlockPtr<void()>::fromCallable(WTFMove(function)).get());
-#else
+    if (!scheduledWithCustomRunLoopMode(pairs))
         return callOnMainThread(WTFMove(function));
-#endif
-    }
 
     // If we have been scheduled in a custom run loop mode, schedule a block in that mode.
     auto block = BlockPtr<void()>::fromCallable([alreadyCalled = false, function = WTFMove(function)] () mutable {
