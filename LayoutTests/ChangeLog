@@ -1,5 +1,20 @@
 2018-01-12  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r226745. rdar://problem/36392368
+
+    2018-01-10  Youenn Fablet  <youenn@apple.com>
+
+            Use no-cache fetch mode when loading main documents with location.reload()
+            https://bugs.webkit.org/show_bug.cgi?id=181285
+            <rdar://problem/36356831>
+
+            Reviewed by Alex Christensen.
+
+            * http/tests/inspector/network/har/har-page-expected.txt:
+            * http/tests/inspector/network/har/har-page.html:
+
+2018-01-12  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r226825. rdar://problem/36458902
 
     2018-01-11  James Craig  <jcraig@apple.com>

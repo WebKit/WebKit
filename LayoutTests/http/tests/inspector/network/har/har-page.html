@@ -42,6 +42,9 @@ function test()
         // Reduce the file contents.
         if (key === "text")
             return "<filtered text (" + value.length + ")>";
+        // Reduce the file size since cache may or may not be used.
+        if (key === "size")
+            return "<filtered>";
 
         // Since cache may or may not be used, timing data may be variable.
         // NOTE: SSL should always be -1 for this test case.
