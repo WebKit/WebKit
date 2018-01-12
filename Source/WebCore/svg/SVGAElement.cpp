@@ -166,14 +166,6 @@ bool SVGAElement::supportsFocus() const
     return isLink() || Element::supportsFocus();
 }
 
-bool SVGAElement::isFocusable() const
-{
-    if (renderer() && renderer()->absoluteClippedOverflowRect().isEmpty())
-        return false;
-    
-    return SVGElement::isFocusable();
-}
-
 bool SVGAElement::isURLAttribute(const Attribute& attribute) const
 {
     return attribute.name().localName() == XLinkNames::hrefAttr || SVGGraphicsElement::isURLAttribute(attribute);

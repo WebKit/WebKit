@@ -167,14 +167,6 @@ bool MathMLElement::canStartSelection() const
     return hasEditableStyle();
 }
 
-bool MathMLElement::isFocusable() const
-{
-    if (renderer() && renderer()->absoluteClippedOverflowRect().isEmpty())
-        return false;
-
-    return StyledElement::isFocusable();
-}
-
 bool MathMLElement::isKeyboardFocusable(KeyboardEvent& event) const
 {
     if (isFocusable() && StyledElement::supportsFocus())

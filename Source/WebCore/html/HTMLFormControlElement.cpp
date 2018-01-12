@@ -357,17 +357,6 @@ bool HTMLFormControlElement::supportsFocus() const
     return !isDisabledFormControl();
 }
 
-bool HTMLFormControlElement::isFocusable() const
-{
-    // If there's a renderer, make sure the size isn't empty, but if there's no renderer,
-    // it might still be focusable if it's in a canvas subtree (handled in Node::isFocusable).
-    if (renderer() && (!is<RenderBox>(*renderer()) || downcast<RenderBox>(*renderer()).size().isEmpty()))
-        return false;
-    // HTMLElement::isFocusable handles visibility and calls suportsFocus which
-    // will cover the disabled case.
-    return HTMLElement::isFocusable();
-}
-
 bool HTMLFormControlElement::isKeyboardFocusable(KeyboardEvent& event) const
 {
     return isFocusable()

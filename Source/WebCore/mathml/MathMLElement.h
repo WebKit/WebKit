@@ -105,7 +105,6 @@ protected:
 
 private:
     bool canStartSelection() const final;
-    bool isFocusable() const final;
     bool isKeyboardFocusable(KeyboardEvent&) const final;
     bool isMouseFocusable() const final;
     bool isURLAttribute(const Attribute&) const final;

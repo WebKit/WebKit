@@ -1,3 +1,27 @@
+2018-01-10  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Make elements of zero width or height focusable
+        https://bugs.webkit.org/show_bug.cgi?id=181516
+
+        Reviewed by Chris Dumez.
+
+        Don't check render box's size or bounding rect when deciding whether an element is focusable.
+        New behavior matches that of Firefox and Chrome.
+
+        Test: fast/events/focus-zero-size-element.html
+
+        * dom/Element.cpp:
+        (WebCore::Element::isFocusable): Only update the style.
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::HTMLFormControlElement::isFocusable const): Deleted.
+        * html/HTMLFormControlElement.h:
+        * mathml/MathMLElement.cpp:
+        (WebCore::MathMLElement::isFocusable const): Deleted. As far as I can tell, no math ml element is focusable.
+        * mathml/MathMLElement.h:
+        * svg/SVGAElement.cpp:
+        (WebCore::SVGAElement::isFocusable const): Deleted.
+        * svg/SVGAElement.h:
+
 2018-01-11  Filip Pizlo  <fpizlo@apple.com>
 
         Rename MarkedAllocator to BlockDirectory and AllocatorAttributes to CellAttributes

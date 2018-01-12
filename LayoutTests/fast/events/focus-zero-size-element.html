@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<body>
+<style>
+input { padding: 0; margin: 0; border: none; }
+</style>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+
+description('This tests focusing an element of zero width or height. WebKit should allow focusing such an element');
+
+function insertElement(name, attributes = {})
+{
+    const element = document.createElement(name);
+    for (const name in attributes)
+        element.setAttribute(name, attributes[name]);
+    document.body.appendChild(element);
+    return element;
+}
+
+shouldBe('input = insertElement("input"); input.focus(); document.activeElement', 'input');
+shouldBe('div = insertElement("div", {tabindex: 0}); div.focus(); document.activeElement', 'div');
+shouldBe('zeroWidthInput = insertElement("input", {style: "width: 0px"}); zeroWidthInput.focus(); document.activeElement', 'zeroWidthInput');
+evalAndLog('div.innerHTML = "&lt;svg>&lt;a tabindex=0 x=10 y=20>&lt;text x=10 y=20>&lt;/text>&lt;/a>&lt;/svg>".replace(/&lt;/g, "<"); svgA = div.querySelector("a");');
+shouldBe('svgA.focus(); document.activeElement', 'svgA');
+
+successfullyParsed = true;
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

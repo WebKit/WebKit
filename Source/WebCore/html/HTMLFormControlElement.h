@@ -72,7 +72,6 @@ public:
 
     bool isDisabledFormControl() const override;
 
-    bool isFocusable() const override;
     bool isEnumeratable() const override { return false; }
 
     bool isRequired() const;

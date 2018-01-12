@@ -53,7 +53,6 @@ private:
     bool supportsFocus() const final;
     bool isMouseFocusable() const final;
     bool isKeyboardFocusable(KeyboardEvent&) const final;
-    bool isFocusable() const final;
     bool isURLAttribute(const Attribute&) const final;
     bool canStartSelection() const final;
     int tabIndex() const final;
