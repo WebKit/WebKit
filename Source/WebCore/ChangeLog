@@ -1,3 +1,30 @@
+2018-01-12  Jer Noble  <jer.noble@apple.com>
+
+        WebGL video texture black in Safari 11.0.2 and wrong colored in Safari Preview 11.1
+        https://bugs.webkit.org/show_bug.cgi?id=181445
+        <rdar://problem/36383183>
+
+        Reviewed by Dean Jackson.
+
+        Tests: added compile-time correctness tests for YCbCrMatrix values.
+
+        Perform the derivation from YCbCr coefficients into matrices in constexpr expressions
+        at compile-time. This allows us to also perform compile-time correctness checks to catch
+        regressions which may cause incorrect color conversions.
+
+        Since we now have general-purpose derivation of matrix values from coefficients,
+        adding missing specificed matrices is trivial, so add support for SMPTE 240M and BT.2020
+        matrices.
+
+        * platform/graphics/cv/VideoTextureCopierCV.cpp:
+        (WebCore::GLfloatColor::GLfloatColor):
+        (WebCore::GLfloatColor::abs):
+        (WebCore::GLfloatColor::isApproximatelyEqualTo const):
+        (WebCore::YCbCrMatrix::operator Vector<GLfloat> const):
+        (WebCore::YCbCrMatrix::YCbCrMatrix):
+        (WebCore::YCbCrMatrix::operator* const):
+        (WebCore::YCbCrToRGBMatrixForRangeAndTransferFunction):
+
 2018-01-12  Antoine Quint  <graouts@apple.com>
 
         Add support for the frames() timing function
