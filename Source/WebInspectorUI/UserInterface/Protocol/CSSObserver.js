@@ -57,11 +57,6 @@ WI.CSSObserver = class CSSObserver
         // COMPATIBILITY (iOS 10): Removed after iOS 10. Ignore for iOS 10 and earlier.
     }
 
-    regionLayoutUpdated(namedFlow)
-    {
-        // COMPATIBILITY (iOS 7): regionLayoutUpdated was removed and replaced by regionOversetChanged. Ignore.
-    }
-
     regionOversetChanged(namedFlow)
     {
         // COMPATIBILITY (iOS 10): Removed after iOS 10. Ignore for iOS 10 and earlier.

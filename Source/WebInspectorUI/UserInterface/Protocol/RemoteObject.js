@@ -99,7 +99,7 @@ WI.RemoteObject = class RemoteObject
             payload.classPrototype = WI.RemoteObject.fromPayload(payload.classPrototype, target);
 
         if (payload.preview) {
-            // COMPATIBILITY (iOS 8): iOS 7 and 8 did not have type/subtype/description on
+            // COMPATIBILITY (iOS 8): Did not have type/subtype/description on
             // Runtime.ObjectPreview. Copy them over from the RemoteObject.
             if (!payload.preview.type) {
                 payload.preview.type = payload.type;

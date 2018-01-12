@@ -60,14 +60,7 @@ WI.Instrument = class Instrument
         if (initiatedByBackend)
             return;
 
-        let result = TimelineAgent.start();
-
-        // COMPATIBILITY (iOS 7): recordingStarted event did not exist yet. Start explicitly.
-        if (!TimelineAgent.hasEvent("recordingStarted")) {
-            result.then(function() {
-                WI.timelineManager.capturingStarted();
-            });
-        }
+        TimelineAgent.start();
     }
 
     static stopLegacyTimelineAgent(initiatedByBackend)

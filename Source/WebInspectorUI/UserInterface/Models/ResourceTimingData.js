@@ -58,8 +58,8 @@ WI.ResourceTimingData = class ResourceTimingData
         payload = payload || {};
 
         // COMPATIBILITY (iOS 10): Resource Timing data was incomplete and incorrect. Do not use it.
-        // iOS 7 sent a requestTime and iOS 8-9.3 sent a navigationStart time.
-        if (typeof payload.requestTime === "number" || typeof payload.navigationStart === "number")
+        // iOS 8-9.3 sent a navigationStart time.
+        if (typeof payload.navigationStart === "number")
             payload = {};
 
         function offsetToTimestamp(offset) {

@@ -342,7 +342,6 @@ WI.ScriptTimelineRecord.EventType.displayName = function(eventType, details, inc
         nameMap.set("webkitplaybacktargetavailabilitychanged", "Playback Target Availability Changed");
         nameMap.set("webkitpointerlockchange", "Pointer Lock Change");
         nameMap.set("webkitpointerlockerror", "Pointer Lock Error");
-        nameMap.set("webkitregionlayoutupdate", "Region Layout Update"); // COMPATIBILITY (iOS 7): regionLayoutUpdated was removed and replaced by regionOversetChanged.
         nameMap.set("webkitregionoversetchange", "Region Overset Change");
         nameMap.set("webkitremovesourcebuffer", "Remove Source Buffer");
         nameMap.set("webkitresourcetimingbufferfull", "Resource Timing Buffer Full");

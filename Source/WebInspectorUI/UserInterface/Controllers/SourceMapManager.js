@@ -125,9 +125,7 @@ WI.SourceMapManager = class SourceMapManager extends WI.Object
             return;
         }
 
-        // COMPATIBILITY (iOS 7): Network.loadResource did not exist.
-        // Also, JavaScript Debuggable may reach this.
-        if (!window.NetworkAgent || !NetworkAgent.loadResource) {
+        if (!window.NetworkAgent) {
             this._loadAndParseFailed(sourceMapURL);
             return;
         }

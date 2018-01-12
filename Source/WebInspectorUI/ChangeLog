@@ -1,5 +1,37 @@
 2018-01-12  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Drop support for iOS 7 targets
+        https://bugs.webkit.org/show_bug.cgi?id=181549
+        <rdar://problem/36444813>
+
+        Reviewed by Brian Burg.
+
+        * Versions/Inspector-iOS-7.0.json: Removed.
+        * UserInterface/Protocol/Legacy/7.0/InspectorBackendCommands.js: Removed.
+        Remove protocol snapshot and generated commands for iOS 7.
+
+        * UserInterface/Base/Main.js:
+        * UserInterface/Controllers/BreakpointPopoverController.js:
+        (WI.BreakpointPopoverController.prototype._createPopoverContent):
+        * UserInterface/Controllers/DebuggerManager.js:
+        (WI.DebuggerManager.prototype._setBreakpoint):
+        * UserInterface/Controllers/SourceMapManager.js:
+        (WI.SourceMapManager.prototype._loadAndParseSourceMap):
+        * UserInterface/Models/Instrument.js:
+        (WI.Instrument.startLegacyTimelineAgent):
+        * UserInterface/Models/ResourceTimingData.js:
+        * UserInterface/Models/ScriptTimelineRecord.js:
+        (WI.ScriptTimelineRecord.EventType.displayName):
+        * UserInterface/Models/SourceMapResource.js:
+        (WI.SourceMapResource.prototype.requestContentFromBackend):
+        * UserInterface/Protocol/CSSObserver.js:
+        (WI.CSSObserver.prototype.regionLayoutUpdated): Deleted.
+        * UserInterface/Protocol/RemoteObject.js:
+        (WI.RemoteObject.fromPayload):
+        Remove code that was only necessary to support iOS 7.
+
+2018-01-12  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Support JSX (React) syntax highlighting
         https://bugs.webkit.org/show_bug.cgi?id=181607
         <rdar://problem/36442564>

@@ -170,62 +170,59 @@ WI.BreakpointPopoverController = class BreakpointPopoverController extends WI.Ob
             this._conditionCodeMirror.focus();
         }, 0);
 
-        // COMPATIBILITY (iOS 7): Debugger.setBreakpoint did not support options.
-        if (DebuggerAgent.setBreakpoint.supports("options")) {
-            // COMPATIBILITY (iOS 9): Legacy backends don't support breakpoint ignore count. Since support
-            // can't be tested directly, check for CSS.getSupportedSystemFontFamilyNames.
-            // FIXME: Use explicit version checking once https://webkit.org/b/148680 is fixed.
-            if (CSSAgent.getSupportedSystemFontFamilyNames) {
-                let ignoreCountRow = table.appendChild(document.createElement("tr"));
-                let ignoreCountHeader = ignoreCountRow.appendChild(document.createElement("th"));
-                let ignoreCountLabel = ignoreCountHeader.appendChild(document.createElement("label"));
-                let ignoreCountData = ignoreCountRow.appendChild(document.createElement("td"));
-                this._ignoreCountInput = ignoreCountData.appendChild(document.createElement("input"));
-                this._ignoreCountInput.id = "edit-breakpoint-popover-ignore";
-                this._ignoreCountInput.type = "number";
-                this._ignoreCountInput.min = 0;
-                this._ignoreCountInput.value = 0;
-                this._ignoreCountInput.addEventListener("change", this._popoverIgnoreInputChanged.bind(this));
+        // COMPATIBILITY (iOS 9): Legacy backends don't support breakpoint ignore count. Since support
+        // can't be tested directly, check for CSS.getSupportedSystemFontFamilyNames.
+        // FIXME: Use explicit version checking once https://webkit.org/b/148680 is fixed.
+        if (CSSAgent.getSupportedSystemFontFamilyNames) {
+            let ignoreCountRow = table.appendChild(document.createElement("tr"));
+            let ignoreCountHeader = ignoreCountRow.appendChild(document.createElement("th"));
+            let ignoreCountLabel = ignoreCountHeader.appendChild(document.createElement("label"));
+            let ignoreCountData = ignoreCountRow.appendChild(document.createElement("td"));
+            this._ignoreCountInput = ignoreCountData.appendChild(document.createElement("input"));
+            this._ignoreCountInput.id = "edit-breakpoint-popover-ignore";
+            this._ignoreCountInput.type = "number";
+            this._ignoreCountInput.min = 0;
+            this._ignoreCountInput.value = 0;
+            this._ignoreCountInput.addEventListener("change", this._popoverIgnoreInputChanged.bind(this));
 
-                ignoreCountLabel.setAttribute("for", this._ignoreCountInput.id);
-                ignoreCountLabel.textContent = WI.UIString("Ignore");
+            ignoreCountLabel.setAttribute("for", this._ignoreCountInput.id);
+            ignoreCountLabel.textContent = WI.UIString("Ignore");
 
-                this._ignoreCountText = ignoreCountData.appendChild(document.createElement("span"));
-                this._updateIgnoreCountText();
-            }
-
-            let actionRow = table.appendChild(document.createElement("tr"));
-            let actionHeader = actionRow.appendChild(document.createElement("th"));
-            let actionData = this._actionsContainer = actionRow.appendChild(document.createElement("td"));
-            let actionLabel = actionHeader.appendChild(document.createElement("label"));
-            actionLabel.textContent = WI.UIString("Action");
-
-            if (!this._breakpoint.actions.length)
-                this._popoverActionsCreateAddActionButton();
-            else {
-                this._popoverContentElement.classList.add(WI.BreakpointPopoverController.WidePopoverClassName);
-                for (let i = 0; i < this._breakpoint.actions.length; ++i) {
-                    let breakpointActionView = new WI.BreakpointActionView(this._breakpoint.actions[i], this, true);
-                    this._popoverActionsInsertBreakpointActionView(breakpointActionView, i);
-                }
-            }
-
-            let optionsRow = this._popoverOptionsRowElement = table.appendChild(document.createElement("tr"));
-            if (!this._breakpoint.actions.length)
-                optionsRow.classList.add(WI.BreakpointPopoverController.HiddenStyleClassName);
-            let optionsHeader = optionsRow.appendChild(document.createElement("th"));
-            let optionsData = optionsRow.appendChild(document.createElement("td"));
-            let optionsLabel = optionsHeader.appendChild(document.createElement("label"));
-            let optionsCheckbox = this._popoverOptionsCheckboxElement = optionsData.appendChild(document.createElement("input"));
-            let optionsCheckboxLabel = optionsData.appendChild(document.createElement("label"));
-            optionsCheckbox.id = "edit-breakpoint-popover-auto-continue";
-            optionsCheckbox.type = "checkbox";
-            optionsCheckbox.checked = this._breakpoint.autoContinue;
-            optionsCheckbox.addEventListener("change", this._popoverToggleAutoContinueCheckboxChanged.bind(this));
-            optionsLabel.textContent = WI.UIString("Options");
-            optionsCheckboxLabel.setAttribute("for", optionsCheckbox.id);
-            optionsCheckboxLabel.textContent = WI.UIString("Automatically continue after evaluating");
+            this._ignoreCountText = ignoreCountData.appendChild(document.createElement("span"));
+            this._updateIgnoreCountText();
         }
+
+        let actionRow = table.appendChild(document.createElement("tr"));
+        let actionHeader = actionRow.appendChild(document.createElement("th"));
+        let actionData = this._actionsContainer = actionRow.appendChild(document.createElement("td"));
+        let actionLabel = actionHeader.appendChild(document.createElement("label"));
+        actionLabel.textContent = WI.UIString("Action");
+
+        if (!this._breakpoint.actions.length)
+            this._popoverActionsCreateAddActionButton();
+        else {
+            this._popoverContentElement.classList.add(WI.BreakpointPopoverController.WidePopoverClassName);
+            for (let i = 0; i < this._breakpoint.actions.length; ++i) {
+                let breakpointActionView = new WI.BreakpointActionView(this._breakpoint.actions[i], this, true);
+                this._popoverActionsInsertBreakpointActionView(breakpointActionView, i);
+            }
+        }
+
+        let optionsRow = this._popoverOptionsRowElement = table.appendChild(document.createElement("tr"));
+        if (!this._breakpoint.actions.length)
+            optionsRow.classList.add(WI.BreakpointPopoverController.HiddenStyleClassName);
+        let optionsHeader = optionsRow.appendChild(document.createElement("th"));
+        let optionsData = optionsRow.appendChild(document.createElement("td"));
+        let optionsLabel = optionsHeader.appendChild(document.createElement("label"));
+        let optionsCheckbox = this._popoverOptionsCheckboxElement = optionsData.appendChild(document.createElement("input"));
+        let optionsCheckboxLabel = optionsData.appendChild(document.createElement("label"));
+        optionsCheckbox.id = "edit-breakpoint-popover-auto-continue";
+        optionsCheckbox.type = "checkbox";
+        optionsCheckbox.checked = this._breakpoint.autoContinue;
+        optionsCheckbox.addEventListener("change", this._popoverToggleAutoContinueCheckboxChanged.bind(this));
+        optionsLabel.textContent = WI.UIString("Options");
+        optionsCheckboxLabel.setAttribute("for", optionsCheckbox.id);
+        optionsCheckboxLabel.textContent = WI.UIString("Automatically continue after evaluating");
 
         this._popoverContentElement.appendChild(checkboxLabel);
         this._popoverContentElement.appendChild(table);
