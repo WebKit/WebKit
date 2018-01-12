@@ -1,3 +1,13 @@
+2018-01-12  Keith Rollin  <krollin@apple.com>
+
+        Logged JSON should escape "'s and \'s in strings.
+        https://bugs.webkit.org/show_bug.cgi?id=181608
+
+        Reviewed by Brent Fulgham.
+
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::logCookieInformation const):
+
 2018-01-12  Megan Gardner  <megan_gardner@apple.com>
 
         Unreviewed, fixing error in UIKitSPI.h.

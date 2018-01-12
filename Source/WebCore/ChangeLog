@@ -1,3 +1,16 @@
+2018-01-12  Keith Rollin  <krollin@apple.com>
+
+        Logged JSON should escape "'s and \'s in strings.
+        https://bugs.webkit.org/show_bug.cgi?id=181608
+
+        Reviewed by Brent Fulgham.
+
+        No new tests -- no new functionality, just changed logging. The
+        efficacy of the logging was verified by inspecting its output.
+
+        * loader/ResourceLoadObserver.cpp:
+        (WebCore::ResourceLoadObserver::logUserInteractionWithReducedTimeResolution):
+
 2018-01-12  Dean Jackson  <dino@apple.com>
 
         drawElements should be invalid if vertexAttrib0 doesn't have data

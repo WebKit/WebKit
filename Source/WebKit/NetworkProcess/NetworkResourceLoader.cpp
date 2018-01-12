@@ -737,9 +737,17 @@ void NetworkResourceLoader::logCookieInformation() const
 #define LOCAL_LOG(str, ...) \
         RELEASE_LOG_IF_ALLOWED("logCookieInformation: pageID = %" PRIu64 ", frameID = %" PRIu64 ", resourceID = %" PRIu64 ": " str, pageID(), frameID(), identifier(), ##__VA_ARGS__)
 
-        LOCAL_LOG(R"({ "url": "%{public}s",)", url.string().utf8().data());
-        LOCAL_LOG(R"(  "partition": "%{public}s",)", partition.string().utf8().data());
-        LOCAL_LOG(R"(  "referer": "%{public}s",)", originalRequest().httpReferrer().utf8().data());
+        auto escapeForJSON = [](String s) {
+            s.replace('\\', "\\\\").replace('"', "\\\"");
+            return s;
+        };
+        auto escapedURL = escapeForJSON(url.string());
+        auto escapedPartition = escapeForJSON(partition.string());
+        auto escapedReferrer = escapeForJSON(originalRequest().httpReferrer());
+
+        LOCAL_LOG(R"({ "url": "%{public}s",)", escapedURL.utf8().data());
+        LOCAL_LOG(R"(  "partition": "%{public}s",)", escapedPartition.utf8().data());
+        LOCAL_LOG(R"(  "referer": "%{public}s",)", escapedReferrer.utf8().data());
         LOCAL_LOG(R"(  "cookies": [)");
 
         auto size = cookies.size();
@@ -749,17 +757,24 @@ void NetworkResourceLoader::logCookieInformation() const
             if (++count == size)
                 trailingComma = "";
 
-            LOCAL_LOG(R"(  { "name": "%{public}s",)", cookie.name.utf8().data());
-            LOCAL_LOG(R"(    "value": "%{public}s",)", cookie.value.utf8().data());
-            LOCAL_LOG(R"(    "domain": "%{public}s",)", cookie.domain.utf8().data());
-            LOCAL_LOG(R"(    "path": "%{public}s",)", cookie.path.utf8().data());
+            auto escapedName = escapeForJSON(cookie.name);
+            auto escapedValue = escapeForJSON(cookie.value);
+            auto escapedDomain = escapeForJSON(cookie.domain);
+            auto escapedPath = escapeForJSON(cookie.path);
+            auto escapedComment = escapeForJSON(cookie.comment);
+            auto escapedCommentURL = escapeForJSON(cookie.commentURL.string());
+
+            LOCAL_LOG(R"(  { "name": "%{public}s",)", escapedName.utf8().data());
+            LOCAL_LOG(R"(    "value": "%{public}s",)", escapedValue.utf8().data());
+            LOCAL_LOG(R"(    "domain": "%{public}s",)", escapedDomain.utf8().data());
+            LOCAL_LOG(R"(    "path": "%{public}s",)", escapedPath.utf8().data());
             LOCAL_LOG(R"(    "created": %f,)", cookie.created);
             LOCAL_LOG(R"(    "expires": %f,)", cookie.expires);
             LOCAL_LOG(R"(    "httpOnly": %{public}s,)", cookie.httpOnly ? "true" : "false");
             LOCAL_LOG(R"(    "secure": %{public}s,)", cookie.secure ? "true" : "false");
             LOCAL_LOG(R"(    "session": %{public}s,)", cookie.session ? "true" : "false");
-            LOCAL_LOG(R"(    "comment": "%{public}s",)", cookie.comment.utf8().data());
-            LOCAL_LOG(R"(    "commentURL": "%{public}s")", cookie.commentURL.string().utf8().data());
+            LOCAL_LOG(R"(    "comment": "%{public}s",)", escapedComment.utf8().data());
+            LOCAL_LOG(R"(    "commentURL": "%{public}s")", escapedCommentURL.utf8().data());
             LOCAL_LOG(R"(  }%{public}s)", trailingComma);
         }
         LOCAL_LOG(R"(]})");

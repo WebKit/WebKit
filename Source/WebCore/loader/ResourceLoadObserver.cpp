@@ -306,8 +306,15 @@ void ResourceLoadObserver::logUserInteractionWithReducedTimeResolution(const Doc
 #define LOCAL_LOG(str, ...) \
         RELEASE_LOG(ResourceLoadStatistics, "ResourceLoadObserver::logUserInteraction: counter = %" PRIu64 ": " str, counter, ##__VA_ARGS__)
 
-        LOCAL_LOG(R"({ "url": "%{public}s",)", url.string().utf8().data());
-        LOCAL_LOG(R"(  "domain" : "%{public}s",)", domain.utf8().data());
+        auto escapeForJSON = [](String s) {
+            s.replace('\\', "\\\\").replace('"', "\\\"");
+            return s;
+        };
+        auto escapedURL = escapeForJSON(url.string());
+        auto escapedDomain = escapeForJSON(domain);
+
+        LOCAL_LOG(R"({ "url": "%{public}s",)", escapedURL.utf8().data());
+        LOCAL_LOG(R"(  "domain" : "%{public}s",)", escapedDomain.utf8().data());
         LOCAL_LOG(R"(  "until" : %f })", newTime.secondsSinceEpoch().seconds());
 
 #undef LOCAL_LOG
