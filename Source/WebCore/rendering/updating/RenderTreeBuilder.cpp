@@ -30,9 +30,7 @@
 #include "RenderRuby.h"
 #include "RenderRubyBase.h"
 #include "RenderRubyRun.h"
-#include "RenderTableRow.h"
 #include "RenderText.h"
-#include "RenderTreeBuilderTable.h"
 #include "RenderTreeUpdater.h"
 
 namespace WebCore {
@@ -41,7 +39,6 @@ RenderTreeBuilder* RenderTreeBuilder::s_current;
 
 RenderTreeBuilder::RenderTreeBuilder(RenderView& view)
     : m_view(view)
-    , m_tableBuilder(std::make_unique<Table>(*this))
 {
     RELEASE_ASSERT(!s_current || &m_view != &s_current->m_view);
     m_previous = s_current;
@@ -60,11 +57,6 @@ void RenderTreeBuilder::insertChild(RenderElement& parent, RenderPtr<RenderObjec
     if (is<RenderText>(beforeChild)) {
         if (auto* wrapperInline = downcast<RenderText>(*beforeChild).inlineWrapperForDisplayContents())
             beforeChild = wrapperInline;
-    }
-
-    if (is<RenderTableRow>(parent)) {
-        m_tableBuilder->findOrCreateParentForChild(downcast<RenderTableRow>(parent), *child, beforeChild).addChild(*this, WTFMove(child), beforeChild);
-        return;
     }
 
     if (is<RenderRubyRun>(parent)) {
