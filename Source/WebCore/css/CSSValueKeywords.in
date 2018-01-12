@@ -1207,6 +1207,7 @@ url
 cubic-bezier
 spring
 steps
+frames
 
 // colors
 rgb

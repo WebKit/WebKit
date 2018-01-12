@@ -39,12 +39,13 @@ public:
 
     virtual ~TimingFunction() = default;
 
-    enum TimingFunctionType { LinearFunction, CubicBezierFunction, StepsFunction, SpringFunction };
+    enum TimingFunctionType { LinearFunction, CubicBezierFunction, StepsFunction, FramesFunction, SpringFunction };
     TimingFunctionType type() const { return m_type; }
 
     bool isLinearTimingFunction() const { return m_type == LinearFunction; }
     bool isCubicBezierTimingFunction() const { return m_type == CubicBezierFunction; }
     bool isStepsTimingFunction() const { return m_type == StepsFunction; }
+    bool isFramesTimingFunction() const { return m_type == FramesFunction; }
     bool isSpringTimingFunction() const { return m_type == SpringFunction; }
 
     virtual bool operator==(const TimingFunction&) const = 0;
@@ -220,6 +221,43 @@ private:
     
     int m_steps;
     bool m_stepAtStart;
+};
+
+class FramesTimingFunction final : public TimingFunction {
+public:
+    static Ref<FramesTimingFunction> create(unsigned frames)
+    {
+        return adoptRef(*new FramesTimingFunction(frames));
+    }
+    static Ref<FramesTimingFunction> create()
+    {
+        return adoptRef(*new FramesTimingFunction(2));
+    }
+
+    bool operator==(const TimingFunction& other) const final
+    {
+        if (!other.isFramesTimingFunction())
+            return false;
+        auto& otherFrames = static_cast<const FramesTimingFunction&>(other);
+        return m_frames == otherFrames.m_frames;
+    }
+    
+    unsigned numberOfFrames() const { return m_frames; }
+    void setNumberOfFrames(unsigned frames) { m_frames = frames; }
+
+private:
+    FramesTimingFunction(unsigned frames)
+        : TimingFunction(FramesFunction)
+        , m_frames(frames)
+    {
+    }
+
+    Ref<TimingFunction> clone() const final
+    {
+        return adoptRef(*new FramesTimingFunction(m_frames));
+    }
+    
+    unsigned m_frames;
 };
 
 class SpringTimingFunction final : public TimingFunction {

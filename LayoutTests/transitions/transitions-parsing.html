@@ -359,6 +359,12 @@ shouldBe("computedStyle.transitionTimingFunction", "'steps(5, start)'");
 shouldBe("style.webkitTransitionTimingFunction", "'steps(5, start)'");
 shouldBe("computedStyle.webkitTransitionTimingFunction", "'steps(5, start)'");
 
+style.transitionTimingFunction = "frames(2)";
+shouldBe("style.transitionTimingFunction", "'frames(2)'");
+shouldBe("computedStyle.transitionTimingFunction", "'frames(2)'");
+shouldBe("style.webkitTransitionTimingFunction", "'frames(2)'");
+shouldBe("computedStyle.webkitTransitionTimingFunction", "'frames(2)'");
+
 style.transitionProperty = "opacity, width";
 
 style.transitionTimingFunction = "ease-in-out, ease-in";
@@ -735,6 +741,21 @@ shouldBe("style.webkitTransition", "''");
 shouldBe("computedStyle.webkitTransition", "'all 0s ease 0s'");
 
 document.body.removeChild(testContainer);
+
+let framesInvalidElement;
+[-10, 0, 1, 2.5, "", "eggs", NaN, new Array, {}].forEach(invalidValue => {
+    framesInvalidElement = document.body.appendChild(document.createElement("div"));
+    const value = `frames(${invalidValue})`;
+    debug("");
+    debug(`Testing frames() invalid values: ${value}`);
+    framesInvalidElement.style.transitionTimingFunction = value;
+    shouldBe("framesInvalidElement.style.transitionTimingFunction", "''");
+    shouldBe("getComputedStyle(framesInvalidElement).transitionTimingFunction", "'ease'");
+    shouldBe("framesInvalidElement.style.webkitTransitionTimingFunction", "''");
+    shouldBe("getComputedStyle(framesInvalidElement).webkitTransitionTimingFunction", "'ease'");
+    framesInvalidElement.remove();
+});
+
 </script>
 <script src="../resources/js-test-post.js"></script>
 </body>

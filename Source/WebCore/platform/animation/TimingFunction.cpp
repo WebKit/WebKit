@@ -48,6 +48,11 @@ TextStream& operator<<(TextStream& ts, const TimingFunction& timingFunction)
         ts << "steps(" << function.numberOfSteps() << ", " << (function.stepAtStart() ? "start" : "end") << ")";
         break;
     }
+    case TimingFunction::FramesFunction: {
+        auto& function = static_cast<const FramesTimingFunction&>(timingFunction);
+        ts << "frames(" << function.numberOfFrames() << ")";
+        break;
+    }
     case TimingFunction::SpringFunction: {
         auto& function = static_cast<const SpringTimingFunction&>(timingFunction);
         ts << "spring(" << function.mass() << " " << function.stiffness() << " " <<  function.damping() << " " << function.initialVelocity() << ")";
@@ -73,6 +78,16 @@ double TimingFunction::transformTime(double inputTime, double duration) const
         if (function.stepAtStart())
             return std::min(1.0, (std::floor(numberOfSteps * inputTime) + 1) / numberOfSteps);
         return std::floor(numberOfSteps * inputTime) / numberOfSteps;
+    }
+    case TimingFunction::FramesFunction: {
+        // https://drafts.csswg.org/css-timing/#frames-timing-functions
+        auto& function = *static_cast<const FramesTimingFunction*>(this);
+        auto numberOfFrames = function.numberOfFrames();
+        ASSERT(numberOfFrames > 1);
+        auto outputTime = std::floor(inputTime * numberOfFrames) / (numberOfFrames - 1);
+        if (inputTime <= 1 && outputTime > 1)
+            return 1;
+        return outputTime;
     }
     case TimingFunction::SpringFunction: {
         auto& function = *static_cast<const SpringTimingFunction*>(this);

@@ -1568,6 +1568,10 @@ static Ref<CSSValue> createTimingFunctionValue(const TimingFunction& timingFunct
         auto& function = static_cast<const StepsTimingFunction&>(timingFunction);
         return CSSStepsTimingFunctionValue::create(function.numberOfSteps(), function.stepAtStart());
     }
+    case TimingFunction::FramesFunction: {
+        auto& function = static_cast<const FramesTimingFunction&>(timingFunction);
+        return CSSFramesTimingFunctionValue::create(function.numberOfFrames());
+    }
     case TimingFunction::SpringFunction: {
         auto& function = static_cast<const SpringTimingFunction&>(timingFunction);
         return CSSSpringTimingFunctionValue::create(function.mass(), function.stiffness(), function.damping(), function.initialVelocity());
