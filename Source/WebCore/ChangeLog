@@ -1,3 +1,16 @@
+2018-01-12  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WinCairo][CMake] Use ${CURL_LIBRARY} instead of specifying the library name libcurl_imp explicitly
+        https://bugs.webkit.org/show_bug.cgi?id=181578
+
+        Reviewed by Alex Christensen.
+
+        vcpkg has libcurl.lib, not libcurl_imp.lib.
+
+        No new tests because no behavior change.
+
+        * PlatformWinCairo.cmake: Link ${CURL_LIBRARY} instead of libcurl_imp.
+
 2018-01-12  Jer Noble  <jer.noble@apple.com>
 
         WebGL video texture black in Safari 11.0.2 and wrong colored in Safari Preview 11.1
