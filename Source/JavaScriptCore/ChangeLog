@@ -1,3 +1,13 @@
+2018-01-11  Keith Miller  <keith_miller@apple.com>
+
+        Rename ENABLE_ASYNC_ITERATION to ENABLE_JS_ASYNC_ITERATION
+        https://bugs.webkit.org/show_bug.cgi?id=181573
+
+        Reviewed by Simon Fraser.
+
+        * Configurations/FeatureDefines.xcconfig:
+        * runtime/Options.h:
+
 2018-01-11  Michael Saboff  <msaboff@apple.com>
 
         REGRESSION(226788): AppStore Crashed @ JavaScriptCore: JSC::MacroAssemblerARM64::pushToSaveImmediateWithoutTouchingRegisters

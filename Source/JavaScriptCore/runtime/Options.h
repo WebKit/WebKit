@@ -106,7 +106,7 @@ typedef const char* optionString;
 #define MAXIMUM_NUMBER_OF_FTL_COMPILER_THREADS 8
 #endif
 
-#if ENABLE(ASYNC_ITERATION)
+#if ENABLE(JS_ASYNC_ITERATION)
 constexpr bool enableAsyncIteration = true;
 #else
 constexpr bool enableAsyncIteration = false;
