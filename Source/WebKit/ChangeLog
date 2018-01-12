@@ -1,5 +1,11 @@
 2018-01-12  Megan Gardner  <megan_gardner@apple.com>
 
+        Unreviewed, fixing error in UIKitSPI.h.
+
+        * Platform/spi/ios/UIKitSPI.h:
+        
+2018-01-12  Megan Gardner  <megan_gardner@apple.com>
+
         Implement MultiDocument protocol for restoring focus to a WKWebView
         https://bugs.webkit.org/show_bug.cgi?id=181510
 

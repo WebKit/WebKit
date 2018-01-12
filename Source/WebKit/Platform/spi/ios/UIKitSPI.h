@@ -968,9 +968,9 @@ typedef NS_OPTIONS(NSUInteger, UIDragOperation)
 @end
 
 #if __has_include(<UIKit/UITextInputMultiDocument.h>)
-#import <UIKit/UITextAutofillSuggestion.h>
+#import <UIKit/UITextInputMultiDocument.h>
 #else
-@protocol UITextAutofillSuggestion <NSObject>
+@protocol UITextInputMultiDocument <NSObject>
 @optional
 - (void)_restoreFocusWithToken:(id <NSCopying, NSSecureCoding>)token completion:(void (^)(BOOL didRestore))completion;
 - (void)_preserveFocusWithToken:(id <NSCopying, NSSecureCoding>)token destructively:(BOOL)destructively;
