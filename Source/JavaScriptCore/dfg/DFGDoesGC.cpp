@@ -134,6 +134,7 @@ bool doesGC(Graph& graph, Node* node)
     case PutGlobalVariable:
     case CheckCell:
     case CheckNotEmpty:
+    case AssertNotEmpty:
     case CheckStringIdent:
     case RegExpExec:
     case RegExpTest:

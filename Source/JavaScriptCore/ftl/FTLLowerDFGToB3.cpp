@@ -670,6 +670,9 @@ private:
         case CheckNotEmpty:
             compileCheckNotEmpty();
             break;
+        case AssertNotEmpty:
+            compileAssertNotEmpty();
+            break;
         case CheckBadCell:
             compileCheckBadCell();
             break;
@@ -2893,6 +2896,23 @@ private:
     void compileCheckNotEmpty()
     {
         speculate(TDZFailure, noValue(), nullptr, m_out.isZero64(lowJSValue(m_node->child1())));
+    }
+
+    void compileAssertNotEmpty()
+    {
+        if (!validationEnabled())
+            return;
+
+        B3::PatchpointValue* patchpoint = m_out.patchpoint(Void);
+        patchpoint->appendSomeRegister(lowJSValue(m_node->child1()));
+        patchpoint->setGenerator(
+            [=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+                AllowMacroScratchRegisterUsage allowScratch(jit);
+                GPRReg input =  params[0].gpr();
+                CCallHelpers::Jump done = jit.branchTest64(CCallHelpers::NonZero, input);
+                jit.breakpoint();
+                done.link(&jit);
+            });
     }
 
     void compileCheckStringIdent()

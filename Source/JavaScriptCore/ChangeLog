@@ -1,3 +1,89 @@
+2018-01-12  Saam Barati  <sbarati@apple.com>
+
+        CheckStructure can be incorrectly subsumed by CheckStructureOrEmpty
+        https://bugs.webkit.org/show_bug.cgi?id=181177
+        <rdar://problem/36205704>
+
+        Reviewed by Yusuke Suzuki.
+
+        The semantics of CheckStructure are such that it does not allow the empty value to flow through it.
+        However, we may eliminate a CheckStructure if it's preceded by a CheckStructureOrEmpty. This doesn't
+        have semantic consequences when validation is turned off. However, with validation on, this trips up
+        our OSR exit machinery that says when an exit is allowed to happen.
+        
+        Consider the following IR:
+        
+        a: GetClosureVar // Or any other node that produces BytecodeTop
+        ...
+        c: CheckStructure(Cell:@a, {s2})
+        d: PutByOffset(KnownCell:@a, KnownCell:@a, @value)
+        
+        In the TypeCheckHoistingPhase, we may insert CheckStructureOrEmptys like this:
+        a: GetClosureVar
+        e: CheckStructureOrEmpty(@a, {s1})
+        ...
+        f: CheckStructureOrEmpty(@a, {s2})
+        c: CheckStructure(Cell:@a, {s2})
+        d: PutByOffset(KnownCell:@a, KnownCell:@a, @value)
+        
+        This will cause constant folding to change the IR to:
+        a: GetClosureVar
+        e: CheckStructureOrEmpty(@a, {s1})
+        ...
+        f: CheckStructureOrEmpty(@a, {s2})
+        d: PutByOffset(KnownCell:@a, KnownCell:@a, @value)
+        
+        Our mayExit analysis determines that the PutByOffset should not exit. Note
+        that AI will determine the only value the PutByOffset can see in @a is 
+        the empty value. Because KnownCell filters SpecCell and not SpecCellCheck,
+        when lowering the PutByOffset, we reach a contradiction in AI and emit
+        an OSR exit. However, because mayExit said we couldn't exit, we assert.
+        
+        Note that if we did not run the TypeCheckHoistingPhase on this IR, AI
+        would have determined we would OSR exit at the second CheckStructure.
+        
+        This patch makes it so constant folding produces the following IR:
+        a: GetClosureVar
+        e: CheckStructureOrEmpty(@a, {s1})
+        g: AssertNotEmpty(@a)
+        ...
+        f: CheckStructureOrEmpty(@a, {s2})
+        h: AssertNotEmpty(@a)
+        d: PutByOffset(KnownCell:@a, KnownCell:@a, @value)
+        
+        This modification will cause AI to know we will OSR exit before even reaching
+        the PutByOffset. Note that in the original IR, the GetClosureVar won't
+        actually produce the TDZ value. If it did, bytecode would have caused us
+        to emit a CheckNotEmpty before the CheckStructure/PutByOffset combo. That's
+        why this bug is about IR bookkeeping and not an actual error in IR analysis.
+        This patch introduces AssertNotEmpty instead of using CheckNotEmpty to be
+        more congruous with CheckStructure's semantics of crashing on the empty value
+        as input (on 64 bit platforms).
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGConstantFoldingPhase.cpp:
+        (JSC::DFG::ConstantFoldingPhase::foldConstants):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNode):
+        (JSC::FTL::DFG::LowerDFGToB3::compileAssertNotEmpty):
+
 2018-01-12  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Remove unnecessary raw pointer in InspectorConsoleAgent

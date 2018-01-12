@@ -4220,6 +4220,18 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
 
+    case AssertNotEmpty: {
+        if (validationEnabled()) {
+            JSValueOperand operand(this, node->child1());
+            GPRReg input = operand.gpr();
+            auto done = m_jit.branchTest64(MacroAssembler::NonZero, input);
+            m_jit.breakpoint();
+            done.link(&m_jit);
+        }
+        noResult(node);
+        break;
+    }
+
     case CheckStringIdent:
         compileCheckStringIdent(node);
         break;
