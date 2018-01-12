@@ -133,8 +133,9 @@ void SWServerWorker::skipWaiting()
     m_isSkipWaitingFlagSet = true;
 
     auto* registration = m_server.getRegistration(m_registrationKey);
-    ASSERT(registration);
-    registration->tryActivate();
+    ASSERT(registration || isTerminating());
+    if (registration)
+        registration->tryActivate();
 }
 
 void SWServerWorker::setHasPendingEvents(bool hasPendingEvents)

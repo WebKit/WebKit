@@ -1,3 +1,24 @@
+2018-01-12  Jason Marcell  <jmarcell@apple.com>
+
+        Cherry-pick r226813. rdar://problem/36458922
+
+    2018-01-11  Chris Dumez  <cdumez@apple.com>
+
+            ASSERTION FAILED: registration in WebCore::SWServerWorker::skipWaiting()
+            https://bugs.webkit.org/show_bug.cgi?id=181222
+            <rdar://problem/36332686>
+
+            Reviewed by Youenn Fablet.
+
+            Replace assertion in SWServerWorker::skipWaiting() that assumes the worker
+            has a registration. Nowadays, a SWServerWorker can stay alive for a short
+            period without having a registration, while it is terminating.
+
+            No new tests, unskipped existing test.
+
+            * workers/service/server/SWServerWorker.cpp:
+            (WebCore::SWServerWorker::skipWaiting):
+
 2018-01-11  Jason Marcell  <jmarcell@apple.com>
 
         Cherry-pick r226818. rdar://problem/36458899
