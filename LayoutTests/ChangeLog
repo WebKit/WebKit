@@ -1,5 +1,18 @@
 2018-01-11  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r226731. rdar://problem/36450734
+
+    2018-01-10  Matt Lewis  <jlewis3@apple.com>
+
+            Marked http/tests/workers/service/service-worker-importScript.html as flaky on macOS WK2.
+            https://bugs.webkit.org/show_bug.cgi?id=181097
+
+            Unreviewed test gardening.
+
+            * platform/mac-wk2/TestExpectations:
+
+2018-01-11  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r226818. rdar://problem/36458899
 
     2018-01-11  Alex Christensen  <achristensen@webkit.org>
