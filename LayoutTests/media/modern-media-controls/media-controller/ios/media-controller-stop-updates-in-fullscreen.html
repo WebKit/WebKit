@@ -14,31 +14,21 @@ const button = document.body.appendChild(document.createElement("button"));
 button.textContent = "Enter Fullscreen";
 button.style = "position: absolute; left: 0; top: 0";
 
-let elapsedTimeWhenEnteringFullscreen;
-
 media.addEventListener("webkitpresentationmodechanged", () => {
-    debug("");
-    debug("Obtained a webkitpresentationmodechanged event");
-    debug(`media.webkitDisplayingFullscreen = ${media.webkitDisplayingFullscreen}.`);
-
     if (media.webkitDisplayingFullscreen) {
-        shouldBeFalse("media.paused");
-        elapsedTimeWhenEnteringFullscreen = elapsedTime();
+        debug("");
+        debug("Entered fullscreen");
 
-        // Let time progress and check after a while that we didn't update the tree.
-        let timeupdateEventCount = 0;
-        media.addEventListener("timeupdate", () => {
-            timeupdateEventCount++;
-            if (timeupdateEventCount == 5) {
-                debug("");
-                debug("Time progressed.");
-                shouldBeTrue("elapsedTimeWhenEnteringFullscreen === elapsedTime()");
-                media.pause();
-                media.webkitExitFullscreen();
-            }
+        shouldBeFalse("media.paused");
+        shouldBecomeEqual("window.internals.shadowRoot(media).querySelector('.media-controls').childElementCount", "0", () => {
+            media.pause();
+            media.webkitExitFullscreen();
         });
-    } else
-        shouldBecomeEqual("elapsedTimeWhenEnteringFullscreen === elapsedTime()", "false", endTest);
+    } else {
+        debug("");
+        debug("Exited fullscreen");
+        endTest();
+    }
 });
 
 media.addEventListener("play", () => {
@@ -61,11 +51,6 @@ function enterFullscreen() {
     });
 
     pressOnElement(button);
-}
-
-function elapsedTime()
-{
-    return window.internals.shadowRoot(media).querySelectorAll(".time-label")[0].textContent;
 }
 
 function startTest()
