@@ -29,7 +29,6 @@ namespace WebCore {
 
 class ControlStates;
 class RenderBlock;
-class RenderTreeBuilder;
 
 class RenderElement : public RenderObject {
     WTF_MAKE_ISO_ALLOCATED(RenderElement);
@@ -87,8 +86,8 @@ public:
     bool isRenderInline() const;
 
     virtual bool isChildAllowed(const RenderObject&, const RenderStyle&) const { return true; }
-    virtual void addChild(RenderTreeBuilder&, RenderPtr<RenderObject>, RenderObject* beforeChild);
-    virtual void addChildIgnoringContinuation(RenderTreeBuilder& builder, RenderPtr<RenderObject> newChild, RenderObject* beforeChild = nullptr) { addChild(builder, WTFMove(newChild), beforeChild); }
+    virtual void addChild(RenderPtr<RenderObject>, RenderObject* beforeChild = nullptr);
+    virtual void addChildIgnoringContinuation(RenderPtr<RenderObject> newChild, RenderObject* beforeChild = nullptr) { addChild(WTFMove(newChild), beforeChild); }
     virtual RenderPtr<RenderObject> takeChild(RenderObject&) WARN_UNUSED_RETURN;
     void removeAndDestroyChild(RenderObject&);
 

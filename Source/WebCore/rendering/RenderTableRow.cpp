@@ -31,7 +31,6 @@
 #include "LayoutState.h"
 #include "PaintInfo.h"
 #include "RenderTableCell.h"
-#include "RenderTreeBuilder.h"
 #include "RenderView.h"
 #include "StyleInheritedData.h"
 #include <wtf/IsoMallocInlines.h>
@@ -111,7 +110,7 @@ const BorderValue& RenderTableRow::borderAdjoiningEndCell(const RenderTableCell&
     return style().borderEnd();
 }
 
-void RenderTableRow::addChild(RenderTreeBuilder& builder, RenderPtr<RenderObject> child, RenderObject* beforeChild)
+void RenderTableRow::addChild(RenderPtr<RenderObject> child, RenderObject* beforeChild)
 {
     if (!is<RenderTableCell>(*child)) {
         RenderObject* last = beforeChild;
@@ -121,14 +120,14 @@ void RenderTableRow::addChild(RenderTreeBuilder& builder, RenderPtr<RenderObject
             RenderTableCell& cell = downcast<RenderTableCell>(*last);
             if (beforeChild == &cell)
                 beforeChild = cell.firstChild();
-            builder.insertChild(cell, WTFMove(child), beforeChild);
+            cell.addChild(WTFMove(child), beforeChild);
             return;
         }
 
         if (beforeChild && !beforeChild->isAnonymous() && beforeChild->parent() == this) {
             RenderObject* cell = beforeChild->previousSibling();
             if (is<RenderTableCell>(cell) && cell->isAnonymous()) {
-                builder.insertChild(downcast<RenderTableCell>(*cell), WTFMove(child));
+                downcast<RenderTableCell>(*cell).addChild(WTFMove(child));
                 return;
             }
         }
@@ -137,7 +136,7 @@ void RenderTableRow::addChild(RenderTreeBuilder& builder, RenderPtr<RenderObject
         if (last && last->parent() && last->parent()->isAnonymous() && !last->parent()->isBeforeOrAfterContent()) {
             // If beforeChild is inside an anonymous cell, insert into the cell.
             if (!is<RenderTableCell>(*last)) {
-                builder.insertChild(*last->parent(), WTFMove(child), beforeChild);
+                last->parent()->addChild(WTFMove(child), beforeChild);
                 return;
             }
             // If beforeChild is inside an anonymous row, insert into the row.
@@ -145,15 +144,15 @@ void RenderTableRow::addChild(RenderTreeBuilder& builder, RenderPtr<RenderObject
             if (is<RenderTableRow>(parent)) {
                 auto newCell = RenderTableCell::createAnonymousWithParentRenderer(*this);
                 auto& cell = *newCell;
-                builder.insertChild(parent, WTFMove(newCell), beforeChild);
-                builder.insertChild(cell, WTFMove(child));
+                parent.addChild(WTFMove(newCell), beforeChild);
+                cell.addChild(WTFMove(child));
                 return;
             }
         }
         auto newCell = RenderTableCell::createAnonymousWithParentRenderer(*this);
         auto& cell = *newCell;
-        builder.insertChild(*this, WTFMove(newCell), beforeChild);
-        builder.insertChild(cell, WTFMove(child));
+        addChild(WTFMove(newCell), beforeChild);
+        cell.addChild(WTFMove(child));
         return;
     } 
 
@@ -167,7 +166,7 @@ void RenderTableRow::addChild(RenderTreeBuilder& builder, RenderPtr<RenderObject
         section->addCell(&cell, this);
 
     ASSERT(!beforeChild || is<RenderTableCell>(*beforeChild));
-    RenderBox::addChild(builder, WTFMove(child), beforeChild);
+    RenderBox::addChild(WTFMove(child), beforeChild);
 
     if (beforeChild || nextRow())
         section()->setNeedsCellRecalc();

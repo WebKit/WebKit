@@ -302,10 +302,10 @@ void RenderSVGRoot::styleDidChange(StyleDifference diff, const RenderStyle* oldS
     SVGResourcesCache::clientStyleChanged(*this, diff, style());
 }
 
-void RenderSVGRoot::addChild(RenderTreeBuilder& builder, RenderPtr<RenderObject> newChild, RenderObject* beforeChild)
+void RenderSVGRoot::addChild(RenderPtr<RenderObject> newChild, RenderObject* beforeChild)
 {
     auto& child = *newChild;
-    RenderReplaced::addChild(builder, WTFMove(newChild), beforeChild);
+    RenderReplaced::addChild(WTFMove(newChild), beforeChild);
     SVGResourcesCache::clientWasAddedToTree(child);
 }
 

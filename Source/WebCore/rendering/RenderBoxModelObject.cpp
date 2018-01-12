@@ -53,7 +53,6 @@
 #include "RenderTableRow.h"
 #include "RenderText.h"
 #include "RenderTextFragment.h"
-#include "RenderTreeBuilder.h"
 #include "RenderView.h"
 #include "ScrollingConstraints.h"
 #include "Settings.h"
@@ -2697,7 +2696,7 @@ void RenderBoxModelObject::moveChildTo(RenderBoxModelObject* toBoxModelObject, R
         // Takes care of adding the new child correctly if toBlock and fromBlock
         // have different kind of children (block vs inline).
         auto childToMove = takeChildInternal(*child);
-        RenderTreeBuilder::current()->insertChild(*toBoxModelObject, WTFMove(childToMove), beforeChild);
+        toBoxModelObject->addChild(WTFMove(childToMove), beforeChild);
     } else {
         auto childToMove = takeChildInternal(*child);
         toBoxModelObject->insertChildInternal(WTFMove(childToMove), beforeChild);
