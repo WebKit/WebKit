@@ -423,6 +423,10 @@ void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters)
 #if ENABLE(WEBASSEMBLY)
     JSC::Wasm::enableFastMemory();
 #endif
+
+#if HAVE(CFNETWORK_STORAGE_PARTITIONING) && !RELEASE_LOG_DISABLED
+    ResourceLoadObserver::shared().setShouldLogUserInteraction(parameters.shouldLogUserInteraction);
+#endif
 }
 
 void WebProcess::registerURLSchemeAsEmptyDocument(const String& urlScheme)

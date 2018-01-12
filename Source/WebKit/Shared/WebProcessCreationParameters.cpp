@@ -146,6 +146,10 @@ void WebProcessCreationParameters::encode(IPC::Encoder& encoder) const
 #if USE(SOUP)
     encoder << proxySettings;
 #endif
+
+#if HAVE(CFNETWORK_STORAGE_PARTITIONING) && !RELEASE_LOG_DISABLED
+    encoder << shouldLogUserInteraction;
+#endif
 }
 
 bool WebProcessCreationParameters::decode(IPC::Decoder& decoder, WebProcessCreationParameters& parameters)
@@ -379,6 +383,11 @@ bool WebProcessCreationParameters::decode(IPC::Decoder& decoder, WebProcessCreat
 
 #if USE(SOUP)
     if (!decoder.decode(parameters.proxySettings))
+        return false;
+#endif
+
+#if HAVE(CFNETWORK_STORAGE_PARTITIONING) && !RELEASE_LOG_DISABLED
+    if (!decoder.decode(parameters.shouldLogUserInteraction))
         return false;
 #endif
 

@@ -64,6 +64,12 @@ public:
 
     WEBCORE_EXPORT void notifyObserver();
     WEBCORE_EXPORT void clearState();
+
+#if HAVE(CFNETWORK_STORAGE_PARTITIONING) && !RELEASE_LOG_DISABLED
+    bool shouldLogUserInteraction() const { return m_shouldLogUserInteraction; }
+    void setShouldLogUserInteraction(bool shouldLogUserInteraction) { m_shouldLogUserInteraction = shouldLogUserInteraction; }
+#endif
+
 private:
     ResourceLoadObserver();
 
@@ -77,6 +83,10 @@ private:
     HashMap<String, WTF::WallTime> m_lastReportedUserInteractionMap;
     WTF::Function<void (Vector<ResourceLoadStatistics>&&)> m_notificationCallback;
     Timer m_notificationTimer;
+#if HAVE(CFNETWORK_STORAGE_PARTITIONING) && !RELEASE_LOG_DISABLED
+    uint64_t m_loggingCounter { 0 };
+    bool m_shouldLogUserInteraction { false };
+#endif
 
     URL nonNullOwnerURL(const Document&) const;
 };

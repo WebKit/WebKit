@@ -1,3 +1,25 @@
+2018-01-11  Keith Rollin  <krollin@apple.com>
+
+        Add optional logging of ITP-related user interaction information
+        https://bugs.webkit.org/show_bug.cgi?id=181556
+
+        Reviewed by Brent Fulgham.
+
+        In order to support the tracking of the efficacy of Intelligent
+        Tracking Protection, add some logging indicating when the user
+        interacts with a page in a way that affects cookie partitioning. This
+        logging is off by default, and is enabled with `defaults write -g
+        WebKitLogCookieInformation -bool true`.
+
+        * Shared/WebProcessCreationParameters.cpp:
+        (WebKit::WebProcessCreationParameters::encode const):
+        (WebKit::WebProcessCreationParameters::decode):
+        * Shared/WebProcessCreationParameters.h:
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::platformInitializeWebProcess):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::initializeWebProcess):
+
 2018-01-11  Megan Gardner  <megan_gardner@apple.com>
 
         Implement MultiDocument protocol for restoring focus to a WKWebView

@@ -180,6 +180,10 @@ struct WebProcessCreationParameters {
 #if USE(SOUP)
     WebCore::SoupNetworkProxySettings proxySettings;
 #endif
+
+#if HAVE(CFNETWORK_STORAGE_PARTITIONING) && !RELEASE_LOG_DISABLED
+    bool shouldLogUserInteraction { false };
+#endif
 };
 
 } // namespace WebKit

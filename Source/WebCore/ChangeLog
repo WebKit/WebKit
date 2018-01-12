@@ -1,3 +1,24 @@
+2018-01-11  Keith Rollin  <krollin@apple.com>
+
+        Add optional logging of ITP-related user interaction information
+        https://bugs.webkit.org/show_bug.cgi?id=181556
+
+        Reviewed by Brent Fulgham.
+
+        In order to support the tracking of the efficacy of Intelligent
+        Tracking Protection, add some logging indicating when the user
+        interacts with a page in a way that affects cookie partitioning. This
+        logging is off by default, and is enabled with `defaults write -g
+        WebKitLogCookieInformation -bool true`.
+
+        No new tests -- no changed functionality.
+
+        * loader/ResourceLoadObserver.cpp:
+        (WebCore::ResourceLoadObserver::logUserInteractionWithReducedTimeResolution):
+        * loader/ResourceLoadObserver.h:
+        (WebCore::ResourceLoadObserver::shouldLogUserInteraction const):
+        (WebCore::ResourceLoadObserver::setShouldLogUserInteraction):
+
 2018-01-11  James Craig  <jcraig@apple.com>
 
         AX: when invert colors is on, double-invert video elements in UserAgentStyleSheet

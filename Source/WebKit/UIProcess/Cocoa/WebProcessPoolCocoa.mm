@@ -275,6 +275,10 @@ void WebProcessPool::platformInitializeWebProcess(WebProcessCreationParameters& 
     if (isSafari && !parameters.shouldCaptureAudioInUIProcess && mediaDevicesEnabled)
         SandboxExtension::createHandleForGenericExtension("com.apple.webkit.microphone", parameters.audioCaptureExtensionHandle);
 #endif
+
+#if HAVE(CFNETWORK_STORAGE_PARTITIONING) && !RELEASE_LOG_DISABLED
+    parameters.shouldLogUserInteraction = [defaults boolForKey:WebKitLogCookieInformationDefaultsKey];
+#endif
 }
 
 void WebProcessPool::platformInitializeNetworkProcess(NetworkProcessCreationParameters& parameters)
