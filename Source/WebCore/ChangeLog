@@ -1,3 +1,16 @@
+2018-01-12  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Large in-place attachment elements cause the document width to expand when inserted
+        https://bugs.webkit.org/show_bug.cgi?id=181614
+
+        Reviewed by Dan Bernstein.
+
+        Make in-place images and videos have a max-width of 100%, so that large attachments aren't inserted with full
+        display size, causing the document and viewport width to expand.
+
+        * html/HTMLAttachmentElement.cpp:
+        (WebCore::HTMLAttachmentElement::populateShadowRootIfNecessary):
+
 2018-01-12  Keith Rollin  <krollin@apple.com>
 
         Logged JSON should escape "'s and \'s in strings.

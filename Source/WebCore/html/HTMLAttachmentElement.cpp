@@ -285,6 +285,7 @@ void HTMLAttachmentElement::populateShadowRootIfNecessary()
             image->setAttributeWithoutSynchronization(srcAttr, DOMURL::createObjectURL(document(), *m_file));
             image->setAttributeWithoutSynchronization(draggableAttr, AtomicString("false"));
             image->setInlineStyleProperty(CSSPropertyDisplay, CSSValueInline, true);
+            image->setInlineStyleProperty(CSSPropertyMaxWidth, 100, CSSPrimitiveValue::UnitType::CSS_PERCENTAGE, true);
         }
 
     } else if (MIMETypeRegistry::isSupportedMediaMIMEType(mimeType)) {
@@ -293,6 +294,7 @@ void HTMLAttachmentElement::populateShadowRootIfNecessary()
             video->setAttributeWithoutSynchronization(srcAttr, DOMURL::createObjectURL(document(), *m_file));
             video->setAttributeWithoutSynchronization(controlsAttr, emptyString());
             video->setInlineStyleProperty(CSSPropertyDisplay, CSSValueInline, true);
+            video->setInlineStyleProperty(CSSPropertyMaxWidth, 100, CSSPrimitiveValue::UnitType::CSS_PERCENTAGE, true);
         }
     }
 }
