@@ -1,5 +1,19 @@
 2018-01-11  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r226646. rdar://problem/36429142
+
+    2018-01-09  Youenn Fablet  <youenn@apple.com>
+
+            [iOS Debug WK2] Layout Test imported/w3c/web-platform-tests/service-workers/service-worker/register-closed-window.https.html is flaky
+            https://bugs.webkit.org/show_bug.cgi?id=181087
+            <rdar://problem/36188109>
+
+            Reviewed by Chris Dumez.
+
+            * platform/ios-wk2/TestExpectations: Removed flaky expectation.
+
+2018-01-11  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r226755. rdar://problem/36429123
 
     2018-01-10  Matt Baker  <mattbaker@apple.com>
