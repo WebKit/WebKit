@@ -1,3 +1,18 @@
+2018-01-12  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r226721.
+        https://bugs.webkit.org/show_bug.cgi?id=181583
+
+        Lets do a slightly different fix (Requested by anttik on
+        #webkit).
+
+        Reverted changeset:
+
+        "REGRESSION(r225650): The scores of MotionMark tests Multiply
+        and Leaves dropped by 8%"
+        https://bugs.webkit.org/show_bug.cgi?id=181460
+        https://trac.webkit.org/changeset/226721
+
 2018-01-11  Keith Miller  <keith_miller@apple.com>
 
         Rename ENABLE_ASYNC_ITERATION to ENABLE_JS_ASYNC_ITERATION
