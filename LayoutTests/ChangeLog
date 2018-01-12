@@ -1,5 +1,20 @@
 2018-01-12  Youenn Fablet  <youenn@apple.com>
 
+        FormDataElement::lengthInBytes should use ThreadableBlobRegistry
+        https://bugs.webkit.org/show_bug.cgi?id=181554
+
+        Reviewed by Chris Dumez.
+
+        * http/tests/workers/service/resources/service-worker-cache-api-worker.js:
+        (async):
+        (event.event.request.url.indexOf): Deleted.
+        (event.event.request.url.endsWith): Deleted.
+        (event.event.respondWith.promise.then): Deleted.
+        * http/tests/workers/service/service-worker-cache-api.https-expected.txt:
+        * http/tests/workers/service/service-worker-cache-api.https.html:
+
+2018-01-12  Youenn Fablet  <youenn@apple.com>
+
         WebProcess should pass the registration identifier and not the worker identifier for fetch events
         https://bugs.webkit.org/show_bug.cgi?id=181591
 

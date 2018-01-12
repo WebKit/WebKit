@@ -143,7 +143,7 @@ uint64_t FormDataElement::lengthInBytes() const
         return 0;
     }
     case Type::EncodedBlob:
-        return blobRegistry().blobSize(m_url);
+        return ThreadableBlobRegistry::blobSize(m_url);
     }
     ASSERT_NOT_REACHED();
     return 0;

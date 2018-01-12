@@ -45,6 +45,7 @@ public:
     void setOnline(bool isOnline);
     void waitForFetchEventToFinish(FetchEvent&, DOMPromiseDeferred<IDLInterface<FetchResponse>>&&);
     Ref<FetchEvent> createBeingDispatchedFetchEvent(ScriptExecutionContext&);
+    Ref<FetchResponse> createOpaqueWithBlobBodyResponse(ScriptExecutionContext&);
 
 private:
     explicit ServiceWorkerInternals(ServiceWorkerIdentifier);

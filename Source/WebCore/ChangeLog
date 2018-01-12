@@ -1,3 +1,26 @@
+2018-01-12  Youenn Fablet  <youenn@apple.com>
+
+        FormDataElement::lengthInBytes should use ThreadableBlobRegistry
+        https://bugs.webkit.org/show_bug.cgi?id=181554
+
+        Reviewed by Chris Dumez.
+
+        Covered by updated test.
+
+        Fix blobRegistry() use and add support for creating a response that may trigger the issue.
+
+
+        * platform/network/FormData.cpp:
+        (WebCore::FormDataElement::lengthInBytes const): Was using directly blobRegistry() while ThreadableBlobRegistry is more appropriate
+        in case this is called from workers.
+        * Modules/fetch/FetchBody.h:
+        * Modules/fetch/FetchResponse.h:
+        * fileapi/Blob.h:
+        * testing/ServiceWorkerInternals.cpp:
+        (WebCore::ServiceWorkerInternals::createOpaqueWithBlobBodyResponse):
+        * testing/ServiceWorkerInternals.h:
+        * testing/ServiceWorkerInternals.idl:
+
 2018-01-12  Jer Noble  <jer.noble@apple.com>
 
         Wrap CDMFairPlayStreaming and related classes in ENABLE(ENCRYPTED_MEDIA) checks

@@ -32,4 +32,5 @@
     void setOnline(boolean isOnline);
     Promise<Response> waitForFetchEventToFinish(FetchEvent event);
     [CallWith=ScriptExecutionContext] FetchEvent createBeingDispatchedFetchEvent();
+    [CallWith=ScriptExecutionContext] FetchResponse createOpaqueWithBlobBodyResponse();
 };

@@ -18,9 +18,18 @@ function statusResponse()
     return new Response(null, {status: 200, statusText: status});
 }
 
-self.addEventListener("fetch", (event) => {
+self.addEventListener("fetch", async (event) => {
     if (event.request.url.indexOf("status") !== -1) {
         event.respondWith(promise.then(statusResponse, statusResponse));
+        return;
+    }
+    if (event.request.url.indexOf("opaqueWithBlob") !== -1) {
+        event.respondWith(self.caches.open("opaque").then((cache) => {
+            let response = self.internals.createOpaqueWithBlobBodyResponse();
+            return cache.put("opaque", response);
+        }).then(() => {
+            return new Response("PASS");
+        }));
         return;
     }
     if (!event.request.url.endsWith(".fromserviceworker")) {

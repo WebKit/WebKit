@@ -53,7 +53,7 @@ public:
         std::optional<FetchHeaders::Init> headers;
     };
 
-    static Ref<FetchResponse> create(ScriptExecutionContext&, std::optional<FetchBody>&&, Ref<FetchHeaders>&&, ResourceResponse&&);
+    WEBCORE_EXPORT static Ref<FetchResponse> create(ScriptExecutionContext&, std::optional<FetchBody>&&, Ref<FetchHeaders>&&, ResourceResponse&&);
 
     static ExceptionOr<Ref<FetchResponse>> create(ScriptExecutionContext&, std::optional<FetchBody::Init>&&, Init&&);
     static Ref<FetchResponse> error(ScriptExecutionContext&);
@@ -100,6 +100,8 @@ public:
     uint64_t bodySizeWithPadding() const { return m_bodySizeWithPadding; }
     void setBodySizeWithPadding(uint64_t size) { m_bodySizeWithPadding = size; }
     uint64_t opaqueLoadIdentifier() const { return m_opaqueLoadIdentifier; }
+
+    void initializeOpaqueLoadIdentifierForTesting() { m_opaqueLoadIdentifier = 1; }
 
 private:
     FetchResponse(ScriptExecutionContext&, std::optional<FetchBody>&&, Ref<FetchHeaders>&&, ResourceResponse&&);
