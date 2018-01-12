@@ -1,3 +1,22 @@
+2018-01-12  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Remove unnecessary raw pointer in InspectorConsoleAgent
+        https://bugs.webkit.org/show_bug.cgi?id=181579
+        <rdar://problem/36193759>
+
+        Reviewed by Brian Burg.
+
+        * inspector/agents/InspectorConsoleAgent.h:
+        * inspector/agents/InspectorConsoleAgent.cpp:
+        (Inspector::InspectorConsoleAgent::clearMessages):
+        (Inspector::InspectorConsoleAgent::addConsoleMessage):
+        Switch from a raw pointer to m_consoleMessages.last().
+        Also move the expiration check into the if block since it can only
+        happen inside here when the number of console messages changes.
+
+        (Inspector::InspectorConsoleAgent::discardValues):
+        Also clear the expired message count when messages are cleared.
+
 2018-01-12  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Create parallel SlotVisitors apriori

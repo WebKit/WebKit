@@ -83,7 +83,6 @@ protected:
     RefPtr<ConsoleBackendDispatcher> m_backendDispatcher;
     InspectorHeapAgent* m_heapAgent;
 
-    ConsoleMessage* m_previousMessage { nullptr };
     Vector<std::unique_ptr<ConsoleMessage>> m_consoleMessages;
     int m_expiredConsoleMessageCount { 0 };
     HashMap<String, unsigned> m_counts;
