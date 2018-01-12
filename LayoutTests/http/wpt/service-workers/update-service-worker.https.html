@@ -1,0 +1,46 @@
+<html>
+<head>
+<title>Service Worker update and interception</title>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/service-workers/service-worker/resources/test-helpers.sub.js"></script>
+</head>
+<body>
+<script>
+var registration;
+var iframe;
+promise_test(async (test) => {
+    registration = await navigator.serviceWorker.getRegistration("resources");
+    if (registration)
+        await registration.unregister();
+    registration = await navigator.serviceWorker.register("update-worker.py", { scope : "resources" });
+    activeWorker = registration.active;
+    if (activeWorker)
+        return;
+    activeWorker = registration.installing;
+    await new Promise(resolve => {
+        activeWorker.addEventListener('statechange', () => {
+            if (activeWorker.state === "activated")
+                resolve();
+        });
+    });
+}, "Setup worker");
+
+promise_test(async (test) => {
+    var promises = [];
+    for (var cptr = 0; cptr < 10; cptr++) {
+         if (registration.active) {
+            registration.update();
+            var iframe = await with_iframe("resources/empty.html");
+            await iframe.contentWindow.fetch("mouse").then(async (response) => {
+                if (await response.text() !== "cat")
+                    return Promise.reject("not cat");
+            });
+            iframe.remove();
+        }
+    }
+    await Promise.all(promises);
+}, "Ensure all fetches are intercepted");
+</script>
+</body>
+</html>

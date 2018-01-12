@@ -1,3 +1,35 @@
+2018-01-12  Youenn Fablet  <youenn@apple.com>
+
+        WebProcess should pass the registration identifier and not the worker identifier for fetch events
+        https://bugs.webkit.org/show_bug.cgi?id=181591
+
+        Reviewed by Chris Dumez.
+
+        Test: http/wpt/service-workers/update-service-worker.https.html
+
+        Store service worker registration identifier in ResourceLoaderOptions instead of service worker identifier.
+
+        * loader/DocumentThreadableLoader.cpp:
+        (WebCore::DocumentThreadableLoader::DocumentThreadableLoader):
+        (WebCore::DocumentThreadableLoader::makeCrossOriginAccessRequest):
+        * loader/ResourceLoaderOptions.h:
+        * loader/WorkerThreadableLoader.cpp:
+        (WebCore::WorkerThreadableLoader::MainThreadBridge::MainThreadBridge):
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::prepareFetch):
+        (WebCore::CachedResourceLoader::determineRevalidationPolicy const):
+        * loader/cache/CachedResourceRequest.cpp:
+        (WebCore::CachedResourceRequest::setSelectedServiceWorkerRegistrationIdentifierIfNeeded):
+        (WebCore::CachedResourceRequest::setNavigationServiceWorkerRegistrationData):
+        (WebCore::CachedResourceRequest::setSelectedServiceWorkerIdentifierIfNeeded): Deleted.
+        * loader/cache/CachedResourceRequest.h:
+        * workers/WorkerScriptLoader.cpp:
+        (WebCore::WorkerScriptLoader::loadSynchronously):
+        (WebCore::WorkerScriptLoader::loadAsynchronously):
+        * workers/service/server/SWServer.cpp:
+        (WebCore::SWServer::activeWorkerFromRegistrationID):
+        * workers/service/server/SWServer.h:
+
 2018-01-12  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [Win][CMake] Remove all-in-one file for WebCore DerivedSources

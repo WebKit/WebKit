@@ -282,7 +282,7 @@ void CachedResourceRequest::setClientIdentifierIfNeeded(DocumentIdentifier clien
         m_options.clientIdentifier = clientIdentifier;
 }
 
-void CachedResourceRequest::setSelectedServiceWorkerIdentifierIfNeeded(ServiceWorkerIdentifier identifier)
+void CachedResourceRequest::setSelectedServiceWorkerRegistrationIdentifierIfNeeded(ServiceWorkerRegistrationIdentifier identifier)
 {
     if (isNonSubresourceRequest(m_options.destination))
         return;
@@ -291,10 +291,10 @@ void CachedResourceRequest::setSelectedServiceWorkerIdentifierIfNeeded(ServiceWo
 
     if (m_options.serviceWorkersMode == ServiceWorkersMode::None)
         return;
-    if (m_options.serviceWorkerIdentifier)
+    if (m_options.serviceWorkerRegistrationIdentifier)
         return;
 
-    m_options.serviceWorkerIdentifier = identifier;
+    m_options.serviceWorkerRegistrationIdentifier = identifier;
 }
 
 void CachedResourceRequest::setNavigationServiceWorkerRegistrationData(const std::optional<ServiceWorkerRegistrationData>& data)
@@ -303,7 +303,7 @@ void CachedResourceRequest::setNavigationServiceWorkerRegistrationData(const std
         m_options.serviceWorkersMode = ServiceWorkersMode::None;
         return;
     }
-    m_options.serviceWorkerIdentifier = data->activeWorker->identifier;
+    m_options.serviceWorkerRegistrationIdentifier = data->identifier;
 }
 #endif
 

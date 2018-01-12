@@ -1,3 +1,24 @@
+2018-01-12  Youenn Fablet  <youenn@apple.com>
+
+        WebProcess should pass the registration identifier and not the worker identifier for fetch events
+        https://bugs.webkit.org/show_bug.cgi?id=181591
+
+        Reviewed by Chris Dumez.
+
+        Use service worker registration identifier to compute the active service worker identifier responsible to handle the fetch event.
+
+        * StorageProcess/ServiceWorker/WebSWServerConnection.cpp:
+        (WebKit::WebSWServerConnection::startFetch):
+        * StorageProcess/ServiceWorker/WebSWServerConnection.h:
+        * StorageProcess/ServiceWorker/WebSWServerConnection.messages.in:
+        * WebProcess/Storage/ServiceWorkerClientFetch.cpp:
+        (WebKit::ServiceWorkerClientFetch::start):
+        * WebProcess/Storage/WebSWClientConnection.cpp:
+        (WebKit::WebSWClientConnection::startFetch):
+        * WebProcess/Storage/WebSWClientConnection.h:
+        * WebProcess/Storage/WebServiceWorkerProvider.cpp:
+        (WebKit::shouldHandleFetch):
+
 2018-01-12  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r226826.

@@ -1,3 +1,16 @@
+2018-01-12  Youenn Fablet  <youenn@apple.com>
+
+        WebProcess should pass the registration identifier and not the worker identifier for fetch events
+        https://bugs.webkit.org/show_bug.cgi?id=181591
+
+        Reviewed by Chris Dumez.
+
+        * http/wpt/service-workers/resources/empty.html: Added.
+        * http/wpt/service-workers/update-service-worker.https-expected.txt: Added.
+        * http/wpt/service-workers/update-service-worker.https.html: Added.
+        * http/wpt/service-workers/update-worker.py: Added.
+        (main):
+
 2018-01-11  Simon Fraser  <simon.fraser@apple.com>
 
         fast/events/ios/rotation/layout-viewport-during-safari-type-rotation.html is flakey

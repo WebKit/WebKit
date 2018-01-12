@@ -68,7 +68,7 @@ void WorkerScriptLoader::loadSynchronously(ScriptExecutionContext* scriptExecuti
 #if ENABLE(SERVICE_WORKER)
     options.serviceWorkersMode = workerGlobalScope.isServiceWorkerGlobalScope() ? ServiceWorkersMode::None : ServiceWorkersMode::All;
     if (auto* activeServiceWorker = workerGlobalScope.activeServiceWorker())
-        options.serviceWorkerIdentifier = activeServiceWorker->identifier();
+        options.serviceWorkerRegistrationIdentifier = activeServiceWorker->registrationIdentifier();
 #endif
     WorkerThreadableLoader::loadResourceSynchronously(workerGlobalScope, WTFMove(*request), *this, options);
 }
@@ -98,7 +98,7 @@ void WorkerScriptLoader::loadAsynchronously(ScriptExecutionContext& scriptExecut
 #if ENABLE(SERVICE_WORKER)
     options.serviceWorkersMode = m_client->isServiceWorkerClient() ? ServiceWorkersMode::None : ServiceWorkersMode::All;
     if (auto* activeServiceWorker = scriptExecutionContext.activeServiceWorker())
-        options.serviceWorkerIdentifier = activeServiceWorker->identifier();
+        options.serviceWorkerRegistrationIdentifier = activeServiceWorker->registrationIdentifier();
 #endif
     // During create, callbacks may happen which remove the last reference to this object.
     Ref<WorkerScriptLoader> protectedThis(*this);

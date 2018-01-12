@@ -129,7 +129,7 @@ WorkerThreadableLoader::MainThreadBridge::MainThreadBridge(ThreadableLoaderClien
 #if ENABLE(SERVICE_WORKER)
     optionsCopy->options.serviceWorkersMode = globalScope.isServiceWorkerGlobalScope() ? ServiceWorkersMode::None : ServiceWorkersMode::All;
     if (auto* activeServiceWorker = globalScope.activeServiceWorker())
-        optionsCopy->options.serviceWorkerIdentifier = activeServiceWorker->identifier();
+        optionsCopy->options.serviceWorkerRegistrationIdentifier = activeServiceWorker->registrationIdentifier();
 #endif
 
     InspectorInstrumentation::willSendRequest(globalScope, m_workerRequestIdentifier, request);

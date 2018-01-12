@@ -72,7 +72,7 @@ void ServiceWorkerClientFetch::start()
     cleanHTTPRequestHeadersForAccessControl(request, options.httpHeadersToKeep);
 
     ASSERT(options.serviceWorkersMode != ServiceWorkersMode::None);
-    m_connection->startFetch(m_loader->identifier(), options.serviceWorkerIdentifier.value(), request, options, referrer);
+    m_connection->startFetch(m_loader->identifier(), options.serviceWorkerRegistrationIdentifier.value(), request, options, referrer);
 }
 
 // https://fetch.spec.whatwg.org/#http-fetch step 3.3
