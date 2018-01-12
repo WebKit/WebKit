@@ -10,10 +10,10 @@ PASS: filter for IMG.no-invert is 'none'.
 PASS: filter for PICTURE.no-invert is 'none'.
 PASS: filter for VIDEO.no-invert is 'none'.
 PASS: filter for VIDEO.no-invert is 'none'.
-PASS: filter for IMG.preserve-filter is 'blur(3px)'.
-PASS: filter for PICTURE.preserve-filter is 'blur(3px)'.
-PASS: filter for VIDEO.preserve-filter is 'blur(3px)'.
-PASS: filter for VIDEO.preserve-filter is 'blur(3px)'.
+PASS: filter for IMG.preserve-filter is 'grayscale(1)'.
+PASS: filter for PICTURE.preserve-filter is 'grayscale(1)'.
+PASS: filter for VIDEO.preserve-filter is 'grayscale(1)'.
+PASS: filter for VIDEO.preserve-filter is 'grayscale(1)'.
 
 AFTER INVERT-COLORS IS APPLIED
 PASS: filter for IMG#a is 'none'. Change once IMG/PICTURE elements are inverted, too.
@@ -25,8 +25,8 @@ PASS: filter for IMG.no-invert is 'none'.
 PASS: filter for PICTURE.no-invert is 'none'.
 PASS: filter for VIDEO.no-invert is 'none'.
 PASS: filter for VIDEO.no-invert is 'none'.
-PASS: filter for IMG.preserve-filter is 'blur(3px)'.
-PASS: filter for PICTURE.preserve-filter is 'blur(3px)'.
-PASS: filter for VIDEO.preserve-filter is 'blur(3px)'.
-PASS: filter for VIDEO.preserve-filter is 'blur(3px)'.
+PASS: filter for IMG.preserve-filter is 'grayscale(1)'.
+PASS: filter for PICTURE.preserve-filter is 'grayscale(1)'.
+PASS: filter for VIDEO.preserve-filter is 'grayscale(1)'.
+PASS: filter for VIDEO.preserve-filter is 'grayscale(1)'.
 

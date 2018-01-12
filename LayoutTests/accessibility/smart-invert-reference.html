@@ -4,7 +4,7 @@
 <style type="text/css">
     /* Testing explicit author overrides. */
     .no-invert { filter: none; }
-    .preserve-filter { filter: blur(3px); }
+    .preserve-filter { filter: grayscale(1); }
 </style>
 <script>
 if (window.testRunner)
@@ -12,7 +12,7 @@ if (window.testRunner)
 
 const NONE_VALUE = "none";
 const INVERTED_VALUE = "invert(1)";
-const PRESERVED_VALUE = "blur(3px)";
+const PRESERVED_VALUE = "grayscale(1)";
 
 function getUIScript() {
     return `
