@@ -251,9 +251,9 @@ void UserMediaRequest::allow(CaptureDevice&& audioDevice, CaptureDevice&& videoD
         return;
 
 #if ENABLE(WEB_RTC)
-    auto* page = downcast<Document>(*m_scriptExecutionContext).page();
-    if (page)
-        page->rtcController().disableICECandidateFiltering();
+    auto& document = downcast<Document>(*m_scriptExecutionContext);
+    if (auto* page = document.page())
+        page->rtcController().disableICECandidateFilteringForDocument(document);
 #endif
 }
 

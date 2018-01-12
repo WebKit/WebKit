@@ -130,6 +130,7 @@ imported/w3c/web-platform-tests/streams/readable-byte-streams/detached-buffers.s
 imported/w3c/web-platform-tests/webrtc [ Skip ]
 webrtc [ Skip ]
 http/tests/webrtc [ Skip ]
+http/wpt/webrtc [ Skip ]
 webrtc/datachannel [ Pass ]
 webrtc/datachannel/bufferedAmountLowThreshold.html [ Pass Failure ]
 webrtc/datachannel/bufferedAmountLowThreshold-default.html [ Pass Failure ]
