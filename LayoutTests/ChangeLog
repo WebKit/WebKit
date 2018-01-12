@@ -1,5 +1,17 @@
 2018-01-11  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r226798. rdar://problem/36450812
+
+    2018-01-11  Matt Lewis  <jlewis3@apple.com>
+
+            Rebaseline of media/event-queue-crash.html after r226785
+
+            Unreviewed test gardening.
+
+            * media/event-queue-crash-expected.txt:
+
+2018-01-11  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r226796. rdar://problem/36450730
 
     2018-01-11  Antoine Quint  <graouts@apple.com>

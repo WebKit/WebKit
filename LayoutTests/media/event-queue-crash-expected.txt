@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: line 34: SyntaxError: Unexpected token '}'. Expected '(' to start an 'if' condition.
 When an element containing video is removed, WebKit should not crash.
 
 PASS. WebKit didn't crash.
