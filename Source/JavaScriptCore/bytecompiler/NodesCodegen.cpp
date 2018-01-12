@@ -1,7 +1,7 @@
 /*
 *  Copyright (C) 1999-2002 Harri Porten (porten@kde.org)
 *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
-*  Copyright (C) 2003-2017 Apple Inc. All rights reserved.
+*  Copyright (C) 2003-2018 Apple Inc. All rights reserved.
 *  Copyright (C) 2007 Cameron Zwarich (cwzwarich@uwaterloo.ca)
 *  Copyright (C) 2007 Maks Orlovich
 *  Copyright (C) 2007 Eric Seidel <eric@webkit.org>
@@ -539,11 +539,16 @@ RegisterID* PropertyListNode::emitBytecode(BytecodeGenerator& generator, Registe
             // Duplicates are possible.
             GetterSetterPair pair(node, static_cast<PropertyNode*>(nullptr));
             GetterSetterMap::AddResult result = map.add(node->name()->impl(), pair);
+            auto& resultPair = result.iterator->value;
             if (!result.isNewEntry) {
-                if (result.iterator->value.first->m_type == node->m_type)
-                    result.iterator->value.first = node;
-                else
-                    result.iterator->value.second = node;
+                if (resultPair.first->m_type == node->m_type) {
+                    resultPair.first->setIsOverriddenByDuplicate();
+                    resultPair.first = node;
+                } else {
+                    if (resultPair.second)
+                        resultPair.second->setIsOverriddenByDuplicate();
+                    resultPair.second = node;
+                }
             }
         }
 
@@ -595,7 +600,7 @@ RegisterID* PropertyListNode::emitBytecode(BytecodeGenerator& generator, Registe
             GetterSetterPair& pair = it->value;
 
             // Was this already generated as a part of its partner?
-            if (pair.second == node)
+            if (pair.second == node || node->isOverriddenByDuplicate())
                 continue;
 
             // Generate the paired node now.

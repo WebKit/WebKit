@@ -1,3 +1,17 @@
+2018-01-11  Jason Marcell  <jmarcell@apple.com>
+
+        Cherry-pick r226650. rdar://problem/36429150
+
+    2018-01-09  Mark Lam  <mark.lam@apple.com>
+
+            ASSERTION FAILED: pair.second->m_type & PropertyNode::Getter
+            https://bugs.webkit.org/show_bug.cgi?id=181388
+            <rdar://problem/36349351>
+
+            Reviewed by Saam Barati.
+
+            * stress/regress-181388.js: Added.
+
 2018-01-09  Jason Marcell  <jmarcell@apple.com>
 
         Cherry-pick r226615. rdar://problem/36392328
