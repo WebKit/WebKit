@@ -1,3 +1,19 @@
+2018-01-11  Alex Christensen  <achristensen@webkit.org>
+
+        REGRESSION(r225003): Loading hangs in environments where dispatch_async does not work
+        https://bugs.webkit.org/show_bug.cgi?id=181553
+        <rdar://problem/35733938>
+
+        Reviewed by Eric Carlson.
+
+        There is an environment where dispatch_async does not work, but performSelectorOnMainThread works.
+        r225003 broke loading in this environment.  This fixes it and updates the test that r225003 fixed.
+        It failed sometimes because loading was happening in a different order than html parsing, so I made
+        the test not depend on html parsing timing by updating media/video-src-remove.html.
+
+        * platform/network/mac/WebCoreResourceHandleAsOperationQueueDelegate.mm:
+        (-[WebCoreResourceHandleAsOperationQueueDelegate callFunctionOnMainThread:]):
+
 2018-01-11  Dean Jackson  <dino@apple.com>
 
         Rolling out 226814. It crashes on some bots.
