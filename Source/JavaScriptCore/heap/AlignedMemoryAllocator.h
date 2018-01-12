@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,7 +30,7 @@
 
 namespace JSC {
 
-class MarkedAllocator;
+class BlockDirectory;
 class Subspace;
 
 class AlignedMemoryAllocator {
@@ -45,13 +45,13 @@ public:
     
     virtual void dump(PrintStream&) const = 0;
 
-    void registerAllocator(MarkedAllocator*);
-    MarkedAllocator* firstAllocator() const { return m_allocators.first(); }
+    void registerDirectory(BlockDirectory*);
+    BlockDirectory* firstDirectory() const { return m_directories.first(); }
 
     void registerSubspace(Subspace*);
 
 private:
-    SinglyLinkedListWithTail<MarkedAllocator> m_allocators;
+    SinglyLinkedListWithTail<BlockDirectory> m_directories;
     SinglyLinkedListWithTail<Subspace> m_subspaces;
 };
 

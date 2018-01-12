@@ -33,10 +33,10 @@ class HeapCellType {
     WTF_MAKE_NONCOPYABLE(HeapCellType);
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    JS_EXPORT_PRIVATE HeapCellType(AllocatorAttributes);
+    JS_EXPORT_PRIVATE HeapCellType(CellAttributes);
     JS_EXPORT_PRIVATE virtual ~HeapCellType();
 
-    const AllocatorAttributes& attributes() const { return m_attributes; }
+    const CellAttributes& attributes() const { return m_attributes; }
 
     // The purpose of overriding this is to specialize the sweep for your destructors. This won't
     // be called for no-destructor blocks. This must call MarkedBlock::finishSweepKnowingSubspace.
@@ -46,7 +46,7 @@ public:
     virtual void destroy(VM&, JSCell*);
 
 private:
-    AllocatorAttributes m_attributes;
+    CellAttributes m_attributes;
 };
 
 } // namespace JSC

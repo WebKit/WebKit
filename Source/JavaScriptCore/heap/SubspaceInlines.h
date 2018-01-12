@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,8 +25,8 @@
 
 #pragma once
 
+#include "BlockDirectoryInlines.h"
 #include "JSCell.h"
-#include "MarkedAllocatorInlines.h"
 #include "MarkedBlock.h"
 #include "MarkedSpace.h"
 #include "Subspace.h"
@@ -34,27 +34,27 @@
 namespace JSC {
 
 template<typename Func>
-void Subspace::forEachAllocator(const Func& func)
+void Subspace::forEachDirectory(const Func& func)
 {
-    for (MarkedAllocator* allocator = m_firstAllocator; allocator; allocator = allocator->nextAllocatorInSubspace())
-        func(*allocator);
+    for (BlockDirectory* directory = m_firstDirectory; directory; directory = directory->nextDirectoryInSubspace())
+        func(*directory);
 }
 
 template<typename Func>
 void Subspace::forEachMarkedBlock(const Func& func)
 {
-    forEachAllocator(
-        [&] (MarkedAllocator& allocator) {
-            allocator.forEachBlock(func);
+    forEachDirectory(
+        [&] (BlockDirectory& directory) {
+            directory.forEachBlock(func);
         });
 }
 
 template<typename Func>
 void Subspace::forEachNotEmptyMarkedBlock(const Func& func)
 {
-    forEachAllocator(
-        [&] (MarkedAllocator& allocator) {
-            allocator.forEachNotEmptyBlock(func);
+    forEachDirectory(
+        [&] (BlockDirectory& directory) {
+            directory.forEachNotEmptyBlock(func);
         });
 }
 

@@ -57,7 +57,7 @@ namespace JSC {
     class JIT;
     class Identifier;
     class Interpreter;
-    class MarkedAllocator;
+    class BlockDirectory;
     class Register;
     class StructureChain;
     class StructureStubInfo;

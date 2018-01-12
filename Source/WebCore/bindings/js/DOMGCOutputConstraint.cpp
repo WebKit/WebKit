@@ -27,8 +27,8 @@
 #include "DOMGCOutputConstraint.h"
 
 #include "WebCoreJSClientData.h"
+#include <heap/BlockDirectoryInlines.h>
 #include <heap/HeapInlines.h>
-#include <heap/MarkedAllocatorInlines.h>
 #include <heap/MarkedBlockInlines.h>
 #include <heap/SubspaceInlines.h>
 #include <runtime/VM.h>

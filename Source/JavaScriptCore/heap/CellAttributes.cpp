@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,28 +23,17 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#include "config.h"
+#include "CellAttributes.h"
 
-#include "DestructionMode.h"
-#include "HeapCell.h"
 #include <wtf/PrintStream.h>
 
 namespace JSC {
 
-struct AllocatorAttributes {
-    AllocatorAttributes() { }
-    
-    AllocatorAttributes(DestructionMode destruction, HeapCell::Kind cellKind)
-        : destruction(destruction)
-        , cellKind(cellKind)
-    {
-    }
-    
-    void dump(PrintStream& out) const;
-    
-    DestructionMode destruction { DoesNotNeedDestruction };
-    HeapCell::Kind cellKind { HeapCell::JSCell };
-};
+void CellAttributes::dump(PrintStream& out) const
+{
+    out.print("{", destruction, ", ", cellKind, "}");
+}
 
 } // namespace JSC
 

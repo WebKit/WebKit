@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2003-2017 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003-2018 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -21,9 +21,9 @@
 
 #pragma once
 
+#include "BlockDirectory.h"
 #include "IterationStatus.h"
 #include "LargeAllocation.h"
-#include "MarkedAllocator.h"
 #include "MarkedBlock.h"
 #include "MarkedBlockSet.h"
 #include <array>
@@ -157,10 +157,10 @@ public:
     LargeAllocation** largeAllocationsForThisCollectionEnd() const { return m_largeAllocationsForThisCollectionEnd; }
     unsigned largeAllocationsForThisCollectionSize() const { return m_largeAllocationsForThisCollectionSize; }
     
-    MarkedAllocator* firstAllocator() const { return m_allocators.first(); }
+    BlockDirectory* firstDirectory() const { return m_directories.first(); }
     
-    Lock& allocatorLock() { return m_allocatorLock; }
-    void addMarkedAllocator(const AbstractLocker&, MarkedAllocator*);
+    Lock& directoryLock() { return m_directoryLock; }
+    void addBlockDirectory(const AbstractLocker&, BlockDirectory*);
     
     // When this is true it means that we have flipped but the mark bits haven't converged yet.
     bool isMarking() const { return m_isMarking; }
@@ -181,7 +181,7 @@ private:
     friend class WeakSet;
     friend class Subspace;
     
-    // Use this version when calling from within the GC where we know that the allocators
+    // Use this version when calling from within the GC where we know that the directories
     // have already been stopped.
     template<typename Functor> void forEachLiveCell(const Functor&);
 
@@ -189,7 +189,7 @@ private:
     
     void initializeSubspace(Subspace&);
 
-    template<typename Functor> inline void forEachAllocator(const Functor&);
+    template<typename Functor> inline void forEachDirectory(const Functor&);
     
     void addActiveWeakSet(WeakSet*);
 
@@ -214,26 +214,26 @@ private:
     SentinelLinkedList<WeakSet, BasicRawSentinelNode<WeakSet>> m_activeWeakSets;
     SentinelLinkedList<WeakSet, BasicRawSentinelNode<WeakSet>> m_newActiveWeakSets;
 
-    Lock m_allocatorLock;
-    SinglyLinkedListWithTail<MarkedAllocator> m_allocators;
+    Lock m_directoryLock;
+    SinglyLinkedListWithTail<BlockDirectory> m_directories;
 
     friend class HeapVerifier;
 };
 
 template <typename Functor> inline void MarkedSpace::forEachBlock(const Functor& functor)
 {
-    forEachAllocator(
-        [&] (MarkedAllocator& allocator) -> IterationStatus {
-            allocator.forEachBlock(functor);
+    forEachDirectory(
+        [&] (BlockDirectory& directory) -> IterationStatus {
+            directory.forEachBlock(functor);
             return IterationStatus::Continue;
         });
 }
 
 template <typename Functor>
-void MarkedSpace::forEachAllocator(const Functor& functor)
+void MarkedSpace::forEachDirectory(const Functor& functor)
 {
-    for (MarkedAllocator* allocator = m_allocators.first(); allocator; allocator = allocator->nextAllocator()) {
-        if (functor(*allocator) == IterationStatus::Done)
+    for (BlockDirectory* directory = m_directories.first(); directory; directory = directory->nextDirectory()) {
+        if (functor(*directory) == IterationStatus::Done)
             return;
     }
 }

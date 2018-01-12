@@ -81,7 +81,7 @@ void JIT::emit_op_new_object(Instruction* currentInstruction)
 {
     Structure* structure = currentInstruction[3].u.objectAllocationProfile->structure();
     size_t allocationSize = JSFinalObject::allocationSize(structure->inlineCapacity());
-    MarkedAllocator* allocator = subspaceFor<JSFinalObject>(*m_vm)->allocatorForNonVirtual(allocationSize, AllocatorForMode::AllocatorIfExists);
+    BlockDirectory* allocator = subspaceFor<JSFinalObject>(*m_vm)->allocatorForNonVirtual(allocationSize, AllocatorForMode::AllocatorIfExists);
 
     RegisterID resultReg = regT0;
     RegisterID allocatorReg = regT1;

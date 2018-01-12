@@ -28,11 +28,11 @@
 namespace JSC {
 
 class Heap;
-class MarkedAllocator;
+class BlockDirectory;
 
 class GCDeferralContext {
     friend class Heap;
-    friend class MarkedAllocator;
+    friend class BlockDirectory;
 public:
     inline GCDeferralContext(Heap&);
     inline ~GCDeferralContext();

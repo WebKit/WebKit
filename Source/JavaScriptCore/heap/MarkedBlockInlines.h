@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,8 +25,8 @@
 
 #pragma once
 
+#include "BlockDirectory.h"
 #include "JSCell.h"
-#include "MarkedAllocator.h"
 #include "MarkedBlock.h"
 #include "MarkedSpace.h"
 #include "Operations.h"
@@ -93,12 +93,12 @@ inline bool MarkedBlock::marksConveyLivenessDuringMarking(HeapVersion myMarkingV
 
 inline bool MarkedBlock::Handle::isAllocated()
 {
-    return m_allocator->isAllocated(NoLockingNecessary, this);
+    return m_directory->isAllocated(NoLockingNecessary, this);
 }
 
 ALWAYS_INLINE bool MarkedBlock::Handle::isLive(HeapVersion markingVersion, HeapVersion newlyAllocatedVersion, bool isMarking, const HeapCell* cell)
 {
-    if (allocator()->isAllocated(NoLockingNecessary, this))
+    if (directory()->isAllocated(NoLockingNecessary, this))
         return true;
     
     // We need to do this while holding the lock because marks might be stale. In that case, newly
@@ -255,7 +255,7 @@ void MarkedBlock::Handle::specializedSweep(FreeList* freeList, MarkedBlock::Hand
         }
     };
     
-    m_allocator->setIsDestructible(NoLockingNecessary, this, false);
+    m_directory->setIsDestructible(NoLockingNecessary, this, false);
     
     if (Options::useBumpAllocator()
         && emptyMode == IsEmpty
@@ -351,7 +351,7 @@ void MarkedBlock::Handle::specializedSweep(FreeList* freeList, MarkedBlock::Hand
         freeList->initializeList(head, secret, count * cellSize);
         setIsFreeListed();
     } else if (isEmpty)
-        m_allocator->setIsEmpty(NoLockingNecessary, this, true);
+        m_directory->setIsEmpty(NoLockingNecessary, this, true);
     if (false)
         dataLog("Slowly swept block ", RawPointer(&block), " with cell size ", cellSize, " and attributes ", m_attributes, ": ", pointerDump(freeList), "\n");
 }
@@ -441,7 +441,7 @@ inline MarkedBlock::Handle::SweepDestructionMode MarkedBlock::Handle::sweepDestr
 
 inline bool MarkedBlock::Handle::isEmpty()
 {
-    return m_allocator->isEmpty(NoLockingNecessary, this);
+    return m_directory->isEmpty(NoLockingNecessary, this);
 }
 
 inline MarkedBlock::Handle::EmptyMode MarkedBlock::Handle::emptyMode()

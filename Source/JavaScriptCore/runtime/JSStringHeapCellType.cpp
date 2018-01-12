@@ -39,7 +39,7 @@ struct JSStringDestroyFunc {
 };
 
 JSStringHeapCellType::JSStringHeapCellType()
-    : HeapCellType(AllocatorAttributes(NeedsDestruction, HeapCell::JSCell))
+    : HeapCellType(CellAttributes(NeedsDestruction, HeapCell::JSCell))
 {
 }
 

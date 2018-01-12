@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,31 +26,31 @@
 #include "config.h"
 #include "IsoSubspace.h"
 
+#include "BlockDirectoryInlines.h"
 #include "IsoAlignedMemoryAllocator.h"
-#include "MarkedAllocatorInlines.h"
 
 namespace JSC {
 
 IsoSubspace::IsoSubspace(CString name, Heap& heap, HeapCellType* heapCellType, size_t size)
     : Subspace(name, heap)
     , m_size(size)
-    , m_allocator(&heap, WTF::roundUpToMultipleOf<MarkedBlock::atomSize>(size))
+    , m_directory(&heap, WTF::roundUpToMultipleOf<MarkedBlock::atomSize>(size))
     , m_isoAlignedMemoryAllocator(std::make_unique<IsoAlignedMemoryAllocator>())
 {
     initialize(heapCellType, m_isoAlignedMemoryAllocator.get());
 
-    auto locker = holdLock(m_space.allocatorLock());
-    m_allocator.setSubspace(this);
-    m_space.addMarkedAllocator(locker, &m_allocator);
-    m_alignedMemoryAllocator->registerAllocator(&m_allocator);
-    m_firstAllocator = &m_allocator;
+    auto locker = holdLock(m_space.directoryLock());
+    m_directory.setSubspace(this);
+    m_space.addBlockDirectory(locker, &m_directory);
+    m_alignedMemoryAllocator->registerDirectory(&m_directory);
+    m_firstDirectory = &m_directory;
 }
 
 IsoSubspace::~IsoSubspace()
 {
 }
 
-MarkedAllocator* IsoSubspace::allocatorFor(size_t size, AllocatorForMode mode)
+BlockDirectory* IsoSubspace::allocatorFor(size_t size, AllocatorForMode mode)
 {
     return allocatorForNonVirtual(size, mode);
 }
@@ -63,7 +63,7 @@ void* IsoSubspace::allocate(size_t size, GCDeferralContext* deferralContext, All
 void* IsoSubspace::allocateNonVirtual(size_t size, GCDeferralContext* deferralContext, AllocationFailureMode failureMode)
 {
     RELEASE_ASSERT(size == this->size());
-    void* result = m_allocator.allocate(deferralContext, failureMode);
+    void* result = m_directory.allocate(deferralContext, failureMode);
     return result;
 }
 

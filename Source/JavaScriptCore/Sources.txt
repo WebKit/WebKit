@@ -465,7 +465,8 @@ ftl/FTLThunks.cpp
 ftl/FTLValueRange.cpp
 
 heap/AlignedMemoryAllocator.cpp
-heap/AllocatorAttributes.cpp
+heap/BlockDirectory.cpp
+heap/CellAttributes.cpp
 heap/CellContainer.cpp
 heap/CodeBlockSet.cpp
 heap/CollectionScope.cpp
@@ -501,7 +502,6 @@ heap/LargeAllocation.cpp
 heap/MachineStackMarker.cpp
 heap/MarkStack.cpp
 heap/MarkStackMergingConstraint.cpp
-heap/MarkedAllocator.cpp
 heap/MarkedBlock.cpp
 heap/MarkedSpace.cpp
 heap/MarkingConstraint.cpp

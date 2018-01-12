@@ -63,10 +63,10 @@ inline bool IsoCellSet::contains(HeapCell* cell) const
 template<typename Func>
 void IsoCellSet::forEachMarkedCell(const Func& func)
 {
-    MarkedAllocator& allocator = m_subspace.m_allocator;
-    (allocator.m_markingNotEmpty & m_blocksWithBits).forEachSetBit(
+    BlockDirectory& directory = m_subspace.m_directory;
+    (directory.m_markingNotEmpty & m_blocksWithBits).forEachSetBit(
         [&] (size_t blockIndex) {
-            MarkedBlock::Handle* block = allocator.m_blocks[blockIndex];
+            MarkedBlock::Handle* block = directory.m_blocks[blockIndex];
 
             auto* bits = m_bits[blockIndex].get();
             block->forEachMarkedCell(

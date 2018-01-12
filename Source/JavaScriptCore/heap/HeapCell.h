@@ -34,7 +34,7 @@ class Heap;
 class LargeAllocation;
 class MarkedBlock;
 class VM;
-struct AllocatorAttributes;
+struct CellAttributes;
 
 class HeapCell {
 public:
@@ -65,7 +65,7 @@ public:
     VM* vm() const;
     
     size_t cellSize() const;
-    AllocatorAttributes allocatorAttributes() const;
+    CellAttributes cellAttributes() const;
     DestructionMode destructionMode() const;
     Kind cellKind() const;
     

@@ -39,7 +39,7 @@ struct JSSegmentedVariableObjectDestroyFunc {
 };
 
 JSSegmentedVariableObjectHeapCellType::JSSegmentedVariableObjectHeapCellType()
-    : HeapCellType(AllocatorAttributes(NeedsDestruction, HeapCell::JSCell))
+    : HeapCellType(CellAttributes(NeedsDestruction, HeapCell::JSCell))
 {
 }
 
