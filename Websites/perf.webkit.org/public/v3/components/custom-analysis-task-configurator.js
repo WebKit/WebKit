@@ -40,7 +40,7 @@ class CustomAnalysisTaskConfigurator extends ComponentBase {
         if (this._selectedTests.length && !this._triggerablePlatforms.includes(this._selectedPlatform))
             this._selectedPlatform = null;
 
-        this.enqueueToRender();
+        this._didUpdateSelectedPlatforms();
     }
 
     selectPlatform(selectedPlatform)
@@ -49,6 +49,12 @@ class CustomAnalysisTaskConfigurator extends ComponentBase {
 
         const [triggerable, error] = this._updateTriggerableLazily.evaluate(this._selectedTests, this._selectedPlatform);
         this._updateRepositoryGroups(triggerable);
+
+        this._didUpdateSelectedPlatforms();
+    }
+
+    _didUpdateSelectedPlatforms()
+    {
         this._updateCommitSetMap();
 
         this.enqueueToRender();
@@ -190,8 +196,14 @@ class CustomAnalysisTaskConfigurator extends ComponentBase {
     {
         const enabledTriggerables = Triggerable.all().filter((triggerable) => !triggerable.isDisabled());
 
-        let tests = Test.topLevelTests().filter((test) => test.metrics().length && enabledTriggerables.some((triggerable) => triggerable.acceptsTest(test)));
-        return this._renderRadioButtonList(this.content('test-list'), 'test', tests, this.selectTests.bind(this));
+        const acceptedTests = new Set;
+        for (const triggerable of enabledTriggerables) {
+            for (const test of triggerable.acceptedTests())
+                acceptedTests.add(test);
+        }
+
+        let tests = Test.all().filter((test) => acceptedTests.has(test) && (!test.parentTest() || !acceptedTests.has(test.parentTest())));
+        return this._renderRadioButtonList(this.content('test-list'), 'test', tests, this.selectTests.bind(this), (test) => test.fullName());
     }
 
     _renderTriggerablePlatforms(selectedTests, triggerablePlatforms)
@@ -207,7 +219,7 @@ class CustomAnalysisTaskConfigurator extends ComponentBase {
         });
     }
 
-    _renderRadioButtonList(listContainer, name, objects, callback)
+    _renderRadioButtonList(listContainer, name, objects, callback, labelForObject = (object) => object.label())
     {
         const listItems = [];
         let selectedListItems = [];
@@ -230,7 +242,7 @@ class CustomAnalysisTaskConfigurator extends ComponentBase {
                 callback(selectedListItems.map((item) => item.object));
                 this.enqueueToRender();
             }});
-            const label = element('label', [radioButton, object.label()]);
+            const label = element('label', [radioButton, labelForObject(object)]);
             listItems.push({radioButton, label, object});
             return element('li', label);
         }));

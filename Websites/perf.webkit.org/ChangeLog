@@ -1,1 +1,25 @@
+2018-01-11  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Cannot trigger Dromaeo tests on internal perf try bots
+        https://bugs.webkit.org/show_bug.cgi?id=179712
+
+        Reviewed by Chris Dumez.
+
+        The bug was caused by CustomAnalysisTaskConfigurator only showing the top-level tests that are triggerable
+        instead of the list of highest level tests that are triggerable.
+
+        * public/v3/components/custom-analysis-task-configurator.js:
+        (CustomAnalysisTaskConfigurator.prototype.selectTests): Update the test group name when a new test is picked.
+        (CustomAnalysisTaskConfigurator.prototype.selectPlatform):
+        (CustomAnalysisTaskConfigurator.prototype._didUpdateSelectedPlatforms): Extracted from selectPlatform.
+        (CustomAnalysisTaskConfigurator.prototype._renderTriggerableTests): Include the list of all highest-level tests
+        which are triggerable.
+        (CustomAnalysisTaskConfigurator.prototype._renderRadioButtonList): Added labelForObject which returns the label
+        to be used in the list items. For tests, we want to use the full name, not just its label.
+        * public/v3/models/analysis-task.js:
+        (AnalysisTask.fetchById):
+        * public/v3/models/triggerable.js:
+        (Triggerable.prototype.acceptedTests): Added.
+        (Triggerable.prototype.acceptsTest): Deleted.
+
 == Rolled over to ChangeLog-2018-01-01 ==

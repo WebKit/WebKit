@@ -23,7 +23,7 @@ class Triggerable extends LabeledObject {
     isDisabled() { return this._isDisabled; }
     repositoryGroups() { return this._repositoryGroups; }
 
-    acceptsTest(test) { return this._acceptedTests.has(test); }
+    acceptedTests() { return this._acceptedTests; }
 
     static findByTestConfiguration(test, platform)
     {

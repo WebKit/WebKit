@@ -178,7 +178,7 @@ class AnalysisTask extends LabeledObject {
 
     static fetchById(id)
     {
-        return this._fetchSubset({id: id}).then(function (data) { return AnalysisTask.findById(id); });
+        return this._fetchSubset({id: id}, true).then(function (data) { return AnalysisTask.findById(id); });
     }
 
     static fetchByBuildRequestId(id)
