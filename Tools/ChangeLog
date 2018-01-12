@@ -1,3 +1,16 @@
+2018-01-12  Alex Christensen  <achristensen@webkit.org>
+
+        REGRESSION (r226818): API test WebKitLegacy.LoadInvalidURLRequest is failing
+        https://bugs.webkit.org/show_bug.cgi?id=181595
+
+        This test was testing behavior of an invalid URL that WebCore parses but NSURL does not.
+        It was using example.com<> but after r226479 < and > are considered invalid by WebCore.
+        I change the < and > to $ to make this test pass and continue to test what it used to.
+
+        * TestWebKitAPI/Tests/mac/LoadInvalidURLRequest.html:
+        * TestWebKitAPI/Tests/mac/LoadInvalidURLRequest.mm:
+        (-[LoadInvalidURLWebFrameLoadDelegate webView:didFailProvisionalLoadWithError:forFrame:]):
+
 2018-01-11  Keith Miller  <keith_miller@apple.com>
 
         Rename ENABLE_ASYNC_ITERATION to ENABLE_JS_ASYNC_ITERATION
