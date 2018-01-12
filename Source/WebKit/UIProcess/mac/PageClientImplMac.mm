@@ -595,7 +595,7 @@ static inline NSCorrectionResponse toCorrectionResponse(AutocorrectionResponse r
 
 void PageClientImpl::recordAutocorrectionResponse(AutocorrectionResponse response, const String& replacedString, const String& replacementString)
 {
-    CorrectionPanel::recordAutocorrectionResponse(m_impl->spellCheckerDocumentTag(), toCorrectionResponse(response), replacedString, replacementString);
+    CorrectionPanel::recordAutocorrectionResponse(*m_impl, m_impl->spellCheckerDocumentTag(), toCorrectionResponse(response), replacedString, replacementString);
 }
 
 void PageClientImpl::recommendedScrollbarStyleDidChange(ScrollbarStyle newStyle)
