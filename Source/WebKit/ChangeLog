@@ -1,3 +1,16 @@
+2018-01-12  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, rolling out r226826.
+
+        Breaks internal builds.
+
+        Reverted changeset:
+
+        "Implement MultiDocument protocol for restoring focus to a
+        WKWebView"
+        https://bugs.webkit.org/show_bug.cgi?id=181510
+        https://trac.webkit.org/changeset/226826
+
 2018-01-12  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [WK2] Unify macOS and iOS codepaths in the UI process when starting a drag
