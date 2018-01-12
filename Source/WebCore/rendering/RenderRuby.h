@@ -56,6 +56,7 @@ public:
     RenderRubyAsInline(Element&, RenderStyle&&);
     virtual ~RenderRubyAsInline();
 
+    void addChild(RenderTreeBuilder&, RenderPtr<RenderObject> child, RenderObject* beforeChild = 0) override;
     RenderPtr<RenderObject> takeChild(RenderObject& child) override;
 
 protected:
