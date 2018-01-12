@@ -1,3 +1,14 @@
+2018-01-12  Jer Noble  <jer.noble@apple.com>
+
+        Wrap CDMFairPlayStreaming and related classes in ENABLE(ENCRYPTED_MEDIA) checks
+        https://bugs.webkit.org/show_bug.cgi?id=181602
+
+        Reviewed by Maciej Stachowiak.
+
+        * platform/graphics/avfoundation/CDMFairPlayStreaming.h:
+        * platform/graphics/avfoundation/objc/CDMInstanceFairPlayStreamingAVFObjC.h:
+        * platform/graphics/avfoundation/objc/CDMInstanceFairPlayStreamingAVFObjC.mm:
+
 2018-01-12  Youenn Fablet  <youenn@apple.com>
 
         WebProcess should pass the registration identifier and not the worker identifier for fetch events

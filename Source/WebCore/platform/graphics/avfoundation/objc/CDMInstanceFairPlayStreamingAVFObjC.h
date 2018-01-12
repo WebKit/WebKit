@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if HAVE(AVCONTENTKEYSESSION)
+#if ENABLE(ENCRYPTED_MEDIA) && HAVE(AVCONTENTKEYSESSION)
 
 #include "CDMInstance.h"
 #include <wtf/Function.h>
@@ -102,4 +102,4 @@ private:
 
 SPECIALIZE_TYPE_TRAITS_CDM_INSTANCE(WebCore::CDMInstanceFairPlayStreamingAVFObjC, WebCore::CDMInstance::ImplementationType::FairPlayStreaming)
 
-#endif // HAVE(AVCONTENTKEYSESSION)
+#endif // ENABLE(ENCRYPTED_MEDIA) && HAVE(AVCONTENTKEYSESSION)

@@ -26,7 +26,7 @@
 #import "config.h"
 #import "CDMInstanceFairPlayStreamingAVFObjC.h"
 
-#if HAVE(AVCONTENTKEYSESSION)
+#if ENABLE(ENCRYPTED_MEDIA) && HAVE(AVCONTENTKEYSESSION)
 
 #import "CDMFairPlayStreaming.h"
 #import "CDMKeySystemConfiguration.h"
@@ -484,4 +484,4 @@ void CDMInstanceFairPlayStreamingAVFObjC::sessionIdentifierChanged(NSData *sessi
 
 }
 
-#endif
+#endif // ENABLE(ENCRYPTED_MEDIA) && HAVE(AVCONTENTKEYSESSION)
