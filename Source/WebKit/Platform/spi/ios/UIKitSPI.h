@@ -378,6 +378,12 @@ typedef enum {
 @interface UITextInputTraits : NSObject <UITextInputTraits, UITextInputTraits_Private, NSCopying>
 @end
 
+@protocol UITextInputMultiDocument <NSObject>
+@optional
+- (void)_restoreFocusWithToken:(id <NSCopying, NSSecureCoding>)token completion:(void (^)(BOOL didRestore))completion;
+- (void)_preserveFocusWithToken:(id <NSCopying, NSSecureCoding>)token destructively:(BOOL)destructively;
+@end
+
 @interface UITextInteractionAssistant : NSObject
 @end
 

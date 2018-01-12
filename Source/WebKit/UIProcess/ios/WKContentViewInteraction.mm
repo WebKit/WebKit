@@ -4127,6 +4127,18 @@ static bool isAssistableInputType(InputType type)
     _fileUploadPanel = nil;
 }
 
+#pragma mark - UITextInputMultiDocument
+
+- (void)_restoreFocusWithToken:(id <NSCopying, NSSecureCoding>)token
+{
+    --_webView->_activeFocusedStateRetainCount;
+}
+
+- (void)_preserveFocusWithToken:(id <NSCopying, NSSecureCoding>)token destructively:(BOOL)destructively
+{
+    ++_webView->_activeFocusedStateRetainCount;
+}
+
 #pragma mark - Implementation of UIWebTouchEventsGestureRecognizerDelegate.
 
 // FIXME: Remove once -gestureRecognizer:shouldIgnoreWebTouchWithEvent: is in UIWebTouchEventsGestureRecognizer.h. Refer to <rdar://problem/33217525> for more details.
