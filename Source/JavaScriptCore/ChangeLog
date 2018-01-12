@@ -1,3 +1,20 @@
+2018-01-12  Saam Barati  <sbarati@apple.com>
+
+        Each variant of a polymorphic inlined call should be exitOK at the top of the block
+        https://bugs.webkit.org/show_bug.cgi?id=181562
+        <rdar://problem/36445624>
+
+        Reviewed by Yusuke Suzuki.
+
+        Before this patch, the very first block in the switch for polymorphic call
+        inlining will have exitOK at the top. The others are not guaranteed to.
+        That was just a bug. They're all exitOK at the top. This will lead to crashes
+        in FixupPhase because we won't have a node in a block that has ExitOK, so
+        when we fixup various type checks, we assert out.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleInlining):
+
 2018-01-11  Keith Miller  <keith_miller@apple.com>
 
         Rename ENABLE_ASYNC_ITERATION to ENABLE_JS_ASYNC_ITERATION

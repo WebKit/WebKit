@@ -1,3 +1,15 @@
+2018-01-12  Saam Barati  <sbarati@apple.com>
+
+        Each variant of a polymorphic inlined call should be exitOK at the top of the block
+        https://bugs.webkit.org/show_bug.cgi?id=181562
+        <rdar://problem/36445624>
+
+        Reviewed by Yusuke Suzuki.
+
+        * stress/each-block-at-top-of-polymorphic-call-inlining-should-be-exitOK.js: Added.
+        (f):
+        (foo):
+
 2018-01-11  Saam Barati  <sbarati@apple.com>
 
         When inserting Unreachable in byte code parser we need to flush all the right things
