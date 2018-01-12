@@ -127,3 +127,9 @@
     from { opacity: 0 }
     to   { opacity: 1 }
 }
+
+/* Default support for "Smart Invert" where all content color except media is inverted. */ 
+@media (inverted-colors) {
+    :host { filter: invert(100%); } /* WebKit native audio and video. */
+    picture { filter: none; } /* Don't invert the control buttons. */
+}
