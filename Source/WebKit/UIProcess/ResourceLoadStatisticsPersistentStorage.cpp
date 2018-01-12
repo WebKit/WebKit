@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -82,10 +82,11 @@ static std::unique_ptr<KeyedDecoder> createDecoderForFile(const String& path)
     return KeyedDecoder::decoder(reinterpret_cast<const uint8_t*>(buffer.data()), buffer.size());
 }
 
-ResourceLoadStatisticsPersistentStorage::ResourceLoadStatisticsPersistentStorage(WebResourceLoadStatisticsStore& store, const String& storageDirectoryPath)
+ResourceLoadStatisticsPersistentStorage::ResourceLoadStatisticsPersistentStorage(WebResourceLoadStatisticsStore& store, const String& storageDirectoryPath, IsReadOnly isReadOnly)
     : m_memoryStore(store)
     , m_storageDirectoryPath(storageDirectoryPath)
     , m_asyncWriteTimer(RunLoop::main(), this, &ResourceLoadStatisticsPersistentStorage::asyncWriteTimerFired)
+    , m_isReadOnly(isReadOnly)
 {
 }
 
@@ -239,6 +240,7 @@ void ResourceLoadStatisticsPersistentStorage::populateMemoryStoreFromDisk()
 void ResourceLoadStatisticsPersistentStorage::asyncWriteTimerFired()
 {
     ASSERT(RunLoop::isMain());
+    RELEASE_ASSERT(m_isReadOnly != IsReadOnly::Yes);
     m_memoryStore.statisticsQueue().dispatch([this] () mutable {
         writeMemoryStoreToDisk();
     });
@@ -247,6 +249,7 @@ void ResourceLoadStatisticsPersistentStorage::asyncWriteTimerFired()
 void ResourceLoadStatisticsPersistentStorage::writeMemoryStoreToDisk()
 {
     ASSERT(!RunLoop::isMain());
+    RELEASE_ASSERT(m_isReadOnly != IsReadOnly::Yes);
 
     m_hasPendingWrite = false;
     stopMonitoringDisk();
@@ -281,6 +284,8 @@ void ResourceLoadStatisticsPersistentStorage::writeMemoryStoreToDisk()
 void ResourceLoadStatisticsPersistentStorage::scheduleOrWriteMemoryStore(ForceImmediateWrite forceImmediateWrite)
 {
     ASSERT(!RunLoop::isMain());
+    if (m_isReadOnly == IsReadOnly::Yes)
+        return;
 
     auto timeSinceLastWrite = MonotonicTime::now() - m_lastStatisticsWriteTime;
     if (forceImmediateWrite != ForceImmediateWrite::Yes && timeSinceLastWrite < minimumWriteInterval) {
@@ -312,6 +317,11 @@ void ResourceLoadStatisticsPersistentStorage::clear()
 
 void ResourceLoadStatisticsPersistentStorage::finishAllPendingWorkSynchronously()
 {
+    if (m_isReadOnly == IsReadOnly::Yes) {
+        RELEASE_ASSERT(!m_asyncWriteTimer.isActive());
+        return;
+    }
+
     m_asyncWriteTimer.stop();
 
     BinarySemaphore semaphore;
