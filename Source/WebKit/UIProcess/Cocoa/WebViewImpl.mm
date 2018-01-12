@@ -73,6 +73,7 @@
 #import <WebCore/ColorMac.h>
 #import <WebCore/DictionaryLookup.h>
 #import <WebCore/DragData.h>
+#import <WebCore/DragItem.h>
 #import <WebCore/Editor.h>
 #import <WebCore/KeypressCommand.h>
 #import <WebCore/LegacyNSPasteboardTypes.h>
@@ -3776,8 +3777,21 @@ void WebViewImpl::startWindowDrag()
     [[m_view window] performWindowDragWithEvent:m_lastMouseDownEvent.get()];
 }
 
-void WebViewImpl::dragImageForView(NSView *view, NSImage *image, CGPoint clientPoint, bool)
+void WebViewImpl::startDrag(const WebCore::DragItem& item, const ShareableBitmap::Handle& dragImageHandle)
 {
+    auto dragImageAsBitmap = ShareableBitmap::create(dragImageHandle);
+    if (!dragImageAsBitmap) {
+        m_page->dragCancelled();
+        return;
+    }
+
+    auto dragCGImage = dragImageAsBitmap->makeCGImage();
+    auto dragNSImage = adoptNS([[NSImage alloc] initWithCGImage:dragCGImage.get() size:dragImageAsBitmap->size()]);
+
+    WebCore::IntSize size([dragNSImage size]);
+    size.scale(1.0 / m_page->deviceScaleFactor());
+    [dragNSImage setSize:size];
+
     // The call below could release the view.
     auto protector = m_view.get();
 #pragma clang diagnostic push
@@ -3787,14 +3801,9 @@ void WebViewImpl::dragImageForView(NSView *view, NSImage *image, CGPoint clientP
     [pasteboard setString:@"" forType:PasteboardTypes::WebDummyPboardType];
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    [view dragImage:image
-                 at:NSPointFromCGPoint(clientPoint)
-             offset:NSZeroSize
-              event:m_lastMouseDownEvent.get()
-         pasteboard:pasteboard
-             source:m_view.getAutoreleased()
-          slideBack:YES];
+    [m_view dragImage:dragNSImage.get() at:NSPointFromCGPoint(item.dragLocationInWindowCoordinates) offset:NSZeroSize event:m_lastMouseDownEvent.get() pasteboard:pasteboard source:m_view.getAutoreleased() slideBack:YES];
 #pragma clang diagnostic pop
+    m_page->didStartDrag();
 }
 
 static bool matchesExtensionOrEquivalent(const String& filename, const String& extension)

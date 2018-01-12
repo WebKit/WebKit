@@ -33,7 +33,6 @@
 #include "WeakObjCPtr.h"
 #include "WebPageProxy.h"
 #include "_WKOverlayScrollbarStyle.h"
-#include <WebCore/PromisedBlobInfo.h>
 #include <WebCore/TextIndicatorWindow.h>
 #include <WebCore/UserInterfaceLayoutDirection.h>
 #include <pal/spi/cocoa/AVKitSPI.h>
@@ -108,6 +107,7 @@ OBJC_CLASS WebPlaybackControlsManager;
 @end
 
 namespace WebCore {
+struct DragItem;
 struct KeyPressCommand;
 }
 
@@ -413,7 +413,7 @@ public:
 
     void startWindowDrag();
 
-    void dragImageForView(NSView *, NSImage *, CGPoint clientPoint, bool linkDrag);
+    void startDrag(const WebCore::DragItem&, const ShareableBitmap::Handle& image);
     void setFileAndURLTypes(NSString *filename, NSString *extension, NSString *title, NSString *url, NSString *visibleURL, NSPasteboard *);
     void setPromisedDataForImage(WebCore::Image*, NSString *filename, NSString *extension, NSString *title, NSString *url, NSString *visibleURL, WebCore::SharedBuffer* archiveBuffer, NSString *pasteboardName);
     void pasteboardChangedOwner(NSPasteboard *);

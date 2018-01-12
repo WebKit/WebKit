@@ -1,3 +1,42 @@
+2018-01-12  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [WK2] Unify macOS and iOS codepaths in the UI process when starting a drag
+        https://bugs.webkit.org/show_bug.cgi?id=181574
+
+        Reviewed by Tim Horton.
+
+        Rearrange some macOS drag start logic in the UI process so that it uses the same codepaths in WebPageProxy as
+        iOS. Namely, startDrag should just forward the DragItem and drag image handle along to the appropriate views on
+        each platform (WKContentView and WebViewImpl).
+
+        There should be no change in behavior.
+
+        * UIProcess/Cocoa/WebPageProxyCocoa.mm:
+
+        Both macOS and iOS now funnel through this method.
+
+        * UIProcess/Cocoa/WebViewImpl.h:
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::startDrag):
+        (WebKit::WebViewImpl::dragImageForView): Deleted.
+
+        Rename dragImageForView to startDrag. Move the call to didStartDrag() here, and call dragCancelled() in the
+        case where we bailed from starting the drag (due to failing to create a drag image).
+
+        * UIProcess/PageClient.h:
+        * UIProcess/ios/PageClientImplIOS.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::setDragImage): Deleted.
+
+        Rename setDragImage to startDrag.
+
+        * UIProcess/mac/PageClientImplMac.h:
+        * UIProcess/mac/PageClientImplMac.mm:
+        (WebKit::PageClientImpl::startDrag):
+        (WebKit::PageClientImpl::setDragImage): Deleted.
+        * UIProcess/mac/WebPageProxyMac.mm:
+        (WebKit::WebPageProxy::startDrag): Deleted.
+
 2018-01-12  Antoine Quint  <graouts@apple.com>
 
         Add support for the frames() timing function

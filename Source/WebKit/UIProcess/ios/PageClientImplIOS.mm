@@ -363,11 +363,6 @@ bool PageClientImpl::executeSavedCommandBySelector(const String&)
     return false;
 }
 
-void PageClientImpl::setDragImage(const IntPoint&, Ref<ShareableBitmap>&&, DragSourceAction)
-{
-    notImplemented();
-}
-
 void PageClientImpl::selectionDidChange()
 {
     [m_contentView _selectionChanged];
