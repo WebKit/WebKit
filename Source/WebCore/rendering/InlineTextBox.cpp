@@ -1044,7 +1044,7 @@ void InlineTextBox::paintTextSubrangeDecoration(GraphicsContext& context, const 
 
 void InlineTextBox::paintCompositionBackground(GraphicsContext& context, const FloatPoint& boxOrigin)
 {
-    paintTextSubrangeBackground(context, boxOrigin, clampedOffset(renderer().frame().editor().compositionStart()), clampedOffset(renderer().frame().editor().compositionEnd()), Color::compositionFill);
+    paintTextSubrangeBackground(context, boxOrigin, Color::compositionFill, clampedOffset(renderer().frame().editor().compositionStart()), clampedOffset(renderer().frame().editor().compositionEnd()));
 }
 
 void InlineTextBox::paintCompositionUnderlines(GraphicsContext& context, const FloatPoint& boxOrigin) const

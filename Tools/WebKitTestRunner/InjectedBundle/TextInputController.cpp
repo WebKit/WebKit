@@ -57,9 +57,9 @@ void TextInputController::makeWindowObject(JSContextRef context, JSObjectRef win
     setProperty(context, windowObject, "textInputController", this, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete, exception);
 }
 
-void TextInputController::setMarkedText(JSStringRef text, int from, int length)
+void TextInputController::setMarkedText(JSStringRef text, int from, int length, bool suppressUnderline)
 {
-    WKBundlePageSetComposition(InjectedBundle::singleton().page()->page(), toWK(text).get(), from, length);
+    WKBundlePageSetComposition(InjectedBundle::singleton().page()->page(), toWK(text).get(), from, length, suppressUnderline);
 }
 
 bool TextInputController::hasMarkedText()

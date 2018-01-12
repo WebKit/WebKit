@@ -735,7 +735,7 @@ public:
     void updateAccessibilityTree();
 #endif
 
-    void setCompositionForTesting(const String& compositionString, uint64_t from, uint64_t length);
+    void setCompositionForTesting(const String& compositionString, uint64_t from, uint64_t length, bool suppressUnderline);
     bool hasCompositionForTesting();
     void confirmCompositionForTesting(const String& compositionString);
 
