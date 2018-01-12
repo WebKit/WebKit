@@ -34,6 +34,7 @@
 #include "RenderImage.h"
 #include "RenderQuote.h"
 #include "RenderTreeUpdater.h"
+#include "RenderTreeUpdaterListItem.h"
 #include "StyleTreeResolver.h"
 
 namespace WebCore {
@@ -151,7 +152,8 @@ void RenderTreeUpdater::GeneratedContent::updatePseudoElement(Element& current, 
         for (auto& child : descendantsOfType<RenderQuote>(*pseudoElementRenderer))
             updateQuotesUpTo(&child);
     }
-    m_updater.m_builder.updateAfterDescendants(*pseudoElementRenderer);
+    if (is<RenderListItem>(*pseudoElementRenderer))
+        ListItem::updateMarker(m_updater.m_builder, downcast<RenderListItem>(*pseudoElementRenderer));
 }
 
 bool RenderTreeUpdater::GeneratedContent::needsPseudoElement(const std::optional<Style::ElementUpdate>& update)

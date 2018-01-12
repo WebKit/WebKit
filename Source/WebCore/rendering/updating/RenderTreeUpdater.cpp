@@ -40,7 +40,11 @@
 #include "RenderDescendantIterator.h"
 #include "RenderFullScreen.h"
 #include "RenderInline.h"
+#include "RenderListItem.h"
+#include "RenderTreeBuilderFirstLetter.h"
 #include "RenderTreeUpdaterGeneratedContent.h"
+#include "RenderTreeUpdaterListItem.h"
+#include "RenderTreeUpdaterMultiColumn.h"
 #include "StyleResolver.h"
 #include "StyleTreeResolver.h"
 #include <wtf/SystemTracing.h>
@@ -131,7 +135,7 @@ void RenderTreeUpdater::commit(std::unique_ptr<const Style::Update> styleUpdate)
 
     generatedContent().updateRemainingQuotes();
 
-    m_builder.updateAfterDescendants(renderView());
+    MultiColumn::update(renderView());
 
     m_styleUpdate = nullptr;
 }
@@ -268,6 +272,12 @@ void RenderTreeUpdater::updateAfterDescendants(Element& element, const Style::El
         return;
 
     m_builder.updateAfterDescendants(*renderer);
+
+    // These functions do render tree mutations that require descendant renderers.
+    if (is<RenderListItem>(*renderer))
+        ListItem::updateMarker(m_builder, downcast<RenderListItem>(*renderer));
+    if (is<RenderBlockFlow>(*renderer))
+        MultiColumn::update(downcast<RenderBlockFlow>(*renderer));
 
     if (element.hasCustomStyleResolveCallbacks() && updates && updates->update.change == Style::Detach)
         element.didAttachRenderers();

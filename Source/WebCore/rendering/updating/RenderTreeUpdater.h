@@ -51,8 +51,11 @@ public:
     static void tearDownRenderers(Element&);
     static void tearDownRenderer(Text&);
 
+    class ListItem;
+
 private:
     class GeneratedContent;
+    class MultiColumn;
 
     void updateRenderTree(ContainerNode& root);
     void updateTextRenderer(Text&, const Style::TextUpdate*);
