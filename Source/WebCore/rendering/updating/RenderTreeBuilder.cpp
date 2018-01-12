@@ -67,16 +67,6 @@ void RenderTreeBuilder::insertChild(RenderElement& parent, RenderPtr<RenderObjec
         return;
     }
 
-    if (is<RenderTableSection>(parent)) {
-        auto& parentCandidate = m_tableBuilder->findOrCreateParentForChild(downcast<RenderTableSection>(parent), *child, beforeChild);
-        if (&parent != &parentCandidate) {
-            insertChild(parentCandidate, WTFMove(child), beforeChild);
-            return;
-        }
-        parent.addChild(*this, WTFMove(child), beforeChild);
-        return;
-    }
-
     if (is<RenderRubyRun>(parent)) {
         rubyRunInsertChild(downcast<RenderRubyRun>(parent), WTFMove(child), beforeChild);
         return;

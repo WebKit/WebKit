@@ -39,7 +39,6 @@ public:
     Table(RenderTreeBuilder&);
 
     RenderElement& findOrCreateParentForChild(RenderTableRow& parent, const RenderObject& child, RenderObject*& beforeChild);
-    RenderElement& findOrCreateParentForChild(RenderTableSection& parent, const RenderObject& child, RenderObject*& beforeChild);
 
 private:
     RenderTreeBuilder& m_builder;
