@@ -100,11 +100,20 @@ void RenderMenuList::willBeDestroyed()
     RenderFlexibleBox::willBeDestroyed();
 }
 
-void RenderMenuList::setInnerRenderer(RenderBlock& innerRenderer)
+void RenderMenuList::createInnerBlock()
 {
-    ASSERT(!m_innerBlock.get());
-    m_innerBlock = makeWeakPtr(innerRenderer);
+    if (m_innerBlock) {
+        ASSERT(firstChild() == m_innerBlock);
+        ASSERT(!m_innerBlock->nextSibling());
+        return;
+    }
+
+    // Create an anonymous block.
+    ASSERT(!firstChild());
+    auto newInnerBlock = createAnonymousBlock();
+    m_innerBlock = makeWeakPtr(*newInnerBlock.get());
     adjustInnerStyle();
+    RenderFlexibleBox::addChild(*RenderTreeBuilder::current(), WTFMove(newInnerBlock));
 }
 
 void RenderMenuList::adjustInnerStyle()
@@ -166,10 +175,15 @@ HTMLSelectElement& RenderMenuList::selectElement() const
     return downcast<HTMLSelectElement>(nodeForNonAnonymous());
 }
 
-void RenderMenuList::addChild(RenderTreeBuilder&, RenderPtr<RenderObject> child, RenderObject*)
+void RenderMenuList::addChild(RenderTreeBuilder& builder, RenderPtr<RenderObject> newChild, RenderObject* beforeChild)
 {
+    createInnerBlock();
+    auto& child = *newChild;
+    builder.insertChild(*m_innerBlock, WTFMove(newChild), beforeChild);
+    ASSERT(m_innerBlock == firstChild());
+
     if (AXObjectCache* cache = document().existingAXObjectCache())
-        cache->childrenChanged(this, child.get());
+        cache->childrenChanged(this, &child);
 }
 
 RenderPtr<RenderObject> RenderMenuList::takeChild(RenderObject& oldChild)
@@ -360,7 +374,10 @@ void RenderMenuList::showPopup()
     if (m_popupIsVisible)
         return;
 
-    ASSERT(m_innerBlock);
+    // Create m_innerBlock here so it ends up as the first child.
+    // This is important because otherwise we might try to create m_innerBlock
+    // inside the showPopup call and it would fail.
+    createInnerBlock();
     if (!m_popup)
         m_popup = document().page()->chrome().createPopupMenu(*this);
     m_popupIsVisible = true;

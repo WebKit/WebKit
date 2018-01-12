@@ -59,9 +59,6 @@ public:
 
     String text() const;
 
-    RenderBlock* innerRenderer() const { return m_innerBlock.get(); }
-    void setInnerRenderer(RenderBlock&);
-
 private:
     void willBeDestroyed() override;
 
@@ -130,6 +127,7 @@ private:
 
     void getItemBackgroundColor(unsigned listIndex, Color&, bool& itemHasCustomBackgroundColor) const;
 
+    void createInnerBlock();
     void adjustInnerStyle();
     void setText(const String&);
     void setTextFromOption(int optionIndex);

@@ -67,7 +67,6 @@ void RenderButton::setInnerRenderer(RenderBlock& innerRenderer)
 {
     ASSERT(!m_inner.get());
     m_inner = makeWeakPtr(innerRenderer);
-    updateAnonymousChildStyle(m_inner->mutableStyle());
 }
 
 RenderPtr<RenderObject> RenderButton::takeChild(RenderObject& oldChild)

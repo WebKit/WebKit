@@ -1985,7 +1985,6 @@ rendering/svg/SVGTextQuery.cpp
 
 rendering/updating/RenderTreeBuilder.cpp
 rendering/updating/RenderTreeBuilderFirstLetter.cpp
-rendering/updating/RenderTreeBuilderFormControls.cpp
 rendering/updating/RenderTreeBuilderList.cpp
 rendering/updating/RenderTreeBuilderMultiColumn.cpp
 rendering/updating/RenderTreeBuilderRuby.cpp
