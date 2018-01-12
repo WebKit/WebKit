@@ -1,5 +1,17 @@
 2018-01-11  Jonathan Bedard  <jbedard@apple.com>
 
+        webkitpy: Fix flakey webserver tests
+        https://bugs.webkit.org/show_bug.cgi?id=181555
+        <rdar://problem/36448273>
+
+        Reviewed by Aakash Jain.
+
+        * Scripts/webkitpy/layout_tests/controllers/layout_test_runner_unittest.py:
+        (LayoutTestRunnerTests.test_servers_started): Add and bind custom checks to
+        determine if a specific server is running.
+
+2018-01-11  Jonathan Bedard  <jbedard@apple.com>
+
         Commit queue failed to land a bug, 'NoneType' object has no attribute 'strip'
         https://bugs.webkit.org/show_bug.cgi?id=181561
         <rdar://problem/36452652>
