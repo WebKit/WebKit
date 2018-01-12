@@ -572,7 +572,7 @@ void RenderBlock::addChildIgnoringContinuation(RenderTreeBuilder& builder, Rende
 
             if (newChild->isTablePart()) {
                 // Insert into the anonymous table.
-                builder.insertChild(*beforeChildAnonymousContainer, WTFMove(newChild), beforeChild);
+                beforeChildAnonymousContainer->addChild(builder, WTFMove(newChild), beforeChild);
                 return;
             }
 

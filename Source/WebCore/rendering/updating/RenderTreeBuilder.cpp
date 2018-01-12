@@ -68,27 +68,12 @@ void RenderTreeBuilder::insertChild(RenderElement& parent, RenderPtr<RenderObjec
     }
 
     if (is<RenderTableRow>(parent)) {
-        auto& parentCandidate = tableBuilder().findOrCreateParentForChild(downcast<RenderTableRow>(parent), *child, beforeChild);
-        if (&parent != &parentCandidate) {
-            insertChild(parentCandidate, WTFMove(child), beforeChild);
-            return;
-        }
-        parent.addChild(*this, WTFMove(child), beforeChild);
+        tableBuilder().findOrCreateParentForChild(downcast<RenderTableRow>(parent), *child, beforeChild).addChild(*this, WTFMove(child), beforeChild);
         return;
     }
 
     if (is<RenderTableSection>(parent)) {
         auto& parentCandidate = tableBuilder().findOrCreateParentForChild(downcast<RenderTableSection>(parent), *child, beforeChild);
-        if (&parent != &parentCandidate) {
-            insertChild(parentCandidate, WTFMove(child), beforeChild);
-            return;
-        }
-        parent.addChild(*this, WTFMove(child), beforeChild);
-        return;
-    }
-
-    if (is<RenderTable>(parent)) {
-        auto& parentCandidate = tableBuilder().findOrCreateParentForChild(downcast<RenderTable>(parent), *child, beforeChild);
         if (&parent != &parentCandidate) {
             insertChild(parentCandidate, WTFMove(child), beforeChild);
             return;
