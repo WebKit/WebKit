@@ -117,7 +117,7 @@ class SubtestResultRecorder(object):
     def record(self, test, status, message=None, stack=None):
         if stack is not None:
             stack = str(stack)
-        new_result = (test, status, message, stack)
+        new_result = (test.split("::")[-1], status, message, stack)
         self.results.append(new_result)
 
 

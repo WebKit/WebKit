@@ -175,7 +175,11 @@ class MarionetteProtocol(Protocol):
             # This can happen if there was a crash
             return
         if socket_timeout:
-            self.marionette.timeout.script = socket_timeout / 2
+            try:
+                self.marionette.timeout.script = socket_timeout / 2
+            except (socket.error, IOError):
+                self.logger.debug("Socket closed")
+                return
 
         self.marionette.switch_to_window(self.runner_handle)
         while True:
@@ -564,7 +568,7 @@ class InternalRefTestImplementation(object):
             self.executor.protocol.marionette.set_context(self.executor.protocol.marionette.CONTEXT_CONTENT)
         except Exception as e:
             # Ignore errors during teardown
-            self.logger.warning(traceback.traceback.format_exc(e))
+            self.logger.warning(traceback.format_exc(e))
 
 
 
