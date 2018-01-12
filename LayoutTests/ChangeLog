@@ -1,3 +1,14 @@
+2018-01-12  Dean Jackson  <dino@apple.com>
+
+        drawElements should be invalid if vertexAttrib0 doesn't have data
+        https://bugs.webkit.org/show_bug.cgi?id=181609
+        <rdar://problem/36392883>
+
+        Reviewed by Antoine Quint.
+
+        * fast/canvas/webgl/drawElements-empty-vertex-data-expected.txt: Added.
+        * fast/canvas/webgl/drawElements-empty-vertex-data.html: Added.
+
 2018-01-12  Youenn Fablet  <youenn@apple.com>
 
         FormDataElement::lengthInBytes should use ThreadableBlobRegistry

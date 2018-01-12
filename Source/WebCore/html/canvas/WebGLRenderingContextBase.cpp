@@ -1924,6 +1924,8 @@ bool WebGLRenderingContextBase::validateVertexAttributes(unsigned elementCount, 
                 // For the last element, we will only touch the data for the
                 // element and nothing beyond it.
                 int bytesRemaining = static_cast<int>(state.bufferBinding->byteLength() - state.offset);
+                if (bytesRemaining <= 0)
+                    return false;
                 unsigned numElements = 0;
                 ASSERT(state.stride > 0);
                 if (bytesRemaining >= state.bytesPerElement)
