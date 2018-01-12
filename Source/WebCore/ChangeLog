@@ -1,3 +1,23 @@
+2018-01-12  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Cocoa] CTFontCopyDefaultCascadeListForLanguages() can return nullptr
+        https://bugs.webkit.org/show_bug.cgi?id=181615
+        <rdar://problem/36334637>
+
+        Reviewed by Jon Lee.
+
+        Speculative fix. We are getting crash reports saying that this call can return nullptr, and we
+        don't check for it.
+
+        No new tests because I couldn't find the specific input that causes it to return nullptr. (I
+        tried running this code with every 0, 1, and 2 length locale string, every weight value, and
+        every italic value, and couldn't get it to crash. I also inspected the code to figure out what
+        values would cause it to return nullptr, and I couldn't find anything other than if the system
+        has a totally busted font setup.)
+
+        * platform/graphics/cocoa/FontDescriptionCocoa.cpp:
+        (WebCore::SystemFontDatabase::computeCascadeList):
+
 2018-01-11  Dean Jackson  <dino@apple.com>
 
         [WebGL] Simulated vertexAttrib0 can sometimes cause OUT_OF_MEMORY errors
