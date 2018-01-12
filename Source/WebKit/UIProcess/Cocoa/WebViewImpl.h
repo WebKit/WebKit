@@ -537,6 +537,9 @@ public:
 
     void prepareToDragPromisedBlob(const WebCore::PromisedBlobInfo&);
 
+    bool beginBackSwipeForTesting();
+    bool completeBackSwipeForTesting();
+
 private:
 #if HAVE(TOUCH_BAR)
     void setUpTextTouchBar(NSTouchBar *);

@@ -335,6 +335,14 @@ void UIScriptController::setSafeAreaInsets(double, double, double, double)
 {
 }
 
+void UIScriptController::beginBackSwipe(JSValueRef callback)
+{
+}
+
+void UIScriptController::completeBackSwipe(JSValueRef callback)
+{
+}
+
 }
 
 #endif // PLATFORM(IOS)

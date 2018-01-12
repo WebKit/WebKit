@@ -50,6 +50,8 @@ using namespace WebCore;
 @interface WKSwipeTransitionController : NSObject <_UINavigationInteractiveTransitionBaseDelegate>
 - (instancetype)initWithViewGestureController:(WebKit::ViewGestureController*)gestureController gestureRecognizerView:(UIView *)gestureRecognizerView;
 - (void)invalidate;
+
+- (_UINavigationInteractiveTransitionBase *)transitionForDirection:(WebKit::ViewGestureController::SwipeDirection)direction;
 @end
 
 @interface _UIViewControllerTransitionContext (WKDetails)
@@ -91,6 +93,11 @@ static const float swipeSnapshotRemovalRenderTreeSizeTargetFraction = 0.5;
 - (WebKit::ViewGestureController::SwipeDirection)directionForTransition:(_UINavigationInteractiveTransitionBase *)transition
 {
     return transition == _backTransitionController ? WebKit::ViewGestureController::SwipeDirection::Back : WebKit::ViewGestureController::SwipeDirection::Forward;
+}
+
+- (_UINavigationInteractiveTransitionBase *)transitionForDirection:(WebKit::ViewGestureController::SwipeDirection)direction
+{
+    return direction == WebKit::ViewGestureController::SwipeDirection::Back ? _backTransitionController.get() : _forwardTransitionController.get();
 }
 
 - (void)startInteractiveTransition:(_UINavigationInteractiveTransitionBase *)transition
@@ -359,6 +366,26 @@ void ViewGestureController::removeSwipeSnapshot()
     m_backgroundColorForCurrentSnapshot = Color();
 
     didEndGesture();
+}
+
+bool ViewGestureController::beginSimulatedSwipeInDirectionForTesting(SwipeDirection direction)
+{
+    if (!canSwipeInDirection(direction))
+        return false;
+
+    _UINavigationInteractiveTransitionBase *transition = [m_swipeInteractiveTransitionDelegate transitionForDirection:direction];
+    beginSwipeGesture(transition, direction);
+    [transition _stopInteractiveTransition];
+
+    return true;
+}
+
+bool ViewGestureController::completeSimulatedSwipeInDirectionForTesting(SwipeDirection direction)
+{
+    _UINavigationInteractiveTransitionBase *transition = [m_swipeInteractiveTransitionDelegate transitionForDirection:direction];
+    [transition _completeStoppedInteractiveTransition];
+
+    return true;
 }
 
 } // namespace WebKit

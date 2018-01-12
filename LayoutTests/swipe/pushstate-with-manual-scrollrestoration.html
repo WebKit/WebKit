@@ -1,0 +1,60 @@
+<head>
+<style>
+html {
+    font-size: 32pt;
+}
+</style>
+<script src="resources/swipe-test.js"></script>
+<script>
+history.scrollRestoration = "manual";
+
+function didBeginSwipeCallback()
+{
+    log("didBeginSwipe");
+
+    completeSwipeGesture();
+}
+
+function didEndSwipeCallback()
+{
+    log("didEndSwipe");
+
+    startMeasuringDuration("snapshotRemoval");
+}
+
+function didRemoveSwipeSnapshotCallback()
+{
+    log("didRemoveSwipeSnapshot");
+
+    measuredDurationShouldBeLessThan("snapshotRemoval", 1000, "Because we're using the page cache, it shouldn't be long between the gesture completing and the snapshot being removed.")
+
+    testComplete();
+}
+
+window.onload = function () {
+    if (!window.eventSender || !window.testRunner) {
+        document.body.innerHTML = "This test must be run in WebKitTestRunner.";
+        return;
+    }
+
+    initializeSwipeTest();
+
+    testRunner.installDidBeginSwipeCallback(didBeginSwipeCallback);
+    testRunner.installDidEndSwipeCallback(didEndSwipeCallback);
+    testRunner.installDidRemoveSwipeSnapshotCallback(didRemoveSwipeSnapshotCallback);
+
+    testRunner.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+
+    setTimeout(function () {
+        history.pushState({page: "second"}, "second", "?second");
+        document.body.innerHTML = "second";
+        startSwipeGesture();
+    }, 0);
+};
+</script>
+</head>
+<body>
+first
+</body>

@@ -356,6 +356,9 @@ RetainPtr<CGImageRef> PlatformWebView::windowSnapshotImage()
 
 void PlatformWebView::setNavigationGesturesEnabled(bool enabled)
 {
+#if WK_API_ENABLED
+    [platformView() setAllowsBackForwardNavigationGestures:enabled];
+#endif
 }
 
 } // namespace WTR
