@@ -1,5 +1,9 @@
 2018-01-11  Dean Jackson  <dino@apple.com>
 
+        Rolling out 226814. It crashes on some bots.
+
+2018-01-11  Dean Jackson  <dino@apple.com>
+
         [WebGL] Simulated vertexAttrib0 can sometimes cause OUT_OF_MEMORY errors
         https://bugs.webkit.org/show_bug.cgi?id=181558
         <rdar://problem/36189833>

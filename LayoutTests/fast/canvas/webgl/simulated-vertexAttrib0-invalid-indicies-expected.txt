@@ -1,5 +1,0 @@
-CONSOLE MESSAGE: line 49: WebGL: INVALID_OPERATION: drawElements: attempt to access out of bounds arrays
-CONSOLE MESSAGE: line 59: WebGL: INVALID_OPERATION: drawElements: unable to simulate vertexAttrib0 array
-PASS: MAX_UINT index was unable to be simulated
-PASS: Huge index was unable to be simulated
-
