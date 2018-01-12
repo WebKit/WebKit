@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="resources/sw-test-pre.js"></script>
+<script>
+log("* Tests that a client is removed from the list of service worker clients while it is in the page cache");
+log("");
+
+if (window.testRunner) {
+  testRunner.setCanOpenWindows();
+  testRunner.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
+}
+
+navigator.serviceWorker.addEventListener("message", function(event) {
+  if (step == "BothClientsInitiallyActive") {
+    if (event.data != 2) {
+      log("FAIL: Wrong initial number of clients: " + event.data);
+      finishSWTest();
+      return;
+    }
+    log("PASS: service worker has initially 2 clients");
+
+    otherWindow.addEventListener("pagehide", function(event) {
+       if (!event.persisted) {
+         log("FAIL: page failed to enter page cache");
+         finishSWTest();
+         return;
+       }
+       log("PASS: page is about to enter page cache");
+
+       setTimeout(function() {
+         step = "OnlyOneClientRemainsActive"
+         worker.postMessage("getClientCount");
+       }, 0);
+    });
+
+    otherWindow.location.href = "about:blank";
+    return;
+  }
+
+  if (step == "OnlyOneClientRemainsActive") {
+    if (event.data != 1) {
+      log("FAIL: Wrong number of clients after one client entered page cache: " + event.data);
+      finishSWTest();
+    }
+
+    log("PASS: service worker has only 1 client after 1 entered page cache");
+    finishSWTest();
+  }
+});
+
+navigator.serviceWorker.register("resources/getClientCount-worker.js", { }).then(function(registration) {
+    worker = registration.installing;
+    otherWindow = open("other_resources/test.html");
+    otherWindow.onload = function() {
+      step = "BothClientsInitiallyActive"
+      worker.postMessage("getClientCount");
+    };
+});
+</script>
+</body>
+</html>

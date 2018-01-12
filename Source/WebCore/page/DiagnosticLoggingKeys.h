@@ -50,7 +50,6 @@ public:
     static String deviceMotionKey();
     static String deviceOrientationKey();
     static String diskCacheKey();
-    static String serviceWorkerKey();
     static String diskCacheAfterValidationKey();
     static String documentLoaderStoppingKey();
     WEBCORE_EXPORT static String domainCausingCrashKey();
@@ -140,6 +139,7 @@ public:
     WEBCORE_EXPORT static String revalidatingKey();
     static String sameLoadKey();
     static String scriptKey();
+    static String serviceWorkerKey();
     WEBCORE_EXPORT static String streamingMedia();
     static String styleSheetKey();
     WEBCORE_EXPORT static String successfulSpeculativeWarmupWithRevalidationKey();

@@ -1,0 +1,57 @@
+<html>
+<head>
+<script src="resources/sw-test-pre.js"></script>
+</head>
+<body>
+<script>
+let initialController = null;
+
+if (window.testRunner) {
+  testRunner.setCanOpenWindows();
+  testRunner.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
+}
+
+window.addEventListener("pageshow", function(event) {
+  log("pageshow - " + (event.persisted ? "" : "not ") + "from page cache");
+  if (!window.sessionStorage.sw_page_cache_with_controller_test_started)
+    return;
+
+  if (event.persisted)
+    log("FAIL: page entered page cache even though its iframe has a controller");
+  else
+    log("PASS: page did not enter page cache");
+
+  finishSWTest();
+});
+
+window.addEventListener("pagehide", function(event) {
+    log("pagehide - " + (event.persisted ? "" : "not ") + "entering page cache");
+    if (event.persisted) {
+        log("FAIL: page entering page cache even though its iframe has a controller");
+        finishSWTest();
+    }
+});
+
+async function test() {
+    let scopeURL = "/workers/service/resources/";
+    await registerAndWaitForActive("resources/updating-fetch-worker.php", scopeURL);
+    let frame = await withFrame(scopeURL);
+    if (frame.contentWindow.navigator.serviceWorker.controller === null) {
+        log("FAIL: frame does not have a controller");
+        finishSWTest();
+        return;
+    }
+
+    log("PASS: frame has a controller");
+
+    gc();
+    setTimeout(function() {
+        window.sessionStorage.sw_page_cache_with_controller_test_started = true;
+        location.href = "/navigation/resources/page-cache-helper.html";
+    }, 0);
+}
+
+window.onload = test;
+</script>
+</body>
+</html>
