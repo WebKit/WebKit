@@ -1,3 +1,20 @@
+2018-01-11  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r226789 and r226794.
+        https://bugs.webkit.org/show_bug.cgi?id=181564
+
+        broke API tests (Requested by alexchristensen on #webkit).
+
+        Reverted changesets:
+
+        "Merge sync and async code paths for getting context menus"
+        https://bugs.webkit.org/show_bug.cgi?id=181423
+        https://trac.webkit.org/changeset/226789
+
+        "Revert changes accidentally committed with r226789."
+        https://bugs.webkit.org/show_bug.cgi?id=181423
+        https://trac.webkit.org/changeset/226794
+
 2018-01-11  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Send PromisedBlobInfo to the client through DragItem instead of DragClient::prepareToDragPromisedBlob

@@ -34,7 +34,7 @@ public:
     }
 
 private:
-    void getContextMenuFromProposedMenu(WebPageProxy&, Vector<Ref<WebKit::WebContextMenuItem>>&& proposedMenu, WebKit::WebContextMenuListenerProxy& contextMenuListener, const WebHitTestResultData& hitTestResultData, API::Object* userData) override
+    bool getContextMenuFromProposedMenu(WebPageProxy&, const Vector<Ref<WebContextMenuItem>>& proposedMenu, Vector<Ref<WebContextMenuItem>>&, const WebHitTestResultData& hitTestResultData, API::Object* userData) override
     {
         GRefPtr<GVariant> variant;
         if (userData) {
@@ -48,7 +48,7 @@ private:
         for (auto& item : proposedMenu)
             menuItems.uncheckedAppend(item->data());
         webkitWebViewPopulateContextMenu(m_webView, menuItems, hitTestResultData, variant.get());
-        contextMenuListener.useContextMenuItems({ });
+        return true;
     }
 
     WebKitWebView* m_webView;

@@ -818,29 +818,13 @@ void WKPageSetPageContextMenuClient(WKPageRef pageRef, const WKPageContextMenuCl
         }
 
     private:
-        void getContextMenuFromProposedMenu(WebPageProxy& page, Vector<Ref<WebKit::WebContextMenuItem>>&& proposedMenuVector, WebKit::WebContextMenuListenerProxy& contextMenuListener, const WebHitTestResultData& hitTestResultData, API::Object* userData) override
+        bool getContextMenuFromProposedMenu(WebPageProxy& page, const Vector<Ref<WebKit::WebContextMenuItem>>& proposedMenuVector, Vector<Ref<WebKit::WebContextMenuItem>>& customMenu, const WebHitTestResultData& hitTestResultData, API::Object* userData) override
         {
-            if (m_client.base.version >= 4 && m_client.getContextMenuFromProposedMenuAsync) {
-                Vector<RefPtr<API::Object>> proposedMenuItems;
-                proposedMenuItems.reserveInitialCapacity(proposedMenuVector.size());
-                
-                for (const auto& menuItem : proposedMenuVector)
-                    proposedMenuItems.uncheckedAppend(menuItem.ptr());
-                
-                auto webHitTestResult = API::HitTestResult::create(hitTestResultData);
-                m_client.getContextMenuFromProposedMenuAsync(toAPI(&page), toAPI(API::Array::create(WTFMove(proposedMenuItems)).ptr()), toAPI(&contextMenuListener), toAPI(webHitTestResult.ptr()), toAPI(userData), m_client.base.clientInfo);
-                return;
-            }
-            
-            if (!m_client.getContextMenuFromProposedMenu && !m_client.getContextMenuFromProposedMenu_deprecatedForUseWithV0) {
-                contextMenuListener.useContextMenuItems(WTFMove(proposedMenuVector));
-                return;
-            }
+            if (!m_client.getContextMenuFromProposedMenu && !m_client.getContextMenuFromProposedMenu_deprecatedForUseWithV0)
+                return false;
 
-            if (m_client.base.version >= 2 && !m_client.getContextMenuFromProposedMenu) {
-                contextMenuListener.useContextMenuItems(WTFMove(proposedMenuVector));
-                return;
-            }
+            if (m_client.base.version >= 2 && !m_client.getContextMenuFromProposedMenu)
+                return false;
 
             Vector<RefPtr<API::Object>> proposedMenuItems;
             proposedMenuItems.reserveInitialCapacity(proposedMenuVector.size());
@@ -857,9 +841,9 @@ void WKPageSetPageContextMenuClient(WKPageRef pageRef, const WKPageContextMenuCl
 
             RefPtr<API::Array> array = adoptRef(toImpl(newMenu));
 
-            Vector<Ref<WebContextMenuItem>> customMenu;
+            customMenu.clear();
+
             size_t newSize = array ? array->size() : 0;
-            customMenu.reserveInitialCapacity(newSize);
             for (size_t i = 0; i < newSize; ++i) {
                 WebContextMenuItem* item = array->at<WebContextMenuItem>(i);
                 if (!item) {
@@ -867,10 +851,27 @@ void WKPageSetPageContextMenuClient(WKPageRef pageRef, const WKPageContextMenuCl
                     continue;
                 }
 
-                customMenu.uncheckedAppend(*item);
+                customMenu.append(*item);
             }
 
-            contextMenuListener.useContextMenuItems(WTFMove(customMenu));
+            return true;
+        }
+
+        bool getContextMenuFromProposedMenuAsync(WebPageProxy& page, const Vector<Ref<WebKit::WebContextMenuItem>>& proposedMenuVector, WebKit::WebContextMenuListenerProxy* contextMenuListener, const WebHitTestResultData& hitTestResultData, API::Object* userData) override
+        {
+            if (m_client.base.version < 4 || !m_client.getContextMenuFromProposedMenuAsync)
+                return false;
+
+            Vector<RefPtr<API::Object>> proposedMenuItems;
+            proposedMenuItems.reserveInitialCapacity(proposedMenuVector.size());
+
+            for (const auto& menuItem : proposedMenuVector)
+                proposedMenuItems.uncheckedAppend(menuItem.ptr());
+
+            RefPtr<API::HitTestResult> webHitTestResult = API::HitTestResult::create(hitTestResultData);
+            m_client.getContextMenuFromProposedMenuAsync(toAPI(&page), toAPI(API::Array::create(WTFMove(proposedMenuItems)).ptr()), toAPI(contextMenuListener), toAPI(webHitTestResult.get()), toAPI(userData), m_client.base.clientInfo);
+
+            return true;
         }
 
         void customContextMenuItemSelected(WebPageProxy& page, const WebContextMenuItemData& itemData) override
