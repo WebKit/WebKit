@@ -868,3 +868,6 @@ webkit.org/b/181392 imported/w3c/web-platform-tests/service-workers/service-work
 webkit.org/b/172879 webrtc/video-unmute.html [ Skip ]
 
 webkit.org/b/181502 swipe/pushstate-with-manual-scrollrestoration.html [ Failure ]
+
+webkit.org/b/181482 http/tests/resourceLoadStatistics/grandfathering.html [ Skip ]
+
