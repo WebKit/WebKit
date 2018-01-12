@@ -1,5 +1,30 @@
 2018-01-11  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r226653. rdar://problem/36429147
+
+    2018-01-09  Antti Koivisto  <antti@apple.com>
+
+            Blank page except for inner iframes because pending stylesheets cause style.isNotFinal() to be true
+            https://bugs.webkit.org/show_bug.cgi?id=180940
+            <rdar://problem/36116507>
+
+            Reviewed by Darin Adler.
+
+            Test: http/tests/local/loading-stylesheet-import-remove.html
+
+            If a <link> referencing a stylesheet containing an @import that was still loading was removed
+            from the document, the loading state was never cleared. For head stylesheets this blocked
+            rendering permanently.
+
+            Test reduction by Justin Ridgewell.
+
+            * html/HTMLLinkElement.cpp:
+            (WebCore::HTMLLinkElement::removedFromAncestor):
+
+            Test if the stylesheet it loading before clearing the pointer.
+
+2018-01-11  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r226599. rdar://problem/36429130
 
     2018-01-08  Said Abou-Hallawa  <sabouhallawa@apple.com>

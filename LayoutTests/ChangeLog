@@ -1,5 +1,21 @@
 2018-01-11  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r226653. rdar://problem/36429147
+
+    2018-01-09  Antti Koivisto  <antti@apple.com>
+
+            Blank page except for inner iframes because pending stylesheets cause style.isNotFinal() to be true
+            https://bugs.webkit.org/show_bug.cgi?id=180940
+            <rdar://problem/36116507>
+
+            Reviewed by Darin Adler.
+
+            * http/tests/local/loading-stylesheet-import-remove.html: Added.
+            * http/tests/local/loading-stylesheet-import-remove-expected.html: Added.
+            * http/tests/local/resources/slow-import.css: Added.
+
+2018-01-11  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r226599. rdar://problem/36429130
 
     2018-01-08  Said Abou-Hallawa  <sabouhallawa@apple.com>
