@@ -1,3 +1,13 @@
+2018-01-11  Alexey Proskuryakov  <ap@apple.com>
+
+        run-webkit-tests fails when there is a curly brace in Xcode build output
+        https://bugs.webkit.org/show_bug.cgi?id=181254
+
+        Reviewed by Daniel Bates.
+
+        * Scripts/webkitpy/layout_tests/views/metered_stream.py:
+        (MeteredStream.write):
+
 2018-01-11  Jonathan Bedard  <jbedard@apple.com>
 
         webkitpy: Reimplement simulator code (Part 3)

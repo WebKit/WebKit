@@ -105,7 +105,7 @@ class MeteredStream(object):
         else:
             msg = self._ensure_newline(txt)
 
-        self._stream.write(msg)
+        self._stream.write(msg.encode('utf-8'))
 
     def writeln(self, txt, now=None, pid=None):
         self.write(self._ensure_newline(txt), now, pid)
