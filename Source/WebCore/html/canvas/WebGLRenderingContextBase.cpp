@@ -1892,8 +1892,12 @@ bool WebGLRenderingContextBase::validateIndexArrayPrecise(GC3Dsizei count, GC3De
     }
 
     // Then set the last index in the index array and make sure it is valid.
-    numElementsRequired = lastIndex + 1;
-    return numElementsRequired > 0;
+    Checked<unsigned, RecordOverflow> checkedNumElementsRequired = Checked<unsigned>(lastIndex);
+    checkedNumElementsRequired += 1;
+    if (checkedNumElementsRequired.hasOverflowed())
+        return false;
+    numElementsRequired = checkedNumElementsRequired.unsafeGet();
+    return true;
 }
 
 bool WebGLRenderingContextBase::validateVertexAttributes(unsigned elementCount, unsigned primitiveCount)
@@ -2117,8 +2121,15 @@ void WebGLRenderingContextBase::drawArrays(GC3Denum mode, GC3Dint first, GC3Dsiz
     clearIfComposited();
 
     bool vertexAttrib0Simulated = false;
-    if (!isGLES2Compliant())
-        vertexAttrib0Simulated = simulateVertexAttrib0(first + count - 1);
+    if (!isGLES2Compliant()) {
+        auto simulateVertexAttrib0Status = simulateVertexAttrib0(first + count - 1);
+        if (!simulateVertexAttrib0Status) {
+            // We were unable to simulate the attribute buffer.
+            synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, "drawArrays", "unable to simulate vertexAttrib0 array");
+            return;
+        }
+        vertexAttrib0Simulated = simulateVertexAttrib0Status.value();
+    }
     bool usesFallbackTexture = false;
     if (!isGLES2NPOTStrict())
         usesFallbackTexture = checkTextureCompleteness("drawArrays", true);
@@ -2147,7 +2158,13 @@ void WebGLRenderingContextBase::drawElements(GC3Denum mode, GC3Dsizei count, GC3
     if (!isGLES2Compliant()) {
         if (!numElements)
             validateIndexArrayPrecise(count, type, static_cast<GC3Dintptr>(offset), numElements);
-        vertexAttrib0Simulated = simulateVertexAttrib0(numElements);
+        auto simulateVertexAttrib0Status = simulateVertexAttrib0(numElements);
+        if (!simulateVertexAttrib0Status) {
+            // We were unable to simulate the attribute buffer.
+            synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, "drawElements", "unable to simulate vertexAttrib0 array");
+            return;
+        }
+        vertexAttrib0Simulated = simulateVertexAttrib0Status.value();
     }
 
     bool usesFallbackTexture = false;
@@ -5684,11 +5701,8 @@ void WebGLRenderingContextBase::initVertexAttrib0()
     m_vertexAttrib0UsedBefore = false;
 }
 
-bool WebGLRenderingContextBase::validateSimulatedVertexAttrib0(GC3Dsizei numVertex)
+bool WebGLRenderingContextBase::validateSimulatedVertexAttrib0(GC3Duint numVertex)
 {
-    if (numVertex < 0)
-        return false;
-
     if (!m_currentProgram)
         return true;
 
@@ -5700,15 +5714,17 @@ bool WebGLRenderingContextBase::validateSimulatedVertexAttrib0(GC3Dsizei numVert
     if (state.enabled)
         return true;
 
-    Checked<GC3Dsizei, RecordOverflow> bufferSize(numVertex);
+    Checked<GC3Duint, RecordOverflow> bufferSize(numVertex);
     bufferSize += 1;
-    bufferSize *= Checked<GC3Dsizei>(4);
+    bufferSize *= Checked<GC3Duint>(4);
+    if (bufferSize.hasOverflowed())
+        return false;
     Checked<GC3Dsizeiptr, RecordOverflow> bufferDataSize(bufferSize);
     bufferDataSize *= Checked<GC3Dsizeiptr>(sizeof(GC3Dfloat));
-    return !bufferDataSize.hasOverflowed();
+    return !bufferDataSize.hasOverflowed() && bufferDataSize.unsafeGet() > 0;
 }
 
-bool WebGLRenderingContextBase::simulateVertexAttrib0(GC3Dsizei numVertex)
+std::optional<bool> WebGLRenderingContextBase::simulateVertexAttrib0(GC3Duint numVertex)
 {
     if (!m_currentProgram)
         return false;
@@ -5724,15 +5740,21 @@ bool WebGLRenderingContextBase::simulateVertexAttrib0(GC3Dsizei numVertex)
     m_vertexAttrib0UsedBefore = true;
     m_context->bindBuffer(GraphicsContext3D::ARRAY_BUFFER, m_vertexAttrib0Buffer->object());
 
-    Checked<GC3Dsizei> bufferSize(numVertex);
+    Checked<GC3Duint> bufferSize(numVertex);
     bufferSize += 1;
-    bufferSize *= Checked<GC3Dsizei>(4);
+    bufferSize *= Checked<GC3Duint>(4);
 
     Checked<GC3Dsizeiptr> bufferDataSize(bufferSize);
     bufferDataSize *= Checked<GC3Dsizeiptr>(sizeof(GC3Dfloat));
 
     if (bufferDataSize.unsafeGet() > m_vertexAttrib0BufferSize) {
+        m_context->moveErrorsToSyntheticErrorList();
         m_context->bufferData(GraphicsContext3D::ARRAY_BUFFER, bufferDataSize.unsafeGet(), 0, GraphicsContext3D::DYNAMIC_DRAW);
+        if (m_context->getError() != GraphicsContext3D::NO_ERROR) {
+            // We were unable to create a buffer.
+            m_vertexAttrib0UsedBefore = false;
+            return std::nullopt;
+        }
         m_vertexAttrib0BufferSize = bufferDataSize.unsafeGet();
         m_forceAttrib0BufferRefill = true;
     }
@@ -5747,7 +5769,7 @@ bool WebGLRenderingContextBase::simulateVertexAttrib0(GC3Dsizei numVertex)
             || attribValue.value[3] != m_vertexAttrib0BufferValue[3])) {
 
         auto bufferData = std::make_unique<GC3Dfloat[]>(bufferSize.unsafeGet());
-        for (GC3Dsizei ii = 0; ii < numVertex + 1; ++ii) {
+        for (GC3Duint ii = 0; ii < numVertex + 1; ++ii) {
             bufferData[ii * 4] = attribValue.value[0];
             bufferData[ii * 4 + 1] = attribValue.value[1];
             bufferData[ii * 4 + 2] = attribValue.value[2];
@@ -6050,8 +6072,15 @@ void WebGLRenderingContextBase::drawArraysInstanced(GC3Denum mode, GC3Dint first
     clearIfComposited();
 
     bool vertexAttrib0Simulated = false;
-    if (!isGLES2Compliant())
-        vertexAttrib0Simulated = simulateVertexAttrib0(first + count - 1);
+    if (!isGLES2Compliant()) {
+        auto simulateVertexAttrib0Status = simulateVertexAttrib0(first + count - 1);
+        if (!simulateVertexAttrib0Status) {
+            // We were unable to simulate the attribute buffer.
+            synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, "drawArraysInstanced", "unable to simulate vertexAttrib0 array");
+            return;
+        }
+        vertexAttrib0Simulated = simulateVertexAttrib0Status.value();
+    }
     if (!isGLES2NPOTStrict())
         checkTextureCompleteness("drawArraysInstanced", true);
 
@@ -6081,7 +6110,13 @@ void WebGLRenderingContextBase::drawElementsInstanced(GC3Denum mode, GC3Dsizei c
     if (!isGLES2Compliant()) {
         if (!numElements)
             validateIndexArrayPrecise(count, type, static_cast<GC3Dintptr>(offset), numElements);
-        vertexAttrib0Simulated = simulateVertexAttrib0(numElements);
+        auto simulateVertexAttrib0Status = simulateVertexAttrib0(numElements);
+        if (!simulateVertexAttrib0Status) {
+            // We were unable to simulate the attribute buffer.
+            synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, "drawArraysInstanced", "unable to simulate vertexAttrib0 array");
+            return;
+        }
+        vertexAttrib0Simulated = simulateVertexAttrib0Status.value();
     }
     if (!isGLES2NPOTStrict())
         checkTextureCompleteness("drawElementsInstanced", true);

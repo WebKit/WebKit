@@ -720,10 +720,12 @@ bool WebGLRenderingContext::validateIndexArrayConservative(GC3Denum type, unsign
 
     // The number of required elements is one more than the maximum
     // index that will be accessed.
-    numElementsRequired = maxIndex.value() + 1;
-
-    // Check for overflow.
-    return numElementsRequired > 0;
+    Checked<unsigned, RecordOverflow> checkedNumElementsRequired = Checked<unsigned>(maxIndex.value());
+    checkedNumElementsRequired += 1;
+    if (checkedNumElementsRequired.hasOverflowed())
+        return false;
+    numElementsRequired = checkedNumElementsRequired.unsafeGet();
+    return true;
 }
 
 bool WebGLRenderingContext::validateBlendEquation(const char* functionName, GC3Denum mode)
