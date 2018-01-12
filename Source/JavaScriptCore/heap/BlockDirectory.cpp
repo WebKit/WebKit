@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,14 +24,14 @@
  */
 
 #include "config.h"
-#include "MarkedAllocator.h"
+#include "BlockDirectory.h"
 
 #include "AllocatingScope.h"
+#include "BlockDirectoryInlines.h"
 #include "GCActivityCallback.h"
 #include "Heap.h"
 #include "IncrementalSweeper.h"
 #include "JSCInlines.h"
-#include "MarkedAllocatorInlines.h"
 #include "MarkedBlockInlines.h"
 #include "SuperSampler.h"
 #include "VM.h"
@@ -41,7 +41,7 @@ namespace JSC {
 
 static constexpr bool tradeDestructorBlocks = true;
 
-MarkedAllocator::MarkedAllocator(Heap* heap, size_t cellSize)
+BlockDirectory::BlockDirectory(Heap* heap, size_t cellSize)
     : m_freeList(cellSize)
     , m_currentBlock(0)
     , m_lastActiveBlock(0)
@@ -50,13 +50,13 @@ MarkedAllocator::MarkedAllocator(Heap* heap, size_t cellSize)
 {
 }
 
-void MarkedAllocator::setSubspace(Subspace* subspace)
+void BlockDirectory::setSubspace(Subspace* subspace)
 {
     m_attributes = subspace->attributes();
     m_subspace = subspace;
 }
 
-bool MarkedAllocator::isPagedOut(double deadline)
+bool BlockDirectory::isPagedOut(double deadline)
 {
     unsigned itersSinceLastTimeCheck = 0;
     for (auto* block : m_blocks) {
@@ -73,7 +73,7 @@ bool MarkedAllocator::isPagedOut(double deadline)
     return false;
 }
 
-MarkedBlock::Handle* MarkedAllocator::findEmptyBlockToSteal()
+MarkedBlock::Handle* BlockDirectory::findEmptyBlockToSteal()
 {
     m_emptyCursor = m_empty.findBit(m_emptyCursor, true);
     if (m_emptyCursor >= m_blocks.size())
@@ -81,7 +81,7 @@ MarkedBlock::Handle* MarkedAllocator::findEmptyBlockToSteal()
     return m_blocks[m_emptyCursor];
 }
 
-void MarkedAllocator::didConsumeFreeList()
+void BlockDirectory::didConsumeFreeList()
 {
     if (m_currentBlock)
         m_currentBlock->didConsumeFreeList();
@@ -90,7 +90,7 @@ void MarkedAllocator::didConsumeFreeList()
     m_currentBlock = nullptr;
 }
 
-void* MarkedAllocator::tryAllocateWithoutCollecting()
+void* BlockDirectory::tryAllocateWithoutCollecting()
 {
     SuperSamplerScope superSamplerScope(false);
     
@@ -118,7 +118,7 @@ void* MarkedAllocator::tryAllocateWithoutCollecting()
             // It's good that this clears canAllocateButNotEmpty as well as all other bits,
             // because there is a remote chance that a block may have both canAllocateButNotEmpty
             // and empty set at the same time.
-            block->removeFromAllocator();
+            block->removeFromDirectory();
             addBlock(block);
             return allocateIn(block);
         }
@@ -127,14 +127,14 @@ void* MarkedAllocator::tryAllocateWithoutCollecting()
     return nullptr;
 }
 
-void* MarkedAllocator::allocateIn(MarkedBlock::Handle* block)
+void* BlockDirectory::allocateIn(MarkedBlock::Handle* block)
 {
     void* result = tryAllocateIn(block);
     RELEASE_ASSERT(result);
     return result;
 }
 
-void* MarkedAllocator::tryAllocateIn(MarkedBlock::Handle* block)
+void* BlockDirectory::tryAllocateIn(MarkedBlock::Handle* block)
 {
     ASSERT(block);
     ASSERT(!block->isFreeListed());
@@ -155,13 +155,16 @@ void* MarkedAllocator::tryAllocateIn(MarkedBlock::Handle* block)
     m_currentBlock = block;
     
     void* result = m_freeList.allocate(
-        [] () -> HeapCell* { RELEASE_ASSERT_NOT_REACHED(); return nullptr; });
+        [] () -> HeapCell* {
+            RELEASE_ASSERT_NOT_REACHED();
+            return nullptr;
+        });
     setIsEden(NoLockingNecessary, m_currentBlock, true);
     markedSpace().didAllocateInBlock(m_currentBlock);
     return result;
 }
 
-ALWAYS_INLINE void MarkedAllocator::doTestCollectionsIfNeeded(GCDeferralContext* deferralContext)
+ALWAYS_INLINE void BlockDirectory::doTestCollectionsIfNeeded(GCDeferralContext* deferralContext)
 {
     if (!Options::slowPathAllocsBetweenGCs())
         return;
@@ -179,7 +182,7 @@ ALWAYS_INLINE void MarkedAllocator::doTestCollectionsIfNeeded(GCDeferralContext*
         allocationCount = 0;
 }
 
-void* MarkedAllocator::allocateSlowCase(GCDeferralContext* deferralContext, AllocationFailureMode failureMode)
+void* BlockDirectory::allocateSlowCase(GCDeferralContext* deferralContext, AllocationFailureMode failureMode)
 {
     SuperSamplerScope superSamplerScope(false);
     ASSERT(m_heap->vm()->currentThreadIsHoldingAPILock());
@@ -194,7 +197,7 @@ void* MarkedAllocator::allocateSlowCase(GCDeferralContext* deferralContext, Allo
 
     m_heap->collectIfNecessaryOrDefer(deferralContext);
     
-    // Goofy corner case: the GC called a callback and now this allocator has a currentBlock. This only
+    // Goofy corner case: the GC called a callback and now this directory has a currentBlock. This only
     // happens when running WebKit tests, which inject a callback into the GC's finalization.
     if (UNLIKELY(m_currentBlock))
         return allocate(deferralContext, failureMode);
@@ -222,7 +225,7 @@ static size_t blockHeaderSize()
     return WTF::roundUpToMultipleOf<MarkedBlock::atomSize>(sizeof(MarkedBlock));
 }
 
-size_t MarkedAllocator::blockSizeForBytes(size_t bytes)
+size_t BlockDirectory::blockSizeForBytes(size_t bytes)
 {
     size_t minBlockSize = MarkedBlock::blockSize;
     size_t minAllocationSize = blockHeaderSize() + WTF::roundUpToMultipleOf<MarkedBlock::atomSize>(bytes);
@@ -230,7 +233,7 @@ size_t MarkedAllocator::blockSizeForBytes(size_t bytes)
     return std::max(minBlockSize, minAllocationSize);
 }
 
-MarkedBlock::Handle* MarkedAllocator::tryAllocateBlock()
+MarkedBlock::Handle* BlockDirectory::tryAllocateBlock()
 {
     SuperSamplerScope superSamplerScope(false);
     
@@ -243,7 +246,7 @@ MarkedBlock::Handle* MarkedAllocator::tryAllocateBlock()
     return handle;
 }
 
-void MarkedAllocator::addBlock(MarkedBlock::Handle* block)
+void BlockDirectory::addBlock(MarkedBlock::Handle* block)
 {
     size_t index;
     if (m_freeBlockIndices.isEmpty()) {
@@ -281,15 +284,15 @@ void MarkedAllocator::addBlock(MarkedBlock::Handle* block)
         });
 
     // This is the point at which the block learns of its cellSize() and attributes().
-    block->didAddToAllocator(this, index);
+    block->didAddToDirectory(this, index);
     
     setIsLive(NoLockingNecessary, index, true);
     setIsEmpty(NoLockingNecessary, index, true);
 }
 
-void MarkedAllocator::removeBlock(MarkedBlock::Handle* block)
+void BlockDirectory::removeBlock(MarkedBlock::Handle* block)
 {
-    ASSERT(block->allocator() == this);
+    ASSERT(block->directory() == this);
     ASSERT(m_blocks[block->index()] == block);
     
     subspace()->didRemoveBlock(block->index());
@@ -303,13 +306,13 @@ void MarkedAllocator::removeBlock(MarkedBlock::Handle* block)
             vector[block->index()] = false;
         });
     
-    block->didRemoveFromAllocator();
+    block->didRemoveFromDirectory();
 }
 
-void MarkedAllocator::stopAllocating()
+void BlockDirectory::stopAllocating()
 {
     if (false)
-        dataLog(RawPointer(this), ": MarkedAllocator::stopAllocating!\n");
+        dataLog(RawPointer(this), ": BlockDirectory::stopAllocating!\n");
     ASSERT(!m_lastActiveBlock);
     if (!m_currentBlock) {
         ASSERT(m_freeList.allocationWillFail());
@@ -322,7 +325,7 @@ void MarkedAllocator::stopAllocating()
     m_freeList.clear();
 }
 
-void MarkedAllocator::prepareForAllocation()
+void BlockDirectory::prepareForAllocation()
 {
     m_lastActiveBlock = nullptr;
     m_currentBlock = nullptr;
@@ -341,7 +344,7 @@ void MarkedAllocator::prepareForAllocation()
     }
 }
 
-void MarkedAllocator::lastChanceToFinalize()
+void BlockDirectory::lastChanceToFinalize()
 {
     forEachBlock(
         [&] (MarkedBlock::Handle* block) {
@@ -349,7 +352,7 @@ void MarkedAllocator::lastChanceToFinalize()
         });
 }
 
-void MarkedAllocator::resumeAllocating()
+void BlockDirectory::resumeAllocating()
 {
     if (!m_lastActiveBlock)
         return;
@@ -359,7 +362,7 @@ void MarkedAllocator::resumeAllocating()
     m_lastActiveBlock = nullptr;
 }
 
-void MarkedAllocator::beginMarkingForFullCollection()
+void BlockDirectory::beginMarkingForFullCollection()
 {
     // Mark bits are sticky and so is our summary of mark bits. We only clear these during full
     // collections, so if you survived the last collection you will survive the next one so long
@@ -368,7 +371,7 @@ void MarkedAllocator::beginMarkingForFullCollection()
     m_markingRetired.clearAll();
 }
 
-void MarkedAllocator::endMarking()
+void BlockDirectory::endMarking()
 {
     m_allocated.clearAll();
     
@@ -399,17 +402,17 @@ void MarkedAllocator::endMarking()
     }
 }
 
-void MarkedAllocator::snapshotUnsweptForEdenCollection()
+void BlockDirectory::snapshotUnsweptForEdenCollection()
 {
     m_unswept |= m_eden;
 }
 
-void MarkedAllocator::snapshotUnsweptForFullCollection()
+void BlockDirectory::snapshotUnsweptForFullCollection()
 {
     m_unswept = m_live;
 }
 
-MarkedBlock::Handle* MarkedAllocator::findBlockToSweep()
+MarkedBlock::Handle* BlockDirectory::findBlockToSweep()
 {
     m_unsweptCursor = m_unswept.findBit(m_unsweptCursor, true);
     if (m_unsweptCursor >= m_blocks.size())
@@ -417,7 +420,7 @@ MarkedBlock::Handle* MarkedAllocator::findBlockToSweep()
     return m_blocks[m_unsweptCursor];
 }
 
-void MarkedAllocator::sweep()
+void BlockDirectory::sweep()
 {
     m_unswept.forEachSetBit(
         [&] (size_t index) {
@@ -426,7 +429,7 @@ void MarkedAllocator::sweep()
         });
 }
 
-void MarkedAllocator::shrink()
+void BlockDirectory::shrink()
 {
     (m_empty & ~m_destructible).forEachSetBit(
         [&] (size_t index) {
@@ -434,7 +437,7 @@ void MarkedAllocator::shrink()
         });
 }
 
-void MarkedAllocator::assertNoUnswept()
+void BlockDirectory::assertNoUnswept()
 {
     if (ASSERT_DISABLED)
         return;
@@ -447,12 +450,12 @@ void MarkedAllocator::assertNoUnswept()
     ASSERT_NOT_REACHED();
 }
 
-RefPtr<SharedTask<MarkedBlock::Handle*()>> MarkedAllocator::parallelNotEmptyBlockSource()
+RefPtr<SharedTask<MarkedBlock::Handle*()>> BlockDirectory::parallelNotEmptyBlockSource()
 {
     class Task : public SharedTask<MarkedBlock::Handle*()> {
     public:
-        Task(MarkedAllocator& allocator)
-            : m_allocator(allocator)
+        Task(BlockDirectory& directory)
+            : m_directory(directory)
         {
         }
         
@@ -461,16 +464,16 @@ RefPtr<SharedTask<MarkedBlock::Handle*()>> MarkedAllocator::parallelNotEmptyBloc
             if (m_done)
                 return nullptr;
             auto locker = holdLock(m_lock);
-            m_index = m_allocator.m_markingNotEmpty.findBit(m_index, true);
-            if (m_index >= m_allocator.m_blocks.size()) {
+            m_index = m_directory.m_markingNotEmpty.findBit(m_index, true);
+            if (m_index >= m_directory.m_blocks.size()) {
                 m_done = true;
                 return nullptr;
             }
-            return m_allocator.m_blocks[m_index++];
+            return m_directory.m_blocks[m_index++];
         }
         
     private:
-        MarkedAllocator& m_allocator;
+        BlockDirectory& m_directory;
         size_t m_index { 0 };
         Lock m_lock;
         bool m_done { false };
@@ -479,12 +482,12 @@ RefPtr<SharedTask<MarkedBlock::Handle*()>> MarkedAllocator::parallelNotEmptyBloc
     return adoptRef(new Task(*this));
 }
 
-void MarkedAllocator::dump(PrintStream& out) const
+void BlockDirectory::dump(PrintStream& out) const
 {
     out.print(RawPointer(this), ":", m_cellSize, "/", m_attributes);
 }
 
-void MarkedAllocator::dumpBits(PrintStream& out)
+void BlockDirectory::dumpBits(PrintStream& out)
 {
     unsigned maxNameLength = 0;
     forEachBitVectorWithName(
@@ -504,7 +507,7 @@ void MarkedAllocator::dumpBits(PrintStream& out)
         });
 }
 
-MarkedSpace& MarkedAllocator::markedSpace() const
+MarkedSpace& BlockDirectory::markedSpace() const
 {
     return m_subspace->space();
 }

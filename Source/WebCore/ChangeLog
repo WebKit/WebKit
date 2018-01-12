@@ -1,3 +1,16 @@
+2018-01-11  Filip Pizlo  <fpizlo@apple.com>
+
+        Rename MarkedAllocator to BlockDirectory and AllocatorAttributes to CellAttributes
+        https://bugs.webkit.org/show_bug.cgi?id=181543
+
+        Rubber stamped by Michael Saboff.
+
+        No new tests because I'm just renaming things.
+
+        * ForwardingHeaders/heap/BlockDirectoryInlines.h: Copied from Source/WebCore/ForwardingHeaders/heap/MarkedAllocatorInlines.h.
+        * ForwardingHeaders/heap/MarkedAllocatorInlines.h: Removed.
+        * bindings/js/DOMGCOutputConstraint.cpp:
+
 2018-01-11  Alex Christensen  <achristensen@webkit.org>
 
         REGRESSION(r225003): Loading hangs in environments where dispatch_async does not work

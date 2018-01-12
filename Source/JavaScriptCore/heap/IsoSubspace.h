@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "MarkedAllocator.h"
+#include "BlockDirectory.h"
 #include "Subspace.h"
 #include <wtf/SinglyLinkedListWithTail.h>
 
@@ -41,11 +41,11 @@ public:
 
     size_t size() const { return m_size; }
 
-    MarkedAllocator* allocatorFor(size_t, AllocatorForMode) override;
-    MarkedAllocator* allocatorForNonVirtual(size_t size, AllocatorForMode);
+    BlockDirectory* allocatorFor(size_t, AllocatorForMode) override;
+    BlockDirectory* allocatorForNonVirtual(size_t, AllocatorForMode);
 
     void* allocate(size_t, GCDeferralContext*, AllocationFailureMode) override;
-    JS_EXPORT_PRIVATE void* allocateNonVirtual(size_t size, GCDeferralContext* deferralContext, AllocationFailureMode failureMode);
+    JS_EXPORT_PRIVATE void* allocateNonVirtual(size_t, GCDeferralContext*, AllocationFailureMode);
 
 private:
     friend class IsoCellSet;
@@ -55,15 +55,15 @@ private:
     void didBeginSweepingToFreeList(MarkedBlock::Handle*) override;
     
     size_t m_size;
-    MarkedAllocator m_allocator;
+    BlockDirectory m_directory;
     std::unique_ptr<IsoAlignedMemoryAllocator> m_isoAlignedMemoryAllocator;
     SentinelLinkedList<IsoCellSet, BasicRawSentinelNode<IsoCellSet>> m_cellSets;
 };
 
-inline MarkedAllocator* IsoSubspace::allocatorForNonVirtual(size_t size, AllocatorForMode)
+inline BlockDirectory* IsoSubspace::allocatorForNonVirtual(size_t size, AllocatorForMode)
 {
     RELEASE_ASSERT(size == this->size());
-    return &m_allocator;
+    return &m_directory;
 }
 
 #define ISO_SUBSPACE_INIT(heap, heapCellType, type) ("Isolated " #type " Space", (heap), (heapCellType), sizeof(type))

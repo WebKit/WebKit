@@ -27,6 +27,7 @@
 
 #if ENABLE(DFG_JIT)
 
+#include "BlockDirectory.h"
 #include "DFGAbstractInterpreter.h"
 #include "DFGGenerationInfo.h"
 #include "DFGInPlaceAbstractState.h"
@@ -37,7 +38,6 @@
 #include "DFGSilentRegisterSavePlan.h"
 #include "JITMathIC.h"
 #include "JITOperations.h"
-#include "MarkedAllocator.h"
 #include "PutKind.h"
 #include "SpillRegistersMode.h"
 #include "StructureStubInfo.h"
@@ -3120,7 +3120,7 @@ public:
     // Allocator for a cell of a specific size.
     template <typename StructureType> // StructureType can be GPR or ImmPtr.
     void emitAllocateJSCell(
-        GPRReg resultGPR, MarkedAllocator* allocator, GPRReg allocatorGPR, StructureType structure,
+        GPRReg resultGPR, BlockDirectory* allocator, GPRReg allocatorGPR, StructureType structure,
         GPRReg scratchGPR, MacroAssembler::JumpList& slowPath)
     {
         m_jit.emitAllocateJSCell(resultGPR, allocator, allocatorGPR, structure, scratchGPR, slowPath);
@@ -3129,7 +3129,7 @@ public:
     // Allocator for an object of a specific size.
     template <typename StructureType, typename StorageType, typename MaskType> // StructureType, StorageType and, MaskType can be GPR or ImmPtr.
     void emitAllocateJSObject(
-        GPRReg resultGPR, MarkedAllocator* allocator, GPRReg allocatorGPR, StructureType structure,
+        GPRReg resultGPR, BlockDirectory* allocator, GPRReg allocatorGPR, StructureType structure,
         StorageType storage, MaskType mask, GPRReg scratchGPR, MacroAssembler::JumpList& slowPath)
     {
         m_jit.emitAllocateJSObject(

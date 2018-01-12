@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,16 +23,42 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
-#include "AllocatorAttributes.h"
+#pragma once
 
-#include <wtf/PrintStream.h>
+#include "BlockDirectory.h"
+#include "FreeListInlines.h"
+#include "VM.h"
 
 namespace JSC {
 
-void AllocatorAttributes::dump(PrintStream& out) const
+inline bool BlockDirectory::isFreeListedCell(const void* target) const
 {
-    out.print("{", destruction, ", ", cellKind, "}");
+    return m_freeList.contains(bitwise_cast<HeapCell*>(target));
+}
+
+ALWAYS_INLINE void* BlockDirectory::allocate(GCDeferralContext* deferralContext, AllocationFailureMode failureMode)
+{
+    return m_freeList.allocate(
+        [&] () -> HeapCell* {
+            sanitizeStackForVM(heap()->vm());
+            return static_cast<HeapCell*>(allocateSlowCase(deferralContext, failureMode));
+        });
+}
+
+template <typename Functor> inline void BlockDirectory::forEachBlock(const Functor& functor)
+{
+    m_live.forEachSetBit(
+        [&] (size_t index) {
+            functor(m_blocks[index]);
+        });
+}
+
+template <typename Functor> inline void BlockDirectory::forEachNotEmptyBlock(const Functor& functor)
+{
+    m_markingNotEmpty.forEachSetBit(
+        [&] (size_t index) {
+            functor(m_blocks[index]);
+        });
 }
 
 } // namespace JSC

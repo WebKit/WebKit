@@ -73,7 +73,7 @@ ALWAYS_INLINE size_t HeapCell::cellSize() const
     return markedBlock().cellSize();
 }
 
-ALWAYS_INLINE AllocatorAttributes HeapCell::allocatorAttributes() const
+ALWAYS_INLINE CellAttributes HeapCell::cellAttributes() const
 {
     if (isLargeAllocation())
         return largeAllocation().attributes();
@@ -82,12 +82,12 @@ ALWAYS_INLINE AllocatorAttributes HeapCell::allocatorAttributes() const
 
 ALWAYS_INLINE DestructionMode HeapCell::destructionMode() const
 {
-    return allocatorAttributes().destruction;
+    return cellAttributes().destruction;
 }
 
 ALWAYS_INLINE HeapCell::Kind HeapCell::cellKind() const
 {
-    return allocatorAttributes().cellKind;
+    return cellAttributes().cellKind;
 }
 
 ALWAYS_INLINE Subspace* HeapCell::subspace() const

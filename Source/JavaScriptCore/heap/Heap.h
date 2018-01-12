@@ -74,7 +74,7 @@ class LLIntOffsetsExtractor;
 class MachineThreads;
 class MarkStackArray;
 class MarkStackMergingConstraint;
-class MarkedAllocator;
+class BlockDirectory;
 class MarkedArgumentBuffer;
 class MarkingConstraint;
 class MarkingConstraintSet;
@@ -390,7 +390,7 @@ private:
     friend class LLIntOffsetsExtractor;
     friend class MarkStackMergingConstraint;
     friend class MarkedSpace;
-    friend class MarkedAllocator;
+    friend class BlockDirectory;
     friend class MarkedBlock;
     friend class RunningScope;
     friend class SlotVisitor;

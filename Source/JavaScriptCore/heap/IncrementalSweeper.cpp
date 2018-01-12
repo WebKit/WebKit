@@ -46,7 +46,7 @@ void IncrementalSweeper::scheduleTimer()
 
 IncrementalSweeper::IncrementalSweeper(Heap* heap)
     : Base(heap->vm())
-    , m_currentAllocator(nullptr)
+    , m_currentDirectory(nullptr)
 {
 }
 
@@ -79,8 +79,8 @@ bool IncrementalSweeper::sweepNextBlock()
 
     MarkedBlock::Handle* block = nullptr;
     
-    for (; m_currentAllocator; m_currentAllocator = m_currentAllocator->nextAllocator()) {
-        block = m_currentAllocator->findBlockToSweep();
+    for (; m_currentDirectory; m_currentDirectory = m_currentDirectory->nextDirectory()) {
+        block = m_currentDirectory->findBlockToSweep();
         if (block)
             break;
     }
@@ -98,12 +98,12 @@ bool IncrementalSweeper::sweepNextBlock()
 void IncrementalSweeper::startSweeping()
 {
     scheduleTimer();
-    m_currentAllocator = m_vm->heap.objectSpace().firstAllocator();
+    m_currentDirectory = m_vm->heap.objectSpace().firstDirectory();
 }
 
 void IncrementalSweeper::stopSweeping()
 {
-    m_currentAllocator = nullptr;
+    m_currentDirectory = nullptr;
     if (m_vm)
         cancelTimer();
 }

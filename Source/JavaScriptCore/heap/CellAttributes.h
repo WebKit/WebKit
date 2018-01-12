@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,41 +25,26 @@
 
 #pragma once
 
-#include "FreeListInlines.h"
-#include "MarkedAllocator.h"
-#include "VM.h"
+#include "DestructionMode.h"
+#include "HeapCell.h"
+#include <wtf/PrintStream.h>
 
 namespace JSC {
 
-inline bool MarkedAllocator::isFreeListedCell(const void* target) const
-{
-    return m_freeList.contains(bitwise_cast<HeapCell*>(target));
-}
-
-ALWAYS_INLINE void* MarkedAllocator::allocate(GCDeferralContext* deferralContext, AllocationFailureMode failureMode)
-{
-    return m_freeList.allocate(
-        [&] () -> HeapCell* {
-            sanitizeStackForVM(heap()->vm());
-            return static_cast<HeapCell*>(allocateSlowCase(deferralContext, failureMode));
-        });
-}
-
-template <typename Functor> inline void MarkedAllocator::forEachBlock(const Functor& functor)
-{
-    m_live.forEachSetBit(
-        [&] (size_t index) {
-            functor(m_blocks[index]);
-        });
-}
-
-template <typename Functor> inline void MarkedAllocator::forEachNotEmptyBlock(const Functor& functor)
-{
-    m_markingNotEmpty.forEachSetBit(
-        [&] (size_t index) {
-            functor(m_blocks[index]);
-        });
-}
+struct CellAttributes {
+    CellAttributes() { }
+    
+    CellAttributes(DestructionMode destruction, HeapCell::Kind cellKind)
+        : destruction(destruction)
+        , cellKind(cellKind)
+    {
+    }
+    
+    void dump(PrintStream& out) const;
+    
+    DestructionMode destruction { DoesNotNeedDestruction };
+    HeapCell::Kind cellKind { HeapCell::JSCell };
+};
 
 } // namespace JSC
 

@@ -1492,7 +1492,7 @@ public:
     // Call this if you know that the value held in allocatorGPR is non-null. This DOES NOT mean
     // that allocator is non-null; allocator can be null as a signal that we don't know what the
     // value of allocatorGPR is.
-    void emitAllocateWithNonNullAllocator(GPRReg resultGPR, MarkedAllocator* allocator, GPRReg allocatorGPR, GPRReg scratchGPR, JumpList& slowPath)
+    void emitAllocateWithNonNullAllocator(GPRReg resultGPR, BlockDirectory* allocator, GPRReg allocatorGPR, GPRReg scratchGPR, JumpList& slowPath)
     {
         // NOTE: This is carefully written so that we can call it while we disallow scratch
         // register usage.
@@ -1505,22 +1505,22 @@ public:
         Jump popPath;
         Jump done;
         
-        load32(Address(allocatorGPR, MarkedAllocator::offsetOfFreeList() + FreeList::offsetOfRemaining()), resultGPR);
+        load32(Address(allocatorGPR, BlockDirectory::offsetOfFreeList() + FreeList::offsetOfRemaining()), resultGPR);
         popPath = branchTest32(Zero, resultGPR);
         if (allocator)
             add32(TrustedImm32(-allocator->cellSize()), resultGPR, scratchGPR);
         else {
             if (isX86()) {
                 move(resultGPR, scratchGPR);
-                sub32(Address(allocatorGPR, MarkedAllocator::offsetOfCellSize()), scratchGPR);
+                sub32(Address(allocatorGPR, BlockDirectory::offsetOfCellSize()), scratchGPR);
             } else {
-                load32(Address(allocatorGPR, MarkedAllocator::offsetOfCellSize()), scratchGPR);
+                load32(Address(allocatorGPR, BlockDirectory::offsetOfCellSize()), scratchGPR);
                 sub32(resultGPR, scratchGPR, scratchGPR);
             }
         }
         negPtr(resultGPR);
-        store32(scratchGPR, Address(allocatorGPR, MarkedAllocator::offsetOfFreeList() + FreeList::offsetOfRemaining()));
-        Address payloadEndAddr = Address(allocatorGPR, MarkedAllocator::offsetOfFreeList() + FreeList::offsetOfPayloadEnd());
+        store32(scratchGPR, Address(allocatorGPR, BlockDirectory::offsetOfFreeList() + FreeList::offsetOfRemaining()));
+        Address payloadEndAddr = Address(allocatorGPR, BlockDirectory::offsetOfFreeList() + FreeList::offsetOfPayloadEnd());
         if (isX86())
             addPtr(payloadEndAddr, resultGPR);
         else {
@@ -1532,11 +1532,11 @@ public:
         
         popPath.link(this);
         
-        loadPtr(Address(allocatorGPR, MarkedAllocator::offsetOfFreeList() + FreeList::offsetOfScrambledHead()), resultGPR);
+        loadPtr(Address(allocatorGPR, BlockDirectory::offsetOfFreeList() + FreeList::offsetOfScrambledHead()), resultGPR);
         if (isX86())
-            xorPtr(Address(allocatorGPR, MarkedAllocator::offsetOfFreeList() + FreeList::offsetOfSecret()), resultGPR);
+            xorPtr(Address(allocatorGPR, BlockDirectory::offsetOfFreeList() + FreeList::offsetOfSecret()), resultGPR);
         else {
-            loadPtr(Address(allocatorGPR, MarkedAllocator::offsetOfFreeList() + FreeList::offsetOfSecret()), scratchGPR);
+            loadPtr(Address(allocatorGPR, BlockDirectory::offsetOfFreeList() + FreeList::offsetOfSecret()), scratchGPR);
             xorPtr(scratchGPR, resultGPR);
         }
         slowPath.append(branchTestPtr(Zero, resultGPR));
@@ -1544,12 +1544,12 @@ public:
         // The object is half-allocated: we have what we know is a fresh object, but
         // it's still on the GC's free list.
         loadPtr(Address(resultGPR), scratchGPR);
-        storePtr(scratchGPR, Address(allocatorGPR, MarkedAllocator::offsetOfFreeList() + FreeList::offsetOfScrambledHead()));
+        storePtr(scratchGPR, Address(allocatorGPR, BlockDirectory::offsetOfFreeList() + FreeList::offsetOfScrambledHead()));
         
         done.link(this);
     }
     
-    void emitAllocate(GPRReg resultGPR, MarkedAllocator* allocator, GPRReg allocatorGPR, GPRReg scratchGPR, JumpList& slowPath)
+    void emitAllocate(GPRReg resultGPR, BlockDirectory* allocator, GPRReg allocatorGPR, GPRReg scratchGPR, JumpList& slowPath)
     {
         if (!allocator)
             slowPath.append(branchTestPtr(Zero, allocatorGPR));
@@ -1557,14 +1557,14 @@ public:
     }
     
     template<typename StructureType>
-    void emitAllocateJSCell(GPRReg resultGPR, MarkedAllocator* allocator, GPRReg allocatorGPR, StructureType structure, GPRReg scratchGPR, JumpList& slowPath)
+    void emitAllocateJSCell(GPRReg resultGPR, BlockDirectory* allocator, GPRReg allocatorGPR, StructureType structure, GPRReg scratchGPR, JumpList& slowPath)
     {
         emitAllocate(resultGPR, allocator, allocatorGPR, scratchGPR, slowPath);
         emitStoreStructureWithTypeInfo(structure, resultGPR, scratchGPR);
     }
     
     template<typename StructureType, typename StorageType, typename MaskType>
-    void emitAllocateJSObject(GPRReg resultGPR, MarkedAllocator* allocator, GPRReg allocatorGPR, StructureType structure, StorageType storage, MaskType mask, GPRReg scratchGPR, JumpList& slowPath)
+    void emitAllocateJSObject(GPRReg resultGPR, BlockDirectory* allocator, GPRReg allocatorGPR, StructureType structure, StorageType storage, MaskType mask, GPRReg scratchGPR, JumpList& slowPath)
     {
         emitAllocateJSCell(resultGPR, allocator, allocatorGPR, structure, scratchGPR, slowPath);
         storePtr(storage, Address(resultGPR, JSObject::butterflyOffset()));
@@ -1576,7 +1576,7 @@ public:
         VM& vm, GPRReg resultGPR, StructureType structure, StorageType storage, MaskType mask, GPRReg scratchGPR1,
         GPRReg scratchGPR2, JumpList& slowPath, size_t size)
     {
-        MarkedAllocator* allocator = subspaceFor<ClassType>(vm)->allocatorForNonVirtual(size, AllocatorForMode::AllocatorIfExists);
+        BlockDirectory* allocator = subspaceFor<ClassType>(vm)->allocatorForNonVirtual(size, AllocatorForMode::AllocatorIfExists);
         if (!allocator) {
             slowPath.append(jump());
             return;

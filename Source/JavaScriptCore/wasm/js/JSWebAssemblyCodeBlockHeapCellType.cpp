@@ -43,7 +43,7 @@ struct JSWebAssemblyCodeBlockDestroyFunc {
 };
 
 JSWebAssemblyCodeBlockHeapCellType::JSWebAssemblyCodeBlockHeapCellType()
-    : HeapCellType(AllocatorAttributes(NeedsDestruction, HeapCell::JSCell))
+    : HeapCellType(CellAttributes(NeedsDestruction, HeapCell::JSCell))
 {
 }
 

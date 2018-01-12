@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,9 +27,9 @@
 #include "Subspace.h"
 
 #include "AlignedMemoryAllocator.h"
+#include "BlockDirectoryInlines.h"
 #include "HeapCellType.h"
 #include "JSCInlines.h"
-#include "MarkedAllocatorInlines.h"
 #include "MarkedBlockInlines.h"
 #include "ParallelSourceAdapter.h"
 #include "PreventCollectionScope.h"
@@ -48,7 +48,7 @@ void Subspace::initialize(HeapCellType* heapCellType, AlignedMemoryAllocator* al
     m_attributes = heapCellType->attributes();
     m_heapCellType = heapCellType;
     m_alignedMemoryAllocator = alignedMemoryAllocator;
-    m_allocatorForEmptyAllocation = m_alignedMemoryAllocator->firstAllocator();
+    m_directoryForEmptyAllocation = m_alignedMemoryAllocator->firstDirectory();
 
     Heap& heap = *m_space.heap();
     PreventCollectionScope preventCollectionScope(heap);
@@ -72,65 +72,65 @@ void Subspace::destroy(VM& vm, JSCell* cell)
 
 void Subspace::prepareForAllocation()
 {
-    forEachAllocator(
-        [&] (MarkedAllocator& allocator) {
-            allocator.prepareForAllocation();
+    forEachDirectory(
+        [&] (BlockDirectory& directory) {
+            directory.prepareForAllocation();
         });
 
-    m_allocatorForEmptyAllocation = m_alignedMemoryAllocator->firstAllocator();
+    m_directoryForEmptyAllocation = m_alignedMemoryAllocator->firstDirectory();
 }
 
 MarkedBlock::Handle* Subspace::findEmptyBlockToSteal()
 {
-    for (; m_allocatorForEmptyAllocation; m_allocatorForEmptyAllocation = m_allocatorForEmptyAllocation->nextAllocatorInAlignedMemoryAllocator()) {
-        if (MarkedBlock::Handle* block = m_allocatorForEmptyAllocation->findEmptyBlockToSteal())
+    for (; m_directoryForEmptyAllocation; m_directoryForEmptyAllocation = m_directoryForEmptyAllocation->nextDirectoryInAlignedMemoryAllocator()) {
+        if (MarkedBlock::Handle* block = m_directoryForEmptyAllocation->findEmptyBlockToSteal())
             return block;
     }
     return nullptr;
 }
 
-RefPtr<SharedTask<MarkedAllocator*()>> Subspace::parallelAllocatorSource()
+RefPtr<SharedTask<BlockDirectory*()>> Subspace::parallelDirectorySource()
 {
-    class Task : public SharedTask<MarkedAllocator*()> {
+    class Task : public SharedTask<BlockDirectory*()> {
     public:
-        Task(MarkedAllocator* allocator)
-            : m_allocator(allocator)
+        Task(BlockDirectory* directory)
+            : m_directory(directory)
         {
         }
         
-        MarkedAllocator* run() override
+        BlockDirectory* run() override
         {
             auto locker = holdLock(m_lock);
-            MarkedAllocator* result = m_allocator;
+            BlockDirectory* result = m_directory;
             if (result)
-                m_allocator = result->nextAllocatorInSubspace();
+                m_directory = result->nextDirectoryInSubspace();
             return result;
         }
         
     private:
-        MarkedAllocator* m_allocator;
+        BlockDirectory* m_directory;
         Lock m_lock;
     };
     
-    return adoptRef(new Task(m_firstAllocator));
+    return adoptRef(new Task(m_firstDirectory));
 }
 
 RefPtr<SharedTask<MarkedBlock::Handle*()>> Subspace::parallelNotEmptyMarkedBlockSource()
 {
-    return createParallelSourceAdapter<MarkedAllocator*, MarkedBlock::Handle*>(
-        parallelAllocatorSource(),
-        [] (MarkedAllocator* allocator) -> RefPtr<SharedTask<MarkedBlock::Handle*()>> {
-            if (!allocator)
+    return createParallelSourceAdapter<BlockDirectory*, MarkedBlock::Handle*>(
+        parallelDirectorySource(),
+        [] (BlockDirectory* directory) -> RefPtr<SharedTask<MarkedBlock::Handle*()>> {
+            if (!directory)
                 return nullptr;
-            return allocator->parallelNotEmptyBlockSource();
+            return directory->parallelNotEmptyBlockSource();
         });
 }
 
 void Subspace::sweep()
 {
-    forEachAllocator(
-        [&] (MarkedAllocator& allocator) {
-            allocator.sweep();
+    forEachDirectory(
+        [&] (BlockDirectory& directory) {
+            directory.sweep();
         });
 }
 

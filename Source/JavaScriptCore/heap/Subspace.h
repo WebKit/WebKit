@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -49,27 +49,27 @@ public:
     const char* name() const { return m_name.data(); }
     MarkedSpace& space() const { return m_space; }
     
-    const AllocatorAttributes& attributes() const { return m_attributes; }
+    const CellAttributes& attributes() const { return m_attributes; }
     HeapCellType* heapCellType() const { return m_heapCellType; }
     AlignedMemoryAllocator* alignedMemoryAllocator() const { return m_alignedMemoryAllocator; }
     
     void finishSweep(MarkedBlock::Handle&, FreeList*);
     void destroy(VM&, JSCell*);
 
-    virtual MarkedAllocator* allocatorFor(size_t, AllocatorForMode) = 0;
+    virtual BlockDirectory* allocatorFor(size_t, AllocatorForMode) = 0;
     virtual void* allocate(size_t, GCDeferralContext*, AllocationFailureMode) = 0;
     
     void prepareForAllocation();
     
-    void didCreateFirstAllocator(MarkedAllocator* allocator) { m_allocatorForEmptyAllocation = allocator; }
+    void didCreateFirstDirectory(BlockDirectory* directory) { m_directoryForEmptyAllocation = directory; }
     
     // Finds an empty block from any Subspace that agrees to trade blocks with us.
     MarkedBlock::Handle* findEmptyBlockToSteal();
     
     template<typename Func>
-    void forEachAllocator(const Func&);
+    void forEachDirectory(const Func&);
     
-    RefPtr<SharedTask<MarkedAllocator*()>> parallelAllocatorSource();
+    RefPtr<SharedTask<BlockDirectory*()>> parallelDirectorySource();
     
     template<typename Func>
     void forEachMarkedBlock(const Func&);
@@ -106,13 +106,13 @@ protected:
     MarkedSpace& m_space;
     
     CString m_name;
-    AllocatorAttributes m_attributes;
+    CellAttributes m_attributes;
 
     HeapCellType* m_heapCellType { nullptr };
     AlignedMemoryAllocator* m_alignedMemoryAllocator { nullptr };
     
-    MarkedAllocator* m_firstAllocator { nullptr };
-    MarkedAllocator* m_allocatorForEmptyAllocation { nullptr }; // Uses the MarkedSpace linked list of blocks.
+    BlockDirectory* m_firstDirectory { nullptr };
+    BlockDirectory* m_directoryForEmptyAllocation { nullptr }; // Uses the MarkedSpace linked list of blocks.
     SentinelLinkedList<LargeAllocation, BasicRawSentinelNode<LargeAllocation>> m_largeAllocations;
     Subspace* m_nextSubspaceInAlignedMemoryAllocator { nullptr };
 };

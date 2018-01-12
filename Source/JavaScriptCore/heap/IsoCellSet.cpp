@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,7 +26,7 @@
 #include "config.h"
 #include "IsoCellSet.h"
 
-#include "MarkedAllocatorInlines.h"
+#include "BlockDirectoryInlines.h"
 #include "MarkedBlockInlines.h"
 
 namespace JSC {
@@ -34,7 +34,7 @@ namespace JSC {
 IsoCellSet::IsoCellSet(IsoSubspace& subspace)
     : m_subspace(subspace)
 {
-    size_t size = subspace.m_allocator.m_blocks.size();
+    size_t size = subspace.m_directory.m_blocks.size();
     m_blocksWithBits.resize(size);
     m_bits.grow(size);
     subspace.m_cellSets.append(this);
@@ -52,7 +52,7 @@ RefPtr<SharedTask<MarkedBlock::Handle*()>> IsoCellSet::parallelNotEmptyMarkedBlo
     public:
         Task(IsoCellSet& set)
             : m_set(set)
-            , m_allocator(set.m_subspace.m_allocator)
+            , m_directory(set.m_subspace.m_directory)
         {
         }
         
@@ -61,18 +61,18 @@ RefPtr<SharedTask<MarkedBlock::Handle*()>> IsoCellSet::parallelNotEmptyMarkedBlo
             if (m_done)
                 return nullptr;
             auto locker = holdLock(m_lock);
-            auto bits = m_allocator.m_markingNotEmpty & m_set.m_blocksWithBits;
+            auto bits = m_directory.m_markingNotEmpty & m_set.m_blocksWithBits;
             m_index = bits.findBit(m_index, true);
-            if (m_index >= m_allocator.m_blocks.size()) {
+            if (m_index >= m_directory.m_blocks.size()) {
                 m_done = true;
                 return nullptr;
             }
-            return m_allocator.m_blocks[m_index++];
+            return m_directory.m_blocks[m_index++];
         }
         
     private:
         IsoCellSet& m_set;
-        MarkedAllocator& m_allocator;
+        BlockDirectory& m_directory;
         size_t m_index { 0 };
         Lock m_lock;
         bool m_done { false };
@@ -83,7 +83,7 @@ RefPtr<SharedTask<MarkedBlock::Handle*()>> IsoCellSet::parallelNotEmptyMarkedBlo
 
 NEVER_INLINE Bitmap<MarkedBlock::atomsPerBlock>* IsoCellSet::addSlow(size_t blockIndex)
 {
-    auto locker = holdLock(m_subspace.m_allocator.m_bitvectorLock);
+    auto locker = holdLock(m_subspace.m_directory.m_bitvectorLock);
     auto& bitsPtrRef = m_bits[blockIndex];
     auto* bits = bitsPtrRef.get();
     if (!bits) {
@@ -104,7 +104,7 @@ void IsoCellSet::didResizeBits(size_t newSize)
 void IsoCellSet::didRemoveBlock(size_t blockIndex)
 {
     {
-        auto locker = holdLock(m_subspace.m_allocator.m_bitvectorLock);
+        auto locker = holdLock(m_subspace.m_directory.m_bitvectorLock);
         m_blocksWithBits[blockIndex] = false;
     }
     m_bits[blockIndex] = nullptr;
@@ -135,7 +135,7 @@ void IsoCellSet::sweepToFreeList(MarkedBlock::Handle* block)
         {
             // Holding the bitvector lock happens to be enough because that's what we also hold in
             // other places where we manipulate this bitvector.
-            auto locker = holdLock(m_subspace.m_allocator.m_bitvectorLock);
+            auto locker = holdLock(m_subspace.m_directory.m_bitvectorLock);
             m_blocksWithBits[block->index()] = false;
         }
         m_bits[block->index()] = nullptr;

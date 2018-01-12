@@ -63,10 +63,10 @@ inline bool IsoCellSet::contains(HeapCell* cell) const
 template<typename Func>
 void IsoCellSet::forEachMarkedCell(const Func& func)
 {
-    MarkedAllocator& allocator = m_subspace.m_allocator;
-    (allocator.m_markingNotEmpty & m_blocksWithBits).forEachSetBit(
+    BlockDirectory& directory = m_subspace.m_directory;
+    (directory.m_markingNotEmpty & m_blocksWithBits).forEachSetBit(
         [&] (size_t blockIndex) {
-            MarkedBlock::Handle* block = allocator.m_blocks[blockIndex];
+            MarkedBlock::Handle* block = directory.m_blocks[blockIndex];
 
             auto* bits = m_bits[blockIndex].get();
             block->forEachMarkedCell(
@@ -117,10 +117,10 @@ RefPtr<SharedTask<void(SlotVisitor&)>> IsoCellSet::forEachMarkedCellInParallel(c
 template<typename Func>
 void IsoCellSet::forEachLiveCell(const Func& func)
 {
-    MarkedAllocator& allocator = m_subspace.m_allocator;
+    BlockDirectory& directory = m_subspace.m_directory;
     m_blocksWithBits.forEachSetBit(
         [&] (size_t blockIndex) {
-            MarkedBlock::Handle* block = allocator.m_blocks[blockIndex];
+            MarkedBlock::Handle* block = directory.m_blocks[blockIndex];
 
             // FIXME: We could optimize this by checking our bits before querying isLive.
             // OOPS! (need bug URL)

@@ -47,7 +47,7 @@ struct DefaultDestroyFunc {
     }
 };
 
-HeapCellType::HeapCellType(AllocatorAttributes attributes)
+HeapCellType::HeapCellType(CellAttributes attributes)
     : m_attributes(attributes)
 {
 }

@@ -1,3 +1,297 @@
+2018-01-11  Filip Pizlo  <fpizlo@apple.com>
+
+        Rename MarkedAllocator to BlockDirectory and AllocatorAttributes to CellAttributes
+        https://bugs.webkit.org/show_bug.cgi?id=181543
+
+        Rubber stamped by Michael Saboff.
+        
+        In a world that has thread-local caches, the thing we now call the "MarkedAllocator" doesn't
+        really have anything to do with allocation anymore. The allocation will be done by something
+        in the TLC. When you move the allocation logic out of MarkedAllocator, it becomes just a
+        place to find blocks (a "block directory").
+
+        Once we do that renaming, the term "allocator attributes" becomes weird. Those are really the
+        attributes of the HeapCellType. So let's call them CellAttributes.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Sources.txt:
+        * bytecode/AccessCase.cpp:
+        (JSC::AccessCase::generateImpl):
+        * bytecode/ObjectAllocationProfile.h:
+        * bytecode/ObjectAllocationProfileInlines.h:
+        (JSC::ObjectAllocationProfile::initializeProfile):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::emitAllocateRawObject):
+        (JSC::DFG::SpeculativeJIT::compileMakeRope):
+        (JSC::DFG::SpeculativeJIT::compileAllocatePropertyStorage):
+        (JSC::DFG::SpeculativeJIT::compileReallocatePropertyStorage):
+        (JSC::DFG::SpeculativeJIT::compileNewObject):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::emitAllocateJSCell):
+        (JSC::DFG::SpeculativeJIT::emitAllocateJSObject):
+        * ftl/FTLAbstractHeapRepository.h:
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileMakeRope):
+        (JSC::FTL::DFG::LowerDFGToB3::compileMaterializeNewObject):
+        (JSC::FTL::DFG::LowerDFGToB3::allocatePropertyStorageWithSizeImpl):
+        (JSC::FTL::DFG::LowerDFGToB3::allocateHeapCell):
+        (JSC::FTL::DFG::LowerDFGToB3::allocateObject):
+        (JSC::FTL::DFG::LowerDFGToB3::allocatorForSize):
+        * heap/AlignedMemoryAllocator.cpp:
+        (JSC::AlignedMemoryAllocator::registerDirectory):
+        (JSC::AlignedMemoryAllocator::registerAllocator): Deleted.
+        * heap/AlignedMemoryAllocator.h:
+        (JSC::AlignedMemoryAllocator::firstDirectory const):
+        (JSC::AlignedMemoryAllocator::firstAllocator const): Deleted.
+        * heap/AllocatorAttributes.cpp: Removed.
+        * heap/AllocatorAttributes.h: Removed.
+        * heap/BlockDirectory.cpp: Copied from Source/JavaScriptCore/heap/MarkedAllocator.cpp.
+        (JSC::BlockDirectory::BlockDirectory):
+        (JSC::BlockDirectory::setSubspace):
+        (JSC::BlockDirectory::isPagedOut):
+        (JSC::BlockDirectory::findEmptyBlockToSteal):
+        (JSC::BlockDirectory::didConsumeFreeList):
+        (JSC::BlockDirectory::tryAllocateWithoutCollecting):
+        (JSC::BlockDirectory::allocateIn):
+        (JSC::BlockDirectory::tryAllocateIn):
+        (JSC::BlockDirectory::doTestCollectionsIfNeeded):
+        (JSC::BlockDirectory::allocateSlowCase):
+        (JSC::BlockDirectory::blockSizeForBytes):
+        (JSC::BlockDirectory::tryAllocateBlock):
+        (JSC::BlockDirectory::addBlock):
+        (JSC::BlockDirectory::removeBlock):
+        (JSC::BlockDirectory::stopAllocating):
+        (JSC::BlockDirectory::prepareForAllocation):
+        (JSC::BlockDirectory::lastChanceToFinalize):
+        (JSC::BlockDirectory::resumeAllocating):
+        (JSC::BlockDirectory::beginMarkingForFullCollection):
+        (JSC::BlockDirectory::endMarking):
+        (JSC::BlockDirectory::snapshotUnsweptForEdenCollection):
+        (JSC::BlockDirectory::snapshotUnsweptForFullCollection):
+        (JSC::BlockDirectory::findBlockToSweep):
+        (JSC::BlockDirectory::sweep):
+        (JSC::BlockDirectory::shrink):
+        (JSC::BlockDirectory::assertNoUnswept):
+        (JSC::BlockDirectory::parallelNotEmptyBlockSource):
+        (JSC::BlockDirectory::dump const):
+        (JSC::BlockDirectory::dumpBits):
+        (JSC::BlockDirectory::markedSpace const):
+        (JSC::MarkedAllocator::MarkedAllocator): Deleted.
+        (JSC::MarkedAllocator::setSubspace): Deleted.
+        (JSC::MarkedAllocator::isPagedOut): Deleted.
+        (JSC::MarkedAllocator::findEmptyBlockToSteal): Deleted.
+        (JSC::MarkedAllocator::didConsumeFreeList): Deleted.
+        (JSC::MarkedAllocator::tryAllocateWithoutCollecting): Deleted.
+        (JSC::MarkedAllocator::allocateIn): Deleted.
+        (JSC::MarkedAllocator::tryAllocateIn): Deleted.
+        (JSC::MarkedAllocator::doTestCollectionsIfNeeded): Deleted.
+        (JSC::MarkedAllocator::allocateSlowCase): Deleted.
+        (JSC::MarkedAllocator::blockSizeForBytes): Deleted.
+        (JSC::MarkedAllocator::tryAllocateBlock): Deleted.
+        (JSC::MarkedAllocator::addBlock): Deleted.
+        (JSC::MarkedAllocator::removeBlock): Deleted.
+        (JSC::MarkedAllocator::stopAllocating): Deleted.
+        (JSC::MarkedAllocator::prepareForAllocation): Deleted.
+        (JSC::MarkedAllocator::lastChanceToFinalize): Deleted.
+        (JSC::MarkedAllocator::resumeAllocating): Deleted.
+        (JSC::MarkedAllocator::beginMarkingForFullCollection): Deleted.
+        (JSC::MarkedAllocator::endMarking): Deleted.
+        (JSC::MarkedAllocator::snapshotUnsweptForEdenCollection): Deleted.
+        (JSC::MarkedAllocator::snapshotUnsweptForFullCollection): Deleted.
+        (JSC::MarkedAllocator::findBlockToSweep): Deleted.
+        (JSC::MarkedAllocator::sweep): Deleted.
+        (JSC::MarkedAllocator::shrink): Deleted.
+        (JSC::MarkedAllocator::assertNoUnswept): Deleted.
+        (JSC::MarkedAllocator::parallelNotEmptyBlockSource): Deleted.
+        (JSC::MarkedAllocator::dump const): Deleted.
+        (JSC::MarkedAllocator::dumpBits): Deleted.
+        (JSC::MarkedAllocator::markedSpace const): Deleted.
+        * heap/BlockDirectory.h: Copied from Source/JavaScriptCore/heap/MarkedAllocator.h.
+        (JSC::BlockDirectory::attributes const):
+        (JSC::BlockDirectory::forEachBitVector):
+        (JSC::BlockDirectory::forEachBitVectorWithName):
+        (JSC::BlockDirectory::nextDirectory const):
+        (JSC::BlockDirectory::nextDirectoryInSubspace const):
+        (JSC::BlockDirectory::nextDirectoryInAlignedMemoryAllocator const):
+        (JSC::BlockDirectory::setNextDirectory):
+        (JSC::BlockDirectory::setNextDirectoryInSubspace):
+        (JSC::BlockDirectory::setNextDirectoryInAlignedMemoryAllocator):
+        (JSC::BlockDirectory::offsetOfFreeList):
+        (JSC::BlockDirectory::offsetOfCellSize):
+        (JSC::MarkedAllocator::cellSize const): Deleted.
+        (JSC::MarkedAllocator::attributes const): Deleted.
+        (JSC::MarkedAllocator::needsDestruction const): Deleted.
+        (JSC::MarkedAllocator::destruction const): Deleted.
+        (JSC::MarkedAllocator::cellKind const): Deleted.
+        (JSC::MarkedAllocator::heap): Deleted.
+        (JSC::MarkedAllocator::bitvectorLock): Deleted.
+        (JSC::MarkedAllocator::forEachBitVector): Deleted.
+        (JSC::MarkedAllocator::forEachBitVectorWithName): Deleted.
+        (JSC::MarkedAllocator::nextAllocator const): Deleted.
+        (JSC::MarkedAllocator::nextAllocatorInSubspace const): Deleted.
+        (JSC::MarkedAllocator::nextAllocatorInAlignedMemoryAllocator const): Deleted.
+        (JSC::MarkedAllocator::setNextAllocator): Deleted.
+        (JSC::MarkedAllocator::setNextAllocatorInSubspace): Deleted.
+        (JSC::MarkedAllocator::setNextAllocatorInAlignedMemoryAllocator): Deleted.
+        (JSC::MarkedAllocator::subspace const): Deleted.
+        (JSC::MarkedAllocator::freeList const): Deleted.
+        (JSC::MarkedAllocator::offsetOfFreeList): Deleted.
+        (JSC::MarkedAllocator::offsetOfCellSize): Deleted.
+        * heap/BlockDirectoryInlines.h: Copied from Source/JavaScriptCore/heap/MarkedAllocatorInlines.h.
+        (JSC::BlockDirectory::isFreeListedCell const):
+        (JSC::BlockDirectory::allocate):
+        (JSC::BlockDirectory::forEachBlock):
+        (JSC::BlockDirectory::forEachNotEmptyBlock):
+        (JSC::MarkedAllocator::isFreeListedCell const): Deleted.
+        (JSC::MarkedAllocator::allocate): Deleted.
+        (JSC::MarkedAllocator::forEachBlock): Deleted.
+        (JSC::MarkedAllocator::forEachNotEmptyBlock): Deleted.
+        * heap/CellAttributes.cpp: Copied from Source/JavaScriptCore/heap/AllocatorAttributes.cpp.
+        (JSC::CellAttributes::dump const):
+        (JSC::AllocatorAttributes::dump const): Deleted.
+        * heap/CellAttributes.h: Copied from Source/JavaScriptCore/heap/AllocatorAttributes.h.
+        (JSC::CellAttributes::CellAttributes):
+        (JSC::AllocatorAttributes::AllocatorAttributes): Deleted.
+        * heap/CompleteSubspace.cpp:
+        (JSC::CompleteSubspace::allocatorFor):
+        (JSC::CompleteSubspace::allocateNonVirtual):
+        (JSC::CompleteSubspace::allocatorForSlow):
+        (JSC::CompleteSubspace::tryAllocateSlow):
+        * heap/CompleteSubspace.h:
+        (JSC::CompleteSubspace::allocatorForSizeStep):
+        (JSC::CompleteSubspace::allocatorForNonVirtual):
+        * heap/GCDeferralContext.h:
+        * heap/Heap.cpp:
+        (JSC::Heap::updateAllocationLimits):
+        * heap/Heap.h:
+        * heap/HeapCell.h:
+        * heap/HeapCellInlines.h:
+        (JSC::HeapCell::cellAttributes const):
+        (JSC::HeapCell::destructionMode const):
+        (JSC::HeapCell::cellKind const):
+        (JSC::HeapCell::allocatorAttributes const): Deleted.
+        * heap/HeapCellType.cpp:
+        (JSC::HeapCellType::HeapCellType):
+        * heap/HeapCellType.h:
+        (JSC::HeapCellType::attributes const):
+        * heap/IncrementalSweeper.cpp:
+        (JSC::IncrementalSweeper::IncrementalSweeper):
+        (JSC::IncrementalSweeper::sweepNextBlock):
+        (JSC::IncrementalSweeper::startSweeping):
+        (JSC::IncrementalSweeper::stopSweeping):
+        * heap/IncrementalSweeper.h:
+        * heap/IsoCellSet.cpp:
+        (JSC::IsoCellSet::IsoCellSet):
+        (JSC::IsoCellSet::parallelNotEmptyMarkedBlockSource):
+        (JSC::IsoCellSet::addSlow):
+        (JSC::IsoCellSet::didRemoveBlock):
+        (JSC::IsoCellSet::sweepToFreeList):
+        * heap/IsoCellSetInlines.h:
+        (JSC::IsoCellSet::forEachMarkedCell):
+        (JSC::IsoCellSet::forEachLiveCell):
+        * heap/IsoSubspace.cpp:
+        (JSC::IsoSubspace::IsoSubspace):
+        (JSC::IsoSubspace::allocatorFor):
+        (JSC::IsoSubspace::allocateNonVirtual):
+        * heap/IsoSubspace.h:
+        (JSC::IsoSubspace::allocatorForNonVirtual):
+        * heap/LargeAllocation.h:
+        (JSC::LargeAllocation::attributes const):
+        * heap/MarkedAllocator.cpp: Removed.
+        * heap/MarkedAllocator.h: Removed.
+        * heap/MarkedAllocatorInlines.h: Removed.
+        * heap/MarkedBlock.cpp:
+        (JSC::MarkedBlock::Handle::~Handle):
+        (JSC::MarkedBlock::Handle::setIsFreeListed):
+        (JSC::MarkedBlock::Handle::stopAllocating):
+        (JSC::MarkedBlock::Handle::lastChanceToFinalize):
+        (JSC::MarkedBlock::Handle::resumeAllocating):
+        (JSC::MarkedBlock::aboutToMarkSlow):
+        (JSC::MarkedBlock::Handle::didConsumeFreeList):
+        (JSC::MarkedBlock::noteMarkedSlow):
+        (JSC::MarkedBlock::Handle::removeFromDirectory):
+        (JSC::MarkedBlock::Handle::didAddToDirectory):
+        (JSC::MarkedBlock::Handle::didRemoveFromDirectory):
+        (JSC::MarkedBlock::Handle::dumpState):
+        (JSC::MarkedBlock::Handle::subspace const):
+        (JSC::MarkedBlock::Handle::sweep):
+        (JSC::MarkedBlock::Handle::isFreeListedCell const):
+        (JSC::MarkedBlock::Handle::removeFromAllocator): Deleted.
+        (JSC::MarkedBlock::Handle::didAddToAllocator): Deleted.
+        (JSC::MarkedBlock::Handle::didRemoveFromAllocator): Deleted.
+        * heap/MarkedBlock.h:
+        (JSC::MarkedBlock::Handle::directory const):
+        (JSC::MarkedBlock::Handle::attributes const):
+        (JSC::MarkedBlock::attributes const):
+        (JSC::MarkedBlock::Handle::allocator const): Deleted.
+        * heap/MarkedBlockInlines.h:
+        (JSC::MarkedBlock::Handle::isAllocated):
+        (JSC::MarkedBlock::Handle::isLive):
+        (JSC::MarkedBlock::Handle::specializedSweep):
+        (JSC::MarkedBlock::Handle::isEmpty):
+        * heap/MarkedSpace.cpp:
+        (JSC::MarkedSpace::lastChanceToFinalize):
+        (JSC::MarkedSpace::sweep):
+        (JSC::MarkedSpace::stopAllocating):
+        (JSC::MarkedSpace::resumeAllocating):
+        (JSC::MarkedSpace::isPagedOut):
+        (JSC::MarkedSpace::freeBlock):
+        (JSC::MarkedSpace::shrink):
+        (JSC::MarkedSpace::beginMarking):
+        (JSC::MarkedSpace::endMarking):
+        (JSC::MarkedSpace::snapshotUnswept):
+        (JSC::MarkedSpace::assertNoUnswept):
+        (JSC::MarkedSpace::dumpBits):
+        (JSC::MarkedSpace::addBlockDirectory):
+        (JSC::MarkedSpace::addMarkedAllocator): Deleted.
+        * heap/MarkedSpace.h:
+        (JSC::MarkedSpace::firstDirectory const):
+        (JSC::MarkedSpace::directoryLock):
+        (JSC::MarkedSpace::forEachBlock):
+        (JSC::MarkedSpace::forEachDirectory):
+        (JSC::MarkedSpace::firstAllocator const): Deleted.
+        (JSC::MarkedSpace::allocatorLock): Deleted.
+        (JSC::MarkedSpace::forEachAllocator): Deleted.
+        * heap/MarkedSpaceInlines.h:
+        * heap/Subspace.cpp:
+        (JSC::Subspace::initialize):
+        (JSC::Subspace::prepareForAllocation):
+        (JSC::Subspace::findEmptyBlockToSteal):
+        (JSC::Subspace::parallelDirectorySource):
+        (JSC::Subspace::parallelNotEmptyMarkedBlockSource):
+        (JSC::Subspace::sweep):
+        (JSC::Subspace::parallelAllocatorSource): Deleted.
+        * heap/Subspace.h:
+        (JSC::Subspace::attributes const):
+        (JSC::Subspace::didCreateFirstDirectory):
+        (JSC::Subspace::didCreateFirstAllocator): Deleted.
+        * heap/SubspaceInlines.h:
+        (JSC::Subspace::forEachDirectory):
+        (JSC::Subspace::forEachMarkedBlock):
+        (JSC::Subspace::forEachNotEmptyMarkedBlock):
+        (JSC::Subspace::forEachAllocator): Deleted.
+        * jit/AssemblyHelpers.h:
+        (JSC::AssemblyHelpers::emitAllocateWithNonNullAllocator):
+        (JSC::AssemblyHelpers::emitAllocate):
+        (JSC::AssemblyHelpers::emitAllocateJSCell):
+        (JSC::AssemblyHelpers::emitAllocateJSObject):
+        (JSC::AssemblyHelpers::emitAllocateJSObjectWithKnownSize):
+        * jit/JIT.h:
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_new_object):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_new_object):
+        * runtime/JSDestructibleObjectHeapCellType.cpp:
+        (JSC::JSDestructibleObjectHeapCellType::JSDestructibleObjectHeapCellType):
+        * runtime/JSSegmentedVariableObjectHeapCellType.cpp:
+        (JSC::JSSegmentedVariableObjectHeapCellType::JSSegmentedVariableObjectHeapCellType):
+        * runtime/JSStringHeapCellType.cpp:
+        (JSC::JSStringHeapCellType::JSStringHeapCellType):
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        * wasm/js/JSWebAssemblyCodeBlockHeapCellType.cpp:
+        (JSC::JSWebAssemblyCodeBlockHeapCellType::JSWebAssemblyCodeBlockHeapCellType):
+
 2018-01-11  Saam Barati  <sbarati@apple.com>
 
         When inserting Unreachable in byte code parser we need to flush all the right things

@@ -77,7 +77,7 @@ public:
 private:
     unsigned possibleDefaultPropertyCount(VM&, JSObject* prototype);
 
-    MarkedAllocator* m_allocator; // Precomputed to make things easier for generated code.
+    BlockDirectory* m_allocator; // Precomputed to make things easier for generated code.
     WriteBarrier<Structure> m_structure;
     unsigned m_inlineCapacity;
 };

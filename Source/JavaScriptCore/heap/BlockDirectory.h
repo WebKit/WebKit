@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,7 +26,7 @@
 #pragma once
 
 #include "AllocationFailureMode.h"
-#include "AllocatorAttributes.h"
+#include "CellAttributes.h"
 #include "FreeList.h"
 #include "MarkedBlock.h"
 #include <wtf/DataLog.h>
@@ -42,7 +42,7 @@ class IsoCellSet;
 class MarkedSpace;
 class LLIntOffsetsExtractor;
 
-#define FOR_EACH_MARKED_ALLOCATOR_BIT(macro) \
+#define FOR_EACH_BLOCK_DIRECTORY_BIT(macro) \
     macro(live, Live) /* The set of block indices that have actual blocks. */\
     macro(empty, Empty) /* The set of all blocks that have no live objects. */ \
     macro(allocated, Allocated) /* The set of all blocks that are full of live objects. */\
@@ -65,12 +65,12 @@ class LLIntOffsetsExtractor;
 //
 // The latter is probably better. I'll leave it to a future bug to fix that, since breathing on
 // this code leads to regressions for days, and it's not clear that making this change would
-// improve perf since it would not change the collector's behavior, and either way the allocator
+// improve perf since it would not change the collector's behavior, and either way the directory
 // has to look at both bitvectors.
 // https://bugs.webkit.org/show_bug.cgi?id=162121
 
-class MarkedAllocator {
-    WTF_MAKE_NONCOPYABLE(MarkedAllocator);
+class BlockDirectory {
+    WTF_MAKE_NONCOPYABLE(BlockDirectory);
     WTF_MAKE_FAST_ALLOCATED;
     
     friend class LLIntOffsetsExtractor;
@@ -79,7 +79,7 @@ public:
     static ptrdiff_t offsetOfFreeList();
     static ptrdiff_t offsetOfCellSize();
 
-    MarkedAllocator(Heap*, size_t cellSize);
+    BlockDirectory(Heap*, size_t cellSize);
     void setSubspace(Subspace*);
     void lastChanceToFinalize();
     void prepareForAllocation();
@@ -93,7 +93,7 @@ public:
     void shrink();
     void assertNoUnswept();
     size_t cellSize() const { return m_cellSize; }
-    const AllocatorAttributes& attributes() const { return m_attributes; }
+    const CellAttributes& attributes() const { return m_attributes; }
     bool needsDestruction() const { return m_attributes.destruction == NeedsDestruction; }
     DestructionMode destruction() const { return m_attributes.destruction; }
     HeapCell::Kind cellKind() const { return m_attributes.cellKind; }
@@ -115,40 +115,40 @@ public:
     static size_t blockSizeForBytes(size_t);
     
     Lock& bitvectorLock() { return m_bitvectorLock; }
-   
-#define MARKED_ALLOCATOR_BIT_ACCESSORS(lowerBitName, capitalBitName)     \
+
+#define BLOCK_DIRECTORY_BIT_ACCESSORS(lowerBitName, capitalBitName)     \
     bool is ## capitalBitName(const AbstractLocker&, size_t index) const { return m_ ## lowerBitName[index]; } \
     bool is ## capitalBitName(const AbstractLocker& locker, MarkedBlock::Handle* block) const { return is ## capitalBitName(locker, block->index()); } \
     void setIs ## capitalBitName(const AbstractLocker&, size_t index, bool value) { m_ ## lowerBitName[index] = value; } \
     void setIs ## capitalBitName(const AbstractLocker& locker, MarkedBlock::Handle* block, bool value) { setIs ## capitalBitName(locker, block->index(), value); }
-    FOR_EACH_MARKED_ALLOCATOR_BIT(MARKED_ALLOCATOR_BIT_ACCESSORS)
-#undef MARKED_ALLOCATOR_BIT_ACCESSORS
+    FOR_EACH_BLOCK_DIRECTORY_BIT(BLOCK_DIRECTORY_BIT_ACCESSORS)
+#undef BLOCK_DIRECTORY_BIT_ACCESSORS
 
     template<typename Func>
     void forEachBitVector(const AbstractLocker&, const Func& func)
     {
-#define MARKED_ALLOCATOR_BIT_CALLBACK(lowerBitName, capitalBitName) \
+#define BLOCK_DIRECTORY_BIT_CALLBACK(lowerBitName, capitalBitName) \
         func(m_ ## lowerBitName);
-        FOR_EACH_MARKED_ALLOCATOR_BIT(MARKED_ALLOCATOR_BIT_CALLBACK);
-#undef MARKED_ALLOCATOR_BIT_CALLBACK
+        FOR_EACH_BLOCK_DIRECTORY_BIT(BLOCK_DIRECTORY_BIT_CALLBACK);
+#undef BLOCK_DIRECTORY_BIT_CALLBACK
     }
     
     template<typename Func>
     void forEachBitVectorWithName(const AbstractLocker&, const Func& func)
     {
-#define MARKED_ALLOCATOR_BIT_CALLBACK(lowerBitName, capitalBitName) \
+#define BLOCK_DIRECTORY_BIT_CALLBACK(lowerBitName, capitalBitName) \
         func(m_ ## lowerBitName, #capitalBitName);
-        FOR_EACH_MARKED_ALLOCATOR_BIT(MARKED_ALLOCATOR_BIT_CALLBACK);
-#undef MARKED_ALLOCATOR_BIT_CALLBACK
+        FOR_EACH_BLOCK_DIRECTORY_BIT(BLOCK_DIRECTORY_BIT_CALLBACK);
+#undef BLOCK_DIRECTORY_BIT_CALLBACK
     }
     
-    MarkedAllocator* nextAllocator() const { return m_nextAllocator; }
-    MarkedAllocator* nextAllocatorInSubspace() const { return m_nextAllocatorInSubspace; }
-    MarkedAllocator* nextAllocatorInAlignedMemoryAllocator() const { return m_nextAllocatorInAlignedMemoryAllocator; }
+    BlockDirectory* nextDirectory() const { return m_nextDirectory; }
+    BlockDirectory* nextDirectoryInSubspace() const { return m_nextDirectoryInSubspace; }
+    BlockDirectory* nextDirectoryInAlignedMemoryAllocator() const { return m_nextDirectoryInAlignedMemoryAllocator; }
     
-    void setNextAllocator(MarkedAllocator* allocator) { m_nextAllocator = allocator; }
-    void setNextAllocatorInSubspace(MarkedAllocator* allocator) { m_nextAllocatorInSubspace = allocator; }
-    void setNextAllocatorInAlignedMemoryAllocator(MarkedAllocator* allocator) { m_nextAllocatorInAlignedMemoryAllocator = allocator; }
+    void setNextDirectory(BlockDirectory* directory) { m_nextDirectory = directory; }
+    void setNextDirectoryInSubspace(BlockDirectory* directory) { m_nextDirectoryInSubspace = directory; }
+    void setNextDirectoryInAlignedMemoryAllocator(BlockDirectory* directory) { m_nextDirectoryInAlignedMemoryAllocator = directory; }
     
     MarkedBlock::Handle* findEmptyBlockToSteal();
     
@@ -182,10 +182,10 @@ private:
     // Mutator uses this to guard resizing the bitvectors. Those things in the GC that may run
     // concurrently to the mutator must lock this when accessing the bitvectors.
     Lock m_bitvectorLock;
-#define MARKED_ALLOCATOR_BIT_DECLARATION(lowerBitName, capitalBitName) \
+#define BLOCK_DIRECTORY_BIT_DECLARATION(lowerBitName, capitalBitName) \
     FastBitVector m_ ## lowerBitName;
-    FOR_EACH_MARKED_ALLOCATOR_BIT(MARKED_ALLOCATOR_BIT_DECLARATION)
-#undef MARKED_ALLOCATOR_BIT_DECLARATION
+    FOR_EACH_BLOCK_DIRECTORY_BIT(BLOCK_DIRECTORY_BIT_DECLARATION)
+#undef BLOCK_DIRECTORY_BIT_DECLARATION
     
     // After you do something to a block based on one of these cursors, you clear the bit in the
     // corresponding bitvector and leave the cursor where it was.
@@ -198,24 +198,24 @@ private:
 
     Lock m_lock;
     unsigned m_cellSize;
-    AllocatorAttributes m_attributes;
+    CellAttributes m_attributes;
     // FIXME: All of these should probably be references.
     // https://bugs.webkit.org/show_bug.cgi?id=166988
     Heap* m_heap { nullptr };
     Subspace* m_subspace { nullptr };
-    MarkedAllocator* m_nextAllocator { nullptr };
-    MarkedAllocator* m_nextAllocatorInSubspace { nullptr };
-    MarkedAllocator* m_nextAllocatorInAlignedMemoryAllocator { nullptr };
+    BlockDirectory* m_nextDirectory { nullptr };
+    BlockDirectory* m_nextDirectoryInSubspace { nullptr };
+    BlockDirectory* m_nextDirectoryInAlignedMemoryAllocator { nullptr };
 };
 
-inline ptrdiff_t MarkedAllocator::offsetOfFreeList()
+inline ptrdiff_t BlockDirectory::offsetOfFreeList()
 {
-    return OBJECT_OFFSETOF(MarkedAllocator, m_freeList);
+    return OBJECT_OFFSETOF(BlockDirectory, m_freeList);
 }
 
-inline ptrdiff_t MarkedAllocator::offsetOfCellSize()
+inline ptrdiff_t BlockDirectory::offsetOfCellSize()
 {
-    return OBJECT_OFFSETOF(MarkedAllocator, m_cellSize);
+    return OBJECT_OFFSETOF(BlockDirectory, m_cellSize);
 }
 
 } // namespace JSC

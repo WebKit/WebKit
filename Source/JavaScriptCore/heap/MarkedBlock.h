@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2003-2017 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003-2018 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -21,7 +21,7 @@
 
 #pragma once
 
-#include "AllocatorAttributes.h"
+#include "CellAttributes.h"
 #include "DestructionMode.h"
 #include "HeapCell.h"
 #include "IterationStatus.h"
@@ -38,7 +38,7 @@ class AlignedMemoryAllocator;
 class FreeList;
 class Heap;
 class JSCell;
-class MarkedAllocator;
+class BlockDirectory;
 class MarkedSpace;
 class SlotVisitor;
 class Subspace;
@@ -110,7 +110,7 @@ public:
 
         void lastChanceToFinalize();
 
-        MarkedAllocator* allocator() const;
+        BlockDirectory* directory() const;
         Subspace* subspace() const;
         AlignedMemoryAllocator* alignedMemoryAllocator() const;
         Heap* heap() const;
@@ -154,7 +154,7 @@ public:
         size_t cellSize();
         inline unsigned cellsPerBlock();
         
-        const AllocatorAttributes& attributes() const;
+        const CellAttributes& attributes() const;
         DestructionMode destruction() const;
         bool needsDestruction() const;
         HeapCell::Kind cellKind() const;
@@ -197,10 +197,10 @@ public:
         
         size_t index() const { return m_index; }
         
-        void removeFromAllocator();
+        void removeFromDirectory();
         
-        void didAddToAllocator(MarkedAllocator*, size_t index);
-        void didRemoveFromAllocator();
+        void didAddToDirectory(BlockDirectory*, size_t index);
+        void didRemoveFromDirectory();
         
         void dumpState(PrintStream&);
         
@@ -232,11 +232,11 @@ public:
             
         Bitmap<atomsPerBlock> m_newlyAllocated;
             
-        AllocatorAttributes m_attributes;
+        CellAttributes m_attributes;
         bool m_isFreeListed { false };
 
         AlignedMemoryAllocator* m_alignedMemoryAllocator { nullptr };
-        MarkedAllocator* m_allocator { nullptr };
+        BlockDirectory* m_directory { nullptr };
         size_t m_index { std::numeric_limits<size_t>::max() };
         WeakSet m_weakSet;
         
@@ -269,7 +269,7 @@ public:
     void clearMarked(const void*);
     
     size_t cellSize();
-    const AllocatorAttributes& attributes() const;
+    const CellAttributes& attributes() const;
     
     bool hasAnyMarked() const;
     void noteMarked();
@@ -397,9 +397,9 @@ inline MarkedBlock* MarkedBlock::blockFor(const void* p)
     return reinterpret_cast<MarkedBlock*>(reinterpret_cast<Bits>(p) & blockMask);
 }
 
-inline MarkedAllocator* MarkedBlock::Handle::allocator() const
+inline BlockDirectory* MarkedBlock::Handle::directory() const
 {
-    return m_allocator;
+    return m_directory;
 }
 
 inline AlignedMemoryAllocator* MarkedBlock::Handle::alignedMemoryAllocator() const
@@ -457,12 +457,12 @@ inline size_t MarkedBlock::cellSize()
     return m_handle.cellSize();
 }
 
-inline const AllocatorAttributes& MarkedBlock::Handle::attributes() const
+inline const CellAttributes& MarkedBlock::Handle::attributes() const
 {
     return m_attributes;
 }
 
-inline const AllocatorAttributes& MarkedBlock::attributes() const
+inline const CellAttributes& MarkedBlock::attributes() const
 {
     return m_handle.attributes();
 }
