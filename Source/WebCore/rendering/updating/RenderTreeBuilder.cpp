@@ -62,14 +62,6 @@ RenderTreeBuilder::~RenderTreeBuilder()
 
 void RenderTreeBuilder::insertChild(RenderElement& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild)
 {
-    auto insertRecursiveIfNeeded = [&](RenderElement& parentCandidate) {
-        if (&parent == &parentCandidate) {
-            parent.addChild(*this, WTFMove(child), beforeChild);
-            return;
-        }
-        insertChild(parentCandidate, WTFMove(child), beforeChild);
-    };
-
     ASSERT(&parent.view() == &m_view);
 
     if (is<RenderText>(beforeChild)) {
@@ -78,17 +70,32 @@ void RenderTreeBuilder::insertChild(RenderElement& parent, RenderPtr<RenderObjec
     }
 
     if (is<RenderTableRow>(parent)) {
-        insertRecursiveIfNeeded(tableBuilder().findOrCreateParentForChild(downcast<RenderTableRow>(parent), *child, beforeChild));
+        auto& parentCandidate = tableBuilder().findOrCreateParentForChild(downcast<RenderTableRow>(parent), *child, beforeChild);
+        if (&parent != &parentCandidate) {
+            insertChild(parentCandidate, WTFMove(child), beforeChild);
+            return;
+        }
+        parent.addChild(*this, WTFMove(child), beforeChild);
         return;
     }
 
     if (is<RenderTableSection>(parent)) {
-        insertRecursiveIfNeeded(tableBuilder().findOrCreateParentForChild(downcast<RenderTableSection>(parent), *child, beforeChild));
+        auto& parentCandidate = tableBuilder().findOrCreateParentForChild(downcast<RenderTableSection>(parent), *child, beforeChild);
+        if (&parent != &parentCandidate) {
+            insertChild(parentCandidate, WTFMove(child), beforeChild);
+            return;
+        }
+        parent.addChild(*this, WTFMove(child), beforeChild);
         return;
     }
 
     if (is<RenderTable>(parent)) {
-        insertRecursiveIfNeeded(tableBuilder().findOrCreateParentForChild(downcast<RenderTable>(parent), *child, beforeChild));
+        auto& parentCandidate = tableBuilder().findOrCreateParentForChild(downcast<RenderTable>(parent), *child, beforeChild);
+        if (&parent != &parentCandidate) {
+            insertChild(parentCandidate, WTFMove(child), beforeChild);
+            return;
+        }
+        parent.addChild(*this, WTFMove(child), beforeChild);
         return;
     }
 
