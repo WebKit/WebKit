@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -59,8 +59,11 @@ private:
 
     static void visitChildren(JSCell*, SlotVisitor&);
 
-    WriteBarrier<JSWebAssemblyInstance> m_instance;
-    WriteBarrier<JSObject> m_startFunction;
+    template<typename T>
+    using PoisonedBarrier = PoisonedWriteBarrier<WebAssemblyModuleRecordPoison, T>;
+
+    PoisonedBarrier<JSWebAssemblyInstance> m_instance;
+    PoisonedBarrier<JSObject> m_startFunction;
 };
 
 } // namespace JSC

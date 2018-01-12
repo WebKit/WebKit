@@ -51,6 +51,10 @@ enum Poison {
     JSWebAssemblyTablePoison,
     StructureTransitionTablePoison,
     UnlinkedSourceCodePoison,
+    WebAssemblyFunctionBasePoison,
+    WebAssemblyModuleRecordPoison,
+    WebAssemblyToJSCalleePoison,
+    WebAssemblyWrapperFunctionPoison,
 };
 
 } // namespace JSC

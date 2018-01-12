@@ -1,3 +1,71 @@
+2018-01-12  JF Bastien  <jfbastien@apple.com>
+
+        PoisonedWriteBarrier
+        https://bugs.webkit.org/show_bug.cgi?id=181599
+        <rdar://problem/36474351>
+
+        Reviewed by Mark Lam.
+
+        Allow poisoning of WriteBarrier objects, and use this for
+        WebAssembly because it is perf-neutral, at least on WasmBench on
+        my MBP. If it indeed is perf-neutral according to the bots, start
+        using it in more performance-sensitive places.
+
+        * heap/HandleTypes.h:
+        * heap/SlotVisitor.h:
+        * heap/SlotVisitorInlines.h:
+        (JSC::SlotVisitor::append):
+        (JSC::SlotVisitor::appendHidden):
+        * runtime/JSCJSValue.h:
+        * runtime/JSCPoison.h:
+        * runtime/Structure.h:
+        * runtime/StructureInlines.h:
+        (JSC::Structure::setPrototypeWithoutTransition):
+        (JSC::Structure::setGlobalObject):
+        (JSC::Structure::setPreviousID):
+        * runtime/WriteBarrier.h:
+        (JSC::WriteBarrierBase::copyFrom):
+        (JSC::WriteBarrierBase::get const):
+        (JSC::WriteBarrierBase::operator* const):
+        (JSC::WriteBarrierBase::operator-> const):
+        (JSC::WriteBarrierBase::clear):
+        (JSC::WriteBarrierBase::slot):
+        (JSC::WriteBarrierBase::operator bool const):
+        (JSC::WriteBarrierBase::setWithoutWriteBarrier):
+        (JSC::WriteBarrierBase::unvalidatedGet const):
+        (JSC::operator==):
+        * runtime/WriteBarrierInlines.h:
+        (JSC::Traits>::set):
+        (JSC::Traits>::setMayBeNull):
+        (JSC::Traits>::setEarlyValue):
+        (JSC::DumbValueTraits<Unknown>>::set):
+        * wasm/WasmInstance.h:
+        * wasm/js/JSWebAssemblyInstance.cpp:
+        (JSC::JSWebAssemblyInstance::JSWebAssemblyInstance):
+        (JSC::JSWebAssemblyInstance::finishCreation):
+        (JSC::JSWebAssemblyInstance::visitChildren):
+        (JSC::JSWebAssemblyInstance::create):
+        * wasm/js/JSWebAssemblyInstance.h:
+        (JSC::JSWebAssemblyInstance::offsetOfPoisonedCallee):
+        * wasm/js/JSWebAssemblyMemory.h:
+        * wasm/js/JSWebAssemblyModule.h:
+        * wasm/js/JSWebAssemblyTable.cpp:
+        (JSC::JSWebAssemblyTable::JSWebAssemblyTable):
+        (JSC::JSWebAssemblyTable::grow):
+        (JSC::JSWebAssemblyTable::clearFunction):
+        * wasm/js/JSWebAssemblyTable.h:
+        * wasm/js/WasmToJS.cpp:
+        (JSC::Wasm::materializeImportJSCell):
+        (JSC::Wasm::handleBadI64Use):
+        (JSC::Wasm::wasmToJS):
+        * wasm/js/WebAssemblyFunctionBase.h:
+        * wasm/js/WebAssemblyModuleRecord.cpp:
+        (JSC::WebAssemblyModuleRecord::link):
+        (JSC::WebAssemblyModuleRecord::evaluate):
+        * wasm/js/WebAssemblyModuleRecord.h:
+        * wasm/js/WebAssemblyToJSCallee.h:
+        * wasm/js/WebAssemblyWrapperFunction.h:
+
 2018-01-12  Saam Barati  <sbarati@apple.com>
 
         CheckStructure can be incorrectly subsumed by CheckStructureOrEmpty

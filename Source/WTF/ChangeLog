@@ -1,3 +1,26 @@
+2018-01-12  JF Bastien  <jfbastien@apple.com>
+
+        PoisonedWriteBarrier
+        https://bugs.webkit.org/show_bug.cgi?id=181599
+        <rdar://problem/36474351>
+
+        Reviewed by Mark Lam.
+
+        Supporting changes needed to allow poisoning of WriteBarrier
+        objects.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/DumbPtrTraits.h:
+        * wtf/DumbValueTraits.h: Copied from Source/WTF/wtf/DumbPtrTraits.h.
+        (WTF::DumbValueTraits::exchange):
+        (WTF::DumbValueTraits::swap):
+        (WTF::DumbValueTraits::unwrap):
+        * wtf/Forward.h:
+        * wtf/Poisoned.h:
+        (WTF::ConstExprPoisonedValueTraits::exchange):
+        (WTF::ConstExprPoisonedValueTraits::swap):
+        (WTF::ConstExprPoisonedValueTraits::unwrap):
+
 2018-01-11  Basuke Suzuki  <Basuke.Suzuki@sony.com>
 
         Remove noexcept from definition of std::tie()

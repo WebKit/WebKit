@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,6 +29,7 @@
 #include "IterationStatus.h"
 #include "MarkStack.h"
 #include "VisitRaceKey.h"
+#include <wtf/Forward.h>
 #include <wtf/MonotonicTime.h>
 #include <wtf/text/CString.h>
 
@@ -44,7 +45,7 @@ class MarkingConstraintSolver;
 class UnconditionalFinalizer;
 template<typename T> class Weak;
 class WeakReferenceHarvester;
-template<typename T> class WriteBarrierBase;
+template<typename T, typename Traits> class WriteBarrierBase;
 
 typedef uint32_t HeapVersion;
 
@@ -70,11 +71,11 @@ public:
 
     void append(ConservativeRoots&);
     
-    template<typename T> void append(const WriteBarrierBase<T>&);
-    template<typename T> void appendHidden(const WriteBarrierBase<T>&);
+    template<typename T, typename Traits> void append(const WriteBarrierBase<T, Traits>&);
+    template<typename T, typename Traits> void appendHidden(const WriteBarrierBase<T, Traits>&);
     template<typename Iterator> void append(Iterator begin , Iterator end);
-    void appendValues(const WriteBarrierBase<Unknown>*, size_t count);
-    void appendValuesHidden(const WriteBarrierBase<Unknown>*, size_t count);
+    void appendValues(const WriteBarrierBase<Unknown, DumbValueTraits<Unknown>>*, size_t count);
+    void appendValuesHidden(const WriteBarrierBase<Unknown, DumbValueTraits<Unknown>>*, size_t count);
     
     // These don't require you to prove that you have a WriteBarrier<>. That makes sense
     // for:

@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2006-2017 Apple Inc. All rights reserved.
+ *  Copyright (C) 2006-2018 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -52,6 +52,7 @@ struct FastMalloc;
 
 template<typename> class CompletionHandler;
 template<typename T> struct DumbPtrTraits;
+template<typename T> struct DumbValueTraits;
 template<typename> class Function;
 template<typename> class LazyNeverDestroyed;
 template<typename> class NeverDestroyed;
@@ -84,6 +85,8 @@ using WTF::AtomicStringImpl;
 using WTF::BinarySemaphore;
 using WTF::CString;
 using WTF::CompletionHandler;
+using WTF::DumbPtrTraits;
+using WTF::DumbValueTraits;
 using WTF::Function;
 using WTF::FunctionDispatcher;
 using WTF::HashCountedSet;

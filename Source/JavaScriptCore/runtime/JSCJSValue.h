@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2003-2017 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003-2018 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -68,8 +68,13 @@ struct ClassInfo;
 struct DumpContext;
 struct Instruction;
 struct MethodTable;
+enum class Unknown { };
 
-template <class T> class WriteBarrierBase;
+template <class T, typename Traits> class WriteBarrierBase;
+template<class T>
+using WriteBarrierTraitsSelect = typename std::conditional<std::is_same<T, Unknown>::value,
+    DumbValueTraits<T>, DumbPtrTraits<T>
+>::type;
 
 enum PreferredPrimitiveType { NoPreference, PreferNumber, PreferString };
 enum ECMAMode { StrictMode, NotStrictMode };
@@ -453,7 +458,7 @@ public:
 #endif
 
 private:
-    template <class T> JSValue(WriteBarrierBase<T>);
+    template <class T> JSValue(WriteBarrierBase<T, WriteBarrierTraitsSelect<T>>);
 
     enum HashTableDeletedValueTag { HashTableDeletedValue };
     JSValue(HashTableDeletedValueTag);

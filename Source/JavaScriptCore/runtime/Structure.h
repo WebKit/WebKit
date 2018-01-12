@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -211,7 +211,7 @@ public:
     PropertyOffset addPropertyWithoutTransition(VM&, PropertyName, unsigned attributes, const Func&);
     template<typename Func>
     PropertyOffset removePropertyWithoutTransition(VM&, PropertyName, const Func&);
-    void setPrototypeWithoutTransition(VM& vm, JSValue prototype) { m_prototype.set(vm, this, prototype); }
+    void setPrototypeWithoutTransition(VM&, JSValue prototype);
         
     bool isDictionary() const { return dictionaryKind() != NoneDictionaryKind; }
     bool isUncacheableDictionary() const { return dictionaryKind() == UncachedDictionaryKind; }
@@ -265,7 +265,7 @@ public:
 
     // NOTE: This method should only be called during the creation of structures, since the global
     // object of a structure is presumed to be immutable in a bunch of places.
-    void setGlobalObject(VM& vm, JSGlobalObject* globalObject) { m_globalObject.set(vm, this, globalObject); }
+    void setGlobalObject(VM&, JSGlobalObject*);
 
     ALWAYS_INLINE bool hasMonoProto() const
     {
@@ -738,13 +738,7 @@ private:
     PropertyTable* takePropertyTableOrCloneIfPinned(VM&);
     PropertyTable* copyPropertyTableForPinning(VM&);
 
-    void setPreviousID(VM& vm, Structure* structure)
-    {
-        if (hasRareData())
-            rareData()->setPreviousID(vm, structure);
-        else
-            m_previousOrRareData.set(vm, this, structure);
-    }
+    void setPreviousID(VM&, Structure*);
 
     void clearPreviousID()
     {

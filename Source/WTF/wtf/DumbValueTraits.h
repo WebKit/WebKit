@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,20 +29,20 @@
 #include <utility>
 
 namespace WTF {
-    
+
 template<typename T>
-struct DumbPtrTraits {
+struct DumbValueTraits {
     static constexpr uintptr_t poison = 0;
 
-    using StorageType = T*;
+    using StorageType = T;
 
     template<typename U>
-    static ALWAYS_INLINE T* exchange(StorageType& ptr, U&& newValue) { return std::exchange(ptr, newValue); }
+    static ALWAYS_INLINE T exchange(StorageType& val, U&& newValue) { return std::exchange(val, newValue); }
 
     static ALWAYS_INLINE void swap(StorageType& a, StorageType& b) { std::swap(a, b); }
-    static ALWAYS_INLINE T* unwrap(const StorageType& ptr) { return ptr; }
+    static ALWAYS_INLINE T unwrap(const StorageType& val) { return val; }
 };
 
 } // namespace WTF
 
-using WTF::DumbPtrTraits;
+using WTF::DumbValueTraits;

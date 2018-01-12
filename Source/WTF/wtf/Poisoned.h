@@ -262,6 +262,8 @@ using ConstExprPoisoned = PoisonedImpl<uintptr_t, makeConstExprPoison(key), T>;
 
 template<uint32_t key, typename T>
 struct ConstExprPoisonedPtrTraits {
+    static constexpr auto poison = makeConstExprPoison(key);
+
     using StorageType = ConstExprPoisoned<key, T*>;
 
     template<class U> static ALWAYS_INLINE T* exchange(StorageType& ptr, U&& newValue) { return ptr.exchange(newValue); }
@@ -273,6 +275,23 @@ struct ConstExprPoisonedPtrTraits {
     static ALWAYS_INLINE void swap(PoisonedImpl<K1, k1, T1>& a, PoisonedImpl<K2, k2, T2>& b) { a.swap(b); }
 
     static ALWAYS_INLINE T* unwrap(const StorageType& ptr) { return ptr.unpoisoned(); }
+};
+
+template<uint32_t key, typename T>
+struct ConstExprPoisonedValueTraits {
+    static constexpr auto poison = makeConstExprPoison(key);
+
+    using StorageType = ConstExprPoisoned<key, T>;
+
+    template<class U> static ALWAYS_INLINE T exchange(StorageType& val, U&& newValue) { return val.exchange(newValue); }
+
+    template<typename K1, K1 k1, typename T1>
+    static ALWAYS_INLINE void swap(PoisonedImpl<K1, k1, T1>& a, T1& b) { a.swap(b); }
+
+    template<typename K1, K1 k1, typename T1, typename K2, K2 k2, typename T2>
+    static ALWAYS_INLINE void swap(PoisonedImpl<K1, k1, T1>& a, PoisonedImpl<K2, k2, T2>& b) { a.swap(b); }
+
+    static ALWAYS_INLINE T unwrap(const StorageType& val) { return val.unpoisoned(); }
 };
 
 } // namespace WTF

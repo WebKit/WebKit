@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,6 +27,11 @@
 
 #include "GCAssertions.h"
 #include "HandleTypes.h"
+#include "JSCPoison.h"
+#include <type_traits>
+#include <wtf/DumbPtrTraits.h>
+#include <wtf/DumbValueTraits.h>
+#include <wtf/Poisoned.h>
 
 namespace JSC {
 
@@ -38,7 +43,12 @@ class JSCell;
 class VM;
 class JSGlobalObject;
 
-template<class T> class WriteBarrierBase;
+template<class T>
+using WriteBarrierTraitsSelect = typename std::conditional<std::is_same<T, Unknown>::value,
+    DumbValueTraits<T>, DumbPtrTraits<T>
+>::type;
+
+template<class T, typename Traits = WriteBarrierTraitsSelect<T>> class WriteBarrierBase;
 template<> class WriteBarrierBase<JSValue>;
 
 JS_EXPORT_PRIVATE void slowValidateCell(JSCell*);
@@ -66,15 +76,18 @@ template<class T> inline void validateCell(T)
 #endif
 
 // We have a separate base class with no constructors for use in Unions.
-template <typename T> class WriteBarrierBase {
+template <typename T, typename Traits> class WriteBarrierBase {
+    using StorageType = typename Traits::StorageType;
+
 public:
     void set(VM&, const JSCell* owner, T* value);
     
     // This is meant to be used like operator=, but is called copyFrom instead, in
     // order to kindly inform the C++ compiler that its advice is not appreciated.
-    void copyFrom(const WriteBarrierBase<T>& other)
+    void copyFrom(const WriteBarrierBase& other)
     {
-        m_cell = other.m_cell;
+        // FIXME add version with different Traits once needed.
+        Traits::exchange(m_cell, other.m_cell);
     }
 
     void setMayBeNull(VM&, const JSCell* owner, T* value);
@@ -86,31 +99,44 @@ public:
     T* get() const
     {
         // Copy m_cell to a local to avoid multiple-read issues. (See <http://webkit.org/b/110854>)
-        JSCell* cell = m_cell;
+        StorageType cell = m_cell;
         if (cell)
-            validateCell(cell);
-        return reinterpret_cast<T*>(static_cast<void*>(cell));
+            validateCell(reinterpret_cast<JSCell*>(static_cast<void*>(Traits::unwrap(cell))));
+        return Traits::unwrap(cell);
     }
 
     T* operator*() const
     {
-        ASSERT(m_cell);
-        validateCell<T>(static_cast<T*>(m_cell));
-        return static_cast<T*>(m_cell);
+        StorageType cell = m_cell;
+        ASSERT(cell);
+        auto unwrapped = Traits::unwrap(cell);
+        validateCell<T>(unwrapped);
+        return Traits::unwrap(unwrapped);
     }
 
     T* operator->() const
     {
-        ASSERT(m_cell);
-        validateCell(static_cast<T*>(m_cell));
-        return static_cast<T*>(m_cell);
+        StorageType cell = m_cell;
+        ASSERT(cell);
+        auto unwrapped = Traits::unwrap(cell);
+        validateCell(unwrapped);
+        return unwrapped;
     }
 
-    void clear() { m_cell = 0; }
+    void clear() { Traits::exchange(m_cell, nullptr); }
+
+    // Slot cannot be used when pointers aren't stored as-is.
+    template<typename BarrierT, typename BarrierTraits, std::enable_if_t<std::is_same<BarrierTraits, DumbPtrTraits<BarrierT>>::value, void*> = nullptr>
+    struct SlotHelper {
+        static BarrierT** reinterpret(typename BarrierTraits::StorageType* cell) { return reinterpret_cast<T**>(cell); }
+    };
+
+    T** slot()
+    {
+        return SlotHelper<T, Traits>::reinterpret(&m_cell);
+    }
     
-    T** slot() { return reinterpret_cast<T**>(&m_cell); }
-    
-    explicit operator bool() const { return m_cell; }
+    explicit operator bool() const { return !!m_cell; }
     
     bool operator!() const { return !m_cell; }
 
@@ -119,16 +145,16 @@ public:
 #if ENABLE(WRITE_BARRIER_PROFILING)
         WriteBarrierCounters::usesWithoutBarrierFromCpp.count();
 #endif
-        this->m_cell = reinterpret_cast<JSCell*>(value);
+        Traits::exchange(this->m_cell, value);
     }
 
-    T* unvalidatedGet() const { return reinterpret_cast<T*>(static_cast<void*>(m_cell)); }
+    T* unvalidatedGet() const { return Traits::unwrap(m_cell); }
 
 private:
-    JSCell* m_cell;
+    StorageType m_cell;
 };
 
-template <> class WriteBarrierBase<Unknown> {
+template <> class WriteBarrierBase<Unknown, DumbValueTraits<Unknown>> {
 public:
     void set(VM&, const JSCell* owner, JSValue);
     void setWithoutWriteBarrier(JSValue value)
@@ -165,9 +191,12 @@ private:
     EncodedJSValue m_value;
 };
 
-template <typename T> class WriteBarrier : public WriteBarrierBase<T> {
+template <typename T, typename Traits = WriteBarrierTraitsSelect<T>>
+class WriteBarrier : public WriteBarrierBase<T, Traits> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
+    static constexpr auto poison = Traits::poison;
+
     WriteBarrier()
     {
         this->setWithoutWriteBarrier(0);
@@ -192,9 +221,12 @@ public:
 };
 
 enum UndefinedWriteBarrierTagType { UndefinedWriteBarrierTag };
-template <> class WriteBarrier<Unknown> : public WriteBarrierBase<Unknown> {
+template <>
+class WriteBarrier<Unknown, DumbValueTraits<Unknown>> : public WriteBarrierBase<Unknown, DumbValueTraits<Unknown>> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
+    static constexpr auto poison = DumbValueTraits<Unknown>::poison;
+
     WriteBarrier()
     {
         this->setWithoutWriteBarrier(JSValue());
@@ -216,9 +248,18 @@ public:
     }
 };
 
-template <typename U, typename V> inline bool operator==(const WriteBarrierBase<U>& lhs, const WriteBarrierBase<V>& rhs)
+template <typename U, typename V, typename TraitsU, typename TraitsV>
+inline bool operator==(const WriteBarrierBase<U, TraitsU>& lhs, const WriteBarrierBase<V, TraitsV>& rhs)
 {
     return lhs.get() == rhs.get();
 }
+
+template<uint32_t key, class T>
+using PoisonedWriteBarrierTraitsSelect = typename std::conditional<std::is_same<T, Unknown>::value,
+    WTF::ConstExprPoisonedValueTraits<key, T>, WTF::ConstExprPoisonedPtrTraits<key, T>
+>::type;
+
+template <uint32_t key, typename T>
+using PoisonedWriteBarrier = WriteBarrier<T, PoisonedWriteBarrierTraitsSelect<key, T>>;
 
 } // namespace JSC

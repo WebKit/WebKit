@@ -54,7 +54,7 @@ JSWebAssemblyInstance::JSWebAssemblyInstance(VM& vm, Structure* structure, Ref<W
     , m_instance(WTFMove(instance))
 {
     for (unsigned i = 0; i < this->instance().numImportFunctions(); ++i)
-        new (this->instance().importFunction<WriteBarrier<JSObject>>(i)) WriteBarrier<JSObject>();
+        new (this->instance().importFunction<PoisonedBarrier<JSObject>>(i)) PoisonedBarrier<JSObject>();
 }
 
 void JSWebAssemblyInstance::finishCreation(VM& vm, JSWebAssemblyModule* module, JSModuleNamespaceObject* moduleNamespaceObject)
@@ -65,7 +65,7 @@ void JSWebAssemblyInstance::finishCreation(VM& vm, JSWebAssemblyModule* module, 
     m_module.set(vm, this, module);
     m_moduleNamespaceObject.set(vm, this, moduleNamespaceObject);
     m_callee.set(vm, this, module->callee());
-    
+
     heap()->reportExtraMemoryAllocated(m_instance->extraMemoryAllocated());
 }
 
@@ -88,7 +88,7 @@ void JSWebAssemblyInstance::visitChildren(JSCell* cell, SlotVisitor& visitor)
     visitor.append(thisObject->m_callee);
     visitor.reportExtraMemoryVisited(thisObject->m_instance->extraMemoryAllocated());
     for (unsigned i = 0; i < thisObject->instance().numImportFunctions(); ++i)
-        visitor.append(*thisObject->instance().importFunction<WriteBarrier<JSObject>>(i)); // This also keeps the functions' JSWebAssemblyInstance alive.
+        visitor.append(*thisObject->instance().importFunction<PoisonedBarrier<JSObject>>(i)); // This also keeps the functions' JSWebAssemblyInstance alive.
 }
 
 void JSWebAssemblyInstance::finalizeCreation(VM& vm, ExecState* exec, Ref<Wasm::CodeBlock>&& wasmCodeBlock)
@@ -236,7 +236,7 @@ JSWebAssemblyInstance* JSWebAssemblyInstance::create(VM& vm, ExecState* exec, JS
             auto* info = jsInstance->instance().importFunctionInfo(numImportFunctions);
             info->targetInstance = calleeInstance;
             info->wasmEntrypoint = wasmEntrypoint;
-            jsInstance->instance().importFunction<WriteBarrier<JSObject>>(numImportFunctions)->set(vm, jsInstance, function);
+            jsInstance->instance().importFunction<PoisonedBarrier<JSObject>>(numImportFunctions)->set(vm, jsInstance, function);
             ++numImportFunctions;
             // v. Append closure to imports.
             break;
