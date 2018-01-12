@@ -562,9 +562,9 @@ void RenderBlock::addChildIgnoringContinuation(RenderTreeBuilder& builder, Rende
                 ) {
                 // Insert the child into the anonymous block box instead of here.
                 if (newChild->isInline() || beforeChild->parent()->firstChild() != beforeChild)
-                    builder.insertChild(*beforeChild->parent(), WTFMove(newChild), beforeChild);
+                    beforeChild->parent()->addChild(builder, WTFMove(newChild), beforeChild);
                 else
-                    builder.insertChild(*this, WTFMove(newChild), beforeChild->parent());
+                    addChild(builder, WTFMove(newChild), beforeChild->parent());
                 return;
             }
 
