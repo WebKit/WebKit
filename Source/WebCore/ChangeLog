@@ -1,5 +1,20 @@
 2018-01-12  Fujii Hironori  <Hironori.Fujii@sony.com>
 
+        [Win][CMake] Remove all-in-one file for WebCore DerivedSources
+        https://bugs.webkit.org/show_bug.cgi?id=181582
+
+        Reviewed by Alex Christensen.
+
+        Those source files are compiled in unified source build nowadays.
+
+        No new tests (No behavior change)
+
+        * CMakeLists.txt: Removed calling PROCESS_ALLINONE_FILE.
+        * DerivedSources.cpp: Removed.
+        * WebCoreMacros.cmake: Removed a macro PROCESS_ALLINONE_FILE.
+
+2018-01-12  Fujii Hironori  <Hironori.Fujii@sony.com>
+
         [WinCairo][CMake] Use ${CURL_LIBRARY} instead of specifying the library name libcurl_imp explicitly
         https://bugs.webkit.org/show_bug.cgi?id=181578
 
