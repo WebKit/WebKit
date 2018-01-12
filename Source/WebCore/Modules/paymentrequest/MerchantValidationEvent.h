@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,31 +27,31 @@
 
 #if ENABLE(PAYMENT_REQUEST)
 
-#include "PaymentRequest.h"
-#include "PaymentSessionBase.h"
-#include <wtf/Function.h>
-
-namespace JSC {
-class JSValue;
-}
+#include "Event.h"
+#include "URL.h"
 
 namespace WebCore {
 
+class DOMPromise;
 class Document;
+class PaymentRequest;
 
-class PaymentHandler : public virtual PaymentSessionBase {
+class MerchantValidationEvent final : public Event {
 public:
-    static RefPtr<PaymentHandler> create(Document&, PaymentRequest&, const PaymentRequest::MethodIdentifier&);
-    static ExceptionOr<void> canCreateSession(Document&);
-    static bool hasActiveSession(Document&);
+    static Ref<MerchantValidationEvent> create(const AtomicString&, const URL&, PaymentRequest&);
 
-    virtual ExceptionOr<void> convertData(JSC::JSValue&&) = 0;
-    virtual ExceptionOr<void> show() = 0;
-    virtual void hide() = 0;
-    virtual void canMakePayment(WTF::Function<void(bool)>&& completionHandler) = 0;
-    virtual ExceptionOr<void> detailsUpdated(const AtomicString& eventType, const String& error) = 0;
-    virtual ExceptionOr<void> merchantValidationCompleted(JSC::JSValue&&) = 0;
-    virtual void complete(std::optional<PaymentComplete>&&) = 0;
+    const String& validationURL() const { return m_validationURL.string(); }
+    ExceptionOr<void> complete(Ref<DOMPromise>&&);
+
+private:
+    MerchantValidationEvent(const AtomicString&, const URL&, PaymentRequest&);
+
+    // Event
+    EventInterface eventInterface() const final;
+
+    bool m_isCompleted { false };
+    URL m_validationURL;
+    Ref<PaymentRequest> m_paymentRequest;
 };
 
 } // namespace WebCore

@@ -92,12 +92,12 @@ async function getPaymentRequestResponse(options, id) {
     ],
   };
   const request = new PaymentRequest(methods, details, options);
-  request.onshippingaddresschange = ev => ev.updateWith(details);
-  request.onshippingoptionchange = ev => ev.updateWith(details);
-  request.onapplepayvalidatemerchant = ev => {
-      ev.complete({});
+  request.onshippingaddresschange = ev => {
+      ev.updateWith(details);
       internals.mockPaymentCoordinator.acceptPayment();
   };
+  request.onshippingoptionchange = ev => ev.updateWith(details);
+  request.onmerchantvalidation = ev => ev.complete({});
   const response = await activateThen(() => request.show());
   return { request, response };
 }

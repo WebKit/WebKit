@@ -43,6 +43,5 @@
 
     attribute EventHandler onshippingaddresschange;
     attribute EventHandler onshippingoptionchange;
-
-    [Conditional=APPLE_PAY] attribute EventHandler onapplepayvalidatemerchant;
+    attribute EventHandler onmerchantvalidation;
 };

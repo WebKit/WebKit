@@ -64,6 +64,7 @@ private:
     void hide() final;
     void canMakePayment(WTF::Function<void(bool)>&& completionHandler) final;
     ExceptionOr<void> detailsUpdated(const AtomicString& eventType, const String& error) final;
+    ExceptionOr<void> merchantValidationCompleted(JSC::JSValue&&) final;
     void complete(std::optional<PaymentComplete>&&) final;
 
     // PaymentSession

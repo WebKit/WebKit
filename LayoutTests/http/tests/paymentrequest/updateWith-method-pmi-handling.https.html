@@ -70,7 +70,7 @@ function runTest(button, { invalidMethod }) {
       validDetails,
       { requestShipping: true }
     );
-    request.onapplepayvalidatemerchant = event => {
+    request.onmerchantvalidation = event => {
         event.complete({ });
     };
     const listener = ev => {

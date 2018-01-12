@@ -30,7 +30,6 @@
 
 #include "ApplePayContactField.h"
 #include "ApplePayMerchantCapability.h"
-#include "ApplePayMerchantValidationEvent.h"
 #include "ApplePayModifier.h"
 #include "ApplePayPayment.h"
 #include "ApplePaySessionPaymentRequest.h"
@@ -40,11 +39,13 @@
 #include "JSApplePayRequest.h"
 #include "LinkIconCollector.h"
 #include "MainFrame.h"
+#include "MerchantValidationEvent.h"
 #include "Page.h"
 #include "Payment.h"
 #include "PaymentAuthorizationStatus.h"
 #include "PaymentContact.h"
 #include "PaymentCoordinator.h"
+#include "PaymentMerchantSession.h"
 #include "PaymentMethod.h"
 #include "PaymentRequestValidator.h"
 #include "PaymentResponse.h"
@@ -318,6 +319,23 @@ ExceptionOr<void> ApplePayPaymentHandler::detailsUpdated(const AtomicString& eve
     return { };
 }
 
+ExceptionOr<void> ApplePayPaymentHandler::merchantValidationCompleted(JSC::JSValue&& merchantSessionValue)
+{
+    if (!paymentCoordinator().hasActiveSession())
+        return Exception { InvalidStateError };
+
+    if (!merchantSessionValue.isObject())
+        return Exception { TypeError };
+
+    String errorMessage;
+    auto merchantSession = PaymentMerchantSession::fromJS(*document().execState(), asObject(merchantSessionValue), errorMessage);
+    if (!merchantSession)
+        return Exception { TypeError, WTFMove(errorMessage) };
+
+    paymentCoordinator().completeMerchantValidation(*merchantSession);
+    return { };
+}
+
 ExceptionOr<void> ApplePayPaymentHandler::shippingAddressUpdated(const String& error)
 {
     ShippingContactUpdate update;
@@ -399,7 +417,7 @@ unsigned ApplePayPaymentHandler::version() const
 void ApplePayPaymentHandler::validateMerchant(const URL& validationURL)
 {
     if (validationURL.isValid())
-        m_paymentRequest->dispatchEvent(ApplePayMerchantValidationEvent::create(eventNames().applepayvalidatemerchantEvent, validationURL).get());
+        m_paymentRequest->dispatchEvent(MerchantValidationEvent::create(eventNames().merchantvalidationEvent, validationURL, m_paymentRequest.get()).get());
 }
 
 static Ref<PaymentAddress> convert(const ApplePayPaymentContact& contact)

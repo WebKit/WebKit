@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>Test for the merchantvalidation event.</title>
+<script src="/js-test-resources/ui-helper.js"></script>
+<script src="/resources/payment-request.js"></script>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<body>
+<script>
+setup({ explicit_done: true, explicit_timeout: true });
+const applePay = Object.freeze({
+    supportedMethods: "https://apple.com/apple-pay",
+    data: {
+        version: 2,
+        merchantIdentifier: '',
+        merchantCapabilities: ['supports3DS'],
+        supportedNetworks: ['visa', 'masterCard'],
+        countryCode: 'US',
+    },
+});
+const validMethods = Object.freeze([applePay]);
+const validAmount = Object.freeze({ currency: "USD", value: "5.00" });
+const validTotal = Object.freeze({
+    label: "label",
+    amount: validAmount,
+});
+const validDetails = Object.freeze({
+    total: validTotal,
+});
+
+user_activation_test(async t => {
+    const request = new PaymentRequest(
+        validMethods,
+        validDetails
+    );
+    request.onmerchantvalidation = event => {
+        assert_equals(event.validationURL, "https://webkit.org/");
+        event.complete({ });
+        assert_throws("InvalidStateError", () => event.complete({ }));
+        request.abort();
+    };
+    await promise_rejects(t, "AbortError", request.show());
+}, "Calling complete() twice throws an InvalidStateError.");
+
+user_activation_test(async t => {
+    const request = new PaymentRequest(
+        validMethods,
+        validDetails
+    );
+    request.onmerchantvalidation = event => {
+        assert_equals(event.validationURL, "https://webkit.org/");
+        request.abort();
+        assert_throws("InvalidStateError", () => event.complete({ }));
+    };
+    await promise_rejects(t, "AbortError", request.show());
+}, "Calling complete() after abort() throws an InvalidStateError.");
+
+user_activation_test(async t => {
+    const request = new PaymentRequest(
+        validMethods,
+        validDetails
+    );
+    request.onmerchantvalidation = event => {
+        assert_equals(event.validationURL, "https://webkit.org/");
+        event.complete(new Promise((resolve, reject) => reject()));
+    };
+    await promise_rejects(t, "AbortError", request.show());
+}, "Calling complete() with a promise that is rejected aborts the request.");
+
+user_activation_test(async t => {
+    const request = new PaymentRequest(
+        validMethods,
+        validDetails
+    );
+    request.onmerchantvalidation = event => {
+        assert_equals(event.validationURL, "https://webkit.org/");
+        event.complete(new Promise(resolve => resolve(7)));
+    };
+    await promise_rejects(t, new TypeError(), request.show());
+}, "Calling complete() with a number aborts the request with a TypeError.");
+
+user_activation_test(async t => {
+    const request = new PaymentRequest(
+        validMethods,
+        validDetails
+    );
+    request.onmerchantvalidation = event => {
+        assert_equals(event.validationURL, "https://webkit.org/");
+        event.complete(new Promise(resolve => resolve(undefined)));
+    };
+    await promise_rejects(t, new TypeError(), request.show());
+}, "Calling complete() with undefined aborts the request with a TypeError.");
+
+user_activation_test(async t => {
+    const request = new PaymentRequest(
+        validMethods,
+        validDetails
+    );
+    request.onmerchantvalidation = event => {
+        assert_equals(event.validationURL, "https://webkit.org/");
+        event.complete(new Promise(resolve => resolve(null)));
+    };
+    await promise_rejects(t, new TypeError(), request.show());
+}, "Calling complete() with null aborts the request with a TypeError.");
+
+user_activation_test(async t => {
+    const request = new PaymentRequest(
+        validMethods,
+        validDetails
+    );
+    request.onmerchantvalidation = event => {
+        assert_equals(event.validationURL, "https://webkit.org/");
+        event.complete(new Promise(resolve => resolve("")));
+    };
+    await promise_rejects(t, new TypeError(), request.show());
+}, "Calling complete() with a string aborts the request with a TypeError.");
+
+user_activation_test(async t => {
+    const request = new PaymentRequest(
+        validMethods,
+        validDetails
+    );
+    request.onmerchantvalidation = event => {
+        assert_equals(event.validationURL, "https://webkit.org/");
+        event.complete(new Promise(resolve => resolve({ })));
+    };
+    request.onshippingaddresschange = event => {
+        event.updateWith(validDetails);
+        internals.mockPaymentCoordinator.acceptPayment();
+    };
+
+    const response = await request.show();
+    response.complete("success");
+}, "Calling complete() with a promise resolving to a valid merchant session does not abort the request.");
+
+user_activation_test(async t => {
+    const request = new PaymentRequest(
+        validMethods,
+        validDetails
+    );
+    request.onmerchantvalidation = event => {
+        assert_equals(event.validationURL, "https://webkit.org/");
+        event.complete({ });
+    };
+    request.onshippingaddresschange = event => {
+        event.updateWith(validDetails);
+        internals.mockPaymentCoordinator.acceptPayment();
+    };
+
+    const response = await request.show();
+    response.complete("success");
+}, "Calling complete() with a valid merchant session does not abort the request.");
+
+done();
+</script>
+
