@@ -1,3 +1,22 @@
+2018-01-12  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Support JSX (React) syntax highlighting
+        https://bugs.webkit.org/show_bug.cgi?id=181607
+        <rdar://problem/36442564>
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Base/MIMETypeUtilities.js:
+        (WI.mimeTypeForFileExtension):
+        (WI.fileExtensionForMIMEType):
+        * UserInterface/Models/Resource.js:
+        Support the jsx extension and mime types.
+
+        * UserInterface/Main.html:
+        * Scripts/update-codemirror-resources.rb:
+        * UserInterface/External/CodeMirror/jsx.js: Added.
+        Include new mode from CodeMirror@d8926768.
+
 2018-01-11  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Rename "Query String" section as "Query String Parameters" for clarity

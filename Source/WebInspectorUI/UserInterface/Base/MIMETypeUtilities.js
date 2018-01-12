@@ -54,6 +54,7 @@ WI.mimeTypeForFileExtension = function(extension)
         "coffee": "text/x-coffeescript",
         "ls": "text/x-livescript",
         "ts": "text/typescript",
+        "jsx": "text/jsx",
 
         // Stylesheet types.
         "css": "text/css",
@@ -100,6 +101,7 @@ WI.fileExtensionForMIMEType = function(mimeType)
         "text/x-coffeescript": "coffee",
         "text/x-livescript": "ls",
         "text/typescript": "ts",
+        "text/jsx": "jsx",
 
         // Stylesheet types.
         "text/css": "css",

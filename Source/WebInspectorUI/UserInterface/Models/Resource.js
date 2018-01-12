@@ -1165,6 +1165,8 @@ WI.Resource._mimeTypeMap = {
     "text/livescript": WI.Resource.Type.Script,
     "text/x-livescript": WI.Resource.Type.Script,
     "text/typescript": WI.Resource.Type.Script,
+    "text/typescript-jsx": WI.Resource.Type.Script,
+    "text/jsx": WI.Resource.Type.Script,
     "text/x-clojure": WI.Resource.Type.Script,
-    "text/x-coffeescript": WI.Resource.Type.Script
+    "text/x-coffeescript": WI.Resource.Type.Script,
 };
