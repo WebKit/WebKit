@@ -1,3 +1,18 @@
+2018-01-11  Jason Marcell  <jmarcell@apple.com>
+
+        Cherry-pick r226758. rdar://problem/36450739
+
+    2018-01-10  Per Arne Vollan  <pvollan@apple.com>
+
+            [Win] WebKitLegacy should be a dll, not a static library.
+            https://bugs.webkit.org/show_bug.cgi?id=181500
+
+            Reviewed by Alex Christensen.
+
+            Set WebKitLegacy library type to shared.
+
+            * Source/cmake/OptionsWin.cmake:
+
 2018-01-05  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         REGRESSION(r226306)[Win][CMake] Unnecessary recompilations triggered by unconditionally copied header files of DerivedSources
