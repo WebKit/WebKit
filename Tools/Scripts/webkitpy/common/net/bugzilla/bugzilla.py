@@ -139,6 +139,9 @@ class BugzillaQueries(object):
     # This is kinda a hack.  There is probably a better way to get this information from bugzilla.
     def _parse_result_count(self, results_page):
         result_count_text = BeautifulSoup(results_page).find(attrs={'class': 'bz_result_count'}).string
+        if result_count_text is None:
+            _log.warn("BeautifulSoup returned None while finding class: bz_result_count in:\n{}".format(results_page))
+            return 0
         result_count_parts = result_count_text.strip().split(" ")
         if result_count_parts[0] == "Zarro":
             return 0
@@ -162,6 +165,7 @@ class BugzillaQueries(object):
             bug_id = int(results_url.split("=")[-1])
             return [self._fetch_bug(bug_id)]
         if not self._parse_result_count(results_page):
+            _log.warn('Failed to find bugs for {}'.format(results_url))
             return []
         # Bugzilla results pages have an "XML" submit button at the bottom
         # which can be used to get an XML page containing all of the <bug> elements.
