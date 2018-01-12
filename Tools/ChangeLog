@@ -1,3 +1,18 @@
+2018-01-11  Jonathan Bedard  <jbedard@apple.com>
+
+        webkitpy: Use partially disambiguated type in SimulatedDeviceManager._disambiguate_device_type
+        https://bugs.webkit.org/show_bug.cgi?id=181538
+        <rdar://problem/36440580>
+
+        Reviewed by Aakash Jain.
+
+        When disambiguating a device type, it is possible that the provided device type is sufficiently
+        ambiguous that the comparisons against complete device types without a disambiguated hardware_family
+        will result in a failure to disambiguate the type.
+
+        * Scripts/webkitpy/xcode/new_simulated_device.py:
+        (SimulatedDeviceManager._disambiguate_device_type):
+
 2018-01-11  Brent Fulgham  <bfulgham@apple.com>
 
         REGRESSION(r219530): ResourceLoadStatisticsPersistentStorage should be read-only in ephemeral sessions

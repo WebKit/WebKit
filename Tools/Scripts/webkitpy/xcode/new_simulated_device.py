@@ -194,32 +194,33 @@ class SimulatedDeviceManager(object):
 
     @staticmethod
     def _disambiguate_device_type(device_type):
-        full_type = DeviceType(
+        # Copy by value since we do not want to modify the DeviceType passed in.
+        full_device_type = DeviceType(
             hardware_family=device_type.hardware_family,
             hardware_type=device_type.hardware_type,
             software_version=device_type.software_version,
             software_variant=device_type.software_variant)
 
-        runtime = SimulatedDeviceManager.get_runtime_for_device_type(device_type)
+        runtime = SimulatedDeviceManager.get_runtime_for_device_type(full_device_type)
         assert runtime is not None
-        full_type.software_version = runtime.version
+        full_device_type.software_version = runtime.version
 
-        if device_type.hardware_family is None:
+        if full_device_type.hardware_family is None:
             # We use the existing devices to determine a legal family if no family is specified
             for device in SimulatedDeviceManager.AVAILABLE_DEVICES:
-                if device.platform_device.device_type == device_type:
-                    full_type.hardware_family = device.platform_device.device_type.hardware_family
+                if device.platform_device.device_type == full_device_type:
+                    full_device_type.hardware_family = device.platform_device.device_type.hardware_family
                     break
 
-        if device_type.hardware_type is None:
+        if full_device_type.hardware_type is None:
             # Again, we use the existing devices to determine a legal hardware type
             for device in SimulatedDeviceManager.AVAILABLE_DEVICES:
-                if device.platform_device.device_type == device_type:
-                    full_type.hardware_type = device.platform_device.device_type.hardware_type
+                if device.platform_device.device_type == full_device_type:
+                    full_device_type.hardware_type = device.platform_device.device_type.hardware_type
                     break
 
-        full_type.check_consistency()
-        return full_type
+        full_device_type.check_consistency()
+        return full_device_type
 
     @staticmethod
     def _get_device_identifier_for_type(device_type):
