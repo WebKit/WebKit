@@ -43,8 +43,10 @@
             var fixed = document.getElementById('fixed');
             var absolute = document.getElementById('absolute');
 
-            debug('layoutViewport: ' + stringFromRect(internals.layoutViewportRect()));
-            debug('visualViewportRect: ' + stringFromRect(internals.visualViewportRect()));
+            if (window.internals) {
+                debug('layoutViewport: ' + stringFromRect(internals.layoutViewportRect()));
+                debug('visualViewportRect: ' + stringFromRect(internals.visualViewportRect()));
+            }
 
             debug('fixed client bounds: ' + stringFromRect(fixed.getBoundingClientRect()));
             debug('fixed client rect: ' + stringFromRect(fixed.getClientRects()[0]));
@@ -55,9 +57,6 @@
 
         function doTest()
         {
-            if (!window.testRunner)
-                return;
-
             if (window.eventSender)
                 eventSender.zoomPageIn();
 
