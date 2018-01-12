@@ -1481,6 +1481,62 @@ Object.defineProperty(Array.prototype, "binaryIndexOf",
             return this[requestAnimationFrameProxySymbol];
         }
     });
+
+    const throttleTimeoutSymbol = Symbol("throttle-timeout");
+
+    Object.defineProperty(Object.prototype, "throttle",
+    {
+        value(delay)
+        {
+            console.assert(delay >= 0);
+
+            let lastFireTime = NaN;
+            let mostRecentArguments = null;
+
+            return new Proxy(this, {
+                get(target, property, receiver) {
+                    return (...args) => {
+                        let original = target[property];
+                        console.assert(typeof original === "function");
+                        mostRecentArguments = args;
+
+                        function performWork() {
+                            lastFireTime = Date.now();
+                            original[throttleTimeoutSymbol] = undefined;
+                            original.apply(target, mostRecentArguments);
+                        }
+
+                        if (isNaN(lastFireTime)) {
+                            performWork();
+                            return;
+                        }
+
+                        let remaining = delay - (Date.now() - lastFireTime);
+                        if (remaining <= 0) {
+                            original.cancelThrottle();
+                            performWork();
+                            return;
+                        }
+
+                        if (!original[throttleTimeoutSymbol])
+                            original[throttleTimeoutSymbol] = setTimeout(performWork, remaining);
+                    };
+                }
+            });
+        }
+    });
+
+    Object.defineProperty(Function.prototype, "cancelThrottle",
+    {
+        value()
+        {
+            if (!this[throttleTimeoutSymbol])
+                return;
+
+            clearTimeout(this[throttleTimeoutSymbol]);
+            this[throttleTimeoutSymbol] = undefined;
+        }
+    });
 })();
 
 function appendWebInspectorSourceURL(string)

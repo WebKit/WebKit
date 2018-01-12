@@ -34,6 +34,7 @@ WI.RecordingContentView = class RecordingContentView extends WI.ContentView
         this._index = NaN;
         this._snapshots = [];
         this._initialContent = null;
+        this._throttler = this.throttle(200);
 
         this.element.classList.add("recording", this.representedObject.type);
 
@@ -113,13 +114,11 @@ WI.RecordingContentView = class RecordingContentView extends WI.ContentView
             this._updateSliderValue();
 
             if (this.representedObject.type === WI.Recording.Type.Canvas2D)
-                this._generateContentCanvas2D(index, actions, options);
+                this._throttler._generateContentCanvas2D(index, actions, options);
             else if (this.representedObject.type === WI.Recording.Type.CanvasWebGL)
-                this._generateContentCanvasWebGL(index, actions, options);
+                this._throttler._generateContentCanvasWebGL(index, actions, options);
         });
     }
-
-    // Protected
 
     shown()
     {
@@ -134,6 +133,15 @@ WI.RecordingContentView = class RecordingContentView extends WI.ContentView
         }
     }
 
+    hidden()
+    {
+        super.hidden();
+
+        this._generateContentCanvas2D.cancelThrottle();
+        this._generateContentCanvasWebGL.cancelThrottle();
+    }
+
+    // Protected
 
     get supportsSave()
     {
