@@ -25,6 +25,8 @@
 
 #pragma once
 
+#if ENABLE(ENCRYPTED_MEDIA)
+
 #include "CDMFactory.h"
 #include "CDMPrivate.h"
 
@@ -75,3 +77,5 @@ public:
 };
 
 }
+
+#endif // ENABLE(ENCRYPTED_MEDIA)
