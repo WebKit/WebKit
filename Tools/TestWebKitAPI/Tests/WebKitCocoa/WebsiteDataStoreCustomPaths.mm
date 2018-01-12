@@ -219,4 +219,46 @@ TEST(WebKit, WebsiteDataStoreCustomPaths)
     EXPECT_FALSE([WKWebsiteDataStore _defaultDataStoreExists]);
 }
 
+TEST(WebKit, WebsiteDataStoreEphemeral)
+{
+    RetainPtr<WebsiteDataStoreCustomPathsMessageHandler> handler = adoptNS([[WebsiteDataStoreCustomPathsMessageHandler alloc] init]);
+    RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [[configuration userContentController] addScriptMessageHandler:handler.get() name:@"testHandler"];
+
+    NSURL *defaultResourceLoadStatisticsPath = [NSURL fileURLWithPath:[@"~/Library/WebKit/TestWebKitAPI/WebsiteData/ResourceLoadStatistics/" stringByExpandingTildeInPath] isDirectory:YES];
+
+    [[NSFileManager defaultManager] removeItemAtURL:defaultResourceLoadStatisticsPath error:nil];
+
+    EXPECT_FALSE([[NSFileManager defaultManager] fileExistsAtPath:defaultResourceLoadStatisticsPath.path]);
+
+    configuration.get().websiteDataStore = [WKWebsiteDataStore nonPersistentDataStore];
+    [configuration.get().websiteDataStore _setResourceLoadStatisticsEnabled:YES];
+
+    // We expect the directory to be created by starting up the data store machinery, but not the data file.
+    EXPECT_TRUE([[NSFileManager defaultManager] fileExistsAtPath:defaultResourceLoadStatisticsPath.path]);
+
+    NSURL *defaultResourceLoadStatisticsFilePath = [NSURL fileURLWithPath:[@"~/Library/WebKit/TestWebKitAPI/WebsiteData/ResourceLoadStatistics/full_browsing_session_resourceLog.plist" stringByExpandingTildeInPath] isDirectory:NO];
+    EXPECT_FALSE([[NSFileManager defaultManager] fileExistsAtPath:defaultResourceLoadStatisticsFilePath.path]);
+
+    RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+
+    NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"WebsiteDataStoreCustomPaths" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
+    [webView loadRequest:request];
+
+    [[[webView configuration] processPool] _syncNetworkProcessCookies];
+
+    // Forcibly shut down everything of WebKit that we can.
+    [[[webView configuration] processPool] _terminateStorageProcess];
+    auto pid = [webView _webProcessIdentifier];
+    if (pid)
+        kill(pid, SIGKILL);
+
+    webView = nil;
+    handler = nil;
+    configuration = nil;
+
+    EXPECT_TRUE([[NSFileManager defaultManager] fileExistsAtPath:defaultResourceLoadStatisticsPath.path]);
+    EXPECT_FALSE([[NSFileManager defaultManager] fileExistsAtPath:defaultResourceLoadStatisticsFilePath.path]);
+}
+
 #endif

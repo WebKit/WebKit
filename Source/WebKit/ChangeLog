@@ -1,3 +1,43 @@
+2018-01-11  Brent Fulgham  <bfulgham@apple.com>
+
+        REGRESSION(r219530): ResourceLoadStatisticsPersistentStorage should be read-only in ephemeral sessions
+        https://bugs.webkit.org/show_bug.cgi?id=181136
+        <rdar://problem/36116604>
+
+        Reviewed by Chris Dumez.
+
+        Some uses of WebKit involve running a UIProcess as an ephemeral session for the life of the process. In this
+        case, we do not initialize the data path for the set of load statistics triggering an assertion.
+
+        We actually intended ephemeral sessions to consume the existing resource load data (presumably captured during
+        non-ephemeral browsing). This would be a read-only mode, where it would not add new entries to the load
+        statistics, but would take advantage of existing observations. Currently that does not happen (for this type
+        of WebKit embed), which forces each run as an ephemeral session to build up in-memory browsing data until it has
+        enough observations to begin modifying loads.
+
+        We need to set the ResourceLoadStatisticsPersistentStorage object to a "read only" mode in this case, so
+        that it read (but does not write) from this database.
+
+        Tested by ephemeral website data TestWebKitAPI tests.
+
+        * UIProcess/ResourceLoadStatisticsPersistentStorage.cpp:
+        (WebKit::ResourceLoadStatisticsPersistentStorage::create): Added to allow creation of the right style of
+        Persistent Storage.
+        (WebKit::ResourceLoadStatisticsPersistentStorage::ResourceLoadStatisticsPersistentStorage): Initialize the
+        new data member.
+        (WebKit::ResourceLoadStatisticsPersistentStorage::asyncWriteTimerFired): RELEASE_ASSERT that we never run
+        this method when in "read only" mode.
+        (WebKit::ResourceLoadStatisticsPersistentStorage::writeMemoryStoreToDisk): Ditto.
+        (WebKit::ResourceLoadStatisticsPersistentStorage::scheduleOrWriteMemoryStore): Return early if asked to
+        schedule a write operation for a "read only" persistent store.
+        (WebKit::ResourceLoadStatisticsPersistentStorage::finishAllPendingWorkSynchronously): RELEASE_ASSERT if we
+        ever shut down in "read only" mode with an active write timer.
+        * UIProcess/ResourceLoadStatisticsPersistentStorage.h:
+        * UIProcess/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::WebResourceLoadStatisticsStore): Pass a flag indicating whether the
+        storage session is ephemeral or not.
+        * UIProcess/WebResourceLoadStatisticsStore.h:
+
 2018-01-11  Keith Rollin  <krollin@apple.com>
 
         Add optional logging of ITP-related user interaction information

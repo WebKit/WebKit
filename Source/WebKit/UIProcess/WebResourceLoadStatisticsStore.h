@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -65,9 +65,9 @@ public:
     using HasStorageAccessForFrameHandler = WTF::Function<void(const String& resourceDomain, const String& firstPartyDomain, uint64_t frameID, uint64_t pageID, WTF::Function<void(bool hasAccess)>&& callback)>;
     using GrantStorageAccessForFrameHandler = WTF::Function<void(const String& resourceDomain, const String& firstPartyDomain, uint64_t frameID, uint64_t pageID, WTF::Function<void(bool wasGranted)>&& callback)>;
     using RemovePrevalentDomainsHandler = WTF::Function<void (const Vector<String>&)>;
-    static Ref<WebResourceLoadStatisticsStore> create(const String& resourceLoadStatisticsDirectory, Function<void (const String&)>&& testingCallback, UpdatePrevalentDomainsToPartitionOrBlockCookiesHandler&& updatePrevalentDomainsToPartitionOrBlockCookiesHandler = [](const Vector<String>&, const Vector<String>&, const Vector<String>&, ShouldClearFirst) { }, HasStorageAccessForFrameHandler&& hasStorageAccessForFrameHandler = [](const String&, const String&, uint64_t, uint64_t, WTF::Function<void(bool)>&&) { }, GrantStorageAccessForFrameHandler&& grantStorageAccessForFrameHandler = [](const String&, const String&, uint64_t, uint64_t, WTF::Function<void(bool)>&&) { }, RemovePrevalentDomainsHandler&& removeDomainsHandler = [] (const Vector<String>&) { })
+    static Ref<WebResourceLoadStatisticsStore> create(const String& resourceLoadStatisticsDirectory, Function<void (const String&)>&& testingCallback, bool isEphemeral, UpdatePrevalentDomainsToPartitionOrBlockCookiesHandler&& updatePrevalentDomainsToPartitionOrBlockCookiesHandler = [](const Vector<String>&, const Vector<String>&, const Vector<String>&, ShouldClearFirst) { }, HasStorageAccessForFrameHandler&& hasStorageAccessForFrameHandler = [](const String&, const String&, uint64_t, uint64_t, WTF::Function<void(bool)>&&) { }, GrantStorageAccessForFrameHandler&& grantStorageAccessForFrameHandler = [](const String&, const String&, uint64_t, uint64_t, WTF::Function<void(bool)>&&) { }, RemovePrevalentDomainsHandler&& removeDomainsHandler = [] (const Vector<String>&) { })
     {
-        return adoptRef(*new WebResourceLoadStatisticsStore(resourceLoadStatisticsDirectory, WTFMove(testingCallback), WTFMove(updatePrevalentDomainsToPartitionOrBlockCookiesHandler), WTFMove(hasStorageAccessForFrameHandler), WTFMove(grantStorageAccessForFrameHandler), WTFMove(removeDomainsHandler)));
+        return adoptRef(*new WebResourceLoadStatisticsStore(resourceLoadStatisticsDirectory, WTFMove(testingCallback), isEphemeral, WTFMove(updatePrevalentDomainsToPartitionOrBlockCookiesHandler), WTFMove(hasStorageAccessForFrameHandler), WTFMove(grantStorageAccessForFrameHandler), WTFMove(removeDomainsHandler)));
     }
 
     ~WebResourceLoadStatisticsStore();
@@ -143,7 +143,7 @@ public:
     void logTestingEvent(const String&);
 
 private:
-    WebResourceLoadStatisticsStore(const String&, Function<void(const String&)>&& testingCallback, UpdatePrevalentDomainsToPartitionOrBlockCookiesHandler&&, HasStorageAccessForFrameHandler&&, GrantStorageAccessForFrameHandler&&, RemovePrevalentDomainsHandler&&);
+    WebResourceLoadStatisticsStore(const String&, Function<void(const String&)>&& testingCallback, bool isEphemeral, UpdatePrevalentDomainsToPartitionOrBlockCookiesHandler&&, HasStorageAccessForFrameHandler&&, GrantStorageAccessForFrameHandler&&, RemovePrevalentDomainsHandler&&);
 
     void removeDataRecords();
 

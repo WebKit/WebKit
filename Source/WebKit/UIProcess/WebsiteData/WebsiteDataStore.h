@@ -86,6 +86,8 @@ public:
         String resourceLoadStatisticsDirectory;
         String javaScriptConfigurationDirectory;
         String cookieStorageFile;
+
+        explicit Configuration();
     };
     static Ref<WebsiteDataStore> createNonPersistent();
     static Ref<WebsiteDataStore> create(Configuration, PAL::SessionID);

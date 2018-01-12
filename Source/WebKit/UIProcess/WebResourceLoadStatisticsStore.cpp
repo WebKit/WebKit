@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -147,9 +147,9 @@ static Vector<OperatingDate> mergeOperatingDates(const Vector<OperatingDate>& ex
     return mergedDates;
 }
 
-WebResourceLoadStatisticsStore::WebResourceLoadStatisticsStore(const String& resourceLoadStatisticsDirectory, Function<void(const String&)>&& testingCallback, UpdatePrevalentDomainsToPartitionOrBlockCookiesHandler&& updatePrevalentDomainsToPartitionOrBlockCookiesHandler, HasStorageAccessForFrameHandler&& hasStorageAccessForFrameHandler, GrantStorageAccessForFrameHandler&& grantStorageAccessForFrameHandler, RemovePrevalentDomainsHandler&& removeDomainsHandler)
+WebResourceLoadStatisticsStore::WebResourceLoadStatisticsStore(const String& resourceLoadStatisticsDirectory, Function<void(const String&)>&& testingCallback, bool isEphemeral, UpdatePrevalentDomainsToPartitionOrBlockCookiesHandler&& updatePrevalentDomainsToPartitionOrBlockCookiesHandler, HasStorageAccessForFrameHandler&& hasStorageAccessForFrameHandler, GrantStorageAccessForFrameHandler&& grantStorageAccessForFrameHandler, RemovePrevalentDomainsHandler&& removeDomainsHandler)
     : m_statisticsQueue(WorkQueue::create("WebResourceLoadStatisticsStore Process Data Queue", WorkQueue::Type::Serial, WorkQueue::QOS::Utility))
-    , m_persistentStorage(*this, resourceLoadStatisticsDirectory)
+    , m_persistentStorage(*this, resourceLoadStatisticsDirectory, isEphemeral ? ResourceLoadStatisticsPersistentStorage::IsReadOnly::Yes : ResourceLoadStatisticsPersistentStorage::IsReadOnly::No)
     , m_updatePrevalentDomainsToPartitionOrBlockCookiesHandler(WTFMove(updatePrevalentDomainsToPartitionOrBlockCookiesHandler))
     , m_hasStorageAccessForFrameHandler(WTFMove(hasStorageAccessForFrameHandler))
     , m_grantStorageAccessForFrameHandler(WTFMove(grantStorageAccessForFrameHandler))

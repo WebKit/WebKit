@@ -1,3 +1,19 @@
+2018-01-11  Brent Fulgham  <bfulgham@apple.com>
+
+        REGRESSION(r219530): ResourceLoadStatisticsPersistentStorage should be read-only in ephemeral sessions
+        https://bugs.webkit.org/show_bug.cgi?id=181136
+        <rdar://problem/36116604>
+
+        Reviewed by Chris Dumez.
+
+        Add a new API test to confirm that ResourceLoadStatistics can be turned on safely for ephemeral
+        browsing sessions.
+
+        * Scripts/run-gtk-tests:
+        (GtkTestRunner): Unskip test now that it passes.
+        * TestWebKitAPI/Tests/WebKitCocoa/WebsiteDataStoreCustomPaths.mm:
+        (TEST): Add new WebsiteDataStoreEphemeral test.
+
 2018-01-11  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r226816.

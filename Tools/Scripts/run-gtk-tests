@@ -43,7 +43,6 @@ class GtkTestRunner(TestRunner):
         SkippedTest("WebKit2Gtk/TestWebViewEditor", "/webkit2/WebKitWebView/editable/editable", "Test hits an assertion in Debug builds", 151654, "Debug"),
         SkippedTest("WebKit2Gtk/TestWebExtensions", "/webkit2/WebKitWebView/install-missing-plugins-permission-request", "Test times out", 147822),
         SkippedTest("WebKit2Gtk/TestWebsiteData", "/webkit2/WebKitWebsiteData/databases", "Test fails to clear database data", 181251),
-        SkippedTest("WebKit2Gtk/TestWebsiteData", "/webkit2/WebKitWebsiteData/ephemeral", "Test hits an assertion in Debug builds", 181136, "Debug"),
         SkippedTest("WebKit/TestWebKit", "WebKit.MouseMoveAfterCrash", "Test is flaky", 85066),
         SkippedTest("WebKit/TestWebKit", "WebKit.NewFirstVisuallyNonEmptyLayoutForImages", "Test is flaky", 85066),
         SkippedTest("WebKit/TestWebKit", "WebKit.NewFirstVisuallyNonEmptyLayoutFrames", "Test fails", 85037),

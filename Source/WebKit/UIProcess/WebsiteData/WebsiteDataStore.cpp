@@ -28,6 +28,7 @@
 
 #include "APIProcessPoolConfiguration.h"
 #include "APIWebsiteDataRecord.h"
+#include "APIWebsiteDataStore.h"
 #include "NetworkProcessMessages.h"
 #include "StorageManager.h"
 #include "StorageProcessCreationParameters.h"
@@ -76,6 +77,11 @@ Ref<WebsiteDataStore> WebsiteDataStore::createNonPersistent()
 Ref<WebsiteDataStore> WebsiteDataStore::create(Configuration configuration, PAL::SessionID sessionID)
 {
     return adoptRef(*new WebsiteDataStore(WTFMove(configuration), sessionID));
+}
+
+WebsiteDataStore::Configuration::Configuration()
+    : resourceLoadStatisticsDirectory(API::WebsiteDataStore::defaultResourceLoadStatisticsDirectory())
+{
 }
 
 WebsiteDataStore::WebsiteDataStore(Configuration configuration, PAL::SessionID sessionID)
@@ -1401,7 +1407,7 @@ void WebsiteDataStore::enableResourceLoadStatisticsAndSetTestingCallback(Functio
     }
 
 #if HAVE(CFNETWORK_STORAGE_PARTITIONING)
-    m_resourceLoadStatistics = WebResourceLoadStatisticsStore::create(m_configuration.resourceLoadStatisticsDirectory, WTFMove(callback), [this, protectedThis = makeRef(*this)] (const Vector<String>& domainsToPartition, const Vector<String>& domainsToBlock, const Vector<String>& domainsToNeitherPartitionNorBlock, ShouldClearFirst shouldClearFirst) {
+    m_resourceLoadStatistics = WebResourceLoadStatisticsStore::create(m_configuration.resourceLoadStatisticsDirectory, WTFMove(callback), m_sessionID.isEphemeral(), [this, protectedThis = makeRef(*this)] (const Vector<String>& domainsToPartition, const Vector<String>& domainsToBlock, const Vector<String>& domainsToNeitherPartitionNorBlock, ShouldClearFirst shouldClearFirst) {
         updatePrevalentDomainsToPartitionOrBlockCookies(domainsToPartition, domainsToBlock, domainsToNeitherPartitionNorBlock, shouldClearFirst);
     }, [this, protectedThis = makeRef(*this)] (const String& resourceDomain, const String& firstPartyDomain, uint64_t frameID, uint64_t pageID, WTF::CompletionHandler<void(bool hasAccess)>&& callback) {
         hasStorageAccessForFrameHandler(resourceDomain, firstPartyDomain, frameID, pageID, WTFMove(callback));
@@ -1411,7 +1417,7 @@ void WebsiteDataStore::enableResourceLoadStatisticsAndSetTestingCallback(Functio
         removePrevalentDomains(domainsToRemove);
     });
 #else
-    m_resourceLoadStatistics = WebResourceLoadStatisticsStore::create(m_configuration.resourceLoadStatisticsDirectory, WTFMove(callback));
+    m_resourceLoadStatistics = WebResourceLoadStatisticsStore::create(m_configuration.resourceLoadStatisticsDirectory, WTFMove(callback), m_sessionID.isEphemeral());
 #endif
 
     for (auto& processPool : processPools())
