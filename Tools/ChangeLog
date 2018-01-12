@@ -1,3 +1,19 @@
+2018-01-12  Jonathan Bedard  <jbedard@apple.com>
+
+        webkitpy: Refactor simulator code (Part 4)
+        https://bugs.webkit.org/show_bug.cgi?id=180555
+        <rdar://problem/36131381>
+
+        Reviewed by Aakash Jain.
+
+        Move new_simulated_device.py to simulated_device.py.
+
+        * Scripts/webkitpy/port/ios_simulator.py: Update import statement.
+        * Scripts/webkitpy/xcode/new_simulated_device.py: Removed.
+        * Scripts/webkitpy/xcode/new_simulated_device_unittest.py: Removed.
+        * Scripts/webkitpy/xcode/simulated_device.py: Copied from Tools/Scripts/webkitpy/xcode/new_simulated_device.py.
+        * Scripts/webkitpy/xcode/simulated_device_unittest.py: Copied from Tools/Scripts/webkitpy/xcode/new_simulated_device_unittest.py.
+
 2018-01-12  Alex Christensen  <achristensen@webkit.org>
 
         REGRESSION (r226818): API test WebKitLegacy.LoadInvalidURLRequest is failing

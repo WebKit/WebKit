@@ -26,7 +26,7 @@ from webkitpy.common.memoized import memoized
 from webkitpy.common.version import Version
 from webkitpy.port.ios import IOSPort
 from webkitpy.xcode.device_type import DeviceType
-from webkitpy.xcode.new_simulated_device import DeviceRequest, SimulatedDeviceManager
+from webkitpy.xcode.simulated_device import DeviceRequest, SimulatedDeviceManager
 
 
 _log = logging.getLogger(__name__)

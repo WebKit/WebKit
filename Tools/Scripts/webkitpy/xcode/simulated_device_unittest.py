@@ -479,7 +479,7 @@ from webkitpy.common.system.filesystem_mock import MockFileSystem
 from webkitpy.common.system.systemhost_mock import MockSystemHost
 from webkitpy.common.version import Version
 from webkitpy.xcode.device_type import DeviceType
-from webkitpy.xcode.new_simulated_device import DeviceRequest, SimulatedDeviceManager, SimulatedDevice
+from webkitpy.xcode.simulated_device import DeviceRequest, SimulatedDeviceManager, SimulatedDevice
 
 
 class SimulatedDeviceTest(unittest.TestCase):
