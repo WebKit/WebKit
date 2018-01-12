@@ -967,6 +967,16 @@ typedef NS_OPTIONS(NSUInteger, UIDragOperation)
 - (void)forceReloadInputViews;
 @end
 
+#if __has_include(<UIKit/UITextInputMultiDocument.h>)
+#import <UIKit/UITextAutofillSuggestion.h>
+#else
+@protocol UITextAutofillSuggestion <NSObject>
+@optional
+- (void)_restoreFocusWithToken:(id <NSCopying, NSSecureCoding>)token completion:(void (^)(BOOL didRestore))completion;
+- (void)_preserveFocusWithToken:(id <NSCopying, NSSecureCoding>)token destructively:(BOOL)destructively;
+@end
+#endif
+
 @interface UIResponder ()
 - (UIResponder *)firstResponder;
 @end

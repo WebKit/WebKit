@@ -1,3 +1,21 @@
+2018-01-12  Megan Gardner  <megan_gardner@apple.com>
+
+        Implement MultiDocument protocol for restoring focus to a WKWebView
+        https://bugs.webkit.org/show_bug.cgi?id=181510
+
+        Reviewed by Dan Bernstein.
+
+        Support the UIKit protocol for restoring focus to a what previously had focus.
+        WebKit already knows what node was previously being focused by the DOM, we merely
+        need to be asked to turn the focus on again.
+        Resubmitting https://trac.webkit.org/changeset/226826 as it broke internal builds
+
+        * Platform/spi/ios/UIKitSPI.h:
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _restoreFocusWithToken:]):
+        (-[WKContentView _preserveFocusWithToken:destructively:]):
+
 2018-01-12  Youenn Fablet  <youenn@apple.com>
 
         WebProcess should pass the registration identifier and not the worker identifier for fetch events
