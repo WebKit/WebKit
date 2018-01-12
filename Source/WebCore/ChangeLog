@@ -1,5 +1,21 @@
 2018-01-12  Jason Marcell  <jmarcell@apple.com>
 
+        Apply patch. rdar://problem/36303061
+
+    Disable WebKit features we don't want to ship after branching
+    <rdar://problem/36303061>
+
+    2018-01-12  Maciej Stachowiak  <mjs@apple.com>
+
+            Disable WebKit features we don't want to ship after branching
+            <rdar://problem/36303061>
+
+            Reviewed by Maciej Stachowiak.
+
+            * Configurations/FeatureDefines.xcconfig:
+
+2018-01-12  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r226905. rdar://problem/36483899
 
     2018-01-12  Jer Noble  <jer.noble@apple.com>
