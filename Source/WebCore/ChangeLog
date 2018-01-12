@@ -1,3 +1,25 @@
+2018-01-11  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Don't load inline data when requesting info for an attachment element backed by a file path
+        https://bugs.webkit.org/show_bug.cgi?id=181550
+
+        Reviewed by Tim Horton.
+
+        When requesting data for an attachment element that is backed by a file path, we currently trigger a load in the
+        web process to fetch contents of the attachment data as inline data in the AttachmentInfo. This is unnecessary,
+        since the file path of the attachment element must have come from the UI process anyways, so it is sufficient to
+        simply send the file path to the UI process and have the UI process read the contents of the path as a memory-
+        mapped NSData.
+
+        This patch lets HTMLAttachmentElement skip over resource loading codepaths when creating an AttachmentInfo for
+        the client, and also teaches _WKAttachment to read a AttachmentInfo's filepath as memory-mapped data if a file
+        path is present, and no inline data was specified.
+
+        Covered by existing API tests.
+
+        * html/HTMLAttachmentElement.cpp:
+        (WebCore::HTMLAttachmentElement::requestInfo):
+
 2018-01-10  Ryosuke Niwa  <rniwa@webkit.org>
 
         Make elements of zero width or height focusable

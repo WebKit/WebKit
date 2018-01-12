@@ -304,8 +304,14 @@ void HTMLAttachmentElement::requestInfo(Function<void(const AttachmentInfo&)>&& 
         return;
     }
 
-    m_attachmentReaders.append(AttachmentDataReader::create(*this, [protectedFile = makeRef(*m_file), callback = WTFMove(callback)] (RefPtr<SharedBuffer>&& data) {
-        callback({ protectedFile->type(), protectedFile->name(), protectedFile->path(), WTFMove(data) });
+    AttachmentInfo infoWithoutData { m_file->type(), m_file->name(), m_file->path(), nullptr };
+    if (!m_file->path().isEmpty()) {
+        callback(infoWithoutData);
+        return;
+    }
+
+    m_attachmentReaders.append(AttachmentDataReader::create(*this, [infoWithoutData = WTFMove(infoWithoutData), protectedFile = makeRef(*m_file), callback = WTFMove(callback)] (RefPtr<SharedBuffer>&& data) {
+        callback({ infoWithoutData.contentType, infoWithoutData.name, infoWithoutData.filePath, WTFMove(data) });
     }));
 }
 

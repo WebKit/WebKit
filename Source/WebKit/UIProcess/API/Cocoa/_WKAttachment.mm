@@ -74,6 +74,7 @@ using namespace WebKit;
     RetainPtr<NSString> _name;
     RetainPtr<NSString> _filePath;
     RetainPtr<NSString> _contentType;
+    RetainPtr<NSError> _fileLoadingError;
 }
 
 - (instancetype)initWithInfo:(const WebCore::AttachmentInfo&)info
@@ -85,6 +86,13 @@ using namespace WebKit;
     _contentType = adoptNS([(NSString *)info.contentType ?: @"" copy]);
     _name = adoptNS([(NSString *)info.name ?: @"" copy]);
     _filePath = adoptNS([(NSString *)info.filePath ?: @"" copy]);
+    _fileLoadingError = nil;
+
+    if (!_data && [_filePath length]) {
+        NSError *error = nil;
+        _data = [NSData dataWithContentsOfFile:_filePath.get() options:NSDataReadingMappedIfSafe error:&error];
+        _fileLoadingError = error;
+    }
 
     return self;
 }
@@ -107,6 +115,11 @@ using namespace WebKit;
 - (NSString *)contentType
 {
     return _contentType.get();
+}
+
+- (NSError *)fileLoadingError
+{
+    return _fileLoadingError.get();
 }
 
 @end
@@ -135,6 +148,11 @@ using namespace WebKit;
         }
 
         auto attachmentInfo = adoptNS([[_WKAttachmentInfo alloc] initWithInfo:info]);
+        if (NSError *fileLoadingError = [attachmentInfo fileLoadingError]) {
+            capturedBlock(nil, [NSError errorWithDomain:WKErrorDomain code:WKErrorUnknown userInfo:@{ NSUnderlyingErrorKey : fileLoadingError }]);
+            return;
+        }
+
         capturedBlock(attachmentInfo.get(), nil);
     });
 }
