@@ -1,5 +1,25 @@
 2018-01-12  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r226840. rdar://problem/36479468
+
+    2018-01-11  Michael Saboff  <msaboff@apple.com>
+
+            REGRESSION(226788): AppStore Crashed @ JavaScriptCore: JSC::MacroAssemblerARM64::pushToSaveImmediateWithoutTouchingRegisters
+            https://bugs.webkit.org/show_bug.cgi?id=181570
+
+            Reviewed by Keith Miller.
+
+            * assembler/MacroAssemblerARM64.h:
+            (JSC::MacroAssemblerARM64::abortWithReason):
+            Reverting these functions to use dataTempRegister and memoryTempRegister as they are
+            JIT release asserts that will crash the program.
+
+            (JSC::MacroAssemblerARM64::pushToSaveImmediateWithoutTouchingRegisters):
+            Changed this so that it invalidates any cached dataTmpRegister contents if temp register
+            caching is enabled.
+
+2018-01-12  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r226822. rdar://problem/36458924
 
     2018-01-11  Filip Pizlo  <fpizlo@apple.com>
