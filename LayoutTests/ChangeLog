@@ -1,3 +1,16 @@
+2018-01-11  Jason Marcell  <jmarcell@apple.com>
+
+        Cherry-pick r226527. rdar://problem/36429143
+
+    2018-01-08  Basuke Suzuki  <Basuke.Suzuki@sony.com>
+
+            [WinCairo] Add default port TestExpectations for wincairo
+            https://bugs.webkit.org/show_bug.cgi?id=179221
+
+            Reviewed by Alex Christensen.
+
+            * platform/wincairo-win10/TestExpectations: Added.
+
 2018-01-09  Jason Marcell  <jmarcell@apple.com>
 
         Cherry-pick r226638. rdar://problem/36392286
