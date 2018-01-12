@@ -198,6 +198,7 @@ public:
     DOMWindow* frames() const { return self(); }
 
     DOMWindow* opener() const;
+    void disownOpener();
     DOMWindow* parent() const;
     DOMWindow* top() const;
 

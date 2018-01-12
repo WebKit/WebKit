@@ -466,4 +466,16 @@ DOMWindow* JSDOMWindow::toWrapped(VM& vm, JSValue value)
     return nullptr;
 }
 
+void JSDOMWindow::setOpener(JSC::ExecState& state, JSC::JSValue value)
+{
+    if (!BindingSecurity::shouldAllowAccessToDOMWindow(&state, wrapped(), ThrowSecurityError))
+        return;
+
+    if (value.isNull()) {
+        wrapped().disownOpener();
+        return;
+    }
+    replaceStaticPropertySlot(state.vm(), this, Identifier::fromString(&state.vm(), "opener"), value);
+}
+
 } // namespace WebCore

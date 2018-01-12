@@ -1,0 +1,36 @@
+<DOCTYPE html>
+<html>
+<body>
+<script src="../../../resources/js-test.js"></script>
+<script>
+description("Tests shadowing of window.opener property");
+
+shouldBeNull("window.opener");
+evalAndLog("desc = Object.getOwnPropertyDescriptor(window, 'opener')");
+shouldBeType("desc.get", "Function");
+shouldBeType("desc.set", "Function");
+shouldBeTrue("desc.enumerable");
+shouldBeTrue("desc.configurable");
+
+openerGetter = desc.get;
+
+shouldNotThrow("window.opener = 'foo'");
+evalAndLog("desc = Object.getOwnPropertyDescriptor(window, 'opener')");
+
+shouldBeEqualToString("desc.value", "foo");
+shouldBeTrue("desc.writable");
+shouldBeTrue("desc.enumerable");
+shouldBeTrue("desc.configurable");
+
+shouldBeNull("openerGetter.call(window)");
+
+shouldNotThrow("delete window.opener");
+shouldBeUndefined("window.opener");
+
+shouldBeNull("openerGetter.call(window)");
+
+evalAndLog("desc = Object.getOwnPropertyDescriptor(window, 'opener')");
+shouldBeUndefined("desc");
+</script>
+</body>
+</html>

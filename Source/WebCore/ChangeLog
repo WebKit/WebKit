@@ -1,3 +1,27 @@
+2018-01-11  Chris Dumez  <cdumez@apple.com>
+
+        Setting Window.opener to null should disown its opener
+        https://bugs.webkit.org/show_bug.cgi?id=181505
+        <rdar://problem/36443151>
+
+        Reviewed by Ryosuke Niwa.
+
+        Setting Window.opener to null should disown its opener as per:
+        - https://html.spec.whatwg.org/#dom-opener
+
+        With this change, tabs opened by clicking link inside Gmail no
+        longer have the Gmail window as opener.
+
+        Tests: fast/dom/Window/window-opener-set-to-null.html
+               fast/dom/Window/window-opener-shadowing.html
+
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::setOpener):
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::disownOpener):
+        * page/DOMWindow.h:
+        * page/DOMWindow.idl:
+
 2018-01-11  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [Cocoa] Star character disappears when bolded

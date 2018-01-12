@@ -1,0 +1,28 @@
+<DOCTYPE html>
+<html>
+<body>
+<script src="../../../resources/js-test.js"></script>
+<script>
+description("Tests that setting window.opener to null disown its opener");
+jsTestIsAsync = true;
+
+onload = function() {
+  if (window.testRunner)
+    testRunner.setCanOpenWindows();
+
+  newWindow = open("resources/blank.html");
+  newWindow.onload = function() {
+    shouldBe("newWindow.opener", "window");
+
+    openerGetter = Object.getOwnPropertyDescriptor(newWindow, "opener").get;
+
+    shouldNotThrow("newWindow.opener = null");
+    shouldBeNull("newWindow.opener");
+    shouldBeNull("openerGetter.call(newWindow)");
+
+    finishJSTest();
+  };
+};
+</script>
+</body>
+</html>
