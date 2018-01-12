@@ -1,21 +1,14 @@
 <!DOCTYPE html>
 <html>
 <head>
-<script>
-if (window.internals) {
-    internals.settings.setFontLoadTimingOverride("Block");
-    internals.settings.setShouldIgnoreFontLoadCompletions(true);
-}
-</script>
 <style>
 @font-face {
     font-family: "MyFont";
-    src: url("../../resources/Ahem.ttf") format("truetype");
+    src: url("../../../resources/Ahem.ttf") format("truetype");
 }
 </style>
 </head>
 <body>
 This test makes sure that text being drawn during the "block" period while the font is still loading is rendered as invisible. The test passes if there is no text below.
-<div style="font: 100px 'MyFont';">Hello</div>
 </body>
 </html>
