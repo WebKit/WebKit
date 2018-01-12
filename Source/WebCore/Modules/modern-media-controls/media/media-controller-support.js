@@ -90,6 +90,11 @@ class MediaControllerSupport
         // Implemented by subclasses.
     }
 
+    controlsUserVisibilityDidChange()
+    {
+        // Implement by subclasses.
+    }
+
     handleEvent(event)
     {
         // Implemented by subclasses.
