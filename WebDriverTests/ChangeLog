@@ -3,6 +3,14 @@
         Unreviewed. Update W3C WebDriver imported tests.
 
         * imported/w3c/importer.json:
+        * imported/w3c/webdriver/tests/sessions/new_session/invalid_capabilities.py:
+        * imported/w3c/webdriver/tests/sessions/new_session/support/create.py:
+
+2018-01-10  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Update W3C WebDriver imported tests.
+
+        * imported/w3c/importer.json:
         * imported/w3c/tools/wptrunner/wptrunner/browsers/firefox.py:
         * imported/w3c/tools/wptrunner/wptrunner/browsers/servo.py:
         * imported/w3c/tools/wptrunner/wptrunner/environment.py:
