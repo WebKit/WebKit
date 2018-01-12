@@ -1,3 +1,97 @@
+2018-01-11  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebAuthN] Import a CBOR coder from Chromium
+        https://bugs.webkit.org/show_bug.cgi?id=181522
+        <rdar://problem/36055729>
+
+        Reviewed by Brent Fulgham.
+
+        This patch imports a CBOR coder including encoder and decoder from Chromium. CBOR encoder
+        is needed for WebAuthN to encode attestation object into binaries. When supporting extensions
+        in the future, CBOR encoder/decoder will be needed as well. Implementating and maintaining
+        a fully-fledged CBOR coder doesn't seem to align with WebKit's best interests. Therefore,
+        importing a most suitable third party implementation will be wise.
+
+        In this patch, it fully integrate the whole coder into our codebase. Those changes includes:
+            1. Substitute data structures that enjoy a better WTF version.
+            2. Replacing marcos.
+            3. Implementating workarounds for some functionalities that we lack fundamental types' support.
+            4. Changing the coding style to match ours.
+
+        This patch doesn't intend to improve the logic of the original codebase. Hence some of the
+        coding logic might not match what WebKit ususally has.
+
+        Here is a full list of Chromium changes that constructed this CBOR coder in chronological order:
+        6efcf495521d18d060027762f48bb292d6979136,
+        9eb43fd347890b4c6cf54c4bd7ec1bbb88e381e1,
+        31c85e74fd567772f18e0a41be468d04af721f21,
+        68672fdcad280a8ff69b91927d38d0eabf2c87f2,
+        0ca8667c0584fb21c0748ebd7468d32889759a07,
+        df763d790d7e45d70116bdefacbfd4f9faa8995e,
+        6d30c4a621c65314db63eb56e87c19ab75627b26,
+        50fe92953f4739f17a62303fedbf8db9234317c8,
+        47be22c3603424d1832d046a348ff3f982500288,
+        98a59e46948b2c71608926004fac8192b0ff2208,
+        07540c6d850ed6e0fa508d63c20a8ce96d751de6,
+        06ae32d640c8e4b86ea8914a80ee419ea16e56d8.
+
+        Covered by API tests.
+
+        * Modules/webauthn/cbor/CBORBinary.h: Added.
+        * Modules/webauthn/cbor/CBORReader.cpp: Added.
+        (cbor::CBORReader::CBORReader):
+        (cbor::CBORReader::~CBORReader):
+        (cbor::CBORReader::read):
+        (cbor::CBORReader::decodeCBOR):
+        (cbor::CBORReader::readVariadicLengthInteger):
+        (cbor::CBORReader::decodeValueToNegative):
+        (cbor::CBORReader::decodeValueToUnsigned):
+        (cbor::CBORReader::readSimpleValue):
+        (cbor::CBORReader::readString):
+        Workarounds applied.
+        (cbor::CBORReader::readBytes):
+        (cbor::CBORReader::readCBORArray):
+        (cbor::CBORReader::readCBORMap):
+        (cbor::CBORReader::canConsume):
+        (cbor::CBORReader::checkMinimalEncoding):
+        (cbor::CBORReader::checkExtraneousData):
+        (cbor::CBORReader::checkDuplicateKey):
+        (cbor::CBORReader::hasValidUTF8Format):
+        Workarounds applied.
+        (cbor::CBORReader::checkOutOfOrderKey):
+        (cbor::CBORReader::getErrorCode):
+        (cbor::CBORReader::errorCodeToString):
+        * Modules/webauthn/cbor/CBORReader.h: Added.
+        * Modules/webauthn/cbor/CBORValue.cpp: Added.
+        (cbor::CBORValue::CBORValue):
+        (cbor::CBORValue::operator=):
+        (cbor::CBORValue::~CBORValue):
+        (cbor::CBORValue::clone const):
+        (cbor::CBORValue::getInteger const):
+        (cbor::CBORValue::getUnsigned const):
+        (cbor::CBORValue::getNegative const):
+        (cbor::CBORValue::getString const):
+        (cbor::CBORValue::getByteString const):
+        (cbor::CBORValue::getArray const):
+        (cbor::CBORValue::getMap const):
+        (cbor::CBORValue::getSimpleValue const):
+        (cbor::CBORValue::internalMoveConstructFrom):
+        (cbor::CBORValue::internalCleanup):
+        * Modules/webauthn/cbor/CBORValue.h: Added.
+        * Modules/webauthn/cbor/CBORWriter.cpp: Added.
+        (cbor::CBORWriter::~CBORWriter):
+        (cbor::CBORWriter::write):
+        (cbor::CBORWriter::CBORWriter):
+        (cbor::CBORWriter::encodeCBOR):
+        Workarounds applied.
+        (cbor::CBORWriter::startItem):
+        (cbor::CBORWriter::setAdditionalInformation):
+        (cbor::CBORWriter::setUint):
+        (cbor::CBORWriter::getNumUintBytes):
+        * Modules/webauthn/cbor/CBORWriter.h: Added.
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+
 2018-01-11  Chris Dumez  <cdumez@apple.com>
 
         Setting Window.opener to null should disown its opener

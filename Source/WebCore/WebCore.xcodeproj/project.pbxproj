@@ -1641,6 +1641,10 @@
 		5721A9871ECE53B10081295A /* CryptoDigestAlgorithm.h in Headers */ = {isa = PBXBuildFile; fileRef = 5721A9861ECE53B10081295A /* CryptoDigestAlgorithm.h */; };
 		5721A98B1ECE57040081295A /* CryptoAlgorithmRsaPssParams.h in Headers */ = {isa = PBXBuildFile; fileRef = 5721A9881ECE57040081295A /* CryptoAlgorithmRsaPssParams.h */; };
 		572A7F211C6E5719009C6149 /* SimulatedClick.h in Headers */ = {isa = PBXBuildFile; fileRef = 572A7F201C6E5719009C6149 /* SimulatedClick.h */; };
+		57303BB92006C6EE00355965 /* CBORValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 57303BB42006C6ED00355965 /* CBORValue.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		57303BBA2006C6EE00355965 /* CBORWriter.h in Headers */ = {isa = PBXBuildFile; fileRef = 57303BB52006C6ED00355965 /* CBORWriter.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		57303BBB2006C6EE00355965 /* CBORBinary.h in Headers */ = {isa = PBXBuildFile; fileRef = 57303BB62006C6ED00355965 /* CBORBinary.h */; };
+		57303BC12006E00C00355965 /* CBORReader.h in Headers */ = {isa = PBXBuildFile; fileRef = 57303BBF2006E00C00355965 /* CBORReader.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		573489391DAC6B6E00DC0667 /* CryptoAlgorithmParameters.h in Headers */ = {isa = PBXBuildFile; fileRef = 573489381DAC6B6D00DC0667 /* CryptoAlgorithmParameters.h */; };
 		5739E12F1DAC7F7800E14383 /* JSCryptoAlgorithmParameters.h in Headers */ = {isa = PBXBuildFile; fileRef = 5739E12E1DAC7F7800E14383 /* JSCryptoAlgorithmParameters.h */; };
 		5750A9751E68D00000705C4A /* CryptoKeyEC.h in Headers */ = {isa = PBXBuildFile; fileRef = 5750A9731E68D00000705C4A /* CryptoKeyEC.h */; };
@@ -8169,6 +8173,13 @@
 		5721A98A1ECE57040081295A /* RsaPssParams.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = RsaPssParams.idl; sourceTree = "<group>"; };
 		572A7F201C6E5719009C6149 /* SimulatedClick.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SimulatedClick.h; sourceTree = "<group>"; };
 		572A7F221C6E5A66009C6149 /* SimulatedClick.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SimulatedClick.cpp; sourceTree = "<group>"; };
+		57303BB42006C6ED00355965 /* CBORValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CBORValue.h; sourceTree = "<group>"; };
+		57303BB52006C6ED00355965 /* CBORWriter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CBORWriter.h; sourceTree = "<group>"; };
+		57303BB62006C6ED00355965 /* CBORBinary.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CBORBinary.h; sourceTree = "<group>"; };
+		57303BB72006C6ED00355965 /* CBORValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CBORValue.cpp; sourceTree = "<group>"; };
+		57303BB82006C6ED00355965 /* CBORWriter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CBORWriter.cpp; sourceTree = "<group>"; };
+		57303BBE2006E00400355965 /* CBORReader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CBORReader.cpp; sourceTree = "<group>"; };
+		57303BBF2006E00C00355965 /* CBORReader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CBORReader.h; sourceTree = "<group>"; };
 		573489381DAC6B6D00DC0667 /* CryptoAlgorithmParameters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CryptoAlgorithmParameters.h; sourceTree = "<group>"; };
 		5739E12E1DAC7F7800E14383 /* JSCryptoAlgorithmParameters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCryptoAlgorithmParameters.h; sourceTree = "<group>"; };
 		5739E1301DAC7FD100E14383 /* JSCryptoAlgorithmParameters.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCryptoAlgorithmParameters.cpp; sourceTree = "<group>"; };
@@ -18058,6 +18069,20 @@
 			path = "unified-sources";
 			sourceTree = "<group>";
 		};
+		57303BB32006C6ED00355965 /* cbor */ = {
+			isa = PBXGroup;
+			children = (
+				57303BB62006C6ED00355965 /* CBORBinary.h */,
+				57303BBE2006E00400355965 /* CBORReader.cpp */,
+				57303BBF2006E00C00355965 /* CBORReader.h */,
+				57303BB72006C6ED00355965 /* CBORValue.cpp */,
+				57303BB42006C6ED00355965 /* CBORValue.h */,
+				57303BB82006C6ED00355965 /* CBORWriter.cpp */,
+				57303BB52006C6ED00355965 /* CBORWriter.h */,
+			);
+			path = cbor;
+			sourceTree = "<group>";
+		};
 		57C7A6881E56946D00C67D71 /* credentialmanagement */ = {
 			isa = PBXGroup;
 			children = (
@@ -18098,6 +18123,7 @@
 		57D8462A1FEAF57F00CA3682 /* webauthn */ = {
 			isa = PBXGroup;
 			children = (
+				57303BB32006C6ED00355965 /* cbor */,
 				57D8462C1FEAF68F00CA3682 /* PublicKeyCredential.cpp */,
 				57D8462B1FEAF68F00CA3682 /* PublicKeyCredential.h */,
 				57D8462D1FEAF68F00CA3682 /* PublicKeyCredential.idl */,
@@ -26524,6 +26550,10 @@
 				07B7116D1D899E63009F0FFB /* CaptureDevice.h in Headers */,
 				07B7116F1D899E63009F0FFB /* CaptureDeviceManager.h in Headers */,
 				CDC734151977896D0046BFC5 /* CARingBuffer.h in Headers */,
+				57303BBB2006C6EE00355965 /* CBORBinary.h in Headers */,
+				57303BC12006E00C00355965 /* CBORReader.h in Headers */,
+				57303BB92006C6EE00355965 /* CBORValue.h in Headers */,
+				57303BBA2006C6EE00355965 /* CBORWriter.h in Headers */,
 				6550B69E099DF0270090D781 /* CDATASection.h in Headers */,
 				CDF4B7161E00B7E500E235A2 /* CDM.h in Headers */,
 				CD94A5DE1F72F57B00F525C5 /* CDMClient.h in Headers */,

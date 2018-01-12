@@ -218,6 +218,9 @@
 		5714ECBB1CA8BFE400051AC8 /* DownloadRequestOriginalURLFrame.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 5714ECBA1CA8BFD100051AC8 /* DownloadRequestOriginalURLFrame.html */; };
 		5714ECBD1CA8C22A00051AC8 /* DownloadRequestOriginalURL2.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 5714ECBC1CA8C21800051AC8 /* DownloadRequestOriginalURL2.html */; };
 		571F7FD01F2961FB00946648 /* IndexedDBStructuredCloneBackwardCompatibility.sqlite3-wal in Copy Resources */ = {isa = PBXBuildFile; fileRef = 571F7FCF1F2961E100946648 /* IndexedDBStructuredCloneBackwardCompatibility.sqlite3-wal */; };
+		57303BC9200824D300355965 /* CBORValueTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 57303BAC2006C56000355965 /* CBORValueTest.cpp */; };
+		57303BCA20082C0100355965 /* CBORWriterTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 57303BAB2006C55400355965 /* CBORWriterTest.cpp */; };
+		57303BCB2008376500355965 /* CBORReaderTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 57303BC220071E2200355965 /* CBORReaderTest.cpp */; };
 		57599E211F07191900A3FB8C /* IndexedDBStructuredCloneBackwardCompatibility.mm in Sources */ = {isa = PBXBuildFile; fileRef = 57599E201F07191700A3FB8C /* IndexedDBStructuredCloneBackwardCompatibility.mm */; };
 		57599E271F071AA000A3FB8C /* IndexedDBStructuredCloneBackwardCompatibility.sqlite3 in Copy Resources */ = {isa = PBXBuildFile; fileRef = 57599E241F07192C00A3FB8C /* IndexedDBStructuredCloneBackwardCompatibility.sqlite3 */; };
 		57599E281F071AA000A3FB8C /* IndexedDBStructuredCloneBackwardCompatibility.sqlite3-shm in Copy Resources */ = {isa = PBXBuildFile; fileRef = 57599E261F07192C00A3FB8C /* IndexedDBStructuredCloneBackwardCompatibility.sqlite3-shm */; };
@@ -1379,6 +1382,9 @@
 		5714ECBA1CA8BFD100051AC8 /* DownloadRequestOriginalURLFrame.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = DownloadRequestOriginalURLFrame.html; sourceTree = "<group>"; };
 		5714ECBC1CA8C21800051AC8 /* DownloadRequestOriginalURL2.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = DownloadRequestOriginalURL2.html; sourceTree = "<group>"; };
 		571F7FCF1F2961E100946648 /* IndexedDBStructuredCloneBackwardCompatibility.sqlite3-wal */ = {isa = PBXFileReference; lastKnownFileType = file; path = "IndexedDBStructuredCloneBackwardCompatibility.sqlite3-wal"; sourceTree = "<group>"; };
+		57303BAB2006C55400355965 /* CBORWriterTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CBORWriterTest.cpp; sourceTree = "<group>"; };
+		57303BAC2006C56000355965 /* CBORValueTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CBORValueTest.cpp; sourceTree = "<group>"; };
+		57303BC220071E2200355965 /* CBORReaderTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CBORReaderTest.cpp; sourceTree = "<group>"; };
 		5735F0251F3A4EA6000EE801 /* TestWebKitAPI-iOS.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "TestWebKitAPI-iOS.entitlements"; sourceTree = "<group>"; };
 		57599E201F07191700A3FB8C /* IndexedDBStructuredCloneBackwardCompatibility.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = IndexedDBStructuredCloneBackwardCompatibility.mm; sourceTree = "<group>"; };
 		57599E231F07192C00A3FB8C /* IndexedDBStructuredCloneBackwardCompatibilityWrite.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = IndexedDBStructuredCloneBackwardCompatibilityWrite.html; sourceTree = "<group>"; };
@@ -2203,6 +2209,9 @@
 				6354F4D01F7C3AB500D89DF3 /* ApplicationManifestParser.cpp */,
 				93A720E518F1A0E800A848E1 /* CalculationValue.cpp */,
 				07C046C91E42573E007201E7 /* CARingBuffer.cpp */,
+				57303BC220071E2200355965 /* CBORReaderTest.cpp */,
+				57303BAC2006C56000355965 /* CBORValueTest.cpp */,
+				57303BAB2006C55400355965 /* CBORWriterTest.cpp */,
 				7C3965051CDD74F90094DBB8 /* Color.cpp */,
 				1C9EB8401E380DA1005C6442 /* ComplexTextController.cpp */,
 				7CB184C41AA3F2100066EDFD /* ContentExtensions.cpp */,
@@ -3331,6 +3340,9 @@
 				7C83E0411D0A63F200FEBCF3 /* CandidateTests.mm in Sources */,
 				7CCE7EE71A411AE600447C4C /* CanHandleRequest.cpp in Sources */,
 				07C046CA1E4262A8007201E7 /* CARingBuffer.cpp in Sources */,
+				57303BCB2008376500355965 /* CBORReaderTest.cpp in Sources */,
+				57303BC9200824D300355965 /* CBORValueTest.cpp in Sources */,
+				57303BCA20082C0100355965 /* CBORWriterTest.cpp in Sources */,
 				7CCE7EE61A411AE600447C4C /* CloseFromWithinCreatePage.cpp in Sources */,
 				7CCE7EB71A411A7E00447C4C /* CloseNewWindowInNavigationPolicyDelegate.mm in Sources */,
 				7CCE7EE51A411AE600447C4C /* CloseThenTerminate.cpp in Sources */,
