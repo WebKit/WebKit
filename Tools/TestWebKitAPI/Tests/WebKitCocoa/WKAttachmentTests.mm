@@ -126,16 +126,21 @@ private:
 @interface TestWKWebView (AttachmentTesting)
 @end
 
-static RetainPtr<TestWKWebView> webViewForTestingAttachments()
+static RetainPtr<TestWKWebView> webViewForTestingAttachments(CGSize webViewSize)
 {
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     [configuration _setAttachmentElementEnabled:YES];
     WKPreferencesSetCustomPasteboardDataEnabled((WKPreferencesRef)[configuration preferences], YES);
 
-    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500) configuration:configuration.get()]);
-    [webView synchronouslyLoadHTMLString:@"<script>focus = () => document.body.focus()</script><body onload=focus() contenteditable></body>"];
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, webViewSize.width, webViewSize.height) configuration:configuration.get()]);
+    [webView synchronouslyLoadHTMLString:@"<meta name='viewport' content='width=device-width, initial-scale=1'><script>focus = () => document.body.focus()</script><body onload=focus() contenteditable></body>"];
 
     return webView;
+}
+
+static RetainPtr<TestWKWebView> webViewForTestingAttachments()
+{
+    return webViewForTestingAttachments(CGSizeMake(500, 500));
 }
 
 static NSData *testZIPData()
@@ -664,6 +669,20 @@ TEST(WKAttachmentTests, AttachmentDataForEmptyFile)
         scope.expectAttachmentUpdates(@[attachment.get()], @[]);
     }
     [attachment expectRequestedDataToBe:nil];
+}
+
+TEST(WKAttachmentTests, InsertedImageSizeIsClampedByMaxWidth)
+{
+    auto webView = webViewForTestingAttachments(CGSizeMake(100, 100));
+    RetainPtr<NSData> imageData = testImageData();
+    RetainPtr<_WKAttachment> attachment;
+    {
+        ObserveAttachmentUpdatesForScope observer(webView.get());
+        attachment = [webView synchronouslyInsertAttachmentWithFilename:@"icon.png" contentType:@"image/png" data:imageData.get() options:displayOptionsWithMode(_WKAttachmentDisplayModeInPlace)];
+        [attachment expectRequestedDataToBe:imageData.get()];
+        observer.expectAttachmentUpdates(@[], @[attachment.get()]);
+    }
+    [webView waitForAttachmentElementSizeToBecome:CGSizeMake(84, 67)];
 }
 
 TEST(WKAttachmentTests, MultipleSimultaneousAttachmentDataRequests)
@@ -1372,7 +1391,7 @@ TEST(WKAttachmentTestsIOS, MoveAttachmentElementAsIconByDragging)
     [webView expectElementTag:@"ATTACHMENT" toComeBefore:@"STRONG"];
 
     auto draggingSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
-    [draggingSimulator runFrom:CGPointMake(25, 25) to:CGPointMake(25, 125)];
+    [draggingSimulator runFrom:CGPointMake(25, 25) to:CGPointMake(25, 425)];
 
     attachment = [[draggingSimulator insertedAttachments] firstObject];
     [attachment expectRequestedDataToBe:data.get()];
@@ -1401,7 +1420,7 @@ TEST(WKAttachmentTestsIOS, MoveInPlaceAttachmentElementByDragging)
     [webView expectElementTag:@"ATTACHMENT" toComeBefore:@"STRONG"];
 
     auto draggingSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
-    [draggingSimulator runFrom:CGPointMake(25, 25) to:CGPointMake(25, 125)];
+    [draggingSimulator runFrom:CGPointMake(25, 25) to:CGPointMake(25, 425)];
 
     attachment = [[draggingSimulator insertedAttachments] firstObject];
     [attachment expectRequestedDataToBe:data.get()];

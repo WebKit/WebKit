@@ -1,3 +1,17 @@
+2018-01-12  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [macOS] API tests ChangeAttachmentDataUpdatesWithInPlaceDisplay and InPlaceVideoAttachmentInsertionWithinList are failing
+        https://bugs.webkit.org/show_bug.cgi?id=181626
+
+        Reviewed by Joseph Pecoraro.
+
+        Make the web view for WKAttachmentTests slightly bigger to avoid size clamping behavior introduced in r226915.
+        Additionally, write a new API test covering the change in r226915.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WKAttachmentTests.mm:
+        (webViewForTestingAttachments):
+        (TestWebKitAPI::TEST):
+
 2018-01-12  Alex Christensen  <achristensen@webkit.org>
 
         History state should be updated during client redirects with asynchronous policy decisions
