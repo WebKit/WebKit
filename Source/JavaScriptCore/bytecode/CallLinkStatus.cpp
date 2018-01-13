@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -54,12 +54,12 @@ CallLinkStatus::CallLinkStatus(JSValue value)
     m_variants.append(CallVariant(value.asCell()));
 }
 
-CallLinkStatus CallLinkStatus::computeFromLLInt(const ConcurrentJSLocker& locker, CodeBlock* profiledBlock, unsigned bytecodeIndex)
+CallLinkStatus CallLinkStatus::computeFromLLInt(const ConcurrentJSLocker&, CodeBlock* profiledBlock, unsigned bytecodeIndex)
 {
     UNUSED_PARAM(profiledBlock);
     UNUSED_PARAM(bytecodeIndex);
 #if ENABLE(DFG_JIT)
-    if (profiledBlock->hasExitSite(locker, DFG::FrequentExitSite(bytecodeIndex, BadCell))) {
+    if (profiledBlock->unlinkedCodeBlock()->hasExitSite(DFG::FrequentExitSite(bytecodeIndex, BadCell))) {
         // We could force this to be a closure call, but instead we'll just assume that it
         // takes slow path.
         return takesSlowPath();
@@ -87,7 +87,7 @@ CallLinkStatus CallLinkStatus::computeFor(
     UNUSED_PARAM(bytecodeIndex);
     UNUSED_PARAM(map);
 #if ENABLE(DFG_JIT)
-    ExitSiteData exitSiteData = computeExitSiteData(locker, profiledBlock, bytecodeIndex);
+    ExitSiteData exitSiteData = computeExitSiteData(profiledBlock, bytecodeIndex);
     
     CallLinkInfo* callLinkInfo = map.get(CodeOrigin(bytecodeIndex));
     if (!callLinkInfo) {
@@ -102,17 +102,18 @@ CallLinkStatus CallLinkStatus::computeFor(
 #endif
 }
 
-CallLinkStatus::ExitSiteData CallLinkStatus::computeExitSiteData(
-    const ConcurrentJSLocker& locker, CodeBlock* profiledBlock, unsigned bytecodeIndex)
+CallLinkStatus::ExitSiteData CallLinkStatus::computeExitSiteData(CodeBlock* profiledBlock, unsigned bytecodeIndex)
 {
     ExitSiteData exitSiteData;
-    
 #if ENABLE(DFG_JIT)
+    UnlinkedCodeBlock* codeBlock = profiledBlock->unlinkedCodeBlock();
+    ConcurrentJSLocker locker(codeBlock->m_lock);
+
     exitSiteData.takesSlowPath =
-        profiledBlock->hasExitSite(locker, DFG::FrequentExitSite(bytecodeIndex, BadType))
-        || profiledBlock->hasExitSite(locker, DFG::FrequentExitSite(bytecodeIndex, BadExecutable));
+        codeBlock->hasExitSite(locker, DFG::FrequentExitSite(bytecodeIndex, BadType))
+        || codeBlock->hasExitSite(locker, DFG::FrequentExitSite(bytecodeIndex, BadExecutable));
     exitSiteData.badFunction =
-        profiledBlock->hasExitSite(locker, DFG::FrequentExitSite(bytecodeIndex, BadCell));
+        codeBlock->hasExitSite(locker, DFG::FrequentExitSite(bytecodeIndex, BadCell));
 #else
     UNUSED_PARAM(locker);
     UNUSED_PARAM(profiledBlock);
@@ -275,12 +276,7 @@ void CallLinkStatus::computeDFGStatuses(
         // InlineCallFrames.
         CodeBlock* currentBaseline =
             baselineCodeBlockForOriginAndBaselineCodeBlock(codeOrigin, baselineCodeBlock);
-        ExitSiteData exitSiteData;
-        {
-            ConcurrentJSLocker locker(currentBaseline->m_lock);
-            exitSiteData = computeExitSiteData(
-                locker, currentBaseline, codeOrigin.bytecodeIndex);
-        }
+        ExitSiteData exitSiteData = computeExitSiteData(currentBaseline, codeOrigin.bytecodeIndex);
         
         {
             ConcurrentJSLocker locker(dfgCodeBlock->m_lock);

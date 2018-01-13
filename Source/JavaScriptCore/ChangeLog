@@ -1,3 +1,61 @@
+2018-01-12  Saam Barati  <sbarati@apple.com>
+
+        Move ExitProfile to UnlinkedCodeBlock so it can be shared amongst CodeBlocks backed by the same UnlinkedCodeBlock
+        https://bugs.webkit.org/show_bug.cgi?id=181545
+
+        Reviewed by Michael Saboff.
+
+        This patch follows the theme of putting optimization profiling information on
+        UnlinkedCodeBlock. This allows the unlinked code cache to remember OSR exit data.
+        This often leads to the first compile of a CodeBlock, backed by an UnlinkedCodeBlock
+        pulled from the code cache, making better compilation decisions, usually
+        resulting in fewer exits, and fewer recompilations.
+        
+        This is a 1% Speedometer progression in my testing.
+
+        * bytecode/BytecodeDumper.cpp:
+        (JSC::BytecodeDumper<CodeBlock>::dumpProfilesForBytecodeOffset):
+        * bytecode/CallLinkStatus.cpp:
+        (JSC::CallLinkStatus::computeFromLLInt):
+        (JSC::CallLinkStatus::computeFor):
+        (JSC::CallLinkStatus::computeExitSiteData):
+        (JSC::CallLinkStatus::computeDFGStatuses):
+        * bytecode/CallLinkStatus.h:
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::addFrequentExitSite): Deleted.
+        (JSC::CodeBlock::hasExitSite const): Deleted.
+        (JSC::CodeBlock::exitProfile): Deleted.
+        * bytecode/DFGExitProfile.cpp:
+        (JSC::DFG::ExitProfile::add):
+        (JSC::DFG::QueryableExitProfile::initialize):
+        * bytecode/DFGExitProfile.h:
+        (JSC::DFG::ExitProfile::hasExitSite const):
+        * bytecode/GetByIdStatus.cpp:
+        (JSC::GetByIdStatus::hasExitSite):
+        (JSC::GetByIdStatus::computeFor):
+        (JSC::GetByIdStatus::computeForStubInfo):
+        * bytecode/GetByIdStatus.h:
+        * bytecode/PutByIdStatus.cpp:
+        (JSC::PutByIdStatus::hasExitSite):
+        (JSC::PutByIdStatus::computeFor):
+        (JSC::PutByIdStatus::computeForStubInfo):
+        * bytecode/PutByIdStatus.h:
+        * bytecode/UnlinkedCodeBlock.cpp:
+        (JSC::UnlinkedCodeBlock::livenessAnalysisSlow):
+        * bytecode/UnlinkedCodeBlock.h:
+        (JSC::UnlinkedCodeBlock::hasExitSite const):
+        (JSC::UnlinkedCodeBlock::hasExitSite):
+        (JSC::UnlinkedCodeBlock::exitProfile):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::InlineStackEntry::InlineStackEntry):
+        * dfg/DFGGraph.h:
+        (JSC::DFG::Graph::hasGlobalExitSite):
+        (JSC::DFG::Graph::hasExitSite):
+        * dfg/DFGLICMPhase.cpp:
+        (JSC::DFG::LICMPhase::attemptHoist):
+        * dfg/DFGOSRExitBase.cpp:
+        (JSC::DFG::OSRExitBase::considerAddingAsFrequentExitSiteSlow):
+
 2018-01-12  JF Bastien  <jfbastien@apple.com>
 
         PoisonedWriteBarrier

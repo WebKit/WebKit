@@ -160,7 +160,7 @@ public:
     // be called a fixed number of times per recompilation. Recompilation is
     // rare to begin with, and implies doing O(n) operations on the CodeBlock
     // anyway.
-    bool add(const ConcurrentJSLocker&, CodeBlock* owner, const FrequentExitSite&);
+    static bool add(CodeBlock*, const FrequentExitSite&);
     
     // Get the frequent exit sites for a bytecode index. This is O(n), and is
     // meant to only be used from debugging/profiling code.
@@ -175,10 +175,6 @@ public:
     {
         return hasExitSite(locker, FrequentExitSite(kind));
     }
-    bool hasExitSite(const ConcurrentJSLocker& locker, unsigned bytecodeIndex, ExitKind kind) const
-    {
-        return hasExitSite(locker, FrequentExitSite(bytecodeIndex, kind));
-    }
     
 private:
     friend class QueryableExitProfile;
@@ -191,7 +187,7 @@ public:
     QueryableExitProfile();
     ~QueryableExitProfile();
     
-    void initialize(const ConcurrentJSLocker&, const ExitProfile&);
+    void initialize(UnlinkedCodeBlock*);
 
     bool hasExitSite(const FrequentExitSite& site) const
     {

@@ -27,6 +27,7 @@
 
 #include "BytecodeConventions.h"
 #include "CodeType.h"
+#include "DFGExitProfile.h"
 #include "ExpressionRangeInfo.h"
 #include "HandlerInfo.h"
 #include "Identifier.h"
@@ -383,6 +384,21 @@ public:
         return livenessAnalysisSlow(codeBlock);
     }
 
+#if ENABLE(DFG_JIT)
+    bool hasExitSite(const ConcurrentJSLocker& locker, const DFG::FrequentExitSite& site) const
+    {
+        return m_exitProfile.hasExitSite(locker, site);
+    }
+
+    bool hasExitSite(const DFG::FrequentExitSite& site)
+    {
+        ConcurrentJSLocker locker(m_lock);
+        return hasExitSite(locker, site);
+    }
+
+    DFG::ExitProfile& exitProfile() { return m_exitProfile; }
+#endif
+
 protected:
     UnlinkedCodeBlock(VM*, Structure*, CodeType, const ExecutableInfo&, DebuggerMode);
     ~UnlinkedCodeBlock();
@@ -419,6 +435,10 @@ private:
     String m_sourceURLDirective;
     String m_sourceMappingURLDirective;
 
+#if ENABLE(DFG_JIT)
+    DFG::ExitProfile m_exitProfile;
+#endif
+
     unsigned m_usesEval : 1;
     unsigned m_isStrictMode : 1;
     unsigned m_isConstructor : 1;
@@ -436,7 +456,9 @@ private:
     unsigned m_lineCount;
     unsigned m_endColumn;
 
-    Lock m_lock;
+public:
+    ConcurrentJSLock m_lock;
+private:
     TriState m_didOptimize;
     SourceParseMode m_parseMode;
     CodeFeatures m_features;
