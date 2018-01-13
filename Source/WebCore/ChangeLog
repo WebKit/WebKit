@@ -1,3 +1,25 @@
+2018-01-12  Alex Christensen  <achristensen@webkit.org>
+
+        History state should be updated during client redirects with asynchronous policy decisions
+        https://bugs.webkit.org/show_bug.cgi?id=181358
+        <rdar://problem/35547689>
+
+        Reviewed by Andy Estes.
+
+        When decidePolicyForNavigationAction is responded to asynchronously during a client redirect, 
+        HistoryController::updateForRedirectWithLockedBackForwardList does not update the history because
+        the document loader has not been marked as a client redirect because the FrameLoader only looks
+        at its provisional document loader to mark it as a client redirect.  When decidePolicyForNavigationAction
+        is responded to asynchronously, though, the FrameLoader's provisional document loader has moved to 
+        its policy document loader.  To get both asynchronous and synchronous cases, let's just mark the document
+        loader as a client redirect whether it's the provisional or policy document loader.
+
+        Covered by a new API test.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::loadURL):
+        (WebCore::FrameLoader::loadPostRequest):
+
 2018-01-12  Dean Jackson  <dino@apple.com>
 
         Use a helper function for checked arithmetic in WebGL validation

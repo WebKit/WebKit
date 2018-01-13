@@ -1,3 +1,16 @@
+2018-01-12  Alex Christensen  <achristensen@webkit.org>
+
+        History state should be updated during client redirects with asynchronous policy decisions
+        https://bugs.webkit.org/show_bug.cgi?id=181358
+        <rdar://problem/35547689>
+
+        Reviewed by Andy Estes.
+
+        * TestWebKitAPI/Tests/WebKit/WKBackForwardList.mm:
+        (-[AsyncPolicyDecisionDelegate webView:didFinishNavigation:]):
+        (-[AsyncPolicyDecisionDelegate webView:decidePolicyForNavigationAction:decisionHandler:]):
+        (TEST):
+
 2018-01-12  Jonathan Bedard  <jbedard@apple.com>
 
         webkitpy: Refactor simulator code (Part 4)

@@ -1342,6 +1342,8 @@ void FrameLoader::loadURL(FrameLoadRequest&& frameLoadRequest, const String& ref
         m_quickRedirectComing = false;
         if (m_provisionalDocumentLoader)
             m_provisionalDocumentLoader->setIsClientRedirect(true);
+        else if (m_policyDocumentLoader)
+            m_policyDocumentLoader->setIsClientRedirect(true);
     } else if (sameURL && !isReload(newLoadType)) {
         // Example of this case are sites that reload the same URL with a different cookie
         // driving the generated content, or a master frame with links that drive a target
@@ -2775,6 +2777,8 @@ void FrameLoader::loadPostRequest(FrameLoadRequest&& request, const String& refe
         m_quickRedirectComing = false;
         if (m_provisionalDocumentLoader)
             m_provisionalDocumentLoader->setIsClientRedirect(true);
+        else if (m_policyDocumentLoader)
+            m_policyDocumentLoader->setIsClientRedirect(true);
     }
 }
 
