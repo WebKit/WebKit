@@ -1,4 +1,4 @@
-; Copyright (C) 2010-2017 Apple Inc. All rights reserved.
+; Copyright (C) 2010-2018 Apple Inc. All rights reserved.
 ;
 ; Redistribution and use in source and binary forms, with or without
 ; modification, are permitted provided that the following conditions
@@ -72,18 +72,7 @@
 
 ;; Various Accessibility services.
 (allow mach-lookup
-    (xpc-service-name "com.apple.accessibility.AccessibilityUIServer"))
-
-;; Guided Access support (<rdar://problem/11683460>).
-(allow mach-lookup
-    (global-name "com.apple.accessibility.gax.backboard"))
-(allow mach-register
-    (local-name "com.apple.accessibility.gax.client"))
-
-;; AssistiveTouch
-;; <rdar://problem/11800071> sandbox error for remote message services when AssistiveTouch is running
-(allow mach-lookup
-    (global-name "UIASTNotificationCenter"))
+    (xpc-service-name "com.apple.accessibility.AccessibilityUIServer")) ; Needed for Zoom focus updates
 
 ;; ZoomTouch
 ;; <rdar://problem/11823957>
@@ -94,18 +83,18 @@
 ;; <rdar://problem/12030530> AX: Sandbox violation with changing Language while VO is on
 ;; and <rdar://problem/13071747>
 (mobile-preferences-read
-    "com.apple.SpeakSelection"
-    "com.apple.VoiceOverTouch"
-    "com.apple.voiceservices")
+    "com.apple.SpeakSelection") ; Needed for WebSpeech
+
 (allow mach-lookup
     (global-name "com.apple.audio.AudioComponentPrefs")
     (global-name "com.apple.audio.AudioComponentRegistrar")
-    (global-name "com.apple.audio.AudioQueueServer")
-    (global-name "com.apple.voiceservices.keepalive")
-    (global-name "com.apple.voiceservices.tts"))
+    (global-name "com.apple.audio.AudioQueueServer"))
+
 (allow mach-register
-    (local-name "com.apple.iphone.axserver"))
+    (local-name "com.apple.iphone.axserver")) ; Needed for Application Accessibility
+
 ;; <rdar://problem/14555119> Access to high quality speech voices
+;; Needed for WebSpeech
 (allow file-read*
     (home-subpath "/Library/VoiceServices/Assets")
     (home-subpath "/Library/Assets/com_apple_MobileAsset_VoiceServicesVocalizerVoice"))
