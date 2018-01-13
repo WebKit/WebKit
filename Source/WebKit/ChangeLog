@@ -1,3 +1,12 @@
+2018-01-12  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Unreviewed, speculative build fix after r226899.
+
+        Add an empty implementation for PageClient::startDrag.
+
+        * UIProcess/PageClient.h:
+        (WebKit::PageClient::startDrag):
+
 2018-01-12  Brent Fulgham  <bfulgham@apple.com>
 
         [iOS] Remove unneeded accessibility-related sandbox rules
