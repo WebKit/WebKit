@@ -556,16 +556,17 @@ void SWServer::syncTerminateWorker(SWServerWorker& worker)
 
 void SWServer::terminateWorkerInternal(SWServerWorker& worker, TerminationMode mode)
 {
-    auto* connection = SWServerToContextConnection::connectionForIdentifier(worker.contextConnectionIdentifier());
-    if (!connection) {
-        LOG_ERROR("Request to terminate a worker whose context connection does not exist");
-        return;
-    }
-
     ASSERT(m_runningOrTerminatingWorkers.get(worker.identifier()) == &worker);
     ASSERT(!worker.isTerminating());
 
     worker.setState(SWServerWorker::State::Terminating);
+
+    auto* connection = SWServerToContextConnection::connectionForIdentifier(worker.contextConnectionIdentifier());
+    if (!connection) {
+        LOG_ERROR("Request to terminate a worker whose context connection does not exist");
+        workerContextTerminated(worker);
+        return;
+    }
 
     switch (mode) {
     case Asynchronous:

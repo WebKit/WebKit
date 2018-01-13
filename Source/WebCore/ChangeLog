@@ -1,3 +1,30 @@
+2018-01-12  Chris Dumez  <cdumez@apple.com>
+
+        ASSERTION FAILED: registration || isTerminating() in WebCore::SWServerWorker::skipWaiting()
+        https://bugs.webkit.org/show_bug.cgi?id=181603
+        <rdar://problem/36476050>
+
+        Reviewed by Youenn Fablet.
+
+        No new tests, covered by existing tests that crash flakily.
+
+        * workers/service/server/SWServer.cpp:
+        (WebCore::SWServer::terminateWorkerInternal):
+        If the connection to the context process is gone, make sure we make the worker as terminated
+        so that it does not stay in Running state and in SWServer::m_runningOrTerminatingWorkers.
+
+        * workers/service/server/SWServerRegistration.cpp:
+        (WebCore::SWServerRegistration::~SWServerRegistration):
+        Add assertions to make sure none of the registration's workers are still running when
+        the registration is destroyed.
+
+        (WebCore::SWServerRegistration::updateRegistrationState):
+        Make sure registration workers that are overwritten are not still running.
+
+        * workers/service/server/SWServerWorker.cpp:
+        (WebCore::SWServerWorker::setState):
+        If a worker's state is set to redundant, make sure we also terminate it.
+
 2018-01-12  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r226927.
