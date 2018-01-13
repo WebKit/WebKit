@@ -1,0 +1,82 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<head>
+    <meta name="viewport" content="initial-scale=1">
+    <style>
+        main {
+            display: flex;
+        }
+        .foo {
+            flex-basis: 0;
+        }
+        .map {
+            flex-grow: 2;
+            overflow: hidden;
+            position: relative;
+            outline: 2px solid green;
+        }
+        #container {
+            height: 10px;
+            background-color: silver;
+            outline: 2px solid black;
+        }
+        #target {
+            background-color: blue;
+        }
+    </style>
+    <script src="../../../../resources/js-test-pre.js"></script>
+    <script>
+        description("Checks that touches work on elements that are taller than the view.");
+        window.jsTestIsAsync = true;
+
+        function getUIScript(x, y)
+        {
+            return `
+            (function() {
+                uiController.singleTapAtPoint(${x}, ${y}, function() {
+                    uiController.uiScriptComplete();
+                });
+            })();`
+        }
+
+        function runTest()
+        {
+            var container = document.getElementById('container');
+            target.addEventListener('touchstart', function() {
+                debug("touchstart fired.");
+                shouldBe("event.touches.length", "1");
+                shouldBe("event.touches[0].clientX", "113");
+                shouldBe("event.touches[0].clientY", "178");
+            }, false);
+
+            window.addEventListener("touchend", (event) => {
+                debug("touchend fired.");
+                finishJSTest();
+            });
+
+            var targetRect = document.getElementById('target').getBoundingClientRect();
+            
+            var tapPointX = targetRect.x + targetRect.width / 2;
+            var tapPointY = targetRect.y + 50; // Tap near the top.
+
+            if (window.testRunner)
+                testRunner.runUIScript(getUIScript(tapPointX, tapPointY), function(result) { });
+        }
+        
+        window.addEventListener('load', runTest, false);
+    </script>
+</head>
+<body>
+<main>
+    <div class="foo">
+        <h1>Test</h1>
+    </div>
+    <div class="map">
+        <div id="container">
+            <div id="target" style="position: absolute; width: 100px; height: 800px;"></div>
+        </div>
+    </div>
+</main>
+<script src="../../../../resources/js-test-post.js"></script>
+</body>
+</html>

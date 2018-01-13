@@ -1,3 +1,16 @@
+2018-01-12  Simon Fraser  <simon.fraser@apple.com>
+
+        Touch events not received with initial-scale=1 viewport
+        https://bugs.webkit.org/show_bug.cgi?id=181566
+        rdar://problem/36460221
+
+        Reviewed by Tim Horton.
+
+        Add a testcase for this touch event case.
+
+        * fast/events/touch/ios/target-taller-than-view-expected.txt: Added.
+        * fast/events/touch/ios/target-taller-than-view.html: Added.
+
 2018-01-12  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Data URL fonts split in the middle of an alphabet cause random letters to disappear
