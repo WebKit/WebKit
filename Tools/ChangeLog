@@ -1,3 +1,17 @@
+2018-01-13  David Kilzer  <ddkilzer@apple.com>
+
+        check-webkit-style: false positive for [whitespace/braces] with os_log format string
+        <https://webkit.org/b/181606>
+
+        Reviewed by Darin Adler.
+
+        * Scripts/webkitpy/style/checkers/cpp.py:
+        (check_spacing): Modify regular expression to ignore
+        os_log format strings like '%{public}'.
+        * Scripts/webkitpy/style/checkers/cpp_unittest.py:
+        (CppStyleTest.test_spacing_before_braces): Add os_log
+        format string test.
+
 2018-01-12  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [macOS] API tests ChangeAttachmentDataUpdatesWithInPlaceDisplay and InPlaceVideoAttachmentInsertionWithinList are failing

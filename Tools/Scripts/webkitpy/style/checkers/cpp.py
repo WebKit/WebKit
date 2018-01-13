@@ -1969,11 +1969,11 @@ def check_spacing(file_extension, clean_lines, line_number, file_state, error):
     # Next we will look for issues with function calls.
     check_spacing_for_function_call(line, line_number, file_state, error)
 
-    # Except after an opening paren, ^ for blocks, or @ for Objective-C
-    # literal NSDictionary, you should have spaces before your braces.
-    # Since you should never have braces at the beginning of a line, this
-    # is an easy test.
-    if search(r'[^ ({\^@]{', line):
+    # Except after an opening paren, ^ for blocks, @ for Objective-C literal
+    # NSDictionary, or os_log format parameters, you should have spaces before
+    # your braces. Since you should never have braces at the beginning of a
+    # line, this is an easy test.
+    if search(r'[^ ({\^@%]{', line):
         error(line_number, 'whitespace/braces', 5,
               'Missing space before {')
 
