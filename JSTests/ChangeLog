@@ -1,3 +1,19 @@
+2018-01-13  Caio Lima  <ticaiolima@gmail.com>
+
+        [JSC] NumberPrototype::extractRadixFromArgs incorrectly cast double to int32_t
+        https://bugs.webkit.org/show_bug.cgi?id=181182
+
+        Reviewed by Darin Adler.
+
+        * bigIntTests.yaml:
+        * stress/big-int-constructor.js:
+        * stress/big-int-prototype-to-string-cast-overflow.js: Added.
+        (assert):
+        (assertThrowRangeError):
+        * stress/number-prototype-to-string-cast-overflow.js: Added.
+        (assert):
+        (assertThrowRangeError):
+
 2018-01-12  Saam Barati  <sbarati@apple.com>
 
         CheckStructure can be incorrectly subsumed by CheckStructureOrEmpty

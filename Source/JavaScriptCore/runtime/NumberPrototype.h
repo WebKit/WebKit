@@ -21,6 +21,7 @@
 #pragma once
 
 #include "NumberObject.h"
+#include <wtf/Variant.h>
 
 namespace JSC {
 
@@ -55,5 +56,6 @@ JSString* int32ToString(VM&, int32_t value, int32_t radix);
 JSString* int52ToString(VM&, int64_t value, int32_t radix);
 JSString* numberToString(VM&, double value, int32_t radix);
 String toStringWithRadix(double doubleValue, int32_t radix);
+Variant<int32_t, EncodedJSValue> extractToStringRadixArgument(ExecState*, JSValue radixValue);
 
 } // namespace JSC
