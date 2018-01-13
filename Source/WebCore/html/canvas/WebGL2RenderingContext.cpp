@@ -1822,11 +1822,11 @@ bool WebGL2RenderingContext::validateIndexArrayConservative(GC3Denum type, unsig
 
     // The number of required elements is one more than the maximum
     // index that will be accessed.
-    Checked<unsigned, RecordOverflow> checkedNumElementsRequired = Checked<unsigned>(maxIndex.value());
-    checkedNumElementsRequired += 1;
-    if (checkedNumElementsRequired.hasOverflowed())
+    auto checkedNumElementsRequired = checkedAddAndMultiply<unsigned>(maxIndex.value(), 1, 1);
+    if (!checkedNumElementsRequired)
         return false;
-    numElementsRequired = checkedNumElementsRequired.unsafeGet();
+    numElementsRequired = checkedNumElementsRequired.value();
+
     return true;
 }
 
