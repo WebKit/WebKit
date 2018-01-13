@@ -143,26 +143,29 @@ void RenderMathMLBlock::paint(PaintInfo& info, const LayoutPoint& paintOffset)
 LayoutUnit toUserUnits(const MathMLElement::Length& length, const RenderStyle& style, const LayoutUnit& referenceValue)
 {
     switch (length.type) {
+    // Zoom for physical units needs to be accounted for.
     case MathMLElement::LengthType::Cm:
-        return length.value * cssPixelsPerInch / 2.54f;
+        return style.effectiveZoom() * length.value * cssPixelsPerInch / 2.54f;
+    case MathMLElement::LengthType::In:
+        return style.effectiveZoom() * length.value * cssPixelsPerInch;
+    case MathMLElement::LengthType::Mm:
+        return style.effectiveZoom() * length.value * cssPixelsPerInch / 25.4f;
+    case MathMLElement::LengthType::Pc:
+        return style.effectiveZoom() * length.value * cssPixelsPerInch / 6;
+    case MathMLElement::LengthType::Pt:
+        return style.effectiveZoom() * length.value * cssPixelsPerInch / 72;
+    case MathMLElement::LengthType::Px:
+        return style.effectiveZoom() * length.value;
+
+    // Zoom for logical units is accounted for either in the font info or referenceValue.
     case MathMLElement::LengthType::Em:
         return length.value * style.fontCascade().size();
     case MathMLElement::LengthType::Ex:
         return length.value * style.fontMetrics().xHeight();
-    case MathMLElement::LengthType::In:
-        return length.value * cssPixelsPerInch;
     case MathMLElement::LengthType::MathUnit:
         return length.value * style.fontCascade().size() / 18;
-    case MathMLElement::LengthType::Mm:
-        return length.value * cssPixelsPerInch / 25.4f;
-    case MathMLElement::LengthType::Pc:
-        return length.value * cssPixelsPerInch / 6;
     case MathMLElement::LengthType::Percentage:
         return referenceValue * length.value / 100;
-    case MathMLElement::LengthType::Pt:
-        return length.value * cssPixelsPerInch / 72;
-    case MathMLElement::LengthType::Px:
-        return length.value;
     case MathMLElement::LengthType::UnitLess:
         return referenceValue * length.value;
     case MathMLElement::LengthType::ParsingFailed:

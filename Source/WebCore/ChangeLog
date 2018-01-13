@@ -1,3 +1,17 @@
+2018-01-13  Minsheng Liu  <lambda@liu.ms>
+
+        MathML Lengths should take zoom level into account
+        https://bugs.webkit.org/show_bug.cgi?id=180029
+
+        Reviewed by Frédéric Wang.
+
+        The patch applies the effective zoom factor to physical units in toUserUnits().
+
+        Test: mathml/presentation/mspace-units-with-zoom.html
+
+        * rendering/mathml/RenderMathMLBlock.cpp:
+        (WebCore::toUserUnits):
+
 2018-01-12  Chris Dumez  <cdumez@apple.com>
 
         ASSERTION FAILED: registration || isTerminating() in WebCore::SWServerWorker::skipWaiting()
