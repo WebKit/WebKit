@@ -91,6 +91,8 @@ private:
 
     void dispatchInvalidationCallbacks();
 
+    void opportunisticallyStartFontDataURLLoading(const FontCascadeDescription&, const AtomicString& family) final;
+
     void fontModified() final;
 
     void beginLoadTimerFired();

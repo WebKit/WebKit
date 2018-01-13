@@ -1,3 +1,41 @@
+2018-01-12  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Data URL fonts split in the middle of an alphabet cause random letters to disappear
+        https://bugs.webkit.org/show_bug.cgi?id=175845
+        <rdar://problem/33996578>
+
+        Reviewed by Brent Fulgham.
+
+        It is fairly common practice for a font foundry to split a font up into two files such that a semi-random
+        half of the alphabet is present in one of the files, and the other half is present in the other file. This
+        practice involves representing the files as data URLs, so as to minimize the time it takes to load them.
+
+        Because resource loading is asynchronous (even for data URLs), it is possible today to get a paint after
+        the first file is loaded but before the second file is loaded. Indeed, because of the way font fallback
+        works, we will never start loading the second file until a layout has occurred with the first font.
+
+        Because a site usually only uses this pattern for a handful of fonts, and I've never seen this pattern
+        being used for CJK fonts, it isn't very expensive to opportunistically decode these data URLs eagerly.
+        Using this method doesn't actually guarantee that the two fonts will load in between successive paints,
+        but it at least makes this much more likely. This patch implements this strategy, along with a size
+        threshold to make sure that we won't decode any super large data URLs when it isn't necessary.
+
+        Test: fast/text/font-load-data-partitioned-alphabet.html
+
+        * css/CSSFontFace.cpp:
+        (WebCore::CSSFontFace::opportunisticallyStartFontDataURLLoading):
+        * css/CSSFontFace.h:
+        * css/CSSFontFaceSource.cpp:
+        (WebCore::CSSFontFaceSource::opportunisticallyStartFontDataURLLoading):
+        * css/CSSFontFaceSource.h:
+        * css/CSSFontSelector.cpp:
+        (WebCore::CSSFontSelector::opportunisticallyStartFontDataURLLoading):
+        * css/CSSFontSelector.h:
+        * platform/graphics/FontCascadeFonts.cpp:
+        (WebCore::opportunisticallyStartFontDataURLLoading):
+        (WebCore::FontCascadeFonts::glyphDataForVariant):
+        * platform/graphics/FontSelector.h:
+
 2018-01-12  Alex Christensen  <achristensen@webkit.org>
 
         History state should be updated during client redirects with asynchronous policy decisions
