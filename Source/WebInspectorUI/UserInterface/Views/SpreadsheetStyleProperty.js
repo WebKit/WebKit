@@ -172,6 +172,7 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
         }
 
         this._contentElement = this.element.appendChild(document.createElement("span"));
+        this._contentElement.className = "content";
 
         if (!this._property.enabled)
             this._contentElement.append("/* ");
@@ -180,7 +181,8 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
         this._nameElement.classList.add("name");
         this._nameElement.textContent = this._property.name;
 
-        this._contentElement.append(": ");
+        let colonElement = this._contentElement.appendChild(document.createElement("span"));
+        colonElement.textContent = ": ";
 
         this._valueElement = this._contentElement.appendChild(document.createElement("span"));
         this._valueElement.classList.add("value");
@@ -203,7 +205,8 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
             this._setupJumpToSymbol(this._valueElement);
         }
 
-        this._contentElement.append(";");
+        let semicolonElement = this._contentElement.appendChild(document.createElement("span"));
+        semicolonElement.textContent = ";";
 
         if (this._property.enabled) {
             this._warningElement = this.element.appendChild(document.createElement("span"));
