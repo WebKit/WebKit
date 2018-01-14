@@ -904,7 +904,7 @@ namespace JSC {
 
         Interpreter* m_interpreter;
 
-        PoisonedRefCountedArray<CodeBlockPoison, Instruction> m_instructions;
+        PoisonedRefCountedArray<POISON(CodeBlock), Instruction> m_instructions;
 
         Vector<CallRecord> m_calls;
         Vector<Label> m_labels;

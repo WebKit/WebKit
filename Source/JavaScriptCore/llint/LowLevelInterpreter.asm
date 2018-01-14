@@ -204,8 +204,6 @@ else
     const LowestTag = DeletedValueTag
 end
 
-const CodeBlockPoison = constexpr CodeBlock::s_poison
-
 # PutByIdFlags data
 const PutByIdPrimaryTypeMask = constexpr PutByIdPrimaryTypeMask
 const PutByIdPrimaryTypeSecondary = constexpr PutByIdPrimaryTypeSecondary
@@ -754,9 +752,10 @@ macro preserveReturnAddressAfterCall(destinationRegister)
     end
 end
 
-macro unpoison(poison, field)
+macro unpoison(poison, field, scratch)
     if POISON
-        xorp poison, field
+        loadp poison, scratch
+        xorp scratch, field
     end
 end
 
@@ -1024,7 +1023,7 @@ macro prologue(codeBlockGetter, codeBlockSetter, osrSlowPath, traceSlowPath)
     # Set up the PC.
     if JSVALUE64
         loadp CodeBlock::m_instructions[t1], PB
-        unpoison(CodeBlockPoison, PB)
+        unpoison(_g_CodeBlockPoison, PB, t3)
         move 0, PC
     else
         loadp CodeBlock::m_instructions[t1], PC
@@ -1035,7 +1034,7 @@ macro prologue(codeBlockGetter, codeBlockSetter, osrSlowPath, traceSlowPath)
     subp cfr, t0, t0
     bpa t0, cfr, .needStackCheck
     loadp CodeBlock::m_poisonedVM[t1], t2
-    unpoison(CodeBlockPoison, t2)
+    unpoison(_g_CodeBlockPoison, t2, t3)
     if C_LOOP
         bpbeq VM::m_cloopStackLimit[t2], t0, .stackHeightOK
     else
@@ -1623,7 +1622,7 @@ _llint_op_check_traps:
     traceExecution()
     loadp CodeBlock[cfr], t1
     loadp CodeBlock::m_poisonedVM[t1], t1
-    unpoison(CodeBlockPoison, t1)
+    unpoison(_g_CodeBlockPoison, t1, t2)
     loadb VM::m_traps+VMTraps::m_needTrapHandling[t1], t0
     btpnz t0, .handleTraps
 .afterHandlingTraps:
@@ -1639,7 +1638,7 @@ _llint_op_check_traps:
 macro acquireShadowChickenPacket(slow)
     loadp CodeBlock[cfr], t1
     loadp CodeBlock::m_poisonedVM[t1], t1
-    unpoison(CodeBlockPoison, t1)
+    unpoison(_g_CodeBlockPoison, t1, t2)
     loadp VM::m_shadowChicken[t1], t2
     loadp ShadowChicken::m_logCursor[t2], t0
     bpaeq t0, ShadowChicken::m_logEnd[t2], slow

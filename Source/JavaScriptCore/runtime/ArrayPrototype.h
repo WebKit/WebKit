@@ -62,8 +62,8 @@ protected:
 private:
     // This bit is set if any user modifies the constructor property Array.prototype. This is used to optimize species creation for JSArrays.
     friend ArrayPrototypeAdaptiveInferredPropertyWatchpoint;
-    PoisonedUniquePtr<ArrayPrototypePoison, ArrayPrototypeAdaptiveInferredPropertyWatchpoint> m_constructorWatchpoint;
-    PoisonedUniquePtr<ArrayPrototypePoison, ArrayPrototypeAdaptiveInferredPropertyWatchpoint> m_constructorSpeciesWatchpoint;
+    PoisonedUniquePtr<POISON(ArrayPrototype), ArrayPrototypeAdaptiveInferredPropertyWatchpoint> m_constructorWatchpoint;
+    PoisonedUniquePtr<POISON(ArrayPrototype), ArrayPrototypeAdaptiveInferredPropertyWatchpoint> m_constructorSpeciesWatchpoint;
 };
 
 EncodedJSValue JSC_HOST_CALL arrayProtoFuncToString(ExecState*);

@@ -50,7 +50,7 @@ protected:
     JSAPIWrapperObject(VM&, Structure*);
 
 private:
-    ConstExprPoisoned<JSAPIWrapperObjectPoison, void*> m_wrappedObject;
+    Poisoned<POISON(JSAPIWrapperObject), void*> m_wrappedObject;
 };
 
 } // namespace JSC

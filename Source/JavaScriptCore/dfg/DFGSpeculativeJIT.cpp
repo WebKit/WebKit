@@ -8662,7 +8662,7 @@ void SpeculativeJIT::compileCheckSubClass(Node* node)
         m_jit.emitLoadStructure(*m_jit.vm(), baseGPR, otherGPR, specifiedGPR);
         m_jit.loadPtr(CCallHelpers::Address(otherGPR, Structure::classInfoOffset()), otherGPR);
 #if USE(JSVALUE64)
-        m_jit.move(CCallHelpers::TrustedImm64(g_globalDataPoison), specifiedGPR);
+        m_jit.move(CCallHelpers::TrustedImm64(POISON(GlobalData)), specifiedGPR);
         m_jit.xor64(specifiedGPR, otherGPR);
 #endif
         m_jit.move(CCallHelpers::TrustedImmPtr(node->classInfo()), specifiedGPR);
@@ -9778,7 +9778,7 @@ void SpeculativeJIT::emitSwitchIntJump(
         data->fallThrough.block);
     UNUSED_PARAM(poisonScratch); // Placate the 32-bit build.
 #if USE(JSVALUE64)
-    m_jit.move(TrustedImm64(g_jitCodePoison), poisonScratch);
+    m_jit.move(TrustedImm64(POISON(JITCode)), poisonScratch);
 #endif
     m_jit.move(TrustedImmPtr(table.ctiOffsets.begin()), scratch);
     m_jit.loadPtr(JITCompiler::BaseIndex(scratch, value, JITCompiler::timesPtr()), scratch);

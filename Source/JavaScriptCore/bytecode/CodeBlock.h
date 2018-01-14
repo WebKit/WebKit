@@ -319,11 +319,11 @@ public:
     }
 
     typedef JSC::Instruction Instruction;
-    typedef PoisonedRefCountedArray<CodeBlockPoison, Instruction>& UnpackedInstructions;
+    typedef PoisonedRefCountedArray<POISON(CodeBlock), Instruction>& UnpackedInstructions;
 
     unsigned numberOfInstructions() const { return m_instructions.size(); }
-    PoisonedRefCountedArray<CodeBlockPoison, Instruction>& instructions() { return m_instructions; }
-    const PoisonedRefCountedArray<CodeBlockPoison, Instruction>& instructions() const { return m_instructions; }
+    PoisonedRefCountedArray<POISON(CodeBlock), Instruction>& instructions() { return m_instructions; }
+    const PoisonedRefCountedArray<POISON(CodeBlock), Instruction>& instructions() const { return m_instructions; }
 
     size_t predictedMachineCodeSize();
 
@@ -887,8 +887,6 @@ public:
 
     bool hasTailCalls() const { return m_unlinkedCode->hasTailCalls(); }
 
-    static constexpr uintptr_t s_poison = makeConstExprPoison(CodeBlockPoison);
-
 protected:
     void finalizeLLIntInlineCaches();
     void finalizeBaselineJITInlineCaches();
@@ -949,9 +947,9 @@ private:
     void ensureCatchLivenessIsComputedForBytecodeOffsetSlow(unsigned);
 
     template<typename T, typename... Arguments, typename Enable = void>
-    static PoisonedUniquePtr<CodeBlockPoison, T> makePoisonedUnique(Arguments&&... arguments)
+    static PoisonedUniquePtr<POISON(CodeBlock), T> makePoisonedUnique(Arguments&&... arguments)
     {
-        return WTF::makePoisonedUnique<CodeBlockPoison, T>(std::forward<Arguments>(arguments)...);
+        return WTF::makePoisonedUnique<POISON(CodeBlock), T>(std::forward<Arguments>(arguments)...);
     }
 
     WriteBarrier<UnlinkedCodeBlock> m_unlinkedCode;
@@ -967,30 +965,30 @@ private:
     };
     WriteBarrier<ExecutableBase> m_ownerExecutable;
     WriteBarrier<ExecutableToCodeBlockEdge> m_ownerEdge;
-    ConstExprPoisoned<CodeBlockPoison, VM*> m_poisonedVM;
+    Poisoned<POISON(CodeBlock), VM*> m_poisonedVM;
 
-    PoisonedRefCountedArray<CodeBlockPoison, Instruction> m_instructions;
+    PoisonedRefCountedArray<POISON(CodeBlock), Instruction> m_instructions;
     VirtualRegister m_thisRegister;
     VirtualRegister m_scopeRegister;
     mutable CodeBlockHash m_hash;
 
-    PoisonedRefPtr<CodeBlockPoison, SourceProvider> m_source;
+    PoisonedRefPtr<POISON(CodeBlock), SourceProvider> m_source;
     unsigned m_sourceOffset;
     unsigned m_firstLineColumnOffset;
 
     RefCountedArray<LLIntCallLinkInfo> m_llintCallLinkInfos;
     SentinelLinkedList<LLIntCallLinkInfo, BasicRawSentinelNode<LLIntCallLinkInfo>> m_incomingLLIntCalls;
     StructureWatchpointMap m_llintGetByIdWatchpointMap;
-    PoisonedRefPtr<CodeBlockPoison, JITCode> m_jitCode;
+    PoisonedRefPtr<POISON(CodeBlock), JITCode> m_jitCode;
 #if ENABLE(JIT)
     std::unique_ptr<RegisterAtOffsetList> m_calleeSaveRegisters;
-    PoisonedBag<CodeBlockPoison, StructureStubInfo> m_stubInfos;
-    PoisonedBag<CodeBlockPoison, JITAddIC> m_addICs;
-    PoisonedBag<CodeBlockPoison, JITMulIC> m_mulICs;
-    PoisonedBag<CodeBlockPoison, JITNegIC> m_negICs;
-    PoisonedBag<CodeBlockPoison, JITSubIC> m_subICs;
-    PoisonedBag<CodeBlockPoison, ByValInfo> m_byValInfos;
-    PoisonedBag<CodeBlockPoison, CallLinkInfo> m_callLinkInfos;
+    PoisonedBag<POISON(CodeBlock), StructureStubInfo> m_stubInfos;
+    PoisonedBag<POISON(CodeBlock), JITAddIC> m_addICs;
+    PoisonedBag<POISON(CodeBlock), JITMulIC> m_mulICs;
+    PoisonedBag<POISON(CodeBlock), JITNegIC> m_negICs;
+    PoisonedBag<POISON(CodeBlock), JITSubIC> m_subICs;
+    PoisonedBag<POISON(CodeBlock), ByValInfo> m_byValInfos;
+    PoisonedBag<POISON(CodeBlock), CallLinkInfo> m_callLinkInfos;
     SentinelLinkedList<CallLinkInfo, BasicRawSentinelNode<CallLinkInfo>> m_incomingCalls;
     SentinelLinkedList<PolymorphicCallNode, BasicRawSentinelNode<PolymorphicCallNode>> m_incomingPolymorphicCalls;
     std::unique_ptr<PCToCodeOriginMap> m_pcToCodeOriginMap;

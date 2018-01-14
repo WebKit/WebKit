@@ -32,11 +32,14 @@
 
 namespace WTF {
 
-template<uint32_t key, typename T, typename Enable = void>
-class PoisonedUniquePtr : public ConstExprPoisoned<key, T*> {
+template<uintptr_t& key, typename T, typename Enable = void>
+class PoisonedUniquePtr : public Poisoned<key, T*> {
     WTF_MAKE_FAST_ALLOCATED;
-    using Base = ConstExprPoisoned<key, T*>;
+    using Base = Poisoned<key, T*>;
 public:
+    static constexpr bool isPoisonedUniquePtr = true;
+    using ValueType = T;
+
     PoisonedUniquePtr() = default;
     PoisonedUniquePtr(std::nullptr_t) : Base() { }
     PoisonedUniquePtr(T* ptr) : Base(ptr) { }
@@ -48,8 +51,8 @@ public:
         : Base(unique.release())
     { }
 
-    template<uint32_t key2, typename U, typename = std::enable_if_t<std::is_base_of<T, U>::value>>
-    PoisonedUniquePtr(PoisonedUniquePtr<key2, U>&& ptr)
+    template<typename Other, typename = std::enable_if_t<Other::isPoisonedUniquePtr && std::is_base_of<T, typename Other::ValueType>::value>>
+    PoisonedUniquePtr(Other&& ptr)
         : Base(ptr.unpoisoned())
     {
         ptr.clearWithoutDestroy();
@@ -89,8 +92,8 @@ public:
         return *this;
     }
 
-    template<uint32_t key2, typename U, typename = std::enable_if_t<std::is_base_of<T, U>::value>>
-    PoisonedUniquePtr& operator=(PoisonedUniquePtr<key2, U>&& ptr)
+    template<typename Other, typename = std::enable_if_t<Other::isPoisonedUniquePtr && std::is_base_of<T, typename Other::ValueType>::value>>
+    PoisonedUniquePtr& operator=(Other&& ptr)
     {
         ASSERT(this == static_cast<void*>(&ptr) || this->unpoisoned() != ptr.unpoisoned());
         if (LIKELY(this != static_cast<void*>(&ptr))) {
@@ -122,28 +125,31 @@ private:
 
     void clearWithoutDestroy() { Base::clear(); }
 
-    template<uint32_t, typename, typename> friend class PoisonedUniquePtr;
+    template<uintptr_t&, typename, typename> friend class PoisonedUniquePtr;
 };
 
-template<uint32_t key, typename T, typename... Arguments, typename Enable = void>
+template<uintptr_t& key, typename T, typename... Arguments, typename Enable = void>
 PoisonedUniquePtr<key, T> makePoisonedUnique(Arguments&&... arguments)
 {
     return PoisonedUniquePtr<key, T>::create(std::forward<Arguments>(arguments)...);
 }
 
-template<uint32_t key, typename T>
-class PoisonedUniquePtr<key, T[]> : public ConstExprPoisoned<key, T*> {
+template<uintptr_t& key, typename T>
+class PoisonedUniquePtr<key, T[]> : public Poisoned<key, T*> {
     WTF_MAKE_FAST_ALLOCATED;
-    using Base = ConstExprPoisoned<key, T*>;
+    using Base = Poisoned<key, T*>;
 public:
+    static constexpr bool isPoisonedUniquePtr = true;
+    using ValueType = T[];
+
     PoisonedUniquePtr() = default;
     PoisonedUniquePtr(std::nullptr_t) : Base() { }
     PoisonedUniquePtr(T* ptr) : Base(ptr) { }
     PoisonedUniquePtr(PoisonedUniquePtr&& ptr) : Base(WTFMove(ptr)) { ptr.clearWithoutDestroy(); }
     PoisonedUniquePtr(std::unique_ptr<T[]>&& unique) : PoisonedUniquePtr(unique.release()) { }
 
-    template<uint32_t key2>
-    PoisonedUniquePtr(PoisonedUniquePtr<key2, T[]>&& ptr)
+    template<typename Other, typename = std::enable_if_t<Other::isPoisonedUniquePtr && std::is_same<T[], typename Other::ValueType>::value>>
+    PoisonedUniquePtr(Other&& ptr)
         : Base(ptr.unpoisoned())
     {
         ptr.clearWithoutDestroy();
@@ -178,8 +184,8 @@ public:
         return *this;
     }
 
-    template<uint32_t key2>
-    PoisonedUniquePtr& operator=(PoisonedUniquePtr<key2, T[]>&& ptr)
+    template<typename Other, typename = std::enable_if_t<Other::isPoisonedUniquePtr && std::is_same<T[], typename Other::ValueType>::value>>
+    PoisonedUniquePtr& operator=(Other&& ptr)
     {
         ASSERT(this == static_cast<void*>(&ptr) || this->unpoisoned() != ptr.unpoisoned());
         if (LIKELY(this != static_cast<void*>(&ptr))) {
@@ -211,10 +217,10 @@ private:
 
     void clearWithoutDestroy() { Base::clear(); }
 
-    template<uint32_t, typename, typename> friend class PoisonedUniquePtr;
+    template<uintptr_t&, typename, typename> friend class PoisonedUniquePtr;
 };
 
-template<uint32_t key, typename T, typename... Arguments>
+template<uintptr_t& key, typename T, typename... Arguments>
 PoisonedUniquePtr<key, T[]> makePoisonedUnique(size_t count, Arguments&&... arguments)
 {
     return PoisonedUniquePtr<key, T[]>::create(count, std::forward<Arguments>(arguments)...);

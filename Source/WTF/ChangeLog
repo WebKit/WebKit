@@ -1,3 +1,84 @@
+2018-01-13  Mark Lam  <mark.lam@apple.com>
+
+        Replace all use of ConstExprPoisoned with Poisoned.
+        https://bugs.webkit.org/show_bug.cgi?id=181542
+        <rdar://problem/36442138>
+
+        Reviewed by JF Bastien.
+
+        1. Removed ConstExprPoisoned and its artifacts.
+
+        2. Consolidated Poisoned into PoisonedImpl.  PoisonedImpl is not more.
+
+        3. Changed all clients of ConstExprPoisoned to use Poisoned instead.
+
+        4. Worked around the GCC and Clang compiler bug that confuses an intptr_t&
+           template arg with intptr_t.
+           See use of std::enable_if_t<Other::isPoisoned> in Poisoned.h.
+
+        5. Removed ENABLE(MIXED_POISON) since we now have a workaround (3) that makes it
+           possible to use the mixed poison code.
+
+        6. Also fixed broken implementation of comparison operators in Poisoned.
+
+        * wtf/Bag.h:
+        * wtf/DumbPtrTraits.h:
+        (WTF::DumbPtrTraits::poison):
+        * wtf/DumbValueTraits.h:
+        (WTF::DumbValueTraits::poison):
+        * wtf/Poisoned.h:
+        (WTF::Poisoned::Poisoned):
+        (WTF::Poisoned::operator== const):
+        (WTF::Poisoned::operator!= const):
+        (WTF::Poisoned::operator< const):
+        (WTF::Poisoned::operator<= const):
+        (WTF::Poisoned::operator> const):
+        (WTF::Poisoned::operator>= const):
+        (WTF::Poisoned::operator=):
+        (WTF::Poisoned::swap):
+        (WTF::swap):
+        (WTF::PoisonedPtrTraits::poison):
+        (WTF::PoisonedPtrTraits::swap):
+        (WTF::PoisonedValueTraits::poison):
+        (WTF::PoisonedValueTraits::swap):
+        (WTF::PoisonedImpl::PoisonedImpl): Deleted.
+        (WTF::PoisonedImpl::assertIsPoisoned const): Deleted.
+        (WTF::PoisonedImpl::assertIsNotPoisoned const): Deleted.
+        (WTF::PoisonedImpl::unpoisoned const): Deleted.
+        (WTF::PoisonedImpl::clear): Deleted.
+        (WTF::PoisonedImpl::operator* const): Deleted.
+        (WTF::PoisonedImpl::operator-> const): Deleted.
+        (WTF::PoisonedImpl::bits const): Deleted.
+        (WTF::PoisonedImpl::operator! const): Deleted.
+        (WTF::PoisonedImpl::operator bool const): Deleted.
+        (WTF::PoisonedImpl::operator== const): Deleted.
+        (WTF::PoisonedImpl::operator!= const): Deleted.
+        (WTF::PoisonedImpl::operator< const): Deleted.
+        (WTF::PoisonedImpl::operator<= const): Deleted.
+        (WTF::PoisonedImpl::operator> const): Deleted.
+        (WTF::PoisonedImpl::operator>= const): Deleted.
+        (WTF::PoisonedImpl::operator=): Deleted.
+        (WTF::PoisonedImpl::swap): Deleted.
+        (WTF::PoisonedImpl::exchange): Deleted.
+        (WTF::PoisonedImpl::poison): Deleted.
+        (WTF::PoisonedImpl::unpoison): Deleted.
+        (WTF::constExprPoisonRandom): Deleted.
+        (WTF::makeConstExprPoison): Deleted.
+        (WTF::ConstExprPoisonedPtrTraits::exchange): Deleted.
+        (WTF::ConstExprPoisonedPtrTraits::swap): Deleted.
+        (WTF::ConstExprPoisonedPtrTraits::unwrap): Deleted.
+        (WTF::ConstExprPoisonedValueTraits::exchange): Deleted.
+        (WTF::ConstExprPoisonedValueTraits::swap): Deleted.
+        (WTF::ConstExprPoisonedValueTraits::unwrap): Deleted.
+        * wtf/PoisonedUniquePtr.h:
+        (WTF::PoisonedUniquePtr::PoisonedUniquePtr):
+        (WTF::PoisonedUniquePtr::operator=):
+        * wtf/Ref.h:
+        * wtf/RefCountedArray.h:
+        (WTF::RefCountedArray::RefCountedArray):
+        * wtf/RefPtr.h:
+        * wtf/WTFAssertions.cpp:
+
 2018-01-12  JF Bastien  <jfbastien@apple.com>
 
         PoisonedWriteBarrier

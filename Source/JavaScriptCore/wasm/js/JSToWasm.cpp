@@ -118,7 +118,7 @@ std::unique_ptr<InternalFunction> createJSToWasmWrapper(CompilationContext& comp
         if (!Context::useFastTLS()) {
             jit.loadPtr(CCallHelpers::Address(GPRInfo::callFrameRegister, jsOffset), wasmContextInstanceGPR);
             jit.loadPtr(CCallHelpers::Address(wasmContextInstanceGPR, JSWebAssemblyInstance::offsetOfPoisonedInstance()), wasmContextInstanceGPR);
-            jit.move(CCallHelpers::TrustedImm64(makeConstExprPoison(JSWebAssemblyInstancePoison)), scratchReg);
+            jit.move(CCallHelpers::TrustedImm64(POISON(JSWebAssemblyInstance)), scratchReg);
             jit.xor64(scratchReg, wasmContextInstanceGPR);
             jsOffset += sizeof(EncodedJSValue);
         }

@@ -2530,7 +2530,7 @@ _llint_op_profile_type:
     traceExecution()
     loadp CodeBlock[cfr], t1
     loadp CodeBlock::m_poisonedVM[t1], t1
-    unpoison(CodeBlockPoison, t1)
+    unpoison(_g_CodeBlockPoison, t1, t2)
     # t1 is holding the pointer to the typeProfilerLog.
     loadp VM::m_typeProfilerLog[t1], t1
 

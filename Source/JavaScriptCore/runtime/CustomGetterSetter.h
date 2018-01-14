@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "JSCPoisonedPtr.h"
+#include "JSCPoison.h"
 #include "JSCell.h"
 #include "PropertySlot.h"
 #include "PutPropertySlot.h"
@@ -68,7 +68,7 @@ protected:
 
 private:
     template<typename T>
-    using PoisonedAccessor = Poisoned<g_nativeCodePoison, T>;
+    using PoisonedAccessor = Poisoned<POISON(NativeCode), T>;
 
     PoisonedAccessor<CustomGetter> m_getter;
     PoisonedAccessor<CustomSetter> m_setter;

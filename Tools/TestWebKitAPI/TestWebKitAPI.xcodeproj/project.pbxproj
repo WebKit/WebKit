@@ -768,7 +768,6 @@
 		FE05FAEC1FDB510A00093230 /* PoisonedRef.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE05FAEB1FDB510200093230 /* PoisonedRef.cpp */; };
 		FE05FAED1FDB510E00093230 /* PoisonedRefPtr.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE05FAEA1FDB510100093230 /* PoisonedRefPtr.cpp */; };
 		FE05FAEF1FE0645B00093230 /* Poisoned.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE05FAEE1FE0643D00093230 /* Poisoned.cpp */; };
-		FE05FAF11FE08CD400093230 /* ConstExprPoisoned.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE05FAF01FE08CCD00093230 /* ConstExprPoisoned.cpp */; };
 		FE05FB061FE84FB700093230 /* PoisonedUniquePtr.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE05FB051FE84FAE00093230 /* PoisonedUniquePtr.cpp */; };
 		FEC8F4E71FE9C9050056FD8A /* PoisonedUniquePtrForTriviallyDestructibleArrays.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FEC8F4E61FE9C8DE0056FD8A /* PoisonedUniquePtrForTriviallyDestructibleArrays.cpp */; };
 		FEC8F4EB1FE9F5AF0056FD8A /* PoisonedUniquePtrForNonTriviallyDestructibleArrays.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FEC8F4EA1FE9F5A70056FD8A /* PoisonedUniquePtrForNonTriviallyDestructibleArrays.cpp */; };
@@ -1887,7 +1886,6 @@
 		FE05FAEA1FDB510100093230 /* PoisonedRefPtr.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PoisonedRefPtr.cpp; sourceTree = "<group>"; };
 		FE05FAEB1FDB510200093230 /* PoisonedRef.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PoisonedRef.cpp; sourceTree = "<group>"; };
 		FE05FAEE1FE0643D00093230 /* Poisoned.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Poisoned.cpp; sourceTree = "<group>"; };
-		FE05FAF01FE08CCD00093230 /* ConstExprPoisoned.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ConstExprPoisoned.cpp; sourceTree = "<group>"; };
 		FE05FB051FE84FAE00093230 /* PoisonedUniquePtr.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PoisonedUniquePtr.cpp; sourceTree = "<group>"; };
 		FEB6F74E1B2BA44E009E4922 /* NakedPtr.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NakedPtr.cpp; sourceTree = "<group>"; };
 		FEC8F4E61FE9C8DE0056FD8A /* PoisonedUniquePtrForTriviallyDestructibleArrays.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PoisonedUniquePtrForTriviallyDestructibleArrays.cpp; sourceTree = "<group>"; };
@@ -2663,7 +2661,6 @@
 				A7A966DA140ECCC8005EF9B4 /* CheckedArithmeticOperations.cpp */,
 				0F30CB5B1FCE1792004B5323 /* ConcurrentPtrHashSet.cpp */,
 				0FEAE3671B7D19CB00CE17F2 /* Condition.cpp */,
-				FE05FAF01FE08CCD00093230 /* ConstExprPoisoned.cpp */,
 				51714EB91D087416004723C4 /* CrossThreadTask.cpp */,
 				26A2C72E15E2E73C005B1A14 /* CString.cpp */,
 				7AA021BA1AB09EA70052953F /* DateMath.cpp */,
@@ -3230,7 +3227,6 @@
 				7C83DEA01D0A590C00FEBCF3 /* CheckedArithmeticOperations.cpp in Sources */,
 				0F30CB5C1FCE1796004B5323 /* ConcurrentPtrHashSet.cpp in Sources */,
 				7C83DEC31D0A590C00FEBCF3 /* Condition.cpp in Sources */,
-				FE05FAF11FE08CD400093230 /* ConstExprPoisoned.cpp in Sources */,
 				7C83DEA61D0A590C00FEBCF3 /* Counters.cpp in Sources */,
 				7C83DEA91D0A590C00FEBCF3 /* CString.cpp in Sources */,
 				7C83DEAD1D0A590C00FEBCF3 /* Deque.cpp in Sources */,

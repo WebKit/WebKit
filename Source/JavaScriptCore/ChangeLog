@@ -1,3 +1,92 @@
+2018-01-13  Mark Lam  <mark.lam@apple.com>
+
+        Replace all use of ConstExprPoisoned with Poisoned.
+        https://bugs.webkit.org/show_bug.cgi?id=181542
+        <rdar://problem/36442138>
+
+        Reviewed by JF Bastien.
+
+        1. All JSC poisons are now defined in JSCPoison.h.
+
+        2. Change all clients to use the new poison values via the POISON() macro.
+
+        3. The LLInt code has been updated to handle CodeBlock poison.  Some of this code
+           uses the t5 temp register, which is not available on the Windows port.
+           Fortunately, we don't currently do poisoning on the Windows port yet.  So,
+           it will just work for now.
+
+           When poisoning is enabled for the Windows port, this LLInt code will need a
+           Windows specific implementation to workaround its lack of a t5 register.
+
+        * API/JSAPIWrapperObject.h:
+        * API/JSCallbackFunction.h:
+        * API/JSCallbackObject.h:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Sources.txt:
+        * assembler/MacroAssemblerCodeRef.h:
+        (JSC::MacroAssemblerCodePtr::emptyValue):
+        (JSC::MacroAssemblerCodePtr::deletedValue):
+        * b3/B3LowerMacros.cpp:
+        * b3/testb3.cpp:
+        (JSC::B3::testInterpreter):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::instructions):
+        (JSC::CodeBlock::instructions const):
+        (JSC::CodeBlock::makePoisonedUnique):
+        * dfg/DFGOSRExitCompilerCommon.h:
+        (JSC::DFG::adjustFrameAndStackInOSRExitCompilerThunk):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileCheckSubClass):
+        (JSC::DFG::SpeculativeJIT::emitSwitchIntJump):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileCheckSubClass):
+        * jit/JIT.h:
+        * jit/ThunkGenerators.cpp:
+        (JSC::virtualThunkFor):
+        (JSC::nativeForGenerator):
+        (JSC::boundThisNoArgsFunctionCallGenerator):
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * parser/UnlinkedSourceCode.h:
+        * runtime/ArrayPrototype.h:
+        * runtime/CustomGetterSetter.h:
+        * runtime/DateInstance.h:
+        * runtime/InternalFunction.h:
+        * runtime/JSArrayBuffer.h:
+        * runtime/JSCPoison.cpp: Copied from Source/JavaScriptCore/runtime/JSCPoisonedPtr.cpp.
+        (JSC::initializePoison):
+        * runtime/JSCPoison.h:
+        (): Deleted.
+        * runtime/JSCPoisonedPtr.cpp: Removed.
+        * runtime/JSCPoisonedPtr.h: Removed.
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::makePoisonedUnique):
+        * runtime/JSScriptFetchParameters.h:
+        * runtime/JSScriptFetcher.h:
+        * runtime/NativeExecutable.h:
+        * runtime/StructureTransitionTable.h:
+        (JSC::StructureTransitionTable::map const):
+        (JSC::StructureTransitionTable::weakImpl const):
+        * runtime/WriteBarrier.h:
+        (JSC::WriteBarrier::poison):
+        * wasm/js/JSToWasm.cpp:
+        (JSC::Wasm::createJSToWasmWrapper):
+        * wasm/js/JSWebAssemblyCodeBlock.cpp:
+        (JSC::JSWebAssemblyCodeBlock::JSWebAssemblyCodeBlock):
+        * wasm/js/JSWebAssemblyCodeBlock.h:
+        * wasm/js/JSWebAssemblyInstance.h:
+        * wasm/js/JSWebAssemblyMemory.h:
+        * wasm/js/JSWebAssemblyModule.h:
+        * wasm/js/JSWebAssemblyTable.h:
+        * wasm/js/WasmToJS.cpp:
+        (JSC::Wasm::handleBadI64Use):
+        (JSC::Wasm::wasmToJS):
+        * wasm/js/WebAssemblyFunctionBase.h:
+        * wasm/js/WebAssemblyModuleRecord.h:
+        * wasm/js/WebAssemblyToJSCallee.h:
+        * wasm/js/WebAssemblyWrapperFunction.h:
+
 2018-01-13  Caio Lima  <ticaiolima@gmail.com>
 
         [JSC] NumberPrototype::extractRadixFromArgs incorrectly cast double to int32_t

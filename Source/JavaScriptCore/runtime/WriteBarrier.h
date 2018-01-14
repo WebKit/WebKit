@@ -195,7 +195,7 @@ template <typename T, typename Traits = WriteBarrierTraitsSelect<T>>
 class WriteBarrier : public WriteBarrierBase<T, Traits> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static constexpr auto poison = Traits::poison;
+    static auto poison() { return Traits::poison(); }
 
     WriteBarrier()
     {
@@ -225,7 +225,7 @@ template <>
 class WriteBarrier<Unknown, DumbValueTraits<Unknown>> : public WriteBarrierBase<Unknown, DumbValueTraits<Unknown>> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static constexpr auto poison = DumbValueTraits<Unknown>::poison;
+    static auto poison() { return DumbValueTraits<Unknown>::poison(); }
 
     WriteBarrier()
     {
@@ -254,12 +254,12 @@ inline bool operator==(const WriteBarrierBase<U, TraitsU>& lhs, const WriteBarri
     return lhs.get() == rhs.get();
 }
 
-template<uint32_t key, class T>
+template<uintptr_t& key, class T>
 using PoisonedWriteBarrierTraitsSelect = typename std::conditional<std::is_same<T, Unknown>::value,
-    WTF::ConstExprPoisonedValueTraits<key, T>, WTF::ConstExprPoisonedPtrTraits<key, T>
+    WTF::PoisonedValueTraits<key, T>, WTF::PoisonedPtrTraits<key, T>
 >::type;
 
-template <uint32_t key, typename T>
+template <uintptr_t& key, typename T>
 using PoisonedWriteBarrier = WriteBarrier<T, PoisonedWriteBarrierTraitsSelect<key, T>>;
 
 } // namespace JSC

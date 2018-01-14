@@ -80,7 +80,7 @@ public:
     static size_t offsetOfPoisonedCallee() { return OBJECT_OFFSETOF(JSWebAssemblyInstance, m_callee); }
 
     template<typename T>
-    using PoisonedBarrier = PoisonedWriteBarrier<JSWebAssemblyInstancePoison, T>;
+    using PoisonedBarrier = PoisonedWriteBarrier<POISON(JSWebAssemblyInstance), T>;
 
 protected:
     JSWebAssemblyInstance(VM&, Structure*, Ref<Wasm::Instance>&&);
@@ -91,7 +91,7 @@ protected:
 private:
     JSWebAssemblyModule* module() const { return m_module.get(); }
 
-    PoisonedRef<JSWebAssemblyInstancePoison, Wasm::Instance> m_instance;
+    PoisonedRef<POISON(JSWebAssemblyInstance), Wasm::Instance> m_instance;
 
     PoisonedBarrier<JSWebAssemblyModule> m_module;
     PoisonedBarrier<JSWebAssemblyCodeBlock> m_codeBlock;

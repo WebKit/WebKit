@@ -149,10 +149,10 @@ private:
     typename PtrTraits::StorageType m_head { nullptr };
 };
 
-template<uint32_t key, typename T> struct ConstExprPoisonedPtrTraits;
+template<uintptr_t& key, typename T> struct PoisonedPtrTraits;
 
-template<uint32_t key, typename T>
-using PoisonedBag = Bag<T, ConstExprPoisonedPtrTraits<key, Private::BagNode<T>>>;
+template<uintptr_t& key, typename T>
+using PoisonedBag = Bag<T, PoisonedPtrTraits<key, Private::BagNode<T>>>;
 
 } // namespace WTF
 

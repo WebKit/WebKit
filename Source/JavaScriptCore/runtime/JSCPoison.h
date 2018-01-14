@@ -29,33 +29,45 @@
 
 namespace JSC {
 
-enum Poison {
-    NotPoisoned = 0, // Reserved (and unused) so that poison keys are never 0.
+// Let's keep the following list of poisons in alphabetical order just so it's easier to read.
+#define FOR_EACH_JSC_POISON(v) \
+    v(ArrayPrototype) \
+    v(CodeBlock) \
+    v(DateInstance) \
+    v(GlobalData) \
+    v(JITCode) \
+    v(JSAPIWrapperObject) \
+    v(JSArrayBuffer) \
+    v(JSCallbackObject) \
+    v(JSGlobalObject) \
+    v(JSScriptFetchParameters) \
+    v(JSScriptFetcher) \
+    v(JSWebAssemblyCodeBlock) \
+    v(JSWebAssemblyInstance) \
+    v(JSWebAssemblyMemory) \
+    v(JSWebAssemblyModule) \
+    v(JSWebAssemblyTable) \
+    v(NativeCode) \
+    v(StructureTransitionTable) \
+    v(UnlinkedSourceCode) \
+    v(WebAssemblyFunctionBase) \
+    v(WebAssemblyModuleRecord) \
+    v(WebAssemblyToJSCallee) \
+    v(WebAssemblyWrapperFunction) \
 
-    // Add new poison keys below in alphabetical order. The order doesn't really
-    // matter, but we might as well keep them in alphabetically order for
-    // greater readability.
-    ArrayPrototypePoison,
-    CodeBlockPoison,
-    DateInstancePoison,
-    JSAPIWrapperObjectPoison,
-    JSArrayBufferPoison,
-    JSCallbackObjectPoison,
-    JSGlobalObjectPoison,
-    JSScriptFetchParametersPoison,
-    JSScriptFetcherPoison,
-    JSWebAssemblyCodeBlockPoison,
-    JSWebAssemblyInstancePoison,
-    JSWebAssemblyMemoryPoison,
-    JSWebAssemblyModulePoison,
-    JSWebAssemblyTablePoison,
-    StructureTransitionTablePoison,
-    UnlinkedSourceCodePoison,
-    WebAssemblyFunctionBasePoison,
-    WebAssemblyModuleRecordPoison,
-    WebAssemblyToJSCalleePoison,
-    WebAssemblyWrapperFunctionPoison,
-};
+#define POISON(_poisonID_) g_##_poisonID_##Poison
+
+#define DECLARE_POISON(_poisonID_) \
+    extern "C" JS_EXPORTDATA uintptr_t POISON(_poisonID_);
+
+FOR_EACH_JSC_POISON(DECLARE_POISON)
+#undef DECLARE_POISON
+
+struct ClassInfo;
+
+using PoisonedClassInfoPtr = Poisoned<POISON(GlobalData), const ClassInfo*>;
+using PoisonedMasmPtr = Poisoned<POISON(JITCode), void*>;
+
+void initializePoison();
 
 } // namespace JSC
-
