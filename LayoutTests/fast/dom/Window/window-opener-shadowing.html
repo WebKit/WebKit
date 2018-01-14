@@ -15,14 +15,25 @@ shouldBeTrue("desc.configurable");
 openerGetter = desc.get;
 
 shouldNotThrow("window.opener = 'foo'");
-evalAndLog("desc = Object.getOwnPropertyDescriptor(window, 'opener')");
+shouldBeEqualToString("window.opener", "foo");
 
+evalAndLog("desc = Object.getOwnPropertyDescriptor(window, 'opener')");
 shouldBeEqualToString("desc.value", "foo");
 shouldBeTrue("desc.writable");
 shouldBeTrue("desc.enumerable");
 shouldBeTrue("desc.configurable");
 
 shouldBeNull("openerGetter.call(window)");
+
+shouldNotThrow("window.opener = null");
+shouldBeNull("window.opener");
+shouldBeNull("openerGetter.call(window)");
+
+evalAndLog("desc = Object.getOwnPropertyDescriptor(window, 'opener')");
+shouldBe("desc.value", "null");
+shouldBeTrue("desc.writable");
+shouldBeTrue("desc.enumerable");
+shouldBeTrue("desc.configurable");
 
 shouldNotThrow("delete window.opener");
 shouldBeUndefined("window.opener");

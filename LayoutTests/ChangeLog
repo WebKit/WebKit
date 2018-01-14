@@ -1,3 +1,15 @@
+2018-01-13  Chris Dumez  <cdumez@apple.com>
+
+        Extend testing added in r226842
+        https://bugs.webkit.org/show_bug.cgi?id=181634
+
+        Reviewed by Darin Adler.
+
+        I have verified that the behavior is consistent with Chrome and Firefox.
+
+        * fast/dom/Window/window-opener-shadowing-expected.txt:
+        * fast/dom/Window/window-opener-shadowing.html:
+
 2018-01-13  Minsheng Liu  <lambda@liu.ms>
 
         MathML Lengths should take zoom level into account

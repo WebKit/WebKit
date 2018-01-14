@@ -10,12 +10,21 @@ PASS desc.set is an instance of Function
 PASS desc.enumerable is true
 PASS desc.configurable is true
 PASS window.opener = 'foo' did not throw exception.
+PASS window.opener is "foo"
 desc = Object.getOwnPropertyDescriptor(window, 'opener')
 PASS desc.value is "foo"
 PASS desc.writable is true
 PASS desc.enumerable is true
 PASS desc.configurable is true
 PASS openerGetter.call(window) is null
+PASS window.opener = null did not throw exception.
+PASS window.opener is null
+PASS openerGetter.call(window) is null
+desc = Object.getOwnPropertyDescriptor(window, 'opener')
+PASS desc.value is null
+PASS desc.writable is true
+PASS desc.enumerable is true
+PASS desc.configurable is true
 PASS delete window.opener did not throw exception.
 PASS window.opener is undefined.
 PASS openerGetter.call(window) is null
