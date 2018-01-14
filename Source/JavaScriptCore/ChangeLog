@@ -1,3 +1,11 @@
+2018-01-14  Saam Barati  <sbarati@apple.com>
+
+        Unreviewed. r226928 broke the CLOOP build. This patch fixes the CLOOP build.
+
+        * bytecode/CallLinkStatus.cpp:
+        (JSC::CallLinkStatus::computeFromLLInt):
+        (JSC::CallLinkStatus::computeExitSiteData):
+
 2018-01-13  Mark Lam  <mark.lam@apple.com>
 
         Replace all use of ConstExprPoisoned with Poisoned.
