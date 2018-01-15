@@ -1,3 +1,14 @@
+2018-01-15  Konstantin Tokarev  <annulen@yandex.ru>
+
+        image-rendering should affect scaling of border-image
+        https://bugs.webkit.org/show_bug.cgi?id=169440
+
+        Reviewed by Michael Catanzaro.
+
+        * fast/borders/border-image-pixelated-expected.html: Added.
+        * fast/borders/border-image-pixelated.html: Added.
+        * fast/borders/resources/border-image-pixelated.png: Added.
+
 2018-01-15  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed GTK gardening

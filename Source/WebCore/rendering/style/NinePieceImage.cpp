@@ -25,6 +25,7 @@
 #include "NinePieceImage.h"
 
 #include "GraphicsContext.h"
+#include "ImageQualityController.h"
 #include "LengthFunctions.h"
 #include "RenderStyle.h"
 #include <wtf/NeverDestroyed.h>
@@ -206,6 +207,7 @@ void NinePieceImage::paint(GraphicsContext& graphicsContext, RenderElement* rend
     if (!image)
         return;
 
+    InterpolationQualityMaintainer interpolationMaintainer(graphicsContext, ImageQualityController::interpolationQualityFromStyle(style));
     for (ImagePiece piece = MinPiece; piece < MaxPiece; ++piece) {
         if ((piece == MiddlePiece && !fill()) || isEmptyPieceRect(piece, destinationRects, sourceRects))
             continue;
