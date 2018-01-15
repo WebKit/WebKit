@@ -31,7 +31,6 @@
 
 #include <wtf/ExportMacros.h>
 
-// See note in wtf/Platform.h for more info on EXPORT_MACROS.
 #if USE(EXPORT_MACROS)
 
 #if !PLATFORM(WIN)

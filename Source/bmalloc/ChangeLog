@@ -1,3 +1,15 @@
+2018-01-15  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Improve use of ExportMacros
+        https://bugs.webkit.org/show_bug.cgi?id=181652
+
+        Reviewed by Konstantin Tokarev.
+
+        Disable BEXPORT on Linux ports.
+
+        * bmalloc/BExport.h: Check for BUSE(EXPORT_MACROS).
+        * bmalloc/BPlatform.h: Add BUSE(EXPORT_MACROS) and define it on macOS and iOS.
+
 2017-12-20  Ting-Wei Lan  <lantw44@gmail.com>
 
         Include stdio.h before using stderr and _IONBF

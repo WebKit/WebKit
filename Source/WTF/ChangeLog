@@ -1,3 +1,15 @@
+2018-01-15  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Improve use of ExportMacros
+        https://bugs.webkit.org/show_bug.cgi?id=181652
+
+        Reviewed by Konstantin Tokarev.
+
+        * wtf/ExportMacros.h: Simplify the #defines in this file.
+        * wtf/Platform.h: Remove unneeded define. Remove comment that expects all ports to
+          eventually enable the export macros. WPE will never want these. We don't currently want
+          them for GTK either, though how we link GTK has been in flux recently.
+
 2018-01-15  JF Bastien  <jfbastien@apple.com>
 
         Remove makePoisonedUnique

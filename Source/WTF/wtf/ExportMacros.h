@@ -67,53 +67,27 @@
 
 #endif
 
-#if defined(BUILDING_WTF) || defined(STATICALLY_LINKED_WITH_WTF)
-#define WTF_IS_LINKED_IN_SAME_BINARY 1
-#endif
-
-// See note in wtf/Platform.h for more info on EXPORT_MACROS.
 #if USE(EXPORT_MACROS)
 
 #define WTF_EXPORT WTF_EXPORT_DECLARATION
 #define WTF_IMPORT WTF_IMPORT_DECLARATION
 #define WTF_HIDDEN WTF_IMPORT_DECLARATION
 
-// FIXME: When all ports are using the export macros, we should replace
-// WTF_EXPORTDATA with WTF_EXPORT_PRIVATE macros.
-#if defined(WTF_IS_LINKED_IN_SAME_BINARY)
-#define WTF_EXPORTDATA WTF_EXPORT
-#else
-#define WTF_EXPORTDATA WTF_IMPORT
-#endif
-
-#else // !USE(EXPORT_MACROS)
-
-#if USE(DECLSPEC_ATTRIBUTE)
 #if defined(BUILDING_WTF) || defined(STATICALLY_LINKED_WITH_WTF)
-#define WTF_EXPORTDATA __declspec(dllexport)
-#else
-#define WTF_EXPORTDATA __declspec(dllimport)
-#endif
-#else // !OS(WINDOWS) || COMPILER(GCC_OR_CLANG)
-#define WTF_EXPORTDATA
-#endif
-
-#define WTF_EXPORTCLASS WTF_EXPORTDATA
-
-#define WTF_EXPORT
-#define WTF_IMPORT
-#define WTF_HIDDEN
-
-#endif // USE(EXPORT_MACROS)
-
-#if defined(WTF_IS_LINKED_IN_SAME_BINARY)
 #define WTF_EXPORT_PRIVATE WTF_EXPORT
 #else
 #define WTF_EXPORT_PRIVATE WTF_IMPORT
 #endif
 
+#else // !USE(EXPORT_MACROS)
+
+#define WTF_EXPORT
+#define WTF_IMPORT
+#define WTF_HIDDEN
+#define WTF_EXPORT_PRIVATE
+
+#endif // USE(EXPORT_MACROS)
+
+// FIXME: We should replace WTF_EXPORTDATA and WTF_EXPORT_STRING_API with WTF_EXPORT_PRIVATE.
+#define WTF_EXPORTDATA WTF_EXPORT_PRIVATE
 #define WTF_EXPORT_STRING_API WTF_EXPORT_PRIVATE
-
-#define WTF_EXPORT_HIDDEN WTF_HIDDEN
-
-#define HIDDEN_INLINE WTF_EXPORT_HIDDEN inline

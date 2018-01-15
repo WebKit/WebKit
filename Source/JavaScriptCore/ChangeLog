@@ -1,3 +1,14 @@
+2018-01-15  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Improve use of ExportMacros
+        https://bugs.webkit.org/show_bug.cgi?id=181652
+
+        Reviewed by Konstantin Tokarev.
+
+        * API/JSBase.h: Update a comment.
+        * inspector/InspectorBackendDispatcher.h: Use a better, yet equivalent, WTF macro.
+        * runtime/JSExportMacros.h: Simplify the #defines in this file.
+
 2018-01-15  JF Bastien  <jfbastien@apple.com>
 
         Remove makePoisonedUnique

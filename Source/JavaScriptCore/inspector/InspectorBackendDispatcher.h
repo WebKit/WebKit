@@ -96,7 +96,7 @@ public:
     void reportProtocolError(std::optional<long> relatedRequestId, CommonErrorCode, const String& errorMessage);
 
     template<typename T>
-    WTF_HIDDEN_DECLARATION
+    WTF_INTERNAL
     T getPropertyValue(JSON::Object*, const String& name, bool* out_optionalValueFound, T defaultValue, std::function<bool(JSON::Value&, T&)>, const char* typeName);
 
     int getInteger(JSON::Object*, const String& name, bool* valueFound);

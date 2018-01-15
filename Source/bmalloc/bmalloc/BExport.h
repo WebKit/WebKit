@@ -25,5 +25,10 @@
 
 #pragma once
 
-#define BEXPORT __attribute__((visibility("default")))
+#include "BPlatform.h"
 
+#if BUSE(EXPORT_MACROS)
+#define BEXPORT __attribute__((visibility("default")))
+#else
+#define BEXPORT
+#endif

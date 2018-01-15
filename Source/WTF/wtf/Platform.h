@@ -1067,16 +1067,8 @@
 #include <wtf/glib/GTypedefs.h>
 #endif
 
-/* FIXME: This define won't be needed once #27551 is fully landed. However,
-   since most ports try to support sub-project independence, adding new headers
-   to WTF causes many ports to break, and so this way we can address the build
-   breakages one port at a time. */
 #if !defined(USE_EXPORT_MACROS) && (PLATFORM(COCOA) || OS(WINDOWS))
 #define USE_EXPORT_MACROS 1
-#endif
-
-#if !defined(USE_EXPORT_MACROS_FOR_TESTING) && (PLATFORM(GTK) || OS(WINDOWS))
-#define USE_EXPORT_MACROS_FOR_TESTING 1
 #endif
 
 #if PLATFORM(GTK) || PLATFORM(WPE)

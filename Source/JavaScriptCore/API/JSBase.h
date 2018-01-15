@@ -76,7 +76,7 @@ typedef struct OpaqueJSValue* JSObjectRef;
 #endif
 
 /* JavaScript symbol exports */
-/* These rules should stay the same as in WebKit2/Shared/API/c/WKBase.h */
+/* These rules should stay the same as in WebKit/Shared/API/c/WKDeclarationSpecifiers.h */
 
 #undef JS_EXPORT
 #if defined(JS_NO_EXPORT)

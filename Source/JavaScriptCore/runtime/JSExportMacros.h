@@ -31,7 +31,6 @@
 
 #include <wtf/ExportMacros.h>
 
-// See note in wtf/Platform.h for more info on EXPORT_MACROS.
 #if USE(EXPORT_MACROS)
 
 #if defined(BUILDING_JavaScriptCore) || defined(STATICALLY_LINKED_WITH_JavaScriptCore)
@@ -40,30 +39,12 @@
 #define JS_EXPORT_PRIVATE WTF_IMPORT
 #endif
 
-#define JS_EXPORT_HIDDEN WTF_HIDDEN
+// FIXME: We should replace JS_EXPORTDATA with JS_EXPORT_PRIVATE.
 #define JS_EXPORTDATA JS_EXPORT_PRIVATE
-#define JS_EXPORTCLASS JS_EXPORT_PRIVATE
 
 #else // !USE(EXPORT_MACROS)
 
-#if USE(DECLSPEC_ATTRIBUTE)
-
-#if defined(BUILDING_JavaScriptCore) || defined(STATICALLY_LINKED_WITH_JavaScriptCore)
-#define JS_EXPORTDATA __declspec(dllexport)
-#else
-#define JS_EXPORTDATA __declspec(dllimport)
-#endif
-
-#define JS_EXPORTCLASS JS_EXPORTDATA
-
-#else // !PLATFORM...
-
 #define JS_EXPORTDATA
-#define JS_EXPORTCLASS
-
-#endif // !PLATFORM...
-
 #define JS_EXPORT_PRIVATE
-#define JS_EXPORT_HIDDEN
 
 #endif // USE(EXPORT_MACROS)
