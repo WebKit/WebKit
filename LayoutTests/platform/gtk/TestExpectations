@@ -2198,7 +2198,7 @@ webkit.org/b/172284 svg/animations/animated-svg-image-outside-viewport-paused.ht
 
 webkit.org/b/172816 media/media-source/media-source-paint-to-canvas.html [ Timeout ]
 
-webkit.org/b/174242 media/media-fullscreen-pause-inline.html [ Timeout ]
+webkit.org/b/174242 media/media-fullscreen-pause-inline.html [ Skip ]
 
 webkit.org/b/174243 fast/images/low-memory-decode.html [ Timeout ]
 

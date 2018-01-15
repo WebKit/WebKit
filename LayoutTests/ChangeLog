@@ -1,5 +1,13 @@
 2018-01-15  Philippe Normand  <pnormand@igalia.com>
 
+        Unreviewed GTK gardening
+
+        * platform/gtk/TestExpectations: Skip
+        media/media-fullscreen-pause-inline.html as advised by Eric
+        Carlson.
+
+2018-01-15  Philippe Normand  <pnormand@igalia.com>
+
         Prevent useless MediaPlayer mute state notifications
         https://bugs.webkit.org/show_bug.cgi?id=181646
 
