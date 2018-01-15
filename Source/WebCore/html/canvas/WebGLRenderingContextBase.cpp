@@ -1892,11 +1892,10 @@ bool WebGLRenderingContextBase::validateIndexArrayPrecise(GC3Dsizei count, GC3De
     }
 
     // Then set the last index in the index array and make sure it is valid.
-    Checked<unsigned, RecordOverflow> checkedNumElementsRequired = Checked<unsigned>(lastIndex);
-    checkedNumElementsRequired += 1;
-    if (checkedNumElementsRequired.hasOverflowed())
+    auto checkedNumElementsRequired = checkedAddAndMultiply<unsigned>(lastIndex, 1, 1);
+    if (!checkedNumElementsRequired)
         return false;
-    numElementsRequired = checkedNumElementsRequired.unsafeGet();
+    numElementsRequired = checkedNumElementsRequired.value();
     return true;
 }
 
@@ -2010,9 +2009,7 @@ bool WebGLRenderingContextBase::validateDrawArrays(const char* functionName, GC3
     }
 
     // Ensure we have a valid rendering state.
-    Checked<GC3Dint, RecordOverflow> checkedFirst(first);
-    Checked<GC3Dint, RecordOverflow> checkedCount(count);
-    Checked<GC3Dint, RecordOverflow> checkedSum = checkedFirst + checkedCount;
+    Checked<GC3Dint, RecordOverflow> checkedSum = Checked<GC3Dint, RecordOverflow>(first) + Checked<GC3Dint, RecordOverflow>(count);
     Checked<GC3Dint, RecordOverflow> checkedPrimitiveCount(primitiveCount);
     if (checkedSum.hasOverflowed() || checkedPrimitiveCount.hasOverflowed() || !validateVertexAttributes(checkedSum.unsafeGet(), checkedPrimitiveCount.unsafeGet())) {
         synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, functionName, "attempt to access out of bounds arrays");
@@ -5714,12 +5711,11 @@ bool WebGLRenderingContextBase::validateSimulatedVertexAttrib0(GC3Duint numVerte
     if (state.enabled)
         return true;
 
-    Checked<GC3Duint, RecordOverflow> bufferSize(numVertex);
-    bufferSize += 1;
-    bufferSize *= Checked<GC3Duint>(4);
-    if (bufferSize.hasOverflowed())
+    auto bufferSize = checkedAddAndMultiply<GC3Duint>(numVertex, 1, 4);
+    if (!bufferSize)
         return false;
-    Checked<GC3Dsizeiptr, RecordOverflow> bufferDataSize(bufferSize);
+
+    Checked<GC3Dsizeiptr, RecordOverflow> bufferDataSize(bufferSize.value());
     bufferDataSize *= Checked<GC3Dsizeiptr>(sizeof(GC3Dfloat));
     return !bufferDataSize.hasOverflowed() && bufferDataSize.unsafeGet() > 0;
 }
@@ -5740,22 +5736,19 @@ std::optional<bool> WebGLRenderingContextBase::simulateVertexAttrib0(GC3Duint nu
     m_vertexAttrib0UsedBefore = true;
     m_context->bindBuffer(GraphicsContext3D::ARRAY_BUFFER, m_vertexAttrib0Buffer->object());
 
-    Checked<GC3Duint> bufferSize(numVertex);
-    bufferSize += 1;
-    bufferSize *= Checked<GC3Duint>(4);
+    // We know bufferSize and bufferDataSize won't overflow or go negative, thanks to validateSimulatedVertexAttrib0
+    GC3Duint bufferSize = (numVertex + 1) * 4;
+    GC3Dsizeiptr bufferDataSize = bufferSize * sizeof(GC3Dfloat);
 
-    Checked<GC3Dsizeiptr> bufferDataSize(bufferSize);
-    bufferDataSize *= Checked<GC3Dsizeiptr>(sizeof(GC3Dfloat));
-
-    if (bufferDataSize.unsafeGet() > m_vertexAttrib0BufferSize) {
+    if (bufferDataSize > m_vertexAttrib0BufferSize) {
         m_context->moveErrorsToSyntheticErrorList();
-        m_context->bufferData(GraphicsContext3D::ARRAY_BUFFER, bufferDataSize.unsafeGet(), 0, GraphicsContext3D::DYNAMIC_DRAW);
+        m_context->bufferData(GraphicsContext3D::ARRAY_BUFFER, bufferDataSize, 0, GraphicsContext3D::DYNAMIC_DRAW);
         if (m_context->getError() != GraphicsContext3D::NO_ERROR) {
             // We were unable to create a buffer.
             m_vertexAttrib0UsedBefore = false;
             return std::nullopt;
         }
-        m_vertexAttrib0BufferSize = bufferDataSize.unsafeGet();
+        m_vertexAttrib0BufferSize = bufferDataSize;
         m_forceAttrib0BufferRefill = true;
     }
 
@@ -5768,7 +5761,7 @@ std::optional<bool> WebGLRenderingContextBase::simulateVertexAttrib0(GC3Duint nu
             || attribValue.value[2] != m_vertexAttrib0BufferValue[2]
             || attribValue.value[3] != m_vertexAttrib0BufferValue[3])) {
 
-        auto bufferData = std::make_unique<GC3Dfloat[]>(bufferSize.unsafeGet());
+        auto bufferData = std::make_unique<GC3Dfloat[]>(bufferSize);
         for (GC3Duint ii = 0; ii < numVertex + 1; ++ii) {
             bufferData[ii * 4] = attribValue.value[0];
             bufferData[ii * 4 + 1] = attribValue.value[1];
@@ -5780,7 +5773,7 @@ std::optional<bool> WebGLRenderingContextBase::simulateVertexAttrib0(GC3Duint nu
         m_vertexAttrib0BufferValue[2] = attribValue.value[2];
         m_vertexAttrib0BufferValue[3] = attribValue.value[3];
         m_forceAttrib0BufferRefill = false;
-        m_context->bufferSubData(GraphicsContext3D::ARRAY_BUFFER, 0, bufferDataSize.unsafeGet(), bufferData.get());
+        m_context->bufferSubData(GraphicsContext3D::ARRAY_BUFFER, 0, bufferDataSize, bufferData.get());
     }
     m_context->vertexAttribPointer(0, 4, GraphicsContext3D::FLOAT, 0, 0, 0);
     return true;

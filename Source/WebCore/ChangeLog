@@ -1,5 +1,28 @@
 2018-01-15  Dean Jackson  <dino@apple.com>
 
+        Use a helper function for checked arithmetic in WebGL validation
+        https://bugs.webkit.org/show_bug.cgi?id=181620
+        <rdar://problem/36485879>
+
+        Reviewed by Eric Carlson.
+
+        Eric recommended using a templated helper function to do
+        a common arithmetic check in WebGL validation.
+
+        * html/canvas/WebGL2RenderingContext.cpp:
+        (WebCore::WebGL2RenderingContext::validateIndexArrayConservative):
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::validateIndexArrayConservative):
+        * html/canvas/WebGLRenderingContextBase.cpp:
+        (WebCore::WebGLRenderingContextBase::validateIndexArrayPrecise):
+        (WebCore::WebGLRenderingContextBase::validateDrawArrays):
+        (WebCore::WebGLRenderingContextBase::validateSimulatedVertexAttrib0):
+        (WebCore::WebGLRenderingContextBase::simulateVertexAttrib0):
+        * html/canvas/WebGLRenderingContextBase.h:
+        (WebCore::WebGLRenderingContextBase::checkedAddAndMultiply): New helper.
+
+2018-01-15  Dean Jackson  <dino@apple.com>
+
         Use traits for animation timing functions
         https://bugs.webkit.org/show_bug.cgi?id=181651
         <rdar://problem/36525328>

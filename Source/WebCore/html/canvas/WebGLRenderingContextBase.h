@@ -829,6 +829,8 @@ protected:
     HTMLCanvasElement* htmlCanvas();
     OffscreenCanvas* offscreenCanvas();
 
+    template <typename T> inline std::optional<T> checkedAddAndMultiply(T value, T add, T multiply);
+
 private:
     bool validateArrayBufferType(const char* functionName, GC3Denum type, std::optional<JSC::TypedArrayType>);
     void registerWithWebGLStateTracker();
@@ -839,6 +841,18 @@ private:
     WebGLStateTracker::Token m_trackerToken;
     Timer m_checkForContextLossHandlingTimer;
 };
+
+template <typename T>
+inline std::optional<T> WebGLRenderingContextBase::checkedAddAndMultiply(T value, T add, T multiply)
+{
+    Checked<T, RecordOverflow> checkedResult = Checked<T>(value);
+    checkedResult += Checked<T>(add);
+    checkedResult *= Checked<T>(multiply);
+    if (checkedResult.hasOverflowed())
+        return std::nullopt;
+
+    return checkedResult.unsafeGet();
+}
 
 } // namespace WebCore
 
