@@ -2004,11 +2004,12 @@ void CanvasRenderingContext2DBase::didDraw(const FloatRect& r, unsigned options)
 #if ENABLE(ACCELERATED_2D_CANVAS)
     // If we are drawing to hardware and we have a composited layer, just call contentChanged().
     if (isAccelerated()) {
-        RenderBox* renderBox = canvas().renderBox();
+        auto& canvas = downcast<HTMLCanvasElement>(canvasBase());
+        RenderBox* renderBox = canvas.renderBox();
         if (renderBox && renderBox->hasAcceleratedCompositing()) {
             renderBox->contentChanged(CanvasPixelsChanged);
-            canvas().clearCopiedImage();
-            canvas().notifyObserversCanvasChanged(r);
+            canvas.clearCopiedImage();
+            canvas.notifyObserversCanvasChanged(r);
             return;
         }
     }
