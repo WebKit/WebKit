@@ -1,3 +1,20 @@
+2018-01-15  Sebastian Dröge  <sebastian@centricular.com>
+
+        [GStreamer] Don't wait for draw condition variable when shutting down.
+        https://bugs.webkit.org/show_bug.cgi?id=180978
+
+        Reviewed by Carlos Garcia Campos.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp:
+        (WebCore::MediaPlayerPrivateGStreamerBase::triggerRepaint):
+        (WebCore::MediaPlayerPrivateGStreamerBase::cancelRepaint):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.h:
+        By also waiting for the draw condition variable while shutting down,
+        it is possible that the GStreamer video sink is waiting for the main
+        thread to actually render the current frame, while at the same time
+        the main thread is waiting for the GStreamer video sink to shut down,
+        resulting in a deadlock.
+
 2018-01-13  Minsheng Liu  <lambda@liu.ms>
 
         MathML Lengths should take zoom level into account
