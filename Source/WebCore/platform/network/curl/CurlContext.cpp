@@ -157,7 +157,11 @@ void CurlContext::setProxyInfo(const String& host,
     setProxyInfo(info);
 }
 
-
+bool CurlContext::isHttp2Enabled() const
+{
+    curl_version_info_data* data = curl_version_info(CURLVERSION_NOW);
+    return data->features & CURL_VERSION_HTTP2;
+}
 
 // CurlShareHandle --------------------------------------------
 
@@ -359,18 +363,32 @@ void CurlHandle::enableRequestHeaders()
     curl_easy_setopt(m_handle, CURLOPT_HTTPHEADER, headers);
 }
 
+void CurlHandle::enableHttp()
+{
+    if (CurlContext::singleton().isHttp2Enabled()) {
+        curl_easy_setopt(m_handle, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_2TLS);
+        curl_easy_setopt(m_handle, CURLOPT_PIPEWAIT, 1L);
+        curl_easy_setopt(m_handle, CURLOPT_SSL_ENABLE_ALPN, 1L);
+        curl_easy_setopt(m_handle, CURLOPT_SSL_ENABLE_NPN, 0L);
+    } else
+        curl_easy_setopt(m_handle, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_1);
+}
+
 void CurlHandle::enableHttpGetRequest()
 {
+    enableHttp();
     curl_easy_setopt(m_handle, CURLOPT_HTTPGET, 1L);
 }
 
 void CurlHandle::enableHttpHeadRequest()
 {
+    enableHttp();
     curl_easy_setopt(m_handle, CURLOPT_NOBODY, 1L);
 }
 
 void CurlHandle::enableHttpPostRequest()
 {
+    enableHttp();
     curl_easy_setopt(m_handle, CURLOPT_POST, 1L);
     curl_easy_setopt(m_handle, CURLOPT_POSTFIELDSIZE, 0L);
 }
@@ -391,6 +409,7 @@ void CurlHandle::setPostFieldLarge(curl_off_t size)
 
 void CurlHandle::enableHttpPutRequest()
 {
+    enableHttp();
     curl_easy_setopt(m_handle, CURLOPT_UPLOAD, 1L);
     curl_easy_setopt(m_handle, CURLOPT_INFILESIZE, 0L);
 }
@@ -405,6 +424,7 @@ void CurlHandle::setInFileSizeLarge(curl_off_t size)
 
 void CurlHandle::setHttpCustomRequest(const String& method)
 {
+    enableHttp();
     curl_easy_setopt(m_handle, CURLOPT_CUSTOMREQUEST, method.ascii().data());
 }
 

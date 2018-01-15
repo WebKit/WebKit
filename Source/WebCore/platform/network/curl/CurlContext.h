@@ -123,6 +123,9 @@ public:
     // SSL
     CurlSSLHandle& sslHandle() { return m_sslHandle; }
 
+    // HTTP/2
+    bool isHttp2Enabled() const;
+
 #ifndef NDEBUG
     FILE* getLogFile() const { return m_logFile; }
     bool isVerbose() const { return m_verbose; }
@@ -230,6 +233,7 @@ public:
     void appendRequestHeader(const String& name);
     void removeRequestHeader(const String& name);
 
+    void enableHttp();
     void enableHttpGetRequest();
     void enableHttpHeadRequest();
     void enableHttpPostRequest();

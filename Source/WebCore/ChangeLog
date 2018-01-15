@@ -1,3 +1,25 @@
+2018-01-15  Basuke Suzuki  <Basuke.Suzuki@sony.com>
+
+        [Curl] Enable HTTP/2
+        https://bugs.webkit.org/show_bug.cgi?id=181551
+
+        Reviewed by Michael Catanzaro.
+
+        Start supporting HTTP/2 protocol. The first step is just enabling the HTTP/2 on Curl backend.
+        Next step will be to enable multiplexing feature.
+
+        No new tests because we don't have HTTP/2 test backend yet.
+
+        * platform/network/curl/CurlContext.cpp:
+        (WebCore::CurlContext::isHttp2Enabled const):
+        (WebCore::CurlHandle::enableHttp):
+        (WebCore::CurlHandle::enableHttpGetRequest):
+        (WebCore::CurlHandle::enableHttpHeadRequest):
+        (WebCore::CurlHandle::enableHttpPostRequest):
+        (WebCore::CurlHandle::enableHttpPutRequest):
+        (WebCore::CurlHandle::setHttpCustomRequest):
+        * platform/network/curl/CurlContext.h:
+
 2018-01-15  Dean Jackson  <dino@apple.com>
 
         Use a helper function for checked arithmetic in WebGL validation
