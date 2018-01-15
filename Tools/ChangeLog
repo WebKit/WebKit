@@ -1,3 +1,18 @@
+2018-01-15  JF Bastien  <jfbastien@apple.com>
+
+        Remove makePoisonedUnique
+        https://bugs.webkit.org/show_bug.cgi?id=181630
+        <rdar://problem/36498623>
+
+        Reviewed by Mark Lam.
+
+        Update tests.
+
+        * TestWebKitAPI/Tests/WTF/PoisonedUniquePtr.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WTF/PoisonedUniquePtrForNonTriviallyDestructibleArrays.cpp:
+        (TestWebKitAPI::TEST):
+
 2018-01-15  Adrian Perez de Castro  <aperez@igalia.com>
 
         [GTK][JHBuild] Tools/gtk/install-dependencies: Package libxfont does not exist anymore in Arch Linux

@@ -946,12 +946,6 @@ private:
     void insertBasicBlockBoundariesForControlFlowProfiler(RefCountedArray<Instruction>&);
     void ensureCatchLivenessIsComputedForBytecodeOffsetSlow(unsigned);
 
-    template<typename T, typename... Arguments, typename Enable = void>
-    static PoisonedUniquePtr<POISON(CodeBlock), T> makePoisonedUnique(Arguments&&... arguments)
-    {
-        return WTF::makePoisonedUnique<POISON(CodeBlock), T>(std::forward<Arguments>(arguments)...);
-    }
-
     WriteBarrier<UnlinkedCodeBlock> m_unlinkedCode;
     int m_numParameters;
     int m_numberOfArgumentsToSkip { 0 };

@@ -128,12 +128,6 @@ private:
     template<uintptr_t&, typename, typename> friend class PoisonedUniquePtr;
 };
 
-template<uintptr_t& key, typename T, typename... Arguments, typename Enable = void>
-PoisonedUniquePtr<key, T> makePoisonedUnique(Arguments&&... arguments)
-{
-    return PoisonedUniquePtr<key, T>::create(std::forward<Arguments>(arguments)...);
-}
-
 template<uintptr_t& key, typename T>
 class PoisonedUniquePtr<key, T[]> : public Poisoned<key, T*> {
     WTF_MAKE_FAST_ALLOCATED;
@@ -220,14 +214,7 @@ private:
     template<uintptr_t&, typename, typename> friend class PoisonedUniquePtr;
 };
 
-template<uintptr_t& key, typename T, typename... Arguments>
-PoisonedUniquePtr<key, T[]> makePoisonedUnique(size_t count, Arguments&&... arguments)
-{
-    return PoisonedUniquePtr<key, T[]>::create(count, std::forward<Arguments>(arguments)...);
-}
-
 } // namespace WTF
 
 using WTF::PoisonedUniquePtr;
-using WTF::makePoisonedUnique;
 

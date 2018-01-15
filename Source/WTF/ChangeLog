@@ -1,3 +1,17 @@
+2018-01-15  JF Bastien  <jfbastien@apple.com>
+
+        Remove makePoisonedUnique
+        https://bugs.webkit.org/show_bug.cgi?id=181630
+        <rdar://problem/36498623>
+
+        Reviewed by Mark Lam.
+
+        I added a conversion from std::unique_ptr, so we can just use
+        std::make_unique and it'll auto-poison when converted.
+
+        * wtf/PoisonedUniquePtr.h:
+        (WTF::makePoisonedUnique): Deleted.
+
 2018-01-13  Mark Lam  <mark.lam@apple.com>
 
         Replace all use of ConstExprPoisoned with Poisoned.
