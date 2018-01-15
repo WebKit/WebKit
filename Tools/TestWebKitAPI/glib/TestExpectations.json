@@ -1,0 +1,109 @@
+{
+    "TestUIClient": {
+        "subtests": {
+            "/webkit2/WebKitWebView/mouse-target": {
+                "expected": {"gtk": {"status": ["TIMEOUT"], "bug": "webkit.org/b/117689"}}
+            },
+            "/webkit2/WebKitWebView/usermedia-permission-requests": {
+                "expected": {"gtk": {"status": ["TIMEOUT"], "bug": "webkit.org/b/158257"}}
+            },
+            "/webkit2/WebKitWebView/audio-usermedia-permission-request": {
+                "expected": {"gtk": {"status": ["TIMEOUT"], "bug": "webkit.org/b/158257"}}
+            }
+        }
+    },
+    "TestCookieManager": {
+        "subtests": {
+            "/webkit2/WebKitCookieManager/persistent-storage": {
+                "expected": {"gtk": {"status": ["FAIL", "PASS"], "bug": "webkit.org/b/134580"}}
+            }
+        }
+    },
+    "TestPrinting": {
+        "subtests": {
+            "/webkit2/WebKitPrintOperation/custom-widget": {
+                "expected": {"gtk": {"status": ["FAIL", "PASS"], "bug": "webkit.org/b/168196"}}
+            }
+        }
+    },
+    "TestWebViewEditor": {
+        "subtests": {
+            "/webkit2/WebKitWebView/editable/editable": {
+                "expected": {"gtk@Debug": {"status": ["FAIL"], "bug": "webkit.org/b/134580"}}
+            }
+        }
+    },
+    "TestWebExtensions": {
+        "subtests": {
+            "/webkit2/WebKitWebView/install-missing-plugins-permission-request": {
+                "expected": {"gtk": {"status": ["TIMEOUT"], "bug": "webkit.org/b/147822"}}
+            }
+        }
+    },
+    "TestWebsiteData": {
+        "subtests": {
+            "/webkit2/WebKitWebsiteData/databases": {
+                "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/181251"}}
+            }
+        }
+    },
+    "TestInspectorServer": {
+        "expected": {"all": {"slow": true}}
+    },
+    "TestWebKit": {
+        "subtests": {
+            "WebKit.MouseMoveAfterCrash": {
+                "expected": {"gtk": {"status": ["CRASH", "PASS"], "bug": "webkit.org/b/85066"}}
+            },
+            "WebKit.NewFirstVisuallyNonEmptyLayoutForImages": {
+                "expected": {"gtk": {"status": ["FAIL", "PASS"], "bug": "webkit.org/b/85066"}}
+            },
+            "WebKit.NewFirstVisuallyNonEmptyLayoutFrames": {
+                "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/85037"}}
+            },
+            "WebKit.SpacebarScrolling": {
+                "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/84961"}}
+            },
+            "WebKit.WKConnection": {
+                "expected": {"gtk": {"status": ["FAIL", "TIMEOUT"], "bug": "webkit.org/b/84959"}}
+            },
+            "WebKit.ForceRepaint": {
+                "expected": {"gtk": {"status": ["TIMEOUT"], "bug": "webkit.org/b/105532"}}
+            },
+            "WebKit.ReloadPageAfterCrash": {
+                "expected": {"gtk": {"status": ["TIMEOUT", "PASS"], "bug": "webkit.org/b/110129"}}
+            },
+            "WebKit.DidAssociateFormControls": {
+                "expected": {"gtk": {"status": ["TIMEOUT"], "bug": "webkit.org/b/120302"}}
+            },
+            "WebKit.InjectedBundleFrameHitTest": {
+                "expected": {"gtk": {"status": ["TIMEOUT"], "bug": "webkit.org/b/120303"}}
+            },
+            "WebKit.TerminateTwice": {
+                "expected": {"gtk": {"status": ["SKIP"], "bug": "webkit.org/b/121970"}}
+            },
+            "WebKit.GeolocationTransitionToHighAccuracy": {
+                "expected": {"gtk": {"status": ["CRASH"], "bug": "webkit.org/b/125068"}}
+            },
+            "WebKit.GeolocationTransitionToLowAccuracy": {
+                "expected": {"gtk": {"status": ["CRASH"], "bug": "webkit.org/b/125068"}}
+            }
+        }
+    },
+    "TestWTF": {
+        "subtests": {
+            "WTF_Lock.ContendedShortSection": {
+                "expected": {"all": {"slow": true}}
+            },
+            "WTF_Lock.ContendedLongSection": {
+                "expected": {"all": {"slow": true}}
+            },
+            "WTF_WordLock.ContendedShortSection": {
+                "expected": {"all": {"slow": true}}
+            },
+            "WTF_WordLock.ContendedLongSection": {
+                "expected": {"all": {"slow": true}}
+            }
+        }
+    }
+}

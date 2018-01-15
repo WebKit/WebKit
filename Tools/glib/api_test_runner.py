@@ -28,35 +28,7 @@ top_level_directory = os.path.normpath(os.path.join(os.path.dirname(__file__), "
 sys.path.insert(0, os.path.join(top_level_directory, "Tools", "glib"))
 import common
 from webkitpy.common.host import Host
-
-
-class SkippedTest:
-    ENTIRE_SUITE = None
-
-    def __init__(self, test, test_case, reason, bug, build_type=None):
-        self.test = test
-        self.test_case = test_case
-        self.reason = reason
-        self.bug = bug
-        self.build_type = build_type
-
-    def __str__(self):
-        skipped_test_str = "%s" % self.test
-
-        if not(self.skip_entire_suite()):
-            skipped_test_str += " [%s]" % self.test_case
-
-        skipped_test_str += ": %s (https://bugs.webkit.org/show_bug.cgi?id=%d)" % (self.reason, self.bug)
-        return skipped_test_str
-
-    def skip_entire_suite(self):
-        return self.test_case == SkippedTest.ENTIRE_SUITE
-
-    def skip_for_build_type(self, build_type):
-        if self.build_type is None:
-            return True
-
-        return self.build_type == build_type
+from webkitpy.common.test_expectations import TestExpectations
 
 
 class TestTimeout(Exception):
@@ -65,8 +37,6 @@ class TestTimeout(Exception):
 
 class TestRunner(object):
     TEST_DIRS = []
-    SKIPPED = []
-    SLOW = []
 
     def __init__(self, port, options, tests=[]):
         self._options = options
@@ -77,8 +47,9 @@ class TestRunner(object):
         self._driver = self._create_driver()
 
         self._programs_path = common.binary_build_path()
+        expectations_file = os.path.join(common.top_level_path(), "Tools", "TestWebKitAPI", "glib", "TestExpectations.json")
+        self._expectations = TestExpectations(self._port.name(), expectations_file, self._build_type)
         self._tests = self._get_tests(tests)
-        self._skipped_tests = [skipped for skipped in TestRunner.SKIPPED if skipped.skip_for_build_type(self._build_type)]
         self._disabled_tests = []
 
     def _test_programs_base_dir(self):
@@ -136,11 +107,7 @@ class TestRunner(object):
         if self._options.skipped_action != 'skip':
             return []
 
-        test_cases = []
-        for skipped in self._skipped_tests:
-            if test_program.endswith(skipped.test) and not skipped.skip_entire_suite():
-                test_cases.append(skipped.test_case)
-        return test_cases
+        return self._expectations.skipped_subtests(os.path.basename(test_program))
 
     def _should_run_test_program(self, test_program):
         for disabled_test in self._disabled_tests:
@@ -150,10 +117,7 @@ class TestRunner(object):
         if self._options.skipped_action != 'skip':
             return True
 
-        for skipped in self._skipped_tests:
-            if test_program.endswith(skipped.test) and skipped.skip_entire_suite():
-                return False
-        return True
+        return os.path.basename(test_program) not in self._expectations.skipped_tests()
 
     def _kill_process(self, pid):
         try:
@@ -211,7 +175,7 @@ class TestRunner(object):
 
         timeout = self._options.timeout
         test = os.path.join(os.path.basename(os.path.dirname(test_program)), os.path.basename(test_program))
-        if test in TestRunner.SLOW:
+        if self._expectations.is_slow(os.path.basename(test_program)):
             timeout *= 5
 
         test_context = {"child-pid": -1, "did-timeout": False, "current_test": None}
@@ -232,6 +196,8 @@ class TestRunner(object):
                         test_context[test] = "TIMEOUT"
                     else:
                         test_context[test] = result
+                else:
+                    test_context[test] = 'PASS'
                 test_context["did-timeout"] = False
                 test_context["current_test"] = None
                 self._stop_timeout(timeout)
@@ -302,7 +268,7 @@ class TestRunner(object):
     def _run_google_test(self, test_program, subtest):
         command = [test_program, '--gtest_filter=%s' % (subtest)]
         timeout = self._options.timeout
-        if subtest in TestRunner.SLOW:
+        if self._expectations.is_slow(os.path.basename(test_program), subtest):
             timeout *= 5
 
         pid, fd = os.forkpty()
@@ -328,7 +294,7 @@ class TestRunner(object):
         if status != 0:
             return {subtest: "FAIL"}
 
-        return {}
+        return {subtest: "PASS"}
 
     def _run_google_test_suite(self, test_program):
         result = {}
@@ -367,42 +333,39 @@ class TestRunner(object):
         crashed_tests = {}
         failed_tests = {}
         timed_out_tests = {}
+        passed_tests = {}
         try:
             for test in self._tests:
                 results = self._run_test(test)
                 for test_case, result in results.iteritems():
+                    if result in self._expectations.get_expectation(os.path.basename(test), test_case):
+                        continue
+
                     if result == "FAIL":
                         failed_tests.setdefault(test, []).append(test_case)
                     elif result == "TIMEOUT":
                         timed_out_tests.setdefault(test, []).append(test_case)
                     elif result == "CRASH":
                         crashed_tests.setdefault(test, []).append(test_case)
+                    elif result == "PASS":
+                        passed_tests.setdefault(test, []).append(test_case)
         finally:
             self._tear_down_testing_environment()
 
-        if failed_tests:
-            sys.stdout.write("\nUnexpected failures (%d)\n" % (sum(len(value) for value in failed_tests.itervalues())))
-            for test in failed_tests:
-                sys.stdout.write("    %s\n" % (test.replace(self._test_programs_base_dir(), '', 1)))
-                for test_case in failed_tests[test]:
+        def report(tests, title, base_dir):
+            if not tests:
+                return
+            sys.stdout.write("\nUnexpected %s (%d)\n" % (title, sum(len(value) for value in tests.itervalues())))
+            for test in tests:
+                sys.stdout.write("    %s\n" % (test.replace(base_dir, '', 1)))
+                for test_case in tests[test]:
                     sys.stdout.write("        %s\n" % (test_case))
             sys.stdout.flush()
 
-        if crashed_tests:
-            sys.stdout.write("\nUnexpected crashes (%d)\n" % (sum(len(value) for value in crashed_tests.itervalues())))
-            for test in crashed_tests:
-                sys.stdout.write("    %s\n" % (test.replace(self._test_programs_base_dir(), '', 1)))
-                for test_case in crashed_tests[test]:
-                    sys.stdout.write("        %s\n" % (test_case))
-            sys.stdout.flush()
-
-        if timed_out_tests:
-            sys.stdout.write("\nUnexpected timeouts (%d)\n" % (sum(len(value) for value in timed_out_tests.itervalues())))
-            for test in timed_out_tests:
-                sys.stdout.write("    %s\n" % (test.replace(self._test_programs_base_dir(), '', 1)))
-                for test_case in timed_out_tests[test]:
-                    sys.stdout.write("        %s\n" % (test_case))
-            sys.stdout.flush()
+        report(failed_tests, "failures", self._test_programs_base_dir())
+        report(crashed_tests, "crashes", self._test_programs_base_dir())
+        report(timed_out_tests, "timeouts", self._test_programs_base_dir())
+        report(passed_tests, "passes", self._test_programs_base_dir())
 
         return len(failed_tests) + len(timed_out_tests)
 

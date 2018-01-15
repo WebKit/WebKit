@@ -29,41 +29,10 @@ sys.path.insert(0, os.path.join(top_level_directory, "Tools", "jhbuild"))
 sys.path.insert(0, os.path.join(top_level_directory, "Tools", "glib"))
 import common
 import jhbuildutils
-from api_test_runner import TestRunner, SkippedTest, add_options
+from api_test_runner import TestRunner, add_options
 
 class GtkTestRunner(TestRunner):
     TestRunner.TEST_DIRS = [ "WebKit2Gtk", "WebKit", "JavaScriptCore", "WTF", "WebCore" ]
-
-    TestRunner.SKIPPED = [
-        SkippedTest("WebKit2Gtk/TestUIClient", "/webkit2/WebKitWebView/mouse-target", "Test times out after r150890", 117689),
-        SkippedTest("WebKit2Gtk/TestUIClient", "/webkit2/WebKitWebView/usermedia-permission-requests", "Test times out", 158257),
-        SkippedTest("WebKit2Gtk/TestUIClient", "/webkit2/WebKitWebView/audio-usermedia-permission-request", "Test times out", 158257),
-        SkippedTest("WebKit2Gtk/TestCookieManager", "/webkit2/WebKitCookieManager/persistent-storage", "Test is flaky", 134580),
-        SkippedTest("WebKit2Gtk/TestPrinting", "/webkit2/WebKitPrintOperation/custom-widget", "Test is flaky", 168196),
-        SkippedTest("WebKit2Gtk/TestWebViewEditor", "/webkit2/WebKitWebView/editable/editable", "Test hits an assertion in Debug builds", 151654, "Debug"),
-        SkippedTest("WebKit2Gtk/TestWebExtensions", "/webkit2/WebKitWebView/install-missing-plugins-permission-request", "Test times out", 147822),
-        SkippedTest("WebKit2Gtk/TestWebsiteData", "/webkit2/WebKitWebsiteData/databases", "Test fails to clear database data", 181251),
-        SkippedTest("WebKit/TestWebKit", "WebKit.MouseMoveAfterCrash", "Test is flaky", 85066),
-        SkippedTest("WebKit/TestWebKit", "WebKit.NewFirstVisuallyNonEmptyLayoutForImages", "Test is flaky", 85066),
-        SkippedTest("WebKit/TestWebKit", "WebKit.NewFirstVisuallyNonEmptyLayoutFrames", "Test fails", 85037),
-        SkippedTest("WebKit/TestWebKit", "WebKit.SpacebarScrolling", "Test fails", 84961),
-        SkippedTest("WebKit/TestWebKit", "WebKit.WKConnection", "Tests fail and time out out", 84959),
-        SkippedTest("WebKit/TestWebKit", "WebKit.ForceRepaint", "Test times out", 105532),
-        SkippedTest("WebKit/TestWebKit", "WebKit.ReloadPageAfterCrash", "Test flakily times out", 110129),
-        SkippedTest("WebKit/TestWebKit", "WebKit.DidAssociateFormControls", "Test times out", 120302),
-        SkippedTest("WebKit/TestWebKit", "WebKit.InjectedBundleFrameHitTest", "Test times out", 120303),
-        SkippedTest("WebKit/TestWebKit", "WebKit.TerminateTwice", "Test causes crash on the next test", 121970),
-        SkippedTest("WebKit/TestWebKit", "WebKit.GeolocationTransitionToHighAccuracy", "Test causes crash on the next test", 125068),
-        SkippedTest("WebKit/TestWebKit", "WebKit.GeolocationTransitionToLowAccuracy", "Test causes crash on the next test", 125068),
-    ]
-
-    TestRunner.SLOW = [
-        "WTF_Lock.ContendedShortSection",
-        "WTF_Lock.ContendedLongSection",
-        "WTF_WordLock.ContendedShortSection",
-        "WTF_WordLock.ContendedLongSection",
-        "WebKit2Gtk/TestInspectorServer",
-    ]
 
     def __init__(self, options, tests=[]):
         super(GtkTestRunner, self).__init__("gtk", options, tests)

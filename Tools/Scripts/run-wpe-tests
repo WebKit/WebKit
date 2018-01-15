@@ -26,17 +26,10 @@ top_level_directory = os.path.normpath(os.path.join(os.path.dirname(__file__), "
 sys.path.insert(0, os.path.join(top_level_directory, "Tools", "jhbuild"))
 sys.path.insert(0, os.path.join(top_level_directory, "Tools", "glib"))
 import jhbuildutils
-from api_test_runner import TestRunner, SkippedTest, add_options
+from api_test_runner import TestRunner, add_options
 
 class WPETestRunner(TestRunner):
     TestRunner.TEST_DIRS = [ "WPE", "WebKit", "JavaScriptCore", "WTF", "WebCore" ]
-
-    TestRunner.SLOW = [
-        "WTF_Lock.ContendedShortSection",
-        "WTF_Lock.ContendedLongSection",
-        "WTF_WordLock.ContendedShortSection",
-        "WTF_WordLock.ContendedLongSection",
-    ]
 
     def __init__(self, options, tests=[]):
         super(WPETestRunner, self).__init__("wpe", options, tests)

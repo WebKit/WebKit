@@ -1,3 +1,58 @@
+2018-01-15  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][WPE] Add support for unit test expectations
+        https://bugs.webkit.org/show_bug.cgi?id=181589
+
+        Reviewed by Michael Catanzaro.
+
+        We currently have a way to skip tests by annotating them in the api test runner script. The main problem of this
+        approach is that we skip tests when they fail in the bots and we never notice if they stop failing, keeping the
+        tests skipped forever. This is indeed the case of several WebKit2 C API tests. Annotating skipped tests in the
+        script itself is not a good idea either.
+
+        This patch adds a generic TestExpectations class for simple tests based on tests with subtests, like our unit
+        tests, but also WebDriver tests. It parses a json file with the tests and subtests expectations and provides
+        convenient methods to query them.
+
+        * Scripts/run-gtk-tests:
+        (GtkTestRunner): Remove all Skipped and Slow tests marked here.
+        * Scripts/run-wpe-tests:
+        (WPETestRunner): Ditto.
+        * Scripts/webkitpy/common/test_expectations.py: Added.
+        (TestExpectations):
+        (TestExpectations.__init__):
+        (TestExpectations._port_name_for_expected):
+        (TestExpectations._expected_value):
+        (TestExpectations.skipped_tests):
+        (TestExpectations.skipped_subtests):
+        (TestExpectations._expectation_value):
+        (TestExpectations.is_slow):
+        (TestExpectations.get_expectation):
+        * Scripts/webkitpy/common/test_expectations_unittest.py: Added.
+        (MockTestExpectations):
+        (MockTestExpectations.__init__):
+        (MockTestExpectations.is_skip):
+        (ExpectationsTest):
+        (assert_exp):
+        (assert_not_exp):
+        (assert_bad_exp):
+        (assert_skip):
+        (test_basic):
+        (test_skip):
+        (test_flaky):
+        (test_build_type):
+        * TestWebKitAPI/glib/TestExpectations.json: Added.
+        * glib/api_test_runner.py:
+        (TestRunner): Remove SkippedTest implementation.
+        (TestRunner.__init__): Create a TestExpectations.
+        (TestRunner._test_cases_to_skip): Use TestExpectations to check skipped tests.
+        (TestRunner._should_run_test_program): Ditto.
+        (TestRunner._run_test_glib): Use TestExpectations to check if test suite is slow.
+        (TestRunner._run_test_glib.parse_line.set_test_result): Register also tests passing.
+        (TestRunner._run_google_test): Use TestExpectations to check if test cases is slow and register tests passing.
+        (TestRunner.run_tests): Check if actual result is the expected one and register also unexpected passes.
+        (TestRunner.run_tests.report): Helper to write report to stdout.
+
 2018-01-13  Mark Lam  <mark.lam@apple.com>
 
         Replace all use of ConstExprPoisoned with Poisoned.
