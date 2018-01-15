@@ -1,3 +1,25 @@
+2018-01-15  Dean Jackson  <dino@apple.com>
+
+        Use traits for animation timing functions
+        https://bugs.webkit.org/show_bug.cgi?id=181651
+        <rdar://problem/36525328>
+
+        Reviewed by Antoine Quint.
+
+        Use the type traits for TimingFunction classes, so
+        we can is<> and downcast<>.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::createTimingFunctionValue):
+        * platform/animation/TimingFunction.cpp:
+        (WebCore::TimingFunction::transformTime const):
+        * platform/animation/TimingFunction.h:
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::animationHasStepsTimingFunction):
+        (WebCore::animationHasFramesTimingFunction):
+        * platform/graphics/ca/cocoa/PlatformCAAnimationCocoa.mm:
+        (WebCore::toCAMediaTimingFunction):
+
 2018-01-15  Youenn Fablet  <youenn@apple.com>
 
         RealtimeMediaSource should be ThreadSafeRefCounted

@@ -72,7 +72,7 @@ public:
     
     bool operator==(const TimingFunction& other) const final
     {
-        return other.isLinearTimingFunction();
+        return is<LinearTimingFunction>(other);
     }
 
 private:
@@ -121,9 +121,9 @@ public:
 
     bool operator==(const TimingFunction& other) const final
     {
-        if (!other.isCubicBezierTimingFunction())
+        if (!is<CubicBezierTimingFunction>(other))
             return false;
-        auto& otherCubic = static_cast<const CubicBezierTimingFunction&>(other);
+        auto& otherCubic = downcast<const CubicBezierTimingFunction>(other);
         if (m_timingFunctionPreset != otherCubic.m_timingFunctionPreset)
             return false;
         if (m_timingFunctionPreset != Custom)
@@ -194,9 +194,9 @@ public:
     
     bool operator==(const TimingFunction& other) const final
     {
-        if (!other.isStepsTimingFunction())
+        if (!is<StepsTimingFunction>(other))
             return false;
-        auto& otherSteps = static_cast<const StepsTimingFunction&>(other);
+        auto& otherSteps = downcast<const StepsTimingFunction>(other);
         return m_steps == otherSteps.m_steps && m_stepAtStart == otherSteps.m_stepAtStart;
     }
     
@@ -236,9 +236,9 @@ public:
 
     bool operator==(const TimingFunction& other) const final
     {
-        if (!other.isFramesTimingFunction())
+        if (is<FramesTimingFunction>(other))
             return false;
-        auto& otherFrames = static_cast<const FramesTimingFunction&>(other);
+        auto& otherFrames = downcast<const FramesTimingFunction>(other);
         return m_frames == otherFrames.m_frames;
     }
     
@@ -276,9 +276,9 @@ public:
     
     bool operator==(const TimingFunction& other) const final
     {
-        if (!other.isSpringTimingFunction())
+        if (!is<SpringTimingFunction>(other))
             return false;
-        auto& otherSpring = static_cast<const SpringTimingFunction&>(other);
+        auto& otherSpring = downcast<const SpringTimingFunction>(other);
         return m_mass == otherSpring.m_mass && m_stiffness == otherSpring.m_stiffness && m_damping == otherSpring.m_damping && m_initialVelocity == otherSpring.m_initialVelocity;
     }
 
@@ -319,3 +319,14 @@ private:
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const TimingFunction&);
 
 } // namespace WebCore
+
+#define SPECIALIZE_TYPE_TRAITS_TIMINGFUNCTION(ToValueTypeName, predicate) \
+SPECIALIZE_TYPE_TRAITS_BEGIN(ToValueTypeName) \
+static bool isType(const WebCore::TimingFunction& function) { return function.predicate; } \
+SPECIALIZE_TYPE_TRAITS_END()
+
+SPECIALIZE_TYPE_TRAITS_TIMINGFUNCTION(WebCore::LinearTimingFunction, isLinearTimingFunction())
+SPECIALIZE_TYPE_TRAITS_TIMINGFUNCTION(WebCore::CubicBezierTimingFunction, isCubicBezierTimingFunction())
+SPECIALIZE_TYPE_TRAITS_TIMINGFUNCTION(WebCore::StepsTimingFunction, isStepsTimingFunction())
+SPECIALIZE_TYPE_TRAITS_TIMINGFUNCTION(WebCore::FramesTimingFunction, isFramesTimingFunction())
+SPECIALIZE_TYPE_TRAITS_TIMINGFUNCTION(WebCore::SpringTimingFunction, isSpringTimingFunction())

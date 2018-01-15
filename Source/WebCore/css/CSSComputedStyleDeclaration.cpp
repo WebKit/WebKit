@@ -1542,7 +1542,7 @@ static Ref<CSSValue> createTimingFunctionValue(const TimingFunction& timingFunct
 {
     switch (timingFunction.type()) {
     case TimingFunction::CubicBezierFunction: {
-        auto& function = static_cast<const CubicBezierTimingFunction&>(timingFunction);
+        auto& function = downcast<const CubicBezierTimingFunction>(timingFunction);
         if (function.timingFunctionPreset() != CubicBezierTimingFunction::Custom) {
             CSSValueID valueId = CSSValueInvalid;
             switch (function.timingFunctionPreset()) {
@@ -1565,15 +1565,15 @@ static Ref<CSSValue> createTimingFunctionValue(const TimingFunction& timingFunct
         return CSSCubicBezierTimingFunctionValue::create(function.x1(), function.y1(), function.x2(), function.y2());
     }
     case TimingFunction::StepsFunction: {
-        auto& function = static_cast<const StepsTimingFunction&>(timingFunction);
+        auto& function = downcast<const StepsTimingFunction>(timingFunction);
         return CSSStepsTimingFunctionValue::create(function.numberOfSteps(), function.stepAtStart());
     }
     case TimingFunction::FramesFunction: {
-        auto& function = static_cast<const FramesTimingFunction&>(timingFunction);
+        auto& function = downcast<const FramesTimingFunction>(timingFunction);
         return CSSFramesTimingFunctionValue::create(function.numberOfFrames());
     }
     case TimingFunction::SpringFunction: {
-        auto& function = static_cast<const SpringTimingFunction&>(timingFunction);
+        auto& function = downcast<const SpringTimingFunction>(timingFunction);
         return CSSSpringTimingFunctionValue::create(function.mass(), function.stiffness(), function.damping(), function.initialVelocity());
     }
     default:

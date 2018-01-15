@@ -129,9 +129,9 @@ static PlatformCAAnimation::ValueFunctionType fromCAValueFunctionType(NSString* 
 CAMediaTimingFunction* WebCore::toCAMediaTimingFunction(const TimingFunction* timingFunction, bool reverse)
 {
     ASSERT(timingFunction);
-    if (timingFunction->isCubicBezierTimingFunction()) {
+    if (is<CubicBezierTimingFunction>(timingFunction)) {
         RefPtr<CubicBezierTimingFunction> reversed;
-        const CubicBezierTimingFunction* ctf = static_cast<const CubicBezierTimingFunction*>(timingFunction);
+        const CubicBezierTimingFunction* ctf = downcast<const CubicBezierTimingFunction>(timingFunction);
 
         if (reverse) {
             reversed = ctf->createReversed();

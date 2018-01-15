@@ -270,12 +270,12 @@ static String animationIdentifier(const String& animationName, AnimatedPropertyI
 
 static bool animationHasStepsTimingFunction(const KeyframeValueList& valueList, const Animation* anim)
 {
-    if (anim->timingFunction()->isStepsTimingFunction())
+    if (is<StepsTimingFunction>(anim->timingFunction()))
         return true;
     
     for (unsigned i = 0; i < valueList.size(); ++i) {
         if (const TimingFunction* timingFunction = valueList.at(i).timingFunction()) {
-            if (timingFunction->isStepsTimingFunction())
+            if (is<StepsTimingFunction>(timingFunction))
                 return true;
         }
     }
@@ -285,12 +285,12 @@ static bool animationHasStepsTimingFunction(const KeyframeValueList& valueList, 
 
 static bool animationHasFramesTimingFunction(const KeyframeValueList& valueList, const Animation* anim)
 {
-    if (anim->timingFunction()->isFramesTimingFunction())
+    if (is<FramesTimingFunction>(anim->timingFunction()))
         return true;
     
     for (unsigned i = 0; i < valueList.size(); ++i) {
         if (const TimingFunction* timingFunction = valueList.at(i).timingFunction()) {
-            if (timingFunction->isFramesTimingFunction())
+            if (is<FramesTimingFunction>(timingFunction))
                 return true;
         }
     }
