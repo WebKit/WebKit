@@ -1195,6 +1195,9 @@ void MediaPlayer::volumeChanged(double newVolume)
 
 void MediaPlayer::muteChanged(bool newMuted)
 {
+    if (newMuted == m_muted)
+        return;
+
     m_muted = newMuted;
     client().mediaPlayerMuteChanged(this);
 }

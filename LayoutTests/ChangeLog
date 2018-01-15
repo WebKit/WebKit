@@ -1,3 +1,16 @@
+2018-01-15  Philippe Normand  <pnormand@igalia.com>
+
+        Prevent useless MediaPlayer mute state notifications
+        https://bugs.webkit.org/show_bug.cgi?id=181646
+
+        Reviewed by Carlos Garcia Campos.
+
+        Unflag tests depending on muted state and media session
+        restrictions, most of those are now passing.
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk/media/video-controls-no-scripting-expected.txt:
+
 2018-01-14  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [macOS] [WK2] Unskip some consistently-passing tests

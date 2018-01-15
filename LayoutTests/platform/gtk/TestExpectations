@@ -1846,7 +1846,6 @@ webkit.org/b/164833 inspector/worker/debugger-pause.html [ Pass Failure Timeout 
 
 webkit.org/b/173412 fast/scrolling/overflow-scrollable-after-back.html [ Pass Failure ]
 
-webkit.org/b/168373 media/video-multiple-concurrent-playback.html [ Failure Crash ]
 webkit.org/b/168373 media/video-seek-past-end-paused.html [ Failure Pass ]
 
 webkit.org/b/174240 svg/dom/SVGScriptElement/script-change-externalResourcesRequired-while-loading.svg [ Pass Timeout ]
@@ -2198,8 +2197,6 @@ webkit.org/b/169211 fast/parser/adoption-agency-unload-iframe-4.html [ Timeout ]
 webkit.org/b/172284 svg/animations/animated-svg-image-outside-viewport-paused.html [ Timeout ]
 
 webkit.org/b/172816 media/media-source/media-source-paint-to-canvas.html [ Timeout ]
-
-webkit.org/b/174241 media/video-inactive-playback.html [ Timeout ]
 
 webkit.org/b/174242 media/media-fullscreen-pause-inline.html [ Timeout ]
 
@@ -3021,13 +3018,8 @@ webkit.org/b/163524 media/track/video-track-alternate-groups.html [ Failure ]
 webkit.org/b/163525 media/video-background-tab-playback.html [ Failure Pass Crash Timeout ]
 webkit.org/b/163526 media/video-controls-drop-and-restore-timeline.html [ Failure ]
 webkit.org/b/163527 media/video-controls-show-on-kb-or-ax-event.html [ Failure ]
-webkit.org/b/163529 media/video-playback-restriction-play-before-load.html [ Failure ]
 webkit.org/b/163531 media/video-volume-slider-drag.html [ Failure ]
 
-webkit.org/b/163823 media/audio-playback-restriction-autoplay.html [ Failure ]
-webkit.org/b/163823 media/audio-playback-restriction-play-muted.html [ Failure ]
-webkit.org/b/163823 media/context-menu-actions.html [ Failure ]
-webkit.org/b/163823 media/video-defaultmuted.html [ Failure ]
 webkit.org/b/163823 media/video-volume-slider.html [ Failure ]
 
 webkit.org/b/163827 storage/websql/quota-tracking.html [ Failure ]
@@ -3069,8 +3061,6 @@ webkit.org/b/167999 imported/w3c/web-platform-tests/fetch/api/redirect/redirect-
 webkit.org/b/168543 http/wpt/resource-timing/rt-nextHopProtocol.html [ Failure ]
 webkit.org/b/168543 http/wpt/resource-timing/rt-nextHopProtocol.worker.html [ Failure ]
 
-webkit.org/b/145260 media/audio-playback-restriction-play.html [ Failure ]
-
 webkit.org/b/168188 fast/events/ime-compositionend-on-selection-change.html [ Failure ]
 
 webkit.org/b/168164 fast/picture/viewport-resize.html [ Failure ]
@@ -3092,8 +3082,6 @@ webkit.org/b/168370 accessibility/selected-text-range-aria-elements.html [ Failu
 
 webkit.org/b/168373 fullscreen/video-controls-rtl.html [ Failure ]
 webkit.org/b/168373 media/media-preload-no-delay-loadevent.html [ Failure ]
-webkit.org/b/168373 media/video-background-playback.html [ Failure Timeout ]
-webkit.org/b/168373 media/video-concurrent-playback.html [ Failure Timeout ]
 
 # [GTK] Some reftest fail with only one or two pixel differences in diff image
 webkit.org/b/168426 fast/multicol/columns-on-body.html [ ImageOnlyFailure ]
@@ -3157,11 +3145,6 @@ webkit.org/b/172274 http/tests/cache/disk-cache/disk-cache-media-small.html [ Fa
 
 webkit.org/b/172275 imported/w3c/web-platform-tests/html/browsers/the-window-object/apis-for-creating-and-navigating-browsing-contexts-by-name/open-features-non-integer-screeny.html [ Failure ]
 
-webkit.org/b/172276 media/video-muted.html [ Failure ]
-webkit.org/b/172276 media/video-play-audio-require-user-gesture.html [ Failure ]
-
-webkit.org/b/172277 media/video-restricted-invisible-autoplay-allowed-if-audible.html [ Failure ]
-
 webkit.org/b/172278 fast/html/marquee-child-wrap.html [ ImageOnlyFailure ]
 
 webkit.org/b/172279 fast/multicol/flexbox-rows.html [ ImageOnlyFailure ]
@@ -3183,8 +3166,6 @@ webkit.org/b/172811 fast/forms/number/number-appearance-spinbutton-disabled-read
 webkit.org/b/172811 fast/forms/number/number-appearance-spinbutton-layer.html [ Failure ]
 
 webkit.org/b/172812 fast/canvas/webgl/lose-context-on-status-failure.html [ Failure ]
-
-webkit.org/b/172814 media/restricted-audio-playback-with-multiple-settimeouts.html [ Failure ]
 
 webkit.org/b/173410 fast/canvas/canvas-createPattern-video-loading.html [ Failure ]
 
@@ -3279,8 +3260,6 @@ webkit.org/b/178454 http/tests/security/clipboard/copy-paste-html-across-origin-
 webkit.org/b/178454 http/tests/security/clipboard/copy-paste-url-across-origin-sanitizes-url.html [ Failure ]
 
 webkit.org/b/144690 editing/spelling/spelling-marker-includes-hyphen.html [ Failure ImageOnlyFailure ]
-
-webkit.org/b/178456 media/audio-playback-volume-changes-with-restrictions.html [ Failure ]
 
 webkit.org/b/178591 http/tests/navigation/keyboard-events-during-provisional-navigation.html [ Failure ]
 webkit.org/b/178591 http/tests/navigation/keyboard-events-during-provisional-subframe-navigation.html [ Failure ]

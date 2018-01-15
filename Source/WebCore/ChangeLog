@@ -1,3 +1,19 @@
+2018-01-15  Philippe Normand  <pnormand@igalia.com>
+
+        Prevent useless MediaPlayer mute state notifications
+        https://bugs.webkit.org/show_bug.cgi?id=181646
+
+        Reviewed by Carlos Garcia Campos.
+
+        On GTK port the mute change notification was triggering the test
+        runner to think the whole page mute state had changed and that
+        media elements were muted. The simplest solution is to propagate
+        the notification only if the state actually changed.
+
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::MediaPlayer::muteChanged): Propagate mute notification
+        only if the mute state actually changed.
+
 2018-01-15  Sebastian Dröge  <sebastian@centricular.com>
 
         [GStreamer] Don't wait for draw condition variable when shutting down.
