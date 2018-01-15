@@ -376,6 +376,7 @@ set(WebKit_PKGCONFIG_FILE ${CMAKE_BINARY_DIR}/Source/WebKitLegacy/gtk/webkitgtk-
 set(WebKit2_PKGCONFIG_FILE ${CMAKE_BINARY_DIR}/Source/WebKit/webkit2gtk-${WEBKITGTK_API_VERSION}.pc)
 set(WebKit2WebExtension_PKGCONFIG_FILE ${CMAKE_BINARY_DIR}/Source/WebKit/webkit2gtk-web-extension-${WEBKITGTK_API_VERSION}.pc)
 
+set(JavaScriptCore_LIBRARY_TYPE SHARED)
 set(SHOULD_INSTALL_JS_SHELL ON)
 
 # Add a typelib file to the list of all typelib dependencies. This makes it easy to

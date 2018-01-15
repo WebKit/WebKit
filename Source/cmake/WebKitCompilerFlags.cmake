@@ -105,13 +105,6 @@ if (COMPILER_IS_GCC_OR_CLANG)
         WEBKIT_APPEND_GLOBAL_CXX_FLAGS(-std=c++14
                                        -fno-rtti)
 
-        if (UNIX AND NOT DEVELOPER_MODE)
-            # These are used even for ports that use symbol maps so that the
-            # compiler can take visibility into account for code optimization.
-            WEBKIT_APPEND_GLOBAL_COMPILER_FLAGS(-fvisibility=hidden)
-            WEBKIT_APPEND_GLOBAL_CXX_FLAGS(-fvisibility-inlines-hidden)
-        endif ()
-
         if (WIN32)
             WEBKIT_APPEND_GLOBAL_COMPILER_FLAGS(-mno-ms-bitfields)
             WEBKIT_PREPEND_GLOBAL_COMPILER_FLAGS(-Wno-unknown-pragmas)

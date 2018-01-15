@@ -1,3 +1,18 @@
+2018-01-15  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        REGRESSION(r226266): [GTK] RELEASE_ASSERT(reservedZoneSize >= minimumReservedZoneSize) in JSC::VM::updateStackLimits
+        https://bugs.webkit.org/show_bug.cgi?id=181438
+        <rdar://problem/36376724>
+
+        Reviewed by Carlos Garcia Campos.
+
+        Roll out the functional changes of r226266. We'll keep the minor CMake library type setting
+        cleanup, but we have to switch back to building JSC only as a shared library, and we have to
+        get rid of the version script.
+
+        * PlatformGTK.cmake:
+        * javascriptcoregtk-symbols.map: Removed.
+
 2018-01-14  Saam Barati  <sbarati@apple.com>
 
         Unreviewed. r226928 broke the CLOOP build. This patch fixes the CLOOP build.

@@ -1,3 +1,19 @@
+2018-01-15  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        REGRESSION(r226266): [GTK] RELEASE_ASSERT(reservedZoneSize >= minimumReservedZoneSize) in JSC::VM::updateStackLimits
+        https://bugs.webkit.org/show_bug.cgi?id=181438
+        <rdar://problem/36376724>
+
+        Reviewed by Carlos Garcia Campos.
+
+        Build JSC as a shared library.
+
+        Stop using -fvisibility=hidden. This is a shame, but it is causing problems that I don't
+        know how to fix.
+
+        * Source/cmake/OptionsGTK.cmake:
+        * Source/cmake/WebKitCompilerFlags.cmake:
+
 2018-01-11  Keith Miller  <keith_miller@apple.com>
 
         Rename ENABLE_ASYNC_ITERATION to ENABLE_JS_ASYNC_ITERATION
