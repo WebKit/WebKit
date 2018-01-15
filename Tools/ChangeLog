@@ -1,3 +1,16 @@
+2018-01-15  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [GTK][JHBuild] Tools/gtk/install-dependencies: Package libxfont does not exist anymore in Arch Linux
+        https://bugs.webkit.org/show_bug.cgi?id=181476
+
+        Reviewed by Michael Catanzaro.
+
+        Update to xorg-server 1.19.6 which depends on libxfont2, and change
+        the lists of packages to install libxfont2-devel (or equivalent).
+
+        * gtk/install-dependencies:
+        * gtk/jhbuild.modules:
+
 2018-01-15  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][WPE] Add support for unit test expectations

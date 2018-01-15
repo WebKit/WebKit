@@ -199,7 +199,8 @@ function installDependenciesWithApt {
         libv4l-dev \
         libxcb-composite0-dev \
         libxcb-xfixes0-dev \
-        $(aptIfElse libxfont1-dev libxfont-dev) \
+        libxfont-dev \
+        libxfont2 \
         libxkbfile-dev \
         libxkbcommon-x11-dev \
         libtool-bin \
@@ -496,7 +497,7 @@ function installDependenciesWithDnf {
         gsettings-desktop-schemas-devel \
         icon-naming-utils \
         itstool \
-        libXfont-devel \
+        libXfont2-devel \
         libcroco-devel \
         libdrm-devel \
         libepoxy-devel \

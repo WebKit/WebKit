@@ -322,10 +322,10 @@
     <dependencies>
       <dep package="pixman"/>
     </dependencies>
-    <branch module="/releases/individual/xserver/xorg-server-1.16.4.tar.bz2" version="1.16.4"
+    <branch module="/releases/individual/xserver/xorg-server-1.19.6.tar.bz2" version="1.16.4"
             repo="xorg"
-            hash="sha256:abb6e1cc9213a9915a121f48576ff6739a0b8cdb3d32796f9a7743c9a6efc871"
-            md5sum="80d140f631d862b76dc67ae983151c77">
+            hash="sha256:a732502f1db000cf36a376cd0c010ffdbf32ecdd7f1fa08ba7f5bdf9601cc197"
+            md5sum="3e47777ff034a331aed2322b078694a8">
       <patch file="xserver-remove-bogus-dependencies.patch" strip="1"/>
       <patch file="xserver-search-for-DRI-drivers-at-LIBGL_DRIVERS_PATH-environ.patch" strip="1"/>
     </branch>
