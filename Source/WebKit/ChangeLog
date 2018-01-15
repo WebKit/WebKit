@@ -1,3 +1,23 @@
+2018-01-15  Youenn Fablet  <youenn@apple.com>
+
+        ASSERTION FAILED: m_ptr under WebKit::CacheStorage::Caches::writeRecord
+        https://bugs.webkit.org/show_bug.cgi?id=181401
+        <rdar://problem/36379022>
+
+        Reviewed by Darin Adler.
+
+        m_isInitialized is true but m_storage is set to nullptr when calling writeRecord.
+        The only case seems to be if:
+        - We are doing persistent storage
+        - We are traversing the storage to do the initialization. At that point m_storage is set to a correct value.
+        - clearMemoryRepresentation is called, thus setting m_storage to nullptr and m_isInitialized to false.
+        We fix this by making clearMemoryRepresentation a no-op if we are initializing the caches.
+        clearMemoryRepresentation is about cleaning the in-memory information of the caches and the memory representation is empty at init time.
+        Nullifying m_storage is a memory consumption optimization.
+
+        * NetworkProcess/cache/CacheStorageEngineCaches.cpp:
+        (WebKit::CacheStorage::Caches::clearMemoryRepresentation):
+
 2018-01-12  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Unreviewed, speculative build fix after r226899.
