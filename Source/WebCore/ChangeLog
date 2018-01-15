@@ -1,3 +1,17 @@
+2018-01-15  Youenn Fablet  <youenn@apple.com>
+
+        RealtimeMediaSource should be ThreadSafeRefCounted
+        https://bugs.webkit.org/show_bug.cgi?id=181649
+
+        Reviewed by Eric Carlson.
+
+        Difficult to write a test as this is really racy.
+        RealtimeIncomingVideoSourceCocoa::OnFrame is taking a reference on a background thread
+        to send a task to the main thread.
+        This requires it to be thread safe ref counted.
+
+        * platform/mediastream/RealtimeMediaSource.h:
+
 2018-01-15  Philippe Normand  <pnormand@igalia.com>
 
         Prevent useless MediaPlayer mute state notifications
