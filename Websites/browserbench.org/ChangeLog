@@ -1,3 +1,11 @@
+2018-01-15  Ryosuke Niwa  <rniwa@webkit.org>
+
+        ΩUpdate the default hyperlink for Speedometer to Speedometer 2.0.
+
+        Rubber-stamped by Saam Barati.
+
+        * index.html:
+
 2018-01-09  Ryosuke Niwa  <rniwa@webkit.org>
 
         Merge the latest version of Speedometer 2.0 to browserbench.org against at r226694.
