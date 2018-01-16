@@ -47,9 +47,11 @@ WEBKIT_WRAP_SOURCELIST(${MALLOC_BENCH_SOURCES})
 include_directories(${MALLOC_BENCH_INCLUDE_DIRECTORIES})
 
 SET(CMAKE_SKIP_BUILD_RPATH  TRUE)
-add_executable(MallocBench ${MALLOC_BENCH_SOURCES})
-target_link_libraries(MallocBench ${CMAKE_THREAD_LIBS_INIT} ${MALLOC_BENCH_LIBRARIES} mbmalloc)
-add_dependencies(MallocBench sysmalloc mbmalloc)
+if (DEVELOPER_MODE)
+    add_executable(MallocBench ${MALLOC_BENCH_SOURCES})
+    target_link_libraries(MallocBench ${CMAKE_THREAD_LIBS_INIT} ${MALLOC_BENCH_LIBRARIES} mbmalloc)
+    add_dependencies(MallocBench sysmalloc mbmalloc)
+endif ()
 
 set(MALLOC_BENCH_OPS
     facebook.ops

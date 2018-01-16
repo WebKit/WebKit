@@ -1,3 +1,10 @@
+2018-01-16  Alex Christensen  <achristensen@webkit.org>
+
+        Fix Mac CMake build after r222900
+
+        * MallocBench/MallocBench/CMakeLists.txt:
+        The mbmalloc target doesn't exist if we're not in developer mode, so only use it if we are.
+
 2018-01-09  Ryosuke Niwa  <rniwa@webkit.org>
 
         Speedometer 2.0: Update the About page.
