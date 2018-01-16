@@ -1,3 +1,15 @@
+2018-01-16  Per Arne Vollan  <pvollan@apple.com>
+
+        [Win] JSC compile error in runtime/DateConversion.cpp.
+        https://bugs.webkit.org/show_bug.cgi?id=181690
+        <rdar://problem/36480409>
+ 
+        Reviewed by Brent Fulgham.
+
+        Add 'text/win' folder to list of forwarding headers directories.
+ 
+        * wtf/PlatformWin.cmake:
+
 2018-01-15  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Improve use of ExportMacros
