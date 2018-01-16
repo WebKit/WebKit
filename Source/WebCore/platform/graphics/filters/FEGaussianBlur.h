@@ -40,8 +40,8 @@ public:
     EdgeModeType edgeMode() const { return m_edgeMode; }
     void setEdgeMode(EdgeModeType);
 
-    static IntSize calculateKernelSize(const Filter&, const FloatPoint& stdDeviation);
-    static IntSize calculateUnscaledKernelSize(const FloatPoint& stdDeviation);
+    static IntSize calculateKernelSize(const Filter&, FloatSize stdDeviation);
+    static IntSize calculateUnscaledKernelSize(FloatSize stdDeviation);
 
 private:
     FEGaussianBlur(Filter&, float, float, EdgeModeType);

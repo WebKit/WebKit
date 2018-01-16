@@ -34,18 +34,12 @@ SVGFilter::SVGFilter(const AffineTransform& absoluteTransform, const FloatRect& 
     m_absoluteFilterRegion = absoluteTransform.mapRect(filterRegion);
 }
 
-float SVGFilter::applyHorizontalScale(float value) const
+FloatSize SVGFilter::scaledByFilterResolution(FloatSize size) const
 {
     if (m_effectBBoxMode)
-        value *= m_targetBoundingBox.width();
-    return Filter::applyHorizontalScale(value) * m_absoluteFilterRegion.width() / m_filterRegion.width();
-}
+        size = size * m_targetBoundingBox.size();
 
-float SVGFilter::applyVerticalScale(float value) const
-{
-    if (m_effectBBoxMode)
-        value *= m_targetBoundingBox.height();
-    return Filter::applyVerticalScale(value) * m_absoluteFilterRegion.height() / m_filterRegion.height();
+    return Filter::scaledByFilterResolution(size) * m_absoluteFilterRegion.size() / m_filterRegion.size();
 }
 
 Ref<SVGFilter> SVGFilter::create(const AffineTransform& absoluteTransform, const FloatRect& absoluteSourceDrawingRegion, const FloatRect& targetBoundingBox, const FloatRect& filterRegion, bool effectBBoxMode)

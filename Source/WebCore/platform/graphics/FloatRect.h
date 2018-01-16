@@ -164,6 +164,8 @@ public:
         m_size.setHeight(m_size.height() + dy + dy);
     }
     void inflate(float d) { inflateX(d); inflateY(d); }
+    void inflate(FloatSize size) { inflateX(size.width()); inflateY(size.height()); }
+
     void scale(float s) { scale(s, s); }
     WEBCORE_EXPORT void scale(float sx, float sy);
     void scale(FloatSize size) { scale(size.width(), size.height()); }

@@ -36,8 +36,7 @@ public:
     FloatRect filterRegionInUserSpace() const { return m_filterRegion; }
     FloatRect filterRegion() const final { return m_absoluteFilterRegion; }
 
-    float applyHorizontalScale(float value) const final;
-    float applyVerticalScale(float value) const final;
+    FloatSize scaledByFilterResolution(FloatSize) const final;
 
     FloatRect sourceImageRect() const final { return m_absoluteSourceDrawingRegion; }
     FloatRect targetBoundingBox() const { return m_targetBoundingBox; }

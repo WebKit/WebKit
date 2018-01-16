@@ -33,7 +33,7 @@ public:
     { }
     virtual ~Filter() = default;
 
-    void setSourceImage(std::unique_ptr<ImageBuffer> sourceImage) { m_sourceImage = WTFMove(sourceImage); }
+    void setSourceImage(std::unique_ptr<ImageBuffer>&& sourceImage) { m_sourceImage = WTFMove(sourceImage); }
     ImageBuffer* sourceImage() { return m_sourceImage.get(); }
 
     FloatSize filterResolution() const { return m_filterResolution; }
@@ -49,8 +49,7 @@ public:
 
     virtual bool isSVGFilter() const { return false; }
 
-    virtual float applyHorizontalScale(float value) const { return value * m_filterResolution.width(); }
-    virtual float applyVerticalScale(float value) const { return value * m_filterResolution.height(); }
+    virtual FloatSize scaledByFilterResolution(FloatSize size) const { return size * m_filterResolution; }
     
     virtual FloatRect sourceImageRect() const = 0;
     virtual FloatRect filterRegion() const = 0;

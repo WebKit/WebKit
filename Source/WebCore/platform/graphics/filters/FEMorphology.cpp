@@ -75,8 +75,7 @@ void FEMorphology::determineAbsolutePaintRect()
 {
     FloatRect paintRect = inputEffect(0)->absolutePaintRect();
     Filter& filter = this->filter();
-    paintRect.inflateX(filter.applyHorizontalScale(m_radiusX));
-    paintRect.inflateY(filter.applyVerticalScale(m_radiusY));
+    paintRect.inflate(filter.scaledByFilterResolution({ m_radiusX, m_radiusY }));
     if (clipsToBounds())
         paintRect.intersect(maxEffectRect());
     else
@@ -254,10 +253,9 @@ void FEMorphology::platformApplySoftware()
     if (!srcPixelArray)
         return;
 
-    int radiusX = static_cast<int>(floorf(filter.applyHorizontalScale(m_radiusX)));
-    int radiusY = static_cast<int>(floorf(filter.applyVerticalScale(m_radiusY)));
-    radiusX = std::min(effectDrawingRect.width() - 1, radiusX);
-    radiusY = std::min(effectDrawingRect.height() - 1, radiusY);
+    IntSize radius = flooredIntSize(filter.scaledByFilterResolution({ m_radiusX, m_radiusY }));
+    int radiusX = std::min(effectDrawingRect.width() - 1, radius.width());
+    int radiusY = std::min(effectDrawingRect.height() - 1, radius.height());
 
     if (platformApplyDegenerate(*dstPixelArray, effectDrawingRect, radiusX, radiusY))
         return;

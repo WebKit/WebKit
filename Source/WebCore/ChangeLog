@@ -1,3 +1,52 @@
+2018-01-16  Simon Fraser  <simon.fraser@apple.com>
+
+        Rename applyHorizontalScale/applyVerticalScale in SVG filters, and related cleanup
+        https://bugs.webkit.org/show_bug.cgi?id=181684
+
+        Reviewed by Alex Christensen.
+
+        Rename the confusing applyHorizontalScale/applyVerticalScale to scaledByFilterResolution(),
+        and have it take and return a FloatSize. Change callers to do math in terms of FloatSizes.
+
+        Add inflate(size) to each of the rect classes.
+
+        * platform/graphics/FloatRect.h:
+        (WebCore::FloatRect::inflate):
+        * platform/graphics/IntRect.h:
+        (WebCore::IntRect::inflate):
+        * platform/graphics/LayoutRect.h:
+        (WebCore::LayoutRect::inflate):
+        * platform/graphics/filters/FEDisplacementMap.cpp:
+        (WebCore::FEDisplacementMap::platformApplySoftware):
+        * platform/graphics/filters/FEDropShadow.cpp:
+        (WebCore::FEDropShadow::determineAbsolutePaintRect):
+        (WebCore::FEDropShadow::platformApplySoftware):
+        * platform/graphics/filters/FEGaussianBlur.cpp:
+        (WebCore::FEGaussianBlur::calculateUnscaledKernelSize):
+        (WebCore::FEGaussianBlur::calculateKernelSize):
+        (WebCore::FEGaussianBlur::determineAbsolutePaintRect):
+        (WebCore::FEGaussianBlur::platformApplySoftware):
+        * platform/graphics/filters/FEGaussianBlur.h:
+        * platform/graphics/filters/FEMorphology.cpp:
+        (WebCore::FEMorphology::determineAbsolutePaintRect):
+        (WebCore::FEMorphology::platformApplySoftware):
+        * platform/graphics/filters/FEOffset.cpp:
+        (WebCore::FEOffset::determineAbsolutePaintRect):
+        (WebCore::FEOffset::platformApplySoftware):
+        * platform/graphics/filters/Filter.h:
+        (WebCore::Filter::setSourceImage):
+        (WebCore::Filter::scaledByFilterResolution const):
+        (WebCore::Filter::applyHorizontalScale const): Deleted.
+        (WebCore::Filter::applyVerticalScale const): Deleted.
+        * platform/graphics/filters/FilterOperations.cpp:
+        (WebCore::outsetSizeForBlur):
+        * rendering/FilterEffectRenderer.h:
+        * svg/graphics/filters/SVGFilter.cpp:
+        (WebCore::SVGFilter::scaledByFilterResolution const):
+        (WebCore::SVGFilter::applyHorizontalScale const): Deleted.
+        (WebCore::SVGFilter::applyVerticalScale const): Deleted.
+        * svg/graphics/filters/SVGFilter.h:
+
 2018-01-16  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [CMake][Mac] Fix the build errors

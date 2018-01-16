@@ -112,12 +112,11 @@ void FEDisplacementMap::platformApplySoftware()
 
     Filter& filter = this->filter();
     IntSize paintSize = absolutePaintRect().size();
-    float scaleX = filter.applyHorizontalScale(m_scale);
-    float scaleY = filter.applyVerticalScale(m_scale);
-    float scaleForColorX = scaleX / 255.0;
-    float scaleForColorY = scaleY / 255.0;
-    float scaledOffsetX = 0.5 - scaleX * 0.5;
-    float scaledOffsetY = 0.5 - scaleY * 0.5;
+    FloatSize scale = filter.scaledByFilterResolution({ m_scale, m_scale });
+    float scaleForColorX = scale.width() / 255.0;
+    float scaleForColorY = scale.height() / 255.0;
+    float scaledOffsetX = 0.5 - scale.width() * 0.5;
+    float scaledOffsetY = 0.5 - scale.height() * 0.5;
     
     int displacementChannelX = xChannelIndex();
     int displacementChannelY = yChannelIndex();

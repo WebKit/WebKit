@@ -67,6 +67,7 @@ private:
     bool m_startedFilterEffect { false };
 };
 
+// This is used to render filters for the CSS filter: property, and the filter() image function.
 class FilterEffectRenderer final : public Filter {
     WTF_MAKE_FAST_ALLOCATED;
 public:

@@ -468,29 +468,28 @@ static int clampedToKernelSize(float value)
     return clampTo<int>(std::min(size, static_cast<unsigned>(gMaxKernelSize)));
 }
     
-IntSize FEGaussianBlur::calculateUnscaledKernelSize(const FloatPoint& stdDeviation)
+IntSize FEGaussianBlur::calculateUnscaledKernelSize(FloatSize stdDeviation)
 {
-    ASSERT(stdDeviation.x() >= 0 && stdDeviation.y() >= 0);
+    ASSERT(stdDeviation.width() >= 0 && stdDeviation.height() >= 0);
     IntSize kernelSize;
 
-    if (stdDeviation.x())
-        kernelSize.setWidth(clampedToKernelSize(stdDeviation.x()));
+    if (stdDeviation.width())
+        kernelSize.setWidth(clampedToKernelSize(stdDeviation.width()));
 
-    if (stdDeviation.y())
-        kernelSize.setHeight(clampedToKernelSize(stdDeviation.y()));
+    if (stdDeviation.height())
+        kernelSize.setHeight(clampedToKernelSize(stdDeviation.height()));
 
     return kernelSize;
 }
 
-IntSize FEGaussianBlur::calculateKernelSize(const Filter& filter, const FloatPoint& stdDeviation)
+IntSize FEGaussianBlur::calculateKernelSize(const Filter& filter, FloatSize stdDeviation)
 {
-    FloatPoint stdFilterScaled(filter.applyHorizontalScale(stdDeviation.x()), filter.applyVerticalScale(stdDeviation.y()));
-    return calculateUnscaledKernelSize(stdFilterScaled);
+    return calculateUnscaledKernelSize(filter.scaledByFilterResolution(stdDeviation));
 }
 
 void FEGaussianBlur::determineAbsolutePaintRect()
 {
-    IntSize kernelSize = calculateKernelSize(filter(), FloatPoint(m_stdX, m_stdY));
+    IntSize kernelSize = calculateKernelSize(filter(), { m_stdX, m_stdY });
 
     FloatRect absolutePaintRect = inputEffect(0)->absolutePaintRect();
     // Edge modes other than 'none' do not inflate the affected paint rect.
@@ -527,7 +526,7 @@ void FEGaussianBlur::platformApplySoftware()
     if (!m_stdX && !m_stdY)
         return;
 
-    IntSize kernelSize = calculateKernelSize(filter(), FloatPoint(m_stdX, m_stdY));
+    IntSize kernelSize = calculateKernelSize(filter(), { m_stdX, m_stdY });
     kernelSize.scale(filter().filterScale());
 
     IntSize paintSize = absolutePaintRect().size();

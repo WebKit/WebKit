@@ -169,6 +169,7 @@ public:
         m_size.setHeight(m_size.height() + dy + dy);
     }
     void inflate(int d) { inflateX(d); inflateY(d); }
+    void inflate(IntSize size) { inflateX(size.width()); inflateY(size.height()); }
     WEBCORE_EXPORT void scale(float s);
 
     IntSize differenceToPoint(const IntPoint&) const;

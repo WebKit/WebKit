@@ -160,6 +160,7 @@ public:
         m_size.setHeight(m_size.height() + dy + dy);
     }
     void inflate(LayoutUnit d) { inflateX(d); inflateY(d); }
+    void inflate(LayoutSize size) { inflateX(size.width()); inflateY(size.height()); }
     WEBCORE_EXPORT void scale(float);
     void scale(float xScale, float yScale);
 

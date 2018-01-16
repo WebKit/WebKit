@@ -35,7 +35,7 @@ namespace WebCore {
 
 static inline IntSize outsetSizeForBlur(float stdDeviation)
 {
-    auto kernelSize = FEGaussianBlur::calculateUnscaledKernelSize(FloatPoint(stdDeviation, stdDeviation));
+    auto kernelSize = FEGaussianBlur::calculateUnscaledKernelSize({ stdDeviation, stdDeviation });
 
     // We take the half kernel size and multiply it with three, because we run box blur three times.
     return {

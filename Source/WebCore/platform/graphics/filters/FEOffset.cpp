@@ -56,7 +56,7 @@ void FEOffset::determineAbsolutePaintRect()
 {
     FloatRect paintRect = inputEffect(0)->absolutePaintRect();
     Filter& filter = this->filter();
-    paintRect.move(filter.applyHorizontalScale(m_dx), filter.applyVerticalScale(m_dy));
+    paintRect.move(filter.scaledByFilterResolution({ m_dx, m_dy }));
     if (clipsToBounds())
         paintRect.intersect(maxEffectRect());
     else
@@ -77,7 +77,7 @@ void FEOffset::platformApplySoftware()
 
     FloatRect drawingRegion = drawingRegionOfInputImage(in->absolutePaintRect());
     Filter& filter = this->filter();
-    drawingRegion.move(filter.applyHorizontalScale(m_dx), filter.applyVerticalScale(m_dy));
+    drawingRegion.move(filter.scaledByFilterResolution({ m_dx, m_dy }));
     resultImage->context().drawImageBuffer(*inBuffer, drawingRegion);
 }
 
