@@ -78,7 +78,6 @@ WI.TabBrowser = class TabBrowser extends WI.View
         this._tabBar.addEventListener(WI.TabBar.Event.TabBarItemSelected, this._tabBarItemSelected, this);
         this._tabBar.addEventListener(WI.TabBar.Event.TabBarItemAdded, this._tabBarItemAdded, this);
         this._tabBar.addEventListener(WI.TabBar.Event.TabBarItemRemoved, this._tabBarItemRemoved, this);
-        this._tabBar.newTabTabBarItem.addEventListener(WI.PinnedTabBarItem.Event.ContextMenu, this._handleNewTabContextMenu, this);
 
         this._recentTabContentViews = [];
         this._closedTabClasses = new Set;
@@ -293,35 +292,6 @@ WI.TabBrowser = class TabBrowser extends WI.View
 
         console.assert(this._recentTabContentViews.length === this._tabBar.normalTabCount);
         console.assert(!this.selectedTabContentView || this.selectedTabContentView === this._recentTabContentViews[0]);
-    }
-
-    _handleNewTabContextMenu(event)
-    {
-        // The array must be reversed because Sets insert into the end, and we want to display the
-        // most recently closed item first (which is the last item added to the set).
-        let closedTabClasses = Array.from(this._closedTabClasses).reverse();
-        let allTabClasses = Array.from(WI.knownTabClasses());
-        let tabClassesToDisplay = closedTabClasses.concat(allTabClasses.filter((tabClass) => {
-            if (closedTabClasses.includes(tabClass))
-                return false;
-
-            if (tabClass.isEphemeral())
-                return false;
-
-            return WI.isNewTabWithTypeAllowed(tabClass.Type);
-        }));
-        if (!tabClassesToDisplay.length)
-            return;
-
-        let contextMenu = event.data.contextMenu;
-
-        contextMenu.appendItem(WI.UIString("Recently Closed Tabs"), null, true);
-
-        for (let tabClass of tabClassesToDisplay) {
-            contextMenu.appendItem(tabClass.tabInfo().title, () => {
-                WI.createNewTabWithType(tabClass.Type, {shouldShowNewTab: true});
-            });
-        }
     }
 
     _sidebarPanelSelected(event)

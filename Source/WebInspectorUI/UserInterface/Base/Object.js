@@ -223,7 +223,6 @@ WI.Notification = {
     PageArchiveStarted: "page-archive-started",
     PageArchiveEnded: "page-archive-ended",
     ExtraDomainsActivated: "extra-domains-activated",
-    TabTypesChanged: "tab-types-changed",
     DebugUIEnabledDidChange: "debug-ui-enabled-did-change",
     VisibilityStateDidChange: "visibility-state-did-change",
 };

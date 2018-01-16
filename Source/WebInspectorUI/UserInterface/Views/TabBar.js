@@ -34,6 +34,7 @@ WI.TabBar = class TabBar extends WI.View
         this.element.addEventListener("mousedown", this._handleMouseDown.bind(this));
         this.element.addEventListener("click", this._handleClick.bind(this));
         this.element.addEventListener("mouseleave", this._handleMouseLeave.bind(this));
+        this.element.addEventListener("contextmenu", this._handleContextMenu.bind(this));
 
         this.element.createChild("div", "top-border");
 
@@ -748,6 +749,35 @@ WI.TabBar = class TabBar extends WI.View
             return;
 
         this._finishExpandingTabsAfterClose();
+    }
+
+    _handleContextMenu(event)
+    {
+        let contextMenu = WI.ContextMenu.createFromEvent(event);
+
+        for (let tabClass of WI.knownTabClasses()) {
+            if (tabClass.isEphemeral())
+                continue;
+
+            let openTabBarItem = null;
+            for (let tabBarItem of this._tabBarItems) {
+                let tabContentView = tabBarItem.representedObject;
+                if (!(tabContentView instanceof WI.TabContentView))
+                    continue;
+
+                if (tabContentView.type === tabClass.Type) {
+                    openTabBarItem = tabBarItem;
+                    break;
+                }
+            }
+
+            contextMenu.appendCheckboxItem(tabClass.tabInfo().title, () => {
+                if (openTabBarItem)
+                    this.removeTabBarItem(openTabBarItem);
+                else
+                    WI.createNewTabWithType(tabClass.Type, {shouldShowNewTab: true});
+            }, !!openTabBarItem);
+        }
     }
 
     _handleNewTabClick(event)

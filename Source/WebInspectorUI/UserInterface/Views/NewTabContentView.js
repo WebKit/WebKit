@@ -33,10 +33,11 @@ WI.NewTabContentView = class NewTabContentView extends WI.TabContentView
 
         super(identifier || "new-tab", "new-tab", tabBarItem);
 
-        WI.notifications.addEventListener(WI.Notification.TabTypesChanged, this._updateShownTabs.bind(this));
-
         this._tabElementsByTabClass = new Map;
-        this._updateShownTabs();
+
+        let allTabClasses = Array.from(WI.knownTabClasses());
+        this._shownTabClasses = allTabClasses.filter((tabClass) => tabClass.isTabAllowed() && !tabClass.isEphemeral());
+        this._shownTabClasses.sort((a, b) => a.tabInfo().title.extendedLocaleCompare(b.tabInfo().title));
     }
 
     static tabInfo()
@@ -126,19 +127,6 @@ WI.NewTabContentView = class NewTabContentView extends WI.TabContentView
             shouldShowNewTab: !WI.modifierKeys.metaKey
         };
         WI.createNewTabWithType(tabType, options);
-    }
-
-    _updateShownTabs()
-    {
-        let allTabClasses = Array.from(WI.knownTabClasses());
-        let allowedTabClasses = allTabClasses.filter((tabClass) => tabClass.isTabAllowed() && !tabClass.isEphemeral());
-        allowedTabClasses.sort((a, b) => a.tabInfo().title.extendedLocaleCompare(b.tabInfo().title));
-
-        if (Array.shallowEqual(this._shownTabClasses, allowedTabClasses))
-            return;
-
-        this._shownTabClasses = allowedTabClasses;
-        this.needsLayout();
     }
 
     _allowableTabTypes()

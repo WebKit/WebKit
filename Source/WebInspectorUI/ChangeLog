@@ -1,3 +1,39 @@
+2018-01-15  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: TabBar redesign: add context menu to TabBar for toggling available tabs
+        https://bugs.webkit.org/show_bug.cgi?id=181448
+        <rdar://problem/36383298>
+
+        Reviewed by Devin Rousso.
+
+        * UserInterface/Base/Main.js:
+        (WI.loaded):
+        (WI.contentLoaded):
+        Reorder production tab classes and default (open) tabs.
+        (WI.registerTabClass): Removed.
+        Not used.
+
+        * UserInterface/Base/Object.js:
+        Remove notification that is no longer used.
+
+        * UserInterface/Views/GeneralTabBarItem.js:
+        (WI.GeneralTabBarItem):
+        (WI.GeneralTabBarItem.prototype.set title):
+        (WI.GeneralTabBarItem.prototype._handleContextMenuEvent): Deleted.
+        Remove per-tab context menu (provided Close Tab and Close Other Tabs).
+
+        * UserInterface/Views/NewTabContentView.js:
+        (WI.NewTabContentView):
+
+        * UserInterface/Views/TabBar.js:
+        (WI.TabBar):
+        (WI.TabBar.prototype._handleContextMenu):
+
+        * UserInterface/Views/TabBrowser.js:
+        (WI.TabBrowser):
+        (WI.TabBrowser._handleNewTabContextMenu): Deleted.
+        No longer needed.
+
 2018-01-13  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Styles Redesign: properties should never be semitransparent or crossed out while editing
