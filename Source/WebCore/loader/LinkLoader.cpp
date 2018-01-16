@@ -110,7 +110,8 @@ void LinkLoader::loadLinksFromHeader(const String& headerValue, const URL& baseU
         // Sanity check to avoid re-entrancy here.
         if (equalIgnoringFragmentIdentifier(url, baseURL))
             continue;
-        preloadIfNeeded(relAttribute, url, document, header.as(), header.media(), header.mimeType(), header.crossOrigin(), nullptr);
+        preconnect(relAttribute, url, document, header.crossOrigin());
+        preload(relAttribute, url, document, header.as(), header.media(), header.mimeType(), header.crossOrigin(), nullptr);
     }
 }
 
@@ -211,7 +212,27 @@ bool LinkLoader::isSupportedType(CachedResource::Type resourceType, const String
     return false;
 }
 
-std::unique_ptr<LinkPreloadResourceClient> LinkLoader::preloadIfNeeded(const LinkRelAttribute& relAttribute, const URL& href, Document& document, const String& as, const String& media, const String& mimeType, const String& crossOriginMode, LinkLoader* loader)
+void LinkLoader::preconnect(const LinkRelAttribute& relAttribute, const URL& href, Document& document, const String& crossOrigin)
+{
+    if (!relAttribute.isLinkPreconnect || !href.isValid() || !href.protocolIsInHTTPFamily() || !document.frame())
+        return;
+    ASSERT(document.settings().linkPreconnectEnabled());
+    StoredCredentialsPolicy storageCredentialsPolicy = StoredCredentialsPolicy::Use;
+    if (equalIgnoringASCIICase(crossOrigin, "anonymous") && document.securityOrigin().canAccess(SecurityOrigin::create(href)))
+        storageCredentialsPolicy = StoredCredentialsPolicy::DoNotUse;
+    ASSERT(document.frame()->loader().networkingContext());
+    platformStrategies()->loaderStrategy()->preconnectTo(*document.frame()->loader().networkingContext(), href, storageCredentialsPolicy, [weakDocument = document.createWeakPtr(), href](ResourceError error) {
+        if (!weakDocument)
+            return;
+
+        if (!error.isNull())
+            weakDocument->addConsoleMessage(MessageSource::Network, MessageLevel::Error, makeString(ASCIILiteral("Failed to preconnect to "), href.string(), ASCIILiteral(". Error: "), error.localizedDescription()));
+        else
+            weakDocument->addConsoleMessage(MessageSource::Network, MessageLevel::Info, makeString(ASCIILiteral("Successfuly preconnected to "), href.string()));
+    });
+}
+
+std::unique_ptr<LinkPreloadResourceClient> LinkLoader::preload(const LinkRelAttribute& relAttribute, const URL& href, Document& document, const String& as, const String& media, const String& mimeType, const String& crossOriginMode, LinkLoader* loader)
 {
     if (!document.loader() || !relAttribute.isLinkPreload)
         return nullptr;
@@ -259,25 +280,10 @@ bool LinkLoader::loadLink(const LinkRelAttribute& relAttribute, const URL& href,
             document.frame()->loader().client().prefetchDNS(href.host());
     }
 
-    if (relAttribute.isLinkPreconnect && href.isValid() && href.protocolIsInHTTPFamily() && document.frame()) {
-        ASSERT(document.settings().linkPreconnectEnabled());
-        StoredCredentialsPolicy storageCredentialsPolicy = StoredCredentialsPolicy::Use;
-        if (equalIgnoringASCIICase(crossOrigin, "anonymous") && document.securityOrigin().canAccess(SecurityOrigin::create(href)))
-            storageCredentialsPolicy = StoredCredentialsPolicy::DoNotUse;
-        ASSERT(document.frame()->loader().networkingContext());
-        platformStrategies()->loaderStrategy()->preconnectTo(*document.frame()->loader().networkingContext(), href, storageCredentialsPolicy, [weakDocument = document.createWeakPtr(), href](ResourceError error) {
-            if (!weakDocument)
-                return;
-
-            if (!error.isNull())
-                weakDocument->addConsoleMessage(MessageSource::Network, MessageLevel::Error, makeString(ASCIILiteral("Failed to preconnect to "), href.string(), ASCIILiteral(". Error: "), error.localizedDescription()));
-            else
-                weakDocument->addConsoleMessage(MessageSource::Network, MessageLevel::Info, makeString(ASCIILiteral("Successfuly preconnected to "), href.string()));
-        });
-    }
+    preconnect(relAttribute, href, document, crossOrigin);
 
     if (m_client.shouldLoadLink()) {
-        auto resourceClient = preloadIfNeeded(relAttribute, href, document, as, media, mimeType, crossOrigin, this);
+        auto resourceClient = preload(relAttribute, href, document, as, media, mimeType, crossOrigin, this);
         if (resourceClient)
             m_preloadResourceClient = WTFMove(resourceClient);
         else if (m_preloadResourceClient)

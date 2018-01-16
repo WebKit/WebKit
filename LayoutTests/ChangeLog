@@ -1,3 +1,15 @@
+2018-01-15  Yoav Weiss  <yoav@yoav.ws>
+
+        Support for preconnect Link headers
+        https://bugs.webkit.org/show_bug.cgi?id=181657
+
+        Reviewed by Darin Adler.
+
+        Add test to see Link preconnect headers trigger a connection.
+
+        * http/tests/preconnect/link-header-rel-preconnect-http-expected.txt: Added.
+        * http/tests/preconnect/link-header-rel-preconnect-http.php: Added.
+
 2018-01-15  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Unreviewed GTK layout test gardening

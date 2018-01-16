@@ -1,3 +1,22 @@
+2018-01-15  Yoav Weiss  <yoav@yoav.ws>
+
+        Support for preconnect Link headers
+        https://bugs.webkit.org/show_bug.cgi?id=181657
+
+        Reviewed by Darin Adler.
+
+        Move the preconnect functionality into its own function, and
+        also call this function when Link headers are processed.
+
+        Test: http/tests/preconnect/link-header-rel-preconnect-http.php
+
+        * loader/LinkLoader.cpp:
+        (WebCore::LinkLoader::loadLinksFromHeader): Call preconnect.
+        (WebCore::LinkLoader::preconnect): Preconnect to a host functionality moved here.
+        (WebCore::LinkLoader::preload): Renamed `preloadIfNeeded` to `preload`.
+        (WebCore::LinkLoader::loadLink): Call preconnect.
+        * loader/LinkLoader.h:
+
 2018-01-15  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Improve use of ExportMacros
