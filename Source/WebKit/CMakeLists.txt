@@ -700,6 +700,10 @@ set(WebKit_MESSAGES_IN_FILES
     WebProcess/WebStorage/StorageAreaMap.messages.in
 )
 
+set(WebKit_LIBRARIES
+    WebCore
+)
+
 set(WebProcess_LIBRARIES
     WebKit
 )
@@ -711,18 +715,6 @@ set(NetworkProcess_LIBRARIES
 set(StorageProcess_LIBRARIES
     WebKit
 )
-
-if (APPLE)
-    set(WebKit_LIBRARIES
-        PRIVATE WebCore
-        PUBLIC JavaScriptCore
-    )
-else ()
-    set(WebKit_LIBRARIES
-        WebCore
-        JavaScriptCore
-    )
-endif ()
 
 set(PluginProcess_LIBRARIES
     WebKit

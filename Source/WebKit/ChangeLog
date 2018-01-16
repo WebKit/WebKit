@@ -1,3 +1,19 @@
+2018-01-16  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Don't link WebKit target directly to JavaScriptCore
+        https://bugs.webkit.org/show_bug.cgi?id=181688
+
+        Reviewed by Alex Christensen.
+
+        It's safer if we only link to the next lower-layered lib in the stack, so let's just link
+        directly to WebCore instead.
+
+        And WPE doesn't need to specify it twice.
+
+        * CMakeLists.txt:
+        * PlatformMac.cmake:
+        * PlatformWPE.cmake:
+
 2018-01-16  Eric Carlson  <eric.carlson@apple.com>
 
         AVSampleBufferDisplayLayer should be flushed when application activates

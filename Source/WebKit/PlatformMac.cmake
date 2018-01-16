@@ -10,7 +10,7 @@ add_definitions(-iframework ${APPLICATIONSERVICES_LIBRARY}/Versions/Current/Fram
 add_definitions(-DWK_XPC_SERVICE_SUFFIX=".Development")
 
 list(APPEND WebKit_LIBRARIES
-    PRIVATE WebKitLegacy
+    WebKitLegacy
     ${APPLICATIONSERVICES_LIBRARY}
 )
 
