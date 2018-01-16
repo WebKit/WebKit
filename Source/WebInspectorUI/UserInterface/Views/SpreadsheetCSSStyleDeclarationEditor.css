@@ -52,6 +52,7 @@
     display: inline-block;
     position: relative;
     z-index: 1;
+    max-width: 100%;
 }
 
 .spreadsheet-style-declaration-editor.no-properties {

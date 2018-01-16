@@ -1,5 +1,18 @@
 2018-01-16  Nikita Vasilyev  <nvasilyev@apple.com>
 
+        Web Inspector: Styles Redesign: Long value causes bad wrapping
+        https://bugs.webkit.org/show_bug.cgi?id=181618
+        <rdar://problem/36485175>
+
+        Reviewed by Joseph Pecoraro.
+
+        Wrap long values only when editing.
+
+        * UserInterface/Views/SpreadsheetCSSStyleDeclarationEditor.css:
+        (.spreadsheet-style-declaration-editor .value.editing):
+
+2018-01-16  Nikita Vasilyev  <nvasilyev@apple.com>
+
         Web Inspector: Styles Redesign: clicking on the white space after the property sometimes places a blank property at the wrong index
         https://bugs.webkit.org/show_bug.cgi?id=179585
         <rdar://problem/35490780>
