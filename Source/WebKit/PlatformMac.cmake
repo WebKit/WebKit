@@ -225,6 +225,7 @@ list(APPEND WebKit_SOURCES
     UIProcess/API/Cocoa/WKWebsiteDataStore.mm
     UIProcess/API/Cocoa/WKWindowFeatures.mm
     UIProcess/API/Cocoa/_WKActivatedElementInfo.mm
+    UIProcess/API/Cocoa/_WKApplicationManifest.mm
     UIProcess/API/Cocoa/_WKAttachment.mm
     UIProcess/API/Cocoa/_WKAutomationSession.mm
     UIProcess/API/Cocoa/_WKAutomationSessionConfiguration.mm
@@ -308,6 +309,8 @@ list(APPEND WebKit_SOURCES
     UIProcess/mac/WKFullScreenWindowController.mm
     UIProcess/mac/WKImmediateActionController.mm
     UIProcess/mac/WKInspectorViewController.mm
+    UIProcess/mac/WKInspectorWKWebView.mm
+    UIProcess/mac/WKInspectorWindow.mm
     UIProcess/mac/WKPrintingView.mm
     UIProcess/mac/WKSharingServicePickerDelegate.mm
     UIProcess/mac/WKTextFinderClient.mm

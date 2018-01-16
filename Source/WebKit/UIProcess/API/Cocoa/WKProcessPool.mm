@@ -450,6 +450,7 @@ static NSDictionary *policiesHashMapToDictionary(const HashMap<String, HashMap<S
 - (size_t)_webPageContentProcessCount
 {
     auto allWebProcesses = _processPool->processes();
+#if ENABLE(SERVICE_WORKER)
     auto* serviceWorkerProcess = _processPool->serviceWorkerProxy();
     if (!serviceWorkerProcess)
         return allWebProcesses.size();
@@ -468,6 +469,9 @@ static NSDictionary *policiesHashMapToDictionary(const HashMap<String, HashMap<S
 #endif
 
     return allWebProcesses.size() - 1;
+#else
+    return allWebProcesses.size();
+#endif
 }
 
 - (void)_preconnectToServer:(NSURL *)serverURL

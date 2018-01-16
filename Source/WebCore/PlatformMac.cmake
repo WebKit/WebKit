@@ -145,6 +145,8 @@ list(APPEND WebCore_SYSTEM_INCLUDE_DIRECTORIES
 )
 
 list(APPEND WebCore_SOURCES
+    Modules/paymentrequest/MerchantValidationEvent.cpp
+
     accessibility/mac/AXObjectCacheMac.mm
     accessibility/mac/AccessibilityObjectMac.mm
     accessibility/mac/WebAccessibilityObjectWrapperMac.mm
@@ -499,7 +501,10 @@ set(WebCore_FORWARDING_HEADERS_DIRECTORIES
     svg
     workers
 
+    workers/service/context
+
     Modules/applepay
+    Modules/applicationmanifest
     Modules/cache
     Modules/geolocation
     Modules/indexeddb
