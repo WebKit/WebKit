@@ -22,17 +22,15 @@ import os
 import errno
 import sys
 import re
-from signal import alarm, signal, SIGALRM, SIGKILL, SIGSEGV
+from signal import SIGKILL, SIGSEGV
+from glib_test_runner import GLibTestRunner
 
 top_level_directory = os.path.normpath(os.path.join(os.path.dirname(__file__), "..", ".."))
 sys.path.insert(0, os.path.join(top_level_directory, "Tools", "glib"))
 import common
 from webkitpy.common.host import Host
 from webkitpy.common.test_expectations import TestExpectations
-
-
-class TestTimeout(Exception):
-    pass
+from webkitpy.common.timeout_context import Timeout
 
 
 class TestRunner(object):
@@ -126,24 +124,6 @@ class TestRunner(object):
             # Process already died.
             pass
 
-    @staticmethod
-    def _start_timeout(timeout):
-        if timeout <= 0:
-            return
-
-        def _alarm_handler(signum, frame):
-            raise TestTimeout
-
-        signal(SIGALRM, _alarm_handler)
-        alarm(timeout)
-
-    @staticmethod
-    def _stop_timeout(timeout):
-        if timeout <= 0:
-            return
-
-        alarm(0)
-
     def _waitpid(self, pid):
         while True:
             try:
@@ -166,82 +146,11 @@ class TestRunner(object):
                 raise
 
     def _run_test_glib(self, test_program):
-        command = ['gtester', '-k']
-        if self._options.verbose:
-            command.append('--verbose')
-        for test_case in self._test_cases_to_skip(test_program):
-            command.extend(['-s', test_case])
-        command.append(test_program)
-
         timeout = self._options.timeout
         test = os.path.join(os.path.basename(os.path.dirname(test_program)), os.path.basename(test_program))
         if self._expectations.is_slow(os.path.basename(test_program)):
             timeout *= 5
-
-        test_context = {"child-pid": -1, "did-timeout": False, "current_test": None}
-
-        def parse_line(line, test_context=test_context):
-            if not line:
-                return
-
-            match = re.search(r'\(pid=(?P<child_pid>[0-9]+)\)', line)
-            if match:
-                test_context["child-pid"] = int(match.group('child_pid'))
-                sys.stdout.write(line)
-                return
-
-            def set_test_result(test, result):
-                if result == "FAIL":
-                    if test_context["did-timeout"] and result == "FAIL":
-                        test_context[test] = "TIMEOUT"
-                    else:
-                        test_context[test] = result
-                else:
-                    test_context[test] = 'PASS'
-                test_context["did-timeout"] = False
-                test_context["current_test"] = None
-                self._stop_timeout(timeout)
-                self._start_timeout(timeout)
-
-            normalized_line = line.strip().replace(' ', '')
-            if not normalized_line:
-                return
-
-            if normalized_line[0] == '/':
-                test, result = normalized_line.split(':', 1)
-                if result in ["OK", "FAIL"]:
-                    set_test_result(test, result)
-                else:
-                    test_context["current_test"] = test
-            elif normalized_line in ["OK", "FAIL"]:
-                set_test_result(test_context["current_test"], normalized_line)
-
-            sys.stdout.write(line)
-
-        pid, fd = os.forkpty()
-        if pid == 0:
-            os.execvpe(command[0], command, self._test_env)
-            sys.exit(0)
-
-        self._start_timeout(timeout)
-
-        while (True):
-            try:
-                common.parse_output_lines(fd, parse_line)
-                break
-            except TestTimeout:
-                assert test_context["child-pid"] > 0
-                self._kill_process(test_context["child-pid"])
-                test_context["child-pid"] = -1
-                test_context["did-timeout"] = True
-
-        self._stop_timeout(timeout)
-        del test_context["child-pid"]
-        del test_context["did-timeout"]
-        del test_context["current_test"]
-
-        self._waitpid(pid)
-        return test_context
+        return GLibTestRunner(test_program, timeout).run(skipped=self._test_cases_to_skip(test_program))
 
     def _get_tests_from_google_test_suite(self, test_program):
         try:
@@ -276,15 +185,15 @@ class TestRunner(object):
             os.execvpe(command[0], command, self._test_env)
             sys.exit(0)
 
-        self._start_timeout(timeout)
-        try:
-            common.parse_output_lines(fd, sys.stdout.write)
-            status = self._waitpid(pid)
-        except TestTimeout:
-            self._kill_process(pid)
-            return {subtest: "TIMEOUT"}
-
-        self._stop_timeout(timeout)
+        with Timeout(timeout):
+            try:
+                common.parse_output_lines(fd, sys.stdout.write)
+                status = self._waitpid(pid)
+            except RuntimeError:
+                self._kill_process(pid)
+                sys.stdout.write("**TIMEOUT** %s\n" % subtest)
+                sys.stdout.flush()
+                return {subtest: "TIMEOUT"}
 
         if status == -SIGSEGV:
             sys.stdout.write("**CRASH** %s\n" % subtest)
@@ -377,13 +286,10 @@ def add_options(option_parser):
     option_parser.add_option('-d', '--debug',
                              action='store_true', dest='debug',
                              help='Run in Debug')
-    option_parser.add_option('-v', '--verbose',
-                             action='store_true', dest='verbose',
-                             help='Run gtester in verbose mode')
     option_parser.add_option('--skipped', action='store', dest='skipped_action',
                              choices=['skip', 'ignore', 'only'], default='skip',
                              metavar='skip|ignore|only',
                              help='Specifies how to treat the skipped tests')
     option_parser.add_option('-t', '--timeout',
-                             action='store', type='int', dest='timeout', default=10,
+                             action='store', type='int', dest='timeout', default=5,
                              help='Time in seconds until a test times out')

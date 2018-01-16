@@ -1,3 +1,46 @@
+2018-01-16  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][WPE] Improve the way glib tests are run
+        https://bugs.webkit.org/show_bug.cgi?id=181674
+
+        Reviewed by Žan Doberšek.
+
+        Stop using gtester external program and use our own tester from python directly. This way we no longer need to
+        parse the tests output to get the results which is causing problems in WPE bot. We can now differentiate between
+        tests failing due to an expected assert in the test and unexpected crashes.
+        This also fixes a bug in previous code where we failed to properly detect tests timing out, because gtester was
+        not showing the subtest name in stdout in case of timeouts.
+        I've lowered the default timeout from 10 to 5, since we are now properly handling the timeout for every test
+        case. I've also removed the verbose option, since it was only used by gtester and we now always show the result
+        of every test case.
+
+        * glib/api_test_runner.py:
+        (TestRunner._run_test_glib): Use GLibTestRunner.
+        (TestRunner._run_google_test): Wrote tests timing out to stdout too.
+        (add_options):
+        * glib/glib_test_runner.py: Added.
+        (TestTimeout):
+        (Message):
+        (Message.__init__):
+        (Message.create):
+        (Message.create.read_unsigned):
+        (Message.create.read_double):
+        (Message.create.read_string):
+        (GLibTestRunner):
+        (GLibTestRunner.__init__):
+        (GLibTestRunner._process_data):
+        (GLibTestRunner._process_message):
+        (GLibTestRunner._read_from_pipe):
+        (GLibTestRunner._read_from_stderr):
+        (GLibTestRunner._start_timeout):
+        (GLibTestRunner._start_timeout._alarm_handler):
+        (GLibTestRunner._stop_timeout):
+        (GLibTestRunner._subtest_start):
+        (GLibTestRunner._subtest_message):
+        (GLibTestRunner._subtest_stderr):
+        (GLibTestRunner._subtest_end):
+        (GLibTestRunner.run):
+
 2018-01-15  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Unreviewed, add Thibault to contributors.json
