@@ -992,9 +992,6 @@ media/encrypted-media/encrypted-media-syntax.html [ Skip ]
 media/encrypted-media/encrypted-media-v2-events.html [ Skip ]
 media/encrypted-media/encrypted-media-v2-syntax.html [ Skip ]
 
-media/encrypted-media/clearKey/clearKey-encrypted-cenc-event.html [ Pass ]
-media/encrypted-media/clearKey/clearKey-encrypted-cenc-event-mse.html [ Pass ]
-
 webkit.org/b/172815 imported/w3c/i18n/bidi/bidi-plaintext-011.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/176174 media/event-queue-crash.html [ Pass Failure ]

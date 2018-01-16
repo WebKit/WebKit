@@ -1,3 +1,21 @@
+2018-01-16  Yacine Bandou  <yacine.bandou_ext@softathome.com>
+
+        [EME] some fixes in clearKey-encrypted-cenc-event LayoutTest
+        https://bugs.webkit.org/show_bug.cgi?id=181526
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Update the TestExpectation files as it was done with clearKey-message-cenc-event
+        LayoutTest, the test should be pass in all platforms except gtk and mac.
+        Use const or let instead of var in JS when it's possible.
+
+        * TestExpectations:
+        * media/encrypted-media/clearKey/clearKey-encrypted-cenc-event.html:
+        * media/media-source/media-source-loader-simple.js:
+        * platform/gtk/TestExpectations:
+        * platform/mac/TestExpectations:
+        * platform/wpe/TestExpectations:
+
 2018-01-15  Yoav Weiss  <yoav@yoav.ws>
 
         Support for preconnect Link headers

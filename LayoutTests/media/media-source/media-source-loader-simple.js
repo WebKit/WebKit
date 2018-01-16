@@ -13,9 +13,9 @@ SourceBufferLoaderSimple.prototype = {
 
     appendSegment : function(index)
     {
-        var segmentFile = this.segments[index];
-        var request = new XMLHttpRequest();
-        var sourcebuff = this.sb;
+        const segmentFile = this.segments[index];
+        const request = new XMLHttpRequest();
+        const sourcebuff = this.sb;
         request.open("GET", segmentFile);
         request.responseType = "arraybuffer";
         request.addEventListener("load", function() {
@@ -40,8 +40,7 @@ SourceBufferLoaderSimple.prototype = {
         if (this.indexSeg >= this.nbSeg)
             return;
 
-        var index = this.indexSeg++;
-        this.appendSegment(index);
+        this.appendSegment(this.indexSeg++);
     },
 
     start : function()
@@ -53,8 +52,7 @@ SourceBufferLoaderSimple.prototype = {
             return;
 
         this.sb.addEventListener("updateend", this.onupdateend.bind(this));
-        var index = this.indexSeg++;
-        this.appendSegment(index);
+        this.appendSegment(this.indexSeg++);
     }
 };
 
@@ -73,8 +71,8 @@ function MediaSourceLoaderSimple(video)
 MediaSourceLoaderSimple.prototype = {
     createSourceBuffer : function(media, maxSeg)
     {
-        let sb = this.ms.addSourceBuffer(media.mimeType);
-        var sbBase = new SourceBufferLoaderSimple(sb, this.ms, media, maxSeg);
+        const sb = this.ms.addSourceBuffer(media.mimeType);
+        const sbBase = new SourceBufferLoaderSimple(sb, this.ms, media, maxSeg);
         sbBase.start();
     },
 
