@@ -1,3 +1,32 @@
+2018-01-16  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        PAL should link to JavaScriptCore rather than WTF
+        https://bugs.webkit.org/show_bug.cgi?id=181683
+
+        Reviewed by Konstantin Tokarev.
+
+        Currently we are accidentally linking WTF into both libjavascriptcoregtk and libwebkit2gtk,
+        which could in theory cause problems similar to bug #179914. There are only two possible
+        solutions:
+
+         - Ensure WTF always built as a shared library if JavaScriptCore is built as a shared
+           library
+         - Change PAL to link to JavaScriptCore instead of WTF
+
+        The problem here is caused by layer hopping. It can never be a problem if each library only
+        links to the next lowest-layered library.
+
+        The downside is this allows PAL to use JavaScriptCore symbols, which is not super desirable.
+        I came up with a hack yesterday for PAL to link to WTF usually, but link to JavaScriptCore
+        instead if ${JavaScriptCore_LIBRARY_TYPE} MATCHES "SHARED" AND ${WTF_LIBRARY_TYPE} MATCHES
+        "STATIC". But that is getting too complex and introduces more possibility for platform-
+        dependent build failures. Better to just accept that PAL will depend on JavaScriptCore.
+
+        Note: I'm not brave enough to update the XCode build. We can use that to enforce that no
+        JavaScriptCore symbols actually get used, I guess....
+
+        * pal/CMakeLists.txt:
+
 2018-01-15  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Improve use of ExportMacros

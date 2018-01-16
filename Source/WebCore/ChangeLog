@@ -1,3 +1,14 @@
+2018-01-16  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        PAL should link to JavaScriptCore rather than WTF
+        https://bugs.webkit.org/show_bug.cgi?id=181683
+
+        Reviewed by Konstantin Tokarev.
+
+        Do not link directly to JavaScriptCore. Get it via PAL.
+
+        * CMakeLists.txt:
+
 2018-01-16  Zach Li  <zachli@apple.com>
 
         Add pop-up policy support in website policies.
