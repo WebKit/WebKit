@@ -1,3 +1,15 @@
+2018-01-16  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Styles Redesign: clicking on the white space after the property sometimes places a blank property at the wrong index
+        https://bugs.webkit.org/show_bug.cgi?id=179585
+        <rdar://problem/35490780>
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Views/SpreadsheetCSSStyleDeclarationEditor.js:
+        (WI.SpreadsheetCSSStyleDeclarationEditor.prototype.spreadsheetStylePropertyRemoved):
+        Layout call is needed to update data-property-index attributes on the property views.
+
 2018-01-16  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Network Tab - Export HAR Context Menu not working
