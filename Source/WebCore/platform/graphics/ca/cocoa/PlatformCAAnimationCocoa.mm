@@ -131,17 +131,17 @@ CAMediaTimingFunction* WebCore::toCAMediaTimingFunction(const TimingFunction* ti
     ASSERT(timingFunction);
     if (is<CubicBezierTimingFunction>(timingFunction)) {
         RefPtr<CubicBezierTimingFunction> reversed;
-        const CubicBezierTimingFunction* ctf = downcast<const CubicBezierTimingFunction>(timingFunction);
+        auto* function = downcast<CubicBezierTimingFunction>(timingFunction);
 
         if (reverse) {
-            reversed = ctf->createReversed();
-            ctf = reversed.get();
+            reversed = function->createReversed();
+            function = reversed.get();
         }
 
-        float x1 = static_cast<float>(ctf->x1());
-        float y1 = static_cast<float>(ctf->y1());
-        float x2 = static_cast<float>(ctf->x2());
-        float y2 = static_cast<float>(ctf->y2());
+        float x1 = static_cast<float>(function->x1());
+        float y1 = static_cast<float>(function->y1());
+        float x2 = static_cast<float>(function->x2());
+        float y2 = static_cast<float>(function->y2());
         return [CAMediaTimingFunction functionWithControlPoints: x1 : y1 : x2 : y2];
     }
     

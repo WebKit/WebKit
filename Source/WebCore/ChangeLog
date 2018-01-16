@@ -1,3 +1,23 @@
+2018-01-16  Antoine Quint  <graouts@apple.com>
+
+        Use traits for animation timing functions
+        https://bugs.webkit.org/show_bug.cgi?id=181651
+
+        Reviewed by Dean Jackson.
+
+        Cleaning up Dean's previous patch as suggested by Darin's post-commit review comments. The
+        downcast function can match const automatically and it's a better style to put the * inside
+        the downcast call rather than outside.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::createTimingFunctionValue):
+        * platform/animation/TimingFunction.cpp:
+        (WebCore::operator<<):
+        (WebCore::TimingFunction::transformTime const):
+        * platform/animation/TimingFunction.h:
+        * platform/graphics/ca/cocoa/PlatformCAAnimationCocoa.mm:
+        (WebCore::toCAMediaTimingFunction):
+
 2018-01-16  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer] Live streaming cleanups

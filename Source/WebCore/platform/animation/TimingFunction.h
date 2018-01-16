@@ -123,7 +123,7 @@ public:
     {
         if (!is<CubicBezierTimingFunction>(other))
             return false;
-        auto& otherCubic = downcast<const CubicBezierTimingFunction>(other);
+        auto& otherCubic = downcast<CubicBezierTimingFunction>(other);
         if (m_timingFunctionPreset != otherCubic.m_timingFunctionPreset)
             return false;
         if (m_timingFunctionPreset != Custom)
@@ -196,7 +196,7 @@ public:
     {
         if (!is<StepsTimingFunction>(other))
             return false;
-        auto& otherSteps = downcast<const StepsTimingFunction>(other);
+        auto& otherSteps = downcast<StepsTimingFunction>(other);
         return m_steps == otherSteps.m_steps && m_stepAtStart == otherSteps.m_stepAtStart;
     }
     
@@ -238,7 +238,7 @@ public:
     {
         if (is<FramesTimingFunction>(other))
             return false;
-        auto& otherFrames = downcast<const FramesTimingFunction>(other);
+        auto& otherFrames = downcast<FramesTimingFunction>(other);
         return m_frames == otherFrames.m_frames;
     }
     
@@ -278,7 +278,7 @@ public:
     {
         if (!is<SpringTimingFunction>(other))
             return false;
-        auto& otherSpring = downcast<const SpringTimingFunction>(other);
+        auto& otherSpring = downcast<SpringTimingFunction>(other);
         return m_mass == otherSpring.m_mass && m_stiffness == otherSpring.m_stiffness && m_damping == otherSpring.m_damping && m_initialVelocity == otherSpring.m_initialVelocity;
     }
 
