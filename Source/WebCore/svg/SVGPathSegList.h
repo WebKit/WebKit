@@ -100,12 +100,6 @@ private:
     {
     }
 
-    virtual ~SVGPathSegList()
-    {
-        if (m_animatedProperty)
-            m_animatedProperty->propertyWillBeDeleted(*this);
-    }
-
     SVGPathElement* contextElement() const;
 
     void clearContextAndRoles();

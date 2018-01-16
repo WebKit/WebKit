@@ -42,7 +42,6 @@ public:
 
     virtual bool isAnimating() const { return false; }
     virtual bool isAnimatedListTearOff() const { return false; }
-    virtual void propertyWillBeDeleted(const SVGProperty&) { }
 
     // Caching facilities.
     typedef HashMap<SVGAnimatedPropertyDescription, SVGAnimatedProperty*, SVGAnimatedPropertyDescriptionHash, SVGAnimatedPropertyDescriptionHashTraits> Cache;

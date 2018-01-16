@@ -35,20 +35,20 @@ public:
     Ref<ListPropertyTearOff> baseVal() final
     {
         if (m_baseVal)
-            return *m_baseVal;
+            return *static_cast<ListPropertyTearOff*>(m_baseVal.get());
 
         auto property = SVGTransformList::create(*this, BaseValRole, m_values, m_wrappers);
-        m_baseVal = property.ptr();
+        m_baseVal = property->createWeakPtr();
         return property;
     }
 
     Ref<ListPropertyTearOff> animVal() final
     {
         if (m_animVal)
-            return *m_animVal;
+            return *static_cast<ListPropertyTearOff*>(m_animVal.get());
 
         auto property = SVGTransformList::create(*this, AnimValRole, m_values, m_wrappers);
-        m_animVal = property.ptr();
+        m_animVal = property->createWeakPtr();
         return property;
     }
 

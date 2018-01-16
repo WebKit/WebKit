@@ -1,3 +1,84 @@
+2018-01-16  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        REGRESSION(r221292): svg/animations/animateTransform-pattern-transform.html crashes with security assertion
+        https://bugs.webkit.org/show_bug.cgi?id=179986
+
+        Reviewed by Simon Fraser.
+
+        This patch reverts all or parts of the following changes-sets
+            <http://trac.webkit.org/changeset/221292>
+            <http://trac.webkit.org/changeset/197967>
+            <http://trac.webkit.org/changeset/196670>
+
+        A JS statement like this:
+            var item = text.x.animVal.getItem(0);
+
+        Creates the following C++ objects:
+            SVGAnimatedListPropertyTearOff<SVGLengthListValues> for 'text.x'
+            SVGListPropertyTearOff<SVGLengthListValues> for 'text.x.animVal'
+            SVGPropertyTearOff<SVGLengthValue> for 'text.x.animVal.getItem(0)'
+
+        If 'item' changes, the attribute 'x' of the element '<text>' will change
+        as well. But this binding works only in one direction. If the attribute
+        'x' of the element '<text>' changes, e.g.:
+
+            text.setAttribute('x', '10,20,30');
+
+        This will detach 'item' from the element <text> and any further changes 
+        in 'item' won't affect the attribute 'x' of element <text>.
+
+        The one direction binding can only work if this chain of tear-off objects
+        is kept connected. This is implemented by RefCounted back pointers from
+        SVGPropertyTearOff and SVGListPropertyTearOff to SVGAnimatedListPropertyTearOff.
+
+        The security crashes and the memory leaks are happening because of the
+        raw forward pointers:
+            -- SVGAnimatedListPropertyTearOff maintains raw pointers of type
+               SVGListPropertyTearOff for m_baseVal and m_animVal
+            -- The m_wrappers and m_animatedWrappers of SVGAnimatedListPropertyTearOff
+               are vectors of raw pointer Vector<SVGLength*>
+
+        To control the life cycle of the raw pointers, SVGListPropertyTearOff and
+        SVGPropertyTearOff call SVGAnimatedListPropertyTearOff::propertyWillBeDeleted()
+        to notify it they are going to be deleted. In propertyWillBeDeleted(), we
+        clear the pointers so they are not used after being freed. This mechanism
+        has been error-prone and we've never got it 100% right.
+
+        The solution we need to adopt with SVG tear-off objects is the following:
+            -- All the forward pointers should be weak pointers.
+            -- All the back pointers should be ref pointers.
+
+        This solution may not look intuitive but it solves the bugs and keeps the
+        one direction binding. The forward weak pointers allows the tear-off
+        objects to go aways if no reference from JS exists. The back ref pointers
+        maintains the chain of objects and guarantees the correct binding.
+
+        * svg/SVGPathSegList.h:
+        * svg/SVGTransformList.h:
+        * svg/properties/SVGAnimatedListPropertyTearOff.h:
+        (WebCore::SVGAnimatedListPropertyTearOff::baseVal):
+        (WebCore::SVGAnimatedListPropertyTearOff::animVal):
+        * svg/properties/SVGAnimatedPathSegListPropertyTearOff.h:
+        * svg/properties/SVGAnimatedProperty.h:
+        (WebCore::SVGAnimatedProperty::isAnimatedListTearOff const):
+        (WebCore::SVGAnimatedProperty::propertyWillBeDeleted): Deleted.
+        * svg/properties/SVGAnimatedPropertyTearOff.h:
+        * svg/properties/SVGAnimatedTransformListPropertyTearOff.h:
+        * svg/properties/SVGListProperty.h:
+        (WebCore::SVGListProperty::initializeValuesAndWrappers):
+        (WebCore::SVGListProperty::getItemValuesAndWrappers):
+        (WebCore::SVGListProperty::insertItemBeforeValuesAndWrappers):
+        (WebCore::SVGListProperty::replaceItemValuesAndWrappers):
+        (WebCore::SVGListProperty::removeItemValuesAndWrappers):
+        (WebCore::SVGListProperty::appendItemValuesAndWrappers):
+        (WebCore::SVGListProperty::createWeakPtr const):
+        * svg/properties/SVGListPropertyTearOff.h:
+        (WebCore::SVGListPropertyTearOff::removeItemFromList):
+        (WebCore::SVGListPropertyTearOff::~SVGListPropertyTearOff): Deleted.
+        * svg/properties/SVGPropertyTearOff.h:
+        (WebCore::SVGPropertyTearOff::createWeakPtr const):
+        (WebCore::SVGPropertyTearOff::~SVGPropertyTearOff):
+
 2018-01-16  Eric Carlson  <eric.carlson@apple.com>
 
         AVSampleBufferDisplayLayer should be flushed when application activates
