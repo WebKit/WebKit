@@ -1,5 +1,16 @@
 2018-01-16  Yacine Bandou  <yacine.bandou_ext@softathome.com>
 
+        [WPE] Two clearkey tests failing since r226621
+        https://bugs.webkit.org/show_bug.cgi?id=181532
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        * platform/wpe/imported/w3c/web-platform-tests/encrypted-media/clearkey-generate-request-disallowed-input-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-unique-origin-expected.txt:
+            Since r226621 initDataType "cenc" is supported in clearKey, so we should update the expected result of these tests.
+
+2018-01-16  Yacine Bandou  <yacine.bandou_ext@softathome.com>
+
         [EME] some fixes in clearKey-encrypted-cenc-event LayoutTest
         https://bugs.webkit.org/show_bug.cgi?id=181526
 

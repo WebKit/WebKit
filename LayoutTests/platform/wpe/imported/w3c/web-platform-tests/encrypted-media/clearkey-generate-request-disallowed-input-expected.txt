@@ -1,5 +1,8 @@
 
+FAIL org.w3.clearkey, temporary, cenc, initData longer than 64Kb characters assert_equals: expected "TypeError" but got "NotSupportedError"
 PASS org.w3.clearkey, temporary, keyids, initData longer than 64Kb characters 
+FAIL org.w3.clearkey, temporary, cenc, invalid initdata (invalid pssh) assert_equals: expected "TypeError" but got "NotSupportedError"
+FAIL org.w3.clearkey, temporary, cenc, invalid initdata (not pssh) assert_equals: expected "TypeError" but got "NotSupportedError"
 FAIL org.w3.clearkey, temporary, keyids, invalid initdata (too short key ID) assert_unreached: generateRequest() succeeded unexpectedly Reached unreachable code
 FAIL org.w3.clearkey, temporary, keyids, invalid initdata (too long key ID) assert_unreached: generateRequest() succeeded unexpectedly Reached unreachable code
 

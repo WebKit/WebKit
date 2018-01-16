@@ -187,6 +187,10 @@ static std::pair<unsigned, unsigned> extractKeyidsLocationFromCencInitData(const
 
         psshSize = data[index + 2] * 256 + data[index + 3];
 
+        // Check the pssh size
+        if (!psshSize)
+            return keyIdsMap;
+
         // 12 = BMFF box header + Full box header.
         if (!memcmp(&data[index + 12], clearKeyCencSystemId, clearKeyCencSystemIdSize)) {
             foundPssh = true;

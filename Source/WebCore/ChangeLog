@@ -1,3 +1,17 @@
+2018-01-16  Yacine Bandou  <yacine.bandou_ext@softathome.com>
+
+        [WPE] Two clearkey tests failing since r226621
+        https://bugs.webkit.org/show_bug.cgi?id=181532
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Whith a fake initData, we can have a pssh size nul, thus we should check it.
+        We saw this issue in the subtest "initData longer than 64Kb characters" in
+        the clearkey-generate-request-disallowed-input layout test.
+
+        * platform/encryptedmedia/clearkey/CDMClearKey.cpp:
+        (WebCore::extractKeyidsLocationFromCencInitData):
+
 2018-01-15  Yoav Weiss  <yoav@yoav.ws>
 
         Support for preconnect Link headers
