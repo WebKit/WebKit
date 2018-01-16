@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,36 +25,28 @@
 
 #pragma once
 
-#include "WebsiteAutoplayPolicy.h"
-#include "WebsiteAutoplayQuirk.h"
-#include "WebsiteDataStoreParameters.h"
-#include "WebsitePopUpPolicy.h"
-#include <WebCore/HTTPHeaderField.h>
-#include <wtf/OptionSet.h>
-
-namespace IPC {
-class Decoder;
-class Encoder;
-}
-
-namespace WebCore {
-class DocumentLoader;
-}
+#include <wtf/EnumTraits.h>
 
 namespace WebKit {
 
-struct WebsitePoliciesData {
-    static void applyToDocumentLoader(WebsitePoliciesData&&, WebCore::DocumentLoader&);
-
-    bool contentBlockersEnabled { true };
-    OptionSet<WebsiteAutoplayQuirk> allowedAutoplayQuirks;
-    WebsiteAutoplayPolicy autoplayPolicy { WebsiteAutoplayPolicy::Default };
-    Vector<WebCore::HTTPHeaderField> customHeaderFields;
-    WebsitePopUpPolicy popUpPolicy { WebsitePopUpPolicy::Default };
-    std::optional<WebsiteDataStoreParameters> websiteDataStoreParameters;
-    
-    void encode(IPC::Encoder&) const;
-    static std::optional<WebsitePoliciesData> decode(IPC::Decoder&);
+enum class WebsitePopUpPolicy {
+    Default,
+    Allow,
+    Block,
 };
 
-} // namespace WebKit
+}
+
+namespace WTF {
+
+template<> struct EnumTraits<WebKit::WebsitePopUpPolicy> {
+    using values = EnumValues<
+        WebKit::WebsitePopUpPolicy,
+        WebKit::WebsitePopUpPolicy::Default,
+        WebKit::WebsitePopUpPolicy::Allow,
+        WebKit::WebsitePopUpPolicy::Block
+    >;
+};
+
+} // namespace WTF
+

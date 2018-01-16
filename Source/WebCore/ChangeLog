@@ -1,3 +1,22 @@
+2018-01-16  Zach Li  <zachli@apple.com>
+
+        Add pop-up policy support in website policies.
+        https://bugs.webkit.org/show_bug.cgi?id=181544.
+        rdar://problem/30521400.
+
+        Reviewed by Alex Christensen.
+
+        * loader/DocumentLoader.h:
+        Introduce pop-up policy getter and setter. Initialize
+        the policy as Default.
+        (WebCore::DocumentLoader::popUpPolicy const):
+        (WebCore::DocumentLoader::setPopUpPolicy):
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::allowPopUp):
+        Pop-up policy specified on a per-page basis holds
+        precedence over the global policy. If no pop-up policy
+        is specified during navigation, global policy is used.
+
 2018-01-16  Jer Noble  <jer.noble@apple.com>
 
         Crash playing audio-only HLS stream via hls.js (MSE)

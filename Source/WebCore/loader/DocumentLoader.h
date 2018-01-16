@@ -99,6 +99,12 @@ enum class AutoplayQuirk {
     ArbitraryUserGestures = 1 << 2,
 };
 
+enum class PopUpPolicy {
+    Default, // Uses policies specified in frame settings.
+    Allow,
+    Block,
+};
+
 class DocumentLoader : public RefCounted<DocumentLoader>, public FrameDestructionObserver, private CachedRawResourceClient {
     WTF_MAKE_FAST_ALLOCATED;
     friend class ContentFilter;
@@ -248,6 +254,9 @@ public:
 
     OptionSet<AutoplayQuirk> allowedAutoplayQuirks() const { return m_allowedAutoplayQuirks; }
     void setAllowedAutoplayQuirks(OptionSet<AutoplayQuirk> allowedQuirks) { m_allowedAutoplayQuirks = allowedQuirks; }
+
+    PopUpPolicy popUpPolicy() const { return m_popUpPolicy; }
+    void setPopUpPolicy(PopUpPolicy popUpPolicy) { m_popUpPolicy = popUpPolicy; }
 
     void addSubresourceLoader(ResourceLoader*);
     void removeSubresourceLoader(ResourceLoader*);
@@ -499,6 +508,7 @@ private:
     bool m_userContentExtensionsEnabled { true };
     AutoplayPolicy m_autoplayPolicy { AutoplayPolicy::Default };
     OptionSet<AutoplayQuirk> m_allowedAutoplayQuirks;
+    PopUpPolicy m_popUpPolicy { PopUpPolicy::Default };
 
 #if ENABLE(SERVICE_WORKER)
     std::optional<ServiceWorkerRegistrationData> m_serviceWorkerRegistrationData;

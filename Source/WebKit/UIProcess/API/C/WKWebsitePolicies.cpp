@@ -144,3 +144,33 @@ void WKWebsitePoliciesSetAutoplayPolicy(WKWebsitePoliciesRef websitePolicies, WK
     }
     ASSERT_NOT_REACHED();
 }
+
+WKWebsitePopUpPolicy WKWebsitePoliciesGetPopUpPolicy(WKWebsitePoliciesRef websitePolicies)
+{
+    switch (toImpl(websitePolicies)->popUpPolicy()) {
+    case WebsitePopUpPolicy::Default:
+        return kWKWebsitePopUpPolicyDefault;
+    case WebsitePopUpPolicy::Allow:
+        return kWKWebsitePopUpPolicyAllow;
+    case WebsitePopUpPolicy::Block:
+        return kWKWebsitePopUpPolicyBlock;
+    }
+    ASSERT_NOT_REACHED();
+    return kWKWebsitePopUpPolicyDefault;
+}
+
+void WKWebsitePoliciesSetPopUpPolicy(WKWebsitePoliciesRef websitePolicies, WKWebsitePopUpPolicy policy)
+{
+    switch (policy) {
+    case kWKWebsitePopUpPolicyDefault:
+        toImpl(websitePolicies)->setPopUpPolicy(WebsitePopUpPolicy::Default);
+        return;
+    case kWKWebsitePopUpPolicyAllow:
+        toImpl(websitePolicies)->setPopUpPolicy(WebsitePopUpPolicy::Allow);
+        return;
+    case kWKWebsitePopUpPolicyBlock:
+        toImpl(websitePolicies)->setPopUpPolicy(WebsitePopUpPolicy::Block);
+        return;
+    }
+    ASSERT_NOT_REACHED();
+}

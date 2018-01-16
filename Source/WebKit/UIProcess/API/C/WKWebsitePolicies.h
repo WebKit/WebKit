@@ -47,6 +47,12 @@ enum {
     kWKWebsiteAutoplayQuirkArbitraryUserGestures = 1 << 2,
 };
 
+enum WKWebsitePopUpPolicy {
+    kWKWebsitePopUpPolicyDefault,
+    kWKWebsitePopUpPolicyAllow,
+    kWKWebsitePopUpPolicyBlock,
+};
+
 WK_EXPORT WKWebsitePoliciesRef WKWebsitePoliciesCreate();
 
 WK_EXPORT bool WKWebsitePoliciesGetContentBlockersEnabled(WKWebsitePoliciesRef);
@@ -60,6 +66,9 @@ WK_EXPORT void WKWebsitePoliciesSetAllowedAutoplayQuirks(WKWebsitePoliciesRef, W
 
 WK_EXPORT WKWebsiteAutoplayPolicy WKWebsitePoliciesGetAutoplayPolicy(WKWebsitePoliciesRef);
 WK_EXPORT void WKWebsitePoliciesSetAutoplayPolicy(WKWebsitePoliciesRef, WKWebsiteAutoplayPolicy);
+
+WK_EXPORT WKWebsitePopUpPolicy WKWebsitePoliciesGetPopUpPolicy(WKWebsitePoliciesRef);
+WK_EXPORT void WKWebsitePoliciesSetPopUpPolicy(WKWebsitePoliciesRef, WKWebsitePopUpPolicy);
 
 #ifdef __cplusplus
 }

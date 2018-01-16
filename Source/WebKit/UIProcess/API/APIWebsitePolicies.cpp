@@ -33,11 +33,12 @@ namespace API {
 
 WebsitePolicies::WebsitePolicies() = default;
 
-WebsitePolicies::WebsitePolicies(bool contentBlockersEnabled, OptionSet<WebKit::WebsiteAutoplayQuirk> allowedAutoplayQuirks, WebKit::WebsiteAutoplayPolicy autoplayPolicy, Vector<WebCore::HTTPHeaderField>&& customHeaderFields, RefPtr<WebsiteDataStore>&& websiteDataStore)
+WebsitePolicies::WebsitePolicies(bool contentBlockersEnabled, OptionSet<WebKit::WebsiteAutoplayQuirk> allowedAutoplayQuirks, WebKit::WebsiteAutoplayPolicy autoplayPolicy, Vector<WebCore::HTTPHeaderField>&& customHeaderFields, WebKit::WebsitePopUpPolicy popUpPolicy, RefPtr<WebsiteDataStore>&& websiteDataStore)
     : m_contentBlockersEnabled(contentBlockersEnabled)
     , m_allowedAutoplayQuirks(allowedAutoplayQuirks)
     , m_autoplayPolicy(autoplayPolicy)
     , m_customHeaderFields(WTFMove(customHeaderFields))
+    , m_popUpPolicy(popUpPolicy)
     , m_websiteDataStore(WTFMove(websiteDataStore))
 { }
 
@@ -55,7 +56,7 @@ WebKit::WebsitePoliciesData WebsitePolicies::data()
     std::optional<WebKit::WebsiteDataStoreParameters> parameters;
     if (m_websiteDataStore)
         parameters = m_websiteDataStore->websiteDataStore().parameters();
-    return { contentBlockersEnabled(), allowedAutoplayQuirks(), autoplayPolicy(), customHeaderFields(), WTFMove(parameters) };
+    return { contentBlockersEnabled(), allowedAutoplayQuirks(), autoplayPolicy(), customHeaderFields(), popUpPolicy(), WTFMove(parameters) };
 }
 
 }

@@ -33,6 +33,7 @@
 		07E1F6A21FFC44FA0096C7EC /* getDisplayMedia.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 07E1F6A11FFC44F90096C7EC /* getDisplayMedia.html */; };
 		07E1F6A31FFC4B760096C7EC /* GetDisplayMedia.mm in Sources */ = {isa = PBXBuildFile; fileRef = 07E1F6A01FFC3A080096C7EC /* GetDisplayMedia.mm */; };
 		07E499911F9E56DF002F1EF3 /* GetUserMediaReprompt.mm in Sources */ = {isa = PBXBuildFile; fileRef = 07E499901F9E56A1002F1EF3 /* GetUserMediaReprompt.mm */; };
+		0EBBCC661FFF9E0C00FA42AB /* pop-up-check.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 0EBBCC651FFF9DCE00FA42AB /* pop-up-check.html */; };
 		0F139E771A423A5B00F590F5 /* WeakObjCPtr.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0F139E751A423A5300F590F5 /* WeakObjCPtr.mm */; };
 		0F139E781A423A6B00F590F5 /* PlatformUtilitiesCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0F139E721A423A2B00F590F5 /* PlatformUtilitiesCocoa.mm */; };
 		0F139E791A42457000F590F5 /* PlatformUtilitiesCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0F139E721A423A2B00F590F5 /* PlatformUtilitiesCocoa.mm */; };
@@ -834,6 +835,7 @@
 			dstPath = TestWebKitAPI.resources;
 			dstSubfolderSpec = 7;
 			files = (
+				0EBBCC661FFF9E0C00FA42AB /* pop-up-check.html in Copy Resources */,
 				1A9E52C913E65EF4006917F5 /* 18-characters.html in Copy Resources */,
 				379028B914FAC24C007E6B43 /* acceptsFirstMouse.html in Copy Resources */,
 				1C2B81871C8925A000A5529F /* Ahem.ttf in Copy Resources */,
@@ -1095,6 +1097,7 @@
 		07EDEFAC1EB9400C00D43292 /* UserMediaDisabled.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = UserMediaDisabled.mm; sourceTree = "<group>"; };
 		0BCD833414857CE400EA2003 /* HashMap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HashMap.cpp; sourceTree = "<group>"; };
 		0BCD85691485C98B00EA2003 /* SetForScope.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SetForScope.cpp; sourceTree = "<group>"; };
+		0EBBCC651FFF9DCE00FA42AB /* pop-up-check.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "pop-up-check.html"; sourceTree = "<group>"; };
 		0F139E721A423A2B00F590F5 /* PlatformUtilitiesCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PlatformUtilitiesCocoa.mm; path = cocoa/PlatformUtilitiesCocoa.mm; sourceTree = "<group>"; };
 		0F139E751A423A5300F590F5 /* WeakObjCPtr.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WeakObjCPtr.mm; path = cocoa/WeakObjCPtr.mm; sourceTree = "<group>"; };
 		0F17BBD415AF6C4D007AB753 /* WebCoreStatisticsWithNoWebProcess.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebCoreStatisticsWithNoWebProcess.cpp; sourceTree = "<group>"; };
@@ -2791,6 +2794,7 @@
 				5797FE321EB15A8900B2F4A0 /* navigation-client-default-crypto.html */,
 				C99B675E1E39735C00FC6C80 /* no-autoplay-with-controls.html */,
 				CEA6CF2719CCF69D0064F5A7 /* open-and-close-window.html */,
+				0EBBCC651FFF9DCE00FA42AB /* pop-up-check.html */,
 				F6FDDDD514241C48004F1729 /* push-state.html */,
 				0F5651F81FCE50E800310FBC /* scroll-to-anchor.html */,
 				7A66BDB71EAF150100CCC924 /* set-long-title.html */,

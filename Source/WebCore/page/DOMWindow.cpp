@@ -358,6 +358,16 @@ FloatRect DOMWindow::adjustWindowRect(Page& page, const FloatRect& pendingChange
 
 bool DOMWindow::allowPopUp(Frame& firstFrame)
 {
+    if (DocumentLoader* documentLoader = firstFrame.loader().documentLoader()) {
+        // If pop-up policy was set during navigation, use it. If not, use the global settings.
+        PopUpPolicy popUpPolicy = documentLoader->popUpPolicy();
+        if (popUpPolicy == PopUpPolicy::Allow)
+            return true;
+
+        if (popUpPolicy == PopUpPolicy::Block)
+            return false;
+    }
+
     return UserGestureIndicator::processingUserGesture()
         || firstFrame.settings().javaScriptCanOpenWindowsAutomatically();
 }

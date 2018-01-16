@@ -40,6 +40,7 @@ void WebsitePoliciesData::encode(IPC::Encoder& encoder) const
     encoder << autoplayPolicy;
     encoder << allowedAutoplayQuirks;
     encoder << customHeaderFields;
+    encoder << popUpPolicy;
     encoder << websiteDataStoreParameters;
 }
 
@@ -64,7 +65,12 @@ std::optional<WebsitePoliciesData> WebsitePoliciesData::decode(IPC::Decoder& dec
     decoder >> customHeaderFields;
     if (!customHeaderFields)
         return std::nullopt;
-    
+
+    std::optional<WebsitePopUpPolicy> popUpPolicy;
+    decoder >> popUpPolicy;
+    if (!popUpPolicy)
+        return std::nullopt;
+
     std::optional<std::optional<WebsiteDataStoreParameters>> websiteDataStoreParameters;
     decoder >> websiteDataStoreParameters;
     if (!websiteDataStoreParameters)
@@ -75,6 +81,7 @@ std::optional<WebsitePoliciesData> WebsitePoliciesData::decode(IPC::Decoder& dec
         WTFMove(*allowedAutoplayQuirks),
         WTFMove(*autoplayPolicy),
         WTFMove(*customHeaderFields),
+        WTFMove(*popUpPolicy),
         WTFMove(*websiteDataStoreParameters),
     } };
 }
@@ -115,7 +122,19 @@ void WebsitePoliciesData::applyToDocumentLoader(WebsitePoliciesData&& websitePol
         documentLoader.setAutoplayPolicy(WebCore::AutoplayPolicy::Deny);
         break;
     }
-    
+
+    switch (websitePolicies.popUpPolicy) {
+    case WebsitePopUpPolicy::Default:
+        documentLoader.setPopUpPolicy(WebCore::PopUpPolicy::Default);
+        break;
+    case WebsitePopUpPolicy::Allow:
+        documentLoader.setPopUpPolicy(WebCore::PopUpPolicy::Allow);
+        break;
+    case WebsitePopUpPolicy::Block:
+        documentLoader.setPopUpPolicy(WebCore::PopUpPolicy::Block);
+        break;
+    }
+
     if (websitePolicies.websiteDataStoreParameters) {
         if (auto* frame = documentLoader.frame()) {
             if (auto* page = frame->page()) {

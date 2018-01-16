@@ -787,6 +787,61 @@ TEST(WebKit, CustomHeaderFields)
     TestWebKitAPI::Util::run(&fourthTestDone);
 }
 
+@interface PopUpPoliciesDelegate : NSObject <WKNavigationDelegate, WKUIDelegatePrivate>
+@property (nonatomic, copy) _WKWebsitePopUpPolicy(^popUpPolicyForURL)(NSURL *);
+@end
+
+@implementation PopUpPoliciesDelegate
+
+- (void)webView:(WKWebView *)webView decidePolicyForNavigationAction:(WKNavigationAction *)navigationAction decisionHandler:(void (^)(WKNavigationActionPolicy))decisionHandler
+{
+    // _webView:decidePolicyForNavigationAction:decisionHandler: should be called instead if it is implemented.
+    EXPECT_TRUE(false);
+    decisionHandler(WKNavigationActionPolicyAllow);
+}
+
+- (void)_webView:(WKWebView *)webView decidePolicyForNavigationAction:(WKNavigationAction *)navigationAction decisionHandler:(void (^)(WKNavigationActionPolicy, _WKWebsitePolicies *))decisionHandler
+{
+    _WKWebsitePolicies *websitePolicies = [[[_WKWebsitePolicies alloc] init] autorelease];
+    if (_popUpPolicyForURL)
+        websitePolicies.popUpPolicy = _popUpPolicyForURL(navigationAction.request.URL);
+    decisionHandler(WKNavigationActionPolicyAllow, websitePolicies);
+}
+
+- (nullable WKWebView *)webView:(WKWebView *)webView createWebViewWithConfiguration:(WKWebViewConfiguration *)configuration forNavigationAction:(WKNavigationAction *)navigationAction windowFeatures:(WKWindowFeatures *)windowFeatures
+{
+    return [[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration];
+}
+
+@end
+
+TEST(WebKit, WebsitePoliciesPopUp)
+{
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+
+    auto delegate = adoptNS([[PopUpPoliciesDelegate alloc] init]);
+    [webView setNavigationDelegate:delegate.get()];
+    [webView setUIDelegate:delegate.get()];
+
+    NSURLRequest *request = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"pop-up-check" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
+
+    [delegate setPopUpPolicyForURL:^_WKWebsitePopUpPolicy(NSURL *) {
+        return _WKWebsitePopUpPolicyBlock;
+    }];
+
+    [webView loadRequest:request];
+    [webView waitForMessage:@"pop-up-blocked"];
+
+    [delegate setPopUpPolicyForURL:^_WKWebsitePopUpPolicy(NSURL *) {
+        return _WKWebsitePopUpPolicyAllow;
+    }];
+
+    [webView loadRequest:request];
+    [webView waitForMessage:@"pop-up-allowed"];
+}
+
 static bool done;
 
 @interface WebsitePoliciesWebsiteDataStoreDelegate : NSObject <WKNavigationDelegatePrivate, WKURLSchemeHandler, WKUIDelegate>

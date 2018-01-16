@@ -1,3 +1,47 @@
+2018-01-16  Zach Li  <zachli@apple.com>
+
+        Add pop-up policy support in website policies.
+        https://bugs.webkit.org/show_bug.cgi?id=181544.
+        rdar://problem/30521400.
+
+        Reviewed by Alex Christensen.
+
+        * Shared/WebsitePoliciesData.cpp: Encode and decode
+        pop-up policy.
+        (WebKit::WebsitePoliciesData::encode const):
+        (WebKit::WebsitePoliciesData::decode):
+        (WebKit::WebsitePoliciesData::applyToDocumentLoader):
+        Apply the pop-up policy from website policies to the
+        document loader.
+
+        * Shared/WebsitePoliciesData.h:
+
+        * Shared/WebsitePopUpPolicy.h:
+        Added for declaring enum WebsitePopUpPolicy.
+
+        * UIProcess/API/APIWforebsitePolicies.cpp:
+        Include pop-up policy in website policies.
+        (API::WebsitePolicies::WebsitePolicies):
+        (API::WebsitePolicies::data):
+        * UIProcess/API/APIWebsitePolicies.h:
+
+        * UIProcess/API/C/WKWebsitePolicies.cpp:
+        Added C API to get and set pop-up policy on
+        website policies.
+        (WKWebsitePoliciesGetPopUpPolicy):
+        (WKWebsitePoliciesSetPopUpPolicy):
+        * UIProcess/API/C/WKWebsitePolicies.h:
+
+        * UIProcess/API/Cocoa/_WKWebsitePolicies.h:
+        Added Obj-C API to get and set pop-up policy
+        on website policies.
+        * UIProcess/API/Cocoa/_WKWebsitePolicies.mm:
+        (-[_WKWebsitePolicies setPopUpPolicy:]):
+        (-[_WKWebsitePolicies popUpPolicy]):
+
+        * WebKit.xcodeproj/project.pbxproj:
+        Added WebsitePopUpPolicy.h.
+
 2018-01-16  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [CMake][Mac] Fix the build errors

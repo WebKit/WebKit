@@ -1,0 +1,20 @@
+<html>
+    <head>
+        <script>
+            function openPopUpWindow() {
+                var popUpWindow = window.open('https://www.webkit.org', '', 'width=300, height=300');
+                if (popUpWindow) {
+                    try {
+                        window.webkit.messageHandlers.testHandler.postMessage("pop-up-allowed");
+                    } catch(e) { }
+                } else {
+                    try {
+                        window.webkit.messageHandlers.testHandler.postMessage("pop-up-blocked");
+                    } catch(e) { }
+                }
+            }
+        </script>
+    </head>
+    <body onload="openPopUpWindow()">
+    </body>
+</html>

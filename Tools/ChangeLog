@@ -1,3 +1,22 @@
+2018-01-16  Zach Li  <zachli@apple.com>
+
+        Add pop-up policy support in website policies.
+        https://bugs.webkit.org/show_bug.cgi?id=181544.
+        rdar://problem/30521400.
+
+        Reviewed by Alex Christensen.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        Added pop-up-check.html.
+
+        * TestWebKitAPI/Tests/WebKit/pop-up-check.html: Added.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WebsitePolicies.mm:
+        (-[PopUpPoliciesDelegate webView:decidePolicyForNavigationAction:decisionHandler:]):
+        (-[PopUpPoliciesDelegate _webView:decidePolicyForNavigationAction:decisionHandler:]):
+        (-[PopUpPoliciesDelegate webView:createWebViewWithConfiguration:forNavigationAction:windowFeatures:]):
+        (TEST):
+
 2018-01-16  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Attachment Support] Provide the `src` of an attachment to the UI delegate when an attachment is inserted
