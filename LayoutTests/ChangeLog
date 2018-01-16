@@ -1,5 +1,40 @@
 2018-01-16  Yacine Bandou  <yacine.bandou_ext@softathome.com>
 
+        [EME] Add layout test for the MSE playback of ClearKey encrypted audio and video
+        https://bugs.webkit.org/show_bug.cgi?id=181594
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Add new layout tests in order to test the playback of ClearKey encrypted content:
+        clearKey-cenc-audio-playback-mse : Tests the MSE playback of ClearKey encrypted audio track.
+        clearKey-cenc-video-playback-mse : Tests the MSE playback of ClearKey encrypted video track.
+
+        * media/content/encrypted/segments/AudioClearKeyCenc-seg-0.mp4: Added.
+        * media/content/encrypted/segments/AudioClearKeyCenc-seg-1.mp4: Added.
+        * media/content/encrypted/segments/AudioClearKeyCenc-seg-2.mp4: Added.
+        * media/content/encrypted/segments/AudioClearKeyCenc-seg-3.mp4: Added.
+            These are a simple encrypted audio fragments used in MSE playback.
+            They have been fragmented and encrypted with BENTO4. https://www.bento4.com/
+            Use full-sample encryption because they are not NAL Structured.
+        * media/content/encrypted/segments/VideoClearKeyCenc-seg-1.mp4: Added.
+        * media/content/encrypted/segments/VideoClearKeyCenc-seg-2.mp4: Added.
+        * media/content/encrypted/segments/VideoClearKeyCenc-seg-3.mp4: Added.
+            These are a simple encrypted video fragments used in MSE playback.
+            They have been fragmented and encrypted with BENTO4. https://www.bento4.com/
+            Use sub-sample encryption because they are NAL Structured.
+        * media/encrypted-media/clearKey/clearKey-cenc-audio-playback-mse-expected.txt: Added.
+        * media/encrypted-media/clearKey/clearKey-cenc-audio-playback-mse.html: Added.
+        * media/encrypted-media/clearKey/clearKey-cenc-video-playback-mse-expected.txt: Added.
+        * media/encrypted-media/clearKey/clearKey-cenc-video-playback-mse.html: Added.
+        * media/encrypted-media/medias-enc.js:
+        * platform/gtk/TestExpectations:
+        * platform/mac/TestExpectations:
+        * platform/wpe/TestExpectations:
+            The test clearKey-cenc-audio-playback-mse crashes because the clearKey decryptor plugin doesn't
+            support yet the Full-sample encryption, see bug 180080.
+
+2018-01-16  Yacine Bandou  <yacine.bandou_ext@softathome.com>
+
         [WPE] Two clearkey tests failing since r226621
         https://bugs.webkit.org/show_bug.cgi?id=181532
 

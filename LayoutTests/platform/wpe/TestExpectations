@@ -1129,6 +1129,8 @@ webkit.org/b/178704 svg/css/svg-resource-fragment-identifier-img-src.html [ Cras
 
 webkit.org/b/178703 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-clear-encrypted.html [ Crash ]
 
+webkit.org/b/180080 media/encrypted-media/clearKey/clearKey-cenc-audio-playback-mse.html [ Crash ]
+
 webkit.org/b/178705 webgl/1.0.2/conformance/rendering/multisample-corruption.html [ Failure ]
 
 webkit.org/b/179957 crypto/workers/subtle/aes-cbc-import-key-decrypt.html [ Pass Crash ]
