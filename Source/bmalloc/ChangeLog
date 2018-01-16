@@ -1,3 +1,12 @@
+2018-01-16  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        mbmalloc should only be built in developer mode
+        https://bugs.webkit.org/show_bug.cgi?id=181654
+
+        Reviewed by Carlos Garcia Campos.
+
+        * CMakeLists.txt:
+
 2018-01-15  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Improve use of ExportMacros
