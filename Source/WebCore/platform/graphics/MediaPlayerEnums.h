@@ -46,6 +46,7 @@ public:
 
 WTF::String convertEnumerationToString(MediaPlayerEnums::ReadyState);
 WTF::String convertEnumerationToString(MediaPlayerEnums::NetworkState);
+WTF::String convertEnumerationToString(MediaPlayerEnums::Preload);
 
 } // namespace WebCore
 

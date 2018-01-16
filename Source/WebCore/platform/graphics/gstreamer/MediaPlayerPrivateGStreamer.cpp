@@ -249,8 +249,9 @@ void MediaPlayerPrivateGStreamer::load(const String& urlString)
 
     setPlaybinURL(url);
 
+    GST_DEBUG("preload: %s", convertEnumerationToString(m_preload).utf8().data());
     if (m_preload == MediaPlayer::None) {
-        GST_DEBUG("Delaying load.");
+        GST_INFO("Delaying load.");
         m_delayingLoad = true;
     }
 
@@ -279,6 +280,9 @@ void MediaPlayerPrivateGStreamer::load(const String&, MediaSourcePrivateClient*)
 #if ENABLE(MEDIA_STREAM)
 void MediaPlayerPrivateGStreamer::load(MediaStreamPrivate&)
 {
+    // Properly fail so the global MediaPlayer tries to fallback to the next MediaPlayerPrivate.
+    m_networkState = MediaPlayer::FormatError;
+    m_player->networkStateChanged();
     notImplemented();
 }
 #endif
@@ -374,6 +378,7 @@ bool MediaPlayerPrivateGStreamer::changePipelineState(GstState newState)
 
 void MediaPlayerPrivateGStreamer::prepareToPlay()
 {
+    GST_DEBUG("Prepare to play");
     m_preload = MediaPlayer::Auto;
     if (m_delayingLoad) {
         m_delayingLoad = false;
@@ -393,7 +398,7 @@ void MediaPlayerPrivateGStreamer::play()
         m_delayingLoad = false;
         m_preload = MediaPlayer::Auto;
         setDownloadBuffering();
-        GST_DEBUG("Play");
+        GST_INFO("Play");
     } else {
         loadingFailed(MediaPlayer::Empty);
     }
@@ -589,7 +594,7 @@ bool MediaPlayerPrivateGStreamer::paused() const
     GstState state;
     gst_element_get_state(m_pipeline.get(), &state, nullptr, 0);
     bool paused = state <= GST_STATE_PAUSED;
-    GST_DEBUG("Paused state: %s", paused ? "enabled":"disabled");
+    GST_DEBUG("Paused: %s", toString(paused).utf8().data());
     return paused;
 }
 
@@ -1071,21 +1076,21 @@ void MediaPlayerPrivateGStreamer::handleMessage(GstMessage* message)
         break;
     }
     default:
-        GST_DEBUG("Unhandled GStreamer message type: %s",
-                    GST_MESSAGE_TYPE_NAME(message));
+        GST_DEBUG("Unhandled GStreamer message type: %s", GST_MESSAGE_TYPE_NAME(message));
         break;
     }
-    return;
 }
 
 void MediaPlayerPrivateGStreamer::processBufferingStats(GstMessage* message)
 {
+    bool alreadyBuffering = m_buffering;
     m_buffering = true;
     gst_message_parse_buffering(message, &m_bufferingPercentage);
 
     GST_DEBUG("[Buffering] Buffering: %d%%.", m_bufferingPercentage);
 
-    updateStates();
+    if ((alreadyBuffering != m_buffering) || (m_bufferingPercentage == 100))
+        updateStates();
 }
 
 #if ENABLE(VIDEO_TRACK) && USE(GSTREAMER_MPEGTS)
@@ -1259,8 +1264,9 @@ void MediaPlayerPrivateGStreamer::fillTimerFired()
         GST_DEBUG("[Buffering] Updated maxTimeLoaded: %s", toString(m_maxTimeLoaded).utf8().data());
     }
 
+    bool downloadAlreadyFinished = m_downloadFinished;
     m_downloadFinished = fillStatus == 100.0;
-    if (!m_downloadFinished) {
+    if ((downloadAlreadyFinished != m_downloadFinished) &&  !m_downloadFinished) {
         updateStates();
         return;
     }
@@ -1644,11 +1650,11 @@ void MediaPlayerPrivateGStreamer::updateStates()
         m_player->playbackStateChanged();
 
     if (m_networkState != oldNetworkState) {
-        GST_DEBUG("Network State Changed from %u to %u", oldNetworkState, m_networkState);
+        GST_DEBUG("Network State Changed from %s to %s", convertEnumerationToString(oldNetworkState).utf8().data(), convertEnumerationToString(m_networkState).utf8().data());
         m_player->networkStateChanged();
     }
     if (m_readyState != oldReadyState) {
-        GST_DEBUG("Ready State Changed from %u to %u", oldReadyState, m_readyState);
+        GST_DEBUG("Ready State Changed from %s to %s", convertEnumerationToString(oldReadyState).utf8().data(), convertEnumerationToString(m_readyState).utf8().data());
         m_player->readyStateChanged();
     }
 
@@ -1988,11 +1994,11 @@ void MediaPlayerPrivateGStreamer::setDownloadBuffering()
 
     bool shouldDownload = !isLiveStream() && m_preload == MediaPlayer::Auto;
     if (shouldDownload) {
-        GST_DEBUG("Enabling on-disk buffering");
+        GST_INFO("Enabling on-disk buffering");
         g_object_set(m_pipeline.get(), "flags", flags | flagDownload, nullptr);
         m_fillTimer.startRepeating(200_ms);
     } else {
-        GST_DEBUG("Disabling on-disk buffering");
+        GST_INFO("Disabling on-disk buffering");
         g_object_set(m_pipeline.get(), "flags", flags & ~flagDownload, nullptr);
         m_fillTimer.stop();
     }
@@ -2191,11 +2197,6 @@ bool MediaPlayerPrivateGStreamer::canSaveMediaData() const
         return true;
 
     return false;
-}
-
-bool MediaPlayerPrivateGStreamer::handleSyncMessage(GstMessage* message)
-{
-    return MediaPlayerPrivateGStreamerBase::handleSyncMessage(message);
 }
 
 }

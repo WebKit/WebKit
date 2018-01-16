@@ -1,3 +1,40 @@
+2018-01-15  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer] misc fixes and cleanups
+        https://bugs.webkit.org/show_bug.cgi?id=181647
+
+        Reviewed by Michael Catanzaro.
+
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::convertEnumerationToString): New utility function to convert preload enum to string.
+        * platform/graphics/MediaPlayerEnums.h: Ditto.
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::load): Debug tweak
+        (WebCore::MediaPlayerPrivateGStreamer::prepareToPlay): Ditto
+        (WebCore::MediaPlayerPrivateGStreamer::play): Ditto
+        (WebCore::MediaPlayerPrivateGStreamer::paused const): Ditto
+        (WebCore::MediaPlayerPrivateGStreamer::processBufferingStats): Prevent useless state update.
+        (WebCore::MediaPlayerPrivateGStreamer::fillTimerFired): Ditto.
+        (WebCore::MediaPlayerPrivateGStreamer::updateStates): Debug tweak.
+        (WebCore::MediaPlayerPrivateGStreamer::setDownloadBuffering): Ditto.
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.h:
+        Remove useless handlesSyncMessage method.
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp:
+        (WebCore::MediaPlayerPrivateGStreamerBase::setMuted): Prevent useless state update.
+        (WebCore::MediaPlayerPrivateGStreamerBase::muted const): Debug tweak.
+        (WebCore::MediaPlayerPrivateGStreamerBase::setStreamVolumeElement): Ditto.
+        * platform/graphics/gstreamer/WebKitWebSourceGStreamer.cpp:
+        (webkit_web_src_init): Enable keepAlive by default like in souphttpsrc.
+        (webKitWebSrcStart): Debug tweak.
+        (webKitWebSrcQueryWithParent): Ditto.
+        (webKitWebSrcNeedData): Ditto.
+        (CachedResourceStreamingClient::responseReceived): Change appsrc
+        stream-type when we wan't seek. Also update caps like souphttpsrc
+        does.
+        * platform/graphics/gstreamer/WebKitWebSourceGStreamer.h: Add forward declaration of MediaPlayer.
+        * platform/graphics/gstreamer/mse/MediaSourceClientGStreamerMSE.cpp:
+        (WebCore::MediaSourceClientGStreamerMSE::append): Fix compilation warning.
+
 2018-01-16  Yacine Bandou  <yacine.bandou_ext@softathome.com>
 
         [WPE] Two clearkey tests failing since r226621

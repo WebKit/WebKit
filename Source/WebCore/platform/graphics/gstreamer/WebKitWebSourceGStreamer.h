@@ -16,12 +16,15 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef WebKitWebSourceGStreamer_h
-#define WebKitWebSourceGStreamer_h
+#pragma once
+
 #if ENABLE(VIDEO) && USE(GSTREAMER)
 
-#include "MediaPlayer.h"
 #include <gst/gst.h>
+
+namespace WebCore {
+class MediaPlayer;
+}
 
 G_BEGIN_DECLS
 
@@ -51,5 +54,4 @@ bool webKitSrcPassedCORSAccessCheck(WebKitWebSrc*);
 
 G_END_DECLS
 
-#endif // USE(GSTREAMER)
-#endif
+#endif // ENABLE(VIDEO) && USE(GSTREAMER)

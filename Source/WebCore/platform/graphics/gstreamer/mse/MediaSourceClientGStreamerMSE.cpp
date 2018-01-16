@@ -128,7 +128,7 @@ bool MediaSourceClientGStreamerMSE::append(RefPtr<SourceBufferPrivateGStreamer> 
 {
     ASSERT(WTF::isMainThread());
 
-    GST_DEBUG("Appending %u bytes", data.size());
+    GST_DEBUG("Appending %zu bytes", data.size());
 
     if (!m_playerPrivate)
         return false;

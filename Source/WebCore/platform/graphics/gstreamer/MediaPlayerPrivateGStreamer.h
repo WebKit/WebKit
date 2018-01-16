@@ -131,8 +131,6 @@ public:
 
     bool isLiveStream() const override { return m_isStreaming; }
 
-    bool handleSyncMessage(GstMessage*) override;
-
 private:
     static void getSupportedTypes(HashSet<String, ASCIICaseInsensitiveHash>&);
     static MediaPlayer::SupportsType supportsType(const MediaEngineSupportParameters&);

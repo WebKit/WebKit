@@ -1552,6 +1552,20 @@ String convertEnumerationToString(MediaPlayerEnums::NetworkState enumerationValu
     return values[static_cast<size_t>(enumerationValue)];
 }
 
+String convertEnumerationToString(MediaPlayerEnums::Preload enumerationValue)
+{
+    static const NeverDestroyed<String> values[] = {
+        MAKE_STATIC_STRING_IMPL("None"),
+        MAKE_STATIC_STRING_IMPL("MetaData"),
+        MAKE_STATIC_STRING_IMPL("Auto"),
+    };
+    static_assert(!static_cast<size_t>(MediaPlayerEnums::None), "MediaPlayerEnums::None is not 0 as expected");
+    static_assert(static_cast<size_t>(MediaPlayerEnums::MetaData) == 1, "MediaPlayerEnums::MetaData is not 1 as expected");
+    static_assert(static_cast<size_t>(MediaPlayerEnums::Auto) == 2, "MediaPlayerEnums::Auto is not 2 as expected");
+    ASSERT(static_cast<size_t>(enumerationValue) < WTF_ARRAY_LENGTH(values));
+    return values[static_cast<size_t>(enumerationValue)];
+}
+
 }
 
 #endif

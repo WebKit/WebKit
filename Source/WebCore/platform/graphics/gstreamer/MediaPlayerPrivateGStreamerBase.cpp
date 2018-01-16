@@ -42,6 +42,7 @@
 #include <wtf/text/AtomicString.h>
 #include <wtf/text/CString.h>
 #include <wtf/MathExtras.h>
+#include <wtf/StringPrintStream.h>
 
 #include <gst/audio/streamvolume.h>
 #include <gst/video/gstvideometa.h>
@@ -609,13 +610,17 @@ void MediaPlayerPrivateGStreamerBase::sizeChanged()
     notImplemented();
 }
 
-void MediaPlayerPrivateGStreamerBase::setMuted(bool muted)
+void MediaPlayerPrivateGStreamerBase::setMuted(bool mute)
 {
     if (!m_volumeElement)
         return;
 
-    GST_INFO("Set muted to %d", muted);
-    g_object_set(m_volumeElement.get(), "mute", muted, nullptr);
+    bool currentValue = muted();
+    if (currentValue == mute)
+        return;
+
+    GST_INFO("Set muted to %s", toString(mute).utf8().data());
+    g_object_set(m_volumeElement.get(), "mute", mute, nullptr);
 }
 
 bool MediaPlayerPrivateGStreamerBase::muted() const
@@ -625,6 +630,7 @@ bool MediaPlayerPrivateGStreamerBase::muted() const
 
     gboolean muted;
     g_object_get(m_volumeElement.get(), "mute", &muted, nullptr);
+    GST_INFO("Player is muted: %s", toString(static_cast<bool>(muted)).utf8().data());
     return muted;
 }
 
@@ -1114,7 +1120,7 @@ void MediaPlayerPrivateGStreamerBase::setStreamVolumeElement(GstStreamVolume* vo
     } else
         GST_DEBUG("Not setting stream volume, trusting system one");
 
-    GST_DEBUG("Setting stream muted %d",  m_player->muted());
+    GST_DEBUG("Setting stream muted %s",  toString(m_player->muted()).utf8().data());
     g_object_set(m_volumeElement.get(), "mute", m_player->muted(), nullptr);
 
     g_signal_connect_swapped(m_volumeElement.get(), "notify::volume", G_CALLBACK(volumeChangedCallback), this);
