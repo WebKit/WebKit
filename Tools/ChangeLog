@@ -1,5 +1,14 @@
 2018-01-16  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Unreviewed. Temporarily bring back --verbose option of api_test_runner.py.
+
+        The bots are still passing that option and the step is failing because it was removed in r226967.
+
+        * glib/api_test_runner.py:
+        (add_options):
+
+2018-01-16  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK][WPE] Improve the way glib tests are run
         https://bugs.webkit.org/show_bug.cgi?id=181674
 

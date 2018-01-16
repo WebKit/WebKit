@@ -293,3 +293,7 @@ def add_options(option_parser):
     option_parser.add_option('-t', '--timeout',
                              action='store', type='int', dest='timeout', default=5,
                              help='Time in seconds until a test times out')
+    # FIXME: Remove this once bug #181676 is fixed and buildbot has been restarted.
+    option_parser.add_option('-v', '--verbose',
+                             action='store_true', dest='verbose',
+                             help='Run gtester in verbose mode')
