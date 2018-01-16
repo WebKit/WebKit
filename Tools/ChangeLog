@@ -1,3 +1,12 @@
+2018-01-15  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Unreviewed, add Thibault to contributors.json
+
+        It's a bit weird to add someone here before their first contribution, but this affects
+        Bugzilla autocomplete, and that is serious business.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2018-01-15  JF Bastien  <jfbastien@apple.com>
 
         Remove makePoisonedUnique
