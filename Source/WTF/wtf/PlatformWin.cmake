@@ -1,5 +1,6 @@
 list(APPEND WTF_HEADERS
     cf/TypeCastsCF.h
+    text/win/WCharStringExtras.h
 )
 
 list(APPEND WTF_SOURCES
@@ -34,6 +35,7 @@ set(WTF_FORWARDING_HEADERS_DIRECTORIES
     persistence
     spi
     text
+    text/win
     threads
     unicode
     win
