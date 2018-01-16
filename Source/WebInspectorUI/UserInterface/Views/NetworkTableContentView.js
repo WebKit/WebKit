@@ -344,7 +344,7 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
         WI.appendContextMenuItemsForSourceCode(contextMenu, entry.resource);
 
         contextMenu.appendSeparator();
-        contextMenu.appendItem(WI.UIString("Export HAR"), this._exportHAR);
+        contextMenu.appendItem(WI.UIString("Export HAR"), () => { this._exportHAR(); });
     }
 
     tableSelectedRowChanged(table, rowIndex)

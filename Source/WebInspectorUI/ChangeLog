@@ -1,3 +1,15 @@
+2018-01-16  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Network Tab - Export HAR Context Menu not working
+        https://bugs.webkit.org/show_bug.cgi?id=181694
+        <rdar://problem/36479197>
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Views/NetworkTableContentView.js:
+        (WI.NetworkTableContentView.prototype.tableCellContextMenuClicked):
+        Ensure `this` works in the handler.
+
 2018-01-15  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: TabBar redesign: add context menu to TabBar for toggling available tabs
