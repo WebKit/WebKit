@@ -3287,8 +3287,6 @@ webkit.org/b/180371 fast/attachment/attachment-without-appearance.html [ ImageOn
 
 webkit.org/b/180749 http/wpt/offscreen-canvas/transferToImageBitmap-webgl.html [ ImageOnlyFailure ]
 
-webkit.org/b/180801 fast/forms/input-autofilled.html [ Failure ]
-
 webkit.org/b/180802 imported/w3c/web-platform-tests/html/webappapis/system-state-and-capabilities/the-navigator-object/navigator-pluginarray.html [ Failure ]
 
 webkit.org/b/180803 imported/w3c/web-platform-tests/media-source/mediasource-duration-boundaryconditions.html [ Failure ]
@@ -3296,6 +3294,17 @@ webkit.org/b/180803 imported/w3c/web-platform-tests/media-source/mediasource-dur
 webkit.org/b/180805 inspector/canvas/requestContent-bitmaprenderer.html [ Failure ]
 
 webkit.org/b/175189 http/tests/resourceLoadStatistics/grandfathering.html [ Failure ]
+
+webkit.org/b/181659 fast/canvas/webgl/simulated-vertexAttrib0-invalid-indicies.html [ Failure ]
+
+webkit.org/b/181660 webgl/1.0.2/conformance/limits/gl-min-textures.html [ Failure ]
+webkit.org/b/181660 webgl/1.0.3/conformance/glsl/bugs/sampler-array-using-loop-index.html [ Failure ]
+webkit.org/b/181660 fast/canvas/webgl/webgl-depth-texture.html [ Failure ]
+
+webkit.org/b/181661 http/wpt/webrtc/third-party-frame-ice-candidate-filtering.html [ Failure ]
+
+webkit.org/b/181662 fast/forms/auto-fill-button/input-strong-password-auto-fill-button.html [ Missing Failure ]
+webkit.org/b/181662 fast/forms/auto-fill-button/input-strong-confirmation-password-auto-fill-button.html [ Missing Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of non-crashing, non-flaky tests failing

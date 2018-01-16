@@ -1,3 +1,10 @@
+2018-01-15  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Unreviewed GTK layout test gardening
+
+        * TestExpectations:
+        * platform/gtk/TestExpectations:
+
 2018-01-15  Konstantin Tokarev  <annulen@yandex.ru>
 
         image-rendering should affect scaling of border-image
