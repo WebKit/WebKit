@@ -1,3 +1,18 @@
+2018-01-16  Jer Noble  <jer.noble@apple.com>
+
+        Crash playing audio-only HLS stream via hls.js (MSE)
+        https://bugs.webkit.org/show_bug.cgi?id=181691
+        <rdar://problem/32967295>
+
+        Reviewed by Eric Carlson.
+
+        Add a weak-link check to the block called by -[AVSampleBufferDisplayLayer requestMediaDataWhenReadyOnQueue:usingBlock:].
+
+        * platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.mm:
+        (WebCore::SourceBufferPrivateAVFObjC::trackDidChangeEnabled):
+        (WebCore::SourceBufferPrivateAVFObjC::notifyClientWhenReadyForMoreSamples):
+        (WebCore::SourceBufferPrivateAVFObjC::setVideoLayer):
+
 2018-01-16  Simon Fraser  <simon.fraser@apple.com>
 
         Rename applyHorizontalScale/applyVerticalScale in SVG filters, and related cleanup

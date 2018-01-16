@@ -874,8 +874,10 @@ void SourceBufferPrivateAVFObjC::trackDidChangeEnabled(AudioTrackPrivateMediaSou
 #pragma clang diagnostic pop
         if (!m_audioRenderers.contains(trackID)) {
             renderer = adoptNS([allocAVSampleBufferAudioRendererInstance() init]);
+            auto weakThis = createWeakPtr();
             [renderer requestMediaDataWhenReadyOnQueue:dispatch_get_main_queue() usingBlock:^{
-                didBecomeReadyForMoreSamples(trackID);
+                if (weakThis)
+                    weakThis->didBecomeReadyForMoreSamples(trackID);
             }];
             m_audioRenderers.set(trackID, renderer);
             [m_errorListener beginObservingRenderer:renderer.get()];
@@ -1176,13 +1178,17 @@ void SourceBufferPrivateAVFObjC::notifyClientWhenReadyForMoreSamples(const Atomi
             });
         }
         if (m_displayLayer) {
+            auto weakThis = createWeakPtr();
             [m_displayLayer requestMediaDataWhenReadyOnQueue:dispatch_get_main_queue() usingBlock:^ {
-                didBecomeReadyForMoreSamples(trackID);
+                if (weakThis)
+                    weakThis->didBecomeReadyForMoreSamples(trackID);
             }];
         }
     } else if (m_audioRenderers.contains(trackID)) {
+        auto weakThis = createWeakPtr();
         [m_audioRenderers.get(trackID) requestMediaDataWhenReadyOnQueue:dispatch_get_main_queue() usingBlock:^ {
-            didBecomeReadyForMoreSamples(trackID);
+            if (weakThis)
+                weakThis->didBecomeReadyForMoreSamples(trackID);
         }];
     }
 }
@@ -1203,8 +1209,10 @@ void SourceBufferPrivateAVFObjC::setVideoLayer(AVSampleBufferDisplayLayer* layer
     m_displayLayer = layer;
 
     if (m_displayLayer) {
+        auto weakThis = createWeakPtr();
         [m_displayLayer requestMediaDataWhenReadyOnQueue:dispatch_get_main_queue() usingBlock:^ {
-            didBecomeReadyForMoreSamples(m_enabledVideoTrackID);
+            if (weakThis)
+                weakThis->didBecomeReadyForMoreSamples(m_enabledVideoTrackID);
         }];
         [m_errorListener beginObservingLayer:m_displayLayer.get()];
         if (m_client)
