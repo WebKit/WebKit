@@ -39,7 +39,7 @@ public:
     void isPlayingAudioDidChange() final;
 
 #if ENABLE(ATTACHMENT_ELEMENT)
-    void didInsertAttachment(const String& identifier) final;
+    void didInsertAttachment(const String& identifier, const String& source) final;
     void didRemoveAttachment(const String& identifier) final;
 #endif
 

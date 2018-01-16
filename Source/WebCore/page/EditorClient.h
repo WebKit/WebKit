@@ -73,7 +73,7 @@ public:
     virtual bool shouldMoveRangeAfterDelete(Range*, Range*) = 0;
 
 #if ENABLE(ATTACHMENT_ELEMENT)
-    virtual void didInsertAttachment(const String&) { }
+    virtual void didInsertAttachment(const String& /* identifier */, const String& /* source */) { }
     virtual void didRemoveAttachment(const String&) { }
 #endif
 

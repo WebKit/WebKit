@@ -1693,7 +1693,7 @@ private:
     void stopAllURLSchemeTasks();
 
 #if ENABLE(ATTACHMENT_ELEMENT)
-    void didInsertAttachment(const String& identifier);
+    void didInsertAttachment(const String& identifier, const String& source);
     void didRemoveAttachment(const String& identifier);
 #endif
 

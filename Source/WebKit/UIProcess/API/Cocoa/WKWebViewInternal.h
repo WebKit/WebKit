@@ -149,7 +149,7 @@ struct PrintInfo;
 
 #if ENABLE(ATTACHMENT_ELEMENT)
 - (void)_didRemoveAttachment:(NSString *)identifier;
-- (void)_didInsertAttachment:(NSString *)identifier;
+- (void)_didInsertAttachment:(NSString *)identifier withSource:(NSString *)source;
 #endif
 
 - (WKPageRef)_pageForTesting;

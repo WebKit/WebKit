@@ -3770,15 +3770,24 @@ void Editor::didRemoveAttachmentElement(HTMLAttachmentElement& attachment)
 
 void Editor::notifyClientOfAttachmentUpdates()
 {
-    if (auto* editorClient = client()) {
-        for (auto& identifier : m_removedAttachmentIdentifiers)
-            editorClient->didRemoveAttachment(identifier);
-        for (auto& identifier : m_insertedAttachmentIdentifiers)
-            editorClient->didInsertAttachment(identifier);
-    }
+    auto removedAttachmentIdentifiers = WTFMove(m_removedAttachmentIdentifiers);
+    auto insertedAttachmentIdentifiers = WTFMove(m_insertedAttachmentIdentifiers);
+    if (!client())
+        return;
 
-    m_removedAttachmentIdentifiers.clear();
-    m_insertedAttachmentIdentifiers.clear();
+    for (auto& identifier : removedAttachmentIdentifiers)
+        client()->didRemoveAttachment(identifier);
+
+    auto* document = m_frame.document();
+    if (!document)
+        return;
+
+    for (auto& identifier : insertedAttachmentIdentifiers) {
+        if (auto attachment = document->attachmentForIdentifier(identifier))
+            client()->didInsertAttachment(identifier, attachment->attributeWithoutSynchronization(HTMLNames::srcAttr));
+        else
+            ASSERT_NOT_REACHED();
+    }
 }
 
 void Editor::insertAttachment(const String& identifier, const AttachmentDisplayOptions& options, const String& filename, const String& filepath, std::optional<String> contentType)

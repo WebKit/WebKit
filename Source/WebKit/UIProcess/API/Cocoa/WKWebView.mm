@@ -1216,10 +1216,12 @@ static NSDictionary *dictionaryRepresentationForEditorState(const WebKit::Editor
 
 #if ENABLE(ATTACHMENT_ELEMENT)
 
-- (void)_didInsertAttachment:(NSString *)identifier
+- (void)_didInsertAttachment:(NSString *)identifier withSource:(NSString *)source
 {
     id <WKUIDelegatePrivate> uiDelegate = (id <WKUIDelegatePrivate>)self.UIDelegate;
-    if ([uiDelegate respondsToSelector:@selector(_webView:didInsertAttachment:)])
+    if ([uiDelegate respondsToSelector:@selector(_webView:didInsertAttachment:withSource:)])
+        [uiDelegate _webView:self didInsertAttachment:[wrapper(API::Attachment::create(identifier, *_page).leakRef()) autorelease] withSource:source];
+    else if ([uiDelegate respondsToSelector:@selector(_webView:didInsertAttachment:)])
         [uiDelegate _webView:self didInsertAttachment:[wrapper(API::Attachment::create(identifier, *_page).leakRef()) autorelease]];
 }
 

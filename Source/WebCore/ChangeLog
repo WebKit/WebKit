@@ -1,3 +1,35 @@
+2018-01-16  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Attachment Support] Provide the `src` of an attachment to the UI delegate when an attachment is inserted
+        https://bugs.webkit.org/show_bug.cgi?id=181638
+        <rdar://problem/36508702>
+
+        Reviewed by Dan Bernstein.
+
+        Adjust the `didInsertAttachment` codepath to additionally propagate the attachment element's `src`.
+        Additionally, fix an issue with insertion and removal client notifications wherein the client can receive
+        insertion calls without corresponding removal calls, or vice versa. This is an existing issue, but matters more
+        now because we actually need to access the attachment element for its `src` when propagating changes to the
+        client. See below for details.
+
+        Test: WKAttachmentTests.AttachmentUpdatesWhenInsertingRichMarkup
+
+        * dom/Document.h:
+        (WebCore::Document::attachmentElementsByIdentifier const):
+        * editing/Editor.cpp:
+        (WebCore::Editor::notifyClientOfAttachmentUpdates):
+        * page/EditorClient.h:
+        (WebCore::EditorClient::didInsertAttachment):
+        * page/Frame.cpp:
+        (WebCore::Frame::setDocument):
+
+        When a Frame's document changes, inform the client that the attachments in the previous document are going away.
+        For each attachment currently connected to the document, we have either (1) already informed the client that it
+        was inserted, or (2) the attachment is pending an insertion call to the client. If (1) is the case, then we'll
+        tell the client that the attachment is removed, which will balance out the earlier insertion call. If (2) is the
+        case, then we'll remove the previously inserted attachment identifier from the set of attachment identifiers
+        pending insertion, and the client won't be informed of insertions or removals.
+
 2018-01-16  Antoine Quint  <graouts@apple.com>
 
         Use traits for animation timing functions

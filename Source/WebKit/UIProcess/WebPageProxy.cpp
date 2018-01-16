@@ -7264,9 +7264,9 @@ void WebPageProxy::setAttachmentDataAndContentType(const String& identifier, Sha
     m_process->send(Messages::WebPage::SetAttachmentDataAndContentType(identifier, IPC::SharedBufferDataReference { &data }, WTFMove(newContentType), WTFMove(newFilename), callbackID), m_pageID);
 }
 
-void WebPageProxy::didInsertAttachment(const String& identifier)
+void WebPageProxy::didInsertAttachment(const String& identifier, const String& source)
 {
-    m_pageClient.didInsertAttachment(identifier);
+    m_pageClient.didInsertAttachment(identifier, source);
 }
 
 void WebPageProxy::didRemoveAttachment(const String& identifier)

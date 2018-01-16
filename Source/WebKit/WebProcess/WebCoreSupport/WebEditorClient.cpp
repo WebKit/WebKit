@@ -159,9 +159,9 @@ bool WebEditorClient::shouldApplyStyle(StyleProperties* style, Range* range)
 
 #if ENABLE(ATTACHMENT_ELEMENT)
 
-void WebEditorClient::didInsertAttachment(const String& identifier)
+void WebEditorClient::didInsertAttachment(const String& identifier, const String& source)
 {
-    m_page->send(Messages::WebPageProxy::DidInsertAttachment(identifier));
+    m_page->send(Messages::WebPageProxy::DidInsertAttachment(identifier, source));
 }
 
 void WebEditorClient::didRemoveAttachment(const String& identifier)

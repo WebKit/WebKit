@@ -510,7 +510,7 @@ messages -> WebPageProxy {
 #endif
 
 #if ENABLE(ATTACHMENT_ELEMENT)
-    DidInsertAttachment(String identifier)
+    DidInsertAttachment(String identifier, String source)
     DidRemoveAttachment(String identifier)
 #endif
 }

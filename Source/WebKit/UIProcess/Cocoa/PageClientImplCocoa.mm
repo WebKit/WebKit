@@ -46,10 +46,10 @@ void PageClientImplCocoa::isPlayingAudioDidChange()
 
 #if ENABLE(ATTACHMENT_ELEMENT)
 
-void PageClientImplCocoa::didInsertAttachment(const String& identifier)
+void PageClientImplCocoa::didInsertAttachment(const String& identifier, const String& source)
 {
 #if WK_API_ENABLED
-    [m_webView _didInsertAttachment:identifier];
+    [m_webView _didInsertAttachment:identifier withSource:source];
 #else
     UNUSED_PARAM(identifier);
 #endif

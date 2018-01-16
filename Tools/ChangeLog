@@ -1,3 +1,22 @@
+2018-01-16  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Attachment Support] Provide the `src` of an attachment to the UI delegate when an attachment is inserted
+        https://bugs.webkit.org/show_bug.cgi?id=181638
+        <rdar://problem/36508702>
+
+        Reviewed by Dan Bernstein.
+
+        Tweak an existing API test to check that the `src` of an attachment element inserted via script matches the
+        `source` provided to the UI delegate via -[WKUIDelegate _webView:didInsertAttachment:withSource:].
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WKAttachmentTests.mm:
+        (-[AttachmentUpdateObserver init]):
+        (-[AttachmentUpdateObserver sourceForIdentifier:]):
+        (-[AttachmentUpdateObserver _webView:didInsertAttachment:withSource:]):
+        (TestWebKitAPI::ObserveAttachmentUpdatesForScope::expectSourceForIdentifier):
+        (TestWebKitAPI::TEST):
+        (-[AttachmentUpdateObserver _webView:didInsertAttachment:]): Deleted.
+
 2018-01-16  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix GTK unit tests execution in the bots after r226967.

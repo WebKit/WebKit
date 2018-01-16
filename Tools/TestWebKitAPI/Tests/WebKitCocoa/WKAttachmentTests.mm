@@ -50,6 +50,7 @@
 @implementation AttachmentUpdateObserver {
     RetainPtr<NSMutableArray<_WKAttachment *>> _inserted;
     RetainPtr<NSMutableArray<_WKAttachment *>> _removed;
+    RetainPtr<NSMutableDictionary<NSString *, NSString *>> _identifierToSourceMap;
 }
 
 - (instancetype)init
@@ -57,6 +58,7 @@
     if (self = [super init]) {
         _inserted = adoptNS([[NSMutableArray alloc] init]);
         _removed = adoptNS([[NSMutableArray alloc] init]);
+        _identifierToSourceMap = adoptNS([[NSMutableDictionary alloc] init]);
     }
     return self;
 }
@@ -71,9 +73,16 @@
     return _removed.get();
 }
 
-- (void)_webView:(WKWebView *)webView didInsertAttachment:(_WKAttachment *)attachment
+- (NSString *)sourceForIdentifier:(NSString *)identifier
+{
+    return [_identifierToSourceMap objectForKey:identifier];
+}
+
+- (void)_webView:(WKWebView *)webView didInsertAttachment:(_WKAttachment *)attachment withSource:(NSString *)source
 {
     [_inserted addObject:attachment];
+    if (source)
+        [_identifierToSourceMap setObject:source forKey:attachment.uniqueIdentifier];
 }
 
 - (void)_webView:(WKWebView *)webView didRemoveAttachment:(_WKAttachment *)attachment
@@ -113,6 +122,15 @@ public:
         if (!insertedAttachmentsMatch)
             NSLog(@"Expected inserted attachments: %@ to match %@.", observer().inserted, inserted);
         EXPECT_TRUE(insertedAttachmentsMatch);
+    }
+
+    void expectSourceForIdentifier(NSString *expectedSource, NSString *identifier)
+    {
+        NSString *observedSource = [observer() sourceForIdentifier:identifier];
+        BOOL success = observedSource == expectedSource || [observedSource isEqualToString:expectedSource];
+        EXPECT_TRUE(success);
+        if (!success)
+            NSLog(@"Expected source: %@ but observed: %@", expectedSource, observedSource);
     }
 
 private:
@@ -606,9 +624,10 @@ TEST(WKAttachmentTests, AttachmentUpdatesWhenInsertingRichMarkup)
     RetainPtr<_WKAttachment> attachment;
     {
         ObserveAttachmentUpdatesForScope observer(webView.get());
-        [webView _synchronouslyExecuteEditCommand:@"InsertHTML" argument:@"<div><strong><attachment title='a'></attachment></strong></div>"];
+        [webView _synchronouslyExecuteEditCommand:@"InsertHTML" argument:@"<div><strong><attachment src='cid:123-4567' title='a'></attachment></strong></div>"];
         attachment = observer.observer().inserted[0];
         observer.expectAttachmentUpdates(@[ ], @[attachment.get()]);
+        observer.expectSourceForIdentifier(@"cid:123-4567", [attachment uniqueIdentifier]);
     }
     EXPECT_FALSE([webView hasAttribute:@"webkitattachmentbloburl" forQuerySelector:@"attachment"]);
     EXPECT_FALSE([webView hasAttribute:@"webkitattachmentpath" forQuerySelector:@"attachment"]);
