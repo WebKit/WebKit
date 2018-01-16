@@ -76,6 +76,7 @@ class InputCursor;
 
 namespace WebCore {
 
+class ApplicationStateChangeListener;
 class AXObjectCache;
 class Attr;
 class CDATASection;
@@ -1401,6 +1402,10 @@ public:
     void setServiceWorkerConnection(SWClientConnection*);
 #endif
 
+    void addApplicationStateChangeListener(ApplicationStateChangeListener&);
+    void removeApplicationStateChangeListener(ApplicationStateChangeListener&);
+    void forEachApplicationStateChangeListener(const Function<void(ApplicationStateChangeListener&)>&);
+
 protected:
     enum ConstructionFlags { Synthesized = 1, NonRenderedPlaceholder = 1 << 1 };
     Document(Frame*, const URL&, unsigned = DefaultDocumentClass, unsigned constructionFlags = 0);
@@ -1883,6 +1888,8 @@ private:
 #if ENABLE(SERVICE_WORKER)
     RefPtr<SWClientConnection> m_serviceWorkerConnection;
 #endif
+
+    HashSet<ApplicationStateChangeListener*> m_applicationStateChangeListeners;
 };
 
 Element* eventTargetElementForDocument(Document*);

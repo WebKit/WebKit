@@ -194,13 +194,17 @@ MediaPlayerPrivateMediaStreamAVFObjC::MediaPlayerPrivateMediaStreamAVFObjC(Media
 #if PLATFORM(IOS) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
     , m_videoFullscreenLayerManager(VideoFullscreenLayerManager::create())
 #endif
+#if !RELEASE_LOG_DISABLED
+    , m_logger(player->mediaPlayerLogger())
+    , m_logIdentifier(player->mediaPlayerLogIdentifier())
+#endif
 {
-    LOG(Media, "MediaPlayerPrivateMediaStreamAVFObjC::MediaPlayerPrivateMediaStreamAVFObjC(%p)", this);
+    INFO_LOG(LOGIDENTIFIER);
 }
 
 MediaPlayerPrivateMediaStreamAVFObjC::~MediaPlayerPrivateMediaStreamAVFObjC()
 {
-    LOG(Media, "MediaPlayerPrivateMediaStreamAVFObjC::~MediaPlayerPrivateMediaStreamAVFObjC(%p)", this);
+    INFO_LOG(LOGIDENTIFIER);
 
     [m_statusChangeListener invalidate];
 
@@ -276,27 +280,6 @@ void MediaPlayerPrivateMediaStreamAVFObjC::addSampleToPendingQueue(PendingSample
     queue.append(sample);
 }
 
-void MediaPlayerPrivateMediaStreamAVFObjC::updateSampleTimes(MediaSample& sample, const MediaTime& timelineOffset, const char* loggingPrefix)
-{
-    LOG(MediaCaptureSamples, "%s(%p): original sample = %s", loggingPrefix, this, toString(sample).utf8().data());
-    sample.offsetTimestampsBy(timelineOffset);
-    LOG(MediaCaptureSamples, "%s(%p): adjusted sample = %s", loggingPrefix, this, toString(sample).utf8().data());
-
-#if !LOG_DISABLED
-    MediaTime now = streamTime();
-    double delta = (sample.presentationTime() - now).toDouble();
-    if (delta < 0)
-        LOG(Media, "%s(%p): *NOTE* audio sample at time %s is %f seconds late", loggingPrefix, this, toString(now).utf8().data(), -delta);
-    else if (delta < .01)
-        LOG(Media, "%s(%p): *NOTE* audio sample at time %s is only %f seconds early", loggingPrefix, this, toString(now).utf8().data(), delta);
-    else if (delta > .3)
-        LOG(Media, "%s(%p): *NOTE* audio sample at time %s is %f seconds early!", loggingPrefix, this, toString(now).utf8().data(), delta);
-#else
-    UNUSED_PARAM(loggingPrefix);
-#endif
-
-}
-
 MediaTime MediaPlayerPrivateMediaStreamAVFObjC::calculateTimelineOffset(const MediaSample& sample, double latency)
 {
     MediaTime sampleTime = sample.outputPresentationTime();
@@ -340,34 +323,12 @@ static void runWithoutAnimations(const WTF::Function<void()>& function)
     [CATransaction commit];
 }
 
-void MediaPlayerPrivateMediaStreamAVFObjC::enqueueVideoSample(MediaStreamTrackPrivate& track, MediaSample& sample)
+void MediaPlayerPrivateMediaStreamAVFObjC::enqueueCorrectedVideoSample(MediaSample& sample)
 {
-    ASSERT(m_videoTrackMap.contains(track.id()));
-
-    if (&track != m_mediaStreamPrivate->activeVideoTrack())
-        return;
-
-    if (!m_imagePainter.mediaSample || m_displayMode != PausedImage) {
-        m_imagePainter.mediaSample = &sample;
-        m_imagePainter.cgImage = nullptr;
-        if (m_readyState < MediaPlayer::ReadyState::HaveEnoughData)
-            updateReadyState();
-    }
-
-    if (m_displayMode != LivePreview || (m_displayMode == PausedImage && m_imagePainter.mediaSample))
-        return;
-
-    auto videoTrack = m_videoTrackMap.get(track.id());
-    MediaTime timelineOffset = videoTrack->timelineOffset();
-    if (timelineOffset == MediaTime::invalidTime()) {
-        timelineOffset = calculateTimelineOffset(sample, rendererLatency);
-        videoTrack->setTimelineOffset(timelineOffset);
-        LOG(MediaCaptureSamples, "MediaPlayerPrivateMediaStreamAVFObjC::enqueueVideoSample: timeline offset for track %s set to %s", track.id().utf8().data(), toString(timelineOffset).utf8().data());
-    }
-
-    updateSampleTimes(sample, timelineOffset, "MediaPlayerPrivateMediaStreamAVFObjC::enqueueVideoSample");
-
     if (m_sampleBufferDisplayLayer) {
+        if ([m_sampleBufferDisplayLayer status] == AVQueuedSampleBufferRenderingStatusFailed)
+            return;
+
         if (sample.videoRotation() != m_videoRotation || sample.videoMirrored() != m_videoMirrored) {
             m_videoRotation = sample.videoRotation();
             m_videoMirrored = sample.videoMirrored();
@@ -390,6 +351,50 @@ void MediaPlayerPrivateMediaStreamAVFObjC::enqueueVideoSample(MediaStreamTrackPr
         m_hasEverEnqueuedVideoFrame = true;
         m_player->firstVideoFrameAvailable();
     }
+}
+
+void MediaPlayerPrivateMediaStreamAVFObjC::enqueueVideoSample(MediaStreamTrackPrivate& track, MediaSample& sample)
+{
+    ASSERT(m_videoTrackMap.contains(track.id()));
+
+    if (&track != m_mediaStreamPrivate->activeVideoTrack())
+        return;
+
+    if (!m_imagePainter.mediaSample || m_displayMode != PausedImage) {
+        m_imagePainter.mediaSample = &sample;
+        m_imagePainter.cgImage = nullptr;
+        if (m_readyState < MediaPlayer::ReadyState::HaveEnoughData)
+            updateReadyState();
+    }
+
+    if (m_displayMode != LivePreview || (m_displayMode == PausedImage && m_imagePainter.mediaSample))
+        return;
+
+    auto videoTrack = m_videoTrackMap.get(track.id());
+    MediaTime timelineOffset = videoTrack->timelineOffset();
+    if (timelineOffset == MediaTime::invalidTime()) {
+        timelineOffset = calculateTimelineOffset(sample, rendererLatency);
+        videoTrack->setTimelineOffset(timelineOffset);
+
+        INFO_LOG(LOGIDENTIFIER, "timeline offset for track ", track.id(), " set to ", timelineOffset);
+    }
+
+    DEBUG_LOG(LOGIDENTIFIER, "original sample = ", toString(sample));
+    sample.offsetTimestampsBy(timelineOffset);
+    DEBUG_LOG(LOGIDENTIFIER, "updated sample = ", toString(sample));
+
+    if (WILL_LOG(WTFLogLevelDebug)) {
+        MediaTime now = streamTime();
+        double delta = (sample.presentationTime() - now).toDouble();
+        if (delta < 0)
+            DEBUG_LOG(LOGIDENTIFIER, "*NOTE* sample at time is ", now, " is", -delta, " seconds late");
+        else if (delta < .01)
+            DEBUG_LOG(LOGIDENTIFIER, "*NOTE* audio sample at time ", now, " is only ", delta, " seconds early");
+        else if (delta > .3)
+            DEBUG_LOG(LOGIDENTIFIER, "*NOTE* audio sample at time ", now, " is ", delta, " seconds early!");
+    }
+
+    enqueueCorrectedVideoSample(sample);
 }
 
 void MediaPlayerPrivateMediaStreamAVFObjC::requestNotificationWhenReadyForVideoData()
@@ -422,12 +427,12 @@ AudioSourceProvider* MediaPlayerPrivateMediaStreamAVFObjC::audioSourceProvider()
 void MediaPlayerPrivateMediaStreamAVFObjC::layerErrorDidChange(AVSampleBufferDisplayLayer* layer)
 {
     UNUSED_PARAM(layer);
-    LOG(Media, "MediaPlayerPrivateMediaStreamAVFObjC::layerErrorDidChange(%p) - error = %s", this, [[layer.error localizedDescription] UTF8String]);
+    ERROR_LOG(LOGIDENTIFIER, "error = ", [[layer.error localizedDescription] UTF8String]);
 }
 
 void MediaPlayerPrivateMediaStreamAVFObjC::layerStatusDidChange(AVSampleBufferDisplayLayer* layer)
 {
-    LOG(Media, "MediaPlayerPrivateMediaStreamAVFObjC::layerStatusDidChange(%p) - status = %d", this, (int)layer.status);
+    ALWAYS_LOG(LOGIDENTIFIER, "status = ", (int)layer.status);
 
     if (layer.status != AVQueuedSampleBufferRenderingStatusRendering)
         return;
@@ -437,6 +442,16 @@ void MediaPlayerPrivateMediaStreamAVFObjC::layerStatusDidChange(AVSampleBufferDi
     auto track = m_videoTrackMap.get(m_activeVideoTrack->id());
     if (track)
         track->setTimelineOffset(MediaTime::invalidTime());
+}
+
+void MediaPlayerPrivateMediaStreamAVFObjC::applicationDidBecomeActive()
+{
+    if (m_sampleBufferDisplayLayer && [m_sampleBufferDisplayLayer status] == AVQueuedSampleBufferRenderingStatusFailed) {
+        flushRenderers();
+        if (m_imagePainter.mediaSample)
+            enqueueCorrectedVideoSample(*m_imagePainter.mediaSample);
+        updateDisplayMode();
+    }
 }
 
 void MediaPlayerPrivateMediaStreamAVFObjC::flushRenderers()
@@ -460,7 +475,7 @@ void MediaPlayerPrivateMediaStreamAVFObjC::ensureLayers()
 
     m_sampleBufferDisplayLayer = adoptNS([allocAVSampleBufferDisplayLayerInstance() init]);
     if (!m_sampleBufferDisplayLayer) {
-        LOG_ERROR("MediaPlayerPrivateMediaStreamAVFObjC::ensureLayers: +[AVSampleBufferDisplayLayer alloc] failed.");
+        ERROR_LOG(LOGIDENTIFIER, "+[AVSampleBufferDisplayLayer alloc] failed.");
         return;
     }
 
@@ -531,7 +546,7 @@ void MediaPlayerPrivateMediaStreamAVFObjC::load(const String&, MediaSourcePrivat
 
 void MediaPlayerPrivateMediaStreamAVFObjC::load(MediaStreamPrivate& stream)
 {
-    LOG(Media, "MediaPlayerPrivateMediaStreamAVFObjC::load(%p)", this);
+    INFO_LOG(LOGIDENTIFIER);
 
     m_intrinsicSize = FloatSize();
 
@@ -556,14 +571,14 @@ bool MediaPlayerPrivateMediaStreamAVFObjC::didPassCORSAccessCheck() const
 
 void MediaPlayerPrivateMediaStreamAVFObjC::cancelLoad()
 {
-    LOG(Media, "MediaPlayerPrivateMediaStreamAVFObjC::cancelLoad(%p)", this);
+    INFO_LOG(LOGIDENTIFIER);
     if (playing())
         pause();
 }
 
 void MediaPlayerPrivateMediaStreamAVFObjC::prepareToPlay()
 {
-    LOG(Media, "MediaPlayerPrivateMediaStreamAVFObjC::prepareToPlay(%p)", this);
+    INFO_LOG(LOGIDENTIFIER);
 }
 
 PlatformLayer* MediaPlayerPrivateMediaStreamAVFObjC::platformLayer() const
@@ -616,6 +631,8 @@ bool MediaPlayerPrivateMediaStreamAVFObjC::updateDisplayMode()
 
     if (displayMode == m_displayMode)
         return false;
+
+    INFO_LOG(LOGIDENTIFIER, "updated to ", static_cast<int>(displayMode));
     m_displayMode = displayMode;
 
     if (m_sampleBufferDisplayLayer) {
@@ -629,7 +646,7 @@ bool MediaPlayerPrivateMediaStreamAVFObjC::updateDisplayMode()
 
 void MediaPlayerPrivateMediaStreamAVFObjC::play()
 {
-    LOG(Media, "MediaPlayerPrivateMediaStreamAVFObjC::play(%p)", this);
+    ALWAYS_LOG(LOGIDENTIFIER);
 
     if (!metaDataAvailable() || playing() || m_ended)
         return;
@@ -653,7 +670,7 @@ void MediaPlayerPrivateMediaStreamAVFObjC::play()
 
 void MediaPlayerPrivateMediaStreamAVFObjC::pause()
 {
-    LOG(Media, "MediaPlayerPrivateMediaStreamAVFObjC::pause(%p)", this);
+    ALWAYS_LOG(LOGIDENTIFIER);
 
     if (!metaDataAvailable() || !playing() || m_ended)
         return;
@@ -675,11 +692,10 @@ void MediaPlayerPrivateMediaStreamAVFObjC::pause()
 
 void MediaPlayerPrivateMediaStreamAVFObjC::setVolume(float volume)
 {
-    LOG(Media, "MediaPlayerPrivateMediaStreamAVFObjC::setVolume(%p)", this);
-
     if (m_volume == volume)
         return;
 
+    ALWAYS_LOG(LOGIDENTIFIER, volume);
     m_volume = volume;
     for (const auto& track : m_audioTrackMap.values())
         track->setVolume(m_muted ? 0 : m_volume);
@@ -687,11 +703,10 @@ void MediaPlayerPrivateMediaStreamAVFObjC::setVolume(float volume)
 
 void MediaPlayerPrivateMediaStreamAVFObjC::setMuted(bool muted)
 {
-    LOG(Media, "MediaPlayerPrivateMediaStreamAVFObjC::setMuted(%p)", this);
-
     if (muted == m_muted)
         return;
 
+    ALWAYS_LOG(LOGIDENTIFIER, muted);
     m_muted = muted;
     for (const auto& track : m_audioTrackMap.values())
         track->setVolume(m_muted ? 0 : m_volume);
@@ -778,8 +793,10 @@ void MediaPlayerPrivateMediaStreamAVFObjC::updateReadyState()
 {
     MediaPlayer::ReadyState newReadyState = currentReadyState();
 
-    if (newReadyState != m_readyState)
+    if (newReadyState != m_readyState) {
+        ALWAYS_LOG(LOGIDENTIFIER, "updated to ", (int)newReadyState);
         setReadyState(newReadyState);
+    }
 }
 
 void MediaPlayerPrivateMediaStreamAVFObjC::activeStatusChanged()
@@ -1169,6 +1186,14 @@ void MediaPlayerPrivateMediaStreamAVFObjC::backgroundLayerBoundsChanged()
         });
     });
 }
+
+#if !RELEASE_LOG_DISABLED
+WTFLogChannel& MediaPlayerPrivateMediaStreamAVFObjC::logChannel() const
+{
+    return LogMedia;
+}
+#endif
+
 
 }
 

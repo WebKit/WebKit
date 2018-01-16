@@ -1,3 +1,71 @@
+2018-01-16  Eric Carlson  <eric.carlson@apple.com>
+
+        AVSampleBufferDisplayLayer should be flushed when application activates
+        https://bugs.webkit.org/show_bug.cgi?id=181623
+        <rdar://problem/36487738>
+
+        Reviewed by Darin Adler.
+
+        No new tests, I wasn't able to reproduce it in a test.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/Document.cpp:
+        (WebCore::Document::addApplicationStateChangeListener): New.
+        (WebCore::Document::removeApplicationStateChangeListener): Ditto.
+        (WebCore::Document::forEachApplicationStateChangeListener): Ditto.
+        * dom/Document.h:
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::registerWithDocument): Register for application state changes.
+        (WebCore::HTMLMediaElement::unregisterWithDocument): Unregister.
+        (WebCore::HTMLMediaElement::applicationWillResignActive): Pass through to the player.
+        (WebCore::HTMLMediaElement::applicationDidBecomeActive): Ditto.
+        * html/HTMLMediaElement.h:
+
+        * page/ApplicationStateChangeListener.h: Added.
+        (WebCore::ApplicationStateChangeListener::applicationWillResignActive):
+        (WebCore::ApplicationStateChangeListener::applicationDidBecomeActive):
+        * page/Page.cpp:
+        (WebCore::Page::forEachDocument):
+        (WebCore::Page::applicationWillResignActive):
+        (WebCore::Page::applicationDidEnterBackground):
+        (WebCore::Page::applicationWillEnterForeground):
+        (WebCore::Page::applicationDidBecomeActive):
+        * page/Page.h:
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::MediaPlayer::applicationWillResignActive):
+        (WebCore::MediaPlayer::applicationDidBecomeActive):
+        * platform/graphics/MediaPlayer.h:
+        * platform/graphics/MediaPlayerPrivate.h:
+        (WebCore::MediaPlayerPrivateInterface::applicationWillResignActive):
+        (WebCore::MediaPlayerPrivateInterface::applicationDidBecomeActive):
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaStreamAVFObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaStreamAVFObjC.mm:
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::MediaPlayerPrivateMediaStreamAVFObjC): Switch
+        to release logging.
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::~MediaPlayerPrivateMediaStreamAVFObjC): Ditto.
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::enqueueCorrectedVideoSample): Split out of enqueueVideoSample.
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::enqueueVideoSample): Move code that updates
+        the display later to enqueueCorrectedVideoSample. Rearrange logic to the image painter sample
+        buffer has the correct timestamp.
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::layerErrorDidChange): Switch to release logging.
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::layerStatusDidChange): Ditto.
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::applicationDidBecomeActive): f the display
+        layer is in the "failed" state, flush the renderer and update the display mode.
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::ensureLayers): Switch to release logging.
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::load): Ditto.
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::cancelLoad): Ditto.
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::prepareToPlay): Ditto.
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::updateDisplayMode): Ditto.
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::play): Ditto.
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::pause): Ditto.
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::setVolume): Ditto.
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::setMuted): Ditto.
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::updateReadyState) Ditto.:
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::logChannel const): Ditto.
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::updateSampleTimes): Deleted.
+
 2018-01-16  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         PAL should link to JavaScriptCore rather than WTF

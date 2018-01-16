@@ -33,6 +33,7 @@
 #include "MediaStreamPrivate.h"
 #include <CoreGraphics/CGAffineTransform.h>
 #include <wtf/Function.h>
+#include <wtf/LoggerHelper.h>
 #include <wtf/MediaTime.h>
 #include <wtf/WeakPtr.h>
 
@@ -42,7 +43,6 @@ OBJC_CLASS AVSampleBufferRenderSynchronizer;
 OBJC_CLASS AVStreamSession;
 OBJC_CLASS NSNumber;
 OBJC_CLASS WebAVSampleBufferStatusChangeListener;
-typedef struct opaqueCMSampleBuffer *CMSampleBufferRef;
 
 namespace PAL {
 class Clock;
@@ -60,7 +60,11 @@ class VideoTrackPrivateMediaStream;
 class VideoFullscreenLayerManager;
 #endif
 
-class MediaPlayerPrivateMediaStreamAVFObjC final : public MediaPlayerPrivateInterface, private MediaStreamPrivate::Observer, private MediaStreamTrackPrivate::Observer {
+class MediaPlayerPrivateMediaStreamAVFObjC final : public MediaPlayerPrivateInterface, private MediaStreamPrivate::Observer, private MediaStreamTrackPrivate::Observer
+#if !RELEASE_LOG_DISABLED
+    , private LoggerHelper
+#endif
+{
 public:
     explicit MediaPlayerPrivateMediaStreamAVFObjC(MediaPlayer*);
     virtual ~MediaPlayerPrivateMediaStreamAVFObjC();
@@ -88,6 +92,13 @@ public:
 
     PlatformLayer* displayLayer();
     PlatformLayer* backgroundLayer();
+
+#if !RELEASE_LOG_DISABLED
+    const Logger& logger() const final { return m_logger.get(); }
+    const char* logClassName() const override { return "MediaPlayerPrivateMediaStreamAVFObjC"; }
+    const void* logIdentifier() const final { return reinterpret_cast<const void*>(m_logIdentifier); }
+    WTFLogChannel& logChannel() const final;
+#endif
 
 private:
     // MediaPlayerPrivateInterface
@@ -144,10 +155,10 @@ private:
     void addSampleToPendingQueue(PendingSampleQueue&, MediaSample&);
     void removeOldSamplesFromPendingQueue(PendingSampleQueue&);
 
-    void updateSampleTimes(MediaSample&, const MediaTime&, const char*);
     MediaTime calculateTimelineOffset(const MediaSample&, double);
     
     void enqueueVideoSample(MediaStreamTrackPrivate&, MediaSample&);
+    void enqueueCorrectedVideoSample(MediaSample&);
     void flushAndRemoveVideoSampleBuffers();
     void requestNotificationWhenReadyForVideoData();
 
@@ -223,12 +234,12 @@ private:
 
     CGAffineTransform videoTransformationMatrix(MediaSample&, bool forceUpdate = false);
 
+    void applicationDidBecomeActive() final;
+
     MediaPlayer* m_player { nullptr };
     WeakPtrFactory<MediaPlayerPrivateMediaStreamAVFObjC> m_weakPtrFactory;
     RefPtr<MediaStreamPrivate> m_mediaStreamPrivate;
-
     RefPtr<MediaStreamTrackPrivate> m_activeVideoTrack;
-
     RetainPtr<WebAVSampleBufferStatusChangeListener> m_statusChangeListener;
     RetainPtr<AVSampleBufferDisplayLayer> m_sampleBufferDisplayLayer;
     RetainPtr<PlatformLayer> m_backgroundLayer;
@@ -272,6 +283,12 @@ private:
 #if PLATFORM(IOS) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
     std::unique_ptr<VideoFullscreenLayerManager> m_videoFullscreenLayerManager;
 #endif
+
+#if !RELEASE_LOG_DISABLED
+    Ref<const Logger> m_logger;
+    const void* m_logIdentifier;
+#endif
+
 };
     
 }

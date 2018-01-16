@@ -1,3 +1,17 @@
+2018-01-16  Eric Carlson  <eric.carlson@apple.com>
+
+        AVSampleBufferDisplayLayer should be flushed when application activates
+        https://bugs.webkit.org/show_bug.cgi?id=181623
+        <rdar://problem/36487738>
+
+        Reviewed by Darin Adler.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::applicationWillResignActive): Call page.
+        (WebKit::WebPage::applicationDidEnterBackground): Ditto, let it call libWebRTCProvider.
+        (WebKit::WebPage::applicationWillEnterForeground): Call page.
+        (WebKit::WebPage::applicationDidBecomeActive): Ditto, let it call libWebRTCProvider.
+
 2018-01-16  Zach Li  <zachli@apple.com>
 
         Add pop-up policy support in website policies.

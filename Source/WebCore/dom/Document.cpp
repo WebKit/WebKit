@@ -29,6 +29,7 @@
 #include "Document.h"
 
 #include "AXObjectCache.h"
+#include "ApplicationStateChangeListener.h"
 #include "Attr.h"
 #include "BeforeUnloadEvent.h"
 #include "CDATASection.h"
@@ -7370,6 +7371,22 @@ void Document::mediaStreamCaptureStateChanged()
         mediaElement->mediaStreamCaptureStarted();
 }
 #endif
+
+void Document::addApplicationStateChangeListener(ApplicationStateChangeListener& listener)
+{
+    m_applicationStateChangeListeners.add(&listener);
+}
+
+void Document::removeApplicationStateChangeListener(ApplicationStateChangeListener& listener)
+{
+    m_applicationStateChangeListeners.remove(&listener);
+}
+
+void Document::forEachApplicationStateChangeListener(const Function<void(ApplicationStateChangeListener&)>& functor)
+{
+    for (auto* listener : m_applicationStateChangeListeners)
+        functor(*listener);
+}
 
 const AtomicString& Document::bgColor() const
 {

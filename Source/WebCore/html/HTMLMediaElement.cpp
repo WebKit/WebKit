@@ -742,6 +742,8 @@ void HTMLMediaElement::registerWithDocument(Document& document)
 #if ENABLE(MEDIA_STREAM)
     document.registerForMediaStreamStateChangeCallbacks(*this);
 #endif
+
+    document.addApplicationStateChangeListener(*this);
 }
 
 void HTMLMediaElement::unregisterWithDocument(Document& document)
@@ -782,6 +784,7 @@ void HTMLMediaElement::unregisterWithDocument(Document& document)
     document.unregisterForMediaStreamStateChangeCallbacks(*this);
 #endif
 
+    document.removeApplicationStateChangeListener(*this);
 }
 
 void HTMLMediaElement::didMoveToNewDocument(Document& oldDocument, Document& newDocument)
@@ -7862,6 +7865,18 @@ bool HTMLMediaElement::willLog(WTFLogLevel level) const
     UNUSED_PARAM(level);
     return false;
 #endif
+}
+
+void HTMLMediaElement::applicationWillResignActive()
+{
+    if (m_player)
+        m_player->applicationWillResignActive();
+}
+
+void HTMLMediaElement::applicationDidBecomeActive()
+{
+    if (m_player)
+        m_player->applicationDidBecomeActive();
 }
 
 }
