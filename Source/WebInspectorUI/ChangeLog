@@ -1,3 +1,30 @@
+2018-01-16  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Make Console's Execution Context picker stand out when it is non-default
+        https://bugs.webkit.org/show_bug.cgi?id=181628
+        <rdar://problem/36492044>
+
+        Reviewed by Matt Baker.
+
+        * UserInterface/Views/HierarchicalPathComponent.css:
+        (.hierarchical-path-component > .selector-arrows):
+        * UserInterface/Views/HierarchicalPathComponent.js:
+        (WI.HierarchicalPathComponent.prototype.set selectorArrows):
+        Switch to SVG element so we can style the arrows.
+
+        * UserInterface/Views/QuickConsole.css:
+        (.quick-console > .navigation-bar > .hierarchical-path .execution-context):
+        (.quick-console > .navigation-bar > .hierarchical-path .execution-context .separator):
+        (.quick-console > .navigation-bar > .hierarchical-path.non-default-execution-context .execution-context):
+        (.quick-console > .navigation-bar > .hierarchical-path.non-default-execution-context .execution-context .selector-arrows):
+        Styles for the execution context picker. We hide the unused separator
+        and instead use margin so that the selected background and border don't
+        have an extra 7px on the right/end side.
+
+        * UserInterface/Views/QuickConsole.js:
+        (WI.QuickConsole.prototype._activeExecutionContextChanged):
+        Toggle the non-default class name on the path.
+
 2018-01-16  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Styles: pressing down key should select first item from completion list when focusing on empty value

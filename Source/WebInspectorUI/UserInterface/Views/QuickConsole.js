@@ -191,6 +191,8 @@ WI.QuickConsole = class QuickConsole extends WI.View
     _activeExecutionContextChanged(event)
     {
         this._rebuildExecutionContextPathComponents();
+
+        this._executionContextSelectorItem.element.classList.toggle("non-default-execution-context", this.selectedExecutionContext !== WI.mainTarget.executionContext);
     }
 
     _createExecutionContextPathComponent(executionContext, preferredName)

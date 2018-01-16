@@ -207,8 +207,7 @@ WI.HierarchicalPathComponent = class HierarchicalPathComponent extends WI.Object
         this._selectorArrows = flag;
 
         if (this._selectorArrows) {
-            this._selectorArrowsElement = document.createElement("img");
-            this._selectorArrowsElement.className = "selector-arrows";
+            this._selectorArrowsElement = WI.ImageUtilities.useSVGSymbol("Images/UpDownArrows.svg", "selector-arrows");
             this._element.insertBefore(this._selectorArrowsElement, this._separatorElement);
         } else if (this._selectorArrowsElement) {
             this._selectorArrowsElement.remove();

@@ -87,3 +87,22 @@
 .quick-console .execution-context {
     margin-top: -1px;
 }
+
+.quick-console > .navigation-bar > .hierarchical-path .execution-context {
+    -webkit-margin-end: 7px;
+}
+
+.quick-console > .navigation-bar > .hierarchical-path .execution-context .separator {
+    display: none;
+}
+
+.quick-console > .navigation-bar > .hierarchical-path.non-default-execution-context .execution-context {
+    background: var(--selected-background-color);
+    border-radius: 3px;
+    color: var(--selected-foreground-color);
+}
+
+.quick-console > .navigation-bar > .hierarchical-path.non-default-execution-context .execution-context .selector-arrows {
+    color: var(--selected-foreground-color);
+    opacity: 1;
+}
