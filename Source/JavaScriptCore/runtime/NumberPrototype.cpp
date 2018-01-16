@@ -34,7 +34,6 @@
 #include <wtf/dtoa.h>
 #include <wtf/Assertions.h>
 #include <wtf/MathExtras.h>
-#include <wtf/Variant.h>
 #include <wtf/dtoa/double-conversion.h>
 
 using DoubleToStringConverter = WTF::double_conversion::DoubleToStringConverter;
@@ -505,6 +504,20 @@ EncodedJSValue JSC_HOST_CALL numberProtoFuncToPrecision(ExecState* exec)
     return JSValue::encode(jsString(exec, String(numberToFixedPrecisionString(x, significantFigures, buffer))));
 }
 
+static inline int32_t extractRadixFromArgs(ExecState* exec)
+{
+    JSValue radixValue = exec->argument(0);
+    int32_t radix;
+    if (radixValue.isInt32())
+        radix = radixValue.asInt32();
+    else if (radixValue.isUndefined())
+        radix = 10;
+    else
+        radix = static_cast<int32_t>(radixValue.toInteger(exec)); // nan -> 0
+
+    return radix;
+}
+
 static ALWAYS_INLINE JSString* int32ToStringInternal(VM& vm, int32_t value, int32_t radix)
 {
     ASSERT(!(radix < 2 || radix > 36));
@@ -573,21 +586,22 @@ JSString* numberToString(VM& vm, double doubleValue, int32_t radix)
     return numberToStringInternal(vm, doubleValue, radix);
 }
 
-EncodedJSValue JSC_HOST_CALL numberProtoFuncToString(ExecState* state)
+EncodedJSValue JSC_HOST_CALL numberProtoFuncToString(ExecState* exec)
 {
-    VM& vm = state->vm();
+    VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     double doubleValue;
-    if (!toThisNumber(state->thisValue(), doubleValue))
-        return throwVMTypeError(state, scope);
+    if (!toThisNumber(exec->thisValue(), doubleValue))
+        return throwVMTypeError(exec, scope);
+
+    int32_t radix = extractRadixFromArgs(exec);
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
+    if (radix < 2 || radix > 36)
+        return throwVMError(exec, scope, createRangeError(exec, ASCIILiteral("toString() radix argument must be between 2 and 36")));
 
     scope.release();
-    auto radix = extractToStringRadixArgument(state, state->argument(0));
-    if (WTF::holds_alternative<EncodedJSValue>(radix))
-        return WTF::get<EncodedJSValue>(radix);
-
-    return JSValue::encode(numberToStringInternal(vm, doubleValue, WTF::get<int32_t>(radix)));
+    return JSValue::encode(numberToStringInternal(vm, doubleValue, radix));
 }
 
 EncodedJSValue JSC_HOST_CALL numberProtoFuncToLocaleString(ExecState* exec)
@@ -612,26 +626,6 @@ EncodedJSValue JSC_HOST_CALL numberProtoFuncValueOf(ExecState* exec)
     if (!toThisNumber(thisValue, x))
         return throwVMTypeError(exec, scope, WTF::makeString("thisNumberValue called on incompatible ", asString(jsTypeStringForValue(exec, thisValue))->value(exec)));
     return JSValue::encode(jsNumber(x));
-}
-
-Variant<int32_t, EncodedJSValue> extractToStringRadixArgument(ExecState* state, JSValue radixValue)
-{
-    if (radixValue.isUndefined())
-        return 10;
-
-    auto scope = DECLARE_THROW_SCOPE(state->vm());
-    if (radixValue.isInt32()) {
-        int32_t radix = radixValue.asInt32();
-        if (radix >= 2 && radix <= 36)
-            return radix;
-    } else {
-        double radixDouble = radixValue.toInteger(state);
-        RETURN_IF_EXCEPTION(scope, encodedJSValue());
-        if (radixDouble >= 2 && radixDouble <= 36)
-            return static_cast<int32_t>(radixDouble);   
-    }
-
-    return throwVMError(state, scope, createRangeError(state, ASCIILiteral("toString() radix argument must be between 2 and 36")));
 }
 
 } // namespace JSC

@@ -97,12 +97,3 @@
 - path: stress/big-int-to-string.js
   cmd: runBigIntEnabled
 
-- path: stress/big-int-prototype-to-string-cast-overflow.js
-  cmd: runBigIntEnabled
-
-- path: stress/big-int-prototype-to-string-exception.js
-  cmd: runBigIntEnabled
-
-- path: stress/big-int-prototype-to-string-wrong-values.js
-  cmd: runBigIntEnabled
-

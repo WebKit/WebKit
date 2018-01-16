@@ -35,9 +35,7 @@
 #include "JSFunction.h"
 #include "JSGlobalObject.h"
 #include "JSString.h"
-#include "NumberPrototype.h"
 #include <wtf/Assertions.h>
-#include <wtf/Variant.h>
 
 namespace JSC {
 
@@ -101,11 +99,21 @@ EncodedJSValue JSC_HOST_CALL bigIntProtoFuncToString(ExecState* state)
     
     ASSERT(value);
 
-    auto radix = extractToStringRadixArgument(state, state->argument(0));
-    if (WTF::holds_alternative<EncodedJSValue>(radix))
-        return WTF::get<EncodedJSValue>(radix);
+    int64_t radix;
+    JSValue radixValue = state->argument(0);
+    if (radixValue.isInt32())
+        radix = radixValue.asInt32();
+    else if (radixValue.isUndefined())
+        radix = 10;
+    else {
+        radix = static_cast<int64_t>(radixValue.toInteger(state));
+        RETURN_IF_EXCEPTION(scope, encodedJSValue());
+    }
 
-    String resultString = value->toString(*state, WTF::get<int32_t>(radix));
+    if (radix < 2 || radix > 36)
+        return throwVMError(state, scope, createRangeError(state, ASCIILiteral("toString() radix argument must be between 2 and 36")));
+
+    String resultString = value->toString(*state, static_cast<int32_t>(radix));
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
     if (resultString.length() == 1)
         return JSValue::encode(vm.smallStrings.singleCharacterString(resultString[0]));

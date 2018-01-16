@@ -75,7 +75,7 @@ assert(n.toString() === "15");
 n = BigInt("0b10");
 assert(n.toString() === "2");
 
-n = BigInt("0b010");
+n = BigInt("0b10");
 assert(n.toString() === "2");
 
 let binaryString = "0b1";
@@ -91,7 +91,7 @@ assert(n.toString() === "15");
 n = BigInt("0B10");
 assert(n.toString() === "2");
 
-n = BigInt("0B010");
+n = BigInt("0B10");
 assert(n.toString() === "2");
 
 binaryString = "0B1";
