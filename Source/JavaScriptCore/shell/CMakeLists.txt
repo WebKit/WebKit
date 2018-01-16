@@ -55,19 +55,19 @@ if (TARGET jscLib)
     add_dependencies(jsc jscLib)
 endif ()
 
-    set(TESTMASM_SOURCES
-        ../assembler/testmasm.cpp
-    )
+set(TESTMASM_SOURCES
+    ../assembler/testmasm.cpp
+)
 
-    set(TESTB3_SOURCES
-        ../b3/testb3.cpp
-    )
+set(TESTB3_SOURCES
+    ../b3/testb3.cpp
+)
 
-    set(TESTAIR_SOURCES
-        ../b3/air/testair.cpp
-    )
+set(TESTAIR_SOURCES
+    ../b3/air/testair.cpp
+)
 
-if (NOT WIN32)
+if (DEVELOPER_MODE AND NOT WIN32)
     add_executable(testmasm ${TESTMASM_SOURCES})
     target_link_libraries(testmasm ${JSC_LIBRARIES})
 

@@ -1,3 +1,14 @@
+2018-01-16  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Test programs should only be built in developer mode
+        https://bugs.webkit.org/show_bug.cgi?id=181653
+
+        Reviewed by Carlos Garcia Campos.
+
+        Build test programs only in developer mode, and fix code style.
+
+        * shell/CMakeLists.txt:
+
 2018-01-15  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Improve use of ExportMacros
