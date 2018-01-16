@@ -1,3 +1,13 @@
+2018-01-12  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebAuthN] Implement dummy WebAuthN IDLs
+        https://bugs.webkit.org/show_bug.cgi?id=181627
+        <rdar://problem/36459864>
+
+        Reviewed by Alex Christensen.
+
+        * web-platform-tests/credential-management/credentialscontainer-create-basics.https-expected.txt:
+
 2018-01-11  Youenn Fablet  <youenn@apple.com>
 
         Redirected iframe loading with Request.redirect=follow should fail

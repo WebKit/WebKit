@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,56 +23,21 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "PublicKeyCredential.h"
+#pragma once
 
-#include "JSDOMPromiseDeferred.h"
+#include "AuthenticatorResponse.h"
 
 namespace WebCore {
 
-PublicKeyCredential::PublicKeyCredential(const String& id)
-    : BasicCredential(id, Type::PublicKey, Discovery::Remote)
-{
-}
+class AuthenticatorAttestationResponse : public AuthenticatorResponse {
+public:
+    AuthenticatorAttestationResponse(RefPtr<ArrayBuffer>&& clientDataJSON, RefPtr<ArrayBuffer>&& attestationObject);
+    virtual ~AuthenticatorAttestationResponse();
 
-Vector<Ref<BasicCredential>> PublicKeyCredential::collectFromCredentialStore(CredentialRequestOptions&&, bool)
-{
-    return { };
-}
+    ArrayBuffer* attestationObject();
 
-ExceptionOr<RefPtr<BasicCredential>> PublicKeyCredential::discoverFromExternalSource(const CredentialRequestOptions&, bool)
-{
-    return Exception { NotSupportedError };
-}
-
-RefPtr<BasicCredential> PublicKeyCredential::store(RefPtr<BasicCredential>&&, bool)
-{
-    return nullptr;
-}
-
-ExceptionOr<RefPtr<BasicCredential>> PublicKeyCredential::create(const CredentialCreationOptions&, bool)
-{
-    return Exception { NotSupportedError };
-}
-
-ArrayBuffer* PublicKeyCredential::rawId()
-{
-    return m_rawId.get();
-}
-
-AuthenticatorResponse* PublicKeyCredential::response()
-{
-    return m_response.get();
-}
-
-ExceptionOr<bool> PublicKeyCredential::getClientExtensionResults()
-{
-    return Exception { NotSupportedError };
-}
-
-void PublicKeyCredential::isUserVerifyingPlatformAuthenticatorAvailable(Ref<DeferredPromise>&& promise)
-{
-    promise->reject(Exception { NotSupportedError });
-}
+private:
+    RefPtr<ArrayBuffer> m_attestationObject;
+};
 
 } // namespace WebCore

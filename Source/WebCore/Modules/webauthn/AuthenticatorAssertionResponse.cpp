@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,55 +24,35 @@
  */
 
 #include "config.h"
-#include "PublicKeyCredential.h"
-
-#include "JSDOMPromiseDeferred.h"
+#include "AuthenticatorAssertionResponse.h"
 
 namespace WebCore {
 
-PublicKeyCredential::PublicKeyCredential(const String& id)
-    : BasicCredential(id, Type::PublicKey, Discovery::Remote)
+AuthenticatorAssertionResponse::AuthenticatorAssertionResponse(RefPtr<ArrayBuffer>&& clientDataJSON, RefPtr<ArrayBuffer>&& authenticatorData, RefPtr<ArrayBuffer>&& signature, RefPtr<ArrayBuffer>&& userHandle)
+    : AuthenticatorResponse(WTFMove(clientDataJSON))
+    , m_authenticatorData(WTFMove(authenticatorData))
+    , m_signature(WTFMove(signature))
+    , m_userHandle(WTFMove(userHandle))
 {
 }
 
-Vector<Ref<BasicCredential>> PublicKeyCredential::collectFromCredentialStore(CredentialRequestOptions&&, bool)
+AuthenticatorAssertionResponse::~AuthenticatorAssertionResponse()
 {
-    return { };
 }
 
-ExceptionOr<RefPtr<BasicCredential>> PublicKeyCredential::discoverFromExternalSource(const CredentialRequestOptions&, bool)
+ArrayBuffer* AuthenticatorAssertionResponse::authenticatorData()
 {
-    return Exception { NotSupportedError };
+    return m_authenticatorData.get();
 }
 
-RefPtr<BasicCredential> PublicKeyCredential::store(RefPtr<BasicCredential>&&, bool)
+ArrayBuffer* AuthenticatorAssertionResponse::signature()
 {
-    return nullptr;
+    return m_signature.get();
 }
 
-ExceptionOr<RefPtr<BasicCredential>> PublicKeyCredential::create(const CredentialCreationOptions&, bool)
+ArrayBuffer* AuthenticatorAssertionResponse::userHandle()
 {
-    return Exception { NotSupportedError };
-}
-
-ArrayBuffer* PublicKeyCredential::rawId()
-{
-    return m_rawId.get();
-}
-
-AuthenticatorResponse* PublicKeyCredential::response()
-{
-    return m_response.get();
-}
-
-ExceptionOr<bool> PublicKeyCredential::getClientExtensionResults()
-{
-    return Exception { NotSupportedError };
-}
-
-void PublicKeyCredential::isUserVerifyingPlatformAuthenticatorAvailable(Ref<DeferredPromise>&& promise)
-{
-    promise->reject(Exception { NotSupportedError });
+    return m_userHandle.get();
 }
 
 } // namespace WebCore

@@ -244,6 +244,9 @@ Modules/webaudio/WaveShaperDSPKernel.cpp
 Modules/webaudio/WaveShaperNode.cpp
 Modules/webaudio/WaveShaperProcessor.cpp
 
+Modules/webauthn/AuthenticatorAssertionResponse.cpp
+Modules/webauthn/AuthenticatorAttestationResponse.cpp
+Modules/webauthn/AuthenticatorResponse.cpp
 Modules/webauthn/PublicKeyCredential.cpp
 Modules/webauthn/cbor/CBORReader.cpp
 Modules/webauthn/cbor/CBORValue.cpp
@@ -2325,6 +2328,9 @@ JSAudioListener.cpp
 JSAudioNode.cpp
 JSAudioParam.cpp
 JSAudioProcessingEvent.cpp
+JSAuthenticatorAssertionResponse.cpp
+JSAuthenticatorAttestationResponse.cpp
+JSAuthenticatorResponse.cpp
 JSBarProp.cpp
 JSBasicCredential.cpp
 JSBeforeLoadEvent.cpp
@@ -2743,6 +2749,10 @@ JSProcessingInstruction.cpp
 JSProgressEvent.cpp
 JSPromiseRejectionEvent.cpp
 JSPublicKeyCredential.cpp
+JSPublicKeyCredentialCreationOptions.cpp
+JSPublicKeyCredentialDescriptor.cpp
+JSPublicKeyCredentialRequestOptions.cpp
+JSPublicKeyCredentialType.cpp
 JSRTCAnswerOptions.cpp
 JSRTCConfiguration.cpp
 JSRTCDTMFSender.cpp

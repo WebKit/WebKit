@@ -40,6 +40,9 @@ namespace WebCore {
     macro(ApplePaySession) \
     macro(AttachmentElement) \
     macro(Audio) \
+    macro(AuthenticatorAssertionResponse) \
+    macro(AuthenticatorAttestationResponse) \
+    macro(AuthenticatorResponse) \
     macro(Cache) \
     macro(CacheStorage) \
     macro(Client) \

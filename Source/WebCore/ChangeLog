@@ -1,3 +1,63 @@
+2018-01-12  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebAuthN] Implement dummy WebAuthN IDLs
+        https://bugs.webkit.org/show_bug.cgi?id=181627
+        <rdar://problem/36459864>
+
+        Reviewed by Alex Christensen.
+
+        This patch implements dummy WebAuthN IDLs and connect them with Credential Management as well.
+        All implementations in this patch are subject to change when real implementations land. The
+        purpose here on the other hand is to have IDLs, bindings and implementations connected. This
+        patch should handle all IDLs that we need.
+
+        No tests.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * Modules/credentialmanagement/CredentialCreationOptions.h:
+        * Modules/credentialmanagement/CredentialCreationOptions.idl:
+        * Modules/credentialmanagement/CredentialRequestOptions.h:
+        * Modules/credentialmanagement/CredentialRequestOptions.idl:
+        * Modules/webauthn/AuthenticatorAssertionResponse.cpp: Copied from Source/WebCore/Modules/webauthn/PublicKeyCredential.cpp.
+        (WebCore::AuthenticatorAssertionResponse::AuthenticatorAssertionResponse):
+        (WebCore::AuthenticatorAssertionResponse::~AuthenticatorAssertionResponse):
+        (WebCore::AuthenticatorAssertionResponse::authenticatorData):
+        (WebCore::AuthenticatorAssertionResponse::signature):
+        (WebCore::AuthenticatorAssertionResponse::userHandle):
+        * Modules/webauthn/AuthenticatorAssertionResponse.h: Copied from Source/WebCore/Modules/credentialmanagement/CredentialRequestOptions.h.
+        * Modules/webauthn/AuthenticatorAssertionResponse.idl: Copied from Source/WebCore/Modules/webauthn/PublicKeyCredential.idl.
+        * Modules/webauthn/AuthenticatorAttestationResponse.cpp: Copied from Source/WebCore/Modules/credentialmanagement/CredentialCreationOptions.h.
+        (WebCore::AuthenticatorAttestationResponse::AuthenticatorAttestationResponse):
+        (WebCore::AuthenticatorAttestationResponse::~AuthenticatorAttestationResponse):
+        (WebCore::AuthenticatorAttestationResponse::attestationObject):
+        * Modules/webauthn/AuthenticatorAttestationResponse.h: Copied from Source/WebCore/Modules/credentialmanagement/CredentialRequestOptions.h.
+        * Modules/webauthn/AuthenticatorAttestationResponse.idl: Copied from Source/WebCore/Modules/webauthn/PublicKeyCredential.idl.
+        * Modules/webauthn/AuthenticatorResponse.cpp: Copied from Source/WebCore/Modules/credentialmanagement/CredentialCreationOptions.h.
+        (WebCore::AuthenticatorResponse::AuthenticatorResponse):
+        (WebCore::AuthenticatorResponse::~AuthenticatorResponse):
+        (WebCore::AuthenticatorResponse::clientDataJSON):
+        * Modules/webauthn/AuthenticatorResponse.h: Copied from Source/WebCore/Modules/credentialmanagement/CredentialRequestOptions.h.
+        * Modules/webauthn/AuthenticatorResponse.idl: Copied from Source/WebCore/Modules/webauthn/PublicKeyCredential.idl.
+        * Modules/webauthn/PublicKeyCredential.cpp:
+        (WebCore::PublicKeyCredential::rawId):
+        (WebCore::PublicKeyCredential::response):
+        (WebCore::PublicKeyCredential::getClientExtensionResults):
+        (WebCore::PublicKeyCredential::isUserVerifyingPlatformAuthenticatorAvailable):
+        * Modules/webauthn/PublicKeyCredential.h:
+        * Modules/webauthn/PublicKeyCredential.idl:
+        * Modules/webauthn/PublicKeyCredentialCreationOptions.h: Copied from Source/WebCore/Modules/credentialmanagement/CredentialRequestOptions.h.
+        * Modules/webauthn/PublicKeyCredentialCreationOptions.idl: Added.
+        * Modules/webauthn/PublicKeyCredentialDescriptor.h: Copied from Source/WebCore/Modules/credentialmanagement/CredentialCreationOptions.h.
+        * Modules/webauthn/PublicKeyCredentialDescriptor.idl: Copied from Source/WebCore/Modules/webauthn/PublicKeyCredential.idl.
+        * Modules/webauthn/PublicKeyCredentialRequestOptions.h: Copied from Source/WebCore/Modules/credentialmanagement/CredentialCreationOptions.h.
+        * Modules/webauthn/PublicKeyCredentialRequestOptions.idl: Copied from Source/WebCore/Modules/credentialmanagement/CredentialRequestOptions.h.
+        * Modules/webauthn/PublicKeyCredentialType.h: Copied from Source/WebCore/Modules/webauthn/PublicKeyCredential.idl.
+        * Modules/webauthn/PublicKeyCredentialType.idl: Copied from Source/WebCore/Modules/webauthn/PublicKeyCredential.idl.
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/WebCoreBuiltinNames.h:
+
 2018-01-16  Zalan Bujtas  <zalan@apple.com>
 
         AX: Do not trigger layout in updateBackingStore() unless it is safe to do so

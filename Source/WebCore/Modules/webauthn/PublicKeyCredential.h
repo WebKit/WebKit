@@ -27,9 +27,13 @@
 
 #include "BasicCredential.h"
 #include "ExceptionOr.h"
-#include <wtf/Vector.h>
+#include <runtime/ArrayBuffer.h>
+#include <wtf/Forward.h>
 
 namespace WebCore {
+
+class AuthenticatorResponse;
+class DeferredPromise;
 
 struct CredentialCreationOptions;
 struct CredentialRequestOptions;
@@ -46,8 +50,18 @@ public:
     static RefPtr<BasicCredential> store(RefPtr<BasicCredential>&&, bool);
     static ExceptionOr<RefPtr<BasicCredential>> create(const CredentialCreationOptions&, bool);
 
+    ArrayBuffer* rawId();
+    AuthenticatorResponse* response();
+    // Not support yet. Always throws.
+    ExceptionOr<bool> getClientExtensionResults();
+
+    static void isUserVerifyingPlatformAuthenticatorAvailable(Ref<DeferredPromise>&&);
+
 private:
     PublicKeyCredential(const String&);
+
+    RefPtr<ArrayBuffer> m_rawId;
+    RefPtr<AuthenticatorResponse> m_response;
 };
 
 } // namespace WebCore

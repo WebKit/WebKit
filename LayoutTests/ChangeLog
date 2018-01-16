@@ -1,3 +1,18 @@
+2018-01-12  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebAuthN] Implement dummy WebAuthN IDLs
+        https://bugs.webkit.org/show_bug.cgi?id=181627
+        <rdar://problem/36459864>
+
+        Reviewed by Alex Christensen.
+
+        Modify some tests to reflect the update.
+
+        * http/wpt/credential-management/credentialscontainer-create-basics.https-expected.txt:
+        * http/wpt/credential-management/credentialscontainer-create-basics.https.html:
+        * http/wpt/credential-management/credentialscontainer-get-basics.https-expected.txt:
+        * http/wpt/credential-management/credentialscontainer-get-basics.https.html:
+
 2018-01-16  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r226962.
