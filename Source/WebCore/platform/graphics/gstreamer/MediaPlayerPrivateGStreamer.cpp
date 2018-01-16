@@ -30,13 +30,14 @@
 
 #include "FileSystem.h"
 #include "GStreamerUtilities.h"
-#include "URL.h"
+#include "HTTPHeaderNames.h"
 #include "MIMETypeRegistry.h"
 #include "MediaPlayer.h"
 #include "MediaPlayerRequestInstallMissingPluginsCallback.h"
 #include "NotImplemented.h"
 #include "SecurityOrigin.h"
 #include "TimeRanges.h"
+#include "URL.h"
 #include "WebKitWebSourceGStreamer.h"
 #include <glib.h>
 #include <gst/gst.h>
@@ -1054,6 +1055,18 @@ void MediaPlayerPrivateGStreamer::handleMessage(GstMessage* message)
             handleProtectionEvent(event.get());
         }
 #endif
+        else if (gst_structure_has_name(structure, "http-headers")) {
+            GstStructure* responseHeaders;
+            if (gst_structure_get(structure, "response-headers", GST_TYPE_STRUCTURE, &responseHeaders, nullptr)) {
+                if (!gst_structure_has_field(responseHeaders, httpHeaderNameString(HTTPHeaderName::ContentLength).utf8().data())) {
+                    GST_INFO("Live stream detected. Disabling on-disk buffering");
+                    m_isStreaming = true;
+                    setDownloadBuffering();
+                }
+                gst_structure_free(responseHeaders);
+            }
+        } else
+            GST_DEBUG("Unhandled element message: %" GST_PTR_FORMAT, structure);
         break;
 #if ENABLE(VIDEO_TRACK)
     case GST_MESSAGE_TOC:
@@ -1324,6 +1337,9 @@ unsigned long long MediaPlayerPrivateGStreamer::totalBytes() const
         return m_totalBytes;
 
     if (!m_source)
+        return 0;
+
+    if (m_isStreaming)
         return 0;
 
     GstFormat fmt = GST_FORMAT_BYTES;

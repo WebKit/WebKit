@@ -1,3 +1,19 @@
+2018-01-16  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer] Live streaming cleanups
+        https://bugs.webkit.org/show_bug.cgi?id=181672
+
+        Reviewed by Michael Catanzaro.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::handleMessage): Switch to
+        streaming code path when no content-length was reported by the
+        http source element.
+        (WebCore::MediaPlayerPrivateGStreamer::totalBytes const): Return early when streaming.
+        * platform/graphics/gstreamer/WebKitWebSourceGStreamer.cpp:
+        (CachedResourceStreamingClient::responseReceived): Emit headers as
+        an element message, like souphttpsrc.
+
 2018-01-15  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer] misc fixes and cleanups
