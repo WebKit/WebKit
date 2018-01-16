@@ -1,3 +1,24 @@
+2018-01-16  Zalan Bujtas  <zalan@apple.com>
+
+        AX: Do not trigger layout in updateBackingStore() unless it is safe to do so
+        https://bugs.webkit.org/show_bug.cgi?id=181703
+        <rdar://problem/36365706>
+
+        Reviewed by Ryosuke Niwa.
+
+        Document::isSafeToUpdateStyleOrLayout() can tell whether it is safe to run layout.
+
+        Unable to create test with WebInspector involved. 
+
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::updateBackingStore):
+        * dom/Document.cpp:
+        (WebCore::Document::isSafeToUpdateStyleOrLayout const):
+        (WebCore::Document::updateStyleIfNeeded):
+        (WebCore::Document::updateLayout):
+        (WebCore::isSafeToUpdateStyleOrLayout): Deleted.
+        * dom/Document.h:
+
 2018-01-16  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r226962.
