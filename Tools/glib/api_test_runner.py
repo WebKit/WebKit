@@ -150,7 +150,7 @@ class TestRunner(object):
         test = os.path.join(os.path.basename(os.path.dirname(test_program)), os.path.basename(test_program))
         if self._expectations.is_slow(os.path.basename(test_program)):
             timeout *= 5
-        return GLibTestRunner(test_program, timeout).run(skipped=self._test_cases_to_skip(test_program))
+        return GLibTestRunner(test_program, timeout).run(skipped=self._test_cases_to_skip(test_program), env=self._test_env)
 
     def _get_tests_from_google_test_suite(self, test_program):
         try:

@@ -230,7 +230,7 @@ class GLibTestRunner(object):
         self._subtest = None
         self._subtest_messages = []
 
-    def run(self, subtests=[], skipped=[]):
+    def run(self, subtests=[], skipped=[], env=None):
         pipe_r, pipe_w = os.pipe()
         command = [self._test_binary, '--quiet', '--keep-going', '--GTestLogFD=%d' % pipe_w]
         if self._results:
@@ -243,7 +243,7 @@ class GLibTestRunner(object):
         if not self._results:
             sys.stdout.write('TEST: %s...\n' % self._test_binary)
             sys.stdout.flush()
-        p = subprocess.Popen(command, stderr=subprocess.PIPE)
+        p = subprocess.Popen(command, stderr=subprocess.PIPE, env=env)
         self._stderr_fd = p.stderr.fileno()
         os.close(pipe_w)
 

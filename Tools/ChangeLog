@@ -1,5 +1,16 @@
 2018-01-16  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Unreviewed. Fix GTK unit tests execution in the bots after r226967.
+
+        I forgot to pass the environment to the GLibTestRunner and Xvfb was not used in the bots.
+
+        * glib/api_test_runner.py:
+        (TestRunner._run_test_glib): Pass env to GLibTestRunner.
+        * glib/glib_test_runner.py:
+        (GLibTestRunner.run): Use given env.
+
+2018-01-16  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK][WPE] Stop passing --verbose to run-api-tests from the bots
         https://bugs.webkit.org/show_bug.cgi?id=181676
 
