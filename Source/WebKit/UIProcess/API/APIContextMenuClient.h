@@ -27,6 +27,7 @@
 
 #if ENABLE(CONTEXT_MENUS)
 
+#include "WebContextMenuItem.h"
 #include "WebContextMenuListenerProxy.h"
 #include "WebHitTestResultData.h"
 #include <WebKit/WKBase.h>
@@ -40,7 +41,6 @@ class IntPoint;
 }
 
 namespace WebKit {
-class WebContextMenuItem;
 class WebContextMenuItemData;
 class WebPageProxy;
 }
@@ -51,8 +51,7 @@ class ContextMenuClient {
 public:
     virtual ~ContextMenuClient() { }
 
-    virtual bool getContextMenuFromProposedMenu(WebKit::WebPageProxy&, const Vector<Ref<WebKit::WebContextMenuItem>>& /* proposedMenu */, Vector<Ref<WebKit::WebContextMenuItem>>& /* customMenu */, const WebKit::WebHitTestResultData&, API::Object* /* userData */) { return false; }
-    virtual bool getContextMenuFromProposedMenuAsync(WebKit::WebPageProxy&, const Vector<Ref<WebKit::WebContextMenuItem>>& /* proposedMenu */, WebKit::WebContextMenuListenerProxy*, const WebKit::WebHitTestResultData&, API::Object* /* userData */) { return false; }
+    virtual void getContextMenuFromProposedMenu(WebKit::WebPageProxy&, Vector<Ref<WebKit::WebContextMenuItem>>&& proposedMenu, WebKit::WebContextMenuListenerProxy& listener, const WebKit::WebHitTestResultData&, API::Object* /* userData */) { listener.useContextMenuItems(WTFMove(proposedMenu)); }
     virtual void customContextMenuItemSelected(WebKit::WebPageProxy&, const WebKit::WebContextMenuItemData&) { }
     virtual bool showContextMenu(WebKit::WebPageProxy&, const WebCore::IntPoint&, const Vector<Ref<WebKit::WebContextMenuItem>>&) { return false; }
     virtual bool hideContextMenu(WebKit::WebPageProxy&) { return false; }

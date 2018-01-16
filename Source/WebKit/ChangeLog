@@ -1,3 +1,32 @@
+2018-01-16  Alex Christensen  <achristensen@webkit.org>
+
+        Merge sync and async code paths for getting context menus
+        https://bugs.webkit.org/show_bug.cgi?id=181423
+
+        Reviewed by Joseph Pecoraro.
+
+        What a mess.  We had a code path for asynchronous context menu generation and a different one for synchronous context menu generation.
+        This makes it so there is just one.  At the API level we see if there is an asynchronous delegate to call, then synchronous.
+        There is a subtle theoretical change in behaviour because m_page.contextMenuClient().showContextMenu is now called for the asynchronous
+        case and it wasn't before, but the one C API client that uses this has nullptr as it's WKPageShowContextMenuCallback, so we won't break anything!
+
+        * UIProcess/API/APIContextMenuClient.h:
+        (API::ContextMenuClient::getContextMenuFromProposedMenu):
+        (API::ContextMenuClient::getContextMenuFromProposedMenuAsync): Deleted.
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetPageContextMenuClient):
+        * UIProcess/API/glib/WebKitContextMenuClient.cpp:
+        * UIProcess/WebContextMenuProxy.h:
+        * UIProcess/gtk/WebContextMenuProxyGtk.cpp:
+        (WebKit::WebContextMenuProxyGtk::show):
+        (WebKit::WebContextMenuProxyGtk::showContextMenuWithItems):
+        * UIProcess/gtk/WebContextMenuProxyGtk.h:
+        * UIProcess/mac/WebContextMenuProxyMac.h:
+        * UIProcess/mac/WebContextMenuProxyMac.mm:
+        (WebKit::WebContextMenuProxyMac::showContextMenuWithItems):
+        (WebKit::WebContextMenuProxyMac::showContextMenu):
+        * UIProcess/wpe/WebContextMenuProxyWPE.h:
+
 2018-01-16  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Don't link WebKit target directly to JavaScriptCore

@@ -36,7 +36,7 @@ public:
         return adoptRef(*new WebContextMenuProxyWPE(WTFMove(context), userData));
     }
 
-    void showContextMenuWithItems(const Vector<Ref<WebContextMenuItem>>&) final { }
+    void showContextMenuWithItems(Vector<Ref<WebContextMenuItem>>&&) final { }
     void show() final { };
 
 private:
