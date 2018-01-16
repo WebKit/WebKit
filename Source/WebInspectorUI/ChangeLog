@@ -1,5 +1,16 @@
 2018-01-16  Nikita Vasilyev  <nvasilyev@apple.com>
 
+        Web Inspector: Styles: pressing down key should select first item from completion list when focusing on empty value
+        https://bugs.webkit.org/show_bug.cgi?id=181633
+        <rdar://problem/36501797>
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Views/SpreadsheetTextField.js:
+        (WI.SpreadsheetTextField.prototype._updateCompletions):
+
+2018-01-16  Nikita Vasilyev  <nvasilyev@apple.com>
+
         Web Inspector: Styles Redesign: Long value causes bad wrapping
         https://bugs.webkit.org/show_bug.cgi?id=181618
         <rdar://problem/36485175>
