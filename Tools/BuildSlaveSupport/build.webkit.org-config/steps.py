@@ -671,11 +671,11 @@ class RunGLibAPITests(shell.Test):
 
 
 class RunGtkAPITests(RunGLibAPITests):
-    command = ["python", "./Tools/Scripts/run-gtk-tests", "--verbose", WithProperties("--%(configuration)s")]
+    command = ["python", "./Tools/Scripts/run-gtk-tests", WithProperties("--%(configuration)s")]
 
 
 class RunWPEAPITests(RunGLibAPITests):
-    command = ["python", "./Tools/Scripts/run-wpe-tests", "--verbose", WithProperties("--%(configuration)s")]
+    command = ["python", "./Tools/Scripts/run-wpe-tests", WithProperties("--%(configuration)s")]
 
 
 class RunWebKit1Tests(RunWebKitTests):
