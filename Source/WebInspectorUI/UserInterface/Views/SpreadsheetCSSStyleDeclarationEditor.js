@@ -224,6 +224,7 @@ WI.SpreadsheetCSSStyleDeclarationEditor = class SpreadsheetCSSStyleDeclarationEd
     spreadsheetStylePropertyRemoved(propertyView)
     {
         this._propertyViews.remove(propertyView);
+        this.updateLayout();
     }
 
     applyFilter(filterText)
