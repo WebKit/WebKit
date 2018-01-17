@@ -109,9 +109,6 @@ void GraphicsContext::restorePlatformState()
 {
     ASSERT(hasPlatformContext());
     Cairo::restore(*platformContext());
-
-    Cairo::State::setShadowValues(*platformContext(), FloatSize { m_state.shadowBlur, m_state.shadowBlur },
-        m_state.shadowOffset, m_state.shadowColor, m_state.shadowsIgnoreTransforms);
 }
 
 // Draws a filled rectangle with a stroked border.
@@ -142,7 +139,7 @@ void GraphicsContext::drawNativeImage(const NativeImagePtr& image, const FloatSi
     }
 
     ASSERT(hasPlatformContext());
-    Cairo::drawNativeImage(*platformContext(), image.get(), destRect, srcRect, compositeOperator, blendMode, orientation, *this);
+    Cairo::drawNativeImage(*platformContext(), image.get(), destRect, srcRect, compositeOperator, blendMode, orientation, Cairo::ShadowState(state()), *this);
 }
 
 // This is only used to draw borders, so we should not draw shadows.
@@ -191,7 +188,8 @@ void GraphicsContext::fillPath(const Path& path)
     }
 
     ASSERT(hasPlatformContext());
-    Cairo::fillPath(*platformContext(), path, Cairo::FillSource(state()), *this);
+    auto& state = this->state();
+    Cairo::fillPath(*platformContext(), path, Cairo::FillSource(state), Cairo::ShadowState(state), *this);
 }
 
 void GraphicsContext::strokePath(const Path& path)
@@ -205,7 +203,8 @@ void GraphicsContext::strokePath(const Path& path)
     }
 
     ASSERT(hasPlatformContext());
-    Cairo::strokePath(*platformContext(), path, Cairo::StrokeSource(state()), *this);
+    auto& state = this->state();
+    Cairo::strokePath(*platformContext(), path, Cairo::StrokeSource(state), Cairo::ShadowState(state), *this);
 }
 
 void GraphicsContext::fillRect(const FloatRect& rect)
@@ -219,7 +218,8 @@ void GraphicsContext::fillRect(const FloatRect& rect)
     }
 
     ASSERT(hasPlatformContext());
-    Cairo::fillRect(*platformContext(), rect, Cairo::FillSource(state()), *this);
+    auto& state = this->state();
+    Cairo::fillRect(*platformContext(), rect, Cairo::FillSource(state), Cairo::ShadowState(state), *this);
 }
 
 void GraphicsContext::fillRect(const FloatRect& rect, const Color& color)
@@ -233,7 +233,7 @@ void GraphicsContext::fillRect(const FloatRect& rect, const Color& color)
     }
 
     ASSERT(hasPlatformContext());
-    Cairo::fillRect(*platformContext(), rect, color, hasShadow(), *this);
+    Cairo::fillRect(*platformContext(), rect, color, Cairo::ShadowState(state()), *this);
 }
 
 void GraphicsContext::clip(const FloatRect& rect)
@@ -451,31 +451,17 @@ void GraphicsContext::setCTM(const AffineTransform& transform)
     Cairo::State::setCTM(*platformContext(), transform);
 }
 
-void GraphicsContext::setPlatformShadow(const FloatSize& offset, float blur, const Color& color)
+void GraphicsContext::setPlatformShadow(const FloatSize& offset, float, const Color&)
 {
-    if (paintingDisabled())
-        return;
-
-    FloatSize adjustedOffset = offset;
     if (m_state.shadowsIgnoreTransforms) {
         // Meaning that this graphics context is associated with a CanvasRenderingContext
         // We flip the height since CG and HTML5 Canvas have opposite Y axis
-        adjustedOffset.setHeight(-offset.height());
-        m_state.shadowOffset = adjustedOffset;
+        m_state.shadowOffset = { offset.width(), -offset.height() };
     }
-
-    ASSERT(hasPlatformContext());
-    Cairo::State::setShadowValues(*platformContext(), FloatSize { blur, blur },
-        adjustedOffset, color, m_state.shadowsIgnoreTransforms);
 }
 
 void GraphicsContext::clearPlatformShadow()
 {
-    if (paintingDisabled())
-        return;
-
-    ASSERT(hasPlatformContext());
-    Cairo::State::clearShadow(*platformContext());
 }
 
 void GraphicsContext::beginPlatformTransparencyLayer(float opacity)
@@ -526,7 +512,8 @@ void GraphicsContext::strokeRect(const FloatRect& rect, float lineWidth)
     }
 
     ASSERT(hasPlatformContext());
-    Cairo::strokeRect(*platformContext(), rect, lineWidth, Cairo::StrokeSource(state()), *this);
+    auto& state = this->state();
+    Cairo::strokeRect(*platformContext(), rect, lineWidth, Cairo::StrokeSource(state), Cairo::ShadowState(state), *this);
 }
 
 void GraphicsContext::setLineCap(LineCap lineCap)
@@ -667,7 +654,7 @@ void GraphicsContext::platformFillRoundedRect(const FloatRoundedRect& rect, cons
         return;
 
     ASSERT(hasPlatformContext());
-    Cairo::fillRoundedRect(*platformContext(), rect, color, hasShadow(), *this);
+    Cairo::fillRoundedRect(*platformContext(), rect, color, Cairo::ShadowState(state()), *this);
 }
 
 void GraphicsContext::fillRectWithRoundedHole(const FloatRect& rect, const FloatRoundedRect& roundedHoleRect, const Color& color)
@@ -682,7 +669,7 @@ void GraphicsContext::fillRectWithRoundedHole(const FloatRect& rect, const Float
 
     ASSERT(hasPlatformContext());
     auto& state = this->state();
-    Cairo::fillRectWithRoundedHole(*platformContext(), rect, roundedHoleRect, Cairo::FillSource(state), Cairo::ShadowBlurUsage(state), *this);
+    Cairo::fillRectWithRoundedHole(*platformContext(), rect, roundedHoleRect, Cairo::FillSource(state), Cairo::ShadowState(state), *this);
 }
 
 void GraphicsContext::drawPattern(Image& image, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, CompositeOperator compositeOperator, BlendMode blendMode)

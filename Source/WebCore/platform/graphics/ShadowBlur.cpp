@@ -169,12 +169,13 @@ static float radiusToLegacyRadius(float radius)
 }
 #endif
 
-ShadowBlur::ShadowBlur(const FloatSize& radius, const FloatSize& offset, const Color& color)
+ShadowBlur::ShadowBlur() = default;
+
+ShadowBlur::ShadowBlur(const FloatSize& radius, const FloatSize& offset, const Color& color, bool shadowsIgnoreTransforms)
     : m_color(color)
     , m_blurRadius(radius)
     , m_offset(offset)
-    , m_layerImage(0)
-    , m_shadowsIgnoreTransforms(false)
+    , m_shadowsIgnoreTransforms(shadowsIgnoreTransforms)
 {
     updateShadowBlurValues();
 }
@@ -193,13 +194,6 @@ ShadowBlur::ShadowBlur(const GraphicsContextState& state)
     }
 #endif
     updateShadowBlurValues();
-}
-
-ShadowBlur::ShadowBlur()
-    : m_type(NoShadow)
-    , m_blurRadius(0, 0)
-    , m_shadowsIgnoreTransforms(false)
-{
 }
 
 void ShadowBlur::setShadowValues(const FloatSize& radius, const FloatSize& offset, const Color& color, bool ignoreTransforms)

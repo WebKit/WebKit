@@ -1,3 +1,16 @@
+2018-01-17  Zan Dobersek  <zdobersek@igalia.com>
+
+        [Cairo] Use one-time ShadowBlur objects when performing shadowing
+        https://bugs.webkit.org/show_bug.cgi?id=181720
+
+        Reviewed by Carlos Garcia Campos.
+
+        * Shared/cairo/ShareableBitmapCairo.cpp:
+        (WebKit::ShareableBitmap::paint):
+        Adjust the PlatformContextCairo::drawSurfaceToContext() invocation.
+        * WebProcess/WebCoreSupport/gtk/WebDragClientGtk.cpp:
+        (WebKit::convertCairoSurfaceToShareableBitmap): Ditto.
+
 2018-01-16  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [CMake] Remove WebCoreDerivedSources library target

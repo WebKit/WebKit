@@ -40,6 +40,7 @@ struct GraphicsContextState;
 namespace Cairo {
 struct FillSource;
 struct StrokeSource;
+struct ShadowState;
 }
 
 // Much like PlatformContextSkia in the Skia port, this class holds information that
@@ -59,7 +60,6 @@ public:
     GraphicsContextPlatformPrivate* graphicsContextPrivate() { return m_graphicsContextPrivate; }
     void setGraphicsContextPrivate(GraphicsContextPlatformPrivate* graphicsContextPrivate) { m_graphicsContextPrivate = graphicsContextPrivate; }
 
-    ShadowBlur& shadowBlur() { return m_shadowBlur; }
     Vector<float>& layers() { return m_layers; }
 
     void save();
@@ -68,7 +68,7 @@ public:
     float globalAlpha() const;
 
     void pushImageMask(cairo_surface_t*, const FloatRect&);
-    WEBCORE_EXPORT void drawSurfaceToContext(cairo_surface_t*, const FloatRect& destRect, const FloatRect& srcRect, GraphicsContext&);
+    WEBCORE_EXPORT void drawSurfaceToContext(cairo_surface_t*, const FloatRect& destRect, const FloatRect& srcRect, const Cairo::ShadowState&, GraphicsContext&);
 
     void setImageInterpolationQuality(InterpolationQuality);
     InterpolationQuality imageInterpolationQuality() const;
@@ -93,9 +93,6 @@ private:
     State* m_state;
     WTF::Vector<State> m_stateStack;
 
-    // GraphicsContext is responsible for managing the state of the ShadowBlur,
-    // so it does not need to be on the state stack.
-    ShadowBlur m_shadowBlur;
     // Transparency layers.
     Vector<float> m_layers;
 };

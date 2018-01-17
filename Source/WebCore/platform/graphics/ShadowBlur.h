@@ -50,9 +50,9 @@ public:
         BlurShadow
     };
 
-    ShadowBlur(const FloatSize& radius, const FloatSize& offset, const Color&);
-    ShadowBlur(const GraphicsContextState&);
     ShadowBlur();
+    ShadowBlur(const FloatSize& radius, const FloatSize& offset, const Color&, bool shadowsIgnoreTransforms = false);
+    ShadowBlur(const GraphicsContextState&);
 
     void setShadowValues(const FloatSize&, const FloatSize& , const Color&, bool ignoreTransforms = false);
 
@@ -100,20 +100,20 @@ private:
     IntSize blurredEdgeSize() const;
     
     
-    ShadowType m_type;
+    ShadowType m_type { NoShadow };
 
     Color m_color;
     FloatSize m_blurRadius;
     FloatSize m_offset;
 
-    ImageBuffer* m_layerImage; // Buffer to where the temporary shadow will be drawn to.
+    ImageBuffer* m_layerImage { nullptr }; // Buffer to where the temporary shadow will be drawn to.
 
     FloatRect m_sourceRect; // Sub-rect of m_layerImage that contains the shadow pixels.
     FloatPoint m_layerOrigin; // Top-left corner of the (possibly clipped) bounding rect to draw the shadow to.
     FloatSize m_layerSize; // Size of m_layerImage pixels that need blurring.
     FloatSize m_layerContextTranslation; // Translation to apply to m_layerContext for the shadow to be correctly clipped.
 
-    bool m_shadowsIgnoreTransforms;
+    bool m_shadowsIgnoreTransforms { false };
 };
 
 } // namespace WebCore
