@@ -1760,3 +1760,7 @@ webkit.org/b/180675 accessibility/mac/search-field-cancel-button.html [ Pass Fai
 webkit.org/b/181098 fast/workers/worker-terminate.html [ Pass Timeout ]
 
 webkit.org/b/181502 swipe/pushstate-with-manual-scrollrestoration.html [ Failure ]
+
+# A lot of GPU hardware simply crashes with this test, since it allocates a lot of memory.
+# It is enabled on systems that instead return GL_OUT_OF_MEMORY.
+[ ElCapitan Sierra ] fast/canvas/webgl/simulated-vertexAttrib0-invalid-indicies.html [ Skip ]

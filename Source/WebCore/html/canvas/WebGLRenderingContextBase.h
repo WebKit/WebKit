@@ -792,8 +792,8 @@ protected:
 
     // Helpers for simulating vertexAttrib0.
     void initVertexAttrib0();
-    bool simulateVertexAttrib0(GC3Dsizei numVertex);
-    bool validateSimulatedVertexAttrib0(GC3Dsizei numVertex);
+    std::optional<bool> simulateVertexAttrib0(GC3Duint numVertex);
+    bool validateSimulatedVertexAttrib0(GC3Duint numVertex);
     void restoreStatesAfterVertexAttrib0Simulation();
 
     void dispatchContextLostEvent();
