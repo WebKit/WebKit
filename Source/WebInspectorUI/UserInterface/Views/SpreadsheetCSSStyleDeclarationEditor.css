@@ -51,6 +51,7 @@
 .spreadsheet-style-declaration-editor .value.editing {
     display: inline-block;
     margin-right: 3px;
+    max-width: 100%;
 }
 
 .spreadsheet-style-declaration-editor.no-properties {
