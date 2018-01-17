@@ -1,5 +1,17 @@
 2018-01-16  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r226942. rdar://problem/36567945
+
+    2018-01-14  Saam Barati  <sbarati@apple.com>
+
+            Unreviewed. r226928 broke the CLOOP build. This patch fixes the CLOOP build.
+
+            * bytecode/CallLinkStatus.cpp:
+            (JSC::CallLinkStatus::computeFromLLInt):
+            (JSC::CallLinkStatus::computeExitSiteData):
+
+2018-01-16  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r226928. rdar://problem/36567945
 
     2018-01-12  Saam Barati  <sbarati@apple.com>

@@ -64,8 +64,6 @@ CallLinkStatus CallLinkStatus::computeFromLLInt(const ConcurrentJSLocker&, CodeB
         // takes slow path.
         return takesSlowPath();
     }
-#else
-    UNUSED_PARAM(locker);
 #endif
 
     Instruction* instruction = profiledBlock->instructions().begin() + bytecodeIndex;
@@ -115,7 +113,6 @@ CallLinkStatus::ExitSiteData CallLinkStatus::computeExitSiteData(CodeBlock* prof
     exitSiteData.badFunction =
         codeBlock->hasExitSite(locker, DFG::FrequentExitSite(bytecodeIndex, BadCell));
 #else
-    UNUSED_PARAM(locker);
     UNUSED_PARAM(profiledBlock);
     UNUSED_PARAM(bytecodeIndex);
 #endif
