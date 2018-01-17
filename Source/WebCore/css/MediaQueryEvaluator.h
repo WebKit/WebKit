@@ -28,6 +28,7 @@
 #pragma once
 
 #include "MediaQueryExpression.h"
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
@@ -74,7 +75,7 @@ public:
 
 private:
     String m_mediaType;
-    Frame* m_frame { nullptr }; // not owned
+    WeakPtr<Document> m_document;
     const RenderStyle* m_style { nullptr };
     bool m_fallbackResult { false };
 };

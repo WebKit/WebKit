@@ -2361,6 +2361,8 @@ void Document::prepareForDestruction()
     if (m_domWindow && m_frame)
         m_domWindow->willDetachDocumentFromFrame();
 
+    styleScope().clearResolver();
+
     if (hasLivingRenderTree())
         destroyRenderTree();
 
