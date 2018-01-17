@@ -103,4 +103,39 @@ TEST(WKBackForwardList, CanNotGoBackAfterRestoringEmptySessionState)
     EXPECT_EQ((NSUInteger)0, newList.forwardList.count);
 }
 
+static bool done;
+static size_t navigations;
+
+@interface AsyncPolicyDecisionDelegate : NSObject <WKNavigationDelegate, WKUIDelegate>
+@end
+
+@implementation AsyncPolicyDecisionDelegate
+
+- (void)webView:(WKWebView *)webView didFinishNavigation:(null_unspecified WKNavigation *)navigation
+{
+    if (navigations++)
+        done = true;
+}
+
+- (void)webView:(WKWebView *)webView decidePolicyForNavigationAction:(WKNavigationAction *)navigationAction decisionHandler:(void (^)(WKNavigationActionPolicy))decisionHandler
+{
+    dispatch_async(dispatch_get_main_queue(), ^{
+        decisionHandler(WKNavigationActionPolicyAllow);
+    });
+}
+
+@end
+
+TEST(WKBackForwardList, WindowLocationAsyncPolicyDecision)
+{
+    NSURL *simple = [[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+    NSURL *simple2 = [[NSBundle mainBundle] URLForResource:@"simple2" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+    auto webView = adoptNS([[WKWebView alloc] init]);
+    auto delegate = adoptNS([[AsyncPolicyDecisionDelegate alloc] init]);
+    [webView setNavigationDelegate:delegate.get()];
+    [webView loadHTMLString:@"<script>window.location='simple.html'</script>" baseURL:simple2];
+    TestWebKitAPI::Util::run(&done);
+    EXPECT_STREQ(webView.get().backForwardList.currentItem.URL.absoluteString.UTF8String, simple.absoluteString.UTF8String);
+}
+
 #endif
