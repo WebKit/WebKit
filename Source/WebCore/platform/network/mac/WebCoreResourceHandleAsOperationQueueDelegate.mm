@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -143,6 +143,7 @@ static bool scheduledWithCustomRunLoopMode(SchedulePairHashSet* pairs)
         LOG(Network, "Handle %p delegate connection:%p willSendRequest:%@ redirectResponse:non-HTTP", m_handle, connection, [newRequest description]); 
 #endif
 
+    auto protectedSelf = retainPtr(self);
     auto work = [self = self, protectedSelf = retainPtr(self), newRequest = retainPtr(newRequest), redirectResponse = retainPtr(redirectResponse)] () mutable {
         if (!m_handle) {
             m_requestResult = nullptr;
@@ -186,6 +187,7 @@ static bool scheduledWithCustomRunLoopMode(SchedulePairHashSet* pairs)
 
     LOG(Network, "Handle %p delegate connection:%p canAuthenticateAgainstProtectionSpace:%@://%@:%u realm:%@ method:%@ %@%@", m_handle, connection, [protectionSpace protocol], [protectionSpace host], [protectionSpace port], [protectionSpace realm], [protectionSpace authenticationMethod], [protectionSpace isProxy] ? @"proxy:" : @"", [protectionSpace isProxy] ? [protectionSpace proxyType] : @"");
 
+    auto protectedSelf = retainPtr(self);
     auto work = [self = self, protectedSelf = retainPtr(self), protectionSpace = retainPtr(protectionSpace)] () mutable {
         if (!m_handle) {
             m_boolResult = NO;
@@ -206,6 +208,7 @@ static bool scheduledWithCustomRunLoopMode(SchedulePairHashSet* pairs)
 
     LOG(Network, "Handle %p delegate connection:%p didReceiveResponse:%p (HTTP status %d, reported MIMEType '%s')", m_handle, connection, r, [r respondsToSelector:@selector(statusCode)] ? [(id)r statusCode] : 0, [[r MIMEType] UTF8String]);
 
+    auto protectedSelf = retainPtr(self);
     auto work = [self = self, protectedSelf = retainPtr(self), r = retainPtr(r), connection = retainPtr(connection)] () mutable {
         RefPtr<ResourceHandle> protectedHandle(m_handle);
         if (!m_handle || !m_handle->client()) {
@@ -325,6 +328,7 @@ static bool scheduledWithCustomRunLoopMode(SchedulePairHashSet* pairs)
 
     LOG(Network, "Handle %p delegate connection:%p willCacheResponse:%p", m_handle, connection, cachedResponse);
 
+    auto protectedSelf = retainPtr(self);
     auto work = [self = self, protectedSelf = retainPtr(self), cachedResponse = retainPtr(cachedResponse)] () mutable {
         if (!m_handle || !m_handle->client()) {
             m_cachedResponseResult = nullptr;
