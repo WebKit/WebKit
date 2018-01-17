@@ -483,6 +483,12 @@ void Caches::removeCacheEntry(const NetworkCache::Key& key)
 
 void Caches::clearMemoryRepresentation()
 {
+    if (!m_isInitialized) {
+        ASSERT(m_caches.isEmpty());
+        // m_storage might not be null in case Caches is being initialized. This is fine as nullify it below is a memory optimization.
+        return;
+    }
+
     makeDirty();
     m_caches.clear();
     m_isInitialized = false;
