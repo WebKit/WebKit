@@ -1,3 +1,12 @@
+2018-01-17  Ryan Haddad  <ryanhaddad@apple.com>
+
+        [iOS] Re-enable LayoutTests in the storage/indexeddb directory
+        https://bugs.webkit.org/show_bug.cgi?id=180958
+
+        Unreviewed test gardening.
+
+        * platform/ios/TestExpectations:
+
 2018-01-17  Antti Koivisto  <antti@apple.com>
 
         REGRESSION (r226385?): Crash in com.apple.WebCore: WebCore::MediaQueryEvaluator::evaluate const + 32
