@@ -111,6 +111,138 @@ static TransferFunction transferFunctionFromString(CFStringRef string)
     return TransferFunction::Unknown;
 }
 
+struct GLfloatColor {
+    union {
+        struct {
+            GLfloat r;
+            GLfloat g;
+            GLfloat b;
+        } rgb;
+        struct {
+            GLfloat y;
+            GLfloat cb;
+            GLfloat cr;
+        } ycbcr;
+    };
+
+    constexpr GLfloatColor(GLfloat r, GLfloat g, GLfloat b)
+        : rgb { r, g, b }
+    {
+    }
+
+    constexpr GLfloatColor(int r, int g, int b, GLfloat scale)
+        : rgb { r / scale, g / scale, b / scale}
+    {
+    }
+
+    static constexpr GLfloat abs(GLfloat value)
+    {
+        return value >= 0 ? value : -value;
+    }
+
+    constexpr bool isApproximatelyEqualTo(const GLfloatColor& color, GLfloat maxDelta) const
+    {
+        return abs(rgb.r - color.rgb.r) < abs(maxDelta)
+            && abs(rgb.g - color.rgb.g) < abs(maxDelta)
+            && abs(rgb.b - color.rgb.b) < abs(maxDelta);
+    }
+};
+
+struct GLfloatColors {
+    static constexpr GLfloatColor black   {0, 0, 0};
+    static constexpr GLfloatColor white   {1, 1, 1};
+    static constexpr GLfloatColor red     {1, 0, 0};
+    static constexpr GLfloatColor green   {0, 1, 0};
+    static constexpr GLfloatColor blue    {0, 0, 1};
+    static constexpr GLfloatColor cyan    {0, 1, 1};
+    static constexpr GLfloatColor magenta {1, 0, 1};
+    static constexpr GLfloatColor yellow  {1, 1, 0};
+};
+
+struct YCbCrMatrix {
+    union {
+        GLfloat rows[4][4];
+        GLfloat data[16];
+    };
+
+    constexpr YCbCrMatrix(PixelRange, GLfloat cbCoefficient, GLfloat crCoefficient);
+
+    operator Vector<GLfloat>() const
+    {
+        Vector<GLfloat> vector;
+        vector.append(data, 16);
+        return vector;
+    }
+
+    constexpr GLfloatColor operator*(const GLfloatColor&) const;
+};
+
+constexpr YCbCrMatrix::YCbCrMatrix(PixelRange range, GLfloat cbCoefficient, GLfloat crCoefficient)
+    : rows { }
+{
+    // The conversion from YCbCr -> RGB generally takes the form:
+    // Y = Kr * R + Kg * G + Kb * B
+    // Cb = (B - Y) / (2 * (1 - Kb))
+    // Cr = (R - Y) / (2 * (1 - Kr))
+    // Where the values of Kb and Kr are defined in a specification and Kg is derived from: Kr + Kg + Kb = 1
+    //
+    // Solving the above equations for R, B, and G derives the following:
+    // R = Y + (2 * (1 - Kr)) * Cr
+    // B = Y + (2 * (1 - Kb)) * Cb
+    // G = Y - (2 * (1 - Kb)) * (Kb / Kg) * Cb - ((1 - Kr) * 2) * (Kr / Kg) * Cr
+    //
+    // When the color values are Video range, Y has a range of [16, 235] with a width of 219, and Cb & Cr have
+    // a range of [16, 240] with a width of 224. When the color values are Full range, Y, Cb, and Cr all have
+    // a range of [0, 255] with a width of 256.
+
+    GLfloat cgCoefficient = 1 - cbCoefficient - crCoefficient;
+    GLfloat yScalingFactor = range == PixelRange::Full ? 1.f : 255.f / 219.f;
+    GLfloat cbcrScalingFactor = range == PixelRange::Full ? 1.f : 255.f / 224.f;
+
+    rows[0][0] = yScalingFactor;
+    rows[0][1] = 0;
+    rows[0][2] = cbcrScalingFactor * 2 * (1 - crCoefficient);
+    rows[0][3] = 0;
+
+    rows[1][0] = yScalingFactor;
+    rows[1][1] = -cbcrScalingFactor * 2 * (1 - cbCoefficient) * (cbCoefficient / cgCoefficient);
+    rows[1][2] = -cbcrScalingFactor * 2 * (1 - crCoefficient) * (crCoefficient / cgCoefficient);
+    rows[1][3] = 0;
+
+    rows[2][0] = yScalingFactor;
+    rows[2][1] = cbcrScalingFactor * 2 * (1 - cbCoefficient);
+    rows[2][2] = 0;
+    rows[2][3] = 0;
+
+    rows[3][0] = 0;
+    rows[3][1] = 0;
+    rows[3][2] = 0;
+    rows[3][3] = 1;
+
+    // Configure the final column of the matrix to convert Cb and Cr to [-128, 128]
+    // and, in the case of video-range, to convert Y to [16, 240]:
+    for (auto rowNumber = 0; rowNumber < 3; ++rowNumber) {
+        auto& row = rows[rowNumber];
+        auto& x = row[0];
+        auto& y = row[1];
+        auto& z = row[2];
+        auto& w = row[3];
+
+        w -= (y + z) * 128 / 255;
+        if (range == PixelRange::Video)
+            w -= x * 16 / 255;
+    }
+}
+
+constexpr GLfloatColor YCbCrMatrix::operator*(const GLfloatColor& color) const
+{
+    return GLfloatColor(
+        rows[0][0] * color.rgb.r + rows[0][1] * color.rgb.g + rows[0][2] * color.rgb.b + rows[0][3],
+        rows[1][0] * color.rgb.r + rows[1][1] * color.rgb.g + rows[1][2] * color.rgb.b + rows[1][3],
+        rows[2][0] * color.rgb.r + rows[2][1] * color.rgb.g + rows[2][2] * color.rgb.b + rows[2][3]
+    );
+}
+
 static const Vector<GLfloat> YCbCrToRGBMatrixForRangeAndTransferFunction(PixelRange range, TransferFunction transferFunction)
 {
     using MapKey = std::pair<PixelRange, TransferFunction>;
@@ -118,35 +250,108 @@ static const Vector<GLfloat> YCbCrToRGBMatrixForRangeAndTransferFunction(PixelRa
 
     static NeverDestroyed<MatrixMap> matrices;
     static dispatch_once_t onceToken;
+
+    // Matrices are derived from the components in the ITU R.601 rev 4 specification
+    // https://www.itu.int/rec/R-REC-BT.601
+    constexpr static YCbCrMatrix r601VideoMatrix { PixelRange::Video, 0.114f, 0.299f };
+    constexpr static YCbCrMatrix r601FullMatrix { PixelRange::Full, 0.114f, 0.299f };
+
+    static_assert((r601VideoMatrix * GLfloatColor(16,  128, 128, 255)).isApproximatelyEqualTo(GLfloatColors::black,   1.5f / 255.f), "r.610 video matrix does not produce black color");
+    static_assert((r601VideoMatrix * GLfloatColor(235, 128, 128, 255)).isApproximatelyEqualTo(GLfloatColors::white,   1.5f / 255.f), "r.610 video matrix does not produce white color");
+    static_assert((r601VideoMatrix * GLfloatColor(81,  90,  240, 255)).isApproximatelyEqualTo(GLfloatColors::red,     1.5f / 255.f), "r.610 video matrix does not produce red color");
+    static_assert((r601VideoMatrix * GLfloatColor(145, 54,  34,  255)).isApproximatelyEqualTo(GLfloatColors::green,   1.5f / 255.f), "r.610 video matrix does not produce green color");
+    static_assert((r601VideoMatrix * GLfloatColor(41,  240, 110, 255)).isApproximatelyEqualTo(GLfloatColors::blue,    1.5f / 255.f), "r.610 video matrix does not produce blue color");
+    static_assert((r601VideoMatrix * GLfloatColor(210, 16,  146, 255)).isApproximatelyEqualTo(GLfloatColors::yellow,  1.5f / 255.f), "r.610 video matrix does not produce yellow color");
+    static_assert((r601VideoMatrix * GLfloatColor(106, 202, 222, 255)).isApproximatelyEqualTo(GLfloatColors::magenta, 1.5f / 255.f), "r.610 video matrix does not produce magenta color");
+    static_assert((r601VideoMatrix * GLfloatColor(170, 166, 16,  255)).isApproximatelyEqualTo(GLfloatColors::cyan,    1.5f / 255.f), "r.610 video matrix does not produce cyan color");
+
+    static_assert((r601FullMatrix * GLfloatColor(0,   128, 128, 255)).isApproximatelyEqualTo(GLfloatColors::black,   1.5f / 255.f), "r.610 full matrix does not produce black color");
+    static_assert((r601FullMatrix * GLfloatColor(255, 128, 128, 255)).isApproximatelyEqualTo(GLfloatColors::white,   1.5f / 255.f), "r.610 full matrix does not produce white color");
+    static_assert((r601FullMatrix * GLfloatColor(76,  85,  255, 255)).isApproximatelyEqualTo(GLfloatColors::red,     1.5f / 255.f), "r.610 full matrix does not produce red color");
+    static_assert((r601FullMatrix * GLfloatColor(150, 44,  21,  255)).isApproximatelyEqualTo(GLfloatColors::green,   1.5f / 255.f), "r.610 full matrix does not produce green color");
+    static_assert((r601FullMatrix * GLfloatColor(29,  255, 107, 255)).isApproximatelyEqualTo(GLfloatColors::blue,    1.5f / 255.f), "r.610 full matrix does not produce blue color");
+    static_assert((r601FullMatrix * GLfloatColor(226, 0,   149, 255)).isApproximatelyEqualTo(GLfloatColors::yellow,  1.5f / 255.f), "r.610 full matrix does not produce yellow color");
+    static_assert((r601FullMatrix * GLfloatColor(105, 212, 235, 255)).isApproximatelyEqualTo(GLfloatColors::magenta, 1.5f / 255.f), "r.610 full matrix does not produce magenta color");
+    static_assert((r601FullMatrix * GLfloatColor(179, 171, 1,   255)).isApproximatelyEqualTo(GLfloatColors::cyan,    1.5f / 255.f), "r.610 full matrix does not produce cyan color");
+
+    // Matrices are derived from the components in the ITU R.709 rev 2 specification
+    // https://www.itu.int/rec/R-REC-BT.709-2-199510-S
+    constexpr static YCbCrMatrix r709VideoMatrix { PixelRange::Video, 0.0722, 0.2126 };
+    constexpr static YCbCrMatrix r709FullMatrix { PixelRange::Full, 0.0722, 0.2126 };
+
+    static_assert((r709VideoMatrix * GLfloatColor(16,  128, 128, 255)).isApproximatelyEqualTo(GLfloatColors::black,   1.5f / 255.f), "r.709 video matrix does not produce black color");
+    static_assert((r709VideoMatrix * GLfloatColor(235, 128, 128, 255)).isApproximatelyEqualTo(GLfloatColors::white,   1.5f / 255.f), "r.709 video matrix does not produce white color");
+    static_assert((r709VideoMatrix * GLfloatColor(63,  102, 240, 255)).isApproximatelyEqualTo(GLfloatColors::red,     1.5f / 255.f), "r.709 video matrix does not produce red color");
+    static_assert((r709VideoMatrix * GLfloatColor(173, 42,  26,  255)).isApproximatelyEqualTo(GLfloatColors::green,   1.5f / 255.f), "r.709 video matrix does not produce green color");
+    static_assert((r709VideoMatrix * GLfloatColor(32,  240, 118, 255)).isApproximatelyEqualTo(GLfloatColors::blue,    1.5f / 255.f), "r.709 video matrix does not produce blue color");
+    static_assert((r709VideoMatrix * GLfloatColor(219, 16,  138, 255)).isApproximatelyEqualTo(GLfloatColors::yellow,  1.5f / 255.f), "r.709 video matrix does not produce yellow color");
+    static_assert((r709VideoMatrix * GLfloatColor(78,  214, 230, 255)).isApproximatelyEqualTo(GLfloatColors::magenta, 1.5f / 255.f), "r.709 video matrix does not produce magenta color");
+    static_assert((r709VideoMatrix * GLfloatColor(188, 154, 16,  255)).isApproximatelyEqualTo(GLfloatColors::cyan,    1.5f / 255.f), "r.709 video matrix does not produce cyan color");
+
+    static_assert((r709FullMatrix * GLfloatColor(0,   128, 128, 255)).isApproximatelyEqualTo(GLfloatColors::black,   1.5f / 255.f), "r.709 full matrix does not produce black color");
+    static_assert((r709FullMatrix * GLfloatColor(255, 128, 128, 255)).isApproximatelyEqualTo(GLfloatColors::white,   1.5f / 255.f), "r.709 full matrix does not produce white color");
+    static_assert((r709FullMatrix * GLfloatColor(54,  99,  256, 255)).isApproximatelyEqualTo(GLfloatColors::red,     1.5f / 255.f), "r.709 full matrix does not produce red color");
+    static_assert((r709FullMatrix * GLfloatColor(182, 30,  12,  255)).isApproximatelyEqualTo(GLfloatColors::green,   1.5f / 255.f), "r.709 full matrix does not produce green color");
+    static_assert((r709FullMatrix * GLfloatColor(18,  256, 116, 255)).isApproximatelyEqualTo(GLfloatColors::blue,    1.5f / 255.f), "r.709 full matrix does not produce blue color");
+    static_assert((r709FullMatrix * GLfloatColor(237, 1,   140, 255)).isApproximatelyEqualTo(GLfloatColors::yellow,  1.5f / 255.f), "r.709 full matrix does not produce yellow color");
+    static_assert((r709FullMatrix * GLfloatColor(73,  226, 244, 255)).isApproximatelyEqualTo(GLfloatColors::magenta, 1.5f / 255.f), "r.709 full matrix does not produce magenta color");
+    static_assert((r709FullMatrix * GLfloatColor(201, 157, 1,   255)).isApproximatelyEqualTo(GLfloatColors::cyan,    1.5f / 255.f), "r.709 full matrix does not produce cyan color");
+
+    // Matrices are derived from the components in the ITU-R BT.2020-2 specification
+    // https://www.itu.int/rec/R-REC-BT.2020
+    constexpr static YCbCrMatrix bt2020VideoMatrix { PixelRange::Video, 0.0593, 0.2627 };
+    constexpr static YCbCrMatrix bt2020FullMatrix { PixelRange::Full, 0.0593, 0.2627 };
+
+    static_assert((bt2020VideoMatrix * GLfloatColor(16,  128, 128, 255)).isApproximatelyEqualTo(GLfloatColors::black,   1.5f / 255.f), "bt.2020 video matrix does not produce black color");
+    static_assert((bt2020VideoMatrix * GLfloatColor(235, 128, 128, 255)).isApproximatelyEqualTo(GLfloatColors::white,   1.5f / 255.f), "bt.2020 video matrix does not produce white color");
+    static_assert((bt2020VideoMatrix * GLfloatColor(74,  97,  240, 255)).isApproximatelyEqualTo(GLfloatColors::red,     1.5f / 255.f), "bt.2020 video matrix does not produce red color");
+    static_assert((bt2020VideoMatrix * GLfloatColor(164, 47,  25,  255)).isApproximatelyEqualTo(GLfloatColors::green,   1.5f / 255.f), "bt.2020 video matrix does not produce green color");
+    static_assert((bt2020VideoMatrix * GLfloatColor(29,  240, 119, 255)).isApproximatelyEqualTo(GLfloatColors::blue,    1.5f / 255.f), "bt.2020 video matrix does not produce blue color");
+    static_assert((bt2020VideoMatrix * GLfloatColor(222, 16,  137, 255)).isApproximatelyEqualTo(GLfloatColors::yellow,  1.5f / 255.f), "bt.2020 video matrix does not produce yellow color");
+    static_assert((bt2020VideoMatrix * GLfloatColor(87,  209, 231, 255)).isApproximatelyEqualTo(GLfloatColors::magenta, 1.5f / 255.f), "bt.2020 video matrix does not produce magenta color");
+    static_assert((bt2020VideoMatrix * GLfloatColor(177, 159, 16,  255)).isApproximatelyEqualTo(GLfloatColors::cyan,    1.5f / 255.f), "bt.2020 video matrix does not produce cyan color");
+
+    static_assert((bt2020FullMatrix * GLfloatColor(0,   128, 128, 255)).isApproximatelyEqualTo(GLfloatColors::black,   1.5f / 255.f), "bt.2020 full matrix does not produce black color");
+    static_assert((bt2020FullMatrix * GLfloatColor(255, 128, 128, 255)).isApproximatelyEqualTo(GLfloatColors::white,   1.5f / 255.f), "bt.2020 full matrix does not produce white color");
+    static_assert((bt2020FullMatrix * GLfloatColor(67,  92,  256, 255)).isApproximatelyEqualTo(GLfloatColors::red,     1.5f / 255.f), "bt.2020 full matrix does not produce red color");
+    static_assert((bt2020FullMatrix * GLfloatColor(173, 36,  11,  255)).isApproximatelyEqualTo(GLfloatColors::green,   1.5f / 255.f), "bt.2020 full matrix does not produce green color");
+    static_assert((bt2020FullMatrix * GLfloatColor(15,  256, 118, 255)).isApproximatelyEqualTo(GLfloatColors::blue,    1.5f / 255.f), "bt.2020 full matrix does not produce blue color");
+    static_assert((bt2020FullMatrix * GLfloatColor(240, 0,   138, 255)).isApproximatelyEqualTo(GLfloatColors::yellow,  1.5f / 255.f), "bt.2020 full matrix does not produce yellow color");
+    static_assert((bt2020FullMatrix * GLfloatColor(82,  220, 245, 255)).isApproximatelyEqualTo(GLfloatColors::magenta, 1.5f / 255.f), "bt.2020 full matrix does not produce magenta color");
+    static_assert((bt2020FullMatrix * GLfloatColor(188, 164, 1,   255)).isApproximatelyEqualTo(GLfloatColors::cyan,    1.5f / 255.f), "bt.2020 full matrix does not produce cyan color");
+
+    // Matrices are derived from the components in the SMPTE 240M-1999 specification
+    // http://ieeexplore.ieee.org/document/7291461/
+    constexpr static YCbCrMatrix smpte240MVideoMatrix { PixelRange::Video, 0.087, 0.212 };
+    constexpr static YCbCrMatrix smpte240MFullMatrix { PixelRange::Full, 0.087, 0.212 };
+
+    static_assert((smpte240MVideoMatrix * GLfloatColor(16,  128, 128, 255)).isApproximatelyEqualTo(GLfloatColors::black,   1.5f / 255.f), "SMPTE 240M video matrix does not produce black color");
+    static_assert((smpte240MVideoMatrix * GLfloatColor(235, 128, 128, 255)).isApproximatelyEqualTo(GLfloatColors::white,   1.5f / 255.f), "SMPTE 240M video matrix does not produce white color");
+    static_assert((smpte240MVideoMatrix * GLfloatColor(62,  102, 240, 255)).isApproximatelyEqualTo(GLfloatColors::red,     1.5f / 255.f), "SMPTE 240M video matrix does not produce red color");
+    static_assert((smpte240MVideoMatrix * GLfloatColor(170, 42,  28,  255)).isApproximatelyEqualTo(GLfloatColors::green,   1.5f / 255.f), "SMPTE 240M video matrix does not produce green color");
+    static_assert((smpte240MVideoMatrix * GLfloatColor(35,  240, 116, 255)).isApproximatelyEqualTo(GLfloatColors::blue,    1.5f / 255.f), "SMPTE 240M video matrix does not produce blue color");
+    static_assert((smpte240MVideoMatrix * GLfloatColor(216, 16,  140, 255)).isApproximatelyEqualTo(GLfloatColors::yellow,  1.5f / 255.f), "SMPTE 240M video matrix does not produce yellow color");
+    static_assert((smpte240MVideoMatrix * GLfloatColor(81,  214, 228, 255)).isApproximatelyEqualTo(GLfloatColors::magenta, 1.5f / 255.f), "SMPTE 240M video matrix does not produce magenta color");
+    static_assert((smpte240MVideoMatrix * GLfloatColor(189, 154, 16,  255)).isApproximatelyEqualTo(GLfloatColors::cyan,    1.5f / 255.f), "SMPTE 240M video matrix does not produce cyan color");
+
+    static_assert((smpte240MFullMatrix * GLfloatColor(0,   128, 128, 255)).isApproximatelyEqualTo(GLfloatColors::black,   1.5f / 255.f), "SMPTE 240M full matrix does not produce black color");
+    static_assert((smpte240MFullMatrix * GLfloatColor(255, 128, 128, 255)).isApproximatelyEqualTo(GLfloatColors::white,   1.5f / 255.f), "SMPTE 240M full matrix does not produce white color");
+    static_assert((smpte240MFullMatrix * GLfloatColor(54,  98,  256, 255)).isApproximatelyEqualTo(GLfloatColors::red,     1.5f / 255.f), "SMPTE 240M full matrix does not produce red color");
+    static_assert((smpte240MFullMatrix * GLfloatColor(179, 30,  15,  255)).isApproximatelyEqualTo(GLfloatColors::green,   1.5f / 255.f), "SMPTE 240M full matrix does not produce green color");
+    static_assert((smpte240MFullMatrix * GLfloatColor(22,  256, 114, 255)).isApproximatelyEqualTo(GLfloatColors::blue,    1.5f / 255.f), "SMPTE 240M full matrix does not produce blue color");
+    static_assert((smpte240MFullMatrix * GLfloatColor(233, 1,   142, 255)).isApproximatelyEqualTo(GLfloatColors::yellow,  1.5f / 255.f), "SMPTE 240M full matrix does not produce yellow color");
+    static_assert((smpte240MFullMatrix * GLfloatColor(76,  226, 241, 255)).isApproximatelyEqualTo(GLfloatColors::magenta, 1.5f / 255.f), "SMPTE 240M full matrix does not produce magenta color");
+    static_assert((smpte240MFullMatrix * GLfloatColor(201, 158, 1,   255)).isApproximatelyEqualTo(GLfloatColors::cyan,    1.5f / 255.f), "SMPTE 240M full matrix does not produce cyan color");
+
     dispatch_once(&onceToken, ^{
-        // Matrices are derived from the components in the ITU R.601 rev 4 specification
-        // https://www.itu.int/rec/R-REC-BT.601
-        matrices.get().emplace(MapKey(PixelRange::Video, TransferFunction::kITU_R_601_4), Vector<GLfloat>({
-            1.164383562f,  0.0f,           1.596026786f,  -0.874202218f,
-            1.164383562f, -0.3917622901f, -0.8129676472f,  0.531667823f,
-            1.164383562f,  2.017232143f,   0.0f,          -1.085630790f,
-            0.0f,          0.0f,           0.0f,           1.0f,
-        }));
-        matrices.get().emplace(MapKey({PixelRange::Full, TransferFunction::kITU_R_601_4}), Vector<GLfloat>({
-            1.000000000f,  0.0f,           1.4075196850f, -1.012571428f,
-            1.000000000f, -0.3454911535f, -0.7169478464f,  0.533302714f,
-            1.000000000f,  1.7789763780f,  0.0f,          -0.892976378f,
-            0.0f,          0.0f,           0.0f,           1.0f,
-        }));
-        // Matrices are derived from the components in the ITU R.709 rev 2 specification
-        // https://www.itu.int/rec/R-REC-BT.709-2-199510-S
-        matrices.get().emplace(MapKey({PixelRange::Video, TransferFunction::kITU_R_709_2}), Vector<GLfloat>({
-            1.164383562f,  0.0f,           1.792741071f,  -0.972945075f,
-            1.164383562f, -0.2132486143f, -0.5329093286f,  0.301482665f,
-            1.164383562f,  2.112401786f,   0.0f,          -1.133402218f,
-            0.0f,          0.0f,           0.0f,           1.0f,
-        }));
-        matrices.get().emplace(MapKey({PixelRange::Full, TransferFunction::kITU_R_709_2}), Vector<GLfloat>({
-            1.000000000f,  0.0f,           1.5810000000f, -0.793600000f,
-            1.000000000f, -0.1880617701f, -0.4699672819f,  0.330304779f,
-            1.000000000f,  1.8629055118f,  0.0f,          -0.935105512f,
-            0.0f,          0.0f,           0.0f,           1.0f,
-        }));
+        matrices.get().emplace(MapKey(PixelRange::Video, TransferFunction::kITU_R_601_4), r601VideoMatrix);
+        matrices.get().emplace(MapKey(PixelRange::Full, TransferFunction::kITU_R_601_4), r601FullMatrix);
+        matrices.get().emplace(MapKey(PixelRange::Video, TransferFunction::kITU_R_709_2), r709VideoMatrix);
+        matrices.get().emplace(MapKey(PixelRange::Full, TransferFunction::kITU_R_709_2), r709FullMatrix);
+        matrices.get().emplace(MapKey(PixelRange::Video, TransferFunction::kITU_R_2020), bt2020VideoMatrix);
+        matrices.get().emplace(MapKey(PixelRange::Full, TransferFunction::kITU_R_2020), bt2020FullMatrix);
+        matrices.get().emplace(MapKey(PixelRange::Video, TransferFunction::kSMPTE_240M_1995), smpte240MVideoMatrix);
+        matrices.get().emplace(MapKey(PixelRange::Full, TransferFunction::kSMPTE_240M_1995), smpte240MFullMatrix);
     });
 
     // We should never be asked to handle a Pixel Format whose range value is unknown.
