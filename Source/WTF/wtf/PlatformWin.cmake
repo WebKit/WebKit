@@ -35,6 +35,8 @@ set(WTF_FORWARDING_HEADERS_DIRECTORIES
     persistence
     spi
     text
+    text/cf
+    text/icu
     text/win
     threads
     unicode
