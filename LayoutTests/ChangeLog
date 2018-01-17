@@ -1,3 +1,19 @@
+2018-01-17  Daniel Bates  <dabates@apple.com>
+
+        ASSERTION FAILED: !m_completionHandler in PingHandle::~PingHandle()
+        https://bugs.webkit.org/show_bug.cgi?id=181746
+        <rdar://problem/36586248>
+
+        Reviewed by Chris Dumez.
+
+        Adds a test to ensure that loading a protected image from a beforeunload handler
+        does not cause an assertion failure.
+
+        * http/tests/misc/before-unload-load-image-expected.txt: Added.
+        * http/tests/misc/before-unload-load-image.html: Added.
+        * http/tests/misc/resources/before-unload-in-subframe-child.html: Added.
+        * http/tests/misc/resources/protected/protected-image.php: Added.
+
 2018-01-17  Yacine Bandou  <yacine.bandou_ext@softathome.com>
 
         [EME][GStreamer] Add the full-sample encryption support in the GStreamer ClearKey decryptor
