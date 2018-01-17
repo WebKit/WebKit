@@ -492,7 +492,10 @@ void Caches::clearMemoryRepresentation()
     makeDirty();
     m_caches.clear();
     m_isInitialized = false;
+
+    // Clear storages as a memory optimization.
     m_storage = nullptr;
+    m_volatileStorage.clear();
 }
 
 bool Caches::isDirty(uint64_t updateCounter) const
