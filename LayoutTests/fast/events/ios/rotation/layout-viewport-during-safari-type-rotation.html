@@ -32,6 +32,23 @@
             })();`
         }
         
+        var rotationComplete = false;
+        var gotOrientationChange = false;
+        
+        function rotationFinished()
+        {
+            rotationComplete = true;
+            checkForCompletion();
+        }
+        
+        function checkForCompletion()
+        {
+            if (rotationComplete && gotOrientationChange) {
+                if (window.testRunner)
+                    testRunner.notifyDone();
+            }
+        }
+
         window.addEventListener('resize', function() {
             accumulateLog('');
             accumulateLog('In resize event handler:');
@@ -43,9 +60,14 @@
             accumulateLog('In orientationchange event handler:');
             accumulateLog('(This will trigger the resize handler by forcing a layout.)');
             logFixedAndViewports();
+            gotOrientationChange = true;
         }, false);
 
-        window.addEventListener('load', doTest, false);
+        window.addEventListener('load', function() {
+            setTimeout(function() {
+                doTest(rotationFinished);
+            }, 0);
+        }, false);
     </script>
 </head>
 <body>

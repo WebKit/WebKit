@@ -27,7 +27,7 @@ function logFixedAndViewports()
     logFixedObject();
 }
 
-function doTest()
+function doTest(scriptCompleteCallback)
 {
     accumulateLog('Before rotation');
     logFixedAndViewports();
@@ -43,7 +43,11 @@ function doTest()
         logPre.textContent = logging;
         document.body.appendChild(logPre);
 
-        if (window.testRunner)
-            testRunner.notifyDone();
+        if (scriptCompleteCallback)
+            scriptCompleteCallback();
+        else {
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }
     });
 }
