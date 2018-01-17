@@ -723,7 +723,7 @@ void CachedResourceLoader::prepareFetch(CachedResource::Type type, CachedResourc
 #if ENABLE(SERVICE_WORKER)
         request.setClientIdentifierIfNeeded(document->identifier());
         if (auto* activeServiceWorker = document->activeServiceWorker())
-            request.setSelectedServiceWorkerIdentifierIfNeeded(activeServiceWorker->identifier());
+            request.setSelectedServiceWorkerRegistrationIdentifierIfNeeded(activeServiceWorker->registrationIdentifier());
 #endif
     }
 
@@ -1028,7 +1028,7 @@ CachedResourceLoader::RevalidationPolicy CachedResourceLoader::determineRevalida
 
 #if ENABLE(SERVICE_WORKER)
     // FIXME: We should validate/specify this behavior.
-    if (cachedResourceRequest.options().serviceWorkerIdentifier != existingResource->options().serviceWorkerIdentifier) {
+    if (cachedResourceRequest.options().serviceWorkerRegistrationIdentifier != existingResource->options().serviceWorkerRegistrationIdentifier) {
         LOG(ResourceLoading, "CachedResourceLoader::determineRevalidationPolicy reloading because selected service worker differs");
         return Reload;
     }

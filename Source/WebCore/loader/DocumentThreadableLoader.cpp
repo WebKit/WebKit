@@ -120,7 +120,7 @@ DocumentThreadableLoader::DocumentThreadableLoader(Document& document, Threadabl
         m_originalHeaders = request.httpHeaderFields();
 
 #if ENABLE(SERVICE_WORKER)
-    if (m_options.serviceWorkersMode == ServiceWorkersMode::All && m_async && (m_options.serviceWorkerIdentifier || document.activeServiceWorker()))
+    if (m_options.serviceWorkersMode == ServiceWorkersMode::All && m_async && (m_options.serviceWorkerRegistrationIdentifier || document.activeServiceWorker()))
         m_options.httpHeadersToKeep = httpHeadersToKeepFromCleaning(request.httpHeaderFields());
 #endif
 
@@ -155,7 +155,7 @@ void DocumentThreadableLoader::makeCrossOriginAccessRequest(ResourceRequest&& re
     else {
 #if ENABLE(SERVICE_WORKER)
         if (m_options.serviceWorkersMode == ServiceWorkersMode::All && m_async) {
-            if (m_options.serviceWorkerIdentifier || document().activeServiceWorker()) {
+            if (m_options.serviceWorkerRegistrationIdentifier || document().activeServiceWorker()) {
                 ASSERT(!m_bypassingPreflightForServiceWorkerRequest);
                 m_bypassingPreflightForServiceWorkerRequest = WTFMove(request);
                 m_options.serviceWorkersMode = ServiceWorkersMode::Only;

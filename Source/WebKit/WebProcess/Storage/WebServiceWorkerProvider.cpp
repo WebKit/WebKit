@@ -67,7 +67,7 @@ static inline bool shouldHandleFetch(const ResourceLoaderOptions& options)
     if (isPotentialNavigationOrSubresourceRequest(options.destination))
         return false;
 
-    return !!options.serviceWorkerIdentifier;
+    return !!options.serviceWorkerRegistrationIdentifier;
 }
 
 void WebServiceWorkerProvider::handleFetch(ResourceLoader& loader, CachedResource* resource, PAL::SessionID sessionID, bool shouldClearReferrerOnHTTPSToHTTPRedirect, ServiceWorkerClientFetch::Callback&& callback)

@@ -126,13 +126,14 @@ void WebSWServerConnection::updateWorkerStateInClient(ServiceWorkerIdentifier wo
     send(Messages::WebSWClientConnection::UpdateWorkerState(worker, state));
 }
 
-void WebSWServerConnection::startFetch(uint64_t fetchIdentifier, ServiceWorkerIdentifier serviceWorkerIdentifier, ResourceRequest&& request, FetchOptions&& options, IPC::FormDataReference&& formData, String&& referrer)
+void WebSWServerConnection::startFetch(uint64_t fetchIdentifier, ServiceWorkerRegistrationIdentifier serviceWorkerRegistrationIdentifier, ResourceRequest&& request, FetchOptions&& options, IPC::FormDataReference&& formData, String&& referrer)
 {
-    auto* worker = server().workerByID(serviceWorkerIdentifier);
+    auto* worker = server().activeWorkerFromRegistrationID(serviceWorkerRegistrationIdentifier);
     if (!worker) {
         m_contentConnection->send(Messages::ServiceWorkerClientFetch::DidNotHandle { }, fetchIdentifier);
         return;
     }
+    auto serviceWorkerIdentifier = worker->identifier();
 
     auto runServerWorkerAndStartFetch = [weakThis = makeWeakPtr(this), this, fetchIdentifier, serviceWorkerIdentifier, request = WTFMove(request), options = WTFMove(options), formData = WTFMove(formData), referrer = WTFMove(referrer)](bool success) mutable {
         if (!weakThis)
@@ -154,10 +155,12 @@ void WebSWServerConnection::startFetch(uint64_t fetchIdentifier, ServiceWorkerId
         });
     };
 
-    if (worker->state() == ServiceWorkerState::Activating)
+    if (worker->state() == ServiceWorkerState::Activating) {
         worker->whenActivated(WTFMove(runServerWorkerAndStartFetch));
-    else
-        runServerWorkerAndStartFetch(true);
+        return;
+    }
+    ASSERT(worker->state() == ServiceWorkerState::Activated);
+    runServerWorkerAndStartFetch(true);
 }
 
 void WebSWServerConnection::postMessageToServiceWorker(ServiceWorkerIdentifier destinationIdentifier, IPC::DataReference&& message, const ServiceWorkerOrClientIdentifier& sourceIdentifier)

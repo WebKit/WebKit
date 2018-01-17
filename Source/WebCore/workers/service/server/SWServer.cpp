@@ -101,6 +101,12 @@ std::optional<ServiceWorkerClientData> SWServer::serviceWorkerClientByID(const S
     return iterator->value;
 }
 
+SWServerWorker* SWServer::activeWorkerFromRegistrationID(ServiceWorkerRegistrationIdentifier identifier)
+{
+    auto* registration = m_registrationsByID.get(identifier);
+    return registration ? registration->activeWorker() : nullptr;
+}
+
 SWServerRegistration* SWServer::getRegistration(const ServiceWorkerRegistrationKey& registrationKey)
 {
     return m_registrations.get(registrationKey);

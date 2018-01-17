@@ -100,7 +100,7 @@ public:
 
 #if ENABLE(SERVICE_WORKER)
     void setClientIdentifierIfNeeded(DocumentIdentifier);
-    void setSelectedServiceWorkerIdentifierIfNeeded(ServiceWorkerIdentifier);
+    void setSelectedServiceWorkerRegistrationIdentifierIfNeeded(ServiceWorkerRegistrationIdentifier);
     void setNavigationServiceWorkerRegistrationData(const std::optional<ServiceWorkerRegistrationData>&);
 #endif
 

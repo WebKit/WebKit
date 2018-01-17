@@ -192,9 +192,9 @@ void WebSWClientConnection::getRegistrations(const SecurityOrigin& topOrigin, co
     });
 }
 
-void WebSWClientConnection::startFetch(uint64_t fetchIdentifier, WebCore::ServiceWorkerIdentifier serviceWorkerIdentifier, const WebCore::ResourceRequest& request, const WebCore::FetchOptions& options, const String& referrer)
+void WebSWClientConnection::startFetch(uint64_t fetchIdentifier, WebCore::ServiceWorkerRegistrationIdentifier serviceWorkerRegistrationIdentifier, const WebCore::ResourceRequest& request, const WebCore::FetchOptions& options, const String& referrer)
 {
-    send(Messages::WebSWServerConnection::StartFetch { fetchIdentifier, serviceWorkerIdentifier, request, options, IPC::FormDataReference { request.httpBody() }, referrer });
+    send(Messages::WebSWServerConnection::StartFetch { fetchIdentifier, serviceWorkerRegistrationIdentifier, request, options, IPC::FormDataReference { request.httpBody() }, referrer });
 }
 
 void WebSWClientConnection::postMessageToServiceWorkerClient(DocumentIdentifier destinationContextIdentifier, const IPC::DataReference& message, ServiceWorkerData&& source, const String& sourceOrigin)
