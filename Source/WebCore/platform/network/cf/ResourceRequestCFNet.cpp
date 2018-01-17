@@ -132,6 +132,25 @@ static inline void setHeaderFields(CFMutableURLRequestRef request, const HTTPHea
         CFURLRequestSetHTTPHeaderFieldValue(request, header.key.createCFString().get(), header.value.createCFString().get());
 }
 
+static inline CFURLRequestCachePolicy toPlatformRequestCachePolicy(ResourceRequestCachePolicy policy)
+{
+    switch (policy) {
+    case UseProtocolCachePolicy:
+        return kCFURLRequestCachePolicyProtocolDefault;
+    case ReturnCacheDataElseLoad:
+        return kCFURLRequestCachePolicyReturnCacheDataElseLoad;
+    case ReturnCacheDataDontLoad:
+        return kCFURLRequestCachePolicyReturnCacheDataDontLoad;
+    case ReloadIgnoringCacheData:
+    case DoNotUseAnyCache:
+    case RefreshAnyCacheData:
+        return kCFURLRequestCachePolicyReloadIgnoringCache;
+    }
+
+    ASSERT_NOT_REACHED();
+    return kCFURLRequestCachePolicyReloadIgnoringCache;
+}
+
 void ResourceRequest::doUpdatePlatformRequest()
 {
     CFMutableURLRequestRef cfRequest;
@@ -143,10 +162,10 @@ void ResourceRequest::doUpdatePlatformRequest()
         cfRequest = CFURLRequestCreateMutableCopy(0, m_cfRequest.get());
         CFURLRequestSetURL(cfRequest, url.get());
         CFURLRequestSetMainDocumentURL(cfRequest, firstPartyForCookies.get());
-        CFURLRequestSetCachePolicy(cfRequest, (CFURLRequestCachePolicy)cachePolicy());
+        CFURLRequestSetCachePolicy(cfRequest, toPlatformRequestCachePolicy(cachePolicy()));
         CFURLRequestSetTimeoutInterval(cfRequest, timeoutInterval);
     } else
-        cfRequest = CFURLRequestCreateMutable(0, url.get(), (CFURLRequestCachePolicy)cachePolicy(), timeoutInterval, firstPartyForCookies.get());
+        cfRequest = CFURLRequestCreateMutable(0, url.get(), toPlatformRequestCachePolicy(cachePolicy()), timeoutInterval, firstPartyForCookies.get());
 
     CFURLRequestSetHTTPRequestMethod(cfRequest, httpMethod().createCFString().get());
 
@@ -189,12 +208,6 @@ void ResourceRequest::doUpdatePlatformRequest()
 #endif
 }
 
-// FIXME: We should use a switch based on ResourceRequestCachePolicy parameter
-static inline CFURLRequestCachePolicy toPlatformRequestCachePolicy(ResourceRequestCachePolicy policy)
-{
-    return static_cast<CFURLRequestCachePolicy>((policy <= ReturnCacheDataDontLoad) ? policy : ReloadIgnoringCacheData);
-}
-
 void ResourceRequest::doUpdatePlatformHTTPBody()
 {
     CFMutableURLRequestRef cfRequest;
@@ -209,7 +222,7 @@ void ResourceRequest::doUpdatePlatformHTTPBody()
         CFURLRequestSetCachePolicy(cfRequest, toPlatformRequestCachePolicy(cachePolicy()));
         CFURLRequestSetTimeoutInterval(cfRequest, timeoutInterval);
     } else
-        cfRequest = CFURLRequestCreateMutable(0, url.get(), (CFURLRequestCachePolicy)cachePolicy(), timeoutInterval, firstPartyForCookies.get());
+        cfRequest = CFURLRequestCreateMutable(0, url.get(), toPlatformRequestCachePolicy(cachePolicy()), timeoutInterval, firstPartyForCookies.get());
 
     FormData* formData = httpBody();
     if (formData && !formData->isEmpty())

@@ -1,3 +1,18 @@
+2018-01-17  Per Arne Vollan  <pvollan@apple.com>
+
+        [Win] Use switch when converting from ResourceRequestCachePolicy to platform cache policy.
+        https://bugs.webkit.org/show_bug.cgi?id=181686
+
+        Reviewed by Alex Christensen.
+
+        No new tests, covered by existing tests.
+
+        A switch will make the function easier on the eyes. Also, use the function in places where the ResourceRequestCachePolicy
+        is just casted to a platform cache policy.
+
+        * platform/network/cf/ResourceRequestCFNet.cpp:
+        (WebCore::toPlatformRequestCachePolicy):
+
 2018-01-17  John Wilander  <wilander@apple.com>
 
         Resource Load Statistics: Block cookies for prevalent resources without user interaction
