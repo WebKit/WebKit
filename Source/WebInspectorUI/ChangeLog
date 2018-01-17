@@ -1,5 +1,25 @@
 2018-01-16  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r226765. rdar://problem/36568045
+
+    2018-01-10  Joseph Pecoraro  <pecoraro@apple.com>
+
+            REGRESSION(r218975): Web Inspector: Add back NavigationSidebarPanel initialization parameter used by SearchSidebarPanel (top overflow shadow)
+            https://bugs.webkit.org/show_bug.cgi?id=181518
+            <rdar://problem/36427197>
+
+            Reviewed by Matt Baker.
+
+            * UserInterface/Views/NavigationSidebarPanel.css:
+            (.sidebar > .panel.navigation > .overflow-shadow.top):
+            * UserInterface/Views/NavigationSidebarPanel.js:
+            (WI.NavigationSidebarPanel):
+            Add back the initialization parameter still used by SearchSidebarPanel
+            and add back its implementation. There were still references to
+            dynamically update _topOverflowShadowElement in NavigationSidebarPanel.
+
+2018-01-16  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r226674. rdar://problem/36568078
 
     2018-01-09  Joseph Pecoraro  <pecoraro@apple.com>
