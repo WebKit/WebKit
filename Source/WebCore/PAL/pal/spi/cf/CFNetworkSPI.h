@@ -179,7 +179,6 @@ typedef void (^CFCachedURLResponseCallBackBlock)(CFCachedURLResponseRef);
 
 @interface NSHTTPCookieStorage ()
 - (void)_getCookiesForURL:(NSURL *)url mainDocumentURL:(NSURL *)mainDocumentURL partition:(NSString *)partition completionHandler:(void (^)(NSArray *))completionHandler;
-- (id)_initWithIdentifier:(NSString *)identifier private:(bool)isPrivate;
 @end
 
 @interface NSURLSessionTask ()

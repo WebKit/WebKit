@@ -1,3 +1,16 @@
+2018-01-17  Matt Lewis  <jlewis3@apple.com>
+
+        Unreviewed, rolling out r227076.
+
+        This breaks internal builds
+
+        Reverted changeset:
+
+        "Resource Load Statistics: Block cookies for prevalent
+        resources without user interaction"
+        https://bugs.webkit.org/show_bug.cgi?id=177394
+        https://trac.webkit.org/changeset/227076
+
 2018-01-17  Ryosuke Niwa  <rniwa@webkit.org>
 
         input and textarea elements should reveal selection in setSelection when focused

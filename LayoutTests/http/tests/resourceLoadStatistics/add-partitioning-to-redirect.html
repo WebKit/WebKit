@@ -64,10 +64,9 @@
                 openIframe(redirectChainUrl + "&message=Redirect case, should receive first-party cookie.", runTest);
                 break;
             case "#step4":
-                // Set localhost as prevalent and with non-recent user interaction to put it in the partitioning category.
+                // Set localhost as prevalent.
                 document.location.hash = "step5";
                 testRunner.setStatisticsPrevalentResource("http://localhost", true);
-                testRunner.setStatisticsHasHadNonRecentUserInteraction("http://localhost");
                 testRunner.statisticsUpdateCookiePartitioning();
                 if (!testRunner.isStatisticsPrevalentResource("http://localhost"))
                     testFailed("Host did not get set as prevalent resource.");
