@@ -539,6 +539,11 @@ bool SWServer::runServiceWorker(ServiceWorkerIdentifier identifier)
 
     auto* connection = SWServerToContextConnection::globalServerToContextConnection();
     ASSERT(connection);
+
+    // When re-running a service worker after a context process crash, the connection identifier may have changed
+    // so we update it here.
+    worker->setContextConnectionIdentifier(connection->identifier());
+
     connection->installServiceWorkerContext(worker->contextData(), m_sessionID);
 
     return true;
@@ -556,7 +561,10 @@ void SWServer::syncTerminateWorker(SWServerWorker& worker)
 
 void SWServer::terminateWorkerInternal(SWServerWorker& worker, TerminationMode mode)
 {
+    ASSERT(worker.isRunning());
+
     auto* connection = SWServerToContextConnection::connectionForIdentifier(worker.contextConnectionIdentifier());
+    ASSERT(connection);
     if (!connection) {
         LOG_ERROR("Request to terminate a worker whose context connection does not exist");
         return;
@@ -737,7 +745,7 @@ void SWServer::unregisterServiceWorkerClient(const ClientOrigin& clientOrigin, S
         ASSERT(!iterator->value.terminateServiceWorkersTimer);
         iterator->value.terminateServiceWorkersTimer = std::make_unique<Timer>([clientOrigin, this] {
             for (auto& worker : m_runningOrTerminatingWorkers.values()) {
-                if (worker->origin() == clientOrigin)
+                if (worker->isRunning() && worker->origin() == clientOrigin)
                     terminateWorker(worker);
             }
             m_clientIdentifiersPerOrigin.remove(clientOrigin);

@@ -1,5 +1,29 @@
 2018-01-16  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r227010. rdar://problem/36567991
+
+    2018-01-16  Chris Dumez  <cdumez@apple.com>
+
+            SWServerWorker::m_contextConnectionIdentifier may get out of date
+            https://bugs.webkit.org/show_bug.cgi?id=181687
+            <rdar://problem/36548111>
+
+            Reviewed by Brady Eidson.
+
+            SWServerWorker::m_contextConnectionIdentifier may get out of date. This happens when the
+            context process crashes and is relaunched.
+
+            No new tests, added assertion in terminateWorkerInternal() that hits without this fix.
+
+            * workers/service/server/SWServer.cpp:
+            (WebCore::SWServer::runServiceWorker):
+            (WebCore::SWServer::terminateWorkerInternal):
+            (WebCore::SWServer::unregisterServiceWorkerClient):
+            * workers/service/server/SWServerWorker.h:
+            (WebCore::SWServerWorker::setContextConnectionIdentifier):
+
+2018-01-16  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r226916. rdar://problem/36568057
 
     2018-01-11  Dean Jackson  <dino@apple.com>
