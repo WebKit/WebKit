@@ -1,0 +1,41 @@
+#!/usr/bin/env python
+
+import subprocess
+import sys
+
+def script_symbols(script):
+    symbols = []
+    in_symbols = False
+    with open(script, 'r') as f:
+        for line in f.readlines():
+            if in_symbols:
+                if line.lstrip() == '};\n':
+                    break
+                line = line.lstrip()
+                line = line.rstrip('\n')
+                line = line.rstrip(';')
+                symbols.append(line.strip('"'))
+            elif line.lstrip() == 'extern "C++" {\n':
+                in_symbols = True
+    return symbols
+
+if len(sys.argv) < 3:
+    print "Usage: %s script lib" % sys.argv[0]
+    sys.exit(1)
+
+
+symbols = script_symbols(sys.argv[1])
+p = subprocess.Popen(['objdump', '-t', '-C', sys.argv[2]], stdout=subprocess.PIPE)
+data = p.communicate()[0]
+
+symbols = []
+for symbol in script_symbols(sys.argv[1]):
+    if symbol not in data:
+        symbols.append(symbol)
+
+if symbols:
+    print 'The following symbols are in version script %s and not in library %s' % (sys.argv[1], sys.argv[2])
+    print '\n'.join(sorted(symbols))
+    sys.exit(1)
+
+sys.exit(0)

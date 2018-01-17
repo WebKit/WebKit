@@ -256,6 +256,16 @@ class Distcheck(object):
             command.append('-j%d' % multiprocessing.cpu_count())
         subprocess.check_call(command, cwd=build_dir)
 
+    def check_symbols(self, build_dir):
+        check_bss = os.path.join(self.source_root, 'Tools', 'Scripts', 'check-for-global-bss-symbols-in-webkigtk-libs')
+        libjsc = os.path.join(build_dir, 'lib', 'libjavascriptcoregtk-4.0.so')
+        libwk = os.path.join(build_dir, 'lib', 'libwebkit2gtk-4.0.so')
+        subprocess.check_call([check_bss, libjsc, libwk])
+
+        check_version_script = os.path.join(self.source_root, 'Tools', 'Scripts', 'check-for-invalid-symbols-in-version-script')
+        version_script = os.path.join(os.path.dirname(build_dir), 'Source', 'WebKit', 'webkitglib-symbols.map')
+        subprocess.check_call([check_version_script, version_script, libwk])
+
     def install(self, build_dir):
         subprocess.check_call(['make', 'install'], cwd=build_dir)
 
@@ -271,6 +281,8 @@ class Distcheck(object):
         self.extract_tarball(tarball)
         self.configure(dist_dir, build_dir, install_dir, port)
         self.build(build_dir)
+        if port == 'GTK':
+            self.check_symbols(build_dir)
         self.install(build_dir)
         self.clean(dist_dir)
 
