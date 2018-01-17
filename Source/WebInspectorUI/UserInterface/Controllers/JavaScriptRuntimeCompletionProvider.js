@@ -173,7 +173,7 @@ WI.JavaScriptRuntimeCompletionProvider = class JavaScriptRuntimeCompletionProvid
                         var names = Object.getOwnPropertyNames(o);
                         for (var i = 0; i < names.length; ++i)
                             resultSet[names[i]] = true;
-                    } catch { }
+                    } catch (e) { }
                 }
 
                 return resultSet;
@@ -184,7 +184,7 @@ WI.JavaScriptRuntimeCompletionProvider = class JavaScriptRuntimeCompletionProvid
             else if (result.type === "object" || result.type === "function")
                 result.callFunctionJSON(inspectedPage_evalResult_getCompletions, undefined, receivedPropertyNames.bind(this));
             else if (result.type === "string" || result.type === "number" || result.type === "boolean" || result.type === "symbol") {
-                let options = {objectGroup: "completion", includeCommandLineAPI: false, doNotPauseOnExceptionsAndMuteConsole: true, returnByValue: false, generatePreview: false, saveResult: false};
+                let options = {objectGroup: "completion", includeCommandLineAPI: false, doNotPauseOnExceptionsAndMuteConsole: true, returnByValue: true, generatePreview: false, saveResult: false};
                 WI.runtimeManager.evaluateInInspectedWindow("(" + inspectedPage_evalResult_getCompletions + ")(\"" + result.type + "\")", options, receivedPropertyNamesFromEvaluate.bind(this));
             } else
                 console.error("Unknown result type: " + result.type);
