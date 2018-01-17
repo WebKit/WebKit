@@ -33,11 +33,7 @@
 #include <wpe/webkit.h>
 #endif
 
-#if PLATFORM(GTK)
-#define TEST_PATH_FORMAT "/webkit2/%s/%s"
-#elif PLATFORM(WPE)
-#define TEST_PATH_FORMAT "/wpe/%s/%s"
-#endif
+#define TEST_PATH_FORMAT "/webkit/%s/%s"
 
 #define MAKE_GLIB_TEST_FIXTURE(ClassName) \
     static void setUp(ClassName* fixture, gconstpointer data) \

@@ -1,48 +1,48 @@
 {
     "TestUIClient": {
         "subtests": {
-            "/webkit2/WebKitWebView/mouse-target": {
+            "/webkit/WebKitWebView/mouse-target": {
                 "expected": {"gtk": {"status": ["TIMEOUT"], "bug": "webkit.org/b/117689"}}
             },
-            "/webkit2/WebKitWebView/usermedia-permission-requests": {
+            "/webkit/WebKitWebView/usermedia-permission-requests": {
                 "expected": {"gtk": {"status": ["TIMEOUT"], "bug": "webkit.org/b/158257"}}
             },
-            "/webkit2/WebKitWebView/audio-usermedia-permission-request": {
+            "/webkit/WebKitWebView/audio-usermedia-permission-request": {
                 "expected": {"gtk": {"status": ["TIMEOUT"], "bug": "webkit.org/b/158257"}}
             }
         }
     },
     "TestCookieManager": {
         "subtests": {
-            "/webkit2/WebKitCookieManager/persistent-storage": {
+            "/webkit/WebKitCookieManager/persistent-storage": {
                 "expected": {"gtk": {"status": ["FAIL", "PASS"], "bug": "webkit.org/b/134580"}}
             }
         }
     },
     "TestPrinting": {
         "subtests": {
-            "/webkit2/WebKitPrintOperation/custom-widget": {
+            "/webkit/WebKitPrintOperation/custom-widget": {
                 "expected": {"gtk": {"status": ["FAIL", "PASS"], "bug": "webkit.org/b/168196"}}
             }
         }
     },
     "TestWebViewEditor": {
         "subtests": {
-            "/webkit2/WebKitWebView/editable/editable": {
+            "/webkit/WebKitWebView/editable/editable": {
                 "expected": {"gtk@Debug": {"status": ["FAIL"], "bug": "webkit.org/b/134580"}}
             }
         }
     },
     "TestWebExtensions": {
         "subtests": {
-            "/webkit2/WebKitWebView/install-missing-plugins-permission-request": {
+            "/webkit/WebKitWebView/install-missing-plugins-permission-request": {
                 "expected": {"gtk": {"status": ["TIMEOUT"], "bug": "webkit.org/b/147822"}}
             }
         }
     },
     "TestWebsiteData": {
         "subtests": {
-            "/webkit2/WebKitWebsiteData/databases": {
+            "/webkit/WebKitWebsiteData/databases": {
                 "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/181251"}}
             }
         }

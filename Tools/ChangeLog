@@ -1,5 +1,19 @@
 2018-01-17  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK][WPE] Use the same subtest names in GTK and WPE unit tests
+        https://bugs.webkit.org/show_bug.cgi?id=181724
+
+        Reviewed by Philippe Normand.
+
+        We currently use /webkit2/foo/bar for GTK and /wpe/foo/bar for WPE. Many of the tests are common, so there's no
+        reason to use different names. This way we can refer to the same test names for both and we can share the
+        expectations in the TestExpectations.json file.
+
+        * TestWebKitAPI/glib/TestExpectations.json:
+        * TestWebKitAPI/glib/WebKitGLib/TestMain.h: Use /webkit/foo/bar in GTK and WPE.
+
+2018-01-17  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Unreviewed. Increase the slow timeout of GTK and WPE unit tests.
 
         We are using now a lower default timeout, so multiplying by 5 is no longer enough for some of the WTF
