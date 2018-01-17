@@ -50,6 +50,100 @@
 namespace WebCore {
 namespace Cairo {
 
+enum PatternAdjustment { NoAdjustment, AdjustPatternForGlobalAlpha };
+enum AlphaPreservation { DoNotPreserveAlpha, PreserveAlpha };
+
+static void reduceSourceByAlpha(cairo_t* cr, float alpha)
+{
+    if (alpha >= 1)
+        return;
+    cairo_push_group(cr);
+    cairo_set_operator(cr, CAIRO_OPERATOR_SOURCE);
+    cairo_paint_with_alpha(cr, alpha);
+    cairo_pop_group_to_source(cr);
+}
+
+static void prepareCairoContextSource(cairo_t* cr, cairo_pattern_t* pattern, cairo_pattern_t* gradient, const Color& color, float globalAlpha)
+{
+    if (pattern) {
+        // Pattern source
+        cairo_set_source(cr, pattern);
+        reduceSourceByAlpha(cr, globalAlpha);
+    } else if (gradient) {
+        // Gradient source
+        cairo_set_source(cr, gradient);
+    } else {
+        // Solid color source
+        if (globalAlpha < 1)
+            setSourceRGBAFromColor(cr, colorWithOverrideAlpha(color.rgb(), color.alpha() / 255.f * globalAlpha));
+        else
+            setSourceRGBAFromColor(cr, color);
+    }
+}
+
+static void clipForPatternFilling(cairo_t* cr, const FloatSize& patternSize, const AffineTransform& patternTransform, bool repeatX, bool repeatY)
+{
+    // Hold current cairo path in a variable for restoring it after configuring the pattern clip rectangle.
+    auto currentPath = cairo_copy_path(cr);
+    cairo_new_path(cr);
+
+    // Initialize clipping extent from current cairo clip extents, then shrink if needed according to pattern.
+    // Inspired by GraphicsContextQt::drawRepeatPattern.
+    double x1, y1, x2, y2;
+    cairo_clip_extents(cr, &x1, &y1, &x2, &y2);
+    FloatRect clipRect(x1, y1, x2 - x1, y2 - y1);
+
+    FloatRect patternRect = patternTransform.mapRect(FloatRect(FloatPoint(), patternSize));
+
+    if (!repeatX) {
+        clipRect.setX(patternRect.x());
+        clipRect.setWidth(patternRect.width());
+    }
+    if (!repeatY) {
+        clipRect.setY(patternRect.y());
+        clipRect.setHeight(patternRect.height());
+    }
+    if (!repeatX || !repeatY) {
+        cairo_rectangle(cr, clipRect.x(), clipRect.y(), clipRect.width(), clipRect.height());
+        cairo_clip(cr);
+    }
+
+    // Restoring cairo path.
+    cairo_append_path(cr, currentPath);
+    cairo_path_destroy(currentPath);
+}
+
+static void prepareForFilling(cairo_t* cr, const Cairo::FillSource& fillSource, float globalAlpha, PatternAdjustment patternAdjustment)
+{
+    cairo_set_fill_rule(cr, fillSource.fillRule == RULE_EVENODD ? CAIRO_FILL_RULE_EVEN_ODD : CAIRO_FILL_RULE_WINDING);
+
+    bool adjustForAlpha = patternAdjustment == AdjustPatternForGlobalAlpha;
+
+    auto* gradient = fillSource.gradient.base.get();
+    if (adjustForAlpha && fillSource.gradient.alphaAdjusted)
+        gradient = fillSource.gradient.alphaAdjusted.get();
+
+    prepareCairoContextSource(cr, fillSource.pattern.object.get(), gradient,
+        fillSource.color, adjustForAlpha ? globalAlpha : 1);
+
+    if (fillSource.pattern.object) {
+        clipForPatternFilling(cr, fillSource.pattern.size, fillSource.pattern.transform,
+            fillSource.pattern.repeatX, fillSource.pattern.repeatY);
+    }
+}
+
+void prepareForStroking(cairo_t* cr, const Cairo::StrokeSource& strokeSource, float globalAlpha, AlphaPreservation alphaPreservation)
+{
+    bool preserveAlpha = alphaPreservation == PreserveAlpha;
+
+    auto* gradient = strokeSource.gradient.base.get();
+    if (preserveAlpha && strokeSource.gradient.alphaAdjusted)
+        gradient = strokeSource.gradient.alphaAdjusted.get();
+
+    prepareCairoContextSource(cr, strokeSource.pattern.get(), gradient,
+        strokeSource.color, preserveAlpha ? globalAlpha : 1);
+}
+
 static inline void fillRectWithColor(cairo_t* cr, const FloatRect& rect, const Color& color)
 {
     if (!color.isVisible() && cairo_get_operator(cr) == CAIRO_OPERATOR_OVER)
@@ -106,14 +200,14 @@ static inline void drawPathShadow(PlatformContextCairo& platformContext, const F
     if (drawingStyle & Fill) {
         cairo_save(cairoShadowContext);
         cairo_append_path(cairoShadowContext, path.get());
-        shadowContext->platformContext()->prepareForFilling(fillSource, PlatformContextCairo::NoAdjustment);
+        prepareForFilling(cairoShadowContext, fillSource, shadowContext->platformContext()->globalAlpha(), NoAdjustment);
         cairo_fill(cairoShadowContext);
         cairo_restore(cairoShadowContext);
     }
 
     if (drawingStyle & Stroke) {
         cairo_append_path(cairoShadowContext, path.get());
-        shadowContext->platformContext()->prepareForStroking(strokeSource, PlatformContextCairo::DoNotPreserveAlpha);
+        prepareForStroking(cairoShadowContext, strokeSource, shadowContext->platformContext()->globalAlpha(), DoNotPreserveAlpha);
         cairo_stroke(cairoShadowContext);
     }
 
@@ -131,7 +225,7 @@ static inline void fillCurrentCairoPath(PlatformContextCairo& platformContext, c
     cairo_t* cr = platformContext.cr();
     cairo_save(cr);
 
-    platformContext.prepareForFilling(fillSource, PlatformContextCairo::AdjustPatternForGlobalAlpha);
+    prepareForFilling(cr, fillSource, platformContext.globalAlpha(), AdjustPatternForGlobalAlpha);
     cairo_fill(cr);
 
     cairo_restore(cr);
@@ -626,7 +720,7 @@ void strokeRect(PlatformContextCairo& platformContext, const FloatRect& rect, fl
     cairo_rectangle(cr, rect.x(), rect.y(), rect.width(), rect.height());
     cairo_set_line_width(cr, lineWidth);
     drawPathShadow(platformContext, { }, strokeSource, shadowState, targetContext, Stroke);
-    platformContext.prepareForStroking(strokeSource, PlatformContextCairo::PreserveAlpha);
+    prepareForStroking(cr, strokeSource, platformContext.globalAlpha(), PreserveAlpha);
     cairo_stroke(cr);
 
     cairo_restore(cr);
@@ -638,7 +732,7 @@ void strokePath(PlatformContextCairo& platformContext, const Path& path, const S
 
     setPathOnCairoContext(cr, path.platformPath()->context());
     drawPathShadow(platformContext, { }, strokeSource, shadowState, targetContext, Stroke);
-    platformContext.prepareForStroking(strokeSource, PlatformContextCairo::PreserveAlpha);
+    prepareForStroking(cr, strokeSource, platformContext.globalAlpha(), PreserveAlpha);
     cairo_stroke(cr);
 }
 
@@ -661,7 +755,7 @@ void drawGlyphs(PlatformContextCairo& platformContext, const FillSource& fillSou
     cairo_save(cr);
 
     if (textDrawingMode & TextModeFill) {
-        platformContext.prepareForFilling(fillSource, PlatformContextCairo::AdjustPatternForGlobalAlpha);
+        prepareForFilling(cr, fillSource, platformContext.globalAlpha(), AdjustPatternForGlobalAlpha);
         drawGlyphsToContext(cr, scaledFont, syntheticBoldOffset, glyphs);
     }
 
@@ -670,7 +764,7 @@ void drawGlyphs(PlatformContextCairo& platformContext, const FillSource& fillSou
     // the text as even one single stroke would cover the full wdth of the text.
     //  See https://bugs.webkit.org/show_bug.cgi?id=33759.
     if (textDrawingMode & TextModeStroke && strokeThickness < 2 * xOffset) {
-        platformContext.prepareForStroking(strokeSource, PlatformContextCairo::PreserveAlpha);
+        prepareForStroking(cr, strokeSource, platformContext.globalAlpha(), PreserveAlpha);
         cairo_set_line_width(cr, strokeThickness);
 
         // This may disturb the CTM, but we are going to call cairo_restore soon after.

@@ -73,15 +73,7 @@ public:
     void setImageInterpolationQuality(InterpolationQuality);
     InterpolationQuality imageInterpolationQuality() const;
 
-    enum PatternAdjustment { NoAdjustment, AdjustPatternForGlobalAlpha };
-    void prepareForFilling(const Cairo::FillSource&, PatternAdjustment);
-
-    enum AlphaPreservation { DoNotPreserveAlpha, PreserveAlpha };
-    void prepareForStroking(const Cairo::StrokeSource&, AlphaPreservation);
-
 private:
-    void clipForPatternFilling(const FloatSize&, const AffineTransform&, bool, bool);
-
     RefPtr<cairo_t> m_cr;
 
     // Keeping a pointer to GraphicsContextPlatformPrivate here enables calling
