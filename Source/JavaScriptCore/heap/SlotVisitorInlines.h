@@ -103,14 +103,14 @@ ALWAYS_INLINE void SlotVisitor::append(const Weak<T>& weak)
     appendUnbarriered(weak.get());
 }
 
-template<typename T>
-ALWAYS_INLINE void SlotVisitor::append(const WriteBarrierBase<T>& slot)
+template<typename T, typename Traits>
+ALWAYS_INLINE void SlotVisitor::append(const WriteBarrierBase<T, Traits>& slot)
 {
     appendUnbarriered(slot.get());
 }
 
-template<typename T>
-ALWAYS_INLINE void SlotVisitor::appendHidden(const WriteBarrierBase<T>& slot)
+template<typename T, typename Traits>
+ALWAYS_INLINE void SlotVisitor::appendHidden(const WriteBarrierBase<T, Traits>& slot)
 {
     appendHiddenUnbarriered(slot.get());
 }

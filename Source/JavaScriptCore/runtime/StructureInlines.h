@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -441,9 +441,27 @@ inline PropertyOffset Structure::removePropertyWithoutTransition(VM&, PropertyNa
     return remove(propertyName, func);
 }
 
+ALWAYS_INLINE void Structure::setPrototypeWithoutTransition(VM& vm, JSValue prototype)
+{
+    m_prototype.set(vm, this, prototype);
+}
+
+ALWAYS_INLINE void Structure::setGlobalObject(VM& vm, JSGlobalObject* globalObject)
+{
+    m_globalObject.set(vm, this, globalObject);
+}
+
 ALWAYS_INLINE void Structure::setPropertyTable(VM& vm, PropertyTable* table)
 {
     m_propertyTableUnsafe.setMayBeNull(vm, this, table);
+}
+
+ALWAYS_INLINE void Structure::setPreviousID(VM& vm, Structure* structure)
+{
+    if (hasRareData())
+        rareData()->setPreviousID(vm, structure);
+    else
+        m_previousOrRareData.set(vm, this, structure);
 }
 
 ALWAYS_INLINE bool Structure::shouldConvertToPolyProto(const Structure* a, const Structure* b)

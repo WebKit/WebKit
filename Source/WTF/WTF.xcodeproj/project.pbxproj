@@ -574,6 +574,7 @@
 		A8A47372151A825B004123FF /* VMTags.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VMTags.h; sourceTree = "<group>"; };
 		A8A4748B151A8264004123FF /* config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = config.h; sourceTree = "<group>"; };
 		A9A4727F151A825A004123FF /* DisallowCType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DisallowCType.h; sourceTree = "<group>"; };
+		AD653DA82006B6C200D820D7 /* DumbValueTraits.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DumbValueTraits.h; sourceTree = "<group>"; };
 		AD7C434A1DD2A4A70026888B /* Expected.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Expected.h; sourceTree = "<group>"; };
 		AD89B6B51E6415080090707F /* MemoryPressureHandler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MemoryPressureHandler.cpp; sourceTree = "<group>"; };
 		AD89B6B61E6415080090707F /* MemoryPressureHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MemoryPressureHandler.h; sourceTree = "<group>"; };
@@ -854,6 +855,7 @@
 				0F4570421BE5B58F0062A629 /* Dominators.h */,
 				A8A47280151A825A004123FF /* DoublyLinkedList.h */,
 				FE05FAE61FDB214300093230 /* DumbPtrTraits.h */,
+				AD653DA82006B6C200D820D7 /* DumbValueTraits.h */,
 				A8A47297151A825A004123FF /* dtoa.cpp */,
 				A8A47298151A825A004123FF /* dtoa.h */,
 				1AEA88E11D6BBCF400E5AD64 /* EnumTraits.h */,

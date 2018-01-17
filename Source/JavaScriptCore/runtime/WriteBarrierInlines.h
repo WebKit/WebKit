@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,8 +30,8 @@
 
 namespace JSC {
 
-template <typename T>
-inline void WriteBarrierBase<T>::set(VM& vm, const JSCell* owner, T* value)
+template <typename T, typename Traits>
+inline void WriteBarrierBase<T, Traits>::set(VM& vm, const JSCell* owner, T* value)
 {
     ASSERT(value);
     ASSERT(!Options::useConcurrentJIT() || !isCompilationThread());
@@ -39,22 +39,22 @@ inline void WriteBarrierBase<T>::set(VM& vm, const JSCell* owner, T* value)
     setEarlyValue(vm, owner, value);
 }
 
-template <typename T>
-inline void WriteBarrierBase<T>::setMayBeNull(VM& vm, const JSCell* owner, T* value)
+template <typename T, typename Traits>
+inline void WriteBarrierBase<T, Traits>::setMayBeNull(VM& vm, const JSCell* owner, T* value)
 {
     if (value)
         validateCell(value);
     setEarlyValue(vm, owner, value);
 }
 
-template <typename T>
-inline void WriteBarrierBase<T>::setEarlyValue(VM& vm, const JSCell* owner, T* value)
+template <typename T, typename Traits>
+inline void WriteBarrierBase<T, Traits>::setEarlyValue(VM& vm, const JSCell* owner, T* value)
 {
-    this->m_cell = reinterpret_cast<JSCell*>(value);
-    vm.heap.writeBarrier(owner, this->m_cell);
+    Traits::exchange(this->m_cell, value);
+    vm.heap.writeBarrier(owner, static_cast<JSCell*>(value));
 }
 
-inline void WriteBarrierBase<Unknown>::set(VM& vm, const JSCell* owner, JSValue value)
+inline void WriteBarrierBase<Unknown, DumbValueTraits<Unknown>>::set(VM& vm, const JSCell* owner, JSValue value)
 {
     ASSERT(!Options::useConcurrentJIT() || !isCompilationThread());
     m_value = JSValue::encode(value);

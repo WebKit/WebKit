@@ -68,7 +68,7 @@ private:
     static void visitChildren(JSCell*, SlotVisitor&);
 
     PoisonedRef<JSWebAssemblyMemoryPoison, Wasm::Memory> m_memory;
-    WriteBarrier<JSArrayBuffer> m_bufferWrapper;
+    PoisonedWriteBarrier<JSWebAssemblyMemoryPoison, JSArrayBuffer> m_bufferWrapper;
     PoisonedRefPtr<JSWebAssemblyMemoryPoison, ArrayBuffer> m_buffer;
 };
 
