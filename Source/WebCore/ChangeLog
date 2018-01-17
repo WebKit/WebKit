@@ -1,3 +1,22 @@
+2018-01-17  John Wilander  <wilander@apple.com>
+
+        Resource Load Statistics: Block cookies for prevalent resources without user interaction
+        https://bugs.webkit.org/show_bug.cgi?id=177394
+        <rdar://problem/34613960>
+
+        Reviewed by Alex Christensen.
+
+        Tests: http/tests/resourceLoadStatistics/add-blocking-to-redirect.html
+               http/tests/resourceLoadStatistics/non-prevalent-resources-can-access-cookies-in-a-third-party-context.html
+               http/tests/resourceLoadStatistics/remove-blocking-in-redirect.html
+               http/tests/resourceLoadStatistics/remove-partitioning-in-redirect.html
+
+        * platform/network/NetworkStorageSession.h:
+            Now exports NetworkStorageSession::nsCookieStorage().
+        * platform/network/cf/NetworkStorageSessionCFNet.cpp:
+        (WebCore::NetworkStorageSession::setPrevalentDomainsToPartitionOrBlockCookies):
+            Fixes the FIXME.
+
 2018-01-17  Daniel Bates  <dabates@apple.com>
 
         REGRESSION (r222795): Cardiogram never signs in

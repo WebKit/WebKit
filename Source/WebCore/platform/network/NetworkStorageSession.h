@@ -74,7 +74,7 @@ public:
     CredentialStorage& credentialStorage() { return m_credentialStorage; }
 
 #ifdef __OBJC__
-    NSHTTPCookieStorage *nsCookieStorage() const;
+    WEBCORE_EXPORT NSHTTPCookieStorage *nsCookieStorage() const;
 #endif
 
     const String& cacheStorageDirectory() const { return m_cacheStorageDirectory; }

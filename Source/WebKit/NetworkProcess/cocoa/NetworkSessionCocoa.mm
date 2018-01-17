@@ -215,7 +215,7 @@ static NSURLRequest* updateIgnoreStrictTransportSecuritySettingIfNecessary(NSURL
 
         bool shouldIgnoreHSTS = false;
 #if USE(CFNETWORK_IGNORE_HSTS)
-        shouldIgnoreHSTS = schemeWasUpgradedDueToDynamicHSTS(request) && !(WebCore::NetworkStorageSession::storageSession(_session->sessionID())->cookieStoragePartition(request, networkDataTask->frameID(), networkDataTask->pageID())).isEmpty();
+        shouldIgnoreHSTS = schemeWasUpgradedDueToDynamicHSTS(request) && WebCore::NetworkStorageSession::storageSession(_session->sessionID())->shouldBlockCookies(request);
         if (shouldIgnoreHSTS) {
             request = downgradeRequest(request);
             ASSERT([request.URL.scheme isEqualToString:@"http"]);
@@ -248,7 +248,7 @@ static NSURLRequest* updateIgnoreStrictTransportSecuritySettingIfNecessary(NSURL
     if (auto* networkDataTask = [self existingTask:task]) {
         bool shouldIgnoreHSTS = false;
 #if USE(CFNETWORK_IGNORE_HSTS)
-        shouldIgnoreHSTS = schemeWasUpgradedDueToDynamicHSTS(request) && !(WebCore::NetworkStorageSession::storageSession(_session->sessionID())->cookieStoragePartition(request, networkDataTask->frameID(), networkDataTask->pageID())).isEmpty();
+        shouldIgnoreHSTS = schemeWasUpgradedDueToDynamicHSTS(request) && WebCore::NetworkStorageSession::storageSession(_session->sessionID())->shouldBlockCookies(request);
         if (shouldIgnoreHSTS) {
             request = downgradeRequest(request);
             ASSERT([request.URL.scheme isEqualToString:@"http"]);

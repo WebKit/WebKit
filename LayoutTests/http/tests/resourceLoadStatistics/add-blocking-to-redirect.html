@@ -6,7 +6,7 @@
 </head>
 <body onload="runTest()">
 <script>
-    description("Tests that partitioning is added mid-flight in redirects.");
+    description("Tests that blocking is added mid-flight in redirects.");
     jsTestIsAsync = true;
 
     function setEnableFeature(enable) {
@@ -34,7 +34,7 @@
     const subPathToSetFirstPartyCookie = "/set-cookie.php?name=" + firstPartyCookieName + "&value=value";
     const partitionedCookieName = "partitionedCookie";
     const subPathToSetPartitionedCookie = "/set-cookie.php?name=" + partitionedCookieName + "&value=value";
-    const returnUrl = "http://" + partitionHost + "/resourceLoadStatistics/add-partitioning-to-redirect.html";
+    const returnUrl = "http://" + partitionHost + "/resourceLoadStatistics/add-blocking-to-redirect.html";
     const subPathToGetCookies = "/get-cookies.php?name1=" + firstPartyCookieName + "&name2=" + partitionedCookieName;
     const redirectChainUrl = "http://" + partitionHost + resourcePath + "/redirect.php?redirectTo=" + thirdPartyBaseUrl + subPathToGetCookies;
 
@@ -61,42 +61,41 @@
             case "#step3":
                 document.location.hash = "step4";
                 // Load an iframe in a redirect chain that starts with 127.0.0.1 and ends with localhost. Expect a cookie for localhost.
-                openIframe(redirectChainUrl + "&message=Redirect case, should receive first-party cookie.", runTest);
+                openIframe(redirectChainUrl + "&message=Redirect case 1, should receive first-party cookie.", runTest);
                 break;
             case "#step4":
-                // Set localhost as prevalent and with non-recent user interaction to put it in the partitioning category.
+                // Set localhost as prevalent and with no user interaction to put it in the blocking category.
                 document.location.hash = "step5";
                 testRunner.setStatisticsPrevalentResource("http://localhost", true);
-                testRunner.setStatisticsHasHadNonRecentUserInteraction("http://localhost");
                 testRunner.statisticsUpdateCookiePartitioning();
                 if (!testRunner.isStatisticsPrevalentResource("http://localhost"))
                     testFailed("Host did not get set as prevalent resource.");
                 runTest();
                 break;
             case "#step5":
-                // Check that no cookie gets sent for localhost under 127.0.0.1 since localhost is partitioned.
+                // Check that no cookie gets sent for localhost under 127.0.0.1 since localhost's cookies are blocked.
                 document.location.hash = "step6";
                 openIframe(thirdPartyBaseUrl + subPathToGetCookies +  "&message=Should receive no cookies.", runTest);
                 break;
             case "#step6":
                 // Load an iframe in a redirect chain that starts with 127.0.0.1 and ends with localhost. Expect no cookie for localhost.
                 document.location.hash = "step7";
-                openIframe(redirectChainUrl + "&message=Redirect case, should receive no cookie.", runTest);
+                openIframe(redirectChainUrl + "&message=Redirect case 2, should receive no cookie.", runTest);
                 break;
             case "#step7":
-                // Set partitioned cookie for localhost under 127.0.0.1.
+                // Try to set cookie for localhost under 127.0.0.1.
                 document.location.hash = "step8";
-                openIframe(thirdPartyBaseUrl + subPathToSetPartitionedCookie + "&message=Set partitioned, third-party cookie.", runTest);
+                openIframe(thirdPartyBaseUrl + subPathToSetPartitionedCookie + "&message=Try to set third-party cookie in blocked mode.", runTest);
                 break;
             case "#step8":
-                // Check that partitioned cookie gets sent for localhost under 127.0.0.1 since localhost is partitioned.
+                // Check that no cookie gets sent for localhost under 127.0.0.1 since localhost's cookies are blocked.
                 document.location.hash = "step9";
-                openIframe(thirdPartyBaseUrl + subPathToGetCookies +  "&message=Should receive partitioned cookie.", runTest);
+                openIframe(thirdPartyBaseUrl + subPathToGetCookies +  "&message=After attempted cookie creation, should receive no cookie.", runTest);
                 break;
             case "#step9":
-                // Load an iframe in a redirect chain that starts with 127.0.0.1 and ends with localhost. Expect the partitioned cookie for localhost.
+                // Load an iframe in a redirect chain that starts with 127.0.0.1 and ends with localhost. Expect no cookie for localhost.
                 document.location.hash = "step10";
-                openIframe(redirectChainUrl + "&message=Redirect case, should receive partitioned cookie.", runTest);
+                openIframe(redirectChainUrl + "&message=Redirect case 3, after attempted cookie creation, should receive no cookie.", runTest);
                 break;
             case "#step10":
                 setEnableFeature(false);

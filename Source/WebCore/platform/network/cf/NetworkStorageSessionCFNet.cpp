@@ -260,11 +260,9 @@ void NetworkStorageSession::setPrevalentDomainsToPartitionOrBlockCookies(const V
     }
 
     for (auto& domain : domainsToBlock) {
-        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=177394
-        // m_topPrivatelyControlledDomainsToBlock.add(domain);
-        // if (!clearFirst)
-        //     m_topPrivatelyControlledDomainsToPartition.remove(domain);
-        m_topPrivatelyControlledDomainsToPartition.add(domain);
+        m_topPrivatelyControlledDomainsToBlock.add(domain);
+        if (!clearFirst)
+            m_topPrivatelyControlledDomainsToPartition.remove(domain);
     }
     
     if (!clearFirst) {

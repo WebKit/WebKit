@@ -1,3 +1,14 @@
+2018-01-17  John Wilander  <wilander@apple.com>
+
+        Resource Load Statistics: Block cookies for prevalent resources without user interaction
+        https://bugs.webkit.org/show_bug.cgi?id=177394
+        <rdar://problem/34613960>
+
+        Reviewed by Alex Christensen.
+
+        * pal/spi/cf/CFNetworkSPI.h:
+            Declaration of _initWithIdentifier() on NSHTTPCookieStorage.
+
 2018-01-16  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         PAL should link to JavaScriptCore rather than WTF
