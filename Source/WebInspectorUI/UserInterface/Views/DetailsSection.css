@@ -257,6 +257,7 @@ body[dir=rtl] .details-section > .content > .group > .row.simple > .label {
 }
 
 .details-section > .content > .group > .row.simple > .value {
+    word-break: break-all;
     word-wrap: break-word;
     cursor: text;
     -webkit-user-select: text;
