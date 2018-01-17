@@ -316,6 +316,7 @@
     "web-platform-tests/url": "import", 
     "web-platform-tests/user-timing": "import", 
     "web-platform-tests/vibration": "skip", 
+    "web-platform-tests/visual-viewport": "import", 
     "web-platform-tests/wai-aria": "skip", 
     "web-platform-tests/wasm": "skip", 
     "web-platform-tests/web-animations": "skip", 

@@ -2,9 +2,9 @@ Viewport: Size unscaled
 
 Test Description: This test checks that window.visualViewport returns correct sizes without any pinch-zoom page scale applied.
 
-window.visualViewport width and height is (320, 548).
+window.visualViewport width and height is (800, 600).
 
-window.visualViewport width and height when scrollbars are present is (320, 548).
+window.visualViewport width and height when scrollbars are present is (800, 600).
 
 
 PASS visualViewport.width should match documentElement.clientWidth when unzoomed. 

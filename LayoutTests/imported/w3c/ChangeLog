@@ -1,3 +1,46 @@
+2018-01-17  Ali Juma  <ajuma@chromium.org>
+
+        Update web platform tests for Visual Viewport API
+        https://bugs.webkit.org/show_bug.cgi?id=181689
+
+        Reviewed by Alex Christensen.
+
+        Rename the test directory from 'viewport' to 'visual-viewport', and update
+        viewport-resize-event-on-load-overflowing-page.html.
+
+        This corresponds to the following upstream commits:
+        1) https://github.com/w3c/web-platform-tests/commit/f878fee4df619e55c7fbfce1a2ff5e5d4d83a03b
+        2) https://github.com/w3c/web-platform-tests/commit/03a684d63e62d85cffed38bc942f468692d7d54f
+
+        * resources/import-expectations.json:
+        * web-platform-tests/viewport/w3c-import.log: Removed.
+        * web-platform-tests/visual-viewport/viewport-no-resize-event-on-overflow-recalc-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/viewport/viewport-no-resize-event-on-overflow-recalc-expected.txt.
+        * web-platform-tests/visual-viewport/viewport-no-resize-event-on-overflow-recalc.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/viewport/viewport-no-resize-event-on-overflow-recalc.html.
+        * web-platform-tests/visual-viewport/viewport-read-size-causes-layout-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/viewport/viewport-read-size-causes-layout-expected.txt.
+        * web-platform-tests/visual-viewport/viewport-read-size-causes-layout.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/viewport/viewport-read-size-causes-layout.html.
+        * web-platform-tests/visual-viewport/viewport-read-size-in-iframe-causes-layout-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/viewport/viewport-read-size-in-iframe-causes-layout-expected.txt.
+        * web-platform-tests/visual-viewport/viewport-read-size-in-iframe-causes-layout.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/viewport/viewport-read-size-in-iframe-causes-layout.html.
+        * web-platform-tests/visual-viewport/viewport-resize-event-on-load-overflowing-page-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/viewport/viewport-resize-event-on-load-overflowing-page-expected.txt.
+        * web-platform-tests/visual-viewport/viewport-resize-event-on-load-overflowing-page.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/viewport/viewport-resize-event-on-load-overflowing-page.html.
+        * web-platform-tests/visual-viewport/viewport-scrollbars-cause-resize-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/viewport/viewport-scrollbars-cause-resize-expected.txt.
+        * web-platform-tests/visual-viewport/viewport-scrollbars-cause-resize.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/viewport/viewport-scrollbars-cause-resize.html.
+        * web-platform-tests/visual-viewport/viewport-type-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/viewport/viewport-type-expected.txt.
+        * web-platform-tests/visual-viewport/viewport-type.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/viewport/viewport-type.html.
+        * web-platform-tests/visual-viewport/viewport-unscaled-scale-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/viewport/viewport-unscaled-scale-expected.txt.
+        * web-platform-tests/visual-viewport/viewport-unscaled-scale-iframe-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/viewport/viewport-unscaled-scale-iframe-expected.txt.
+        * web-platform-tests/visual-viewport/viewport-unscaled-scale-iframe.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/viewport/viewport-unscaled-scale-iframe.html.
+        * web-platform-tests/visual-viewport/viewport-unscaled-scale.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/viewport/viewport-unscaled-scale.html.
+        * web-platform-tests/visual-viewport/viewport-unscaled-scroll-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/viewport/viewport-unscaled-scroll-expected.txt.
+        * web-platform-tests/visual-viewport/viewport-unscaled-scroll-iframe-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/viewport/viewport-unscaled-scroll-iframe-expected.txt.
+        * web-platform-tests/visual-viewport/viewport-unscaled-scroll-iframe.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/viewport/viewport-unscaled-scroll-iframe.html.
+        * web-platform-tests/visual-viewport/viewport-unscaled-scroll.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/viewport/viewport-unscaled-scroll.html.
+        * web-platform-tests/visual-viewport/viewport-unscaled-size-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/viewport/viewport-unscaled-size-expected.txt.
+        * web-platform-tests/visual-viewport/viewport-unscaled-size-iframe-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/viewport/viewport-unscaled-size-iframe-expected.txt.
+        * web-platform-tests/visual-viewport/viewport-unscaled-size-iframe.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/viewport/viewport-unscaled-size-iframe.html.
+        * web-platform-tests/visual-viewport/viewport-unscaled-size.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/viewport/viewport-unscaled-size.html.
+        * web-platform-tests/visual-viewport/viewport_support.js: Renamed from LayoutTests/imported/w3c/web-platform-tests/viewport/viewport_support.js.
+        * web-platform-tests/visual-viewport/w3c-import.log: Added.
+
 2018-01-12  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthN] Implement dummy WebAuthN IDLs
