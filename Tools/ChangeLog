@@ -1,5 +1,11 @@
 2018-01-17  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Unreviewed WPE gardening. Mark some known unit test failures.
+
+        * TestWebKitAPI/glib/TestExpectations.json:
+
+2018-01-17  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK][WPE] Use the same subtest names in GTK and WPE unit tests
         https://bugs.webkit.org/show_bug.cgi?id=181724
 

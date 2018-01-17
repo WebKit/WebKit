@@ -40,10 +40,20 @@
             }
         }
     },
+    "TestWebKitFindController": {
+        "expected": {"wpe": {"status": ["CRASH"], "bug": "webkit.org/b/181472"}}
+    },
     "TestWebsiteData": {
         "subtests": {
             "/webkit/WebKitWebsiteData/databases": {
                 "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/181251"}}
+            }
+        }
+    },
+    "TestWebKitWebView": {
+        "subtests": {
+            "/webkit/WebKitWebView/backend": {
+                "expected": {"wpe": {"status": ["CRASH"], "bug": "webkit.org/b/179884"}}
             }
         }
     },
