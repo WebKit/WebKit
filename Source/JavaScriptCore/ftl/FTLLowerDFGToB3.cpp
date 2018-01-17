@@ -1773,14 +1773,13 @@ private:
     void compileValueAdd()
     {
         ArithProfile* arithProfile = m_ftlState.graph.baselineCodeBlockFor(m_node->origin.semantic)->arithProfileForBytecodeOffset(m_node->origin.semantic.bytecodeIndex);
-        JITAddIC* addIC = codeBlock()->addJITAddIC(arithProfile);
         auto repatchingFunction = operationValueAddOptimize;
         auto nonRepatchingFunction = operationValueAdd;
-        compileMathIC(addIC, repatchingFunction, nonRepatchingFunction);
+        compileBinaryMathIC<JITAddGenerator>(arithProfile, repatchingFunction, nonRepatchingFunction);
     }
 
     template <typename Generator>
-    void compileMathIC(JITUnaryMathIC<Generator>* mathIC, FunctionPtr repatchingFunction, FunctionPtr nonRepatchingFunction)
+    void compileUnaryMathIC(ArithProfile* arithProfile, FunctionPtr repatchingFunction, FunctionPtr nonRepatchingFunction)
     {
         Node* node = m_node;
 
@@ -1806,6 +1805,7 @@ private:
 #endif
 
                 Box<MathICGenerationState> mathICGenerationState = Box<MathICGenerationState>::create();
+                JITUnaryMathIC<Generator>* mathIC = jit.codeBlock()->addMathIC<Generator>(arithProfile);
                 mathIC->m_generator = Generator(JSValueRegs(params[0].gpr()), JSValueRegs(params[1].gpr()), params.gpScratch(0));
 
                 bool shouldEmitProfiling = false;
@@ -1864,7 +1864,7 @@ private:
     }
 
     template <typename Generator>
-    void compileMathIC(JITBinaryMathIC<Generator>* mathIC, FunctionPtr repatchingFunction, FunctionPtr nonRepatchingFunction)
+    void compileBinaryMathIC(ArithProfile* arithProfile, FunctionPtr repatchingFunction, FunctionPtr nonRepatchingFunction)
     {
         Node* node = m_node;
         
@@ -1889,6 +1889,7 @@ private:
             [=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
                 AllowMacroScratchRegisterUsage allowScratch(jit);
 
+
                 Box<CCallHelpers::JumpList> exceptions =
                     exceptionHandle->scheduleExitCreation(params)->jumps(jit);
 
@@ -1897,6 +1898,7 @@ private:
 #endif
 
                 Box<MathICGenerationState> mathICGenerationState = Box<MathICGenerationState>::create();
+                JITBinaryMathIC<Generator>* mathIC = jit.codeBlock()->addMathIC<Generator>(arithProfile);
                 mathIC->m_generator = Generator(leftOperand, rightOperand, JSValueRegs(params[0].gpr()),
                     JSValueRegs(params[1].gpr()), JSValueRegs(params[2].gpr()), params.fpScratch(0),
                     params.fpScratch(1), params.gpScratch(0), InvalidFPRReg);
@@ -2028,10 +2030,9 @@ private:
             }
 
             ArithProfile* arithProfile = m_ftlState.graph.baselineCodeBlockFor(m_node->origin.semantic)->arithProfileForBytecodeOffset(m_node->origin.semantic.bytecodeIndex);
-            JITSubIC* subIC = codeBlock()->addJITSubIC(arithProfile);
             auto repatchingFunction = operationValueSubOptimize;
             auto nonRepatchingFunction = operationValueSub;
-            compileMathIC(subIC, repatchingFunction, nonRepatchingFunction);
+            compileBinaryMathIC<JITSubGenerator>(arithProfile, repatchingFunction, nonRepatchingFunction);
             break;
         }
 
@@ -2123,10 +2124,9 @@ private:
 
         case UntypedUse: {
             ArithProfile* arithProfile = m_ftlState.graph.baselineCodeBlockFor(m_node->origin.semantic)->arithProfileForBytecodeOffset(m_node->origin.semantic.bytecodeIndex);
-            JITMulIC* mulIC = codeBlock()->addJITMulIC(arithProfile);
             auto repatchingFunction = operationValueMulOptimize;
             auto nonRepatchingFunction = operationValueMul;
-            compileMathIC(mulIC, repatchingFunction, nonRepatchingFunction);
+            compileBinaryMathIC<JITMulGenerator>(arithProfile, repatchingFunction, nonRepatchingFunction);
             break;
         }
 
@@ -2705,10 +2705,9 @@ private:
         default:
             DFG_ASSERT(m_graph, m_node, m_node->child1().useKind() == UntypedUse);
             ArithProfile* arithProfile = m_ftlState.graph.baselineCodeBlockFor(m_node->origin.semantic)->arithProfileForBytecodeOffset(m_node->origin.semantic.bytecodeIndex);
-            JITNegIC* negIC = codeBlock()->addJITNegIC(arithProfile);
             auto repatchingFunction = operationArithNegateOptimize;
             auto nonRepatchingFunction = operationArithNegate;
-            compileMathIC(negIC, repatchingFunction, nonRepatchingFunction);
+            compileUnaryMathIC<JITNegGenerator>(arithProfile, repatchingFunction, nonRepatchingFunction);
             break;
         }
     }

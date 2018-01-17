@@ -1,3 +1,17 @@
+2018-01-16  Jason Marcell  <jmarcell@apple.com>
+
+        Cherry-pick r226806. rdar://problem/36567946
+
+    2018-01-11  Saam Barati  <sbarati@apple.com>
+
+            JITMathIC code in the FTL is wrong when code gets duplicated
+            https://bugs.webkit.org/show_bug.cgi?id=181525
+            <rdar://problem/36351993>
+
+            Reviewed by Michael Saboff and Keith Miller.
+
+            * stress/allow-math-ic-b3-code-duplication.js: Added.
+
 2018-01-11  Jason Marcell  <jmarcell@apple.com>
 
         Cherry-pick r226811. rdar://problem/36458907
