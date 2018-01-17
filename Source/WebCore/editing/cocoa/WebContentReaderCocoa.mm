@@ -53,6 +53,7 @@
 #import "SocketProvider.h"
 #import "TypedElementDescendantIterator.h"
 #import "URLParser.h"
+#import "UTIUtilities.h"
 #import "WebArchiveResourceFromNSAttributedString.h"
 #import "WebArchiveResourceWebResourceHandler.h"
 #import "WebNSAttributedStringExtras.h"
@@ -614,7 +615,7 @@ bool WebContentReader::readImage(Ref<SharedBuffer>&& buffer, const String& type)
     ASSERT(frame.document());
     auto& document = *frame.document();
 
-    auto replacementURL = frame.editor().clientReplacementURLForResource(buffer.copyRef(), type);
+    auto replacementURL = frame.editor().clientReplacementURLForResource(buffer.copyRef(), isDeclaredUTI(type) ? MIMETypeFromUTI(type) : type);
     if (!replacementURL.isEmpty()) {
         addFragment(createFragmentForImageAndURL(document, replacementURL));
         return true;
