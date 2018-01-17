@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -55,11 +55,12 @@ bool PutByIdStatus::appendVariant(const PutByIdVariant& variant)
 }
 
 #if ENABLE(DFG_JIT)
-bool PutByIdStatus::hasExitSite(const ConcurrentJSLocker& locker, CodeBlock* profiledBlock, unsigned bytecodeIndex)
+bool PutByIdStatus::hasExitSite(CodeBlock* profiledBlock, unsigned bytecodeIndex)
 {
-    return profiledBlock->hasExitSite(locker, DFG::FrequentExitSite(bytecodeIndex, BadCache))
-        || profiledBlock->hasExitSite(locker, DFG::FrequentExitSite(bytecodeIndex, BadConstantCache));
-    
+    UnlinkedCodeBlock* unlinkedCodeBlock = profiledBlock->unlinkedCodeBlock();
+    ConcurrentJSLocker locker(unlinkedCodeBlock->m_lock);
+    return unlinkedCodeBlock->hasExitSite(locker, DFG::FrequentExitSite(bytecodeIndex, BadCache))
+        || unlinkedCodeBlock->hasExitSite(locker, DFG::FrequentExitSite(bytecodeIndex, BadConstantCache));
 }
 #endif
 
@@ -117,13 +118,13 @@ PutByIdStatus PutByIdStatus::computeFor(CodeBlock* profiledBlock, StubInfoMap& m
     UNUSED_PARAM(bytecodeIndex);
     UNUSED_PARAM(uid);
 #if ENABLE(DFG_JIT)
-    if (hasExitSite(locker, profiledBlock, bytecodeIndex))
+    if (hasExitSite(profiledBlock, bytecodeIndex))
         return PutByIdStatus(TakesSlowPath);
     
     StructureStubInfo* stubInfo = map.get(CodeOrigin(bytecodeIndex));
     PutByIdStatus result = computeForStubInfo(
         locker, profiledBlock, stubInfo, uid,
-        CallLinkStatus::computeExitSiteData(locker, profiledBlock, bytecodeIndex));
+        CallLinkStatus::computeExitSiteData(profiledBlock, bytecodeIndex));
     if (!result)
         return computeFromLLInt(profiledBlock, bytecodeIndex, uid);
     
@@ -139,7 +140,7 @@ PutByIdStatus PutByIdStatus::computeForStubInfo(const ConcurrentJSLocker& locker
 {
     return computeForStubInfo(
         locker, baselineBlock, stubInfo, uid,
-        CallLinkStatus::computeExitSiteData(locker, baselineBlock, codeOrigin.bytecodeIndex));
+        CallLinkStatus::computeExitSiteData(baselineBlock, codeOrigin.bytecodeIndex));
 }
 
 PutByIdStatus PutByIdStatus::computeForStubInfo(
@@ -267,13 +268,13 @@ PutByIdStatus PutByIdStatus::computeFor(CodeBlock* baselineBlock, CodeBlock* dfg
 {
 #if ENABLE(DFG_JIT)
     if (dfgBlock) {
+        if (hasExitSite(baselineBlock, codeOrigin.bytecodeIndex))
+            return PutByIdStatus(TakesSlowPath);
         CallLinkStatus::ExitSiteData exitSiteData;
         {
             ConcurrentJSLocker locker(baselineBlock->m_lock);
-            if (hasExitSite(locker, baselineBlock, codeOrigin.bytecodeIndex))
-                return PutByIdStatus(TakesSlowPath);
             exitSiteData = CallLinkStatus::computeExitSiteData(
-                locker, baselineBlock, codeOrigin.bytecodeIndex);
+                baselineBlock, codeOrigin.bytecodeIndex);
         }
             
         PutByIdStatus result;

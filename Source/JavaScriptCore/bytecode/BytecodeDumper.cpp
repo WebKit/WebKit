@@ -226,7 +226,7 @@ void BytecodeDumper<CodeBlock>::dumpProfilesForBytecodeOffset(PrintStream& out, 
     }
 
 #if ENABLE(DFG_JIT)
-    Vector<DFG::FrequentExitSite> exitSites = block()->exitProfile().exitSitesFor(location);
+    Vector<DFG::FrequentExitSite> exitSites = block()->unlinkedCodeBlock()->exitProfile().exitSitesFor(location);
     if (!exitSites.isEmpty()) {
         out.print(" !! frequent exits: ");
         CommaPrinter comma;

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2017 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2012-2018 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -422,12 +422,11 @@ BytecodeLivenessAnalysis& UnlinkedCodeBlock::livenessAnalysisSlow(CodeBlock* cod
 {
     RELEASE_ASSERT(codeBlock->unlinkedCodeBlock() == this);
 
-
     {
-        auto locker = holdLock(m_lock);
+        ConcurrentJSLocker locker(m_lock);
         if (!m_liveness) {
             // There is a chance two compiler threads raced to the slow path.
-            // We defend against computing liveness twice.
+            // Grabbing the lock above defends against computing liveness twice.
             m_liveness = std::make_unique<BytecodeLivenessAnalysis>(codeBlock);
         }
     }

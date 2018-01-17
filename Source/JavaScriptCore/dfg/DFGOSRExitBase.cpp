@@ -47,7 +47,7 @@ void OSRExitBase::considerAddingAsFrequentExitSiteSlow(CodeBlock* profiledCodeBl
             site = FrequentExitSite(HoistingFailed, jitType);
         else
             site = FrequentExitSite(m_codeOriginForExitProfile.bytecodeIndex, m_kind, jitType);
-        sourceProfiledCodeBlock->addFrequentExitSite(site);
+        ExitProfile::add(sourceProfiledCodeBlock, site);
     }
 }
 
