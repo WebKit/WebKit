@@ -145,10 +145,10 @@ class WebDriverW3CExecutor(WdspecExecutor):
     def teardown(self):
         self.protocol.teardown()
 
-    def run(self, test, timeout):
+    def run(self, test, timeout, expectations):
         env = {'WD_HOST': self.protocol.session_config['host'],
                'WD_PORT': str(self.protocol.session_config['port']),
                'WD_CAPABILITIES': json.dumps(self.protocol.session_config['capabilities']),
                'WD_SERVER_CONFIG': json.dumps(self.server_config)}
         args = ['--strict', '-p', 'no:mozlog']
-        return pytest_runner.run(test, args, timeout, env)
+        return pytest_runner.run(test, args, timeout, env, expectations)

@@ -58,5 +58,5 @@ class WebDriverSeleniumExecutor(object):
     def collect(self, directory):
         return pytest_runner.collect(directory, self._args)
 
-    def run(self, test, timeout):
-        return pytest_runner.run(test, self._args, timeout, self._env)
+    def run(self, test, timeout, expectations):
+        return pytest_runner.run(test, self._args, timeout, self._env, expectations)

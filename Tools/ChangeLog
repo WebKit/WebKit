@@ -1,5 +1,43 @@
 2018-01-17  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        WebDriver: add support for test expectations
+        https://bugs.webkit.org/show_bug.cgi?id=180420
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        Add support for parsing test expectations from a JSON file and mark tests on collection accordingly.
+
+        * Scripts/run-webdriver-tests: Get the retval from process_results().
+        * Scripts/webkitpy/thirdparty/__init__.py:
+        (AutoinstallImportHook._install_pytest): Install also py because pytest needs it.
+        * Scripts/webkitpy/webdriver_tests/pytest_runner.py:
+        (TestExpectationsMarker): Plugin to mark tests based on given expectations.
+        (TestExpectationsMarker.__init__): Initialize expectations.
+        (TestExpectationsMarker.pytest_collection_modifyitems): Mark tests if needed,
+        (run): Create and use TestExpectationsMarker plugin.
+        * Scripts/webkitpy/webdriver_tests/webdriver_selenium_executor.py:
+        (WebDriverSeleniumExecutor.run): Pass expectations to pytest_runner.
+        * Scripts/webkitpy/webdriver_tests/webdriver_test_runner.py:
+        (WebDriverTestRunner.__init__): Create a TestExpectations and pass it to the runners.
+        (WebDriverTestRunner.run): Do not count results here.
+        (WebDriverTestRunner.process_results): Rename print_results() as process_results() since it now returns the
+        amount of failures. Printing the test summary while processing results will be made optional in a follow up
+        patch.
+        (WebDriverTestRunner.process_results.report): Return the amount of failures.
+        * Scripts/webkitpy/webdriver_tests/webdriver_test_runner_selenium.py:
+        (WebDriverTestRunnerSelenium.__init__): Initialize _expectations.
+        (WebDriverTestRunnerSelenium.collect_tests): Do not include skipped tests.
+        (WebDriverTestRunnerSelenium.run): Stop returning the tests count.
+        * Scripts/webkitpy/webdriver_tests/webdriver_test_runner_w3c.py:
+        (WebDriverTestRunnerW3C.__init__): Initialize _expectations.
+        (WebDriverTestRunnerW3C.collect_tests): Do not include skipped tests.
+        (WebDriverTestRunnerW3C._scan_directory): Ditto.
+        (WebDriverTestRunnerW3C.run): Stop returning the tests count.
+        * Scripts/webkitpy/webdriver_tests/webdriver_w3c_executor.py:
+        (WebDriverW3CExecutor.run): Pass expectations to pytest_runner.
+
+2018-01-17  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Unreviewed WPE gardening. Mark some known unit test failures.
 
         * TestWebKitAPI/glib/TestExpectations.json:

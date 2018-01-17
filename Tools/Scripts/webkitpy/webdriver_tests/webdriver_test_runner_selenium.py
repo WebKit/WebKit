@@ -34,46 +34,46 @@ _log = logging.getLogger(__name__)
 
 class WebDriverTestRunnerSelenium(object):
 
-    def __init__(self, port, driver, display_driver):
+    def __init__(self, port, driver, display_driver, expectations):
         self._port = port
         self._driver = driver
         self._display_driver = display_driver
+        self._expectations = expectations
         self._results = []
+        self._tests_dir = WebKitFinder(self._port.host.filesystem).path_from_webkit_base('WebDriverTests')
 
-    def _tests_dir(self):
-        return WebKitFinder(self._port.host.filesystem).path_from_webkit_base('WebDriverTests')
-
-    def collect_tests(self, tests=[]):
+    def collect_tests(self, tests):
         if self._driver.selenium_name() is None:
             return 0
 
+        skipped = [os.path.join(self._tests_dir, test) for test in self._expectations.skipped_tests()]
         relative_tests_dir = os.path.join('imported', 'selenium', 'py', 'test')
         executor = WebDriverSeleniumExecutor(self._driver, self._display_driver)
         # Collected tests are relative to test directory.
-        base_dir = os.path.join(self._tests_dir(), os.path.dirname(relative_tests_dir))
-        collected_tests = [os.path.join(base_dir, test) for test in executor.collect(os.path.join(self._tests_dir(), relative_tests_dir))]
+        base_dir = os.path.join(self._tests_dir, os.path.dirname(relative_tests_dir))
+        collected_tests = [os.path.join(base_dir, test) for test in executor.collect(os.path.join(self._tests_dir, relative_tests_dir))]
         selenium_tests = []
         if not tests:
             tests = [relative_tests_dir]
         for test in tests:
             if not test.startswith(relative_tests_dir):
                 continue
-            test_path = os.path.join(self._tests_dir(), test)
+            test_path = os.path.join(self._tests_dir, test)
             if os.path.isdir(test_path):
-                selenium_tests.extend([test for test in collected_tests if test.startswith(test_path)])
-            elif test_path in collected_tests:
+                selenium_tests.extend([test for test in collected_tests if test.startswith(test_path) and test not in skipped])
+            elif test_path in collected_tests and test_path not in skipped:
                 selenium_tests.append(test_path)
         return selenium_tests
 
     def run(self, tests=[]):
         if self._driver.selenium_name() is None:
-            return 0
+            return
 
         executor = WebDriverSeleniumExecutor(self._driver, self._display_driver)
         timeout = self._port.get_option('timeout')
         for test in tests:
-            test_name = os.path.relpath(test, self._tests_dir())
-            harness_result, test_results = executor.run(test, timeout)
+            test_name = os.path.relpath(test, self._tests_dir)
+            harness_result, test_results = executor.run(test, timeout, self._expectations)
             result = WebDriverTestResult(test_name, *harness_result)
             if harness_result[0] == 'OK':
                 for subtest, status, message, backtrace in test_results:
@@ -82,8 +82,6 @@ class WebDriverTestRunnerSelenium(object):
                 # FIXME: handle other results.
                 pass
             self._results.append(result)
-
-        return len(self._results)
 
     def results(self):
         return self._results

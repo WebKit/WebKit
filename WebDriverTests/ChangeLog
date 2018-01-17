@@ -1,3 +1,15 @@
+2018-01-17  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        WebDriver: add support for test expectations
+        https://bugs.webkit.org/show_bug.cgi?id=180420
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        Add initial test expectations. For now I'm only adding the W3C test expectations, selenium ones will be added in
+        a follow up patch.
+
+        * TestExpectations.json: Added.
+
 2018-01-11  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Update Selenium WebDriver imported tests.

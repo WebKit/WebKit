@@ -24,6 +24,8 @@ import json
 import logging
 import os
 
+from webkitpy.common.webkit_finder import WebKitFinder
+from webkitpy.common.test_expectations import TestExpectations
 from webkitpy.webdriver_tests.webdriver_driver import create_driver
 from webkitpy.webdriver_tests.webdriver_test_runner_selenium import WebDriverTestRunnerSelenium
 from webkitpy.webdriver_tests.webdriver_test_runner_w3c import WebDriverTestRunnerW3C
@@ -49,7 +51,13 @@ class WebDriverTestRunner(object):
         _log.info('Using driver at %s' % (driver.binary_path()))
         _log.info('Browser: %s' % (driver.browser_name()))
 
-        self._runners = [runner_cls(self._port, driver, self._display_driver) for runner_cls in self.RUNNER_CLASSES]
+        _log.info('Parsing expectations')
+        self._tests_dir = WebKitFinder(self._port.host.filesystem).path_from_webkit_base('WebDriverTests')
+        expectations_file = os.path.join(self._tests_dir, 'TestExpectations.json')
+        build_type = 'Debug' if self._port.get_option('debug') else 'Release'
+        self._expectations = TestExpectations(self._port.name(), expectations_file, build_type)
+
+        self._runners = [runner_cls(self._port, driver, self._display_driver, self._expectations) for runner_cls in self.RUNNER_CLASSES]
 
     def run(self, tests=[]):
         runner_tests = [runner.collect_tests(tests) for runner in self._runners]
@@ -59,13 +67,11 @@ class WebDriverTestRunner(object):
             return 0
 
         _log.info('Collected %d test files' % collected_count)
-        results_count = 0
         for i in range(len(self._runners)):
             if runner_tests[i]:
-                results_count += self._runners[i].run(runner_tests[i])
-        return results_count
+                self._runners[i].run(runner_tests[i])
 
-    def print_results(self):
+    def process_results(self):
         results = {}
         expected_count = 0
         passed_count = 0
@@ -93,30 +99,38 @@ class WebDriverTestRunner(object):
                 pass
 
         _log.info('')
+        retval = 0
 
         if not results:
             _log.info('All tests run as expected')
-            return
+            return retval
 
         _log.info('%d tests ran as expected, %d didn\'t\n' % (expected_count, failures_count + timeout_count + passed_count))
 
         def report(status, actual, expected=None):
+            retval = 0
             if status not in results:
-                return
+                return retval
 
             tests = results[status]
+            tests_count = len(tests)
             if expected is None:
-                _log.info('Unexpected %s (%d)' % (actual, len(tests)))
+                _log.info('Unexpected %s (%d)' % (actual, tests_count))
+                retval += tests_count
             else:
-                _log.info('Expected to %s, but %s (%d)' % (expected, actual, len(tests)))
+                _log.info('Expected to %s, but %s (%d)' % (expected, actual, tests_count))
             for test in tests:
                 _log.info('  %s' % test)
             _log.info('')
 
+            return retval
+
         report('XPASS', 'passed', 'fail')
         report('XPASS_TIMEOUT', 'passed', 'timeout')
-        report('FAIL', 'failures')
-        report('TIMEOUT', 'timeouts')
+        retval += report('FAIL', 'failures')
+        retval += report('TIMEOUT', 'timeouts')
+
+        return retval
 
     def dump_results_to_json_file(self, output_path):
         json_results = {}
