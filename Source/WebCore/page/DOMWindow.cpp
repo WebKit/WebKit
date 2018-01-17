@@ -1425,6 +1425,12 @@ DOMWindow* DOMWindow::opener() const
     return opener->document()->domWindow();
 }
 
+void DOMWindow::disownOpener()
+{
+    if (m_frame)
+        m_frame->loader().setOpener(nullptr);
+}
+
 DOMWindow* DOMWindow::parent() const
 {
     if (!m_frame)

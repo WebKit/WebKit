@@ -1,0 +1,27 @@
+Tests shadowing of window.opener property
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS window.opener is null
+desc = Object.getOwnPropertyDescriptor(window, 'opener')
+PASS desc.get is an instance of Function
+PASS desc.set is an instance of Function
+PASS desc.enumerable is true
+PASS desc.configurable is true
+PASS window.opener = 'foo' did not throw exception.
+desc = Object.getOwnPropertyDescriptor(window, 'opener')
+PASS desc.value is "foo"
+PASS desc.writable is true
+PASS desc.enumerable is true
+PASS desc.configurable is true
+PASS openerGetter.call(window) is null
+PASS delete window.opener did not throw exception.
+PASS window.opener is undefined.
+PASS openerGetter.call(window) is null
+desc = Object.getOwnPropertyDescriptor(window, 'opener')
+PASS desc is undefined.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

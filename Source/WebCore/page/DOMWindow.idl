@@ -73,7 +73,7 @@ typedef USVString CSSOMString;
     [Replaceable, DoNotCheckSecurityOnGetter] readonly attribute DOMWindow frames;
     [Replaceable, DoNotCheckSecurityOnGetter] readonly attribute unsigned long length;
     [DoNotCheckSecurityOnGetter, Unforgeable] readonly attribute DOMWindow? top;
-    [Replaceable, DoNotCheckSecurityOnGetter] readonly attribute DOMWindow? opener;
+    [DoNotCheckSecurityOnGetter, CustomSetter] attribute DOMWindow? opener;
     [Replaceable, DoNotCheckSecurityOnGetter] readonly attribute DOMWindow? parent;
     [CheckSecurityForNode] readonly attribute Element? frameElement;
     [CallWith=ActiveWindow&FirstWindow] DOMWindow? open(optional USVString url = "about:blank", optional DOMString target = "_blank", optional [TreatNullAs=EmptyString] DOMString features = "");

@@ -1,3 +1,22 @@
+2018-01-16  Jason Marcell  <jmarcell@apple.com>
+
+        Cherry-pick r226842. rdar://problem/36568025
+
+    2018-01-11  Chris Dumez  <cdumez@apple.com>
+
+            Setting Window.opener to null should disown its opener
+            https://bugs.webkit.org/show_bug.cgi?id=181505
+            <rdar://problem/36443151>
+
+            Reviewed by Ryosuke Niwa.
+
+            Add layout test coverage.
+
+            * fast/dom/Window/window-opener-set-to-null-expected.txt: Added.
+            * fast/dom/Window/window-opener-set-to-null.html: Added.
+            * fast/dom/Window/window-opener-shadowing-expected.txt: Added.
+            * fast/dom/Window/window-opener-shadowing.html: Added.
+
 2018-01-12  Jason Marcell  <jmarcell@apple.com>
 
         Cherry-pick r226745. rdar://problem/36392368
