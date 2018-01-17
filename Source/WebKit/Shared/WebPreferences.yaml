@@ -1103,13 +1103,12 @@ LinkPreloadEnabled:
   category: experimental
   webcoreBinding: RuntimeEnabledFeatures
 
-WebRTCLegacyAPIDisabled:
+WebRTCLegacyAPIEnabled:
   type: bool
-  defaultValue: DEFAULT_EXPERIMENTAL_FEATURES_ENABLED
-  humanReadableName: "Remove Legacy WebRTC API"
-  humanReadableDescription: "Remove Legacy WebRTC API"
-  category: experimental
-  webcoreBinding: custom
+  defaultValue: false
+  humanReadableName: "Enable Legacy WebRTC API"
+  humanReadableDescription: "Enable Legacy WebRTC API"
+  webcoreBinding: RuntimeEnabledFeatures
   condition: ENABLE(WEB_RTC)
 
 IsSecureContextAttributeEnabled:
