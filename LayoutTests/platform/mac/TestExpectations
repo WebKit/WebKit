@@ -1778,3 +1778,5 @@ webkit.org/b/181494 accessibility/mac/aria-multiple-liveregions-notification.htm
 
 webkit.org/b/181100 inspector/worker/worker-recover-if-inspector-close.html [ Pass Failure ]
 
+webkit.org/b/180260 [ HighSierra ] http/wpt/resource-timing/rt-resources-per-worker.html [ Pass Failure ]
+
