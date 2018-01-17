@@ -774,6 +774,7 @@ static void enableExperimentalFeatures(IWebPreferences* preferences)
 {
     COMPtr<IWebPreferencesPrivate6> prefsPrivate { Query, preferences };
 
+    prefsPrivate->setFetchAPIKeepAliveEnabled(TRUE);
     // FIXME: CSSGridLayout
     // FIXME: SpringTimingFunction
     // FIXME: Gamepads

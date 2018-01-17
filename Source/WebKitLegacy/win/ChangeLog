@@ -1,3 +1,17 @@
+2018-01-17  Youenn Fablet  <youenn@apple.com>
+
+        Put fetch Request.keepalive behind a runtime flag
+        https://bugs.webkit.org/show_bug.cgi?id=181592
+
+        Reviewed by Chris Dumez.
+
+        * WebPreferences.cpp:
+        (WebPreferences::fetchAPIKeepAliveEnabled):
+        (WebPreferences::setFetchAPIKeepAliveEnabled):
+        * WebPreferences.h:
+        * WebView.cpp:
+        (WebView::notifyPreferencesChanged):
+
 2018-01-17  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Add injected bundle SPI to replace subresource URLs when dropping or pasting rich content

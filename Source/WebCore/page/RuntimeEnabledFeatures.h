@@ -220,6 +220,9 @@ public:
     void setServiceWorkerEnabled(bool isEnabled) { m_serviceWorkerEnabled = isEnabled; }
 #endif
 
+    bool fetchAPIKeepAliveEnabled() const { return m_fetchAPIKeepAliveEnabled; }
+    void setFetchAPIKeepAliveEnabled(bool isEnabled) { m_fetchAPIKeepAliveEnabled = isEnabled; }
+
     bool spectreGadgetsEnabled() const;
 
 #if ENABLE(VIDEO)
@@ -357,6 +360,7 @@ private:
 #if ENABLE(SERVICE_WORKER)
     bool m_serviceWorkerEnabled { false };
 #endif
+    bool m_fetchAPIKeepAliveEnabled { false };
 
     bool m_inspectorAdditionsEnabled { false };
     bool m_webVREnabled { false };

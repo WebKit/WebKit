@@ -1754,6 +1754,16 @@ bool WKPreferencesGetResourceTimingEnabled(WKPreferencesRef preferencesRef)
     return toImpl(preferencesRef)->resourceTimingEnabled();
 }
 
+void WKPreferencesSetFetchAPIKeepAliveEnabled(WKPreferencesRef preferencesRef, bool flag)
+{
+    toImpl(preferencesRef)->setFetchAPIKeepAliveEnabled(flag);
+}
+
+bool WKPreferencesGetFetchAPIKeepAliveEnabled(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->fetchAPIKeepAliveEnabled();
+}
+
 void WKPreferencesSetSelectionPaintingWithoutSelectionGapsEnabled(WKPreferencesRef preferencesRef, bool flag)
 {
     toImpl(preferencesRef)->setSelectionPaintingWithoutSelectionGapsEnabled(flag);
