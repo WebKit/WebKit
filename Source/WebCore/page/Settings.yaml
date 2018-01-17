@@ -99,6 +99,8 @@ allowUniversalAccessFromFileURLs:
   initial: true
 allowFileAccessFromFileURLs:
   initial: true
+allowSettingAnyXHRHeaderFromFileURLs:
+  initial: false
 needsStorageAccessFromFileURLsQuirk:
   initial: true
 javaScriptCanOpenWindowsAutomatically:

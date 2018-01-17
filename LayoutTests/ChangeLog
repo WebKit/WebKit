@@ -1,5 +1,19 @@
 2018-01-17  Daniel Bates  <dabates@apple.com>
 
+        REGRESSION (r222795): Cardiogram never signs in
+        https://bugs.webkit.org/show_bug.cgi?id=181693
+        <rdar://problem/36286293>
+
+        Reviewed by Ryosuke Niwa.
+
+        Adds a test to ensure that a file URL can set forbidden XHR headers when the setting
+        allowSettingAnyXHRHeaderFromFileURLs is enabled.
+
+        * fast/xmlhttprequest/set-dangerous-headers-from-file-when-setting-enabled-expected.txt: Added.
+        * fast/xmlhttprequest/set-dangerous-headers-from-file-when-setting-enabled.html: Added.
+
+2018-01-17  Daniel Bates  <dabates@apple.com>
+
         ASSERTION FAILED: !m_completionHandler in PingHandle::~PingHandle()
         https://bugs.webkit.org/show_bug.cgi?id=181746
         <rdar://problem/36586248>

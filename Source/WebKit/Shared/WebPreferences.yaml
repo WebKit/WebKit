@@ -179,6 +179,10 @@ AllowFileAccessFromFileURLs:
   type: bool
   defaultValue: false
 
+AllowSettingAnyXHRHeaderFromFileURLs:
+  type: bool
+  defaultValue: false
+
 AVFoundationEnabled:
   type: bool
   defaultValue: true
