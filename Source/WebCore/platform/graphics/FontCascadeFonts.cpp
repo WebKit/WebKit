@@ -379,11 +379,32 @@ enum class FallbackVisibility {
     Invisible
 };
 
+static void opportunisticallyStartFontDataURLLoading(const FontCascadeDescription& description, FontSelector* fontSelector)
+{
+    // It is a somewhat common practice for a font foundry to break up a single font into two fonts, each having a random half of
+    // the alphabet, and then encoding the two fonts as data: urls (with different font-family names).
+    // Therefore, if these two fonts don't get loaded at (nearly) the same time, there will be a flash of unintelligible text where
+    // only a random half of the letters are visible.
+    // This code attempts to pre-warm these data urls to make them load at closer to the same time. However, font loading is
+    // asynchronous, and this code doesn't actually fix the race - it just makes it more likely for the two fonts to tie in the race.
+    if (!fontSelector)
+        return;
+    for (unsigned i = 0; i < description.effectiveFamilyCount(); ++i) {
+        auto visitor = WTF::makeVisitor([&](const AtomicString& family) {
+            fontSelector->opportunisticallyStartFontDataURLLoading(description, family);
+        }, [&](const FontFamilyPlatformSpecification&) {
+        });
+        const auto& currentFamily = description.effectiveFamilyAt(i);
+        WTF::visit(visitor, currentFamily);
+    }
+}
+
 GlyphData FontCascadeFonts::glyphDataForVariant(UChar32 character, const FontCascadeDescription& description, FontVariant variant, unsigned fallbackIndex)
 {
     FallbackVisibility fallbackVisibility = FallbackVisibility::Immaterial;
     ExternalResourceDownloadPolicy policy = ExternalResourceDownloadPolicy::Allow;
     GlyphData loadingResult;
+    opportunisticallyStartFontDataURLLoading(description, m_fontSelector.get());
     for (; ; ++fallbackIndex) {
         auto& fontRanges = realizeFallbackRangesAt(description, fallbackIndex);
         if (fontRanges.isNull())

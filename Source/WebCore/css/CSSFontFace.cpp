@@ -687,6 +687,13 @@ bool CSSFontFace::shouldIgnoreFontLoadCompletions() const
     return false;
 }
 
+void CSSFontFace::opportunisticallyStartFontDataURLLoading(CSSFontSelector& fontSelector)
+{
+    // We don't want to go crazy here and blow the cache. Usually these data URLs are the first item in the src: list, so let's just check that one.
+    if (!m_sources.isEmpty())
+        m_sources[0]->opportunisticallyStartFontDataURLLoading(fontSelector);
+}
+
 size_t CSSFontFace::pump(ExternalResourceDownloadPolicy policy)
 {
     if (status() == Status::Failure)

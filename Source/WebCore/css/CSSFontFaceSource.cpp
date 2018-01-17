@@ -110,6 +110,12 @@ bool CSSFontFaceSource::shouldIgnoreFontLoadCompletions() const
     return m_face.shouldIgnoreFontLoadCompletions();
 }
 
+void CSSFontFaceSource::opportunisticallyStartFontDataURLLoading(CSSFontSelector& fontSelector)
+{
+    if (status() == Status::Pending && m_font && m_font->url().protocolIsData() && m_familyNameOrURI.length() < MB)
+        load(&fontSelector);
+}
+
 void CSSFontFaceSource::fontLoaded(CachedFont& loadedFont)
 {
     ASSERT_UNUSED(loadedFont, &loadedFont == m_font.get());

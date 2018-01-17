@@ -66,6 +66,8 @@ public:
 
     const AtomicString& familyNameOrURI() const { return m_familyNameOrURI; }
 
+    void opportunisticallyStartFontDataURLLoading(CSSFontSelector&);
+
     void load(CSSFontSelector*);
     RefPtr<Font> font(const FontDescription&, bool syntheticBold, bool syntheticItalic, const FontFeatureSettings&, const FontVariantSettings&, FontSelectionSpecifiedCapabilities);
 

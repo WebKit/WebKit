@@ -52,6 +52,8 @@ public:
 
     virtual size_t fallbackFontCount() = 0;
 
+    virtual void opportunisticallyStartFontDataURLLoading(const FontCascadeDescription&, const AtomicString& family) = 0;
+
     virtual void fontCacheInvalidated() { }
 
     virtual void registerForInvalidationCallbacks(FontSelectorClient&) = 0;

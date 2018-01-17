@@ -243,6 +243,15 @@ void CSSFontSelector::dispatchInvalidationCallbacks()
         client->fontsNeedUpdate(*this);
 }
 
+void CSSFontSelector::opportunisticallyStartFontDataURLLoading(const FontCascadeDescription& description, const AtomicString& familyName)
+{
+    const auto& segmentedFontFace = m_cssFontFaceSet->fontFace(description.fontSelectionRequest(), familyName);
+    if (!segmentedFontFace)
+        return;
+    for (auto& face : segmentedFontFace->constituentFaces())
+        face->opportunisticallyStartFontDataURLLoading(*this);
+}
+
 void CSSFontSelector::fontLoaded()
 {
     dispatchInvalidationCallbacks();
