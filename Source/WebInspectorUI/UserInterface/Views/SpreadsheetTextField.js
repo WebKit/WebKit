@@ -381,11 +381,11 @@ WI.SpreadsheetTextField = class SpreadsheetTextField
             this._suggestionsView.show(caretRect);
         }
 
-        // Select first item and call completionSuggestionsSelectedCompletion.
         this._suggestionsView.selectedIndex = NaN;
-        this._suggestionsView.selectNext();
-
-        if (!completionPrefix)
+        if (completionPrefix) {
+            // Select first item and call completionSuggestionsSelectedCompletion.
+            this._suggestionsView.selectNext();
+        } else
             this.suggestionHint = "";
     }
 

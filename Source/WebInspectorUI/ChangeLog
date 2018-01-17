@@ -1,5 +1,20 @@
 2018-01-16  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r226996. rdar://problem/36568089
+
+    2018-01-16  Nikita Vasilyev  <nvasilyev@apple.com>
+
+            Web Inspector: Styles: pressing down key should select first item from completion list when focusing on empty value
+            https://bugs.webkit.org/show_bug.cgi?id=181633
+            <rdar://problem/36501797>
+
+            Reviewed by Joseph Pecoraro.
+
+            * UserInterface/Views/SpreadsheetTextField.js:
+            (WI.SpreadsheetTextField.prototype._updateCompletions):
+
+2018-01-16  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r226994. rdar://problem/36568074
 
     2018-01-16  Nikita Vasilyev  <nvasilyev@apple.com>
