@@ -1,5 +1,16 @@
 2018-01-17  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Unreviewed. Increase the slow timeout of GTK and WPE unit tests.
+
+        We are using now a lower default timeout, so multiplying by 5 is no longer enough for some of the WTF
+        tests. Multiply by 10 so that we get the same slow timeout as before, 50.
+
+        * glib/api_test_runner.py:
+        (TestRunner._run_test_glib):
+        (TestRunner._run_google_test):
+
+2018-01-17  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] Duplicated symbols in libjavascriptcoregtk and libwebkit2gtk can cause crashes in production builds
         https://bugs.webkit.org/show_bug.cgi?id=179914
 
