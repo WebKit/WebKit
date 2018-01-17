@@ -34,6 +34,6 @@ WI.RulesStyleDetailsSidebarPanel = class RulesStyleDetailsSidebarPanel extends W
         else
             rulesStyleDetailsPanelConstructor = WI.SpreadsheetRulesStyleDetailsPanel;
 
-        super("style-rules", "Styles", rulesStyleDetailsPanelConstructor);
+        super("style-rules", WI.UIString("Styles"), rulesStyleDetailsPanelConstructor);
     }
 };

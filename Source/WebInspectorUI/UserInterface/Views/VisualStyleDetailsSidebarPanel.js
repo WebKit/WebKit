@@ -27,6 +27,6 @@ WI.VisualStyleDetailsSidebarPanel = class VisualStyleDetailsSidebarPanel extends
 {
     constructor()
     {
-        super("style-visual", "Visual", WI.VisualStyleDetailsPanel);
+        super("style-visual", WI.UIString("Visual"), WI.VisualStyleDetailsPanel);
     }
 };

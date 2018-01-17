@@ -1,5 +1,22 @@
 2018-01-17  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Add back localized strings for Styles sidebar panels
+        https://bugs.webkit.org/show_bug.cgi?id=181748
+        <rdar://problem/36583184>
+
+        Reviewed by Brian Burg.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Views/ComputedStyleDetailsSidebarPanel.js:
+        (WI.ComputedStyleDetailsSidebarPanel):
+        * UserInterface/Views/RulesStyleDetailsSidebarPanel.js:
+        (WI.RulesStyleDetailsSidebarPanel):
+        * UserInterface/Views/VisualStyleDetailsSidebarPanel.js:
+        (WI.VisualStyleDetailsSidebarPanel):
+        Add back localized strings for panel titles lost in r225547.
+
+2018-01-17  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Super long URL string causes bad wrapping in Resources detail sidebar
         https://bugs.webkit.org/show_bug.cgi?id=181617
 
