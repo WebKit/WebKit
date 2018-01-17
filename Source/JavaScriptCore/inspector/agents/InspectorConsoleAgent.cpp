@@ -69,6 +69,7 @@ void InspectorConsoleAgent::willDestroyFrontendAndBackend(DisconnectReason)
 void InspectorConsoleAgent::discardValues()
 {
     m_consoleMessages.clear();
+    m_expiredConsoleMessageCount = 0;
 }
 
 void InspectorConsoleAgent::enable(ErrorString&)
@@ -102,7 +103,6 @@ void InspectorConsoleAgent::clearMessages(ErrorString&)
 {
     m_consoleMessages.clear();
     m_expiredConsoleMessageCount = 0;
-    m_previousMessage = nullptr;
 
     m_injectedScriptManager.releaseObjectGroup(ASCIILiteral("console"));
 
@@ -220,20 +220,22 @@ void InspectorConsoleAgent::addConsoleMessage(std::unique_ptr<ConsoleMessage> co
     ASSERT(m_injectedScriptManager.inspectorEnvironment().developerExtrasEnabled());
     ASSERT_ARG(consoleMessage, consoleMessage);
 
-    if (m_previousMessage && !isGroupMessage(m_previousMessage->type()) && m_previousMessage->isEqual(consoleMessage.get())) {
-        m_previousMessage->incrementCount();
+    ConsoleMessage* previousMessage = m_consoleMessages.isEmpty() ? nullptr : m_consoleMessages.last().get();
+
+    if (previousMessage && !isGroupMessage(previousMessage->type()) && previousMessage->isEqual(consoleMessage.get())) {
+        previousMessage->incrementCount();
         if (m_enabled)
-            m_previousMessage->updateRepeatCountInConsole(*m_frontendDispatcher);
+            previousMessage->updateRepeatCountInConsole(*m_frontendDispatcher);
     } else {
-        m_previousMessage = consoleMessage.get();
+        ConsoleMessage* newMessage = consoleMessage.get();
         m_consoleMessages.append(WTFMove(consoleMessage));
         if (m_enabled)
-            m_previousMessage->addToFrontend(*m_frontendDispatcher, m_injectedScriptManager, true);
-    }
+            newMessage->addToFrontend(*m_frontendDispatcher, m_injectedScriptManager, true);
 
-    if (m_consoleMessages.size() >= maximumConsoleMessages) {
-        m_expiredConsoleMessageCount += expireConsoleMessagesStep;
-        m_consoleMessages.remove(0, expireConsoleMessagesStep);
+        if (m_consoleMessages.size() >= maximumConsoleMessages) {
+            m_expiredConsoleMessageCount += expireConsoleMessagesStep;
+            m_consoleMessages.remove(0, expireConsoleMessagesStep);
+        }
     }
 }
 
