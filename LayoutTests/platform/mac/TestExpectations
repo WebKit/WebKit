@@ -1775,3 +1775,6 @@ webkit.org/b/181494 accessibility/mac/aria-multiple-liveregions-notification.htm
 # A lot of GPU hardware simply crashes with this test, since it allocates a lot of memory.
 # It is enabled on systems that instead return GL_OUT_OF_MEMORY.
 [ ElCapitan Sierra ] fast/canvas/webgl/simulated-vertexAttrib0-invalid-indicies.html [ Skip ]
+
+webkit.org/b/181100 inspector/worker/worker-recover-if-inspector-close.html [ Pass Failure ]
+

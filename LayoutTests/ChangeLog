@@ -1,3 +1,12 @@
+2018-01-17  Matt Lewis  <jlewis3@apple.com>
+
+        Marked inspector/worker/worker-recover-if-inspector-close.html as flaky on macOS
+        https://bugs.webkit.org/show_bug.cgi?id=181100
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
 2018-01-17  Simon Fraser  <simon.fraser@apple.com>
 
         REGRESSION (r226902): fast/events/ios/rotation/layout-viewport-during-rotation.html and fast/events/ios/rotation/safe-area-insets-during-safari-type-rotation.html are timing out
