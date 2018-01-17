@@ -1,8 +1,20 @@
 =================
+WebKitGTK+ 2.19.6
+=================
+
+What's new in WebKitGTK+ 2.19.6?
+
+  - Fix crashes due to duplicated symbols in libjavascriptcoregtk and libwebkit2gtk.
+  - Fix parsing of timeout values in WebDriver.
+  - Implement get timeouts command in WebDriver.
+  - Fix deadlock in GStreamer video sink during shutdown when accelerated compositing is disabled.
+  - Fix several crashes and rendering issues.
+
+=================
 WebKitGTK+ 2.19.5
 =================
 
-What's new in WebKitGTK+ 2.19.4?
+What's new in WebKitGTK+ 2.19.5?
 
   - This is a follow up release to export webkit_dom_dom_window_webkit_message_handlers_post_message() symbol that
     was hidden in 2.19.4 by mistake.

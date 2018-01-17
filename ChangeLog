@@ -1,3 +1,9 @@
+2018-01-17  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Update OptionsGTK.cmake and NEWS for 2.19.6 release.
+
+        * Source/cmake/OptionsGTK.cmake: Bump version numbers.
+
 2018-01-15  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         REGRESSION(r226266): [GTK] RELEASE_ASSERT(reservedZoneSize >= minimumReservedZoneSize) in JSC::VM::updateStackLimits
