@@ -1,3 +1,19 @@
+2018-01-16  JF Bastien  <jfbastien@apple.com>
+
+        Allow dangerous disabling of poison
+        https://bugs.webkit.org/show_bug.cgi?id=181685
+        <rdar://problem/36546265>
+
+        Reviewed by Keith Miller.
+
+        Some tools such as leak detectors and such like to look at real
+        pointers, and poisoned ones confuse them. Add a JSC option to
+        disable poisoning, but log to the console when this is done.
+
+        * runtime/JSCPoison.cpp:
+        (JSC::initializePoison):
+        * runtime/Options.h:
+
 2018-01-16  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r226937.
