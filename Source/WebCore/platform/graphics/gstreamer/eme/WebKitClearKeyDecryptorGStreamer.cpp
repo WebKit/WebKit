@@ -207,6 +207,12 @@ static gboolean webKitMediaClearKeyDecryptorSetupCipher(WebKitMediaCommonEncrypt
 static gboolean webKitMediaClearKeyDecryptorDecrypt(WebKitMediaCommonEncryptionDecrypt* self, GstBuffer* ivBuffer, GstBuffer* buffer, unsigned subSampleCount, GstBuffer* subSamplesBuffer)
 {
     GstMapInfo ivMap;
+    // Check ivBuffer isn't null.
+    if (!ivBuffer) {
+        GST_ERROR_OBJECT(self, "Error, the ivBuffer is null");
+        return false;
+    }
+
     if (!gst_buffer_map(ivBuffer, &ivMap, GST_MAP_READ)) {
         GST_ERROR_OBJECT(self, "Failed to map IV");
         return false;
@@ -223,9 +229,15 @@ static gboolean webKitMediaClearKeyDecryptorDecrypt(WebKitMediaCommonEncryptionD
     gst_buffer_unmap(ivBuffer, &ivMap);
 
     WebKitMediaClearKeyDecryptPrivate* priv = WEBKIT_MEDIA_CK_DECRYPT_GET_PRIVATE(WEBKIT_MEDIA_CK_DECRYPT(self));
-    gcry_error_t error = gcry_cipher_setctr(priv->handle, ctr, CLEARKEY_SIZE);
-    if (error) {
-        GST_ERROR_OBJECT(self, "gcry_cipher_setctr failed: %s", gpg_strerror(error));
+    gcry_error_t cipherError = gcry_cipher_setctr(priv->handle, ctr, CLEARKEY_SIZE);
+    if (cipherError) {
+        GST_ERROR_OBJECT(self, "gcry_cipher_setctr failed: %s", gpg_strerror(cipherError));
+        return false;
+    }
+
+    // Check buffer isn't null.
+    if (!buffer) {
+        GST_ERROR_OBJECT(self, "Error, the buffer is null");
         return false;
     }
 
@@ -236,60 +248,81 @@ static gboolean webKitMediaClearKeyDecryptorDecrypt(WebKitMediaCommonEncryptionD
         return false;
     }
 
+    bool returnValue = true;
+    GstByteReader* reader;
+    unsigned position = 0;
     GstMapInfo subSamplesMap;
-    gboolean subsamplesBufferMapped = gst_buffer_map(subSamplesBuffer, &subSamplesMap, GST_MAP_READ);
-    if (!subsamplesBufferMapped) {
-        GST_ERROR_OBJECT(self, "Failed to map subsample buffer");
-        gst_buffer_unmap(buffer, &map);
-        return false;
+
+    if (!subSampleCount) {
+        // Full sample encryption.
+        GST_TRACE_OBJECT(self, "full sample encryption: %d encrypted bytes", map.size);
+
+        // Check if the buffer is empty.
+        if (map.size) {
+            cipherError = gcry_cipher_decrypt(priv->handle, map.data, map.size, 0, 0);
+            if (cipherError) {
+                GST_ERROR_OBJECT(self, "full sample decryption failed: %s", gpg_strerror(cipherError));
+                returnValue = false;
+            }
+        }
+        goto releaseBuffer;
     }
 
-    GstByteReader* reader = gst_byte_reader_new(subSamplesMap.data, subSamplesMap.size);
-    unsigned position = 0;
-    unsigned sampleIndex = 0;
+    // Check subSamplesBuffer isn't null.
+    if (!subSamplesBuffer) {
+        GST_ERROR_OBJECT(self, "Error, the subSampleBuffer is null");
+        returnValue = false;
+        goto releaseBuffer;
+    }
 
+    // Subsample encryption.
+    if (!gst_buffer_map(subSamplesBuffer, &subSamplesMap, GST_MAP_READ)) {
+        GST_ERROR_OBJECT(self, "Failed to map subsample buffer");
+        returnValue = false;
+        goto releaseBuffer;
+    }
+
+    reader = gst_byte_reader_new(subSamplesMap.data, subSamplesMap.size);
     GST_DEBUG_OBJECT(self, "position: %d, size: %zu", position, map.size);
 
     while (position < map.size) {
         guint16 nBytesClear = 0;
         guint32 nBytesEncrypted = 0;
+        unsigned sampleIndex = 0;
 
         if (sampleIndex < subSampleCount) {
             if (!gst_byte_reader_get_uint16_be(reader, &nBytesClear)
                 || !gst_byte_reader_get_uint32_be(reader, &nBytesEncrypted)) {
                 GST_DEBUG_OBJECT(self, "unsupported");
-                gst_byte_reader_free(reader);
-                gst_buffer_unmap(buffer, &map);
-                gst_buffer_unmap(subSamplesBuffer, &subSamplesMap);
-                return false;
+                returnValue = false;
+                goto releaseSubsamples;
             }
-
             sampleIndex++;
         } else {
             nBytesClear = 0;
             nBytesEncrypted = map.size - position;
         }
 
-        GST_TRACE_OBJECT(self, "%d bytes clear (todo=%zu)", nBytesClear, map.size - position);
+        GST_TRACE_OBJECT(self, "subsample index %u - %hu bytes clear (todo=%zu)", sampleIndex, nBytesClear, map.size - position);
         position += nBytesClear;
         if (nBytesEncrypted) {
-            GST_TRACE_OBJECT(self, "%d bytes encrypted (todo=%zu)", nBytesEncrypted, map.size - position);
-            error = gcry_cipher_decrypt(priv->handle, map.data + position, nBytesEncrypted, 0, 0);
-            if (error) {
-                GST_ERROR_OBJECT(self, "decryption failed: %s", gpg_strerror(error));
-                gst_byte_reader_free(reader);
-                gst_buffer_unmap(buffer, &map);
-                gst_buffer_unmap(subSamplesBuffer, &subSamplesMap);
-                return false;
+            GST_TRACE_OBJECT(self, "subsample index %u - %hu bytes encrypted (todo=%zu)", sampleIndex, nBytesEncrypted, map.size - position);
+            cipherError = gcry_cipher_decrypt(priv->handle, map.data + position, nBytesEncrypted, 0, 0);
+            if (cipherError) {
+                GST_ERROR_OBJECT(self, "sub sample index %u decryption failed: %s", sampleIndex, gpg_strerror(cipherError));
+                returnValue = false;
+                goto releaseSubsamples;
             }
             position += nBytesEncrypted;
         }
     }
-
+releaseSubsamples:
     gst_byte_reader_free(reader);
-    gst_buffer_unmap(buffer, &map);
     gst_buffer_unmap(subSamplesBuffer, &subSamplesMap);
-    return true;
+
+releaseBuffer:
+    gst_buffer_unmap(buffer, &map);
+    return returnValue;
 }
 
 static void webKitMediaClearKeyDecryptorReleaseCipher(WebKitMediaCommonEncryptionDecrypt* self)

@@ -1,3 +1,17 @@
+2018-01-17  Yacine Bandou  <yacine.bandou_ext@softathome.com>
+        [EME][GStreamer] Add the full-sample encryption support in the GStreamer ClearKey decryptor
+        https://bugs.webkit.org/show_bug.cgi?id=180080
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Currently the GStreamer clearKey decryptor doesn't support the full-sample encryption,
+        where the buffer is entirely encrypted, it supports only the sub-sample encryption.
+
+        Test: media/encrypted-media/clearKey/clearKey-cenc-audio-playback-mse.html
+
+        * platform/graphics/gstreamer/eme/WebKitClearKeyDecryptorGStreamer.cpp:
+        (webKitMediaClearKeyDecryptorDecrypt):
+
 2018-01-17  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed follow-up to r227051.

@@ -1,3 +1,13 @@
+2018-01-17  Yacine Bandou  <yacine.bandou_ext@softathome.com>
+
+        [EME][GStreamer] Add the full-sample encryption support in the GStreamer ClearKey decryptor
+        https://bugs.webkit.org/show_bug.cgi?id=180080
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        * platform/wpe/TestExpectations:
+        This patch fixes the crash of the test clearKey-cenc-audio-playback-mse.
+
 2018-01-17  Ali Juma  <ajuma@chromium.org>
 
         Update web platform tests for Visual Viewport API
