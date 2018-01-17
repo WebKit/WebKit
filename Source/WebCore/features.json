@@ -1,6 +1,17 @@
 {
     "specification": [
     {
+        "name": "Application Cache",
+        "status": {
+            "status": "Deprecated"
+        },
+        "url": "https://html.spec.whatwg.org/multipage/offline.html",
+        "webkit-url": "https://webkit.org/b/181764",
+        "keywords": ["appcache", "application cache"],
+        "category": "webapps",
+        "description": "Resources are saved for offline use using a manifest."
+    },
+    {
         "name": "Battery Status API",
         "status": {
             "status": "Removed"
