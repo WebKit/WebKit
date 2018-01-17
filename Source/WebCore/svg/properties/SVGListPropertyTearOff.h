@@ -66,7 +66,7 @@ public:
         ASSERT(m_values->size() == m_wrappers->size());
         ASSERT_WITH_SECURITY_IMPLICATION(itemIndex < m_wrappers->size());
 
-        RefPtr<ListItemTearOff> item = m_wrappers->at(itemIndex);
+        auto item = m_wrappers->at(itemIndex);
         item->detachWrapper();
         m_wrappers->remove(itemIndex);
         m_values->remove(itemIndex);
@@ -118,11 +118,6 @@ protected:
     {
     }
 
-    virtual ~SVGListPropertyTearOff()
-    {
-        m_animatedProperty->propertyWillBeDeleted(*this);
-    }
-
     bool isReadOnly() const override
     {
         if (m_role == AnimValRole)
@@ -141,7 +136,7 @@ protected:
         unsigned size = m_wrappers->size();
         ASSERT(size == m_values->size());
         for (unsigned i = 0; i < size; ++i) {
-            auto item = makeRefPtr(m_wrappers->at(i));
+            auto item = m_wrappers->at(i);
             if (!item)
                 continue;
             item->setAnimatedProperty(m_animatedProperty.ptr());

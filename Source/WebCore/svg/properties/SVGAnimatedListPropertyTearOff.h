@@ -34,7 +34,7 @@ class SVGAnimatedListPropertyTearOff : public SVGAnimatedProperty {
 public:
     using ListItemType = typename SVGPropertyTraits<PropertyType>::ListItemType;
     using ListItemTearOff = typename SVGPropertyTraits<PropertyType>::ListItemTearOff;
-    using ListWrapperCache = Vector<ListItemTearOff*>;
+    using ListWrapperCache = Vector<WeakPtr<SVGPropertyTearOff<ListItemType>>>;
     using ListProperty = SVGListProperty<PropertyType>;
     using ListPropertyTearOff = typename SVGPropertyTraits<PropertyType>::ListPropertyTearOff;
     using ContentType = PropertyType;
@@ -48,37 +48,25 @@ public:
     virtual Ref<ListPropertyTearOff> baseVal()
     {
         if (m_baseVal)
-            return *m_baseVal;
+            return *static_cast<ListPropertyTearOff*>(m_baseVal.get());
 
         auto property = ListPropertyTearOff::create(*this, BaseValRole, m_values, m_wrappers);
-        m_baseVal = property.ptr();
+        m_baseVal = property->createWeakPtr();
         return property;
     }
 
     virtual Ref<ListPropertyTearOff> animVal()
     {
         if (m_animVal)
-            return *m_animVal;
+            return *static_cast<ListPropertyTearOff*>(m_animVal.get());
 
         auto property = ListPropertyTearOff::create(*this, AnimValRole, m_values, m_wrappers);
-        m_animVal = property.ptr();
+        m_animVal = property->createWeakPtr();
         return property;
     }
     
     bool isAnimating() const override { return m_animatedProperty; }
     bool isAnimatedListTearOff() const override { return true; }
-    void propertyWillBeDeleted(const SVGProperty& property) override
-    {
-        if (&property == m_baseVal)
-            m_baseVal = nullptr;
-        else if (&property == m_animVal)
-            m_animVal = nullptr;
-        else {
-            size_t i = m_wrappers.find(&property);
-            if (i != notFound)
-                m_wrappers[i] = nullptr;
-        }
-    }
 
     int findItem(SVGProperty* property)
     {
@@ -186,11 +174,11 @@ protected:
     ListWrapperCache m_wrappers;
     ListWrapperCache m_animatedWrappers;
 
-    // Cache the raw pointer but return a RefPtr<>. This will break the cyclic reference
+    // Cache weak pointers but return Ref pointers. This will break the cyclic reference
     // between SVGListPropertyTearOff and SVGAnimatedListPropertyTearOff once the property
     // pointer is not needed.
-    ListPropertyTearOff* m_baseVal { nullptr };
-    ListPropertyTearOff* m_animVal { nullptr };
+    WeakPtr<SVGListProperty<PropertyType>> m_baseVal;
+    WeakPtr<SVGListProperty<PropertyType>> m_animVal;
 
     RefPtr<ListProperty> m_animatedProperty;
 };
