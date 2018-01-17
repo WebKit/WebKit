@@ -1,5 +1,32 @@
 2018-01-16  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r226906. rdar://problem/36568006
+
+    2018-01-12  Youenn Fablet  <youenn@apple.com>
+
+            FormDataElement::lengthInBytes should use ThreadableBlobRegistry
+            https://bugs.webkit.org/show_bug.cgi?id=181554
+
+            Reviewed by Chris Dumez.
+
+            Covered by updated test.
+
+            Fix blobRegistry() use and add support for creating a response that may trigger the issue.
+
+
+            * platform/network/FormData.cpp:
+            (WebCore::FormDataElement::lengthInBytes const): Was using directly blobRegistry() while ThreadableBlobRegistry is more appropriate
+            in case this is called from workers.
+            * Modules/fetch/FetchBody.h:
+            * Modules/fetch/FetchResponse.h:
+            * fileapi/Blob.h:
+            * testing/ServiceWorkerInternals.cpp:
+            (WebCore::ServiceWorkerInternals::createOpaqueWithBlobBodyResponse):
+            * testing/ServiceWorkerInternals.h:
+            * testing/ServiceWorkerInternals.idl:
+
+2018-01-16  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r226904. rdar://problem/36568017
 
     2018-01-12  Youenn Fablet  <youenn@apple.com>

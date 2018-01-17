@@ -66,6 +66,20 @@ Ref<FetchEvent> ServiceWorkerInternals::createBeingDispatchedFetchEvent(ScriptEx
     return event;
 }
 
+Ref<FetchResponse> ServiceWorkerInternals::createOpaqueWithBlobBodyResponse(ScriptExecutionContext& context)
+{
+    auto blob = Blob::create();
+    auto formData = FormData::create();
+    formData->appendBlob(blob->url());
+
+    ResourceResponse response;
+    response.setType(ResourceResponse::Type::Cors);
+    response.setTainting(ResourceResponse::Tainting::Opaque);
+    auto fetchResponse = FetchResponse::create(context, FetchBody::fromFormData(formData), FetchHeaders::create(), WTFMove(response));
+    fetchResponse->initializeOpaqueLoadIdentifierForTesting();
+    return fetchResponse;
+}
+
 } // namespace WebCore
 
 #endif

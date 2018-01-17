@@ -103,7 +103,7 @@ public:
     }
 
 protected:
-    Blob();
+    WEBCORE_EXPORT Blob();
     Blob(Vector<BlobPartVariant>&&, const BlobPropertyBag&);
     Blob(const SharedBuffer&, const String& contentType);
     Blob(Vector<uint8_t>&&, const String& contentType);

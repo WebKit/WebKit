@@ -1,5 +1,24 @@
 2018-01-16  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r226906. rdar://problem/36568006
+
+    2018-01-12  Youenn Fablet  <youenn@apple.com>
+
+            FormDataElement::lengthInBytes should use ThreadableBlobRegistry
+            https://bugs.webkit.org/show_bug.cgi?id=181554
+
+            Reviewed by Chris Dumez.
+
+            * http/tests/workers/service/resources/service-worker-cache-api-worker.js:
+            (async):
+            (event.event.request.url.indexOf): Deleted.
+            (event.event.request.url.endsWith): Deleted.
+            (event.event.respondWith.promise.then): Deleted.
+            * http/tests/workers/service/service-worker-cache-api.https-expected.txt:
+            * http/tests/workers/service/service-worker-cache-api.https.html:
+
+2018-01-16  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r226904. rdar://problem/36568017
 
     2018-01-12  Youenn Fablet  <youenn@apple.com>
