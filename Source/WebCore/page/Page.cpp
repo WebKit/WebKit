@@ -2349,4 +2349,42 @@ void Page::didChangeMainDocument()
 #endif
 }
 
+void Page::forEachDocument(const Function<void(Document&)>& functor)
+{
+    for (Frame* frame = &mainFrame(); frame; frame = frame->tree().traverseNext()) {
+        if (!frame->document())
+            continue;
+
+        functor(*frame->document());
+    }
+}
+
+void Page::applicationWillResignActive()
+{
+    forEachDocument([&] (Document& document) {
+        document.forEachApplicationStateChangeListener([&] (ApplicationStateChangeListener& listener) {
+            listener.applicationWillResignActive();
+        });
+    });
+}
+
+void Page::applicationDidEnterBackground()
+{
+    m_libWebRTCProvider->setActive(false);
+}
+
+void Page::applicationWillEnterForeground()
+{
+    m_libWebRTCProvider->setActive(true);
+}
+
+void Page::applicationDidBecomeActive()
+{
+    forEachDocument([&] (Document& document) {
+        document.forEachApplicationStateChangeListener([&] (ApplicationStateChangeListener& listener) {
+            listener.applicationDidBecomeActive();
+        });
+    });
+}
+
 } // namespace WebCore

@@ -638,6 +638,9 @@ public:
     const void* mediaPlayerLogIdentifier() { return client().mediaPlayerLogIdentifier(); }
 #endif
 
+    void applicationWillResignActive();
+    void applicationDidBecomeActive();
+
 private:
     MediaPlayer(MediaPlayerClient&);
 

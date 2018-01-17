@@ -2689,6 +2689,7 @@ void WebPage::updateViewportSizeForCSSViewportUnits()
 void WebPage::applicationWillResignActive()
 {
     [[NSNotificationCenter defaultCenter] postNotificationName:WebUIApplicationWillResignActiveNotification object:nil];
+    m_page->applicationWillResignActive();
 }
 
 void WebPage::applicationDidEnterBackground(bool isSuspendedUnderLock)
@@ -2698,7 +2699,7 @@ void WebPage::applicationDidEnterBackground(bool isSuspendedUnderLock)
     m_isSuspendedUnderLock = isSuspendedUnderLock;
     setLayerTreeStateIsFrozen(true);
 
-    m_page->libWebRTCProvider().setActive(false);
+    m_page->applicationDidEnterBackground();
 }
 
 void WebPage::applicationDidFinishSnapshottingAfterEnteringBackground()
@@ -2714,12 +2715,13 @@ void WebPage::applicationWillEnterForeground(bool isSuspendedUnderLock)
 
     [[NSNotificationCenter defaultCenter] postNotificationName:WebUIApplicationWillEnterForegroundNotification object:nil userInfo:@{@"isSuspendedUnderLock": @(isSuspendedUnderLock)}];
 
-    m_page->libWebRTCProvider().setActive(true);
+    m_page->applicationWillEnterForeground();
 }
 
 void WebPage::applicationDidBecomeActive()
 {
     [[NSNotificationCenter defaultCenter] postNotificationName:WebUIApplicationDidBecomeActiveNotification object:nil];
+    m_page->applicationDidBecomeActive();
 }
 
 static inline void adjustVelocityDataForBoundedScale(double& horizontalVelocity, double& verticalVelocity, double& scaleChangeRate, double exposedRectScale, double minimumScale, double maximumScale)

@@ -280,6 +280,9 @@ public:
     virtual void notifyActiveSourceBuffersChanged() { }
 
     virtual void setShouldDisableSleep(bool) { }
+
+    virtual void applicationWillResignActive() { }
+    virtual void applicationDidBecomeActive() { }
 };
 
 }

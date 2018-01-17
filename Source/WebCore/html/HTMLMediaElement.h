@@ -28,6 +28,7 @@
 #if ENABLE(VIDEO)
 
 #include "ActiveDOMObject.h"
+#include "ApplicationStateChangeListener.h"
 #include "AutoplayEvent.h"
 #include "GenericEventQueue.h"
 #include "GenericTaskQueue.h"
@@ -128,6 +129,7 @@ class HTMLMediaElement
     , private MediaPlayerClient
     , private MediaProducer
     , private VisibilityChangeClient
+    , private ApplicationStateChangeListener
 #if ENABLE(VIDEO_TRACK)
     , private AudioTrackClient
     , private TextTrackClient
@@ -903,6 +905,9 @@ private:
     void addBehaviorRestrictionsOnEndIfNecessary();
     void handleSeekToPlaybackPosition(double);
     void seekToPlaybackPositionEndedTimerFired();
+
+    void applicationWillResignActive() final;
+    void applicationDidBecomeActive() final;
 
 #if !RELEASE_LOG_DISABLED
     const char* logClassName() const final { return "HTMLMediaElement"; }

@@ -1502,6 +1502,16 @@ bool MediaPlayer::shouldCheckHardwareSupport() const
     return client().mediaPlayerShouldCheckHardwareSupport();
 }
 
+void MediaPlayer::applicationWillResignActive()
+{
+    m_private->applicationWillResignActive();
+}
+
+void MediaPlayer::applicationDidBecomeActive()
+{
+    m_private->applicationDidBecomeActive();
+}
+
 #if !RELEASE_LOG_DISABLED
 const Logger& MediaPlayer::mediaPlayerLogger()
 {
