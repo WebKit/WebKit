@@ -952,6 +952,7 @@ void MediaPlayerPrivateGStreamer::handleMessage(GstMessage* message)
             // this case the HTMLMediaElement will emit a stalled
             // event.
             GST_ERROR("Decode error, let the Media element emit a stalled event.");
+            m_loadingStalled = true;
             break;
         } else if (err->domain == GST_STREAM_ERROR) {
             error = MediaPlayer::DecodeError;
@@ -1096,13 +1097,12 @@ void MediaPlayerPrivateGStreamer::handleMessage(GstMessage* message)
 
 void MediaPlayerPrivateGStreamer::processBufferingStats(GstMessage* message)
 {
-    bool alreadyBuffering = m_buffering;
     m_buffering = true;
     gst_message_parse_buffering(message, &m_bufferingPercentage);
 
     GST_DEBUG("[Buffering] Buffering: %d%%.", m_bufferingPercentage);
 
-    if ((alreadyBuffering != m_buffering) || (m_bufferingPercentage == 100))
+    if (m_bufferingPercentage == 100)
         updateStates();
 }
 
@@ -1277,9 +1277,8 @@ void MediaPlayerPrivateGStreamer::fillTimerFired()
         GST_DEBUG("[Buffering] Updated maxTimeLoaded: %s", toString(m_maxTimeLoaded).utf8().data());
     }
 
-    bool downloadAlreadyFinished = m_downloadFinished;
     m_downloadFinished = fillStatus == 100.0;
-    if ((downloadAlreadyFinished != m_downloadFinished) &&  !m_downloadFinished) {
+    if (!m_downloadFinished) {
         updateStates();
         return;
     }
@@ -1319,12 +1318,19 @@ MediaTime MediaPlayerPrivateGStreamer::maxTimeLoaded() const
 
 bool MediaPlayerPrivateGStreamer::didLoadingProgress() const
 {
+    if (m_errorOccured || m_loadingStalled)
+        return false;
+
+    if (isLiveStream())
+        return true;
+
     if (UNLIKELY(!m_pipeline || !durationMediaTime() || (!isMediaSource() && !totalBytes())))
         return false;
+
     MediaTime currentMaxTimeLoaded = maxTimeLoaded();
     bool didLoadingProgress = currentMaxTimeLoaded != m_maxTimeLoadedAtLastDidLoadingProgress;
     m_maxTimeLoadedAtLastDidLoadingProgress = currentMaxTimeLoaded;
-    GST_LOG("didLoadingProgress: %d", didLoadingProgress);
+    GST_LOG("didLoadingProgress: %s", toString(didLoadingProgress).utf8().data());
     return didLoadingProgress;
 }
 
@@ -1339,7 +1345,7 @@ unsigned long long MediaPlayerPrivateGStreamer::totalBytes() const
     if (!m_source)
         return 0;
 
-    if (m_isStreaming)
+    if (isLiveStream())
         return 0;
 
     GstFormat fmt = GST_FORMAT_BYTES;

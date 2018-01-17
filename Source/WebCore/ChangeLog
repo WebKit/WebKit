@@ -1,3 +1,25 @@
+2018-01-17  Philippe Normand  <pnormand@igalia.com>
+
+        REGRESSION(r226973/r226974): Four multimedia tests failing
+        https://bugs.webkit.org/show_bug.cgi?id=181696
+
+        Reviewed by Carlos Garcia Campos.
+
+        This patch reverts some of the changes of the above revisions so as to fix layout test failures.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::handleMessage): Properly
+        prepare stalled event when an error was detected.
+        (WebCore::MediaPlayerPrivateGStreamer::processBufferingStats): Revert to previous version.
+        (WebCore::MediaPlayerPrivateGStreamer::fillTimerFired): Ditto.
+        (WebCore::MediaPlayerPrivateGStreamer::didLoadingProgress const):
+        Emit progress event also when streaming but not when an error was
+        detected.
+        (WebCore::MediaPlayerPrivateGStreamer::totalBytes const): use isLiveStream like everywhere else.
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.h:
+        * platform/graphics/gstreamer/WebKitWebSourceGStreamer.cpp:
+        (webkit_web_src_init): Revert to keep-alive FALSE by default.
+
 2018-01-17  Zan Dobersek  <zdobersek@igalia.com>
 
         [Cairo] Move prepareForFilling(), prepareForStroking() code to CairoOperations

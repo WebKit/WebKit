@@ -175,7 +175,7 @@ static void webkit_web_src_class_init(WebKitWebSrcClass* klass)
 
     g_object_class_install_property(oklass, PROP_KEEP_ALIVE,
         g_param_spec_boolean("keep-alive", "keep-alive", "Use HTTP persistent connections",
-            TRUE, static_cast<GParamFlags>(G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS)));
+            FALSE, static_cast<GParamFlags>(G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS)));
 
     g_object_class_install_property(oklass, PROP_EXTRA_HEADERS,
         g_param_spec_boxed("extra-headers", "Extra Headers", "Extra headers to append to the HTTP request",
@@ -200,8 +200,6 @@ static void webkit_web_src_init(WebKitWebSrc* src)
 
     src->priv = priv;
     new (priv) WebKitWebSrcPrivate();
-
-    priv->keepAlive = true;
 
     priv->notifier = MainThreadNotifier<MainThreadSourceNotification>::create();
 
