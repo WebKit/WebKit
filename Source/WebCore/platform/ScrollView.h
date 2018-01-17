@@ -87,8 +87,8 @@ public:
 
     // Functions for child manipulation and inspection.
     const HashSet<Ref<Widget>>& children() const { return m_children; }
-    WEBCORE_EXPORT void addChild(Widget&);
-    virtual void removeChild(Widget&);
+    WEBCORE_EXPORT virtual void addChild(Widget&);
+    WEBCORE_EXPORT virtual void removeChild(Widget&);
 
     // If the scroll view does not use a native widget, then it will have cross-platform Scrollbars. These functions
     // can be used to obtain those scrollbars.

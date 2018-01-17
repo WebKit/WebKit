@@ -1,3 +1,14 @@
+2018-01-16  Simon Fraser  <simon.fraser@apple.com>
+
+        Can't scroll iframe after toggling it to display:none and back
+        https://bugs.webkit.org/show_bug.cgi?id=181708
+        rdar://problem/13234778
+
+        Reviewed by Tim Horton.
+
+        * tiled-drawing/scrolling/non-fast-region/non-fast-scrollable-region-hide-show-iframe-expected.txt: Added.
+        * tiled-drawing/scrolling/non-fast-region/non-fast-scrollable-region-hide-show-iframe.html: Added.
+
 2018-01-16  Jer Noble  <jer.noble@apple.com>
 
         Reset MediaSourcePrivateAVFObjC's m_sourceBufferWithSelectedVideo when the underlying SourceBufferPrivate is removed.

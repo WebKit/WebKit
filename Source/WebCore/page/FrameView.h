@@ -521,7 +521,8 @@ public:
     bool containsScrollableArea(ScrollableArea*) const;
     const ScrollableAreaSet* scrollableAreas() const { return m_scrollableAreas.get(); }
 
-    void removeChild(Widget&) final;
+    WEBCORE_EXPORT void addChild(Widget&) final;
+    WEBCORE_EXPORT void removeChild(Widget&) final;
 
     // This function exists for ports that need to handle wheel events manually.
     // On Mac WebKit1 the underlying NSScrollView just does the scrolling, but on most other platforms

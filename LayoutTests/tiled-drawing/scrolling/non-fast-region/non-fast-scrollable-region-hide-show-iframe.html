@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="resources/wheel-handler-region-helper.js"></script>
+<script>
+    if (window.testRunner)
+        testRunner.waitUntilDone();
+
+    function dumpRegion(prefix)
+    {
+        if (window.internals) {
+            var rects = window.internals.nonFastScrollableRects();
+            document.getElementById('output').textContent += prefix + rectsAsString(rects) + '\n';
+        }
+    }
+
+    function doTest()
+    {
+        var frame = document.getElementById('frame');
+        dumpRegion('before: ');
+        frame.style.display = 'none';
+        dumpRegion('after hide: ');
+        
+        setTimeout(function() {
+            frame.style.display = 'inline';
+            dumpRegion('after show: ');
+
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }, 0);
+    }
+    window.addEventListener('load', doTest, false);
+</script>
+</head>
+<body>
+<iframe id="frame" srcdoc="<html><body style='width:1000px;height:1000px;'></body></html>"></iframe>
+<pre id="output"></pre>
+</body>
+</html>
+

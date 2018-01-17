@@ -1,3 +1,22 @@
+2018-01-16  Simon Fraser  <simon.fraser@apple.com>
+
+        Can't scroll iframe after toggling it to display:none and back
+        https://bugs.webkit.org/show_bug.cgi?id=181708
+        rdar://problem/13234778
+
+        Reviewed by Tim Horton.
+
+        Nothing updated the FrameView's set of scrollable areas when a subframe came back from display:none.
+        Mirror the existing virtual removeChild() by making addChild() virtual, and using it to mark
+        the FrameView's scrollable area set as dirty.
+
+        Test: tiled-drawing/scrolling/non-fast-region/non-fast-scrollable-region-hide-show-iframe.html
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::addChild):
+        * page/FrameView.h:
+        * platform/ScrollView.h:
+
 2018-01-16  Chris Dumez  <cdumez@apple.com>
 
         SWServerWorker::m_contextConnectionIdentifier may get out of date

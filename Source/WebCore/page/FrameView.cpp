@@ -4645,6 +4645,14 @@ void FrameView::sendScrollEvent()
 #endif
 }
 
+void FrameView::addChild(Widget& widget)
+{
+    if (is<FrameView>(widget))
+        addScrollableArea(&downcast<FrameView>(widget));
+
+    ScrollView::addChild(widget);
+}
+
 void FrameView::removeChild(Widget& widget)
 {
     if (is<FrameView>(widget))
