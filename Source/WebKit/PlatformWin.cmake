@@ -129,10 +129,6 @@ if (${WTF_PLATFORM_WIN_CAIRO})
     )
 endif ()
 
-list(APPEND WebKit_LIBRARIES
-    WebCoreDerivedSources${DEBUG_SUFFIX}
-)
-
 set(SharedWebKitLibraries
     ${WebKit_LIBRARIES}
 )

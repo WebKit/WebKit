@@ -30,7 +30,6 @@ set(test_webcore_LIBRARIES
     Shlwapi
     Usp10
     WebCore${DEBUG_SUFFIX}
-    WebCoreDerivedSources${DEBUG_SUFFIX}
     WindowsCodecs
     gtest
 )

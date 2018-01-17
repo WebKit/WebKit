@@ -829,8 +829,10 @@ set(SharedWebKitLibraries
     ${WebKit_LIBRARIES}
 )
 
+
 list(APPEND WebKit_LIBRARIES
-    WebCorePlatformGTK
+    # WebCore should be specifed before and after WebCorePlatformGTK
+    WebCorePlatformGTK WebCore
     ${GTK_UNIX_PRINT_LIBRARIES}
 )
 

@@ -71,7 +71,7 @@ list(APPEND WebCorePlatformGTK_SOURCES
 )
 
 if (ENABLE_GEOLOCATION)
-    list(APPEND WebCore_DERIVED_SOURCES
+    list(APPEND WebCore_SOURCES
         ${DERIVED_SOURCES_WEBCORE_DIR}/Geoclue2Interface.c
     )
     execute_process(COMMAND ${PKG_CONFIG_EXECUTABLE} --variable dbus_interface geoclue-2.0 OUTPUT_VARIABLE GEOCLUE_DBUS_INTERFACE)

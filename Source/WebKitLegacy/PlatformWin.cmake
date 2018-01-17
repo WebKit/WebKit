@@ -448,7 +448,6 @@ list(APPEND WebKitLegacy_LIBRARIES
     PRIVATE Version
     PRIVATE Winmm
     PRIVATE WebKitGUID${DEBUG_SUFFIX}
-    PRIVATE WebCoreDerivedSources${DEBUG_SUFFIX}
     PRIVATE WindowsCodecs
 )
 
