@@ -266,7 +266,7 @@ class GLibTestRunner(object):
         self._stderr_fd = None
 
         if need_restart:
-            self.run()
+            self.run(subtests, skipped, env)
 
         return self._results
 

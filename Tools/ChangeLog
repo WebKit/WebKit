@@ -1,3 +1,15 @@
+2018-01-17  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][WPE] Propagate the parameters when restarting glib api tests after a crash
+        https://bugs.webkit.org/show_bug.cgi?id=181722
+
+        Reviewed by Žan Doberšek.
+
+        I forgot to pass the parameters to run() when restarting.
+
+        * glib/glib_test_runner.py:
+        (GLibTestRunner.run):
+
 2018-01-16  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [CMake] Remove WebCoreDerivedSources library target
