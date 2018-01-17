@@ -23,6 +23,7 @@
 #include "ActivityStateChangeObserver.h"
 #include "AlternativeTextClient.h"
 #include "ApplicationCacheStorage.h"
+#include "ApplicationStateChangeListener.h"
 #include "BackForwardClient.h"
 #include "BackForwardController.h"
 #include "CSSAnimationController.h"

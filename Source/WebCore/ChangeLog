@@ -1,3 +1,14 @@
+2018-01-17  Stephan Szabo  <stephan.szabo@sony.com>
+
+        Page.cpp only sees forward declaration of ApplicationStateChangeListener when ENABLE(VIDEO) is off
+        https://bugs.webkit.org/show_bug.cgi?id=181713
+
+        Reviewed by Darin Adler.
+
+        No new tests (build fix).
+
+        * page/Page.cpp: Add include for ApplicationStateChangeListener
+
 2018-01-17  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Add injected bundle SPI to replace subresource URLs when dropping or pasting rich content
