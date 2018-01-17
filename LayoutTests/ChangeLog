@@ -1,5 +1,20 @@
 2018-01-16  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r227009. rdar://problem/36567976
+
+    2018-01-16  Jer Noble  <jer.noble@apple.com>
+
+            Reset MediaSourcePrivateAVFObjC's m_sourceBufferWithSelectedVideo when the underlying SourceBufferPrivate is removed.
+            https://bugs.webkit.org/show_bug.cgi?id=181707
+            <rdar://problem/34809474>
+
+            Reviewed by Eric Carlson.
+
+            * media/media-source/media-source-remove-unload-crash-expected.txt: Added.
+            * media/media-source/media-source-remove-unload-crash.html: Added.
+
+2018-01-16  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r226993. rdar://problem/36567965
 
     2018-01-16  Said Abou-Hallawa  <sabouhallawa@apple.com>
