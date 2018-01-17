@@ -129,12 +129,12 @@ macro(WEBKIT_FRAMEWORK_DECLARE _target)
 endmacro()
 
 macro(WEBKIT_FRAMEWORK _target)
-    include_directories(SYSTEM ${${_target}_SYSTEM_INCLUDE_DIRECTORIES})
     target_sources(${_target} PRIVATE
         ${${_target}_HEADERS}
         ${${_target}_SOURCES}
     )
     target_include_directories(${_target} PUBLIC "$<BUILD_INTERFACE:${${_target}_INCLUDE_DIRECTORIES}>")
+    target_include_directories(${_target} SYSTEM PRIVATE "$<BUILD_INTERFACE:${${_target}_SYSTEM_INCLUDE_DIRECTORIES}>")
     target_include_directories(${_target} PRIVATE "$<BUILD_INTERFACE:${${_target}_PRIVATE_INCLUDE_DIRECTORIES}>")
     target_link_libraries(${_target} ${${_target}_LIBRARIES})
     set_target_properties(${_target} PROPERTIES COMPILE_DEFINITIONS "BUILDING_${_target}")

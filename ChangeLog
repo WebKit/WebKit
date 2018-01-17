@@ -1,3 +1,14 @@
+2018-01-17  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        WEBKIT_FRAMEWORK should not modify file-global include directories
+        https://bugs.webkit.org/show_bug.cgi?id=181656
+
+        Reviewed by Konstantin Tokarev.
+
+        Only modify the system include directories of the target passed to WEBKIT_FRAMEWORK.
+
+        * Source/cmake/WebKitMacros.cmake:
+
 2018-01-17  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Update OptionsGTK.cmake and NEWS for 2.19.6 release.

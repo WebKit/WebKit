@@ -19,6 +19,7 @@ include_directories(
 )
 
 include_directories(SYSTEM
+    ${CAIRO_INCLUDE_DIRS}
     ${GLIB_INCLUDE_DIRS}
     ${LIBSOUP_INCLUDE_DIRS}
 )

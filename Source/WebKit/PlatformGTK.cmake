@@ -1060,22 +1060,21 @@ list(APPEND PluginProcess_SOURCES
 )
 
 # Commands for building the built-in injected bundle.
-include_directories(
-    "${WEBKIT_DIR}/Platform"
-    "${WEBKIT_DIR}/Shared"
-    "${WEBKIT_DIR}/Shared/API/c"
-    "${WEBKIT_DIR}/UIProcess/API/C"
-    "${WEBKIT_DIR}/WebProcess/InjectedBundle"
-    "${WEBKIT_DIR}/WebProcess/InjectedBundle/API/c"
+add_library(webkit2gtkinjectedbundle MODULE "${WEBKIT_DIR}/WebProcess/InjectedBundle/API/glib/WebKitInjectedBundleMain.cpp")
+ADD_WEBKIT_PREFIX_HEADER(webkit2gtkinjectedbundle)
+target_link_libraries(webkit2gtkinjectedbundle WebKit)
+
+target_include_directories(webkit2gtkinjectedbundle PRIVATE
+    ${WebKit_INCLUDE_DIRECTORIES}
     "${DERIVED_SOURCES_DIR}/InjectedBundle"
     "${FORWARDING_HEADERS_DIR}"
     "${FORWARDING_HEADERS_WEBKIT2GTK_DIR}"
     "${DERIVED_SOURCES_WEBKIT2GTK_API_DIR}"
 )
 
-add_library(webkit2gtkinjectedbundle MODULE "${WEBKIT_DIR}/WebProcess/InjectedBundle/API/glib/WebKitInjectedBundleMain.cpp")
-ADD_WEBKIT_PREFIX_HEADER(webkit2gtkinjectedbundle)
-target_link_libraries(webkit2gtkinjectedbundle WebKit)
+target_include_directories(webkit2gtkinjectedbundle SYSTEM PRIVATE
+    ${WebKit_SYSTEM_INCLUDE_DIRECTORIES}
+)
 
 if (COMPILER_IS_GCC_OR_CLANG)
     WEBKIT_ADD_TARGET_CXX_FLAGS(webkit2gtkinjectedbundle -Wno-unused-parameter)
