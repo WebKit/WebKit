@@ -175,6 +175,14 @@ void SWServerWorker::setState(ServiceWorkerState state)
 
     m_data.state = state;
 
+    auto* registration = m_server.getRegistration(m_registrationKey);
+    ASSERT(registration || state == ServiceWorkerState::Redundant);
+    if (registration) {
+        registration->forEachConnection([&](auto& connection) {
+            connection.updateWorkerStateInClient(identifier(), state);
+        });
+    }
+
     if (state == ServiceWorkerState::Activated || state == ServiceWorkerState::Redundant)
         callWhenActivatedHandler(state == ServiceWorkerState::Activated);
 }

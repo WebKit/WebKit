@@ -102,10 +102,6 @@ void SWServerRegistration::updateWorkerState(SWServerWorker& worker, ServiceWork
     LOG(ServiceWorker, "Updating worker %p state to %i (%p)", &worker, (int)state, this);
 
     worker.setState(state);
-
-    forEachConnection([&](auto& connection) {
-        connection.updateWorkerStateInClient(worker.identifier(), state);
-    });
 }
 
 void SWServerRegistration::setUpdateViaCache(ServiceWorkerUpdateViaCache updateViaCache)

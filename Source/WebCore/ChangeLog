@@ -1,3 +1,58 @@
+2018-01-17  Chris Dumez  <cdumez@apple.com>
+
+        'fetch' event may be sent to a service worker before its state is set to 'activated'
+        https://bugs.webkit.org/show_bug.cgi?id=181698
+        <rdar://problem/36554856>
+
+        Reviewed by Youenn Fablet.
+
+        'fetch' event may be sent to a service worker before its state is set to 'activated'.
+        When the registration's active worker needs to intercept a load, and its state is 'activating',
+        we queue the request to send the fetch event in SWServerWorker::m_whenActivatedHandlers.
+        Once the SWServerWorker::setState() is called with 'activated' state, we then call the
+        handlers in m_whenActivatedHandlers to make send the fetch event now that the worker is
+        activated. The issue is that even though the worker is activated and its state was set to
+        'activated' on Storage process side, we had not yet notified the ServiceWorker process
+        of the service worker's new state yet.
+
+        To address the issue, we now make sure that SWServerWorker::m_whenActivatedHandlers are
+        called *after* we've sent the IPC to the ServiceWorker process to update the worker's
+        state to 'activated'. Also, we now call ServiceWorkerFetch::dispatchFetchEvent()
+        asynchronously in a postTask() as the service worker's state is also updated asynchronously
+        in a postTask. This is as per specification [1], which says to "queue a task" to fire
+        the fetch event.
+
+        [1] https://w3c.github.io/ServiceWorker/#on-fetch-request-algorithm (step 18)
+
+        No new tests, covered by imported/w3c/web-platform-tests/service-workers/service-worker/fetch-waits-for-activate.https.html
+        which hits the new assertion without the fix.
+
+        * workers/service/context/ServiceWorkerFetch.cpp:
+        (WebCore::ServiceWorkerFetch::dispatchFetchEvent):
+        Add assertions to make sure that we dispatch the fetch event on the right worker and
+        that the worker is in 'activated' state.
+
+        * workers/service/context/ServiceWorkerThread.cpp:
+        (WebCore::ServiceWorkerThread::postFetchTask):
+        Queue a task to fire the fetch event as per:
+        - https://w3c.github.io/ServiceWorker/#on-fetch-request-algorithm (step 18)
+        We need to match the specification exactly here or things will happen in the wrong
+        order. In particular, things like "update registration state" and "update worker state"
+        might happen *after* firing the fetch event, even though the IPC for "update registration/worker
+        state" was sent before the "fire fetch event" one, because the code for updating a registration/
+        worker state already queues a task, as per the specification.
+
+        * workers/service/server/SWServerRegistration.cpp:
+        (WebCore::SWServerRegistration::updateWorkerState):
+        * workers/service/server/SWServerRegistration.h:
+        * workers/service/server/SWServerWorker.cpp:
+        (WebCore::SWServerWorker::setState):
+        Move code to send the IPC to the Service Worker process whenever the service worker's state
+        needs to be updated from SWServerRegistration::updateWorkerState() to SWServerWorker::setState().
+        This way, we can make sure the IPC is sent *before* we call the m_whenActivatedHandlers handlers,
+        as they may also send IPC to the Service Worker process, and we need to make sure this IPC happens
+        after so that the service worker is in the right state.
+
 2018-01-17  Stephan Szabo  <stephan.szabo@sony.com>
 
         Page.cpp only sees forward declaration of ApplicationStateChangeListener when ENABLE(VIDEO) is off

@@ -34,6 +34,7 @@
 #include "FetchRequest.h"
 #include "FetchResponse.h"
 #include "ResourceRequest.h"
+#include "ServiceWorker.h"
 #include "ServiceWorkerClientIdentifier.h"
 #include "WorkerGlobalScope.h"
 
@@ -97,6 +98,10 @@ void dispatchFetchEvent(Ref<Client>&& client, ServiceWorkerGlobalScope& globalSc
 
     bool isNavigation = options.mode == FetchOptions::Mode::Navigate;
     bool isNonSubresourceRequest = WebCore::isNonSubresourceRequest(options.destination);
+
+    ASSERT(globalScope.registration().active());
+    ASSERT(globalScope.registration().active()->identifier() == globalScope.thread().identifier());
+    ASSERT(globalScope.registration().active()->state() == ServiceWorkerState::Activated);
 
     auto* formData = request.httpBody();
     std::optional<FetchBody> body;

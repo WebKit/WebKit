@@ -96,7 +96,9 @@ void ServiceWorkerThread::postFetchTask(Ref<ServiceWorkerFetch::Client>&& client
     // FIXME: instead of directly using runLoop(), we should be using something like WorkerGlobalScopeProxy.
     // FIXME: request and options come straigth from IPC so are already isolated. We should be able to take benefit of that.
     runLoop().postTaskForMode([client = WTFMove(client), clientId, request = request.isolatedCopy(), referrer = referrer.isolatedCopy(), options = options.isolatedCopy()] (ScriptExecutionContext& context) mutable {
-        ServiceWorkerFetch::dispatchFetchEvent(WTFMove(client), downcast<ServiceWorkerGlobalScope>(context), clientId, WTFMove(request), WTFMove(referrer), WTFMove(options));
+        context.postTask([client = WTFMove(client), clientId, request = WTFMove(request), referrer = WTFMove(referrer), options = WTFMove(options)] (ScriptExecutionContext& context) mutable {
+            ServiceWorkerFetch::dispatchFetchEvent(WTFMove(client), downcast<ServiceWorkerGlobalScope>(context), clientId, WTFMove(request), WTFMove(referrer), WTFMove(options));
+        });
     }, WorkerRunLoop::defaultMode());
 }
 
