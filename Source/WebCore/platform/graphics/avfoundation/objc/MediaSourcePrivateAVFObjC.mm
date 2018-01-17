@@ -80,6 +80,9 @@ void MediaSourcePrivateAVFObjC::removeSourceBuffer(SourceBufferPrivate* buffer)
 {
     ASSERT(m_sourceBuffers.contains(buffer));
 
+    if (buffer == m_sourceBufferWithSelectedVideo)
+        m_sourceBufferWithSelectedVideo = nullptr;
+
     size_t pos = m_activeSourceBuffers.find(buffer);
     if (pos != notFound) {
         m_activeSourceBuffers.remove(pos);

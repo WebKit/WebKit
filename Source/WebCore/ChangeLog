@@ -1,3 +1,16 @@
+2018-01-16  Jer Noble  <jer.noble@apple.com>
+
+        Reset MediaSourcePrivateAVFObjC's m_sourceBufferWithSelectedVideo when the underlying SourceBufferPrivate is removed.
+        https://bugs.webkit.org/show_bug.cgi?id=181707
+        <rdar://problem/34809474>
+
+        Reviewed by Eric Carlson.
+
+        Test: media/media-source/media-source-remove-unload-crash.html
+
+        * platform/graphics/avfoundation/objc/MediaSourcePrivateAVFObjC.mm:
+        (WebCore::MediaSourcePrivateAVFObjC::removeSourceBuffer):
+
 2018-01-12  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthN] Implement dummy WebAuthN IDLs
