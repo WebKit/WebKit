@@ -77,7 +77,9 @@ public:
     WorkerType type() const { return m_data.type; }
 
     ServiceWorkerIdentifier identifier() const { return m_data.identifier; }
+
     SWServerToContextConnectionIdentifier contextConnectionIdentifier() const { return m_contextConnectionIdentifier; }
+    void setContextConnectionIdentifier(SWServerToContextConnectionIdentifier identifier) { m_contextConnectionIdentifier = identifier; }
 
     ServiceWorkerState state() const { return m_data.state; }
     void setState(ServiceWorkerState);
