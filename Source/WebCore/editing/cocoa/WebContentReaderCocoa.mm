@@ -175,7 +175,7 @@ private:
 };
 
 
-static bool shouldConvertToBlob(const URL& url)
+static bool shouldReplaceSubresourceURL(const URL& url)
 {
     return !(url.protocolIsInHTTPFamily() || url.protocolIsData());
 }
@@ -223,7 +223,7 @@ static void replaceRichContentWithAttachments(DocumentFragment& fragment, const 
     HashMap<AtomicString, Ref<Blob>> urlToBlobMap;
     for (const Ref<ArchiveResource>& subresource : subresources) {
         auto& url = subresource->url();
-        if (shouldConvertToBlob(url))
+        if (shouldReplaceSubresourceURL(url))
             urlToBlobMap.set(url.string(), Blob::create(subresource->data(), subresource->mimeType()));
     }
 
@@ -286,6 +286,30 @@ static void replaceRichContentWithAttachments(DocumentFragment& fragment, const 
 #endif
 }
 
+static void replaceSubresourceURLsWithURLsFromClient(DocumentFragment& fragment, const Vector<Ref<ArchiveResource>>& subresources, Vector<Ref<ArchiveResource>>& outUnreplacedResources)
+{
+    ASSERT(fragment.document().frame());
+    auto& frame = *fragment.document().frame();
+    HashMap<AtomicString, AtomicString> subresourceURLToClientURLMap;
+    for (auto& subresource : subresources) {
+        auto& originalURL = subresource->url();
+        if (!shouldReplaceSubresourceURL(originalURL)) {
+            outUnreplacedResources.append(subresource.copyRef());
+            continue;
+        }
+
+        auto replacementURL = frame.editor().clientReplacementURLForResource(subresource->data(), subresource->mimeType());
+        if (replacementURL.isEmpty()) {
+            outUnreplacedResources.append(subresource.copyRef());
+            continue;
+        }
+
+        subresourceURLToClientURLMap.set(originalURL.string(), replacementURL);
+    }
+
+    if (!subresourceURLToClientURLMap.isEmpty())
+        replaceSubresourceURLs(fragment, WTFMove(subresourceURLToClientURLMap));
+}
 
 RefPtr<DocumentFragment> createFragmentAndAddResources(Frame& frame, NSAttributedString *string)
 {
@@ -309,13 +333,16 @@ RefPtr<DocumentFragment> createFragmentAndAddResources(Frame& frame, NSAttribute
         return WTFMove(fragmentAndResources.fragment);
     }
 
+    Vector<Ref<ArchiveResource>> unreplacedResources;
+    replaceSubresourceURLsWithURLsFromClient(*fragmentAndResources.fragment, fragmentAndResources.resources, unreplacedResources);
+
     if (shouldReplaceRichContentWithAttachments()) {
-        replaceRichContentWithAttachments(*fragmentAndResources.fragment, fragmentAndResources.resources);
+        replaceRichContentWithAttachments(*fragmentAndResources.fragment, unreplacedResources);
         return WTFMove(fragmentAndResources.fragment);
     }
 
     HashMap<AtomicString, AtomicString> blobURLMap;
-    for (const Ref<ArchiveResource>& subresource : fragmentAndResources.resources) {
+    for (const Ref<ArchiveResource>& subresource : unreplacedResources) {
         auto blob = Blob::create(subresource->data(), subresource->mimeType());
         String blobURL = DOMURL::createObjectURL(document, blob);
         blobURLMap.set(subresource->url().string(), blobURL);
@@ -366,15 +393,18 @@ static String sanitizeMarkupWithArchive(Document& destinationDocument, MarkupAnd
     ASSERT(stagingDocument);
     auto fragment = createFragmentFromMarkup(*stagingDocument, markupAndArchive.markup, markupAndArchive.mainResource->url(), DisallowScriptingAndPluginContent);
 
+    Vector<Ref<ArchiveResource>> unreplacedResources;
+    replaceSubresourceURLsWithURLsFromClient(fragment, markupAndArchive.archive->subresources(), unreplacedResources);
+
     if (shouldReplaceRichContentWithAttachments()) {
-        replaceRichContentWithAttachments(fragment, markupAndArchive.archive->subresources());
+        replaceRichContentWithAttachments(fragment, unreplacedResources);
         return markupForFragmentInDocument(WTFMove(fragment), *stagingDocument);
     }
 
     HashMap<AtomicString, AtomicString> blobURLMap;
-    for (const Ref<ArchiveResource>& subresource : markupAndArchive.archive->subresources()) {
+    for (const Ref<ArchiveResource>& subresource : unreplacedResources) {
         auto& subresourceURL = subresource->url();
-        if (!shouldConvertToBlob(subresourceURL))
+        if (!shouldReplaceSubresourceURL(subresourceURL))
             continue;
         auto blob = Blob::create(subresource->data(), subresource->mimeType());
         String blobURL = DOMURL::createObjectURL(destinationDocument, blob);
@@ -392,7 +422,7 @@ static String sanitizeMarkupWithArchive(Document& destinationDocument, MarkupAnd
             continue;
 
         auto subframeURL = subframeMainResource->url();
-        if (!shouldConvertToBlob(subframeURL))
+        if (!shouldReplaceSubresourceURL(subframeURL))
             continue;
 
         MarkupAndArchive subframeContent = { String::fromUTF8(subframeMainResource->data().data(), subframeMainResource->data().size()),
@@ -581,10 +611,16 @@ bool WebContentReader::readPlainText(const String& text)
 
 bool WebContentReader::readImage(Ref<SharedBuffer>&& buffer, const String& type)
 {
-    auto blob = Blob::create(buffer.get(), type);
     ASSERT(frame.document());
     auto& document = *frame.document();
 
+    auto replacementURL = frame.editor().clientReplacementURLForResource(buffer.copyRef(), type);
+    if (!replacementURL.isEmpty()) {
+        addFragment(createFragmentForImageAndURL(document, replacementURL));
+        return true;
+    }
+
+    auto blob = Blob::create(buffer.get(), type);
     if (shouldReplaceRichContentWithAttachments())
         addFragment(createFragmentForImageAttachment(document, WTFMove(blob)));
     else

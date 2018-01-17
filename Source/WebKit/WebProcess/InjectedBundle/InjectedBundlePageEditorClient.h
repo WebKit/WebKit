@@ -31,7 +31,7 @@
 
 namespace API {
 template<> struct ClientTraits<WKBundlePageEditorClientBase> {
-    typedef std::tuple<WKBundlePageEditorClientV0, WKBundlePageEditorClientV1> Versions;
+    typedef std::tuple<WKBundlePageEditorClientV0, WKBundlePageEditorClientV1, WKBundlePageEditorClientV2> Versions;
 };
 }
 
@@ -67,6 +67,7 @@ private:
     void getPasteboardDataForRange(WebPage&, WebCore::Range*, Vector<String>& pasteboardTypes, Vector<RefPtr<WebCore::SharedBuffer>>& pasteboardData) final;
     void didWriteToPasteboard(WebPage&) final;
     bool performTwoStepDrop(WebPage&, WebCore::DocumentFragment&, WebCore::Range& destination, bool isMove) final;
+    String replacementURLForResource(WebPage&, Ref<WebCore::SharedBuffer>&& resourceData, const String&) final;
 };
 
 } // namespace WebKit

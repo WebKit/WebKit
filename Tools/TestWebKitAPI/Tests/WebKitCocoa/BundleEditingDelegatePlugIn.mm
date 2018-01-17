@@ -47,6 +47,7 @@
     RetainPtr<id <BundleEditingDelegateProtocol>> _remoteObject;
     BOOL _editingDelegateShouldInsertText;
     BOOL _shouldOverridePerformTwoStepDrop;
+    RetainPtr<NSDictionary<NSString *, NSString *>> _mimeTypeToReplacementURLMap;
 }
 
 - (void)webProcessPlugIn:(WKWebProcessPlugInController *)plugInController didCreateBrowserContextController:(WKWebProcessPlugInBrowserContextController *)browserContextController
@@ -63,6 +64,7 @@
         _editingDelegateShouldInsertText = YES;
 
     _shouldOverridePerformTwoStepDrop = [[plugInController.parameters valueForKey:@"BundleOverridePerformTwoStepDrop"] boolValue];
+    _mimeTypeToReplacementURLMap = [plugInController.parameters valueForKey:@"MIMETypeToReplacementURLMap"];
 
     _WKRemoteObjectInterface *interface = [_WKRemoteObjectInterface remoteObjectInterfaceWithProtocol:@protocol(BundleEditingDelegateProtocol)];
     _remoteObject = [browserContextController._remoteObjectRegistry remoteObjectProxyWithInterface:interface];
@@ -96,6 +98,12 @@
 - (BOOL)_webProcessPlugInBrowserContextController:(WKWebProcessPlugInBrowserContextController *)controller performTwoStepDrop:(WKWebProcessPlugInNodeHandle *)fragment atDestination:(WKWebProcessPlugInRangeHandle *)destination isMove:(BOOL)isMove
 {
     return _shouldOverridePerformTwoStepDrop;
+}
+
+- (NSString *)_webProcessPlugInBrowserContextController:(WKWebProcessPlugInBrowserContextController *)controller replacementURLForResource:(NSData *)resourceData mimeType:(NSString *)mimeType
+{
+    assert(!!resourceData);
+    return [_mimeTypeToReplacementURLMap objectForKey:mimeType];
 }
 
 @end

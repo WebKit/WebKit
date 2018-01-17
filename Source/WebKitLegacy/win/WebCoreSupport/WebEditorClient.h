@@ -54,6 +54,7 @@ private:
     void willWriteSelectionToPasteboard(WebCore::Range*) final;
     void didWriteSelectionToPasteboard() final;
     void getClientPasteboardDataForRange(WebCore::Range*, Vector<String>& pasteboardTypes, Vector<RefPtr<WebCore::SharedBuffer>>& pasteboardData) final;
+    String replacementURLForResource(Ref<WebCore::SharedBuffer>&&, const String&) final;
 
     void didEndUserTriggeredSelectionChanges() final { }
     void respondToChangedContents() final;

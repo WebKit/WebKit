@@ -1,3 +1,34 @@
+2018-01-17  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Add injected bundle SPI to replace subresource URLs when dropping or pasting rich content
+        https://bugs.webkit.org/show_bug.cgi?id=181637
+        <rdar://problem/36508471>
+
+        Reviewed by Tim Horton.
+
+        Add 2 new API tests to exercise injected bundle SPI for supplying replacement URLs when pasting an image, and an
+        attributed string containing multiple NSTextAttachments. See WebKit and WebCore ChangeLogs for more detail.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/BundleEditingDelegatePlugIn.mm:
+        (-[BundleEditingDelegatePlugIn webProcessPlugIn:didCreateBrowserContextController:]):
+        (-[BundleEditingDelegatePlugIn _webProcessPlugInBrowserContextController:replacementURLForResource:mimeType:]):
+
+        Implement the new Objective-C bundle SPI to look up the incoming MIME type in the dictionary supplied via the
+        "MIMETypeToReplacementURLMap" bundle initialization parameter, and return it.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WKAttachmentTests.mm:
+        (webViewForTestingAttachments):
+        (-[TestWKWebView tagsInBody]):
+        (-[TestWKWebView expectElementTagsInOrder:]):
+        (-[TestWKWebView expectElementTag:toComeBefore:]):
+
+        Add a test helper to check that the given list of element tags appears in the document body. Also, reimplement
+        the existing -expectElementTag:toComeBefore: as a special case of -expectElementTagsInOrder:.
+
+        (TestWebKitAPI::TEST):
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp:
+        (WTR::InjectedBundlePage::InjectedBundlePage):
+
 2018-01-17  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         WebDriver: add support for test expectations

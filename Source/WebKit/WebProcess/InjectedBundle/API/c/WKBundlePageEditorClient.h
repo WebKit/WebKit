@@ -62,6 +62,7 @@ typedef bool (*WKBundlePageShouldApplyStyle)(WKBundlePageRef page, WKBundleCSSSt
 typedef void (*WKBundlePageEditingNotification)(WKBundlePageRef page, WKStringRef notificationName, const void* clientInfo);
 typedef void (*WKBundlePageWillWriteToPasteboard)(WKBundlePageRef page, WKBundleRangeHandleRef range,  const void* clientInfo);
 typedef void (*WKBundlePageGetPasteboardDataForRange)(WKBundlePageRef page, WKBundleRangeHandleRef range, WKArrayRef* pasteboardTypes, WKArrayRef* pasteboardData, const void* clientInfo);
+typedef WKStringRef (*WKBundlePageReplacementURLForResource)(WKBundlePageRef, WKDataRef resourceData, WKStringRef mimeType, const void* clientInfo);
 typedef void (*WKBundlePageDidWriteToPasteboard)(WKBundlePageRef page, const void* clientInfo);
 typedef bool (*WKBundlePagePerformTwoStepDrop)(WKBundlePageRef page, WKBundleNodeHandleRef fragment, WKBundleRangeHandleRef destination, bool isMove, const void* clientInfo);
 
@@ -109,5 +110,31 @@ typedef struct WKBundlePageEditorClientV1 {
     WKBundlePageDidWriteToPasteboard                                    didWriteToPasteboard;
     WKBundlePagePerformTwoStepDrop                                      performTwoStepDrop;
 } WKBundlePageEditorClientV1;
+
+typedef struct WKBundlePageEditorClientV2 {
+    WKBundlePageEditorClientBase                                        base;
+
+    // Version 0.
+    WKBundlePageShouldBeginEditingCallback                              shouldBeginEditing;
+    WKBundlePageShouldEndEditingCallback                                shouldEndEditing;
+    WKBundlePageShouldInsertNodeCallback                                shouldInsertNode;
+    WKBundlePageShouldInsertTextCallback                                shouldInsertText;
+    WKBundlePageShouldDeleteRangeCallback                               shouldDeleteRange;
+    WKBundlePageShouldChangeSelectedRange                               shouldChangeSelectedRange;
+    WKBundlePageShouldApplyStyle                                        shouldApplyStyle;
+    WKBundlePageEditingNotification                                     didBeginEditing;
+    WKBundlePageEditingNotification                                     didEndEditing;
+    WKBundlePageEditingNotification                                     didChange;
+    WKBundlePageEditingNotification                                     didChangeSelection;
+
+    // Version 1.
+    WKBundlePageWillWriteToPasteboard                                   willWriteToPasteboard;
+    WKBundlePageGetPasteboardDataForRange                               getPasteboardDataForRange;
+    WKBundlePageDidWriteToPasteboard                                    didWriteToPasteboard;
+    WKBundlePagePerformTwoStepDrop                                      performTwoStepDrop;
+
+    // Version 2.
+    WKBundlePageReplacementURLForResource                               replacementURLForResource;
+} WKBundlePageEditorClientV2;
 
 #endif // WKBundlePageEditorClient_h

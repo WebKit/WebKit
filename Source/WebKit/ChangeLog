@@ -1,3 +1,30 @@
+2018-01-17  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Add injected bundle SPI to replace subresource URLs when dropping or pasting rich content
+        https://bugs.webkit.org/show_bug.cgi?id=181637
+        <rdar://problem/36508471>
+
+        Reviewed by Tim Horton.
+
+        Add new injected bundle SPI, replacementURLForResource, which clients may use to provide a replacement URL to
+        represent an archive resource, given the resource's data and MIME type.
+
+        * WebProcess/InjectedBundle/API/APIInjectedBundleEditorClient.h:
+        (API::InjectedBundle::EditorClient::replacementURLForResource):
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInEditingDelegate.h:
+        * WebProcess/InjectedBundle/API/c/WKBundlePageEditorClient.h:
+
+        Add replacementURLForResource, and also bump the current injected bundle editor client version to 2.
+
+        * WebProcess/InjectedBundle/API/mac/WKWebProcessPlugInBrowserContextController.mm:
+        (-[WKWebProcessPlugInBrowserContextController _setEditingDelegate:]):
+        * WebProcess/InjectedBundle/InjectedBundlePageEditorClient.cpp:
+        (WebKit::InjectedBundlePageEditorClient::replacementURLForResource):
+        * WebProcess/InjectedBundle/InjectedBundlePageEditorClient.h:
+        * WebProcess/WebCoreSupport/WebEditorClient.cpp:
+        (WebKit::WebEditorClient::replacementURLForResource):
+        * WebProcess/WebCoreSupport/WebEditorClient.h:
+
 2018-01-17  Zan Dobersek  <zdobersek@igalia.com>
 
         [Cairo] Don't mirror global alpha and image interpolation quality state values in PlatformContextCairo

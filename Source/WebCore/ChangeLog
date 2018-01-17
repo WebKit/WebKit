@@ -1,3 +1,47 @@
+2018-01-17  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Add injected bundle SPI to replace subresource URLs when dropping or pasting rich content
+        https://bugs.webkit.org/show_bug.cgi?id=181637
+        <rdar://problem/36508471>
+
+        Reviewed by Tim Horton.
+
+        Before carrying out blob URL conversion for pasted or dropped rich content, let the editor client replace
+        subresource URLs in WebKit2 by calling out to new injected bundle SPI. See comments below for more detail.
+
+        Tests:  WKAttachmentTests.InjectedBundleReplaceURLsWhenPastingAttributedString
+                WKAttachmentTests.InjectedBundleReplaceURLWhenPastingImage
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::clientReplacementURLForResource):
+        * editing/Editor.h:
+
+        Add a new helper to call out to the editor client for a URL string to replace a given ArchiveResource. In
+        WebKit2, this calls out to the injected bundle's new `replacementURLForResource` SPI hook.
+
+        * editing/cocoa/WebContentReaderCocoa.mm:
+        (WebCore::shouldReplaceSubresourceURL):
+        (WebCore::replaceRichContentWithAttachments):
+        (WebCore::replaceSubresourceURLsWithURLsFromClient):
+
+        Add a new static helper to replace subresource URLs in the given DocumentFragment with URLs supplied by the
+        editor client. Additionally builds a list of ArchiveResources that have not been replaced, for use at call sites
+        so that we don't unnecessarily create more Blobs for ArchiveResources that have already been replaced.
+
+        (WebCore::createFragmentAndAddResources):
+        (WebCore::sanitizeMarkupWithArchive):
+
+        Tweak web content reading codepaths to first replace subresource URLs with editor-client-supplied URLs.
+
+        (WebCore::WebContentReader::readImage):
+        (WebCore::shouldConvertToBlob): Deleted.
+
+        Rename this helper to shouldReplaceSubresourceURL, blob URL replacement is no longer the only scenario in which
+        we replace resource URLs, but in both cases, we still want to ignore `http:`-family and `data:` URLs.
+
+        * loader/EmptyClients.cpp:
+        * page/EditorClient.h:
+
 2018-01-17  Yacine Bandou  <yacine.bandou_ext@softathome.com>
         [EME][GStreamer] Add the full-sample encryption support in the GStreamer ClearKey decryptor
         https://bugs.webkit.org/show_bug.cgi?id=180080

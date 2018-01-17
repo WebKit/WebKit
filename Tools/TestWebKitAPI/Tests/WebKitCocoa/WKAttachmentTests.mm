@@ -28,6 +28,7 @@
 #import "DataInteractionSimulator.h"
 #import "PlatformUtilities.h"
 #import "TestWKWebView.h"
+#import "WKWebViewConfigurationExtras.h"
 #import <WebKit/WKPreferencesRefPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/WebKit.h>
@@ -144,16 +145,21 @@ private:
 @interface TestWKWebView (AttachmentTesting)
 @end
 
-static RetainPtr<TestWKWebView> webViewForTestingAttachments(CGSize webViewSize)
+static RetainPtr<TestWKWebView> webViewForTestingAttachments(CGSize webViewSize, WKWebViewConfiguration *configuration)
 {
-    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
-    [configuration _setAttachmentElementEnabled:YES];
+    configuration._attachmentElementEnabled = YES;
     WKPreferencesSetCustomPasteboardDataEnabled((WKPreferencesRef)[configuration preferences], YES);
 
-    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, webViewSize.width, webViewSize.height) configuration:configuration.get()]);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, webViewSize.width, webViewSize.height) configuration:configuration]);
     [webView synchronouslyLoadHTMLString:@"<meta name='viewport' content='width=device-width, initial-scale=1'><script>focus = () => document.body.focus()</script><body onload=focus() contenteditable></body>"];
 
     return webView;
+}
+
+static RetainPtr<TestWKWebView> webViewForTestingAttachments(CGSize webViewSize)
+{
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    return webViewForTestingAttachments(webViewSize, configuration.get());
 }
 
 static RetainPtr<TestWKWebView> webViewForTestingAttachments()
@@ -207,20 +213,29 @@ static _WKAttachmentDisplayOptions *displayOptionsWithMode(_WKAttachmentDisplayM
 
 @implementation TestWKWebView (AttachmentTesting)
 
+- (NSArray<NSString *> *)tagsInBody
+{
+    return [self objectByEvaluatingJavaScript:@"Array.from(document.body.getElementsByTagName('*')).map(e => e.tagName)"];
+}
+
+- (void)expectElementTagsInOrder:(NSArray<NSString *> *)tagNames
+{
+    auto remainingTags = adoptNS([tagNames mutableCopy]);
+    NSArray<NSString *> *tagsInBody = self.tagsInBody;
+    for (NSString *tag in tagsInBody.reverseObjectEnumerator) {
+        if ([tag isEqualToString:[remainingTags lastObject]])
+            [remainingTags removeLastObject];
+        if (![remainingTags count])
+            break;
+    }
+    EXPECT_EQ([remainingTags count], 0U);
+    if ([remainingTags count])
+        NSLog(@"Expected to find ordered tags: %@ in: %@", tagNames, tagsInBody);
+}
+
 - (void)expectElementTag:(NSString *)tagName toComeBefore:(NSString *)otherTagName
 {
-    NSArray *tagsInBody = [self objectByEvaluatingJavaScript:@"Array.from(document.body.getElementsByTagName('*')).map(e => e.tagName)"];
-    BOOL success = [tagsInBody containsObject:tagName] && [tagsInBody containsObject:otherTagName];
-    if (success) {
-        NSUInteger index = [tagsInBody indexOfObject:tagName];
-        NSUInteger otherIndex = [tagsInBody indexOfObjectWithOptions:NSEnumerationReverse passingTest:[&] (NSString *tag, NSUInteger, BOOL *) {
-            return [tag isEqualToString:otherTagName];
-        }];
-        success = index < otherIndex;
-    }
-    EXPECT_TRUE(success);
-    if (!success)
-        NSLog(@"Expected %@ to come before %@ in tags: %@", tagName, otherTagName, tagsInBody);
+    [self expectElementTagsInOrder:@[tagName, otherTagName]];
 }
 
 - (BOOL)_synchronouslyExecuteEditCommand:(NSString *)command argument:(NSString *)argument
@@ -1094,6 +1109,38 @@ TEST(WKAttachmentTests, InsertDuplicateAttachmentAndUpdateData)
     [originalAttachment synchronouslySetData:updatedData.get() newContentType:nil newFilename:nil error:nil];
     [originalAttachment expectRequestedDataToBe:updatedData.get()];
     [pastedAttachment expectRequestedDataToBe:originalData.get()];
+}
+
+TEST(WKAttachmentTests, InjectedBundleReplaceURLsWhenPastingAttributedString)
+{
+    platformCopyRichTextWithMultipleAttachments();
+
+    auto configuration = retainPtr([WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"BundleEditingDelegatePlugIn"]);
+    [[configuration processPool] _setObject:@{ @"image/png" : @"cid:foo-bar" } forBundleParameter:@"MIMETypeToReplacementURLMap"];
+    auto webView = webViewForTestingAttachments(CGSizeMake(500, 500), configuration.get());
+    {
+        ObserveAttachmentUpdatesForScope observer(webView.get());
+        [webView _synchronouslyExecuteEditCommand:@"Paste" argument:nil];
+        EXPECT_EQ(2U, observer.observer().inserted.count);
+    }
+    [webView expectElementTagsInOrder:@[ @"IMG", @"ATTACHMENT", @"ATTACHMENT" ]];
+    EXPECT_WK_STREQ("cid:foo-bar", [webView valueOfAttribute:@"src" forQuerySelector:@"img"]);
+}
+
+TEST(WKAttachmentTests, InjectedBundleReplaceURLWhenPastingImage)
+{
+    platformCopyPNG();
+
+    NSString *replacementURL = @"cid:foo-bar";
+    auto configuration = retainPtr([WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"BundleEditingDelegatePlugIn"]);
+    [[configuration processPool] _setObject:@{ @"image/tiff" : replacementURL, @"image/png" : replacementURL } forBundleParameter:@"MIMETypeToReplacementURLMap"];
+    auto webView = webViewForTestingAttachments(CGSizeMake(500, 500), configuration.get());
+    {
+        ObserveAttachmentUpdatesForScope observer(webView.get());
+        [webView _synchronouslyExecuteEditCommand:@"Paste" argument:nil];
+        EXPECT_EQ(0U, observer.observer().inserted.count);
+    }
+    EXPECT_WK_STREQ("cid:foo-bar", [webView valueOfAttribute:@"src" forQuerySelector:@"img"]);
 }
 
 #pragma mark - Platform-specific tests

@@ -358,8 +358,8 @@ InjectedBundlePage::InjectedBundlePage(WKBundlePageRef page)
     };
     WKBundlePageSetUIClient(m_page, &uiClient.base);
 
-    WKBundlePageEditorClientV1 editorClient = {
-        { 1, this },
+    WKBundlePageEditorClientV2 editorClient = {
+        { 2, this },
         shouldBeginEditing,
         shouldEndEditing,
         shouldInsertNode,
@@ -375,6 +375,7 @@ InjectedBundlePage::InjectedBundlePage(WKBundlePageRef page)
         0, /* getPasteboardDataForRange */
         0, /* didWriteToPasteboard */
         0, /* performTwoStepDrop */
+        0, /* replacementURLForResource */
     };
     WKBundlePageSetEditorClient(m_page, &editorClient.base);
 
