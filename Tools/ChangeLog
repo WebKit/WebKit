@@ -1,3 +1,10 @@
+2018-01-16  Ling Ho  <lingcherd_ho@apple.com>
+
+        Move Debug Test262, Release Test262 and Performance queues to Sierra
+        https://bugs.webkit.org/show_bug.cgi?id=181692
+
+        Unreviewed
+
 2018-01-16  Zach Li  <zachli@apple.com>
 
         Add pop-up policy support in website policies.
