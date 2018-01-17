@@ -1,3 +1,16 @@
+2018-01-17  Zan Dobersek  <zdobersek@igalia.com>
+
+        CanvasImageData: createImageData() parameter should not be nullable
+        https://bugs.webkit.org/show_bug.cgi?id=181670
+
+        Reviewed by Sam Weinig.
+
+        Update createImageData(null) tests that should now throw a TypeError.
+
+        * canvas/philip/tests/2d.imageData.create1.zero.html:
+        * fast/canvas/canvas-createImageData-expected.txt:
+        * fast/canvas/canvas-createImageData.html:
+
 2018-01-16  Simon Fraser  <simon.fraser@apple.com>
 
         Can't scroll iframe after toggling it to display:none and back

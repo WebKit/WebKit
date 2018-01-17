@@ -9,7 +9,7 @@ description("Test canvas createImageData()");
 
 ctx = document.createElement('canvas').getContext('2d');
 
-shouldThrowErrorName("ctx.createImageData(null)", "NotSupportedError");
+shouldThrowErrorName("ctx.createImageData(null)", "TypeError");
 
 // create a 100x50 imagedata and fill it with white pixels
 

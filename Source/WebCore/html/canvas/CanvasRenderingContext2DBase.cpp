@@ -2105,12 +2105,9 @@ static RefPtr<ImageData> createEmptyImageData(const IntSize& size)
     return data;
 }
 
-ExceptionOr<RefPtr<ImageData>> CanvasRenderingContext2DBase::createImageData(ImageData* imageData) const
+RefPtr<ImageData> CanvasRenderingContext2DBase::createImageData(ImageData& imageData) const
 {
-    if (!imageData)
-        return Exception { NotSupportedError };
-
-    return createEmptyImageData(imageData->size());
+    return createEmptyImageData(imageData.size());
 }
 
 ExceptionOr<RefPtr<ImageData>> CanvasRenderingContext2DBase::createImageData(float sw, float sh) const

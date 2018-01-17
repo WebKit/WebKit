@@ -31,7 +31,7 @@
 
     // pixel manipulation
     [MayThrowException] ImageData createImageData(float sw, float sh);
-    [MayThrowException] ImageData createImageData(ImageData? imagedata); // FIXME: imagedata should not be optional
+    ImageData createImageData(ImageData imagedata);
     [MayThrowException] ImageData getImageData(float sx, float sy, float sw, float sh);
     void putImageData(ImageData imagedata, float dx, float dy);
     void putImageData(ImageData imagedata, float dx, float dy, float dirtyX, float dirtyY, float dirtyWidth, float dirtyHeight);

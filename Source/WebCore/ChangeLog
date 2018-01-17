@@ -1,3 +1,22 @@
+2018-01-17  Zan Dobersek  <zdobersek@igalia.com>
+
+        CanvasImageData: createImageData() parameter should not be nullable
+        https://bugs.webkit.org/show_bug.cgi?id=181670
+
+        Reviewed by Sam Weinig.
+
+        createImageData() method on the CanvasImageData interface should not
+        treat the ImageData parameter as nullable, but should instead reject any
+        null values with a TypeError, as demanded by the specification.
+
+        No new tests -- current tests covering createImageData(null) are updated
+        to properly cover new behavior of throwing a TypeError exception.
+
+        * html/canvas/CanvasImageData.idl:
+        * html/canvas/CanvasRenderingContext2DBase.cpp:
+        (WebCore::CanvasRenderingContext2DBase::createImageData const):
+        * html/canvas/CanvasRenderingContext2DBase.h:
+
 2018-01-16  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [CMake] Remove WebCoreDerivedSources library target
