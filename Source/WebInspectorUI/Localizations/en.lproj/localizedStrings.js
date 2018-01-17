@@ -721,6 +721,7 @@ localizedStrings["Protocol"] = "Protocol";
 localizedStrings["Pseudo Element"] = "Pseudo Element";
 localizedStrings["Query Parameters"] = "Query Parameters";
 localizedStrings["Query String"] = "Query String";
+localizedStrings["Query String Parameters"] = "Query String Parameters";
 localizedStrings["Query returned no results."] = "Query returned no results.";
 localizedStrings["Queued"] = "Queued";
 localizedStrings["Radial Gradient"] = "Radial Gradient";

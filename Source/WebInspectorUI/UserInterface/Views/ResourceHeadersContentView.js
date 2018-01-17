@@ -75,7 +75,7 @@ WI.ResourceHeadersContentView = class ResourceHeadersContentView extends WI.Cont
         this._refreshResponseHeadersSection();
 
         if (this._resource.urlComponents.queryString) {
-            this._queryStringSection = new WI.ResourceDetailsSection(WI.UIString("Query String"));
+            this._queryStringSection = new WI.ResourceDetailsSection(WI.UIString("Query String Parameters"));
             this.element.appendChild(this._queryStringSection.element);
             this._refreshQueryStringSection();
         }
