@@ -62,23 +62,9 @@ private:
 // pushed graphics state.
 class PlatformContextCairo::State {
 public:
-    State()
-        : m_globalAlpha(1)
-        , m_imageInterpolationQuality(InterpolationDefault)
-    {
-    }
-
-    State(float globalAlpha, InterpolationQuality imageInterpolationQuality)
-        : m_globalAlpha(globalAlpha)
-        , m_imageInterpolationQuality(imageInterpolationQuality)
-    {
-        // We do not copy m_imageMaskInformation because otherwise it would be applied
-        // more than once during subsequent calls to restore().
-    }
+    State() = default;
 
     ImageMaskInformation m_imageMaskInformation;
-    float m_globalAlpha;
-    InterpolationQuality m_imageInterpolationQuality;
 };
 
 PlatformContextCairo::PlatformContextCairo(cairo_t* cr)
@@ -108,7 +94,7 @@ PlatformContextCairo::~PlatformContextCairo() = default;
 
 void PlatformContextCairo::save()
 {
-    m_stateStack.append(State(m_state->m_globalAlpha, m_state->m_imageInterpolationQuality));
+    m_stateStack.append(State());
     m_state = &m_stateStack.last();
 
     cairo_save(m_cr.get());
@@ -157,7 +143,7 @@ static void drawPatternToCairoContext(cairo_t* cr, cairo_pattern_t* pattern, con
         cairo_fill(cr);
 }
 
-void PlatformContextCairo::drawSurfaceToContext(cairo_surface_t* surface, const FloatRect& destRect, const FloatRect& originalSrcRect, const Cairo::ShadowState& shadowState, GraphicsContext& context)
+void PlatformContextCairo::drawSurfaceToContext(cairo_surface_t* surface, const FloatRect& destRect, const FloatRect& originalSrcRect, InterpolationQuality imageInterpolationQuality, float globalAlpha, const Cairo::ShadowState& shadowState, GraphicsContext& context)
 {
     // Avoid invalid cairo matrix with small values.
     if (std::fabs(destRect.width()) < 0.5f || std::fabs(destRect.height()) < 0.5f)
@@ -194,7 +180,7 @@ void PlatformContextCairo::drawSurfaceToContext(cairo_surface_t* surface, const 
     RefPtr<cairo_pattern_t> pattern = adoptRef(cairo_pattern_create_for_surface(patternSurface.get()));
 
     ASSERT(m_state);
-    switch (m_state->m_imageInterpolationQuality) {
+    switch (imageInterpolationQuality) {
     case InterpolationNone:
     case InterpolationLow:
         cairo_pattern_set_filter(pattern.get(), CAIRO_FILTER_FAST);
@@ -227,31 +213,8 @@ void PlatformContextCairo::drawSurfaceToContext(cairo_surface_t* surface, const 
     }
 
     cairo_save(m_cr.get());
-    drawPatternToCairoContext(m_cr.get(), pattern.get(), destRect, globalAlpha());
+    drawPatternToCairoContext(m_cr.get(), pattern.get(), destRect, globalAlpha);
     cairo_restore(m_cr.get());
-}
-
-void PlatformContextCairo::setImageInterpolationQuality(InterpolationQuality quality)
-{
-    ASSERT(m_state);
-    m_state->m_imageInterpolationQuality = quality;
-}
-
-InterpolationQuality PlatformContextCairo::imageInterpolationQuality() const
-{
-    ASSERT(m_state);
-    return m_state->m_imageInterpolationQuality;
-}
-
-
-float PlatformContextCairo::globalAlpha() const
-{
-    return m_state->m_globalAlpha;
-}
-
-void PlatformContextCairo::setGlobalAlpha(float globalAlpha)
-{
-    m_state->m_globalAlpha = globalAlpha;
 }
 
 } // namespace WebCore

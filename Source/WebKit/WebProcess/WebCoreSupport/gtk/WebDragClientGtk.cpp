@@ -54,7 +54,8 @@ static RefPtr<ShareableBitmap> convertCairoSurfaceToShareableBitmap(cairo_surfac
     RefPtr<ShareableBitmap> bitmap = ShareableBitmap::createShareable(imageSize, { });
     auto graphicsContext = bitmap->createGraphicsContext();
 
-    graphicsContext->platformContext()->drawSurfaceToContext(surface, IntRect(IntPoint(), imageSize), IntRect(IntPoint(), imageSize), Cairo::ShadowState(graphicsContext->state()), *graphicsContext);
+    auto& state = graphicsContext->state();
+    graphicsContext->platformContext()->drawSurfaceToContext(surface, IntRect(IntPoint(), imageSize), IntRect(IntPoint(), imageSize), state.imageInterpolationQuality, state.alpha, Cairo::ShadowState(state), *graphicsContext);
     return bitmap;
 }
 

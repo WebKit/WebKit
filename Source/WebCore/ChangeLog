@@ -1,3 +1,56 @@
+2018-01-17  Zan Dobersek  <zdobersek@igalia.com>
+
+        [Cairo] Don't mirror global alpha and image interpolation quality state values in PlatformContextCairo
+        https://bugs.webkit.org/show_bug.cgi?id=181725
+
+        Reviewed by Carlos Garcia Campos.
+
+        Don't duplicate global alpha and image interpolation quality state
+        values on the PlatformContextCairo. Instead, retrieve them from
+        the managing GraphicsContextState when necessary.
+
+        For Cairo operations, the FillSource and StrokeSource containers now
+        store the global alpha value, using it during the operation executions.
+        For drawNativeImage(), the global alpha and interpolation quality values
+        are passed through arguments.
+
+        In PlatformContextCairo, the two values are no longer stored on the
+        internally-managed stack, and the getter-setter pairs for the two values
+        are removed. In drawSurfaceToContext(), the two values are now expected
+        to be passed through the method arguments.
+
+        No new tests -- no change in behavior.
+
+        * platform/graphics/cairo/CairoOperations.cpp:
+        (WebCore::Cairo::prepareForFilling):
+        (WebCore::Cairo::prepareForStroking):
+        (WebCore::Cairo::drawPathShadow):
+        (WebCore::Cairo::fillCurrentCairoPath):
+        (WebCore::Cairo::FillSource::FillSource):
+        (WebCore::Cairo::StrokeSource::StrokeSource):
+        (WebCore::Cairo::strokeRect):
+        (WebCore::Cairo::strokePath):
+        (WebCore::Cairo::drawGlyphs):
+        (WebCore::Cairo::drawNativeImage):
+        (WebCore::Cairo::State::setGlobalAlpha): Deleted.
+        (WebCore::Cairo::State::setImageInterpolationQuality): Deleted.
+        * platform/graphics/cairo/CairoOperations.h:
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        (WebCore::GraphicsContext::drawNativeImage):
+        (WebCore::GraphicsContext::setPlatformAlpha):
+        (WebCore::GraphicsContext::setPlatformImageInterpolationQuality):
+        * platform/graphics/cairo/PlatformContextCairo.cpp:
+        (WebCore::PlatformContextCairo::save):
+        (WebCore::PlatformContextCairo::drawSurfaceToContext):
+        (WebCore::PlatformContextCairo::State::State): Deleted.
+        (WebCore::PlatformContextCairo::setImageInterpolationQuality): Deleted.
+        (WebCore::PlatformContextCairo::imageInterpolationQuality const): Deleted.
+        (WebCore::PlatformContextCairo::globalAlpha const): Deleted.
+        (WebCore::PlatformContextCairo::setGlobalAlpha): Deleted.
+        * platform/graphics/cairo/PlatformContextCairo.h:
+        * platform/graphics/win/MediaPlayerPrivateMediaFoundation.cpp:
+        (WebCore::MediaPlayerPrivateMediaFoundation::Direct3DPresenter::paintCurrentFrame):
+
 2018-01-17  Philippe Normand  <pnormand@igalia.com>
 
         REGRESSION(r226973/r226974): Four multimedia tests failing

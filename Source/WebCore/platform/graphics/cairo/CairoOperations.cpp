@@ -113,7 +113,7 @@ static void clipForPatternFilling(cairo_t* cr, const FloatSize& patternSize, con
     cairo_path_destroy(currentPath);
 }
 
-static void prepareForFilling(cairo_t* cr, const Cairo::FillSource& fillSource, float globalAlpha, PatternAdjustment patternAdjustment)
+static void prepareForFilling(cairo_t* cr, const Cairo::FillSource& fillSource, PatternAdjustment patternAdjustment)
 {
     cairo_set_fill_rule(cr, fillSource.fillRule == RULE_EVENODD ? CAIRO_FILL_RULE_EVEN_ODD : CAIRO_FILL_RULE_WINDING);
 
@@ -124,7 +124,7 @@ static void prepareForFilling(cairo_t* cr, const Cairo::FillSource& fillSource, 
         gradient = fillSource.gradient.alphaAdjusted.get();
 
     prepareCairoContextSource(cr, fillSource.pattern.object.get(), gradient,
-        fillSource.color, adjustForAlpha ? globalAlpha : 1);
+        fillSource.color, adjustForAlpha ? fillSource.globalAlpha : 1);
 
     if (fillSource.pattern.object) {
         clipForPatternFilling(cr, fillSource.pattern.size, fillSource.pattern.transform,
@@ -132,7 +132,7 @@ static void prepareForFilling(cairo_t* cr, const Cairo::FillSource& fillSource, 
     }
 }
 
-void prepareForStroking(cairo_t* cr, const Cairo::StrokeSource& strokeSource, float globalAlpha, AlphaPreservation alphaPreservation)
+void prepareForStroking(cairo_t* cr, const Cairo::StrokeSource& strokeSource, AlphaPreservation alphaPreservation)
 {
     bool preserveAlpha = alphaPreservation == PreserveAlpha;
 
@@ -141,7 +141,7 @@ void prepareForStroking(cairo_t* cr, const Cairo::StrokeSource& strokeSource, fl
         gradient = strokeSource.gradient.alphaAdjusted.get();
 
     prepareCairoContextSource(cr, strokeSource.pattern.get(), gradient,
-        strokeSource.color, preserveAlpha ? globalAlpha : 1);
+        strokeSource.color, preserveAlpha ? strokeSource.globalAlpha : 1);
 }
 
 static inline void fillRectWithColor(cairo_t* cr, const FloatRect& rect, const Color& color)
@@ -200,14 +200,14 @@ static inline void drawPathShadow(PlatformContextCairo& platformContext, const F
     if (drawingStyle & Fill) {
         cairo_save(cairoShadowContext);
         cairo_append_path(cairoShadowContext, path.get());
-        prepareForFilling(cairoShadowContext, fillSource, shadowContext->platformContext()->globalAlpha(), NoAdjustment);
+        prepareForFilling(cairoShadowContext, fillSource, NoAdjustment);
         cairo_fill(cairoShadowContext);
         cairo_restore(cairoShadowContext);
     }
 
     if (drawingStyle & Stroke) {
         cairo_append_path(cairoShadowContext, path.get());
-        prepareForStroking(cairoShadowContext, strokeSource, shadowContext->platformContext()->globalAlpha(), DoNotPreserveAlpha);
+        prepareForStroking(cairoShadowContext, strokeSource, DoNotPreserveAlpha);
         cairo_stroke(cairoShadowContext);
     }
 
@@ -225,7 +225,7 @@ static inline void fillCurrentCairoPath(PlatformContextCairo& platformContext, c
     cairo_t* cr = platformContext.cr();
     cairo_save(cr);
 
-    prepareForFilling(cr, fillSource, platformContext.globalAlpha(), AdjustPatternForGlobalAlpha);
+    prepareForFilling(cr, fillSource, AdjustPatternForGlobalAlpha);
     cairo_fill(cr);
 
     cairo_restore(cr);
@@ -430,11 +430,6 @@ void setStrokeStyle(PlatformContextCairo& platformContext, StrokeStyle strokeSty
     }
 }
 
-void setGlobalAlpha(PlatformContextCairo& platformContext, float alpha)
-{
-    platformContext.setGlobalAlpha(alpha);
-}
-
 void setCompositeOperation(PlatformContextCairo& platformContext, CompositeOperator compositeOperation, BlendMode blendMode)
 {
     cairo_set_operator(platformContext.cr(), toCairoOperator(compositeOperation, blendMode));
@@ -446,11 +441,6 @@ void setShouldAntialias(PlatformContextCairo& platformContext, bool enable)
     // enables standard 'grayscale' antialiasing); false to explicitly disable
     // antialiasing.
     cairo_set_antialias(platformContext.cr(), enable ? CAIRO_ANTIALIAS_DEFAULT : CAIRO_ANTIALIAS_NONE);
-}
-
-void setImageInterpolationQuality(PlatformContextCairo& platformContext, InterpolationQuality quality)
-{
-    platformContext.setImageInterpolationQuality(quality);
 }
 
 void setCTM(PlatformContextCairo& platformContext, const AffineTransform& transform)
@@ -522,6 +512,8 @@ bool isAcceleratedContext(PlatformContextCairo& platformContext)
 } // namespace State
 
 FillSource::FillSource(const GraphicsContextState& state)
+    : globalAlpha(state.alpha)
+    , fillRule(state.fillRule)
 {
     if (state.fillPattern) {
         pattern.object = adoptRef(state.fillPattern->createPlatformPattern(AffineTransform()));
@@ -537,11 +529,10 @@ FillSource::FillSource(const GraphicsContextState& state)
             gradient.alphaAdjusted = adoptRef(state.fillGradient->createPlatformGradient(state.alpha));
     } else
         color = state.fillColor;
-
-    fillRule = state.fillRule;
 }
 
 StrokeSource::StrokeSource(const GraphicsContextState& state)
+    : globalAlpha(state.alpha)
 {
     if (state.strokePattern)
         pattern = adoptRef(state.strokePattern->createPlatformPattern(AffineTransform()));
@@ -720,7 +711,7 @@ void strokeRect(PlatformContextCairo& platformContext, const FloatRect& rect, fl
     cairo_rectangle(cr, rect.x(), rect.y(), rect.width(), rect.height());
     cairo_set_line_width(cr, lineWidth);
     drawPathShadow(platformContext, { }, strokeSource, shadowState, targetContext, Stroke);
-    prepareForStroking(cr, strokeSource, platformContext.globalAlpha(), PreserveAlpha);
+    prepareForStroking(cr, strokeSource, PreserveAlpha);
     cairo_stroke(cr);
 
     cairo_restore(cr);
@@ -732,7 +723,7 @@ void strokePath(PlatformContextCairo& platformContext, const Path& path, const S
 
     setPathOnCairoContext(cr, path.platformPath()->context());
     drawPathShadow(platformContext, { }, strokeSource, shadowState, targetContext, Stroke);
-    prepareForStroking(cr, strokeSource, platformContext.globalAlpha(), PreserveAlpha);
+    prepareForStroking(cr, strokeSource, PreserveAlpha);
     cairo_stroke(cr);
 }
 
@@ -755,7 +746,7 @@ void drawGlyphs(PlatformContextCairo& platformContext, const FillSource& fillSou
     cairo_save(cr);
 
     if (textDrawingMode & TextModeFill) {
-        prepareForFilling(cr, fillSource, platformContext.globalAlpha(), AdjustPatternForGlobalAlpha);
+        prepareForFilling(cr, fillSource, AdjustPatternForGlobalAlpha);
         drawGlyphsToContext(cr, scaledFont, syntheticBoldOffset, glyphs);
     }
 
@@ -764,7 +755,7 @@ void drawGlyphs(PlatformContextCairo& platformContext, const FillSource& fillSou
     // the text as even one single stroke would cover the full wdth of the text.
     //  See https://bugs.webkit.org/show_bug.cgi?id=33759.
     if (textDrawingMode & TextModeStroke && strokeThickness < 2 * xOffset) {
-        prepareForStroking(cr, strokeSource, platformContext.globalAlpha(), PreserveAlpha);
+        prepareForStroking(cr, strokeSource, PreserveAlpha);
         cairo_set_line_width(cr, strokeThickness);
 
         // This may disturb the CTM, but we are going to call cairo_restore soon after.
@@ -776,7 +767,7 @@ void drawGlyphs(PlatformContextCairo& platformContext, const FillSource& fillSou
     cairo_restore(cr);
 }
 
-void drawNativeImage(PlatformContextCairo& platformContext, cairo_surface_t* surface, const FloatRect& destRect, const FloatRect& srcRect, CompositeOperator compositeOperator, BlendMode blendMode, ImageOrientation orientation, const ShadowState& shadowState, GraphicsContext& targetContext)
+void drawNativeImage(PlatformContextCairo& platformContext, cairo_surface_t* surface, const FloatRect& destRect, const FloatRect& srcRect, CompositeOperator compositeOperator, BlendMode blendMode, ImageOrientation orientation, InterpolationQuality imageInterpolationQuality, float globalAlpha, const ShadowState& shadowState, GraphicsContext& targetContext)
 {
     platformContext.save();
 
@@ -799,7 +790,7 @@ void drawNativeImage(PlatformContextCairo& platformContext, cairo_surface_t* sur
         }
     }
 
-    platformContext.drawSurfaceToContext(surface, dst, srcRect, shadowState, targetContext);
+    platformContext.drawSurfaceToContext(surface, dst, srcRect, imageInterpolationQuality, globalAlpha, shadowState, targetContext);
     platformContext.restore();
 }
 

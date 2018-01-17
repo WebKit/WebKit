@@ -1,3 +1,16 @@
+2018-01-17  Zan Dobersek  <zdobersek@igalia.com>
+
+        [Cairo] Don't mirror global alpha and image interpolation quality state values in PlatformContextCairo
+        https://bugs.webkit.org/show_bug.cgi?id=181725
+
+        Reviewed by Carlos Garcia Campos.
+
+        * Shared/cairo/ShareableBitmapCairo.cpp:
+        (WebKit::ShareableBitmap::paint):
+        Adjust the PlatformContextCairo::drawSurfaceToContext() invocation.
+        * WebProcess/WebCoreSupport/gtk/WebDragClientGtk.cpp:
+        (WebKit::convertCairoSurfaceToShareableBitmap): Ditto.
+
 2018-01-17  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Update OptionsGTK.cmake and NEWS for 2.19.6 release.

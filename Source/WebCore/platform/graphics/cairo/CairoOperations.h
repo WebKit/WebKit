@@ -59,10 +59,8 @@ namespace State {
 void setStrokeThickness(PlatformContextCairo&, float);
 void setStrokeStyle(PlatformContextCairo&, StrokeStyle);
 
-void setGlobalAlpha(PlatformContextCairo&, float);
 void setCompositeOperation(PlatformContextCairo&, CompositeOperator, BlendMode);
 void setShouldAntialias(PlatformContextCairo&, bool);
-void setImageInterpolationQuality(PlatformContextCairo&, InterpolationQuality);
 
 void setCTM(PlatformContextCairo&, const AffineTransform&);
 AffineTransform getCTM(PlatformContextCairo&);
@@ -78,6 +76,7 @@ struct FillSource {
     FillSource() = default;
     explicit FillSource(const GraphicsContextState&);
 
+    float globalAlpha { 0 };
     struct {
         RefPtr<cairo_pattern_t> object;
         FloatSize size;
@@ -98,6 +97,7 @@ struct StrokeSource {
     StrokeSource() = default;
     explicit StrokeSource(const GraphicsContextState&);
 
+    float globalAlpha { 0 };
     RefPtr<cairo_pattern_t> pattern;
     struct {
         RefPtr<cairo_pattern_t> base;
@@ -135,7 +135,7 @@ void clearRect(PlatformContextCairo&, const FloatRect&);
 
 void drawGlyphs(PlatformContextCairo&, const FillSource&, const StrokeSource&, const ShadowState&, const FloatPoint&, cairo_scaled_font_t*, double, const Vector<cairo_glyph_t>&, float, TextDrawingModeFlags, float, const FloatSize&, const Color&, GraphicsContext&);
 
-void drawNativeImage(PlatformContextCairo&, cairo_surface_t*, const FloatRect&, const FloatRect&, CompositeOperator, BlendMode, ImageOrientation, const ShadowState&, GraphicsContext&);
+void drawNativeImage(PlatformContextCairo&, cairo_surface_t*, const FloatRect&, const FloatRect&, CompositeOperator, BlendMode, ImageOrientation, InterpolationQuality, float, const ShadowState&, GraphicsContext&);
 void drawPattern(PlatformContextCairo&, cairo_surface_t*, const IntSize&, const FloatRect&, const FloatRect&, const AffineTransform&, const FloatPoint&, CompositeOperator, BlendMode);
 
 void drawRect(PlatformContextCairo&, const FloatRect&, float, const Color&, StrokeStyle, const Color&);
