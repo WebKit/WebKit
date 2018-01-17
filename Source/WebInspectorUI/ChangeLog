@@ -1,5 +1,21 @@
 2018-01-16  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r226992. rdar://problem/36568053
+
+    2018-01-16  Joseph Pecoraro  <pecoraro@apple.com>
+
+            Web Inspector: Network Tab - Export HAR Context Menu not working
+            https://bugs.webkit.org/show_bug.cgi?id=181694
+            <rdar://problem/36479197>
+
+            Reviewed by Brian Burg.
+
+            * UserInterface/Views/NetworkTableContentView.js:
+            (WI.NetworkTableContentView.prototype.tableCellContextMenuClicked):
+            Ensure `this` works in the handler.
+
+2018-01-16  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r226821. rdar://problem/36568038
 
     2018-01-11  Joseph Pecoraro  <pecoraro@apple.com>
