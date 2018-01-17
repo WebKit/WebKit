@@ -1,3 +1,36 @@
+2018-01-17  Ryosuke Niwa  <rniwa@webkit.org>
+
+        input and textarea elements should reveal selection in setSelection when focused
+        https://bugs.webkit.org/show_bug.cgi?id=181715
+        <rdar://problem/36570546>
+
+        Reviewed by Zalan Bujtas.
+
+        Made input and textarea elements reveal selection in FrameSelection::setSelection instead of by directly
+        invoking FrameSelection::revealSelection in their respective updateFocusAppearance to unify code paths.
+
+        Also added options to reveal selection up to the main frame to SetSelectionOption to be used in iOS.
+
+        * editing/FrameSelection.cpp:
+        (WebCore::FrameSelection::FrameSelection):
+        (WebCore::FrameSelection::moveWithoutValidationTo): Takes SelectionRevealMode as an argument and converts
+        sets appropriate selection options.
+        (WebCore::FrameSelection::setSelection): Reconstruct SelectionRevealMode out of selection option sets.
+        (WebCore::FrameSelection::updateAndRevealSelection):
+        * editing/FrameSelection.h:
+        (WebCore::FrameSelection): Added RevealSelectionUpToMainFrame as a SelectionRevealMode and replaced
+        m_shouldRevealSelection by m_selectionRevealMode.
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::updateFocusAppearance): Pass SelectionRevealMode to HTMLTextFormControlElement's
+        select and restoreCachedSelection instead of directly invoking FrameSelection::revealSelection.
+        * html/HTMLTextAreaElement.cpp:
+        (WebCore::HTMLTextAreaElement::updateFocusAppearance): Ditto.
+        * html/HTMLTextFormControlElement.cpp:
+        (WebCore::HTMLTextFormControlElement::select):
+        (WebCore::HTMLTextFormControlElement::setSelectionRange):
+        (WebCore::HTMLTextFormControlElement::restoreCachedSelection):
+        * html/HTMLTextFormControlElement.h:
+
 2018-01-17  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         WEBKIT_FRAMEWORK should not modify file-global include directories

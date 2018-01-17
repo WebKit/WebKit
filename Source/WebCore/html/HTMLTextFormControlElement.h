@@ -69,11 +69,11 @@ public:
     WEBCORE_EXPORT void setSelectionStart(int);
     WEBCORE_EXPORT void setSelectionEnd(int);
     WEBCORE_EXPORT void setSelectionDirection(const String&);
-    WEBCORE_EXPORT void select(const AXTextStateChangeIntent& = AXTextStateChangeIntent());
+    WEBCORE_EXPORT void select(SelectionRevealMode = SelectionRevealMode::DoNotReveal, const AXTextStateChangeIntent& = AXTextStateChangeIntent());
     WEBCORE_EXPORT virtual ExceptionOr<void> setRangeText(const String& replacement);
     WEBCORE_EXPORT virtual ExceptionOr<void> setRangeText(const String& replacement, unsigned start, unsigned end, const String& selectionMode);
     void setSelectionRange(int start, int end, const String& direction, const AXTextStateChangeIntent& = AXTextStateChangeIntent());
-    WEBCORE_EXPORT void setSelectionRange(int start, int end, TextFieldSelectionDirection = SelectionHasNoDirection, const AXTextStateChangeIntent& = AXTextStateChangeIntent());
+    WEBCORE_EXPORT void setSelectionRange(int start, int end, TextFieldSelectionDirection = SelectionHasNoDirection, SelectionRevealMode = SelectionRevealMode::DoNotReveal, const AXTextStateChangeIntent& = AXTextStateChangeIntent());
     RefPtr<Range> selection() const;
     String selectedText() const;
 
@@ -116,7 +116,7 @@ protected:
         m_cachedSelectionDirection = direction;
     }
 
-    void restoreCachedSelection(const AXTextStateChangeIntent& = AXTextStateChangeIntent());
+    void restoreCachedSelection(SelectionRevealMode, const AXTextStateChangeIntent& = AXTextStateChangeIntent());
     bool hasCachedSelection() const { return m_cachedSelectionStart >= 0; }
 
     virtual void subtreeHasChanged() = 0;

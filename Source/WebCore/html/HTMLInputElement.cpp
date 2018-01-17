@@ -444,11 +444,9 @@ void HTMLInputElement::updateFocusAppearance(SelectionRestorationMode restoratio
 {
     if (isTextField()) {
         if (restorationMode == SelectionRestorationMode::SetDefault || !hasCachedSelection())
-            select(Element::defaultFocusTextStateChangeIntent());
+            select(revealMode, Element::defaultFocusTextStateChangeIntent());
         else
-            restoreCachedSelection();
-        if (document().frame())
-            document().frame()->selection().revealSelection(revealMode);
+            restoreCachedSelection(revealMode);
     } else
         HTMLTextFormControlElement::updateFocusAppearance(restorationMode, revealMode);
 }
