@@ -2138,6 +2138,7 @@ private:
         case ForceOSRExit:
         case CheckBadCell:
         case CheckNotEmpty:
+        case AssertNotEmpty:
         case CheckTraps:
         case Unreachable:
         case ExtractOSREntryLocal:

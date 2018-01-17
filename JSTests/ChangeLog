@@ -1,5 +1,23 @@
 2018-01-16  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r226907. rdar://problem/36567949
+
+    2018-01-12  Saam Barati  <sbarati@apple.com>
+
+            CheckStructure can be incorrectly subsumed by CheckStructureOrEmpty
+            https://bugs.webkit.org/show_bug.cgi?id=181177
+            <rdar://problem/36205704>
+
+            Reviewed by Yusuke Suzuki.
+
+            * stress/check-structure-ir-ensures-empty-does-not-flow-through.js: Added.
+            (runNearStackLimit.t):
+            (runNearStackLimit):
+            (test.f):
+            (test):
+
+2018-01-16  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r226881. rdar://problem/36567948
 
     2018-01-12  Saam Barati  <sbarati@apple.com>
