@@ -1985,6 +1985,9 @@ ByteCodeParser::CallOptimizationResult ByteCodeParser::handleInlining(
         BasicBlock* calleeEntryBlock = allocateUntargetableBlock();
         m_currentBlock = calleeEntryBlock;
         prepareToParseBlock();
+
+        // At the top of each switch case, we can exit.
+        m_exitOK = true;
         
         Node* myCallTargetNode = getDirect(calleeReg);
         
