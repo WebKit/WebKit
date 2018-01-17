@@ -126,7 +126,7 @@ void setMiterLimit(PlatformContextCairo&, float);
 void fillRect(PlatformContextCairo&, const FloatRect&, const FillSource&, const ShadowState&, GraphicsContext&);
 void fillRect(PlatformContextCairo&, const FloatRect&, const Color&, const ShadowState&, GraphicsContext&);
 void fillRect(PlatformContextCairo&, const FloatRect&, cairo_pattern_t*);
-void fillRoundedRect(PlatformContextCairo&, const FloatRoundedRect&, const Color&, const ShadowState&, bool, GraphicsContext&);
+void fillRoundedRect(PlatformContextCairo&, const FloatRoundedRect&, const Color&, const ShadowState&, GraphicsContext&);
 void fillRectWithRoundedHole(PlatformContextCairo&, const FloatRect&, const FloatRoundedRect&, const FillSource&, const ShadowState&, GraphicsContext&);
 void fillPath(PlatformContextCairo&, const Path&, const FillSource&, const ShadowState&, GraphicsContext&);
 void strokeRect(PlatformContextCairo&, const FloatRect&, float, const StrokeSource&, const ShadowState&, GraphicsContext&);

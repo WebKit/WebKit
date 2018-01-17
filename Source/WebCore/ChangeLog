@@ -1,5 +1,16 @@
 2018-01-17  Zan Dobersek  <zdobersek@igalia.com>
 
+        Unreviewed follow-up to r227051.
+
+        * platform/graphics/cairo/CairoOperations.h: Fix declaration of the
+        fillRoundedRect() function by removing the bool parameter that's not
+        used at all in the definition. This went unspotted due to the unified
+        source build including the implementation file before fillRoundedRect()
+        usage in GrapihcsContextCairo.cpp, leaving the declaration undefined
+        and instead using the definition directly.
+
+2018-01-17  Zan Dobersek  <zdobersek@igalia.com>
+
         [Cairo] Don't mirror global alpha and image interpolation quality state values in PlatformContextCairo
         https://bugs.webkit.org/show_bug.cgi?id=181725
 
