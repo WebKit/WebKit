@@ -35,7 +35,12 @@ enum Poison {
     // Add new poison keys below in alphabetical order. The order doesn't really
     // matter, but we might as well keep them in alphabetically order for
     // greater readability.
+    ArrayPrototypePoison,
     CodeBlockPoison,
+    DateInstancePoison,
+    JSAPIWrapperObjectPoison,
+    JSArrayBufferPoison,
+    JSCallbackObjectPoison,
     JSGlobalObjectPoison,
     JSScriptFetchParametersPoison,
     JSScriptFetcherPoison,

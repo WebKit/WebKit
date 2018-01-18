@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -46,8 +46,8 @@ void JSArrayBuffer::finishCreation(VM& vm, JSGlobalObject* globalObject)
 {
     Base::finishCreation(vm);
     // This probably causes GCs in the various VMs to overcount the impact of the array buffer.
-    vm.heap.addReference(this, m_impl);
-    vm.m_typedArrayController->registerWrapper(globalObject, m_impl, this);
+    vm.heap.addReference(this, impl());
+    vm.m_typedArrayController->registerWrapper(globalObject, impl(), this);
 }
 
 JSArrayBuffer* JSArrayBuffer::create(
@@ -70,12 +70,12 @@ Structure* JSArrayBuffer::createStructure(
 
 bool JSArrayBuffer::isShared() const
 {
-    return m_impl->isShared();
+    return impl()->isShared();
 }
 
 ArrayBufferSharingMode JSArrayBuffer::sharingMode() const
 {
-    return m_impl->sharingMode();
+    return impl()->sharingMode();
 }
 
 size_t JSArrayBuffer::estimatedSize(JSCell* cell)

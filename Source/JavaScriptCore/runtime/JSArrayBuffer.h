@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,7 +26,9 @@
 #pragma once
 
 #include "ArrayBuffer.h"
+#include "JSCPoison.h"
 #include "JSObject.h"
+#include <wtf/Poisoned.h>
 
 namespace JSC {
 
@@ -43,7 +45,7 @@ public:
     // This function will register the new wrapper with the vm's TypedArrayController.
     JS_EXPORT_PRIVATE static JSArrayBuffer* create(VM&, Structure*, RefPtr<ArrayBuffer>&&);
 
-    ArrayBuffer* impl() const { return m_impl; }
+    ArrayBuffer* impl() const { return m_impl.unpoisoned(); }
     
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue prototype);
 
@@ -59,7 +61,7 @@ protected:
     static size_t estimatedSize(JSCell*);
 
 private:
-    ArrayBuffer* m_impl;
+    ConstExprPoisoned<JSArrayBufferPoison, ArrayBuffer*> m_impl;
 };
 
 inline ArrayBuffer* toPossiblySharedArrayBuffer(VM& vm, JSValue value)
