@@ -263,17 +263,7 @@ WI.HierarchicalPathComponent = class HierarchicalPathComponent extends WI.Object
             sibling = sibling.nextSibling;
         }
 
-        // Since the change event only fires when the selection actually changes we are
-        // stuck with either not showing the current selection in the menu or accepting that
-        // the user can't select what is already selected again. Selecting the same item
-        // again can be desired (for selecting the main resource while looking at an image).
-        // So if there is only one option, don't make it be selected by default. This lets
-        // you select the top level item which usually has no siblings to go back.
-        // FIXME: Make this work when there are multiple options with a selectedIndex.
-        if (this._selectElement.options.length === 1)
-            this._selectElement.selectedIndex = -1;
-        else
-            this._selectElement.selectedIndex = previousSiblingCount;
+        this._selectElement.selectedIndex = previousSiblingCount;
     }
 
     _selectElementMouseOver(event)
@@ -291,6 +281,12 @@ WI.HierarchicalPathComponent = class HierarchicalPathComponent extends WI.Object
     _selectElementMouseDown(event)
     {
         this._updateSelectElement();
+
+        if (this._selectElement.options.length === 1) {
+            event.preventDefault();
+
+            this._selectElementSelectionChanged();
+        }
     }
 
     _selectElementMouseUp(event)
