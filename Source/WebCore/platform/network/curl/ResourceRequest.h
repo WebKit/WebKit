@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2003, 2006 Apple Inc.  All rights reserved.
  * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
+ * Copyright (C) 2018 Sony Interactive Entertainment Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -69,6 +70,9 @@ public:
     static bool httpPipeliningEnabled() { return false; }
     static void setHTTPPipeliningEnabled(bool) { }
 
+    template<class Encoder> void encodeWithPlatformData(Encoder&) const;
+    template<class Decoder> bool decodeWithPlatformData(Decoder&);
+
 private:
     friend class ResourceRequestBase;
 
@@ -81,5 +85,20 @@ private:
 
     static bool s_httpPipeliningEnabled;
 };
+
+template<class Encoder>
+void ResourceRequest::encodeWithPlatformData(Encoder& encoder) const
+{
+    encodeBase(encoder);
+}
+
+template<class Decoder>
+bool ResourceRequest::decodeWithPlatformData(Decoder& decoder)
+{
+    if (!decodeBase(decoder))
+        return false;
+
+    return true;
+}
 
 } // namespace WebCore

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Sony Interactive Entertainment Inc.
+ * Copyright (C) 2018 Sony Interactive Entertainment Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -39,12 +39,12 @@ namespace IPC {
 
 void ArgumentCoder<ResourceRequest>::encodePlatformData(Encoder& encoder, const ResourceRequest& resourceRequest)
 {
-    resourceRequest.encodeWithoutPlatformData(encoder);
+    resourceRequest.encodeWithPlatformData(encoder);
 }
 
 bool ArgumentCoder<ResourceRequest>::decodePlatformData(Decoder& decoder, ResourceRequest& resourceRequest)
 {
-    return resourceRequest.decodeWithoutPlatformData(decoder);
+    return resourceRequest.decodeWithPlatformData(decoder);
 }
 
 void ArgumentCoder<CertificateInfo>::encode(Encoder&, const CertificateInfo&)
