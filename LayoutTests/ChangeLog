@@ -1,5 +1,21 @@
 2018-01-18  Joanmarie Diggs  <jdiggs@igalia.com>
 
+        AX: roles-computedRoleString.html layout test should support enabling/disabling individual test cases
+        https://bugs.webkit.org/show_bug.cgi?id=181806
+
+        Reviewed by Chris Fleizach.
+
+        Add a "data-platform" attribute to each element so that we can enable or disable
+        a given test case on a given platform. Update the platform expectations for GTK
+        to reflect changes and new support which happened in the interim. And remove the
+        test from the list of expected failures.
+
+        * accessibility/roles-computedRoleString.html:
+        * platform/gtk/TestExpectations:
+        * platform/gtk/accessibility/roles-computedRoleString-expected.txt:
+
+2018-01-18  Joanmarie Diggs  <jdiggs@igalia.com>
+
         [GTK] AX: Two layout tests crash with error 'g_strstr_len: assertion 'haystack != NULL' failed' in Accessibility::UIElement::url
         https://bugs.webkit.org/show_bug.cgi?id=176796
 
