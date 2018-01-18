@@ -1,3 +1,14 @@
+2018-01-18  Brent Fulgham  <bfulgham@apple.com>
+
+        REGRESSION(r225858): Sandbox violations due to blocked access to Spotlight search preferences
+        https://bugs.webkit.org/show_bug.cgi?id=181797
+        <rdar://problem/36546412>
+
+        Reviewed by Eric Carlson.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb: Add the read permission for
+        'com.apple.lookup.shared' to support DataDetectors.
+
 2018-01-17  John Wilander  <wilander@apple.com>
 
         Resource Load Statistics: Block cookies for prevalent resources without user interaction

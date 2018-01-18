@@ -135,7 +135,9 @@
     ; <rdar://problem/8206632> Weather(1038) deny file-read-data ~/Library/Preferences/com.apple.keyboard.plist
     "com.apple.keyboard"
     ; <rdar://problem/9384085>
-    "com.apple.Preferences")
+    "com.apple.Preferences"
+    "com.apple.lookup.shared" ; Needed for DataDetector (Spotlight) support
+)
 
 ;; <rdar://problem/12985925> Need read access to /var/mobile/Library/Fonts to all apps
 (allow file-read*
