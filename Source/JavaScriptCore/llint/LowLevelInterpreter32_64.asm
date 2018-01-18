@@ -2124,6 +2124,9 @@ macro nativeCallTrampoline(executableOffsetToFunction)
     ret
 
 .handleException:
+if X86 or X86_WIN
+    subp 8, sp # align stack pointer
+end
     storep cfr, VM::topCallFrame[t3]
     jmp _llint_throw_from_slow_path_trampoline
 end
@@ -2176,6 +2179,9 @@ macro internalFunctionCallTrampoline(offsetOfFunction)
     ret
 
 .handleException:
+if X86 or X86_WIN
+    subp 8, sp # align stack pointer
+end
     storep cfr, VM::topCallFrame[t3]
     jmp _llint_throw_from_slow_path_trampoline
 end
