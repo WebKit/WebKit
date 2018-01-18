@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<body>
+<pre id="log">FAIL did cause assertion failure.</pre>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.setHandlesAuthenticationChallenges(true);
+    testRunner.setAuthenticationUsername("testUser");
+    testRunner.setAuthenticationPassword("testPassword");
+    testRunner.waitUntilDone();
+}
+
+var log = document.getElementById("log");
+var isDone = false;
+
+function done()
+{
+    isDone = true;
+    window.setTimeout(() => {
+        log.innerHTML = "PASS did not cause assertion failure.";
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }, 0);
+}
+
+function test(iframe)
+{
+    if (iframe.didLoad) {
+        done();
+        return;
+    }
+    iframe.didLoad = true;
+    iframe.contentWindow.location.href = "resources/before-unload-in-subframe-child.html";
+}
+
+function fired(contentWindow)
+{
+    if (isDone)
+        return;
+    var image = new contentWindow.Image;
+    image.src = "http://127.0.0.1:8000/misc/resources/protected/protected-image.php";
+}
+
+
+</script>
+<iframe onload="test(this);" src="resources/before-unload-in-subframe-child.html"></iframe>
+</body>
+</html>

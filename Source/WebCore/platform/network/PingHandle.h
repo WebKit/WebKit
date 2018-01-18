@@ -81,7 +81,7 @@ private:
     void canAuthenticateAgainstProtectionSpaceAsync(ResourceHandle*, const ProtectionSpace&)
     {
         m_handle->continueCanAuthenticateAgainstProtectionSpace(false);
-        delete this;
+        pingLoadComplete(ResourceError { String { }, 0, m_currentRequest.url(), ASCIILiteral("Not allowed to authenticate"), ResourceError::Type::AccessControl });
     }
 #endif
 
