@@ -48,7 +48,6 @@ extern const CFStringRef _kCFSystemVersionBuildVersionKey;
 extern const CFStringRef _kCFSystemVersionProductVersionKey;
 
 Boolean _CFAppVersionCheckLessThan(CFStringRef bundleID, int linkedOnAnOlderSystemThan, double versionNumberLessThan);
-Boolean _CFExecutableLinkedOnOrAfter(CFSystemVersion);
 CFDictionaryRef _CFCopySystemVersionDictionary();
 CFDictionaryRef _CFWebServicesCopyProviderInfo(CFStringRef serviceType, Boolean* outIsUserSelection);
 
