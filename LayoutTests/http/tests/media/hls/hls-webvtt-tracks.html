@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src=../../media-resources/video-test.js></script>
+    <script src=../../media-resources/media-controls.js></script>
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
+
+        function start() {
+            video = document.getElementById('video');
+            video.src = "../resources/hls/test-webvtt.m3u8";
+            video.play();
+            waitForEventOnceOn(video.textTracks, 'addtrack', trackAdded);
+        }
+
+        function trackAdded() {
+            testExpected("video.textTracks.length", "1");
+            run("video.textTracks[0].mode = 'showing'");
+            waitForEventOnceOn(video.textTracks[0], 'cuechange', cueChanged);
+        }
+
+        function cueChanged() {
+            testExpected("video.textTracks[0].activeCues.length", "1");
+            testExpected("video.textTracks[0].activeCues[0].text", "Subtitle Test");
+            endTest();
+        }
+    </script>
+</head>
+<body onload="start()">
+    <video id="video"></video>
+</body>
+</html>

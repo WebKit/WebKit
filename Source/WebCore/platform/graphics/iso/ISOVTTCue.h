@@ -42,7 +42,7 @@ class ISOWebVTTCue : public ISOBox {
 public:
     ISOWebVTTCue(const MediaTime& presentationTime, const MediaTime& duration);
 
-    static FourCC boxTypeName() { return "vtcc"; }
+    static FourCC boxTypeName() { return "vttc"; }
 
     const MediaTime& presentationTime() const { return m_presentationTime; }
     const MediaTime& duration() const { return m_duration; }
