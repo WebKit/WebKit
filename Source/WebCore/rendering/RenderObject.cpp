@@ -196,6 +196,11 @@ RenderObject::FragmentedFlowState RenderObject::computedFragmentedFlowState(cons
     if (!renderer.parent())
         return renderer.fragmentedFlowState();
 
+    if (is<RenderMultiColumnFlow>(renderer)) {
+        // Multicolumn flows do not inherit the flow state.
+        return InsideInFragmentedFlow;
+    }
+
     auto inheritedFlowState = RenderObject::NotInsideFragmentedFlow;
     if (is<RenderText>(renderer))
         inheritedFlowState = renderer.parent()->fragmentedFlowState();
