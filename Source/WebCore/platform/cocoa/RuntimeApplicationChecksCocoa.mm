@@ -236,6 +236,12 @@ bool IOSApplication::isTheSecretSocietyHiddenMystery()
     return isTheSecretSocietyHiddenMystery;
 }
 
+bool IOSApplication::isCardiogram()
+{
+    static bool isCardiogram = applicationBundleIsEqualTo("com.cardiogram.ios.heart");
+    return isCardiogram;
+}
+
 #endif
 
 } // namespace WebCore
