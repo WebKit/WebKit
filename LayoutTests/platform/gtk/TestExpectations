@@ -1909,6 +1909,9 @@ webkit.org/b/181528 http/tests/cache/memory-cache-pruning.html [ Pass Crash ]
 
 webkit.org/b/181529 imported/blink/http/tests/webfont/animation-assert.html [ Pass Crash ]
 
+webkit.org/b/181766 imported/w3c/web-platform-tests/html/semantics/text-level-semantics/the-br-element/br-bidi-in-inline-ancestors.html [ Pass Timeout ]
+webkit.org/b/181767 fast/hidpi/filters-hue-rotate.html [ Pass ImageOnlyFailure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Flaky tests
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -2796,7 +2799,7 @@ webkit.org/b/134979 media/track/track-cue-rendering-mode-changed.html [ Failure 
 webkit.org/b/134979 media/track/track-cue-rendering-rtl.html [ Crash Failure Timeout ]
 webkit.org/b/134979 media/track/track-cue-rendering-snap-to-lines-not-set.html [ Failure Timeout ]
 
-webkit.org/b/134995 media/track/track-in-band-subtitles-too-large.html [ Failure Crash ]
+webkit.org/b/134995 media/track/track-in-band-subtitles-too-large.html [ Failure Crash Timeout ]
 webkit.org/b/134995 media/track/track-long-word-container-sizing.html [ Failure ]
 
 webkit.org/b/135529 svg/css/parse-height.html [ Failure ]
