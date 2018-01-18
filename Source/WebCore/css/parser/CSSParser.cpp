@@ -78,8 +78,9 @@ CSSParserContext::CSSParserContext(Document& document, const URL& sheetBaseURL, 
     , mode(document.inQuirksMode() ? HTMLQuirksMode : HTMLStandardMode)
     , isHTMLDocument(document.isHTMLDocument())
     , cssGridLayoutEnabled(document.isCSSGridLayoutEnabled())
-    , hasDocumentSecurityOrigin(document.securityOrigin().canRequest(baseURL))
+    , hasDocumentSecurityOrigin(sheetBaseURL.isNull() || document.securityOrigin().canRequest(baseURL))
 {
+    
     needsSiteSpecificQuirks = document.settings().needsSiteSpecificQuirks();
     enforcesCSSMIMETypeInNoQuirksMode = document.settings().enforceCSSMIMETypeInNoQuirksMode();
     useLegacyBackgroundSizeShorthandBehavior = document.settings().useLegacyBackgroundSizeShorthandBehavior();

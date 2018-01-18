@@ -1,5 +1,19 @@
 2018-01-18  Antti Koivisto  <antti@apple.com>
 
+        REGRESSION(r225650): The scores of MotionMark tests Multiply and Leaves dropped by 8%
+        https://bugs.webkit.org/show_bug.cgi?id=181460
+        <rdar://problem/36379776>
+
+        Reviewed by Ryosuke Niwa.
+
+        * css/parser/CSSParser.cpp:
+        (WebCore::CSSParserContext::CSSParserContext):
+
+        Don't do the expensive security origin test if the supplied sheet base URL is null. This
+        is true for rules coming from the same document.
+
+2018-01-18  Antti Koivisto  <antti@apple.com>
+
         REGRESSION (r223604): Setting :before/after pseudo element on <noscript> asserts
         https://bugs.webkit.org/show_bug.cgi?id=181795
         <rdar://problem/36334524>
