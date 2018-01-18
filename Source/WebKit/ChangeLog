@@ -1,3 +1,16 @@
+2018-01-18  Chris Dumez  <cdumez@apple.com>
+
+        Regression(r223149): WebProcessProxy::didClose() no longer refs WebPageProxy objects
+        https://bugs.webkit.org/show_bug.cgi?id=181771
+        <rdar://problem/36566237>
+
+        Reviewed by Brady Eidson.
+
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::didClose):
+        Use copyToVectorOf<RefPtr<WebPageProxy>>() to maintain pre-r223149 behavior
+        and ref the pages.
+
 2018-01-18  Dan Bernstein  <mitz@apple.com>
 
         [Xcode] Streamline and future-proof target-macOS-version-dependent build setting definitions

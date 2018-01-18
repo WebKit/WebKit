@@ -628,7 +628,7 @@ void WebProcessProxy::didClose(IPC::Connection&)
 
     webConnection()->didClose();
 
-    auto pages = copyToVector(m_pageMap.values());
+    auto pages = copyToVectorOf<RefPtr<WebPageProxy>>(m_pageMap.values());
 
     shutDown();
 
