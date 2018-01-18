@@ -1291,8 +1291,6 @@ webkit.org/b/173916 webaudio/silent-audio-interrupted-in-background.html [ Skip 
 
 webkit.org/b/175575 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/ready-states/autoplay-with-slow-text-tracks.html [ Crash Pass ]
 
-webkit.org/b/176796 accessibility/gtk/xml-roles-exposed.html [ Crash ]
-
 webkit.org/b/176797 accessibility/aria-listbox-no-selection.html [ Crash ]
 
 webkit.org/b/176799 editing/deleting/delete-surrogatepair.html [ Crash ]
@@ -3196,9 +3194,6 @@ webkit.org/b/175134 fast/text/line-height-minimumFontSize.html [ Failure ]
 webkit.org/b/175134 fast/text/line-height-minimumFontSize-text-zoom.html [ ImageOnlyFailure ]
 webkit.org/b/175134 fast/text/line-height-minimumFontSize-visual.html [ ImageOnlyFailure ]
 webkit.org/b/175134 fast/text/line-height-minimumFontSize-zoom.html [ ImageOnlyFailure ]
-
-# Crash is webkit.org/b/176796
-webkit.org/b/175418 accessibility/add-children-pseudo-element.html [ Failure Crash ]
 
 webkit.org/b/175420 fullscreen/requestFullscreen-escape-key.html [ Failure ]
 

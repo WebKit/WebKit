@@ -43,12 +43,18 @@
 
     if (window.accessibilityController) {
         var element = accessibilityController.accessibleElementById("float");
-        shouldBe("element.childrenCount", "3");
+        if (accessibilityController.platformName != "atk")
+            shouldBe("element.childrenCount", "3");
+        else
+            shouldBe("element.childrenCount", "2");
         
         eventSender.keyDown('\t');
         eventSender.keyDown('\t');
         
-        shouldBe("element.childrenCount", "2");
+        if (accessibilityController.platformName != "atk")
+            shouldBe("element.childrenCount", "2");
+        else
+            shouldBe("element.childrenCount", "1");
         showPseudo();
         
         function hidePseudo() {

@@ -20,7 +20,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: computed-role:alert, xml-roles:alert, tag:div, toolkit:WebKitGtk
+AXPlatformAttributes: atomic:true, relevant:additions text, live:assertive, container-live-role:alert, container-atomic:true, container-relevant:additions text, container-live:assertive, computed-role:alert, xml-roles:alert, tag:div, toolkit:WebKitGtk
 ------------
 AXRole: AXDialog
 AXParent: AXWebArea
@@ -39,7 +39,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: computed-role:alertdialog, xml-roles:alertdialog, tag:div, toolkit:WebKitGtk
+AXPlatformAttributes: relevant:additions text, live:assertive, container-live-role:alertdialog, container-relevant:additions text, container-live:assertive, computed-role:alertdialog, xml-roles:alertdialog, tag:div, toolkit:WebKitGtk
 ------------
 AXRole: AXEmbedded
 AXParent: AXWebArea
@@ -307,7 +307,7 @@ AXRequired: 0
 AXChecked: 0
 AXPlatformAttributes: computed-role:figure, xml-roles:figure, tag:div, toolkit:WebKitGtk
 ------------
-AXRole: AXForm
+AXRole: AXLandmarkForm
 AXParent: AXWebArea
 AXChildren: 0
 AXPosition: { 0.000000, 0.000000 }
@@ -420,7 +420,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: computed-role:log, xml-roles:log, tag:div, toolkit:WebKitGtk
+AXPlatformAttributes: relevant:additions text, live:polite, container-live-role:log, container-relevant:additions text, container-live:polite, computed-role:log, xml-roles:log, tag:div, toolkit:WebKitGtk
 ------------
 AXRole: AXLandmarkMain
 AXParent: AXWebArea
@@ -458,7 +458,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: computed-role:marquee, xml-roles:marquee, tag:div, toolkit:WebKitGtk
+AXPlatformAttributes: relevant:additions text, live:off, container-live-role:marquee, container-relevant:additions text, container-live:off, computed-role:marquee, xml-roles:marquee, tag:div, toolkit:WebKitGtk
 ------------
 AXRole: AXMath
 AXParent: AXWebArea
@@ -724,7 +724,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: computed-role:status, xml-roles:status, tag:div, toolkit:WebKitGtk
+AXPlatformAttributes: atomic:true, relevant:additions text, live:polite, container-live-role:status, container-atomic:true, container-relevant:additions text, container-live:polite, computed-role:status, xml-roles:status, tag:div, toolkit:WebKitGtk
 ------------
 AXRole: AXToggleButton
 AXParent: AXWebArea
@@ -800,7 +800,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: computed-role:timer, xml-roles:timer, tag:div, toolkit:WebKitGtk
+AXPlatformAttributes: relevant:additions text, live:off, container-live-role:timer, container-relevant:additions text, container-live:off, computed-role:timer, xml-roles:timer, tag:div, toolkit:WebKitGtk
 ------------
 AXRole: AXToolbar
 AXParent: AXWebArea

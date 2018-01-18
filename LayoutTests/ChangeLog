@@ -1,3 +1,24 @@
+2018-01-18  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        [GTK] AX: Two layout tests crash with error 'g_strstr_len: assertion 'haystack != NULL' failed' in Accessibility::UIElement::url
+        https://bugs.webkit.org/show_bug.cgi?id=176796
+
+        Reviewed by Chris Fleizach.
+
+        Remove failing tests from Test Expectations. Update expected results of
+        xml-roles-exposed to reflect several bug fixes which were made in the
+        interim. Modify add-children-pseudo-element.html to account for platform
+        differences in the accessibility tree. Add an additional URL test because
+        we didn't have coverage for getting the URL of accessible links resulting
+        from native anchor elements.
+
+        * accessibility/add-children-pseudo-element.html: Modified.
+        * accessibility/gtk/link-url-expected.txt: Added.
+        * accessibility/gtk/link-url.html: Added.
+        * accessibility/gtk/xml-roles-exposed-expected.txt: Updated.
+        * platform/gtk/TestExpectations: Removed failing tests.
+        * platform/gtk/accessibility/add-children-pseudo-element-expected.txt: Added.
+
 2018-01-18  Matt Lewis  <jlewis3@apple.com>
 
         Marked multiple imported/w3c/web-platform-tests/service-workers/ test as flaky

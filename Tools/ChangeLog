@@ -1,3 +1,15 @@
+2018-01-18  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        [GTK] AX: Two layout tests crash with error 'g_strstr_len: assertion 'haystack != NULL' failed' in Accessibility::UIElement::url
+        https://bugs.webkit.org/show_bug.cgi?id=176796
+
+        Reviewed by Chris Fleizach.
+
+        Add sanity check that we have a URL before calling g_strstr_len().
+
+        * WebKitTestRunner/InjectedBundle/atk/AccessibilityUIElementAtk.cpp:
+        (WTR::AccessibilityUIElement::url):
+
 2018-01-18  Ryan Haddad  <ryanhaddad@apple.com>
 
         Add triggers for Sierra test262 and perf queues
