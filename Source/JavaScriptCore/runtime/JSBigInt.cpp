@@ -728,7 +728,7 @@ JSBigInt* JSBigInt::parseInt(ExecState* state, CharType*  data, int length)
         ++p;
 
     // Check Radix from frist characters
-    if (p + 1 < length && data[p] == '0') {
+    if (static_cast<unsigned>(p) + 1 < static_cast<unsigned>(length) && data[p] == '0') {
         if (isASCIIAlphaCaselessEqual(data[p + 1], 'b'))
             return parseInt(state, vm, data, length, p + 2, 2, false);
         
