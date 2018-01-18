@@ -1746,6 +1746,9 @@ void Element::removedFromAncestor(RemovalType removalType, ContainerNode& oldPar
             shadowRoot->hostChildElementDidChange(*this);
     }
 
+    clearBeforePseudoElement();
+    clearAfterPseudoElement();
+
     ContainerNode::removedFromAncestor(removalType, oldParentOfRemovedTree);
 
     if (hasPendingResources())

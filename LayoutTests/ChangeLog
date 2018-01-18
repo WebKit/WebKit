@@ -1,3 +1,14 @@
+2018-01-18  Antti Koivisto  <antti@apple.com>
+
+        REGRESSION (r223604): Setting :before/after pseudo element on <noscript> asserts
+        https://bugs.webkit.org/show_bug.cgi?id=181795
+        <rdar://problem/36334524>
+
+        Reviewed by David Kilzer.
+
+        * fast/css-generated-content/noscript-pseudo-anim-crash-expected.txt: Added.
+        * fast/css-generated-content/noscript-pseudo-anim-crash.html: Added.
+
 2018-01-18  Chris Fleizach  <cfleizach@apple.com>
 
         AX: Aria-activedescendant not supported

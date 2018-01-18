@@ -1,3 +1,24 @@
+2018-01-18  Antti Koivisto  <antti@apple.com>
+
+        REGRESSION (r223604): Setting :before/after pseudo element on <noscript> asserts
+        https://bugs.webkit.org/show_bug.cgi?id=181795
+        <rdar://problem/36334524>
+
+        Reviewed by David Kilzer.
+
+        <noscript> disallows renderer generation outside CSS mechanisms, however we would still construct
+        PseudoElements for them during style resolution. These were never removed properly because the
+        pseudo element removal was tied to render tree teardown. Without proper removal the associated
+        animations were also not canceled.
+
+        Test: fast/css-generated-content/noscript-pseudo-anim-crash.html
+
+        * dom/Element.cpp:
+        (WebCore::Element::removedFromAncestor):
+
+        Take care to get rid of PseudoElements when the element is removed from the tree.
+        This also cancels any associated animations.
+
 2018-01-18  Chris Fleizach  <cfleizach@apple.com>
 
         AX: Aria-activedescendant not supported
