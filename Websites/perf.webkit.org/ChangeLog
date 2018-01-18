@@ -1,3 +1,23 @@
+2018-01-17  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Fix perf dashboard tests for node v8
+        https://bugs.webkit.org/show_bug.cgi?id=181782
+
+        Reviewed by Wenson Hsieh.
+
+        Fixed the various tests for node.js v8, which is the latest LTS version.
+
+        * server-tests/api-manifest-tests.js: Replaced the missing Triggerable.acceptsTest by Triggerable.acceptedTests
+        after r226836.
+        * server-tests/api-measurement-set-tests.js: Added "Z" to the end timestamps to force UTF timezone now that Date
+        in node.js parses using the local timezone by default.
+        * server-tests/resources/test-server.js:
+        (TestServer.prototype._restoreDataDirectory): Fixed the bug that this function was erroneously using the async
+        function to rename a directory per new warnings. This code was racy, and it used to cause a test error occasionally.
+        * server-tests/tools-os-build-fetcher-tests.js: Fixed the assertions to make it work in the latest node.js.
+        * unit-tests/measurement-set-tests.js:
+        (waitForMeasurementSet): Wait for setTimeout to cycle through all microtasks instead of just two microtask cycles.
+
 2018-01-11  Ryosuke Niwa  <rniwa@webkit.org>
 
         Cannot trigger Dromaeo tests on internal perf try bots

@@ -107,7 +107,7 @@ class TestServer {
     {
         childProcess.execFileSync('rm', ['-rf', this._dataDirectory]);
         if (this._backupDataPath)
-            fs.rename(this._backupDataPath, this._dataDirectory);
+            fs.renameSync(this._backupDataPath, this._dataDirectory);
     }
 
     cleanDataDirectory()

@@ -109,15 +109,15 @@ describe('OSBuildFetcher', function() {
 
         it('should throw assertion error when given a invalid revision', () => {
             const fetcher = new OSBuildFetcher({});
-            assert.throws(() => fetcher._computeOrder('invalid'), (error) => error.name == 'AssertionError');
-            assert.throws(() => fetcher._computeOrder(''), (error) => error.name == 'AssertionError');
-            assert.throws(() => fetcher._computeOrder('16'), (error) => error.name == 'AssertionError');
-            assert.throws(() => fetcher._computeOrder('16D'), (error) => error.name == 'AssertionError');
-            assert.throws(() => fetcher._computeOrder('123'), (error) => error.name == 'AssertionError');
-            assert.throws(() => fetcher._computeOrder('D123'), (error) => error.name == 'AssertionError');
-            assert.throws(() => fetcher._computeOrder('123z'), (error) => error.name == 'AssertionError');
-            assert.throws(() => fetcher._computeOrder('16[163'), (error) => error.name == 'AssertionError');
-            assert.throws(() => fetcher._computeOrder('16D163['), (error) => error.name == 'AssertionError');
+            assert.throws(() => fetcher._computeOrder('invalid'), 'AssertionError [ERR_ASSERTION]');
+            assert.throws(() => fetcher._computeOrder(''), 'AssertionError [ERR_ASSERTION]');
+            assert.throws(() => fetcher._computeOrder('16'), 'AssertionError [ERR_ASSERTION]');
+            assert.throws(() => fetcher._computeOrder('16D'), 'AssertionError [ERR_ASSERTION]');
+            assert.throws(() => fetcher._computeOrder('123'), 'AssertionError [ERR_ASSERTION]');
+            assert.throws(() => fetcher._computeOrder('D123'), 'AssertionError [ERR_ASSERTION]');
+            assert.throws(() => fetcher._computeOrder('123z'), 'AssertionError [ERR_ASSERTION]');
+            assert.throws(() => fetcher._computeOrder('16[163'), 'AssertionError [ERR_ASSERTION]');
+            assert.throws(() => fetcher._computeOrder('16D163['), 'AssertionError [ERR_ASSERTION]');
         })
     });
 
@@ -206,7 +206,7 @@ describe('OSBuildFetcher', function() {
                     assert(false, 'should never be reached');
                 }, (error_output) => {
                     assert(error_output);
-                    assert.equal(error_output.name, 'AssertionError');
+                    assert.equal(error_output.name, 'AssertionError [ERR_ASSERTION]');
                 });
             });
         })

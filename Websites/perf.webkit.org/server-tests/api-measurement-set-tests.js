@@ -65,7 +65,7 @@ describe("/api/measurement-set", function () {
 
     const reportWithRevision = [{
         "buildNumber": "124",
-        "buildTime": "2013-02-28T15:34:51",
+        "buildTime": "2013-02-28T15:34:51Z",
         "revisions": {
             "WebKit": {
                 "revision": "144000",
@@ -87,7 +87,7 @@ describe("/api/measurement-set", function () {
 
     const reportWithNewRevision = [{
         "buildNumber": "125",
-        "buildTime": "2013-02-28T21:45:17",
+        "buildTime": "2013-02-28T21:45:17Z",
         "revisions": {
             "WebKit": {
                 "revision": "160609",
@@ -109,7 +109,7 @@ describe("/api/measurement-set", function () {
 
     const reportWithAncentRevision = [{
         "buildNumber": "126",
-        "buildTime": "2013-02-28T23:07:25",
+        "buildTime": "2013-02-28T23:07:25Z",
         "revisions": {
             "WebKit": {
                 "revision": "137793",

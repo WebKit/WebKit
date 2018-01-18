@@ -383,7 +383,7 @@ describe('/api/manifest', function () {
 
             const macTriggerable = Triggerable.findByTestConfiguration(someTest, sierra);
             assert.equal(macTriggerable.name(), 'mac-build.webkit.org');
-            assert(macTriggerable.acceptsTest(someTest));
+            assert(macTriggerable.acceptedTests().has(someTest));
 
             const groups = macTriggerable.repositoryGroups();
             assert.deepEqual(groups.length, 2);
