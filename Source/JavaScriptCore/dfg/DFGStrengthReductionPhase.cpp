@@ -462,7 +462,9 @@ private:
         }
 
         case RegExpExec:
-        case RegExpTest: {
+        case RegExpTest:
+        case RegExpMatchFast:
+        case RegExpExecNonGlobalOrSticky: {
             JSGlobalObject* globalObject = m_node->child1()->dynamicCastConstant<JSGlobalObject*>(vm());
             if (!globalObject) {
                 if (verbose)
@@ -476,250 +478,297 @@ private:
                 break;
             }
 
-            Node* regExpObjectNode = m_node->child2().node();
-            RegExp* regExp;
-            if (RegExpObject* regExpObject = regExpObjectNode->dynamicCastConstant<RegExpObject*>(vm()))
-                regExp = regExpObject->regExp();
-            else if (regExpObjectNode->op() == NewRegexp)
-                regExp = regExpObjectNode->castOperand<RegExp*>();
-            else {
-                if (verbose)
-                    dataLog("Giving up because the regexp is unknown.\n");
-                break;
-            }
-
-            Node* stringNode = m_node->child3().node();
-            
-            // NOTE: This mostly already protects us from having the compiler execute a regexp
-            // operation on a ginormous string by preventing us from getting our hands on ginormous
-            // strings in the first place.
-            String string = m_node->child3()->tryGetString(m_graph);
-            if (!string) {
-                if (verbose)
-                    dataLog("Giving up because the string is unknown.\n");
-                break;
-            }
-
-            FrozenValue* regExpFrozenValue = m_graph.freeze(regExp);
-
-            // Refuse to do things with regular expressions that have a ginormous number of
-            // subpatterns.
-            unsigned ginormousNumberOfSubPatterns = 1000;
-            if (regExp->numSubpatterns() > ginormousNumberOfSubPatterns) {
-                if (verbose)
-                    dataLog("Giving up because of pattern limit.\n");
-                break;
-            }
-
-            if (m_node->op() == RegExpExec && regExp->hasNamedCaptures()) {
-                // FIXME: https://bugs.webkit.org/show_bug.cgi?id=176464
-                // Implement strength reduction optimization for named capture groups.
-                if (verbose)
-                    dataLog("Giving up because of named capture groups.\n");
-                break;
-            }
-
-            unsigned lastIndex;
-            if (regExp->globalOrSticky()) {
-                // This will only work if we can prove what the value of lastIndex is. To do this
-                // safely, we need to execute the insertion set so that we see any previous strength
-                // reductions. This is needed for soundness since otherwise the effectfulness of any
-                // previous strength reductions would be invisible to us.
-                executeInsertionSet();
-                lastIndex = UINT_MAX;
-                for (unsigned otherNodeIndex = m_nodeIndex; otherNodeIndex--;) {
-                    Node* otherNode = m_block->at(otherNodeIndex);
-                    if (otherNode == regExpObjectNode) {
-                        lastIndex = 0;
-                        break;
-                    }
-                    if (otherNode->op() == SetRegExpObjectLastIndex
-                        && otherNode->child1() == regExpObjectNode
-                        && otherNode->child2()->isInt32Constant()
-                        && otherNode->child2()->asInt32() >= 0) {
-                        lastIndex = static_cast<unsigned>(otherNode->child2()->asInt32());
-                        break;
-                    }
-                    if (writesOverlap(m_graph, otherNode, RegExpObject_lastIndex))
-                        break;
-                }
-                if (lastIndex == UINT_MAX) {
+            Node* regExpObjectNode = nullptr;
+            RegExp* regExp = nullptr;
+            if (m_node->op() == RegExpExec || m_node->op() == RegExpTest || m_node->op() == RegExpMatchFast) {
+                regExpObjectNode = m_node->child2().node();
+                if (RegExpObject* regExpObject = regExpObjectNode->dynamicCastConstant<RegExpObject*>(vm()))
+                    regExp = regExpObject->regExp();
+                else if (regExpObjectNode->op() == NewRegexp)
+                    regExp = regExpObjectNode->castOperand<RegExp*>();
+                else {
                     if (verbose)
-                        dataLog("Giving up because the last index is not known.\n");
+                        dataLog("Giving up because the regexp is unknown.\n");
                     break;
                 }
             } else
-                lastIndex = 0;
+                regExp = m_node->castOperand<RegExp*>();
 
-            m_graph.watchpoints().addLazily(globalObject->havingABadTimeWatchpoint());
-            
-            Structure* structure;
-            if (m_node->op() == RegExpExec && regExp->hasNamedCaptures())
-                structure = globalObject->regExpMatchesArrayWithGroupsStructure();
-            else
-                structure = globalObject->regExpMatchesArrayStructure();
-
-            if (structure->indexingType() != ArrayWithContiguous) {
-                // This is further protection against a race with haveABadTime.
-                if (verbose)
-                    dataLog("Giving up because the structure has the wrong indexing type.\n");
-                break;
-            }
-            m_graph.registerStructure(structure);
-
-            RegExpConstructor* constructor = globalObject->regExpConstructor();
-            FrozenValue* constructorFrozenValue = m_graph.freeze(constructor);
-
-            MatchResult result;
-            Vector<int> ovector;
-            // We have to call the kind of match function that the main thread would have called.
-            // Otherwise, we might not have the desired Yarr code compiled, and the match will fail.
-            if (m_node->op() == RegExpExec) {
-                int position;
-                if (!regExp->matchConcurrently(vm(), string, lastIndex, position, ovector)) {
-                    if (verbose)
-                        dataLog("Giving up because match failed.\n");
+            if (m_node->op() == RegExpMatchFast) {
+                if (!regExp->global()) {
+                    m_node->setOp(RegExpExec);
+                    m_changed = true;
+                    // Continue performing strength reduction onto RegExpExec node.
+                } else
                     break;
-                }
-                result.start = position;
-                result.end = ovector[1];
-            } else {
-                if (!regExp->matchConcurrently(vm(), string, lastIndex, result)) {
-                    if (verbose)
-                        dataLog("Giving up because match failed.\n");
-                    break;
-                }
             }
 
-            // We've constant-folded the regexp. Now we're committed to replacing RegExpExec/Test.
+            ASSERT(m_node->op() != RegExpMatchFast);
 
-            m_changed = true;
+            auto foldToConstant = [&] {
+                Node* stringNode = nullptr;
+                if (m_node->op() == RegExpExecNonGlobalOrSticky)
+                    stringNode = m_node->child2().node();
+                else
+                    stringNode = m_node->child3().node();
 
-            NodeOrigin origin = m_node->origin;
+                // NOTE: This mostly already protects us from having the compiler execute a regexp
+                // operation on a ginormous string by preventing us from getting our hands on ginormous
+                // strings in the first place.
+                String string = stringNode->tryGetString(m_graph);
+                if (!string) {
+                    if (verbose)
+                        dataLog("Giving up because the string is unknown.\n");
+                    return false;
+                }
 
-            m_insertionSet.insertNode(
-                m_nodeIndex, SpecNone, Check, origin, m_node->children.justChecks());
+                FrozenValue* regExpFrozenValue = m_graph.freeze(regExp);
 
-            if (m_node->op() == RegExpExec) {
-                if (result) {
-                    RegisteredStructureSet* structureSet = m_graph.addStructureSet(structure);
+                // Refuse to do things with regular expressions that have a ginormous number of
+                // subpatterns.
+                unsigned ginormousNumberOfSubPatterns = 1000;
+                if (regExp->numSubpatterns() > ginormousNumberOfSubPatterns) {
+                    if (verbose)
+                        dataLog("Giving up because of pattern limit.\n");
+                    return false;
+                }
 
-                    // Create an array modeling the JS array that we will try to allocate. This is
-                    // basically createRegExpMatchesArray but over C++ strings instead of JSStrings.
-                    Vector<String> resultArray;
-                    resultArray.append(string.substring(result.start, result.end - result.start));
-                    for (unsigned i = 1; i <= regExp->numSubpatterns(); ++i) {
-                        int start = ovector[2 * i];
-                        if (start >= 0)
-                            resultArray.append(string.substring(start, ovector[2 * i + 1] - start));
-                        else
-                            resultArray.append(String());
+                if ((m_node->op() == RegExpExec || m_node->op() == RegExpExecNonGlobalOrSticky) && regExp->hasNamedCaptures()) {
+                    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=176464
+                    // Implement strength reduction optimization for named capture groups.
+                    if (verbose)
+                        dataLog("Giving up because of named capture groups.\n");
+                    return false;
+                }
+
+                unsigned lastIndex;
+                if (regExp->globalOrSticky()) {
+                    // This will only work if we can prove what the value of lastIndex is. To do this
+                    // safely, we need to execute the insertion set so that we see any previous strength
+                    // reductions. This is needed for soundness since otherwise the effectfulness of any
+                    // previous strength reductions would be invisible to us.
+                    ASSERT(regExpObjectNode);
+                    executeInsertionSet();
+                    lastIndex = UINT_MAX;
+                    for (unsigned otherNodeIndex = m_nodeIndex; otherNodeIndex--;) {
+                        Node* otherNode = m_block->at(otherNodeIndex);
+                        if (otherNode == regExpObjectNode) {
+                            lastIndex = 0;
+                            break;
+                        }
+                        if (otherNode->op() == SetRegExpObjectLastIndex
+                            && otherNode->child1() == regExpObjectNode
+                            && otherNode->child2()->isInt32Constant()
+                            && otherNode->child2()->asInt32() >= 0) {
+                            lastIndex = static_cast<unsigned>(otherNode->child2()->asInt32());
+                            break;
+                        }
+                        if (writesOverlap(m_graph, otherNode, RegExpObject_lastIndex))
+                            break;
                     }
+                    if (lastIndex == UINT_MAX) {
+                        if (verbose)
+                            dataLog("Giving up because the last index is not known.\n");
+                        return false;
+                    }
+                } else
+                    lastIndex = 0;
 
-                    unsigned publicLength = resultArray.size();
-                    unsigned vectorLength =
-                        Butterfly::optimalContiguousVectorLength(structure, publicLength);
+                m_graph.watchpoints().addLazily(globalObject->havingABadTimeWatchpoint());
 
-                    UniquedStringImpl* indexUID = vm().propertyNames->index.impl();
-                    UniquedStringImpl* inputUID = vm().propertyNames->input.impl();
-                    unsigned indexIndex = m_graph.identifiers().ensure(indexUID);
-                    unsigned inputIndex = m_graph.identifiers().ensure(inputUID);
+                Structure* structure;
+                if ((m_node->op() == RegExpExec || m_node->op() == RegExpExecNonGlobalOrSticky) && regExp->hasNamedCaptures())
+                    structure = globalObject->regExpMatchesArrayWithGroupsStructure();
+                else
+                    structure = globalObject->regExpMatchesArrayStructure();
 
+                if (structure->indexingType() != ArrayWithContiguous) {
+                    // This is further protection against a race with haveABadTime.
+                    if (verbose)
+                        dataLog("Giving up because the structure has the wrong indexing type.\n");
+                    return false;
+                }
+                m_graph.registerStructure(structure);
+
+                RegExpConstructor* constructor = globalObject->regExpConstructor();
+                FrozenValue* constructorFrozenValue = m_graph.freeze(constructor);
+
+                MatchResult result;
+                Vector<int> ovector;
+                // We have to call the kind of match function that the main thread would have called.
+                // Otherwise, we might not have the desired Yarr code compiled, and the match will fail.
+                if (m_node->op() == RegExpExec || m_node->op() == RegExpExecNonGlobalOrSticky) {
+                    int position;
+                    if (!regExp->matchConcurrently(vm(), string, lastIndex, position, ovector)) {
+                        if (verbose)
+                            dataLog("Giving up because match failed.\n");
+                        return false;
+                    }
+                    result.start = position;
+                    result.end = ovector[1];
+                } else {
+                    if (!regExp->matchConcurrently(vm(), string, lastIndex, result)) {
+                        if (verbose)
+                            dataLog("Giving up because match failed.\n");
+                        return false;
+                    }
+                }
+
+                // We've constant-folded the regexp. Now we're committed to replacing RegExpExec/Test.
+
+                m_changed = true;
+
+                NodeOrigin origin = m_node->origin;
+
+                m_insertionSet.insertNode(
+                    m_nodeIndex, SpecNone, Check, origin, m_node->children.justChecks());
+
+                if (m_node->op() == RegExpExec || m_node->op() == RegExpExecNonGlobalOrSticky) {
+                    if (result) {
+                        RegisteredStructureSet* structureSet = m_graph.addStructureSet(structure);
+
+                        // Create an array modeling the JS array that we will try to allocate. This is
+                        // basically createRegExpMatchesArray but over C++ strings instead of JSStrings.
+                        Vector<String> resultArray;
+                        resultArray.append(string.substring(result.start, result.end - result.start));
+                        for (unsigned i = 1; i <= regExp->numSubpatterns(); ++i) {
+                            int start = ovector[2 * i];
+                            if (start >= 0)
+                                resultArray.append(string.substring(start, ovector[2 * i + 1] - start));
+                            else
+                                resultArray.append(String());
+                        }
+
+                        unsigned publicLength = resultArray.size();
+                        unsigned vectorLength =
+                            Butterfly::optimalContiguousVectorLength(structure, publicLength);
+
+                        UniquedStringImpl* indexUID = vm().propertyNames->index.impl();
+                        UniquedStringImpl* inputUID = vm().propertyNames->input.impl();
+                        unsigned indexIndex = m_graph.identifiers().ensure(indexUID);
+                        unsigned inputIndex = m_graph.identifiers().ensure(inputUID);
+
+                        unsigned firstChild = m_graph.m_varArgChildren.size();
+                        m_graph.m_varArgChildren.append(
+                            m_insertionSet.insertConstantForUse(
+                                m_nodeIndex, origin, structure, KnownCellUse));
+                        ObjectMaterializationData* data = m_graph.m_objectMaterializationData.add();
+
+                        m_graph.m_varArgChildren.append(
+                            m_insertionSet.insertConstantForUse(
+                                m_nodeIndex, origin, jsNumber(publicLength), KnownInt32Use));
+                        data->m_properties.append(PublicLengthPLoc);
+
+                        m_graph.m_varArgChildren.append(
+                            m_insertionSet.insertConstantForUse(
+                                m_nodeIndex, origin, jsNumber(vectorLength), KnownInt32Use));
+                        data->m_properties.append(VectorLengthPLoc);
+
+                        m_graph.m_varArgChildren.append(
+                            m_insertionSet.insertConstantForUse(
+                                m_nodeIndex, origin, jsNumber(result.start), UntypedUse));
+                        data->m_properties.append(
+                            PromotedLocationDescriptor(NamedPropertyPLoc, indexIndex));
+
+                        m_graph.m_varArgChildren.append(Edge(stringNode, UntypedUse));
+                        data->m_properties.append(
+                            PromotedLocationDescriptor(NamedPropertyPLoc, inputIndex));
+
+                        auto materializeString = [&] (const String& string) -> Node* {
+                            if (string.isNull())
+                                return nullptr;
+                            if (string.isEmpty()) {
+                                return m_insertionSet.insertConstant(
+                                    m_nodeIndex, origin, vm().smallStrings.emptyString());
+                            }
+                            LazyJSValue value = LazyJSValue::newString(m_graph, string);
+                            return m_insertionSet.insertNode(
+                                m_nodeIndex, SpecNone, LazyJSConstant, origin,
+                                OpInfo(m_graph.m_lazyJSValues.add(value)));
+                        };
+
+                        for (unsigned i = 0; i < resultArray.size(); ++i) {
+                            if (Node* node = materializeString(resultArray[i])) {
+                                m_graph.m_varArgChildren.append(Edge(node, UntypedUse));
+                                data->m_properties.append(
+                                    PromotedLocationDescriptor(IndexedPropertyPLoc, i));
+                            }
+                        }
+
+                        Node* resultNode = m_insertionSet.insertNode(
+                            m_nodeIndex, SpecArray, Node::VarArg, MaterializeNewObject, origin,
+                            OpInfo(structureSet), OpInfo(data), firstChild,
+                            m_graph.m_varArgChildren.size() - firstChild);
+
+                        m_node->convertToIdentityOn(resultNode);
+                    } else
+                        m_graph.convertToConstant(m_node, jsNull());
+                } else
+                    m_graph.convertToConstant(m_node, jsBoolean(!!result));
+
+                // Whether it's Exec or Test, we need to tell the constructor and RegExpObject what's up.
+                // Because SetRegExpObjectLastIndex may exit and it clobbers exit state, we do that
+                // first.
+
+                if (regExp->globalOrSticky()) {
+                    ASSERT(regExpObjectNode);
+                    m_insertionSet.insertNode(
+                        m_nodeIndex, SpecNone, SetRegExpObjectLastIndex, origin,
+                        OpInfo(false),
+                        Edge(regExpObjectNode, RegExpObjectUse),
+                        m_insertionSet.insertConstantForUse(
+                            m_nodeIndex, origin, jsNumber(result ? result.end : 0), UntypedUse));
+
+                    origin = origin.withInvalidExit();
+                }
+
+                if (result) {
                     unsigned firstChild = m_graph.m_varArgChildren.size();
                     m_graph.m_varArgChildren.append(
                         m_insertionSet.insertConstantForUse(
-                            m_nodeIndex, origin, structure, KnownCellUse));
-                    ObjectMaterializationData* data = m_graph.m_objectMaterializationData.add();
-            
+                            m_nodeIndex, origin, constructorFrozenValue, KnownCellUse));
                     m_graph.m_varArgChildren.append(
                         m_insertionSet.insertConstantForUse(
-                            m_nodeIndex, origin, jsNumber(publicLength), KnownInt32Use));
-                    data->m_properties.append(PublicLengthPLoc);
-            
+                            m_nodeIndex, origin, regExpFrozenValue, KnownCellUse));
+                    m_graph.m_varArgChildren.append(Edge(stringNode, KnownCellUse));
                     m_graph.m_varArgChildren.append(
                         m_insertionSet.insertConstantForUse(
-                            m_nodeIndex, origin, jsNumber(vectorLength), KnownInt32Use));
-                    data->m_properties.append(VectorLengthPLoc);
-
+                            m_nodeIndex, origin, jsNumber(result.start), KnownInt32Use));
                     m_graph.m_varArgChildren.append(
                         m_insertionSet.insertConstantForUse(
-                            m_nodeIndex, origin, jsNumber(result.start), UntypedUse));
-                    data->m_properties.append(
-                        PromotedLocationDescriptor(NamedPropertyPLoc, indexIndex));
+                            m_nodeIndex, origin, jsNumber(result.end), KnownInt32Use));
+                    m_insertionSet.insertNode(
+                        m_nodeIndex, SpecNone, Node::VarArg, RecordRegExpCachedResult, origin,
+                        OpInfo(), OpInfo(), firstChild, m_graph.m_varArgChildren.size() - firstChild);
 
-                    m_graph.m_varArgChildren.append(Edge(stringNode, UntypedUse));
-                    data->m_properties.append(
-                        PromotedLocationDescriptor(NamedPropertyPLoc, inputIndex));
+                    origin = origin.withInvalidExit();
+                }
 
-                    auto materializeString = [&] (const String& string) -> Node* {
-                        if (string.isNull())
-                            return nullptr;
-                        if (string.isEmpty()) {
-                            return m_insertionSet.insertConstant(
-                                m_nodeIndex, origin, vm().smallStrings.emptyString());
-                        }
-                        LazyJSValue value = LazyJSValue::newString(m_graph, string);
-                        return m_insertionSet.insertNode(
-                            m_nodeIndex, SpecNone, LazyJSConstant, origin,
-                            OpInfo(m_graph.m_lazyJSValues.add(value)));
-                    };
+                m_node->origin = origin;
+                return true;
+            };
 
-                    for (unsigned i = 0; i < resultArray.size(); ++i) {
-                        if (Node* node = materializeString(resultArray[i])) {
-                            m_graph.m_varArgChildren.append(Edge(node, UntypedUse));
-                            data->m_properties.append(
-                                PromotedLocationDescriptor(IndexedPropertyPLoc, i));
-                        }
-                    }
-            
-                    Node* resultNode = m_insertionSet.insertNode(
-                        m_nodeIndex, SpecArray, Node::VarArg, MaterializeNewObject, origin,
-                        OpInfo(structureSet), OpInfo(data), firstChild,
-                        m_graph.m_varArgChildren.size() - firstChild);
-                
-                    m_node->convertToIdentityOn(resultNode);
-                } else
-                    m_graph.convertToConstant(m_node, jsNull());
-            } else
-                m_graph.convertToConstant(m_node, jsBoolean(!!result));
-
-            // Whether it's Exec or Test, we need to tell the constructor and RegExpObject what's up.
-            // Because SetRegExpObjectLastIndex may exit and it clobbers exit state, we do that
-            // first.
-            
-            if (regExp->globalOrSticky()) {
+            auto convertToStatic = [&] {
+                if (m_node->op() != RegExpExec)
+                    return false;
+                if (regExp->globalOrSticky())
+                    return false;
+                if (m_node->child3().useKind() != StringUse)
+                    return false;
+                NodeOrigin origin = m_node->origin;
                 m_insertionSet.insertNode(
-                    m_nodeIndex, SpecNone, SetRegExpObjectLastIndex, origin,
-                    Edge(regExpObjectNode, RegExpObjectUse),
-                    m_insertionSet.insertConstantForUse(
-                        m_nodeIndex, origin, jsNumber(result ? result.end : 0), UntypedUse));
-                
-                origin = origin.withInvalidExit();
-            }
+                    m_nodeIndex, SpecNone, Check, origin, m_node->children.justChecks());
+                m_node->convertToRegExpExecNonGlobalOrSticky(m_graph.freeze(regExp));
+                m_changed = true;
+                return true;
+            };
 
-            if (result) {
-                unsigned firstChild = m_graph.m_varArgChildren.size();
-                m_graph.m_varArgChildren.append(
-                    m_insertionSet.insertConstantForUse(
-                        m_nodeIndex, origin, constructorFrozenValue, KnownCellUse));
-                m_graph.m_varArgChildren.append(
-                    m_insertionSet.insertConstantForUse(
-                        m_nodeIndex, origin, regExpFrozenValue, KnownCellUse));
-                m_graph.m_varArgChildren.append(Edge(stringNode, KnownCellUse));
-                m_graph.m_varArgChildren.append(
-                    m_insertionSet.insertConstantForUse(
-                        m_nodeIndex, origin, jsNumber(result.start), KnownInt32Use));
-                m_graph.m_varArgChildren.append(
-                    m_insertionSet.insertConstantForUse(
-                        m_nodeIndex, origin, jsNumber(result.end), KnownInt32Use));
-                m_insertionSet.insertNode(
-                    m_nodeIndex, SpecNone, Node::VarArg, RecordRegExpCachedResult, origin,
-                    OpInfo(), OpInfo(), firstChild, m_graph.m_varArgChildren.size() - firstChild);
+            if (foldToConstant())
+                break;
 
-                origin = origin.withInvalidExit();
-            }
-            
-            m_node->origin = origin;
+            if (convertToStatic())
+                break;
+
             break;
         }
 
@@ -802,6 +851,7 @@ private:
             if (regExp->global()) {
                 m_insertionSet.insertNode(
                     m_nodeIndex, SpecNone, SetRegExpObjectLastIndex, origin,
+                    OpInfo(false),
                     Edge(regExpObjectNode, RegExpObjectUse),
                     m_insertionSet.insertConstantForUse(
                         m_nodeIndex, origin, jsNumber(0), UntypedUse));

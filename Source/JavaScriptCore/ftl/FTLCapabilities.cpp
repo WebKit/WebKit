@@ -246,6 +246,7 @@ inline CapabilityLevel canCompile(Node* node)
     case PhantomNewAsyncGeneratorFunction:
     case PhantomNewAsyncFunction:
     case PhantomCreateActivation:
+    case PhantomNewRegexp:
     case PutHint:
     case CheckStructureImmediate:
     case MaterializeNewObject:
@@ -276,6 +277,7 @@ inline CapabilityLevel canCompile(Node* node)
     case CreateRest:
     case GetRestLength:
     case RegExpExec:
+    case RegExpExecNonGlobalOrSticky:
     case RegExpTest:
     case RegExpMatchFast:
     case NewRegexp:

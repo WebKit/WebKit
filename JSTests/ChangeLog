@@ -1,3 +1,48 @@
+2018-01-17  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [DFG][FTL] Introduce PhantomNewRegexp and RegExpExecNonGlobalOrSticky
+        https://bugs.webkit.org/show_bug.cgi?id=181535
+
+        Reviewed by Saam Barati.
+
+        * stress/inserted-recovery-with-set-last-index.js: Added.
+        (shouldBe):
+        (foo):
+        * stress/materialize-regexp-at-osr-exit.js: Added.
+        (shouldBe):
+        (test):
+        * stress/materialize-regexp-cyclic-regexp-at-osr-exit.js: Added.
+        (shouldBe):
+        (test):
+        * stress/materialize-regexp-cyclic-regexp.js: Added.
+        (shouldBe):
+        (test):
+        (i.switch):
+        * stress/materialize-regexp-cyclic.js: Added.
+        (shouldBe):
+        (test):
+        (i.switch):
+        * stress/materialize-regexp-referenced-from-phantom-regexp-cyclic.js: Added.
+        (bar):
+        (foo):
+        (test):
+        * stress/materialize-regexp-referenced-from-phantom-regexp.js: Added.
+        (bar):
+        (foo):
+        (test):
+        * stress/materialize-regexp.js: Added.
+        (shouldBe):
+        (test):
+        * stress/phantom-regexp-regexp-exec.js: Added.
+        (shouldBe):
+        (test):
+        * stress/phantom-regexp-string-match.js: Added.
+        (shouldBe):
+        (test):
+        * stress/regexp-last-index-sinking.js: Added.
+        (shouldBe):
+        (test):
+
 2018-01-17  Saam Barati  <sbarati@apple.com>
 
         Disable Atomics when SharedArrayBuffer isn’t enabled

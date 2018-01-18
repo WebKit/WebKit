@@ -137,6 +137,7 @@ bool doesGC(Graph& graph, Node* node)
     case AssertNotEmpty:
     case CheckStringIdent:
     case RegExpExec:
+    case RegExpExecNonGlobalOrSticky:
     case RegExpTest:
     case RegExpMatchFast:
     case CompareLess:
@@ -272,6 +273,7 @@ bool doesGC(Graph& graph, Node* node)
     case PhantomNewArrayBuffer:
     case PhantomSpread:
     case PhantomClonedArguments:
+    case PhantomNewRegexp:
     case GetMyArgumentByVal:
     case GetMyArgumentByValOutOfBounds:
     case ForwardVarargs:

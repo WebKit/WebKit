@@ -4499,7 +4499,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
         case op_new_regexp: {
             RegExp* regexp = m_inlineStackTop->m_codeBlock->regexp(currentInstruction[2].u.operand);
             FrozenValue* frozen = m_graph.freezeStrong(regexp);
-            set(VirtualRegister(currentInstruction[1].u.operand), addToGraph(NewRegexp, OpInfo(frozen)));
+            set(VirtualRegister(currentInstruction[1].u.operand), addToGraph(NewRegexp, OpInfo(frozen), jsConstant(jsNumber(0))));
             NEXT_OPCODE(op_new_regexp);
         }
 

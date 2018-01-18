@@ -9075,10 +9075,12 @@ void SpeculativeJIT::compileNewRegexp(Node* node)
     GPRTemporary result(this);
     GPRTemporary scratch1(this);
     GPRTemporary scratch2(this);
+    JSValueOperand lastIndex(this, node->child1());
 
     GPRReg resultGPR = result.gpr();
     GPRReg scratch1GPR = scratch1.gpr();
     GPRReg scratch2GPR = scratch2.gpr();
+    JSValueRegs lastIndexRegs = lastIndex.jsValueRegs();
 
     JITCompiler::JumpList slowPath;
 
@@ -9090,11 +9092,11 @@ void SpeculativeJIT::compileNewRegexp(Node* node)
     m_jit.storePtr(
         TrustedImmPtr(node->cellOperand()),
         CCallHelpers::Address(resultGPR, RegExpObject::offsetOfRegExp()));
-    m_jit.storeTrustedValue(jsNumber(0), CCallHelpers::Address(resultGPR, RegExpObject::offsetOfLastIndex()));
+    m_jit.storeValue(lastIndexRegs, CCallHelpers::Address(resultGPR, RegExpObject::offsetOfLastIndex()));
     m_jit.store8(TrustedImm32(true), CCallHelpers::Address(resultGPR, RegExpObject::offsetOfLastIndexIsWritable()));
     m_jit.mutatorFence(*m_jit.vm());
 
-    addSlowPathGenerator(slowPathCall(slowPath, this, operationNewRegexp, resultGPR, regexp));
+    addSlowPathGenerator(slowPathCall(slowPath, this, operationNewRegexpWithLastIndex, resultGPR, regexp, lastIndexRegs));
 
     cellResult(resultGPR, node);
 }
@@ -10421,12 +10423,16 @@ void SpeculativeJIT::compileSetRegExpObjectLastIndex(Node* node)
     JSValueOperand value(this, node->child2());
     GPRReg regExpGPR = regExp.gpr();
     JSValueRegs valueRegs = value.jsValueRegs();
-    speculateRegExpObject(node->child1(), regExpGPR);
-    speculationCheck(
-        ExoticObjectMode, JSValueRegs(), nullptr,
-        m_jit.branchTest8(
-            JITCompiler::Zero,
-            JITCompiler::Address(regExpGPR, RegExpObject::offsetOfLastIndexIsWritable())));
+
+    if (!node->ignoreLastIndexIsWritable()) {
+        speculateRegExpObject(node->child1(), regExpGPR);
+        speculationCheck(
+            ExoticObjectMode, JSValueRegs(), nullptr,
+            m_jit.branchTest8(
+                JITCompiler::Zero,
+                JITCompiler::Address(regExpGPR, RegExpObject::offsetOfLastIndexIsWritable())));
+    }
+
     m_jit.storeValue(valueRegs, JITCompiler::Address(regExpGPR, RegExpObject::offsetOfLastIndex()));
     noResult(node);
 }
@@ -10618,6 +10624,26 @@ void SpeculativeJIT::compileStringReplace(Node* node)
     cellResult(result.gpr(), node);
     if (sample)
         m_jit.decrementSuperSamplerCount();
+}
+
+void SpeculativeJIT::compileRegExpExecNonGlobalOrSticky(Node* node)
+{
+    SpeculateCellOperand globalObject(this, node->child1());
+    SpeculateCellOperand argument(this, node->child2());
+    GPRReg globalObjectGPR = globalObject.gpr();
+    GPRReg argumentGPR = argument.gpr();
+
+    speculateString(node->child2(), argumentGPR);
+
+    flushRegisters();
+    JSValueRegsFlushedCallResult result(this);
+    JSValueRegs resultRegs = result.regs();
+    callOperation(
+        operationRegExpExecNonGlobalOrSticky, resultRegs,
+        globalObjectGPR, TrustedImmPtr(node->cellOperand()), argumentGPR);
+    m_jit.exceptionCheck();
+
+    jsValueResult(resultRegs, node);
 }
 
 void SpeculativeJIT::compileRegExpMatchFast(Node* node)

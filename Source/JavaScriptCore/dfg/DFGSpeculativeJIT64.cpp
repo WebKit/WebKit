@@ -3433,6 +3433,11 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
 
+    case RegExpExecNonGlobalOrSticky: {
+        compileRegExpExecNonGlobalOrSticky(node);
+        break;
+    }
+
     case RegExpTest: {
         compileRegExpTest(node);
         break;
@@ -5741,6 +5746,7 @@ void SpeculativeJIT::compile(Node* node)
     case PhantomNewAsyncFunction:
     case PhantomNewAsyncGeneratorFunction:
     case PhantomCreateActivation:
+    case PhantomNewRegexp:
     case GetMyArgumentByVal:
     case GetMyArgumentByValOutOfBounds:
     case GetVectorLength:

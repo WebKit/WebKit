@@ -1443,7 +1443,7 @@ private:
                 
                 if (uid == vm().propertyNames->lastIndex.impl()
                     && node->child1()->shouldSpeculateRegExpObject()) {
-                    node->setOp(SetRegExpObjectLastIndex);
+                    node->convertToSetRegExpObjectLastIndex();
                     fixEdge<RegExpObjectUse>(node->child1());
                     speculateForBarrier(node->child2());
                     break;
@@ -1651,6 +1651,7 @@ private:
         case PhantomNewArrayWithSpread:
         case PhantomNewArrayBuffer:
         case PhantomClonedArguments:
+        case PhantomNewRegexp:
         case GetMyArgumentByVal:
         case GetMyArgumentByValOutOfBounds:
         case GetVectorLength:
@@ -1667,6 +1668,7 @@ private:
         case GetRegExpObjectLastIndex:
         case SetRegExpObjectLastIndex:
         case RecordRegExpCachedResult:
+        case RegExpExecNonGlobalOrSticky:
             // These are just nodes that we don't currently expect to see during fixup.
             // If we ever wanted to insert them prior to fixup, then we just have to create
             // fixup rules for them.

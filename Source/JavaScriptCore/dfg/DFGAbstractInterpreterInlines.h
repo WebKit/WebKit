@@ -1935,11 +1935,15 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     }
             
     case RegExpExec:
-        if (node->child2().useKind() == RegExpObjectUse
-            && node->child3().useKind() == StringUse) {
-            // This doesn't clobber the world since there are no conversions to perform.
-        } else
-            clobberWorld(node->origin.semantic, clobberLimit);
+    case RegExpExecNonGlobalOrSticky:
+        if (node->op() == RegExpExec) {
+            if (node->child2().useKind() == RegExpObjectUse
+                && node->child3().useKind() == StringUse) {
+                // This doesn't clobber the world since there are no conversions to perform.
+            } else
+                clobberWorld(node->origin.semantic, clobberLimit);
+        }
+
         if (JSValue globalObjectValue = forNode(node->child1()).m_value) {
             if (JSGlobalObject* globalObject = jsDynamicCast<JSGlobalObject*>(m_vm, globalObjectValue)) {
                 if (!globalObject->isHavingABadTime()) {
@@ -2254,6 +2258,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     case PhantomSpread:
     case PhantomNewArrayWithSpread:
     case PhantomNewArrayBuffer:
+    case PhantomNewRegexp:
     case BottomValue:
         m_state.setDidClobber(true); // Prevent constant folding.
         // This claims to return bottom.

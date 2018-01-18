@@ -209,6 +209,16 @@ void Node::convertToCallDOM(Graph& graph)
         clearFlags(NodeMustGenerate);
 }
 
+void Node::convertToRegExpExecNonGlobalOrSticky(FrozenValue* regExp)
+{
+    ASSERT(op() == RegExpExec);
+    setOpAndDefaultFlags(RegExpExecNonGlobalOrSticky);
+    children.child1() = Edge(children.child1().node(), KnownCellUse);
+    children.child2() = Edge(children.child3().node(), StringUse);
+    children.child3() = Edge();
+    m_opInfo = regExp;
+}
+
 String Node::tryGetString(Graph& graph)
 {
     if (hasConstant())

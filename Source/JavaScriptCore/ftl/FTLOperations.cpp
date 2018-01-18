@@ -40,6 +40,7 @@
 #include "JSFixedArray.h"
 #include "JSGeneratorFunction.h"
 #include "JSLexicalEnvironment.h"
+#include "RegExpObject.h"
 
 namespace JSC { namespace FTL {
 
@@ -110,6 +111,19 @@ extern "C" void JIT_OPERATION operationPopulateObjectInOSR(
         break;
     }
 
+    case PhantomNewRegexp: {
+        RegExpObject* regExpObject = jsCast<RegExpObject*>(JSValue::decode(*encodedValue));
+
+        for (unsigned i = materialization->properties().size(); i--;) {
+            const ExitPropertyValue& property = materialization->properties()[i];
+            if (property.location().kind() != RegExpObjectLastIndexPLoc)
+                continue;
+
+            regExpObject->setLastIndex(exec, JSValue::decode(values[i]), false /* shouldThrow */);
+            break;
+        }
+        break;
+    }
 
     default:
         RELEASE_ASSERT_NOT_REACHED();
@@ -533,7 +547,21 @@ extern "C" JSCell* JIT_OPERATION operationMaterializeObjectInOSR(
         return result;
     }
 
-        
+    case PhantomNewRegexp: {
+        RegExp* regExp = nullptr;
+        for (unsigned i = materialization->properties().size(); i--;) {
+            const ExitPropertyValue& property = materialization->properties()[i];
+            if (property.location() == PromotedLocationDescriptor(RegExpObjectRegExpPLoc)) {
+                RELEASE_ASSERT(JSValue::decode(values[i]).asCell()->inherits(vm, RegExp::info()));
+                regExp = jsCast<RegExp*>(JSValue::decode(values[i]));
+            }
+        }
+        RELEASE_ASSERT(regExp);
+        CodeBlock* codeBlock = baselineCodeBlockForOriginAndBaselineCodeBlock(materialization->origin(), exec->codeBlock());
+        Structure* structure = codeBlock->globalObject()->regExpStructure();
+        return RegExpObject::create(vm, structure, regExp);
+    }
+
     default:
         RELEASE_ASSERT_NOT_REACHED();
         return nullptr;

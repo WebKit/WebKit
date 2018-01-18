@@ -39,6 +39,13 @@ public:
         return object;
     }
 
+    static RegExpObject* create(VM& vm, Structure* structure, RegExp* regExp, JSValue lastIndex)
+    {
+        auto* object = create(vm, structure, regExp);
+        object->m_lastIndex.set(vm, object, lastIndex);
+        return object;
+    }
+
     void setRegExp(VM& vm, RegExp* r) { m_regExp.set(vm, this, r); }
     RegExp* regExp() const { return m_regExp.get(); }
 

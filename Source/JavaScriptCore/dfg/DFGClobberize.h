@@ -1475,6 +1475,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
     case PhantomNewAsyncGeneratorFunction:
     case PhantomCreateActivation:
     case MaterializeCreateActivation:
+    case PhantomNewRegexp:
         read(HeapObjectCount);
         write(HeapObjectCount);
         return;
@@ -1502,6 +1503,11 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         }
         read(World);
         write(Heap);
+        return;
+
+    case RegExpExecNonGlobalOrSticky:
+        read(RegExpState);
+        write(RegExpState);
         return;
 
     case StringReplace:

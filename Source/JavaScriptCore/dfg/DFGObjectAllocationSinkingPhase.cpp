@@ -141,7 +141,7 @@ public:
     // once it is escaped if it still has pointers to it in order to
     // replace any use of those pointers by the corresponding
     // materialization
-    enum class Kind { Escaped, Object, Activation, Function, GeneratorFunction, AsyncFunction, AsyncGeneratorFunction };
+    enum class Kind { Escaped, Object, Activation, Function, GeneratorFunction, AsyncFunction, AsyncGeneratorFunction, RegExpObject };
 
     using Fields = HashMap<PromotedLocationDescriptor, Node*>;
 
@@ -246,6 +246,11 @@ public:
         return m_kind == Kind::Function || m_kind == Kind::GeneratorFunction || m_kind == Kind::AsyncFunction;
     }
 
+    bool isRegExpObjectAllocation() const
+    {
+        return m_kind == Kind::RegExpObject;
+    }
+
     bool operator==(const Allocation& other) const
     {
         return m_identifier == other.m_identifier
@@ -290,8 +295,13 @@ public:
         case Kind::AsyncGeneratorFunction:
             out.print("AsyncGeneratorFunction");
             break;
+
         case Kind::Activation:
             out.print("Activation");
+            break;
+
+        case Kind::RegExpObject:
+            out.print("RegExpObject");
             break;
         }
         out.print("Allocation(");
@@ -849,6 +859,14 @@ private:
             break;
         }
 
+        case NewRegexp: {
+            target = &m_heap.newAllocation(node, Allocation::Kind::RegExpObject);
+
+            writes.add(RegExpObjectRegExpPLoc, LazyNode(node->cellOperand()));
+            writes.add(RegExpObjectLastIndexPLoc, LazyNode(node->child1().node()));
+            break;
+        }
+
         case CreateActivation: {
             if (isStillValid(node->castOperand<SymbolTable*>()->singletonScope())) {
                 m_heap.escape(node->child1().node());
@@ -1030,6 +1048,26 @@ private:
                 exactRead = FunctionActivationPLoc;
             else
                 m_heap.escape(node->child1().node());
+            break;
+
+        case GetRegExpObjectLastIndex:
+            target = m_heap.onlyLocalAllocation(node->child1().node());
+            if (target && target->isRegExpObjectAllocation())
+                exactRead = RegExpObjectLastIndexPLoc;
+            else
+                m_heap.escape(node->child1().node());
+            break;
+
+        case SetRegExpObjectLastIndex:
+            target = m_heap.onlyLocalAllocation(node->child1().node());
+            if (target && target->isRegExpObjectAllocation()) {
+                writes.add(
+                    PromotedLocationDescriptor(RegExpObjectLastIndexPLoc),
+                    LazyNode(node->child2().node()));
+            } else {
+                m_heap.escape(node->child1().node());
+                m_heap.escape(node->child2().node());
+            }
             break;
 
         case Check:
@@ -1508,6 +1546,16 @@ private:
                 OpInfo(symbolTable), OpInfo(data), 0, 0);
         }
 
+        case Allocation::Kind::RegExpObject: {
+            FrozenValue* regExp = allocation.identifier()->cellOperand();
+            return m_graph.addNode(
+                allocation.identifier()->prediction(), NewRegexp,
+                where->origin.withSemantic(
+                    allocation.identifier()->origin.semantic),
+                OpInfo(regExp));
+            break;
+        }
+
         default:
             DFG_CRASH(m_graph, allocation.identifier(), "Bad allocation kind");
         }
@@ -1864,15 +1912,21 @@ private:
                     case NewGeneratorFunction:
                         node->convertToPhantomNewGeneratorFunction();
                         break;
+
                     case NewAsyncGeneratorFunction:
                         node->convertToPhantomNewAsyncGeneratorFunction();
                         break;
+
                     case NewAsyncFunction:
                         node->convertToPhantomNewAsyncFunction();
                         break;
 
                     case CreateActivation:
                         node->convertToPhantomCreateActivation();
+                        break;
+
+                    case NewRegexp:
+                        node->convertToPhantomNewRegexp();
                         break;
 
                     default:
@@ -2143,6 +2197,23 @@ private:
             break;
         }
 
+        case NewRegexp: {
+            Vector<PromotedHeapLocation> locations = m_locationsForAllocation.get(escapee);
+            ASSERT(locations.size() == 2);
+
+            PromotedHeapLocation regExp(RegExpObjectRegExpPLoc, allocation.identifier());
+            ASSERT_UNUSED(regExp, locations.contains(regExp));
+
+            PromotedHeapLocation lastIndex(RegExpObjectLastIndexPLoc, allocation.identifier());
+            ASSERT(locations.contains(lastIndex));
+            Node* value = resolve(block, lastIndex);
+            if (m_sinkCandidates.contains(value))
+                node->child1() = Edge(m_bottom);
+            else
+                node->child1() = Edge(value);
+            break;
+        }
+
         default:
             DFG_CRASH(m_graph, node, "Bad materialize op");
         }
@@ -2243,6 +2314,16 @@ private:
                 PutClosureVar,
                 origin.takeValidExit(canExit),
                 OpInfo(location.info()),
+                Edge(base, KnownCellUse),
+                value->defaultEdge());
+            break;
+        }
+
+        case RegExpObjectLastIndexPLoc: {
+            return m_graph.addNode(
+                SetRegExpObjectLastIndex,
+                origin.takeValidExit(canExit),
+                OpInfo(true),
                 Edge(base, KnownCellUse),
                 value->defaultEdge());
             break;

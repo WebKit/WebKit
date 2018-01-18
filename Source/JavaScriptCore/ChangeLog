@@ -1,5 +1,106 @@
 2018-01-17  Yusuke Suzuki  <utatane.tea@gmail.com>
 
+        [DFG][FTL] Introduce PhantomNewRegexp and RegExpExecNonGlobalOrSticky
+        https://bugs.webkit.org/show_bug.cgi?id=181535
+
+        Reviewed by Saam Barati.
+
+        When executing the code like `string.match(/regexp/)`, `/regexp/` object is created every time we execute this code.
+        However, user rarely cares about this `/regexp/` object. Typically, it is soon discarded even if it has `lastIndex`
+        information. So we should not create RegExpObject for this typical case.
+
+        This patch introduces PhantomNewRegexp. We convert NewRegexp node to PhantomNewRegexp in Object Allocation Sinking (OAS)
+        phase. We should do this analysis in OAS phase since we track modifications to `lastIndex` in the OAS phase. Even if
+        `lastIndex` is modified, it may not be read by users. So we have a chance to drop this NewRegexp beacause we carefully model
+        SetRegExpObjectLastIndex and GetRegExpObjectLastIndex in OAS phase.
+
+        This patch is a first attempt to drop NewRegexp. So we start optimizing it with the simple step: we first drop RegExp with
+        non-global and non-sticky one. We can later extend this optimization for RegExp with global flag. But this is not included
+        in this patch.
+
+        We convert RegExpExec to RegExpExecNonGlobalOrSticky if we find that the given RegExpObject's RegExp is not global/sticky
+        flagged. Since we do not need to touch `lastIndex` property in this case, RegExpExecNonGlobalOrSticky just takes RegExp
+        instead of RegExpObject. This offers the chance to make NewRegExp unused.
+
+        We also convert RegExpMatchFast to RegExpExecNonGlobalOrSticky if its RegExpObject's RegExp is non-global and non-sticky,
+        since they are the same behavior.
+
+        The above optimization completely removes NewRegexp in SixSpeed's regexp-u.{es5,es6}. The resulted execution time is
+        somewhat pure execution time of our Yarr implementation.
+
+                                     baseline                  patched
+
+            regex-u.es5          34.8557+-0.5963     ^      6.1507+-0.5526        ^ definitely 5.6670x faster
+            regex-u.es6          89.1919+-3.3851     ^     32.0917+-0.4260        ^ definitely 2.7793x faster
+
+        This patch does not change Octane/RegExp so much since it heavily uses String.prototype.replace, which is not handled in
+        this patch right now. We should support StringReplace node in subsequent patches.
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGClobbersExitState.cpp:
+        (JSC::DFG::clobbersExitState):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::dump):
+        * dfg/DFGMayExit.cpp:
+        * dfg/DFGNode.cpp:
+        (JSC::DFG::Node::convertToRegExpExecNonGlobalOrSticky):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::convertToPhantomNewRegexp):
+        (JSC::DFG::Node::convertToSetRegExpObjectLastIndex):
+        (JSC::DFG::Node::hasHeapPrediction):
+        (JSC::DFG::Node::hasCellOperand):
+        (JSC::DFG::Node::isPhantomAllocation):
+        (JSC::DFG::Node::hasIgnoreLastIndexIsWritable):
+        (JSC::DFG::Node::ignoreLastIndexIsWritable):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGObjectAllocationSinkingPhase.cpp:
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        * dfg/DFGPromotedHeapLocation.cpp:
+        (WTF::printInternal):
+        * dfg/DFGPromotedHeapLocation.h:
+        (JSC::DFG::PromotedLocationDescriptor::neededForMaterialization const):
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileNewRegexp):
+        (JSC::DFG::SpeculativeJIT::compileSetRegExpObjectLastIndex):
+        (JSC::DFG::SpeculativeJIT::compileRegExpExecNonGlobalOrSticky):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::callOperation):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGStrengthReductionPhase.cpp:
+        (JSC::DFG::StrengthReductionPhase::handleNode):
+        * dfg/DFGValidate.cpp:
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNode):
+        (JSC::FTL::DFG::LowerDFGToB3::compileRegExpExecNonGlobalOrSticky):
+        (JSC::FTL::DFG::LowerDFGToB3::compileNewRegexp):
+        (JSC::FTL::DFG::LowerDFGToB3::compileSetRegExpObjectLastIndex):
+        * ftl/FTLOperations.cpp:
+        (JSC::FTL::operationPopulateObjectInOSR):
+        (JSC::FTL::operationMaterializeObjectInOSR):
+        * jit/JITOperations.h:
+        * runtime/RegExpObject.h:
+        (JSC::RegExpObject::create):
+
+2018-01-17  Yusuke Suzuki  <utatane.tea@gmail.com>
+
         [FTL] Remove unused helper functions to convert node to PutHint
         https://bugs.webkit.org/show_bug.cgi?id=181775
 

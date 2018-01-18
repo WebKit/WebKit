@@ -1182,6 +1182,9 @@ private:
         case RegExpExec:
             compileRegExpExec();
             break;
+        case RegExpExecNonGlobalOrSticky:
+            compileRegExpExecNonGlobalOrSticky();
+            break;
         case RegExpTest:
             compileRegExpTest();
             break;
@@ -1267,6 +1270,7 @@ private:
         case PhantomNewArrayWithSpread:
         case PhantomNewArrayBuffer:
         case PhantomClonedArguments:
+        case PhantomNewRegexp:
         case PutHint:
         case BottomValue:
         case KillStack:
@@ -10260,6 +10264,15 @@ private:
         setJSValue(result);
     }
 
+    void compileRegExpExecNonGlobalOrSticky()
+    {
+        LValue globalObject = lowCell(m_node->child1());
+        LValue argument = lowString(m_node->child2());
+        LValue result = vmCall(
+            Int64, m_out.operation(operationRegExpExecNonGlobalOrSticky), m_callFrame, globalObject, frozenPointer(m_node->cellOperand()), argument);
+        setJSValue(result);
+    }
+
     void compileRegExpTest()
     {
         LValue globalObject = lowCell(m_node->child1());
@@ -10306,6 +10319,7 @@ private:
     void compileNewRegexp()
     {
         FrozenValue* regexp = m_node->cellOperand();
+        LValue lastIndex = lowJSValue(m_node->child1());
         ASSERT(regexp->cell()->inherits(vm(), RegExp::info()));
         ASSERT(m_node->castOperand<RegExp*>()->isValid());
 
@@ -10317,7 +10331,7 @@ private:
         auto structure = m_graph.registerStructure(m_graph.globalObjectFor(m_node->origin.semantic)->regExpStructure());
         LValue fastResultValue = allocateObject<RegExpObject>(structure, m_out.intPtrZero, m_out.int32Zero, slowCase);
         m_out.storePtr(frozenPointer(regexp), fastResultValue, m_heaps.RegExpObject_regExp);
-        m_out.store64(m_out.constInt64(JSValue::encode(jsNumber(0))), fastResultValue, m_heaps.RegExpObject_lastIndex);
+        m_out.store64(lastIndex, fastResultValue, m_heaps.RegExpObject_lastIndex);
         m_out.store32As8(m_out.constInt32(true), m_out.address(fastResultValue, m_heaps.RegExpObject_lastIndexIsWritable));
         mutatorFence();
         ValueFromBlock fastResult = m_out.anchor(fastResultValue);
@@ -10329,9 +10343,9 @@ private:
         LValue slowResultValue = lazySlowPath(
             [=, &vm] (const Vector<Location>& locations) -> RefPtr<LazySlowPath::Generator> {
                 return createLazyCallGenerator(vm,
-                    operationNewRegexp, locations[0].directGPR(),
-                    CCallHelpers::TrustedImmPtr(regexpCell));
-            });
+                    operationNewRegexpWithLastIndex, locations[0].directGPR(),
+                    CCallHelpers::TrustedImmPtr(regexpCell), locations[1].directGPR());
+            }, lastIndex);
         ValueFromBlock slowResult = m_out.anchor(slowResultValue);
         m_out.jump(continuation);
 
@@ -10398,14 +10412,19 @@ private:
 
     void compileSetRegExpObjectLastIndex()
     {
-        LValue regExp = lowRegExpObject(m_node->child1());
-        LValue value = lowJSValue(m_node->child2());
+        if (!m_node->ignoreLastIndexIsWritable()) {
+            LValue regExp = lowRegExpObject(m_node->child1());
+            LValue value = lowJSValue(m_node->child2());
 
-        speculate(
-            ExoticObjectMode, noValue(), nullptr,
-            m_out.isZero32(m_out.load8ZeroExt32(regExp, m_heaps.RegExpObject_lastIndexIsWritable)));
+            speculate(
+                ExoticObjectMode, noValue(), nullptr,
+                m_out.isZero32(m_out.load8ZeroExt32(regExp, m_heaps.RegExpObject_lastIndexIsWritable)));
+
+            m_out.store64(value, regExp, m_heaps.RegExpObject_lastIndex);
+            return;
+        }
         
-        m_out.store64(value, regExp, m_heaps.RegExpObject_lastIndex);
+        m_out.store64(lowJSValue(m_node->child2()), lowCell(m_node->child1()), m_heaps.RegExpObject_lastIndex);
     }
     
     void compileLogShadowChickenPrologue()

@@ -582,6 +582,7 @@ private:
                 case PhantomNewAsyncFunction:
                 case PhantomNewAsyncGeneratorFunction:
                 case PhantomCreateActivation:
+                case PhantomNewRegexp:
                 case GetMyArgumentByVal:
                 case GetMyArgumentByValOutOfBounds:
                 case PutHint:
@@ -738,6 +739,7 @@ private:
                 case PhantomDirectArguments:
                 case PhantomCreateRest:
                 case PhantomClonedArguments:
+                case PhantomNewRegexp:
                 case MovHint:
                 case Upsilon:
                 case ForwardVarargs:
