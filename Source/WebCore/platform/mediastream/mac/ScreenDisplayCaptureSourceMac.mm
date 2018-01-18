@@ -149,7 +149,6 @@ bool ScreenDisplayCaptureSourceMac::createDisplayStream()
         if (!m_captureQueue)
             m_captureQueue = adoptOSObject(dispatch_queue_create("ScreenDisplayCaptureSourceMac Capture Queue", DISPATCH_QUEUE_SERIAL));
 
-        static CGColorSpaceRef deviceRGBColorSpace = CGColorSpaceCreateDeviceRGB();
         double frameTime = 1 / frameRate();
         auto frameTimeCF = adoptCF(CFNumberCreate(nullptr,  kCFNumberDoubleType,  &frameTime));
         int depth = screenQueueMaximumLength;
@@ -163,7 +162,7 @@ bool ScreenDisplayCaptureSourceMac::createDisplayStream()
         CFTypeRef values[] = {
             frameTimeCF.get(),
             depthCF.get(),
-            deviceRGBColorSpace,
+            sRGBColorSpaceRef(),
             kCFBooleanTrue,
         };
         auto streamOptions = adoptCF(CFDictionaryCreate(kCFAllocatorDefault, keys, values, WTF_ARRAY_LENGTH(keys), &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
