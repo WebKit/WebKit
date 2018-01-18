@@ -1,3 +1,10 @@
+2018-01-18  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, suppress deprecation warnings to fix the build with a newer SDK.
+
+        * UIProcess/ios/WKPDFPageNumberIndicator.mm:
+        (-[WKPDFPageNumberIndicator _makeRoundedCorners]):
+
 2018-01-18  Youenn Fablet  <youenn@apple.com>
 
         Do not go to the storage process when loading a main resource if there is no service worker registered

@@ -1,3 +1,11 @@
+2018-01-18  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, suppress deprecation warnings to fix the build with a newer SDK.
+
+        * Carbon/HIWebView.mm:
+        (overrideCGContext):
+        (restoreCGContext):
+
 2018-01-18  Dan Bernstein  <mitz@apple.com>
 
         [Xcode] Streamline and future-proof target-macOS-version-dependent build setting definitions
