@@ -1,3 +1,20 @@
+2018-01-18  JF Bastien  <jfbastien@apple.com>
+
+        Set the minimum executable allocator size properly
+        https://bugs.webkit.org/show_bug.cgi?id=181816
+        <rdar://problem/36635533>
+
+        Reviewed by Saam Barati.
+
+        Executable allocator expects at least two page size's worth of
+        allocation in certain conditions, and that causes some tests to
+        now fail because they ask for less. Set that minimum correctly. We
+        were already rounding up to a page size, so having a minimum of 2
+        page sizes is fine.
+
+        * jit/ExecutableAllocator.cpp:
+        (JSC::FixedVMPoolExecutableAllocator::FixedVMPoolExecutableAllocator):
+
 2018-01-18  Michael Saboff  <msaboff@apple.com>
 
         Unreviewed build fix for Windows
