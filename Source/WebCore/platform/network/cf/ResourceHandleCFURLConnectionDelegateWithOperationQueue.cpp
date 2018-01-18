@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc.  All rights reserved.
+ * Copyright (C) 2013-2018 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -145,7 +145,8 @@ CFURLRequestRef ResourceHandleCFURLConnectionDelegateWithOperationQueue::willSen
     }
 
     ASSERT(!isMainThread());
-    
+
+    auto protectedThis = makeRef(*this);
     auto work = [this, protectedThis = makeRef(*this), cfRequest = RetainPtr<CFURLRequestRef>(cfRequest), originalRedirectResponse = RetainPtr<CFURLResponseRef>(originalRedirectResponse)] () mutable {
         auto& handle = protectedThis->m_handle;
         auto completionHandler = [this, protectedThis = WTFMove(protectedThis)] (ResourceRequest&& request) {
@@ -178,6 +179,7 @@ CFURLRequestRef ResourceHandleCFURLConnectionDelegateWithOperationQueue::willSen
 
 void ResourceHandleCFURLConnectionDelegateWithOperationQueue::didReceiveResponse(CFURLConnectionRef connection, CFURLResponseRef cfResponse)
 {
+    auto protectedThis = makeRef(*this);
     auto work = [protectedThis = makeRef(*this), cfResponse = RetainPtr<CFURLResponseRef>(cfResponse), connection = RetainPtr<CFURLConnectionRef>(connection)] () {
         auto& handle = protectedThis->m_handle;
         
@@ -291,6 +293,7 @@ CFCachedURLResponseRef ResourceHandleCFURLConnectionDelegateWithOperationQueue::
             return nullptr;
     }
 
+    auto protectedThis = makeRef(*this);
     auto work = [protectedThis = makeRef(*this), cachedResponse = RetainPtr<CFCachedURLResponseRef>(cachedResponse)] () {
         auto& handle = protectedThis->m_handle;
         
@@ -356,6 +359,7 @@ Boolean ResourceHandleCFURLConnectionDelegateWithOperationQueue::shouldUseCreden
 #if USE(PROTECTION_SPACE_AUTH_CALLBACK)
 Boolean ResourceHandleCFURLConnectionDelegateWithOperationQueue::canRespondToProtectionSpace(CFURLProtectionSpaceRef protectionSpace)
 {
+    auto protectedThis = makeRef(*this);
     auto work = [protectedThis = makeRef(*this), protectionSpace = RetainPtr<CFURLProtectionSpaceRef>(protectionSpace)] () mutable {
         auto& handle = protectedThis->m_handle;
         
