@@ -1,3 +1,5 @@
+//@ skip
+
 function foo(bytes) {
     return Atomics.isLockFree(bytes);
 }
