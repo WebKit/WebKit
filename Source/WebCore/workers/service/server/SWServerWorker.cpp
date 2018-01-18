@@ -56,6 +56,8 @@ SWServerWorker::SWServerWorker(SWServer& server, SWServerRegistration& registrat
 
     auto result = allWorkers().add(identifier, this);
     ASSERT_UNUSED(result, result.isNewEntry);
+
+    ASSERT(m_server.getRegistration(m_registrationKey));
 }
 
 SWServerWorker::~SWServerWorker()
@@ -168,6 +170,9 @@ void SWServerWorker::whenActivated(WTF::Function<void(bool)>&& handler)
 
 void SWServerWorker::setState(ServiceWorkerState state)
 {
+    if (state == ServiceWorkerState::Redundant)
+        terminate();
+
     m_data.state = state;
 
     auto* registration = m_server.getRegistration(m_registrationKey);
@@ -187,6 +192,12 @@ void SWServerWorker::callWhenActivatedHandler(bool success)
     auto whenActivatedHandlers = WTFMove(m_whenActivatedHandlers);
     for (auto& handler : whenActivatedHandlers)
         handler(success);
+}
+
+void SWServerWorker::setState(State state)
+{
+    ASSERT(state != State::Running || m_server.getRegistration(m_registrationKey));
+    m_state = state;
 }
 
 } // namespace WebCore

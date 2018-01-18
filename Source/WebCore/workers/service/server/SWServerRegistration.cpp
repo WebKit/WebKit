@@ -54,6 +54,9 @@ SWServerRegistration::SWServerRegistration(SWServer& server, const ServiceWorker
 
 SWServerRegistration::~SWServerRegistration()
 {
+    ASSERT(!m_installingWorker || !m_installingWorker->isRunning());
+    ASSERT(!m_waitingWorker || !m_waitingWorker->isRunning());
+    ASSERT(!m_activeWorker || !m_activeWorker->isRunning());
 }
 
 SWServerWorker* SWServerRegistration::getNewestWorker()
@@ -72,12 +75,15 @@ void SWServerRegistration::updateRegistrationState(ServiceWorkerRegistrationStat
     
     switch (state) {
     case ServiceWorkerRegistrationState::Installing:
+        ASSERT(!m_installingWorker || !m_installingWorker->isRunning() || m_waitingWorker == m_installingWorker);
         m_installingWorker = worker;
         break;
     case ServiceWorkerRegistrationState::Waiting:
+        ASSERT(!m_waitingWorker || !m_waitingWorker->isRunning() || m_activeWorker == m_waitingWorker);
         m_waitingWorker = worker;
         break;
     case ServiceWorkerRegistrationState::Active:
+        ASSERT(!m_activeWorker || !m_activeWorker->isRunning());
         m_activeWorker = worker;
         break;
     };

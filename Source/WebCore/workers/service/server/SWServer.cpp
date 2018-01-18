@@ -562,18 +562,18 @@ void SWServer::syncTerminateWorker(SWServerWorker& worker)
 void SWServer::terminateWorkerInternal(SWServerWorker& worker, TerminationMode mode)
 {
     ASSERT(worker.isRunning());
+    ASSERT(m_runningOrTerminatingWorkers.get(worker.identifier()) == &worker);
+    ASSERT(!worker.isTerminating());
+
+    worker.setState(SWServerWorker::State::Terminating);
 
     auto* connection = SWServerToContextConnection::connectionForIdentifier(worker.contextConnectionIdentifier());
     ASSERT(connection);
     if (!connection) {
         LOG_ERROR("Request to terminate a worker whose context connection does not exist");
+        workerContextTerminated(worker);
         return;
     }
-
-    ASSERT(m_runningOrTerminatingWorkers.get(worker.identifier()) == &worker);
-    ASSERT(!worker.isTerminating());
-
-    worker.setState(SWServerWorker::State::Terminating);
 
     switch (mode) {
     case Asynchronous:
