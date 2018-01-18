@@ -586,12 +586,6 @@ public:
         m_op = MultiPutByOffset;
     }
     
-    void convertToPutHint(const PromotedLocationDescriptor&, Node* base, Node* value);
-    
-    void convertToPutByOffsetHint();
-    void convertToPutStructureHint(Node* structure);
-    void convertToPutClosureVarHint();
-    
     void convertToPhantomNewObject()
     {
         ASSERT(m_op == NewObject || m_op == MaterializeNewObject);

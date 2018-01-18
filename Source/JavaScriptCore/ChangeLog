@@ -1,5 +1,21 @@
 2018-01-17  Yusuke Suzuki  <utatane.tea@gmail.com>
 
+        [FTL] Remove unused helper functions to convert node to PutHint
+        https://bugs.webkit.org/show_bug.cgi?id=181775
+
+        Reviewed by Saam Barati.
+
+        We are using PromotedHeapLocation::createHint. So they are not necessary.
+
+        * dfg/DFGNode.cpp:
+        (JSC::DFG::Node::convertToPutHint): Deleted.
+        (JSC::DFG::Node::convertToPutStructureHint): Deleted.
+        (JSC::DFG::Node::convertToPutByOffsetHint): Deleted.
+        (JSC::DFG::Node::convertToPutClosureVarHint): Deleted.
+        * dfg/DFGNode.h:
+
+2018-01-17  Yusuke Suzuki  <utatane.tea@gmail.com>
+
         Unreviewed, suppress warnings on GCC
 
         Since `length` and `p` are always positive or zero,

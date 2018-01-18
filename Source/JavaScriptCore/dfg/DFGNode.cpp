@@ -164,39 +164,6 @@ void Node::convertToLazyJSConstant(Graph& graph, LazyJSValue value)
     children.reset();
 }
 
-void Node::convertToPutHint(const PromotedLocationDescriptor& descriptor, Node* base, Node* value)
-{
-    m_op = PutHint;
-    m_opInfo = descriptor.imm1();
-    m_opInfo2 = descriptor.imm2();
-    child1() = base->defaultEdge();
-    child2() = value->defaultEdge();
-    child3() = Edge();
-}
-
-void Node::convertToPutStructureHint(Node* structure)
-{
-    ASSERT(m_op == PutStructure);
-    ASSERT(structure->castConstant<Structure*>(*structure->asCell()->vm()) == transition()->next.get());
-    convertToPutHint(StructurePLoc, child1().node(), structure);
-}
-
-void Node::convertToPutByOffsetHint()
-{
-    ASSERT(m_op == PutByOffset);
-    convertToPutHint(
-        PromotedLocationDescriptor(NamedPropertyPLoc, storageAccessData().identifierNumber),
-        child2().node(), child3().node());
-}
-
-void Node::convertToPutClosureVarHint()
-{
-    ASSERT(m_op == PutClosureVar);
-    convertToPutHint(
-        PromotedLocationDescriptor(ClosureVarPLoc, scopeOffset().offset()),
-        child1().node(), child2().node());
-}
-
 void Node::convertToDirectCall(FrozenValue* executable)
 {
     NodeType newOp = LastNodeType;
