@@ -40,6 +40,7 @@ class TestGroupResultsViewer extends ComponentBase {
 
         this._renderResultsTableLazily.evaluate(this._testGroup, this._expandedTests,
             ...this._analysisResults.topLevelTestsForTestGroup(this._testGroup));
+        this._renderCurrentMetricsLazily.evaluate(this._currentMetric);
     }
 
     _renderResultsTable(testGroup, expandedTests, ...tests)
@@ -99,7 +100,10 @@ class TestGroupResultsViewer extends ComponentBase {
         const deltaFormatter = metric.makeFormatter(2, false);
         const formatValue = (value, interval) => {
             const delta = interval ? (interval[1] - interval[0]) / 2 : null;
-            return value == null || isNaN(value) ? '-' : `${formatter(value)} \u00b1 ${deltaFormatter(delta)}`;
+            let result = value == null || isNaN(value) ? '-' : formatter(value);
+            if (delta != null && !isNaN(delta))
+                result += ` \u00b1 ${deltaFormatter(delta)}`;
+            return result;
         }
 
         const barGroup = new BarGraphGroup();
