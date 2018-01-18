@@ -96,8 +96,11 @@ static void dispatchIfShowing(Function<void()>&& function)
     });
 }
 
-bool MockPaymentCoordinator::showPaymentUI(const URL&, const Vector<URL>&, const ApplePaySessionPaymentRequest&)
+bool MockPaymentCoordinator::showPaymentUI(const URL&, const Vector<URL>&, const ApplePaySessionPaymentRequest& request)
 {
+    if (request.shippingContact().pkContact())
+        m_shippingAddress = request.shippingContact().toApplePayPaymentContact(request.version());
+
     ASSERT(showCount == hideCount);
     ++showCount;
     dispatchIfShowing([mainFrame = makeRef(m_mainFrame)]() {
@@ -108,9 +111,8 @@ bool MockPaymentCoordinator::showPaymentUI(const URL&, const Vector<URL>&, const
 
 void MockPaymentCoordinator::completeMerchantValidation(const PaymentMerchantSession&)
 {
-    dispatchIfShowing([mainFrame = makeRef(m_mainFrame), shippingAddress = m_shippingAddress]() {
-        ApplePayPaymentContact contact = shippingAddress;
-        mainFrame->paymentCoordinator().didSelectShippingContact(MockPaymentContact { WTFMove(contact) });
+    dispatchIfShowing([mainFrame = makeRef(m_mainFrame), shippingAddress = m_shippingAddress]() mutable {
+        mainFrame->paymentCoordinator().didSelectShippingContact(MockPaymentContact { WTFMove(shippingAddress) });
     });
 }
 

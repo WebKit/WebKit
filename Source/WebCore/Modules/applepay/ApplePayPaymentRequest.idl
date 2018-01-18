@@ -41,7 +41,6 @@
     required DOMString currencyCode;
 
     sequence<ApplePayContactField> requiredShippingContactFields;
-    ApplePayPaymentContact shippingContact;
 
     ApplePayShippingType shippingType = "shipping";
     sequence<ApplePayShippingMethod> shippingMethods;

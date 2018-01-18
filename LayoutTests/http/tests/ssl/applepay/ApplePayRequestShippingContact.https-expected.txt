@@ -1,0 +1,62 @@
+Test ApplePayRequest.shippingContact.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Test setting a default shipping contact in a version 2 request.
+PASS paymentResponse.details.shippingContact.phoneNumber is expectedPhoneNumber
+PASS paymentResponse.details.shippingContact.emailAddress is expectedEmailAddress
+PASS paymentResponse.details.shippingContact.givenName is expectedGivenName
+PASS paymentResponse.details.shippingContact.familyName is expectedFamilyName
+PASS paymentResponse.details.shippingContact.phoneticGivenName is undefined.
+PASS paymentResponse.details.shippingContact.phoneticFamilyName is undefined.
+PASS paymentResponse.details.shippingContact.addressLines is expectedAddressLines
+PASS paymentResponse.details.shippingContact.subLocality is expectedSubLocality
+PASS paymentResponse.details.shippingContact.locality is expectedLocality
+PASS paymentResponse.details.shippingContact.postalCode is expectedPostalCode
+PASS paymentResponse.details.shippingContact.subAdministrativeArea is expectedSubAdministrativeArea
+PASS paymentResponse.details.shippingContact.administrativeArea is expectedAdministrativeArea
+PASS paymentResponse.details.shippingContact.country is expectedCountry
+PASS paymentResponse.details.shippingContact.countryCode is expectedCountryCode
+PASS paymentResponse.shippingAddress.country is expectedCountryCode
+PASS paymentResponse.shippingAddress.addressLine is expectedAddressLines
+PASS paymentResponse.shippingAddress.region is expectedAdministrativeArea
+PASS paymentResponse.shippingAddress.city is expectedLocality
+PASS paymentResponse.shippingAddress.dependentLocality is expectedSubLocality
+PASS paymentResponse.shippingAddress.postalCode is expectedPostalCode
+PASS paymentResponse.shippingAddress.postalCode is expectedPostalCode
+PASS paymentResponse.shippingAddress.sortingCode is ''
+PASS paymentResponse.shippingAddress.languageCode is ''
+PASS paymentResponse.shippingAddress.organization is ''
+PASS paymentResponse.shippingAddress.recipient is expectedName
+PASS paymentResponse.shippingAddress.phone is expectedPhoneNumber
+PASS paymentResponse.payerName is expectedName
+PASS paymentResponse.payerEmail is expectedEmailAddress
+PASS paymentResponse.payerPhone is expectedPhoneNumber
+
+Test setting a default shipping contact in a version 3 request.
+PASS paymentResponse.details.shippingContact.phoneticGivenName is expectedGivenName
+PASS paymentResponse.details.shippingContact.phoneticFamilyName is expectedFamilyName
+
+Test setting a default shipping contact that only specifies an email address.
+PASS paymentResponse.shippingAddress is null
+PASS paymentResponse.payerName is null
+PASS paymentResponse.payerEmail is expectedEmailAddress
+PASS paymentResponse.payerPhone is null
+
+Test setting a default shipping contact that only specifies a phone number.
+PASS paymentResponse.shippingAddress is null
+PASS paymentResponse.payerName is null
+PASS paymentResponse.payerEmail is null
+PASS paymentResponse.payerPhone is expectedPhoneNumber
+
+Test setting a default shipping contact that only specifies a name.
+PASS paymentResponse.shippingAddress is null
+PASS paymentResponse.payerName is expectedName
+PASS paymentResponse.payerEmail is null
+PASS paymentResponse.payerPhone is null
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

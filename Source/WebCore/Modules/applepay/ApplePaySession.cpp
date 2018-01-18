@@ -234,9 +234,6 @@ static ExceptionOr<ApplePaySessionPaymentRequest> convertAndValidate(unsigned ve
         result.setRequiredShippingContactFields(requiredShippingContactFields.releaseReturnValue());
     }
 
-    if (paymentRequest.shippingContact)
-        result.setShippingContact(PaymentContact::fromApplePayPaymentContact(version, paymentRequest.shippingContact.value()));
-
     result.setShippingType(paymentRequest.shippingType);
 
     if (paymentRequest.shippingMethods) {

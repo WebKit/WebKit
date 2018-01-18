@@ -1,3 +1,14 @@
+2018-01-18  Andy Estes  <aestes@apple.com>
+
+        [Payment Request] Support a default shipping address for Apple Pay
+        https://bugs.webkit.org/show_bug.cgi?id=181754
+        <rdar://problem/36009733>
+
+        Reviewed by Brady Eidson.
+
+        * http/tests/ssl/applepay/ApplePayRequestShippingContact.https-expected.txt: Added.
+        * http/tests/ssl/applepay/ApplePayRequestShippingContact.https.html: Added.
+
 2018-01-18  Ali Juma  <ajuma@chromium.org>
 
         imported/w3c/web-platform-tests/viewport/viewport-resize-event-on-load-overflowing-page.html is flaky

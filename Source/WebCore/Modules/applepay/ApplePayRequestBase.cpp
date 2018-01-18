@@ -52,6 +52,7 @@ static ExceptionOr<Vector<String>> convertAndValidate(unsigned version, const Ve
 ExceptionOr<ApplePaySessionPaymentRequest> convertAndValidate(unsigned version, ApplePayRequestBase& request, const PaymentCoordinator& paymentCoordinator)
 {
     ApplePaySessionPaymentRequest result;
+    result.setVersion(version);
     result.setCountryCode(request.countryCode);
 
     auto merchantCapabilities = convertAndValidate(request.merchantCapabilities);
@@ -73,6 +74,9 @@ ExceptionOr<ApplePaySessionPaymentRequest> convertAndValidate(unsigned version, 
 
     if (request.billingContact)
         result.setBillingContact(PaymentContact::fromApplePayPaymentContact(version, *request.billingContact));
+
+    if (request.shippingContact)
+        result.setShippingContact(PaymentContact::fromApplePayPaymentContact(version, *request.shippingContact));
 
     result.setApplicationData(request.applicationData);
 
