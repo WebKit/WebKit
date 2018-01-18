@@ -868,3 +868,7 @@ webkit.org/b/181502 swipe/pushstate-with-manual-scrollrestoration.html [ Failure
 
 webkit.org/b/181482 http/tests/resourceLoadStatistics/grandfathering.html [ Skip ]
 
+webkit.org/b/181750 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-request-redirect.https.html [ Pass Failure ]
+webkit.org/b/181750 imported/w3c/web-platform-tests/service-workers/service-worker/interfaces-sw.https.html [ Pass Failure ]
+webkit.org/b/181750 imported/w3c/web-platform-tests/service-workers/service-worker/redirected-response.https.html [ Pass Failure ]
+

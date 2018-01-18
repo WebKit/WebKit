@@ -1,3 +1,12 @@
+2018-01-18  Matt Lewis  <jlewis3@apple.com>
+
+        Marked multiple imported/w3c/web-platform-tests/service-workers/ test as flaky
+        https://bugs.webkit.org/show_bug.cgi?id=181750
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
 2018-01-18  Antti Koivisto  <antti@apple.com>
 
         REGRESSION (r223604): Setting :before/after pseudo element on <noscript> asserts
