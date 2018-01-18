@@ -4,24 +4,6 @@
    <BuildAction
       parallelizeBuildables = "NO"
       buildImplicitDependencies = "YES">
-      <PreActions>
-         <ExecutionAction
-            ActionType = "Xcode.IDEStandardExecutionActionsCore.ExecutionActionType.ShellScriptAction">
-            <ActionContent
-               title = "Run Script"
-               scriptText = "&quot;$SRCROOT/../../Tools/Scripts/copy-webkitlibraries-to-product-directory&quot; --wksi --sdk &quot;$SDKROOT&quot;">
-               <EnvironmentBuildable>
-                  <BuildableReference
-                     BuildableIdentifier = "primary"
-                     BlueprintIdentifier = "5D247B6114689B8600E78B76"
-                     BuildableName = "libWTF.a"
-                     BlueprintName = "WTF"
-                     ReferencedContainer = "container:Source/WTF/WTF.xcodeproj">
-                  </BuildableReference>
-               </EnvironmentBuildable>
-            </ActionContent>
-         </ExecutionAction>
-      </PreActions>
       <BuildActionEntries>
          <BuildActionEntry
             buildForTesting = "YES"

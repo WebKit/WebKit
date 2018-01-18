@@ -4,24 +4,6 @@
    <BuildAction
       parallelizeBuildables = "NO"
       buildImplicitDependencies = "YES">
-      <PreActions>
-         <ExecutionAction
-            ActionType = "Xcode.IDEStandardExecutionActionsCore.ExecutionActionType.ShellScriptAction">
-            <ActionContent
-               title = "Run Script"
-               scriptText = "&quot;$SRCROOT/../Scripts/copy-webkitlibraries-to-product-directory&quot;">
-               <EnvironmentBuildable>
-                  <BuildableReference
-                     BuildableIdentifier = "primary"
-                     BlueprintIdentifier = "9340994A08540CAE007F3BC8"
-                     BuildableName = "DumpRenderTree"
-                     BlueprintName = "DumpRenderTree"
-                     ReferencedContainer = "container:Tools/DumpRenderTree/DumpRenderTree.xcodeproj">
-                  </BuildableReference>
-               </EnvironmentBuildable>
-            </ActionContent>
-         </ExecutionAction>
-      </PreActions>
       <BuildActionEntries>
          <BuildActionEntry
             buildForTesting = "YES"
