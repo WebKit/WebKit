@@ -84,6 +84,7 @@ private:
     void scheduleInternallyFailedLoad(WebCore::ResourceLoader&);
     void internallyFailedLoadTimerFired();
     void startLocalLoad(WebCore::ResourceLoader&);
+    bool tryLoadingUsingURLSchemeHandler(WebCore::ResourceLoader&);
 
     HashSet<RefPtr<WebCore::ResourceLoader>> m_internallyFailedResourceLoaders;
     RunLoop::Timer<WebLoaderStrategy> m_internallyFailedLoadTimer;

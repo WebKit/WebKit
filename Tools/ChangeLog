@@ -1,3 +1,16 @@
+2018-01-18  Chris Dumez  <cdumez@apple.com>
+
+        Service Workers restored from persistent storage have 'redundant' state
+        https://bugs.webkit.org/show_bug.cgi?id=181749
+        <rdar://problem/36556486>
+
+        Reviewed by Youenn Fablet.
+
+        Add API test coverage.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ServiceWorkerBasic.mm:
+        (-[SWMessageHandlerForFetchTest userContentController:didReceiveScriptMessage:]):
+
 2018-01-18  Joanmarie Diggs  <jdiggs@igalia.com>
 
         [GTK] AX: Two layout tests crash with error 'g_strstr_len: assertion 'haystack != NULL' failed' in Accessibility::UIElement::url

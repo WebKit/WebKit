@@ -208,23 +208,12 @@ void WebLoaderStrategy::scheduleLoad(ResourceLoader& resourceLoader, CachedResou
     }
 #endif
 
-    auto* webFrameLoaderClient = toWebFrameLoaderClient(resourceLoader.frameLoader()->client());
-    auto* webFrame = webFrameLoaderClient ? webFrameLoaderClient->webFrame() : nullptr;
-    auto* webPage = webFrame ? webFrame->page() : nullptr;
-    if (webPage) {
-        if (auto* handler = webPage->urlSchemeHandlerForScheme(resourceLoader.request().url().protocol().toStringWithoutCopying())) {
-            LOG(NetworkScheduling, "(WebProcess) WebLoaderStrategy::scheduleLoad, URL '%s' will be handled by a UIProcess URL scheme handler.", resourceLoader.url().string().utf8().data());
-            RELEASE_LOG_IF_ALLOWED(resourceLoader, "scheduleLoad: URL will be handled by a UIProcess URL scheme handler (frame = %p, resourceID = %" PRIu64 ")", resourceLoader.frame(), identifier);
-
-            handler->startNewTask(resourceLoader);
-            return;
-        }
-    }
-
 #if ENABLE(SERVICE_WORKER)
     WebServiceWorkerProvider::singleton().handleFetch(resourceLoader, resource, sessionID, shouldClearReferrerOnHTTPSToHTTPRedirect, [trackingParameters, sessionID, shouldClearReferrerOnHTTPSToHTTPRedirect, maximumBufferingTime = maximumBufferingTime(resource), resourceLoader = makeRef(resourceLoader)] (ServiceWorkerClientFetch::Result result) mutable {
-        if (result != ServiceWorkerClientFetch::Result::Unhandled)
+        if (result != ServiceWorkerClientFetch::Result::Unhandled) {
+            LOG(NetworkScheduling, "(WebProcess) WebLoaderStrategy::scheduleLoad, url '%s' will be scheduled through ServiceWorker handle fetch algorithm", resourceLoader->url().string().latin1().data());
             return;
+        }
         if (resourceLoader->options().serviceWorkersMode == ServiceWorkersMode::Only) {
             callOnMainThread([resourceLoader = WTFMove(resourceLoader)] {
                 auto error = internalError(resourceLoader->request().url());
@@ -234,13 +223,30 @@ void WebLoaderStrategy::scheduleLoad(ResourceLoader& resourceLoader, CachedResou
             return;
         }
 
-        LOG(NetworkScheduling, "(WebProcess) WebLoaderStrategy::scheduleLoad, url '%s' will be scheduled through ServiceWorker handle fetch algorithm", resourceLoader->url().string().latin1().data());
-        WebProcess::singleton().webLoaderStrategy().scheduleLoadFromNetworkProcess(resourceLoader.get(), resourceLoader->request(), trackingParameters, sessionID, shouldClearReferrerOnHTTPSToHTTPRedirect, maximumBufferingTime);
+        if (!WebProcess::singleton().webLoaderStrategy().tryLoadingUsingURLSchemeHandler(resourceLoader))
+            WebProcess::singleton().webLoaderStrategy().scheduleLoadFromNetworkProcess(resourceLoader.get(), resourceLoader->request(), trackingParameters, sessionID, shouldClearReferrerOnHTTPSToHTTPRedirect, maximumBufferingTime);
     });
 #else
-    LOG(NetworkScheduling, "(WebProcess) WebLoaderStrategy::scheduleLoad, url '%s' will be scheduled through ServiceWorker handle fetch algorithm", resourceLoader.url().string().latin1().data());
-    scheduleLoadFromNetworkProcess(resourceLoader, resourceLoader.request(), trackingParameters, sessionID, shouldClearReferrerOnHTTPSToHTTPRedirect, maximumBufferingTime(resource));
+    if (!tryLoadingUsingURLSchemeHandler(resourceLoader))
+        scheduleLoadFromNetworkProcess(resourceLoader, resourceLoader.request(), trackingParameters, sessionID, shouldClearReferrerOnHTTPSToHTTPRedirect, maximumBufferingTime(resource));
 #endif
+}
+
+bool WebLoaderStrategy::tryLoadingUsingURLSchemeHandler(ResourceLoader& resourceLoader)
+{
+    auto* webFrameLoaderClient = toWebFrameLoaderClient(resourceLoader.frameLoader()->client());
+    auto* webFrame = webFrameLoaderClient ? webFrameLoaderClient->webFrame() : nullptr;
+    auto* webPage = webFrame ? webFrame->page() : nullptr;
+    if (webPage) {
+        if (auto* handler = webPage->urlSchemeHandlerForScheme(resourceLoader.request().url().protocol().toStringWithoutCopying())) {
+            LOG(NetworkScheduling, "(WebProcess) WebLoaderStrategy::scheduleLoad, URL '%s' will be handled by a UIProcess URL scheme handler.", resourceLoader.url().string().utf8().data());
+            RELEASE_LOG_IF_ALLOWED(resourceLoader, "scheduleLoad: URL will be handled by a UIProcess URL scheme handler (frame = %p, resourceID = %lu)", resourceLoader.frame(), resourceLoader.identifier());
+
+            handler->startNewTask(resourceLoader);
+            return true;
+        }
+    }
+    return false;
 }
 
 void WebLoaderStrategy::scheduleLoadFromNetworkProcess(ResourceLoader& resourceLoader, const ResourceRequest& request, const WebResourceLoader::TrackingParameters& trackingParameters, PAL::SessionID sessionID, bool shouldClearReferrerOnHTTPSToHTTPRedirect, Seconds maximumBufferingTime)

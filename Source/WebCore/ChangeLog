@@ -1,3 +1,18 @@
+2018-01-18  Chris Dumez  <cdumez@apple.com>
+
+        Service Workers restored from persistent storage have 'redundant' state
+        https://bugs.webkit.org/show_bug.cgi?id=181749
+        <rdar://problem/36556486>
+
+        Reviewed by Youenn Fablet.
+
+        Tested by new API test.
+
+        * workers/service/server/SWServer.cpp:
+        (WebCore::SWServer::installContextData):
+        Make sure the SWServerWorker's state is set to "activated" after it is assigned to
+        the registrations' active slot. Otherwise, it stays in its default state (redundant).
+
 2018-01-18  Antti Koivisto  <antti@apple.com>
 
         REGRESSION(r225650): The scores of MotionMark tests Multiply and Leaves dropped by 8%

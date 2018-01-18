@@ -64,6 +64,17 @@ static Deque<String> expectedMessages;
 }
 @end
 
+@interface SWMessageHandlerForFetchTest : NSObject <WKScriptMessageHandler>
+@end
+
+@implementation SWMessageHandlerForFetchTest
+- (void)userContentController:(WKUserContentController *)userContentController didReceiveScriptMessage:(WKScriptMessage *)message
+{
+    EXPECT_TRUE([[message body] isEqualToString:@"Intercepted by worker"]);
+    done = true;
+}
+@end
+
 @interface SWSchemes : NSObject <WKURLSchemeHandler> {
 @public
     HashMap<String, ResourceInfo> resources;
@@ -137,6 +148,58 @@ self.addEventListener("message", (event) => {
 
 )SWRESOURCE";
 
+static const char* mainForFetchTestBytes = R"SWRESOURCE(
+<html>
+<body>
+<script>
+try {
+
+function addFrame()
+{
+    frame = document.createElement('iframe');
+    frame.src = "/test.html";
+    frame.onload = function() { window.webkit.messageHandlers.sw.postMessage(frame.contentDocument.body.innerHTML); }
+    document.body.appendChild(frame);
+}
+
+navigator.serviceWorker.register('/sw.js').then(function(reg) {
+    if (reg.active) {
+        addFrame();
+        return;
+    }
+    worker = reg.installing;
+    worker.addEventListener('statechange', function() {
+        if (worker.state == 'activated')
+            addFrame();
+    });
+}).catch(function(error) {
+    log("Registration failed with: " + error);
+});
+} catch(e) {
+    log("Exception: " + e);
+}
+
+</script>
+</body>
+</html>
+)SWRESOURCE";
+
+static const char* scriptHandlingFetchBytes = R"SWRESOURCE(
+
+self.addEventListener("fetch", (event) => {
+    if (event.request.url.indexOf("test.html") !== -1) {
+        event.respondWith(new Response(new Blob(['Intercepted by worker'], {type: 'text/html'})));
+    }
+});
+
+)SWRESOURCE";
+
+static const char* testBytes = R"SWRESOURCE(
+<body>
+NOT intercepted by worker
+</body>
+)SWRESOURCE";
+
 TEST(ServiceWorkers, Basic)
 {
     ASSERT(mainBytes);
@@ -178,6 +241,66 @@ TEST(ServiceWorkers, Basic)
 
         done = true;
     }];
+
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+}
+
+TEST(ServiceWorkers, FetchAfterRestoreFromDisk)
+{
+    ASSERT(mainForFetchTestBytes);
+    ASSERT(scriptHandlingFetchBytes);
+
+    [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
+
+    // Start with a clean slate data store
+    [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+
+    RetainPtr<SWMessageHandlerForFetchTest> messageHandler = adoptNS([[SWMessageHandlerForFetchTest alloc] init]);
+    [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"sw"];
+
+    RetainPtr<SWSchemes> handler = adoptNS([[SWSchemes alloc] init]);
+    handler->resources.set("sw://host/main.html", ResourceInfo { @"text/html", mainForFetchTestBytes });
+    handler->resources.set("sw://host/test.html", ResourceInfo { @"text/html", testBytes });
+    handler->resources.set("sw://host/sw.js", ResourceInfo { @"application/javascript", scriptHandlingFetchBytes });
+    [configuration setURLSchemeHandler:handler.get() forURLScheme:@"SW"];
+
+    RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    [webView.get().configuration.processPool _registerURLSchemeServiceWorkersCanHandle:@"sw"];
+
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"sw://host/main.html"]];
+    [webView loadRequest:request];
+
+    TestWebKitAPI::Util::run(&done);
+
+    webView = nullptr;
+    configuration = nullptr;
+    messageHandler = nullptr;
+    handler = nullptr;
+
+    done = false;
+
+    configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    messageHandler = adoptNS([[SWMessageHandlerForFetchTest alloc] init]);
+    [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"sw"];
+
+    handler = adoptNS([[SWSchemes alloc] init]);
+    handler->resources.set("sw://host/main.html", ResourceInfo { @"text/html", mainForFetchTestBytes });
+    handler->resources.set("sw://host/test.html", ResourceInfo { @"text/html", testBytes });
+    handler->resources.set("sw://host/sw.js", ResourceInfo { @"application/javascript", scriptHandlingFetchBytes });
+    [configuration setURLSchemeHandler:handler.get() forURLScheme:@"SW"];
+
+    webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    [webView.get().configuration.processPool _registerURLSchemeServiceWorkersCanHandle:@"sw"];
+
+    request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"sw://host/main.html"]];
+    [webView loadRequest:request];
 
     TestWebKitAPI::Util::run(&done);
     done = false;
