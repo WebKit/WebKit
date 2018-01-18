@@ -91,4 +91,8 @@ WTF_EXTERN_C_END
 @end
 #endif
 
+@interface NSURL (UIKitSPI)
+@property (nonatomic, copy, setter=_setTitle:) NSString *_title;
+@end
+
 #endif // PLATFORM(IOS)

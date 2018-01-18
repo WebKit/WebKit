@@ -1,3 +1,26 @@
+2018-01-18  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Specify -[NSURL _title] for the associated URL when copying an image element
+        https://bugs.webkit.org/show_bug.cgi?id=181783
+        <rdar://problem/35785445>
+
+        Reviewed by Ryosuke Niwa.
+
+        Always specify the -[NSURL _title] to be either the title specified in a PasteboardImage's inner PasteboardURL,
+        or if no title is specified, fall back to the user-visible URL string. This is because at least one internal
+        client always tries to use the -_title property to determine the title of a pasted URL, or if none is specified,
+        the -suggestedName. Since we need to set suggestedName to the preferred file name of the copied image and we
+        don't want the suggested name to become the title of the link, we need to explicitly set the link title.
+
+        In doing so, this patch also fixes a bug wherein we forget to set the _title of the NSURL we're registering to
+        an NSItemProvider.
+
+        Tests:  ActionSheetTests.CopyImageElementWithHREFAndTitle (new)
+                ActionSheetTests.CopyImageElementWithHREF (modified)
+
+        * platform/ios/PlatformPasteboardIOS.mm:
+        (WebCore::PlatformPasteboard::write):
+
 2018-01-17  Jer Noble  <jer.noble@apple.com>
 
         WebVTT served via HLS never results in cues
