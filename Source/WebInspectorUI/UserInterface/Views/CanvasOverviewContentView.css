@@ -111,11 +111,6 @@
     opacity: 0.5;
 }
 
-.content-view.canvas-overview .content-view.canvas:not(.is-recording) > header > .navigation-bar > .item.record-start-stop {
-    /* Workaround for background image clipping issue on non-retina machines. See http://webkit.org/b/147346. */
-    filter: brightness(100%);
-}
-
 .content-view.canvas-overview .content-view.canvas:not(.is-recording) > header > .navigation-bar > .item.record-start-stop:not(.disabled):hover {
     filter: brightness(95%);
 }
