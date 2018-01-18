@@ -92,9 +92,9 @@ public:
     void tryActivate();
     void didFinishActivation(ServiceWorkerIdentifier);
 
-private:
     void forEachConnection(const WTF::Function<void(SWServer::Connection&)>&);
 
+private:
     void activate();
     void handleClientUnload();
 
