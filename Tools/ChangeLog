@@ -1,5 +1,40 @@
 2018-01-17  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r226940. rdar://problem/36598019
+
+    2018-01-13  Mark Lam  <mark.lam@apple.com>
+
+            Replace all use of ConstExprPoisoned with Poisoned.
+            https://bugs.webkit.org/show_bug.cgi?id=181542
+            <rdar://problem/36442138>
+
+            Reviewed by JF Bastien.
+
+            1. Converted tests to using new uintptr_t& poison type.
+            2. Added tests for Poisoned comparison operators.
+
+            * TestWebKitAPI/CMakeLists.txt:
+            * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+            * TestWebKitAPI/Tests/WTF/ConstExprPoisoned.cpp: Removed.
+            * TestWebKitAPI/Tests/WTF/Poisoned.cpp:
+            (TestWebKitAPI::TEST):
+            (TestWebKitAPI::initializeTestPoison): Deleted.
+            * TestWebKitAPI/Tests/WTF/PoisonedRef.cpp:
+            (TestWebKitAPI::TEST):
+            (TestWebKitAPI::passWithRef):
+            * TestWebKitAPI/Tests/WTF/PoisonedRefPtr.cpp:
+            (TestWebKitAPI::TEST):
+            (TestWebKitAPI::f1):
+            * TestWebKitAPI/Tests/WTF/PoisonedUniquePtr.cpp:
+            (TestWebKitAPI::TEST):
+            (TestWebKitAPI::poisonedPtrFoo):
+            * TestWebKitAPI/Tests/WTF/PoisonedUniquePtrForNonTriviallyDestructibleArrays.cpp:
+            (TestWebKitAPI::TEST):
+            * TestWebKitAPI/Tests/WTF/PoisonedUniquePtrForTriviallyDestructibleArrays.cpp:
+            (TestWebKitAPI::TEST):
+
+2018-01-17  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r226752. rdar://problem/36601128
 
     2018-01-10  JF Bastien  <jfbastien@apple.com>

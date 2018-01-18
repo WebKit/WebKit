@@ -51,7 +51,7 @@ private:
     void finishCreation(VM&, JSWebAssemblyModule*);
     WebAssemblyToJSCallee(VM&, Structure*);
 
-    PoisonedWriteBarrier<WebAssemblyToJSCalleePoison, JSWebAssemblyModule> m_module;
+    PoisonedWriteBarrier<POISON(WebAssemblyToJSCallee), JSWebAssemblyModule> m_module;
 };
 
 } // namespace JSC

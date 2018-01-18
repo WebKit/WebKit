@@ -25,14 +25,26 @@
 
 #include "config.h"
 
+#include <mutex>
 #include <wtf/PoisonedUniquePtr.h>
 
 namespace TestWebKitAPI {
 
 namespace {
 
-const uint32_t PoisonA = 0xaaaa;
-const uint32_t PoisonB = 0xbbbb;
+uintptr_t g_poisonA;
+uintptr_t g_poisonB;
+
+static void initializePoisons()
+{
+    static std::once_flag initializeOnceFlag;
+    std::call_once(initializeOnceFlag, [] {
+        // Make sure we get 2 different poison values.
+        g_poisonA = makePoison();
+        while (!g_poisonB || g_poisonB == g_poisonA)
+            g_poisonB = makePoison();
+    });
+}
 
 struct Logger {
     Logger() { }
@@ -62,8 +74,10 @@ const int arraySize = 5;
 
 TEST(WTF_PoisonedUniquePtrForNonTriviallyDestructibleArrays, Basic)
 {
+    initializePoisons();
+
     {
-        PoisonedUniquePtr<PoisonA, Logger[]> empty;
+        PoisonedUniquePtr<g_poisonA, Logger[]> empty;
         ASSERT_EQ(nullptr, empty.unpoisoned());
         ASSERT_EQ(0u, empty.bits());
     }
@@ -72,7 +86,7 @@ TEST(WTF_PoisonedUniquePtrForNonTriviallyDestructibleArrays, Basic)
         int aDestructCount = 0;
         Logger* a = makeArray<Logger>(arraySize, "a", aDestructCount);
         {
-            PoisonedUniquePtr<PoisonA, Logger[]> ptr(a);
+            PoisonedUniquePtr<g_poisonA, Logger[]> ptr(a);
             ASSERT_EQ(0, aDestructCount);
             ASSERT_EQ(a, ptr.unpoisoned());
             ASSERT_EQ(a, &*ptr);
@@ -84,7 +98,7 @@ TEST(WTF_PoisonedUniquePtrForNonTriviallyDestructibleArrays, Basic)
             std::memcpy(&ptrBits, &ptr, sizeof(ptrBits));
             ASSERT_TRUE(ptrBits != bitwise_cast<uintptr_t>(a));
 #if ENABLE(POISON_ASSERTS)
-            ASSERT_TRUE((PoisonedUniquePtr<PoisonA, Logger[]>::isPoisoned(ptrBits)));
+            ASSERT_TRUE((PoisonedUniquePtr<g_poisonA, Logger[]>::isPoisoned(ptrBits)));
 #endif
 #endif // ENABLE(POISON)
         }
@@ -95,7 +109,7 @@ TEST(WTF_PoisonedUniquePtrForNonTriviallyDestructibleArrays, Basic)
         int aDestructCount = 0;
         Logger* a = makeArray<Logger>(arraySize, "a", aDestructCount);
         {
-            PoisonedUniquePtr<PoisonA, Logger[]> ptr = a;
+            PoisonedUniquePtr<g_poisonA, Logger[]> ptr = a;
             ASSERT_EQ(0, aDestructCount);
             ASSERT_EQ(a, ptr.unpoisoned());
             for (auto i = 0; i < arraySize; ++i)
@@ -108,7 +122,7 @@ TEST(WTF_PoisonedUniquePtrForNonTriviallyDestructibleArrays, Basic)
         int aDestructCount = 0;
         const char* aName = "a";
         {
-            PoisonedUniquePtr<PoisonA, Logger[]> ptr = PoisonedUniquePtr<PoisonA, Logger[]>::create(arraySize, aName, aDestructCount);
+            PoisonedUniquePtr<g_poisonA, Logger[]> ptr = PoisonedUniquePtr<g_poisonA, Logger[]>::create(arraySize, aName, aDestructCount);
             ASSERT_EQ(0, aDestructCount);
             ASSERT_TRUE(nullptr != ptr.unpoisoned());
             for (auto i = 0; i < arraySize; ++i)
@@ -121,7 +135,7 @@ TEST(WTF_PoisonedUniquePtrForNonTriviallyDestructibleArrays, Basic)
         int aDestructCount = 0;
         const char* aName = "a";
         {
-            PoisonedUniquePtr<PoisonA, Logger[]> ptr = makePoisonedUnique<PoisonA, Logger[]>(arraySize, aName, aDestructCount);
+            PoisonedUniquePtr<g_poisonA, Logger[]> ptr = makePoisonedUnique<g_poisonA, Logger[]>(arraySize, aName, aDestructCount);
             ASSERT_EQ(0, aDestructCount);
             ASSERT_TRUE(nullptr != ptr.unpoisoned());
             for (auto i = 0; i < arraySize; ++i)
@@ -134,7 +148,7 @@ TEST(WTF_PoisonedUniquePtrForNonTriviallyDestructibleArrays, Basic)
         int aDestructCount = 0;
         const char* aName = "a";
         {
-            PoisonedUniquePtr<PoisonA, Logger[]> ptr = makePoisonedUnique<PoisonA, Logger[]>(arraySize, aName, aDestructCount);
+            PoisonedUniquePtr<g_poisonA, Logger[]> ptr = makePoisonedUnique<g_poisonA, Logger[]>(arraySize, aName, aDestructCount);
             ASSERT_EQ(0, aDestructCount);
             ASSERT_TRUE(nullptr != ptr.unpoisoned());
             for (auto i = 0; i < arraySize; ++i)
@@ -149,15 +163,15 @@ TEST(WTF_PoisonedUniquePtrForNonTriviallyDestructibleArrays, Basic)
         Logger* a = makeArray<Logger>(arraySize, "a", aDestructCount);
         Logger* b = makeArray<Logger>(arraySize, "b", bDestructCount);
         {
-            PoisonedUniquePtr<PoisonA, Logger[]> p1 = a;
-            PoisonedUniquePtr<PoisonA, Logger[]> p2 = WTFMove(p1);
+            PoisonedUniquePtr<g_poisonA, Logger[]> p1 = a;
+            PoisonedUniquePtr<g_poisonA, Logger[]> p2 = WTFMove(p1);
             ASSERT_EQ(aDestructCount, 0);
             ASSERT_EQ(nullptr, p1.unpoisoned());
             ASSERT_EQ(0u, p1.bits());
             ASSERT_EQ(a, p2.unpoisoned());
 
-            PoisonedUniquePtr<PoisonA, Logger[]> p3 = b;
-            PoisonedUniquePtr<PoisonB, Logger[]> p4 = WTFMove(p3);
+            PoisonedUniquePtr<g_poisonA, Logger[]> p3 = b;
+            PoisonedUniquePtr<g_poisonB, Logger[]> p4 = WTFMove(p3);
             ASSERT_EQ(0, bDestructCount);
             ASSERT_EQ(nullptr, p3.unpoisoned());
             ASSERT_EQ(0u, p3.bits());
@@ -173,15 +187,15 @@ TEST(WTF_PoisonedUniquePtrForNonTriviallyDestructibleArrays, Basic)
         Logger* a = makeArray<Logger>(arraySize, "a", aDestructCount);
         Logger* b = makeArray<Logger>(arraySize, "b", bDestructCount);
         {
-            PoisonedUniquePtr<PoisonA, Logger[]> p1 = a;
-            PoisonedUniquePtr<PoisonA, Logger[]> p2(WTFMove(p1));
+            PoisonedUniquePtr<g_poisonA, Logger[]> p1 = a;
+            PoisonedUniquePtr<g_poisonA, Logger[]> p2(WTFMove(p1));
             ASSERT_EQ(0, aDestructCount);
             ASSERT_EQ(nullptr, p1.unpoisoned());
             ASSERT_EQ(0u, p1.bits());
             ASSERT_EQ(a, p2.unpoisoned());
 
-            PoisonedUniquePtr<PoisonA, Logger[]> p3 = b;
-            PoisonedUniquePtr<PoisonB, Logger[]> p4(WTFMove(p3));
+            PoisonedUniquePtr<g_poisonA, Logger[]> p3 = b;
+            PoisonedUniquePtr<g_poisonB, Logger[]> p4(WTFMove(p3));
             ASSERT_EQ(0, bDestructCount);
             ASSERT_EQ(nullptr, p3.unpoisoned());
             ASSERT_EQ(0u, p3.bits());
@@ -197,15 +211,15 @@ TEST(WTF_PoisonedUniquePtrForNonTriviallyDestructibleArrays, Basic)
         Logger* a = makeArray<Logger>(arraySize, "a", aDestructCount);
         Logger* b = makeArray<Logger>(arraySize, "b", bDestructCount);
         {
-            PoisonedUniquePtr<PoisonA, Logger[]> p1 = a;
-            PoisonedUniquePtr<PoisonA, Logger[]> p2 = WTFMove(p1);
+            PoisonedUniquePtr<g_poisonA, Logger[]> p1 = a;
+            PoisonedUniquePtr<g_poisonA, Logger[]> p2 = WTFMove(p1);
             ASSERT_EQ(aDestructCount, 0);
             ASSERT_TRUE(!p1.unpoisoned());
             ASSERT_TRUE(!p1.bits());
             ASSERT_EQ(a, p2.unpoisoned());
 
-            PoisonedUniquePtr<PoisonA, Logger[]> p3 = b;
-            PoisonedUniquePtr<PoisonB, Logger[]> p4 = WTFMove(p3);
+            PoisonedUniquePtr<g_poisonA, Logger[]> p3 = b;
+            PoisonedUniquePtr<g_poisonB, Logger[]> p4 = WTFMove(p3);
             ASSERT_EQ(bDestructCount, 0);
             ASSERT_TRUE(!p3.unpoisoned());
             ASSERT_TRUE(!p3.bits());
@@ -221,15 +235,15 @@ TEST(WTF_PoisonedUniquePtrForNonTriviallyDestructibleArrays, Basic)
         Logger* a = makeArray<Logger>(arraySize, "a", aDestructCount);
         Logger* b = makeArray<Logger>(arraySize, "b", bDestructCount);
         {
-            PoisonedUniquePtr<PoisonA, Logger[]> p1 = a;
-            PoisonedUniquePtr<PoisonA, Logger[]> p2(WTFMove(p1));
+            PoisonedUniquePtr<g_poisonA, Logger[]> p1 = a;
+            PoisonedUniquePtr<g_poisonA, Logger[]> p2(WTFMove(p1));
             ASSERT_EQ(aDestructCount, 0);
             ASSERT_TRUE(!p1.unpoisoned());
             ASSERT_TRUE(!p1.bits());
             ASSERT_EQ(a, p2.unpoisoned());
 
-            PoisonedUniquePtr<PoisonA, Logger[]> p3 = b;
-            PoisonedUniquePtr<PoisonB, Logger[]> p4(WTFMove(p3));
+            PoisonedUniquePtr<g_poisonA, Logger[]> p3 = b;
+            PoisonedUniquePtr<g_poisonB, Logger[]> p4(WTFMove(p3));
             ASSERT_EQ(bDestructCount, 0);
             ASSERT_TRUE(!p3.unpoisoned());
             ASSERT_TRUE(!p3.bits());
@@ -243,7 +257,7 @@ TEST(WTF_PoisonedUniquePtrForNonTriviallyDestructibleArrays, Basic)
         int aDestructCount = 0;
         Logger* a = makeArray<Logger>(arraySize, "a", aDestructCount);
         {
-            PoisonedUniquePtr<PoisonA, Logger[]> ptr(a);
+            PoisonedUniquePtr<g_poisonA, Logger[]> ptr(a);
             ASSERT_EQ(a, ptr.unpoisoned());
             ptr.clear();
             ASSERT_TRUE(!ptr.unpoisoned());
@@ -256,13 +270,15 @@ TEST(WTF_PoisonedUniquePtrForNonTriviallyDestructibleArrays, Basic)
 
 TEST(WTF_PoisonedUniquePtrForNonTriviallyDestructibleArrays, Assignment)
 {
+    initializePoisons();
+
     {
         int aDestructCount = 0;
         int bDestructCount = 0;
         Logger* a = makeArray<Logger>(arraySize, "a", aDestructCount);
         Logger* b = makeArray<Logger>(arraySize, "b", bDestructCount);
         {
-            PoisonedUniquePtr<PoisonA, Logger[]> ptr(a);
+            PoisonedUniquePtr<g_poisonA, Logger[]> ptr(a);
             ASSERT_EQ(0, aDestructCount);
             ASSERT_EQ(0, bDestructCount);
             ASSERT_EQ(a, ptr.unpoisoned());
@@ -279,7 +295,7 @@ TEST(WTF_PoisonedUniquePtrForNonTriviallyDestructibleArrays, Assignment)
         int aDestructCount = 0;
         Logger* a = makeArray<Logger>(arraySize, "a", aDestructCount);
         {
-            PoisonedUniquePtr<PoisonA, Logger[]> ptr(a);
+            PoisonedUniquePtr<g_poisonA, Logger[]> ptr(a);
             ASSERT_EQ(0, aDestructCount);
             ASSERT_EQ(a, ptr.unpoisoned());
             ptr = nullptr;
@@ -299,8 +315,8 @@ TEST(WTF_PoisonedUniquePtrForNonTriviallyDestructibleArrays, Assignment)
         Logger* c = makeArray<Logger>(arraySize, "c", cDestructCount);
         Logger* d = makeArray<Logger>(arraySize, "d", dDestructCount);
         {
-            PoisonedUniquePtr<PoisonA, Logger[]> p1(a);
-            PoisonedUniquePtr<PoisonA, Logger[]> p2(b);
+            PoisonedUniquePtr<g_poisonA, Logger[]> p1(a);
+            PoisonedUniquePtr<g_poisonA, Logger[]> p2(b);
             ASSERT_EQ(0, aDestructCount);
             ASSERT_EQ(0, bDestructCount);
             ASSERT_EQ(a, p1.unpoisoned());
@@ -311,8 +327,8 @@ TEST(WTF_PoisonedUniquePtrForNonTriviallyDestructibleArrays, Assignment)
             ASSERT_EQ(b, p1.unpoisoned());
             ASSERT_EQ(nullptr, p2.unpoisoned());
 
-            PoisonedUniquePtr<PoisonA, Logger[]> p3(c);
-            PoisonedUniquePtr<PoisonB, Logger[]> p4(d);
+            PoisonedUniquePtr<g_poisonA, Logger[]> p3(c);
+            PoisonedUniquePtr<g_poisonB, Logger[]> p4(d);
             ASSERT_EQ(0, cDestructCount);
             ASSERT_EQ(0, dDestructCount);
             ASSERT_EQ(c, p3.unpoisoned());
@@ -333,7 +349,7 @@ TEST(WTF_PoisonedUniquePtrForNonTriviallyDestructibleArrays, Assignment)
         int aDestructCount = 0;
         Logger* a = makeArray<Logger>(arraySize, "a", aDestructCount);
         {
-            PoisonedUniquePtr<PoisonA, Logger[]> ptr(a);
+            PoisonedUniquePtr<g_poisonA, Logger[]> ptr(a);
             ASSERT_EQ(0, aDestructCount);
             ASSERT_EQ(a, ptr.unpoisoned());
             ptr = a;
@@ -347,7 +363,7 @@ TEST(WTF_PoisonedUniquePtrForNonTriviallyDestructibleArrays, Assignment)
         int aDestructCount = 0;
         Logger* a = makeArray<Logger>(arraySize, "a", aDestructCount);
         {
-            PoisonedUniquePtr<PoisonA, Logger[]> ptr(a);
+            PoisonedUniquePtr<g_poisonA, Logger[]> ptr(a);
             ASSERT_EQ(0, aDestructCount);
             ASSERT_EQ(a, ptr.unpoisoned());
 #if COMPILER(CLANG)
@@ -368,14 +384,16 @@ TEST(WTF_PoisonedUniquePtrForNonTriviallyDestructibleArrays, Assignment)
 
 TEST(WTF_PoisonedUniquePtrForNonTriviallyDestructibleArrays, Swap)
 {
+    initializePoisons();
+
     {
         int aDestructCount = 0;
         int bDestructCount = 0;
         Logger* a = makeArray<Logger>(arraySize, "a", aDestructCount);
         Logger* b = makeArray<Logger>(arraySize, "b", bDestructCount);
         {
-            PoisonedUniquePtr<PoisonA, Logger[]> p1 = a;
-            PoisonedUniquePtr<PoisonA, Logger[]> p2;
+            PoisonedUniquePtr<g_poisonA, Logger[]> p1 = a;
+            PoisonedUniquePtr<g_poisonA, Logger[]> p2;
             ASSERT_EQ(a, p1.unpoisoned());
             ASSERT_TRUE(!p2.bits());
             ASSERT_TRUE(!p2.unpoisoned());
@@ -385,8 +403,8 @@ TEST(WTF_PoisonedUniquePtrForNonTriviallyDestructibleArrays, Swap)
             ASSERT_TRUE(!p1.unpoisoned());
             ASSERT_EQ(a, p2.unpoisoned());
 
-            PoisonedUniquePtr<PoisonA, Logger[]> p3 = b;
-            PoisonedUniquePtr<PoisonB, Logger[]> p4;
+            PoisonedUniquePtr<g_poisonA, Logger[]> p3 = b;
+            PoisonedUniquePtr<g_poisonB, Logger[]> p4;
             ASSERT_EQ(b, p3.unpoisoned());
             ASSERT_TRUE(!p4.bits());
             ASSERT_TRUE(!p4.unpoisoned());
@@ -406,8 +424,8 @@ TEST(WTF_PoisonedUniquePtrForNonTriviallyDestructibleArrays, Swap)
         Logger* a = makeArray<Logger>(arraySize, "a", aDestructCount);
         Logger* b = makeArray<Logger>(arraySize, "b", bDestructCount);
         {
-            PoisonedUniquePtr<PoisonA, Logger[]> p1 = a;
-            PoisonedUniquePtr<PoisonA, Logger[]> p2;
+            PoisonedUniquePtr<g_poisonA, Logger[]> p1 = a;
+            PoisonedUniquePtr<g_poisonA, Logger[]> p2;
             ASSERT_EQ(a, p1.unpoisoned());
             ASSERT_TRUE(!p2.bits());
             ASSERT_TRUE(!p2.unpoisoned());
@@ -417,8 +435,8 @@ TEST(WTF_PoisonedUniquePtrForNonTriviallyDestructibleArrays, Swap)
             ASSERT_TRUE(!p1.unpoisoned());
             ASSERT_EQ(a, p2.unpoisoned());
 
-            PoisonedUniquePtr<PoisonA, Logger[]> p3 = b;
-            PoisonedUniquePtr<PoisonB, Logger[]> p4;
+            PoisonedUniquePtr<g_poisonA, Logger[]> p3 = b;
+            PoisonedUniquePtr<g_poisonB, Logger[]> p4;
             ASSERT_EQ(b, p3.unpoisoned());
             ASSERT_TRUE(!p4.bits());
             ASSERT_TRUE(!p4.unpoisoned());
@@ -433,13 +451,15 @@ TEST(WTF_PoisonedUniquePtrForNonTriviallyDestructibleArrays, Swap)
     }
 }
 
-static PoisonedUniquePtr<PoisonA, Logger[]> poisonedPtrFoo(Logger* array)
+static PoisonedUniquePtr<g_poisonA, Logger[]> poisonedPtrFoo(Logger* array)
 {
-    return PoisonedUniquePtr<PoisonA, Logger[]>(array);
+    return PoisonedUniquePtr<g_poisonA, Logger[]>(array);
 }
 
 TEST(WTF_PoisonedUniquePtrForNonTriviallyDestructibleArrays, ReturnValue)
 {
+    initializePoisons();
+
     {
         int aDestructCount = 0;
         Logger* a = makeArray<Logger>(arraySize, "a", aDestructCount);

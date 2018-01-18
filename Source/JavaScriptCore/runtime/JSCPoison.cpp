@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,23 +24,26 @@
  */
 
 #include "config.h"
-#include "JSCPoisonedPtr.h"
+#include "JSCPoison.h"
 
 #include <mutex>
+#include <wtf/HashSet.h>
 
 namespace JSC {
 
-uintptr_t g_globalDataPoison;
-uintptr_t g_jitCodePoison;
-uintptr_t g_nativeCodePoison;
+#define DEFINE_POISON(poisonID) \
+    uintptr_t POISON(poisonID);
+FOR_EACH_JSC_POISON(DEFINE_POISON)
 
 void initializePoison()
 {
     static std::once_flag initializeOnceFlag;
     std::call_once(initializeOnceFlag, [] {
-        g_globalDataPoison = makePoison();
-        g_jitCodePoison = makePoison();
-        g_nativeCodePoison = makePoison();
+
+#define INITIALIZE_POISON(poisonID) \
+    POISON(poisonID) = makePoison();
+
+        FOR_EACH_JSC_POISON(INITIALIZE_POISON)
     });
 }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2009-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,7 +26,7 @@
 #pragma once
 
 #include "ExecutableBase.h"
-#include "JSCPoisonedPtr.h"
+#include "JSCPoison.h"
 
 namespace JSC {
 namespace DOMJIT {
@@ -90,7 +90,7 @@ protected:
 
 private:
     friend class ExecutableBase;
-    using PoisonedNativeFunction = Poisoned<g_nativeCodePoison, NativeFunction>;
+    using PoisonedNativeFunction = Poisoned<POISON(NativeCode), NativeFunction>;
 
     NativeExecutable(VM&, NativeFunction function, NativeFunction constructor, Intrinsic, const DOMJIT::Signature*);
 

@@ -87,7 +87,7 @@ void adjustFrameAndStackInOSRExitCompilerThunk(MacroAssembler& jit, VM* vm, JITC
     // We need to make sure SP is correct in case of an exception.
     jit.loadPtr(MacroAssembler::Address(GPRInfo::callFrameRegister, CallFrameSlot::codeBlock * static_cast<int>(sizeof(Register))), GPRInfo::regT0);
     jit.loadPtr(MacroAssembler::Address(GPRInfo::regT0, CodeBlock::jitCodeOffset()), GPRInfo::regT0);
-    jit.xorPtr(MacroAssembler::TrustedImmPtr(CodeBlock::s_poison), GPRInfo::regT0);
+    jit.xorPtr(MacroAssembler::TrustedImmPtr(POISON(CodeBlock)), GPRInfo::regT0);
     jit.addPtr(MacroAssembler::TrustedImm32(JITCodeType::commonDataOffset()), GPRInfo::regT0);
     jit.load32(MacroAssembler::Address(GPRInfo::regT0, CommonData::frameRegisterCountOffset()), GPRInfo::regT0);
     // This does virtualRegisterForLocal(frameRegisterCount - 1)*sizeof(Register) where:

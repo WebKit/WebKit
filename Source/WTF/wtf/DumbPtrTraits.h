@@ -32,7 +32,7 @@ namespace WTF {
     
 template<typename T>
 struct DumbPtrTraits {
-    static constexpr uintptr_t poison = 0;
+    static uintptr_t poison() { return 0; }
 
     using StorageType = T*;
 

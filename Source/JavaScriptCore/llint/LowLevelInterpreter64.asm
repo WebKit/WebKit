@@ -45,7 +45,7 @@ macro dispatchAfterCall()
     loadi ArgumentCount + TagOffset[cfr], PC
     loadp CodeBlock[cfr], PB
     loadp CodeBlock::m_instructions[PB], PB
-    unpoison(CodeBlockPoison, PB)
+    unpoison(_g_CodeBlockPoison, PB, t1)
     loadisFromInstruction(1, t1)
     storeq r0, [cfr, t1, 8]
     valueProfile(r0, (CallOpCodeSize - 1), t3)
@@ -480,26 +480,17 @@ macro valueProfile(value, operand, scratch)
     storeq value, ValueProfile::m_buckets[scratch]
 end
 
-macro structureIDToStructureWithScratch(structureIDThenStructure, scratch)
+macro structureIDToStructureWithScratch(structureIDThenStructure, scratch, scratch2)
     loadp CodeBlock[cfr], scratch
     loadp CodeBlock::m_poisonedVM[scratch], scratch
-    unpoison(CodeBlockPoison, scratch)
+    unpoison(_g_CodeBlockPoison, scratch, scratch2)
     loadp VM::heap + Heap::m_structureIDTable + StructureIDTable::m_table[scratch], scratch
     loadp [scratch, structureIDThenStructure, 8], structureIDThenStructure
 end
 
-macro loadStructureWithScratch(cell, structure, scratch)
+macro loadStructureWithScratch(cell, structure, scratch, scratch2)
     loadi JSCell::m_structureID[cell], structure
-    structureIDToStructureWithScratch(structure, scratch)
-end
-
-macro loadStructureAndClobberFirstArg(cell, structure)
-    loadi JSCell::m_structureID[cell], structure
-    loadp CodeBlock[cfr], cell
-    loadp CodeBlock::m_poisonedVM[cell], cell
-    unpoison(CodeBlockPoison, cell)
-    loadp VM::heap + Heap::m_structureIDTable + StructureIDTable::m_table[cell], cell
-    loadp [cell, structure, 8], structure
+    structureIDToStructureWithScratch(structure, scratch, scratch2)
 end
 
 # Entrypoints into the interpreter.
@@ -562,7 +553,7 @@ macro functionArityCheck(doneLabel, slowPath)
     # Reload CodeBlock and reset PC, since the slow_path clobbered them.
     loadp CodeBlock[cfr], t1
     loadp CodeBlock::m_instructions[t1], PB
-    unpoison(CodeBlockPoison, PB)
+    unpoison(_g_CodeBlockPoison, PB, t2)
     move 0, PC
     jmp doneLabel
 end
@@ -641,7 +632,7 @@ _llint_op_to_this:
     loadq [cfr, t0, 8], t0
     btqnz t0, tagMask, .opToThisSlow
     bbneq JSCell::m_type[t0], FinalObjectType, .opToThisSlow
-    loadStructureWithScratch(t0, t1, t2)
+    loadStructureWithScratch(t0, t1, t2, t3)
     loadpFromInstruction(2, t2)
     bpneq t1, t2, .opToThisSlow
     dispatch(constexpr op_to_this_length)
@@ -724,7 +715,7 @@ macro equalNullComparison()
     move 0, t0
     jmp .done
 .masqueradesAsUndefined:
-    loadStructureWithScratch(t0, t2, t1)
+    loadStructureWithScratch(t0, t2, t1, t3)
     loadp CodeBlock[cfr], t0
     loadp CodeBlock::m_globalObject[t0], t0
     cpeq Structure::m_globalObject[t2], t0, t0
@@ -1163,7 +1154,7 @@ _llint_op_is_undefined:
     storeq t1, [cfr, t2, 8]
     dispatch(constexpr op_is_undefined_length)
 .masqueradesAsUndefined:
-    loadStructureWithScratch(t0, t3, t1)
+    loadStructureWithScratch(t0, t3, t1, t5)
     loadp CodeBlock[cfr], t1
     loadp CodeBlock::m_globalObject[t1], t1
     cpeq Structure::m_globalObject[t3], t1, t0
@@ -1433,7 +1424,7 @@ _llint_op_put_by_id:
     loadp StructureChain::m_vector[t3], t3
     assert(macro (ok) btpnz t3, ok end)
 
-    structureIDToStructureWithScratch(t2, t1)
+    structureIDToStructureWithScratch(t2, t1, t5)
     loadq Structure::m_prototype[t2], t2
     bqeq t2, ValueNull, .opPutByIdTransitionChainDone
 .opPutByIdTransitionChainLoop:
@@ -1740,7 +1731,7 @@ macro equalNull(cellHandler, immediateHandler)
     assertNotConstant(t0)
     loadq [cfr, t0, 8], t0
     btqnz t0, tagMask, .immediate
-    loadStructureWithScratch(t0, t2, t1)
+    loadStructureWithScratch(t0, t2, t1, t3)
     cellHandler(t2, JSCell::m_flags[t0], .target)
     dispatch(3)
 
@@ -1954,7 +1945,7 @@ macro doCall(slowPath, prepareCall)
     storei t2, ArgumentCount + PayloadOffset[t3]
     move t3, sp
     if POISON
-        loadp _g_jitCodePoison, t2
+        loadp _g_JITCodePoison, t2
         xorp LLIntCallLinkInfo::machineCodeTarget[t1], t2
         prepareCall(t2, t1, t3, t4)
         callTargetFunction(t2)
@@ -2007,7 +1998,7 @@ _llint_op_catch:
 
     loadp CodeBlock[cfr], PB
     loadp CodeBlock::m_instructions[PB], PB
-    unpoison(CodeBlockPoison, PB)
+    unpoison(_g_CodeBlockPoison, PB, t2)
     loadp VM::targetInterpreterPCForThrow[t3], PC
     subp PB, PC
     rshiftp 3, PC
@@ -2084,7 +2075,7 @@ macro nativeCallTrampoline(executableOffsetToFunction)
     loadp JSFunction::m_executable[t1], t1
     checkStackPointerAlignment(t3, 0xdead0001)
     if C_LOOP
-        loadp _g_nativeCodePoison, t2
+        loadp _g_NativeCodePoison, t2
         xorp executableOffsetToFunction[t1], t2
         cloopCallNative t2
     else
@@ -2093,7 +2084,7 @@ macro nativeCallTrampoline(executableOffsetToFunction)
             call executableOffsetToFunction[t1]
             addp 32, sp
         else
-            loadp _g_nativeCodePoison, t2
+            loadp _g_NativeCodePoison, t2
             xorp executableOffsetToFunction[t1], t2
             call t2
         end
@@ -2127,7 +2118,7 @@ macro internalFunctionCallTrampoline(offsetOfFunction)
     loadp Callee[cfr], t1
     checkStackPointerAlignment(t3, 0xdead0001)
     if C_LOOP
-        loadp _g_nativeCodePoison, t2
+        loadp _g_NativeCodePoison, t2
         xorp offsetOfFunction[t1], t2
         cloopCallNative t2
     else
@@ -2136,7 +2127,7 @@ macro internalFunctionCallTrampoline(offsetOfFunction)
             call offsetOfFunction[t1]
             addp 32, sp
         else
-            loadp _g_nativeCodePoison, t2
+            loadp _g_NativeCodePoison, t2
             xorp offsetOfFunction[t1], t2
             call t2
         end
@@ -2247,7 +2238,7 @@ _llint_op_resolve_scope:
 macro loadWithStructureCheck(operand, slowPath)
     loadisFromInstruction(operand, t0)
     loadq [cfr, t0, 8], t0
-    loadStructureWithScratch(t0, t2, t1)
+    loadStructureWithScratch(t0, t2, t1, t3)
     loadpFromInstruction(5, t1)
     bpneq t2, t1, slowPath
 end
@@ -2500,7 +2491,7 @@ _llint_op_profile_type:
     traceExecution()
     loadp CodeBlock[cfr], t1
     loadp CodeBlock::m_poisonedVM[t1], t1
-    unpoison(CodeBlockPoison, t1)
+    unpoison(_g_CodeBlockPoison, t1, t3)
     # t1 is holding the pointer to the typeProfilerLog.
     loadp VM::m_typeProfilerLog[t1], t1
     # t2 is holding the pointer to the current log entry.

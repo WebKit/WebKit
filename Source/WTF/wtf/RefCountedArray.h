@@ -63,7 +63,7 @@ public:
     explicit RefCountedArray(size_t size)
     {
         if (!size) {
-            m_data = 0;
+            PtrTraits::exchange(m_data, nullptr);
             return;
         }
 
@@ -90,7 +90,7 @@ public:
     explicit RefCountedArray(const Vector<T, inlineCapacity, OverflowHandler>& other)
     {
         if (other.isEmpty()) {
-            m_data = 0;
+            PtrTraits::exchange(m_data, nullptr);
             return;
         }
         
@@ -238,10 +238,10 @@ private:
     typename PtrTraits::StorageType m_data { nullptr };
 };
 
-template<uint32_t key, typename T> struct ConstExprPoisonedPtrTraits;
+template<uintptr_t& key, typename T> struct PoisonedPtrTraits;
 
-template<uint32_t key, typename T>
-using PoisonedRefCountedArray = RefCountedArray<T, ConstExprPoisonedPtrTraits<key, T>>;
+template<uintptr_t& key, typename T>
+using PoisonedRefCountedArray = RefCountedArray<T, PoisonedPtrTraits<key, T>>;
 
 } // namespace WTF
 

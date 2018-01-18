@@ -187,8 +187,8 @@ public:
 
 private:
     friend class SingleSlotTransitionWeakOwner;
-    using PoisonedTransitionMapPtr = ConstExprPoisoned<StructureTransitionTablePoison, TransitionMap*>;
-    using PoisonedWeakImplPtr = ConstExprPoisoned<StructureTransitionTablePoison, WeakImpl*>;
+    using PoisonedTransitionMapPtr = Poisoned<POISON(StructureTransitionTable), TransitionMap*>;
+    using PoisonedWeakImplPtr = Poisoned<POISON(StructureTransitionTable), WeakImpl*>;
 
     bool isUsingSingleSlot() const
     {
@@ -198,13 +198,13 @@ private:
     TransitionMap* map() const
     {
         ASSERT(!isUsingSingleSlot());
-        return PoisonedTransitionMapPtr(m_data).unpoisoned();
+        return PoisonedTransitionMapPtr(AlreadyPoisoned, m_data).unpoisoned();
     }
 
     WeakImpl* weakImpl() const
     {
         ASSERT(isUsingSingleSlot());
-        return PoisonedWeakImplPtr(m_data & ~UsingSingleSlotFlag).unpoisoned();
+        return PoisonedWeakImplPtr(AlreadyPoisoned, m_data & ~UsingSingleSlotFlag).unpoisoned();
     }
 
     void setMap(TransitionMap* map)

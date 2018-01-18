@@ -35,38 +35,8 @@ namespace WTF {
 
 namespace {
 struct DummyStruct { };
-const uint32_t dummyPoison = 0xffff;
+uintptr_t dummyPoison = 0;
 }
-
-#if ENABLE(POISON)
-static_assert(!(makeConstExprPoison(1) >> 48), "poisoned bits should look like a pointer.");
-static_assert(!(makeConstExprPoison(100) >> 48), "poisoned bits should look like a pointer.");
-static_assert(!(makeConstExprPoison(1000) >> 48), "poisoned bits should look like a pointer.");
-static_assert(!(makeConstExprPoison(10000) >> 48), "poisoned bits should look like a pointer.");
-static_assert(!(makeConstExprPoison(1000000) >> 48), "poisoned bits should look like a pointer.");
-static_assert(!(makeConstExprPoison(0xffffffff) >> 48), "poisoned bits should look like a pointer.");
-
-static_assert((makeConstExprPoison(1) >> 32), "bits 32-47 of poisoned bits should not be not completely 0.");
-static_assert((makeConstExprPoison(100) >> 32), "bits 32-47 of poisoned bits should not be not completely 0.");
-static_assert((makeConstExprPoison(1000) >> 32), "bits 32-47 of poisoned bits should not be not completely 0.");
-static_assert((makeConstExprPoison(10000) >> 32), "bits 32-47 of poisoned bits should not be not completely 0.");
-static_assert((makeConstExprPoison(1000000) >> 32), "bits 32-47 of poisoned bits should not be not completely 0.");
-static_assert((makeConstExprPoison(0xffffffff) >> 32), "bits 32-47 of poisoned bits should not be not completely 0.");
-
-static_assert((makeConstExprPoison(1) & 0x4), "bit 2 should always be set.");
-static_assert((makeConstExprPoison(100) & 0x4), "bit 2 should always be set.");
-static_assert((makeConstExprPoison(1000) & 0x4), "bit 2 should always be set.");
-static_assert((makeConstExprPoison(10000) & 0x4), "bit 2 should always be set.");
-static_assert((makeConstExprPoison(1000000) & 0x4), "bit 2 should always be set.");
-static_assert((makeConstExprPoison(0xffffffff) & 0x4), "bit 2 should always be set.");
-
-static_assert(!(makeConstExprPoison(1) & 0x3), "ensure bottom 2 alignment bits are available for use as flag bits.");
-static_assert(!(makeConstExprPoison(100) & 0x3), "ensure bottom 2 alignment bits are available for use as flag bits.");
-static_assert(!(makeConstExprPoison(1000) & 0x3), "ensure bottom 2 alignment bits are available for use as flag bits.");
-static_assert(!(makeConstExprPoison(10000) & 0x3), "ensure bottom 2 alignment bits are available for use as flag bits.");
-static_assert(!(makeConstExprPoison(1000000) & 0x3), "ensure bottom 2 alignment bits are available for use as flag bits.");
-static_assert(!(makeConstExprPoison(0xffffffff) & 0x3), "ensure bottom 2 alignment bits are available for use as flag bits.");
-#endif // ENABLE(POISON)
 
 static_assert(sizeof(Bag<DummyStruct>) == sizeof(void*), "");
 static_assert(sizeof(PoisonedBag<dummyPoison, DummyStruct>) == sizeof(void*), "");

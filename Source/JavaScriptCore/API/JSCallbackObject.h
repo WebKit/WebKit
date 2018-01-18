@@ -28,7 +28,6 @@
 #define JSCallbackObject_h
 
 #include "JSCPoison.h"
-#include "JSCPoisonedPtr.h"
 #include "JSObjectRef.h"
 #include "JSValueRef.h"
 #include "JSObject.h"
@@ -235,7 +234,7 @@ private:
     static EncodedJSValue staticFunctionGetter(ExecState*, EncodedJSValue, PropertyName);
     static EncodedJSValue callbackGetter(ExecState*, EncodedJSValue, PropertyName);
 
-    WTF::PoisonedUniquePtr<JSCallbackObjectPoison, JSCallbackObjectData> m_callbackObjectData;
+    WTF::PoisonedUniquePtr<POISON(JSCallbackObject), JSCallbackObjectData> m_callbackObjectData;
     PoisonedClassInfoPtr m_classInfo;
 };
 

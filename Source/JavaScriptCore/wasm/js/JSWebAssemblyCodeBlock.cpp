@@ -51,7 +51,7 @@ JSWebAssemblyCodeBlock::JSWebAssemblyCodeBlock(VM& vm, Ref<Wasm::CodeBlock>&& co
     : Base(vm, vm.webAssemblyCodeBlockStructure.get())
     , m_codeBlock(WTFMove(codeBlock))
 {
-    m_unconditionalFinalizer = PoisonedUniquePtr<JSWebAssemblyCodeBlockPoison, UnconditionalFinalizer>::create(*this);
+    m_unconditionalFinalizer = PoisonedUniquePtr<POISON(JSWebAssemblyCodeBlock), UnconditionalFinalizer>::create(*this);
 
     // FIXME: We should not need to do this synchronously.
     // https://bugs.webkit.org/show_bug.cgi?id=170567

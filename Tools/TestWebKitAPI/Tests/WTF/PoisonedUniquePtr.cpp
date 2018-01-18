@@ -25,14 +25,26 @@
 
 #include "config.h"
 
+#include <mutex>
 #include <wtf/PoisonedUniquePtr.h>
 
 namespace TestWebKitAPI {
 
 namespace {
 
-const uint32_t PoisonA = 0xaaaa;
-const uint32_t PoisonB = 0xbbbb;
+uintptr_t g_poisonA;
+uintptr_t g_poisonB;
+
+static void initializePoisons()
+{
+    static std::once_flag initializeOnceFlag;
+    std::call_once(initializeOnceFlag, [] {
+        // Make sure we get 2 different poison values.
+        g_poisonA = makePoison();
+        while (!g_poisonB || g_poisonB == g_poisonA)
+            g_poisonB = makePoison();
+    });
+}
 
 struct Logger {
     Logger(const char* name, int& destructCount)
@@ -61,13 +73,15 @@ struct Other {
 
 TEST(WTF_PoisonedUniquePtr, Basic)
 {
+    initializePoisons();
+
     {
-        PoisonedUniquePtr<PoisonA, Logger> empty;
+        PoisonedUniquePtr<g_poisonA, Logger> empty;
         ASSERT_EQ(nullptr, empty.unpoisoned());
         ASSERT_EQ(0u, empty.bits());
     }
     {
-        PoisonedUniquePtr<PoisonA, Logger> empty(nullptr);
+        PoisonedUniquePtr<g_poisonA, Logger> empty(nullptr);
         ASSERT_EQ(nullptr, empty.unpoisoned());
         ASSERT_EQ(0u, empty.bits());
     }
@@ -76,7 +90,7 @@ TEST(WTF_PoisonedUniquePtr, Basic)
         int aDestructCount = 0;
         Logger* a = new Logger("a", aDestructCount);
         {
-            PoisonedUniquePtr<PoisonA, Logger> ptr(a);
+            PoisonedUniquePtr<g_poisonA, Logger> ptr(a);
             ASSERT_EQ(0, aDestructCount);
             ASSERT_EQ(a, ptr.unpoisoned());
             ASSERT_EQ(a, &*ptr);
@@ -87,7 +101,7 @@ TEST(WTF_PoisonedUniquePtr, Basic)
             std::memcpy(&ptrBits, &ptr, sizeof(ptrBits));
             ASSERT_TRUE(ptrBits != bitwise_cast<uintptr_t>(a));
 #if ENABLE(POISON_ASSERTS)
-            ASSERT_TRUE((PoisonedUniquePtr<PoisonA, Logger>::isPoisoned(ptrBits)));
+            ASSERT_TRUE((PoisonedUniquePtr<g_poisonA, Logger>::isPoisoned(ptrBits)));
 #endif
 #endif // ENABLE(POISON)
         }
@@ -96,7 +110,7 @@ TEST(WTF_PoisonedUniquePtr, Basic)
         int bDestructCount = 0;
         DerivedLogger* b = new DerivedLogger("b", bDestructCount);
         {
-            PoisonedUniquePtr<PoisonA, Logger> ptr(b);
+            PoisonedUniquePtr<g_poisonA, Logger> ptr(b);
             ASSERT_EQ(0, bDestructCount);
             ASSERT_EQ(b, ptr.unpoisoned());
             ASSERT_EQ(b, &*ptr);
@@ -109,7 +123,7 @@ TEST(WTF_PoisonedUniquePtr, Basic)
         int aDestructCount = 0;
         Logger* a = new Logger("a", aDestructCount);
         {
-            PoisonedUniquePtr<PoisonA, Logger> ptr = a;
+            PoisonedUniquePtr<g_poisonA, Logger> ptr = a;
             ASSERT_EQ(0, aDestructCount);
             ASSERT_EQ(a, ptr.unpoisoned());
         }
@@ -118,7 +132,7 @@ TEST(WTF_PoisonedUniquePtr, Basic)
         int bDestructCount = 0;
         DerivedLogger* b = new DerivedLogger("b", bDestructCount);
         {
-            PoisonedUniquePtr<PoisonA, Logger> ptr = b;
+            PoisonedUniquePtr<g_poisonA, Logger> ptr = b;
             ASSERT_EQ(0, bDestructCount);
             ASSERT_EQ(b, ptr.unpoisoned());
         }
@@ -129,7 +143,7 @@ TEST(WTF_PoisonedUniquePtr, Basic)
         int aDestructCount = 0;
         const char* aName = "a";
         {
-            PoisonedUniquePtr<PoisonA, Logger> ptr = PoisonedUniquePtr<PoisonA, Logger>::create(aName, aDestructCount);
+            PoisonedUniquePtr<g_poisonA, Logger> ptr = PoisonedUniquePtr<g_poisonA, Logger>::create(aName, aDestructCount);
             ASSERT_EQ(0, aDestructCount);
             ASSERT_TRUE(nullptr != ptr.unpoisoned());
             ASSERT_EQ(aName, &ptr->name);
@@ -139,7 +153,7 @@ TEST(WTF_PoisonedUniquePtr, Basic)
         int bDestructCount = 0;
         const char* bName = "b";
         {
-            PoisonedUniquePtr<PoisonA, Logger> ptr = PoisonedUniquePtr<PoisonA, DerivedLogger>::create(bName, bDestructCount);
+            PoisonedUniquePtr<g_poisonA, Logger> ptr = PoisonedUniquePtr<g_poisonA, DerivedLogger>::create(bName, bDestructCount);
             ASSERT_EQ(0, bDestructCount);
             ASSERT_TRUE(nullptr != ptr.unpoisoned());
             ASSERT_EQ(bName, &ptr->name);
@@ -151,7 +165,7 @@ TEST(WTF_PoisonedUniquePtr, Basic)
         int aDestructCount = 0;
         const char* aName = "a";
         {
-            PoisonedUniquePtr<PoisonA, Logger> ptr = makePoisonedUnique<PoisonA, Logger>(aName, aDestructCount);
+            PoisonedUniquePtr<g_poisonA, Logger> ptr = makePoisonedUnique<g_poisonA, Logger>(aName, aDestructCount);
             ASSERT_EQ(0, aDestructCount);
             ASSERT_TRUE(nullptr != ptr.unpoisoned());
             ASSERT_EQ(aName, &ptr->name);
@@ -161,7 +175,7 @@ TEST(WTF_PoisonedUniquePtr, Basic)
         int bDestructCount = 0;
         const char* bName = "b";
         {
-            PoisonedUniquePtr<PoisonA, Logger> ptr = makePoisonedUnique<PoisonA, DerivedLogger>(bName, bDestructCount);
+            PoisonedUniquePtr<g_poisonA, Logger> ptr = makePoisonedUnique<g_poisonA, DerivedLogger>(bName, bDestructCount);
             ASSERT_EQ(0, bDestructCount);
             ASSERT_TRUE(nullptr != ptr.unpoisoned());
             ASSERT_EQ(bName, &ptr->name);
@@ -171,7 +185,7 @@ TEST(WTF_PoisonedUniquePtr, Basic)
         int uniqueDestructCount = 0;
         const char* uniqueName = "unique";
         {
-            PoisonedUniquePtr<PoisonA, DerivedLogger> ptr = std::make_unique<DerivedLogger>(uniqueName, uniqueDestructCount);
+            PoisonedUniquePtr<g_poisonA, DerivedLogger> ptr = std::make_unique<DerivedLogger>(uniqueName, uniqueDestructCount);
             ASSERT_EQ(0, uniqueDestructCount);
             ASSERT_TRUE(nullptr != ptr.unpoisoned());
             ASSERT_EQ(uniqueName, &ptr->name);
@@ -181,7 +195,7 @@ TEST(WTF_PoisonedUniquePtr, Basic)
         int uniqueDerivedDestructCount = 0;
         const char* uniqueDerivedName = "unique derived";
         {
-            PoisonedUniquePtr<PoisonA, Logger> ptr = std::make_unique<DerivedLogger>(uniqueDerivedName, uniqueDerivedDestructCount);
+            PoisonedUniquePtr<g_poisonA, Logger> ptr = std::make_unique<DerivedLogger>(uniqueDerivedName, uniqueDerivedDestructCount);
             ASSERT_EQ(0, uniqueDerivedDestructCount);
             ASSERT_TRUE(nullptr != ptr.unpoisoned());
             ASSERT_EQ(uniqueDerivedName, &ptr->name);
@@ -195,15 +209,15 @@ TEST(WTF_PoisonedUniquePtr, Basic)
         Logger* a = new Logger("a", aDestructCount);
         Logger* b = new Logger("b", bDestructCount);
         {
-            PoisonedUniquePtr<PoisonA, Logger> p1 = a;
-            PoisonedUniquePtr<PoisonA, Logger> p2 = WTFMove(p1);
+            PoisonedUniquePtr<g_poisonA, Logger> p1 = a;
+            PoisonedUniquePtr<g_poisonA, Logger> p2 = WTFMove(p1);
             ASSERT_EQ(aDestructCount, 0);
             ASSERT_EQ(nullptr, p1.unpoisoned());
             ASSERT_EQ(0u, p1.bits());
             ASSERT_EQ(a, p2.unpoisoned());
 
-            PoisonedUniquePtr<PoisonA, Logger> p3 = b;
-            PoisonedUniquePtr<PoisonB, Logger> p4 = WTFMove(p3);
+            PoisonedUniquePtr<g_poisonA, Logger> p3 = b;
+            PoisonedUniquePtr<g_poisonB, Logger> p4 = WTFMove(p3);
             ASSERT_EQ(0, bDestructCount);
             ASSERT_EQ(nullptr, p3.unpoisoned());
             ASSERT_EQ(0u, p3.bits());
@@ -219,15 +233,15 @@ TEST(WTF_PoisonedUniquePtr, Basic)
         Logger* a = new Logger("a", aDestructCount);
         Logger* b = new Logger("b", bDestructCount);
         {
-            PoisonedUniquePtr<PoisonA, Logger> p1 = a;
-            PoisonedUniquePtr<PoisonA, Logger> p2(WTFMove(p1));
+            PoisonedUniquePtr<g_poisonA, Logger> p1 = a;
+            PoisonedUniquePtr<g_poisonA, Logger> p2(WTFMove(p1));
             ASSERT_EQ(0, aDestructCount);
             ASSERT_EQ(nullptr, p1.unpoisoned());
             ASSERT_EQ(0u, p1.bits());
             ASSERT_EQ(a, p2.unpoisoned());
 
-            PoisonedUniquePtr<PoisonA, Logger> p3 = b;
-            PoisonedUniquePtr<PoisonB, Logger> p4(WTFMove(p3));
+            PoisonedUniquePtr<g_poisonA, Logger> p3 = b;
+            PoisonedUniquePtr<g_poisonB, Logger> p4(WTFMove(p3));
             ASSERT_EQ(0, bDestructCount);
             ASSERT_EQ(nullptr, p3.unpoisoned());
             ASSERT_EQ(0u, p3.bits());
@@ -243,15 +257,15 @@ TEST(WTF_PoisonedUniquePtr, Basic)
         DerivedLogger* a = new DerivedLogger("a", aDestructCount);
         DerivedLogger* b = new DerivedLogger("b", bDestructCount);
         {
-            PoisonedUniquePtr<PoisonA, Logger> p1 = a;
-            PoisonedUniquePtr<PoisonA, Logger> p2 = WTFMove(p1);
+            PoisonedUniquePtr<g_poisonA, Logger> p1 = a;
+            PoisonedUniquePtr<g_poisonA, Logger> p2 = WTFMove(p1);
             ASSERT_EQ(aDestructCount, 0);
             ASSERT_TRUE(!p1.unpoisoned());
             ASSERT_TRUE(!p1.bits());
             ASSERT_EQ(a, p2.unpoisoned());
 
-            PoisonedUniquePtr<PoisonA, Logger> p3 = b;
-            PoisonedUniquePtr<PoisonB, Logger> p4 = WTFMove(p3);
+            PoisonedUniquePtr<g_poisonA, Logger> p3 = b;
+            PoisonedUniquePtr<g_poisonB, Logger> p4 = WTFMove(p3);
             ASSERT_EQ(bDestructCount, 0);
             ASSERT_TRUE(!p3.unpoisoned());
             ASSERT_TRUE(!p3.bits());
@@ -267,15 +281,15 @@ TEST(WTF_PoisonedUniquePtr, Basic)
         DerivedLogger* a = new DerivedLogger("a", aDestructCount);
         DerivedLogger* b = new DerivedLogger("b", bDestructCount);
         {
-            PoisonedUniquePtr<PoisonA, Logger> p1 = a;
-            PoisonedUniquePtr<PoisonA, Logger> p2(WTFMove(p1));
+            PoisonedUniquePtr<g_poisonA, Logger> p1 = a;
+            PoisonedUniquePtr<g_poisonA, Logger> p2(WTFMove(p1));
             ASSERT_EQ(aDestructCount, 0);
             ASSERT_TRUE(!p1.unpoisoned());
             ASSERT_TRUE(!p1.bits());
             ASSERT_EQ(a, p2.unpoisoned());
 
-            PoisonedUniquePtr<PoisonA, Logger> p3 = b;
-            PoisonedUniquePtr<PoisonB, Logger> p4(WTFMove(p3));
+            PoisonedUniquePtr<g_poisonA, Logger> p3 = b;
+            PoisonedUniquePtr<g_poisonB, Logger> p4(WTFMove(p3));
             ASSERT_EQ(bDestructCount, 0);
             ASSERT_TRUE(!p3.unpoisoned());
             ASSERT_TRUE(!p3.bits());
@@ -289,7 +303,7 @@ TEST(WTF_PoisonedUniquePtr, Basic)
         int aDestructCount = 0;
         Logger* a = new Logger("a", aDestructCount);
         {
-            PoisonedUniquePtr<PoisonA, Logger> ptr(a);
+            PoisonedUniquePtr<g_poisonA, Logger> ptr(a);
             ASSERT_EQ(a, ptr.unpoisoned());
             ptr.clear();
             ASSERT_TRUE(!ptr.unpoisoned());
@@ -302,13 +316,15 @@ TEST(WTF_PoisonedUniquePtr, Basic)
 
 TEST(WTF_PoisonedUniquePtr, Assignment)
 {
+    initializePoisons();
+
     {
         int aDestructCount = 0;
         int bDestructCount = 0;
         Logger* a = new Logger("a", aDestructCount);
         Logger* b = new Logger("b", bDestructCount);
         {
-            PoisonedUniquePtr<PoisonA, Logger> ptr(a);
+            PoisonedUniquePtr<g_poisonA, Logger> ptr(a);
             ASSERT_EQ(0, aDestructCount);
             ASSERT_EQ(0, bDestructCount);
             ASSERT_EQ(a, ptr.unpoisoned());
@@ -325,7 +341,7 @@ TEST(WTF_PoisonedUniquePtr, Assignment)
         int aDestructCount = 0;
         Logger* a = new Logger("a", aDestructCount);
         {
-            PoisonedUniquePtr<PoisonA, Logger> ptr(a);
+            PoisonedUniquePtr<g_poisonA, Logger> ptr(a);
             ASSERT_EQ(0, aDestructCount);
             ASSERT_EQ(a, ptr.unpoisoned());
             ptr = nullptr;
@@ -345,8 +361,8 @@ TEST(WTF_PoisonedUniquePtr, Assignment)
         Logger* c = new Logger("c", cDestructCount);
         Logger* d = new Logger("d", dDestructCount);
         {
-            PoisonedUniquePtr<PoisonA, Logger> p1(a);
-            PoisonedUniquePtr<PoisonA, Logger> p2(b);
+            PoisonedUniquePtr<g_poisonA, Logger> p1(a);
+            PoisonedUniquePtr<g_poisonA, Logger> p2(b);
             ASSERT_EQ(0, aDestructCount);
             ASSERT_EQ(0, bDestructCount);
             ASSERT_EQ(a, p1.unpoisoned());
@@ -357,8 +373,8 @@ TEST(WTF_PoisonedUniquePtr, Assignment)
             ASSERT_EQ(b, p1.unpoisoned());
             ASSERT_EQ(nullptr, p2.unpoisoned());
 
-            PoisonedUniquePtr<PoisonA, Logger> p3(c);
-            PoisonedUniquePtr<PoisonB, Logger> p4(d);
+            PoisonedUniquePtr<g_poisonA, Logger> p3(c);
+            PoisonedUniquePtr<g_poisonB, Logger> p4(d);
             ASSERT_EQ(0, cDestructCount);
             ASSERT_EQ(0, dDestructCount);
             ASSERT_EQ(c, p3.unpoisoned());
@@ -381,7 +397,7 @@ TEST(WTF_PoisonedUniquePtr, Assignment)
         DerivedLogger* a = new DerivedLogger("a", aDestructCount);
         DerivedLogger* b = new DerivedLogger("b", bDestructCount);
         {
-            PoisonedUniquePtr<PoisonA, Logger> ptr(a);
+            PoisonedUniquePtr<g_poisonA, Logger> ptr(a);
             ASSERT_EQ(0, aDestructCount);
             ASSERT_EQ(0, bDestructCount);
             ASSERT_EQ(a, ptr.unpoisoned());
@@ -404,8 +420,8 @@ TEST(WTF_PoisonedUniquePtr, Assignment)
         DerivedLogger* c = new DerivedLogger("c", cDestructCount);
         DerivedLogger* d = new DerivedLogger("d", dDestructCount);
         {
-            PoisonedUniquePtr<PoisonA, Logger> p1(a);
-            PoisonedUniquePtr<PoisonA, DerivedLogger> p2(b);
+            PoisonedUniquePtr<g_poisonA, Logger> p1(a);
+            PoisonedUniquePtr<g_poisonA, DerivedLogger> p2(b);
             ASSERT_EQ(0, aDestructCount);
             ASSERT_EQ(0, bDestructCount);
             ASSERT_EQ(a, p1.unpoisoned());
@@ -416,8 +432,8 @@ TEST(WTF_PoisonedUniquePtr, Assignment)
             ASSERT_EQ(b, p1.unpoisoned());
             ASSERT_EQ(nullptr, p2.unpoisoned());
 
-            PoisonedUniquePtr<PoisonA, Logger> p3(c);
-            PoisonedUniquePtr<PoisonB, DerivedLogger> p4(d);
+            PoisonedUniquePtr<g_poisonA, Logger> p3(c);
+            PoisonedUniquePtr<g_poisonB, DerivedLogger> p4(d);
             ASSERT_EQ(0, cDestructCount);
             ASSERT_EQ(0, dDestructCount);
             ASSERT_EQ(c, p3.unpoisoned());
@@ -438,7 +454,7 @@ TEST(WTF_PoisonedUniquePtr, Assignment)
         int aDestructCount = 0;
         Logger* a = new Logger("a", aDestructCount);
         {
-            PoisonedUniquePtr<PoisonA, Logger> ptr(a);
+            PoisonedUniquePtr<g_poisonA, Logger> ptr(a);
             ASSERT_EQ(0, aDestructCount);
             ASSERT_EQ(a, ptr.unpoisoned());
             ptr = a;
@@ -452,7 +468,7 @@ TEST(WTF_PoisonedUniquePtr, Assignment)
         int aDestructCount = 0;
         Logger* a = new Logger("a", aDestructCount);
         {
-            PoisonedUniquePtr<PoisonA, Logger> ptr(a);
+            PoisonedUniquePtr<g_poisonA, Logger> ptr(a);
             ASSERT_EQ(0, aDestructCount);
             ASSERT_EQ(a, ptr.unpoisoned());
 #if COMPILER(CLANG)
@@ -473,14 +489,16 @@ TEST(WTF_PoisonedUniquePtr, Assignment)
 
 TEST(WTF_PoisonedUniquePtr, Swap)
 {
+    initializePoisons();
+
     {
         int aDestructCount = 0;
         int bDestructCount = 0;
         Logger* a = new Logger("a", aDestructCount);
         Logger* b = new Logger("b", bDestructCount);
         {
-            PoisonedUniquePtr<PoisonA, Logger> p1 = a;
-            PoisonedUniquePtr<PoisonA, Logger> p2;
+            PoisonedUniquePtr<g_poisonA, Logger> p1 = a;
+            PoisonedUniquePtr<g_poisonA, Logger> p2;
             ASSERT_EQ(a, p1.unpoisoned());
             ASSERT_TRUE(!p2.bits());
             ASSERT_TRUE(!p2.unpoisoned());
@@ -490,8 +508,8 @@ TEST(WTF_PoisonedUniquePtr, Swap)
             ASSERT_TRUE(!p1.unpoisoned());
             ASSERT_EQ(a, p2.unpoisoned());
 
-            PoisonedUniquePtr<PoisonA, Logger> p3 = b;
-            PoisonedUniquePtr<PoisonB, Logger> p4;
+            PoisonedUniquePtr<g_poisonA, Logger> p3 = b;
+            PoisonedUniquePtr<g_poisonB, Logger> p4;
             ASSERT_EQ(b, p3.unpoisoned());
             ASSERT_TRUE(!p4.bits());
             ASSERT_TRUE(!p4.unpoisoned());
@@ -511,8 +529,8 @@ TEST(WTF_PoisonedUniquePtr, Swap)
         Logger* a = new Logger("a", aDestructCount);
         Logger* b = new Logger("b", bDestructCount);
         {
-            PoisonedUniquePtr<PoisonA, Logger> p1 = a;
-            PoisonedUniquePtr<PoisonA, Logger> p2;
+            PoisonedUniquePtr<g_poisonA, Logger> p1 = a;
+            PoisonedUniquePtr<g_poisonA, Logger> p2;
             ASSERT_EQ(a, p1.unpoisoned());
             ASSERT_TRUE(!p2.bits());
             ASSERT_TRUE(!p2.unpoisoned());
@@ -522,8 +540,8 @@ TEST(WTF_PoisonedUniquePtr, Swap)
             ASSERT_TRUE(!p1.unpoisoned());
             ASSERT_EQ(a, p2.unpoisoned());
 
-            PoisonedUniquePtr<PoisonA, Logger> p3 = b;
-            PoisonedUniquePtr<PoisonB, Logger> p4;
+            PoisonedUniquePtr<g_poisonA, Logger> p3 = b;
+            PoisonedUniquePtr<g_poisonB, Logger> p4;
             ASSERT_EQ(b, p3.unpoisoned());
             ASSERT_TRUE(!p4.bits());
             ASSERT_TRUE(!p4.unpoisoned());
@@ -538,13 +556,15 @@ TEST(WTF_PoisonedUniquePtr, Swap)
     }
 }
 
-static PoisonedUniquePtr<PoisonA, Logger> poisonedPtrFoo(Logger* logger)
+static PoisonedUniquePtr<g_poisonA, Logger> poisonedPtrFoo(Logger* logger)
 {
-    return PoisonedUniquePtr<PoisonA, Logger>(logger);
+    return PoisonedUniquePtr<g_poisonA, Logger>(logger);
 }
 
 TEST(WTF_PoisonedUniquePtr, ReturnValue)
 {
+    initializePoisons();
+
     {
         int aDestructCount = 0;
         Logger* a = new Logger("a", aDestructCount);

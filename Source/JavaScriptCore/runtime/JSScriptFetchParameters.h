@@ -74,7 +74,7 @@ private:
     {
     }
 
-    PoisonedRef<JSScriptFetchParametersPoison, ScriptFetchParameters> m_parameters;
+    PoisonedRef<POISON(JSScriptFetchParameters), ScriptFetchParameters> m_parameters;
 };
 
 } // namespace JSC

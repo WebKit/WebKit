@@ -74,7 +74,7 @@ private:
     {
     }
 
-    PoisonedRefPtr<JSScriptFetcherPoison, ScriptFetcher> m_fetcher;
+    PoisonedRefPtr<POISON(JSScriptFetcher), ScriptFetcher> m_fetcher;
 };
 
 } // namespace JSC

@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2005-2017 Apple Inc. All rights reserved.
+ *  Copyright (C) 2005-2018 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -276,10 +276,10 @@ inline bool is(const RefPtr<ArgType, PtrTraits>& source)
     return is<ExpectedType>(source.get());
 }
 
-template<uint32_t key, typename T> struct ConstExprPoisonedPtrTraits;
+template<uintptr_t& key, typename T> struct PoisonedPtrTraits;
 
-template<uint32_t key, typename T>
-using PoisonedRefPtr = RefPtr<T, ConstExprPoisonedPtrTraits<key, T>>;
+template<uintptr_t& key, typename T>
+using PoisonedRefPtr = RefPtr<T, PoisonedPtrTraits<key, T>>;
 
 } // namespace WTF
 

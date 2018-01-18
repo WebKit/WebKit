@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- *  Copyright (C) 2003-2017 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003-2018 Apple Inc. All rights reserved.
  *  Copyright (C) 2007 Cameron Zwarich (cwzwarich@uwaterloo.ca)
  *  Copyright (C) 2007 Maks Orlovich
  *
@@ -24,7 +24,7 @@
 #pragma once
 
 #include "CodeSpecializationKind.h"
-#include "JSCPoisonedPtr.h"
+#include "JSCPoison.h"
 #include "JSDestructibleObject.h"
 
 namespace JSC {
@@ -70,7 +70,7 @@ public:
     }
 
 protected:
-    using PoisonedNativeFunction = Poisoned<g_nativeCodePoison, NativeFunction>;
+    using PoisonedNativeFunction = Poisoned<POISON(NativeCode), NativeFunction>;
 
     JS_EXPORT_PRIVATE InternalFunction(VM&, Structure*, NativeFunction functionForCall, NativeFunction functionForConstruct);
 

@@ -81,10 +81,10 @@ private:
     static void destroy(JSCell*);
     static void visitChildren(JSCell*, SlotVisitor&);
 
-    PoisonedRef<JSWebAssemblyModulePoison, Wasm::Module> m_module;
+    PoisonedRef<POISON(JSWebAssemblyModule), Wasm::Module> m_module;
 
     template<typename T>
-    using PoisonedBarrier = PoisonedWriteBarrier<JSWebAssemblyModulePoison, T>;
+    using PoisonedBarrier = PoisonedWriteBarrier<POISON(JSWebAssemblyModule), T>;
 
     PoisonedBarrier<SymbolTable> m_exportSymbolTable;
     PoisonedBarrier<JSWebAssemblyCodeBlock> m_codeBlocks[Wasm::NumberOfMemoryModes];

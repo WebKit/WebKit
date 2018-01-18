@@ -95,7 +95,6 @@ set(TestWTF_SOURCES
     ${TESTWEBKITAPI_DIR}/Tests/WTF/CheckedArithmeticOperations.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/ConcurrentPtrHashSet.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/Condition.cpp
-    ${TESTWEBKITAPI_DIR}/Tests/WTF/ConstExprPoisoned.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/CrossThreadTask.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/DateMath.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/Deque.cpp

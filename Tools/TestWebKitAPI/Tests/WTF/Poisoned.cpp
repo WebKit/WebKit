@@ -31,6 +31,8 @@
 
 namespace TestWebKitAPI {
 
+namespace {
+
 uintptr_t g_testPoisonA;
 uintptr_t g_testPoisonB;
 
@@ -44,6 +46,8 @@ static void initializeTestPoison()
             g_testPoisonB = makePoison();
     });
 }
+
+} // namespace anonymous
 
 // For these tests, we need a base class and a derived class. For this purpose,
 // we reuse the RefLogger and DerivedRefLogger classes.
@@ -90,13 +94,13 @@ TEST(WTF_Poisoned, Basic)
 
         ASSERT_EQ(&a, p1.unpoisoned());
         ASSERT_EQ(&a, p2.unpoisoned());
+        ASSERT_TRUE(p1 == p2);
         ASSERT_TRUE(p1.bits() == p2.bits());
 
-#if ENABLE(MIXED_POISON)
         Poisoned<g_testPoisonB, RefLogger*> p3(p1);
         ASSERT_EQ(&a, p3.unpoisoned());
+        ASSERT_TRUE(p1 == p3);
         ASSERT_TRUE(p1.bits() != p3.bits());
-#endif
     }
 
     {
@@ -104,13 +108,13 @@ TEST(WTF_Poisoned, Basic)
         Poisoned<g_testPoisonA, RefLogger*> p2 = p1;
         ASSERT_EQ(&a, p1.unpoisoned());
         ASSERT_EQ(&a, p2.unpoisoned());
+        ASSERT_TRUE(p1 == p2);
         ASSERT_TRUE(p1.bits() == p2.bits());
 
-#if ENABLE(MIXED_POISON)
         Poisoned<g_testPoisonB, RefLogger*> p3 = p1;
         ASSERT_EQ(&a, p3.unpoisoned());
+        ASSERT_TRUE(p1 == p3);
         ASSERT_TRUE(p1.bits() != p3.bits());
-#endif
     }
 
     {
@@ -118,15 +122,15 @@ TEST(WTF_Poisoned, Basic)
         Poisoned<g_testPoisonA, RefLogger*> p2 = WTFMove(p1);
         ASSERT_EQ(&a, p1.unpoisoned());
         ASSERT_EQ(&a, p2.unpoisoned());
+        ASSERT_TRUE(p1 == p2);
         ASSERT_TRUE(p1.bits() == p2.bits());
 
-#if ENABLE(MIXED_POISON)
         Poisoned<g_testPoisonA, RefLogger*> p3 = &a;
         Poisoned<g_testPoisonB, RefLogger*> p4 = WTFMove(p3);
         ASSERT_EQ(&a, p3.unpoisoned());
         ASSERT_EQ(&a, p4.unpoisoned());
+        ASSERT_TRUE(p3 == p4);
         ASSERT_TRUE(p3.bits() != p4.bits());
-#endif
     }
 
     {
@@ -134,52 +138,230 @@ TEST(WTF_Poisoned, Basic)
         Poisoned<g_testPoisonA, RefLogger*> p2(WTFMove(p1));
         ASSERT_EQ(&a, p1.unpoisoned());
         ASSERT_EQ(&a, p2.unpoisoned());
+        ASSERT_TRUE(p1 == p2);
         ASSERT_TRUE(p1.bits() == p2.bits());
 
-#if ENABLE(MIXED_POISON)
         Poisoned<g_testPoisonA, RefLogger*> p3 = &a;
         Poisoned<g_testPoisonB, RefLogger*> p4(WTFMove(p3));
         ASSERT_EQ(&a, p3.unpoisoned());
         ASSERT_EQ(&a, p4.unpoisoned());
+        ASSERT_TRUE(p3 == p4);
         ASSERT_TRUE(p3.bits() != p4.bits());
-#endif
     }
 
-#if ENABLE(MIXED_POISON)
     {
         Poisoned<g_testPoisonA, DerivedRefLogger*> p1 = &a;
         Poisoned<g_testPoisonA, RefLogger*> p2 = p1;
         ASSERT_EQ(&a, p1.unpoisoned());
         ASSERT_EQ(&a, p2.unpoisoned());
+        ASSERT_TRUE(p1 == p2);
+        ASSERT_TRUE(p2 == p1);
         ASSERT_TRUE(p1.bits() == p2.bits());
 
         Poisoned<g_testPoisonB, RefLogger*> p3 = p1;
         ASSERT_EQ(&a, p3.unpoisoned());
+        ASSERT_TRUE(p1 == p3);
+        ASSERT_TRUE(p3 == p1);
         ASSERT_TRUE(p1.bits() != p3.bits());
     }
-#endif
 
-#if ENABLE(MIXED_POISON)
     {
         Poisoned<g_testPoisonA, DerivedRefLogger*> p1 = &a;
         Poisoned<g_testPoisonA, RefLogger*> p2 = WTFMove(p1);
         ASSERT_EQ(&a, p1.unpoisoned());
         ASSERT_EQ(&a, p2.unpoisoned());
+        ASSERT_TRUE(p1 == p2);
+        ASSERT_TRUE(p2 == p1);
         ASSERT_TRUE(p1.bits() == p2.bits());
 
         Poisoned<g_testPoisonA, DerivedRefLogger*> p3 = &a;
         Poisoned<g_testPoisonB, RefLogger*> p4 = WTFMove(p3);
         ASSERT_EQ(&a, p3.unpoisoned());
         ASSERT_EQ(&a, p4.unpoisoned());
+        ASSERT_TRUE(p3 == p4);
+        ASSERT_TRUE(p4 == p3);
         ASSERT_TRUE(p3.bits() != p4.bits());
     }
-#endif
 
     {
         Poisoned<g_testPoisonA, RefLogger*> ptr(&a);
         ASSERT_EQ(&a, ptr.unpoisoned());
         ptr.clear();
         ASSERT_EQ(nullptr, ptr.unpoisoned());
+    }
+
+    {
+        Poisoned<g_testPoisonA, RefLogger*> pA1000a = reinterpret_cast<RefLogger*>(0x1000);
+        Poisoned<g_testPoisonB, RefLogger*> pB2000a = reinterpret_cast<RefLogger*>(0x2000);
+
+        Poisoned<g_testPoisonA, RefLogger*> pA1000b = reinterpret_cast<RefLogger*>(0x1000);
+        Poisoned<g_testPoisonA, RefLogger*> pA2000b = reinterpret_cast<RefLogger*>(0x2000);
+
+        Poisoned<g_testPoisonB, RefLogger*> pB1000c = reinterpret_cast<RefLogger*>(0x1000);
+        Poisoned<g_testPoisonB, RefLogger*> pB2000c = reinterpret_cast<RefLogger*>(0x2000);
+
+
+        ASSERT_EQ(pA1000a == pA1000a, true);
+        ASSERT_EQ(pA1000a == pA1000b, true);
+        ASSERT_EQ(pA1000a == pA2000b, false);
+        ASSERT_EQ(pA1000a == pB1000c, true);
+        ASSERT_EQ(pA1000a == pB2000c, false);
+
+        ASSERT_EQ(pA1000a != pA1000a, false);
+        ASSERT_EQ(pA1000a != pA1000b, false);
+        ASSERT_EQ(pA1000a != pA2000b, true);
+        ASSERT_EQ(pA1000a != pB1000c, false);
+        ASSERT_EQ(pA1000a != pB2000c, true);
+
+        ASSERT_EQ(pA1000a < pA1000a, false);
+        ASSERT_EQ(pA1000a < pA1000b, false);
+        ASSERT_EQ(pA1000a < pA2000b, true);
+        ASSERT_EQ(pA1000a < pB1000c, false);
+        ASSERT_EQ(pA1000a < pB2000c, true);
+
+        ASSERT_EQ(pB2000a < pB2000a, false);
+        ASSERT_EQ(pB2000a < pA1000b, false);
+        ASSERT_EQ(pB2000a < pA2000b, false);
+        ASSERT_EQ(pB2000a < pB1000c, false);
+        ASSERT_EQ(pB2000a < pB2000c, false);
+
+        ASSERT_EQ(pA1000a <= pA1000a, true);
+        ASSERT_EQ(pA1000a <= pA1000b, true);
+        ASSERT_EQ(pA1000a <= pA2000b, true);
+        ASSERT_EQ(pA1000a <= pB1000c, true);
+        ASSERT_EQ(pA1000a <= pB2000c, true);
+
+        ASSERT_EQ(pB2000a <= pB2000a, true);
+        ASSERT_EQ(pB2000a <= pA1000b, false);
+        ASSERT_EQ(pB2000a <= pA2000b, true);
+        ASSERT_EQ(pB2000a <= pB1000c, false);
+        ASSERT_EQ(pB2000a <= pB2000c, true);
+
+        ASSERT_EQ(pA1000a > pA1000a, false);
+        ASSERT_EQ(pA1000a > pA1000b, false);
+        ASSERT_EQ(pA1000a > pA2000b, false);
+        ASSERT_EQ(pA1000a > pB1000c, false);
+        ASSERT_EQ(pA1000a > pB2000c, false);
+
+        ASSERT_EQ(pB2000a > pB2000a, false);
+        ASSERT_EQ(pB2000a > pA1000b, true);
+        ASSERT_EQ(pB2000a > pA2000b, false);
+        ASSERT_EQ(pB2000a > pB1000c, true);
+        ASSERT_EQ(pB2000a > pB2000c, false);
+
+        ASSERT_EQ(pA1000a >= pA1000a, true);
+        ASSERT_EQ(pA1000a >= pA1000b, true);
+        ASSERT_EQ(pA1000a >= pA2000b, false);
+        ASSERT_EQ(pA1000a >= pB1000c, true);
+        ASSERT_EQ(pA1000a >= pB2000c, false);
+
+        ASSERT_EQ(pB2000a >= pB2000a, true);
+        ASSERT_EQ(pB2000a >= pA1000b, true);
+        ASSERT_EQ(pB2000a >= pA2000b, true);
+        ASSERT_EQ(pB2000a >= pB1000c, true);
+        ASSERT_EQ(pB2000a >= pB2000c, true);
+    }
+
+    {
+        Poisoned<g_testPoisonA, RefLogger*> prA1000 = reinterpret_cast<DerivedRefLogger*>(0x1000);
+        Poisoned<g_testPoisonA, DerivedRefLogger*> pdA1000 = reinterpret_cast<DerivedRefLogger*>(0x1000);
+        Poisoned<g_testPoisonB, RefLogger*> prB1000 = reinterpret_cast<DerivedRefLogger*>(0x1000);
+        Poisoned<g_testPoisonB, DerivedRefLogger*> pdB1000 = reinterpret_cast<DerivedRefLogger*>(0x1000);
+
+        Poisoned<g_testPoisonA, RefLogger*> prA2000 = reinterpret_cast<DerivedRefLogger*>(0x2000);
+        Poisoned<g_testPoisonA, DerivedRefLogger*> pdA2000 = reinterpret_cast<DerivedRefLogger*>(0x2000);
+        Poisoned<g_testPoisonB, RefLogger*> prB2000 = reinterpret_cast<DerivedRefLogger*>(0x2000);
+        Poisoned<g_testPoisonB, DerivedRefLogger*> pdB2000 = reinterpret_cast<DerivedRefLogger*>(0x2000);
+
+        ASSERT_EQ(prA1000 == pdA1000, true);
+        ASSERT_EQ(prA1000 == pdB1000, true);
+        ASSERT_EQ(prA1000 == pdA2000, false);
+        ASSERT_EQ(prA1000 == pdB2000, false);
+        ASSERT_EQ(pdA1000 == prA1000, true);
+        ASSERT_EQ(pdA1000 == prB1000, true);
+        ASSERT_EQ(pdA1000 == prA2000, false);
+        ASSERT_EQ(pdA1000 == prB2000, false);
+
+        ASSERT_EQ(prA1000 != pdA1000, false);
+        ASSERT_EQ(prA1000 != pdB1000, false);
+        ASSERT_EQ(prA1000 != pdA2000, true);
+        ASSERT_EQ(prA1000 != pdB2000, true);
+        ASSERT_EQ(pdA1000 != prA1000, false);
+        ASSERT_EQ(pdA1000 != prB1000, false);
+        ASSERT_EQ(pdA1000 != prA2000, true);
+        ASSERT_EQ(pdA1000 != prB2000, true);
+
+        ASSERT_EQ(prA1000 < pdA1000, false);
+        ASSERT_EQ(prA1000 < pdB1000, false);
+        ASSERT_EQ(prA1000 < pdA2000, true);
+        ASSERT_EQ(prA1000 < pdB2000, true);
+        ASSERT_EQ(pdA1000 < prA1000, false);
+        ASSERT_EQ(pdA1000 < prB1000, false);
+        ASSERT_EQ(pdA1000 < prA2000, true);
+        ASSERT_EQ(pdA1000 < prB2000, true);
+
+        ASSERT_EQ(prA2000 < pdA1000, false);
+        ASSERT_EQ(prA2000 < pdB1000, false);
+        ASSERT_EQ(prA2000 < pdA2000, false);
+        ASSERT_EQ(prA2000 < pdB2000, false);
+        ASSERT_EQ(pdA2000 < prA1000, false);
+        ASSERT_EQ(pdA2000 < prB1000, false);
+        ASSERT_EQ(pdA2000 < prA2000, false);
+        ASSERT_EQ(pdA2000 < prB2000, false);
+
+        ASSERT_EQ(prA1000 <= pdA1000, true);
+        ASSERT_EQ(prA1000 <= pdB1000, true);
+        ASSERT_EQ(prA1000 <= pdA2000, true);
+        ASSERT_EQ(prA1000 <= pdB2000, true);
+        ASSERT_EQ(pdA1000 <= prA1000, true);
+        ASSERT_EQ(pdA1000 <= prB1000, true);
+        ASSERT_EQ(pdA1000 <= prA2000, true);
+        ASSERT_EQ(pdA1000 <= prB2000, true);
+
+        ASSERT_EQ(prA2000 <= pdA1000, false);
+        ASSERT_EQ(prA2000 <= pdB1000, false);
+        ASSERT_EQ(prA2000 <= pdA2000, true);
+        ASSERT_EQ(prA2000 <= pdB2000, true);
+        ASSERT_EQ(pdA2000 <= prA1000, false);
+        ASSERT_EQ(pdA2000 <= prB1000, false);
+        ASSERT_EQ(pdA2000 <= prA2000, true);
+        ASSERT_EQ(pdA2000 <= prB2000, true);
+
+        ASSERT_EQ(prA1000 > pdA1000, false);
+        ASSERT_EQ(prA1000 > pdB1000, false);
+        ASSERT_EQ(prA1000 > pdA2000, false);
+        ASSERT_EQ(prA1000 > pdB2000, false);
+        ASSERT_EQ(pdA1000 > prA1000, false);
+        ASSERT_EQ(pdA1000 > prB1000, false);
+        ASSERT_EQ(pdA1000 > prA2000, false);
+        ASSERT_EQ(pdA1000 > prB2000, false);
+
+        ASSERT_EQ(prA2000 > pdA1000, true);
+        ASSERT_EQ(prA2000 > pdB1000, true);
+        ASSERT_EQ(prA2000 > pdA2000, false);
+        ASSERT_EQ(prA2000 > pdB2000, false);
+        ASSERT_EQ(pdA2000 > prA1000, true);
+        ASSERT_EQ(pdA2000 > prB1000, true);
+        ASSERT_EQ(pdA2000 > prA2000, false);
+        ASSERT_EQ(pdA2000 > prB2000, false);
+
+        ASSERT_EQ(prA1000 >= pdA1000, true);
+        ASSERT_EQ(prA1000 >= pdB1000, true);
+        ASSERT_EQ(prA1000 >= pdA2000, false);
+        ASSERT_EQ(prA1000 >= pdB2000, false);
+        ASSERT_EQ(pdA1000 >= prA1000, true);
+        ASSERT_EQ(pdA1000 >= prB1000, true);
+        ASSERT_EQ(pdA1000 >= prA2000, false);
+        ASSERT_EQ(pdA1000 >= prB2000, false);
+
+        ASSERT_EQ(prA2000 >= pdA1000, true);
+        ASSERT_EQ(prA2000 >= pdB1000, true);
+        ASSERT_EQ(prA2000 >= pdA2000, true);
+        ASSERT_EQ(prA2000 >= pdB2000, true);
+        ASSERT_EQ(pdA2000 >= prA1000, true);
+        ASSERT_EQ(pdA2000 >= prB1000, true);
+        ASSERT_EQ(pdA2000 >= prA2000, true);
+        ASSERT_EQ(pdA2000 >= prB2000, true);
     }
 }
 
@@ -200,7 +382,6 @@ TEST(WTF_Poisoned, Assignment)
         ASSERT_EQ(&b, p2.unpoisoned());
         ASSERT_TRUE(p1.bits() == p2.bits());
 
-#if ENABLE(MIXED_POISON)
         Poisoned<g_testPoisonA, RefLogger*> p3(&a);
         Poisoned<g_testPoisonB, RefLogger*> p4(&b);
         ASSERT_EQ(&a, p3.unpoisoned());
@@ -209,7 +390,6 @@ TEST(WTF_Poisoned, Assignment)
         ASSERT_EQ(&b, p3.unpoisoned());
         ASSERT_EQ(&b, p4.unpoisoned());
         ASSERT_TRUE(p3.bits() != p4.bits());
-#endif
     }
 
     {
@@ -236,7 +416,6 @@ TEST(WTF_Poisoned, Assignment)
         ASSERT_EQ(&b, p2.unpoisoned());
         ASSERT_TRUE(p1.bits() == p2.bits());
 
-#if ENABLE(MIXED_POISON)
         Poisoned<g_testPoisonA, RefLogger*> p3(&a);
         Poisoned<g_testPoisonB, RefLogger*> p4(&b);
         ASSERT_EQ(&a, p3.unpoisoned());
@@ -245,10 +424,8 @@ TEST(WTF_Poisoned, Assignment)
         ASSERT_EQ(&b, p3.unpoisoned());
         ASSERT_EQ(&b, p4.unpoisoned());
         ASSERT_TRUE(p3.bits() != p4.bits());
-#endif
     }
 
-#if ENABLE(MIXED_POISON)
     {
         Poisoned<g_testPoisonA, RefLogger*> p1(&a);
         Poisoned<g_testPoisonA, DerivedRefLogger*> p2(&c);
@@ -268,7 +445,6 @@ TEST(WTF_Poisoned, Assignment)
         ASSERT_EQ(&c, p4.unpoisoned());
         ASSERT_TRUE(p3.bits() != p4.bits());
     }
-#endif
 
     {
         Poisoned<g_testPoisonA, RefLogger*> ptr(&a);
@@ -277,7 +453,6 @@ TEST(WTF_Poisoned, Assignment)
         ASSERT_EQ(&c, ptr.unpoisoned());
     }
 
-#if ENABLE(MIXED_POISON)
     {
         Poisoned<g_testPoisonA, RefLogger*> p1(&a);
         Poisoned<g_testPoisonA, DerivedRefLogger*> p2(&c);
@@ -297,7 +472,6 @@ TEST(WTF_Poisoned, Assignment)
         ASSERT_EQ(&c, p4.unpoisoned());
         ASSERT_TRUE(p3.bits() != p4.bits());
     }
-#endif
 
     {
         Poisoned<g_testPoisonA, RefLogger*> ptr(&a);
@@ -339,7 +513,6 @@ TEST(WTF_Poisoned, Swap)
 
         ASSERT_TRUE(p1.bits() != p2.bits());
 
-#if ENABLE(MIXED_POISON)
         Poisoned<g_testPoisonA, RefLogger*> p3(&a);
         Poisoned<g_testPoisonB, RefLogger*> p4(&b);
         ASSERT_EQ(&a, p3.unpoisoned());
@@ -351,7 +524,6 @@ TEST(WTF_Poisoned, Swap)
         ASSERT_TRUE(p3.bits() != p4.bits());
         ASSERT_TRUE(p1.bits() == p3.bits());
         ASSERT_TRUE(p2.bits() != p4.bits());
-#endif
     }
 
     {
@@ -359,17 +531,12 @@ TEST(WTF_Poisoned, Swap)
         Poisoned<g_testPoisonA, RefLogger*> p2(&b);
         ASSERT_EQ(&a, p1.unpoisoned());
         ASSERT_EQ(&b, p2.unpoisoned());
-#if ENABLE(MIXED_POISON)
         swap(p1, p2);
-#else
-        std::swap(p1, p2);
-#endif
         ASSERT_EQ(&b, p1.unpoisoned());
         ASSERT_EQ(&a, p2.unpoisoned());
 
         ASSERT_TRUE(p1.bits() != p2.bits());
 
-#if ENABLE(MIXED_POISON)
         Poisoned<g_testPoisonA, RefLogger*> p3(&a);
         Poisoned<g_testPoisonB, RefLogger*> p4(&b);
         ASSERT_EQ(&a, p3.unpoisoned());
@@ -381,10 +548,8 @@ TEST(WTF_Poisoned, Swap)
         ASSERT_TRUE(p3.bits() != p4.bits());
         ASSERT_TRUE(p1.bits() == p3.bits());
         ASSERT_TRUE(p2.bits() != p4.bits());
-#endif
     }
 
-#if ENABLE(MIXED_POISON)
     {
         Poisoned<g_testPoisonA, RefLogger*> p1(&a);
         RefLogger* p2(&b);
@@ -408,7 +573,6 @@ TEST(WTF_Poisoned, Swap)
 
         ASSERT_TRUE(p1.bits() != bitwise_cast<uintptr_t>(p2));
     }
-#endif
 }
 
 static Poisoned<g_testPoisonA, RefLogger*> poisonedPtrFoo(RefLogger& logger)

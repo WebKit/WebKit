@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -256,10 +256,10 @@ inline bool is(const Ref<ArgType, PtrTraits>& source)
     return is<ExpectedType>(source.get());
 }
 
-template<uint32_t key, typename T> struct ConstExprPoisonedPtrTraits;
+template<uintptr_t& key, typename T> struct PoisonedPtrTraits;
 
-template<uint32_t key, typename T>
-using PoisonedRef = Ref<T, ConstExprPoisonedPtrTraits<key, T>>;
+template<uintptr_t& key, typename T>
+using PoisonedRef = Ref<T, PoisonedPtrTraits<key, T>>;
 
 } // namespace WTF
 

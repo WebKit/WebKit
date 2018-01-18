@@ -25,6 +25,7 @@
 
 #include "config.h"
 
+#include <mutex>
 #include <wtf/FastMalloc.h>
 #include <wtf/PoisonedUniquePtr.h>
 
@@ -32,8 +33,19 @@ namespace TestWebKitAPI {
 
 namespace {
 
-const uint32_t PoisonA = 0xaaaa;
-const uint32_t PoisonB = 0xbbbb;
+uintptr_t g_poisonA;
+uintptr_t g_poisonB;
+
+static void initializePoisons()
+{
+    static std::once_flag initializeOnceFlag;
+    std::call_once(initializeOnceFlag, [] {
+        // Make sure we get 2 different poison values.
+        g_poisonA = makePoison();
+        while (!g_poisonB || g_poisonB == g_poisonA)
+            g_poisonB = makePoison();
+    });
+}
 
 template<typename T>
 static void fillArray(T& array, int size)
@@ -48,13 +60,15 @@ static const int arraySize = 5;
 
 TEST(WTF_PoisonedUniquePtrForTriviallyDestructibleArrays, Basic)
 {
+    initializePoisons();
+
     {
-        PoisonedUniquePtr<PoisonA, int[]> empty;
+        PoisonedUniquePtr<g_poisonA, int[]> empty;
         ASSERT_EQ(nullptr, empty.unpoisoned());
         ASSERT_EQ(0u, empty.bits());
     }
     {
-        PoisonedUniquePtr<PoisonA, int[]> empty(nullptr);
+        PoisonedUniquePtr<g_poisonA, int[]> empty(nullptr);
         ASSERT_EQ(nullptr, empty.unpoisoned());
         ASSERT_EQ(0u, empty.bits());
     }
@@ -63,7 +77,7 @@ TEST(WTF_PoisonedUniquePtrForTriviallyDestructibleArrays, Basic)
         auto* a = new int[arraySize];
         fillArray(a, arraySize);
         {
-            PoisonedUniquePtr<PoisonA, int[]> ptr(a);
+            PoisonedUniquePtr<g_poisonA, int[]> ptr(a);
             ASSERT_EQ(a, ptr.unpoisoned());
             ASSERT_EQ(a, &*ptr);
             for (auto i = 0; i < arraySize; ++i)
@@ -74,7 +88,7 @@ TEST(WTF_PoisonedUniquePtrForTriviallyDestructibleArrays, Basic)
             std::memcpy(&ptrBits, &ptr, sizeof(ptrBits));
             ASSERT_TRUE(ptrBits != bitwise_cast<uintptr_t>(a));
 #if ENABLE(POISON_ASSERTS)
-            ASSERT_TRUE((PoisonedUniquePtr<PoisonA, int[]>::isPoisoned(ptrBits)));
+            ASSERT_TRUE((PoisonedUniquePtr<g_poisonA, int[]>::isPoisoned(ptrBits)));
 #endif
 #endif // ENABLE(POISON)
         }
@@ -84,7 +98,7 @@ TEST(WTF_PoisonedUniquePtrForTriviallyDestructibleArrays, Basic)
         auto* a = new int[arraySize];
         fillArray(a, arraySize);
 
-        PoisonedUniquePtr<PoisonA, int[]> ptr = a;
+        PoisonedUniquePtr<g_poisonA, int[]> ptr = a;
         ASSERT_EQ(a, ptr.unpoisoned());
         ASSERT_EQ(a, &*ptr);
         for (auto i = 0; i < arraySize; ++i)
@@ -92,7 +106,7 @@ TEST(WTF_PoisonedUniquePtrForTriviallyDestructibleArrays, Basic)
     }
 
     {
-        PoisonedUniquePtr<PoisonA, int[]> ptr = PoisonedUniquePtr<PoisonA, int[]>::create(arraySize);
+        PoisonedUniquePtr<g_poisonA, int[]> ptr = PoisonedUniquePtr<g_poisonA, int[]>::create(arraySize);
         ASSERT_TRUE(nullptr != ptr.unpoisoned());
         fillArray(ptr, arraySize);
         for (auto i = 0; i < arraySize; ++i)
@@ -105,16 +119,16 @@ TEST(WTF_PoisonedUniquePtrForTriviallyDestructibleArrays, Basic)
         auto* b = new int[arraySize];
         fillArray(b, arraySize);
 
-        PoisonedUniquePtr<PoisonA, int[]> p1 = a;
-        PoisonedUniquePtr<PoisonA, int[]> p2 = WTFMove(p1);
+        PoisonedUniquePtr<g_poisonA, int[]> p1 = a;
+        PoisonedUniquePtr<g_poisonA, int[]> p2 = WTFMove(p1);
         ASSERT_EQ(nullptr, p1.unpoisoned());
         ASSERT_EQ(0u, p1.bits());
         ASSERT_EQ(a, p2.unpoisoned());
         for (auto i = 0; i < arraySize; ++i)
             ASSERT_EQ(a[i], p2[i]);
 
-        PoisonedUniquePtr<PoisonA, int[]> p3 = b;
-        PoisonedUniquePtr<PoisonB, int[]> p4 = WTFMove(p3);
+        PoisonedUniquePtr<g_poisonA, int[]> p3 = b;
+        PoisonedUniquePtr<g_poisonB, int[]> p4 = WTFMove(p3);
         ASSERT_EQ(nullptr, p3.unpoisoned());
         ASSERT_EQ(0u, p3.bits());
         ASSERT_EQ(b, p4.unpoisoned());
@@ -128,16 +142,16 @@ TEST(WTF_PoisonedUniquePtrForTriviallyDestructibleArrays, Basic)
         auto* b = new int[arraySize];
         fillArray(b, arraySize);
 
-        PoisonedUniquePtr<PoisonA, int[]> p1 = a;
-        PoisonedUniquePtr<PoisonA, int[]> p2(WTFMove(p1));
+        PoisonedUniquePtr<g_poisonA, int[]> p1 = a;
+        PoisonedUniquePtr<g_poisonA, int[]> p2(WTFMove(p1));
         ASSERT_EQ(nullptr, p1.unpoisoned());
         ASSERT_EQ(0u, p1.bits());
         ASSERT_EQ(a, p2.unpoisoned());
         for (auto i = 0; i < arraySize; ++i)
             ASSERT_EQ(a[i], p2[i]);
 
-        PoisonedUniquePtr<PoisonA, int[]> p3 = b;
-        PoisonedUniquePtr<PoisonB, int[]> p4(WTFMove(p3));
+        PoisonedUniquePtr<g_poisonA, int[]> p3 = b;
+        PoisonedUniquePtr<g_poisonB, int[]> p4(WTFMove(p3));
         ASSERT_EQ(nullptr, p3.unpoisoned());
         ASSERT_EQ(0u, p3.bits());
         ASSERT_EQ(b, p4.unpoisoned());
@@ -149,7 +163,7 @@ TEST(WTF_PoisonedUniquePtrForTriviallyDestructibleArrays, Basic)
         auto* a = new int[arraySize];
         fillArray(a, arraySize);
 
-        PoisonedUniquePtr<PoisonA, int[]> ptr(a);
+        PoisonedUniquePtr<g_poisonA, int[]> ptr(a);
         ASSERT_EQ(a, ptr.unpoisoned());
         ptr.clear();
         ASSERT_TRUE(!ptr.unpoisoned());
@@ -159,13 +173,15 @@ TEST(WTF_PoisonedUniquePtrForTriviallyDestructibleArrays, Basic)
 
 TEST(WTF_PoisonedUniquePtrForTriviallyDestructibleArrays, Assignment)
 {
+    initializePoisons();
+
     {
         auto* a = new int[arraySize];
         auto* b = new int[arraySize];
         fillArray(a, arraySize);
         fillArray(b, arraySize);
 
-        PoisonedUniquePtr<PoisonA, int[]> ptr(a);
+        PoisonedUniquePtr<g_poisonA, int[]> ptr(a);
         ASSERT_EQ(a, ptr.unpoisoned());
         ptr = b;
         ASSERT_EQ(b, ptr.unpoisoned());
@@ -175,7 +191,7 @@ TEST(WTF_PoisonedUniquePtrForTriviallyDestructibleArrays, Assignment)
         auto* a = new int[arraySize];
         fillArray(a, arraySize);
 
-        PoisonedUniquePtr<PoisonA, int[]> ptr(a);
+        PoisonedUniquePtr<g_poisonA, int[]> ptr(a);
         ASSERT_EQ(a, ptr.unpoisoned());
         ptr = nullptr;
         ASSERT_EQ(nullptr, ptr.unpoisoned());
@@ -191,16 +207,16 @@ TEST(WTF_PoisonedUniquePtrForTriviallyDestructibleArrays, Assignment)
         fillArray(c, arraySize);
         fillArray(d, arraySize);
 
-        PoisonedUniquePtr<PoisonA, int[]> p1(a);
-        PoisonedUniquePtr<PoisonA, int[]> p2(b);
+        PoisonedUniquePtr<g_poisonA, int[]> p1(a);
+        PoisonedUniquePtr<g_poisonA, int[]> p2(b);
         ASSERT_EQ(a, p1.unpoisoned());
         ASSERT_EQ(b, p2.unpoisoned());
         p1 = WTFMove(p2);
         ASSERT_EQ(b, p1.unpoisoned());
         ASSERT_EQ(nullptr, p2.unpoisoned());
 
-        PoisonedUniquePtr<PoisonA, int[]> p3(c);
-        PoisonedUniquePtr<PoisonB, int[]> p4(d);
+        PoisonedUniquePtr<g_poisonA, int[]> p3(c);
+        PoisonedUniquePtr<g_poisonB, int[]> p4(d);
         ASSERT_EQ(c, p3.unpoisoned());
         ASSERT_EQ(d, p4.unpoisoned());
         p3 = WTFMove(p4);
@@ -212,7 +228,7 @@ TEST(WTF_PoisonedUniquePtrForTriviallyDestructibleArrays, Assignment)
         auto* a = new int[arraySize];
         fillArray(a, arraySize);
 
-        PoisonedUniquePtr<PoisonA, int[]> ptr(a);
+        PoisonedUniquePtr<g_poisonA, int[]> ptr(a);
         ASSERT_EQ(a, ptr.unpoisoned());
         ptr = a;
         ASSERT_EQ(a, ptr.unpoisoned());
@@ -222,7 +238,7 @@ TEST(WTF_PoisonedUniquePtrForTriviallyDestructibleArrays, Assignment)
         auto* a = new int[arraySize];
         fillArray(a, arraySize);
 
-        PoisonedUniquePtr<PoisonA, int[]> ptr(a);
+        PoisonedUniquePtr<g_poisonA, int[]> ptr(a);
         ASSERT_EQ(a, ptr.unpoisoned());
 #if COMPILER(CLANG)
 #pragma clang diagnostic push
@@ -239,14 +255,16 @@ TEST(WTF_PoisonedUniquePtrForTriviallyDestructibleArrays, Assignment)
 
 TEST(WTF_PoisonedUniquePtrForTriviallyDestructibleArrays, Swap)
 {
+    initializePoisons();
+
     {
         auto* a = new int[arraySize];
         auto* b = new int[arraySize];
         fillArray(a, arraySize);
         fillArray(b, arraySize);
 
-        PoisonedUniquePtr<PoisonA, int[]> p1 = a;
-        PoisonedUniquePtr<PoisonA, int[]> p2;
+        PoisonedUniquePtr<g_poisonA, int[]> p1 = a;
+        PoisonedUniquePtr<g_poisonA, int[]> p2;
         ASSERT_EQ(p1.unpoisoned(), a);
         ASSERT_TRUE(!p2.bits());
         ASSERT_TRUE(!p2.unpoisoned());
@@ -255,8 +273,8 @@ TEST(WTF_PoisonedUniquePtrForTriviallyDestructibleArrays, Swap)
         ASSERT_TRUE(!p1.unpoisoned());
         ASSERT_EQ(p2.unpoisoned(), a);
 
-        PoisonedUniquePtr<PoisonA, int[]> p3 = b;
-        PoisonedUniquePtr<PoisonB, int[]> p4;
+        PoisonedUniquePtr<g_poisonA, int[]> p3 = b;
+        PoisonedUniquePtr<g_poisonB, int[]> p4;
         ASSERT_EQ(p3.unpoisoned(), b);
         ASSERT_TRUE(!p4.bits());
         ASSERT_TRUE(!p4.unpoisoned());
@@ -272,8 +290,8 @@ TEST(WTF_PoisonedUniquePtrForTriviallyDestructibleArrays, Swap)
         fillArray(a, arraySize);
         fillArray(b, arraySize);
 
-        PoisonedUniquePtr<PoisonA, int[]> p1 = a;
-        PoisonedUniquePtr<PoisonA, int[]> p2;
+        PoisonedUniquePtr<g_poisonA, int[]> p1 = a;
+        PoisonedUniquePtr<g_poisonA, int[]> p2;
         ASSERT_EQ(p1.unpoisoned(), a);
         ASSERT_TRUE(!p2.bits());
         ASSERT_TRUE(!p2.unpoisoned());
@@ -282,8 +300,8 @@ TEST(WTF_PoisonedUniquePtrForTriviallyDestructibleArrays, Swap)
         ASSERT_TRUE(!p1.unpoisoned());
         ASSERT_EQ(p2.unpoisoned(), a);
 
-        PoisonedUniquePtr<PoisonA, int[]> p3 = b;
-        PoisonedUniquePtr<PoisonB, int[]> p4;
+        PoisonedUniquePtr<g_poisonA, int[]> p3 = b;
+        PoisonedUniquePtr<g_poisonB, int[]> p4;
         ASSERT_EQ(p3.unpoisoned(), b);
         ASSERT_TRUE(!p4.bits());
         ASSERT_TRUE(!p4.unpoisoned());
@@ -294,13 +312,15 @@ TEST(WTF_PoisonedUniquePtrForTriviallyDestructibleArrays, Swap)
     }
 }
 
-static PoisonedUniquePtr<PoisonA, int[]> poisonedPtrFoo(int* ptr)
+static PoisonedUniquePtr<g_poisonA, int[]> poisonedPtrFoo(int* ptr)
 {
-    return PoisonedUniquePtr<PoisonA, int[]>(ptr);
+    return PoisonedUniquePtr<g_poisonA, int[]>(ptr);
 }
 
 TEST(WTF_PoisonedUniquePtrForTriviallyDestructibleArrays, ReturnValue)
 {
+    initializePoisons();
+
     {
         auto* a = new int[arraySize];
         fillArray(a, arraySize);
