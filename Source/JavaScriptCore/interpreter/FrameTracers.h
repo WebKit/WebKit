@@ -26,6 +26,7 @@
 #pragma once
 
 #include "CatchScope.h"
+#include "StackAlignment.h"
 #include "VM.h"
 
 namespace JSC {
@@ -68,6 +69,18 @@ private:
     CallFrame* oldCallFrame;
 };
 
+ALWAYS_INLINE static void assertStackPointerIsAligned()
+{
+#ifndef NDEBUG
+#if CPU(X86)
+    uintptr_t stackPointer;
+
+    asm("movl %%esp,%0" : "=r"(stackPointer));
+    ASSERT(!(stackPointer % stackAlignmentBytes()));
+#endif
+#endif
+}
+
 class NativeCallFrameTracer {
 public:
     ALWAYS_INLINE NativeCallFrameTracer(VM* vm, CallFrame* callFrame)
@@ -75,6 +88,7 @@ public:
         ASSERT(vm);
         ASSERT(callFrame);
         ASSERT(reinterpret_cast<void*>(callFrame) < reinterpret_cast<void*>(vm->topEntryFrame));
+        assertStackPointerIsAligned();
         vm->topCallFrame = callFrame;
     }
 };
@@ -86,6 +100,7 @@ public:
     {
         ASSERT(vm);
         ASSERT(callFrame);
+        assertStackPointerIsAligned();
         m_savedTopEntryFrame = vm->topEntryFrame;
         m_savedTopCallFrame = vm->topCallFrame;
         vm->topEntryFrame = EntryFrame;
