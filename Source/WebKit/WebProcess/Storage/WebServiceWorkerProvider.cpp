@@ -59,6 +59,11 @@ WebCore::SWClientConnection& WebServiceWorkerProvider::serviceWorkerConnectionFo
     return WebProcess::singleton().ensureWebToStorageProcessConnection(sessionID).serviceWorkerConnectionForSession(sessionID);
 }
 
+WebCore::SWClientConnection* WebServiceWorkerProvider::existingServiceWorkerConnectionForSession(SessionID sessionID)
+{
+    return WebProcess::singleton().ensureWebToStorageProcessConnection(sessionID).existingServiceWorkerConnectionForSession(sessionID);
+}
+
 static inline bool shouldHandleFetch(const ResourceLoaderOptions& options)
 {
     if (options.serviceWorkersMode == ServiceWorkersMode::None)

@@ -1,3 +1,33 @@
+2018-01-18  Youenn Fablet  <youenn@apple.com>
+
+        Do not go to the storage process when loading a main resource if there is no service worker registered
+        https://bugs.webkit.org/show_bug.cgi?id=181395
+
+        Reviewed by Chris Dumez.
+
+        Add a new web process creation parameter to know whether there is any service worker registered at web process creation time.
+        If there is none, the web process will then start to load HTTP resources from the network.
+        The connection to the storage process is then executed when receiving the first bytes of the main resource.
+        This connection is needed as other web processes may create service workers at any given time.
+        If there is one registered service worker, the web process will wait for its connection to the storage process to be active.
+
+        * Shared/WebProcessCreationParameters.cpp:
+        (WebKit::WebProcessCreationParameters::encode const):
+        (WebKit::WebProcessCreationParameters::decode):
+        * Shared/WebProcessCreationParameters.h:
+        * UIProcess/ServiceWorkerProcessProxy.cpp:
+        (WebKit::ServiceWorkerProcessProxy::hasRegisteredServiceWorkers):
+        * UIProcess/ServiceWorkerProcessProxy.h:
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::initializeNewWebProcess):
+        * WebProcess/Storage/WebServiceWorkerProvider.cpp:
+        (WebKit::WebServiceWorkerProvider::existingServiceWorkerConnectionForSession):
+        * WebProcess/Storage/WebServiceWorkerProvider.h:
+        * WebProcess/Storage/WebToStorageProcessConnection.h:
+        (WebKit::WebToStorageProcessConnection::existingServiceWorkerConnectionForSession):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::initializeWebProcess):
+
 2018-01-18  Chris Dumez  <cdumez@apple.com>
 
         Regression(r223149): WebProcessProxy::didClose() no longer refs WebPageProxy objects

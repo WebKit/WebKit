@@ -127,6 +127,10 @@ void WebProcessCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << hasRichContentServices;
 #endif
 
+#if ENABLE(SERVICE_WORKER)
+    encoder << hasRegisteredServiceWorkers;
+#endif
+
 #if ENABLE(NETSCAPE_PLUGIN_API)
     encoder << pluginLoadClientPolicies;
 #endif
@@ -358,6 +362,11 @@ bool WebProcessCreationParameters::decode(IPC::Decoder& decoder, WebProcessCreat
     if (!decoder.decode(parameters.hasSelectionServices))
         return false;
     if (!decoder.decode(parameters.hasRichContentServices))
+        return false;
+#endif
+
+#if ENABLE(SERVICE_WORKER)
+    if (!decoder.decode(parameters.hasRegisteredServiceWorkers))
         return false;
 #endif
 

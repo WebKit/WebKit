@@ -74,6 +74,11 @@ static const String& databaseFilename()
     return filename;
 }
 
+String serviceWorkerRegistrationDatabaseFilename(const String& databaseDirectory)
+{
+    return FileSystem::pathByAppendingComponent(databaseDirectory, databaseFilename());
+}
+
 RegistrationDatabase::RegistrationDatabase(RegistrationStore& store, const String& databaseDirectory)
     : CrossThreadTaskHandler("ServiceWorker I/O Thread")
     , m_store(store)

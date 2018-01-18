@@ -33,6 +33,7 @@
 #include "WebProcessPool.h"
 #include "WebSWContextManagerConnectionMessages.h"
 #include <WebCore/NotImplemented.h>
+#include <WebCore/RegistrationDatabase.h>
 
 namespace WebKit {
 
@@ -51,6 +52,12 @@ ServiceWorkerProcessProxy::ServiceWorkerProcessProxy(WebProcessPool& pool, Websi
 
 ServiceWorkerProcessProxy::~ServiceWorkerProcessProxy()
 {
+}
+
+bool ServiceWorkerProcessProxy::hasRegisteredServiceWorkers(const String& serviceWorkerDirectory)
+{
+    String registrationFile = WebCore::serviceWorkerRegistrationDatabaseFilename(serviceWorkerDirectory);
+    return WebCore::FileSystem::fileExists(registrationFile);
 }
 
 void ServiceWorkerProcessProxy::getLaunchOptions(ProcessLauncher::LaunchOptions& launchOptions)

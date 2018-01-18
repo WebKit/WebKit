@@ -54,6 +54,7 @@ public:
     WebIDBConnectionToServer& idbConnectionToServerForSession(PAL::SessionID);
 #endif
 #if ENABLE(SERVICE_WORKER)
+    WebSWClientConnection* existingServiceWorkerConnectionForSession(PAL::SessionID sessionID) { return m_swConnectionsBySession.get(sessionID); }
     WebSWClientConnection& serviceWorkerConnectionForSession(PAL::SessionID);
 #endif
 

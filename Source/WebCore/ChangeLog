@@ -1,3 +1,24 @@
+2018-01-18  Youenn Fablet  <youenn@apple.com>
+
+        Do not go to the storage process when loading a main resource if there is no service worker registered
+        https://bugs.webkit.org/show_bug.cgi?id=181395
+
+        Reviewed by Chris Dumez.
+
+        No observable behavior change.
+        Instead of creating a connection to know whether there is a potential service worker,
+        Ask the service worker provider that will use the connection if needed.
+        Otherwise, it will use a default value provided by the UIProcess.
+
+        Tested by cleaning all service workers and checking the computed value of the default value,
+        then observing whether pages registering service workers work well.
+
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::startLoadingMainResource):
+        * workers/service/ServiceWorkerProvider.cpp:
+        (WebCore::ServiceWorkerProvider::mayHaveServiceWorkerRegisteredForOrigin):
+        * workers/service/ServiceWorkerProvider.h:
+
 2018-01-18  Dan Bernstein  <mitz@apple.com>
 
         [Xcode] Streamline and future-proof target-macOS-version-dependent build setting definitions
