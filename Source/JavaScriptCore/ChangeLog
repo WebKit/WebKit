@@ -1,3 +1,16 @@
+2018-01-18  Mark Lam  <mark.lam@apple.com>
+
+        Poisons should be initialized after Options are initialized.
+        https://bugs.webkit.org/show_bug.cgi?id=181807
+        <rdar://problem/36629138>
+
+        Reviewed by Keith Miller.
+
+        This is because poison initialization may depend on options.
+
+        * runtime/InitializeThreading.cpp:
+        (JSC::initializeThreading):
+
 2018-01-18  Dan Bernstein  <mitz@apple.com>
 
         [Xcode] Streamline and future-proof target-macOS-version-dependent build setting definitions
