@@ -55,7 +55,7 @@ To run `browser-tests`, open `browser-tests/index.html` inside a Web browser.
 Run the following command to setup a Postgres server at `/Volumes/Data/perf.webkit.org/PostgresSQL` (or wherever you'd prefer):
 `python ./tools/setup-database.py /Volumes/Data/perf.webkit.org/PostgresSQL`
 
-It automatically retrieves the database name, the username, and the password from `config.json`.
+It automatically retrieves the database name, the username, and the password from `config.json`. Create one from `config.json.sample`
 
 ### Starting PostgreSQL
 

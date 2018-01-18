@@ -1,5 +1,16 @@
 2018-01-17  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Rename config.json to config.json.sample
+        https://bugs.webkit.org/show_bug.cgi?id=181785
+
+        Reviewed by Wenson Hsieh.
+
+        * .gitignore: Added config.json.
+        * ReadMe.md: Updated the instruction.
+        * config.json.sample: Renamed from config.json.
+
+2018-01-17  Ryosuke Niwa  <rniwa@webkit.org>
+
         Unreviewed build fixes in TestGroupResultsViewer.
 
         * public/v3/components/test-group-results-viewer.js:
