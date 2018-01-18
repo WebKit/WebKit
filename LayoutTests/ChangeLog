@@ -1,3 +1,14 @@
+2018-01-18  Ali Juma  <ajuma@chromium.org>
+
+        imported/w3c/web-platform-tests/viewport/viewport-resize-event-on-load-overflowing-page.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=181435
+
+        Reviewed by Frédéric Wang.
+
+        Test gardening. The flakiness was fixed by r227054, so remove the test expectation.
+
+        * TestExpectations:
+
 2018-01-18  Jer Noble  <jer.noble@apple.com>
 
         Layout Test http/tests/images/image-supports-video.html is flaky

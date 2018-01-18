@@ -276,7 +276,6 @@ imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/trav
 imported/w3c/web-platform-tests/html/dom/interfaces.worker.html [ Pass Failure ]
 imported/w3c/web-platform-tests/mediacapture-fromelement/creation.html [ Pass Failure ]
 webkit.org/b/180240 imported/w3c/web-platform-tests/resource-timing/single-entry-per-resource.html [ Pass Failure ]
-webkit.org/b/181435 imported/w3c/web-platform-tests/visual-viewport/viewport-resize-event-on-load-overflowing-page.html [ Pass Failure ]
 
 # The follow two tests change their output each run
 imported/w3c/web-platform-tests/fetch/api/abort/general.any.html [ Skip ]
