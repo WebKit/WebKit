@@ -1,5 +1,26 @@
 2018-01-17  Saam Barati  <sbarati@apple.com>
 
+        Support MultiGetByOffset in the DFG
+        https://bugs.webkit.org/show_bug.cgi?id=181466
+
+        Reviewed by Keith Miller.
+
+        This seems to benefit Speedometer in my local testing. It seems like this
+        might be around a 0.5% improvement.
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleGetById):
+        * dfg/DFGConstantFoldingPhase.cpp:
+        (JSC::DFG::ConstantFoldingPhase::foldConstants):
+        * dfg/DFGGraph.h:
+        (JSC::DFG::Graph::supportsMultiGetByOffset):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+
+2018-01-17  Saam Barati  <sbarati@apple.com>
+
         DFG::Node::convertToConstant needs to clear the varargs flags
         https://bugs.webkit.org/show_bug.cgi?id=181697
         <rdar://problem/36497332>

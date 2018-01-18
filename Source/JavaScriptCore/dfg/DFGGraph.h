@@ -970,6 +970,17 @@ public:
         return result;
     }
 
+    bool supportsMultiGetByOffset(CodeOrigin origin)
+    {
+        if (!is64Bit())
+            return false;
+        if (isFTL(m_plan.mode))
+            return true;
+        // We want to ensure we get polyvariant profiling data from the GetById. This allows
+        // the same get_by_id inlined into two separate functions to get independent profiling data.
+        return !origin.inlineCallFrame;
+    }
+
     VM& m_vm;
     Plan& m_plan;
     CodeBlock* m_codeBlock;

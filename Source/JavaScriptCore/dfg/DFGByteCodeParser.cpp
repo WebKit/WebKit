@@ -3933,8 +3933,7 @@ void ByteCodeParser::handleGetById(
     }
     
     if (getByIdStatus.numVariants() > 1) {
-        if (getByIdStatus.makesCalls() || !isFTL(m_graph.m_plan.mode)
-            || !Options::usePolymorphicAccessInlining()) {
+        if (getByIdStatus.makesCalls() || !m_graph.supportsMultiGetByOffset(currentCodeOrigin()) || !Options::usePolymorphicAccessInlining()) {
             set(VirtualRegister(destinationOperand),
                 addToGraph(getById, OpInfo(identifierNumber), OpInfo(prediction), base));
             return;
