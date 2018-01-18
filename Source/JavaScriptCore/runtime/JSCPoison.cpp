@@ -26,6 +26,7 @@
 #include "config.h"
 #include "JSCPoison.h"
 
+#include "Options.h"
 #include <mutex>
 #include <wtf/HashSet.h>
 
@@ -39,6 +40,8 @@ void initializePoison()
 {
     static std::once_flag initializeOnceFlag;
     std::call_once(initializeOnceFlag, [] {
+        if (!Options::usePoisoning())
+            return;
 
 #define INITIALIZE_POISON(poisonID) \
     POISON(poisonID) = makePoison();
