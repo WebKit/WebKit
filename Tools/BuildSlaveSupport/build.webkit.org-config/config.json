@@ -1,25 +1,6 @@
 {
     "slaves":     [ { "name": "test-slave", "platform": "*" },
 
-                    { "name": "bot123", "platform": "mac-elcapitan" },
-                    { "name": "bot126", "platform": "mac-elcapitan" },
-                    { "name": "bot133", "platform": "mac-elcapitan" },
-                    { "name": "bot145", "platform": "mac-elcapitan" },
-                    { "name": "bot162", "platform": "mac-elcapitan" },
-                    { "name": "bot165", "platform": "mac-elcapitan" },
-                    { "name": "bot169", "platform": "mac-elcapitan" },
-                    { "name": "bot170", "platform": "mac-elcapitan" },
-                    { "name": "bot173", "platform": "mac-elcapitan" },
-                    { "name": "bot174", "platform": "mac-elcapitan" },
-                    { "name": "bot208", "platform": "mac-elcapitan" },
-                    { "name": "bot209", "platform": "mac-elcapitan" },
-                    { "name": "bot210", "platform": "mac-elcapitan" },
-                    { "name": "bot415", "platform": "mac-elcapitan" },
-                    { "name": "bot416", "platform": "mac-elcapitan" },
-                    { "name": "bot417", "platform": "mac-elcapitan" },
-                    { "name": "bot418", "platform": "mac-elcapitan" },
-                    { "name": "bot419", "platform": "mac-elcapitan" },
-
                     { "name": "bot121", "platform": "mac-highsierra" },
                     { "name": "bot155", "platform": "mac-highsierra" },
                     { "name": "bot153", "platform": "mac-highsierra" },
@@ -185,69 +166,14 @@
                       "platform": "mac-sierra", "configuration": "release", "architectures": ["i386"],
                       "slavenames": ["bot600"]
                     },
-                    { "name": "Apple El Capitan Debug (Build)", "type": "Build", "builddir": "elcapitan-debug",
-                      "platform": "mac-elcapitan", "configuration": "debug", "architectures": ["x86_64"],
-                      "triggers": ["elcapitan-debug-tests-jsc", "elcapitan-debug-tests-test262", "elcapitan-debug-tests-wk1", "elcapitan-debug-tests-wk2"],
-                      "slavenames": ["bot415", "bot416"]
-                    },
-                    { "name": "Apple El Capitan CMake Debug (Build)", "type": "Build", "builddir": "elcapitan-cmake-debug",
-                      "platform": "mac-elcapitan", "configuration": "debug", "architectures": ["x86_64"],
-                      "additionalArguments": ["--cmake", "--verbose"],
-                      "slavenames": ["bot170"]
-                    },
-                    { "name": "Apple El Capitan Debug JSC (Tests)", "type": "TestJSC", "builddir": "elcapitan-debug-tests-jsc",
-                      "platform": "mac-elcapitan", "configuration": "debug", "architectures": ["x86_64"],
-                      "slavenames": ["bot210"]
-                    },
-                    { "name": "Apple El Capitan Debug WK1 (Tests)", "type": "TestWebKit1AllButJSC", "builddir": "elcapitan-debug-tests-wk1",
-                      "platform": "mac-elcapitan", "configuration": "debug", "architectures": ["x86_64"],
-                      "additionalArguments": ["--no-retry-failures", "--no-sample-on-timeout"],
-                      "slavenames": ["bot133", "bot145"]
-                    },
-                    { "name": "Apple El Capitan Debug WK2 (Tests)", "type": "TestAllButJSC", "builddir": "elcapitan-debug-tests-wk2",
-                      "platform": "mac-elcapitan", "configuration": "debug", "architectures": ["x86_64"],
-                      "additionalArguments": ["--no-retry-failures", "--no-sample-on-timeout"],
-                      "slavenames": ["bot162", "bot165"]
-                    },
                     { "name": "Apple Sierra Debug Test262 (Tests)", "type": "Test262", "builddir": "sierra-debug-tests-test262",
                       "platform": "mac-sierra", "configuration": "debug", "architectures": ["x86_64"],
                       "slavenames": ["bot603"]
-                    },
-                    { "name": "Apple El Capitan LLINT CLoop (BuildAndTest)", "type": "BuildAndTestLLINTCLoop", "builddir": "elcapitan-cloop-debug",
-                      "platform": "mac-elcapitan", "configuration": "debug", "architectures": ["x86_64"],
-                      "slavenames": ["bot169"]
-                    },
-                    { "name": "Apple El Capitan 32-bit JSC (BuildAndTest)", "type": "BuildAndTest32bitJSC", "builddir": "elcapitan-32bitJSC-debug",
-                      "platform": "mac-elcapitan", "configuration": "debug", "architectures": ["i386"],
-                      "slavenames": ["bot123"]
-                    },
-                    { "name": "Apple El Capitan Release (Build)", "type": "Build", "builddir": "elcapitan-release",
-                      "platform": "mac-elcapitan", "configuration": "release", "architectures": ["x86_64"],
-                      "triggers": ["elcapitan-release-tests-jsc", "elcapitan-release-tests-test262", "elcapitan-release-tests-wk1", "elcapitan-release-tests-wk2", "elcapitan-release-perf"],
-                      "slavenames": ["bot417", "bot418"]
-                    },
-                    { "name": "Apple El Capitan Release JSC (Tests)", "type": "TestJSC", "builddir": "elcapitan-release-tests-jsc",
-                      "platform": "mac-elcapitan", "configuration": "release", "architectures": ["x86_64"],
-                      "slavenames": ["bot126"]
-                    },
-                    { "name": "Apple El Capitan Release WK1 (Tests)", "type": "TestWebKit1AllButJSC", "builddir": "elcapitan-release-tests-wk1",
-                      "platform": "mac-elcapitan", "configuration": "release", "architectures": ["x86_64"],
-                      "additionalArguments": ["--no-retry-failures", "--no-sample-on-timeout"],
-                      "slavenames": ["bot173", "bot174"]
-                    },
-                    { "name": "Apple El Capitan Release WK2 (Tests)", "type": "TestAllButJSC", "builddir": "elcapitan-release-tests-wk2",
-                      "platform": "mac-elcapitan", "configuration": "release", "architectures": ["x86_64"],
-                      "additionalArguments": ["--no-retry-failures", "--no-sample-on-timeout"],
-                      "slavenames": ["bot208", "bot209"]
                     },
                     {
                       "name": "Apple Sierra Release WK2 (Perf)", "type": "DownloadAndPerfTest", "builddir": "sierra-release-perf-tests",
                       "platform": "mac-sierra", "configuration": "release", "architectures": ["x86_64"],
                       "slavenames": ["bot205"]
-                    },
-                    { "name": "Apple El Capitan Release (32-bit Build)", "type": "Build", "builddir": "elcapitan-32bit-release",
-                      "platform": "mac-elcapitan", "configuration": "release", "architectures": ["i386"],
-                      "slavenames": ["bot419"]
                     },
                     { "name": "Apple Sierra Release Test262 (Tests)", "type": "Test262", "builddir": "sierra-release-tests-test262",
                       "platform": "mac-sierra", "configuration": "release", "architectures": ["x86_64"],
@@ -407,9 +333,6 @@
                                        "JSCOnly Linux AArch64 Release", "JSCOnly Linux ARMv7 Thumb2 Release", "JSCOnly Linux ARMv7 Traditional Release",
                                        "JSCOnly Linux MIPS32el Release", "WinCairo 64-Bit Release", "WPE Linux 64-bit Release (Build)"]
                     },
-                    { "type": "PlatformSpecificScheduler", "platform": "mac-elcapitan", "branch": "trunk", "treeStableTimer": 45.0,
-                      "builderNames": ["Apple El Capitan Release (Build)", "Apple El Capitan Debug (Build)", "Apple El Capitan LLINT CLoop (BuildAndTest)", "Apple El Capitan 32-bit JSC (BuildAndTest)", "Apple El Capitan Release (32-bit Build)", "Apple El Capitan CMake Debug (Build)"]
-                    },
                     { "type": "PlatformSpecificScheduler", "platform": "mac-highsierra", "branch": "trunk", "treeStableTimer": 45.0,
                       "builderNames": ["Apple High Sierra Release (Build)", "Apple High Sierra Debug (Build)", "Apple High Sierra Release (32-bit Build)", "Apple High Sierra LLINT CLoop (BuildAndTest)", "Apple High Sierra 32-bit JSC (BuildAndTest)"]
                     },
@@ -457,24 +380,6 @@
                     },
                     { "type": "Triggerable", "name": "sierra-debug-tests-wk2",
                       "builderNames": ["Apple Sierra Debug WK2 (Tests)"]
-                    },
-                    { "type": "Triggerable", "name": "elcapitan-release-tests-jsc",
-                      "builderNames": ["Apple El Capitan Release JSC (Tests)"]
-                    },
-                    { "type": "Triggerable", "name": "elcapitan-release-tests-wk1",
-                      "builderNames": ["Apple El Capitan Release WK1 (Tests)"]
-                    },
-                    { "type": "Triggerable", "name": "elcapitan-release-tests-wk2",
-                      "builderNames": ["Apple El Capitan Release WK2 (Tests)"]
-                    },
-                    { "type": "Triggerable", "name": "elcapitan-debug-tests-jsc",
-                      "builderNames": ["Apple El Capitan Debug JSC (Tests)"]
-                    },
-                    { "type": "Triggerable", "name": "elcapitan-debug-tests-wk1",
-                      "builderNames": ["Apple El Capitan Debug WK1 (Tests)"]
-                    },
-                    { "type": "Triggerable", "name": "elcapitan-debug-tests-wk2",
-                      "builderNames": ["Apple El Capitan Debug WK2 (Tests)"]
                     },
                     { "type": "Triggerable", "name": "sierra-release-perf",
                       "builderNames": ["Apple Sierra Release WK2 (Perf)"]
