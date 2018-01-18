@@ -1,3 +1,5 @@
+#include "macOSTargetConditionals.xcconfig"
+
 PRODUCT_NAME = opus;
 
 CLANG_WARN_BOOL_CONVERSION = YES;
@@ -20,7 +22,5 @@ EXCLUDED_SOURCE_FILE_NAMES[sdk=macosx*] = $(EXCLUDED_SOURCE_FILE_NAMES_macosx_$(
 
 // El Capitan and iossimulator can't use SSE4 intrinsics, but Sierra and newer can.
 EXCLUDED_SOURCE_FILE_NAMES_macosx_101100 = NSQ_sse.c VAD_sse.c VQ_WMat_EC_sse.c NSQ_del_dec_sse.c;
-SSE4_FLAG[sdk=macosx*] = $(SSE4_FLAG_macosx_$(TARGET_MAC_OS_X_VERSION_MAJOR));
-SSE4_FLAG_macosx_101200 = OPUS_X86_MAY_HAVE_SSE4_1;
-SSE4_FLAG_macosx_101300 = OPUS_X86_MAY_HAVE_SSE4_1;
-SSE4_FLAG_macosx_101400 = OPUS_X86_MAY_HAVE_SSE4_1;
+SSE4_FLAG[sdk=macosx*] = $(SSE4_FLAG$(WK_MACOS_1012));
+SSE4_FLAG_MACOS_SINCE_1012 = OPUS_X86_MAY_HAVE_SSE4_1;
