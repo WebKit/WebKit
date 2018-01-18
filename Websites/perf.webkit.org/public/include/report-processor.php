@@ -130,7 +130,7 @@ class ReportProcessor {
     private function resolve_build_id(&$build_data, $revisions, $build_request_id) {
         // FIXME: This code has a race condition. See <rdar://problem/15876303>.
         $results = $this->db->query_and_fetch_all("SELECT build_id, build_slave FROM builds
-            WHERE build_builder = $1 AND build_number = $2 AND build_time <= $3 AND build_time + interval '1 day' > $3",
+            WHERE build_builder = $1 AND build_number = $2 AND build_time <= $3 AND build_time + interval '1 day' > $3 LIMIT 2",
             array($build_data['builder'], $build_data['number'], $build_data['time']));
         if ($results) {
             $first_result = $results[0];

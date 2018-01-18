@@ -1,3 +1,15 @@
+2018-01-18  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Don't fetch more than two builds to check duplicity of builds in ReportProcessor
+        https://bugs.webkit.org/show_bug.cgi?id=181786
+
+        Reviewed by Wenson Hsieh.
+
+        Limit the number of builds to check to avoid using a lot of memory with a long delay.
+
+        * public/include/report-processor.php:
+        (ReportProcessor::resolve_build_id): 
+
 2018-01-17  Ryosuke Niwa  <rniwa@webkit.org>
 
         Rename config.json to config.json.sample
