@@ -41,10 +41,11 @@ _log = logging.getLogger(__name__)
 class WebDriverSeleniumExecutor(object):
 
     def __init__(self, driver, display_driver):
+        self._driver_name = driver.selenium_name()
         self._env = display_driver._setup_environ_for_test()
         self._env.update(driver.browser_env())
 
-        self._args = ['--driver=%s' % driver.selenium_name(), '--driver-binary=%s' % driver.binary_path().encode()]
+        self._args = ['--driver=%s' % self._driver_name, '--driver-binary=%s' % driver.binary_path().encode()]
         browser_path = driver.browser_path().encode()
         if browser_path:
             self._args.extend(['--browser-binary=%s' % browser_path])
@@ -59,4 +60,4 @@ class WebDriverSeleniumExecutor(object):
         return pytest_runner.collect(directory, self._args)
 
     def run(self, test, timeout, expectations):
-        return pytest_runner.run(test, self._args, timeout, self._env, expectations)
+        return pytest_runner.run(test, self._args, timeout, self._env, expectations, self._driver_name)

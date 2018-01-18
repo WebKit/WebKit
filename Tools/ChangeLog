@@ -1,5 +1,25 @@
 2018-01-17  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        WebDriver: ignore the driver in selenium test names when getting expectations
+        https://bugs.webkit.org/show_bug.cgi?id=181738
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        In selenium tests, the driver is added as a parameter to every test which results in tests names like
+        foo[DriverName] or foo[DriverName-param2] in case of tests using more parameters. We don't want to include the
+        driver name in the test expectations file, so we need to remove it when querying the expectations.
+
+        * Scripts/webkitpy/webdriver_tests/pytest_runner.py:
+        (TestExpectationsMarker.__init__): Save the param to ignore.
+        (TestExpectationsMarker._item_name): Return the name of the test without the para to ignore.
+        (TestExpectationsMarker.pytest_collection_modifyitems): Use _item_name().
+        (run): Pass param to ignore to TestExpectationsMarker().
+        * Scripts/webkitpy/webdriver_tests/webdriver_selenium_executor.py:
+        (WebDriverSeleniumExecutor.__init__): Save the driver name.
+        (WebDriverSeleniumExecutor.run): Pass the driver name as param to ignore.
+
+2018-01-17  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK][WPE] Show unit tests unexpectedly passing in the bots
         https://bugs.webkit.org/show_bug.cgi?id=181726
 

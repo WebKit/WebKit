@@ -1,4 +1,111 @@
 {
+    "imported/selenium/py/test/selenium/webdriver/common/alerts_tests.py": {
+        "subtests": {
+            "testShouldAllowUsersToAcceptAnAlertInAFrame": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/181727"}}
+            },
+            "testShouldAllowUsersToAcceptAnAlertInANestedFrame": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/181727"}}
+            }
+        }
+    },
+    "imported/selenium/py/test/selenium/webdriver/common/api_example_tests.py": {
+        "subtests": {
+            "testChangeWindowSize": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/181728"}}
+            },
+            "testGetLogTypes": {
+                "expected": {"all": {"status": ["SKIP"]}}
+            },
+            "testGetLog": {
+                "expected": {"all": {"status": ["SKIP"]}}
+            }
+        }
+    },
+    "imported/selenium/py/test/selenium/webdriver/common/appcache_tests.py": {
+        "expected": {"all": {"status": ["SKIP"]}}
+    },
+    "imported/selenium/py/test/selenium/webdriver/common/click_scrolling_tests.py": {
+        "subtests": {
+            "testShouldBeAbleToClickOnAnElementHiddenByDoubleOverflow": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/174902"}}
+            },
+            "testShouldNotScrollIfAlreadyScrolledAndElementIsInView": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/181729"}}
+            },
+            "testShouldScrollOverflowElementsIfClickPointIsOutOfViewButElementIsInView": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/181730"}}
+            },
+            "testShouldBeAbleToClickElementThatIsOutOfViewInAFrameThatIsOutOfView": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/181731"}}
+            },
+            "testShouldBeAbleToClickElementThatIsOutOfViewInANestedFrame": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/181731"}}
+            },
+            "testShouldBeAbleToClickElementThatIsOutOfViewInANestedFrameThatIsOutOfView": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/181731"}}
+            },
+            "testShouldNotScrollWhenGettingElementSize": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/181731"}}
+            },
+            "testShouldBeAbleToClickElementInATallFrame": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/181731"}}
+            }
+        }
+    },
+    "imported/selenium/py/test/selenium/webdriver/common/correct_event_firing_tests.py": {
+        "subtests": {
+            "testShouldEmitOnChangeEventsWhenChangingTheStateOfACheckbox": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/181732"}}
+            },
+            "testClearingAnElementShouldCauseTheOnChangeHandlerToFire": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/181732"}}
+            }
+        }
+    },
+    "imported/selenium/py/test/selenium/webdriver/common/form_handling_tests.py": {
+        "subtests": {
+            "testShouldThrowAnExceptionWhenSelectingAnUnselectableElement": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/181733"}}
+            }
+        }
+    },
+    "imported/selenium/py/test/selenium/webdriver/common/interactions_tests.py": {
+        "expected": {"all": {"status": ["SKIP"], "bug": "webkit.org/b/174616"}}
+    },
+    "imported/selenium/py/test/selenium/webdriver/common/position_and_size_tests.py": {
+        "subtests": {
+            "testShouldScrollPageAndGetCoordinatesOfAnElementThatIsOutOfViewPort": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/181734"}}
+            },
+            "testShouldGetCoordinatesOfAnElementInAFrame": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/181735"}}
+            },
+            "testShouldGetCoordinatesOfAnElementInANestedFrame": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/181735"}}
+            }
+        }
+    },
+    "imported/selenium/py/test/selenium/webdriver/common/rendered_webelement_tests.py": {
+        "subtests": {
+            "testShouldPickUpStyleOfAnElement": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/181736"}}
+            },
+            "testShouldAllowInheritedStylesToBeUsed": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/181736"}}
+            }
+        }
+    },
+    "imported/selenium/py/test/selenium/webdriver/common/text_handling_tests.py": {
+        "subtests": {
+            "testReadALargeAmountOfData": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/181737"}}
+            }
+        }
+    },
+    "imported/selenium/py/test/selenium/webdriver/common/w3c_interaction_tests.py": {
+        "expected": {"all": {"status": ["SKIP"], "bug": "webkit.org/b/174616"}}
+    },
     "imported/w3c/webdriver/tests/actions/key.py": {
         "expected": {"all": {"status": ["SKIP"], "bug": "webkit.org/b/174616"}}
     },
