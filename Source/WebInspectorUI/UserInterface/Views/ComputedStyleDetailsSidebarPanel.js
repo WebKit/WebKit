@@ -27,6 +27,6 @@ WI.ComputedStyleDetailsSidebarPanel = class ComputedStyleDetailsSidebarPanel ext
 {
     constructor()
     {
-        super("style-computed", "Computed", WI.ComputedStyleDetailsPanel);
+        super("style-computed", WI.UIString("Computed"), WI.ComputedStyleDetailsPanel);
     }
 };
