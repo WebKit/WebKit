@@ -1529,8 +1529,8 @@ static inline bool isValidCueStyleProperty(CSSPropertyID id)
     case CSSPropertyPaintOrder:
     case CSSPropertyStrokeLinejoin:
     case CSSPropertyStrokeLinecap:
-    case CSSPropertyWebkitTextStrokeColor:
-    case CSSPropertyWebkitTextStrokeWidth:
+    case CSSPropertyStrokeColor:
+    case CSSPropertyStrokeWidth:
         return true;
     default:
         break;
