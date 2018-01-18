@@ -628,28 +628,35 @@ class RunGLibAPITests(shell.Test):
 
         logText = cmd.logs['stdio'].getText()
 
-        self.incorrectTests = 0
-        self.crashedTests = 0
-        self.timedOutTests = 0
-        self.skippedTests = 0
+        failedTests = 0
+        crashedTests = 0
+        timedOutTests = 0
+        messages = []
         self.statusLine = []
 
         foundItems = re.findall("Unexpected failures \((\d+)\)", logText)
-        if (foundItems):
-            self.incorrectTests = int(foundItems[0])
+        if foundItems:
+            failedTests = int(foundItems[0])
+            messages.append("%d failures" % failedTests)
 
         foundItems = re.findall("Unexpected crashes \((\d+)\)", logText)
-        if (foundItems):
-            self.crashedTests = int(foundItems[0])
+        if foundItems:
+            crashedTests = int(foundItems[0])
+            messages.append("%d crashes" % crashedTests)
 
         foundItems = re.findall("Unexpected timeouts \((\d+)\)", logText)
-        if (foundItems):
-            self.timedOutTests = int(foundItems[0])
+        if foundItems:
+            timedOutTests = int(foundItems[0])
+            messages.append("%d timeouts" % timedOutTests)
 
-        self.totalFailedTests = self.incorrectTests + self.crashedTests + self.timedOutTests
+        foundItems = re.findall("Unexpected passes \((\d+)\)", logText)
+        if foundItems:
+            newPassTests = int(foundItems[0])
+            messages.append("%d new passes" % newPassTests)
 
-        if self.totalFailedTests > 0:
-            self.statusLine = ["%d API tests failed, %d crashed, %d timed out" % (self.incorrectTests, self.crashedTests, self.timedOutTests)]
+        self.totalFailedTests = failedTests + crashedTests + timedOutTests
+        if messages:
+            self.statusLine = ["API tests: %s" % ", ".join(messages)]
 
     def evaluateCommand(self, cmd):
         if self.totalFailedTests > 0:

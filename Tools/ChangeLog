@@ -1,3 +1,15 @@
+2018-01-17  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][WPE] Show unit tests unexpectedly passing in the bots
+        https://bugs.webkit.org/show_bug.cgi?id=181726
+
+        Reviewed by Michael Catanzaro.
+
+        Now that we have the info, let's show it also in the bots.
+
+        * BuildSlaveSupport/build.webkit.org-config/steps.py:
+        (RunGLibAPITests.commandComplete):
+
 2018-01-17  Ling Ho  <lingcherd_ho@apple.com>
 
         Fix broken unittest after r227048
