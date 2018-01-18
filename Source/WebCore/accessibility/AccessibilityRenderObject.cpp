@@ -2495,6 +2495,18 @@ void AccessibilityRenderObject::handleAriaExpandedChanged()
     else
         cache->postNotification(this, document(), AXObjectCache::AXExpandedChanged);
 }
+    
+RenderObject* AccessibilityRenderObject::targetElementForActiveDescendant(const QualifiedName& attributeName, AccessibilityObject* activeDescendant) const
+{
+    AccessibilityObject::AccessibilityChildrenVector elements;
+    ariaElementsFromAttribute(elements, attributeName);
+    for (auto element : elements) {
+        if (activeDescendant->isDescendantOfObject(element.get()))
+            return element->renderer();
+    }
+
+    return nullptr;
+}
 
 void AccessibilityRenderObject::handleActiveDescendantChanged()
 {
@@ -2504,8 +2516,22 @@ void AccessibilityRenderObject::handleActiveDescendantChanged()
     if (!renderer()->frame().selection().isFocusedAndActive() || renderer()->document().focusedElement() != element)
         return;
 
-    if (activeDescendant() && shouldNotifyActiveDescendant())
-        renderer()->document().axObjectCache()->postNotification(renderer(), AXObjectCache::AXActiveDescendantChanged);
+    auto* activeDescendant = this->activeDescendant();
+    if (activeDescendant && shouldNotifyActiveDescendant()) {
+        auto* targetRenderer = renderer();
+        
+#if PLATFORM(COCOA)
+        // If the combobox's activeDescendant is inside another object, the target element should be that parent.
+        if (isComboBox()) {
+            if (auto* ariaOwner = targetElementForActiveDescendant(aria_ownsAttr, activeDescendant))
+                targetRenderer = ariaOwner;
+            else if (auto* ariaController = targetElementForActiveDescendant(aria_controlsAttr, activeDescendant))
+                targetRenderer = ariaController;
+        }
+#endif
+    
+        renderer()->document().axObjectCache()->postNotification(targetRenderer, AXObjectCache::AXActiveDescendantChanged);
+    }
 }
 
 AccessibilityObject* AccessibilityRenderObject::correspondingControlForLabelElement() const
@@ -3299,6 +3325,7 @@ bool AccessibilityRenderObject::canHaveSelectedChildren() const
     case AccessibilityRole::TabList:
     case AccessibilityRole::Tree:
     case AccessibilityRole::TreeGrid:
+    case AccessibilityRole::List:
     // These roles are containers whose children are treated as selected by assistive
     // technologies. We can get the "selected" item via aria-activedescendant or the
     // focused element.
@@ -3326,7 +3353,7 @@ void AccessibilityRenderObject::ariaSelectedRows(AccessibilityChildrenVector& re
     // Get all the rows.
     auto rowsIteration = [&](auto& rows) {
         for (auto& row : rows) {
-            if (row->isSelected()) {
+            if (row->isSelected() || row->isActiveDescendantOfFocusedContainer()) {
                 result.append(row);
                 if (!isMulti)
                     break;
@@ -3350,7 +3377,7 @@ void AccessibilityRenderObject::ariaListboxSelectedChildren(AccessibilityChildre
 
     for (const auto& child : children()) {
         // Every child should have aria-role option, and if so, check for selected attribute/state.
-        if (child->isSelected() && child->ariaRoleAttribute() == AccessibilityRole::ListBoxOption) {
+        if (child->ariaRoleAttribute() == AccessibilityRole::ListBoxOption && (child->isSelected() || child->isActiveDescendantOfFocusedContainer())) {
             result.append(child);
             if (!isMulti)
                 return;
@@ -3378,6 +3405,10 @@ void AccessibilityRenderObject::selectedChildren(AccessibilityChildrenVector& re
     case AccessibilityRole::TabList:
         if (AccessibilityObject* selectedTab = selectedTabItem())
             result.append(selectedTab);
+        return;
+    case AccessibilityRole::List:
+        if (auto* selectedListItemChild = selectedListItem())
+            result.append(selectedListItemChild);
         return;
     case AccessibilityRole::Menu:
     case AccessibilityRole::MenuBar:

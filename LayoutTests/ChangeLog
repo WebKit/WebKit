@@ -1,3 +1,14 @@
+2018-01-18  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: Aria-activedescendant not supported
+        https://bugs.webkit.org/show_bug.cgi?id=161734
+        <rdar://problem/28202679>
+
+        Reviewed by Joanmarie Diggs.
+
+        * accessibility/aria-combobox-control-owns-elements-expected.txt: Added.
+        * accessibility/aria-combobox-control-owns-elements.html: Added.
+
 2018-01-18  Per Arne Vollan  <pvollan@apple.com>
 
         Mark fast/forms/auto-fill-button/input-strong-password-auto-fill-button.html as failing on Windows.

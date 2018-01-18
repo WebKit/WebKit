@@ -285,6 +285,7 @@ private:
 
     bool shouldGetTextFromNode(AccessibilityTextUnderElementMode) const;
 
+    RenderObject* targetElementForActiveDescendant(const QualifiedName&, AccessibilityObject*) const;
     bool canHavePlainText() const;
 };
 

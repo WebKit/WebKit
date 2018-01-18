@@ -3410,6 +3410,16 @@ bool AccessibilityObject::isContainedByPasswordField() const
     Element* element = node->shadowHost();
     return is<HTMLInputElement>(element) && downcast<HTMLInputElement>(*element).isPasswordField();
 }
+    
+AccessibilityObject* AccessibilityObject::selectedListItem()
+{
+    for (const auto& child : children()) {
+        if (child->isListItem() && (child->isSelected() || child->isActiveDescendantOfFocusedContainer()))
+            return child.get();
+    }
+    
+    return nullptr;
+}
 
 void AccessibilityObject::ariaElementsFromAttribute(AccessibilityChildrenVector& children, const QualifiedName& attributeName) const
 {

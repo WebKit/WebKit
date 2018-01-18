@@ -38,7 +38,7 @@ AXDOMClassList: <array of size 0>
 AXFocusableAncestor: <AXList>
 AXEditableAncestor: (null)
 AXHighestEditableAncestor: (null)
-AXSelectedChildren: (null)
+AXSelectedChildren: <array of size 0>
 AXVisibleChildren: <array of size 2>
 AXOrientation: AXVerticalOrientation
 AXTitleUIElement: (null)
@@ -72,7 +72,7 @@ AXDOMClassList: <array of size 0>
 AXFocusableAncestor: <AXList>
 AXEditableAncestor: (null)
 AXHighestEditableAncestor: (null)
-AXSelectedChildren: (null)
+AXSelectedChildren: <array of size 0>
 AXVisibleChildren: <array of size 2>
 AXOrientation: AXVerticalOrientation
 AXTitleUIElement: (null)

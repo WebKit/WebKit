@@ -1,3 +1,29 @@
+2018-01-18  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: Aria-activedescendant not supported
+        https://bugs.webkit.org/show_bug.cgi?id=161734
+        <rdar://problem/28202679>
+
+        Reviewed by Joanmarie Diggs.
+
+        When a combo-box owns/controls a list/listbox/grid/tree, the owned element needs to check the active-descendant of the combobox when
+        checking if it has selected children. 
+        The target of the selection change notification should also be the owned element in these cases.
+
+        Test: accessibility/aria-combobox-controlling-list.html
+
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::selectedListItem):
+        * accessibility/AccessibilityObject.h:
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::targetElementForActiveDescendant const):
+        (WebCore::AccessibilityRenderObject::handleActiveDescendantChanged):
+        (WebCore::AccessibilityRenderObject::canHaveSelectedChildren const):
+        (WebCore::AccessibilityRenderObject::selectedChildren):
+        * accessibility/AccessibilityRenderObject.h:
+        * accessibility/mac/AXObjectCacheMac.mm:
+        (WebCore::AXObjectCache::postPlatformNotification):
+
 2018-01-17  Per Arne Vollan  <pvollan@apple.com>
 
         REGRESSION (r224780): Text stroke not applied to video captions.
