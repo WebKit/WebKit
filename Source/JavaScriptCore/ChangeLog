@@ -1,3 +1,11 @@
+2018-01-18  Michael Saboff  <msaboff@apple.com>
+
+        Unreviewed build fix for Windows
+
+        * interpreter/FrameTracers.h:
+        (JSC::assertStackPointerIsAligned): Can't use gcc style inlined assembly
+        on Windows.
+
 2018-01-18  Mark Lam  <mark.lam@apple.com>
 
         Poisons should be initialized after Options are initialized.
