@@ -1,3 +1,23 @@
+2018-01-19  Daniel Bates  <dabates@apple.com>
+
+        Update frame-ancestor directive to match Content Security Policy Level 3
+        https://bugs.webkit.org/show_bug.cgi?id=178891
+        <rdar://problem/35209458>
+
+        Reviewed by Alex Christensen.
+
+        Derived from Blink e667cc2e501fabab3605b838e4ee0d642a9c4a59:
+        <https://chromium.googlesource.com/chromium/src.git/+/e667cc2e501fabab3605b838e4ee0d642a9c4a59>
+
+        * http/tests/security/contentSecurityPolicy/1.1/frame-ancestors/frame-ancestors-nested-cross-in-allow-same-origin-sandboxed-cross-url-allow-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/frame-ancestors/frame-ancestors-nested-cross-in-allow-same-origin-sandboxed-cross-url-allow.html: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/frame-ancestors/frame-ancestors-nested-cross-in-sandboxed-cross-url-block-expected.txt: Added.
+        * http/tests/security/contentSecurityPolicy/1.1/frame-ancestors/frame-ancestors-nested-cross-in-sandboxed-cross-url-block.html: Added.
+        * http/tests/security/contentSecurityPolicy/resources/frame-ancestors-test.js:
+        (injectNestedIframe):
+        (window.onload):
+        (testNestedIFrame):
+
 2018-01-19  Yoav Weiss  <yoav@yoav.ws>
 
         Support for preconnect Link headers

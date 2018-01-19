@@ -26,7 +26,7 @@ window.addEventListener("message", function (e) {
     done();
 });
 
-function injectNestedIframe(policy, parent, child, expectation) {
+function injectNestedIframe(policy, parent, child, expectation, sandboxPolicy) {
     var iframe = document.createElement("iframe");
 
     var url = "/security/contentSecurityPolicy/resources/frame-in-frame.pl?"
@@ -35,6 +35,9 @@ function injectNestedIframe(policy, parent, child, expectation) {
               + "&child=" + child
               + "&expectation=" + expectation;
     url = (parent == "same" ? SAMEORIGIN_ORIGIN : CROSSORIGIN_ORIGIN) + url;
+
+    if (sandboxPolicy !== undefined)
+        iframe.sandbox = sandboxPolicy;
 
     iframe.src = url;
     document.body.appendChild(iframe);
@@ -85,8 +88,8 @@ function sameOriginFrameShouldBeAllowed(policy) {
     };
 }
 
-function testNestedIFrame(policy, parent, child, expectation) {
+function testNestedIFrame(policy, parent, child, expectation, sandboxPolicy) {
     window.onload = function () {
-        injectNestedIframe(policy, parent == SAME_ORIGIN ? "same" : "cross", child == SAME_ORIGIN ? "same" : "cross", expectation == EXPECT_LOAD ? "Allowed" : "Blocked");
+        injectNestedIframe(policy, parent == SAME_ORIGIN ? "same" : "cross", child == SAME_ORIGIN ? "same" : "cross", expectation == EXPECT_LOAD ? "Allowed" : "Blocked", sandboxPolicy);
     };
 }

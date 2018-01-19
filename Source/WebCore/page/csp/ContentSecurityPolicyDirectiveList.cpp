@@ -76,7 +76,8 @@ static inline bool checkFrameAncestors(ContentSecurityPolicySourceListDirective*
         return true;
     bool didReceiveRedirectResponse = false;
     for (Frame* current = frame.tree().parent(); current; current = current->tree().parent()) {
-        if (!directive->allows(current->document()->url(), didReceiveRedirectResponse, ContentSecurityPolicySourceListDirective::ShouldAllowEmptyURLIfSourceListIsNotNone::No))
+        URL origin { URL { }, current->document()->securityOrigin().toString() };
+        if (!origin.isValid() || !directive->allows(origin, didReceiveRedirectResponse, ContentSecurityPolicySourceListDirective::ShouldAllowEmptyURLIfSourceListIsNotNone::No))
             return false;
     }
     return true;
