@@ -1,3 +1,13 @@
+2018-01-19  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [GTK] TERM environment variable is not passed to the test driver.
+        https://bugs.webkit.org/show_bug.cgi?id=181847
+
+        Rubber-stamped by by Carlos Garcia Campos.
+
+        * Scripts/webkitpy/port/base.py:
+        (Port.to.setup_environ_for_server):
+
 2018-01-19  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         WebDriver: run-webdriver-tests is crashing in the bots when creating results json file
