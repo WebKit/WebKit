@@ -31,7 +31,7 @@
 
 @interface NSWindow (WKExtras)
 
-- (BOOL)_web_isWebInspectorWindow;
+- (BOOL)_web_isWebInspectorWindow WK_API_AVAILABLE(macosx(WK_MAC_TBA));
 
 @end
 

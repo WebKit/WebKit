@@ -1,3 +1,12 @@
+2018-01-19  Joseph Pecoraro  <pecoraro@apple.com>
+
+        [Cocoa] _WKNSWindowExtras.h: Add missing availability annotation
+        https://bugs.webkit.org/show_bug.cgi?id=181868
+
+        Reviewed by Dan Bernstein.
+
+        * Shared/API/Cocoa/_WKNSWindowExtras.h:
+
 2018-01-19  John Wilander  <wilander@apple.com>
 
         Resource Load Statistics: Add void to argument list to fix build with -Wstrict-prototypes
