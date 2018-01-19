@@ -1,3 +1,13 @@
+2018-01-19  John Wilander  <wilander@apple.com>
+
+        Resource Load Statistics: Add void to argument list to fix build with -Wstrict-prototypes
+        https://bugs.webkit.org/show_bug.cgi?id=181870
+        <rdar://problem/36666750>
+
+        Unreviewed build fix.
+
+        * UIProcess/API/Cocoa/WKWebsiteDataStorePrivate.h:
+
 2018-01-19  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r227211.
