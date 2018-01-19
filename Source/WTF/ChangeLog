@@ -1,3 +1,13 @@
+2018-01-19  Alexey Proskuryakov  <ap@apple.com>
+
+        Update XPCSPI.h
+        https://bugs.webkit.org/show_bug.cgi?id=181827
+        rdar://problem/36393031
+
+        Reviewed by Daniel Bates.
+
+        * wtf/spi/darwin/XPCSPI.h:
+
 2018-01-18  Chris Dumez  <cdumez@apple.com>
 
         We should be able to terminate service workers that are unresponsive
