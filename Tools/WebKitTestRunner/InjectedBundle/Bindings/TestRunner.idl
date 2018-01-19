@@ -293,8 +293,8 @@ interface TestRunner {
     void setStatisticsGrandfatheringTime(double seconds);
     void setStatisticsMaxStatisticsEntries(unsigned long entries);
     void setStatisticsPruneEntriesDownTo(unsigned long entries);
-    void statisticsClearInMemoryAndPersistentStore();
-    void statisticsClearInMemoryAndPersistentStoreModifiedSinceHours(unsigned long hours);
+    void statisticsClearInMemoryAndPersistentStore(object callback);
+    void statisticsClearInMemoryAndPersistentStoreModifiedSinceHours(unsigned long hours, object callback);
     void statisticsClearThroughWebsiteDataRemoval(object callback);
     void statisticsResetToConsistentState();
 

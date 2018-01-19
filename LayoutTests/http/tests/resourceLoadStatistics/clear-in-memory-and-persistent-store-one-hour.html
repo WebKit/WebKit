@@ -30,11 +30,7 @@
         else
             testFailed("Host did not get classified as prevalent resource.");
 
-        testRunner.clearTestRunnerCallbacks();
-        testRunner.installStatisticsDidScanDataRecordsCallback(completeTest);
-        testRunner.installStatisticsDidModifyDataRecordsCallback(completeTest);
-
-        testRunner.statisticsClearInMemoryAndPersistentStoreModifiedSinceHours(1);
+        testRunner.statisticsClearInMemoryAndPersistentStoreModifiedSinceHours(1, completeTest);
     }
 
     function runTestRunnerTest() {
@@ -53,7 +49,6 @@
         testRunner.setStatisticsSubresourceUnderTopFrameOrigin(statisticsUrl, topFrameOrigin3);
 
         testRunner.installStatisticsDidScanDataRecordsCallback(testStep2);
-        testRunner.installStatisticsDidModifyDataRecordsCallback(testStep2);
 
         testRunner.statisticsProcessStatisticsAndDataRecords();
     }

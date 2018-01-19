@@ -79,8 +79,10 @@ typedef NS_OPTIONS(NSUInteger, _WKWebsiteDataStoreFetchOptions) {
 - (void)_resourceLoadStatisticsSetShouldClassifyResourcesBeforeDataRecordsRemoval:(BOOL)value WK_API_AVAILABLE(macosx(10.13), ios(11.0));
 - (void)_resourceLoadStatisticsSetNotifyPagesWhenTelemetryWasCaptured:(BOOL)value WK_API_AVAILABLE(macosx(10.13), ios(11.0));
 - (void)_resourceLoadStatisticsSetShouldSubmitTelemetry:(BOOL)value WK_API_AVAILABLE(macosx(10.13), ios(11.0));
-- (void)_resourceLoadStatisticsClearInMemoryAndPersistentStore WK_API_AVAILABLE(macosx(10.13), ios(11.0));
-- (void)_resourceLoadStatisticsClearInMemoryAndPersistentStoreModifiedSinceHours:(unsigned)hours WK_API_AVAILABLE(macosx(10.13), ios(11.0));
+- (void)_resourceLoadStatisticsClearInMemoryAndPersistentStore WK_API_DEPRECATED_WITH_REPLACEMENT("_resourceLoadStatisticsClearInMemoryAndPersistentStore", macosx(10.13, WK_MAC_TBA), ios(11.0, WK_IOS_TBA));
+- (void)_resourceLoadStatisticsClearInMemoryAndPersistentStore:(void (^)())completionHandler WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
+- (void)_resourceLoadStatisticsClearInMemoryAndPersistentStoreModifiedSinceHours:(unsigned)hours WK_API_DEPRECATED_WITH_REPLACEMENT("_resourceLoadStatisticsClearInMemoryAndPersistentStoreModifiedSinceHours", macosx(10.13, WK_MAC_TBA), ios(11.0, WK_IOS_TBA));
+- (void)_resourceLoadStatisticsClearInMemoryAndPersistentStoreModifiedSinceHours:(unsigned)hours completionHandler:(void (^)())completionHandler WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
 - (void)_resourceLoadStatisticsResetToConsistentState WK_API_AVAILABLE(macosx(10.13), ios(11.0));
 - (void)_setResourceLoadStatisticsTestingCallback:(nullable void (^)(WKWebsiteDataStore *, NSString *))callback WK_API_AVAILABLE(macosx(10.13), ios(11.0));
 + (void)_allowWebsiteDataRecordsForAllOrigins WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));

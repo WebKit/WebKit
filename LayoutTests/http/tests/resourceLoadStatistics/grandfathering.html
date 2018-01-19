@@ -40,10 +40,9 @@
     }
 
     function clearInMemoryAndPersistentStoreAndContinue() {
-        testRunner.installStatisticsDidScanDataRecordsCallback(function() {
+        testRunner.statisticsClearInMemoryAndPersistentStore(function() {
             runTest();
         });
-        testRunner.statisticsClearInMemoryAndPersistentStore();
     }
 
     function runTest() {
@@ -99,6 +98,7 @@
                 break;
             default:
                 testFailed("Should not be reached.");
+                finishTest();
         }
     }
 

@@ -392,8 +392,8 @@ public:
     void setStatisticsGrandfatheringTime(double seconds);
     void setStatisticsMaxStatisticsEntries(unsigned);
     void setStatisticsPruneEntriesDownTo(unsigned);
-    void statisticsClearInMemoryAndPersistentStore();
-    void statisticsClearInMemoryAndPersistentStoreModifiedSinceHours(unsigned hours);
+    void statisticsClearInMemoryAndPersistentStore(JSValueRef callback);
+    void statisticsClearInMemoryAndPersistentStoreModifiedSinceHours(unsigned hours, JSValueRef callback);
     void statisticsClearThroughWebsiteDataRemoval(JSValueRef callback);
     void statisticsCallClearThroughWebsiteDataRemovalCallback();
     void statisticsResetToConsistentState();

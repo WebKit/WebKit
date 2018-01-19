@@ -211,7 +211,7 @@ void ResourceLoadStatisticsPersistentStorage::populateMemoryStoreFromDisk()
 
     String filePath = resourceLogFilePath();
     if (filePath.isEmpty() || !FileSystem::fileExists(filePath)) {
-        m_memoryStore.grandfatherExistingWebsiteData();
+        m_memoryStore.grandfatherExistingWebsiteData([]() { });
         monitorDirectoryForNewStatistics();
         return;
     }
@@ -225,7 +225,7 @@ void ResourceLoadStatisticsPersistentStorage::populateMemoryStoreFromDisk()
 
     auto decoder = createDecoderForFile(filePath);
     if (!decoder) {
-        m_memoryStore.grandfatherExistingWebsiteData();
+        m_memoryStore.grandfatherExistingWebsiteData([]() { });
         return;
     }
 

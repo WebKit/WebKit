@@ -429,12 +429,16 @@ void TestController::setStatisticsPruneEntriesDownTo(unsigned entries)
     
 void TestController::statisticsClearInMemoryAndPersistentStore()
 {
-    [globalWebViewConfiguration.websiteDataStore _resourceLoadStatisticsClearInMemoryAndPersistentStore];
+    [globalWebViewConfiguration.websiteDataStore _resourceLoadStatisticsClearInMemoryAndPersistentStore:^() {
+        m_currentInvocation->didClearStatisticsThroughWebsiteDataRemoval();
+    }];
 }
 
 void TestController::statisticsClearInMemoryAndPersistentStoreModifiedSinceHours(unsigned hours)
 {
-    [globalWebViewConfiguration.websiteDataStore _resourceLoadStatisticsClearInMemoryAndPersistentStoreModifiedSinceHours:hours];
+    [globalWebViewConfiguration.websiteDataStore _resourceLoadStatisticsClearInMemoryAndPersistentStoreModifiedSinceHours:hours completionHandler:^() {
+        m_currentInvocation->didClearStatisticsThroughWebsiteDataRemoval();
+    }];
 }
 
 void TestController::statisticsClearThroughWebsiteDataRemoval()

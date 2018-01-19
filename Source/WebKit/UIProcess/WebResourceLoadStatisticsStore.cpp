@@ -305,24 +305,24 @@ void WebResourceLoadStatisticsStore::requestStorageAccess(String&& subFrameHost,
     });
 }
     
-void WebResourceLoadStatisticsStore::grandfatherExistingWebsiteData()
+void WebResourceLoadStatisticsStore::grandfatherExistingWebsiteData(CompletionHandler<void()>&& callback)
 {
     ASSERT(!RunLoop::isMain());
 
-    RunLoop::main().dispatch([this, protectedThis = makeRef(*this)] () mutable {
+    RunLoop::main().dispatch([this, protectedThis = makeRef(*this), callback = WTFMove(callback)] () mutable {
         // FIXME: This method being a static call on WebProcessProxy is wrong.
         // It should be on the data store that this object belongs to.
-        WebProcessProxy::topPrivatelyControlledDomainsWithWebsiteData(WebResourceLoadStatisticsStore::monitoredDataTypes(), m_parameters.shouldNotifyPagesWhenDataRecordsWereScanned, [this, protectedThis = WTFMove(protectedThis)] (HashSet<String>&& topPrivatelyControlledDomainsWithWebsiteData) mutable {
-            m_statisticsQueue->dispatch([this, protectedThis = WTFMove(protectedThis), topDomains = crossThreadCopy(topPrivatelyControlledDomainsWithWebsiteData)] () mutable {
+        WebProcessProxy::topPrivatelyControlledDomainsWithWebsiteData(WebResourceLoadStatisticsStore::monitoredDataTypes(), m_parameters.shouldNotifyPagesWhenDataRecordsWereScanned, [this, protectedThis = WTFMove(protectedThis), callback = WTFMove(callback)] (HashSet<String>&& topPrivatelyControlledDomainsWithWebsiteData) mutable {
+            m_statisticsQueue->dispatch([this, protectedThis = WTFMove(protectedThis), topDomains = crossThreadCopy(topPrivatelyControlledDomainsWithWebsiteData), callback = WTFMove(callback)] () mutable {
                 for (auto& topPrivatelyControlledDomain : topDomains) {
                     auto& statistic = ensureResourceStatisticsForPrimaryDomain(topPrivatelyControlledDomain);
                     statistic.grandfathered = true;
                 }
                 m_endOfGrandfatheringTimestamp = WallTime::now() + m_parameters.grandfatheringTime;
                 m_persistentStorage.scheduleOrWriteMemoryStore(ResourceLoadStatisticsPersistentStorage::ForceImmediateWrite::Yes);
+                callback();
+                logTestingEvent(ASCIILiteral("Grandfathered"));
             });
-
-            logTestingEvent(ASCIILiteral("Grandfathered"));
         });
     });
 }
@@ -593,23 +593,30 @@ void WebResourceLoadStatisticsStore::scheduleClearInMemory()
     });
 }
 
-void WebResourceLoadStatisticsStore::scheduleClearInMemoryAndPersistent(ShouldGrandfather shouldGrandfather)
+void WebResourceLoadStatisticsStore::scheduleClearInMemoryAndPersistent(ShouldGrandfather shouldGrandfather, CompletionHandler<void()>&& callback)
 {
     ASSERT(RunLoop::isMain());
-    m_statisticsQueue->dispatch([this, protectedThis = makeRef(*this), shouldGrandfather] {
+    m_statisticsQueue->dispatch([this, protectedThis = makeRef(*this), shouldGrandfather, callback = WTFMove(callback)] () mutable {
         clearInMemory();
         m_persistentStorage.clear();
         
         if (shouldGrandfather == ShouldGrandfather::Yes)
-            grandfatherExistingWebsiteData();
+            grandfatherExistingWebsiteData([this, protectedThis = makeRef(*this), callback = WTFMove(callback)]() {
+                callback();
+                logTestingEvent(ASCIILiteral("ClearedInMemoryAndPersistent"));
+            });
+        else {
+            callback();
+            logTestingEvent(ASCIILiteral("ClearedInMemoryAndPersistent"));
+        }
     });
 }
 
-void WebResourceLoadStatisticsStore::scheduleClearInMemoryAndPersistent(WallTime modifiedSince, ShouldGrandfather shouldGrandfather)
+void WebResourceLoadStatisticsStore::scheduleClearInMemoryAndPersistent(WallTime modifiedSince, ShouldGrandfather shouldGrandfather, CompletionHandler<void()>&& callback)
 {
     // For now, be conservative and clear everything regardless of modifiedSince.
     UNUSED_PARAM(modifiedSince);
-    scheduleClearInMemoryAndPersistent(shouldGrandfather);
+    scheduleClearInMemoryAndPersistent(shouldGrandfather, WTFMove(callback));
 }
 
 void WebResourceLoadStatisticsStore::setTimeToLiveUserInteraction(Seconds seconds)

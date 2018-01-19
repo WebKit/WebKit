@@ -119,8 +119,8 @@ public:
         No,
         Yes,
     };
-    void scheduleClearInMemoryAndPersistent(ShouldGrandfather);
-    void scheduleClearInMemoryAndPersistent(WallTime modifiedSince, ShouldGrandfather);
+    void scheduleClearInMemoryAndPersistent(ShouldGrandfather, CompletionHandler<void()>&&);
+    void scheduleClearInMemoryAndPersistent(WallTime modifiedSince, ShouldGrandfather, CompletionHandler<void()>&&);
 
     void setTimeToLiveUserInteraction(Seconds);
     void setTimeToLiveCookiePartitionFree(Seconds);
@@ -137,7 +137,7 @@ public:
     std::unique_ptr<WebCore::KeyedEncoder> createEncoderFromData() const;
     void mergeWithDataFromDecoder(WebCore::KeyedDecoder&);
     void clearInMemory();
-    void grandfatherExistingWebsiteData();
+    void grandfatherExistingWebsiteData(CompletionHandler<void()>&&);
 
     void setStatisticsTestingCallback(Function<void (const String&)>&& callback) { m_statisticsTestingCallback = WTFMove(callback); }
     void logTestingEvent(const String&);

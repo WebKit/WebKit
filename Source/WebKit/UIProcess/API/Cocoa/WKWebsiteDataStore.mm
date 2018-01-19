@@ -549,20 +549,38 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
 
 - (void)_resourceLoadStatisticsClearInMemoryAndPersistentStore
 {
-    auto* store = _websiteDataStore->websiteDataStore().resourceLoadStatistics();
-    if (!store)
-        return;
+    [self _resourceLoadStatisticsClearInMemoryAndPersistentStore:^() { }];
+}
 
-    store->scheduleClearInMemoryAndPersistent(WebKit::WebResourceLoadStatisticsStore::ShouldGrandfather::Yes);
+- (void)_resourceLoadStatisticsClearInMemoryAndPersistentStore:(void (^)())completionHandler
+{
+    auto* store = _websiteDataStore->websiteDataStore().resourceLoadStatistics();
+    if (!store) {
+        completionHandler();
+        return;
+    }
+
+    store->scheduleClearInMemoryAndPersistent(WebKit::WebResourceLoadStatisticsStore::ShouldGrandfather::Yes, [completionHandler = makeBlockPtr(completionHandler)]() {
+        completionHandler();
+    });
 }
 
 - (void)_resourceLoadStatisticsClearInMemoryAndPersistentStoreModifiedSinceHours:(unsigned)hours
 {
-    auto* store = _websiteDataStore->websiteDataStore().resourceLoadStatistics();
-    if (!store)
-        return;
+    [self _resourceLoadStatisticsClearInMemoryAndPersistentStoreModifiedSinceHours:hours completionHandler:^() { }];
+}
 
-    store->scheduleClearInMemoryAndPersistent(WallTime::now() - Seconds::fromHours(hours), WebKit::WebResourceLoadStatisticsStore::ShouldGrandfather::Yes);
+- (void)_resourceLoadStatisticsClearInMemoryAndPersistentStoreModifiedSinceHours:(unsigned)hours completionHandler:(void (^)())completionHandler
+{
+    auto* store = _websiteDataStore->websiteDataStore().resourceLoadStatistics();
+    if (!store) {
+        completionHandler();
+        return;
+    }
+
+    store->scheduleClearInMemoryAndPersistent(WallTime::now() - Seconds::fromHours(hours), WebKit::WebResourceLoadStatisticsStore::ShouldGrandfather::Yes, [completionHandler = makeBlockPtr(completionHandler)]() {
+        completionHandler();
+    });
 }
 
 - (void)_resourceLoadStatisticsResetToConsistentState

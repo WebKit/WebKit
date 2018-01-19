@@ -1,3 +1,42 @@
+2018-01-19  John Wilander  <wilander@apple.com>
+
+        Resource Load Statistics: Implement callback support for removal of WebsiteDataType::ResourceLoadStatistics
+        https://bugs.webkit.org/show_bug.cgi?id=181822
+        https://bugs.webkit.org/show_bug.cgi?id=175263
+        https://bugs.webkit.org/show_bug.cgi?id=178536
+        https://bugs.webkit.org/show_bug.cgi?id=181223
+        https://bugs.webkit.org/show_bug.cgi?id=181482
+        <rdar://problem/33491222>
+        <rdar://problem/33805293>
+        <rdar://problem/36332683>
+        <rdar://problem/36549026>
+
+        Reviewed by Alex Christensen.
+
+        * UIProcess/API/C/WKWebsiteDataStoreRef.cpp:
+        (WKWebsiteDataStoreStatisticsClearInMemoryAndPersistentStore):
+        (WKWebsiteDataStoreStatisticsClearInMemoryAndPersistentStoreModifiedSinceHours):
+        * UIProcess/API/Cocoa/WKWebsiteDataStore.mm:
+        (-[WKWebsiteDataStore _resourceLoadStatisticsClearInMemoryAndPersistentStore]):
+            Calls the new API with no-op completion handler.
+        (-[WKWebsiteDataStore _resourceLoadStatisticsClearInMemoryAndPersistentStore:]):
+            New API with completion handler.
+        (-[WKWebsiteDataStore _resourceLoadStatisticsClearInMemoryAndPersistentStoreModifiedSinceHours:]):
+            Calls the new API with no-op completion handler.
+        (-[WKWebsiteDataStore _resourceLoadStatisticsClearInMemoryAndPersistentStoreModifiedSinceHours:completionHandler:]):
+            New API with completion handler.
+        * UIProcess/API/Cocoa/WKWebsiteDataStorePrivate.h:
+        * UIProcess/ResourceLoadStatisticsPersistentStorage.cpp:
+        (WebKit::ResourceLoadStatisticsPersistentStorage::populateMemoryStoreFromDisk):
+        * UIProcess/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::grandfatherExistingWebsiteData):
+        (WebKit::WebResourceLoadStatisticsStore::scheduleClearInMemoryAndPersistent):
+        * UIProcess/WebResourceLoadStatisticsStore.h:
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::removeData):
+        (WebKit::WebsiteDataStore::clearResourceLoadStatisticsInWebProcesses):
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+
 2018-01-19  Daniel Bates  <dabates@apple.com>
 
         REGRESSION (r223149): Ref WebPageProxy objects before calling their functionality

@@ -107,7 +107,7 @@ public:
     void setCacheStorageDirectory(String&& directory) { m_resolvedConfiguration.cacheStorageDirectory = WTFMove(directory); }
 
     WebResourceLoadStatisticsStore* resourceLoadStatistics() const { return m_resourceLoadStatistics.get(); }
-    void clearResourceLoadStatisticsInWebProcesses();
+    void clearResourceLoadStatisticsInWebProcesses(CompletionHandler<void()>&&);
 
     static void cloneSessionData(WebPageProxy& sourcePage, WebPageProxy& newPage);
 

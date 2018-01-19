@@ -808,6 +808,9 @@ webkit.org/b/176122 media/video-controls-drop-and-restore-timeline.html [ Pass F
 [ HighSierra+ ] http/tests/resourceLoadStatistics/add-blocking-to-redirect.html [ Pass ]
 [ HighSierra+ ] http/tests/resourceLoadStatistics/remove-partitioning-in-redirect.html [ Pass ]
 [ HighSierra+ ] http/tests/resourceLoadStatistics/remove-blocking-in-redirect.html [ Pass ]
+[ HighSierra+ ] http/tests/resourceLoadStatistics/grandfathering.html [ Pass ]
+[ HighSierra+ ] http/tests/resourceLoadStatistics/clear-in-memory-and-persistent-store.html [ Pass ]
+[ HighSierra+ ] http/tests/resourceLoadStatistics/clear-in-memory-and-persistent-store-one-hour.html [ Pass ]
 
 # <rdar://problem/33555759>
 webkit.org/b/177616 [ HighSierra+ ] http/tests/media/video-buffered-range-contains-currentTime.html [ Pass Timeout ]
@@ -824,8 +827,6 @@ webkit.org/b/177214 [ ElCapitan Debug ] imported/w3c/web-platform-tests/FileAPI/
 webkit.org/b/177687 http/tests/inspector/network/resource-sizes-memory-cache.html [ Pass Failure ]
 
 webkit.org/b/178472 http/tests/resourceLoadStatistics/prevalent-resource-handled-keydown.html [ Pass ]
-
-webkit.org/b/178536 http/tests/resourceLoadStatistics/clear-in-memory-and-persistent-store-one-hour.html [ Skip ]
 
 webkit.org/b/176881 plugins/js-from-destroy.html [ Pass Failure ]
 
@@ -865,8 +866,6 @@ webkit.org/b/181392 imported/w3c/web-platform-tests/service-workers/service-work
 webkit.org/b/172879 webrtc/video-unmute.html [ Skip ]
 
 webkit.org/b/181502 swipe/pushstate-with-manual-scrollrestoration.html [ Failure ]
-
-webkit.org/b/181482 http/tests/resourceLoadStatistics/grandfathering.html [ Skip ]
 
 webkit.org/b/181750 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-request-redirect.https.html [ Pass Failure ]
 webkit.org/b/181750 imported/w3c/web-platform-tests/service-workers/service-worker/interfaces-sw.https.html [ Pass Failure ]
