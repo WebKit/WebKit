@@ -1,3 +1,164 @@
+2018-01-18  Brady Eidson  <beidson@apple.com>
+
+        Make in-process MessagePorts be (mostly) asynchronous
+        https://bugs.webkit.org/show_bug.cgi?id=181454
+
+        Reviewed by Alex Christensen.
+
+        No new tests (Covered *brutally* by existing tests)
+
+        Part of making MessagePorts be a thing we can pass across processes is making them work async.
+        
+        The existing "MessagePortChannel" method of abstraction was not cut out for this.
+        This patch gets rid of MessagePortChannel and adds a new MessagePortChannelProvider abstraction.
+        It then gets the new machinery working in-process (with some pieces of out-of-process in place)
+
+        One synchronous behavior this patch maintains is the hasPendingActivity() check used to support GC.
+        That will (creatively) be made async in the next followup.
+        
+        More generally from MessagePorts, this patch also adds a "MessageWithMessagePorts" object to be used
+        with all forms of postMessage(). Much better.
+        
+        * CMakeLists.txt:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+
+        * dom/InProcessMessagePortChannel.cpp: Removed.
+        * dom/InProcessMessagePortChannel.h: Removed.
+        * dom/MessagePortChannel.cpp: Removed.
+        * dom/MessagePortChannel.h: Removed.
+
+        * dom/MessageChannel.cpp:
+        (WebCore::MessageChannel::create):
+        (WebCore::MessageChannel::MessageChannel):
+        (WebCore::m_port2): Deleted.
+        * dom/MessageChannel.h:
+        (WebCore::MessageChannel::create): Deleted.
+
+        * dom/MessagePort.cpp:
+        (WebCore::MessagePort::create):
+        (WebCore::MessagePort::MessagePort):
+        (WebCore::MessagePort::~MessagePort):
+        (WebCore::MessagePort::entangle):
+        (WebCore::MessagePort::postMessage):
+        (WebCore::MessagePort::disentangle):
+        (WebCore::MessagePort::messageAvailable):
+        (WebCore::MessagePort::start):
+        (WebCore::MessagePort::close):
+        (WebCore::MessagePort::contextDestroyed):
+        (WebCore::MessagePort::dispatchMessages):
+        (WebCore::MessagePort::hasPendingActivity const):
+        (WebCore::MessagePort::locallyEntangledPort const):
+        (WebCore::MessagePort::disentanglePorts):
+        (WebCore::MessagePort::entanglePorts):
+        (WebCore::MessagePort::entangleWithRemote): Deleted.
+        * dom/MessagePort.h:
+
+        * dom/MessagePortIdentifier.h:
+        (WebCore::MessagePortIdentifier::logString const):
+
+        * dom/ScriptExecutionContext.cpp:
+        (WebCore::ScriptExecutionContext::processMessageWithMessagePortsSoon):
+        (WebCore::ScriptExecutionContext::dispatchMessagePortEvents):
+        (WebCore::ScriptExecutionContext::processMessagePortMessagesSoon): Deleted.
+        * dom/ScriptExecutionContext.h:
+
+        Add a single object that represents two intertwined ports, tracks their pending
+        messages, tracks which process they're in, etc etc:
+        * dom/messageports/MessagePortChannel.cpp: Added.
+        (WebCore::MessagePortChannel::create):
+        (WebCore::MessagePortChannel::MessagePortChannel):
+        (WebCore::MessagePortChannel::~MessagePortChannel):
+        (WebCore::MessagePortChannel::includesPort):
+        (WebCore::MessagePortChannel::entanglePortWithProcess):
+        (WebCore::MessagePortChannel::disentanglePort):
+        (WebCore::MessagePortChannel::closePort):
+        (WebCore::MessagePortChannel::postMessageToRemote):
+        (WebCore::MessagePortChannel::takeAllMessagesForPort):
+        (WebCore::MessagePortChannel::hasAnyMessagesPendingOrInFlight const):
+        * dom/messageports/MessagePortChannel.h: Added.
+        (WebCore::MessagePortChannel::port1 const):
+        (WebCore::MessagePortChannel::port2 const):
+        (WebCore::MessagePortChannel::logString const):
+
+        Abstraction for creating and operating on MessagePorts in a potentially cross-process way:
+        * dom/messageports/MessagePortChannelProvider.cpp: Added.
+        (WebCore::MessagePortChannelProvider::singleton):
+        (WebCore::MessagePortChannelProvider::setSharedProvider):
+        * dom/messageports/MessagePortChannelProvider.h: Added.
+        (WebCore::MessagePortChannelProvider::~MessagePortChannelProvider):
+
+        Adds a concrete implementation of that provider to be used in-process (e.g. WK1):
+        * dom/messageports/MessagePortChannelProviderImpl.cpp: Added.
+        (WebCore::MessagePortChannelProviderImpl::~MessagePortChannelProviderImpl):
+        (WebCore::MessagePortChannelProviderImpl::performActionOnAppropriateThread):
+        (WebCore::MessagePortChannelProviderImpl::createNewMessagePortChannel):
+        (WebCore::MessagePortChannelProviderImpl::entangleLocalPortInThisProcessToRemote):
+        (WebCore::MessagePortChannelProviderImpl::messagePortDisentangled):
+        (WebCore::MessagePortChannelProviderImpl::messagePortClosed):
+        (WebCore::MessagePortChannelProviderImpl::postMessageToRemote):
+        (WebCore::MessagePortChannelProviderImpl::takeAllMessagesForPort):
+        (WebCore::MessagePortChannelProviderImpl::hasMessagesForPorts_temporarySync):
+        * dom/messageports/MessagePortChannelProviderImpl.h: Added.
+
+        Adds a main thread object to handle the set of all MessagePortChannels that are open.
+        For now it lives in the WebProcess, but for out-of-process it will live in the UIProcess:
+        * dom/messageports/MessagePortChannelRegistry.cpp: Added.
+        (WebCore::MessagePortChannelRegistry::~MessagePortChannelRegistry):
+        (WebCore::MessagePortChannelRegistry::didCreateMessagePortChannel):
+        (WebCore::MessagePortChannelRegistry::messagePortChannelCreated):
+        (WebCore::MessagePortChannelRegistry::messagePortChannelDestroyed):
+        (WebCore::MessagePortChannelRegistry::didEntangleLocalToRemote):
+        (WebCore::MessagePortChannelRegistry::didDisentangleMessagePort):
+        (WebCore::MessagePortChannelRegistry::didCloseMessagePort):
+        (WebCore::MessagePortChannelRegistry::didPostMessageToRemote):
+        (WebCore::MessagePortChannelRegistry::takeAllMessagesForPort):
+        (WebCore::MessagePortChannelRegistry::hasMessagesForPorts_temporarySync): This is named against style
+          and weird on purpose - to call attention to how bad it is and how it's temporary.
+        (WebCore::MessagePortChannelRegistry::existingChannelContainingPort):
+        * dom/messageports/MessagePortChannelRegistry.h: Added.
+
+        Add an object that represents a "SerializedScriptValue for the message payload and the ports
+        that are being transferred along with that payload". This is used in all forms of postMessage():
+        * dom/messageports/MessageWithMessagePorts.cpp: Added.
+        * dom/messageports/MessageWithMessagePorts.h: Added.
+
+        * page/DOMWindow.cpp:
+        (WebCore::PostMessageTimer::PostMessageTimer):
+        (WebCore::PostMessageTimer::event):
+        (WebCore::DOMWindow::postMessage):
+
+        * platform/Logging.h:
+
+        * workers/DedicatedWorkerGlobalScope.cpp:
+        (WebCore::DedicatedWorkerGlobalScope::postMessage):
+
+        * workers/Worker.cpp:
+        (WebCore::Worker::postMessage):
+
+        * workers/WorkerGlobalScopeProxy.h:
+
+        * workers/WorkerMessagingProxy.cpp:
+        (WebCore::WorkerMessagingProxy::postMessageToWorkerObject):
+        (WebCore::WorkerMessagingProxy::postMessageToWorkerGlobalScope):
+        * workers/WorkerMessagingProxy.h:
+
+        * workers/WorkerObjectProxy.h:
+
+        * workers/service/ServiceWorker.cpp:
+        (WebCore::ServiceWorker::postMessage):
+
+        * workers/service/ServiceWorkerClient.cpp:
+        (WebCore::ServiceWorkerClient::postMessage):
+
+        * workers/service/context/SWContextManager.cpp:
+        (WebCore::SWContextManager::postMessageToServiceWorker):
+
+        * workers/service/context/ServiceWorkerThread.cpp:
+        (WebCore::fireMessageEvent):
+        (WebCore::ServiceWorkerThread::postMessageToServiceWorker):
+        * workers/service/context/ServiceWorkerThread.h:
+
 2018-01-18  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed build fix, removed unused lambda capture.

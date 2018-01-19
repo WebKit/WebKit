@@ -735,7 +735,6 @@ dom/FocusEvent.cpp
 dom/GenericEventQueue.cpp
 dom/IdTargetObserver.cpp
 dom/IdTargetObserverRegistry.cpp
-dom/InProcessMessagePortChannel.cpp
 dom/InlineClassicScript.cpp
 dom/InlineStyleSheetOwner.cpp
 dom/InputEvent.cpp
@@ -747,7 +746,6 @@ dom/LoadableScript.cpp
 dom/MessageChannel.cpp
 dom/MessageEvent.cpp
 dom/MessagePort.cpp
-dom/MessagePortChannel.cpp
 dom/Microtasks.cpp
 dom/MouseEvent.cpp
 dom/MouseRelatedEvent.cpp
@@ -822,6 +820,12 @@ dom/VisitedLinkState.cpp
 dom/WebKitAnimationEvent.cpp
 dom/WebKitTransitionEvent.cpp
 dom/WheelEvent.cpp
+
+dom/messageports/MessagePortChannel.cpp
+dom/messageports/MessagePortChannelProvider.cpp
+dom/messageports/MessagePortChannelProviderImpl.cpp
+dom/messageports/MessagePortChannelRegistry.cpp
+dom/messageports/MessageWithMessagePorts.cpp
 
 domjit/DOMJITHelpers.cpp
 domjit/JSDocumentDOMJIT.cpp

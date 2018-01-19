@@ -40,11 +40,10 @@ class ExtendableEvent;
 class MessagePortChannel;
 class SerializedScriptValue;
 class WorkerObjectProxy;
+struct MessageWithMessagePorts;
 struct ServiceWorkerClientData;
 struct ServiceWorkerClientIdentifier;
 struct ServiceWorkerContextData;
-
-using MessagePortChannelArray = Vector<RefPtr<MessagePortChannel>, 1>;
 
 class ServiceWorkerThread : public WorkerThread {
 public:
@@ -57,7 +56,7 @@ public:
     WorkerObjectProxy& workerObjectProxy() const { return m_workerObjectProxy; }
 
     WEBCORE_EXPORT void postFetchTask(Ref<ServiceWorkerFetch::Client>&&, std::optional<ServiceWorkerClientIdentifier>&&, ResourceRequest&&, String&& referrer, FetchOptions&&);
-    WEBCORE_EXPORT void postMessageToServiceWorker(Ref<SerializedScriptValue>&&, std::unique_ptr<MessagePortChannelArray>&&, ServiceWorkerOrClientData&& sourceData);
+    WEBCORE_EXPORT void postMessageToServiceWorker(MessageWithMessagePorts&&, ServiceWorkerOrClientData&& sourceData);
 
     void fireInstallEvent();
     void fireActivateEvent();

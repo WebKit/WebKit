@@ -30,24 +30,22 @@
 
 #pragma once
 
+#include "MessageWithMessagePorts.h"
 #include "WorkerReportingProxy.h"
-#include "MessagePort.h"
 #include <memory>
 
 namespace WebCore {
 
-    class MessagePortChannel;
+// A proxy to talk to the worker object.
+class WorkerObjectProxy : public WorkerReportingProxy {
+public:
+    virtual void postMessageToWorkerObject(MessageWithMessagePorts&&) = 0;
 
-    // A proxy to talk to the worker object.
-    class WorkerObjectProxy : public WorkerReportingProxy {
-    public:
-        virtual void postMessageToWorkerObject(Ref<SerializedScriptValue>&&, std::unique_ptr<MessagePortChannelArray>&&) = 0;
+    virtual void confirmMessageFromWorkerObject(bool hasPendingActivity) = 0;
+    virtual void reportPendingActivity(bool hasPendingActivity) = 0;
 
-        virtual void confirmMessageFromWorkerObject(bool hasPendingActivity) = 0;
-        virtual void reportPendingActivity(bool hasPendingActivity) = 0;
-
-        // No need to notify the parent page context when dedicated workers are closing.
-        void workerGlobalScopeClosed() override { }
-    };
+    // No need to notify the parent page context when dedicated workers are closing.
+    void workerGlobalScopeClosed() override { }
+};
 
 } // namespace WebCore

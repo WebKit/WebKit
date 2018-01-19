@@ -27,6 +27,7 @@
 
 #include "Process.h"
 #include <wtf/Hasher.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
@@ -39,6 +40,10 @@ struct MessagePortIdentifier {
 
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static std::optional<MessagePortIdentifier> decode(Decoder&);
+
+#if !LOG_DISABLED
+    String logString() const;
+#endif
 };
 
 inline bool operator==(const MessagePortIdentifier& a, const MessagePortIdentifier& b)
@@ -72,6 +77,13 @@ inline unsigned MessagePortIdentifier::hash() const
 {
     return computeHash(processIdentifier.toUInt64(), portIdentifier.toUInt64());
 }
+
+#if !LOG_DISABLED
+inline String MessagePortIdentifier::logString() const
+{
+    return makeString(String::number(processIdentifier.toUInt64()), "-", String::number(portIdentifier.toUInt64()));
+}
+#endif
 
 } // namespace WebCore
 
