@@ -1,5 +1,22 @@
 2018-01-19  Saam Barati  <sbarati@apple.com>
 
+        Kill ArithNegate's ArithProfile assert inside BytecodeParser
+        https://bugs.webkit.org/show_bug.cgi?id=181877
+        <rdar://problem/36630552>
+
+        Reviewed by Mark Lam.
+
+        * stress/arith-profile-for-negate-can-see-non-number-due-to-dfg-osr-exit-profiling.js: Added.
+        (runNearStackLimit):
+        (f1):
+        (f2):
+        (f3):
+        (i.catch):
+        (i.try.runNearStackLimit):
+        (catch):
+
+2018-01-19  Saam Barati  <sbarati@apple.com>
+
         Spread's effects are modeled incorrectly both in AI and in Clobberize
         https://bugs.webkit.org/show_bug.cgi?id=181867
         <rdar://problem/36290415>

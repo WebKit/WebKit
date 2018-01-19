@@ -1,3 +1,21 @@
+2018-01-19  Saam Barati  <sbarati@apple.com>
+
+        Kill ArithNegate's ArithProfile assert inside BytecodeParser
+        https://bugs.webkit.org/show_bug.cgi?id=181877
+        <rdar://problem/36630552>
+
+        Reviewed by Mark Lam.
+
+        Before this patch, we used to assert that op_negate's result ArithProfile
+        only produces number. It's logically true that negate only produces a number.
+        However, the DFG may incorrectly pick this ArithProfile when doing OSR exit
+        profiling. So we'll end up profiling something that's likely the input to
+        negate. This patch removes the assert. We cede to the fact that Graph::methodOfGettingAValueProfileFor
+        is entirely heuristic based, potentially leading to profiling results being imprecise.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::makeSafe):
+
 2018-01-19  David Kilzer  <ddkilzer@apple.com>
 
         oss-fuzz jsc build is broken: StringImpl.h:27:10: fatal error: 'unicode/ustring.h' file not found
