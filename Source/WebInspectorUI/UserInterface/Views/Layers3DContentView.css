@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
- * Copyright (C) 2017 Sony Interactive Entertainment Inc.
+ * Copyright (C) 2018 Sony Interactive Entertainment Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,53 +23,46 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-.sidebar > .panel.details.layer > .content {
-    bottom: var(--console-prompt-min-height);
-}
-
-.panel.details.layer .data-grid {
-    height: 100%;
-}
-
-.panel.details.layer .name-column .icon {
-    content: url(../Images/DOMElement.svg);
-}
-
-.panel.details.layer tr.reflection .name-column .icon {
-    content: url(../Images/Reflection.svg);
-}
-
-.panel.details.layer tr.pseudo-element .name-column .icon {
-    content: url(../Images/PseudoElement.svg);
-}
-
-.panel.details.layer .name-column :matches(.pseudo-element, .reflection) {
-    color: var(--text-color-gray-medium);
-}
-
-.panel.details.layer tr.selected .name-column :matches(.pseudo-element, .reflection) {
-    color: var(--selected-secondary-text-color);
-}
-
-.panel.details.layer .bottom-bar {
+.content-view.layers-3d .layer-info {
+    display: flex;
     position: absolute;
-    display: flex;
-    bottom: 0;
-    height: var(--console-prompt-min-height);
-    width: 100%;
-    border-top: 1px solid var(--border-color);
+    top: 0;
+    max-width: 300px;
+    max-height: calc(100% - 20px);
+    margin: 10px;
+    border-radius: 5px;
+    background-color: var(--panel-background-color);
+    box-shadow: 0 1px 5px hsla(0, 0%, 0%, 0.5);
 }
 
-.panel.details.layer .bottom-bar > div {
-    display: flex;
+.content-view.layers-3d .layer-info .content {
     flex: 1;
-    padding: 4px 6px;
-    line-height: 20px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    margin: 10px;
+    overflow-y: auto;
 }
 
-.panel.details.layer .layers-memory-label {
-    justify-content: flex-end;
+.content-view.layers-3d .layer-info .content > div {
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.content-view.layers-3d .layer-info table {
+    margin: 10px 0;
+}
+.content-view.layers-3d .layer-info td {
+    padding: 0 5px;
+    line-height: 14px;
+    vertical-align: top;
+}
+
+.content-view.layers-3d .layer-info ul {
+    margin: 10px 0 0;
+    padding: 0;
+
+    -webkit-margin-start: 11px;
+    -webkit-padding-start: 11px;
+}
+
+.content-view.layers-3d .layer-info li {
+    line-height: 14px;
 }

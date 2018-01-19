@@ -1,3 +1,41 @@
+2018-01-19  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Web Inspector: Layers tab should do away with popovers (if possible)
+        https://bugs.webkit.org/show_bug.cgi?id=181805
+
+        Reviewed by Matt Baker.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        Remove superfluous colon from a string.
+
+        * UserInterface/Main.html:
+        * UserInterface/Views/LayerDetailsSidebarPanel.css:
+        * UserInterface/Views/Layers3DContentView.css: Added.
+        Remove popover styling from sidebar, add new file with similar styling for canvas overlay.
+
+        * UserInterface/Views/LayerDetailsSidebarPanel.js:
+        (WI.LayerDetailsSidebarPanel):
+        (WI.LayerDetailsSidebarPanel.prototype.selectNodeByLayerId):
+        (WI.LayerDetailsSidebarPanel.prototype._dataGridSelectedNodeChanged):
+        (WI.LayerDetailsSidebarPanel.prototype._updateLayers):
+        (WI.LayerDetailsSidebarPanel.prototype._updateBottomBar):
+        (WI.LayerDetailsSidebarPanel.prototype.willDismissPopover): Deleted.
+        (WI.LayerDetailsSidebarPanel.prototype._showPopoverForSelectedNode): Deleted.
+        (WI.LayerDetailsSidebarPanel.prototype._presentPopover): Deleted.
+        (WI.LayerDetailsSidebarPanel.prototype._contentForPopover): Deleted.
+        (WI.LayerDetailsSidebarPanel.prototype._populateListOfCompositingReasons.addReason): Deleted.
+        (WI.LayerDetailsSidebarPanel.prototype._populateListOfCompositingReasons): Deleted.
+        * UserInterface/Views/Layers3DContentView.js:
+        (WI.Layers3DContentView):
+        (WI.Layers3DContentView.prototype.shown):
+        (WI.Layers3DContentView.prototype.selectLayerById):
+        (WI.Layers3DContentView.prototype._canvasMouseDown):
+        (WI.Layers3DContentView.prototype._buildLayerInfoElement):
+        (WI.Layers3DContentView.prototype._updateLayerInfoElement):
+        (WI.Layers3DContentView.prototype._updateReasonsList):
+        Remove popover from sidebar table, overlay div with same data arrangement on top of the canvas.
+        Also reverse the fix from r226671 since the visualization is no longer unusable without the sidebar!
+
 2018-01-19  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Canvas Tab: Multiple "waiting for frames" messages displayed
