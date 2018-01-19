@@ -694,6 +694,10 @@ class RunWebDriverTests(shell.Test):
     logfiles = {"json": jsonFileName}
 
     def start(self):
+        additionalArguments = self.getProperty('additionalArguments')
+        if additionalArguments:
+            self.setCommand(self.command + additionalArguments)
+
         appendCustomBuildFlags(self, self.getProperty('platform'), self.getProperty('fullPlatform'))
         return shell.Test.start(self)
 

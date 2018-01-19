@@ -1,3 +1,15 @@
+2018-01-19  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] WebDriver: wayland display no used in wayland bot
+        https://bugs.webkit.org/show_bug.cgi?id=181851
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        We need to handle the additionalArguments property in the WebDriverTests step.
+
+        * BuildSlaveSupport/build.webkit.org-config/steps.py:
+        (RunWebDriverTests.start):
+
 2018-01-19  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [GTK] TERM environment variable is not passed to the test driver.
