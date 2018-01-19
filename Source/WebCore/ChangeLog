@@ -1,3 +1,21 @@
+2018-01-18  Jason Marcell  <jmarcell@apple.com>
+
+        Cherry-pick r227147. rdar://problem/36429159
+
+    2018-01-18  Antti Koivisto  <antti@apple.com>
+
+            REGRESSION(r225650): The scores of MotionMark tests Multiply and Leaves dropped by 8%
+            https://bugs.webkit.org/show_bug.cgi?id=181460
+            <rdar://problem/36379776>
+
+            Reviewed by Ryosuke Niwa.
+
+            * css/parser/CSSParser.cpp:
+            (WebCore::CSSParserContext::CSSParserContext):
+
+            Don't do the expensive security origin test if the supplied sheet base URL is null. This
+            is true for rules coming from the same document.
+
 2018-01-17  Jason Marcell  <jmarcell@apple.com>
 
         Cherry-pick r227121. rdar://problem/36609529
