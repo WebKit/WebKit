@@ -972,6 +972,20 @@ fast/forms/validation-message-in-relative-body.html [ Skip ]
 fast/forms/validation-message-appearance.html [ Skip ]
 fast/forms/validation-message-on-textarea.html  [ Skip ]
 
+# iOS doesn’t support mouse events simulation using the eventSender.
+editing/selection/select-out-of-floated-non-editable-01.html [ Skip ]
+editing/selection/select-out-of-floated-non-editable-02.html [ Skip ]
+editing/selection/select-out-of-floated-non-editable-03.html [ Skip ]
+editing/selection/select-out-of-floated-non-editable-04.html [ Skip ]
+editing/selection/select-out-of-floated-non-editable-05.html [ Skip ]
+editing/selection/select-out-of-floated-non-editable-06.html [ Skip ]
+editing/selection/select-out-of-floated-non-editable-07.html [ Skip ]
+editing/selection/select-out-of-floated-non-editable-08.html [ Skip ]
+editing/selection/select-out-of-floated-non-editable-09.html [ Skip ]
+editing/selection/select-out-of-floated-non-editable-10.html [ Skip ]
+editing/selection/select-out-of-floated-non-editable-11.html [ Skip ]
+editing/selection/select-out-of-floated-non-editable-12.html [ Skip ]
+
 # Flaky as of 06/08/2015
 fast/loader/fragment-navigation-base-blank.html [ Failure Pass ]
 fast/loader/iframe-meta-refresh-base-blank.html [ Failure Pass ]

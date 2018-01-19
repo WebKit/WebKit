@@ -1,3 +1,15 @@
+2018-01-19  Jonathan Bedard  <jbedard@apple.com>
+
+        Move select-out-of-floated-non-editable iOS Simulator expectations to iOS
+
+        Unreviewed test gardening.
+
+        r222317 introduced these test expectations. These expectations should apply to both
+        Simulator and device testing.
+
+        * platform/ios-simulator-wk2/TestExpectations:
+        * platform/ios-wk2/TestExpectations:
+
 2018-01-19  Frederic Wang  <fwang@igalia.com>
 
         Use promises for basic-gestures.js and 'await' for the corresponding tests
