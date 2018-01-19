@@ -1,3 +1,21 @@
+2018-01-19  Yoav Weiss  <yoav@yoav.ws>
+
+        Support for preconnect Link headers
+        https://bugs.webkit.org/show_bug.cgi?id=181657
+
+        Reviewed by Darin Adler.
+
+        Move the preconnect functionality into its own function, and
+        also call this function when Link headers are processed.
+
+        Test: http/tests/preconnect/link-header-rel-preconnect-http.php
+
+        * loader/LinkLoader.cpp:
+        (WebCore::LinkLoader::loadLinksFromHeader): Call preconnectIfNeeded.
+        (WebCore::LinkLoader::preconnectIfNeeded): Preconnect to a host functionality moved here.
+        (WebCore::LinkLoader::loadLink): Call preconnectIfNeeded.
+        * loader/LinkLoader.h:
+
 2018-01-19  Joseph Pecoraro  <pecoraro@apple.com>
 
         AppCache: Log a Deprecation warning to the Console when AppCache is used

@@ -59,5 +59,8 @@ wasm/window-postmessage.html [ Skip ]
 # WebGL tests which need triaging https://bugs.webkit.org/b/174100
 webgl/1.0.2/conformance/uniforms/uniform-default-values.html [ Failure ]
 
+# ios-simulator does not process link headers for subresources
+webkit.org/b/181789 http/tests/preconnect/link-header-rel-preconnect-http.html [ Skip ]
+
 # This test requires Skia, which isn't available on iOS.
 webkit.org/b/174079 fast/text/variations/skia-postscript-name.html [ ImageOnlyFailure ]
