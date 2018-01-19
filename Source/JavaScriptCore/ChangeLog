@@ -1,3 +1,14 @@
+2018-01-19  David Kilzer  <ddkilzer@apple.com>
+
+        oss-fuzz jsc build is broken: StringImpl.h:27:10: fatal error: 'unicode/ustring.h' file not found
+        <https://webkit.org/b/181871>
+
+        Rubber-stamped by JF Bastien.
+
+        * CMakeLists.txt: Add ICU header search path to
+        LLIntOffsetsExtractor target by reusing
+        JavaScriptCore_SYSTEM_INCLUDE_DIRECTORIES.
+
 2018-01-19  Saam Barati  <sbarati@apple.com>
 
         Spread's effects are modeled incorrectly both in AI and in Clobberize

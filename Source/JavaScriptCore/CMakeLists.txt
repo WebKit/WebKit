@@ -596,6 +596,7 @@ WEBKIT_INCLUDE_CONFIG_FILES_IF_EXISTS()
 WEBKIT_CREATE_FORWARDING_HEADERS(JavaScriptCore DIRECTORIES ${JavaScriptCore_FORWARDING_HEADERS_DIRECTORIES} FILES ${JavaScriptCore_FORWARDING_HEADERS_FILES})
 
 target_include_directories(LLIntOffsetsExtractor PRIVATE ${JavaScriptCore_INCLUDE_DIRECTORIES})
+target_include_directories(LLIntOffsetsExtractor SYSTEM PUBLIC ${JavaScriptCore_SYSTEM_INCLUDE_DIRECTORIES})
 
 add_subdirectory(shell)
 
