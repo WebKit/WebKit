@@ -3052,7 +3052,7 @@ webkit.org/b/155092 js/arraybuffer-wrappers.html [ Pass Timeout ]
 
 webkit.org/b/172052 [ Release ] imported/w3c/web-platform-tests/html/webappapis/timers/type-long-setinterval.html [ Pass Failure ]
 
-webkit.org/b/176878 [ Debug ] fast/multicol/spanner-crash-when-adding-summary.html [ Crash ]
+webkit.org/b/176878 [ Debug ] fast/multicol/spanner-crash-when-adding-summary.html [ Skip ]
 
 # <rdar://problem/32542437> REGRESSION (iOS 11): LayoutTest fast/events/ios/before-input-events-prevent-candidate-insertion.html is timing out
 fast/events/ios/before-input-events-prevent-candidate-insertion.html [ Timeout ]
