@@ -1,3 +1,12 @@
+2018-01-19  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Follow-up build fix for r227206.
+
+        Unreviewed.
+
+        * Source/webrtc/sdk/objc/Framework/Classes/VideoProcessing/VideoProcessingSoftLink.h:
+        Avoid duplicate and different definitions of ALWAYS_INLINE.
+
 2018-01-19  Youenn Fablet  <youenn@apple.com>
 
         Softlink VideoProcessing in WebKit

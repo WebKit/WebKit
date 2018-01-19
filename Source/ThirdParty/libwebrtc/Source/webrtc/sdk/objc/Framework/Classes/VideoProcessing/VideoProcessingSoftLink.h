@@ -41,8 +41,6 @@
 
 #include <VideoProcessing/VideoProcessing.h>
 
-#define ALWAYS_INLINE inline
-
 #ifdef __cplusplus
 #define WTF_EXTERN_C_BEGIN extern "C" {
 #define WTF_EXTERN_C_END }
@@ -72,7 +70,7 @@
         return softLink##framework##functionName parameterNames; \
     } \
     } \
-    ALWAYS_INLINE resultType functionName parameterDeclarations \
+    inline resultType functionName parameterDeclarations \
     {\
         return functionNamespace::softLink##framework##functionName parameterNames; \
     }
