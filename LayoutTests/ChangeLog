@@ -1,5 +1,14 @@
 2018-01-18  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Mark media/video-main-content-allow-then-deny.html as flaky.
+        https://bugs.webkit.org/show_bug.cgi?id=181830
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
+2018-01-18  Ryan Haddad  <ryanhaddad@apple.com>
+
         Update TestExpectations for fast/multicol/spanner-crash-when-adding-summary.html.
 
         Unreviewed test gardening.
