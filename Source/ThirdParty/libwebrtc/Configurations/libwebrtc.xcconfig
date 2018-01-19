@@ -40,5 +40,5 @@ EXCLUDED_SOURCE_FILE_NAMES[sdk=iphoneos*] = *_sse.cc *_sse2.cc macutils.cc macwi
 EXCLUDED_SOURCE_FILE_NAMES[sdk=iphonesimulator*] = macutils.cc macwindowpicker.cc audio_device_mac.cc audio_mixer_manager_mac.cc;
 EXCLUDED_SOURCE_FILE_NAMES[sdk=macosx*] = voice_processing_audio_unit.mm;
 
-OTHER_LDFLAGS[sdk=macosx10.13*] = $(inherited) -framework VideoProcessing;
-OTHER_LDFLAGS[sdk=macosx10.14*] = $(inherited) -framework VideoProcessing;
+OTHER_LDFLAGS[sdk=macosx10.13*] = $(inherited);
+OTHER_LDFLAGS[sdk=macosx10.14*] = $(inherited);

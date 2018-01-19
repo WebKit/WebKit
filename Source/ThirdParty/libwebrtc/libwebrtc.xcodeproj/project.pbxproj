@@ -167,6 +167,8 @@
 		414D71191E4AEB110023E526 /* sctp_userspace.c in Sources */ = {isa = PBXBuildFile; fileRef = 414D71181E4AEB110023E526 /* sctp_userspace.c */; };
 		416D2F151FA8CCAE00097345 /* encoder_vcp.h in Headers */ = {isa = PBXBuildFile; fileRef = 416D2F131FA8CCAD00097345 /* encoder_vcp.h */; };
 		416D2F161FA8CCAE00097345 /* encoder_vcp.mm in Sources */ = {isa = PBXBuildFile; fileRef = 416D2F141FA8CCAD00097345 /* encoder_vcp.mm */; };
+		417CF799201239AF001ADF3A /* VideoProcessingSoftLink.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 417CF797201239AE001ADF3A /* VideoProcessingSoftLink.cpp */; };
+		417CF79A201239AF001ADF3A /* VideoProcessingSoftLink.h in Headers */ = {isa = PBXBuildFile; fileRef = 417CF798201239AE001ADF3A /* VideoProcessingSoftLink.h */; };
 		417DA4581EF9CD0D00E869DB /* RTCUIApplicationStatusObserver.h in Headers */ = {isa = PBXBuildFile; fileRef = 417DA4561EF9CD0A00E869DB /* RTCUIApplicationStatusObserver.h */; };
 		41A391731EFC447C00C4516A /* sha1-altivec.c in Sources */ = {isa = PBXBuildFile; fileRef = 41A3914F1EFC446E00C4516A /* sha1-altivec.c */; };
 		41A391741EFC447C00C4516A /* sha1.c in Sources */ = {isa = PBXBuildFile; fileRef = 41A391501EFC446E00C4516A /* sha1.c */; };
@@ -2937,6 +2939,8 @@
 		416D2F101FA8CC0400097345 /* VideoProcessing.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = VideoProcessing.framework; path = System/Library/PrivateFrameworks/VideoProcessing.framework; sourceTree = SDKROOT; };
 		416D2F131FA8CCAD00097345 /* encoder_vcp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = encoder_vcp.h; path = VideoProcessing/encoder_vcp.h; sourceTree = "<group>"; };
 		416D2F141FA8CCAD00097345 /* encoder_vcp.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = encoder_vcp.mm; path = VideoProcessing/encoder_vcp.mm; sourceTree = "<group>"; };
+		417CF797201239AE001ADF3A /* VideoProcessingSoftLink.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = VideoProcessingSoftLink.cpp; path = VideoProcessing/VideoProcessingSoftLink.cpp; sourceTree = "<group>"; };
+		417CF798201239AE001ADF3A /* VideoProcessingSoftLink.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VideoProcessingSoftLink.h; path = VideoProcessing/VideoProcessingSoftLink.h; sourceTree = "<group>"; };
 		417DA4561EF9CD0A00E869DB /* RTCUIApplicationStatusObserver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RTCUIApplicationStatusObserver.h; path = Source/webrtc/sdk/objc/Framework/Classes/Common/RTCUIApplicationStatusObserver.h; sourceTree = SOURCE_ROOT; };
 		41A391451EFC446E00C4516A /* sha1-586.pl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = "sha1-586.pl"; sourceTree = "<group>"; };
 		41A391461EFC446E00C4516A /* sha1-armv4-large.pl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = "sha1-armv4-large.pl"; sourceTree = "<group>"; };
@@ -5653,6 +5657,8 @@
 			children = (
 				416D2F131FA8CCAD00097345 /* encoder_vcp.h */,
 				416D2F141FA8CCAD00097345 /* encoder_vcp.mm */,
+				417CF797201239AE001ADF3A /* VideoProcessingSoftLink.cpp */,
+				417CF798201239AE001ADF3A /* VideoProcessingSoftLink.h */,
 			);
 			name = VideoProcessing;
 			sourceTree = "<group>";
@@ -10940,6 +10946,7 @@
 				5C4B49071E42C1E3002651C8 /* videocommon.h in Headers */,
 				5CD286251E6A666D0094FDC8 /* videodecodersoftwarefallbackwrapper.h in Headers */,
 				5C4B488A1E42C1BA002651C8 /* videoencodersoftwarefallbackwrapper.h in Headers */,
+				417CF79A201239AF001ADF3A /* VideoProcessingSoftLink.h in Headers */,
 				5C4B490A1E42C1E3002651C8 /* videosinkinterface.h in Headers */,
 				5C4B490C1E42C1E3002651C8 /* videosourcebase.h in Headers */,
 				5C4B490D1E42C1E3002651C8 /* videosourceinterface.h in Headers */,
@@ -12641,6 +12648,7 @@
 				5C4B49061E42C1E3002651C8 /* videocommon.cc in Sources */,
 				5CD286241E6A666D0094FDC8 /* videodecodersoftwarefallbackwrapper.cc in Sources */,
 				5C4B48891E42C1BA002651C8 /* videoencodersoftwarefallbackwrapper.cc in Sources */,
+				417CF799201239AF001ADF3A /* VideoProcessingSoftLink.cpp in Sources */,
 				5C4B490B1E42C1E3002651C8 /* videosourcebase.cc in Sources */,
 				5CD285161E6A60570094FDC8 /* videotrack.cc in Sources */,
 				5CD285181E6A60570094FDC8 /* videotracksource.cc in Sources */,
