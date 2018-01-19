@@ -117,7 +117,9 @@ using namespace WebCore;
     [_popupWindow setContentView:scrollView];
     [scrollView release];
     [_popupWindow setHasShadow:YES];
+#if __MAC_OS_X_VERSION_MIN_REQUIRED < 101400
     [_popupWindow setOneShot:YES];
+#endif
     [_popupWindow _setForceActiveControls:YES];
     [_popupWindow setReleasedWhenClosed:NO];
 }
