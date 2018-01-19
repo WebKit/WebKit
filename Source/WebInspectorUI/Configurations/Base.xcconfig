@@ -1,4 +1,4 @@
-#include "../../../../Internal/Configurations/HaveInternalSDK.xcconfig"
+#include? "../../../../Internal/Configurations/HaveInternalSDK.xcconfig"
 
 USE_INTERNAL_SDK = $(USE_INTERNAL_SDK_$(CONFIGURATION));
 USE_INTERNAL_SDK_Production = YES;

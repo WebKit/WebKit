@@ -1,3 +1,12 @@
+2018-01-19  Keith Miller  <keith_miller@apple.com>
+
+        HaveInternalSDK includes should be "#include?"
+        https://bugs.webkit.org/show_bug.cgi?id=179670
+
+        Reviewed by Dan Bernstein.
+
+        * Configurations/Base.xcconfig:
+
 2018-01-19  Alexey Proskuryakov  <ap@apple.com>
 
         Update XPCSPI.h
