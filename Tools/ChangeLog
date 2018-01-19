@@ -1,3 +1,14 @@
+2018-01-19  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] WebDriver tests are running outside the jhbuild env
+        https://bugs.webkit.org/show_bug.cgi?id=181842
+
+        Reviewed by Žan Doberšek.
+
+        We need to enter jhbuild env in run-webdriver-tests.
+
+        * Scripts/run-webdriver-tests:
+
 2018-01-18  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Run WebDriver tests in the bots
