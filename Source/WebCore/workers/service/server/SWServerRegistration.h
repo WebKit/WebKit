@@ -73,6 +73,8 @@ public:
     void addClientServiceWorkerRegistration(SWServerConnectionIdentifier);
     void removeClientServiceWorkerRegistration(SWServerConnectionIdentifier);
 
+    void setPreInstallationWorker(SWServerWorker*);
+    SWServerWorker* preInstallationWorker() const { return m_preInstallationWorker.get(); }
     SWServerWorker* installingWorker() const { return m_installingWorker.get(); }
     SWServerWorker* waitingWorker() const { return m_waitingWorker.get(); }
     SWServerWorker* activeWorker() const { return m_activeWorker.get(); }
@@ -105,6 +107,7 @@ private:
     URL m_scriptURL;
 
     bool m_uninstalling { false };
+    RefPtr<SWServerWorker> m_preInstallationWorker; // Implementation detail, not part of the specification.
     RefPtr<SWServerWorker> m_installingWorker;
     RefPtr<SWServerWorker> m_waitingWorker;
     RefPtr<SWServerWorker> m_activeWorker;
