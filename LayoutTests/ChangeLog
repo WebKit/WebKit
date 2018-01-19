@@ -1,5 +1,14 @@
 2018-01-18  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Mark platform/mac/webrtc/captureCanvas-webrtc-software-encoder.html as flaky.
+        https://bugs.webkit.org/show_bug.cgi?id=180171
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
+2018-01-18  Ryan Haddad  <ryanhaddad@apple.com>
+
         Mark inspector/debugger/breakpoint-action-log.html as flaky.
         https://bugs.webkit.org/show_bug.cgi?id=181839
 

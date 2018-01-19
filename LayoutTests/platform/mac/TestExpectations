@@ -1783,3 +1783,5 @@ webkit.org/b/180260 [ HighSierra ] http/wpt/resource-timing/rt-resources-per-wor
 webkit.org/b/181830 [ Debug ] media/video-main-content-allow-then-deny.html [ Pass Failure ]
 
 webkit.org/b/173928 storage/websql/database-lock-after-reload.html [ Pass Failure ]
+
+webkit.org/b/180171 [ HighSierra ] platform/mac/webrtc/captureCanvas-webrtc-software-encoder.html [ Pass Failure Timeout ]
