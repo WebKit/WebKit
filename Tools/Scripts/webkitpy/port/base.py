@@ -1426,7 +1426,7 @@ class Port(object):
         if args:
             run_script_command.extend(args)
         output = self._executive.run_command(run_script_command, cwd=self.webkit_base(), decode_output=decode_output, env=env)
-        _log.debug('Output of %s:\n%s' % (run_script_command, output))
+        _log.debug('Output of %s:\n%s' % (run_script_command, output.encode('utf-8') if decode_output else output))
         return output
 
     def _build_driver(self):
