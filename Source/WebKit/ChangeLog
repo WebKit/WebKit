@@ -1,3 +1,21 @@
+2018-01-18  Chris Dumez  <cdumez@apple.com>
+
+        We should be able to terminate service workers that are unresponsive
+        https://bugs.webkit.org/show_bug.cgi?id=181563
+        <rdar://problem/35280031>
+
+        Reviewed by Alex Christensen.
+
+        * WebProcess/Storage/WebSWContextManagerConnection.cpp:
+        (WebKit::WebSWContextManagerConnection::terminateWorker):
+        Use a 10 second timeout for forcefully exiting the service worker process when
+        the service worker in question fails to terminate.
+
+        (WebKit::WebSWContextManagerConnection::syncTerminateWorker):
+        Use a 100ms timeout for forcefully exiting the service worker process when
+        the service worker in question fails to terminate. This method is only called
+        from the layout tests, which is why we use a very short timeout.
+
 2018-01-18  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, suppress deprecation warnings to fix the build with a newer SDK.
