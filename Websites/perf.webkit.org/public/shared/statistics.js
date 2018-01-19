@@ -394,7 +394,7 @@ var Statistics = new (function () {
                 squareSum += currentValue * currentValue;
                 var sampleSize = j - i + 1;
                 var stdev = Statistics.sampleStandardDeviation(sampleSize, sum, squareSum);
-                costMatrix[i][j - i - 1] = sampleSize * Math.log1p(stdev * stdev - 1);
+                costMatrix[i][j - i - 1] = stdev > 0 ? sampleSize * Math.log(stdev * stdev) : 0;
             }
         }
         this.costMatrix = costMatrix;

@@ -585,6 +585,8 @@ class TimeSeriesChart extends ComponentBase {
                 max = (max === undefined) ? maxCandidate : Math.max(max, maxCandidate);
             }
         }
+        if (min == max)
+            max = max * 1.1;
         this._valueRangeCache = [min, max];
         Instrumentation.endMeasuringTime('TimeSeriesChart', 'valueRangeCache');
 

@@ -380,5 +380,12 @@ describe('Statistics', function () {
                 5722.87, 5726.8, 5779.23, 5772.2, 5763.1, 5807.05];
             assert.deepEqual(Statistics.segmentTimeSeriesByMaximizingSchwarzCriterion(values), [0, values.length]);
         });
+
+        it('should not segment time series for platform=51 metric=4817 betweeen 1453926047749 and 1454635479052 into multiple parts', function () {
+            var values = new Array(37);
+            for (let i = 0; i < 37; i++)
+                values[i] = 1;
+            assert.deepEqual(Statistics.segmentTimeSeriesByMaximizingSchwarzCriterion(values), [ 0, 6, 16, 26, 37 ]);
+        });
     });
 });

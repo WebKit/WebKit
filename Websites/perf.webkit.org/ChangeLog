@@ -1,5 +1,28 @@
 2018-01-18  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Charts can be empty when values are all identical
+        https://bugs.webkit.org/show_bug.cgi?id=181828
+
+        Reviewed by Alexey Proskuryakov.
+
+        Fixed the bug that when SampleVarianceUpperTriangularMatrix can store -Infinity as the initial cost
+        of some entries when the sample standard deviation between two points turns out to be 0,
+        and cause splitIntoSegmentsUntilGoodEnough to return undefiend because no segmentation has a finite cost.
+
+        Also fixed the bug that the time series chart fails to show any data points when all data points have
+        identical values as the entire y-coordinate gets collapsed to an empty value range by adjusting the max value
+        when min & max values are identical.
+
+        * public/v3/components/time-series-chart.js:
+        (TimeSeriesChart.prototype._ensureValueRangeCache): Raise the max slightly when min & max are identical
+        to avoid the chart becoming empty. Otherwise valueDiff in _computeVerticalRenderingMetrics becomes 0
+        and value-to-y-coordinate conversion always results in NaN.
+        * public/shared/statistics.js:
+        (Statistics..SampleVarianceUpperTriangularMatrix):
+        * unit-tests/statistics-tests.js: Added a test case.
+
+2018-01-18  Ryosuke Niwa  <rniwa@webkit.org>
+
         Don't fetch more than two builds to check duplicity of builds in ReportProcessor
         https://bugs.webkit.org/show_bug.cgi?id=181786
 
