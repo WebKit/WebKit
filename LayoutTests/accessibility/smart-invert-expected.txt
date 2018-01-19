@@ -16,8 +16,8 @@ PASS: filter for VIDEO.preserve-filter is 'grayscale(1)'.
 PASS: filter for VIDEO.preserve-filter is 'grayscale(1)'.
 
 AFTER INVERT-COLORS IS APPLIED
-PASS: filter for IMG#a is 'none'. Change once IMG/PICTURE elements are inverted, too.
-PASS: filter for PICTURE#b is 'none'. Change once IMG/PICTURE elements are inverted, too.
+PASS: filter for IMG#a is 'invert(1)'.
+PASS: filter for PICTURE#b is 'invert(1)'.
 PASS: filter for VIDEO#c is 'invert(1)'.
 PASS: filter for VIDEO#d is 'invert(1)'.
 PASS: filter for IMG.fallback is 'none'.
