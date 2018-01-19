@@ -16,7 +16,7 @@ function foo(p) {
 noInline(foo);
 
 var array = new Array(1000);
-for (var i = 0; i < 4000000; ++i) {
+for (var i = 0; i < 400000; ++i) {
     var o = foo(i & 0x1);
     if (i & 0x1) {
         shouldBe(o instanceof RegExp, true);
