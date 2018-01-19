@@ -1,3 +1,14 @@
+2018-01-19  Alex Christensen  <achristensen@webkit.org>
+
+        Fix jsc-only build
+        https://bugs.webkit.org/show_bug.cgi?id=181874
+
+        Reviewed by JF Bastien.
+
+        This makes "build-webkit --jsc-only" work on Mac!
+
+        * wtf/PlatformJSCOnly.cmake:
+
 2018-01-19  Keith Miller  <keith_miller@apple.com>
 
         HaveInternalSDK includes should be "#include?"
