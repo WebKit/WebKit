@@ -685,6 +685,58 @@ class RunWPEAPITests(RunGLibAPITests):
     command = ["python", "./Tools/Scripts/run-wpe-tests", WithProperties("--%(configuration)s")]
 
 
+class RunWebDriverTests(shell.Test):
+    name = "webdriver-test"
+    description = ["webdriver-tests running"]
+    descriptionDone = ["webdriver-tests"]
+    jsonFileName = "webdriver_tests.json"
+    command = ["python", "./Tools/Scripts/run-webdriver-tests", "--json-output={0}".format(jsonFileName), WithProperties("--%(configuration)s")]
+    logfiles = {"json": jsonFileName}
+
+    def start(self):
+        appendCustomBuildFlags(self, self.getProperty('platform'), self.getProperty('fullPlatform'))
+        return shell.Test.start(self)
+
+    def commandComplete(self, cmd):
+        shell.Test.commandComplete(self, cmd)
+        logText = cmd.logs['stdio'].getText()
+
+        self.failuresCount = 0
+        self.newPassesCount = 0
+        foundItems = re.findall("Unexpected.+\((\d+)\)", logText)
+        if foundItems:
+            self.failuresCount = int(foundItems[0])
+        foundItems = re.findall("Expected to .+, but passed \((\d+)\)", logText)
+        if foundItems:
+            self.newPassesCount = int(foundItems[0])
+
+    def evaluateCommand(self, cmd):
+        if self.failuresCount:
+            return FAILURE
+
+        if self.newPassesCount:
+            return WARNINGS
+
+        if cmd.rc != 0:
+            return FAILURE
+
+        return SUCCESS
+
+    def getText(self, cmd, results):
+        return self.getText2(cmd, results)
+
+    def getText2(self, cmd, results):
+        if results != SUCCESS and (self.failuresCount or self.newPassesCount):
+            lines = []
+            if self.failuresCount:
+                lines.append("%d failures" % self.failuresCount)
+            if self.newPassesCount:
+                lines.append("%d new passes" % self.newPassesCount)
+            return ["%s %s" % (self.name, ", ".join(lines))]
+
+        return [self.name]
+
+
 class RunWebKit1Tests(RunWebKitTests):
     def start(self):
         self.setCommand(self.command + ["--dump-render-tree"])
