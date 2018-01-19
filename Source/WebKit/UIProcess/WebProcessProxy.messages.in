@@ -54,4 +54,6 @@ messages -> WebProcessProxy LegacyReceiver {
 
     MemoryPressureStatusChanged(bool isUnderMemoryPressure)
     DidExceedInactiveMemoryLimitWhileActive()
+
+    TestIncomingSyncIPCMessageWhileWaitingForSyncReply() -> (bool handled)
 }

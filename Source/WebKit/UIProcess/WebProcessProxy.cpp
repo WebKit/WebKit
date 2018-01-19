@@ -811,6 +811,15 @@ void WebProcessProxy::shouldTerminate(bool& shouldTerminate)
     }
 }
 
+void WebProcessProxy::testIncomingSyncIPCMessageWhileWaitingForSyncReply(bool& handled)
+{
+    // Send Synchronous IPC back to the WebProcess while it is waiting for a sync reply from us.
+    // This should time out.
+    bool didSyncIPCsucceed = sendSync(Messages::WebProcess::SyncIPCMessageWhileWaitingForSyncReplyForTesting(), Messages::WebProcess::SyncIPCMessageWhileWaitingForSyncReplyForTesting::Reply(), 0, 100_ms);
+    RELEASE_ASSERT(!didSyncIPCsucceed);
+    handled = true;
+}
+
 void WebProcessProxy::updateTextCheckerState()
 {
     if (canSendMessage())

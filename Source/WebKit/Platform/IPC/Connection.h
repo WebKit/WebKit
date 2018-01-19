@@ -64,6 +64,9 @@ enum class SendSyncOption {
     // Use this to inform that this sync call will suspend this process until the user responds with input.
     InformPlatformProcessWillSuspend = 1 << 0,
     UseFullySynchronousModeForTesting = 1 << 1,
+
+    // This is the default except if setShouldProcessIncomingMessagesWhileWaitingForSyncReply(false) is called on the connection.
+    ProcessIncomingMessagesEvenWhenWaitingForSyncReply = 1 << 2,
 };
 
 enum class WaitForOption {
@@ -150,6 +153,8 @@ public:
 
     void setOnlySendMessagesAsDispatchWhenWaitingForSyncReplyWhenProcessingSuchAMessage(bool);
     void setShouldExitOnSyncMessageSendFailure(bool);
+
+    void setShouldProcessIncomingMessagesWhileWaitingForSyncReply(bool value) { m_shouldProcessIncomingMessagesWhileWaitingForSyncReply = value; }
 
     // The set callback will be called on the connection work queue when the connection is closed, 
     // before didCall is called on the client thread. Must be called before the connection is opened.
@@ -269,6 +274,8 @@ private:
     bool m_fullySynchronousModeIsAllowedForTesting { false };
     bool m_ignoreTimeoutsForTesting { false };
     bool m_didReceiveInvalidMessage;
+
+    bool m_shouldProcessIncomingMessagesWhileWaitingForSyncReply { true };
 
     // Incoming messages.
     Lock m_incomingMessagesMutex;

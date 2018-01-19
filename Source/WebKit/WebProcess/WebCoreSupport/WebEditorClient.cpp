@@ -318,13 +318,13 @@ bool WebEditorClient::canRedo() const
 void WebEditorClient::undo()
 {
     bool result = false;
-    m_page->sendSync(Messages::WebPageProxy::ExecuteUndoRedo(static_cast<uint32_t>(WebPageProxy::Undo)), Messages::WebPageProxy::ExecuteUndoRedo::Reply(result));
+    m_page->sendSync(Messages::WebPageProxy::ExecuteUndoRedo(static_cast<uint32_t>(WebPageProxy::Undo)), Messages::WebPageProxy::ExecuteUndoRedo::Reply(result), Seconds::infinity(), IPC::SendSyncOption::ProcessIncomingMessagesEvenWhenWaitingForSyncReply);
 }
 
 void WebEditorClient::redo()
 {
     bool result = false;
-    m_page->sendSync(Messages::WebPageProxy::ExecuteUndoRedo(static_cast<uint32_t>(WebPageProxy::Redo)), Messages::WebPageProxy::ExecuteUndoRedo::Reply(result));
+    m_page->sendSync(Messages::WebPageProxy::ExecuteUndoRedo(static_cast<uint32_t>(WebPageProxy::Redo)), Messages::WebPageProxy::ExecuteUndoRedo::Reply(result), Seconds::infinity(), IPC::SendSyncOption::ProcessIncomingMessagesEvenWhenWaitingForSyncReply);
 }
 
 #if !PLATFORM(GTK) && !PLATFORM(COCOA) && !PLATFORM(WPE)

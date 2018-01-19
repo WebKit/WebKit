@@ -1,3 +1,20 @@
+2018-01-19  Chris Dumez  <cdumez@apple.com>
+
+        The WebContent process should not process incoming IPC while waiting for a sync IPC reply
+        https://bugs.webkit.org/show_bug.cgi?id=181560
+
+        Reviewed by Ryosuke Niwa.
+
+        Add internals API for testing purposes.
+
+        Test: fast/misc/testIncomingSyncIPCMessageWhileWaitingForSyncReply.html
+
+        * page/ChromeClient.h:
+        * testing/Internals.cpp:
+        (WebCore::Internals::testIncomingSyncIPCMessageWhileWaitingForSyncReply):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2018-01-19  Keith Miller  <keith_miller@apple.com>
 
         HaveInternalSDK includes should be "#include?"
