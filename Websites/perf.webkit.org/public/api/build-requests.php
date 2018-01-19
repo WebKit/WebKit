@@ -61,7 +61,7 @@ function update_builds($db, $updates) {
             }
             $db->update_row('build_requests', 'request', array('id' => $id), array('status' => 'failed', 'url' => $url));
         } else {
-            if (!in_array($status, array('pending', 'scheduled', 'running', 'failed', 'completed'))) {
+            if (!in_array($status, array('pending', 'scheduled', 'running', 'failed', 'completed', 'canceled'))) {
                 $db->rollback_transaction();
                 exit_with_error('UnknownBuildRequestStatus', array('buildRequest' => $id, 'status' => $status));
             }
