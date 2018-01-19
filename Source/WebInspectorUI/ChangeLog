@@ -1,5 +1,31 @@
 2018-01-19  Nikita Vasilyev  <nvasilyev@apple.com>
 
+        Web Inspector: Styles Redesign: tabbing on commented out property throws exception
+        https://bugs.webkit.org/show_bug.cgi?id=180676
+        <rdar://problem/35981058>
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Views/SpreadsheetCSSStyleDeclarationEditor.js:
+        (WI.SpreadsheetCSSStyleDeclarationEditor.prototype.startEditingFirstProperty):
+        Tabbing from the selector field should focus on the first editable property.
+        When no editable properties are present, a new blank property should be added after the commented out ones.
+
+        (WI.SpreadsheetCSSStyleDeclarationEditor.prototype.startEditingLastProperty):
+        Shift-tabbing from the selector field should focus on the last editable property of the previous CSS rule.
+        When no editable properties are present, a new blank property should be added after the commented out ones.
+
+        (WI.SpreadsheetCSSStyleDeclarationEditor.prototype.spreadsheetCSSStyleDeclarationEditorFocusMoved):
+        When navigating between properties skip the commented out ones.
+
+        (WI.SpreadsheetCSSStyleDeclarationEditor.prototype._editablePropertyAfter):
+        (WI.SpreadsheetCSSStyleDeclarationEditor.prototype._editablePropertyBefore):
+        * UserInterface/Views/SpreadsheetStyleProperty.js:
+        (WI.SpreadsheetStyleProperty.prototype.get enabled):
+        (WI.SpreadsheetStyleProperty.prototype._update):
+
+2018-01-19  Nikita Vasilyev  <nvasilyev@apple.com>
+
         Web Inspector: Make styles sidebar always LTR
         https://bugs.webkit.org/show_bug.cgi?id=175357
         <rdar://problem/33787988>
