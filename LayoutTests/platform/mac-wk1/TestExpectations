@@ -488,3 +488,5 @@ webkit.org/b/180062 fast/text/user-installed-fonts [ ImageOnlyFailure ]
 webkit.org/b/180997 svg/animations/smil-leak-element-instances-noBaseValRef.svg [ Pass Failure ]
 
 webkit.org/b/179643 media/W3C/video/networkState/networkState_during_loadstart.html [ Pass Failure ]
+
+webkit.org/b/181862 [ Debug ] http/tests/images/image-supports-video.html [ Pass Failure ]
