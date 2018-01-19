@@ -159,7 +159,7 @@ NO_RETURN_DUE_TO_CRASH void SWContextManager::serviceWorkerFailedToTerminate(Ser
 }
 
 SWContextManager::ServiceWorkerTerminationRequest::ServiceWorkerTerminationRequest(SWContextManager& manager, ServiceWorkerIdentifier serviceWorkerIdentifier, Seconds timeout)
-    : m_timeoutTimer([this, &manager, serviceWorkerIdentifier] { manager.serviceWorkerFailedToTerminate(serviceWorkerIdentifier); })
+    : m_timeoutTimer([&manager, serviceWorkerIdentifier] { manager.serviceWorkerFailedToTerminate(serviceWorkerIdentifier); })
 {
     m_timeoutTimer.startOneShot(timeout);
 }

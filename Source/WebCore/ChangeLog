@@ -1,3 +1,10 @@
+2018-01-18  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed build fix, removed unused lambda capture.
+
+        * workers/service/context/SWContextManager.cpp:
+        (WebCore::SWContextManager::ServiceWorkerTerminationRequest::ServiceWorkerTerminationRequest):
+
 2018-01-18  Chris Dumez  <cdumez@apple.com>
 
         We should be able to terminate service workers that are unresponsive
