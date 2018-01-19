@@ -2150,16 +2150,6 @@ static NSMutableSet *knownPluginMIMETypes()
         webResourceLoadScheduler().resumePendingRequests();
 }
 
-+ (void)_setAllowCookies:(BOOL)allow
-{
-    ResourceRequestBase::setDefaultAllowCookies(allow);
-}
-
-+ (BOOL)_allowCookies
-{
-    return ResourceRequestBase::defaultAllowCookies();
-}
-
 + (BOOL)_isUnderMemoryPressure
 {
     return MemoryPressureHandler::singleton().isUnderMemoryPressure();

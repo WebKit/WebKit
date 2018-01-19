@@ -466,8 +466,6 @@ Could be worth adding to the API.
 - (void)_setResourceLoadSchedulerSuspended:(BOOL)suspend;
 + (void)_setTileCacheLayerPoolCapacity:(unsigned)capacity;
 
-+ (void)_setAllowCookies:(BOOL)allow;
-+ (BOOL)_allowCookies;
 + (void)_releaseMemoryNow;
 
 - (void)_replaceCurrentHistoryItem:(WebHistoryItem *)item;

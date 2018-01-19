@@ -1,3 +1,18 @@
+2018-01-19  Alex Christensen  <achristensen@webkit.org>
+
+        Remove unused WebViewPrivate _allowCookies
+        https://bugs.webkit.org/show_bug.cgi?id=181812
+
+        Reviewed by Tim Horton.
+
+        This SPI was in the original iOS upstreaming and has not been used in many years.
+
+        * platform/network/ResourceRequestBase.cpp:
+        (WebCore::ResourceRequestBase::setDefaultAllowCookies): Deleted.
+        (WebCore::ResourceRequestBase::defaultAllowCookies): Deleted.
+        * platform/network/ResourceRequestBase.h:
+        (WebCore::ResourceRequestBase::ResourceRequestBase):
+
 2018-01-18  Brady Eidson  <beidson@apple.com>
 
         Make in-process MessagePorts be (mostly) asynchronous

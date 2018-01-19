@@ -41,10 +41,6 @@ double ResourceRequestBase::s_defaultTimeoutInterval = INT_MAX;
 double ResourceRequestBase::s_defaultTimeoutInterval = 0;
 #endif
 
-#if PLATFORM(IOS)
-bool ResourceRequestBase::s_defaultAllowCookies = true;
-#endif
-
 inline const ResourceRequest& ResourceRequestBase::asResourceRequest() const
 {
     return *static_cast<const ResourceRequest*>(this);
@@ -641,18 +637,6 @@ unsigned initializeMaximumHTTPConnectionCountPerHost()
     // This is used by the loader to control the number of issued parallel load requests. 
     // Four seems to be a common default in HTTP frameworks.
     return 4;
-}
-#endif
-
-#if PLATFORM(IOS)
-void ResourceRequestBase::setDefaultAllowCookies(bool allowCookies)
-{
-    s_defaultAllowCookies = allowCookies;
-}
-
-bool ResourceRequestBase::defaultAllowCookies()
-{
-    return s_defaultAllowCookies;
 }
 #endif
 
