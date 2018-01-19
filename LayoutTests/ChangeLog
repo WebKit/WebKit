@@ -1,3 +1,12 @@
+2018-01-19  Per Arne Vollan  <pvollan@apple.com>
+
+        Mark svg/filters/feDiffuseLighting-bottomRightPixel.html as failing on Windows.
+        https://bugs.webkit.org/show_bug.cgi?id=181854
+
+        Unreviewed test gardening.
+
+        * platform/win/TestExpectations:
+
 2018-01-19  Antoine Quint  <graouts@apple.com>
 
         [iOS] LayoutTest media/modern-media-controls/media-controller/ios/media-controller-ios-do-not-hide-controls-when-tapping-button.html fails on Internal bots
