@@ -72,7 +72,7 @@ private:
 ALWAYS_INLINE static void assertStackPointerIsAligned()
 {
 #ifndef NDEBUG
-#if CPU(X86)
+#if CPU(X86) && !OS(WINDOWS)
     uintptr_t stackPointer;
 
     asm("movl %%esp,%0" : "=r"(stackPointer));
