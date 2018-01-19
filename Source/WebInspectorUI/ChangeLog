@@ -1,3 +1,15 @@
+2018-01-19  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Canvas Tab: Multiple "waiting for frames" messages displayed
+        https://bugs.webkit.org/show_bug.cgi?id=181865
+        <rdar://problem/36664737>
+
+        Reviewed by Devin Rousso.
+
+        * UserInterface/Views/CanvasContentView.js:
+        (WI.CanvasContentView.prototype._recordingStarted):
+        (WI.CanvasContentView.prototype._recordingStopped):
+
 2018-01-19  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Styles Redesign: tabbing on commented out property throws exception

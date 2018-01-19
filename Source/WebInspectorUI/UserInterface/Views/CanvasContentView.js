@@ -263,6 +263,9 @@ WI.CanvasContentView = class CanvasContentView extends WI.ContentView
     {
         this._updateRecordNavigationItem();
 
+        if (!this.representedObject.isRecording)
+            return;
+
         if (!this._recordingProgressElement) {
             this._recordingProgressElement = this._previewContainerElement.insertAdjacentElement("beforebegin", document.createElement("div"));
             this._recordingProgressElement.className = "progress";
@@ -297,13 +300,16 @@ WI.CanvasContentView = class CanvasContentView extends WI.ContentView
         this._updateRecordNavigationItem();
 
         let {canvas, recording} = event.data;
-        if (canvas !== this.representedObject || !recording)
+        if (canvas !== this.representedObject)
             return;
 
-        this._addRecording(recording);
+        if (recording)
+            this._addRecording(recording);
 
-        this._recordingProgressElement.remove();
-        this._recordingProgressElement = null;
+        if (this._recordingProgressElement) {
+            this._recordingProgressElement.remove();
+            this._recordingProgressElement = null;
+        }
     }
 
     _handleRecordingSelectElementChange(event)
