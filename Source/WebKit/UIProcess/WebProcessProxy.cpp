@@ -666,7 +666,7 @@ void WebProcessProxy::didBecomeUnresponsive()
 
     auto isResponsiveCallbacks = WTFMove(m_isResponsiveCallbacks);
 
-    for (auto& page : copyToVector(m_pageMap.values()))
+    for (auto& page : copyToVectorOf<RefPtr<WebPageProxy>>(m_pageMap.values()))
         page->processDidBecomeUnresponsive();
 
     bool isWebProcessResponsive = false;
@@ -678,19 +678,19 @@ void WebProcessProxy::didBecomeResponsive()
 {
     m_isResponsive = NoOrMaybe::Maybe;
 
-    for (auto& page : copyToVector(m_pageMap.values()))
+    for (auto& page : copyToVectorOf<RefPtr<WebPageProxy>>(m_pageMap.values()))
         page->processDidBecomeResponsive();
 }
 
 void WebProcessProxy::willChangeIsResponsive()
 {
-    for (auto& page : copyToVector(m_pageMap.values()))
+    for (auto& page : copyToVectorOf<RefPtr<WebPageProxy>>(m_pageMap.values()))
         page->willChangeProcessIsResponsive();
 }
 
 void WebProcessProxy::didChangeIsResponsive()
 {
-    for (auto& page : copyToVector(m_pageMap.values()))
+    for (auto& page : copyToVectorOf<RefPtr<WebPageProxy>>(m_pageMap.values()))
         page->didChangeProcessIsResponsive();
 }
 
@@ -897,7 +897,7 @@ void WebProcessProxy::requestTermination(ProcessTerminationReason reason)
     if (webConnection())
         webConnection()->didClose();
 
-    auto pages = copyToVector(m_pageMap.values());
+    auto pages = copyToVectorOf<RefPtr<WebPageProxy>>(m_pageMap.values());
 
     shutDown();
 

@@ -1,3 +1,23 @@
+2018-01-19  Daniel Bates  <dabates@apple.com>
+
+        REGRESSION (r223149): Ref WebPageProxy objects before calling their functionality
+        https://bugs.webkit.org/show_bug.cgi?id=181863
+        <rdar://problem/36662452>
+
+        Reviewed by Chris Dumez.
+
+        More fix ups following r223149. When notifying all pages of a process state change we need to
+        take care to ref all the pages before iterating over them and notifying them of the change.
+        Notifying a page of such a state change may ultimately delegate to the embedding client. And
+        the embedding client can do anything, including deallocating one or more pages.
+
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::didBecomeUnresponsive):
+        (WebKit::WebProcessProxy::didBecomeResponsive):
+        (WebKit::WebProcessProxy::willChangeIsResponsive):
+        (WebKit::WebProcessProxy::didChangeIsResponsive):
+        (WebKit::WebProcessProxy::requestTermination):
+
 2018-01-19  Chris Dumez  <cdumez@apple.com>
 
         The WebContent process should not process incoming IPC while waiting for a sync IPC reply
