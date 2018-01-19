@@ -1,3 +1,24 @@
+2018-01-19  Frederic Wang  <fwang@igalia.com>
+
+        Use promises for basic-gestures.js and 'await' for the corresponding tests
+        https://bugs.webkit.org/show_bug.cgi?id=181841
+
+        Reviewed by Megan Gardner.
+
+        * fast/events/touch/ios/drag-to-autoscroll-in-single-line-editable.html: Remove redundant
+        check for testRunner.runUIScript, rewrite runUIScript calls to just await a promise, add the
+        async keyword to runTest and reindent.
+        Also remove extraneous space after + operator.
+        * fast/events/touch/ios/long-press-then-drag-down-to-change-selected-text.html: Ditto.
+        * fast/events/touch/ios/long-press-then-drag-left-to-change-selected-text.html: Ditto.
+        * fast/events/touch/ios/long-press-then-drag-right-to-change-selected-text.html: Ditto.
+        * fast/events/touch/ios/long-press-then-drag-to-select-text.html: Ditto.
+        * fast/events/touch/ios/long-press-then-drag-up-to-change-selected-text.html: Ditto.
+        * fast/events/touch/ios/long-press-to-select-and-tap-to-clear.html: Ditto.
+        * fast/events/touch/ios/long-press-to-select-text.html: Ditto.
+        * resources/basic-gestures.js: For all functions in this file, wrap the script source into a
+        runUIScript call and a new promise, reindent.
+
 2018-01-19  Per Arne Vollan  <pvollan@apple.com>
 
         Mark svg/filters/feDiffuseLighting-bottomRightPixel.html as failing on Windows.

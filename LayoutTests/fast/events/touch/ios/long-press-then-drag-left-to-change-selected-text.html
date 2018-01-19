@@ -9,7 +9,7 @@
             testRunner.waitUntilDone();
         }
     
-        function runTest()
+        async function runTest()
         {
             if (!testRunner.runUIScript)
                 return;
@@ -27,58 +27,50 @@
             var dragX3 = thirdTargetRect.x;
             var dragX4 = firstTargetRect.x + firstTargetRect.width;
         
-            if (testRunner.runUIScript) {
-                testRunner.runUIScript(longPressAtPoint(pressPointX, pressPointY), function(result) {
-                    if (document.getSelection().toString() == "aliqua")
-                        output += 'PASS: Correct Selection';
-                    else
-                        output += 'FAIL: failed to select a word as a result of a long press. Incorrect Selection: ' + document.getSelection().toString();
-                    output += '<br>';
-            
-                    testRunner.runUIScript(touchAndDragFromPointToPoint(dragX, dragY, dragX2, dragY), function(result) {
-                        if (document.getSelection().toString() == "magna aliqua")
-                            output += 'PASS: Correct Selection';
-                        else
-                            output += 'FAIL: failed to select additional word after a drag. Incorrect Selection: ' + document.getSelection().toString();
-                        output += '<br>';
-                                       
-                        testRunner.runUIScript(touchAndDragFromPointToPoint(dragX2, dragY, dragX3, dragY), function(result) {
-                            if (document.getSelection().toString() == "dolore magna aliqua")
-                                output += 'PASS: Correct Selection';
-                            else
-                                output += 'FAIL: failed to select additional word after a drag. Incorrect Selection: ' + document.getSelection().toString();
-                            output += '<br>';
-                                           
-                            testRunner.runUIScript(touchAndDragFromPointToPoint(dragX3, dragY, dragX2, dragY), function(result) {
-                                if (document.getSelection().toString() == "magna aliqua")
-                                    output += 'PASS: Correct Selection';
-                                else
-                                    output += 'FAIL: failed to deselect word after a drag. Incorrect Selection: ' + document.getSelection().toString();
-                                output += '<br>';
-                        
-                                testRunner.runUIScript(touchAndDragFromPointToPoint(dragX2, dragY, dragX, dragY), function(result) {
-                                    if (document.getSelection().toString() == "aliqua")
-                                        output += 'PASS: Correct Selection';
-                                    else
-                                        output += 'FAIL: failed to deselect word after a drag. Incorrect Selection: ' + document.getSelection().toString();
-                                    output += '<br>';
-                            
-                                    testRunner.runUIScript(touchAndDragFromPointToPoint(dragX, dragY, dragX4, dragY), function(result) {
-                                        if (document.getSelection().toString() == "a")
-                                            output += 'PASS: Correct Selection';
-                                        else
-                                            output += 'FAIL: failed to reduce selection to a single character by dragging right. Incorrect Selection: ' +     document.getSelection().toString();
-                                        output += '<br>';
-                                        output += result;
-                                        document.getElementById('target').innerHTML = output;
-                                        testRunner.notifyDone();
-                                    });
-                                });
-                            });
-                        });
-                    });
-                });
-            }
+            await longPressAtPoint(pressPointX, pressPointY);
+            if (document.getSelection().toString() == "aliqua")
+                output += 'PASS: Correct Selection';
+            else
+                output += 'FAIL: failed to select a word as a result of a long press. Incorrect Selection: ' + document.getSelection().toString();
+            output += '<br>';
+
+            await touchAndDragFromPointToPoint(dragX, dragY, dragX2, dragY);
+            if (document.getSelection().toString() == "magna aliqua")
+                output += 'PASS: Correct Selection';
+            else
+                output += 'FAIL: failed to select additional word after a drag. Incorrect Selection: ' + document.getSelection().toString();
+            output += '<br>';
+
+            await touchAndDragFromPointToPoint(dragX2, dragY, dragX3, dragY);
+            if (document.getSelection().toString() == "dolore magna aliqua")
+                output += 'PASS: Correct Selection';
+            else
+                output += 'FAIL: failed to select additional word after a drag. Incorrect Selection: ' + document.getSelection().toString();
+            output += '<br>';
+
+            await touchAndDragFromPointToPoint(dragX3, dragY, dragX2, dragY);
+            if (document.getSelection().toString() == "magna aliqua")
+                output += 'PASS: Correct Selection';
+            else
+                output += 'FAIL: failed to deselect word after a drag. Incorrect Selection: ' + document.getSelection().toString();
+            output += '<br>';
+
+            await touchAndDragFromPointToPoint(dragX2, dragY, dragX, dragY);
+            if (document.getSelection().toString() == "aliqua")
+                 output += 'PASS: Correct Selection';
+            else
+                output += 'FAIL: failed to deselect word after a drag. Incorrect Selection: ' + document.getSelection().toString();
+            output += '<br>';
+
+            var result = await touchAndDragFromPointToPoint(dragX, dragY, dragX4, dragY);
+            if (document.getSelection().toString() == "a")
+                output += 'PASS: Correct Selection';
+            else
+                output += 'FAIL: failed to reduce selection to a single character by dragging right. Incorrect Selection: ' + document.getSelection().toString();
+            output += '<br>';
+            output += result;
+            document.getElementById('target').innerHTML = output;
+            testRunner.notifyDone();
         }
     
         window.addEventListener('load', runTest, false);

@@ -9,7 +9,7 @@
             testRunner.waitUntilDone();
         }
     
-        function runTest()
+        async function runTest()
         {
             if (!testRunner.runUIScript)
                 return;
@@ -24,34 +24,26 @@
             
             var textLength = scrollBox.value.length;
 
-            if (testRunner.runUIScript) {
-                testRunner.runUIScript(tapAtPoint(tapPointX, tapPointY), function() {
-                    testRunner.runUIScript(didShowKeyboard(), function() {
-                        testRunner.runUIScript(longPressAndHoldAtPoint(tapPointX, tapPointY), function() {
-                            testRunner.runUIScript(continueTouchAndDragFromPointToPoint(tapPointX, tapPointY, dragX, tapPointY), function() {
-                                testRunner.runUIScript(holdAtPoint(dragX, tapPointY, 2.0), function() {
-                                    testRunner.runUIScript(continueTouchAndDragFromPointToPoint(dragX, tapPointY, dragX + 5, tapPointY), function() {
-                                        if (scrollBox.scrollLeft > 0)
-                                            output += 'PASS: Text Box has been scrolled.';
-                                        else
-                                            output += 'FAIL: Text Box has not been scrolled';
-                                        output += '<br>';
-                                                           
-                                        if ((scrollBox.selectionStart == scrollBox.selectionEnd) && (scrollBox.selectionStart == textLength))
-                                            output += 'PASS: Correct Cursor Location';
-                                        else
-                                            output += 'FAIL: cursor is at an unexpected position:' + scrollBox.selectionStart;
-                                        output += '<br>';
-                                   
-                                        document.getElementById('target').innerHTML = output;
-                                        testRunner.notifyDone();
-                                    });
-                                });
-                            });
-                        });
-                    });
-                });
-            }
+            await tapAtPoint(tapPointX, tapPointY);
+            await didShowKeyboard();
+            await longPressAndHoldAtPoint(tapPointX, tapPointY);
+            await continueTouchAndDragFromPointToPoint(tapPointX, tapPointY, dragX, tapPointY);
+            await holdAtPoint(dragX, tapPointY, 2.0);
+            await continueTouchAndDragFromPointToPoint(dragX, tapPointY, dragX + 5, tapPointY);
+            if (scrollBox.scrollLeft > 0)
+                output += 'PASS: Text Box has been scrolled.';
+            else
+                output += 'FAIL: Text Box has not been scrolled';
+            output += '<br>';
+
+            if ((scrollBox.selectionStart == scrollBox.selectionEnd) && (scrollBox.selectionStart == textLength))
+                output += 'PASS: Correct Cursor Location';
+            else
+                output += 'FAIL: cursor is at an unexpected position:' + scrollBox.selectionStart;
+            output += '<br>';
+
+            document.getElementById('target').innerHTML = output;
+            testRunner.notifyDone();
         }
     
         window.addEventListener('load', runTest, false);
