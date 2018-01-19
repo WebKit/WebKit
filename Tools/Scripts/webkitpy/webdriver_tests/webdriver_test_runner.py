@@ -153,7 +153,7 @@ class WebDriverTestRunner(object):
             json_results['results'].append(results)
 
         directory = os.path.dirname(output_path)
-        if not os.path.exists(directory):
+        if directory and not os.path.exists(directory):
             os.makedirs(directory)
 
         with open(output_path, 'wb') as fp:
