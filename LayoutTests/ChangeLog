@@ -1,3 +1,12 @@
+2018-01-19  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Update TestExpectations for media/W3C/audio/networkState/networkState_during_loadstart.html.
+        https://bugs.webkit.org/show_bug.cgi?id=123010
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
 2018-01-19  Jonathan Bedard  <jbedard@apple.com>
 
         Move select-out-of-floated-non-editable iOS Simulator expectations to iOS
