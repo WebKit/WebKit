@@ -381,7 +381,7 @@
                     { "type": "Triggerable", "name": "sierra-debug-tests-wk2",
                       "builderNames": ["Apple Sierra Debug WK2 (Tests)"]
                     },
-                    { "type": "Triggerable", "name": "sierra-release-perf",
+                    { "type": "Triggerable", "name": "sierra-release-perf-tests",
                       "builderNames": ["Apple Sierra Release WK2 (Perf)"]
                     },
                     { "type": "Triggerable", "name": "sierra-debug-tests-test262",
