@@ -1,7 +1,0 @@
-
-PASS Document exposes the getAnimations method. 
-PASS Document.getAnimations() returns an empty array when no animations were added. 
-PASS Document.getAnimations() returns an array with the new animations contained. 
-PASS Setting timeline = null on an animation removes it from the array returned by Document.getAnimations(). 
-PASS Setting timeline = document.timeline on an animation adds it to the array returned by Document.getAnimations(). 
-

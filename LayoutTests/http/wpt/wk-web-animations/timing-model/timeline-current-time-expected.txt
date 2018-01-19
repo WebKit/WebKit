@@ -1,5 +1,0 @@
-
-PASS The document timeline currentTime is null by default. 
-PASS Using internals.setTimelineCurrentTime() can set the document timeline currentTime. 
-PASS Using internals.setTimelineCurrentTime() can set the document timeline currentTime to a negative value. 
-

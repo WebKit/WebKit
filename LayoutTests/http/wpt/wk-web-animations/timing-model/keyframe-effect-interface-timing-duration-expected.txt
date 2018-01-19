@@ -1,4 +1,0 @@
-
-PASS Check the default state of the timing and duration properties. 
-PASS Check that we can update the timing duration. 
-

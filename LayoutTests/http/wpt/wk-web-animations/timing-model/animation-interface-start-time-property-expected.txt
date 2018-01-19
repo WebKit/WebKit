@@ -1,5 +1,0 @@
-
-PASS The animation.startTime property should be null by default. 
-PASS The animation.startTime property can be set to a number. 
-PASS The animation.effect property can be set back to null. 
-

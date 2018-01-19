@@ -1,4 +1,0 @@
-
-PASS The AnimationEffect interface is defined. 
-PASS The AnimationEffect interface cannot be constructed. 
-

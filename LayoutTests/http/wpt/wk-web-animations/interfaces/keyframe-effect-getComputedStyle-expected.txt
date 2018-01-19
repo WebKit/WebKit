@@ -1,4 +1,0 @@
-
-PASS Querying the computed style for an accelerated animation. 
-PASS Querying the computed style for a non-accelerated animation. 
-

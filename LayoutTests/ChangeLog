@@ -1,5 +1,46 @@
 2018-01-19  Antoine Quint  <graouts@apple.com>
 
+        [Web Animations] Remove http/wpt/wk-web-animations tests
+        https://bugs.webkit.org/show_bug.cgi?id=181861
+
+        These tests were written early on during our Web Animations implementation before we had a good sense of the quality
+        of the coverage of the W3C WPT suite. That suite is extremely comprehensive and all of the assertions we wrote ourselves
+        are redundant and should be removed so that all testing, unless specific to our implementation, is done through the WPT
+        suite.
+
+        Reviewed by Dean Jackson.
+
+        * http/wpt/wk-web-animations/interfaces/document-get-animations-expected.txt: Removed.
+        * http/wpt/wk-web-animations/interfaces/document-get-animations.html: Removed.
+        * http/wpt/wk-web-animations/interfaces/element-get-animations-expected.txt: Removed.
+        * http/wpt/wk-web-animations/interfaces/element-get-animations.html: Removed.
+        * http/wpt/wk-web-animations/interfaces/keyframe-effect-getComputedStyle-expected.txt: Removed.
+        * http/wpt/wk-web-animations/interfaces/keyframe-effect-getComputedStyle.html: Removed.
+        * http/wpt/wk-web-animations/timing-model/animation-creation-basic-expected.txt: Removed.
+        * http/wpt/wk-web-animations/timing-model/animation-creation-basic.html: Removed.
+        * http/wpt/wk-web-animations/timing-model/animation-current-time-expected.txt: Removed.
+        * http/wpt/wk-web-animations/timing-model/animation-current-time.html: Removed.
+        * http/wpt/wk-web-animations/timing-model/animation-effect-expected.txt: Removed.
+        * http/wpt/wk-web-animations/timing-model/animation-effect-timing-expected.txt: Removed.
+        * http/wpt/wk-web-animations/timing-model/animation-effect-timing.html: Removed.
+        * http/wpt/wk-web-animations/timing-model/animation-effect-unique-relationship-expected.txt: Removed.
+        * http/wpt/wk-web-animations/timing-model/animation-effect-unique-relationship.html: Removed.
+        * http/wpt/wk-web-animations/timing-model/animation-effect.html: Removed.
+        * http/wpt/wk-web-animations/timing-model/animation-interface-effect-property-expected.txt: Removed.
+        * http/wpt/wk-web-animations/timing-model/animation-interface-effect-property.html: Removed.
+        * http/wpt/wk-web-animations/timing-model/animation-interface-start-time-property-expected.txt: Removed.
+        * http/wpt/wk-web-animations/timing-model/animation-interface-start-time-property.html: Removed.
+        * http/wpt/wk-web-animations/timing-model/document-timeline-expected.txt: Removed.
+        * http/wpt/wk-web-animations/timing-model/document-timeline.html: Removed.
+        * http/wpt/wk-web-animations/timing-model/keyframe-effect-expected.txt: Removed.
+        * http/wpt/wk-web-animations/timing-model/keyframe-effect-interface-timing-duration-expected.txt: Removed.
+        * http/wpt/wk-web-animations/timing-model/keyframe-effect-interface-timing-duration.html: Removed.
+        * http/wpt/wk-web-animations/timing-model/keyframe-effect.html: Removed.
+        * http/wpt/wk-web-animations/timing-model/timeline-current-time-expected.txt: Removed.
+        * http/wpt/wk-web-animations/timing-model/timeline-current-time.html: Removed.
+
+2018-01-19  Antoine Quint  <graouts@apple.com>
+
         [Web Animations] Expose timing properties (delay, endDelay, fill, iterationStart, iterations, direction) and getComputedTiming()
         https://bugs.webkit.org/show_bug.cgi?id=181857
         <rdar://problem/36660081>

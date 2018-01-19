@@ -1,7 +1,0 @@
-
-PASS The DocumentTimeline interface is defined. 
-PASS The Document interface exposes a timeline property. 
-PASS The document timeline is a DocumentTimeline. 
-PASS The document timeline inherits from AnimationTimeline. 
-PASS The document timeline is a single object. 
-
