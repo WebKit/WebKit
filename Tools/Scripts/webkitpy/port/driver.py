@@ -35,6 +35,7 @@ import sys
 import time
 import os
 
+from os.path import normpath
 from webkitpy.common.system import path
 from webkitpy.common.system.profiler import ProfilerFactory
 
@@ -253,10 +254,10 @@ class Driver(object):
             return shlex.split(self._port.get_option('wrapper')) + wrapper_arguments
         return wrapper_arguments
 
-    HTTP_DIR = "http/tests/"
-    HTTP_LOCAL_DIR = "http/tests/local/"
-    WEBKIT_SPECIFIC_WEB_PLATFORM_TEST_SUBDIR = "http/wpt/"
-    WEBKIT_WEB_PLATFORM_TEST_SERVER_ROUTE = "WebKit/"
+    HTTP_DIR = normpath("http/tests") + os.sep
+    HTTP_LOCAL_DIR = normpath("http/tests/local") + os.sep
+    WEBKIT_SPECIFIC_WEB_PLATFORM_TEST_SUBDIR = normpath("http/wpt") + os.sep
+    WEBKIT_WEB_PLATFORM_TEST_SERVER_ROUTE = normpath("WebKit") + os.sep
 
     def is_http_test(self, test_name):
         return test_name.startswith(self.HTTP_DIR) and not test_name.startswith(self.HTTP_LOCAL_DIR)
@@ -271,7 +272,14 @@ class Driver(object):
         return self.web_platform_test_server_base_https_url + path if ".https." in path else self.web_platform_test_server_base_http_url + path
 
     def http_test_path_to_uri(self, path):
-        return "https://127.0.0.1:8443/" + path if path.startswith("ssl") or ".https." in path else "http://127.0.0.1:8000/" + path
+        path = path.replace(os.sep, '/')
+        return self.http_base_url(secure=self.is_secure_path(path)) + path
+
+    def is_secure_path(self, path):
+        return path.startswith("ssl") or ".https." in path
+
+    def http_base_url(self, secure=None):
+        return "%s://127.0.0.1:%d/" % (('https', 8443) if secure else ('http', 8000))
 
     def test_to_uri(self, test_name):
         """Convert a test name to a URI."""
@@ -307,9 +315,9 @@ class Driver(object):
         if uri.startswith(self.web_platform_test_server_base_https_url):
             return uri.replace(self.web_platform_test_server_base_https_url, self.web_platform_test_server_doc_root)
         if uri.startswith("http://"):
-            return uri.replace('http://127.0.0.1:8000/', self.HTTP_DIR)
+            return uri.replace(self.http_base_url(secure=False), self.HTTP_DIR)
         if uri.startswith("https://"):
-            return uri.replace('https://127.0.0.1:8443/', self.HTTP_DIR)
+            return uri.replace(self.http_base_url(secure=True), self.HTTP_DIR)
         raise NotImplementedError('unknown url type: %s' % uri)
 
     def has_crashed(self):

@@ -1,3 +1,17 @@
+2018-01-18  Basuke Suzuki  <Basuke.Suzuki@sony.com>
+
+        [WinCairo] Pass correct url for http test to test driver.
+        https://bugs.webkit.org/show_bug.cgi?id=181814
+
+        Reviewed by Alex Christensen.
+
+        * Scripts/webkitpy/port/driver.py:
+        (Driver):
+        (Driver.http_test_path_to_uri):
+        (Driver.is_secure_path):
+        (Driver.http_base_url):
+        (Driver.uri_to_test):
+
 2018-01-18  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, update the triggerable name for 'sierra-release-perf-tests'
