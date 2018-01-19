@@ -34,9 +34,9 @@ namespace WebCore {
 
 const char* const ResourceError::curlErrorDomain = "CurlErrorDomain";
 
-ResourceError ResourceError::httpError(int errorCode, const URL& failingURL)
+ResourceError ResourceError::httpError(int errorCode, const URL& failingURL, Type type)
 {
-    return ResourceError(curlErrorDomain, errorCode, failingURL, CurlHandle::errorDescription(static_cast<CURLcode>(errorCode)));
+    return ResourceError(curlErrorDomain, errorCode, failingURL, CurlHandle::errorDescription(static_cast<CURLcode>(errorCode)), type);
 }
 
 ResourceError ResourceError::sslError(int errorCode, unsigned sslErrors, const URL& failingURL)

@@ -192,6 +192,9 @@ CURL* CurlRequest::setupTransfer()
     m_curlHandle->enableAcceptEncoding();
     m_curlHandle->enableTimeout();
 
+    long timeoutMilliseconds = (m_request.timeoutInterval() > 0.0) ? static_cast<long>(m_request.timeoutInterval() * 1000.0) : 0;
+    m_curlHandle->setTimeout(timeoutMilliseconds);
+
     m_curlHandle->enableProxyIfExists();
     m_curlHandle->enableCookieJarIfExists();
 
@@ -421,7 +424,8 @@ void CurlRequest::didCompleteTransfer(CURLcode result)
             });
         }
     } else {
-        auto resourceError = ResourceError::httpError(result, m_request.url());
+        auto type = (result == CURLE_OPERATION_TIMEDOUT && m_request.timeoutInterval() > 0.0) ? ResourceError::Type::Timeout : ResourceError::Type::General;
+        auto resourceError = ResourceError::httpError(result, m_request.url(), type);
         if (m_sslVerifier.sslErrors())
             resourceError.setSslErrors(m_sslVerifier.sslErrors());
 

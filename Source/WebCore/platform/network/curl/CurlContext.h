@@ -263,6 +263,7 @@ public:
     void enableProxyIfExists();
 
     void enableTimeout();
+    void setTimeout(long timeoutMilliseconds);
 
     // Callback function
     void setHeaderCallbackFunction(curl_write_callback, void*);

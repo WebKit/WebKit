@@ -1,3 +1,21 @@
+2018-01-19  Basuke Suzuki  <Basuke.Suzuki@sony.com>
+
+        [Curl] Add timeout support to XMLHttpRequest
+        https://bugs.webkit.org/show_bug.cgi?id=181876
+
+        Reviewed by Alex Christensen 
+
+        * platform/network/ResourceRequestBase.cpp:
+        * platform/network/curl/CurlContext.cpp:
+        (WebCore::CurlHandle::setTimeout):
+        * platform/network/curl/CurlContext.h:
+        * platform/network/curl/CurlRequest.cpp:
+        (WebCore::CurlRequest::setupTransfer):
+        (WebCore::CurlRequest::didCompleteTransfer):
+        * platform/network/curl/ResourceError.h:
+        * platform/network/curl/ResourceErrorCurl.cpp:
+        (WebCore::ResourceError::httpError):
+
 2018-01-19  Yoav Weiss  <yoav@yoav.ws>
 
         Support for preconnect Link headers

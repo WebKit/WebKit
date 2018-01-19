@@ -520,6 +520,11 @@ void CurlHandle::enableTimeout()
     curl_easy_setopt(m_handle, CURLOPT_DNS_CACHE_TIMEOUT, dnsCacheTimeout);
 }
 
+void CurlHandle::setTimeout(long timeoutMilliseconds)
+{
+    curl_easy_setopt(m_handle, CURLOPT_TIMEOUT_MS, timeoutMilliseconds);
+}
+
 void CurlHandle::setHeaderCallbackFunction(curl_write_callback callbackFunc, void* userData)
 {
     curl_easy_setopt(m_handle, CURLOPT_HEADERFUNCTION, callbackFunc);
