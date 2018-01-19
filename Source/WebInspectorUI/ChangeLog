@@ -1,3 +1,14 @@
+2018-01-19  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Make styles sidebar always LTR
+        https://bugs.webkit.org/show_bug.cgi?id=175357
+        <rdar://problem/33787988>
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Views/SpreadsheetRulesStyleDetailsPanel.js:
+        (WI.SpreadsheetRulesStyleDetailsPanel):
+
 2018-01-19  Keith Miller  <keith_miller@apple.com>
 
         HaveInternalSDK includes should be "#include?"
