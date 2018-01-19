@@ -4065,12 +4065,19 @@ static bool isAssistableInputType(InputType type)
     [_fileUploadPanel presentWithParameters:parameters resultListener:listener];
 }
 
+#pragma mark - WKFileUploadPanelDelegate
+
 - (void)fileUploadPanelDidDismiss:(WKFileUploadPanel *)fileUploadPanel
 {
     ASSERT(_fileUploadPanel.get() == fileUploadPanel);
 
     [_fileUploadPanel setDelegate:nil];
     _fileUploadPanel = nil;
+}
+
+- (UIViewController *)viewControllerForPresentingFileUploadPanel:(WKFileUploadPanel *)fileUploadPanel
+{
+    return _page->uiClient().presentingViewController();
 }
 
 #pragma mark - UITextInputMultiDocument

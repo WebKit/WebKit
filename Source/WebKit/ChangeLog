@@ -1,3 +1,23 @@
+2018-01-19  Megan Gardner  <megan_gardner@apple.com>
+
+        Present WKFileUploadPanel on correct ViewController
+        https://bugs.webkit.org/show_bug.cgi?id=181884
+        <rdar://problem/35114892>
+
+        Reviewed by Tim Horton and Joseph Pecoraro
+
+        We should not be getting the main view controller directly, as done in 
+        ValidationBubbleIOS. This will keep us from presenting on view controllers are 
+        in the midst of being dismissed, etc, causing us to get into states where we lose
+        the ability to present the WKFileUploadPanel.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView viewControllerForPresentingFileUploadPanel:]):
+        * UIProcess/ios/forms/WKFileUploadPanel.h:
+        * UIProcess/ios/forms/WKFileUploadPanel.mm:
+        (fallbackViewController):
+        (-[WKFileUploadPanel _presentFullscreenViewController:animated:]):
+
 2018-01-18  Jason Marcell  <jmarcell@apple.com>
 
         Cherry-pick r227146. rdar://problem/36624319
