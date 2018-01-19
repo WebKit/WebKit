@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -123,32 +123,6 @@ TEST(WTF_PoisonedUniquePtrForNonTriviallyDestructibleArrays, Basic)
         const char* aName = "a";
         {
             PoisonedUniquePtr<g_poisonA, Logger[]> ptr = PoisonedUniquePtr<g_poisonA, Logger[]>::create(arraySize, aName, aDestructCount);
-            ASSERT_EQ(0, aDestructCount);
-            ASSERT_TRUE(nullptr != ptr.unpoisoned());
-            for (auto i = 0; i < arraySize; ++i)
-                ASSERT_EQ(aName, ptr[i].name);
-        }
-        ASSERT_EQ(arraySize, aDestructCount);
-    }
-
-    {
-        int aDestructCount = 0;
-        const char* aName = "a";
-        {
-            PoisonedUniquePtr<g_poisonA, Logger[]> ptr = makePoisonedUnique<g_poisonA, Logger[]>(arraySize, aName, aDestructCount);
-            ASSERT_EQ(0, aDestructCount);
-            ASSERT_TRUE(nullptr != ptr.unpoisoned());
-            for (auto i = 0; i < arraySize; ++i)
-                ASSERT_EQ(aName, ptr[i].name);
-        }
-        ASSERT_EQ(arraySize, aDestructCount);
-    }
-
-    {
-        int aDestructCount = 0;
-        const char* aName = "a";
-        {
-            PoisonedUniquePtr<g_poisonA, Logger[]> ptr = makePoisonedUnique<g_poisonA, Logger[]>(arraySize, aName, aDestructCount);
             ASSERT_EQ(0, aDestructCount);
             ASSERT_TRUE(nullptr != ptr.unpoisoned());
             for (auto i = 0; i < arraySize; ++i)

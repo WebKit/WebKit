@@ -920,12 +920,6 @@ private:
 
     JS_EXPORT_PRIVATE static void clearRareData(JSCell*);
 
-    template<typename T, typename... Arguments, typename Enable = void>
-    static JSGlobalObject::PoisonedUniquePtr<T> makePoisonedUnique(Arguments&&... arguments)
-    {
-        return WTF::makePoisonedUnique<POISON(JSGlobalObject), T>(std::forward<Arguments>(arguments)...);
-    }
-
     bool m_needsSiteSpecificQuirks { false };
 #if JSC_OBJC_API_ENABLED
     RetainPtr<JSWrapperMap> m_wrapperMap;

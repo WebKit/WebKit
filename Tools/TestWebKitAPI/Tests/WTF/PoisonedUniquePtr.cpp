@@ -165,7 +165,7 @@ TEST(WTF_PoisonedUniquePtr, Basic)
         int aDestructCount = 0;
         const char* aName = "a";
         {
-            PoisonedUniquePtr<g_poisonA, Logger> ptr = makePoisonedUnique<g_poisonA, Logger>(aName, aDestructCount);
+            PoisonedUniquePtr<g_poisonA, Logger> ptr = std::make_unique<Logger>(aName, aDestructCount);
             ASSERT_EQ(0, aDestructCount);
             ASSERT_TRUE(nullptr != ptr.unpoisoned());
             ASSERT_EQ(aName, &ptr->name);
@@ -175,7 +175,7 @@ TEST(WTF_PoisonedUniquePtr, Basic)
         int bDestructCount = 0;
         const char* bName = "b";
         {
-            PoisonedUniquePtr<g_poisonA, Logger> ptr = makePoisonedUnique<g_poisonA, DerivedLogger>(bName, bDestructCount);
+            PoisonedUniquePtr<g_poisonA, Logger> ptr = std::make_unique<DerivedLogger>(bName, bDestructCount);
             ASSERT_EQ(0, bDestructCount);
             ASSERT_TRUE(nullptr != ptr.unpoisoned());
             ASSERT_EQ(bName, &ptr->name);

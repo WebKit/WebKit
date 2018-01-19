@@ -329,8 +329,8 @@ CodeBlock::CodeBlock(VM* vm, Structure* structure, CopyParsedBlockTag, CodeBlock
     , m_optimizationDelayCounter(0)
     , m_reoptimizationRetryCounter(0)
     , m_creationTime(MonotonicTime::now())
-    , m_unconditionalFinalizer(makePoisonedUnique<UnconditionalFinalizer>(*this))
-    , m_weakReferenceHarvester(makePoisonedUnique<WeakReferenceHarvester>(*this))
+    , m_unconditionalFinalizer(std::make_unique<UnconditionalFinalizer>(*this))
+    , m_weakReferenceHarvester(std::make_unique<WeakReferenceHarvester>(*this))
 {
     m_visitWeaklyHasBeenCalled = false;
 
@@ -389,8 +389,8 @@ CodeBlock::CodeBlock(VM* vm, Structure* structure, ScriptExecutable* ownerExecut
     , m_optimizationDelayCounter(0)
     , m_reoptimizationRetryCounter(0)
     , m_creationTime(MonotonicTime::now())
-    , m_unconditionalFinalizer(makePoisonedUnique<UnconditionalFinalizer>(*this))
-    , m_weakReferenceHarvester(makePoisonedUnique<WeakReferenceHarvester>(*this))
+    , m_unconditionalFinalizer(std::make_unique<UnconditionalFinalizer>(*this))
+    , m_weakReferenceHarvester(std::make_unique<WeakReferenceHarvester>(*this))
 {
     m_visitWeaklyHasBeenCalled = false;
 
