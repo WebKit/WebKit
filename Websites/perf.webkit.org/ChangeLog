@@ -1,3 +1,28 @@
+2018-01-18  Aakash Jain  <aakash_jain@apple.com>
+
+        Add support for builderNameToIDMap in BuildbotSyncer
+        https://bugs.webkit.org/show_bug.cgi?id=176526
+
+        Reviewed by Ryosuke Niwa.
+
+        * tools/js/buildbot-syncer.js:
+        (BuildbotSyncer._loadConfig): Added builderNameToIDMap parameter. It would be used later on.
+        (BuildbotSyncer._resolveBuildersWithPlatforms): Ditto.
+        (BuildbotSyncer._validateAndMergeConfig): Added builderID as a valid config parameter.
+        * tools/js/buildbot-triggerable.js:
+        (BuildbotTriggerable.prototype.getBuilderNameToIDMap): Method to fetch BuilderNameToIDMap from Buildbot 0.9.
+        (BuildbotTriggerable.prototype.getBuilderNameToIDMapDeprecated): Method to fetch BuilderNameToIDMap from Buildbot 0.8.
+        (BuildbotTriggerable.prototype.initSyncers): Updated to use getBuilderNameToIDMap.
+        * unit-tests/buildbot-syncer-tests.js: Updated unit-tests.
+        * server-tests/resources/mock-data.js:
+        (MockData.buildbotBuildersURLDeprecated): URL for fetching Builders list.
+        (MockData.buildbotBuildersURL): Ditto for Buildbot 0.9
+        (MockData.mockBuildbotBuildersDeprecated): Sample builders data for Buildbot 0.8
+        (MockData.mockBuildbotBuilders): Ditto for Buildbot 0.9
+        * server-tests/tools-buildbot-triggerable-tests.js: Added test for getBuilderNameToIDMap. Updated tests to handle
+        newly added promise for fetching builders list from Buildbot.
+        * server-tests/tools-sync-buildbot-integration-tests.js: Ditto.
+
 2018-01-18  Ryosuke Niwa  <rniwa@webkit.org>
 
         Charts can be empty when values are all identical

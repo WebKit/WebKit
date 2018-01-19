@@ -17,6 +17,8 @@ MockData = {
     jscRepositoryId() { return 222; },
     gitWebkitRepositoryId() { return 111; },
     sharedRepositoryId() { return 14; },
+    buildbotBuildersURLDeprecated() {return '/json/builders'},
+    buildbotBuildersURL() {return '/api/v2/builders'},
     addMockConfiguration: function (db)
     {
         return Promise.all([
@@ -216,6 +218,60 @@ MockData = {
                     'platforms': ['some platform'],
                     'types': ['some-test'],
                     'builders': ['builder-1', 'builder-2'],
+                }
+            ]
+        }
+    },
+    mockBuildbotBuildersDeprecated: function ()
+    {
+        return {
+            "some builder": {
+                "slaves": [ "some-slave-1" ]
+            },
+            "some-builder-1": {
+                "slaves": [ "some-slave-2" ]
+            },
+            "some builder 2": {
+                "slaves": [ "some-slave-3" ]
+            },
+            "other builder": {
+                "slaves": [ "some-slave-4" ]
+            },
+            "some tester": {
+                "slaves": [ "some-slave-5" ]
+            },
+            "another tester": {
+                "slaves": [ "some-slave-6" ]
+            }
+        }
+    },
+    mockBuildbotBuilders: function ()
+    {
+        return {
+            "builders": [
+                {
+                    "builderid": 1,
+                    "name": "some builder",
+                },
+                {
+                    "builderid": 2,
+                    "name": "some-builder-1",
+                },
+                {
+                    "builderid": 3,
+                    "name": "some builder 2",
+                },
+                {
+                    "builderid": 4,
+                    "name": "other builder",
+                },
+                {
+                    "builderid": 5,
+                    "name": "some tester",
+                },
+                {
+                    "builderid": 6,
+                    "name": "another tester",
                 }
             ]
         }

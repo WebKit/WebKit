@@ -36,6 +36,8 @@ describe('BuildbotTriggerable', function () {
                 const slaveInfo = {name: 'sync-slave', password: 'password'};
                 const triggerable = new BuildbotTriggerable(config, TestServer.remoteAPI(), MockRemoteAPI, slaveInfo, logger);
                 syncPromise = triggerable.initSyncers().then(() => triggerable.syncOnce());
+                assertRequestAndResolve(MockRemoteAPI.requests[0], 'GET', MockData.buildbotBuildersURLDeprecated(), MockData.mockBuildbotBuildersDeprecated());
+                MockRemoteAPI.reset();
                 return MockRemoteAPI.waitForRequest();
             }).then(() => {
                 assert.equal(BuildRequest.all().length, 4);
@@ -90,6 +92,8 @@ describe('BuildbotTriggerable', function () {
                 let slaveInfo = {name: 'sync-slave', password: 'password'};
                 let triggerable = new BuildbotTriggerable(config, TestServer.remoteAPI(), MockRemoteAPI, slaveInfo, logger);
                 syncPromise = triggerable.initSyncers().then(() => triggerable.syncOnce());
+                assertRequestAndResolve(MockRemoteAPI.requests[0], 'GET', MockData.buildbotBuildersURLDeprecated(), MockData.mockBuildbotBuildersDeprecated());
+                MockRemoteAPI.reset();
                 return MockRemoteAPI.waitForRequest();
             }).then(() => {
                 assert.equal(MockRemoteAPI.requests[0].method, 'GET');
@@ -138,6 +142,8 @@ describe('BuildbotTriggerable', function () {
                 const slaveInfo = {name: 'sync-slave', password: 'password'};
                 const triggerable = new BuildbotTriggerable(config, TestServer.remoteAPI(), MockRemoteAPI, slaveInfo, logger);
                 syncPromise = triggerable.initSyncers().then(() => triggerable.syncOnce());
+                assertRequestAndResolve(MockRemoteAPI.requests[0], 'GET', MockData.buildbotBuildersURLDeprecated(), MockData.mockBuildbotBuildersDeprecated());
+                MockRemoteAPI.reset();
                 return MockRemoteAPI.waitForRequest();
             }).then(() => {
                 assert.equal(MockRemoteAPI.requests.length, 2);
@@ -217,6 +223,8 @@ describe('BuildbotTriggerable', function () {
                 let slaveInfo = {name: 'sync-slave', password: 'password'};
                 let triggerable = new BuildbotTriggerable(config, TestServer.remoteAPI(), MockRemoteAPI, slaveInfo, logger);
                 syncPromise = triggerable.initSyncers().then(() => triggerable.syncOnce());
+                assertRequestAndResolve(MockRemoteAPI.requests[0], 'GET', MockData.buildbotBuildersURLDeprecated(), MockData.mockBuildbotBuildersDeprecated());
+                MockRemoteAPI.reset();
                 return MockRemoteAPI.waitForRequest();
             }).then(() => {
                 assert.equal(MockRemoteAPI.requests.length, 2);
@@ -289,6 +297,8 @@ describe('BuildbotTriggerable', function () {
                 const slaveInfo = {name: 'sync-slave', password: 'password'};
                 const triggerable = new BuildbotTriggerable(config, TestServer.remoteAPI(), MockRemoteAPI, slaveInfo, logger);
                 syncPromise = triggerable.initSyncers().then(() => triggerable.syncOnce());
+                assertRequestAndResolve(MockRemoteAPI.requests[0], 'GET', MockData.buildbotBuildersURLDeprecated(), MockData.mockBuildbotBuildersDeprecated());
+                MockRemoteAPI.reset();
                 return MockRemoteAPI.waitForRequest();
             }).then(() => {
                 assert.equal(MockRemoteAPI.requests.length, 2);
@@ -368,6 +378,8 @@ describe('BuildbotTriggerable', function () {
                 let slaveInfo = {name: 'sync-slave', password: 'password'};
                 let triggerable = new BuildbotTriggerable(config, TestServer.remoteAPI(), MockRemoteAPI, slaveInfo, logger);
                 syncPromise = triggerable.initSyncers().then(() => triggerable.syncOnce());
+                assertRequestAndResolve(MockRemoteAPI.requests[0], 'GET', MockData.buildbotBuildersURLDeprecated(), MockData.mockBuildbotBuildersDeprecated());
+                MockRemoteAPI.reset();
                 return MockRemoteAPI.waitForRequest();
             }).then(() => {
                 assert.equal(MockRemoteAPI.requests.length, 1);
@@ -431,6 +443,8 @@ describe('BuildbotTriggerable', function () {
                 const slaveInfo = {name: 'sync-slave', password: 'password'};
                 const triggerable = new BuildbotTriggerable(config, TestServer.remoteAPI(), MockRemoteAPI, slaveInfo, logger);
                 syncPromise = triggerable.initSyncers().then(() => triggerable.syncOnce());
+                assertRequestAndResolve(MockRemoteAPI.requests[0], 'GET', MockData.buildbotBuildersURLDeprecated(), MockData.mockBuildbotBuildersDeprecated());
+                MockRemoteAPI.reset();
                 return MockRemoteAPI.waitForRequest();
             }).then(() => {
                 assert.equal(MockRemoteAPI.requests.length, 2);
@@ -529,6 +543,8 @@ describe('BuildbotTriggerable', function () {
                 const slaveInfo = {name: 'sync-slave', password: 'password'};
                 const triggerable = new BuildbotTriggerable(config, TestServer.remoteAPI(), MockRemoteAPI, slaveInfo, logger);
                 syncPromise = triggerable.initSyncers().then(() => triggerable.syncOnce());
+                assertRequestAndResolve(MockRemoteAPI.requests[0], 'GET', MockData.buildbotBuildersURLDeprecated(), MockData.mockBuildbotBuildersDeprecated());
+                MockRemoteAPI.reset();
                 return MockRemoteAPI.waitForRequest();
             }).then(() => {
                 assert.equal(MockRemoteAPI.requests.length, 2);
@@ -630,6 +646,8 @@ describe('BuildbotTriggerable', function () {
                 const slaveInfo = {name: 'sync-slave', password: 'password'};
                 const triggerable = new BuildbotTriggerable(config, TestServer.remoteAPI(), MockRemoteAPI, slaveInfo, logger);
                 syncPromise = triggerable.initSyncers().then(() => triggerable.syncOnce());
+                assertRequestAndResolve(requests[0], 'GET', MockData.buildbotBuildersURLDeprecated(), MockData.mockBuildbotBuildersDeprecated());
+                MockRemoteAPI.reset();
                 return MockRemoteAPI.waitForRequest();
             }).then(() => {
                 assert.equal(requests.length, 1);
@@ -705,6 +723,8 @@ describe('BuildbotTriggerable', function () {
                 const slaveInfo = {name: 'sync-slave', password: 'password'};
                 triggerable = new BuildbotTriggerable(config, TestServer.remoteAPI(), MockRemoteAPI, slaveInfo, logger);
                 syncPromise = triggerable.initSyncers().then(() => triggerable.syncOnce());
+                assertRequestAndResolve(requests[0], 'GET', MockData.buildbotBuildersURLDeprecated(), MockData.mockBuildbotBuildersDeprecated());
+                MockRemoteAPI.reset();
                 return MockRemoteAPI.waitForRequest();
             }).then(() => {
                 assert.equal(requests.length, 1);
@@ -732,23 +752,24 @@ describe('BuildbotTriggerable', function () {
                 return syncPromise;
             }).then(() => {
                 syncPromise = triggerable.initSyncers().then(() => triggerable.syncOnce());
-                return MockRemoteAPI.waitForRequest();
-            }).then(() => {
-                assert.equal(requests.length, 6);
-                assertRequestAndResolve(requests[5], 'GET', '/json/builders/some-builder-1/pendingBuilds', []);
+                assertRequestAndResolve(requests[5], 'GET', MockData.buildbotBuildersURLDeprecated(), MockData.mockBuildbotBuildersDeprecated());
                 return MockRemoteAPI.waitForRequest();
             }).then(() => {
                 assert.equal(requests.length, 7);
-                assertRequestAndResolve(requests[6], 'GET', '/json/builders/some-builder-1/builds/?select=-1&select=-2',
-                    {[-1]: MockData.runningBuild({buildRequestId: 701}), [-2]: MockData.runningBuild({buildRequestId: 700})});
+                assertRequestAndResolve(requests[6], 'GET', '/json/builders/some-builder-1/pendingBuilds', []);
                 return MockRemoteAPI.waitForRequest();
             }).then(() => {
                 assert.equal(requests.length, 8);
-                assertRequestAndResolve(requests[7], 'GET', '/json/builders/some-builder-1/pendingBuilds', []);
+                assertRequestAndResolve(requests[7], 'GET', '/json/builders/some-builder-1/builds/?select=-1&select=-2',
+                    {[-1]: MockData.runningBuild({buildRequestId: 701}), [-2]: MockData.runningBuild({buildRequestId: 700})});
                 return MockRemoteAPI.waitForRequest();
             }).then(() => {
                 assert.equal(requests.length, 9);
-                assertRequestAndResolve(requests[8], 'GET', '/json/builders/some-builder-1/builds/?select=-1&select=-2',
+                assertRequestAndResolve(requests[8], 'GET', '/json/builders/some-builder-1/pendingBuilds', []);
+                return MockRemoteAPI.waitForRequest();
+            }).then(() => {
+                assert.equal(requests.length, 10);
+                assertRequestAndResolve(requests[9], 'GET', '/json/builders/some-builder-1/builds/?select=-1&select=-2',
                     {[-1]: MockData.runningBuild({buildRequestId: 701}), [-2]: MockData.runningBuild({buildRequestId: 700})});
                 return syncPromise;
             });
@@ -765,6 +786,8 @@ describe('BuildbotTriggerable', function () {
                 const slaveInfo = {name: 'sync-slave', password: 'password'};
                 const triggerable = new BuildbotTriggerable(config, TestServer.remoteAPI(), MockRemoteAPI, slaveInfo, logger);
                 syncPromise = triggerable.initSyncers().then(() => triggerable.syncOnce());
+                assertRequestAndResolve(MockRemoteAPI.requests[0], 'GET', MockData.buildbotBuildersURLDeprecated(), MockData.mockBuildbotBuildersDeprecated());
+                MockRemoteAPI.reset();
                 return MockRemoteAPI.waitForRequest();
             }).then(() => {
                 assert.equal(MockRemoteAPI.requests.length, 1);
@@ -832,6 +855,8 @@ describe('BuildbotTriggerable', function () {
                 const slaveInfo = {name: 'sync-slave', password: 'password'};
                 const triggerable = new BuildbotTriggerable(config, TestServer.remoteAPI(), MockRemoteAPI, slaveInfo, logger);
                 syncPromise = triggerable.initSyncers().then(() => triggerable.syncOnce());
+                assertRequestAndResolve(MockRemoteAPI.requests[0], 'GET', MockData.buildbotBuildersURLDeprecated(), MockData.mockBuildbotBuildersDeprecated());
+                MockRemoteAPI.reset();
                 return MockRemoteAPI.waitForRequest();
             }).then(() => {
                 assert.equal(MockRemoteAPI.requests.length, 1);
@@ -887,6 +912,8 @@ describe('BuildbotTriggerable', function () {
                 const slaveInfo = {name: 'sync-slave', password: 'password'};
                 const triggerable = new BuildbotTriggerable(config, TestServer.remoteAPI(), MockRemoteAPI, slaveInfo, logger);
                 syncPromise = triggerable.initSyncers().then(() => triggerable.syncOnce());
+                assertRequestAndResolve(MockRemoteAPI.requests[0], 'GET', MockData.buildbotBuildersURLDeprecated(), MockData.mockBuildbotBuildersDeprecated());
+                MockRemoteAPI.reset();
                 return MockRemoteAPI.waitForRequest();
             }).then(() => {
                 assert.equal(MockRemoteAPI.requests.length, 1);
@@ -972,7 +999,9 @@ describe('BuildbotTriggerable', function () {
                 const logger = new MockLogger;
                 const slaveInfo = {name: 'sync-slave', password: 'password'};
                 const buildbotTriggerable = new BuildbotTriggerable(config, TestServer.remoteAPI(), MockRemoteAPI, slaveInfo, logger);
-                return buildbotTriggerable.initSyncers().then(() => buildbotTriggerable.updateTriggerable());
+                const triggerablePromise = buildbotTriggerable.initSyncers().then(() => buildbotTriggerable.updateTriggerable());
+                assertRequestAndResolve(MockRemoteAPI.requests[0], 'GET', MockData.buildbotBuildersURLDeprecated(), MockData.mockBuildbotBuildersDeprecated());
+                return triggerablePromise;
             }).then(() => refetchManifest()).then(() => {
                 assert.equal(Triggerable.all().length, 1);
 
@@ -997,7 +1026,9 @@ describe('BuildbotTriggerable', function () {
                 const logger = new MockLogger;
                 const slaveInfo = {name: 'sync-slave', password: 'password'};
                 const buildbotTriggerable = new BuildbotTriggerable(config, TestServer.remoteAPI(), MockRemoteAPI, slaveInfo, logger);
-                return buildbotTriggerable.initSyncers().then(() => buildbotTriggerable.updateTriggerable());
+                const triggerablePromise = buildbotTriggerable.initSyncers().then(() => buildbotTriggerable.updateTriggerable());
+                assertRequestAndResolve(MockRemoteAPI.requests[1], 'GET', MockData.buildbotBuildersURLDeprecated(), MockData.mockBuildbotBuildersDeprecated());
+                return triggerablePromise;
             }).then(() => refetchManifest()).then(() => {
                 assert.equal(Triggerable.all().length, 1);
                 const groups = TriggerableRepositoryGroup.sortByName(Triggerable.all()[0].repositoryGroups());
@@ -1010,4 +1041,23 @@ describe('BuildbotTriggerable', function () {
         });
     });
 
+    describe('getBuilderNameToIDMap', () => {
+
+        it('should get Builder Name to ID Map', () => {
+            const config = MockData.mockTestSyncConfigWithSingleBuilder();
+            const logger = new MockLogger;
+            const slaveInfo = {name: 'sync-slave', password: 'password'};
+            const buildbotTriggerable = new BuildbotTriggerable(config, TestServer.remoteAPI(), MockRemoteAPI, slaveInfo, logger);
+            const getBuilderNameToIDMapPromise = buildbotTriggerable.getBuilderNameToIDMap();
+            assertRequestAndResolve(MockRemoteAPI.requests[0], 'GET', MockData.buildbotBuildersURL(), MockData.mockBuildbotBuilders());
+            getBuilderNameToIDMapPromise.then((builderNameToIDMap) => {
+                assert.equal(builderNameToIDMap["some builder"], 1)
+                assert.equal(builderNameToIDMap["some-builder-1"], 2)
+                assert.equal(builderNameToIDMap["some builder 2"], 3)
+                assert.equal(builderNameToIDMap["other builder"], 4)
+                assert.equal(builderNameToIDMap["some tester"], 5)
+                assert.equal(builderNameToIDMap["another tester"], 6)
+            });
+        });
+    });
 });
