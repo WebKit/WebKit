@@ -35,7 +35,7 @@ namespace WebCore {
 
 namespace DOMCacheEngine {
 
-Exception errorToException(Error error)
+static inline Exception errorToException(Error error)
 {
     switch (error) {
     case Error::NotImplemented:
@@ -49,6 +49,14 @@ Exception errorToException(Error error)
     default:
         return Exception { TypeError, ASCIILiteral("Internal error") };
     }
+}
+
+Exception convertToExceptionAndLog(ScriptExecutionContext* context, Error error)
+{
+    auto exception = errorToException(error);
+    if (context)
+        context->addConsoleMessage(MessageSource::JS, MessageLevel::Error, makeString("Cache API operation failed: ", exception.message()));
+    return exception;
 }
 
 static inline bool matchURLs(const ResourceRequest& request, const URL& cachedURL, const CacheQueryOptions& options)
