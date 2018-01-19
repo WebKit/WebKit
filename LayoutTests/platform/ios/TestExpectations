@@ -3296,3 +3296,5 @@ webkit.org/b/180062 fast/text/user-installed-fonts/shadow-family.html [ ImageOnl
 webkit.org/b/180062 fast/text/user-installed-fonts/shadow-postscript.html [ ImageOnlyFailure ]
 webkit.org/b/180062 fast/text/user-installed-fonts/shadow.html [ ImageOnlyFailure ]
 webkit.org/b/180062 fast/text/user-installed-fonts/shadow-postscript-family.html [ ImageOnlyFailure ]
+
+webkit.org/b/181499 [ Release ] imported/w3c/web-platform-tests/service-workers/service-worker/update-after-navigation-fetch-event.https.html [ Pass Failure ]
