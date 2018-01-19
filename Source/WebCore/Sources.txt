@@ -2397,6 +2397,7 @@ JSCommandLineAPIHost.cpp
 JSComment.cpp
 JSCompositionEvent.cpp
 JSCompositeOperation.cpp
+JSComputedTimingProperties.cpp
 JSConvolverNode.cpp
 JSCoordinates.cpp
 JSCountQueuingStrategy.cpp

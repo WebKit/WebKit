@@ -2,6 +2,6 @@
 PASS pause() a running animation 
 FAIL pause() from idle assert_equals: initially pause-pending expected "pending" but got "paused"
 PASS pause() from idle with a negative playbackRate 
-FAIL pause() from idle with a negative playbackRate and endless effect assert_throws: Expect InvalidStateError exception on calling pause() from idle with a negative playbackRate and infinite-duration animation function "function () { animation.pause(); }" did not throw
+PASS pause() from idle with a negative playbackRate and endless effect 
 PASS pause() on a finished animation 
 

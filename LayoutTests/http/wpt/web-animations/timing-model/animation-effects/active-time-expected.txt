@@ -1,16 +1,16 @@
 
-FAIL Active time in before phase anim.effect.getComputedTiming is not a function. (In 'anim.effect.getComputedTiming()', 'anim.effect.getComputedTiming' is undefined)
-FAIL Active time in active phase and no start delay is the local time anim.effect.getComputedTiming is not a function. (In 'anim.effect.getComputedTiming()', 'anim.effect.getComputedTiming' is undefined)
-FAIL Active time in active phase and positive start delay is the local time minus the start delay anim.effect.getComputedTiming is not a function. (In 'anim.effect.getComputedTiming()', 'anim.effect.getComputedTiming' is undefined)
-FAIL Active time in active phase and negative start delay is the local time minus the start delay anim.effect.getComputedTiming is not a function. (In 'anim.effect.getComputedTiming()', 'anim.effect.getComputedTiming' is undefined)
-FAIL Active time in after phase with no fill is unresolved anim.effect.getComputedTiming is not a function. (In 'anim.effect.getComputedTiming()', 'anim.effect.getComputedTiming' is undefined)
-FAIL Active time in after phase with backwards-only fill is unresolved anim.effect.getComputedTiming is not a function. (In 'anim.effect.getComputedTiming()', 'anim.effect.getComputedTiming' is undefined)
-FAIL Active time in after phase with forwards fill is the active duration anim.effect.getComputedTiming is not a function. (In 'anim.effect.getComputedTiming()', 'anim.effect.getComputedTiming' is undefined)
-FAIL Active time in after phase with forwards fill, zero-duration, and  infinite iteration count is the active duration anim.effect.getComputedTiming is not a function. (In 'anim.effect.getComputedTiming()', 'anim.effect.getComputedTiming' is undefined)
-FAIL Active time in after phase with forwards fill and positive end delay is the active duration anim.effect.getComputedTiming is not a function. (In 'anim.effect.getComputedTiming()', 'anim.effect.getComputedTiming' is undefined)
-FAIL Active time in after phase with forwards fill and negative end delay is the active duration + end delay anim.effect.getComputedTiming is not a function. (In 'anim.effect.getComputedTiming()', 'anim.effect.getComputedTiming' is undefined)
-FAIL Active time in after phase with forwards fill and negative end delay greater in magnitude than the active duration is zero anim.effect.getComputedTiming is not a function. (In 'anim.effect.getComputedTiming()', 'anim.effect.getComputedTiming' is undefined)
-FAIL Active time in after phase with forwards fill and negative end delay greater in magnitude than the sum of the active duration and start delay is zero anim.effect.getComputedTiming is not a function. (In 'anim.effect.getComputedTiming()', 'anim.effect.getComputedTiming' is undefined)
-FAIL Active time in after phase with 'both' fill is the active duration anim.effect.getComputedTiming is not a function. (In 'anim.effect.getComputedTiming()', 'anim.effect.getComputedTiming' is undefined)
-FAIL Active time when the local time is unresolved, is unresolved effect.getComputedTiming is not a function. (In 'effect.getComputedTiming()', 'effect.getComputedTiming' is undefined)
+FAIL Active time in before phase assert_equals: Progress in before phase when using 'backwards' fill expected (number) 0 but got (object) null
+FAIL Active time in active phase and no start delay is the local time assert_approx_equals: expected a number but got a "object"
+FAIL Active time in active phase and positive start delay is the local time minus the start delay assert_approx_equals: expected a number but got a "object"
+FAIL Active time in active phase and negative start delay is the local time minus the start delay assert_approx_equals: expected a number but got a "object"
+PASS Active time in after phase with no fill is unresolved 
+PASS Active time in after phase with backwards-only fill is unresolved 
+FAIL Active time in after phase with forwards fill is the active duration assert_equals: expected (number) 2 but got (object) null
+FAIL Active time in after phase with forwards fill, zero-duration, and  infinite iteration count is the active duration assert_equals: expected (number) Infinity but got (object) null
+FAIL Active time in after phase with forwards fill and positive end delay is the active duration assert_equals: expected (number) 2 but got (object) null
+FAIL Active time in after phase with forwards fill and negative end delay is the active duration + end delay assert_equals: expected (number) 1 but got (object) null
+FAIL Active time in after phase with forwards fill and negative end delay greater in magnitude than the active duration is zero assert_equals: expected (number) 0 but got (object) null
+FAIL Active time in after phase with forwards fill and negative end delay greater in magnitude than the sum of the active duration and start delay is zero assert_equals: expected (number) 0 but got (object) null
+FAIL Active time in after phase with 'both' fill is the active duration assert_equals: expected (number) 2 but got (object) null
+PASS Active time when the local time is unresolved, is unresolved 
 

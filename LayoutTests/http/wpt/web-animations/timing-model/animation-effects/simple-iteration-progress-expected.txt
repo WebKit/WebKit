@@ -1,51 +1,51 @@
 
-FAIL Test zero iterations: iterations:0 iterationStart:0 duration:0 delay:1 fill:both effect.getComputedTiming is not a function. (In 'effect.getComputedTiming()', 'effect.getComputedTiming' is undefined)
-FAIL Test zero iterations: iterations:0 iterationStart:0 duration:100 delay:1 fill:both effect.getComputedTiming is not a function. (In 'effect.getComputedTiming()', 'effect.getComputedTiming' is undefined)
-FAIL Test zero iterations: iterations:0 iterationStart:0 duration:Infinity delay:1 fill:both effect.getComputedTiming is not a function. (In 'effect.getComputedTiming()', 'effect.getComputedTiming' is undefined)
-FAIL Test zero iterations: iterations:0 iterationStart:2.5 duration:0 delay:1 fill:both effect.getComputedTiming is not a function. (In 'effect.getComputedTiming()', 'effect.getComputedTiming' is undefined)
-FAIL Test zero iterations: iterations:0 iterationStart:2.5 duration:100 delay:1 fill:both effect.getComputedTiming is not a function. (In 'effect.getComputedTiming()', 'effect.getComputedTiming' is undefined)
-FAIL Test zero iterations: iterations:0 iterationStart:2.5 duration:Infinity delay:1 fill:both effect.getComputedTiming is not a function. (In 'effect.getComputedTiming()', 'effect.getComputedTiming' is undefined)
-FAIL Test zero iterations: iterations:0 iterationStart:3 duration:0 delay:1 fill:both effect.getComputedTiming is not a function. (In 'effect.getComputedTiming()', 'effect.getComputedTiming' is undefined)
-FAIL Test zero iterations: iterations:0 iterationStart:3 duration:100 delay:1 fill:both effect.getComputedTiming is not a function. (In 'effect.getComputedTiming()', 'effect.getComputedTiming' is undefined)
-FAIL Test zero iterations: iterations:0 iterationStart:3 duration:Infinity delay:1 fill:both effect.getComputedTiming is not a function. (In 'effect.getComputedTiming()', 'effect.getComputedTiming' is undefined)
-FAIL Test integer iterations: iterations:3 iterationStart:0 duration:0 delay:1 fill:both effect.getComputedTiming is not a function. (In 'effect.getComputedTiming()', 'effect.getComputedTiming' is undefined)
-FAIL Test integer iterations: iterations:3 iterationStart:0 duration:100 delay:1 fill:both effect.getComputedTiming is not a function. (In 'effect.getComputedTiming()', 'effect.getComputedTiming' is undefined)
-FAIL Test integer iterations: iterations:3 iterationStart:0 duration:Infinity delay:1 fill:both effect.getComputedTiming is not a function. (In 'effect.getComputedTiming()', 'effect.getComputedTiming' is undefined)
-FAIL Test integer iterations: iterations:3 iterationStart:2.5 duration:0 delay:1 fill:both effect.getComputedTiming is not a function. (In 'effect.getComputedTiming()', 'effect.getComputedTiming' is undefined)
-FAIL Test integer iterations: iterations:3 iterationStart:2.5 duration:100 delay:1 fill:both effect.getComputedTiming is not a function. (In 'effect.getComputedTiming()', 'effect.getComputedTiming' is undefined)
-FAIL Test integer iterations: iterations:3 iterationStart:2.5 duration:Infinity delay:1 fill:both effect.getComputedTiming is not a function. (In 'effect.getComputedTiming()', 'effect.getComputedTiming' is undefined)
-FAIL Test integer iterations: iterations:3 iterationStart:3 duration:0 delay:1 fill:both effect.getComputedTiming is not a function. (In 'effect.getComputedTiming()', 'effect.getComputedTiming' is undefined)
-FAIL Test integer iterations: iterations:3 iterationStart:3 duration:100 delay:1 fill:both effect.getComputedTiming is not a function. (In 'effect.getComputedTiming()', 'effect.getComputedTiming' is undefined)
-FAIL Test integer iterations: iterations:3 iterationStart:3 duration:Infinity delay:1 fill:both effect.getComputedTiming is not a function. (In 'effect.getComputedTiming()', 'effect.getComputedTiming' is undefined)
-FAIL Test fractional iterations: iterations:3.5 iterationStart:0 duration:0 delay:1 fill:both effect.getComputedTiming is not a function. (In 'effect.getComputedTiming()', 'effect.getComputedTiming' is undefined)
-FAIL Test fractional iterations: iterations:3.5 iterationStart:0 duration:100 delay:1 fill:both effect.getComputedTiming is not a function. (In 'effect.getComputedTiming()', 'effect.getComputedTiming' is undefined)
-FAIL Test fractional iterations: iterations:3.5 iterationStart:0 duration:Infinity delay:1 fill:both effect.getComputedTiming is not a function. (In 'effect.getComputedTiming()', 'effect.getComputedTiming' is undefined)
-FAIL Test fractional iterations: iterations:3.5 iterationStart:2.5 duration:0 delay:1 fill:both effect.getComputedTiming is not a function. (In 'effect.getComputedTiming()', 'effect.getComputedTiming' is undefined)
-FAIL Test fractional iterations: iterations:3.5 iterationStart:2.5 duration:100 delay:1 fill:both effect.getComputedTiming is not a function. (In 'effect.getComputedTiming()', 'effect.getComputedTiming' is undefined)
-FAIL Test fractional iterations: iterations:3.5 iterationStart:2.5 duration:Infinity delay:1 fill:both effect.getComputedTiming is not a function. (In 'effect.getComputedTiming()', 'effect.getComputedTiming' is undefined)
-FAIL Test fractional iterations: iterations:3.5 iterationStart:3 duration:0 delay:1 fill:both effect.getComputedTiming is not a function. (In 'effect.getComputedTiming()', 'effect.getComputedTiming' is undefined)
-FAIL Test fractional iterations: iterations:3.5 iterationStart:3 duration:100 delay:1 fill:both effect.getComputedTiming is not a function. (In 'effect.getComputedTiming()', 'effect.getComputedTiming' is undefined)
-FAIL Test fractional iterations: iterations:3.5 iterationStart:3 duration:Infinity delay:1 fill:both effect.getComputedTiming is not a function. (In 'effect.getComputedTiming()', 'effect.getComputedTiming' is undefined)
-FAIL Test infinity iterations: iterations:Infinity iterationStart:0 duration:0 delay:1 fill:both effect.getComputedTiming is not a function. (In 'effect.getComputedTiming()', 'effect.getComputedTiming' is undefined)
-FAIL Test infinity iterations: iterations:Infinity iterationStart:0 duration:100 delay:1 fill:both effect.getComputedTiming is not a function. (In 'effect.getComputedTiming()', 'effect.getComputedTiming' is undefined)
-FAIL Test infinity iterations: iterations:Infinity iterationStart:0 duration:Infinity delay:1 fill:both effect.getComputedTiming is not a function. (In 'effect.getComputedTiming()', 'effect.getComputedTiming' is undefined)
-FAIL Test infinity iterations: iterations:Infinity iterationStart:2.5 duration:0 delay:1 fill:both effect.getComputedTiming is not a function. (In 'effect.getComputedTiming()', 'effect.getComputedTiming' is undefined)
-FAIL Test infinity iterations: iterations:Infinity iterationStart:2.5 duration:100 delay:1 fill:both effect.getComputedTiming is not a function. (In 'effect.getComputedTiming()', 'effect.getComputedTiming' is undefined)
-FAIL Test infinity iterations: iterations:Infinity iterationStart:2.5 duration:Infinity delay:1 fill:both effect.getComputedTiming is not a function. (In 'effect.getComputedTiming()', 'effect.getComputedTiming' is undefined)
-FAIL Test infinity iterations: iterations:Infinity iterationStart:3 duration:0 delay:1 fill:both effect.getComputedTiming is not a function. (In 'effect.getComputedTiming()', 'effect.getComputedTiming' is undefined)
-FAIL Test infinity iterations: iterations:Infinity iterationStart:3 duration:100 delay:1 fill:both effect.getComputedTiming is not a function. (In 'effect.getComputedTiming()', 'effect.getComputedTiming' is undefined)
-FAIL Test infinity iterations: iterations:Infinity iterationStart:3 duration:Infinity delay:1 fill:both effect.getComputedTiming is not a function. (In 'effect.getComputedTiming()', 'effect.getComputedTiming' is undefined)
-FAIL Test end delay: duration:100 delay:1 fill:both endDelay:50 effect.getComputedTiming is not a function. (In 'effect.getComputedTiming()', 'effect.getComputedTiming' is undefined)
-FAIL Test end delay: duration:100 delay:1 fill:both endDelay:-50 effect.getComputedTiming is not a function. (In 'effect.getComputedTiming()', 'effect.getComputedTiming' is undefined)
-FAIL Test end delay: duration:100 delay:1 fill:both endDelay:-100 effect.getComputedTiming is not a function. (In 'effect.getComputedTiming()', 'effect.getComputedTiming' is undefined)
-FAIL Test end delay: duration:100 delay:1 fill:both endDelay:-200 effect.getComputedTiming is not a function. (In 'effect.getComputedTiming()', 'effect.getComputedTiming' is undefined)
-FAIL Test end delay: iterationStart:0.5 duration:100 delay:1 fill:both endDelay:50 effect.getComputedTiming is not a function. (In 'effect.getComputedTiming()', 'effect.getComputedTiming' is undefined)
-FAIL Test end delay: iterationStart:0.5 duration:100 delay:1 fill:both endDelay:-50 effect.getComputedTiming is not a function. (In 'effect.getComputedTiming()', 'effect.getComputedTiming' is undefined)
-FAIL Test end delay: iterationStart:0.5 duration:100 delay:1 fill:both endDelay:-100 effect.getComputedTiming is not a function. (In 'effect.getComputedTiming()', 'effect.getComputedTiming' is undefined)
-FAIL Test end delay: iterations:2 duration:100 delay:1 fill:both endDelay:-100 effect.getComputedTiming is not a function. (In 'effect.getComputedTiming()', 'effect.getComputedTiming' is undefined)
-FAIL Test end delay: iterations:1 iterationStart:2 duration:100 delay:1 fill:both endDelay:-50 effect.getComputedTiming is not a function. (In 'effect.getComputedTiming()', 'effect.getComputedTiming' is undefined)
-FAIL Test end delay: iterations:1 iterationStart:2 duration:100 delay:1 fill:both endDelay:-100 effect.getComputedTiming is not a function. (In 'effect.getComputedTiming()', 'effect.getComputedTiming' is undefined)
-FAIL Test negative playback rate: duration:1 delay:1 fill:both playbackRate:-1 effect.getComputedTiming is not a function. (In 'effect.getComputedTiming()', 'effect.getComputedTiming' is undefined)
-FAIL Test negative playback rate: duration:0 delay:1 fill:both playbackRate:-1 effect.getComputedTiming is not a function. (In 'effect.getComputedTiming()', 'effect.getComputedTiming' is undefined)
-FAIL Test negative playback rate: duration:0 iterations:0 delay:1 fill:both playbackRate:-1 effect.getComputedTiming is not a function. (In 'effect.getComputedTiming()', 'effect.getComputedTiming' is undefined)
+FAIL Test zero iterations: iterations:0 iterationStart:0 duration:0 delay:1 fill:both assert_approx_equals: Value of progress in the before phase expected a number but got a "object"
+FAIL Test zero iterations: iterations:0 iterationStart:0 duration:100 delay:1 fill:both assert_approx_equals: Value of progress in the before phase expected a number but got a "object"
+FAIL Test zero iterations: iterations:0 iterationStart:0 duration:Infinity delay:1 fill:both assert_approx_equals: Value of progress in the before phase expected a number but got a "object"
+FAIL Test zero iterations: iterations:0 iterationStart:2.5 duration:0 delay:1 fill:both assert_approx_equals: Value of progress in the before phase expected a number but got a "object"
+FAIL Test zero iterations: iterations:0 iterationStart:2.5 duration:100 delay:1 fill:both assert_approx_equals: Value of progress in the before phase expected a number but got a "object"
+FAIL Test zero iterations: iterations:0 iterationStart:2.5 duration:Infinity delay:1 fill:both assert_approx_equals: Value of progress in the before phase expected a number but got a "object"
+FAIL Test zero iterations: iterations:0 iterationStart:3 duration:0 delay:1 fill:both assert_approx_equals: Value of progress in the before phase expected a number but got a "object"
+FAIL Test zero iterations: iterations:0 iterationStart:3 duration:100 delay:1 fill:both assert_approx_equals: Value of progress in the before phase expected a number but got a "object"
+FAIL Test zero iterations: iterations:0 iterationStart:3 duration:Infinity delay:1 fill:both assert_approx_equals: Value of progress in the before phase expected a number but got a "object"
+FAIL Test integer iterations: iterations:3 iterationStart:0 duration:0 delay:1 fill:both assert_approx_equals: Value of progress in the before phase expected a number but got a "object"
+FAIL Test integer iterations: iterations:3 iterationStart:0 duration:100 delay:1 fill:both assert_approx_equals: Value of progress in the before phase expected a number but got a "object"
+FAIL Test integer iterations: iterations:3 iterationStart:0 duration:Infinity delay:1 fill:both assert_approx_equals: Value of progress in the before phase expected a number but got a "object"
+FAIL Test integer iterations: iterations:3 iterationStart:2.5 duration:0 delay:1 fill:both assert_approx_equals: Value of progress in the before phase expected a number but got a "object"
+FAIL Test integer iterations: iterations:3 iterationStart:2.5 duration:100 delay:1 fill:both assert_approx_equals: Value of progress in the before phase expected a number but got a "object"
+FAIL Test integer iterations: iterations:3 iterationStart:2.5 duration:Infinity delay:1 fill:both assert_approx_equals: Value of progress in the before phase expected a number but got a "object"
+FAIL Test integer iterations: iterations:3 iterationStart:3 duration:0 delay:1 fill:both assert_approx_equals: Value of progress in the before phase expected a number but got a "object"
+FAIL Test integer iterations: iterations:3 iterationStart:3 duration:100 delay:1 fill:both assert_approx_equals: Value of progress in the before phase expected a number but got a "object"
+FAIL Test integer iterations: iterations:3 iterationStart:3 duration:Infinity delay:1 fill:both assert_approx_equals: Value of progress in the before phase expected a number but got a "object"
+FAIL Test fractional iterations: iterations:3.5 iterationStart:0 duration:0 delay:1 fill:both assert_approx_equals: Value of progress in the before phase expected a number but got a "object"
+FAIL Test fractional iterations: iterations:3.5 iterationStart:0 duration:100 delay:1 fill:both assert_approx_equals: Value of progress in the before phase expected a number but got a "object"
+FAIL Test fractional iterations: iterations:3.5 iterationStart:0 duration:Infinity delay:1 fill:both assert_approx_equals: Value of progress in the before phase expected a number but got a "object"
+FAIL Test fractional iterations: iterations:3.5 iterationStart:2.5 duration:0 delay:1 fill:both assert_approx_equals: Value of progress in the before phase expected a number but got a "object"
+FAIL Test fractional iterations: iterations:3.5 iterationStart:2.5 duration:100 delay:1 fill:both assert_approx_equals: Value of progress in the before phase expected a number but got a "object"
+FAIL Test fractional iterations: iterations:3.5 iterationStart:2.5 duration:Infinity delay:1 fill:both assert_approx_equals: Value of progress in the before phase expected a number but got a "object"
+FAIL Test fractional iterations: iterations:3.5 iterationStart:3 duration:0 delay:1 fill:both assert_approx_equals: Value of progress in the before phase expected a number but got a "object"
+FAIL Test fractional iterations: iterations:3.5 iterationStart:3 duration:100 delay:1 fill:both assert_approx_equals: Value of progress in the before phase expected a number but got a "object"
+FAIL Test fractional iterations: iterations:3.5 iterationStart:3 duration:Infinity delay:1 fill:both assert_approx_equals: Value of progress in the before phase expected a number but got a "object"
+FAIL Test infinity iterations: iterations:Infinity iterationStart:0 duration:0 delay:1 fill:both assert_approx_equals: Value of progress in the before phase expected a number but got a "object"
+FAIL Test infinity iterations: iterations:Infinity iterationStart:0 duration:100 delay:1 fill:both assert_approx_equals: Value of progress in the before phase expected a number but got a "object"
+FAIL Test infinity iterations: iterations:Infinity iterationStart:0 duration:Infinity delay:1 fill:both assert_approx_equals: Value of progress in the before phase expected a number but got a "object"
+FAIL Test infinity iterations: iterations:Infinity iterationStart:2.5 duration:0 delay:1 fill:both assert_approx_equals: Value of progress in the before phase expected a number but got a "object"
+FAIL Test infinity iterations: iterations:Infinity iterationStart:2.5 duration:100 delay:1 fill:both assert_approx_equals: Value of progress in the before phase expected a number but got a "object"
+FAIL Test infinity iterations: iterations:Infinity iterationStart:2.5 duration:Infinity delay:1 fill:both assert_approx_equals: Value of progress in the before phase expected a number but got a "object"
+FAIL Test infinity iterations: iterations:Infinity iterationStart:3 duration:0 delay:1 fill:both assert_approx_equals: Value of progress in the before phase expected a number but got a "object"
+FAIL Test infinity iterations: iterations:Infinity iterationStart:3 duration:100 delay:1 fill:both assert_approx_equals: Value of progress in the before phase expected a number but got a "object"
+FAIL Test infinity iterations: iterations:Infinity iterationStart:3 duration:Infinity delay:1 fill:both assert_approx_equals: Value of progress in the before phase expected a number but got a "object"
+FAIL Test end delay: duration:100 delay:1 fill:both endDelay:50 assert_approx_equals: Value of progress in the before phase expected a number but got a "object"
+FAIL Test end delay: duration:100 delay:1 fill:both endDelay:-50 assert_approx_equals: Value of progress in the before phase expected a number but got a "object"
+FAIL Test end delay: duration:100 delay:1 fill:both endDelay:-100 assert_approx_equals: Value of progress in the before phase expected a number but got a "object"
+FAIL Test end delay: duration:100 delay:1 fill:both endDelay:-200 assert_approx_equals: Value of progress in the before phase expected a number but got a "object"
+FAIL Test end delay: iterationStart:0.5 duration:100 delay:1 fill:both endDelay:50 assert_approx_equals: Value of progress in the before phase expected a number but got a "object"
+FAIL Test end delay: iterationStart:0.5 duration:100 delay:1 fill:both endDelay:-50 assert_approx_equals: Value of progress in the before phase expected a number but got a "object"
+FAIL Test end delay: iterationStart:0.5 duration:100 delay:1 fill:both endDelay:-100 assert_approx_equals: Value of progress in the before phase expected a number but got a "object"
+FAIL Test end delay: iterations:2 duration:100 delay:1 fill:both endDelay:-100 assert_approx_equals: Value of progress in the before phase expected a number but got a "object"
+FAIL Test end delay: iterations:1 iterationStart:2 duration:100 delay:1 fill:both endDelay:-50 assert_approx_equals: Value of progress in the before phase expected a number but got a "object"
+FAIL Test end delay: iterations:1 iterationStart:2 duration:100 delay:1 fill:both endDelay:-100 assert_approx_equals: Value of progress in the before phase expected a number but got a "object"
+FAIL Test negative playback rate: duration:1 delay:1 fill:both playbackRate:-1 assert_approx_equals: Value of progress in the before phase expected a number but got a "object"
+FAIL Test negative playback rate: duration:0 delay:1 fill:both playbackRate:-1 assert_approx_equals: Value of progress in the before phase expected a number but got a "object"
+FAIL Test negative playback rate: duration:0 iterations:0 delay:1 fill:both playbackRate:-1 assert_approx_equals: Value of progress in the before phase expected a number but got a "object"
 

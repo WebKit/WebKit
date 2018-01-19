@@ -23,8 +23,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "AnimationPlaybackEvent.h"
 #include "config.h"
+#include "AnimationPlaybackEvent.h"
+
+#include "WebAnimationUtilities.h"
 
 namespace WebCore {
 
@@ -55,14 +57,14 @@ std::optional<double> AnimationPlaybackEvent::bindingsCurrentTime() const
 {
     if (!m_currentTime)
         return std::nullopt;
-    return m_currentTime->milliseconds();
+    return secondsToWebAnimationsAPITime(m_currentTime.value());
 }
 
 std::optional<double> AnimationPlaybackEvent::bindingsTimelineTime() const
 {
     if (!m_timelineTime)
         return std::nullopt;
-    return m_timelineTime->milliseconds();
+    return secondsToWebAnimationsAPITime(m_timelineTime.value());
 }
 
 } // namespace WebCore

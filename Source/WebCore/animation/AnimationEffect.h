@@ -26,6 +26,7 @@
 #pragma once
 
 #include "AnimationEffectTiming.h"
+#include "ComputedTimingProperties.h"
 #include "WebAnimation.h"
 #include <wtf/Forward.h>
 #include <wtf/Ref.h>
@@ -40,10 +41,13 @@ public:
 
     bool isKeyframeEffect() const { return m_classType == KeyframeEffectClass; }
     AnimationEffectTiming* timing() const { return m_timing.get(); }
+    ComputedTimingProperties getComputedTiming();
     virtual void applyAtLocalTime(Seconds, RenderStyle&) = 0;
 
     WebAnimation* animation() const { return m_animation.get(); }
     void setAnimation(RefPtr<WebAnimation>&& animation) { m_animation = animation; }
+
+    std::optional<Seconds> localTime() const;
 
 protected:
     enum ClassType {

@@ -1,3 +1,62 @@
+2018-01-19  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Expose timing properties (delay, endDelay, fill, iterationStart, iterations, direction) and getComputedTiming()
+        https://bugs.webkit.org/show_bug.cgi?id=181857
+        <rdar://problem/36660081>
+
+        Reviewed by Dean Jackson.
+
+        We start the work to implement the rest of the Web Animations timing and animation model by exposing more properties on
+        AnimationEffectTiming to control delay (delay, endDelay), looping (iterationStart, iterations), fill and direction.
+        Additionally, we expose the getComputedTiming() method on AnimationEffect, although it currently lacks some computed
+        properties that will come in later patch as we implement various processes defined by the spec. We also update the
+        existing duration() method on AnimationEffectTiming to be called iterationDuration() to match the terms used in the
+        specification.
+
+        Finally, we make all new properties, and update existing ones, that expose a time value go through the new utility
+        function secondsToWebAnimationsAPITime() to guarantee rounded values with microseconds precision, as advised by
+        the Web Animations specification.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * animation/AnimationEffect.cpp:
+        (WebCore::AnimationEffect::localTime const):
+        (WebCore::AnimationEffect::getComputedTiming):
+        * animation/AnimationEffect.h:
+        * animation/AnimationEffect.idl:
+        * animation/AnimationEffectTiming.cpp:
+        (WebCore::AnimationEffectTiming::AnimationEffectTiming):
+        (WebCore::AnimationEffectTiming::setIterationStart):
+        (WebCore::AnimationEffectTiming::setIterations):
+        (WebCore::AnimationEffectTiming::bindingsDuration const):
+        (WebCore::AnimationEffectTiming::setBindingsDuration):
+        (WebCore::AnimationEffectTiming::endTime const):
+        (WebCore::AnimationEffectTiming::activeDuration const):
+        * animation/AnimationEffectTiming.h:
+        * animation/AnimationEffectTiming.idl:
+        * animation/AnimationPlaybackEvent.cpp:
+        (WebCore::AnimationPlaybackEvent::bindingsCurrentTime const):
+        (WebCore::AnimationPlaybackEvent::bindingsTimelineTime const):
+        * animation/AnimationTimeline.cpp:
+        (WebCore::AnimationTimeline::bindingsCurrentTime):
+        * animation/ComputedTimingProperties.h: Added.
+        * animation/ComputedTimingProperties.idl: Added. We set nullable double values to a default value of "null" since
+        otherwise setting those properties to a null value would not set the properties in the converted JS dictionary.
+        * animation/KeyframeEffect.cpp:
+        (WebCore::KeyframeEffect::create): Handle new timing properties passed in the KeyframeEffectOptions dictionary.
+        (WebCore::KeyframeEffect::applyAtLocalTime):
+        (WebCore::KeyframeEffect::getAnimatedStyle):
+        (WebCore::KeyframeEffect::startOrStopAccelerated):
+        * animation/WebAnimation.cpp:
+        (WebCore::WebAnimation::bindingsStartTime const):
+        (WebCore::WebAnimation::bindingsCurrentTime const):
+        (WebCore::WebAnimation::effectEndTime const):
+        (WebCore::WebAnimation::timeToNextRequiredTick const):
+        * animation/WebAnimationUtilities.h: Added.
+        (WebCore::secondsToWebAnimationsAPITime):
+
 2018-01-19  Alex Christensen  <achristensen@webkit.org>
 
         Remove dead networking code

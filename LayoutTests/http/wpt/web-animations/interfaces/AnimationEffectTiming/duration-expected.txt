@@ -1,9 +1,9 @@
 
-FAIL Test default value assert_equals: expected (string) "auto" but got (number) 0
-FAIL set duration 123.45 anim.effect.getComputedTiming is not a function. (In 'anim.effect.getComputedTiming()', 'anim.effect.getComputedTiming' is undefined)
-FAIL set duration auto assert_equals: set duration 'auto' expected (string) "auto" but got (number) 0
-FAIL set auto duration in animate as object assert_equals: set duration 'auto' expected (string) "auto" but got (number) 0
-FAIL set duration Infinity anim.effect.getComputedTiming is not a function. (In 'anim.effect.getComputedTiming()', 'anim.effect.getComputedTiming' is undefined)
+PASS Test default value 
+PASS set duration 123.45 
+PASS set duration auto 
+PASS set auto duration in animate as object 
+PASS set duration Infinity 
 PASS set negative duration in animate using a duration parameter 
 PASS set negative Infinity duration in animate using a duration parameter 
 PASS set NaN duration in animate using a duration parameter 
@@ -17,5 +17,5 @@ PASS set negative Infinity duration
 PASS set NaN duration 
 PASS set duration abc 
 PASS set duration string 100 
-FAIL Extending an effect's duration does not change the start or current time promise_test: Unhandled rejection with value: object "TypeError: anim.effect.getComputedTiming is not a function. (In 'anim.effect.getComputedTiming()', 'anim.effect.getComputedTiming' is undefined)"
+PASS Extending an effect's duration does not change the start or current time 
 

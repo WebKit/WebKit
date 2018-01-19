@@ -27,6 +27,9 @@
 #include "AnimationEffect.h"
 
 #include "AnimationEffectTiming.h"
+#include "FillMode.h"
+#include "JSComputedTimingProperties.h"
+#include "WebAnimationUtilities.h"
 
 namespace WebCore {
 
@@ -34,6 +37,31 @@ AnimationEffect::AnimationEffect(ClassType classType)
     : m_classType(classType)
 {
     m_timing = AnimationEffectTiming::create();
+}
+
+std::optional<Seconds> AnimationEffect::localTime() const
+{
+    if (m_animation)
+        return m_animation->currentTime();
+    return std::nullopt;
+}
+
+ComputedTimingProperties AnimationEffect::getComputedTiming()
+{
+    ComputedTimingProperties computedTiming;
+    computedTiming.delay = m_timing->bindingsDelay();
+    computedTiming.endDelay = m_timing->bindingsEndDelay();
+    auto fillMode = m_timing->fill();
+    computedTiming.fill = fillMode == FillMode::Auto ? FillMode::None : fillMode;
+    computedTiming.iterationStart = m_timing->iterationStart();
+    computedTiming.iterations = m_timing->iterations();
+    computedTiming.duration = secondsToWebAnimationsAPITime(m_timing->iterationDuration());
+    computedTiming.direction = m_timing->direction();
+    computedTiming.endTime = secondsToWebAnimationsAPITime(m_timing->endTime());
+    computedTiming.activeDuration = secondsToWebAnimationsAPITime(m_timing->activeDuration());
+    if (auto effectLocalTime = localTime())
+        computedTiming.localTime = secondsToWebAnimationsAPITime(effectLocalTime.value());
+    return computedTiming;
 }
 
 } // namespace WebCore

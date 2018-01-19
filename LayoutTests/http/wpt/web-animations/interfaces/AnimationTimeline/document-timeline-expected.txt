@@ -1,7 +1,7 @@
 
 PASS document.timeline identity tests 
-FAIL document.timeline.currentTime value tests assert_equals: document.timeline.currentTime matches requestAnimationFrame time expected 547.6 but got 149.60000000000002
-FAIL document.timeline.currentTime liveness tests assert_greater_than: document.timeline.currentTime increases between script blocks expected a number greater than 149.60000000000002 but got 149.60000000000002
-FAIL iframe document.timeline.currentTime liveness tests assert_greater_than: iframe document.timeline.currentTime increases between script blocks expected a number greater than 23.900000000000002 but got 23.900000000000002
+PASS document.timeline.currentTime value tests 
+PASS document.timeline.currentTime liveness tests 
+PASS iframe document.timeline.currentTime liveness tests 
 PASS document.timeline.currentTime time should be the same for all RAF callbacks in a frame 
- 
+

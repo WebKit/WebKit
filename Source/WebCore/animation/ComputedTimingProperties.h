@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,15 +23,19 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-[
-    EnabledAtRuntime=WebAnimations,
-    ImplementationLacksVTable
-] interface AnimationEffectTiming {
-    [ImplementedAs=bindingsDelay] attribute double delay;
-    [ImplementedAs=bindingsEndDelay] attribute double endDelay;
-    attribute FillMode fill;
-    [MayThrowException] attribute double iterationStart;
-    [MayThrowException] attribute unrestricted double iterations;
-    [MayThrowException, ImplementedAs=bindingsDuration] attribute (unrestricted double or DOMString) duration;
-    attribute PlaybackDirection direction;
+#pragma once
+
+#include "AnimationEffectTimingProperties.h"
+#include <wtf/Optional.h>
+
+namespace WebCore {
+
+struct ComputedTimingProperties : AnimationEffectTimingProperties {
+    double endTime;
+    double activeDuration;
+    std::optional<double> localTime;
+    std::optional<double> progress;
+    std::optional<double> currentIteration;
 };
+
+} // namespace WebCore

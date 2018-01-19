@@ -1,4 +1,4 @@
 
-FAIL Test default value assert_equals: expected (string) "normal" but got (undefined) undefined
+PASS Test default value 
 PASS set direction to a valid keyword 
 

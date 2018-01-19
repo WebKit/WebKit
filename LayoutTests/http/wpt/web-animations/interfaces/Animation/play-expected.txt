@@ -1,3 +1,3 @@
 
-FAIL play() throws when seeking an infinite-duration animation played in reverse assert_throws: Expected InvalidStateError exception on calling play() with a negative playbackRate and infinite-duration animation function "function () { animation.play(); }" did not throw
+PASS play() throws when seeking an infinite-duration animation played in reverse 
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,15 +23,22 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-[
-    EnabledAtRuntime=WebAnimations,
-    ImplementationLacksVTable
-] interface AnimationEffectTiming {
-    [ImplementedAs=bindingsDelay] attribute double delay;
-    [ImplementedAs=bindingsEndDelay] attribute double endDelay;
-    attribute FillMode fill;
-    [MayThrowException] attribute double iterationStart;
-    [MayThrowException] attribute unrestricted double iterations;
-    [MayThrowException, ImplementedAs=bindingsDuration] attribute (unrestricted double or DOMString) duration;
-    attribute PlaybackDirection direction;
-};
+#pragma once
+
+#include <wtf/Seconds.h>
+
+namespace WebCore {
+
+inline double secondsToWebAnimationsAPITime(const Seconds time)
+{
+    // Precision of time values
+    // https://drafts.csswg.org/web-animations-1/#precision-of-time-values
+
+    // The internal representation of time values is implementation dependent however, it is RECOMMENDED that user
+    // agents be able to represent input time values with microsecond precision so that a time value (which nominally
+    // represents milliseconds) of 0.001 is distinguishable from 0.0.
+    return std::round(time.microseconds()) / 1000;
+}
+
+} // namespace WebCore
+

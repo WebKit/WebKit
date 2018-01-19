@@ -1,20 +1,20 @@
 
 FAIL Test default value assert_equals: expected (string) "linear" but got (undefined) undefined
 FAIL step-start function assert_equals: expected "steps(1, start)" but got "step-start"
-FAIL steps(1, start) function animation.effect.getComputedTiming is not a function. (In 'animation.effect.getComputedTiming()', 'animation.effect.getComputedTiming' is undefined)
-FAIL steps(2, start) function animation.effect.getComputedTiming is not a function. (In 'animation.effect.getComputedTiming()', 'animation.effect.getComputedTiming' is undefined)
+FAIL steps(1, start) function assert_approx_equals: The progress of the animation should be approximately 1 at 0ms expected a number but got a "object"
+FAIL steps(2, start) function assert_approx_equals: The progress of the animation should be approximately 0.5 at 0ms expected a number but got a "object"
 FAIL step-end function assert_equals: expected "steps(1)" but got "step-end"
-FAIL steps(1) function animation.effect.getComputedTiming is not a function. (In 'animation.effect.getComputedTiming()', 'animation.effect.getComputedTiming' is undefined)
+FAIL steps(1) function assert_approx_equals: The progress of the animation should be approximately 0 at 0ms expected a number but got a "object"
 FAIL steps(1, end) function assert_equals: expected "steps(1)" but got "steps(1, end)"
 FAIL steps(2, end) function assert_equals: expected "steps(2)" but got "steps(2, end)"
-FAIL frames function animation.effect.getComputedTiming is not a function. (In 'animation.effect.getComputedTiming()', 'animation.effect.getComputedTiming' is undefined)
-FAIL linear function animation.effect.getComputedTiming is not a function. (In 'animation.effect.getComputedTiming()', 'animation.effect.getComputedTiming' is undefined)
-FAIL ease function animation.effect.getComputedTiming is not a function. (In 'animation.effect.getComputedTiming()', 'animation.effect.getComputedTiming' is undefined)
-FAIL ease-in function animation.effect.getComputedTiming is not a function. (In 'animation.effect.getComputedTiming()', 'animation.effect.getComputedTiming' is undefined)
-FAIL ease-in-out function animation.effect.getComputedTiming is not a function. (In 'animation.effect.getComputedTiming()', 'animation.effect.getComputedTiming' is undefined)
-FAIL ease-out function animation.effect.getComputedTiming is not a function. (In 'animation.effect.getComputedTiming()', 'animation.effect.getComputedTiming' is undefined)
-FAIL easing function which produces values greater than 1 animation.effect.getComputedTiming is not a function. (In 'animation.effect.getComputedTiming()', 'animation.effect.getComputedTiming' is undefined)
-FAIL easing function which produces values less than 1 animation.effect.getComputedTiming is not a function. (In 'animation.effect.getComputedTiming()', 'animation.effect.getComputedTiming' is undefined)
+FAIL frames function assert_approx_equals: The progress of the animation should be approximately 0 at 0ms expected a number but got a "object"
+FAIL linear function assert_approx_equals: The progress of the animation should be approximately 0 at 0ms expected a number but got a "object"
+FAIL ease function assert_approx_equals: The progress of the animation should be approximately 0 at 0ms expected a number but got a "object"
+FAIL ease-in function assert_approx_equals: The progress of the animation should be approximately 0 at 0ms expected a number but got a "object"
+FAIL ease-in-out function assert_approx_equals: The progress of the animation should be approximately 0 at 0ms expected a number but got a "object"
+FAIL ease-out function assert_approx_equals: The progress of the animation should be approximately 0 at 0ms expected a number but got a "object"
+FAIL easing function which produces values greater than 1 assert_approx_equals: The progress of the animation should be approximately 0 at 0ms expected a number but got a "object"
+FAIL easing function which produces values less than 1 assert_approx_equals: The progress of the animation should be approximately 0 at 0ms expected a number but got a "object"
 FAIL Invalid effect easing value test: '' assert_throws: function "function () {
                     anim.effect.timing.easing = invalidEasing;
                   }" did not throw
@@ -111,5 +111,5 @@ PASS Canonical easing 'cubic-bezier(0.1, 5, 0.23, 0)' is returned as set
 PASS Canonical easing 'steps(3, start)' is returned as set 
 PASS Canonical easing 'steps(3)' is returned as set 
 PASS Canonical easing 'frames(3)' is returned as set 
-FAIL Change the easing while the animation is running anim.effect.getComputedTiming is not a function. (In 'anim.effect.getComputedTiming()', 'anim.effect.getComputedTiming' is undefined)
+FAIL Change the easing while the animation is running assert_equals: easing replace to steps(2, end) at before phase expected (number) 0 but got (object) null
 

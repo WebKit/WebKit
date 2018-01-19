@@ -34,6 +34,7 @@
 #include "JSWebAnimation.h"
 #include "KeyframeEffect.h"
 #include "Microtasks.h"
+#include "WebAnimationUtilities.h"
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -151,7 +152,7 @@ std::optional<double> WebAnimation::bindingsStartTime() const
 {
     if (!m_startTime)
         return std::nullopt;
-    return m_startTime->milliseconds();
+    return secondsToWebAnimationsAPITime(m_startTime.value());
 }
 
 void WebAnimation::setBindingsStartTime(std::optional<double> startTime)
@@ -183,7 +184,7 @@ std::optional<double> WebAnimation::bindingsCurrentTime() const
     auto time = currentTime();
     if (!time)
         return std::nullopt;
-    return time->milliseconds();
+    return secondsToWebAnimationsAPITime(time.value());
 }
 
 ExceptionOr<void> WebAnimation::setBindingsCurrentTime(std::optional<double> currentTime)
@@ -330,8 +331,7 @@ Seconds WebAnimation::effectEndTime() const
 {
     // The target effect end of an animation is equal to the end time of the animation's target effect.
     // If the animation has no target effect, the target effect end is zero.
-    // FIXME: Use the effect's computed end time once we support it (webkit.org/b/179170).
-    return m_effect ? m_effect->timing()->duration() : 0_s;
+    return m_effect ? m_effect->timing()->endTime() : 0_s;
 }
 
 void WebAnimation::cancel()
@@ -797,7 +797,7 @@ Seconds WebAnimation::timeToNextRequiredTick(Seconds timelineTime) const
         return Seconds::infinity();
 
     auto startTime = m_startTime.value();
-    auto endTime = startTime + (m_effect->timing()->duration() / m_playbackRate);
+    auto endTime = startTime + (m_effect->timing()->iterationDuration() / m_playbackRate);
 
     // If we haven't started yet, return the interval until our active start time.
     auto activeStartTime = std::min(startTime, endTime);

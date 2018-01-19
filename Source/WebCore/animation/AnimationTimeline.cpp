@@ -28,6 +28,7 @@
 #include "AnimationTimeline.h"
 
 #include "DocumentTimeline.h"
+#include "WebAnimationUtilities.h"
 #include <wtf/text/TextStream.h>
 #include <wtf/text/WTFString.h>
 
@@ -59,7 +60,7 @@ std::optional<double> AnimationTimeline::bindingsCurrentTime()
     auto time = currentTime();
     if (!time)
         return std::nullopt;
-    return time->milliseconds();
+    return secondsToWebAnimationsAPITime(*time);
 }
 
 void AnimationTimeline::setCurrentTime(Seconds currentTime)

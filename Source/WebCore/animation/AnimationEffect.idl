@@ -28,4 +28,5 @@
     CustomToJSObject
 ] interface AnimationEffect {
     readonly attribute AnimationEffectTiming timing;
+    ComputedTimingProperties getComputedTiming();
 };

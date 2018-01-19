@@ -1,14 +1,8 @@
 
-FAIL Test default value assert_equals: expected (number) 1 but got (undefined) undefined
-FAIL set iterations 2 anim.effect.getComputedTiming is not a function. (In 'anim.effect.getComputedTiming()', 'anim.effect.getComputedTiming' is undefined)
-FAIL set iterations Infinity anim.effect.getComputedTiming is not a function. (In 'anim.effect.getComputedTiming()', 'anim.effect.getComputedTiming' is undefined)
-FAIL set negative iterations assert_throws: function "function () {
-    anim.effect.timing.iterations = -1;
-  }" did not throw
-FAIL set negative infinity iterations  assert_throws: function "function () {
-    anim.effect.timing.iterations = -Infinity;
-  }" did not throw
-FAIL set NaN iterations assert_throws: function "function () {
-    anim.effect.timing.iterations = NaN;
-  }" did not throw
+PASS Test default value 
+PASS set iterations 2 
+PASS set iterations Infinity 
+PASS set negative iterations 
+PASS set negative infinity iterations  
+PASS set NaN iterations 
 

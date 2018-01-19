@@ -1897,6 +1897,8 @@
 		71025EDE1F99F1EC004A250C /* JSAnimationTimeline.h in Headers */ = {isa = PBXBuildFile; fileRef = 71025ED91F99F1A7004A250C /* JSAnimationTimeline.h */; };
 		71025EE01F99F1EC004A250C /* JSDocumentTimeline.h in Headers */ = {isa = PBXBuildFile; fileRef = 71025EDC1F99F1A8004A250C /* JSDocumentTimeline.h */; };
 		71025EE21F99F1EC004A250C /* JSWebAnimation.h in Headers */ = {isa = PBXBuildFile; fileRef = 71025ED81F99F1A6004A250C /* JSWebAnimation.h */; };
+		7116E2CC1FED75DC00C06FDE /* ComputedTimingProperties.h in Headers */ = {isa = PBXBuildFile; fileRef = 7116E2CB1FED75D100C06FDE /* ComputedTimingProperties.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		7116E2CF1FED765B00C06FDE /* JSComputedTimingProperties.h in Headers */ = {isa = PBXBuildFile; fileRef = 7116E2CE1FED765200C06FDE /* JSComputedTimingProperties.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7117445914BC34EC00EE5FC8 /* SVGTextMetricsBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = 7117445714BC34E200EE5FC8 /* SVGTextMetricsBuilder.h */; };
 		7118FED515685CC60030B79A /* JSSVGViewSpec.h in Headers */ = {isa = PBXBuildFile; fileRef = 7118FED315685CC60030B79A /* JSSVGViewSpec.h */; };
 		71247E371FEA5F86008C08CE /* CompositeOperation.h in Headers */ = {isa = PBXBuildFile; fileRef = 71247E351FEA5F81008C08CE /* CompositeOperation.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1913,6 +1915,7 @@
 		712BE4881FE8686A002031CC /* JSFillMode.h in Headers */ = {isa = PBXBuildFile; fileRef = 712BE4851FE86818002031CC /* JSFillMode.h */; };
 		712BE4891FE86875002031CC /* JSPlaybackDirection.h in Headers */ = {isa = PBXBuildFile; fileRef = 712BE4861FE86859002031CC /* JSPlaybackDirection.h */; };
 		713171341FBE78DB00F758DE /* CSSPropertyBlendingClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 713171321FBE78C500F758DE /* CSSPropertyBlendingClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		7132445120109DA500AE7FB2 /* WebAnimationUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = 7132444F20109D9B00AE7FB2 /* WebAnimationUtilities.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7134496E146941B300720312 /* SVGLengthContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 7134496C146941B300720312 /* SVGLengthContext.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		714C7C661FDAD2A100F2BEE1 /* AnimationPlaybackEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 714C7C651FDAD27B00F2BEE1 /* AnimationPlaybackEvent.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		714C7C671FDAD2A900F2BEE1 /* AnimationPlaybackEventInit.h in Headers */ = {isa = PBXBuildFile; fileRef = 714C7C621FDAD27A00F2BEE1 /* AnimationPlaybackEventInit.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -8728,6 +8731,10 @@
 		71025EDC1F99F1A8004A250C /* JSDocumentTimeline.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDocumentTimeline.h; sourceTree = "<group>"; };
 		710FA74B1DEE576D004C715E /* controls-bar.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = "controls-bar.js"; sourceTree = "<group>"; };
 		710FA74C1DEE577E004C715E /* controls-visibility-support.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = "controls-visibility-support.js"; sourceTree = "<group>"; };
+		7116E2C91FED75D000C06FDE /* ComputedTimingProperties.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ComputedTimingProperties.idl; sourceTree = "<group>"; };
+		7116E2CB1FED75D100C06FDE /* ComputedTimingProperties.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ComputedTimingProperties.h; sourceTree = "<group>"; };
+		7116E2CD1FED765200C06FDE /* JSComputedTimingProperties.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSComputedTimingProperties.cpp; sourceTree = "<group>"; };
+		7116E2CE1FED765200C06FDE /* JSComputedTimingProperties.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSComputedTimingProperties.h; sourceTree = "<group>"; };
 		7117445614BC34E200EE5FC8 /* SVGTextMetricsBuilder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGTextMetricsBuilder.cpp; sourceTree = "<group>"; };
 		7117445714BC34E200EE5FC8 /* SVGTextMetricsBuilder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGTextMetricsBuilder.h; sourceTree = "<group>"; };
 		7118FED215685CC60030B79A /* JSSVGViewSpec.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSSVGViewSpec.cpp; sourceTree = "<group>"; };
@@ -8763,6 +8770,7 @@
 		712BE4871FE8685A002031CC /* JSPlaybackDirection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSPlaybackDirection.cpp; sourceTree = "<group>"; };
 		7130141D1DC9C08600CA3A88 /* pip-support.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = "pip-support.js"; sourceTree = "<group>"; };
 		713171321FBE78C500F758DE /* CSSPropertyBlendingClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSSPropertyBlendingClient.h; sourceTree = "<group>"; };
+		7132444F20109D9B00AE7FB2 /* WebAnimationUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebAnimationUtilities.h; sourceTree = "<group>"; };
 		7134496B146941B300720312 /* SVGLengthContext.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGLengthContext.cpp; sourceTree = "<group>"; };
 		7134496C146941B300720312 /* SVGLengthContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGLengthContext.h; sourceTree = "<group>"; };
 		713E70AF1733E8B300A22D00 /* plugIns.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = plugIns.js; sourceTree = "<group>"; };
@@ -15366,6 +15374,8 @@
 				71025ED91F99F1A7004A250C /* JSAnimationTimeline.h */,
 				71247E2B1FEA5F63008C08CE /* JSCompositeOperation.cpp */,
 				71247E2E1FEA5F66008C08CE /* JSCompositeOperation.h */,
+				7116E2CD1FED765200C06FDE /* JSComputedTimingProperties.cpp */,
+				7116E2CE1FED765200C06FDE /* JSComputedTimingProperties.h */,
 				71025EDB1F99F1A8004A250C /* JSDocumentTimeline.cpp */,
 				71025EDC1F99F1A8004A250C /* JSDocumentTimeline.h */,
 				712BE4841FE867C2002031CC /* JSFillMode.cpp */,
@@ -18972,6 +18982,8 @@
 				71025EC91F99F096004A250C /* AnimationTimeline.idl */,
 				71247E351FEA5F81008C08CE /* CompositeOperation.h */,
 				71247E361FEA5F81008C08CE /* CompositeOperation.idl */,
+				7116E2CB1FED75D100C06FDE /* ComputedTimingProperties.h */,
+				7116E2C91FED75D000C06FDE /* ComputedTimingProperties.idl */,
 				713171321FBE78C500F758DE /* CSSPropertyBlendingClient.h */,
 				71025EC41F99F096004A250C /* DocumentTimeline.cpp */,
 				71025EC51F99F096004A250C /* DocumentTimeline.h */,
@@ -18992,6 +19004,7 @@
 				71025EC31F99F096004A250C /* WebAnimation.cpp */,
 				71025EC21F99F096004A250C /* WebAnimation.h */,
 				71025EC81F99F096004A250C /* WebAnimation.idl */,
+				7132444F20109D9B00AE7FB2 /* WebAnimationUtilities.h */,
 			);
 			path = animation;
 			sourceTree = "<group>";
@@ -26719,6 +26732,7 @@
 				71247E371FEA5F86008C08CE /* CompositeOperation.h in Headers */,
 				79F2F5A21091939A000D87CB /* CompositionEvent.h in Headers */,
 				2DD5A7271EBEE47D009BA597 /* CompositionUnderline.h in Headers */,
+				7116E2CC1FED75DC00C06FDE /* ComputedTimingProperties.h in Headers */,
 				FD31608F12B026F700C1A359 /* Cone.h in Headers */,
 				65C97AF308EA908800ACD273 /* config.h in Headers */,
 				2DAF343D1EA7E0F100382CD3 /* ConstantPropertyMap.h in Headers */,
@@ -27774,6 +27788,7 @@
 				93F9B6E10BA0FB7200854064 /* JSComment.h in Headers */,
 				71247E3B1FEA5F90008C08CE /* JSCompositeOperation.h in Headers */,
 				79AC9219109945C80021266E /* JSCompositionEvent.h in Headers */,
+				7116E2CF1FED765B00C06FDE /* JSComputedTimingProperties.h in Headers */,
 				FDA15EBE12B03F0B003A583A /* JSConvolverNode.h in Headers */,
 				FE6FD48E0F676E9300092873 /* JSCoordinates.h in Headers */,
 				14DCF3B31B6BE2080062D4C2 /* JSCountQueuingStrategy.h in Headers */,
@@ -30090,6 +30105,7 @@
 				AA478A7F16CD70C3007D1BB4 /* WebAccessibilityObjectWrapperMac.h in Headers */,
 				2D3EF4481917915C00034184 /* WebActionDisablingCALayerDelegate.h in Headers */,
 				71025ED31F99F0CE004A250C /* WebAnimation.h in Headers */,
+				7132445120109DA500AE7FB2 /* WebAnimationUtilities.h in Headers */,
 				E18536841F4E481400FE091B /* WebArchiveResourceFromNSAttributedString.h in Headers */,
 				E18C35441F71970C00FF632D /* WebArchiveResourceWebResourceHandler.h in Headers */,
 				CDE667A51E4BBF1500E8154A /* WebAudioBufferList.h in Headers */,

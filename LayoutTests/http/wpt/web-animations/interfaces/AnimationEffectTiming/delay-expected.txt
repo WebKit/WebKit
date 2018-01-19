@@ -1,11 +1,9 @@
 
-FAIL Test default value assert_equals: expected (number) 0 but got (undefined) undefined
-FAIL set delay 100 anim.effect.getComputedTiming is not a function. (In 'anim.effect.getComputedTiming()', 'anim.effect.getComputedTiming' is undefined)
-FAIL set delay -100 anim.effect.getComputedTiming is not a function. (In 'anim.effect.getComputedTiming()', 'anim.effect.getComputedTiming' is undefined)
-FAIL Test adding a positive delay to an animation without a backwards fill makes it no longer active anim.effect.getComputedTiming is not a function. (In 'anim.effect.getComputedTiming()', 'anim.effect.getComputedTiming' is undefined)
-FAIL Test seeking an animation by setting a negative delay anim.effect.getComputedTiming is not a function. (In 'anim.effect.getComputedTiming()', 'anim.effect.getComputedTiming' is undefined)
-FAIL Test finishing an animation using a large negative delay anim.effect.getComputedTiming is not a function. (In 'anim.effect.getComputedTiming()', 'anim.effect.getComputedTiming' is undefined)
-FAIL Setting invalid values should throw TypeError assert_throws: setting NaN function "function () {
-      anim.effect.timing.delay = invalid;
-    }" did not throw
+PASS Test default value 
+PASS set delay 100 
+PASS set delay -100 
+PASS Test adding a positive delay to an animation without a backwards fill makes it no longer active 
+FAIL Test seeking an animation by setting a negative delay assert_equals: expected (number) 0.5 but got (object) null
+FAIL Test finishing an animation using a large negative delay assert_equals: expected (number) 1 but got (object) null
+PASS Setting invalid values should throw TypeError 
 

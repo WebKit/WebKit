@@ -1,3 +1,38 @@
+2018-01-19  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Expose timing properties (delay, endDelay, fill, iterationStart, iterations, direction) and getComputedTiming()
+        https://bugs.webkit.org/show_bug.cgi?id=181857
+        <rdar://problem/36660081>
+
+        Reviewed by Dean Jackson.
+
+        Update expectations with progressions and new failure points now we expose more of the API.
+
+        * http/wpt/web-animations/animation-model/animation-types/discrete-animation-expected.txt:
+        * http/wpt/web-animations/interfaces/Animatable/animate-expected.txt:
+        * http/wpt/web-animations/interfaces/Animation/finish-expected.txt:
+        * http/wpt/web-animations/interfaces/Animation/finished-expected.txt:
+        * http/wpt/web-animations/interfaces/Animation/pause-expected.txt:
+        * http/wpt/web-animations/interfaces/Animation/play-expected.txt:
+        * http/wpt/web-animations/interfaces/AnimationEffectTiming/delay-expected.txt:
+        * http/wpt/web-animations/interfaces/AnimationEffectTiming/direction-expected.txt:
+        * http/wpt/web-animations/interfaces/AnimationEffectTiming/duration-expected.txt:
+        * http/wpt/web-animations/interfaces/AnimationEffectTiming/easing-expected.txt:
+        * http/wpt/web-animations/interfaces/AnimationEffectTiming/endDelay-expected.txt:
+        * http/wpt/web-animations/interfaces/AnimationEffectTiming/fill-expected.txt:
+        * http/wpt/web-animations/interfaces/AnimationEffectTiming/iterationStart-expected.txt:
+        * http/wpt/web-animations/interfaces/AnimationEffectTiming/iterations-expected.txt:
+        * http/wpt/web-animations/interfaces/AnimationTimeline/document-timeline-expected.txt:
+        * http/wpt/web-animations/timing-model/animation-effects/active-time-expected.txt:
+        * http/wpt/web-animations/timing-model/animation-effects/current-iteration-expected.txt:
+        * http/wpt/web-animations/timing-model/animation-effects/local-time-expected.txt:
+        * http/wpt/web-animations/timing-model/animation-effects/phases-and-states-expected.txt:
+        * http/wpt/web-animations/timing-model/animation-effects/simple-iteration-progress-expected.txt:
+        * http/wpt/web-animations/timing-model/animations/set-the-animation-start-time-expected.txt:
+        * http/wpt/web-animations/timing-model/animations/set-the-target-effect-of-an-animation-expected.txt:
+        * http/wpt/web-animations/timing-model/time-transformations/transformed-progress-expected.txt:
+        * http/wpt/wk-web-animations/timing-model/keyframe-effect-interface-timing-duration.html:
+
 2018-01-19  Ryan Haddad  <ryanhaddad@apple.com>
 
         Mark http/tests/images/image-supports-video.html as flaky.

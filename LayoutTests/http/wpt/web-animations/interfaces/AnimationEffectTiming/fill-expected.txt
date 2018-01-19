@@ -1,7 +1,7 @@
 
-FAIL Test default value assert_equals: expected (string) "auto" but got (undefined) undefined
-FAIL set fill none anim.effect.getComputedTiming is not a function. (In 'anim.effect.getComputedTiming()', 'anim.effect.getComputedTiming' is undefined)
-FAIL set fill forwards anim.effect.getComputedTiming is not a function. (In 'anim.effect.getComputedTiming()', 'anim.effect.getComputedTiming' is undefined)
-FAIL set fill backwards anim.effect.getComputedTiming is not a function. (In 'anim.effect.getComputedTiming()', 'anim.effect.getComputedTiming' is undefined)
-FAIL set fill both anim.effect.getComputedTiming is not a function. (In 'anim.effect.getComputedTiming()', 'anim.effect.getComputedTiming' is undefined)
+PASS Test default value 
+PASS set fill none 
+PASS set fill forwards 
+PASS set fill backwards 
+PASS set fill both 
 

@@ -1,13 +1,9 @@
 
-FAIL Test default value assert_equals: expected (number) 0 but got (undefined) undefined
-FAIL set endDelay 123.45 anim.effect.getComputedTiming is not a function. (In 'anim.effect.getComputedTiming()', 'anim.effect.getComputedTiming' is undefined)
-FAIL set endDelay -1000 anim.effect.getComputedTiming is not a function. (In 'anim.effect.getComputedTiming()', 'anim.effect.getComputedTiming' is undefined)
-FAIL set endDelay Infinity assert_throws: we can not assign Infinity to timing.endDelay function "function () {
-    anim.effect.timing.endDelay = Infinity;
-  }" did not throw
-FAIL set endDelay negative Infinity assert_throws: we can not assign negative Infinity to timing.endDelay function "function () {
-    anim.effect.timing.endDelay = -Infinity;
-  }" did not throw
+PASS Test default value 
+PASS set endDelay 123.45 
+PASS set endDelay -1000 
+PASS set endDelay Infinity 
+PASS set endDelay negative Infinity 
 PASS onfinish event is not fired duration endDelay 
-FAIL onfinish event is fired currentTime is after endTime assert_unreached: onfinish event should not be fired during endDelay Reached unreachable code
+PASS onfinish event is fired currentTime is after endTime 
 

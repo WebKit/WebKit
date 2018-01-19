@@ -376,8 +376,21 @@ ExceptionOr<Ref<KeyframeEffect>> KeyframeEffect::create(ExecState& state, Elemen
         Variant<double, String> bindingsDuration;
         if (WTF::holds_alternative<double>(optionsValue))
             bindingsDuration = WTF::get<double>(optionsValue);
-        else
-            bindingsDuration = WTF::get<KeyframeEffectOptions>(optionsValue).duration;
+        else {
+            auto keyframeEffectOptions = WTF::get<KeyframeEffectOptions>(optionsValue);
+            bindingsDuration = keyframeEffectOptions.duration;
+            keyframeEffect->timing()->setBindingsDelay(keyframeEffectOptions.delay);
+            keyframeEffect->timing()->setBindingsEndDelay(keyframeEffectOptions.endDelay);
+            keyframeEffect->timing()->setFill(keyframeEffectOptions.fill);
+            auto setIterationStartResult = keyframeEffect->timing()->setIterationStart(keyframeEffectOptions.iterationStart);
+            if (setIterationStartResult.hasException())
+                return setIterationStartResult.releaseException();
+            auto setIterationsResult = keyframeEffect->timing()->setIterations(keyframeEffectOptions.iterations);
+            if (setIterationsResult.hasException())
+                return setIterationsResult.releaseException();
+            keyframeEffect->timing()->setDirection(keyframeEffectOptions.direction);
+        }
+
         auto setBindingsDurationResult = keyframeEffect->timing()->setBindingsDuration(WTFMove(bindingsDuration));
         if (setBindingsDurationResult.hasException())
             return setBindingsDurationResult.releaseException();
@@ -512,17 +525,17 @@ void KeyframeEffect::applyAtLocalTime(Seconds localTime, RenderStyle& targetStyl
     if (!m_target)
         return;
 
-    if (m_startedAccelerated && localTime >= timing()->duration()) {
+    if (m_startedAccelerated && localTime >= timing()->iterationDuration()) {
         m_startedAccelerated = false;
         animation()->acceleratedRunningStateDidChange();
     }
 
     // FIXME: Assume animations only apply in the range [0, duration[
     // until we support fill modes, delays and iterations.
-    if (localTime < 0_s || localTime >= timing()->duration())
+    if (localTime < 0_s || localTime >= timing()->iterationDuration())
         return;
 
-    if (!timing()->duration())
+    if (!timing()->iterationDuration())
         return;
 
     bool needsToStartAccelerated = false;
@@ -536,7 +549,7 @@ void KeyframeEffect::applyAtLocalTime(Seconds localTime, RenderStyle& targetStyl
     m_started = true;
 
     if (!needsToStartAccelerated && !m_startedAccelerated)
-        setAnimatedPropertiesInStyle(targetStyle, localTime / timing()->duration());
+        setAnimatedPropertiesInStyle(targetStyle, localTime / timing()->iterationDuration());
 
     // https://w3c.github.io/web-animations/#side-effects-section
     // For every property targeted by at least one animation effect that is current or in effect, the user agent
@@ -556,14 +569,14 @@ bool KeyframeEffect::shouldRunAccelerated()
 
 void KeyframeEffect::getAnimatedStyle(std::unique_ptr<RenderStyle>& animatedStyle)
 {
-    if (!animation() || !timing()->duration())
+    if (!animation() || !timing()->iterationDuration())
         return;
 
     auto localTime = animation()->currentTime();
 
     // FIXME: Assume animations only apply in the range [0, duration[
     // until we support fill modes, delays and iterations.
-    if (!localTime || localTime < 0_s || localTime >= timing()->duration())
+    if (!localTime || localTime < 0_s || localTime >= timing()->iterationDuration())
         return;
 
     if (!m_keyframes.size())
@@ -572,7 +585,7 @@ void KeyframeEffect::getAnimatedStyle(std::unique_ptr<RenderStyle>& animatedStyl
     if (!animatedStyle)
         animatedStyle = RenderStyle::clonePtr(renderer()->style());
 
-    setAnimatedPropertiesInStyle(*animatedStyle.get(), localTime.value() / timing()->duration());
+    setAnimatedPropertiesInStyle(*animatedStyle.get(), localTime.value() / timing()->iterationDuration());
 }
 
 void KeyframeEffect::setAnimatedPropertiesInStyle(RenderStyle& targetStyle, double progress)
@@ -631,7 +644,7 @@ void KeyframeEffect::startOrStopAccelerated()
     auto* compositedRenderer = downcast<RenderBoxModelObject>(renderer);
     if (m_startedAccelerated) {
         auto animation = Animation::create();
-        animation->setDuration(timing()->duration().value());
+        animation->setDuration(timing()->iterationDuration().seconds());
         compositedRenderer->startAnimation(0, animation.ptr(), m_keyframes);
     } else {
         compositedRenderer->animationFinished(m_keyframes.animationName());

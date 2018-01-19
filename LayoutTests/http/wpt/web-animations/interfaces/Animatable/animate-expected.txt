@@ -144,9 +144,9 @@ FAIL Element.animate() does not accept invalid easing: 'frames(2.5)' assert_thro
 FAIL Element.animate() does not accept invalid easing: 'frames(2 3)' assert_throws: function "() => {
       div.animate({ easing: invalidEasing }, 2000);
     }" did not throw
-FAIL Element.animate() accepts a double as an options argument assert_equals: expected (string) "auto" but got (undefined) undefined
-FAIL Element.animate() accepts a KeyframeAnimationOptions argument assert_equals: expected (string) "forwards" but got (undefined) undefined
-FAIL Element.animate() accepts an absent options argument assert_equals: expected (string) "auto" but got (number) 0
+PASS Element.animate() accepts a double as an options argument 
+PASS Element.animate() accepts a KeyframeAnimationOptions argument 
+PASS Element.animate() accepts an absent options argument 
 PASS Element.animate() correctly sets the id attribute when no id is specified 
 PASS Element.animate() correctly sets the id attribute 
 PASS Element.animate() correctly sets the Animation's timeline 

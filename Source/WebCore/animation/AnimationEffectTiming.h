@@ -26,6 +26,9 @@
 #pragma once
 
 #include "ExceptionOr.h"
+#include "FillMode.h"
+#include "PlaybackDirection.h"
+#include "WebAnimationUtilities.h"
 #include <wtf/Forward.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
@@ -40,14 +43,45 @@ public:
     static Ref<AnimationEffectTiming> create();
     ~AnimationEffectTiming();
 
-    double bindingsDuration() const { return m_duration.milliseconds(); }
+    double bindingsDelay() const { return secondsToWebAnimationsAPITime(m_delay); }
+    void setBindingsDelay(double delay) { m_delay = Seconds::fromMilliseconds(delay); }
+    Seconds delay() const { return m_delay; }
+    void setDelay(Seconds& delay) { m_delay = delay; }
+
+    double bindingsEndDelay() const { return secondsToWebAnimationsAPITime(m_endDelay); }
+    void setBindingsEndDelay(double endDelay) { m_endDelay = Seconds::fromMilliseconds(endDelay); }
+    Seconds endDelay() const { return m_endDelay; }
+    void setEndDelay(Seconds& endDelay) { m_endDelay = endDelay; }
+
+    FillMode fill() const { return m_fill; }
+    void setFill(FillMode fill) { m_fill = fill; }
+
+    double iterationStart() const { return m_iterationStart; }
+    ExceptionOr<void> setIterationStart(double);
+
+    double iterations() const { return m_iterations; }
+    ExceptionOr<void> setIterations(double);
+
+    Variant<double, String> bindingsDuration() const;
     ExceptionOr<void> setBindingsDuration(Variant<double, String>&&);
-    Seconds duration() const { return m_duration; }
-    void setDuration(Seconds& duration) { m_duration = duration; }
+    Seconds iterationDuration() const { return m_iterationDuration; }
+    void setIterationDuration(Seconds& duration) { m_iterationDuration = duration; }
+
+    PlaybackDirection direction() const { return m_direction; }
+    void setDirection(PlaybackDirection direction) { m_direction = direction; }
+
+    Seconds endTime() const;
+    Seconds activeDuration() const;
 
 private:
     AnimationEffectTiming();
-    Seconds m_duration;
+    Seconds m_delay { 0_s };
+    Seconds m_endDelay { 0_s };
+    FillMode m_fill { FillMode::Auto };
+    double m_iterationStart { 0 };
+    double m_iterations { 1 };
+    Seconds m_iterationDuration { 0_s };
+    PlaybackDirection m_direction { PlaybackDirection::Normal };
 };
 
 } // namespace WebCore
