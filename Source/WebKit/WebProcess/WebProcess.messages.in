@@ -117,5 +117,6 @@ messages -> WebProcess LegacyReceiver {
 
 #if ENABLE(SERVICE_WORKER)
     EstablishWorkerContextConnectionToStorageProcess(uint64_t pageID, struct WebKit::WebPreferencesStore store, PAL::SessionID initialSessionID)
+    RegisterServiceWorkerClients(PAL::SessionID sessionID)
 #endif
 }

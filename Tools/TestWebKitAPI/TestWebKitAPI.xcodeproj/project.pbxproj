@@ -147,6 +147,8 @@
 		3FBD1B4A1D3D66AB00E6D6FA /* FullscreenLayoutConstraints.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 3FBD1B491D39D1DB00E6D6FA /* FullscreenLayoutConstraints.html */; };
 		3FCC4FE51EC4E8520076E37C /* PictureInPictureDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3FCC4FE41EC4E8520076E37C /* PictureInPictureDelegate.mm */; };
 		3FCC4FE81EC4E8CA0076E37C /* PictureInPictureDelegate.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 3FCC4FE61EC4E87E0076E37C /* PictureInPictureDelegate.html */; };
+		4135FB842011FAA700332139 /* InjectInternals_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4135FB832011FAA300332139 /* InjectInternals_Bundle.cpp */; };
+		4135FB852011FABF00332139 /* libWebCoreTestSupport.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 4135FB862011FABF00332139 /* libWebCoreTestSupport.dylib */; };
 		44817A2F1F0486BF00003810 /* WKRequestActivatedElementInfo.mm in Sources */ = {isa = PBXBuildFile; fileRef = 44817A2E1F0486BF00003810 /* WKRequestActivatedElementInfo.mm */; };
 		448D7E471EA6C55500ECC756 /* EnvironmentUtilitiesTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 448D7E451EA6C55500ECC756 /* EnvironmentUtilitiesTest.cpp */; };
 		46397B951DC2C850009A78AE /* DOMNode.mm in Sources */ = {isa = PBXBuildFile; fileRef = 46397B941DC2C850009A78AE /* DOMNode.mm */; };
@@ -835,7 +837,6 @@
 			dstPath = TestWebKitAPI.resources;
 			dstSubfolderSpec = 7;
 			files = (
-				0EBBCC661FFF9E0C00FA42AB /* pop-up-check.html in Copy Resources */,
 				1A9E52C913E65EF4006917F5 /* 18-characters.html in Copy Resources */,
 				379028B914FAC24C007E6B43 /* acceptsFirstMouse.html in Copy Resources */,
 				1C2B81871C8925A000A5529F /* Ahem.ttf in Copy Resources */,
@@ -1027,6 +1028,7 @@
 				9B7D740F1F8378770006C432 /* paste-rtfd.html in Copy Resources */,
 				3FCC4FE81EC4E8CA0076E37C /* PictureInPictureDelegate.html in Copy Resources */,
 				F415086D1DA040C50044BE9B /* play-audio-on-click.html in Copy Resources */,
+				0EBBCC661FFF9E0C00FA42AB /* pop-up-check.html in Copy Resources */,
 				F41AB9A81EF4696B0083FA08 /* prevent-operation.html in Copy Resources */,
 				F41AB9A91EF4696B0083FA08 /* prevent-start.html in Copy Resources */,
 				F6FDDDD614241C6F004F1729 /* push-state.html in Copy Resources */,
@@ -1286,6 +1288,8 @@
 		3FBD1B491D39D1DB00E6D6FA /* FullscreenLayoutConstraints.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = FullscreenLayoutConstraints.html; sourceTree = "<group>"; };
 		3FCC4FE41EC4E8520076E37C /* PictureInPictureDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PictureInPictureDelegate.mm; sourceTree = "<group>"; };
 		3FCC4FE61EC4E87E0076E37C /* PictureInPictureDelegate.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = PictureInPictureDelegate.html; sourceTree = "<group>"; };
+		4135FB832011FAA300332139 /* InjectInternals_Bundle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = InjectInternals_Bundle.cpp; path = Tests/InjectInternals_Bundle.cpp; sourceTree = SOURCE_ROOT; };
+		4135FB862011FABF00332139 /* libWebCoreTestSupport.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; path = libWebCoreTestSupport.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		41973B5A1AF2286A006C7B36 /* FileSystem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FileSystem.cpp; sourceTree = "<group>"; };
 		41973B5C1AF22875006C7B36 /* SharedBuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SharedBuffer.cpp; sourceTree = "<group>"; };
 		440A1D3814A0103A008A66F2 /* URL.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = URL.cpp; sourceTree = "<group>"; };
@@ -1935,6 +1939,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4135FB852011FABF00332139 /* libWebCoreTestSupport.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2278,6 +2283,7 @@
 				0F4FFAA01ED3D0DE00F7111F /* ImageIO.framework */,
 				CDA3159C1ED5643F009F60D3 /* IOKit.framework */,
 				7C83E0331D0A5F2700FEBCF3 /* libicucore.dylib */,
+				4135FB862011FABF00332139 /* libWebCoreTestSupport.dylib */,
 				7C83E0291D0A5CDF00FEBCF3 /* libWTF.a */,
 				7A010BCC1D877C0D00EDE72A /* QuartzCore.framework */,
 			);
@@ -2576,6 +2582,7 @@
 				F660AA1415A61ABF003A1243 /* InjectedBundleInitializationUserDataCallbackWins_Bundle.cpp */,
 				9B0786A21C58830F00D159E3 /* InjectedBundleMakeAllShadowRootsOpen.cpp */,
 				9B0786A41C5885C300D159E3 /* InjectedBundleMakeAllShadowRootsOpen_Bundle.cpp */,
+				4135FB832011FAA300332139 /* InjectInternals_Bundle.cpp */,
 				93D3D19D17B1A84200C7C415 /* LayoutMilestonesWithAllContentInFrame.cpp */,
 				7A66BDB51EAF14D000CCC924 /* LimitTitleSize.cpp */,
 				52CB47401448FB9300873995 /* LoadAlternateHTMLStringWithNonDirectoryURL.cpp */,
@@ -3741,6 +3748,7 @@
 				F660AA1515A61ABF003A1243 /* InjectedBundleInitializationUserDataCallbackWins_Bundle.cpp in Sources */,
 				BC575A97126E74F1006F0F12 /* InjectedBundleMain.cpp in Sources */,
 				9B0786A51C5885C300D159E3 /* InjectedBundleMakeAllShadowRootsOpen_Bundle.cpp in Sources */,
+				4135FB842011FAA700332139 /* InjectInternals_Bundle.cpp in Sources */,
 				33DC89141419579F00747EF7 /* LoadCanceledNoServerRedirectCallback_Bundle.cpp in Sources */,
 				33BE5AF9137B5AAE00705813 /* MouseMoveAfterCrash_Bundle.cpp in Sources */,
 				93F1DB3414DA20870024C362 /* NewFirstVisuallyNonEmptyLayout_Bundle.cpp in Sources */,

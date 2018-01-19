@@ -612,6 +612,7 @@ void WebProcessPool::establishWorkerContextConnectionToStorageProcess(StoragePro
 
     auto serviceWorkerProcessProxy = ServiceWorkerProcessProxy::create(*this, *websiteDataStore);
     m_serviceWorkerProcess = serviceWorkerProcessProxy.ptr();
+    sendToAllProcesses(Messages::WebProcess::RegisterServiceWorkerClients { websiteDataStore->sessionID() });
 
     updateProcessAssertions();
     initializeNewWebProcess(serviceWorkerProcessProxy.get(), *websiteDataStore);

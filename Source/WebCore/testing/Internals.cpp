@@ -4309,6 +4309,14 @@ void Internals::terminateServiceWorker(ServiceWorker& worker)
 
     ServiceWorkerProvider::singleton().serviceWorkerConnectionForSession(contextDocument()->sessionID()).syncTerminateWorker(worker.identifier());
 }
+
+bool Internals::hasServiceWorkerConnection()
+{
+    if (!contextDocument())
+        return false;
+
+    return ServiceWorkerProvider::singleton().existingServiceWorkerConnectionForSession(contextDocument()->sessionID());
+}
 #endif
 
 String Internals::timelineDescription(AnimationTimeline& timeline)

@@ -570,6 +570,7 @@ enum EventThrottlingBehavior {
 
     [Conditional=SERVICE_WORKER] Promise<boolean> hasServiceWorkerRegistration(DOMString scopeURL);
     [Conditional=SERVICE_WORKER] void terminateServiceWorker(ServiceWorker worker);
+    [Conditional=SERVICE_WORKER] boolean hasServiceWorkerConnection();
 
     void testIncomingSyncIPCMessageWhileWaitingForSyncReply();
 

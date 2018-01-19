@@ -446,4 +446,130 @@ TEST(ServiceWorkers, FetchAfterRestoreFromDisk)
     done = false;
 }
 
+#if WK_HAVE_C_SPI
+
+void setConfigurationInjectedBundlePath(WKWebViewConfiguration* configuration)
+{
+    WKRetainPtr<WKContextRef> context(AdoptWK, TestWebKitAPI::Util::createContextForInjectedBundleTest("InternalsInjectedBundleTest"));
+    configuration.processPool = (WKProcessPool *)context.get();
+    auto pool = configuration.processPool;
+    [pool _registerURLSchemeServiceWorkersCanHandle:@"sw"];
+    [pool _setMaximumNumberOfProcesses:5];
+
+    configuration.websiteDataStore = (WKWebsiteDataStore *)WKContextGetWebsiteDataStore(context.get());
+}
+
+@interface RegularPageMessageHandler : NSObject <WKScriptMessageHandler>
+@end
+
+@implementation RegularPageMessageHandler
+- (void)userContentController:(WKUserContentController *)userContentController didReceiveScriptMessage:(WKScriptMessage *)message
+{
+    EXPECT_TRUE([[message body] isEqualToString:@"PASS"]);
+    done = true;
+}
+@end
+
+static const char* regularPageWithoutConnectionBytes = R"SWRESOURCE(
+<script>
+var result = window.internals.hasServiceWorkerConnection() ? "FAIL" : "PASS";
+window.webkit.messageHandlers.regularPage.postMessage(result);
+</script>
+)SWRESOURCE";
+
+static const char* regularPageWithConnectionBytes = R"SWRESOURCE(
+<script>
+var result = window.internals.hasServiceWorkerConnection() ? "PASS" : "FAIL";
+window.webkit.messageHandlers.regularPage.postMessage(result);
+</script>
+)SWRESOURCE";
+
+TEST(ServiceWorkers, StorageConnectionCreation)
+{
+    ASSERT(mainBytes);
+    ASSERT(scriptBytes);
+
+    [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
+
+    RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    setConfigurationInjectedBundlePath(configuration.get());
+
+    done = false;
+
+    [[configuration websiteDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    [[configuration websiteDataStore] fetchDataRecordsOfTypes:[NSSet setWithObject:WKWebsiteDataTypeServiceWorkerRegistrations] completionHandler:^(NSArray<WKWebsiteDataRecord *> *websiteDataRecords) {
+        EXPECT_EQ(0u, [websiteDataRecords count]);
+
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    RetainPtr<SWMessageHandler> messageHandler = adoptNS([[SWMessageHandler alloc] init]);
+    [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"sw"];
+    RetainPtr<RegularPageMessageHandler> regularPageMessageHandler = adoptNS([[RegularPageMessageHandler alloc] init]);
+    [[configuration userContentController] addScriptMessageHandler:regularPageMessageHandler.get() name:@"regularPage"];
+
+    RetainPtr<SWSchemes> handler = adoptNS([[SWSchemes alloc] init]);
+    handler->resources.set("sw://host/regularPageWithoutConnection.html", ResourceInfo { @"text/html", regularPageWithoutConnectionBytes });
+    handler->resources.set("sw://host/regularPageWithConnection.html", ResourceInfo { @"text/html", regularPageWithConnectionBytes });
+    handler->resources.set("sw://host/main.html", ResourceInfo { @"text/html", mainBytes });
+    handler->resources.set("sw://host/sw.js", ResourceInfo { @"application/javascript", scriptBytes });
+    [configuration setURLSchemeHandler:handler.get() forURLScheme:@"SW"];
+
+    RetainPtr<WKWebView> regularPageWebView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    RetainPtr<WKWebView> newRegularPageWebView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+
+    // Test that a regular page does not trigger a service worker connection to storage process if there is no registered service worker.
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"sw://host/regularPageWithoutConnection.html"]];
+
+    [regularPageWebView loadRequest:request];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    // Test that a sw scheme page can register a service worker.
+    request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"sw://host/main.html"]];
+
+    [webView loadRequest:request];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+    webView = nullptr;
+
+    // Now that a service worker is registered, the regular page should have a service worker connection.
+    request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"sw://host/regularPageWithConnection.html"]];
+
+    [regularPageWebView loadRequest:request];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+    regularPageWebView = nullptr;
+
+    [newRegularPageWebView loadRequest:request];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+    newRegularPageWebView = nullptr;
+
+    [[configuration websiteDataStore] fetchDataRecordsOfTypes:[NSSet setWithObject:WKWebsiteDataTypeServiceWorkerRegistrations] completionHandler:^(NSArray<WKWebsiteDataRecord *> *websiteDataRecords) {
+        EXPECT_EQ(1u, [websiteDataRecords count]);
+        EXPECT_TRUE([websiteDataRecords[0].displayName isEqualToString:@"sw host"]);
+
+        done = true;
+    }];
+
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    [[configuration websiteDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+}
+
+#endif // WK_HAVE_C_SPI
+
 #endif // WK_API_ENABLED

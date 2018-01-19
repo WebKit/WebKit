@@ -1,3 +1,31 @@
+2018-01-19  Youenn Fablet  <youenn@apple.com>
+
+        Do not go to the storage process when registering a service worker client if there is no service worker registered
+        https://bugs.webkit.org/show_bug.cgi?id=181740
+        <rdar://problem/36650400>
+
+        Reviewed by Chris Dumez.
+
+        Register a document as service worker client only if there is an existing service worker connection.
+        This allows not creating any connection if no service worker is registered.
+
+        Add internals API to test whether a service worker connection was created or not.
+        This is used by API tests that cover the changes.
+
+        * dom/Document.cpp:
+        (WebCore::Document::privateBrowsingStateDidChange): No need to create a service worker connection if client is not registered yet.
+        (WebCore::Document::setServiceWorkerConnection): No need to unregister/register if service worker connection is the same.
+        Similarly, if Document is to be destroyed or suspended, we should not register it.
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::commitData):
+        * testing/Internals.cpp:
+        (WebCore::Internals::hasServiceWorkerConnection):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+        * workers/service/ServiceWorkerProvider.cpp:
+        (WebCore::ServiceWorkerProvider::registerServiceWorkerClients):
+        * workers/service/ServiceWorkerProvider.h:
+
 2018-01-19  Dean Jackson  <dino@apple.com>
 
         REGRESSION (r221092): Swipe actions are hard to perform in FastMail app

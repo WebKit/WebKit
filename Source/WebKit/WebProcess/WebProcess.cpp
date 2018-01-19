@@ -1651,6 +1651,12 @@ void WebProcess::establishWorkerContextConnectionToStorageProcess(uint64_t pageI
     auto& ipcConnection = ensureWebToStorageProcessConnection(initialSessionID).connection();
     SWContextManager::singleton().setConnection(std::make_unique<WebSWContextManagerConnection>(ipcConnection, pageID, store));
 }
+
+void WebProcess::registerServiceWorkerClients(PAL::SessionID sessionID)
+{
+    ServiceWorkerProvider::singleton().registerServiceWorkerClients(sessionID);
+}
+
 #endif
 
 } // namespace WebKit

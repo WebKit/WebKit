@@ -1,3 +1,24 @@
+2018-01-19  Youenn Fablet  <youenn@apple.com>
+
+        Do not go to the storage process when registering a service worker client if there is no service worker registered
+        https://bugs.webkit.org/show_bug.cgi?id=181740
+        <rdar://problem/36650400>
+
+        Reviewed by Chris Dumez.
+
+        UIProcess notifies all web processes to register their service worker clients when spinning the service worker process.
+        Add private API to set the number of web processes for testing purposes.
+
+        * UIProcess/API/Cocoa/WKProcessPool.mm:
+        (-[WKProcessPool _setMaximumNumberOfProcesses:]):
+        * UIProcess/API/Cocoa/WKProcessPoolPrivate.h:
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::establishWorkerContextConnectionToStorageProcess):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::registerServiceWorkerClients):
+        * WebProcess/WebProcess.h:
+        * WebProcess/WebProcess.messages.in:
+
 2018-01-19  Dean Jackson  <dino@apple.com>
 
         REGRESSION (r221092): Swipe actions are hard to perform in FastMail app

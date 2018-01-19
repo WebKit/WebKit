@@ -4919,16 +4919,16 @@ void Document::resume(ActiveDOMObject::ReasonForSuspension reason)
 
     resumeScheduledTasks(reason);
 
-#if ENABLE(SERVICE_WORKER)
-    if (RuntimeEnabledFeatures::sharedFeatures().serviceWorkerEnabled() && reason == ActiveDOMObject::ReasonForSuspension::PageCache) {
-        ASSERT_WITH_MESSAGE(!activeServiceWorker(), "Documents with an active service worker should not go into PageCache in the first place");
-        setServiceWorkerConnection(&ServiceWorkerProvider::singleton().serviceWorkerConnectionForSession(sessionID()));
-    }
-#endif
-
     m_visualUpdatesAllowed = true;
 
     m_isSuspended = false;
+
+#if ENABLE(SERVICE_WORKER)
+    if (RuntimeEnabledFeatures::sharedFeatures().serviceWorkerEnabled() && reason == ActiveDOMObject::ReasonForSuspension::PageCache) {
+        ASSERT_WITH_MESSAGE(!activeServiceWorker(), "Documents with an active service worker should not go into PageCache in the first place");
+        setServiceWorkerConnection(ServiceWorkerProvider::singleton().existingServiceWorkerConnectionForSession(sessionID()));
+    }
+#endif
 }
 
 void Document::registerForDocumentSuspensionCallbacks(Element* e)
@@ -4996,7 +4996,7 @@ void Document::privateBrowsingStateDidChange()
         element->privateBrowsingStateDidChange();
 
 #if ENABLE(SERVICE_WORKER)
-    if (RuntimeEnabledFeatures::sharedFeatures().serviceWorkerEnabled())
+    if (RuntimeEnabledFeatures::sharedFeatures().serviceWorkerEnabled() && m_serviceWorkerConnection)
         setServiceWorkerConnection(&ServiceWorkerProvider::singleton().serviceWorkerConnectionForSession(sessionID()));
 #endif
 }
@@ -7720,6 +7720,9 @@ void Document::didLogMessage(const WTFLogChannel& channel, WTFLogLevel level, Ve
 #if ENABLE(SERVICE_WORKER)
 void Document::setServiceWorkerConnection(SWClientConnection* serviceWorkerConnection)
 {
+    if (m_serviceWorkerConnection == serviceWorkerConnection || m_hasPreparedForDestruction || m_isSuspended)
+        return;
+
     if (m_serviceWorkerConnection)
         m_serviceWorkerConnection->unregisterServiceWorkerClient(identifier());
 
