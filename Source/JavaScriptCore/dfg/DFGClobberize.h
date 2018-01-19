@@ -1321,21 +1321,13 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
     }
 
     case Spread: {
-        if (node->child1()->op() == PhantomCreateRest)
+        if (node->child1()->op() == PhantomNewArrayBuffer) {
+            read(MiscFields);
+            return;
+        }
+
+        if (node->child1()->op() == PhantomCreateRest) {
             read(Stack);
-
-        if (node->child1().useKind() == ArrayUse) {
-            // FIXME: We can probably CSE these together, but we need to construct the right rules
-            // to prove that nobody writes to child1() in between two Spreads: https://bugs.webkit.org/show_bug.cgi?id=164531
-            read(HeapObjectCount); 
-            read(JSCell_indexingType);
-            read(JSObject_butterfly);
-            read(Butterfly_publicLength);
-            read(IndexedDoubleProperties);
-            read(IndexedInt32Properties);
-            read(IndexedContiguousProperties);
-            read(IndexedArrayStorageProperties);
-
             write(HeapObjectCount);
             return;
         }

@@ -2149,6 +2149,9 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         break;
 
     case Spread:
+        if (!m_graph.canDoFastSpread(node, forNode(node->child1())))
+            clobberWorld(node->origin.semantic, clobberLimit);
+
         forNode(node).set(
             m_graph, m_vm.fixedArrayStructure.get());
         break;
