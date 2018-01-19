@@ -73,8 +73,10 @@ void HTMLHtmlElement::insertedByParser()
     auto& manifest = attributeWithoutSynchronization(manifestAttr);
     if (manifest.isEmpty())
         documentLoader->applicationCacheHost().selectCacheWithoutManifest();
-    else
+    else {
+        document().addConsoleMessage(MessageSource::AppCache, MessageLevel::Warning, ASCIILiteral("ApplicationCache is deprecated. Please use ServiceWorkers instead."));
         documentLoader->applicationCacheHost().selectCacheWithManifest(document().completeURL(manifest));
+    }
 }
 
 }

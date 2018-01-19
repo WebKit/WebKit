@@ -1,3 +1,6 @@
+CONSOLE MESSAGE: line 1: ApplicationCache is deprecated. Please use ServiceWorkers instead.
+CONSOLE MESSAGE: line 1: ApplicationCache is deprecated. Please use ServiceWorkers instead.
+CONSOLE MESSAGE: line 1: ApplicationCache is deprecated. Please use ServiceWorkers instead.
 Test that a subframe with manifest that matches top frame manifest works correctly.
 
 In this case, the subframe resource is NOT listed in manifest explicitly.

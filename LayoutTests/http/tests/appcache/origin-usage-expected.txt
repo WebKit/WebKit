@@ -1,3 +1,5 @@
+CONSOLE MESSAGE: line 1: ApplicationCache is deprecated. Please use ServiceWorkers instead.
+CONSOLE MESSAGE: line 1: ApplicationCache is deprecated. Please use ServiceWorkers instead.
 This test checks that per-origin usage is reported correctly by loading two iframes which use ~15K each and querying origin usage.
 
 Cleared application cache

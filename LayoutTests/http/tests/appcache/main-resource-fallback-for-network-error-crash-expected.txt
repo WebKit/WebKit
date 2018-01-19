@@ -1,1 +1,2 @@
+CONSOLE MESSAGE: line 3: ApplicationCache is deprecated. Please use ServiceWorkers instead.
 SUCCESS

@@ -1,5 +1,10 @@
+CONSOLE MESSAGE: line 1: ApplicationCache is deprecated. Please use ServiceWorkers instead.
+CONSOLE MESSAGE: line 1: ApplicationCache is deprecated. Please use ServiceWorkers instead.
+CONSOLE MESSAGE: line 1: ApplicationCache is deprecated. Please use ServiceWorkers instead.
 CONSOLE MESSAGE: Application Cache manifest could not be fetched, because the manifest had a 404 response.
+CONSOLE MESSAGE: line 1: ApplicationCache is deprecated. Please use ServiceWorkers instead.
 CONSOLE MESSAGE: Application Cache manifest could not be fetched, because the manifest had a 404 response.
+CONSOLE MESSAGE: line 1: ApplicationCache is deprecated. Please use ServiceWorkers instead.
 Test that a 404 response for manifest results in cache removal.
 
 Frame 1: Manifest is still available, so a new master resource is added to the cache.

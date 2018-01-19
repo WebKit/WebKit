@@ -1,3 +1,92 @@
+2018-01-19  Joseph Pecoraro  <pecoraro@apple.com>
+
+        AppCache: Log a Deprecation warning to the Console when AppCache is used
+        https://bugs.webkit.org/show_bug.cgi?id=181778
+
+        Reviewed by Alex Christensen.
+
+        * http/tests/appcache/404-manifest-expected.txt:
+        * http/tests/appcache/404-resource-expected.txt:
+        * http/tests/appcache/404-resource-with-slow-main-resource-expected.txt:
+        * http/tests/appcache/abort-cache-onchecking-expected.txt:
+        * http/tests/appcache/abort-cache-onchecking-manifest-404-expected.txt:
+        * http/tests/appcache/abort-cache-onchecking-resource-404-expected.txt:
+        * http/tests/appcache/abort-cache-ondownloading-expected.txt:
+        * http/tests/appcache/abort-cache-ondownloading-manifest-404-expected.txt:
+        * http/tests/appcache/abort-cache-ondownloading-resource-404-expected.txt:
+        * http/tests/appcache/abort-cache-onprogress-expected.txt:
+        * http/tests/appcache/access-via-redirect-expected.txt:
+        * http/tests/appcache/crash-when-navigating-away-then-back-expected.txt:
+        * http/tests/appcache/credential-url-expected.txt:
+        * http/tests/appcache/cyrillic-uri-expected.txt:
+        * http/tests/appcache/decide-navigation-policy-after-delay-expected.txt:
+        * http/tests/appcache/deferred-events-delete-while-raising-expected.txt:
+        * http/tests/appcache/deferred-events-delete-while-raising-timer-expected.txt:
+        * http/tests/appcache/deferred-events-expected.txt:
+        * http/tests/appcache/different-https-origin-resource-main-expected.txt:
+        * http/tests/appcache/different-origin-manifest-expected.txt:
+        * http/tests/appcache/different-scheme-expected.txt:
+        * http/tests/appcache/document-write-html-element-2-expected.txt:
+        * http/tests/appcache/empty-manifest-expected.txt:
+        * http/tests/appcache/fail-on-update-2-expected.txt:
+        * http/tests/appcache/fail-on-update-expected.txt:
+        * http/tests/appcache/fallback-expected.txt:
+        * http/tests/appcache/fallback-namespace-outside-manifest-path-expected.txt:
+        * http/tests/appcache/foreign-fallback-expected.txt:
+        * http/tests/appcache/foreign-iframe-main-expected.txt:
+        * http/tests/appcache/history-test-expected.txt:
+        * http/tests/appcache/idempotent-update-expected.txt:
+        * http/tests/appcache/identifier-test-expected.txt:
+        * http/tests/appcache/interrupted-update-expected.txt:
+        * http/tests/appcache/local-content-expected.txt:
+        * http/tests/appcache/main-resource-fallback-for-network-error-crash-expected.txt:
+        * http/tests/appcache/main-resource-hash-expected.txt:
+        * http/tests/appcache/main-resource-redirect-expected.txt:
+        * http/tests/appcache/manifest-containing-itself-expected.txt:
+        * http/tests/appcache/manifest-parsing-expected.txt:
+        * http/tests/appcache/manifest-redirect-2-expected.txt:
+        * http/tests/appcache/manifest-redirect-expected.txt:
+        * http/tests/appcache/manifest-with-empty-file-expected.txt:
+        * http/tests/appcache/max-size-expected.txt:
+        * http/tests/appcache/multi-fallback-expected.txt:
+        * http/tests/appcache/navigating-away-while-cache-attempt-in-progress-expected.txt:
+        * http/tests/appcache/non-html-expected.txt:
+        * http/tests/appcache/offline-access-expected.txt:
+        * http/tests/appcache/online-fallback-layering-expected.txt:
+        * http/tests/appcache/online-whitelist-expected.txt:
+        * http/tests/appcache/origin-delete-expected.txt:
+        * http/tests/appcache/origin-quota-continued-download-expected.txt:
+        * http/tests/appcache/origin-quota-continued-download-multiple-manifests-expected.txt:
+        * http/tests/appcache/origin-quota-expected.txt:
+        * http/tests/appcache/origin-usage-expected.txt:
+        * http/tests/appcache/origins-with-appcache-expected.txt:
+        * http/tests/appcache/progress-counter-expected.txt:
+        * http/tests/appcache/reload-expected.txt:
+        * http/tests/appcache/remove-cache-expected.txt:
+        * http/tests/appcache/resource-redirect-2-expected.txt:
+        * http/tests/appcache/resource-redirect-expected.txt:
+        * http/tests/appcache/simple-expected.txt:
+        * http/tests/appcache/simple-video-async-expected.txt:
+        * http/tests/appcache/simple-video-sync-expected.txt:
+        * http/tests/appcache/top-frame-1-expected.txt:
+        * http/tests/appcache/top-frame-2-expected.txt:
+        * http/tests/appcache/top-frame-3-expected.txt:
+        * http/tests/appcache/top-frame-4-expected.txt:
+        * http/tests/appcache/update-cache-expected.txt:
+        * http/tests/appcache/video-expected.txt:
+        * http/tests/appcache/whitelist-wildcard-expected.txt:
+        * http/tests/appcache/wrong-content-type-expected.txt:
+        * http/tests/appcache/wrong-signature-2-expected.txt:
+        * http/tests/appcache/wrong-signature-expected.txt:
+        * http/tests/appcache/x-frame-options-prevents-framing-expected.txt:
+        * http/tests/appcache/xhr-foreign-resource-expected.txt:
+        * http/tests/contentfiltering/load-substitute-data-from-appcache-expected.txt:
+        * http/tests/security/appcache-switching-private-browsing-expected.txt:
+        * http/tests/security/cross-origin-appcache-allowed-expected.txt:
+        * http/tests/security/cross-origin-appcache-expected.txt:
+        * http/tests/security/same-origin-appcache-blocked-expected.txt:
+        * http/tests/ssl/upgrade-origin-usage-expected.txt:
+
 2018-01-19  John Wilander  <wilander@apple.com>
 
         Resource Load Statistics: Implement callback support for removal of WebsiteDataType::ResourceLoadStatistics

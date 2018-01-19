@@ -1,3 +1,4 @@
+CONSOLE MESSAGE: line 2: ApplicationCache is deprecated. Please use ServiceWorkers instead.
 
 Test that <video> can be loaded from the application cache.
 

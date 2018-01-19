@@ -1,2 +1,3 @@
+CONSOLE MESSAGE: line 1: ApplicationCache is deprecated. Please use ServiceWorkers instead.
 SUCCESS, no assertion failure
 applicationCache.status == 1

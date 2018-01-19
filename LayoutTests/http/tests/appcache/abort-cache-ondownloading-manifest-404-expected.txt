@@ -1,3 +1,4 @@
+CONSOLE MESSAGE: line 1: ApplicationCache is deprecated. Please use ServiceWorkers instead.
 CONSOLE MESSAGE: Application Cache manifest could not be fetched, because the manifest had a 404 response.
 This tests that download process was not aborted after downloading event since manifest was not found.
 SUCCESS

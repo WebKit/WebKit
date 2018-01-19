@@ -1,2 +1,3 @@
+CONSOLE MESSAGE: line 1: ApplicationCache is deprecated. Please use ServiceWorkers instead.
 This tests that the lengthComputable / loaded / total properties of the progress event are set correctly.
 SUCCESS
