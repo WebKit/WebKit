@@ -1,3 +1,17 @@
+2018-01-19  Chris Dumez  <cdumez@apple.com>
+
+        Service worker registrations restored from disk may not be reused when the JS calls register() again
+        https://bugs.webkit.org/show_bug.cgi?id=181810
+        <rdar://problem/36591711>
+
+        Reviewed by Youenn Fablet.
+
+        Add API test coverage.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ServiceWorkerBasic.mm:
+        (-[SWMessageHandlerForRestoreFromDiskTest initWithExpectedMessage:]):
+        (-[SWMessageHandlerForRestoreFromDiskTest userContentController:didReceiveScriptMessage:]):
+
 2018-01-19  Ryan Haddad  <ryanhaddad@apple.com>
 
         Remove El Capitan queues from flakiness dashboard

@@ -1,3 +1,32 @@
+2018-01-19  Chris Dumez  <cdumez@apple.com>
+
+        Service worker registrations restored from disk may not be reused when the JS calls register() again
+        https://bugs.webkit.org/show_bug.cgi?id=181810
+        <rdar://problem/36591711>
+
+        Reviewed by Youenn Fablet.
+
+        The issue was that when restoring a registration from disk, we would not set its active worker right
+        away. We only set it later in installContextData(). installContextData() is only called after we’ve
+        launched the service worker process and established a connection to it.
+
+        However, we would start processing jobs (such as registrations) before we’ve established the connection
+        to the service worker process. SWServerJobQueue::runRegisterJob(), in order to reuse an existing
+        registration checks the registration’s active worker has the right script URL. The issue was that when
+        this code would execute, we may not have set the registration’s active service worker yet, in which case,
+        we would update the existing registration instead of reusing it as-is.
+
+        To address the issue, we now delay the processing of jobs until the connection to the service worker
+        process has been established and we've installed all pending contexts via installContextData().
+
+        Changed is covered by new API test.
+
+        * workers/service/server/SWServer.cpp:
+        (WebCore::SWServer::Connection::scheduleJobInServer):
+        (WebCore::SWServer::scheduleJob):
+        (WebCore::SWServer::serverToContextConnectionCreated):
+        * workers/service/server/SWServer.h:
+
 2018-01-19  James Craig  <jcraig@apple.com>
 
         AX: when invert colors is on, double-invert image and picture elements in UserAgentStyleSheet

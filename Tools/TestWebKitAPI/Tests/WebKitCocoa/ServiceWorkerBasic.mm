@@ -75,6 +75,31 @@ static Deque<String> expectedMessages;
 }
 @end
 
+@interface SWMessageHandlerForRestoreFromDiskTest : NSObject <WKScriptMessageHandler> {
+    NSString *_expectedMessage;
+}
+- (instancetype)initWithExpectedMessage:(NSString *)expectedMessage;
+@end
+
+@implementation SWMessageHandlerForRestoreFromDiskTest
+
+- (instancetype)initWithExpectedMessage:(NSString *)expectedMessage
+{
+    if (!(self = [super init]))
+        return nil;
+
+    _expectedMessage = expectedMessage;
+
+    return self;
+}
+
+- (void)userContentController:(WKUserContentController *)userContentController didReceiveScriptMessage:(WKScriptMessage *)message
+{
+    EXPECT_TRUE([[message body] isEqualToString:_expectedMessage]);
+    done = true;
+}
+@end
+
 @interface SWSchemes : NSObject <WKURLSchemeHandler> {
 @public
     HashMap<String, ResourceInfo> resources;
@@ -200,6 +225,62 @@ NOT intercepted by worker
 </body>
 )SWRESOURCE";
 
+static const char* mainRegisteringWorkerBytes = R"SWRESOURCE(
+<script>
+try {
+function log(msg)
+{
+    window.webkit.messageHandlers.sw.postMessage(msg);
+}
+
+navigator.serviceWorker.register('/sw.js').then(function(reg) {
+    if (reg.active) {
+        log("FAIL: Registration already has an active worker");
+        return;
+    }
+    worker = reg.installing;
+    worker.addEventListener('statechange', function() {
+        if (worker.state == 'activated')
+            log("PASS: Registration was successful and service worker was activated");
+    });
+}).catch(function(error) {
+    log("Registration failed with: " + error);
+});
+} catch(e) {
+    log("Exception: " + e);
+}
+</script>
+)SWRESOURCE";
+
+static const char* mainRegisteringAlreadyExistingWorkerBytes = R"SWRESOURCE(
+<script>
+try {
+function log(msg)
+{
+    window.webkit.messageHandlers.sw.postMessage(msg);
+}
+
+navigator.serviceWorker.register('/sw.js').then(function(reg) {
+    if (reg.installing) {
+        log("FAIL: Registration had an installing worker");
+        return;
+    }
+    if (reg.active) {
+        if (reg.active.state == "activated")
+            log("PASS: Registration already has an active worker");
+        else
+            log("FAIL: Registration has an active worker but its state is not activated");
+    } else
+        log("FAIL: Registration does not have an active worker");
+}).catch(function(error) {
+    log("Registration failed with: " + error);
+});
+} catch(e) {
+    log("Exception: " + e);
+}
+</script>
+)SWRESOURCE";
+
 TEST(ServiceWorkers, Basic)
 {
     ASSERT(mainBytes);
@@ -241,6 +322,65 @@ TEST(ServiceWorkers, Basic)
 
         done = true;
     }];
+
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+}
+
+TEST(ServiceWorkers, RestoreFromDisk)
+{
+    ASSERT(mainRegisteringWorkerBytes);
+    ASSERT(scriptBytes);
+    ASSERT(mainRegisteringAlreadyExistingWorkerBytes);
+
+    [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
+
+    // Start with a clean slate data store
+    [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+
+    RetainPtr<SWMessageHandlerForRestoreFromDiskTest> messageHandler = adoptNS([[SWMessageHandlerForRestoreFromDiskTest alloc] initWithExpectedMessage:@"PASS: Registration was successful and service worker was activated"]);
+    [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"sw"];
+
+    RetainPtr<SWSchemes> handler = adoptNS([[SWSchemes alloc] init]);
+    handler->resources.set("sw://host/main.html", ResourceInfo { @"text/html", mainRegisteringWorkerBytes });
+    handler->resources.set("sw://host/sw.js", ResourceInfo { @"application/javascript", scriptBytes });
+    [configuration setURLSchemeHandler:handler.get() forURLScheme:@"SW"];
+
+    RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    [webView.get().configuration.processPool _registerURLSchemeServiceWorkersCanHandle:@"sw"];
+
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"sw://host/main.html"]];
+    [webView loadRequest:request];
+
+    TestWebKitAPI::Util::run(&done);
+
+    webView = nullptr;
+    configuration = nullptr;
+    messageHandler = nullptr;
+    handler = nullptr;
+
+    done = false;
+
+    configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    messageHandler = adoptNS([[SWMessageHandlerForRestoreFromDiskTest alloc] initWithExpectedMessage:@"PASS: Registration already has an active worker"]);
+    [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"sw"];
+
+    handler = adoptNS([[SWSchemes alloc] init]);
+    handler->resources.set("sw://host/main.html", ResourceInfo { @"text/html", mainRegisteringAlreadyExistingWorkerBytes });
+    handler->resources.set("sw://host/sw.js", ResourceInfo { @"application/javascript", scriptBytes });
+    [configuration setURLSchemeHandler:handler.get() forURLScheme:@"SW"];
+
+    webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    [webView.get().configuration.processPool _registerURLSchemeServiceWorkersCanHandle:@"sw"];
+
+    request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"sw://host/main.html"]];
+    [webView loadRequest:request];
 
     TestWebKitAPI::Util::run(&done);
     done = false;
