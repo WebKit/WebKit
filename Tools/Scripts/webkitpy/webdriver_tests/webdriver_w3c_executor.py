@@ -150,5 +150,6 @@ class WebDriverW3CExecutor(WdspecExecutor):
                'WD_PORT': str(self.protocol.session_config['port']),
                'WD_CAPABILITIES': json.dumps(self.protocol.session_config['capabilities']),
                'WD_SERVER_CONFIG': json.dumps(self.server_config)}
+        env.update(WebKitDriverServer.test_env)
         args = ['--strict', '-p', 'no:mozlog']
         return pytest_runner.run(test, args, timeout, env, expectations)
