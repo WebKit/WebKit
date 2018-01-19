@@ -1,3 +1,12 @@
+2018-01-19  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Remove El Capitan queues from flakiness dashboard
+        https://bugs.webkit.org/show_bug.cgi?id=181860
+
+        Reviewed by Aakash Jain.
+
+        * TestResultServer/static-dashboards/builders.jsonp:
+
 2018-01-19  Keith Miller  <keith_miller@apple.com>
 
         HaveInternalSDK includes should be "#include?"
