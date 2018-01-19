@@ -1,3 +1,12 @@
+2018-01-19  Jonathan Bedard  <jbedard@apple.com>
+
+        Unreviewed build fix, remove unused lambda captures.
+
+        * dom/messageports/MessagePortChannel.cpp:
+        (WebCore::MessagePortChannel::takeAllMessagesForPort):
+        * dom/messageports/MessagePortChannelRegistry.cpp:
+        (WebCore::MessagePortChannelRegistry::messagePortChannelCreated):
+
 2018-01-19  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Expose timing properties (delay, endDelay, fill, iterationStart, iterations, direction) and getComputedTiming()

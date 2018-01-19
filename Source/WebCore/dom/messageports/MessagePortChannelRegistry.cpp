@@ -48,12 +48,12 @@ void MessagePortChannelRegistry::messagePortChannelCreated(MessagePortChannel& c
     Locker<Lock> locker(m_openChannelsLock);
     ASSERT(isMainThread());
 
-    auto result = m_openChannels.ensure(channel.port1(), [this, channel = &channel] {
+    auto result = m_openChannels.ensure(channel.port1(), [channel = &channel] {
         return channel;
     });
     ASSERT(result.isNewEntry);
 
-    result = m_openChannels.ensure(channel.port2(), [this, channel = &channel] {
+    result = m_openChannels.ensure(channel.port2(), [channel = &channel] {
         return channel;
     });
     ASSERT(result.isNewEntry);
