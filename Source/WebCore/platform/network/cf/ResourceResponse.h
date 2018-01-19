@@ -50,9 +50,6 @@ public:
     {
         m_isNull = !cfResponse;
     }
-#if PLATFORM(COCOA)
-    WEBCORE_EXPORT ResourceResponse(NSURLResponse *);
-#endif
 #else
     ResourceResponse(NSURLResponse *nsResponse)
         : m_initLevel(Uninitialized)

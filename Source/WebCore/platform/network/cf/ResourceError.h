@@ -62,11 +62,9 @@ public:
     WEBCORE_EXPORT operator CFErrorRef() const;
 
 #if USE(CFURLCONNECTION)
-#if PLATFORM(WIN)
     ResourceError(const String& domain, int errorCode, const URL& failingURL, const String& localizedDescription, CFDataRef certificate);
     PCCERT_CONTEXT certificate() const;
     void setCertificate(CFDataRef);
-#endif
     ResourceError(CFStreamError error);
     CFStreamError cfStreamError() const;
     operator CFStreamError() const;
@@ -90,9 +88,6 @@ private:
     bool m_dataIsUpToDate;
 #if USE(CFURLCONNECTION)
     mutable RetainPtr<CFErrorRef> m_platformError;
-#if PLATFORM(COCOA)
-    mutable RetainPtr<NSError> m_platformNSError;
-#endif
 #if PLATFORM(WIN)
     RetainPtr<CFDataRef> m_certificate;
 #endif

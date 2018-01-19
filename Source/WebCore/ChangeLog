@@ -1,5 +1,26 @@
 2018-01-19  Alex Christensen  <achristensen@webkit.org>
 
+        Remove dead networking code
+        https://bugs.webkit.org/show_bug.cgi?id=181813
+
+        Reviewed by Tim Horton.
+
+        CFURLConnection is only used on Windows.
+
+        * platform/network/cf/ResourceError.h:
+        * platform/network/cf/ResourceRequest.h:
+        (WebCore::ResourceRequest::encodingRequiresPlatformData const):
+        * platform/network/cf/ResourceRequestCFNet.cpp:
+        (WebCore::findCFURLRequestCopyContentDispositionEncodingFallbackArrayFunction):
+        (WebCore::ResourceRequest::doUpdatePlatformRequest):
+        (WebCore::ResourceRequest::doUpdatePlatformHTTPBody):
+        (WebCore::ResourceRequest::doUpdateResourceRequest):
+        (WebCore::ResourceRequest::setStorageSession):
+        * platform/network/cf/ResourceResponse.h:
+        (WebCore::ResourceResponse::ResourceResponse):
+
+2018-01-19  Alex Christensen  <achristensen@webkit.org>
+
         Remove unused WebViewPrivate _allowCookies
         https://bugs.webkit.org/show_bug.cgi?id=181812
 
