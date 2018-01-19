@@ -1162,7 +1162,7 @@ bool PDFPlugin::initialize(const Parameters& parameters)
     return true;
 }
 
-void PDFPlugin::willDetatchRenderer()
+void PDFPlugin::willDetachRenderer()
 {
     if (webFrame()) {
         if (FrameView* frameView = webFrame()->coreFrame()->view())

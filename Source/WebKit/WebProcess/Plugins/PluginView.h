@@ -167,7 +167,7 @@ private:
     void beginSnapshottingRunningPlugin() override;
     bool shouldAllowNavigationFromDrags() const override;
     bool shouldNotAddLayer() const override;
-    void willDetatchRenderer() override;
+    void willDetachRenderer() override;
 
     // WebCore::Widget
     void setFrameRect(const WebCore::IntRect&) override;

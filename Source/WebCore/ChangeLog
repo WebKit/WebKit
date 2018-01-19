@@ -1,3 +1,13 @@
+2018-01-19  Daniel Bates  <dabates@apple.com>
+
+        Fix misspelling; substitute willDetachRenderer for willDetatchRenderer.
+
+        * html/HTMLPlugInImageElement.cpp:
+        (WebCore::HTMLPlugInImageElement::willDetachRenderers):
+        * plugins/PluginViewBase.h:
+        (WebCore::PluginViewBase::willDetachRenderer):
+        (WebCore::PluginViewBase::willDetatchRenderer): Deleted.
+
 2018-01-19  Jonathan Bedard  <jbedard@apple.com>
 
         Unreviewed build fix, remove unused lambda captures.

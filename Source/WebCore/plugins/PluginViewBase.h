@@ -85,7 +85,7 @@ public:
 
     virtual RefPtr<JSC::Bindings::Instance> bindingInstance() { return nullptr; }
     
-    virtual void willDetatchRenderer() { }
+    virtual void willDetachRenderer() { }
 
 #if PLATFORM(COCOA)
     virtual id accessibilityAssociatedPluginParentForElement(Element*) const { return nullptr; }

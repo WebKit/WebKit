@@ -300,7 +300,7 @@ public:
 
     virtual bool requiresUnifiedScaleFactor() const { return false; }
 
-    virtual void willDetatchRenderer() { }
+    virtual void willDetachRenderer() { }
 
     virtual bool pluginHandlesContentOffsetForAccessibilityHitTest() const { return false; }
 
