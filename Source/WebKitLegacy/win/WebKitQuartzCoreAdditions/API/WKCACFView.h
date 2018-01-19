@@ -25,8 +25,8 @@
 
 #pragma once
 
+#include "WebKitQuartzCoreAdditionsBase.h"
 #include <QuartzCore/CoreAnimationCF.h>
-#include <WebKitQuartzCoreAdditions/WebKitQuartzCoreAdditionsBase.h>
 
 #ifndef WIN32_LEAN_AND_MEAN
 #define WKQCA_DEFINED_WIN32_LEAN_AND_MEAN
