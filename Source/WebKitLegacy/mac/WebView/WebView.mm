@@ -1489,6 +1489,10 @@ static void WebKitInitializeGamepadProviderIfNecessary()
 #endif
 
 #if PLATFORM(IOS)
+    _private->page->settings().setPassiveTouchListenersAsDefaultOnDocument(linkedOnOrAfter(SDKVersion::FirstThatDefaultsToPassiveTouchListenersOnDocument));
+#endif
+
+#if PLATFORM(IOS)
     // Preserve the behavior we had before <rdar://problem/7580867>
     // by enforcing a 5MB limit for session storage.
     _private->page->settings().setSessionStorageQuota(5 * 1024 * 1024);

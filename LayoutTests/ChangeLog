@@ -1,3 +1,13 @@
+2018-01-19  Dean Jackson  <dino@apple.com>
+
+        REGRESSION (r221092): Swipe actions are hard to perform in FastMail app
+        https://bugs.webkit.org/show_bug.cgi?id=181817
+        <rdar://problem/35274055>
+
+        Reviewed by Simon Fraser.
+
+        * fast/events/touch/ios/passive-by-default-on-document-and-window-expected.txt:
+
 2018-01-19  Daniel Bates  <dabates@apple.com>
 
         Update frame-ancestor directive to match Content Security Policy Level 3

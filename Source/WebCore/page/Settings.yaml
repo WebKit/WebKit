@@ -698,6 +698,9 @@ needsAdobeFrameReloadingQuirk:
   initial: false
   getter: needsAcrobatFrameReloadingQuirk
 
+passiveTouchListenersAsDefaultOnDocument:
+  initial: true
+
 touchEventEmulationEnabled:
   initial: false
   getter: isTouchEventEmulationEnabled

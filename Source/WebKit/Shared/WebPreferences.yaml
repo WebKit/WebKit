@@ -968,6 +968,10 @@ LongRunningMediaCaptureStreamRepromptIntervalInHours:
   defaultValue: 24
   webcoreBinding: none
 
+PassiveTouchListenersAsDefaultOnDocument:
+  type: bool
+  defaultValue: defaultPassiveTouchListenersAsDefaultOnDocument()
+  webcoreName: passiveTouchListenersAsDefaultOnDocument
 
 # Debug Preferences
 

@@ -184,3 +184,5 @@
 #else
 #define DEFAULT_SERVICE_WORKERS_ENABLED false
 #endif
+
+bool defaultPassiveTouchListenersAsDefaultOnDocument();
