@@ -1,5 +1,14 @@
 2018-01-19  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Mark http/wpt/web-animations/timing-model/animation-effects/current-iteration.html as flaky.
+        https://bugs.webkit.org/show_bug.cgi?id=181888
+
+        Unreviewed test gardening.
+
+        * TestExpectations:
+
+2018-01-19  Ryan Haddad  <ryanhaddad@apple.com>
+
         Update TestExpectations for webrtc/video-mute.html.
         https://bugs.webkit.org/show_bug.cgi?id=177501
 
