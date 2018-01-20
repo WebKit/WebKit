@@ -180,10 +180,6 @@ table.queue-grid tr.platform.ios-11 img.logo {
     content: -webkit-image-set(url(../Images/IOS11@2x.png) 2x, url(../Images/IOS11.png) 1x);
 }
 
-table.queue-grid tr.platform.mac-os-x-elcapitan img.logo {
-    content: -webkit-image-set(url(../Images/ElCapitan@2x.png) 2x, url(../Images/ElCapitan.png) 1x);
-}
-
 table.queue-grid tr.platform.macos-sierra img.logo {
     content: -webkit-image-set(url(../Images/Sierra@2x.png) 2x, url(../Images/Sierra.png) 1x);
 }
