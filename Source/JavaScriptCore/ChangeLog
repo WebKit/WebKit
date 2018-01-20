@@ -1,3 +1,26 @@
+2018-01-20  Caio Lima  <ticaiolima@gmail.com>
+
+        [JSC] NumberPrototype::extractRadixFromArgs incorrectly cast double to int32_t
+        https://bugs.webkit.org/show_bug.cgi?id=181182
+
+        Reviewed by Darin Adler.
+
+        Casting double to integer is undefined behavior when the truncation
+        results into a value that doesn't fit into integer size,
+        according C++ spec[1]. Thus, we are changing bigIntProtoFuncToString and
+        numberProtoFuncToString to remove these source of undefined
+        behavior.
+
+        [1] - http://en.cppreference.com/w/cpp/language/implicit_conversion
+
+        * runtime/BigIntPrototype.cpp:
+        (JSC::bigIntProtoFuncToString):
+        * runtime/NumberPrototype.cpp:
+        (JSC::numberProtoFuncToString):
+        (JSC::extractToStringRadixArgument):
+        (JSC::extractRadixFromArgs): Deleted.
+        * runtime/NumberPrototype.h:
+
 2018-01-19  Saam Barati  <sbarati@apple.com>
 
         Kill ArithNegate's ArithProfile assert inside BytecodeParser

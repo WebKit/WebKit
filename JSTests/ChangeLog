@@ -1,3 +1,17 @@
+2018-01-20  Caio Lima  <ticaiolima@gmail.com>
+
+        [JSC] NumberPrototype::extractRadixFromArgs incorrectly cast double to int32_t
+        https://bugs.webkit.org/show_bug.cgi?id=181182
+
+        Reviewed by Darin Adler.
+
+        * stress/big-int-prototype-to-string-cast-overflow.js: Added.
+        * stress/big-int-prototype-to-string-exception.js: Added.
+        * stress/big-int-prototype-to-string-wrong-values.js: Added.
+        * stress/number-prototype-to-string-cast-overflow.js: Added.
+        * stress/number-prototype-to-string-exception.js: Added.
+        * stress/number-prototype-to-string-wrong-values.js: Added.
+
 2018-01-19  Ryan Haddad  <ryanhaddad@apple.com>
 
         Disable Atomics when SharedArrayBuffer isn’t enabled
