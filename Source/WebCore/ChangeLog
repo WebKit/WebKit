@@ -1,3 +1,35 @@
+2018-01-19  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [macOS] [WK2] Drag location is computed incorrectly when dragging content from subframes
+        https://bugs.webkit.org/show_bug.cgi?id=181896
+        <rdar://problem/35479043>
+
+        Reviewed by Tim Horton.
+
+        In r218837, I packaged most of the information needed to start a drag into DragItem, which is propagated to the client layer
+        via the startDrag codepath. However, this introduced a bug in computing the event position and drag location in window
+        coordinates. Consider the case where we're determining the drag image offset for a dragged element in a subframe:
+
+        Before the patch, the drag location (which starts out in the subframe's content coordinates) would be converted to root view
+        coordinates, which would then be converted to mainframe content coordinates, which would then be converted to window coordinates
+        using the mainframe's view. After the patch, we carry out the same math until the last step, where we erroneously use the
+        _subframe's_ view to convert to window coordinates from content coordinates. This results in the position of the iframe relative
+        to the mainframe being accounted for twice.
+
+        To fix this, we simply use the main frame's view to convert from mainframe content coordinates to window coordinates while
+        computing the drag location. As for the event position in window coordinates, this is currently unused by any codepath in WebKit,
+        so we can just remove it altogether.
+
+        Since this bug only affects drag and drop in the macOS WebKit2 port, there's currently no way to test this. I'll be using
+        <https://bugs.webkit.org/show_bug.cgi?id=181898> to track adding test support for drag and drop on macOS WebKit2. Manually tested
+        dragging in both WebKit1 and WebKit2 on macOS. dragLocationInWindowCoordinates isn't used at all for iOS drag and drop.
+
+        * page/DragController.cpp:
+        (WebCore::DragController::doSystemDrag):
+        * platform/DragItem.h:
+        (WebCore::DragItem::encode const):
+        (WebCore::DragItem::decode):
+
 2018-01-19  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r227235.

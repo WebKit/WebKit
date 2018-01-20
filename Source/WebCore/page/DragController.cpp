@@ -1227,8 +1227,7 @@ void DragController::doSystemDrag(DragImage image, const IntPoint& dragLoc, cons
     auto dragLocationInRootViewCoordinates = frame.view()->contentsToRootView(dragLoc);
     item.eventPositionInContentCoordinates = viewProtector->rootViewToContents(eventPositionInRootViewCoordinates);
     item.dragLocationInContentCoordinates = viewProtector->rootViewToContents(dragLocationInRootViewCoordinates);
-    item.eventPositionInWindowCoordinates = frame.view()->contentsToWindow(item.eventPositionInContentCoordinates);
-    item.dragLocationInWindowCoordinates = frame.view()->contentsToWindow(item.dragLocationInContentCoordinates);
+    item.dragLocationInWindowCoordinates = viewProtector->contentsToWindow(item.dragLocationInContentCoordinates);
     if (auto element = state.source) {
         auto dataTransferImageElement = state.dataTransfer->dragImageElement();
         if (state.type == DragSourceActionDHTML) {
