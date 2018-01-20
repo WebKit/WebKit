@@ -1,3 +1,10 @@
+2018-01-19  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed build fix, removed unused lambda capture.
+
+        * UIProcess/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::scheduleClearInMemoryAndPersistent):
+
 2018-01-19  John Wilander  <wilander@apple.com>
 
         Resource Load Statistics: Remove unused calls to WebResourceLoadStatisticsStore:logTestingEvent() to fix API test
