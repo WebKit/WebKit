@@ -1,3 +1,27 @@
+2018-01-19  Zach Li  <zacharyli323@gmail.com>
+
+        Expose Safe Browsing SPI
+        https://bugs.webkit.org/show_bug.cgi?id=181804
+        <rdar://problem/36626946>
+
+        Reviewed by Dan Bernstein.
+
+        If client is using Apple internal SDK, then we can just import the header; if not,
+        then we declare necessary symbols that client will need.
+
+        * Configurations/WebKit.xcconfig:
+        Only link against SafariSafeBrowsing framework on macOS High Sierra
+        and iOS 11 and above. Weak link against SafariSafeBrowsing framework
+        because it is not present on the Base system.
+
+        * Platform/spi/Cocoa/SafeBrowsingSPI.h: Added.
+
+        * WebKit.xcodeproj/project.pbxproj:
+        Added SafeBrowsingSPI.h.
+
+        * WebKitLibraries/WebKitPrivateFrameworkStubs/iOS/11/SafariSafeBrowsing.framework/SafariSafeBrowsing.tbd:
+        Added.
+
 2018-01-19  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed build fix, removed unused lambda capture.
