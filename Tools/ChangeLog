@@ -1,3 +1,19 @@
+2018-01-20  Brian Burg  <bburg@apple.com>
+
+        WebDriver: fix some nits that prevent running W3C tests on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=181864
+
+        Reviewed by Carlos Garcia Campos.
+
+        * Scripts/webkitpy/webdriver_tests/webdriver_w3c_web_server.py:
+        (WebDriverW3CWebServer.__init__): _wsout needs to always be defined,
+        as we assume that the property exists later.
+
+        (WebDriverW3CWebServer.stop): If the temporary file doesn't
+        exist for some reason, the remove call will raise and exception.
+        Gracefully handle the case where the file isn't created due to
+        a problem/exception that happened elsewhere.
+
 2018-01-19  Ling Ho  <lingcherd_ho@apple.com>
 
         Move Bingdings EWS and Webkitpy EWS queues to High Sierra on buildbot dashboard.
