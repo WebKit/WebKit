@@ -3786,7 +3786,8 @@ webkit.org/b/177541 accessibility/image-load-on-delay.html [ Failure ]
 
 # preconnect tests are failing on Windows.
 webkit.org/b/177626 fast/dom/HTMLLinkElement/preconnect-support.html  [ Skip ]
-webkit.org/b/177626 http/tests/preconnect/ [ Skip ]
+webkit.org/b/177626 http/tests/preconnect/link-rel-preconnect-http.html [ Skip ]
+webkit.org/b/177626 http/tests/preconnect/link-rel-preconnect-https.html [ Skip ]
 
 webkit.org/b/177964 fast/text/font-display/block-nofinish.html [ Pass ImageOnlyFailure ]
 webkit.org/b/177964 fast/text/font-display/failure-finish.html [ Pass ImageOnlyFailure ]
