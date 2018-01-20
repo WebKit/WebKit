@@ -1,5 +1,14 @@
 2018-01-19  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Update TestExpectations for webrtc/video-mute.html.
+        https://bugs.webkit.org/show_bug.cgi?id=177501
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
+2018-01-19  Ryan Haddad  <ryanhaddad@apple.com>
+
         Mark imported/w3c/web-platform-tests/media-source/mediasource-config-change-mp4-* tests as flaky.
         https://bugs.webkit.org/show_bug.cgi?id=181565
 
