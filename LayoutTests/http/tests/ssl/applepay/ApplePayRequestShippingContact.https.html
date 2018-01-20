@@ -133,27 +133,6 @@ async function runTests() {
     debug("");
 
     await new Promise((resolve, reject) => {
-        debug("Test setting a default shipping contact in a version 3 request.");
-
-        var paymentRequest = new PaymentRequest([validPaymentMethod(3, validShippingContact())], validPaymentDetails(), validPaymentOptions());
-
-        activateThen(() => {
-            paymentRequest.show().then((response) => {
-                window.paymentResponse = response;
-
-                shouldBe("paymentResponse.details.shippingContact.phoneticGivenName", "expectedGivenName");
-                shouldBe("paymentResponse.details.shippingContact.phoneticFamilyName", "expectedFamilyName");
-
-                response.complete("success");
-                resolve();
-            });
-
-            internals.mockPaymentCoordinator.acceptPayment();
-        });
-    });
-    debug("");
-
-    await new Promise((resolve, reject) => {
         debug("Test setting a default shipping contact that only specifies an email address.");
 
         var paymentRequest = new PaymentRequest([validPaymentMethod(3, { emailAddress: expectedEmailAddress })], validPaymentDetails(), { requestPayerEmail: true });

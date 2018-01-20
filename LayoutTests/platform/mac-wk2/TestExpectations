@@ -23,6 +23,7 @@ fast/media/mq-prefers-reduced-motion-live-update.html [ Pass ]
 [ Sierra+ ] http/tests/ssl/applepay/ [ Pass ]
 [ Sierra ] http/tests/ssl/applepay/ApplePayError.html [ Skip ]
 [ Sierra ] http/tests/ssl/applepay/ApplePaySessionV3.html [ Skip ]
+[ Sierra ] http/tests/ssl/applepay/ApplePayRequestShippingContactV3.https.html [ Skip ]
 
 fast/visual-viewport/rubberbanding-viewport-rects.html [ Pass ]
 fast/visual-viewport/rubberbanding-viewport-rects-header-footer.html  [ Pass ]
@@ -798,6 +799,7 @@ webkit.org/b/176122 media/video-controls-drop-and-restore-timeline.html [ Pass F
 # <rdar://problem/25010307>
 [ HighSierra+ ] http/tests/ssl/applepay/ApplePayError.html [ Pass ]
 [ HighSierra+ ] http/tests/ssl/applepay/ApplePaySessionV3.html [ Pass ]
+[ HighSierra+ ] http/tests/ssl/applepay/ApplePayRequestShippingContactV3.https.html [ Pass ]
 # <rdar://problem/31634451>
 [ HighSierra+ ] http/tests/resourceLoadStatistics/partitioned-cookies-with-and-without-user-interaction.html [ Pass ]
 [ HighSierra+ ] http/tests/resourceLoadStatistics/partitioned-and-unpartitioned-cookie-with-partitioning-timeout.html [ Pass ]

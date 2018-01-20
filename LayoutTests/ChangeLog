@@ -1,3 +1,16 @@
+2018-01-19  Andy Estes  <aestes@apple.com>
+
+        [Sierra Debug WK2] ASSERTION FAILED: paymentCoordinator().supportsVersion(version)
+        https://bugs.webkit.org/show_bug.cgi?id=181833
+
+        Reviewed by Youenn Fablet.
+
+        Moved the version 3 test into its own file that only runs on High Sierra and later.
+
+        * http/tests/ssl/applepay/ApplePayRequestShippingContactV3.https-expected.txt: Added.
+        * http/tests/ssl/applepay/ApplePayRequestShippingContactV3.https.html: Added.
+        * platform/mac-wk2/TestExpectations:
+
 2018-01-19  Ryan Haddad  <ryanhaddad@apple.com>
 
         Mark http/wpt/web-animations/timing-model/animation-effects/current-iteration.html as flaky.

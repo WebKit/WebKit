@@ -34,10 +34,6 @@ PASS paymentResponse.payerName is expectedName
 PASS paymentResponse.payerEmail is expectedEmailAddress
 PASS paymentResponse.payerPhone is expectedPhoneNumber
 
-Test setting a default shipping contact in a version 3 request.
-PASS paymentResponse.details.shippingContact.phoneticGivenName is expectedGivenName
-PASS paymentResponse.details.shippingContact.phoneticFamilyName is expectedFamilyName
-
 Test setting a default shipping contact that only specifies an email address.
 PASS paymentResponse.shippingAddress is null
 PASS paymentResponse.payerName is null
