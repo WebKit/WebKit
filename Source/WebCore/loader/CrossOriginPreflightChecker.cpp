@@ -95,11 +95,17 @@ void CrossOriginPreflightChecker::notifyFinished(CachedResource& resource)
     validatePreflightResponse(m_loader, WTFMove(m_request), m_resource->identifier(), m_resource->response());
 }
 
+void CrossOriginPreflightChecker::redirectReceived(CachedResource& resource, ResourceRequest&&, const ResourceResponse& response, CompletionHandler<void(ResourceRequest&&)>&& completionHandler)
+{
+    ASSERT_UNUSED(resource, &resource == m_resource);
+    validatePreflightResponse(m_loader, WTFMove(m_request), m_resource->identifier(), response);
+    completionHandler(ResourceRequest { });
+}
+
 void CrossOriginPreflightChecker::startPreflight()
 {
     ResourceLoaderOptions options;
     options.referrerPolicy = m_loader.options().referrerPolicy;
-    options.redirect = FetchOptions::Redirect::Manual;
     options.contentSecurityPolicyImposition = ContentSecurityPolicyImposition::SkipPolicyCheck;
     options.serviceWorkersMode = ServiceWorkersMode::None;
 

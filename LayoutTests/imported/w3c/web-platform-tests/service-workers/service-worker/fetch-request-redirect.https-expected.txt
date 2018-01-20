@@ -1,7 +1,4 @@
 CONSOLE MESSAGE: XMLHttpRequest cannot load https://localhost:9443/service-workers/service-worker/resources/redirect.py?Redirect=%2Fservice-workers%2Fservice-worker%2Fresources%2Fsimple.txt. Response served by service worker is opaque redirect
-CONSOLE MESSAGE: Cross-origin image load denied by Cross-Origin Resource Sharing policy.
-CONSOLE MESSAGE: XMLHttpRequest cannot load https://localhost:9443/service-workers/service-worker/resources/redirect.py?Redirect=%2Fservice-workers%2Fservice-worker%2Fresources%2Fsimple.txt. Response served by service worker is opaque redirect
-CONSOLE MESSAGE: XMLHttpRequest cannot load https://localhost:9443/service-workers/service-worker/resources/redirect.py?Redirect=%2Fservice-workers%2Fservice-worker%2Fresources%2Fsimple.txt. Response served by service worker is opaque redirect
 
 PASS Verify redirect mode of Fetch API and ServiceWorker FetchEvent. 
 PASS Verify redirected of Response(Fetch API) and ServiceWorker FetchEvent. 

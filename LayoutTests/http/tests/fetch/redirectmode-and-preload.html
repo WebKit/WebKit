@@ -16,12 +16,7 @@ function startTests()
 {
     var preloadUrl = "./resources/redirect-with-cache.php?enableCaching&url=http://localhost:8000/security/resources/allow-if-origin.php?allowCache&origin=http%3A%2F%2F127.0.0.1%3A8000&name=alert-fail.js&contentType=text/ascii";
     promise_test(function(test) {
-        return fetch(preloadUrl, {redirect: "manual", mode: "no-cors", credentials: "include"}).then((response) => {
-            assert_equals(response.type, "opaqueredirect", "Response's type should be opaqueRedirect");
-            return response.text();
-        }).then((text) => {
-            assert_equals(text, "");
-        });
+        return promise_rejects(test,new TypeError(), fetch(preloadUrl, {redirect: "manual", mode: "no-cors", credentials: "include"}));
     }, "Fetch should check for redirections even if resource is preloaded (same fetch options except for redirect mode)");
 
     promise_test(function(test) {

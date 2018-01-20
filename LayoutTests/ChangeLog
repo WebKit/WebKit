@@ -1,3 +1,14 @@
+2018-01-20  Youenn Fablet  <youenn@apple.com>
+
+        fetch redirect is incompatible with "no-cors" mode
+        https://bugs.webkit.org/show_bug.cgi?id=181866
+        <rdar://problem/35827140>
+
+        Reviewed by Chris Dumez.
+
+        * http/tests/fetch/redirectmode-and-preload-expected.txt:
+        * http/tests/fetch/redirectmode-and-preload.html:
+
 2018-01-19  Ryan Haddad  <ryanhaddad@apple.com>
 
         Mark imported/w3c/web-platform-tests/service-workers/service-worker/fetch-cors-xhr.https.html as flaky.

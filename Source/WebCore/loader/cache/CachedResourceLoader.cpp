@@ -507,6 +507,7 @@ static inline bool isSameOriginDataURL(const URL& url, const ResourceLoaderOptio
     return url.protocolIsData() && options.sameOriginDataURLFlag == SameOriginDataURLFlag::Set;
 }
 
+// Security checks defined in https://fetch.spec.whatwg.org/#main-fetch step 2 and 5.
 bool CachedResourceLoader::canRequest(CachedResource::Type type, const URL& url, const CachedResourceRequest& request, ForPreload forPreload)
 {
     auto& options = request.options();
@@ -520,6 +521,12 @@ bool CachedResourceLoader::canRequest(CachedResource::Type type, const URL& url,
 
     if (options.mode == FetchOptions::Mode::SameOrigin && !m_document->securityOrigin().canRequest(url) && !isSameOriginDataURL(url, options)) {
         printAccessDeniedMessage(url);
+        return false;
+    }
+
+    if (options.mode == FetchOptions::Mode::NoCors && options.redirect != FetchOptions::Redirect::Follow) {
+        ASSERT(type != CachedResource::Type::MainResource);
+        frame()->document()->addConsoleMessage(MessageSource::Security, MessageLevel::Error, ASCIILiteral("No-Cors mode requires follow redirect mode"));
         return false;
     }
 
