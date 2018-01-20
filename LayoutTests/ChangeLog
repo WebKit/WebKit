@@ -1,5 +1,14 @@
 2018-01-19  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Mark imported/w3c/web-platform-tests/service-workers/service-worker/fetch-canvas-tainting.https.html as flaky.
+        https://bugs.webkit.org/show_bug.cgi?id=181897
+
+        Unreviewed test gardening.
+
+        * TestExpectations:
+
+2018-01-19  Ryan Haddad  <ryanhaddad@apple.com>
+
         Unreviewed, rolling out r227235.
 
         The test for this change consistently times out on High
