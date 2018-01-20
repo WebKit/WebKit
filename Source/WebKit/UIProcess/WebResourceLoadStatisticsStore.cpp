@@ -603,11 +603,9 @@ void WebResourceLoadStatisticsStore::scheduleClearInMemoryAndPersistent(ShouldGr
         if (shouldGrandfather == ShouldGrandfather::Yes)
             grandfatherExistingWebsiteData([this, protectedThis = makeRef(*this), callback = WTFMove(callback)]() {
                 callback();
-                logTestingEvent(ASCIILiteral("ClearedInMemoryAndPersistent"));
             });
         else {
             callback();
-            logTestingEvent(ASCIILiteral("ClearedInMemoryAndPersistent"));
         }
     });
 }
