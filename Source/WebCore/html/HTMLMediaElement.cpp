@@ -3442,6 +3442,11 @@ void HTMLMediaElement::playInternal()
 {
     ALWAYS_LOG(LOGIDENTIFIER);
 
+    if (isSuspended()) {
+        ALWAYS_LOG(LOGIDENTIFIER, "  returning because context is suspended");
+        return;
+    }
+
     if (!m_mediaSession->clientWillBeginPlayback()) {
         ALWAYS_LOG(LOGIDENTIFIER, "  returning because of interruption");
         return;
@@ -3526,6 +3531,11 @@ void HTMLMediaElement::pause()
 void HTMLMediaElement::pauseInternal()
 {
     ALWAYS_LOG(LOGIDENTIFIER);
+
+    if (isSuspended()) {
+        ALWAYS_LOG(LOGIDENTIFIER, "  returning because context is suspended");
+        return;
+    }
 
     if (!m_mediaSession->clientWillPausePlayback()) {
         ALWAYS_LOG(LOGIDENTIFIER, "  returning because of interruption");

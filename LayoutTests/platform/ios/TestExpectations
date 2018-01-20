@@ -951,6 +951,7 @@ media/audio-playback-volume-changes-with-restrictions-and-user-gestures.html [ S
 media/audio-playback-volume-changes-with-restrictions.html [ Skip ]
 media/restricted-audio-playback-with-document-gesture.html [ Skip ]
 media/restricted-audio-playback-with-multiple-settimeouts.html [ Skip ]
+media/video-fullscreen-reload-crash.html [ Skip ]
 scrollbars/scrolling-backward-by-page-accounting-bottom-fixed-elements-on-keyboard-spacebar.html [ Skip ]
 scrollbars/scrolling-backward-by-page-on-keyboard-spacebar.html [ Skip ]
 scrollbars/scrolling-by-page-accounting-oversized-fixed-elements-on-keyboard-spacebar.html [ Skip ]

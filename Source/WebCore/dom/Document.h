@@ -1251,7 +1251,7 @@ public:
 
     bool inStyleRecalc() const { return m_inStyleRecalc; }
     bool inRenderTreeUpdate() const { return m_inRenderTreeUpdate; }
-    bool isSafeToUpdateStyleOrLayout() const;
+    WEBCORE_EXPORT bool isSafeToUpdateStyleOrLayout() const;
 
     void updateTextRenderer(Text&, unsigned offsetOfReplacedText, unsigned lengthOfReplacedText);
 

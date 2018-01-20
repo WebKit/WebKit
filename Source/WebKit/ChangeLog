@@ -1,3 +1,16 @@
+2018-01-20  Jer Noble  <jer.noble@apple.com>
+
+        Release ASSERT when reloading Vimeo page @ WebCore: WebCore::Document::updateLayout
+        https://bugs.webkit.org/show_bug.cgi?id=181840
+        <rdar://problem/36186214>
+
+        Reviewed by Simon Fraser.
+
+        Updating layout while the document is suspended or stopped is unsafe.
+
+        * WebProcess/cocoa/VideoFullscreenManager.mm:
+        (WebKit::inlineVideoFrame):
+
 2018-01-20  Chris Dumez  <cdumez@apple.com>
 
         DOMCache data sometimes not properly removed when clearing data for a given origin
