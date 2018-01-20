@@ -1355,7 +1355,7 @@ static Class _WebMessageDocumentClass()
     static BOOL lookedUpClass = NO;
     if (!lookedUpClass) {
         // If the class is not there, we don't want to try again
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101500
         _WebMessageDocumentClass = objc_lookUpClass("EditableWebMessageDocument");
 #endif
         if (!_WebMessageDocumentClass)

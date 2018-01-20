@@ -586,7 +586,7 @@ bool Connection::kill()
 static void AccessibilityProcessSuspendedNotification(bool suspended)
 {
 #if PLATFORM(MAC)
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101500
     // Calling _AXUIElementNotifyProcessSuspendStatus will crash if the NSApplication event loop is not running.
     if (![NSApp isRunning])
         return;

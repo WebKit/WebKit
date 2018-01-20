@@ -30,7 +30,7 @@ namespace WebCore {
 
 void EventLoop::cycle()
 {
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101500
     if (![NSApp isRunning]) {
         [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.05]];
         return;

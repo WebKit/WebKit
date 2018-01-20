@@ -76,7 +76,7 @@ static bool shouldLeakBoost(const ProcessLauncher::LaunchOptions& launchOptions)
     UNUSED_PARAM(launchOptions);
     return true;
 #else
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101500
     // Boost the WebContent process if the NSApplication run loop is not used.
     if (launchOptions.processType == ProcessLauncher::ProcessType::Web)
         return true;

@@ -129,7 +129,7 @@ void cancelCallOnMainThread(void (*function)(void*), void* context)
 }
 #endif
 
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 101400
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 101500
 struct LockBase {
 private:
     WTF_EXPORT_PRIVATE void lockSlow();

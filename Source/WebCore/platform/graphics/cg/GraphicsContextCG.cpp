@@ -52,7 +52,7 @@
 #include <WebKitSystemInterface/WebKitSystemInterface.h>
 #endif
 
-#define USE_DRAW_PATH_DIRECT (PLATFORM(IOS) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400))
+#define USE_DRAW_PATH_DIRECT (PLATFORM(IOS) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101500))
 
 // FIXME: The following using declaration should be in <wtf/HashFunctions.h>.
 using WTF::pairIntHash;
