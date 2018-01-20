@@ -1,3 +1,11 @@
+2018-01-19  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed GTK+ gardening. Skip imported/w3c/webdriver/tests/sessions/new_session/response.py.
+
+        It's causing a crash in the driver process and affecting all other tests.
+
+        * TestExpectations.json:
+
 2018-01-18  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Update Selenium WebDriver imported tests.

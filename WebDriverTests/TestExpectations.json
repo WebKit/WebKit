@@ -353,6 +353,7 @@
         }
     },
     "imported/w3c/webdriver/tests/sessions/new_session/response.py": {
+        "expected": {"gtk": {"status": ["SKIP"], "bug": "webkit.org/b/181904"}},
         "subtests": {
             "test_resp_capabilites": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/180408"}}
