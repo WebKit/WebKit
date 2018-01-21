@@ -1,3 +1,75 @@
+2018-01-20  Brady Eidson  <beidson@apple.com>
+
+        Make garbage collection of MessagePort objects be asynchronous.
+        https://bugs.webkit.org/show_bug.cgi?id=181910
+
+        Reviewed by Andy Estes.
+
+        No new tests (Covered by existing tests, including GC-specific ones).
+
+        The basic premise here is as follows:
+        - You can *always* GC a MessagePort that is closed
+        - You can *always* GC a MessagePort that has no onmessage handler, as incoming messages cannot 
+          possibly revive it.
+        - You can GC a MessagePort, even if it has a message handler, as long as there are no messages 
+          in flight between it and the remote port, and as long as the remote port is "maybe eligible for GC."
+          
+        A MessagePort is considered "maybe eligible for GC" once hasPendingActivity is asked once.
+        
+        A MessagePort loses "maybe eligible for GC" status once it is used for sending or receiving a message.
+        
+        The changes to MessagePort.cpp implement the above with a tiny little bool-driven state machine.
+        * dom/MessagePort.cpp:
+        (WebCore::MessagePort::postMessage):
+        (WebCore::MessagePort::disentangle):
+        (WebCore::MessagePort::registerLocalActivity):
+        (WebCore::MessagePort::start):
+        (WebCore::MessagePort::close):
+        (WebCore::MessagePort::contextDestroyed):
+        (WebCore::MessagePort::dispatchMessages):
+        (WebCore::MessagePort::hasPendingActivity const):
+        (WebCore::MessagePort::isLocallyReachable const):
+        (WebCore::MessagePort::addEventListener):
+        (WebCore::MessagePort::removeEventListener):
+        * dom/MessagePort.h:
+
+        - Remove the lock and any background-thread code paths
+        - Add ASSERT(isMainThread())s throughout
+        * dom/messageports/MessagePortChannel.cpp:
+        (WebCore::MessagePortChannel::MessagePortChannel):
+        (WebCore::MessagePortChannel::includesPort):
+        (WebCore::MessagePortChannel::entanglePortWithProcess):
+        (WebCore::MessagePortChannel::disentanglePort):
+        (WebCore::MessagePortChannel::closePort):
+        (WebCore::MessagePortChannel::postMessageToRemote):
+        (WebCore::MessagePortChannel::takeAllMessagesForPort):
+        (WebCore::MessagePortChannel::checkRemotePortForActivity):
+        (WebCore::MessagePortChannel::hasAnyMessagesPendingOrInFlight const):
+        * dom/messageports/MessagePortChannel.h:
+        
+        Add a callback for a MessagePortChannel to go ask the remote MessagePort object about local activity:
+        * dom/messageports/MessagePortChannelProvider.h:
+        * dom/messageports/MessagePortChannelProviderImpl.cpp:
+        (WebCore::MessagePortChannelProviderImpl::checkRemotePortForActivity):
+        (WebCore::MessagePortChannelProviderImpl::checkProcessLocalPortForActivity):
+        (WebCore::MessagePortChannelProviderImpl::hasMessagesForPorts_temporarySync): Deleted.
+        * dom/messageports/MessagePortChannelProviderImpl.h:
+        
+        - Remove the lock and any background-thread code paths
+        - Add ASSERT(isMainThread())s throughout
+        * dom/messageports/MessagePortChannelRegistry.cpp:
+        (WebCore::MessagePortChannelRegistry::messagePortChannelCreated):
+        (WebCore::MessagePortChannelRegistry::messagePortChannelDestroyed):
+        (WebCore::MessagePortChannelRegistry::didEntangleLocalToRemote):
+        (WebCore::MessagePortChannelRegistry::didDisentangleMessagePort):
+        (WebCore::MessagePortChannelRegistry::didCloseMessagePort):
+        (WebCore::MessagePortChannelRegistry::didPostMessageToRemote):
+        (WebCore::MessagePortChannelRegistry::takeAllMessagesForPort):
+        (WebCore::MessagePortChannelRegistry::checkRemotePortForActivity):
+        (WebCore::MessagePortChannelRegistry::existingChannelContainingPort):
+        (WebCore::MessagePortChannelRegistry::hasMessagesForPorts_temporarySync): Deleted.
+        * dom/messageports/MessagePortChannelRegistry.h:
+
 2018-01-20  Andy Estes  <aestes@apple.com>
 
         [Apple Pay] Stop eagerly loading PassKit.framework

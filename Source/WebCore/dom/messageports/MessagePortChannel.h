@@ -25,11 +25,11 @@
 
 #pragma once
 
+#include "MessagePortChannelProvider.h"
 #include "MessagePortIdentifier.h"
 #include "MessageWithMessagePorts.h"
 #include "Process.h"
 #include <wtf/HashSet.h>
-#include <wtf/Lock.h>
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
 
@@ -53,6 +53,7 @@ public:
     bool postMessageToRemote(MessageWithMessagePorts&&, const MessagePortIdentifier& remoteTarget);
 
     void takeAllMessagesForPort(const MessagePortIdentifier&, Function<void(Vector<MessageWithMessagePorts>&&, Function<void()>&&)>&&);
+    void checkRemotePortForActivity(const MessagePortIdentifier&, CompletionHandler<void(MessagePortChannelProvider::HasActivity)>&& callback);
 
     bool hasAnyMessagesPendingOrInFlight() const;
 
@@ -64,10 +65,6 @@ public:
 
 private:
     MessagePortChannel(MessagePortChannelRegistry&, const MessagePortIdentifier& port1, const MessagePortIdentifier& port2);
-
-    // FIXME: This lock is to temporarily support synchronous background-thread GC.
-    // It should be removed and this class relegated to main thread only.
-    mutable Lock m_lock;
 
     MessagePortIdentifier m_ports[2];
     bool m_isClosed[2] { false, false };

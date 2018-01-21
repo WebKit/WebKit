@@ -83,6 +83,8 @@ public:
     void stop() final { close(); }
     bool hasPendingActivity() const final;
 
+    bool isLocallyReachable() const;
+
     // EventTargetWithInlineData.
     EventTargetInterface eventTargetInterface() const final { return MessagePortEventTargetInterfaceType; }
     ScriptExecutionContext* scriptExecutionContext() const final { return ActiveDOMObject::scriptExecutionContext(); }
@@ -93,8 +95,11 @@ private:
     explicit MessagePort(ScriptExecutionContext&, const MessagePortIdentifier& local, const MessagePortIdentifier& remote);
 
     bool addEventListener(const AtomicString& eventType, Ref<EventListener>&&, const AddEventListenerOptions&) final;
+    bool removeEventListener(const AtomicString& eventType, EventListener&, const ListenerOptions&) final;
 
     void disentangle();
+
+    void registerLocalActivity();
 
     // A port starts out its life entangled, and remains entangled until it is closed or is cloned.
     bool isEntangled() const { return !m_closed && m_entangled; }
@@ -102,6 +107,13 @@ private:
     bool m_started { false };
     bool m_closed { false };
     bool m_entangled { true };
+
+    // Flags to manage querying the remote port for GC purposes
+    mutable bool m_mightBeEligibleForGC { false };
+    mutable bool m_hasHadLocalActivitySinceLastCheck { false };
+    mutable bool m_isRemoteEligibleForGC { false };
+    mutable bool m_isAskingRemoteAboutGC { false };
+    bool m_hasMessageEventListener { false };
 
     MessagePortIdentifier m_identifier;
     MessagePortIdentifier m_remoteIdentifier;

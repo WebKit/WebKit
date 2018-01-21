@@ -26,6 +26,7 @@
 #pragma once
 
 #include "MessagePortChannel.h"
+#include "MessagePortChannelProvider.h"
 #include "MessagePortIdentifier.h"
 #include "Process.h"
 #include <wtf/HashMap.h>
@@ -42,18 +43,14 @@ public:
     void didCloseMessagePort(const MessagePortIdentifier& local);
     bool didPostMessageToRemote(MessageWithMessagePorts&&, const MessagePortIdentifier& remoteTarget);
     void takeAllMessagesForPort(const MessagePortIdentifier&, Function<void(Vector<MessageWithMessagePorts>&&, Function<void()>&&)>&&);
+    void checkRemotePortForActivity(const MessagePortIdentifier& remoteTarget, CompletionHandler<void(MessagePortChannelProvider::HasActivity)>&& callback);
 
     MessagePortChannel* existingChannelContainingPort(const MessagePortIdentifier&);
-    bool hasMessagesForPorts_temporarySync(const MessagePortIdentifier&, const MessagePortIdentifier&);
 
     void messagePortChannelCreated(MessagePortChannel&);
     void messagePortChannelDestroyed(MessagePortChannel&);
 
 private:
-
-    // FIXME: The need for the open channels lock is temporary.
-    // It should be removed and this class should be main-thread only.
-    Lock m_openChannelsLock;
     HashMap<MessagePortIdentifier, MessagePortChannel*> m_openChannels;
 };
 
