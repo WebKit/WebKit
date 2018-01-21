@@ -1,3 +1,21 @@
+2018-01-21  Andy Estes  <aestes@apple.com>
+
+        [ios] LayoutTest imported/w3c/web-platform-tests/payment-request/rejects_if_not_active.https.html is crashing in JSC::JSONParse
+        https://bugs.webkit.org/show_bug.cgi?id=177832
+        <rdar://problem/34805315>
+
+        Reviewed by Tim Horton.
+
+        Made a copy of imported/w3c/web-platform-tests/payment-request/rejects_if_not_active.https.html
+        and modified it to handle Apple Pay and user gesture requirements.
+
+        * http/tests/paymentrequest/rejects_if_not_active.https-expected.txt: Added.
+        * http/tests/paymentrequest/rejects_if_not_active.https.html: Added.
+        * http/tests/paymentrequest/resources/page1.html: Added.
+        * http/tests/paymentrequest/resources/page2.html: Added.
+        * platform/ios-wk2/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+
 2018-01-20  Jer Noble  <jer.noble@apple.com>
 
         Release ASSERT when reloading Vimeo page @ WebCore: WebCore::Document::updateLayout

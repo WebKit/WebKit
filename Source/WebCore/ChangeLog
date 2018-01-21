@@ -1,3 +1,16 @@
+2018-01-21  Andy Estes  <aestes@apple.com>
+
+        [ios] LayoutTest imported/w3c/web-platform-tests/payment-request/rejects_if_not_active.https.html is crashing in JSC::JSONParse
+        https://bugs.webkit.org/show_bug.cgi?id=177832
+        <rdar://problem/34805315>
+
+        Reviewed by Tim Horton.
+
+        Test: http/tests/paymentrequest/rejects_if_not_active.https.html
+
+        * Modules/paymentrequest/PaymentRequest.cpp:
+        (WebCore::PaymentRequest::show): Rejected promise if the document is not active.
+
 2018-01-20  Brady Eidson  <beidson@apple.com>
 
         Make garbage collection of MessagePort objects be asynchronous.
