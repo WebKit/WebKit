@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,7 +34,7 @@
 #import <wtf/BlockPtr.h>
 #import <wtf/SoftLinking.h>
 
-SOFT_LINK_PRIVATE_FRAMEWORK(PassKit)
+SOFT_LINK_PRIVATE_FRAMEWORK_OPTIONAL(PassKit)
 
 SOFT_LINK_CLASS(PassKit, PKPaymentAuthorizationViewController);
 SOFT_LINK_CONSTANT(PassKit, PKExtensionPaymentAuthorizationUIExtensionPointName, NSString *);
@@ -43,6 +43,11 @@ namespace WebKit {
 
 void WebPaymentCoordinatorProxy::platformShowPaymentUI(const WebCore::URL& originatingURL, const Vector<WebCore::URL>& linkIconURLStrings, const WebCore::ApplePaySessionPaymentRequest& request, WTF::Function<void (bool)>&& completionHandler)
 {
+    if (!PassKitLibrary()) {
+        completionHandler(false);
+        return;
+    }
+
     auto paymentRequest = toPKPaymentRequest(m_webPageProxy, originatingURL, linkIconURLStrings, request);
 
     auto showPaymentUIRequestSeed = m_showPaymentUIRequestSeed;

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -293,11 +293,23 @@ namespace WebKit {
 
 bool WebPaymentCoordinatorProxy::platformCanMakePayments()
 {
+#if PLATFORM(MAC)
+    if (!PassKitLibrary())
+        return false;
+#endif
+
     return [getPKPaymentAuthorizationViewControllerClass() canMakePayments];
 }
 
 void WebPaymentCoordinatorProxy::platformCanMakePaymentsWithActiveCard(const String& merchantIdentifier, const String& domainName, WTF::Function<void (bool)>&& completionHandler)
 {
+#if PLATFORM(MAC)
+    if (!PassKitLibrary()) {
+        completionHandler(false);
+        return;
+    }
+#endif
+
 #if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000)
     if (!canLoad_PassKit_PKCanMakePaymentsWithMerchantIdentifierDomainAndSourceApplication()) {
         RunLoop::main().dispatch([completionHandler = WTFMove(completionHandler)] {
@@ -335,6 +347,13 @@ void WebPaymentCoordinatorProxy::platformCanMakePaymentsWithActiveCard(const Str
 
 void WebPaymentCoordinatorProxy::platformOpenPaymentSetup(const String& merchantIdentifier, const String& domainName, WTF::Function<void (bool)>&& completionHandler)
 {
+#if PLATFORM(MAC)
+    if (!PassKitLibrary()) {
+        completionHandler(false);
+        return;
+    }
+#endif
+
     auto passLibrary = adoptNS([allocPKPassLibraryInstance() init]);
     [passLibrary openPaymentSetupForMerchantIdentifier:merchantIdentifier domain:domainName completion:BlockPtr<void (BOOL)>::fromCallable([completionHandler = WTFMove(completionHandler)](BOOL result) mutable {
         RunLoop::main().dispatch([completionHandler = WTFMove(completionHandler), result] {
@@ -847,26 +866,19 @@ void WebPaymentCoordinatorProxy::platformCompletePaymentMethodSelection(const st
     m_paymentAuthorizationViewControllerDelegate->_didSelectPaymentMethodCompletion = nullptr;
 }
 
-Vector<String> WebPaymentCoordinatorProxy::availablePaymentNetworks()
+Vector<String> WebPaymentCoordinatorProxy::platformAvailablePaymentNetworks()
 {
-    if (!platformSupportsPayments())
+#if PLATFORM(MAC)
+    if (!PassKitLibrary())
         return { };
-
+#endif
+    
     NSArray<PKPaymentNetwork> *availableNetworks = [getPKPaymentRequestClass() availableNetworks];
     Vector<String> result;
     result.reserveInitialCapacity(availableNetworks.count);
     for (PKPaymentNetwork network in availableNetworks)
         result.uncheckedAppend(network);
     return result;
-}
-
-bool WebPaymentCoordinatorProxy::platformSupportsPayments()
-{
-#if PLATFORM(MAC)
-    return PassKitLibrary();
-#else
-    return true;
-#endif
 }
 
 } // namespace WebKit

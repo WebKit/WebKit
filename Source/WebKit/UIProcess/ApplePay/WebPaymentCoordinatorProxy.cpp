@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -55,6 +55,11 @@ WebPaymentCoordinatorProxy::~WebPaymentCoordinatorProxy()
         hidePaymentUI();
 
     m_webPageProxy.process().removeMessageReceiver(Messages::WebPaymentCoordinatorProxy::messageReceiverName(), m_webPageProxy.pageID());
+}
+
+void WebPaymentCoordinatorProxy::availablePaymentNetworks(Vector<String>& networks)
+{
+    networks = platformAvailablePaymentNetworks();
 }
 
 void WebPaymentCoordinatorProxy::canMakePayments(bool& reply)

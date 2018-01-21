@@ -1,3 +1,55 @@
+2018-01-20  Andy Estes  <aestes@apple.com>
+
+        [Apple Pay] Stop eagerly loading PassKit.framework
+        https://bugs.webkit.org/show_bug.cgi?id=181911
+        <rdar://problem/36555369>
+
+        Reviewed by Tim Horton.
+
+        r226458 and r226123 added code that caused PassKit.framework to be eagerly loaded when
+        initializing a WKWebView. This is costly and should only be done when Apple Pay is first used.
+
+        To avoid eagerly loading PassKit, this patch does two things:
+
+        1. Instead of sending the available payment networks as part of WebPageCreationParameters,
+        PaymentCoordinator asks for them using a syncrhonous message the first time they are needed.
+        2. Instead of setting the Apple Pay preference to false when PassKit can't be loaded,
+        the following API entry points check for a missing PassKit and return false, or throw
+        exceptions, or reject promises:
+            - ApplePaySession.canMakePayments()
+            - ApplePaySession.canMakePaymentsWithActiveCard()
+            - ApplePaySession.openPaymentSetup()
+            - ApplePaySession.begin()
+
+        No new tests for (1), which causes no change in behavior. (2) was manually verified by
+        locally moving aside PassKit.framework, but that's not possible to do in an automated test.
+
+        * Modules/applepay/PaymentCoordinator.cpp:
+        (WebCore::PaymentCoordinator::PaymentCoordinator):
+        (WebCore::PaymentCoordinator::validatedPaymentNetwork const):
+        (WebCore::toHashSet): Deleted.
+        * Modules/applepay/PaymentCoordinator.h:
+        * Modules/applepay/PaymentCoordinatorClient.h:
+        * loader/EmptyClients.cpp:
+        * page/MainFrame.cpp:
+        (WebCore::MainFrame::MainFrame):
+
+        Removed PaymentCoordinator::m_availablePaymentNetworks and made
+        PaymentCoordinator::validatedPaymentNetwork() call
+        PaymentCoordinatorClient::validatedPaymentNetwork() instead.
+
+        * page/PageConfiguration.h:
+
+        Removed availablePaymentNetworks from PageConfiguration.
+
+        * testing/Internals.cpp:
+        (WebCore::Internals::Internals):
+        * testing/MockPaymentCoordinator.cpp:
+        (WebCore::MockPaymentCoordinator::validatedPaymentNetwork):
+        * testing/MockPaymentCoordinator.h:
+
+        Implemented PaymentCoordinatorClient::validatedPaymentNetwork().
+
 2018-01-20  Jer Noble  <jer.noble@apple.com>
 
         Release ASSERT when reloading Vimeo page @ WebCore: WebCore::Document::updateLayout
