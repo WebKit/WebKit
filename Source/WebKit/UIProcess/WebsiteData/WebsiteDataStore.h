@@ -68,7 +68,7 @@ enum class ShouldClearFirst { No, Yes };
 
 class WebsiteDataStore : public RefCounted<WebsiteDataStore>, public WebProcessLifetimeObserver, public Identified<WebsiteDataStore>  {
 public:
-    constexpr static uint64_t defaultCacheStoragePerOriginQuota = 20 * 1024 * 1024;
+    constexpr static uint64_t defaultCacheStoragePerOriginQuota = 50 * 1024 * 1024;
 
     struct Configuration {
         String cacheStorageDirectory;
