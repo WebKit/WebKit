@@ -312,6 +312,7 @@
     "com.apple.LaunchServices"
     "com.apple.WebFoundation"
     "com.apple.mobileipod"
+    "com.apple.avfoundation.frecents" ;; <rdar://problem/33137029>
     "com.apple.avfoundation.videoperformancehud" ;; <rdar://problem/31594568>
     "com.apple.voiceservices.logging")
 

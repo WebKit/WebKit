@@ -1,3 +1,16 @@
+2018-01-22  Brent Fulgham  <bfulgham@apple.com>
+
+        [macOS, iOS] Allow accss to AVFoundation preference
+        https://bugs.webkit.org/show_bug.cgi?id=181937
+        <rdar://problem/33137029>
+
+        Reviewed by Eric Carlson.
+
+        Grant access to the 'com.apple.avfoundation.frecents' preference.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2018-01-22  Brady Eidson  <beidson@apple.com>
 
         In WebKit2, make the MessagePortChannelRegistry live in the UI process.
