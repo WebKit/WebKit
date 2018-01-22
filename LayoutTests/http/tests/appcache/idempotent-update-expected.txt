@@ -1,3 +1,4 @@
+CONSOLE MESSAGE: line 1: ApplicationCache is deprecated. Please use ServiceWorkers instead.
 Test what applicationCache.update() does if update is already in progess.
 
 Should say DONE, with no failures:

@@ -1,3 +1,4 @@
+CONSOLE MESSAGE: line 1: ApplicationCache is deprecated. Please use ServiceWorkers instead.
 Test a simple offline application self-update process. Should print a series of messages followed with DONE:
 
 Updating cache group...

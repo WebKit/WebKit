@@ -1,3 +1,4 @@
+CONSOLE MESSAGE: line 1: ApplicationCache is deprecated. Please use ServiceWorkers instead.
 Test that a network namespace trumps a fallback namespace where they overlap.
 
 Sanity check the presence of the fallback namespace, should get the fallback resource.

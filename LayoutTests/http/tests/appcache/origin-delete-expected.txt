@@ -1,3 +1,4 @@
+CONSOLE MESSAGE: line 1: ApplicationCache is deprecated. Please use ServiceWorkers instead.
 This test checks that application cache groups correctly become obsolete after application cache is deletion for a specific origin.
 
 PASS - cached iframe-1

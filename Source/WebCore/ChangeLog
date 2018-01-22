@@ -1,5 +1,19 @@
 2018-01-22  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r227225. rdar://problem/36722527
+
+    2018-01-19  Joseph Pecoraro  <pecoraro@apple.com>
+
+            AppCache: Log a Deprecation warning to the Console when AppCache is used
+            https://bugs.webkit.org/show_bug.cgi?id=181778
+
+            Reviewed by Alex Christensen.
+
+            * html/HTMLHtmlElement.cpp:
+            (WebCore::HTMLHtmlElement::insertedByParser):
+
+2018-01-22  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r227221. rdar://problem/36722533
 
     2018-01-19  Chris Dumez  <cdumez@apple.com>

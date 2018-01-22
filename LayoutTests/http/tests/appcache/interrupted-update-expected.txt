@@ -1,4 +1,6 @@
+CONSOLE MESSAGE: line 1: ApplicationCache is deprecated. Please use ServiceWorkers instead.
 CONSOLE MESSAGE: line 37: Reloading...
+CONSOLE MESSAGE: line 1: ApplicationCache is deprecated. Please use ServiceWorkers instead.
 Test that an application cache update works again after interruption.
 
 Reloaded

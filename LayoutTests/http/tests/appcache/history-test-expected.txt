@@ -1,3 +1,5 @@
+CONSOLE MESSAGE: line 1: ApplicationCache is deprecated. Please use ServiceWorkers instead.
+CONSOLE MESSAGE: line 1: ApplicationCache is deprecated. Please use ServiceWorkers instead.
 Test whether window.history.back() is supported in application cache.
 
 PASS: Returning to the original page.

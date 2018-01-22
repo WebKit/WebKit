@@ -1,3 +1,4 @@
+CONSOLE MESSAGE: line 1: ApplicationCache is deprecated. Please use ServiceWorkers instead.
 Cache a manifest that contains a resource that is too large to fit. The layout test controller sets a maximum size of 10KB for the application cache database file.
 
 SUCCESS
