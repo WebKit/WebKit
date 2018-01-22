@@ -1,5 +1,18 @@
 2018-01-22  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r227278. rdar://problem/36722580
+
+    2018-01-21  Jer Noble  <jer.noble@apple.com>
+
+            REGRESSION (macOS 10.13.2): imported/w3c/web-platform-tests/media-source/mediasource-* LayoutTests failing
+            https://bugs.webkit.org/show_bug.cgi?id=181891
+
+            Reviewed by Eric Carlson.
+
+            * platform/mac/TestExpectations:
+
+2018-01-22  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r227272. rdar://problem/36722635
 
     2018-01-20  Jer Noble  <jer.noble@apple.com>
