@@ -490,6 +490,7 @@ void SWServer::installContextData(const ServiceWorkerContextData& data)
     // as it is unlikely they will be needed immediately.
     if (data.loadedFromDisk) {
         registration->updateRegistrationState(ServiceWorkerRegistrationState::Active, worker.ptr());
+        worker->setState(ServiceWorkerState::Activated);
         return;
     }
 
