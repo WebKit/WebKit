@@ -1,5 +1,22 @@
 2018-01-22  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r227159. rdar://problem/36722618
+
+    2018-01-18  Mark Lam  <mark.lam@apple.com>
+
+            Poisons should be initialized after Options are initialized.
+            https://bugs.webkit.org/show_bug.cgi?id=181807
+            <rdar://problem/36629138>
+
+            Reviewed by Keith Miller.
+
+            This is because poison initialization may depend on options.
+
+            * runtime/InitializeThreading.cpp:
+            (JSC::initializeThreading):
+
+2018-01-22  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r227136. rdar://problem/36722486
 
     2018-01-18  Commit Queue  <commit-queue@webkit.org>

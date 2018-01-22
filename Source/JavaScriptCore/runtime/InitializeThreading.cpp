@@ -59,8 +59,8 @@ void initializeThreading()
 
     std::call_once(initializeThreadingOnceFlag, []{
         WTF::initializeThreading();
-        initializePoison();
         Options::initialize();
+        initializePoison();
 #if ENABLE(WRITE_BARRIER_PROFILING)
         WriteBarrierCounters::initialize();
 #endif
