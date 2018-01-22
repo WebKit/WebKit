@@ -30,6 +30,7 @@
 #include "FetchOptions.h"
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
+#include "ScriptExecutionContext.h"
 #include "SharedBuffer.h"
 
 namespace WebCore {
@@ -46,7 +47,7 @@ enum class Error {
     Internal
 };
 
-WEBCORE_EXPORT Exception errorToException(Error);
+Exception convertToExceptionAndLog(ScriptExecutionContext*, Error);
 
 WEBCORE_EXPORT bool queryCacheMatch(const ResourceRequest& request, const ResourceRequest& cachedRequest, const ResourceResponse&, const CacheQueryOptions&);
 WEBCORE_EXPORT bool queryCacheMatch(const ResourceRequest& request, const URL& url, bool hasVaryStar, const HashMap<String, String>& varyHeaders, const CacheQueryOptions&);
