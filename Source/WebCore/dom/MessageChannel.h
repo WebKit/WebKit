@@ -36,7 +36,7 @@ class ScriptExecutionContext;
 
 class MessageChannel : public RefCounted<MessageChannel> {
 public:
-    static Ref<MessageChannel> create(ScriptExecutionContext& context) { return adoptRef(*new MessageChannel(context)); }
+    static Ref<MessageChannel> create(ScriptExecutionContext&);
     ~MessageChannel();
 
     MessagePort* port1() const { return m_port1.get(); }

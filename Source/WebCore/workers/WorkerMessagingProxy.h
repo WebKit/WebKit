@@ -48,14 +48,14 @@ private:
     // (Only use these functions in the worker object thread.)
     void startWorkerGlobalScope(const URL& scriptURL, const String& userAgent, bool isOnline, const String& sourceCode, const ContentSecurityPolicyResponseHeaders&, bool shouldBypassMainWorldContentSecurityPolicy, MonotonicTime timeOrigin, JSC::RuntimeFlags, PAL::SessionID) final;
     void terminateWorkerGlobalScope() final;
-    void postMessageToWorkerGlobalScope(Ref<SerializedScriptValue>&&, std::unique_ptr<MessagePortChannelArray>&&) final;
+    void postMessageToWorkerGlobalScope(MessageWithMessagePorts&&) final;
     bool hasPendingActivity() const final;
     void workerObjectDestroyed() final;
     void notifyNetworkStateChange(bool isOnline) final;
 
     // Implementation of WorkerObjectProxy.
     // (Only use these functions in the worker context thread.)
-    void postMessageToWorkerObject(Ref<SerializedScriptValue>&&, std::unique_ptr<MessagePortChannelArray>&&) final;
+    void postMessageToWorkerObject(MessageWithMessagePorts&&) final;
     void postExceptionToWorkerObject(const String& errorMessage, int lineNumber, int columnNumber, const String& sourceURL) final;
     void confirmMessageFromWorkerObject(bool hasPendingActivity) final;
     void reportPendingActivity(bool hasPendingActivity) final;

@@ -31,6 +31,7 @@
 #include "ExceptionOr.h"
 #include "MessagePortChannel.h"
 #include "MessagePortIdentifier.h"
+#include "MessageWithMessagePorts.h"
 
 namespace JSC {
 class ExecState;
@@ -44,23 +45,23 @@ class Frame;
 
 class MessagePort final : public ActiveDOMObject, public EventTargetWithInlineData {
 public:
-    static Ref<MessagePort> create(ScriptExecutionContext& scriptExecutionContext, const MessagePortIdentifier& identifier) { return adoptRef(*new MessagePort(scriptExecutionContext, identifier)); }
+    static Ref<MessagePort> create(ScriptExecutionContext&, const MessagePortIdentifier& local, const MessagePortIdentifier& remote);
     virtual ~MessagePort();
 
     ExceptionOr<void> postMessage(JSC::ExecState&, JSC::JSValue message, Vector<JSC::Strong<JSC::JSObject>>&&);
 
     void start();
     void close();
-
-    void entangleWithRemote(RefPtr<MessagePortChannel>&&);
+    void entangle();
 
     // Returns nullptr if the passed-in vector is empty.
-    static ExceptionOr<std::unique_ptr<MessagePortChannelArray>> disentanglePorts(Vector<RefPtr<MessagePort>>&&);
-    static Vector<RefPtr<MessagePort>> entanglePorts(ScriptExecutionContext&, std::unique_ptr<MessagePortChannelArray>&&);
+    static ExceptionOr<TransferredMessagePortArray> disentanglePorts(Vector<RefPtr<MessagePort>>&&);
+    static Vector<RefPtr<MessagePort>> entanglePorts(ScriptExecutionContext&, TransferredMessagePortArray&&);
     static RefPtr<MessagePort> existingMessagePortForIdentifier(const MessagePortIdentifier&);
 
     void messageAvailable();
     bool started() const { return m_started; }
+    bool closed() const { return m_closed; }
 
     void dispatchMessages();
 
@@ -70,6 +71,7 @@ public:
     MessagePort* locallyEntangledPort() const;
 
     const MessagePortIdentifier& identifier() const { return m_identifier; }
+    const MessagePortIdentifier& remoteIdentifier() const { return m_remoteIdentifier; }
 
     void ref() const;
     void deref() const;
@@ -88,24 +90,21 @@ public:
     void derefEventTarget() final { deref(); }
 
 private:
-    explicit MessagePort(ScriptExecutionContext&, const MessagePortIdentifier&);
+    explicit MessagePort(ScriptExecutionContext&, const MessagePortIdentifier& local, const MessagePortIdentifier& remote);
 
     bool addEventListener(const AtomicString& eventType, Ref<EventListener>&&, const AddEventListenerOptions&) final;
 
-    RefPtr<MessagePortChannel> disentangle();
+    void disentangle();
 
     // A port starts out its life entangled, and remains entangled until it is closed or is cloned.
-    bool isEntangled() const { return !m_closed && !isNeutered(); }
+    bool isEntangled() const { return !m_closed && m_entangled; }
 
-    // A port gets neutered when it is transferred to a new owner via postMessage().
-    bool isNeutered() const { return !m_entangledChannel; }
-
-    RefPtr<MessagePortChannel> m_entangledChannel;
-    RefPtr<MessagePort> m_messageProtector;
     bool m_started { false };
     bool m_closed { false };
+    bool m_entangled { true };
 
     MessagePortIdentifier m_identifier;
+    MessagePortIdentifier m_remoteIdentifier;
 
     mutable std::atomic<unsigned> m_refCount { 1 };
 };

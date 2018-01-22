@@ -99,7 +99,7 @@ ExceptionOr<void> ServiceWorkerClient::postMessage(ScriptExecutionContext& conte
 
     // FIXME: Support sending the channels.
     auto channels = channelsOrException.releaseReturnValue();
-    if (channels && !channels->isEmpty())
+    if (!channels.isEmpty())
         return Exception { NotSupportedError, ASCIILiteral("Passing MessagePort objects to postMessage is not yet supported") };
 
     auto sourceIdentifier = downcast<ServiceWorkerGlobalScope>(context).thread().identifier();

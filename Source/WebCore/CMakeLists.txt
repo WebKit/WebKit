@@ -68,6 +68,7 @@ set(WebCore_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/cssjit"
     "${WEBCORE_DIR}/dom"
     "${WEBCORE_DIR}/dom/default"
+    "${WEBCORE_DIR}/dom/messageports"
     "${WEBCORE_DIR}/domjit"
     "${WEBCORE_DIR}/editing"
     "${WEBCORE_DIR}/fileapi"

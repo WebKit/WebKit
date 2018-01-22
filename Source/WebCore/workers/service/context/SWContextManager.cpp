@@ -24,11 +24,11 @@
  */
 
 #include "config.h"
-
-#if ENABLE(SERVICE_WORKER)
 #include "SWContextManager.h"
 
+#if ENABLE(SERVICE_WORKER)
 #include "Logging.h"
+#include "MessageWithMessagePorts.h"
 #include "ServiceWorkerClientIdentifier.h"
 #include "ServiceWorkerGlobalScope.h"
 #include <unistd.h>
@@ -84,7 +84,7 @@ void SWContextManager::postMessageToServiceWorker(ServiceWorkerIdentifier destin
     ASSERT(!serviceWorker->isTerminatingOrTerminated());
 
     // FIXME: We should pass valid MessagePortChannels.
-    serviceWorker->thread().postMessageToServiceWorker(WTFMove(message), nullptr, WTFMove(sourceData));
+    serviceWorker->thread().postMessageToServiceWorker({ WTFMove(message), { } }, WTFMove(sourceData));
 }
 
 void SWContextManager::fireInstallEvent(ServiceWorkerIdentifier identifier)

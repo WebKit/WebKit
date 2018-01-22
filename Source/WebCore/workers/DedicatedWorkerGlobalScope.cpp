@@ -72,7 +72,8 @@ ExceptionOr<void> DedicatedWorkerGlobalScope::postMessage(JSC::ExecState& state,
     auto channels = MessagePort::disentanglePorts(WTFMove(ports));
     if (channels.hasException())
         return channels.releaseException();
-    thread().workerObjectProxy().postMessageToWorkerObject(message.releaseReturnValue(), channels.releaseReturnValue());
+
+    thread().workerObjectProxy().postMessageToWorkerObject({ message.releaseReturnValue(), channels.releaseReturnValue() });
     return { };
 }
 

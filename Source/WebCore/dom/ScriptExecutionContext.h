@@ -146,7 +146,7 @@ public:
     void willDestroyDestructionObserver(ContextDestructionObserver&);
 
     // MessagePort is conceptually a kind of ActiveDOMObject, but it needs to be tracked separately for message dispatch.
-    void processMessagePortMessagesSoon();
+    void processMessageWithMessagePortsSoon();
     void dispatchMessagePortEvents();
     void createdMessagePort(MessagePort&);
     void destroyedMessagePort(MessagePort&);
@@ -313,7 +313,7 @@ private:
     bool m_activeDOMObjectsAreStopped { false };
     bool m_inDispatchErrorEvent { false };
     bool m_activeDOMObjectAdditionForbidden { false };
-    bool m_willProcessMessagePortMessagesSoon { false };
+    bool m_willprocessMessageWithMessagePortsSoon { false };
 
 #if !ASSERT_DISABLED
     bool m_inScriptExecutionContextDestructor { false };
