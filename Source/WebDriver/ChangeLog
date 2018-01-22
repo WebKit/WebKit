@@ -1,3 +1,26 @@
+2018-01-22  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] WebDriver: test imported/w3c/webdriver/tests/sessions/new_session/response.py is crashing in the bots
+        https://bugs.webkit.org/show_bug.cgi?id=181904
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        Handle the case of failing to launch the browser. The test is actually failing because it's sending wrong
+        capabilities, the driver tries to fall back to the default driver, but since WebKit is not installed in the
+        bots, it fails to find the MiniBrowser. The test needs to be fixed, but we shouldn't crash when the browser
+        can't be spawned for whatever reason in any case. This patch handles that case and changes the boolean result of
+        connectToBrowser to be an optional error string instead. This way we can provide more detailed error message
+        when we reject the session creation because the browser failed to start.
+
+        * SessionHost.h:
+        * WebDriverService.cpp:
+        (WebDriver::WebDriverService::newSession):
+        * glib/SessionHostGlib.cpp:
+        (WebDriver::SessionHost::connectToBrowser):
+        (WebDriver::ConnectToBrowserAsyncData::ConnectToBrowserAsyncData):
+        (WebDriver::SessionHost::launchBrowser):
+        (WebDriver::SessionHost::setupConnection):
+
 2018-01-11  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         WebDriver: implement get timeouts command
