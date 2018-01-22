@@ -80,7 +80,12 @@ static void runUntilTasksInFlight(size_t count)
 
 auto e = EPERM;
 
+#if PLATFORM(IOS)
+// This test is sometimes timing out on iOS (rdar://problem/33665676).
+TEST(URLSchemeHandler, DISABLED_Leaks1)
+#else
 TEST(URLSchemeHandler, Leaks1)
+#endif
 {
     RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     RetainPtr<LeakSchemeHandler> handler = adoptNS([[LeakSchemeHandler alloc] init]);
