@@ -43,6 +43,15 @@ void ServiceWorkerProvider::setSharedProvider(ServiceWorkerProvider& newProvider
     sharedProvider = &newProvider;
 }
 
+bool ServiceWorkerProvider::mayHaveServiceWorkerRegisteredForOrigin(PAL::SessionID sessionID, const WebCore::SecurityOrigin& origin)
+{
+    auto* connection = existingServiceWorkerConnectionForSession(sessionID);
+    if (!connection)
+        return m_hasRegisteredServiceWorkers;
+
+    return connection->mayHaveServiceWorkerRegisteredForOrigin(origin);
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(SERVICE_WORKER)

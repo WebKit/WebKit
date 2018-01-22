@@ -1589,8 +1589,10 @@ void DocumentLoader::startLoadingMainResource()
         auto tryLoadingThroughServiceWorker = !frameLoader()->isReloadingFromOrigin() && m_frame->page() && RuntimeEnabledFeatures::sharedFeatures().serviceWorkerEnabled() && SchemeRegistry::canServiceWorkersHandleURLScheme(request.url().protocol().toStringWithoutCopying());
         if (tryLoadingThroughServiceWorker) {
             auto origin = (!m_frame->isMainFrame() && m_frame->document()) ? makeRef(m_frame->document()->topOrigin()) : SecurityOrigin::create(request.url());
-            auto& connection = ServiceWorkerProvider::singleton().serviceWorkerConnectionForSession(m_frame->page()->sessionID());
-            if (connection.mayHaveServiceWorkerRegisteredForOrigin(origin)) {
+            auto sessionID = m_frame->page()->sessionID();
+            auto& provider = ServiceWorkerProvider::singleton();
+            if (provider.mayHaveServiceWorkerRegisteredForOrigin(sessionID, origin)) {
+                auto& connection = ServiceWorkerProvider::singleton().serviceWorkerConnectionForSession(sessionID);
                 auto url = request.url();
                 connection.matchRegistration(origin, url, [request = WTFMove(request), protectedThis = WTFMove(protectedThis), this] (auto&& registrationData) mutable {
                     if (!m_mainDocumentError.isNull() || !m_frame)

@@ -37,6 +37,8 @@ class RegistrationStore;
 class SQLiteDatabase;
 struct ServiceWorkerContextData;
 
+WEBCORE_EXPORT String serviceWorkerRegistrationDatabaseFilename(const String& databaseDirectory);
+
 class RegistrationDatabase : public CrossThreadTaskHandler {
 WTF_MAKE_FAST_ALLOCATED;
 public:

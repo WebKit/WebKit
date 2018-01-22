@@ -812,6 +812,10 @@ void WebProcessPool::initializeNewWebProcess(WebProcessProxy& process, WebsiteDa
     serviceController.refreshExistingServices();
 #endif
 
+#if ENABLE(SERVICE_WORKER)
+    parameters.hasRegisteredServiceWorkers = ServiceWorkerProcessProxy::hasRegisteredServiceWorkers(m_configuration->serviceWorkerRegistrationDirectory());
+#endif
+
 #if ENABLE(NETSCAPE_PLUGIN_API)
     parameters.pluginLoadClientPolicies = m_pluginLoadClientPolicies;
 #endif
