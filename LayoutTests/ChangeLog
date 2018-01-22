@@ -1,5 +1,21 @@
 2018-01-22  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r227272. rdar://problem/36722635
+
+    2018-01-20  Jer Noble  <jer.noble@apple.com>
+
+            Release ASSERT when reloading Vimeo page @ WebCore: WebCore::Document::updateLayout
+            https://bugs.webkit.org/show_bug.cgi?id=181840
+            <rdar://problem/36186214>
+
+            Reviewed by Simon Fraser.
+
+            * media/video-fullscreen-reload-crash-expected.txt: Added.
+            * media/video-fullscreen-reload-crash.html: Added.
+            * platform/ios/TestExpectations:
+
+2018-01-22  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r227270. rdar://problem/36722650
 
     2018-01-20  Youenn Fablet  <youenn@apple.com>

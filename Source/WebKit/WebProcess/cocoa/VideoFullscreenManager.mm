@@ -58,7 +58,11 @@ namespace WebKit {
 
 static IntRect inlineVideoFrame(HTMLVideoElement& element)
 {
-    element.document().updateLayoutIgnorePendingStylesheets();
+    auto& document = element.document();
+    if (!document.isSafeToUpdateStyleOrLayout())
+        return { };
+
+    document.updateLayoutIgnorePendingStylesheets();
     auto* renderer = element.renderer();
     if (!renderer)
         return { };
