@@ -64,6 +64,7 @@ static const double ExponentialMovingAverageCoefficient = 0.1;
 
 struct SourceBuffer::TrackBuffer {
     MediaTime lastDecodeTimestamp;
+    MediaTime greatestDecodeDuration;
     MediaTime lastFrameDuration;
     MediaTime highestPresentationTimestamp;
     MediaTime lastEnqueuedPresentationTime;
@@ -78,6 +79,7 @@ struct SourceBuffer::TrackBuffer {
 
     TrackBuffer()
         : lastDecodeTimestamp(MediaTime::invalidTime())
+        , greatestDecodeDuration(MediaTime::invalidTime())
         , lastFrameDuration(MediaTime::invalidTime())
         , highestPresentationTimestamp(MediaTime::invalidTime())
         , lastEnqueuedPresentationTime(MediaTime::invalidTime())
@@ -247,6 +249,7 @@ void SourceBuffer::resetParserState()
     // 5. Set the need random access point flag on all track buffers to true.
     for (auto& trackBufferPair : m_trackBufferMap.values()) {
         trackBufferPair.lastDecodeTimestamp = MediaTime::invalidTime();
+        trackBufferPair.greatestDecodeDuration = MediaTime::invalidTime();
         trackBufferPair.lastFrameDuration = MediaTime::invalidTime();
         trackBufferPair.highestPresentationTimestamp = MediaTime::invalidTime();
         trackBufferPair.needRandomAccessFlag = true;
@@ -1392,7 +1395,7 @@ void SourceBuffer::sourceBufferPrivateDidReceiveSample(MediaSample& sample)
         // ↳ If last decode timestamp for track buffer is set and the difference between decode timestamp and
         // last decode timestamp is greater than 2 times last frame duration:
         if (trackBuffer.lastDecodeTimestamp.isValid() && (decodeTimestamp < trackBuffer.lastDecodeTimestamp
-            || abs(decodeTimestamp - trackBuffer.lastDecodeTimestamp) > (trackBuffer.lastFrameDuration * 2))) {
+            || (trackBuffer.greatestDecodeDuration.isValid() && abs(decodeTimestamp - trackBuffer.lastDecodeTimestamp) > (trackBuffer.greatestDecodeDuration * 2)))) {
 
             // 1.6.1:
             if (m_mode == AppendMode::Segments) {
@@ -1409,6 +1412,7 @@ void SourceBuffer::sourceBufferPrivateDidReceiveSample(MediaSample& sample)
                 // 1.6.2 Unset the last decode timestamp on all track buffers.
                 trackBuffer.lastDecodeTimestamp = MediaTime::invalidTime();
                 // 1.6.3 Unset the last frame duration on all track buffers.
+                trackBuffer.greatestDecodeDuration = MediaTime::invalidTime();
                 trackBuffer.lastFrameDuration = MediaTime::invalidTime();
                 // 1.6.4 Unset the highest presentation timestamp on all track buffers.
                 trackBuffer.highestPresentationTimestamp = MediaTime::invalidTime();
@@ -1591,6 +1595,14 @@ void SourceBuffer::sourceBufferPrivateDidReceiveSample(MediaSample& sample)
         if (trackBuffer.lastEnqueuedDecodeEndTime.isInvalid() || decodeTimestamp >= trackBuffer.lastEnqueuedDecodeEndTime) {
             DecodeOrderSampleMap::KeyType decodeKey(sample.decodeTime(), sample.presentationTime());
             trackBuffer.decodeQueue.insert(DecodeOrderSampleMap::MapType::value_type(decodeKey, &sample));
+        }
+
+        // NOTE: the spec considers "Coded Frame Duration" to be the presentation duration, but this is not necessarily equal
+        // to the decoded duration. When comparing deltas between decode timestamps, the decode duration, not the presentation.
+        if (trackBuffer.lastDecodeTimestamp.isValid()) {
+            MediaTime lastDecodeDuration = decodeTimestamp - trackBuffer.lastDecodeTimestamp;
+            if (lastDecodeDuration > trackBuffer.greatestDecodeDuration)
+                trackBuffer.greatestDecodeDuration = lastDecodeDuration;
         }
 
         // 1.18 Set last decode timestamp for track buffer to decode timestamp.

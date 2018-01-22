@@ -1,3 +1,35 @@
+2018-01-21  Jer Noble  <jer.noble@apple.com>
+
+        REGRESSION (macOS 10.13.2): imported/w3c/web-platform-tests/media-source/mediasource-* LayoutTests failing
+        https://bugs.webkit.org/show_bug.cgi?id=181891
+
+        Reviewed by Eric Carlson.
+
+        In macOS 10.13.2, CoreMedia changed the definition of CMSampleBufferGetDuration() to return
+        the presentation duration rather than the decode duration. For media streams where those two
+        durations are identical (or at least, closely similar), this isn't a problem. But the media
+        file used in the WPT tests have an unusual frame cadence: decode durations go {3000, 1, 5999,
+        1, 5999,...} and presentation durations go {3000, 2999, 3000, 2999}. This caused one check in
+        the "Coded Frame Processing" algorithm to begin failing, where it checks that the delta
+        between the last sample's decode time and the new decode time is no more than 2x as far as
+        the last sample's duration. That's not a problem as long as the "duration" is the "decode
+        duration" and the samples are all adjacent. Once the "duration" is "presentation duration",
+        all the assumptions in the algorithm are invalidated. In the WPT test case, the delta between
+        decode times is 5999, and 2 * the presentation duration is 5998, causing all samples up to
+        the next sync sample to be dropped.
+
+        To work around this change in behavior, we'll adopt the same technique used by Mozilla's MSE
+        implementation, which was done for similar reasons. Rather than track the "last frame duration",
+        we'll record the "greatest frame duration", and use actual decode timestamps to derive this
+        duration. The "greatest frame duration" field will be reset at the same times as "last frame
+        duration", and will be used only in the part of the algorithm that checks for large decode
+        timestamp gaps.
+
+        * Modules/mediasource/SourceBuffer.cpp:
+        (WebCore::SourceBuffer::TrackBuffer::TrackBuffer):
+        (WebCore::SourceBuffer::resetParserState):
+        (WebCore::SourceBuffer::sourceBufferPrivateDidReceiveSample):
+
 2018-01-21  Andy Estes  <aestes@apple.com>
 
         [ios] LayoutTest imported/w3c/web-platform-tests/payment-request/rejects_if_not_active.https.html is crashing in JSC::JSONParse

@@ -1746,11 +1746,6 @@ webkit.org/b/175998 http/tests/security/mixedContent/insecure-css-with-secure-co
 [ ElCapitan Sierra ] platform/mac/media/encrypted-media/fps-generateRequest.html [ Skip ]
 [ ElCapitan Sierra ] platform/mac/media/encrypted-media/fps-encrypted-event.html [ Skip ]
 
-# rdar://problem/35395437
-[ HighSierra+ ] imported/w3c/web-platform-tests/media-source/mediasource-play.html [ Failure ]
-[ HighSierra+ ] imported/w3c/web-platform-tests/media-source/mediasource-redundant-seek.html [ Failure ]
-[ HighSierra+ ] imported/w3c/web-platform-tests/media-source/mediasource-remove.html [ Failure ]
-
 webkit.org/b/165311 [ Sierra+ ] media/modern-media-controls/pip-support/pip-support-click.html [ Pass Failure ]
 
 webkit.org/b/176693 storage/indexeddb/modern/idbtransaction-objectstore-failures-private.html [ Pass Failure ]
