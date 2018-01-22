@@ -128,6 +128,10 @@
 ;; <rdar://problem/31252371>
 (allow mach-lookup (xpc-service-name-regex #"\.viewservice$"))
 
+;; Power logging
+(allow mach-lookup
+    (global-name "com.apple.powerlog.plxpclogger.xpc")) ;;  <rdar://problem/36442803>
+
 (mobile-preferences-read
     "com.apple.EmojiPreferences"
     ; <rdar://problem/8477596> com.apple.InputModePreferences
