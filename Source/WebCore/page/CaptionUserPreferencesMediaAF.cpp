@@ -395,7 +395,7 @@ String CaptionUserPreferencesMediaAF::captionsTextEdgeCSS() const
         appendCSS(builder, CSSPropertyTextShadow, makeString(edgeStyleDropShadow.get(), " black"), important);
 
     if (textEdgeStyle == kMACaptionAppearanceTextEdgeStyleDropShadow || textEdgeStyle == kMACaptionAppearanceTextEdgeStyleUniform) {
-        appendCSS(builder, CSSPropertyWebkitTextStrokeColor, "black", important);
+        appendCSS(builder, CSSPropertyStrokeColor, "black", important);
         appendCSS(builder, CSSPropertyPaintOrder, getValueName(CSSValueStroke), important);
         appendCSS(builder, CSSPropertyStrokeLinejoin, getValueName(CSSValueRound), important);
         appendCSS(builder, CSSPropertyStrokeLinecap, getValueName(CSSValueRound), important);
