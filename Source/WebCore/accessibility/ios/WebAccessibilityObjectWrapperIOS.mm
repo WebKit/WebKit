@@ -948,6 +948,9 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
     case AccessibilityRole::Footer:
     case AccessibilityRole::Footnote:
     case AccessibilityRole::Form:
+    case AccessibilityRole::GraphicsDocument:
+    case AccessibilityRole::GraphicsObject:
+    case AccessibilityRole::GraphicsSymbol:
     case AccessibilityRole::Grid:
     case AccessibilityRole::GridCell:
     case AccessibilityRole::GrowArea:

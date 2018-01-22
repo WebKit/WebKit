@@ -649,6 +649,15 @@ div[role=figure]
 div[role=form]
       AXRole: AXLandmarkForm
       
+div[role=graphics-document]
+      AXRole: AXDocument
+      
+div[role=graphics-object]
+      AXRole: AXGroup
+      
+div[role=graphics-symbol]
+      AXRole: AXImage
+      
 div[role=grid]
       AXRole: AXTable
       

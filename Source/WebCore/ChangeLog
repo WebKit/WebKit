@@ -1,3 +1,29 @@
+2018-01-22  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        AX: Implement support for Graphics ARIA roles
+        https://bugs.webkit.org/show_bug.cgi?id=181796
+
+        Reviewed by Chris Fleizach.
+
+        Add mappings for the three new roles (graphics-document, graphics-object,
+        and graphics-symbol) as per the Graphics Accessibility API Mappings spec.
+
+        No new tests; instead, new test cases added to roles-computedRoleString.html
+        and roles-exposed.html.
+
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::initializeRoleMap):
+        (WebCore::AccessibilityObject::computedRoleString const):
+        * accessibility/AccessibilityObject.h:
+        * accessibility/atk/WebKitAccessibleWrapperAtk.cpp:
+        (atkRole):
+        * accessibility/ios/WebAccessibilityObjectWrapperIOS.mm:
+        (-[WebAccessibilityObjectWrapper determineIsAccessibilityElement]):
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (createAccessibilityRoleMap):
+        (-[WebAccessibilityObjectWrapper subrole]):
+        (-[WebAccessibilityObjectWrapper roleDescription]):
+
 2018-01-22  Antti Koivisto  <antti@apple.com>
 
         REGRESSION(r224535): Can't write reviews in the App Store

@@ -2306,6 +2306,10 @@ static void initializeRoleMap()
         { "doc-tip", AccessibilityRole::DocumentNote },
         { "doc-toc", AccessibilityRole::LandmarkNavigation },
         { "figure", AccessibilityRole::Figure },
+        // The mappings for 'graphics-*' roles are defined in this spec: https://w3c.github.io/graphics-aam/
+        { "graphics-document", AccessibilityRole::GraphicsDocument },
+        { "graphics-object", AccessibilityRole::GraphicsObject },
+        { "graphics-symbol", AccessibilityRole::GraphicsSymbol },
         { "grid", AccessibilityRole::Grid },
         { "gridcell", AccessibilityRole::GridCell },
         { "table", AccessibilityRole::Table },
@@ -2408,8 +2412,16 @@ String AccessibilityObject::computedRoleString() const
         return "";
 
     // We do compute a role string for block elements with author-provided roles.
-    if (role == AccessibilityRole::ApplicationTextGroup || role == AccessibilityRole::Footnote)
+    if (role == AccessibilityRole::ApplicationTextGroup
+        || role == AccessibilityRole::Footnote
+        || role == AccessibilityRole::GraphicsObject)
         return reverseAriaRoleMap().get(static_cast<int>(AccessibilityRole::ApplicationGroup));
+
+    if (role == AccessibilityRole::GraphicsDocument)
+        return reverseAriaRoleMap().get(static_cast<int>(AccessibilityRole::Document));
+
+    if (role == AccessibilityRole::GraphicsSymbol)
+        return reverseAriaRoleMap().get(static_cast<int>(AccessibilityRole::Image));
 
     if (role == AccessibilityRole::HorizontalRule)
         return reverseAriaRoleMap().get(static_cast<int>(AccessibilityRole::Splitter));

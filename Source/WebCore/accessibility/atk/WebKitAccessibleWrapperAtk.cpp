@@ -716,6 +716,7 @@ static AtkRole atkRole(AccessibilityObject* coreObject)
     case AccessibilityRole::ApplicationGroup:
     case AccessibilityRole::Feed:
     case AccessibilityRole::Figure:
+    case AccessibilityRole::GraphicsObject:
     case AccessibilityRole::Group:
     case AccessibilityRole::RadioGroup:
     case AccessibilityRole::SVGRoot:
@@ -735,6 +736,7 @@ static AtkRole atkRole(AccessibilityObject* coreObject)
         return ATK_ROLE_LINK;
     case AccessibilityRole::ImageMap:
         return ATK_ROLE_IMAGE_MAP;
+    case AccessibilityRole::GraphicsSymbol:
     case AccessibilityRole::Image:
         return ATK_ROLE_IMAGE;
     case AccessibilityRole::ListMarker:
@@ -744,6 +746,7 @@ static AtkRole atkRole(AccessibilityObject* coreObject)
         return ATK_ROLE_ARTICLE;
 #endif
     case AccessibilityRole::Document:
+    case AccessibilityRole::GraphicsDocument:
         return ATK_ROLE_DOCUMENT_FRAME;
     case AccessibilityRole::DocumentNote:
         return ATK_ROLE_COMMENT;

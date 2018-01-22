@@ -1084,6 +1084,21 @@ div[role=form]
       AXSubrole: 
       AXRoleDescription: group
       
+div[role=graphics-document]
+      AXRole: AXGroup
+      AXSubrole: AXDocument
+      AXRoleDescription: document
+      
+div[role=graphics-object]
+      AXRole: AXGroup
+      AXSubrole: 
+      AXRoleDescription: group
+      
+div[role=graphics-symbol]
+      AXRole: AXImage
+      AXSubrole: 
+      AXRoleDescription: image
+      
 div[role=grid]
       AXRole: AXTable
       AXSubrole: 

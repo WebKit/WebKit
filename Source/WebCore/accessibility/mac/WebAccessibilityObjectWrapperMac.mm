@@ -1986,6 +1986,9 @@ static const AccessibilityRoleMap& createAccessibilityRoleMap()
         { AccessibilityRole::Feed, NSAccessibilityGroupRole },
         { AccessibilityRole::Figure, NSAccessibilityGroupRole },
         { AccessibilityRole::Footnote, NSAccessibilityGroupRole },
+        { AccessibilityRole::GraphicsDocument, NSAccessibilityGroupRole },
+        { AccessibilityRole::GraphicsObject, NSAccessibilityGroupRole },
+        { AccessibilityRole::GraphicsSymbol, NSAccessibilityImageRole },
     };
     AccessibilityRoleMap& roleMap = *new AccessibilityRoleMap;
     
@@ -2113,6 +2116,7 @@ static NSString* roleValueToNSString(AccessibilityRole value)
     case AccessibilityRole::ApplicationTimer:
         return @"AXApplicationTimer";
     case AccessibilityRole::Document:
+    case AccessibilityRole::GraphicsDocument:
         return @"AXDocument";
     case AccessibilityRole::DocumentArticle:
         return @"AXDocumentArticle";
@@ -2286,6 +2290,8 @@ static NSString* roleValueToNSString(AccessibilityRole value)
             return AXMarkText();
         case AccessibilityRole::Video:
             return localizedMediaControlElementString("VideoElement");
+        case AccessibilityRole::GraphicsDocument:
+            return AXARIAContentGroupText(@"ARIADocument");
         default:
             return NSAccessibilityRoleDescription(NSAccessibilityGroupRole, [self subrole]);
         }

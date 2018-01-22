@@ -1,3 +1,21 @@
+2018-01-22  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        AX: Implement support for Graphics ARIA roles
+        https://bugs.webkit.org/show_bug.cgi?id=181796
+
+        Reviewed by Chris Fleizach.
+
+        Add new test cases and update expectations accordingly.
+
+        * accessibility/gtk/xml-roles-exposed-expected.txt:
+        * accessibility/gtk/xml-roles-exposed.html:
+        * accessibility/roles-computedRoleString.html:
+        * accessibility/roles-exposed.html:
+        * platform/gtk/accessibility/roles-computedRoleString-expected.txt:
+        * platform/gtk/accessibility/roles-exposed-expected.txt:
+        * platform/mac/accessibility/roles-computedRoleString-expected.txt:
+        * platform/mac/accessibility/roles-exposed-expected.txt:
+
 2018-01-22  Youenn Fablet  <youenn@apple.com>
 
         Fetch Headers from an Opaque response should be filtered out

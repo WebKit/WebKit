@@ -1585,6 +1585,63 @@ AXRequired: 0
 AXChecked: 0
 AXPlatformAttributes: computed-role:navigation, xml-roles:doc-toc, tag:div, toolkit:WebKitGtk
 ------------
+AXRole: AXDocument
+AXParent: AXWebArea
+AXChildren: 0
+AXPosition: { 0.000000, 0.000000 }
+AXSize: { 0.000000, 0.000000 }
+AXTitle: 
+AXDescription: 
+AXValue: 
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:document, xml-roles:graphics-document, tag:div, toolkit:WebKitGtk
+------------
+AXRole: AXGroup
+AXParent: AXWebArea
+AXChildren: 0
+AXPosition: { 0.000000, 0.000000 }
+AXSize: { 0.000000, 0.000000 }
+AXTitle: 
+AXDescription: 
+AXValue: 
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:group, xml-roles:graphics-object, tag:div, toolkit:WebKitGtk
+------------
+AXRole: AXImage
+AXParent: AXWebArea
+AXChildren: 0
+AXPosition: { 0.000000, 0.000000 }
+AXSize: { 0.000000, 0.000000 }
+AXTitle: 
+AXDescription: 
+AXValue: 
+AXFocusable: 0
+AXFocused: 0
+AXSelectable: 0
+AXSelected: 0
+AXMultiSelectable: 0
+AXEnabled: 1
+AXExpanded: 0
+AXRequired: 0
+AXChecked: 0
+AXPlatformAttributes: computed-role:img, xml-roles:graphics-symbol, tag:div, toolkit:WebKitGtk
+------------
 AXRole: AXParagraph
 AXParent: AXWebArea
 AXChildren: 2
