@@ -121,7 +121,7 @@ public:
             reservationSize = Options::jitMemoryReservationSize();
         else
             reservationSize = fixedExecutableMemoryPoolSize;
-        reservationSize = roundUpToMultipleOf(pageSize(), reservationSize);
+        reservationSize = std::max(roundUpToMultipleOf(pageSize(), reservationSize), pageSize() * 2);
         m_reservation = PageReservation::reserveWithGuardPages(reservationSize, OSAllocator::JSJITCodePages, EXECUTABLE_POOL_WRITABLE, true);
         if (m_reservation) {
             ASSERT(m_reservation.size() == reservationSize);
