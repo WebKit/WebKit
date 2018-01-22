@@ -35,12 +35,10 @@ struct ServiceWorkerJobDataIdentifier {
     SWServerConnectionIdentifier connectionIdentifier;
     ServiceWorkerJobIdentifier jobIdentifier;
 
-#ifndef NDEBUG
     String loggingString() const
     {
         return connectionIdentifier.loggingString() + "-" + jobIdentifier.loggingString();
     }
-#endif
 
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static std::optional<ServiceWorkerJobDataIdentifier> decode(Decoder&);

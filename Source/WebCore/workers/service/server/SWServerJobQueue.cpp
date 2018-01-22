@@ -159,6 +159,8 @@ void SWServerJobQueue::didResolveRegistrationPromise()
     ASSERT(registration);
     ASSERT(registration->installingWorker());
 
+    RELEASE_LOG(ServiceWorker, "%p - SWServerJobQueue::didResolveRegistrationPromise: Registration ID: %llu. Now proceeding with install", this, registration->identifier().toUInt64());
+
     // Queue a task to fire an event named updatefound at all the ServiceWorkerRegistration objects
     // for all the service worker clients whose creation URL matches registration's scope url and
     // all the service workers whose containing service worker registration is registration.
@@ -263,6 +265,7 @@ void SWServerJobQueue::runRegisterJob(const ServiceWorkerJobData& job)
         registration->setIsUninstalling(false);
         auto* newestWorker = registration->getNewestWorker();
         if (newestWorker && equalIgnoringFragmentIdentifier(job.scriptURL, newestWorker->scriptURL()) && job.registrationOptions.updateViaCache == registration->updateViaCache()) {
+            RELEASE_LOG(ServiceWorker, "%p - SWServerJobQueue::runRegisterJob: Found directly reusable registration %llu for job %s (DONE)", this, registration->identifier().toUInt64(), job.identifier().loggingString().utf8().data());
             m_server.resolveRegistrationJob(job, registration->data(), ShouldNotifyWhenResolved::No);
             finishCurrentJob();
             return;
@@ -270,9 +273,12 @@ void SWServerJobQueue::runRegisterJob(const ServiceWorkerJobData& job)
         // This is not specified yet (https://github.com/w3c/ServiceWorker/issues/1189).
         if (registration->updateViaCache() != job.registrationOptions.updateViaCache)
             registration->setUpdateViaCache(job.registrationOptions.updateViaCache);
+        RELEASE_LOG(ServiceWorker, "%p - SWServerJobQueue::runRegisterJob: Found registration %llu for job %s but it needs updating", this, registration->identifier().toUInt64(), job.identifier().loggingString().utf8().data());
     } else {
         auto newRegistration = std::make_unique<SWServerRegistration>(m_server, m_registrationKey, job.registrationOptions.updateViaCache, job.scopeURL, job.scriptURL);
         m_server.addRegistration(WTFMove(newRegistration));
+
+        RELEASE_LOG(ServiceWorker, "%p - SWServerJobQueue::runRegisterJob: No existing registration for job %s, constructing a new one.", this, job.identifier().loggingString().utf8().data());
     }
 
     runUpdateJob(job);

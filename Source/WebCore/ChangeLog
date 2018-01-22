@@ -1,3 +1,42 @@
+2018-01-22  Chris Dumez  <cdumez@apple.com>
+
+        Add release logging to help debug issues related to service workers
+        https://bugs.webkit.org/show_bug.cgi?id=181935
+        <rdar://problem/36735900>
+
+        Reviewed by Brady Eidson.
+
+        * workers/service/ServiceWorker.cpp:
+        (WebCore::ServiceWorker::ServiceWorker):
+        (WebCore::ServiceWorker::scheduleTaskToUpdateState):
+        (WebCore::ServiceWorker::postMessage):
+        (WebCore::ServiceWorker::isAlwaysOnLoggingAllowed const):
+        * workers/service/ServiceWorker.h:
+        * workers/service/ServiceWorkerContainer.cpp:
+        (WebCore::ServiceWorkerContainer::addRegistration):
+        (WebCore::ServiceWorkerContainer::removeRegistration):
+        (WebCore::ServiceWorkerContainer::updateRegistration):
+        (WebCore::ServiceWorkerContainer::jobFailedWithException):
+        (WebCore::ServiceWorkerContainer::jobResolvedWithRegistration):
+        (WebCore::ServiceWorkerContainer::jobResolvedWithUnregistrationResult):
+        (WebCore::ServiceWorkerContainer::startScriptFetchForJob):
+        (WebCore::ServiceWorkerContainer::jobFinishedLoadingScript):
+        (WebCore::ServiceWorkerContainer::jobFailedLoadingScript):
+        (WebCore::ServiceWorkerContainer::isAlwaysOnLoggingAllowed const):
+        * workers/service/ServiceWorkerContainer.h:
+        * workers/service/ServiceWorkerRegistration.cpp:
+        (WebCore::ServiceWorkerRegistration::ServiceWorkerRegistration):
+        (WebCore::ServiceWorkerRegistration::updateStateFromServer):
+        (WebCore::ServiceWorkerRegistration::scheduleTaskToFireUpdateFoundEvent):
+        * workers/service/server/SWServer.cpp:
+        (WebCore::SWServer::scriptContextFailedToStart):
+        (WebCore::SWServer::didFinishInstall):
+        (WebCore::SWServer::didFinishActivation):
+        (WebCore::SWServer::terminateWorkerInternal):
+        * workers/service/server/SWServerJobQueue.cpp:
+        (WebCore::SWServerJobQueue::didResolveRegistrationPromise):
+        (WebCore::SWServerJobQueue::runRegisterJob):
+
 2018-01-22  Youenn Fablet  <youenn@apple.com>
 
         Safari Tech Preview can't use GitHub login at forums.swift.org

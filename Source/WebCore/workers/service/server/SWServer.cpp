@@ -334,6 +334,8 @@ void SWServer::scriptContextFailedToStart(const std::optional<ServiceWorkerJobDa
     if (!jobDataIdentifier)
         return;
 
+    RELEASE_LOG_ERROR(ServiceWorker, "%p - SWServer::scriptContextFailedToStart: Failed to start SW for job %s, error: %s", this, jobDataIdentifier->loggingString().utf8().data(), message.utf8().data());
+
     if (auto* jobQueue = m_jobQueues.get(worker.registrationKey()))
         jobQueue->scriptContextFailedToStart(*jobDataIdentifier, worker.identifier(), message);
 }
@@ -352,12 +354,19 @@ void SWServer::didFinishInstall(const std::optional<ServiceWorkerJobDataIdentifi
     if (!jobDataIdentifier)
         return;
 
+    if (wasSuccessful)
+        RELEASE_LOG(ServiceWorker, "%p - SWServer::didFinishInstall: Successfuly finished SW install for job %s", this, jobDataIdentifier->loggingString().utf8().data());
+    else
+        RELEASE_LOG_ERROR(ServiceWorker, "%p - SWServer::didFinishInstall: Failed SW install for job %s", this, jobDataIdentifier->loggingString().utf8().data());
+
     if (auto* jobQueue = m_jobQueues.get(worker.registrationKey()))
         jobQueue->didFinishInstall(*jobDataIdentifier, worker.identifier(), wasSuccessful);
 }
 
 void SWServer::didFinishActivation(SWServerWorker& worker)
 {
+    RELEASE_LOG(ServiceWorker, "%p - SWServer::didFinishActivation: Finished activation for service worker %llu", this, worker.identifier().toUInt64());
+
     if (auto* registration = getRegistration(worker.registrationKey()))
         registration->didFinishActivation(worker.identifier());
 }
@@ -574,6 +583,8 @@ void SWServer::terminateWorkerInternal(SWServerWorker& worker, TerminationMode m
 {
     ASSERT(m_runningOrTerminatingWorkers.get(worker.identifier()) == &worker);
     ASSERT(worker.isRunning());
+
+    RELEASE_LOG(ServiceWorker, "%p - SWServer::terminateWorkerInternal: Terminating service worker %llu", this, worker.identifier().toUInt64());
 
     worker.setState(SWServerWorker::State::Terminating);
 

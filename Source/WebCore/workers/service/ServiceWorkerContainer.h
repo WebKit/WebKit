@@ -84,6 +84,8 @@ public:
 
     bool isStopped() const { return m_isStopped; };
 
+    bool isAlwaysOnLoggingAllowed() const;
+
 private:
     void scheduleJob(Ref<ServiceWorkerJob>&&);
 

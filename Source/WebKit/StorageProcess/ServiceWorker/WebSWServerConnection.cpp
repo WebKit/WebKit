@@ -56,6 +56,9 @@ using namespace WebCore;
 
 namespace WebKit {
 
+#define SWSERVERCONNECTION_RELEASE_LOG_IF_ALLOWED(fmt, ...) RELEASE_LOG_IF(m_sessionID.isAlwaysOnLoggingAllowed(), ServiceWorker, "%p - WebSWServerConnection::" fmt, this, ##__VA_ARGS__)
+#define SWSERVERCONNECTION_RELEASE_LOG_ERROR_IF_ALLOWED(fmt, ...) RELEASE_LOG_ERROR_IF(m_sessionID.isAlwaysOnLoggingAllowed(), ServiceWorker, "%p - WebSWServerConnection::" fmt, this, ##__VA_ARGS__)
+
 WebSWServerConnection::WebSWServerConnection(SWServer& server, IPC::Connection& connection, SessionID sessionID)
     : SWServer::Connection(server)
     , m_sessionID(sessionID)
@@ -130,6 +133,7 @@ void WebSWServerConnection::startFetch(uint64_t fetchIdentifier, ServiceWorkerRe
 {
     auto* worker = server().activeWorkerFromRegistrationID(serviceWorkerRegistrationIdentifier);
     if (!worker) {
+        SWSERVERCONNECTION_RELEASE_LOG_ERROR_IF_ALLOWED("startFetch: fetchIdentifier: %llu -> DidNotHandle because no active worker", fetchIdentifier);
         m_contentConnection->send(Messages::ServiceWorkerClientFetch::DidNotHandle { }, fetchIdentifier);
         return;
     }
@@ -140,6 +144,7 @@ void WebSWServerConnection::startFetch(uint64_t fetchIdentifier, ServiceWorkerRe
             return;
 
         if (!success) {
+            SWSERVERCONNECTION_RELEASE_LOG_ERROR_IF_ALLOWED("startFetch: fetchIdentifier: %llu -> DidNotHandle because worker did not become activated", fetchIdentifier);
             m_contentConnection->send(Messages::ServiceWorkerClientFetch::DidNotHandle { }, fetchIdentifier);
             return;
         }
@@ -148,10 +153,13 @@ void WebSWServerConnection::startFetch(uint64_t fetchIdentifier, ServiceWorkerRe
             if (!weakThis)
                 return;
 
-            if (success)
+            if (success) {
+                SWSERVERCONNECTION_RELEASE_LOG_IF_ALLOWED("startFetch: Starting fetch %llu via service worker %llu", fetchIdentifier, serviceWorkerIdentifier.toUInt64());
                 sendToContextProcess(contextConnection, Messages::WebSWContextManagerConnection::StartFetch { identifier(), fetchIdentifier, serviceWorkerIdentifier, request, options, formData, referrer });
-            else
+            } else {
+                SWSERVERCONNECTION_RELEASE_LOG_ERROR_IF_ALLOWED("startFetch: fetchIdentifier: %llu -> DidNotHandle because failed to run service worker", fetchIdentifier);
                 m_contentConnection->send(Messages::ServiceWorkerClientFetch::DidNotHandle { }, fetchIdentifier);
+            }
         });
     };
 
@@ -201,16 +209,19 @@ void WebSWServerConnection::didReceiveFetchFormData(uint64_t fetchIdentifier, co
 
 void WebSWServerConnection::didFinishFetch(uint64_t fetchIdentifier)
 {
+    SWSERVERCONNECTION_RELEASE_LOG_IF_ALLOWED("didFinishFetch: fetchIdentifier: %llu", fetchIdentifier);
     m_contentConnection->send(Messages::ServiceWorkerClientFetch::DidFinish { }, fetchIdentifier);
 }
 
 void WebSWServerConnection::didFailFetch(uint64_t fetchIdentifier)
 {
+    SWSERVERCONNECTION_RELEASE_LOG_ERROR_IF_ALLOWED("didFailFetch: fetchIdentifier: %llu", fetchIdentifier);
     m_contentConnection->send(Messages::ServiceWorkerClientFetch::DidFail { }, fetchIdentifier);
 }
 
 void WebSWServerConnection::didNotHandleFetch(uint64_t fetchIdentifier)
 {
+    SWSERVERCONNECTION_RELEASE_LOG_IF_ALLOWED("didNotHandleFetch: fetchIdentifier: %llu", fetchIdentifier);
     m_contentConnection->send(Messages::ServiceWorkerClientFetch::DidNotHandle { }, fetchIdentifier);
 }
 

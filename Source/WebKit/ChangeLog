@@ -1,3 +1,17 @@
+2018-01-22  Chris Dumez  <cdumez@apple.com>
+
+        Add release logging to help debug issues related to service workers
+        https://bugs.webkit.org/show_bug.cgi?id=181935
+        <rdar://problem/36735900>
+
+        Reviewed by Brady Eidson.
+
+        * StorageProcess/ServiceWorker/WebSWServerConnection.cpp:
+        (WebKit::WebSWServerConnection::startFetch):
+        (WebKit::WebSWServerConnection::didFinishFetch):
+        (WebKit::WebSWServerConnection::didFailFetch):
+        (WebKit::WebSWServerConnection::didNotHandleFetch):
+
 2018-01-22  Brent Fulgham  <bfulgham@apple.com>
 
         [iOS] REGRESSION (r225763): Allow access to power logging features

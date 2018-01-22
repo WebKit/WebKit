@@ -30,6 +30,7 @@
 
 #include "Document.h"
 #include "EventNames.h"
+#include "Logging.h"
 #include "MessagePort.h"
 #include "SWClientConnection.h"
 #include "ScriptExecutionContext.h"
@@ -39,6 +40,9 @@
 #include "ServiceWorkerProvider.h"
 #include <runtime/JSCJSValueInlines.h>
 #include <wtf/NeverDestroyed.h>
+
+#define WORKER_RELEASE_LOG_IF_ALLOWED(fmt, ...) RELEASE_LOG_IF(isAlwaysOnLoggingAllowed(), ServiceWorker, "%p - ServiceWorker::" fmt, this, ##__VA_ARGS__)
+#define WORKER_RELEASE_LOG_ERROR_IF_ALLOWED(fmt, ...) RELEASE_LOG_ERROR_IF(isAlwaysOnLoggingAllowed(), ServiceWorker, "%p - ServiceWorker::" fmt, this, ##__VA_ARGS__)
 
 namespace WebCore {
 
@@ -59,6 +63,8 @@ ServiceWorker::ServiceWorker(ScriptExecutionContext& context, ServiceWorkerData&
 
     relaxAdoptionRequirement();
     updatePendingActivityForEventDispatch();
+
+    WORKER_RELEASE_LOG_IF_ALLOWED("ServiceWorker: ID: %llu, state: %u", identifier().toUInt64(), m_data.state);
 }
 
 ServiceWorker::~ServiceWorker()
@@ -76,6 +82,7 @@ void ServiceWorker::scheduleTaskToUpdateState(State state)
     context->postTask([this, protectedThis = makeRef(*this), state](ScriptExecutionContext&) {
         ASSERT(this->state() != state);
 
+        WORKER_RELEASE_LOG_IF_ALLOWED("scheduleTaskToUpdateState: Updating service worker %llu state from %u to %u. Registration ID: %llu", identifier().toUInt64(), m_data.state, state, registrationIdentifier().toUInt64());
         m_data.state = state;
         if (state != State::Installing && !m_isStopped) {
             ASSERT(m_pendingActivityForEventDispatch);
@@ -111,8 +118,10 @@ ExceptionOr<void> ServiceWorker::postMessage(ScriptExecutionContext& context, JS
 
     // FIXME: Support sending the channels.
     auto channels = channelsOrException.releaseReturnValue();
-    if (!channels.isEmpty())
+    if (!channels.isEmpty()) {
+        WORKER_RELEASE_LOG_ERROR_IF_ALLOWED("postMessage: Passing MessagePort objects to postMessage is not yet supported");
         return Exception { NotSupportedError, ASCIILiteral("Passing MessagePort objects to postMessage is not yet supported") };
+    }
 
     ServiceWorkerOrClientIdentifier sourceIdentifier;
     if (is<ServiceWorkerGlobalScope>(context))
@@ -168,6 +177,19 @@ void ServiceWorker::updatePendingActivityForEventDispatch()
     if (m_pendingActivityForEventDispatch)
         return;
     m_pendingActivityForEventDispatch = makePendingActivity(*this);
+}
+
+bool ServiceWorker::isAlwaysOnLoggingAllowed() const
+{
+    auto* context = scriptExecutionContext();
+    if (!context)
+        return false;
+
+    auto* container = context->serviceWorkerContainer();
+    if (!container)
+        return false;
+
+    return container->isAlwaysOnLoggingAllowed();
 }
 
 } // namespace WebCore
