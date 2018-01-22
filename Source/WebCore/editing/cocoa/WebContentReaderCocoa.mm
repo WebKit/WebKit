@@ -31,7 +31,6 @@
 #import "BlobURL.h"
 #import "CachedResourceLoader.h"
 #import "DOMURL.h"
-#import "DeprecatedGlobalSettings.h"
 #import "Document.h"
 #import "DocumentFragment.h"
 #import "DocumentLoader.h"
@@ -326,7 +325,7 @@ RefPtr<DocumentFragment> createFragmentAndAddResources(Frame& frame, NSAttribute
     if (!fragmentAndResources.fragment)
         return nullptr;
 
-    if (!DeprecatedGlobalSettings::customPasteboardDataEnabled()) {
+    if (!RuntimeEnabledFeatures::sharedFeatures().customPasteboardDataEnabled()) {
         if (DocumentLoader* loader = frame.loader().documentLoader()) {
             for (auto& resource : fragmentAndResources.resources)
                 loader->addArchiveResource(resource.copyRef());
@@ -457,7 +456,7 @@ bool WebContentReader::readWebArchive(SharedBuffer& buffer)
     if (!result)
         return false;
     
-    if (!DeprecatedGlobalSettings::customPasteboardDataEnabled()) {
+    if (!RuntimeEnabledFeatures::sharedFeatures().customPasteboardDataEnabled()) {
         fragment = createFragmentFromMarkup(*frame.document(), result->markup, result->mainResource->url(), DisallowScriptingAndPluginContent);
         if (DocumentLoader* loader = frame.loader().documentLoader())
             loader->addAllArchiveResources(result->archive.get());

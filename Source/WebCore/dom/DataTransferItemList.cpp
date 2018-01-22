@@ -27,9 +27,9 @@
 #include "DataTransferItemList.h"
 
 #include "DataTransferItem.h"
-#include "DeprecatedGlobalSettings.h"
 #include "FileList.h"
 #include "Pasteboard.h"
+#include "RuntimeEnabledFeatures.h"
 #include "Settings.h"
 
 namespace WebCore {
@@ -56,7 +56,7 @@ RefPtr<DataTransferItem> DataTransferItemList::item(unsigned index)
 
 static bool shouldExposeTypeInItemList(const String& type)
 {
-    return DeprecatedGlobalSettings::customPasteboardDataEnabled() || Pasteboard::isSafeTypeForDOMToReadAndWrite(type);
+    return RuntimeEnabledFeatures::sharedFeatures().customPasteboardDataEnabled() || Pasteboard::isSafeTypeForDOMToReadAndWrite(type);
 }
 
 ExceptionOr<RefPtr<DataTransferItem>> DataTransferItemList::add(const String& data, const String& type)

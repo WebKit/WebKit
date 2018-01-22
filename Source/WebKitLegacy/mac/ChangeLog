@@ -1,3 +1,18 @@
+2018-01-21  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Turning off custom pasteboard data doesn't actually turn it off in WK2
+        https://bugs.webkit.org/show_bug.cgi?id=181920
+        <rdar://problem/36686429>
+
+        Reviewed by Wenson Hsieh.
+
+        Always disable custom pasteboard data in WebKit1. See r226156 for details.
+
+        * WebView/WebPreferences.mm:
+        (+[WebPreferences initialize]):
+        * WebView/WebView.mm:
+        (-[WebView _preferencesChanged:]):
+
 2018-01-21  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Add a new feature flag for EXTRA_ZOOM_MODE and reintroduce AdditionalFeatureDefines.h

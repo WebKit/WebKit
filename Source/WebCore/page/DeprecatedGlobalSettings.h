@@ -108,10 +108,6 @@ public:
     static void setShouldManageAudioSessionCategory(bool flag) { gManageAudioSession = flag; }
     static bool shouldManageAudioSessionCategory() { return gManageAudioSession; }
 #endif
-
-    static void setCustomPasteboardDataEnabled(bool enabled) { gCustomPasteboardDataEnabled = enabled; }
-    static bool customPasteboardDataEnabled() { return gCustomPasteboardDataEnabled; }
-    WEBCORE_EXPORT static bool defaultCustomPasteboardDataEnabled();
     
 #if ENABLE(MEDIA_STREAM)
     static bool mockCaptureDevicesEnabled();
