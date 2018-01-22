@@ -3849,3 +3849,6 @@ webkit.org/b/181662 fast/forms/auto-fill-button/input-strong-password-auto-fill-
 webkit.org/b/181662 fast/forms/auto-fill-button/input-strong-confirmation-password-auto-fill-button.html [ Failure ]
 
 webkit.org/b/181854 svg/filters/feDiffuseLighting-bottomRightPixel.html [ ImageOnlyFailure ]
+
+webkit.org/b/181869 svg/filters/fePointLight-color.svg [ ImageOnlyFailure ]
+webkit.org/b/181869 svg/filters/feSpotLight-color.svg [ ImageOnlyFailure ]

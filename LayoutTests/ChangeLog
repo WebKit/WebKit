@@ -1,3 +1,12 @@
+2018-01-19  Per Arne Vollan  <pvollan@apple.com>
+
+        Mark svg/filters/fePointLight-color.svg as failure on Windows.
+        https://bugs.webkit.org/show_bug.cgi?id=181869
+
+        Unreviewed test gardening.
+
+        * platform/win/TestExpectations:
+
 2018-01-22  Chris Nardi  <csnardi1@gmail.com>
 
         Parse calc() in CSS media queries
