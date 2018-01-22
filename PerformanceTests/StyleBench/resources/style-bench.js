@@ -83,22 +83,32 @@ class StyleBench
         });
     }
 
-    static pseudoClassConfiguration()
+    static structuralPseudoClassConfiguration()
     {
         return Object.assign(this.defaultConfiguration(), {
-            name: 'Positional pseudo classes',
+            name: 'Structural pseudo classes',
             pseudoClassChance: 0.1,
             pseudoClasses: [
-                'nth-child(2n+1)',
-                'nth-last-child(3n)',
-                'nth-of-type(3n)',
-                'nth-last-of-type(4n)',
                 'first-child',
                 'last-child',
                 'first-of-type',
                 'last-of-type',
                 'only-of-type',
                 'empty',
+            ],
+        });
+    }
+
+    static nthPseudoClassConfiguration()
+    {
+        return Object.assign(this.defaultConfiguration(), {
+            name: ':nth pseudo classes',
+            pseudoClassChance: 0.1,
+            pseudoClasses: [
+                'nth-child(2n+1)',
+                'nth-last-child(3n)',
+                'nth-of-type(3n)',
+                'nth-last-of-type(4n)',
             ],
         });
     }
@@ -116,7 +126,8 @@ class StyleBench
         return [
             this.descendantCombinatorConfiguration(),
             this.siblingCombinatorConfiguration(),
-            this.pseudoClassConfiguration(),
+            this.structuralPseudoClassConfiguration(),
+            this.nthPseudoClassConfiguration(),
             this.beforeAndAfterConfiguration(),
         ];
     }
