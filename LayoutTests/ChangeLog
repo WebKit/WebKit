@@ -1,5 +1,19 @@
 2018-01-22  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r227240. rdar://problem/36722464
+
+    2018-01-19  Dean Jackson  <dino@apple.com>
+
+            REGRESSION (r221092): Swipe actions are hard to perform in FastMail app
+            https://bugs.webkit.org/show_bug.cgi?id=181817
+            <rdar://problem/35274055>
+
+            Reviewed by Simon Fraser.
+
+            * fast/events/touch/ios/passive-by-default-on-document-and-window-expected.txt:
+
+2018-01-22  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r227238. rdar://problem/36722424
 
     2018-01-19  Daniel Bates  <dabates@apple.com>

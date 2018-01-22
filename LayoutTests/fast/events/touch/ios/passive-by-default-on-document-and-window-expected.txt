@@ -1,13 +1,13 @@
-touchstart on body - cancelable: false defaultPrevented: false 
-touchstart on documentElement - cancelable: false defaultPrevented: false 
-touchstart on document - cancelable: false defaultPrevented: false 
-touchstart on window - cancelable: false defaultPrevented: false 
-touchmove on body - cancelable: false defaultPrevented: false 
-touchmove on documentElement - cancelable: false defaultPrevented: false 
-touchmove on document - cancelable: false defaultPrevented: false 
-touchmove on window - cancelable: false defaultPrevented: false 
-touchend on body - cancelable: false defaultPrevented: false 
-touchend on documentElement - cancelable: false defaultPrevented: false 
-touchend on document - cancelable: false defaultPrevented: false 
-touchend on window - cancelable: false defaultPrevented: false 
+touchstart on body - cancelable: true defaultPrevented: true 
+touchstart on documentElement - cancelable: true defaultPrevented: true 
+touchstart on document - cancelable: true defaultPrevented: true 
+touchstart on window - cancelable: true defaultPrevented: true 
+touchmove on body - cancelable: true defaultPrevented: true 
+touchmove on documentElement - cancelable: true defaultPrevented: true 
+touchmove on document - cancelable: true defaultPrevented: true 
+touchmove on window - cancelable: true defaultPrevented: true 
+touchend on body - cancelable: true defaultPrevented: true 
+touchend on documentElement - cancelable: true defaultPrevented: true 
+touchend on document - cancelable: true defaultPrevented: true 
+touchend on window - cancelable: true defaultPrevented: true 
 Done

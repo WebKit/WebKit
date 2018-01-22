@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,29 +23,18 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "WebPreferencesDefaultValues.h"
 
-#import <wtf/spi/darwin/dyldSPI.h>
-
-namespace WebKit {
-
-enum class SDKVersion : uint32_t {
 #if PLATFORM(IOS)
-    FirstWithNetworkCache = DYLD_IOS_VERSION_9_0,
-    FirstWithMediaTypesRequiringUserActionForPlayback = DYLD_IOS_VERSION_10_0,
-    FirstWithExceptionsForDuplicateCompletionHandlerCalls = DYLD_IOS_VERSION_11_0,
-    FirstToExcludeLocalStorageFromBackup = DYLD_IOS_VERSION_11_0,
-    FirstWithExpiredOnlyReloadBehavior = DYLD_IOS_VERSION_11_0,
-    FirstThatDisallowsSettingAnyXHRHeaderFromFileURLs = DYLD_IOS_VERSION_11_3,
-    FirstThatDefaultsToPassiveTouchListenersOnDocument = DYLD_IOS_VERSION_11_3,
-#elif PLATFORM(MAC)
-    FirstWithNetworkCache = DYLD_MACOSX_VERSION_10_11,
-    FirstWithExceptionsForDuplicateCompletionHandlerCalls = DYLD_MACOSX_VERSION_10_13,
-    FirstWithDropToNavigateDisallowedByDefault = DYLD_MACOSX_VERSION_10_13,
-    FirstWithExpiredOnlyReloadBehavior = DYLD_MACOSX_VERSION_10_13,
+#include "VersionChecks.h"
 #endif
-};
 
-bool linkedOnOrAfter(SDKVersion);
-
+bool defaultPassiveTouchListenersAsDefaultOnDocument()
+{
+#if PLATFORM(IOS)
+    return linkedOnOrAfter(WebKit::SDKVersion::FirstThatDefaultsToPassiveTouchListenersOnDocument);
+#else
+    return true;
+#endif
 }
