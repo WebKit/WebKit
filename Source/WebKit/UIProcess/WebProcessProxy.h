@@ -217,6 +217,7 @@ private:
     void didDestroyUserGestureToken(uint64_t);
 
     void shouldTerminate(bool& shouldTerminate);
+    void testIncomingSyncIPCMessageWhileWaitingForSyncReply(bool& handled);
 
     // Plugins
 #if ENABLE(NETSCAPE_PLUGIN_API)

@@ -556,7 +556,8 @@ std::unique_ptr<Decoder> Connection::waitForSyncReply(uint64_t syncRequestID, Se
     bool timedOut = false;
     while (!timedOut) {
         // First, check if we have any messages that we need to process.
-        SyncMessageState::singleton().dispatchMessages(nullptr);
+        if (m_shouldProcessIncomingMessagesWhileWaitingForSyncReply || sendSyncOptions.contains(SendSyncOption::ProcessIncomingMessagesEvenWhenWaitingForSyncReply) || sendSyncOptions.contains(SendSyncOption::UseFullySynchronousModeForTesting) || m_inDispatchMessageMarkedToUseFullySynchronousModeForTesting)
+            SyncMessageState::singleton().dispatchMessages(nullptr);
         
         {
             LockHolder locker(m_syncReplyStateMutex);

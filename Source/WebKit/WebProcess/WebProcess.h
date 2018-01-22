@@ -292,6 +292,8 @@ private:
     void mainThreadPing();
     void backgroundResponsivenessPing();
 
+    void syncIPCMessageWhileWaitingForSyncReplyForTesting();
+
 #if ENABLE(GAMEPAD)
     void setInitialGamepads(const Vector<GamepadData>&);
     void gamepadConnected(const GamepadData&);

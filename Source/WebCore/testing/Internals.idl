@@ -571,6 +571,8 @@ enum EventThrottlingBehavior {
     [Conditional=SERVICE_WORKER] Promise<boolean> hasServiceWorkerRegistration(DOMString scopeURL);
     [Conditional=SERVICE_WORKER] void terminateServiceWorker(ServiceWorker worker);
 
+    void testIncomingSyncIPCMessageWhileWaitingForSyncReply();
+
     [EnabledAtRuntime=WebAnimations] DOMString timelineDescription(AnimationTimeline timeline);
     [EnabledAtRuntime=WebAnimations] void pauseTimeline(AnimationTimeline timeline);
     [EnabledAtRuntime=WebAnimations] void setTimelineCurrentTime(AnimationTimeline timeline, double currentTime);

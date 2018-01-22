@@ -54,6 +54,9 @@ namespace WebKit {
 NetworkProcessConnection::NetworkProcessConnection(IPC::Connection::Identifier connectionIdentifier)
     : m_connection(IPC::Connection::createClientConnection(connectionIdentifier, *this))
 {
+    // The WebProcess never processes incoming messages while waiting for a synchronous message reply as it would not be safe.
+    m_connection->setShouldProcessIncomingMessagesWhileWaitingForSyncReply(false);
+
     m_connection->open();
 }
 

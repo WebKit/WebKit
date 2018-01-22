@@ -1,5 +1,21 @@
 2018-01-22  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r227216. rdar://problem/36722508
+
+    2018-01-19  Chris Dumez  <cdumez@apple.com>
+
+            The WebContent process should not process incoming IPC while waiting for a sync IPC reply
+            https://bugs.webkit.org/show_bug.cgi?id=181560
+
+            Reviewed by Ryosuke Niwa.
+
+            Add layout test coverage.
+
+            * fast/misc/testIncomingSyncIPCMessageWhileWaitingForSyncReply-expected.txt: Added.
+            * fast/misc/testIncomingSyncIPCMessageWhileWaitingForSyncReply.html: Added.
+
+2018-01-22  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r227199. rdar://problem/36722438
 
     2018-01-19  Antoine Quint  <graouts@apple.com>
