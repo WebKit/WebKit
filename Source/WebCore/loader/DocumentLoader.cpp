@@ -907,7 +907,7 @@ void DocumentLoader::commitData(const char* bytes, size_t length)
             }
 
             if (m_frame->document()->activeServiceWorker() || SchemeRegistry::canServiceWorkersHandleURLScheme(m_frame->document()->url().protocol().toStringWithoutCopying()))
-                m_frame->document()->setServiceWorkerConnection(&ServiceWorkerProvider::singleton().serviceWorkerConnectionForSession(m_frame->page()->sessionID()));
+                m_frame->document()->setServiceWorkerConnection(ServiceWorkerProvider::singleton().existingServiceWorkerConnectionForSession(m_frame->page()->sessionID()));
         }
 #endif
         // Call receivedFirstData() exactly once per load. We should only reach this point multiple times

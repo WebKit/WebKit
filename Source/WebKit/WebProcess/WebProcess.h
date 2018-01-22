@@ -303,7 +303,8 @@ private:
     void setNetworkProxySettings(const WebCore::SoupNetworkProxySettings&);
 #endif
 #if ENABLE(SERVICE_WORKER)
-    void establishWorkerContextConnectionToStorageProcess(uint64_t pageID, const WebPreferencesStore&, PAL::SessionID initialSessionID);
+    void establishWorkerContextConnectionToStorageProcess(uint64_t pageID, const WebPreferencesStore&, PAL::SessionID);
+    void registerServiceWorkerClients(PAL::SessionID);
 #endif
 
     void releasePageCache();

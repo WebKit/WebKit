@@ -28,6 +28,8 @@
 
 #if ENABLE(SERVICE_WORKER)
 
+#include "SchemeRegistry.h"
+
 namespace WebCore {
 
 static ServiceWorkerProvider* sharedProvider;
@@ -50,6 +52,15 @@ bool ServiceWorkerProvider::mayHaveServiceWorkerRegisteredForOrigin(PAL::Session
         return m_hasRegisteredServiceWorkers;
 
     return connection->mayHaveServiceWorkerRegisteredForOrigin(origin);
+}
+
+void ServiceWorkerProvider::registerServiceWorkerClients(PAL::SessionID sessionID)
+{
+    auto& connection = serviceWorkerConnectionForSession(sessionID);
+    for (auto* document : Document::allDocuments()) {
+        if (SchemeRegistry::canServiceWorkersHandleURLScheme(document->url().protocol().toStringWithoutCopying()))
+            document->setServiceWorkerConnection(&connection);
+    }
 }
 
 } // namespace WebCore

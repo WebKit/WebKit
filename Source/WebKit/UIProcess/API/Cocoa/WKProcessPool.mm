@@ -187,6 +187,11 @@ static WKProcessPool *sharedProcessPool;
     _processPool->registerURLSchemeServiceWorkersCanHandle(scheme);
 }
 
+- (void)_setMaximumNumberOfProcesses:(NSUInteger)value
+{
+    _processPool->setMaximumNumberOfProcesses(value);
+}
+
 - (void)_setCanHandleHTTPSServerTrustEvaluation:(BOOL)value
 {
     _processPool->setCanHandleHTTPSServerTrustEvaluation(value);
