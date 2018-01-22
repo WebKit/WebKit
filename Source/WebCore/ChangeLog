@@ -1,3 +1,14 @@
+2018-01-21  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Add a new feature flag for EXTRA_ZOOM_MODE and reintroduce AdditionalFeatureDefines.h
+        https://bugs.webkit.org/show_bug.cgi?id=181918
+
+        Reviewed by Tim Horton.
+
+        Add EXTRA_ZOOM_MODE to FeatureDefines.xconfig (off by default). No change in behavior.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2018-01-19  Ryosuke Niwa  <rniwa@webkit.org>
 
         Release assertion in canExecuteScript when executing scripts during page cache restore

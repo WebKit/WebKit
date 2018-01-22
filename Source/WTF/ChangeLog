@@ -1,3 +1,15 @@
+2018-01-21  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Add a new feature flag for EXTRA_ZOOM_MODE and reintroduce AdditionalFeatureDefines.h
+        https://bugs.webkit.org/show_bug.cgi?id=181918
+
+        Reviewed by Tim Horton.
+
+        Include AdditionalFeatureDefines.h, if possible. This allows WebKitAdditions to override
+        the value of certain feature flags in the OpenSource WebKit repository.
+
+        * wtf/Platform.h:
+
 2018-01-19  Alex Christensen  <achristensen@webkit.org>
 
         Fix jsc-only build
