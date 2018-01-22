@@ -32,7 +32,7 @@ bool IsHighProfileEnabled() {
 VideoToolboxVideoEncoderFactory::VideoToolboxVideoEncoderFactory()
 {
 #if ENABLE_VCP_ENCODER
-    VPModuleInitialize();
+    webrtc::VPModuleInitialize();
 #endif
 }
 

@@ -74,7 +74,7 @@ void SetVTSessionProperty(VCPCompressionSessionRef session,
                           int32_t value) {
   CFNumberRef cfNum =
       CFNumberCreate(kCFAllocatorDefault, kCFNumberSInt32Type, &value);
-  OSStatus status = VCPCompressionSessionSetProperty(session, key, cfNum);
+  OSStatus status = webrtc::VCPCompressionSessionSetProperty(session, key, cfNum);
   CFRelease(cfNum);
   if (status != noErr) {
     std::string key_string = CFStringToString(key);
@@ -90,7 +90,7 @@ void SetVTSessionProperty(VCPCompressionSessionRef session,
   int64_t value_64 = value;
   CFNumberRef cfNum =
       CFNumberCreate(kCFAllocatorDefault, kCFNumberSInt64Type, &value_64);
-  OSStatus status = VCPCompressionSessionSetProperty(session, key, cfNum);
+  OSStatus status = webrtc::VCPCompressionSessionSetProperty(session, key, cfNum);
   CFRelease(cfNum);
   if (status != noErr) {
     std::string key_string = CFStringToString(key);
@@ -102,7 +102,7 @@ void SetVTSessionProperty(VCPCompressionSessionRef session,
 // Convenience function for setting a VT property.
 void SetVTSessionProperty(VCPCompressionSessionRef session, CFStringRef key, bool value) {
   CFBooleanRef cf_bool = (value) ? kCFBooleanTrue : kCFBooleanFalse;
-  OSStatus status = VCPCompressionSessionSetProperty(session, key, cf_bool);
+  OSStatus status = webrtc::VCPCompressionSessionSetProperty(session, key, cf_bool);
   if (status != noErr) {
     std::string key_string = CFStringToString(key);
     LOG(LS_ERROR) << "VTSessionSetProperty failed to set: " << key_string
@@ -114,7 +114,7 @@ void SetVTSessionProperty(VCPCompressionSessionRef session, CFStringRef key, boo
 void SetVTSessionProperty(VCPCompressionSessionRef session,
                           CFStringRef key,
                           CFStringRef value) {
-  OSStatus status = VCPCompressionSessionSetProperty(session, key, value);
+  OSStatus status = webrtc::VCPCompressionSessionSetProperty(session, key, value);
   if (status != noErr) {
     std::string key_string = CFStringToString(key);
     std::string val_string = CFStringToString(value);
@@ -413,7 +413,7 @@ int H264VideoToolboxEncoderVCP::Encode(
 
   // Get a pixel buffer from the pool and copy frame data over.
   CVPixelBufferPoolRef pixel_buffer_pool =
-      VCPCompressionSessionGetPixelBufferPool(compression_session_);
+      webrtc::VCPCompressionSessionGetPixelBufferPool(compression_session_);
 #if defined(WEBRTC_IOS)
   if (!pixel_buffer_pool) {
     // Kind of a hack. On backgrounding, the compression session seems to get
@@ -423,7 +423,7 @@ int H264VideoToolboxEncoderVCP::Encode(
     // In addition we request a keyframe so video can recover quickly.
     ResetCompressionSession();
     pixel_buffer_pool =
-        VCPCompressionSessionGetPixelBufferPool(compression_session_);
+        webrtc::VCPCompressionSessionGetPixelBufferPool(compression_session_);
     is_keyframe_required = true;
     LOG(LS_INFO) << "Resetting compression session due to invalid pool.";
   }
@@ -496,7 +496,7 @@ int H264VideoToolboxEncoderVCP::Encode(
   // Update the bitrate if needed.
   SetBitrateBps(bitrate_adjuster_.GetAdjustedBitrateBps());
 
-  OSStatus status = VCPCompressionSessionEncodeFrame(
+  OSStatus status = webrtc::VCPCompressionSessionEncodeFrame(
       compression_session_, pixel_buffer, presentation_time_stamp,
       kCMTimeInvalid, frame_properties, encode_params.release(), nullptr);
   if (frame_properties) {
@@ -593,7 +593,7 @@ int H264VideoToolboxEncoderVCP::CreateCompressionSession(VCPCompressionSessionRe
   CFDictionaryRef encoderSpecification = nullptr;
 #endif
 
-  OSStatus status = VCPCompressionSessionCreate(
+  OSStatus status = webrtc::VCPCompressionSessionCreate(
       nullptr,  // use default allocator
       width, height, kVCPCodecType4CC_H264,
       encoderSpecification,  // use default encoder
@@ -645,7 +645,7 @@ void H264VideoToolboxEncoderVCP::ConfigureCompressionSession() {
 
 void H264VideoToolboxEncoderVCP::DestroyCompressionSession() {
   if (compression_session_) {
-    VCPCompressionSessionInvalidate(compression_session_);
+    webrtc::VCPCompressionSessionInvalidate(compression_session_);
     CFRelease(compression_session_);
     compression_session_ = nullptr;
   }

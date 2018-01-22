@@ -12,17 +12,7 @@
 
 #pragma once
 
-#ifdef __APPLE__
-#include <Availability.h>
-#include <AvailabilityMacros.h>
-#include <TargetConditionals.h>
-
-#if (defined(TARGET_OS_IPHONE)  && TARGET_OS_IPHONE) || (defined(TARGET_IPHONE_SIMULATOR)  && TARGET_IPHONE_SIMULATOR)
-// FIXME: Activate VCP for iOS/iOS simulator
-#define ENABLE_VCP_ENCODER 0
-#elif (defined(TARGET_OS_MAC)  && TARGET_OS_MAC)
-#define ENABLE_VCP_ENCODER (__MAC_OS_X_VERSION_MAX_ALLOWED >= 101304)
-#endif
+#include "VideoProcessingSoftLink.h"
 
 #if ENABLE_VCP_ENCODER
 
@@ -34,7 +24,6 @@
 #include "webrtc/modules/video_coding/codecs/h264/include/h264.h"
 #include "webrtc/modules/video_coding/utility/quality_scaler.h"
 
-#include <VideoProcessing/VideoProcessing.h>
 #include <vector>
 
 // This file provides a H264 encoder implementation using the VideoProcessing APIs.
@@ -127,4 +116,3 @@ void deleteH264VideoToolboxEncoderVCP(H264VideoToolboxEncoderVCP*);
 
 #endif // ENABLE_VCP_ENCODER
 
-#endif // __APPLE__
