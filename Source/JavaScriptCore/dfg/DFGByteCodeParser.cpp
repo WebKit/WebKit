@@ -940,8 +940,10 @@ private:
                     break;
                 }
                 case ArithNegate: {
-                    ASSERT_WITH_MESSAGE(!arithProfile->didObserveNonNumber(), "op_negate starts with a toNumber() on the argument, it should only produce numbers.");
-
+                    // We'd like to assert here that the arith profile for the result of negate never
+                    // sees a non-number, but we can't. It's true that negate never produces a non-number.
+                    // But sometimes we'll end up grabbing the wrong ArithProfile during OSR exit, and
+                    // profiling the wrong value, leading the ArithProfile to think it observed a non-number result.
                     if (arithProfile->lhsObservedType().sawNumber() || arithProfile->didObserveDouble())
                         node->mergeFlags(NodeMayHaveDoubleResult);
                     if (arithProfile->didObserveNegZeroDouble() || m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, NegativeZero))
