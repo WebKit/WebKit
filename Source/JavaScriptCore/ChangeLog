@@ -1,5 +1,22 @@
 2018-01-22  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r227229. rdar://problem/36722641
+
+    2018-01-19  Saam Barati  <sbarati@apple.com>
+
+            Spread's effects are modeled incorrectly both in AI and in Clobberize
+            https://bugs.webkit.org/show_bug.cgi?id=181867
+            <rdar://problem/36290415>
+
+            Reviewed by Michael Saboff.
+
+            * dfg/DFGAbstractInterpreterInlines.h:
+            (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+            * dfg/DFGClobberize.h:
+            (JSC::DFG::clobberize):
+
+2018-01-22  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r227168. rdar://problem/36722591
 
     2018-01-18  JF Bastien  <jfbastien@apple.com>
