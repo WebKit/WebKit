@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include <WebKitQuartzCoreAdditions/WebKitQuartzCoreAdditionsBase.h>
+#include "WebKitQuartzCoreAdditionsBase.h"
 
 #ifdef __cplusplus
 extern "C" {

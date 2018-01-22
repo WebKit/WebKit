@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include <WebKitQuartzCoreAdditions/WKCACFView.h>
+#include "WKCACFView.h"
 
 #ifdef __cplusplus
 extern "C" {
