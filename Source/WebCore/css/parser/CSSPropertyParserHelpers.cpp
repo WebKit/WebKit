@@ -406,6 +406,18 @@ RefPtr<CSSPrimitiveValue> consumeTime(CSSParserTokenRange& range, CSSParserMode 
     return nullptr;
 }
 
+RefPtr<CSSPrimitiveValue> consumeResolution(CSSParserTokenRange& range)
+{
+    const CSSParserToken& token = range.peek();
+    // Unlike the other types, calc() does not work with <resolution>.
+    if (token.type() != DimensionToken)
+        return nullptr;
+    CSSPrimitiveValue::UnitType unit = token.unitType();
+    if (unit == CSSPrimitiveValue::UnitType::CSS_DPPX || unit == CSSPrimitiveValue::UnitType::CSS_DPI || unit == CSSPrimitiveValue::UnitType::CSS_DPCM)
+        return CSSValuePool::singleton().createValue(range.consumeIncludingWhitespace().numericValue(), unit);
+    return nullptr;
+}
+
 RefPtr<CSSPrimitiveValue> consumeIdent(CSSParserTokenRange& range)
 {
     if (range.peek().type() != IdentToken)

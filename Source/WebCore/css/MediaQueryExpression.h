@@ -27,7 +27,7 @@
 
 #pragma once
 
-#include "CSSParserToken.h"
+#include "CSSParserTokenRange.h"
 #include "CSSValue.h"
 #include <memory>
 
@@ -40,7 +40,7 @@ namespace WebCore {
 class MediaQueryExpression {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    explicit MediaQueryExpression(const String& mediaFeature, const Vector<CSSParserToken, 4>& tokenList);
+    explicit MediaQueryExpression(const String& mediaFeature, CSSParserTokenRange&);
 
     const AtomicString& mediaFeature() const;
     CSSValue* value() const;

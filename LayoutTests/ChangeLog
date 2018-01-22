@@ -1,3 +1,26 @@
+2018-01-22  Chris Nardi  <csnardi1@gmail.com>
+
+        Parse calc() in CSS media queries
+        https://bugs.webkit.org/show_bug.cgi?id=181716
+
+        Imported CSS mediaqueries tests from WPT, deleting our (old) copy of one test. Updated
+        expectations.
+
+        Reviewed by Antti Koivisto.
+
+        * TestExpectations:
+        * fast/dom/HTMLImageElement/sizes/image-sizes-w3c-1-expected.txt:
+        * fast/dom/HTMLImageElement/sizes/image-sizes-w3c-2-expected.txt:
+        * fast/dom/HTMLImageElement/sizes/image-sizes-w3c-3-expected.txt:
+        * fast/dom/HTMLImageElement/sizes/image-sizes-w3c-4-expected.txt:
+        * fast/media/w3c/README: Removed.
+        * fast/media/w3c/test_media_queries-expected.txt: Removed.
+        * platform/ios/TestExpectations:
+        * platform/ios/fast/dom/HTMLImageElement/sizes/image-sizes-w3c-1-expected.txt:
+        * platform/ios/fast/dom/HTMLImageElement/sizes/image-sizes-w3c-2-expected.txt:
+        * platform/ios/fast/dom/HTMLImageElement/sizes/image-sizes-w3c-3-expected.txt:
+        * platform/ios/fast/dom/HTMLImageElement/sizes/image-sizes-w3c-4-expected.txt:
+
 2018-01-19  Ryosuke Niwa  <rniwa@webkit.org>
 
         Release assertion in canExecuteScript when executing scripts during page cache restore

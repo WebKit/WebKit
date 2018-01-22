@@ -1,3 +1,48 @@
+2018-01-22  Chris Nardi  <csnardi1@gmail.com>
+
+        Parse calc() in CSS media queries
+        https://bugs.webkit.org/show_bug.cgi?id=181716
+
+        calc() was previously unsupported inside of media queries. This change
+        adds in support for parsing calc inside of media queries.
+
+        Reviewed by Antti Koivisto.
+
+        Tests: Imported web-platform-tests/css/mediaqueries
+
+        * css/MediaQueryExpression.cpp:
+        (WebCore::featureWithValidIdent): Updated function to take a CSSPrimitiveValue.
+        (WebCore::featureWithValidDensity): Updated function to take a CSSPrimitiveValue instead of a CSSParserToken.
+        (WebCore::featureWithValidPositiveLength): Ditto.
+        (WebCore::featureExpectingPositiveInteger): Ditto.
+        (WebCore::featureWithPositiveInteger): Ditto.
+        (WebCore::featureWithPositiveNumber): Ditto.
+        (WebCore::featureWithZeroOrOne): Ditto.
+        (WebCore::MediaQueryExpression::MediaQueryExpression): Use CSSPropertyParserHelpers for consuming.
+        * css/MediaQueryExpression.h:
+        * css/parser/CSSPropertyParserHelpers.cpp:
+        (WebCore::CSSPropertyParserHelpers::consumeResolution): Added function for use in media query expression parsing.
+        * css/parser/CSSPropertyParserHelpers.h:
+        * css/parser/MediaQueryParser.cpp:
+        (WebCore::MediaQueryParser::readRestrictor): Updated functions to take a CSSParserTokenRange in order to use CSSPropertyParserHelpers.
+        (WebCore::MediaQueryParser::readMediaNot): Ditto.
+        (WebCore::MediaQueryParser::readMediaType): Ditto.
+        (WebCore::MediaQueryParser::readAnd): Ditto.
+        (WebCore::MediaQueryParser::readFeatureStart): Ditto.
+        (WebCore::MediaQueryParser::readFeature): Ditto.
+        (WebCore::MediaQueryParser::readFeatureColon): Ditto.
+        (WebCore::MediaQueryParser::readFeatureValue): Ditto.
+        (WebCore::MediaQueryParser::readFeatureEnd): Ditto.
+        (WebCore::MediaQueryParser::skipUntilComma): Ditto.
+        (WebCore::MediaQueryParser::skipUntilBlockEnd): Ditto.
+        (WebCore::MediaQueryParser::processToken): Ditto.
+        (WebCore::MediaQueryParser::parseInternal): Ditto.
+        (WebCore::MediaQueryData::clear): Removed reference to m_valueList
+        (WebCore::MediaQueryData::addExpression): Use CSSParserTokenRange.
+        (WebCore::MediaQueryData::lastExpressionValid): New helper function.
+        (WebCore::MediaQueryData::removeLastExpression): New helper function.
+        * css/parser/MediaQueryParser.h:
+
 2018-01-22  Zan Dobersek  <zdobersek@igalia.com>
 
         [Cairo] Refactor PlatformContextCairo::drawSurfaceToContext() into a Cairo operation

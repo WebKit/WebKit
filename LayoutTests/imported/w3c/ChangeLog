@@ -1,3 +1,70 @@
+2018-01-22  Chris Nardi  <csnardi1@gmail.com>
+
+        Parse calc() in CSS media queries
+        https://bugs.webkit.org/show_bug.cgi?id=181716
+
+        Reviewed by Antti Koivisto.
+
+        * resources/import-expectations.json:
+        * resources/resource-files.json:
+        * web-platform-tests/css/mediaqueries/OWNERS: Added.
+        * web-platform-tests/css/mediaqueries/aspect-ratio-001-expected.xht: Added.
+        * web-platform-tests/css/mediaqueries/aspect-ratio-001.html: Added.
+        * web-platform-tests/css/mediaqueries/aspect-ratio-002-expected.xht: Added.
+        * web-platform-tests/css/mediaqueries/aspect-ratio-002.html: Added.
+        * web-platform-tests/css/mediaqueries/aspect-ratio-003-expected.xht: Added.
+        * web-platform-tests/css/mediaqueries/aspect-ratio-003.html: Added.
+        * web-platform-tests/css/mediaqueries/aspect-ratio-004-expected.xht: Added.
+        * web-platform-tests/css/mediaqueries/aspect-ratio-004.html: Added.
+        * web-platform-tests/css/mediaqueries/device-aspect-ratio-001-expected.xht: Added.
+        * web-platform-tests/css/mediaqueries/device-aspect-ratio-001.html: Added.
+        * web-platform-tests/css/mediaqueries/device-aspect-ratio-002-expected.xht: Added.
+        * web-platform-tests/css/mediaqueries/device-aspect-ratio-002.html: Added.
+        * web-platform-tests/css/mediaqueries/device-aspect-ratio-003-expected.xht: Added.
+        * web-platform-tests/css/mediaqueries/device-aspect-ratio-003.html: Added.
+        * web-platform-tests/css/mediaqueries/device-aspect-ratio-004-expected.xht: Added.
+        * web-platform-tests/css/mediaqueries/device-aspect-ratio-004.html: Added.
+        * web-platform-tests/css/mediaqueries/device-aspect-ratio-005-expected.xht: Added.
+        * web-platform-tests/css/mediaqueries/device-aspect-ratio-005.html: Added.
+        * web-platform-tests/css/mediaqueries/device-aspect-ratio-006-expected.xht: Added.
+        * web-platform-tests/css/mediaqueries/device-aspect-ratio-006.html: Added.
+        * web-platform-tests/css/mediaqueries/min-width-001-expected.xht: Added.
+        * web-platform-tests/css/mediaqueries/min-width-001.xht: Added.
+        * web-platform-tests/css/mediaqueries/min-width-tables-001-expected.xht: Added.
+        * web-platform-tests/css/mediaqueries/min-width-tables-001.html: Added.
+        * web-platform-tests/css/mediaqueries/mq-calc-001-expected.xht: Added.
+        * web-platform-tests/css/mediaqueries/mq-calc-001.html: Added.
+        * web-platform-tests/css/mediaqueries/mq-calc-002-expected.xht: Added.
+        * web-platform-tests/css/mediaqueries/mq-calc-002.html: Added.
+        * web-platform-tests/css/mediaqueries/mq-calc-003-expected.xht: Added.
+        * web-platform-tests/css/mediaqueries/mq-calc-003.html: Added.
+        * web-platform-tests/css/mediaqueries/mq-calc-004-expected.xht: Added.
+        * web-platform-tests/css/mediaqueries/mq-calc-004.html: Added.
+        * web-platform-tests/css/mediaqueries/mq-calc-005-expected.xht: Added.
+        * web-platform-tests/css/mediaqueries/mq-calc-005.html: Added.
+        * web-platform-tests/css/mediaqueries/mq-invalid-media-type-001-expected.xht: Added.
+        * web-platform-tests/css/mediaqueries/mq-invalid-media-type-001.html: Added.
+        * web-platform-tests/css/mediaqueries/mq-invalid-media-type-002-expected.xht: Added.
+        * web-platform-tests/css/mediaqueries/mq-invalid-media-type-002.html: Added.
+        * web-platform-tests/css/mediaqueries/mq-invalid-media-type-003-expected.xht: Added.
+        * web-platform-tests/css/mediaqueries/mq-invalid-media-type-003.html: Added.
+        * web-platform-tests/css/mediaqueries/mq-invalid-media-type-004-expected.xht: Added.
+        * web-platform-tests/css/mediaqueries/mq-invalid-media-type-004.html: Added.
+        * web-platform-tests/css/mediaqueries/relative-units-001-expected.xht: Added.
+        * web-platform-tests/css/mediaqueries/relative-units-001.html: Added.
+        * web-platform-tests/css/mediaqueries/relative-units-002-expected.xht: Added.
+        * web-platform-tests/css/mediaqueries/relative-units-002.html: Added.
+        * web-platform-tests/css/mediaqueries/relative-units-003-expected.xht: Added.
+        * web-platform-tests/css/mediaqueries/relative-units-003.html: Added.
+        * web-platform-tests/css/mediaqueries/relative-units-004-expected.xht: Added.
+        * web-platform-tests/css/mediaqueries/relative-units-004.html: Added.
+        * web-platform-tests/css/mediaqueries/support/media_queries_iframe.html: Renamed from LayoutTests/fast/media/w3c/resources/media_queries_iframe.html.
+        * web-platform-tests/css/mediaqueries/support/min-width-tables-001-iframe.html: Added.
+        * web-platform-tests/css/mediaqueries/support/w3c-import.log: Added.
+        * web-platform-tests/css/mediaqueries/test_media_queries-expected.txt: Renamed from LayoutTests/fast/media/w3c/test_media_queries-expected.txt.
+        * web-platform-tests/css/mediaqueries/test_media_queries.html: Renamed from LayoutTests/fast/media/w3c/test_media_queries.html.
+        * web-platform-tests/css/mediaqueries/w3c-import.log: Added.
+
 2018-01-22  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [css-grid] Spanning Grid item has too much space at the bottom / is too high

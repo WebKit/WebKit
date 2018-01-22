@@ -277,6 +277,8 @@
         "web-platform-tests/css/css-ui-3/support/nav-up-013-frame.html",
         "web-platform-tests/css/css-ui-3/text-overflow-018.html",
         "web-platform-tests/css/css-ui-3/text-overflow-019.html",
+        "web-platform-tests/css/mediaqueries/support/media_queries_iframe.html",
+        "web-platform-tests/css/mediaqueries/support/min-width-tables-001-iframe.html",
         "web-platform-tests/cssom-view/iframe.html",
         "web-platform-tests/cssom/support/xmlss-pi.xhtml",
         "web-platform-tests/dom/events/EventListener-incumbent-global-subframe-1.sub.html",
