@@ -1,3 +1,17 @@
+2018-01-22  Andy Estes  <aestes@apple.com>
+
+        LayoutTest http/tests/paymentrequest/payment-request-abort-method.https.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=178107
+        <rdar://problem/34901064>
+
+        Reviewed by Brady Eidson.
+
+        Modified the test to call show() with user activation.
+
+        * http/tests/paymentrequest/payment-request-abort-method.https.html:
+        * platform/ios-wk2/TestExpectations:
+        * platform/mac-wk2/TestExpectations:
+
 2018-01-22  Javier Fernandez  <jfernandez@igalia.com>
 
         [css-align] 'overflow' keyword must precede the self-position and content-position value
