@@ -1,3 +1,35 @@
+2018-01-22  Zan Dobersek  <zdobersek@igalia.com>
+
+        [Cairo] Refactor PlatformContextCairo::drawSurfaceToContext() into a Cairo operation
+        https://bugs.webkit.org/show_bug.cgi?id=181930
+
+        Reviewed by Carlos Garcia Campos.
+
+        Move the PlatformContextCairo::drawSurfaceToContext() code into the
+        Cairo namespace as an operation, renaming it to drawSurface(). Mirroring
+        other operations, the PlatformContextCairo object is now passed through
+        a reference as the first argument to the function, and cairo_t context
+        object is retrieved from that.
+
+        Call sites of the PlatformContextCairo::drawSurfaceToContext() method
+        are adjusted to now call Cairo::drawSurface() and properly pass the
+        PlatformContextCairo object to the function.
+
+        No new tests -- no change in functionality.
+
+        * platform/graphics/cairo/CairoOperations.cpp:
+        (WebCore::Cairo::prepareForStroking): Make this static.
+        (WebCore::Cairo::drawPatternToCairoContext):
+        (WebCore::Cairo::drawNativeImage):
+        (WebCore::Cairo::drawSurface):
+        * platform/graphics/cairo/CairoOperations.h:
+        * platform/graphics/cairo/PlatformContextCairo.cpp:
+        (WebCore::drawPatternToCairoContext): Deleted.
+        (WebCore::PlatformContextCairo::drawSurfaceToContext): Deleted.
+        * platform/graphics/cairo/PlatformContextCairo.h:
+        * platform/graphics/win/MediaPlayerPrivateMediaFoundation.cpp:
+        (WebCore::MediaPlayerPrivateMediaFoundation::Direct3DPresenter::paintCurrentFrame):
+
 2018-01-22  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [css-grid] Spanning Grid item has too much space at the bottom / is too high

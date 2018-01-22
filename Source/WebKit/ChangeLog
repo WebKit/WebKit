@@ -1,3 +1,19 @@
+2018-01-22  Zan Dobersek  <zdobersek@igalia.com>
+
+        [Cairo] Refactor PlatformContextCairo::drawSurfaceToContext() into a Cairo operation
+        https://bugs.webkit.org/show_bug.cgi?id=181930
+
+        Reviewed by Carlos Garcia Campos.
+
+        Call sites of the PlatformContextCairo::drawSurfaceToContext() method
+        are adjusted to now call Cairo::drawSurface() and properly pass the
+        PlatformContextCairo object to the function.
+
+        * Shared/cairo/ShareableBitmapCairo.cpp:
+        (WebKit::ShareableBitmap::paint):
+        * WebProcess/WebCoreSupport/gtk/WebDragClientGtk.cpp:
+        (WebKit::convertCairoSurfaceToShareableBitmap):
+
 2018-01-21  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix compile warning.

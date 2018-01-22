@@ -66,7 +66,6 @@ public:
     void restore();
 
     void pushImageMask(cairo_surface_t*, const FloatRect&);
-    WEBCORE_EXPORT void drawSurfaceToContext(cairo_surface_t*, const FloatRect& destRect, const FloatRect& srcRect, InterpolationQuality, float globalAlpha, const Cairo::ShadowState&, GraphicsContext&);
 
 private:
     RefPtr<cairo_t> m_cr;
