@@ -35,20 +35,20 @@ namespace WebCore {
 
 class MessagePortChannelRegistry {
 public:
-    ~MessagePortChannelRegistry();
+    WEBCORE_EXPORT ~MessagePortChannelRegistry();
     
-    void didCreateMessagePortChannel(const MessagePortIdentifier& port1, const MessagePortIdentifier& port2);
-    void didEntangleLocalToRemote(const MessagePortIdentifier& local, const MessagePortIdentifier& remote, ProcessIdentifier);
-    void didDisentangleMessagePort(const MessagePortIdentifier& local);
-    void didCloseMessagePort(const MessagePortIdentifier& local);
-    bool didPostMessageToRemote(MessageWithMessagePorts&&, const MessagePortIdentifier& remoteTarget);
-    void takeAllMessagesForPort(const MessagePortIdentifier&, Function<void(Vector<MessageWithMessagePorts>&&, Function<void()>&&)>&&);
-    void checkRemotePortForActivity(const MessagePortIdentifier& remoteTarget, CompletionHandler<void(MessagePortChannelProvider::HasActivity)>&& callback);
+    WEBCORE_EXPORT void didCreateMessagePortChannel(const MessagePortIdentifier& port1, const MessagePortIdentifier& port2);
+    WEBCORE_EXPORT void didEntangleLocalToRemote(const MessagePortIdentifier& local, const MessagePortIdentifier& remote, ProcessIdentifier);
+    WEBCORE_EXPORT void didDisentangleMessagePort(const MessagePortIdentifier& local);
+    WEBCORE_EXPORT void didCloseMessagePort(const MessagePortIdentifier& local);
+    WEBCORE_EXPORT bool didPostMessageToRemote(MessageWithMessagePorts&&, const MessagePortIdentifier& remoteTarget);
+    WEBCORE_EXPORT void takeAllMessagesForPort(const MessagePortIdentifier&, Function<void(Vector<MessageWithMessagePorts>&&, Function<void()>&&)>&&);
+    WEBCORE_EXPORT void checkRemotePortForActivity(const MessagePortIdentifier& remoteTarget, CompletionHandler<void(MessagePortChannelProvider::HasActivity)>&& callback);
 
-    MessagePortChannel* existingChannelContainingPort(const MessagePortIdentifier&);
+    WEBCORE_EXPORT MessagePortChannel* existingChannelContainingPort(const MessagePortIdentifier&);
 
-    void messagePortChannelCreated(MessagePortChannel&);
-    void messagePortChannelDestroyed(MessagePortChannel&);
+    WEBCORE_EXPORT void messagePortChannelCreated(MessagePortChannel&);
+    WEBCORE_EXPORT void messagePortChannelDestroyed(MessagePortChannel&);
 
 private:
     HashMap<MessagePortIdentifier, MessagePortChannel*> m_openChannels;

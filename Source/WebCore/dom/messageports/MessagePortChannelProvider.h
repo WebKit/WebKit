@@ -37,7 +37,7 @@ struct MessageWithMessagePorts;
 class MessagePortChannelProvider {
 public:
     static MessagePortChannelProvider& singleton();
-    static void setSharedProvider(MessagePortChannelProvider&);
+    WEBCORE_EXPORT static void setSharedProvider(MessagePortChannelProvider&);
 
     virtual ~MessagePortChannelProvider() { }
 

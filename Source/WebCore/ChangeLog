@@ -1,3 +1,29 @@
+2018-01-22  Brady Eidson  <beidson@apple.com>
+
+        In WebKit2, make the MessagePortChannelRegistry live in the UI process.
+        https://bugs.webkit.org/show_bug.cgi?id=181922
+
+        Reviewed by Andy Estes.
+
+        No new tests (Refactor, no behavior change)
+
+        Add encoder/decoders and EXPORT a whole bunch of stuff.
+        
+        * WebCore.xcodeproj/project.pbxproj:
+
+        * dom/MessagePort.h:
+
+        * dom/messageports/MessagePortChannel.cpp:
+        (WebCore::MessagePortChannel::processForPort):
+        * dom/messageports/MessagePortChannel.h:
+
+        * dom/messageports/MessagePortChannelProvider.h:
+        * dom/messageports/MessagePortChannelRegistry.h:
+
+        * dom/messageports/MessageWithMessagePorts.h:
+        (WebCore::MessageWithMessagePorts::encode const):
+        (WebCore::MessageWithMessagePorts::decode):
+
 2018-01-22  Youenn Fablet  <youenn@apple.com>
 
         Fetch Headers from an Opaque response should be filtered out

@@ -1409,7 +1409,7 @@
 		51A052561058874000CC9E95 /* ProtectionSpaceHash.h in Headers */ = {isa = PBXBuildFile; fileRef = 51A052551058874000CC9E95 /* ProtectionSpaceHash.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		51A4BB0A1954D61600FA5C2E /* Gamepad.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51A4BB071954D61600FA5C2E /* Gamepad.cpp */; };
 		51A4BB101954D62700FA5C2E /* NavigatorGamepad.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51A4BB0D1954D62700FA5C2E /* NavigatorGamepad.cpp */; };
-		51A748E32005D0E80075BA68 /* MessageWithMessagePorts.h in Headers */ = {isa = PBXBuildFile; fileRef = 51A748E02005D0E00075BA68 /* MessageWithMessagePorts.h */; };
+		51A748E32005D0E80075BA68 /* MessageWithMessagePorts.h in Headers */ = {isa = PBXBuildFile; fileRef = 51A748E02005D0E00075BA68 /* MessageWithMessagePorts.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		51A748E62006004F0075BA68 /* MessagePortChannelProviderImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = 51A748E5200600210075BA68 /* MessagePortChannelProviderImpl.h */; };
 		51A9D9E9195B931F001B2B5C /* GamepadManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51A9D9E7195B931F001B2B5C /* GamepadManager.cpp */; };
 		51A9D9EA195B931F001B2B5C /* GamepadManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 51A9D9E8195B931F001B2B5C /* GamepadManager.h */; };
@@ -1442,9 +1442,9 @@
 		51E399021D6E4750009C8831 /* GameControllerGamepadProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = 51E398FE1D6E474B009C8831 /* GameControllerGamepadProvider.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		51E3AA0B1B98BCAB0036AD81 /* SecurityOriginData.h in Headers */ = {isa = PBXBuildFile; fileRef = 51E3AA091B98BC9A0036AD81 /* SecurityOriginData.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		51E6821016387302003BBF3C /* LoaderStrategy.h in Headers */ = {isa = PBXBuildFile; fileRef = 51E6820F16387302003BBF3C /* LoaderStrategy.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		51ECC3F6200587BF00483EAE /* MessagePortChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = 51ECC3F4200587B700483EAE /* MessagePortChannel.h */; };
-		51ECC3F8200587BF00483EAE /* MessagePortChannelRegistry.h in Headers */ = {isa = PBXBuildFile; fileRef = 51ECC3F1200587B500483EAE /* MessagePortChannelRegistry.h */; };
-		51ECC3FD2005930D00483EAE /* MessagePortChannelProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = 51ECC3FB2005930100483EAE /* MessagePortChannelProvider.h */; };
+		51ECC3F6200587BF00483EAE /* MessagePortChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = 51ECC3F4200587B700483EAE /* MessagePortChannel.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		51ECC3F8200587BF00483EAE /* MessagePortChannelRegistry.h in Headers */ = {isa = PBXBuildFile; fileRef = 51ECC3F1200587B500483EAE /* MessagePortChannelRegistry.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		51ECC3FD2005930D00483EAE /* MessagePortChannelProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = 51ECC3FB2005930100483EAE /* MessagePortChannelProvider.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		51EE7B381AA50B0500F92B21 /* ResourceLoadInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 51EE7B371AA50B0500F92B21 /* ResourceLoadInfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		51EEAA741BEFFAB100218008 /* IndexValueEntry.h in Headers */ = {isa = PBXBuildFile; fileRef = 51EEAA721BEFFA7900218008 /* IndexValueEntry.h */; };
 		51F174FE1F35899200C74950 /* WorkerType.h in Headers */ = {isa = PBXBuildFile; fileRef = 51F174FC1F35898800C74950 /* WorkerType.h */; settings = {ATTRIBUTES = (Private, ); }; };

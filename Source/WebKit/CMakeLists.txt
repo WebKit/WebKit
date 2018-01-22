@@ -302,6 +302,7 @@ set(WebKit_SOURCES
     UIProcess/ResponsivenessTimer.cpp
     UIProcess/StatisticsRequest.cpp
     UIProcess/TextCheckerCompletion.cpp
+    UIProcess/UIMessagePortChannelProvider.cpp
     UIProcess/UserMediaPermissionCheckProxy.cpp
     UIProcess/UserMediaPermissionRequestManagerProxy.cpp
     UIProcess/UserMediaPermissionRequestProxy.cpp
@@ -561,6 +562,7 @@ set(WebKit_SOURCES
     WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp
     WebProcess/WebCoreSupport/WebGeolocationClient.cpp
     WebProcess/WebCoreSupport/WebInspectorClient.cpp
+    WebProcess/WebCoreSupport/WebMessagePortChannelProvider.cpp
     WebProcess/WebCoreSupport/WebNotificationClient.cpp
     WebProcess/WebCoreSupport/WebPerformanceLoggingClient.cpp
     WebProcess/WebCoreSupport/WebPlatformStrategies.cpp

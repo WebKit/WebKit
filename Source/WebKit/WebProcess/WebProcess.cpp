@@ -57,6 +57,7 @@
 #include "WebLoaderStrategy.h"
 #include "WebMediaKeyStorageManager.h"
 #include "WebMemorySampler.h"
+#include "WebMessagePortChannelProvider.h"
 #include "WebPage.h"
 #include "WebPageGroupProxy.h"
 #include "WebPlatformStrategies.h"
@@ -101,6 +102,7 @@
 #include <WebCore/MainFrame.h>
 #include <WebCore/MemoryCache.h>
 #include <WebCore/MemoryRelease.h>
+#include <WebCore/MessagePort.h>
 #include <WebCore/NetworkStorageSession.h>
 #include <WebCore/Page.h>
 #include <WebCore/PageCache.h>
@@ -216,6 +218,8 @@ WebProcess::~WebProcess()
 
 void WebProcess::initializeProcess(const ChildProcessInitializationParameters& parameters)
 {
+    MessagePortChannelProvider::setSharedProvider(WebMessagePortChannelProvider::singleton());
+    
 #if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400
     // This call is needed when the WebProcess is not running the NSApplication event loop.
     // Otherwise, calling enableSandboxStyleFileQuarantine() will fail.
@@ -1052,6 +1056,28 @@ void WebProcess::backgroundResponsivenessPing()
 
 void WebProcess::syncIPCMessageWhileWaitingForSyncReplyForTesting()
 {
+}
+
+void WebProcess::didTakeAllMessagesForPort(Vector<MessageWithMessagePorts>&& messages, uint64_t messageCallbackIdentifier, uint64_t messageBatchIdentifier)
+{
+    WebMessagePortChannelProvider::singleton().didTakeAllMessagesForPort(WTFMove(messages), messageCallbackIdentifier, messageBatchIdentifier);
+}
+
+void WebProcess::checkProcessLocalPortForActivity(const MessagePortIdentifier& port, uint64_t callbackIdentifier)
+{
+    WebMessagePortChannelProvider::singleton().checkProcessLocalPortForActivity(port, callbackIdentifier);
+}
+
+void WebProcess::didCheckRemotePortForActivity(uint64_t callbackIdentifier, bool hasActivity)
+{
+    WebMessagePortChannelProvider::singleton().didCheckRemotePortForActivity(callbackIdentifier, hasActivity);
+}
+
+void WebProcess::messagesAvailableForPort(const MessagePortIdentifier& identifier)
+{
+    auto port = MessagePort::existingMessagePortForIdentifier(identifier);
+    if (port)
+        port->messageAvailable();
 }
 
 #if ENABLE(GAMEPAD)

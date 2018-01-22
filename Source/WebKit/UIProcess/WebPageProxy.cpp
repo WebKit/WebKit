@@ -77,6 +77,7 @@
 #include "PrintInfo.h"
 #include "TextChecker.h"
 #include "TextCheckerState.h"
+#include "UIMessagePortChannelProvider.h"
 #include "URLSchemeTaskParameters.h"
 #include "UserMediaPermissionRequestProxy.h"
 #include "UserMediaProcessManager.h"
@@ -414,6 +415,11 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, uin
         this->dispatchActivityStateChange();
     });
 #endif
+
+    static std::once_flag once;
+    std::call_once(once, [] {
+        MessagePortChannelProvider::setSharedProvider(UIMessagePortChannelProvider::singleton());
+    });
 }
 
 WebPageProxy::~WebPageProxy()

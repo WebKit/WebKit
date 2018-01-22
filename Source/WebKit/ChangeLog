@@ -1,3 +1,81 @@
+2018-01-22  Brady Eidson  <beidson@apple.com>
+
+        In WebKit2, make the MessagePortChannelRegistry live in the UI process.
+        https://bugs.webkit.org/show_bug.cgi?id=181922
+
+        Reviewed by Andy Estes.
+
+        With all of the work that went into making MessagePorts be fully asynchronous
+        and to be process-aware, formally moving them out-of-process is just a matter
+        of adding WebKit IPC layers.
+        
+        The basic unit of asynchronicity is "MessagePortChannelProvider", and this patch
+        adds both a WebMessagePortChannelProvider and UIMessagePortChannelProvider for
+        each side of the process divide.
+        
+        * UIProcess/UIMessagePortChannelProvider.cpp: Added.
+        (WebKit::UIMessagePortChannelProvider::singleton):
+        (WebKit::UIMessagePortChannelProvider::UIMessagePortChannelProvider):
+        (WebKit::UIMessagePortChannelProvider::~UIMessagePortChannelProvider):
+        (WebKit::UIMessagePortChannelProvider::createNewMessagePortChannel):
+        (WebKit::UIMessagePortChannelProvider::entangleLocalPortInThisProcessToRemote):
+        (WebKit::UIMessagePortChannelProvider::messagePortDisentangled):
+        (WebKit::UIMessagePortChannelProvider::messagePortClosed):
+        (WebKit::UIMessagePortChannelProvider::takeAllMessagesForPort):
+        (WebKit::UIMessagePortChannelProvider::postMessageToRemote):
+        (WebKit::UIMessagePortChannelProvider::checkRemotePortForActivity):
+        (WebKit::UIMessagePortChannelProvider::checkProcessLocalPortForActivity):
+        * UIProcess/UIMessagePortChannelProvider.h: Added.
+        (WebKit::UIMessagePortChannelProvider::registry):
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::m_configurationPreferenceValues):
+
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::processForIdentifier):
+        (WebKit::m_userMediaCaptureManagerProxy):
+        (WebKit::WebProcessProxy::~WebProcessProxy):
+        (WebKit::WebProcessProxy::shutDown):
+        (WebKit::WebProcessProxy::createNewMessagePortChannel):
+        (WebKit::WebProcessProxy::entangleLocalPortInThisProcessToRemote):
+        (WebKit::WebProcessProxy::messagePortDisentangled):
+        (WebKit::WebProcessProxy::messagePortClosed):
+        (WebKit::WebProcessProxy::takeAllMessagesForPort):
+        (WebKit::WebProcessProxy::didDeliverMessagePortMessages):
+        (WebKit::WebProcessProxy::postMessageToRemote):
+        (WebKit::WebProcessProxy::checkRemotePortForActivity):
+        (WebKit::WebProcessProxy::checkProcessLocalPortForActivity):
+        (WebKit::WebProcessProxy::didCheckProcessLocalPortForActivity):
+        * UIProcess/WebProcessProxy.h:
+        * UIProcess/WebProcessProxy.messages.in:
+
+        * WebKit.xcodeproj/project.pbxproj:
+
+        * WebProcess/WebCoreSupport/WebMessagePortChannelProvider.cpp: Added.
+        (WebKit::WebMessagePortChannelProvider::singleton):
+        (WebKit::WebMessagePortChannelProvider::WebMessagePortChannelProvider):
+        (WebKit::WebMessagePortChannelProvider::~WebMessagePortChannelProvider):
+        (WebKit::WebMessagePortChannelProvider::createNewMessagePortChannel):
+        (WebKit::WebMessagePortChannelProvider::entangleLocalPortInThisProcessToRemote):
+        (WebKit::WebMessagePortChannelProvider::messagePortDisentangled):
+        (WebKit::WebMessagePortChannelProvider::messagePortClosed):
+        (WebKit::WebMessagePortChannelProvider::takeAllMessagesForPort):
+        (WebKit::WebMessagePortChannelProvider::didTakeAllMessagesForPort):
+        (WebKit::WebMessagePortChannelProvider::didCheckRemotePortForActivity):
+        (WebKit::WebMessagePortChannelProvider::postMessageToRemote):
+        (WebKit::WebMessagePortChannelProvider::checkProcessLocalPortForActivity):
+        (WebKit::WebMessagePortChannelProvider::checkRemotePortForActivity):
+        * WebProcess/WebCoreSupport/WebMessagePortChannelProvider.h: Added.
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::initializeProcess):
+        (WebKit::WebProcess::didTakeAllMessagesForPort):
+        (WebKit::WebProcess::checkProcessLocalPortForActivity):
+        (WebKit::WebProcess::didCheckRemotePortForActivity):
+        (WebKit::WebProcess::messagesAvailableForPort):
+        * WebProcess/WebProcess.h:
+        * WebProcess/WebProcess.messages.in:
+
 2018-01-22  Youenn Fablet  <youenn@apple.com>
 
         Bump default cache storage quota to 50MB
