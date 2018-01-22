@@ -1,3 +1,26 @@
+2018-01-22  Per Arne Vollan  <pvollan@apple.com>
+
+        [Win] Null pointer crash under WebCore::RenderStyle::colorIncludingFallback.
+        https://bugs.webkit.org/show_bug.cgi?id=181801
+        <rdar://problem/35614900>
+
+        Reviewed by Brent Fulgham.
+
+        Do not paint synchronously when popup items have been added or changed while the popup is visible.
+        If new popup items have been added after the popup was shown, a synchronous paint operation will
+        possibly access their style before it is ready, leading to a null pointer crash. The invalidated
+        area will be painted asynchronously.
+
+        No new tests. To reproduce this crash, it is necessary to open a popup with JavaScript, add new
+        popup items, and then end the test. Opening the popup can be done by sending a mousedown event
+        with the eventsender. However, on Windows the mousedown event is sent synchronously, and will
+        block as long as the popup is open and running the popup event loop. This means no JS can be
+        executed until the popup is closed, causing the test to always time out before new popup items
+        can be added. I have verified the fix with a manual test case.
+
+        * platform/win/PopupMenuWin.cpp:
+        (WebCore::PopupMenuWin::updateFromElement):
+
 2018-01-22  Chris Dumez  <cdumez@apple.com>
 
         RELEASE_ASSERT(registration) hit in SWServer::installContextData(const ServiceWorkerContextData&)
