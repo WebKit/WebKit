@@ -482,10 +482,70 @@ void DocumentLoader::handleSubstituteDataLoadSoon()
         startDataLoadTimer();
 }
 
+#if ENABLE(SERVICE_WORKER)
+void DocumentLoader::matchRegistration(const URL& url, SWClientConnection::RegistrationCallback&& callback)
+{
+    auto shouldTryLoadingThroughServiceWorker = !frameLoader()->isReloadingFromOrigin() && m_frame->page() && RuntimeEnabledFeatures::sharedFeatures().serviceWorkerEnabled() && SchemeRegistry::canServiceWorkersHandleURLScheme(url.protocol().toStringWithoutCopying());
+    if (!shouldTryLoadingThroughServiceWorker) {
+        callback(std::nullopt);
+        return;
+    }
+
+    auto origin = (!m_frame->isMainFrame() && m_frame->document()) ? makeRef(m_frame->document()->topOrigin()) : SecurityOrigin::create(url);
+    auto sessionID = m_frame->page()->sessionID();
+    auto& provider = ServiceWorkerProvider::singleton();
+    if (!provider.mayHaveServiceWorkerRegisteredForOrigin(sessionID, origin)) {
+        callback(std::nullopt);
+        return;
+    }
+
+    auto& connection = ServiceWorkerProvider::singleton().serviceWorkerConnectionForSession(sessionID);
+    connection.matchRegistration(origin, url, WTFMove(callback));
+}
+
+static inline bool areRegistrationsEqual(const std::optional<ServiceWorkerRegistrationData>& a, const std::optional<ServiceWorkerRegistrationData>& b)
+{
+    if (!a)
+        return !b;
+    if (!b)
+        return false;
+    return a->identifier == b->identifier;
+}
+#endif
+
 void DocumentLoader::redirectReceived(CachedResource& resource, ResourceRequest&& request, const ResourceResponse& redirectResponse, CompletionHandler<void(ResourceRequest&&)>&& completionHandler)
 {
     ASSERT_UNUSED(resource, &resource == m_mainResource);
+#if ENABLE(SERVICE_WORKER)
+    willSendRequest(WTFMove(request), redirectResponse, [completionHandler = WTFMove(completionHandler), protectedThis = makeRef(*this), this] (auto&& request) mutable {
+        if (request.isNull() || !m_mainDocumentError.isNull() || !m_frame) {
+            completionHandler({ });
+            return;
+        }
+        auto url = request.url();
+        matchRegistration(url, [request = WTFMove(request), completionHandler = WTFMove(completionHandler), protectedThis = WTFMove(protectedThis), this] (auto&& registrationData) mutable {
+            if (!m_mainDocumentError.isNull() || !m_frame) {
+                completionHandler({ });
+                return;
+            }
+
+            if (areRegistrationsEqual(m_serviceWorkerRegistrationData, registrationData)) {
+                completionHandler(WTFMove(request));
+                return;
+            }
+
+            // Service worker registration changed, we need to cancel the current load to restart a new one.
+            clearMainResource();
+            completionHandler({ });
+
+            m_serviceWorkerRegistrationData = WTFMove(registrationData);
+            loadMainResource(WTFMove(request));
+            return;
+        });
+    });
+#else
     willSendRequest(WTFMove(request), redirectResponse, WTFMove(completionHandler));
+#endif
 }
 
 void DocumentLoader::willSendRequest(ResourceRequest&& newRequest, const ResourceResponse& redirectResponse, CompletionHandler<void(ResourceRequest&&)>&& completionHandler)
@@ -1586,26 +1646,17 @@ void DocumentLoader::startLoadingMainResource()
 
 #if ENABLE(SERVICE_WORKER)
         // FIXME: Implement local URL interception by getting the service worker of the parent.
-        auto tryLoadingThroughServiceWorker = !frameLoader()->isReloadingFromOrigin() && m_frame->page() && RuntimeEnabledFeatures::sharedFeatures().serviceWorkerEnabled() && SchemeRegistry::canServiceWorkersHandleURLScheme(request.url().protocol().toStringWithoutCopying());
-        if (tryLoadingThroughServiceWorker) {
-            auto origin = (!m_frame->isMainFrame() && m_frame->document()) ? makeRef(m_frame->document()->topOrigin()) : SecurityOrigin::create(request.url());
-            auto sessionID = m_frame->page()->sessionID();
-            auto& provider = ServiceWorkerProvider::singleton();
-            if (provider.mayHaveServiceWorkerRegisteredForOrigin(sessionID, origin)) {
-                auto& connection = ServiceWorkerProvider::singleton().serviceWorkerConnectionForSession(sessionID);
-                auto url = request.url();
-                connection.matchRegistration(origin, url, [request = WTFMove(request), protectedThis = WTFMove(protectedThis), this] (auto&& registrationData) mutable {
-                    if (!m_mainDocumentError.isNull() || !m_frame)
-                        return;
-
-                    m_serviceWorkerRegistrationData = WTFMove(registrationData);
-                    loadMainResource(WTFMove(request));
-                });
+        auto url = request.url();
+        matchRegistration(url, [request = WTFMove(request), protectedThis = WTFMove(protectedThis), this] (auto&& registrationData) mutable {
+            if (!m_mainDocumentError.isNull() || !m_frame)
                 return;
-            }
-        }
-#endif
+
+            m_serviceWorkerRegistrationData = WTFMove(registrationData);
+            loadMainResource(WTFMove(request));
+        });
+#else
         loadMainResource(WTFMove(request));
+#endif
     });
 }
 

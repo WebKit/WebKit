@@ -1,3 +1,27 @@
+2018-01-22  Youenn Fablet  <youenn@apple.com>
+
+        Safari Tech Preview can't use GitHub login at forums.swift.org
+        https://bugs.webkit.org/show_bug.cgi?id=181908
+        <rdar://problem/36715111>
+
+        Reviewed by Chris Dumez.
+
+        Test: http/wpt/service-workers/navigation-redirect.https.html
+
+        For subresource loads, redirections will not change who is in charge of continuing the load (service worker or network process).
+        For navigation loads, we need to match the registration for every redirection since this is using the Manual redirect mode.
+        This allows starting the load with a service worker and finishing the load with another service worker, which will become the controller.
+
+        Implement this by wrapping the registration matching of an URL within DocumentLoader::matchRegistration.
+        Use that method in DocumentLoader::redirectReceived.
+
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::matchRegistration):
+        (WebCore::doRegistrationsMatch):
+        (WebCore::DocumentLoader::redirectReceived):
+        (WebCore::DocumentLoader::startLoadingMainResource):
+        * loader/DocumentLoader.h:
+
 2018-01-22  Antti Koivisto  <antti@apple.com>
 
         REGRESSION (Safari 11): Buttons inside a fieldset legend cannot be clicked on in Safari 11

@@ -329,6 +329,10 @@ protected:
 private:
     Document* document() const;
 
+#if ENABLE(SERVICE_WORKER)
+    void matchRegistration(const URL&, CompletionHandler<void(std::optional<ServiceWorkerRegistrationData>&&)>&&);
+#endif
+
     void loadMainResource(ResourceRequest&&);
 
     void setRequest(const ResourceRequest&);
