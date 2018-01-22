@@ -1,5 +1,11 @@
 2018-01-22  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Reviewed GTK gardening. Mark /webkit/WebKitWebView/mouse-target as fail too.
+
+        * TestWebKitAPI/glib/TestExpectations.json:
+
+2018-01-22  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Unreviewed GTK+ gardening. Fix /webkit/WebKitConsoleMessage/network-error.
 
         Partially revert r226782, the fix was wrong for the GLib version we currently use.

@@ -2,7 +2,7 @@
     "TestUIClient": {
         "subtests": {
             "/webkit/WebKitWebView/mouse-target": {
-                "expected": {"gtk": {"status": ["TIMEOUT"], "bug": "webkit.org/b/117689"}}
+                "expected": {"gtk": {"status": ["TIMEOUT", "FAIL"], "bug": "webkit.org/b/117689"}}
             },
             "/webkit/WebKitWebView/usermedia-permission-requests": {
                 "expected": {"gtk": {"status": ["TIMEOUT"], "bug": "webkit.org/b/158257"}}
