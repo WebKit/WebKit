@@ -41,7 +41,6 @@ struct ApplePayPaymentRequest : ApplePayRequestBase {
     String currencyCode;
 
     std::optional<Vector<ApplePayContactField>> requiredShippingContactFields;
-    std::optional<ApplePayPaymentContact> shippingContact;
 
     ShippingType shippingType { ShippingType::Shipping };
     std::optional<Vector<ApplePayShippingMethod>> shippingMethods;

@@ -71,7 +71,7 @@ private:
     void updateTotalAndLineItems(const ApplePaySessionPaymentRequest::TotalAndLineItems&);
 
     MainFrame& m_mainFrame;
-    MockPaymentAddress m_shippingAddress;
+    ApplePayPaymentContact m_shippingAddress;
     ApplePayLineItem m_total;
     Vector<ApplePayLineItem> m_lineItems;
     Vector<String> m_availablePaymentNetworks;

@@ -29,4 +29,3 @@
     required unsigned long version;
     required DOMString merchantIdentifier;
 };
-

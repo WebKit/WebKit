@@ -42,6 +42,9 @@ public:
     WEBCORE_EXPORT ApplePaySessionPaymentRequest();
     WEBCORE_EXPORT ~ApplePaySessionPaymentRequest();
 
+    unsigned version() const { return m_version; }
+    void setVersion(unsigned version) { m_version = version; }
+
     const String& countryCode() const { return m_countryCode; }
     void setCountryCode(const String& countryCode) { m_countryCode = countryCode; }
 
@@ -136,6 +139,8 @@ public:
     void setRequester(Requester requester) { m_requester = requester; }
 
 private:
+    unsigned m_version { 0 };
+
     String m_countryCode;
     String m_currencyCode;
 

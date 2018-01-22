@@ -33,6 +33,8 @@
     sequence<ApplePayContactField> requiredBillingContactFields;
     ApplePayPaymentContact billingContact;
 
+    ApplePayPaymentContact shippingContact;
+
     DOMString applicationData;
     [Conditional=APPLE_PAY_SESSION_V3] sequence<DOMString> supportedCountries;
 };
