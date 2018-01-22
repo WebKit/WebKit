@@ -209,12 +209,12 @@ void SWServer::clear(const SecurityOrigin& origin, WTF::CompletionHandler<void()
     m_registrationStore.flushChanges(WTFMove(completionHandler));
 }
 
-void SWServer::Connection::scheduleJobInServer(const ServiceWorkerJobData& jobData)
+void SWServer::Connection::scheduleJobInServer(ServiceWorkerJobData&& jobData)
 {
     LOG(ServiceWorker, "Scheduling ServiceWorker job %s in server", jobData.identifier().loggingString().utf8().data());
     ASSERT(identifier() == jobData.connectionIdentifier());
 
-    m_server.scheduleJob(jobData);
+    m_server.scheduleJob(WTFMove(jobData));
 }
 
 void SWServer::Connection::finishFetchingScriptInServer(const ServiceWorkerFetchResult& result)
@@ -256,9 +256,14 @@ SWServer::SWServer(UniqueRef<SWOriginStore>&& originStore, String&& registration
 }
 
 // https://w3c.github.io/ServiceWorker/#schedule-job-algorithm
-void SWServer::scheduleJob(const ServiceWorkerJobData& jobData)
+void SWServer::scheduleJob(ServiceWorkerJobData&& jobData)
 {
     ASSERT(m_connections.contains(jobData.connectionIdentifier()));
+
+    if (!SWServerToContextConnection::globalServerToContextConnection()) {
+        m_pendingJobs.append(WTFMove(jobData));
+        return;
+    }
 
     // FIXME: Per the spec, check if this job is equivalent to the last job on the queue.
     // If it is, stack it along with that job.
@@ -471,6 +476,10 @@ void SWServer::serverToContextConnectionCreated()
         for (auto& callback : item.value)
             callback(success, *connection);
     }
+
+    auto pendingJobs = WTFMove(m_pendingJobs);
+    for (auto& jobData : pendingJobs)
+        scheduleJob(WTFMove(jobData));
 }
 
 void SWServer::installContextData(const ServiceWorkerContextData& data)
