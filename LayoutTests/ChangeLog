@@ -1,3 +1,19 @@
+2018-01-19  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Release assertion in canExecuteScript when executing scripts during page cache restore
+        https://bugs.webkit.org/show_bug.cgi?id=181902
+
+        Reviewed by Antti Koivisto.
+
+        Added regression tests for the release assertion and navigating while a document is being restored from the page cache.
+        WebKit should not hit any assertions in either situations.
+
+        * fast/history/page-cache-execute-script-during-restore-expected.txt: Added.
+        * fast/history/page-cache-execute-script-during-restore.html: Added.
+        * fast/history/page-cache-navigate-during-restore-expected.txt: Added.
+        * fast/history/page-cache-navigate-during-restore.html: Added.
+        * fast/history/resources/navigate-back-with-finish-test-stage.html: Added.
+
 2018-01-21  Jer Noble  <jer.noble@apple.com>
 
         REGRESSION (macOS 10.13.2): imported/w3c/web-platform-tests/media-source/mediasource-* LayoutTests failing

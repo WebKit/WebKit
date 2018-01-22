@@ -1,3 +1,33 @@
+2018-01-19  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Release assertion in canExecuteScript when executing scripts during page cache restore
+        https://bugs.webkit.org/show_bug.cgi?id=181902
+
+        Reviewed by Antti Koivisto.
+
+        The crash was caused by an erroneous instantiation of ScriptDisallowedScope::InMainThread in CachedPage::restore.
+        It can execute arbitrary scripts since CachedFrame::open can update style, layout, and evaluate media queries.
+
+        This is fine because there is no way to put this page back into a page cache until the load is commited via
+        FrameLoader::commitProvisionalLoad is invoked later which only happens after CachedPage::restore had exited.
+
+        Also added a release assert to make sure this condition holds.
+
+        Tests: fast/history/page-cache-execute-script-during-restore.html
+               fast/history/page-cache-navigate-during-restore.html
+
+        * history/CachedPage.cpp:
+        (WebCore::CachedPageRestorationScope::CachedPageRestorationScope): Added.
+        (WebCore::CachedPageRestorationScope::~CachedPageRestorationScope): Added.
+        (WebCore::CachedPage::restore): Don't instantiate ScriptDisallowedScope::InMainThread. Set isRestoringCachedPage
+        on the cached pate to release-assert that there won't be any attempt to put this very page back into the cache.
+        * history/PageCache.cpp:
+        (WebCore::canCachePage): Added a release assert to make sure the page which is in the process of being restored
+        from the page cache is not put into the page cache.
+        * page/Page.h:
+        (WebCore::Page::setIsRestoringCachedPage): Added.
+        (WebCore::Page::isRestoringCachedPage const): Added.
+
 2018-01-21  Eric Carlson  <eric.carlson@apple.com>
 
         Resign NowPlaying status when no media element is eligible

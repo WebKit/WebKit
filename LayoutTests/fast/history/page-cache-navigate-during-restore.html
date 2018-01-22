@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p>This tests navigation while being restored from a page cache. WebKit should not hit any debug assertions.</p>
+<div id="result">
+<input id="input">
+<button onclick="delete sessionStorage.testStage; runTest()">Start test</button>
+</div>
+<script>
+
+if (window.testRunner) {
+    testRunner.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
+    testRunner.clearBackForwardList();
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+    internals.clearPageCache();
+}
+sessionStorage.testStage = 'initial';
+let persisted = false;
+
+window.addEventListener("pageshow", () => {
+    switch (sessionStorage.testStage) {
+    case 'initial':
+        if (window.testRunner)
+            setTimeout(runTest, 0);
+        break;
+    case 'navigate':
+        location.href = 'resources/navigate-back-with-finish-test-stage.html';
+        break;
+    case 'finish':
+        document.getElementById('result').textContent = persisted ? 'PASS' : 'FAIL - Not put into the page cache';
+        delete sessionStorage.testStage;
+        if (window.testRunner)
+            testRunner.notifyDone();
+        break;
+    }
+});
+
+function runTest()
+{
+    sessionStorage.testStage = 'navigate';
+    input.setAttribute('autofocus', '');
+    document.getElementById('input').addEventListener('focus', navigate);
+    persisted = true;
+    location.href = 'resources/page-cache-helper.html';
+}
+
+function navigate()
+{
+    if (sessionStorage.testStage != 'navigate')
+        return;
+    location.href = 'resources/navigate-back-with-finish-test-stage.html';
+    document.getElementById('result').textContent = 'FAIL';
+}
+
+function finish() {
+    document.getElementById('result').textContent = 'PASS';
+    setTimeout(() => {
+        delete sessionStorage.testStage;
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }, 0);
+}
+
+</script>
+</body>
+</html>
