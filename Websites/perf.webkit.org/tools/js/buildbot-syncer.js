@@ -283,7 +283,9 @@ class BuildbotSyncer {
             case 'conditional':
                 switch (value.condition) {
                 case 'built':
-                    if (!requestsInGroup.some((otherRequest) => otherRequest.isBuild() && otherRequest.commitSet() == buildRequest.commitSet()))
+                    const repositoryRequirement = value.repositoryRequirement;
+                    const meetRepositoryRequirement = !repositoryRequirement.length || repositoryRequirement.some((repository) => commitSet.requiresBuildForRepository(repository));
+                    if (!meetRepositoryRequirement || !requestsInGroup.some((otherRequest) => otherRequest.isBuild() && otherRequest.commitSet() == buildRequest.commitSet()))
                         continue;
                     break;
                 case 'requiresBuild':
@@ -440,7 +442,7 @@ class BuildbotSyncer {
 
         const testRepositories = new Set;
         let specifiesRoots = false;
-        const testPropertiesTemplate = this._parseRepositoryGroupPropertyTemplate('test', name, group.testProperties, (type, value) => {
+        const testPropertiesTemplate = this._parseRepositoryGroupPropertyTemplate('test', name, group.testProperties, (type, value, condition) => {
             assert(type != 'patch', `Repository group "${name}" specifies a patch for "${value}" in the properties for testing`);
             switch (type) {
             case 'revision':
@@ -452,7 +454,8 @@ class BuildbotSyncer {
                 specifiesRoots = true;
                 return {type};
             case 'ifBuilt':
-                return {type: 'conditional', condition: 'built', value};
+                assert('condition', 'condition must set if type is "ifBuilt"');
+                return {type: 'conditional', condition: 'built', value, repositoryRequirement: condition.map(resolveRepository)};
             }
             return null;
         });

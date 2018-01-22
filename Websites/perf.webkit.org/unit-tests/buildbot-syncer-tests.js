@@ -265,7 +265,10 @@ function createSampleBuildRequestWithOwnedCommit(platform, test, order)
     const owned111222 = CommitLog.ensureSingleton('111222', {'id': '111222', 'time': 1456932774000, 'repository': MockModels.ownedRepository, 'revision': 'owned-002'});
     const ios13A452 = CommitLog.ensureSingleton('88930', {'id': '88930', 'time': 0, 'repository': MockModels.ios, 'revision': '13A452'});
 
-    const commitSet = CommitSet.ensureSingleton('53246486', {customRoots: [], revisionItems: [{commit: webkit197463}, {commit: owner111289}, {commit: owned111222, commitOwner: owner111289, requiresBuild: true}, {commit: ios13A452}]});
+    const root = new UploadedFile(456, {'createdAt': new Date('2017-05-01T21:03:27Z'), 'filename': 'root.dat', 'extension': '.dat', 'author': 'some user',
+        size: 16452234, sha256: '03eed7a8494ab8794c44b7d4308e55448fc56f4d6c175809ba968f78f656d58d'});
+
+    const commitSet = CommitSet.ensureSingleton('53246486', {customRoots: [root], revisionItems: [{commit: webkit197463}, {commit: owner111289}, {commit: owned111222, commitOwner: owner111289, requiresBuild: true}, {commit: ios13A452}]});
 
     return BuildRequest.ensureSingleton(`6345645370-${order}`, {'triggerable': MockModels.triggerable,
         repositoryGroup: MockModels.svnRepositoryWithOwnedRepositoryGroup,
@@ -1039,8 +1042,8 @@ describe('BuildbotSyncer', () => {
                     'webkit': {'revision': 'WebKit'},
                     'shared': {'revision': 'Shared'},
                     'roots': {'roots': {}},
-                    'test-custom-build': {'ifBuilt': ''},
-                    'has-built-patch': {'ifBuilt': 'true'},
+                    'test-custom-build': {'ifBuilt': [], 'value': ''},
+                    'has-built-patch': {'ifBuilt': [], 'value': 'true'},
                 },
                 'acceptsRoots': true,
             };
@@ -1067,6 +1070,64 @@ describe('BuildbotSyncer', () => {
             assert.equal(properties['test-custom-build'], undefined);
             assert.equal(properties['has-built-patch'], undefined);
 
+        });
+
+        it('should set the value for "ifBuilt" if the repository in the list appears', () => {
+            const config = sampleiOSConfig();
+            config.repositoryGroups['ios-svn-webkit'] = {
+                'repositories': {'WebKit': {'acceptsPatch': true}, 'Shared': {}, 'iOS': {}},
+                'testProperties': {
+                    'os': {'revision': 'iOS'},
+                    'webkit': {'revision': 'WebKit'},
+                    'shared': {'revision': 'Shared'},
+                    'roots': {'roots': {}},
+                    'checkbox': {'ifBuilt': ['WebKit'], 'value': 'test-webkit'}
+                },
+                'buildProperties': {
+                    'webkit': {'revision': 'WebKit'},
+                    'webkit-patch': {'patch': 'WebKit'},
+                    'checkbox': {'ifRepositorySet': ['WebKit'], 'value': 'build-webkit'},
+                    'shared': {'revision': 'Shared'},
+                },
+                'acceptsRoots': true,
+            };
+            const syncers = BuildbotSyncer._loadConfig(RemoteAPI, config, builderNameToIDMap());
+            const requestToBuild = createSampleBuildRequestWithPatch(MockModels.iphone, null, -1);
+            const requestToTest = createSampleBuildRequestWithPatch(MockModels.iphone, MockModels.speedometer, 0);
+            const properties = syncers[0]._propertiesForBuildRequest(requestToTest, [requestToBuild, requestToTest]);
+            assert.equal(properties['webkit'], '197463');
+            assert.equal(properties['roots'], '[{"url":"http://build.webkit.org/api/uploaded-file/456.dat"}]');
+            assert.equal(properties['checkbox'], 'test-webkit');
+        });
+
+        it('should not set the value for "ifBuilt" if no build for the repository in the list appears', () => {
+            const config = sampleiOSConfig();
+            config.repositoryGroups['ios-svn-webkit-with-owned-commit'] = {
+                'repositories': {'WebKit': {'acceptsPatch': true}, 'Owner Repository': {}, 'iOS': {}},
+                'testProperties': {
+                    'os': {'revision': 'iOS'},
+                    'webkit': {'revision': 'WebKit'},
+                    'owner-repo': {'revision': 'Owner Repository'},
+                    'roots': {'roots': {}},
+                    'checkbox': {'ifBuilt': ['WebKit'], 'value': 'test-webkit'}
+                },
+                'buildProperties': {
+                    'webkit': {'revision': 'WebKit'},
+                    'webkit-patch': {'patch': 'WebKit'},
+                    'owner-repo': {'revision': 'Owner Repository'},
+                    'checkbox': {'ifRepositorySet': ['WebKit'], 'value': 'build-webkit'},
+                    'owned-commits': {'ownedRevisions': 'Owner Repository'}
+                },
+                'acceptsRoots': true,
+            };
+            const syncers = BuildbotSyncer._loadConfig(RemoteAPI, config, builderNameToIDMap());
+            const requestToBuild =  createSampleBuildRequestWithOwnedCommit(MockModels.iphone, null, -1);
+            const requestToTest = createSampleBuildRequestWithOwnedCommit(MockModels.iphone, MockModels.speedometer, 0);
+            const properties = syncers[0]._propertiesForBuildRequest(requestToTest, [requestToBuild, requestToTest]);
+
+            assert.equal(properties['webkit'], '197463');
+            assert.equal(properties['roots'], '[{"url":"http://build.webkit.org/api/uploaded-file/456.dat"}]');
+            assert.equal(properties['checkbox'], undefined);
         });
 
         it('should resolve "ifRepositorySet" and "requiresBuild"', () => {

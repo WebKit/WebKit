@@ -1,3 +1,22 @@
+2018-01-20  Dewei Zhu  <dewei_zhu@apple.com>
+
+        Extend 'ifBuilt' config key to set property based on whether certain repositories are built or not.
+        https://bugs.webkit.org/show_bug.cgi?id=181906
+
+        Reviewed by Ryosuke Niwa.
+
+        Before this change, 'ifBuilt' will always set specified property for test properties as long as there
+        is a build type build in the same build request group. However, this is no longer valid as we don't
+        want to set specified property for testing when only owned commit is built in previous build.
+        'ifBuilt' needs to conditionally set property based on whether certain required repositories are built.
+        Empty required repository list means no requirement on repository to set property.
+
+        * tools/js/buildbot-syncer.js:
+        (BuildbotSyncer.prototype._propertiesForBuildRequest):In the case of 'built', only set property when
+        repository requirment is meet and there is a 'build' root request in the same build request group.
+        (BuildbotSyncer._parseRepositoryGroup): Extend 'ifBuild' to pass information based on contition.
+        * unit-tests/buildbot-syncer-tests.js: Added unit tests.
+
 2018-01-19  Dewei Zhu  <dewei_zhu@apple.com>
 
         Should reject updating a build request which has an associated build.
