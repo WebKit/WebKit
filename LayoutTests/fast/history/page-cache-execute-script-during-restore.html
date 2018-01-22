@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p>This tests executing a script while being restored from a page cache. WebKit should not hit a release assertion.</p>
+<div id="result">
+<input id="input">
+<button onclick="runTest()">Start test</button>
+</div>
+<script>
+
+if (window.testRunner) {
+    testRunner.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
+    testRunner.clearBackForwardList();
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+window.addEventListener("pageshow", (event) => {
+    if (event.persisted)
+        return;
+    if (window.testRunner)
+        setTimeout(runTest, 0);
+});
+
+function runTest()
+{
+    input.setAttribute('autofocus', '');
+    document.getElementById('input').addEventListener('focus', finish);
+    location.href = 'resources/page-cache-helper.html';
+}
+
+function finish()
+{
+    document.getElementById('result').textContent = 'PASS';
+    setTimeout(() => {
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }, 0);
+}
+
+</script>
+</body>
+</html>
