@@ -1,3 +1,19 @@
+2018-01-22  Jason Marcell  <jmarcell@apple.com>
+
+        Cherry-pick r227174. rdar://problem/36723030
+
+    2018-01-18  Chris Dumez  <cdumez@apple.com>
+
+            We should be able to terminate service workers that are unresponsive
+            https://bugs.webkit.org/show_bug.cgi?id=181563
+            <rdar://problem/35280031>
+
+            Reviewed by Alex Christensen.
+
+            * wtf/ObjectIdentifier.h:
+            (WTF::ObjectIdentifier::loggingString const):
+            Allow using loggingString() from RELEASE_LOG().
+
 2018-01-18  Jason Marcell  <jmarcell@apple.com>
 
         Cherry-pick r226956. rdar://problem/36598688

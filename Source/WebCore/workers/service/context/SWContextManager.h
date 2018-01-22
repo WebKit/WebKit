@@ -70,7 +70,7 @@ public:
     WEBCORE_EXPORT void postMessageToServiceWorker(ServiceWorkerIdentifier destination, Ref<SerializedScriptValue>&& message, ServiceWorkerOrClientData&& sourceData);
     WEBCORE_EXPORT void fireInstallEvent(ServiceWorkerIdentifier);
     WEBCORE_EXPORT void fireActivateEvent(ServiceWorkerIdentifier);
-    WEBCORE_EXPORT void terminateWorker(ServiceWorkerIdentifier, Function<void()>&&);
+    WEBCORE_EXPORT void terminateWorker(ServiceWorkerIdentifier, Seconds timeout, Function<void()>&&);
 
     void forEachServiceWorkerThread(const WTF::Function<void(ServiceWorkerThreadProxy&)>&);
 
@@ -85,10 +85,20 @@ private:
     SWContextManager() = default;
 
     void startedServiceWorker(std::optional<ServiceWorkerJobDataIdentifier>, ServiceWorkerIdentifier, const String& exceptionMessage);
+    void serviceWorkerFailedToTerminate(ServiceWorkerIdentifier);
 
     HashMap<ServiceWorkerIdentifier, RefPtr<ServiceWorkerThreadProxy>> m_workerMap;
     std::unique_ptr<Connection> m_connection;
     ServiceWorkerCreationCallback* m_serviceWorkerCreationCallback { nullptr };
+
+    class ServiceWorkerTerminationRequest {
+    public:
+        ServiceWorkerTerminationRequest(SWContextManager&, ServiceWorkerIdentifier, Seconds timeout);
+
+    private:
+        Timer m_timeoutTimer;
+    };
+    HashMap<ServiceWorkerIdentifier, std::unique_ptr<ServiceWorkerTerminationRequest>> m_pendingServiceWorkerTerminationRequests;
 };
 
 } // namespace WebCore

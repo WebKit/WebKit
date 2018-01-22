@@ -62,6 +62,9 @@ using namespace WebCore;
 
 namespace WebKit {
 
+static const Seconds asyncWorkerTerminationTimeout { 10_s };
+static const Seconds syncWorkerTerminationTimeout { 100_ms }; // Only used by layout tests.
+
 class ServiceWorkerFrameLoaderClient final : public EmptyFrameLoaderClient {
 public:
     ServiceWorkerFrameLoaderClient(WebSWContextManagerConnection& connection, PAL::SessionID sessionID, uint64_t pageID, uint64_t frameID, const String& userAgent)
@@ -196,12 +199,12 @@ void WebSWContextManagerConnection::fireActivateEvent(ServiceWorkerIdentifier id
 
 void WebSWContextManagerConnection::terminateWorker(ServiceWorkerIdentifier identifier)
 {
-    SWContextManager::singleton().terminateWorker(identifier, nullptr);
+    SWContextManager::singleton().terminateWorker(identifier, asyncWorkerTerminationTimeout, nullptr);
 }
 
 void WebSWContextManagerConnection::syncTerminateWorker(ServiceWorkerIdentifier identifier, Ref<Messages::WebSWContextManagerConnection::SyncTerminateWorker::DelayedReply>&& reply)
 {
-    SWContextManager::singleton().terminateWorker(identifier, [reply = WTFMove(reply)] {
+    SWContextManager::singleton().terminateWorker(identifier, syncWorkerTerminationTimeout, [reply = WTFMove(reply)] {
         reply->send();
     });
 }

@@ -67,12 +67,10 @@ public:
 
     uint64_t toUInt64() const { return m_identifier; }
     
-#ifndef NDEBUG
     String loggingString() const
     {
         return String::number(m_identifier);
     }
-#endif
 
 private:
     template<typename U> friend ObjectIdentifier<U> generateObjectIdentifier();
