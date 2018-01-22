@@ -1,3 +1,26 @@
+2018-01-22  Antti Koivisto  <antti@apple.com>
+
+        REGRESSION (Safari 11): Buttons inside a fieldset legend cannot be clicked on in Safari 11
+        https://bugs.webkit.org/show_bug.cgi?id=179666
+        <rdar://problem/35534292>
+
+        Reviewed by Zalan Bujtas.
+
+        The legend element of a fieldset is in the border area, outside the clip rect.
+        With overflow:hidden mouse events won't reach it.
+
+        Test case by Dhaya Benmessaoud.
+
+        Test: fast/forms/legend-overflow-hidden-hit-test.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::nodeAtPoint):
+        (WebCore::RenderBlock::hitTestExcludedChildrenInBorder):
+
+        Add a special case to hit testing to handle legend, similarly to what is done for painting.
+
+        * rendering/RenderBlock.h:
+
 2018-01-22  Joanmarie Diggs  <jdiggs@igalia.com>
 
         AX: Implement support for Graphics ARIA roles

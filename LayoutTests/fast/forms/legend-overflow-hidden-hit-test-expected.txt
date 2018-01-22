@@ -1,0 +1,2 @@
+Check that hit testing works in the legend of a fieldset with overflow:hidden. Click me
+Clicks: 1

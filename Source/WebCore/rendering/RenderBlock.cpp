@@ -2225,6 +2225,9 @@ bool RenderBlock::nodeAtPoint(const HitTestRequest& request, HitTestResult& resu
         }
     }
 
+    if (!checkChildren && hitTestExcludedChildrenInBorder(request, result, locationInContainer, adjustedLocation, hitTestAction))
+        return true;
+
     // Check if the point is outside radii.
     if (!isRenderView() && style().hasBorderRadius()) {
         LayoutRect borderRect = borderBoxRect();
@@ -3655,6 +3658,22 @@ void RenderBlock::paintExcludedChildrenInBorder(PaintInfo& paintInfo, const Layo
     
     LayoutPoint childPoint = flipForWritingModeForChild(box, paintOffset);
     box->paintAsInlineBlock(paintInfo, childPoint);
+}
+
+bool RenderBlock::hitTestExcludedChildrenInBorder(const HitTestRequest& request, HitTestResult& result, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction hitTestAction)
+{
+    if (!isFieldset())
+        return false;
+
+    auto* legend = findFieldsetLegend();
+    if (!legend || !legend->isExcludedFromNormalLayout() || legend->hasSelfPaintingLayer())
+        return false;
+
+    HitTestAction childHitTest = hitTestAction;
+    if (hitTestAction == HitTestChildBlockBackgrounds)
+        childHitTest = HitTestChildBlockBackground;
+    LayoutPoint childPoint = flipForWritingModeForChild(legend, accumulatedOffset);
+    return legend->nodeAtPoint(request, result, locationInContainer, childPoint, childHitTest);
 }
     
 } // namespace WebCore
