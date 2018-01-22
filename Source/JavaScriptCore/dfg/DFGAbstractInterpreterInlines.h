@@ -764,6 +764,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             break;
         default:
             DFG_ASSERT(m_graph, node, node->child1().useKind() == UntypedUse);
+            clobberWorld(node->origin.semantic, clobberLimit);
             forNode(node).setType(SpecBytecodeNumber);
             break;
         }
@@ -978,6 +979,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             break;
         default:
             DFG_ASSERT(m_graph, node, node->child1().useKind() == UntypedUse);
+            clobberWorld(node->origin.semantic, clobberLimit);
             forNode(node).setType(SpecFullNumber);
             break;
         }
@@ -1054,21 +1056,22 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                 forNode(node).setType(typeOfDoubleRounding(forNode(node->child1()).m_type));
         } else {
             DFG_ASSERT(m_graph, node, node->child1().useKind() == UntypedUse);
+            clobberWorld(node->origin.semantic, clobberLimit);
             forNode(node).setType(SpecFullNumber);
         }
         break;
     }
             
     case ArithSqrt:
-        executeDoubleUnaryOpEffects(node, sqrt);
+        executeDoubleUnaryOpEffects(node, clobberLimit, sqrt);
         break;
 
     case ArithFRound:
-        executeDoubleUnaryOpEffects(node, [](double value) -> double { return static_cast<float>(value); });
+        executeDoubleUnaryOpEffects(node, clobberLimit, [](double value) -> double { return static_cast<float>(value); });
         break;
         
     case ArithUnary:
-        executeDoubleUnaryOpEffects(node, arithUnaryFunction(node->arithUnaryType()));
+        executeDoubleUnaryOpEffects(node, clobberLimit, arithUnaryFunction(node->arithUnaryType()));
         break;
             
     case LogicalNot: {
@@ -1607,7 +1610,9 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                 break;
             }
         }
-        
+
+        if (node->child1().useKind() == UntypedUse || node->child2().useKind() == UntypedUse)
+            clobberWorld(node->origin.semantic, clobberLimit);
         forNode(node).setType(SpecBoolean);
         break;
     }
@@ -3573,7 +3578,7 @@ FiltrationResult AbstractInterpreter<AbstractStateType>::filterClassInfo(
 }
 
 template<typename AbstractStateType>
-void AbstractInterpreter<AbstractStateType>::executeDoubleUnaryOpEffects(Node* node, double(*equivalentFunction)(double))
+void AbstractInterpreter<AbstractStateType>::executeDoubleUnaryOpEffects(Node* node, unsigned clobberLimit, double(*equivalentFunction)(double))
 {
     JSValue child = forNode(node->child1()).value();
     if (std::optional<double> number = child.toNumberFromPrimitive()) {
@@ -3583,6 +3588,8 @@ void AbstractInterpreter<AbstractStateType>::executeDoubleUnaryOpEffects(Node* n
     SpeculatedType type = SpecFullNumber;
     if (node->child1().useKind() == DoubleRepUse)
         type = typeOfDoubleUnaryOp(forNode(node->child1()).m_type);
+    else
+        clobberWorld(node->origin.semantic, clobberLimit);
     forNode(node).setType(type);
 }
 

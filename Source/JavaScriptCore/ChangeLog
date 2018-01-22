@@ -1,3 +1,18 @@
+2018-01-22  Michael Saboff  <msaboff@apple.com>
+
+        DFG abstract interpreter needs to properly model effects of some Math ops
+        https://bugs.webkit.org/show_bug.cgi?id=181886
+
+        Reviewed by Saam Barati.
+
+        Reviewed the processing of the various ArithXXX and CompareXXX and found that
+        several nodes don't handle UntypedUse.  Added clobberWorld() for those cases.
+
+        * dfg/DFGAbstractInterpreter.h:
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeDoubleUnaryOpEffects):
+
 2018-01-21  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Add a new feature flag for EXTRA_ZOOM_MODE and reintroduce AdditionalFeatureDefines.h

@@ -1,3 +1,15 @@
+2018-01-22  Michael Saboff  <msaboff@apple.com>
+
+        DFG abstract interpreter needs to properly model effects of some Math ops
+        https://bugs.webkit.org/show_bug.cgi?id=181886
+
+        Reviewed by Saam Barati.
+
+        New regression test.
+
+        * stress/arith-nodes-abstract-interpreter-untypeduse.js: Added.
+        (test):
+
 2018-01-20  Caio Lima  <ticaiolima@gmail.com>
 
         [JSC] NumberPrototype::extractRadixFromArgs incorrectly cast double to int32_t
