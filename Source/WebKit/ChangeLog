@@ -1,3 +1,11 @@
+2018-01-21  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix compile warning.
+
+        Use #include instead of #import in cross-platform code.
+
+        * Shared/WebPreferencesDefaultValues.cpp:
+
 2018-01-21  Ryosuke Niwa  <rniwa@webkit.org>
 
         Turning off custom pasteboard data doesn't actually turn it off in WK2

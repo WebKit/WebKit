@@ -25,7 +25,7 @@
 
 #include "config.h"
 #include "WebPreferencesDefaultValues.h"
-#import <WebCore/RuntimeApplicationChecks.h>
+#include <WebCore/RuntimeApplicationChecks.h>
 
 #if PLATFORM(COCOA)
 #include <wtf/spi/darwin/dyldSPI.h>
