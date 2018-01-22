@@ -34,6 +34,9 @@ WI.SpreadsheetRulesStyleDetailsPanel = class SpreadsheetRulesStyleDetailsPanel e
 
         this.element.classList.add("spreadsheet-style-panel");
 
+        // Make the styles sidebar always left-to-right since CSS is strictly an LTR language.
+        this.element.dir = "ltr";
+
         this._headerMap = new Map;
         this._sections = [];
         this._newRuleSelector = null;
