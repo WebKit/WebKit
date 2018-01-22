@@ -503,6 +503,7 @@ void SWServer::installContextData(const ServiceWorkerContextData& data)
         return;
     }
 
+    registration->setPreInstallationWorker(worker.ptr());
     worker->setState(SWServerWorker::State::Running);
     auto result = m_runningOrTerminatingWorkers.add(data.serviceWorkerIdentifier, WTFMove(worker));
     ASSERT_UNUSED(result, result.isNewEntry);

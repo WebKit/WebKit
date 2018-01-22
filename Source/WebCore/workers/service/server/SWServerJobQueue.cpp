@@ -109,6 +109,10 @@ void SWServerJobQueue::scriptContextFailedToStart(const ServiceWorkerJobDataIden
     auto* registration = m_server.getRegistration(m_registrationKey);
     ASSERT(registration);
 
+    ASSERT(registration->preInstallationWorker());
+    registration->preInstallationWorker()->terminate();
+    registration->setPreInstallationWorker(nullptr);
+
     // Invoke Reject Job Promise with job and TypeError.
     m_server.rejectJob(firstJob(), { TypeError, message });
 
@@ -137,6 +141,9 @@ void SWServerJobQueue::install(SWServerRegistration& registration, ServiceWorker
     // The Install algorithm should never be invoked with a null worker.
     auto* worker = m_server.workerByID(installingWorker);
     RELEASE_ASSERT(worker);
+
+    ASSERT(registration.preInstallationWorker() == worker);
+    registration.setPreInstallationWorker(nullptr);
 
     registration.updateRegistrationState(ServiceWorkerRegistrationState::Installing, worker);
     registration.updateWorkerState(*worker, ServiceWorkerState::Installing);
