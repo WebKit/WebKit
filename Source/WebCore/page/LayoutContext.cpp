@@ -482,6 +482,11 @@ void LayoutContext::applyTextSizingIfNeeded(RenderElement& layoutRoot)
 void LayoutContext::updateStyleForLayout()
 {
     Document& document = *frame().document();
+
+    // FIXME: This shouldn't be necessary, but see rdar://problem/36670246.
+    if (!document.styleScope().resolverIfExists())
+        document.styleScope().didChangeStyleSheetEnvironment();
+
     // Viewport-dependent media queries may cause us to need completely different style information.
     document.styleScope().evaluateMediaQueriesForViewportChange();
 

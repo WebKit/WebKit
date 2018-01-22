@@ -1,3 +1,18 @@
+2018-01-22  Antti Koivisto  <antti@apple.com>
+
+        REGRESSION(r224535): Can't write reviews in the App Store
+        https://bugs.webkit.org/show_bug.cgi?id=181936
+        <rdar://problem/36670246>
+
+        Reviewed by Zalan Bujtas.
+
+        * page/LayoutContext.cpp:
+        (WebCore::LayoutContext::updateStyleForLayout):
+
+        r224535 was about media queries but it also removed a seemingly spurious call to SyleScope::didChangeStyleSheetEnvironment
+        from the path that does not involve media queries.
+        Turns out UITextContentView somehow depended on it, so revert this specific change.
+
 2018-01-22  Brady Eidson  <beidson@apple.com>
 
         In WebKit2, make the MessagePortChannelRegistry live in the UI process.
