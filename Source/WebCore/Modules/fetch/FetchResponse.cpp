@@ -44,10 +44,17 @@ static inline bool isNullBodyStatus(int status)
     return status == 101 || status == 204 || status == 205 || status == 304;
 }
 
-Ref<FetchResponse> FetchResponse::create(ScriptExecutionContext& context, std::optional<FetchBody>&& body, Ref<FetchHeaders>&& headers, ResourceResponse&& response)
+Ref<FetchResponse> FetchResponse::create(ScriptExecutionContext& context, std::optional<FetchBody>&& body, FetchHeaders::Guard guard, ResourceResponse&& response)
 {
+    bool isSynthetic = response.type() == ResourceResponse::Type::Default || response.type() == ResourceResponse::Type::Error;
+    bool isOpaque = response.tainting() == ResourceResponse::Tainting::Opaque;
+    auto headers = isOpaque ? FetchHeaders::create(guard) : FetchHeaders::create(guard, HTTPHeaderMap { response.httpHeaderFields() });
+
     auto fetchResponse = adoptRef(*new FetchResponse(context, WTFMove(body), WTFMove(headers), WTFMove(response)));
-    fetchResponse->m_filteredResponse = ResourceResponseBase::filter(fetchResponse->m_internalResponse);
+    if (!isSynthetic)
+        fetchResponse->m_filteredResponse = ResourceResponseBase::filter(fetchResponse->m_internalResponse);
+    if (isOpaque)
+        fetchResponse->setBodyAsOpaque();
     return fetchResponse;
 }
 
@@ -163,10 +170,12 @@ ExceptionOr<Ref<FetchResponse>> FetchResponse::clone(ScriptExecutionContext& con
     if (isLoading())
         readableStream(*context.execState());
 
-    auto clone = adoptRef(*new FetchResponse(context, std::nullopt, FetchHeaders::create(headers()), ResourceResponse(m_internalResponse)));
+    // Synthetic responses do not store headers in m_internalResponse.
+    if (m_internalResponse.type() == ResourceResponse::Type::Default)
+        m_internalResponse.setHTTPHeaderFields(HTTPHeaderMap { headers().internalHeaders() });
+
+    auto clone = FetchResponse::create(context, std::nullopt, headers().guard(), ResourceResponse { m_internalResponse });
     clone->cloneBody(*this);
-    if (isBodyOpaque())
-        clone->setBodyAsOpaque();
     clone->m_opaqueLoadIdentifier = m_opaqueLoadIdentifier;
     clone->m_bodySizeWithPadding = m_bodySizeWithPadding;
     return WTFMove(clone);

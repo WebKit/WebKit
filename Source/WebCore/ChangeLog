@@ -1,3 +1,31 @@
+2018-01-22  Youenn Fablet  <youenn@apple.com>
+
+        Fetch Headers from an Opaque response should be filtered out
+        https://bugs.webkit.org/show_bug.cgi?id=181926
+
+        Reviewed by Chris Dumez.
+
+        Covered by updated test.
+
+        Refactor to use the same FetchResponse::create for Cache API and cloning.
+        In this method, ensure that response and headers are filtered correctly according response tainting.
+        Make also sure that synthetic responses do not get filtered (not needed since created by JavaScript).
+
+        Introduce helper routine to set the header map of a resource response.
+        Use this routine when cloning a synthetic response as in that case, m_internalResponse has no header at all.
+
+        * Modules/cache/DOMCache.cpp:
+        (WebCore::DOMCache::updateRecords):
+        * Modules/fetch/FetchResponse.cpp:
+        (WebCore::FetchResponse::create):
+        (WebCore::FetchResponse::clone):
+        * Modules/fetch/FetchResponse.h:
+        * platform/network/ResourceResponseBase.cpp:
+        (WebCore::ResourceResponseBase::setHTTPHeaderFields):
+        * platform/network/ResourceResponseBase.h:
+        * testing/ServiceWorkerInternals.cpp:
+        (WebCore::ServiceWorkerInternals::createOpaqueWithBlobBodyResponse):
+
 2018-01-22  Javier Fernandez  <jfernandez@igalia.com>
 
         [css-align] 'overflow' keyword must precede the self-position and content-position value

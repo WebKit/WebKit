@@ -531,8 +531,7 @@ void DOMCache::updateRecords(Vector<Record>&& records)
         if (index != notFound) {
             auto& current = m_records[index];
             if (current.updateResponseCounter != record.updateResponseCounter) {
-                auto responseHeaders = FetchHeaders::create(record.responseHeadersGuard, HTTPHeaderMap { record.response.httpHeaderFields() });
-                auto response = FetchResponse::create(*scriptExecutionContext(), std::nullopt, WTFMove(responseHeaders), WTFMove(record.response));
+                auto response = FetchResponse::create(*scriptExecutionContext(), std::nullopt, record.responseHeadersGuard, WTFMove(record.response));
                 response->setBodyData(WTFMove(record.responseBody), record.responseBodySize);
 
                 current.response = WTFMove(response);
@@ -543,8 +542,7 @@ void DOMCache::updateRecords(Vector<Record>&& records)
             auto requestHeaders = FetchHeaders::create(record.requestHeadersGuard, HTTPHeaderMap { record.request.httpHeaderFields() });
             auto request = FetchRequest::create(*scriptExecutionContext(), std::nullopt, WTFMove(requestHeaders),  WTFMove(record.request), WTFMove(record.options), WTFMove(record.referrer));
 
-            auto responseHeaders = FetchHeaders::create(record.responseHeadersGuard, HTTPHeaderMap { record.response.httpHeaderFields() });
-            auto response = FetchResponse::create(*scriptExecutionContext(), std::nullopt, WTFMove(responseHeaders), WTFMove(record.response));
+            auto response = FetchResponse::create(*scriptExecutionContext(), std::nullopt, record.responseHeadersGuard, WTFMove(record.response));
             response->setBodyData(WTFMove(record.responseBody), record.responseBodySize);
 
             newRecords.append(CacheStorageRecord { record.identifier, record.updateResponseCounter, WTFMove(request), WTFMove(response) });

@@ -399,6 +399,13 @@ void ResourceResponseBase::setHTTPHeaderField(const String& name, const String& 
     // FIXME: Should invalidate or update platform response if present.
 }
 
+void ResourceResponseBase::setHTTPHeaderFields(HTTPHeaderMap&& headerFields)
+{
+    lazyInit(AllFields);
+
+    m_httpHeaderFields = WTFMove(headerFields);
+}
+
 void ResourceResponseBase::setHTTPHeaderField(HTTPHeaderName name, const String& value)
 {
     lazyInit(AllFields);
