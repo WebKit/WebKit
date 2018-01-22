@@ -101,22 +101,23 @@ WI.SpreadsheetCSSStyleDeclarationEditor = class SpreadsheetCSSStyleDeclarationEd
 
     startEditingFirstProperty()
     {
-        if (this._propertyViews.length)
-            this._propertyViews[0].nameTextField.startEditing();
+        let firstEditableProperty = this._editablePropertyAfter(-1);
+        if (firstEditableProperty)
+            firstEditableProperty.nameTextField.startEditing();
         else {
-            let index = 0;
-            this.addBlankProperty(index);
+            const appendAfterLast = -1;
+            this.addBlankProperty(appendAfterLast);
         }
     }
 
     startEditingLastProperty()
     {
-        let lastProperty = this._propertyViews.lastValue;
-        if (lastProperty)
-            lastProperty.valueTextField.startEditing();
+        let lastEditableProperty = this._editablePropertyBefore(this._propertyViews.length);
+        if (lastEditableProperty)
+            lastEditableProperty.valueTextField.startEditing();
         else {
-            let index = 0;
-            this.addBlankProperty(index);
+            const appendAfterLast = -1;
+            this.addBlankProperty(appendAfterLast);
         }
     }
 
@@ -194,29 +195,29 @@ WI.SpreadsheetCSSStyleDeclarationEditor = class SpreadsheetCSSStyleDeclarationEd
         }
 
         if (direction === "forward") {
-            // Move from the value to the next property's name.
-            let index = movedFromIndex + 1;
-            if (index < this._propertyViews.length)
-                this._propertyViews[index].nameTextField.startEditing();
+            // Move from the value to the next enabled property's name.
+            let propertyView = this._editablePropertyAfter(movedFromIndex);
+            if (propertyView)
+                propertyView.nameTextField.startEditing();
             else {
                 if (willRemoveProperty) {
                     // Move from the last value in the rule to the next rule's selector.
                     let reverse = false;
                     this._delegate.cssStyleDeclarationEditorStartEditingAdjacentRule(reverse);
-                } else
-                    this.addBlankProperty(index);
+                } else {
+                    const appendAfterLast = -1;
+                    this.addBlankProperty(appendAfterLast);
+                }
             }
         } else {
-            let index = movedFromIndex - 1;
-            if (index < 0) {
+            let propertyView = this._editablePropertyBefore(movedFromIndex);
+            if (propertyView) {
+                // Move from the property's name to the previous enabled property's value.
+                propertyView.valueTextField.startEditing()
+            } else {
                 // Move from the first property's name to the rule's selector.
                 if (this._style.selectorEditable)
                     this._delegate.cssStyleDeclarationTextEditorStartEditingRuleSelector();
-            } else {
-                // Move from the property's name to the previous property's value.
-                let valueTextField = this._propertyViews[index].valueTextField;
-                if (valueTextField)
-                    valueTextField.startEditing();
             }
         }
     }
@@ -251,6 +252,28 @@ WI.SpreadsheetCSSStyleDeclarationEditor = class SpreadsheetCSSStyleDeclarationEd
             return this._style.allVisibleProperties;
 
         return this._style.allProperties;
+    }
+
+    _editablePropertyAfter(propertyIndex)
+    {
+        for (let index = propertyIndex + 1; index < this._propertyViews.length; index++) {
+            let property = this._propertyViews[index];
+            if (property.enabled)
+                return property;
+        }
+
+        return null;
+    }
+
+    _editablePropertyBefore(propertyIndex)
+    {
+        for (let index = propertyIndex - 1; index >= 0; index--) {
+            let property = this._propertyViews[index];
+            if (property.enabled)
+                return property;
+        }
+
+        return null;
     }
 
     _propertiesChanged(event)
