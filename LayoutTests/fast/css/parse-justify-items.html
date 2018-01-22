@@ -16,6 +16,10 @@
     justify-items: stretch;
 }
 
+#justifyItemsNormal {
+    justify-items: normal;
+}
+
 #justifyItemsStart {
     justify-items: start;
 }
@@ -52,36 +56,36 @@
     justify-items: flex-end;
 }
 
-#justifyItemsEndUnsafe {
-    justify-items: end unsafe;
+#justifyItemsUnsafeEnd {
+    justify-items: unsafe end ;
 }
 
-#justifyItemsCenterUnsafe {
-    justify-items: center unsafe;
+#justifyItemsUnsafeCenter {
+    justify-items: unsafe center ;
 }
 
-#justifyItemsSelfEndSafe {
-    justify-items: self-end safe;
+#justifyItemsSafeSelfEnd {
+    justify-items: safe self-end;
 }
 
-#justifyItemsSelfStartSafe {
-    justify-items: self-start safe;
+#justifyItemsSafeSelfStart {
+    justify-items: safe self-start;
 }
 
-#justifyItemsRightSafe {
-    justify-items: right safe;
+#justifyItemsSafeRight {
+    justify-items: safe right;
 }
 
-#justifyItemsLeftUnsafe {
-    justify-items: left unsafe;
+#justifyItemsUnsafeLeft {
+    justify-items: unsafe left;
 }
 
-#justifyItemsFlexStartUnsafe {
-    justify-items: flex-start unsafe;
+#justifyItemsUnsafeFlexStart {
+    justify-items: unsafe flex-start;
 }
 
-#justifyItemsFlexEndSafe {
-    justify-items: flex-end safe;
+#justifyItemsSafeFlexEnd {
+    justify-items: safe flex-end;
 }
 
 #justifyItemsLegacyLeft {
@@ -113,6 +117,7 @@
 <div id="justifyItemsFirstBaseline"></div>
 <div id="justifyItemsLastBaseline"></div>
 <div id="justifyItemsStretch"></div>
+<div id="justifyItemsNormal"></div>
 <div id="justifyItemsStart"></div>
 <div id="justifyItemsEnd"></div>
 <div id="justifyItemsCenter"></div>
@@ -123,14 +128,14 @@
 <div id="justifyItemsFlexStart"></div>
 <div id="justifyItemsFlexEnd"></div>
 
-<div id="justifyItemsEndUnsafe"></div>
-<div id="justifyItemsCenterUnsafe"></div>
-<div id="justifyItemsSelfEndSafe"></div>
-<div id="justifyItemsSelfStartSafe"></div>
-<div id="justifyItemsRightSafe"></div>
-<div id="justifyItemsLeftUnsafe"></div>
-<div id="justifyItemsFlexStartUnsafe"></div>
-<div id="justifyItemsFlexEndSafe"></div>
+<div id="justifyItemsUnsafeEnd"></div>
+<div id="justifyItemsUnsafeCenter"></div>
+<div id="justifyItemsSafeSelfEnd"></div>
+<div id="justifyItemsSafeSelfStart"></div>
+<div id="justifyItemsSafeRight"></div>
+<div id="justifyItemsUnsafeLeft"></div>
+<div id="justifyItemsUnsafeFlexStart"></div>
+<div id="justifyItemsSafeFlexEnd"></div>
 <div id="justifyItemsLegacyLeft"></div>
 <div id="justifyItemsLegacyCenter"></div>
 <div id="justifyItemsLegacyRight"></div>
@@ -150,6 +155,8 @@ test(function() {
     checkValues(justifyItemsLastBaseline, "justifyItems", "justify-items", "", "last baseline");
     var justifyItemsStretch = document.getElementById("justifyItemsStretch");
     checkValues(justifyItemsStretch, "justifyItems", "justify-items", "", "stretch");
+    var justifyItemsNormal = document.getElementById("justifyItemsNormal");
+    checkValues(justifyItemsNormal, "justifyItems", "justify-items", "", "normal");
     var justifyItemsStart = document.getElementById("justifyItemsStart");
     checkValues(justifyItemsStart, "justifyItems", "justify-items", "", "start");
     var justifyItemsEnd = document.getElementById("justifyItemsEnd");
@@ -169,22 +176,22 @@ test(function() {
     var justifyItemsFlexEnd = document.getElementById("justifyItemsFlexEnd");
     checkValues(justifyItemsFlexEnd, "justifyItems", "justify-items", "", "flex-end");
 
-    var justifyItemsEndUnsafe = document.getElementById("justifyItemsEndUnsafe");
-    checkValues(justifyItemsEndUnsafe, "justifyItems", "justify-items", "", "end unsafe");
-    var justifyItemsCenterUnsafe = document.getElementById("justifyItemsCenterUnsafe");
-    checkValues(justifyItemsCenterUnsafe, "justifyItems", "justify-items", "", "center unsafe");
-    var justifyItemsSelfEndSafe = document.getElementById("justifyItemsSelfEndSafe");
-    checkValues(justifyItemsSelfEndSafe, "justifyItems", "justify-items", "", "self-end safe");
-    var justifyItemsSelfStartSafe = document.getElementById("justifyItemsSelfStartSafe");
-    checkValues(justifyItemsSelfStartSafe, "justifyItems", "justify-items", "", "self-start safe");
-    var justifyItemsRightSafe = document.getElementById("justifyItemsRightSafe");
-    checkValues(justifyItemsRightSafe, "justifyItems", "justify-items", "", "right safe");
-    var justifyItemsLeftUnsafe = document.getElementById("justifyItemsLeftUnsafe");
-    checkValues(justifyItemsLeftUnsafe, "justifyItems", "justify-items", "", "left unsafe");
-    var justifyItemsFlexStartUnsafe = document.getElementById("justifyItemsFlexStartUnsafe");
-    checkValues(justifyItemsFlexStartUnsafe, "justifyItems", "justify-items", "", "flex-start unsafe");
-    var justifyItemsFlexEndSafe = document.getElementById("justifyItemsFlexEndSafe");
-    checkValues(justifyItemsFlexEndSafe, "justifyItems", "justify-items", "", "flex-end safe");
+    var justifyItemsUnsafeEnd = document.getElementById("justifyItemsUnsafeEnd");
+    checkValues(justifyItemsUnsafeEnd, "justifyItems", "justify-items", "", "unsafe end");
+    var justifyItemsUnsafeCenter = document.getElementById("justifyItemsUnsafeCenter");
+    checkValues(justifyItemsUnsafeCenter, "justifyItems", "justify-items", "", "unsafe center");
+    var justifyItemsSafeSelfEnd = document.getElementById("justifyItemsSafeSelfEnd");
+    checkValues(justifyItemsSafeSelfEnd, "justifyItems", "justify-items", "", "safe self-end");
+    var justifyItemsSafeSelfStart = document.getElementById("justifyItemsSafeSelfStart");
+    checkValues(justifyItemsSafeSelfStart, "justifyItems", "justify-items", "", "safe self-start");
+    var justifyItemsSafeRight = document.getElementById("justifyItemsSafeRight");
+    checkValues(justifyItemsSafeRight, "justifyItems", "justify-items", "", "safe right");
+    var justifyItemsUnsafeLeft = document.getElementById("justifyItemsUnsafeLeft");
+    checkValues(justifyItemsUnsafeLeft, "justifyItems", "justify-items", "", "unsafe left");
+    var justifyItemsUnsafeFlexStart = document.getElementById("justifyItemsUnsafeFlexStart");
+    checkValues(justifyItemsUnsafeFlexStart, "justifyItems", "justify-items", "", "unsafe flex-start");
+    var justifyItemsSafeFlexEnd = document.getElementById("justifyItemsSafeFlexEnd");
+    checkValues(justifyItemsSafeFlexEnd, "justifyItems", "justify-items", "", "safe flex-end");
     var justifyItemsLegacyLeft = document.getElementById("justifyItemsLegacyLeft");
     checkValues(justifyItemsLegacyLeft, "justifyItems", "justify-items", "", "legacy left");
     var justifyItemsLegacyCenter = document.getElementById("justifyItemsLegacyCenter");
@@ -212,10 +219,10 @@ test(function() {
     checkValues(element, "justifyItems", "justify-items",  "center", "center");
 
     element.style.justifyItems = "unsafe start";
-    checkValues(element, "justifyItems", "justify-items",  "start unsafe", "start unsafe");
+    checkValues(element, "justifyItems", "justify-items",  "unsafe start", "unsafe start");
 
-    element.style.justifyItems = "flex-end safe";
-    checkValues(element, "justifyItems", "justify-items",  "flex-end safe", "flex-end safe");
+    element.style.justifyItems = "safe flex-end";
+    checkValues(element, "justifyItems", "justify-items",  "safe flex-end", "safe flex-end");
 
     element.style.justifyItems = "right legacy";
     checkValues(element, "justifyItems", "justify-items",  "legacy right", "legacy right");
@@ -225,6 +232,18 @@ test(function() {
 
     element.style.justifyItems = "left legacy";
     checkValues(element, "justifyItems", "justify-items",  "legacy left", "legacy left");
+
+    element.style.justifyItems = "right";
+    checkValues(element, "justifyItems", "justify-items",  "right", "right");
+
+    element.style.justifyItems = "center";
+    checkValues(element, "justifyItems", "justify-items",  "center", "center");
+
+    element.style.justifyItems = "self-start";
+    checkValues(element, "justifyItems", "justify-items",  "self-start", "self-start");
+
+    element.style.justifyItems = "normal";
+    checkValues(element, "justifyItems", "justify-items",  "normal", "normal");
 
     element.style.justifyItems = "auto";
     checkValues(element, "justifyItems", "justify-items",  "auto", "normal");
@@ -255,8 +274,15 @@ test(function() {
     checkBadValues(element, "justifyItems", "justify-items",  "unsafe auto");
     checkBadValues(element, "justifyItems", "justify-items",  "auto safe");
     checkBadValues(element, "justifyItems", "justify-items",  "auto left");
+    checkBadValues(element, "justifyItems", "justify-items",  "normal unsafe");
+    checkBadValues(element, "justifyItems", "justify-items",  "normal stretch");
+    checkBadValues(element, "justifyItems", "justify-items",  "baseline normal");
     checkBadValues(element, "justifyItems", "justify-items",  "baseline safe");
     checkBadValues(element, "justifyItems", "justify-items",  "baseline center");
+    checkBadValues(element, "justifyItems", "justify-items",  "first baseline center");
+    checkBadValues(element, "justifyItems", "justify-items",  "last baseline center");
+    checkBadValues(element, "justifyItems", "justify-items",  "baseline last");
+    checkBadValues(element, "justifyItems", "justify-items",  "baseline first");
     checkBadValues(element, "justifyItems", "justify-items",  "stretch unsafe");
     checkBadValues(element, "justifyItems", "justify-items",  "stretch right");
     checkBadValues(element, "justifyItems", "justify-items",  "unsafe unsafe");
@@ -276,6 +302,8 @@ test(function() {
     checkBadValues(element, "justifyItems", "justify-items",  "legacy stretch");
     checkBadValues(element, "justifyItems", "justify-items",  "legacy");
     checkBadValues(element, "justifyItems", "justify-items",  "legacy left right");
+    checkBadValues(element, "justifyItems", "justify-items",  "start safe");
+    checkBadValues(element, "justifyItems", "justify-items",  "end unsafe");
 }, "Test bad combinations of justify-items");
 
 test(function() {
@@ -285,18 +313,18 @@ test(function() {
 
 test(function() {
     element.style.display = "grid";
-    checkInitialValues(element, "justifyItems", "justify-items", "left safe", "normal");
+    checkInitialValues(element, "justifyItems", "justify-items", "safe left", "normal");
 }, "Test the value 'initial' for grid containers");
 
 test(function() {
     element.style.display = "flex";
-    checkInitialValues(element, "justifyItems", "justify-items", "right unsafe", "normal");
+    checkInitialValues(element, "justifyItems", "justify-items", "unsafe right", "normal");
 }, "Test the value 'initial' for flex containers");
 
 test(function() {
     checkInheritValues("justifyItems", "justify-items", "end");
-    checkInheritValues("justifyItems", "justify-items", "left safe");
-    checkInheritValues("justifyItems", "justify-items", "legacy center");
+    checkInheritValues("justifyItems", "justify-items", "safe left");
+    checkInheritValues("justifyItems", "justify-items", "unsafe center");
 }, "Test the value 'inherit'");
 
 test(function() {

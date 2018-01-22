@@ -2,13 +2,13 @@
 <style>
 .parent {
    display: -webkit-flex;
-   justify-items: flex-end unsafe;
-   align-items: flex-start safe;
+   justify-items: unsafe flex-end;
+   align-items: safe flex-start;
 }
 .parent .child {
    display: -webkit-flex;
-   justify-self: flex-end unsafe;
-   align-self: flex-start safe;
+   justify-self: unsafe flex-end;
+   align-self: safe flex-start;
 }
 #parentId {
    justify-items: center;
@@ -35,8 +35,8 @@ shouldBeEqualToString("getComputedStyle(parent, '').getPropertyValue('justify-it
 shouldBeEqualToString("getComputedStyle(parent, '').getPropertyValue('align-items')", "stretch");
 
 var childOfDefaultParent = document.getElementById("childOfDefaultParent");
-shouldBeEqualToString("getComputedStyle(childOfDefaultParent, '').getPropertyValue('justify-self')", "flex-end unsafe");
-shouldBeEqualToString("getComputedStyle(childOfDefaultParent, '').getPropertyValue('align-self')", "flex-start safe");
+shouldBeEqualToString("getComputedStyle(childOfDefaultParent, '').getPropertyValue('justify-self')", "unsafe flex-end");
+shouldBeEqualToString("getComputedStyle(childOfDefaultParent, '').getPropertyValue('align-self')", "safe flex-start");
 
 var childOfParentId = document.getElementById("childOfParentId");
 shouldBeEqualToString("getComputedStyle(childOfParentId, '').getPropertyValue('justify-self')", "center");

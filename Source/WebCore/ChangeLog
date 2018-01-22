@@ -1,3 +1,52 @@
+2018-01-22  Javier Fernandez  <jfernandez@igalia.com>
+
+        [css-align] 'overflow' keyword must precede the self-position and content-position value
+        https://bugs.webkit.org/show_bug.cgi?id=181793
+
+        Reviewed by Antti Koivisto.
+
+        There were several discussions to avoid ambiguities with the complex
+        values, specially when it comes to define the place-xxx shorthands.
+
+        One of the sources of problems is the 'overflow-position' keyword. The
+        CSS WG has decided to change the syntax of all the CSS Box Alignment
+        properties so that the 'overflow-position' keyword always precede the
+        'self-position' or the 'content-position' keywords.
+
+        https://github.com/w3c/csswg-drafts/issues/1446#event-1125715434
+
+        In order to apply this change to the Content Distribution properties'
+        (align-content and justify-content) syntax I had to completely
+        re-implement their parsing function. Thanks to this I addressed also
+        the issue with the content-distribution fallback, which cannot be
+        specified explicitly now.
+
+        https://github.com/w3c/csswg-drafts/issues/1002#ref-commit-c38cac4
+
+        No new tests, just rebaselined the expected results of the test cases affected.
+
+        Despite the so many layout tests affected by this change, it's
+        unlikely that it might break any content in current web
+        sites. This patch changes the new CSS syntax, obviously backward
+        compatible, defined by the new CSS Box Alignment. The
+        'overflow-position' keyword is only used by the layout models
+        implementing the new spec, so far only CSS Grid Layout.
+        Considering that CSS Grid has been shipped last year, it's unlikely
+        that many sites are using the new CSS values.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::valueForItemPositionWithOverflowAlignment):
+        (WebCore::valueForContentPositionAndDistributionWithOverflowAlignment):
+        * css/CSSContentDistributionValue.cpp:
+        (WebCore::CSSContentDistributionValue::customCSSText const):
+        * css/StyleBuilderConverter.h:
+        (WebCore::StyleBuilderConverter::convertSelfOrDefaultAlignmentData):
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::consumeOverflowPositionKeyword):
+        (WebCore::consumeContentPositionKeyword):
+        (WebCore::consumeContentDistributionOverflowPosition):
+        (WebCore::consumeSelfPositionOverflowPosition):
+
 2018-01-22  Chris Nardi  <csnardi1@gmail.com>
 
         Parse calc() in CSS media queries

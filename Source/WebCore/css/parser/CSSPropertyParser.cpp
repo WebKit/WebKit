@@ -2667,6 +2667,17 @@ static bool isBaselineKeyword(CSSValueID id)
     return identMatches<CSSValueFirst, CSSValueLast, CSSValueBaseline>(id);
 }
 
+static RefPtr<CSSPrimitiveValue> consumeOverflowPositionKeyword(CSSParserTokenRange& range)
+{
+    return isOverflowKeyword(range.peek().id()) ? consumeIdent(range) : nullptr;
+}
+
+static RefPtr<CSSPrimitiveValue> consumeContentPositionKeyword(CSSParserTokenRange& range)
+{
+    return isContentPositionKeyword(range.peek().id()) ? consumeIdent(range) : nullptr;
+}
+
+
 static CSSValueID getBaselineKeyword(RefPtr<CSSValue> value)
 {
     auto& primitiveValue = downcast<CSSPrimitiveValue>(*value);
@@ -2707,38 +2718,19 @@ static RefPtr<CSSValue> consumeContentDistributionOverflowPosition(CSSParserToke
         return CSSContentDistributionValue::create(CSSValueInvalid, getBaselineKeyword(baseline), CSSValueInvalid);
     }
 
-    CSSValueID distribution = CSSValueInvalid;
-    CSSValueID position = CSSValueInvalid;
-    CSSValueID overflow = CSSValueInvalid;
-    do {
-        CSSValueID id = range.peek().id();
-        if (isContentDistributionKeyword(id)) {
-            if (distribution != CSSValueInvalid)
-                return nullptr;
-            distribution = id;
-        } else if (isContentPositionKeyword(id)) {
-            if (position != CSSValueInvalid)
-                return nullptr;
-            position = id;
-        } else if (isOverflowKeyword(id)) {
-            if (overflow != CSSValueInvalid)
-                return nullptr;
-            overflow = id;
-        } else {
-            return nullptr;
-        }
+    if (isContentDistributionKeyword(id)) {
         range.consumeIncludingWhitespace();
-    } while (!range.atEnd());
+        return CSSContentDistributionValue::create(id, CSSValueInvalid, CSSValueInvalid);
+    }
 
-    // The grammar states that we should have at least <content-distribution> or <content-position>.
-    if (position == CSSValueInvalid && distribution == CSSValueInvalid)
+    RefPtr<CSSPrimitiveValue> overflow = consumeOverflowPositionKeyword(range);
+    RefPtr<CSSPrimitiveValue> position = consumeContentPositionKeyword(range);
+    if (!position)
         return nullptr;
 
-    // The grammar states that <overflow-position> must be associated to <content-position>.
-    if (overflow != CSSValueInvalid && position == CSSValueInvalid)
-        return nullptr;
-
-    return CSSContentDistributionValue::create(distribution, position, overflow);
+    CSSValueID overflowId = overflow ? overflow->valueID() : CSSValueInvalid;
+    CSSValueID positionId = position->valueID();
+    return CSSContentDistributionValue::create(CSSValueInvalid, positionId, overflowId);
 }
 
 static RefPtr<CSSPrimitiveValue> consumeBorderImageRepeatKeyword(CSSParserTokenRange& range)
@@ -3109,14 +3101,12 @@ static RefPtr<CSSValue> consumeSelfPositionOverflowPosition(CSSParserTokenRange&
     if (isBaselineKeyword(id))
         return consumeBaselineKeyword(range);
 
-    RefPtr<CSSPrimitiveValue> overflowPosition = consumeIdent<CSSValueUnsafe, CSSValueSafe>(range);
+    RefPtr<CSSPrimitiveValue> overflowPosition = consumeOverflowPositionKeyword(range);
     RefPtr<CSSPrimitiveValue> selfPosition = consumeSelfPositionKeyword(range);
     if (!selfPosition)
         return nullptr;
-    if (!overflowPosition)
-        overflowPosition = consumeIdent<CSSValueUnsafe, CSSValueSafe>(range);
     if (overflowPosition)
-        return createPrimitiveValuePair(selfPosition.releaseNonNull(), overflowPosition.releaseNonNull(), Pair::IdenticalValueEncoding::Coalesce);
+        return createPrimitiveValuePair(overflowPosition.releaseNonNull(), selfPosition.releaseNonNull(), Pair::IdenticalValueEncoding::Coalesce);
     return selfPosition;
 }
 

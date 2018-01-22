@@ -2,8 +2,8 @@
 <script src="resources/text-based-repaint.js"></script>
 <script>
 function repaintTest() {
-  document.getElementsByClassName('item1')[0].style.justifySelf = 'end safe';
-  document.getElementsByClassName('item2')[0].style.justifySelf = 'end safe';
+  document.getElementsByClassName('item1')[0].style.justifySelf = 'safe end';
+  document.getElementsByClassName('item2')[0].style.justifySelf = 'safe end';
 }
 onload = runRepaintTest;
 </script>
@@ -21,7 +21,7 @@ body {
 .item1 {
   grid-row: 1;
   grid-column: 1;
-  justify-self: end unsafe;
+  justify-self: unsafe end;
   background-color: green;
   width: 150px;
 }
@@ -29,7 +29,7 @@ body {
   grid-row: 1;
   grid-column: 2;
   background-color: green;
-  justify-self: end unsafe;
+  justify-self: unsafe end;
   width: 50px;
 </style>
 <p style="height: 20px">Tests invalidation on justify-self style change. Passes if there is no red.</p>

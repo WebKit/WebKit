@@ -2521,10 +2521,11 @@ static Ref<CSSValueList> valueForItemPositionWithOverflowAlignment(const StyleSe
     else if (data.position() == ItemPositionLastBaseline) {
         result->append(cssValuePool.createIdentifierValue(CSSValueLast));
         result->append(cssValuePool.createIdentifierValue(CSSValueBaseline));
-    } else
+    } else {
+        if (data.position() >= ItemPositionCenter && data.overflow() != OverflowAlignmentDefault)
+            result->append(cssValuePool.createValue(data.overflow()));
         result->append(cssValuePool.createValue(data.position()));
-    if (data.position() >= ItemPositionCenter && data.overflow() != OverflowAlignmentDefault)
-        result->append(cssValuePool.createValue(data.overflow()));
+    }
     ASSERT(result->length() <= 2);
     return result;
 }
@@ -2552,12 +2553,12 @@ static Ref<CSSValueList> valueForContentPositionAndDistributionWithOverflowAlign
         result->append(cssValuePool.createIdentifierValue(CSSValueBaseline));
         break;
     default:
+        // Handle overflow-alignment (only allowed for content-position values)
+        if ((data.position() >= ContentPositionCenter || data.distribution() != ContentDistributionDefault) && data.overflow() != OverflowAlignmentDefault)
+            result->append(cssValuePool.createValue(data.overflow()));
         result->append(cssValuePool.createValue(data.position()));
     }
 
-    // Handle overflow-alignment (only allowed for content-position values)
-    if ((data.position() >= ContentPositionCenter || data.distribution() != ContentDistributionDefault) && data.overflow() != OverflowAlignmentDefault)
-        result->append(cssValuePool.createValue(data.overflow()));
     ASSERT(result->length() > 0);
     ASSERT(result->length() <= 3);
     return result;

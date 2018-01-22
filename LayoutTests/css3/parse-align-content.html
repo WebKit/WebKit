@@ -60,30 +60,31 @@
     align-content: flex-end;
 }
 
-#alignContentEndUnsafe {
-    align-content: end unsafe;
+#alignContentUnsafeEnd {
+    align-content: unsafe end ;
 }
 
-#alignContentCenterUnsafe {
-    align-content: center unsafe;
+#alignContentUnsafeCenter {
+    align-content: unsafe center ;
 }
 
-#alignContentRightSafe {
-    align-content: right safe;
+#alignContentSafeRight {
+    align-content: safe right;
 }
 
-#alignContentLeftUnsafe {
-    align-content: left unsafe;
+#alignContentUnsafeLeft {
+    align-content: unsafe left;
 }
 
-#alignContentFlexStartUnsafe {
-    align-content: flex-start unsafe;
+#alignContentUnsafeFlexStart {
+    align-content: unsafe flex-start;
 }
 
-#alignContentFlexEndSafe {
-    align-content: flex-end safe;
+#alignContentSafeFlexEnd {
+    align-content: safe flex-end;
 }
 
+<!-- Invalid CSS cases -->
 #alignContentSpaceBetweenLeft {
     align-content: space-between left;
 }
@@ -108,7 +109,6 @@
     align-content: space-evenly flex-start safe;
 }
 
-<!-- Invalid CSS cases -->
 #alignContentSpaceBetweenSafe {
     align-content: space-between safe;
 }
@@ -145,19 +145,27 @@
 <div id="alignContentRight"></div>
 <div id="alignContentFlexStart"></div>
 <div id="alignContentFlexEnd"></div>
+<div id="alignContentUnsafeEnd"></div>
+<div id="alignContentUnsafeCenter"></div>
+<div id="alignContentSafeSelfEnd"></div>
+<div id="alignContentSafeSelfStart"></div>
+<div id="alignContentSafeRight"></div>
+<div id="alignContentUnsafeLeft"></div>
+<div id="alignContentUnsafeFlexStart"></div>
+<div id="alignContentSafeFlexEnd"></div>
 <div id="alignContentEndUnsafe"></div>
 <div id="alignContentCenterUnsafe"></div>
 <div id="alignContentRightSafe"></div>
 <div id="alignContentLeftUnsafe"></div>
 <div id="alignContentFlexStartUnsafe"></div>
 <div id="alignContentFlexEndSafe"></div>
+
 <div id="alignContentSpaceBetweenLeft"></div>
 <div id="alignContentSpaceAroundCenter"></div>
 <div id="alignContentSpaceEvenlyRight"></div>
 <div id="alignContentStretchStartSafe"></div>
 <div id="alignContentSpaceAroundEndUnsafe"></div>
 <div id="alignContentSpaceEvenlyFlexStartSafe"></div>
-
 <div id="alignContentSpaceBetweenSafe"></div>
 <div id="alignContentSpaceBetweenStretch"></div>
 <div id="alignContentSafe"></div>
@@ -199,33 +207,45 @@ test(function() {
     checkValues(alignContentFlexStart, "alignContent", "align-content", "", "flex-start");
     var alignContentFlexEnd = document.getElementById("alignContentFlexEnd");
     checkValues(alignContentFlexEnd, "alignContent", "align-content", "", "flex-end");
-    var alignContentEndUnsafe = document.getElementById("alignContentEndUnsafe");
-    checkValues(alignContentEndUnsafe, "alignContent", "align-content", "", "end unsafe");
-    var alignContentCenterUnsafe = document.getElementById("alignContentCenterUnsafe");
-    checkValues(alignContentCenterUnsafe, "alignContent", "align-content", "", "center unsafe");
-    var alignContentRightSafe = document.getElementById("alignContentRightSafe");
-    checkValues(alignContentRightSafe, "alignContent", "align-content", "", "right safe");
-    var alignContentLeftUnsafe = document.getElementById("alignContentLeftUnsafe");
-    checkValues(alignContentLeftUnsafe, "alignContent", "align-content", "", "left unsafe");
-    var alignContentFlexStartUnsafe = document.getElementById("alignContentFlexStartUnsafe");
-    checkValues(alignContentFlexStartUnsafe, "alignContent", "align-content", "", "flex-start unsafe");
-    var alignContentFlexEndSafe = document.getElementById("alignContentFlexEndSafe");
-    checkValues(alignContentFlexEndSafe, "alignContent", "align-content", "", "flex-end safe");
-    var alignContentSpaceBetweenLeft = document.getElementById("alignContentSpaceBetweenLeft");
-    checkValues(alignContentSpaceBetweenLeft, "alignContent", "align-content", "", "space-between left");
-    var alignContentSpaceAroundCenter = document.getElementById("alignContentSpaceAroundCenter");
-    checkValues(alignContentSpaceAroundCenter, "alignContent", "align-content", "", "space-around center");
-    var alignContentSpaceEvenlyRight = document.getElementById("alignContentSpaceEvenlyRight");
-    checkValues(alignContentSpaceEvenlyRight, "alignContent", "align-content", "", "space-evenly right");
-    var alignContentStretchStartSafe = document.getElementById("alignContentStretchStartSafe");
-    checkValues(alignContentStretchStartSafe, "alignContent", "align-content", "", "stretch start safe");
-    var alignContentSpaceAroundEndUnsafe = document.getElementById("alignContentSpaceAroundEndUnsafe");
-    checkValues(alignContentSpaceAroundEndUnsafe, "alignContent", "align-content", "", "space-around end unsafe");
-    var alignContentSpaceEvenlyFlexStartSafe = document.getElementById("alignContentSpaceEvenlyFlexStartSafe");
-    checkValues(alignContentSpaceEvenlyFlexStartSafe, "alignContent", "align-content", "", "space-evenly flex-start safe");
+    var alignContentUnsafeEnd = document.getElementById("alignContentUnsafeEnd");
+    checkValues(alignContentUnsafeEnd, "alignContent", "align-content", "", "unsafe end");
+    var alignContentUnsafeCenter = document.getElementById("alignContentUnsafeCenter");
+    checkValues(alignContentUnsafeCenter, "alignContent", "align-content", "", "unsafe center");
+    var alignContentSafeRight = document.getElementById("alignContentSafeRight");
+    checkValues(alignContentSafeRight, "alignContent", "align-content", "", "safe right");
+    var alignContentUnsafeLeft = document.getElementById("alignContentUnsafeLeft");
+    checkValues(alignContentUnsafeLeft, "alignContent", "align-content", "", "unsafe left");
+    var alignContentUnsafeFlexStart = document.getElementById("alignContentUnsafeFlexStart");
+    checkValues(alignContentUnsafeFlexStart, "alignContent", "align-content", "", "unsafe flex-start");
+    var alignContentSafeFlexEnd = document.getElementById("alignContentSafeFlexEnd");
+    checkValues(alignContentSafeFlexEnd, "alignContent", "align-content", "", "safe flex-end");
 }, "Test getting align-content values previously set through CSS.");
 
 test(function() {
+    var alignContentEndUnsafe = document.getElementById("alignContentEndUnsafe");
+    checkValues(alignContentEndUnsafe, "alignContent", "align-content", "", "normal");
+    var alignContentCenterUnsafe = document.getElementById("alignContentCenterUnsafe");
+    checkValues(alignContentCenterUnsafe, "alignContent", "align-content", "", "normal");
+    var alignContentRightSafe = document.getElementById("alignContentRightSafe");
+    checkValues(alignContentRightSafe, "alignContent", "align-content", "", "normal");
+    var alignContentLeftUnsafe = document.getElementById("alignContentLeftUnsafe");
+    checkValues(alignContentLeftUnsafe, "alignContent", "align-content", "", "normal");
+    var alignContentFlexStartUnsafe = document.getElementById("alignContentFlexStartUnsafe");
+    checkValues(alignContentFlexStartUnsafe, "alignContent", "align-content", "", "normal");
+    var alignContentFlexEndSafe = document.getElementById("alignContentFlexEndSafe");
+    checkValues(alignContentFlexEndSafe, "alignContent", "align-content", "", "normal");
+    var alignContentSpaceBetweenLeft = document.getElementById("alignContentSpaceBetweenLeft");
+    checkValues(alignContentSpaceBetweenLeft, "alignContent", "align-content", "", "normal");
+    var alignContentSpaceAroundCenter = document.getElementById("alignContentSpaceAroundCenter");
+    checkValues(alignContentSpaceAroundCenter, "alignContent", "align-content", "", "normal");
+    var alignContentSpaceEvenlyRight = document.getElementById("alignContentSpaceEvenlyRight");
+    checkValues(alignContentSpaceEvenlyRight, "alignContent", "align-content", "", "normal");
+    var alignContentStretchStartSafe = document.getElementById("alignContentStretchStartSafe");
+    checkValues(alignContentStretchStartSafe, "alignContent", "align-content", "", "normal");
+    var alignContentSpaceAroundEndUnsafe = document.getElementById("alignContentSpaceAroundEndUnsafe");
+    checkValues(alignContentSpaceAroundEndUnsafe, "alignContent", "align-content", "", "normal");
+    var alignContentSpaceEvenlyFlexStartSafe = document.getElementById("alignContentSpaceEvenlyFlexStartSafe");
+    checkValues(alignContentSpaceEvenlyFlexStartSafe, "alignContent", "align-content", "", "normal");
     var alignContentSpaceBetweenSafe = document.getElementById("alignContentSpaceBetweenSafe");
     checkValues(alignContentSpaceBetweenSafe, "alignContent", "align-content", "", "normal");
     var alignContentSpaceBetweenStretch = document.getElementById("alignContentSpaceBetweenStretch");
@@ -251,19 +271,13 @@ test(function() {
     checkValues(element, "alignContent", "align-content",  "center", "center");
 
     element.style.alignContent = "unsafe start";
-    checkValues(element, "alignContent", "align-content",  "start unsafe", "start unsafe");
+    checkValues(element, "alignContent", "align-content",  "unsafe start", "unsafe start");
 
-    element.style.alignContent = "flex-end safe";
-    checkValues(element, "alignContent", "align-content",  "flex-end safe", "flex-end safe");
+    element.style.alignContent = "safe flex-end";
+    checkValues(element, "alignContent", "align-content",  "safe flex-end", "safe flex-end");
 
-    element.style.alignContent = "space-between right safe";
-    checkValues(element, "alignContent", "align-content",  "space-between right safe", "space-between right safe");
-
-    element.style.alignContent = "stretch center";
-    checkValues(element, "alignContent", "align-content",  "stretch center", "stretch center");
-
-    element.style.alignContent = "right unsafe";
-    checkValues(element, "alignContent", "align-content",  "right unsafe", "right unsafe");
+    element.style.alignContent = " unsafe right";
+    checkValues(element, "alignContent", "align-content",  "unsafe right", "unsafe right");
 
     element.style.justifyContent = "first baseline";
     checkValues(element, "justifyContent", "justify-content",  "first baseline", "baseline");
@@ -309,12 +323,16 @@ test(function() {
     checkBadValues(element, "alignContent", "align-content",  "safe stretch");
     checkBadValues(element, "alignContent", "align-content",  "normal space-between");
     checkBadValues(element, "alignContent", "align-content",  "stretch normal");
+    checkBadValues(element, "alignContent", "align-content",  "stretch center");
+    checkBadValues(element, "alignContent", "align-content",  "space-between right safe");
     checkBadValues(element, "alignContent", "align-content",  "normal safe");
     checkBadValues(element, "alignContent", "align-content",  "space-around stretch");
     checkBadValues(element, "alignContent", "align-content",  "end space-between start");
     checkBadValues(element, "alignContent", "align-content",  "right safe left");
     checkBadValues(element, "alignContent", "align-content",  "unsafe");
     checkBadValues(element, "alignContent", "align-content",  "safe");
+    checkBadValues(element, "alignContent", "align-content",  "start safe");
+    checkBadValues(element, "alignContent", "align-content",  "end unsafe");
 }, "Test bad combinations of align-content");
 
 test(function() {
@@ -324,17 +342,17 @@ test(function() {
 
 test(function() {
     element.style.display = "grid";
-    checkInitialValues(element, "alignContent", "align-content", "left safe", "normal");
+    checkInitialValues(element, "alignContent", "align-content", "safe left", "normal");
 }, "Test the value 'initial' for grid containers");
 
 test(function() {
     element.style.display = "flex";
-    checkInitialValues(element, "alignContent", "align-content", "right unsafe", "normal");
+    checkInitialValues(element, "alignContent", "align-content", "unsafe right", "normal");
 }, "Test the value 'initial' for flex containers");
 
 test(function() {
     checkInheritValues("alignContent", "align-content", "end");
-    checkInheritValues("alignContent", "align-content", "left safe");
-    checkInheritValues("alignContent", "align-content", "center unsafe");
+    checkInheritValues("alignContent", "align-content", "safe left");
+    checkInheritValues("alignContent", "align-content", "unsafe center");
 }, "Test the value 'inherit'");
 </script>

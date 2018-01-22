@@ -43,10 +43,10 @@ function checkSelfAlignmentValues(gridEnabled)
 
     item.style.webkitAlignSelf = "flex-start";
 
-    checkAlignSelfValue("start unsafe", "start unsafe", gridEnabled)
+    checkAlignSelfValue("unsafe start", "unsafe start", gridEnabled)
     checkAlignSelfValue("start", "start", gridEnabled)
     checkAlignSelfValue("end", "end", gridEnabled)
-    checkAlignSelfValue("flex-start safe", "flex-start safe", gridEnabled)
+    checkAlignSelfValue("safe flex-start", "safe flex-start", gridEnabled)
     checkAlignSelfValue("self-start", "self-start", gridEnabled)
     checkAlignSelfValue("self-end", "self-end", gridEnabled)
 }
@@ -59,10 +59,10 @@ function checkDefaultAlignmentValues(gridEnabled)
     container.style.webkitAlignItems = "flex-end";
     item.style.webkitAlignSelf = "auto";
 
-    checkAlignItemsValue("start unsafe", "start unsafe", gridEnabled)
+    checkAlignItemsValue("unsafe start", "unsafe start", gridEnabled)
     checkAlignItemsValue("start", "start", gridEnabled)
     checkAlignItemsValue("end", "end", gridEnabled)
-    checkAlignItemsValue("flex-start safe", "flex-start safe", gridEnabled)
+    checkAlignItemsValue("safe flex-start", "safe flex-start", gridEnabled)
     checkAlignItemsValue("self-start", "self-start", gridEnabled)
     checkAlignItemsValue("self-end", "self-end", gridEnabled)
 }

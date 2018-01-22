@@ -1360,8 +1360,8 @@ inline StyleSelfAlignmentData StyleBuilderConverter::convertSelfOrDefaultAlignme
         } else if (pairValue->first()->valueID() == CSSValueLast) {
             alignmentData.setPosition(ItemPositionLastBaseline);
         } else {
-            alignmentData.setPosition(*pairValue->first());
-            alignmentData.setOverflow(*pairValue->second());
+            alignmentData.setOverflow(*pairValue->first());
+            alignmentData.setPosition(*pairValue->second());
         }
     } else
         alignmentData.setPosition(primitiveValue);

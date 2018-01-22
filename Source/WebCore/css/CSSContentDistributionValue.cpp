@@ -51,11 +51,12 @@ String CSSContentDistributionValue::customCSSText() const
             CSSValueID preference = m_position == CSSValueFirstBaseline ? CSSValueFirst : CSSValueLast;
             list->append(cssValuePool.createIdentifierValue(preference));
             list->append(cssValuePool.createIdentifierValue(CSSValueBaseline));
-        } else
+        } else {
+            if (m_overflow != CSSValueInvalid)
+                list->append(overflow());
             list->append(position());
+        }
     }
-    if (m_overflow != CSSValueInvalid)
-        list->append(overflow());
     return list->customCSSText();
 }
 

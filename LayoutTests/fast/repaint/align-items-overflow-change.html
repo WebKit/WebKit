@@ -2,7 +2,7 @@
 <script src="resources/text-based-repaint.js"></script>
 <script>
 function repaintTest() {
-  document.getElementById('container').style.alignItems = 'end safe';
+  document.getElementById('container').style.alignItems = 'safe end';
 }
 onload = runRepaintTest;
 </script>
@@ -13,7 +13,7 @@ body {
 #container {
   display: grid;
   grid: 150px 150px / 200px;
-  align-items: end unsafe;
+  align-items: unsafe end;
   width: 200px;
   height: 300px;
   background-color: red;

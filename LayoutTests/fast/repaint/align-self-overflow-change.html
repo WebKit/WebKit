@@ -2,8 +2,8 @@
 <script src="resources/text-based-repaint.js"></script>
 <script>
 function repaintTest() {
-  document.getElementsByClassName('item1')[0].style.alignSelf = 'end safe';
-  document.getElementsByClassName('item2')[0].style.alignSelf = 'end safe';
+  document.getElementsByClassName('item1')[0].style.alignSelf = 'safe end';
+  document.getElementsByClassName('item2')[0].style.alignSelf = 'safe end';
 }
 onload = runRepaintTest;
 </script>
@@ -21,13 +21,13 @@ body {
 .item1 {
   grid-row: 1;
   grid-column: 1;
-  align-self: end unsafe;
+  align-self: unsafe end;
   background-color: green;
 }
 .item2 {
   grid-row: 2;
   grid-column: 1;
-  align-self: end unsafe;
+  align-self: unsafe end;
   background-color: green;
 </style>
 <p style="height: 20px">Tests invalidation on align-self style change (just overflow). Passes if there is no red.</p>

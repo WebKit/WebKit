@@ -1,3 +1,28 @@
+2018-01-22  Javier Fernandez  <jfernandez@igalia.com>
+
+        [css-align] 'overflow' keyword must precede the self-position and content-position value
+        https://bugs.webkit.org/show_bug.cgi?id=181793
+
+        Reviewed by Antti Koivisto.
+
+        Rebaseline expected results of the test cases affected by this change.
+
+        * css3/parse-align-content.html:
+        * css3/parse-align-items.html:
+        * css3/parse-align-self.html:
+        * css3/parse-justify-content.html:
+        * css3/overwrite-self-alignment.html:
+        * css3/flexbox/new-alignment-values-invalid-if-grid-not-enabled.html:
+        * css3/overwrite-content-alignment.html:
+        * fast/css-grid-layout/grid-content-alignment-overflow.html:
+        * fast/css-grid-layout/grid-align-justify-overflow.html:
+        * fast/css/parse-justify-items.html:
+        * fast/css/parse-justify-self.html:
+        * fast/repaint/align-items-overflow-change.html:
+        * fast/repaint/align-self-overflow-change.html:
+        * fast/repaint/justify-items-overflow-change.html:
+        * fast/repaint/justify-self-overflow-change.html:
+
 2018-01-19  Per Arne Vollan  <pvollan@apple.com>
 
         Mark svg/filters/fePointLight-color.svg as failure on Windows.
