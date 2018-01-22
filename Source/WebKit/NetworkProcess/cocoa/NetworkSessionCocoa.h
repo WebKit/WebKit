@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if USE(NETWORK_SESSION)
-
 OBJC_CLASS NSData;
 OBJC_CLASS NSURLSession;
 OBJC_CLASS NSURLSessionDownloadTask;
@@ -87,5 +85,3 @@ private:
 };
 
 } // namespace WebKit
-
-#endif // USE(NETWORK_SESSION)

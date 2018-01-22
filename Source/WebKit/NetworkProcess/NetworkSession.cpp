@@ -26,8 +26,6 @@
 #include "config.h"
 #include "NetworkSession.h"
 
-#if USE(NETWORK_SESSION)
-
 #include "NetworkDataTask.h"
 #include <WebCore/NetworkStorageSession.h>
 #include <wtf/MainThread.h>
@@ -87,5 +85,3 @@ bool NetworkSession::allowsSpecificHTTPSCertificateForHost(const WebCore::Authen
 }
 
 } // namespace WebKit
-
-#endif // USE(NETWORK_SESSION)

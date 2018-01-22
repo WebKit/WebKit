@@ -119,9 +119,7 @@ public:
     void clearHSTSCache(WebCore::NetworkStorageSession&, WallTime modifiedSince);
 #endif
 
-#if USE(NETWORK_SESSION)
     void findPendingDownloadLocation(NetworkDataTask&, ResponseCompletionHandler&&, const WebCore::ResourceResponse&);
-#endif
 
 #if USE(PROTECTION_SPACE_AUTH_CALLBACK)
     void canAuthenticateAgainstProtectionSpace(NetworkResourceLoader&, const WebCore::ProtectionSpace&);
@@ -184,9 +182,7 @@ private:
     void didDestroyDownload() override;
     IPC::Connection* downloadProxyConnection() override;
     AuthenticationManager& downloadsAuthenticationManager() override;
-#if USE(NETWORK_SESSION)
     void pendingDownloadCanceled(DownloadID) override;
-#endif
 
     // Message Handlers
     void didReceiveNetworkProcessMessage(IPC::Connection&, IPC::Decoder&);
@@ -210,9 +206,7 @@ private:
 #if USE(PROTECTION_SPACE_AUTH_CALLBACK)
     void continueCanAuthenticateAgainstProtectionSpace(uint64_t resourceLoadIdentifier, bool canAuthenticate);
 #endif
-#if USE(NETWORK_SESSION)
     void continueWillSendRequest(DownloadID, WebCore::ResourceRequest&&);
-#endif
     void continueDecidePendingDownloadDestination(DownloadID, String destination, SandboxExtension::Handle&&, bool allowOverwrite);
 
     void setCacheModel(uint32_t);

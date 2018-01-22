@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if USE(NETWORK_SESSION)
-
 #include <pal/SessionID.h>
 #include <wtf/HashSet.h>
 #include <wtf/Ref.h>
@@ -67,5 +65,3 @@ protected:
 };
 
 } // namespace WebKit
-
-#endif // USE(NETWORK_SESSION)

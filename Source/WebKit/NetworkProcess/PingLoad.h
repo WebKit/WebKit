@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if USE(NETWORK_SESSION)
-
 #include "NetworkDataTask.h"
 #include "NetworkResourceLoadParameters.h"
 #include <WebCore/ContentExtensionsBackend.h>
@@ -98,5 +96,3 @@ private:
 };
 
 }
-
-#endif // USE(NETWORK_SESSION)

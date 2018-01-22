@@ -53,9 +53,6 @@ public:
     virtual void didReceiveAuthenticationChallenge(WebKit::WebProcessPool&, WebKit::DownloadProxy&, WebKit::AuthenticationChallengeProxy&) { }
     virtual void didReceiveResponse(WebKit::WebProcessPool&, WebKit::DownloadProxy&, const WebCore::ResourceResponse&) { }
     virtual void didReceiveData(WebKit::WebProcessPool&, WebKit::DownloadProxy&, uint64_t) { }
-#if !USE(NETWORK_SESSION)
-    virtual bool shouldDecodeSourceDataOfMIMEType(WebKit::WebProcessPool&, WebKit::DownloadProxy&, const WTF::String&) { return true; }
-#endif
     virtual void decideDestinationWithSuggestedFilename(WebKit::WebProcessPool&, WebKit::DownloadProxy&, const WTF::String&, Function<void(WebKit::AllowOverwrite, WTF::String)>&& completionHandler) { completionHandler(WebKit::AllowOverwrite::No, { }); }
     virtual void didCreateDestination(WebKit::WebProcessPool&, WebKit::DownloadProxy&, const WTF::String&) { }
     virtual void didFinish(WebKit::WebProcessPool&, WebKit::DownloadProxy&) { }

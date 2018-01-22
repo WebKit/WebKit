@@ -45,10 +45,8 @@ public:
     static const String& getIdentifierBase();
     static void setIdentifierBase(const String&);
     
-#if USE(NETWORK_SESSION)
     static void setSession(PAL::SessionID, Ref<NetworkSession>&&);
     static NetworkSession* networkSession(PAL::SessionID);
-#endif
     static void destroySession(PAL::SessionID);
 };
 

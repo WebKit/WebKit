@@ -31,8 +31,6 @@
 
 #pragma once
 
-#if USE(NETWORK_SESSION)
-
 #include "NetworkDataTask.h"
 #include <WebCore/FileStreamClient.h>
 #include <WebCore/FileSystem.h>
@@ -120,5 +118,3 @@ private:
 };
 
 } // namespace WebKit
-
-#endif // USE(NETWORK_SESSION)

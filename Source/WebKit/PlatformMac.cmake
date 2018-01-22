@@ -27,8 +27,6 @@ list(APPEND WebKit_SOURCES
 
     NetworkProcess/Downloads/cocoa/DownloadCocoa.mm
 
-    NetworkProcess/Downloads/mac/DownloadMac.mm
-
     NetworkProcess/cache/NetworkCacheCodersCocoa.cpp
     NetworkProcess/cache/NetworkCacheDataCocoa.mm
     NetworkProcess/cache/NetworkCacheIOChannelCocoa.mm
@@ -37,7 +35,6 @@ list(APPEND WebKit_SOURCES
     NetworkProcess/cocoa/NetworkProcessCocoa.mm
     NetworkProcess/cocoa/NetworkSessionCocoa.mm
 
-    NetworkProcess/mac/NetworkLoadMac.mm
     NetworkProcess/mac/NetworkProcessMac.mm
     NetworkProcess/mac/RemoteNetworkingContext.mm
 
@@ -71,8 +68,6 @@ list(APPEND WebKit_SOURCES
 
     Shared/APIWebArchive.mm
     Shared/APIWebArchiveResource.mm
-
-    Shared/Authentication/cocoa/AuthenticationManagerCocoa.mm
 
     Shared/API/Cocoa/RemoteObjectInvocation.mm
     Shared/API/Cocoa/RemoteObjectRegistry.mm
@@ -141,7 +136,6 @@ list(APPEND WebKit_SOURCES
     Shared/mac/ChildProcessMac.mm
     Shared/mac/CodeSigning.mm
     Shared/mac/ColorSpaceData.mm
-    Shared/mac/CookieStorageShim.mm
     Shared/mac/CookieStorageShimLibrary.cpp
     Shared/mac/HangDetectionDisablerMac.mm
     Shared/mac/NativeWebGestureEventMac.mm

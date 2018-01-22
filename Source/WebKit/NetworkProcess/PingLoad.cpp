@@ -26,8 +26,6 @@
 #include "config.h"
 #include "PingLoad.h"
 
-#if USE(NETWORK_SESSION)
-
 #include "AuthenticationManager.h"
 #include "Logging.h"
 #include "NetworkCORSPreflightChecker.h"
@@ -330,5 +328,3 @@ ContentExtensions::BlockedStatus PingLoad::processContentExtensionRulesForLoad(R
 #endif // ENABLE(CONTENT_EXTENSIONS)
 
 } // namespace WebKit
-
-#endif // USE(NETWORK_SESSION)

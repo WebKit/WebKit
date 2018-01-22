@@ -32,8 +32,6 @@
 #include "config.h"
 #include "NetworkDataTaskBlob.h"
 
-#if USE(NETWORK_SESSION)
-
 #include "DataReference.h"
 #include "Download.h"
 #include "Logging.h"
@@ -584,5 +582,3 @@ void NetworkDataTaskBlob::didFinish()
 }
 
 } // namespace WebKit
-
-#endif // USE(NETWORK_SESSION)

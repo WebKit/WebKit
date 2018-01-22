@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if USE(NETWORK_SESSION)
-
 #include "NetworkDataTask.h"
 #include "NetworkLoadParameters.h"
 #include <WebCore/NetworkLoadMetrics.h>
@@ -99,5 +97,3 @@ private:
 WebCore::Credential serverTrustCredential(const WebCore::AuthenticationChallenge&);
 
 } // namespace WebKit
-
-#endif // USE(NETWORK_SESSION)

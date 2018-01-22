@@ -56,9 +56,6 @@ private:
     void didCancel(WebProcessPool&, DownloadProxy&) final;
     void willSendRequest(WebProcessPool&, DownloadProxy&, WebCore::ResourceRequest&&, const WebCore::ResourceResponse&, CompletionHandler<void(WebCore::ResourceRequest&&)>&&) final;
     void didReceiveAuthenticationChallenge(WebProcessPool&, DownloadProxy&, AuthenticationChallengeProxy&) final;
-#if !USE(NETWORK_SESSION)
-    bool shouldDecodeSourceDataOfMIMEType(WebProcessPool&, DownloadProxy&, const String&) final;
-#endif
     void didCreateDestination(WebProcessPool&, DownloadProxy&, const String&) final;
     void processDidCrash(WebProcessPool&, DownloadProxy&) final;
 

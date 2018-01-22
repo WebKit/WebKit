@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if USE(NETWORK_SESSION)
-
 #include "NetworkDataTask.h"
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/ResourceResponse.h>
@@ -75,5 +73,3 @@ private:
 };
 
 } // namespace WebKit
-
-#endif // USE(NETWORK_SESSION)

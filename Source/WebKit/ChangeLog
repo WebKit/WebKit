@@ -1,3 +1,140 @@
+2018-01-22  Alex Christensen  <achristensen@webkit.org>
+
+        Remove pre-NetworkSession loading code
+        https://bugs.webkit.org/show_bug.cgi?id=181944
+
+        Reviewed by Tim Horton.
+
+        We were keeping it around for El Capitan.
+
+        * NetworkProcess/CustomProtocols/Cocoa/LegacyCustomProtocolManagerCocoa.mm:
+        (WebKit::LegacyCustomProtocolManager::registerProtocolClass):
+        * NetworkProcess/CustomProtocols/LegacyCustomProtocolManager.cpp:
+        (WebKit::LegacyCustomProtocolManager::initialize):
+        * NetworkProcess/CustomProtocols/LegacyCustomProtocolManager.h:
+        * NetworkProcess/Downloads/BlobDownloadClient.cpp: Removed.
+        * NetworkProcess/Downloads/BlobDownloadClient.h: Removed.
+        * NetworkProcess/Downloads/Download.cpp:
+        (WebKit::Download::~Download):
+        (WebKit::Download::cancel):
+        (WebKit::Download::didReceiveChallenge):
+        (WebKit::Download::didFinish):
+        (WebKit::Download::isAlwaysOnLoggingAllowed const):
+        (WebKit::Download::start): Deleted.
+        (WebKit::Download::startWithHandle): Deleted.
+        (WebKit::Download::didStart): Deleted.
+        (WebKit::Download::willSendRedirectedRequest): Deleted.
+        (WebKit::Download::didReceiveAuthenticationChallenge): Deleted.
+        (WebKit::Download::didReceiveResponse): Deleted.
+        (WebKit::Download::shouldDecodeSourceDataOfMIMEType): Deleted.
+        (WebKit::Download::decideDestinationWithSuggestedFilename): Deleted.
+        (WebKit::Download::decideDestinationWithSuggestedFilenameAsync): Deleted.
+        (WebKit::Download::didDecideDownloadDestination): Deleted.
+        (WebKit::Download::continueDidReceiveResponse): Deleted.
+        * NetworkProcess/Downloads/Download.h:
+        (WebKit::Download::setBlobFileReferences): Deleted.
+        (WebKit::Download::request const): Deleted.
+        * NetworkProcess/Downloads/DownloadManager.cpp:
+        (WebKit::DownloadManager::startDownload):
+        (WebKit::DownloadManager::willDecidePendingDownloadDestination):
+        (WebKit::DownloadManager::convertNetworkLoadToDownload):
+        (WebKit::DownloadManager::continueDecidePendingDownloadDestination):
+        (WebKit::DownloadManager::resumeDownload):
+        (WebKit::DownloadManager::cancelDownload):
+        * NetworkProcess/Downloads/DownloadManager.h:
+        (WebKit::DownloadManager::startDownload):
+        * NetworkProcess/Downloads/PendingDownload.cpp:
+        * NetworkProcess/Downloads/PendingDownload.h:
+        * NetworkProcess/Downloads/cocoa/DownloadCocoa.mm:
+        * NetworkProcess/Downloads/ios/DownloadIOS.mm: Removed.
+        * NetworkProcess/Downloads/mac/DownloadMac.mm: Removed.
+        * NetworkProcess/NetworkCORSPreflightChecker.cpp:
+        * NetworkProcess/NetworkCORSPreflightChecker.h:
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::loadPing):
+        * NetworkProcess/NetworkDataTask.cpp:
+        * NetworkProcess/NetworkDataTask.h:
+        * NetworkProcess/NetworkDataTaskBlob.cpp:
+        * NetworkProcess/NetworkDataTaskBlob.h:
+        * NetworkProcess/NetworkLoad.cpp:
+        (WebKit::NetworkLoad::~NetworkLoad):
+        (WebKit::NetworkLoad::setDefersLoading):
+        (WebKit::NetworkLoad::cancel):
+        (WebKit::NetworkLoad::continueWillSendRequest):
+        (WebKit::NetworkLoad::continueDidReceiveResponse):
+        (WebKit::NetworkLoad::shouldCaptureExtraNetworkLoadMetrics const):
+        (WebKit::NetworkLoad::didReceiveResponseAsync): Deleted.
+        (WebKit::NetworkLoad::didReceiveBuffer): Deleted.
+        (WebKit::NetworkLoad::didFinishLoading): Deleted.
+        (WebKit::NetworkLoad::didFail): Deleted.
+        (WebKit::NetworkLoad::willSendRequestAsync): Deleted.
+        (WebKit::NetworkLoad::canAuthenticateAgainstProtectionSpaceAsync): Deleted.
+        (WebKit::NetworkLoad::shouldUseCredentialStorage): Deleted.
+        (WebKit::NetworkLoad::didReceiveAuthenticationChallenge): Deleted.
+        (WebKit::NetworkLoad::receivedCancellation): Deleted.
+        * NetworkProcess/NetworkLoad.h:
+        * NetworkProcess/NetworkLoadParameters.h:
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::initializeNetworkProcess):
+        (WebKit::NetworkProcess::clearCachedCredentials):
+        (WebKit::NetworkProcess::findPendingDownloadLocation):
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in:
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::startNetworkLoad):
+        * NetworkProcess/NetworkSession.cpp:
+        * NetworkProcess/NetworkSession.h:
+        * NetworkProcess/PingLoad.cpp:
+        * NetworkProcess/PingLoad.h:
+        * NetworkProcess/cache/NetworkCacheSpeculativeLoad.cpp:
+        (WebKit::NetworkCache::SpeculativeLoad::SpeculativeLoad):
+        * NetworkProcess/cocoa/NetworkDataTaskCocoa.h:
+        * NetworkProcess/cocoa/NetworkDataTaskCocoa.mm:
+        * NetworkProcess/cocoa/NetworkProcessCocoa.mm:
+        (WebKit::NetworkProcess::platformInitializeNetworkProcessCocoa):
+        * NetworkProcess/cocoa/NetworkSessionCocoa.h:
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        * NetworkProcess/mac/NetworkLoadMac.mm: Removed.
+        * NetworkProcess/mac/RemoteNetworkingContext.mm:
+        (WebKit::RemoteNetworkingContext::ensureWebsiteDataStoreSession):
+        * Shared/Authentication/AuthenticationManager.cpp:
+        (WebKit::AuthenticationManager::didReceiveAuthenticationChallenge):
+        (WebKit::AuthenticationManager::useCredentialForSingleChallenge):
+        (WebKit::AuthenticationManager::continueWithoutCredentialForSingleChallenge):
+        (WebKit::AuthenticationManager::cancelSingleChallenge):
+        (WebKit::AuthenticationManager::performDefaultHandlingForSingleChallenge):
+        (WebKit::AuthenticationManager::rejectProtectionSpaceAndContinueForSingleChallenge):
+        * Shared/Authentication/AuthenticationManager.h:
+        * Shared/Authentication/cocoa/AuthenticationManagerCocoa.mm: Removed.
+        * Shared/SessionTracker.cpp:
+        (WebKit::SessionTracker::setSession):
+        (WebKit::SessionTracker::destroySession):
+        * Shared/SessionTracker.h:
+        * Shared/mac/CookieStorageShim.h: Removed.
+        * Shared/mac/CookieStorageShim.mm: Removed.
+        * UIProcess/API/APIDownloadClient.h:
+        (API::DownloadClient::didReceiveData):
+        (API::DownloadClient::shouldDecodeSourceDataOfMIMEType): Deleted.
+        * UIProcess/API/C/WKContext.cpp:
+        (WKContextSetDownloadClient):
+        * UIProcess/Cocoa/DownloadClient.h:
+        * UIProcess/Cocoa/DownloadClient.mm:
+        (WebKit::DownloadClient::shouldDecodeSourceDataOfMIMEType): Deleted.
+        * UIProcess/Downloads/DownloadProxy.cpp:
+        (WebKit::DownloadProxy::willSendRequest):
+        (WebKit::DownloadProxy::didReceiveResponse):
+        (WebKit::DownloadProxy::shouldDecodeSourceDataOfMIMEType): Deleted.
+        (WebKit::DownloadProxy::decideDestinationWithSuggestedFilename): Deleted.
+        * UIProcess/Downloads/DownloadProxy.h:
+        * UIProcess/Downloads/DownloadProxy.messages.in:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/WebCoreSupport/mac/WebFrameNetworkingContext.mm:
+        (WebKit::WebFrameNetworkingContext::ensureWebsiteDataStoreSession):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::initializeWebProcess):
+        (WebKit::WebProcess::clearCachedCredentials):
+        * config.h:
+
 2018-01-22  Youenn Fablet  <youenn@apple.com>
 
         SW: Make sure ServiceWorker loading and requests are correctly cleared by ITP

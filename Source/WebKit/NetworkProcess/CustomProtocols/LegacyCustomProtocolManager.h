@@ -94,7 +94,7 @@ public:
     void startLoading(uint64_t customProtocolID, const WebCore::ResourceRequest&);
     void stopLoading(uint64_t customProtocolID);
 
-#if PLATFORM(COCOA) && USE(NETWORK_SESSION)
+#if PLATFORM(COCOA)
     void registerProtocolClass(NSURLSessionConfiguration*);
 #endif
 

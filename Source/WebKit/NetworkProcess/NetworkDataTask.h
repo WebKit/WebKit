@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if USE(NETWORK_SESSION)
-
 #include "DownloadID.h"
 #include "SandboxExtension.h"
 #include <WebCore/Credential.h>
@@ -160,5 +158,3 @@ protected:
 };
 
 } // namespace WebKit
-
-#endif // USE(NETWORK_SESSION)

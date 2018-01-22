@@ -26,8 +26,6 @@
 #include "config.h"
 #include "NetworkDataTask.h"
 
-#if USE(NETWORK_SESSION)
-
 #include "NetworkDataTaskBlob.h"
 #include "NetworkLoadParameters.h"
 #include "NetworkSession.h"
@@ -140,5 +138,3 @@ void NetworkDataTask::failureTimerFired()
 }
 
 } // namespace WebKit
-
-#endif // USE(NETWORK_SESSION)

@@ -26,8 +26,6 @@
 #include "config.h"
 #include "NetworkCORSPreflightChecker.h"
 
-#if USE(NETWORK_SESSION)
-
 #include "AuthenticationManager.h"
 #include "Logging.h"
 #include "NetworkLoadParameters.h"
@@ -133,5 +131,3 @@ void NetworkCORSPreflightChecker::cannotShowURL()
 }
 
 } // Namespace WebKit
-
-#endif // USE(NETWORK_SESSION)

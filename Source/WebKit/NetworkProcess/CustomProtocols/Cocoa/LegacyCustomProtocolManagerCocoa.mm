@@ -107,17 +107,12 @@ namespace WebKit {
 
 void LegacyCustomProtocolManager::registerProtocolClass()
 {
-#if !USE(NETWORK_SESSION)
-    [NSURLProtocol registerClass:[WKCustomProtocol class]];
-#endif
 }
 
-#if USE(NETWORK_SESSION)
 void LegacyCustomProtocolManager::registerProtocolClass(NSURLSessionConfiguration *configuration)
 {
     configuration.protocolClasses = @[[WKCustomProtocol class]];
 }
-#endif
 
 void LegacyCustomProtocolManager::registerScheme(const String& scheme)
 {

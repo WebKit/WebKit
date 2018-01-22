@@ -43,6 +43,7 @@
 #include "NetworkResourceLoaderMessages.h"
 #include "NetworkSocketStream.h"
 #include "NetworkSocketStreamMessages.h"
+#include "PingLoad.h"
 #include "PreconnectTask.h"
 #include "RemoteNetworkingContext.h"
 #include "SessionTracker.h"
@@ -56,10 +57,6 @@
 #include <WebCore/ResourceLoaderOptions.h>
 #include <WebCore/ResourceRequest.h>
 #include <pal/SessionID.h>
-
-#if USE(NETWORK_SESSION)
-#include "PingLoad.h"
-#endif
 
 using namespace WebCore;
 
@@ -243,16 +240,8 @@ void NetworkConnectionToWebProcess::loadPing(NetworkResourceLoadParameters&& loa
         didFinishPingLoad(identifier, error, response);
     };
 
-#if USE(NETWORK_SESSION)
     // PingLoad manages its own lifetime, deleting itself when its purpose has been fulfilled.
     new PingLoad(WTFMove(loadParameters), WTFMove(originalRequestHeaders), WTFMove(completionHandler));
-#else
-    UNUSED_PARAM(originalRequestHeaders);
-    auto context = RemoteNetworkingContext::create(loadParameters.sessionID, loadParameters.shouldClearReferrerOnHTTPSToHTTPRedirect);
-
-    // PingHandle manages its own lifetime, deleting itself when its purpose has been fulfilled.
-    new PingHandle(context.ptr(), loadParameters.request, loadParameters.storedCredentialsPolicy == StoredCredentialsPolicy::Use, loadParameters.shouldFollowRedirects, WTFMove(completionHandler));
-#endif
 }
 
 void NetworkConnectionToWebProcess::didFinishPingLoad(uint64_t pingLoadIdentifier, const ResourceError& error, const ResourceResponse& response)

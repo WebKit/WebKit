@@ -124,15 +124,6 @@ void DownloadClient::didReceiveAuthenticationChallenge(WebProcessPool&, Download
     }).get()];
 }
 
-#if !USE(NETWORK_SESSION)
-bool DownloadClient::shouldDecodeSourceDataOfMIMEType(WebProcessPool&, DownloadProxy& downloadProxy, const String& mimeType)
-{
-    if (m_delegateMethods.downloadShouldDecodeSourceDataOfMIMEType)
-        return [m_delegate _download:wrapper(downloadProxy) shouldDecodeSourceDataOfMIMEType:mimeType];
-    return true;
-}
-#endif
-
 void DownloadClient::didCreateDestination(WebProcessPool&, DownloadProxy& downloadProxy, const String& destination)
 {
     if (m_delegateMethods.downloadDidCreateDestination)

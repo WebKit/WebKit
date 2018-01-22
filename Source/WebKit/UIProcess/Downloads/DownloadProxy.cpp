@@ -134,7 +134,6 @@ void DownloadProxy::willSendRequest(ResourceRequest&& proposedRequest, const Res
     m_processPool->downloadClient().willSendRequest(*m_processPool, *this, WTFMove(proposedRequest), redirectResponse, [this, protectedThis = makeRef(*this)](ResourceRequest&& newRequest) {
         m_redirectChain.append(newRequest.url());
 
-#if USE(NETWORK_SESSION)
         if (!protectedThis->m_processPool)
             return;
 
@@ -143,7 +142,6 @@ void DownloadProxy::willSendRequest(ResourceRequest&& proposedRequest, const Res
             return;
 
         networkProcessProxy->send(Messages::NetworkProcess::ContinueWillSendRequest(protectedThis->m_downloadID, newRequest), 0);
-#endif
     });
 }
 
@@ -151,13 +149,6 @@ void DownloadProxy::didReceiveResponse(const ResourceResponse& response)
 {
     if (!m_processPool)
         return;
-
-#if !USE(NETWORK_SESSION)
-    // As per https://html.spec.whatwg.org/#as-a-download (step 2), the filename from the Content-Disposition header
-    // should override the suggested filename from the download attribute.
-    if (!m_suggestedFilename.isNull() && response.isAttachmentWithFilename())
-        m_suggestedFilename = String();
-#endif
 
     m_processPool->downloadClient().didReceiveResponse(*m_processPool, *this, response);
 }
@@ -169,18 +160,6 @@ void DownloadProxy::didReceiveData(uint64_t length)
 
     m_processPool->downloadClient().didReceiveData(*m_processPool, *this, length);
 }
-
-#if !USE(NETWORK_SESSION)
-void DownloadProxy::shouldDecodeSourceDataOfMIMEType(const String& mimeType, bool& result)
-{
-    result = false;
-
-    if (!m_processPool)
-        return;
-
-    result = m_processPool->downloadClient().shouldDecodeSourceDataOfMIMEType(*m_processPool, *this, mimeType);
-}
-#endif
 
 void DownloadProxy::decideDestinationWithSuggestedFilenameAsync(DownloadID downloadID, const String& suggestedFilename)
 {
@@ -196,24 +175,6 @@ void DownloadProxy::decideDestinationWithSuggestedFilenameAsync(DownloadID downl
             networkProcess->send(Messages::NetworkProcess::ContinueDecidePendingDownloadDestination(downloadID, destination, sandboxExtensionHandle, allowOverwrite == AllowOverwrite::Yes), 0);
     });
 }
-
-#if !USE(NETWORK_SESSION)
-
-void DownloadProxy::decideDestinationWithSuggestedFilename(const String& filename, const String& mimeType, Ref<Messages::DownloadProxy::DecideDestinationWithSuggestedFilename::DelayedReply>&& reply)
-{
-    if (!m_processPool)
-        return;
-
-    String suggestedFilename = MIMETypeRegistry::appendFileExtensionIfNecessary(m_suggestedFilename.isEmpty() ? filename : m_suggestedFilename, mimeType);
-    m_processPool->downloadClient().decideDestinationWithSuggestedFilename(*m_processPool, *this, suggestedFilename, [reply = WTFMove(reply)] (AllowOverwrite allowOverwrite, String destination) {
-        SandboxExtension::Handle sandboxExtensionHandle;
-        if (!destination.isNull())
-            SandboxExtension::createHandle(destination, SandboxExtension::Type::ReadWrite, sandboxExtensionHandle);
-        reply->send(destination, allowOverwrite == AllowOverwrite::Yes, sandboxExtensionHandle);
-    });
-}
-
-#endif
 
 void DownloadProxy::didCreateDestination(const String& path)
 {

@@ -26,8 +26,6 @@
 #import "config.h"
 #import "NetworkDataTaskCocoa.h"
 
-#if USE(NETWORK_SESSION)
-
 #import "AuthenticationManager.h"
 #import "Download.h"
 #import "DownloadProxyMessages.h"
@@ -439,5 +437,3 @@ WebCore::Credential serverTrustCredential(const WebCore::AuthenticationChallenge
 }
 
 }
-
-#endif

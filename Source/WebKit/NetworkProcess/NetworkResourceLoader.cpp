@@ -106,14 +106,6 @@ NetworkResourceLoader::NetworkResourceLoader(const NetworkResourceLoadParameters
         }
     }
 
-#if !USE(NETWORK_SESSION)
-    if (originalRequest().url().protocolIsBlob()) {
-        ASSERT(!m_parameters.resourceSandboxExtension);
-        m_fileReferences.appendVector(NetworkBlobRegistry::singleton().filesInBlob(connection, originalRequest().url()));
-    }
-#endif
-
-
     if (synchronousReply)
         m_synchronousLoadData = std::make_unique<SynchronousLoadData>(WTFMove(synchronousReply));
 }
@@ -229,7 +221,6 @@ void NetworkResourceLoader::startNetworkLoad(const ResourceRequest& request)
     parameters.defersLoading = m_defersLoading;
     parameters.request = request;
 
-#if USE(NETWORK_SESSION)
     if (request.url().protocolIsBlob())
         parameters.blobFileReferences = NetworkBlobRegistry::singleton().filesInBlob(m_connection, originalRequest().url());
 
@@ -242,9 +233,6 @@ void NetworkResourceLoader::startNetworkLoad(const ResourceRequest& request)
         return;
     }
     m_networkLoad = std::make_unique<NetworkLoad>(*this, WTFMove(parameters), *networkSession);
-#else
-    m_networkLoad = std::make_unique<NetworkLoad>(*this, WTFMove(parameters));
-#endif
 
     if (m_defersLoading) {
         RELEASE_LOG_IF_ALLOWED("startNetworkLoad: Created, but deferred (pageID = %" PRIu64 ", frameID = %" PRIu64 ", resourceID = %" PRIu64 ")",

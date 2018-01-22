@@ -66,21 +66,13 @@ public:
 
     static const char* supplementName();
 
-#if USE(NETWORK_SESSION)
     void didReceiveAuthenticationChallenge(uint64_t pageID, uint64_t frameID, const WebCore::AuthenticationChallenge&, ChallengeCompletionHandler&&);
     void didReceiveAuthenticationChallenge(IPC::MessageSender& download, const WebCore::AuthenticationChallenge&, ChallengeCompletionHandler&&);
 #if USE(PROTECTION_SPACE_AUTH_CALLBACK)
     void continueCanAuthenticateAgainstProtectionSpace(DownloadID, bool canAuthenticate);
 #endif
-#endif
     // Called for resources in the WebProcess (NetworkProcess disabled)
     void didReceiveAuthenticationChallenge(WebFrame*, const WebCore::AuthenticationChallenge&);
-
-#if !USE(NETWORK_SESSION)
-    // Called for resources in the NetworkProcess (NetworkProcess enabled)
-    void didReceiveAuthenticationChallenge(uint64_t pageID, uint64_t frameID, const WebCore::AuthenticationChallenge&);
-    void didReceiveAuthenticationChallenge(Download&, const WebCore::AuthenticationChallenge&);
-#endif
 
     void useCredentialForChallenge(uint64_t challengeID, const WebCore::Credential&, const WebCore::CertificateInfo&);
     void continueWithoutCredentialForChallenge(uint64_t challengeID);
@@ -100,9 +92,7 @@ private:
     struct Challenge {
         uint64_t pageID;
         WebCore::AuthenticationChallenge challenge;
-#if USE(NETWORK_SESSION)
         ChallengeCompletionHandler completionHandler;
-#endif
     };
     
     // IPC::MessageReceiver

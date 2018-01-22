@@ -26,8 +26,6 @@
 #import "config.h"
 #import "Download.h"
 
-#if USE(NETWORK_SESSION)
-
 #import "DataReference.h"
 #import "NetworkSessionCocoa.h"
 #import "SessionTracker.h"
@@ -74,5 +72,3 @@ void Download::platformCancelNetworkLoad()
 }
 
 }
-
-#endif // USE(NETWORK_SESSION)

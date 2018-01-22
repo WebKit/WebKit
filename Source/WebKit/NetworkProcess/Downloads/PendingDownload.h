@@ -23,10 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PendingDownload_h
-#define PendingDownload_h
-
-#if USE(NETWORK_SESSION)
+#pragma once
 
 #include "MessageSender.h"
 #include "NetworkLoadClient.h"
@@ -75,7 +72,3 @@ private:
 };
 
 }
-
-#endif
-
-#endif

@@ -28,10 +28,6 @@ messages -> DownloadProxy {
 
     DidReceiveResponse(WebCore::ResourceResponse response)
     DidReceiveData(uint64_t length)
-#if !USE(NETWORK_SESSION)
-    ShouldDecodeSourceDataOfMIMEType(String mimeType) -> (bool result)
-    DecideDestinationWithSuggestedFilename(String filename, String mimeType) -> (String destination, bool allowOverwrite, WebKit::SandboxExtension::Handle sandboxExtensionHandle) Delayed
-#endif
     DidCreateDestination(String path)
     DidFinish()
     DidFail(WebCore::ResourceError error, IPC::DataReference resumeData)

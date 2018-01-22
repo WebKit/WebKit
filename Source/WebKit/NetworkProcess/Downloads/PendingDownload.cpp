@@ -26,8 +26,6 @@
 #include "config.h"
 #include "PendingDownload.h"
 
-#if USE(NETWORK_SESSION)
-
 #include "DataReference.h"
 #include "DownloadProxyMessages.h"
 #include "NetworkLoad.h"
@@ -101,5 +99,3 @@ uint64_t PendingDownload::messageSenderDestinationID()
 }
     
 }
-
-#endif

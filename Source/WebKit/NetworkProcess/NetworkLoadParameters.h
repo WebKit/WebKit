@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef NetworkLoadParameters_h
-#define NetworkLoadParameters_h
+#pragma once
 
 #include <WebCore/BlobDataFileReference.h>
 #include <WebCore/ResourceLoaderOptions.h>
@@ -49,12 +48,8 @@ public:
     bool shouldClearReferrerOnHTTPSToHTTPRedirect { true };
     bool defersLoading { false };
     bool needsCertificateInfo { false };
-#if USE(NETWORK_SESSION)
     Vector<RefPtr<WebCore::BlobDataFileReference>> blobFileReferences;
-#endif
     PreconnectOnly shouldPreconnectOnly { PreconnectOnly::No };
 };
 
 } // namespace WebKit
-
-#endif // NetworkLoadParameters_h

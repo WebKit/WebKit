@@ -129,7 +129,6 @@
 #endif
 
 #if PLATFORM(COCOA)
-#include "CookieStorageShim.h"
 #include "ObjCObjectGraph.h"
 #include "UserMediaCaptureManager.h"
 #endif
@@ -276,9 +275,7 @@ void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters)
 
     platformInitializeWebProcess(WTFMove(parameters));
 
-#if USE(NETWORK_SESSION)
     SessionTracker::setSession(PAL::SessionID::defaultSessionID(), NetworkSession::create({ }));
-#endif
 
     // Match the QoS of the UIProcess and the scrolling thread but use a slightly lower priority.
     WTF::Thread::setCurrentThreadIsUserInteractive(-1);
@@ -389,9 +386,6 @@ void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters)
 
     ensureNetworkProcessConnection();
 
-#if PLATFORM(COCOA) && !USE(NETWORK_SESSION)
-    CookieStorageShim::singleton().initialize();
-#endif
     setTerminationTimeout(parameters.terminationTimeout);
 
     resetPlugInAutoStartOriginHashes(parameters.plugInAutoStartOriginHashes);
@@ -560,12 +554,10 @@ void WebProcess::setCacheModel(uint32_t cm)
 void WebProcess::clearCachedCredentials()
 {
     NetworkStorageSession::defaultStorageSession().credentialStorage().clearCredentials();
-#if USE(NETWORK_SESSION)
     if (auto* networkSession = SessionTracker::networkSession(PAL::SessionID::defaultSessionID()))
         networkSession->clearCredentials();
     else
         ASSERT_NOT_REACHED();
-#endif
 }
 
 WebPage* WebProcess::focusedWebPage() const

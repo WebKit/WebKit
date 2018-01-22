@@ -26,8 +26,6 @@
 #import "config.h"
 #import "NetworkSessionCocoa.h"
 
-#if USE(NETWORK_SESSION)
-
 #import "AuthenticationManager.h"
 #import "DataReference.h"
 #import "Download.h"
@@ -800,5 +798,3 @@ bool NetworkSessionCocoa::allowsSpecificHTTPSCertificateForHost(const WebCore::A
 }
 
 }
-
-#endif
