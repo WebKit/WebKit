@@ -61,7 +61,7 @@ function runTest() {
             document.getElementById("result").innerHTML += "<br>AFTER INVERT-COLORS IS APPLIED<br>";
 
             // Eventually elements img amd picture will be double-inverted when invert colors is on. Not shipping yet.
-            expectFilterValueForElements(NONE_VALUE, document.querySelectorAll("#a, #b"), "Change once IMG/PICTURE elements are inverted, too.");
+            expectFilterValueForElements(INVERTED_VALUE, document.querySelectorAll("#a, #b"));
 
             // Element <video> should be double-inverted when invert colors is on.
             expectFilterValueForElements(INVERTED_VALUE, document.querySelectorAll("#c, #d"));            
