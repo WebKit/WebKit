@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2018 Apple Inc. All rights reserved.
  * Copyright (C) 2012 Intel Corporation. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -5844,10 +5844,6 @@ WebPageCreationParameters WebPageProxy::creationParameters()
 
 #if ENABLE(APPLICATION_MANIFEST)
     parameters.applicationManifest = m_configuration->applicationManifest() ? std::optional<WebCore::ApplicationManifest>(m_configuration->applicationManifest()->applicationManifest()) : std::nullopt;
-#endif
-
-#if ENABLE(APPLE_PAY)
-    parameters.availablePaymentNetworks = WebPaymentCoordinatorProxy::availablePaymentNetworks();
 #endif
 
     m_process->addWebUserContentControllerProxy(m_userContentController, parameters);

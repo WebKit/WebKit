@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,10 +31,6 @@
 #include "WebPreferences.h"
 #include <WebCore/Settings.h>
 #include <wtf/RefPtr.h>
-
-#if ENABLE(APPLE_PAY)
-#include "WebPaymentCoordinatorProxy.h"
-#endif
 
 using namespace WebKit;
 
@@ -1791,10 +1787,6 @@ WK_EXPORT bool WKPreferencesGetApplePayEnabled(WKPreferencesRef preferencesRef)
 
 void WKPreferencesSetApplePayEnabled(WKPreferencesRef preferencesRef, bool enabled)
 {
-#if ENABLE(APPLE_PAY)
-    if (!WebPaymentCoordinatorProxy::platformSupportsPayments())
-        enabled = false;
-#endif
     WebKit::toImpl(preferencesRef)->setApplePayEnabled(enabled);
 }
 

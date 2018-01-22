@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2012 Google Inc. All rights reserved.
- * Copyright (C) 2013-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -520,7 +520,7 @@ Internals::Internals(Document& document)
     auto* frame = document.frame();
     if (frame && frame->isMainFrame()) {
         m_mockPaymentCoordinator = new MockPaymentCoordinator(frame->mainFrame());
-        frame->mainFrame().setPaymentCoordinator(std::make_unique<PaymentCoordinator>(*m_mockPaymentCoordinator, m_mockPaymentCoordinator->availablePaymentNetworks()));
+        frame->mainFrame().setPaymentCoordinator(std::make_unique<PaymentCoordinator>(*m_mockPaymentCoordinator));
     }
 #endif
 }

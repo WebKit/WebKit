@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,6 +32,8 @@
 #include <WebCore/PaymentHeaders.h>
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
+#include <wtf/HashSet.h>
+#include <wtf/text/StringHash.h>
 
 namespace IPC {
 class DataReference;
@@ -54,6 +56,7 @@ public:
 private:
     // WebCore::PaymentCoordinatorClient.
     bool supportsVersion(unsigned version) override;
+    std::optional<String> validatedPaymentNetwork(const String&) override;
     bool canMakePayments() override;
     void canMakePaymentsWithActiveCard(const String& merchantIdentifier, const String& domainName, WTF::Function<void (bool)>&& completionHandler) override;
     void openPaymentSetup(const String& merchantIdentifier, const String& domainName, WTF::Function<void (bool)>&& completionHandler) override;
@@ -83,11 +86,16 @@ private:
     void openPaymentSetupReply(uint64_t requestID, bool result);
 
     WebCore::PaymentCoordinator& paymentCoordinator();
+    
+    using AvailablePaymentNetworksSet = HashSet<String, ASCIICaseInsensitiveHash>;
+    const AvailablePaymentNetworksSet& availablePaymentNetworks();
 
     WebPage& m_webPage;
 
     HashMap<uint64_t, WTF::Function<void (bool)>> m_pendingCanMakePaymentsWithActiveCardCallbacks;
     HashMap<uint64_t, WTF::Function<void (bool)>> m_pendingOpenPaymentSetupCallbacks;
+
+    std::optional<AvailablePaymentNetworksSet> m_availablePaymentNetworks;
 };
 
 }

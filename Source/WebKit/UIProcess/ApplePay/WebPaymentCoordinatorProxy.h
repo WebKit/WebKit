@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -69,15 +69,13 @@ public:
 
     void hidePaymentUI();
 
-    static bool platformSupportsPayments();
-    static Vector<String> availablePaymentNetworks();
-
 private:
     // IPC::MessageReceiver.
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
     void didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, std::unique_ptr<IPC::Encoder>&) override;
 
     // Message handlers.
+    void availablePaymentNetworks(Vector<String>&);
     void canMakePayments(bool& reply);
     void canMakePaymentsWithActiveCard(const String& merchantIdentifier, const String& domainName, uint64_t requestID);
     void openPaymentSetup(const String& merchantIdentifier, const String& domainName, uint64_t requestID);
@@ -97,6 +95,7 @@ private:
 
     void didReachFinalState();
 
+    Vector<String> platformAvailablePaymentNetworks();
     bool platformCanMakePayments();
     void platformCanMakePaymentsWithActiveCard(const String& merchantIdentifier, const String& domainName, WTF::Function<void (bool)>&& completionHandler);
     void platformOpenPaymentSetup(const String& merchantIdentifier, const String& domainName, WTF::Function<void (bool)>&& completionHandler);
