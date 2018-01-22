@@ -1,0 +1,10 @@
+<!DOCTYPE html>
+<iframe id="webtest0"></iframe>
+<script id="webtest1">
+if (window.testRunner)
+    testRunner.dumpAsText();
+framedoc = frames[0].document.documentElement;
+document.body.innerText = 'PASS';
+framedoc.innerHTML = '<title>';
+framedoc.getElementsByTagName('title')[0].innerText = 'a';
+</script>

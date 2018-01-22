@@ -109,7 +109,7 @@ MediaQueryEvaluator::MediaQueryEvaluator(const String& acceptedMediaType, bool m
 
 MediaQueryEvaluator::MediaQueryEvaluator(const String& acceptedMediaType, const Document& document, const RenderStyle* style)
     : m_mediaType(acceptedMediaType)
-    , m_frame(document.frame())
+    , m_document(const_cast<Document&>(document).createWeakPtr())
     , m_style(style)
 {
 }
@@ -137,7 +137,7 @@ static bool applyRestrictor(MediaQuery::Restrictor r, bool value)
 
 bool MediaQueryEvaluator::evaluate(const MediaQuerySet& querySet, StyleResolver* styleResolver) const
 {
-    LOG_WITH_STREAM(MediaQueries, stream << "MediaQueryEvaluator::evaluate on " << (m_frame && m_frame->document() ? m_frame->document()->url().string() : emptyString()));
+    LOG_WITH_STREAM(MediaQueries, stream << "MediaQueryEvaluator::evaluate on " << (m_document ? m_document->url().string() : emptyString()));
 
     auto& queries = querySet.queryVector();
     if (!queries.size()) {
@@ -769,7 +769,12 @@ static void add(MediaQueryFunctionMap& map, AtomicStringImpl* key, MediaQueryFun
 
 bool MediaQueryEvaluator::evaluate(const MediaQueryExpression& expression) const
 {
-    if (!m_frame || !m_frame->view() || !m_style)
+    if (!m_document)
+        return m_fallbackResult;
+
+    Document& document = *m_document;
+    auto* frame = document.frame();
+    if (!frame || !frame->view() || !m_style)
         return m_fallbackResult;
 
     if (!expression.isValid())
@@ -787,10 +792,9 @@ bool MediaQueryEvaluator::evaluate(const MediaQueryExpression& expression) const
     if (!function)
         return false;
 
-    Document& document = *m_frame->document();
     if (!document.documentElement())
         return false;
-    return function(expression.value(), { m_style, document.documentElement()->renderStyle(), document.renderView(), 1, false }, *m_frame, NoPrefix);
+    return function(expression.value(), { m_style, document.documentElement()->renderStyle(), document.renderView(), 1, false }, *frame, NoPrefix);
 }
 
 bool MediaQueryEvaluator::mediaAttributeMatches(Document& document, const String& attributeValue)
