@@ -86,16 +86,6 @@
             }
         }
     },
-    "imported/selenium/py/test/selenium/webdriver/common/rendered_webelement_tests.py": {
-        "subtests": {
-            "testShouldPickUpStyleOfAnElement": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/181736"}}
-            },
-            "testShouldAllowInheritedStylesToBeUsed": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/181736"}}
-            }
-        }
-    },
     "imported/selenium/py/test/selenium/webdriver/common/text_handling_tests.py": {
         "subtests": {
             "testReadALargeAmountOfData": {

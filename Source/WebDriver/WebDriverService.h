@@ -87,6 +87,7 @@ private:
     void isElementSelected(RefPtr<JSON::Object>&&, Function<void (CommandResult&&)>&&);
     void getElementAttribute(RefPtr<JSON::Object>&&, Function<void (CommandResult&&)>&&);
     void getElementProperty(RefPtr<JSON::Object>&&, Function<void (CommandResult&&)>&&);
+    void getElementCSSValue(RefPtr<JSON::Object>&&, Function<void (CommandResult&&)>&&);
     void getElementText(RefPtr<JSON::Object>&&, Function<void (CommandResult&&)>&&);
     void getElementTagName(RefPtr<JSON::Object>&&, Function<void (CommandResult&&)>&&);
     void getElementRect(RefPtr<JSON::Object>&&, Function<void (CommandResult&&)>&&);

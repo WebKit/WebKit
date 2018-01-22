@@ -88,6 +88,7 @@ public:
     void isElementSelected(const String& elementID, Function<void (CommandResult&&)>&&);
     void getElementAttribute(const String& elementID, const String& attribute, Function<void (CommandResult&&)>&&);
     void getElementProperty(const String& elementID, const String& attribute, Function<void (CommandResult&&)>&&);
+    void getElementCSSValue(const String& elementID, const String& cssProperty, Function<void (CommandResult&&)>&&);
     void getElementText(const String& elementID, Function<void (CommandResult&&)>&&);
     void getElementTagName(const String& elementID, Function<void (CommandResult&&)>&&);
     void getElementRect(const String& elementID, Function<void (CommandResult&&)>&&);

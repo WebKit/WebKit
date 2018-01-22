@@ -1,5 +1,14 @@
 2018-01-22  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        WebDriver: implement get element CSS value command
+        https://bugs.webkit.org/show_bug.cgi?id=181736
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        * TestExpectations.json: Unskip tests passing now.
+
+2018-01-22  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Unreviewed. Update W3C WebDriver imported tests.
 
         * imported/w3c/importer.json:
