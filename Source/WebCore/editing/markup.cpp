@@ -72,6 +72,7 @@
 #include "TextIterator.h"
 #include "TypedElementDescendantIterator.h"
 #include "URL.h"
+#include "URLParser.h"
 #include "VisibleSelection.h"
 #include "VisibleUnits.h"
 #include <wtf/StdLibExtras.h>
@@ -144,6 +145,30 @@ void replaceSubresourceURLs(Ref<DocumentFragment>&& fragment, HashMap<AtomicStri
         change.apply();
 }
 
+struct ElementAttribute {
+    Ref<Element> element;
+    QualifiedName attributeName;
+};
+
+void removeSubresourceURLAttributes(Ref<DocumentFragment>&& fragment, WTF::Function<bool(const URL&)> shouldRemoveURL)
+{
+    Vector<ElementAttribute> attributesToRemove;
+    for (auto& element : descendantsOfType<Element>(fragment)) {
+        if (!element.hasAttributes())
+            continue;
+        for (const Attribute& attribute : element.attributesIterator()) {
+            // FIXME: This won't work for srcset.
+            if (element.attributeContainsURL(attribute) && !attribute.value().isEmpty()) {
+                URL url = URLParser { attribute.value() }.result();
+                if (shouldRemoveURL(url))
+                    attributesToRemove.append({ element, attribute.name() });
+            }
+        }
+    }
+    for (auto& item : attributesToRemove)
+        item.element->removeAttribute(item.attributeName);
+}
+
 std::unique_ptr<Page> createPageForSanitizingWebContent()
 {
     PageConfiguration pageConfiguration(createEmptyEditorClient(), SocketProvider::create(), LibWebRTCProvider::create(), CacheStorageProvider::create());
@@ -172,7 +197,7 @@ std::unique_ptr<Page> createPageForSanitizingWebContent()
 }
 
 
-String sanitizeMarkup(const String& rawHTML)
+String sanitizeMarkup(const String& rawHTML, std::optional<WTF::Function<void(DocumentFragment&)>> fragmentSanitizer)
 {
     auto page = createPageForSanitizingWebContent();
     Document* stagingDocument = page->mainFrame().document();
@@ -181,6 +206,10 @@ String sanitizeMarkup(const String& rawHTML)
     ASSERT(bodyElement);
 
     auto fragment = createFragmentFromMarkup(*stagingDocument, rawHTML, emptyString(), DisallowScriptingAndPluginContent);
+
+    if (fragmentSanitizer)
+        (*fragmentSanitizer)(fragment);
+
     bodyElement->appendChild(fragment.get());
 
     auto range = Range::create(*stagingDocument);

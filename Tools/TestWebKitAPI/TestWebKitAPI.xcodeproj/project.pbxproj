@@ -577,6 +577,7 @@
 		9B62630C1F8C25C8007EE29B /* copy-url.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 9B62630B1F8C2510007EE29B /* copy-url.html */; };
 		9B7A37C41F8AEBA5004AA228 /* CopyURL.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9B7A37C21F8AEBA5004AA228 /* CopyURL.mm */; };
 		9B7D740F1F8378770006C432 /* paste-rtfd.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 9B7D740E1F8377E60006C432 /* paste-rtfd.html */; };
+		9BCB7C2820130600003E7C0C /* PasteHTML.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9BCB7C2620130600003E7C0C /* PasteHTML.mm */; };
 		9BD4239A1E04BD9800200395 /* AttributedSubstringForProposedRangeWithImage.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9BD423991E04BD9800200395 /* AttributedSubstringForProposedRangeWithImage.mm */; };
 		9BD4239C1E04C01C00200395 /* chinese-character-with-image.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 9BD4239B1E04BFD000200395 /* chinese-character-with-image.html */; };
 		9BD5111C1FE8E11600D2B630 /* AccessingPastedImage.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9BD5111B1FE8E11600D2B630 /* AccessingPastedImage.mm */; };
@@ -1589,6 +1590,7 @@
 		9B79164F1BD89D0D00D50B8F /* FirstResponderScrollingPosition.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FirstResponderScrollingPosition.mm; sourceTree = "<group>"; };
 		9B7A37C21F8AEBA5004AA228 /* CopyURL.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = CopyURL.mm; sourceTree = "<group>"; };
 		9B7D740E1F8377E60006C432 /* paste-rtfd.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "paste-rtfd.html"; sourceTree = "<group>"; };
+		9BCB7C2620130600003E7C0C /* PasteHTML.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = PasteHTML.mm; sourceTree = "<group>"; };
 		9BD423991E04BD9800200395 /* AttributedSubstringForProposedRangeWithImage.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AttributedSubstringForProposedRangeWithImage.mm; sourceTree = "<group>"; };
 		9BD4239B1E04BFD000200395 /* chinese-character-with-image.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "chinese-character-with-image.html"; sourceTree = "<group>"; };
 		9BD5111B1FE8E11600D2B630 /* AccessingPastedImage.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = AccessingPastedImage.mm; sourceTree = "<group>"; };
@@ -2115,6 +2117,7 @@
 				CEBCA12E1E3A660100C73293 /* OverrideContentSecurityPolicy.mm */,
 				9BDCCD851F7D0B0700009A18 /* PasteImage.mm */,
 				9BDD95561F83683600D20C60 /* PasteRTFD.mm */,
+				9BCB7C2620130600003E7C0C /* PasteHTML.mm */,
 				9B2346411F943A2400DB1D23 /* PasteWebArchive.mm */,
 				3FCC4FE41EC4E8520076E37C /* PictureInPictureDelegate.mm */,
 				83BAEE8C1EF4625500DDE894 /* PluginLoadClientPolicies.mm */,
@@ -3396,6 +3399,7 @@
 				7CCE7EBB1A411A7E00447C4C /* DOMHTMLTableCellCellAbove.mm in Sources */,
 				2D51A0C71C8BF00C00765C45 /* DOMHTMLVideoElementWrapper.mm in Sources */,
 				46397B951DC2C850009A78AE /* DOMNode.mm in Sources */,
+				9BCB7C2820130600003E7C0C /* PasteHTML.mm in Sources */,
 				7CCE7EBC1A411A7E00447C4C /* DOMNodeFromJSObject.mm in Sources */,
 				7CCE7EBD1A411A7E00447C4C /* DOMRangeOfString.mm in Sources */,
 				7CCE7EEC1A411AE600447C4C /* DOMWindowExtensionBasic.cpp in Sources */,

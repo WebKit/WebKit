@@ -527,7 +527,17 @@ bool WebContentReader::readHTML(const String& string)
     if (stringOmittingMicrosoftPrefix.isEmpty())
         return false;
 
-    addFragment(createFragmentFromMarkup(document, stringOmittingMicrosoftPrefix, emptyString(), DisallowScriptingAndPluginContent));
+    String markup;
+    if (RuntimeEnabledFeatures::sharedFeatures().customPasteboardDataEnabled() && shouldSanitize()) {
+        markup = sanitizeMarkup(stringOmittingMicrosoftPrefix, WTF::Function<void (DocumentFragment&)> { [] (DocumentFragment& fragment) {
+            removeSubresourceURLAttributes(fragment, [] (const URL& url) {
+                return shouldReplaceSubresourceURL(url);
+            });
+        } });
+    } else
+        markup = stringOmittingMicrosoftPrefix;
+
+    addFragment(createFragmentFromMarkup(document, markup, emptyString(), DisallowScriptingAndPluginContent));
     return true;
 }
 
@@ -537,9 +547,13 @@ bool WebContentMarkupReader::readHTML(const String& string)
         return false;
 
     String rawHTML = stripMicrosoftPrefix(string);
-    if (shouldSanitize())
-        markup = sanitizeMarkup(rawHTML);
-    else
+    if (shouldSanitize()) {
+        markup = sanitizeMarkup(rawHTML, WTF::Function<void (DocumentFragment&)> { [] (DocumentFragment& fragment) {
+            removeSubresourceURLAttributes(fragment, [] (const URL& url) {
+                return shouldReplaceSubresourceURL(url);
+            });
+        } });
+    } else
         markup = rawHTML;
 
     return !markup.isEmpty();

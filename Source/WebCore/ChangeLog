@@ -1,3 +1,37 @@
+2018-01-22  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Blob conversion and sanitization doesn't work with Microsoft Word for Mac 2011
+        https://bugs.webkit.org/show_bug.cgi?id=181616
+        <rdar://problem/36484908>
+
+        Reviewed by Wenson Hsieh.
+
+        The bug was caused by WebContentReader::readHTML and WebContentMarkupReader::readHTML not sanitizing plain HTML string
+        as done for web archives even when custom pasteboard data is enabled. Fixed the bug by doing the sanitization.
+
+        Unfortunately, we can't make file URLs available in this case because WebContent process doesn't have sandbox extensions
+        to access local files referenced by the HTML source in the clipboard, and we can't make WebContent process request for
+        a sandbox extension¸on an arbitrary local file, as it would defeat the whole point of sandboxing.
+
+        Instead, we strip away all HTML attributes referencing a URL whose scheme is not HTTP, HTTPS, or data when sanitizing
+        text/html from the clipboard to avoid exposing local file paths, which can reveal privacy & security sensitive data
+        such as the user's full name, and the location of private containers of other applications in the system.
+
+        Tests: PasteHTML.DoesNotSanitizeHTMLWhenCustomPasteboardDataIsDisabled
+               PasteHTML.DoesNotStripFileURLsWhenCustomPasteboardDataIsDisabled
+               PasteHTML.ExposesHTMLTypeInDataTransfer
+               PasteHTML.KeepsHTTPURLs
+               PasteHTML.SanitizesHTML
+               PasteHTML.StripsFileURLs
+
+        * editing/cocoa/WebContentReaderCocoa.mm:
+        (WebCore::WebContentReader::readHTML): Fixed the bug by sanitizing the markup, and stripping away file URLs.
+        (WebCore::WebContentMarkupReader::readHTML): Ditto.
+        * editing/markup.cpp:
+        (WebCore::removeSubresourceURLAttributes): Added.
+        (WebCore::sanitizeMarkup): Added.
+        * editing/markup.h:
+
 2018-01-22  Chris Dumez  <cdumez@apple.com>
 
         Add release logging to help debug issues related to service workers

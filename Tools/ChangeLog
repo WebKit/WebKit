@@ -1,3 +1,19 @@
+2018-01-22  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Blob conversion and sanitization doesn't work with Microsoft Word for Mac 2011
+        https://bugs.webkit.org/show_bug.cgi?id=181616
+        <rdar://problem/36484908>
+
+        Reviewed by Wenson Hsieh.
+
+        Added tests to make sure we sanitize plain HTML, not just web archives,
+        when and only when custom pasteboard data is enabled.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/PasteHTML.mm: Added.
+        (writeHTMLToPasteboard): Added.
+        (createWebViewWithCustomPasteboardDataSetting): Added.
+
 2018-01-22  Alexey Proskuryakov  <ap@apple.com>
 
         REGRESSION (r226485): Many new wasm leaks detected by the leaks bot
