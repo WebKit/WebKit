@@ -1,3 +1,20 @@
+2018-01-22  Chris Dumez  <cdumez@apple.com>
+
+        RELEASE_ASSERT(registration) hit in SWServer::installContextData(const ServiceWorkerContextData&)
+        https://bugs.webkit.org/show_bug.cgi?id=181941
+        <rdar://problem/36744892>
+
+        Reviewed by Youenn Fablet.
+
+        Make sure we clear SWServer::m_pendingContextDatas & SWServer::m_pendingJobs as needed
+        when clearing Website data. Otherwise, we will hit assertion when those gets processed
+        after the connection to the SW process has been established (not to mentioned we failed
+        to clear some in-memory data even though the user asked us to).
+
+        * workers/service/server/SWServer.cpp:
+        (WebCore::SWServer::clearAll):
+        (WebCore::SWServer::clear):
+
 2018-01-22  Ryosuke Niwa  <rniwa@webkit.org>
 
         Blob conversion and sanitization doesn't work with Microsoft Word for Mac 2011
