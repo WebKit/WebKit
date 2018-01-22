@@ -1,5 +1,13 @@
 2018-01-22  Zan Dobersek  <zdobersek@igalia.com>
 
+        Unreviewed build fix after r227292. Fixing a bad copy-paste that broke
+        the GTK+ debug builds.
+
+        * WebProcess/WebCoreSupport/gtk/WebDragClientGtk.cpp:
+        (WebKit::convertCairoSurfaceToShareableBitmap):
+
+2018-01-22  Zan Dobersek  <zdobersek@igalia.com>
+
         [Cairo] Refactor PlatformContextCairo::drawSurfaceToContext() into a Cairo operation
         https://bugs.webkit.org/show_bug.cgi?id=181930
 
