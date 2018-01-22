@@ -6,6 +6,7 @@ const TestServer = require('./resources/test-server.js');
 const addBuilderForReport = require('./resources/common-operations.js').addBuilderForReport;
 const addSlaveForReport = require('./resources/common-operations.js').addSlaveForReport;
 const prepareServerTest = require('./resources/common-operations.js').prepareServerTest;
+const MockData = require('./resources/mock-data.js');
 
 describe("/api/report", function () {
     prepareServerTest(this);
@@ -377,7 +378,7 @@ describe("/api/report", function () {
             }
         }};
 
-    function reportAfterAddingBuilderAndAggregators(report)
+    function reportAfterAddingBuilderAndAggregatorsWithResponse(report)
     {
         return addBuilderForReport(report).then(() => {
             const db = TestServer.database();
@@ -385,9 +386,12 @@ describe("/api/report", function () {
                 db.insert('aggregators', {name: 'Arithmetic'}),
                 db.insert('aggregators', {name: 'Geometric'}),
             ]);
-        }).then(() => {
-            return TestServer.remoteAPI().postJSON('/api/report/', [report]);
-        }).then((response) => {
+        }).then(() => TestServer.remoteAPI().postJSON('/api/report/', [report]));
+    }
+
+    function reportAfterAddingBuilderAndAggregators(report)
+    {
+        return reportAfterAddingBuilderAndAggregatorsWithResponse(report).then((response) => {
             assert.equal(response['status'], 'OK');
             assert.equal(response['failureStored'], false);
             return response;
@@ -735,4 +739,64 @@ describe("/api/report", function () {
             });
         });
     });
+
+    const reportWithBuildRequest = {
+        "buildNumber": "123",
+        "buildTime": "2013-02-28T10:12:03.388304",
+        "builderName": "someBuilder",
+        "builderPassword": "somePassword",
+        "platform": "Mountain Lion",
+        "buildRequest": "700",
+        "tests": {
+            "test": {
+                "metrics": {"FrameRate": { "current": [[[0, 4], [100, 5], [205, 3]]] }}
+            },
+        },
+    };
+
+    const anotherReportWithSameBuildRequest = {
+        "buildNumber": "124",
+        "buildTime": "2013-02-28T10:12:03.388304",
+        "builderName": "someBuilder",
+        "builderPassword": "somePassword",
+        "platform": "Lion",
+        "buildRequest": "700",
+        "tests": {
+            "test": {
+                "metrics": {"FrameRate": { "current": [[[0, 4], [100, 5], [205, 3]]] }}
+            },
+        },
+    };
+
+    it("should allow to report a build request", () => {
+        return MockData.addMockData(TestServer.database()).then(() => {
+            return reportAfterAddingBuilderAndAggregatorsWithResponse(reportWithBuildRequest);
+        }).then((response) => {
+            assert.equal(response['status'], 'OK');
+        });
+    });
+
+    it("should reject the report if the build request in the report has an existing associated build", () => {
+        return MockData.addMockData(TestServer.database()).then(() => {
+            return reportAfterAddingBuilderAndAggregatorsWithResponse(reportWithBuildRequest);
+        }).then((response) => {
+            assert.equal(response['status'], 'OK');
+            return TestServer.database().selectRows('builds', {number: '123'});
+        }).then((results) => {
+            assert.equal(results.length, 1);
+            return TestServer.database().selectRows('platforms', {name: 'Mountain Lion'});
+        }).then((results) => {
+            assert.equal(results.length, 1);
+            return TestServer.remoteAPI().postJSON('/api/report/', [anotherReportWithSameBuildRequest]);
+        }).then((response) => {
+            assert.equal(response['status'], 'FailedToUpdateBuildRequest');
+            return TestServer.database().selectRows('builds', {number: '124'});
+        }).then((results) => {
+            assert.equal(results.length, 0);
+            return TestServer.database().selectRows('platforms', {name: 'Lion'});
+        }).then((results) => {
+            assert.equal(results.length, 0);
+        });
+    });
+
 });

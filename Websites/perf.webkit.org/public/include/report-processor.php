@@ -44,13 +44,17 @@ class ReportProcessor {
         $this->runs->aggregate();
         $this->runs->compute_caches();
 
+        $this->db->begin_transaction() or $this->exit_with_error('FailedToBeginTransaction');
+
         $platform_id = $this->db->select_or_insert_row('platforms', 'platform', array('name' => $report['platform']));
         if (!$platform_id)
-            $this->exit_with_error('FailedToInsertPlatform', array('name' => $report['platform']));
+            $this->rollback_with_error('FailedToInsertPlatform', array('name' => $report['platform']));
 
         // FIXME: Deprecate and unsupport "jobId".
         $build_id = $this->resolve_build_id($build_data, array_get($report, 'revisions', array()),
             array_get($report, 'jobId', array_get($report, 'buildRequest')));
+
+        $this->db->commit_transaction() or $this->exit_with_error('FailedToCommitTransaction');
 
         $this->runs->commit($platform_id, $build_id);
     }
@@ -128,31 +132,31 @@ class ReportProcessor {
     }
 
     private function resolve_build_id(&$build_data, $revisions, $build_request_id) {
-        // FIXME: This code has a race condition. See <rdar://problem/15876303>.
         $results = $this->db->query_and_fetch_all("SELECT build_id, build_slave FROM builds
             WHERE build_builder = $1 AND build_number = $2 AND build_time <= $3 AND build_time + interval '1 day' > $3 LIMIT 2",
             array($build_data['builder'], $build_data['number'], $build_data['time']));
         if ($results) {
             $first_result = $results[0];
             if ($first_result['build_slave'] != $build_data['slave'])
-                $this->exit_with_error('MismatchingBuildSlave', array('storedBuild' => $results, 'reportedBuildData' => $build_data));
+                $this->rollback_with_error('MismatchingBuildSlave', array('storedBuild' => $results, 'reportedBuildData' => $build_data));
             $build_id = $first_result['build_id'];
         } else
             $build_id = $this->db->insert_row('builds', 'build', $build_data);
+
         if (!$build_id)
-            $this->exit_with_error('FailedToInsertBuild', $build_data);
+            $this->rollback_with_error('FailedToInsertBuild', $build_data);
 
         if ($build_request_id) {
-            if ($this->db->update_row('build_requests', 'request', array('id' => $build_request_id), array('status' => 'completed', 'build' => $build_id))
+            if ($this->db->update_row('build_requests', 'request', array('id' => $build_request_id, 'build' => null), array('status' => 'completed', 'build' => $build_id))
                 != $build_request_id)
-                $this->exit_with_error('FailedToUpdateBuildRequest', array('buildRequest' => $build_request_id, 'build' => $build_id));
+                $this->rollback_with_error('FailedToUpdateBuildRequest', array('buildRequest' => $build_request_id, 'build' => $build_id));
         }
 
 
         foreach ($revisions as $repository_name => $revision_data) {
             $repository_id = $this->db->select_or_insert_row('repositories', 'repository', array('name' => $repository_name, 'owner' => NULL));
             if (!$repository_id)
-                $this->exit_with_error('FailedToInsertRepository', array('name' => $repository_name));
+                $this->rollback_with_error('FailedToInsertRepository', array('name' => $repository_name));
 
             $commit_data = array('repository' => $repository_id, 'revision' => $revision_data['revision'], 'time' => array_get($revision_data, 'timestamp'));
 
@@ -160,21 +164,26 @@ class ReportProcessor {
                 WHERE build_commit = commit_id AND commit_build = $1 AND commit_repository = $2 AND commit_revision != $3 LIMIT 1',
                 array($build_id, $repository_id, $revision_data['revision']));
             if ($mismatching_commit)
-                $this->exit_with_error('MismatchingCommitRevision', array('build' => $build_id, 'existing' => $mismatching_commit, 'new' => $commit_data));
+                $this->rollback_with_error('MismatchingCommitRevision', array('build' => $build_id, 'existing' => $mismatching_commit, 'new' => $commit_data));
 
             $commit_row = $this->db->select_or_insert_row('commits', 'commit',
                 array('repository' => $repository_id, 'revision' => $revision_data['revision']), $commit_data, '*');
             if (!$commit_row)
-                $this->exit_with_error('FailedToRecordCommit', $commit_data);
+                $this->rollback_with_error('FailedToRecordCommit', $commit_data);
             if ($commit_data['time'] && abs(floatval($commit_row['commit_time']) - floatval($commit_data['time'])) > 1.0)
-                $this->exit_with_error('MismatchingCommitTime', array('existing' => $commit_row, 'new' => $commit_data));
+                $this->rollback_with_error('MismatchingCommitTime', array('existing' => $commit_row, 'new' => $commit_data));
 
             if (!$this->db->select_or_insert_row('build_commits', null,
                 array('commit_build' => $build_id, 'build_commit' => $commit_row['commit_id']), null, '*'))
-                $this->exit_with_error('FailedToRelateCommitToBuild', array('commit' => $commit_row, 'build' => $build_id));
+                $this->rollback_with_error('FailedToRelateCommitToBuild', array('commit' => $commit_row, 'build' => $build_id));
         }
 
         return $build_id;
+    }
+
+    private function rollback_with_error($message, $details) {
+        $this->db->rollback_transaction();
+        $this->exit_with_error($message, $details);
     }
 
     private function recursively_ensure_tests(&$tests, $parent_id = NULL, $level = 0) {
