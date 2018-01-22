@@ -1,3 +1,12 @@
+2018-01-22  Matt Lewis  <jlewis3@apple.com>
+
+        Marked http/wpt/service-workers/update-service-worker.https.html as flaky on High Sierra release.
+        https://bugs.webkit.org/show_bug.cgi?id=181753
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
 2018-01-22  Youenn Fablet  <youenn@apple.com>
 
         Safari Tech Preview can't use GitHub login at forums.swift.org

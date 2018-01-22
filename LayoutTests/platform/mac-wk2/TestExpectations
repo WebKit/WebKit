@@ -873,3 +873,6 @@ webkit.org/b/181750 imported/w3c/web-platform-tests/service-workers/service-work
 webkit.org/b/181750 imported/w3c/web-platform-tests/service-workers/service-worker/redirected-response.https.html [ Pass Failure ]
 
 webkit.org/b/181839 [ Debug ] inspector/debugger/breakpoint-action-log.html [ Pass Timeout ]
+
+webkit.org/b/181753 [ HighSierra Release ] http/wpt/service-workers/update-service-worker.https.html [ Pass Failure ]
+
