@@ -1,3 +1,10 @@
+2018-01-21  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Remove unused verbose mode from GLib API tests runner.
+
+        * glib/api_test_runner.py:
+        (add_options):
+
 2018-01-21  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Add a new feature flag for EXTRA_ZOOM_MODE and reintroduce AdditionalFeatureDefines.h
