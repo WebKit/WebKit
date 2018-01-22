@@ -1,3 +1,16 @@
+2018-01-22  Youenn Fablet  <youenn@apple.com>
+
+        SW: Make sure ServiceWorker loading and requests are correctly cleared by ITP
+        https://bugs.webkit.org/show_bug.cgi?id=181942
+        <rdar://problem/35132091>
+
+        Reviewed by Chris Dumez.
+
+        Add ServiceWorkerRegistrations and DOMCache as persistent data to be cleared according ITP decisions.
+
+        * UIProcess/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::monitoredDataTypes):
+
 2018-01-22  Chris Dumez  <cdumez@apple.com>
 
         Add release logging to help debug issues related to service workers
