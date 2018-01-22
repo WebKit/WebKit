@@ -1,3 +1,18 @@
+2018-01-22  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [css-grid] Spanning Grid item has too much space at the bottom / is too high
+        https://bugs.webkit.org/show_bug.cgi?id=181677
+
+        Imported WPT tests to check this change.
+
+        Reviewed by Javier Fernandez.
+
+        * web-platform-tests/css/css-grid/layout-algorithm/grid-find-fr-size-gutters-001-expected.txt: Added.
+        * web-platform-tests/css/css-grid/layout-algorithm/grid-find-fr-size-gutters-001.html: Added.
+        * web-platform-tests/css/css-grid/layout-algorithm/grid-find-fr-size-gutters-002-expected.txt: Added.
+        * web-platform-tests/css/css-grid/layout-algorithm/grid-find-fr-size-gutters-002.html: Added.
+        * web-platform-tests/css/css-grid/layout-algorithm/w3c-import.log:
+
 2018-01-20  Youenn Fablet  <youenn@apple.com>
 
         fetch redirect is incompatible with "no-cors" mode

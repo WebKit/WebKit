@@ -1,3 +1,32 @@
+2018-01-22  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [css-grid] Spanning Grid item has too much space at the bottom / is too high
+        https://bugs.webkit.org/show_bug.cgi?id=181677
+
+        Reviewed by Javier Fernandez.
+
+        In IndefiniteSizeStrategy::findUsedFlexFraction() we were not
+        subtracting the size of the gutters when we call findFrUnitSize().
+        If an item spans several tracks, we cannot pass the maxContentForChild()
+        directly, we need to subtract the gutters as they are treated
+        as fixed size tracks in the algorithm.
+
+        The spec text is pretty clear regarding this
+        (https://drafts.csswg.org/css-grid/#algo-find-fr-size):
+        "Let leftover space be the space to fill minus the base sizes
+         of the non-flexible grid tracks."
+
+        Gutters are treated as fixed-size tracks for the purpose
+        of the track sizing algorithm, so we need to subtract them from the
+        leftover space while finding the size of an "fr".
+
+        Tests: imported/w3c/web-platform-tests/css/css-grid/layout-algorithm/grid-find-fr-size-gutters-001.html
+               imported/w3c/web-platform-tests/css/css-grid/layout-algorithm/grid-find-fr-size-gutters-002.html
+
+        * rendering/GridTrackSizingAlgorithm.cpp:
+        (WebCore::GridTrackSizingAlgorithm::findFrUnitSize const):
+        (WebCore::IndefiniteSizeStrategy::findUsedFlexFraction const):
+
 2018-01-21  Ryosuke Niwa  <rniwa@webkit.org>
 
         Turning off custom pasteboard data doesn't actually turn it off in WK2
