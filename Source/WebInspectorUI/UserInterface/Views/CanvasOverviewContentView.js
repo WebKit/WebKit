@@ -61,9 +61,15 @@ WI.CanvasOverviewContentView = class CanvasOverviewContentView extends WI.Collec
             new WI.KeyboardShortcut(null, WI.KeyboardShortcut.Key.Right, this._handleRight.bind(this)),
             new WI.KeyboardShortcut(null, WI.KeyboardShortcut.Key.Down, this._handleDown.bind(this)),
             new WI.KeyboardShortcut(null, WI.KeyboardShortcut.Key.Left, this._handleLeft.bind(this)),
-            new WI.KeyboardShortcut(null, WI.KeyboardShortcut.Key.Space, this._handleSpace.bind(this)),
-            new WI.KeyboardShortcut(WI.KeyboardShortcut.Modifier.Shift, WI.KeyboardShortcut.Key.Space, this._handleSpace.bind(this)),
         ];
+
+        let recordShortcut = new WI.KeyboardShortcut(null, WI.KeyboardShortcut.Key.Space, this._handleSpace.bind(this));
+        recordShortcut.implicitlyPreventsDefault = false;
+        this._keyboardShortcuts.push(recordShortcut);
+
+        let recordSingleFrameShortcut = new WI.KeyboardShortcut(WI.KeyboardShortcut.Modifier.Shift, WI.KeyboardShortcut.Key.Space, this._handleSpace.bind(this));
+        recordSingleFrameShortcut.implicitlyPreventsDefault = false;
+        this._keyboardShortcuts.push(recordSingleFrameShortcut);
 
         for (let shortcut of this._keyboardShortcuts)
             shortcut.disabled = true;
@@ -241,6 +247,9 @@ WI.CanvasOverviewContentView = class CanvasOverviewContentView extends WI.Collec
 
     _handleSpace(event)
     {
+        if (WI.isEventTargetAnEditableField(event))
+            return;
+
         if (!this._selectedItem)
             return;
 
@@ -250,6 +259,8 @@ WI.CanvasOverviewContentView = class CanvasOverviewContentView extends WI.Collec
             let singleFrame = !!event.shiftKey;
             WI.canvasManager.startRecording(this._selectedItem, singleFrame);
         }
+
+        event.preventDefault();
     }
 
     _updateShowImageGrid()
