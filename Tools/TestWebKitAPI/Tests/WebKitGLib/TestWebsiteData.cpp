@@ -538,6 +538,12 @@ static void testWebsiteDataCookies(WebsiteDataTest* test, gconstpointer)
     g_assert(!dataList);
 }
 
+static void fileChangedCallback(GFileMonitor*, GFile*, GFile*, GFileMonitorEvent event, bool* fileRemoved)
+{
+    if (event == G_FILE_MONITOR_EVENT_DELETED)
+        *fileRemoved = true;
+}
+
 static void testWebsiteDataResourceLoadStatistics(WebsiteDataTest* test, gconstpointer)
 {
     const char* resourceLoadStatisticsDirectory = webkit_website_data_manager_get_resource_load_statistics_directory(test->m_manager);
@@ -566,9 +572,13 @@ static void testWebsiteDataResourceLoadStatistics(WebsiteDataTest* test, gconstp
 
     // Clear all.
     static const WebKitWebsiteDataTypes cacheAndResourceLoadStatistics = static_cast<WebKitWebsiteDataTypes>(WEBKIT_WEBSITE_DATA_RESOURCE_LOAD_STATISTICS | WEBKIT_WEBSITE_DATA_MEMORY_CACHE | WEBKIT_WEBSITE_DATA_DISK_CACHE);
+    GRefPtr<GFile> file = adoptGRef(g_file_new_for_path(resourceLoadStatisticsLogFile.get()));
+    GRefPtr<GFileMonitor> monitor = adoptGRef(g_file_monitor_file(file.get(), G_FILE_MONITOR_NONE, nullptr, nullptr));
+    g_assert(monitor.get());
+    bool fileRemoved = false;
+    g_signal_connect(monitor.get(), "changed", G_CALLBACK(fileChangedCallback), &fileRemoved);
     test->clear(cacheAndResourceLoadStatistics, 0);
-    g_assert(g_file_test(resourceLoadStatisticsDirectory, G_FILE_TEST_IS_DIR));
-    g_assert(!g_file_test(resourceLoadStatisticsLogFile.get(), G_FILE_TEST_IS_REGULAR));
+    g_assert(fileRemoved);
 
     webkit_website_data_manager_set_resource_load_statistics_enabled(test->m_manager, FALSE);
     g_assert(!webkit_website_data_manager_get_resource_load_statistics_enabled(test->m_manager));
