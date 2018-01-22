@@ -2875,6 +2875,10 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         // contradiction then there must always be a contradiction even if subsequent passes don't
         // realize it. This is the case here.
         
+        // Ordinarily you have to be careful with calling setFoundConstants()
+        // because of the effect on compile times, but this node is FTL-only.
+        m_state.setFoundConstants(true);
+        
         UniquedStringImpl* uid = m_graph.identifiers()[node->multiGetByOffsetData().identifierNumber];
 
         AbstractValue base = forNode(node->child1());
@@ -2883,10 +2887,8 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         for (const MultiGetByOffsetCase& getCase : node->multiGetByOffsetData().cases) {
             RegisteredStructureSet set = getCase.set();
             set.filter(base);
-            if (set.isEmpty()) {
-                m_state.setFoundConstants(true);
+            if (set.isEmpty())
                 continue;
-            }
             baseSet.merge(set);
 
             switch (getCase.method().kind()) {

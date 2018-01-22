@@ -522,7 +522,7 @@ private:
                     break;
                 }
                 
-                if (!m_graph.supportsMultiGetByOffset(node->origin.semantic))
+                if (!isFTL(m_graph.m_plan.mode))
                     break;
                 
                 MultiGetByOffsetData* data = m_graph.m_multiGetByOffsetData.add();
