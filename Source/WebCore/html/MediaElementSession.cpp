@@ -379,6 +379,11 @@ bool MediaElementSession::canShowControlsManager(PlaybackControlsPurpose purpose
     }
 
     if (purpose == PlaybackControlsPurpose::NowPlaying) {
+        if (!m_element.inActiveDocument()) {
+            LOG(Media, "MediaElementSession::canShowControlsManager - returning FALSE: Not in active document");
+            return false;
+        }
+
         LOG(Media, "MediaElementSession::canShowControlsManager - returning TRUE: Potentially plays audio");
         return true;
     }

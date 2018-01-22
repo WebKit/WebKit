@@ -971,6 +971,9 @@ void HTMLMediaElement::removedFromAncestor(RemovalType removalType, ContainerNod
         m_pauseAfterDetachedTaskQueue.enqueueTask(std::bind(&HTMLMediaElement::pauseAfterDetachedTask, this));
     }
 
+    if (m_mediaSession)
+        m_mediaSession->clientCharacteristicsChanged();
+
     HTMLElement::removedFromAncestor(removalType, oldParentOfRemovedTree);
 }
 

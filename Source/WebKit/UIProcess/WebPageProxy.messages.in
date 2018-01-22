@@ -201,7 +201,7 @@ messages -> WebPageProxy {
 #endif
 #if PLATFORM(COCOA)
     MachSendRightCallback(WebCore::MachSendRight sendRight, WebKit::CallbackID callbackID)
-    NowPlayingInfoCallback(bool active, String title, double duration, double elapsedTime, uint64_t uniqueIdentifier, WebKit::CallbackID callbackID)
+    NowPlayingInfoCallback(bool active, bool registeredAsNowPlayingApplication, String title, double duration, double elapsedTime, uint64_t uniqueIdentifier, WebKit::CallbackID callbackID)
 #endif
 
     PageScaleFactorDidChange(double scaleFactor)

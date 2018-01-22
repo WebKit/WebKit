@@ -1,3 +1,16 @@
+2018-01-21  Eric Carlson  <eric.carlson@apple.com>
+
+        Resign NowPlaying status when no media element is eligible
+        https://bugs.webkit.org/show_bug.cgi?id=181914
+        <rdar://problem/35294116>
+
+        Reviewed by Jer Noble.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/NowPlayingControlsTests.mm:
+        (-[NowPlayingTestWebView hasActiveNowPlayingSession]):
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/large-video-test-now-playing.html:
+
 2018-01-21  Aakash Jain  <aakash_jain@apple.com>
 
         Fix broken unit-tests after r227192
