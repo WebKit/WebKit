@@ -1,3 +1,12 @@
+2018-01-22  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed GTK+ gardening. Fix /webkit/WebKitConsoleMessage/network-error.
+
+        Partially revert r226782, the fix was wrong for the GLib version we currently use.
+
+        * TestWebKitAPI/Tests/WebKitGLib/TestConsoleMessage.cpp:
+        (testWebKitConsoleMessageNetworkError):
+
 2018-01-21  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Remove unused verbose mode from GLib API tests runner.
