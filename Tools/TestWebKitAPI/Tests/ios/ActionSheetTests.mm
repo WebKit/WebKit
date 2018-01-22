@@ -164,6 +164,47 @@ static void presentActionSheetAndChooseAction(WKWebView *webView, ActionSheetObs
     [copyAction runActionWithElementInfo:copyElement.get()];
 }
 
+TEST(ActionSheetTests, CopyImageElementWithHREFAndTitle)
+{
+    UIApplicationInitialize();
+    [UIPasteboard generalPasteboard].items = @[ ];
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    auto observer = adoptNS([[ActionSheetObserver alloc] init]);
+    [webView setUIDelegate:observer.get()];
+    [webView synchronouslyLoadTestPageNamed:@"image-in-link-and-input"];
+    [webView stringByEvaluatingJavaScript:@"document.querySelector('a').setAttribute('title', 'hello world')"];
+
+    presentActionSheetAndChooseAction(webView.get(), observer.get(), CGPointMake(100, 50), _WKElementActionTypeCopy);
+
+    __block bool done = false;
+    __block RetainPtr<NSItemProvider> itemProvider;
+    [webView _doAfterNextPresentationUpdate:^() {
+        NSArray <NSString *> *pasteboardTypes = [[UIPasteboard generalPasteboard] pasteboardTypes];
+        EXPECT_EQ(2UL, pasteboardTypes.count);
+        EXPECT_WK_STREQ((NSString *)kUTTypePNG, pasteboardTypes.firstObject);
+        EXPECT_WK_STREQ((NSString *)kUTTypeURL, pasteboardTypes.lastObject);
+        NSArray <NSItemProvider *> *itemProviders = [[UIPasteboard generalPasteboard] itemProviders];
+        EXPECT_EQ(1UL, itemProviders.count);
+        itemProvider = itemProviders.firstObject;
+        EXPECT_EQ(2UL, [itemProvider registeredTypeIdentifiers].count);
+        EXPECT_WK_STREQ((NSString *)kUTTypePNG, [itemProvider registeredTypeIdentifiers].firstObject);
+        EXPECT_WK_STREQ((NSString *)kUTTypeURL, [itemProvider registeredTypeIdentifiers].lastObject);
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+
+    __block bool doneLoading = false;
+    [itemProvider loadObjectOfClass:[NSURL class] completionHandler:^(id <NSItemProviderReading> result, NSError *) {
+        EXPECT_TRUE([result isKindOfClass:[NSURL class]]);
+        NSURL *url = (NSURL *)result;
+        EXPECT_WK_STREQ("https://www.apple.com/", url.absoluteString);
+        EXPECT_WK_STREQ("hello world", url._title);
+        doneLoading = true;
+    }];
+    TestWebKitAPI::Util::run(&doneLoading);
+}
+
 TEST(ActionSheetTests, CopyImageElementWithHREF)
 {
     UIApplicationInitialize();
@@ -177,6 +218,7 @@ TEST(ActionSheetTests, CopyImageElementWithHREF)
     presentActionSheetAndChooseAction(webView.get(), observer.get(), CGPointMake(100, 50), _WKElementActionTypeCopy);
 
     __block bool done = false;
+    __block RetainPtr<NSItemProvider> itemProvider;
     [webView _doAfterNextPresentationUpdate:^() {
         NSArray <NSString *> *pasteboardTypes = [[UIPasteboard generalPasteboard] pasteboardTypes];
         EXPECT_EQ(2UL, pasteboardTypes.count);
@@ -184,13 +226,23 @@ TEST(ActionSheetTests, CopyImageElementWithHREF)
         EXPECT_WK_STREQ((NSString *)kUTTypeURL, pasteboardTypes.lastObject);
         NSArray <NSItemProvider *> *itemProviders = [[UIPasteboard generalPasteboard] itemProviders];
         EXPECT_EQ(1UL, itemProviders.count);
-        NSItemProvider *itemProvider = itemProviders.firstObject;
-        EXPECT_EQ(2UL, itemProvider.registeredTypeIdentifiers.count);
-        EXPECT_WK_STREQ((NSString *)kUTTypePNG, itemProvider.registeredTypeIdentifiers.firstObject);
-        EXPECT_WK_STREQ((NSString *)kUTTypeURL, itemProvider.registeredTypeIdentifiers.lastObject);
+        itemProvider = itemProviders.firstObject;
+        EXPECT_EQ(2UL, [itemProvider registeredTypeIdentifiers].count);
+        EXPECT_WK_STREQ((NSString *)kUTTypePNG, [itemProvider registeredTypeIdentifiers].firstObject);
+        EXPECT_WK_STREQ((NSString *)kUTTypeURL, [itemProvider registeredTypeIdentifiers].lastObject);
         done = true;
     }];
     TestWebKitAPI::Util::run(&done);
+
+    __block bool doneLoading = false;
+    [itemProvider loadObjectOfClass:[NSURL class] completionHandler:^(id <NSItemProviderReading> result, NSError *) {
+        EXPECT_TRUE([result isKindOfClass:[NSURL class]]);
+        NSURL *url = (NSURL *)result;
+        EXPECT_WK_STREQ("https://www.apple.com/", url.absoluteString);
+        EXPECT_WK_STREQ("https://www.apple.com/", url._title);
+        doneLoading = true;
+    }];
+    TestWebKitAPI::Util::run(&doneLoading);
 }
 
 TEST(ActionSheetTests, CopyImageElementWithoutHREF)

@@ -32,6 +32,7 @@
 #import "SharedBuffer.h"
 #import "URL.h"
 #import "UTIUtilities.h"
+#import "WebCoreNSURLExtras.h"
 #import "WebItemProviderPasteboard.h"
 #import <MobileCoreServices/MobileCoreServices.h>
 #import <UIKit/UIImage.h>
@@ -346,9 +347,10 @@ void PlatformPasteboard::write(const PasteboardImage& pasteboardImage)
     // FIXME: When writing a PasteboardImage, we currently always place the image data at a higer fidelity than the
     // associated image URL. However, in the case of an image enclosed by an anchor, we might want to consider the
     // the URL (i.e. the anchor's href attribute) to be a higher fidelity representation.
-    if (!pasteboardImage.url.url.isEmpty()) {
-        if (NSURL *nsURL = pasteboardImage.url.url)
-            [representationsToRegister addRepresentingObject:nsURL];
+    auto& pasteboardURL = pasteboardImage.url;
+    if (NSURL *nsURL = pasteboardURL.url) {
+        nsURL._title = pasteboardURL.title.isEmpty() ? userVisibleString(pasteboardURL.url) : (NSString *)pasteboardURL.title;
+        [representationsToRegister addRepresentingObject:nsURL];
     }
 
     registerItemToPasteboard(representationsToRegister.get(), m_pasteboard.get());
