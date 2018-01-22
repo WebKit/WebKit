@@ -219,4 +219,6 @@ interface IWebPreferencesPrivate6 : IWebPreferencesPrivate5
     HRESULT setInspectorAdditionsEnabled([in] BOOL enabled);
     HRESULT visualViewportAPIEnabled([out, retval] BOOL*);
     HRESULT setVisualViewportAPIEnabled([in] BOOL enabled);
+    HRESULT fetchAPIKeepAliveEnabled([out, retval] BOOL* enabled);
+    HRESULT setFetchAPIKeepAliveEnabled([in] BOOL enabled);
 }

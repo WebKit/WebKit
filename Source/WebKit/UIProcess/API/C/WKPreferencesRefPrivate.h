@@ -493,6 +493,10 @@ WK_EXPORT bool WKPreferencesGetUserTimingEnabled(WKPreferencesRef);
 WK_EXPORT void WKPreferencesSetResourceTimingEnabled(WKPreferencesRef, bool flag);
 WK_EXPORT bool WKPreferencesGetResourceTimingEnabled(WKPreferencesRef);
 
+// Defaults to false
+WK_EXPORT void WKPreferencesSetFetchAPIKeepAliveEnabled(WKPreferencesRef, bool flag);
+WK_EXPORT bool WKPreferencesGetFetchAPIKeepAliveEnabled(WKPreferencesRef);
+
 // Defaults to true.
 WK_EXPORT void WKPreferencesSetLargeImageAsyncDecodingEnabled(WKPreferencesRef preferencesRef, bool flag);
 WK_EXPORT bool WKPreferencesGetLargeImageAsyncDecodingEnabled(WKPreferencesRef preferencesRef);

@@ -564,6 +564,9 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification;
 - (void)setWebAnimationsEnabled:(BOOL)flag;
 - (BOOL)webAnimationsEnabled;
 
+- (void)setFetchAPIKeepAliveEnabled:(BOOL)flag;
+- (BOOL)fetchAPIKeepAliveEnabled;
+
 - (void)setModernMediaControlsEnabled:(BOOL)flag;
 - (BOOL)modernMediaControlsEnabled;
 

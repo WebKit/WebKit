@@ -2013,6 +2013,20 @@ HRESULT WebPreferences::modernMediaControlsEnabled(_Out_ BOOL* enabled)
     return S_OK;
 }
 
+HRESULT WebPreferences::fetchAPIKeepAliveEnabled(_Out_ BOOL* enabled)
+{
+    if (!enabled)
+        return E_POINTER;
+    *enabled = boolValueForKey(WebKitFetchAPIKeepAliveEnabledPreferenceKey);
+    return S_OK;
+}
+
+HRESULT WebPreferences::setFetchAPIKeepAliveEnabled(BOOL enabled)
+{
+    setBoolValue(WebKitFetchAPIKeepAliveEnabledPreferenceKey, enabled);
+    return S_OK;
+}
+
 HRESULT WebPreferences::setLinkPreloadEnabled(BOOL enabled)
 {
     setBoolValue(WebKitLinkPreloadEnabledPreferenceKey, enabled);

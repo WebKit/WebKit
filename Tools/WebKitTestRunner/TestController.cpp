@@ -725,6 +725,7 @@ void TestController::resetPreferencesToConsistentValues(const TestOptions& optio
     // FIXME: We should be testing the default.
     WKPreferencesSetStorageBlockingPolicy(preferences, kWKAllowAllStorage);
 
+    WKPreferencesSetFetchAPIKeepAliveEnabled(preferences, true);
     WKPreferencesSetResourceTimingEnabled(preferences, true);
     WKPreferencesSetUserTimingEnabled(preferences, true);
     WKPreferencesSetMediaPreloadingEnabled(preferences, true);

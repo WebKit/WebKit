@@ -5233,6 +5233,11 @@ HRESULT WebView::notifyPreferencesChanged(IWebNotification* notification)
         return hr;
     RuntimeEnabledFeatures::sharedFeatures().setLinkPreloadEnabled(!!enabled);
 
+    hr = prefsPrivate->fetchAPIKeepAliveEnabled(&enabled);
+    if (FAILED(hr))
+        return hr;
+    RuntimeEnabledFeatures::sharedFeatures().setFetchAPIKeepAliveEnabled(!!enabled);
+
     hr = prefsPrivate->mediaPreloadingEnabled(&enabled);
     if (FAILED(hr))
         return hr;

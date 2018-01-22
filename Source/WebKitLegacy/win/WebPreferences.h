@@ -267,6 +267,8 @@ public:
     virtual HRESULT STDMETHODCALLTYPE setInspectorAdditionsEnabled(BOOL);
     virtual HRESULT STDMETHODCALLTYPE visualViewportAPIEnabled(_Out_ BOOL*);
     virtual HRESULT STDMETHODCALLTYPE setVisualViewportAPIEnabled(BOOL);
+    virtual HRESULT STDMETHODCALLTYPE fetchAPIKeepAliveEnabled(_Out_ BOOL*);
+    virtual HRESULT STDMETHODCALLTYPE setFetchAPIKeepAliveEnabled(BOOL);
 
     // WebPreferences
 

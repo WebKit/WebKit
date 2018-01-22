@@ -1123,6 +1123,15 @@ IsSecureContextAttributeEnabled:
   category: experimental
   webcoreBinding: RuntimeEnabledFeatures
 
+FetchAPIKeepAliveEnabled:
+  type: bool
+  defaultValue: false
+  humanReadableName: "Fetch API Request KeepAlive"
+  humanReadableDescription: "Enable Fetch API Request KeepAlive"
+  category: experimental
+  webcoreBinding: RuntimeEnabledFeatures
+  webcoreName: fetchAPIKeepAliveEnabled
+
 ServiceWorkersEnabled:
   type: bool
   defaultValue: DEFAULT_SERVICE_WORKERS_ENABLED
