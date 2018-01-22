@@ -1,5 +1,52 @@
 2018-01-22  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Unreviewed. Update W3C WebDriver imported tests.
+
+        * imported/w3c/importer.json:
+        * imported/w3c/tools/webdriver/webdriver/client.py:
+        * imported/w3c/tools/webdriver/webdriver/protocol.py:
+        * imported/w3c/tools/webdriver/webdriver/servo.py: Removed.
+        * imported/w3c/tools/webdriver/webdriver/transport.py:
+        * imported/w3c/tools/wptrunner/MANIFEST.in:
+        * imported/w3c/tools/wptrunner/README.rst:
+        * imported/w3c/tools/wptrunner/docs/conf.py:
+        * imported/w3c/tools/wptrunner/docs/usage.rst:
+        * imported/w3c/tools/wptrunner/setup.py:
+        * imported/w3c/tools/wptrunner/tox.ini:
+        * imported/w3c/tools/wptrunner/wptrunner/browsers/__init__.py:
+        * imported/w3c/tools/wptrunner/wptrunner/browsers/b2g_setup/certtest_app.zip: Removed.
+        * imported/w3c/tools/wptrunner/wptrunner/browsers/chrome_android.py: Copied from WebDriverTests/imported/w3c/tools/wptrunner/wptrunner/browsers/ie.py.
+        * imported/w3c/tools/wptrunner/wptrunner/browsers/firefox.py:
+        * imported/w3c/tools/wptrunner/wptrunner/browsers/ie.py:
+        * imported/w3c/tools/wptrunner/wptrunner/browsers/servo.py:
+        * imported/w3c/tools/wptrunner/wptrunner/environment.py:
+        * imported/w3c/tools/wptrunner/wptrunner/executors/base.py:
+        * imported/w3c/tools/wptrunner/wptrunner/executors/executormarionette.py:
+        * imported/w3c/tools/wptrunner/wptrunner/executors/executorselenium.py:
+        * imported/w3c/tools/wptrunner/wptrunner/executors/executorservo.py:
+        * imported/w3c/tools/wptrunner/wptrunner/executors/executorservodriver.py:
+        * imported/w3c/tools/wptrunner/wptrunner/manifestupdate.py:
+        * imported/w3c/tools/wptrunner/wptrunner/metadata.py:
+        * imported/w3c/tools/wptrunner/wptrunner/stability.py:
+        * imported/w3c/tools/wptrunner/wptrunner/testloader.py:
+        * imported/w3c/tools/wptrunner/wptrunner/testrunner.py:
+        * imported/w3c/tools/wptrunner/wptrunner/tests/test_hosts.py:
+        * imported/w3c/tools/wptrunner/wptrunner/update/__init__.py:
+        * imported/w3c/tools/wptrunner/wptrunner/update/sync.py:
+        * imported/w3c/tools/wptrunner/wptrunner/update/tree.py:
+        * imported/w3c/tools/wptrunner/wptrunner/vcs.py:
+        * imported/w3c/tools/wptrunner/wptrunner/webdriver_server.py:
+        * imported/w3c/tools/wptrunner/wptrunner/wptcommandline.py:
+        * imported/w3c/tools/wptrunner/wptrunner/wptmanifest/tests/test_serializer.py:
+        * imported/w3c/tools/wptrunner/wptrunner/wptmanifest/tests/test_tokenizer.py:
+        * imported/w3c/tools/wptrunner/wptrunner/wptrunner.py:
+        * imported/w3c/tools/wptrunner/wptrunner/wpttest.py:
+        * imported/w3c/webdriver/tests/execute_async_script/__init__.py: Added.
+        * imported/w3c/webdriver/tests/execute_script/__init__.py: Added.
+        * imported/w3c/webdriver/tests/sessions/new_session/response.py:
+
+2018-01-22  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] WebDriver: test imported/w3c/webdriver/tests/sessions/new_session/response.py is crashing in the bots
         https://bugs.webkit.org/show_bug.cgi?id=181904
 

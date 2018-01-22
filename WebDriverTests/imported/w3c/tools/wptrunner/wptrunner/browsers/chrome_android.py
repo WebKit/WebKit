@@ -1,16 +1,17 @@
 from .base import Browser, ExecutorBrowser, require_arg
-from ..webdriver_server import InternetExplorerDriverServer
+from ..webdriver_server import ChromeDriverServer
 from ..executors import executor_kwargs as base_executor_kwargs
 from ..executors.executorselenium import (SeleniumTestharnessExecutor,
                                           SeleniumRefTestExecutor)
-from ..executors.executorinternetexplorer import InternetExplorerDriverWdspecExecutor
+from ..executors.executorchrome import ChromeDriverWdspecExecutor
 
-__wptrunner__ = {"product": "ie",
+
+__wptrunner__ = {"product": "chrome_android",
                  "check_args": "check_args",
-                 "browser": "InternetExplorerBrowser",
+                 "browser": "ChromeAndroidBrowser",
                  "executor": {"testharness": "SeleniumTestharnessExecutor",
                               "reftest": "SeleniumRefTestExecutor",
-                              "wdspec": "InternetExplorerDriverWdspecExecutor"},
+                              "wdspec": "ChromeDriverWdspecExecutor"},
                  "browser_kwargs": "browser_kwargs",
                  "executor_kwargs": "executor_kwargs",
                  "env_extras": "env_extras",
@@ -20,45 +21,63 @@ __wptrunner__ = {"product": "ie",
 def check_args(**kwargs):
     require_arg(kwargs, "webdriver_binary")
 
+
 def browser_kwargs(test_type, run_info_data, **kwargs):
-    return {"webdriver_binary": kwargs["webdriver_binary"],
+    return {"binary": kwargs["binary"],
+            "webdriver_binary": kwargs["webdriver_binary"],
             "webdriver_args": kwargs.get("webdriver_args")}
+
 
 def executor_kwargs(test_type, server_config, cache_manager, run_info_data,
                     **kwargs):
     from selenium.webdriver import DesiredCapabilities
 
-    options = {}
-    options["requireWindowFocus"] = True
-    capabilities = {}
-    capabilities["se:ieOptions"] = options
     executor_kwargs = base_executor_kwargs(test_type, server_config,
                                            cache_manager, **kwargs)
     executor_kwargs["close_after_done"] = True
+    capabilities = dict(DesiredCapabilities.CHROME.items())
+    capabilities["chromeOptions"] = {}
+    # required to start on mobile
+    capabilities["chromeOptions"]["androidPackage"] = "com.android.chrome"
+
+    for (kwarg, capability) in [("binary", "binary"), ("binary_args", "args")]:
+        if kwargs[kwarg] is not None:
+            capabilities["chromeOptions"][capability] = kwargs[kwarg]
+    if test_type == "testharness":
+        capabilities["useAutomationExtension"] = False
+        capabilities["excludeSwitches"] = ["enable-automation"]
+    if test_type == "wdspec":
+        capabilities["chromeOptions"]["w3c"] = True
     executor_kwargs["capabilities"] = capabilities
     return executor_kwargs
+
 
 def env_extras(**kwargs):
     return []
 
+
 def env_options():
     return {"host": "web-platform.test",
-            "bind_hostname": "true",
-            "supports_debugger": False}
+            "bind_hostname": "true"}
 
-class InternetExplorerBrowser(Browser):
-    used_ports = set()
 
-    def __init__(self, logger, webdriver_binary, webdriver_args=None):
+class ChromeAndroidBrowser(Browser):
+    """Chrome is backed by chromedriver, which is supplied through
+    ``wptrunner.webdriver.ChromeDriverServer``.
+    """
+
+    def __init__(self, logger, binary, webdriver_binary="chromedriver",
+                 webdriver_args=None):
+        """Creates a new representation of Chrome.  The `binary` argument gives
+        the browser binary to use for testing."""
         Browser.__init__(self, logger)
-        self.server = InternetExplorerDriverServer(self.logger,
-                                                   binary=webdriver_binary,
-                                                   args=webdriver_args)
-        self.webdriver_host = "localhost"
-        self.webdriver_port = self.server.port
+        self.binary = binary
+        self.server = ChromeDriverServer(self.logger,
+                                         binary=webdriver_binary,
+                                         args=webdriver_args)
 
     def start(self, **kwargs):
-        self.server.start()
+        self.server.start(block=False)
 
     def stop(self, force=False):
         self.server.stop(force=force)
@@ -67,7 +86,7 @@ class InternetExplorerBrowser(Browser):
         return self.server.pid
 
     def is_alive(self):
-        # TODO(ato): This only indicates the server is alive,
+        # TODO(ato): This only indicates the driver is alive,
         # and doesn't say anything about whether a browser session
         # is active.
         return self.server.is_alive()
