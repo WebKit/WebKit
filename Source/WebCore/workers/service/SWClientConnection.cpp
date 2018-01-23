@@ -116,7 +116,7 @@ void SWClientConnection::startScriptFetchForServer(ServiceWorkerJobIdentifier jo
 }
 
 
-void SWClientConnection::postMessageToServiceWorkerClient(DocumentIdentifier destinationContextIdentifier, Ref<SerializedScriptValue>&& message, ServiceWorkerData&& sourceData, const String& sourceOrigin)
+void SWClientConnection::postMessageToServiceWorkerClient(DocumentIdentifier destinationContextIdentifier, MessageWithMessagePorts&& message, ServiceWorkerData&& sourceData, const String& sourceOrigin)
 {
     ASSERT(isMainThread());
 
@@ -131,8 +131,7 @@ void SWClientConnection::postMessageToServiceWorkerClient(DocumentIdentifier des
 
     MessageEventSource source = RefPtr<ServiceWorker> { ServiceWorker::getOrCreate(*destinationDocument, WTFMove(sourceData)) };
 
-    // FIXME: We should pass in ports.
-    auto messageEvent = MessageEvent::create({ }, WTFMove(message), sourceOrigin, { }, WTFMove(source));
+    auto messageEvent = MessageEvent::create(MessagePort::entanglePorts(*destinationDocument, WTFMove(message.transferredPorts)), WTFMove(message.message), sourceOrigin, { }, WTFMove(source));
     container->dispatchEvent(messageEvent);
 }
 

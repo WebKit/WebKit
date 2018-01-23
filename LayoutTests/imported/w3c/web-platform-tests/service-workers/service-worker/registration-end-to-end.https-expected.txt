@@ -1,3 +1,3 @@
 
-FAIL Registration: end-to-end Passing MessagePort objects to postMessage is not yet supported
+PASS Registration: end-to-end 
 

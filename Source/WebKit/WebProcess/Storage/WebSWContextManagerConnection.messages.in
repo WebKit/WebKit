@@ -25,7 +25,7 @@
 messages -> WebSWContextManagerConnection {
     InstallServiceWorker(struct WebCore::ServiceWorkerContextData contextData, PAL::SessionID sessionID)
     StartFetch(WebCore::SWServerConnectionIdentifier serverConnectionIdentifier, uint64_t fetchIdentifier, WebCore::ServiceWorkerIdentifier serviceWorkerIdentifier, WebCore::ResourceRequest request, struct WebCore::FetchOptions options, IPC::FormDataReference requestBody, String referrer)
-    PostMessageToServiceWorker(WebCore::ServiceWorkerIdentifier destinationIdentifier, IPC::DataReference message, WebCore::ServiceWorkerOrClientData sourceData)
+    PostMessageToServiceWorker(WebCore::ServiceWorkerIdentifier destinationIdentifier, struct WebCore::MessageWithMessagePorts message, WebCore::ServiceWorkerOrClientData sourceData)
     FireInstallEvent(WebCore::ServiceWorkerIdentifier identifier)
     FireActivateEvent(WebCore::ServiceWorkerIdentifier identifier)
     TerminateWorker(WebCore::ServiceWorkerIdentifier identifier)

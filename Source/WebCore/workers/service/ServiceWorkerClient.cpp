@@ -88,22 +88,18 @@ ExceptionOr<void> ServiceWorkerClient::postMessage(ScriptExecutionContext& conte
     ASSERT(execState);
 
     Vector<RefPtr<MessagePort>> ports;
-    auto message = SerializedScriptValue::create(*execState, messageValue, WTFMove(transfer), ports, SerializationContext::WorkerPostMessage);
-    if (message.hasException())
-        return message.releaseException();
+    auto messageData = SerializedScriptValue::create(*execState, messageValue, WTFMove(transfer), ports, SerializationContext::WorkerPostMessage);
+    if (messageData.hasException())
+        return messageData.releaseException();
 
     // Disentangle the port in preparation for sending it to the remote context.
-    auto channelsOrException = MessagePort::disentanglePorts(WTFMove(ports));
-    if (channelsOrException.hasException())
-        return channelsOrException.releaseException();
+    auto portsOrException = MessagePort::disentanglePorts(WTFMove(ports));
+    if (portsOrException.hasException())
+        return portsOrException.releaseException();
 
-    // FIXME: Support sending the channels.
-    auto channels = channelsOrException.releaseReturnValue();
-    if (!channels.isEmpty())
-        return Exception { NotSupportedError, ASCIILiteral("Passing MessagePort objects to postMessage is not yet supported") };
-
+    MessageWithMessagePorts message = { messageData.releaseReturnValue(), portsOrException.releaseReturnValue() };
     auto sourceIdentifier = downcast<ServiceWorkerGlobalScope>(context).thread().identifier();
-    callOnMainThread([message = message.releaseReturnValue(), destinationIdentifier = identifier(), sourceIdentifier, sourceOrigin = context.origin().isolatedCopy()] () mutable {
+    callOnMainThread([message = WTFMove(message), destinationIdentifier = identifier(), sourceIdentifier, sourceOrigin = context.origin().isolatedCopy()] () mutable {
         if (auto* connection = SWContextManager::singleton().connection())
             connection->postMessageToServiceWorkerClient(destinationIdentifier, WTFMove(message), sourceIdentifier, sourceOrigin);
     });

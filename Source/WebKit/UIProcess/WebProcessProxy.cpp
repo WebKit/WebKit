@@ -1262,6 +1262,10 @@ void WebProcessProxy::entangleLocalPortInThisProcessToRemote(const MessagePortId
 {
     m_processEntangledPorts.add(local);
     UIMessagePortChannelProvider::singleton().registry().didEntangleLocalToRemote(local, remote, coreProcessIdentifier());
+
+    auto* channel = UIMessagePortChannelProvider::singleton().registry().existingChannelContainingPort(local);
+    if (channel && channel->hasAnyMessagesPendingOrInFlight())
+        send(Messages::WebProcess::MessagesAvailableForPort(local), 0);
 }
 
 void WebProcessProxy::messagePortDisentangled(const MessagePortIdentifier& port)
@@ -1304,9 +1308,11 @@ void WebProcessProxy::postMessageToRemote(MessageWithMessagePorts&& message, con
         // Look up the process for that port
         auto* channel = UIMessagePortChannelProvider::singleton().registry().existingChannelContainingPort(port);
         ASSERT(channel);
-        auto process = channel->processForPort(port);
-        if (process)
-            send(Messages::WebProcess::MessagesAvailableForPort(port), 0);
+        auto processIdentifier = channel->processForPort(port);
+        if (processIdentifier) {
+            if (auto* process = WebProcessProxy::processForIdentifier(*processIdentifier))
+                process->send(Messages::WebProcess::MessagesAvailableForPort(port), 0);
+        }
     }
 }
 

@@ -42,6 +42,6 @@ messages -> StorageProcess LegacyReceiver {
     DidReceiveFetchData(WebCore::SWServerConnectionIdentifier serverConnectionIdentifier, uint64_t fetchIdentifier, IPC::DataReference data, int64_t encodedDataLength)
     DidReceiveFetchFormData(WebCore::SWServerConnectionIdentifier serverConnectionIdentifier, uint64_t fetchIdentifier, IPC::FormDataReference data)
     DidFinishFetch(WebCore::SWServerConnectionIdentifier serverConnectionIdentifier, uint64_t fetchIdentifier)
-    PostMessageToServiceWorkerClient(struct WebCore::ServiceWorkerClientIdentifier destinationIdentifier, IPC::DataReference message, WebCore::ServiceWorkerIdentifier sourceIdentifier, String sourceOrigin)
+    PostMessageToServiceWorkerClient(struct WebCore::ServiceWorkerClientIdentifier destinationIdentifier, struct WebCore::MessageWithMessagePorts message, WebCore::ServiceWorkerIdentifier sourceIdentifier, String sourceOrigin)
 #endif
 }

@@ -107,21 +107,14 @@ ExceptionOr<void> ServiceWorker::postMessage(ScriptExecutionContext& context, JS
     ASSERT(execState);
 
     Vector<RefPtr<MessagePort>> ports;
-    auto message = SerializedScriptValue::create(*execState, messageValue, WTFMove(transfer), ports, SerializationContext::WorkerPostMessage);
-    if (message.hasException())
-        return message.releaseException();
+    auto messageData = SerializedScriptValue::create(*execState, messageValue, WTFMove(transfer), ports, SerializationContext::WorkerPostMessage);
+    if (messageData.hasException())
+        return messageData.releaseException();
 
     // Disentangle the port in preparation for sending it to the remote context.
-    auto channelsOrException = MessagePort::disentanglePorts(WTFMove(ports));
-    if (channelsOrException.hasException())
-        return channelsOrException.releaseException();
-
-    // FIXME: Support sending the channels.
-    auto channels = channelsOrException.releaseReturnValue();
-    if (!channels.isEmpty()) {
-        WORKER_RELEASE_LOG_ERROR_IF_ALLOWED("postMessage: Passing MessagePort objects to postMessage is not yet supported");
-        return Exception { NotSupportedError, ASCIILiteral("Passing MessagePort objects to postMessage is not yet supported") };
-    }
+    auto portsOrException = MessagePort::disentanglePorts(WTFMove(ports));
+    if (portsOrException.hasException())
+        return portsOrException.releaseException();
 
     ServiceWorkerOrClientIdentifier sourceIdentifier;
     if (is<ServiceWorkerGlobalScope>(context))
@@ -131,9 +124,10 @@ ExceptionOr<void> ServiceWorker::postMessage(ScriptExecutionContext& context, JS
         sourceIdentifier = ServiceWorkerClientIdentifier { connection.serverConnectionIdentifier(), downcast<Document>(context).identifier() };
     }
 
+    MessageWithMessagePorts message = { messageData.releaseReturnValue(), portsOrException.releaseReturnValue() };
     callOnMainThread([sessionID = context.sessionID(), destinationIdentifier = identifier(), message = WTFMove(message), sourceIdentifier = WTFMove(sourceIdentifier)]() mutable {
         auto& connection = ServiceWorkerProvider::singleton().serviceWorkerConnectionForSession(sessionID);
-        connection.postMessageToServiceWorker(destinationIdentifier, message.releaseReturnValue(), sourceIdentifier);
+        connection.postMessageToServiceWorker(destinationIdentifier, WTFMove(message), sourceIdentifier);
     });
     return { };
 }

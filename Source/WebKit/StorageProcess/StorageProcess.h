@@ -42,9 +42,10 @@ class FormDataReference;
 
 namespace WebCore {
 class SWServer;
+class ServiceWorkerRegistrationKey;
+struct MessageWithMessagePorts;
 struct SecurityOriginData;
 struct ServiceWorkerClientIdentifier;
-class ServiceWorkerRegistrationKey;
 }
 
 namespace WebKit {
@@ -135,7 +136,7 @@ private:
     void didFailFetch(WebCore::SWServerConnectionIdentifier, uint64_t fetchIdentifier);
     void didNotHandleFetch(WebCore::SWServerConnectionIdentifier, uint64_t fetchIdentifier);
 
-    void postMessageToServiceWorkerClient(const WebCore::ServiceWorkerClientIdentifier& destinationIdentifier, const IPC::DataReference& message, WebCore::ServiceWorkerIdentifier sourceIdentifier, const String& sourceOrigin);
+    void postMessageToServiceWorkerClient(const WebCore::ServiceWorkerClientIdentifier& destinationIdentifier, WebCore::MessageWithMessagePorts&&, WebCore::ServiceWorkerIdentifier sourceIdentifier, const String& sourceOrigin);
     WebSWOriginStore& swOriginStoreForSession(PAL::SessionID);
     bool needsServerToContextConnection() const;
 #endif

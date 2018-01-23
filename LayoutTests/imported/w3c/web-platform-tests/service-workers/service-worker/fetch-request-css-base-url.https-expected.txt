@@ -1,3 +1,4 @@
 
-FAIL CSS's base URL must be the request URL even when fetched from other URL. assert_unreached: unexpected rejection: Passing MessagePort objects to postMessage is not yet supported Reached unreachable code
+
+FAIL CSS's base URL must be the request URL even when fetched from other URL. assert_equals: The base URL while loading the images referred from CSS must be the request URL of CSS. expected "https://localhost:9443/service-workers/service-worker/resources/dummy.png" but got "https://127.0.0.1:9443/service-workers/service-worker/resources/dummy.png"
 

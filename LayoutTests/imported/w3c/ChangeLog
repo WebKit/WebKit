@@ -1,3 +1,42 @@
+2018-01-23  Brady Eidson  <beidson@apple.com>
+
+        Allow passing MessagePorts across processes (e.g. ServiceWorkers).
+        https://bugs.webkit.org/show_bug.cgi?id=181178
+
+        Reviewed by Andy Estes.
+
+        Re-baseline for many new passes and a few new failure modes.
+
+        * web-platform-tests/service-workers/service-worker/ServiceWorkerGlobalScope/extendable-message-event.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/ServiceWorkerGlobalScope/postmessage.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/ServiceWorkerGlobalScope/registration-attribute.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/ServiceWorkerGlobalScope/unregister.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/claim-affect-other-registration.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/claim-fetch.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/claim-not-using-registration.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/claim-using-registration.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/claim-worker-fetch.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/client-id.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/clients-get-cross-origin.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/clients-get.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/clients-matchall-client-types.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/clients-matchall-exact-controller.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/clients-matchall-order.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/clients-matchall.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/extendable-event-async-waituntil.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/fetch-event-async-respond-with.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/fetch-event-respond-with-stops-propagation.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/fetch-event-throws-after-respond-with.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/fetch-request-css-base-url.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/fetch-request-css-images.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/fetch-request-fallback.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/fetch-request-no-freshness-headers.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/fetch-request-resources.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/immutable-prototype-serviceworker.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/registration-end-to-end.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/registration-events.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/skip-waiting-installed.https-expected.txt:
+
 2018-01-22  Chris Nardi  <csnardi1@gmail.com>
 
         Parse calc() in CSS media queries

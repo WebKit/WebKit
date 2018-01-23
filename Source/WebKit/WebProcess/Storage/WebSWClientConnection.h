@@ -32,6 +32,7 @@
 #include "MessageSender.h"
 #include "ServiceWorkerClientFetch.h"
 #include "SharedMemory.h"
+#include <WebCore/MessageWithMessagePorts.h>
 #include <WebCore/SWClientConnection.h>
 #include <pal/SessionID.h>
 #include <wtf/UniqueRef.h>
@@ -62,7 +63,7 @@ public:
     bool mayHaveServiceWorkerRegisteredForOrigin(const WebCore::SecurityOrigin&) const final;
     void startFetch(uint64_t fetchIdentifier, WebCore::ServiceWorkerRegistrationIdentifier, const WebCore::ResourceRequest&, const WebCore::FetchOptions&, const String& referrer);
 
-    void postMessageToServiceWorkerClient(WebCore::DocumentIdentifier destinationContextIdentifier, const IPC::DataReference& message, WebCore::ServiceWorkerData&& source, const String& sourceOrigin);
+    void postMessageToServiceWorkerClient(WebCore::DocumentIdentifier destinationContextIdentifier, WebCore::MessageWithMessagePorts&&, WebCore::ServiceWorkerData&& source, const String& sourceOrigin);
 
     void connectionToServerLost();
 
@@ -73,7 +74,7 @@ private:
 
     void scheduleJobInServer(const WebCore::ServiceWorkerJobData&) final;
     void finishFetchingScriptInServer(const WebCore::ServiceWorkerFetchResult&) final;
-    void postMessageToServiceWorker(WebCore::ServiceWorkerIdentifier destinationIdentifier, Ref<WebCore::SerializedScriptValue>&&, const WebCore::ServiceWorkerOrClientIdentifier& source) final;
+    void postMessageToServiceWorker(WebCore::ServiceWorkerIdentifier destinationIdentifier, WebCore::MessageWithMessagePorts&&, const WebCore::ServiceWorkerOrClientIdentifier& source) final;
     void registerServiceWorkerClient(const WebCore::SecurityOrigin& topOrigin, const WebCore::ServiceWorkerClientData&, const std::optional<WebCore::ServiceWorkerIdentifier>&) final;
     void unregisterServiceWorkerClient(WebCore::DocumentIdentifier) final;
 

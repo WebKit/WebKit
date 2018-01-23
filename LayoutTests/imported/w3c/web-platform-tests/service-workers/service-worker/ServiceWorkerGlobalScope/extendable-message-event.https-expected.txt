@@ -1,5 +1,5 @@
 
-FAIL Post an extendable message from a top-level client promise_test: Unhandled rejection with value: object "NotSupportedError: Passing MessagePort objects to postMessage is not yet supported"
+PASS Post an extendable message from a top-level client 
 FAIL Post an extendable message from a nested client assert_equals: event `source` property `focused` expected false but got true
 PASS Post loopback extendable messages 
 PASS Post extendable messages among service workers 

@@ -1,4 +1,4 @@
 
 PASS Verify registration attributes on ServiceWorkerGlobalScope 
-FAIL Verify registration attributes on ServiceWorkerGlobalScope of the newer worker promise_test: Unhandled rejection with value: object "NotSupportedError: Passing MessagePort objects to postMessage is not yet supported"
+PASS Verify registration attributes on ServiceWorkerGlobalScope of the newer worker 
 

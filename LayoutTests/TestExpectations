@@ -160,11 +160,19 @@ imported/w3c/web-platform-tests/service-workers/service-worker/update-after-oned
 imported/w3c/web-platform-tests/service-workers/service-worker/update-bytecheck.https.html [ Skip ]
 imported/w3c/web-platform-tests/service-workers/service-worker/update-recovery.https.html [ Skip ]
 imported/w3c/web-platform-tests/service-workers/service-worker/client-navigate.https.html [ Skip ]
+imported/w3c/web-platform-tests/service-workers/service-worker/clients-matchall-include-uncontrolled.https.html [ Skip ]
+imported/w3c/web-platform-tests/service-workers/service-worker/indexeddb.https.html [ Skip ]
 
 # Unsupported features: SharedWorker, NavigationPreload
 imported/w3c/web-platform-tests/service-workers/service-worker/navigation-preload [ Skip ]
 imported/w3c/web-platform-tests/service-workers/service-worker/shared-worker-controlled.https.html [ Skip ]
 imported/w3c/web-platform-tests/service-workers/service-worker/claim-shared-worker-fetch.https.html [ Skip ]
+
+# Reliably ASSERTS in ServiceWorkerClientFetch::didFinish
+imported/w3c/web-platform-tests/service-workers/service-worker/navigation-redirect-body.https.html [ Skip ]
+
+# Different failure string each test run due to a random number being dumped in test output
+imported/w3c/web-platform-tests/service-workers/service-worker/fetch-request-css-images.https.html [ Skip ]
 
 imported/w3c/web-platform-tests/service-workers/service-worker/about-blank-replacement.https.html [ Pass Failure ]
 webkit.org/b/179248 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-event-within-sw.https.html [ Pass Failure ]
