@@ -48,15 +48,17 @@ void WebPage::requestActiveNowPlayingSessionInfo(CallbackID callbackID)
     double duration = NAN;
     double elapsedTime = NAN;
     uint64_t uniqueIdentifier = 0;
+    bool registeredAsNowPlayingApplication = false;
     if (auto* sharedManager = WebCore::PlatformMediaSessionManager::sharedManagerIfExists()) {
         hasActiveSession = sharedManager->hasActiveNowPlayingSession();
         title = sharedManager->lastUpdatedNowPlayingTitle();
         duration = sharedManager->lastUpdatedNowPlayingDuration();
         elapsedTime = sharedManager->lastUpdatedNowPlayingElapsedTime();
         uniqueIdentifier = sharedManager->lastUpdatedNowPlayingInfoUniqueIdentifier();
+        registeredAsNowPlayingApplication = sharedManager->registeredAsNowPlayingApplication();
     }
 
-    send(Messages::WebPageProxy::NowPlayingInfoCallback(hasActiveSession, title, duration, elapsedTime, uniqueIdentifier, callbackID));
+    send(Messages::WebPageProxy::NowPlayingInfoCallback(hasActiveSession, registeredAsNowPlayingApplication, title, duration, elapsedTime, uniqueIdentifier, callbackID));
 }
 
 } // namespace WebKit

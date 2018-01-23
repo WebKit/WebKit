@@ -550,6 +550,8 @@ public:
 
     bool willLog(WTFLogLevel) const;
 
+    bool isSuspended() const final;
+
 protected:
     HTMLMediaElement(const QualifiedName&, Document&, bool createdByParser);
     virtual void finishInitialization();
@@ -860,7 +862,6 @@ private:
     bool shouldOverrideBackgroundLoadingRestriction() const override;
     bool canProduceAudio() const final;
     bool processingUserGestureForMedia() const final;
-    bool isSuspended() const final;
 
     void pageMutedStateDidChange() override;
 

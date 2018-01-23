@@ -1,3 +1,39 @@
+2018-01-23  Eric Carlson  <eric.carlson@apple.com>
+
+        Resign NowPlaying status when no media element is eligible
+        https://bugs.webkit.org/show_bug.cgi?id=181914
+        <rdar://problem/35294116>
+
+        Reviewed by Jer Noble.
+
+        Updated API test.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::removedFromAncestor): Call mediaSession->clientCharacteristicsChanged
+        so NowPlaying status will be updated.
+
+        * html/MediaElementSession.cpp:
+        (WebCore::MediaElementSession::playbackPermitted const): Return early when the media 
+        element has been suspended.
+        (WebCore::MediaElementSession::canShowControlsManager const): Return false when being queried
+        for NowPlaying status in an inactive document or when element has been suspended.
+        (WebCore::isMainContentForPurposesOfAutoplay): Return early if it isn't safe to update
+        style because HitTest can force a layout.
+        (WebCore::MediaElementSession::updateIsMainContent const): Ditto.
+
+        * platform/audio/PlatformMediaSessionManager.cpp:
+        (WebCore::PlatformMediaSessionManager::updateNowPlayingInfoIfNecessary): Implement in for all
+        ports.
+        * platform/audio/PlatformMediaSessionManager.h:
+        (WebCore::PlatformMediaSessionManager::registeredAsNowPlayingApplication const):
+        * platform/audio/ios/MediaSessionManagerIOS.h:
+        * platform/audio/mac/MediaSessionManagerMac.h:
+        * platform/audio/mac/MediaSessionManagerMac.mm:
+        (WebCore::MediaSessionManagerMac::updateNowPlayingInfo): Call MRMediaRemoteSetCanBeNowPlayingApplication
+        whenever status changes.
+        (WebCore::PlatformMediaSessionManager::updateNowPlayingInfoIfNecessary): Deleted, implemented
+        in the base class.
+
 2018-01-23  Alex Christensen  <achristensen@webkit.org>
 
         Use CompletionHandlers for ResourceHandleClient::didReceiveResponseAsync

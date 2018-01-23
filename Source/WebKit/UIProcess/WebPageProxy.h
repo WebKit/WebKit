@@ -297,7 +297,7 @@ using DrawToPDFCallback = GenericCallback<const IPC::DataReference&>;
 
 #if PLATFORM(COCOA)
 typedef GenericCallback<const WebCore::MachSendRight&> MachSendRightCallback;
-typedef GenericCallback<bool, String, double, double, uint64_t> NowPlayingInfoCallback;
+typedef GenericCallback<bool, bool, String, double, double, uint64_t> NowPlayingInfoCallback;
 #endif
 
 class WebPageProxy : public API::ObjectImpl<API::Object::Type::Page>
@@ -1126,7 +1126,7 @@ public:
 
 #if PLATFORM(COCOA)
     void requestActiveNowPlayingSessionInfo(Ref<NowPlayingInfoCallback>&&);
-    void nowPlayingInfoCallback(bool, const String&, double, double, uint64_t, CallbackID);
+    void nowPlayingInfoCallback(bool, bool, const String&, double, double, uint64_t, CallbackID);
 #endif
 
 #if ENABLE(MEDIA_SESSION)

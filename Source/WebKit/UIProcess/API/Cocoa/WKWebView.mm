@@ -6074,16 +6074,16 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
 
 #endif // PLATFORM(MAC)
 
-- (void)_requestActiveNowPlayingSessionInfo:(void(^)(BOOL, NSString*, double, double, NSInteger))callback
+- (void)_requestActiveNowPlayingSessionInfo:(void(^)(BOOL, BOOL, NSString*, double, double, NSInteger))callback
 {
     if (!_page) {
-        callback(NO, @"", std::numeric_limits<double>::quiet_NaN(), std::numeric_limits<double>::quiet_NaN(), 0);
+        callback(NO, NO, @"", std::numeric_limits<double>::quiet_NaN(), std::numeric_limits<double>::quiet_NaN(), 0);
         return;
     }
 
     auto handler = makeBlockPtr(callback);
-    auto localCallback = WebKit::NowPlayingInfoCallback::create([handler](bool active, String title, double duration, double elapsedTime, uint64_t uniqueIdentifier, WebKit::CallbackBase::Error) {
-        handler(active, title, duration, elapsedTime, uniqueIdentifier);
+    auto localCallback = WebKit::NowPlayingInfoCallback::create([handler](bool active, bool registeredAsNowPlayingApplication, String title, double duration, double elapsedTime, uint64_t uniqueIdentifier, WebKit::CallbackBase::Error) {
+        handler(active, registeredAsNowPlayingApplication, title, duration, elapsedTime, uniqueIdentifier);
     });
 
     _page->requestActiveNowPlayingSessionInfo(WTFMove(localCallback));
