@@ -1,3 +1,53 @@
+2018-01-23  Robin Morisset  <rmorisset@apple.com>
+
+        Update the argument count in DFGByteCodeParser::handleRecursiveCall
+        https://bugs.webkit.org/show_bug.cgi?id=181739
+        <rdar://problem/36627662>
+
+        Reviewed by Saam Barati.
+
+        When calling a function, its number of arguments is set on the stack. When we turn a recursive tail call
+        into a jump, we should update that stack slot as there is no guarantee that the function was originally
+        called with the same number of arguments. Forgetting to do this is observable through 'arguments.length'.
+
+        It required adding a new DFG node: 'SetArgumentCountIncludingThis', that takes an unsigned int
+        as its first OpInfo field, and stores it to the stack at the right place.
+
+        We must be a bit careful in where we put this new node, as it ClobbersExit.
+        We must also fix DFGArgumentsEliminationPhase and DFGPutStackSinkingPhase as they assumed that any node that writes to the stack must write to either an argument or a local.
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGArgumentsEliminationPhase.cpp:
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleRecursiveTailCall):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGMayExit.cpp:
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::argumentCountIncludingThis):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        * dfg/DFGPutStackSinkingPhase.cpp:
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileSetArgumentCountIncludingThis):
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNode):
+        (JSC::FTL::DFG::LowerDFGToB3::compileSetArgumentCountIncludingThis):
+
 2018-01-22  Michael Saboff  <msaboff@apple.com>
 
         DFG abstract interpreter needs to properly model effects of some Math ops

@@ -11324,6 +11324,12 @@ void SpeculativeJIT::compileGetArgumentCountIncludingThis(Node* node)
     int32Result(result.gpr(), node);
 }
 
+void SpeculativeJIT::compileSetArgumentCountIncludingThis(Node* node)
+{
+    m_jit.store32(TrustedImm32(node->argumentCountIncludingThis()), JITCompiler::payloadFor(CallFrameSlot::argumentCount));
+    noResult(node);
+}
+
 void SpeculativeJIT::compileStrCat(Node* node)
 {
     JSValueOperand op1(this, node->child1(), ManualOperandSpeculation);

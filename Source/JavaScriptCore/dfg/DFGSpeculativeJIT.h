@@ -3125,6 +3125,7 @@ public:
     void compileGetSetter(Node*);
     void compileGetCallee(Node*);
     void compileGetArgumentCountIncludingThis(Node*);
+    void compileSetArgumentCountIncludingThis(Node*);
     void compileStrCat(Node*);
     void compileNewArrayWithSize(Node*);
     void compileNewTypedArray(Node*);

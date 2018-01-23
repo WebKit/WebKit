@@ -3808,6 +3808,10 @@ void SpeculativeJIT::compile(Node* node)
         compileGetArgumentCountIncludingThis(node);
         break;
     }
+
+    case SetArgumentCountIncludingThis:
+        compileSetArgumentCountIncludingThis(node);
+        break;
         
     case GetScope:
         compileGetScope(node);

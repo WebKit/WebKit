@@ -4016,6 +4016,10 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
 
+    case SetArgumentCountIncludingThis:
+        compileSetArgumentCountIncludingThis(node);
+        break;
+
     case GetRestLength: {
         compileGetRestLength(node);
         break;

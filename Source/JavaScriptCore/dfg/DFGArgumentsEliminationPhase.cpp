@@ -484,7 +484,9 @@ private:
                         }
                         ASSERT(!heap.payload().isTop());
                         VirtualRegister reg(heap.payload().value32());
-                        clobberedByThisBlock.operand(reg) = true;
+                        // The register may not point to an argument or local, for example if we are looking at SetArgumentCountIncludingThis.
+                        if (!reg.isHeader())
+                            clobberedByThisBlock.operand(reg) = true;
                     },
                     NoOpClobberize());
             }

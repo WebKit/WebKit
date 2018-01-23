@@ -1403,6 +1403,8 @@ bool ByteCodeParser::handleRecursiveTailCall(CallVariant callVariant, int regist
         flushForTerminal();
 
         // We must set the arguments to the right values
+        if (!stackEntry->m_inlineCallFrame)
+            addToGraph(SetArgumentCountIncludingThis, OpInfo(argumentCountIncludingThis));
         int argIndex = 0;
         for (; argIndex < argumentCountIncludingThis; ++argIndex) {
             Node* value = get(virtualRegisterForArgument(argIndex, registerOffset));

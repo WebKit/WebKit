@@ -706,6 +706,10 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         def(HeapLocation(StackPayloadLoc, AbstractHeap(Stack, CallFrameSlot::argumentCount)), LazyNode(node));
         return;
 
+    case SetArgumentCountIncludingThis:
+        write(AbstractHeap(Stack, CallFrameSlot::argumentCount));
+        return;
+
     case GetRestLength:
         read(Stack);
         return;

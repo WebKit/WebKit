@@ -918,6 +918,9 @@ private:
         case GetArgumentCountIncludingThis:
             compileGetArgumentCountIncludingThis();
             break;
+        case SetArgumentCountIncludingThis:
+            compileSetArgumentCountIncludingThis();
+            break;
         case GetScope:
             compileGetScope();
             break;
@@ -6342,6 +6345,11 @@ private:
     void compileGetArgumentCountIncludingThis()
     {
         setInt32(m_out.load32(payloadFor(CallFrameSlot::argumentCount)));
+    }
+
+    void compileSetArgumentCountIncludingThis()
+    {
+        m_out.store32(m_out.constInt32(m_node->argumentCountIncludingThis()), payloadFor(CallFrameSlot::argumentCount));
     }
     
     void compileGetScope()

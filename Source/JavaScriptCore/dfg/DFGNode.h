@@ -971,6 +971,12 @@ public:
         ASSERT(hasStackAccessData());
         return m_opInfo.as<StackAccessData*>();
     }
+
+    unsigned argumentCountIncludingThis()
+    {
+        ASSERT(op() == SetArgumentCountIncludingThis);
+        return m_opInfo.as<unsigned>();
+    }
     
     bool hasPhi()
     {

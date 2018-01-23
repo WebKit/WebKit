@@ -1,3 +1,15 @@
+2018-01-23  Robin Morisset  <rmorisset@apple.com>
+
+        Update the argument count in DFGByteCodeParser::handleRecursiveCall
+        https://bugs.webkit.org/show_bug.cgi?id=181739
+        <rdar://problem/36627662>
+
+        Reviewed by Saam Barati.
+
+        * stress/recursive-tail-call-with-different-argument-count.js: Added.
+        (foo):
+        (bar):
+
 2018-01-22  Michael Saboff  <msaboff@apple.com>
 
         DFG abstract interpreter needs to properly model effects of some Math ops
