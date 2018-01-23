@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function makeNarrow() {
+    document.getElementById("x").style.width = "50px";
+}
+
+function makeWide() {
+    document.getElementById("x").style.width = "200px";
+}
+
+function test() {
+    let nodeStyles = null;
+    let suite = InspectorTest.createAsyncSuite("ModifyCSSProperty");
+
+    suite.addTestCase({
+        name: "Update value when CSSStyleDeclaration is not locked",
+        test(resolve, reject) {
+            let getMatchedStyleDeclaration = () => {
+                for (let rule of nodeStyles.matchedRules) {
+                    if (rule.selectorText === ".rule-b")
+                        return rule.style;
+                }
+            };
+
+            let getProperty = (propertyName) => {
+                let styleDeclaration = getMatchedStyleDeclaration();
+                for (let property of styleDeclaration.properties) {
+                    if (property.name === propertyName)
+                        return property;
+                }
+            };
+
+            let styleDeclaration = getMatchedStyleDeclaration();
+            styleDeclaration.locked = false;
+            getProperty("font-size").rawValue = "11px";
+            getProperty("font-size").rawValue = "10px";
+
+            InspectorTest.expectEqual(getProperty("font-size").rawValue, "10px", `"font-size" property value should update immediately.`);
+
+            InspectorTest.expectEqual(styleDeclaration.text, `font-size: 12px; color: antiquewhite`, `Style declaration text should stay unchanged.`);
+
+            resolve();
+        }
+    });
+
+    suite.addTestCase({
+        name: "Update value when CSSStyleDeclaration is locked",
+        test(resolve, reject) {
+            let getMatchedStyleDeclaration = () => {
+                for (let rule of nodeStyles.matchedRules) {
+                    if (rule.selectorText === ".rule-a")
+                        return rule.style;
+                }
+            };
+
+            let getProperty = (propertyName) => {
+                let styleDeclaration = getMatchedStyleDeclaration();
+                for (let property of styleDeclaration.properties) {
+                    if (property.name === propertyName)
+                        return property;
+                }
+            };
+
+            let styleDeclaration = getMatchedStyleDeclaration();
+            styleDeclaration.locked = true;
+            getProperty("font-size").rawValue = "15px";
+            getProperty("font-size").rawValue = "16px";
+
+            InspectorTest.expectEqual(getProperty("font-size").rawValue, "16px", `"font-size" property value should update immediately.`);
+
+            InspectorTest.expectEqual(styleDeclaration.text, `
+        font-size: 16px;
+        color: #333;
+
+        margin-left: 0;
+        margin-top: 1em;
+    `, `Style declaration text should update immediately.`);
+
+            styleDeclaration.locked = false;
+
+            resolve();
+        }
+    });
+
+    suite.addTestCase({
+        name: "Update inline style value when CSSStyleDeclaration locked and not locked",
+        test(resolve, reject) {
+            let getInlineStyleDeclaration = () => {
+                for (let styleDeclaration of nodeStyles.orderedStyles) {
+                    if (styleDeclaration.type === styleDeclaration.constructor.Type.Inline)
+                        return styleDeclaration;
+                }
+            };
+
+            let getProperty = (propertyName) => {
+                let styleDeclaration = getInlineStyleDeclaration();
+                for (let property of styleDeclaration.properties) {
+                    if (property.name === propertyName)
+                        return property;
+                }
+            };
+
+            let styleDeclaration = getInlineStyleDeclaration();
+
+            styleDeclaration.awaitEvent(WI.CSSStyleDeclaration.Event.PropertiesChanged)
+                .then((event) => {
+                    InspectorTest.expectEqual(getProperty("width").rawValue, "200px", `"width" property value should update to "200px".`);
+                    InspectorTest.expectEqual(styleDeclaration.text, `width: 200px;`, `Inline style declaration text should update when not locked.`);
+                })
+                .then(resolve, reject);
+
+            styleDeclaration.locked = true;
+            getProperty("width").rawValue = "64px";
+            InspectorTest.expectEqual(styleDeclaration.text, `\nwidth: 64px;`, `Style declaration text should update immediately.`);
+
+            // WI.CSSStyleDeclaration.Event.PropertiesChanged event should not fire when the style declaration is locked.
+            InspectorTest.evaluateInPage(`makeNarrow()`);
+
+            styleDeclaration.locked = false;
+            getProperty("width").rawValue = "128px";
+            InspectorTest.expectEqual(styleDeclaration.text, `\nwidth: 64px;`, `Style declaration text should stay "width: 64px".`);
+
+            InspectorTest.evaluateInPage(`makeWide()`);
+        }
+    });
+
+    WI.domTreeManager.requestDocument((documentNode) => {
+        WI.domTreeManager.querySelector(documentNode.id, "#x", (contentNodeId) => {
+            if (contentNodeId) {
+                let domNode = WI.domTreeManager.nodeForId(contentNodeId);
+                nodeStyles = WI.cssStyleManager.stylesForNode(domNode);
+
+                if (nodeStyles.needsRefresh) {
+                    nodeStyles.singleFireEventListener(WI.DOMNodeStyles.Event.Refreshed, (event) => {
+                        suite.runTestCasesAndFinish()
+                    });
+                } else
+                    suite.runTestCasesAndFinish();
+            } else {
+                InspectorTest.fail("DOM node not found.");
+                InspectorTest.completeTest();
+            }
+        });
+    });
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>Testing that CSSStyleDeclaration update immediately after modifying its properties when it is not locked.</p>
+
+    <style>
+    .rule-a {
+        font-size: 14px;
+        color: #333;
+
+        margin-left: 0;
+        margin-top: 1em;
+    }
+    .rule-b {font-size: 12px; color: antiquewhite}
+    </style>
+    <div id="x" class="test-node rule-a rule-b" style="width: 100px"></div>
+</body>
+</html>
