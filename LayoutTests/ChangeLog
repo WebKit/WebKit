@@ -1,5 +1,22 @@
 2018-01-22  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r227348. rdar://problem/36746180
+
+    2018-01-22  Youenn Fablet  <youenn@apple.com>
+
+            Safari Tech Preview can't use GitHub login at forums.swift.org
+            https://bugs.webkit.org/show_bug.cgi?id=181908
+            <rdar://problem/36715111>
+
+            Reviewed by Chris Dumez.
+
+            * http/wpt/service-workers/navigation-redirect-worker.js: Added.
+            (async):
+            * http/wpt/service-workers/navigation-redirect.https-expected.txt: Added.
+            * http/wpt/service-workers/navigation-redirect.https.html: Added.
+
+2018-01-22  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r227174. rdar://problem/36723030
 
     2018-01-18  Chris Dumez  <cdumez@apple.com>
