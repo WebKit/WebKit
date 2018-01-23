@@ -1,3 +1,99 @@
+2018-01-23  Javier Fernandez  <jfernandez@igalia.com>
+
+        [css-align] 'left' and 'right' should parse as invalid in block/cross-axis alignment
+        https://bugs.webkit.org/show_bug.cgi?id=181792
+
+        Reviewed by Antti Koivisto.
+
+        The CSS WG resolved to remove the 'left' and 'right' values from the
+        block/cross axis alignment properties.
+
+        https://github.com/w3c/csswg-drafts/issues/1403
+
+        This patch changes the CSS parsing logic of all the CSS Box Alignment
+        properties, both block-axis (align-{self, items, content} and
+        inline-axis (justify-{self, items, content}).
+
+        Additionally, the alignment shorthands (place-{self, items, content})
+        have been also changed to respect the new syntax.
+
+        Despite the number of layout tests changed, I don't think this
+        change will break any content in current sites. The CSS values
+        'left' and 'right' were introduced by the new CSS Box Alignment
+        spec and only implemented by the CSS Grid Layout feature, shipped
+        last year. Additionally, the removed values have no effect on the
+        layout result when they are applied to the block/cross-axis CSS
+        Alignment properties.
+
+        Tests: imported/w3c/web-platform-tests/css/css-align/content-distribution/parse-align-content-001.html
+               imported/w3c/web-platform-tests/css/css-align/content-distribution/parse-align-content-002.html
+               imported/w3c/web-platform-tests/css/css-align/content-distribution/parse-align-content-003.html
+               imported/w3c/web-platform-tests/css/css-align/content-distribution/parse-align-content-004.html
+               imported/w3c/web-platform-tests/css/css-align/content-distribution/parse-align-content-005.html
+               imported/w3c/web-platform-tests/css/css-align/content-distribution/parse-justify-content-001.html
+               imported/w3c/web-platform-tests/css/css-align/content-distribution/parse-justify-content-002.html
+               imported/w3c/web-platform-tests/css/css-align/content-distribution/parse-justify-content-003.html
+               imported/w3c/web-platform-tests/css/css-align/content-distribution/parse-justify-content-004.html
+               imported/w3c/web-platform-tests/css/css-align/content-distribution/parse-justify-content-005.html
+               imported/w3c/web-platform-tests/css/css-align/content-distribution/place-content-shorthand-001.html
+               imported/w3c/web-platform-tests/css/css-align/content-distribution/place-content-shorthand-002.html
+               imported/w3c/web-platform-tests/css/css-align/content-distribution/place-content-shorthand-003.html
+               imported/w3c/web-platform-tests/css/css-align/content-distribution/place-content-shorthand-004.html
+               imported/w3c/web-platform-tests/css/css-align/content-distribution/place-content-shorthand-005.html
+               imported/w3c/web-platform-tests/css/css-align/content-distribution/place-content-shorthand-006.html
+               imported/w3c/web-platform-tests/css/css-align/default-alignment/justify-items-legacy-001.html
+               imported/w3c/web-platform-tests/css/css-align/default-alignment/parse-align-items-001.html
+               imported/w3c/web-platform-tests/css/css-align/default-alignment/parse-align-items-002.html
+               imported/w3c/web-platform-tests/css/css-align/default-alignment/parse-align-items-003.html
+               imported/w3c/web-platform-tests/css/css-align/default-alignment/parse-align-items-004.html
+               imported/w3c/web-platform-tests/css/css-align/default-alignment/parse-align-items-005.html
+               imported/w3c/web-platform-tests/css/css-align/default-alignment/parse-justify-items-001.html
+               imported/w3c/web-platform-tests/css/css-align/default-alignment/parse-justify-items-002.html
+               imported/w3c/web-platform-tests/css/css-align/default-alignment/parse-justify-items-003.html
+               imported/w3c/web-platform-tests/css/css-align/default-alignment/parse-justify-items-004.html
+               imported/w3c/web-platform-tests/css/css-align/default-alignment/parse-justify-items-005.html
+               imported/w3c/web-platform-tests/css/css-align/default-alignment/parse-justify-items-006.html
+               imported/w3c/web-platform-tests/css/css-align/default-alignment/place-items-shorthand-001.html
+               imported/w3c/web-platform-tests/css/css-align/default-alignment/place-items-shorthand-002.html
+               imported/w3c/web-platform-tests/css/css-align/default-alignment/place-items-shorthand-003.html
+               imported/w3c/web-platform-tests/css/css-align/default-alignment/place-items-shorthand-004.html
+               imported/w3c/web-platform-tests/css/css-align/default-alignment/place-items-shorthand-005.html
+               imported/w3c/web-platform-tests/css/css-align/default-alignment/place-items-shorthand-006.html
+               imported/w3c/web-platform-tests/css/css-align/distribution-values/space-evenly-001.html
+               imported/w3c/web-platform-tests/css/css-align/self-alignment/parse-align-self-001.html
+               imported/w3c/web-platform-tests/css/css-align/self-alignment/parse-align-self-002.html
+               imported/w3c/web-platform-tests/css/css-align/self-alignment/parse-align-self-003.html
+               imported/w3c/web-platform-tests/css/css-align/self-alignment/parse-align-self-004.html
+               imported/w3c/web-platform-tests/css/css-align/self-alignment/parse-align-self-005.html
+               imported/w3c/web-platform-tests/css/css-align/self-alignment/parse-justify-self-001.html
+               imported/w3c/web-platform-tests/css/css-align/self-alignment/parse-justify-self-002.html
+               imported/w3c/web-platform-tests/css/css-align/self-alignment/parse-justify-self-003.html
+               imported/w3c/web-platform-tests/css/css-align/self-alignment/parse-justify-self-004.html
+               imported/w3c/web-platform-tests/css/css-align/self-alignment/parse-justify-self-005.html
+               imported/w3c/web-platform-tests/css/css-align/self-alignment/place-self-shorthand-001.html
+               imported/w3c/web-platform-tests/css/css-align/self-alignment/place-self-shorthand-002.html
+               imported/w3c/web-platform-tests/css/css-align/self-alignment/place-self-shorthand-003.html
+               imported/w3c/web-platform-tests/css/css-align/self-alignment/place-self-shorthand-004.html
+               imported/w3c/web-platform-tests/css/css-align/self-alignment/place-self-shorthand-005.html
+               imported/w3c/web-platform-tests/css/css-align/self-alignment/place-self-shorthand-006.html
+
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::isLeftOrRightKeyword):
+        (WebCore::isContentPositionKeyword):
+        (WebCore::isContentPositionOrLeftOrRightKeyword):
+        (WebCore::consumeContentDistributionOverflowPosition):
+        (WebCore::isSelfPositionKeyword):
+        (WebCore::isSelfPositionOrLeftOrRightKeyword):
+        (WebCore::consumeSelfPositionOverflowPosition):
+        (WebCore::consumeAlignItems):
+        (WebCore::consumeJustifyItems):
+        (WebCore::CSSPropertyParser::parseSingleValue):
+        (WebCore::consumeSimplifiedContentPosition):
+        (WebCore::CSSPropertyParser::consumePlaceContentShorthand):
+        (WebCore::consumeSimplifiedItemPosition):
+        (WebCore::CSSPropertyParser::consumePlaceItemsShorthand):
+        (WebCore::CSSPropertyParser::consumePlaceSelfShorthand):
+
 2018-01-23  Simon Fraser  <simon.fraser@apple.com>
 
         Element with position:fixed stops scrolling at the bottom of the page, but is painted in the right place on Chacos.com.

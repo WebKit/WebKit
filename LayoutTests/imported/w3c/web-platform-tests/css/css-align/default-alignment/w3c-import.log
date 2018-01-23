@@ -1,0 +1,34 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/w3c/web-platform-tests
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/default-alignment/justify-items-legacy-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/default-alignment/parse-align-items-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/default-alignment/parse-align-items-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/default-alignment/parse-align-items-003.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/default-alignment/parse-align-items-004.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/default-alignment/parse-align-items-005.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/default-alignment/parse-justify-items-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/default-alignment/parse-justify-items-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/default-alignment/parse-justify-items-003.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/default-alignment/parse-justify-items-004.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/default-alignment/parse-justify-items-005.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/default-alignment/parse-justify-items-006.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/default-alignment/place-items-shorthand-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/default-alignment/place-items-shorthand-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/default-alignment/place-items-shorthand-003.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/default-alignment/place-items-shorthand-004.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/default-alignment/place-items-shorthand-005.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-align/default-alignment/place-items-shorthand-006.html

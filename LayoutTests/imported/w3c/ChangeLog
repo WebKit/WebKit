@@ -1,3 +1,135 @@
+2018-01-23  Javier Fernandez  <jfernandez@igalia.com>
+
+        [css-align] 'left' and 'right' should parse as invalid in block/cross-axis alignment
+        https://bugs.webkit.org/show_bug.cgi?id=181792
+
+        Reviewed by Antti Koivisto.
+
+        Imported new Web Platform Tests for the css-align module.
+
+        * resources/import-expectations.json:
+        * web-platform-tests/css/css-align-3/content-distribution/w3c-import.log: Removed.
+        * web-platform-tests/css/css-align-3/default-alignment/w3c-import.log: Removed.
+        * web-platform-tests/css/css-align-3/resources/alignment-parsing-utils.js: Removed.
+        * web-platform-tests/css/css-align-3/self-alignment/w3c-import.log: Removed.
+        * web-platform-tests/css/css-align/content-distribution/parse-align-content-001-expected.txt: Added.
+        * web-platform-tests/css/css-align/content-distribution/parse-align-content-001.html: Added.
+        * web-platform-tests/css/css-align/content-distribution/parse-align-content-002-expected.txt: Added.
+        * web-platform-tests/css/css-align/content-distribution/parse-align-content-002.html: Added.
+        * web-platform-tests/css/css-align/content-distribution/parse-align-content-003-expected.txt: Added.
+        * web-platform-tests/css/css-align/content-distribution/parse-align-content-003.html: Added.
+        * web-platform-tests/css/css-align/content-distribution/parse-align-content-004-expected.txt: Added.
+        * web-platform-tests/css/css-align/content-distribution/parse-align-content-004.html: Added.
+        * web-platform-tests/css/css-align/content-distribution/parse-align-content-005-expected.txt: Added.
+        * web-platform-tests/css/css-align/content-distribution/parse-align-content-005.html: Added.
+        * web-platform-tests/css/css-align/content-distribution/parse-justify-content-001-expected.txt: Added.
+        * web-platform-tests/css/css-align/content-distribution/parse-justify-content-001.html: Added.
+        * web-platform-tests/css/css-align/content-distribution/parse-justify-content-002-expected.txt: Added.
+        * web-platform-tests/css/css-align/content-distribution/parse-justify-content-002.html: Added.
+        * web-platform-tests/css/css-align/content-distribution/parse-justify-content-003-expected.txt: Added.
+        * web-platform-tests/css/css-align/content-distribution/parse-justify-content-003.html: Added.
+        * web-platform-tests/css/css-align/content-distribution/parse-justify-content-004-expected.txt: Added.
+        * web-platform-tests/css/css-align/content-distribution/parse-justify-content-004.html: Added.
+        * web-platform-tests/css/css-align/content-distribution/parse-justify-content-005-expected.txt: Added.
+        * web-platform-tests/css/css-align/content-distribution/parse-justify-content-005.html: Added.
+        * web-platform-tests/css/css-align/content-distribution/place-content-shorthand-001-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-align-3/content-distribution/place-content-shorthand-001-expected.txt.
+        * web-platform-tests/css/css-align/content-distribution/place-content-shorthand-001.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-align-3/content-distribution/place-content-shorthand-001.html.
+        * web-platform-tests/css/css-align/content-distribution/place-content-shorthand-002-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-align-3/content-distribution/place-content-shorthand-002-expected.txt.
+        * web-platform-tests/css/css-align/content-distribution/place-content-shorthand-002.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-align-3/content-distribution/place-content-shorthand-002.html.
+        * web-platform-tests/css/css-align/content-distribution/place-content-shorthand-003-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-align-3/content-distribution/place-content-shorthand-003-expected.txt.
+        * web-platform-tests/css/css-align/content-distribution/place-content-shorthand-003.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-align-3/content-distribution/place-content-shorthand-003.html.
+        * web-platform-tests/css/css-align/content-distribution/place-content-shorthand-004-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-align-3/content-distribution/place-content-shorthand-004-expected.txt.
+        * web-platform-tests/css/css-align/content-distribution/place-content-shorthand-004.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-align-3/content-distribution/place-content-shorthand-004.html.
+        * web-platform-tests/css/css-align/content-distribution/place-content-shorthand-005-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-align-3/content-distribution/place-content-shorthand-005-expected.txt.
+        * web-platform-tests/css/css-align/content-distribution/place-content-shorthand-005.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-align-3/content-distribution/place-content-shorthand-005.html.
+        * web-platform-tests/css/css-align/content-distribution/place-content-shorthand-006-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-align-3/content-distribution/place-content-shorthand-006-expected.txt.
+        * web-platform-tests/css/css-align/content-distribution/place-content-shorthand-006.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-align-3/content-distribution/place-content-shorthand-006.html.
+        * web-platform-tests/css/css-align/content-distribution/w3c-import.log: Added.
+        * web-platform-tests/css/css-align/default-alignment/justify-items-legacy-001-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-align-3/default-alignment/justify-items-legacy-001-expected.txt.
+        * web-platform-tests/css/css-align/default-alignment/justify-items-legacy-001.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-align-3/default-alignment/justify-items-legacy-001.html.
+        * web-platform-tests/css/css-align/default-alignment/parse-align-items-001-expected.txt: Added.
+        * web-platform-tests/css/css-align/default-alignment/parse-align-items-001.html: Added.
+        * web-platform-tests/css/css-align/default-alignment/parse-align-items-002-expected.txt: Added.
+        * web-platform-tests/css/css-align/default-alignment/parse-align-items-002.html: Added.
+        * web-platform-tests/css/css-align/default-alignment/parse-align-items-003-expected.txt: Added.
+        * web-platform-tests/css/css-align/default-alignment/parse-align-items-003.html: Added.
+        * web-platform-tests/css/css-align/default-alignment/parse-align-items-004-expected.txt: Added.
+        * web-platform-tests/css/css-align/default-alignment/parse-align-items-004.html: Added.
+        * web-platform-tests/css/css-align/default-alignment/parse-align-items-005-expected.txt: Added.
+        * web-platform-tests/css/css-align/default-alignment/parse-align-items-005.html: Added.
+        * web-platform-tests/css/css-align/default-alignment/parse-justify-items-001-expected.txt: Added.
+        * web-platform-tests/css/css-align/default-alignment/parse-justify-items-001.html: Added.
+        * web-platform-tests/css/css-align/default-alignment/parse-justify-items-002-expected.txt: Added.
+        * web-platform-tests/css/css-align/default-alignment/parse-justify-items-002.html: Added.
+        * web-platform-tests/css/css-align/default-alignment/parse-justify-items-003-expected.txt: Added.
+        * web-platform-tests/css/css-align/default-alignment/parse-justify-items-003.html: Added.
+        * web-platform-tests/css/css-align/default-alignment/parse-justify-items-004-expected.txt: Added.
+        * web-platform-tests/css/css-align/default-alignment/parse-justify-items-004.html: Added.
+        * web-platform-tests/css/css-align/default-alignment/parse-justify-items-005-expected.txt: Added.
+        * web-platform-tests/css/css-align/default-alignment/parse-justify-items-005.html: Added.
+        * web-platform-tests/css/css-align/default-alignment/parse-justify-items-006-expected.txt: Added.
+        * web-platform-tests/css/css-align/default-alignment/parse-justify-items-006.html: Added.
+        * web-platform-tests/css/css-align/default-alignment/place-items-shorthand-001-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-align-3/default-alignment/place-items-shorthand-001-expected.txt.
+        * web-platform-tests/css/css-align/default-alignment/place-items-shorthand-001.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-align-3/default-alignment/place-items-shorthand-001.html.
+        * web-platform-tests/css/css-align/default-alignment/place-items-shorthand-002-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-align-3/default-alignment/place-items-shorthand-002-expected.txt.
+        * web-platform-tests/css/css-align/default-alignment/place-items-shorthand-002.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-align-3/default-alignment/place-items-shorthand-002.html.
+        * web-platform-tests/css/css-align/default-alignment/place-items-shorthand-003-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-align-3/default-alignment/place-items-shorthand-003-expected.txt.
+        * web-platform-tests/css/css-align/default-alignment/place-items-shorthand-003.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-align-3/default-alignment/place-items-shorthand-003.html.
+        * web-platform-tests/css/css-align/default-alignment/place-items-shorthand-004-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-align-3/default-alignment/place-items-shorthand-004-expected.txt.
+        * web-platform-tests/css/css-align/default-alignment/place-items-shorthand-004.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-align-3/default-alignment/place-items-shorthand-004.html.
+        * web-platform-tests/css/css-align/default-alignment/place-items-shorthand-005-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-align-3/default-alignment/place-items-shorthand-005-expected.txt.
+        * web-platform-tests/css/css-align/default-alignment/place-items-shorthand-005.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-align-3/default-alignment/place-items-shorthand-005.html.
+        * web-platform-tests/css/css-align/default-alignment/place-items-shorthand-006-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-align-3/default-alignment/place-items-shorthand-006-expected.txt.
+        * web-platform-tests/css/css-align/default-alignment/place-items-shorthand-006.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-align-3/default-alignment/place-items-shorthand-006.html.
+        * web-platform-tests/css/css-align/default-alignment/w3c-import.log: Added.
+        * web-platform-tests/css/css-align/distribution-values/space-evenly-001-expected.xht: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-align-3/distribution-values/space-evenly-001-expected.xht.
+        * web-platform-tests/css/css-align/distribution-values/space-evenly-001.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-align-3/distribution-values/space-evenly-001.html.
+        * web-platform-tests/css/css-align/distribution-values/w3c-import.log: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-align-3/distribution-values/w3c-import.log.
+        * web-platform-tests/css/css-align/resources/alignment-parsing-utils.js: Added.
+        (checkPlaceShorhand):
+        (checkPlaceShorhandLonghands):
+        (checkPlaceShorthandInvalidValues):
+        (checkValues):
+        (checkBadValues):
+        (checkInitialValues):
+        (checkInheritValues):
+        (checkLegacyValues):
+        (checkSupportedValues):
+        * web-platform-tests/css/css-align/resources/w3c-import.log: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-align-3/resources/w3c-import.log.
+        * web-platform-tests/css/css-align/self-alignment/parse-align-self-001-expected.txt: Added.
+        * web-platform-tests/css/css-align/self-alignment/parse-align-self-001.html: Added.
+        * web-platform-tests/css/css-align/self-alignment/parse-align-self-002-expected.txt: Added.
+        * web-platform-tests/css/css-align/self-alignment/parse-align-self-002.html: Added.
+        * web-platform-tests/css/css-align/self-alignment/parse-align-self-003-expected.txt: Added.
+        * web-platform-tests/css/css-align/self-alignment/parse-align-self-003.html: Added.
+        * web-platform-tests/css/css-align/self-alignment/parse-align-self-004-expected.txt: Added.
+        * web-platform-tests/css/css-align/self-alignment/parse-align-self-004.html: Added.
+        * web-platform-tests/css/css-align/self-alignment/parse-align-self-005-expected.txt: Added.
+        * web-platform-tests/css/css-align/self-alignment/parse-align-self-005.html: Added.
+        * web-platform-tests/css/css-align/self-alignment/parse-justify-self-001-expected.txt: Added.
+        * web-platform-tests/css/css-align/self-alignment/parse-justify-self-001.html: Added.
+        * web-platform-tests/css/css-align/self-alignment/parse-justify-self-002-expected.txt: Added.
+        * web-platform-tests/css/css-align/self-alignment/parse-justify-self-002.html: Added.
+        * web-platform-tests/css/css-align/self-alignment/parse-justify-self-003-expected.txt: Added.
+        * web-platform-tests/css/css-align/self-alignment/parse-justify-self-003.html: Added.
+        * web-platform-tests/css/css-align/self-alignment/parse-justify-self-004-expected.txt: Added.
+        * web-platform-tests/css/css-align/self-alignment/parse-justify-self-004.html: Added.
+        * web-platform-tests/css/css-align/self-alignment/parse-justify-self-005-expected.txt: Added.
+        * web-platform-tests/css/css-align/self-alignment/parse-justify-self-005.html: Added.
+        * web-platform-tests/css/css-align/self-alignment/place-self-shorthand-001-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-align-3/self-alignment/place-self-shorthand-001-expected.txt.
+        * web-platform-tests/css/css-align/self-alignment/place-self-shorthand-001.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-align-3/self-alignment/place-self-shorthand-001.html.
+        * web-platform-tests/css/css-align/self-alignment/place-self-shorthand-002-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-align-3/self-alignment/place-self-shorthand-002-expected.txt.
+        * web-platform-tests/css/css-align/self-alignment/place-self-shorthand-002.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-align-3/self-alignment/place-self-shorthand-002.html.
+        * web-platform-tests/css/css-align/self-alignment/place-self-shorthand-003-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-align-3/self-alignment/place-self-shorthand-003-expected.txt.
+        * web-platform-tests/css/css-align/self-alignment/place-self-shorthand-003.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-align-3/self-alignment/place-self-shorthand-003.html.
+        * web-platform-tests/css/css-align/self-alignment/place-self-shorthand-004-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-align-3/self-alignment/place-self-shorthand-004-expected.txt.
+        * web-platform-tests/css/css-align/self-alignment/place-self-shorthand-004.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-align-3/self-alignment/place-self-shorthand-004.html.
+        * web-platform-tests/css/css-align/self-alignment/place-self-shorthand-005-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-align-3/self-alignment/place-self-shorthand-005-expected.txt.
+        * web-platform-tests/css/css-align/self-alignment/place-self-shorthand-005.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-align-3/self-alignment/place-self-shorthand-005.html.
+        * web-platform-tests/css/css-align/self-alignment/place-self-shorthand-006-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-align-3/self-alignment/place-self-shorthand-006-expected.txt.
+        * web-platform-tests/css/css-align/self-alignment/place-self-shorthand-006.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-align-3/self-alignment/place-self-shorthand-006.html.
+        * web-platform-tests/css/css-align/self-alignment/w3c-import.log: Added.
+
 2018-01-23  Brady Eidson  <beidson@apple.com>
 
         Allow passing MessagePorts across processes (e.g. ServiceWorkers).

@@ -74,6 +74,8 @@
 .justifyItemsStart { justify-items: start; }
 .justifyItemsCenter { justify-items: center; }
 .justifyItemsEnd { justify-items: end; }
+.justifyItemsLeft { justify-items: left; }
+.justifyItemsRight { justify-items: right; }
 
 .justifyItemsCenterSafe { justify-items: safe center; }
 .justifyItemsCenterUnsafe { justify-items: unsafe center; }
@@ -121,16 +123,6 @@
 .itemsEnd {
     align-items: end;
     justify-items: end;
-}
-
-.itemsLeft {
-    align-items: left;
-    justify-items: left;
-}
-
-.itemsRight {
-    align-items: right;
-    justify-items: right;
 }
 
 .itemsSelfStart {

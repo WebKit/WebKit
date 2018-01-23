@@ -1,0 +1,20 @@
+
+PASS Checking align-self: auto 
+FAIL Checking align-self: normal assert_equals: align-self computed style is not what is should. expected "normal" but got "auto"
+FAIL Checking align-self: stretch assert_equals: align-self computed style is not what is should. expected "stretch" but got "auto"
+FAIL Checking align-self: start assert_equals: align-self computed style is not what is should. expected "start" but got "auto"
+FAIL Checking align-self: end assert_equals: align-self computed style is not what is should. expected "end" but got "auto"
+FAIL Checking align-self: self-start assert_equals: align-self computed style is not what is should. expected "self-start" but got "auto"
+FAIL Checking align-self: self-end assert_equals: align-self computed style is not what is should. expected "self-end" but got "auto"
+FAIL Checking align-self: center assert_equals: align-self computed style is not what is should. expected "center" but got "auto"
+FAIL Checking align-self: flex-start assert_equals: align-self computed style is not what is should. expected "flex-start" but got "auto"
+FAIL Checking align-self: flex-end assert_equals: align-self computed style is not what is should. expected "flex-end" but got "auto"
+FAIL Checking align-self: baseline assert_equals: align-self computed style is not what is should. expected "first baseline" but got "auto"
+FAIL Checking align-self: first baseline assert_equals: align-self computed style is not what is should. expected "first baseline" but got "auto"
+FAIL Checking align-self: last baseline assert_equals: align-self computed style is not what is should. expected "last baseline" but got "auto"
+FAIL Checking align-self: safe flex-end assert_equals: align-self computed style is not what is should. expected "safe flex-end" but got "auto"
+FAIL Checking align-self: unsafe end assert_equals: align-self computed style is not what is should. expected "unsafe end" but got "auto"
+FAIL Checking align-self: safe end assert_equals: align-self computed style is not what is should. expected "safe end" but got "auto"
+FAIL Checking align-self: unsafe flex-start assert_equals: align-self computed style is not what is should. expected "unsafe flex-start" but got "auto"
+FAIL Checking align-self: safe center assert_equals: align-self computed style is not what is should. expected "safe center" but got "auto"
+

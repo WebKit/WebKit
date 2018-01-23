@@ -1,0 +1,22 @@
+
+PASS Checking justify-self: auto 
+FAIL Checking justify-self: normal assert_equals: justify-self computed style is not what is should. expected "normal" but got "auto"
+FAIL Checking justify-self: stretch assert_equals: justify-self computed style is not what is should. expected "stretch" but got "auto"
+FAIL Checking justify-self: left assert_equals: justify-self computed style is not what is should. expected "left" but got "auto"
+FAIL Checking justify-self: right assert_equals: justify-self computed style is not what is should. expected "right" but got "auto"
+FAIL Checking justify-self: start assert_equals: justify-self computed style is not what is should. expected "start" but got "auto"
+FAIL Checking justify-self: end assert_equals: justify-self computed style is not what is should. expected "end" but got "auto"
+FAIL Checking justify-self: self-start assert_equals: justify-self computed style is not what is should. expected "self-start" but got "auto"
+FAIL Checking justify-self: self-end assert_equals: justify-self computed style is not what is should. expected "self-end" but got "auto"
+FAIL Checking justify-self: center assert_equals: justify-self computed style is not what is should. expected "center" but got "auto"
+FAIL Checking justify-self: flex-start assert_equals: justify-self computed style is not what is should. expected "flex-start" but got "auto"
+FAIL Checking justify-self: flex-end assert_equals: justify-self computed style is not what is should. expected "flex-end" but got "auto"
+FAIL Checking justify-self: baseline assert_equals: justify-self computed style is not what is should. expected "first baseline" but got "auto"
+FAIL Checking justify-self: first baseline assert_equals: justify-self computed style is not what is should. expected "first baseline" but got "auto"
+FAIL Checking justify-self: last baseline assert_equals: justify-self computed style is not what is should. expected "last baseline" but got "auto"
+FAIL Checking justify-self: safe flex-end assert_equals: justify-self computed style is not what is should. expected "safe flex-end" but got "auto"
+FAIL Checking justify-self: unsafe end assert_equals: justify-self computed style is not what is should. expected "unsafe end" but got "auto"
+FAIL Checking justify-self: safe end assert_equals: justify-self computed style is not what is should. expected "safe end" but got "auto"
+FAIL Checking justify-self: unsafe flex-start assert_equals: justify-self computed style is not what is should. expected "unsafe flex-start" but got "auto"
+FAIL Checking justify-self: safe center assert_equals: justify-self computed style is not what is should. expected "safe center" but got "auto"
+

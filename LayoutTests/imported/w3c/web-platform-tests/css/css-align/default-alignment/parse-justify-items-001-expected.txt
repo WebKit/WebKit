@@ -1,0 +1,21 @@
+
+PASS Checking justify-items: normal 
+FAIL Checking justify-items: stretch assert_equals: justify-items computed style is not what is should. expected "stretch" but got "normal"
+FAIL Checking justify-items: left assert_equals: justify-items computed style is not what is should. expected "left" but got "normal"
+FAIL Checking justify-items: right assert_equals: justify-items computed style is not what is should. expected "right" but got "normal"
+FAIL Checking justify-items: start assert_equals: justify-items computed style is not what is should. expected "start" but got "normal"
+FAIL Checking justify-items: end assert_equals: justify-items computed style is not what is should. expected "end" but got "normal"
+FAIL Checking justify-items: self-start assert_equals: justify-items computed style is not what is should. expected "self-start" but got "normal"
+FAIL Checking justify-items: self-end assert_equals: justify-items computed style is not what is should. expected "self-end" but got "normal"
+FAIL Checking justify-items: center assert_equals: justify-items computed style is not what is should. expected "center" but got "normal"
+FAIL Checking justify-items: flex-start assert_equals: justify-items computed style is not what is should. expected "flex-start" but got "normal"
+FAIL Checking justify-items: flex-end assert_equals: justify-items computed style is not what is should. expected "flex-end" but got "normal"
+FAIL Checking justify-items: baseline assert_equals: justify-items computed style is not what is should. expected "first baseline" but got "normal"
+FAIL Checking justify-items: first baseline assert_equals: justify-items computed style is not what is should. expected "first baseline" but got "normal"
+FAIL Checking justify-items: last baseline assert_equals: justify-items computed style is not what is should. expected "last baseline" but got "normal"
+FAIL Checking justify-items: safe flex-end assert_equals: justify-items computed style is not what is should. expected "safe flex-end" but got "normal"
+FAIL Checking justify-items: unsafe end assert_equals: justify-items computed style is not what is should. expected "unsafe end" but got "normal"
+FAIL Checking justify-items: safe end assert_equals: justify-items computed style is not what is should. expected "safe end" but got "normal"
+FAIL Checking justify-items: unsafe flex-start assert_equals: justify-items computed style is not what is should. expected "unsafe flex-start" but got "normal"
+FAIL Checking justify-items: safe center assert_equals: justify-items computed style is not what is should. expected "safe center" but got "normal"
+

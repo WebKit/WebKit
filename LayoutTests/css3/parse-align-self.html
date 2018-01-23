@@ -40,14 +40,6 @@
     align-self: self-end;
 }
 
-#alignSelfLeft {
-    align-self: left;
-}
-
-#alignSelfRight {
-    align-self: right;
-}
-
 #alignSelfFlexStart {
     align-self: flex-start;
 }
@@ -72,14 +64,6 @@
     align-self: safe self-start;
 }
 
-#alignSelfSafeRight {
-    align-self: safe right;
-}
-
-#alignSelfUnsafeLeft {
-    align-self: unsafe left;
-}
-
 #alignSelfUnsafeFlexStart {
     align-self: unsafe flex-start;
 }
@@ -99,8 +83,6 @@
 <div id="alignSelfCenter"></div>
 <div id="alignSelfSelfStart"></div>
 <div id="alignSelfSelfEnd"></div>
-<div id="alignSelfLeft"></div>
-<div id="alignSelfRight"></div>
 <div id="alignSelfFlexStart"></div>
 <div id="alignSelfFlexEnd"></div>
 
@@ -108,8 +90,6 @@
 <div id="alignSelfUnsafeCenter"></div>
 <div id="alignSelfSafeSelfEnd"></div>
 <div id="alignSelfSafeSelfStart"></div>
-<div id="alignSelfSafeRight"></div>
-<div id="alignSelfUnsafeLeft"></div>
 <div id="alignSelfUnsafeFlexStart"></div>
 <div id="alignSelfSafeFlexEnd"></div>
 <script src="../resources/testharness.js"></script>
@@ -137,10 +117,6 @@ test(function() {
     checkValues(alignSelfSelfEnd, "alignSelf", "align-self", "", "self-end");
     var alignSelfSelfStart = document.getElementById("alignSelfSelfStart");
     checkValues(alignSelfSelfStart, "alignSelf", "align-self", "", "self-start");
-    var alignSelfLeft = document.getElementById("alignSelfLeft");
-    checkValues(alignSelfLeft, "alignSelf", "align-self", "", "left");
-    var alignSelfRight = document.getElementById("alignSelfRight");
-    checkValues(alignSelfRight, "alignSelf", "align-self", "", "right");
     var alignSelfFlexStart = document.getElementById("alignSelfFlexStart");
     checkValues(alignSelfFlexStart, "alignSelf", "align-self", "", "flex-start");
     var alignSelfFlexEnd = document.getElementById("alignSelfFlexEnd");
@@ -154,10 +130,6 @@ test(function() {
     checkValues(alignSelfSafeSelfEnd, "alignSelf", "align-self", "", "safe self-end");
     var alignSelfSafeSelfStart = document.getElementById("alignSelfSafeSelfStart");
     checkValues(alignSelfSafeSelfStart, "alignSelf", "align-self", "", "safe self-start");
-    var alignSelfSafeRight = document.getElementById("alignSelfSafeRight");
-    checkValues(alignSelfSafeRight, "alignSelf", "align-self", "", "safe right");
-    var alignSelfUnsafeLeft = document.getElementById("alignSelfUnsafeLeft");
-    checkValues(alignSelfUnsafeLeft, "alignSelf", "align-self", "", "unsafe left");
     var alignSelfUnsafeFlexStart = document.getElementById("alignSelfUnsafeFlexStart");
     checkValues(alignSelfUnsafeFlexStart, "alignSelf", "align-self", "", "unsafe flex-start");
     var alignSelfSafeFlexEnd = document.getElementById("alignSelfSafeFlexEnd");
@@ -183,9 +155,6 @@ test(function() {
 
     element.style.alignSelf = "safe flex-end";
     checkValues(element, "alignSelf", "align-self",  "safe flex-end", "safe flex-end");
-
-    element.style.alignSelf = "right";
-    checkValues(element, "alignSelf", "align-self",  "right", "right");
 
     element.style.alignSelf = "center";
     checkValues(element, "alignSelf", "align-self",  "center", "center");
@@ -222,8 +191,11 @@ test(function() {
     container.appendChild(element);
     document.body.appendChild(container);
 
-    checkBadValues(element, "alignSelf", "align-self",  "auto safe");
+    checkBadValues(element, "alignSelf", "align-self",  "left");
+    checkBadValues(element, "alignSelf", "align-self",  "right");
+    checkBadValues(element, "alignSelf", "align-self",  "safe auto");
     checkBadValues(element, "alignSelf", "align-self",  "auto left");
+    checkBadValues(element, "alignSelf", "align-self",  "safe right");
     checkBadValues(element, "alignSelf", "align-self",  "normal unsafe");
     checkBadValues(element, "alignSelf", "align-self",  "normal stretch");
     checkBadValues(element, "alignSelf", "align-self",  "baseline normal");
@@ -263,35 +235,35 @@ test(function() {
 
 test(function() {
     container.style.display = "grid";
-    checkInitialValues(element, "alignSelf", "align-self", "safe left", "auto");
+    checkInitialValues(element, "alignSelf", "align-self", "safe start", "auto");
 }, "Test the value 'initial' for grid containers");
 
 test(function() {
     container.style.display = "flex";
-    checkInitialValues(element, "alignSelf", "align-self", "unsafe right", "auto");
+    checkInitialValues(element, "alignSelf", "align-self", "unsafe end", "auto");
 }, "Test the value 'initial' for flex containers");
 
 test(function() {
     container.style.display = "";
     element.style.position = "absolute";
-    checkInitialValues(element, "alignSelf", "align-self", "left", "auto");
+    checkInitialValues(element, "alignSelf", "align-self", "start", "auto");
 }, "Test the value 'initial' for positioned elements");
 
 test(function() {
     container.style.display = "grid";
     element.style.position = "absolute";
-    checkInitialValues(element, "alignSelf", "align-self", "right", "auto");
+    checkInitialValues(element, "alignSelf", "align-self", "end", "auto");
 }, "Test the value 'initial' for positioned elements in grid containers");
 
 test(function() {
     container.style.display = "flex";
     element.style.position = "absolute";
     checkInitialValues(element, "alignSelf", "align-self", "end", "auto");
-}, "Test the value 'initial' for positioned elements in grid containers");
+}, "Test the value 'initial' for positioned elements in flex containers");
 
 test(function() {
     checkInheritValues("alignSelf", "align-self", "end");
-    checkInheritValues("alignSelf", "align-self", "safe left");
+    checkInheritValues("alignSelf", "align-self", "safe start");
     checkInheritValues("alignSelf", "align-self", "unsafe center");
 }, "Test the value 'inherit'");
 </script>

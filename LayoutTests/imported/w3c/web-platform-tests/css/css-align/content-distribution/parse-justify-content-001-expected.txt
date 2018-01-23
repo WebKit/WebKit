@@ -1,0 +1,22 @@
+
+PASS Checking justify-content: normal 
+FAIL Checking justify-content: left assert_equals: justify-content computed style is not what is should. expected "left" but got "normal"
+FAIL Checking justify-content: right assert_equals: justify-content computed style is not what is should. expected "right" but got "normal"
+FAIL Checking justify-content: start assert_equals: justify-content computed style is not what is should. expected "start" but got "normal"
+FAIL Checking justify-content: end assert_equals: justify-content computed style is not what is should. expected "end" but got "normal"
+FAIL Checking justify-content: center assert_equals: justify-content computed style is not what is should. expected "center" but got "normal"
+FAIL Checking justify-content: flex-start assert_equals: justify-content computed style is not what is should. expected "flex-start" but got "normal"
+FAIL Checking justify-content: flex-end assert_equals: justify-content computed style is not what is should. expected "flex-end" but got "normal"
+FAIL Checking justify-content: stretch assert_equals: justify-content computed style is not what is should. expected "stretch" but got "normal"
+FAIL Checking justify-content: space-around assert_equals: justify-content computed style is not what is should. expected "space-around" but got "normal"
+FAIL Checking justify-content: space-between assert_equals: justify-content computed style is not what is should. expected "space-between" but got "normal"
+FAIL Checking justify-content: space-evenly assert_equals: justify-content computed style is not what is should. expected "space-evenly" but got "normal"
+FAIL Checking justify-content: baseline assert_equals: justify-content computed style is not what is should. expected "first baseline" but got "normal"
+FAIL Checking justify-content: first baseline assert_equals: justify-content computed style is not what is should. expected "first baseline" but got "normal"
+FAIL Checking justify-content: last baseline assert_equals: justify-content computed style is not what is should. expected "last baseline" but got "normal"
+FAIL Checking justify-content: safe flex-end assert_equals: justify-content computed style is not what is should. expected "safe flex-end" but got "normal"
+FAIL Checking justify-content: unsafe end assert_equals: justify-content computed style is not what is should. expected "unsafe end" but got "normal"
+FAIL Checking justify-content: safe end assert_equals: justify-content computed style is not what is should. expected "safe end" but got "normal"
+FAIL Checking justify-content: unsafe flex-start assert_equals: justify-content computed style is not what is should. expected "unsafe flex-start" but got "normal"
+FAIL Checking justify-content: safe center assert_equals: justify-content computed style is not what is should. expected "safe center" but got "normal"
+

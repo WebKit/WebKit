@@ -40,14 +40,6 @@
     align-items: self-end;
 }
 
-#alignItemsLeft {
-    align-items: left;
-}
-
-#alignItemsRight {
-    align-items: right;
-}
-
 #alignItemsFlexStart {
     align-items: flex-start;
 }
@@ -72,14 +64,6 @@
     align-items: safe self-start;
 }
 
-#alignItemsSafeRight {
-    align-items: safe right;
-}
-
-#alignItemsUnsafeLeft {
-    align-items: unsafe left;
-}
-
 #alignItemsUnsafeFlexStart {
     align-items: unsafe flex-start;
 }
@@ -99,8 +83,6 @@
 <div id="alignItemsCenter"></div>
 <div id="alignItemsSelfStart"></div>
 <div id="alignItemsSelfEnd"></div>
-<div id="alignItemsLeft"></div>
-<div id="alignItemsRight"></div>
 <div id="alignItemsFlexStart"></div>
 <div id="alignItemsFlexEnd"></div>
 
@@ -108,8 +90,6 @@
 <div id="alignItemsUnsafeCenter"></div>
 <div id="alignItemsSafeSelfEnd"></div>
 <div id="alignItemsSafeSelfStart"></div>
-<div id="alignItemsSafeRight"></div>
-<div id="alignItemsUnsafeLeft"></div>
 <div id="alignItemsUnsafeFlexStart"></div>
 <div id="alignItemsSafeFlexEnd"></div>
 <script src="../resources/testharness.js"></script>
@@ -137,10 +117,6 @@ test(function() {
     checkValues(alignItemsSelfEnd, "alignItems", "align-items", "", "self-end");
     var alignItemsSelfStart = document.getElementById("alignItemsSelfStart");
     checkValues(alignItemsSelfStart, "alignItems", "align-items", "", "self-start");
-    var alignItemsLeft = document.getElementById("alignItemsLeft");
-    checkValues(alignItemsLeft, "alignItems", "align-items", "", "left");
-    var alignItemsRight = document.getElementById("alignItemsRight");
-    checkValues(alignItemsRight, "alignItems", "align-items", "", "right");
     var alignItemsFlexStart = document.getElementById("alignItemsFlexStart");
     checkValues(alignItemsFlexStart, "alignItems", "align-items", "", "flex-start");
     var alignItemsFlexEnd = document.getElementById("alignItemsFlexEnd");
@@ -154,10 +130,6 @@ test(function() {
     checkValues(alignItemsSafeSelfEnd, "alignItems", "align-items", "", "safe self-end");
     var alignItemsSafeSelfStart = document.getElementById("alignItemsSafeSelfStart");
     checkValues(alignItemsSafeSelfStart, "alignItems", "align-items", "", "safe self-start");
-    var alignItemsSafeRight = document.getElementById("alignItemsSafeRight");
-    checkValues(alignItemsSafeRight, "alignItems", "align-items", "", "safe right");
-    var alignItemsUnsafeLeft = document.getElementById("alignItemsUnsafeLeft");
-    checkValues(alignItemsUnsafeLeft, "alignItems", "align-items", "", "unsafe left");
     var alignItemsUnsafeFlexStart = document.getElementById("alignItemsUnsafeFlexStart");
     checkValues(alignItemsUnsafeFlexStart, "alignItems", "align-items", "", "unsafe flex-start");
     var alignItemsSafeFlexEnd = document.getElementById("alignItemsSafeFlexEnd");
@@ -181,9 +153,6 @@ test(function() {
 
     element.style.alignItems = "safe flex-end";
     checkValues(element, "alignItems", "align-items",  "safe flex-end", "safe flex-end");
-
-    element.style.alignItems = "right";
-    checkValues(element, "alignItems", "align-items",  "right", "right");
 
     element.style.alignItems = "center";
     checkValues(element, "alignItems", "align-items",  "center", "center");
@@ -216,10 +185,14 @@ test(function() {
     document.body.appendChild(element);
 
     checkBadValues(element, "alignItems", "align-items",  "auto");
+    checkBadValues(element, "alignItems", "align-items",  "left");
+    checkBadValues(element, "alignItems", "align-items",  "right");
     checkBadValues(element, "alignItems", "align-items",  "unsafe auto");
     checkBadValues(element, "alignItems", "align-items",  "auto safe");
     checkBadValues(element, "alignItems", "align-items",  "auto left");
-    checkBadValues(element, "alignItems", "align-items",  "normal unsafe");
+    checkBadValues(element, "alignItems", "align-items",  "safe left");
+    checkBadValues(element, "alignItems", "align-items",  "unsafe right");
+    checkBadValues(element, "alignItems", "align-items",  "unsafe normal");
     checkBadValues(element, "alignItems", "align-items",  "normal stretch");
     checkBadValues(element, "alignItems", "align-items",  "baseline normal");
     checkBadValues(element, "alignItems", "align-items",  "baseline safe");
@@ -258,17 +231,17 @@ test(function() {
 
 test(function() {
     element.style.display = "grid";
-    checkInitialValues(element, "alignItems", "align-items", "safe left", "normal");
+    checkInitialValues(element, "alignItems", "align-items", "safe start", "normal");
 }, "Test the value 'initial' for grid containers");
 
 test(function() {
     element.style.display = "flex";
-    checkInitialValues(element, "alignItems", "align-items", "unsafe right", "normal");
+    checkInitialValues(element, "alignItems", "align-items", "unsafe end", "normal");
 }, "Test the value 'initial' for flex containers");
 
 test(function() {
     checkInheritValues("alignItems", "align-items", "end");
-    checkInheritValues("alignItems", "align-items", "safe left");
+    checkInheritValues("alignItems", "align-items", "safe start");
     checkInheritValues("alignItems", "align-items", "unsafe center");
 }, "Test the value 'inherit'");
 </script>

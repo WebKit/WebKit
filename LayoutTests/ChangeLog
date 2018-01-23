@@ -1,3 +1,18 @@
+2018-01-23  Javier Fernandez  <jfernandez@igalia.com>
+
+        [css-align] 'left' and 'right' should parse as invalid in block/cross-axis alignment
+        https://bugs.webkit.org/show_bug.cgi?id=181792
+
+        Reviewed by Antti Koivisto.
+
+        Rebaseline tests because of the removal of the 'left' and right' CSS values.
+
+        * css3/parse-align-content.html:
+        * css3/parse-align-items.html:
+        * css3/parse-align-self-expected.txt:
+        * css3/parse-align-self.html:
+        * css3/parse-alignment-of-root-elements-expected.txt:
+
 2018-01-23  Simon Fraser  <simon.fraser@apple.com>
 
         Element with position:fixed stops scrolling at the bottom of the page, but is painted in the right place on Chacos.com.

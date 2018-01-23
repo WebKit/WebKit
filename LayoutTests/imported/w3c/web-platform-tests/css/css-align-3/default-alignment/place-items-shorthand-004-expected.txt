@@ -1,7 +1,0 @@
-
-PASS Verify overflow keywords are invalid 
-PASS Verify fallback values are invalid 
-PASS Verify numeric values are invalid 
-PASS Verify 'auto' value is invalid as first longhand value. 
-PASS Verify empty declaration is invalid 
-

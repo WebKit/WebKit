@@ -3,72 +3,74 @@ This test checks that the 'margin', 'border' and 'padding' properties are applie
 border: 5px 10px 15px 20px | padding: 10px 15px 20px 30px | margin: 4px 8px 12px 16px
 direction: LTR | align-items: 'auto' | justify-items: 'auto'
 
-PASS
 border: 5px 10px 15px 20px | padding: 10px 15px 20px 30px | margin: 4px 8px 12px 16px
 direction: LTR | align-items: 'center' | justify-items: 'center'
 
-PASS
 border: 5px 10px 15px 20px | padding: 10px 15px 20px 30px | margin: 4px 8px 12px 16px
 direction: LTR | align-items: 'end' | justify-items: 'end'
 
-PASS
 border: 5px 10px 15px 20px | padding: 10px 15px 20px 30px | margin: 4px 8px 12px 16px
 direction: LTR | align-items: 'left' | justify-items: 'left'
 
-PASS
 border: 5px 10px 15px 20px | padding: 10px 15px 20px 30px | margin: 4px 8px 12px 16px
-direction: LTR | align-items: 'right' | justify-items: 'right'
+direction: LTR | align-items: 'start' | justify-items: 'right'
 
-PASS
 border: 5px 10px 15px 20px | padding: 10px 15px 20px 30px | margin: 4px 8px 12px 16px
 direction: LTR (ortho) | align-items: 'self-start' | justify-items: 'self-start'
 
-PASS
 border: 5px 10px 15px 20px | padding: 10px 15px 20px 30px | margin: 4px 8px 12px 16px
 direction: LTR (ortho) | align-items: 'self-end' | justify-items: 'self-end'
 
-PASS
 border: 5px 10px 15px 20px | padding: 10px 15px 20px 30px | margin: 4px 8px 12px 16px
 direction: LTR (parall) | align-items: 'self-start' | justify-items: 'self-start'
 
-PASS
 border: 5px 10px 15px 20px | padding: 10px 15px 20px 30px | margin: 4px 8px 12px 16px
 direction: LTR (parall) | align-items: 'self-end' | justify-items: 'self-end'
 
-PASS
 border: 5px 10px 15px 20px | padding: 10px 15px 20px 30px | margin: 4px 8px 12px 16px
 direction: RTL | align-items: 'auto' | justify-items: 'auto'
 
-PASS
 border: 5px 10px 15px 20px | padding: 10px 15px 20px 30px | margin: 4px 8px 12px 16px
 direction: RTL | align-items: 'center' | justify-items: 'center'
 
-PASS
 border: 5px 10px 15px 20px | padding: 10px 15px 20px 30px | margin: 4px 8px 12px 16px
 direction: RTL | align-items: 'end' | justify-items: 'end'
 
-PASS
 border: 5px 10px 15px 20px | padding: 10px 15px 20px 30px | margin: 4px 8px 12px 16px
-direction: RTL | align-items: 'left' | justify-items: 'left'
+direction: RTL | align-items: 'start' | justify-items: 'left'
 
-PASS
 border: 5px 10px 15px 20px | padding: 10px 15px 20px 30px | margin: 4px 8px 12px 16px
-direction: RTL | align-items: 'right' | justify-items: 'right'
+direction: RTL | align-items: 'start' | justify-items: 'right'
 
-PASS
 border: 5px 10px 15px 20px | padding: 10px 15px 20px 30px | margin: 4px 8px 12px 16px
 direction: RTL (ortho) | align-items: 'self-start' | justify-items: 'self-start'
 
-PASS
 border: 5px 10px 15px 20px | padding: 10px 15px 20px 30px | margin: 4px 8px 12px 16px
 direction: RTL (ortho) | align-items: 'self-end' | justify-items: 'self-end'
 
-PASS
 border: 5px 10px 15px 20px | padding: 10px 15px 20px 30px | margin: 4px 8px 12px 16px
 direction: RTL (parall) | align-items: 'self-start' | justify-items: 'self-start'
 
-PASS
 border: 5px 10px 15px 20px | padding: 10px 15px 20px 30px | margin: 4px 8px 12px 16px
 direction: RTL (parall) | align-items: 'self-end' | justify-items: 'self-end'
 
-PASS
+
+PASS .grid 1 
+PASS .grid 2 
+PASS .grid 3 
+PASS .grid 4 
+PASS .grid 5 
+PASS .grid 6 
+PASS .grid 7 
+PASS .grid 8 
+PASS .grid 9 
+PASS .grid 10 
+PASS .grid 11 
+PASS .grid 12 
+PASS .grid 13 
+PASS .grid 14 
+PASS .grid 15 
+PASS .grid 16 
+PASS .grid 17 
+PASS .grid 18 
+

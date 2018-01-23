@@ -1,0 +1,9 @@
+
+FAIL Test 'initial' value when nothing is specified assert_equals: justify-items computed style is not what is should. expected "legacy" but got "normal"
+FAIL Test justify-items: 'initial' assert_equals: justify-items computed style is not what is should. expected "legacy" but got "normal"
+FAIL Test grid items justify-items: 'initial' assert_equals: justify-items computed style is not what is should. expected "legacy" but got "normal"
+FAIL Test flex items justify-items: 'initial' assert_equals: justify-items computed style is not what is should. expected "legacy" but got "normal"
+FAIL Test absolute positioned elements justify-items: 'initial' assert_equals: justify-items computed style is not what is should. expected "legacy" but got "normal"
+FAIL Test absolute positioned grid items justify-items: 'initial' assert_equals: justify-items computed style is not what is should. expected "legacy" but got "normal"
+FAIL Test absolute positioned flex items justify-items: 'initial' assert_equals: justify-items computed style is not what is should. expected "legacy" but got "normal"
+

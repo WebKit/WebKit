@@ -11,6 +11,6 @@ PASS Test the value 'initial' for grid containers
 PASS Test the value 'initial' for flex containers 
 PASS Test the value 'initial' for positioned elements 
 PASS Test the value 'initial' for positioned elements in grid containers 
-PASS Test the value 'initial' for positioned elements in grid containers 
+PASS Test the value 'initial' for positioned elements in flex containers 
 PASS Test the value 'inherit' 
 

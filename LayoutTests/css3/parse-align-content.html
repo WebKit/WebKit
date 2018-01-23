@@ -44,13 +44,6 @@
     align-content: center;
 }
 
-#alignContentLeft {
-    align-content: left;
-}
-
-#alignContentRight {
-    align-content: right;
-}
 
 #alignContentFlexStart {
     align-content: flex-start;
@@ -66,14 +59,6 @@
 
 #alignContentUnsafeCenter {
     align-content: unsafe center ;
-}
-
-#alignContentSafeRight {
-    align-content: safe right;
-}
-
-#alignContentUnsafeLeft {
-    align-content: unsafe left;
 }
 
 #alignContentUnsafeFlexStart {
@@ -141,22 +126,16 @@
 <div id="alignContentStart"></div>
 <div id="alignContentEnd"></div>
 <div id="alignContentCenter"></div>
-<div id="alignContentLeft"></div>
-<div id="alignContentRight"></div>
 <div id="alignContentFlexStart"></div>
 <div id="alignContentFlexEnd"></div>
 <div id="alignContentUnsafeEnd"></div>
 <div id="alignContentUnsafeCenter"></div>
 <div id="alignContentSafeSelfEnd"></div>
 <div id="alignContentSafeSelfStart"></div>
-<div id="alignContentSafeRight"></div>
-<div id="alignContentUnsafeLeft"></div>
 <div id="alignContentUnsafeFlexStart"></div>
 <div id="alignContentSafeFlexEnd"></div>
 <div id="alignContentEndUnsafe"></div>
 <div id="alignContentCenterUnsafe"></div>
-<div id="alignContentRightSafe"></div>
-<div id="alignContentLeftUnsafe"></div>
 <div id="alignContentFlexStartUnsafe"></div>
 <div id="alignContentFlexEndSafe"></div>
 
@@ -199,10 +178,6 @@ test(function() {
     checkValues(alignContentEnd, "alignContent", "align-content", "", "end");
     var alignContentCenter = document.getElementById("alignContentCenter");
     checkValues(alignContentCenter, "alignContent", "align-content", "", "center");
-    var alignContentLeft = document.getElementById("alignContentLeft");
-    checkValues(alignContentLeft, "alignContent", "align-content", "", "left");
-    var alignContentRight = document.getElementById("alignContentRight");
-    checkValues(alignContentRight, "alignContent", "align-content", "", "right");
     var alignContentFlexStart = document.getElementById("alignContentFlexStart");
     checkValues(alignContentFlexStart, "alignContent", "align-content", "", "flex-start");
     var alignContentFlexEnd = document.getElementById("alignContentFlexEnd");
@@ -211,10 +186,6 @@ test(function() {
     checkValues(alignContentUnsafeEnd, "alignContent", "align-content", "", "unsafe end");
     var alignContentUnsafeCenter = document.getElementById("alignContentUnsafeCenter");
     checkValues(alignContentUnsafeCenter, "alignContent", "align-content", "", "unsafe center");
-    var alignContentSafeRight = document.getElementById("alignContentSafeRight");
-    checkValues(alignContentSafeRight, "alignContent", "align-content", "", "safe right");
-    var alignContentUnsafeLeft = document.getElementById("alignContentUnsafeLeft");
-    checkValues(alignContentUnsafeLeft, "alignContent", "align-content", "", "unsafe left");
     var alignContentUnsafeFlexStart = document.getElementById("alignContentUnsafeFlexStart");
     checkValues(alignContentUnsafeFlexStart, "alignContent", "align-content", "", "unsafe flex-start");
     var alignContentSafeFlexEnd = document.getElementById("alignContentSafeFlexEnd");
@@ -226,10 +197,6 @@ test(function() {
     checkValues(alignContentEndUnsafe, "alignContent", "align-content", "", "normal");
     var alignContentCenterUnsafe = document.getElementById("alignContentCenterUnsafe");
     checkValues(alignContentCenterUnsafe, "alignContent", "align-content", "", "normal");
-    var alignContentRightSafe = document.getElementById("alignContentRightSafe");
-    checkValues(alignContentRightSafe, "alignContent", "align-content", "", "normal");
-    var alignContentLeftUnsafe = document.getElementById("alignContentLeftUnsafe");
-    checkValues(alignContentLeftUnsafe, "alignContent", "align-content", "", "normal");
     var alignContentFlexStartUnsafe = document.getElementById("alignContentFlexStartUnsafe");
     checkValues(alignContentFlexStartUnsafe, "alignContent", "align-content", "", "normal");
     var alignContentFlexEndSafe = document.getElementById("alignContentFlexEndSafe");
@@ -276,8 +243,8 @@ test(function() {
     element.style.alignContent = "safe flex-end";
     checkValues(element, "alignContent", "align-content",  "safe flex-end", "safe flex-end");
 
-    element.style.alignContent = " unsafe right";
-    checkValues(element, "alignContent", "align-content",  "unsafe right", "unsafe right");
+    element.style.alignContent = "unsafe end";
+    checkValues(element, "alignContent", "align-content",  "unsafe end", "unsafe end");
 
     element.style.justifyContent = "first baseline";
     checkValues(element, "justifyContent", "justify-content",  "first baseline", "baseline");
@@ -304,11 +271,14 @@ test(function() {
     element = document.createElement("div");
     document.body.appendChild(element);
 
-    checkBadValues(element, "alignContent", "align-content",  "");
+    checkBadValues(element, "alignContent", "align-content",  "left");
+    checkBadValues(element, "alignContent", "align-content",  "right");
     checkBadValues(element, "alignContent", "align-content",  "auto");
     checkBadValues(element, "alignContent", "align-content",  "unsafe auto");
     checkBadValues(element, "alignContent", "align-content",  "auto safe");
     checkBadValues(element, "alignContent", "align-content",  "auto left");
+    checkBadValues(element, "alignContent", "align-content",  "safe left");
+    checkBadValues(element, "alignContent", "align-content",  "unsafe right");
     checkBadValues(element, "alignContent", "align-content",  "baseline safe");
     checkBadValues(element, "alignContent", "align-content",  "last-baseline center");
     checkBadValues(element, "alignContent", "align-content",  "unsafe unsafe");
@@ -342,17 +312,17 @@ test(function() {
 
 test(function() {
     element.style.display = "grid";
-    checkInitialValues(element, "alignContent", "align-content", "safe left", "normal");
+    checkInitialValues(element, "alignContent", "align-content", "safe start", "normal");
 }, "Test the value 'initial' for grid containers");
 
 test(function() {
     element.style.display = "flex";
-    checkInitialValues(element, "alignContent", "align-content", "unsafe right", "normal");
+    checkInitialValues(element, "alignContent", "align-content", "unsafe end", "normal");
 }, "Test the value 'initial' for flex containers");
 
 test(function() {
     checkInheritValues("alignContent", "align-content", "end");
-    checkInheritValues("alignContent", "align-content", "safe left");
+    checkInheritValues("alignContent", "align-content", "safe start");
     checkInheritValues("alignContent", "align-content", "unsafe center");
 }, "Test the value 'inherit'");
 </script>
