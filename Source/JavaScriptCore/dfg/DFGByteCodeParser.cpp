@@ -3440,7 +3440,7 @@ bool ByteCodeParser::handleConstantInternalFunction(
         return true;
     }
 
-    for (unsigned typeIndex = 0; typeIndex < NUMBER_OF_TYPED_ARRAY_TYPES; ++typeIndex) {
+    for (unsigned typeIndex = 0; typeIndex < NumberOfTypedArrayTypes; ++typeIndex) {
         bool result = handleTypedArrayConstructor(
             resultOperand, function, registerOffset, argumentCountIncludingThis,
             indexToTypedArrayType(typeIndex), insertChecks);

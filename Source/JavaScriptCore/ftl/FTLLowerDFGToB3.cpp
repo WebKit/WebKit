@@ -14387,10 +14387,10 @@ private:
             return proven;
         LValue jsType = m_out.sub(
             m_out.load8ZeroExt32(cell, m_heaps.JSCell_typeInfoType),
-            m_out.constInt32(Int8ArrayType));
-        return m_out.belowOrEqual(
+            m_out.constInt32(FirstTypedArrayType));
+        return m_out.below(
             jsType,
-            m_out.constInt32(Float64ArrayType - Int8ArrayType));
+            m_out.constInt32(NumberOfTypedArrayTypesExcludingDataView));
     }
     
     LValue isObject(LValue cell, SpeculatedType type = SpecFullTop)

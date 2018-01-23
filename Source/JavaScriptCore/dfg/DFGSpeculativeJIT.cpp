@@ -4033,10 +4033,10 @@ void SpeculativeJIT::compileIsTypedArrayView(Node* node)
     JITCompiler::Jump isNotCell = m_jit.branchIfNotCell(valueRegs);
 
     m_jit.load8(JITCompiler::Address(valueRegs.payloadGPR(), JSCell::typeInfoTypeOffset()), resultGPR);
-    m_jit.sub32(TrustedImm32(Int8ArrayType), resultGPR);
-    m_jit.compare32(JITCompiler::BelowOrEqual,
+    m_jit.sub32(TrustedImm32(FirstTypedArrayType), resultGPR);
+    m_jit.compare32(JITCompiler::Below,
         resultGPR,
-        TrustedImm32(Float64ArrayType - Int8ArrayType),
+        TrustedImm32(NumberOfTypedArrayTypesExcludingDataView),
         resultGPR);
     blessBoolean(resultGPR);
     JITCompiler::Jump done = m_jit.jump();
@@ -6387,7 +6387,7 @@ void SpeculativeJIT::compileGetTypedArrayByteOffset(Node* node)
     m_jit.loadPtr(MacroAssembler::Address(baseGPR, JSArrayBufferView::offsetOfVector()), vectorGPR);
     JITCompiler::Jump nullVector = m_jit.branchTestPtr(JITCompiler::Zero, vectorGPR);
     cageTypedArrayStorage(vectorGPR);
-    nullVector.link(&m_jit);
+
     m_jit.loadPtr(MacroAssembler::Address(dataGPR, Butterfly::offsetOfArrayBuffer()), dataGPR);
     // FIXME: This needs caging.
     // https://bugs.webkit.org/show_bug.cgi?id=175515
@@ -6400,6 +6400,7 @@ void SpeculativeJIT::compileGetTypedArrayByteOffset(Node* node)
     m_jit.move(TrustedImmPtr(0), vectorGPR);
     
     done.link(&m_jit);
+    nullVector.link(&m_jit);
 
     int32Result(vectorGPR, node);
 }

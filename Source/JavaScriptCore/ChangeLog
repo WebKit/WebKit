@@ -1,3 +1,61 @@
+2018-01-23  Mark Lam  <mark.lam@apple.com>
+
+        Re-arrange TypedArray JSTypes to match the order of the TypedArrayType enum list.
+        https://bugs.webkit.org/show_bug.cgi?id=181976
+        <rdar://problem/36766936>
+
+        Reviewed by Filip Pizlo.
+
+        1. The order of TypedArray JSTypes now matches the order the TypedArrayType enum
+           list.  I also added static asserts in TypedArrayType.h to enforce this.
+
+           Also redefined FOR_EACH_TYPED_ARRAY_TYPE() in terms of
+
+        2. Define 4 new values:
+           a. FirstTypedArrayType
+           b. LastTypedArrayType
+           c. NumberOfTypedArrayTypesExcludingDataView
+           d. NumberOfTypedArrayTypes
+
+           Use these everywhere where we iterate or bisect the TypedArray JSTypes.
+
+        3. Removed NUMBER_OF_TYPED_ARRAY_TYPES, and use NumberOfTypedArrayTypes instead.
+
+        4. Simplify the code that converts between TypedArrayType and JSType.
+
+           Changed typedArrayTypeForType() to be the mirror image of typeForTypedArrayType().
+           Previously, typedArrayTypeForType() converts DataViewType to NotTypedArray
+           instead of TypeDataView.  Now, it converts to TypeDataView.
+
+           This does not result in any change of behavior because typedArrayTypeForType()
+           is only called in Structure::hasIndexingHeader(), and its result is passed to
+           isTypedView(), which handles TypeDataView correctly.
+
+        5. Also fixed a bug in SpeculativeJIT::compileGetTypedArrayByteOffset().
+           If the vector is null, we can skip the rest of the checks.  While the current
+           code does not result in incorrect behavior, it is inefficient, and communicates
+           wrong information to the reader i.e. implying that there's something in the
+           dataGPR when there's not.  The dataGPR should also be null in this case.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleConstantInternalFunction):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileIsTypedArrayView):
+        (JSC::DFG::SpeculativeJIT::compileGetTypedArrayByteOffset):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::isTypedArrayView):
+        * ftl/FTLOSRExit.cpp:
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::visitChildren):
+        * runtime/JSType.h:
+        * runtime/TypedArrayType.cpp:
+        (JSC::typeForTypedArrayType): Deleted.
+        * runtime/TypedArrayType.h:
+        (JSC::typedArrayTypeForType):
+        (JSC::typeForTypedArrayType):
+
 2018-01-23  Filip Pizlo  <fpizlo@apple.com>
 
         DFG should always flush `this`

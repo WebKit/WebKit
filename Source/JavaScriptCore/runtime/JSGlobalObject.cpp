@@ -1420,7 +1420,7 @@ void JSGlobalObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
 
 #undef VISIT_LAZY_TYPE
 
-    for (unsigned i = NUMBER_OF_TYPED_ARRAY_TYPES; i--;)
+    for (unsigned i = NumberOfTypedArrayTypes; i--;)
         thisObject->lazyTypedArrayStructure(indexToTypedArrayType(i)).visit(visitor);
     
     visitor.append(thisObject->m_speciesGetterSetter);

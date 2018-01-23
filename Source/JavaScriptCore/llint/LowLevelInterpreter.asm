@@ -383,17 +383,17 @@ const ProxyObjectType = constexpr ProxyObjectType
 # The typed array types need to be numbered in a particular order because of the manually written
 # switch statement in get_by_val and put_by_val.
 const Int8ArrayType = constexpr Int8ArrayType
-const Int16ArrayType = constexpr Int16ArrayType
-const Int32ArrayType = constexpr Int32ArrayType
 const Uint8ArrayType = constexpr Uint8ArrayType
 const Uint8ClampedArrayType = constexpr Uint8ClampedArrayType
+const Int16ArrayType = constexpr Int16ArrayType
 const Uint16ArrayType = constexpr Uint16ArrayType
+const Int32ArrayType = constexpr Int32ArrayType
 const Uint32ArrayType = constexpr Uint32ArrayType
 const Float32ArrayType = constexpr Float32ArrayType
 const Float64ArrayType = constexpr Float64ArrayType
 
-const FirstArrayType = Int8ArrayType
-const LastArrayType = Float64ArrayType
+const FirstArrayType = constexpr FirstTypedArrayType
+const NumberOfTypedArrayTypesExcludingDataView = constexpr NumberOfTypedArrayTypesExcludingDataView
 
 # Type flags constants.
 const MasqueradesAsUndefined = constexpr MasqueradesAsUndefined

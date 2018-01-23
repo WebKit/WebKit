@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2006-2011, 2015-2016 Apple Inc. All rights reserved.
+ *  Copyright (C) 2006-2018 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -70,11 +70,11 @@ enum JSType : uint8_t {
     DerivedArrayType,
 
     Int8ArrayType,
-    Int16ArrayType,
-    Int32ArrayType,
     Uint8ArrayType,
     Uint8ClampedArrayType,
+    Int16ArrayType,
     Uint16ArrayType,
+    Int32ArrayType,
     Uint32ArrayType,
     Float32ArrayType,
     Float64ArrayType,
@@ -103,6 +103,11 @@ enum JSType : uint8_t {
     LastJSCObjectType = WebAssemblyToJSCalleeType,
     MaxJSType = 0b11111111,
 };
+
+static const uint32_t FirstTypedArrayType = Int8ArrayType;
+static const uint32_t LastTypedArrayType = DataViewType;
+static constexpr uint32_t NumberOfTypedArrayTypes = LastTypedArrayType - FirstTypedArrayType + 1;
+static constexpr uint32_t NumberOfTypedArrayTypesExcludingDataView = NumberOfTypedArrayTypes - 1;
 
 static_assert(sizeof(JSType) == sizeof(uint8_t), "sizeof(JSType) is one byte.");
 static_assert(LastJSCObjectType < 128, "The highest bit is reserved for embedder's extension.");
