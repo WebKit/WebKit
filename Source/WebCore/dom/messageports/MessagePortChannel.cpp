@@ -184,7 +184,7 @@ void MessagePortChannel::takeAllMessagesForPort(const MessagePortIdentifier& por
 
     ++m_messageBatchesInFlight;
 
-    LOG(MessagePorts, "There are %zu messages to take for port %s. Taking them now, messages in flight is now %llu", result.size(), port.logString().utf8().data(), m_messageBatchesInFlight);
+    LOG(MessagePorts, "There are %zu messages to take for port %s. Taking them now, messages in flight is now %" PRIu64, result.size(), port.logString().utf8().data(), m_messageBatchesInFlight);
 
     auto size = result.size();
     HashSet<RefPtr<MessagePortChannel>> transferredPortProtectors;
@@ -196,7 +196,7 @@ void MessagePortChannel::takeAllMessagesForPort(const MessagePortIdentifier& por
         UNUSED_PARAM(size);
 #endif
         --m_messageBatchesInFlight;
-        LOG(MessagePorts, "Message port channel %s was notified that a batch of %zu message port messages targeted for port %s just completed dispatch, in flight is now %llu", logString().utf8().data(), size, port.logString().utf8().data(), m_messageBatchesInFlight);
+        LOG(MessagePorts, "Message port channel %s was notified that a batch of %zu message port messages targeted for port %s just completed dispatch, in flight is now %" PRIu64, logString().utf8().data(), size, port.logString().utf8().data(), m_messageBatchesInFlight);
 
     });
 }
