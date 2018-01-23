@@ -32,7 +32,6 @@
 #include <WebCore/NetscapePlugInStreamLoader.h>
 #include <WebCore/PingHandle.h>
 #include <WebCore/PlatformStrategies.h>
-#include <WebCore/ResourceHandle.h>
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/SubresourceLoader.h>
 #include <WebCore/URL.h>

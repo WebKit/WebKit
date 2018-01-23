@@ -657,14 +657,14 @@ void ResourceLoader::didSendData(ResourceHandle*, unsigned long long bytesSent, 
     didSendData(bytesSent, totalBytesToBeSent);
 }
 
-void ResourceLoader::didReceiveResponseAsync(ResourceHandle* handle, ResourceResponse&& response)
+void ResourceLoader::didReceiveResponseAsync(ResourceHandle*, ResourceResponse&& response, CompletionHandler<void()>&& completionHandler)
 {
     if (documentLoader()->applicationCacheHost().maybeLoadFallbackForResponse(this, response)) {
-        handle->continueDidReceiveResponse();
+        completionHandler();
         return;
     }
     didReceiveResponse(response);
-    handle->continueDidReceiveResponse();
+    completionHandler();
 }
 
 void ResourceLoader::didReceiveData(ResourceHandle*, const char* data, unsigned length, int encodedDataLength)

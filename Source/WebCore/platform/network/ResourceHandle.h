@@ -107,7 +107,7 @@ public:
     void willSendRequest(ResourceRequest&&, ResourceResponse&&, CompletionHandler<void(ResourceRequest&&)>&&);
 #endif
 
-    void didReceiveResponse(ResourceResponse&&);
+    void didReceiveResponse(ResourceResponse&&, CompletionHandler<void()>&&);
 
     bool shouldUseCredentialStorage();
     void didReceiveAuthenticationChallenge(const AuthenticationChallenge&);
@@ -192,9 +192,6 @@ public:
     // The client may be 0, in which case no callbacks will be made.
     WEBCORE_EXPORT ResourceHandleClient* client() const;
     WEBCORE_EXPORT void clearClient();
-
-    // Called in response to ResourceHandleClient::didReceiveResponseAsync().
-    WEBCORE_EXPORT virtual void continueDidReceiveResponse();
 
 #if USE(PROTECTION_SPACE_AUTH_CALLBACK)
     // Called in response to ResourceHandleClient::canAuthenticateAgainstProtectionSpaceAsync().

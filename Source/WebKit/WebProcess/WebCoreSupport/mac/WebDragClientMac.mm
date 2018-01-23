@@ -48,7 +48,6 @@
 #import <WebCore/Page.h>
 #import <WebCore/Pasteboard.h>
 #import <WebCore/RenderImage.h>
-#import <WebCore/ResourceHandle.h>
 #import <WebCore/StringTruncator.h>
 #import <WebCore/WebCoreNSURLExtras.h>
 #import <wtf/StdLibExtras.h>

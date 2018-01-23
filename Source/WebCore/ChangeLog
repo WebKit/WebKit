@@ -1,3 +1,49 @@
+2018-01-23  Alex Christensen  <achristensen@webkit.org>
+
+        Use CompletionHandlers for ResourceHandleClient::didReceiveResponseAsync
+        https://bugs.webkit.org/show_bug.cgi?id=181961
+
+        Reviewed by Michael Catanzaro.
+
+        No change in behavior.
+
+        * loader/ResourceLoader.cpp:
+        (WebCore::ResourceLoader::didReceiveResponseAsync):
+        * loader/ResourceLoader.h:
+        * loader/appcache/ApplicationCacheGroup.cpp:
+        (WebCore::ApplicationCacheGroup::didReceiveResponseAsync):
+        * loader/appcache/ApplicationCacheGroup.h:
+        * platform/network/BlobResourceHandle.cpp:
+        (WebCore::BlobResourceHandle::notifyResponseOnSuccess):
+        (WebCore::BlobResourceHandle::notifyResponseOnError):
+        (WebCore::BlobResourceHandle::continueDidReceiveResponse): Deleted.
+        * platform/network/BlobResourceHandle.h:
+        * platform/network/PingHandle.h:
+        * platform/network/ResourceHandle.cpp:
+        (WebCore::ResourceHandle::didReceiveResponse):
+        * platform/network/ResourceHandle.h:
+        * platform/network/ResourceHandleClient.h:
+        * platform/network/SynchronousLoaderClient.cpp:
+        (WebCore::SynchronousLoaderClient::didReceiveResponseAsync):
+        * platform/network/SynchronousLoaderClient.h:
+        * platform/network/cf/ResourceHandleCFURLConnectionDelegateWithOperationQueue.cpp:
+        (WebCore::ResourceHandleCFURLConnectionDelegateWithOperationQueue::didReceiveResponse):
+        (WebCore::ResourceHandleCFURLConnectionDelegateWithOperationQueue::continueDidReceiveResponse): Deleted.
+        * platform/network/curl/ResourceHandleCurlDelegate.cpp:
+        (WebCore::ResourceHandleCurlDelegate::curlDidReceiveResponse):
+        (WebCore::ResourceHandleCurlDelegate::handleDataURL):
+        (WebCore::ResourceHandleCurlDelegate::continueDidReceiveResponse): Deleted.
+        * platform/network/mac/ResourceHandleMac.mm:
+        (WebCore::ResourceHandle::continueDidReceiveResponse): Deleted.
+        * platform/network/mac/WebCoreResourceHandleAsOperationQueueDelegate.h:
+        * platform/network/mac/WebCoreResourceHandleAsOperationQueueDelegate.mm:
+        (-[WebCoreResourceHandleAsOperationQueueDelegate connection:didReceiveResponse:]):
+        (-[WebCoreResourceHandleAsOperationQueueDelegate continueDidReceiveResponse]): Deleted.
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::nextMultipartResponsePartCallback):
+        (WebCore::sendRequestCallback):
+        (WebCore::ResourceHandle::continueDidReceiveResponse): Deleted.
+
 2018-01-23  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, rollout r227216 as it seems to be causing deadlocks

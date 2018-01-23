@@ -221,7 +221,9 @@ void ResourceHandleCurlDelegate::curlDidReceiveResponse(const CurlResponse& rece
         CurlCacheManager::singleton().didReceiveResponse(*m_handle, response());
 
         auto protectedThis = makeRef(*m_handle);
-        m_handle->didReceiveResponse(ResourceResponse(response()));
+        m_handle->didReceiveResponse(ResourceResponse(response()), [this, protectedThis = makeRef(*this)] {
+            continueAfterDidReceiveResponse();
+        });
     }
 }
 
@@ -426,7 +428,9 @@ void ResourceHandleCurlDelegate::handleDataURL()
 
     if (base64) {
         data = decodeURLEscapeSequences(data);
-        m_handle->didReceiveResponse(WTFMove(response));
+        m_handle->didReceiveResponse(WTFMove(response), [this, protectedThis = makeRef(*this)] {
+            continueAfterDidReceiveResponse();
+        });
 
         // didReceiveResponse might cause the client to be deleted.
         if (m_handle->client()) {
@@ -437,7 +441,9 @@ void ResourceHandleCurlDelegate::handleDataURL()
     } else {
         TextEncoding encoding(charset);
         data = decodeURLEscapeSequences(data, encoding);
-        m_handle->didReceiveResponse(WTFMove(response));
+        m_handle->didReceiveResponse(WTFMove(response), [this, protectedThis = makeRef(*this)] {
+            continueAfterDidReceiveResponse();
+        });
 
         // didReceiveResponse might cause the client to be deleted.
         if (m_handle->client()) {

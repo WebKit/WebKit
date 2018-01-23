@@ -471,11 +471,6 @@ void ResourceHandle::willSendRequest(ResourceRequest&& request, ResourceResponse
     });
 }
 
-void ResourceHandle::continueDidReceiveResponse()
-{
-    [delegate() continueDidReceiveResponse];
-}
-
 void ResourceHandle::didReceiveAuthenticationChallenge(const AuthenticationChallenge& challenge)
 {
     ASSERT(!d->m_currentMacChallenge);

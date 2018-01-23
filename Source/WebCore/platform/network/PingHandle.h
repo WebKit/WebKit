@@ -67,9 +67,9 @@ private:
         completionHandler({ });
         pingLoadComplete(ResourceError { String(), 0, m_currentRequest.url(), ASCIILiteral("Not allowed to follow redirects"), ResourceError::Type::AccessControl });
     }
-    void didReceiveResponseAsync(ResourceHandle*, ResourceResponse&& response) final
+    void didReceiveResponseAsync(ResourceHandle*, ResourceResponse&& response, CompletionHandler<void()>&& completionHandler) final
     {
-        m_handle->continueDidReceiveResponse();
+        completionHandler();
         pingLoadComplete({ }, response);
     }
     void didReceiveBuffer(ResourceHandle*, Ref<SharedBuffer>&&, int) final { pingLoadComplete(); }

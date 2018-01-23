@@ -23,15 +23,13 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef NetworkResourceLoadParameters_h
-#define NetworkResourceLoadParameters_h
+#pragma once
 
 #include "NetworkLoadParameters.h"
 #include "SandboxExtension.h"
 #include "WebCompiledContentRuleListData.h"
 #include <WebCore/ContentSecurityPolicyResponseHeaders.h>
 #include <WebCore/FetchOptions.h>
-#include <WebCore/ResourceHandle.h>
 #include <WebCore/ResourceLoaderOptions.h>
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/SecurityOrigin.h>
@@ -68,5 +66,3 @@ public:
 };
 
 } // namespace WebKit
-
-#endif // NetworkResourceLoadParameters_h

@@ -38,6 +38,7 @@
 #include "Logging.h"
 #include "ResourceHandleInternal.h"
 #include "SynchronousLoaderClient.h"
+#include <wtf/CompletionHandler.h>
 
 namespace WebCore {
 
@@ -214,8 +215,12 @@ void ResourceHandle::receivedRequestToContinueWithoutCredential(const Authentica
 
     clearAuthentication();
 
-    auto protectedThis = makeRef(*this);
-    didReceiveResponse(ResourceResponse(d->m_response));
+    didReceiveResponse(ResourceResponse(d->m_response), [this, protectedThis = makeRef(*this)] {
+        ASSERT(isMainThread());
+
+        if (d->m_delegate)
+            d->m_delegate->continueDidReceiveResponse();
+    });
 }
 
 void ResourceHandle::receivedCancellation(const AuthenticationChallenge& challenge)
@@ -257,14 +262,6 @@ void ResourceHandle::platformLoadResourceSynchronously(NetworkingContext* contex
     error = client.error();
     data.swap(client.mutableData());
     response = client.response();
-}
-
-void ResourceHandle::continueDidReceiveResponse()
-{
-    ASSERT(isMainThread());
-
-    if (d->m_delegate)
-        d->m_delegate->continueDidReceiveResponse();
 }
 
 void ResourceHandle::platformContinueSynchronousDidReceiveResponse()

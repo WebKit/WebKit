@@ -30,8 +30,6 @@
 #include "NetworkDataTask.h"
 #include "SandboxExtension.h"
 #include <WebCore/AuthenticationChallenge.h>
-#include <WebCore/ResourceHandle.h>
-#include <WebCore/ResourceHandleClient.h>
 #include <WebCore/ResourceRequest.h>
 #include <memory>
 #include <pal/SessionID.h>

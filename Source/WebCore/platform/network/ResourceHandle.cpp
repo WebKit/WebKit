@@ -33,6 +33,7 @@
 #include "ResourceHandleClient.h"
 #include "Timer.h"
 #include <algorithm>
+#include <wtf/CompletionHandler.h>
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/AtomicStringHash.h>
@@ -150,7 +151,7 @@ void ResourceHandle::clearClient()
     d->m_client = nullptr;
 }
 
-void ResourceHandle::didReceiveResponse(ResourceResponse&& response)
+void ResourceHandle::didReceiveResponse(ResourceResponse&& response, CompletionHandler<void()>&& completionHandler)
 {
     if (response.isHTTP09()) {
         auto url = response.url();
@@ -159,11 +160,11 @@ void ResourceHandle::didReceiveResponse(ResourceResponse&& response)
             cancel();
             String message = "Cancelled load from '" + url.stringCenterEllipsizedToLength() + "' because it is using HTTP/0.9.";
             d->m_client->didFail(this, { String(), 0, url, message });
-            continueDidReceiveResponse();
+            completionHandler();
             return;
         }
     }
-    client()->didReceiveResponseAsync(this, WTFMove(response));
+    client()->didReceiveResponseAsync(this, WTFMove(response), WTFMove(completionHandler));
 }
 
 #if !USE(SOUP) && !USE(CURL)

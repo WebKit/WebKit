@@ -1,3 +1,19 @@
+2018-01-23  Alex Christensen  <achristensen@webkit.org>
+
+        Use CompletionHandlers for ResourceHandleClient::didReceiveResponseAsync
+        https://bugs.webkit.org/show_bug.cgi?id=181961
+
+        Reviewed by Michael Catanzaro.
+
+        * NetworkProcess/Downloads/Download.h:
+        * NetworkProcess/NetworkLoad.cpp:
+        * NetworkProcess/NetworkLoad.h:
+        * NetworkProcess/NetworkResourceLoadParameters.h:
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        * WebProcess/WebCoreSupport/mac/WebDragClientMac.mm:
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        * WebProcess/WebProcess.cpp:
+
 2018-01-23  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, rollout r227216 as it seems to be causing deadlocks

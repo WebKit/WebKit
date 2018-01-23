@@ -657,11 +657,6 @@ const ResourceRequest& ResourceHandle::currentRequest() const
     return d->m_currentRequest;
 }
 
-void ResourceHandle::continueDidReceiveResponse()
-{
-    d->m_connectionDelegate->continueDidReceiveResponse();
-}
-
 #if USE(PROTECTION_SPACE_AUTH_CALLBACK)
 void ResourceHandle::continueCanAuthenticateAgainstProtectionSpace(bool canAuthenticate)
 {

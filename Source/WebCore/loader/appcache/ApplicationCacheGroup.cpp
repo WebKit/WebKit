@@ -489,14 +489,14 @@ RefPtr<ResourceHandle> ApplicationCacheGroup::createResourceHandle(const URL& ur
     return handle;
 }
 
-void ApplicationCacheGroup::didReceiveResponseAsync(ResourceHandle* handle, ResourceResponse&& response)
+void ApplicationCacheGroup::didReceiveResponseAsync(ResourceHandle* handle, ResourceResponse&& response, CompletionHandler<void()>&& completionHandler)
 {
     ASSERT(m_frame);
     InspectorInstrumentation::didReceiveResourceResponse(*m_frame, m_currentResourceIdentifier, m_frame->loader().documentLoader(), response, nullptr);
 
     if (handle == m_manifestHandle) {
         didReceiveManifestResponse(response);
-        handle->continueDidReceiveResponse();
+        completionHandler();
         return;
     }
 
@@ -523,7 +523,7 @@ void ApplicationCacheGroup::didReceiveResponseAsync(ResourceHandle* handle, Reso
             m_currentHandle = nullptr;
             // Load the next resource, if any.
             startLoadingEntry();
-            handle->continueDidReceiveResponse();
+            completionHandler();
             return;
         }
         // The server could return 304 for an unconditional request - in this case, we handle the response as a normal error.
@@ -555,12 +555,12 @@ void ApplicationCacheGroup::didReceiveResponseAsync(ResourceHandle* handle, Reso
             // Load the next resource, if any.
             startLoadingEntry();
         }
-        handle->continueDidReceiveResponse();
+        completionHandler();
         return;
     }
     
     m_currentResource = ApplicationCacheResource::create(url, response, type);
-    handle->continueDidReceiveResponse();
+    completionHandler();
 }
 
 void ApplicationCacheGroup::willSendRequestAsync(ResourceHandle*, ResourceRequest&& request, ResourceResponse&&, CompletionHandler<void(ResourceRequest&&)>&& completionHandler)

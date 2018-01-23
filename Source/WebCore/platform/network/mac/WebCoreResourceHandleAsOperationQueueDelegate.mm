@@ -108,11 +108,6 @@ static bool scheduledWithCustomRunLoopMode(SchedulePairHashSet* pairs)
     [super dealloc];
 }
 
-- (void)continueDidReceiveResponse
-{
-    dispatch_semaphore_signal(m_semaphore);
-}
-
 - (void)continueCanAuthenticateAgainstProtectionSpace:(BOOL)canAuthenticate
 {
     m_boolResult = canAuthenticate;
@@ -230,7 +225,9 @@ static bool scheduledWithCustomRunLoopMode(SchedulePairHashSet* pairs)
         resourceResponse.setSource(ResourceResponse::Source::Network);
         ResourceHandle::getConnectionTimingData(connection.get(), resourceResponse.deprecatedNetworkLoadMetrics());
 
-        m_handle->didReceiveResponse(WTFMove(resourceResponse));
+        m_handle->didReceiveResponse(WTFMove(resourceResponse), [self, protectedSelf = WTFMove(protectedSelf)] {
+            dispatch_semaphore_signal(m_semaphore);
+        });
     };
 
     [self callFunctionOnMainThread:WTFMove(work)];

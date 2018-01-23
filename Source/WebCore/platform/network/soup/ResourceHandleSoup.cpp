@@ -463,7 +463,9 @@ static void nextMultipartResponsePartCallback(GObject* /*source*/, GAsyncResult*
 
     d->m_previousPosition = 0;
 
-    handle->didReceiveResponse(ResourceResponse(d->m_response));
+    handle->didReceiveResponse(ResourceResponse(d->m_response), [handle = makeRef(*handle)] {
+        continueAfterDidReceiveResponse(handle.ptr());
+    });
 }
 
 static void sendRequestCallback(GObject*, GAsyncResult* result, gpointer data)
@@ -520,7 +522,9 @@ static void sendRequestCallback(GObject*, GAsyncResult* result, gpointer data)
     else
         d->m_inputStream = inputStream;
 
-    handle->didReceiveResponse(ResourceResponse(d->m_response));
+    handle->didReceiveResponse(ResourceResponse(d->m_response), [handle = makeRef(*handle)] {
+        continueAfterDidReceiveResponse(handle.ptr());
+    });
 }
 
 void ResourceHandle::platformContinueSynchronousDidReceiveResponse()
@@ -1017,11 +1021,6 @@ static void readCallback(GObject*, GAsyncResult* asyncResult, gpointer data)
     handle->ensureReadBuffer();
     g_input_stream_read_async(d->m_inputStream.get(), const_cast<char*>(d->m_soupBuffer->data), d->m_soupBuffer->length, RunLoopSourcePriority::AsyncIONetwork,
         d->m_cancellable.get(), readCallback, handle.get());
-}
-
-void ResourceHandle::continueDidReceiveResponse()
-{
-    continueAfterDidReceiveResponse(this);
 }
 
 }

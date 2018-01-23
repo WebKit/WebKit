@@ -75,7 +75,7 @@ class BlobResourceSynchronousLoader : public ResourceHandleClient {
 public:
     BlobResourceSynchronousLoader(ResourceError&, ResourceResponse&, Vector<char>&);
 
-    void didReceiveResponseAsync(ResourceHandle*, ResourceResponse&&) final;
+    void didReceiveResponseAsync(ResourceHandle*, ResourceResponse&&, CompletionHandler<void()>&&) final;
     void didFail(ResourceHandle*, const ResourceError&) final;
     void willSendRequestAsync(ResourceHandle*, ResourceRequest&&, ResourceResponse&&, CompletionHandler<void(ResourceRequest&&)>&&) final;
 #if USE(PROTECTION_SPACE_AUTH_CALLBACK)
@@ -109,12 +109,12 @@ void BlobResourceSynchronousLoader::canAuthenticateAgainstProtectionSpaceAsync(R
 }
 #endif
 
-void BlobResourceSynchronousLoader::didReceiveResponseAsync(ResourceHandle* handle, ResourceResponse&& response)
+void BlobResourceSynchronousLoader::didReceiveResponseAsync(ResourceHandle* handle, ResourceResponse&& response, CompletionHandler<void()>&& completionHandler)
 {
     // We cannot handle the size that is more than maximum integer.
     if (response.expectedContentLength() > INT_MAX) {
         m_error = ResourceError(webKitBlobResourceDomain, static_cast<int>(BlobResourceHandle::Error::NotReadableError), response.url(), "File is too large");
-        handle->continueDidReceiveResponse();
+        completionHandler();
         return;
     }
 
@@ -123,7 +123,7 @@ void BlobResourceSynchronousLoader::didReceiveResponseAsync(ResourceHandle* hand
     // Read all the data.
     m_data.resize(static_cast<size_t>(response.expectedContentLength()));
     static_cast<BlobResourceHandle*>(handle)->readSync(m_data.data(), static_cast<int>(m_data.size()));
-    handle->continueDidReceiveResponse();
+    completionHandler();
 }
 
 void BlobResourceSynchronousLoader::didFail(ResourceHandle*, const ResourceError& error)
@@ -174,12 +174,6 @@ void BlobResourceHandle::cancel()
     m_aborted = true;
 
     ResourceHandle::cancel();
-}
-
-void BlobResourceHandle::continueDidReceiveResponse()
-{
-    m_buffer.resize(bufferSize);
-    readAsync();
 }
 
 void BlobResourceHandle::start()
@@ -584,7 +578,10 @@ void BlobResourceHandle::notifyResponseOnSuccess()
     // as if the response had a Content-Disposition header with the filename parameter set to the File's name attribute.
     // Notably, this will affect a name suggested in "File Save As".
 
-    client()->didReceiveResponseAsync(this, WTFMove(response));
+    client()->didReceiveResponseAsync(this, WTFMove(response), [this, protectedThis = makeRef(*this)] {
+        m_buffer.resize(bufferSize);
+        readAsync();
+    });
 }
 
 void BlobResourceHandle::notifyResponseOnError()
@@ -607,7 +604,10 @@ void BlobResourceHandle::notifyResponseOnError()
         break;
     }
 
-    client()->didReceiveResponseAsync(this, WTFMove(response));
+    client()->didReceiveResponseAsync(this, WTFMove(response), [this, protectedThis = makeRef(*this)] {
+        m_buffer.resize(bufferSize);
+        readAsync();
+    });
 }
 
 void BlobResourceHandle::notifyReceiveData(const char* data, int bytesRead)

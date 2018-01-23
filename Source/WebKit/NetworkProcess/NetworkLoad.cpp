@@ -34,7 +34,6 @@
 #include "WebCoreArgumentCoders.h"
 #include "WebErrors.h"
 #include <WebCore/NotImplemented.h>
-#include <WebCore/ResourceHandle.h>
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/SharedBuffer.h>
 #include <pal/SessionID.h>
