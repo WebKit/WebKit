@@ -335,7 +335,7 @@
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/180408"}}
             },
             "test_resp_data": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/180411"}}
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/180412"}}
             },
             "test_timeouts": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/180412"}}

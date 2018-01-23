@@ -1,5 +1,24 @@
 2018-01-23  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        WebDriver: matched capabilities should include setWindowRect
+        https://bugs.webkit.org/show_bug.cgi?id=180411
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        Handle setWindowRect in capabilities. It's always true for GTK and false for WPE.
+
+        * Capabilities.h:
+        * WebDriverService.cpp:
+        (WebDriver::WebDriverService::parseCapabilities const):
+        (WebDriver::WebDriverService::matchCapabilities const):
+        (WebDriver::WebDriverService::newSession):
+        * gtk/WebDriverServiceGtk.cpp:
+        (WebDriver::WebDriverService::platformCapabilities):
+        * wpe/WebDriverServiceWPE.cpp:
+        (WebDriver::WebDriverService::platformCapabilities):
+
+2018-01-23  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         WebDriver: test imported/selenium/py/test/selenium/webdriver/common/api_example_tests.py::testChangeWindowSize fails
         https://bugs.webkit.org/show_bug.cgi?id=181728
 

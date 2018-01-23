@@ -1,5 +1,17 @@
 2018-01-23  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        WebDriver: matched capabilities should include setWindowRect
+        https://bugs.webkit.org/show_bug.cgi?id=180411
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        Change the bug number of test imported/w3c/webdriver/tests/sessions/new_session/response.py::test_resp_data,
+        since now it's failing due to missing timeouts value.
+
+        * TestExpectations.json:
+
+2018-01-23  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         WebDriver: test imported/selenium/py/test/selenium/webdriver/common/api_example_tests.py::testChangeWindowSize fails
         https://bugs.webkit.org/show_bug.cgi?id=181728
 
