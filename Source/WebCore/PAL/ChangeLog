@@ -1,3 +1,25 @@
+2018-01-23  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [WPE][GTK] Sleep inhibitors do not work under Flatpak
+        https://bugs.webkit.org/show_bug.cgi?id=180812
+
+        Reviewed by Carlos Garcia Campos.
+
+        Ensure SleepDisablerGLib works even when running inside a Flatpak sandbox by using the
+        Freedesktop inhibit portal D-Bus API.
+
+        Unfortunately this has to be tested manually.
+
+        * pal/system/glib/SleepDisablerGLib.cpp:
+        (PAL::SleepDisablerGLib::SleepDisablerGLib):
+        (PAL::SleepDisablerGLib::~SleepDisablerGLib):
+        (PAL::SleepDisablerGLib::acquireInhibitor):
+        (PAL::SleepDisablerGLib::acquireInhibitorViaScreenSaverProxy):
+        (PAL::SleepDisablerGLib::acquireInhibitorViaInhibitPortalProxy):
+        (PAL::SleepDisablerGLib::releaseInhibitor):
+        (PAL::SleepDisablerGLib::releaseInhibitorViaScreenSaverProxy):
+        (PAL::SleepDisablerGLib::releaseInhibitorViaInhibitPortalProxy):
+
 2018-01-22  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [Cocoa] Support font collections

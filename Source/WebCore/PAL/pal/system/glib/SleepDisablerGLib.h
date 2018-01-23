@@ -28,6 +28,7 @@
 #include "SleepDisabler.h"
 
 #include <wtf/glib/GRefPtr.h>
+#include <wtf/glib/GUniquePtr.h>
 #include <wtf/text/CString.h>
 
 typedef struct _GDBusProxy GDBusProxy;
@@ -41,10 +42,18 @@ public:
 
 private:
     void acquireInhibitor();
+    void acquireInhibitorViaScreenSaverProxy();
+    void acquireInhibitorViaInhibitPortalProxy();
+
     void releaseInhibitor();
+    void releaseInhibitorViaScreenSaverProxy();
+    void releaseInhibitorViaInhibitPortalProxy();
 
     GRefPtr<GDBusProxy> m_screenSaverProxy;
     unsigned m_screenSaverCookie { 0 };
+
+    GRefPtr<GDBusProxy> m_inhibitPortalProxy;
+    GUniqueOutPtr<char> m_inhibitPortalRequestObjectPath;
 
     GRefPtr<GCancellable> m_cancellable;
     CString m_reason;
