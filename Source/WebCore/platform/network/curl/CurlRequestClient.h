@@ -35,6 +35,9 @@ class SharedBuffer;
 
 class CurlRequestClient {
 public:
+    virtual void ref() = 0;
+    virtual void deref() = 0;
+
     virtual void curlDidReceiveResponse(const CurlResponse&) = 0;
     virtual void curlDidReceiveBuffer(Ref<SharedBuffer>&&) = 0;
     virtual void curlDidComplete() = 0;

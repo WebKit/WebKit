@@ -43,6 +43,9 @@ public:
     ResourceHandleCurlDelegate(ResourceHandle*);
     ~ResourceHandleCurlDelegate();
 
+    void ref() override { ThreadSafeRefCounted<ResourceHandleCurlDelegate>::ref(); }
+    void deref() override { ThreadSafeRefCounted<ResourceHandleCurlDelegate>::deref(); }
+
     bool hasHandle() const;
     void releaseHandle();
 

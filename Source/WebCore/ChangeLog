@@ -1,3 +1,23 @@
+2018-01-23  Basuke Suzuki  <Basuke.Suzuki@sony.com>
+
+        [Curl] CurlRequest must protect its client from disposal while it's on duty.
+        https://bugs.webkit.org/show_bug.cgi?id=181875
+
+        Reviewed by Alex Christensen.
+
+        No new tests. It's covered by existing tests.
+
+        * platform/network/curl/CurlDownload.h:
+        * platform/network/curl/CurlRequest.cpp:
+        (WebCore::CurlRequest::callClient):
+        (WebCore::CurlRequest::didReceiveData):
+        (WebCore::CurlRequest::didReceiveDataFromMultipart):
+        (WebCore::CurlRequest::didCompleteTransfer):
+        (WebCore::CurlRequest::invokeDidReceiveResponse):
+        * platform/network/curl/CurlRequest.h:
+        * platform/network/curl/CurlRequestClient.h:
+        * platform/network/curl/ResourceHandleCurlDelegate.h:
+
 2018-01-23  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r227437.
