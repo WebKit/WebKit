@@ -1,3 +1,9 @@
+2018-01-22  Dan Bernstein  <mitz@apple.com>
+
+        Fixed building for macOS 10.12 with the macOS 10.13 SDK after r227156.
+
+        * Configurations/WebCore.xcconfig:
+
 2018-01-22  Simon Fraser  <simon.fraser@apple.com>
 
         REGRESSION (r226981): ASSERTION FAILED: startY >= 0 && endY <= height && startY < endY in WebCore::FEMorphology::platformApplyGeneric
