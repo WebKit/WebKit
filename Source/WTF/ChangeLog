@@ -1,3 +1,12 @@
+2018-01-22  Alex Christensen  <achristensen@webkit.org>
+
+        Begin removing QTKit code
+        https://bugs.webkit.org/show_bug.cgi?id=181951
+
+        Reviewed by Jer Noble.
+
+        * wtf/Platform.h:
+
 2018-01-21  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Add a new feature flag for EXTRA_ZOOM_MODE and reintroduce AdditionalFeatureDefines.h

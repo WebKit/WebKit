@@ -69,8 +69,6 @@ platform/graphics/mac/IconMac.mm
 platform/graphics/mac/IntPointMac.mm
 platform/graphics/mac/IntRectMac.mm
 platform/graphics/mac/IntSizeMac.mm
-platform/graphics/mac/MediaPlayerPrivateQTKit.mm @no-unify
-platform/graphics/mac/MediaTimeQTKit.mm
 platform/graphics/mac/PDFDocumentImageMac.mm
 
 platform/mac/BlacklistUpdater.mm

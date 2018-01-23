@@ -1,3 +1,26 @@
+2018-01-22  Alex Christensen  <achristensen@webkit.org>
+
+        Begin removing QTKit code
+        https://bugs.webkit.org/show_bug.cgi?id=181951
+
+        Reviewed by Jer Noble.
+
+        QTKit was being used on El Capitan and before.
+
+        * Configurations/WebCore.xcconfig:
+        * SourcesMac.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::buildMediaEnginesVector):
+        (WebCore::MediaPlayer::supportsType):
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.h: Removed.
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.mm: Removed.
+        * platform/graphics/mac/MediaTimeQTKit.h: Removed.
+        * platform/graphics/mac/MediaTimeQTKit.mm: Removed.
+        * platform/mac/WebVideoFullscreenController.mm:
+        (-[WebVideoFullscreenController setVideoElement:]):
+        (-[WebVideoFullscreenController updatePowerAssertions]):
+
 2018-01-22  Per Arne Vollan  <pvollan@apple.com>
 
         [Win] Null pointer crash under WebCore::RenderStyle::colorIncludingFallback.

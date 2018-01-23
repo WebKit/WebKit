@@ -65,9 +65,6 @@
 #endif
 
 #if PLATFORM(COCOA)
-#if USE(QTKIT)
-#include "MediaPlayerPrivateQTKit.h"
-#endif
 
 #if USE(AVFOUNDATION)
 #include "MediaPlayerPrivateAVFoundationObjC.h"
@@ -248,11 +245,6 @@ static void buildMediaEnginesVector()
 #endif
     }
 #endif // USE(AVFOUNDATION)
-
-#if PLATFORM(MAC) && USE(QTKIT)
-    if (DeprecatedGlobalSettings::isQTKitEnabled())
-        MediaPlayerPrivateQTKit::registerMediaEngine(addMediaEngine);
-#endif
 
 #if defined(PlatformMediaEngineClassName)
 #if USE(GSTREAMER)
@@ -908,7 +900,7 @@ NativeImagePtr MediaPlayer::nativeImageForCurrentTime()
     return m_private->nativeImageForCurrentTime();
 }
 
-MediaPlayer::SupportsType MediaPlayer::supportsType(const MediaEngineSupportParameters& parameters, const MediaPlayerSupportsTypeClient* client)
+MediaPlayer::SupportsType MediaPlayer::supportsType(const MediaEngineSupportParameters& parameters, const MediaPlayerSupportsTypeClient*)
 {
     // 4.8.10.3 MIME types - The canPlayType(type) method must return the empty string if type is a type that the 
     // user agent knows it cannot render or is the type "application/octet-stream"
@@ -919,23 +911,6 @@ MediaPlayer::SupportsType MediaPlayer::supportsType(const MediaEngineSupportPara
     const MediaPlayerFactory* engine = bestMediaEngineForSupportParameters(parameters);
     if (!engine)
         return IsNotSupported;
-
-#if PLATFORM(COCOA)
-    // YouTube will ask if the HTMLMediaElement canPlayType video/webm, then
-    // video/x-flv, then finally video/mp4, and will then load a URL of the first type
-    // in that list which returns "probably". When Perian is installed,
-    // MediaPlayerPrivateQTKit claims to support both video/webm and video/x-flv, but
-    // due to a bug in Perian, loading media in these formats will sometimes fail on
-    // slow connections. <https://bugs.webkit.org/show_bug.cgi?id=86409>
-    if (client && client->mediaPlayerNeedsSiteSpecificHacks()) {
-        String host = client->mediaPlayerDocumentHost();
-        if ((host.endsWithIgnoringASCIICase(".youtube.com") || equalLettersIgnoringASCIICase(host, "youtube.com"))
-            && (startsWithLettersIgnoringASCIICase(containerType, "video/webm") || startsWithLettersIgnoringASCIICase(containerType, "video/x-flv")))
-            return IsNotSupported;
-    }
-#else
-    UNUSED_PARAM(client);
-#endif
 
     return engine->supportsTypeAndCodecs(parameters);
 }
