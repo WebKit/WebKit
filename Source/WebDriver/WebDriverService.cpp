@@ -442,12 +442,8 @@ RefPtr<JSON::Object> WebDriverService::mergeCapabilities(const JSON::Object& req
         result->setValue(it->key, RefPtr<JSON::Value>(it->value));
 
     auto firstMatchEnd = firstMatchCapabilities.end();
-    for (auto it = firstMatchCapabilities.begin(); it != firstMatchEnd; ++it) {
-        if (requiredCapabilities.find(it->key) != requiredEnd)
-            return nullptr;
-
+    for (auto it = firstMatchCapabilities.begin(); it != firstMatchEnd; ++it)
         result->setValue(it->key, RefPtr<JSON::Value>(it->value));
-    }
 
     return result;
 }
@@ -575,6 +571,18 @@ RefPtr<JSON::Object> WebDriverService::processCapabilities(const JSON::Object& p
             completionHandler(CommandResult::fail(CommandResult::ErrorCode::InvalidArgument, String("Invalid firstMatch capabilities")));
             return nullptr;
         }
+
+        // Validate here that firstMatchCapabilities don't shadow alwaysMatchCapabilities.
+        auto requiredEnd = requiredCapabilities->end();
+        auto firstMatchEnd = firstMatchCapabilities->end();
+        for (auto it = firstMatchCapabilities->begin(); it != firstMatchEnd; ++it) {
+            if (requiredCapabilities->find(it->key) != requiredEnd) {
+                completionHandler(CommandResult::fail(CommandResult::ErrorCode::InvalidArgument,
+                    makeString("Invalid firstMatch capabilities: key ", it->key, " is present in alwaysMatch")));
+                return nullptr;
+            }
+        }
+
         // 5.2. Append validated capabilities to validated first match capabilities.
         validatedFirstMatchCapabilitiesList.uncheckedAppend(WTFMove(firstMatchCapabilities));
     }

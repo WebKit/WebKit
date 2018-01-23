@@ -193,17 +193,11 @@
     },
     "imported/w3c/webdriver/tests/sessions/new_session/merge.py": {
         "subtests": {
-            "test_merge_invalid[unhandledPromptBehavior-value1]": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/180407"}}
-            },
-            "test_merge_invalid[unhandledPromptBehavior-value2]": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/180407"}}
-            },
             "test_merge_platformName": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/180407"}}
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/181984"}}
             },
             "test_merge_browserName": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/180407"}}
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/181985"}}
             }
         }
     },
