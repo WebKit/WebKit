@@ -1,3 +1,20 @@
+2018-01-22  Simon Fraser  <simon.fraser@apple.com>
+
+        REGRESSION (r227011): fast/frames/hidpi-position-iframe-on-device-pixel.html times out
+        https://bugs.webkit.org/show_bug.cgi?id=181959
+
+        Reviewed by Zalan Bujtas.
+
+        This test creates 300 iframes, which became slow after r227011 because they all became part
+        of the non-fast scrollable region, slowing down ScrollingCoordinator::absoluteEventTrackingRegionsForFrame().
+
+        Fix by not adding non-scrollable iframes, and making FrameView::isScrollable() more efficient for frames
+        that have not done layout yet.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::isScrollable):
+        (WebCore::FrameView::addChild):
+
 2018-01-22  Dan Bernstein  <mitz@apple.com>
 
         Fixed building for macOS 10.12 with the macOS 10.13 SDK after r227156.

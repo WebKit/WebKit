@@ -3592,6 +3592,8 @@ bool FrameView::isScrollable(Scrollability definitionOfScrollable)
     // 2) display:none or visibility:hidden set to self or inherited.
     // 3) overflow{-x,-y}: hidden;
     // 4) scrolling: no;
+    if (!didFirstLayout())
+        return false;
 
     bool requiresActualOverflowToBeConsideredScrollable = !frame().isMainFrame() || definitionOfScrollable != Scrollability::ScrollableOrRubberbandable;
 #if !ENABLE(RUBBER_BANDING)
@@ -4647,8 +4649,11 @@ void FrameView::sendScrollEvent()
 
 void FrameView::addChild(Widget& widget)
 {
-    if (is<FrameView>(widget))
-        addScrollableArea(&downcast<FrameView>(widget));
+    if (is<FrameView>(widget)) {
+        auto& childFrameView = downcast<FrameView>(widget);
+        if (childFrameView.isScrollable())
+            addScrollableArea(&childFrameView);
+    }
 
     ScrollView::addChild(widget);
 }
