@@ -1,3 +1,20 @@
+2018-01-23  Robin Morisset  <rmorisset@apple.com>
+
+        Rollout r219636
+        https://bugs.webkit.org/show_bug.cgi?id=181997
+        <rdar://problem/35883022>
+
+        Unreviewed, as it is a rollout.
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::emitAllocateRawObject):
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::tryCreateUninitializedRestricted):
+        * runtime/JSArray.h:
+        (JSC::JSArray::tryCreate):
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::ensureLengthSlow):
+
 2018-01-23  Mark Lam  <mark.lam@apple.com>
 
         Re-arrange TypedArray JSTypes to match the order of the TypedArrayType enum list.
