@@ -647,29 +647,6 @@ void WebDriverService::newSession(RefPtr<JSON::Object>&& parameters, Function<vo
                 capabilitiesObject->setString(ASCIILiteral("platformName"), capabilities.platformName.value());
             if (capabilities.acceptInsecureCerts)
                 capabilitiesObject->setBoolean(ASCIILiteral("acceptInsecureCerts"), capabilities.acceptInsecureCerts.value());
-            if (capabilities.timeouts) {
-                RefPtr<JSON::Object> timeoutsObject = JSON::Object::create();
-                if (capabilities.timeouts.value().script)
-                    timeoutsObject->setInteger(ASCIILiteral("script"), capabilities.timeouts.value().script.value().millisecondsAs<int>());
-                if (capabilities.timeouts.value().pageLoad)
-                    timeoutsObject->setInteger(ASCIILiteral("pageLoad"), capabilities.timeouts.value().pageLoad.value().millisecondsAs<int>());
-                if (capabilities.timeouts.value().implicit)
-                    timeoutsObject->setInteger(ASCIILiteral("implicit"), capabilities.timeouts.value().implicit.value().millisecondsAs<int>());
-                capabilitiesObject->setObject(ASCIILiteral("timeouts"), WTFMove(timeoutsObject));
-            }
-            if (capabilities.pageLoadStrategy) {
-                switch (capabilities.pageLoadStrategy.value()) {
-                case PageLoadStrategy::None:
-                    capabilitiesObject->setString(ASCIILiteral("pageLoadStrategy"), "none");
-                    break;
-                case PageLoadStrategy::Normal:
-                    capabilitiesObject->setString(ASCIILiteral("pageLoadStrategy"), "normal");
-                    break;
-                case PageLoadStrategy::Eager:
-                    capabilitiesObject->setString(ASCIILiteral("pageLoadStrategy"), "eager");
-                    break;
-                }
-            }
             if (capabilities.setWindowRect)
                 capabilitiesObject->setBoolean(ASCIILiteral("setWindowRect"), capabilities.setWindowRect.value());
             if (capabilities.unhandledPromptBehavior) {
@@ -691,6 +668,25 @@ void WebDriverService::newSession(RefPtr<JSON::Object>&& parameters, Function<vo
                     break;
                 }
             }
+            switch (capabilities.pageLoadStrategy.value_or(PageLoadStrategy::Normal)) {
+            case PageLoadStrategy::None:
+                capabilitiesObject->setString(ASCIILiteral("pageLoadStrategy"), "none");
+                break;
+            case PageLoadStrategy::Normal:
+                capabilitiesObject->setString(ASCIILiteral("pageLoadStrategy"), "normal");
+                break;
+            case PageLoadStrategy::Eager:
+                capabilitiesObject->setString(ASCIILiteral("pageLoadStrategy"), "eager");
+                break;
+            }
+            // FIXME: implement proxy support.
+            capabilitiesObject->setObject(ASCIILiteral("proxy"), JSON::Object::create());
+            RefPtr<JSON::Object> timeoutsObject = JSON::Object::create();
+            timeoutsObject->setInteger(ASCIILiteral("script"), m_session->scriptTimeout().millisecondsAs<int>());
+            timeoutsObject->setInteger(ASCIILiteral("pageLoad"), m_session->pageLoadTimeout().millisecondsAs<int>());
+            timeoutsObject->setInteger(ASCIILiteral("implicit"), m_session->implicitWaitTimeout().millisecondsAs<int>());
+            capabilitiesObject->setObject(ASCIILiteral("timeouts"), WTFMove(timeoutsObject));
+
             resultObject->setObject(ASCIILiteral("capabilities"), WTFMove(capabilitiesObject));
             completionHandler(CommandResult::success(WTFMove(resultObject)));
         });

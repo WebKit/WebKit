@@ -1,5 +1,25 @@
 2018-01-23  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        WebDriver: test imported/w3c/webdriver/tests/sessions/new_session/response.py::test_timeouts fails
+        https://bugs.webkit.org/show_bug.cgi?id=180412
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        Include all missing capabilities in the new session response message.
+
+        Fixes: imported/w3c/webdriver/tests/sessions/new_session/response.py::test_resp_capabilites
+               imported/w3c/webdriver/tests/sessions/new_session/response.py::test_resp_data
+               imported/w3c/webdriver/tests/sessions/new_session/response.py::test_timeouts
+
+        * Session.h:
+        (WebDriver::Session::scriptTimeout const):
+        (WebDriver::Session::pageLoadTimeout const):
+        (WebDriver::Session::implicitWaitTimeout const):
+        * WebDriverService.cpp:
+        (WebDriver::WebDriverService::newSession):
+
+2018-01-23  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         WebDriver: matched capabilities should include setWindowRect
         https://bugs.webkit.org/show_bug.cgi?id=180411
 

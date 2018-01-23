@@ -48,10 +48,12 @@ public:
 
     const String& id() const { return m_id; }
     const Capabilities& capabilities() const;
+    Seconds scriptTimeout() const  { return m_scriptTimeout; }
+    Seconds pageLoadTimeout() const { return m_pageLoadTimeout; }
+    Seconds implicitWaitTimeout() const { return m_implicitWaitTimeout; }
 
     enum class FindElementsMode { Single, Multiple };
     enum class ExecuteScriptMode { Sync, Async };
-    enum class Timeout { Script, PageLoad, Implicit };
 
     struct Cookie {
         String name;
