@@ -1790,3 +1790,5 @@ webkit.org/b/181565 imported/w3c/web-platform-tests/media-source/mediasource-con
 webkit.org/b/181966 [ Debug ] media/W3C/audio/events/event_progress.html [ Pass Failure ]
 webkit.org/b/181966 media/W3C/video/events/event_order_loadstart_progress.html [ Pass Failure ]
 
+webkit.org/b/181969 fast/events/message-port.html [ Skip ]
+
