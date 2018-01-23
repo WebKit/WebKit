@@ -1,5 +1,30 @@
 2018-01-23  Filip Pizlo  <fpizlo@apple.com>
 
+        DFG should always flush `this`
+        https://bugs.webkit.org/show_bug.cgi?id=181999
+
+        Reviewed by Saam Barati and Mark Lam.
+        
+        This is going to make it possible to use precise index masking for arguments-on-the-stack
+        accesses with an index adjusted so that 0 is this. Without this change, we would have no way
+        of masking when the argument count is 0, unless we padded the argument area so that there was
+        always an argument slot after `this` and it was always initialized.
+        
+        This is neutral on all benchmarks.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::flushImpl):
+        (JSC::DFG::ByteCodeParser::flushForTerminalImpl):
+        (JSC::DFG::ByteCodeParser::flush):
+        (JSC::DFG::ByteCodeParser::flushForTerminal):
+        (JSC::DFG::ByteCodeParser::parse):
+        (JSC::DFG::flushImpl): Deleted.
+        (JSC::DFG::flushForTerminalImpl): Deleted.
+        * dfg/DFGPreciseLocalClobberize.h:
+        (JSC::DFG::PreciseLocalClobberizeAdaptor::readTop):
+
+2018-01-23  Filip Pizlo  <fpizlo@apple.com>
+
         JSC should use a speculation fence on VM entry/exit
         https://bugs.webkit.org/show_bug.cgi?id=181991
 

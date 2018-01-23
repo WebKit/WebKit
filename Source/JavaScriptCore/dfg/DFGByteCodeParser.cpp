@@ -82,51 +82,6 @@ if (DFGByteCodeParserInternal::verbose && Options::verboseDFGBytecodeParsing()) 
 dataLog(__VA_ARGS__); \
 } while (false)
 
-template <typename F1, typename F2>
-static ALWAYS_INLINE void flushImpl(Graph& graph, InlineCallFrame* inlineCallFrame, const F1& addFlushDirect, const F2& addPhantomLocalDirect)
-{
-    int numArguments;
-    if (inlineCallFrame) {
-        ASSERT(!graph.hasDebuggerEnabled());
-        numArguments = inlineCallFrame->argumentsWithFixup.size();
-        if (inlineCallFrame->isClosureCall)
-            addFlushDirect(remapOperand(inlineCallFrame, VirtualRegister(CallFrameSlot::callee)));
-        if (inlineCallFrame->isVarargs())
-            addFlushDirect(remapOperand(inlineCallFrame, VirtualRegister(CallFrameSlot::argumentCount)));
-    } else
-        numArguments = graph.baselineCodeBlockFor(inlineCallFrame)->numParameters();
-
-    for (unsigned argument = numArguments; argument-- > 1;)
-        addFlushDirect(remapOperand(inlineCallFrame, virtualRegisterForArgument(argument)));
-
-    if (!inlineCallFrame && graph.needsFlushedThis())
-        addFlushDirect(remapOperand(inlineCallFrame, virtualRegisterForArgument(0)));
-    else
-        addPhantomLocalDirect(remapOperand(inlineCallFrame, virtualRegisterForArgument(0)));
-
-    if (graph.needsScopeRegister())
-        addFlushDirect(graph.m_codeBlock->scopeRegister());
-}
-
-template <typename F1, typename F2>
-static ALWAYS_INLINE void flushForTerminalImpl(Graph& graph, CodeOrigin origin, const F1& addFlushDirect, const F2& addPhantomLocalDirect)
-{
-    origin.walkUpInlineStack([&] (CodeOrigin origin) {
-        unsigned bytecodeIndex = origin.bytecodeIndex;
-        InlineCallFrame* inlineCallFrame = origin.inlineCallFrame;
-        flushImpl(graph, inlineCallFrame, addFlushDirect, addPhantomLocalDirect);
-
-        CodeBlock* codeBlock = graph.baselineCodeBlockFor(inlineCallFrame);
-        FullBytecodeLiveness& fullLiveness = graph.livenessFor(codeBlock);
-        const FastBitVector& livenessAtBytecode = fullLiveness.getLiveness(bytecodeIndex);
-
-        for (unsigned local = codeBlock->m_numCalleeLocals; local--;) {
-            if (livenessAtBytecode[local])
-                addPhantomLocalDirect(remapOperand(inlineCallFrame, virtualRegisterForLocal(local)));
-        }
-    });
-}
-
 // === ByteCodeParser ===
 //
 // This class is used to compile the dataflow graph from a CodeBlock.
@@ -564,6 +519,47 @@ private:
         return findArgumentPositionForLocal(operand);
     }
 
+    template<typename AddFlushDirectFunc>
+    void flushImpl(InlineCallFrame* inlineCallFrame, const AddFlushDirectFunc& addFlushDirect)
+    {
+        int numArguments;
+        if (inlineCallFrame) {
+            ASSERT(!m_graph.hasDebuggerEnabled());
+            numArguments = inlineCallFrame->argumentsWithFixup.size();
+            if (inlineCallFrame->isClosureCall)
+                addFlushDirect(remapOperand(inlineCallFrame, VirtualRegister(CallFrameSlot::callee)));
+            if (inlineCallFrame->isVarargs())
+                addFlushDirect(remapOperand(inlineCallFrame, VirtualRegister(CallFrameSlot::argumentCount)));
+        } else
+            numArguments = m_graph.baselineCodeBlockFor(inlineCallFrame)->numParameters();
+
+        for (unsigned argument = numArguments; argument--;)
+            addFlushDirect(remapOperand(inlineCallFrame, virtualRegisterForArgument(argument)));
+
+        if (m_graph.needsScopeRegister())
+            addFlushDirect(m_graph.m_codeBlock->scopeRegister());
+    }
+
+    template<typename AddFlushDirectFunc, typename AddPhantomLocalDirectFunc>
+    void flushForTerminalImpl(CodeOrigin origin, const AddFlushDirectFunc& addFlushDirect, const AddPhantomLocalDirectFunc& addPhantomLocalDirect)
+    {
+        origin.walkUpInlineStack(
+            [&] (CodeOrigin origin) {
+                unsigned bytecodeIndex = origin.bytecodeIndex;
+                InlineCallFrame* inlineCallFrame = origin.inlineCallFrame;
+                flushImpl(inlineCallFrame, addFlushDirect);
+
+                CodeBlock* codeBlock = m_graph.baselineCodeBlockFor(inlineCallFrame);
+                FullBytecodeLiveness& fullLiveness = m_graph.livenessFor(codeBlock);
+                const FastBitVector& livenessAtBytecode = fullLiveness.getLiveness(bytecodeIndex);
+
+                for (unsigned local = codeBlock->m_numCalleeLocals; local--;) {
+                    if (livenessAtBytecode[local])
+                        addPhantomLocalDirect(remapOperand(inlineCallFrame, virtualRegisterForLocal(local)));
+                }
+            });
+    }
+
     void flush(VirtualRegister operand)
     {
         flushDirect(m_inlineStackTop->remapOperand(operand));
@@ -607,15 +603,14 @@ private:
     void flush(InlineStackEntry* inlineStackEntry)
     {
         auto addFlushDirect = [&] (VirtualRegister reg) { flushDirect(reg); };
-        auto addPhantomLocalDirect = [&] (VirtualRegister reg) { phantomLocalDirect(reg); };
-        flushImpl(m_graph, inlineStackEntry->m_inlineCallFrame, addFlushDirect, addPhantomLocalDirect);
+        flushImpl(inlineStackEntry->m_inlineCallFrame, addFlushDirect);
     }
 
     void flushForTerminal()
     {
         auto addFlushDirect = [&] (VirtualRegister reg) { flushDirect(reg); };
         auto addPhantomLocalDirect = [&] (VirtualRegister reg) { phantomLocalDirect(reg); };
-        flushForTerminalImpl(m_graph, currentCodeOrigin(), addFlushDirect, addPhantomLocalDirect);
+        flushForTerminalImpl(currentCodeOrigin(), addFlushDirect, addPhantomLocalDirect);
     }
 
     void flushForReturn()
@@ -6632,7 +6627,7 @@ void ByteCodeParser::parse()
                     auto addFlushDirect = [&] (VirtualRegister operand) { insertLivenessPreservingOp(Flush, operand); };
                     auto addPhantomLocalDirect = [&] (VirtualRegister operand) { insertLivenessPreservingOp(PhantomLocal, operand); };
 
-                    flushForTerminalImpl(m_graph, endOrigin.semantic, addFlushDirect, addPhantomLocalDirect);
+                    flushForTerminalImpl(endOrigin.semantic, addFlushDirect, addPhantomLocalDirect);
 
                     insertionSet.insertNode(block->size(), SpecNone, Unreachable, endOrigin);
                     insertionSet.execute(block);
