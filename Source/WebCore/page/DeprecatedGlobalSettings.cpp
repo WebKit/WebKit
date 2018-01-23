@@ -46,6 +46,10 @@ bool DeprecatedGlobalSettings::gAVFoundationEnabled = true;
 bool DeprecatedGlobalSettings::gAVFoundationNSURLSessionEnabled = true;
 #endif
 
+#if PLATFORM(COCOA)
+bool DeprecatedGlobalSettings::gQTKitEnabled = false;
+#endif
+
 #if USE(GSTREAMER)
 bool DeprecatedGlobalSettings::gGStreamerEnabled = true;
 #endif
@@ -98,6 +102,17 @@ void DeprecatedGlobalSettings::setAVFoundationNSURLSessionEnabled(bool enabled)
         return;
 
     gAVFoundationNSURLSessionEnabled = enabled;
+}
+#endif
+
+#if PLATFORM(COCOA)
+void DeprecatedGlobalSettings::setQTKitEnabled(bool enabled)
+{
+    if (gQTKitEnabled == enabled)
+        return;
+
+    gQTKitEnabled = enabled;
+    HTMLMediaElement::resetMediaEngines();
 }
 #endif
 

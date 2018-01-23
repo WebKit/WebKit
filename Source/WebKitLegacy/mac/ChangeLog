@@ -1,3 +1,16 @@
+2018-01-23  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r227437.
+        https://bugs.webkit.org/show_bug.cgi?id=182011
+
+        broke build (Requested by alexchristensen on #webkit).
+
+        Reverted changeset:
+
+        "Remove unused QTKit preference"
+        https://bugs.webkit.org/show_bug.cgi?id=181968
+        https://trac.webkit.org/changeset/227437
+
 2018-01-23  Alex Christensen  <achristensen@webkit.org>
 
         Remove unused QTKit preference

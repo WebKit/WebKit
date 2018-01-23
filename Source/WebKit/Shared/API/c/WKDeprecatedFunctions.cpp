@@ -51,12 +51,3 @@ void WKContextSetUsesNetworkProcess(WKContextRef, bool)
 void WKContextSetProcessModel(WKContextRef, WKProcessModel)
 {
 }
-
-void WKPreferencesSetQTKitEnabled(WKPreferencesRef, bool)
-{
-}
-
-bool WKPreferencesGetQTKitEnabled(WKPreferencesRef)
-{
-    return false;
-}

@@ -1203,6 +1203,16 @@ bool WKPreferencesGetAggressiveTileRetentionEnabled(WKPreferencesRef preferences
     return toImpl(preferencesRef)->aggressiveTileRetentionEnabled();
 }
 
+void WKPreferencesSetQTKitEnabled(WKPreferencesRef preferencesRef, bool enabled)
+{
+    toImpl(preferencesRef)->setQTKitEnabled(enabled);
+}
+
+bool WKPreferencesGetQTKitEnabled(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->isQTKitEnabled();
+}
+
 void WKPreferencesSetLogsPageMessagesToSystemConsoleEnabled(WKPreferencesRef preferencesRef, bool enabled)
 {
     toImpl(preferencesRef)->setLogsPageMessagesToSystemConsoleEnabled(enabled);

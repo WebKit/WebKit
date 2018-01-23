@@ -597,6 +597,7 @@ public:
 #endif
         [NSNumber numberWithLongLong:ApplicationCacheStorage::noQuota()], WebKitApplicationCacheTotalQuota,
         [NSNumber numberWithLongLong:ApplicationCacheStorage::noQuota()], WebKitApplicationCacheDefaultOriginQuota,
+        [NSNumber numberWithBool:DeprecatedGlobalSettings::isQTKitEnabled()], WebKitQTKitEnabledPreferenceKey,
         [NSNumber numberWithBool:NO], WebKitHiddenPageDOMTimerThrottlingEnabledPreferenceKey,
         [NSNumber numberWithBool:NO], WebKitHiddenPageCSSAnimationSuspensionEnabledPreferenceKey,
         [NSNumber numberWithBool:NO], WebKitLowPowerVideoAudioBufferSizeEnabledPreferenceKey,
@@ -2262,6 +2263,16 @@ static NSString *classIBCreatorID = nil;
 - (BOOL)isAVFoundationNSURLSessionEnabled
 {
     return [self _boolValueForKey:WebKitAVFoundationNSURLSessionEnabledKey];
+}
+
+- (void)setQTKitEnabled:(BOOL)flag
+{
+    [self _setBoolValue:flag forKey:WebKitQTKitEnabledPreferenceKey];
+}
+
+- (BOOL)isQTKitEnabled
+{
+    return [self _boolValueForKey:WebKitQTKitEnabledPreferenceKey];
 }
 
 - (void)setVideoPluginProxyEnabled:(BOOL)flag

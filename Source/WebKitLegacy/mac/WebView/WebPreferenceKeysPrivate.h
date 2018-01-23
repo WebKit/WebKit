@@ -157,6 +157,7 @@
 #define WebKitDiagnosticLoggingEnabledKey @"WebKitDiagnosticLoggingEnabled"
 #define WebKitStorageBlockingPolicyKey @"WebKitStorageBlockingPolicy"
 #define WebKitPlugInSnapshottingEnabledPreferenceKey @"WebKitPlugInSnapshottingEnabled"
+#define WebKitQTKitEnabledPreferenceKey @"WebKitQTKitEnabled"
 #define WebKitHiddenPageDOMTimerThrottlingEnabledPreferenceKey @"WebKitHiddenPageDOMTimerThrottlingEnabled"
 #define WebKitHiddenPageCSSAnimationSuspensionEnabledPreferenceKey @"WebKitHiddenPageCSSAnimationSuspensionEnabled"
 #define WebKitLowPowerVideoAudioBufferSizeEnabledPreferenceKey @"WebKitLowPowerVideoAudioBufferSizeEnabled"

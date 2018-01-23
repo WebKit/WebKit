@@ -55,6 +55,13 @@ public:
     static bool isAVFoundationNSURLSessionEnabled() { return gAVFoundationNSURLSessionEnabled; }
 #endif
 
+#if PLATFORM(COCOA)
+    WEBCORE_EXPORT static void setQTKitEnabled(bool flag);
+    static bool isQTKitEnabled() { return gQTKitEnabled; }
+#else
+    static bool isQTKitEnabled() { return false; }
+#endif
+
 #if USE(GSTREAMER)
     WEBCORE_EXPORT static void setGStreamerEnabled(bool flag);
     static bool isGStreamerEnabled() { return gGStreamerEnabled; }
@@ -117,6 +124,10 @@ private:
 #if USE(AVFOUNDATION)
     WEBCORE_EXPORT static bool gAVFoundationEnabled;
     WEBCORE_EXPORT static bool gAVFoundationNSURLSessionEnabled;
+#endif
+
+#if PLATFORM(COCOA)
+    WEBCORE_EXPORT static bool gQTKitEnabled;
 #endif
 
 #if USE(GSTREAMER)

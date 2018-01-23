@@ -932,6 +932,16 @@ static WebCore::EditableLinkBehavior toEditableLinkBehavior(_WKEditableLinkBehav
     return _preferences->plugInSnapshottingEnabled();
 }
 
+- (void)_setQTKitEnabled:(BOOL)enabled
+{
+    _preferences->setQTKitEnabled(enabled);
+}
+
+- (BOOL)_qtKitEnabled
+{
+    return _preferences->isQTKitEnabled();
+}
+
 - (void)_setSubpixelCSSOMElementMetricsEnabled:(BOOL)enabled
 {
     _preferences->setSubpixelCSSOMElementMetricsEnabled(enabled);

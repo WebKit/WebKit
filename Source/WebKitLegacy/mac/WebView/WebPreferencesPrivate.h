@@ -423,6 +423,9 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification;
 - (void)setAVFoundationNSURLSessionEnabled:(BOOL)flag;
 - (BOOL)isAVFoundationNSURLSessionEnabled;
 
+- (void)setQTKitEnabled:(BOOL)flag;
+- (BOOL)isQTKitEnabled;
+
 // Deprecated, has no effect.
 - (void)setVideoPluginProxyEnabled:(BOOL)flag;
 - (BOOL)isVideoPluginProxyEnabled;
