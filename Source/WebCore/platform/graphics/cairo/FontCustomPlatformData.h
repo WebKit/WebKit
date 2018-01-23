@@ -48,7 +48,7 @@ private:
     cairo_font_face_t* m_fontFace;
 };
 
-std::unique_ptr<FontCustomPlatformData> createFontCustomPlatformData(SharedBuffer&);
+std::unique_ptr<FontCustomPlatformData> createFontCustomPlatformData(SharedBuffer&, unsigned);
 
 } // namespace WebCore
 

@@ -1,3 +1,53 @@
+2018-01-22  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Cocoa] Support font collections
+        https://bugs.webkit.org/show_bug.cgi?id=181826
+        <rdar://problem/36455137>
+
+        Reviewed by Dean Jackson.
+
+        Use the CoreText call CTFontManagerCreateFontDescriptorsFromData() to get all the descriptors inside
+        the collection file. We select which one by using the fragment identifier at the end of the url linking
+        to the remote font. For example, to select the 4th font inside a TTC file, the @font-face block would
+        look like:
+
+        @font-face {
+            font-family: "MyFont";
+            src: url("path/to/font.ttc#4");
+        }
+
+        Note that these numbers are 1-indexed.
+
+        The CSS Fonts spec states:
+        > Fragment identifiers are used to indicate which font to load. If a container format lacks a defined
+        > fragment identifier scheme, implementations should use a simple 1-based indexing scheme (e.g.
+        > "font-collection#1" for the first font, "font-collection#2" for the second font).
+
+        Not only are TTC font collections supported, but WOFF2 font collections are also supported, which is
+        increasingly important web standard.
+
+        No new tests because I don't have a font collection file with the appropriate license for the
+        WebKit repository. I tested manually.
+
+        * css/CSSFontFaceSource.cpp:
+        (WebCore::CSSFontFaceSource::load):
+        * loader/cache/CachedFont.cpp:
+        (WebCore::CachedFont::calculateIndex const):
+        (WebCore::CachedFont::ensureCustomFontData):
+        (WebCore::CachedFont::createCustomFontData):
+        * loader/cache/CachedFont.h:
+        * platform/graphics/cairo/FontCustomPlatformData.h:
+        * platform/graphics/freetype/FontCustomPlatformDataFreeType.cpp:
+        (WebCore::createFontCustomPlatformData):
+        * platform/graphics/mac/FontCustomPlatformData.cpp:
+        (WebCore::createFontCustomPlatformData):
+        * platform/graphics/mac/FontCustomPlatformData.h:
+        * platform/graphics/win/FontCustomPlatformData.cpp:
+        (WebCore::createFontCustomPlatformData):
+        * platform/graphics/win/FontCustomPlatformData.h:
+        * platform/graphics/win/FontCustomPlatformDataCairo.cpp:
+        (WebCore::createFontCustomPlatformData):
+
 2018-01-22  Simon Fraser  <simon.fraser@apple.com>
 
         REGRESSION (r227011): fast/frames/hidpi-position-iframe-on-device-pixel.html times out

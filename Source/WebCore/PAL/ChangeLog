@@ -1,3 +1,13 @@
+2018-01-22  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [Cocoa] Support font collections
+        https://bugs.webkit.org/show_bug.cgi?id=181826
+        <rdar://problem/36455137>
+
+        Reviewed by Dean Jackson.
+
+        * pal/spi/cocoa/CoreTextSPI.h:
+
 2018-01-21  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Add a new feature flag for EXTRA_ZOOM_MODE and reintroduce AdditionalFeatureDefines.h

@@ -52,7 +52,7 @@ public:
     bool stillNeedsLoad() const override { return !m_loadInitiated; }
 
     virtual bool ensureCustomFontData(const AtomicString& remoteURI);
-    static std::unique_ptr<FontCustomPlatformData> createCustomFontData(SharedBuffer&, bool& wrapping);
+    static std::unique_ptr<FontCustomPlatformData> createCustomFontData(SharedBuffer&, unsigned index, bool& wrapping);
     static FontPlatformData platformDataFromCustomData(FontCustomPlatformData&, const FontDescription&, bool bold, bool italic, const FontFeatureSettings&, const FontVariantSettings&, FontSelectionSpecifiedCapabilities);
 
     virtual RefPtr<Font> createFont(const FontDescription&, const AtomicString& remoteURI, bool syntheticBold, bool syntheticItalic, const FontFeatureSettings&, const FontVariantSettings&, FontSelectionSpecifiedCapabilities);
@@ -63,6 +63,8 @@ protected:
     bool ensureCustomFontData(SharedBuffer* data);
 
 private:
+    unsigned calculateIndex() const;
+
     void checkNotify() override;
     bool mayTryReplaceEncodedData() const override;
 

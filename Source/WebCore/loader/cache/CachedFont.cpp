@@ -88,11 +88,27 @@ bool CachedFont::ensureCustomFontData(const AtomicString&)
     return ensureCustomFontData(m_data.get());
 }
 
+unsigned CachedFont::calculateIndex() const
+{
+    auto& url = this->url();
+    if (!url.hasFragmentIdentifier())
+        return 0;
+    const auto& fragment = url.fragmentIdentifier();
+    unsigned result = 0;
+    for (unsigned i = 0; i < fragment.length(); ++i) {
+        UChar c = fragment[i];
+        if (c < '0' || c > '9')
+            return 0;
+        result = result * 10 + (c - '0');
+    }
+    return result;
+}
+
 bool CachedFont::ensureCustomFontData(SharedBuffer* data)
 {
     if (!m_fontCustomPlatformData && !errorOccurred() && !isLoading() && data) {
         bool wrapping;
-        m_fontCustomPlatformData = createCustomFontData(*data, wrapping);
+        m_fontCustomPlatformData = createCustomFontData(*data, calculateIndex(), wrapping);
         m_hasCreatedFontDataWrappingResource = m_fontCustomPlatformData && wrapping;
         if (!m_fontCustomPlatformData)
             setStatus(DecodeError);
@@ -101,7 +117,7 @@ bool CachedFont::ensureCustomFontData(SharedBuffer* data)
     return m_fontCustomPlatformData.get();
 }
 
-std::unique_ptr<FontCustomPlatformData> CachedFont::createCustomFontData(SharedBuffer& bytes, bool& wrapping)
+std::unique_ptr<FontCustomPlatformData> CachedFont::createCustomFontData(SharedBuffer& bytes, unsigned index, bool& wrapping)
 {
     wrapping = true;
 
@@ -113,11 +129,11 @@ std::unique_ptr<FontCustomPlatformData> CachedFont::createCustomFontData(SharedB
             return nullptr;
 
         auto buffer = SharedBuffer::create(WTFMove(convertedFont));
-        return createFontCustomPlatformData(buffer);
+        return createFontCustomPlatformData(buffer, index);
     }
 #endif
 
-    return createFontCustomPlatformData(bytes);
+    return createFontCustomPlatformData(bytes, index);
 }
 
 RefPtr<Font> CachedFont::createFont(const FontDescription& fontDescription, const AtomicString&, bool syntheticBold, bool syntheticItalic, const FontFeatureSettings& fontFaceFeatures, const FontVariantSettings& fontFaceVariantSettings, FontSelectionSpecifiedCapabilities fontFaceCapabilities)

@@ -57,7 +57,7 @@ public:
     RetainPtr<CTFontDescriptorRef> m_fontDescriptor;
 };
 
-std::unique_ptr<FontCustomPlatformData> createFontCustomPlatformData(SharedBuffer&);
+std::unique_ptr<FontCustomPlatformData> createFontCustomPlatformData(SharedBuffer&, unsigned index);
 
 }
 

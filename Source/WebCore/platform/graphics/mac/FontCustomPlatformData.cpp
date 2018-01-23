@@ -25,8 +25,10 @@
 #include "FontDescription.h"
 #include "FontPlatformData.h"
 #include "SharedBuffer.h"
+#include <CoreFoundation/CoreFoundation.h>
 #include <CoreGraphics/CoreGraphics.h>
 #include <CoreText/CoreText.h>
+#include <pal/spi/cocoa/CoreTextSPI.h>
 
 namespace WebCore {
 
@@ -43,11 +45,27 @@ FontPlatformData FontCustomPlatformData::fontPlatformData(const FontDescription&
     return FontPlatformData(font.get(), size, bold, italic, orientation, widthVariant, fontDescription.textRenderingMode());
 }
 
-std::unique_ptr<FontCustomPlatformData> createFontCustomPlatformData(SharedBuffer& buffer)
+std::unique_ptr<FontCustomPlatformData> createFontCustomPlatformData(SharedBuffer& buffer, unsigned index)
 {
     RetainPtr<CFDataRef> bufferData = buffer.createCFData();
 
-    RetainPtr<CTFontDescriptorRef> fontDescriptor = adoptCF(CTFontManagerCreateFontDescriptorFromData(bufferData.get()));
+    RetainPtr<CTFontDescriptorRef> fontDescriptor;
+#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000)
+    auto array = adoptCF(CTFontManagerCreateFontDescriptorsFromData(bufferData.get()));
+    if (!array)
+        return nullptr;
+    auto length = CFArrayGetCount(array.get());
+    if (length <= 0)
+        return nullptr;
+    if (index > 0)
+        --index;
+    if (index >= static_cast<unsigned>(length))
+        index = 0;
+    fontDescriptor = static_cast<CTFontDescriptorRef>(CFArrayGetValueAtIndex(array.get(), index));
+#else
+    UNUSED_PARAM(index);
+    fontDescriptor = adoptCF(CTFontManagerCreateFontDescriptorFromData(bufferData.get()));
+#endif
     if (!fontDescriptor)
         return nullptr;
 
