@@ -733,7 +733,6 @@ BeaconAPIEnabled:
   defaultValue: true
   humanReadableName: "Beacon API"
   humanReadableDescription: "Beacon API"
-  condition: ENABLE(BEACON_API)
 
 LegacyEncryptedMediaAPIEnabled:
   type: bool

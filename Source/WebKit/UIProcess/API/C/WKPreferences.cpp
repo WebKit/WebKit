@@ -826,18 +826,12 @@ bool WKPreferencesGetInlineMediaPlaybackRequiresPlaysInlineAttribute(WKPreferenc
 
 void WKPreferencesSetBeaconAPIEnabled(WKPreferencesRef preferencesRef, bool flag)
 {
-#if ENABLE(BEACON_API)
     toImpl(preferencesRef)->setBeaconAPIEnabled(flag);
-#endif
 }
 
 bool WKPreferencesGetBeaconAPIEnabled(WKPreferencesRef preferencesRef)
 {
-#if ENABLE(BEACON_API)
     return toImpl(preferencesRef)->beaconAPIEnabled();
-#else
-    return false;
-#endif
 }
 
 void WKPreferencesSetDirectoryUploadEnabled(WKPreferencesRef preferencesRef, bool flag)

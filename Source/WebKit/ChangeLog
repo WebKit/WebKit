@@ -1,5 +1,20 @@
 2018-01-23  Alex Christensen  <achristensen@webkit.org>
 
+        Remove compile guard around beacon API
+        https://bugs.webkit.org/show_bug.cgi?id=182002
+
+        Reviewed by Sam Weinig.
+
+        It's enabled everywhere now.
+
+        * Shared/WebPreferences.yaml:
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetBeaconAPIEnabled):
+        (WKPreferencesGetBeaconAPIEnabled):
+        * config.h:
+
+2018-01-23  Alex Christensen  <achristensen@webkit.org>
+
         Remove unused QTKit preference
         https://bugs.webkit.org/show_bug.cgi?id=181968
 

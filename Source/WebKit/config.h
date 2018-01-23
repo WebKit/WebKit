@@ -78,15 +78,9 @@
 #endif
 #endif
 
-#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200) || PLATFORM(IOS) || PLATFORM(APPLETV) || PLATFORM(WATCHOS) || USE(SOUP)
-#ifndef ENABLE_BEACON_API
-#define ENABLE_BEACON_API 1
-#endif
-
-// FIXME: We should work towards not using CredentialStorage in WebKit2 to not have problems with digest authentication.
+// FIXME: We should work towards not using CredentialStorage in WebKit to not have problems with digest authentication.
 #ifndef USE_CREDENTIAL_STORAGE_WITH_NETWORK_SESSION
 #define USE_CREDENTIAL_STORAGE_WITH_NETWORK_SESSION 1
-#endif
 #endif
 
 #if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000)
