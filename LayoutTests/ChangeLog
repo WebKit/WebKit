@@ -1,5 +1,14 @@
 2018-01-22  Matt Lewis  <jlewis3@apple.com>
 
+        Marked fast/forms/searchfield-heights.html as flaky on High Sierra.
+        https://bugs.webkit.org/show_bug.cgi?id=181914
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
+2018-01-22  Matt Lewis  <jlewis3@apple.com>
+
         Skipped http/tests/resourceLoadStatistics/grandfathering.html.
         https://bugs.webkit.org/show_bug.cgi?id=181482
 
