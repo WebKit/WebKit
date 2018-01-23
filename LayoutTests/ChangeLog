@@ -1,3 +1,11 @@
+2018-01-23  Andy Estes  <aestes@apple.com>
+
+        Follow-up layout test fix after r227260.
+
+        I missed a few places that were still using version 3 API requests.
+
+        * http/tests/ssl/applepay/ApplePayRequestShippingContact.https.html:
+
 2018-01-23  Youenn Fablet  <youenn@apple.com>
 
         Mark some service-worker fetch tests as DumpJSConsoleLogInStdErr
