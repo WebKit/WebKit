@@ -382,6 +382,11 @@ static ExceptionOr<JSC::JSValue> parse(ScriptExecutionContext& context, const St
 // https://www.w3.org/TR/payment-request/#show()-method
 void PaymentRequest::show(Document& document, ShowPromise&& promise)
 {
+    if (!document.frame()) {
+        promise.reject(Exception { AbortError });
+        return;
+    }
+
     if (!UserGestureIndicator::processingUserGesture()) {
         promise.reject(Exception { SecurityError, "show() must be triggered by user activation." });
         return;
