@@ -1,3 +1,14 @@
+2018-01-23  David Kilzer  <ddkilzer@apple.com>
+
+        Follow-up for: oss-fuzz jsc build is broken: StringImpl.h:27:10: fatal error: 'unicode/ustring.h' file not found
+        <https://webkit.org/b/181871>
+        <rdar://problem/36669691>
+
+        Address feedback for this change.
+
+        * CMakeLists.txt: Change "SYSTEM PUBLIC" to "SYSTEM PRIVATE" per
+        feedback from Konstantin Tokarev.
+
 2018-01-23  Robin Morisset  <rmorisset@apple.com>
 
         Rollout r219636
