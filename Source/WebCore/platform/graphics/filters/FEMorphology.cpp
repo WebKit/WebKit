@@ -4,7 +4,7 @@
  * Copyright (C) 2005 Eric Seidel <eric@webkit.org>
  * Copyright (C) 2009 Dirk Schulze <krit@webkit.org>
  * Copyright (C) Research In Motion Limited 2010. All rights reserved.
- * Copyright (C) Apple Inc. 2017. All rights reserved.
+ * Copyright (C) Apple Inc. 2017-2018 All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -139,6 +139,8 @@ ALWAYS_INLINE ColorComponents kernelExtremum(const ColumnExtrema& kernel, Morpho
 
 void FEMorphology::platformApplyGeneric(const PaintingData& paintingData, int startY, int endY)
 {
+    ASSERT(endY > startY);
+
     const auto& srcPixelArray = *paintingData.srcPixelArray;
     auto& dstPixelArray = *paintingData.dstPixelArray;
 
@@ -188,16 +190,17 @@ void FEMorphology::platformApply(const PaintingData& paintingData)
     float kernelFactor = sqrt(paintingData.radiusX * paintingData.radiusY) * 0.65;
 
     static const int minimalArea = (160 * 160); // Empirical data limit for parallel jobs
-    int optimalThreadNumber = (paintingData.width * paintingData.height * kernelFactor) / minimalArea;
-
+    
+    unsigned maxNumThreads = paintingData.height / 8;
+    unsigned optimalThreadNumber = std::min<unsigned>((paintingData.width * paintingData.height * kernelFactor) / minimalArea, maxNumThreads);
     if (optimalThreadNumber > 1) {
-        ParallelJobs<PlatformApplyParameters> parallelJobs(&WebCore::FEMorphology::platformApplyWorker, optimalThreadNumber);
-        int numOfThreads = parallelJobs.numberOfJobs();
+        WTF::ParallelJobs<PlatformApplyParameters> parallelJobs(&WebCore::FEMorphology::platformApplyWorker, optimalThreadNumber);
+        auto numOfThreads = parallelJobs.numberOfJobs();
         if (numOfThreads > 1) {
             // Split the job into "jobSize"-sized jobs but there a few jobs that need to be slightly larger since
             // jobSize * jobs < total size. These extras are handled by the remainder "jobsWithExtra".
-            const int jobSize = paintingData.height / numOfThreads;
-            const int jobsWithExtra = paintingData.height % numOfThreads;
+            int jobSize = paintingData.height / numOfThreads;
+            int jobsWithExtra = paintingData.height % numOfThreads;
             int currentY = 0;
             for (int job = numOfThreads - 1; job >= 0; --job) {
                 PlatformApplyParameters& param = parallelJobs.parameter(job);
@@ -224,8 +227,9 @@ bool FEMorphology::platformApplyDegenerate(Uint8ClampedArray& dstPixelArray, con
         return true;
     }
 
-    // Input radius is equal to zero or the scaled radius is less than one.
-    if (!m_radiusX || !m_radiusY) {
+    // FIXME: this should allow erode/dilate on one axis. webkit.org/b/181903.
+    // Also if both x radiusX and radiusY are zero, the result should be transparent black.
+    if (!radiusX || !radiusY) {
         FilterEffect* in = inputEffect(0);
         in->copyPremultipliedResult(dstPixelArray, imageRect);
         return true;
@@ -245,7 +249,9 @@ void FEMorphology::platformApplySoftware()
     setIsAlphaImage(in->isAlphaImage());
 
     IntRect effectDrawingRect = requestedRegionOfInputImageData(in->absolutePaintRect());
-    if (platformApplyDegenerate(*dstPixelArray, effectDrawingRect, m_radiusX, m_radiusY))
+
+    IntSize radius = flooredIntSize(FloatSize(m_radiusX, m_radiusY));
+    if (platformApplyDegenerate(*dstPixelArray, effectDrawingRect, radius.width(), radius.height()))
         return;
 
     Filter& filter = this->filter();
@@ -253,7 +259,7 @@ void FEMorphology::platformApplySoftware()
     if (!srcPixelArray)
         return;
 
-    IntSize radius = flooredIntSize(filter.scaledByFilterResolution({ m_radiusX, m_radiusY }));
+    radius = flooredIntSize(filter.scaledByFilterResolution({ m_radiusX, m_radiusY }));
     int radiusX = std::min(effectDrawingRect.width() - 1, radius.width());
     int radiusY = std::min(effectDrawingRect.height() - 1, radius.height());
 

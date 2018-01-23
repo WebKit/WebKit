@@ -1,3 +1,35 @@
+2018-01-22  Simon Fraser  <simon.fraser@apple.com>
+
+        REGRESSION (r226981): ASSERTION FAILED: startY >= 0 && endY <= height && startY < endY in WebCore::FEMorphology::platformApplyGeneric
+        https://bugs.webkit.org/show_bug.cgi?id=181836
+
+        Reviewed by Tim Horton.
+        
+        All the filters that use ParallelJobs<> has the same type of bug where very wide but not tall
+        filter regions could result in computing an optimalThreadNumber that was greater than the
+        number of rows to process, which resulted in jobs with zero rows to process.
+
+        Since we split the work by rows, cap the maximum number of threads to height/8 so that each job
+        has at least 8 rows of pixels to process. Add some assertions to detect jobs with zero rows.
+
+        FEMorphology was also using implicit float -> int conversion to detect integer overflow of radius,
+        so change that to use explicit clamping.
+        
+        Tests: svg/filters/feLighting-parallel-jobs.svg
+               svg/filters/feTurbulence-parallel-jobs-wide.svg
+
+        * platform/graphics/filters/FELighting.cpp:
+        (WebCore::FELighting::platformApplyGenericPaint):
+        (WebCore::FELighting::platformApplyGeneric):
+        * platform/graphics/filters/FEMorphology.cpp:
+        (WebCore::FEMorphology::platformApplyGeneric):
+        (WebCore::FEMorphology::platformApply):
+        (WebCore::FEMorphology::platformApplyDegenerate):
+        (WebCore::FEMorphology::platformApplySoftware):
+        * platform/graphics/filters/FETurbulence.cpp:
+        (WebCore::FETurbulence::fillRegion const):
+        (WebCore::FETurbulence::platformApplySoftware):
+
 2018-01-22  Eric Carlson  <eric.carlson@apple.com>
 
         Resign NowPlaying status when no media element is eligible

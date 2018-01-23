@@ -40,15 +40,16 @@
 
       <g id="morphology">
 	      <rect x="0" y="0" height="252" width="256" fill="green" />
-	      <rect x="0" y="0" height="28" width="256" fill="red" filter="url(#f1)" />
-	      <rect x="0" y="10" height="28" width="256" fill="red" filter="url(#f2)" />
-	      <rect x="0" y="20" height="28" width="256" fill="red" filter="url(#f3)" />
-	      <rect x="0" y="30" height="28" width="256" fill="red" filter="url(#f4)" />
-	      <rect x="0" y="40" height="28" width="256" fill="red" filter="url(#f5)" />
-	      <rect x="0" y="50" height="28" width="256" fill="red" filter="url(#f6)" />
-	      <rect x="0" y="60" height="28" width="256" fill="red" filter="url(#f7)" />
-	      <rect x="0" y="70" height="28" width="256" fill="red" filter="url(#f8)" />
-	      <rect x="0" y="80" height="28" width="256" fill="red" filter="url(#f9)" />
+	      <rect x="0" y="0"  height="4"  width="512" fill="red" filter="url(#f1)" />
+	      <rect x="0" y="10" height="46" width="512" fill="red" filter="url(#f2)" />
+	      <rect x="0" y="20" height="46" width="512" fill="red" filter="url(#f3)" />
+	      <rect x="0" y="30" height="46" width="512" fill="red" filter="url(#f4)" />
+	      <rect x="0" y="40" height="46" width="512" fill="red" filter="url(#f5)" />
+	      <rect x="0" y="50" height="46" width="512" fill="red" filter="url(#f6)" />
+	      <rect x="0" y="60" height="46" width="512" fill="red" filter="url(#f7)" />
+	      <rect x="0" y="70" height="46" width="512" fill="red" filter="url(#f8)" />
+	      <rect x="0" y="80" height="46" width="512" fill="red" filter="url(#f9)" />
+	      <rect x="0" y="90" height="46" width="512" fill="red" filter="url(#f4)" />
       </g>
     </svg>
     <script>
