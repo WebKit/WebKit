@@ -21,5 +21,14 @@
 
 #include "WebKitWebViewBackend.h"
 
+#include <wtf/glib/GRefPtr.h>
+
+namespace WTF {
+
+template <> WebKitWebViewBackend* refGPtr(WebKitWebViewBackend* ptr);
+template <> void derefGPtr(WebKitWebViewBackend* ptr);
+
+}
+
 void webkitWebViewBackendUnref(WebKitWebViewBackend*);
-WebKitWebViewBackend* webkitWebViewBackendCreateDefault();
+GRefPtr<WebKitWebViewBackend> webkitWebViewBackendCreateDefault();

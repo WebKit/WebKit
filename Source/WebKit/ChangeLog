@@ -1,3 +1,35 @@
+2018-01-23  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [WPE] TestWebKitFindController asserts
+        https://bugs.webkit.org/show_bug.cgi?id=181472
+
+        Reviewed by Carlos Garcia Campos.
+
+        Let's fix this in two independent ways.
+
+        First, use a GRefPtr to hold ownership of the WebKitWebViewBackend. This way, we don't need
+        to change the order in which WebKitWebView destroys its priv struct members from what is
+        used in WebKitGTK+, which can lead to odd bugs.
+
+        Additionally, just for good measure, stop resetting the find client when disposing
+        WebKitFindController. This is unnecessary because it will never be destroyed before the
+        WebKitWebView.
+
+        * UIProcess/API/glib/WebKitFindController.cpp:
+        (webkit_find_controller_class_init):
+        (webkitFindControllerDispose): Deleted.
+        * UIProcess/API/glib/WebKitWebView.cpp:
+        (_WebKitWebViewPrivate::~_WebKitWebViewPrivate):
+        (webkitWebViewSetProperty):
+        (webkitWebViewGetProperty):
+        (webkitWebViewCreatePage):
+        (webkit_web_view_get_backend):
+        * UIProcess/API/wpe/WebKitWebViewBackend.cpp:
+        (webkitWebViewBackendCreateDefault):
+        (WTF::refGPtr):
+        (WTF::derefGPtr):
+        * UIProcess/API/wpe/WebKitWebViewBackendPrivate.h:
+
 2018-01-22  Jon Lee  <jonlee@apple.com>
 
         Update title label size

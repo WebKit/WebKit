@@ -132,14 +132,6 @@ private:
     WebKitFindController* m_findController;
 };
 
-static void webkitFindControllerDispose(GObject* object)
-{
-    WebKitFindController* findController = WEBKIT_FIND_CONTROLLER(object);
-    getPage(findController).setFindClient(nullptr);
-
-    G_OBJECT_CLASS(webkit_find_controller_parent_class)->dispose(object);
-}
-
 static void webkitFindControllerConstructed(GObject* object)
 {
     G_OBJECT_CLASS(webkit_find_controller_parent_class)->constructed(object);
@@ -186,7 +178,6 @@ static void webkitFindControllerSetProperty(GObject* object, guint propId, const
 static void webkit_find_controller_class_init(WebKitFindControllerClass* findClass)
 {
     GObjectClass* gObjectClass = G_OBJECT_CLASS(findClass);
-    gObjectClass->dispose = webkitFindControllerDispose;
     gObjectClass->constructed = webkitFindControllerConstructed;
     gObjectClass->get_property = webkitFindControllerGetProperty;
     gObjectClass->set_property = webkitFindControllerSetProperty;

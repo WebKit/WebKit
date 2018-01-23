@@ -82,11 +82,11 @@ void webkitWebViewBackendUnref(WebKitWebViewBackend* viewBackend)
     }
 }
 
-WebKitWebViewBackend* webkitWebViewBackendCreateDefault()
+GRefPtr<WebKitWebViewBackend> webkitWebViewBackendCreateDefault()
 {
     auto* viewBackend = static_cast<WebKitWebViewBackend*>(fastMalloc(sizeof(WebKitWebViewBackend)));
     new (viewBackend) WebKitWebViewBackend();
-    return viewBackend;
+    return adoptGRef(viewBackend);
 }
 
 /**
@@ -128,4 +128,21 @@ struct wpe_view_backend* webkit_web_view_backend_get_wpe_backend(WebKitWebViewBa
 {
     g_return_val_if_fail(viewBackend, nullptr);
     return viewBackend->backend;
+}
+
+namespace WTF {
+
+template <> WebKitWebViewBackend* refGPtr(WebKitWebViewBackend* ptr)
+{
+    if (ptr)
+        webkitWebViewBackendRef(ptr);
+    return ptr;
+}
+
+template <> void derefGPtr(WebKitWebViewBackend* ptr)
+{
+    if (ptr)
+        webkitWebViewBackendUnref(ptr);
+}
+
 }

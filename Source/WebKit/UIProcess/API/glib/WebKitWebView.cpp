@@ -198,14 +198,10 @@ struct _WebKitWebViewPrivate {
         // For modal dialogs, make sure the main loop is stopped when finalizing the webView.
         if (modalLoop && g_main_loop_is_running(modalLoop.get()))
             g_main_loop_quit(modalLoop.get());
-#if PLATFORM(WPE)
-        view = nullptr;
-        webkitWebViewBackendUnref(backend);
-#endif
     }
 
 #if PLATFORM(WPE)
-    WebKitWebViewBackend* backend;
+    GRefPtr<WebKitWebViewBackend> backend;
     std::unique_ptr<WKWPE::View> view;
 #endif
 
@@ -691,7 +687,7 @@ static void webkitWebViewSetProperty(GObject* object, guint propId, const GValue
 #if PLATFORM(WPE)
     case PROP_BACKEND: {
         gpointer backend = g_value_get_boxed(value);
-        webView->priv->backend = backend ? static_cast<WebKitWebViewBackend*>(backend) : nullptr;
+        webView->priv->backend = backend ? adoptGRef(static_cast<WebKitWebViewBackend*>(backend)) : nullptr;
         break;
     }
 #endif
@@ -739,7 +735,7 @@ static void webkitWebViewGetProperty(GObject* object, guint propId, GValue* valu
     switch (propId) {
 #if PLATFORM(WPE)
     case PROP_BACKEND:
-        g_value_set_static_boxed(value, webView->priv->backend);
+        g_value_set_static_boxed(value, webView->priv->backend.get());
         break;
 #endif
     case PROP_WEB_CONTEXT:
@@ -1983,7 +1979,7 @@ void webkitWebViewCreatePage(WebKitWebView* webView, Ref<API::PageConfiguration>
 #if PLATFORM(GTK)
     webkitWebViewBaseCreateWebPage(WEBKIT_WEB_VIEW_BASE(webView), WTFMove(configuration));
 #elif PLATFORM(WPE)
-    webView->priv->view.reset(WKWPE::View::create(webkit_web_view_backend_get_wpe_backend(webView->priv->backend), configuration.get()));
+    webView->priv->view.reset(WKWPE::View::create(webkit_web_view_backend_get_wpe_backend(webView->priv->backend.get()), configuration.get()));
 #endif
 }
 
@@ -2430,7 +2426,7 @@ WebKitWebViewBackend* webkit_web_view_get_backend(WebKitWebView* webView)
 {
     g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), nullptr);
 
-    return webView->priv->backend;
+    return webView->priv->backend.get();
 }
 #endif
 
