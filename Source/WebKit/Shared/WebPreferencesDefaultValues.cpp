@@ -25,6 +25,11 @@
 
 #include "config.h"
 #include "WebPreferencesDefaultValues.h"
+#import <WebCore/RuntimeApplicationChecks.h>
+
+#if PLATFORM(COCOA)
+#include <wtf/spi/darwin/dyldSPI.h>
+#endif
 
 #if PLATFORM(IOS)
 #include "VersionChecks.h"
@@ -38,3 +43,17 @@ bool defaultPassiveTouchListenersAsDefaultOnDocument()
     return true;
 #endif
 }
+
+bool defaultCustomPasteboardDataEnabled()
+{
+#if PLATFORM(IOS) && __IPHONE_OS_VERSION_MAX_ALLOWED >= 110300
+    return WebCore::IOSApplication::isMobileSafari() || dyld_get_program_sdk_version() >= DYLD_IOS_VERSION_11_3;
+#elif PLATFORM(MAC) && __MAC_OS_X_VERSION_MAX_ALLOWED >= 101300
+    return WebCore::MacApplication::isSafari() || dyld_get_program_sdk_version() > DYLD_MACOSX_VERSION_10_13;
+#elif PLATFORM(MAC)
+    return WebCore::MacApplication::isSafari();
+#else
+    return false;
+#endif
+}
+

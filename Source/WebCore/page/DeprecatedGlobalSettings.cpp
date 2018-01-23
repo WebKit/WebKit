@@ -39,10 +39,6 @@
 #endif
 #endif
 
-#if PLATFORM(COCOA)
-#include <wtf/spi/darwin/dyldSPI.h>
-#endif
-
 namespace WebCore {
 
 #if USE(AVFOUNDATION)
@@ -82,22 +78,6 @@ bool DeprecatedGlobalSettings::gAVKitEnabled = false;
 bool DeprecatedGlobalSettings::gShouldOptOutOfNetworkStateObservation = false;
 #endif
 bool DeprecatedGlobalSettings::gManageAudioSession = false;
-bool DeprecatedGlobalSettings::gCustomPasteboardDataEnabled = false;
-
-bool DeprecatedGlobalSettings::defaultCustomPasteboardDataEnabled()
-{
-    if (!isInWebProcess())
-        return false;
-#if PLATFORM(IOS) && __IPHONE_OS_VERSION_MAX_ALLOWED >= 110300
-    return IOSApplication::isMobileSafari() || dyld_get_program_sdk_version() >= DYLD_IOS_VERSION_11_3;
-#elif PLATFORM(MAC) && __MAC_OS_X_VERSION_MAX_ALLOWED >= 101300
-    return MacApplication::isSafari() || dyld_get_program_sdk_version() > DYLD_MACOSX_VERSION_10_13;
-#elif PLATFORM(MAC)
-    return MacApplication::isSafari();
-#else
-    return false;
-#endif
-}
 
 #if PLATFORM(WIN)
 void DeprecatedGlobalSettings::setShouldUseHighResolutionTimers(bool shouldUseHighResolutionTimers)

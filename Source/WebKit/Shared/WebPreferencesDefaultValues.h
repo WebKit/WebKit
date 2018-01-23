@@ -186,3 +186,4 @@
 #endif
 
 bool defaultPassiveTouchListenersAsDefaultOnDocument();
+bool defaultCustomPasteboardDataEnabled();

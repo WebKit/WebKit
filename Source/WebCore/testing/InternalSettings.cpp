@@ -119,7 +119,7 @@ InternalSettings::Backup::Backup(Settings& settings)
 #if USE(AUDIO_SESSION)
     , m_shouldManageAudioSessionCategory(DeprecatedGlobalSettings::shouldManageAudioSessionCategory())
 #endif
-    , m_customPasteboardDataEnabled(DeprecatedGlobalSettings::customPasteboardDataEnabled())
+    , m_customPasteboardDataEnabled(RuntimeEnabledFeatures::sharedFeatures().customPasteboardDataEnabled())
 {
 }
 
@@ -216,11 +216,11 @@ void InternalSettings::Backup::restoreTo(Settings& settings)
 #if ENABLE(MEDIA_STREAM)
     RuntimeEnabledFeatures::sharedFeatures().setScreenCaptureEnabled(m_setScreenCaptureEnabled);
 #endif
+    RuntimeEnabledFeatures::sharedFeatures().setCustomPasteboardDataEnabled(m_customPasteboardDataEnabled);
 
 #if USE(AUDIO_SESSION)
     DeprecatedGlobalSettings::setShouldManageAudioSessionCategory(m_shouldManageAudioSessionCategory);
 #endif
-    DeprecatedGlobalSettings::setCustomPasteboardDataEnabled(m_customPasteboardDataEnabled);
 }
 
 class InternalSettingsWrapper : public Supplement<Page> {
@@ -879,7 +879,7 @@ ExceptionOr<void> InternalSettings::setShouldManageAudioSessionCategory(bool sho
 
 ExceptionOr<void> InternalSettings::setCustomPasteboardDataEnabled(bool enabled)
 {
-    DeprecatedGlobalSettings::setCustomPasteboardDataEnabled(enabled);
+    RuntimeEnabledFeatures::sharedFeatures().setCustomPasteboardDataEnabled(enabled);
     return { };
 }
 

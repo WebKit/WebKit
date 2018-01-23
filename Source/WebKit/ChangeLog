@@ -1,5 +1,25 @@
 2018-01-22  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r227282. rdar://problem/36746077
+
+    2018-01-21  Ryosuke Niwa  <rniwa@webkit.org>
+
+            Turning off custom pasteboard data doesn't actually turn it off in WK2
+            https://bugs.webkit.org/show_bug.cgi?id=181920
+            <rdar://problem/36686429>
+
+            Reviewed by Wenson Hsieh.
+
+            Moved the code to decide when to enable custom pasteboard data from WebCore
+            since we never enable this feature in WebKit1.
+
+            * Shared/WebPreferences.yaml:
+            * Shared/WebPreferencesDefaultValues.cpp:
+            (defaultCustomPasteboardDataEnabled): Added.
+            * Shared/WebPreferencesDefaultValues.h:
+
+2018-01-22  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r227298. rdar://problem/36746084
 
     2018-01-22  Youenn Fablet  <youenn@apple.com>
