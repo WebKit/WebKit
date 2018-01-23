@@ -1,5 +1,21 @@
 2018-01-22  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r227346. rdar://problem/36746149
+
+    2018-01-22  Antti Koivisto  <antti@apple.com>
+
+            REGRESSION (Safari 11): Buttons inside a fieldset legend cannot be clicked on in Safari 11
+            https://bugs.webkit.org/show_bug.cgi?id=179666
+            <rdar://problem/35534292>
+
+            Reviewed by Zalan Bujtas.
+
+            * fast/forms/legend-overflow-hidden-hit-test-expected.txt: Added.
+            * fast/forms/legend-overflow-hidden-hit-test.html: Added.
+            * platform/ios/TestExpectations:
+
+2018-01-22  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r227348. rdar://problem/36746180
 
     2018-01-22  Youenn Fablet  <youenn@apple.com>
