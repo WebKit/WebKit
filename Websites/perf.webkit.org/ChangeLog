@@ -1,3 +1,16 @@
+2018-01-18  Dewei Zhu  <dewei_zhu@apple.com>
+
+        'run-test.py' script should make sure 'node_modules' directory exists before installing node packages.
+        https://bugs.webkit.org/show_bug.cgi?id=181808
+
+        Reviewed by Ryosuke Niwa.
+
+        'run-test.py' will fail if 'node_modules' does not exist before running this script.
+        Instead of calling 'os.chdir' to change directory, use 'cwd' in subprocess instead.
+
+        * tools/run-tests.py: Added the logic to ensure 'node_modules' exists.
+        Also use 'cwd' in subprocess.call instead of calling 'os.chdir' ahead.
+
 2018-01-20  Dewei Zhu  <dewei_zhu@apple.com>
 
         Extend 'ifBuilt' config key to set property based on whether certain repositories are built or not.
