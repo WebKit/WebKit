@@ -1,3 +1,12 @@
+2018-01-22  Matt Lewis  <jlewis3@apple.com>
+
+        Skipped http/tests/resourceLoadStatistics/grandfathering.html.
+        https://bugs.webkit.org/show_bug.cgi?id=181482
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
 2018-01-22  Ryan Haddad  <ryanhaddad@apple.com>
 
         Mark inspector/debugger/tail-deleted-frames-from-vm-entry.html as slow on macOS Debug.
