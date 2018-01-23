@@ -89,5 +89,7 @@ WK_CORE_PREDICTION_LDFLAGS_YES[sdk=macosx*] = -weak_framework CorePrediction;
 
 WK_SAFE_BROWSING_LDFLAGS[sdk=iphone*] = -framework SafariSafeBrowsing;
 WK_SAFE_BROWSING_LDFLAGS[sdk=iphone*10.*] = ;
+WK_SAFE_BROWSING_LDFLAGS[sdk=watch*] = ;
+WK_SAFE_BROWSING_LDFLAGS[sdk=appletv*] = ;
 WK_SAFE_BROWSING_LDFLAGS[sdk=macosx*] = $(WK_SAFE_BROWSING_LDFLAGS$(WK_MACOS_1013));
 WK_SAFE_BROWSING_LDFLAGS_MACOS_SINCE_1013 = -weak_framework SafariSafeBrowsing;

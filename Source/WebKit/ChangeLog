@@ -1,3 +1,12 @@
+2018-01-22  Zach Li  <zacharyli323@gmail.com>
+
+        We should not try to link against the Safe Browsing framework on watchOS and tvOS.
+        https://bugs.webkit.org/show_bug.cgi?id=181965.
+
+        Reviewed by Tim Horton.
+
+        * Configurations/WebKit.xcconfig:
+
 2018-01-22  Alex Christensen  <achristensen@webkit.org>
 
         Remove pre-NetworkSession loading code
