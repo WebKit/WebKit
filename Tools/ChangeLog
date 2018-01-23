@@ -1,3 +1,15 @@
+2018-01-23  Yoshiaki Jitsukawa  <Yoshiaki.Jitsukawa@sony.com>
+
+        [WinCairo] Use 64-bit toolset
+        https://bugs.webkit.org/show_bug.cgi?id=181979
+
+        Reviewed by Alex Christensen.
+
+        Use 64-bit toolset for 64-bit build in order to improve build time. 
+
+        * Scripts/webkitdirs.pm:
+        (generateBuildSystemFromCMakeProject):
+
 2018-01-23  Simon Fraser  <simon.fraser@apple.com>
 
         Element with position:fixed stops scrolling at the bottom of the page, but is painted in the right place on Chacos.com.
