@@ -54,6 +54,12 @@ PlatformMediaSessionManager* PlatformMediaSessionManager::sharedManagerIfExists(
     return platformMediaSessionManager;
 }
 
+void PlatformMediaSessionManager::updateNowPlayingInfoIfNecessary()
+{
+    if (auto existingManager = (MediaSessionManagerMac *)PlatformMediaSessionManager::sharedManagerIfExists())
+        existingManager->scheduleUpdateNowPlayingInfo();
+}
+
 MediaSessionManagerMac::MediaSessionManagerMac()
     : PlatformMediaSessionManager()
 {
@@ -130,10 +136,6 @@ void MediaSessionManagerMac::updateNowPlayingInfo()
             MRMediaRemoteSetNowPlayingVisibility(MRMediaRemoteGetLocalOrigin(), MRNowPlayingClientVisibilityNeverVisible);
 
         LOG(Media, "MediaSessionManagerMac::updateNowPlayingInfo - clearing now playing info");
-
-        MRMediaRemoteSetCanBeNowPlayingApplication(false);
-        m_registeredAsNowPlayingApplication = false;
-
         MRMediaRemoteSetNowPlayingInfo(nullptr);
         m_nowPlayingActive = false;
         m_lastUpdatedNowPlayingTitle = emptyString();
@@ -152,10 +154,10 @@ void MediaSessionManagerMac::updateNowPlayingInfo()
         return;
     }
 
-    if (!m_registeredAsNowPlayingApplication) {
-        m_registeredAsNowPlayingApplication = true;
+    static dispatch_once_t enableNowPlayingToken;
+    dispatch_once(&enableNowPlayingToken, ^() {
         MRMediaRemoteSetCanBeNowPlayingApplication(true);
-    }
+    });
 
     String title = currentSession->title();
     double duration = currentSession->supportsSeeking() ? currentSession->duration() : MediaPlayer::invalidTime();

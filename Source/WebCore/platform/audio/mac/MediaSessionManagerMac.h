@@ -41,7 +41,6 @@ public:
     double lastUpdatedNowPlayingDuration() const final { return m_lastUpdatedNowPlayingDuration; }
     double lastUpdatedNowPlayingElapsedTime() const final { return m_lastUpdatedNowPlayingElapsedTime; }
     uint64_t lastUpdatedNowPlayingInfoUniqueIdentifier() const final { return m_lastUpdatedNowPlayingInfoUniqueIdentifier; }
-    bool registeredAsNowPlayingApplication() const final { return m_registeredAsNowPlayingApplication; }
 
 private:
     friend class PlatformMediaSessionManager;
@@ -62,7 +61,6 @@ private:
 
     bool m_nowPlayingActive { false };
     bool m_isInBackground { false };
-    bool m_registeredAsNowPlayingApplication { false };
 
     // For testing purposes only.
     String m_lastUpdatedNowPlayingTitle;

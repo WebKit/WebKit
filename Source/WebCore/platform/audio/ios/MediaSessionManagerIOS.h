@@ -73,7 +73,6 @@ private:
     double lastUpdatedNowPlayingDuration() const final { return m_reportedDuration; }
     double lastUpdatedNowPlayingElapsedTime() const final { return m_reportedCurrentTime; }
     uint64_t lastUpdatedNowPlayingInfoUniqueIdentifier() const final { return m_lastUpdatedNowPlayingInfoUniqueIdentifier; }
-    bool registeredAsNowPlayingApplication() const final { return m_nowPlayingActive; }
 
     PlatformMediaSession* nowPlayingEligibleSession();
     

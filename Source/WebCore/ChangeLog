@@ -1,3 +1,21 @@
+2018-01-23  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r227279 and r227373.
+        https://bugs.webkit.org/show_bug.cgi?id=181988
+
+        The LayoutTest crash fix introduced an API test failure.
+        (Requested by ryanhaddad on #webkit).
+
+        Reverted changesets:
+
+        "Resign NowPlaying status when no media element is eligible"
+        https://bugs.webkit.org/show_bug.cgi?id=181914
+        https://trac.webkit.org/changeset/227279
+
+        "Resign NowPlaying status when no media element is eligible"
+        https://bugs.webkit.org/show_bug.cgi?id=181914
+        https://trac.webkit.org/changeset/227373
+
 2018-01-23  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Unreviewed, fix some format specifiers added in r227190
