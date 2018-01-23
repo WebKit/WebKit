@@ -1,0 +1,37 @@
+<html>
+<head>
+    <script src="/js-test-resources/js-test.js"></script>
+    <script src="util.js"></script>
+    <script>
+    function messageToTop(messagePrefix) {
+        top.postMessage(messagePrefix, "https://127.0.0.1:8443");
+    }
+
+    const options = {
+        publicKey: {
+            rp: {
+                name: "example.com"
+            },
+            user: {
+                name: "John Appleseed",
+                id: asciiToUint8Array("123456"),
+                displayName: "John",
+            },
+            challenge: asciiToUint8Array("123456"),
+            pubKeyCredParams: [{ type: "public-key", alg: -7 }]
+        }
+    };
+    navigator.credentials.create(options).then(
+        function(value) {
+            messageToTop("Access granted. " + value);
+        },
+        function(exception) {
+            if (exception.name == "NotAllowedError")
+                messageToTop("PASS Throw NotAllowedError.");
+            else
+                messageToTop("Throw " + exception.name  + ".");
+        }
+    );
+    </script>
+</head>
+</html>

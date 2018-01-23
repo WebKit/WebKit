@@ -33,11 +33,7 @@ AuthenticatorResponse::AuthenticatorResponse(RefPtr<ArrayBuffer>&& clientDataJSO
 {
 }
 
-AuthenticatorResponse::~AuthenticatorResponse()
-{
-}
-
-ArrayBuffer* AuthenticatorResponse::clientDataJSON()
+ArrayBuffer* AuthenticatorResponse::clientDataJSON() const
 {
     return m_clientDataJSON.get();
 }

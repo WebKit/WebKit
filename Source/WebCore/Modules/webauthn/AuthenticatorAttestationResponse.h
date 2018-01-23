@@ -31,13 +31,23 @@ namespace WebCore {
 
 class AuthenticatorAttestationResponse : public AuthenticatorResponse {
 public:
-    AuthenticatorAttestationResponse(RefPtr<ArrayBuffer>&& clientDataJSON, RefPtr<ArrayBuffer>&& attestationObject);
-    virtual ~AuthenticatorAttestationResponse();
+    static Ref<AuthenticatorAttestationResponse> create(RefPtr<ArrayBuffer>&& clientDataJSON, RefPtr<ArrayBuffer>&& attestationObject)
+    {
+        return adoptRef(*new AuthenticatorAttestationResponse(WTFMove(clientDataJSON), WTFMove(attestationObject)));
+    }
 
-    ArrayBuffer* attestationObject();
+    virtual ~AuthenticatorAttestationResponse() = default;
+
+    ArrayBuffer* attestationObject() const;
 
 private:
+    AuthenticatorAttestationResponse(RefPtr<ArrayBuffer>&& clientDataJSON, RefPtr<ArrayBuffer>&& attestationObject);
+
+    Type type() const final { return Type::Attestation; }
+
     RefPtr<ArrayBuffer> m_attestationObject;
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_AUTHENTICATOR_RESPONSE(AuthenticatorAttestationResponse, AuthenticatorResponse::Type::Attestation)

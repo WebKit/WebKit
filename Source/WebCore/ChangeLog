@@ -1,3 +1,92 @@
+2018-01-22  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebAuthN] Implement PublicKeyCredential's [[Create]] with a dummy authenticator
+        https://bugs.webkit.org/show_bug.cgi?id=181928
+        <rdar://problem/36459893>
+
+        Reviewed by Brent Fulgham.
+
+        This patch implements PublicKeyCredential's [[Create]] from https://www.w3.org/TR/webauthn/#createCredential
+        as of 5 December 2017. In order to do testing, a dummy authenticator is implemented to exercise a failure
+        and a pass path. A number of dependencies need to be resolved later in order to comply with the spec.
+        Also, the current architecture of handling async WebAuthN operations including dispatching, timeout, and aborting
+        might need a redesign once the underlying authenticator is clear. Since this is our first attempt to implement
+        a prototype, all those limitations, in my opinion, can be marked as non-blocking to accelerate the whole
+        process. Those limitations will then be addressed once the first prototype is finshed.
+
+        Tests: http/tests/webauthn/public-key-credential-create-with-invalid-parameters.https.html
+               http/tests/webauthn/public-key-credential-same-origin-with-ancestors-2.https.html
+               http/tests/webauthn/public-key-credential-same-origin-with-ancestors.https.html
+               http/wpt/webauthn/idl.https.html
+               http/wpt/webauthn/public-key-credential-create-failure.https.html
+               http/wpt/webauthn/public-key-credential-create-success.https.html
+
+        * Modules/credentialmanagement/BasicCredential.h:
+        * Modules/credentialmanagement/BasicCredential.idl:
+        * Modules/credentialmanagement/CredentialsContainer.cpp:
+        (WebCore::CredentialsContainer::PendingPromise::PendingPromise):
+        (WebCore::CredentialsContainer::dispatchTask):
+        (WebCore::CredentialsContainer::get):
+        (WebCore::CredentialsContainer::isCreate):
+        (WebCore::CredentialsContainer::preventSilentAccess const):
+        (WebCore::CredentialsContainer::preventSilentAccess): Deleted.
+        * Modules/credentialmanagement/CredentialsContainer.h:
+        (WebCore::CredentialsContainer::PendingPromise::create):
+        * Modules/webauthn/Authenticator.cpp: Copied from Source/WebCore/Modules/webauthn/AuthenticatorResponse.cpp.
+        (WebCore::Authenticator::singleton):
+        (WebCore::Authenticator::makeCredential const):
+        * Modules/webauthn/Authenticator.h: Copied from Source/WebCore/Modules/webauthn/PublicKeyCredentialCreationOptions.h.
+        * Modules/webauthn/AuthenticatorAssertionResponse.cpp:
+        (WebCore::AuthenticatorAssertionResponse::authenticatorData const):
+        (WebCore::AuthenticatorAssertionResponse::signature const):
+        (WebCore::AuthenticatorAssertionResponse::userHandle const):
+        (WebCore::AuthenticatorAssertionResponse::~AuthenticatorAssertionResponse): Deleted.
+        (WebCore::AuthenticatorAssertionResponse::authenticatorData): Deleted.
+        (WebCore::AuthenticatorAssertionResponse::signature): Deleted.
+        (WebCore::AuthenticatorAssertionResponse::userHandle): Deleted.
+        * Modules/webauthn/AuthenticatorAssertionResponse.h:
+        (WebCore::AuthenticatorAssertionResponse::create):
+        * Modules/webauthn/AuthenticatorAttestationResponse.cpp:
+        (WebCore::AuthenticatorAttestationResponse::attestationObject const):
+        (WebCore::AuthenticatorAttestationResponse::~AuthenticatorAttestationResponse): Deleted.
+        (WebCore::AuthenticatorAttestationResponse::attestationObject): Deleted.
+        * Modules/webauthn/AuthenticatorAttestationResponse.h:
+        (WebCore::AuthenticatorAttestationResponse::create):
+        * Modules/webauthn/AuthenticatorResponse.cpp:
+        (WebCore::AuthenticatorResponse::clientDataJSON const):
+        (WebCore::AuthenticatorResponse::~AuthenticatorResponse): Deleted.
+        (WebCore::AuthenticatorResponse::clientDataJSON): Deleted.
+        * Modules/webauthn/AuthenticatorResponse.h:
+        * Modules/webauthn/AuthenticatorResponse.idl:
+        * Modules/webauthn/PublicKeyCredential.cpp:
+        (WebCore::PublicKeyCredentialInternal::produceClientDataJson):
+        (WebCore::PublicKeyCredentialInternal::produceClientDataJsonHash):
+        (WebCore::PublicKeyCredentialInternal::getIdFromAttestationObject):
+        (WebCore::PublicKeyCredential::PublicKeyCredential):
+        (WebCore::PublicKeyCredential::discoverFromExternalSource):
+        (WebCore::PublicKeyCredential::create):
+        (WebCore::PublicKeyCredential::rawId const):
+        (WebCore::PublicKeyCredential::response const):
+        (WebCore::PublicKeyCredential::getClientExtensionResults const):
+        (WebCore::PublicKeyCredential::rawId): Deleted.
+        (WebCore::PublicKeyCredential::response): Deleted.
+        (WebCore::PublicKeyCredential::getClientExtensionResults): Deleted.
+        * Modules/webauthn/PublicKeyCredential.h:
+        * Modules/webauthn/PublicKeyCredential.idl:
+        * Modules/webauthn/PublicKeyCredentialCreationOptions.h:
+        (): Deleted.
+        * Modules/webauthn/PublicKeyCredentialDescriptor.h:
+        * Modules/webauthn/PublicKeyCredentialDescriptor.idl:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSAuthenticatorResponseCustom.cpp: Copied from Source/WebCore/Modules/webauthn/AuthenticatorAttestationResponse.cpp.
+        (WebCore::toJSNewlyCreated):
+        (WebCore::toJS):
+        * bindings/js/JSBasicCredentialCustom.cpp: Copied from Source/WebCore/Modules/webauthn/AuthenticatorResponse.cpp.
+        (WebCore::toJSNewlyCreated):
+        (WebCore::toJS):
+        * bindings/js/JSBindingsAllInOne.cpp:
+
 2018-01-22  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [Cocoa] Support font collections

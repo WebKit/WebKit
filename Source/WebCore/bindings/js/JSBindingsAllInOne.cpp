@@ -32,6 +32,7 @@
 #include "JSAttrCustom.cpp"
 #include "JSAudioTrackCustom.cpp"
 #include "JSAudioTrackListCustom.cpp"
+#include "JSBasicCredentialCustom.cpp"
 #include "JSBlobCustom.cpp"
 #include "JSCSSRuleCustom.cpp"
 #include "JSCSSRuleListCustom.cpp"

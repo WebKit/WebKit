@@ -27,18 +27,31 @@
 
 #include <runtime/ArrayBuffer.h>
 #include <wtf/ThreadSafeRefCounted.h>
+#include <wtf/TypeCasts.h>
 
 namespace WebCore {
 
 class AuthenticatorResponse : public ThreadSafeRefCounted<AuthenticatorResponse> {
 public:
-    explicit AuthenticatorResponse(RefPtr<ArrayBuffer>&&);
-    virtual ~AuthenticatorResponse();
+    enum class Type {
+        Assertion,
+        Attestation
+    };
 
-    ArrayBuffer* clientDataJSON();
+    explicit AuthenticatorResponse(RefPtr<ArrayBuffer>&&);
+    virtual ~AuthenticatorResponse() = default;
+
+    virtual Type type() const = 0;
+
+    ArrayBuffer* clientDataJSON() const;
 
 private:
     RefPtr<ArrayBuffer> m_clientDataJSON;
 };
 
 } // namespace WebCore
+
+#define SPECIALIZE_TYPE_TRAITS_AUTHENTICATOR_RESPONSE(ToClassName, Type) \
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::ToClassName) \
+    static bool isType(const WebCore::AuthenticatorResponse& response) { return response.type() == WebCore::Type; } \
+SPECIALIZE_TYPE_TRAITS_END()

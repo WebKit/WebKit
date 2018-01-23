@@ -34,11 +34,7 @@ AuthenticatorAttestationResponse::AuthenticatorAttestationResponse(RefPtr<ArrayB
 {
 }
 
-AuthenticatorAttestationResponse::~AuthenticatorAttestationResponse()
-{
-}
-
-ArrayBuffer* AuthenticatorAttestationResponse::attestationObject()
+ArrayBuffer* AuthenticatorAttestationResponse::attestationObject() const
 {
     return m_attestationObject.get();
 }

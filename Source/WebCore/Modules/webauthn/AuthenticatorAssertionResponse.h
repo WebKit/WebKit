@@ -31,17 +31,27 @@ namespace WebCore {
 
 class AuthenticatorAssertionResponse : public AuthenticatorResponse {
 public:
-    AuthenticatorAssertionResponse(RefPtr<ArrayBuffer>&& clientDataJSON, RefPtr<ArrayBuffer>&& authenticatorData, RefPtr<ArrayBuffer>&& signature, RefPtr<ArrayBuffer>&& userHandle);
-    virtual ~AuthenticatorAssertionResponse();
+    static Ref<AuthenticatorAssertionResponse> create(RefPtr<ArrayBuffer>&& clientDataJSON, RefPtr<ArrayBuffer>&& authenticatorData, RefPtr<ArrayBuffer>&& signature, RefPtr<ArrayBuffer>&& userHandle)
+    {
+        return adoptRef(*new AuthenticatorAssertionResponse(WTFMove(clientDataJSON), WTFMove(authenticatorData), WTFMove(signature), WTFMove(userHandle)));
+    }
 
-    ArrayBuffer* authenticatorData();
-    ArrayBuffer* signature();
-    ArrayBuffer* userHandle();
+    virtual ~AuthenticatorAssertionResponse() = default;
+
+    ArrayBuffer* authenticatorData() const;
+    ArrayBuffer* signature() const;
+    ArrayBuffer* userHandle() const;
 
 private:
+    AuthenticatorAssertionResponse(RefPtr<ArrayBuffer>&& clientDataJSON, RefPtr<ArrayBuffer>&& authenticatorData, RefPtr<ArrayBuffer>&& signature, RefPtr<ArrayBuffer>&& userHandle);
+
+    Type type() const final { return Type::Assertion; }
+
     RefPtr<ArrayBuffer> m_authenticatorData;
     RefPtr<ArrayBuffer> m_signature;
     RefPtr<ArrayBuffer> m_userHandle;
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_AUTHENTICATOR_RESPONSE(AuthenticatorAssertionResponse, AuthenticatorResponse::Type::Assertion)

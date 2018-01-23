@@ -1,0 +1,57 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset=utf-8>
+    <title>IDL check of WebAuthN</title>
+    <link rel="help" href="https://www.w3.org/TR/webauthn/#idl-index">
+    <script src=/resources/testharness.js></script>
+    <script src=/resources/testharnessreport.js></script>
+    <script src=/resources/WebIDLParser.js></script>
+    <script src=/resources/idlharness.js></script>
+    <script src="./resources/util.js"></script>
+</head>
+<body>
+
+<h1 class="instructions">Description</h1>
+
+<p class="instructions">This test verifies that the implementations of the WebAuthN API match with its WebIDL definition.</p>
+
+<div id='log'></div>
+
+<script>
+promise_test(async () => {
+    const idlURL = ["WebAuthN.idl"];
+    const idlArray = new IdlArray();
+    const idlText = await fetch(idlURL).then(r => r.text());
+
+    idlArray.add_untested_idls("interface ArrayBuffer {};");
+
+    idlArray.add_idls(`
+        [Exposed=Window, SecureContext]
+        interface Credential {
+            readonly attribute USVString id;
+            readonly attribute DOMString type;
+        };
+    `);
+    idlArray.add_idls(idlText);
+
+    const options = {
+        publicKey: {
+            rp: {
+                name: "localhost",
+            },
+            user: {
+                name: "John Appleseed",
+                id: asciiToUint8Array("123456"),
+                displayName: "Appleseed",
+            },
+            challenge: Base64URL.parse("MTIzNDU2"),
+            pubKeyCredParams: [{ type: "public-key", alg: -7 }],
+        }
+    };
+    credential = await navigator.credentials.create(options);
+
+    idlArray.add_objects({"PublicKeyCredential": ["credential"], "AuthenticatorAttestationResponse": ["credential.response"]});
+    idlArray.test();
+}, "Setup for WebAuthN API IDL tests.");
+</script>

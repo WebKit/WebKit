@@ -23,11 +23,31 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-[
-    CustomToJSObject,
-    EnabledAtRuntime=WebAuthentication,
-    Exposed=Window,
-    SecureContext,
-] interface AuthenticatorResponse {
-    [SameObject] readonly attribute ArrayBuffer clientDataJSON;
+#pragma once
+
+#include "ExceptionOr.h"
+#include "PublicKeyCredentialCreationOptions.h"
+#include <wtf/Forward.h>
+#include <wtf/Noncopyable.h>
+
+namespace WebCore {
+
+// FIXME: Consider moving all static methods from PublicKeyCredential to here and making this
+// as an authenticator manager that controls all authenticator activities, mostly likely asnyc
+// for attestations.
+class Authenticator {
+    WTF_MAKE_NONCOPYABLE(Authenticator);
+    friend class NeverDestroyed<Authenticator>;
+public:
+    static Authenticator& singleton();
+
+    // Omit requireResidentKey, requireUserPresence, and requireUserVerification as we always provide resident keys and require user verification.
+    ExceptionOr<Vector<uint8_t>> makeCredential(const Vector<uint8_t>& hash, const PublicKeyCredentialCreationOptions::RpEntity&, const PublicKeyCredentialCreationOptions::UserEntity&, const Vector<PublicKeyCredentialCreationOptions::Parameters>&, const Vector<PublicKeyCredentialDescriptor>& excludeCredentialIds) const;
+
+#if !COMPILER(MSVC)
+private:
+#endif
+    Authenticator() = default;
 };
+
+} // namespace WebCore

@@ -23,11 +23,25 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-[
-    CustomToJSObject,
-    EnabledAtRuntime=WebAuthentication,
-    Exposed=Window,
-    SecureContext,
-] interface AuthenticatorResponse {
-    [SameObject] readonly attribute ArrayBuffer clientDataJSON;
-};
+#include "config.h"
+#include "JSAuthenticatorResponse.h"
+
+#include "JSAuthenticatorAttestationResponse.h"
+#include "JSDOMBinding.h"
+
+namespace WebCore {
+using namespace JSC;
+
+JSValue toJSNewlyCreated(JSC::ExecState*, JSDOMGlobalObject* globalObject, Ref<AuthenticatorResponse>&& response)
+{
+    if (is<AuthenticatorAttestationResponse>(response))
+        return createWrapper<AuthenticatorAttestationResponse>(globalObject, WTFMove(response));
+    return createWrapper<AuthenticatorResponse>(globalObject, WTFMove(response));
+}
+
+JSValue toJS(ExecState* state, JSDOMGlobalObject* globalObject, AuthenticatorResponse& response)
+{
+    return wrap(state, globalObject, response);
+}
+
+} // namespace WebCore

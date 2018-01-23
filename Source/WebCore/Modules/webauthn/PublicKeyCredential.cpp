@@ -26,12 +26,77 @@
 #include "config.h"
 #include "PublicKeyCredential.h"
 
+#include "Authenticator.h"
+#include "AuthenticatorResponse.h"
+#include "CredentialCreationOptions.h"
 #include "JSDOMPromiseDeferred.h"
+#include "SecurityOrigin.h"
+#include <pal/crypto/CryptoDigest.h>
+#include <wtf/CurrentTime.h>
+#include <wtf/JSONValues.h>
+#include <wtf/text/Base64.h>
 
 namespace WebCore {
 
-PublicKeyCredential::PublicKeyCredential(const String& id)
-    : BasicCredential(id, Type::PublicKey, Discovery::Remote)
+namespace PublicKeyCredentialInternal {
+
+// The layout of attestation object: https://www.w3.org/TR/webauthn/#attestation-object as of 5 December 2017.
+// Here is a summary before CredentialID in the layout. All lengths are fixed.
+// RP ID hash (32) || FLAGS (1) || COUNTER (4) || AAGUID (16) || L (2) || CREDENTIAL ID (?) || ...
+static constexpr size_t CredentialIdLengthOffset = 43;
+
+enum class ClientDataType {
+    Create,
+    Get
+};
+
+// FIXME: Add token binding ID and extensions.
+// https://bugs.webkit.org/show_bug.cgi?id=181948
+// https://bugs.webkit.org/show_bug.cgi?id=181949
+static Ref<ArrayBuffer> produceClientDataJson(ClientDataType type, const BufferSource& challenge, const SecurityOrigin& origin)
+{
+    auto object = JSON::Object::create();
+    switch (type) {
+    case ClientDataType::Create:
+        object->setString(ASCIILiteral("type"), ASCIILiteral("webauthn.create"));
+        break;
+    case ClientDataType::Get:
+        object->setString(ASCIILiteral("type"), ASCIILiteral("webauthn.get"));
+        break;
+    }
+    object->setString(ASCIILiteral("challenge"), WTF::base64URLEncode(challenge.data(), challenge.length()));
+    object->setString(ASCIILiteral("origin"), origin.toRawString());
+    // FIXME: This might be platform dependent.
+    object->setString(ASCIILiteral("hashAlgorithm"), ASCIILiteral("SHA-256"));
+
+    auto utf8JSONString = object->toJSONString().utf8();
+    return ArrayBuffer::create(utf8JSONString.data(), utf8JSONString.length());
+}
+
+static Vector<uint8_t> produceClientDataJsonHash(const Ref<ArrayBuffer>& clientDataJson)
+{
+    auto crypto = PAL::CryptoDigest::create(PAL::CryptoDigest::Algorithm::SHA_256);
+    crypto->addBytes(clientDataJson->data(), clientDataJson->byteLength());
+    return crypto->computeHash();
+}
+
+static RefPtr<ArrayBuffer> getIdFromAttestationObject(const Vector<uint8_t>& attestationObject)
+{
+    // The byte length of L is 2.
+    if (attestationObject.size() < CredentialIdLengthOffset + 2)
+        return nullptr;
+    size_t length = (attestationObject[CredentialIdLengthOffset] << 8) + attestationObject[CredentialIdLengthOffset + 1];
+    if (attestationObject.size() < CredentialIdLengthOffset + 2 + length)
+        return nullptr;
+    return ArrayBuffer::create(attestationObject.data() + CredentialIdLengthOffset + 2, length);
+}
+
+} // namespace PublicKeyCredentialInternal
+
+PublicKeyCredential::PublicKeyCredential(RefPtr<ArrayBuffer>&& id, RefPtr<AuthenticatorResponse>&& response)
+    : BasicCredential(WTF::base64URLEncode(id->data(), id->byteLength()), Type::PublicKey, Discovery::Remote)
+    , m_rawId(WTFMove(id))
+    , m_response(WTFMove(response))
 {
 }
 
@@ -40,7 +105,7 @@ Vector<Ref<BasicCredential>> PublicKeyCredential::collectFromCredentialStore(Cre
     return { };
 }
 
-ExceptionOr<RefPtr<BasicCredential>> PublicKeyCredential::discoverFromExternalSource(const CredentialRequestOptions&, bool)
+ExceptionOr<RefPtr<BasicCredential>> PublicKeyCredential::discoverFromExternalSource(const SecurityOrigin&, const CredentialRequestOptions&, bool)
 {
     return Exception { NotSupportedError };
 }
@@ -50,22 +115,66 @@ RefPtr<BasicCredential> PublicKeyCredential::store(RefPtr<BasicCredential>&&, bo
     return nullptr;
 }
 
-ExceptionOr<RefPtr<BasicCredential>> PublicKeyCredential::create(const CredentialCreationOptions&, bool)
+ExceptionOr<RefPtr<BasicCredential>> PublicKeyCredential::create(const SecurityOrigin& callerOrigin, const PublicKeyCredentialCreationOptions& options, bool sameOriginWithAncestors)
 {
-    return Exception { NotSupportedError };
+    using namespace PublicKeyCredentialInternal;
+
+    // The following implements https://www.w3.org/TR/webauthn/#createCredential as of 5 December 2017.
+    // FIXME: Extensions are not supported yet. Skip Step 11-12.
+    // Step 1, 3, 4, 17 are handled by the caller, including options sanitizing, timer and abort signal.
+    // Step 2.
+    if (!sameOriginWithAncestors)
+        return Exception { NotAllowedError };
+
+    // Step 5-7.
+    // FIXME: We lack fundamental support from SecurityOrigin to determine if a host is a valid domain or not.
+    // Step 6 is therefore skipped. Also, we lack the support to determine whether a domain is a registrable
+    // domain suffix of another domain. Hence restrict the comparison to equal in Step 7.
+    // https://bugs.webkit.org/show_bug.cgi?id=181950
+    if (!options.rp.id.isEmpty() && !(callerOrigin.host() == options.rp.id))
+        return Exception { SecurityError };
+    if (options.rp.id.isEmpty())
+        options.rp.id = callerOrigin.host();
+
+    // Step 8-10.
+    // Most of the jobs are done by bindings. However, we can't know if the JSValue of options.pubKeyCredParams
+    // is empty or not. Return NotSupportedError as long as it is empty.
+    if (options.pubKeyCredParams.isEmpty())
+        return Exception { NotSupportedError };
+
+    // Step 13-15.
+    auto clientDataJson = produceClientDataJson(ClientDataType::Create, options.challenge, callerOrigin);
+    auto clientDataJsonHash = produceClientDataJsonHash(clientDataJson);
+
+    // Step 18-21.
+    // Only platform attachments will be supported at this stage. Assuming one authenticator per device.
+    // Also, resident keys, user verifications and direct attestation are enforced at this tage.
+    // For better performance, no filtering is done here regarding to options.excludeCredentials.
+    // What's more, user cancellations effectively means NotAllowedError. Therefore, the below call
+    // will only returns either an exception or a PublicKeyCredential ref.
+    // FIXME: The following operation might need to perform async.
+    // https://bugs.webkit.org/show_bug.cgi?id=181946
+    auto result = Authenticator::singleton().makeCredential(clientDataJsonHash, options.rp, options.user, options.pubKeyCredParams, options.excludeCredentials);
+    if (result.hasException())
+        return result.releaseException();
+
+    auto attestationObject = result.releaseReturnValue();
+    // FIXME: Got some crazy compile error when I was trying to return RHS directly.
+    RefPtr<BasicCredential> credential = PublicKeyCredential::create(getIdFromAttestationObject(attestationObject), AuthenticatorAttestationResponse::create(WTFMove(clientDataJson), ArrayBuffer::create(attestationObject.data(), attestationObject.size())));
+    return WTFMove(credential);
 }
 
-ArrayBuffer* PublicKeyCredential::rawId()
+ArrayBuffer* PublicKeyCredential::rawId() const
 {
     return m_rawId.get();
 }
 
-AuthenticatorResponse* PublicKeyCredential::response()
+AuthenticatorResponse* PublicKeyCredential::response() const
 {
     return m_response.get();
 }
 
-ExceptionOr<bool> PublicKeyCredential::getClientExtensionResults()
+ExceptionOr<bool> PublicKeyCredential::getClientExtensionResults() const
 {
     return Exception { NotSupportedError };
 }

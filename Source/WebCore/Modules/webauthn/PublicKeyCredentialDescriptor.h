@@ -31,8 +31,15 @@
 namespace WebCore {
 
 struct PublicKeyCredentialDescriptor {
+    enum class AuthenticatorTransport {
+        Usb,
+        Nfc,
+        Ble
+    };
+
     PublicKeyCredentialType type;
     BufferSource id;
+    Vector<AuthenticatorTransport> transports;
 };
 
 } // namespace WebCore

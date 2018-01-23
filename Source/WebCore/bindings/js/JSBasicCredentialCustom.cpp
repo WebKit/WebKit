@@ -23,11 +23,26 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-[
-    CustomToJSObject,
-    EnabledAtRuntime=WebAuthentication,
-    Exposed=Window,
-    SecureContext,
-] interface AuthenticatorResponse {
-    [SameObject] readonly attribute ArrayBuffer clientDataJSON;
-};
+#include "config.h"
+#include "JSBasicCredential.h"
+
+#include "JSDOMBinding.h"
+#include "JSPublicKeyCredential.h"
+
+
+namespace WebCore {
+using namespace JSC;
+
+JSValue toJSNewlyCreated(JSC::ExecState*, JSDOMGlobalObject* globalObject, Ref<BasicCredential>&& credential)
+{
+    if (is<PublicKeyCredential>(credential))
+        return createWrapper<PublicKeyCredential>(globalObject, WTFMove(credential));
+    return createWrapper<BasicCredential>(globalObject, WTFMove(credential));
+}
+
+JSValue toJS(ExecState* state, JSDOMGlobalObject* globalObject, BasicCredential& credential)
+{
+    return wrap(state, globalObject, credential);
+}
+
+} // namespace WebCore

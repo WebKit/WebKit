@@ -36,21 +36,17 @@ AuthenticatorAssertionResponse::AuthenticatorAssertionResponse(RefPtr<ArrayBuffe
 {
 }
 
-AuthenticatorAssertionResponse::~AuthenticatorAssertionResponse()
-{
-}
-
-ArrayBuffer* AuthenticatorAssertionResponse::authenticatorData()
+ArrayBuffer* AuthenticatorAssertionResponse::authenticatorData() const
 {
     return m_authenticatorData.get();
 }
 
-ArrayBuffer* AuthenticatorAssertionResponse::signature()
+ArrayBuffer* AuthenticatorAssertionResponse::signature() const
 {
     return m_signature.get();
 }
 
-ArrayBuffer* AuthenticatorAssertionResponse::userHandle()
+ArrayBuffer* AuthenticatorAssertionResponse::userHandle() const
 {
     return m_userHandle.get();
 }

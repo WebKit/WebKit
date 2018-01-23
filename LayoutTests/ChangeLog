@@ -1,3 +1,33 @@
+2018-01-22  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebAuthN] Implement PublicKeyCredential's [[Create]] with a dummy authenticator
+        https://bugs.webkit.org/show_bug.cgi?id=181928
+        <rdar://problem/36459893>
+
+        Reviewed by Brent Fulgham.
+
+        Test cases are divided into two different folders. One follows wpt style. The other contains tests
+        that I don't know how to write them in wpt style.
+
+        * http/tests/webauthn/public-key-credential-create-with-invalid-parameters.https-expected.txt: Added.
+        * http/tests/webauthn/public-key-credential-create-with-invalid-parameters.https.html: Added.
+        * http/tests/webauthn/public-key-credential-same-origin-with-ancestors-2.https-expected.txt: Added.
+        * http/tests/webauthn/public-key-credential-same-origin-with-ancestors-2.https.html: Added.
+        * http/tests/webauthn/public-key-credential-same-origin-with-ancestors.https-expected.txt: Added.
+        * http/tests/webauthn/public-key-credential-same-origin-with-ancestors.https.html: Added.
+        * http/tests/webauthn/resources/last-layer-frame.https.html: Added.
+        * http/tests/webauthn/resources/second-layer-frame.https.html: Added.
+        * http/tests/webauthn/resources/util.js: Added.
+        It will be good to convert them into wpt style.
+        * http/wpt/webauthn/WebAuthN.idl: Added.
+        * http/wpt/webauthn/idl.https-expected.txt: Added.
+        * http/wpt/webauthn/idl.https.html: Added.
+        * http/wpt/webauthn/public-key-credential-create-failure.https-expected.txt: Added.
+        * http/wpt/webauthn/public-key-credential-create-failure.https.html: Added.
+        * http/wpt/webauthn/public-key-credential-create-success.https-expected.txt: Added.
+        * http/wpt/webauthn/public-key-credential-create-success.https.html: Added.
+        * http/wpt/webauthn/resources/util.js: Added.
+
 2018-01-22  Ryan Haddad  <ryanhaddad@apple.com>
 
         Skip http/tests/ssl/applepay/ApplePayRequestShippingContact.https.html on Sierra.
