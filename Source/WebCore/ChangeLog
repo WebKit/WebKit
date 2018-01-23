@@ -1,3 +1,30 @@
+2018-01-23  Yacine Bandou  <yacine.bandou_ext@softathome.com>
+
+        [EME] Add support of multi keys from different sessions in CDMinstanceClearKey
+        https://bugs.webkit.org/show_bug.cgi?id=180083
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Add support of multi keys from different MediaKeySession in CDMInstanceClearKey.
+
+        Currently the CDMInstanceClearKey manages two "m_keys", one is a WTF::Vector
+        where it stores the list of last added keys, an other which is defined in the
+        ClearKeyState::singleton it is a WTF::HashMap, in this last one, it stores the
+        keys lists of each created session.
+
+        The method "keys()" of CDMInstanceClearKey returns the first "m_keys" which
+        contains just the list of last keys.
+
+        The goal of this commit is to return all keys lists of all sessions, thus
+        we remove the "m_keys" which is WTF::Vector and we modify the method
+        "keys()" to return all keys lists, which is stored in "m_keys" WTF::HashMap,
+        in one Vector instead of return just the list of last keys.
+
+        * platform/encryptedmedia/clearkey/CDMClearKey.cpp:
+        (WebCore::CDMInstanceClearKey::keys const):
+        (WebCore::CDMInstanceClearKey::updateLicense):
+        * platform/encryptedmedia/clearkey/CDMClearKey.h:
+
 2018-01-22  Simon Fraser  <simon.fraser@apple.com>
 
         Optimize building the non-fast scrollable region with multiple iframes

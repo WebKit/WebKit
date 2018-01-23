@@ -480,6 +480,16 @@ void CDMInstanceClearKey::requestLicense(LicenseType, const AtomicString& initDa
         });
 }
 
+const Vector<CDMInstanceClearKey::Key> CDMInstanceClearKey::keys() const
+{
+    // Return the keys of all sessions.
+    Vector<CDMInstanceClearKey::Key> allKeys { };
+    for (auto& key : ClearKeyState::singleton().keys().values())
+        allKeys.appendVector(key);
+
+    return allKeys;
+}
+
 void CDMInstanceClearKey::updateLicense(const String& sessionId, LicenseType, const SharedBuffer& response, LicenseUpdateCallback callback)
 {
     // Use a helper functor that schedules the callback dispatch, avoiding
@@ -565,9 +575,6 @@ void CDMInstanceClearKey::updateLicense(const String& sessionId, LicenseType, co
             changedKeys = WTFMove(keyStatusVector);
         }
 
-        // Cache the key information Vector on CDMInstance for easier access from the pipeline.
-        m_keys = keyVector;
-
         dispatchCallback(false, WTFMove(changedKeys), SuccessValue::Succeeded);
         return;
     }
@@ -576,7 +583,6 @@ void CDMInstanceClearKey::updateLicense(const String& sessionId, LicenseType, co
     if (parseLicenseReleaseAcknowledgementFormat(*root)) {
         // FIXME: Retrieve the key ID information and use it to validate the keys for this sessionId.
         ClearKeyState::singleton().keys().remove(sessionId);
-        m_keys.clear();
         dispatchCallback(true, std::nullopt, SuccessValue::Succeeded);
         return;
     }

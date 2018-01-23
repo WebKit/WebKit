@@ -102,11 +102,10 @@ public:
         RefPtr<SharedBuffer> keyValueData;
     };
 
-    const Vector<Key>& keys() const { return m_keys; }
+    const Vector<Key> keys() const;
 
 private:
     WeakPtrFactory<CDMInstanceClearKey> m_weakPtrFactory;
-    Vector<Key> m_keys;
 };
 
 } // namespace WebCore
