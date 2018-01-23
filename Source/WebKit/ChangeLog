@@ -1,3 +1,14 @@
+2018-01-23  Brent Fulgham  <bfulgham@apple.com>
+
+        [macOS] WebProcess needs TCC entitlements for media capture
+        https://bugs.webkit.org/show_bug.cgi?id=181995
+        <rdar://problem/36674649>
+
+        Reviewed by Eric Carlson.
+
+        * Configurations/WebContent-OSX.entitlements: Add delegated services needed to support media
+        capture features.
+
 2018-01-23  Dan Bernstein  <mitz@apple.com>
 
         [Cocoa] Disable header postprocessing when building for macOS High Sierra
