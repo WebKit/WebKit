@@ -1,3 +1,14 @@
+2018-01-23  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, rollout r227216 as it seems to be causing deadlocks
+        https://bugs.webkit.org/show_bug.cgi?id=182013
+
+        * page/ChromeClient.h:
+        * testing/Internals.cpp:
+        (WebCore::Internals::testIncomingSyncIPCMessageWhileWaitingForSyncReply): Deleted.
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2018-01-23  Ali Juma  <ajuma@chromium.org>
 
         REGRESSION (r226622): ASSERTION FAILED: !m_frame in WebCore::DOMWindowProperty::willDestroyGlobalObjectInCachedFrame()

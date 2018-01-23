@@ -1,3 +1,33 @@
+2018-01-23  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, rollout r227216 as it seems to be causing deadlocks
+        https://bugs.webkit.org/show_bug.cgi?id=182013
+
+        * Platform/IPC/Connection.cpp:
+        (IPC::Connection::waitForSyncReply):
+        * Platform/IPC/Connection.h:
+        (IPC::Connection::setShouldProcessIncomingMessagesWhileWaitingForSyncReply): Deleted.
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::testIncomingSyncIPCMessageWhileWaitingForSyncReply): Deleted.
+        * UIProcess/WebProcessProxy.h:
+        * UIProcess/WebProcessProxy.messages.in:
+        * WebProcess/Network/NetworkProcessConnection.cpp:
+        (WebKit::NetworkProcessConnection::NetworkProcessConnection):
+        * WebProcess/Storage/WebToStorageProcessConnection.cpp:
+        (WebKit::WebToStorageProcessConnection::WebToStorageProcessConnection):
+        * WebProcess/WebConnectionToUIProcess.cpp:
+        (WebKit::WebConnectionToUIProcess::WebConnectionToUIProcess):
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::testIncomingSyncIPCMessageWhileWaitingForSyncReply): Deleted.
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+        * WebProcess/WebCoreSupport/WebEditorClient.cpp:
+        (WebKit::WebEditorClient::undo):
+        (WebKit::WebEditorClient::redo):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::syncIPCMessageWhileWaitingForSyncReplyForTesting): Deleted.
+        * WebProcess/WebProcess.h:
+        * WebProcess/WebProcess.messages.in:
+
 2018-01-23  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r227437.
