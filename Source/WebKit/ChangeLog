@@ -1,3 +1,18 @@
+2018-01-23  Youenn Fablet  <youenn@apple.com>
+
+        REGRESSION (r227348): ASSERT_NOT_REACHED in WebKit::ServiceWorkerClientFetch::didFinish()
+        https://bugs.webkit.org/show_bug.cgi?id=181956
+        <rdar://problem/36755492>
+
+        Reviewed by Chris Dumez.
+
+        Covered by test no longer crashing in Debug builds.
+        Reset m_redirectionStatus to None when starting an SW fetch.
+
+        * WebProcess/Storage/ServiceWorkerClientFetch.cpp:
+        (WebKit::ServiceWorkerClientFetch::start):
+        (WebKit::ServiceWorkerClientFetch::didFinish):
+
 2018-01-23  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [WPE] TestWebKitFindController asserts
