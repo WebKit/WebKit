@@ -1,3 +1,27 @@
+2018-01-23  Ting-Wei Lan  <lantw44@gmail.com>
+
+        [GTK] Add user agent quirk for Microsoft Outlook Web App
+        https://bugs.webkit.org/show_bug.cgi?id=181982
+
+        Reviewed by Michael Catanzaro.
+
+        Microsoft Outlook Web App forces users to switch to the lite version on
+        the login page with our standard user agent on all non-macOS systems.
+        Since it is an application that can be installed by different companies,
+        schools and organizations, it is not possible to fix the issue unless
+        we keep a big list of host names that are known to run it. We check the
+        host name instead of the base domain name here because it is not
+        expected to run all sites under a base domain on this webmail and
+        calendar application.
+
+        https://mail.ntu.edu.tw is a site that is known to run Microsoft Outlook
+        Web App for several years, and it is not likely to change. When there
+        are other sites found to run it and having the same user agent problem,
+        we can expand the list to include them.
+
+        * platform/UserAgentQuirks.cpp:
+        (WebCore::urlRequiresMacintoshPlatform):
+
 2018-01-23  Yacine Bandou  <yacine.bandou_ext@softathome.com>
 
         [EME] Add support of multi keys from different sessions in CDMinstanceClearKey
