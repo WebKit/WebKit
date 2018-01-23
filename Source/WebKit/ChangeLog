@@ -1,5 +1,20 @@
 2018-01-22  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r227298. rdar://problem/36746084
+
+    2018-01-22  Youenn Fablet  <youenn@apple.com>
+
+            Bump default cache storage quota to 50MB
+            https://bugs.webkit.org/show_bug.cgi?id=181924
+
+            Reviewed by Chris Dumez.
+
+            Existing web sites use more than 20 MB.
+
+            * UIProcess/WebsiteData/WebsiteDataStore.h:
+
+2018-01-22  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r227345. rdar://problem/36745991
 
     2018-01-22  Brent Fulgham  <bfulgham@apple.com>
