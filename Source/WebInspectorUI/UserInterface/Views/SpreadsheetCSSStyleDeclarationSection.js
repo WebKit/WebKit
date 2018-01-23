@@ -40,14 +40,12 @@ WI.SpreadsheetCSSStyleDeclarationSection = class SpreadsheetCSSStyleDeclarationS
         this._mediaElements = [];
         this._filterText = null;
         this._shouldFocusSelectorElement = false;
-        this._wasFocused = false;
+        this._wasEditing = false;
     }
 
     // Public
 
     get style() { return this._style; }
-
-    get propertiesEditor() { return this._propertiesEditor; }
 
     get editable()
     {
@@ -152,6 +150,8 @@ WI.SpreadsheetCSSStyleDeclarationSection = class SpreadsheetCSSStyleDeclarationS
         this.startEditingRuleSelector();
     }
 
+    // SpreadsheetSelectorField delegate
+
     spreadsheetSelectorFieldDidChange(direction)
     {
         let selectorText = this._selectorElement.textContent.trim();
@@ -180,6 +180,8 @@ WI.SpreadsheetCSSStyleDeclarationSection = class SpreadsheetCSSStyleDeclarationS
     {
         this._discardSelectorChange();
     }
+
+    // SpreadsheetCSSStyleDeclarationEditor delegate
 
     cssStyleDeclarationEditorStartEditingAdjacentRule(toPreviousRule)
     {
@@ -418,12 +420,12 @@ WI.SpreadsheetCSSStyleDeclarationSection = class SpreadsheetCSSStyleDeclarationS
 
     _handleMouseDown(event)
     {
-        this._wasFocused = this._propertiesEditor.isFocused();
+        this._wasEditing = this._propertiesEditor.editing || document.activeElement === this._selectorElement;
     }
 
     _handleClick(event)
     {
-        if (this._wasFocused)
+        if (this._wasEditing)
             return;
 
         if (window.getSelection().type === "Range")

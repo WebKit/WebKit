@@ -34,11 +34,30 @@ WI.SpreadsheetCSSStyleDeclarationEditor = class SpreadsheetCSSStyleDeclarationEd
         this._delegate = delegate;
         this.style = style;
         this._propertyViews = [];
+
+        this._inlineSwatchActive = false;
+        this._focused = false;
+
         this._propertyPendingStartEditing = null;
         this._filterText = null;
     }
 
     // Public
+
+    initialLayout()
+    {
+        if (!this.style.editable)
+            return;
+
+        this.element.addEventListener("focus", () => { this.focused = true; }, true);
+        this.element.addEventListener("blur", (event) => {
+            let focusedElement = event.relatedTarget;
+            if (focusedElement && focusedElement.isDescendant(this.element))
+                return;
+
+            this.focused = false;
+        }, true);
+    }
 
     layout()
     {
@@ -74,6 +93,9 @@ WI.SpreadsheetCSSStyleDeclarationEditor = class SpreadsheetCSSStyleDeclarationEd
 
     detached()
     {
+        this._inlineSwatchActive = false;
+        this.focused = false;
+
         for (let propertyView of this._propertyViews)
             propertyView.detached();
     }
@@ -97,6 +119,23 @@ WI.SpreadsheetCSSStyleDeclarationEditor = class SpreadsheetCSSStyleDeclarationEd
             this._style.addEventListener(WI.CSSStyleDeclaration.Event.PropertiesChanged, this._propertiesChanged, this);
 
         this.needsLayout();
+    }
+
+    get editing()
+    {
+        return this._focused || this._inlineSwatchActive;
+    }
+
+    set focused(value)
+    {
+        this._focused = value;
+        this._updateStyleLock();
+    }
+
+    set inlineSwatchActive(value)
+    {
+        this._inlineSwatchActive = value;
+        this._updateStyleLock();
     }
 
     startEditingFirstProperty()
@@ -162,16 +201,6 @@ WI.SpreadsheetCSSStyleDeclarationEditor = class SpreadsheetCSSStyleDeclarationEd
         return false;
     }
 
-    isFocused()
-    {
-        let focusedElement = document.activeElement;
-
-        if (!focusedElement || focusedElement.tagName === "BODY")
-            return false;
-
-        return focusedElement.isSelfOrDescendant(this.element);
-    }
-
     addBlankProperty(index)
     {
         if (index === -1) {
@@ -222,10 +251,22 @@ WI.SpreadsheetCSSStyleDeclarationEditor = class SpreadsheetCSSStyleDeclarationEd
         }
     }
 
+    // SpreadsheetStyleProperty delegate
+
     spreadsheetStylePropertyRemoved(propertyView)
     {
         this._propertyViews.remove(propertyView);
         this.updateLayout();
+    }
+
+    stylePropertyInlineSwatchActivated()
+    {
+        this.inlineSwatchActive = true;
+    }
+
+    stylePropertyInlineSwatchDeactivated()
+    {
+        this.inlineSwatchActive = false;
     }
 
     applyFilter(filterText)
@@ -278,11 +319,16 @@ WI.SpreadsheetCSSStyleDeclarationEditor = class SpreadsheetCSSStyleDeclarationEd
 
     _propertiesChanged(event)
     {
-        if (this.isFocused()) {
+        if (this.editing) {
             for (let propertyView of this._propertyViews)
                 propertyView.updateStatus();
         } else
             this.needsLayout();
+    }
+
+    _updateStyleLock()
+    {
+        this.style.locked = this._focused || this._inlineSwatchActive;
     }
 };
 

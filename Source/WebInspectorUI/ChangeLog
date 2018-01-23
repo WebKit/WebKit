@@ -1,3 +1,58 @@
+2018-01-22  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Styles Redesign: data corruption when updating values quickly
+        https://bugs.webkit.org/show_bug.cgi?id=179461
+        <rdar://problem/35431882>
+
+        Reviewed by Joseph Pecoraro.
+
+        Data corruption used to happen because CSSStyleDeclaration.prototype.text didn't
+        update synchronously. Making two or more quick changes resulted in corrupted data.
+
+        Imagine we modify a CSS value 3 times:
+
+        Front-end:  (1)-(2)---(3)
+        Back-end:          (1)-----(2)-(3)
+
+        The first response from the backend could happen after the 2nd edit. In this patch,
+        CSSStyleDeclaration is locked when its view is being edited.
+
+        To correctly display invalid and overridden properties, the backend is allowed to update
+        CSSStyleDeclaration and CSSProperty when they're locked if the text from the backend
+        matches the model's text. This should happen when the backend is caught up with the
+        front-end changes.
+
+        * UserInterface/Models/CSSProperty.js:
+        (WI.CSSProperty.prototype.update):
+        * UserInterface/Models/CSSStyleDeclaration.js:
+        (WI.CSSStyleDeclaration):
+        (WI.CSSStyleDeclaration.prototype.get locked):
+        (WI.CSSStyleDeclaration.prototype.set locked):
+        (WI.CSSStyleDeclaration.prototype.set text):
+
+        * UserInterface/Views/SpreadsheetCSSStyleDeclarationEditor.js:
+        (WI.SpreadsheetCSSStyleDeclarationEditor):
+        (WI.SpreadsheetCSSStyleDeclarationEditor.prototype.initialLayout):
+        (WI.SpreadsheetCSSStyleDeclarationEditor.prototype.detached):
+        (WI.SpreadsheetCSSStyleDeclarationEditor.prototype.get editing):
+        (WI.SpreadsheetCSSStyleDeclarationEditor.prototype.set focused):
+        (WI.SpreadsheetCSSStyleDeclarationEditor.prototype.set inlineSwatchActive):
+        (WI.SpreadsheetCSSStyleDeclarationEditor.prototype.stylePropertyInlineSwatchActivated):
+        (WI.SpreadsheetCSSStyleDeclarationEditor.prototype.stylePropertyInlineSwatchDeactivated):
+        (WI.SpreadsheetCSSStyleDeclarationEditor.prototype._propertiesChanged):
+        (WI.SpreadsheetCSSStyleDeclarationEditor.prototype._updateStyleLock):
+        Lock CSSStyleDeclaration when a CSS property name or value is focused or
+        an inline widget is active.
+
+        * UserInterface/Views/SpreadsheetCSSStyleDeclarationSection.js:
+        (WI.SpreadsheetCSSStyleDeclarationSection):
+        (WI.SpreadsheetCSSStyleDeclarationSection.prototype._handleMouseDown):
+        (WI.SpreadsheetCSSStyleDeclarationSection.prototype._handleClick):
+        * UserInterface/Views/SpreadsheetStyleProperty.js:
+        (WI.SpreadsheetStyleProperty):
+        (WI.SpreadsheetStyleProperty.prototype._createInlineSwatch):
+        When selector is focused, clicking on the white-space should not add a new blank property.
+
 2018-01-19  Ross Kirsling  <ross.kirsling@sony.com>
 
         Web Inspector: Layers tab should do away with popovers (if possible)

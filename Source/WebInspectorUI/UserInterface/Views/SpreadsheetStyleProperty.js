@@ -355,6 +355,18 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
             this._handleValueChange();
         }, this);
 
+        if (typeof this._delegate.stylePropertyInlineSwatchActivated === "function") {
+            swatch.addEventListener(WI.InlineSwatch.Event.Activated, () => {
+                this._delegate.stylePropertyInlineSwatchActivated();
+            });
+        }
+
+        if (typeof this._delegate.stylePropertyInlineSwatchDeactivated === "function") {
+            swatch.addEventListener(WI.InlineSwatch.Event.Deactivated, () => {
+                this._delegate.stylePropertyInlineSwatchDeactivated();
+            });
+        }
+
         tokenElement.append(swatch.element, innerElement);
 
         // Prevent the value from editing when clicking on the swatch.

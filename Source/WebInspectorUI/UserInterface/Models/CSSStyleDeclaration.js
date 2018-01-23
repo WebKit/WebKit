@@ -40,6 +40,7 @@ WI.CSSStyleDeclaration = class CSSStyleDeclaration extends WI.Object
         this._node = node || null;
         this._inherited = inherited || false;
 
+        this._locked = false;
         this._pendingProperties = [];
         this._propertyNameMap = {};
 
@@ -49,7 +50,7 @@ WI.CSSStyleDeclaration = class CSSStyleDeclaration extends WI.Object
         this._allProperties = [];
         this._allVisibleProperties = null;
 
-        this.update(text, properties, styleSheetTextRange, true);
+        this.update(text, properties, styleSheetTextRange, {dontFireEvents: true});
     }
 
     // Public
@@ -98,8 +99,17 @@ WI.CSSStyleDeclaration = class CSSStyleDeclaration extends WI.Object
         return this._ownerRule && this._ownerRule.editable;
     }
 
-    update(text, properties, styleSheetTextRange, dontFireEvents)
+    get locked() { return this._locked; }
+    set locked(value) { this._locked = value; }
+
+    update(text, properties, styleSheetTextRange, options = {})
     {
+        let dontFireEvents = options.dontFireEvents || false;
+        let suppressLock = options.suppressLock || false;
+
+        if (this._locked && !suppressLock && text !== this._text)
+            return;
+
         text = text || "";
         properties = properties || [];
 
@@ -161,8 +171,11 @@ WI.CSSStyleDeclaration = class CSSStyleDeclaration extends WI.Object
 
         // Don't fire the event if there is text and it hasn't changed.
         if (oldText && this._text && oldText === this._text) {
-            // We shouldn't have any added or removed properties in this case.
-            console.assert(!addedProperties.length && !removedProperties.length);
+            if (!this._locked || suppressLock) {
+                // We shouldn't have any added or removed properties in this case.
+                console.assert(!addedProperties.length && !removedProperties.length);
+            }
+
             if (!addedProperties.length && !removedProperties.length)
                 return;
         }
@@ -208,6 +221,10 @@ WI.CSSStyleDeclaration = class CSSStyleDeclaration extends WI.Object
             this._hasModifiedInitialText = modified;
             this.dispatchEventToListeners(WI.CSSStyleDeclaration.Event.InitialTextModified);
         }
+
+        // Update text immediately when it was modified via the styles sidebar.
+        if (this._locked)
+            this._text = text;
 
         this._nodeStyles.changeStyleText(this, text);
     }
@@ -370,8 +387,7 @@ WI.CSSStyleDeclaration = class CSSStyleDeclaration extends WI.Object
         for (let index = propertyIndex + 1; index < this._allProperties.length; index++)
             this._allProperties[index].index = index;
 
-        const suppressEvents = true;
-        this.update(this._text, this._allProperties, this._styleSheetTextRange, suppressEvents);
+        this.update(this._text, this._allProperties, this._styleSheetTextRange, {dontFireEvents: true, suppressLock: true});
 
         return property;
     }
