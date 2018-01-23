@@ -415,13 +415,6 @@ TemporaryTileCohortRetentionEnabled:
   type: bool
   defaultValue: DEFAULT_TEMPORARY_TILE_COHORT_RETENTION_ENABLED
 
-QTKitEnabled:
-  type: bool
-  defaultValue: WebCore::DeprecatedGlobalSettings::isQTKitEnabled()
-  getter: isQTKitEnabled
-  webcoreBinding: DeprecatedGlobalSettings
-  condition: PLATFORM(COCOA)
-
 PageVisibilityBasedProcessSuppressionEnabled:
   type: bool
   defaultValue: true
