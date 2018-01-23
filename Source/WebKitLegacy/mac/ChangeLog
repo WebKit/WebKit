@@ -1,3 +1,22 @@
+2018-01-22  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        WebViews created via -initSimpleHTMLDocumentWithStyle: don't propagate attachmentElementEnabled state
+        https://bugs.webkit.org/show_bug.cgi?id=181960
+        <rdar://problem/36431678>
+
+        Reviewed by Tim Horton.
+
+        Mail's compose view is initialized via the -initSimpleHTMLDocumentWithStyle: codepath. This is intended to be
+        a fast path for initializing WebViews, which bypasses certain initialization steps present in the regular -init
+        path, such as calling -_preferencesChanged: to sync RuntimeEnabledFeatures with WebPreferences.
+
+        This means that even though we set -[WebPreferences attachmentElementEnabled] to YES for Mail, the value of the
+        RuntimeEnabledFeature isn't updated to match. To fix this, we explicitly invoke
+        RuntimeEnabledFeatures::setAttachmentElementEnabled here to make sure the value is in sync with WebPreferences.
+
+        * WebView/WebView.mm:
+        (-[WebView initSimpleHTMLDocumentWithStyle:frame:preferences:groupName:]):
+
 2018-01-21  Ryosuke Niwa  <rniwa@webkit.org>
 
         Turning off custom pasteboard data doesn't actually turn it off in WK2

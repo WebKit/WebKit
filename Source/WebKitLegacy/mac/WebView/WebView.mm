@@ -1759,6 +1759,8 @@ static void WebKitInitializeGamepadProviderIfNecessary()
     
     SecurityPolicy::setLocalLoadPolicy(SecurityPolicy::AllowLocalLoadsForLocalAndSubstituteData);
     
+    RuntimeEnabledFeatures::sharedFeatures().setAttachmentElementEnabled(self.preferences.attachmentElementEnabled);
+
     return self;
 }
 
