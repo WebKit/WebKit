@@ -59,6 +59,7 @@ namespace WebKit {
 
 static const NSTimeInterval showHideAnimationDuration = 0.1;
 static const NSTimeInterval autoHideDelay = 4.0;
+static const CGFloat fontSize = 12;
 
 static void replaceViewWithView(UIView *view, UIView *otherView)
 {
@@ -256,8 +257,6 @@ static UIEdgeInsets mirrorEdgeInsets(UIEdgeInsets insets)
     [_locationButton setContentEdgeInsets:locationContentEdgeInsets];
     [_locationButton setImageEdgeInsets:locationImageEdgeInsets];
     [_locationButton setTitle:locationName forState:UIControlStateNormal];
-    [[_locationButton titleLabel] setLineBreakMode:NSLineBreakByTruncatingTail];
-    [[_locationButton titleLabel] setAdjustsFontSizeToFitWidth:NO];
 }
 
 - (void)createSubviews
@@ -274,6 +273,7 @@ static UIEdgeInsets mirrorEdgeInsets(UIEdgeInsets insets)
     [[_cancelButton layer] setCompositingFilter:[CAFilter filterWithType:kCAFilterPlusL]];
     [_cancelButton setTitle:WEB_UI_STRING("Done", "Text of button that exits element fullscreen.") forState:UIControlStateNormal];
     [_cancelButton setTintColor:[UIColor whiteColor]];
+    [[_cancelButton titleLabel] setFont:[UIFont systemFontOfSize:fontSize]];
     [_cancelButton addTarget:self action:@selector(cancelAction:) forControlEvents:UIControlEventTouchUpInside];
 
     [[self view] addSubview:_cancelButton.get()];
@@ -283,6 +283,9 @@ static UIEdgeInsets mirrorEdgeInsets(UIEdgeInsets insets)
     [_locationButton setAdjustsImageWhenHighlighted:NO];
     [_locationButton setBackgroundColor:[UIColor blackColor]];
     [[_locationButton layer] setCompositingFilter:[CAFilter filterWithType:kCAFilterPlusL]];
+    [[_locationButton titleLabel] setLineBreakMode:NSLineBreakByTruncatingTail];
+    [[_locationButton titleLabel] setAdjustsFontSizeToFitWidth:NO];
+    [[_locationButton titleLabel] setFont:[UIFont systemFontOfSize:fontSize]];
     [[self view] addSubview:_locationButton.get()];
 
     UILayoutGuide* containerGuide = [[self view] layoutMarginsGuide];
