@@ -1,5 +1,16 @@
 2018-01-22  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Unreviewed. Add test case for slow in test_expectations.py.
+
+        I forgot to also check slow tests in test_expectations.py unit tests.
+
+        * Scripts/webkitpy/common/test_expectations_unittest.py:
+        (assert_slow):
+        (test_build_type):
+        (test_slow):
+
+2018-01-22  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Unreviewed. Mark test WTF_Lock.ManyContendedShortSections as slow.
 
         * TestWebKitAPI/glib/TestExpectations.json:

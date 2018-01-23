@@ -163,6 +163,28 @@ class ExpectationsTest(unittest.TestCase):
     }
 }"""
 
+    SLOW = """
+{
+    "TestCookieManager": {
+        "expected": {"all": {"slow": true}},
+        "subtests": {
+            "/webkit2/WebKitCookieManager/persistent-storage": {
+                "expected": {"wpe": {"status": ["FAIL"], "slow": false, "bug": "1234"}}
+            }
+        }
+    },
+    "TestWebKit": {
+        "subtests": {
+            "WebKit.MouseMoveAfterCrash": {
+                "expected": {"all": {"status": ["FAIL"], "slow": true, "bug": "1234"}}
+            },
+            "WebKit.WKConnection": {
+                "expected": {"gtk": {"status": ["CRASH"], "bug": "1234"}}
+            }
+        }
+    }
+}"""
+
     def assert_exp(self, test, subtest, result):
         self.assertIn(result, self.expectations.get_expectation(test, subtest))
 
@@ -174,6 +196,9 @@ class ExpectationsTest(unittest.TestCase):
 
     def assert_skip(self, test, subtest, result):
         self.assertEqual(self.expectations.is_skip(test, subtest), result)
+
+    def assert_slow(self, test, subtest, result):
+        self.assertEqual(self.expectations.is_slow(test, subtest), result)
 
     def test_basic(self):
         self.expectations = MockTestExpectations('gtk', self.BASIC)
@@ -252,3 +277,19 @@ class ExpectationsTest(unittest.TestCase):
         self.expectations = MockTestExpectations('wpe', self.BUILD_TYPE, 'Debug')
         self.assert_skip('TestWebViewEditor', None, True)
         self.assert_skip('TestWebViewEditor', '/webkit2/WebKitWebView/editable/editable', True)
+
+    def test_slow(self):
+        self.expectations = MockTestExpectations('gtk', self.SLOW)
+        self.assert_slow('TestCookieManager', '/webkit2/WebKitCookieManager/basic', True)
+        self.assert_slow('TestCookieManager', '/webkit2/WebKitCookieManager/persistent-storage', True)
+        self.assert_slow('TestWebKit', 'WebKit.WKView', False)
+        self.assert_slow('TestWebKit', 'WebKit.MouseMoveAfterCrash', True)
+        self.assert_exp('TestWebKit', 'WebKit.MouseMoveAfterCrash', 'FAIL')
+        self.assert_slow('TestWebKit', 'WebKit.WKConnection', False)
+
+        self.expectations = MockTestExpectations('wpe', self.SLOW)
+        self.assert_slow('TestCookieManager', '/webkit2/WebKitCookieManager/basic', True)
+        self.assert_slow('TestCookieManager', '/webkit2/WebKitCookieManager/persistent-storage', False)
+        self.assert_slow('TestWebKit', 'WebKit.WKView', False)
+        self.assert_slow('TestWebKit', 'WebKit.MouseMoveAfterCrash', True)
+        self.assert_slow('TestWebKit', 'WebKit.WKConnection', False)
