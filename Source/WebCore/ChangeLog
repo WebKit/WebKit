@@ -1,3 +1,19 @@
+2018-01-22  Simon Fraser  <simon.fraser@apple.com>
+
+        Optimize building the non-fast scrollable region with multiple iframes
+        https://bugs.webkit.org/show_bug.cgi?id=181971
+
+        Reviewed by Zalan Bujtas.
+
+        AsyncScrollingCoordinator::frameViewLayoutUpdated() is called every time a subframe lays out.
+        We don't need to eagerly update the non-fast scrollable region at this time; we can just mark
+        it dirty, and rely on the existing scrolling tree commit code to recompute it.
+
+        On my machine this makes fast/frames/lots-of-objects.html no longer a timeout.
+
+        * page/scrolling/AsyncScrollingCoordinator.cpp:
+        (WebCore::AsyncScrollingCoordinator::frameViewLayoutUpdated):
+
 2018-01-22  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthN] Implement PublicKeyCredential's [[Create]] with a dummy authenticator
