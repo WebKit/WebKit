@@ -60,6 +60,14 @@ MessagePortChannel::~MessagePortChannel()
     m_registry.messagePortChannelDestroyed(*this);
 }
 
+std::optional<ProcessIdentifier> MessagePortChannel::processForPort(const MessagePortIdentifier& port)
+{
+    ASSERT(isMainThread());
+    ASSERT(port == m_ports[0] || port == m_ports[1]);
+    size_t i = port == m_ports[0] ? 0 : 1;
+    return m_processes[i];
+}
+
 bool MessagePortChannel::includesPort(const MessagePortIdentifier& port)
 {
     ASSERT(isMainThread());

@@ -57,9 +57,9 @@ public:
     // Returns nullptr if the passed-in vector is empty.
     static ExceptionOr<TransferredMessagePortArray> disentanglePorts(Vector<RefPtr<MessagePort>>&&);
     static Vector<RefPtr<MessagePort>> entanglePorts(ScriptExecutionContext&, TransferredMessagePortArray&&);
-    static RefPtr<MessagePort> existingMessagePortForIdentifier(const MessagePortIdentifier&);
+    WEBCORE_EXPORT static RefPtr<MessagePort> existingMessagePortForIdentifier(const MessagePortIdentifier&);
 
-    void messageAvailable();
+    WEBCORE_EXPORT void messageAvailable();
     bool started() const { return m_started; }
     bool closed() const { return m_closed; }
 
@@ -73,8 +73,8 @@ public:
     const MessagePortIdentifier& identifier() const { return m_identifier; }
     const MessagePortIdentifier& remoteIdentifier() const { return m_remoteIdentifier; }
 
-    void ref() const;
-    void deref() const;
+    WEBCORE_EXPORT void ref() const;
+    WEBCORE_EXPORT void deref() const;
 
     // ActiveDOMObject
     const char* activeDOMObjectName() const final;
@@ -83,7 +83,7 @@ public:
     void stop() final { close(); }
     bool hasPendingActivity() const final;
 
-    bool isLocallyReachable() const;
+    WEBCORE_EXPORT bool isLocallyReachable() const;
 
     // EventTargetWithInlineData.
     EventTargetInterface eventTargetInterface() const final { return MessagePortEventTargetInterfaceType; }

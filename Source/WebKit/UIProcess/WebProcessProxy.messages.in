@@ -56,4 +56,14 @@ messages -> WebProcessProxy LegacyReceiver {
     DidExceedInactiveMemoryLimitWhileActive()
 
     TestIncomingSyncIPCMessageWhileWaitingForSyncReply() -> (bool handled)
+
+    CreateNewMessagePortChannel(struct WebCore::MessagePortIdentifier port1, struct WebCore::MessagePortIdentifier port2)
+    EntangleLocalPortInThisProcessToRemote(struct WebCore::MessagePortIdentifier local, struct WebCore::MessagePortIdentifier remote)
+    MessagePortDisentangled(struct WebCore::MessagePortIdentifier local)
+    MessagePortClosed(struct WebCore::MessagePortIdentifier local)
+    TakeAllMessagesForPort(struct WebCore::MessagePortIdentifier port, uint64_t messagesCallbackIdentifier)
+    PostMessageToRemote(struct WebCore::MessageWithMessagePorts message, struct WebCore::MessagePortIdentifier remote)
+    CheckRemotePortForActivity(struct WebCore::MessagePortIdentifier port, uint64_t callbackIdentifier)
+    DidDeliverMessagePortMessages(uint64_t messageBatchIdentifier)
+    DidCheckProcessLocalPortForActivity(uint64_t callbackIdentifier, bool isLocallyReachable)
 }
