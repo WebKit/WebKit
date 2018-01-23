@@ -1,3 +1,13 @@
+2018-01-23  Dan Bernstein  <mitz@apple.com>
+
+        [Cocoa] Disable header postprocessing when building for macOS High Sierra
+        https://bugs.webkit.org/show_bug.cgi?id=181972
+
+        Reviewed by Anders Carlsson.
+
+        * Configurations/WebKit.xcconfig: Adopt macOSTargetConditionals.xcconfig helpers and disable postprocessing
+          when building for macOS 10.13.
+
 2018-01-23  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Window resizing is broken after detaching to separate window
