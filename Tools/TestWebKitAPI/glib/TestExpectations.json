@@ -108,6 +108,9 @@
             "WTF_Lock.ContendedLongSection": {
                 "expected": {"all": {"slow": true}}
             },
+            "WTF_Lock.ManyContendedShortSections": {
+                "expected": {"all": {"slow": true}}
+            },
             "WTF_WordLock.ContendedShortSection": {
                 "expected": {"all": {"slow": true}}
             },
