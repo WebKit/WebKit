@@ -175,7 +175,7 @@ private:
 };
 
 
-static bool shouldConvertToBlob(const URL& url)
+static bool shouldReplaceSubresourceURL(const URL& url)
 {
     return !(url.protocolIsInHTTPFamily() || url.protocolIsData());
 }
@@ -224,7 +224,7 @@ static void replaceRichContentWithAttachments(DocumentFragment& fragment, const 
     HashMap<AtomicString, Ref<Blob>> urlToBlobMap;
     for (const Ref<ArchiveResource>& subresource : subresources) {
         auto& url = subresource->url();
-        if (shouldConvertToBlob(url))
+        if (shouldReplaceSubresourceURL(url))
             urlToBlobMap.set(url.string(), Blob::create(subresource->data(), subresource->mimeType()));
     }
 
@@ -376,7 +376,7 @@ static String sanitizeMarkupWithArchive(Document& destinationDocument, MarkupAnd
     HashMap<AtomicString, AtomicString> blobURLMap;
     for (const Ref<ArchiveResource>& subresource : markupAndArchive.archive->subresources()) {
         auto& subresourceURL = subresource->url();
-        if (!shouldConvertToBlob(subresourceURL))
+        if (!shouldReplaceSubresourceURL(subresourceURL))
             continue;
         auto blob = Blob::create(subresource->data(), subresource->mimeType());
         String blobURL = DOMURL::createObjectURL(destinationDocument, blob);
@@ -394,7 +394,7 @@ static String sanitizeMarkupWithArchive(Document& destinationDocument, MarkupAnd
             continue;
 
         auto subframeURL = subframeMainResource->url();
-        if (!shouldConvertToBlob(subframeURL))
+        if (!shouldReplaceSubresourceURL(subframeURL))
             continue;
 
         MarkupAndArchive subframeContent = { String::fromUTF8(subframeMainResource->data().data(), subframeMainResource->data().size()),
@@ -499,7 +499,17 @@ bool WebContentReader::readHTML(const String& string)
     if (stringOmittingMicrosoftPrefix.isEmpty())
         return false;
 
-    addFragment(createFragmentFromMarkup(document, stringOmittingMicrosoftPrefix, emptyString(), DisallowScriptingAndPluginContent));
+    String markup;
+    if (RuntimeEnabledFeatures::sharedFeatures().customPasteboardDataEnabled() && shouldSanitize()) {
+        markup = sanitizeMarkup(stringOmittingMicrosoftPrefix, WTF::Function<void (DocumentFragment&)> { [] (DocumentFragment& fragment) {
+            removeSubresourceURLAttributes(fragment, [] (const URL& url) {
+                return shouldReplaceSubresourceURL(url);
+            });
+        } });
+    } else
+        markup = stringOmittingMicrosoftPrefix;
+
+    addFragment(createFragmentFromMarkup(document, markup, emptyString(), DisallowScriptingAndPluginContent));
     return true;
 }
 
@@ -509,9 +519,13 @@ bool WebContentMarkupReader::readHTML(const String& string)
         return false;
 
     String rawHTML = stripMicrosoftPrefix(string);
-    if (shouldSanitize())
-        markup = sanitizeMarkup(rawHTML);
-    else
+    if (shouldSanitize()) {
+        markup = sanitizeMarkup(rawHTML, WTF::Function<void (DocumentFragment&)> { [] (DocumentFragment& fragment) {
+            removeSubresourceURLAttributes(fragment, [] (const URL& url) {
+                return shouldReplaceSubresourceURL(url);
+            });
+        } });
+    } else
         markup = rawHTML;
 
     return !markup.isEmpty();
