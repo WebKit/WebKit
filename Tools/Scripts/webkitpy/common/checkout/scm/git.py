@@ -109,7 +109,7 @@ class Git(SCM, SVNRepository):
     def in_working_directory(cls, path, executive=None):
         try:
             executive = executive or Executive()
-            return executive.run_command([cls.executable_name, 'rev-parse', '--is-inside-work-tree'], cwd=path, error_handler=Executive.ignore_error).rstrip() == "true"
+            return executive.run_command([cls.executable_name, 'rev-parse', '--is-inside-work-tree'], cwd=path, ignore_errors=True).rstrip() == "true"
         except OSError as e:
             # The Windows bots seem to through a WindowsError when git isn't installed.
             return False
@@ -118,7 +118,7 @@ class Git(SCM, SVNRepository):
     def clone(cls, url, directory, executive=None):
         try:
             executive = executive or Executive()
-            return executive.run_command([cls.executable_name, 'clone', '-v', url, directory], error_handler=Executive.ignore_error)
+            return executive.run_command([cls.executable_name, 'clone', '-v', url, directory], ignore_errors=True)
         except OSError as e:
             return False
 
@@ -142,7 +142,7 @@ class Git(SCM, SVNRepository):
         # Pass the cwd if provided so that we can handle the case of running webkit-patch outside of the working directory.
         # FIXME: This should use an Executive.
         executive = executive or Executive()
-        return executive.run_command([cls.executable_name, "config", "--get-all", key], error_handler=Executive.ignore_error, cwd=cwd).rstrip('\n')
+        return executive.run_command([cls.executable_name, "config", "--get-all", key], ignore_errors=True, cwd=cwd).rstrip('\n')
 
     @staticmethod
     def commit_success_regexp():
@@ -400,7 +400,7 @@ class Git(SCM, SVNRepository):
         # Assume the revision is an svn revision.
         git_commit = self.git_commit_from_svn_revision(revision)
         # I think this will always fail due to ChangeLogs.
-        self._run_git(['revert', '--no-commit', git_commit], error_handler=Executive.ignore_error)
+        self._run_git(['revert', '--no-commit', git_commit], ignore_errors=True)
 
     def revert_files(self, file_paths):
         self._run_git(['checkout', 'HEAD'] + file_paths)

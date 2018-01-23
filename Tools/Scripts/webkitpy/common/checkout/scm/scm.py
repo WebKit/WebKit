@@ -66,12 +66,13 @@ class SCM:
         self.checkout_root = self.find_checkout_root(self.cwd)
 
     # A wrapper used by subclasses to create processes.
-    def run(self, args, cwd=None, input=None, error_handler=None, return_exit_code=False, return_stderr=True, decode_output=True):
+    def run(self, args, cwd=None, input=None, error_handler=None, ignore_errors=False, return_exit_code=False, return_stderr=True, decode_output=True):
         # FIXME: We should set cwd appropriately.
         return self._executive.run_command(args,
             cwd=cwd,
             input=input,
             error_handler=error_handler,
+            ignore_errors=ignore_errors,
             return_exit_code=return_exit_code,
             return_stderr=return_stderr,
             decode_output=decode_output)

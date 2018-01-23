@@ -127,7 +127,7 @@ class GtkPort(Port):
         # Configure the software libgl renderer if jhbuild ready and we test inside a virtualized window system
         if self._driver_class() in [XvfbDriver, WestonDriver] and self._should_use_jhbuild():
             llvmpipe_libgl_path = self.host.executive.run_command(self._jhbuild_wrapper + ['printenv', 'LLVMPIPE_LIBGL_PATH'],
-                                                                  error_handler=self.host.executive.ignore_error).strip()
+                                                                  ignore_errors=True).strip()
             dri_libgl_path = os.path.join(llvmpipe_libgl_path, "dri")
             if os.path.exists(os.path.join(llvmpipe_libgl_path, "libGL.so")) and os.path.exists(os.path.join(dri_libgl_path, "swrast_dri.so")):
                     # Force the Gallium llvmpipe software rasterizer

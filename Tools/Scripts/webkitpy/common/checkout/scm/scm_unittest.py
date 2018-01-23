@@ -265,12 +265,12 @@ svn: resource out of date; try updating
 """
         command_does_not_exist = ['does_not_exist', 'invalid_option']
         self.assertRaises(OSError, run_command, command_does_not_exist)
-        self.assertRaises(OSError, run_command, command_does_not_exist, error_handler=Executive.ignore_error)
+        self.assertRaises(OSError, run_command, command_does_not_exist, ignore_errors=True)
 
         command_returns_non_zero = ['/bin/sh', '--invalid-option']
         self.assertRaises(ScriptError, run_command, command_returns_non_zero)
         # Check if returns error text:
-        self.assertTrue(run_command(command_returns_non_zero, error_handler=Executive.ignore_error))
+        self.assertTrue(run_command(command_returns_non_zero, ignore_errors=True))
 
         self.assertRaises(CheckoutNeedsUpdate, commit_error_handler, ScriptError(output=git_failure_message))
         self.assertRaises(CheckoutNeedsUpdate, commit_error_handler, ScriptError(output=svn_failure_message))

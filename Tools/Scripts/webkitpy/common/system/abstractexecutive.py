@@ -116,7 +116,7 @@ class AbstractExecutive(object):
             escaped_args.append(arg)
         return " ".join(escaped_args)
 
-    def run_command(self, args, cwd=None, env=None, input=None, error_handler=None,
+    def run_command(self, args, cwd=None, env=None, input=None, error_handler=None, ignore_errors=False,
         return_exit_code=False, return_stderr=True, decode_output=True):
         raise NotImplementedError('subclasses must implement')
 

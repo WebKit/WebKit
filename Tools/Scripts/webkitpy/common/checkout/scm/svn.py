@@ -60,7 +60,7 @@ class SVNRepository(object):
         if not os.path.isdir(os.path.join(home_directory, ".subversion")):
             return False
         find_args = ["find", ".subversion", "-type", "f", "-exec", "grep", "-q", realm, "{}", ";", "-print"]
-        find_output = self.run(find_args, cwd=home_directory, error_handler=Executive.ignore_error).rstrip()
+        find_output = self.run(find_args, cwd=home_directory, ignore_errors=True).rstrip()
         if not find_output or not os.path.isfile(os.path.join(home_directory, find_output)):
             return False
         # Subversion either stores the password in the credential file, indicated by the presence of the key "password",

@@ -31,7 +31,6 @@ import sys
 from webkitpy.common.config.contributionareas import ContributionAreas
 from webkitpy.common.host_mock import MockHost
 from webkitpy.common.system.filesystem_mock import MockFileSystem
-from webkitpy.common.system.executive import Executive
 from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.tool.commands.analyzechangelog import AnalyzeChangeLog
 from webkitpy.tool.commands.analyzechangelog import ChangeLogAnalyzer

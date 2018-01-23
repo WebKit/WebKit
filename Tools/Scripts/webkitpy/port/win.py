@@ -151,7 +151,7 @@ class WinPort(ApplePort):
     def _runtime_feature_list(self):
         supported_features_command = [self._path_to_driver(), '--print-supported-features']
         try:
-            output = self._executive.run_command(supported_features_command, error_handler=Executive.ignore_error)
+            output = self._executive.run_command(supported_features_command, ignore_errors=True)
         except OSError as e:
             _log.warn("Exception running driver: %s, %s.  Driver must be built before calling WebKitPort.test_expectations()." % (supported_features_command, e))
             return None
@@ -261,7 +261,7 @@ class WinPort(ApplePort):
             registry_key = reg_path % (root, key)
             _log.debug("Reading %s" % (registry_key))
             read_registry_command = ["regtool", arch, "get", registry_key]
-            int_value = self._executive.run_command(read_registry_command, error_handler=Executive.ignore_error)
+            int_value = self._executive.run_command(read_registry_command, ignore_errors=True)
             # regtool doesn't return the type of the entry, so need this ugly hack:
             if reg_path in (self.WINDOWS_ERROR_REPORTING_KEY, self.WOW64_WINDOWS_ERROR_REPORTING_KEY):
                 _log.debug("I got {0}".format(int_value))

@@ -95,10 +95,10 @@ class WinPortTest(port_testcase.PortTestCase):
 
     def test_runtime_feature_list(self):
         port = self.make_port()
-        port._executive.run_command = lambda command, cwd=None, error_handler=None: "Nonsense"
+        port._executive.run_command = lambda command, cwd=None, ignore_errors=False: "Nonsense"
         # runtime_features_list returns None when its results are meaningless (it couldn't run DRT or parse the output, etc.)
         self.assertEqual(port._runtime_feature_list(), None)
-        port._executive.run_command = lambda command, cwd=None, error_handler=None: "SupportedFeatures:foo bar"
+        port._executive.run_command = lambda command, cwd=None, ignore_errors=False: "SupportedFeatures:foo bar"
         self.assertEqual(port._runtime_feature_list(), ['foo', 'bar'])
 
     def test_expectations_files(self):

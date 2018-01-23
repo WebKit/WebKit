@@ -174,7 +174,7 @@ class Executive(AbstractExecutive):
             task_kill_executable = os.path.join('C:', os.sep, 'WINDOWS', 'system32', 'taskkill.exe')
             command = [task_kill_executable, "/f", "/t", "/pid", pid]
             # taskkill will exit 128 if the process is not found.  We should log.
-            self.run_command(command, error_handler=self.ignore_error)
+            self.run_command(command, ignore_errors=True)
             return
 
         # According to http://docs.python.org/library/os.html
@@ -271,7 +271,7 @@ class Executive(AbstractExecutive):
 
         running_pids = []
         if sys.platform in ("cygwin"):
-            ps_process = self.run_command(['ps', '-e'], error_handler=Executive.ignore_error)
+            ps_process = self.run_command(['ps', '-e'], ignore_errors=True)
             for line in ps_process.splitlines():
                 tokens = line.strip().split()
                 try:
@@ -325,7 +325,7 @@ class Executive(AbstractExecutive):
                 killCommand = os.path.join('C:', os.sep, 'WINDOWS', 'system32', 'taskkill.exe')
             command = [killCommmand, "/f", "/im", image_name]
             # taskkill will exit 128 if the process is not found.  We should log.
-            self.run_command(command, error_handler=self.ignore_error)
+            self.run_command(command, ignore_errors=True)
             return
 
         # FIXME: This is inconsistent that kill_all uses TERM and kill_process
@@ -336,7 +336,7 @@ class Executive(AbstractExecutive):
         # killall returns 1 if no process can be found and 2 on command error.
         # FIXME: We should pass a custom error_handler to allow only exit_code 1.
         # We should log in exit_code == 1
-        self.run_command(command, error_handler=self.ignore_error)
+        self.run_command(command, ignore_errors=True)
 
     def _compute_stdin(self, input):
         """Returns (stdin, string_to_communicate)"""
@@ -364,6 +364,7 @@ class Executive(AbstractExecutive):
                     env=None,
                     input=None,
                     error_handler=None,
+                    ignore_errors=False,
                     return_exit_code=False,
                     return_stderr=True,
                     decode_output=True):
@@ -401,6 +402,11 @@ class Executive(AbstractExecutive):
                                        exit_code=exit_code,
                                        output=output,
                                        cwd=cwd)
+
+            if ignore_errors:
+                assert error_handler is None, "don't specify error_handler if ignore_errors is True"
+                error_handler = Executive.ignore_error
+
             (error_handler or self.default_error_handler)(script_error)
         return output
 

@@ -35,7 +35,6 @@ from webkitpy.common.checkout.scm.detection import SCMDetector
 from webkitpy.common.checkout.changelog import ChangeLog
 from webkitpy.common.config.contributionareas import ContributionAreas
 from webkitpy.common.system.filesystem import FileSystem
-from webkitpy.common.system.executive import Executive
 from webkitpy.tool.multicommandtool import Command
 from webkitpy.tool import steps
 
