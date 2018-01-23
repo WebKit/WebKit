@@ -1,3 +1,44 @@
+2018-01-23  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed, retire some microbenchmarks that are proportionately very slow. Benchmark running time should be proportional to their value. Microbenchmarks have little value, so they should be very fast.
+
+        * microbenchmarks/array-push-3.js: Removed.
+        * microbenchmarks/bigswitch-indirect-symbol-or-undefined.js: Removed.
+        * microbenchmarks/double-to-int32.js: Removed.
+        * microbenchmarks/fake-iterators-that-throw-when-finished.js: Removed.
+        * microbenchmarks/ftl-polymorphic-bitand.js: Removed.
+        * microbenchmarks/ftl-polymorphic-bitor.js: Removed.
+        * microbenchmarks/ftl-polymorphic-bitxor.js: Removed.
+        * microbenchmarks/ftl-polymorphic-lshift.js: Removed.
+        * microbenchmarks/ftl-polymorphic-rshift.js: Removed.
+        * microbenchmarks/ftl-polymorphic-sub.js: Removed.
+        * microbenchmarks/ftl-polymorphic-urshift.js: Removed.
+        * microbenchmarks/map-constant-key.js: Removed.
+        * microbenchmarks/nested-function-parsing.js: Removed.
+        * microbenchmarks/rest-parameter-allocation-elimination.js: Removed.
+        * microbenchmarks/spread-large-array.js: Removed.
+        * microbenchmarks/string-add-constant-folding.js: Removed.
+        * microbenchmarks/to-lower-case.js: Removed.
+        * microbenchmarks/undefined-property-access.js: Removed.
+        * slowMicrobenchmarks/array-push-3.js: Copied from JSTests/microbenchmarks/array-push-3.js.
+        * slowMicrobenchmarks/bigswitch-indirect-symbol-or-undefined.js: Copied from JSTests/microbenchmarks/bigswitch-indirect-symbol-or-undefined.js.
+        * slowMicrobenchmarks/double-to-int32.js: Copied from JSTests/microbenchmarks/double-to-int32.js.
+        * slowMicrobenchmarks/fake-iterators-that-throw-when-finished.js: Copied from JSTests/microbenchmarks/fake-iterators-that-throw-when-finished.js.
+        * slowMicrobenchmarks/ftl-polymorphic-bitand.js: Copied from JSTests/microbenchmarks/ftl-polymorphic-bitand.js.
+        * slowMicrobenchmarks/ftl-polymorphic-bitor.js: Copied from JSTests/microbenchmarks/ftl-polymorphic-bitor.js.
+        * slowMicrobenchmarks/ftl-polymorphic-bitxor.js: Copied from JSTests/microbenchmarks/ftl-polymorphic-bitxor.js.
+        * slowMicrobenchmarks/ftl-polymorphic-lshift.js: Copied from JSTests/microbenchmarks/ftl-polymorphic-lshift.js.
+        * slowMicrobenchmarks/ftl-polymorphic-rshift.js: Copied from JSTests/microbenchmarks/ftl-polymorphic-rshift.js.
+        * slowMicrobenchmarks/ftl-polymorphic-sub.js: Copied from JSTests/microbenchmarks/ftl-polymorphic-sub.js.
+        * slowMicrobenchmarks/ftl-polymorphic-urshift.js: Copied from JSTests/microbenchmarks/ftl-polymorphic-urshift.js.
+        * slowMicrobenchmarks/map-constant-key.js: Copied from JSTests/microbenchmarks/map-constant-key.js.
+        * slowMicrobenchmarks/nested-function-parsing.js: Copied from JSTests/microbenchmarks/nested-function-parsing.js.
+        * slowMicrobenchmarks/rest-parameter-allocation-elimination.js: Copied from JSTests/microbenchmarks/rest-parameter-allocation-elimination.js.
+        * slowMicrobenchmarks/spread-large-array.js: Copied from JSTests/microbenchmarks/spread-large-array.js.
+        * slowMicrobenchmarks/string-add-constant-folding.js: Copied from JSTests/microbenchmarks/string-add-constant-folding.js.
+        * slowMicrobenchmarks/to-lower-case.js: Copied from JSTests/microbenchmarks/to-lower-case.js.
+        * slowMicrobenchmarks/undefined-property-access.js: Copied from JSTests/microbenchmarks/undefined-property-access.js.
+
 2018-01-23  Robin Morisset  <rmorisset@apple.com>
 
         Update the argument count in DFGByteCodeParser::handleRecursiveCall
