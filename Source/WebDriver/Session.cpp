@@ -698,7 +698,7 @@ void Session::getToplevelBrowsingContextRect(Function<void (CommandResult&&)>&& 
         double width, height;
         if (!browsingContext->getObject(ASCIILiteral("windowSize"), windowSize)
             || !windowSize->getDouble(ASCIILiteral("width"), width)
-            || !windowSize->getDouble(ASCIILiteral("height"), width)) {
+            || !windowSize->getDouble(ASCIILiteral("height"), height)) {
             completionHandler(CommandResult::fail(CommandResult::ErrorCode::UnknownError));
             return;
         }

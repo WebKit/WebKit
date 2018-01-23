@@ -11,9 +11,6 @@
     },
     "imported/selenium/py/test/selenium/webdriver/common/api_example_tests.py": {
         "subtests": {
-            "testChangeWindowSize": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/181728"}}
-            },
             "testGetLogTypes": {
                 "expected": {"all": {"status": ["SKIP"]}}
             },
@@ -75,9 +72,6 @@
     },
     "imported/selenium/py/test/selenium/webdriver/common/position_and_size_tests.py": {
         "subtests": {
-            "testShouldScrollPageAndGetCoordinatesOfAnElementThatIsOutOfViewPort": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/181734"}}
-            },
             "testShouldGetCoordinatesOfAnElementInAFrame": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/181735"}}
             },
@@ -116,13 +110,6 @@
     },
     "imported/w3c/webdriver/tests/actions/special_keys.py": {
         "expected": {"all": {"status": ["SKIP"], "bug": "webkit.org/b/174616"}}
-    },
-    "imported/w3c/webdriver/tests/contexts/resizing_and_positioning.py": {
-        "subtests": {
-            "test_window_resize": {
-                "expected": {"gtk": {"status": ["FAIL"]}}
-            }
-        }
     },
     "imported/w3c/webdriver/tests/contexts/maximize_window.py": {
         "subtests": {
@@ -443,9 +430,6 @@
     },
     "imported/w3c/webdriver/tests/set_window_rect.py": {
         "subtests": {
-            "test_width_height_floats": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/180416"}}
-            },
             "test_fully_exit_fullscreen": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/180398"}}
             },
@@ -454,12 +438,6 @@
             },
             "test_restore_from_maximized": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/180398"}}
-            },
-            "test_height_width": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/180417"}}
-            },
-            "test_height_width_larger_than_max": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/180419"}}
             },
             "test_negative_x_y": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/180418"}}
