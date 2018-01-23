@@ -468,10 +468,10 @@ std::optional<Vector<MediaKeySystemMediaCapability>> CDM::getSupportedCapabiliti
         //       with restrictions:
         MediaEngineSupportParameters parameters;
         parameters.type = ContentType(contentType.mimeType());
-        if (!MediaPlayer::supportsType(parameters, nullptr)) {
+        if (!MediaPlayer::supportsType(parameters)) {
             // Try with Media Source:
             parameters.isMediaSource = true;
-            if (!MediaPlayer::supportsType(parameters, nullptr))
+            if (!MediaPlayer::supportsType(parameters))
                 continue;
         }
 

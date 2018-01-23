@@ -1189,7 +1189,7 @@ String HTMLMediaElement::canPlayType(const String& mimeType) const
     ContentType contentType(mimeType);
     parameters.type = contentType;
     parameters.contentTypesRequiringHardwareSupport = mediaContentTypesRequiringHardwareSupport();
-    MediaPlayer::SupportsType support = MediaPlayer::supportsType(parameters, this);
+    MediaPlayer::SupportsType support = MediaPlayer::supportsType(parameters);
     String canPlay;
 
     // 4.8.10.3
@@ -4551,7 +4551,7 @@ URL HTMLMediaElement::selectNextSourceChild(ContentType* contentType, String* ke
             if (!document().settings().allowMediaContentTypesRequiringHardwareSupportAsFallback() || Traversal<HTMLSourceElement>::nextSkippingChildren(source))
                 parameters.contentTypesRequiringHardwareSupport = mediaContentTypesRequiringHardwareSupport();
 
-            if (!MediaPlayer::supportsType(parameters, this))
+            if (!MediaPlayer::supportsType(parameters))
                 goto CheckAgain;
         }
 
@@ -6770,16 +6770,6 @@ Vector<RefPtr<PlatformTextTrack>> HTMLMediaElement::outOfBandTrackSources()
 }
 
 #endif
-
-bool HTMLMediaElement::mediaPlayerNeedsSiteSpecificHacks() const
-{
-    return document().settings().needsSiteSpecificQuirks();
-}
-
-String HTMLMediaElement::mediaPlayerDocumentHost() const
-{
-    return document().url().host();
-}
 
 void HTMLMediaElement::mediaPlayerEnterFullscreen()
 {

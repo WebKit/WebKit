@@ -850,7 +850,7 @@ bool MediaSource::isTypeSupported(const String& type)
     MediaEngineSupportParameters parameters;
     parameters.type = contentType;
     parameters.isMediaSource = true;
-    MediaPlayer::SupportsType supported = MediaPlayer::supportsType(parameters, 0);
+    MediaPlayer::SupportsType supported = MediaPlayer::supportsType(parameters);
 
     if (codecs.isEmpty())
         return supported != MediaPlayer::IsNotSupported;

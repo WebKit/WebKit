@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef MediaPlayer_h
-#define MediaPlayer_h
+#pragma once
 
 #if ENABLE(VIDEO)
 #include "GraphicsTypes3D.h"
@@ -308,14 +307,6 @@ public:
 #endif
 };
 
-class MediaPlayerSupportsTypeClient {
-public:
-    virtual ~MediaPlayerSupportsTypeClient() = default;
-
-    virtual bool mediaPlayerNeedsSiteSpecificHacks() const { return false; }
-    virtual String mediaPlayerDocumentHost() const { return String(); }
-};
-
 class MediaPlayer : public MediaPlayerEnums, public RefCounted<MediaPlayer> {
     WTF_MAKE_NONCOPYABLE(MediaPlayer); WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -326,7 +317,7 @@ public:
 
     // Media engine support.
     enum SupportsType { IsNotSupported, IsSupported, MayBeSupported };
-    static MediaPlayer::SupportsType supportsType(const MediaEngineSupportParameters&, const MediaPlayerSupportsTypeClient*);
+    static MediaPlayer::SupportsType supportsType(const MediaEngineSupportParameters&);
     static void getSupportedTypes(HashSet<String, ASCIICaseInsensitiveHash>&);
     static bool isAvailable();
     static HashSet<RefPtr<SecurityOrigin>> originsInMediaCache(const String& path);
@@ -708,5 +699,3 @@ struct LogArgument<MediaTime> {
 }
 
 #endif // ENABLE(VIDEO)
-
-#endif

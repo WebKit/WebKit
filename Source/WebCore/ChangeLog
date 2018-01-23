@@ -1,5 +1,34 @@
 2018-01-23  Alex Christensen  <achristensen@webkit.org>
 
+        Remove unused MediaPlayerSupportsTypeClient
+        https://bugs.webkit.org/show_bug.cgi?id=182003
+
+        Reviewed by Sam Weinig.
+
+        This was used for a QTKit-specific hack I removed in r227372.
+
+        * Modules/encryptedmedia/CDM.cpp:
+        (WebCore::CDM::getSupportedCapabilitiesForAudioVideoType):
+        * Modules/mediasource/MediaSource.cpp:
+        (WebCore::MediaSource::isTypeSupported):
+        * dom/DOMImplementation.cpp:
+        (WebCore::DOMImplementation::createDocument):
+        (WebCore::DOMImplementationSupportsTypeClient::DOMImplementationSupportsTypeClient): Deleted.
+        (): Deleted.
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::canPlayType const):
+        (WebCore::HTMLMediaElement::selectNextSourceChild):
+        (WebCore::HTMLMediaElement::mediaPlayerNeedsSiteSpecificHacks const): Deleted.
+        (WebCore::HTMLMediaElement::mediaPlayerDocumentHost const): Deleted.
+        * html/HTMLMediaElement.h:
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::MediaPlayer::supportsType):
+        * platform/graphics/MediaPlayer.h:
+        (WebCore::MediaPlayerSupportsTypeClient::mediaPlayerNeedsSiteSpecificHacks const): Deleted.
+        (WebCore::MediaPlayerSupportsTypeClient::mediaPlayerDocumentHost const): Deleted.
+
+2018-01-23  Alex Christensen  <achristensen@webkit.org>
+
         Remove unused QTKit preference
         https://bugs.webkit.org/show_bug.cgi?id=181968
 

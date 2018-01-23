@@ -62,26 +62,6 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-#if ENABLE(VIDEO)
-
-class DOMImplementationSupportsTypeClient : public MediaPlayerSupportsTypeClient {
-public:
-    DOMImplementationSupportsTypeClient(bool needsHacks, const String& host)
-        : m_needsHacks(needsHacks)
-        , m_host(host)
-    {
-    }
-
-private:
-    bool mediaPlayerNeedsSiteSpecificHacks() const override { return m_needsHacks; }
-    String mediaPlayerDocumentHost() const override { return m_host; }
-
-    bool m_needsHacks;
-    String m_host;
-};
-
-#endif
-
 DOMImplementation::DOMImplementation(Document& document)
     : m_document(document)
 {
@@ -192,11 +172,10 @@ Ref<Document> DOMImplementation::createDocument(const String& type, Frame* frame
 #if ENABLE(VIDEO)
     // Check to see if the type can be played by our MediaPlayer, if so create a MediaDocument
     // Key system is not applicable here.
-    DOMImplementationSupportsTypeClient client(frame && frame->settings().needsSiteSpecificQuirks(), url.host());
     MediaEngineSupportParameters parameters;
     parameters.type = ContentType(type);
     parameters.url = url;
-    if (MediaPlayer::supportsType(parameters, &client))
+    if (MediaPlayer::supportsType(parameters))
         return MediaDocument::create(frame, url);
 #endif
 

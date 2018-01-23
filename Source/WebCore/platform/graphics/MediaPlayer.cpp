@@ -900,7 +900,7 @@ NativeImagePtr MediaPlayer::nativeImageForCurrentTime()
     return m_private->nativeImageForCurrentTime();
 }
 
-MediaPlayer::SupportsType MediaPlayer::supportsType(const MediaEngineSupportParameters& parameters, const MediaPlayerSupportsTypeClient*)
+MediaPlayer::SupportsType MediaPlayer::supportsType(const MediaEngineSupportParameters& parameters)
 {
     // 4.8.10.3 MIME types - The canPlayType(type) method must return the empty string if type is a type that the 
     // user agent knows it cannot render or is the type "application/octet-stream"

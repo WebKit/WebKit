@@ -123,7 +123,6 @@ class HTMLMediaElement
     : public HTMLElement
     , public ActiveDOMObject
     , public MediaControllerInterface
-    , public MediaPlayerSupportsTypeClient
     , public PlatformMediaSessionClient
     , private MediaCanStartListener
     , private MediaPlayerClient
@@ -676,9 +675,6 @@ private:
 
     String mediaPlayerReferrer() const override;
     String mediaPlayerUserAgent() const override;
-
-    bool mediaPlayerNeedsSiteSpecificHacks() const override;
-    String mediaPlayerDocumentHost() const override;
 
     void mediaPlayerEnterFullscreen() override;
     void mediaPlayerExitFullscreen() override;
