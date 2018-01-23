@@ -73,6 +73,8 @@ void ServiceWorkerClientFetch::start()
 
     ASSERT(options.serviceWorkersMode != ServiceWorkersMode::None);
     m_connection->startFetch(m_loader->identifier(), options.serviceWorkerRegistrationIdentifier.value(), request, options, referrer);
+
+    m_redirectionStatus = RedirectionStatus::None;
 }
 
 // https://fetch.spec.whatwg.org/#http-fetch step 3.3
@@ -158,7 +160,6 @@ void ServiceWorkerClientFetch::didFinish()
         m_redirectionStatus = RedirectionStatus::Received;
         return;
     case RedirectionStatus::Following:
-        m_redirectionStatus = RedirectionStatus::None;
         start();
         return;
     case RedirectionStatus::Received:
