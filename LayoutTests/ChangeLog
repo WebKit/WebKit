@@ -1,3 +1,13 @@
+2018-01-23  Simon Fraser  <simon.fraser@apple.com>
+
+        feMorphology stops applying if either x or y radius is 0 but should not.
+        https://bugs.webkit.org/show_bug.cgi?id=181903
+
+        Reviewed by Dean Jackson.
+
+        * svg/filters/feMorphology-zero-radius-one-axis-expected.svg: Added.
+        * svg/filters/feMorphology-zero-radius-one-axis.svg: Added.
+
 2018-01-23  Javier Fernandez  <jfernandez@igalia.com>
 
         [css-align] 'left' and 'right' should parse as invalid in block/cross-axis alignment

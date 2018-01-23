@@ -442,7 +442,7 @@ void FilterEffect::copyPremultipliedResult(Uint8ClampedArray& destination, const
 
 ImageBuffer* FilterEffect::createImageBufferResult()
 {
-    LOG(Filters, "FilterEffect %s %p createImageBufferResult", filterName(), this);
+    LOG(Filters, "FilterEffect %s %p createImageBufferResult %dx%d", filterName(), this, m_absolutePaintRect.size().width(), m_absolutePaintRect.size().height());
 
     // Only one result type is allowed.
     ASSERT(!hasResult());

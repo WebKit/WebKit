@@ -1,3 +1,23 @@
+2018-01-23  Simon Fraser  <simon.fraser@apple.com>
+
+        feMorphology stops applying if either x or y radius is 0 but should not.
+        https://bugs.webkit.org/show_bug.cgi?id=181903
+
+        Reviewed by Dean Jackson.
+        
+        feMorphology should allow the radius on one axis to be zero but still apply the effect
+        (it's akin to a blur on just one axis). Also, any negative radius, or zero on both axes
+        should act like a pass-through, rather than outputting transparent blank (this is a spec
+        change from SVG 1.1 to SVG 2).
+
+        Tests: svg/filters/feMorphology-zero-radius-one-axis-expected.svg
+               svg/filters/feMorphology-zero-radius-one-axis.svg
+
+        * platform/graphics/filters/FEMorphology.cpp:
+        (WebCore::FEMorphology::platformApplyDegenerate):
+        * platform/graphics/filters/FilterEffect.cpp:
+        (WebCore::FilterEffect::createImageBufferResult):
+
 2018-01-23  Alex Christensen  <achristensen@webkit.org>
 
         Remove unused MediaPlayerSupportsTypeClient

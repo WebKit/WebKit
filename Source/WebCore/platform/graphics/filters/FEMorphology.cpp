@@ -221,15 +221,7 @@ void FEMorphology::platformApply(const PaintingData& paintingData)
 
 bool FEMorphology::platformApplyDegenerate(Uint8ClampedArray& dstPixelArray, const IntRect& imageRect, int radiusX, int radiusY)
 {
-    // Input radius is less than zero or an overflow happens when scaling it.
-    if (radiusX < 0 || radiusY < 0) {
-        dstPixelArray.zeroFill();
-        return true;
-    }
-
-    // FIXME: this should allow erode/dilate on one axis. webkit.org/b/181903.
-    // Also if both x radiusX and radiusY are zero, the result should be transparent black.
-    if (!radiusX || !radiusY) {
+    if (radiusX < 0 || radiusY < 0 || (!radiusX && !radiusY)) {
         FilterEffect* in = inputEffect(0);
         in->copyPremultipliedResult(dstPixelArray, imageRect);
         return true;
