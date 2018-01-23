@@ -10,16 +10,42 @@
   <body>
     <script src="/common/get-host-info.sub.js"></script>
     <script>
-promise_test(function(test) {
-    return fetch(get_host_info().HTTP_REMOTE_ORIGIN, { mode: "no-cors" }).then((response) => {
-        var clone = response.clone();
-        assert_equals(response.body, null, "opaque response body should be null");
-        assert_equals(clone.body, null, "clone body should be null");
-        return clone.arrayBuffer();
-    }).then((buffer) => {
-        assert_equals(buffer.byteLength, 0, "cloned opaque response buffer should be null");
-    });
-}, "Check opaque response can be cloned");
+
+function testResponseOpacity(response, test, testName)
+{
+    assert_equals(response.type, "opaque", testName + " type");
+    assert_equals(response.status, 0, testName + " status");
+    assert_equals(response.statusText, "", testName + " statusText");
+    assert_false(response.redirected, testName + " redirected");
+    assert_true(response.headers.values().next().done, testName + " headers");
+    assert_equals(response.body, null, testName + " opaque response body should be null");
+}
+promise_test(async function(test) {
+    var request = new Request(get_host_info().HTTP_REMOTE_ORIGIN, { mode: "no-cors" });
+    var response = await fetch(request);
+
+    testResponseOpacity(response, test, "fetched response");
+
+    var clone = response.clone();
+
+    testResponseOpacity(clone, test, "cloned response");
+    var buffer = await clone.arrayBuffer();
+    assert_equals(buffer.byteLength, 0, "cloned opaque response buffer should be null");
+
+    // WK1 does not support Cache API yet.
+    if (!self.caches)
+        return;
+
+    var cache = await self.caches.open("test");
+    await cache.put(request, response);
+    var cached = await cache.match(request.url);
+
+    testResponseOpacity(cached, test,  "cached response")
+    buffer = await cached.arrayBuffer();
+    assert_equals(buffer.byteLength, 0, "cached opaque response buffer should be null");
+
+    await self.caches.delete("test");
+}, "Check opaque response can be cloned and cached correctly");
     </script>
   </body>
 </html>
