@@ -1,3 +1,15 @@
+2018-01-23  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] JIT requires sizeof(bool) == 1
+        https://bugs.webkit.org/show_bug.cgi?id=181150
+
+        Reviewed by Saam Barati.
+
+        LLInt and JIT assumes that sizeof(bool) == 1. But it is implementation-dependent in C++ spec.
+        Since this is a mandatory requirement in JSC, we add a static_assert to ensure this.
+
+        * runtime/InitializeThreading.cpp:
+
 2018-01-23  Robin Morisset  <rmorisset@apple.com>
 
         Update the argument count in DFGByteCodeParser::handleRecursiveCall

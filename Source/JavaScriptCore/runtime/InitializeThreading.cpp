@@ -53,6 +53,8 @@ using namespace WTF;
 
 namespace JSC {
 
+static_assert(sizeof(bool) == 1, "LLInt and JIT assume sizeof(bool) is always 1 when touching it directly from assembly code.");
+
 void initializeThreading()
 {
     static std::once_flag initializeThreadingOnceFlag;
