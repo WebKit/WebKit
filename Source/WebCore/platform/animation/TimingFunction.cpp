@@ -175,11 +175,8 @@ String TimingFunction::cssText() const
 
     if (m_type == TimingFunction::StepsFunction) {
         auto& function = downcast<StepsTimingFunction>(*this);
-        auto numberOfSteps = function.numberOfSteps();
-        if (numberOfSteps == 1)
-            return function.stepAtStart() ? "step-start" : "step-end";
         if (!function.stepAtStart())
-            return String::format("steps(%d)", numberOfSteps);
+            return String::format("steps(%d)", function.numberOfSteps());
     }
 
     TextStream stream;

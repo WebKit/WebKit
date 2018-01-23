@@ -1,3 +1,16 @@
+2018-01-23  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Expose getKeyframes() and parsing of remaining keyframe properties
+        https://bugs.webkit.org/show_bug.cgi?id=181978
+
+        Not reviewed.
+
+        Fix failures for http/wpt/web-animations/interfaces/AnimationEffectTiming/easing.html introduced in the previous patch.
+        Those keyword values are not expected.
+
+        * platform/animation/TimingFunction.cpp:
+        (WebCore::TimingFunction::cssText const):
+
 2018-01-23  Simon Fraser  <simon.fraser@apple.com>
 
         feMorphology stops applying if either x or y radius is 0 but should not.
