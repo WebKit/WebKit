@@ -1,3 +1,24 @@
+2018-01-23  Ali Juma  <ajuma@chromium.org>
+
+        REGRESSION (r226622): ASSERTION FAILED: !m_frame in WebCore::DOMWindowProperty::willDestroyGlobalObjectInCachedFrame()
+        https://bugs.webkit.org/show_bug.cgi?id=181756
+
+        Reviewed by Simon Fraser.
+
+        Don't create a VisualViewport for a suspended DOMWindow. When a DOMWindow is suspended
+        for document suspension, all DOMWindowProperties are disconnected from their frame.
+        Creating a new VisualViewport while in this state means unexpectedly having a DOMWindowProperty
+        that's connected to a frame, and this leads to an assertion failure.
+
+        Test: http/tests/navigation/https-in-page-cache.html
+
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::visualViewport const):
+        Don't create a VisualViewport while suspended.
+        * page/FrameView.cpp:
+        (WebCore::FrameView::updateLayoutViewport):
+        Handle null DOMWindow::visualViewport.
+
 2018-01-23  Basuke Suzuki  <Basuke.Suzuki@sony.com>
 
         [Curl] CurlRequest must protect its client from disposal while it's on duty.

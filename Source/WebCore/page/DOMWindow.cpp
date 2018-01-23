@@ -814,7 +814,7 @@ VisualViewport* DOMWindow::visualViewport() const
 {
     if (!isCurrentlyDisplayedInFrame())
         return nullptr;
-    if (!m_visualViewport)
+    if (!m_visualViewport && !m_suspendedForDocumentSuspension)
         m_visualViewport = VisualViewport::create(m_frame);
     return m_visualViewport.get();
 }
