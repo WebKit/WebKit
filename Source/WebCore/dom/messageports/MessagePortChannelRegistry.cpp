@@ -45,7 +45,6 @@ void MessagePortChannelRegistry::didCreateMessagePortChannel(const MessagePortId
 
 void MessagePortChannelRegistry::messagePortChannelCreated(MessagePortChannel& channel)
 {
-    Locker<Lock> locker(m_openChannelsLock);
     ASSERT(isMainThread());
 
     auto result = m_openChannels.ensure(channel.port1(), [channel = &channel] {
@@ -61,7 +60,6 @@ void MessagePortChannelRegistry::messagePortChannelCreated(MessagePortChannel& c
 
 void MessagePortChannelRegistry::messagePortChannelDestroyed(MessagePortChannel& channel)
 {
-    Locker<Lock> locker(m_openChannelsLock);
     ASSERT(isMainThread());
 
     ASSERT(m_openChannels.get(channel.port1()) == &channel);
@@ -76,7 +74,6 @@ void MessagePortChannelRegistry::messagePortChannelDestroyed(MessagePortChannel&
 void MessagePortChannelRegistry::didEntangleLocalToRemote(const MessagePortIdentifier& local, const MessagePortIdentifier& remote, ProcessIdentifier process)
 {
     ASSERT(isMainThread());
-    Locker<Lock> locker(m_openChannelsLock);
 
     // The channel might be gone if the remote side was closed.
     auto* channel = m_openChannels.get(local);
@@ -91,21 +88,18 @@ void MessagePortChannelRegistry::didEntangleLocalToRemote(const MessagePortIdent
 void MessagePortChannelRegistry::didDisentangleMessagePort(const MessagePortIdentifier& port)
 {
     ASSERT(isMainThread());
-    Locker<Lock> locker(m_openChannelsLock);
 
     // The channel might be gone if the remote side was closed.
     auto* channel = m_openChannels.get(port);
     if (!channel)
         return;
 
-    locker.unlockEarly();
     channel->disentanglePort(port);
 }
 
 void MessagePortChannelRegistry::didCloseMessagePort(const MessagePortIdentifier& port)
 {
     ASSERT(isMainThread());
-    Locker<Lock> locker(m_openChannelsLock);
 
     LOG(MessagePorts, "Registry: MessagePort %s closed in registry", port.logString().utf8().data());
 
@@ -118,7 +112,6 @@ void MessagePortChannelRegistry::didCloseMessagePort(const MessagePortIdentifier
         LOG(MessagePorts, "Registry: (Note) The channel closed for port %s had messages pending or in flight", port.logString().utf8().data());
 #endif
 
-    locker.unlockEarly();
     channel->closePort(port);
 
     // FIXME: When making message ports be multi-process, this should probably push a notification
@@ -128,7 +121,6 @@ void MessagePortChannelRegistry::didCloseMessagePort(const MessagePortIdentifier
 bool MessagePortChannelRegistry::didPostMessageToRemote(MessageWithMessagePorts&& message, const MessagePortIdentifier& remoteTarget)
 {
     ASSERT(isMainThread());
-    Locker<Lock> locker(m_openChannelsLock);
 
     LOG(MessagePorts, "Registry: Posting message to MessagePort %s in registry", remoteTarget.logString().utf8().data());
 
@@ -139,14 +131,12 @@ bool MessagePortChannelRegistry::didPostMessageToRemote(MessageWithMessagePorts&
         return false;
     }
 
-    locker.unlockEarly();
     return channel->postMessageToRemote(WTFMove(message), remoteTarget);
 }
 
 void MessagePortChannelRegistry::takeAllMessagesForPort(const MessagePortIdentifier& port, Function<void(Vector<MessageWithMessagePorts>&&, Function<void()>&&)>&& callback)
 {
     ASSERT(isMainThread());
-    Locker<Lock> locker(m_openChannelsLock);
 
     LOG(MessagePorts, "Registry: Taking all messages for MessagePort %s", port.logString().utf8().data());
 
@@ -157,34 +147,26 @@ void MessagePortChannelRegistry::takeAllMessagesForPort(const MessagePortIdentif
         return;
     }
 
-    locker.unlockEarly();
     channel->takeAllMessagesForPort(port, WTFMove(callback));
 }
 
-bool MessagePortChannelRegistry::hasMessagesForPorts_temporarySync(const MessagePortIdentifier& port1, const MessagePortIdentifier& port2)
+void MessagePortChannelRegistry::checkRemotePortForActivity(const MessagePortIdentifier& remoteTarget, CompletionHandler<void(MessagePortChannelProvider::HasActivity)>&& callback)
 {
-    // FIXME: Remove this function (and the lock) with a followup patch to do async garbage collection
-    Locker<Lock> locker(m_openChannelsLock);
+    ASSERT(isMainThread());
 
-    auto* channel1 = m_openChannels.get(port1);
-    if (!channel1)
-        return false;
+    // The channel might be gone if the remote side was closed.
+    auto* channel = m_openChannels.get(remoteTarget);
+    if (!channel) {
+        callback(MessagePortChannelProvider::HasActivity::No);
+        return;
+    }
 
-    auto* channel2 = m_openChannels.get(port2);
-    ASSERT_UNUSED(channel2, channel2);
-    if (!channel2)
-        return false;
-
-    ASSERT(channel1 == channel2);
-
-    return channel1->hasAnyMessagesPendingOrInFlight();
+    channel->checkRemotePortForActivity(remoteTarget, WTFMove(callback));
 }
 
 MessagePortChannel* MessagePortChannelRegistry::existingChannelContainingPort(const MessagePortIdentifier& port)
 {
     ASSERT(isMainThread());
-
-    Locker<Lock> locker(m_openChannelsLock);
 
     return m_openChannels.get(port);
 }

@@ -27,6 +27,7 @@
 #include "MessagePortChannelProviderImpl.h"
 
 #include "MessagePort.h"
+#include <wtf/CompletionHandler.h>
 #include <wtf/MainThread.h>
 #include <wtf/RunLoop.h>
 
@@ -97,10 +98,30 @@ void MessagePortChannelProviderImpl::takeAllMessagesForPort(const MessagePortIde
     });
 }
 
-bool MessagePortChannelProviderImpl::hasMessagesForPorts_temporarySync(const MessagePortIdentifier& port1, const MessagePortIdentifier& port2)
+void MessagePortChannelProviderImpl::checkRemotePortForActivity(const MessagePortIdentifier& remoteTarget, CompletionHandler<void(HasActivity)>&& outerCallback)
 {
-    // FIXME: Remove this sync function call when GC logic is made asynchronous.
-    return m_registry.hasMessagesForPorts_temporarySync(port1, port2);
+    auto callback = CompletionHandler<void(HasActivity)> { [outerCallback = WTFMove(outerCallback)](HasActivity hasActivity) {
+        ASSERT(isMainThread());
+        outerCallback(hasActivity);
+    } };
+
+    performActionOnMainThread([registry = &m_registry, remoteTarget, callback = WTFMove(callback)]() mutable {
+        registry->checkRemotePortForActivity(remoteTarget, WTFMove(callback));
+    });
 }
+
+void MessagePortChannelProviderImpl::checkProcessLocalPortForActivity(const MessagePortIdentifier& identifier, ProcessIdentifier, CompletionHandler<void(HasActivity)>&& callback)
+{
+    ASSERT(isMainThread());
+
+    auto port = MessagePort::existingMessagePortForIdentifier(identifier);
+    if (!port) {
+        callback(MessagePortChannelProvider::HasActivity::No);
+        return;
+    }
+
+    callback(port->isLocallyReachable() ? HasActivity::Yes : HasActivity::No);
+}
+
 
 } // namespace WebCore

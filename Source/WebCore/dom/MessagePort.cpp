@@ -124,6 +124,8 @@ ExceptionOr<void> MessagePort::postMessage(JSC::ExecState& state, JSC::JSValue m
 {
     LOG(MessagePorts, "Attempting to post message to port %s (to be received by port %s)", m_identifier.logString().utf8().data(), m_remoteIdentifier.logString().utf8().data());
 
+    registerLocalActivity();
+
     Vector<RefPtr<MessagePort>> ports;
     auto messageData = SerializedScriptValue::create(state, messageValue, WTFMove(transfer), ports);
     if (messageData.hasException())
@@ -158,8 +160,10 @@ ExceptionOr<void> MessagePort::postMessage(JSC::ExecState& state, JSC::JSValue m
 void MessagePort::disentangle()
 {
     ASSERT(m_entangled);
-
     m_entangled = false;
+
+    registerLocalActivity();
+
     MessagePortChannelProvider::singleton().messagePortDisentangled(m_identifier);
 
     // We can't receive any messages or generate any events after this, so remove ourselves from the list of active ports.
@@ -169,6 +173,13 @@ void MessagePort::disentangle()
     m_scriptExecutionContext->willDestroyDestructionObserver(*this);
 
     m_scriptExecutionContext = nullptr;
+}
+
+void MessagePort::registerLocalActivity()
+{
+    // Any time certain local operations happen, we dirty our own state to delay GC.
+    m_hasHadLocalActivitySinceLastCheck = true;
+    m_mightBeEligibleForGC = false;
 }
 
 // Invoked to notify us that there are messages available for this port.
@@ -189,6 +200,8 @@ void MessagePort::start()
     if (!isEntangled())
         return;
 
+    registerLocalActivity();
+
     ASSERT(m_scriptExecutionContext);
     if (m_started)
         return;
@@ -199,6 +212,7 @@ void MessagePort::start()
 
 void MessagePort::close()
 {
+    m_mightBeEligibleForGC = true;
     if (m_closed)
         return;
 
@@ -210,6 +224,8 @@ void MessagePort::close()
 void MessagePort::contextDestroyed()
 {
     ASSERT(m_scriptExecutionContext);
+
+    m_mightBeEligibleForGC = true;
     if (!m_closed)
         close();
 
@@ -231,6 +247,9 @@ void MessagePort::dispatchMessages()
 
             if (!m_scriptExecutionContext)
                 return;
+
+            if (!messages.isEmpty())
+                registerLocalActivity();
 
             ASSERT(m_scriptExecutionContext->isContextThread());
 
@@ -266,12 +285,59 @@ void MessagePort::dispatchMessages()
 
 bool MessagePort::hasPendingActivity() const
 {
-    // The spec says that entangled message ports should always be treated as if they have a strong reference.
-    // We'll also stipulate that the queue needs to be open (if the app drops its reference to the port before start()-ing it, then it's not really entangled as it's unreachable).
-    if (m_started && isEntangled() && MessagePortChannelProvider::singleton().hasMessagesForPorts_temporarySync(m_identifier, m_remoteIdentifier))
-        return true;
+    m_mightBeEligibleForGC = true;
 
-    return false;
+    // If the ScriptExecutionContext has been shut down on this object close()'ed, we can GC.
+    if (!m_scriptExecutionContext || m_closed)
+        return false;
+
+    // If this object has been idle since the remote port declared itself elgibile for GC, we can GC.
+    if (!m_hasHadLocalActivitySinceLastCheck && m_isRemoteEligibleForGC)
+        return false;
+
+    // If this MessagePort has no message event handler then the existence of remote activity cannot keep it alive.
+    if (!m_hasMessageEventListener)
+        return false;
+
+    // If we're not in the middle of asking the remote port about collectability, do so now.
+    if (!m_isAskingRemoteAboutGC) {
+        MessagePortChannelProvider::singleton().checkRemotePortForActivity(m_remoteIdentifier, [this, protectedThis = makeRef(*this)](MessagePortChannelProvider::HasActivity hasActivity) mutable {
+            auto innerHandler = [this, otherProtectedThis = WTFMove(protectedThis)](MessagePortChannelProvider::HasActivity hasActivity) {
+                bool hasHadLocalActivity = m_hasHadLocalActivitySinceLastCheck;
+                m_hasHadLocalActivitySinceLastCheck = false;
+
+                if (hasActivity == MessagePortChannelProvider::HasActivity::No && !hasHadLocalActivity)
+                    m_isRemoteEligibleForGC = true;
+
+                if (hasActivity == MessagePortChannelProvider::HasActivity::Yes)
+                    m_isRemoteEligibleForGC = false;
+
+                m_isAskingRemoteAboutGC = false;
+            };
+
+
+            if (!m_scriptExecutionContext)
+                return;
+
+            if (m_scriptExecutionContext->isContextThread()) {
+                innerHandler(hasActivity);
+                return;
+            }
+
+            m_scriptExecutionContext->postTask([innerHandler = WTFMove(innerHandler), hasActivity](ScriptExecutionContext&) mutable {
+                innerHandler(hasActivity);
+            });
+        });
+        m_isAskingRemoteAboutGC = true;
+    }
+
+    // Since we need an answer from the remote object, we have to pretend we have pending activity for now.
+    return true;
+}
+
+bool MessagePort::isLocallyReachable() const
+{
+    return !m_mightBeEligibleForGC;
 }
 
 MessagePort* MessagePort::locallyEntangledPort() const
@@ -323,9 +389,24 @@ Vector<RefPtr<MessagePort>> MessagePort::entanglePorts(ScriptExecutionContext& c
 
 bool MessagePort::addEventListener(const AtomicString& eventType, Ref<EventListener>&& listener, const AddEventListenerOptions& options)
 {
-    if (listener->isAttribute() && eventType == eventNames().messageEvent)
-        start();
+    if (eventType == eventNames().messageEvent) {
+        if (listener->isAttribute())
+            start();
+        m_hasMessageEventListener = true;
+        registerLocalActivity();
+    }
+
     return EventTargetWithInlineData::addEventListener(eventType, WTFMove(listener), options);
+}
+
+bool MessagePort::removeEventListener(const AtomicString& eventType, EventListener& listener, const ListenerOptions& options)
+{
+    auto result = EventTargetWithInlineData::removeEventListener(eventType, listener, options);
+
+    if (!hasEventListeners(eventNames().messageEvent))
+        m_hasMessageEventListener = false;
+
+    return result;
 }
 
 const char* MessagePort::activeDOMObjectName() const

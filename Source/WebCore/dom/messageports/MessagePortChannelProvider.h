@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "Process.h"
 #include <wtf/Function.h>
 #include <wtf/Vector.h>
 
@@ -40,6 +41,7 @@ public:
 
     virtual ~MessagePortChannelProvider() { }
 
+    // Operations that WebProcesses perform
     virtual void createNewMessagePortChannel(const MessagePortIdentifier& local, const MessagePortIdentifier& remote) = 0;
     virtual void entangleLocalPortInThisProcessToRemote(const MessagePortIdentifier& local, const MessagePortIdentifier& remote) = 0;
     virtual void messagePortDisentangled(const MessagePortIdentifier& local) = 0;
@@ -47,7 +49,14 @@ public:
     virtual void takeAllMessagesForPort(const MessagePortIdentifier&, Function<void(Vector<MessageWithMessagePorts>&&, Function<void()>&&)>&&) = 0;
     virtual void postMessageToRemote(MessageWithMessagePorts&&, const MessagePortIdentifier& remoteTarget) = 0;
 
-    virtual bool hasMessagesForPorts_temporarySync(const MessagePortIdentifier&, const MessagePortIdentifier&) = 0;
+    enum class HasActivity {
+        Yes,
+        No,
+    };
+    virtual void checkRemotePortForActivity(const MessagePortIdentifier& remoteTarget, CompletionHandler<void(HasActivity)>&& callback) = 0;
+
+    // Operations that the coordinating process performs (e.g. the UIProcess)
+    virtual void checkProcessLocalPortForActivity(const MessagePortIdentifier&, ProcessIdentifier, CompletionHandler<void(HasActivity)>&&) = 0;
 
 private:
 

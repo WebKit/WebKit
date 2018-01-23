@@ -28,6 +28,8 @@
 
 #include "Logging.h"
 #include "MessagePortChannelRegistry.h"
+#include <wtf/CompletionHandler.h>
+#include <wtf/MainThread.h>
 
 namespace WebCore {
 
@@ -39,6 +41,8 @@ Ref<MessagePortChannel> MessagePortChannel::create(MessagePortChannelRegistry& r
 MessagePortChannel::MessagePortChannel(MessagePortChannelRegistry& registry, const MessagePortIdentifier& port1, const MessagePortIdentifier& port2)
     : m_registry(registry)
 {
+    ASSERT(isMainThread());
+
     relaxAdoptionRequirement();
 
     m_ports[0] = port1;
@@ -58,14 +62,14 @@ MessagePortChannel::~MessagePortChannel()
 
 bool MessagePortChannel::includesPort(const MessagePortIdentifier& port)
 {
-    Locker<Lock> locker(m_lock);
+    ASSERT(isMainThread());
 
     return m_ports[0] == port || m_ports[1] == port;
 }
 
 void MessagePortChannel::entanglePortWithProcess(const MessagePortIdentifier& port, ProcessIdentifier process)
 {
-    Locker<Lock> locker(m_lock);
+    ASSERT(isMainThread());
 
     LOG(MessagePorts, "MessagePortChannel %s (%p) entangling port %s", logString().utf8().data(), this, port.logString().utf8().data());
 
@@ -79,7 +83,7 @@ void MessagePortChannel::entanglePortWithProcess(const MessagePortIdentifier& po
 
 void MessagePortChannel::disentanglePort(const MessagePortIdentifier& port)
 {
-    Locker<Lock> locker(m_lock);
+    ASSERT(isMainThread());
 
     LOG(MessagePorts, "MessagePortChannel %s (%p) disentangling port %s", logString().utf8().data(), this, port.logString().utf8().data());
 
@@ -92,12 +96,11 @@ void MessagePortChannel::disentanglePort(const MessagePortIdentifier& port)
     // This set of steps is to guarantee that the lock is unlocked before the
     // last ref to this object is released.
     auto protectedThis = WTFMove(m_entangledToProcessProtectors[i]);
-    locker.unlockEarly();
 }
 
 void MessagePortChannel::closePort(const MessagePortIdentifier& port)
 {
-    Locker<Lock> locker(m_lock);
+    ASSERT(isMainThread());
 
     ASSERT(port == m_ports[0] || port == m_ports[1]);
     size_t i = port == m_ports[0] ? 0 : 1;
@@ -113,13 +116,11 @@ void MessagePortChannel::closePort(const MessagePortIdentifier& port)
     m_pendingMessagePortTransfers[i].clear();
     m_pendingMessageProtectors[i] = nullptr;
     m_entangledToProcessProtectors[i] = nullptr;
-
-    locker.unlockEarly();
 }
 
 bool MessagePortChannel::postMessageToRemote(MessageWithMessagePorts&& message, const MessagePortIdentifier& remoteTarget)
 {
-    Locker<Lock> locker(m_lock);
+    ASSERT(isMainThread());
 
     ASSERT(remoteTarget == m_ports[0] || remoteTarget == m_ports[1]);
     size_t i = remoteTarget == m_ports[0] ? 0 : 1;
@@ -156,7 +157,7 @@ bool MessagePortChannel::postMessageToRemote(MessageWithMessagePorts&& message, 
 
 void MessagePortChannel::takeAllMessagesForPort(const MessagePortIdentifier& port, Function<void(Vector<MessageWithMessagePorts>&&, Function<void()>&&)>&& callback)
 {
-    Locker<Lock> locker(m_lock);
+    ASSERT(isMainThread());
 
     LOG(MessagePorts, "MessagePortChannel %p taking all messages for port %s", this, port.logString().utf8().data());
 
@@ -181,7 +182,6 @@ void MessagePortChannel::takeAllMessagesForPort(const MessagePortIdentifier& por
     HashSet<RefPtr<MessagePortChannel>> transferredPortProtectors;
     transferredPortProtectors.swap(m_pendingMessagePortTransfers[i]);
 
-    locker.unlockEarly();
     callback(WTFMove(result), [size, this, port, protectedThis = WTFMove(m_pendingMessageProtectors[i]), transferredPortProtectors = WTFMove(transferredPortProtectors)] {
         UNUSED_PARAM(port);
 #if LOG_DISABLED
@@ -193,10 +193,51 @@ void MessagePortChannel::takeAllMessagesForPort(const MessagePortIdentifier& por
     });
 }
 
+void MessagePortChannel::checkRemotePortForActivity(const MessagePortIdentifier& remotePort, CompletionHandler<void(MessagePortChannelProvider::HasActivity)>&& callback)
+{
+    ASSERT(isMainThread());
+    ASSERT(remotePort == m_ports[0] || remotePort == m_ports[1]);
+
+    // If the remote port is closed there is no pending activity.
+    size_t i = remotePort == m_ports[0] ? 0 : 1;
+    if (m_isClosed[i]) {
+        callback(MessagePortChannelProvider::HasActivity::No);
+        return;
+    }
+
+    // If there are any messages in flight between the ports, there is pending activity.
+    if (hasAnyMessagesPendingOrInFlight()) {
+        callback(MessagePortChannelProvider::HasActivity::Yes);
+        return;
+    }
+
+    // If the port is not currently in a process then it's being transferred as part of a postMessage.
+    // We treat these ports as if they do have activity since they will be revived when the message is delivered.
+    if (!m_processes[i]) {
+        callback(MessagePortChannelProvider::HasActivity::Yes);
+        return;
+    }
+
+    auto outerCallback = CompletionHandler<void(MessagePortChannelProvider::HasActivity)> { [this, protectedThis = makeRef(*this), callback = WTFMove(callback)] (MessagePortChannelProvider::HasActivity hasActivity) {
+        if (hasActivity == MessagePortChannelProvider::HasActivity::Yes) {
+            callback(hasActivity);
+            return;
+        }
+
+        // If the remote port said it had no activity, check again for any messages that might be in flight.
+        // This is because it might have asynchronously sent a message just before it was asked about local activity.
+        if (hasAnyMessagesPendingOrInFlight())
+            hasActivity = MessagePortChannelProvider::HasActivity::Yes;
+
+        callback(hasActivity);
+    } };
+
+    MessagePortChannelProvider::singleton().checkProcessLocalPortForActivity(remotePort, *m_processes[i], WTFMove(outerCallback));
+}
+
 bool MessagePortChannel::hasAnyMessagesPendingOrInFlight() const
 {
-    Locker<Lock> locker(m_lock);
-
+    ASSERT(isMainThread());
     return m_messageBatchesInFlight || !m_pendingMessages[0].isEmpty() || !m_pendingMessages[1].isEmpty();
 }
 
