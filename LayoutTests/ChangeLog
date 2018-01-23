@@ -1,3 +1,14 @@
+2018-01-23  Simon Fraser  <simon.fraser@apple.com>
+
+        Element with position:fixed stops scrolling at the bottom of the page, but is painted in the right place on Chacos.com.
+        https://bugs.webkit.org/show_bug.cgi?id=181741
+        rdar://problem/36593581
+
+        Reviewed by Tim Horton.
+
+        * fast/visual-viewport/ios/min-scale-greater-than-one-expected.txt: Added.
+        * fast/visual-viewport/ios/min-scale-greater-than-one.html: Added.
+
 2018-01-23  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Expose getKeyframes() and parsing of remaining keyframe properties

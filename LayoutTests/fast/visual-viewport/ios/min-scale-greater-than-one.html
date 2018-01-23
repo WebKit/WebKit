@@ -1,0 +1,83 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+
+<html>
+<head>
+    <meta name="viewport" content="width=256, initial-scale=1.25">
+    <script src="../../../resources/ui-helper.js"></script>
+    <script src="../../../resources/js-test-pre.js"></script>
+    <script>
+        jsTestIsAsync = true;
+
+        function scrollToBottom(offsetTop)
+        {
+            return `(function() {
+                uiController.immediateScrollToOffset(0, ${offsetTop});
+                uiController.doAfterPresentationUpdate(function() {
+                    uiController.uiScriptComplete();
+                });
+            })()`;
+        }
+
+        var boundingClientRect;
+        var expectedTop;
+        function checkBoundingClientRect(top)
+        {
+            var target = document.getElementById('target');
+            boundingClientRect = target.getBoundingClientRect();
+            expectedTop = top;
+            shouldBe('Math.round(boundingClientRect.top)', 'expectedTop');
+        }
+        
+        function targetClicked()
+        {
+            debug('Target clicked');
+            finishJSTest();
+        }
+
+        function doTest()
+        {
+            var scale = 320 / 250;
+
+            checkBoundingClientRect(300);
+            debug('Scrolling to bottom');
+            testRunner.runUIScript(scrollToBottom(2000), function() {
+
+                expectedTop = 1578;
+                shouldBe('window.scrollY', 'expectedTop');
+                checkBoundingClientRect(300);
+                
+                // Tap coordinates are document coordinates.
+                var top = window.scrollY + 300 + 10;
+                UIHelper.tapAt(50, top).then(() => {
+                    debug('Tap dispatched');
+                    setTimeout(function watchdog() {
+                        debug('Failed to receive click');
+                        finishJSTest();
+                    }, 400);
+                });
+            });
+        }
+
+        window.addEventListener('load', doTest, false);
+    </script>
+    <style>
+        body {
+            height: 2000px;
+        }
+        #target {
+            position: fixed;
+            top: 300px;
+            left: 20px;
+            width: 120px;
+            height: 100px;
+            background-color: gray;
+        }
+    </style>
+</head>
+<body>
+    
+    <div id="target" onclick="targetClicked()"></div>
+
+    <script src="../../../resources/js-test-post.js"></script>
+</body>
+</html>

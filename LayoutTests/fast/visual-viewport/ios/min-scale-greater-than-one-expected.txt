@@ -1,0 +1,10 @@
+PASS Math.round(boundingClientRect.top) is expectedTop
+Scrolling to bottom
+PASS window.scrollY is expectedTop
+PASS Math.round(boundingClientRect.top) is expectedTop
+Tap dispatched
+Target clicked
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

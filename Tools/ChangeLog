@@ -1,3 +1,17 @@
+2018-01-23  Simon Fraser  <simon.fraser@apple.com>
+
+        Element with position:fixed stops scrolling at the bottom of the page, but is painted in the right place on Chacos.com.
+        https://bugs.webkit.org/show_bug.cgi?id=181741
+        rdar://problem/36593581
+
+        Reviewed by Tim Horton.
+        
+        If zoomToScale:animated: is called with the current zoom level, call the callback
+        rather than doing nothing.
+
+        * WebKitTestRunner/cocoa/TestRunnerWKWebView.mm:
+        (-[TestRunnerWKWebView zoomToScale:animated:completionHandler:]):
+
 2018-01-23  Basuke Suzuki  <Basuke.Suzuki@sony.com>
 
         Add ignore_errors keyword argument to Executive.run_command() for replacing the common pattern of error_handler usage

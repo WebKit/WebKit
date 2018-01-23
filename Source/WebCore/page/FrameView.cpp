@@ -1938,12 +1938,7 @@ ScrollPosition FrameView::unscaledMaximumScrollPosition() const
     if (RenderView* renderView = this->renderView()) {
         IntRect unscaledDocumentRect = renderView->unscaledDocumentRect();
         unscaledDocumentRect.expand(0, headerHeight() + footerHeight());
-        IntSize visibleSize = this->visibleSize();
-#if PLATFORM(IOS)
-        // FIXME: visibleSize() is the unscaled size on macOS, but the scaled size on iOS. This should be consistent. webkit.org/b/174648.
-        visibleSize.scale(visibleContentScaleFactor());
-#endif        
-        ScrollPosition maximumPosition = ScrollPosition(unscaledDocumentRect.maxXMaxYCorner() - visibleSize).expandedTo({ 0, 0 });
+        ScrollPosition maximumPosition = ScrollPosition(unscaledDocumentRect.maxXMaxYCorner() - visibleSize()).expandedTo({ 0, 0 });
         if (frame().isMainFrame() && m_scrollPinningBehavior == PinToTop)
             maximumPosition.setY(unscaledMinimumScrollPosition().y());
 
