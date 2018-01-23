@@ -877,3 +877,5 @@ webkit.org/b/181482 http/tests/resourceLoadStatistics/grandfathering.html [ Skip
 
 webkit.org/b/181831 [ HighSierra ] fast/forms/searchfield-heights.html [ Pass Failure ]
 
+webkit.org/b/181957 [ Release ] http/tests/misc/resource-timing-resolution.html [ Pass Failure ]
+

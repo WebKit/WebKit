@@ -1313,3 +1313,5 @@ webkit.org/b/181392 imported/w3c/web-platform-tests/service-workers/service-work
 
 webkit.org/b/172879 webrtc/video-unmute.html [ Skip ]
 
+webkit.org/b/181957 [ Release ] http/tests/misc/resource-timing-resolution.html [ Pass Failure ]
+
