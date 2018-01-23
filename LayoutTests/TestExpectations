@@ -178,9 +178,9 @@ imported/w3c/web-platform-tests/service-workers/service-worker/windowclient-navi
 imported/w3c/web-platform-tests/streams/readable-byte-streams/detached-buffers.serviceworker.https.html [ Pass Failure ]
 imported/w3c/web-platform-tests/service-workers/service-worker/update.https.html [ Pass Failure ]
 
-webkit.org/b/181901 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-cors-xhr.https.html [ Pass Failure ]
-webkit.org/b/181897 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-canvas-tainting.https.html [ Pass Failure ]
-webkit.org/b/181900 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-canvas-tainting-cache.https.html [ Pass Failure ]
+webkit.org/b/181901 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-cors-xhr.https.html [ DumpJSConsoleLogInStdErr Pass Failure ]
+webkit.org/b/181897 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-canvas-tainting.https.html [ DumpJSConsoleLogInStdErr Pass Failure ]
+webkit.org/b/181900 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-canvas-tainting-cache.https.html [ DumpJSConsoleLogInStdErr Pass Failure ]
 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-response-taint.https.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-request-redirect.https.html [ Slow ]
 [ Debug ] imported/w3c/web-platform-tests/service-workers/service-worker/getregistrations.https.html [ Slow ]
