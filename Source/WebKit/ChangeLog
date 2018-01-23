@@ -1,5 +1,22 @@
 2018-01-22  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r227349. rdar://problem/36746053
+
+    2018-01-22  Brent Fulgham  <bfulgham@apple.com>
+
+            [iOS] REGRESSION (r225763): Allow access to power logging features
+            https://bugs.webkit.org/show_bug.cgi?id=181938
+            <rdar://problem/36442803>
+
+            Reviewed by Eric Carlson.
+
+            I denied access to the powerlog facility in r225763, not realizing that it
+            gets activated in certain logging scenarios. This patch reverts this change.
+
+            * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+
+2018-01-22  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r227174. rdar://problem/36723030
 
     2018-01-18  Chris Dumez  <cdumez@apple.com>
