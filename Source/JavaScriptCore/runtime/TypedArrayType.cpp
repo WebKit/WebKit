@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,39 +31,6 @@
 #include "JSTypedArrays.h"
 
 namespace JSC {
-
-JSType typeForTypedArrayType(TypedArrayType type)
-{
-    switch (type) {
-    case NotTypedArray:
-        RELEASE_ASSERT_NOT_REACHED();
-        return Int8ArrayType;
-    case TypeInt8:
-        return Int8ArrayType;
-    case TypeUint8:
-        return Uint8ArrayType;
-    case TypeUint8Clamped:
-        return Uint8ClampedArrayType;
-    case TypeInt16:
-        return Int16ArrayType;
-    case TypeUint16:
-        return Uint16ArrayType;
-    case TypeInt32:
-        return Int32ArrayType;
-    case TypeUint32:
-        return Uint32ArrayType;
-    case TypeFloat32:
-        return Float32ArrayType;
-    case TypeFloat64:
-        return Float64ArrayType;
-    case TypeDataView:
-        return DataViewType;
-
-    default:
-        RELEASE_ASSERT_NOT_REACHED();
-        return Int8ArrayType;
-    }
-}
 
 const ClassInfo* constructorClassInfoForType(TypedArrayType type)
 {

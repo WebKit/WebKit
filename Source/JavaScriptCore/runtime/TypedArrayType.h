@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,18 +32,6 @@ namespace JSC {
 
 struct ClassInfo;
 
-#define FOR_EACH_TYPED_ARRAY_TYPE(macro) \
-    macro(Int8) \
-    macro(Uint8) \
-    macro(Uint8Clamped) \
-    macro(Int16) \
-    macro(Uint16) \
-    macro(Int32) \
-    macro(Uint32) \
-    macro(Float32) \
-    macro(Float64) \
-    macro(DataView)
-
 #define FOR_EACH_TYPED_ARRAY_TYPE_EXCLUDING_DATA_VIEW(macro) \
     macro(Int8) \
     macro(Uint8) \
@@ -55,6 +43,10 @@ struct ClassInfo;
     macro(Float32) \
     macro(Float64)
 
+#define FOR_EACH_TYPED_ARRAY_TYPE(macro) \
+    FOR_EACH_TYPED_ARRAY_TYPE_EXCLUDING_DATA_VIEW(macro) \
+    macro(DataView)
+
 enum TypedArrayType {
     NotTypedArray,
 #define DECLARE_TYPED_ARRAY_TYPE(name) Type ## name,
@@ -62,7 +54,12 @@ enum TypedArrayType {
 #undef DECLARE_TYPED_ARRAY_TYPE
 };
 
-#define NUMBER_OF_TYPED_ARRAY_TYPES TypeDataView
+#define ASSERT_TYPED_ARRAY_TYPE(name) \
+    static_assert(Type ## name == (name ## ArrayType - FirstTypedArrayType + TypeInt8), "");
+    FOR_EACH_TYPED_ARRAY_TYPE_EXCLUDING_DATA_VIEW(ASSERT_TYPED_ARRAY_TYPE)
+#undef ASSERT_TYPED_ARRAY_TYPE
+
+static_assert(TypeDataView == (DataViewType - FirstTypedArrayType + TypeInt8), "");
 
 inline unsigned toIndex(TypedArrayType type)
 {
@@ -117,32 +114,21 @@ inline size_t elementSize(TypedArrayType type)
 }
 
 const ClassInfo* constructorClassInfoForType(TypedArrayType);
-JSType typeForTypedArrayType(TypedArrayType);
 
 inline TypedArrayType typedArrayTypeForType(JSType type)
 {
-    switch (type) {
-    case Int8ArrayType:
-        return TypeInt8;
-    case Int16ArrayType:
-        return TypeInt16;
-    case Int32ArrayType:
-        return TypeInt32;
-    case Uint8ArrayType:
-        return TypeUint8;
-    case Uint8ClampedArrayType:
-        return TypeUint8Clamped;
-    case Uint16ArrayType:
-        return TypeUint16;
-    case Uint32ArrayType:
-        return TypeUint32;
-    case Float32ArrayType:
-        return TypeFloat32;
-    case Float64ArrayType:
-        return TypeFloat64;
-    default:
-        return NotTypedArray;
-    }
+    if (type >= FirstTypedArrayType && type <= LastTypedArrayType)
+        return static_cast<TypedArrayType>(type - FirstTypedArrayType + TypeInt8);
+    return NotTypedArray;
+}
+
+inline JSType typeForTypedArrayType(TypedArrayType type)
+{
+    if (type >= TypeInt8 && type <= TypeDataView)
+        return static_cast<JSType>(type - TypeInt8 + FirstTypedArrayType);
+
+    RELEASE_ASSERT_NOT_REACHED();
+    return Int8ArrayType;
 }
 
 inline bool isInt(TypedArrayType type)
