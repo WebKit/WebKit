@@ -188,7 +188,7 @@ private:
     
     void verifyEdge(Node*, Edge);
     void verifyEdges(Node*);
-    void executeDoubleUnaryOpEffects(Node*, double(*equivalentFunction)(double));
+    void executeDoubleUnaryOpEffects(Node*, unsigned clobberLimit, double(*equivalentFunction)(double));
     
     CodeBlock* m_codeBlock;
     Graph& m_graph;
