@@ -1,3 +1,23 @@
+2018-01-22  Eric Carlson  <eric.carlson@apple.com>
+
+        Resign NowPlaying status when no media element is eligible
+        https://bugs.webkit.org/show_bug.cgi?id=181914
+        <rdar://problem/35294116>
+
+        Reviewed by Jer Noble.
+
+        No new tests, these changes prevent existing tests from crashing.
+
+        * html/HTMLMediaElement.h:
+        * html/MediaElementSession.cpp:
+        (WebCore::MediaElementSession::playbackPermitted const): Return early when the media 
+        element has been suspended.
+        (WebCore::MediaElementSession::canShowControlsManager const): Return false when the
+        media element has been suspended.
+        (WebCore::isMainContentForPurposesOfAutoplay): Return early if it isn't safe to update
+        style because HitTest can force a layout.
+        (WebCore::MediaElementSession::updateIsMainContent const): Ditto.
+
 2018-01-22  Alex Christensen  <achristensen@webkit.org>
 
         Begin removing QTKit code

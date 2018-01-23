@@ -162,6 +162,9 @@ static bool needsArbitraryUserGestureAutoplayQuirk(const Document& document)
 
 SuccessOr<MediaPlaybackDenialReason> MediaElementSession::playbackPermitted(const HTMLMediaElement& element) const
 {
+    if (m_element.isSuspended())
+        return { };
+
     if (element.document().isMediaDocument() && !element.document().ownerElement())
         return { };
 
@@ -295,6 +298,11 @@ bool MediaElementSession::pageAllowsPlaybackAfterResuming(const HTMLMediaElement
 
 bool MediaElementSession::canShowControlsManager(PlaybackControlsPurpose purpose) const
 {
+    if (m_element.isSuspended()) {
+        LOG(Media, "MediaElementSession::canShowControlsManager - returning FALSE: isSuspended()");
+        return false;
+    }
+
     if (m_element.isFullscreen()) {
         LOG(Media, "MediaElementSession::canShowControlsManager - returning TRUE: Is fullscreen");
         return true;
@@ -332,11 +340,6 @@ bool MediaElementSession::canShowControlsManager(PlaybackControlsPurpose purpose
 
     if (!m_element.hasAudio() && !m_element.hasEverHadAudio()) {
         LOG(Media, "MediaElementSession::canShowControlsManager - returning FALSE: No audio");
-        return false;
-    }
-
-    if (m_element.document().activeDOMObjectsAreSuspended()) {
-        LOG(Media, "MediaElementSession::canShowControlsManager - returning FALSE: activeDOMObjectsAreSuspended()");
         return false;
     }
 
@@ -379,11 +382,6 @@ bool MediaElementSession::canShowControlsManager(PlaybackControlsPurpose purpose
     }
 
     if (purpose == PlaybackControlsPurpose::NowPlaying) {
-        if (!m_element.inActiveDocument()) {
-            LOG(Media, "MediaElementSession::canShowControlsManager - returning FALSE: Not in active document");
-            return false;
-        }
-
         LOG(Media, "MediaElementSession::canShowControlsManager - returning TRUE: Potentially plays audio");
         return true;
     }
@@ -696,7 +694,8 @@ size_t MediaElementSession::maximumMediaSourceBufferSize(const SourceBuffer& buf
 
 static bool isMainContentForPurposesOfAutoplay(const HTMLMediaElement& element)
 {
-    if (!element.hasAudio() || !element.hasVideo())
+    Document& document = element.document();
+    if (!document.isSafeToUpdateStyleOrLayout() || !element.hasAudio() || !element.hasVideo())
         return false;
 
     // Elements which have not yet been laid out, or which are not yet in the DOM, cannot be main content.
@@ -716,7 +715,6 @@ static bool isMainContentForPurposesOfAutoplay(const HTMLMediaElement& element)
         return false;
 
     // Main content elements must be in the main frame.
-    Document& document = element.document();
     if (!document.frame() || !document.frame()->isMainFrame())
         return false;
 
@@ -823,6 +821,9 @@ void MediaElementSession::mainContentCheckTimerFired()
 
 bool MediaElementSession::updateIsMainContent() const
 {
+    if (m_element.isSuspended())
+        return false;
+
     bool wasMainContent = m_isMainContent;
     m_isMainContent = isMainContentForPurposesOfAutoplay(m_element);
 
