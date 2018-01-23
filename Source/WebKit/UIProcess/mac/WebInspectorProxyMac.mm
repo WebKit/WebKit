@@ -607,6 +607,8 @@ void WebInspectorProxy::platformDetach()
 
     [inspectorView removeFromSuperview];
 
+    [inspectorView setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
+
     // Make sure that we size the inspected view's frame after detaching so that it takes up the space that the
     // attached inspector used to. Preserve the top position of the inspected view so banners in Safari still work.
 
