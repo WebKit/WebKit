@@ -59,6 +59,7 @@ const OptionSet<WebsiteDataType>& WebResourceLoadStatisticsStore::monitoredDataT
 {
     static NeverDestroyed<OptionSet<WebsiteDataType>> dataTypes(std::initializer_list<WebsiteDataType>({
         WebsiteDataType::Cookies,
+        WebsiteDataType::DOMCache,
         WebsiteDataType::IndexedDBDatabases,
         WebsiteDataType::LocalStorage,
         WebsiteDataType::MediaKeys,
@@ -68,6 +69,9 @@ const OptionSet<WebsiteDataType>& WebResourceLoadStatisticsStore::monitoredDataT
 #endif
         WebsiteDataType::SearchFieldRecentSearches,
         WebsiteDataType::SessionStorage,
+#if ENABLE(SERVICE_WORKER)
+        WebsiteDataType::ServiceWorkerRegistrations,
+#endif
         WebsiteDataType::WebSQLDatabases,
     }));
 
