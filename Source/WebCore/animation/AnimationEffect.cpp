@@ -57,6 +57,7 @@ ComputedTimingProperties AnimationEffect::getComputedTiming()
     computedTiming.iterations = m_timing->iterations();
     computedTiming.duration = secondsToWebAnimationsAPITime(m_timing->iterationDuration());
     computedTiming.direction = m_timing->direction();
+    computedTiming.easing = m_timing->easing();
     computedTiming.endTime = secondsToWebAnimationsAPITime(m_timing->endTime());
     computedTiming.activeDuration = secondsToWebAnimationsAPITime(m_timing->activeDuration());
     if (auto effectLocalTime = localTime())

@@ -30,11 +30,22 @@
     Constructor(Element? target, object? keyframes, optional (unrestricted double or KeyframeEffectOptions) options)
 ] interface KeyframeEffect : AnimationEffect {
     readonly attribute Element? target;
+    attribute IterationCompositeOperation iterationComposite;
+    attribute CompositeOperation composite;
+    [CallWith=ScriptState] sequence<object> getKeyframes();
     [MayThrowException, CallWith=ScriptState] void setKeyframes(object? keyframes);
 };
 
 dictionary BasePropertyIndexedKeyframe {
-    (double? or sequence<double?>) offset = [];
-    (DOMString or sequence<DOMString>) easing = [];
-    (CompositeOperation or sequence<CompositeOperation>) composite = [];
+    (sequence<double?> or double?) offset = [];
+    (sequence<DOMString> or DOMString) easing = [];
+    (sequence<CompositeOperation> or CompositeOperation) composite = [];
+};
+
+[
+    JSGenerateToJSObject
+] dictionary BaseComputedKeyframe {
+     double? offset = null;
+     double computedOffset;
+     DOMString easing = "linear";
 };

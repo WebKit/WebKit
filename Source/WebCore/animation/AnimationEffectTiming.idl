@@ -34,4 +34,5 @@
     [MayThrowException] attribute unrestricted double iterations;
     [MayThrowException, ImplementedAs=bindingsDuration] attribute (unrestricted double or DOMString) duration;
     attribute PlaybackDirection direction;
+    [MayThrowException] attribute DOMString easing;
 };

@@ -34,6 +34,7 @@ Ref<AnimationEffectTiming> AnimationEffectTiming::create()
 }
 
 AnimationEffectTiming::AnimationEffectTiming()
+    : m_timingFunction(LinearTimingFunction::create())
 {
 }
 
@@ -118,6 +119,15 @@ Seconds AnimationEffectTiming::activeDuration() const
     if (!m_iterationDuration || !m_iterations)
         return 0_s;
     return m_iterationDuration * m_iterations;
+}
+
+ExceptionOr<void> AnimationEffectTiming::setEasing(const String& easing)
+{
+    auto timingFunctionResult = TimingFunction::createFromCSSText(easing);
+    if (timingFunctionResult.hasException())
+        return timingFunctionResult.releaseException();
+    m_timingFunction = timingFunctionResult.returnValue();
+    return { };
 }
 
 } // namespace WebCore

@@ -1,6 +1,6 @@
 
-FAIL Default value assert_equals: The default value should be replace expected (string) "replace" but got (undefined) undefined
+PASS Default value 
 PASS Change composite value 
-FAIL Unspecified keyframe composite value when setting effect composite anim.effect.getKeyframes is not a function. (In 'anim.effect.getKeyframes()', 'anim.effect.getKeyframes' is undefined)
-FAIL Specified keyframe composite value when setting effect composite anim.effect.getKeyframes is not a function. (In 'anim.effect.getKeyframes()', 'anim.effect.getKeyframes' is undefined)
+PASS Unspecified keyframe composite value when setting effect composite 
+PASS Specified keyframe composite value when setting effect composite 
 

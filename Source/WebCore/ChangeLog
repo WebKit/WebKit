@@ -1,3 +1,61 @@
+2018-01-23  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Expose getKeyframes() and parsing of remaining keyframe properties
+        https://bugs.webkit.org/show_bug.cgi?id=181978
+        <rdar://problem/36772586>
+
+        Reviewed by Dean Jackson.
+
+        We finish our implementation of multiple keyframes by exposing the getKeyframes() method on KeyframeEffect and
+        parsing the remaining properties that can be exposed on keyframes: "easing" and "composite". And since we parse
+        those properties on keyframes, we also parse "easing" on AnimationEffectTiming and "composite" and "iterationComposite"
+        on KeyframeEffect. 
+
+        To support this, we implement a new TimingFunction::createFromCSSText() method which takes in a string that is
+        a value provided directly via the JS API. As its converse, we expose a TimingFunction::cssText() method which
+        provides a string that can be sent back to JS to represent a timing function, using keywords when the timing
+        function matches one and ommitting default values.
+
+        We now also keep track of the original "offset" value provided through the JS API since that value is required
+        when calling getKeyframes() and distinct from the "computedOffset". These original offsets, composite operations
+        and timing functions are kept as separate Vectors from the KeyframeList since this type does not support exposing
+        those. We may consider improving that in a future patch.
+
+        Finally, we make some adjustments in the keyframe parsing to comply with the specification and correctly parse
+        all provided timing functions, regardless of the number of keyframes and timing functions provided.
+
+        Note that this patch is only about parsing, storing and returning provided easing and composite operations but
+        that such values will only be used for the resolution of animation effects in future patches.
+
+        * animation/AnimationEffect.cpp:
+        (WebCore::AnimationEffect::getComputedTiming): Set the "easing" property on the getComputedTiming() return value
+        now that we expose "easing" on AnimationEffectTiming.
+        * animation/AnimationEffectTiming.cpp:
+        (WebCore::AnimationEffectTiming::AnimationEffectTiming): Create a linear TimingFunction by default.
+        (WebCore::AnimationEffectTiming::setEasing): Parse the "easing" value and propagate an exception for invalid values.
+        * animation/AnimationEffectTiming.h: Expose the new "easing" property and backing TimingFunction.
+        * animation/AnimationEffectTiming.idl: Expose the new "easing" property.
+        * animation/KeyframeEffect.cpp:
+        (WebCore::CSSPropertyIDToIDLAttributeName): Provide a way to convert the name of a CSS property to a string that can
+        be used to generate a JS property name for use by getKeyframes().
+        (WebCore::computeMissingKeyframeOffsets): Implement the full steps of the spec.
+        (WebCore::processIterableKeyframes): Fix a problematic declaration for the easing variable.
+        (WebCore::processPropertyIndexedKeyframes): Now that ProcessedKeyframe has both an offset and a computedOffset, use
+        computed offsets. We also fix a couple of loops to fix compliance issues revealed by WPT tests.
+        (WebCore::KeyframeEffect::create): Parse the provided "easing" property on the KeyframeEffectOptions object.
+        (WebCore::KeyframeEffect::getKeyframes): Implement the getKeyframes() method as mandated by the spec.
+        (WebCore::KeyframeEffect::processKeyframes): Keep a list of unused easings so these might be parsed as well, and
+        potentially throw exceptions, as mandated by the spec. For valid easings, store their matching TimingFunction in
+        m_timingFunctions, original offset values in m_offsets and CompositeOperation values in m_compositeOperations.
+        * animation/KeyframeEffect.h: Switch the order in which we specify some of the Variant types so that default values
+        are correctly used.
+        * animation/KeyframeEffect.idl: Switch the order in which we specify some of the Variant types so that default values
+        are correctly used.
+        * platform/animation/TimingFunction.cpp:
+        (WebCore::TimingFunction::createFromCSSText):
+        (WebCore::TimingFunction::cssText const):
+        * platform/animation/TimingFunction.h:
+
 2018-01-23  Brady Eidson  <beidson@apple.com>
 
         Allow passing MessagePorts across processes (e.g. ServiceWorkers).

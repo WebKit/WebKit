@@ -29,6 +29,7 @@
 #include "AnimationEffectTimingProperties.h"
 #include "CSSPropertyBlendingClient.h"
 #include "CompositeOperation.h"
+#include "IterationCompositeOperation.h"
 #include "KeyframeEffectOptions.h"
 #include "KeyframeList.h"
 #include "RenderStyle.h"
@@ -45,9 +46,9 @@ public:
     ~KeyframeEffect() { }
 
     struct BasePropertyIndexedKeyframe {
-        Variant<std::nullptr_t, double, Vector<std::optional<double>>> offset;
-        Variant<String, Vector<String>> easing;
-        Variant<CompositeOperation, Vector<CompositeOperation>> composite;
+        Variant<std::nullptr_t, Vector<std::optional<double>>, double> offset = Vector<std::optional<double>>();
+        Variant<Vector<String>, String> easing = Vector<String>();
+        Variant<Vector<CompositeOperation>, CompositeOperation> composite = Vector<CompositeOperation>();
     };
 
     struct PropertyAndValues {
@@ -63,12 +64,26 @@ public:
     struct ProcessedKeyframe {
         String easing;
         std::optional<double> offset;
+        std::optional<double> computedOffset;
         std::optional<CompositeOperation> composite;
         HashMap<CSSPropertyID, String> cssPropertiesAndValues;
     };
 
+    struct BaseComputedKeyframe {
+        std::optional<double> offset;
+        double computedOffset;
+        String easing { "linear" };
+    };
+
     Element* target() const { return m_target.get(); }
+    Vector<JSC::Strong<JSC::JSObject>> getKeyframes(JSC::ExecState&);
     ExceptionOr<void> setKeyframes(JSC::ExecState&, JSC::Strong<JSC::JSObject>&&);
+
+    IterationCompositeOperation iterationComposite() const { return m_iterationCompositeOperation; }
+    void setIterationComposite(IterationCompositeOperation iterationCompositeOperation) { m_iterationCompositeOperation = iterationCompositeOperation; }
+    CompositeOperation composite() const { return m_compositeOperation; }
+    void setComposite(CompositeOperation compositeOperation) { m_compositeOperation = compositeOperation; }
+
     void getAnimatedStyle(std::unique_ptr<RenderStyle>& animatedStyle);
     void applyAtLocalTime(Seconds, RenderStyle&) override;
     void startOrStopAccelerated();
@@ -92,7 +107,12 @@ private:
     bool shouldRunAccelerated();
 
     RefPtr<Element> m_target;
+    IterationCompositeOperation m_iterationCompositeOperation { IterationCompositeOperation::Replace };
+    CompositeOperation m_compositeOperation { CompositeOperation::Replace };
     KeyframeList m_keyframes;
+    Vector<std::optional<double>> m_offsets;
+    Vector<RefPtr<TimingFunction>> m_timingFunctions;
+    Vector<std::optional<CompositeOperation>> m_compositeOperations;
     bool m_triggersStackingContext { false };
     bool m_started { false };
     bool m_startedAccelerated { false };

@@ -26,7 +26,9 @@
 #include "config.h"
 #include "TimingFunction.h"
 
+#include "CSSTimingFunctionValue.h"
 #include "SpringSolver.h"
+#include "StyleProperties.h"
 #include "UnitBezier.h"
 #include <wtf/text/TextStream.h>
 
@@ -99,6 +101,90 @@ double TimingFunction::transformTime(double inputTime, double duration) const
 
     ASSERT_NOT_REACHED();
     return 0;
+}
+
+ExceptionOr<RefPtr<TimingFunction>> TimingFunction::createFromCSSText(const String& cssText)
+{
+    StringBuilder cssString;
+    cssString.append(getPropertyNameString(CSSPropertyAnimationTimingFunction));
+    cssString.appendLiteral(": ");
+    cssString.append(cssText);
+    auto styleProperties = MutableStyleProperties::create();
+    styleProperties->parseDeclaration(cssString.toString(), CSSParserContext(HTMLStandardMode));
+    auto cssValue = styleProperties->getPropertyCSSValue(CSSPropertyAnimationTimingFunction);
+
+    if (!cssValue)
+        return Exception { TypeError };
+
+    auto& value = *cssValue.get();
+    if (is<CSSPrimitiveValue>(value)) {
+        switch (downcast<CSSPrimitiveValue>(value).valueID()) {
+        case CSSValueLinear:
+            return { LinearTimingFunction::create() };
+        case CSSValueEase:
+            return { CubicBezierTimingFunction::create() };
+        case CSSValueEaseIn:
+            return { CubicBezierTimingFunction::create(CubicBezierTimingFunction::EaseIn) };
+        case CSSValueEaseOut:
+            return { CubicBezierTimingFunction::create(CubicBezierTimingFunction::EaseOut) };
+        case CSSValueEaseInOut:
+            return { CubicBezierTimingFunction::create(CubicBezierTimingFunction::EaseInOut) };
+        case CSSValueStepStart:
+            return { StepsTimingFunction::create(1, true) };
+        case CSSValueStepEnd:
+            return { StepsTimingFunction::create(1, false) };
+        default:
+            return Exception { TypeError };
+        }
+    }
+
+    if (is<CSSCubicBezierTimingFunctionValue>(value)) {
+        auto& cubicTimingFunction = downcast<CSSCubicBezierTimingFunctionValue>(value);
+        return { CubicBezierTimingFunction::create(cubicTimingFunction.x1(), cubicTimingFunction.y1(), cubicTimingFunction.x2(), cubicTimingFunction.y2()) };
+    }
+    if (is<CSSStepsTimingFunctionValue>(value)) {
+        auto& stepsTimingFunction = downcast<CSSStepsTimingFunctionValue>(value);
+        return { StepsTimingFunction::create(stepsTimingFunction.numberOfSteps(), stepsTimingFunction.stepAtStart()) };
+    }
+    if (is<CSSFramesTimingFunctionValue>(value)) {
+        auto& framesTimingFunction = downcast<CSSFramesTimingFunctionValue>(value);
+        return { FramesTimingFunction::create(framesTimingFunction.numberOfFrames()) };
+    }
+    if (is<CSSSpringTimingFunctionValue>(value)) {
+        auto& springTimingFunction = downcast<CSSSpringTimingFunctionValue>(value);
+        return { SpringTimingFunction::create(springTimingFunction.mass(), springTimingFunction.stiffness(), springTimingFunction.damping(), springTimingFunction.initialVelocity()) };
+    }
+
+    return Exception { TypeError };
+}
+
+String TimingFunction::cssText() const
+{
+    if (m_type == TimingFunction::CubicBezierFunction) {
+        auto& function = downcast<CubicBezierTimingFunction>(*this);
+        if (function.x1() == 0.25 && function.y1() == 0.1 && function.x2() == 0.25 && function.y2() == 1.0)
+            return "ease";
+        if (function.x1() == 0.42 && !function.y1() && function.x2() == 1.0 && function.y2() == 1.0)
+            return "ease-in";
+        if (!function.x1() && !function.y1() && function.x2() == 0.58 && function.y2() == 1.0)
+            return "ease-out";
+        if (function.x1() == 0.42 && !function.y1() && function.x2() == 0.58 && function.y2() == 1.0)
+            return "ease-in-out";
+        return String::format("cubic-bezier(%g, %g, %g, %g)", function.x1(), function.y1(), function.x2(), function.y2());
+    }
+
+    if (m_type == TimingFunction::StepsFunction) {
+        auto& function = downcast<StepsTimingFunction>(*this);
+        auto numberOfSteps = function.numberOfSteps();
+        if (numberOfSteps == 1)
+            return function.stepAtStart() ? "step-start" : "step-end";
+        if (!function.stepAtStart())
+            return String::format("steps(%d)", numberOfSteps);
+    }
+
+    TextStream stream;
+    stream << *this;
+    return stream.release();
 }
 
 } // namespace WebCore

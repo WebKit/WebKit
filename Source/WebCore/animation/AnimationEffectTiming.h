@@ -28,6 +28,7 @@
 #include "ExceptionOr.h"
 #include "FillMode.h"
 #include "PlaybackDirection.h"
+#include "TimingFunction.h"
 #include "WebAnimationUtilities.h"
 #include <wtf/Forward.h>
 #include <wtf/Ref.h>
@@ -70,6 +71,10 @@ public:
     PlaybackDirection direction() const { return m_direction; }
     void setDirection(PlaybackDirection direction) { m_direction = direction; }
 
+    String easing() const { return m_timingFunction->cssText(); }
+    ExceptionOr<void> setEasing(const String&);
+    TimingFunction* timingFunction() const { return m_timingFunction.get(); }
+
     Seconds endTime() const;
     Seconds activeDuration() const;
 
@@ -82,6 +87,7 @@ private:
     double m_iterations { 1 };
     Seconds m_iterationDuration { 0_s };
     PlaybackDirection m_direction { PlaybackDirection::Normal };
+    RefPtr<TimingFunction> m_timingFunction;
 };
 
 } // namespace WebCore

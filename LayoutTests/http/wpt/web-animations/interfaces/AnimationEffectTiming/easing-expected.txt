@@ -1,12 +1,12 @@
 
-FAIL Test default value assert_equals: expected (string) "linear" but got (undefined) undefined
-FAIL step-start function assert_equals: expected "steps(1, start)" but got "step-start"
+PASS Test default value 
+FAIL step-start function assert_approx_equals: The progress of the animation should be approximately 1 at 0ms expected a number but got a "object"
 FAIL steps(1, start) function assert_approx_equals: The progress of the animation should be approximately 1 at 0ms expected a number but got a "object"
 FAIL steps(2, start) function assert_approx_equals: The progress of the animation should be approximately 0.5 at 0ms expected a number but got a "object"
-FAIL step-end function assert_equals: expected "steps(1)" but got "step-end"
+FAIL step-end function assert_approx_equals: The progress of the animation should be approximately 0 at 0ms expected a number but got a "object"
 FAIL steps(1) function assert_approx_equals: The progress of the animation should be approximately 0 at 0ms expected a number but got a "object"
-FAIL steps(1, end) function assert_equals: expected "steps(1)" but got "steps(1, end)"
-FAIL steps(2, end) function assert_equals: expected "steps(2)" but got "steps(2, end)"
+FAIL steps(1, end) function assert_approx_equals: The progress of the animation should be approximately 0 at 0ms expected a number but got a "object"
+FAIL steps(2, end) function assert_approx_equals: The progress of the animation should be approximately 0 at 0ms expected a number but got a "object"
 FAIL frames function assert_approx_equals: The progress of the animation should be approximately 0 at 0ms expected a number but got a "object"
 FAIL linear function assert_approx_equals: The progress of the animation should be approximately 0 at 0ms expected a number but got a "object"
 FAIL ease function assert_approx_equals: The progress of the animation should be approximately 0 at 0ms expected a number but got a "object"
@@ -15,93 +15,35 @@ FAIL ease-in-out function assert_approx_equals: The progress of the animation sh
 FAIL ease-out function assert_approx_equals: The progress of the animation should be approximately 0 at 0ms expected a number but got a "object"
 FAIL easing function which produces values greater than 1 assert_approx_equals: The progress of the animation should be approximately 0 at 0ms expected a number but got a "object"
 FAIL easing function which produces values less than 1 assert_approx_equals: The progress of the animation should be approximately 0 at 0ms expected a number but got a "object"
-FAIL Invalid effect easing value test: '' assert_throws: function "function () {
-                    anim.effect.timing.easing = invalidEasing;
-                  }" did not throw
-FAIL Invalid effect easing value test: '7' assert_throws: function "function () {
-                    anim.effect.timing.easing = invalidEasing;
-                  }" did not throw
-FAIL Invalid effect easing value test: 'test' assert_throws: function "function () {
-                    anim.effect.timing.easing = invalidEasing;
-                  }" did not throw
-FAIL Invalid effect easing value test: 'initial' assert_throws: function "function () {
-                    anim.effect.timing.easing = invalidEasing;
-                  }" did not throw
-FAIL Invalid effect easing value test: 'inherit' assert_throws: function "function () {
-                    anim.effect.timing.easing = invalidEasing;
-                  }" did not throw
-FAIL Invalid effect easing value test: 'unset' assert_throws: function "function () {
-                    anim.effect.timing.easing = invalidEasing;
-                  }" did not throw
-FAIL Invalid effect easing value test: 'unrecognized' assert_throws: function "function () {
-                    anim.effect.timing.easing = invalidEasing;
-                  }" did not throw
-FAIL Invalid effect easing value test: 'var(--x)' assert_throws: function "function () {
-                    anim.effect.timing.easing = invalidEasing;
-                  }" did not throw
-FAIL Invalid effect easing value test: 'ease-in-out, ease-out' assert_throws: function "function () {
-                    anim.effect.timing.easing = invalidEasing;
-                  }" did not throw
-FAIL Invalid effect easing value test: 'cubic-bezier(1.1, 0, 1, 1)' assert_throws: function "function () {
-                    anim.effect.timing.easing = invalidEasing;
-                  }" did not throw
-FAIL Invalid effect easing value test: 'cubic-bezier(0, 0, 1.1, 1)' assert_throws: function "function () {
-                    anim.effect.timing.easing = invalidEasing;
-                  }" did not throw
-FAIL Invalid effect easing value test: 'cubic-bezier(-0.1, 0, 1, 1)' assert_throws: function "function () {
-                    anim.effect.timing.easing = invalidEasing;
-                  }" did not throw
-FAIL Invalid effect easing value test: 'cubic-bezier(0, 0, -0.1, 1)' assert_throws: function "function () {
-                    anim.effect.timing.easing = invalidEasing;
-                  }" did not throw
-FAIL Invalid effect easing value test: 'cubic-bezier(0.1, 0, 4, 0.4)' assert_throws: function "function () {
-                    anim.effect.timing.easing = invalidEasing;
-                  }" did not throw
-FAIL Invalid effect easing value test: 'steps(-1, start)' assert_throws: function "function () {
-                    anim.effect.timing.easing = invalidEasing;
-                  }" did not throw
-FAIL Invalid effect easing value test: 'steps(0.1, start)' assert_throws: function "function () {
-                    anim.effect.timing.easing = invalidEasing;
-                  }" did not throw
-FAIL Invalid effect easing value test: 'steps(3, nowhere)' assert_throws: function "function () {
-                    anim.effect.timing.easing = invalidEasing;
-                  }" did not throw
-FAIL Invalid effect easing value test: 'steps(-3, end)' assert_throws: function "function () {
-                    anim.effect.timing.easing = invalidEasing;
-                  }" did not throw
-FAIL Invalid effect easing value test: 'function (a){return a}' assert_throws: function "function () {
-                    anim.effect.timing.easing = invalidEasing;
-                  }" did not throw
-FAIL Invalid effect easing value test: 'function (x){return x}' assert_throws: function "function () {
-                    anim.effect.timing.easing = invalidEasing;
-                  }" did not throw
-FAIL Invalid effect easing value test: 'function(x, y){return 0.3}' assert_throws: function "function () {
-                    anim.effect.timing.easing = invalidEasing;
-                  }" did not throw
-FAIL Invalid effect easing value test: 'frames(1)' assert_throws: function "function () {
-                    anim.effect.timing.easing = invalidEasing;
-                  }" did not throw
-FAIL Invalid effect easing value test: 'frames' assert_throws: function "function () {
-                    anim.effect.timing.easing = invalidEasing;
-                  }" did not throw
-FAIL Invalid effect easing value test: 'frames()' assert_throws: function "function () {
-                    anim.effect.timing.easing = invalidEasing;
-                  }" did not throw
-FAIL Invalid effect easing value test: 'frames(,)' assert_throws: function "function () {
-                    anim.effect.timing.easing = invalidEasing;
-                  }" did not throw
-FAIL Invalid effect easing value test: 'frames(a)' assert_throws: function "function () {
-                    anim.effect.timing.easing = invalidEasing;
-                  }" did not throw
-FAIL Invalid effect easing value test: 'frames(2.0)' assert_throws: function "function () {
-                    anim.effect.timing.easing = invalidEasing;
-                  }" did not throw
-FAIL Invalid effect easing value test: 'frames(2.5)' assert_throws: function "function () {
-                    anim.effect.timing.easing = invalidEasing;
-                  }" did not throw
-FAIL Invalid effect easing value test: 'frames(2 3)' assert_throws: function "function () {
-                    anim.effect.timing.easing = invalidEasing;
-                  }" did not throw
+PASS Invalid effect easing value test: '' 
+PASS Invalid effect easing value test: '7' 
+PASS Invalid effect easing value test: 'test' 
+PASS Invalid effect easing value test: 'initial' 
+PASS Invalid effect easing value test: 'inherit' 
+PASS Invalid effect easing value test: 'unset' 
+PASS Invalid effect easing value test: 'unrecognized' 
+PASS Invalid effect easing value test: 'var(--x)' 
+PASS Invalid effect easing value test: 'ease-in-out, ease-out' 
+PASS Invalid effect easing value test: 'cubic-bezier(1.1, 0, 1, 1)' 
+PASS Invalid effect easing value test: 'cubic-bezier(0, 0, 1.1, 1)' 
+PASS Invalid effect easing value test: 'cubic-bezier(-0.1, 0, 1, 1)' 
+PASS Invalid effect easing value test: 'cubic-bezier(0, 0, -0.1, 1)' 
+PASS Invalid effect easing value test: 'cubic-bezier(0.1, 0, 4, 0.4)' 
+PASS Invalid effect easing value test: 'steps(-1, start)' 
+PASS Invalid effect easing value test: 'steps(0.1, start)' 
+PASS Invalid effect easing value test: 'steps(3, nowhere)' 
+PASS Invalid effect easing value test: 'steps(-3, end)' 
+PASS Invalid effect easing value test: 'function (a){return a}' 
+PASS Invalid effect easing value test: 'function (x){return x}' 
+PASS Invalid effect easing value test: 'function(x, y){return 0.3}' 
+PASS Invalid effect easing value test: 'frames(1)' 
+PASS Invalid effect easing value test: 'frames' 
+PASS Invalid effect easing value test: 'frames()' 
+PASS Invalid effect easing value test: 'frames(,)' 
+PASS Invalid effect easing value test: 'frames(a)' 
+PASS Invalid effect easing value test: 'frames(2.0)' 
+PASS Invalid effect easing value test: 'frames(2.5)' 
+PASS Invalid effect easing value test: 'frames(2 3)' 
 PASS Canonical easing 'ease' is returned as set 
 PASS Canonical easing 'linear' is returned as set 
 PASS Canonical easing 'ease-in' is returned as set 
