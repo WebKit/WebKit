@@ -1,5 +1,12 @@
 2018-01-24  Wenson Hsieh  <wenson_hsieh@apple.com>
 
+        Unreviewed, another attempt to fix the Windows build after r227479.
+
+        * WebFrame.cpp:
+        (WebFrame::elementWithName):
+
+2018-01-24  Wenson Hsieh  <wenson_hsieh@apple.com>
+
         Unreviewed, try to fix the Windows build after r227479.
 
         Tweak some Windows WebKitLegacy code to use updated HTMLFormElement methods.
