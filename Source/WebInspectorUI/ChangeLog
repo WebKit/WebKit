@@ -1,3 +1,16 @@
+2018-01-23  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Network's columns shake when scrolling at non-default zoom level
+        https://bugs.webkit.org/show_bug.cgi?id=181998
+        <rdar://problem/36449808>
+
+        Reviewed by Matt Baker.
+
+        * UserInterface/Views/Table.js:
+        When zoomed the bounding client rect values were fractional, which was
+        unexpected by this area of code. Floor the values to get a value we expect
+        to be able to evenly distribute.
+
 2018-01-22  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Styles Redesign: data corruption when updating values quickly
