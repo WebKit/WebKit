@@ -5,6 +5,7 @@ async function test()
         var fetch = frame.contentWindow.fetch;
 
         var response = await fetch("test1");
+        log("test1 url: " + response.url);
         log("test1 status code: " + response.status);
         log("test1 status text: " + response.statusText);
         log("test1 header Hello: " + response.headers.get("hello"));
@@ -13,6 +14,7 @@ async function test()
             log("test1 source: " + internals.fetchResponseSource(response));
 
         var response = await fetch("test2");
+        log("test2 url: " + response.url);
         log("test2 status code: " + response.status);
         log("test2 status text: " + response.statusText);
 
@@ -30,6 +32,7 @@ async function test()
         }
 
         var response = await fetch("test4");
+        log("test4 url: " + response.url);
         log("test4 status code: " + response.status);
 
         try {

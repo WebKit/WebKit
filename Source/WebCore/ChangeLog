@@ -1,5 +1,17 @@
 2018-01-24  Youenn Fablet  <youenn@apple.com>
 
+        Fetch response should copy its url from the request if null
+        https://bugs.webkit.org/show_bug.cgi?id=182048
+
+        Reviewed by Chris Dumez.
+
+        No change of behavior.
+
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::responseReceived): Add assertion to check that the response URL is not null.
+
+2018-01-24  Youenn Fablet  <youenn@apple.com>
+
         Account for memory cache in DocumentThreadableLoader::didReceiveResponse assertion
         https://bugs.webkit.org/show_bug.cgi?id=182049
 

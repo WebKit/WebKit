@@ -1,12 +1,15 @@
 
+test1 url: https://127.0.0.1:8443/workers/service/resources/test1
 test1 status code: 200
 test1 status text: Hello from service worker
 test1 header Hello: World
 test1 source: Service worker
+test2 url: https://127.0.0.1:8443/workers/service/resources/test2
 test2 status code: 500
 test2 status text: Error from service worker
 test2 source: Service worker
 PASS: test3 fetch failed as expected
+test4 url: https://127.0.0.1:8443/workers/service/resources/test4
 test4 status code: 404
 PASS: test5 fetch failed as expected
 PASS: / fetch failed as expected

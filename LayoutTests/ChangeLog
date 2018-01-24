@@ -1,3 +1,14 @@
+2018-01-24  Youenn Fablet  <youenn@apple.com>
+
+        Fetch response should copy its url from the request if null
+        https://bugs.webkit.org/show_bug.cgi?id=182048
+
+        Reviewed by Chris Dumez.
+
+        * http/tests/workers/service/basic-fetch.https-expected.txt:
+        * http/tests/workers/service/resources/basic-fetch.js:
+        (async.test):
+
 2018-01-24  Ms2ger  <Ms2ger@igalia.com>
 
         WPE-focused test gardening.
