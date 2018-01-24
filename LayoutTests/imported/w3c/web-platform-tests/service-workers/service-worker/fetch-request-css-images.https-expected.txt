@@ -1,7 +1,7 @@
 
 
-FAIL Verify FetchEvent for css image (backgroundImage). assert_unreached: unexpected rejection: Passing MessagePort objects to postMessage is not yet supported Reached unreachable code
-FAIL Verify FetchEvent for css image (shapeOutside). assert_unreached: unexpected rejection: Passing MessagePort objects to postMessage is not yet supported Reached unreachable code
-FAIL Verify FetchEvent for css image-set (backgroundImage). assert_unreached: unexpected rejection: Passing MessagePort objects to postMessage is not yet supported Reached unreachable code
-FAIL Verify FetchEvent for css image-set (shapeOutside). assert_unreached: unexpected rejection: Passing MessagePort objects to postMessage is not yet supported Reached unreachable code
+PASS Verify FetchEvent for css image (backgroundImage). 
+FAIL Verify FetchEvent for css image (shapeOutside). assert_equals: credentials of CSSImage load (url:https://localhost:9443/service-workers/service-worker/resources/dummy?test1516682573070 type:shapeOutside) must be same-origin. expected "same-origin" but got "include"
+PASS Verify FetchEvent for css image-set (backgroundImage). 
+FAIL Verify FetchEvent for css image-set (shapeOutside). assert_equals: credentials of CSSImageSet load (url:https://localhost:9443/service-workers/service-worker/resources/dummy?test1516682573028 type:shapeOutside) must be same-origin. expected "same-origin" but got "include"
 

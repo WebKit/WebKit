@@ -79,10 +79,10 @@ void MessagePortChannel::entanglePortWithProcess(const MessagePortIdentifier& po
 {
     ASSERT(isMainThread());
 
-    LOG(MessagePorts, "MessagePortChannel %s (%p) entangling port %s", logString().utf8().data(), this, port.logString().utf8().data());
-
     ASSERT(port == m_ports[0] || port == m_ports[1]);
     size_t i = port == m_ports[0] ? 0 : 1;
+
+    LOG(MessagePorts, "MessagePortChannel %s (%p) entangling port %s (that port has %zu messages available)", logString().utf8().data(), this, port.logString().utf8().data(), m_pendingMessages[i].size());
 
     ASSERT(!m_processes[i] || *m_processes[i] == process);
     m_processes[i] = process;

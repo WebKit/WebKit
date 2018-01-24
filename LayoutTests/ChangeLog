@@ -1,5 +1,21 @@
 2018-01-23  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r227425. rdar://problem/36791667
+
+    2018-01-23  Brady Eidson  <beidson@apple.com>
+
+            Allow passing MessagePorts across processes (e.g. ServiceWorkers).
+            https://bugs.webkit.org/show_bug.cgi?id=181178
+
+            Reviewed by Andy Estes.
+
+            * http/tests/workers/service/basic-messageport-expected.txt: Added.
+            * http/tests/workers/service/basic-messageport.html: Added.
+            * http/tests/workers/service/resources/basic-messageport.js: Added.
+            * http/tests/workers/service/resources/messageport-echo-worker.js: Added.
+
+2018-01-23  Jason Marcell  <jmarcell@apple.com>
+
         Revert r227216. rdar://problem/36722508
 
 2018-01-22  Jason Marcell  <jmarcell@apple.com>

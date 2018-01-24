@@ -1,7 +1,6 @@
 
-
 PASS Unregister on script evaluation 
 PASS Unregister on installing event 
 PASS Unregister on activate event 
-FAIL Unregister controlling service worker promise_test: Unhandled rejection with value: object "NotSupportedError: Passing MessagePort objects to postMessage is not yet supported"
+PASS Unregister controlling service worker 
 

@@ -91,7 +91,7 @@ MessagePort::MessagePort(ScriptExecutionContext& scriptExecutionContext, const M
     , m_identifier(local)
     , m_remoteIdentifier(remote)
 {
-    LOG(MessagePorts, "Created MessagePort %s (%p)", m_identifier.logString().utf8().data(), this);
+    LOG(MessagePorts, "Created MessagePort %s (%p) in process %" PRIu64, m_identifier.logString().utf8().data(), this, Process::identifier().toUInt64());
 
     Locker<Lock> locker(allMessagePortsLock());
     allMessagePorts().set(m_identifier, this);
@@ -104,7 +104,7 @@ MessagePort::MessagePort(ScriptExecutionContext& scriptExecutionContext, const M
 
 MessagePort::~MessagePort()
 {
-    LOG(MessagePorts, "Destroyed MessagePort %s (%p)", m_identifier.logString().utf8().data(), this);
+    LOG(MessagePorts, "Destroyed MessagePort %s (%p) in process %" PRIu64, m_identifier.logString().utf8().data(), this, Process::identifier().toUInt64());
 
     ASSERT(allMessagePortsLock().isLocked());
 

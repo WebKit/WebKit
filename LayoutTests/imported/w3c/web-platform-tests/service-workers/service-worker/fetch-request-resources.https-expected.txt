@@ -1,3 +1,19 @@
+CONSOLE MESSAGE: Unhandled Promise Rejection: TypeError: Type error
+CONSOLE MESSAGE: Unhandled Promise Rejection: TypeError: Type error
+CONSOLE MESSAGE: Unhandled Promise Rejection: TypeError: Type error
+CONSOLE MESSAGE: Unhandled Promise Rejection: TypeError: Type error
+CONSOLE MESSAGE: Unhandled Promise Rejection: TypeError: Type error
+CONSOLE MESSAGE: Unhandled Promise Rejection: TypeError: Type error
+CONSOLE MESSAGE: Unhandled Promise Rejection: TypeError: Type error
+CONSOLE MESSAGE: Unhandled Promise Rejection: TypeError: Type error
+CONSOLE MESSAGE: Unhandled Promise Rejection: TypeError: Type error
+CONSOLE MESSAGE: Unhandled Promise Rejection: TypeError: Type error
+CONSOLE MESSAGE: Unhandled Promise Rejection: TypeError: Type error
+CONSOLE MESSAGE: Unhandled Promise Rejection: TypeError: Type error
+CONSOLE MESSAGE: Unhandled Promise Rejection: TypeError: Type error
+CONSOLE MESSAGE: Unhandled Promise Rejection: TypeError: Type error
+CONSOLE MESSAGE: Unhandled Promise Rejection: TypeError: Type error
 
-FAIL Verify FetchEvent for resources. assert_unreached: unexpected rejection: Passing MessagePort objects to postMessage is not yet supported Reached unreachable code
+
+FAIL Verify FetchEvent for resources. assert_equals: integrity of Script load (url:https://localhost:9443/service-workers/service-worker/resources/dummy?test24) must be      . expected "     " but got ""
 

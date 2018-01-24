@@ -37,7 +37,7 @@ messages -> WebSWClientConnection {
 
     SetSWOriginTableIsImported()
     SetSWOriginTableSharedMemory(WebKit::SharedMemory::Handle handle)
-    PostMessageToServiceWorkerClient(WebCore::DocumentIdentifier destinationContextIdentifier, IPC::DataReference message, struct WebCore::ServiceWorkerData source, String sourceOrigin)
+    PostMessageToServiceWorkerClient(WebCore::DocumentIdentifier destinationContextIdentifier, struct WebCore::MessageWithMessagePorts message, struct WebCore::ServiceWorkerData source, String sourceOrigin)
 
     DidMatchRegistration(uint64_t matchRequestIdentifier, std::optional<WebCore::ServiceWorkerRegistrationData> data)
     DidGetRegistrations(uint64_t matchRequestIdentifier, Vector<WebCore::ServiceWorkerRegistrationData> registrations)

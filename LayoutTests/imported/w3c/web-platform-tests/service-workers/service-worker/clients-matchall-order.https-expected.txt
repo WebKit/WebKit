@@ -1,9 +1,9 @@
 
-FAIL Clients.matchAll() returns non-focused controlled windows in creation order. promise_test: Unhandled rejection with value: object "NotSupportedError: Passing MessagePort objects to postMessage is not yet supported"
-FAIL Clients.matchAll() returns controlled windows in focus order.  Case 1. promise_test: Unhandled rejection with value: object "NotSupportedError: Passing MessagePort objects to postMessage is not yet supported"
-FAIL Clients.matchAll() returns controlled windows in focus order.  Case 2. promise_test: Unhandled rejection with value: object "NotSupportedError: Passing MessagePort objects to postMessage is not yet supported"
-FAIL Clients.matchAll() returns non-focused uncontrolled windows in creation order. promise_test: Unhandled rejection with value: object "NotSupportedError: Passing MessagePort objects to postMessage is not yet supported"
-FAIL Clients.matchAll() returns uncontrolled windows in focus order.  Case 1. promise_test: Unhandled rejection with value: object "NotSupportedError: Passing MessagePort objects to postMessage is not yet supported"
-FAIL Clients.matchAll() returns uncontrolled windows in focus order.  Case 2. promise_test: Unhandled rejection with value: object "NotSupportedError: Passing MessagePort objects to postMessage is not yet supported"
-FAIL Clients.matchAll() returns controlled windows and frames in focus order. promise_test: Unhandled rejection with value: object "NotSupportedError: Passing MessagePort objects to postMessage is not yet supported"
+PASS Clients.matchAll() returns non-focused controlled windows in creation order. 
+FAIL Clients.matchAll() returns controlled windows in focus order.  Case 1. assert_equals: expected URL index 0 expected "https://localhost:9443/service-workers/service-worker/resources/empty.html?name=focus-controlled-windows-1&q=2" but got "https://localhost:9443/service-workers/service-worker/resources/empty.html?name=focus-controlled-windows-1&q=0"
+PASS Clients.matchAll() returns controlled windows in focus order.  Case 2. 
+FAIL Clients.matchAll() returns non-focused uncontrolled windows in creation order. assert_equals: expected 6 but got 5
+FAIL Clients.matchAll() returns uncontrolled windows in focus order.  Case 1. assert_equals: expected 6 but got 5
+FAIL Clients.matchAll() returns uncontrolled windows in focus order.  Case 2. assert_equals: expected 6 but got 5
+FAIL Clients.matchAll() returns controlled windows and frames in focus order. assert_equals: expected URL index 0 expected "https://localhost:9443/service-workers/service-worker/resources/empty.html?name=focus-controlled-nested-windows&q=2" but got "https://localhost:9443/service-workers/service-worker/resources/empty.html?name=focus-controlled-nested-windows&q=0"
 
