@@ -130,14 +130,29 @@ class SubtestResultRecorder(object):
 
 class TestExpectationsMarker(object):
 
-    def __init__(self, expectations):
+    def __init__(self, expectations, ignore_param):
         self._expectations = expectations
+        self._ignore_param = ignore_param
         self._base_dir = WebKitFinder(FileSystem()).path_from_webkit_base('WebDriverTests')
+
+    def _item_name(self, item):
+        if self._ignore_param is None:
+            return item.name
+
+        single_param = '[%s]' % self._ignore_param
+        if item.name.endswith(single_param):
+            return item.name[:-len(single_param)]
+
+        param = '[%s-' % self._ignore_param
+        if param in item.name:
+            return item.name.replace('%s-' % self._ignore_param, '')
+
+        return item.name
 
     def pytest_collection_modifyitems(self, session, config, items):
         for item in items:
             test = os.path.relpath(str(item.fspath), self._base_dir)
-            expected = self._expectations.get_expectation(test, item.name)[0]
+            expected = self._expectations.get_expectation(test, self._item_name(item))[0]
             if expected == 'FAIL':
                 item.add_marker(pytest.mark.xfail)
             elif expected == 'TIMEOUT':
@@ -161,10 +176,10 @@ def collect(directory, args):
     return collect_recorder.tests
 
 
-def run(path, args, timeout, env, expectations):
+def run(path, args, timeout, env, expectations, ignore_param=None):
     harness_recorder = HarnessResultRecorder()
     subtests_recorder = SubtestResultRecorder()
-    expectations_marker = TestExpectationsMarker(expectations)
+    expectations_marker = TestExpectationsMarker(expectations, ignore_param)
     _environ = dict(os.environ)
     os.environ.clear()
     os.environ.update(env)

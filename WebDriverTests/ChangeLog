@@ -1,5 +1,16 @@
 2018-01-17  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        WebDriver: ignore the driver in selenium test names when getting expectations
+        https://bugs.webkit.org/show_bug.cgi?id=181738
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        Add some expectations for selenium tests.
+
+        * TestExpectations.json:
+
+2018-01-17  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         WebDriver: add support for test expectations
         https://bugs.webkit.org/show_bug.cgi?id=180420
 
