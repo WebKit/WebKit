@@ -1,5 +1,20 @@
 2018-01-23  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        WebDriver: several tests in imported/w3c/webdriver/tests/sessions/new_session/merge.py are failing
+        https://bugs.webkit.org/show_bug.cgi?id=180407
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        This is actually a bug in the spec, see https://github.com/w3c/webdriver/issues/1203. It seems the idea in any
+        case is that we should check all the firstMatch capabilities before matching them, and return if there's any
+        error.
+
+        * WebDriverService.cpp:
+        (WebDriver::WebDriverService::mergeCapabilities const):
+        (WebDriver::WebDriverService::processCapabilities const):
+
+2018-01-23  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         WebDriver: test imported/w3c/webdriver/tests/sessions/new_session/response.py::test_timeouts fails
         https://bugs.webkit.org/show_bug.cgi?id=180412
 
