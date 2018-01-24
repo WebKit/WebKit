@@ -142,6 +142,8 @@ class AutoinstallImportHook(object):
                               "pytest-timeout-1.2.0/pytest_timeout.py")
 
     def _install_pytest(self):
+        self._install("https://pypi.python.org/packages/90/e3/e075127d39d35f09a500ebb4a90afd10f9ef0a1d28a6d09abeec0e444fdd/py-1.5.2.tar.gz#md5=279ca69c632069e1b71e11b14641ca28",
+                              "py-1.5.2/py")
         self._install("https://pypi.python.org/packages/1f/f8/8cd74c16952163ce0db0bd95fdd8810cbf093c08be00e6e665ebf0dc3138/pytest-3.2.5.tar.gz#md5=6dbe9bb093883f75394a689a1426ac6f",
                               "pytest-3.2.5/_pytest")
         self._install("https://pypi.python.org/packages/1f/f8/8cd74c16952163ce0db0bd95fdd8810cbf093c08be00e6e665ebf0dc3138/pytest-3.2.5.tar.gz#md5=6dbe9bb093883f75394a689a1426ac6f",

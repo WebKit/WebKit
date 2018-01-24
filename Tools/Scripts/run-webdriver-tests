@@ -65,8 +65,8 @@ except NotImplementedError, e:
 
 port._display_server = options.display_server
 runner = WebDriverTestRunner(port)
-retval = runner.run(args)
-runner.print_results()
+runner.run(args)
+retval = runner.process_results()
 
 if options.json_output is not None:
     runner.dump_results_to_json_file(options.json_output)

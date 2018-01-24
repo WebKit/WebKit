@@ -35,18 +35,18 @@ _log = logging.getLogger(__name__)
 
 class WebDriverTestRunnerW3C(object):
 
-    def __init__(self, port, driver, display_driver):
+    def __init__(self, port, driver, display_driver, expectations):
         self._port = port
         self._driver = driver
         self._display_driver = display_driver
+        self._expectations = expectations
         self._results = []
+        self._tests_dir = WebKitFinder(self._port.host.filesystem).path_from_webkit_base('WebDriverTests')
 
         self._server = WebDriverW3CWebServer(self._port)
 
-    def _tests_dir(self):
-        return WebKitFinder(self._port.host.filesystem).path_from_webkit_base('WebDriverTests')
-
-    def collect_tests(self, tests=[]):
+    def collect_tests(self, tests):
+        skipped = [os.path.join(self._tests_dir, test) for test in self._expectations.skipped_tests()]
         relative_tests_dir = os.path.join('imported', 'w3c', 'webdriver', 'tests')
         w3c_tests = []
         if not tests:
@@ -54,10 +54,10 @@ class WebDriverTestRunnerW3C(object):
         for test in tests:
             if not test.startswith(relative_tests_dir):
                 continue
-            test_path = os.path.join(self._tests_dir(), test)
+            test_path = os.path.join(self._tests_dir, test)
             if os.path.isdir(test_path):
-                w3c_tests.extend(self._scan_directory(test_path))
-            elif self._is_test(test_path):
+                w3c_tests.extend(self._scan_directory(test_path, skipped))
+            elif self._is_test(test_path) and test_path not in skipped:
                 w3c_tests.append(test_path)
         return w3c_tests
 
@@ -72,10 +72,10 @@ class WebDriverTestRunnerW3C(object):
             return False
         return True
 
-    def _scan_directory(self, directory):
+    def _scan_directory(self, directory, skipped):
         tests = []
         for path in self._port.host.filesystem.files_under(directory):
-            if self._is_test(path):
+            if self._is_test(path) and path not in skipped:
                 tests.append(path)
         return tests
 
@@ -91,8 +91,8 @@ class WebDriverTestRunnerW3C(object):
         timeout = self._port.get_option('timeout')
         try:
             for test in tests:
-                test_name = os.path.relpath(test, self._tests_dir())
-                harness_result, test_results = executor.run(test, timeout)
+                test_name = os.path.relpath(test, self._tests_dir)
+                harness_result, test_results = executor.run(test, timeout, self._expectations)
                 result = WebDriverTestResult(test_name, *harness_result)
                 if harness_result[0] == 'OK':
                     for subtest, status, message, backtrace in test_results:
@@ -104,8 +104,6 @@ class WebDriverTestRunnerW3C(object):
         finally:
             executor.teardown()
             self._server.stop()
-
-        return len(self._results)
 
     def results(self):
         return self._results
