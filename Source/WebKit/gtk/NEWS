@@ -1,8 +1,19 @@
 ==================
+WebKitGTK+  2.18.6
+==================
+
+What's new in WebKitGTK+ 2.18.6?
+
+  - Fix deadlock in GStreamer video sink during shutdown when accelerated compositing is disabled.
+  - Several fixes and improvements in WebDriver.
+  - Security fixes: CVE-2018-4088, CVE-2017-13885, CVE-2017-7165, CVE-2017-13884, CVE-2017-7160,
+    CVE-2017-7153, CVE-2017-7153, CVE-2017-7161, CVE-2018-4096.
+
+==================
 WebKitGTK+  2.18.5
 ==================
 
-What's new in WebKitGTK+ 2.18.4?
+What's new in WebKitGTK+ 2.18.5?
 
   - Disable SharedArrayBuffers from Web API.
   - Reduce the precision of "high" resolution time to 1ms.
