@@ -661,6 +661,8 @@ void MediaPlayerPrivateGStreamerBase::triggerRepaint(GstSample* sample)
 
     if (!m_renderingCanBeAccelerated) {
         LockHolder locker(m_drawMutex);
+        if (m_drawCancelled)
+            return;
         m_drawTimer.startOneShot(0_s);
         m_drawCondition.wait(m_drawMutex);
         return;
@@ -672,6 +674,8 @@ void MediaPlayerPrivateGStreamerBase::triggerRepaint(GstSample* sample)
 #else
     {
         LockHolder lock(m_drawMutex);
+        if (m_drawCancelled)
+            return;
         if (!m_platformLayerProxy->scheduleUpdateOnCompositorThread([this] { this->pushTextureToCompositor(); }))
             return;
         m_drawCondition.wait(m_drawMutex);
@@ -687,11 +691,14 @@ void MediaPlayerPrivateGStreamerBase::repaintCallback(MediaPlayerPrivateGStreame
 
 void MediaPlayerPrivateGStreamerBase::cancelRepaint()
 {
+    LockHolder locker(m_drawMutex);
+
     if (!m_renderingCanBeAccelerated) {
         m_drawTimer.stop();
-        LockHolder locker(m_drawMutex);
-        m_drawCondition.notifyOne();
     }
+
+    m_drawCancelled = true;
+    m_drawCondition.notifyOne();
 }
 
 void MediaPlayerPrivateGStreamerBase::repaintCancelledCallback(MediaPlayerPrivateGStreamerBase* player)
