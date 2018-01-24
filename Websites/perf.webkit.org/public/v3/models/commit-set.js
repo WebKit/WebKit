@@ -87,7 +87,7 @@ class CommitSet extends DataModelObject {
 
     patchForRepository(repository) { return this._repositoryToPatchMap.get(repository); }
     rootForRepository(repository) { return this._repositoryToRootMap.get(repository); }
-    requiresBuildForRepository(repository) { return this._repositoryRequiresBuildMap.get(repository); }
+    requiresBuildForRepository(repository) { return this._repositoryRequiresBuildMap.get(repository) || false; }
 
     // FIXME: This should return a Date object.
     latestCommitTime()
@@ -108,13 +108,13 @@ class CommitSet extends DataModelObject {
         for (const [repository, commit] of this._repositoryToCommitMap) {
             if (commit != other._repositoryToCommitMap.get(repository))
                 return false;
-            if (this._repositoryToPatchMap.get(repository) != other._repositoryToPatchMap.get(repository))
+            if (this.patchForRepository(repository) != other.patchForRepository(repository))
                 return false;
-            if (this._repositoryToRootMap.get(repository) != other._repositoryToRootMap.get(repository))
+            if (this.rootForRepository(repository) != other.rootForRepository(repository))
                 return false;
-            if (this._repositoryToCommitOwnerMap.get(repository) != other._repositoryToCommitMap.get(repository))
+            if (this.ownerCommitForRepository(repository) != other.ownerCommitForRepository(repository))
                 return false;
-            if (this._repositoryRequiresBuildMap.get(repository) != other._repositoryRequiresBuildMap.get(repository))
+            if (this.requiresBuildForRepository(repository) != other.requiresBuildForRepository(repository))
                 return false;
         }
         return CommitSet.areCustomRootsEqual(this._customRoots, other._customRoots);

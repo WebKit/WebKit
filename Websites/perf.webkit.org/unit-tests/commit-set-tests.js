@@ -7,14 +7,26 @@ const MockRemoteAPI = require('../unit-tests/resources/mock-remote-api.js').Mock
 
 function createPatch()
 {
-    return new UploadedFile(453, {'createdAt': new Date('2017-05-01T19:16:53Z'), 'filename': 'patch.dat', 'extension': '.dat', 'author': 'some user',
+    return UploadedFile.ensureSingleton(453, {'createdAt': new Date('2017-05-01T19:16:53Z'), 'filename': 'patch.dat', 'extension': '.dat', 'author': 'some user',
         size: 534637, sha256: '169463c8125e07c577110fe144ecd63942eb9472d438fc0014f474245e5df8a1'});
+}
+
+function createAnotherPatch()
+{
+    return UploadedFile.ensureSingleton(454, {'createdAt': new Date('2017-05-01T19:16:53Z'), 'filename': 'patch.dat', 'extension': '.dat', 'author': 'some user',
+        size: 534611, sha256: '169463c8125e07c577110fe144ecd63942eb9472d438fc0014f474245e5dfaaa'});
 }
 
 function createRoot()
 {
-    return new UploadedFile(456, {'createdAt': new Date('2017-05-01T21:03:27Z'), 'filename': 'root.dat', 'extension': '.dat', 'author': 'some user',
+    return UploadedFile.ensureSingleton(456, {'createdAt': new Date('2017-05-01T21:03:27Z'), 'filename': 'root.dat', 'extension': '.dat', 'author': 'some user',
         size: 16452234, sha256: '03eed7a8494ab8794c44b7d4308e55448fc56f4d6c175809ba968f78f656d58d'});
+}
+
+function createAnotherRoot()
+{
+    return UploadedFile.ensureSingleton(457, {'createdAt': new Date('2017-05-01T21:03:27Z'), 'filename': 'root.dat', 'extension': '.dat', 'author': 'some user',
+        size: 16452111, sha256: '03eed7a8494ab8794c44b7d4308e55448fc56f4d6c175809ba968f78f656dbbb'});
 }
 
 function customCommitSetWithoutOwnedCommit()
@@ -54,7 +66,7 @@ function customCommitSetWithOwnedRepositoryHasSameNameAsNotOwnedRepository()
 
 function ownerCommit()
 {
-    return new CommitLog(5, {
+    return CommitLog.ensureSingleton(5, {
         repository: MockModels.ownerRepository,
         revision: 'owner-commit-0',
         ownsCommits: true,
@@ -64,7 +76,7 @@ function ownerCommit()
 
 function partialOwnerCommit()
 {
-    return new CommitLog(5, {
+    return CommitLog.ensureSingleton(5, {
         repository: MockModels.ownerRepository,
         revision: 'owner-commit-0',
         ownsCommits: null,
@@ -84,13 +96,110 @@ function ownedCommit()
 
 function webkitCommit()
 {
-    return new CommitLog(2017, {
+    return CommitLog.ensureSingleton(2017, {
         repository: MockModels.webkit,
         revision: 'webkit-commit-0',
         ownsCommits: false,
         time: 1456932773000
     });
 }
+
+describe('CommitSet', () => {
+    MockRemoteAPI.inject();
+    MockModels.inject();
+
+    function oneCommitSet()
+    {
+        return CommitSet.ensureSingleton(1, {
+            revisionItems: [{ commit: webkitCommit(), requiresBuild: false }],
+            customRoots: []
+        });
+    }
+
+    function anotherCommitSet()
+    {
+        return CommitSet.ensureSingleton(2, {
+            revisionItems: [{ commit: webkitCommit(), requiresBuild: false }],
+            customRoots: []
+        });
+    }
+
+    function commitSetWithPatch()
+    {
+        return CommitSet.ensureSingleton(3, {
+            revisionItems: [{ commit: webkitCommit(), requiresBuild: false, patch: createPatch() }],
+            customRoots: []
+        });
+    }
+
+    function commitSetWithAnotherPatch()
+    {
+        return CommitSet.ensureSingleton(4, {
+            revisionItems: [{ commit: webkitCommit(), requiresBuild: false, patch: createAnotherPatch() }],
+            customRoots: []
+        });
+    }
+
+    function commitSetWithRoot()
+    {
+        return CommitSet.ensureSingleton(5, {
+            revisionItems: [{ commit: webkitCommit(), requiresBuild: false }],
+            customRoots: [createRoot()]
+        });
+    }
+
+    function anotherCommitSetWithRoot()
+    {
+        return CommitSet.ensureSingleton(6, {
+            revisionItems: [{ commit: webkitCommit(), requiresBuild: false }],
+            customRoots: [createAnotherRoot()]
+        });
+    }
+
+    function oneMeasurementCommitSet()
+    {
+        return MeasurementCommitSet.ensureSingleton(1, [
+            [2017, 11, 'webkit-commit-0', 1456932773000]
+        ]);
+    }
+
+    describe('equals', () => {
+        it('should return false if patches for same repository are different', () => {
+            assert(!commitSetWithPatch().equals(commitSetWithAnotherPatch()));
+            assert(!commitSetWithAnotherPatch().equals(commitSetWithPatch()));
+        });
+
+        it('should return false if patch is only specified in one commit set', () => {
+            assert(!oneCommitSet().equals(commitSetWithPatch()));
+            assert(!commitSetWithPatch().equals(oneCommitSet()));
+        });
+
+        it('should return false if roots for same repository are different', () => {
+            assert(!commitSetWithRoot().equals(anotherCommitSetWithRoot()));
+            assert(!anotherCommitSetWithRoot().equals(commitSetWithRoot()));
+        });
+
+        it('should return false if root is only specified in one commit set', () => {
+            assert(!commitSetWithRoot().equals(oneCommitSet()));
+            assert(!oneCommitSet().equals(commitSetWithRoot()));
+        });
+
+        it('should return true when comparing two identical commit set', () => {
+            assert(oneCommitSet().equals(oneCommitSet()));
+            assert(anotherCommitSet().equals(anotherCommitSet()));
+            assert(commitSetWithPatch().equals(commitSetWithPatch()));
+            assert(commitSetWithAnotherPatch().equals(commitSetWithAnotherPatch()));
+            assert(oneMeasurementCommitSet().equals(oneMeasurementCommitSet()));
+            assert(commitSetWithRoot().equals(commitSetWithRoot()));
+            assert(anotherCommitSetWithRoot().equals(anotherCommitSetWithRoot()));
+        });
+
+        it('should be able to compare between CommitSet and MeasurementCommitSet', () => {
+            assert(oneCommitSet().equals(oneMeasurementCommitSet()));
+            assert(oneMeasurementCommitSet().equals(oneCommitSet()));
+        });
+    })
+});
 
 describe('IntermediateCommitSet', () => {
     MockRemoteAPI.inject();

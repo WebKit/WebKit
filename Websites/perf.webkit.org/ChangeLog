@@ -1,3 +1,26 @@
+2018-01-22  Dewei Zhu  <dewei_zhu@apple.com>
+
+        Fix the bug that 'TestGroupResultsViewer' creates unnecessary rows.
+        https://bugs.webkit.org/show_bug.cgi?id=181967
+
+        Reviewed by Ryosuke Niwa.
+
+        Fixed a bug caused by a typo in CommitSet.equals, which makes it returns incorrect results for most
+        comparison between a CommitSet and a MeasurementCommitSet.
+
+        MeasurementCommitSet does not have full information for the commits, thus, it cannot build mappings
+        between root/patch/owner commit/requires build to repository. When querying whether a given repository
+        needs to be built, MeasurementCommitSet will return undefined. Due to 'undefined != false', this
+        equality check will fail. Making 'CommitSet.requiresBuildForRepository' defaults to 'false' would fix
+        this bug.
+
+        * public/v3/models/commit-set.js:
+        (CommitSet.prototype.requiresBuildForRepository): Make it return false when key does not exist
+        instead of 'undefined'.
+        (CommitSet.prototype.equals): Fixed the typo that causes the bug.
+        Use wrapped functions instead of querying the mapping directly.
+        * unit-tests/commit-set-tests.js: Added unit tests.
+
 2018-01-18  Dewei Zhu  <dewei_zhu@apple.com>
 
         'run-test.py' script should make sure 'node_modules' directory exists before installing node packages.
