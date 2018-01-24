@@ -172,7 +172,6 @@ typedef void (^CFCachedURLResponseCallBackBlock)(CFCachedURLResponseRef);
 @end
 #endif
 
-#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200) || PLATFORM(IOS)
 @interface NSHTTPCookie ()
 @property (nullable, readonly, copy) NSString *_storagePartition;
 @end
@@ -186,7 +185,6 @@ typedef void (^CFCachedURLResponseCallBackBlock)(CFCachedURLResponseRef);
 @property (readwrite, copy) NSString *_pathToDownloadTaskFile;
 @property (copy) NSString *_storagePartitionIdentifier;
 @end
-#endif
 
 #endif // defined(__OBJC__)
 

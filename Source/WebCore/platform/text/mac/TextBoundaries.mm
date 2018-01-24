@@ -232,32 +232,6 @@ void findEndWordBoundary(StringView text, int position, int* end)
 int findNextWordFromIndex(StringView text, int position, bool forward)
 {   
 #if USE(APPKIT)
-#if __MAC_OS_X_VERSION_MIN_REQUIRED < 101200
-    if (!text.length())
-        return 0;
-    if (!text.is8Bit() && !forward) {
-        int chunkSize = 256;
-        int decrement = chunkSize / 2;
-        for (int startPosition = std::max(0, position - chunkSize); startPosition > -decrement; startPosition -= decrement) {
-            int length;
-            if (startPosition < 0) {
-                length = chunkSize + startPosition;
-                startPosition = 0;
-            } else
-                length = std::min(chunkSize, position - startPosition);
-            if (length > 1 && U16_IS_LEAD(text[startPosition + length - 1]) && (static_cast<unsigned>(startPosition + length) < text.length()) && U16_IS_TRAIL(text[startPosition + length])) {
-                ++startPosition;
-                ++length;
-            }
-            StringView shortText(text.characters16() + startPosition, length);
-            RetainPtr<NSAttributedString> attributedString = adoptNS([[NSAttributedString alloc] initWithString:shortText.createNSStringWithoutCopying().get()]);
-            int result = [attributedString nextWordFromIndex:length forward:forward];
-            if (result && (result != 1 || !U16_IS_TRAIL(shortText[0])))
-                return startPosition + result;
-        }
-        return 0;
-    }
-#endif
     NSAttributedString *attributedString = [[NSAttributedString alloc] initWithString:text.createNSStringWithoutCopying().get()];
     int result = [attributedString nextWordFromIndex:position forward:forward];
     [attributedString release];

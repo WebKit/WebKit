@@ -182,7 +182,7 @@ void ResourceRequest::doUpdatePlatformRequest()
         [NSURLProtocol setProperty:partitionValue forKey:(NSString *)_kCFURLCachePartitionKey inRequest:nsRequest];
     }
 
-#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200)
+#if PLATFORM(MAC)
     if (m_url.isLocalFile()) {
         auto fsRepFile = FileSystem::fileSystemRepresentation(m_url.fileSystemPath());
         if (!fsRepFile.isNull()) {

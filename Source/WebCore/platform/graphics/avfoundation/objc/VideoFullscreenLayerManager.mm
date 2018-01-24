@@ -113,7 +113,7 @@ void VideoFullscreenLayerManager::setVideoFullscreenLayer(PlatformLayer *videoFu
 
         CAContext *newContext = [m_videoLayer context];
         if (oldContext && newContext && oldContext != newContext) {
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200
+#if PLATFORM(MAC)
             oldContext.commitPriority = 0;
             newContext.commitPriority = 1;
 #endif

@@ -43,11 +43,7 @@ namespace WebCore {
 #if PLATFORM(MAC)
 static NSBitmapImageFileType bitmapPNGFileType()
 {
-#if __MAC_OS_X_VERSION_MAX_ALLOWED >= 101200
     return NSBitmapImageFileTypePNG;
-#else
-    return NSPNGFileType;
-#endif
 }
 #endif // PLATFORM(MAC)
 

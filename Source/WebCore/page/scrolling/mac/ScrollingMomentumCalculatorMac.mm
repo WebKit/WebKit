@@ -70,9 +70,7 @@ void ScrollingMomentumCalculatorMac::retargetedScrollOffsetDidChange()
 {
     _NSScrollingMomentumCalculator *calculator = ensurePlatformMomentumCalculator();
     calculator.destinationOrigin = NSMakePoint(retargetedScrollOffset().width(), retargetedScrollOffset().height());
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200
     [calculator calculateToReachDestination];
-#endif
 }
 
 Seconds ScrollingMomentumCalculatorMac::animationDuration()

@@ -343,7 +343,7 @@ void PDFDocumentImage::drawPDFPage(GraphicsContext& context)
     notImplemented();
 #else
     // CGPDF pages are indexed from 1.
-#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200) || PLATFORM(IOS)
+#if PLATFORM(COCOA)
     CGContextDrawPDFPageWithAnnotations(context.platformContext(), CGPDFDocumentGetPage(m_document.get(), 1), nullptr);
 #else
     CGContextDrawPDFPage(context.platformContext(), CGPDFDocumentGetPage(m_document.get(), 1));

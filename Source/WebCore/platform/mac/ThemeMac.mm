@@ -867,11 +867,7 @@ void ThemeMac::paint(ControlPart part, ControlStates& states, GraphicsContext& c
 
 bool ThemeMac::userPrefersReducedMotion() const
 {
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200
     return [[NSWorkspace sharedWorkspace] accessibilityDisplayShouldReduceMotion];
-#else
-    return false;
-#endif
 }
 
 }

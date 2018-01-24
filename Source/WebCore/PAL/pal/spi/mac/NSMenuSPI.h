@@ -57,12 +57,7 @@ enum {
 
 @class QLPreviewMenuItem;
 
-#if __MAC_OS_X_VERSION_MAX_ALLOWED < 101200
-@interface NSMenuItem () <NSUserInterfaceItemIdentification>
-#else 
 @interface NSMenuItem ()
-#endif
-
 + (QLPreviewMenuItem *)standardQuickLookMenuItem;
 + (NSMenuItem *)standardShareMenuItemForItems:(NSArray *)items;
 @end

@@ -234,7 +234,7 @@ void Font::platformDestroy()
 
 bool Font::variantCapsSupportsCharacterForSynthesis(FontVariantCaps fontVariantCaps, UChar32 character) const
 {
-#if (PLATFORM(IOS) && TARGET_OS_IOS) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200)
+#if (PLATFORM(IOS) && TARGET_OS_IOS) || PLATFORM(MAC)
     Glyph glyph = glyphForCharacter(character);
     if (!glyph)
         return false;
@@ -276,7 +276,7 @@ bool Font::variantCapsSupportsCharacterForSynthesis(FontVariantCaps fontVariantC
 #endif
 }
 
-#if (PLATFORM(IOS) && TARGET_OS_IOS) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200)
+#if (PLATFORM(IOS) && TARGET_OS_IOS) || PLATFORM(MAC)
 static RetainPtr<CFDictionaryRef> smallCapsOpenTypeDictionary(CFStringRef key, int rawValue)
 {
     RetainPtr<CFNumberRef> value = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberIntType, &rawValue));
@@ -581,37 +581,12 @@ FloatRect Font::platformBoundsForGlyph(Glyph glyph) const
     return boundingBox;
 }
 
-#if !((PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200) || PLATFORM(IOS))
-static inline std::optional<CGSize> advanceForColorBitmapFont(const FontPlatformData& platformData, Glyph glyph)
-{
-    CTFontRef font = platformData.font();
-    if (!font || !platformData.isColorBitmapFont())
-        return std::nullopt;
-    CGSize advance;
-    CTFontGetAdvancesForGlyphs(font, kCTFontOrientationDefault, &glyph, &advance, 1);
-    return advance;
-}
-
-static inline bool canUseFastGlyphAdvanceGetter(const FontPlatformData& platformData, Glyph glyph, CGSize& advance, bool& populatedAdvance)
-{
-    if (platformData.isEmoji() || platformData.hasCustomTracking() || platformData.textRenderingMode() == OptimizeLegibility)
-        return false;
-    if (auto size = advanceForColorBitmapFont(platformData, glyph)) {
-        populatedAdvance = true;
-        advance = size.value();
-        return false;
-    }
-    return true;
-}
-#endif
-
 float Font::platformWidthForGlyph(Glyph glyph) const
 {
     CGSize advance = CGSizeZero;
     bool horizontal = platformData().orientation() == Horizontal;
     CGFontRenderingStyle style = kCGFontRenderingStyleAntialiasing | kCGFontRenderingStyleSubpixelPositioning | kCGFontRenderingStyleSubpixelQuantization | kCGFontAntialiasingStyleUnfiltered;
 
-#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200) || PLATFORM(IOS)
     if (platformData().size()) {
         CTFontOrientation orientation = horizontal || m_isBrokenIdeographFallback ? kCTFontOrientationHorizontal : kCTFontOrientationVertical;
         // FIXME: Remove this special-casing when <rdar://problem/28197291> and <rdar://problem/28662086> are fixed.
@@ -620,22 +595,6 @@ float Font::platformWidthForGlyph(Glyph glyph) const
         else
             CTFontGetUnsummedAdvancesForGlyphsAndStyle(m_platformData.ctFont(), orientation, style, &glyph, &advance, 1);
     }
-
-#else
-
-    bool populatedAdvance = false;
-    if ((horizontal || m_isBrokenIdeographFallback) && canUseFastGlyphAdvanceGetter(this->platformData(), glyph, advance, populatedAdvance)) {
-        float pointSize = platformData().size();
-        CGAffineTransform m = CGAffineTransformMakeScale(pointSize, pointSize);
-        if (!CGFontGetGlyphAdvancesForStyle(platformData().cgFont(), &m, style, &glyph, 1, &advance)) {
-            RetainPtr<CFStringRef> fullName = adoptCF(CGFontCopyFullName(platformData().cgFont()));
-            LOG_ERROR("Unable to cache glyph widths for %@ %f", fullName.get(), pointSize);
-            advance.width = 0;
-        }
-    } else if (!populatedAdvance && platformData().size())
-        CTFontGetAdvancesForGlyphs(m_platformData.ctFont(), horizontal ? kCTFontOrientationHorizontal : kCTFontOrientationVertical, &glyph, &advance, 1);
-#endif
-
     return advance.width + m_syntheticBoldOffset;
 }
 

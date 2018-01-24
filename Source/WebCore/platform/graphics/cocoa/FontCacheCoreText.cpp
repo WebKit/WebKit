@@ -35,7 +35,6 @@
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
 
-#define SHOULD_USE_CORE_TEXT_FONT_LOOKUP (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 101200)
 #define HAS_CORE_TEXT_WIDTH_ATTRIBUTE ((PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000))
 #define CAN_DISALLOW_USER_INSTALLED_FONTS ((PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 120000) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101400))
 
@@ -810,29 +809,6 @@ static inline bool isSystemFont(const AtomicString& family)
     return family[0] == '.';
 }
 
-#if SHOULD_USE_CORE_TEXT_FONT_LOOKUP
-static float fontWeightFromCoreText(CGFloat weight)
-{
-    if (weight < -0.6)
-        return 100;
-    if (weight < -0.365)
-        return 200;
-    if (weight < -0.115)
-        return 300;
-    if (weight <  0.130)
-        return 400;
-    if (weight <  0.235)
-        return 500;
-    if (weight <  0.350)
-        return 600;
-    if (weight <  0.500)
-        return 700;
-    if (weight <  0.700)
-        return 800;
-    return 900;
-}
-#endif
-
 class FontDatabase {
 public:
 #if !CAN_DISALLOW_USER_INSTALLED_FONTS
@@ -1077,7 +1053,6 @@ static VariationCapabilities variationCapabilitiesForFontDescriptor(CTFontDescri
     return result;
 }
 
-#if !SHOULD_USE_CORE_TEXT_FONT_LOOKUP || HAS_CORE_TEXT_WIDTH_ATTRIBUTE
 static float getCSSAttribute(CTFontDescriptorRef fontDescriptor, const CFStringRef attribute, float fallback)
 {
     auto number = adoptCF(static_cast<CFNumberRef>(CTFontDescriptorCopyAttribute(fontDescriptor, attribute)));
@@ -1088,7 +1063,6 @@ static float getCSSAttribute(CTFontDescriptorRef fontDescriptor, const CFStringR
     ASSERT_UNUSED(success, success);
     return cssValue;
 }
-#endif
 
 FontSelectionCapabilities capabilitiesForFontDescriptor(CTFontDescriptorRef fontDescriptor)
 {
@@ -1097,7 +1071,7 @@ FontSelectionCapabilities capabilitiesForFontDescriptor(CTFontDescriptorRef font
 
     VariationCapabilities variationCapabilities = variationCapabilitiesForFontDescriptor(fontDescriptor);
 
-#if SHOULD_USE_CORE_TEXT_FONT_LOOKUP || !HAS_CORE_TEXT_WIDTH_ATTRIBUTE
+#if !HAS_CORE_TEXT_WIDTH_ATTRIBUTE
     bool weightOrWidthComeFromTraits = !variationCapabilities.weight || !variationCapabilities.width;
 #else
     bool weightOrWidthComeFromTraits = false;
@@ -1124,29 +1098,13 @@ FontSelectionCapabilities capabilitiesForFontDescriptor(CTFontDescriptorRef font
                 } else
                     variationCapabilities.slope = {{ static_cast<float>(normalItalicValue()), static_cast<float>(normalItalicValue()) }};
             }
-
-#if SHOULD_USE_CORE_TEXT_FONT_LOOKUP
-            if (!variationCapabilities.weight) {
-                auto weightNumber = static_cast<CFNumberRef>(CFDictionaryGetValue(traits.get(), kCTFontWeightTrait));
-                if (weightNumber) {
-                    CGFloat ctWeight;
-                    auto success = CFNumberGetValue(weightNumber, kCFNumberCGFloatType, &ctWeight);
-                    ASSERT_UNUSED(success, success);
-                    auto weightValue = fontWeightFromCoreText(ctWeight);
-                    variationCapabilities.weight = {{ weightValue, weightValue }};
-                } else
-                    variationCapabilities.weight = {{ static_cast<float>(normalWeightValue()), static_cast<float>(normalWeightValue()) }};
-            }
-#endif
         }
     }
 
-#if !SHOULD_USE_CORE_TEXT_FONT_LOOKUP
     if (!variationCapabilities.weight) {
         auto value = getCSSAttribute(fontDescriptor, kCTFontCSSWeightAttribute, static_cast<float>(normalWeightValue()));
         variationCapabilities.weight = {{ value, value }};
     }
-#endif
 
 #if HAS_CORE_TEXT_WIDTH_ATTRIBUTE
     if (!variationCapabilities.width) {
@@ -1164,7 +1122,6 @@ FontSelectionCapabilities capabilitiesForFontDescriptor(CTFontDescriptorRef font
     return result;
 }
 
-#if !SHOULD_USE_CORE_TEXT_FONT_LOOKUP
 static const FontDatabase::InstalledFont* findClosestFont(const FontDatabase::InstalledFontFamily& familyFonts, FontSelectionRequest fontSelectionRequest)
 {
     Vector<FontSelectionCapabilities> capabilities;
@@ -1174,7 +1131,6 @@ static const FontDatabase::InstalledFont* findClosestFont(const FontDatabase::In
     FontSelectionAlgorithm fontSelectionAlgorithm(fontSelectionRequest, capabilities, familyFonts.capabilities);
     return &familyFonts.installedFonts[fontSelectionAlgorithm.indexOfBestCapabilities()];
 }
-#endif
 
 Vector<FontSelectionCapabilities> FontCache::getFontSelectionCapabilitiesInFamily(const AtomicString& familyName, AllowUserInstalledFonts allowUserInstalledFonts)
 {
@@ -1201,11 +1157,6 @@ static FontLookup platformFontLookupWithFamily(const AtomicString& family, FontS
     if (!isSystemFont(family) && whitelist.size() && !whitelist.contains(family))
         return { nullptr };
 
-#if SHOULD_USE_CORE_TEXT_FONT_LOOKUP
-    UNUSED_PARAM(allowUserInstalledFonts);
-    CTFontSymbolicTraits traits = (isFontWeightBold(request.weight) ? kCTFontTraitBold : 0) | (isItalic(request.slope) ? kCTFontTraitItalic : 0);
-    return { adoptCF(CTFontCreateForCSS(family.string().createCFString().get(), static_cast<float>(request.weight), traits, size)) };
-#else
     auto& fontDatabase = allowUserInstalledFonts == AllowUserInstalledFonts::Yes ? FontDatabase::singletonAllowingUserInstalledFonts() : FontDatabase::singletonDisallowingUserInstalledFonts();
     const auto& familyFonts = fontDatabase.collectionForFamily(family.string());
     if (familyFonts.isEmpty()) {
@@ -1241,7 +1192,6 @@ static FontLookup platformFontLookupWithFamily(const AtomicString& family, FontS
         return { adoptCF(CTFontCreateWithFontDescriptor(installedFont->fontDescriptor.get(), size, nullptr)), false };
 
     return { nullptr };
-#endif
 }
 
 static void invalidateFontCache()
@@ -1364,7 +1314,7 @@ static RetainPtr<CTFontRef> lookupFallbackFont(CTFontRef font, FontSelectionValu
     ASSERT(length > 0);
 
     RetainPtr<CFStringRef> localeString;
-#if (PLATFORM(IOS) && TARGET_OS_IOS) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200)
+#if (PLATFORM(IOS) && TARGET_OS_IOS) || PLATFORM(MAC)
     if (!locale.isNull())
         localeString = locale.string().createCFString();
 #else
@@ -1373,7 +1323,7 @@ static RetainPtr<CTFontRef> lookupFallbackFont(CTFontRef font, FontSelectionValu
 
     CFIndex coveredLength = 0;
     RetainPtr<CTFontRef> result;
-#if !USE_PLATFORM_SYSTEM_FALLBACK_LIST && ((PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200) || (PLATFORM(IOS) && TARGET_OS_IOS))
+#if !USE_PLATFORM_SYSTEM_FALLBACK_LIST && (PLATFORM(MAC) || (PLATFORM(IOS) && TARGET_OS_IOS))
     result = adoptCF(CTFontCreatePhysicalFontForCharactersWithLanguage(font, characters, length, localeString.get(), &coveredLength));
 #else
     result = adoptCF(CTFontCreateForCharactersWithLanguage(font, characters, length, localeString.get(), &coveredLength));

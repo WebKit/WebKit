@@ -39,11 +39,7 @@ namespace WebCore {
 enum TextSpacingCTFeatureSelector { TextSpacingProportional, TextSpacingFullWidth, TextSpacingHalfWidth, TextSpacingThirdWidth, TextSpacingQuarterWidth };
 
 FontPlatformData::FontPlatformData(CTFontRef font, float size, bool syntheticBold, bool syntheticOblique, FontOrientation orientation, FontWidthVariant widthVariant, TextRenderingMode textRenderingMode)
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 101200
-    : FontPlatformData(adoptCF(CTFontCopyGraphicsFont(font, NULL)).get(), size, syntheticBold, syntheticOblique, orientation, widthVariant, textRenderingMode)
-#else
     : FontPlatformData(size, syntheticBold, syntheticOblique, orientation, widthVariant, textRenderingMode)
-#endif
 {
     ASSERT_ARG(font, font);
     m_font = font;
@@ -60,11 +56,7 @@ FontPlatformData::FontPlatformData(CTFontRef font, float size, bool syntheticBol
 unsigned FontPlatformData::hash() const
 {
     uintptr_t flags = static_cast<uintptr_t>(m_widthVariant << 6 | m_isHashTableDeletedValue << 5 | m_textRenderingMode << 3 | m_orientation << 2 | m_syntheticBold << 1 | m_syntheticOblique);
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 101200
-    uintptr_t fontHash = reinterpret_cast<uintptr_t>(m_font.get());
-#else
     uintptr_t fontHash = reinterpret_cast<uintptr_t>(CFHash(m_font.get()));
-#endif
     uintptr_t hashCodes[] = { fontHash, flags };
     return StringHasher::hashMemory<sizeof(hashCodes)>(hashCodes);
 }
@@ -73,11 +65,7 @@ bool FontPlatformData::platformIsEqual(const FontPlatformData& other) const
 {
     if (!m_font || !other.m_font)
         return m_font == other.m_font;
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 101200
-    return m_font == other.m_font;
-#else
     return CFEqual(m_font.get(), other.m_font.get());
-#endif
 }
 
 CTFontRef FontPlatformData::registeredFont() const
@@ -161,9 +149,6 @@ CTFontRef FontPlatformData::ctFont() const
         return m_ctFont.get();
 
     ASSERT(m_font);
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 101200
-    ASSERT(m_cgFont);
-#endif
     m_ctFont = adoptCF(CTFontCreateCopyWithAttributes(m_font.get(), m_size, 0, cascadeToLastResortAndVariationsFontDescriptor(m_font.get()).get()));
 
     if (m_widthVariant != RegularWidth) {

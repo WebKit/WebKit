@@ -92,8 +92,6 @@ CGColorSpaceRef sRGBColorSpaceRef()
     return sRGBColorSpace;
 }
 
-#if PLATFORM(WIN) || PLATFORM(IOS) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200)
-// See GraphicsContextCocoa for the pre-10.12 implementation.
 CGColorSpaceRef linearRGBColorSpaceRef()
 {
     static CGColorSpaceRef linearRGBColorSpace;
@@ -108,7 +106,6 @@ CGColorSpaceRef linearRGBColorSpaceRef()
     });
     return linearRGBColorSpace;
 }
-#endif
 
 CGColorSpaceRef extendedSRGBColorSpaceRef()
 {
@@ -116,7 +113,7 @@ CGColorSpaceRef extendedSRGBColorSpaceRef()
     static std::once_flag onceFlag;
     std::call_once(onceFlag, [] {
         CGColorSpaceRef colorSpace = NULL;
-#if PLATFORM(IOS) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200)
+#if PLATFORM(COCOA)
         colorSpace = CGColorSpaceCreateWithName(kCGColorSpaceExtendedSRGB);
 #endif
         // If there is no support for extended sRGB, fall back to sRGB.

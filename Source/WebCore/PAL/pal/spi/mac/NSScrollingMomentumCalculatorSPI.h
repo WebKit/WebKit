@@ -33,9 +33,7 @@
 
 - (instancetype)initWithInitialOrigin:(NSPoint)origin velocity:(NSPoint)velocity documentFrame:(NSRect)docFrame constrainedClippingOrigin:(NSPoint)constrainedClippingOrigin clippingSize:(NSSize)clipViewSize tolerance:(NSSize)tolerance;
 - (NSPoint)positionAfterDuration:(NSTimeInterval)duration;
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200
 - (void)calculateToReachDestination;
-#endif
 
 @property NSPoint destinationOrigin;
 @property (readonly) NSTimeInterval durationUntilStop;
