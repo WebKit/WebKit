@@ -2862,10 +2862,12 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     }
     case HasGenericProperty: {
         forNode(node).setType(SpecBoolean);
+        clobberWorld(node->origin.semantic, clobberLimit);
         break;
     }
     case HasStructureProperty: {
         forNode(node).setType(SpecBoolean);
+        clobberWorld(node->origin.semantic, clobberLimit);
         break;
     }
     case HasIndexedProperty: {
@@ -2892,6 +2894,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     }
     case GetPropertyEnumerator: {
         forNode(node).setType(m_graph, SpecCell);
+        clobberWorld(node->origin.semantic, clobberLimit);
         break;
     }
     case GetEnumeratorStructurePname: {
