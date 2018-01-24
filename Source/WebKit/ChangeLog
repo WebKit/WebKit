@@ -1,5 +1,16 @@
 2018-01-24  Alex Christensen  <achristensen@webkit.org>
 
+        Remove WebProcess access to QTKit
+        https://bugs.webkit.org/show_bug.cgi?id=182035
+
+        Reviewed by Alexey Proskuryakov.
+
+        * WebProcess/com.apple.WebProcess.sb.in:
+        This isn't needed any more.  We only have a little bit of code that uses QTKit which we should remove,
+        and it's only used for fullscreen controls in WebKitLegacy.  Let's tighten up the sandbox!
+
+2018-01-24  Alex Christensen  <achristensen@webkit.org>
+
         Remove pre-Sierra-OS-specific code in WebKit
         https://bugs.webkit.org/show_bug.cgi?id=182024
 
