@@ -1,5 +1,15 @@
 2017-10-27  Daniel Bates  <dabates@apple.com>
 
+        Attempt to fix the Apple El Capitan build following <https://trac.webkit.org/changeset/224134>
+        (https://bugs.webkit.org/show_bug.cgi?id=178919)
+
+        Move definition of NetworkLoad::isAllowedToAskUserForCredentials() outside of USE(NETWORK_SESSION)-guarded section.
+
+        * NetworkProcess/NetworkLoad.cpp:
+        (WebKit::NetworkLoad::isAllowedToAskUserForCredentials const):
+
+2017-10-27  Daniel Bates  <dabates@apple.com>
+
         Only allow non-mixed content protected subresources to ask for credentials
         https://bugs.webkit.org/show_bug.cgi?id=178919
         <rdar://problem/35015245>

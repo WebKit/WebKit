@@ -268,6 +268,11 @@ void NetworkLoad::sharedWillSendRedirectedRequest(ResourceRequest&& request, Res
     m_client.get().willSendRedirectedRequest(WTFMove(oldRequest), WTFMove(request), WTFMove(redirectResponse));
 }
 
+bool NetworkLoad::isAllowedToAskUserForCredentials() const
+{
+    return m_client.get().isAllowedToAskUserForCredentials();
+}
+
 #if USE(NETWORK_SESSION)
 
 void NetworkLoad::convertTaskToDownload(PendingDownload& pendingDownload, const ResourceRequest& updatedRequest, const ResourceResponse& response)
@@ -335,11 +340,6 @@ void NetworkLoad::didReceiveChallenge(const AuthenticationChallenge& challenge, 
 #else
     completeAuthenticationChallenge(WTFMove(completionHandler));
 #endif
-}
-
-bool NetworkLoad::isAllowedToAskUserForCredentials() const
-{
-    return m_client.get().isAllowedToAskUserForCredentials();
 }
 
 void NetworkLoad::completeAuthenticationChallenge(ChallengeCompletionHandler&& completionHandler)
