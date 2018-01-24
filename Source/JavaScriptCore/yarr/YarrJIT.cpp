@@ -1749,7 +1749,7 @@ class YarrGenerator : private MacroAssembler {
         case PatternTerm::TypeParentheticalAssertion:
             RELEASE_ASSERT_NOT_REACHED();
         case PatternTerm::TypeBackReference:
-            m_shouldFallBack = true;
+            m_failureReason = JITFailureReason::BackReference;
             break;
         case PatternTerm::TypeDotStarEnclosure:
             generateDotStarEnclosure(opIndex);
@@ -1820,7 +1820,7 @@ class YarrGenerator : private MacroAssembler {
             break;
 
         case PatternTerm::TypeBackReference:
-            m_shouldFallBack = true;
+            m_failureReason = JITFailureReason::BackReference;
             break;
         }
     }
@@ -3004,9 +3004,7 @@ class YarrGenerator : private MacroAssembler {
         // need to restore the capture from the first subpattern upon a
         // failure in the second.
         if (term->quantityMinCount && term->quantityMinCount != term->quantityMaxCount) {
-            if (Options::dumpCompiledRegExpPatterns())
-                dataLogF("Can't JIT a variable counted parenthesis with a non-zero minimum\n");
-            m_shouldFallBack = true;
+            m_failureReason = JITFailureReason::VariableCountedParenthesisWithNonZeroMinimum;
             return;
         } if (term->quantityMaxCount == 1 && !term->parentheses.isCopy) {
             // Select the 'Once' nodes.
@@ -3028,7 +3026,7 @@ class YarrGenerator : private MacroAssembler {
             // We only handle generic parenthesis with greedy counts.
             if (term->quantityType != QuantifierGreedy) {
                 // This subpattern is not supported by the JIT.
-                m_shouldFallBack = true;
+                m_failureReason = JITFailureReason::NonGreedyParenthesizedSubpattern;
                 return;
             }
 
@@ -3046,7 +3044,7 @@ class YarrGenerator : private MacroAssembler {
             }
 #else
             // This subpattern is not supported by the JIT.
-            m_shouldFallBack = true;
+            m_failureReason = JITFailureReason::ParenthesizedSubpattern;
             return;
 #endif
         }
@@ -3397,7 +3395,6 @@ public:
         : m_vm(vm)
         , m_pattern(pattern)
         , m_charSize(charSize)
-        , m_shouldFallBack(false)
         , m_decodeSurrogatePairs(m_charSize == Char16 && m_pattern.unicode())
         , m_unicodeIgnoreCase(m_pattern.unicode() && m_pattern.ignoreCase())
         , m_canonicalMode(m_pattern.unicode() ? CanonicalMode::Unicode : CanonicalMode::UCS2)
@@ -3412,7 +3409,7 @@ public:
     {
 #ifndef JIT_UNICODE_EXPRESSIONS
         if (m_decodeSurrogatePairs) {
-            jitObject.setFallBack(true);
+            jitObject.setFallBackWithFailureReason(JITFailureReason::DecodeSurrogatePair);
             return;
         }
 #endif
@@ -3421,8 +3418,8 @@ public:
         // are used during generation.
         opCompileBody(m_pattern.m_body);
         
-        if (m_shouldFallBack) {
-            jitObject.setFallBack(true);
+        if (m_failureReason) {
+            jitObject.setFallBackWithFailureReason(*m_failureReason);
             return;
         }
         
@@ -3469,7 +3466,7 @@ public:
 
         LinkBuffer linkBuffer(*this, REGEXP_CODE_ID, JITCompilationCanFail);
         if (linkBuffer.didFailToAllocate()) {
-            jitObject.setFallBack(true);
+            jitObject.setFallBackWithFailureReason(JITFailureReason::ExecutableMemoryAllocationFailure);
             return;
         }
 
@@ -3493,7 +3490,8 @@ public:
             else
                 jitObject.set16BitCode(FINALIZE_CODE(linkBuffer, ("16-bit regular expression")));
         }
-        jitObject.setFallBack(m_shouldFallBack);
+        if (m_failureReason)
+            jitObject.setFallBackWithFailureReason(*m_failureReason);
     }
 
 private:
@@ -3505,7 +3503,7 @@ private:
 
     // Used to detect regular expression constructs that are not currently
     // supported in the JIT; fall back to the interpreter when this is detected.
-    bool m_shouldFallBack;
+    std::optional<JITFailureReason> m_failureReason;
 
     bool m_decodeSurrogatePairs;
     bool m_unicodeIgnoreCase;
@@ -3538,12 +3536,41 @@ private:
     BacktrackingState m_backtrackingState;
 };
 
+static void dumpCompileFailure(JITFailureReason failure)
+{
+    switch (failure) {
+    case JITFailureReason::DecodeSurrogatePair:
+        dataLog("Can't JIT a pattern decoding surrogate pairs\n");
+        break;
+    case JITFailureReason::BackReference:
+        dataLog("Can't JIT a pattern containing back references\n");
+        break;
+    case JITFailureReason::VariableCountedParenthesisWithNonZeroMinimum:
+        dataLog("Can't JIT a pattern containing a variable counted parenthesis with a non-zero minimum\n");
+        break;
+    case JITFailureReason::ParenthesizedSubpattern:
+        dataLog("Can't JIT a pattern containing parenthesized subpatterns\n");
+        break;
+    case JITFailureReason::NonGreedyParenthesizedSubpattern:
+        dataLog("Can't JIT a pattern containing non-greedy parenthesized subpatterns\n");
+        break;
+    case JITFailureReason::ExecutableMemoryAllocationFailure:
+        dataLog("Can't JIT because of failure of allocation of executable memory\n");
+        break;
+    }
+}
+
 void jitCompile(YarrPattern& pattern, YarrCharSize charSize, VM* vm, YarrCodeBlock& jitObject, YarrJITCompileMode mode)
 {
     if (mode == MatchOnly)
         YarrGenerator<MatchOnly>(vm, pattern, charSize).compile(jitObject);
     else
         YarrGenerator<IncludeSubpatterns>(vm, pattern, charSize).compile(jitObject);
+
+    if (auto failureReason = jitObject.failureReason()) {
+        if (Options::dumpCompiledRegExpPatterns())
+            dumpCompileFailure(*failureReason);
+    }
 }
 
 }}

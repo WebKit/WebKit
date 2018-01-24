@@ -50,6 +50,15 @@ class ExecutablePool;
 
 namespace Yarr {
 
+enum class JITFailureReason : uint8_t {
+    DecodeSurrogatePair,
+    BackReference,
+    VariableCountedParenthesisWithNonZeroMinimum,
+    ParenthesizedSubpattern,
+    NonGreedyParenthesizedSubpattern,
+    ExecutableMemoryAllocationFailure,
+};
+
 class YarrCodeBlock {
 #if CPU(X86_64) || CPU(ARM64)
 #ifdef JIT_ALL_PARENS_EXPRESSIONS
@@ -71,17 +80,10 @@ class YarrCodeBlock {
 #endif
 
 public:
-    YarrCodeBlock()
-        : m_needFallBack(false)
-    {
-    }
+    YarrCodeBlock() = default;
 
-    ~YarrCodeBlock()
-    {
-    }
-
-    void setFallBack(bool fallback) { m_needFallBack = fallback; }
-    bool isFallBack() { return m_needFallBack; }
+    void setFallBackWithFailureReason(JITFailureReason failureReason) { m_failureReason = failureReason; }
+    std::optional<JITFailureReason> failureReason() { return m_failureReason; }
 
     bool has8BitCode() { return m_ref8.size(); }
     bool has16BitCode() { return m_ref16.size(); }
@@ -188,7 +190,7 @@ public:
         m_ref16 = MacroAssemblerCodeRef();
         m_matchOnly8 = MacroAssemblerCodeRef();
         m_matchOnly16 = MacroAssemblerCodeRef();
-        m_needFallBack = false;
+        m_failureReason = std::nullopt;
     }
 
 private:
@@ -196,7 +198,7 @@ private:
     MacroAssemblerCodeRef m_ref16;
     MacroAssemblerCodeRef m_matchOnly8;
     MacroAssemblerCodeRef m_matchOnly16;
-    bool m_needFallBack;
+    std::optional<JITFailureReason> m_failureReason;
 };
 
 enum YarrJITCompileMode {

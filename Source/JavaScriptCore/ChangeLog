@@ -1,3 +1,32 @@
+2018-01-23  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [YARR] Add diagnosis for YarrJIT failures
+        https://bugs.webkit.org/show_bug.cgi?id=181927
+
+        Reviewed by Sam Weinig.
+
+        It is nice if we can see the reason why YarrJIT fails to compile a given pattern.
+        This patch introduces Yarr::JITFailureReason and dumps messages if Options::dumpCompiledRegExpPatterns is specified.
+
+        * runtime/RegExp.cpp:
+        (JSC::RegExp::compile):
+        (JSC::RegExp::compileMatchOnly):
+        * yarr/YarrJIT.cpp:
+        (JSC::Yarr::YarrGenerator::generateTerm):
+        (JSC::Yarr::YarrGenerator::backtrackTerm):
+        (JSC::Yarr::YarrGenerator::opCompileParenthesesSubpattern):
+        (JSC::Yarr::YarrGenerator::YarrGenerator):
+        (JSC::Yarr::YarrGenerator::compile):
+        (JSC::Yarr::dumpCompileFailure):
+        (JSC::Yarr::jitCompile):
+        * yarr/YarrJIT.h:
+        (JSC::Yarr::YarrCodeBlock::setFallBack):
+        (JSC::Yarr::YarrCodeBlock::fallBack):
+        (JSC::Yarr::YarrCodeBlock::clear):
+        (JSC::Yarr::YarrCodeBlock::YarrCodeBlock): Deleted.
+        (JSC::Yarr::YarrCodeBlock::~YarrCodeBlock): Deleted.
+        (JSC::Yarr::YarrCodeBlock::isFallBack): Deleted.
+
 2018-01-23  Alex Christensen  <achristensen@webkit.org>
 
         Remove pre-Sierra-OS-specific code in WTF and JavaScriptCore
