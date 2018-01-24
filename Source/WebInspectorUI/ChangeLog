@@ -1,3 +1,16 @@
+2018-01-24  Joseph Pecoraro  <pecoraro@apple.com>
+
+        ReferenceError:​ Can't find variable:​ DOMAgent (at ScriptSyntaxTree.js:​178:​22)​
+        https://bugs.webkit.org/show_bug.cgi?id=182059
+
+        Reviewed by Matt Baker.
+
+        * UserInterface/Models/ScriptSyntaxTree.js:
+        (WI.ScriptSyntaxTree.functionReturnDivot):
+        DOMAgent won't be available in a ServiceWorker or JSContext inspector. So add
+        a check for DOMAgent, and assume if DOMAgent doesn't exist that we should fall
+        back to the latest path (non-iOS 9) target.
+
 2018-01-23  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Network's columns shake when scrolling at non-default zoom level
