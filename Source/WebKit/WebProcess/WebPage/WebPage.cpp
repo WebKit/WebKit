@@ -3079,8 +3079,6 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
     settings.setDataDetectorTypes(static_cast<DataDetectorTypes>(store.getUInt32ValueForKey(WebPreferencesKey::dataDetectorTypesKey())));
 #endif
 
-    RuntimeEnabledFeatures::sharedFeatures().setWebAuthenticationEnabled(store.getBoolValueForKey(WebPreferencesKey::webAuthenticationEnabledKey()));
-
     DatabaseManager::singleton().setIsAvailable(store.getBoolValueForKey(WebPreferencesKey::databasesEnabledKey()));
 
     m_tabToLinks = store.getBoolValueForKey(WebPreferencesKey::tabsToLinksKey());

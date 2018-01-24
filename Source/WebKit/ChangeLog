@@ -1,3 +1,14 @@
+2018-01-24  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Remove duplicate preference update for WebAuthentication value
+        https://bugs.webkit.org/show_bug.cgi?id=182058
+
+        Reviewed by Brian Burg.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences):
+        An identical update already happens in generated code.
+
 2018-01-24  Alex Christensen  <achristensen@webkit.org>
 
         Remove WebProcess access to QTKit
