@@ -1,3 +1,23 @@
+2018-01-23  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        WebDriver: test imported/selenium/py/test/selenium/webdriver/common/api_example_tests.py::testChangeWindowSize fails
+        https://bugs.webkit.org/show_bug.cgi?id=181728
+
+        Reviewed by Sergio Villar Senin.
+
+        Due to a copy-paste error we are getting the window height using the width variable.
+
+        Fixes: imported/selenium/py/test/selenium/webdriver/common/api_example_tests.py::testChangeWindowSize
+               imported/selenium/py/test/selenium/webdriver/common/position_and_size_tests.py::testShouldScrollPageAndGetCoordinatesOfAnElementThatIsOutOfViewPort
+               imported/w3c/webdriver/tests/get_window_rect.py::test_payload
+               imported/w3c/webdriver/tests/set_window_rect.py::test_width_height_floats
+               imported/w3c/webdriver/tests/set_window_rect.py::test_height_width
+               imported/w3c/webdriver/tests/set_window_rect.py::test_height_width_larger_than_max
+               imported/w3c/webdriver/tests/contexts/resizing_and_positioning.py::test_window_resize
+
+        * Session.cpp:
+        (WebDriver::Session::getToplevelBrowsingContextRect):
+
 2018-01-22  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         WebDriver: implement get element CSS value command

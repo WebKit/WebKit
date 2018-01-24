@@ -1,3 +1,14 @@
+2018-01-23  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        WebDriver: test imported/selenium/py/test/selenium/webdriver/common/api_example_tests.py::testChangeWindowSize fails
+        https://bugs.webkit.org/show_bug.cgi?id=181728
+
+        Reviewed by Sergio Villar Senin.
+
+        Remove expectations for tests that are now passing.
+
+        * TestExpectations.json:
+
 2018-01-22  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         WebDriver: implement get element CSS value command
