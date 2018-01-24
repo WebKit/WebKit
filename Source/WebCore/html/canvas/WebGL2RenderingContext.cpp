@@ -911,6 +911,8 @@ void WebGL2RenderingContext::deleteSync(WebGLSync*)
 
 GC3Denum WebGL2RenderingContext::clientWaitSync(WebGLSync&, GC3Dbitfield, GC3Duint64)
 {
+    // Note: Do not implement this function without consulting webkit-dev and WebGL
+    // reviewers beforehand. Apple folks, see <rdar://problem/36666458>.
     return 0;
 }
 
@@ -920,6 +922,8 @@ void WebGL2RenderingContext::waitSync(WebGLSync&, GC3Dbitfield, GC3Dint64)
 
 WebGLAny WebGL2RenderingContext::getSyncParameter(WebGLSync&, GC3Denum)
 {
+    // Note: Do not implement this function without consulting webkit-dev and WebGL
+    // reviewers beforehand. Apple folks, see <rdar://problem/36666458>.
     return nullptr;
 }
 

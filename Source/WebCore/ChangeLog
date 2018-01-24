@@ -1,3 +1,12 @@
+2018-01-24  Dean Jackson  <dino@apple.com>
+
+        Add a note about not implementing these functions without discussion.
+        <rdar://problem/36666458>
+
+        * html/canvas/WebGL2RenderingContext.cpp:
+        (WebCore::WebGL2RenderingContext::clientWaitSync):
+        (WebCore::WebGL2RenderingContext::getSyncParameter):
+
 2018-01-24  Youenn Fablet  <youenn@apple.com>
 
         Opaque being-loaded responses should clone their body
