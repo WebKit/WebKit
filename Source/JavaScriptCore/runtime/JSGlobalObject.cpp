@@ -382,7 +382,8 @@ void JSGlobalObject::init(VM& vm)
     ExecState::initGlobalExec(JSGlobalObject::globalExec(), globalCallee);
     ExecState* exec = JSGlobalObject::globalExec();
 
-    m_functionStructure.set(vm, this, JSFunction::createStructure(vm, this, m_functionPrototype.get()));
+    m_strictFunctionStructure.set(vm, this, JSFunction::createStructure(vm, this, m_functionPrototype.get()));
+    m_sloppyFunctionStructure.set(vm, this, JSFunction::createStructure(vm, this, m_functionPrototype.get()));
     m_customGetterSetterFunctionStructure.initLater(
         [] (const Initializer<Structure>& init) {
             init.set(JSCustomGetterSetterFunction::createStructure(init.vm, init.owner, init.owner->m_functionPrototype.get()));
@@ -395,10 +396,6 @@ void JSGlobalObject::init(VM& vm)
     m_nativeStdFunctionStructure.initLater(
         [] (const Initializer<Structure>& init) {
             init.set(JSNativeStdFunction::createStructure(init.vm, init.owner, init.owner->m_functionPrototype.get()));
-        });
-    m_namedFunctionStructure.initLater(
-        [] (const Initializer<Structure>& init) {
-            init.set(Structure::addPropertyTransition(init.vm, init.owner->m_functionStructure.get(), init.vm.propertyNames->name, DontDelete | ReadOnly | DontEnum, init.owner->m_functionNameOffset));
         });
     JSFunction* callFunction = nullptr;
     JSFunction* applyFunction = nullptr;
@@ -1271,12 +1268,12 @@ void JSGlobalObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
     thisObject->m_nullPrototypeObjectStructure.visit(visitor);
     visitor.append(thisObject->m_errorStructure);
     visitor.append(thisObject->m_calleeStructure);
-    visitor.append(thisObject->m_functionStructure);
+    visitor.append(thisObject->m_strictFunctionStructure);
+    visitor.append(thisObject->m_sloppyFunctionStructure);
     thisObject->m_customGetterSetterFunctionStructure.visit(visitor);
     thisObject->m_boundFunctionStructure.visit(visitor);
     visitor.append(thisObject->m_getterSetterStructure);
     thisObject->m_nativeStdFunctionStructure.visit(visitor);
-    thisObject->m_namedFunctionStructure.visit(visitor);
     visitor.append(thisObject->m_symbolObjectStructure);
     visitor.append(thisObject->m_regExpStructure);
     visitor.append(thisObject->m_generatorFunctionStructure);

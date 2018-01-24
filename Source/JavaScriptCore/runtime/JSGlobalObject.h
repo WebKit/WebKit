@@ -315,12 +315,12 @@ public:
 #endif
     LazyProperty<JSGlobalObject, Structure> m_nullPrototypeObjectStructure;
     WriteBarrier<Structure> m_calleeStructure;
-    WriteBarrier<Structure> m_functionStructure;
+    WriteBarrier<Structure> m_strictFunctionStructure;
+    WriteBarrier<Structure> m_sloppyFunctionStructure;
     LazyProperty<JSGlobalObject, Structure> m_boundFunctionStructure;
     LazyProperty<JSGlobalObject, Structure> m_customGetterSetterFunctionStructure;
     WriteBarrier<Structure> m_getterSetterStructure;
     LazyProperty<JSGlobalObject, Structure> m_nativeStdFunctionStructure;
-    LazyProperty<JSGlobalObject, Structure> m_namedFunctionStructure;
     PropertyOffset m_functionNameOffset;
     WriteBarrier<Structure> m_privateNameStructure;
     WriteBarrier<Structure> m_regExpStructure;
@@ -616,12 +616,12 @@ public:
     Structure* nullPrototypeObjectStructure() const { return m_nullPrototypeObjectStructure.get(this); }
     Structure* errorStructure() const { return m_errorStructure.get(); }
     Structure* calleeStructure() const { return m_calleeStructure.get(); }
-    Structure* functionStructure() const { return m_functionStructure.get(); }
+    Structure* strictFunctionStructure() const { return m_strictFunctionStructure.get(); }
+    Structure* sloppyFunctionStructure() const { return m_sloppyFunctionStructure.get(); }
     Structure* boundFunctionStructure() const { return m_boundFunctionStructure.get(this); }
     Structure* customGetterSetterFunctionStructure() const { return m_customGetterSetterFunctionStructure.get(this); }
     Structure* getterSetterStructure() const { return m_getterSetterStructure.get(); }
     Structure* nativeStdFunctionStructure() const { return m_nativeStdFunctionStructure.get(this); }
-    Structure* namedFunctionStructure() const { return m_namedFunctionStructure.get(this); }
     PropertyOffset functionNameOffset() const { return m_functionNameOffset; }
     Structure* numberObjectStructure() const { return m_numberObjectStructure.get(); }
     Structure* privateNameStructure() const { return m_privateNameStructure.get(); }
