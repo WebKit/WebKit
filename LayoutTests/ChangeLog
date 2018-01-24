@@ -1,3 +1,13 @@
+2018-01-24  Jonathan Bedard  <jbedard@apple.com>
+
+        Fix race-condition in fast/text/click-ellipsis-assertion-failure.html
+        https://bugs.webkit.org/show_bug.cgi?id=182055
+        <rdar://problem/36830203>
+
+        Reviewed by Simon Fraser.
+
+        * fast/text/click-ellipsis-assertion-failure.html: Wait for promise before ending test.
+
 2018-01-24  Antti Koivisto  <antti@apple.com>
 
         Assertion failure in RenderMultiColumnSet::requiresBalancing() on fast/multicol/spanner-crash-when-adding-summary.html

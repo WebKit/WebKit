@@ -22,7 +22,7 @@ if (window.testRunner) {
     testRunner.dumpAsText();
 
     var ellipsizedText = document.getElementById("ellipsizedText");
-    UIHelper.activateAt(ellipsizedText.offsetLeft, ellipsizedText.offsetTop);
+    UIHelper.wait(UIHelper.activateAt(ellipsizedText.offsetLeft, ellipsizedText.offsetTop));
 }
 </script>
 </body>
