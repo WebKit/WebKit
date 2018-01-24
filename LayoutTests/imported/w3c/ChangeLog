@@ -1,5 +1,11 @@
 2018-01-24  Chris Dumez  <cdumez@apple.com>
 
+        Unreviewed, rebaseline flaky service worker test
+
+        * web-platform-tests/service-workers/service-worker/windowclient-navigate.https-expected.txt:
+
+2018-01-24  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed, unskip some service worker tests that no longer time out
 
         * web-platform-tests/service-workers/service-worker/clients-matchall-include-uncontrolled.https-expected.txt:
