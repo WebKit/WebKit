@@ -2688,12 +2688,12 @@ webkit.org/b/180581 css3/shapes/shape-outside/values/shape-outside-ellipse-005.h
 webkit.org/b/180581 css3/shapes/shape-outside/values/shape-outside-inset-003.html [ Failure ]
 webkit.org/b/180581 css3/shapes/shape-outside/values/shape-outside-polygon-004.html [ Failure ]
 webkit.org/b/180581 css3/shapes/shape-outside/values/shape-outside-shape-arguments-000.html [ Failure ]
-webkit.org/b/180581 imported/w3c/web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-circle-004.html [ Failure ]
-webkit.org/b/180581 imported/w3c/web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-circle-005.html [ Failure ]
-webkit.org/b/180581 imported/w3c/web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-ellipse-004.html [ Failure ]
-webkit.org/b/180581 imported/w3c/web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-ellipse-005.html [ Failure ]
-webkit.org/b/180581 imported/w3c/web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-inset-003.html [ Failure ]
-webkit.org/b/180581 imported/w3c/web-platform-tests/css/css-shapes-1/shape-outside/values/shape-outside-polygon-004.html [ Failure ]
+webkit.org/b/180581 imported/w3c/web-platform-tests/css/css-shapes/shape-outside/values/shape-outside-circle-004.html [ Failure ]
+webkit.org/b/180581 imported/w3c/web-platform-tests/css/css-shapes/shape-outside/values/shape-outside-circle-005.html [ Failure ]
+webkit.org/b/180581 imported/w3c/web-platform-tests/css/css-shapes/shape-outside/values/shape-outside-ellipse-004.html [ Failure ]
+webkit.org/b/180581 imported/w3c/web-platform-tests/css/css-shapes/shape-outside/values/shape-outside-ellipse-005.html [ Failure ]
+webkit.org/b/180581 imported/w3c/web-platform-tests/css/css-shapes/shape-outside/values/shape-outside-inset-003.html [ Failure ]
+webkit.org/b/180581 imported/w3c/web-platform-tests/css/css-shapes/shape-outside/values/shape-outside-polygon-004.html [ Failure ]
 
 webkit.org/b/124507 fast/css3-text/css3-text-decoration/text-decoration-skip/text-decoration-skip-ink.html [ ImageOnlyFailure ]
 webkit.org/b/139486 fast/css3-text/css3-text-decoration/text-decoration-skip/decoration-skip-crash-fallback-svg.html [ ImageOnlyFailure ]
@@ -2810,7 +2810,7 @@ webkit.org/b/135533 editing/pasteboard/img-srcset-copy-paste-canonicalization.ht
 
 # Various failures from the W3C CSS Shapes test suite import
 webkit.org/b/136065 css3/shapes/shape-outside/supported-shapes/circle/shape-outside-circle-027.html [ ImageOnlyFailure ]
-webkit.org/b/136065 imported/w3c/web-platform-tests/css/css-shapes-1/shape-outside/supported-shapes/circle/shape-outside-circle-027.html [ ImageOnlyFailure ]
+webkit.org/b/136065 imported/w3c/web-platform-tests/css/css-shapes/shape-outside/supported-shapes/circle/shape-outside-circle-027.html [ ImageOnlyFailure ]
 
 # The backing store is cleared when page cached in GTK
 webkit.org/b/135348 compositing/iframes/page-cache-layer-tree.html [ Skip ]
@@ -3278,7 +3278,7 @@ webkit.org/b/179722 compositing/accelerated-layers-after-back.html [ Failure ]
 
 webkit.org/b/179113 fast/inline/padding-ellipsis-right.html [ ImageOnlyFailure ]
 webkit.org/b/179113 fast/text/ellipsis-text-rtl.html [ ImageOnlyFailure ]
-webkit.org/b/179113 imported/w3c/web-platform-tests/css/css-ui-3/text-overflow-013.html [ ImageOnlyFailure ]
+webkit.org/b/179113 imported/w3c/web-platform-tests/css/css-ui/text-overflow-013.html [ ImageOnlyFailure ]
 
 webkit.org/b/177632 fast/text/flag-codepoint.html [ ImageOnlyFailure ]
 
@@ -3326,19 +3326,19 @@ imported/w3c/css/css-color-3/t422-rgba-onscreen-multiple-boxes-c.xht [ Pass ]
 imported/w3c/css/css-color-3/t425-hsla-onscreen-multiple-boxes-c.xht [ Pass ]
 
 imported/w3c/web-platform-tests/2dcontext/transformations/canvas_transformations_reset_001.html [ Pass ]
-imported/w3c/web-platform-tests/css/css-pseudo-4/first-letter-002.html [ Pass ]
-imported/w3c/web-platform-tests/css/css-pseudo-4/first-letter-003.html [ Pass ]
-imported/w3c/web-platform-tests/css/css-shapes-1/shape-outside/shape-image/gradients/shape-outside-linear-gradient-001.html [ Pass ]
-imported/w3c/web-platform-tests/css/css-shapes-1/shape-outside/shape-image/gradients/shape-outside-linear-gradient-002.html [ Pass ]
-imported/w3c/web-platform-tests/css/css-shapes-1/shape-outside/shape-image/gradients/shape-outside-linear-gradient-003.html [ Pass ]
-imported/w3c/web-platform-tests/css/css-ui-3/box-sizing-026.html [ Pass ]
-imported/w3c/web-platform-tests/css/css-ui-3/outline-006.html [ Pass ]
-imported/w3c/web-platform-tests/css/css-ui-3/text-overflow-012.html [ Pass ]
-imported/w3c/web-platform-tests/css/selectors4/selector-placeholder-shown-type-change-001.html [ Pass ]
-imported/w3c/web-platform-tests/css/selectors4/selector-placeholder-shown-type-change-002.html [ Pass ]
-imported/w3c/web-platform-tests/css/selectors4/selector-placeholder-shown-type-change-003.html [ Pass ]
-imported/w3c/web-platform-tests/css/selectors4/selector-read-write-type-change-002.html [ Pass ]
-imported/w3c/web-platform-tests/css/selectors4/selector-required-type-change-002.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-pseudo/first-letter-002.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-pseudo/first-letter-003.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-shapes/shape-outside/shape-image/gradients/shape-outside-linear-gradient-001.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-shapes/shape-outside/shape-image/gradients/shape-outside-linear-gradient-002.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-shapes/shape-outside/shape-image/gradients/shape-outside-linear-gradient-003.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-ui/box-sizing-026.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-ui/outline-006.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-ui/text-overflow-012.html [ Pass ]
+imported/w3c/web-platform-tests/css/selectors/selector-placeholder-shown-type-change-001.html [ Pass ]
+imported/w3c/web-platform-tests/css/selectors/selector-placeholder-shown-type-change-002.html [ Pass ]
+imported/w3c/web-platform-tests/css/selectors/selector-placeholder-shown-type-change-003.html [ Pass ]
+imported/w3c/web-platform-tests/css/selectors/selector-read-write-type-change-002.html [ Pass ]
+imported/w3c/web-platform-tests/css/selectors/selector-required-type-change-002.html [ Pass ]
 imported/w3c/web-platform-tests/cssom/MediaList.html [ Pass ]
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-embed-element/embed-represent-nothing-02.html [ Pass ]
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-area-element/area-coords.html [ Pass ]
@@ -3398,7 +3398,7 @@ webkit.org/b/172056 fast/text/multiglyph-characters.html [ Pass ]
 
 webkit.org/b/172337 imported/w3c/web-platform-tests/url/failure.html [ Pass ]
 
-webkit.org/b/175290 imported/w3c/web-platform-tests/css/css-ui-3/text-overflow-005.html [ Pass ]
+webkit.org/b/175290 imported/w3c/web-platform-tests/css/css-ui/text-overflow-005.html [ Pass ]
 
 webkit.org/b/139282 imported/mozilla/svg/image/image-filter-01.svg [ Pass ]
 

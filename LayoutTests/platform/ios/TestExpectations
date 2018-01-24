@@ -2840,7 +2840,7 @@ webkit.org/b/163291 media/video-fullscreeen-only-playback.html [ Failure ]
 webkit.org/b/163291 media/video-play-audio-require-user-gesture.html [ Failure ]
 webkit.org/b/163291 media/video-play-require-user-gesture.html
 
-webkit.org/b/163755 imported/w3c/web-platform-tests/css/css-shapes-1 [ Skip ]
+webkit.org/b/163755 imported/w3c/web-platform-tests/css/css-shapes [ Skip ]
 
 # Variation fonts are not implemented earlier than iOS 11.
 fast/text/variations [ Pass Failure ImageOnlyFailure ]
@@ -3022,8 +3022,8 @@ http/tests/resourceLoadStatistics/clear-in-memory-and-persistent-store-one-hour.
 
 webkit.org/b/175273 imported/w3c/web-platform-tests/html/browsers/windows/noreferrer-window-name.html [ Failure ]
 
-webkit.org/b/175353 imported/w3c/web-platform-tests/css/css-ui-3/outline-004.html [ ImageOnlyFailure ]
-webkit.org/b/175353 imported/w3c/web-platform-tests/css/css-ui-3/outline-style-014.html [ ImageOnlyFailure ]
+webkit.org/b/175353 imported/w3c/web-platform-tests/css/css-ui/outline-004.html [ ImageOnlyFailure ]
+webkit.org/b/175353 imported/w3c/web-platform-tests/css/css-ui/outline-style-014.html [ ImageOnlyFailure ]
 
 imported/w3c/web-platform-tests/css/mediaqueries/device-aspect-ratio-003.html [ ImageOnlyFailure ]
 

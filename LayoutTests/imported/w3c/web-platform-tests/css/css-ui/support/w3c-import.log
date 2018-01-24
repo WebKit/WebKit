@@ -1,0 +1,30 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/w3c/web-platform-tests
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-ui/support/1x1-red.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-ui/support/green.ico
+/LayoutTests/imported/w3c/web-platform-tests/css/css-ui/support/h100.svg
+/LayoutTests/imported/w3c/web-platform-tests/css/css-ui/support/h100_r1-1.svg
+/LayoutTests/imported/w3c/web-platform-tests/css/css-ui/support/orange.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-ui/support/orange.svg
+/LayoutTests/imported/w3c/web-platform-tests/css/css-ui/support/r1-1.svg
+/LayoutTests/imported/w3c/web-platform-tests/css/css-ui/support/red.ico
+/LayoutTests/imported/w3c/web-platform-tests/css/css-ui/support/test.mp4
+/LayoutTests/imported/w3c/web-platform-tests/css/css-ui/support/test.ogv
+/LayoutTests/imported/w3c/web-platform-tests/css/css-ui/support/test.webm
+/LayoutTests/imported/w3c/web-platform-tests/css/css-ui/support/w100.svg
+/LayoutTests/imported/w3c/web-platform-tests/css/css-ui/support/w100_h100.svg
+/LayoutTests/imported/w3c/web-platform-tests/css/css-ui/support/w100_r1-1.svg

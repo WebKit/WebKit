@@ -1,3 +1,21 @@
+2018-01-24  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        Update paths of CSS tests from WPT
+        https://bugs.webkit.org/show_bug.cgi?id=182043
+
+        Reviewed by Youenn Fablet.
+
+        * resources/import-expectations.json:
+        * resources/resource-files.json:
+        * web-platform-tests/css/css-display/: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-display-3/.
+        * web-platform-tests/css/css-pseudo/: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-pseudo-4/.
+        * web-platform-tests/css/css-scoping/: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-scoping-1/.
+        * web-platform-tests/css/css-shapes/: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-shapes-1/.
+        * web-platform-tests/css/css-ui/: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/css-ui-3/.
+        * web-platform-tests/css/geometry/: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/geometry-1/.
+        * web-platform-tests/css/selectors/: Renamed from LayoutTests/imported/w3c/web-platform-tests/css/selectors4/.
+        * web-platform-tests/lint.whitelist:
+
 2018-01-23  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Import WPT for modules

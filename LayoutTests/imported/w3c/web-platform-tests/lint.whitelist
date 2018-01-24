@@ -161,11 +161,11 @@ SET TIMEOUT: cookies/resources/testharness-helpers.js
 SET TIMEOUT: common/reftest-wait.js
 SET TIMEOUT: conformance-checkers/*
 SET TIMEOUT: content-security-policy/*
-SET TIMEOUT: css/selectors4/selector-placeholder-shown-type-change-001.html
-SET TIMEOUT: css/selectors4/selector-placeholder-shown-type-change-002.html
-SET TIMEOUT: css/selectors4/selector-placeholder-shown-type-change-003.html
-SET TIMEOUT: css/selectors4/selector-read-write-type-change-002.html
-SET TIMEOUT: css/selectors4/selector-required-type-change-002.html
+SET TIMEOUT: css/selectors/selector-placeholder-shown-type-change-001.html
+SET TIMEOUT: css/selectors/selector-placeholder-shown-type-change-002.html
+SET TIMEOUT: css/selectors/selector-placeholder-shown-type-change-003.html
+SET TIMEOUT: css/selectors/selector-read-write-type-change-002.html
+SET TIMEOUT: css/selectors/selector-required-type-change-002.html
 SET TIMEOUT: css-fonts/font-display/font-display.html
 SET TIMEOUT: encrypted-media/Google/migrated_to_root_disabled/encrypted-media-utils.js
 SET TIMEOUT: encrypted-media/polyfill/chrome-polyfill.js
@@ -267,7 +267,7 @@ SET TIMEOUT: XMLHttpRequest/resources/xmlhttprequest-timeout.js
 
 # generate_tests usage (should be got rid of)
 GENERATE_TESTS: 2dcontext/drawing-images-to-the-canvas/*
-GENERATE_TESTS: css/css-shapes-1/shape-outside/values/*
+GENERATE_TESTS: css/css-shapes/shape-outside/values/*
 GENERATE_TESTS: css/css-tables-3/bounding-box-computation-1.html
 GENERATE_TESTS: css/css-tables-3/bounding-box-computation-2.html
 GENERATE_TESTS: css/css-tables-3/bounding-box-computation-3.html
@@ -461,16 +461,16 @@ INDENT TABS: css/css-multicol-1/*
 INDENT TABS: css/cssom-1/*
 INDENT TABS: css/cssom-view-1/*
 INDENT TABS: css/css-page-3/*
-INDENT TABS: css/css-pseudo-4/*
+INDENT TABS: css/css-pseudo/*
 INDENT TABS: css/css-regions-1/*
 INDENT TABS: css/css-round-display-1/*
-INDENT TABS: css/css-shapes-1/*
+INDENT TABS: css/css-shapes/*
 INDENT TABS: css/css-speech-1/*
 INDENT TABS: css/css-text-3/*
 INDENT TABS: css/css-text-decor-3/*
 INDENT TABS: css/css-transforms-1/*
 INDENT TABS: css/css-transitions-1/*
-INDENT TABS: css/css-ui-3/*
+INDENT TABS: css/css-ui/*
 INDENT TABS: css/css-values-3/*
 INDENT TABS: css/css-variables-1/*
 INDENT TABS: css/css-writing-modes-3/*
@@ -478,7 +478,7 @@ INDENT TABS: css/filter-effects-1/*
 INDENT TABS: css/fonts/*
 INDENT TABS: css/mediaqueries-3/*
 INDENT TABS: css/css3-selectors/*
-INDENT TABS: css/selectors4/*
+INDENT TABS: css/selectors/*
 INDENT TABS: css/vendor-imports/*
 INDENT TABS: css/WOFF2/*
 
@@ -488,7 +488,7 @@ CONSOLE: css/*/support/check-layout-th.js
 CONSOLE: css/css-regions-1/elements/support/Three.js
 CONSOLE: css/css-regions-1/interactivity/selection/support/js/selection-test-helper.js
 CONSOLE: css/css-regions-1/stacking-context/javascript-stacking-context-002.html
-CONSOLE: css/css-shapes-1/shape-outside/supported-shapes/support/test-utils.js
+CONSOLE: css/css-shapes/shape-outside/supported-shapes/support/test-utils.js
 CONSOLE: css/css-transitions-1/transition-delay-002.html
 CONSOLE: css/css-transitions-1/transition-delay-003.html
 CONSOLE: css/css-values-3/viewport-units-css2-001.html
@@ -512,24 +512,24 @@ TRAILING WHITESPACE: css/css-color-4/lch-005.html
 TRAILING WHITESPACE: css/css-color-4/lch-006.html
 TRAILING WHITESPACE: css/css-color-4/lch-007.html
 TRAILING WHITESPACE: css/css-fonts-3/support/fonts/gsubtest-lookup3.ufo/features.fea
-TRAILING WHITESPACE: css/css-scoping-1/css-scoping-shadow-assigned-node-with-before-after.html
-TRAILING WHITESPACE: css/css-scoping-1/css-scoping-shadow-assigned-node-with-rules.html
-TRAILING WHITESPACE: css/css-scoping-1/css-scoping-shadow-host-rule.html
-TRAILING WHITESPACE: css/css-scoping-1/css-scoping-shadow-host-with-before-after.html
-TRAILING WHITESPACE: css/css-scoping-1/css-scoping-shadow-invisible-slot.html
-TRAILING WHITESPACE: css/css-scoping-1/css-scoping-shadow-root-hides-children.html
-TRAILING WHITESPACE: css/css-scoping-1/css-scoping-shadow-slot-display-override.html
-TRAILING WHITESPACE: css/css-scoping-1/css-scoping-shadow-slot.html
-TRAILING WHITESPACE: css/css-scoping-1/css-scoping-shadow-slot-style.html
-TRAILING WHITESPACE: css/css-scoping-1/css-scoping-shadow-slotted-nested.html
-TRAILING WHITESPACE: css/css-scoping-1/css-scoping-shadow-slotted-rule.html
-TRAILING WHITESPACE: css/css-scoping-1/css-scoping-shadow-with-outside-rules.html
-TRAILING WHITESPACE: css/css-scoping-1/css-scoping-shadow-with-rules.html
-TRAILING WHITESPACE: css/css-scoping-1/css-scoping-shadow-with-rules-no-style-leak.html
+TRAILING WHITESPACE: css/css-scoping/css-scoping-shadow-assigned-node-with-before-after.html
+TRAILING WHITESPACE: css/css-scoping/css-scoping-shadow-assigned-node-with-rules.html
+TRAILING WHITESPACE: css/css-scoping/css-scoping-shadow-host-rule.html
+TRAILING WHITESPACE: css/css-scoping/css-scoping-shadow-host-with-before-after.html
+TRAILING WHITESPACE: css/css-scoping/css-scoping-shadow-invisible-slot.html
+TRAILING WHITESPACE: css/css-scoping/css-scoping-shadow-root-hides-children.html
+TRAILING WHITESPACE: css/css-scoping/css-scoping-shadow-slot-display-override.html
+TRAILING WHITESPACE: css/css-scoping/css-scoping-shadow-slot.html
+TRAILING WHITESPACE: css/css-scoping/css-scoping-shadow-slot-style.html
+TRAILING WHITESPACE: css/css-scoping/css-scoping-shadow-slotted-nested.html
+TRAILING WHITESPACE: css/css-scoping/css-scoping-shadow-slotted-rule.html
+TRAILING WHITESPACE: css/css-scoping/css-scoping-shadow-with-outside-rules.html
+TRAILING WHITESPACE: css/css-scoping/css-scoping-shadow-with-rules.html
+TRAILING WHITESPACE: css/css-scoping/css-scoping-shadow-with-rules-no-style-leak.html
 TRAILING WHITESPACE: css/css-transforms-1/css3-transform-rotateY.html
 TRAILING WHITESPACE: css/css-variables-1/reference/vars-font-shorthand-001-ref.html
 TRAILING WHITESPACE: css/css-variables-1/vars-font-shorthand-001.html
-TRAILING WHITESPACE: css/geometry-1/DOMMatrix-001.html
+TRAILING WHITESPACE: css/geometry/DOMMatrix-001.html
 TRAILING WHITESPACE: css/vendor-imports/mozilla/mozilla-central-reftests/css21/pagination/moz-css21-float-page-break-inside-avoid-7.html
 TRAILING WHITESPACE: css/vendor-imports/mozilla/mozilla-central-reftests/css21/pagination/moz-css21-float-page-break-inside-avoid-7-ref.html
 TRAILING WHITESPACE: css/vendor-imports/mozilla/mozilla-central-reftests/css21/pagination/moz-css21-float-page-break-inside-avoid-8.html
@@ -551,7 +551,7 @@ SET TIMEOUT: css/css-animations-1/animation-name-001.html
 SET TIMEOUT: css/css-animations-1/animation-name-003.html
 SET TIMEOUT: css/css-animations-1/animation-name-004.html
 SET TIMEOUT: css/css-animations-1/animation-play-state-001.html
-SET TIMEOUT: css/css-shapes-1/spec-examples/support/spec-example-utils.js
+SET TIMEOUT: css/css-shapes/spec-examples/support/spec-example-utils.js
 SET TIMEOUT: css/css-transitions-1/changing-while-transition.html
 SET TIMEOUT: css/css-transitions-1/events-007.html
 SET TIMEOUT: css/css-transitions-1/support/generalParallelTest.js
@@ -603,11 +603,11 @@ SET TIMEOUT: css/CSS2/selectors/dom-hover-002.xht
 SET TIMEOUT: css/CSS2/tables/tables-102.xht
 SET TIMEOUT: css/cssom-view-1/matchMediaAddListener.html
 SET TIMEOUT: css/mediaqueries-3/min-width-tables-001.html
-SET TIMEOUT: css/selectors4/focus-within-shadow-001.html
-SET TIMEOUT: css/selectors4/focus-within-shadow-002.html
-SET TIMEOUT: css/selectors4/focus-within-shadow-003.html
-SET TIMEOUT: css/selectors4/focus-within-shadow-004.html
-SET TIMEOUT: css/selectors4/focus-within-shadow-005.html
+SET TIMEOUT: css/selectors/focus-within-shadow-001.html
+SET TIMEOUT: css/selectors/focus-within-shadow-002.html
+SET TIMEOUT: css/selectors/focus-within-shadow-003.html
+SET TIMEOUT: css/selectors/focus-within-shadow-004.html
+SET TIMEOUT: css/selectors/focus-within-shadow-005.html
 SET TIMEOUT: css/work-in-progress/apple/css-transforms/scripts/prefixfree.min.js
 SET TIMEOUT: css/work-in-progress/aryehgregor/transitions/test_transitions.html
 SET TIMEOUT: css/work-in-progress/aryehgregor/transitions/test_transitions_per_property.html
@@ -687,7 +687,7 @@ CSS-COLLIDING-SUPPORT-NAME: css/CSS2/lists/support/pattern-rgr-grg-rgr.png
 CSS-COLLIDING-SUPPORT-NAME: css/filter-effects-1/support/pattern-rgr-grg-rgr.png
 CSS-COLLIDING-SUPPORT-NAME: css/CSS2/selectors/support/pattern-rgr-grg-rgr.png
 CSS-COLLIDING-SUPPORT-NAME: css/CSS2/values/support/pattern-rgr-grg-rgr.png
-CSS-COLLIDING-SUPPORT-NAME: css/css-shapes-1/support/pattern-rgr-grg-rgr.png
+CSS-COLLIDING-SUPPORT-NAME: css/css-shapes/support/pattern-rgr-grg-rgr.png
 CSS-COLLIDING-SUPPORT-NAME: css/CSS2/tables/support/pattern-rgr-grg-rgr.png
 CSS-COLLIDING-SUPPORT-NAME: css/CSS2/bidi-text/support/pattern-rgr-grg-rgr.png
 CSS-COLLIDING-SUPPORT-NAME: css/CSS2/css1/support/pattern-rgr-grg-rgr.png
@@ -704,7 +704,7 @@ CSS-COLLIDING-SUPPORT-NAME: css/CSS2/fonts/support/pattern-grg-rgr-grg.png
 CSS-COLLIDING-SUPPORT-NAME: css/css-regions-1/support/pattern-grg-rgr-grg.png
 CSS-COLLIDING-SUPPORT-NAME: css/CSS2/support/pattern-grg-rgr-grg.png
 CSS-COLLIDING-SUPPORT-NAME: css/CSS2/selectors/support/pattern-grg-rgr-grg.png
-CSS-COLLIDING-SUPPORT-NAME: css/css-shapes-1/support/pattern-grg-rgr-grg.png
+CSS-COLLIDING-SUPPORT-NAME: css/css-shapes/support/pattern-grg-rgr-grg.png
 CSS-COLLIDING-SUPPORT-NAME: css/CSS2/ui/support/pattern-grg-rgr-grg.png
 CSS-COLLIDING-SUPPORT-NAME: css/CSS2/normal-flow/support/pattern-grg-rgr-grg.png
 CSS-COLLIDING-SUPPORT-NAME: css/CSS2/margin-padding-clear/support/pattern-grg-rgr-grg.png
@@ -769,7 +769,7 @@ CSS-COLLIDING-SUPPORT-NAME: css/css-transitions-1/support/swatch-red.png
 CSS-COLLIDING-SUPPORT-NAME: css/CSS2/cascade/support/swatch-red.png
 CSS-COLLIDING-SUPPORT-NAME: css/CSS2/floats-clear/support/swatch-red.png
 CSS-COLLIDING-SUPPORT-NAME: css/CSS2/css1/support/swatch-red.png
-CSS-COLLIDING-SUPPORT-NAME: css/css-shapes-1/support/swatch-red.png
+CSS-COLLIDING-SUPPORT-NAME: css/css-shapes/support/swatch-red.png
 CSS-COLLIDING-SUPPORT-NAME: css/CSS2/colors/support/swatch-red.png
 CSS-COLLIDING-SUPPORT-NAME: css/CSS2/positioning/support/swatch-red.png
 CSS-COLLIDING-SUPPORT-NAME: css/css-regions-1/support/swatch-red.png
@@ -810,7 +810,7 @@ CSS-COLLIDING-SUPPORT-NAME: css/CSS2/i18n/syndata/support/swatch-green.png
 CSS-COLLIDING-SUPPORT-NAME: css/CSS2/selectors/support/swatch-green.png
 CSS-COLLIDING-SUPPORT-NAME: css/CSS2/syntax/support/swatch-green.png
 CSS-COLLIDING-SUPPORT-NAME: css/CSS2/css1/support/swatch-green.png
-CSS-COLLIDING-SUPPORT-NAME: css/css-shapes-1/support/swatch-green.png
+CSS-COLLIDING-SUPPORT-NAME: css/css-shapes/support/swatch-green.png
 CSS-COLLIDING-SUPPORT-NAME: css/CSS2/lists/support/swatch-green.png
 CSS-COLLIDING-SUPPORT-NAME: css/CSS2/ui/support/swatch-green.png
 CSS-COLLIDING-SUPPORT-NAME: css/CSS2/margin-padding-clear/support/swatch-green.png
@@ -841,7 +841,7 @@ CSS-COLLIDING-REF-NAME: css/CSS2/text/text-transform-capitalize-003-ref.xht
 CSS-COLLIDING-REF-NAME: css/css-text-3/text-transform/reference/text-transform-capitalize-003-ref.html
 CSS-COLLIDING-REF-NAME: css/CSS2/text/text-transform-capitalize-001-ref.xht
 CSS-COLLIDING-REF-NAME: css/css-text-3/text-transform/reference/text-transform-capitalize-001-ref.html
-CSS-COLLIDING-REF-NAME: css/css-pseudo-4/first-letter-001-ref.html
+CSS-COLLIDING-REF-NAME: css/css-pseudo/first-letter-001-ref.html
 CSS-COLLIDING-REF-NAME: css/CSS2/selectors/first-letter-001-ref.xht
 CSS-COLLIDING-REF-NAME: css/CSS2/text/text-transform-uppercase-001-ref.xht
 CSS-COLLIDING-REF-NAME: css/css-text-3/text-transform/reference/text-transform-uppercase-001-ref.xht
@@ -860,15 +860,15 @@ CSS-COLLIDING-SUPPORT-NAME: css/css-grid-1/grid-items/support/50x50-green.png
 CSS-COLLIDING-SUPPORT-NAME: css/CSS2/support/50x50-green.png
 CSS-COLLIDING-SUPPORT-NAME: css/CSS2/ui/support/animated.gif
 CSS-COLLIDING-SUPPORT-NAME: css/CSS2/backgrounds/support/animated.gif
-CSS-COLLIDING-SUPPORT-NAME: css/css-shapes-1/shape-outside/shape-image/support/animated.gif
+CSS-COLLIDING-SUPPORT-NAME: css/css-shapes/shape-outside/shape-image/support/animated.gif
 CSS-COLLIDING-SUPPORT-NAME: css/CSS2/archive/raw-tests/css1tests/support/pattern-gg-gr.png
 CSS-COLLIDING-SUPPORT-NAME: css/CSS2/css1/support/pattern-gg-gr.png
-CSS-COLLIDING-SUPPORT-NAME: css/css-display-3/support/util.js
+CSS-COLLIDING-SUPPORT-NAME: css/css-display/support/util.js
 CSS-COLLIDING-SUPPORT-NAME: css/CSS2/normal-flow/support/replaced-min-max-1.png
 CSS-COLLIDING-SUPPORT-NAME: css/vendor-imports/mozilla/mozilla-central-reftests/ui3/support/replaced-min-max-1.png
 
 # TODO https://github.com/w3c/web-platform-tests/issues/5770
-MISSING-LINK: css/geometry-1/*.worker.js
+MISSING-LINK: css/geometry/*.worker.js
 
 WEBIDL2.JS:.gitmodules
 

@@ -419,8 +419,8 @@ webkit.org/b/172241 http/tests/appcache/404-resource-with-slow-main-resource.php
 
 webkit.org/b/172331 workers/wasm-long-compile-many.html [ Pass Timeout ]
 
-webkit.org/b/172807 imported/w3c/web-platform-tests/css/selectors4/focus-display-none-001.html [ Pass Failure ]
-webkit.org/b/172807 imported/w3c/web-platform-tests/css/selectors4/focus-within-display-none-001.html [ Pass Failure ]
+webkit.org/b/172807 imported/w3c/web-platform-tests/css/selectors/focus-display-none-001.html [ Pass Failure ]
+webkit.org/b/172807 imported/w3c/web-platform-tests/css/selectors/focus-within-display-none-001.html [ Pass Failure ]
 
 webkit.org/b/168409 media/modern-media-controls/airplay-button/airplay-button.html [ Pass Timeout ]
 webkit.org/b/175195 media/modern-media-controls/css/webkit-cursor-visibility-auto-hide.html [ Pass Failure ]
