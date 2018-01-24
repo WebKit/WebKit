@@ -1,5 +1,57 @@
 2018-01-23  Jason Marcell  <jmarcell@apple.com>
 
+        Apply patch. rdar://problem/36685708
+
+    Update test results for features disabled on branch
+    <rdar://problem/36685708>
+
+    2018-01-23  Maciej Stachowiak  <mjs@apple.com>
+
+            Update test results for features disabled on branch
+            <rdar://problem/36685708>
+
+            Reviewed by Maciej Stachowiak.
+
+            * TestExpectations:
+            * accessibility/color-well-expected.txt:
+            * accessibility/roles-exposed-expected.txt:
+            * animations/trigger-computed-style-expected.txt:
+            * animations/trigger-container-scroll-boundaries-expected.txt:
+            * animations/trigger-parsing-expected.txt:
+            * fast/canvas/webgl/copyBufferSubData-expected.txt:
+            * fast/canvas/webgl/getBufferSubData-webgl1-expected.txt:
+            * fast/canvas/webgl/webgl2-buffer-targets-expected.txt:
+            * fast/canvas/webgl/webgl2-buffers-expected.txt:
+            * fast/canvas/webgl/webgl2-context-creation-expected.txt:
+            * fast/canvas/webgl/webgl2-getActiveUniforms-expected.txt:
+            * fast/canvas/webgl/webgl2-runtime-flag-expected.txt:
+            * fast/canvas/webgl/webgl2-texStorage-expected.txt:
+            * fast/canvas/webgl/webgl2-texture-upload-enums-expected.txt:
+            * fast/canvas/webgl/webgl2/constants-expected.txt:
+            * fast/css/pseudo-visited-background-color-on-input-expected.html:
+            * fast/css/read-only-read-write-input-basics-expected.html:
+            * fast/dom/navigator-detached-no-crash-expected.txt:
+            * fast/forms/color/color-setrangetext-expected.txt:
+            * fast/forms/color/input-color-onchange-event-expected.txt:
+            * fast/forms/color/input-color-readonly-expected.txt:
+            * fast/forms/color/input-value-sanitization-color-expected.txt:
+            * fast/selectors/read-only-read-write-input-basics-expected.txt:
+            * inspector/canvas/create-context-webgl2-expected.txt:
+            * inspector/canvas/requestContent-webgl2-expected.txt:
+            * inspector/canvas/resolveCanvasContext-webgl2-expected.txt:
+            * inspector/canvas/shaderProgram-add-remove-webgl2-expected.txt:
+            * platform/mac/accessibility/roles-exposed-expected.txt:
+            * platform/mac/fast/forms/color/input-appearance-color-expected.txt:
+            * platform/mac/media/encrypted-media/fps-createMediaKeys-expected.txt:
+            * platform/mac/media/encrypted-media/fps-createSession-expected.txt:
+            * platform/mac/media/encrypted-media/fps-encrypted-event-expected.txt:
+            * platform/mac/media/encrypted-media/fps-generateRequest-expected.txt:
+            * webgl/webgl-vertex-array-object-defined-expected.txt:
+            * webgl/webgl2-rendering-context-defined-expected.txt:
+            * webgl/webgl2-rendering-context-obtain-expected.txt:
+
+2018-01-23  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r227425. rdar://problem/36791667
 
     2018-01-23  Brady Eidson  <beidson@apple.com>

@@ -1,1 +1,2 @@
+CONSOLE MESSAGE: line 6: ReferenceError: Can't find variable: WebGL2RenderingContext
 PASS if a "webgl2" context can be obtained.

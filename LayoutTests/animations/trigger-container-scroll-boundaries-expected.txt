@@ -2,13 +2,13 @@ This element should begin animating only when the page scrolls to 20px from the 
 
 PASS: Value before animation is applied is 0px
 PASS: Value with animation but no scroll was 0px
-PASS: Value with scroll amount of 10 was 10px
-PASS: Value with scroll amount of 20 was 20px
-PASS: Value with scroll amount of 30 was 30px
-PASS: Value with scroll amount of 40 was 40px
-PASS: Value with scroll amount of 50 was 50px
-PASS: Value with scroll amount of 60 was 60px
-PASS: Value with scroll amount of 70 was 70px
-PASS: Value with scroll amount of 80 was 80px
-PASS: Value with scroll amount of 90 was 90px
+FAIL: Value with scroll amount of 10 should be 10px, was 100px
+FAIL: Value with scroll amount of 20 should be 20px, was 100px
+FAIL: Value with scroll amount of 30 should be 30px, was 100px
+FAIL: Value with scroll amount of 40 should be 40px, was 100px
+FAIL: Value with scroll amount of 50 should be 50px, was 100px
+FAIL: Value with scroll amount of 60 should be 60px, was 100px
+FAIL: Value with scroll amount of 70 should be 70px, was 100px
+FAIL: Value with scroll amount of 80 should be 80px, was 100px
+FAIL: Value with scroll amount of 90 should be 90px, was 100px
 

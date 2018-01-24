@@ -1,5 +1,28 @@
 2018-01-23  Jason Marcell  <jmarcell@apple.com>
 
+        Apply patch. rdar://problem/36685708
+
+    Update test results for features disabled on branch
+    <rdar://problem/36685708>
+
+    2018-01-23  Maciej Stachowiak  <mjs@apple.com>
+
+            Update test results for features disabled on branch
+            <rdar://problem/36685708>
+
+            Reviewed by Maciej Stachowiak.
+
+            * web-platform-tests/html/semantics/forms/constraints/form-validation-validity-badInput-expected.txt:
+            * web-platform-tests/html/semantics/forms/constraints/form-validation-willValidate-expected.txt:
+            * web-platform-tests/html/semantics/forms/textfieldselection/selection-not-application-expected.txt:
+            * web-platform-tests/html/semantics/forms/the-input-element/color-expected.txt:
+            * web-platform-tests/html/semantics/forms/the-input-element/selection-expected.txt:
+            * web-platform-tests/html/semantics/forms/the-input-element/type-change-state-expected.txt:
+            * web-platform-tests/html/semantics/forms/the-input-element/valueMode-expected.txt:
+            * web-platform-tests/html/semantics/selectors/pseudo-classes/readwrite-readonly-expected.txt:
+
+2018-01-23  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r227425. rdar://problem/36791667
 
     2018-01-23  Brady Eidson  <beidson@apple.com>

@@ -3,8 +3,6 @@ RUN(video.srcObject = mediaSource)
 EVENT(sourceopen)
 RUN(sourceBuffer = mediaSource.addSourceBuffer("video/mp4"))
 RUN(sourceBuffer.appendBuffer(mediaData))
-EVENT(encrypted)
-EXPECTED (event.initData != 'null') OK
-EXPECTED (event.initDataType == 'sinf') OK
+EVENT(error) TEST(false) FAIL
 END OF TEST
 

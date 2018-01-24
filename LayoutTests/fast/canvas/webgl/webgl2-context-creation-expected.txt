@@ -1,10 +1,10 @@
+CONSOLE MESSAGE: line 1: TypeError: null is not an object (evaluating 'context.NO_ERROR')
 Checks that using a WebGL 2 context doesn't cause an error.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS context.getError() is context.NO_ERROR
-PASS successfullyParsed is true
+FAIL successfullyParsed should be true (of type boolean). Was undefined (of type undefined).
 
 TEST COMPLETE
 

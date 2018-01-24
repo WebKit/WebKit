@@ -4,11 +4,10 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 PASS onChangeCount is 0
-input event dispatched - value is:  #ff0000
-change event dispatched - value changed to #ff0000
-PASS onChangeCount is 1
-PASS input.value is "#ff0000"
+FAIL onChangeCount should be 1. Was 0.
+FAIL input.value should be #ff0000. Was #000000.
 PASS successfullyParsed is true
+Some tests failed.
 
 TEST COMPLETE
 

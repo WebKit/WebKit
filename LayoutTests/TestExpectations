@@ -1686,3 +1686,9 @@ webkit.org/b/178785 perf/object-keys.html [ Pass Failure ]
 imported/w3c/web-platform-tests/workers/worker-performance.worker.html [ Pass Failure ]
 media/event-queue-crash.html [ DumpJSConsoleLogInStdErr ]
 
+# Skip because these time out with WebGL2 disabled
+fast/canvas/webgl/webgl2/bindings.html [ Skip ]
+fast/canvas/webgl/webgl2/sequences.html [ Skip ]
+
+# Skip because this times out with Modern EME disabled
+platform/mac/media/encrypted-media/fps-requestMediaKeySystemAccess.html

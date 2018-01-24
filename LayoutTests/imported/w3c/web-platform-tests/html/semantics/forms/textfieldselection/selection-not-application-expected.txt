@@ -8,7 +8,7 @@ FAIL text field selection for the input week assert_equals: expected (object) nu
 FAIL text field selection for the input time assert_equals: expected (object) null but got (number) 0
 FAIL text field selection for the input number assert_equals: expected (object) null but got (number) 0
 FAIL text field selection for the input range Type error
-FAIL text field selection for the input color Type error
+FAIL text field selection for the input color assert_equals: expected (object) null but got (number) 0
 FAIL text field selection for the input checkbox Type error
 FAIL text field selection for the input radio Type error
 FAIL text field selection for the input file Type error
