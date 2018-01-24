@@ -1,3 +1,16 @@
+2017-10-06  Enrique Ocaña González  <eocanha@igalia.com>
+
+        [MSE][GStreamer] Seek on youtube.com/tv fails after r217185
+        https://bugs.webkit.org/show_bug.cgi?id=177976
+
+        Reviewed by Jer Noble.
+
+        Covered by existing tests.
+
+        * Modules/mediasource/MediaSource.cpp:
+        (WebCore::MediaSource::seekToTime): Only call waitForSeekCompleted()
+        when the time is not buffered when using GStreamer.
+
 2018-01-05  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         SVGAnimatedListPropertyTearOff::synchronizeWrappersIfNeeded() should do nothing if the property is not animating

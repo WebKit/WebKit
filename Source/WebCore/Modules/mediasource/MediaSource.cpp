@@ -232,7 +232,10 @@ void MediaSource::seekToTime(const MediaTime& time)
     // ↳ Otherwise
     // Continue
 
+// https://bugs.webkit.org/show_bug.cgi?id=125157 broke seek on MediaPlayerPrivateGStreamerMSE
+#if !USE(GSTREAMER)
     m_private->waitForSeekCompleted();
+#endif
     completeSeek();
 }
 
