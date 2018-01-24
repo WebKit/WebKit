@@ -1,5 +1,19 @@
 2018-01-19  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        WebDriver: run-webdriver-tests is crashing in the bots when creating results json file
+        https://bugs.webkit.org/show_bug.cgi?id=181844
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        We always try to create the directory where to store the json file, but when the filename is given directly,
+        like in the bots, the current dir is used.
+
+        * Scripts/webkitpy/webdriver_tests/webdriver_test_runner.py:
+        (WebDriverTestRunner.dump_results_to_json_file): Do not try to create the directory if dirname() returns an
+        empty string.
+
+2018-01-19  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] WebDriver tests are running outside the jhbuild env
         https://bugs.webkit.org/show_bug.cgi?id=181842
 
