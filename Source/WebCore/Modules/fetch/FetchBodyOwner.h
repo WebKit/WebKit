@@ -76,6 +76,7 @@ protected:
     void consumeOnceLoadingFinished(FetchBodyConsumer::Type, Ref<DeferredPromise>&&);
 
     void setBody(FetchBody&& body) { m_body = WTFMove(body); }
+    void createReadableStream(JSC::ExecState&);
 
     // ActiveDOMObject API
     void stop() override;

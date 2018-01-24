@@ -1,3 +1,17 @@
+2018-01-24  Youenn Fablet  <youenn@apple.com>
+
+        Opaque being-loaded responses should clone their body
+        https://bugs.webkit.org/show_bug.cgi?id=182056
+
+        Reviewed by Brady Eidson.
+
+        * http/wpt/service-workers/clone-opaque-being-loaded-response-worker.js: Added.
+        * http/wpt/service-workers/clone-opaque-being-loaded-response.html: Added.
+        * http/wpt/service-workers/clone-opaque-being-loaded-response.https-expected.txt: Added.
+        * http/wpt/service-workers/resources/clone-opaque-being-loaded-response-iframe.html: Added.
+        * http/wpt/service-workers/resources/lengthy-pass.py: Added.
+        (main):
+
 2018-01-24  David Hyatt  <hyatt@apple.com>
 
         Implement line clamp for mail.

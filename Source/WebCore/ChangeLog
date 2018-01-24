@@ -1,3 +1,22 @@
+2018-01-24  Youenn Fablet  <youenn@apple.com>
+
+        Opaque being-loaded responses should clone their body
+        https://bugs.webkit.org/show_bug.cgi?id=182056
+
+        Reviewed by Brady Eidson.
+
+        Test: http/wpt/service-workers/clone-opaque-being-loaded-response.https.html
+
+        When cloning a being-loaded response, make sure we create a ReadableStream.
+        Before the patch, the readableStream was not created in that case for opaque responses.
+
+        * Modules/fetch/FetchBodyOwner.cpp:
+        (WebCore::FetchBodyOwner::readableStream):
+        (WebCore::FetchBodyOwner::createReadableStream):
+        * Modules/fetch/FetchBodyOwner.h:
+        * Modules/fetch/FetchResponse.cpp:
+        (WebCore::FetchResponse::clone):
+
 2018-01-24  Chris Dumez  <cdumez@apple.com>
 
         close() operation should not be exposed inside a ServiceWorkerGlobalScope
