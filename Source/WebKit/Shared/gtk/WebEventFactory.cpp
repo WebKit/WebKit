@@ -247,6 +247,9 @@ WebTouchEvent WebEventFactory::createWebTouchEvent(const GdkEvent* event, Vector
     case GDK_TOUCH_END:
         type = WebEvent::TouchEnd;
         break;
+    case GDK_TOUCH_CANCEL:
+        type = WebEvent::TouchCancel;
+        break;
     default:
         ASSERT_NOT_REACHED();
     }

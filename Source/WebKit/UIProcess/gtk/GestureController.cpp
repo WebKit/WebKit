@@ -49,10 +49,12 @@ GestureController::GestureController(WebPageProxy& page)
 bool GestureController::handleEvent(const GdkEvent* event)
 {
     bool wasProcessingGestures = isProcessingGestures();
+    bool touchEnd;
     m_dragGesture.handleEvent(event);
     m_swipeGesture.handleEvent(event);
     m_zoomGesture.handleEvent(event);
-    return event->type == GDK_TOUCH_END ? wasProcessingGestures : isProcessingGestures();
+    touchEnd = (event->type == GDK_TOUCH_END) || (event->type == GDK_TOUCH_CANCEL);
+    return touchEnd ? wasProcessingGestures : isProcessingGestures();
 }
 
 bool GestureController::isProcessingGestures() const

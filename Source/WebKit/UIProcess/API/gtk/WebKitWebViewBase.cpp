@@ -64,6 +64,7 @@
 #include <glib/gi18n-lib.h>
 #include <memory>
 #include <pal/system/SleepDisabler.h>
+#include <wtf/Compiler.h>
 #include <wtf/HashMap.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/WTFGType.h>
@@ -895,6 +896,8 @@ static inline WebPlatformTouchPoint::TouchPointState touchPointStateForEvents(co
         return WebPlatformTouchPoint::TouchPressed;
     case GDK_TOUCH_END:
         return WebPlatformTouchPoint::TouchReleased;
+    case GDK_TOUCH_CANCEL:
+        return WebPlatformTouchPoint::TouchCancelled;
     default:
         return WebPlatformTouchPoint::TouchStationary;
     }
@@ -903,13 +906,14 @@ static inline WebPlatformTouchPoint::TouchPointState touchPointStateForEvents(co
 static void webkitWebViewBaseGetTouchPointsForEvent(WebKitWebViewBase* webViewBase, GdkEvent* event, Vector<WebPlatformTouchPoint>& touchPoints)
 {
     WebKitWebViewBasePrivate* priv = webViewBase->priv;
-    touchPoints.reserveInitialCapacity(event->type == GDK_TOUCH_END ? priv->touchEvents.size() + 1 : priv->touchEvents.size());
+    bool touchEnd = (event->type == GDK_TOUCH_END) || (event->type == GDK_TOUCH_CANCEL);
+    touchPoints.reserveInitialCapacity(touchEnd ? priv->touchEvents.size() + 1 : priv->touchEvents.size());
 
     for (const auto& it : priv->touchEvents)
         appendTouchEvent(touchPoints, it.value.get(), touchPointStateForEvents(it.value.get(), event));
 
     // Touch was already removed from the TouchEventsMap, add it here.
-    if (event->type == GDK_TOUCH_END)
+    if (touchEnd)
         appendTouchEvent(touchPoints, event, WebPlatformTouchPoint::TouchReleased);
 }
 
@@ -937,6 +941,8 @@ static gboolean webkitWebViewBaseTouchEvent(GtkWidget* widget, GdkEventTouch* ev
         it->value.reset(gdk_event_copy(touchEvent));
         break;
     }
+    case GDK_TOUCH_CANCEL:
+        FALLTHROUGH;
     case GDK_TOUCH_END:
         ASSERT(priv->touchEvents.contains(sequence));
         priv->touchEvents.remove(sequence);

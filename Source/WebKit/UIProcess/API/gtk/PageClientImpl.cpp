@@ -47,6 +47,7 @@
 #include <WebCore/EventNames.h>
 #include <WebCore/GtkUtilities.h>
 #include <WebCore/RefPtrCairo.h>
+#include <wtf/Compiler.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 
@@ -372,6 +373,8 @@ void PageClientImpl::doneWithTouchEvent(const NativeWebTouchEvent& event, bool w
         pointerEvent->motion.state = touchEvent->touch.state | GDK_BUTTON1_MASK;
     } else {
         switch (touchEvent->type) {
+        case GDK_TOUCH_CANCEL:
+            FALLTHROUGH;
         case GDK_TOUCH_END:
             pointerEvent.reset(gdk_event_new(GDK_BUTTON_RELEASE));
             pointerEvent->button.state = touchEvent->touch.state | GDK_BUTTON1_MASK;

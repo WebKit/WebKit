@@ -1,3 +1,22 @@
+2018-01-24  Jan-Michael Brummer  <jan.brummer@tabos.org>
+        [GTK] Page crash after swipe gesture running GNOME3 under wayland
+
+        https://bugs.webkit.org/show_bug.cgi?id=181996
+
+        Reviewed by Michael Catanzaro.
+
+        Add missing GDK_TOUCH_CANCEL support which fixes page crashes due to cancelled gestures.
+        * Shared/gtk/WebEventFactory.cpp:
+        (WebKit::WebEventFactory::createWebTouchEvent):
+        * UIProcess/API/gtk/PageClientImpl.cpp:
+        (WebKit::PageClientImpl::doneWithTouchEvent):
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (touchPointStateForEvents):
+        (webkitWebViewBaseGetTouchPointsForEvent):
+        (webkitWebViewBaseTouchEvent):
+        * UIProcess/gtk/GestureController.cpp:
+        (WebKit::GestureController::handleEvent):
+
 2018-01-24  Alex Christensen  <achristensen@webkit.org>
 
         Remove unused QTKit preference
