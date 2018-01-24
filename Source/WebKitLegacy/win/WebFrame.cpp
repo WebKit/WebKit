@@ -1088,13 +1088,12 @@ HRESULT WebFrame::elementWithName(BSTR name, IDOMElement* form, IDOMElement** el
 
     HTMLFormElement* formElement = formElementFromDOMElement(form);
     if (formElement) {
-        const Vector<FormAssociatedElement*>& elements = formElement->associatedElements();
         AtomicString targetName((UChar*)name, SysStringLen(name));
-        for (unsigned int i = 0; i < elements.size(); i++) {
-            if (!is<HTMLFormControlElement>(*elements[i]))
+        for (auto& element : formElement->copyAssociatedElementsVector()) {
+            if (!is<HTMLFormControlElement>(element.get()))
                 continue;
-            HTMLFormControlElement& elt = downcast<HTMLFormControlElement>(*elements[i]);
-            // Skip option elements, other duds
+            auto& elt = downcast<HTMLFormControlElement>(element.get());
+            // Skip option elements, other duds.
             if (elt.name() == targetName) {
                 *element = DOMElement::createInstance(&elt);
                 return S_OK;
@@ -1267,8 +1266,9 @@ HRESULT WebFrame::controlsInForm(IDOMElement* form, IDOMElement** controls, int*
     if (!formElement)
         return E_FAIL;
 
+    auto elements = formElement->copyAssociatedElementsVector();
     int inCount = *cControls;
-    int count = (int) formElement->associatedElements().size();
+    int count = (int) elements.size();
     *cControls = count;
     if (!controls)
         return S_OK;
@@ -1276,10 +1276,10 @@ HRESULT WebFrame::controlsInForm(IDOMElement* form, IDOMElement** controls, int*
         return E_FAIL;
 
     *cControls = 0;
-    const Vector<FormAssociatedElement*>& elements = formElement->associatedElements();
-    for (int i = 0; i < count; i++) {
-        if (elements.at(i)->isEnumeratable()) { // Skip option elements, other duds
-            controls[*cControls] = DOMElement::createInstance(&elements.at(i)->asHTMLElement());
+    for (auto& element : elements) {
+        if (element->isEnumeratable()) {
+            // Skip option elements, other duds.
+            controls[*cControls] = DOMElement::createInstance(&element->asHTMLElement());
             (*cControls)++;
         }
     }

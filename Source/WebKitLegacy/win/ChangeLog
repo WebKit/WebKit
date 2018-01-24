@@ -1,3 +1,13 @@
+2018-01-24  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Unreviewed, try to fix the Windows build after r227479.
+
+        Tweak some Windows WebKitLegacy code to use updated HTMLFormElement methods.
+
+        * WebFrame.cpp:
+        (WebFrame::elementWithName):
+        (WebFrame::controlsInForm):
+
 2018-01-19  Per Arne Vollan  <pvollan@apple.com>
 
         [Win] Compile error: 'WebKitQuartzCoreAdditionsBase.h' not found.
