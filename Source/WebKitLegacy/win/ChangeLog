@@ -1,3 +1,17 @@
+2018-01-24  Jason Marcell  <jmarcell@apple.com>
+
+        Cherry-pick r227480. rdar://problem/36830349
+
+    2018-01-24  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+            Unreviewed, try to fix the Windows build after r227479.
+
+            Tweak some Windows WebKitLegacy code to use updated HTMLFormElement methods.
+
+            * WebFrame.cpp:
+            (WebFrame::elementWithName):
+            (WebFrame::controlsInForm):
+
 2018-01-22  Jason Marcell  <jmarcell@apple.com>
 
         Cherry-pick r227209. rdar://problem/36722622
