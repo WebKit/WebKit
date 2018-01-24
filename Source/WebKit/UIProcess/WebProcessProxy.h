@@ -137,6 +137,8 @@ public:
 
     VisibleWebPageToken visiblePageToken() const;
 
+    void testIncomingSyncIPCMessageWhileWaitingForSyncReply(bool& handled);
+
     void updateTextCheckerState();
 
     void registerNewWebBackForwardListItem(WebBackForwardListItem&);

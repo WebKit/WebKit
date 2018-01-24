@@ -135,6 +135,8 @@ private:
     
     void print(WebCore::Frame&) final;
 
+    void testIncomingSyncIPCMessageWhileWaitingForSyncReply() final;
+
     void exceededDatabaseQuota(WebCore::Frame&, const String& databaseName, WebCore::DatabaseDetails) final;
 
     void reachedMaxAppCacheSize(int64_t spaceNeeded) final;

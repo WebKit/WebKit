@@ -1,3 +1,16 @@
+2018-01-24  Chris Dumez  <cdumez@apple.com>
+
+        Add a IPC::SendSyncOption indicating we should not process incoming IPC while waiting for the sync reply
+        https://bugs.webkit.org/show_bug.cgi?id=182021
+        <rdar://problem/21629943>
+
+        Reviewed by Ryosuke Niwa.
+
+        Add layout test coverage for the new flag.
+
+        * fast/misc/testIncomingSyncIPCMessageWhileWaitingForSyncReply-expected.txt: Added.
+        * fast/misc/testIncomingSyncIPCMessageWhileWaitingForSyncReply.html: Added.
+
 2018-01-24  Matt Lewis  <jlewis3@apple.com>
 
         Adjusted expectations for http/tests/cache/disk-cache/memory-cache-revalidation-updates-disk-cache.html.

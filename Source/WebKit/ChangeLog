@@ -1,3 +1,67 @@
+2018-01-24  Chris Dumez  <cdumez@apple.com>
+
+        Add a IPC::SendSyncOption indicating we should not process incoming IPC while waiting for the sync reply
+        https://bugs.webkit.org/show_bug.cgi?id=182021
+        <rdar://problem/21629943>
+
+        Reviewed by Ryosuke Niwa.
+
+        Add a new DoNotProcessIncomingMessagesWhenWaitingForSyncReply SendSyncOption that the caller can
+        set when calling sendSync(). This indicates that the sendSync() should return only when we receive
+        the response to our sync IPC message, and that we should not process ANY incoming IPC in the meantime.
+
+        This patch also starts using this flag in 3 places where we know processing incoming IPC is an issue
+        and is causing crashes.
+
+        * Platform/IPC/Connection.cpp:
+        (IPC::Connection::sendSyncMessage):
+        When DoNotProcessIncomingMessagesWhenWaitingForSyncReply SendSyncOption is set, make sure
+        we set the ShouldDispatchMessageWhenWaitingForSyncReply flag on the encoder. If we did not set this
+        flag then it could cause deadlocks when the destination process is also waiting on a synchronous
+        IPC from us. Normally, this flag already gets set for sync messages because sendSyncMessage() calls
+        sendMessage() with DispatchMessageEvenWhenWaitingForSyncReply SyncOption. However, sendMessage()
+        ignores the DispatchMessageEvenWhenWaitingForSyncReply flag if the
+        m_onlySendMessagesAsDispatchWhenWaitingForSyncReplyWhenProcessingSuchAMessage flag is set on the
+        connection. Note that this flag is set on the connection from the WebProcess to the UIProcess at
+        the moment, which is why we saw deadlocks on the previous iteration of this patch.
+
+        (IPC::Connection::waitForSyncReply):
+        If DoNotProcessIncomingMessagesWhenWaitingForSyncReply SendSyncOption is set, do not
+        process incoming IPC messages while waiting for our sync IPC reply.
+
+        * Platform/IPC/Connection.h:
+        Add new SendSyncOption.
+
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::testIncomingSyncIPCMessageWhileWaitingForSyncReply):
+        * UIProcess/WebProcessProxy.h:
+        * UIProcess/WebProcessProxy.messages.in:
+        Testing infrastructure.
+
+        * WebProcess/Network/WebLoaderStrategy.cpp:
+        (WebKit::WebLoaderStrategy::loadResourceSynchronously):
+        Use new flag.
+
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::testIncomingSyncIPCMessageWhileWaitingForSyncReply):
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+        Testing infrastructure.
+
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.cpp:
+        (WebKit::WebPlatformStrategies::cookieRequestHeaderFieldValue):
+        Use new flag.
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::syncIPCMessageWhileWaitingForSyncReplyForTesting):
+        Testing infrastructure.
+
+        (WebKit::WebProcess::ensureNetworkProcessConnection):
+        Use new flag.
+
+        * WebProcess/WebProcess.h:
+        * WebProcess/WebProcess.messages.in:
+        Testing infrastructure.
+
 2018-01-24  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Remove duplicate preference update for WebAuthentication value

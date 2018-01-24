@@ -47,6 +47,8 @@ messages -> WebProcessProxy LegacyReceiver {
     DidExceedInactiveMemoryLimit()
     DidExceedCPULimit()
 
+    TestIncomingSyncIPCMessageWhileWaitingForSyncReply() -> (bool handled)
+
     StopResponsivenessTimer()
 
     DidReceiveMainThreadPing()
