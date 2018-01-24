@@ -346,6 +346,9 @@ void WebDriverService::parseCapabilities(const JSON::Object& matchedCapabilities
     bool acceptInsecureCerts;
     if (matchedCapabilities.getBoolean(ASCIILiteral("acceptInsecureCerts"), acceptInsecureCerts))
         capabilities.acceptInsecureCerts = acceptInsecureCerts;
+    bool setWindowRect;
+    if (matchedCapabilities.getBoolean(ASCIILiteral("setWindowRect"), setWindowRect))
+        capabilities.setWindowRect = setWindowRect;
     String browserName;
     if (matchedCapabilities.getString(ASCIILiteral("browserName"), browserName))
         capabilities.browserName = browserName;
@@ -466,6 +469,8 @@ RefPtr<JSON::Object> WebDriverService::matchCapabilities(const JSON::Object& mer
         matchedCapabilities->setString(ASCIILiteral("platformName"), platformCapabilities.platformName.value());
     if (platformCapabilities.acceptInsecureCerts)
         matchedCapabilities->setBoolean(ASCIILiteral("acceptInsecureCerts"), platformCapabilities.acceptInsecureCerts.value());
+    if (platformCapabilities.setWindowRect)
+        matchedCapabilities->setBoolean(ASCIILiteral("setWindowRect"), platformCapabilities.setWindowRect.value());
 
     auto end = mergedCapabilities.end();
     for (auto it = mergedCapabilities.begin(); it != end; ++it) {
@@ -665,6 +670,8 @@ void WebDriverService::newSession(RefPtr<JSON::Object>&& parameters, Function<vo
                     break;
                 }
             }
+            if (capabilities.setWindowRect)
+                capabilitiesObject->setBoolean(ASCIILiteral("setWindowRect"), capabilities.setWindowRect.value());
             if (capabilities.unhandledPromptBehavior) {
                 switch (capabilities.unhandledPromptBehavior.value()) {
                 case UnhandledPromptBehavior::Dismiss:
