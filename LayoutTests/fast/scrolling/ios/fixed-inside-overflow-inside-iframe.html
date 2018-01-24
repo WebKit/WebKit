@@ -12,29 +12,21 @@
            height: 100px;
        }
     </style>
+    <script src="../../../resources/basic-gestures.js"></script>
     <script type="text/javascript">
       if (window.testRunner)
           testRunner.waitUntilDone();
 
-      function getSwipeUIScript(fromX, fromY, toX, toY, duration)
-      {
-          return `(() => {
-              uiController.dragFromPointToPoint(${fromX}, ${fromY}, ${toX}, ${toY}, ${duration}, () => {
-                  uiController.uiScriptComplete("");
-              });
-          })();`;
-      }
-
-      function runTest() {
+      async function runTest() {
          var frameBox = document.querySelector("iframe").getBoundingClientRect();
          var x = frameBox.left + frameBox.width / 4;
          var ystart = frameBox.top + frameBox.height - 2;
          var yend = frameBox.top + 2;
 
          if (window.testRunner && testRunner.runUIScript) {
-             testRunner.runUIScript(getSwipeUIScript(x, ystart, x, yend, 0.05), () => {
-                 setTimeout(function() { testRunner.notifyDone(); }, 4000);
-             });
+             await touchAndDragFromPointToPoint(x, ystart, x, yend);
+             await liftUpAtPoint(x, ystart, x, yend);
+             setTimeout(() => { testRunner.notifyDone(); }, 4000);
          }
        }
     </script>

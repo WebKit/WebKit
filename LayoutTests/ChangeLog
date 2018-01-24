@@ -1,3 +1,14 @@
+2018-01-24  Frederic Wang  <fwang@igalia.com>
+
+        Use basic-gestures.js for fixed-inside-overflow-inside-iframe.html
+        https://bugs.webkit.org/show_bug.cgi?id=182041
+
+        Reviewed by Antonio Gomes.
+
+        * fast/scrolling/ios/fixed-inside-overflow-inside-iframe.html: Insert basic-gestures.js,
+        remove definition of getSwipeUIScript(), make runTest() async and use functions from
+        basic-gestures.js
+
 2018-01-24  Manuel Rego Casasnovas  <rego@igalia.com>
 
         Remove unneeded -expected.txt files for reftest
