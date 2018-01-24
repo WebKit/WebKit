@@ -2935,8 +2935,6 @@ webkit.org/b/151267 imported/blink/svg/canvas/canvas-draw-pattern-size.html [ Im
 webkit.org/b/151267 imported/blink/svg/filters/feDropShadow-linearrgb-flood-color.svg [ ImageOnlyFailure ]
 webkit.org/b/151267 imported/blink/webexposed/webkit-focus-ring-exposed-to-quirks-mode.html [ ImageOnlyFailure ]
 
-webkit.org/b/152057 accessibility/textarea-selected-text-range.html [ Failure Timeout ]
-
 webkit.org/b/152788 imported/mozilla/svg/filter-scaled-02.html [ ImageOnlyFailure Pass ]
 
 webkit.org/b/152821 imported/w3c/css/css-multicol-1/multicol-basic-001.html [ ImageOnlyFailure ]
@@ -3079,10 +3077,7 @@ webkit.org/b/168191 css3/font-synthesis-small-caps.html [ ImageOnlyFailure ]
 
 webkit.org/b/168192 http/tests/media/hls/video-duration-accessibility.html [ Timeout Failure ]
 
-webkit.org/b/168369 accessibility/gtk/text-at-offset-textarea.html [ Failure ]
-webkit.org/b/168369 accessibility/gtk/text-at-offset-textinput.html [ Failure ]
 webkit.org/b/168370 accessibility/hidden-th-still-column-header.html [ Failure ]
-webkit.org/b/168370 accessibility/selected-text-range-aria-elements.html [ Failure ]
 
 webkit.org/b/168373 fullscreen/video-controls-rtl.html [ Failure ]
 webkit.org/b/168373 media/media-preload-no-delay-loadevent.html [ Failure ]

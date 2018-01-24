@@ -391,13 +391,6 @@ static void getSelectionOffsetsForObject(AccessibilityObject* coreObject, Visibl
     Position firstValidPosition = firstPositionInOrBeforeNode(node->firstDescendant());
     Position lastValidPosition = lastPositionInOrAfterNode(node->lastDescendant());
 
-    // Early return with proper values if the selection falls entirely out of the object.
-    if (!selectionBelongsToObject(coreObject, selection)) {
-        startOffset = comparePositions(selection.start(), firstValidPosition) <= 0 ? 0 : accessibilityObjectLength(coreObject);
-        endOffset = startOffset;
-        return;
-    }
-
     // Find the proper range for the selection that falls inside the object.
     Position nodeRangeStart = selection.start();
     if (comparePositions(nodeRangeStart, firstValidPosition) < 0)

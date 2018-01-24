@@ -1,3 +1,32 @@
+2018-01-24  Ms2ger  <Ms2ger@igalia.com>
+
+        [GTK] Fix some test failures in ATK selection handling.
+        https://bugs.webkit.org/show_bug.cgi?id=168369
+        <rdar://problem/30534881>
+
+        Reviewed by Joanmarie Diggs.
+
+        In r208479, selectionBelongsToObject was changed to return false if the
+        intersectsNode call returns an exception.
+
+        In particular, this caused accessibility/gtk/text-at-offset-textarea.html
+        to fail. In this test, the selection is situated in the shadow DOM of the
+        textarea, while the node that is checked for intersection is the textarea
+        itself. In line with the standard, intersectsNode returns an exception in
+        this case.
+
+        This caused webkitAccessibleText{Word, Line, Sentence}ForBoundary to stop
+        returning the expected text in the tested case. Removing this check fixes
+        the test, along with some others.
+
+        Tests: accessibility/gtk/text-at-offset-textarea.html
+               accessibility/gtk/text-at-offset-textinput.html
+               accessibility/selected-text-range-aria-elements.html
+               accessibility/textarea-selected-text-range.html
+
+        * accessibility/atk/WebKitAccessibleInterfaceText.cpp:
+        (getSelectionOffsetsForObject): Remove the selectionBelongsToObject() call.
+
 2018-01-18  Sergio Villar Senin  <svillar@igalia.com>
 
         [WebVR] Add OpenVR to the tree and to the build
