@@ -322,7 +322,7 @@ void ResourceHandleCurlDelegate::willSendRequest()
     }
 
     String location = response().httpHeaderField(HTTPHeaderName::Location);
-    URL newURL = URL(m_firstRequest.url(), location);
+    URL newURL = URL(m_handle->getInternal()->m_response.url(), location);
     bool crossOrigin = !protocolHostAndPortAreEqual(m_firstRequest.url(), newURL);
 
     ResourceRequest newRequest = m_firstRequest;

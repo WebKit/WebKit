@@ -174,7 +174,7 @@ void CurlDownload::willSendRequest()
     }
 
     String location = m_response.httpHeaderField(HTTPHeaderName::Location);
-    URL newURL = URL(m_request.url(), location);
+    URL newURL = URL(m_response.url(), location);
     bool crossOrigin = !protocolHostAndPortAreEqual(m_request.url(), newURL);
 
     ResourceRequest newRequest = m_request;

@@ -1,3 +1,16 @@
+2018-01-23  Basuke Suzuki  <Basuke.Suzuki@sony.com>
+
+        [Curl] Fix wrong redirection with relative url when it happens from
+        different host than original host.
+        https://bugs.webkit.org/show_bug.cgi?id=181873
+
+        Reviewed by Alex Christensen.
+
+        * platform/network/curl/CurlDownload.cpp:
+        (WebCore::CurlDownload::willSendRequest):
+        * platform/network/curl/ResourceHandleCurlDelegate.cpp:
+        (WebCore::ResourceHandleCurlDelegate::willSendRequest):
+
 2018-01-23  Eric Carlson  <eric.carlson@apple.com>
 
         Resign NowPlaying status when no media element is eligible
