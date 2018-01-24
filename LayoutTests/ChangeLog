@@ -1,5 +1,17 @@
 2018-01-24  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Cherry-pick r226720. rdar://problem/36837397
+
+    2018-01-10  Chris Dumez  <cdumez@apple.com>
+
+            Unreviewed, skip http/tests/workers/service/other_resources folder.
+
+            It is a resources folder and does not contain tests.
+
+            * TestExpectations:
+
+2018-01-24  Ryan Haddad  <ryanhaddad@apple.com>
+
         Cherry-pick r226759. rdar://problem/36837397
 
     2018-01-10  Ryan Haddad  <ryanhaddad@apple.com>
