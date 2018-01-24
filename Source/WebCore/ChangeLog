@@ -1,3 +1,17 @@
+2018-01-24  Eric Carlson  <eric.carlson@apple.com>
+
+        REGRESSION(r227457): Release assert in updateLayout while destructing a media element
+        https://bugs.webkit.org/show_bug.cgi?id=182038
+        <rdar://problem/36812083>
+
+        Reviewed by Jer Noble.
+
+        * html/MediaElementSession.cpp:
+        (WebCore::isMainContentForPurposesOfAutoplay): Early return if element.isSuspended().
+        * platform/audio/mac/MediaSessionManagerMac.mm:
+        (WebCore::MediaSessionManagerMac::clientCharacteristicsChanged): Call scheduleUpdateNowPlayingInfo
+        instead of updateNowPlayingInfo.
+
 2018-01-24  Chris Fleizach  <cfleizach@apple.com>
 
         AX: Provide a way for VoiceOver to uniquely identify a web session
