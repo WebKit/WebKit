@@ -136,6 +136,10 @@ void ServiceWorkerClientFetch::didReceiveResponse(ResourceResponse&& response)
     }
     response.setSource(ResourceResponse::Source::ServiceWorker);
 
+    // As per https://fetch.spec.whatwg.org/#main-fetch step 9, copy request's url list in response's url list if empty.
+    if (response.url().isNull())
+        response.setURL(m_loader->request().url());
+
     m_loader->didReceiveResponse(response);
     if (auto callback = WTFMove(m_callback))
         callback(Result::Succeeded);
