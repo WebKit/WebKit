@@ -507,7 +507,7 @@ private:
                         GPRReg scratch = params.gpScratch(0);
                         GPRReg poisonScratch = params.gpScratch(1);
 
-                        jit.move(CCallHelpers::TrustedImm64(POISON(JITCode)), poisonScratch);
+                        jit.move(CCallHelpers::TrustedImm64(JITCodePoison::key()), poisonScratch);
                         jit.move(CCallHelpers::TrustedImmPtr(jumpTable), scratch);
                         jit.load64(CCallHelpers::BaseIndex(scratch, index, CCallHelpers::timesPtr()), scratch);
                         jit.xor64(poisonScratch, scratch);

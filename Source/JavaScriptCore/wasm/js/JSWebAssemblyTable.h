@@ -66,10 +66,10 @@ private:
     static void destroy(JSCell*);
     static void visitChildren(JSCell*, SlotVisitor&);
 
-    PoisonedRef<POISON(JSWebAssemblyTable), Wasm::Table> m_table;
+    PoisonedRef<JSWebAssemblyTablePoison, Wasm::Table> m_table;
 
     template<typename T>
-    using PoisonedBarrier = PoisonedWriteBarrier<POISON(JSWebAssemblyTable), T>;
+    using PoisonedBarrier = PoisonedWriteBarrier<JSWebAssemblyTablePoison, T>;
 
     MallocPtr<PoisonedBarrier<JSObject>> m_jsFunctions;
 };

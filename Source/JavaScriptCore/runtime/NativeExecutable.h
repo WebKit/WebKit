@@ -90,7 +90,7 @@ protected:
 
 private:
     friend class ExecutableBase;
-    using PoisonedNativeFunction = Poisoned<POISON(NativeCode), NativeFunction>;
+    using PoisonedNativeFunction = Poisoned<NativeCodePoison, NativeFunction>;
 
     NativeExecutable(VM&, NativeFunction function, NativeFunction constructor, Intrinsic, const DOMJIT::Signature*);
 

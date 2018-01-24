@@ -61,7 +61,7 @@ protected:
     static size_t estimatedSize(JSCell*);
 
 private:
-    Poisoned<POISON(JSArrayBuffer), ArrayBuffer*> m_impl;
+    Poisoned<JSArrayBufferPoison, ArrayBuffer*> m_impl;
 };
 
 inline ArrayBuffer* toPossiblySharedArrayBuffer(VM& vm, JSValue value)

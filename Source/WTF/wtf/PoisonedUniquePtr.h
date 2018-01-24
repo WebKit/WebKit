@@ -33,10 +33,10 @@
 
 namespace WTF {
 
-template<uintptr_t& key, typename T, typename Enable = void>
-class PoisonedUniquePtr : public Poisoned<key, T*> {
+template<typename Poison, typename T, typename Enable = void>
+class PoisonedUniquePtr : public Poisoned<Poison, T*> {
     WTF_MAKE_FAST_ALLOCATED;
-    using Base = Poisoned<key, T*>;
+    using Base = Poisoned<Poison, T*>;
 public:
     static constexpr bool isPoisonedUniquePtr = true;
     using ValueType = T;
@@ -126,13 +126,13 @@ private:
 
     void clearWithoutDestroy() { Base::clear(); }
 
-    template<uintptr_t&, typename, typename> friend class PoisonedUniquePtr;
+    template<typename, typename, typename> friend class PoisonedUniquePtr;
 };
 
-template<uintptr_t& key, typename T>
-class PoisonedUniquePtr<key, T[]> : public Poisoned<key, T*> {
+template<typename Poison, typename T>
+class PoisonedUniquePtr<Poison, T[]> : public Poisoned<Poison, T*> {
     WTF_MAKE_FAST_ALLOCATED;
-    using Base = Poisoned<key, T*>;
+    using Base = Poisoned<Poison, T*>;
 public:
     static constexpr bool isPoisonedUniquePtr = true;
     using ValueType = T[];
@@ -212,7 +212,7 @@ private:
 
     void clearWithoutDestroy() { Base::clear(); }
 
-    template<uintptr_t&, typename, typename> friend class PoisonedUniquePtr;
+    template<typename, typename, typename> friend class PoisonedUniquePtr;
 };
 
 } // namespace WTF

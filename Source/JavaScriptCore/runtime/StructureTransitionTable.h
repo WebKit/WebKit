@@ -187,8 +187,8 @@ public:
 
 private:
     friend class SingleSlotTransitionWeakOwner;
-    using PoisonedTransitionMapPtr = Poisoned<POISON(StructureTransitionTable), TransitionMap*>;
-    using PoisonedWeakImplPtr = Poisoned<POISON(StructureTransitionTable), WeakImpl*>;
+    using PoisonedTransitionMapPtr = Poisoned<StructureTransitionTablePoison, TransitionMap*>;
+    using PoisonedWeakImplPtr = Poisoned<StructureTransitionTablePoison, WeakImpl*>;
 
     bool isUsingSingleSlot() const
     {

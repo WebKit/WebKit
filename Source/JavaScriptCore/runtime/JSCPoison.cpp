@@ -33,7 +33,7 @@
 namespace JSC {
 
 #define DEFINE_POISON(poisonID) \
-    uintptr_t POISON(poisonID);
+    uintptr_t POISON_KEY_NAME(poisonID);
 FOR_EACH_JSC_POISON(DEFINE_POISON)
 
 void initializePoison()
@@ -44,7 +44,7 @@ void initializePoison()
             return;
 
 #define INITIALIZE_POISON(poisonID) \
-    POISON(poisonID) = makePoison();
+    POISON_KEY_NAME(poisonID) = makePoison();
 
         FOR_EACH_JSC_POISON(INITIALIZE_POISON)
     });

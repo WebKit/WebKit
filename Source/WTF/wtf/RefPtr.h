@@ -276,10 +276,10 @@ inline bool is(const RefPtr<ArgType, PtrTraits>& source)
     return is<ExpectedType>(source.get());
 }
 
-template<uintptr_t& key, typename T> struct PoisonedPtrTraits;
+template<typename Poison, typename T> struct PoisonedPtrTraits;
 
-template<uintptr_t& key, typename T>
-using PoisonedRefPtr = RefPtr<T, PoisonedPtrTraits<key, T>>;
+template<typename Poison, typename T>
+using PoisonedRefPtr = RefPtr<T, PoisonedPtrTraits<Poison, T>>;
 
 } // namespace WTF
 

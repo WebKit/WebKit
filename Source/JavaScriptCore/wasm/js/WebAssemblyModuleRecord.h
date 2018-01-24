@@ -60,7 +60,7 @@ private:
     static void visitChildren(JSCell*, SlotVisitor&);
 
     template<typename T>
-    using PoisonedBarrier = PoisonedWriteBarrier<POISON(WebAssemblyModuleRecord), T>;
+    using PoisonedBarrier = PoisonedWriteBarrier<WebAssemblyModuleRecordPoison, T>;
 
     PoisonedBarrier<JSWebAssemblyInstance> m_instance;
     PoisonedBarrier<JSObject> m_startFunction;

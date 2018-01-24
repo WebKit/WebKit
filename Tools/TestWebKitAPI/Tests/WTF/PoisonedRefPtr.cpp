@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -43,6 +43,13 @@ uintptr_t g_poisonD;
 uintptr_t g_poisonE;
 uintptr_t g_poisonF;
 
+using PoisonA = Poison<g_poisonA>;
+using PoisonB = Poison<g_poisonB>;
+using PoisonC = Poison<g_poisonC>;
+using PoisonD = Poison<g_poisonD>;
+using PoisonE = Poison<g_poisonE>;
+using PoisonF = Poison<g_poisonF>;
+
 static void initializePoisons()
 {
     static std::once_flag initializeOnceFlag;
@@ -64,11 +71,11 @@ TEST(WTF_PoisonedRefPtr, Basic)
 
     DerivedRefLogger a("a");
 
-    PoisonedRefPtr<g_poisonA, RefLogger> empty;
+    PoisonedRefPtr<PoisonA, RefLogger> empty;
     EXPECT_EQ(nullptr, empty.get());
 
     {
-        PoisonedRefPtr<g_poisonB, RefLogger> ptr(&a);
+        PoisonedRefPtr<PoisonB, RefLogger> ptr(&a);
         EXPECT_EQ(&a, ptr.get());
         EXPECT_EQ(&a, &*ptr);
         EXPECT_EQ(&a.name, &ptr->name);
@@ -77,70 +84,70 @@ TEST(WTF_PoisonedRefPtr, Basic)
         uintptr_t ptrBits;
         std::memcpy(&ptrBits, &ptr, sizeof(ptrBits));
         ASSERT_TRUE(ptrBits != bitwise_cast<uintptr_t>(&a));
-        ASSERT_EQ(ptrBits, (Poisoned<g_poisonB, RefLogger*>(&a).bits()));
+        ASSERT_EQ(ptrBits, (Poisoned<PoisonB, RefLogger*>(&a).bits()));
 #if ENABLE(POISON_ASSERTS)
-        ASSERT_TRUE((Poisoned<g_poisonB, RefLogger*>::isPoisoned(ptrBits)));
+        ASSERT_TRUE((Poisoned<PoisonB, RefLogger*>::isPoisoned(ptrBits)));
 #endif
 #endif // ENABLE(POISON)
     }
     EXPECT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());
 
     {
-        PoisonedRefPtr<g_poisonC, RefLogger> ptr = &a;
+        PoisonedRefPtr<PoisonC, RefLogger> ptr = &a;
         EXPECT_EQ(&a, ptr.get());
     }
     EXPECT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());
 
     {
-        PoisonedRefPtr<g_poisonD, RefLogger> p1 = &a;
-        PoisonedRefPtr<g_poisonE, RefLogger> p2(p1);
+        PoisonedRefPtr<PoisonD, RefLogger> p1 = &a;
+        PoisonedRefPtr<PoisonE, RefLogger> p2(p1);
         EXPECT_EQ(&a, p1.get());
         EXPECT_EQ(&a, p2.get());
     }
     EXPECT_STREQ("ref(a) ref(a) deref(a) deref(a) ", takeLogStr().c_str());
 
     {
-        PoisonedRefPtr<g_poisonF, RefLogger> p1 = &a;
-        PoisonedRefPtr<g_poisonB, RefLogger> p2 = p1;
+        PoisonedRefPtr<PoisonF, RefLogger> p1 = &a;
+        PoisonedRefPtr<PoisonB, RefLogger> p2 = p1;
         EXPECT_EQ(&a, p1.get());
         EXPECT_EQ(&a, p2.get());
     }
     EXPECT_STREQ("ref(a) ref(a) deref(a) deref(a) ", takeLogStr().c_str());
 
     {
-        PoisonedRefPtr<g_poisonC, RefLogger> p1 = &a;
-        PoisonedRefPtr<g_poisonD, RefLogger> p2 = WTFMove(p1);
+        PoisonedRefPtr<PoisonC, RefLogger> p1 = &a;
+        PoisonedRefPtr<PoisonD, RefLogger> p2 = WTFMove(p1);
         EXPECT_EQ(nullptr, p1.get());
         EXPECT_EQ(&a, p2.get());
     }
     EXPECT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());
 
     {
-        PoisonedRefPtr<g_poisonE, RefLogger> p1 = &a;
-        PoisonedRefPtr<g_poisonF, RefLogger> p2(WTFMove(p1));
+        PoisonedRefPtr<PoisonE, RefLogger> p1 = &a;
+        PoisonedRefPtr<PoisonF, RefLogger> p2(WTFMove(p1));
         EXPECT_EQ(nullptr, p1.get());
         EXPECT_EQ(&a, p2.get());
     }
     EXPECT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());
 
     {
-        PoisonedRefPtr<g_poisonB, DerivedRefLogger> p1 = &a;
-        PoisonedRefPtr<g_poisonC, RefLogger> p2 = p1;
+        PoisonedRefPtr<PoisonB, DerivedRefLogger> p1 = &a;
+        PoisonedRefPtr<PoisonC, RefLogger> p2 = p1;
         EXPECT_EQ(&a, p1.get());
         EXPECT_EQ(&a, p2.get());
     }
     EXPECT_STREQ("ref(a) ref(a) deref(a) deref(a) ", takeLogStr().c_str());
 
     {
-        PoisonedRefPtr<g_poisonD, DerivedRefLogger> p1 = &a;
-        PoisonedRefPtr<g_poisonE, RefLogger> p2 = WTFMove(p1);
+        PoisonedRefPtr<PoisonD, DerivedRefLogger> p1 = &a;
+        PoisonedRefPtr<PoisonE, RefLogger> p2 = WTFMove(p1);
         EXPECT_EQ(nullptr, p1.get());
         EXPECT_EQ(&a, p2.get());
     }
     EXPECT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());
 
     {
-        PoisonedRefPtr<g_poisonF, RefLogger> ptr(&a);
+        PoisonedRefPtr<PoisonF, RefLogger> ptr(&a);
         EXPECT_EQ(&a, ptr.get());
         ptr = nullptr;
         EXPECT_EQ(nullptr, ptr.get());
@@ -155,7 +162,7 @@ TEST(WTF_PoisonedRefPtr, AssignPassRefToPoisonedRefPtr)
     DerivedRefLogger a("a");
     {
         Ref<RefLogger> passRef(a);
-        PoisonedRefPtr<g_poisonB, RefLogger> ptr = WTFMove(passRef);
+        PoisonedRefPtr<PoisonB, RefLogger> ptr = WTFMove(passRef);
         EXPECT_EQ(&a, ptr.get());
     }
     EXPECT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());
@@ -167,11 +174,11 @@ TEST(WTF_PoisonedRefPtr, Adopt)
 
     DerivedRefLogger a("a");
 
-    PoisonedRefPtr<g_poisonC, RefLogger> empty;
+    PoisonedRefPtr<PoisonC, RefLogger> empty;
     EXPECT_EQ(nullptr, empty.get());
 
     {
-        PoisonedRefPtr<g_poisonD, RefLogger> ptr(adoptRef(&a));
+        PoisonedRefPtr<PoisonD, RefLogger> ptr(adoptRef(&a));
         EXPECT_EQ(&a, ptr.get());
         EXPECT_EQ(&a, &*ptr);
         EXPECT_EQ(&a.name, &ptr->name);
@@ -179,7 +186,7 @@ TEST(WTF_PoisonedRefPtr, Adopt)
     EXPECT_STREQ("deref(a) ", takeLogStr().c_str());
 
     {
-        PoisonedRefPtr<g_poisonE, RefLogger> ptr = adoptRef(&a);
+        PoisonedRefPtr<PoisonE, RefLogger> ptr = adoptRef(&a);
         EXPECT_EQ(&a, ptr.get());
     }
     EXPECT_STREQ("deref(a) ", takeLogStr().c_str());
@@ -194,8 +201,8 @@ TEST(WTF_PoisonedRefPtr, Assignment)
     DerivedRefLogger c("c");
 
     {
-        PoisonedRefPtr<g_poisonF, RefLogger> p1(&a);
-        PoisonedRefPtr<g_poisonB, RefLogger> p2(&b);
+        PoisonedRefPtr<PoisonF, RefLogger> p1(&a);
+        PoisonedRefPtr<PoisonB, RefLogger> p2(&b);
         EXPECT_EQ(&a, p1.get());
         EXPECT_EQ(&b, p2.get());
         log() << "| ";
@@ -207,7 +214,7 @@ TEST(WTF_PoisonedRefPtr, Assignment)
     EXPECT_STREQ("ref(a) ref(b) | ref(b) deref(a) | deref(b) deref(b) ", takeLogStr().c_str());
 
     {
-        PoisonedRefPtr<g_poisonC, RefLogger> ptr(&a);
+        PoisonedRefPtr<PoisonC, RefLogger> ptr(&a);
         EXPECT_EQ(&a, ptr.get());
         log() << "| ";
         ptr = &b;
@@ -217,7 +224,7 @@ TEST(WTF_PoisonedRefPtr, Assignment)
     EXPECT_STREQ("ref(a) | ref(b) deref(a) | deref(b) ", takeLogStr().c_str());
 
     {
-        PoisonedRefPtr<g_poisonD, RefLogger> ptr(&a);
+        PoisonedRefPtr<PoisonD, RefLogger> ptr(&a);
         EXPECT_EQ(&a, ptr.get());
         log() << "| ";
         ptr = adoptRef(&b);
@@ -227,7 +234,7 @@ TEST(WTF_PoisonedRefPtr, Assignment)
     EXPECT_STREQ("ref(a) | deref(a) | deref(b) ", takeLogStr().c_str());
 
     {
-        PoisonedRefPtr<g_poisonE, RefLogger> ptr(&a);
+        PoisonedRefPtr<PoisonE, RefLogger> ptr(&a);
         EXPECT_EQ(&a, ptr.get());
         ptr = nullptr;
         EXPECT_EQ(nullptr, ptr.get());
@@ -235,8 +242,8 @@ TEST(WTF_PoisonedRefPtr, Assignment)
     EXPECT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());
 
     {
-        PoisonedRefPtr<g_poisonB, RefLogger> p1(&a);
-        PoisonedRefPtr<g_poisonC, RefLogger> p2(&b);
+        PoisonedRefPtr<PoisonB, RefLogger> p1(&a);
+        PoisonedRefPtr<PoisonC, RefLogger> p2(&b);
         EXPECT_EQ(&a, p1.get());
         EXPECT_EQ(&b, p2.get());
         log() << "| ";
@@ -248,8 +255,8 @@ TEST(WTF_PoisonedRefPtr, Assignment)
     EXPECT_STREQ("ref(a) ref(b) | deref(a) | deref(b) ", takeLogStr().c_str());
 
     {
-        PoisonedRefPtr<g_poisonD, RefLogger> p1(&a);
-        PoisonedRefPtr<g_poisonE, DerivedRefLogger> p2(&c);
+        PoisonedRefPtr<PoisonD, RefLogger> p1(&a);
+        PoisonedRefPtr<PoisonE, DerivedRefLogger> p2(&c);
         EXPECT_EQ(&a, p1.get());
         EXPECT_EQ(&c, p2.get());
         log() << "| ";
@@ -261,7 +268,7 @@ TEST(WTF_PoisonedRefPtr, Assignment)
     EXPECT_STREQ("ref(a) ref(c) | ref(c) deref(a) | deref(c) deref(c) ", takeLogStr().c_str());
 
     {
-        PoisonedRefPtr<g_poisonF, RefLogger> ptr(&a);
+        PoisonedRefPtr<PoisonF, RefLogger> ptr(&a);
         EXPECT_EQ(&a, ptr.get());
         log() << "| ";
         ptr = &c;
@@ -271,7 +278,7 @@ TEST(WTF_PoisonedRefPtr, Assignment)
     EXPECT_STREQ("ref(a) | ref(c) deref(a) | deref(c) ", takeLogStr().c_str());
 
     {
-        PoisonedRefPtr<g_poisonB, RefLogger> ptr(&a);
+        PoisonedRefPtr<PoisonB, RefLogger> ptr(&a);
         EXPECT_EQ(&a, ptr.get());
         log() << "| ";
         ptr = adoptRef(&c);
@@ -281,8 +288,8 @@ TEST(WTF_PoisonedRefPtr, Assignment)
     EXPECT_STREQ("ref(a) | deref(a) | deref(c) ", takeLogStr().c_str());
 
     {
-        PoisonedRefPtr<g_poisonC, RefLogger> p1(&a);
-        PoisonedRefPtr<g_poisonD, DerivedRefLogger> p2(&c);
+        PoisonedRefPtr<PoisonC, RefLogger> p1(&a);
+        PoisonedRefPtr<PoisonD, DerivedRefLogger> p2(&c);
         EXPECT_EQ(&a, p1.get());
         EXPECT_EQ(&c, p2.get());
         log() << "| ";
@@ -294,7 +301,7 @@ TEST(WTF_PoisonedRefPtr, Assignment)
     EXPECT_STREQ("ref(a) ref(c) | deref(a) | deref(c) ", takeLogStr().c_str());
 
     {
-        PoisonedRefPtr<g_poisonE, RefLogger> ptr(&a);
+        PoisonedRefPtr<PoisonE, RefLogger> ptr(&a);
         EXPECT_EQ(&a, ptr.get());
         log() << "| ";
         ptr = ptr;
@@ -304,7 +311,7 @@ TEST(WTF_PoisonedRefPtr, Assignment)
     EXPECT_STREQ("ref(a) | ref(a) deref(a) | deref(a) ", takeLogStr().c_str());
 
     {
-        PoisonedRefPtr<g_poisonF, RefLogger> ptr(&a);
+        PoisonedRefPtr<PoisonF, RefLogger> ptr(&a);
         EXPECT_EQ(&a, ptr.get());
 #if COMPILER(CLANG)
 #pragma clang diagnostic push
@@ -328,8 +335,8 @@ TEST(WTF_PoisonedRefPtr, Swap)
     RefLogger b("b");
 
     {
-        PoisonedRefPtr<g_poisonB, RefLogger> p1(&a);
-        PoisonedRefPtr<g_poisonC, RefLogger> p2(&b);
+        PoisonedRefPtr<PoisonB, RefLogger> p1(&a);
+        PoisonedRefPtr<PoisonC, RefLogger> p2(&b);
         log() << "| ";
         EXPECT_EQ(&a, p1.get());
         EXPECT_EQ(&b, p2.get());
@@ -341,8 +348,8 @@ TEST(WTF_PoisonedRefPtr, Swap)
     EXPECT_STREQ("ref(a) ref(b) | | deref(a) deref(b) ", takeLogStr().c_str());
 
     {
-        PoisonedRefPtr<g_poisonD, RefLogger> p1(&a);
-        PoisonedRefPtr<g_poisonE, RefLogger> p2(&b);
+        PoisonedRefPtr<PoisonD, RefLogger> p1(&a);
+        PoisonedRefPtr<PoisonE, RefLogger> p2(&b);
         log() << "| ";
         EXPECT_EQ(&a, p1.get());
         EXPECT_EQ(&b, p2.get());
@@ -361,8 +368,8 @@ TEST(WTF_PoisonedRefPtr, ReleaseNonNull)
     RefLogger a("a");
 
     {
-        PoisonedRefPtr<g_poisonF, RefLogger> refPtr = &a;
-        PoisonedRefPtr<g_poisonB, RefLogger> ref = refPtr.releaseNonNull();
+        PoisonedRefPtr<PoisonF, RefLogger> refPtr = &a;
+        PoisonedRefPtr<PoisonB, RefLogger> ref = refPtr.releaseNonNull();
     }
 
     EXPECT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());
@@ -377,32 +384,32 @@ TEST(WTF_PoisonedRefPtr, Release)
     DerivedRefLogger c("c");
 
     {
-        PoisonedRefPtr<g_poisonC, RefLogger> p1 = &a;
-        PoisonedRefPtr<g_poisonD, RefLogger> p2 = WTFMove(p1);
+        PoisonedRefPtr<PoisonC, RefLogger> p1 = &a;
+        PoisonedRefPtr<PoisonD, RefLogger> p2 = WTFMove(p1);
         EXPECT_EQ(nullptr, p1.get());
         EXPECT_EQ(&a, p2.get());
     }
     EXPECT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());
 
     {
-        PoisonedRefPtr<g_poisonE, RefLogger> p1 = &a;
-        PoisonedRefPtr<g_poisonF, RefLogger> p2(WTFMove(p1));
+        PoisonedRefPtr<PoisonE, RefLogger> p1 = &a;
+        PoisonedRefPtr<PoisonF, RefLogger> p2(WTFMove(p1));
         EXPECT_EQ(nullptr, p1.get());
         EXPECT_EQ(&a, p2.get());
     }
     EXPECT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());
 
     {
-        PoisonedRefPtr<g_poisonB, DerivedRefLogger> p1 = &a;
-        PoisonedRefPtr<g_poisonC, RefLogger> p2 = WTFMove(p1);
+        PoisonedRefPtr<PoisonB, DerivedRefLogger> p1 = &a;
+        PoisonedRefPtr<PoisonC, RefLogger> p2 = WTFMove(p1);
         EXPECT_EQ(nullptr, p1.get());
         EXPECT_EQ(&a, p2.get());
     }
     EXPECT_STREQ("ref(a) deref(a) ", takeLogStr().c_str());
 
     {
-        PoisonedRefPtr<g_poisonD, RefLogger> p1(&a);
-        PoisonedRefPtr<g_poisonE, RefLogger> p2(&b);
+        PoisonedRefPtr<PoisonD, RefLogger> p1(&a);
+        PoisonedRefPtr<PoisonE, RefLogger> p2(&b);
         EXPECT_EQ(&a, p1.get());
         EXPECT_EQ(&b, p2.get());
         log() << "| ";
@@ -414,8 +421,8 @@ TEST(WTF_PoisonedRefPtr, Release)
     EXPECT_STREQ("ref(a) ref(b) | deref(a) | deref(b) ", takeLogStr().c_str());
 
     {
-        PoisonedRefPtr<g_poisonF, RefLogger> p1(&a);
-        PoisonedRefPtr<g_poisonB, DerivedRefLogger> p2(&c);
+        PoisonedRefPtr<PoisonF, RefLogger> p1(&a);
+        PoisonedRefPtr<PoisonB, DerivedRefLogger> p2(&c);
         EXPECT_EQ(&a, p1.get());
         EXPECT_EQ(&c, p2.get());
         log() << "| ";
@@ -427,9 +434,9 @@ TEST(WTF_PoisonedRefPtr, Release)
     EXPECT_STREQ("ref(a) ref(c) | deref(a) | deref(c) ", takeLogStr().c_str());
 }
 
-static PoisonedRefPtr<g_poisonC, RefLogger> f1(RefLogger& logger)
+static PoisonedRefPtr<PoisonC, RefLogger> f1(RefLogger& logger)
 {
-    return PoisonedRefPtr<g_poisonC, RefLogger>(&logger);
+    return PoisonedRefPtr<PoisonC, RefLogger>(&logger);
 }
 
 TEST(WTF_PoisonedRefPtr, ReturnValue)
@@ -471,17 +478,17 @@ TEST(WTF_PoisonedRefPtr, Const)
     // This test passes if it compiles without an error.
     auto a = ConstRefCounted::create();
     Ref<const ConstRefCounted> b = WTFMove(a);
-    PoisonedRefPtr<g_poisonD, const ConstRefCounted> c = b.ptr();
+    PoisonedRefPtr<PoisonD, const ConstRefCounted> c = b.ptr();
     Ref<const ConstRefCounted> d = returnConstRefCountedRef();
-    PoisonedRefPtr<g_poisonE, const ConstRefCounted> e = &returnConstRefCountedRef();
-    PoisonedRefPtr<g_poisonF, ConstRefCounted> f = ConstRefCounted::create();
-    PoisonedRefPtr<g_poisonB, const ConstRefCounted> g = f;
-    PoisonedRefPtr<g_poisonC, const ConstRefCounted> h(f);
+    PoisonedRefPtr<PoisonE, const ConstRefCounted> e = &returnConstRefCountedRef();
+    PoisonedRefPtr<PoisonF, ConstRefCounted> f = ConstRefCounted::create();
+    PoisonedRefPtr<PoisonB, const ConstRefCounted> g = f;
+    PoisonedRefPtr<PoisonC, const ConstRefCounted> h(f);
     Ref<const ConstRefCounted> i(returnRefCountedRef());
 }
 
 struct PoisonedRefPtrCheckingRefLogger : RefLogger {
-    using Ref = PoisonedRefPtr<g_poisonD, PoisonedRefPtrCheckingRefLogger>;
+    using Ref = PoisonedRefPtr<PoisonD, PoisonedRefPtrCheckingRefLogger>;
 
     PoisonedRefPtrCheckingRefLogger(const char* name);
     void ref();

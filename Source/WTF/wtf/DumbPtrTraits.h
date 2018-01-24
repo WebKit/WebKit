@@ -32,8 +32,6 @@ namespace WTF {
     
 template<typename T>
 struct DumbPtrTraits {
-    static uintptr_t poison() { return 0; }
-
     using StorageType = T*;
 
     template<typename U>
