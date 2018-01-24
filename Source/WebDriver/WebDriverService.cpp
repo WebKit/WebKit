@@ -270,6 +270,22 @@ void WebDriverService::sendResponse(Function<void (HTTPRequestHandler::Response&
     replyHandler({ result.httpStatusCode(), responseObject->toJSONString().utf8(), ASCIILiteral("application/json; charset=utf-8") });
 }
 
+static bool integerValue(JSON::Value& value, int& output)
+{
+    // Bail if an integer value cannot be retrieved.
+    if (!value.asInteger(output))
+        return false;
+
+    // If the contained value is a double, bail in case it doesn't match the integer
+    // value, i.e. if the double value was not originally in integer form.
+    // https://w3c.github.io/webdriver/webdriver-spec.html#dfn-integer
+    double doubleValue;
+    if (value.asDouble(doubleValue) && doubleValue != output)
+        return false;
+
+    return true;
+}
+
 static std::optional<Timeouts> deserializeTimeouts(JSON::Object& timeoutsObject)
 {
     // §8.5 Set Timeouts.
@@ -281,7 +297,7 @@ static std::optional<Timeouts> deserializeTimeouts(JSON::Object& timeoutsObject)
             continue;
 
         int timeoutMS;
-        if (it->value->type() != JSON::Value::Type::Integer || !it->value->asInteger(timeoutMS) || timeoutMS < 0 || timeoutMS > INT_MAX)
+        if (!integerValue(*it->value, timeoutMS) || timeoutMS < 0 || timeoutMS > INT_MAX)
             return std::nullopt;
 
         if (it->key == "script")

@@ -1,3 +1,37 @@
+2018-01-10  Zan Dobersek  <zdobersek@igalia.com>
+
+        WebDriver: deserializeTimeouts() shouldn't reject double timeout values
+        https://bugs.webkit.org/show_bug.cgi?id=181473
+
+        Reviewed by Carlos Garcia Campos.
+
+        With these changes, the following tests are fixed:
+            imported/selenium/py/test/selenium/webdriver/common/executing_async_javascript_tests.py::testShouldTimeoutIfScriptDoesNotInvokeCallbackWithLongTimeout
+            imported/selenium/py/test/selenium/webdriver/common/executing_async_javascript_tests.py::testShouldDetectPageLoadsWhileWaitingOnAnAsyncScriptAndReturnAnError
+            imported/selenium/py/test/selenium/webdriver/common/executing_async_javascript_tests.py::testShouldBeAbleToExecuteAsynchronousScripts
+            imported/selenium/py/test/selenium/webdriver/common/implicit_waits_tests.py::testShouldImplicitlyWaitForASingleElement
+            imported/selenium/py/test/selenium/webdriver/common/implicit_waits_tests.py::testShouldStillFailToFindAnElementWhenImplicitWaitsAreEnabled
+            imported/selenium/py/test/selenium/webdriver/common/implicit_waits_tests.py::testShouldReturnAfterFirstAttemptToFindOneAfterDisablingImplicitWaits
+            imported/selenium/py/test/selenium/webdriver/common/implicit_waits_tests.py::testShouldImplicitlyWaitUntilAtLeastOneElementIsFoundWhenSearchingForMany
+            imported/selenium/py/test/selenium/webdriver/common/implicit_waits_tests.py::testShouldStillFailToFindAnElemenstWhenImplicitWaitsAreEnabled
+            imported/selenium/py/test/selenium/webdriver/common/implicit_waits_tests.py::testShouldReturnAfterFirstAttemptToFindManyAfterDisablingImplicitWaits
+            imported/selenium/py/test/selenium/webdriver/common/page_load_timeout_tests.py::testShouldTimeoutOnPageLoadTakingTooLong
+            imported/selenium/py/test/selenium/webdriver/common/page_load_timeout_tests.py::testShouldTimeoutOnPageLoadTakingTooLong
+            imported/selenium/py/test/selenium/webdriver/common/webdriverwait_tests.py::testShouldWaitOnlyAsLongAsTimeoutSpecifiedWhenImplicitWaitsAreSet
+
+        The following two tests regress, and will be looked into separately:
+            imported/w3c/webdriver/tests/sessions/new_session/merge.py::test_merge_invalid
+            imported/w3c/webdriver/tests/sessions/new_session/merge.py::test_merge_invalid
+
+        * WebDriverService.cpp:
+        (WebDriver::integerValue): Helper function that retrieves an integer value
+        from a given JSON::Value object, if possible.
+        (WebDriver::deserializeTimeouts): Timeout JSON value has to be converted to
+        an integer, which is allowed if the value is of either Integer or Double type.
+        Helper integerValue() function retrieves the integer value, in addition to
+        ensuring that possible double value that we convert to an integer is already
+        in integer form to begin with.
+
 2017-12-15  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         WebDriver: add support for accept/dismiss and notify unhandled prompt behavior
