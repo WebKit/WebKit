@@ -34,13 +34,14 @@
 
 namespace WebCore {
 
-void CurlSSLVerifier::setSslCtx(void* sslCtx)
+CurlSSLVerifier::CurlSSLVerifier(CurlHandle* curlHandle, const String& hostName, void* sslCtx)
+    : m_curlHandle(curlHandle)
+    , m_hostName(hostName)
 {
-    if (!sslCtx)
-        return;
-
-    SSL_CTX_set_app_data(static_cast<SSL_CTX*>(sslCtx), this);
-    SSL_CTX_set_verify(static_cast<SSL_CTX*>(sslCtx), SSL_VERIFY_PEER, certVerifyCallback);
+    if (sslCtx) {
+        SSL_CTX_set_app_data(static_cast<SSL_CTX*>(sslCtx), this);
+        SSL_CTX_set_verify(static_cast<SSL_CTX*>(sslCtx), SSL_VERIFY_PEER, certVerifyCallback);
+    }
 }
 
 int CurlSSLVerifier::certVerifyCallback(int ok, X509_STORE_CTX* storeCtx)

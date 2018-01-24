@@ -50,11 +50,7 @@ public:
         SSL_CERTIFICATE_GENERIC_ERROR = (1 << 6) // Some other error occurred validating the certificate
     };
 
-    CurlSSLVerifier() = default;
-
-    void setCurlHandle(CurlHandle* curlHandle) { m_curlHandle = curlHandle; }
-    void setHostName(const String& hostName) { m_hostName = hostName; }
-    void setSslCtx(void*);
+    CurlSSLVerifier(CurlHandle*, const String& hostName, void* sslCtx);
 
     int sslErrors() { return m_sslErrors; }
 

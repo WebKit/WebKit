@@ -232,9 +232,7 @@ CURL* CurlRequest::setupTransfer()
 
 CURLcode CurlRequest::willSetupSslCtx(void* sslCtx)
 {
-    m_sslVerifier.setCurlHandle(m_curlHandle.get());
-    m_sslVerifier.setHostName(m_request.url().host());
-    m_sslVerifier.setSslCtx(sslCtx);
+    m_sslVerifier = std::make_unique<CurlSSLVerifier>(m_curlHandle.get(), m_request.url().host(), sslCtx);
 
     return CURLE_OK;
 }
@@ -427,8 +425,8 @@ void CurlRequest::didCompleteTransfer(CURLcode result)
     } else {
         auto type = (result == CURLE_OPERATION_TIMEDOUT && m_request.timeoutInterval() > 0.0) ? ResourceError::Type::Timeout : ResourceError::Type::General;
         auto resourceError = ResourceError::httpError(result, m_request.url(), type);
-        if (m_sslVerifier.sslErrors())
-            resourceError.setSslErrors(m_sslVerifier.sslErrors());
+        if (m_sslVerifier && m_sslVerifier->sslErrors())
+            resourceError.setSslErrors(m_sslVerifier->sslErrors());
 
         finalizeTransfer();
         callClient([error = resourceError.isolatedCopy()](CurlRequestClient& client) {
@@ -447,6 +445,7 @@ void CurlRequest::finalizeTransfer()
 {
     closeDownloadFile();
     m_formDataStream.clean();
+    m_sslVerifier = nullptr;
     m_multipartHandle = nullptr;
     m_curlHandle = nullptr;
 }

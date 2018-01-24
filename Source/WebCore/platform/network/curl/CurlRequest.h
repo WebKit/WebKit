@@ -157,7 +157,7 @@ private:
 
     std::unique_ptr<CurlHandle> m_curlHandle;
     CurlFormDataStream m_formDataStream;
-    CurlSSLVerifier m_sslVerifier;
+    std::unique_ptr<CurlSSLVerifier> m_sslVerifier;
     std::unique_ptr<CurlMultipartHandle> m_multipartHandle;
 
     CurlResponse m_response;

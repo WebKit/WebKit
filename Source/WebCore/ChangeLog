@@ -1,3 +1,28 @@
+2018-01-24  Basuke Suzuki  <Basuke.Suzuki@sony.com>
+
+        [Curl] Allocate CurlSSLVerifier only when it is required.
+        https://bugs.webkit.org/show_bug.cgi?id=182061
+
+        CurlSSLVerifier was a member function of CurlRequest. This patch do
+        lazy initialization of it only when actually it is required.
+        Also configuration method is not required by moving those stuff to
+        constructor of SSLVerifier which makes much safer because there's
+        no change to change its behavior from outside.
+
+        Reviewed by Alex Christensen.
+
+        * platform/network/curl/CurlRequest.cpp:
+        (WebCore::CurlRequest::willSetupSslCtx):
+        (WebCore::CurlRequest::didCompleteTransfer):
+        (WebCore::CurlRequest::finalizeTransfer):
+        * platform/network/curl/CurlRequest.h:
+        * platform/network/curl/CurlSSLVerifier.cpp:
+        (WebCore::CurlSSLVerifier::CurlSSLVerifier):
+        (WebCore::CurlSSLVerifier::setSslCtx): Deleted.
+        * platform/network/curl/CurlSSLVerifier.h:
+        (WebCore::CurlSSLVerifier::setCurlHandle): Deleted.
+        (WebCore::CurlSSLVerifier::setHostName): Deleted.
+
 2018-01-24  Antti Koivisto  <antti@apple.com>
 
         Assertion failure in RenderMultiColumnSet::requiresBalancing() on fast/multicol/spanner-crash-when-adding-summary.html
