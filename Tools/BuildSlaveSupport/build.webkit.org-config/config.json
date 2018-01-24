@@ -129,7 +129,7 @@
                     },
                     { "name": "Apple High Sierra (Leaks)", "type": "TestWebKit1Leaks", "builddir": "highsierra-leaks",
                       "platform": "mac-highsierra", "configuration": "release", "architectures": ["x86_64"],
-                      "additionalArguments": ["--no-retry-failures", "--no-sample-on-timeout", "--JSC_usePoisoning=0"],
+                      "additionalArguments": ["--no-retry-failures", "--no-sample-on-timeout"],
                       "slavenames": ["bot121"]
                     },
                     { "name": "Apple Sierra Debug (Build)", "type": "Build", "builddir": "sierra-debug",

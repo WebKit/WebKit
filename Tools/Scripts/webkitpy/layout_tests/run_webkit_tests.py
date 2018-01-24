@@ -429,6 +429,9 @@ def _set_up_derived_options(port, options):
     if options.platform in ["gtk", "wpe"]:
         options.webkit_test_runner = True
 
+    if options.leaks:
+        options.additional_env_var.append("JSC_usePoisoning=0")
+        options.additional_env_var.append("__XPC_JSC_usePoisoning=0")
 
 def run(port, options, args, logging_stream):
     logger = logging.getLogger()

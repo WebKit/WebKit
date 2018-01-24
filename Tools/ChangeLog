@@ -1,3 +1,17 @@
+2018-01-24  Alexey Proskuryakov  <ap@apple.com>
+
+        REGRESSION (r226485): Many new wasm leaks detected by the leaks bot
+        https://bugs.webkit.org/show_bug.cgi?id=181400
+        <rdar://problem/36358768>
+
+        Reviewed by Joseph Pecoraro.
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json: Remove incorrect option.
+
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py: (_set_up_derived_options):
+        Always disable poisoning when running with --leaks, as this should work locally,
+        not just on bots.
+
 2018-01-24  Daniel Bates  <dabates@apple.com>
 
         REGRESSION (r226138): Selecting a line that ends with zero-width joiner (ZWJ) may cause text transformation
