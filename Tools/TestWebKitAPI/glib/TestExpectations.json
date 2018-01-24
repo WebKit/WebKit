@@ -40,9 +40,6 @@
             }
         }
     },
-    "TestWebKitFindController": {
-        "expected": {"wpe": {"status": ["CRASH"], "bug": "webkit.org/b/181472"}}
-    },
     "TestWebsiteData": {
         "subtests": {
             "/webkit/WebKitWebsiteData/databases": {

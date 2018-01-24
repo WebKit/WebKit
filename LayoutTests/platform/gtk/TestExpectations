@@ -3302,6 +3302,8 @@ webkit.org/b/181661 http/wpt/webrtc/third-party-frame-ice-candidate-filtering.ht
 webkit.org/b/181662 fast/forms/auto-fill-button/input-strong-password-auto-fill-button.html [ Missing Failure ]
 webkit.org/b/181662 fast/forms/auto-fill-button/input-strong-confirmation-password-auto-fill-button.html [ Missing Failure ]
 
+webkit.org/b/182050 http/wpt/fetch/response-opaque-clone.html [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of non-crashing, non-flaky tests failing
 #////////////////////////////////////////////////////////////////////////////////////////

@@ -159,7 +159,6 @@ fast/canvas/canvas-quadratic-same-endpoint.html [ Failure ]
 fast/canvas/canvas-toDataURL-case-insensitive-mimetype.html [ Failure ]
 fast/canvas/canvas-toDataURL-webp.html [ Failure ]
 fast/canvas/drawImage-with-negative-source-destination.html [ Failure ]
-fast/canvas/fallback-content.html [ Failure ]
 fast/canvas/toDataURL-supportedTypes.html [ Failure ]
 fast/canvas/webgl/antialiasing-enabled.html [ Failure ]
 fast/canvas/webgl/context-creation-attributes.html [ Failure ]
@@ -213,6 +212,11 @@ imported/w3c/web-platform-tests/dom [ Pass ]
 imported/w3c/web-platform-tests/dom/nodes/Document-constructor-svg.svg [ Timeout ]
 
 
+# WPT: 2dcontext
+# ==============
+imported/w3c/web-platform-tests/2dcontext/transformations/canvas_transformations_reset_001.html [ Pass ]
+
+
 # WPT: cors
 # =========
 
@@ -221,7 +225,7 @@ webkit.org/b/180693 imported/w3c/web-platform-tests/cors/preflight-failure.htm [
 
 # WPT: css
 # ========
-imported/w3c/web-platform-tests/css/css-grid-1/grid-items/grid-items-sizing-alignment-001.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-items-sizing-alignment-001.html [ Pass ]
 
 imported/w3c/web-platform-tests/css/css-pseudo/first-letter-002.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-pseudo/first-letter-003.html [ Pass ]
@@ -694,7 +698,6 @@ webkit.org/b/173419 fast/events/sequential-focus-navigation-starting-point.html 
 webkit.org/b/173419 fast/events/shadow-event-path-2.html [ Failure ]
 webkit.org/b/173419 fast/events/shadow-event-path.html [ Failure ]
 webkit.org/b/173419 fast/events/special-key-events-in-input-text.html [ Failure ]
-webkit.org/b/173419 fast/events/tabindex-focus-blur-all.html [ Failure ]
 webkit.org/b/173419 fast/events/touch/basic-multi-touch-events-limited.html [ Failure ]
 webkit.org/b/173419 fast/events/touch/basic-multi-touch-events.html [ Failure ]
 webkit.org/b/173419 fast/events/touch/document-create-touch-list.html [ Failure ]
@@ -1008,12 +1011,14 @@ Bug(WPE) perf/accessibility-title-ui-element.html [ Failure ]
 
 webkit.org/b/177873 http/wpt/beacon/beacon-async-error-logging.html [ Failure ]
 
+webkit.org/b/182050 http/wpt/fetch/response-opaque-clone.html [ Failure ]
 webkit.org/b/177872 http/wpt/fetch/response-status-text.html [ Failure ]
 webkit.org/b/180749 http/wpt/offscreen-canvas/transferToImageBitmap-webgl.html [ ImageOnlyFailure ]
 webkit.org/b/168543 http/wpt/resource-timing/rt-nextHopProtocol.html [ Failure ]
 webkit.org/b/168543 http/wpt/resource-timing/rt-nextHopProtocol.worker.html [ Failure ]
 webkit.org/b/177871 http/wpt/resource-timing/rt-shared-resource-in-workers.html [ Failure ]
 webkit.org/b/168357 http/wpt/resource-timing/rt-initiatorType-media.html [ Pass ]
+webkit.org/b/181661 http/wpt/webrtc/third-party-frame-ice-candidate-filtering.html [ Failure ]
 
 Bug(WPE) contentfiltering/ [ Skip ]
 Bug(WPE) http/wpt/beacon/contentextensions/ [ Skip ]
@@ -1135,6 +1140,7 @@ webkit.org/b/179957 crypto/workers/subtle/aes-cbc-import-key-decrypt.html [ Pass
 
 webkit.org/b/179759 js/dom/removing-Cf-characters.html [ Pass Crash ]
 
+webkit.org/b/181659 fast/canvas/webgl/simulated-vertexAttrib0-invalid-indicies.html [ Failure ]
 webkit.org/b/179760 fast/canvas/webgl/texImage2D-mse-flipY-false.html [ Timeout ]
 webkit.org/b/179760 fast/canvas/webgl/texImage2D-mse-flipY-true.html [ Timeout ]
 
@@ -1149,7 +1155,7 @@ webkit.org/b/180134 webanimations/opacity-animation-no-longer-composited-upon-co
 webkit.org/b/180134 webanimations/width-and-opacity-separate-animation-yields-no-compositing.html [ Failure ]
 
 # User-installed font infrastructure is ony present on certain OSes.
-webkit.org/b/180062 fast/text/user-installed-fonts/ [ ImageOnlyFailure ]
+webkit.org/b/180062 fast/text/user-installed-fonts/ [ Skip ]
 
 webkit.org/b/181224 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-setMediaKeys-after-update.html [ Crash ]
 webkit.org/b/181224 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-setmediakeys-multiple-times-with-the-same-mediakeys.html [ Crash ]
@@ -1157,9 +1163,6 @@ webkit.org/b/181225 media/encrypted-media/mock-MediaKeySystemAccess.html [ Crash
 
 webkit.org/b/175189 http/tests/resourceLoadStatistics/grandfathering.html [ Failure ]
 
-webkit.org/b/181532 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-unique-origin.html [ Failure ]
-webkit.org/b/181532 imported/w3c/web-platform-tests/encrypted-media/clearkey-generate-request-disallowed-input.html [ Timeout ]
-
 webkit.org/b/181533 imported/w3c/web-platform-tests/fetch/api/cors/cors-filtering.html [ Pass Failure ]
 
-webkit.org/b/181534 imported/w3c/web-platform-tests/fetch/api/cors/cors-filtering.html [ Pass Failure ]
+webkit.org/b/181534 perf/show-hide-table-rows.html [ Pass Failure ]
