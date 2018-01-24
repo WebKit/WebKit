@@ -1,3 +1,18 @@
+2018-01-24  Ali Juma  <ajuma@chromium.org>
+
+        REGRESSION (r227430): ASSERTION FAILED: !self.zoomToScaleCompletionHandler in TestRunnerWKWebView::zoomToScale
+        https://bugs.webkit.org/show_bug.cgi?id=182052
+
+        Reviewed by Simon Fraser.
+
+        Don't set zoomToScaleCompletionHandler in zoomToScale:animated when calling the completion handler
+        immediately.
+
+        Test: fast/visual-viewport/viewport-dimensions.html
+
+        * WebKitTestRunner/cocoa/TestRunnerWKWebView.mm:
+        (-[TestRunnerWKWebView zoomToScale:animated:completionHandler:]):
+
 2018-01-24  Alex Christensen  <achristensen@webkit.org>
 
         Remove pre-Sierra-OS-specific code in Tools
