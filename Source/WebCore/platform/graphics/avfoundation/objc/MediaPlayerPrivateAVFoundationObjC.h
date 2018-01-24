@@ -101,7 +101,6 @@ public:
     
 #if HAVE(AVFOUNDATION_LOADER_DELEGATE)
     bool shouldWaitForLoadingOfResource(AVAssetResourceLoadingRequest*);
-    bool shouldWaitForResponseToAuthenticationChallenge(NSURLAuthenticationChallenge*);
     void didCancelLoadingRequest(AVAssetResourceLoadingRequest*);
     void didStopLoadingRequest(AVAssetResourceLoadingRequest *);
 #endif

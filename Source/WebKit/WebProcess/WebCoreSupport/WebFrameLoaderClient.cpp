@@ -218,16 +218,9 @@ bool WebFrameLoaderClient::shouldUseCredentialStorage(DocumentLoader*, unsigned 
     return webPage->injectedBundleResourceLoadClient().shouldUseCredentialStorage(*webPage, *m_frame, identifier);
 }
 
-void WebFrameLoaderClient::dispatchDidReceiveAuthenticationChallenge(DocumentLoader*, unsigned long, const AuthenticationChallenge& challenge)
+void WebFrameLoaderClient::dispatchDidReceiveAuthenticationChallenge(DocumentLoader*, unsigned long, const AuthenticationChallenge&)
 {
-    // FIXME: Authentication is a per-resource concept, but we don't do per-resource handling in the UIProcess at the API level quite yet.
-    // Once we do, we might need to make sure authentication fits with our solution.
-
-    WebPage* webPage = m_frame->page();
-    if (!webPage)
-        return;
-
-    WebProcess::singleton().supplement<AuthenticationManager>()->didReceiveAuthenticationChallenge(m_frame, challenge);
+    ASSERT_NOT_REACHED();
 }
 
 #if USE(PROTECTION_SPACE_AUTH_CALLBACK)

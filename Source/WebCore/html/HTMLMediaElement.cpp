@@ -6877,27 +6877,6 @@ const String& HTMLMediaElement::mediaPlayerMediaCacheDirectory() const
     return mediaCacheDirectory();
 }
 
-bool HTMLMediaElement::mediaPlayerShouldWaitForResponseToAuthenticationChallenge(const AuthenticationChallenge& challenge)
-{
-    RefPtr<Frame> frame = document().frame();
-    if (!frame)
-        return false;
-
-    Page* page = frame->page();
-    if (!page)
-        return false;
-
-    ResourceRequest request(m_currentSrc);
-    ResourceLoadNotifier& notifier = frame->loader().notifier();
-    RefPtr<DocumentLoader> documentLoader = document().loader();
-    unsigned long identifier = page->progress().createUniqueIdentifier();
-
-    notifier.assignIdentifierToInitialRequest(identifier, documentLoader.get(), request);
-    notifier.didReceiveAuthenticationChallenge(identifier, documentLoader.get(), challenge);
-
-    return true;
-}
-
 String HTMLMediaElement::sourceApplicationIdentifier() const
 {
     if (RefPtr<Frame> frame = document().frame()) {

@@ -280,8 +280,6 @@ public:
     virtual String mediaPlayerNetworkInterfaceName() const { return String(); }
     virtual bool mediaPlayerGetRawCookies(const URL&, Vector<Cookie>&) const { return false; }
 #endif
-    
-    virtual bool mediaPlayerShouldWaitForResponseToAuthenticationChallenge(const AuthenticationChallenge&) { return false; }
     virtual void mediaPlayerHandlePlaybackCommand(PlatformMediaSession::RemoteControlCommandType) { }
 
     virtual String mediaPlayerSourceApplicationIdentifier() const { return emptyString(); }
@@ -607,7 +605,6 @@ public:
     std::optional<PlatformVideoPlaybackQualityMetrics> videoPlaybackQualityMetrics();
 #endif
 
-    bool shouldWaitForResponseToAuthenticationChallenge(const AuthenticationChallenge&);
     void handlePlaybackCommand(PlatformMediaSession::RemoteControlCommandType);
     String sourceApplicationIdentifier() const;
     Vector<String> preferredAudioCharacteristics() const;

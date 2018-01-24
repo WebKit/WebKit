@@ -1417,11 +1417,6 @@ std::optional<PlatformVideoPlaybackQualityMetrics> MediaPlayer::videoPlaybackQua
 }
 #endif
 
-bool MediaPlayer::shouldWaitForResponseToAuthenticationChallenge(const AuthenticationChallenge& challenge)
-{
-    return client().mediaPlayerShouldWaitForResponseToAuthenticationChallenge(challenge);
-}
-
 void MediaPlayer::handlePlaybackCommand(PlatformMediaSession::RemoteControlCommandType command)
 {
     client().mediaPlayerHandlePlaybackCommand(command);

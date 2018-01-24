@@ -59,7 +59,7 @@ enum class AuthenticationChallengeDisposition {
 };
 using ChallengeCompletionHandler = CompletionHandler<void(AuthenticationChallengeDisposition, const WebCore::Credential&)>;
 
-class AuthenticationManager : public WebProcessSupplement, public NetworkProcessSupplement, public IPC::MessageReceiver {
+class AuthenticationManager : public NetworkProcessSupplement, public IPC::MessageReceiver {
     WTF_MAKE_NONCOPYABLE(AuthenticationManager);
 public:
     explicit AuthenticationManager(ChildProcess&);
@@ -71,8 +71,6 @@ public:
 #if USE(PROTECTION_SPACE_AUTH_CALLBACK)
     void continueCanAuthenticateAgainstProtectionSpace(DownloadID, bool canAuthenticate);
 #endif
-    // Called for resources in the WebProcess (NetworkProcess disabled)
-    void didReceiveAuthenticationChallenge(WebFrame*, const WebCore::AuthenticationChallenge&);
 
     void useCredentialForChallenge(uint64_t challengeID, const WebCore::Credential&, const WebCore::CertificateInfo&);
     void continueWithoutCredentialForChallenge(uint64_t challengeID);

@@ -1,3 +1,27 @@
+2018-01-24  Alex Christensen  <achristensen@webkit.org>
+
+        Remove WebProcess authentication code
+        https://bugs.webkit.org/show_bug.cgi?id=182020
+
+        Reviewed by Brady Eidson.
+
+        We were keeping it around for pre-NetworkSession media loading, which is gone now.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::mediaPlayerShouldWaitForResponseToAuthenticationChallenge): Deleted.
+        * html/HTMLMediaElement.h:
+        * loader/ResourceLoader.cpp:
+        (WebCore::ResourceLoader::didReceiveAuthenticationChallenge):
+        * loader/ResourceLoader.h:
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::MediaPlayer::shouldWaitForResponseToAuthenticationChallenge): Deleted.
+        * platform/graphics/MediaPlayer.h:
+        (WebCore::MediaPlayerClient::mediaPlayerShouldWaitForResponseToAuthenticationChallenge): Deleted.
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (-[WebCoreAVFLoaderDelegate resourceLoader:shouldWaitForResponseToAuthenticationChallenge:]):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::shouldWaitForResponseToAuthenticationChallenge): Deleted.
+
 2018-01-24  Joanmarie Diggs  <jdiggs@igalia.com>
 
         AX: SVG AAM mapping trumps ARIA role attribute in the case of SVG root

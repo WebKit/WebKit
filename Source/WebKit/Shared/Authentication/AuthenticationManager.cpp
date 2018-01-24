@@ -110,21 +110,6 @@ Vector<uint64_t> AuthenticationManager::coalesceChallengesMatching(uint64_t chal
     return challengesToCoalesce;
 }
 
-void AuthenticationManager::didReceiveAuthenticationChallenge(WebFrame* frame, const AuthenticationChallenge& authenticationChallenge)
-{
-    ASSERT(frame);
-    ASSERT(frame->page());
-
-    auto pageID = frame->page()->pageID();
-    uint64_t challengeID = addChallengeToChallengeMap({ pageID, authenticationChallenge, { } });
-
-    // Coalesce challenges in the same protection space and in the same page.
-    if (shouldCoalesceChallenge(pageID, challengeID, authenticationChallenge))
-        return;
-    
-    m_process.send(Messages::WebPageProxy::DidReceiveAuthenticationChallenge(frame->frameID(), authenticationChallenge, challengeID), frame->page()->pageID());
-}
-
 void AuthenticationManager::didReceiveAuthenticationChallenge(uint64_t pageID, uint64_t frameID, const AuthenticationChallenge& authenticationChallenge, ChallengeCompletionHandler&& completionHandler)
 {
     ASSERT(pageID);

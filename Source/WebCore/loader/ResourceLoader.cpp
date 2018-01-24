@@ -716,8 +716,9 @@ bool ResourceLoader::isAllowedToAskUserForCredentials() const
     return m_options.credentials == FetchOptions::Credentials::Include || (m_options.credentials == FetchOptions::Credentials::SameOrigin && m_frame->document()->securityOrigin().canRequest(originalRequest().url()));
 }
 
-void ResourceLoader::didReceiveAuthenticationChallenge(const AuthenticationChallenge& challenge)
+void ResourceLoader::didReceiveAuthenticationChallenge(ResourceHandle* handle, const AuthenticationChallenge& challenge)
 {
+    ASSERT_UNUSED(handle, handle == m_handle);
     ASSERT(m_handle->hasAuthenticationChallenge());
 
     // Protect this in this delegate method since the additional processing can do

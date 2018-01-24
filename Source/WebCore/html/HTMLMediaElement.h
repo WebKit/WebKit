@@ -702,7 +702,6 @@ private:
 
     void mediaPlayerActiveSourceBuffersChanged(const MediaPlayer*) override;
 
-    bool mediaPlayerShouldWaitForResponseToAuthenticationChallenge(const AuthenticationChallenge&) override;
     void mediaPlayerHandlePlaybackCommand(PlatformMediaSession::RemoteControlCommandType command) override { didReceiveRemoteControlCommand(command, nullptr); }
     String sourceApplicationIdentifier() const override;
     String mediaPlayerSourceApplicationIdentifier() const override { return sourceApplicationIdentifier(); }

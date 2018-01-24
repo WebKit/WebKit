@@ -1825,11 +1825,6 @@ bool MediaPlayerPrivateAVFoundationObjC::shouldWaitForLoadingOfResource(AVAssetR
     return true;
 }
 
-bool MediaPlayerPrivateAVFoundationObjC::shouldWaitForResponseToAuthenticationChallenge(NSURLAuthenticationChallenge* challenge)
-{
-    return player()->shouldWaitForResponseToAuthenticationChallenge(challenge);
-}
-
 void MediaPlayerPrivateAVFoundationObjC::didCancelLoadingRequest(AVAssetResourceLoadingRequest* avRequest)
 {
     String scheme = [[[avRequest request] URL] scheme];
@@ -3525,26 +3520,9 @@ NSArray* playerKVOProperties()
 - (BOOL)resourceLoader:(AVAssetResourceLoader *)resourceLoader shouldWaitForResponseToAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
 {
     UNUSED_PARAM(resourceLoader);
-    if (!m_callback)
-        return NO;
-
-    if ([[[challenge protectionSpace] authenticationMethod] isEqualToString:NSURLAuthenticationMethodServerTrust])
-        return NO;
-
-    RetainPtr<WebCoreAVFLoaderDelegate> protectedSelf = self;
-    RetainPtr<NSURLAuthenticationChallenge> protectedChallenge = challenge;
-    callOnMainThread([protectedSelf = WTFMove(protectedSelf), protectedChallenge = WTFMove(protectedChallenge)] {
-        MediaPlayerPrivateAVFoundationObjC* callback = protectedSelf->m_callback;
-        if (!callback) {
-            [[protectedChallenge sender] cancelAuthenticationChallenge:protectedChallenge.get()];
-            return;
-        }
-
-        if (!callback->shouldWaitForResponseToAuthenticationChallenge(protectedChallenge.get()))
-            [[protectedChallenge sender] cancelAuthenticationChallenge:protectedChallenge.get()];
-    });
-
-    return YES;
+    UNUSED_PARAM(challenge);
+    ASSERT_NOT_REACHED();
+    return NO;
 }
 
 - (void)resourceLoader:(AVAssetResourceLoader *)resourceLoader didCancelLoadingRequest:(AVAssetResourceLoadingRequest *)loadingRequest

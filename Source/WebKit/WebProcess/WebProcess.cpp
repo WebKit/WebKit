@@ -186,7 +186,6 @@ WebProcess::WebProcess()
     // limited.
     addSupplement<WebGeolocationManager>();
     addSupplement<WebCookieManager>();
-    addSupplement<AuthenticationManager>();
 
 #if ENABLE(NOTIFICATIONS)
     addSupplement<WebNotificationManager>();
