@@ -334,7 +334,7 @@ void DocumentThreadableLoader::didReceiveResponse(unsigned long identifier, cons
         }
         return;
     }
-    ASSERT(response.type() == ResourceResponse::Type::Opaqueredirect || response.source() == ResourceResponse::Source::ServiceWorker);
+    ASSERT(response.type() == ResourceResponse::Type::Opaqueredirect || response.source() == ResourceResponse::Source::ServiceWorker || response.source() == ResourceResponse::Source::MemoryCache);
     m_client->didReceiveResponse(identifier, response);
 }
 
