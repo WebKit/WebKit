@@ -1,0 +1,11 @@
+localhost:8443 - didReceiveAuthenticationChallenge - Responding with testUser:testPassword
+This test loads a secure image that redirects to a secure image that redirects to a secure image guarded by basic authentication. The secure image should load.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS did load image.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

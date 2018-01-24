@@ -57,6 +57,7 @@ private:
     void canAuthenticateAgainstProtectionSpaceAsync(const WebCore::ProtectionSpace&) override;
 #endif
     bool isSynchronous() const override { return false; }
+    bool isAllowedToAskUserForCredentials() const final { return false; }
     void willSendRedirectedRequest(WebCore::ResourceRequest&&, WebCore::ResourceRequest&& redirectRequest, WebCore::ResourceResponse&& redirectResponse) override;
     ShouldContinueDidReceiveResponse didReceiveResponse(WebCore::ResourceResponse&&) override;
     void didReceiveBuffer(Ref<WebCore::SharedBuffer>&&, int reportedEncodedDataLength) override;

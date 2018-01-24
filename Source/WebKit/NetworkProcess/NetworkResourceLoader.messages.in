@@ -22,6 +22,6 @@
 
 messages -> NetworkResourceLoader LegacyReceiver {
 
-    ContinueWillSendRequest(WebCore::ResourceRequest request)
+    ContinueWillSendRequest(WebCore::ResourceRequest request, bool isAllowedToAskUserForCredentials)
     ContinueDidReceiveResponse()
 }

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="/js-test-resources/js-test.js"></script>
+<script>
+if (window.testRunner) {
+    testRunner.setHandlesAuthenticationChallenges(true);
+    testRunner.setAuthenticationUsername("testUser");
+    testRunner.setAuthenticationPassword("testPassword");
+}
+
+window.jsTestIsAsync = true;
+
+function pass()
+{
+    testPassed("did not load image.");
+    finishJSTest();
+}
+
+function fail()
+{
+    testFailed("did load image.");
+    finishJSTest();
+}
+</script>
+<script>
+description("This test loads a secure image that redirects to an secure image that redirects to an insecure image guarded by basic authentication. The insecure image should be blocked because it requires credentials.");
+</script>
+<img src="https://127.0.0.1:8443/resources/redirect.php?url=http%3A//127.0.0.1%3A8443/resources/redirect.php%3Furl%3Dhttp%3A//localhost%3A8080/security/mixedContent/resources/subresource/protected-image.php" onerror="pass()" onload="fail()">
+</body>
+</html>

@@ -337,10 +337,15 @@ void NetworkLoad::didReceiveChallenge(const AuthenticationChallenge& challenge, 
 #endif
 }
 
+bool NetworkLoad::isAllowedToAskUserForCredentials() const
+{
+    return m_client.get().isAllowedToAskUserForCredentials();
+}
+
 void NetworkLoad::completeAuthenticationChallenge(ChallengeCompletionHandler&& completionHandler)
 {
     bool isServerTrustEvaluation = m_challenge->protectionSpace().authenticationScheme() == ProtectionSpaceAuthenticationSchemeServerTrustEvaluationRequested;
-    if (m_parameters.clientCredentialPolicy == ClientCredentialPolicy::CannotAskClientForCredentials && !isServerTrustEvaluation) {
+    if (!isAllowedToAskUserForCredentials() && !isServerTrustEvaluation) {
         completionHandler(AuthenticationChallengeDisposition::UseCredential, { });
         return;
     }
@@ -564,7 +569,7 @@ void NetworkLoad::didReceiveAuthenticationChallenge(ResourceHandle* handle, cons
 {
     ASSERT_UNUSED(handle, handle == m_handle);
 
-    if (m_parameters.clientCredentialPolicy == ClientCredentialPolicy::CannotAskClientForCredentials) {
+    if (!isAllowedToAskUserForCredentials()) {
         challenge.authenticationClient()->receivedRequestToContinueWithoutCredential(challenge);
         return;
     }

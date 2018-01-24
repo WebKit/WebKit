@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+function pass()
+{
+    window.opener.postMessage("PASS did not load script.", "*");
+}
+
+function fail()
+{
+    window.opener.postMessage("FAIL did load script.", "*");
+}
+</script>
+</head>
+<body>
+<script src="http://127.0.0.1:8080/resources/redirect.php?url=https://localhost:8443/security/mixedContent/resources/subresource/protected-script.php" onerror="pass()" onload="fail()"></script>
+</body>
+</html>

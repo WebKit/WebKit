@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+function checkDidLoadStylesheet()
+{
+    if (document.styleSheets.length)
+        window.opener.postMessage("FAIL did load stylesheet.", "*");
+    else
+        window.opener.postMessage("PASS did not load stylesheet.", "*");
+}
+</script>
+<!-- For some reason, a blocked stylesheet is not treated as a network error. -->
+<link rel="stylesheet" href="http://127.0.0.1:8080/resources/redirect.php?url=https://localhost:8443/security/mixedContent/resources/subresource/protected-stylesheet.php" onload="checkDidLoadStylesheet()">
+</head>
+<body>
+</body>
+</html>
