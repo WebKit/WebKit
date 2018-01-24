@@ -1248,6 +1248,14 @@
       ],
       "status" : "reviewer"
    },
+   "Chris Nardi" : {
+      "emails" : [
+         "cnardi@chromium.org"
+      ],
+      "nicks" : [
+         "cnardi"
+      ]
+   },
    "Chris Petersen" : {
       "emails" : [
          "c.petersen87@yahoo.com",

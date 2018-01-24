@@ -1,3 +1,12 @@
+2018-01-24  Chris Nardi  <cnardi@chromium.org>
+
+        Add Chris Nardi to contributors list
+        https://bugs.webkit.org/show_bug.cgi?id=182029
+
+        Reviewed by Antti Koivisto.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2018-01-22  Ryosuke Niwa  <rniwa@webkit.org>
 
         Mac Sierra perf bots have been failing due to CG errors
