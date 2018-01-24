@@ -1,3 +1,64 @@
+2018-01-23  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Harden against layout passes triggered when iterating through HTMLFormElement::associatedElements
+        https://bugs.webkit.org/show_bug.cgi?id=182037
+        <rdar://problem/36747812>
+
+        Reviewed by Ryosuke Niwa.
+
+        Observe that HTMLFormElement::associatedElements returns a const reference to a Vector of raw
+        FormAssociatedElement pointers. In various call sites that iterate through these associated elements using this
+        function, some require synchronous layout updates per iteration, which can lead to a bad time when combined with
+        the first observation.
+
+        To address this, we introduce HTMLFormElement::copyAssociatedElementsVector. This returns a new vector
+        containing strong Refs to each associated element. From each call site that may trigger synchronous layout and
+        execute arbitrary script while iterating over associated form elements, we instead use iterate over protected
+        FormAssociatedElements.
+
+        From each call site that currently doesn't (and shouldn't) require a layout update, we use the old version that
+        returns a list of raw FormAssociatedElement pointers, but add ScriptDisallowedScopes to ensure that we never
+        execute script there in the future.
+
+        Test: fast/forms/form-data-associated-element-iteration.html
+
+        * html/DOMFormData.cpp:
+        (WebCore::DOMFormData::DOMFormData):
+
+        Change to use copyAssociatedElementsVector().
+
+        * html/FormController.cpp:
+        (WebCore::recordFormStructure):
+        (WebCore::FormController::restoreControlStateIn):
+
+        Change to use copyAssociatedElementsVector().
+
+        * html/HTMLFieldSetElement.cpp:
+        (WebCore::HTMLFieldSetElement::copyAssociatedElementsVector const):
+        (WebCore:: const):
+        (WebCore::HTMLFieldSetElement::length const):
+
+        Refactor to use unsafeAssociatedElements().
+
+        * html/HTMLFieldSetElement.h:
+        * html/HTMLFormControlsCollection.cpp:
+        (WebCore:: const):
+        (WebCore::HTMLFormControlsCollection::copyFormControlElementsVector const):
+        (WebCore::HTMLFormControlsCollection::customElementAfter const):
+        (WebCore::HTMLFormControlsCollection::updateNamedElementCache const):
+
+        Refactor these to use unsafeAssociatedElements().
+
+        * html/HTMLFormControlsCollection.h:
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::unsafeAssociatedElements const):
+        (WebCore::HTMLFormElement::copyAssociatedElementsVector const):
+        * html/HTMLFormElement.h:
+        * loader/FormSubmission.cpp:
+        (WebCore::FormSubmission::create):
+
+        Refactor to use copyAssociatedElementsVector().
+
 2018-01-23  Basuke Suzuki  <Basuke.Suzuki@sony.com>
 
         [Curl] Fix wrong redirection with relative url when it happens from

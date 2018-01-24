@@ -40,7 +40,8 @@ public:
     Ref<HTMLFormControlsCollection> elements();
     Ref<HTMLCollection> elementsForNativeBindings();
 
-    const Vector<FormAssociatedElement*>& associatedElements() const;
+    const Vector<FormAssociatedElement*>& unsafeAssociatedElements() const;
+    Vector<Ref<FormAssociatedElement>> copyAssociatedElementsVector() const;
     unsigned length() const;
 
     void addInvalidDescendant(const HTMLFormControlElement&);

@@ -47,7 +47,7 @@ DOMFormData::DOMFormData(HTMLFormElement* form)
     if (!form)
         return;
 
-    for (auto& element : form->associatedElements()) {
+    for (auto& element : form->copyAssociatedElementsVector()) {
         if (!element->asHTMLElement().isDisabledFormControl())
             element->appendFormData(*this, true);
     }

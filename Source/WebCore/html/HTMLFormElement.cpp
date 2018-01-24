@@ -47,6 +47,7 @@
 #include "Page.h"
 #include "RadioNodeList.h"
 #include "RenderTextControl.h"
+#include "ScriptDisallowedScope.h"
 #include "Settings.h"
 #include "UserGestureIndicator.h"
 #include <limits>
@@ -849,6 +850,19 @@ void HTMLFormElement::finishParsingChildren()
 {
     HTMLElement::finishParsingChildren();
     document().formController().restoreControlStateIn(*this);
+}
+
+const Vector<FormAssociatedElement*>& HTMLFormElement::unsafeAssociatedElements() const
+{
+    ASSERT(!ScriptDisallowedScope::InMainThread::isScriptAllowed());
+    return m_associatedElements;
+}
+
+Vector<Ref<FormAssociatedElement>> HTMLFormElement::copyAssociatedElementsVector() const
+{
+    return WTF::map(m_associatedElements, [] (auto* rawElement) {
+        return Ref<FormAssociatedElement>(*rawElement);
+    });
 }
 
 void HTMLFormElement::copyNonAttributePropertiesFromElement(const Element& source)
