@@ -218,17 +218,16 @@ class PerfTest(object):
         return driver.run_test(DriverInput(test_path, time_out_ms, image_hash=None, should_run_pixel_test=should_run_pixel_test), stop_when_done=False)
 
     def run_failed(self, output):
-        if output.text == None or output.error:
+        if output.text == None:
             pass
+        elif output.error:
+            _log.error('error: %s\n%s' % (self.test_name(), output.error))
         elif output.timeout:
             _log.error('timeout: %s' % self.test_name())
         elif output.crash:
             _log.error('crash: %s' % self.test_name())
         else:
             return False
-
-        if output.error:
-            _log.error('error: %s\n%s' % (self.test_name(), output.error))
 
         return True
 
@@ -241,7 +240,13 @@ class PerfTest(object):
                 return True
         return False
 
-    _lines_to_ignore_in_parser_result = [
+    @staticmethod
+    def filter_ignored_lines(regexps, text):
+        lines = re.split('\n', text)
+        filtered_lines = [line for line in lines if not PerfTest._should_ignore_line(regexps, line)]
+        return '\n'.join(filtered_lines)
+
+    _lines_to_ignore = [
         re.compile("^\s+$"),
         # Following are for handle existing test like Dromaeo
         re.compile(re.escape("""main frame - has 1 onunload handler(s)""")),
@@ -257,9 +262,17 @@ class PerfTest(object):
         re.compile(r'CONSOLE MESSAGE: line \d+: DEBUG: jQuery\s+: (\d\.)+'),
     ]
 
+    _errors_to_ignore_in_sierra = [
+        # GC errors on macOS 10.12.6
+        re.compile(r'WebKitTestRunner\[\d+\] <Error>: CGContext\w+: invalid context 0x0\. If you want to see the backtrace, please set CG_CONTEXT_SHOW_BACKTRACE environmental variable.'),
+    ]
+
     def _filter_output(self, output):
         if output.text:
-            output.text = '\n'.join([line for line in re.split('\n', output.text) if not self._should_ignore_line(self._lines_to_ignore_in_parser_result, line)])
+            output.text = self.filter_ignored_lines(self._lines_to_ignore, output.text)
+        if output.error:
+            if self._port.name().startswith('mac-sierra'):
+                output.error = self.filter_ignored_lines(self._errors_to_ignore_in_sierra, output.error)
 
 
 class SingleProcessPerfTest(PerfTest):

@@ -115,6 +115,50 @@ class TestPerfTest(unittest.TestCase):
 median= 1101.0 ms, stdev= 13.3140211016 ms, min= 1080.0 ms, max= 1120.0 ms
 """)
 
+    def test_parse_output_with_ignored_stdout(self):
+        output = DriverOutput("""
+main frame - has 1 onunload handler(s)
+:Time -> [1080, 1120, 1095, 1101, 1104] ms
+""", image=None, image_hash=None, audio=None)
+        output_capture = OutputCapture()
+        output_capture.capture_output()
+        try:
+            test = PerfTest(MockPort(), 'some-test', '/path/some-dir/some-test')
+            self._assert_results_are_correct(test, output)
+        finally:
+            actual_stdout, actual_stderr, actual_logs = output_capture.restore_output()
+        self.assertEqual(actual_stdout, '')
+        self.assertEqual(actual_stderr, '')
+        self.assertEqual(actual_logs, """RESULT some-test: Time= 1100.0 ms
+median= 1101.0 ms, stdev= 13.3140211016 ms, min= 1080.0 ms, max= 1120.0 ms
+""")
+
+    def test_parse_output_with_ignored_stderr(self):
+        output = DriverOutput(":Time -> [1080, 1120, 1095, 1101, 1104] ms", image=None, image_hash=None, audio=None, error="""
+Jan 22 14:09:24  WebKitTestRunner[1296] <Error>: CGContextSetFillColorWithColor: invalid context 0x0. If you want to see the backtrace, please set CG_CONTEXT_SHOW_BACKTRACE environmental variable.
+Jan 22 14:09:24  WebKitTestRunner[1296] <Error>: CGContextSetStrokeColorWithColor: invalid context 0x0. If you want to see the backtrace, please set CG_CONTEXT_SHOW_BACKTRACE environmental variable.
+Jan 22 14:09:24  WebKitTestRunner[1296] <Error>: CGContextGetCompositeOperation: invalid context 0x0. If you want to see the backtrace, please set CG_CONTEXT_SHOW_BACKTRACE environmental variable.
+Jan 22 14:09:24  WebKitTestRunner[1296] <Error>: CGContextSetCompositeOperation: invalid context 0x0. If you want to see the backtrace, please set CG_CONTEXT_SHOW_BACKTRACE environmental variable.
+Jan 22 14:09:24  WebKitTestRunner[1296] <Error>: CGContextFillRects: invalid context 0x0. If you want to see the backtrace, please set CG_CONTEXT_SHOW_BACKTRACE environmental variable.
+""")
+
+        class MockPortWithSierraName(MockPort):
+            def name(self):
+                return "mac-sierra"
+
+        output_capture = OutputCapture()
+        output_capture.capture_output()
+        try:
+            test = PerfTest(MockPortWithSierraName(), 'some-test', '/path/some-dir/some-test')
+            self._assert_results_are_correct(test, output)
+        finally:
+            actual_stdout, actual_stderr, actual_logs = output_capture.restore_output()
+        self.assertEqual(actual_stdout, '')
+        self.assertEqual(actual_stderr, '')
+        self.assertEqual(actual_logs, """RESULT some-test: Time= 1100.0 ms
+median= 1101.0 ms, stdev= 13.3140211016 ms, min= 1080.0 ms, max= 1120.0 ms
+""")
+
     def _assert_failed_on_line(self, output_text, expected_log):
         output = DriverOutput(output_text, image=None, image_hash=None, audio=None)
         output_capture = OutputCapture()

@@ -1,3 +1,27 @@
+2018-01-22  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Mac Sierra perf bots have been failing due to CG errors
+        https://bugs.webkit.org/show_bug.cgi?id=181955
+
+        Reviewed by Antti Koivisto.
+
+        Ignore the CoreGraphics error messages on macOS Sierra.
+
+        Also added tests for ignoring lines in stdout and stderr.
+
+        * Scripts/webkitpy/performance_tests/perftest.py:
+        (PerfTest.run_failed): Refactored for clarity.
+        (PerfTest):
+        (PerfTest.filter_ignored_lines): Added.
+        (PerfTest._lines_to_ignore): Renamed from _lines_to_ignore_in_parser_result since these regular expressions
+        are now used to ignore lines in other kinds of tests than parser tests.
+        (PerfTest._errors_to_ignore_in_sierra): Added.
+        (PerfTest._filter_output): Added the code to ignore errors only on macOS Sierra.
+        * Scripts/webkitpy/performance_tests/perftest_unittest.py:
+        (test_parse_output_with_ignored_stdout): Added.
+        (test_parse_output_with_ignored_stderr): Added.
+        (test_parse_output_with_ignored_stderr.MockPortWithSierraName): Added.
+
 2018-01-23  Eric Carlson  <eric.carlson@apple.com>
 
         Resign NowPlaying status when no media element is eligible
