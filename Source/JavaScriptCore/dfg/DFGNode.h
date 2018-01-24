@@ -2619,10 +2619,15 @@ public:
     {
         m_misc.epoch = epoch.toUnsigned();
     }
+    
+    bool hasNumberOfArgumentsToSkip()
+    {
+        return op() == CreateRest || op() == PhantomCreateRest || op() == GetRestLength || op() == GetMyArgumentByVal || op() == GetMyArgumentByValOutOfBounds;
+    }
 
     unsigned numberOfArgumentsToSkip()
     {
-        ASSERT(op() == CreateRest || op() == PhantomCreateRest || op() == GetRestLength || op() == GetMyArgumentByVal || op() == GetMyArgumentByValOutOfBounds);
+        ASSERT(hasNumberOfArgumentsToSkip());
         return m_opInfo.as<unsigned>();
     }
 

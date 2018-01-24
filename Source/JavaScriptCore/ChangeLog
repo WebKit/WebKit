@@ -1,5 +1,33 @@
 2018-01-23  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r227462. rdar://problem/36807140
+
+    2018-01-23  Filip Pizlo  <fpizlo@apple.com>
+
+            Use precise index masking for FTL GetByArgumentByVal
+            https://bugs.webkit.org/show_bug.cgi?id=182006
+
+            Reviewed by Keith Miller.
+
+            This protects speculative out-of-bounds on arguments[index].
+
+            Making this work right involved fixing a possible overflow situation with
+            numberOfArgumentsToSkip.
+
+            * dfg/DFGByteCodeParser.cpp:
+            (JSC::DFG::ByteCodeParser::findArgumentPositionForLocal):
+            * dfg/DFGGraph.cpp:
+            (JSC::DFG::Graph::dump):
+            * dfg/DFGNode.h:
+            (JSC::DFG::Node::hasNumberOfArgumentsToSkip):
+            (JSC::DFG::Node::numberOfArgumentsToSkip):
+            * dfg/DFGStackLayoutPhase.cpp:
+            (JSC::DFG::StackLayoutPhase::run):
+            * ftl/FTLLowerDFGToB3.cpp:
+            (JSC::FTL::DFG::LowerDFGToB3::compileGetMyArgumentByVal):
+
+2018-01-23  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r227434. rdar://problem/36791632
 
     2018-01-23  Mark Lam  <mark.lam@apple.com>
