@@ -1,5 +1,16 @@
 2018-01-24  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r227481. rdar://problem/36830349
+
+    2018-01-24  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+            Unreviewed, another attempt to fix the Windows build after r227479.
+
+            * WebFrame.cpp:
+            (WebFrame::elementWithName):
+
+2018-01-24  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r227480. rdar://problem/36830349
 
     2018-01-24  Wenson Hsieh  <wenson_hsieh@apple.com>

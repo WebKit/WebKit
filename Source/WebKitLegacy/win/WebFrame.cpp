@@ -1089,10 +1089,10 @@ HRESULT WebFrame::elementWithName(BSTR name, IDOMElement* form, IDOMElement** el
     HTMLFormElement* formElement = formElementFromDOMElement(form);
     if (formElement) {
         AtomicString targetName((UChar*)name, SysStringLen(name));
-        for (auto& element : formElement->copyAssociatedElementsVector()) {
-            if (!is<HTMLFormControlElement>(element.get()))
+        for (auto& associatedElement : formElement->copyAssociatedElementsVector()) {
+            if (!is<HTMLFormControlElement>(associatedElement.get()))
                 continue;
-            auto& elt = downcast<HTMLFormControlElement>(element.get());
+            auto& elt = downcast<HTMLFormControlElement>(associatedElement.get());
             // Skip option elements, other duds.
             if (elt.name() == targetName) {
                 *element = DOMElement::createInstance(&elt);
