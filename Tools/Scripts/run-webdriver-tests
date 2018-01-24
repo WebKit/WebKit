@@ -63,6 +63,17 @@ except NotImplementedError, e:
     _log.error(str(e))
     sys.exit(-1)
 
+if port.name() in ['gtk', 'wpe']:
+    import os
+    top_level_directory = os.path.normpath(os.path.join(os.path.dirname(__file__), '..', '..'))
+    sys.path.insert(0, os.path.join(top_level_directory, 'Tools', 'jhbuild'))
+    import jhbuildutils
+
+    if not jhbuildutils.enter_jhbuild_environment_if_available(port.name()):
+        print '***'
+        print '*** Warning: jhbuild environment not present. Run update-webkitgtk-libs before build-webkit to ensure proper testing.'
+        print '***'
+
 port._display_server = options.display_server
 runner = WebDriverTestRunner(port)
 runner.run(args)
