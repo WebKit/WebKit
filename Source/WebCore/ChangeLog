@@ -1,3 +1,18 @@
+2018-01-24  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: Provide a way for VoiceOver to uniquely identify a web session
+        https://bugs.webkit.org/show_bug.cgi?id=181894
+
+        Reviewed by Joanmarie Diggs.
+
+        Add a way for VoiceOver to uniquely track a web page session.
+
+        Test: accessibility/mac/session-id.html
+
+        * accessibility/mac/WebAccessibilityObjectWrapperMac.mm:
+        (-[WebAccessibilityObjectWrapper accessibilityAttributeNames]):
+        (-[WebAccessibilityObjectWrapper accessibilityAttributeValue:]):
+
 2018-01-24  Antti Koivisto  <antti@apple.com>
 
         RenderBlockRareData::m_enclosingFragmentedFlow should be WeakPtr

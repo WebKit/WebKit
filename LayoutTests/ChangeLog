@@ -1,3 +1,15 @@
+2018-01-24  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: Provide a way for VoiceOver to uniquely identify a web session
+        https://bugs.webkit.org/show_bug.cgi?id=181894
+
+        Reviewed by Joanmarie Diggs.
+
+        * accessibility/mac/document-attributes-expected.txt:
+        * accessibility/mac/session-id-expected.txt: Added.
+        * accessibility/mac/session-id.html: Added.
+        * platform/mac/accessibility/parent-delete-expected.txt: Added.
+
 2018-01-24  Ms2ger  <Ms2ger@igalia.com>
 
         [GTK] Fix some test failures in ATK selection handling.
