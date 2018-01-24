@@ -6027,9 +6027,7 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
 
 - (void)_handleAcceptedCandidate:(NSTextCheckingResult *)candidate
 {
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200
     _impl->handleAcceptedCandidate(candidate);
-#endif
 }
 
 - (void)_didHandleAcceptedCandidate

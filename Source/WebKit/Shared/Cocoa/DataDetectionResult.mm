@@ -41,19 +41,9 @@ namespace WebKit {
 
 void DataDetectionResult::encode(IPC::Encoder& encoder) const
 {
-#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 101200)
-    auto data = adoptNS([[NSMutableData alloc] init]);
-    auto archiver = adoptNS([[NSKeyedArchiver alloc] initForWritingWithMutableData:data.get()]);
-    [archiver setRequiresSecureCoding:YES];
-    [archiver encodeObject:results.get() forKey:@"dataDetectorResults"];
-    [archiver finishEncoding];
-
-    IPC::encode(encoder, reinterpret_cast<CFDataRef>(data.get()));
-#else
     auto archiver = secureArchiver();
     [archiver encodeObject:results.get() forKey:@"dataDetectorResults"];
     IPC::encode(encoder, reinterpret_cast<CFDataRef>(archiver.get().encodedData));
-#endif
 }
 
 bool DataDetectionResult::decode(IPC::Decoder& decoder, DataDetectionResult& result)

@@ -45,12 +45,7 @@ static CGColorSpaceRef colorSpace(const ShareableBitmap::Configuration& configur
 
 static bool wantsExtendedRange(const ShareableBitmap::Configuration& configuration)
 {
-#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200) || PLATFORM(IOS)
     return CGColorSpaceUsesExtendedRange(colorSpace(configuration));
-#else
-    UNUSED_PARAM(configuration);
-    return false;
-#endif
 }
 
 static CGBitmapInfo bitmapInfo(const ShareableBitmap::Configuration& configuration)

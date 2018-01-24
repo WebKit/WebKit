@@ -227,14 +227,7 @@ static WebKit::HTTPCookieAcceptPolicy toHTTPCookieAcceptPolicy(NSHTTPCookieAccep
 - (void)_setObject:(id <NSCopying, NSSecureCoding>)object forBundleParameter:(NSString *)parameter
 {
     auto copy = adoptNS([(NSObject *)object copy]);
-
-#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 101200)
-    auto data = adoptNS([[NSMutableData alloc] init]);
-    auto keyedArchiver = adoptNS([[NSKeyedArchiver alloc] initForWritingWithMutableData:data.get()]);
-    [keyedArchiver setRequiresSecureCoding:YES];
-#else
     auto keyedArchiver = secureArchiver();
-#endif
 
     @try {
         [keyedArchiver encodeObject:copy.get() forKey:@"parameter"];
@@ -248,24 +241,14 @@ static WebKit::HTTPCookieAcceptPolicy toHTTPCookieAcceptPolicy(NSHTTPCookieAccep
     else
         [_processPool->ensureBundleParameters() removeObjectForKey:parameter];
 
-#if (!PLATFORM(MAC) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200)
     auto data = keyedArchiver.get().encodedData;
-#endif
-
     _processPool->sendToAllProcesses(Messages::WebProcess::SetInjectedBundleParameter(parameter, IPC::DataReference(static_cast<const uint8_t*>([data bytes]), [data length])));
 }
 
 - (void)_setObjectsForBundleParametersWithDictionary:(NSDictionary *)dictionary
 {
     auto copy = adoptNS([[NSDictionary alloc] initWithDictionary:dictionary copyItems:YES]);
-
-#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 101200)
-    auto data = adoptNS([[NSMutableData alloc] init]);
-    auto keyedArchiver = adoptNS([[NSKeyedArchiver alloc] initForWritingWithMutableData:data.get()]);
-    [keyedArchiver setRequiresSecureCoding:YES];
-#else
     auto keyedArchiver = secureArchiver();
-#endif
 
     @try {
         [keyedArchiver encodeObject:copy.get() forKey:@"parameters"];
@@ -276,10 +259,7 @@ static WebKit::HTTPCookieAcceptPolicy toHTTPCookieAcceptPolicy(NSHTTPCookieAccep
 
     [_processPool->ensureBundleParameters() setValuesForKeysWithDictionary:copy.get()];
 
-#if (!PLATFORM(MAC) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200)
     auto data = keyedArchiver.get().encodedData;
-#endif
-
     _processPool->sendToAllProcesses(Messages::WebProcess::SetInjectedBundleParameters(IPC::DataReference(static_cast<const uint8_t*>([data bytes]), [data length])));
 }
 

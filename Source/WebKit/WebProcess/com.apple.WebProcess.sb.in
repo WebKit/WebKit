@@ -170,9 +170,7 @@
 (deny process-info*)
 (allow process-info-pidinfo)
 (allow process-info-setcontrol (target self))
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200
 (allow process-codesigning-status*)
-#endif
 
 (deny sysctl*)
 (allow sysctl-read
@@ -465,9 +463,6 @@
         "com.apple.driver.AppleBluetoothMultitouch.trackpad"
         "com.apple.driver.AppleHIDMouse"
         "com.apple.lookup.shared"
-#if __MAC_OS_X_VERSION_MIN_REQUIRED < 101200
-        "com.apple.mediaaccessibility"
-#endif
         "com.apple.networkConnect"
         "com.apple.security"
         "com.apple.security.common"
@@ -506,12 +501,6 @@
 ;; Allow the OpenGL Profiler to attach.
 (if (defined? 'mach-register)
     (allow mach-register (global-name-regex #"^_oglprof_attach_<[0-9]+>$")))
-
-#if __MAC_OS_X_VERSION_MIN_REQUIRED < 101200
-;; MediaAccessibility
-(allow user-preference-read user-preference-write
-    (preference-domain "com.apple.mediaaccessibility.public"))
-#endif
 
 (if (positive? (string-length (param "DARWIN_USER_CACHE_DIR")))
     (allow-read-write-directory-and-issue-read-write-extensions (param "DARWIN_USER_CACHE_DIR")))
@@ -558,9 +547,6 @@
 (allow mach-lookup
        (global-name "com.apple.FileCoordination")
        (global-name "com.apple.FontObjectsServer")
-#if __MAC_OS_X_VERSION_MIN_REQUIRED < 101200
-       (global-name "com.apple.FontServer")
-#endif
        (global-name "com.apple.PowerManagement.control")
        (global-name "com.apple.SystemConfiguration.configd")
        (global-name "com.apple.SystemConfiguration.PPPController")
@@ -583,9 +569,7 @@
        (global-name "com.apple.fonts")
        (global-name "com.apple.iconservices")
        (global-name "com.apple.iconservices.store")
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200
        (global-name "com.apple.mediaremoted.xpc")
-#endif
        (global-name "com.apple.logd")
        (global-name "com.apple.logd.events")
        (global-name "com.apple.lsd.mapdb")

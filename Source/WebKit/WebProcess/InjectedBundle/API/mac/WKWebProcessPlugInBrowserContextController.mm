@@ -484,13 +484,7 @@ static void setUpResourceLoadClient(WKWebProcessPlugInBrowserContextController *
             if (!userObject)
                 return;
 
-#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 101200)
-            auto data = adoptNS([[NSMutableData alloc] init]);
-            auto archiver = adoptNS([[NSKeyedArchiver alloc] initForWritingWithMutableData:data.get()]);
-            [archiver setRequiresSecureCoding:YES];
-#else
             auto archiver = secureArchiver();
-#endif
             @try {
                 [archiver encodeObject:userObject forKey:@"userObject"];
             } @catch (NSException *exception) {
@@ -499,11 +493,7 @@ static void setUpResourceLoadClient(WKWebProcessPlugInBrowserContextController *
             }
             [archiver finishEncoding];
 
-#if (!PLATFORM(MAC) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200)
-            auto data = retainPtr(archiver.get().encodedData);
-#endif
-
-            userData = API::Data::createWithoutCopying(WTFMove(data));
+            userData = API::Data::createWithoutCopying(archiver.get().encodedData);
         }
 
         void willSubmitForm(WebPage*, HTMLFormElement* formElement, WebFrame* frame, WebFrame* sourceFrame, const Vector<std::pair<WTF::String, WTF::String>>& values, RefPtr<API::Object>& userData) override

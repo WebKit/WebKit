@@ -129,8 +129,7 @@
 #define DEFAULT_MODERN_MEDIA_CONTROLS_ENABLED false
 #endif
 
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 101200
-// <https://webkit.org/b/168415> El Capitan NetworkLoadTiming values are sometimes jumbled
+#if PLATFORM(MAC)
 #define DEFAULT_RESOURCE_TIMING_ENABLED false
 #else
 #define DEFAULT_RESOURCE_TIMING_ENABLED true

@@ -34,32 +34,21 @@
 
 namespace WebKit {
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200
 static String codeSigningIdentifier(SecTaskRef task)
 {
     return adoptCF(SecTaskCopySigningIdentifier(task, nullptr)).get();
 }
-#endif
 
 String codeSigningIdentifierForCurrentProcess()
 {
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200
     return codeSigningIdentifier(adoptCF(SecTaskCreateFromSelf(kCFAllocatorDefault)).get());
-#else
-    return { };
-#endif
 }
 
 String codeSigningIdentifier(xpc_connection_t connection)
 {
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200
     audit_token_t auditToken;
     xpc_connection_get_audit_token(connection, &auditToken);
     return codeSigningIdentifier(adoptCF(SecTaskCreateWithAuditToken(kCFAllocatorDefault, auditToken)).get());
-#else
-    UNUSED_PARAM(connection);
-    return { };
-#endif
 }
 
 } // namespace WebKit

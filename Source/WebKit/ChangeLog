@@ -1,5 +1,54 @@
 2018-01-24  Alex Christensen  <achristensen@webkit.org>
 
+        Remove pre-Sierra-OS-specific code in WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=182024
+
+        Reviewed by Tim Horton.
+
+        * PluginProcess/mac/com.apple.WebKit.plugin-common.sb.in:
+        * Shared/Cocoa/DataDetectionResult.mm:
+        (WebKit::DataDetectionResult::encode const):
+        * Shared/Cocoa/WebCoreArgumentCodersCocoa.mm:
+        (IPC::ArgumentCoder<WebCore::Payment>::encode):
+        (IPC::ArgumentCoder<WebCore::PaymentContact>::encode):
+        (IPC::ArgumentCoder<WebCore::PaymentMerchantSession>::encode):
+        (IPC::ArgumentCoder<WebCore::PaymentMethod>::encode):
+        * Shared/WebPreferencesDefaultValues.h:
+        * Shared/cg/ShareableBitmapCG.cpp:
+        (WebKit::wantsExtendedRange):
+        * Shared/ios/InteractionInformationAtPosition.mm:
+        (WebKit::InteractionInformationAtPosition::encode const):
+        * Shared/mac/CodeSigning.mm:
+        (WebKit::codeSigningIdentifier):
+        (WebKit::codeSigningIdentifierForCurrentProcess):
+        * Shared/mac/ColorSpaceData.mm:
+        (WebKit::ColorSpaceData::encode const):
+        * Shared/mac/PasteboardTypes.mm:
+        (WebKit::PasteboardTypes::forURL):
+        * Shared/mac/WebCoreArgumentCodersMac.mm:
+        (IPC::ArgumentCoder<ProtectionSpace>::encodePlatformData):
+        (IPC::ArgumentCoder<Credential>::encodePlatformData):
+        (IPC::ArgumentCoder<ContentFilterUnblockHandler>::encode):
+        (IPC::ArgumentCoder<MediaPlaybackTargetContext>::encodePlatformData):
+        * Shared/mac/WebHitTestResultData.mm:
+        (WebKit::WebHitTestResultData::platformEncode const):
+        * UIProcess/API/Cocoa/WKProcessPool.mm:
+        (-[WKProcessPool _setObject:forBundleParameter:]):
+        (-[WKProcessPool _setObjectsForBundleParametersWithDictionary:]):
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _handleAcceptedCandidate:]):
+        * UIProcess/Cocoa/WebViewImpl.h:
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::handleAcceptedCandidate):
+        (WebKit::WebViewImpl::performDragOperation):
+        * UIProcess/mac/WebPopupMenuProxyMac.mm:
+        (WebKit::WebPopupMenuProxyMac::showPopupMenu):
+        * WebProcess/InjectedBundle/API/mac/WKWebProcessPlugInBrowserContextController.mm:
+        (-[WKWebProcessPlugInBrowserContextController _setFormDelegate:]):
+        * WebProcess/com.apple.WebProcess.sb.in:
+
+2018-01-24  Alex Christensen  <achristensen@webkit.org>
+
         Stop using AuthenticationClient in WebKit
         https://bugs.webkit.org/show_bug.cgi?id=182016
 

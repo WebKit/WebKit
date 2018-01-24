@@ -350,9 +350,6 @@
     (global-name "com.apple.DiskArbitration.diskarbitrationd")
     (global-name "com.apple.FileCoordination")
     (global-name "com.apple.FontObjectsServer")
-#if __MAC_OS_X_VERSION_MIN_REQUIRED < 101200
-    (global-name "com.apple.FontServer")
-#endif
     (global-name "com.apple.ImageCaptureExtension2.presence")
     (global-name "com.apple.PowerManagement.control")
     (global-name "com.apple.SecurityServer")
@@ -443,12 +440,8 @@
     (shared-preferences-read "org.cups.PrintingPrefs"))
 
 ;; Text Services Manager
-#if PLATFORM(IOS) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200)
 (with-filter (iokit-registry-entry-class "IOHIDEventDriver")
     (allow iokit-set-properties (iokit-property "CapsLockDelayOverride")))
-#else
-(allow iokit-set-properties (iokit-property "CapsLockDelayOverride"))
-#endif
 
 ;; Image Capture
 (define (webkit-imagecapture)
