@@ -76,20 +76,12 @@ void InjectedBundle::platformInitialize(WKTypeRef initializationUserData)
             @"wellcome": @"welcome",
             @"hellolfworld": @"hello\nworld"
         },
-#if __MAC_OS_X_VERSION_MIN_REQUIRED < 101200
-        @"AppleSystemFontOSSubversion": @(10),
-#endif
         @"AppleEnableSwipeNavigateWithScrolls": @YES,
         @"com.apple.swipescrolldirection": @1,
         @"com.apple.trackpad.forceClick": @1,
     };
 
     [[NSUserDefaults standardUserDefaults] setVolatileDomain:dict forName:NSArgumentDomain];
-
-#if __MAC_OS_X_VERSION_MIN_REQUIRED < 101200
-    // Make NSFont use the new defaults.
-    [NSFont initialize];
-#endif
 
     // Underlying frameworks have already read AppleAntiAliasingThreshold default before we changed it.
     // A distributed notification is delivered to all applications, but it should be harmless, and it's the only way to update all underlying frameworks anyway.

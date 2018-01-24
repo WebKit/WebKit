@@ -37,7 +37,7 @@ using namespace WebCore;
 
 namespace TestWebKitAPI {
 
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200 && __MAC_OS_X_VERSION_MIN_REQUIRED < 101300
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 101300
 
 class FontCacheTest : public testing::Test {
 public:

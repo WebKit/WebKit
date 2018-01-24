@@ -26,12 +26,6 @@
 #ifdef __OBJC__
 #import <Cocoa/Cocoa.h>
 #import <WebKit/WebKit.h>
-
-#if __MAC_OS_X_VERSION_MAX_ALLOWED < 101200
-static const NSEventModifierFlags NSEventModifierFlagCommand =  NSCommandKeyMask;
-static const NSEventModifierFlags NSEventModifierFlagOption = NSAlternateKeyMask;
-#endif
-
 #endif
 
 #define ENABLE_LOGGING 0

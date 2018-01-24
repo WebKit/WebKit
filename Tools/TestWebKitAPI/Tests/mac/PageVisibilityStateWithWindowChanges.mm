@@ -123,14 +123,8 @@ void PageVisibilityStateWithWindowChanges::runTest(View view)
     EXPECT_JS_EQ(view, "document.visibilityState", "prerender");
     EXPECT_JS_EQ(view, "document.hidden", "true");
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200
-    NSWindowStyleMask windowStyle = NSWindowStyleMaskBorderless | NSWindowStyleMaskMiniaturizable;
-#else
-    NSUInteger windowStyle = NSBorderlessWindowMask | NSMiniaturizableWindowMask;
-#endif
-
     // Add it to a non-visible window. PageVisibility should still be "prerender".
-    RetainPtr<NSWindow> window = adoptNS([[NSWindow alloc] initWithContentRect:view.frame styleMask:windowStyle backing:NSBackingStoreBuffered defer:NO]);
+    RetainPtr<NSWindow> window = adoptNS([[NSWindow alloc] initWithContentRect:view.frame styleMask:NSWindowStyleMaskBorderless | NSWindowStyleMaskMiniaturizable backing:NSBackingStoreBuffered defer:NO]);
     [window.get().contentView addSubview:view];
     EXPECT_NOT_NULL([view window]);
     EXPECT_NOT_NULL([view superview]);

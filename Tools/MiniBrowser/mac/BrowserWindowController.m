@@ -40,12 +40,7 @@
 
 - (void)windowDidLoad
 {
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200
     [share sendActionOn:NSEventMaskLeftMouseDown];
-#else
-    [share sendActionOn:NSLeftMouseDownMask];
-#endif
-
     [super windowDidLoad];
 }
 
@@ -77,11 +72,7 @@
 {
     NSSharingServicePicker *picker = [[NSSharingServicePicker alloc] initWithItems:@[ self.currentURL ]];
     picker.delegate = self;
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200
     [picker showRelativeToRect:NSZeroRect ofView:sender preferredEdge:NSRectEdgeMinY];
-#else
-    [picker showRelativeToRect:NSZeroRect ofView:sender preferredEdge:NSMinYEdge];
-#endif
 }
 
 - (IBAction)fetch:(id)sender

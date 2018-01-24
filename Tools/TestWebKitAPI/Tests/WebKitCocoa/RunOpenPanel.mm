@@ -25,7 +25,7 @@
 
 #import "config.h"
 
-#if WK_API_ENABLED && PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200
+#if WK_API_ENABLED && PLATFORM(MAC)
 
 #import "PlatformUtilities.h"
 #import "TestNavigationDelegate.h"
@@ -82,4 +82,4 @@ TEST(WebKit, RunOpenPanelNonLatin1)
     
 } // namespace TestWebKitAPI
 
-#endif // WK_API_ENABLED && PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200
+#endif // WK_API_ENABLED && PLATFORM(MAC)

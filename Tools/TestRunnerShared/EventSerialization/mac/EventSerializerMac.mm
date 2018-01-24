@@ -294,11 +294,7 @@ const float eventDispatchTimerRate = 1. / 120.;
     if ([_remainingEventDictionaries count])
         return;
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200
     NSEventType applicationDefinedEventType = NSEventTypeApplicationDefined;
-#else
-    NSEventType applicationDefinedEventType = NSApplicationDefined;
-#endif
     [NSApp postEvent:[NSEvent otherEventWithType:applicationDefinedEventType location:NSZeroPoint modifierFlags:0 timestamp:0 windowNumber:0 context:0 subtype:0 data1:42 data2:0] atStart:NO];
     // Block until we send the last event we posted.
     while (true) {

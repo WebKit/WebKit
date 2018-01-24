@@ -1,3 +1,28 @@
+2018-01-24  Alex Christensen  <achristensen@webkit.org>
+
+        Remove pre-Sierra-OS-specific code in Tools
+        https://bugs.webkit.org/show_bug.cgi?id=182034
+
+        Reviewed by Tim Horton.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (setDefaultsToConsistentValuesForTesting):
+        * MiniBrowser/mac/BrowserWindowController.m:
+        (-[BrowserWindowController windowDidLoad]):
+        (-[BrowserWindowController share:]):
+        * MiniBrowser/mac/MiniBrowser_Prefix.pch:
+        * TestRunnerShared/EventSerialization/mac/EventSerializerMac.mm:
+        (-[EventStreamPlayer playbackTimerFired:]):
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebCore/FontCache.cpp: Removed.
+        * TestWebKitAPI/Tests/WebKitCocoa/RunOpenPanel.mm:
+        * TestWebKitAPI/Tests/mac/PageVisibilityStateWithWindowChanges.mm:
+        (TestWebKitAPI::PageVisibilityStateWithWindowChanges::runTest):
+        * WebKitTestRunner/InjectedBundle/mac/InjectedBundleMac.mm:
+        (WTR::InjectedBundle::platformInitialize):
+        * WebKitTestRunner/cocoa/TestControllerCocoa.mm:
+        (WTR::initializeWebViewConfiguration):
+
 2018-01-24  Alexey Proskuryakov  <ap@apple.com>
 
         REGRESSION (r226485): Many new wasm leaks detected by the leaks bot
