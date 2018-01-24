@@ -1,7 +1,7 @@
 
 PASS Test default value 
-FAIL Test that changing the iterationStart affects computed timing when backwards-filling assert_approx_equals: expected a number but got a "object"
-FAIL Test that changing the iterationStart affects computed timing during the active phase assert_approx_equals: expected a number but got a "object"
-FAIL Test that changing the iterationStart affects computed timing when forwards-filling assert_approx_equals: expected a number but got a "object"
+PASS Test that changing the iterationStart affects computed timing when backwards-filling 
+PASS Test that changing the iterationStart affects computed timing during the active phase 
+PASS Test that changing the iterationStart affects computed timing when forwards-filling 
 PASS Using invalid values should throw TypeError 
 

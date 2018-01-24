@@ -1,3 +1,28 @@
+2018-01-24  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Compute the progress and currentIteration properties on getComputedTiming()
+        https://bugs.webkit.org/show_bug.cgi?id=182039
+        <rdar://problem/36813568>
+
+        Reviewed by Dean Jackson.
+
+        Compute the "progress" and "currentIteration" properties on the dictionary returned by getComputedTiming().
+        To support this we implement several procedures from the specification implemented separately with links
+        and steps copied from the specification. There is one last procedure we don't implement, which is to obtain
+        the transformed time following the application of the provided easing, which will be the next patch.
+
+        * animation/AnimationEffect.cpp:
+        (WebCore::AnimationEffect::phase const):
+        (WebCore::AnimationEffect::activeTime const):
+        (WebCore::AnimationEffect::overallProgress const):
+        (WebCore::AnimationEffect::simpleIterationProgress const):
+        (WebCore::AnimationEffect::currentIteration const):
+        (WebCore::AnimationEffect::currentDirection const):
+        (WebCore::AnimationEffect::directedProgress const):
+        (WebCore::AnimationEffect::iterationProgress const):
+        (WebCore::AnimationEffect::getComputedTiming):
+        * animation/AnimationEffect.h:
+
 2018-01-24  Daniel Bates  <dabates@apple.com>
 
         REGRESSION (r226138): Selecting a line that ends with zero-width joiner (ZWJ) may cause text transformation

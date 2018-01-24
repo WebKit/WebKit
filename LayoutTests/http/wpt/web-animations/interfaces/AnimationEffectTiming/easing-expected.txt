@@ -1,20 +1,20 @@
 
 PASS Test default value 
-FAIL step-start function assert_approx_equals: The progress of the animation should be approximately 1 at 0ms expected a number but got a "object"
-FAIL steps(1, start) function assert_approx_equals: The progress of the animation should be approximately 1 at 0ms expected a number but got a "object"
-FAIL steps(2, start) function assert_approx_equals: The progress of the animation should be approximately 0.5 at 0ms expected a number but got a "object"
-FAIL step-end function assert_approx_equals: The progress of the animation should be approximately 0 at 0ms expected a number but got a "object"
-FAIL steps(1) function assert_approx_equals: The progress of the animation should be approximately 0 at 0ms expected a number but got a "object"
-FAIL steps(1, end) function assert_approx_equals: The progress of the animation should be approximately 0 at 0ms expected a number but got a "object"
-FAIL steps(2, end) function assert_approx_equals: The progress of the animation should be approximately 0 at 0ms expected a number but got a "object"
-FAIL frames function assert_approx_equals: The progress of the animation should be approximately 0 at 0ms expected a number but got a "object"
-FAIL linear function assert_approx_equals: The progress of the animation should be approximately 0 at 0ms expected a number but got a "object"
-FAIL ease function assert_approx_equals: The progress of the animation should be approximately 0 at 0ms expected a number but got a "object"
-FAIL ease-in function assert_approx_equals: The progress of the animation should be approximately 0 at 0ms expected a number but got a "object"
-FAIL ease-in-out function assert_approx_equals: The progress of the animation should be approximately 0 at 0ms expected a number but got a "object"
-FAIL ease-out function assert_approx_equals: The progress of the animation should be approximately 0 at 0ms expected a number but got a "object"
-FAIL easing function which produces values greater than 1 assert_approx_equals: The progress of the animation should be approximately 0 at 0ms expected a number but got a "object"
-FAIL easing function which produces values less than 1 assert_approx_equals: The progress of the animation should be approximately 0 at 0ms expected a number but got a "object"
+FAIL step-start function assert_approx_equals: The progress of the animation should be approximately 1 at 0ms expected 1 +/- 0.01 but got 0
+FAIL steps(1, start) function assert_approx_equals: The progress of the animation should be approximately 1 at 0ms expected 1 +/- 0.01 but got 0
+FAIL steps(2, start) function assert_approx_equals: The progress of the animation should be approximately 0.5 at 0ms expected 0.5 +/- 0.01 but got 0
+FAIL step-end function assert_approx_equals: The progress of the animation should be approximately 0 at 250000ms expected 0 +/- 0.01 but got 0.25
+FAIL steps(1) function assert_approx_equals: The progress of the animation should be approximately 0 at 250000ms expected 0 +/- 0.01 but got 0.25
+FAIL steps(1, end) function assert_approx_equals: The progress of the animation should be approximately 0 at 250000ms expected 0 +/- 0.01 but got 0.25
+FAIL steps(2, end) function assert_approx_equals: The progress of the animation should be approximately 0 at 250000ms expected 0 +/- 0.01 but got 0.25
+PASS frames function 
+PASS linear function 
+FAIL ease function assert_approx_equals: The progress of the animation should be approximately 0.40851059137130497 at 250000ms expected 0.40851059137130497 +/- 0.01 but got 0.25
+FAIL ease-in function assert_approx_equals: The progress of the animation should be approximately 0.09346465078656778 at 250000ms expected 0.09346465078656778 +/- 0.01 but got 0.25
+FAIL ease-in-out function assert_approx_equals: The progress of the animation should be approximately 0.129161930735705 at 250000ms expected 0.129161930735705 +/- 0.01 but got 0.25
+FAIL ease-out function assert_approx_equals: The progress of the animation should be approximately 0.37813813135508706 at 250000ms expected 0.37813813135508706 +/- 0.01 but got 0.25
+FAIL easing function which produces values greater than 1 assert_approx_equals: The progress of the animation should be approximately 1.0240666638411384 at 250000ms expected 1.0240666638411384 +/- 0.01 but got 0.25
+FAIL easing function which produces values less than 1 assert_approx_equals: The progress of the animation should be approximately -0.29501119758965655 at 250000ms expected -0.29501119758965655 +/- 0.01 but got 0.25
 PASS Invalid effect easing value test: '' 
 PASS Invalid effect easing value test: '7' 
 PASS Invalid effect easing value test: 'test' 
@@ -53,5 +53,5 @@ PASS Canonical easing 'cubic-bezier(0.1, 5, 0.23, 0)' is returned as set
 PASS Canonical easing 'steps(3, start)' is returned as set 
 PASS Canonical easing 'steps(3)' is returned as set 
 PASS Canonical easing 'frames(3)' is returned as set 
-FAIL Change the easing while the animation is running assert_equals: easing replace to steps(2, end) at before phase expected (number) 0 but got (object) null
+FAIL Change the easing while the animation is running assert_equals: change currentTime to active phase expected 0.5 but got 0.75
 

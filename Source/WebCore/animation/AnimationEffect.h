@@ -48,6 +48,11 @@ public:
     void setAnimation(RefPtr<WebAnimation>&& animation) { m_animation = animation; }
 
     std::optional<Seconds> localTime() const;
+    std::optional<Seconds> activeTime() const;
+    std::optional<double> iterationProgress() const;
+
+    enum class Phase { Before, Active, After, Idle };
+    Phase phase() const;
 
 protected:
     enum ClassType {
@@ -59,6 +64,14 @@ protected:
     explicit AnimationEffect(ClassType);
 
 private:
+    enum class ComputedDirection { Forwards, Reverse };
+
+    std::optional<double> overallProgress() const;
+    std::optional<double> simpleIterationProgress() const;
+    std::optional<double> currentIteration() const;
+    AnimationEffect::ComputedDirection currentDirection() const;
+    std::optional<double> directedProgress() const;
+
     ClassType m_classType;
     RefPtr<WebAnimation> m_animation;
     RefPtr<AnimationEffectTiming> m_timing;

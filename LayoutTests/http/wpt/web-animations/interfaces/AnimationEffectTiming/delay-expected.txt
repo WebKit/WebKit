@@ -3,7 +3,7 @@ PASS Test default value
 PASS set delay 100 
 PASS set delay -100 
 PASS Test adding a positive delay to an animation without a backwards fill makes it no longer active 
-FAIL Test seeking an animation by setting a negative delay assert_equals: expected (number) 0.5 but got (object) null
-FAIL Test finishing an animation using a large negative delay assert_equals: expected (number) 1 but got (object) null
+PASS Test seeking an animation by setting a negative delay 
+PASS Test finishing an animation using a large negative delay 
 PASS Setting invalid values should throw TypeError 
 
