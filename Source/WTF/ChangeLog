@@ -1,3 +1,27 @@
+2018-01-23  Alex Christensen  <achristensen@webkit.org>
+
+        Remove pre-Sierra-OS-specific code in WTF and JavaScriptCore
+        https://bugs.webkit.org/show_bug.cgi?id=182028
+
+        Reviewed by Keith Miller.
+
+        * wtf/Platform.h:
+        * wtf/mac/AppKitCompatibilityDeclarations.h:
+        * wtf/mac/DeprecatedSymbolsUsedBySafari.mm:
+        (WTF::MainThreadFunctionTracker::singleton): Deleted.
+        (WTF::MainThreadFunctionTracker::callOnMainThread): Deleted.
+        (WTF::MainThreadFunctionTracker::cancelCallOnMainThread): Deleted.
+        (WTF::MainThreadFunctionTracker::addFunction): Deleted.
+        (WTF::MainThreadFunctionTracker::removeIdentifier): Deleted.
+        (WTF::MainThreadFunctionTracker::removeFunctions): Deleted.
+        (WTF::callOnMainThread): Deleted.
+        (WTF::cancelCallOnMainThread): Deleted.
+        * wtf/spi/cocoa/SecuritySPI.h:
+        * wtf/spi/darwin/dyldSPI.h:
+        * wtf/text/icu/TextBreakIteratorICU.h:
+        (WTF::TextBreakIteratorICU::TextBreakIteratorICU):
+        (WTF::caretRules): Deleted.
+
 2018-01-23  Filip Pizlo  <fpizlo@apple.com>
 
         JSC should use a speculation fence on VM entry/exit

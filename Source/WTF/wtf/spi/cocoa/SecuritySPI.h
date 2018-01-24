@@ -66,12 +66,9 @@ SecTaskRef SecTaskCreateWithAuditToken(CFAllocatorRef, audit_token_t);
 SecTaskRef SecTaskCreateFromSelf(CFAllocatorRef);
 CFTypeRef SecTaskCopyValueForEntitlement(SecTaskRef, CFStringRef entitlement, CFErrorRef *);
 
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200
-CFStringRef SecTaskCopySigningIdentifier(SecTaskRef, CFErrorRef *);
-#endif
-
 #if PLATFORM(MAC)
 #include <Security/SecAsn1Types.h>
+CFStringRef SecTaskCopySigningIdentifier(SecTaskRef, CFErrorRef *);
 extern const SecAsn1Template kSecAsn1AlgorithmIDTemplate[];
 extern const SecAsn1Template kSecAsn1SubjectPublicKeyInfoTemplate[];
 #endif

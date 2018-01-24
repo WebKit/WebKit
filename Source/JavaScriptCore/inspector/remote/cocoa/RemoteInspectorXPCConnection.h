@@ -67,7 +67,7 @@ private:
     dispatch_queue_t m_queue;
     Client* m_client;
     bool m_closed { false };
-#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200)
+#if PLATFORM(MAC)
     bool m_validated { false };
 #endif
 };

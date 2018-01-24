@@ -46,7 +46,7 @@ extern "C" {
 }
 #endif
 
-#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200)
+#if PLATFORM(MAC)
 static bool auditTokenHasEntitlement(audit_token_t token, NSString *entitlement)
 {
     auto task = adoptCF(SecTaskCreateWithAuditToken(kCFAllocatorDefault, token));
@@ -169,7 +169,7 @@ void RemoteInspectorXPCConnection::handleEvent(xpc_object_t object)
         return;
     }
 
-#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200)
+#if PLATFORM(MAC)
     if (!m_validated) {
         audit_token_t token;
         xpc_connection_get_audit_token(m_connection, &token);

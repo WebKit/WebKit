@@ -32,11 +32,7 @@ static Variant<TextBreakIteratorICU, TextBreakIteratorPlatform> mapModeToBacking
     case TextBreakIterator::Mode::Line:
         return TextBreakIteratorICU(string, TextBreakIteratorICU::Mode::Line, locale.string().utf8().data());
     case TextBreakIterator::Mode::Caret:
-#if USE_ICU_CARET_ITERATOR
-        return TextBreakIteratorICU(string, TextBreakIteratorICU::Mode::Caret, locale.string().utf8().data());
-#else
         return TextBreakIteratorCF(string, TextBreakIteratorCF::Mode::Caret);
-#endif
     case TextBreakIterator::Mode::Delete:
         return TextBreakIteratorCF(string, TextBreakIteratorCF::Mode::Delete);
     }

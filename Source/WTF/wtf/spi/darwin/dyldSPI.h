@@ -29,10 +29,6 @@
 
 #include <mach-o/dyld_priv.h>
 
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 101200
-#define DYLD_MACOSX_VERSION_10_12 0x000A0C00
-#endif
-
 #ifndef DYLD_IOS_VERSION_11_0
 #define DYLD_IOS_VERSION_11_0 0x000B0000
 #endif
