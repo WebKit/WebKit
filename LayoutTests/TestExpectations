@@ -149,20 +149,19 @@ imported/w3c/web-platform-tests/service-workers/service-worker/import-scripts-re
 
 # Skip service worker tests that are timing out.
 imported/w3c/web-platform-tests/fetch/api/abort/general-serviceworker.https.html [ Skip ]
-imported/w3c/web-platform-tests/service-workers/service-worker/extendable-event-waituntil.https.html [ Skip ]
 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-event-respond-with-partial-stream.https.html [ Skip ]
 imported/w3c/web-platform-tests/service-workers/service-worker/http-to-https-redirect-and-register.https.html [ Skip ]
 imported/w3c/web-platform-tests/service-workers/service-worker/navigation-redirect.https.html [ Skip ]
 imported/w3c/web-platform-tests/service-workers/service-worker/postmessage.https.html [ Skip ]
-imported/w3c/web-platform-tests/service-workers/service-worker/postmessage-msgport-to-client.https.html [ Skip ]
 imported/w3c/web-platform-tests/service-workers/service-worker/respond-with-body-accessed-response.https.html [ Skip ]
 imported/w3c/web-platform-tests/service-workers/service-worker/sandboxed-iframe-fetch-event.https.html [ Skip ]
-imported/w3c/web-platform-tests/service-workers/service-worker/update-after-oneday.https.html [ Skip ]
 imported/w3c/web-platform-tests/service-workers/service-worker/update-bytecheck.https.html [ Skip ]
-imported/w3c/web-platform-tests/service-workers/service-worker/update-recovery.https.html [ Skip ]
 imported/w3c/web-platform-tests/service-workers/service-worker/client-navigate.https.html [ Skip ]
 imported/w3c/web-platform-tests/service-workers/service-worker/clients-matchall-include-uncontrolled.https.html [ Skip ]
 imported/w3c/web-platform-tests/service-workers/service-worker/indexeddb.https.html [ Skip ]
+
+# Requires additional test infrastructure.
+imported/w3c/web-platform-tests/service-workers/service-worker/update-after-oneday.https.html [ Skip ]
 
 # Unsupported features: SharedWorker, NavigationPreload
 imported/w3c/web-platform-tests/service-workers/service-worker/navigation-preload [ Skip ]

@@ -1,3 +1,16 @@
+2018-01-24  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, unskip some service worker tests that no longer time out
+
+        * web-platform-tests/service-workers/service-worker/clients-matchall-include-uncontrolled.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/extendable-event-waituntil.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/indexeddb.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/navigation-redirect.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/postmessage-msgport-to-client.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/postmessage.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/sandboxed-iframe-fetch-event.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/update-recovery.https-expected.txt:
+
 2018-01-24  Manuel Rego Casasnovas  <rego@igalia.com>
 
         Update paths of CSS tests from WPT

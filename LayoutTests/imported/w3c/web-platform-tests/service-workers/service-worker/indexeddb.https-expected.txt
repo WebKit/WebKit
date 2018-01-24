@@ -1,4 +1,8 @@
+CONSOLE MESSAGE: line 14: NotFoundError: Failed to execute 'transaction' on 'IDBDatabase': One of the specified object stores was not found.
 
-FAIL Verify Indexed DB operation in a Service Worker promise_test: Unhandled rejection with value: object "NotSupportedError: Passing MessagePort objects to postMessage is not yet supported"
-PASS clean up: registration 
+Harness Error (FAIL), message = NotFoundError: Failed to execute 'transaction' on 'IDBDatabase': One of the specified object stores was not found.
+
+TIMEOUT Verify Indexed DB operation in a Service Worker Test timed out
+NOTRUN clean up: registration 
+NOTRUN clean up: database 
 

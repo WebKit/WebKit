@@ -1,13 +1,8 @@
-CONSOLE MESSAGE: line 19: Unhandled Promise Rejection: NotSupportedError: Passing MessagePort objects to postMessage is not yet supported
-CONSOLE MESSAGE: line 19: Unhandled Promise Rejection: NotSupportedError: Passing MessagePort objects to postMessage is not yet supported
-CONSOLE MESSAGE: line 19: Unhandled Promise Rejection: NotSupportedError: Passing MessagePort objects to postMessage is not yet supported
 
-Harness Error (FAIL), message = Passing MessagePort objects to postMessage is not yet supported
-
-TIMEOUT Test install event waitUntil fulfilled Test timed out
-TIMEOUT Test ExtendableEvent multiple waitUntil fulfilled. Test timed out
-TIMEOUT Test ExtendableEvent waitUntil reject precedence. Test timed out
-FAIL Test activate event waitUntil fulfilled assert_unreached: unexpected rejection: Passing MessagePort objects to postMessage is not yet supported Reached unreachable code
+PASS Test install event waitUntil fulfilled 
+PASS Test ExtendableEvent multiple waitUntil fulfilled. 
+PASS Test ExtendableEvent waitUntil reject precedence. 
+PASS Test activate event waitUntil fulfilled 
 PASS Test install event waitUntil rejected 
 PASS Test activate event waitUntil rejected. 
 

@@ -1,3 +1,9 @@
+2018-01-24  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, unskip some service worker tests that no longer time out
+
+        * TestExpectations:
+
 2018-01-24  Joanmarie Diggs  <jdiggs@igalia.com>
 
         AX: SVG AAM mapping trumps ARIA role attribute in the case of SVG root

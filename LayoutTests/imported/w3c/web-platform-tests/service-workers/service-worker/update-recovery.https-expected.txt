@@ -1,5 +1,3 @@
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT Recover from a bad service worker by updating after a failed navigation. Test timed out
+PASS Recover from a bad service worker by updating after a failed navigation. 
 
