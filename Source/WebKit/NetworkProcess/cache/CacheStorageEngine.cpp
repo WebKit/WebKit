@@ -420,6 +420,7 @@ void Engine::clearCachesForOrigin(const WebCore::SecurityOriginData& origin, Cal
             if (folderOrigin->topOrigin != origin && folderOrigin->clientOrigin != origin)
                 return;
 
+            ASSERT(folderPath == cachesRootPath(*folderOrigin));
             m_ioQueue->dispatch([path = folderPath.isolatedCopy(), taskHandler = WTFMove(taskHandler)] {
                 deleteDirectoryRecursively(path);
             });

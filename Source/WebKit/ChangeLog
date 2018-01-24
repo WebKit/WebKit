@@ -1,3 +1,16 @@
+2018-01-24  Youenn Fablet  <youenn@apple.com>
+
+        Add Cache Storage engine assertion following on bug 181887
+        https://bugs.webkit.org/show_bug.cgi?id=181925
+
+        Reviewed by Alex Christensen.
+
+        In a normal environment, the folderPath should be the same as the path computed from the ClientOrigin.
+        Add assertion to verify this.
+
+        * NetworkProcess/cache/CacheStorageEngine.cpp:
+        (WebKit::CacheStorage::Engine::clearCachesForOrigin):
+
 2018-01-24  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [GTK] Use GDK_EVENT_PROPAGATE and GDK_EVENT_STOP in WebKitWebViewBase.cpp
