@@ -55,7 +55,7 @@ enum TypedArrayType {
 };
 
 #define ASSERT_TYPED_ARRAY_TYPE(name) \
-    static_assert(Type ## name == (name ## ArrayType - FirstTypedArrayType + TypeInt8), "");
+    static_assert(static_cast<uint32_t>(Type ## name) == (static_cast<uint32_t>(name ## ArrayType) - FirstTypedArrayType + static_cast<uint32_t>(TypeInt8)), "");
     FOR_EACH_TYPED_ARRAY_TYPE_EXCLUDING_DATA_VIEW(ASSERT_TYPED_ARRAY_TYPE)
 #undef ASSERT_TYPED_ARRAY_TYPE
 
