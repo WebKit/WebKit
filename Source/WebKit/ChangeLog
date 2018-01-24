@@ -1,3 +1,23 @@
+2018-01-24  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [GTK] Use GDK_EVENT_PROPAGATE and GDK_EVENT_STOP in WebKitWebViewBase.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=182031
+
+        Reviewed by Carlos Garcia Campos.
+
+        No functional changes, this just replaces TRUE with GDK_EVENT_STOP and FALSE with
+        GDK_EVENT_PROPAGATE, to improve readability.
+
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewBaseKeyPressEvent):
+        (webkitWebViewBaseKeyReleaseEvent):
+        (webkitWebViewBaseButtonPressEvent):
+        (webkitWebViewBaseButtonReleaseEvent):
+        (webkitWebViewBaseScrollEvent):
+        (webkitWebViewBaseMotionNotifyEvent):
+        (webkitWebViewBaseCrossingNotifyEvent):
+        (webkitWebViewBaseTouchEvent):
+
 2018-01-23  Eric Carlson  <eric.carlson@apple.com>
 
         Resign NowPlaying status when no media element is eligible

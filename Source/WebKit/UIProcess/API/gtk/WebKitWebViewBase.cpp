@@ -681,7 +681,7 @@ static gboolean webkitWebViewBaseKeyPressEvent(GtkWidget* widget, GdkEventKey* k
         auto& preferences = priv->pageProxy->preferences();
         preferences.setResourceUsageOverlayVisible(!preferences.resourceUsageOverlayVisible());
         priv->shouldForwardNextKeyEvent = FALSE;
-        return TRUE;
+        return GDK_EVENT_STOP;
     }
 #endif
 
@@ -695,7 +695,7 @@ static gboolean webkitWebViewBaseKeyPressEvent(GtkWidget* widget, GdkEventKey* k
         case GDK_KEY_f:
         case GDK_KEY_F:
             priv->pageProxy->fullScreenManager()->requestExitFullScreen();
-            return TRUE;
+            return GDK_EVENT_STOP;
         default:
             break;
         }
@@ -718,7 +718,7 @@ static gboolean webkitWebViewBaseKeyPressEvent(GtkWidget* widget, GdkEventKey* k
             !compositionResults.compositionUpdated() ? priv->keyBindingTranslator.commandsForKeyEvent(&event->key) : Vector<String>()));
     });
 
-    return TRUE;
+    return GDK_EVENT_STOP;
 }
 
 static gboolean webkitWebViewBaseKeyReleaseEvent(GtkWidget* widget, GdkEventKey* keyEvent)
@@ -737,7 +737,7 @@ static gboolean webkitWebViewBaseKeyReleaseEvent(GtkWidget* widget, GdkEventKey*
         priv->pageProxy->handleKeyboardEvent(NativeWebKeyboardEvent(event.get(), compositionResults, faked, { }));
     });
 
-    return TRUE;
+    return GDK_EVENT_STOP;
 }
 
 static gboolean webkitWebViewBaseButtonPressEvent(GtkWidget* widget, GdkEventButton* buttonEvent)
@@ -746,7 +746,7 @@ static gboolean webkitWebViewBaseButtonPressEvent(GtkWidget* widget, GdkEventBut
     WebKitWebViewBasePrivate* priv = webViewBase->priv;
 
     if (priv->authenticationDialog)
-        return TRUE;
+        return GDK_EVENT_STOP;
 
     gtk_widget_grab_focus(widget);
 
@@ -759,7 +759,7 @@ static gboolean webkitWebViewBaseButtonPressEvent(GtkWidget* widget, GdkEventBut
     // are generated.
     GUniquePtr<GdkEvent> nextEvent(gdk_event_peek());
     if (nextEvent && (nextEvent->any.type == GDK_2BUTTON_PRESS || nextEvent->any.type == GDK_3BUTTON_PRESS))
-        return TRUE;
+        return GDK_EVENT_STOP;
 
     // If it's a right click event save it as a possible context menu event.
     if (buttonEvent->button == 3)
@@ -767,7 +767,7 @@ static gboolean webkitWebViewBaseButtonPressEvent(GtkWidget* widget, GdkEventBut
 
     priv->pageProxy->handleMouseEvent(NativeWebMouseEvent(reinterpret_cast<GdkEvent*>(buttonEvent),
         priv->clickCounter.currentClickCountForGdkButtonEvent(buttonEvent)));
-    return TRUE;
+    return GDK_EVENT_STOP;
 }
 
 static gboolean webkitWebViewBaseButtonReleaseEvent(GtkWidget* widget, GdkEventButton* event)
@@ -776,12 +776,12 @@ static gboolean webkitWebViewBaseButtonReleaseEvent(GtkWidget* widget, GdkEventB
     WebKitWebViewBasePrivate* priv = webViewBase->priv;
 
     if (priv->authenticationDialog)
-        return TRUE;
+        return GDK_EVENT_STOP;
 
     gtk_widget_grab_focus(widget);
     priv->pageProxy->handleMouseEvent(NativeWebMouseEvent(reinterpret_cast<GdkEvent*>(event), 0 /* currentClickCount */));
 
-    return TRUE;
+    return GDK_EVENT_STOP;
 }
 
 static gboolean webkitWebViewBaseScrollEvent(GtkWidget* widget, GdkEventScroll* event)
@@ -790,14 +790,14 @@ static gboolean webkitWebViewBaseScrollEvent(GtkWidget* widget, GdkEventScroll* 
     WebKitWebViewBasePrivate* priv = webViewBase->priv;
 
     if (std::exchange(priv->shouldForwardNextWheelEvent, false))
-        return FALSE;
+        return GDK_EVENT_PROPAGATE;
 
     if (priv->authenticationDialog)
-        return FALSE;
+        return GDK_EVENT_PROPAGATE;
 
     priv->pageProxy->handleWheelEvent(NativeWebWheelEvent(reinterpret_cast<GdkEvent*>(event)));
 
-    return TRUE;
+    return GDK_EVENT_STOP;
 }
 
 static gboolean webkitWebViewBasePopupMenu(GtkWidget* widget)
@@ -821,12 +821,12 @@ static gboolean webkitWebViewBaseMotionNotifyEvent(GtkWidget* widget, GdkEventMo
 
     if (priv->authenticationDialog) {
         auto* widgetClass = GTK_WIDGET_CLASS(webkit_web_view_base_parent_class);
-        return widgetClass->motion_notify_event ? widgetClass->motion_notify_event(widget, event) : FALSE;
+        return widgetClass->motion_notify_event ? widgetClass->motion_notify_event(widget, event) : GDK_EVENT_PROPAGATE;
     }
 
     priv->pageProxy->handleMouseEvent(NativeWebMouseEvent(reinterpret_cast<GdkEvent*>(event), 0 /* currentClickCount */));
 
-    return FALSE;
+    return GDK_EVENT_PROPAGATE;
 }
 
 static gboolean webkitWebViewBaseCrossingNotifyEvent(GtkWidget* widget, GdkEventCrossing* crosssingEvent)
@@ -835,7 +835,7 @@ static gboolean webkitWebViewBaseCrossingNotifyEvent(GtkWidget* widget, GdkEvent
     WebKitWebViewBasePrivate* priv = webViewBase->priv;
 
     if (priv->authenticationDialog)
-        return FALSE;
+        return GDK_EVENT_PROPAGATE;
 
     // In the case of crossing events, it's very important the actual coordinates the WebProcess receives, because once the mouse leaves
     // the web view, the WebProcess won't receive more events until the mouse enters again in the web view. So, if the coordinates of the leave
@@ -867,7 +867,7 @@ static gboolean webkitWebViewBaseCrossingNotifyEvent(GtkWidget* widget, GdkEvent
 
     priv->pageProxy->handleMouseEvent(NativeWebMouseEvent(copiedEvent ? copiedEvent.get() : event, 0 /* currentClickCount */));
 
-    return FALSE;
+    return GDK_EVENT_PROPAGATE;
 }
 
 #if ENABLE(TOUCH_EVENTS)
@@ -919,7 +919,7 @@ static gboolean webkitWebViewBaseTouchEvent(GtkWidget* widget, GdkEventTouch* ev
     WebKitWebViewBasePrivate* priv = webViewBase->priv;
 
     if (priv->authenticationDialog)
-        return TRUE;
+        return GDK_EVENT_STOP;
 
     GdkEvent* touchEvent = reinterpret_cast<GdkEvent*>(event);
     uint32_t sequence = GPOINTER_TO_UINT(gdk_event_get_event_sequence(touchEvent));
@@ -949,7 +949,7 @@ static gboolean webkitWebViewBaseTouchEvent(GtkWidget* widget, GdkEventTouch* ev
     webkitWebViewBaseGetTouchPointsForEvent(webViewBase, touchEvent, touchPoints);
     priv->pageProxy->handleTouchEvent(NativeWebTouchEvent(reinterpret_cast<GdkEvent*>(event), WTFMove(touchPoints)));
 
-    return TRUE;
+    return GDK_EVENT_STOP;
 }
 #endif // ENABLE(TOUCH_EVENTS)
 
