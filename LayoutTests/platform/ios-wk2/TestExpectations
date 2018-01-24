@@ -1315,3 +1315,5 @@ webkit.org/b/172879 webrtc/video-unmute.html [ Skip ]
 
 webkit.org/b/181957 [ Release ] http/tests/misc/resource-timing-resolution.html [ Pass Failure ]
 
+webkit.org/b/181821 fast/visual-viewport/ios/caret-after-focus-in-fixed.html [ Pass Failure ]
+
