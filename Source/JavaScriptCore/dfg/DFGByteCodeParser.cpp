@@ -502,8 +502,6 @@ private:
                 break;
             if (operand.offset() < static_cast<int>(inlineCallFrame->stackOffset + CallFrame::headerSizeInRegisters))
                 continue;
-            if (operand.offset() == inlineCallFrame->stackOffset + CallFrame::thisArgumentOffset())
-                continue;
             if (operand.offset() >= static_cast<int>(inlineCallFrame->stackOffset + CallFrame::thisArgumentOffset() + inlineCallFrame->argumentsWithFixup.size()))
                 continue;
             int argument = VirtualRegister(operand.offset() - inlineCallFrame->stackOffset).toArgument();

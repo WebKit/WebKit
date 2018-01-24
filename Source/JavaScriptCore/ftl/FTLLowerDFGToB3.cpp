@@ -3975,16 +3975,19 @@ private:
         InlineCallFrame* inlineCallFrame = m_node->child1()->origin.semantic.inlineCallFrame;
         
         LValue index = lowInt32(m_node->child2());
-        if (m_node->numberOfArgumentsToSkip())
-            index = m_out.add(index, m_out.constInt32(m_node->numberOfArgumentsToSkip()));
         
-        LValue limit;
+        LValue originalLimit;
         if (inlineCallFrame && !inlineCallFrame->isVarargs())
-            limit = m_out.constInt32(inlineCallFrame->argumentCountIncludingThis - 1);
+            originalLimit = m_out.constInt32(inlineCallFrame->argumentCountIncludingThis);
         else {
             VirtualRegister argumentCountRegister = AssemblyHelpers::argumentCount(inlineCallFrame);
-            limit = m_out.sub(m_out.load32(payloadFor(argumentCountRegister)), m_out.int32One);
+            originalLimit = m_out.load32(payloadFor(argumentCountRegister));
         }
+        
+        LValue limit = m_out.sub(originalLimit, m_out.int32One);
+        
+        if (m_node->numberOfArgumentsToSkip())
+            limit = m_out.sub(limit, m_out.constInt32(m_node->numberOfArgumentsToSkip()));
         
         LValue isOutOfBounds = m_out.aboveOrEqual(index, limit);
         LBasicBlock continuation = nullptr;
@@ -4001,17 +4004,30 @@ private:
         } else
             speculate(OutOfBounds, noValue(), 0, isOutOfBounds);
         
+        if (m_node->numberOfArgumentsToSkip())
+            index = m_out.add(index, m_out.constInt32(m_node->numberOfArgumentsToSkip()));
+        index = m_out.add(index, m_out.int32One);
+        
+        index = m_out.zeroExt(index, Int64);
+        
+        index = m_out.bitAnd(
+            index,
+            m_out.aShr(
+                m_out.sub(
+                    index,
+                    m_out.opaque(m_out.zeroExt(originalLimit, Int64))),
+                m_out.constInt32(63)));
+        
         TypedPointer base;
         if (inlineCallFrame) {
             if (inlineCallFrame->argumentCountIncludingThis > 1)
-                base = addressFor(inlineCallFrame->argumentsWithFixup[1].virtualRegister());
+                base = addressFor(inlineCallFrame->argumentsWithFixup[0].virtualRegister());
         } else
-            base = addressFor(virtualRegisterForArgument(1));
+            base = addressFor(virtualRegisterForArgument(0));
         
         LValue result;
         if (base) {
-            LValue pointer = m_out.baseIndex(
-                base.value(), m_out.zeroExt(index, pointerType()), ScaleEight);
+            LValue pointer = m_out.baseIndex(base.value(), index, ScaleEight);
             result = m_out.load64(TypedPointer(m_heaps.variables.atAnyIndex(), pointer));
         } else
             result = m_out.constInt64(JSValue::encode(jsUndefined()));
