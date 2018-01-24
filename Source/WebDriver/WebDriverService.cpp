@@ -101,6 +101,7 @@ const WebDriverService::Command WebDriverService::s_commands[] = {
     { HTTPMethod::Post, "/session", &WebDriverService::newSession },
     { HTTPMethod::Delete, "/session/$sessionId", &WebDriverService::deleteSession },
     { HTTPMethod::Get, "/status", &WebDriverService::status },
+    { HTTPMethod::Get, "/session/$sessionId/timeouts", &WebDriverService::getTimeouts },
     { HTTPMethod::Post, "/session/$sessionId/timeouts", &WebDriverService::setTimeouts },
 
     { HTTPMethod::Post, "/session/$sessionId/url", &WebDriverService::go },
@@ -717,6 +718,16 @@ void WebDriverService::status(RefPtr<JSON::Object>&&, Function<void (CommandResu
     body->setBoolean(ASCIILiteral("ready"), !m_session);
     body->setString(ASCIILiteral("message"), m_session ? ASCIILiteral("A session already exists") : ASCIILiteral("No sessions"));
     completionHandler(CommandResult::success(WTFMove(body)));
+}
+
+void WebDriverService::getTimeouts(RefPtr<JSON::Object>&& parameters, Function<void (CommandResult&&)>&& completionHandler)
+{
+    // §8.4 Get Timeouts.
+    // https://w3c.github.io/webdriver/webdriver-spec.html#get-timeouts
+    if (!findSessionOrCompleteWithError(*parameters, completionHandler))
+        return;
+
+    m_session->getTimeouts(WTFMove(completionHandler));
 }
 
 void WebDriverService::setTimeouts(RefPtr<JSON::Object>&& parameters, Function<void (CommandResult&&)>&& completionHandler)
