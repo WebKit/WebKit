@@ -43,6 +43,7 @@ class WebDriverW3CWebServer(object):
         self._layout_doc_root = os.path.join(layout_root, 'imported', 'w3c', 'web-platform-tests')
         self._process = None
         self._pid = None
+        self._wsout = None
 
         tmpdir = tempfile.gettempdir()
         if self._port.host.platform.is_mac():
@@ -114,7 +115,9 @@ class WebDriverW3CWebServer(object):
 
     def stop(self):
         _log.debug('Cleaning WebDriver WPT server config.json')
-        self._port.host.filesystem.remove(os.path.join(self._layout_doc_root, 'config.json'))
+        temporary_config_file = os.path.join(self._layout_doc_root, 'config.json')
+        if self._port.host.filesystem.exists(temporary_config_file):
+            self._port.host.filesystem.remove(temporary_config_file)
         if self._process:
             self._process.communicate(input='\n')
         if self._wsout:
