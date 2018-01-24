@@ -129,6 +129,7 @@ const WebDriverService::Command WebDriverService::s_commands[] = {
     { HTTPMethod::Get, "/session/$sessionId/element/$elementId/selected", &WebDriverService::isElementSelected },
     { HTTPMethod::Get, "/session/$sessionId/element/$elementId/attribute/$name", &WebDriverService::getElementAttribute },
     { HTTPMethod::Get, "/session/$sessionId/element/$elementId/property/$name", &WebDriverService::getElementProperty },
+    { HTTPMethod::Get, "/session/$sessionId/element/$elementId/css/$name", &WebDriverService::getElementCSSValue },
     { HTTPMethod::Get, "/session/$sessionId/element/$elementId/text", &WebDriverService::getElementText },
     { HTTPMethod::Get, "/session/$sessionId/element/$elementId/name", &WebDriverService::getElementTagName },
     { HTTPMethod::Get, "/session/$sessionId/element/$elementId/rect", &WebDriverService::getElementRect },
@@ -1189,6 +1190,26 @@ void WebDriverService::getElementProperty(RefPtr<JSON::Object>&& parameters, Fun
     }
 
     m_session->getElementProperty(elementID.value(), attribute, WTFMove(completionHandler));
+}
+
+void WebDriverService::getElementCSSValue(RefPtr<JSON::Object>&& parameters, Function<void (CommandResult&&)>&& completionHandler)
+{
+    // §13.4 Get Element CSS Value
+    // https://w3c.github.io/webdriver/webdriver-spec.html#get-element-css-value
+    if (!findSessionOrCompleteWithError(*parameters, completionHandler))
+        return;
+
+    auto elementID = findElementOrCompleteWithError(*parameters, completionHandler);
+    if (!elementID)
+        return;
+
+    String cssProperty;
+    if (!parameters->getString(ASCIILiteral("name"), cssProperty)) {
+        completionHandler(CommandResult::fail(CommandResult::ErrorCode::InvalidArgument));
+        return;
+    }
+
+    m_session->getElementCSSValue(elementID.value(), cssProperty, WTFMove(completionHandler));
 }
 
 void WebDriverService::getElementText(RefPtr<JSON::Object>&& parameters, Function<void (CommandResult&&)>&& completionHandler)
