@@ -14,12 +14,12 @@ worker.postMessage("eval self.__proto__.__proto__.__proto__.__proto__ === {}.__p
 worker.postMessage("eval self.__proto__.__proto__.hasOwnProperty('navigator') === true");
 worker.postMessage("eval self.__proto__.__proto__.hasOwnProperty('self') === true");
 worker.postMessage("eval self.__proto__.__proto__.hasOwnProperty('location') === true");
-worker.postMessage("eval self.__proto__.__proto__.hasOwnProperty('close') === true");
+worker.postMessage("eval self.__proto__.__proto__.hasOwnProperty('close') === false");
 worker.postMessage("eval self.__proto__.__proto__.hasOwnProperty('importScripts') === true");
 worker.postMessage("eval self.__proto__.__proto__.hasOwnProperty('indexedDB') === true");
 worker.postMessage("eval self.hasOwnProperty('navigator') === false");
 worker.postMessage("eval self.hasOwnProperty('location') === false");
-worker.postMessage("eval self.hasOwnProperty('close') === false");
+worker.postMessage("eval self.hasOwnProperty('close') === true");
 
 // DedicatedWorkerGlobalScope properties should be on the instance.
 worker.postMessage("eval self.hasOwnProperty('postMessage') === true");

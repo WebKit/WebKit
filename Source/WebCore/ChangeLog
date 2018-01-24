@@ -1,3 +1,21 @@
+2018-01-24  Chris Dumez  <cdumez@apple.com>
+
+        close() operation should not be exposed inside a ServiceWorkerGlobalScope
+        https://bugs.webkit.org/show_bug.cgi?id=182057
+
+        Reviewed by Youenn Fablet.
+
+        Move close() from WorkerGlobalScope to DedicatedWorkerGlobalScope as per:
+        - https://html.spec.whatwg.org/multipage/workers.html#dedicatedworkerglobalscope
+
+        This change to the specification was made to avoid exposing this deprecated
+        features to service workers (which are new).
+
+        No new tests, rebaselined existing test.
+
+        * workers/DedicatedWorkerGlobalScope.idl:
+        * workers/WorkerGlobalScope.idl:
+
 2018-01-24  David Hyatt  <hyatt@apple.com>
 
         Implement line clamp for mail.

@@ -35,7 +35,6 @@
 
     readonly attribute WorkerGlobalScope self;
     readonly attribute WorkerLocation location;
-    void close();
 
     attribute EventHandler onerror;
     attribute EventHandler onoffline;

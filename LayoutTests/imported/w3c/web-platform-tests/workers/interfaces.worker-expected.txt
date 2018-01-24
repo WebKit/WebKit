@@ -45,7 +45,7 @@ PASS DedicatedWorkerGlobalScope interface: internal [[SetPrototypeOf]] method of
 PASS DedicatedWorkerGlobalScope interface: existence and properties of interface prototype object's "constructor" property 
 FAIL DedicatedWorkerGlobalScope interface: attribute name assert_own_property: The global object must have a property "name" expected property "name" missing
 PASS DedicatedWorkerGlobalScope interface: operation postMessage(any, [object Object]) 
-FAIL DedicatedWorkerGlobalScope interface: operation close() assert_own_property: global object missing non-static operation expected property "close" missing
+PASS DedicatedWorkerGlobalScope interface: operation close() 
 PASS DedicatedWorkerGlobalScope interface: attribute onmessage 
 FAIL DedicatedWorkerGlobalScope interface: attribute onmessageerror assert_own_property: The global object must have a property "onmessageerror" expected property "onmessageerror" missing
 PASS DedicatedWorkerGlobalScope interface: internal [[SetPrototypeOf]] method of global platform object - setting to a new value via Object.setPrototypeOf should throw a TypeError 
@@ -59,7 +59,7 @@ PASS Stringification of self
 FAIL DedicatedWorkerGlobalScope interface: self must inherit property "name" with the proper type assert_own_property: expected property "name" missing
 PASS DedicatedWorkerGlobalScope interface: self must inherit property "postMessage(any, [object Object])" with the proper type 
 PASS DedicatedWorkerGlobalScope interface: calling postMessage(any, [object Object]) on self with too few arguments must throw TypeError 
-FAIL DedicatedWorkerGlobalScope interface: self must inherit property "close()" with the proper type assert_own_property: expected property "close" missing
+PASS DedicatedWorkerGlobalScope interface: self must inherit property "close()" with the proper type 
 PASS DedicatedWorkerGlobalScope interface: self must inherit property "onmessage" with the proper type 
 FAIL DedicatedWorkerGlobalScope interface: self must inherit property "onmessageerror" with the proper type assert_own_property: expected property "onmessageerror" missing
 PASS WorkerGlobalScope interface: self must inherit property "self" with the proper type 
