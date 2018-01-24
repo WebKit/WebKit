@@ -435,6 +435,13 @@ WEBKIT_API void
 webkit_settings_set_allow_universal_access_from_file_urls      (WebKitSettings *settings,
                                                                 gboolean        allowed);
 
+WEBKIT_API gboolean
+webkit_settings_get_enable_webvr                               (WebKitSettings *settings);
+
+WEBKIT_API void
+webkit_settings_set_enable_webvr                               (WebKitSettings *settings,
+                                                                gboolean        enabled);
+
 G_END_DECLS
 
 #endif /* WebKitSettings_h */
