@@ -37,7 +37,6 @@
 #include "WebPage.h"
 #include "WebPageProxyMessages.h"
 #include <WebCore/AuthenticationChallenge.h>
-#include <WebCore/AuthenticationClient.h>
 
 using namespace WebCore;
 
@@ -162,18 +161,10 @@ void AuthenticationManager::useCredentialForSingleChallenge(uint64_t challengeID
     if (tryUseCertificateInfoForChallenge(challenge.challenge, certificateInfo, completionHandler))
         return;
 
-    AuthenticationClient* coreClient = challenge.challenge.authenticationClient();
-    // If there is a completion handler, then there is no AuthenticationClient.
-    // FIXME: Remove the use of AuthenticationClient in WebKit2 once NETWORK_SESSION is used for all loads.
-    if (completionHandler) {
-        ASSERT(!coreClient);
+    if (completionHandler)
         completionHandler(AuthenticationChallengeDisposition::UseCredential, credential);
-        return;
-    }
-    ASSERT(coreClient);
-
-    if (coreClient)
-        coreClient->receivedCredential(challenge.challenge, credential);
+    else
+        ASSERT_NOT_REACHED();
 }
 
 void AuthenticationManager::continueWithoutCredentialForChallenge(uint64_t challengeID)
@@ -189,16 +180,10 @@ void AuthenticationManager::continueWithoutCredentialForSingleChallenge(uint64_t
     auto challenge = m_challenges.take(challengeID);
     ASSERT(!challenge.challenge.isNull());
 
-    AuthenticationClient* coreClient = challenge.challenge.authenticationClient();
-    if (challenge.completionHandler) {
-        ASSERT(!coreClient);
+    if (challenge.completionHandler)
         challenge.completionHandler(AuthenticationChallengeDisposition::UseCredential, Credential());
-        return;
-    }
-    ASSERT(coreClient);
-
-    if (coreClient)
-        coreClient->receivedRequestToContinueWithoutCredential(challenge.challenge);
+    else
+        ASSERT_NOT_REACHED();
 }
 
 void AuthenticationManager::cancelChallenge(uint64_t challengeID)
@@ -214,16 +199,10 @@ void AuthenticationManager::cancelSingleChallenge(uint64_t challengeID)
     auto challenge = m_challenges.take(challengeID);
     ASSERT(!challenge.challenge.isNull());
 
-    AuthenticationClient* coreClient = challenge.challenge.authenticationClient();
-    if (challenge.completionHandler) {
-        ASSERT(!coreClient);
+    if (challenge.completionHandler)
         challenge.completionHandler(AuthenticationChallengeDisposition::Cancel, Credential());
-        return;
-    }
-    ASSERT(coreClient);
-
-    if (coreClient)
-        coreClient->receivedCancellation(challenge.challenge);
+    else
+        ASSERT_NOT_REACHED();
 }
 
 void AuthenticationManager::performDefaultHandling(uint64_t challengeID)
@@ -239,16 +218,10 @@ void AuthenticationManager::performDefaultHandlingForSingleChallenge(uint64_t ch
     auto challenge = m_challenges.take(challengeID);
     ASSERT(!challenge.challenge.isNull());
 
-    AuthenticationClient* coreClient = challenge.challenge.authenticationClient();
-    if (challenge.completionHandler) {
-        ASSERT(!coreClient);
+    if (challenge.completionHandler)
         challenge.completionHandler(AuthenticationChallengeDisposition::PerformDefaultHandling, Credential());
-        return;
-    }
-    ASSERT(coreClient);
-
-    if (coreClient)
-        coreClient->receivedRequestToPerformDefaultHandling(challenge.challenge);
+    else
+        ASSERT_NOT_REACHED();
 }
 
 void AuthenticationManager::rejectProtectionSpaceAndContinue(uint64_t challengeID)
@@ -264,16 +237,10 @@ void AuthenticationManager::rejectProtectionSpaceAndContinueForSingleChallenge(u
     auto challenge = m_challenges.take(challengeID);
     ASSERT(!challenge.challenge.isNull());
 
-    AuthenticationClient* coreClient = challenge.challenge.authenticationClient();
-    if (challenge.completionHandler) {
-        ASSERT(!coreClient);
+    if (challenge.completionHandler)
         challenge.completionHandler(AuthenticationChallengeDisposition::RejectProtectionSpace, Credential());
-        return;
-    }
-    ASSERT(coreClient);
-
-    if (coreClient)
-        coreClient->receivedChallengeRejection(challenge.challenge);
+    else
+        ASSERT_NOT_REACHED();
 }
 
 } // namespace WebKit

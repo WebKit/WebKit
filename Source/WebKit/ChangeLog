@@ -1,5 +1,21 @@
 2018-01-24  Alex Christensen  <achristensen@webkit.org>
 
+        Stop using AuthenticationClient in WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=182016
+
+        Reviewed by Brady Eidson.
+
+        It was necessary to support ResourceHandle use in WebKit, but now we're using NetworkSession everywhere in WebKit.
+
+        * Shared/Authentication/AuthenticationManager.cpp:
+        (WebKit::AuthenticationManager::useCredentialForSingleChallenge):
+        (WebKit::AuthenticationManager::continueWithoutCredentialForSingleChallenge):
+        (WebKit::AuthenticationManager::cancelSingleChallenge):
+        (WebKit::AuthenticationManager::performDefaultHandlingForSingleChallenge):
+        (WebKit::AuthenticationManager::rejectProtectionSpaceAndContinueForSingleChallenge):
+
+2018-01-24  Alex Christensen  <achristensen@webkit.org>
+
         Remove WebProcess authentication code
         https://bugs.webkit.org/show_bug.cgi?id=182020
 
