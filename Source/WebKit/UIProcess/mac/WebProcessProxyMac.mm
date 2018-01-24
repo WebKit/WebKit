@@ -24,6 +24,7 @@
  */
  
 #import "config.h"
+#import "WebProcessPool.h"
 #import "WebProcessProxy.h"
 
 #if PLATFORM(MAC)
@@ -35,6 +36,24 @@ namespace WebKit {
 bool WebProcessProxy::fullKeyboardAccessEnabled()
 {
     return [WKFullKeyboardAccessWatcher fullKeyboardAccessEnabled];
+}
+
+bool WebProcessProxy::shouldAllowNonValidInjectedCode() const
+{
+    static bool isSystemWebKit = [] {
+#if WK_API_ENABLED
+        NSBundle *webkit2Bundle = [NSBundle bundleForClass:NSClassFromString(@"WKWebView")];
+#else
+        NSBundle *webkit2Bundle = [NSBundle bundleForClass:NSClassFromString(@"WKView")];
+#endif
+        return [webkit2Bundle.bundlePath hasPrefix:@"/System/"];
+    }();
+
+    if (!isSystemWebKit)
+        return false;
+
+    const String& path = m_processPool->configuration().injectedBundlePath();
+    return !path.isEmpty() && !path.startsWith("/System/");
 }
 
 } // namespace WebKit

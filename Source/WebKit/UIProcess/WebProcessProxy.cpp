@@ -167,6 +167,8 @@ void WebProcessProxy::getLaunchOptions(ProcessLauncher::LaunchOptions& launchOpt
         }
         launchOptions.extraInitializationData.add(ASCIILiteral("OverrideLanguages"), languageString.toString());
     }
+
+    launchOptions.nonValidInjectedCodeAllowed = shouldAllowNonValidInjectedCode();
 }
 
 void WebProcessProxy::connectionWillOpen(IPC::Connection& connection)
@@ -605,6 +607,13 @@ void WebProcessProxy::getStorageProcessConnection(PAL::SessionID initialSessionI
 
 #if !PLATFORM(COCOA)
 bool WebProcessProxy::platformIsBeingDebugged() const
+{
+    return false;
+}
+#endif
+
+#if !PLATFORM(MAC)
+bool WebProcessProxy::shouldAllowNonValidInjectedCode() const
 {
     return false;
 }

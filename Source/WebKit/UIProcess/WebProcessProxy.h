@@ -247,6 +247,7 @@ private:
     void getStorageProcessConnection(PAL::SessionID initialSessionID, Ref<Messages::WebProcessProxy::GetStorageProcessConnection::DelayedReply>&&);
 
     bool platformIsBeingDebugged() const;
+    bool shouldAllowNonValidInjectedCode() const;
 
     static const HashSet<String>& platformPathsWithAssumedReadAccess();
 

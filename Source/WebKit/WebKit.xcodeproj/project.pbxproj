@@ -16,6 +16,7 @@
 			);
 			dependencies = (
 				BCA8D46815BCE0D6009DC1F1 /* PBXTargetDependency */,
+				372EBB492017E6CF00085064 /* PBXTargetDependency */,
 				51A60B2E180CCF1700F3BF50 /* PBXTargetDependency */,
 				BC77F95616D0459100F8F78A /* PBXTargetDependency */,
 				BC82844616B4FF6600A278FE /* PBXTargetDependency */,
@@ -794,6 +795,10 @@
 		371E695B1AED7A6700495E48 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8DC2EF5B0486A6940098B216 /* WebKit.framework */; };
 		372CAF0B1833FD910040AC27 /* WKNSError.h in Headers */ = {isa = PBXBuildFile; fileRef = 372CAF091833FD910040AC27 /* WKNSError.h */; };
 		372CAF0C1833FD910040AC27 /* WKNSError.mm in Sources */ = {isa = PBXBuildFile; fileRef = 372CAF0A1833FD910040AC27 /* WKNSError.mm */; };
+		372EBB3C2017E64300085064 /* XPCServiceMain.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC82839616B47EC400A278FE /* XPCServiceMain.mm */; };
+		372EBB3E2017E64300085064 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BC3DE46815A91763008D26FC /* Foundation.framework */; };
+		372EBB3F2017E64300085064 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8DC2EF5B0486A6940098B216 /* WebKit.framework */; };
+		372EBB412017E64300085064 /* WebContentProcess.xib in Resources */ = {isa = PBXBuildFile; fileRef = E1D26A4C1759634E0095BFD1 /* WebContentProcess.xib */; };
 		373CEAD5185417AE008C363D /* WKNSData.mm in Sources */ = {isa = PBXBuildFile; fileRef = 373CEAD3185417AE008C363D /* WKNSData.mm */; };
 		373CEAD6185417AE008C363D /* WKNSData.h in Headers */ = {isa = PBXBuildFile; fileRef = 373CEAD4185417AE008C363D /* WKNSData.h */; };
 		373CEAD81859553F008C363D /* WKPagePolicyClientInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 373CEAD71859553F008C363D /* WKPagePolicyClientInternal.h */; };
@@ -2128,6 +2133,20 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		372EBB3A2017E64300085064 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 8DC2EF4F0486A6940098B216;
+			remoteInfo = WebKit;
+		};
+		372EBB482017E6CF00085064 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 372EBB382017E64300085064;
+			remoteInfo = WebContent.Development;
+		};
 		375E0626191EA8CC004E3CAF /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
@@ -3125,6 +3144,8 @@
 		371A19401824D29300F32A5E /* WKNSDictionary.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKNSDictionary.h; sourceTree = "<group>"; };
 		372CAF091833FD910040AC27 /* WKNSError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKNSError.h; sourceTree = "<group>"; };
 		372CAF0A1833FD910040AC27 /* WKNSError.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKNSError.mm; sourceTree = "<group>"; };
+		372EBB462017E64300085064 /* com.apple.WebKit.WebContent.Development.xpc */ = {isa = PBXFileReference; explicitFileType = "wrapper.xpc-service"; includeInIndex = 0; path = com.apple.WebKit.WebContent.Development.xpc; sourceTree = BUILT_PRODUCTS_DIR; };
+		372EBB4A2017E76000085064 /* WebContentService.Development.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = WebContentService.Development.xcconfig; sourceTree = "<group>"; };
 		373CEAD3185417AE008C363D /* WKNSData.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKNSData.mm; sourceTree = "<group>"; };
 		373CEAD4185417AE008C363D /* WKNSData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKNSData.h; sourceTree = "<group>"; };
 		373CEAD71859553F008C363D /* WKPagePolicyClientInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKPagePolicyClientInternal.h; sourceTree = "<group>"; };
@@ -4614,6 +4635,15 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		372EBB3D2017E64300085064 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				372EBB3E2017E64300085064 /* Foundation.framework in Frameworks */,
+				372EBB3F2017E64300085064 /* WebKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		510031EE1379CACB00C8DFE4 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -4700,6 +4730,7 @@
 				510031F61379CACB00C8DFE4 /* SecItemShim.dylib */,
 				8DC2EF5B0486A6940098B216 /* WebKit.framework */,
 				CDC3830617211799008A2FC3 /* WebProcessShim.dylib */,
+				372EBB462017E64300085064 /* com.apple.WebKit.WebContent.Development.xpc */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -4929,6 +4960,7 @@
 				7C0BB9A818DCDE890006C086 /* WebContent-iOS.entitlements */,
 				37B418EB1C9624F20031E63B /* WebContent-OSX.entitlements */,
 				BCACC40E16B0B8A800B6E092 /* WebContentService.xcconfig */,
+				372EBB4A2017E76000085064 /* WebContentService.Development.xcconfig */,
 				BCB86F4B116AAACD00CE20B7 /* WebKit.xcconfig */,
 				A1EDD2DD1884B9E300BBFE98 /* WebProcessShim.xcconfig */,
 			);
@@ -9570,6 +9602,24 @@
 			productReference = 1AC25FB012A48EA700BD2671 /* PluginProcessShim.dylib */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
+		372EBB382017E64300085064 /* WebContent.Development */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 372EBB422017E64300085064 /* Build configuration list for PBXNativeTarget "WebContent.Development" */;
+			buildPhases = (
+				372EBB3B2017E64300085064 /* Sources */,
+				372EBB3D2017E64300085064 /* Frameworks */,
+				372EBB402017E64300085064 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				372EBB392017E64300085064 /* PBXTargetDependency */,
+			);
+			name = WebContent.Development;
+			productName = WebKit2Service;
+			productReference = 372EBB462017E64300085064 /* com.apple.WebKit.WebContent.Development.xpc */;
+			productType = "com.apple.product-type.xpc-service";
+		};
 		510031EA1379CACB00C8DFE4 /* SecItemShim */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 510031F21379CACB00C8DFE4 /* Build configuration list for PBXNativeTarget "SecItemShim" */;
@@ -9766,6 +9816,7 @@
 				510031EA1379CACB00C8DFE4 /* SecItemShim */,
 				CDC382FB17211799008A2FC3 /* WebProcessShim */,
 				BC3DE46515A91763008D26FC /* WebContent */,
+				372EBB382017E64300085064 /* WebContent.Development */,
 				BC8283B016B4BF7700A278FE /* Networking */,
 				BC8283F816B4FDDE00A278FE /* Plugin.32 */,
 				BC82841E16B4FDF600A278FE /* Plugin.64 */,
@@ -9776,6 +9827,14 @@
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		372EBB402017E64300085064 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				372EBB412017E64300085064 /* WebContentProcess.xib in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		51F7DC45180CC93600212CA3 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -10069,6 +10128,7 @@
 				"$(BUILT_PRODUCTS_DIR)/com.apple.WebKit.Plugin.32.xpc",
 				"$(BUILT_PRODUCTS_DIR)/com.apple.WebKit.Plugin.64.xpc",
 				"$(BUILT_PRODUCTS_DIR)/$(WK_STORAGE_SERVICE_PRODUCT_NAME).xpc",
+				"$(BUILT_PRODUCTS_DIR)/com.apple.WebKit.WebContent.Development.xpc",
 			);
 			name = "Copy XPC services for engineering builds";
 			outputPaths = (
@@ -10077,6 +10137,7 @@
 				"$(BUILT_PRODUCTS_DIR)/WebKit.framework/XPCServices/com.apple.WebKit.Plugin.32.xpc",
 				"$(BUILT_PRODUCTS_DIR)/WebKit.framework/XPCServices/com.apple.WebKit.Plugin.64.xpc",
 				"$(BUILT_PRODUCTS_DIR)/WebKit.framework/XPCServices/$(WK_STORAGE_SERVICE_PRODUCT_NAME).xpc",
+				"$(BUILT_PRODUCTS_DIR)/WebKit.framework/XPCServices/com.apple.WebKit.WebContent.Development.xpc",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -10104,6 +10165,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				1AC25FC212A48F6000BD2671 /* PluginProcessShim.mm in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		372EBB3B2017E64300085064 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				372EBB3C2017E64300085064 /* XPCServiceMain.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -11123,6 +11192,16 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		372EBB392017E64300085064 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 8DC2EF4F0486A6940098B216 /* WebKit */;
+			targetProxy = 372EBB3A2017E64300085064 /* PBXContainerItemProxy */;
+		};
+		372EBB492017E6CF00085064 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 372EBB382017E64300085064 /* WebContent.Development */;
+			targetProxy = 372EBB482017E6CF00085064 /* PBXContainerItemProxy */;
+		};
 		375E0627191EA8CC004E3CAF /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 8DC2EF4F0486A6940098B216 /* WebKit */;
@@ -11281,6 +11360,27 @@
 			buildSettings = {
 			};
 			name = Release;
+		};
+		372EBB432017E64300085064 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 372EBB4A2017E76000085064 /* WebContentService.Development.xcconfig */;
+			buildSettings = {
+			};
+			name = Debug;
+		};
+		372EBB442017E64300085064 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 372EBB4A2017E76000085064 /* WebContentService.Development.xcconfig */;
+			buildSettings = {
+			};
+			name = Release;
+		};
+		372EBB452017E64300085064 /* Production */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 372EBB4A2017E76000085064 /* WebContentService.Development.xcconfig */;
+			buildSettings = {
+			};
+			name = Production;
 		};
 		510031F31379CACB00C8DFE4 /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -11550,6 +11650,16 @@
 				1DEB91B208733DA50010E9CD /* Debug */,
 				1DEB91B308733DA50010E9CD /* Release */,
 				5D22D69B11A7534600BF30E5 /* Production */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Production;
+		};
+		372EBB422017E64300085064 /* Build configuration list for PBXNativeTarget "WebContent.Development" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				372EBB432017E64300085064 /* Debug */,
+				372EBB442017E64300085064 /* Release */,
+				372EBB452017E64300085064 /* Production */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Production;

@@ -51,7 +51,7 @@ static const char* serviceName(const ProcessLauncher::LaunchOptions& launchOptio
 {
     switch (launchOptions.processType) {
     case ProcessLauncher::ProcessType::Web:
-        return "com.apple.WebKit.WebContent";
+        return launchOptions.nonValidInjectedCodeAllowed ? "com.apple.WebKit.WebContent.Development" : "com.apple.WebKit.WebContent";
     case ProcessLauncher::ProcessType::Network:
         return "com.apple.WebKit.Networking";
     case ProcessLauncher::ProcessType::Storage:

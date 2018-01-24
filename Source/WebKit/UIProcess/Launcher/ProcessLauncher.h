@@ -60,6 +60,7 @@ public:
         ProcessType processType;
         WebCore::ProcessIdentifier processIdentifier;
         HashMap<String, String> extraInitializationData;
+        bool nonValidInjectedCodeAllowed { false };
 
 #if ENABLE(DEVELOPER_MODE) && (PLATFORM(GTK) || PLATFORM(WPE))
         String processCmdPrefix;

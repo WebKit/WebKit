@@ -1,3 +1,45 @@
+2018-01-24  Dan Bernstein  <mitz@apple.com>
+
+        Enable library validation on the Web Content service
+        Part 1 of https://bugs.webkit.org/show_bug.cgi?id=172365
+        <rdar://problem/26470661>
+
+        Reviewed by David Kilzer.
+
+        This makes the Web Content process signed with the Library Validation flag in production
+        builds. Because doing so would prevent engineering builds of Apple apps that use an
+        injected bundle from working, this also adds a Development version of the service, which
+        does not enforce Library Validation. The UI process chooses to use the Development service
+        iff it would need to load an injected bundle that is not part of the OS.
+
+        * Configurations/DebugRelease.xcconfig: Disable Library Validation in engineering builds.
+
+        * Configurations/WebContentService.Development.xcconfig: Added. Like the normal service, but
+          only installed when WebKit is installed in the OS, and uses a Development variant.
+
+        * Configurations/WebContentService.xcconfig: For the Development variant, append
+          ".Development" to the product name, which is also the service identifier. Enable Library
+          Validation for the Normal variant of the service when WK_LIBRARY_VALIDATION_ENABLED allows
+          it.
+
+        * UIProcess/Launcher/ProcessLauncher.h: Add nonValidInjectedCodeAllowed member to
+          LaunchOptions, false by default.
+
+        * UIProcess/Launcher/mac/ProcessLauncherMac.mm:
+        (WebKit::serviceName): Use the Development variant if nonValidInjectedCodeAllowed is true.
+
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::getLaunchOptions): Initialize nonValidInjectedCodeAllowed using
+           the new shouldAllowNonValidInjectedCode().
+        (WebKit::WebProcessProxy::shouldAllowNonValidInjectedCode const): Generic implementation
+          that returns false.
+        * UIProcess/WebProcessProxy.h: Declared shouldAllowNonValidInjectedCode.
+        * UIProcess/mac/WebProcessProxyMac.mm:
+        (WebKit::WebProcessProxy::shouldAllowNonValidInjectedCode const): Return true if this is
+          system WebKit with a non-system injected bundle.
+
+        * WebKit.xcodeproj/project.pbxproj: Added new service target.
+
 2018-01-24  Chris Dumez  <cdumez@apple.com>
 
         Add a IPC::SendSyncOption indicating we should not process incoming IPC while waiting for the sync reply
