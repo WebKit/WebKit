@@ -53,8 +53,7 @@ public:
 
     const Capabilities& capabilities() const { return m_capabilities; }
 
-    enum class Succeeded { No, Yes };
-    void connectToBrowser(Function<void (Succeeded)>&&);
+    void connectToBrowser(Function<void (std::optional<String> error)>&&);
     void startAutomationSession(const String& sessionID, Function<void (std::optional<String>)>&&);
 
     struct CommandResponse {
@@ -77,10 +76,10 @@ private:
 #if USE(GLIB)
     static void dbusConnectionClosedCallback(SessionHost*);
     static const GDBusInterfaceVTable s_interfaceVTable;
-    void launchBrowser(Function<void (Succeeded)>&&);
+    void launchBrowser(Function<void (std::optional<String> error)>&&);
     void connectToBrowser(std::unique_ptr<ConnectToBrowserAsyncData>&&);
     std::optional<String> matchCapabilities(GVariant*);
-    void setupConnection(GRefPtr<GDBusConnection>&&, Function<void (Succeeded)>&&);
+    void setupConnection(GRefPtr<GDBusConnection>&&);
     void setTargetList(uint64_t connectionID, Vector<Target>&&);
     void sendMessageToFrontend(uint64_t connectionID, uint64_t targetID, const char* message);
 #endif

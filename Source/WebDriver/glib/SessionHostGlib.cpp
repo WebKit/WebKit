@@ -98,7 +98,7 @@ const GDBusInterfaceVTable SessionHost::s_interfaceVTable = {
     { 0 }
 };
 
-void SessionHost::connectToBrowser(Function<void (Succeeded)>&& completionHandler)
+void SessionHost::connectToBrowser(Function<void (std::optional<String> error)>&& completionHandler)
 {
     launchBrowser(WTFMove(completionHandler));
 }
@@ -109,7 +109,7 @@ bool SessionHost::isConnected() const
 }
 
 struct ConnectToBrowserAsyncData {
-    ConnectToBrowserAsyncData(SessionHost* sessionHost, GUniquePtr<char>&& dbusAddress, GCancellable* cancellable, Function<void (SessionHost::Succeeded)>&& completionHandler)
+    ConnectToBrowserAsyncData(SessionHost* sessionHost, GUniquePtr<char>&& dbusAddress, GCancellable* cancellable, Function<void (std::optional<String> error)>&& completionHandler)
         : sessionHost(sessionHost)
         , dbusAddress(WTFMove(dbusAddress))
         , cancellable(cancellable)
@@ -120,7 +120,7 @@ struct ConnectToBrowserAsyncData {
     SessionHost* sessionHost;
     GUniquePtr<char> dbusAddress;
     GRefPtr<GCancellable> cancellable;
-    Function<void (SessionHost::Succeeded)> completionHandler;
+    Function<void (std::optional<String> error)> completionHandler;
 };
 
 static guint16 freePort()
@@ -135,7 +135,7 @@ static guint16 freePort()
     return g_inet_socket_address_get_port(G_INET_SOCKET_ADDRESS(address.get()));
 }
 
-void SessionHost::launchBrowser(Function<void (Succeeded)>&& completionHandler)
+void SessionHost::launchBrowser(Function<void (std::optional<String> error)>&& completionHandler)
 {
     m_cancellable = adoptGRef(g_cancellable_new());
     GRefPtr<GSubprocessLauncher> launcher = adoptGRef(g_subprocess_launcher_new(G_SUBPROCESS_FLAGS_NONE));
@@ -152,7 +152,13 @@ void SessionHost::launchBrowser(Function<void (Succeeded)>&& completionHandler)
     for (unsigned i = 0; i < browserArguments.size(); ++i)
         args.get()[i + 1] = g_strdup(browserArguments[i].utf8().data());
 
-    m_browser = adoptGRef(g_subprocess_launcher_spawnv(launcher.get(), args.get(), nullptr));
+    GUniqueOutPtr<GError> error;
+    m_browser = adoptGRef(g_subprocess_launcher_spawnv(launcher.get(), args.get(), &error.outPtr()));
+    if (error) {
+        completionHandler(String::fromUTF8(error->message));
+        return;
+    }
+
     g_subprocess_wait_async(m_browser.get(), m_cancellable.get(), [](GObject* browser, GAsyncResult* result, gpointer userData) {
         GUniqueOutPtr<GError> error;
         g_subprocess_wait_finish(G_SUBPROCESS(browser), result, &error.outPtr());
@@ -190,10 +196,11 @@ void SessionHost::connectToBrowser(std::unique_ptr<ConnectToBrowserAsyncData>&& 
                         return;
                     }
 
-                    data->completionHandler(Succeeded::No);
+                    data->completionHandler(String::fromUTF8(error->message));
                     return;
                 }
-                data->sessionHost->setupConnection(WTFMove(connection), WTFMove(data->completionHandler));
+                data->sessionHost->setupConnection(WTFMove(connection));
+                data->completionHandler(std::nullopt);
         }, data);
     });
 }
@@ -212,7 +219,7 @@ static void dbusConnectionCallAsyncReadyCallback(GObject* source, GAsyncResult* 
         WTFLogAlways("RemoteInspectorServer failed to send DBus message: %s", error->message);
 }
 
-void SessionHost::setupConnection(GRefPtr<GDBusConnection>&& connection, Function<void (Succeeded)>&& completionHandler)
+void SessionHost::setupConnection(GRefPtr<GDBusConnection>&& connection)
 {
     ASSERT(!m_dbusConnection);
     ASSERT(connection);
@@ -225,8 +232,6 @@ void SessionHost::setupConnection(GRefPtr<GDBusConnection>&& connection, Functio
         introspectionData = g_dbus_node_info_new_for_xml(introspectionXML, nullptr);
 
     g_dbus_connection_register_object(m_dbusConnection.get(), REMOTE_INSPECTOR_CLIENT_OBJECT_PATH, introspectionData->interfaces[0], &s_interfaceVTable, this, nullptr, nullptr);
-
-    completionHandler(Succeeded::Yes);
 }
 
 std::optional<String> SessionHost::matchCapabilities(GVariant* capabilities)

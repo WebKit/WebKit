@@ -611,9 +611,9 @@ void WebDriverService::newSession(RefPtr<JSON::Object>&& parameters, Function<vo
     parseCapabilities(*matchedCapabilities, capabilities);
     auto sessionHost = std::make_unique<SessionHost>(WTFMove(capabilities));
     auto* sessionHostPtr = sessionHost.get();
-    sessionHostPtr->connectToBrowser([this, sessionHost = WTFMove(sessionHost), completionHandler = WTFMove(completionHandler)](SessionHost::Succeeded succeeded) mutable {
-        if (succeeded == SessionHost::Succeeded::No) {
-            completionHandler(CommandResult::fail(CommandResult::ErrorCode::SessionNotCreated, String("Failed to connect to browser")));
+    sessionHostPtr->connectToBrowser([this, sessionHost = WTFMove(sessionHost), completionHandler = WTFMove(completionHandler)](std::optional<String> error) mutable {
+        if (error) {
+            completionHandler(CommandResult::fail(CommandResult::ErrorCode::SessionNotCreated, makeString("Failed to connect to browser: ", error.value())));
             return;
         }
 
