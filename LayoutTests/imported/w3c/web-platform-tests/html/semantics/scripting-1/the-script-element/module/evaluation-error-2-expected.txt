@@ -1,0 +1,5 @@
+CONSOLE MESSAGE: line 3: ReferenceError: Cannot access uninitialized variable.
+
+FAIL Test that ill-founded cyclic dependencies cause ReferenceError during evaluation, which leads to error events on window, and that exceptions are remembered.
+ assert_array_equals: lengths differ, expected 4 got 2
+

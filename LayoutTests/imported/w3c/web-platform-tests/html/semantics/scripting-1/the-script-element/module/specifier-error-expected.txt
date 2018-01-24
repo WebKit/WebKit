@@ -1,0 +1,8 @@
+CONSOLE MESSAGE: line 1: TypeError: Module specifier does not start with "/", "./", or "../".
+
+FAIL Test that invalid module specifier leads to TypeError on window. assert_equals: expected function "function TypeError() {
+    [native code]
+}" but got function "function String() {
+    [native code]
+}"
+

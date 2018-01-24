@@ -1400,6 +1400,14 @@ webkit.org/b/164539 http/tests/security/module-crossorigin-onerror-information.h
 
 webkit.org/b/165764 http/tests/misc/module-script-async.html [ Pass Timeout ]
 
+webkit.org/b/181980 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/errorhandling.html [ Crash ]
+
+# After rebasing WPT, we should investigate deterministic error handling, which is the updated spec.
+imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/compilation-error-1.html [ Pass Failure ]
+imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/compilation-error-2.html [ Pass Failure ]
+imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/crossorigin.html [ Pass Failure ]
+imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/instantiation-error-8.html [ Skip ]
+
 # Clean layout tree after FrameView::layout
 webkit.org/b/164856 [ Debug ] editing/execCommand/indent-block-in-list.html [ Skip ]
 webkit.org/b/162831 [ Debug ] imported/blink/css3/flexbox/relpos-with-scrollable-with-abspos-crash.html  [ Skip ]

@@ -1,5 +1,14 @@
 2018-01-23  Yusuke Suzuki  <utatane.tea@gmail.com>
 
+        Import WPT for modules
+        https://bugs.webkit.org/show_bug.cgi?id=181981
+
+        Reviewed by Sam Weinig.
+
+        * TestExpectations:
+
+2018-01-23  Yusuke Suzuki  <utatane.tea@gmail.com>
+
         Add more module scope related tests with code evaluation by string
         https://bugs.webkit.org/show_bug.cgi?id=181983
 

@@ -1,0 +1,3 @@
+
+PASS dynamic import should work when triggered from inline event handlers 
+

@@ -1,0 +1,7 @@
+CONSOLE MESSAGE: line 2: ReferenceError: Can't find variable: executed_utf8_bom
+CONSOLE MESSAGE: line 2: ReferenceError: Can't find variable: executed_utf16be_bom
+CONSOLE MESSAGE: line 2: ReferenceError: Can't find variable: executed_utf16le_bom
+CONSOLE MESSAGE: line 1401: Error: Tried to create a test with file_is_test
+
+PASS Module scripts should ignore BOMs and always use UTF-8 
+

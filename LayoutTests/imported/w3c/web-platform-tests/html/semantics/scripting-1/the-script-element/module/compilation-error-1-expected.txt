@@ -1,0 +1,6 @@
+CONSOLE MESSAGE: line 1: SyntaxError: Unexpected token '%'
+CONSOLE MESSAGE: line 1: SyntaxError: Unexpected token '%'
+CONSOLE MESSAGE: line 1: SyntaxError: Unexpected token '%'
+
+FAIL Test that syntax errors lead to SyntaxError events on window, and that exceptions are remembered. assert_equals: expected 5 but got 3
+

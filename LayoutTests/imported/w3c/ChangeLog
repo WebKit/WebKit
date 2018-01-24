@@ -1,3 +1,235 @@
+2018-01-23  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Import WPT for modules
+        https://bugs.webkit.org/show_bug.cgi?id=181981
+
+        Reviewed by Sam Weinig.
+
+        This patch just imports WPT for modules mechanically.
+
+        * resources/import-expectations.json:
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/bad-module-specifier.js: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/charset-01-expected.txt: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/charset-01.html: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/charset-02-expected.txt: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/charset-02.html: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/charset-03-expected.txt: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/charset-03.html: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/compilation-error-1-expected.txt: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/compilation-error-1.html: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/compilation-error-2-expected.txt: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/compilation-error-2.html: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/credentials.sub-expected.txt: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/credentials.sub.html: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/crossorigin-common.js: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/crossorigin-expected.txt: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/crossorigin-import-different.sub.html: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/crossorigin-import-missingheader.sub.html: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/crossorigin-import-same.sub.html: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/crossorigin-import-wrongheader.sub.html: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/crossorigin-root-different.sub.html: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/crossorigin-root-missingheader.sub.html: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/crossorigin-root-same.sub.html: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/crossorigin-root-wrongheader.sub.html: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/crossorigin-scripterror.js: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/crossorigin.html: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/currentScript-null-expected.txt: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/currentScript-null.html: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/currentscript.js: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/custom-element-exception-expected.txt: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/custom-element-exception.html: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/cycle-tdz-access-a.js: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/cycle-tdz-access.js: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/cycle-unresolvable-a.js: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/cycle-unresolvable.js: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/dynamic-import/dynamic-imports-expected.txt: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/dynamic-import/dynamic-imports-fetch-error.sub-expected.txt: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/dynamic-import/dynamic-imports-fetch-error.sub.html: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/dynamic-import/dynamic-imports-script-error-expected.txt: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/dynamic-import/dynamic-imports-script-error.html: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/dynamic-import/dynamic-imports.html: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/dynamic-import/inline-event-handler-expected.txt: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/dynamic-import/inline-event-handler.html: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/dynamic-import/propagate-nonce-external-classic-expected.txt: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/dynamic-import/propagate-nonce-external-classic.html: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/dynamic-import/propagate-nonce-external-module-expected.txt: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/dynamic-import/propagate-nonce-external-module.html: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/dynamic-import/propagate-nonce-external.js: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/dynamic-import/propagate-nonce-inline-classic-expected.txt: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/dynamic-import/propagate-nonce-inline-classic.html: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/dynamic-import/propagate-nonce-inline-module-expected.txt: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/dynamic-import/propagate-nonce-inline-module.html: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/dynamic-import/string-compilation-base-url-classic-expected.txt: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/dynamic-import/string-compilation-base-url-classic.html: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/dynamic-import/string-compilation-base-url-module-expected.txt: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/dynamic-import/string-compilation-base-url-module.html: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/dynamic-import/string-compilation-classic-expected.txt: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/dynamic-import/string-compilation-classic.html: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/dynamic-import/string-compilation-module-expected.txt: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/dynamic-import/string-compilation-module.html: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/dynamic-import/w3c-import.log: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/error-and-slow-dependency-expected.txt: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/error-and-slow-dependency.html: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/errorhandling-parseerror-common.js: Added.
+        (errorHandler):
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/errorhandling-parseerror-dependent.html: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/errorhandling-parseerror-dependent.js: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/errorhandling-parseerror-dependentmultiple.html: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/errorhandling-parseerror-dependentmultiple.js: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/errorhandling-parseerror-root.html: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/errorhandling-wrongMimetype-import.js: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/errorhandling-wrongMimetype.js: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/errorhandling.html: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/evaluation-error-1-expected.txt: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/evaluation-error-1.html: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/evaluation-error-2-expected.txt: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/evaluation-error-2.html: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/evaluation-error-3-expected.txt: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/evaluation-error-3.html: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/evaluation-error-4-expected.txt: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/evaluation-error-4.html: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/execorder-dynamicordered2.js: Added.
+        (test_dynamicOrdered.step):
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/execorder-dynamicordered3.js: Added.
+        (test_dynamicOrdered.step):
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/execorder-dynamicordered4.js: Added.
+        (test_dynamicOrdered.step):
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/execorder-dynamicunordered1.js: Added.
+        (test_dynamicUnordered1.step):
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/execorder-dynamicunordered2.js: Added.
+        (test_dynamicUnordered2.step):
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/execorder-expected.txt: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/execorder-parsedordered2.js: Added.
+        (test_parsedOrdered.step):
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/execorder-parsedordered4.js: Added.
+        (test_parsedOrdered.step):
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/execorder-parsedunordered1.js: Added.
+        (test_parsedUnordered1.step):
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/execorder-parsedunordered2.js: Added.
+        (test_parsedUnordered2.step):
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/execorder.html: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/export-something-nested.js: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/export-something.js: Added.
+        (export.set_foo):
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/fetch-error-1-expected.txt: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/fetch-error-1.html: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/fetch-error-2-expected.txt: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/fetch-error-2.html: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/fetch-error-2.js: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/import-something-namespace.js: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/import-subgraph-404-expected.txt: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/import-subgraph-404.html: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/imports-a.js: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/imports-b.js: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/imports-cycle-a.js: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/imports-cycle-b.js: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/imports-cycle.js: Added.
+        (test_importCycle.step):
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/imports-expected.txt: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/imports-inc-a.js: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/imports-inc-ab.js: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/imports-inc-b.js: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/imports-self-inner.js: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/imports-self.js: Added.
+        (test_importSelf.step):
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/imports.html: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/instantiation-error-1-expected.txt: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/instantiation-error-1.html: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/instantiation-error-1.js: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/instantiation-error-2-expected.txt: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/instantiation-error-2.html: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/instantiation-error-3-expected.txt: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/instantiation-error-3.html: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/instantiation-error-4-expected.txt: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/instantiation-error-4.html: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/instantiation-error-4a.js: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/instantiation-error-4b.js: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/instantiation-error-4c.js: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/instantiation-error-4d.js: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/instantiation-error-5-expected.txt: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/instantiation-error-5.html: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/instantiation-error-5a.js: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/instantiation-error-5b.js: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/instantiation-error-5c.js: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/instantiation-error-5d.js: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/instantiation-error-5e.js: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/instantiation-error-6-expected.txt: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/instantiation-error-6.html: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/instantiation-error-6a.js: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/instantiation-error-6b.js: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/instantiation-error-6c.js: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/instantiation-error-6d.js: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/instantiation-error-7-expected.txt: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/instantiation-error-7.html: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/instantiation-error-7a.js: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/instantiation-error-7b.js: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/instantiation-error-7c.js: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/instantiation-error-7d.js: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/instantiation-error-7e.js: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/instantiation-error-7f.js: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/instantiation-error-8.html: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/integrity-expected.txt: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/integrity-matches-inner.js: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/integrity-matches.js: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/integrity-mismatches-inner.js: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/integrity-mismatches.js: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/integrity.html: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/late-namespace-request-expected.txt: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/late-namespace-request.html: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/late-star-export-request-expected.txt: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/late-star-export-request.html: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/load-error-events-expected.txt: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/load-error-events-inline-expected.txt: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/load-error-events-inline.html: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/load-error-events.html: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/missing-export-nested.js: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/missing-export.js: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/module-in-xhtml-expected.txt: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/module-in-xhtml.xhtml: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/module-vs-script-1-expected.txt: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/module-vs-script-1.html: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/module-vs-script-2-expected.txt: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/module-vs-script-2.html: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/nested-missing-export.js: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/nomodule-attribute-expected.txt: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/nomodule-attribute.html: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/resources/404-but-js.asis: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/resources/500-but-js.asis: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/resources/check-cookie.py: Added.
+        (main):
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/resources/credentials-iframe.sub.html: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/resources/delayed-modulescript.py: Added.
+        (main):
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/resources/import-non-utf8-with-charset-header.js: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/resources/import-non-utf8.js: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/resources/import-utf8-with-charset-header.js: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/resources/import-utf8.js: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/resources/imports-404-but-js.js: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/resources/imports-500-but-js.js: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/resources/imports-b-cross-origin.sub.js: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/resources/w3c-import.log: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/script-for-event-expected.txt: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/script-for-event.html: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/set-currentScript-on-window.js: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/single-evaluation-1-expected.txt: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/single-evaluation-1.html: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/single-evaluation-2-expected.txt: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/single-evaluation-2.html: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/slow-cycle-expected.txt: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/slow-cycle.html: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/slow-module-graph-a.js: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/slow-module-graph-b.js: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/specifier-error-expected.txt: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/specifier-error.html: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/syntaxerror-nested.js: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/syntaxerror.js: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/this-nested.js: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/this.js: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/throw-error.js: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/throw-nested.js: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/throw.js: Added.
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/w3c-import.log: Added.
+
 2018-01-23  Javier Fernandez  <jfernandez@igalia.com>
 
         [css-align] 'left' and 'right' should parse as invalid in block/cross-axis alignment

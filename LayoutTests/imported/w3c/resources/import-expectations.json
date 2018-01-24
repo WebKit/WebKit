@@ -213,7 +213,7 @@
     "web-platform-tests/html/semantics/links/following-hyperlinks": "skip", 
     "web-platform-tests/html/semantics/links/links-created-by-a-and-area-elements": "skip", 
     "web-platform-tests/html/semantics/scripting-1/the-script-element/execution-timing": "skip", 
-    "web-platform-tests/html/semantics/scripting-1/the-script-element/module": "skip", 
+    "web-platform-tests/html/semantics/scripting-1/the-script-element/module": "import", 
     "web-platform-tests/html/semantics/scripting-1/the-script-element/script-for-event.xhtml": "skip", 
     "web-platform-tests/html/semantics/scripting-1/the-script-element/script-text.xhtml": "skip", 
     "web-platform-tests/html/semantics/tabular-data": "import", 

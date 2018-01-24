@@ -1,0 +1,13 @@
+
+PASS import() must reject when there is a parse error 
+FAIL import() must reject with the same error object for each import when there is a parse error assert_throws: It must reject the second time function "function () { throw e }" threw object "TypeError: Type error" ("TypeError") expected object "SyntaxError" ("SyntaxError")
+PASS import() must reject when there is a bad module specifier 
+PASS import() must reject with different error objects for each import when there is a bad module specifier 
+PASS import() must reject when there is a bad module specifier in a dependency 
+FAIL import() must reject with the same error object for each import when there is a bad module specifier in a dependency assert_equals: The error objects must be equal expected object "TypeError: Type error" but got object "TypeError: Module specifier does not start with "/", "./", or "../"."
+PASS import() must reject when there is a instantiation error 
+PASS import() must reject with the same error object for each import when there is a instantiation error 
+PASS import() must reject when there is a evaluation error 
+FAIL import() must reject with the same error object for each import when there is a evaluation error assert_unreached: Should have rejected: It must reject the first time Reached unreachable code
+PASS import()ing a module with an evaluation error must stop evaluation 
+

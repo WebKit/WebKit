@@ -1,0 +1,3 @@
+
+PASS Test that 'nomodule' has the desired effect on classic scripts, but no effect on module scripts. 
+
