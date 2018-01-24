@@ -44,7 +44,7 @@
             logFixedAndViewports();
         }, false);
 
-        window.addEventListener('load', doTest, false);
+        window.addEventListener('load', function() { doTest(); }, false);
     </script>
 </head>
 <body>
