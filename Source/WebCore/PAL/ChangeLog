@@ -1,3 +1,16 @@
+2018-01-23  Dean Jackson  <dino@apple.com>
+
+        REGRESSION (r222961?): sRGB images shown in WebGL are over-saturated on a wide gamut monitor
+        https://bugs.webkit.org/show_bug.cgi?id=182033
+        <rdar://problem/36377780>
+
+        Reviewed by Antoine Quint.
+
+        Expose an IOSurface colorspace property name, and a function to serialize a CGColorSpace.
+
+        * pal/spi/cg/CoreGraphicsSPI.h:
+        * pal/spi/cocoa/IOSurfaceSPI.h:
+
 2018-01-23  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [WPE][GTK] Sleep inhibitors do not work under Flatpak

@@ -1,3 +1,26 @@
+2018-01-23  Dean Jackson  <dino@apple.com>
+
+        REGRESSION (r222961?): sRGB images shown in WebGL are over-saturated on a wide gamut monitor
+        https://bugs.webkit.org/show_bug.cgi?id=182033
+        <rdar://problem/36377780>
+
+        Reviewed by Antoine Quint.
+
+        My fix for YouTube360 changed the way we composite WebGL on macOS. Unfortunately it dropped
+        a flag telling the compositor the colorspace of the content should be sRGB. Reinstate this
+        by explicitly setting the colorspace on the IOSurface we use for WebGL back buffers.
+
+        This *should* be covered by the test in:
+        fast/canvas/webgl/match-page-color-space.html
+        ... however, it shows a problem with our testing infrastructure. As long as it is not
+        testing on a Wide Gamut display, and explicitly setting the color profile, an automated
+        test won't pick up this regression. I could add an Internals helper to query the colorspace
+        of the WebGL content, but that doesn't actually verify the composited result, which is
+        all that matters.
+
+        * platform/graphics/cocoa/WebGLLayer.mm:
+        (-[WebGLLayer allocateIOSurfaceBackingStoreWithSize:usingAlpha:]):
+
 2018-01-24  Ms2ger  <Ms2ger@igalia.com>
 
         [GTK] Fix some test failures in ATK selection handling.

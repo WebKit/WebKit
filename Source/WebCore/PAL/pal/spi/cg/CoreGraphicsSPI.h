@@ -267,6 +267,7 @@ CGColorSpaceRef CGIOSurfaceContextGetColorSpace(CGContextRef);
 
 #if PLATFORM(COCOA)
 CGColorSpaceRef CGContextCopyDeviceColorSpace(CGContextRef);
+CFPropertyListRef CGColorSpaceCopyPropertyList(CGColorSpaceRef);
 CGError CGSNewRegionWithRect(const CGRect*, CGRegionRef*);
 CGError CGSPackagesEnableConnectionOcclusionNotifications(CGSConnectionID, bool flag, bool* outCurrentVisibilityState);
 CGError CGSPackagesEnableConnectionWindowModificationNotifications(CGSConnectionID, bool flag, bool* outConnectionIsCurrentlyIdle);

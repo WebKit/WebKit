@@ -154,9 +154,15 @@ static void freeData(void *, const void *data, size_t /* size */)
     _contentsBuffer = WebCore::IOSurface::create(size, sRGBColorSpaceRef());
     _drawingBuffer = WebCore::IOSurface::create(size, sRGBColorSpaceRef());
     _spareBuffer = WebCore::IOSurface::create(size, sRGBColorSpaceRef());
+
     ASSERT(_contentsBuffer);
     ASSERT(_drawingBuffer);
     ASSERT(_spareBuffer);
+
+    auto sRGBDetails = adoptCF(CGColorSpaceCopyPropertyList(sRGBColorSpaceRef()));
+    IOSurfaceSetValue(_contentsBuffer->surface(), kIOSurfaceColorSpace, sRGBDetails.get());
+    IOSurfaceSetValue(_drawingBuffer->surface(), kIOSurfaceColorSpace, sRGBDetails.get());
+    IOSurfaceSetValue(_spareBuffer->surface(), kIOSurfaceColorSpace, sRGBDetails.get());
 }
 
 - (void)bindFramebufferToNextAvailableSurface
