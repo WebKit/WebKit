@@ -1,3 +1,16 @@
+2018-01-24  Daniel Bates  <dabates@apple.com>
+
+        REGRESSION (r226138): Selecting a line that ends with zero-width joiner (ZWJ) may cause text transformation
+        https://bugs.webkit.org/show_bug.cgi?id=181993
+        <rdar://problem/36421080>
+
+        Reviewed by David Hyatt.
+
+        Remove unit test for overlap strategy FrontmostWithLongestEffectiveRange
+        as we no longer support this strategy.
+
+        * TestWebKitAPI/Tests/WebCore/MarkerSubrange.cpp:
+
 2018-01-24  David Kilzer  <ddkilzer@apple.com>
 
         check-webkit-style reports false-positive whitespace/braces warning about blocks with return types as arguments in Objective-C

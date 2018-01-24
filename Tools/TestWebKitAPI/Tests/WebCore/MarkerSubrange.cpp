@@ -214,21 +214,4 @@ TEST(MarkerSubrange, SubdivideGrammarAndSelectionOverlapFrontmost)
         EXPECT_EQ(expectedSubranges[i], results[i]);
 }
 
-TEST(MarkerSubrange, SubdivideGrammarAndSelectionOverlapFrontmostWithLongestEffectiveRange)
-{
-    Vector<MarkerSubrange> subranges {
-        MarkerSubrange { 0, 40, MarkerSubrange::GrammarError },
-        MarkerSubrange { 2, 60, MarkerSubrange::Selection },
-        MarkerSubrange { 50, 60, MarkerSubrange::GrammarError },
-    };
-    Vector<MarkerSubrange> expectedSubranges {
-        MarkerSubrange { 0, 2, MarkerSubrange::GrammarError },
-        MarkerSubrange { 2, 60, MarkerSubrange::Selection },
-    };
-    auto results = subdivide(subranges, OverlapStrategy::FrontmostWithLongestEffectiveRange);
-    ASSERT_EQ(expectedSubranges.size(), results.size());
-    for (size_t i = 0; i < expectedSubranges.size(); ++i)
-        EXPECT_EQ(expectedSubranges[i], results[i]);
-}
-
 }

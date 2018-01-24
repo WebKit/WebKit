@@ -163,6 +163,9 @@ private:
     StyledMarkerSubrange resolveStyleForSubrange(const MarkerSubrange&, const MarkerSubrangeStyle& baseStyle, const PaintInfo&);
     Vector<StyledMarkerSubrange> subdivideAndResolveStyle(const Vector<MarkerSubrange>&, const MarkerSubrangeStyle& baseStyle, const PaintInfo&);
 
+    using MarkerSubrangeStylesEqualityFunction = bool (*)(const MarkerSubrangeStyle&, const MarkerSubrangeStyle&);
+    Vector<StyledMarkerSubrange> coalesceAdjacentSubranges(const Vector<StyledMarkerSubrange>&, MarkerSubrangeStylesEqualityFunction);
+
     FloatPoint textOriginFromBoxRect(const FloatRect&) const;
 
     void paintMarkerSubranges(GraphicsContext&, TextPaintPhase, const FloatRect& boxRect, const Vector<StyledMarkerSubrange>&, const FloatRect& decorationClipOutRect = { });

@@ -67,22 +67,14 @@ Vector<MarkerSubrange> subdivide(const Vector<MarkerSubrange>& subranges, Overla
     unsigned offsetSoFar = offsets[0].value;
     for (unsigned i = 1; i < numberOfOffsets; ++i) {
         if (offsets[i].value > offsets[i - 1].value) {
-            if (overlapStrategy == OverlapStrategy::Frontmost || overlapStrategy == OverlapStrategy::FrontmostWithLongestEffectiveRange) {
+            if (overlapStrategy == OverlapStrategy::Frontmost) {
                 std::optional<unsigned> frontmost;
                 for (unsigned j = 0; j < i; ++j) {
                     if (!processedSubranges.contains(offsets[j].subrange) && (!frontmost || offsets[j].subrange->type > offsets[*frontmost].subrange->type))
                         frontmost = j;
                 }
-                if (frontmost) {
-                    if (overlapStrategy == OverlapStrategy::FrontmostWithLongestEffectiveRange && !result.isEmpty()) {
-                        auto& previous = result.last();
-                        if (previous.endOffset == offsetSoFar && previous.type == offsets[*frontmost].subrange->type && previous.marker == offsets[*frontmost].subrange->marker)
-                            previous.endOffset = offsets[i].value;
-                        else
-                            result.append({ offsetSoFar, offsets[i].value, offsets[*frontmost].subrange->type, offsets[*frontmost].subrange->marker });
-                    } else
-                        result.append({ offsetSoFar, offsets[i].value, offsets[*frontmost].subrange->type, offsets[*frontmost].subrange->marker });
-                }
+                if (frontmost)
+                    result.append({ offsetSoFar, offsets[i].value, offsets[*frontmost].subrange->type, offsets[*frontmost].subrange->marker });
             } else {
                 // The appended subranges may not be in paint order. We will fix this up at the end of this function.
                 for (unsigned j = 0; j < i; ++j) {

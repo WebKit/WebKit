@@ -1,3 +1,24 @@
+2018-01-24  Daniel Bates  <dabates@apple.com>
+
+        REGRESSION (r226138): Selecting a line that ends with zero-width joiner (ZWJ) may cause text transformation
+        https://bugs.webkit.org/show_bug.cgi?id=181993
+        <rdar://problem/36421080>
+
+        Reviewed by David Hyatt.
+
+        Add a Mac-specific test to ensure that selecting the last visible character on a line
+        that ends with a zero-width joiner (ZWJ) does not cause a text transformation of the
+        selected character.
+
+        We need to fix <https://bugs.webkit.org/show_bug.cgi?id=181964> for this test to
+        pass on Mac.
+
+        * TestExpectations: Skip the test directory on non-Mac platforms.
+        * fast/text/mac/select-character-before-zero-width-joiner-expected.html: Added.
+        * fast/text/mac/select-character-before-zero-width-joiner.html: Added.
+        * platform/mac/TestExpectations: Mark the test directory as PASS on Mac so that we run
+        all containing tests. Mark the test as ImageOnlyFailure until we fix <https://bugs.webkit.org/show_bug.cgi?id=181964>.
+
 2018-01-24  Youenn Fablet  <youenn@apple.com>
 
         Fetch response should copy its url from the request if null

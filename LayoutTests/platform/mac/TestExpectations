@@ -37,6 +37,9 @@ http/tests/gzip-content-encoding [ Pass ]
 # FIXME: Mark as Pass once the fix for <rdar://problem/33822249> ships.
 http/tests/xmlhttprequest/gzip-content-type-no-content-encoding.html [ Pass Failure ]
 
+fast/text/mac [ Pass ]
+webkit.org/b/181964 fast/text/mac/select-character-before-zero-width-joiner.html [ ImageOnlyFailure ]
+
 #//////////////////////////////////////////////////////////////////////////////////////////
 # End platform-specific directories.
 #//////////////////////////////////////////////////////////////////////////////////////////

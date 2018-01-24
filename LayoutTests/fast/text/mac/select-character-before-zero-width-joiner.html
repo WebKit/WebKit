@@ -1,0 +1,10 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p id="text" style="font-family: -apple-system">12&zwj;</p>
+<script>
+var text = document.getElementById("text").firstChild;
+getSelection().setBaseAndExtent(text, 1, text, 2);
+</script>
+</body>
+</html>

@@ -1,3 +1,60 @@
+2018-01-24  Daniel Bates  <dabates@apple.com>
+
+        REGRESSION (r226138): Selecting a line that ends with zero-width joiner (ZWJ) may cause text transformation
+        https://bugs.webkit.org/show_bug.cgi?id=181993
+        <rdar://problem/36421080>
+
+        Reviewed by David Hyatt.
+
+        Re-implement paint optimization that was inadvertently removed in r226138. This optimization
+        works around an issue where selecting the last printable character in a line that is followed
+        followed by a zero-width joiner transforms the selected character.
+
+        We need to fix <https://bugs.webkit.org/show_bug.cgi?id=181964> to improve the interaction
+        of selection and zero-width joiner characters. For now, re-implement a paint optimization
+        to perform a single paint operation when the style of the non-selected text is identical
+        to the style of the selected text.
+
+        Test: fast/text/mac/select-character-before-zero-width-joiner.html
+
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::MarkerSubrangeStyle::areBackgroundMarkerSubrangeStylesEqual):
+        (WebCore::InlineTextBox::MarkerSubrangeStyle::areForegroundMarkerSubrangeStylesEqual):
+        (WebCore::InlineTextBox::MarkerSubrangeStyle::areDecorationMarkerSubrangeStylesEqual):
+        Add helper functions to determine when marker styles are identical. We make use of these
+        equality functions to coalesce adjacent subranges that have the same visual style and
+        hence reduce the number of drawing commands to paint all the subranges in a line.
+ 
+        (WebCore::InlineTextBox::paint): Coalesce subranges before painting.
+
+        (WebCore::InlineTextBox::subdivideAndResolveStyle): Split out the logic to coalesce
+        subranges with the same style into its own function InlineTextBox::coalesceAdjacentSubranges()
+        and kept this function focused on subdivision and style resolution. Manually compute
+        the frontmost subranges so that we can resolve style for each subrange with respect to
+        the correct base style. Formerly we always resolved style with respect the specified
+        base style. Now we resolve style with respect the previous frontmost subrange to ensure
+        styles cascade as expected. This change causes no visual difference now. Once we implement
+        <https://bugs.webkit.org/show_bug.cgi?id=175784> we will be able to test this change
+        with respect to selection of ::spelling-error/::grammar-error pseudo elements.
+
+        (WebCore::InlineTextBox::coalesceAdjacentSubranges): Extracted logic from InlineTextBox::subdivideAndResolveStyle().
+
+        (WebCore::InlineTextBox::MarkerSubrangeStyle::operator== const): Deleted.
+        (WebCore::InlineTextBox::MarkerSubrangeStyle::operator!= const): Deleted.
+        Comparing MarkerSubrangeStyle objects should be performed using the appropriate
+        are*MarkerSubrangeStylesEqual() non-member function.
+
+        * rendering/InlineTextBox.h:
+        * rendering/MarkerSubrange.cpp:
+        (WebCore::subdivide): Remove overlap strategy FrontmostWithLongestEffectiveRange
+        as this strategy is now implemented by InlineTextBox::subdivideAndResolveStyle() and
+        InlineTextBox::coalesceAdjacentSubranges() that compute the set of frontmost subranges and
+        coalesces adjacent subranges with the same style into the longest effective subrange,
+        respectively. Unlike WebCore::subdivide(), InlineTextBox knows what the base style should
+        be for the subranges and can more aggressively coalesce adjacent subranges of different
+        types that have the same visual style.
+        * rendering/MarkerSubrange.h:
+
 2018-01-24  Youenn Fablet  <youenn@apple.com>
 
         Fetch response should copy its url from the request if null
