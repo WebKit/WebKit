@@ -1,3 +1,16 @@
+2018-01-24  Antti Koivisto  <antti@apple.com>
+
+        Assertion failure in RenderMultiColumnSet::requiresBalancing() on fast/multicol/spanner-crash-when-adding-summary.html
+        https://bugs.webkit.org/show_bug.cgi?id=179308
+        <rdar://problem/34592771>
+
+        Reviewed by Zalan Bujtas.
+
+        Unskip fast/multicol/spanner-crash-when-adding-summary.html
+
+        * platform/ios/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2018-01-24  Daniel Bates  <dabates@apple.com>
 
         [CSP] Check policy for targeted windows when navigating to a JavaScript URL

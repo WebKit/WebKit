@@ -1,3 +1,23 @@
+2018-01-24  Antti Koivisto  <antti@apple.com>
+
+        Assertion failure in RenderMultiColumnSet::requiresBalancing() on fast/multicol/spanner-crash-when-adding-summary.html
+        https://bugs.webkit.org/show_bug.cgi?id=179308
+        <rdar://problem/34592771>
+
+        Reviewed by Zalan Bujtas.
+
+        The issue here is that we fail to tear down render tree for a summary element because adding another summary element
+        takes it out of the composed tree. This leaves behind renderers that break some multicolumn assumptions.
+
+        * rendering/updating/RenderTreeUpdater.cpp:
+        (WebCore::RenderTreeUpdater::tearDownRenderers):
+        (WebCore::RenderTreeUpdater::tearDownLeftoverShadowHostChildren):
+
+        When tearing down renderers go through the real children of the shadow hosts at the end and see if we left any renderers behind.
+        If so, tear them down too.
+
+        * rendering/updating/RenderTreeUpdater.h:
+
 2018-01-24  Daniel Bates  <dabates@apple.com>
 
         [CSP] Check policy for targeted windows when navigating to a JavaScript URL
