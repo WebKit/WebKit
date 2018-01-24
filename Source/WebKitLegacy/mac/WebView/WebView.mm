@@ -2935,7 +2935,6 @@ static bool needsSelfRetainWhileLoadingQuirk()
     settings.setExperimentalNotificationsEnabled([preferences experimentalNotificationsEnabled]);
     settings.setShowsURLsInToolTips([preferences showsURLsInToolTips]);
     settings.setShowsToolTipOverTruncatedText([preferences showsToolTipOverTruncatedText]);
-    DeprecatedGlobalSettings::setQTKitEnabled([preferences isQTKitEnabled]);
 #endif // PLATFORM(MAC)
 
     DatabaseManager::singleton().setIsAvailable([preferences databasesEnabled]);

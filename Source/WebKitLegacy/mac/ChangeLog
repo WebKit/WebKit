@@ -1,3 +1,19 @@
+2018-01-24  Alex Christensen  <achristensen@webkit.org>
+
+        Remove unused QTKit preference
+        https://bugs.webkit.org/show_bug.cgi?id=181968
+
+        Reviewed by Alexey Proskuryakov.
+
+        * WebView/WebPreferenceKeysPrivate.h:
+        * WebView/WebPreferences.mm:
+        (+[WebPreferences initialize]):
+        (-[WebPreferences setQTKitEnabled:]): Deleted.
+        (-[WebPreferences isQTKitEnabled]): Deleted.
+        * WebView/WebPreferencesPrivate.h:
+        * WebView/WebView.mm:
+        (-[WebView _preferencesChanged:]):
+
 2018-01-23  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Harden against layout passes triggered when iterating through HTMLFormElement::associatedElements

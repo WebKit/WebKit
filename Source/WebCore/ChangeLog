@@ -1,3 +1,17 @@
+2018-01-24  Alex Christensen  <achristensen@webkit.org>
+
+        Remove unused QTKit preference
+        https://bugs.webkit.org/show_bug.cgi?id=181968
+
+        Reviewed by Alexey Proskuryakov.
+
+        They weren't used and didn't do anything.
+
+        * page/DeprecatedGlobalSettings.cpp:
+        (WebCore::DeprecatedGlobalSettings::setQTKitEnabled): Deleted.
+        * page/DeprecatedGlobalSettings.h:
+        (WebCore::DeprecatedGlobalSettings::isQTKitEnabled): Deleted.
+
 2018-01-24  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Compute the progress and currentIteration properties on getComputedTiming()

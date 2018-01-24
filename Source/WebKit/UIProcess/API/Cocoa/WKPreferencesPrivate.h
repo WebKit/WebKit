@@ -154,7 +154,6 @@ typedef NS_ENUM(NSInteger, _WKEditableLinkBehavior) {
 @property (nonatomic, setter=_setArtificialPluginInitializationDelayEnabled:) BOOL _artificialPluginInitializationDelayEnabled WK_API_AVAILABLE(macosx(WK_MAC_TBA));
 @property (nonatomic, setter=_setCookieEnabled:) BOOL _cookieEnabled WK_API_AVAILABLE(macosx(WK_MAC_TBA));
 @property (nonatomic, setter=_setPlugInSnapshottingEnabled:) BOOL _plugInSnapshottingEnabled WK_API_AVAILABLE(macosx(WK_MAC_TBA));
-@property (nonatomic, setter=_setQTKitEnabled:) BOOL _qtKitEnabled WK_API_AVAILABLE(macosx(WK_MAC_TBA));
 @property (nonatomic, setter=_setSubpixelCSSOMElementMetricsEnabled:) BOOL _subpixelCSSOMElementMetricsEnabled WK_API_AVAILABLE(macosx(WK_MAC_TBA));
 @property (nonatomic, setter=_setMediaSourceEnabled:) BOOL _mediaSourceEnabled WK_API_AVAILABLE(macosx(WK_MAC_TBA));
 @property (nonatomic, setter=_setViewGestureDebuggingEnabled:) BOOL _viewGestureDebuggingEnabled WK_API_AVAILABLE(macosx(WK_MAC_TBA));
