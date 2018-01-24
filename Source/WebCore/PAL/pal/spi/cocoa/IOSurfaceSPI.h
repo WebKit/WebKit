@@ -54,6 +54,7 @@ extern const CFStringRef kIOSurfaceAllocSize;
 extern const CFStringRef kIOSurfaceBytesPerElement;
 extern const CFStringRef kIOSurfaceBytesPerRow;
 extern const CFStringRef kIOSurfaceCacheMode;
+extern const CFStringRef kIOSurfaceColorSpace;
 extern const CFStringRef kIOSurfaceHeight;
 extern const CFStringRef kIOSurfacePixelFormat;
 extern const CFStringRef kIOSurfaceWidth;
