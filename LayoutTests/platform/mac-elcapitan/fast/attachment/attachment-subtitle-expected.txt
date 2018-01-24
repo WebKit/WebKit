@@ -1,8 +1,0 @@
-layer at (0,0) size 800x600
-  RenderView at (0,0) size 800x600
-layer at (0,0) size 800x105
-  RenderBlock {HTML} at (0,0) size 800x105
-    RenderBody {BODY} at (8,8) size 784x89
-      RenderAttachment {ATTACHMENT} at (0,0) size 74x89
-      RenderText {#text} at (0,0) size 0x0
-      RenderText {#text} at (0,0) size 0x0
