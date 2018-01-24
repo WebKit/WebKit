@@ -1,3 +1,14 @@
+2018-01-18  Sergio Villar Senin  <svillar@igalia.com>
+
+        [WebVR] Add OpenVR to the tree and to the build
+        https://bugs.webkit.org/show_bug.cgi?id=177298
+
+        Reviewed by Žan Doberšek.
+
+        Added build dependencies with the OpenVR library.
+
+        * CMakeLists.txt:
+
 2018-01-23  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Harden against layout passes triggered when iterating through HTMLFormElement::associatedElements

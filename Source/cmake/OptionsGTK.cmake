@@ -340,6 +340,8 @@ if (USE_LIBHYPHEN)
     endif ()
 endif ()
 
+SET_AND_EXPOSE_TO_BUILD(USE_OPENVR TRUE)
+
 if (USE_UPOWER)
     find_package(UPowerGLib)
     if (NOT UPOWERGLIB_FOUND)

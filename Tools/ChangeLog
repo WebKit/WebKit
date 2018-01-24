@@ -1,3 +1,13 @@
+2018-01-18  Sergio Villar Senin  <svillar@igalia.com>
+
+        [WebVR] Add OpenVR to the tree and to the build
+        https://bugs.webkit.org/show_bug.cgi?id=177298
+
+        Reviewed by Žan Doberšek.
+
+        * Scripts/webkitpy/style/checker.py: Added openvr to the list of third party libraries
+        with reduced style checks.
+
 2018-01-24  Chris Nardi  <cnardi@chromium.org>
 
         Add Chris Nardi to contributors list

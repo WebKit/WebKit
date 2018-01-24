@@ -1,3 +1,490 @@
+2018-01-18  Sergio Villar Senin  <svillar@igalia.com>
+
+        [WebVR] Add OpenVR to the tree and to the build
+        https://bugs.webkit.org/show_bug.cgi?id=177298
+
+        Reviewed by Žan Doberšek.
+
+        Adding the required parts of OpenVR library to the tree. This will be used as a backend for
+        the eventual WebVR implementation.
+
+        * openvr/CMakeLists.txt: Added.
+        * openvr/LICENSE: Added.
+        * openvr/README.md: Added.
+        * openvr/README.webkit: Added. Includes specifics changes made to the original library to
+        accommodate it to the WebKit build system.
+        * openvr/Toolchain-clang.cmake: Added.
+        * openvr/headers/openvr.h: Added.
+        (vr::ButtonMaskFromId):
+        (vr::NotificationBitmap_t::NotificationBitmap_t):
+        (vr::VRToken):
+        (vr::COpenVRContext::COpenVRContext):
+        (vr::COpenVRContext::CheckClear):
+        (vr::COpenVRContext::VRSystem):
+        (vr::COpenVRContext::VRChaperone):
+        (vr::COpenVRContext::VRChaperoneSetup):
+        (vr::COpenVRContext::VRCompositor):
+        (vr::COpenVRContext::VROverlay):
+        (vr::COpenVRContext::VRResources):
+        (vr::COpenVRContext::VRScreenshots):
+        (vr::COpenVRContext::VRRenderModels):
+        (vr::COpenVRContext::VRExtendedDisplay):
+        (vr::COpenVRContext::VRSettings):
+        (vr::COpenVRContext::VRApplications):
+        (vr::COpenVRContext::VRTrackedCamera):
+        (vr::COpenVRContext::VRDriverManager):
+        (vr::OpenVRInternal_ModuleContext):
+        (vr::VRSystem):
+        (vr::VRChaperone):
+        (vr::VRChaperoneSetup):
+        (vr::VRCompositor):
+        (vr::VROverlay):
+        (vr::VRScreenshots):
+        (vr::VRRenderModels):
+        (vr::VRApplications):
+        (vr::VRSettings):
+        (vr::VRResources):
+        (vr::VRExtendedDisplay):
+        (vr::VRTrackedCamera):
+        (vr::VRDriverManager):
+        (vr::COpenVRContext::Clear):
+        (vr::VR_Init):
+        (vr::VR_Shutdown):
+        * openvr/headers/openvr_api.cs: Added.
+        * openvr/headers/openvr_api.json: Added.
+        * openvr/headers/openvr_capi.h: Added.
+        * openvr/headers/openvr_driver.h: Added.
+        (vr::ButtonMaskFromId):
+        (vr::IVRDriverDirectModeComponent::CreateSwapTextureSet):
+        (vr::IVRDriverDirectModeComponent::DestroySwapTextureSet):
+        (vr::IVRDriverDirectModeComponent::DestroyAllSwapTextureSets):
+        (vr::IVRDriverDirectModeComponent::GetNextSwapTextureSetIndex):
+        (vr::IVRDriverDirectModeComponent::SubmitLayer):
+        (vr::IVRDriverDirectModeComponent::Present):
+        (vr::CVRPropertyHelpers::CVRPropertyHelpers):
+        (vr::CVRPropertyHelpers::TrackedDeviceToPropertyContainer):
+        (vr::CVRPropertyHelpers::GetProperty):
+        (vr::CVRPropertyHelpers::SetProperty):
+        (vr::CVRPropertyHelpers::GetStringProperty):
+        (vr::CVRPropertyHelpers::SetStringProperty):
+        (vr::CVRPropertyHelpers::GetPropertyHelper):
+        (vr::CVRPropertyHelpers::GetBoolProperty):
+        (vr::CVRPropertyHelpers::GetFloatProperty):
+        (vr::CVRPropertyHelpers::GetInt32Property):
+        (vr::CVRPropertyHelpers::GetUint64Property):
+        (vr::CVRPropertyHelpers::SetBoolProperty):
+        (vr::CVRPropertyHelpers::SetFloatProperty):
+        (vr::CVRPropertyHelpers::SetInt32Property):
+        (vr::CVRPropertyHelpers::SetUint64Property):
+        (vr::CVRPropertyHelpers::SetPropertyError):
+        (vr::CVRPropertyHelpers::EraseProperty):
+        (vr::CVRHiddenAreaHelpers::CVRHiddenAreaHelpers):
+        (vr::CVRHiddenAreaHelpers::GetPropertyEnum):
+        (vr::CVRHiddenAreaHelpers::SetHiddenArea):
+        (vr::CVRHiddenAreaHelpers::GetHiddenArea):
+        (vr::VRDriverContext):
+        (vr::COpenVRDriverContext::COpenVRDriverContext):
+        (vr::COpenVRDriverContext::VRSettings):
+        (vr::COpenVRDriverContext::VRPropertiesRaw):
+        (vr::COpenVRDriverContext::VRProperties):
+        (vr::COpenVRDriverContext::VRHiddenArea):
+        (vr::COpenVRDriverContext::VRServerDriverHost):
+        (vr::COpenVRDriverContext::VRWatchdogHost):
+        (vr::COpenVRDriverContext::VRDriverLog):
+        (vr::COpenVRDriverContext::VRDriverHandle):
+        (vr::OpenVRInternal_ModuleServerDriverContext):
+        (vr::VRSettings):
+        (vr::VRPropertiesRaw):
+        (vr::VRProperties):
+        (vr::VRHiddenArea):
+        (vr::VRDriverLog):
+        (vr::VRServerDriverHost):
+        (vr::VRWatchdogHost):
+        (vr::VRDriverHandle):
+        (vr::COpenVRDriverContext::Clear):
+        (vr::COpenVRDriverContext::InitServer):
+        (vr::COpenVRDriverContext::InitWatchdog):
+        (vr::InitServerDriverContext):
+        (vr::InitWatchdogDriverContext):
+        (vr::CleanupDriverContext):
+        * openvr/patches/cmake-build.patch: Added.
+        * openvr/src/CMakeLists.txt: Added.
+        * openvr/src/Info.plist: Added.
+        * openvr/src/README: Added.
+        * openvr/src/ivrclientcore.h: Added.
+        * openvr/src/json/json-forwards.h: Added.
+        * openvr/src/json/json.h: Added.
+        (std::swap):
+        * openvr/src/jsoncpp.cpp: Added.
+        (Json::codePointToUTF8):
+        (Json::isControlCharacter):
+        (Json::uintToString):
+        (Json::fixNumericLocale):
+        (Json::Features::Features):
+        (Json::Features::all):
+        (Json::Features::strictMode):
+        (Json::containsNewLine):
+        (Json::Reader::Reader):
+        (Json::Reader::parse):
+        (Json::Reader::readValue):
+        (Json::Reader::skipCommentTokens):
+        (Json::Reader::readToken):
+        (Json::Reader::skipSpaces):
+        (Json::Reader::match):
+        (Json::Reader::readComment):
+        (Json::normalizeEOL):
+        (Json::Reader::addComment):
+        (Json::Reader::readCStyleComment):
+        (Json::Reader::readCppStyleComment):
+        (Json::Reader::readNumber):
+        (Json::Reader::readString):
+        (Json::Reader::readObject):
+        (Json::Reader::readArray):
+        (Json::Reader::decodeNumber):
+        (Json::Reader::decodeDouble):
+        (Json::Reader::decodeString):
+        (Json::Reader::decodeUnicodeCodePoint):
+        (Json::Reader::decodeUnicodeEscapeSequence):
+        (Json::Reader::addError):
+        (Json::Reader::recoverFromError):
+        (Json::Reader::addErrorAndRecover):
+        (Json::Reader::currentValue):
+        (Json::Reader::getNextChar):
+        (Json::Reader::getLocationLineAndColumn const):
+        (Json::Reader::getLocationSnippet const):
+        (Json::Reader::getFormatedErrorMessages const):
+        (Json::Reader::getFormattedErrorMessages const):
+        (Json::Reader::getStructuredErrors const):
+        (Json::Reader::pushError):
+        (Json::Reader::good const):
+        (Json::OurFeatures::all):
+        (Json::OurReader::OurReader):
+        (Json::OurReader::parse):
+        (Json::OurReader::readValue):
+        (Json::OurReader::skipCommentTokens):
+        (Json::OurReader::readToken):
+        (Json::OurReader::skipSpaces):
+        (Json::OurReader::match):
+        (Json::OurReader::readComment):
+        (Json::OurReader::addComment):
+        (Json::OurReader::readCStyleComment):
+        (Json::OurReader::readCppStyleComment):
+        (Json::OurReader::readNumber):
+        (Json::OurReader::readString):
+        (Json::OurReader::readStringSingleQuote):
+        (Json::OurReader::readObject):
+        (Json::OurReader::readArray):
+        (Json::OurReader::decodeNumber):
+        (Json::OurReader::decodeDouble):
+        (Json::OurReader::decodeString):
+        (Json::OurReader::decodeUnicodeCodePoint):
+        (Json::OurReader::decodeUnicodeEscapeSequence):
+        (Json::OurReader::addError):
+        (Json::OurReader::recoverFromError):
+        (Json::OurReader::addErrorAndRecover):
+        (Json::OurReader::currentValue):
+        (Json::OurReader::getNextChar):
+        (Json::OurReader::getLocationLineAndColumn const):
+        (Json::OurReader::getFormattedErrorMessages const):
+        (Json::OurReader::getStructuredErrors const):
+        (Json::OurReader::pushError):
+        (Json::OurReader::good const):
+        (Json::OurCharReader::OurCharReader):
+        (Json::OurCharReader::parse):
+        (Json::CharReaderBuilder::CharReaderBuilder):
+        (Json::CharReaderBuilder::~CharReaderBuilder):
+        (Json::CharReaderBuilder::newCharReader const):
+        (Json::getValidReaderKeys):
+        (Json::CharReaderBuilder::validate const):
+        (Json::CharReaderBuilder::operator[]):
+        (Json::CharReaderBuilder::strictMode):
+        (Json::CharReaderBuilder::setDefaults):
+        (Json::parseFromStream):
+        (Json::operator>>):
+        (Json::ValueIteratorBase::ValueIteratorBase):
+        (Json::ValueIteratorBase::deref const):
+        (Json::ValueIteratorBase::increment):
+        (Json::ValueIteratorBase::decrement):
+        (Json::ValueIteratorBase::computeDistance const):
+        (Json::ValueIteratorBase::isEqual const):
+        (Json::ValueIteratorBase::copy):
+        (Json::ValueIteratorBase::key const):
+        (Json::ValueIteratorBase::index const):
+        (Json::ValueIteratorBase::name const):
+        (Json::ValueIteratorBase::memberName const):
+        (Json::ValueConstIterator::ValueConstIterator):
+        (Json::operator=):
+        (Json::ValueIterator::ValueIterator):
+        (Json::ValueIterator::operator=):
+        (Json::InRange):
+        (Json::integerToDouble):
+        (Json::duplicateStringValue):
+        (Json::duplicateAndPrefixStringValue):
+        (Json::decodePrefixedString):
+        (Json::releaseStringValue):
+        (Json::Exception::Exception):
+        (Json::throw):
+        (Json::RuntimeError::RuntimeError):
+        (Json::LogicError::LogicError):
+        (Json::throwRuntimeError):
+        (Json::throwLogicError):
+        (Json::Value::CommentInfo::CommentInfo):
+        (Json::Value::CommentInfo::~CommentInfo):
+        (Json::Value::CommentInfo::setComment):
+        (Json::Value::CZString::CZString):
+        (Json::Value::CZString::~CZString):
+        (Json::Value::CZString::swap):
+        (Json::Value::CZString::operator=):
+        (Json::Value::CZString::operator< const):
+        (Json::Value::CZString::operator== const):
+        (Json::Value::CZString::index const):
+        (Json::Value::CZString::data const):
+        (Json::Value::CZString::length const):
+        (Json::Value::CZString::isStaticString const):
+        (Json::Value::Value):
+        (Json::Value::~Value):
+        (Json::Value::operator=):
+        (Json::Value::swapPayload):
+        (Json::Value::swap):
+        (Json::Value::type const):
+        (Json::Value::compare const):
+        (Json::Value::operator< const):
+        (Json::Value::operator<= const):
+        (Json::Value::operator>= const):
+        (Json::Value::operator> const):
+        (Json::Value::operator== const):
+        (Json::Value::operator!= const):
+        (Json::Value::asCString const):
+        (Json::Value::getString const):
+        (Json::Value::asString const):
+        (Json::Value::asConstString const):
+        (Json::Value::asInt const):
+        (Json::Value::asUInt const):
+        (Json::Value::asInt64 const):
+        (Json::Value::asUInt64 const):
+        (Json::Value::asLargestInt const):
+        (Json::Value::asLargestUInt const):
+        (Json::Value::asDouble const):
+        (Json::Value::asFloat const):
+        (Json::Value::asBool const):
+        (Json::Value::isConvertibleTo const):
+        (Json::Value::size const):
+        (Json::Value::empty const):
+        (Json::Value::operator! const):
+        (Json::Value::clear):
+        (Json::Value::resize):
+        (Json::Value::operator[]):
+        (Json::Value::operator[] const):
+        (Json::Value::initBasic):
+        (Json::Value::resolveReference):
+        (Json::Value::get const):
+        (Json::Value::isValidIndex const):
+        (Json::Value::find const):
+        (Json::Value::append):
+        (Json::Value::removeMember):
+        (Json::Value::removeIndex):
+        (Json::Value::isMember const):
+        (Json::Value::getMemberNames const):
+        (Json::IsIntegral):
+        (Json::Value::isNull const):
+        (Json::Value::isBool const):
+        (Json::Value::isInt const):
+        (Json::Value::isUInt const):
+        (Json::Value::isInt64 const):
+        (Json::Value::isUInt64 const):
+        (Json::Value::isIntegral const):
+        (Json::Value::isDouble const):
+        (Json::Value::isNumeric const):
+        (Json::Value::isString const):
+        (Json::Value::isArray const):
+        (Json::Value::isObject const):
+        (Json::Value::setComment):
+        (Json::Value::hasComment const):
+        (Json::Value::getComment const):
+        (Json::Value::setOffsetStart):
+        (Json::Value::setOffsetLimit):
+        (Json::Value::getOffsetStart const):
+        (Json::Value::getOffsetLimit const):
+        (Json::Value::toStyledString const):
+        (Json::Value::begin const):
+        (Json::Value::end const):
+        (Json::Value::begin):
+        (Json::Value::end):
+        (Json::PathArgument::PathArgument):
+        (Json::Path::Path):
+        (Json::Path::makePath):
+        (Json::Path::addPathInArg):
+        (Json::Path::invalidPath):
+        (Json::Path::resolve const):
+        (Json::Path::make const):
+        (Json::containsControlCharacter):
+        (Json::containsControlCharacter0):
+        (Json::valueToString):
+        (Json::valueToQuotedString):
+        (Json::strnpbrk):
+        (Json::valueToQuotedStringN):
+        (Json::Writer::~Writer):
+        (Json::FastWriter::FastWriter):
+        (Json::FastWriter::enableYAMLCompatibility):
+        (Json::FastWriter::dropNullPlaceholders):
+        (Json::FastWriter::omitEndingLineFeed):
+        (Json::FastWriter::write):
+        (Json::FastWriter::writeValue):
+        (Json::StyledWriter::StyledWriter):
+        (Json::StyledWriter::write):
+        (Json::StyledWriter::writeValue):
+        (Json::StyledWriter::writeArrayValue):
+        (Json::StyledWriter::isMultineArray):
+        (Json::StyledWriter::pushValue):
+        (Json::StyledWriter::writeIndent):
+        (Json::StyledWriter::writeWithIndent):
+        (Json::StyledWriter::indent):
+        (Json::StyledWriter::unindent):
+        (Json::StyledWriter::writeCommentBeforeValue):
+        (Json::StyledWriter::writeCommentAfterValueOnSameLine):
+        (Json::StyledWriter::hasCommentForValue):
+        (Json::StyledStreamWriter::StyledStreamWriter):
+        (Json::StyledStreamWriter::write):
+        (Json::StyledStreamWriter::writeValue):
+        (Json::StyledStreamWriter::writeArrayValue):
+        (Json::StyledStreamWriter::isMultineArray):
+        (Json::StyledStreamWriter::pushValue):
+        (Json::StyledStreamWriter::writeIndent):
+        (Json::StyledStreamWriter::writeWithIndent):
+        (Json::StyledStreamWriter::indent):
+        (Json::StyledStreamWriter::unindent):
+        (Json::StyledStreamWriter::writeCommentBeforeValue):
+        (Json::StyledStreamWriter::writeCommentAfterValueOnSameLine):
+        (Json::StyledStreamWriter::hasCommentForValue):
+        (Json::BuiltStyledStreamWriter::BuiltStyledStreamWriter):
+        (Json::BuiltStyledStreamWriter::write):
+        (Json::BuiltStyledStreamWriter::writeValue):
+        (Json::BuiltStyledStreamWriter::writeArrayValue):
+        (Json::BuiltStyledStreamWriter::isMultineArray):
+        (Json::BuiltStyledStreamWriter::pushValue):
+        (Json::BuiltStyledStreamWriter::writeIndent):
+        (Json::BuiltStyledStreamWriter::writeWithIndent):
+        (Json::BuiltStyledStreamWriter::indent):
+        (Json::BuiltStyledStreamWriter::unindent):
+        (Json::BuiltStyledStreamWriter::writeCommentBeforeValue):
+        (Json::BuiltStyledStreamWriter::writeCommentAfterValueOnSameLine):
+        (Json::BuiltStyledStreamWriter::hasCommentForValue):
+        (Json::StreamWriter::StreamWriter):
+        (Json::StreamWriter::~StreamWriter):
+        (Json::StreamWriter::Factory::~Factory):
+        (Json::StreamWriterBuilder::StreamWriterBuilder):
+        (Json::StreamWriterBuilder::~StreamWriterBuilder):
+        (Json::StreamWriterBuilder::newStreamWriter const):
+        (Json::getValidWriterKeys):
+        (Json::StreamWriterBuilder::validate const):
+        (Json::StreamWriterBuilder::operator[]):
+        (Json::StreamWriterBuilder::setDefaults):
+        (Json::writeString):
+        (Json::operator<<):
+        * openvr/src/openvr_api_public.cpp: Added.
+        (vr::VR_GetInitToken):
+        (vr::VR_InitInternal2):
+        (vr::VR_InitInternal):
+        (vr::VR_ShutdownInternal):
+        (vr::VR_LoadHmdSystemInternal):
+        (vr::VR_GetGenericInterface):
+        (vr::VR_IsInterfaceVersionValid):
+        (vr::VR_IsHmdPresent):
+        (vr::VR_IsRuntimeInstalled):
+        (vr::VR_RuntimePath):
+        (vr::VR_GetVRInitErrorAsSymbol):
+        (vr::VR_GetVRInitErrorAsEnglishDescription):
+        (vr::VR_GetStringForHmdError):
+        * openvr/src/vrcommon/dirtools_public.cpp: Added.
+        (BCreateDirectoryRecursive):
+        (BCreateDirectory):
+        * openvr/src/vrcommon/dirtools_public.h: Added.
+        * openvr/src/vrcommon/envvartools_public.cpp: Added.
+        (GetEnvironmentVariable):
+        (SetEnvironmentVariable):
+        * openvr/src/vrcommon/envvartools_public.h: Added.
+        * openvr/src/vrcommon/hmderrors_public.cpp: Added.
+        (GetEnglishStringForHmdError):
+        (GetIDForVRInitError):
+        * openvr/src/vrcommon/hmderrors_public.h: Added.
+        * openvr/src/vrcommon/pathtools_public.cpp: Added.
+        (Path_GetExecutablePath):
+        (Path_GetWorkingDirectory):
+        (Path_SetWorkingDirectory):
+        (Path_StripFilename):
+        (Path_StripDirectory):
+        (Path_StripExtension):
+        (Path_GetExtension):
+        (Path_IsAbsolute):
+        (Path_MakeAbsolute):
+        (Path_FixSlashes):
+        (Path_GetSlash):
+        (Path_Join):
+        (Path_RemoveTrailingSlash):
+        (Path_Compact):
+        (Path_GetThisModulePath):
+        (Path_IsDirectory):
+        (Path_IsAppBundle):
+        (Path_Exists):
+        (Path_FindParentDirectoryRecursively):
+        (Path_FindParentSubDirectoryRecursively):
+        (Path_ReadBinaryFile):
+        (Path_WriteBinaryFile):
+        (Path_ReadTextFile):
+        (Path_WriteStringToTextFile):
+        (Path_WriteStringToTextFileAtomic):
+        (Path_FilePathToUrl):
+        (Path_UrlToFilePath):
+        (GetUserDocumentsPath):
+        * openvr/src/vrcommon/pathtools_public.h: Added.
+        * openvr/src/vrcommon/sharedlibtools_public.cpp: Added.
+        (SharedLib_Load):
+        (SharedLib_GetFunction):
+        (SharedLib_Unload):
+        * openvr/src/vrcommon/sharedlibtools_public.h: Added.
+        * openvr/src/vrcommon/strtools_public.cpp: Added.
+        (StringHasPrefix):
+        (StringHasPrefixCaseSensitive):
+        (StringHasSuffix):
+        (StringHasSuffixCaseSensitive):
+        (UTF16to8):
+        (UTF8to16):
+        (strcpy_safe):
+        (StringToUpper):
+        (StringToLower):
+        (ReturnStdString):
+        (BufferToStdString):
+        (Uint64ToString):
+        (StringToUint64):
+        (cIntToHexDigit):
+        (iHexCharToInt):
+        (V_URLEncodeInternal):
+        (V_URLDecodeInternal):
+        (V_URLEncode):
+        (V_URLDecode):
+        (V_StripExtension):
+        * openvr/src/vrcommon/strtools_public.h: Added.
+        (stricmp):
+        (strnicmp):
+        (wcsncpy_s):
+        (strncpy_s):
+        (strtoull):
+        * openvr/src/vrcommon/vrpathregistry_public.cpp: Added.
+        (GetAppSettingsPath):
+        (CVRPathRegistry_Public::CVRPathRegistry_Public):
+        (CVRPathRegistry_Public::GetOpenVRConfigPath):
+        (CVRPathRegistry_Public::GetVRPathRegistryFilename):
+        (ParseStringListFromJson):
+        (StringListToJson):
+        (CVRPathRegistry_Public::ToJsonString):
+        (CVRPathRegistry_Public::BLoadFromFile):
+        (CVRPathRegistry_Public::BSaveToFile const):
+        (CVRPathRegistry_Public::GetRuntimePath const):
+        (CVRPathRegistry_Public::GetConfigPath const):
+        (CVRPathRegistry_Public::GetLogPath const):
+        (CVRPathRegistry_Public::GetPaths):
+        * openvr/src/vrcommon/vrpathregistry_public.h: Added.
+
 2017-12-14  David Kilzer  <ddkilzer@apple.com>
 
         Enable -Wstrict-prototypes for WebKit

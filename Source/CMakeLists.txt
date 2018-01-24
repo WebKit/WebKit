@@ -17,6 +17,10 @@ if (ENABLE_API_TESTS)
     add_subdirectory(ThirdParty/gtest)
 endif ()
 
+if (USE_OPENVR)
+    add_subdirectory(ThirdParty/openvr)
+endif ()
+
 if (USE_XDGMIME)
     add_subdirectory(ThirdParty/xdgmime)
 endif ()

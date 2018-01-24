@@ -1,3 +1,14 @@
+2018-01-18  Sergio Villar Senin  <svillar@igalia.com>
+
+        [WebVR] Add OpenVR to the tree and to the build
+        https://bugs.webkit.org/show_bug.cgi?id=177298
+
+        Reviewed by Žan Doberšek.
+
+        * Source/CMakeLists.txt:
+        * Source/cmake/OptionsGTK.cmake: Enable USE_OPENVR.
+        * Source/cmake/OptionsWPE.cmake: Ditto.
+
 2018-01-18  Dan Bernstein  <mitz@apple.com>
 
         [Xcode] Shared schemes in the WebKit workspace still have build pre-actions that invoke copy-webkitlibraries-to-product-directory
