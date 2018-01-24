@@ -27,6 +27,7 @@
 #include "HTMLFormElement.h"
 #include "HTMLImageElement.h"
 #include "HTMLNames.h"
+#include "ScriptDisallowedScope.h"
 
 namespace WebCore {
 
@@ -62,12 +63,20 @@ std::optional<Variant<RefPtr<RadioNodeList>, RefPtr<Element>>> HTMLFormControlsC
     return Variant<RefPtr<RadioNodeList>, RefPtr<Element>> { RefPtr<RadioNodeList> { ownerNode().radioNodeList(name) } };
 }
 
-const Vector<FormAssociatedElement*>& HTMLFormControlsCollection::formControlElements() const
+const Vector<FormAssociatedElement*>& HTMLFormControlsCollection::unsafeFormControlElements() const
 {
     ASSERT(is<HTMLFormElement>(ownerNode()) || is<HTMLFieldSetElement>(ownerNode()));
     if (is<HTMLFormElement>(ownerNode()))
-        return downcast<HTMLFormElement>(ownerNode()).associatedElements();
-    return downcast<HTMLFieldSetElement>(ownerNode()).associatedElements();
+        return downcast<HTMLFormElement>(ownerNode()).unsafeAssociatedElements();
+    return downcast<HTMLFieldSetElement>(ownerNode()).unsafeAssociatedElements();
+}
+
+Vector<Ref<FormAssociatedElement>> HTMLFormControlsCollection::copyFormControlElementsVector() const
+{
+    ASSERT(is<HTMLFormElement>(ownerNode()) || is<HTMLFieldSetElement>(ownerNode()));
+    if (is<HTMLFormElement>(ownerNode()))
+        return downcast<HTMLFormElement>(ownerNode()).copyAssociatedElementsVector();
+    return downcast<HTMLFieldSetElement>(ownerNode()).copyAssociatedElementsVector();
 }
 
 const Vector<HTMLImageElement*>& HTMLFormControlsCollection::formImageElements() const
@@ -88,7 +97,8 @@ static unsigned findFormAssociatedElement(const Vector<FormAssociatedElement*>& 
 
 HTMLElement* HTMLFormControlsCollection::customElementAfter(Element* current) const
 {
-    const Vector<FormAssociatedElement*>& elements = formControlElements();
+    ScriptDisallowedScope::InMainThread scriptDisallowedScope;
+    auto& elements = unsafeFormControlElements();
     unsigned start;
     if (!current)
         start = 0;
@@ -118,7 +128,8 @@ void HTMLFormControlsCollection::updateNamedElementCache() const
     bool ownerIsFormElement = is<HTMLFormElement>(ownerNode());
     HashSet<AtomicStringImpl*> foundInputElements;
 
-    for (auto& elementPtr : formControlElements()) {
+    ScriptDisallowedScope::InMainThread scriptDisallowedScope;
+    for (auto& elementPtr : unsafeFormControlElements()) {
         FormAssociatedElement& associatedElement = *elementPtr;
         if (associatedElement.isEnumeratable()) {
             HTMLElement& element = associatedElement.asHTMLElement();

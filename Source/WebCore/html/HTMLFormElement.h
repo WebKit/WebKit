@@ -116,7 +116,8 @@ public:
 
     RadioButtonGroups& radioButtonGroups() { return m_radioButtonGroups; }
 
-    const Vector<FormAssociatedElement*>& associatedElements() const { return m_associatedElements; }
+    WEBCORE_EXPORT const Vector<FormAssociatedElement*>& unsafeAssociatedElements() const;
+    Vector<Ref<FormAssociatedElement>> copyAssociatedElementsVector() const;
     const Vector<HTMLImageElement*>& imageElements() const { return m_imageElements; }
 
     StringPairVector textFieldValues() const;

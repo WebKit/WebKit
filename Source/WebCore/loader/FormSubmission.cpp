@@ -182,11 +182,7 @@ Ref<FormSubmission> FormSubmission::create(HTMLFormElement& form, const Attribut
     StringPairVector formValues;
 
     bool containsPasswordData = false;
-    auto protectedAssociatedElements = WTF::map(form.associatedElements(), [] (auto* rawElement) {
-        return Ref<FormAssociatedElement>(*rawElement);
-    });
-
-    for (auto& control : protectedAssociatedElements) {
+    for (auto& control : form.copyAssociatedElementsVector()) {
         auto& element = control->asHTMLElement();
         if (!element.isDisabledFormControl())
             control->appendFormData(domFormData, isMultiPartForm);

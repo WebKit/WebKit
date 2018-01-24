@@ -23,6 +23,7 @@
 
 #include "HTMLFormElement.h"
 #include "HTMLInputElement.h"
+#include "ScriptDisallowedScope.h"
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/StringConcatenateNumbers.h>
@@ -279,9 +280,10 @@ private:
 
 static inline void recordFormStructure(const HTMLFormElement& form, StringBuilder& builder)
 {
+    ScriptDisallowedScope::InMainThread scriptDisallowedScope;
     // 2 is enough to distinguish forms in webkit.org/b/91209#c0
     const size_t namedControlsToBeRecorded = 2;
-    const Vector<FormAssociatedElement*>& controls = form.associatedElements();
+    auto& controls = form.unsafeAssociatedElements();
     builder.appendLiteral(" [");
     for (size_t i = 0, namedControls = 0; i < controls.size() && namedControls < namedControlsToBeRecorded; ++i) {
         if (!controls[i]->isFormControlElementWithState())
@@ -454,17 +456,17 @@ void FormController::restoreControlStateFor(HTMLFormControlElementWithState& con
 
 void FormController::restoreControlStateIn(HTMLFormElement& form)
 {
-    for (auto& element : form.associatedElements()) {
-        if (!is<HTMLFormControlElementWithState>(*element))
+    for (auto& element : form.copyAssociatedElementsVector()) {
+        if (!is<HTMLFormControlElementWithState>(element.get()))
             continue;
-        auto control = makeRef(downcast<HTMLFormControlElementWithState>(*element));
-        if (!control->shouldSaveAndRestoreFormControlState())
+        auto& control = downcast<HTMLFormControlElementWithState>(element.get());
+        if (!control.shouldSaveAndRestoreFormControlState())
             continue;
         if (ownerFormForState(control) != &form)
             continue;
         auto state = takeStateForFormElement(control);
         if (!state.isEmpty())
-            control->restoreFormControlState(state);
+            control.restoreFormControlState(state);
     }
 }
 
