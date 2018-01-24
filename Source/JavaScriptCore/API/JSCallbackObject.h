@@ -234,7 +234,7 @@ private:
     static EncodedJSValue staticFunctionGetter(ExecState*, EncodedJSValue, PropertyName);
     static EncodedJSValue callbackGetter(ExecState*, EncodedJSValue, PropertyName);
 
-    WTF::PoisonedUniquePtr<POISON(JSCallbackObject), JSCallbackObjectData> m_callbackObjectData;
+    WTF::PoisonedUniquePtr<JSCallbackObjectPoison, JSCallbackObjectData> m_callbackObjectData;
     PoisonedClassInfoPtr m_classInfo;
 };
 

@@ -70,7 +70,7 @@ public:
     }
 
 protected:
-    using PoisonedNativeFunction = Poisoned<POISON(NativeCode), NativeFunction>;
+    using PoisonedNativeFunction = Poisoned<NativeCodePoison, NativeFunction>;
 
     JS_EXPORT_PRIVATE InternalFunction(VM&, Structure*, NativeFunction functionForCall, NativeFunction functionForConstruct);
 

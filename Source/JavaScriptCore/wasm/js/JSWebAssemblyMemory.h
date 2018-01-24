@@ -67,9 +67,9 @@ private:
     static void destroy(JSCell*);
     static void visitChildren(JSCell*, SlotVisitor&);
 
-    PoisonedRef<POISON(JSWebAssemblyMemory), Wasm::Memory> m_memory;
-    PoisonedWriteBarrier<POISON(JSWebAssemblyMemory), JSArrayBuffer> m_bufferWrapper;
-    PoisonedRefPtr<POISON(JSWebAssemblyMemory), ArrayBuffer> m_buffer;
+    PoisonedRef<JSWebAssemblyMemoryPoison, Wasm::Memory> m_memory;
+    PoisonedWriteBarrier<JSWebAssemblyMemoryPoison, JSArrayBuffer> m_bufferWrapper;
+    PoisonedRefPtr<JSWebAssemblyMemoryPoison, ArrayBuffer> m_buffer;
 };
 
 } // namespace JSC

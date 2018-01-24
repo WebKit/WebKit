@@ -97,9 +97,9 @@ private:
         JSWebAssemblyCodeBlock& codeBlock;
     };
 
-    PoisonedRef<POISON(JSWebAssemblyCodeBlock), Wasm::CodeBlock> m_codeBlock;
+    PoisonedRef<JSWebAssemblyCodeBlockPoison, Wasm::CodeBlock> m_codeBlock;
     Vector<MacroAssemblerCodeRef> m_wasmToJSExitStubs;
-    PoisonedUniquePtr<POISON(JSWebAssemblyCodeBlock), UnconditionalFinalizer> m_unconditionalFinalizer;
+    PoisonedUniquePtr<JSWebAssemblyCodeBlockPoison, UnconditionalFinalizer> m_unconditionalFinalizer;
     Bag<CallLinkInfo> m_callLinkInfos;
     String m_errorMessage;
 };

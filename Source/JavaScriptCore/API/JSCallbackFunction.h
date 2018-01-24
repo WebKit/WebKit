@@ -54,7 +54,7 @@ private:
 
     JSObjectCallAsFunctionCallback functionCallback() { return m_callback.unpoisoned(); }
 
-    Poisoned<POISON(NativeCode), JSObjectCallAsFunctionCallback> m_callback;
+    Poisoned<NativeCodePoison, JSObjectCallAsFunctionCallback> m_callback;
 };
 
 } // namespace JSC

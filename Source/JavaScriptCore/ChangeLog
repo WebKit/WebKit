@@ -1,3 +1,69 @@
+2018-01-23  Mark Lam  <mark.lam@apple.com>
+
+        Update Poisoned pointers to take a Poison class instead of a uintptr_t&.
+        https://bugs.webkit.org/show_bug.cgi?id=182017
+        <rdar://problem/36795513>
+
+        Reviewed by Filip Pizlo and JF Bastien.
+
+        Removed the POISON() macro.  Now that we have Poison types, we can just use the
+        the Poison type instead and make the code a bit nicer to read.
+
+        * API/JSAPIWrapperObject.h:
+        * API/JSCallbackFunction.h:
+        * API/JSCallbackObject.h:
+        * b3/B3LowerMacros.cpp:
+        * b3/testb3.cpp:
+        (JSC::B3::testInterpreter):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::instructions):
+        (JSC::CodeBlock::instructions const):
+        * dfg/DFGOSRExitCompilerCommon.h:
+        (JSC::DFG::adjustFrameAndStackInOSRExitCompilerThunk):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileCheckSubClass):
+        (JSC::DFG::SpeculativeJIT::emitSwitchIntJump):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileCheckSubClass):
+        * jit/JIT.h:
+        * jit/ThunkGenerators.cpp:
+        (JSC::virtualThunkFor):
+        (JSC::nativeForGenerator):
+        (JSC::boundThisNoArgsFunctionCallGenerator):
+        * parser/UnlinkedSourceCode.h:
+        * runtime/ArrayPrototype.h:
+        * runtime/CustomGetterSetter.h:
+        * runtime/DateInstance.h:
+        * runtime/InternalFunction.h:
+        * runtime/JSArrayBuffer.h:
+        * runtime/JSCPoison.cpp:
+        (JSC::initializePoison):
+        * runtime/JSCPoison.h:
+        * runtime/JSGlobalObject.h:
+        * runtime/JSScriptFetchParameters.h:
+        * runtime/JSScriptFetcher.h:
+        * runtime/NativeExecutable.h:
+        * runtime/StructureTransitionTable.h:
+        * runtime/WriteBarrier.h:
+        (JSC::WriteBarrier::poison): Deleted.
+        * wasm/js/JSToWasm.cpp:
+        (JSC::Wasm::createJSToWasmWrapper):
+        * wasm/js/JSWebAssemblyCodeBlock.cpp:
+        (JSC::JSWebAssemblyCodeBlock::JSWebAssemblyCodeBlock):
+        * wasm/js/JSWebAssemblyCodeBlock.h:
+        * wasm/js/JSWebAssemblyInstance.h:
+        (JSC::JSWebAssemblyInstance::poison):
+        * wasm/js/JSWebAssemblyMemory.h:
+        * wasm/js/JSWebAssemblyModule.h:
+        * wasm/js/JSWebAssemblyTable.h:
+        * wasm/js/WasmToJS.cpp:
+        (JSC::Wasm::handleBadI64Use):
+        (JSC::Wasm::wasmToJS):
+        * wasm/js/WebAssemblyFunctionBase.h:
+        * wasm/js/WebAssemblyModuleRecord.h:
+        * wasm/js/WebAssemblyToJSCallee.h:
+        * wasm/js/WebAssemblyWrapperFunction.h:
+
 2018-01-23  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Unreviewed, suppress GCC warnings

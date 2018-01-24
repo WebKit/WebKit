@@ -39,20 +39,20 @@ uintptr_t dummyPoison = 0;
 }
 
 static_assert(sizeof(Bag<DummyStruct>) == sizeof(void*), "");
-static_assert(sizeof(PoisonedBag<dummyPoison, DummyStruct>) == sizeof(void*), "");
+static_assert(sizeof(PoisonedBag<Poison<dummyPoison>, DummyStruct>) == sizeof(void*), "");
 
 static_assert(sizeof(Ref<DummyStruct>) == sizeof(DummyStruct*), "");
-static_assert(sizeof(PoisonedRef<dummyPoison, DummyStruct>) == sizeof(DummyStruct*), "");
+static_assert(sizeof(PoisonedRef<Poison<dummyPoison>, DummyStruct>) == sizeof(DummyStruct*), "");
 
 static_assert(sizeof(RefPtr<DummyStruct>) == sizeof(DummyStruct*), "");
-static_assert(sizeof(PoisonedRefPtr<dummyPoison, DummyStruct>) == sizeof(DummyStruct*), "");
+static_assert(sizeof(PoisonedRefPtr<Poison<dummyPoison>, DummyStruct>) == sizeof(DummyStruct*), "");
 
-static_assert(sizeof(PoisonedUniquePtr<dummyPoison, DummyStruct>) == sizeof(DummyStruct*), "");
-static_assert(sizeof(PoisonedUniquePtr<dummyPoison, int[]>) == sizeof(int*), "");
-static_assert(sizeof(PoisonedUniquePtr<dummyPoison, DummyStruct[]>) == sizeof(DummyStruct*), "");
+static_assert(sizeof(PoisonedUniquePtr<Poison<dummyPoison>, DummyStruct>) == sizeof(DummyStruct*), "");
+static_assert(sizeof(PoisonedUniquePtr<Poison<dummyPoison>, int[]>) == sizeof(int*), "");
+static_assert(sizeof(PoisonedUniquePtr<Poison<dummyPoison>, DummyStruct[]>) == sizeof(DummyStruct*), "");
 
 static_assert(sizeof(RefCountedArray<DummyStruct>) == sizeof(void*), "");
-static_assert(sizeof(PoisonedRefCountedArray<dummyPoison, DummyStruct>) == sizeof(void*), "");
+static_assert(sizeof(PoisonedRefCountedArray<Poison<dummyPoison>, DummyStruct>) == sizeof(void*), "");
     
 } // namespace WTF
 

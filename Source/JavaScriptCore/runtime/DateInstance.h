@@ -77,7 +77,7 @@ private:
     JS_EXPORT_PRIVATE const GregorianDateTime* calculateGregorianDateTime(ExecState*) const;
     JS_EXPORT_PRIVATE const GregorianDateTime* calculateGregorianDateTimeUTC(ExecState*) const;
 
-    mutable PoisonedRefPtr<POISON(DateInstance), DateInstanceData> m_data;
+    mutable PoisonedRefPtr<DateInstancePoison, DateInstanceData> m_data;
 };
 
 DateInstance* asDateInstance(JSValue);

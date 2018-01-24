@@ -149,10 +149,10 @@ private:
     typename PtrTraits::StorageType m_head { nullptr };
 };
 
-template<uintptr_t& key, typename T> struct PoisonedPtrTraits;
+template<typename Poison, typename T> struct PoisonedPtrTraits;
 
-template<uintptr_t& key, typename T>
-using PoisonedBag = Bag<T, PoisonedPtrTraits<key, Private::BagNode<T>>>;
+template<typename Poison, typename T>
+using PoisonedBag = Bag<T, PoisonedPtrTraits<Poison, Private::BagNode<T>>>;
 
 } // namespace WTF
 

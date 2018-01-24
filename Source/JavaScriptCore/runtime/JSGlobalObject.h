@@ -401,7 +401,7 @@ public:
 
     VM& m_vm;
 
-    template<typename T> using PoisonedUniquePtr = WTF::PoisonedUniquePtr<POISON(JSGlobalObject), T>;
+    template<typename T> using PoisonedUniquePtr = WTF::PoisonedUniquePtr<JSGlobalObjectPoison, T>;
 
 #if ENABLE(REMOTE_INSPECTOR)
     PoisonedUniquePtr<Inspector::JSGlobalObjectInspectorController> m_inspectorController;

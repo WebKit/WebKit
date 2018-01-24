@@ -101,7 +101,7 @@ namespace JSC {
     protected:
         // FIXME: Make it PoisonedRef<SourceProvidier>.
         // https://bugs.webkit.org/show_bug.cgi?id=168325
-        PoisonedRefPtr<POISON(UnlinkedSourceCode), SourceProvider> m_provider;
+        PoisonedRefPtr<UnlinkedSourceCodePoison, SourceProvider> m_provider;
         int m_startOffset;
         int m_endOffset;
     };

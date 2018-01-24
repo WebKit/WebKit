@@ -86,7 +86,7 @@ static Expected<MacroAssemblerCodeRef, BindingFailure> handleBadI64Use(VM* vm, J
         // Store Callee.
         jit.loadPtr(CCallHelpers::Address(GPRInfo::argumentGPR1, Instance::offsetOfOwner()), GPRInfo::argumentGPR1);
         jit.loadPtr(CCallHelpers::Address(GPRInfo::argumentGPR1, JSWebAssemblyInstance::offsetOfPoisonedCallee()), GPRInfo::argumentGPR2);
-        jit.move(CCallHelpers::TrustedImm64(JSWebAssemblyInstance::PoisonedBarrier<WebAssemblyToJSCallee>::poison()), GPRInfo::argumentGPR3);
+        jit.move(CCallHelpers::TrustedImm64(JSWebAssemblyInstancePoison::key()), GPRInfo::argumentGPR3);
         jit.xor64(GPRInfo::argumentGPR3, GPRInfo::argumentGPR2);
         jit.storePtr(GPRInfo::argumentGPR2, JIT::Address(GPRInfo::callFrameRegister, CallFrameSlot::callee * static_cast<int>(sizeof(Register))));
 
@@ -291,7 +291,7 @@ Expected<MacroAssemblerCodeRef, BindingFailure> wasmToJS(VM* vm, Bag<CallLinkInf
         jit.loadWasmContextInstance(GPRInfo::argumentGPR0);
         jit.loadPtr(CCallHelpers::Address(GPRInfo::argumentGPR0, Instance::offsetOfOwner()), GPRInfo::argumentGPR0);
         jit.loadPtr(CCallHelpers::Address(GPRInfo::argumentGPR0, JSWebAssemblyInstance::offsetOfPoisonedCallee()), GPRInfo::argumentGPR0);
-        jit.move(CCallHelpers::TrustedImm64(JSWebAssemblyInstance::PoisonedBarrier<WebAssemblyToJSCallee>::poison()), GPRInfo::argumentGPR3);
+        jit.move(CCallHelpers::TrustedImm64(JSWebAssemblyInstancePoison::key()), GPRInfo::argumentGPR3);
         jit.xor64(GPRInfo::argumentGPR3, GPRInfo::argumentGPR0);
         jit.storePtr(GPRInfo::argumentGPR0, JIT::Address(GPRInfo::callFrameRegister, CallFrameSlot::callee * static_cast<int>(sizeof(Register))));
         
@@ -483,7 +483,7 @@ Expected<MacroAssemblerCodeRef, BindingFailure> wasmToJS(VM* vm, Bag<CallLinkInf
     jit.loadWasmContextInstance(GPRInfo::argumentGPR0);
     jit.loadPtr(CCallHelpers::Address(GPRInfo::argumentGPR0, Instance::offsetOfOwner()), GPRInfo::argumentGPR0);
     jit.loadPtr(CCallHelpers::Address(GPRInfo::argumentGPR0, JSWebAssemblyInstance::offsetOfPoisonedCallee()), GPRInfo::argumentGPR0);
-    jit.move(CCallHelpers::TrustedImm64(JSWebAssemblyInstance::PoisonedBarrier<WebAssemblyToJSCallee>::poison()), poison);
+    jit.move(CCallHelpers::TrustedImm64(JSWebAssemblyInstancePoison::key()), poison);
     jit.xor64(poison, GPRInfo::argumentGPR0);
     jit.storePtr(GPRInfo::argumentGPR0, JIT::Address(GPRInfo::callFrameRegister, CallFrameSlot::callee * static_cast<int>(sizeof(Register))));
 

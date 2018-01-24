@@ -238,10 +238,10 @@ private:
     typename PtrTraits::StorageType m_data { nullptr };
 };
 
-template<uintptr_t& key, typename T> struct PoisonedPtrTraits;
+template<typename Poison, typename T> struct PoisonedPtrTraits;
 
-template<uintptr_t& key, typename T>
-using PoisonedRefCountedArray = RefCountedArray<T, PoisonedPtrTraits<key, T>>;
+template<typename Poison, typename T>
+using PoisonedRefCountedArray = RefCountedArray<T, PoisonedPtrTraits<Poison, T>>;
 
 } // namespace WTF
 

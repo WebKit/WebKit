@@ -68,7 +68,7 @@ protected:
 
 private:
     template<typename T>
-    using PoisonedAccessor = Poisoned<POISON(NativeCode), T>;
+    using PoisonedAccessor = Poisoned<NativeCodePoison, T>;
 
     PoisonedAccessor<CustomGetter> m_getter;
     PoisonedAccessor<CustomSetter> m_setter;

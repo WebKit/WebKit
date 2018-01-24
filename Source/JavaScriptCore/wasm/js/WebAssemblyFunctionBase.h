@@ -50,7 +50,7 @@ protected:
     void finishCreation(VM&, NativeExecutable*, unsigned length, const String& name, JSWebAssemblyInstance*);
     WebAssemblyFunctionBase(VM&, JSGlobalObject*, Structure*);
 
-    PoisonedWriteBarrier<POISON(WebAssemblyFunctionBase), JSWebAssemblyInstance> m_instance;
+    PoisonedWriteBarrier<WebAssemblyFunctionBasePoison, JSWebAssemblyInstance> m_instance;
 };
 
 } // namespace JSC
