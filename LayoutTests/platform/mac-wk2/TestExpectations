@@ -803,12 +803,13 @@ webkit.org/b/176122 media/video-controls-drop-and-restore-timeline.html [ Pass F
 [ HighSierra+ ] http/tests/resourceLoadStatistics/third-party-cookie-with-and-without-user-interaction.html [ Pass ]
 [ HighSierra+ ] http/tests/resourceLoadStatistics/partitioned-and-unpartitioned-cookie-deletion.html [ Pass Timeout ]
 [ HighSierra+ ] http/tests/resourceLoadStatistics/non-prevalent-resources-can-access-cookies-in-a-third-party-context.html [ Pass ]
-[ HighSierra+ ] http/tests/resourceLoadStatistics/add-partitioning-to-redirect.html [ Pass ]
 [ HighSierra+ ] http/tests/resourceLoadStatistics/add-blocking-to-redirect.html [ Pass ]
 [ HighSierra+ ] http/tests/resourceLoadStatistics/remove-partitioning-in-redirect.html [ Pass ]
 [ HighSierra+ ] http/tests/resourceLoadStatistics/remove-blocking-in-redirect.html [ Pass ]
 [ HighSierra+ ] http/tests/resourceLoadStatistics/clear-in-memory-and-persistent-store.html [ Pass ]
 [ HighSierra+ ] http/tests/resourceLoadStatistics/clear-in-memory-and-persistent-store-one-hour.html [ Pass ]
+
+webkit.org/b/181958 [ HighSierra+ ] http/tests/resourceLoadStatistics/add-partitioning-to-redirect.html [ Pass Failure ]
 
 # <rdar://problem/33555759>
 webkit.org/b/177616 [ HighSierra+ ] http/tests/media/video-buffered-range-contains-currentTime.html [ Pass Timeout ]

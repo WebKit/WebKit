@@ -1,5 +1,14 @@
 2018-01-23  Matt Lewis  <jlewis3@apple.com>
 
+        Marked http/tests/resourceLoadStatistics/non-prevalent-resources-can-access-cookies-in-a-third-party-context.html as flaky.
+        https://bugs.webkit.org/show_bug.cgi?id=181958
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
+2018-01-23  Matt Lewis  <jlewis3@apple.com>
+
         Marked fast/visual-viewport/ios/caret-after-focus-in-fixed.html as flaky
         https://bugs.webkit.org/show_bug.cgi?id=181821
 
