@@ -709,8 +709,8 @@ WI.Table = class Table extends WI.View
 
         if (isNaN(this._cachedWidth)) {
             let boundingClientRect = this._scrollContainerElement.getBoundingClientRect();
-            this._cachedWidth = boundingClientRect.width;
-            this._cachedHeight = boundingClientRect.height;
+            this._cachedWidth = Math.floor(boundingClientRect.width);
+            this._cachedHeight = Math.floor(boundingClientRect.height);
         }
 
         // Not visible yet.
