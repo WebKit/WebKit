@@ -47,7 +47,7 @@ private:
     bool isAccessibilitySVGRoot() const override { return true; }
 
     WeakPtr<AccessibilityRenderObject> m_parent;
-    AccessibilityRole roleValue() const override { return AccessibilityRole::Group; }
+    AccessibilityRole roleValue() const override;
 };
     
 } // namespace WebCore 

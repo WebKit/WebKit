@@ -1,3 +1,15 @@
+2018-01-24  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        AX: SVG AAM mapping trumps ARIA role attribute in the case of SVG root
+        https://bugs.webkit.org/show_bug.cgi?id=181994
+
+        Reviewed by Chris Fleizach.
+
+        * accessibility/svg-element-with-aria-role.html: Added.
+        * platform/gtk/accessibility/svg-element-with-aria-role-expected.txt: Added.
+        * platform/mac/accessibility/svg-element-with-aria-role-expected.txt: Added.
+        * platform/win/TestExpectations: Skip test.
+
 2018-01-24  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Compute the progress and currentIteration properties on getComputedTiming()
