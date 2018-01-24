@@ -1,3 +1,12 @@
+2018-01-24  Aakash Jain  <aakash_jain@apple.com>
+
+        Update code style guidelines for Python
+        https://bugs.webkit.org/show_bug.cgi?id=179387
+
+        Rubber-stamped by Alexey Proskuryakov.
+
+        * code-style.md:
+
 2017-12-11  Dean Jackson  <dino@apple.com>
 
         Add a runtime feature flag for ImageBitmap and OffscreenCanvas

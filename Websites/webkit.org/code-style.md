@@ -1325,3 +1325,7 @@ public:
     virtual String description() { ... }; // This is incorrect because it uses the "virtual" keyword to indicate that the method is overridden.
 }
 ```
+
+### Python
+
+[](#python) For Python use PEP8 style.
