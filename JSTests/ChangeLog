@@ -1,3 +1,20 @@
+2018-01-23  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Add more module scope related tests with code evaluation by string
+        https://bugs.webkit.org/show_bug.cgi?id=181983
+
+        Reviewed by Sam Weinig.
+
+        Add more module scope related tests. When the original tests are landed,
+        we do not have browser integration. This patch adds more module scope tests
+        with dynamically created script evaluation. We add tests with Function
+        constructor, direct eval, indirect eval, setTimeout, setInterval, and event handlers.
+
+        * modules/scopes-eval.js: Added.
+        (shouldBe):
+        * modules/scopes.js:
+        (shouldBe):
+
 2018-01-23  Filip Pizlo  <fpizlo@apple.com>
 
         Unreviewed, retire some microbenchmarks that are proportionately very slow. Benchmark running time should be proportional to their value. Microbenchmarks have little value, so they should be very fast.

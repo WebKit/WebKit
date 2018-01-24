@@ -1,0 +1,13 @@
+Test relationship between module scope and setInterval
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Module is not executed yet.
+PASS visibleAtATime is "Module Scope"
+PASS visibleAtATime is "Module Scope"
+PASS visibleAtATime is "Global Scope"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
