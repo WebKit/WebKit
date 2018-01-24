@@ -253,7 +253,7 @@ public:
     LayoutUnit m_pageLogicalOffset;
     LayoutUnit m_intrinsicBorderForFieldset;
     
-    std::optional<RenderFragmentedFlow*> m_enclosingFragmentedFlow;
+    std::optional<WeakPtr<RenderFragmentedFlow>> m_enclosingFragmentedFlow;
 };
 
 typedef HashMap<const RenderBlock*, std::unique_ptr<RenderBlockRareData>> RenderBlockRareDataMap;
@@ -3067,7 +3067,7 @@ RenderFragmentedFlow* RenderBlock::cachedEnclosingFragmentedFlow() const
     if (!rareData || !rareData->m_enclosingFragmentedFlow)
         return nullptr;
 
-    return rareData->m_enclosingFragmentedFlow.value();
+    return rareData->m_enclosingFragmentedFlow.value().get();
 }
 
 bool RenderBlock::cachedEnclosingFragmentedFlowNeedsUpdate() const
@@ -3089,7 +3089,7 @@ void RenderBlock::setCachedEnclosingFragmentedFlowNeedsUpdate()
 RenderFragmentedFlow* RenderBlock::updateCachedEnclosingFragmentedFlow(RenderFragmentedFlow* fragmentedFlow) const
 {
     RenderBlockRareData& rareData = ensureBlockRareData(*this);
-    rareData.m_enclosingFragmentedFlow = fragmentedFlow;
+    rareData.m_enclosingFragmentedFlow = makeWeakPtr(fragmentedFlow);
 
     return fragmentedFlow;
 }
@@ -3101,7 +3101,7 @@ RenderFragmentedFlow* RenderBlock::locateEnclosingFragmentedFlow() const
         return updateCachedEnclosingFragmentedFlow(RenderBox::locateEnclosingFragmentedFlow());
 
     ASSERT(rareData->m_enclosingFragmentedFlow.value() == RenderBox::locateEnclosingFragmentedFlow());
-    return rareData->m_enclosingFragmentedFlow.value();
+    return rareData->m_enclosingFragmentedFlow.value().get();
 }
 
 void RenderBlock::resetEnclosingFragmentedFlowAndChildInfoIncludingDescendants(RenderFragmentedFlow*)
