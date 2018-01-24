@@ -1,3 +1,15 @@
+2018-01-24  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        Remove unneeded -expected.txt files for reftest
+
+        Unreviewed gardening.
+
+        The test fast/multicol/pagination/RightToLeft-max-width.html was converted
+        into a reftest in r217943, however expectations for GTK+ and Win port were not removed.
+
+        * platform/gtk/fast/multicol/pagination/RightToLeft-max-width-expected.txt: Removed.
+        * platform/win/fast/multicol/pagination/RightToLeft-max-width-expected.txt: Removed.
+
 2018-01-23  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Harden against layout passes triggered when iterating through HTMLFormElement::associatedElements
