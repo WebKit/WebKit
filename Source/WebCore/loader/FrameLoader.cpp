@@ -3743,6 +3743,10 @@ RefPtr<Frame> createWindow(Frame& openerFrame, Frame& lookupFrame, FrameLoadRequ
 
     created = false;
 
+    // FIXME: Provide line number information with respect to the opener's document.
+    if (protocolIsJavaScript(request.resourceRequest().url()) && !openerFrame.document()->contentSecurityPolicy()->allowJavaScriptURLs(openerFrame.document()->url(), { }))
+        return nullptr;
+
     if (!request.frameName().isEmpty() && !equalIgnoringASCIICase(request.frameName(), "_blank")) {
         if (RefPtr<Frame> frame = lookupFrame.loader().findFrameForNavigation(request.frameName(), openerFrame.document())) {
             if (!equalIgnoringASCIICase(request.frameName(), "_self")) {
@@ -3759,10 +3763,6 @@ RefPtr<Frame> createWindow(Frame& openerFrame, Frame& lookupFrame, FrameLoadRequ
         openerFrame.document()->addConsoleMessage(MessageSource::Security, MessageLevel::Error, "Blocked opening '" + request.resourceRequest().url().stringCenterEllipsizedToLength() + "' in a new window because the request was made in a sandboxed frame whose 'allow-popups' permission is not set.");
         return nullptr;
     }
-
-    // FIXME: Provide line number information with respect to the opener's document.
-    if (protocolIsJavaScript(request.resourceRequest().url()) && !openerFrame.document()->contentSecurityPolicy()->allowJavaScriptURLs(openerFrame.document()->url(), { }))
-        return nullptr;
 
     // FIXME: Setting the referrer should be the caller's responsibility.
     String referrer = SecurityPolicy::generateReferrerHeader(openerFrame.document()->referrerPolicy(), request.resourceRequest().url(), openerFrame.loader().outgoingReferrer());

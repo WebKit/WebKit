@@ -1,3 +1,18 @@
+2018-01-24  Daniel Bates  <dabates@apple.com>
+
+        [CSP] Check policy for targeted windows when navigating to a JavaScript URL
+        https://bugs.webkit.org/show_bug.cgi?id=182018
+        <rdar://problem/36795781>
+
+        Reviewed by Brent Fulgham.
+
+        Move the CSP check to be earlier in the function.
+
+        Test: http/tests/security/contentSecurityPolicy/window-open-javascript-url-with-target-blocked.html
+
+        * loader/FrameLoader.cpp:
+        (WebCore::createWindow):
+
 2018-01-24  Chris Dumez  <cdumez@apple.com>
 
         Add a IPC::SendSyncOption indicating we should not process incoming IPC while waiting for the sync reply
