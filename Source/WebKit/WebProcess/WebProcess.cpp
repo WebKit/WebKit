@@ -265,6 +265,7 @@ void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters)
             WebCore::releaseMemory(critical, synchronous);
         });
 #if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MAX_ALLOWED >= 101200) || PLATFORM(GTK) || PLATFORM(WPE)
+#if CPU(X86_64) || CPU(ARM64)
         memoryPressureHandler.setShouldUsePeriodicMemoryMonitor(true);
         memoryPressureHandler.setMemoryKillCallback([this] () {
             WebCore::logMemoryStatisticsAtTimeOfDeath();
@@ -276,6 +277,7 @@ void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters)
         memoryPressureHandler.setDidExceedInactiveLimitWhileActiveCallback([this] () {
             parentProcessConnection()->send(Messages::WebProcessProxy::DidExceedInactiveMemoryLimitWhileActive(), 0);
         });
+#endif
 #endif
         memoryPressureHandler.setMemoryPressureStatusChangedCallback([this](bool isUnderMemoryPressure) {
             if (parentProcessConnection())
