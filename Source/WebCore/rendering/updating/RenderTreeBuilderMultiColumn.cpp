@@ -26,6 +26,7 @@
 
 #include "RenderBlockFlow.h"
 #include "RenderChildIterator.h"
+#include "RenderLinesClampFlow.h"
 #include "RenderMultiColumnFlow.h"
 #include "RenderMultiColumnSet.h"
 #include "RenderMultiColumnSpannerPlaceholder.h"
@@ -83,7 +84,7 @@ void RenderTreeBuilder::MultiColumn::createFragmentedFlow(RenderBlockFlow& flow)
         }
     }
 
-    auto newFragmentedFlow = WebCore::createRenderer<RenderMultiColumnFlow>(flow.document(), RenderStyle::createAnonymousStyleWithDisplay(flow.style(), BLOCK));
+    auto newFragmentedFlow = !flow.style().hasLinesClamp() ? WebCore::createRenderer<RenderMultiColumnFlow>(flow.document(), RenderStyle::createAnonymousStyleWithDisplay(flow.style(), BLOCK)) :  WebCore::createRenderer<RenderLinesClampFlow>(flow.document(), RenderStyle::createAnonymousStyleWithDisplay(flow.style(), BLOCK));
     newFragmentedFlow->initializeStyle();
     auto& fragmentedFlow = *newFragmentedFlow;
     m_builder.insertChildToRenderBlock(flow, WTFMove(newFragmentedFlow));
@@ -95,6 +96,14 @@ void RenderTreeBuilder::MultiColumn::createFragmentedFlow(RenderBlockFlow& flow)
         for (auto& box : childrenOfType<RenderBox>(fragmentedFlow)) {
             if (box.isLegend())
                 fragmentedFlow.moveChildTo(&flow, &box, RenderBoxModelObject::NormalizeAfterInsertion::Yes);
+        }
+    }
+
+    if (flow.style().hasLinesClamp()) {
+        // Keep the middle block out of the flow thread.
+        for (auto& element : childrenOfType<RenderElement>(fragmentedFlow)) {
+            if (!downcast<RenderLinesClampFlow>(fragmentedFlow).isChildAllowedInFragmentedFlow(flow, element))
+                fragmentedFlow.moveChildTo(&flow, &element, RenderBoxModelObject::NormalizeAfterInsertion::Yes);
         }
     }
 

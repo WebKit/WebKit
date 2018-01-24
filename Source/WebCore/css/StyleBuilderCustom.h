@@ -144,6 +144,8 @@ public:
 
     static void applyValueStrokeWidth(StyleResolver&, CSSValue&);
     static void applyValueStrokeColor(StyleResolver&, CSSValue&);
+    
+    static void applyValueWebkitLinesClamp(StyleResolver&, CSSValue&);
 
 private:
     static void resetEffectiveZoom(StyleResolver&);
@@ -1889,6 +1891,20 @@ inline void StyleBuilderCustom::applyValueStrokeColor(StyleResolver& styleResolv
     if (styleResolver.applyPropertyToVisitedLinkStyle())
         styleResolver.style()->setVisitedLinkStrokeColor(styleResolver.colorFromPrimitiveValue(primitiveValue, /* forVisitedLink */ true));
     styleResolver.style()->setHasExplicitlySetStrokeColor(true);
+}
+
+inline void StyleBuilderCustom::applyValueWebkitLinesClamp(StyleResolver& styleResolver, CSSValue& value)
+{
+    if (is<CSSValueList>(value)) {
+        auto& list = downcast<CSSValueList>(value);
+        if (list.length() != 3)
+            return;
+        LineClampValue start = downcast<CSSPrimitiveValue>(*list.itemWithoutBoundsCheck(0));
+        LineClampValue end = downcast<CSSPrimitiveValue>(*list.itemWithoutBoundsCheck(1));
+        AtomicString center = downcast<CSSPrimitiveValue>(*list.itemWithoutBoundsCheck(2)).stringValue();
+        styleResolver.style()->setLinesClamp(LinesClampValue(start, end, center));
+    } else
+        styleResolver.style()->setLinesClamp(RenderStyle::initialLinesClamp());
 }
 
 } // namespace WebCore

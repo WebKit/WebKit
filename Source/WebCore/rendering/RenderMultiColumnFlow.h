@@ -33,7 +33,7 @@ namespace WebCore {
 class RenderMultiColumnSet;
 class RenderMultiColumnSpannerPlaceholder;
 
-class RenderMultiColumnFlow final : public RenderFragmentedFlow {
+class RenderMultiColumnFlow : public RenderFragmentedFlow {
     WTF_MAKE_ISO_ALLOCATED(RenderMultiColumnFlow);
 public:
     RenderMultiColumnFlow(Document&, RenderStyle&&);
@@ -97,6 +97,11 @@ public:
 
     typedef HashMap<RenderBox*, WeakPtr<RenderMultiColumnSpannerPlaceholder>> SpannerMap;
     SpannerMap& spannerMap() { return *m_spannerMap; }
+
+    virtual bool isColumnSpanningDescendant(const RenderBox&) const;
+
+protected:
+    virtual RenderPtr<RenderMultiColumnSet> createMultiColumnSet(RenderStyle&&);
 
 private:
     bool isRenderMultiColumnFlow() const override { return true; }

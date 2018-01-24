@@ -84,6 +84,8 @@ public:
     void invalidateFragments(MarkingBehavior = MarkContainingBlockChain);
     bool hasValidFragmentInfo() const { return !m_fragmentsInvalidated && !m_fragmentList.isEmpty(); }
 
+    virtual bool singleFragmentHasUniformLogicalHeight() const { return true; }
+    
     // Some renderers (column spanners) are moved out of the flow thread to live among column
     // sets. If |child| is such a renderer, resolve it to the placeholder that lives at the original
     // location in the tree.
@@ -94,6 +96,8 @@ public:
     virtual void fragmentedFlowRelativeWillBeRemoved(RenderObject&) { }
     // Called when a descendant box's layout is finished and it has been positioned within its container.
     virtual void fragmentedFlowDescendantBoxLaidOut(RenderBox*) { }
+
+    virtual void layoutFlowExcludedObjects(bool) { }
 
     static RenderStyle createFragmentedFlowStyle(const RenderStyle* parentStyle);
 

@@ -44,6 +44,7 @@ StyleRareNonInheritedData::StyleRareNonInheritedData()
     , perspectiveOriginX(RenderStyle::initialPerspectiveOriginX())
     , perspectiveOriginY(RenderStyle::initialPerspectiveOriginY())
     , lineClamp(RenderStyle::initialLineClamp())
+    , linesClamp(RenderStyle::initialLinesClamp())
     , initialLetter(RenderStyle::initialInitialLetter())
     , deprecatedFlexibleBox(StyleDeprecatedFlexibleBoxData::create())
     , flexibleBox(StyleFlexibleBoxData::create())
@@ -118,6 +119,7 @@ inline StyleRareNonInheritedData::StyleRareNonInheritedData(const StyleRareNonIn
     , perspectiveOriginX(o.perspectiveOriginX)
     , perspectiveOriginY(o.perspectiveOriginY)
     , lineClamp(o.lineClamp)
+    , linesClamp(o.linesClamp)
     , initialLetter(o.initialLetter)
     , deprecatedFlexibleBox(o.deprecatedFlexibleBox)
     , flexibleBox(o.flexibleBox)
@@ -214,6 +216,7 @@ bool StyleRareNonInheritedData::operator==(const StyleRareNonInheritedData& o) c
         && perspectiveOriginX == o.perspectiveOriginX
         && perspectiveOriginY == o.perspectiveOriginY
         && lineClamp == o.lineClamp
+        && linesClamp == o.linesClamp
         && initialLetter == o.initialLetter
 #if ENABLE(DASHBOARD_SUPPORT)
         && dashboardRegions == o.dashboardRegions

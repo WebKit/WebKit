@@ -42,7 +42,7 @@ namespace WebCore {
 //
 // Column spans result in the creation of new column sets as well, since a spanning fragment has to be placed in between the column sets that
 // come before and after the span.
-class RenderMultiColumnSet final : public RenderFragmentContainerSet {
+class RenderMultiColumnSet : public RenderFragmentContainerSet {
     WTF_MAKE_ISO_ALLOCATED(RenderMultiColumnSet);
 public:
     RenderMultiColumnSet(RenderFragmentedFlow&, RenderStyle&&);
@@ -92,7 +92,7 @@ public:
     // multicol container's height is constrained. If |initial| is set, and we are to balance, guess
     // an initial column height; otherwise, stretch the column height a tad. Return true if column
     // height changed and another layout pass is required.
-    bool recalculateColumnHeight(bool initial);
+    virtual bool recalculateColumnHeight(bool initial);
 
     // Record space shortage (the amount of space that would have been enough to prevent some
     // element from being moved to the next column) at a column break. The smallest amount of space
@@ -112,7 +112,7 @@ public:
     // Has this set been flowed in this layout pass?
     bool hasBeenFlowed() const { return logicalBottomInFragmentedFlow() != RenderFragmentedFlow::maxLogicalHeight(); }
 
-    bool requiresBalancing() const;
+    virtual bool requiresBalancing() const;
 
     LayoutPoint columnTranslationForOffset(const LayoutUnit&) const;
     
@@ -126,17 +126,15 @@ public:
 
     void updateHitTestResult(HitTestResult&, const LayoutPoint&) override;
     
-    LayoutRect columnRectAt(unsigned index) const;
-    unsigned columnCount() const;
+    virtual LayoutRect columnRectAt(unsigned index) const;
+    virtual unsigned columnCount() const;
 
 protected:
     void addOverflowFromChildren() override;
-    
-private:
+    LogicalExtentComputedValues computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logicalTop) const override;
+
     bool isRenderMultiColumnSet() const override { return true; }
     void layout() override;
-
-    LogicalExtentComputedValues computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logicalTop) const override;
 
     void paintObject(PaintInfo&, const LayoutPoint&) override { }
 
@@ -144,6 +142,7 @@ private:
     LayoutUnit pageLogicalHeight() const override { return m_computedColumnHeight; }
 
     LayoutUnit pageLogicalTopForOffset(LayoutUnit offset) const override;
+    LayoutUnit pageLogicalHeightForOffset(LayoutUnit) const override { return m_computedColumnHeight; }
 
     LayoutUnit logicalHeightOfAllFragmentedFlowContent() const override { return logicalHeightInFragmentedFlow(); }
 
@@ -158,21 +157,24 @@ private:
     const char* renderName() const override;
 
     LayoutUnit calculateMaxColumnHeight() const;
-    LayoutUnit columnGap() const;
+    virtual LayoutUnit columnGap() const;
 
     LayoutUnit columnLogicalLeft(unsigned) const;
     LayoutUnit columnLogicalTop(unsigned) const;
 
-    LayoutRect fragmentedFlowPortionRectAt(unsigned index) const;
-    LayoutRect fragmentedFlowPortionOverflowRect(const LayoutRect& fragmentedFlowPortion, unsigned index, unsigned colCount, LayoutUnit colGap);
+    virtual LayoutRect fragmentedFlowPortionRectAt(unsigned index) const;
+    virtual LayoutRect fragmentedFlowPortionOverflowRect(const LayoutRect& fragmentedFlowPortion, unsigned index, unsigned colCount, LayoutUnit colGap);
 
     LayoutUnit initialBlockOffsetForPainting() const;
 
+    virtual bool skipLayerFragmentCollectionForColumn(unsigned) const { return false; }
+    virtual LayoutUnit customBlockProgressionAdjustmentForColumn(unsigned) const { return 0; }
+    
     enum ColumnIndexCalculationMode {
         ClampToExistingColumns, // Stay within the range of already existing columns.
         AssumeNewColumns // Allow column indices outside the range of already existing columns.
     };
-    unsigned columnIndexAtOffset(LayoutUnit, ColumnIndexCalculationMode = ClampToExistingColumns) const;
+    virtual unsigned columnIndexAtOffset(LayoutUnit, ColumnIndexCalculationMode = ClampToExistingColumns) const;
 
     void setAndConstrainColumnHeight(LayoutUnit);
 

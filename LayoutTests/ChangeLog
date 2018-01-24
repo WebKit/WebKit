@@ -1,3 +1,28 @@
+2018-01-24  David Hyatt  <hyatt@apple.com>
+
+        Implement line clamp for mail.
+        https://bugs.webkit.org/show_bug.cgi?id=180818
+
+        Reviewed by Dean Jackson.
+
+        Added parsing tests, basic and advanced clamping examples, and vertical
+        writing tests. Revised an iOS clamp test to account for a slight change
+        in rendering caused by altering clamping to be consistent with the pagination
+        model of breaking beteween lines.
+
+        * fast/block/lines-clamp-advanced-expected.html: Added.
+        * fast/block/lines-clamp-advanced-rl-expected.html: Added.
+        * fast/block/lines-clamp-advanced-rl.html: Added.
+        * fast/block/lines-clamp-advanced.html: Added.
+        * fast/block/lines-clamp-basic-expected.html: Added.
+        * fast/block/lines-clamp-basic-rl-expected.html: Added.
+        * fast/block/lines-clamp-basic-rl.html: Added.
+        * fast/block/lines-clamp-basic.html: Added.
+        * fast/css/lines-clamp-parsing-expected.txt: Added.
+        * fast/css/lines-clamp-parsing.html: Added.
+        * platform/ios-simulator-wk2/fast/overflow: Added.
+        * platform/ios-simulator-wk2/fast/overflow/line-clamp-expected.txt: Added.
+
 2018-01-24  Matt Lewis  <jlewis3@apple.com>
 
         Marked http/tests/storageAccess/request-and-grant-access-then-detach-should-not-have-access.html as flaky on High Sierra Release.

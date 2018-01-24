@@ -683,6 +683,8 @@ public:
     
     LineBoxContain lineBoxContain() const { return m_rareInheritedData->lineBoxContain; }
     const LineClampValue& lineClamp() const { return m_rareNonInheritedData->lineClamp; }
+    const LinesClampValue& linesClamp() const { return m_rareNonInheritedData->linesClamp; }
+    bool hasLinesClamp() const { return !linesClamp().start().isNone(); }
     const IntSize& initialLetter() const { return m_rareNonInheritedData->initialLetter; }
     int initialLetterDrop() const { return initialLetter().width(); }
     int initialLetterHeight() const { return initialLetter().height(); }
@@ -1196,6 +1198,7 @@ public:
 
     void setLineBoxContain(LineBoxContain c) { SET_VAR(m_rareInheritedData, lineBoxContain, c); }
     void setLineClamp(LineClampValue c) { SET_VAR(m_rareNonInheritedData, lineClamp, c); }
+    void setLinesClamp(const LinesClampValue& c) { SET_VAR(m_rareNonInheritedData, linesClamp, c); }
     
     void setInitialLetter(const IntSize& size) { SET_VAR(m_rareNonInheritedData, initialLetter, size); }
     
@@ -1639,6 +1642,7 @@ public:
 
     static IntSize initialInitialLetter() { return IntSize(); }
     static LineClampValue initialLineClamp() { return LineClampValue(); }
+    static LinesClampValue initialLinesClamp() { return LinesClampValue(); }
     static ETextSecurity initialTextSecurity() { return TSNONE; }
 
 #if PLATFORM(IOS)
@@ -2040,7 +2044,7 @@ inline bool RenderStyle::breakWords() const
 inline bool RenderStyle::hasInlineColumnAxis() const
 {
     auto axis = columnAxis();
-    return axis == AutoColumnAxis || isHorizontalWritingMode() == (axis == HorizontalColumnAxis);
+    return (axis == AutoColumnAxis || isHorizontalWritingMode() == (axis == HorizontalColumnAxis)) && !hasLinesClamp();
 }
 
 inline ImageOrientationEnum RenderStyle::imageOrientation() const

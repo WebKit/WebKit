@@ -192,6 +192,11 @@ RenderObject* RenderMultiColumnFlow::resolveMovedChild(RenderObject* child) cons
     return child;
 }
 
+bool RenderMultiColumnFlow::isColumnSpanningDescendant(const RenderBox& descendantBox) const
+{
+    return descendantBox.style().columnSpan() == ColumnSpanAll;
+}
+
 static bool isValidColumnSpanner(const RenderMultiColumnFlow& fragmentedFlow, const RenderObject& descendant)
 {
     // We assume that we're inside the flow thread. This function is not to be called otherwise.
@@ -204,7 +209,7 @@ static bool isValidColumnSpanner(const RenderMultiColumnFlow& fragmentedFlow, co
     if (descendantBox.isFloatingOrOutOfFlowPositioned())
         return false;
 
-    if (descendantBox.style().columnSpan() != ColumnSpanAll)
+    if (!fragmentedFlow.isColumnSpanningDescendant(descendantBox))
         return false;
 
     auto* parent = descendantBox.parent();
@@ -332,7 +337,7 @@ RenderObject* RenderMultiColumnFlow::processPossibleSpannerDescendant(RenderObje
     // Need to create a new column set when there's no set already created. We also always insert
     // another column set after a spanner. Even if it turns out that there are no renderers
     // following the spanner, there may be bottom margins there, which take up space.
-    auto newSet = createRenderer<RenderMultiColumnSet>(*this, RenderStyle::createAnonymousStyleWithDisplay(multicolContainer->style(), BLOCK));
+    auto newSet = createMultiColumnSet(RenderStyle::createAnonymousStyleWithDisplay(multicolContainer->style(), BLOCK));
     newSet->initializeStyle();
     auto& set = *newSet;
     RenderTreeBuilder::current()->insertChildToRenderBlock(*multicolContainer, WTFMove(newSet), insertBeforeMulticolChild);
@@ -344,6 +349,11 @@ RenderObject* RenderMultiColumnFlow::processPossibleSpannerDescendant(RenderObje
     ASSERT(!nextColumnSetOrSpannerSiblingOf(&set) || !nextColumnSetOrSpannerSiblingOf(&set)->isRenderMultiColumnSet());
     
     return nextDescendant;
+}
+
+RenderPtr<RenderMultiColumnSet> RenderMultiColumnFlow::createMultiColumnSet(RenderStyle&& style)
+{
+    return createRenderer<RenderMultiColumnSet>(*this, WTFMove(style));
 }
 
 void RenderMultiColumnFlow::fragmentedFlowDescendantInserted(RenderObject& newDescendant)

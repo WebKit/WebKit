@@ -1,3 +1,147 @@
+2018-01-24  David Hyatt  <hyatt@apple.com>
+
+        Implement line clamp for mail.
+        https://bugs.webkit.org/show_bug.cgi?id=180818
+
+        Reviewed by Dean Jackson.
+
+        This patch implements a form of clamping that can clamp lines at both the top
+        and the bottom, and the interior can be replaced with a DOM element (identified
+        by id) that replaces the middle section.
+
+        The implementation derives from the multicolumn classes, but ultimately the
+        clamp should derive from the fragmentset classes instead (with most of the current
+        multicolumn code moving into base classes).
+
+        The virtualization of many of the multicolumn functions is something that would happen
+        once we move pages/printing over to this pagination model anyway.
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        Add the new clamp classes.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::ComputedStyleExtractor::valueForPropertyinStyle):
+        * css/CSSProperties.json:
+        * css/StyleBuilderCustom.h:
+        (WebCore::StyleBuilderCustom::applyValueWebkitLinesClamp):
+        * css/parser/CSSParser.cpp:
+        (WebCore::CSSParserContext::CSSParserContext):
+        * css/parser/CSSParserMode.h:
+        (WebCore::CSSParserContextHash::hash):
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::consumeLinesClamp):
+        (WebCore::CSSPropertyParser::parseSingleValue):
+        Implement the new CSS property, webkit-lines-clamp. This is only exposed if a preference
+        is set, so it is not exposed to the Web.
+
+        * page/Settings.yaml:
+        Add a new setting to control allowing access to the new CSS property.
+
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::willCreateColumns const):
+        Make sure columns are created when lines clamp is set.
+
+        (WebCore::getHeightForLineCount):
+        (WebCore::RenderBlockFlow::logicalHeightForLineCount):
+        (WebCore::RenderBlockFlow::logicalHeightExcludingLineCount):
+        (WebCore::RenderBlockFlow::layoutExcludedChildren):
+        (WebCore::RenderBlockFlow::heightForLineCount): Deleted.
+        * rendering/RenderBlockFlow.h:
+        Re-use the same clamping logic as the old line clamp code, but modernize it to work
+        with writing modes and to be able to go backwards from the end of the block.
+
+        * rendering/RenderDeprecatedFlexibleBox.cpp:
+        (WebCore::RenderDeprecatedFlexibleBox::applyLineClamp):
+        The line count method got renamed to have the word "logical" in it, since it now
+        works with vertical writing.
+
+        * rendering/RenderFragmentContainer.cpp:
+        (WebCore::RenderFragmentContainer::pageLogicalHeightForOffset const):
+        * rendering/RenderFragmentContainer.h:
+        Since line clamp sets have variable page heights, this new method takes the offset
+        as an argument so that it can return the appropriate page for the given offset.
+        This method will eventually be used by printing/page sets as well, since pages
+        can have variable heights.
+
+        * rendering/RenderFragmentedFlow.cpp:
+        (WebCore::RenderFragmentedFlow::validateFragments):
+        (WebCore::RenderFragmentedFlow::pageLogicalHeightForOffset const):
+        (WebCore::RenderFragmentedFlow::pageRemainingLogicalHeightForOffset const):
+        * rendering/RenderFragmentedFlow.h:
+        Support for variable page heights in a fragment set.
+
+        * rendering/RenderLinesClampFlow.cpp: Added.
+        (WebCore::RenderLinesClampFlow::RenderLinesClampFlow):
+        (WebCore::RenderLinesClampFlow::renderName const):
+        (WebCore::RenderLinesClampFlow::layout):
+        (WebCore::RenderLinesClampFlow::createMultiColumnSet):
+        (WebCore::RenderLinesClampFlow::isChildAllowedInFragmentedFlow const):
+        (WebCore::RenderLinesClampFlow::layoutFlowExcludedObjects):
+        * rendering/RenderLinesClampFlow.h: Added.
+        * rendering/RenderLinesClampSet.cpp: Added.
+        (WebCore::RenderLinesClampSet::RenderLinesClampSet):
+        (WebCore::RenderLinesClampSet::recalculateColumnHeight):
+        (WebCore::RenderLinesClampSet::computeLogicalHeight const):
+        (WebCore::RenderLinesClampSet::columnCount const):
+        (WebCore::RenderLinesClampSet::columnRectAt const):
+        (WebCore::RenderLinesClampSet::columnIndexAtOffset const):
+        (WebCore::RenderLinesClampSet::pageLogicalTopForOffset const):
+        (WebCore::RenderLinesClampSet::pageLogicalHeightForOffset const):
+        (WebCore::RenderLinesClampSet::fragmentedFlowPortionRectAt const):
+        (WebCore::RenderLinesClampSet::fragmentedFlowPortionOverflowRect):
+        (WebCore::RenderLinesClampSet::customBlockProgressionAdjustmentForColumn const):
+        (WebCore::RenderLinesClampSet::renderName const):
+        * rendering/RenderLinesClampSet.h: Added.
+        The new classes. They subclass all the methods necessary to do multi-pass layout,
+        and to determine the page heights of each section.
+
+        * rendering/RenderMultiColumnFlow.cpp:
+        (WebCore::RenderMultiColumnFlow::isColumnSpanningDescendant const):
+        (WebCore::isValidColumnSpanner):
+        (WebCore::RenderMultiColumnFlow::processPossibleSpannerDescendant):
+        (WebCore::RenderMultiColumnFlow::createMultiColumnSet):
+        * rendering/RenderMultiColumnFlow.h:
+        * rendering/RenderMultiColumnSet.cpp:
+        (WebCore::RenderMultiColumnSet::collectLayerFragments):
+        (WebCore::RenderMultiColumnSet::columnTranslationForOffset const):
+        * rendering/RenderMultiColumnSet.h:
+        (WebCore::RenderMultiColumnSet::skipLayerFragmentCollectionForColumn const):
+        (WebCore::RenderMultiColumnSet::customBlockProgressionAdjustmentForColumn const):
+        Virtualized methods so that lines clamp can subclass and change behavior.
+
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::isRenderLinesClampFlow const):
+        (WebCore::RenderObject::isRenderLinesClampSet const):
+        Add new functions for type checking.
+
+        * rendering/RenderRubyText.cpp:
+        Include adjustment.
+
+        * rendering/style/LineClampValue.h:
+        (WebCore::LinesClampValue::LinesClampValue):
+        (WebCore::LinesClampValue::isNone const):
+        (WebCore::LinesClampValue::operator== const):
+        (WebCore::LinesClampValue::operator!= const):
+        (WebCore::LinesClampValue::start const):
+        (WebCore::LinesClampValue::end const):
+        (WebCore::LinesClampValue::center const):
+        * rendering/style/RenderStyle.h:
+        (WebCore::RenderStyle::linesClamp const):
+        (WebCore::RenderStyle::hasLinesClamp const):
+        (WebCore::RenderStyle::setLinesClamp):
+        (WebCore::RenderStyle::initialLinesClamp):
+        (WebCore::RenderStyle::hasInlineColumnAxis const):
+        * rendering/style/StyleRareNonInheritedData.cpp:
+        (WebCore::StyleRareNonInheritedData::StyleRareNonInheritedData):
+        (WebCore::StyleRareNonInheritedData::operator== const):
+        * rendering/style/StyleRareNonInheritedData.h:
+        The front end style implementation of the new property.
+
+        * rendering/updating/RenderTreeBuilderMultiColumn.cpp:
+        (WebCore::RenderTreeBuilder::MultiColumn::createFragmentedFlow):
+        Make sure to build the correct renderer when lines clamp is set.
+
 2018-01-24  Basuke Suzuki  <Basuke.Suzuki@sony.com>
 
         [Curl] Allocate CurlSSLVerifier only when it is required.

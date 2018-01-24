@@ -102,6 +102,7 @@ public:
     Length perspectiveOriginY;
 
     LineClampValue lineClamp; // An Apple extension.
+    LinesClampValue linesClamp; // An Apple extension.
     
     IntSize initialLetter;
 

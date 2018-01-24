@@ -25,6 +25,7 @@
 #pragma once
 
 #include "RenderStyleConstants.h"
+#include <wtf/text/AtomicString.h>
 
 namespace WebCore {
     
@@ -62,5 +63,38 @@ private:
     ELineClampType m_type;
     int m_value;
 };
+
+class LinesClampValue {
+public:
+    LinesClampValue()
+    { }
+
+    LinesClampValue(const LineClampValue& start, const LineClampValue& end, const AtomicString& center)
+        : m_start(start)
+        , m_end(end)
+        , m_center(center)
+    { }
     
+    bool isNone() const { return m_start.isNone(); }
+
+    bool operator==(const LinesClampValue& o) const
+    {
+        return m_start == o.start() && m_end == o.end() && m_center == o.center();
+    }
+    
+    bool operator!=(const LinesClampValue& o) const
+    {
+        return !(*this == o);
+    }
+    
+    LineClampValue start() const { return m_start; }
+    LineClampValue end() const { return m_end; }
+    AtomicString center() const { return m_center; }
+
+private:
+    LineClampValue m_start;
+    LineClampValue m_end;
+    AtomicString m_center;
+};
+
 } // namespace WebCore

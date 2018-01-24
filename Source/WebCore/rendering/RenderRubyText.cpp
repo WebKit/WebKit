@@ -33,6 +33,7 @@
 
 #include "RenderRubyText.h"
 #include "RenderRubyRun.h"
+#include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
 
