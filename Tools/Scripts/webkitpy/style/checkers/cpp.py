@@ -1241,7 +1241,7 @@ class _EnumState(object):
 
 def regex_for_lambdas_and_blocks(line, line_number, file_state, error):
     cpp_result = search(r'\s\[.*?\]\s', line)
-    objc_result = search(r'(\s\^\s?\(.*?\)\s?|\^\s*\{|:\^\s?\(.*?\)\s\{)', line)
+    objc_result = search(r'(\s\^\s?\(.*?\)\s?|\^\s*\{|:\^(\s|\w+)?\(.*?\)\s\{)', line)
     if cpp_result:
         group = cpp_result.group()
         targ_error = None

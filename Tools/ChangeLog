@@ -1,3 +1,17 @@
+2018-01-24  David Kilzer  <ddkilzer@apple.com>
+
+        check-webkit-style reports false-positive whitespace/braces warning about blocks with return types as arguments in Objective-C
+        <https://webkit.org/b/182015>
+        <rdar://problem/36449728>
+
+        Reviewed by Tim Horton.
+
+        * Scripts/webkitpy/style/checkers/cpp.py:
+        (regex_for_lambdas_and_blocks): Update regex to include
+        optional return type for block argument in Objective-C.
+        * Scripts/webkitpy/style/checkers/cpp_unittest.py:
+        (WebKitStyleTest.test_braces): Add test.
+
 2018-01-24  Ms2ger  <Ms2ger@igalia.com>
 
         WPE-focused test gardening.

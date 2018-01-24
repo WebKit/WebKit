@@ -4566,6 +4566,10 @@ class WebKitStyleTest(CppStyleTestBase):
             '    Value1,\n'
             '    Value2\n'
             '};', '')
+        self.assert_multi_line_lint(
+            '[delegate setPolicyForURL:^_WKWebsitePolicy(NSURL *url) {\n'
+            '    return _WKWebsitePolicyDoIt;\n'
+            '}];', '', file_name='foo.mm')
 
         # 3. One-line control clauses should not use braces unless
         #    comments are included or a single statement spans multiple
