@@ -223,7 +223,6 @@ private:
     void didDestroyUserGestureToken(uint64_t);
 
     void shouldTerminate(bool& shouldTerminate);
-    void testIncomingSyncIPCMessageWhileWaitingForSyncReply(bool& handled);
 
     void createNewMessagePortChannel(const WebCore::MessagePortIdentifier& port1, const WebCore::MessagePortIdentifier& port2);
     void entangleLocalPortInThisProcessToRemote(const WebCore::MessagePortIdentifier& local, const WebCore::MessagePortIdentifier& remote);

@@ -42,9 +42,6 @@ WebConnectionToUIProcess::WebConnectionToUIProcess(WebProcess* process)
     : m_process(process)
 {
     m_process->addMessageReceiver(Messages::WebConnection::messageReceiverName(), *this);
-
-    // The WebProcess never processes incoming messages while waiting for a synchronous message reply as it would not be safe.
-    messageSenderConnection()->setShouldProcessIncomingMessagesWhileWaitingForSyncReply(false);
 }
 
 void WebConnectionToUIProcess::invalidate()

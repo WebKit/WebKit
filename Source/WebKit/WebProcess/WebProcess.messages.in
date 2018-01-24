@@ -103,8 +103,6 @@ messages -> WebProcess LegacyReceiver {
     MainThreadPing()
     BackgroundResponsivenessPing()
 
-    SyncIPCMessageWhileWaitingForSyncReplyForTesting() -> ()
-
 #if ENABLE(GAMEPAD)
     SetInitialGamepads(Vector<WebKit::GamepadData> gamepadDatas)
     GamepadConnected(WebKit::GamepadData gamepadData)

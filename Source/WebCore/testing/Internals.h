@@ -639,8 +639,6 @@ public:
     void pauseTimeline(AnimationTimeline&);
     void setTimelineCurrentTime(AnimationTimeline&, double);
 
-    void testIncomingSyncIPCMessageWhileWaitingForSyncReply();
-
 private:
     explicit Internals(Document&);
     Document* contextDocument() const;
