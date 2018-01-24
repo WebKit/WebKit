@@ -1,3 +1,19 @@
+2018-01-24  Chris Dumez  <cdumez@apple.com>
+
+        Layout Test http/tests/workers/service/basic-unregister-then-register-again-reuse.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=182030
+        <rdar://problem/36802933>
+
+        Reviewed by Youenn Fablet.
+
+        The service worker was only extending its lifetime using waitUntil() for 10 seconds. On the flakiness
+        dashboard, I see that the test sometimes takes more than 10 seconds to run on some bots, which can
+        cause the test to fail since the service worker is not keeping the registration alive anymore.
+        To address the issue, raise the lifetime to 30 seconds.
+
+        * http/tests/workers/service/resources/basic-unregister-then-register-again-reuse-worker.js:
+        (event.waitUntil.new.Promise):
+
 2018-01-24  Alex Christensen  <achristensen@webkit.org>
 
         Remove El Capitan test expectations.
