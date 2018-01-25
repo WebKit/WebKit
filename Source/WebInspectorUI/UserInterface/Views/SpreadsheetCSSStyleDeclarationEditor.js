@@ -74,7 +74,8 @@ WI.SpreadsheetCSSStyleDeclarationEditor = class SpreadsheetCSSStyleDeclarationEd
         let propertyViewPendingStartEditing = null;
         for (let index = 0; index < properties.length; index++) {
             let property = properties[index];
-            let propertyView = new WI.SpreadsheetStyleProperty(this, property, index);
+            let propertyView = new WI.SpreadsheetStyleProperty(this, property);
+            propertyView.index = index;
             this.element.append(propertyView.element);
             this._propertyViews.push(propertyView);
 
@@ -256,7 +257,9 @@ WI.SpreadsheetCSSStyleDeclarationEditor = class SpreadsheetCSSStyleDeclarationEd
     spreadsheetStylePropertyRemoved(propertyView)
     {
         this._propertyViews.remove(propertyView);
-        this.updateLayout();
+
+        for (let index = 0; index < this._propertyViews.length; index++)
+            this._propertyViews[index].index = index;
     }
 
     stylePropertyInlineSwatchActivated()

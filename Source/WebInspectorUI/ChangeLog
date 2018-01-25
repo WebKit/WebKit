@@ -1,3 +1,29 @@
+2018-01-24  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        REGRESSION (r226994): Web Inspector: Styles: Suggestions popover floats in top-left corner of Web Inspector after tabbing
+        https://bugs.webkit.org/show_bug.cgi?id=182027
+
+        Reviewed by Matt Baker.
+
+        r226994 added a layout of all properties on property removal. Layout caused
+        a property element to be removed from DOM right before dislaying the suggestion
+        popover, resulting in the popover being displayed at the top left corner.
+
+        * UserInterface/Views/SpreadsheetCSSStyleDeclarationEditor.js:
+        (WI.SpreadsheetCSSStyleDeclarationEditor.prototype.layout):
+        (WI.SpreadsheetCSSStyleDeclarationEditor.prototype.spreadsheetStylePropertyRemoved):
+        Only update property view indices when a property is removed.
+
+        * UserInterface/Views/SpreadsheetStyleProperty.js:
+        (WI.SpreadsheetStyleProperty):
+        (WI.SpreadsheetStyleProperty.prototype.set index):
+
+        * UserInterface/Views/SpreadsheetTextField.js:
+        (WI.SpreadsheetTextField.prototype._updateCompletions):
+        Checking this._element.parentNode to see if the element is attached to the DOM tree is unreliable,
+        since the element may have a non-null parent node that is detached from the DOM tree. To fix that,
+        we could traverse element's ancestors, but I used a concise isConnected property instead.
+
 2018-01-24  Joseph Pecoraro  <pecoraro@apple.com>
 
         ReferenceError:​ Can't find variable:​ DOMAgent (at ScriptSyntaxTree.js:​178:​22)​

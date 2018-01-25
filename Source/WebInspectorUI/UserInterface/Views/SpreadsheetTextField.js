@@ -365,8 +365,8 @@ WI.SpreadsheetTextField = class SpreadsheetTextField
             return;
         }
 
-        console.assert(this._element.parentNode, "_updateCompletions got called after SpreadsheetTextField was removed from the DOM");
-        if (!this._element.parentNode) {
+        console.assert(this._element.isConnected, "SpreadsheetTextField already removed from the DOM.");
+        if (!this._element.isConnected) {
             this._suggestionsView.hide();
             return;
         }
