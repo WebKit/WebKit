@@ -30,6 +30,7 @@
 #include "WebPageProxy.h"
 #include <WebCore/RefPtrCairo.h>
 #include <WebCore/WlUniquePtr.h>
+#include <gtk/gtk.h>
 #include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/Noncopyable.h>

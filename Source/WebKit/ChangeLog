@@ -1,3 +1,14 @@
+2018-01-25  Claudio Saavedra  <csaavedra@igalia.com>
+
+        [GTK] Fix build with touch events disabled
+
+        Unreviewed build fix.
+
+        Explicitly include gtk.h in files that were indirectly getting it
+        only when touch events were enabled.
+        * UIProcess/Automation/gtk/WebAutomationSessionGtk.cpp:
+        * UIProcess/gtk/WaylandCompositor.h:
+
 2018-01-25  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         WebDriver: test imported/selenium/py/test/selenium/webdriver/common/alerts_tests.py crashes in debug

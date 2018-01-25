@@ -28,6 +28,7 @@
 
 #include "WebAutomationSessionMacros.h"
 #include "WebPageProxy.h"
+#include <gtk/gtk.h>
 
 using namespace WebCore;
 
