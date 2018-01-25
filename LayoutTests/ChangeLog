@@ -1,5 +1,17 @@
 2018-01-25  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Cherry-pick r227421. rdar://problem/36837397
+
+    2018-01-23  Andy Estes  <aestes@apple.com>
+
+            Follow-up layout test fix after r227260.
+
+            I missed a few places that were still using version 3 API requests.
+
+            * http/tests/ssl/applepay/ApplePayRequestShippingContact.https.html:
+
+2018-01-25  Ryan Haddad  <ryanhaddad@apple.com>
+
         Cherry-pick r227260. rdar://problem/36837397
 
     2018-01-19  Andy Estes  <aestes@apple.com>

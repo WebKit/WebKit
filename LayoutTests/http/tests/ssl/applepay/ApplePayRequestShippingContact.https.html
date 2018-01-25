@@ -135,7 +135,7 @@ async function runTests() {
     await new Promise((resolve, reject) => {
         debug("Test setting a default shipping contact that only specifies an email address.");
 
-        var paymentRequest = new PaymentRequest([validPaymentMethod(3, { emailAddress: expectedEmailAddress })], validPaymentDetails(), { requestPayerEmail: true });
+        var paymentRequest = new PaymentRequest([validPaymentMethod(2, { emailAddress: expectedEmailAddress })], validPaymentDetails(), { requestPayerEmail: true });
 
         activateThen(() => {
             paymentRequest.show().then((response) => {
@@ -158,7 +158,7 @@ async function runTests() {
     await new Promise((resolve, reject) => {
         debug("Test setting a default shipping contact that only specifies a phone number.");
 
-        var paymentRequest = new PaymentRequest([validPaymentMethod(3, { phoneNumber: expectedPhoneNumber })], validPaymentDetails(), { requestPayerPhone: true });
+        var paymentRequest = new PaymentRequest([validPaymentMethod(2, { phoneNumber: expectedPhoneNumber })], validPaymentDetails(), { requestPayerPhone: true });
 
         activateThen(() => {
             paymentRequest.show().then((response) => {
@@ -181,7 +181,7 @@ async function runTests() {
     await new Promise((resolve, reject) => {
         debug("Test setting a default shipping contact that only specifies a name.");
 
-        var paymentRequest = new PaymentRequest([validPaymentMethod(3, { givenName: expectedGivenName, familyName: expectedFamilyName })], validPaymentDetails(), { requestPayerName: true });
+        var paymentRequest = new PaymentRequest([validPaymentMethod(2, { givenName: expectedGivenName, familyName: expectedFamilyName })], validPaymentDetails(), { requestPayerName: true });
 
         activateThen(() => {
             paymentRequest.show().then((response) => {
