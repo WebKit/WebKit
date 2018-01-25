@@ -4,6 +4,14 @@
 
         Unreviewed test gardening.
 
+        * platform/mac/TestExpectations:
+
+2018-01-25  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Work towards rdar://problem/36837397.
+
+        Unreviewed test gardening.
+
         * platform/mac-elcapitan-wk2/fast/dom/navigator-detached-no-crash-expected.txt:
         * platform/mac-wk1/fast/dom/navigator-detached-no-crash-expected.txt:
         * platform/mac/TestExpectations:

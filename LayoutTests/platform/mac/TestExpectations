@@ -1760,7 +1760,8 @@ webkit.org/b/181502 swipe/pushstate-with-manual-scrollrestoration.html [ Failure
 # It is enabled on systems that instead return GL_OUT_OF_MEMORY.
 [ ElCapitan Sierra ] fast/canvas/webgl/simulated-vertexAttrib0-invalid-indicies.html [ Skip ]
 
-inspector/canvas/requestContent-webgl2.html [ Skip ]
 animations/trigger-container-scroll-boundaries.html [ Skip ]
 animations/trigger-container-scroll-simple.html [ Skip ]
 fast/css/read-only-read-write-input-basics.html [ Skip ]
+fast/forms/color/input-appearance-color.html [ Skip ]
+inspector/canvas/requestContent-webgl2.html [ Skip ]
