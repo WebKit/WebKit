@@ -491,7 +491,7 @@ public:
     const RuntimeFlags& runtimeFlags() const { return m_runtimeFlags; }
 
 protected:
-    JS_EXPORT_PRIVATE explicit JSGlobalObject(VM&, Structure*, const GlobalObjectMethodTable* = 0);
+    JS_EXPORT_PRIVATE explicit JSGlobalObject(VM&, Structure*, const GlobalObjectMethodTable* = 0, RefPtr<ThreadLocalCache> = nullptr);
 
     JS_EXPORT_PRIVATE void finishCreation(VM&);
 
@@ -893,6 +893,8 @@ public:
     JSWrapperMap* wrapperMap() const { return m_wrapperMap.get(); }
     void setWrapperMap(JSWrapperMap* map) { m_wrapperMap = map; }
 #endif
+    
+    ThreadLocalCache& threadLocalCache() const { return *m_threadLocalCache.get(); }
 
 protected:
     struct GlobalPropertyInfo {
@@ -924,6 +926,8 @@ private:
 #if JSC_OBJC_API_ENABLED
     RetainPtr<JSWrapperMap> m_wrapperMap;
 #endif
+    
+    RefPtr<ThreadLocalCache> m_threadLocalCache;
 };
 
 JSGlobalObject* asGlobalObject(JSValue);

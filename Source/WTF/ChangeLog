@@ -1,3 +1,12 @@
+2018-01-20  Filip Pizlo  <fpizlo@apple.com>
+
+        JSC GC should support TLCs (thread local caches)
+        https://bugs.webkit.org/show_bug.cgi?id=181559
+
+        Reviewed by Mark Lam and Saam Barati.
+
+        * wtf/Bitmap.h: Just fixing a compile error.
+
 2018-01-23  Mark Lam  <mark.lam@apple.com>
 
         Update Poisoned pointers to take a Poison class instead of a uintptr_t&.

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,28 +23,42 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#include "config.h"
+#include "ThreadLocalCacheLayout.h"
 
 #include "BlockDirectory.h"
-#include "FreeListInlines.h"
-#include "VM.h"
 
 namespace JSC {
 
-template <typename Functor> inline void BlockDirectory::forEachBlock(const Functor& functor)
+ThreadLocalCacheLayout::ThreadLocalCacheLayout()
 {
-    m_live.forEachSetBit(
-        [&] (size_t index) {
-            functor(m_blocks[index]);
-        });
 }
 
-template <typename Functor> inline void BlockDirectory::forEachNotEmptyBlock(const Functor& functor)
+ThreadLocalCacheLayout::~ThreadLocalCacheLayout()
 {
-    m_markingNotEmpty.forEachSetBit(
-        [&] (size_t index) {
-            functor(m_blocks[index]);
-        });
+}
+
+void ThreadLocalCacheLayout::allocateOffset(BlockDirectory* directory)
+{
+    auto locker = holdLock(m_lock);
+    directory->m_tlcOffset = m_size;
+    m_size += sizeof(LocalAllocator);
+    m_directories.append(directory);
+}
+
+ThreadLocalCacheLayout::Snapshot ThreadLocalCacheLayout::snapshot()
+{
+    auto locker = holdLock(m_lock);
+    Snapshot result;
+    result.size = m_size;
+    result.directories = m_directories;
+    return result;
+}
+
+BlockDirectory* ThreadLocalCacheLayout::directory(unsigned offset)
+{
+    auto locker = holdLock(m_lock);
+    return m_directories[offset / sizeof(LocalAllocator)];
 }
 
 } // namespace JSC

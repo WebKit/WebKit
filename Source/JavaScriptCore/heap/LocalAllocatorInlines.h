@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,25 +25,16 @@
 
 #pragma once
 
-#include "BlockDirectory.h"
-#include "FreeListInlines.h"
-#include "VM.h"
+#include "LocalAllocator.h"
 
 namespace JSC {
 
-template <typename Functor> inline void BlockDirectory::forEachBlock(const Functor& functor)
+ALWAYS_INLINE void* LocalAllocator::allocate(GCDeferralContext* deferralContext, AllocationFailureMode failureMode)
 {
-    m_live.forEachSetBit(
-        [&] (size_t index) {
-            functor(m_blocks[index]);
-        });
-}
-
-template <typename Functor> inline void BlockDirectory::forEachNotEmptyBlock(const Functor& functor)
-{
-    m_markingNotEmpty.forEachSetBit(
-        [&] (size_t index) {
-            functor(m_blocks[index]);
+    return m_freeList.allocate(
+        [&] () -> HeapCell* {
+            sanitizeStackForVM(m_directory->heap()->vm());
+            return static_cast<HeapCell*>(allocateSlowCase(deferralContext, failureMode));
         });
 }
 

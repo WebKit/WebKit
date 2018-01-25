@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -40,6 +40,7 @@ void ValueRep::addUsedRegistersTo(RegisterSet& set) const
     case ColdAny:
     case LateColdAny:
     case SomeRegister:
+    case SomeRegisterWithClobber:
     case SomeEarlyRegister:
     case Constant:
         return;
@@ -71,6 +72,7 @@ void ValueRep::dump(PrintStream& out) const
     case ColdAny:
     case LateColdAny:
     case SomeRegister:
+    case SomeRegisterWithClobber:
     case SomeEarlyRegister:
         return;
     case LateRegister:
@@ -174,6 +176,9 @@ void printInternal(PrintStream& out, ValueRep::Kind kind)
         return;
     case ValueRep::SomeRegister:
         out.print("SomeRegister");
+        return;
+    case ValueRep::SomeRegisterWithClobber:
+        out.print("SomeRegisterWithClobber");
         return;
     case ValueRep::SomeEarlyRegister:
         out.print("SomeEarlyRegister");

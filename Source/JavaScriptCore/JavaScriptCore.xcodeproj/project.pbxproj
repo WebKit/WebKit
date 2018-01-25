@@ -389,6 +389,13 @@
 		0F725CAA1C503DED00AD943A /* B3PureCSE.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F725CA61C503DED00AD943A /* B3PureCSE.h */; };
 		0F725CB01C506D3B00AD943A /* B3FoldPathConstants.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F725CAE1C506D3B00AD943A /* B3FoldPathConstants.h */; };
 		0F74B93B1F89614800B935D3 /* PrototypeKey.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F74B93A1F89614500B935D3 /* PrototypeKey.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0F75A05E200D25F60038E2CF /* ThreadLocalCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F75A055200D25EF0038E2CF /* ThreadLocalCache.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0F75A060200D260B0038E2CF /* LocalAllocatorInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F75A05A200D25F00038E2CF /* LocalAllocatorInlines.h */; };
+		0F75A061200D26180038E2CF /* LocalAllocator.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F75A057200D25F00038E2CF /* LocalAllocator.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0F75A062200D261D0038E2CF /* AllocatorInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F75A05D200D25F10038E2CF /* AllocatorInlines.h */; };
+		0F75A063200D261F0038E2CF /* Allocator.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F75A054200D25EF0038E2CF /* Allocator.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0F75A064200D26280038E2CF /* ThreadLocalCacheLayout.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F75A05C200D25F10038E2CF /* ThreadLocalCacheLayout.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0F75A0662013E4F10038E2CF /* JITAllocator.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F75A0652013E4EF0038E2CF /* JITAllocator.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F766D2C15A8CC3A008F363E /* JITStubRoutineSet.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F766D2A15A8CC34008F363E /* JITStubRoutineSet.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F766D3015A8DCE2008F363E /* GCAwareJITStubRoutine.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F766D2E15A8DCDD008F363E /* GCAwareJITStubRoutine.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F766D3115AA8112008F363E /* JITStubRoutine.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F766D1C15A5028D008F363E /* JITStubRoutine.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -2419,6 +2426,17 @@
 		0F725CAD1C506D3B00AD943A /* B3FoldPathConstants.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = B3FoldPathConstants.cpp; path = b3/B3FoldPathConstants.cpp; sourceTree = "<group>"; };
 		0F725CAE1C506D3B00AD943A /* B3FoldPathConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = B3FoldPathConstants.h; path = b3/B3FoldPathConstants.h; sourceTree = "<group>"; };
 		0F74B93A1F89614500B935D3 /* PrototypeKey.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrototypeKey.h; sourceTree = "<group>"; };
+		0F75A054200D25EF0038E2CF /* Allocator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Allocator.h; sourceTree = "<group>"; };
+		0F75A055200D25EF0038E2CF /* ThreadLocalCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ThreadLocalCache.h; sourceTree = "<group>"; };
+		0F75A056200D25EF0038E2CF /* ThreadLocalCacheInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ThreadLocalCacheInlines.h; sourceTree = "<group>"; };
+		0F75A057200D25F00038E2CF /* LocalAllocator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LocalAllocator.h; sourceTree = "<group>"; };
+		0F75A058200D25F00038E2CF /* ThreadLocalCache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ThreadLocalCache.cpp; sourceTree = "<group>"; };
+		0F75A059200D25F00038E2CF /* LocalAllocator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LocalAllocator.cpp; sourceTree = "<group>"; };
+		0F75A05A200D25F00038E2CF /* LocalAllocatorInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LocalAllocatorInlines.h; sourceTree = "<group>"; };
+		0F75A05B200D25F10038E2CF /* ThreadLocalCacheLayout.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ThreadLocalCacheLayout.cpp; sourceTree = "<group>"; };
+		0F75A05C200D25F10038E2CF /* ThreadLocalCacheLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ThreadLocalCacheLayout.h; sourceTree = "<group>"; };
+		0F75A05D200D25F10038E2CF /* AllocatorInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AllocatorInlines.h; sourceTree = "<group>"; };
+		0F75A0652013E4EF0038E2CF /* JITAllocator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JITAllocator.h; sourceTree = "<group>"; };
 		0F766D1C15A5028D008F363E /* JITStubRoutine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JITStubRoutine.h; sourceTree = "<group>"; };
 		0F766D2615A8CC1B008F363E /* JITStubRoutine.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JITStubRoutine.cpp; sourceTree = "<group>"; };
 		0F766D2915A8CC34008F363E /* JITStubRoutineSet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JITStubRoutineSet.cpp; sourceTree = "<group>"; };
@@ -5447,6 +5465,7 @@
 				1429D92E0ED22D7000B89619 /* JIT.h */,
 				FE1220251BE7F5640039E6F2 /* JITAddGenerator.cpp */,
 				FE1220261BE7F5640039E6F2 /* JITAddGenerator.h */,
+				0F75A0652013E4EF0038E2CF /* JITAllocator.h */,
 				86A90ECF0EE7D51F00AB350D /* JITArithmetic.cpp */,
 				A75706DD118A2BCF0057F88F /* JITArithmetic32_64.cpp */,
 				FE3A06AD1C10CB6F00390FDD /* JITBitAndGenerator.cpp */,
@@ -5540,6 +5559,16 @@
 		142E312A134FF0A600AFADB5 /* heap */ = {
 			isa = PBXGroup;
 			children = (
+				0F75A054200D25EF0038E2CF /* Allocator.h */,
+				0F75A05D200D25F10038E2CF /* AllocatorInlines.h */,
+				0F75A059200D25F00038E2CF /* LocalAllocator.cpp */,
+				0F75A057200D25F00038E2CF /* LocalAllocator.h */,
+				0F75A05A200D25F00038E2CF /* LocalAllocatorInlines.h */,
+				0F75A058200D25F00038E2CF /* ThreadLocalCache.cpp */,
+				0F75A055200D25EF0038E2CF /* ThreadLocalCache.h */,
+				0F75A056200D25EF0038E2CF /* ThreadLocalCacheInlines.h */,
+				0F75A05B200D25F10038E2CF /* ThreadLocalCacheLayout.cpp */,
+				0F75A05C200D25F10038E2CF /* ThreadLocalCacheLayout.h */,
 				0FEC3C501F33A41600F59B6C /* AlignedMemoryAllocator.cpp */,
 				0FEC3C511F33A41600F59B6C /* AlignedMemoryAllocator.h */,
 				0FA7620A1DB959F600B7A2FD /* AllocatingScope.h */,
@@ -8048,6 +8077,7 @@
 				0F2AC5711E8EE4540001EE3F /* AirFormTable.h in Headers */,
 				0FEC85771BDACDC70080FF74 /* AirFrequentedBlock.h in Headers */,
 				0FEC85791BDACDC70080FF74 /* AirGenerate.h in Headers */,
+				0F75A061200D26180038E2CF /* LocalAllocator.h in Headers */,
 				0FEC857A1BDACDC70080FF74 /* AirGenerationContext.h in Headers */,
 				0FEC857C1BDACDC70080FF74 /* AirHandleCalleeSaves.h in Headers */,
 				0FEC857E1BDACDC70080FF74 /* AirInsertionSet.h in Headers */,
@@ -8213,6 +8243,7 @@
 				0F6B8ADD1C4EFAC300969052 /* B3SSACalculator.h in Headers */,
 				0F33FCF81C136E2500323F67 /* B3StackmapGenerationParams.h in Headers */,
 				0FEC85311BDACDAC0080FF74 /* B3StackmapSpecial.h in Headers */,
+				0F75A064200D26280038E2CF /* ThreadLocalCacheLayout.h in Headers */,
 				0F338DF21BE93AD10013C88F /* B3StackmapValue.h in Headers */,
 				0F9495881C57F47500413A48 /* B3StackSlot.h in Headers */,
 				0FEC85361BDACDAC0080FF74 /* B3SuccessorCollection.h in Headers */,
@@ -8382,6 +8413,7 @@
 				0F1E3A461534CBAF000F9456 /* DFGArgumentPosition.h in Headers */,
 				0F2DD8121AB3D8BE00BBB8E8 /* DFGArgumentsEliminationPhase.h in Headers */,
 				0F2DD8141AB3D8BE00BBB8E8 /* DFGArgumentsUtilities.h in Headers */,
+				0F75A063200D261F0038E2CF /* Allocator.h in Headers */,
 				0F485322187750560083B687 /* DFGArithMode.h in Headers */,
 				0F05C3B41683CF9200BAF45B /* DFGArrayifySlowPathGenerator.h in Headers */,
 				0F63948515E4811B006A597C /* DFGArrayMode.h in Headers */,
@@ -8662,6 +8694,7 @@
 				FEA0C4031CDD7D1D00481991 /* FunctionWhitelist.h in Headers */,
 				2AACE63D18CA5A0300ED0191 /* GCActivityCallback.h in Headers */,
 				BCBE2CAE14E985AA000593AD /* GCAssertions.h in Headers */,
+				0F75A060200D260B0038E2CF /* LocalAllocatorInlines.h in Headers */,
 				0F766D3015A8DCE2008F363E /* GCAwareJITStubRoutine.h in Headers */,
 				0FD0E5EA1E43D34D0006AB08 /* GCConductor.h in Headers */,
 				0FB4767E1D99AEA9008EA6CB /* GCDeferralContext.h in Headers */,
@@ -8746,6 +8779,7 @@
 				0FB7F39A15ED8E4600F167B2 /* IndexingHeaderInlines.h in Headers */,
 				0FB7F39B15ED8E4600F167B2 /* IndexingType.h in Headers */,
 				14386A791DD6989C008652C4 /* IndirectEvalExecutable.h in Headers */,
+				0F75A062200D261D0038E2CF /* AllocatorInlines.h in Headers */,
 				0FBF92B91FD76FFF00AC28A8 /* InferredStructure.h in Headers */,
 				0FBF92BA1FD7700400AC28A8 /* InferredStructureWatchpoint.h in Headers */,
 				0F0A75231B94BFA900110660 /* InferredType.h in Headers */,
@@ -8931,6 +8965,7 @@
 				E33F50791B84225700413856 /* JSInternalPromiseConstructor.h in Headers */,
 				E33F50871B8449EF00413856 /* JSInternalPromiseConstructor.lut.h in Headers */,
 				E33F50851B8437A000413856 /* JSInternalPromiseDeferred.h in Headers */,
+				0F75A05E200D25F60038E2CF /* ThreadLocalCache.h in Headers */,
 				E33F50751B8421C000413856 /* JSInternalPromisePrototype.h in Headers */,
 				A503FA1E188E0FB000110F14 /* JSJavaScriptCallFramePrototype.h in Headers */,
 				7013CA8C1B491A9400CAE613 /* JSJob.h in Headers */,
@@ -9430,6 +9465,7 @@
 				14E84FA214EE1ACC00D6D5D4 /* WeakImpl.h in Headers */,
 				14BE7D3317135CF400D1807A /* WeakInlines.h in Headers */,
 				A7CA3AE417DA41AE006538AF /* WeakMapConstructor.h in Headers */,
+				0F75A0662013E4F10038E2CF /* JITAllocator.h in Headers */,
 				E3A32BC71FC83147007D7E76 /* WeakMapImpl.h in Headers */,
 				E393ADD81FE702D00022D681 /* WeakMapImplInlines.h in Headers */,
 				A7CA3AE617DA41AE006538AF /* WeakMapPrototype.h in Headers */,
