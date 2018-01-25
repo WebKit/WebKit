@@ -107,7 +107,7 @@ struct StrokeSource {
 };
 
 struct ShadowState {
-    explicit ShadowState(const GraphicsContextState&);
+    WEBCORE_EXPORT explicit ShadowState(const GraphicsContextState&);
 
     bool isVisible() const;
     bool isRequired(PlatformContextCairo&) const;

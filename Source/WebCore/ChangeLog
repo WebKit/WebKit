@@ -1,3 +1,16 @@
+2018-01-24  Christopher Reid  <chris.reid@sony.com>
+
+        Linker error in ShareableBitmapCairo.cpp  undefined reference to WebCore::Cairo::ShadowState::ShadowState
+        https://bugs.webkit.org/show_bug.cgi?id=182060
+
+        Reviewed by Žan Doberšek.
+
+        No new tests, no change in behavior.
+
+        Added exports to WebCore::Cairo::ShadowState::ShadowState.
+
+        * platform/graphics/cairo/CairoOperations.h:
+
 2018-01-24  Basuke Suzuki  <Basuke.Suzuki@sony.com>
 
         [Curl] Implement didSendData client callback.
