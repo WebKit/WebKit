@@ -1,3 +1,16 @@
+2018-01-25  Mark Lam  <mark.lam@apple.com>
+
+        Rename some local vars from type to typedArrayType for greater clarity.
+        https://bugs.webkit.org/show_bug.cgi?id=182148
+        <rdar://problem/36882310>
+
+        Reviewed by Saam Barati.
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileNewTypedArrayWithSize):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNewTypedArray):
+
 2018-01-25  Filip Pizlo  <fpizlo@apple.com>
 
         JSC GC should support TLCs (thread local caches)

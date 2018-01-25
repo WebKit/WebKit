@@ -5582,12 +5582,12 @@ private:
 
     void compileNewTypedArray()
     {
-        TypedArrayType type = m_node->typedArrayType();
+        TypedArrayType typedArrayType = m_node->typedArrayType();
         JSGlobalObject* globalObject = m_graph.globalObjectFor(m_node->origin.semantic);
         
         switch (m_node->child1().useKind()) {
         case Int32Use: {
-            RegisteredStructure structure = m_graph.registerStructure(globalObject->typedArrayStructureConcurrently(type));
+            RegisteredStructure structure = m_graph.registerStructure(globalObject->typedArrayStructureConcurrently(typedArrayType));
 
             LValue size = lowInt32(m_node->child1());
 
@@ -5609,8 +5609,8 @@ private:
             m_out.appendTo(nonZeroCase, slowCase);
 
             LValue byteSize =
-                m_out.shl(m_out.zeroExtPtr(size), m_out.constInt32(logElementSize(type)));
-            if (elementSize(type) < 8) {
+                m_out.shl(m_out.zeroExtPtr(size), m_out.constInt32(logElementSize(typedArrayType)));
+            if (elementSize(typedArrayType) < 8) {
                 byteSize = m_out.bitAnd(
                     m_out.add(byteSize, m_out.constIntPtr(7)),
                     m_out.constIntPtr(~static_cast<intptr_t>(7)));
@@ -5647,7 +5647,7 @@ private:
             LValue slowResultValue = lazySlowPath(
                 [=, &vm] (const Vector<Location>& locations) -> RefPtr<LazySlowPath::Generator> {
                     return createLazyCallGenerator(vm,
-                        operationNewTypedArrayWithSizeForType(type), locations[0].directGPR(),
+                        operationNewTypedArrayWithSizeForType(typedArrayType), locations[0].directGPR(),
                         CCallHelpers::TrustedImmPtr(structure.get()), locations[1].directGPR(),
                         locations[2].directGPR());
                 },
@@ -5664,8 +5664,8 @@ private:
             LValue argument = lowJSValue(m_node->child1());
 
             LValue result = vmCall(
-                pointerType(), m_out.operation(operationNewTypedArrayWithOneArgumentForType(type)),
-                m_callFrame, weakPointer(globalObject->typedArrayStructureConcurrently(type)), argument);
+                pointerType(), m_out.operation(operationNewTypedArrayWithOneArgumentForType(typedArrayType)),
+                m_callFrame, weakPointer(globalObject->typedArrayStructureConcurrently(typedArrayType)), argument);
 
             setJSValue(result);
             return;

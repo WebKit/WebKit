@@ -8982,8 +8982,8 @@ void SpeculativeJIT::compileNewStringObject(Node* node)
 void SpeculativeJIT::compileNewTypedArrayWithSize(Node* node)
 {
     JSGlobalObject* globalObject = m_jit.graph().globalObjectFor(node->origin.semantic);
-    TypedArrayType type = node->typedArrayType();
-    RegisteredStructure structure = m_jit.graph().registerStructure(globalObject->typedArrayStructureConcurrently(type));
+    auto typedArrayType = node->typedArrayType();
+    RegisteredStructure structure = m_jit.graph().registerStructure(globalObject->typedArrayStructureConcurrently(typedArrayType));
     RELEASE_ASSERT(structure.get());
     
     SpeculateInt32Operand size(this, node->child1());
@@ -9009,8 +9009,8 @@ void SpeculativeJIT::compileNewTypedArrayWithSize(Node* node)
     slowCases.append(m_jit.branchTest32(MacroAssembler::Zero, sizeGPR));
     
     m_jit.move(sizeGPR, scratchGPR);
-    m_jit.lshift32(TrustedImm32(logElementSize(type)), scratchGPR);
-    if (elementSize(type) < 8) {
+    m_jit.lshift32(TrustedImm32(logElementSize(typedArrayType)), scratchGPR);
+    if (elementSize(typedArrayType) < 8) {
         m_jit.add32(TrustedImm32(7), scratchGPR);
         m_jit.and32(TrustedImm32(~7), scratchGPR);
     }
@@ -9020,12 +9020,12 @@ void SpeculativeJIT::compileNewTypedArrayWithSize(Node* node)
     
     MacroAssembler::Jump done = m_jit.branchTest32(MacroAssembler::Zero, sizeGPR);
     m_jit.move(sizeGPR, scratchGPR);
-    if (elementSize(type) != 4) {
-        if (elementSize(type) > 4)
-            m_jit.lshift32(TrustedImm32(logElementSize(type) - 2), scratchGPR);
+    if (elementSize(typedArrayType) != 4) {
+        if (elementSize(typedArrayType) > 4)
+            m_jit.lshift32(TrustedImm32(logElementSize(typedArrayType) - 2), scratchGPR);
         else {
-            if (elementSize(type) > 1)
-                m_jit.lshift32(TrustedImm32(logElementSize(type)), scratchGPR);
+            if (elementSize(typedArrayType) > 1)
+                m_jit.lshift32(TrustedImm32(logElementSize(typedArrayType)), scratchGPR);
             m_jit.add32(TrustedImm32(3), scratchGPR);
             m_jit.urshift32(TrustedImm32(2), scratchGPR);
         }
@@ -9057,7 +9057,7 @@ void SpeculativeJIT::compileNewTypedArrayWithSize(Node* node)
     m_jit.mutatorFence(*m_jit.vm());
     
     addSlowPathGenerator(slowPathCall(
-        slowCases, this, operationNewTypedArrayWithSizeForType(type),
+        slowCases, this, operationNewTypedArrayWithSizeForType(typedArrayType),
         resultGPR, structure, sizeGPR, storageGPR));
     
     cellResult(resultGPR, node);
