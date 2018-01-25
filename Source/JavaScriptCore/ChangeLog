@@ -1,3 +1,18 @@
+2018-01-25  Alejandro G. Castro  <alex@igalia.com>
+
+        undefined reference to 'JSC::B3::BasicBlock::fallThrough() const
+        https://bugs.webkit.org/show_bug.cgi?id=180637
+
+        Reviewed by Michael Catanzaro.
+
+        We need to make sure the implementation of the inline functions is
+        compiled when we compile the code using the function, now that the
+        compilation is divided, or we could end up with undefined symbols
+        when the declaration is not inlined, at least with some compilers
+        and optimizations enabled -O2.
+
+        * b3/B3SwitchValue.cpp: replace the include.
+
 2018-01-20  Filip Pizlo  <fpizlo@apple.com>
 
         JSC GC should support TLCs (thread local caches)
