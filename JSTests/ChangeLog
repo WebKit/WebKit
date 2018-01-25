@@ -1,3 +1,19 @@
+2018-01-24  Ryan Haddad  <ryanhaddad@apple.com>
+
+        JSC test gardening for <rdar://problem/36827460>.
+
+        * stress/async-generator-assertion.js:
+        * stress/async-iteration-async-from-sync.js:
+        * stress/async-iteration-basic.js:
+        * stress/async-iteration-evaluation.js:
+        * stress/async-iteration-for-await-of-syntax.js:
+        * stress/async-iteration-for-await-of.js:
+        (assert):
+        * stress/async-iteration-syntax.js:
+        * stress/async-iteration-yield-promise.js:
+        * stress/async-iteration-yield-star-interface.js:
+        * stress/async-iteration-yield-star.js:
+
 2018-01-22  Jason Marcell  <jmarcell@apple.com>
 
         Cherry-pick r227341. rdar://problem/36746038
