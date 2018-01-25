@@ -260,6 +260,10 @@ size_t CurlRequest::willSendData(char* buffer, size_t blockSize, size_t numberOf
         return CURL_READFUNC_ABORT;
     }
 
+    callClient([this, totalReadSize = m_formDataStream.totalReadSize(), totalSize = m_formDataStream.totalSize()](CurlRequestClient& client) {
+        client.curlDidSendData(totalReadSize, totalSize);
+    });
+
     return *sendBytes;
 }
 

@@ -38,6 +38,7 @@ public:
     virtual void ref() = 0;
     virtual void deref() = 0;
 
+    virtual void curlDidSendData(unsigned long long bytesSent, unsigned long long totalBytesToBeSent) = 0;
     virtual void curlDidReceiveResponse(const CurlResponse&) = 0;
     virtual void curlDidReceiveBuffer(Ref<SharedBuffer>&&) = 0;
     virtual void curlDidComplete() = 0;

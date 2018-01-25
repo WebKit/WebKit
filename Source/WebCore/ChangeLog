@@ -1,3 +1,20 @@
+2018-01-24  Basuke Suzuki  <Basuke.Suzuki@sony.com>
+
+        [Curl] Implement didSendData client callback.
+        https://bugs.webkit.org/show_bug.cgi?id=182063
+
+        Reviewed by Alex Christensen.
+
+        No new tests (covered by existing tests).
+
+        * platform/network/curl/CurlDownload.h:
+        * platform/network/curl/CurlRequest.cpp:
+        (WebCore::CurlRequest::willSendData):
+        * platform/network/curl/CurlRequestClient.h:
+        * platform/network/curl/ResourceHandleCurlDelegate.cpp:
+        (WebCore::ResourceHandleCurlDelegate::curlDidSendData):
+        * platform/network/curl/ResourceHandleCurlDelegate.h:
+
 2018-01-24  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthN] Implement PublicKeyCredential’s [[DiscoverFromExternalSource]] with a dummy authenticator

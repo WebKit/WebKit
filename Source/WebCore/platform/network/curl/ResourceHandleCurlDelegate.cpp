@@ -180,6 +180,16 @@ bool ResourceHandleCurlDelegate::cancelledOrClientless()
     return !m_handle->client();
 }
 
+void ResourceHandleCurlDelegate::curlDidSendData(unsigned long long bytesSent, unsigned long long totalBytesToBeSent)
+{
+    ASSERT(isMainThread());
+
+    if (cancelledOrClientless())
+        return;
+
+    m_handle->client()->didSendData(m_handle, bytesSent, totalBytesToBeSent);
+}
+
 void ResourceHandleCurlDelegate::curlDidReceiveResponse(const CurlResponse& receivedResponse)
 {
     ASSERT(isMainThread());
