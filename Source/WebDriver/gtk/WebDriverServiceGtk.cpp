@@ -81,9 +81,9 @@ bool WebDriverService::platformValidateCapability(const String& name, const RefP
     return true;
 }
 
-std::optional<String> WebDriverService::platformMatchCapability(const String&, const RefPtr<JSON::Value>&) const
+bool WebDriverService::platformMatchCapability(const String&, const RefPtr<JSON::Value>&) const
 {
-    return std::nullopt;
+    return true;
 }
 
 void WebDriverService::platformParseCapabilities(const JSON::Object& matchedCapabilities, Capabilities& capabilities) const

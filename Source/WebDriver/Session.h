@@ -46,7 +46,7 @@ public:
     }
     ~Session();
 
-    const String& id() const { return m_id; }
+    const String& id() const;
     const Capabilities& capabilities() const;
     Seconds scriptTimeout() const  { return m_scriptTimeout; }
     Seconds pageLoadTimeout() const { return m_pageLoadTimeout; }
@@ -181,7 +181,6 @@ private:
     void performKeyboardInteractions(Vector<KeyboardInteraction>&&, Function<void (CommandResult&&)>&&);
 
     std::unique_ptr<SessionHost> m_host;
-    String m_id;
     Seconds m_scriptTimeout;
     Seconds m_pageLoadTimeout;
     Seconds m_implicitWaitTimeout;

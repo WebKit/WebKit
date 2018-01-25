@@ -111,14 +111,16 @@ private:
     void takeElementScreenshot(RefPtr<JSON::Object>&&, Function<void (CommandResult&&)>&&);
 
     static Capabilities platformCapabilities();
-    RefPtr<JSON::Object> processCapabilities(const JSON::Object&, Function<void (CommandResult&&)>&) const;
+    Vector<Capabilities> processCapabilities(const JSON::Object&, Function<void (CommandResult&&)>&) const;
     RefPtr<JSON::Object> validatedCapabilities(const JSON::Object&) const;
     RefPtr<JSON::Object> mergeCapabilities(const JSON::Object&, const JSON::Object&) const;
-    RefPtr<JSON::Object> matchCapabilities(const JSON::Object&, std::optional<String>&) const;
+    RefPtr<JSON::Object> matchCapabilities(const JSON::Object&) const;
     bool platformValidateCapability(const String&, const RefPtr<JSON::Value>&) const;
-    std::optional<String> platformMatchCapability(const String&, const RefPtr<JSON::Value>&) const;
+    bool platformMatchCapability(const String&, const RefPtr<JSON::Value>&) const;
     void parseCapabilities(const JSON::Object& desiredCapabilities, Capabilities&) const;
     void platformParseCapabilities(const JSON::Object& desiredCapabilities, Capabilities&) const;
+    void connectToBrowser(Vector<Capabilities>&&, Function<void (CommandResult&&)>&&);
+    void createSession(Vector<Capabilities>&&, std::unique_ptr<SessionHost>&&, Function<void (CommandResult&&)>&&);
     bool findSessionOrCompleteWithError(JSON::Object&, Function<void (CommandResult&&)>&);
 
     void handleRequest(HTTPRequestHandler::Request&&, Function<void (HTTPRequestHandler::Response&&)>&& replyHandler) override;

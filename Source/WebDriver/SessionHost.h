@@ -51,10 +51,11 @@ public:
 
     bool isConnected() const;
 
+    const String& sessionID() const { return m_sessionID; }
     const Capabilities& capabilities() const { return m_capabilities; }
 
     void connectToBrowser(Function<void (std::optional<String> error)>&&);
-    void startAutomationSession(const String& sessionID, Function<void (std::optional<String>)>&&);
+    void startAutomationSession(Function<void (bool, std::optional<String>)>&&);
 
     struct CommandResponse {
         RefPtr<JSON::Object> responseObject;
@@ -78,7 +79,7 @@ private:
     static const GDBusInterfaceVTable s_interfaceVTable;
     void launchBrowser(Function<void (std::optional<String> error)>&&);
     void connectToBrowser(std::unique_ptr<ConnectToBrowserAsyncData>&&);
-    std::optional<String> matchCapabilities(GVariant*);
+    bool matchCapabilities(GVariant*);
     void setupConnection(GRefPtr<GDBusConnection>&&);
     void setTargetList(uint64_t connectionID, Vector<Target>&&);
     void sendMessageToFrontend(uint64_t connectionID, uint64_t targetID, const char* message);
@@ -86,13 +87,14 @@ private:
 
     Capabilities m_capabilities;
 
+    String m_sessionID;
     uint64_t m_connectionID { 0 };
     Target m_target;
 
     HashMap<long, Function<void (CommandResponse&&)>> m_commandRequests;
 
 #if USE(GLIB)
-    Function<void (std::optional<String>)> m_startSessionCompletionHandler;
+    Function<void (bool, std::optional<String>)> m_startSessionCompletionHandler;
     GRefPtr<GSubprocess> m_browser;
     GRefPtr<GDBusConnection> m_dbusConnection;
     GRefPtr<GCancellable> m_cancellable;

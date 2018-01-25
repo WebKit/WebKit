@@ -1,5 +1,50 @@
 2018-01-25  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        WebDriver: test imported/w3c/webdriver/tests/sessions/new_session/merge.py::test_merge_browserName fails
+        https://bugs.webkit.org/show_bug.cgi?id=181985
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        The problem is that we are considering a failure when the browser name doesn't match the capabilities, instead
+        of trying with the next merged capabilities. This is happening because when processing capabilities, we only
+        match the ones that we know without having to launch the browser. Browser name and version are provided by the
+        browser during the session initialization. This patch reworks the session creation to make it possible to try
+        with the next merged capabilities when matching fails after the browser is launched.
+
+        * Session.cpp:
+        (WebDriver::Session::Session): Initialize timeouts from capabilities, because now we have the final capabilities here.
+        (WebDriver::Session::id const): Return the session ID from the SessionHost, since it's now created there.
+        (WebDriver::Session::createTopLevelBrowsingContext): Do not start the session, it has already been started a
+        this point.
+        (WebDriver::Session::createElement): Use id() instead of m_id.
+        * Session.h:
+        * SessionHost.h:
+        (WebDriver::SessionHost::sessionID const): Return the session ID.
+        * WebDriverService.cpp:
+        (WebDriver::WebDriverService::matchCapabilities const): Remove the error handling, and return a boolean instead,
+        since not mathing is not an error.
+        (WebDriver::WebDriverService::processCapabilities const): Return a list of matched capabilities, instead of the
+        JSON object corresponding to the first match.
+        (WebDriver::WebDriverService::newSession): Use helper connectToBrowser().
+        (WebDriver::WebDriverService::connectToBrowser): Create a session host for the next merged capabilities and
+        connect to the browser.
+        (WebDriver::WebDriverService::createSession): Start a new automation session. If capabilities didn't match,
+        start the process again calling connectToBrowser(), otherwise create the new session and top level.
+        * WebDriverService.h:
+        * glib/SessionHostGlib.cpp:
+        (WebDriver::matchBrowserOptions): Helper to check browser options.
+        (WebDriver::SessionHost::matchCapabilities): Use matchBrowserOptions() and return true or false instead of an
+        optional error message.
+        (WebDriver::SessionHost::startAutomationSession): Create the session ID here and notify the caller in case
+        capabilities didn't match.
+        (WebDriver::SessionHost::setTargetList): Notify that capabilities did match.
+        * gtk/WebDriverServiceGtk.cpp:
+        (WebDriver::WebDriverService::platformMatchCapability const): Make it return bool.
+        * wpe/WebDriverServiceWPE.cpp:
+        (WebDriver::WebDriverService::platformMatchCapability const): Ditto.
+
+2018-01-25  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         WebDriver: test imported/w3c/webdriver/tests/sessions/new_session/merge.py::test_merge_platformName fails
         https://bugs.webkit.org/show_bug.cgi?id=181984
 

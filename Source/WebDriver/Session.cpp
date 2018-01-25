@@ -31,7 +31,6 @@
 #include "WebDriverAtoms.h"
 #include <wtf/CryptographicallyRandomNumber.h>
 #include <wtf/HexNumber.h>
-#include <wtf/UUID.h>
 
 namespace WebDriver {
 
@@ -48,15 +47,21 @@ static const Seconds defaultImplicitWaitTimeout = 0_s;
 
 Session::Session(std::unique_ptr<SessionHost>&& host)
     : m_host(WTFMove(host))
-    , m_id(createCanonicalUUIDString())
     , m_scriptTimeout(defaultScriptTimeout)
     , m_pageLoadTimeout(defaultPageLoadTimeout)
     , m_implicitWaitTimeout(defaultImplicitWaitTimeout)
 {
+    if (capabilities().timeouts)
+        setTimeouts(capabilities().timeouts.value(), [](CommandResult&&) { });
 }
 
 Session::~Session()
 {
+}
+
+const String& Session::id() const
+{
+    return m_host->sessionID();
 }
 
 const Capabilities& Session::capabilities() const
@@ -162,24 +167,18 @@ std::optional<String> Session::pageLoadStrategyString() const
 void Session::createTopLevelBrowsingContext(Function<void (CommandResult&&)>&& completionHandler)
 {
     ASSERT(!m_toplevelBrowsingContext.value());
-    m_host->startAutomationSession(m_id, [this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)](std::optional<String> errorMessage) mutable {
-        if (errorMessage) {
-            completionHandler(CommandResult::fail(CommandResult::ErrorCode::UnknownError, errorMessage.value()));
+    m_host->sendCommandToBackend(ASCIILiteral("createBrowsingContext"), nullptr, [this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) mutable {
+        if (response.isError || !response.responseObject) {
+            completionHandler(CommandResult::fail(WTFMove(response.responseObject)));
             return;
         }
-        m_host->sendCommandToBackend(ASCIILiteral("createBrowsingContext"), nullptr, [this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)](SessionHost::CommandResponse&& response) mutable {
-            if (response.isError || !response.responseObject) {
-                completionHandler(CommandResult::fail(WTFMove(response.responseObject)));
-                return;
-            }
-            String handle;
-            if (!response.responseObject->getString(ASCIILiteral("handle"), handle)) {
-                completionHandler(CommandResult::fail(CommandResult::ErrorCode::UnknownError));
-                return;
-            }
-            switchToTopLevelBrowsingContext(handle);
-            completionHandler(CommandResult::success());
-        });
+        String handle;
+        if (!response.responseObject->getString(ASCIILiteral("handle"), handle)) {
+            completionHandler(CommandResult::fail(CommandResult::ErrorCode::UnknownError));
+            return;
+        }
+        switchToTopLevelBrowsingContext(handle);
+        completionHandler(CommandResult::success());
     });
 }
 
@@ -818,7 +817,7 @@ RefPtr<JSON::Object> Session::createElement(RefPtr<JSON::Value>&& value)
         return nullptr;
 
     String elementID;
-    if (!valueObject->getString("session-node-" + m_id, elementID))
+    if (!valueObject->getString("session-node-" + id(), elementID))
         return nullptr;
 
     RefPtr<JSON::Object> elementObject = JSON::Object::create();
@@ -829,7 +828,7 @@ RefPtr<JSON::Object> Session::createElement(RefPtr<JSON::Value>&& value)
 RefPtr<JSON::Object> Session::createElement(const String& elementID)
 {
     RefPtr<JSON::Object> elementObject = JSON::Object::create();
-    elementObject->setString("session-node-" + m_id, elementID);
+    elementObject->setString("session-node-" + id(), elementID);
     return elementObject;
 }
 
