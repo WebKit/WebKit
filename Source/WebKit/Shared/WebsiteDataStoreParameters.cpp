@@ -86,9 +86,10 @@ std::optional<WebsiteDataStoreParameters> WebsiteDataStoreParameters::decode(IPC
     return {{ WTFMove(*uiProcessCookieStorageIdentifier), WTFMove(*cookieStoragePathExtensionHandle), WTFMove(*pendingCookies), WTFMove(*cacheStorageDirectory), WTFMove(*cacheStoragePerOriginQuota), WTFMove(*cacheStorageDirectoryExtensionHandle), WTFMove(*networkSessionParameters)}};
 }
 
-WebsiteDataStoreParameters WebsiteDataStoreParameters::legacyPrivateSessionParameters()
+WebsiteDataStoreParameters WebsiteDataStoreParameters::privateSessionParameters(PAL::SessionID sessionID)
 {
-    return { { }, { }, { }, { }, WebsiteDataStore::defaultCacheStoragePerOriginQuota, { }, { PAL::SessionID::legacyPrivateSessionID(), { }, { }, { }}};
+    ASSERT(sessionID.isEphemeral());
+    return { { }, { }, { }, { }, WebsiteDataStore::defaultCacheStoragePerOriginQuota, { }, { sessionID, { }, { }, { }}};
 }
 
 } // namespace WebKit

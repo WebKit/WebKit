@@ -463,7 +463,8 @@ void NetworkConnectionToWebProcess::ensureLegacyPrivateBrowsingSession()
 void NetworkConnectionToWebProcess::removeStorageAccessForFrame(PAL::SessionID sessionID, uint64_t frameID, uint64_t pageID)
 {
 #if HAVE(CFNETWORK_STORAGE_PARTITIONING)
-    storageSession(sessionID).removeStorageAccessForFrame(frameID, pageID);
+    if (auto* storageSession = NetworkStorageSession::storageSession(sessionID))
+        storageSession->removeStorageAccessForFrame(frameID, pageID);
 #else
     UNUSED_PARAM(sessionID);
     UNUSED_PARAM(frameID);
@@ -474,7 +475,8 @@ void NetworkConnectionToWebProcess::removeStorageAccessForFrame(PAL::SessionID s
 void NetworkConnectionToWebProcess::removeStorageAccessForAllFramesOnPage(PAL::SessionID sessionID, uint64_t pageID)
 {
 #if HAVE(CFNETWORK_STORAGE_PARTITIONING)
-    storageSession(sessionID).removeStorageAccessForAllFramesOnPage(pageID);
+    if (auto* storageSession = NetworkStorageSession::storageSession(sessionID))
+        storageSession->removeStorageAccessForAllFramesOnPage(pageID);
 #else
     UNUSED_PARAM(sessionID);
     UNUSED_PARAM(pageID);

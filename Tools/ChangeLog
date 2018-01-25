@@ -1,3 +1,18 @@
+2018-01-24  Alex Christensen  <achristensen@webkit.org>
+
+        Gracefully recover from NetworkProcess crashes in private browsing
+        https://bugs.webkit.org/show_bug.cgi?id=182073
+        <rdar://problem/36572023>
+
+        Reviewed by Geoff Garen.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/NetworkProcessCrashNonPersistentDataStore.mm: Added.
+        (-[CrashDelegate webView:didFinishNavigation:]):
+        (-[CrashDelegate webView:didFailProvisionalNavigation:withError:]):
+        (-[CrashDelegate webView:didFailNavigation:withError:]):
+        (TEST):
+
 2018-01-24  Ali Juma  <ajuma@chromium.org>
 
         REGRESSION (r227430): ASSERTION FAILED: !self.zoomToScaleCompletionHandler in TestRunnerWKWebView::zoomToScale
