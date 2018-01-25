@@ -311,7 +311,8 @@ auto WebAnimation::playState() const -> PlayState
         return PlayState::Pending;
 
     // The current time of animation is unresolved → idle
-    if (!currentTime())
+    auto animationCurrentTime = currentTime();
+    if (!animationCurrentTime)
         return PlayState::Idle;
 
     // The start time of animation is unresolved → paused
@@ -320,7 +321,7 @@ auto WebAnimation::playState() const -> PlayState
 
     // For animation, animation playback rate > 0 and current time ≥ target effect end; or
     // animation playback rate < 0 and current time ≤ 0 → finished
-    if ((m_playbackRate > 0 && currentTime().value() >= effectEndTime()) || (m_playbackRate < 0 && currentTime().value() <= 0_s))
+    if ((m_playbackRate > 0 && animationCurrentTime.value() >= effectEndTime()) || (m_playbackRate < 0 && animationCurrentTime.value() <= 0_s))
         return PlayState::Finished;
 
     // Otherwise → running
