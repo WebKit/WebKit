@@ -622,8 +622,8 @@ private:
     bool m_automaticallyAdjustsContentInsets { false };
     CGFloat m_pendingTopContentInset { 0 };
     bool m_didScheduleSetTopContentInset { false };
-
-    CGSize m_resizeScrollOffset { 0, 0 };
+    
+    CGSize m_scrollOffsetAdjustment { 0, 0 };
 
     CGSize m_intrinsicContentSize { 0, 0 };
     CGFloat m_overrideDeviceScaleFactor { 0 };

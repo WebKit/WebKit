@@ -1527,11 +1527,11 @@ bool WebViewImpl::frameSizeUpdatesDisabled() const
     return [m_layoutStrategy frameSizeUpdatesDisabled];
 }
 
-void WebViewImpl::setFrameAndScrollBy(CGRect frame, CGSize offset)
+void WebViewImpl::setFrameAndScrollBy(CGRect frame, CGSize scrollDelta)
 {
-    ASSERT(CGSizeEqualToSize(m_resizeScrollOffset, CGSizeZero));
+    if (!CGSizeEqualToSize(scrollDelta, CGSizeZero))
+        m_scrollOffsetAdjustment = scrollDelta;
 
-    m_resizeScrollOffset = offset;
     [m_view frame] = NSRectFromCGRect(frame);
 }
 
@@ -1600,8 +1600,8 @@ void WebViewImpl::setDrawingAreaSize(CGSize size)
     if (!m_page->drawingArea())
         return;
 
-    m_page->drawingArea()->setSize(WebCore::IntSize(size), WebCore::IntSize(), WebCore::IntSize(m_resizeScrollOffset));
-    m_resizeScrollOffset = CGSizeZero;
+    m_page->drawingArea()->setSize(WebCore::IntSize(size), WebCore::IntSize(m_scrollOffsetAdjustment));
+    m_scrollOffsetAdjustment = CGSizeZero;
 }
 
 void WebViewImpl::updateLayer()

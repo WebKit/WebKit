@@ -55,14 +55,13 @@ DrawingAreaProxy::~DrawingAreaProxy()
     m_webPageProxy.process().removeMessageReceiver(Messages::DrawingAreaProxy::messageReceiverName(), m_webPageProxy.pageID());
 }
 
-bool DrawingAreaProxy::setSize(const IntSize& size, const IntSize& layerPosition, const IntSize& scrollOffset)
+bool DrawingAreaProxy::setSize(const IntSize& size, const IntSize& scrollDelta)
 { 
-    if (m_size == size && m_layerPosition == layerPosition && scrollOffset.isZero())
+    if (m_size == size && scrollDelta.isZero())
         return false;
 
     m_size = size;
-    m_layerPosition = layerPosition;
-    m_scrollOffset += scrollOffset;
+    m_scrollOffset += scrollDelta;
     sizeDidChange();
     return true;
 }

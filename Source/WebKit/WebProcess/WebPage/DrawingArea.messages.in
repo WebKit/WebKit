@@ -26,7 +26,7 @@ messages -> DrawingArea {
 
 #if PLATFORM(COCOA)
     // Used by TiledCoreAnimationDrawingArea.
-    UpdateGeometry(WebCore::IntSize viewSize, WebCore::IntSize layerPosition, bool flushSynchronously, WebCore::MachSendRight fencePort)
+    UpdateGeometry(WebCore::IntSize viewSize, bool flushSynchronously, WebCore::MachSendRight fencePort)
     SetDeviceScaleFactor(float deviceScaleFactor)
     SetColorSpace(struct WebKit::ColorSpaceData colorSpace)
     SetViewExposedRect(std::optional<WebCore::FloatRect> viewExposedRect)

@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef TiledCoreAnimationDrawingArea_h
-#define TiledCoreAnimationDrawingArea_h
+#pragma once
 
 #if !PLATFORM(IOS)
 
@@ -93,7 +92,7 @@ private:
     bool flushLayers() override;
 
     // Message handlers.
-    void updateGeometry(const WebCore::IntSize& viewSize, const WebCore::IntSize& layerPosition, bool flushSynchronously, const WebCore::MachSendRight& fencePort) override;
+    void updateGeometry(const WebCore::IntSize& viewSize, bool flushSynchronously, const WebCore::MachSendRight& fencePort) override;
     void setDeviceScaleFactor(float) override;
     void suspendPainting();
     void resumePainting();
@@ -171,4 +170,3 @@ SPECIALIZE_TYPE_TRAITS_DRAWING_AREA(TiledCoreAnimationDrawingArea, DrawingAreaTy
 
 #endif // !PLATFORM(IOS)
 
-#endif // TiledCoreAnimationDrawingArea_h

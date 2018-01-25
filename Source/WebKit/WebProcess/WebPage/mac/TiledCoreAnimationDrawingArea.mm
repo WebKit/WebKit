@@ -540,7 +540,7 @@ void TiledCoreAnimationDrawingArea::updateScrolledExposedRect()
     frameView->setViewExposedRect(m_scrolledViewExposedRect);
 }
 
-void TiledCoreAnimationDrawingArea::updateGeometry(const IntSize& viewSize, const IntSize& layerPosition, bool flushSynchronously, const WebCore::MachSendRight& fencePort)
+void TiledCoreAnimationDrawingArea::updateGeometry(const IntSize& viewSize, bool flushSynchronously, const WebCore::MachSendRight& fencePort)
 {
     m_inUpdateGeometry = true;
 
@@ -568,7 +568,7 @@ void TiledCoreAnimationDrawingArea::updateGeometry(const IntSize& viewSize, cons
     [CATransaction begin];
     [CATransaction setDisableActions:YES];
 
-    [m_hostingLayer setFrame:CGRectMake(layerPosition.width(), layerPosition.height(), viewSize.width(), viewSize.height())];
+    [m_hostingLayer setFrame:CGRectMake(0, 0, viewSize.width(), viewSize.height())];
 
     [CATransaction commit];
 

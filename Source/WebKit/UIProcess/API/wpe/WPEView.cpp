@@ -165,7 +165,7 @@ void View::setSize(const WebCore::IntSize& size)
 {
     m_size = size;
     if (m_pageProxy->drawingArea())
-        m_pageProxy->drawingArea()->setSize(size, WebCore::IntSize(), WebCore::IntSize());
+        m_pageProxy->drawingArea()->setSize(size);
 }
 
 void View::setViewState(WebCore::ActivityState::Flags flags)

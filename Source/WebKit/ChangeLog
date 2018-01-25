@@ -1,3 +1,44 @@
+2018-01-25  Simon Fraser  <simon.fraser@apple.com>
+
+        ASSERT(CGSizeEqualToSize(m_resizeScrollOffset, CGSizeZero)) in WebViewImpl::setFrameAndScrollBy()
+        https://bugs.webkit.org/show_bug.cgi?id=182082
+        rdar://problem/13971838
+
+        Reviewed by Tim Horton.
+
+        Safari could call WebViewImpl::setFrameAndScrollBy() multiple times with different scroll offsets,
+        triggering this assertion.
+
+        Rename to m_resizeScrollOffset to m_scrollOffsetAdjustment to reduce confusion with actual scroll offsets.
+        This parameter has no effect on macOS, but is used by the -[WKWebView setFrame:andScrollBy:] so at some point
+        needs to be hooked up to allow synchronous view resize and scroll adjustment (e.g. for the Find bar animation).
+        
+        Remove DrawingAreaProxy's m_layerPosition which was unused, and remove the parameters from the UpdateGeometry message.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _frameOrBoundsChanged]):
+        (-[WKWebView _beginAnimatedResizeWithUpdates:]):
+        * UIProcess/Cocoa/WebViewImpl.h:
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::setFrameAndScrollBy):
+        (WebKit::WebViewImpl::setDrawingAreaSize):
+        * UIProcess/DrawingAreaProxy.cpp:
+        (WebKit::DrawingAreaProxy::setSize):
+        * UIProcess/DrawingAreaProxy.h:
+        * UIProcess/RemoteLayerTree/RemoteLayerTreeDrawingAreaProxy.mm:
+        (WebKit::RemoteLayerTreeDrawingAreaProxy::sendUpdateGeometry):
+        * UIProcess/mac/TiledCoreAnimationDrawingAreaProxy.mm:
+        (WebKit::TiledCoreAnimationDrawingAreaProxy::sendUpdateGeometry):
+        * WebProcess/WebPage/DrawingArea.h:
+        (WebKit::DrawingArea::updateGeometry):
+        * WebProcess/WebPage/DrawingArea.messages.in:
+        * WebProcess/WebPage/RemoteLayerTree/RemoteLayerTreeDrawingArea.h:
+        * WebProcess/WebPage/RemoteLayerTree/RemoteLayerTreeDrawingArea.mm:
+        (WebKit::RemoteLayerTreeDrawingArea::updateGeometry):
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.h:
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::updateGeometry):
+
 2018-01-25  Keith Rollin  <krollin@apple.com>
 
         Add logging to facilitate binding of WebContent and Network processes to UI process
