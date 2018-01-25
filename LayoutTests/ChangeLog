@@ -1,3 +1,13 @@
+2018-01-25  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [css-multicol] Update WPT test suite
+        https://bugs.webkit.org/show_bug.cgi?id=182087
+
+        Reviewed by Javier Fernandez.
+
+        * TestExpectations:
+        * platform/gtk/TestExpectations:
+
 2018-01-25  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Update WPT tests and move them to imported/w3c/web-platform-tests

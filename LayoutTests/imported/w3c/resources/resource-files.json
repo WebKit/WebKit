@@ -28,6 +28,7 @@
         "web-platform-tests/css/css-grid-1/test-plan/index.html",
         "web-platform-tests/css/css-grid/grid-items/ref-filled-green-100px-square-image.html",
         "web-platform-tests/css/css-grid/test-plan/index.html",
+        "web-platform-tests/css/css-multicol/multicol-rule-large-002.xht",
         "web-platform-tests/css/css-shapes/test-plan/index.html",
         "web-platform-tests/css/css-ui/canvas-cursor-001.html",
         "web-platform-tests/css/css-ui/canvas-cursor-002.html",

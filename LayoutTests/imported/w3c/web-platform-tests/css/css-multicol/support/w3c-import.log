@@ -1,0 +1,56 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/w3c/web-platform-tests
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/support/1x1-green.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/support/1x1-lime.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/support/1x1-maroon.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/support/1x1-navy.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/support/1x1-red.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/support/1x1-white.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/support/60x60-gg-rr.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/support/60x60-green.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/support/60x60-red.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/support/a-green.css
+/LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/support/b-green.css
+/LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/support/black20x20.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/support/c-red.css
+/LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/support/cat.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/support/import-green.css
+/LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/support/import-red.css
+/LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/support/pattern-grg-rgr-grg.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/support/pattern-grg-rrg-rgg.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/support/pattern-rgr-grg-rgr.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/support/pattern-tr.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/support/red20x20.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/support/square-purple.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/support/square-teal.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/support/square-white.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/support/swatch-blue.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/support/swatch-gray.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/support/swatch-green.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/support/swatch-lime.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/support/swatch-navy.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/support/swatch-orange.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/support/swatch-pink.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/support/swatch-purple.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/support/swatch-red.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/support/swatch-white.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/support/swatch-yellow.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/support/test-bl.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/support/test-br.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/support/test-outer.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/support/test-tl.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/support/test-tr.png
