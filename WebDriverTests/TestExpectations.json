@@ -67,6 +67,13 @@
             }
         }
     },
+    "imported/selenium/py/test/selenium/webdriver/common/frame_switching_tests.py": {
+        "subtests": {
+            "testShouldNotSwitchMagicallyToTheTopWindow": {
+                "expected": {"all": {"slow": true}}
+            }
+        }
+    },
     "imported/selenium/py/test/selenium/webdriver/common/interactions_tests.py": {
         "expected": {"all": {"status": ["SKIP"], "bug": "webkit.org/b/174616"}}
     },
@@ -77,6 +84,19 @@
             },
             "testShouldGetCoordinatesOfAnElementInANestedFrame": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/181735"}}
+            }
+        }
+    },
+    "imported/selenium/py/test/selenium/webdriver/common/select_class_tests.py": {
+        "subtests": {
+            "testSelectByIndexMultiple": {
+                "expected": {"all": {"slow": true}}
+            },
+            "testSelectByValueMultiple": {
+                "expected": {"all": {"slow": true}}
+            },
+            "testSelectByVisibleTextMultiple": {
+                "expected": {"all": {"slow": true}}
             }
         }
     },

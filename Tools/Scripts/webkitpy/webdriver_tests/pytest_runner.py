@@ -130,8 +130,9 @@ class SubtestResultRecorder(object):
 
 class TestExpectationsMarker(object):
 
-    def __init__(self, expectations, ignore_param):
+    def __init__(self, expectations, timeout, ignore_param):
         self._expectations = expectations
+        self._timeout = timeout
         self._ignore_param = ignore_param
         self._base_dir = WebKitFinder(FileSystem()).path_from_webkit_base('WebDriverTests')
 
@@ -152,7 +153,10 @@ class TestExpectationsMarker(object):
     def pytest_collection_modifyitems(self, session, config, items):
         for item in items:
             test = os.path.relpath(str(item.fspath), self._base_dir)
-            expected = self._expectations.get_expectation(test, self._item_name(item))[0]
+            item_name = self._item_name(item)
+            if self._expectations.is_slow(test, item_name):
+                item.add_marker(pytest.mark.timeout(self._timeout * 5))
+            expected = self._expectations.get_expectation(test, item_name)[0]
             if expected == 'FAIL':
                 item.add_marker(pytest.mark.xfail)
             elif expected == 'TIMEOUT':
@@ -179,7 +183,7 @@ def collect(directory, args):
 def run(path, args, timeout, env, expectations, ignore_param=None):
     harness_recorder = HarnessResultRecorder()
     subtests_recorder = SubtestResultRecorder()
-    expectations_marker = TestExpectationsMarker(expectations, ignore_param)
+    expectations_marker = TestExpectationsMarker(expectations, timeout, ignore_param)
     _environ = dict(os.environ)
     os.environ.clear()
     os.environ.update(env)
