@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="/js-test-resources/ui-helper.js"></script>
+<script src="/resources/js-test-pre.js"></script>
+<script src="/resources/payment-request.js"></script>
+</head>
+<body>
+<script>
+
+description("Test ApplePayRequest.shippingContact.");
+
+window.jsTestIsAsync = true;
+
+const expectedGivenName = 'Web';
+const expectedFamilyName = 'Test';
+const expectedName = [expectedGivenName, expectedFamilyName].join(' ');
+const expectedEmailAddress = 'wpt@w3.org';
+const expectedPhoneNumber = '+12345678910';
+const expectedAddressLines = ['1 wpt street'];
+const expectedSubLocality = 'AA';
+const expectedLocality = 'BB';
+const expectedPostalCode = '12345';
+const expectedSubAdministrativeArea = 'CC';
+const expectedAdministrativeArea = 'DD';
+const expectedCountry = 'United States';
+const expectedCountryCode = 'US';
+
+function validShippingContact() {
+    return {
+        phoneNumber: expectedPhoneNumber,
+        emailAddress: expectedEmailAddress,
+        givenName: expectedGivenName,
+        familyName: expectedFamilyName,
+        phoneticGivenName: expectedGivenName,
+        phoneticFamilyName: expectedFamilyName,
+        addressLines: expectedAddressLines,
+        subLocality: expectedSubLocality,
+        locality: expectedLocality,
+        postalCode: expectedPostalCode,
+        subAdministrativeArea: expectedSubAdministrativeArea,
+        administrativeArea: expectedAdministrativeArea,
+        country: expectedCountry,
+        countryCode: expectedCountryCode,
+    };
+}
+
+function validPaymentMethod(version, shippingContact) {
+    return {
+        supportedMethods: 'https://apple.com/apple-pay',
+        data: {
+            version,
+            merchantIdentifier: '',
+            countryCode: 'US',
+            supportedNetworks: ['visa', 'masterCard'],
+            merchantCapabilities: ['supports3DS'],
+            shippingContact,
+        },
+    }
+}
+
+function validPaymentDetails() {
+    return {
+        total: {
+            label: 'Total',
+            amount: {
+                currency: 'USD',
+                value: '10.00',
+            },
+        },
+    };
+}
+
+function validPaymentOptions() {
+    return {
+        requestPayerName: true,
+        requestPayerEmail: true,
+        requestPayerPhone: true,
+        requestShipping: true,
+    };
+}
+
+async function runTests() {
+    await new Promise((resolve, reject) => {
+        debug("Test setting a default shipping contact in a version 3 request.");
+
+        var paymentRequest = new PaymentRequest([validPaymentMethod(3, validShippingContact())], validPaymentDetails(), validPaymentOptions());
+
+        activateThen(() => {
+            paymentRequest.show().then((response) => {
+                window.paymentResponse = response;
+
+                shouldBe("paymentResponse.details.shippingContact.phoneticGivenName", "expectedGivenName");
+                shouldBe("paymentResponse.details.shippingContact.phoneticFamilyName", "expectedFamilyName");
+
+                response.complete("success");
+                resolve();
+            });
+
+            internals.mockPaymentCoordinator.acceptPayment();
+        });
+    });
+    debug("");
+
+    finishJSTest();
+}
+
+runTests();
+</script>
+<script src="/resources/js-test-post.js"></script>
+</body>
+</html>

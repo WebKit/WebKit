@@ -1,0 +1,13 @@
+Test ApplePayRequest.shippingContact.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Test setting a default shipping contact in a version 3 request.
+PASS paymentResponse.details.shippingContact.phoneticGivenName is expectedGivenName
+PASS paymentResponse.details.shippingContact.phoneticFamilyName is expectedFamilyName
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
