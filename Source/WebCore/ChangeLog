@@ -1,3 +1,16 @@
+2018-01-25  John Wilander  <wilander@apple.com>
+
+        Make sure we have a frame as we iterate in ResourceLoadObserver::nonNullOwnerURL()
+        https://bugs.webkit.org/show_bug.cgi?id=182116
+        <rdar://problem/36210134>
+
+        Reviewed by Alex Christensen.
+
+        No new tests. No known repro case, just crash logs.
+
+        * loader/ResourceLoadObserver.cpp:
+        (WebCore::ResourceLoadObserver::nonNullOwnerURL const):
+
 2018-01-25  Jer Noble  <jer.noble@apple.com>
 
         Move ImageDecoderAVFObjC from using AVSampleBufferGenerator to AVAssetReaderOutput for parsing

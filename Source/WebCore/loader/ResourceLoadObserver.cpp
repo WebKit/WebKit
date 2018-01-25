@@ -383,7 +383,7 @@ URL ResourceLoadObserver::nonNullOwnerURL(const Document& document) const
     auto* frame = document.frame();
     auto host = document.url().host();
 
-    while ((host.isNull() || host.isEmpty()) && !frame->isMainFrame()) {
+    while ((host.isNull() || host.isEmpty()) && frame && !frame->isMainFrame()) {
         auto* ownerElement = frame->ownerElement();
 
         ASSERT(ownerElement != nullptr);
