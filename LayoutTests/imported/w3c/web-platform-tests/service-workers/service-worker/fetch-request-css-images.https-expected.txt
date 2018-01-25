@@ -1,7 +1,6 @@
 
-
 PASS Verify FetchEvent for css image (backgroundImage). 
-FAIL Verify FetchEvent for css image (shapeOutside). assert_equals: credentials of CSSImage load (url:https://localhost:9443/service-workers/service-worker/resources/dummy?test1516682573070 type:shapeOutside) must be same-origin. expected "same-origin" but got "include"
+PASS Verify FetchEvent for css image (shapeOutside). 
 PASS Verify FetchEvent for css image-set (backgroundImage). 
-FAIL Verify FetchEvent for css image-set (shapeOutside). assert_equals: credentials of CSSImageSet load (url:https://localhost:9443/service-workers/service-worker/resources/dummy?test1516682573028 type:shapeOutside) must be same-origin. expected "same-origin" but got "include"
+PASS Verify FetchEvent for css image-set (shapeOutside). 
 

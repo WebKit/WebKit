@@ -53,6 +53,7 @@ static void loadPendingImage(Document& document, const StyleImage* styleImage, c
     // FIXME: Why does shape-outside have different policy than other properties?
     if (loadPolicy == LoadPolicy::ShapeOutside) {
         options.mode = FetchOptions::Mode::Cors;
+        options.credentials = FetchOptions::Credentials::SameOrigin;
         options.storedCredentialsPolicy = StoredCredentialsPolicy::DoNotUse;
         options.sameOriginDataURLFlag = SameOriginDataURLFlag::Set;
     }

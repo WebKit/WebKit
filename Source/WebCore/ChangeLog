@@ -1,3 +1,17 @@
+2018-01-25  Youenn Fablet  <youenn@apple.com>
+
+        ShapeOutside should use same origin credentials mode
+        https://bugs.webkit.org/show_bug.cgi?id=182141
+
+        Reviewed by Chris Dumez.
+
+        Covered by updated test.
+        As per https://drafts.csswg.org/css-shapes/#shape-outside-property, ShapeOutside images
+        should be fetched with anonymous cors mode, meaning credentials should be set to same-origin.
+
+        * style/StylePendingResources.cpp:
+        (WebCore::Style::loadPendingImage):
+
 2018-01-25  John Wilander  <wilander@apple.com>
 
         Make sure we have a frame as we iterate in ResourceLoadObserver::nonNullOwnerURL()
