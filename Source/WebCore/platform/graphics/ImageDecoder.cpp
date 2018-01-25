@@ -34,7 +34,7 @@
 #include "ScalableImageDecoder.h"
 #endif
 
-#if HAVE(AVSAMPLEBUFFERGENERATOR)
+#if HAVE(AVASSETREADER)
 #include "ImageDecoderAVFObjC.h"
 #endif
 
@@ -42,7 +42,7 @@ namespace WebCore {
 
 RefPtr<ImageDecoder> ImageDecoder::create(SharedBuffer& data, const String& mimeType, AlphaOption alphaOption, GammaAndColorProfileOption gammaAndColorProfileOption)
 {
-#if HAVE(AVSAMPLEBUFFERGENERATOR)
+#if HAVE(AVASSETREADER)
     if (ImageDecoderAVFObjC::canDecodeType(mimeType))
         return ImageDecoderAVFObjC::create(data, mimeType, alphaOption, gammaAndColorProfileOption);
 #else
@@ -61,7 +61,7 @@ RefPtr<ImageDecoder> ImageDecoder::create(SharedBuffer& data, const String& mime
 bool ImageDecoder::supportsMediaType(MediaType type)
 {
     bool supports = false;
-#if HAVE(AVSAMPLEBUFFERGENERATOR)
+#if HAVE(AVASSETREADER)
     if (ImageDecoderAVFObjC::supportsMediaType(type))
         supports = true;
 #endif

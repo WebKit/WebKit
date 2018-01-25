@@ -33,7 +33,7 @@
 
 namespace WebCore {
     
-class MediaSampleAVFObjC final : public MediaSample {
+class MediaSampleAVFObjC : public MediaSample {
 public:
     static Ref<MediaSampleAVFObjC> create(CMSampleBufferRef sample, int trackID) { return adoptRef(*new MediaSampleAVFObjC(sample, trackID)); }
     static Ref<MediaSampleAVFObjC> create(CMSampleBufferRef sample, AtomicString trackID) { return adoptRef(*new MediaSampleAVFObjC(sample, trackID)); }
@@ -41,31 +41,7 @@ public:
     static RefPtr<MediaSampleAVFObjC> createImageSample(Ref<JSC::Uint8ClampedArray>&&, unsigned long width, unsigned long height);
     static RefPtr<MediaSampleAVFObjC> createImageSample(Vector<uint8_t>&&, unsigned long width, unsigned long height);
 
-    RefPtr<JSC::Uint8ClampedArray> getRGBAImageData() const final;
-
-private:
-    MediaSampleAVFObjC(CMSampleBufferRef sample)
-        : m_sample(sample)
-    {
-    }
-    MediaSampleAVFObjC(CMSampleBufferRef sample, AtomicString trackID)
-        : m_sample(sample)
-        , m_id(trackID)
-    {
-    }
-    MediaSampleAVFObjC(CMSampleBufferRef sample, int trackID)
-        : m_sample(sample)
-        , m_id(String::format("%d", trackID))
-    {
-    }
-    MediaSampleAVFObjC(CMSampleBufferRef sample, VideoRotation rotation, bool mirrored)
-        : m_sample(sample)
-        , m_rotation(rotation)
-        , m_mirrored(mirrored)
-    {
-    }
-
-    virtual ~MediaSampleAVFObjC() = default;
+    RefPtr<JSC::Uint8ClampedArray> getRGBAImageData() const override;
 
     MediaTime presentationTime() const override;
     MediaTime outputPresentationTime() const override;
@@ -88,9 +64,38 @@ private:
     std::pair<RefPtr<MediaSample>, RefPtr<MediaSample>> divide(const MediaTime& presentationTime) override;
     Ref<MediaSample> createNonDisplayingCopy() const override;
 
-    VideoRotation videoRotation() const final { return m_rotation; }
-    bool videoMirrored() const final { return m_mirrored; }
+    VideoRotation videoRotation() const override { return m_rotation; }
+    bool videoMirrored() const override { return m_mirrored; }
 
+    CMSampleBufferRef sampleBuffer() const { return m_sample.get(); }
+
+protected:
+    MediaSampleAVFObjC(RetainPtr<CMSampleBufferRef>&& sample)
+        : m_sample(WTFMove(sample))
+    {
+    }
+    MediaSampleAVFObjC(CMSampleBufferRef sample)
+        : m_sample(sample)
+    {
+    }
+    MediaSampleAVFObjC(CMSampleBufferRef sample, AtomicString trackID)
+        : m_sample(sample)
+        , m_id(trackID)
+    {
+    }
+    MediaSampleAVFObjC(CMSampleBufferRef sample, int trackID)
+        : m_sample(sample)
+        , m_id(String::format("%d", trackID))
+    {
+    }
+    MediaSampleAVFObjC(CMSampleBufferRef sample, VideoRotation rotation, bool mirrored)
+        : m_sample(sample)
+        , m_rotation(rotation)
+        , m_mirrored(mirrored)
+    {
+    }
+
+    virtual ~MediaSampleAVFObjC() = default;
     RetainPtr<CMSampleBufferRef> m_sample;
     AtomicString m_id;
     VideoRotation m_rotation { VideoRotation::None };

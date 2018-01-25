@@ -1,3 +1,54 @@
+2018-01-25  Jer Noble  <jer.noble@apple.com>
+
+        Move ImageDecoderAVFObjC from using AVSampleBufferGenerator to AVAssetReaderOutput for parsing
+        https://bugs.webkit.org/show_bug.cgi?id=182091
+
+        Reviewed by Eric Carlson.
+
+        No new tests; should be covered by existing tests.
+
+        AVSampleBufferGenerator is not available on iOS, so in order to enable ImageDecoderAVFObjC there,
+        we must adopt a similar API which is available both on iOS and macOS: AVAssetReaderOutput. Unlike
+        the generator, AVAssetReaderOutput doesn't necessarily generate samples in decode order, so we'll
+        repurpose the SampleMap from EME to hold the decoded samples as well as their generated images.
+
+        * Modules/mediasource/SampleMap.cpp:
+        * Modules/mediasource/SampleMap.h:
+        (WebCore::SampleMap::size const):
+        * platform/MIMETypeRegistry.cpp:
+        (WebCore::MIMETypeRegistry::isSupportedImageVideoOrSVGMIMEType):
+        * platform/MediaSample.h:
+        (WebCore::MediaSample::hasAlpha const):
+        * platform/graphics/ImageDecoder.cpp:
+        (WebCore::ImageDecoder::create):
+        (WebCore::ImageDecoder::supportsMediaType):
+        * platform/graphics/avfoundation/MediaSampleAVFObjC.h: Make non-final.
+        (WebCore::MediaSampleAVFObjC::sampleBuffer const):
+        (WebCore::MediaSampleAVFObjC::MediaSampleAVFObjC):
+        * platform/graphics/avfoundation/objc/ImageDecoderAVFObjC.h:
+        * platform/graphics/avfoundation/objc/ImageDecoderAVFObjC.mm:
+        (WebCore::ImageDecoderAVFObjCSample::create):
+        (WebCore::ImageDecoderAVFObjCSample::sampleBuffer const):
+        (WebCore::ImageDecoderAVFObjCSample::image const):
+        (WebCore::ImageDecoderAVFObjCSample::setImage):
+        (WebCore::ImageDecoderAVFObjCSample::ImageDecoderAVFObjCSample):
+        (WebCore::ImageDecoderAVFObjCSample::cacheMetadata):
+        (WebCore::toSample):
+        (WebCore::ImageDecoderAVFObjC::readSamples):
+        (WebCore::ImageDecoderAVFObjC::storeSampleBuffer):
+        (WebCore::ImageDecoderAVFObjC::advanceCursor):
+        (WebCore::ImageDecoderAVFObjC::setTrack):
+        (WebCore::ImageDecoderAVFObjC::encodedDataStatus const):
+        (WebCore::ImageDecoderAVFObjC::repetitionCount const):
+        (WebCore::ImageDecoderAVFObjC::frameIsCompleteAtIndex const):
+        (WebCore::ImageDecoderAVFObjC::frameDurationAtIndex const):
+        (WebCore::ImageDecoderAVFObjC::frameHasAlphaAtIndex const):
+        (WebCore::ImageDecoderAVFObjC::createFrameImageAtIndex):
+        (WebCore::ImageDecoderAVFObjC::setData):
+        (WebCore::ImageDecoderAVFObjC::clearFrameBufferCache):
+        (WebCore::ImageDecoderAVFObjC::sampleAtIndex const):
+        (WebCore::ImageDecoderAVFObjC::readSampleMetadata): Deleted.
+
 2018-01-25  Youenn Fablet  <youenn@apple.com>
 
         DocumentThreadableLoader should ensure service worker is not reused if redirection comes from the network

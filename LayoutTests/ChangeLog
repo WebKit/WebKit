@@ -1,3 +1,12 @@
+2018-01-25  Jer Noble  <jer.noble@apple.com>
+
+        Move ImageDecoderAVFObjC from using AVSampleBufferGenerator to AVAssetReaderOutput for parsing
+        https://bugs.webkit.org/show_bug.cgi?id=182091
+
+        Reviewed by Eric Carlson.
+
+        * platform/ios/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/update-the-source-set-expected.txt: Added.
+
 2018-01-25  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Account for provided easings when computing progress and resolving keyframe effect values

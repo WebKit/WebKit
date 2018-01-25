@@ -55,7 +55,7 @@
 #include "ArchiveFactory.h"
 #endif
 
-#if HAVE(AVSAMPLEBUFFERGENERATOR)
+#if HAVE(AVASSETREADER)
 #include "ContentType.h"
 #include "ImageDecoderAVFObjC.h"
 #endif
@@ -460,7 +460,7 @@ bool MIMETypeRegistry::isSupportedImageVideoOrSVGMIMEType(const String& mimeType
     if (isSupportedImageMIMEType(mimeType) || equalLettersIgnoringASCIICase(mimeType, "image/svg+xml"))
         return true;
 
-#if HAVE(AVSAMPLEBUFFERGENERATOR)
+#if HAVE(AVASSETREADER)
     if (ImageDecoderAVFObjC::supportsContentType(ContentType(mimeType)))
         return true;
 #endif
