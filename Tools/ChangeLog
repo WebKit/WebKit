@@ -1,3 +1,28 @@
+2018-01-24  Daniel Bates  <dabates@apple.com>
+
+        webkit-patch upload emits irrelevant simulator warnings
+        https://bugs.webkit.org/show_bug.cgi?id=181702
+        <rdar://problem/36556359>
+
+        Reviewed by Aakash Jain.
+
+        Remove warning when a person explicitly passes --child-processes with a value greater than
+        the default number of simulator instances webkitpy would have used had --child-processes
+        been omitted. Moreover, the placement of the warning logic to support printing such a message
+        (in the IOSSimulatorPort constructor) caused side effects that may print other warning messages.
+
+        By default, webkitpy will parallelize running tests using the maximum number of simulator
+        instances that can be supported based on available system resources at the time run-webkit-tests
+        is invoked. It seems reasonable to assume that a person that explicitly overrides this default
+        by specifying --child-processes knows what they are doing. The effects of picking a large
+        value be obvious, the system may become sluggish.
+
+        As a side benefit of this change we no longer will emit simulator warnings whenever the iOS
+        simulator port is instantiated by non-layout test related code (e.g. check-webkit-style).
+
+        * Scripts/webkitpy/port/ios_simulator.py:
+        (IOSSimulatorPort.__init__):
+
 2018-01-25  Sergio Villar Senin  <svillar@igalia.com>
 
         [WebVR][GTK][WPE] Remove the WebVR public API added in r227518
