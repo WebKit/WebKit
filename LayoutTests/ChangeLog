@@ -1,3 +1,17 @@
+2018-01-24  Frederic Wang  <fwang@igalia.com>
+
+        ScrollingStateNode::reconcileLayerPositionForViewportRect is only called on direct children of the root
+        https://bugs.webkit.org/show_bug.cgi?id=179946
+
+        Reviewed by Simon Fraser.
+
+        Add a test that verifies the correct update of the graphic layer of a "position: fixed" and
+        "position: sticky" nodes inside a non-flat scrolling tree. The test checks recursive call
+        on overflow, "position: sticky" and "position: fixed" nodes.
+
+        * fast/scrolling/ios/reconcile-layer-position-recursive-expected.txt: Added.
+        * fast/scrolling/ios/reconcile-layer-position-recursive.html: Added.
+
 2018-01-24  Manuel Rego Casasnovas  <rego@igalia.com>
 
         Move css-color & css-multicol WPT suites to the proper folder

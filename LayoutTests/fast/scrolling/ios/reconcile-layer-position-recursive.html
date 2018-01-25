@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Reconcile layer position recursive</title>
+    <meta charset="utf-8"/>
+    <style>
+      #container div {
+         margin: 50px;
+         border: 5px solid black;
+      }
+      .scrollable {
+         background: linear-gradient(135deg, cyan, green);
+         overflow: auto;
+         -webkit-overflow-scrolling: touch;
+      }
+      .fixed {
+         position: fixed;
+         height: 100px;
+         width: 100px;
+         background: yellow;
+      }
+      .sticky {
+         position: -webkit-sticky;
+         position: sticky;
+         height: 100px;
+         width: 100px;
+         background: magenta;
+      }
+    </style>
+    <script>
+      if (window.testRunner) {
+          testRunner.dumpAsText();
+          testRunner.waitUntilDone();
+      }
+      if (window.internals)
+          window.internals.settings.setAsyncFrameScrollingEnabled(true);
+      function getSwipeUIScript(fromX, fromY, toX, toY, duration)
+      {
+          return `(() => {
+              uiController.dragFromPointToPoint(${fromX}, ${fromY}, ${toX}, ${toY}, ${duration}, () => {
+                  uiController.uiScriptComplete("");
+              });
+          })();`;
+      }
+      function doTest()
+      {
+          if (window.testRunner && testRunner.runUIScript && window.internals) {
+              testRunner.runUIScript(getSwipeUIScript(2, 200, 0, 2, .05), () => {
+                  setTimeout(() => {
+                       document.getElementById('layerTree').innerText = internals.layerTreeAsText(document,
+                   internals.LAYER_TREE_INCLUDES_VISIBLE_RECTS | internals.LAYER_TREE_INCLUDES_TILE_CACHES);
+                      testRunner.notifyDone();
+                  }, 3000);
+              });
+          }
+      }
+      window.addEventListener('load', doTest, false);
+    </script>
+  </head>
+  <body>
+    <div style="height: 1000px"></div>
+    <div id="container" class="scrollable" style="height: 300px; width: 300px">
+      <div class="scrollable" style="height: 400px; width: 200px">
+        <div style="height: 500px; width: 100px; background: gray">
+          <div class="fixed" style="left: 20px; top: 20px;">
+            <div class="sticky" style="left: 30px; top: 30px;"></div>
+          </div>
+          <div class="sticky" style="left: 20px; top: 70px;">
+            <div class="sticky" style="left: 30px; top: 30px;"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div style="height: 300px"></div>
+    <pre id="layerTree"></pre>
+  </body>
+</html>

@@ -71,6 +71,8 @@ void ScrollingStateFixedNode::updateConstraints(const FixedPositionViewportConst
 
 void ScrollingStateFixedNode::reconcileLayerPositionForViewportRect(const LayoutRect& viewportRect, ScrollingLayerPositionAction action)
 {
+    ScrollingStateNode::reconcileLayerPositionForViewportRect(viewportRect, action);
+
     FloatPoint position = m_constraints.layerPositionForViewportRect(viewportRect);
     if (layer().representsGraphicsLayer()) {
         auto* graphicsLayer = static_cast<GraphicsLayer*>(layer());

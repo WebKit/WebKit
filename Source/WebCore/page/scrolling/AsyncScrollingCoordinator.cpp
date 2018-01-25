@@ -491,15 +491,9 @@ void AsyncScrollingCoordinator::reconcileViewportConstrainedLayerPositions(const
     if (!m_scrollingStateTree->rootStateNode())
         return;
 
-    auto children = m_scrollingStateTree->rootStateNode()->children();
-    if (!children)
-        return;
-
     LOG_WITH_STREAM(Scrolling, stream << getpid() << " AsyncScrollingCoordinator::reconcileViewportConstrainedLayerPositions for viewport rect " << viewportRect);
 
-    // FIXME: We'll have to traverse deeper into the tree at some point.
-    for (auto& child : *children)
-        child->reconcileLayerPositionForViewportRect(viewportRect, action);
+    m_scrollingStateTree->rootStateNode()->reconcileLayerPositionForViewportRect(viewportRect, action);
 }
 
 void AsyncScrollingCoordinator::ensureRootStateNodeForFrameView(FrameView& frameView)

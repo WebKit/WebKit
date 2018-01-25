@@ -218,7 +218,7 @@ public:
     ChangedProperties changedProperties() const { return m_changedProperties; }
     void setChangedProperties(ChangedProperties changedProperties) { m_changedProperties = changedProperties; }
     
-    virtual void reconcileLayerPositionForViewportRect(const LayoutRect& /*viewportRect*/, ScrollingLayerPositionAction) { }
+    virtual void reconcileLayerPositionForViewportRect(const LayoutRect& /*viewportRect*/, ScrollingLayerPositionAction);
 
     const LayerRepresentation& layer() const { return m_layer; }
     WEBCORE_EXPORT void setLayer(const LayerRepresentation&);

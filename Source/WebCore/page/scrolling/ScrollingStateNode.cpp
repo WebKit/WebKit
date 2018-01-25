@@ -100,6 +100,15 @@ void ScrollingStateNode::appendChild(Ref<ScrollingStateNode>&& childNode)
     m_children->append(WTFMove(childNode));
 }
 
+void ScrollingStateNode::reconcileLayerPositionForViewportRect(const LayoutRect& viewportRect, ScrollingLayerPositionAction action)
+{
+    if (!m_children)
+        return;
+
+    for (auto& child : *m_children)
+        child->reconcileLayerPositionForViewportRect(viewportRect, action);
+}
+
 void ScrollingStateNode::setLayer(const LayerRepresentation& layerRepresentation)
 {
     if (layerRepresentation == m_layer)

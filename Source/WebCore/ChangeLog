@@ -1,3 +1,32 @@
+2018-01-24  Frederic Wang  <fwang@igalia.com>
+
+        ScrollingStateNode::reconcileLayerPositionForViewportRect is only called on direct children of the root
+        https://bugs.webkit.org/show_bug.cgi?id=179946
+
+        Reviewed by Simon Fraser.
+
+        ScrollingStateNode::reconcileLayerPositionForViewportRect is currently only called on the
+        direct children of root of the scrolling tree. Hence nodes like "position: fixed" will not
+        update their layers after scrolling when they are deeper in the tree. This is already
+        possible on iOS with overflow nodes and will happen with subframes when async scrolling is
+        implemented. This commit fixes that issue by recursively calling the function
+        ScrollingStateNode::reconcileLayerPositionForViewportRect on the scrolling tree.
+
+        Test: fast/scrolling/ios/reconcile-layer-position-recursive.html
+
+        * page/scrolling/AsyncScrollingCoordinator.cpp:
+        (WebCore::AsyncScrollingCoordinator::reconcileViewportConstrainedLayerPositions): Just call
+        reconcileLayerPositionForViewportRect on the root node.
+        * page/scrolling/ScrollingStateNode.cpp:
+        (WebCore::ScrollingStateNode::reconcileLayerPositionForViewportRect): By default, this
+        function now recursively calls reconcileLayerPositionForViewportRect on the children.
+        * page/scrolling/ScrollingStateNode.h:
+        * page/scrolling/ScrollingStateFixedNode.cpp:
+        (WebCore::ScrollingStateFixedNode::reconcileLayerPositionForViewportRect): Call the function
+        on children.
+        * page/scrolling/ScrollingStateStickyNode.cpp:
+        (WebCore::ScrollingStateStickyNode::reconcileLayerPositionForViewportRect): Ditto.
+
 2018-01-24  Zan Dobersek  <zdobersek@igalia.com>
 
         [Cairo] Use GraphicsContextImplCairo for ImageBuffer context
