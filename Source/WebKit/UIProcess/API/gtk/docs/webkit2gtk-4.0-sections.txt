@@ -473,8 +473,6 @@ webkit_settings_get_hardware_acceleration_policy
 webkit_settings_set_hardware_acceleration_policy
 webkit_settings_font_size_to_points
 webkit_settings_font_size_to_pixels
-webkit_settings_get_enable_webvr
-webkit_settings_set_enable_webvr
 
 <SUBSECTION Standard>
 WebKitSettingsClass

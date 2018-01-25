@@ -1,3 +1,13 @@
+2018-01-25  Sergio Villar Senin  <svillar@igalia.com>
+
+        [WebVR][GTK][WPE] Remove the WebVR public API added in r227518
+        https://bugs.webkit.org/show_bug.cgi?id=182102
+
+        Reviewed by Carlos Garcia Campos.
+
+        * MiniBrowser/gtk/main.c:
+        (main): Removed the call to set_enable_webvr().
+
 2018-01-25  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         WebDriver: add support for slow tests

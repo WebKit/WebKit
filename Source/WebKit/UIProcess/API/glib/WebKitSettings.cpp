@@ -158,7 +158,6 @@ enum {
 #if PLATFORM(GTK)
     PROP_HARDWARE_ACCELERATION_POLICY,
 #endif
-    PROP_ENABLE_WEBVR,
 };
 
 static void webKitSettingsDispose(GObject* object)
@@ -364,9 +363,6 @@ static void webKitSettingsSetProperty(GObject* object, guint propId, const GValu
         webkit_settings_set_hardware_acceleration_policy(settings, static_cast<WebKitHardwareAccelerationPolicy>(g_value_get_enum(value)));
         break;
 #endif
-    case PROP_ENABLE_WEBVR:
-        webkit_settings_set_enable_webvr(settings, g_value_get_boolean(value));
-        break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propId, paramSpec);
         break;
@@ -538,9 +534,6 @@ static void webKitSettingsGetProperty(GObject* object, guint propId, GValue* val
         g_value_set_enum(value, webkit_settings_get_hardware_acceleration_policy(settings));
         break;
 #endif
-    case PROP_ENABLE_WEBVR:
-        g_value_set_boolean(value, webkit_settings_get_enable_webvr(settings));
-        break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propId, paramSpec);
         break;
@@ -1384,19 +1377,6 @@ static void webkit_settings_class_init(WebKitSettingsClass* klass)
             WEBKIT_HARDWARE_ACCELERATION_POLICY_ON_DEMAND,
             readWriteConstructParamFlags));
 #endif // PLATFOTM(GTK)
-
-    /**
-    * WebKitSettings:enable-webvr:
-    *
-    * Enable or disable support for WebVR on pages.
-    */
-    g_object_class_install_property(gObjectClass,
-        PROP_ENABLE_WEBVR,
-        g_param_spec_boolean("enable-webvr",
-            _("Enable WebVR"),
-            _("Whether WebVR content should be rendered"),
-            FALSE,
-            readWriteConstructParamFlags));
 }
 
 WebPreferences* webkitSettingsGetPreferences(WebKitSettings* settings)
@@ -3422,38 +3402,3 @@ guint32 webkit_settings_font_size_to_pixels(guint32 points)
     return std::round(points * WebCore::screenDPI() / 72);
 }
 #endif // PLATFORM(GTK)
-
-/**
- * webkit_settings_get_enable_webvr:
- * @settings: a #WebKitSettings
- *
- * Get the #WebKitSettings:enable-webvr property.
- *
- * Returns: %TRUE If Webvr support is enabled or %FALSE otherwise.
- */
-gboolean webkit_settings_get_enable_webvr(WebKitSettings* settings)
-{
-    g_return_val_if_fail(WEBKIT_IS_SETTINGS(settings), FALSE);
-
-    return settings->priv->preferences->webVREnabled();
-}
-
-/**
- * webkit_settings_set_enable_webvr:
- * @settings: a #WebKitSettings
- * @enabled: Value to be set
- *
- * Set the #WebKitSettings:enable-webvr property.
- */
-void webkit_settings_set_enable_webvr(WebKitSettings* settings, gboolean enabled)
-{
-    g_return_if_fail(WEBKIT_IS_SETTINGS(settings));
-
-    WebKitSettingsPrivate* priv = settings->priv;
-    bool currentValue = priv->preferences->webVREnabled();
-    if (currentValue == enabled)
-        return;
-
-    priv->preferences->setWebVREnabled(enabled);
-    g_object_notify(G_OBJECT(settings), "enable-webvr");
-}

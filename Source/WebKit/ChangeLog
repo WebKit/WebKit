@@ -1,3 +1,31 @@
+2018-01-25  Sergio Villar Senin  <svillar@igalia.com>
+
+        [WebVR][GTK][WPE] Remove the WebVR public API added in r227518
+        https://bugs.webkit.org/show_bug.cgi?id=182102
+
+        Reviewed by Carlos Garcia Campos.
+
+        * UIProcess/API/gtk/docs/webkit2gtk-4.0-sections.txt:
+
+2018-01-25  Sergio Villar Senin  <svillar@igalia.com>
+
+        [WebVR][GTK][WPE] Remove the WebVR public API added in r227518
+        https://bugs.webkit.org/show_bug.cgi?id=182102
+
+        Reviewed by Carlos Garcia Campos.
+
+        This new public API was not supposed to be included in the patch
+        that added OpenVR to the tree and to the build.
+
+        * UIProcess/API/glib/WebKitSettings.cpp:
+        (webKitSettingsSetProperty):
+        (webKitSettingsGetProperty):
+        (webkit_settings_class_init):
+        (webkit_settings_get_enable_webvr): Deleted.
+        (webkit_settings_set_enable_webvr): Deleted.
+        * UIProcess/API/gtk/WebKitSettings.h:
+        * UIProcess/API/wpe/WebKitSettings.h:
+
 2018-01-25  Claudio Saavedra  <csaavedra@igalia.com>
 
         [GTK] Fix build with touch events disabled
