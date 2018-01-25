@@ -1,3 +1,14 @@
+2018-01-25  Chris Dumez  <cdumez@apple.com>
+
+        Clients.get(id) should only returns clients in the service worker's origin
+        https://bugs.webkit.org/show_bug.cgi?id=182149
+        <rdar://problem/36882310>
+
+        Reviewed by Youenn Fablet.
+
+        * StorageProcess/ServiceWorker/WebSWServerConnection.cpp:
+        (WebKit::WebSWServerConnection::postMessageToServiceWorker):
+
 2018-01-25  Youenn Fablet  <youenn@apple.com>
 
         WebPluginInfoProvider should handle null host queries

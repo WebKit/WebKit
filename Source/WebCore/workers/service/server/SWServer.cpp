@@ -93,12 +93,18 @@ SWServerWorker* SWServer::workerByID(ServiceWorkerIdentifier identifier) const
     return worker;
 }
 
-std::optional<ServiceWorkerClientData> SWServer::serviceWorkerClientByID(const ServiceWorkerClientIdentifier& clientIdentifier) const
+std::optional<ServiceWorkerClientData> SWServer::serviceWorkerClientWithOriginByID(const ClientOrigin& clientOrigin, const ServiceWorkerClientIdentifier& clientIdentifier) const
 {
-    auto iterator = m_clientsById.find(clientIdentifier);
-    if (iterator == m_clientsById.end())
+    auto iterator = m_clientIdentifiersPerOrigin.find(clientOrigin);
+    if (iterator == m_clientIdentifiersPerOrigin.end())
         return std::nullopt;
-    return iterator->value;
+
+    if (!iterator->value.identifiers.contains(clientIdentifier))
+        return std::nullopt;
+
+    auto clientIterator = m_clientsById.find(clientIdentifier);
+    ASSERT(clientIterator != m_clientsById.end());
+    return clientIterator->value;
 }
 
 SWServerWorker* SWServer::activeWorkerFromRegistrationID(ServiceWorkerRegistrationIdentifier identifier)

@@ -178,7 +178,11 @@ void WebSWServerConnection::postMessageToServiceWorker(ServiceWorkerIdentifier d
         if (auto* sourceWorker = server().workerByID(identifier))
             sourceData = ServiceWorkerOrClientData { sourceWorker->data() };
     }, [&](ServiceWorkerClientIdentifier identifier) {
-        if (auto clientData = server().serviceWorkerClientByID(identifier))
+        auto* destinationWorker = server().workerByID(destinationIdentifier);
+        if (!destinationWorker)
+            return;
+
+        if (auto clientData = destinationWorker->findClientByIdentifier(identifier))
             sourceData = ServiceWorkerOrClientData { *clientData };
     });
 
