@@ -28,8 +28,7 @@ class Task
     puts "#{display_input} -> #{display_output}"
 
     Dir.mktmpdir do |tmpdir|
-      dependency = @dependency_json_path ? "'#{@dependency_json_path}'" : ""
-      cmd = "#{$code_generator_path} --force --outputDir '#{tmpdir}' --framework JavaScriptCore '#{@input_json_path}' #{dependency}"
+      cmd = "#{$code_generator_path} --force --outputDir '#{tmpdir}' --framework WebInspectorUI '#{@input_json_path}'"
       %x{ #{cmd} }
       if $?.exitstatus != 0
         puts "ERROR: Error Code (#{$?.exitstatus}) Evaluating: #{cmd}"

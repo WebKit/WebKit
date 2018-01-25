@@ -1,3 +1,15 @@
+2018-01-24  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Simplify update-LegacyInspectorBackendCommands.rb
+        https://bugs.webkit.org/show_bug.cgi?id=182067
+
+        Reviewed by Brian Burg.
+
+        * Scripts/update-LegacyInspectorBackendCommands.rb:
+        Remove stale dependency_json, it has always been empty for a while now.
+        Switch to framework WebInspectorUI to generate only the backend commands
+        and not spend time generating a bunch of cpp files.
+
 2018-01-24  Nikita Vasilyev  <nvasilyev@apple.com>
 
         REGRESSION (r226994): Web Inspector: Styles: Suggestions popover floats in top-left corner of Web Inspector after tabbing

@@ -195,6 +195,9 @@ def generate_from_specification(primary_specification_filepath=None,
         generators.append(ObjCProtocolTypeConversionsHeaderGenerator(*generator_arguments))
         generators.append(ObjCProtocolTypesImplementationGenerator(*generator_arguments))
 
+    elif protocol.framework is Frameworks.WebInspectorUI:
+        generators.append(JSBackendCommandsGenerator(*generator_arguments))
+
     single_output_file_contents = []
 
     for generator in generators:
@@ -224,7 +227,7 @@ def generate_from_specification(primary_specification_filepath=None,
 
 
 if __name__ == '__main__':
-    allowed_framework_names = ['JavaScriptCore', 'WebInspector', 'WebKit', 'Test']
+    allowed_framework_names = ['JavaScriptCore', 'WebInspector', 'WebInspectorUI', 'WebKit', 'Test']
     allowed_platform_names = ['iOS', 'macOS', 'all', 'generic']
     cli_parser = optparse.OptionParser(usage="usage: %prog [options] PrimaryProtocol.json [SupplementalProtocol.json ...]")
     cli_parser.add_option("-o", "--outputDir", help="Directory where generated files should be written.")

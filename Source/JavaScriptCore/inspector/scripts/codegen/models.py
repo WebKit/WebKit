@@ -55,6 +55,8 @@ _FRAMEWORK_CONFIG_MAP = {
         "objc_protocol_group": "RWI",
         "objc_prefix": "RWI",
     },
+    "WebInspectorUI": {
+    },
     # Used for code generator tests.
     "Test": {
         "alternate_dispatchers": True,
@@ -95,6 +97,9 @@ class Framework:
         if frameworkString == "WebInspector":
             return Frameworks.WebInspector
 
+        if frameworkString == "WebInspectorUI":
+            return Frameworks.WebInspectorUI
+
         if frameworkString == "Test":
             return Frameworks.Test
 
@@ -106,6 +111,7 @@ class Frameworks:
     JavaScriptCore = Framework("JavaScriptCore")
     WebKit = Framework("WebKit")
     WebInspector = Framework("WebInspector")
+    WebInspectorUI = Framework("WebInspectorUI")
     Test = Framework("Test")
 
 
