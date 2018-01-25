@@ -1,5 +1,13 @@
 2018-01-25  Manuel Rego Casasnovas  <rego@igalia.com>
 
+        [css-multicol] Some test imported in r227600 are failing
+
+        Unreviewed gardening.
+
+        * TestExpectations:
+
+2018-01-25  Manuel Rego Casasnovas  <rego@igalia.com>
+
         [css-multicol] Update WPT test suite
         https://bugs.webkit.org/show_bug.cgi?id=182087
 
