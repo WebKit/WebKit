@@ -688,7 +688,7 @@ webkit.org/b/169640 imported/w3c/web-platform-tests/html/webappapis/scripting/ev
 
 compositing/tiling/non-visible-window-tile-coverage.html [ Pass ]
 
-webkit.org/b/170629 [ Sierra ] memory/memory-pressure-simulation.html [ Pass Failure ]
+webkit.org/b/170629  memory/memory-pressure-simulation.html [ Pass Failure ]
 
 webkit.org/b/170484 swipe/main-frame-pinning-requirement.html [ Pass Failure ]
 
