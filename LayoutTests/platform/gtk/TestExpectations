@@ -1760,8 +1760,8 @@ webkit.org/b/153942 plugins/private-browsing-mode.html [ Failure Pass ]
 
 webkit.org/b/153943 webaudio/convolution-mono-mono.html [ Failure Pass ]
 
-webkit.org/b/153947 imported/w3c/css/css-color-3/t424-hsl-parsing-f.xht [ ImageOnlyFailure Pass ]
-webkit.org/b/153947 imported/w3c/css/css-color-3/t425-hsla-parsing-f.xht [ ImageOnlyFailure Pass ]
+webkit.org/b/153947 imported/w3c/web-platform-tests/css/css-color/t424-hsl-parsing-f.xht [ ImageOnlyFailure Pass ]
+webkit.org/b/153947 imported/w3c/web-platform-tests/css/css-color/t425-hsla-parsing-f.xht [ ImageOnlyFailure Pass ]
 
 webkit.org/b/153948 imported/w3c/web-platform-tests/html/semantics/document-metadata/styling/LinkStyle.html [ Failure Pass ]
 
@@ -2889,8 +2889,8 @@ webkit.org/b/145049 fast/text/simple-line-layout-text-stroke-width.html [ Failur
 
 webkit.org/b/145432 media/video-transformed-by-javascript.html [ Failure ]
 
-webkit.org/b/148932 imported/w3c/css/css-color-3/t424-hsl-basic-a.xht [ ImageOnlyFailure Pass ]
-webkit.org/b/148932 imported/w3c/css/css-color-3/t425-hsla-clip-outside-device-gamut-b.xht [ ImageOnlyFailure ]
+webkit.org/b/148932 imported/w3c/web-platform-tests/css/css-color/t424-hsl-basic-a.xht [ ImageOnlyFailure Pass ]
+webkit.org/b/148932 imported/w3c/web-platform-tests/css/css-color/t425-hsla-clip-outside-device-gamut-b.xht [ ImageOnlyFailure ]
 
 webkit.org/b/148935 accessibility/scroll-to-global-point-iframe-nested.html [ Failure ]
 webkit.org/b/148935 accessibility/scroll-to-global-point-iframe.html [ Failure ]
@@ -2937,16 +2937,16 @@ webkit.org/b/151267 imported/blink/webexposed/webkit-focus-ring-exposed-to-quirk
 
 webkit.org/b/152788 imported/mozilla/svg/filter-scaled-02.html [ ImageOnlyFailure Pass ]
 
-webkit.org/b/152821 imported/w3c/css/css-multicol-1/multicol-basic-001.html [ ImageOnlyFailure ]
-webkit.org/b/152821 imported/w3c/css/css-multicol-1/multicol-basic-002.html [ ImageOnlyFailure ]
-webkit.org/b/152821 imported/w3c/css/css-multicol-1/multicol-basic-003.html [ ImageOnlyFailure ]
-webkit.org/b/152821 imported/w3c/css/css-multicol-1/multicol-basic-004.html [ ImageOnlyFailure ]
-webkit.org/b/152821 imported/w3c/css/css-multicol-1/multicol-rule-002.xht [ ImageOnlyFailure ]
-webkit.org/b/152821 imported/w3c/css/css-multicol-1/multicol-rule-px-001.xht [ ImageOnlyFailure ]
-webkit.org/b/152821 imported/w3c/css/css-multicol-1/multicol-rule-stacking-001.xht [ ImageOnlyFailure ]
-webkit.org/b/152821 imported/w3c/css/css-multicol-1/multicol-shorthand-001.xht [ ImageOnlyFailure ]
-webkit.org/b/152821 imported/w3c/css/css-multicol-1/multicol-span-all-block-sibling-003.xht [ ImageOnlyFailure ]
-webkit.org/b/152821 imported/w3c/css/css-multicol-1/multicol-span-all-margin-nested-firstchild-001.xht [ ImageOnlyFailure ]
+webkit.org/b/152821 imported/w3c/web-platform-tests/css/css-multicol/multicol-basic-001.html [ ImageOnlyFailure ]
+webkit.org/b/152821 imported/w3c/web-platform-tests/css/css-multicol/multicol-basic-002.html [ ImageOnlyFailure ]
+webkit.org/b/152821 imported/w3c/web-platform-tests/css/css-multicol/multicol-basic-003.html [ ImageOnlyFailure ]
+webkit.org/b/152821 imported/w3c/web-platform-tests/css/css-multicol/multicol-basic-004.html [ ImageOnlyFailure ]
+webkit.org/b/152821 imported/w3c/web-platform-tests/css/css-multicol/multicol-rule-002.xht [ ImageOnlyFailure ]
+webkit.org/b/152821 imported/w3c/web-platform-tests/css/css-multicol/multicol-rule-px-001.xht [ ImageOnlyFailure ]
+webkit.org/b/152821 imported/w3c/web-platform-tests/css/css-multicol/multicol-rule-stacking-001.xht [ ImageOnlyFailure ]
+webkit.org/b/152821 imported/w3c/web-platform-tests/css/css-multicol/multicol-shorthand-001.xht [ ImageOnlyFailure ]
+webkit.org/b/152821 imported/w3c/web-platform-tests/css/css-multicol/multicol-span-all-block-sibling-003.xht [ ImageOnlyFailure ]
+webkit.org/b/152821 imported/w3c/web-platform-tests/css/css-multicol/multicol-span-all-margin-nested-firstchild-001.xht [ ImageOnlyFailure ]
 
 webkit.org/b/152908 pageoverlay/overlay-installation.html [ Failure ]
 webkit.org/b/152908 pageoverlay/overlay-large-document-scrolled.html [ Failure ]
@@ -2962,8 +2962,8 @@ webkit.org/b/153697 http/tests/security/contentSecurityPolicy/object-src-applet-
 webkit.org/b/153697 http/tests/security/contentSecurityPolicy/object-src-applet-code-codebase.html [ Failure ]
 webkit.org/b/153697 http/tests/security/contentSecurityPolicy/object-src-applet-code.html [ Failure ]
 
-webkit.org/b/153698 imported/w3c/css/css-multicol-1/multicol-rule-dashed-000.xht [ ImageOnlyFailure ]
-webkit.org/b/153698 imported/w3c/css/css-multicol-1/multicol-zero-height-001.xht [ ImageOnlyFailure ]
+webkit.org/b/153698 imported/w3c/web-platform-tests/css/css-multicol/multicol-rule-dashed-000.xht [ ImageOnlyFailure ]
+webkit.org/b/153698 imported/w3c/web-platform-tests/css/css-multicol/multicol-zero-height-001.xht [ ImageOnlyFailure ]
 
 webkit.org/b/153700 fast/ruby/ruby-expansion-cjk-2.html [ ImageOnlyFailure ]
 webkit.org/b/153700 fast/ruby/ruby-expansion-cjk-3.html [ ImageOnlyFailure ]
@@ -3318,9 +3318,9 @@ ietestcenter/css3/flexbox/flexbox-layout-001.htm [ Pass ]
 
 imported/w3c/canvas/2d.line.cap.round.html [ Pass ]
 
-imported/w3c/css/css-color-3/t422-rgba-onscreen-b.xht [ Pass ]
-imported/w3c/css/css-color-3/t422-rgba-onscreen-multiple-boxes-c.xht [ Pass ]
-imported/w3c/css/css-color-3/t425-hsla-onscreen-multiple-boxes-c.xht [ Pass ]
+imported/w3c/web-platform-tests/css/css-color/t422-rgba-onscreen-b.xht [ Pass ]
+imported/w3c/web-platform-tests/css/css-color/t422-rgba-onscreen-multiple-boxes-c.xht [ Pass ]
+imported/w3c/web-platform-tests/css/css-color/t425-hsla-onscreen-multiple-boxes-c.xht [ Pass ]
 
 imported/w3c/web-platform-tests/2dcontext/transformations/canvas_transformations_reset_001.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-pseudo/first-letter-002.html [ Pass ]

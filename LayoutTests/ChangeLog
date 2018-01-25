@@ -1,3 +1,16 @@
+2018-01-24  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        Move css-color & css-multicol WPT suites to the proper folder
+        https://bugs.webkit.org/show_bug.cgi?id=182044
+
+        Reviewed by Youenn Fablet.
+
+        * TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/ios-wk1/TestExpectations:
+        * platform/ios/TestExpectations:
+        * platform/win/TestExpectations:
+
 2018-01-24  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthN] Implement PublicKeyCredential’s [[DiscoverFromExternalSource]] with a dummy authenticator

@@ -609,16 +609,16 @@ webkit.org/b/149018 accessibility/aria-current.html [ Skip ]
 webkit.org/b/148967 accessibility/aria-table-attributes.html [ Skip ]
 
 # TODO webkit-font-smoothing is not supported.
-webkit.org/b/149245 imported/w3c/css/css-multicol-1/multicol-basic-001.html [ Skip ]
-webkit.org/b/149245 imported/w3c/css/css-multicol-1/multicol-basic-002.html [ Skip ]
-webkit.org/b/149245 imported/w3c/css/css-multicol-1/multicol-basic-003.html [ Skip ]
-webkit.org/b/149245 imported/w3c/css/css-multicol-1/multicol-basic-004.html [ Skip ]
-webkit.org/b/149245 imported/w3c/css/css-multicol-1/multicol-rule-002.xht [ Skip ]
-webkit.org/b/149245 imported/w3c/css/css-multicol-1/multicol-rule-px-001.xht [ Skip ]
-webkit.org/b/149245 imported/w3c/css/css-multicol-1/multicol-rule-stacking-001.xht [ Skip ]
-webkit.org/b/149245 imported/w3c/css/css-multicol-1/multicol-shorthand-001.xht [ Skip ]
-webkit.org/b/149245 imported/w3c/css/css-multicol-1/multicol-span-all-block-sibling-003.xht [ Skip ]
-webkit.org/b/149245 imported/w3c/css/css-multicol-1/multicol-span-all-margin-nested-firstchild-001.xht [ Skip ]
+webkit.org/b/149245 imported/w3c/web-platform-tests/css/css-multicol/multicol-basic-001.html [ Skip ]
+webkit.org/b/149245 imported/w3c/web-platform-tests/css/css-multicol/multicol-basic-002.html [ Skip ]
+webkit.org/b/149245 imported/w3c/web-platform-tests/css/css-multicol/multicol-basic-003.html [ Skip ]
+webkit.org/b/149245 imported/w3c/web-platform-tests/css/css-multicol/multicol-basic-004.html [ Skip ]
+webkit.org/b/149245 imported/w3c/web-platform-tests/css/css-multicol/multicol-rule-002.xht [ Skip ]
+webkit.org/b/149245 imported/w3c/web-platform-tests/css/css-multicol/multicol-rule-px-001.xht [ Skip ]
+webkit.org/b/149245 imported/w3c/web-platform-tests/css/css-multicol/multicol-rule-stacking-001.xht [ Skip ]
+webkit.org/b/149245 imported/w3c/web-platform-tests/css/css-multicol/multicol-shorthand-001.xht [ Skip ]
+webkit.org/b/149245 imported/w3c/web-platform-tests/css/css-multicol/multicol-span-all-block-sibling-003.xht [ Skip ]
+webkit.org/b/149245 imported/w3c/web-platform-tests/css/css-multicol/multicol-span-all-margin-nested-firstchild-001.xht [ Skip ]
 
 # font-variant-* not implemented on Windows
 webkit.org/b/149630 css3/font-variant-all.html [ ImageOnlyFailure ]
@@ -1988,7 +1988,7 @@ fast/css/direct-adjacent-style-update-optimization.html [ Failure ]
 webkit.org/b/140767 fast/css/read-only-read-write-input-basics.html [ ImageOnlyFailure ]
 
 # Newly imported W3C CSS test that is off by 1 pixel on Windows.
-imported/w3c/css/css-multicol-1/multicol-span-all-001.xht [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-multicol/multicol-span-all-001.xht [ ImageOnlyFailure ]
 
 # https://bugs.webkit.org/show_bug.cgi?id=138025
 # Larger text and as a result, larger elements containing said text (as compared to Mac port)
