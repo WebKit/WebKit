@@ -33,6 +33,7 @@
 #include "NetworkLoadParameters.h"
 #include "NetworkProcess.h"
 #include "SessionTracker.h"
+#include "WebErrors.h"
 #include <WebCore/ResourceError.h>
 
 namespace WebKit {
@@ -46,7 +47,11 @@ PreconnectTask::PreconnectTask(NetworkLoadParameters&& parameters, WTF::Completi
     RELEASE_LOG(Network, "%p - PreconnectTask::PreconnectTask()", this);
 
     auto* networkSession = SessionTracker::networkSession(parameters.sessionID);
-    ASSERT(networkSession);
+    if (!networkSession) {
+        ASSERT_NOT_REACHED();
+        m_completionHandler(internalError(parameters.request.url()));
+        return;
+    }
 
     ASSERT(parameters.shouldPreconnectOnly == PreconnectOnly::Yes);
     m_networkLoad = std::make_unique<NetworkLoad>(*this, WTFMove(parameters), *networkSession);

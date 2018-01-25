@@ -1,3 +1,15 @@
+2018-01-25  Alex Christensen  <achristensen@webkit.org>
+
+        Fix crash when preconnecting while closing private browsing
+        https://bugs.webkit.org/show_bug.cgi?id=182114
+        <rdar://problem/35637284>
+
+        Reviewed by Joseph Pecoraro.
+
+        * NetworkProcess/PreconnectTask.cpp:
+        There is a race condition when destroying a session while a page is initiating a preconnect.
+        If this happens, fail gracefully instead of trying to preconnect with a null session.
+
 2018-01-25  Dan Bernstein  <mitz@apple.com>
 
         [Mac] Enable library validation for Networking & Storage XPC services
