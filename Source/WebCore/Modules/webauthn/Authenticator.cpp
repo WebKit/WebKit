@@ -26,6 +26,8 @@
 #include "config.h"
 #include "Authenticator.h"
 
+#include <AuthenticatorAttestationResponse.h>
+#include <wtf/CurrentTime.h>
 #include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
@@ -53,6 +55,21 @@ ExceptionOr<Vector<uint8_t>> Authenticator::makeCredential(const Vector<uint8_t>
     // Append clientDataJsonHash
     attestationObject.appendVector(hash);
     return WTFMove(attestationObject);
+}
+
+ExceptionOr<Authenticator::AssertionReturnBundle> Authenticator::getAssertion(const String&, const Vector<uint8_t>& hash, const Vector<PublicKeyCredentialDescriptor>& allowCredentialIds) const
+{
+    // The followings is just a dummy implementaion to support initial development.
+    // User cancellation is effecively NotAllowedError.
+    if (!allowCredentialIds.isEmpty())
+        return Exception { NotAllowedError };
+
+    // FIXME: Delay processing for 0.1 seconds to simulate a timeout condition. This code will be removed
+    // when the full test infrastructure is set up.
+    WTF::sleep(0.1);
+
+    // Fill all parts with hash
+    return AssertionReturnBundle(ArrayBuffer::create(hash.data(), hash.size()), ArrayBuffer::create(hash.data(), hash.size()), ArrayBuffer::create(hash.data(), hash.size()), ArrayBuffer::create(hash.data(), hash.size()));
 }
 
 } // namespace WebCore

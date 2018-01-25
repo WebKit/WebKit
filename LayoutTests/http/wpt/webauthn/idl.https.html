@@ -35,7 +35,7 @@ promise_test(async () => {
     `);
     idlArray.add_idls(idlText);
 
-    const options = {
+    const creationOptions = {
         publicKey: {
             rp: {
                 name: "localhost",
@@ -49,9 +49,17 @@ promise_test(async () => {
             pubKeyCredParams: [{ type: "public-key", alg: -7 }],
         }
     };
-    credential = await navigator.credentials.create(options);
+    createdCredential = await navigator.credentials.create(creationOptions);
 
-    idlArray.add_objects({"PublicKeyCredential": ["credential"], "AuthenticatorAttestationResponse": ["credential.response"]});
+
+    const requestOptions = {
+        publicKey: {
+            challenge: Base64URL.parse("MTIzNDU2"),
+        }
+    };
+    requestedCredential = await navigator.credentials.get(requestOptions);
+
+    idlArray.add_objects({"PublicKeyCredential": ["createdCredential"], "AuthenticatorAttestationResponse": ["createdCredential.response"], "AuthenticatorAssertionResponse": ["requestedCredential.response"]});
     idlArray.test();
 }, "Setup for WebAuthN API IDL tests.");
 </script>

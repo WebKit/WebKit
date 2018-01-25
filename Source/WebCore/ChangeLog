@@ -1,3 +1,43 @@
+2018-01-24  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebAuthN] Implement PublicKeyCredential’s [[DiscoverFromExternalSource]] with a dummy authenticator
+        https://bugs.webkit.org/show_bug.cgi?id=182032
+        <rdar://problem/36459922>
+
+        Reviewed by Brent Fulgham.
+
+        This patch implements PublicKeyCredential's [[DiscoverFromExternalSource]] from
+        https://www.w3.org/TR/webauthn/#getAssertion as of 5 December 2017. In order to
+        do testing, a dummy authenticator is implemented to exercise a failure and a
+        pass path. A number of dependencies need to be resolved later in order to comply
+        with the spec, which are marked by FIXME in the patch and tracked by proper
+        bugs. Those dependencies will be addressed once the first prototype is finshed.
+
+        Tests: http/tests/webauthn/public-key-credential-get-with-invalid-parameters.https.html
+               http/wpt/credential-management/credentialscontainer-store-basics.https.html
+               http/wpt/webauthn/public-key-credential-get-failure.https.html
+               http/wpt/webauthn/public-key-credential-get-success.https.html
+
+        * Modules/credentialmanagement/CredentialsContainer.cpp:
+        (WebCore::CredentialsContainer::get):
+        (WebCore::CredentialsContainer::isCreate):
+        Fixes some minor issues.
+        * Modules/webauthn/Authenticator.cpp:
+        (WebCore::Authenticator::getAssertion const):
+        * Modules/webauthn/Authenticator.h:
+        (WebCore::Authenticator::AssertionReturnBundle::AssertionReturnBundle):
+        * Modules/webauthn/PublicKeyCredential.cpp:
+        (WebCore::PublicKeyCredential::collectFromCredentialStore):
+        Changed a parameter type.
+        (WebCore::PublicKeyCredential::discoverFromExternalSource):
+        (WebCore::PublicKeyCredential::create):
+        Improved some comments.
+        * Modules/webauthn/PublicKeyCredential.h:
+        * Modules/webauthn/PublicKeyCredentialRequestOptions.h:
+        (): Deleted.
+        * bindings/js/JSAuthenticatorResponseCustom.cpp:
+        (WebCore::toJSNewlyCreated):
+
 2018-01-24  Dean Jackson  <dino@apple.com>
 
         Move WebGL's colorspace code into IOSurface

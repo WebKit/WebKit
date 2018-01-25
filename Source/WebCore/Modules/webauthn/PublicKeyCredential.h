@@ -37,7 +37,7 @@ class DeferredPromise;
 class SecurityOrigin;
 
 struct PublicKeyCredentialCreationOptions;
-struct CredentialRequestOptions;
+struct PublicKeyCredentialRequestOptions;
 
 class PublicKeyCredential final : public BasicCredential {
 public:
@@ -46,8 +46,8 @@ public:
         return adoptRef(*new PublicKeyCredential(WTFMove(id), WTFMove(response)));
     }
 
-    static Vector<Ref<BasicCredential>> collectFromCredentialStore(CredentialRequestOptions&&, bool);
-    static ExceptionOr<RefPtr<BasicCredential>> discoverFromExternalSource(const SecurityOrigin&, const CredentialRequestOptions&, bool sameOriginWithAncestors);
+    static Vector<Ref<BasicCredential>> collectFromCredentialStore(PublicKeyCredentialRequestOptions&&, bool);
+    static ExceptionOr<RefPtr<BasicCredential>> discoverFromExternalSource(const SecurityOrigin&, const PublicKeyCredentialRequestOptions&, bool sameOriginWithAncestors);
     static RefPtr<BasicCredential> store(RefPtr<BasicCredential>&&, bool);
     static ExceptionOr<RefPtr<BasicCredential>> create(const SecurityOrigin&, const PublicKeyCredentialCreationOptions&, bool sameOriginWithAncestors);
 

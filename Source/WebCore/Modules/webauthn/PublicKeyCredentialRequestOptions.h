@@ -33,8 +33,8 @@ namespace WebCore {
 
 struct PublicKeyCredentialRequestOptions {
     BufferSource challenge;
-    unsigned long timeout { 0 };
-    String rpId;
+    std::optional<unsigned long> timeout;
+    mutable String rpId;
     Vector<PublicKeyCredentialDescriptor> allowCredentials;
 };
 

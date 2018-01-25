@@ -28,8 +28,9 @@
 
 #include "Authenticator.h"
 #include "AuthenticatorResponse.h"
-#include "CredentialCreationOptions.h"
 #include "JSDOMPromiseDeferred.h"
+#include "PublicKeyCredentialCreationOptions.h"
+#include "PublicKeyCredentialRequestOptions.h"
 #include "SecurityOrigin.h"
 #include <pal/crypto/CryptoDigest.h>
 #include <wtf/CurrentTime.h>
@@ -50,9 +51,7 @@ enum class ClientDataType {
     Get
 };
 
-// FIXME: Add token binding ID and extensions.
-// https://bugs.webkit.org/show_bug.cgi?id=181948
-// https://bugs.webkit.org/show_bug.cgi?id=181949
+// FIXME(181948): Add token binding ID and extensions.
 static Ref<ArrayBuffer> produceClientDataJson(ClientDataType type, const BufferSource& challenge, const SecurityOrigin& origin)
 {
     auto object = JSON::Object::create();
@@ -100,14 +99,48 @@ PublicKeyCredential::PublicKeyCredential(RefPtr<ArrayBuffer>&& id, RefPtr<Authen
 {
 }
 
-Vector<Ref<BasicCredential>> PublicKeyCredential::collectFromCredentialStore(CredentialRequestOptions&&, bool)
+Vector<Ref<BasicCredential>> PublicKeyCredential::collectFromCredentialStore(PublicKeyCredentialRequestOptions&&, bool)
 {
     return { };
 }
 
-ExceptionOr<RefPtr<BasicCredential>> PublicKeyCredential::discoverFromExternalSource(const SecurityOrigin&, const CredentialRequestOptions&, bool)
+ExceptionOr<RefPtr<BasicCredential>> PublicKeyCredential::discoverFromExternalSource(const SecurityOrigin& callerOrigin, const PublicKeyCredentialRequestOptions& options, bool sameOriginWithAncestors)
 {
-    return Exception { NotSupportedError };
+    using namespace PublicKeyCredentialInternal;
+
+    // The following implements https://www.w3.org/TR/webauthn/#createCredential as of 5 December 2017.
+    // FIXME: Extensions are not supported yet. Skip Step 8-9.
+    // Step 1, 3-4, 13, 16 are handled by the caller, including options sanitizing, timer and abort signal.
+    // Step 2.
+    if (!sameOriginWithAncestors)
+        return Exception { NotAllowedError };
+
+    // Step 5-7.
+    // FIXME(181950): We lack fundamental support from SecurityOrigin to determine if a host is a valid domain or not.
+    // Step 6 is therefore skipped. Also, we lack the support to determine whether a domain is a registrable
+    // domain suffix of another domain. Hence restrict the comparison to equal in Step 7.
+    if (!options.rpId.isEmpty() && !(callerOrigin.host() == options.rpId))
+        return Exception { SecurityError };
+    if (options.rpId.isEmpty())
+        options.rpId = callerOrigin.host();
+
+    // Step 10-12.
+    auto clientDataJson = produceClientDataJson(ClientDataType::Get, options.challenge, callerOrigin);
+    auto clientDataJsonHash = produceClientDataJsonHash(clientDataJson);
+
+    // Step 14-15, 17-19.
+    // Only platform attachments will be supported at this stage. Assuming one authenticator per device.
+    // Also, resident keys, user verifications and direct attestation are enforced at this tage.
+    // For better performance, no filtering is done here regarding to options.excludeCredentials.
+    // What's more, user cancellations effectively means NotAllowedError. Therefore, the below call
+    // will only returns either an exception or a PublicKeyCredential ref.
+    // FIXME(181946): The following operation might need to perform async.
+    auto result = Authenticator::singleton().getAssertion(options.rpId, clientDataJsonHash, options.allowCredentials);
+    if (result.hasException())
+        return result.releaseException();
+
+    auto bundle = result.releaseReturnValue();
+    return ExceptionOr<RefPtr<BasicCredential>>(PublicKeyCredential::create(WTFMove(bundle.credentialID), AuthenticatorAssertionResponse::create(WTFMove(clientDataJson), WTFMove(bundle.authenticatorData), WTFMove(bundle.signature), WTFMove(bundle.userHandle))));
 }
 
 RefPtr<BasicCredential> PublicKeyCredential::store(RefPtr<BasicCredential>&&, bool)
@@ -121,16 +154,15 @@ ExceptionOr<RefPtr<BasicCredential>> PublicKeyCredential::create(const SecurityO
 
     // The following implements https://www.w3.org/TR/webauthn/#createCredential as of 5 December 2017.
     // FIXME: Extensions are not supported yet. Skip Step 11-12.
-    // Step 1, 3, 4, 17 are handled by the caller, including options sanitizing, timer and abort signal.
+    // Step 1, 3-4, 16-17 are handled by the caller, including options sanitizing, timer and abort signal.
     // Step 2.
     if (!sameOriginWithAncestors)
         return Exception { NotAllowedError };
 
     // Step 5-7.
-    // FIXME: We lack fundamental support from SecurityOrigin to determine if a host is a valid domain or not.
+    // FIXME(181950): We lack fundamental support from SecurityOrigin to determine if a host is a valid domain or not.
     // Step 6 is therefore skipped. Also, we lack the support to determine whether a domain is a registrable
     // domain suffix of another domain. Hence restrict the comparison to equal in Step 7.
-    // https://bugs.webkit.org/show_bug.cgi?id=181950
     if (!options.rp.id.isEmpty() && !(callerOrigin.host() == options.rp.id))
         return Exception { SecurityError };
     if (options.rp.id.isEmpty())
@@ -152,16 +184,13 @@ ExceptionOr<RefPtr<BasicCredential>> PublicKeyCredential::create(const SecurityO
     // For better performance, no filtering is done here regarding to options.excludeCredentials.
     // What's more, user cancellations effectively means NotAllowedError. Therefore, the below call
     // will only returns either an exception or a PublicKeyCredential ref.
-    // FIXME: The following operation might need to perform async.
-    // https://bugs.webkit.org/show_bug.cgi?id=181946
+    // FIXME(181946): The following operation might need to perform async.
     auto result = Authenticator::singleton().makeCredential(clientDataJsonHash, options.rp, options.user, options.pubKeyCredParams, options.excludeCredentials);
     if (result.hasException())
         return result.releaseException();
 
     auto attestationObject = result.releaseReturnValue();
-    // FIXME: Got some crazy compile error when I was trying to return RHS directly.
-    RefPtr<BasicCredential> credential = PublicKeyCredential::create(getIdFromAttestationObject(attestationObject), AuthenticatorAttestationResponse::create(WTFMove(clientDataJson), ArrayBuffer::create(attestationObject.data(), attestationObject.size())));
-    return WTFMove(credential);
+    return ExceptionOr<RefPtr<BasicCredential>>(PublicKeyCredential::create(getIdFromAttestationObject(attestationObject), AuthenticatorAttestationResponse::create(WTFMove(clientDataJson), ArrayBuffer::create(attestationObject.data(), attestationObject.size()))));
 }
 
 ArrayBuffer* PublicKeyCredential::rawId() const

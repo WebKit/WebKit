@@ -32,17 +32,35 @@
 
 namespace WebCore {
 
-// FIXME: Consider moving all static methods from PublicKeyCredential to here and making this
+// FIXME(181946): Consider moving all static methods from PublicKeyCredential to here and making this
 // as an authenticator manager that controls all authenticator activities, mostly likely asnyc
 // for attestations.
 class Authenticator {
     WTF_MAKE_NONCOPYABLE(Authenticator);
     friend class NeverDestroyed<Authenticator>;
 public:
+    // FIXME(181946): After moving all static methods from PublicKeyCredential to here, we will probably
+    // return PublicKeyCredential directly and get rid of the following return type.
+    struct AssertionReturnBundle {
+        AssertionReturnBundle(Ref<ArrayBuffer>&& id, Ref<ArrayBuffer>&& data, Ref<ArrayBuffer>&& sig, Ref<ArrayBuffer>&& handle)
+            : credentialID(WTFMove(id))
+            , authenticatorData(WTFMove(data))
+            , signature(WTFMove(sig))
+            , userHandle(WTFMove(handle))
+        {
+        }
+
+        Ref<ArrayBuffer> credentialID;
+        Ref<ArrayBuffer> authenticatorData;
+        Ref<ArrayBuffer> signature;
+        Ref<ArrayBuffer> userHandle;
+    };
+
     static Authenticator& singleton();
 
     // Omit requireResidentKey, requireUserPresence, and requireUserVerification as we always provide resident keys and require user verification.
     ExceptionOr<Vector<uint8_t>> makeCredential(const Vector<uint8_t>& hash, const PublicKeyCredentialCreationOptions::RpEntity&, const PublicKeyCredentialCreationOptions::UserEntity&, const Vector<PublicKeyCredentialCreationOptions::Parameters>&, const Vector<PublicKeyCredentialDescriptor>& excludeCredentialIds) const;
+    ExceptionOr<AssertionReturnBundle> getAssertion(const String& rpId, const Vector<uint8_t>& hash, const Vector<PublicKeyCredentialDescriptor>& allowCredentialIds) const;
 
 #if !COMPILER(MSVC)
 private:

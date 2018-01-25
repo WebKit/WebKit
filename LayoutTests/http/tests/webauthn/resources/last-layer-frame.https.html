@@ -7,7 +7,7 @@
         top.postMessage(messagePrefix, "https://127.0.0.1:8443");
     }
 
-    const options = {
+    const makeOptions = {
         publicKey: {
             rp: {
                 name: "example.com"
@@ -15,23 +15,37 @@
             user: {
                 name: "John Appleseed",
                 id: asciiToUint8Array("123456"),
-                displayName: "John",
+                displayName: "Appleseed",
             },
             challenge: asciiToUint8Array("123456"),
             pubKeyCredParams: [{ type: "public-key", alg: -7 }]
         }
     };
-    navigator.credentials.create(options).then(
+    const requestOptions = {
+        publicKey: {
+            challenge: asciiToUint8Array("123456"),
+        }
+    };
+
+    navigator.credentials.create(makeOptions).then(
         function(value) {
             messageToTop("Access granted. " + value);
         },
         function(exception) {
             if (exception.name == "NotAllowedError")
-                messageToTop("PASS Throw NotAllowedError.");
+                return navigator.credentials.get(requestOptions)
             else
                 messageToTop("Throw " + exception.name  + ".");
         }
-    );
+    ).then(function(value) {
+            messageToTop("Access granted. " + value);
+        },
+        function(exception) {
+            if (exception.name == "NotAllowedError")
+                messageToTop("PASS Throw NotAllowedError for both PublicKeyCredential's [[create]] and [[get]].");
+            else
+                messageToTop("Throw " + exception.name  + ".");
+    });
     </script>
 </head>
 </html>

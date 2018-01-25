@@ -1,3 +1,26 @@
+2018-01-24  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebAuthN] Implement PublicKeyCredential’s [[DiscoverFromExternalSource]] with a dummy authenticator
+        https://bugs.webkit.org/show_bug.cgi?id=182032
+        <rdar://problem/36459922>
+
+        Reviewed by Brent Fulgham.
+
+        * http/tests/webauthn/public-key-credential-get-with-invalid-parameters.https-expected.txt: Added.
+        * http/tests/webauthn/public-key-credential-get-with-invalid-parameters.https.html: Added.
+        * http/tests/webauthn/public-key-credential-same-origin-with-ancestors-2.https-expected.txt:
+        * http/tests/webauthn/public-key-credential-same-origin-with-ancestors.https-expected.txt:
+        * http/tests/webauthn/resources/last-layer-frame.https.html:
+        * http/wpt/credential-management/credentialscontainer-store-basics.https-expected.txt: Added.
+        * http/wpt/credential-management/credentialscontainer-store-basics.https.html: Added.
+        * http/wpt/webauthn/idl.https-expected.txt:
+        * http/wpt/webauthn/idl.https.html:
+        * http/wpt/webauthn/public-key-credential-create-success.https.html:
+        * http/wpt/webauthn/public-key-credential-get-failure.https-expected.txt: Added.
+        * http/wpt/webauthn/public-key-credential-get-failure.https.html: Added.
+        * http/wpt/webauthn/public-key-credential-get-success.https-expected.txt: Added.
+        * http/wpt/webauthn/public-key-credential-get-success.https.html: Added.
+
 2018-01-24  Youenn Fablet  <youenn@apple.com>
 
         Opaque being-loaded responses should clone their body

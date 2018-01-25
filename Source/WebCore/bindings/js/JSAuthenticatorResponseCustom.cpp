@@ -26,6 +26,7 @@
 #include "config.h"
 #include "JSAuthenticatorResponse.h"
 
+#include "JSAuthenticatorAssertionResponse.h"
 #include "JSAuthenticatorAttestationResponse.h"
 #include "JSDOMBinding.h"
 
@@ -36,6 +37,8 @@ JSValue toJSNewlyCreated(JSC::ExecState*, JSDOMGlobalObject* globalObject, Ref<A
 {
     if (is<AuthenticatorAttestationResponse>(response))
         return createWrapper<AuthenticatorAttestationResponse>(globalObject, WTFMove(response));
+    if (is<AuthenticatorAssertionResponse>(response))
+        return createWrapper<AuthenticatorAssertionResponse>(globalObject, WTFMove(response));
     return createWrapper<AuthenticatorResponse>(globalObject, WTFMove(response));
 }
 
