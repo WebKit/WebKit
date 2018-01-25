@@ -58,6 +58,7 @@ extern "C" {
     M(PerformanceLogging) \
     M(Plugins) \
     M(Printing) \
+    M(Process) \
     M(ProcessSuspension) \
     M(RemoteLayerTree) \
     M(Resize) \

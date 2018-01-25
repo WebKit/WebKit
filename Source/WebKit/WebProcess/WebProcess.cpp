@@ -425,6 +425,8 @@ void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters)
 #if HAVE(CFNETWORK_STORAGE_PARTITIONING) && !RELEASE_LOG_DISABLED
     ResourceLoadObserver::shared().setShouldLogUserInteraction(parameters.shouldLogUserInteraction);
 #endif
+
+    RELEASE_LOG(Process, "%p - WebProcess::initializeWebProcess: Presenting process = %d", this, WebCore::presentingApplicationPID());
 }
 
 void WebProcess::registerURLSchemeAsEmptyDocument(const String& urlScheme)
