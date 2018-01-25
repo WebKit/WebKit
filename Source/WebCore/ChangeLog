@@ -1,5 +1,25 @@
 2018-01-24  Dean Jackson  <dino@apple.com>
 
+        Move WebGL's colorspace code into IOSurface
+        https://bugs.webkit.org/show_bug.cgi?id=182076
+        <rdar://problem/36846863>
+
+        Reviewed by Simon Fraser, with assistance from Tim Horton.
+
+        Rather than have WebGLLayer talk directly to an IOSurfaceRef,
+        use a helper function on WebCore::IOSurface.
+
+        No behaviour change.
+
+        * platform/graphics/cocoa/IOSurface.h:
+        * platform/graphics/cocoa/IOSurface.mm:
+        (WebCore::IOSurface::migrateColorSpaceToProperties): Add new helper.
+        * platform/graphics/cocoa/WebGLLayer.mm:
+        (-[WebGLLayer allocateIOSurfaceBackingStoreWithSize:usingAlpha:]): The
+        newly created IOSurfaces call the helper to set up their colorspace.
+
+2018-01-24  Dean Jackson  <dino@apple.com>
+
         Add a note about not implementing these functions without discussion.
         <rdar://problem/36666458>
 

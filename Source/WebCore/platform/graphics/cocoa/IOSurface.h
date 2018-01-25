@@ -139,6 +139,8 @@ public:
     WEBCORE_EXPORT static void convertToFormat(std::unique_ptr<WebCore::IOSurface>&& inSurface, Format, WTF::Function<void(std::unique_ptr<WebCore::IOSurface>)>&&);
 #endif
 
+    void migrateColorSpaceToProperties();
+
 private:
     IOSurface(IntSize, IntSize contextSize, CGColorSpaceRef, Format, bool& success);
     IOSurface(IOSurfaceRef, CGColorSpaceRef);

@@ -437,6 +437,12 @@ void IOSurface::convertToFormat(std::unique_ptr<IOSurface>&& inSurface, Format f
 }
 #endif // PLATFORM(IOS)
 
+void IOSurface::migrateColorSpaceToProperties()
+{
+    auto colorSpaceProperties = adoptCF(CGColorSpaceCopyPropertyList(m_colorSpace.get()));
+    IOSurfaceSetValue(m_surface.get(), kIOSurfaceColorSpace, colorSpaceProperties.get());
+}
+
 static TextStream& operator<<(TextStream& ts, IOSurface::Format format)
 {
     switch (format) {

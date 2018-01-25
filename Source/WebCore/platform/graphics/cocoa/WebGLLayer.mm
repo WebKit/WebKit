@@ -159,10 +159,9 @@ static void freeData(void *, const void *data, size_t /* size */)
     ASSERT(_drawingBuffer);
     ASSERT(_spareBuffer);
 
-    auto sRGBDetails = adoptCF(CGColorSpaceCopyPropertyList(sRGBColorSpaceRef()));
-    IOSurfaceSetValue(_contentsBuffer->surface(), kIOSurfaceColorSpace, sRGBDetails.get());
-    IOSurfaceSetValue(_drawingBuffer->surface(), kIOSurfaceColorSpace, sRGBDetails.get());
-    IOSurfaceSetValue(_spareBuffer->surface(), kIOSurfaceColorSpace, sRGBDetails.get());
+    _contentsBuffer->migrateColorSpaceToProperties();
+    _drawingBuffer->migrateColorSpaceToProperties();
+    _spareBuffer->migrateColorSpaceToProperties();
 }
 
 - (void)bindFramebufferToNextAvailableSurface
