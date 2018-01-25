@@ -1,3 +1,20 @@
+2018-01-25  Dan Bernstein  <mitz@apple.com>
+
+        [Mac] Enable library validation for Networking & Storage XPC services
+        https://bugs.webkit.org/show_bug.cgi?id=173424
+        <rdar://problem/32386565>
+
+        Reviewed by Joseph Pecoraro.
+
+        * Configurations/BaseXPCService.xcconfig: Moved the definitions of
+          WK_LIBRARY_VALIDATION_ENABLED and WK_LIBRARY_VALIDATION_CODE_SIGN_FLAGS from
+          WebContentService.xcconfig to here and made them Mac-only at this level.
+        * Configurations/NetworkService.xcconfig: Also set OTHER_CODE_SIGN_FLAGS to
+          WK_LIBRARY_VALIDATION_CODE_SIGN_FLAGS.
+        * Configurations/StorageService.xcconfig: Ditto.
+        * Configurations/WebContentService.xcconfig: Moved definitions from here to
+          BaseXPCService.xcconfig.
+
 2018-01-25  David Hyatt  <hyatt@apple.com>
 
         Enable lines clamp support for Apple Mail by default
