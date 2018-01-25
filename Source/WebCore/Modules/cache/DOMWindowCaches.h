@@ -26,19 +26,21 @@
 #pragma once
 
 #include "DOMWindowProperty.h"
+#include "ExceptionOr.h"
 #include "Supplementable.h"
 
 namespace WebCore {
 
 class DOMWindow;
 class DOMCacheStorage;
+class ScriptExecutionContext;
 
 class DOMWindowCaches : public Supplement<DOMWindow>, public DOMWindowProperty {
 public:
     explicit DOMWindowCaches(DOMWindow*);
 
     static DOMWindowCaches* from(DOMWindow*);
-    static DOMCacheStorage* caches(DOMWindow&);
+    static ExceptionOr<DOMCacheStorage*> caches(ScriptExecutionContext&, DOMWindow&);
 
 private:
     static const char* supplementName();

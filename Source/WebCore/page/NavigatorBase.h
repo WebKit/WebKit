@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "ExceptionOr.h"
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
 #include <wtf/UniqueRef.h>
@@ -61,6 +62,7 @@ protected:
 #if ENABLE(SERVICE_WORKER)
 public:
     ServiceWorkerContainer& serviceWorker();
+    ExceptionOr<ServiceWorkerContainer&> serviceWorker(ScriptExecutionContext&);
 
 private:
     UniqueRef<ServiceWorkerContainer> m_serviceWorkerContainer;

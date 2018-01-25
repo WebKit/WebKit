@@ -1,5 +1,18 @@
 2018-01-25  Chris Dumez  <cdumez@apple.com>
 
+        Access to service workers / Cache API should be disabled in sandboxed frames without allow-same-origin flag
+        https://bugs.webkit.org/show_bug.cgi?id=182140
+        <rdar://problem/36879952>
+
+        Reviewed by Youenn Fablet.
+
+        Rebaseline several WPT test that either pass or fail differently.
+
+        * web-platform-tests/service-workers/cache-storage/window/sandboxed-iframes.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/sandboxed-iframe-navigator-serviceworker.https-expected.txt:
+
+2018-01-25  Chris Dumez  <cdumez@apple.com>
+
         Clients.get(id) should only returns clients in the service worker's origin
         https://bugs.webkit.org/show_bug.cgi?id=182149
         <rdar://problem/36882310>

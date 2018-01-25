@@ -153,6 +153,13 @@ ServiceWorkerContainer& NavigatorBase::serviceWorker()
 {
     return m_serviceWorkerContainer;
 }
+
+ExceptionOr<ServiceWorkerContainer&> NavigatorBase::serviceWorker(ScriptExecutionContext& context)
+{
+    if (is<Document>(context) && downcast<Document>(context).isSandboxed(SandboxOrigin))
+        return Exception { SecurityError, "Service Worker is disabled because the context is sandboxed and lacks the 'allow-same-origin' flag" };
+    return m_serviceWorkerContainer.get();
+}
 #endif
 
 } // namespace WebCore

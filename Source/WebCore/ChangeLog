@@ -1,5 +1,27 @@
 2018-01-25  Chris Dumez  <cdumez@apple.com>
 
+        Access to service workers / Cache API should be disabled in sandboxed frames without allow-same-origin flag
+        https://bugs.webkit.org/show_bug.cgi?id=182140
+        <rdar://problem/36879952>
+
+        Reviewed by Youenn Fablet.
+
+        Throw a SecurityError when accessing navigator.serviceWorker or window.caches inside a sandboxed iframe
+        without the allow-same-origin flag. This behavior is consistent with Chrome. Firefox, however, seems
+        to return these objects but have their API reject promises with a SecurityError instead.
+
+        No new tests, rebaselined existing tests.
+
+        * Modules/cache/DOMWindowCaches.cpp:
+        (WebCore::DOMWindowCaches::caches): Deleted.
+        * Modules/cache/DOMWindowCaches.h:
+        * Modules/cache/DOMWindowCaches.idl:
+        * page/NavigatorBase.cpp:
+        * page/NavigatorBase.h:
+        * page/NavigatorServiceWorker.idl:
+
+2018-01-25  Chris Dumez  <cdumez@apple.com>
+
         Clients.get(id) should only returns clients in the service worker's origin
         https://bugs.webkit.org/show_bug.cgi?id=182149
         <rdar://problem/36882310>

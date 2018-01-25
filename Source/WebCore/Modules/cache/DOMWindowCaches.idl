@@ -26,5 +26,5 @@
 [
     EnabledAtRuntime=CacheAPI,
 ] partial interface DOMWindow {
-    [SecureContext, SameObject] readonly attribute DOMCacheStorage caches;
+    [CallWith=ScriptExecutionContext, MayThrowException, SecureContext, SameObject] readonly attribute DOMCacheStorage caches;
 };
