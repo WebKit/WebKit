@@ -1,3 +1,18 @@
+2018-01-25  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        WebDriver: test imported/selenium/py/test/selenium/webdriver/common/alerts_tests.py crashes in debug
+        https://bugs.webkit.org/show_bug.cgi?id=182096
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        It's an assert in HashTable iterators checkValidity(). The problem is that we get the keys to iterate the values
+        and the map is modified inside the loop. We need to use copyToVector to copy the keys.
+
+        * UIProcess/Automation/WebAutomationSession.cpp:
+        (WebKit::WebAutomationSession::respondToPendingPageNavigationCallbacksWithTimeout):
+        (WebKit::WebAutomationSession::respondToPendingFrameNavigationCallbacksWithTimeout):
+        (WebKit::WebAutomationSession::willShowJavaScriptDialog):
+
 2018-01-24  Alex Christensen  <achristensen@webkit.org>
 
         Gracefully recover from NetworkProcess crashes in private browsing
