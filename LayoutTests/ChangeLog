@@ -1,3 +1,11 @@
+2018-01-25  Miguel Gomez  <magomez@igalia.com>
+
+        Unreviewed GTK+ gardening after r227599.
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk/fast/overflow/line-clamp-expected.png:
+        * platform/gtk/fast/overflow/line-clamp-expected.txt:
+
 2018-01-25  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [css-multicol] Some test imported in r227600 are failing
