@@ -1,3 +1,20 @@
+2018-01-25  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Account for provided easings when computing progress and resolving keyframe effect values
+        https://bugs.webkit.org/show_bug.cgi?id=182098
+        <rdar://problem/36866149>
+
+        Reviewed by Dean Jackson.
+
+        Update expected values with a few adjusted failures and many progressions.
+
+        * web-platform-tests/css-timing-1/step-timing-functions-output-expected.txt:
+        * web-platform-tests/web-animations/animation-model/keyframe-effects/effect-value-iteration-composite-operation-expected.txt:
+        * web-platform-tests/web-animations/interfaces/Animation/effect-expected.txt:
+        * web-platform-tests/web-animations/interfaces/AnimationEffectTiming/easing-expected.txt:
+        * web-platform-tests/web-animations/interfaces/KeyframeEffect/iterationComposite-expected.txt:
+        * web-platform-tests/web-animations/timing-model/time-transformations/transformed-progress-expected.txt:
+
 2018-01-25  Youenn Fablet  <youenn@apple.com>
 
         Set integrity fetch options for loading scripts and CSS

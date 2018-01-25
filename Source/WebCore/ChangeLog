@@ -1,5 +1,42 @@
 2018-01-25  Antoine Quint  <graouts@apple.com>
 
+        [Web Animations] Account for provided easings when computing progress and resolving keyframe effect values
+        https://bugs.webkit.org/show_bug.cgi?id=182098
+        <rdar://problem/36866149>
+
+        Reviewed by Dean Jackson.
+
+        We now account for the timing functions provided through the "easing" propreties on whole animation effects
+        and individual keyframes. Exposing those exposed shortcomings of our keyframe resolution in general through
+        WPT tests so we now implement the "effect value of a keyframe effect" procedure from the spec to correctly
+        resolve keyframes in KeyframeEffect::setAnimatedPropertiesInStyle(). The tests also showed some shortcomings
+        in our TimingFunction code where our step() function resolution wasn't fully compliant and our cubic-bezier()
+        resolution not accurate enough. We now have microsecond accuracy when resolving cubic-bezier() timing functions
+        and identify cubic-bezier(0, 0, 0, 0), cubic-bezier(0, 0, 1, 1) and cubic-bezier(1, 1, 1, 1) as linear timing
+        functions, as called out by the WPT tests.
+
+        * animation/AnimationEffect.cpp:
+        (WebCore::AnimationEffect::transformedProgress const): Account for the effect-wide timing function when computing
+        the progress.
+        (WebCore::AnimationEffect::iterationProgress const): Use the transformed progress now that we support this procedure.
+        * animation/AnimationEffect.h:
+        * animation/KeyframeEffect.cpp:
+        (WebCore::KeyframeEffect::apply): We now use the computed progress from AnimationEffect rather than compute based
+        on the provided time, which we've dropped as an argument.
+        (WebCore::KeyframeEffect::getAnimatedStyle):
+        (WebCore::KeyframeEffect::setAnimatedPropertiesInStyle): Implement the "effect value of a keyframe effect" procedure
+        in full as specified (save for composite operations).
+        (WebCore::KeyframeEffect::applyAtLocalTime): Deleted.
+        * animation/KeyframeEffect.h:
+        * animation/WebAnimation.cpp:
+        (WebCore::WebAnimation::resolve):
+        * css/CSSTimingFunctionValue.h: Fix a small error made in a previous patch where we used "int" instead of "unsigned".
+        * platform/animation/TimingFunction.cpp:
+        (WebCore::TimingFunction::transformTime const):
+        * platform/animation/TimingFunction.h:
+
+2018-01-25  Antoine Quint  <graouts@apple.com>
+
         [Web Animations] Avoid querying the current time multiple time when resolving the play state
         https://bugs.webkit.org/show_bug.cgi?id=182099
 

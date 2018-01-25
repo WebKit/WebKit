@@ -259,9 +259,45 @@ std::optional<double> AnimationEffect::directedProgress() const
     return 1 - effectSimpleIterationProgress.value();
 }
 
+std::optional<double> AnimationEffect::transformedProgress() const
+{
+    // 3.10.1. Calculating the transformed progress
+    // https://drafts.csswg.org/web-animations-1/#calculating-the-transformed-progress
+
+    // The transformed progress is calculated from the directed progress using the following steps:
+    //
+    // 1. If the directed progress is unresolved, return unresolved.
+    auto effectDirectedProgress = directedProgress();
+    if (!effectDirectedProgress)
+        return std::nullopt;
+
+    auto effectDirectedProgressValue = effectDirectedProgress.value();
+
+    if (auto iterationDuration = m_timing->iterationDuration().seconds()) {
+        bool before = false;
+        auto* timingFunction = m_timing->timingFunction();
+        // 2. Calculate the value of the before flag as follows:
+        if (is<StepsTimingFunction>(timingFunction)) {
+            // 1. Determine the current direction using the procedure defined in §3.9.1 Calculating the directed progress.
+            // 2. If the current direction is forwards, let going forwards be true, otherwise it is false.
+            bool goingForwards = currentDirection() == AnimationEffect::ComputedDirection::Forwards;
+            // 3. The before flag is set if the animation effect is in the before phase and going forwards is true;
+            //    or if the animation effect is in the after phase and going forwards is false.
+            auto effectPhase = phase();
+            before = (effectPhase == Phase::Before && goingForwards) || (effectPhase == Phase::After && !goingForwards);
+        }
+
+        // 3. Return the result of evaluating the animation effect’s timing function passing directed progress as the
+        //    input progress value and before flag as the before flag.
+        return timingFunction->transformTime(effectDirectedProgressValue, iterationDuration, before);
+    }
+
+    return effectDirectedProgressValue;
+}
+
 std::optional<double> AnimationEffect::iterationProgress() const
 {
-    return directedProgress();
+    return transformedProgress();
 }
 
 ComputedTimingProperties AnimationEffect::getComputedTiming()

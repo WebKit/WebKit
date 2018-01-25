@@ -85,7 +85,7 @@ public:
     void setComposite(CompositeOperation compositeOperation) { m_compositeOperation = compositeOperation; }
 
     void getAnimatedStyle(std::unique_ptr<RenderStyle>& animatedStyle);
-    void applyAtLocalTime(Seconds, RenderStyle&) override;
+    void apply(RenderStyle&) override;
     void startOrStopAccelerated();
     bool isRunningAccelerated() const { return m_startedAccelerated; }
 

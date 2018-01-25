@@ -15,7 +15,7 @@ FAIL iteration composition of filter brightness for different unit animation ass
 FAIL iteration composition of filter brightness animation assert_equals: Animated filter brightness style at 50s of the first iteration expected "brightness(0.5)" but got "brightness(1)"
 FAIL iteration composition of filter drop-shadow animation assert_equals: Animated filter drop-shadow style at 50s of the first iteration expected "drop-shadow(rgb(60, 60, 60) 5px 5px 5px)" but got "drop-shadow(rgb(120, 120, 120) 10px 10px 10px)"
 FAIL iteration composition of same filter list animation assert_equals: Animated filter list at 50s of the first iteration expected "brightness(1.5) contrast(1.5)" but got "brightness(2) contrast(2)"
-FAIL iteration composition of discrete filter list because of mismatch of the order assert_equals: Animated filter list at 0s of the third iteration expected "brightness(1) contrast(1)" but got "none"
+FAIL iteration composition of discrete filter list because of mismatch of the order assert_equals: Animated filter list at 0s of the third iteration expected "brightness(1) contrast(1)" but got "contrast(2) brightness(2)"
 FAIL iteration composition of different length filter list animation assert_equals: Animated filter list at 50s of the first iteration expected "sepia(0.5) contrast(1.5)" but got "sepia(1) contrast(2)"
 FAIL iteration composition of transform(rotate) animation assert_regexp_match: Actual value is not a matrix expected object "/^matrix(?:3d)*\((.+)\)/" but got "none"
 FAIL iteration composition of transform: [ scale(0), scale(1) ] animation assert_regexp_match: Actual value is not a matrix expected object "/^matrix(?:3d)*\((.+)\)/" but got "none"
@@ -30,5 +30,5 @@ FAIL iteration composition of transform of matrix3d function assert_regexp_match
 FAIL iteration composition of transform of rotate3d function assert_regexp_match: Actual value is not a matrix expected object "/^matrix(?:3d)*\((.+)\)/" but got "none"
 FAIL iteration composition starts with non-zero value animation assert_equals: Animated margin-left style at 0s of the third iteration expected "50px" but got "15px"
 FAIL iteration composition with negative final value animation assert_equals: Animated margin-left style at 0s of the third iteration expected "-10px" but got "0px"
-FAIL duration changes with an iteration composition operation of accumulate assert_equals: Animated style at 50s of the third iteration expected "25px" but got "0px"
+FAIL duration changes with an iteration composition operation of accumulate assert_equals: Animated style at 50s of the third iteration expected "25px" but got "5px"
 

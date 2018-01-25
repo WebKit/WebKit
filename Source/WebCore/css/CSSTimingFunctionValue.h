@@ -101,7 +101,7 @@ public:
     bool equals(const CSSFramesTimingFunctionValue&) const;
 
 private:
-    CSSFramesTimingFunctionValue(int frames)
+    CSSFramesTimingFunctionValue(unsigned frames)
         : CSSValue(FramesTimingFunctionClass)
         , m_frames(frames)
     {

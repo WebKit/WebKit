@@ -1,3 +1,15 @@
+2018-01-25  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Account for provided easings when computing progress and resolving keyframe effect values
+        https://bugs.webkit.org/show_bug.cgi?id=182098
+        <rdar://problem/36866149>
+
+        Reviewed by Dean Jackson.
+
+        Update an animated value due to more accurate resolution of cubic-bezier() timing functions.
+
+        * platform/mac/transitions/default-timing-function-expected.txt:
+
 2018-01-25  Per Arne Vollan  <pvollan@apple.com>
 
         [Win] Update test expectations.

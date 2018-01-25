@@ -52,8 +52,8 @@ public:
     virtual bool operator==(const TimingFunction&) const = 0;
     bool operator!=(const TimingFunction& other) const { return !(*this == other); }
 
-    double transformTime(double, double) const;
     static ExceptionOr<RefPtr<TimingFunction>> createFromCSSText(const String&);
+    double transformTime(double, double, bool before = false) const;
     String cssText() const;
 
 protected:
@@ -159,6 +159,11 @@ public:
     Ref<CubicBezierTimingFunction> createReversed() const
     {
         return create(1.0 - m_x2, 1.0 - m_y2, 1.0 - m_x1, 1.0 - m_y1);
+    }
+
+    bool isLinear() const
+    {
+        return (!m_x1 && !m_y1 && !m_x2 && !m_y2) || (m_x1 == 1.0 && m_y1 == 1.0 && m_x2 == 1.0 && m_y2 == 1.0) || (m_x1 == 0.0 && m_y1 == 0.0 && m_x2 == 1.0 && m_y2 == 1.0);
     }
 
 private:

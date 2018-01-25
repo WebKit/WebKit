@@ -817,8 +817,8 @@ Seconds WebAnimation::timeToNextRequiredTick(Seconds timelineTime) const
 
 void WebAnimation::resolve(RenderStyle& targetStyle)
 {
-    if (m_effect && currentTime())
-        m_effect->applyAtLocalTime(currentTime().value(), targetStyle);
+    if (m_effect)
+        m_effect->apply(targetStyle);
 }
 
 void WebAnimation::acceleratedRunningStateDidChange()

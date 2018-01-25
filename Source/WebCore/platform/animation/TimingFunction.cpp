@@ -64,22 +64,41 @@ TextStream& operator<<(TextStream& ts, const TimingFunction& timingFunction)
     return ts;
 }
 
-double TimingFunction::transformTime(double inputTime, double duration) const
+double TimingFunction::transformTime(double inputTime, double duration, bool before) const
 {
     switch (m_type) {
     case TimingFunction::CubicBezierFunction: {
         auto& function = downcast<CubicBezierTimingFunction>(*this);
+        if (function.isLinear())
+            return inputTime;
         // The epsilon value we pass to UnitBezier::solve given that the animation is going to run over |dur| seconds. The longer the
         // animation, the more precision we need in the timing function result to avoid ugly discontinuities.
-        auto epsilon = 1.0 / (200.0 * duration);
+        auto epsilon = 1.0 / (1000.0 * duration);
         return UnitBezier(function.x1(), function.y1(), function.x2(), function.y2()).solve(inputTime, epsilon);
     }
     case TimingFunction::StepsFunction: {
+        // https://drafts.csswg.org/css-timing/#step-timing-functions
         auto& function = downcast<StepsTimingFunction>(*this);
-        auto numberOfSteps = function.numberOfSteps();
+        auto steps = function.numberOfSteps();
+        // 1. Calculate the current step as floor(input progress value × steps).
+        auto currentStep = std::floor(inputTime * steps);
+        // 2. If the step position property is start, increment current step by one.
         if (function.stepAtStart())
-            return std::min(1.0, (std::floor(numberOfSteps * inputTime) + 1) / numberOfSteps);
-        return std::floor(numberOfSteps * inputTime) / numberOfSteps;
+            currentStep++;
+        // 3. If both of the following conditions are true:
+        //    - the before flag is set, and
+        //    - input progress value × steps mod 1 equals zero (that is, if input progress value × steps is integral), then
+        //    decrement current step by one.
+        if (before && !fmod(inputTime * steps, 1))
+            currentStep--;
+        // 4. If input progress value ≥ 0 and current step < 0, let current step be zero.
+        if (inputTime >= 0 && currentStep < 0)
+            currentStep = 0;
+        // 5. If input progress value ≤ 1 and current step > steps, let current step be steps.
+        if (inputTime <= 1 && currentStep > steps)
+            currentStep = steps;
+        // 6. The output progress value is current step / steps.
+        return currentStep / steps;
     }
     case TimingFunction::FramesFunction: {
         // https://drafts.csswg.org/css-timing/#frames-timing-functions

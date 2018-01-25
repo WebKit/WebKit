@@ -42,7 +42,7 @@ public:
     bool isKeyframeEffect() const { return m_classType == KeyframeEffectClass; }
     AnimationEffectTiming* timing() const { return m_timing.get(); }
     ComputedTimingProperties getComputedTiming();
-    virtual void applyAtLocalTime(Seconds, RenderStyle&) = 0;
+    virtual void apply(RenderStyle&) = 0;
 
     WebAnimation* animation() const { return m_animation.get(); }
     void setAnimation(RefPtr<WebAnimation>&& animation) { m_animation = animation; }
@@ -71,6 +71,7 @@ private:
     std::optional<double> currentIteration() const;
     AnimationEffect::ComputedDirection currentDirection() const;
     std::optional<double> directedProgress() const;
+    std::optional<double> transformedProgress() const;
 
     ClassType m_classType;
     RefPtr<WebAnimation> m_animation;

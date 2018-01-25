@@ -627,23 +627,19 @@ void KeyframeEffect::computeStackingContextImpact()
     }
 }
 
-void KeyframeEffect::applyAtLocalTime(Seconds localTime, RenderStyle& targetStyle)
+void KeyframeEffect::apply(RenderStyle& targetStyle)
 {
     if (!m_target)
         return;
 
-    if (m_startedAccelerated && localTime >= timing()->iterationDuration()) {
+    auto progress = iterationProgress();
+    if (!progress)
+        return;
+
+    if (m_startedAccelerated && progress.value() >= 1) {
         m_startedAccelerated = false;
         animation()->acceleratedRunningStateDidChange();
     }
-
-    // FIXME: Assume animations only apply in the range [0, duration[
-    // until we support fill modes, delays and iterations.
-    if (localTime < 0_s || localTime >= timing()->iterationDuration())
-        return;
-
-    if (!timing()->iterationDuration())
-        return;
 
     bool needsToStartAccelerated = false;
 
@@ -656,7 +652,7 @@ void KeyframeEffect::applyAtLocalTime(Seconds localTime, RenderStyle& targetStyl
     m_started = true;
 
     if (!needsToStartAccelerated && !m_startedAccelerated)
-        setAnimatedPropertiesInStyle(targetStyle, localTime / timing()->iterationDuration());
+        setAnimatedPropertiesInStyle(targetStyle, progress.value());
 
     // https://w3c.github.io/web-animations/#side-effects-section
     // For every property targeted by at least one animation effect that is current or in effect, the user agent
@@ -676,69 +672,157 @@ bool KeyframeEffect::shouldRunAccelerated()
 
 void KeyframeEffect::getAnimatedStyle(std::unique_ptr<RenderStyle>& animatedStyle)
 {
-    if (!animation() || !timing()->iterationDuration())
-        return;
-
-    auto localTime = animation()->currentTime();
-
-    // FIXME: Assume animations only apply in the range [0, duration[
-    // until we support fill modes, delays and iterations.
-    if (!localTime || localTime < 0_s || localTime >= timing()->iterationDuration())
+    if (!animation())
         return;
 
     if (!m_keyframes.size())
         return;
 
+    auto progress = iterationProgress();
+    if (!progress)
+        return;
+
     if (!animatedStyle)
         animatedStyle = RenderStyle::clonePtr(renderer()->style());
 
-    setAnimatedPropertiesInStyle(*animatedStyle.get(), localTime.value() / timing()->iterationDuration());
+    setAnimatedPropertiesInStyle(*animatedStyle.get(), progress.value());
 }
 
-void KeyframeEffect::setAnimatedPropertiesInStyle(RenderStyle& targetStyle, double progress)
+void KeyframeEffect::setAnimatedPropertiesInStyle(RenderStyle& targetStyle, double iterationProgress)
 {
-    size_t numberOfKeyframes = m_keyframes.size();
-    for (auto cssPropertyId : m_keyframes.properties()) {
-        int startKeyframeIndex = -1;
-        int endKeyframeIndex = -1;
+    // 4.4.3. The effect value of a keyframe effect
+    // https://drafts.csswg.org/web-animations-1/#the-effect-value-of-a-keyframe-animation-effect
+    //
+    // The effect value of a single property referenced by a keyframe effect as one of its target properties,
+    // for a given iteration progress, current iteration and underlying value is calculated as follows.
 
-        for (size_t i = 0; i < numberOfKeyframes; ++i) {
+    for (auto cssPropertyId : m_keyframes.properties()) {
+        // 1. If iteration progress is unresolved abort this procedure.
+        // 2. Let target property be the longhand property for which the effect value is to be calculated.
+        // 3. If animation type of the target property is not animatable abort this procedure since the effect cannot be applied.
+        // 4. Define the neutral value for composition as a value which, when combined with an underlying value using the add composite operation,
+        //    produces the underlying value.
+
+        // 5. Let property-specific keyframes be the result of getting the set of computed keyframes for this keyframe effect.
+        // 6. Remove any keyframes from property-specific keyframes that do not have a property value for target property.
+        unsigned numberOfKeyframesWithZeroOffset = 0;
+        unsigned numberOfKeyframesWithOneOffset = 0;
+        Vector<std::optional<size_t>> propertySpecificKeyframes;
+        for (size_t i = 0; i < m_keyframes.size(); ++i) {
             auto& keyframe = m_keyframes[i];
             if (!keyframe.containsProperty(cssPropertyId))
                 continue;
+            auto offset = keyframe.key();
+            if (!offset)
+                numberOfKeyframesWithZeroOffset++;
+            if (offset == 1)
+                numberOfKeyframesWithOneOffset++;
+            propertySpecificKeyframes.append(i);
+        }
 
-            if (keyframe.key() > progress) {
-                endKeyframeIndex = i;
-                break;
+        // 7. If property-specific keyframes is empty, return underlying value.
+        if (propertySpecificKeyframes.isEmpty())
+            continue;
+
+        // 8. If there is no keyframe in property-specific keyframes with a computed keyframe offset of 0, create a new keyframe with a computed keyframe
+        //    offset of 0, a property value set to the neutral value for composition, and a composite operation of add, and prepend it to the beginning of
+        //    property-specific keyframes.
+        if (!numberOfKeyframesWithZeroOffset) {
+            propertySpecificKeyframes.insert(0, std::nullopt);
+            numberOfKeyframesWithZeroOffset = 1;
+        }
+
+        // 9. Similarly, if there is no keyframe in property-specific keyframes with a computed keyframe offset of 1, create a new keyframe with a computed
+        //    keyframe offset of 1, a property value set to the neutral value for composition, and a composite operation of add, and append it to the end of
+        //    property-specific keyframes.
+        if (!numberOfKeyframesWithOneOffset) {
+            propertySpecificKeyframes.append(std::nullopt);
+            numberOfKeyframesWithOneOffset = 1;
+        }
+
+        // 10. Let interval endpoints be an empty sequence of keyframes.
+        Vector<std::optional<size_t>> intervalEndpoints;
+
+        // 11. Populate interval endpoints by following the steps from the first matching condition from below:
+        if (iterationProgress < 0 && numberOfKeyframesWithZeroOffset > 1) {
+            // If iteration progress < 0 and there is more than one keyframe in property-specific keyframes with a computed keyframe offset of 0,
+            // Add the first keyframe in property-specific keyframes to interval endpoints.
+            intervalEndpoints.append(propertySpecificKeyframes.first());
+        } else if (iterationProgress >= 1 && numberOfKeyframesWithOneOffset > 1) {
+            // If iteration progress ≥ 1 and there is more than one keyframe in property-specific keyframes with a computed keyframe offset of 1,
+            // Add the last keyframe in property-specific keyframes to interval endpoints.
+            intervalEndpoints.append(propertySpecificKeyframes.last());
+        } else {
+            // Otherwise,
+            // 1. Append to interval endpoints the last keyframe in property-specific keyframes whose computed keyframe offset is less than or equal
+            //    to iteration progress and less than 1. If there is no such keyframe (because, for example, the iteration progress is negative),
+            //    add the last keyframe whose computed keyframe offset is 0.
+            // 2. Append to interval endpoints the next keyframe in property-specific keyframes after the one added in the previous step.
+            size_t indexOfLastKeyframeWithZeroOffset = 0;
+            int indexOfFirstKeyframeToAddToIntervalEndpoints = -1;
+            for (size_t i = 0; i < propertySpecificKeyframes.size(); ++i) {
+                auto keyframeIndex = propertySpecificKeyframes[i];
+                auto offset = [&] () -> double {
+                    if (!keyframeIndex)
+                        return i ? 1 : 0;
+                    return m_keyframes[keyframeIndex.value()].key();
+                }();
+                if (!offset)
+                    indexOfLastKeyframeWithZeroOffset = i;
+                if (offset <= iterationProgress && offset < 1)
+                    indexOfFirstKeyframeToAddToIntervalEndpoints = i;
+                else
+                    break;
             }
 
-            startKeyframeIndex = i;
+            if (indexOfFirstKeyframeToAddToIntervalEndpoints >= 0) {
+                intervalEndpoints.append(propertySpecificKeyframes[indexOfFirstKeyframeToAddToIntervalEndpoints]);
+                intervalEndpoints.append(propertySpecificKeyframes[indexOfFirstKeyframeToAddToIntervalEndpoints + 1]);
+            } else {
+                ASSERT(indexOfLastKeyframeWithZeroOffset < propertySpecificKeyframes.size() - 1);
+                intervalEndpoints.append(propertySpecificKeyframes[indexOfLastKeyframeWithZeroOffset]);
+                intervalEndpoints.append(propertySpecificKeyframes[indexOfLastKeyframeWithZeroOffset + 1]);
+            }
         }
 
-        // If we didn't find a start keyframe, this means there is an implicit start keyframe.
-        double startOffset;
-        const RenderStyle* startStyle;
-        if (startKeyframeIndex == -1) {
-            startOffset = 0;
-            startStyle = &targetStyle;
-        } else {
-            startOffset = m_keyframes[startKeyframeIndex].key();
-            startStyle = m_keyframes[startKeyframeIndex].style();
+        // 12. For each keyframe in interval endpoints…
+        // FIXME: we don't support this step yet since we don't deal with any composite operation other than "replace".
+
+        // 13. If there is only one keyframe in interval endpoints return the property value of target property on that keyframe.
+        if (intervalEndpoints.size() == 1) {
+            auto keyframeIndex = intervalEndpoints[0];
+            auto keyframeStyle = !keyframeIndex ? &targetStyle : m_keyframes[keyframeIndex.value()].style();
+            CSSPropertyAnimation::blendProperties(this, cssPropertyId, &targetStyle, keyframeStyle, keyframeStyle, 0);
+            continue;
         }
 
-        // If we didn't find an end keyframe, this means there is an implicit end keyframe.
-        double endOffset;
-        const RenderStyle* endStyle;
-        if (endKeyframeIndex == -1) {
-            endOffset = 1;
-            endStyle = &targetStyle;
-        } else {
-            endOffset = m_keyframes[endKeyframeIndex].key();
-            endStyle = m_keyframes[endKeyframeIndex].style();
+        // 14. Let start offset be the computed keyframe offset of the first keyframe in interval endpoints.
+        auto startKeyframeIndex = intervalEndpoints.first();
+        auto startOffset = !startKeyframeIndex ? 0 : m_keyframes[startKeyframeIndex.value()].key();
+
+        // 15. Let end offset be the computed keyframe offset of last keyframe in interval endpoints.
+        auto endKeyframeIndex = intervalEndpoints.last();
+        auto endOffset = !endKeyframeIndex ? 1 : m_keyframes[endKeyframeIndex.value()].key();
+
+        // 16. Let interval distance be the result of evaluating (iteration progress - start offset) / (end offset - start offset).
+        auto intervalDistance = (iterationProgress - startOffset) / (endOffset - startOffset);
+
+        // 17. Let transformed distance be the result of evaluating the timing function associated with the first keyframe in interval endpoints
+        //     passing interval distance as the input progress.
+        auto transformedDistance = intervalDistance;
+        if (startKeyframeIndex) {
+            if (auto iterationDuration = timing()->iterationDuration()) {
+                auto rangeDuration = (endOffset - startOffset) * iterationDuration.seconds();
+                transformedDistance = m_timingFunctions[startKeyframeIndex.value()]->transformTime(intervalDistance, rangeDuration);
+            }
         }
 
-        auto progressInRange = (progress - startOffset) / (endOffset - startOffset);
-        CSSPropertyAnimation::blendProperties(this, cssPropertyId, &targetStyle, startStyle, endStyle, progressInRange);
+        // 18. Return the result of applying the interpolation procedure defined by the animation type of the target property, to the values of the target
+        //     property specified on the two keyframes in interval endpoints taking the first such value as Vstart and the second as Vend and using transformed
+        //     distance as the interpolation parameter p.
+        auto startStyle = !startKeyframeIndex ? &targetStyle : m_keyframes[startKeyframeIndex.value()].style();
+        auto endStyle = !endKeyframeIndex ? &targetStyle : m_keyframes[endKeyframeIndex.value()].style();
+        CSSPropertyAnimation::blendProperties(this, cssPropertyId, &targetStyle, startStyle, endStyle, transformedDistance);
     }
 }
 
