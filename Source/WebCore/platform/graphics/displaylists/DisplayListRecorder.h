@@ -56,6 +56,9 @@ public:
     size_t itemCount() const { return m_displayList.itemCount(); }
 
 private:
+    bool hasPlatformContext() const override { return false; }
+    PlatformGraphicsContext* platformContext() const override { return nullptr; }
+
     void updateState(const GraphicsContextState&, GraphicsContextState::StateChangeFlags) override;
     void clearShadow() override;
 
@@ -84,9 +87,9 @@ private:
 
     void drawGlyphs(const Font&, const GlyphBuffer&, unsigned from, unsigned numGlyphs, const FloatPoint& anchorPoint, FontSmoothingMode) override;
 
-    void drawImage(Image&, const FloatRect& destination, const FloatRect& source, const ImagePaintingOptions&) override;
-    void drawTiledImage(Image&, const FloatRect& destination, const FloatPoint& source, const FloatSize& tileSize, const FloatSize& spacing, const ImagePaintingOptions&) override;
-    void drawTiledImage(Image&, const FloatRect& destination, const FloatRect& source, const FloatSize& tileScaleFactor, Image::TileRule hRule, Image::TileRule vRule, const ImagePaintingOptions&) override;
+    ImageDrawResult drawImage(Image&, const FloatRect& destination, const FloatRect& source, const ImagePaintingOptions&) override;
+    ImageDrawResult drawTiledImage(Image&, const FloatRect& destination, const FloatPoint& source, const FloatSize& tileSize, const FloatSize& spacing, const ImagePaintingOptions&) override;
+    ImageDrawResult drawTiledImage(Image&, const FloatRect& destination, const FloatRect& source, const FloatSize& tileScaleFactor, Image::TileRule hRule, Image::TileRule vRule, const ImagePaintingOptions&) override;
 #if USE(CG) || USE(CAIRO)
     void drawNativeImage(const NativeImagePtr&, const FloatSize& selfSize, const FloatRect& destRect, const FloatRect& srcRect, CompositeOperator, BlendMode, ImageOrientation) override;
 #endif
@@ -109,6 +112,8 @@ private:
     void rotate(float angleInRadians) override;
     void scale(const FloatSize&) override;
     void concatCTM(const AffineTransform&) override;
+    void setCTM(const AffineTransform&) override;
+    AffineTransform getCTM(GraphicsContext::IncludeDeviceScale) override;
 
     void beginTransparencyLayer(float opacity) override;
     void endTransparencyLayer() override;
@@ -117,8 +122,11 @@ private:
     void clipOut(const FloatRect&) override;
     void clipOut(const Path&) override;
     void clipPath(const Path&, WindRule) override;
+    IntRect clipBounds() override;
     
     void applyDeviceScaleFactor(float) override;
+
+    FloatRect roundToDevicePixels(const FloatRect&, GraphicsContext::RoundingMode) override;
 
     Item& appendItem(Ref<Item>&&);
     void willAppendItem(const Item&);

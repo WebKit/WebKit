@@ -37,6 +37,9 @@ public:
 
     GraphicsContext& graphicsContext() const { return m_graphicsContext; }
 
+    virtual bool hasPlatformContext() const = 0;
+    virtual PlatformGraphicsContext* platformContext() const = 0;
+
     virtual void updateState(const GraphicsContextState&, GraphicsContextState::StateChangeFlags) = 0;
     virtual void clearShadow() = 0;
 
@@ -65,9 +68,9 @@ public:
 
     virtual void drawGlyphs(const Font&, const GlyphBuffer&, unsigned from, unsigned numGlyphs, const FloatPoint& anchorPoint, FontSmoothingMode) = 0;
 
-    virtual void drawImage(Image&, const FloatRect& destination, const FloatRect& source, const ImagePaintingOptions&) = 0;
-    virtual void drawTiledImage(Image&, const FloatRect& destination, const FloatPoint& source, const FloatSize& tileSize, const FloatSize& spacing, const ImagePaintingOptions&) = 0;
-    virtual void drawTiledImage(Image&, const FloatRect& destination, const FloatRect& source, const FloatSize& tileScaleFactor, Image::TileRule hRule, Image::TileRule vRule, const ImagePaintingOptions&) = 0;
+    virtual ImageDrawResult drawImage(Image&, const FloatRect& destination, const FloatRect& source, const ImagePaintingOptions&) = 0;
+    virtual ImageDrawResult drawTiledImage(Image&, const FloatRect& destination, const FloatPoint& source, const FloatSize& tileSize, const FloatSize& spacing, const ImagePaintingOptions&) = 0;
+    virtual ImageDrawResult drawTiledImage(Image&, const FloatRect& destination, const FloatRect& source, const FloatSize& tileScaleFactor, Image::TileRule hRule, Image::TileRule vRule, const ImagePaintingOptions&) = 0;
 #if USE(CG) || USE(CAIRO)
     virtual void drawNativeImage(const NativeImagePtr&, const FloatSize& selfSize, const FloatRect& destRect, const FloatRect& srcRect, CompositeOperator, BlendMode, ImageOrientation) = 0;
 #endif
@@ -90,6 +93,8 @@ public:
     virtual void rotate(float angleInRadians) = 0;
     virtual void scale(const FloatSize&) = 0;
     virtual void concatCTM(const AffineTransform&) = 0;
+    virtual void setCTM(const AffineTransform&) = 0;
+    virtual AffineTransform getCTM(GraphicsContext::IncludeDeviceScale) = 0;
 
     virtual void beginTransparencyLayer(float opacity) = 0;
     virtual void endTransparencyLayer() = 0;
@@ -98,8 +103,16 @@ public:
     virtual void clipOut(const FloatRect&) = 0;
     virtual void clipOut(const Path&) = 0;
     virtual void clipPath(const Path&, WindRule) = 0;
+    virtual IntRect clipBounds() = 0;
     
     virtual void applyDeviceScaleFactor(float) = 0;
+
+    virtual FloatRect roundToDevicePixels(const FloatRect&, GraphicsContext::RoundingMode) = 0;
+
+protected:
+    static ImageDrawResult drawImageImpl(GraphicsContext&, Image&, const FloatRect&, const FloatRect&, const ImagePaintingOptions&);
+    static ImageDrawResult drawTiledImageImpl(GraphicsContext&, Image&, const FloatRect&, const FloatPoint&, const FloatSize&, const FloatSize&, const ImagePaintingOptions&);
+    static ImageDrawResult drawTiledImageImpl(GraphicsContext&, Image&, const FloatRect&, const FloatRect&, const FloatSize&, Image::TileRule, Image::TileRule, const ImagePaintingOptions&);
 
 private:
     friend class GraphicsContext;

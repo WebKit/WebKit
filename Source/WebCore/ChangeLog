@@ -1,3 +1,137 @@
+2018-01-24  Zan Dobersek  <zdobersek@igalia.com>
+
+        [Cairo] Use GraphicsContextImplCairo for ImageBuffer context
+        https://bugs.webkit.org/show_bug.cgi?id=181977
+
+        Reviewed by Carlos Garcia Campos.
+
+        Enhance the GraphicsContextImpl interface to the point of enabling the
+        Cairo-based implementation to be used for GraphicsContext construction
+        in ImageBufferCairo.cpp.
+
+        In order to enable GraphicsContextImpl implementations to properly
+        manage PlatformGraphicsContext objects, the hasPlatformContext() and
+        platformContext() methods are added. Cairo implementation returns true
+        in the first method, and returns pointer to the PlatformContextCairo
+        object in the second. The DisplayList::Recorder, due to its recording
+        nature, doesn't manage such an object, so it returns false and nullptr,
+        respectively.
+
+        GraphicsContextImpl also gains the setCTM(), getCTM(), clipBounds() and
+        roundToDevicePixels() methods, corresponding to the GraphicsContext
+        methods that now invoke these new methods on any existing m_impl object.
+        GraphicsContextImplCairo implementations mimic the existing behavior in
+        the Cairo-specific GraphicsContext methods, but DisplayList::Recorder
+        implementations remain no-op, logging the invocation but doing nothing
+        otherwise.
+
+        drawImage() and drawTiledImage() methods on the GraphicsContextImpl
+        interface are changed to return the ImageDrawResult value, corresponding
+        to what's been done in the method. In DisplayList::Recorder, the methods
+        return ImageDrawResult::DidRecord, while in GraphicsContextImplCairo the
+        methods return the return result of Image::draw() or Image::drawTiled()
+        call.
+
+        To make the protected Image::draw() and Image::drawTiled() methods
+        accessible, invocations of those are packed into static drawImageImpl()
+        and drawTiledImageImpl() functions on the GraphicsContextImpl class.
+        This makes it possible to simply declare GraphicsContextImpl class as a
+        friend class of Image, and not every specific GraphicsContextImpl
+        derivation. Implementations of these functions mirror behavior of the
+        drawImage() and drawTiledImage() methods on the GraphicsContext class,
+        when an m_impl object isn't present, constructing a scope-tied
+        InterpolationQualityMaintainer object and invoking the relevant Image
+        method.
+
+        To make immediate use of the new GraphicsContextImplCairo functionality,
+        the GraphicsContext construction in Cairo-specific ImageBuffer
+        implementation now uses a factory function that returns a new
+        GraphicsContextImplCairo object through which the given
+        PlatformContextCairo is used for painting.
+
+        No new tests -- no change in functionality.
+
+        * platform/graphics/GraphicsContext.cpp:
+        (WebCore::GraphicsContext::hasPlatformContext const):
+        (WebCore::GraphicsContext::drawImage):
+        (WebCore::GraphicsContext::drawTiledImage):
+        * platform/graphics/GraphicsContext.h:
+        (WebCore::GraphicsContext::hasPlatformContext const): Deleted.
+        * platform/graphics/GraphicsContextImpl.cpp:
+        (WebCore::GraphicsContextImpl::drawImageImpl):
+        (WebCore::GraphicsContextImpl::drawTiledImageImpl):
+        * platform/graphics/GraphicsContextImpl.h:
+        * platform/graphics/Image.h:
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        (WebCore::GraphicsContext::getCTM const):
+        (WebCore::GraphicsContext::platformContext const):
+        (WebCore::GraphicsContext::clipBounds const):
+        (WebCore::GraphicsContext::roundToDevicePixels):
+        (WebCore::GraphicsContext::setCTM):
+        * platform/graphics/cairo/GraphicsContextImplCairo.cpp:
+        (WebCore::m_private):
+        (WebCore::GraphicsContextImplCairo::~GraphicsContextImplCairo):
+        (WebCore::GraphicsContextImplCairo::hasPlatformContext const):
+        (WebCore::GraphicsContextImplCairo::platformContext const):
+        (WebCore::GraphicsContextImplCairo::updateState):
+        (WebCore::GraphicsContextImplCairo::setLineCap):
+        (WebCore::GraphicsContextImplCairo::setLineDash):
+        (WebCore::GraphicsContextImplCairo::setLineJoin):
+        (WebCore::GraphicsContextImplCairo::setMiterLimit):
+        (WebCore::GraphicsContextImplCairo::fillRect):
+        (WebCore::GraphicsContextImplCairo::fillRoundedRect):
+        (WebCore::GraphicsContextImplCairo::fillRectWithRoundedHole):
+        (WebCore::GraphicsContextImplCairo::fillPath):
+        (WebCore::GraphicsContextImplCairo::fillEllipse):
+        (WebCore::GraphicsContextImplCairo::strokeRect):
+        (WebCore::GraphicsContextImplCairo::strokePath):
+        (WebCore::GraphicsContextImplCairo::strokeEllipse):
+        (WebCore::GraphicsContextImplCairo::clearRect):
+        (WebCore::GraphicsContextImplCairo::drawGlyphs):
+        (WebCore::GraphicsContextImplCairo::drawImage):
+        (WebCore::GraphicsContextImplCairo::drawTiledImage):
+        (WebCore::GraphicsContextImplCairo::drawNativeImage):
+        (WebCore::GraphicsContextImplCairo::drawPattern):
+        (WebCore::GraphicsContextImplCairo::drawRect):
+        (WebCore::GraphicsContextImplCairo::drawLine):
+        (WebCore::GraphicsContextImplCairo::drawLinesForText):
+        (WebCore::GraphicsContextImplCairo::drawLineForDocumentMarker):
+        (WebCore::GraphicsContextImplCairo::drawEllipse):
+        (WebCore::GraphicsContextImplCairo::drawFocusRing):
+        (WebCore::GraphicsContextImplCairo::save):
+        (WebCore::GraphicsContextImplCairo::restore):
+        (WebCore::GraphicsContextImplCairo::translate):
+        (WebCore::GraphicsContextImplCairo::rotate):
+        (WebCore::GraphicsContextImplCairo::scale):
+        (WebCore::GraphicsContextImplCairo::concatCTM):
+        (WebCore::GraphicsContextImplCairo::setCTM):
+        (WebCore::GraphicsContextImplCairo::getCTM):
+        (WebCore::GraphicsContextImplCairo::beginTransparencyLayer):
+        (WebCore::GraphicsContextImplCairo::endTransparencyLayer):
+        (WebCore::GraphicsContextImplCairo::clip):
+        (WebCore::GraphicsContextImplCairo::clipOut):
+        (WebCore::GraphicsContextImplCairo::clipPath):
+        (WebCore::GraphicsContextImplCairo::clipBounds):
+        (WebCore::GraphicsContextImplCairo::roundToDevicePixels):
+        (WebCore::m_platformContext): Deleted.
+        * platform/graphics/cairo/GraphicsContextImplCairo.h:
+        * platform/graphics/cairo/ImageBufferCairo.cpp:
+        (WebCore::ImageBuffer::ImageBuffer):
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::GraphicsContext::clipBounds const):
+        (WebCore::GraphicsContext::setCTM):
+        (WebCore::GraphicsContext::getCTM const):
+        (WebCore::GraphicsContext::roundToDevicePixels):
+        * platform/graphics/displaylists/DisplayListRecorder.cpp:
+        (WebCore::DisplayList::Recorder::drawImage):
+        (WebCore::DisplayList::Recorder::drawTiledImage):
+        (WebCore::DisplayList::Recorder::drawNativeImage):
+        (WebCore::DisplayList::Recorder::setCTM):
+        (WebCore::DisplayList::Recorder::getCTM):
+        (WebCore::DisplayList::Recorder::clipBounds):
+        (WebCore::DisplayList::Recorder::roundToDevicePixels):
+        * platform/graphics/displaylists/DisplayListRecorder.h:
+
 2018-01-24  Christopher Reid  <chris.reid@sony.com>
 
         Linker error in ShareableBitmapCairo.cpp  undefined reference to WebCore::Cairo::ShadowState::ShadowState

@@ -348,6 +348,13 @@ GraphicsContext::~GraphicsContext()
     platformDestroy();
 }
 
+bool GraphicsContext::hasPlatformContext() const
+{
+    if (m_impl)
+        return m_impl->hasPlatformContext();
+    return !!m_data;
+}
+
 void GraphicsContext::save()
 {
     if (paintingDisabled())
@@ -709,10 +716,8 @@ ImageDrawResult GraphicsContext::drawImage(Image& image, const FloatRect& destin
     if (paintingDisabled())
         return ImageDrawResult::DidNothing;
 
-    if (m_impl) {
-        m_impl->drawImage(image, destination, source, imagePaintingOptions);
-        return ImageDrawResult::DidRecord;
-    }
+    if (m_impl)
+        return m_impl->drawImage(image, destination, source, imagePaintingOptions);
 
     InterpolationQualityMaintainer interpolationQualityForThisScope(*this, imagePaintingOptions.m_interpolationQuality);
     return image.draw(*this, destination, source, imagePaintingOptions.m_compositeOperator, imagePaintingOptions.m_blendMode, imagePaintingOptions.m_decodingMode, imagePaintingOptions.m_orientationDescription);
@@ -723,10 +728,8 @@ ImageDrawResult GraphicsContext::drawTiledImage(Image& image, const FloatRect& d
     if (paintingDisabled())
         return ImageDrawResult::DidNothing;
 
-    if (m_impl) {
-        m_impl->drawTiledImage(image, destination, source, tileSize, spacing, imagePaintingOptions);
-        return ImageDrawResult::DidRecord;
-    }
+    if (m_impl)
+        return m_impl->drawTiledImage(image, destination, source, tileSize, spacing, imagePaintingOptions);
 
     InterpolationQualityMaintainer interpolationQualityForThisScope(*this, imagePaintingOptions.m_interpolationQuality);
     return image.drawTiled(*this, destination, source, tileSize, spacing, imagePaintingOptions.m_compositeOperator, imagePaintingOptions.m_blendMode, imagePaintingOptions.m_decodingMode);
@@ -738,10 +741,8 @@ ImageDrawResult GraphicsContext::drawTiledImage(Image& image, const FloatRect& d
     if (paintingDisabled())
         return ImageDrawResult::DidNothing;
 
-    if (m_impl) {
-        m_impl->drawTiledImage(image, destination, source, tileScaleFactor, hRule, vRule, imagePaintingOptions);
-        return ImageDrawResult::DidRecord;
-    }
+    if (m_impl)
+        return m_impl->drawTiledImage(image, destination, source, tileScaleFactor, hRule, vRule, imagePaintingOptions);
 
     if (hRule == Image::StretchTile && vRule == Image::StretchTile) {
         // Just do a scale.

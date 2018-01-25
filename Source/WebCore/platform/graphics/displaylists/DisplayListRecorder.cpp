@@ -105,16 +105,25 @@ void Recorder::drawGlyphs(const Font& font, const GlyphBuffer& glyphBuffer, unsi
     updateItemExtent(newItem);
 }
 
-void Recorder::drawImage(Image& image, const FloatRect& destination, const FloatRect& source, const ImagePaintingOptions& imagePaintingOptions)
+ImageDrawResult Recorder::drawImage(Image& image, const FloatRect& destination, const FloatRect& source, const ImagePaintingOptions& imagePaintingOptions)
 {
     DrawingItem& newItem = downcast<DrawingItem>(appendItem(DrawImage::create(image, destination, source, imagePaintingOptions)));
     updateItemExtent(newItem);
+    return ImageDrawResult::DidRecord;
 }
 
-void Recorder::drawTiledImage(Image& image, const FloatRect& destination, const FloatPoint& source, const FloatSize& tileSize, const FloatSize& spacing, const ImagePaintingOptions& imagePaintingOptions)
+ImageDrawResult Recorder::drawTiledImage(Image& image, const FloatRect& destination, const FloatPoint& source, const FloatSize& tileSize, const FloatSize& spacing, const ImagePaintingOptions& imagePaintingOptions)
 {
     DrawingItem& newItem = downcast<DrawingItem>(appendItem(DrawTiledImage::create(image, destination, source, tileSize, spacing, imagePaintingOptions)));
     updateItemExtent(newItem);
+    return ImageDrawResult::DidRecord;
+}
+
+ImageDrawResult Recorder::drawTiledImage(Image& image, const FloatRect& destination, const FloatRect& source, const FloatSize& tileScaleFactor, Image::TileRule hRule, Image::TileRule vRule, const ImagePaintingOptions& imagePaintingOptions)
+{
+    DrawingItem& newItem = downcast<DrawingItem>(appendItem(DrawTiledScaledImage::create(image, destination, source, tileScaleFactor, hRule, vRule, imagePaintingOptions)));
+    updateItemExtent(newItem);
+    return ImageDrawResult::DidRecord;
 }
 
 #if USE(CG) || USE(CAIRO)
@@ -124,12 +133,6 @@ void Recorder::drawNativeImage(const NativeImagePtr& image, const FloatSize& ima
     updateItemExtent(newItem);
 }
 #endif
-
-void Recorder::drawTiledImage(Image& image, const FloatRect& destination, const FloatRect& source, const FloatSize& tileScaleFactor, Image::TileRule hRule, Image::TileRule vRule, const ImagePaintingOptions& imagePaintingOptions)
-{
-    DrawingItem& newItem = downcast<DrawingItem>(appendItem(DrawTiledScaledImage::create(image, destination, source, tileScaleFactor, hRule, vRule, imagePaintingOptions)));
-    updateItemExtent(newItem);
-}
 
 void Recorder::drawPattern(Image& image, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, CompositeOperator op, BlendMode blendMode)
 {
@@ -191,6 +194,17 @@ void Recorder::concatCTM(const AffineTransform& transform)
 {
     currentState().concatCTM(transform);
     appendItem(ConcatenateCTM::create(transform));
+}
+
+void Recorder::setCTM(const AffineTransform&)
+{
+    WTFLogAlways("GraphicsContext::setCTM() is not compatible with DisplayList::Recorder.");
+}
+
+AffineTransform Recorder::getCTM(GraphicsContext::IncludeDeviceScale)
+{
+    WTFLogAlways("GraphicsContext::getCTM() is not yet compatible with DisplayList::Recorder.");
+    return { };
 }
 
 void Recorder::beginTransparencyLayer(float opacity)
@@ -358,11 +372,23 @@ void Recorder::clipPath(const Path& path, WindRule windRule)
     appendItem(ClipPath::create(path, windRule));
 }
 
+IntRect Recorder::clipBounds()
+{
+    WTFLogAlways("Getting the clip bounds not yet supported with DisplayList::Recorder.");
+    return IntRect(-2048, -2048, 4096, 4096);
+}
+
 void Recorder::applyDeviceScaleFactor(float deviceScaleFactor)
 {
     // FIXME: this changes the baseCTM, which will invalidate all of our cached extents.
     // Assert that it's only called early on?
     appendItem(ApplyDeviceScaleFactor::create(deviceScaleFactor));
+}
+
+FloatRect Recorder::roundToDevicePixels(const FloatRect& rect, GraphicsContext::RoundingMode)
+{
+    WTFLogAlways("GraphicsContext::roundToDevicePixels() is not yet compatible with DisplayList::Recorder.");
+    return rect;
 }
 
 Item& Recorder::appendItem(Ref<Item>&& item)
