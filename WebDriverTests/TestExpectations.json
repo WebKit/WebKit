@@ -193,9 +193,6 @@
     },
     "imported/w3c/webdriver/tests/sessions/new_session/merge.py": {
         "subtests": {
-            "test_merge_platformName": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/181984"}}
-            },
             "test_merge_browserName": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/181985"}}
             }

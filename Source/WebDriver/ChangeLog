@@ -1,3 +1,17 @@
+2018-01-25  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        WebDriver: test imported/w3c/webdriver/tests/sessions/new_session/merge.py::test_merge_platformName fails
+        https://bugs.webkit.org/show_bug.cgi?id=181984
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        Platform name is expected to be lower case, so do not compre ignoring case.
+
+        Fixes: imported/w3c/webdriver/tests/sessions/new_session/merge.py::test_merge_platformName
+
+        * WebDriverService.cpp:
+        (WebDriver::WebDriverService::matchCapabilities const):
+
 2018-01-23  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         WebDriver: several tests in imported/w3c/webdriver/tests/sessions/new_session/merge.py are failing

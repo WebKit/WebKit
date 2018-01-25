@@ -487,7 +487,7 @@ RefPtr<JSON::Object> WebDriverService::matchCapabilities(const JSON::Object& mer
         } else if (it->key == "platformName" && platformCapabilities.platformName) {
             String platformName;
             it->value->asString(platformName);
-            if (!equalLettersIgnoringASCIICase(platformName, "any") && !equalIgnoringASCIICase(platformCapabilities.platformName.value(), platformName)) {
+            if (!equalLettersIgnoringASCIICase(platformName, "any") && platformCapabilities.platformName.value() != platformName) {
                 errorString = makeString("expected platformName ", platformCapabilities.platformName.value(), " but got ", platformName);
                 return nullptr;
             }
