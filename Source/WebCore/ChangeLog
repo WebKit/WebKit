@@ -1,5 +1,21 @@
 2018-01-25  Antoine Quint  <graouts@apple.com>
 
+        [Web Animations] Expose the reverse() method
+        https://bugs.webkit.org/show_bug.cgi?id=182100
+        <rdar://problem/36867117>
+
+        Reviewed by Dean Jackson.
+
+        We expose and implement the reverse() method on Animation as specified.
+
+        * animation/WebAnimation.cpp:
+        (WebCore::WebAnimation::setPlaybackRate):
+        (WebCore::WebAnimation::reverse):
+        * animation/WebAnimation.h:
+        * animation/WebAnimation.idl:
+
+2018-01-25  Antoine Quint  <graouts@apple.com>
+
         [Web Animations] Account for provided easings when computing progress and resolving keyframe effect values
         https://bugs.webkit.org/show_bug.cgi?id=182098
         <rdar://problem/36866149>

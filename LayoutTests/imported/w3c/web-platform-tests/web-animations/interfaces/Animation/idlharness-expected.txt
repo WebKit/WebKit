@@ -20,7 +20,7 @@ PASS Animation interface: operation cancel()
 PASS Animation interface: operation finish() 
 PASS Animation interface: operation play() 
 PASS Animation interface: operation pause() 
-FAIL Animation interface: operation reverse() assert_own_property: interface prototype object missing non-static operation expected property "reverse" missing
+PASS Animation interface: operation reverse() 
 PASS Animation must be primary interface of new Animation() 
 PASS Stringification of new Animation() 
 PASS Animation interface: new Animation() must inherit property "id" with the proper type 
@@ -39,5 +39,5 @@ PASS Animation interface: new Animation() must inherit property "cancel()" with 
 PASS Animation interface: new Animation() must inherit property "finish()" with the proper type 
 PASS Animation interface: new Animation() must inherit property "play()" with the proper type 
 PASS Animation interface: new Animation() must inherit property "pause()" with the proper type 
-FAIL Animation interface: new Animation() must inherit property "reverse()" with the proper type assert_inherits: property "reverse" not found in prototype chain
+PASS Animation interface: new Animation() must inherit property "reverse()" with the proper type 
 

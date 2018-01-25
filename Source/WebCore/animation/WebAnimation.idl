@@ -54,4 +54,5 @@ enum AnimationPlayState {
     [MayThrowException] void finish();
     [MayThrowException] void play();
     [MayThrowException] void pause();
+    [MayThrowException] void reverse();
 };

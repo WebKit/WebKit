@@ -67,8 +67,9 @@ public:
     std::optional<Seconds> currentTime() const;
     ExceptionOr<void> setCurrentTime(std::optional<Seconds>);
 
+    enum class Silently { Yes, No };
     double playbackRate() const { return m_playbackRate; }
-    void setPlaybackRate(double);
+    void setPlaybackRate(double, Silently silently = Silently::No );
 
     enum class PlayState { Idle, Pending, Running, Paused, Finished };
     PlayState playState() const;
@@ -85,6 +86,7 @@ public:
     ExceptionOr<void> finish();
     ExceptionOr<void> play();
     ExceptionOr<void> pause();
+    ExceptionOr<void> reverse();
 
     Seconds timeToNextRequiredTick(Seconds) const;
     void resolve(RenderStyle&);

@@ -288,17 +288,34 @@ ExceptionOr<void> WebAnimation::setCurrentTime(std::optional<Seconds> seekTime)
     return { };
 }
 
-void WebAnimation::setPlaybackRate(double newPlaybackRate)
+void WebAnimation::setPlaybackRate(double newPlaybackRate, Silently silently)
 {
+    // 3.4.17.1. Updating the playback rate of an animation
+    // https://drafts.csswg.org/web-animations-1/#updating-the-playback-rate-of-an-animation
+
     if (m_playbackRate == newPlaybackRate)
         return;
 
-    // 3.5.17.1. Updating the playback rate of an animation
+    // The procedure to set the animation playback rate of an animation, animation to new playback rate is as follows.
+    // The procedure to silently set the animation playback rate of animation, animation to new playback rate is identical
+    // to the above procedure except that rather than invoking the procedure to set the current time in the final step,
+    // the procedure to silently set the current time is invoked instead.
+
+    // 1. Let previous time be the value of the current time of animation before changing the playback rate.
+    auto previousTime = currentTime();
+
+    // 2. Set the playback rate to new playback rate.
+    m_playbackRate = newPlaybackRate;
+
+    // 3. If previous time is resolved, set the current time of animation to previous time.
     // Changes to the playback rate trigger a compensatory seek so that that the animation's current time
     // is unaffected by the change to the playback rate.
-    auto previousTime = currentTime();
-    m_playbackRate = newPlaybackRate;
-    if (previousTime)
+    if (!previousTime)
+        return;
+
+    if (silently == Silently::Yes)
+        silentlySetCurrentTime(previousTime);
+    else
         setCurrentTime(previousTime);
 }
 
@@ -742,6 +759,38 @@ ExceptionOr<void> WebAnimation::pause()
 
     // 8. Run the procedure to update an animation's finished state for animation with the did seek flag set to false, and the synchronously notify flag set to false.
     updateFinishedState(DidSeek::No, SynchronouslyNotify::No);
+
+    return { };
+}
+
+ExceptionOr<void> WebAnimation::reverse()
+{
+    // 3.4.18. Reversing an animation
+    // https://drafts.csswg.org/web-animations-1/#reverse-an-animation
+
+    // The procedure to reverse an animation of animation animation is as follows:
+
+    // 1. If there is no timeline associated with animation, or the associated timeline is inactive
+    //    throw an InvalidStateError and abort these steps.
+    if (!m_timeline || !m_timeline->currentTime())
+        return Exception { InvalidStateError };
+
+    // 2. Silently set the animation playback rate of animation to −animation playback rate.
+    //    This must be done silently or else we may end up resolving the current ready promise when
+    //    we do the compensatory seek despite the fact that we will most likely still have a pending
+    //    task queued at the end of the operation.
+    setPlaybackRate(-m_playbackRate, Silently::Yes);
+
+    // 3. Run the steps to play an animation for animation with the auto-rewind flag set to true.
+    auto playResult = play(AutoRewind::Yes);
+
+    // If the steps to play an animation throw an exception, restore the original animation playback rate
+    // by re-running the procedure to silently set the animation playback rate with the original animation
+    // playback rate.
+    if (playResult.hasException()) {
+        setPlaybackRate(-m_playbackRate, Silently::Yes);
+        return playResult.releaseException();
+    }
 
     return { };
 }
