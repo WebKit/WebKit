@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -110,9 +110,6 @@ void StackmapSpecial::forEachArgImpl(
             case ValueRep::Constant:
                 role = Arg::Use;
                 break;
-            case ValueRep::SomeRegisterWithClobber:
-                role = Arg::UseDef;
-                break;
             case ValueRep::LateRegister:
                 role = Arg::LateUse;
                 break;
@@ -131,10 +128,6 @@ void StackmapSpecial::forEachArgImpl(
             // be able to recover the stackmap value. So, force LateColdUse to preserve the
             // original stackmap value across the Special operation.
             if (!Arg::isLateUse(role) && optionalDefArgWidth && *optionalDefArgWidth < child.value()->resultWidth()) {
-                // The role can only be some kind of def if we did SomeRegisterWithClobber, which is
-                // only allowed for patchpoints. Patchpoints don't use the defArgWidth feature.
-                RELEASE_ASSERT(!Arg::isAnyDef(role));
-                
                 if (Arg::isWarmUse(role))
                     role = Arg::LateUse;
                 else
@@ -252,7 +245,6 @@ bool StackmapSpecial::isArgValidForRep(Air::Code& code, const Air::Arg& arg, con
         // We already verified by isArgValidForValue().
         return true;
     case ValueRep::SomeRegister:
-    case ValueRep::SomeRegisterWithClobber:
     case ValueRep::SomeEarlyRegister:
         return arg.isTmp();
     case ValueRep::LateRegister:

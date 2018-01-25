@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2009-2017 Apple Inc. All rights reserved.
  * Copyright (C) 2010 Patrick Gansterer <paroga@paroga.com>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -81,23 +81,22 @@ void JIT::emit_op_new_object(Instruction* currentInstruction)
 {
     Structure* structure = currentInstruction[3].u.objectAllocationProfile->structure();
     size_t allocationSize = JSFinalObject::allocationSize(structure->inlineCapacity());
-    Allocator allocator = subspaceFor<JSFinalObject>(*m_vm)->allocatorForNonVirtual(allocationSize, AllocatorForMode::AllocatorIfExists);
+    BlockDirectory* allocator = subspaceFor<JSFinalObject>(*m_vm)->allocatorForNonVirtual(allocationSize, AllocatorForMode::AllocatorIfExists);
 
     RegisterID resultReg = regT0;
     RegisterID allocatorReg = regT1;
     RegisterID scratchReg = regT2;
 
-    if (!allocator)
-        addSlowCase(jump());
-    else {
-        JumpList slowCases;
-        auto butterfly = TrustedImmPtr(nullptr);
-        auto mask = TrustedImm32(0);
-        emitAllocateJSObject(resultReg, JITAllocator::constant(allocator), allocatorReg, TrustedImmPtr(structure), butterfly, mask, scratchReg, slowCases);
-        emitInitializeInlineStorage(resultReg, structure->inlineCapacity());
-        addSlowCase(slowCases);
-        emitPutVirtualRegister(currentInstruction[1].u.operand);
-    }
+    move(TrustedImmPtr(allocator), allocatorReg);
+    if (allocator)
+        addSlowCase(Jump());
+    JumpList slowCases;
+    auto butterfly = TrustedImmPtr(nullptr);
+    auto mask = TrustedImm32(0);
+    emitAllocateJSObject(resultReg, allocator, allocatorReg, TrustedImmPtr(structure), butterfly, mask, scratchReg, slowCases);
+    emitInitializeInlineStorage(resultReg, structure->inlineCapacity());
+    addSlowCase(slowCases);
+    emitPutVirtualRegister(currentInstruction[1].u.operand);
 }
 
 void JIT::emitSlow_op_new_object(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
@@ -767,9 +766,9 @@ void JIT::emit_op_create_this(Instruction* currentInstruction)
     addSlowCase(branch8(NotEqual, Address(calleeReg, JSCell::typeInfoTypeOffset()), TrustedImm32(JSFunctionType)));
     loadPtr(Address(calleeReg, JSFunction::offsetOfRareData()), rareDataReg);
     addSlowCase(branchTestPtr(Zero, rareDataReg));
-    load32(Address(rareDataReg, FunctionRareData::offsetOfObjectAllocationProfile() + ObjectAllocationProfile::offsetOfAllocator()), allocatorReg);
+    loadPtr(Address(rareDataReg, FunctionRareData::offsetOfObjectAllocationProfile() + ObjectAllocationProfile::offsetOfAllocator()), allocatorReg);
     loadPtr(Address(rareDataReg, FunctionRareData::offsetOfObjectAllocationProfile() + ObjectAllocationProfile::offsetOfStructure()), structureReg);
-    addSlowCase(branch32(Equal, allocatorReg, TrustedImm32(Allocator().offset())));
+    addSlowCase(branchTestPtr(Zero, allocatorReg));
 
     loadPtr(cachedFunction, cachedFunctionReg);
     Jump hasSeenMultipleCallees = branchPtr(Equal, cachedFunctionReg, TrustedImmPtr(JSCell::seenMultipleCalleeObjects()));
@@ -779,7 +778,7 @@ void JIT::emit_op_create_this(Instruction* currentInstruction)
     JumpList slowCases;
     auto butterfly = TrustedImmPtr(nullptr);
     auto mask = TrustedImm32(0);
-    emitAllocateJSObject(resultReg, JITAllocator::variable(), allocatorReg, structureReg, butterfly, mask, scratchReg, slowCases);
+    emitAllocateJSObject(resultReg, nullptr, allocatorReg, structureReg, butterfly, mask, scratchReg, slowCases);
     emitGetVirtualRegister(callee, scratchReg);
     loadPtr(Address(scratchReg, JSFunction::offsetOfRareData()), scratchReg);
     load32(Address(scratchReg, FunctionRareData::offsetOfObjectAllocationProfile() + ObjectAllocationProfile::offsetOfInlineCapacity()), scratchReg);

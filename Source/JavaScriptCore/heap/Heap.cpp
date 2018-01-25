@@ -68,7 +68,6 @@
 #include "StopIfNecessaryTimer.h"
 #include "SweepingScope.h"
 #include "SynchronousStopTheWorldMutatorScheduler.h"
-#include "ThreadLocalCacheLayout.h"
 #include "TypeProfiler.h"
 #include "TypeProfilerLog.h"
 #include "UnlinkedCodeBlock.h"
@@ -313,7 +312,6 @@ Heap::Heap(VM* vm, HeapType heapType)
     , m_helperClient(&heapHelperPool())
     , m_threadLock(Box<Lock>::create())
     , m_threadCondition(AutomaticThreadCondition::create())
-    , m_threadLocalCacheLayout(std::make_unique<ThreadLocalCacheLayout>())
 {
     m_worldState.store(0);
 
@@ -448,7 +446,7 @@ void Heap::lastChanceToFinalize()
         dataLog("5 ");
     
     m_arrayBuffers.lastChanceToFinalize();
-    m_objectSpace.stopAllocatingForGood();
+    m_objectSpace.stopAllocating();
     m_objectSpace.lastChanceToFinalize();
     releaseDelayedReleasedObjects();
 

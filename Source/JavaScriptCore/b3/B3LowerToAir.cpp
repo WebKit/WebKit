@@ -1277,12 +1277,6 @@ private:
             case ValueRep::SomeRegister:
                 arg = tmp(value.value());
                 break;
-            case ValueRep::SomeRegisterWithClobber: {
-                Tmp dstTmp = m_code.newTmp(value.value()->resultBank());
-                append(relaxedMoveForType(value.value()->type()), immOrTmp(value.value()), dstTmp);
-                arg = dstTmp;
-                break;
-            }
             case ValueRep::LateRegister:
             case ValueRep::Register:
                 stackmap->earlyClobbered().clear(value.rep().reg());

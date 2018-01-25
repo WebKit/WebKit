@@ -31,6 +31,20 @@
 
 namespace JSC {
 
+inline bool BlockDirectory::isFreeListedCell(const void* target) const
+{
+    return m_freeList.contains(bitwise_cast<HeapCell*>(target));
+}
+
+ALWAYS_INLINE void* BlockDirectory::allocate(GCDeferralContext* deferralContext, AllocationFailureMode failureMode)
+{
+    return m_freeList.allocate(
+        [&] () -> HeapCell* {
+            sanitizeStackForVM(heap()->vm());
+            return static_cast<HeapCell*>(allocateSlowCase(deferralContext, failureMode));
+        });
+}
+
 template <typename Functor> inline void BlockDirectory::forEachBlock(const Functor& functor)
 {
     m_live.forEachSetBit(

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,15 +26,11 @@
 #include "config.h"
 #include "Subspace.h"
 
-#include "AlignedMemoryAllocator.h"
-#include "AllocatorInlines.h"
 #include "BlockDirectoryInlines.h"
 #include "JSCInlines.h"
-#include "LocalAllocatorInlines.h"
 #include "MarkedBlockInlines.h"
 #include "PreventCollectionScope.h"
 #include "SubspaceInlines.h"
-#include "ThreadLocalCacheInlines.h"
 
 namespace JSC {
 
@@ -42,38 +38,40 @@ CompleteSubspace::CompleteSubspace(CString name, Heap& heap, HeapCellType* heapC
     : Subspace(name, heap)
 {
     initialize(heapCellType, alignedMemoryAllocator);
+    for (size_t i = MarkedSpace::numSizeClasses; i--;)
+        m_allocatorForSizeStep[i] = nullptr;
 }
 
 CompleteSubspace::~CompleteSubspace()
 {
 }
 
-Allocator CompleteSubspace::allocatorFor(size_t size, AllocatorForMode mode)
+BlockDirectory* CompleteSubspace::allocatorFor(size_t size, AllocatorForMode mode)
 {
     return allocatorForNonVirtual(size, mode);
 }
 
-void* CompleteSubspace::allocate(VM& vm, size_t size, GCDeferralContext* deferralContext, AllocationFailureMode failureMode)
+void* CompleteSubspace::allocate(size_t size, GCDeferralContext* deferralContext, AllocationFailureMode failureMode)
 {
-    return allocateNonVirtual(vm, size, deferralContext, failureMode);
+    return allocateNonVirtual(size, deferralContext, failureMode);
 }
 
-void* CompleteSubspace::allocateNonVirtual(VM& vm, size_t size, GCDeferralContext* deferralContext, AllocationFailureMode failureMode)
+void* CompleteSubspace::allocateNonVirtual(size_t size, GCDeferralContext* deferralContext, AllocationFailureMode failureMode)
 {
-    Allocator allocator = allocatorForNonVirtual(size, AllocatorForMode::AllocatorIfExists);
-    return allocator.tryAllocate(
-        vm, deferralContext, failureMode,
-        [&] () {
-            return allocateSlow(vm, size, deferralContext, failureMode);
-        });
+    void *result;
+    if (BlockDirectory* allocator = allocatorForNonVirtual(size, AllocatorForMode::AllocatorIfExists))
+        result = allocator->allocate(deferralContext, failureMode);
+    else
+        result = allocateSlow(size, deferralContext, failureMode);
+    return result;
 }
 
-Allocator CompleteSubspace::allocatorForSlow(size_t size)
+BlockDirectory* CompleteSubspace::allocatorForSlow(size_t size)
 {
     size_t index = MarkedSpace::sizeClassToIndex(size);
     size_t sizeClass = MarkedSpace::s_sizeClassForSizeStep[index];
     if (!sizeClass)
-        return Allocator();
+        return nullptr;
     
     // This is written in such a way that it's OK for the JIT threads to end up here if they want
     // to generate code that uses some allocator that hadn't been used yet. Note that a possibly-
@@ -84,7 +82,7 @@ Allocator CompleteSubspace::allocatorForSlow(size_t size)
     // that any "forEachAllocator" traversals will only see this allocator after it's initialized
     // enough: it will have 
     auto locker = holdLock(m_space.directoryLock());
-    if (Allocator allocator = m_allocatorForSizeStep[index])
+    if (BlockDirectory* allocator = m_allocatorForSizeStep[index])
         return allocator;
 
     if (false)
@@ -100,7 +98,7 @@ Allocator CompleteSubspace::allocatorForSlow(size_t size)
         if (MarkedSpace::s_sizeClassForSizeStep[index] != sizeClass)
             break;
 
-        m_allocatorForSizeStep[index] = directory->allocator();
+        m_allocatorForSizeStep[index] = directory;
         
         if (!index--)
             break;
@@ -109,23 +107,23 @@ Allocator CompleteSubspace::allocatorForSlow(size_t size)
     m_alignedMemoryAllocator->registerDirectory(directory);
     WTF::storeStoreFence();
     m_firstDirectory = directory;
-    return directory->allocator();
+    return directory;
 }
 
-void* CompleteSubspace::allocateSlow(VM& vm, size_t size, GCDeferralContext* deferralContext, AllocationFailureMode failureMode)
+void* CompleteSubspace::allocateSlow(size_t size, GCDeferralContext* deferralContext, AllocationFailureMode failureMode)
 {
-    void* result = tryAllocateSlow(vm, size, deferralContext);
+    void* result = tryAllocateSlow(size, deferralContext);
     if (failureMode == AllocationFailureMode::Assert)
         RELEASE_ASSERT(result);
     return result;
 }
 
-void* CompleteSubspace::tryAllocateSlow(VM& vm, size_t size, GCDeferralContext* deferralContext)
+void* CompleteSubspace::tryAllocateSlow(size_t size, GCDeferralContext* deferralContext)
 {
-    sanitizeStackForVM(&vm);
+    sanitizeStackForVM(m_space.heap()->vm());
     
-    if (Allocator allocator = allocatorFor(size, AllocatorForMode::EnsureAllocator))
-        return allocator.allocate(vm, deferralContext, AllocationFailureMode::ReturnNull);
+    if (BlockDirectory* allocator = allocatorFor(size, AllocatorForMode::EnsureAllocator))
+        return allocator->allocate(deferralContext, AllocationFailureMode::ReturnNull);
     
     if (size <= Options::largeAllocationCutoff()
         && size <= MarkedSpace::largeCutoff) {
@@ -134,15 +132,15 @@ void* CompleteSubspace::tryAllocateSlow(VM& vm, size_t size, GCDeferralContext* 
         RELEASE_ASSERT_NOT_REACHED();
     }
     
-    vm.heap.collectIfNecessaryOrDefer(deferralContext);
+    m_space.heap()->collectIfNecessaryOrDefer(deferralContext);
     
     size = WTF::roundUpToMultipleOf<MarkedSpace::sizeStep>(size);
-    LargeAllocation* allocation = LargeAllocation::tryCreate(vm.heap, size, this);
+    LargeAllocation* allocation = LargeAllocation::tryCreate(*m_space.m_heap, size, this);
     if (!allocation)
         return nullptr;
     
     m_space.m_largeAllocations.append(allocation);
-    vm.heap.didAllocate(size);
+    m_space.m_heap->didAllocate(size);
     m_space.m_capacity += size;
     
     m_largeAllocations.append(allocation);

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -121,7 +121,6 @@
 #include "StrongInlines.h"
 #include "StructureInlines.h"
 #include "TestRunnerUtils.h"
-#include "ThreadLocalCacheInlines.h"
 #include "ThunkGenerators.h"
 #include "TypeProfiler.h"
 #include "TypeProfilerLog.h"
@@ -306,9 +305,6 @@ VM::VM(VMType vmType, HeapType heapType)
     StackBounds stack = Thread::current().stack();
     updateSoftReservedZoneSize(Options::softReservedZoneSize());
     setLastStackTop(stack.origin());
-
-    defaultThreadLocalCache = ThreadLocalCache::create(heap);
-    defaultThreadLocalCache->install(*this);
 
     // Need to be careful to keep everything consistent here
     JSLockHolder lock(this);
@@ -498,10 +494,6 @@ VM::~VM()
     ASSERT(currentThreadIsHoldingAPILock());
     m_apiLock->willDestroyVM(this);
     heap.lastChanceToFinalize();
-    
-#if !ENABLE(FAST_TLS_JIT)
-    ThreadLocalCache::destructor(threadLocalCacheData);
-#endif
 
     delete interpreter;
 #ifndef NDEBUG

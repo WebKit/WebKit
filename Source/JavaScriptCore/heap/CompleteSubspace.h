@@ -39,31 +39,31 @@ public:
     
     // FIXME: Currently subspaces speak of BlockDirectories as "allocators", but that's temporary.
     // https://bugs.webkit.org/show_bug.cgi?id=181559
-    Allocator allocatorFor(size_t, AllocatorForMode) override;
-    Allocator allocatorForNonVirtual(size_t, AllocatorForMode);
+    BlockDirectory* allocatorFor(size_t, AllocatorForMode) override;
+    BlockDirectory* allocatorForNonVirtual(size_t, AllocatorForMode);
     
-    void* allocate(VM&, size_t, GCDeferralContext*, AllocationFailureMode) override;
-    JS_EXPORT_PRIVATE void* allocateNonVirtual(VM&, size_t, GCDeferralContext*, AllocationFailureMode);
+    void* allocate(size_t, GCDeferralContext*, AllocationFailureMode) override;
+    JS_EXPORT_PRIVATE void* allocateNonVirtual(size_t, GCDeferralContext*, AllocationFailureMode);
     
     static ptrdiff_t offsetOfAllocatorForSizeStep() { return OBJECT_OFFSETOF(CompleteSubspace, m_allocatorForSizeStep); }
     
-    Allocator* allocatorForSizeStep() { return &m_allocatorForSizeStep[0]; }
+    BlockDirectory** allocatorForSizeStep() { return &m_allocatorForSizeStep[0]; }
 
 private:
-    Allocator allocatorForSlow(size_t);
+    BlockDirectory* allocatorForSlow(size_t);
     
     // These slow paths are concerned with large allocations and allocator creation.
-    void* allocateSlow(VM&, size_t, GCDeferralContext*, AllocationFailureMode);
-    void* tryAllocateSlow(VM&, size_t, GCDeferralContext*);
+    void* allocateSlow(size_t, GCDeferralContext*, AllocationFailureMode);
+    void* tryAllocateSlow(size_t, GCDeferralContext*);
     
-    std::array<Allocator, MarkedSpace::numSizeClasses> m_allocatorForSizeStep;
+    std::array<BlockDirectory*, MarkedSpace::numSizeClasses> m_allocatorForSizeStep;
     Vector<std::unique_ptr<BlockDirectory>> m_directories;
 };
 
-ALWAYS_INLINE Allocator CompleteSubspace::allocatorForNonVirtual(size_t size, AllocatorForMode mode)
+ALWAYS_INLINE BlockDirectory* CompleteSubspace::allocatorForNonVirtual(size_t size, AllocatorForMode mode)
 {
     if (size <= MarkedSpace::largeCutoff) {
-        Allocator result = m_allocatorForSizeStep[MarkedSpace::sizeClassToIndex(size)];
+        BlockDirectory* result = m_allocatorForSizeStep[MarkedSpace::sizeClassToIndex(size)];
         switch (mode) {
         case AllocatorForMode::MustAlreadyHaveAllocator:
             RELEASE_ASSERT(result);
@@ -78,7 +78,7 @@ ALWAYS_INLINE Allocator CompleteSubspace::allocatorForNonVirtual(size_t size, Al
         return result;
     }
     RELEASE_ASSERT(mode != AllocatorForMode::MustAlreadyHaveAllocator);
-    return Allocator();
+    return nullptr;
 }
 
 } // namespace JSC

@@ -43,7 +43,8 @@ public:
     static ptrdiff_t offsetOfInlineCapacity() { return OBJECT_OFFSETOF(ObjectAllocationProfile, m_inlineCapacity); }
 
     ObjectAllocationProfile()
-        : m_inlineCapacity(0)
+        : m_allocator(0)
+        , m_inlineCapacity(0)
     {
     }
 
@@ -62,7 +63,7 @@ public:
 
     void clear()
     {
-        m_allocator = Allocator();
+        m_allocator = nullptr;
         m_structure.clear();
         m_inlineCapacity = 0;
         ASSERT(isNull());
@@ -76,7 +77,7 @@ public:
 private:
     unsigned possibleDefaultPropertyCount(VM&, JSObject* prototype);
 
-    Allocator m_allocator; // Precomputed to make things easier for generated code.
+    BlockDirectory* m_allocator; // Precomputed to make things easier for generated code.
     WriteBarrier<Structure> m_structure;
     unsigned m_inlineCapacity;
 };

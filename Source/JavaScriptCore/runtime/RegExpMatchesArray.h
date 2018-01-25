@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2008-2018 Apple Inc. All Rights Reserved.
+ *  Copyright (C) 2008-2017 Apple Inc. All Rights Reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -42,7 +42,7 @@ ALWAYS_INLINE JSArray* tryCreateUninitializedRegExpMatchesArray(ObjectInitializa
 
     JSGlobalObject* globalObject = structure->globalObject();
     bool createUninitialized = globalObject->isOriginalArrayStructure(structure);
-    void* temp = vm.jsValueGigacageAuxiliarySpace.allocateNonVirtual(vm, Butterfly::totalSize(0, structure->outOfLineCapacity(), true, vectorLength * sizeof(EncodedJSValue)), deferralContext, AllocationFailureMode::ReturnNull);
+    void* temp = vm.jsValueGigacageAuxiliarySpace.allocateNonVirtual(Butterfly::totalSize(0, structure->outOfLineCapacity(), true, vectorLength * sizeof(EncodedJSValue)), deferralContext, AllocationFailureMode::ReturnNull);
     if (UNLIKELY(!temp))
         return nullptr;
     Butterfly* butterfly = Butterfly::fromBase(temp, 0, structure->outOfLineCapacity());

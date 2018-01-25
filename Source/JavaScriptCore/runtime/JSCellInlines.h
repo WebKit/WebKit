@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -145,15 +145,14 @@ CompleteSubspace* JSCell::subspaceFor(VM& vm)
 template<typename T>
 ALWAYS_INLINE void* tryAllocateCellHelper(Heap& heap, size_t size, GCDeferralContext* deferralContext, AllocationFailureMode failureMode)
 {
-    VM& vm = *heap.vm();
     ASSERT(deferralContext || !DisallowGC::isInEffectOnCurrentThread());
     ASSERT(size >= sizeof(T));
-    JSCell* result = static_cast<JSCell*>(subspaceFor<T>(vm)->allocateNonVirtual(vm, size, deferralContext, failureMode));
+    JSCell* result = static_cast<JSCell*>(subspaceFor<T>(*heap.vm())->allocateNonVirtual(size, deferralContext, failureMode));
     if (failureMode == AllocationFailureMode::ReturnNull && !result)
         return nullptr;
 #if ENABLE(GC_VALIDATION)
-    ASSERT(!vm.isInitializingObject());
-    vm.setInitializingObjectClass(T::info());
+    ASSERT(!heap.vm()->isInitializingObject());
+    heap.vm()->setInitializingObjectClass(T::info());
 #endif
     result->clearStructure();
     return result;

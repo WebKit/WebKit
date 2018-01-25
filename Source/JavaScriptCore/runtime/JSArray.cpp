@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- *  Copyright (C) 2003-2018 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003-2017 Apple Inc. All rights reserved.
  *  Copyright (C) 2003 Peter Kelly (pmk@post.com)
  *  Copyright (C) 2006 Alexey Proskuryakov (ap@nypop.com)
  *
@@ -81,10 +81,7 @@ JSArray* JSArray::tryCreateUninitializedRestricted(ObjectInitializationScope& sc
             || hasContiguous(indexingType));
 
         unsigned vectorLength = Butterfly::optimalContiguousVectorLength(structure, initialLength);
-        void* temp = vm.jsValueGigacageAuxiliarySpace.allocateNonVirtual(
-            vm,
-            Butterfly::totalSize(0, outOfLineStorage, true, vectorLength * sizeof(EncodedJSValue)),
-            deferralContext, AllocationFailureMode::ReturnNull);
+        void* temp = vm.jsValueGigacageAuxiliarySpace.allocateNonVirtual(Butterfly::totalSize(0, outOfLineStorage, true, vectorLength * sizeof(EncodedJSValue)), deferralContext, AllocationFailureMode::ReturnNull);
         if (UNLIKELY(!temp))
             return nullptr;
         butterfly = Butterfly::fromBase(temp, 0, outOfLineStorage);
@@ -101,10 +98,7 @@ JSArray* JSArray::tryCreateUninitializedRestricted(ObjectInitializationScope& sc
     } else {
         static const unsigned indexBias = 0;
         unsigned vectorLength = ArrayStorage::optimalVectorLength(indexBias, structure, initialLength);
-        void* temp = vm.jsValueGigacageAuxiliarySpace.allocateNonVirtual(
-            vm,
-            Butterfly::totalSize(indexBias, outOfLineStorage, true, ArrayStorage::sizeFor(vectorLength)),
-            deferralContext, AllocationFailureMode::ReturnNull);
+        void* temp = vm.jsValueGigacageAuxiliarySpace.allocateNonVirtual(Butterfly::totalSize(indexBias, outOfLineStorage, true, ArrayStorage::sizeFor(vectorLength)), deferralContext, AllocationFailureMode::ReturnNull);
         if (UNLIKELY(!temp))
             return nullptr;
         butterfly = Butterfly::fromBase(temp, indexBias, outOfLineStorage);
@@ -374,8 +368,7 @@ bool JSArray::unshiftCountSlowCase(const AbstractLocker&, VM& vm, DeferGC&, bool
         allocatedNewStorage = false;
     } else {
         size_t newSize = Butterfly::totalSize(0, propertyCapacity, true, ArrayStorage::sizeFor(desiredCapacity));
-        newAllocBase = vm.jsValueGigacageAuxiliarySpace.allocateNonVirtual(
-            vm, newSize, nullptr, AllocationFailureMode::ReturnNull);
+        newAllocBase = vm.jsValueGigacageAuxiliarySpace.allocateNonVirtual(newSize, nullptr, AllocationFailureMode::ReturnNull);
         if (!newAllocBase)
             return false;
         newStorageCapacity = desiredCapacity;

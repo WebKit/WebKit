@@ -432,8 +432,21 @@ public:
                 VALIDATE(!value->kind().hasExtraBits(), ("At ", *value));
                 if (value->type() == Void)
                     VALIDATE(value->as<PatchpointValue>()->resultConstraint == ValueRep::WarmAny, ("At ", *value));
-                else
+                else {
+                    switch (value->as<PatchpointValue>()->resultConstraint.kind()) {
+                    case ValueRep::WarmAny:
+                    case ValueRep::SomeRegister:
+                    case ValueRep::SomeEarlyRegister:
+                    case ValueRep::Register:
+                    case ValueRep::StackArgument:
+                        break;
+                    default:
+                        VALIDATE(false, ("At ", *value));
+                        break;
+                    }
+                    
                     validateStackmapConstraint(value, ConstrainedValue(value, value->as<PatchpointValue>()->resultConstraint), ConstraintRole::Def);
+                }
                 validateStackmap(value);
                 break;
             case CheckAdd:
@@ -558,24 +571,16 @@ private:
     {
         switch (value.rep().kind()) {
         case ValueRep::WarmAny:
+        case ValueRep::ColdAny:
+        case ValueRep::LateColdAny:
         case ValueRep::SomeRegister:
         case ValueRep::StackArgument:
-            break;
-        case ValueRep::LateColdAny:
-        case ValueRep::ColdAny:
-            VALIDATE(role == ConstraintRole::Use, ("At ", *context, ": ", value));
-            break;
-        case ValueRep::SomeRegisterWithClobber:
-            VALIDATE(role == ConstraintRole::Use, ("At ", *context, ": ", value));
-            VALIDATE(context->as<PatchpointValue>(), ("At ", *context));
             break;
         case ValueRep::SomeEarlyRegister:
             VALIDATE(role == ConstraintRole::Def, ("At ", *context, ": ", value));
             break;
         case ValueRep::Register:
         case ValueRep::LateRegister:
-            if (value.rep().kind() == ValueRep::LateRegister)
-                VALIDATE(role == ConstraintRole::Use, ("At ", *context, ": ", value));
             if (value.rep().reg().isGPR())
                 VALIDATE(isInt(value.value()->type()), ("At ", *context, ": ", value));
             else

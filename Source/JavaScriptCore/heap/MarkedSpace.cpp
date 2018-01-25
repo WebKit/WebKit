@@ -302,16 +302,6 @@ void MarkedSpace::stopAllocating()
         });
 }
 
-void MarkedSpace::stopAllocatingForGood()
-{
-    ASSERT(!isIterating());
-    forEachDirectory(
-        [&] (BlockDirectory& directory) -> IterationStatus {
-            directory.stopAllocatingForGood();
-            return IterationStatus::Continue;
-        });
-}
-
 void MarkedSpace::prepareForConservativeScan()
 {
     m_largeAllocationsForThisCollectionBegin = m_largeAllocations.begin() + m_largeAllocationsOffsetForThisCollection;

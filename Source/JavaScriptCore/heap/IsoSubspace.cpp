@@ -26,11 +26,8 @@
 #include "config.h"
 #include "IsoSubspace.h"
 
-#include "AllocatorInlines.h"
 #include "BlockDirectoryInlines.h"
 #include "IsoAlignedMemoryAllocator.h"
-#include "LocalAllocatorInlines.h"
-#include "ThreadLocalCacheInlines.h"
 
 namespace JSC {
 
@@ -38,7 +35,6 @@ IsoSubspace::IsoSubspace(CString name, Heap& heap, HeapCellType* heapCellType, s
     : Subspace(name, heap)
     , m_size(size)
     , m_directory(&heap, WTF::roundUpToMultipleOf<MarkedBlock::atomSize>(size))
-    , m_allocator(m_directory.allocator())
     , m_isoAlignedMemoryAllocator(std::make_unique<IsoAlignedMemoryAllocator>())
 {
     initialize(heapCellType, m_isoAlignedMemoryAllocator.get());
@@ -54,20 +50,20 @@ IsoSubspace::~IsoSubspace()
 {
 }
 
-Allocator IsoSubspace::allocatorFor(size_t size, AllocatorForMode mode)
+BlockDirectory* IsoSubspace::allocatorFor(size_t size, AllocatorForMode mode)
 {
     return allocatorForNonVirtual(size, mode);
 }
 
-void* IsoSubspace::allocate(VM& vm, size_t size, GCDeferralContext* deferralContext, AllocationFailureMode failureMode)
+void* IsoSubspace::allocate(size_t size, GCDeferralContext* deferralContext, AllocationFailureMode failureMode)
 {
-    return allocateNonVirtual(vm, size, deferralContext, failureMode);
+    return allocateNonVirtual(size, deferralContext, failureMode);
 }
 
-void* IsoSubspace::allocateNonVirtual(VM& vm, size_t size, GCDeferralContext* deferralContext, AllocationFailureMode failureMode)
+void* IsoSubspace::allocateNonVirtual(size_t size, GCDeferralContext* deferralContext, AllocationFailureMode failureMode)
 {
     RELEASE_ASSERT(size == this->size());
-    void* result = m_allocator.allocate(vm, deferralContext, failureMode);
+    void* result = m_directory.allocate(deferralContext, failureMode);
     return result;
 }
 

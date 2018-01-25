@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -207,7 +207,7 @@ public:
     {
         auto scope = DECLARE_THROW_SCOPE(vm);
         size_t allocationSize = HashMapBuffer::allocationSize(capacity);
-        void* data = vm.jsValueGigacageAuxiliarySpace.allocateNonVirtual(vm, allocationSize, nullptr, AllocationFailureMode::ReturnNull);
+        void* data = vm.jsValueGigacageAuxiliarySpace.allocateNonVirtual(allocationSize, nullptr, AllocationFailureMode::ReturnNull);
         if (!data) {
             throwOutOfMemoryError(exec, scope);
             return nullptr;

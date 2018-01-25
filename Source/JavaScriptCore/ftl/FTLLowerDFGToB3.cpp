@@ -5876,10 +5876,10 @@ private:
         
         LBasicBlock lastNext = m_out.insertNewBlocksBefore(slowPath);
         
-        Allocator allocator = subspaceFor<JSRopeString>(vm())->allocatorForNonVirtual(sizeof(JSRopeString), AllocatorForMode::AllocatorIfExists);
+        BlockDirectory* allocator = subspaceFor<JSRopeString>(vm())->allocatorForNonVirtual(sizeof(JSRopeString), AllocatorForMode::AllocatorIfExists);
         
         LValue result = allocateCell(
-            m_out.constInt32(allocator.offset()), vm().stringStructure.get(), slowPath);
+            m_out.constIntPtr(allocator), vm().stringStructure.get(), slowPath);
         
         m_out.storePtr(m_out.intPtrZero, result, m_heaps.JSString_value);
         for (unsigned i = 0; i < numKids; ++i)
@@ -9909,7 +9909,7 @@ private:
             
             if (structure->outOfLineCapacity() || hasIndexedProperties(structure->indexingType())) {
                 size_t allocationSize = JSFinalObject::allocationSize(structure->inlineCapacity());
-                Allocator cellAllocator = subspaceFor<JSFinalObject>(vm())->allocatorForNonVirtual(allocationSize, AllocatorForMode::AllocatorIfExists);
+                BlockDirectory* cellAllocator = subspaceFor<JSFinalObject>(vm())->allocatorForNonVirtual(allocationSize, AllocatorForMode::AllocatorIfExists);
 
                 bool hasIndexingHeader = hasIndexedProperties(structure->indexingType());
                 unsigned indexingHeaderSize = 0;
@@ -9968,7 +9968,7 @@ private:
 
                 LValue mask = computeButterflyIndexingMask(vectorLength);
                 LValue fastObjectValue = allocateObject(
-                    m_out.constInt32(cellAllocator.offset()), structure, fastButterflyValue, mask, slowPath);
+                    m_out.constIntPtr(cellAllocator), structure, fastButterflyValue, mask, slowPath);
 
                 ValueFromBlock fastObject = m_out.anchor(fastObjectValue);
                 ValueFromBlock fastButterfly = m_out.anchor(fastButterflyValue);
@@ -10955,8 +10955,8 @@ private:
         LBasicBlock lastNext = m_out.insertNewBlocksBefore(slowPath);
 
         size_t sizeInBytes = sizeInValues * sizeof(JSValue);
-        Allocator allocator = vm().jsValueGigacageAuxiliarySpace.allocatorForNonVirtual(sizeInBytes, AllocatorForMode::AllocatorIfExists);
-        LValue startOfStorage = allocateHeapCell(m_out.constInt32(allocator.offset()), slowPath);
+        BlockDirectory* allocator = vm().jsValueGigacageAuxiliarySpace.allocatorForNonVirtual(sizeInBytes, AllocatorForMode::AllocatorIfExists);
+        LValue startOfStorage = allocateHeapCell(m_out.constIntPtr(allocator), slowPath);
         ValueFromBlock fastButterfly = m_out.anchor(
             m_out.add(m_out.constIntPtr(sizeInBytes + sizeof(IndexingHeader)), startOfStorage));
         m_out.jump(continuation);
@@ -11988,28 +11988,16 @@ private:
 
     LValue allocateHeapCell(LValue allocator, LBasicBlock slowPath)
     {
-        JITAllocator actualAllocator;
-        if (allocator->hasInt32())
-            actualAllocator = JITAllocator::constant(Allocator(allocator->asInt32()));
-        else
-            actualAllocator = JITAllocator::variable();
+        BlockDirectory* actualAllocator = nullptr;
+        if (allocator->hasIntPtr())
+            actualAllocator = bitwise_cast<BlockDirectory*>(allocator->asIntPtr());
         
-        if (actualAllocator.isConstant()) {
-            if (!actualAllocator.allocator()) {
-                LBasicBlock haveAllocator = m_out.newBlock();
-                LBasicBlock lastNext = m_out.insertNewBlocksBefore(haveAllocator);
-                m_out.jump(slowPath);
-                m_out.appendTo(haveAllocator, lastNext);
-                return m_out.intPtrZero;
-            }
-        } else {
+        if (!actualAllocator) {
             // This means that either we know that the allocator is null or we don't know what the
             // allocator is. In either case, we need the null check.
             LBasicBlock haveAllocator = m_out.newBlock();
             LBasicBlock lastNext = m_out.insertNewBlocksBefore(haveAllocator);
-            m_out.branch(
-                m_out.notEqual(allocator, m_out.constInt32(Allocator().offset())),
-                usually(haveAllocator), rarely(slowPath));
+            m_out.branch(allocator, usually(haveAllocator), rarely(slowPath));
             m_out.appendTo(haveAllocator, lastNext);
         }
         
@@ -12019,10 +12007,7 @@ private:
         
         PatchpointValue* patchpoint = m_out.patchpoint(pointerType());
         patchpoint->effects.terminal = true;
-        if (actualAllocator.isConstant())
-            patchpoint->numGPScratchRegisters++;
-        else
-            patchpoint->appendSomeRegisterWithClobber(allocator);
+        patchpoint->appendSomeRegister(allocator);
         patchpoint->numGPScratchRegisters++;
         patchpoint->resultConstraint = ValueRep::SomeEarlyRegister;
         
@@ -12033,12 +12018,6 @@ private:
             [=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
                 CCallHelpers::JumpList jumpToSlowPath;
                 
-                GPRReg allocatorGPR;
-                if (actualAllocator.isConstant())
-                    allocatorGPR = params.gpScratch(1);
-                else
-                    allocatorGPR = params[1].gpr();
-                
                 // We use a patchpoint to emit the allocation path because whenever we mess with
                 // allocation paths, we already reason about them at the machine code level. We know
                 // exactly what instruction sequence we want. We're confident that no compiler
@@ -12046,7 +12025,7 @@ private:
                 // AssemblyHelpers::emitAllocate(). That way, the same optimized path is shared by
                 // all of the compiler tiers.
                 jit.emitAllocateWithNonNullAllocator(
-                    params[0].gpr(), actualAllocator, allocatorGPR, params.gpScratch(0),
+                    params[0].gpr(), actualAllocator, params[1].gpr(), params.gpScratch(0),
                     jumpToSlowPath);
                 
                 CCallHelpers::Jump jumpToSuccess;
@@ -12138,8 +12117,8 @@ private:
     LValue allocateObject(
         size_t size, StructureType structure, LValue butterfly, LValue indexingMask, LBasicBlock slowPath)
     {
-        Allocator allocator = subspaceFor<ClassType>(vm())->allocatorForNonVirtual(size, AllocatorForMode::AllocatorIfExists);
-        return allocateObject(m_out.constInt32(allocator.offset()), structure, butterfly, indexingMask, slowPath);
+        BlockDirectory* allocator = subspaceFor<ClassType>(vm())->allocatorForNonVirtual(size, AllocatorForMode::AllocatorIfExists);
+        return allocateObject(m_out.constIntPtr(allocator), structure, butterfly, indexingMask, slowPath);
     }
     
     template<typename ClassType, typename StructureType>
@@ -12158,16 +12137,16 @@ private:
             CompleteSubspace* actualSubspace = bitwise_cast<CompleteSubspace*>(subspace->asIntPtr());
             size_t actualSize = size->asIntPtr();
             
-            Allocator actualAllocator = actualSubspace->allocatorForNonVirtual(actualSize, AllocatorForMode::AllocatorIfExists);
+            BlockDirectory* actualAllocator = actualSubspace->allocatorForNonVirtual(actualSize, AllocatorForMode::AllocatorIfExists);
             if (!actualAllocator) {
                 LBasicBlock continuation = m_out.newBlock();
                 LBasicBlock lastNext = m_out.insertNewBlocksBefore(continuation);
                 m_out.jump(slowPath);
                 m_out.appendTo(continuation, lastNext);
-                return m_out.int32Zero;
+                return m_out.intPtrZero;
             }
             
-            return m_out.constInt32(actualAllocator.offset());
+            return m_out.constIntPtr(actualAllocator);
         }
         
         unsigned stepShift = getLSBSet(MarkedSpace::sizeStep);
@@ -12186,7 +12165,7 @@ private:
         
         m_out.appendTo(continuation, lastNext);
         
-        return m_out.load32(
+        return m_out.loadPtr(
             m_out.baseIndex(
                 m_heaps.CompleteSubspace_allocatorForSizeStep,
                 subspace, m_out.sub(sizeClassIndex, m_out.intPtrOne)));
@@ -12201,7 +12180,8 @@ private:
     LValue allocateVariableSizedObject(
         LValue size, RegisteredStructure structure, LValue butterfly, LValue butterflyIndexingMask, LBasicBlock slowPath)
     {
-        LValue allocator = allocatorForSize(*subspaceFor<ClassType>(vm()), size, slowPath);
+        LValue allocator = allocatorForSize(
+            *subspaceFor<ClassType>(vm()), size, slowPath);
         return allocateObject(allocator, structure, butterfly, butterflyIndexingMask, slowPath);
     }
 
@@ -12209,14 +12189,15 @@ private:
     LValue allocateVariableSizedCell(
         LValue size, Structure* structure, LBasicBlock slowPath)
     {
-        LValue allocator = allocatorForSize(*subspaceFor<ClassType>(vm()), size, slowPath);
+        LValue allocator = allocatorForSize(
+            *subspaceFor<ClassType>(vm()), size, slowPath);
         return allocateCell(allocator, structure, slowPath);
     }
     
     LValue allocateObject(RegisteredStructure structure)
     {
         size_t allocationSize = JSFinalObject::allocationSize(structure.get()->inlineCapacity());
-        Allocator allocator = subspaceFor<JSFinalObject>(vm())->allocatorForNonVirtual(allocationSize, AllocatorForMode::AllocatorIfExists);
+        BlockDirectory* allocator = subspaceFor<JSFinalObject>(vm())->allocatorForNonVirtual(allocationSize, AllocatorForMode::AllocatorIfExists);
         
         // FIXME: If the allocator is null, we could simply emit a normal C call to the allocator
         // instead of putting it on the slow path.
@@ -12228,7 +12209,7 @@ private:
         LBasicBlock lastNext = m_out.insertNewBlocksBefore(slowPath);
         
         ValueFromBlock fastResult = m_out.anchor(allocateObject(
-            m_out.constInt32(allocator.offset()), structure, m_out.intPtrZero, m_out.int32Zero, slowPath));
+            m_out.constIntPtr(allocator), structure, m_out.intPtrZero, m_out.int32Zero, slowPath));
         
         m_out.jump(continuation);
         

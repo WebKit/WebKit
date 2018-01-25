@@ -37,7 +37,6 @@
 #include "JSObject.h"
 #include "JSString.h"
 #include "JSCInlines.h"
-#include "MarkingConstraintSolver.h"
 #include "SlotVisitorInlines.h"
 #include "StopIfNecessaryTimer.h"
 #include "SuperSampler.h"
