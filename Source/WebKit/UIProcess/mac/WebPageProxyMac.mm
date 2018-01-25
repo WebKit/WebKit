@@ -538,6 +538,11 @@ bool WebPageProxy::appleMailPaginationQuirkEnabled()
     return MacApplication::isAppleMail();
 }
 
+bool WebPageProxy::appleMailLinesClampEnabled()
+{
+    return MacApplication::isAppleMail();
+}
+    
 void WebPageProxy::setFont(const String& fontFamily, double fontSize, uint64_t fontTraits)
 {
     if (!isValid())

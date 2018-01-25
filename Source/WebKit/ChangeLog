@@ -1,3 +1,22 @@
+2018-01-25  David Hyatt  <hyatt@apple.com>
+
+        Enable lines clamp support for Apple Mail by default
+        https://bugs.webkit.org/show_bug.cgi?id=182113
+
+        Reviewed by Dean Jackson.
+
+        * Shared/WebPageCreationParameters.cpp:
+        (WebKit::WebPageCreationParameters::encode const):
+        (WebKit::WebPageCreationParameters::decode):
+        * Shared/WebPageCreationParameters.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::creationParameters):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/mac/WebPageProxyMac.mm:
+        (WebKit::WebPageProxy::appleMailLinesClampEnabled):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::m_cpuLimit):
+
 2018-01-25  Sergio Villar Senin  <svillar@igalia.com>
 
         [WebVR][GTK][WPE] Remove the WebVR public API added in r227518

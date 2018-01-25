@@ -554,7 +554,8 @@ WebPage::WebPage(uint64_t pageID, WebPageCreationParameters&& parameters)
         m_page->settings().setMediaKeysStorageDirectory(manager->mediaKeyStorageDirectory());
 #endif
     m_page->settings().setAppleMailPaginationQuirkEnabled(parameters.appleMailPaginationQuirkEnabled);
-
+    m_page->settings().setAppleMailLinesClampEnabled(parameters.appleMailLinesClampEnabled);
+    
     if (parameters.viewScaleFactor != 1)
         scaleView(parameters.viewScaleFactor);
 

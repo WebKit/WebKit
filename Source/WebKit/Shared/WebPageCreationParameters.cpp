@@ -94,6 +94,7 @@ void WebPageCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << smartInsertDeleteEnabled;
 #endif
     encoder << appleMailPaginationQuirkEnabled;
+    encoder << appleMailLinesClampEnabled;
     encoder << shouldScaleViewToFitDocument;
     encoder.encodeEnum(userInterfaceLayoutDirection);
     encoder.encodeEnum(observedLayoutMilestones);
@@ -250,6 +251,9 @@ std::optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::
 #endif
 
     if (!decoder.decode(parameters.appleMailPaginationQuirkEnabled))
+        return std::nullopt;
+
+    if (!decoder.decode(parameters.appleMailLinesClampEnabled))
         return std::nullopt;
 
     if (!decoder.decode(parameters.shouldScaleViewToFitDocument))

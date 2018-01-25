@@ -151,6 +151,7 @@ struct WebPageCreationParameters {
     bool smartInsertDeleteEnabled;
 #endif
     bool appleMailPaginationQuirkEnabled;
+    bool appleMailLinesClampEnabled;
     bool shouldScaleViewToFitDocument;
 
     WebCore::UserInterfaceLayoutDirection userInterfaceLayoutDirection;

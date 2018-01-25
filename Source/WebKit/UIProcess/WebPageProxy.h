@@ -1507,6 +1507,11 @@ private:
     bool appleMailPaginationQuirkEnabled();
 #endif
 
+#if PLATFORM(MAC)
+    // FIXME: Need to support iOS too, but there is no isAppleMail for iOS.
+    bool appleMailLinesClampEnabled();
+#endif
+
     // Spelling and grammar.
     void checkSpellingOfString(const String& text, int32_t& misspellingLocation, int32_t& misspellingLength);
     void checkGrammarOfString(const String& text, Vector<WebCore::GrammarDetail>&, int32_t& badGrammarLocation, int32_t& badGrammarLength);
