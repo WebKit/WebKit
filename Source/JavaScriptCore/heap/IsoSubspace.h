@@ -41,11 +41,11 @@ public:
 
     size_t size() const { return m_size; }
 
-    BlockDirectory* allocatorFor(size_t, AllocatorForMode) override;
-    BlockDirectory* allocatorForNonVirtual(size_t, AllocatorForMode);
+    Allocator allocatorFor(size_t, AllocatorForMode) override;
+    Allocator allocatorForNonVirtual(size_t, AllocatorForMode);
 
-    void* allocate(size_t, GCDeferralContext*, AllocationFailureMode) override;
-    JS_EXPORT_PRIVATE void* allocateNonVirtual(size_t, GCDeferralContext*, AllocationFailureMode);
+    void* allocate(VM&, size_t, GCDeferralContext*, AllocationFailureMode) override;
+    JS_EXPORT_PRIVATE void* allocateNonVirtual(VM&, size_t, GCDeferralContext*, AllocationFailureMode);
 
 private:
     friend class IsoCellSet;
@@ -56,14 +56,15 @@ private:
     
     size_t m_size;
     BlockDirectory m_directory;
+    Allocator m_allocator;
     std::unique_ptr<IsoAlignedMemoryAllocator> m_isoAlignedMemoryAllocator;
     SentinelLinkedList<IsoCellSet, BasicRawSentinelNode<IsoCellSet>> m_cellSets;
 };
 
-inline BlockDirectory* IsoSubspace::allocatorForNonVirtual(size_t size, AllocatorForMode)
+inline Allocator IsoSubspace::allocatorForNonVirtual(size_t size, AllocatorForMode)
 {
     RELEASE_ASSERT(size == this->size());
-    return &m_directory;
+    return m_allocator;
 }
 
 #define ISO_SUBSPACE_INIT(heap, heapCellType, type) ("Isolated " #type " Space", (heap), (heapCellType), sizeof(type))

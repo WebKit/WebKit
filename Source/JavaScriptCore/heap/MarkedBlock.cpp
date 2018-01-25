@@ -399,8 +399,15 @@ void MarkedBlock::Handle::sweep(FreeList* freeList)
     if (sweepMode == SweepOnly && !needsDestruction)
         return;
 
-    RELEASE_ASSERT(!m_isFreeListed);
-    RELEASE_ASSERT(!isAllocated());
+    if (m_isFreeListed) {
+        dataLog("FATAL: ", RawPointer(this), "->sweep: block is free-listed.\n");
+        RELEASE_ASSERT_NOT_REACHED();
+    }
+    
+    if (isAllocated()) {
+        dataLog("FATAL: ", RawPointer(this), "->sweep: block is allocated.\n");
+        RELEASE_ASSERT_NOT_REACHED();
+    }
     
     if (space()->isMarking())
         block().m_lock.lock();

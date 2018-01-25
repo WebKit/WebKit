@@ -54,6 +54,7 @@
 #include "TemplateRegistryKeyTable.h"
 #include "VMEntryRecord.h"
 #include "VMTraps.h"
+#include "ThreadLocalCache.h"
 #include "WasmContext.h"
 #include "Watchpoint.h"
 #include <wtf/BumpPointerAllocator.h>
@@ -656,6 +657,11 @@ public:
 
     JSObject* stringRecursionCheckFirstObject { nullptr };
     HashSet<JSObject*> stringRecursionCheckVisitedObjects;
+    
+#if !ENABLE(FAST_TLS_JIT)
+    ThreadLocalCache::Data* threadLocalCacheData { nullptr };
+#endif
+    RefPtr<ThreadLocalCache> defaultThreadLocalCache;
 
     LocalTimeOffsetCache localTimeOffsetCache;
 

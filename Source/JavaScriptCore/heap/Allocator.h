@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,27 +25,42 @@
 
 #pragma once
 
-#include "BlockDirectory.h"
-#include "FreeListInlines.h"
-#include "VM.h"
+#include "AllocationFailureMode.h"
+#include <climits>
 
 namespace JSC {
 
-template <typename Functor> inline void BlockDirectory::forEachBlock(const Functor& functor)
-{
-    m_live.forEachSetBit(
-        [&] (size_t index) {
-            functor(m_blocks[index]);
-        });
-}
+class GCDeferralContext;
+class Heap;
+class VM;
 
-template <typename Functor> inline void BlockDirectory::forEachNotEmptyBlock(const Functor& functor)
-{
-    m_markingNotEmpty.forEachSetBit(
-        [&] (size_t index) {
-            functor(m_blocks[index]);
-        });
-}
+class Allocator {
+public:
+    Allocator() { }
+    
+    explicit Allocator(unsigned offset)
+        : m_offset(offset)
+    {
+    }
+    
+    void* allocate(VM&, GCDeferralContext*, AllocationFailureMode) const;
+    
+    // This version calls FailureFunc if we have a null allocator or if the TLC hasn't been resized
+    // to include this allocator.
+    template<typename FailureFunc>
+    void* tryAllocate(VM&, GCDeferralContext*, AllocationFailureMode, const FailureFunc&) const;
+    
+    unsigned cellSize(Heap&) const;
+    
+    unsigned offset() const { return m_offset; }
+    
+    bool operator==(const Allocator& other) const { return m_offset == other.offset(); }
+    bool operator!=(const Allocator& other) const { return !(*this == other); }
+    explicit operator bool() const { return *this != Allocator(); }
+    
+private:
+    unsigned m_offset { UINT_MAX };
+};
 
 } // namespace JSC
 

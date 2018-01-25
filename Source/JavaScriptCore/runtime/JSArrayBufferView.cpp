@@ -66,7 +66,7 @@ JSArrayBufferView::ConstructionContext::ConstructionContext(
         void* temp;
         size_t size = sizeOf(length, elementSize);
         if (size) {
-            temp = vm.primitiveGigacageAuxiliarySpace.allocateNonVirtual(size, nullptr, AllocationFailureMode::ReturnNull);
+            temp = vm.primitiveGigacageAuxiliarySpace.allocateNonVirtual(vm, size, nullptr, AllocationFailureMode::ReturnNull);
             if (!temp)
                 return;
         } else

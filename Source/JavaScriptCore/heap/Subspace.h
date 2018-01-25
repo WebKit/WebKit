@@ -27,6 +27,7 @@
 
 #include "AllocationFailureMode.h"
 #include "AllocatorForMode.h"
+#include "Allocator.h"
 #include "MarkedBlock.h"
 #include "MarkedSpace.h"
 #include <wtf/text/CString.h>
@@ -56,8 +57,8 @@ public:
     void finishSweep(MarkedBlock::Handle&, FreeList*);
     void destroy(VM&, JSCell*);
 
-    virtual BlockDirectory* allocatorFor(size_t, AllocatorForMode) = 0;
-    virtual void* allocate(size_t, GCDeferralContext*, AllocationFailureMode) = 0;
+    virtual Allocator allocatorFor(size_t, AllocatorForMode) = 0;
+    virtual void* allocate(VM&, size_t, GCDeferralContext*, AllocationFailureMode) = 0;
     
     void prepareForAllocation();
     

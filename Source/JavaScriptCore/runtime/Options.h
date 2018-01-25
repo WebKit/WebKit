@@ -236,6 +236,7 @@ constexpr bool enableAsyncIteration = false;
     v(bool, dumpSizeClasses, false, Normal, nullptr) \
     v(bool, useBumpAllocator, true, Normal, nullptr) \
     v(bool, stealEmptyBlocksFromOtherAllocators, true, Normal, nullptr) \
+    v(bool, tradeDestructorBlocks, true, Normal, nullptr) \
     v(bool, eagerlyUpdateTopCallFrame, false, Normal, nullptr) \
     \
     v(bool, useOSREntryToDFG, true, Normal, nullptr) \

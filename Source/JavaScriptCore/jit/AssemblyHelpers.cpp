@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -581,6 +581,111 @@ void AssemblyHelpers::emitRandomThunk(VM& vm, GPRReg scratch0, GPRReg scratch1, 
     emitRandomThunkImpl(*this, scratch0, scratch1, scratch2, result, loadFromHigh, storeToHigh, loadFromLow, storeToLow);
 }
 #endif
+
+void AssemblyHelpers::emitAllocateWithNonNullAllocator(GPRReg resultGPR, const JITAllocator& allocator, GPRReg allocatorGPR, GPRReg scratchGPR, JumpList& slowPath)
+{
+    // NOTE: This is carefully written so that we can call it while we disallow scratch
+    // register usage.
+        
+    if (Options::forceGCSlowPaths()) {
+        slowPath.append(jump());
+        return;
+    }
+    
+    Jump popPath;
+    Jump done;
+    
+#if ENABLE(FAST_TLS_JIT)
+    loadFromTLSPtr(fastTLSOffsetForKey(WTF_GC_TLC_KEY), scratchGPR);
+#else
+    loadPtr(&vm().threadLocalCacheData, scratchGPR);
+#endif
+    if (!isX86())
+        load32(Address(scratchGPR, ThreadLocalCache::offsetOfSizeInData()), resultGPR);
+    if (allocator.isConstant()) {
+        if (isX86())
+            slowPath.append(branch32(BelowOrEqual, Address(scratchGPR, ThreadLocalCache::offsetOfSizeInData()), TrustedImm32(allocator.allocator().offset())));
+        else
+            slowPath.append(branch32(BelowOrEqual, resultGPR, TrustedImm32(allocator.allocator().offset())));
+        addPtr(TrustedImm32(ThreadLocalCache::offsetOfFirstAllocatorInData() + allocator.allocator().offset()), scratchGPR, allocatorGPR);
+    } else {
+        if (isX86())
+            slowPath.append(branch32(BelowOrEqual, Address(scratchGPR, ThreadLocalCache::offsetOfSizeInData()), allocatorGPR));
+        else
+            slowPath.append(branch32(BelowOrEqual, resultGPR, allocatorGPR));
+        addPtr(TrustedImm32(ThreadLocalCache::offsetOfFirstAllocatorInData()), allocatorGPR);
+        addPtr(scratchGPR, allocatorGPR);
+    }
+
+    load32(Address(allocatorGPR, LocalAllocator::offsetOfFreeList() + FreeList::offsetOfRemaining()), resultGPR);
+    popPath = branchTest32(Zero, resultGPR);
+    if (allocator.isConstant())
+        add32(TrustedImm32(-allocator.allocator().cellSize(vm().heap)), resultGPR, scratchGPR);
+    else {
+        if (isX86()) {
+            move(resultGPR, scratchGPR);
+            sub32(Address(allocatorGPR, LocalAllocator::offsetOfCellSize()), scratchGPR);
+        } else {
+            load32(Address(allocatorGPR, LocalAllocator::offsetOfCellSize()), scratchGPR);
+            sub32(resultGPR, scratchGPR, scratchGPR);
+        }
+    }
+    negPtr(resultGPR);
+    store32(scratchGPR, Address(allocatorGPR, LocalAllocator::offsetOfFreeList() + FreeList::offsetOfRemaining()));
+    Address payloadEndAddr = Address(allocatorGPR, LocalAllocator::offsetOfFreeList() + FreeList::offsetOfPayloadEnd());
+    if (isX86())
+        addPtr(payloadEndAddr, resultGPR);
+    else {
+        loadPtr(payloadEndAddr, scratchGPR);
+        addPtr(scratchGPR, resultGPR);
+    }
+        
+    done = jump();
+        
+    popPath.link(this);
+        
+    loadPtr(Address(allocatorGPR, LocalAllocator::offsetOfFreeList() + FreeList::offsetOfScrambledHead()), resultGPR);
+    if (isX86())
+        xorPtr(Address(allocatorGPR, LocalAllocator::offsetOfFreeList() + FreeList::offsetOfSecret()), resultGPR);
+    else {
+        loadPtr(Address(allocatorGPR, LocalAllocator::offsetOfFreeList() + FreeList::offsetOfSecret()), scratchGPR);
+        xorPtr(scratchGPR, resultGPR);
+    }
+    slowPath.append(branchTestPtr(Zero, resultGPR));
+        
+    // The object is half-allocated: we have what we know is a fresh object, but
+    // it's still on the GC's free list.
+    loadPtr(Address(resultGPR), scratchGPR);
+    storePtr(scratchGPR, Address(allocatorGPR, LocalAllocator::offsetOfFreeList() + FreeList::offsetOfScrambledHead()));
+        
+    done.link(this);
+}
+
+void AssemblyHelpers::emitAllocate(GPRReg resultGPR, const JITAllocator& allocator, GPRReg allocatorGPR, GPRReg scratchGPR, JumpList& slowPath)
+{
+    if (allocator.isConstant()) {
+        if (!allocator.allocator()) {
+            slowPath.append(jump());
+            return;
+        }
+    }
+    emitAllocateWithNonNullAllocator(resultGPR, allocator, allocatorGPR, scratchGPR, slowPath);
+}
+
+void AssemblyHelpers::emitAllocateVariableSized(GPRReg resultGPR, CompleteSubspace& subspace, GPRReg allocationSize, GPRReg scratchGPR1, GPRReg scratchGPR2, JumpList& slowPath)
+{
+    static_assert(!(MarkedSpace::sizeStep & (MarkedSpace::sizeStep - 1)), "MarkedSpace::sizeStep must be a power of two.");
+    
+    unsigned stepShift = getLSBSet(MarkedSpace::sizeStep);
+    
+    add32(TrustedImm32(MarkedSpace::sizeStep - 1), allocationSize, scratchGPR1);
+    urshift32(TrustedImm32(stepShift), scratchGPR1);
+    slowPath.append(branch32(Above, scratchGPR1, TrustedImm32(MarkedSpace::largeCutoff >> stepShift)));
+    move(TrustedImmPtr(subspace.allocatorForSizeStep() - 1), scratchGPR2);
+    load32(BaseIndex(scratchGPR2, scratchGPR1, TimesFour), scratchGPR1);
+    
+    emitAllocate(resultGPR, JITAllocator::variable(), scratchGPR1, scratchGPR2, slowPath);
+}
 
 void AssemblyHelpers::restoreCalleeSavesFromEntryFrameCalleeSavesBuffer(EntryFrame*& topEntryFrame)
 {

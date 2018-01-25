@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,26 +25,29 @@
 
 #pragma once
 
-#include "BlockDirectory.h"
-#include "FreeListInlines.h"
-#include "VM.h"
+#include "Allocator.h"
+#include "ThreadLocalCache.h"
 
 namespace JSC {
 
-template <typename Functor> inline void BlockDirectory::forEachBlock(const Functor& functor)
+inline void* Allocator::allocate(VM& vm, GCDeferralContext* context, AllocationFailureMode mode) const
 {
-    m_live.forEachSetBit(
-        [&] (size_t index) {
-            functor(m_blocks[index]);
-        });
+    return ThreadLocalCache::allocator(vm, m_offset).allocate(context, mode);
 }
 
-template <typename Functor> inline void BlockDirectory::forEachNotEmptyBlock(const Functor& functor)
+template<typename FailureFunc>
+void* Allocator::tryAllocate(VM& vm, GCDeferralContext* context, AllocationFailureMode mode, const FailureFunc& failureFunc) const
 {
-    m_markingNotEmpty.forEachSetBit(
-        [&] (size_t index) {
-            functor(m_blocks[index]);
+    void* result;
+    ThreadLocalCache::tryGetAllocator(
+        vm, m_offset,
+        [&] (LocalAllocator& allocator) {
+            result = allocator.allocate(context, mode);
+        },
+        [&] () {
+            result = failureFunc();
         });
+    return result;
 }
 
 } // namespace JSC

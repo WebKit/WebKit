@@ -94,7 +94,7 @@ public:
     
     Heap* heap() const { return m_heap; }
     
-    void lastChanceToFinalize(); // You must call stopAllocating before you call this.
+    void lastChanceToFinalize(); // Must call stopAllocatingForGood first.
     void freeMemory();
 
     static size_t optimalSizeFor(size_t);
@@ -111,6 +111,7 @@ public:
     void didFinishIterating();
 
     void stopAllocating();
+    void stopAllocatingForGood();
     void resumeAllocating(); // If we just stopped allocation but we didn't do a collection, we need to resume allocation.
     
     void prepareForMarking();

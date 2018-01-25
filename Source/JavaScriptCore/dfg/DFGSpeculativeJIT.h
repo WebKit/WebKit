@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -3142,7 +3142,7 @@ public:
     // Allocator for a cell of a specific size.
     template <typename StructureType> // StructureType can be GPR or ImmPtr.
     void emitAllocateJSCell(
-        GPRReg resultGPR, BlockDirectory* allocator, GPRReg allocatorGPR, StructureType structure,
+        GPRReg resultGPR, const JITAllocator& allocator, GPRReg allocatorGPR, StructureType structure,
         GPRReg scratchGPR, MacroAssembler::JumpList& slowPath)
     {
         m_jit.emitAllocateJSCell(resultGPR, allocator, allocatorGPR, structure, scratchGPR, slowPath);
@@ -3151,7 +3151,7 @@ public:
     // Allocator for an object of a specific size.
     template <typename StructureType, typename StorageType, typename MaskType> // StructureType, StorageType and, MaskType can be GPR or ImmPtr.
     void emitAllocateJSObject(
-        GPRReg resultGPR, BlockDirectory* allocator, GPRReg allocatorGPR, StructureType structure,
+        GPRReg resultGPR, const JITAllocator& allocator, GPRReg allocatorGPR, StructureType structure,
         StorageType storage, MaskType mask, GPRReg scratchGPR, MacroAssembler::JumpList& slowPath)
     {
         m_jit.emitAllocateJSObject(

@@ -1,3 +1,252 @@
+2018-01-25  Filip Pizlo  <fpizlo@apple.com>
+
+        JSC GC should support TLCs (thread local caches)
+        https://bugs.webkit.org/show_bug.cgi?id=181559
+
+        Reviewed by Mark Lam and Saam Barati.
+        
+        This is a big step towards object distancing by site origin. This patch implements TLCs, or
+        thread-local caches, which allow each thread to allocate from its own free lists. It also
+        means that any given thread can context-switch TLCs. This will allow us to do separate
+        allocation for separate site origins. Eventually, once we reshape how MarkedBlock looks, this
+        will allow us to have a hard distancing constraint between objects from different origins.
+        
+        In this new design, every "size class" is represented as a BlockDirectory (formerly known as
+        MarkedAllocator, prior to r226822). This contains a bag of blocks allocated using some
+        aligned memory allocator (which roughly represents which cage you came out of), and anyone
+        using the same allocator can share those blocks - but so long as they are in that
+        BlockDirectory, they will have the size and type of that directory. Previously, each
+        BlockDirectory had exactly one FreeList. Now, each BlockDirectory has a double-linked-list of
+        LocalAllocators, each of which has a FreeList.
+        
+        To decide which LocalAllocator to allocate out of, we need a ThreadLocalCache and a
+        BlockDirectory. The directory gives us an offset-within-the-ThreadLocalCache, which we simply
+        call the Allocator (which is just a POD type that contains a 32-bit offset). Each allocation
+        starts by figuring out what Allocator it wants (often we have this information at JIT time).
+        Then the allocation loads its ThreadLocalCache::Data from a fast TLS slot. Then we add the
+        Allocator offset to the ThreadLocalCache::Data to get the LocalAllocator. Note that we use
+        offsets as opposed to indices to make it easy to do the math on each allocation (if
+        LocalAllocator had a weird size then every allocation would have to do an imul).
+        
+        This is a definite slow-down on GC-heavy benchmarks, but by a small margin, and only on
+        unusually heavy tests. For example, boyer and splay are both 3% regressed, but the Octane
+        geomean is just fine. The JetStream score regressed by 0.5% with p = 0.08 (so maybe there is
+        something there, but it's not significant according to our threshold).
+        
+        Relanding after fixing ARM64 bug in AssemblyHelpers::emitAllocateWithNonNullAllocator(). That
+        function needs to be careful to avoid using the scratch register because the FTL will call it
+        in disallow-scratch-register mode.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Sources.txt:
+        * b3/B3LowerToAir.cpp:
+        * b3/B3PatchpointSpecial.cpp:
+        (JSC::B3::PatchpointSpecial::admitsStack):
+        * b3/B3StackmapSpecial.cpp:
+        (JSC::B3::StackmapSpecial::forEachArgImpl):
+        (JSC::B3::StackmapSpecial::isArgValidForRep):
+        * b3/B3StackmapValue.cpp:
+        (JSC::B3::StackmapValue::appendSomeRegisterWithClobber):
+        * b3/B3StackmapValue.h:
+        * b3/B3Validate.cpp:
+        * b3/B3ValueRep.cpp:
+        (JSC::B3::ValueRep::addUsedRegistersTo const):
+        (JSC::B3::ValueRep::dump const):
+        (WTF::printInternal):
+        * b3/B3ValueRep.h:
+        (JSC::B3::ValueRep::ValueRep):
+        * bytecode/AccessCase.cpp:
+        (JSC::AccessCase::generateImpl):
+        * bytecode/ObjectAllocationProfile.h:
+        (JSC::ObjectAllocationProfile::ObjectAllocationProfile):
+        (JSC::ObjectAllocationProfile::clear):
+        * bytecode/ObjectAllocationProfileInlines.h:
+        (JSC::ObjectAllocationProfile::initializeProfile):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::emitAllocateRawObject):
+        (JSC::DFG::SpeculativeJIT::compileMakeRope):
+        (JSC::DFG::SpeculativeJIT::compileAllocatePropertyStorage):
+        (JSC::DFG::SpeculativeJIT::compileReallocatePropertyStorage):
+        (JSC::DFG::SpeculativeJIT::compileCreateThis):
+        (JSC::DFG::SpeculativeJIT::compileNewObject):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::emitAllocateJSCell):
+        (JSC::DFG::SpeculativeJIT::emitAllocateJSObject):
+        * ftl/FTLAbstractHeapRepository.h:
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileMakeRope):
+        (JSC::FTL::DFG::LowerDFGToB3::compileMaterializeNewObject):
+        (JSC::FTL::DFG::LowerDFGToB3::allocatePropertyStorageWithSizeImpl):
+        (JSC::FTL::DFG::LowerDFGToB3::allocateHeapCell):
+        (JSC::FTL::DFG::LowerDFGToB3::allocateObject):
+        (JSC::FTL::DFG::LowerDFGToB3::allocatorForSize):
+        (JSC::FTL::DFG::LowerDFGToB3::allocateVariableSizedObject):
+        (JSC::FTL::DFG::LowerDFGToB3::allocateVariableSizedCell):
+        * heap/Allocator.cpp: Added.
+        (JSC::Allocator::cellSize const):
+        * heap/Allocator.h: Added.
+        (JSC::Allocator::Allocator):
+        (JSC::Allocator::offset const):
+        (JSC::Allocator::operator== const):
+        (JSC::Allocator::operator!= const):
+        (JSC::Allocator::operator bool const):
+        * heap/AllocatorInlines.h: Added.
+        (JSC::Allocator::allocate const):
+        (JSC::Allocator::tryAllocate const):
+        * heap/BlockDirectory.cpp:
+        (JSC::BlockDirectory::BlockDirectory):
+        (JSC::BlockDirectory::findBlockForAllocation):
+        (JSC::BlockDirectory::stopAllocating):
+        (JSC::BlockDirectory::prepareForAllocation):
+        (JSC::BlockDirectory::stopAllocatingForGood):
+        (JSC::BlockDirectory::resumeAllocating):
+        (JSC::BlockDirectory::endMarking):
+        (JSC::BlockDirectory::isFreeListedCell):
+        (JSC::BlockDirectory::didConsumeFreeList): Deleted.
+        (JSC::BlockDirectory::tryAllocateWithoutCollecting): Deleted.
+        (JSC::BlockDirectory::allocateIn): Deleted.
+        (JSC::BlockDirectory::tryAllocateIn): Deleted.
+        (JSC::BlockDirectory::doTestCollectionsIfNeeded): Deleted.
+        (JSC::BlockDirectory::allocateSlowCase): Deleted.
+        * heap/BlockDirectory.h:
+        (JSC::BlockDirectory::cellKind const):
+        (JSC::BlockDirectory::allocator const):
+        (JSC::BlockDirectory::freeList const): Deleted.
+        (JSC::BlockDirectory::offsetOfFreeList): Deleted.
+        (JSC::BlockDirectory::offsetOfCellSize): Deleted.
+        * heap/BlockDirectoryInlines.h:
+        (JSC::BlockDirectory::isFreeListedCell const): Deleted.
+        (JSC::BlockDirectory::allocate): Deleted.
+        * heap/CompleteSubspace.cpp:
+        (JSC::CompleteSubspace::CompleteSubspace):
+        (JSC::CompleteSubspace::allocatorFor):
+        (JSC::CompleteSubspace::allocate):
+        (JSC::CompleteSubspace::allocateNonVirtual):
+        (JSC::CompleteSubspace::allocatorForSlow):
+        (JSC::CompleteSubspace::allocateSlow):
+        (JSC::CompleteSubspace::tryAllocateSlow):
+        * heap/CompleteSubspace.h:
+        (JSC::CompleteSubspace::allocatorForSizeStep):
+        (JSC::CompleteSubspace::allocatorForNonVirtual):
+        * heap/FreeList.h:
+        * heap/GCDeferralContext.h:
+        * heap/Heap.cpp:
+        (JSC::Heap::Heap):
+        (JSC::Heap::lastChanceToFinalize):
+        * heap/Heap.h:
+        (JSC::Heap::threadLocalCacheLayout):
+        * heap/IsoCellSet.h:
+        * heap/IsoSubspace.cpp:
+        (JSC::IsoSubspace::IsoSubspace):
+        (JSC::IsoSubspace::allocatorFor):
+        (JSC::IsoSubspace::allocate):
+        (JSC::IsoSubspace::allocateNonVirtual):
+        * heap/IsoSubspace.h:
+        (JSC::IsoSubspace::allocatorForNonVirtual):
+        * heap/LocalAllocator.cpp: Added.
+        (JSC::LocalAllocator::LocalAllocator):
+        (JSC::LocalAllocator::reset):
+        (JSC::LocalAllocator::~LocalAllocator):
+        (JSC::LocalAllocator::stopAllocating):
+        (JSC::LocalAllocator::resumeAllocating):
+        (JSC::LocalAllocator::prepareForAllocation):
+        (JSC::LocalAllocator::stopAllocatingForGood):
+        (JSC::LocalAllocator::allocateSlowCase):
+        (JSC::LocalAllocator::didConsumeFreeList):
+        (JSC::LocalAllocator::tryAllocateWithoutCollecting):
+        (JSC::LocalAllocator::allocateIn):
+        (JSC::LocalAllocator::tryAllocateIn):
+        (JSC::LocalAllocator::doTestCollectionsIfNeeded):
+        (JSC::LocalAllocator::isFreeListedCell const):
+        * heap/LocalAllocator.h: Added.
+        (JSC::LocalAllocator::offsetOfFreeList):
+        (JSC::LocalAllocator::offsetOfCellSize):
+        * heap/LocalAllocatorInlines.h: Added.
+        (JSC::LocalAllocator::allocate):
+        * heap/MarkedSpace.cpp:
+        (JSC::MarkedSpace::stopAllocatingForGood):
+        * heap/MarkedSpace.h:
+        * heap/SlotVisitor.cpp:
+        * heap/SlotVisitor.h:
+        * heap/Subspace.h:
+        * heap/ThreadLocalCache.cpp: Added.
+        (JSC::ThreadLocalCache::create):
+        (JSC::ThreadLocalCache::ThreadLocalCache):
+        (JSC::ThreadLocalCache::~ThreadLocalCache):
+        (JSC::ThreadLocalCache::allocateData):
+        (JSC::ThreadLocalCache::destroyData):
+        (JSC::ThreadLocalCache::installSlow):
+        (JSC::ThreadLocalCache::installData):
+        (JSC::ThreadLocalCache::allocatorSlow):
+        (JSC::ThreadLocalCache::destructor):
+        * heap/ThreadLocalCache.h: Added.
+        (JSC::ThreadLocalCache::offsetOfSize):
+        (JSC::ThreadLocalCache::offsetOfFirstAllocator):
+        * heap/ThreadLocalCacheInlines.h: Added.
+        (JSC::ThreadLocalCache::getImpl):
+        (JSC::ThreadLocalCache::get):
+        (JSC::ThreadLocalCache::install):
+        (JSC::ThreadLocalCache::allocator):
+        (JSC::ThreadLocalCache::tryGetAllocator):
+        * heap/ThreadLocalCacheLayout.cpp: Added.
+        (JSC::ThreadLocalCacheLayout::ThreadLocalCacheLayout):
+        (JSC::ThreadLocalCacheLayout::~ThreadLocalCacheLayout):
+        (JSC::ThreadLocalCacheLayout::allocateOffset):
+        (JSC::ThreadLocalCacheLayout::snapshot):
+        (JSC::ThreadLocalCacheLayout::directory):
+        * heap/ThreadLocalCacheLayout.h: Added.
+        * jit/AssemblyHelpers.cpp:
+        (JSC::AssemblyHelpers::emitAllocateWithNonNullAllocator):
+        (JSC::AssemblyHelpers::emitAllocate):
+        (JSC::AssemblyHelpers::emitAllocateVariableSized):
+        * jit/AssemblyHelpers.h:
+        (JSC::AssemblyHelpers::vm):
+        (JSC::AssemblyHelpers::emitAllocateJSCell):
+        (JSC::AssemblyHelpers::emitAllocateJSObject):
+        (JSC::AssemblyHelpers::emitAllocateJSObjectWithKnownSize):
+        (JSC::AssemblyHelpers::emitAllocateWithNonNullAllocator): Deleted.
+        (JSC::AssemblyHelpers::emitAllocate): Deleted.
+        (JSC::AssemblyHelpers::emitAllocateVariableSized): Deleted.
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_new_object):
+        (JSC::JIT::emit_op_create_this):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_new_object):
+        (JSC::JIT::emit_op_create_this):
+        * runtime/ButterflyInlines.h:
+        (JSC::Butterfly::createUninitialized):
+        (JSC::Butterfly::tryCreate):
+        (JSC::Butterfly::growArrayRight):
+        * runtime/DirectArguments.cpp:
+        (JSC::DirectArguments::overrideThings):
+        * runtime/GenericArgumentsInlines.h:
+        (JSC::GenericArguments<Type>::initModifiedArgumentsDescriptor):
+        * runtime/HashMapImpl.h:
+        (JSC::HashMapBuffer::create):
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::tryCreateUninitializedRestricted):
+        (JSC::JSArray::unshiftCountSlowCase):
+        * runtime/JSArray.h:
+        (JSC::JSArray::tryCreate):
+        * runtime/JSArrayBufferView.cpp:
+        (JSC::JSArrayBufferView::ConstructionContext::ConstructionContext):
+        * runtime/JSCellInlines.h:
+        (JSC::tryAllocateCellHelper):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::JSGlobalObject):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::threadLocalCache const):
+        * runtime/JSLock.cpp:
+        (JSC::JSLock::didAcquireLock):
+        * runtime/Options.h:
+        * runtime/RegExpMatchesArray.h:
+        (JSC::tryCreateUninitializedRegExpMatchesArray):
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        * runtime/VM.h:
+        * runtime/VMEntryScope.cpp:
+        (JSC::VMEntryScope::VMEntryScope):
+
 2018-01-25  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r227592.

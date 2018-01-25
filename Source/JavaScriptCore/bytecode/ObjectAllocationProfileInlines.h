@@ -53,7 +53,7 @@ ALWAYS_INLINE void ObjectAllocationProfile::initializeProfile(VM& vm, JSGlobalOb
 
         if (Structure* structure = executable->cachedPolyProtoStructure()) {
             RELEASE_ASSERT(structure->typeInfo().type() == FinalObjectType);
-            m_allocator = nullptr;
+            m_allocator = Allocator();
             m_structure.set(vm, owner, structure);
             m_inlineCapacity = structure->inlineCapacity();
             return;
@@ -99,11 +99,11 @@ ALWAYS_INLINE void ObjectAllocationProfile::initializeProfile(VM& vm, JSGlobalOb
     ASSERT(inlineCapacity <= JSFinalObject::maxInlineCapacity());
 
     size_t allocationSize = JSFinalObject::allocationSize(inlineCapacity);
-    BlockDirectory* allocator = vm.cellSpace.allocatorForNonVirtual(allocationSize, AllocatorForMode::EnsureAllocator);
+    Allocator allocator = vm.cellSpace.allocatorForNonVirtual(allocationSize, AllocatorForMode::EnsureAllocator);
 
     // Take advantage of extra inline capacity available in the size class.
     if (allocator) {
-        size_t slop = (allocator->cellSize() - allocationSize) / sizeof(WriteBarrier<Unknown>);
+        size_t slop = (allocator.cellSize(vm.heap) - allocationSize) / sizeof(WriteBarrier<Unknown>);
         inlineCapacity += slop;
         if (inlineCapacity > JSFinalObject::maxInlineCapacity())
             inlineCapacity = JSFinalObject::maxInlineCapacity();
@@ -113,7 +113,7 @@ ALWAYS_INLINE void ObjectAllocationProfile::initializeProfile(VM& vm, JSGlobalOb
 
     if (isPolyProto) {
         ASSERT(structure->hasPolyProto());
-        m_allocator = nullptr;
+        m_allocator = Allocator();
         executable->setCachedPolyProtoStructure(vm, structure);
     } else {
         if (executable) {

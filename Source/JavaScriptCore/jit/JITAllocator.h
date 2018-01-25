@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,27 +25,64 @@
 
 #pragma once
 
-#include "BlockDirectory.h"
-#include "FreeListInlines.h"
-#include "VM.h"
+#include "Allocator.h"
 
 namespace JSC {
 
-template <typename Functor> inline void BlockDirectory::forEachBlock(const Functor& functor)
-{
-    m_live.forEachSetBit(
-        [&] (size_t index) {
-            functor(m_blocks[index]);
-        });
-}
-
-template <typename Functor> inline void BlockDirectory::forEachNotEmptyBlock(const Functor& functor)
-{
-    m_markingNotEmpty.forEachSetBit(
-        [&] (size_t index) {
-            functor(m_blocks[index]);
-        });
-}
+class JITAllocator {
+public:
+    enum Kind {
+        Constant,
+        Variable
+    };
+    
+    JITAllocator() { }
+    
+    static JITAllocator constant(Allocator allocator)
+    {
+        JITAllocator result;
+        result.m_kind = Constant;
+        result.m_allocator = allocator;
+        return result;
+    }
+    
+    static JITAllocator variable()
+    {
+        JITAllocator result;
+        result.m_kind = Variable;
+        return result;
+    }
+    
+    bool operator==(const JITAllocator& other) const
+    {
+        return m_kind == other.m_kind
+            && m_allocator == other.m_allocator;
+    }
+    
+    bool operator!=(const JITAllocator& other) const
+    {
+        return !(*this == other);
+    }
+    
+    explicit operator bool() const
+    {
+        return *this != JITAllocator();
+    }
+    
+    Kind kind() const { return m_kind; }
+    bool isConstant() const { return m_kind == Constant; }
+    bool isVariable() const { return m_kind == Variable; }
+    
+    Allocator allocator() const
+    {
+        RELEASE_ASSERT(isConstant());
+        return m_allocator;
+    }
+    
+private:
+    Kind m_kind { Constant };
+    Allocator m_allocator;
+};
 
 } // namespace JSC
 
