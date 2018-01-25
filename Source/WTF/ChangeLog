@@ -1,3 +1,18 @@
+2018-01-25  Mark Lam  <mark.lam@apple.com>
+
+        Rename the Poisoned::isPoisoned constant to Poisoned::isPoisonedType.
+        https://bugs.webkit.org/show_bug.cgi?id=182143
+        <rdar://problem/36880970>
+
+        Reviewed by JF Bastien.
+
+        This is so that it doesn't conflict with the isPoisoned() debugging methods that
+        are normally not built.  Also renamed PoisonedUniquePtr::isPoisonedUniquePtr to
+        PoisonedUniquePtr::isPoisonedUniquePtrType to be consistent.
+
+        * wtf/Poisoned.h:
+        * wtf/PoisonedUniquePtr.h:
+
 2018-01-25  Filip Pizlo  <fpizlo@apple.com>
 
         JSC GC should support TLCs (thread local caches)

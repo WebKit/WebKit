@@ -78,7 +78,7 @@ public:
 template<typename Poison, typename T, typename = std::enable_if_t<std::is_pointer<T>::value>>
 class Poisoned {
 public:
-    static constexpr bool isPoisoned = true;
+    static constexpr bool isPoisonedType = true;
 
     Poisoned() { }
 
@@ -90,7 +90,7 @@ public:
 
     Poisoned(const Poisoned&) = default;
 
-    template<typename Other, typename = std::enable_if_t<Other::isPoisoned>>
+    template<typename Other, typename = std::enable_if_t<Other::isPoisonedType>>
     Poisoned(const Other& other)
         : m_poisonedBits(poison<T>(other.unpoisoned()))
     { }
@@ -152,7 +152,7 @@ public:
         return *this;
     }
 
-    template<typename Other, typename = std::enable_if_t<Other::isPoisoned>>
+    template<typename Other, typename = std::enable_if_t<Other::isPoisonedType>>
     Poisoned& operator=(const Other& other)
     {
         m_poisonedBits = poison<T>(other.unpoisoned());
@@ -166,7 +166,7 @@ public:
 
     void swap(std::nullptr_t) { clear(); }
 
-    template<typename Other, typename = std::enable_if_t<Other::isPoisoned>>
+    template<typename Other, typename = std::enable_if_t<Other::isPoisonedType>>
     void swap(Other& other)
     {
         T t1 = this->unpoisoned();
@@ -215,25 +215,25 @@ private:
     template<typename, typename, typename> friend class Poisoned;
 };
 
-template<typename T, typename U, typename = std::enable_if_t<T::isPoisoned && U::isPoisoned && !std::is_same<T, U>::value>>
+template<typename T, typename U, typename = std::enable_if_t<T::isPoisonedType && U::isPoisonedType && !std::is_same<T, U>::value>>
 inline bool operator==(const T& a, const U& b) { return a.unpoisoned() == b.unpoisoned(); }
 
-template<typename T, typename U, typename = std::enable_if_t<T::isPoisoned && U::isPoisoned && !std::is_same<T, U>::value>>
+template<typename T, typename U, typename = std::enable_if_t<T::isPoisonedType && U::isPoisonedType && !std::is_same<T, U>::value>>
 inline bool operator!=(const T& a, const U& b) { return a.unpoisoned() != b.unpoisoned(); }
 
-template<typename T, typename U, typename = std::enable_if_t<T::isPoisoned && U::isPoisoned>>
+template<typename T, typename U, typename = std::enable_if_t<T::isPoisonedType && U::isPoisonedType>>
 inline bool operator<(const T& a, const U& b) { return a.unpoisoned() < b.unpoisoned(); }
 
-template<typename T, typename U, typename = std::enable_if_t<T::isPoisoned && U::isPoisoned>>
+template<typename T, typename U, typename = std::enable_if_t<T::isPoisonedType && U::isPoisonedType>>
 inline bool operator<=(const T& a, const U& b) { return a.unpoisoned() <= b.unpoisoned(); }
 
-template<typename T, typename U, typename = std::enable_if_t<T::isPoisoned && U::isPoisoned>>
+template<typename T, typename U, typename = std::enable_if_t<T::isPoisonedType && U::isPoisonedType>>
 inline bool operator>(const T& a, const U& b) { return a.unpoisoned() > b.unpoisoned(); }
 
-template<typename T, typename U, typename = std::enable_if_t<T::isPoisoned && U::isPoisoned>>
+template<typename T, typename U, typename = std::enable_if_t<T::isPoisonedType && U::isPoisonedType>>
 inline bool operator>=(const T& a, const U& b) { return a.unpoisoned() >= b.unpoisoned(); }
 
-template<typename T, typename U, typename = std::enable_if_t<T::isPoisoned>>
+template<typename T, typename U, typename = std::enable_if_t<T::isPoisonedType>>
 inline void swap(T& a, U& b)
 {
     a.swap(b);
