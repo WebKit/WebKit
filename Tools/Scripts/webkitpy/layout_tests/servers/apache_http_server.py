@@ -64,7 +64,7 @@ class LayoutTestApacheHttpd(http_server_base.HttpServerBase):
 
         self._pid_file = self._filesystem.join(self._runtime_path, '%s.pid' % self._name)
 
-        if port_obj.host.platform.is_win():
+        if port_obj.host.platform.is_cygwin():
             # Convert to MSDOS file naming:
             precompiledBuildbot = re.compile('^/home/buildbot')
             precompiledDrive = re.compile('^/cygdrive/[cC]')
@@ -166,7 +166,7 @@ class LayoutTestApacheHttpd(http_server_base.HttpServerBase):
         # FIXME: Why do we need to copy the config file since we're not modifying it?
         self._filesystem.write_text_file(httpd_config_copy, httpd_conf)
 
-        if self._port_obj.host.platform.is_win():
+        if self._port_obj.host.platform.is_cygwin():
             # Convert to MSDOS file naming:
             precompiledDrive = re.compile('^/cygdrive/[cC]')
             httpd_config_copy = precompiledDrive.sub("C:", httpd_config_copy)
