@@ -1,5 +1,18 @@
 2018-01-25  Youenn Fablet  <youenn@apple.com>
 
+        DocumentThreadableLoader should ensure service worker is not reused if redirection comes from the network
+        https://bugs.webkit.org/show_bug.cgi?id=182137
+
+        Reviewed by Chris Dumez.
+
+        Covered by rebased test.
+        In case redirection does not come from memory cache or service worker, disable service worker interception when following the redirection.
+
+        * loader/DocumentThreadableLoader.cpp:
+        (WebCore::DocumentThreadableLoader::redirectReceived):
+
+2018-01-25  Youenn Fablet  <youenn@apple.com>
+
         DocumentLoader should interrupt ongoing load when getting a redirection from network that matches a service worker
         https://bugs.webkit.org/show_bug.cgi?id=182115
 
