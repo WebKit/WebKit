@@ -1,3 +1,12 @@
+2018-01-25  Youenn Fablet  <youenn@apple.com>
+
+        DocumentLoader should interrupt ongoing load when getting a redirection from network that matches a service worker
+        https://bugs.webkit.org/show_bug.cgi?id=182115
+
+        Reviewed by Alex Christensen.
+
+        * web-platform-tests/service-workers/service-worker/navigation-redirect.https-expected.txt:
+
 2018-01-25  Chris Dumez  <cdumez@apple.com>
 
         Registering same scope as the script directory without the last slash should fail

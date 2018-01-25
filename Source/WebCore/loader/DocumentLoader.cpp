@@ -517,19 +517,22 @@ void DocumentLoader::redirectReceived(CachedResource& resource, ResourceRequest&
 {
     ASSERT_UNUSED(resource, &resource == m_mainResource);
 #if ENABLE(SERVICE_WORKER)
-    willSendRequest(WTFMove(request), redirectResponse, [completionHandler = WTFMove(completionHandler), protectedThis = makeRef(*this), this] (auto&& request) mutable {
+    bool isRedirectionFromServiceWorker = redirectResponse.source() == ResourceResponse::Source::ServiceWorker;
+    willSendRequest(WTFMove(request), redirectResponse, [isRedirectionFromServiceWorker, completionHandler = WTFMove(completionHandler), protectedThis = makeRef(*this), this] (auto&& request) mutable {
         if (request.isNull() || !m_mainDocumentError.isNull() || !m_frame) {
             completionHandler({ });
             return;
         }
         auto url = request.url();
-        matchRegistration(url, [request = WTFMove(request), completionHandler = WTFMove(completionHandler), protectedThis = WTFMove(protectedThis), this] (auto&& registrationData) mutable {
+        matchRegistration(url, [request = WTFMove(request), isRedirectionFromServiceWorker, completionHandler = WTFMove(completionHandler), protectedThis = WTFMove(protectedThis), this] (auto&& registrationData) mutable {
             if (!m_mainDocumentError.isNull() || !m_frame) {
                 completionHandler({ });
                 return;
             }
+            bool shouldContinueLoad = areRegistrationsEqual(m_serviceWorkerRegistrationData, registrationData)
+                && isRedirectionFromServiceWorker == !!registrationData;
 
-            if (areRegistrationsEqual(m_serviceWorkerRegistrationData, registrationData)) {
+            if (shouldContinueLoad) {
                 completionHandler(WTFMove(request));
                 return;
             }

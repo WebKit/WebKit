@@ -5,7 +5,7 @@ Harness Error (TIMEOUT), message = null
 PASS Normal redirect to same-origin scope. 
 PASS Normal redirect to other-origin scope. 
 PASS SW-fallbacked redirect to same-origin out-scope. 
-FAIL SW-fallbacked redirect to same-origin same-scope. assert_object_equals: Intercepted URLs should match. expected property "1" missing
+PASS SW-fallbacked redirect to same-origin same-scope. 
 PASS SW-fallbacked redirect to same-origin other-scope. 
 PASS SW-fallbacked redirect to other-origin out-scope. 
 PASS SW-fallbacked redirect to other-origin in-scope. 
