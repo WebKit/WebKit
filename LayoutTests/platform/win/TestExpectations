@@ -3653,6 +3653,7 @@ media/document-level-media-user-gesture-quirk.html [ Skip ]
 imported/w3c/web-platform-tests/webrtc [ Skip ]
 webrtc [ Skip ]
 http/tests/webrtc [ Skip ]
+http/wpt/webrtc [ Skip ]
 
 # Resource Timing Metrics not available.
 http/wpt/resource-timing/rt-nextHopProtocol.html [ Skip ]
@@ -3853,3 +3854,36 @@ webkit.org/b/181854 svg/filters/feDiffuseLighting-bottomRightPixel.html [ ImageO
 
 webkit.org/b/181869 svg/filters/fePointLight-color.svg [ ImageOnlyFailure ]
 webkit.org/b/181869 svg/filters/feSpotLight-color.svg [ ImageOnlyFailure ]
+
+webkit.org/b/182118 http/tests/webauthn/public-key-credential-create-with-invalid-parameters.https.html [ Failure ]
+webkit.org/b/182118 http/wpt/webauthn/idl.https.html [ Failure ]
+webkit.org/b/182118 http/wpt/webauthn/public-key-credential-create-failure.https.html [ Failure ]
+webkit.org/b/182118 http/wpt/webauthn/public-key-credential-create-success.https.html [ Failure ]
+webkit.org/b/182118 http/tests/webauthn/public-key-credential-same-origin-with-ancestors-2.https.html [ Skip ]
+webkit.org/b/182118 http/tests/webauthn/public-key-credential-same-origin-with-ancestors.https.html [ Skip ]
+
+webkit.org/b/182119 js/dom/random-array-gc-stress.html [ Failure ]
+
+webkit.org/b/182120 http/tests/images/image-supports-video.html [ Failure ]
+
+webkit.org/b/182121 fast/text/unknown-font.html [ ImageOnlyFailure ]
+
+webkit.org/b/182123 fast/text/font-display/swap-flash.html [ ImageOnlyFailure ]
+
+webkit.org/b/182124 fast/selectors/placeholder-shown-style-update.html [ Failure ]
+
+webkit.org/b/182125 fast/forms/range/slider-mouse-events.html [ Failure ]
+
+webkit.org/b/182126 fast/forms/focus-selection-textarea.html [ Failure ]
+
+webkit.org/b/182127 fast/dom/navigator-userAgent-frozen.html [ Failure ]
+
+webkit.org/b/182128 fast/dom/navigator-detached-no-crash.html [ Failure ]
+
+webkit.org/b/182129 editing/input/reveal-edit-on-paste-vertically.html [ Failure ]
+
+webkit.org/b/182130 http/tests/misc/bubble-drag-events.html [ Crash Pass ]
+
+webkit.org/b/182132 accessibility/aria-combobox-control-owns-elements.html [ Skip ]
+
+webkit.org/b/182133 fast/text/font-load-data-partitioned-alphabet.html [ Failure ]
