@@ -31,7 +31,7 @@ namespace WebCore {
 
 class ScriptElementCachedScriptFetcher : public CachedScriptFetcher {
 public:
-    virtual CachedResourceHandle<CachedScript> requestModuleScript(Document&, const URL& sourceURL) const;
+    virtual CachedResourceHandle<CachedScript> requestModuleScript(Document&, const URL& sourceURL, String&& integrity) const;
 
     virtual bool isClassicScript() const = 0;
     virtual bool isModuleScript() const = 0;

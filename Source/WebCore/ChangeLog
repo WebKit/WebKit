@@ -1,3 +1,28 @@
+2018-01-25  Youenn Fablet  <youenn@apple.com>
+
+        Set integrity fetch options for loading scripts and CSS
+        https://bugs.webkit.org/show_bug.cgi?id=182077
+
+        Reviewed by Chris Dumez.
+
+        Covered by updated test.
+
+        Set integrity fetch option in script and CSS loading.
+
+        * bindings/js/CachedModuleScriptLoader.cpp:
+        (WebCore::CachedModuleScriptLoader::load):
+        * bindings/js/CachedScriptFetcher.cpp:
+        (WebCore::CachedScriptFetcher::requestModuleScript const):
+        (WebCore::CachedScriptFetcher::requestScriptWithCache const):
+        * bindings/js/CachedScriptFetcher.h:
+        * dom/LoadableClassicScript.cpp:
+        (WebCore::LoadableClassicScript::load):
+        * dom/ScriptElementCachedScriptFetcher.cpp:
+        (WebCore::ScriptElementCachedScriptFetcher::requestModuleScript const):
+        * dom/ScriptElementCachedScriptFetcher.h:
+        * html/HTMLLinkElement.cpp:
+        (WebCore::HTMLLinkElement::process):
+
 2018-01-25  Zan Dobersek  <zdobersek@igalia.com>
 
         [Cairo] Use GraphicsContextImplCairo in Nicosia::PaintingContextCairo
