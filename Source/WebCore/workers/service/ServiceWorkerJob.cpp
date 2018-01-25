@@ -122,7 +122,7 @@ void ServiceWorkerJob::didReceiveResponse(unsigned long, const ResourceResponse&
     if (serviceWorkerAllowed.isNull()) {
         String path = m_jobData.scriptURL.path();
         // Last part of the path is the script's filename.
-        maxScopeString = path.substring(0, path.reverseFind('/'));
+        maxScopeString = path.substring(0, path.reverseFind('/') + 1);
     } else {
         auto maxScope = URL(m_jobData.scriptURL, serviceWorkerAllowed);
         maxScopeString = maxScope.path();

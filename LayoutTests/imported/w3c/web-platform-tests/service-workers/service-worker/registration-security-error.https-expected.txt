@@ -1,5 +1,5 @@
 
-FAIL Registering same scope as the script directory without the last slash assert_unreached: Should have rejected: Registering same scope as the script directory without the last slash should fail with SecurityError. Reached unreachable code
+PASS Registering same scope as the script directory without the last slash 
 PASS Registration scope outside the script directory 
 PASS Registering scope outside domain 
 PASS Registering script outside domain 
