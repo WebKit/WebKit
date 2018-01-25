@@ -28,10 +28,13 @@
 #if PLATFORM(MAC)
 
 #import "PlatformUtilities.h"
+#import "PlatformWebView.h"
 #import "Test.h"
+#import "TestBrowsingContextLoadDelegate.h"
 #import <WebKit/WKContextPrivateMac.h>
 #import <WebKit/WKPluginInformation.h>
 #import <WebKit/WKProcessPoolPrivate.h>
+#import <WebKit/WKViewPrivate.h>
 #import <wtf/RetainPtr.h>
 
 #if WK_API_ENABLED
@@ -103,5 +106,31 @@ TEST(WKProcessPool, resetPluginLoadClientPolicies)
     EXPECT_EQ(0U, policies.count);
 }
 
-#endif
-#endif
+#if WK_HAVE_C_SPI
+static bool testFinished = false;
+
+TEST(WebKit, PluginLoadClientPoliciesWithNullHost)
+{
+    WKRetainPtr<WKContextRef> context = adoptWK(TestWebKitAPI::Util::createContextForInjectedBundleTest("DenyWillSendRequestTest"));
+
+    auto appleHost = adoptWK(WKStringCreateWithUTF8CString("apple.com"));
+    auto flashIdentifier = adoptWK(WKStringCreateWithUTF8CString("com.macromedia.Flash Player.plugin"));
+    auto flashVersion = adoptWK(WKStringCreateWithUTF8CString("26.0.0.126"));
+    WKContextSetPluginLoadClientPolicy(context.get(), kWKPluginLoadClientPolicyAllowAlways, appleHost.get(), flashIdentifier.get(), flashVersion.get());
+
+    TestWebKitAPI::PlatformWebView webView(context.get());
+
+    webView.platformView().minimumSizeForAutoLayout = NSMakeSize(400, 300);
+    webView.platformView().browsingContextController.loadDelegate = [[TestBrowsingContextLoadDelegate alloc] initWithBlockToRunOnLoad:^(WKBrowsingContextController *sender) {
+        testFinished = true;
+    }];
+    [webView.platformView().browsingContextController loadHTMLString:@"<html><body><script>navigator.plugins.length;</script></body></html>" baseURL:[NSURL URLWithString:@"about:blank"]];
+
+    TestWebKitAPI::Util::run(&testFinished);
+}
+
+#endif // WK_HAVE_C_SPI
+
+#endif // WK_API_ENABLED
+
+#endif // PLATFORM(MAC)

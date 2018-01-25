@@ -1,3 +1,15 @@
+2018-01-25  Youenn Fablet  <youenn@apple.com>
+
+        WebPluginInfoProvider should handle null host queries
+        https://bugs.webkit.org/show_bug.cgi?id=182112
+
+        Reviewed by Chris Dumez.
+
+        Return early if host is null.
+
+        * WebProcess/Plugins/WebPluginInfoProvider.cpp:
+        (WebKit::WebPluginInfoProvider::populatePluginCache):
+
 2018-01-25  Simon Fraser  <simon.fraser@apple.com>
 
         ASSERT(CGSizeEqualToSize(m_resizeScrollOffset, CGSizeZero)) in WebViewImpl::setFrameAndScrollBy()
