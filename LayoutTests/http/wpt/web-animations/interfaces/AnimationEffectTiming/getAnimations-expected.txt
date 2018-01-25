@@ -1,7 +1,0 @@
-
-FAIL when duration is changed assert_equals: animation finished expected 0 but got 1
-FAIL when endDelay is changed assert_equals: set negative endDelay so as endTime is less than currentTime expected 0 but got 1
-FAIL when iterations is changed assert_equals: animation finished expected 0 but got 1
-FAIL when currentTime changed in duration:1000, delay: 500, endDelay: -500 assert_equals: set currentTime 1000 expected 0 but got 1
-FAIL when currentTime changed in duration:1000, delay: -500, endDelay: -500 assert_equals: when currentTime 0 expected 0 but got 1
-

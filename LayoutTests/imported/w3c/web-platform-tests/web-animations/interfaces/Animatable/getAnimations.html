@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<meta charset=utf-8>
+<title>Animatable.getAnimations</title>
+<link rel="help" href="https://drafts.csswg.org/web-animations/#dom-animatable-getanimations">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="../../testcommon.js"></script>
+<body>
+<script>
+'use strict';
+
+test(t => {
+  const div = createDiv(t);
+  assert_array_equals(div.getAnimations(), []);
+}, 'Returns an empty array for an element with no animations');
+
+test(t => {
+  const div = createDiv(t);
+  const animationA = div.animate(null, 100 * MS_PER_SEC);
+  const animationB = div.animate(null, 100 * MS_PER_SEC);
+  assert_array_equals(div.getAnimations(), [animationA, animationB]);
+}, 'Returns both animations for an element with two animations');
+
+test(t => {
+  const divA = createDiv(t);
+  const divB = createDiv(t);
+  const animationA = divA.animate(null, 100 * MS_PER_SEC);
+  const animationB = divB.animate(null, 100 * MS_PER_SEC);
+  assert_array_equals(divA.getAnimations(), [animationA], 'divA');
+  assert_array_equals(divB.getAnimations(), [animationB], 'divB');
+}, 'Returns only the animations specific to each sibling element');
+
+test(t => {
+  const divParent = createDiv(t);
+  const divChild = createDiv(t);
+  divParent.appendChild(divChild);
+  const animationParent = divParent.animate(null, 100 * MS_PER_SEC);
+  const animationChild = divChild.animate(null, 100 * MS_PER_SEC);
+  assert_array_equals(divParent.getAnimations(), [animationParent],
+                      'divParent');
+  assert_array_equals(divChild.getAnimations(), [animationChild], 'divChild');
+}, 'Returns only the animations specific to each parent/child element');
+
+test(t => {
+  const div = createDiv(t);
+  const animation = div.animate(null, 100 * MS_PER_SEC);
+  animation.finish();
+  assert_array_equals(div.getAnimations(), []);
+}, 'Does not return finished animations that do not fill forwards');
+
+test(t => {
+  const div = createDiv(t);
+  const animation = div.animate(null, {
+    duration: 100 * MS_PER_SEC,
+    fill: 'forwards',
+  });
+  animation.finish();
+  assert_array_equals(div.getAnimations(), [animation]);
+}, 'Returns finished animations that fill forwards');
+
+test(t => {
+  const div = createDiv(t);
+  const animation = div.animate(null, {
+    duration: 100 * MS_PER_SEC,
+    delay: 100 * MS_PER_SEC,
+  });
+  assert_array_equals(div.getAnimations(), [animation]);
+}, 'Returns animations in their delay phase');
+
+test(t => {
+  const div = createDiv(t);
+  const animation = div.animate(null, 100 * MS_PER_SEC);
+
+  animation.finish();
+  assert_array_equals(div.getAnimations(), [],
+                      'Animation should not be returned when it is finished');
+
+  animation.effect.timing.duration += 100 * MS_PER_SEC;
+  assert_array_equals(div.getAnimations(), [animation],
+                      'Animation should be returned after extending the'
+                      + ' duration');
+
+  animation.effect.timing.duration = 0;
+  assert_array_equals(div.getAnimations(), [],
+                      'Animation should not be returned after setting the'
+                      + ' duration to zero');
+}, 'Returns animations based on dynamic changes to individual'
+   + ' animations\' duration');
+
+test(t => {
+  const div = createDiv(t);
+  const animation = div.animate(null, 100 * MS_PER_SEC);
+
+  animation.effect.timing.endDelay = -200 * MS_PER_SEC;
+  assert_array_equals(div.getAnimations(), [],
+                      'Animation should not be returned after setting a'
+                      + ' negative end delay such that the end time is less'
+                      + ' than the current time');
+
+  animation.effect.timing.endDelay = 100 * MS_PER_SEC;
+  assert_array_equals(div.getAnimations(), [animation],
+                      'Animation should be returned after setting a positive'
+                      + ' end delay such that the end time is more than the'
+                      + ' current time');
+}, 'Returns animations based on dynamic changes to individual'
+   + ' animations\' end delay');
+
+test(t => {
+  const div = createDiv(t);
+  const animation = div.animate(null, 100 * MS_PER_SEC);
+
+  animation.finish();
+  assert_array_equals(div.getAnimations(), [],
+                      'Animation should not be returned when it is finished');
+
+  animation.effect.timing.iterations = 10;
+  assert_array_equals(div.getAnimations(), [animation],
+                      'Animation should be returned after inreasing the'
+                      + ' number of iterations');
+
+  animation.effect.timing.iterations = 0;
+  assert_array_equals(div.getAnimations(), [],
+                      'Animations should not be returned after setting the'
+                      + ' iteration count to zero');
+
+  animation.effect.timing.iterations = Infinity;
+  assert_array_equals(div.getAnimations(), [animation],
+                      'Animation should be returned after inreasing the'
+                      + ' number of iterations to infinity');
+}, 'Returns animations based on dynamic changes to individual'
+   + ' animations\' iteration count');
+
+test(t => {
+  const div = createDiv(t);
+  const animation = div.animate(null,
+                                { duration: 100 * MS_PER_SEC,
+                                  delay: 50 * MS_PER_SEC,
+                                  endDelay: -50 * MS_PER_SEC });
+
+  assert_array_equals(div.getAnimations(), [animation],
+                      'Animation should be returned at during delay phase');
+
+  animation.currentTime = 50 * MS_PER_SEC;
+  assert_array_equals(div.getAnimations(), [animation],
+                      'Animation should be returned after seeking to the start'
+                      + ' of the active interval');
+
+  animation.currentTime = 100 * MS_PER_SEC;
+  assert_array_equals(div.getAnimations(), [],
+                      'Animation should not be returned after seeking to the'
+                      + ' clipped end of the active interval');
+}, 'Returns animations based on dynamic changes to individual'
+   + ' animations\' current time');
+
+</script>
+</body>

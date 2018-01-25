@@ -1,6 +1,0 @@
-
-FAIL A play-pending ready promise should be rejected when the animation is canceled assert_equals: ready promise is rejected with AbortError expected "AbortError" but got "Error"
-FAIL A pause-pending ready promise should be rejected when the animation is canceled assert_equals: ready promise is rejected with AbortError expected "AbortError" but got "Error"
-PASS When an animation is canceled, it should create a resolved Promise 
-FAIL The ready promise should be replaced when the animation is canceled assert_not_equals: got disallowed value object "[object Promise]"
-

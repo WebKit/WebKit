@@ -1,3 +1,57 @@
+2018-01-25  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Update WPT tests and move them to imported/w3c/web-platform-tests
+        https://bugs.webkit.org/show_bug.cgi?id=182092
+
+        Unreviewed test gardening.
+
+        * TestExpectations:
+        * http/wpt/web-animations/OWNERS: Removed.
+        * http/wpt/web-animations/README.md: Removed.
+        * http/wpt/web-animations/interfaces/Animatable/animate-expected.txt: Removed.
+        * http/wpt/web-animations/interfaces/Animatable/getAnimations-expected.txt: Removed.
+        * http/wpt/web-animations/interfaces/Animatable/getAnimations.html: Removed.
+        * http/wpt/web-animations/interfaces/Animation/constructor.html: Removed.
+        * http/wpt/web-animations/interfaces/Animation/finish-expected.txt: Removed.
+        * http/wpt/web-animations/interfaces/Animation/finished-expected.txt: Removed.
+        * http/wpt/web-animations/interfaces/Animation/playState-expected.txt: Removed.
+        * http/wpt/web-animations/interfaces/Animation/playState.html: Removed.
+        * http/wpt/web-animations/interfaces/AnimationEffectTiming/delay-expected.txt: Removed.
+        * http/wpt/web-animations/interfaces/AnimationEffectTiming/delay.html: Removed.
+        * http/wpt/web-animations/interfaces/AnimationEffectTiming/direction-expected.txt: Removed.
+        * http/wpt/web-animations/interfaces/AnimationEffectTiming/direction.html: Removed.
+        * http/wpt/web-animations/interfaces/AnimationEffectTiming/duration-expected.txt: Removed.
+        * http/wpt/web-animations/interfaces/AnimationEffectTiming/duration.html: Removed.
+        * http/wpt/web-animations/interfaces/AnimationEffectTiming/endDelay-expected.txt: Removed.
+        * http/wpt/web-animations/interfaces/AnimationEffectTiming/endDelay.html: Removed.
+        * http/wpt/web-animations/interfaces/AnimationEffectTiming/fill-expected.txt: Removed.
+        * http/wpt/web-animations/interfaces/AnimationEffectTiming/fill.html: Removed.
+        * http/wpt/web-animations/interfaces/AnimationEffectTiming/getAnimations-expected.txt: Removed.
+        * http/wpt/web-animations/interfaces/AnimationEffectTiming/getAnimations.html: Removed.
+        * http/wpt/web-animations/interfaces/AnimationEffectTiming/getComputedStyle-expected.txt: Removed.
+        * http/wpt/web-animations/interfaces/AnimationEffectTiming/getComputedStyle.html: Removed.
+        * http/wpt/web-animations/interfaces/AnimationEffectTiming/iterationStart-expected.txt: Removed.
+        * http/wpt/web-animations/interfaces/AnimationEffectTiming/iterationStart.html: Removed.
+        * http/wpt/web-animations/interfaces/AnimationEffectTiming/iterations-expected.txt: Removed.
+        * http/wpt/web-animations/interfaces/AnimationEffectTiming/iterations.html: Removed.
+        * http/wpt/web-animations/interfaces/AnimationTimeline/document-timeline-expected.txt: Removed.
+        * http/wpt/web-animations/interfaces/AnimationTimeline/document-timeline.html: Removed.
+        * http/wpt/web-animations/interfaces/KeyframeEffect/composite-expected.txt: Removed.
+        * http/wpt/web-animations/interfaces/KeyframeEffect/constructor-expected.txt: Removed.
+        * http/wpt/web-animations/interfaces/KeyframeEffect/constructor.html: Removed.
+        * http/wpt/web-animations/interfaces/KeyframeEffect/copy-constructor-expected.txt: Removed.
+        * http/wpt/web-animations/interfaces/KeyframeEffect/copy-constructor.html: Removed.
+        * http/wpt/web-animations/interfaces/KeyframeEffect/getComputedTiming-expected.txt: Removed.
+        * http/wpt/web-animations/interfaces/KeyframeEffect/getComputedTiming.html: Removed.
+        * http/wpt/web-animations/interfaces/KeyframeEffect/iterationComposite-expected.txt: Removed.
+        * http/wpt/web-animations/interfaces/KeyframeEffect/setKeyframes-expected.txt: Removed.
+        * http/wpt/web-animations/interfaces/KeyframeEffect/setKeyframes.html: Removed.
+        * http/wpt/web-animations/interfaces/KeyframeEffectReadOnly/copy-constructor-expected.txt: Removed.
+        * http/wpt/web-animations/interfaces/KeyframeEffectReadOnly/copy-constructor.html: Removed.
+        * http/wpt/web-animations/resources/keyframe-utils.js: Removed.
+        * http/wpt/web-animations/timing-model/animation-effects/active-time.html: Removed.
+        * http/wpt/web-animations/timing-model/animation-effects/phases-and-states.html: Removed.
+
 2018-01-24  Frederic Wang  <fwang@igalia.com>
 
         ScrollingStateNode::reconcileLayerPositionForViewportRect is only called on direct children of the root

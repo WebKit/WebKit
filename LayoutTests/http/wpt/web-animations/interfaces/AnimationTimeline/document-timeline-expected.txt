@@ -1,7 +1,0 @@
-
-PASS document.timeline identity tests 
-PASS document.timeline.currentTime value tests 
-PASS document.timeline.currentTime liveness tests 
-PASS iframe document.timeline.currentTime liveness tests 
-PASS document.timeline.currentTime time should be the same for all RAF callbacks in a frame 
-

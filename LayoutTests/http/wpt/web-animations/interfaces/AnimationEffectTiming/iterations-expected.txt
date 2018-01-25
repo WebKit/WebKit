@@ -1,8 +1,0 @@
-
-PASS Test default value 
-PASS set iterations 2 
-PASS set iterations Infinity 
-PASS set negative iterations 
-PASS set negative infinity iterations  
-PASS set NaN iterations 
-

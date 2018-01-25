@@ -1,9 +1,0 @@
-
-PASS Test default value 
-PASS set endDelay 123.45 
-PASS set endDelay -1000 
-PASS set endDelay Infinity 
-PASS set endDelay negative Infinity 
-PASS onfinish event is not fired duration endDelay 
-PASS onfinish event is fired currentTime is after endTime 
-

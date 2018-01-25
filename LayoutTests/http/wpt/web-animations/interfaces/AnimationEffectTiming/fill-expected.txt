@@ -1,7 +1,0 @@
-
-PASS Test default value 
-PASS set fill none 
-PASS set fill forwards 
-PASS set fill backwards 
-PASS set fill both 
-

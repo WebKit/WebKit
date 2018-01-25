@@ -1,0 +1,56 @@
+
+FAIL AnimationEffectTimingReadOnly interface: existence and properties of interface object assert_own_property: self does not have own property "AnimationEffectTimingReadOnly" expected property "AnimationEffectTimingReadOnly" missing
+FAIL AnimationEffectTimingReadOnly interface object length assert_own_property: self does not have own property "AnimationEffectTimingReadOnly" expected property "AnimationEffectTimingReadOnly" missing
+FAIL AnimationEffectTimingReadOnly interface object name assert_own_property: self does not have own property "AnimationEffectTimingReadOnly" expected property "AnimationEffectTimingReadOnly" missing
+FAIL AnimationEffectTimingReadOnly interface: existence and properties of interface prototype object assert_own_property: self does not have own property "AnimationEffectTimingReadOnly" expected property "AnimationEffectTimingReadOnly" missing
+FAIL AnimationEffectTimingReadOnly interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "AnimationEffectTimingReadOnly" expected property "AnimationEffectTimingReadOnly" missing
+FAIL AnimationEffectTimingReadOnly interface: attribute delay assert_own_property: self does not have own property "AnimationEffectTimingReadOnly" expected property "AnimationEffectTimingReadOnly" missing
+FAIL AnimationEffectTimingReadOnly interface: attribute endDelay assert_own_property: self does not have own property "AnimationEffectTimingReadOnly" expected property "AnimationEffectTimingReadOnly" missing
+FAIL AnimationEffectTimingReadOnly interface: attribute fill assert_own_property: self does not have own property "AnimationEffectTimingReadOnly" expected property "AnimationEffectTimingReadOnly" missing
+FAIL AnimationEffectTimingReadOnly interface: attribute iterationStart assert_own_property: self does not have own property "AnimationEffectTimingReadOnly" expected property "AnimationEffectTimingReadOnly" missing
+FAIL AnimationEffectTimingReadOnly interface: attribute iterations assert_own_property: self does not have own property "AnimationEffectTimingReadOnly" expected property "AnimationEffectTimingReadOnly" missing
+FAIL AnimationEffectTimingReadOnly interface: attribute duration assert_own_property: self does not have own property "AnimationEffectTimingReadOnly" expected property "AnimationEffectTimingReadOnly" missing
+FAIL AnimationEffectTimingReadOnly interface: attribute direction assert_own_property: self does not have own property "AnimationEffectTimingReadOnly" expected property "AnimationEffectTimingReadOnly" missing
+FAIL AnimationEffectTimingReadOnly interface: attribute easing assert_own_property: self does not have own property "AnimationEffectTimingReadOnly" expected property "AnimationEffectTimingReadOnly" missing
+FAIL AnimationEffectTimingReadOnly must be primary interface of (new KeyframeEffectReadOnly(null, null)).timing assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: KeyframeEffectReadOnly"
+FAIL Stringification of (new KeyframeEffectReadOnly(null, null)).timing assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: KeyframeEffectReadOnly"
+FAIL AnimationEffectTimingReadOnly interface: (new KeyframeEffectReadOnly(null, null)).timing must inherit property "delay" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: KeyframeEffectReadOnly"
+FAIL AnimationEffectTimingReadOnly interface: (new KeyframeEffectReadOnly(null, null)).timing must inherit property "endDelay" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: KeyframeEffectReadOnly"
+FAIL AnimationEffectTimingReadOnly interface: (new KeyframeEffectReadOnly(null, null)).timing must inherit property "fill" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: KeyframeEffectReadOnly"
+FAIL AnimationEffectTimingReadOnly interface: (new KeyframeEffectReadOnly(null, null)).timing must inherit property "iterationStart" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: KeyframeEffectReadOnly"
+FAIL AnimationEffectTimingReadOnly interface: (new KeyframeEffectReadOnly(null, null)).timing must inherit property "iterations" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: KeyframeEffectReadOnly"
+FAIL AnimationEffectTimingReadOnly interface: (new KeyframeEffectReadOnly(null, null)).timing must inherit property "duration" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: KeyframeEffectReadOnly"
+FAIL AnimationEffectTimingReadOnly interface: (new KeyframeEffectReadOnly(null, null)).timing must inherit property "direction" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: KeyframeEffectReadOnly"
+FAIL AnimationEffectTimingReadOnly interface: (new KeyframeEffectReadOnly(null, null)).timing must inherit property "easing" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: KeyframeEffectReadOnly"
+FAIL AnimationEffectTiming interface: existence and properties of interface object assert_own_property: should inherit from AnimationEffectTimingReadOnly, but self has no such property expected property "AnimationEffectTimingReadOnly" missing
+PASS AnimationEffectTiming interface object length 
+PASS AnimationEffectTiming interface object name 
+FAIL AnimationEffectTiming interface: existence and properties of interface prototype object assert_own_property: should inherit from AnimationEffectTimingReadOnly, but self has no such property expected property "AnimationEffectTimingReadOnly" missing
+PASS AnimationEffectTiming interface: existence and properties of interface prototype object's "constructor" property 
+PASS AnimationEffectTiming interface: attribute delay 
+PASS AnimationEffectTiming interface: attribute endDelay 
+PASS AnimationEffectTiming interface: attribute fill 
+PASS AnimationEffectTiming interface: attribute iterationStart 
+PASS AnimationEffectTiming interface: attribute iterations 
+PASS AnimationEffectTiming interface: attribute duration 
+PASS AnimationEffectTiming interface: attribute direction 
+PASS AnimationEffectTiming interface: attribute easing 
+PASS AnimationEffectTiming must be primary interface of (new KeyframeEffect(null, null)).timing 
+PASS Stringification of (new KeyframeEffect(null, null)).timing 
+PASS AnimationEffectTiming interface: (new KeyframeEffect(null, null)).timing must inherit property "delay" with the proper type 
+PASS AnimationEffectTiming interface: (new KeyframeEffect(null, null)).timing must inherit property "endDelay" with the proper type 
+PASS AnimationEffectTiming interface: (new KeyframeEffect(null, null)).timing must inherit property "fill" with the proper type 
+PASS AnimationEffectTiming interface: (new KeyframeEffect(null, null)).timing must inherit property "iterationStart" with the proper type 
+PASS AnimationEffectTiming interface: (new KeyframeEffect(null, null)).timing must inherit property "iterations" with the proper type 
+PASS AnimationEffectTiming interface: (new KeyframeEffect(null, null)).timing must inherit property "duration" with the proper type 
+PASS AnimationEffectTiming interface: (new KeyframeEffect(null, null)).timing must inherit property "direction" with the proper type 
+PASS AnimationEffectTiming interface: (new KeyframeEffect(null, null)).timing must inherit property "easing" with the proper type 
+PASS AnimationEffectTimingReadOnly interface: (new KeyframeEffect(null, null)).timing must inherit property "delay" with the proper type 
+PASS AnimationEffectTimingReadOnly interface: (new KeyframeEffect(null, null)).timing must inherit property "endDelay" with the proper type 
+PASS AnimationEffectTimingReadOnly interface: (new KeyframeEffect(null, null)).timing must inherit property "fill" with the proper type 
+PASS AnimationEffectTimingReadOnly interface: (new KeyframeEffect(null, null)).timing must inherit property "iterationStart" with the proper type 
+PASS AnimationEffectTimingReadOnly interface: (new KeyframeEffect(null, null)).timing must inherit property "iterations" with the proper type 
+PASS AnimationEffectTimingReadOnly interface: (new KeyframeEffect(null, null)).timing must inherit property "duration" with the proper type 
+PASS AnimationEffectTimingReadOnly interface: (new KeyframeEffect(null, null)).timing must inherit property "direction" with the proper type 
+PASS AnimationEffectTimingReadOnly interface: (new KeyframeEffect(null, null)).timing must inherit property "easing" with the proper type 
+

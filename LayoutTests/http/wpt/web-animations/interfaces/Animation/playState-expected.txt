@@ -1,6 +1,0 @@
-
-FAIL Animation.playState reports 'pending'->'running' when initially played assert_equals: expected "pending" but got "running"
-FAIL Animation.playState reports 'pending'->'paused' when pausing assert_equals: expected "pending" but got "paused"
-PASS Animation.playState is 'idle' when canceled. 
-PASS Animation.playState is 'paused' after cancelling an animation, seeking it makes it paused 
-

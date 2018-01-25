@@ -1,7 +1,0 @@
-
-PASS Test default value 
-PASS Test that changing the iterationStart affects computed timing when backwards-filling 
-PASS Test that changing the iterationStart affects computed timing during the active phase 
-PASS Test that changing the iterationStart affects computed timing when forwards-filling 
-PASS Using invalid values should throw TypeError 
-

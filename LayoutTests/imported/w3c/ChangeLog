@@ -1,3 +1,163 @@
+2018-01-25  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Update WPT tests and move them to imported/w3c/web-platform-tests
+        https://bugs.webkit.org/show_bug.cgi?id=182092
+
+        Unreviewed test gardening.
+
+        * web-platform-tests/web-animations/animation-model/animation-types/accumulation-per-property-expected.txt: Renamed from LayoutTests/http/wpt/web-animations/animation-model/animation-types/accumulation-per-property-expected.txt.
+        * web-platform-tests/web-animations/animation-model/animation-types/accumulation-per-property.html: Renamed from LayoutTests/http/wpt/web-animations/animation-model/animation-types/accumulation-per-property.html.
+        * web-platform-tests/web-animations/animation-model/animation-types/addition-per-property-expected.txt: Renamed from LayoutTests/http/wpt/web-animations/animation-model/animation-types/addition-per-property-expected.txt.
+        * web-platform-tests/web-animations/animation-model/animation-types/addition-per-property.html: Renamed from LayoutTests/http/wpt/web-animations/animation-model/animation-types/addition-per-property.html.
+        * web-platform-tests/web-animations/animation-model/animation-types/discrete-expected.txt: Renamed from LayoutTests/http/wpt/web-animations/animation-model/animation-types/discrete-animation-expected.txt.
+        * web-platform-tests/web-animations/animation-model/animation-types/discrete.html: Renamed from LayoutTests/http/wpt/web-animations/animation-model/animation-types/discrete-animation.html.
+        * web-platform-tests/web-animations/animation-model/animation-types/interpolation-per-property-expected.txt: Renamed from LayoutTests/http/wpt/web-animations/animation-model/animation-types/interpolation-per-property-expected.txt.
+        * web-platform-tests/web-animations/animation-model/animation-types/interpolation-per-property.html: Renamed from LayoutTests/http/wpt/web-animations/animation-model/animation-types/interpolation-per-property.html.
+        * web-platform-tests/web-animations/animation-model/animation-types/property-list.js: Renamed from LayoutTests/http/wpt/web-animations/animation-model/animation-types/property-list.js.
+        * web-platform-tests/web-animations/animation-model/animation-types/property-types.js: Renamed from LayoutTests/http/wpt/web-animations/animation-model/animation-types/property-types.js.
+        * web-platform-tests/web-animations/animation-model/animation-types/visibility-expected.txt: Renamed from LayoutTests/http/wpt/web-animations/animation-model/keyframe-effects/effect-value-visibility-expected.txt.
+        * web-platform-tests/web-animations/animation-model/animation-types/visibility.html: Renamed from LayoutTests/http/wpt/web-animations/animation-model/keyframe-effects/effect-value-visibility.html.
+        * web-platform-tests/web-animations/animation-model/combining-effects/effect-composition-expected.txt: Renamed from LayoutTests/http/wpt/web-animations/animation-model/combining-effects/effect-composition-expected.txt.
+        * web-platform-tests/web-animations/animation-model/combining-effects/effect-composition.html: Renamed from LayoutTests/http/wpt/web-animations/animation-model/combining-effects/effect-composition.html.
+        * web-platform-tests/web-animations/animation-model/keyframe-effects/effect-value-context-expected.txt: Renamed from LayoutTests/http/wpt/web-animations/animation-model/keyframe-effects/effect-value-context-expected.txt.
+        * web-platform-tests/web-animations/animation-model/keyframe-effects/effect-value-context.html: Renamed from LayoutTests/http/wpt/web-animations/animation-model/keyframe-effects/effect-value-context.html.
+        * web-platform-tests/web-animations/animation-model/keyframe-effects/effect-value-iteration-composite-operation-expected.txt: Added.
+        * web-platform-tests/web-animations/animation-model/keyframe-effects/effect-value-iteration-composite-operation.html: Renamed from LayoutTests/http/wpt/web-animations/interfaces/KeyframeEffect/iterationComposite.html.
+        * web-platform-tests/web-animations/animation-model/keyframe-effects/effect-value-overlapping-keyframes-expected.txt: Renamed from LayoutTests/http/wpt/web-animations/animation-model/keyframe-effects/effect-value-overlapping-keyframes-expected.txt.
+        * web-platform-tests/web-animations/animation-model/keyframe-effects/effect-value-overlapping-keyframes.html: Renamed from LayoutTests/http/wpt/web-animations/animation-model/keyframe-effects/effect-value-overlapping-keyframes.html.
+        * web-platform-tests/web-animations/animation-model/keyframe-effects/effect-value-transformed-distance-expected.txt: Renamed from LayoutTests/http/wpt/web-animations/animation-model/keyframe-effects/effect-value-transformed-distance-expected.txt.
+        * web-platform-tests/web-animations/animation-model/keyframe-effects/effect-value-transformed-distance.html: Renamed from LayoutTests/http/wpt/web-animations/animation-model/keyframe-effects/effect-value-transformed-distance.html.
+        * web-platform-tests/web-animations/interfaces/Animatable/animate-expected.txt: Added.
+        * web-platform-tests/web-animations/interfaces/Animatable/animate-no-browsing-context-expected.txt: Renamed from LayoutTests/http/wpt/web-animations/interfaces/Animatable/animate-no-browsing-context-expected.txt.
+        * web-platform-tests/web-animations/interfaces/Animatable/animate-no-browsing-context.html: Renamed from LayoutTests/http/wpt/web-animations/interfaces/Animatable/animate-no-browsing-context.html.
+        * web-platform-tests/web-animations/interfaces/Animatable/animate.html: Renamed from LayoutTests/http/wpt/web-animations/interfaces/Animatable/animate.html.
+        * web-platform-tests/web-animations/interfaces/Animatable/getAnimations-expected.txt: Added.
+        * web-platform-tests/web-animations/interfaces/Animatable/getAnimations.html: Added.
+        * web-platform-tests/web-animations/interfaces/Animation/cancel-expected.txt: Renamed from LayoutTests/http/wpt/web-animations/interfaces/Animation/cancel-expected.txt.
+        * web-platform-tests/web-animations/interfaces/Animation/cancel.html: Renamed from LayoutTests/http/wpt/web-animations/interfaces/Animation/cancel.html.
+        * web-platform-tests/web-animations/interfaces/Animation/constructor-expected.txt: Renamed from LayoutTests/http/wpt/web-animations/interfaces/Animation/constructor-expected.txt.
+        * web-platform-tests/web-animations/interfaces/Animation/constructor.html: Added.
+        * web-platform-tests/web-animations/interfaces/Animation/effect-expected.txt: Renamed from LayoutTests/http/wpt/web-animations/interfaces/Animation/effect-expected.txt.
+        * web-platform-tests/web-animations/interfaces/Animation/effect.html: Renamed from LayoutTests/http/wpt/web-animations/interfaces/Animation/effect.html.
+        * web-platform-tests/web-animations/interfaces/Animation/finish-expected.txt: Added.
+        * web-platform-tests/web-animations/interfaces/Animation/finish.html: Renamed from LayoutTests/http/wpt/web-animations/interfaces/Animation/finish.html.
+        * web-platform-tests/web-animations/interfaces/Animation/finished-expected.txt: Added.
+        * web-platform-tests/web-animations/interfaces/Animation/finished.html: Renamed from LayoutTests/http/wpt/web-animations/interfaces/Animation/finished.html.
+        * web-platform-tests/web-animations/interfaces/Animation/id-expected.txt: Renamed from LayoutTests/http/wpt/web-animations/interfaces/Animation/id-expected.txt.
+        * web-platform-tests/web-animations/interfaces/Animation/id.html: Renamed from LayoutTests/http/wpt/web-animations/interfaces/Animation/id.html.
+        * web-platform-tests/web-animations/interfaces/Animation/idlharness-expected.txt: Renamed from LayoutTests/http/wpt/web-animations/interfaces/Animation/idlharness-expected.txt.
+        * web-platform-tests/web-animations/interfaces/Animation/idlharness.html: Renamed from LayoutTests/http/wpt/web-animations/interfaces/Animation/idlharness.html.
+        * web-platform-tests/web-animations/interfaces/Animation/oncancel-expected.txt: Renamed from LayoutTests/http/wpt/web-animations/interfaces/Animation/oncancel-expected.txt.
+        * web-platform-tests/web-animations/interfaces/Animation/oncancel.html: Renamed from LayoutTests/http/wpt/web-animations/interfaces/Animation/oncancel.html.
+        * web-platform-tests/web-animations/interfaces/Animation/onfinish-expected.txt: Renamed from LayoutTests/http/wpt/web-animations/interfaces/Animation/onfinish-expected.txt.
+        * web-platform-tests/web-animations/interfaces/Animation/onfinish.html: Renamed from LayoutTests/http/wpt/web-animations/interfaces/Animation/onfinish.html.
+        * web-platform-tests/web-animations/interfaces/Animation/pause-expected.txt: Renamed from LayoutTests/http/wpt/web-animations/interfaces/Animation/pause-expected.txt.
+        * web-platform-tests/web-animations/interfaces/Animation/pause.html: Renamed from LayoutTests/http/wpt/web-animations/interfaces/Animation/pause.html.
+        * web-platform-tests/web-animations/interfaces/Animation/pending-expected.txt: Added.
+        * web-platform-tests/web-animations/interfaces/Animation/pending.html: Added.
+        * web-platform-tests/web-animations/interfaces/Animation/play-expected.txt: Renamed from LayoutTests/http/wpt/web-animations/interfaces/Animation/play-expected.txt.
+        * web-platform-tests/web-animations/interfaces/Animation/play.html: Renamed from LayoutTests/http/wpt/web-animations/interfaces/Animation/play.html.
+        * web-platform-tests/web-animations/interfaces/Animation/playbackRate-expected.txt: Renamed from LayoutTests/http/wpt/web-animations/interfaces/Animation/playbackRate-expected.txt.
+        * web-platform-tests/web-animations/interfaces/Animation/playbackRate.html: Renamed from LayoutTests/http/wpt/web-animations/interfaces/Animation/playbackRate.html.
+        * web-platform-tests/web-animations/interfaces/Animation/ready-expected.txt: Renamed from LayoutTests/http/wpt/web-animations/interfaces/Animation/ready-expected.txt.
+        * web-platform-tests/web-animations/interfaces/Animation/ready.html: Renamed from LayoutTests/http/wpt/web-animations/interfaces/Animation/ready.html.
+        * web-platform-tests/web-animations/interfaces/Animation/startTime-expected.txt: Renamed from LayoutTests/http/wpt/web-animations/interfaces/Animation/startTime-expected.txt.
+        * web-platform-tests/web-animations/interfaces/Animation/startTime.html: Renamed from LayoutTests/http/wpt/web-animations/interfaces/Animation/startTime.html.
+        * web-platform-tests/web-animations/interfaces/AnimationEffectTiming/delay-expected.txt: Added.
+        * web-platform-tests/web-animations/interfaces/AnimationEffectTiming/delay.html: Added.
+        * web-platform-tests/web-animations/interfaces/AnimationEffectTiming/direction-expected.txt: Added.
+        * web-platform-tests/web-animations/interfaces/AnimationEffectTiming/direction.html: Added.
+        * web-platform-tests/web-animations/interfaces/AnimationEffectTiming/duration-expected.txt: Added.
+        * web-platform-tests/web-animations/interfaces/AnimationEffectTiming/duration.html: Added.
+        * web-platform-tests/web-animations/interfaces/AnimationEffectTiming/easing-expected.txt: Renamed from LayoutTests/http/wpt/web-animations/interfaces/AnimationEffectTiming/easing-expected.txt.
+        * web-platform-tests/web-animations/interfaces/AnimationEffectTiming/easing.html: Renamed from LayoutTests/http/wpt/web-animations/interfaces/AnimationEffectTiming/easing.html.
+        * web-platform-tests/web-animations/interfaces/AnimationEffectTiming/endDelay-expected.txt: Added.
+        * web-platform-tests/web-animations/interfaces/AnimationEffectTiming/endDelay.html: Added.
+        * web-platform-tests/web-animations/interfaces/AnimationEffectTiming/fill-expected.txt: Added.
+        * web-platform-tests/web-animations/interfaces/AnimationEffectTiming/fill.html: Added.
+        * web-platform-tests/web-animations/interfaces/AnimationEffectTiming/getComputedTiming-expected.txt: Added.
+        * web-platform-tests/web-animations/interfaces/AnimationEffectTiming/getComputedTiming.html: Added.
+        * web-platform-tests/web-animations/interfaces/AnimationEffectTiming/idlharness-expected.txt: Added.
+        * web-platform-tests/web-animations/interfaces/AnimationEffectTiming/idlharness.html: Added.
+        * web-platform-tests/web-animations/interfaces/AnimationEffectTiming/iterationStart-expected.txt: Added.
+        * web-platform-tests/web-animations/interfaces/AnimationEffectTiming/iterationStart.html: Added.
+        * web-platform-tests/web-animations/interfaces/AnimationEffectTiming/iterations-expected.txt: Added.
+        * web-platform-tests/web-animations/interfaces/AnimationEffectTiming/iterations.html: Added.
+        * web-platform-tests/web-animations/interfaces/AnimationPlaybackEvent/constructor-expected.txt: Added.
+        * web-platform-tests/web-animations/interfaces/AnimationPlaybackEvent/constructor.html: Added.
+        * web-platform-tests/web-animations/interfaces/AnimationPlaybackEvent/idlharness-expected.txt: Added.
+        * web-platform-tests/web-animations/interfaces/AnimationPlaybackEvent/idlharness.html: Added.
+        * web-platform-tests/web-animations/interfaces/Document/getAnimations-expected.txt: Renamed from LayoutTests/http/wpt/web-animations/interfaces/Document/getAnimations-expected.txt.
+        * web-platform-tests/web-animations/interfaces/Document/getAnimations.html: Renamed from LayoutTests/http/wpt/web-animations/interfaces/Document/getAnimations.html.
+        * web-platform-tests/web-animations/interfaces/Document/timeline-expected.txt: Added.
+        * web-platform-tests/web-animations/interfaces/Document/timeline.html: Added.
+        * web-platform-tests/web-animations/interfaces/DocumentTimeline/constructor-expected.txt: Renamed from LayoutTests/http/wpt/web-animations/interfaces/DocumentTimeline/constructor-expected.txt.
+        * web-platform-tests/web-animations/interfaces/DocumentTimeline/constructor.html: Renamed from LayoutTests/http/wpt/web-animations/interfaces/DocumentTimeline/constructor.html.
+        * web-platform-tests/web-animations/interfaces/DocumentTimeline/idlharness-expected.txt: Renamed from LayoutTests/http/wpt/web-animations/interfaces/AnimationTimeline/idlharness-expected.txt.
+        * web-platform-tests/web-animations/interfaces/DocumentTimeline/idlharness.html: Renamed from LayoutTests/http/wpt/web-animations/interfaces/AnimationTimeline/idlharness.html.
+        * web-platform-tests/web-animations/interfaces/KeyframeEffect/composite-expected.txt: Added.
+        * web-platform-tests/web-animations/interfaces/KeyframeEffect/composite.html: Renamed from LayoutTests/http/wpt/web-animations/interfaces/KeyframeEffect/composite.html.
+        * web-platform-tests/web-animations/interfaces/KeyframeEffect/constructor-expected.txt: Added.
+        * web-platform-tests/web-animations/interfaces/KeyframeEffect/constructor.html: Added.
+        * web-platform-tests/web-animations/interfaces/KeyframeEffect/copy-constructor-expected.txt: Added.
+        * web-platform-tests/web-animations/interfaces/KeyframeEffect/copy-constructor.html: Added.
+        * web-platform-tests/web-animations/interfaces/KeyframeEffect/idlharness-expected.txt: Added.
+        * web-platform-tests/web-animations/interfaces/KeyframeEffect/idlharness.html: Added.
+        * web-platform-tests/web-animations/interfaces/KeyframeEffect/iterationComposite-expected.txt: Added.
+        * web-platform-tests/web-animations/interfaces/KeyframeEffect/iterationComposite.html: Added.
+        * web-platform-tests/web-animations/interfaces/KeyframeEffect/processing-a-keyframes-argument-001-expected.txt: Renamed from LayoutTests/http/wpt/web-animations/interfaces/KeyframeEffect/processing-a-keyframes-argument-001-expected.txt.
+        * web-platform-tests/web-animations/interfaces/KeyframeEffect/processing-a-keyframes-argument-001.html: Renamed from LayoutTests/http/wpt/web-animations/interfaces/KeyframeEffect/processing-a-keyframes-argument-001.html.
+        * web-platform-tests/web-animations/interfaces/KeyframeEffect/processing-a-keyframes-argument-002-expected.txt: Renamed from LayoutTests/http/wpt/web-animations/interfaces/KeyframeEffect/processing-a-keyframes-argument-002-expected.txt.
+        * web-platform-tests/web-animations/interfaces/KeyframeEffect/processing-a-keyframes-argument-002.html: Renamed from LayoutTests/http/wpt/web-animations/interfaces/KeyframeEffect/processing-a-keyframes-argument-002.html.
+        * web-platform-tests/web-animations/interfaces/KeyframeEffect/setKeyframes-expected.txt: Added.
+        * web-platform-tests/web-animations/interfaces/KeyframeEffect/setKeyframes.html: Added.
+        * web-platform-tests/web-animations/interfaces/KeyframeEffect/target-expected.txt: Renamed from LayoutTests/http/wpt/web-animations/interfaces/KeyframeEffect/setTarget-expected.txt.
+        * web-platform-tests/web-animations/interfaces/KeyframeEffect/target.html: Renamed from LayoutTests/http/wpt/web-animations/interfaces/KeyframeEffect/setTarget.html.
+        * web-platform-tests/web-animations/resources/easing-tests.js: Renamed from LayoutTests/http/wpt/web-animations/resources/easing-tests.js.
+        * web-platform-tests/web-animations/resources/effect-tests.js: Renamed from LayoutTests/http/wpt/web-animations/resources/effect-tests.js.
+        * web-platform-tests/web-animations/resources/keyframe-tests.js: Added.
+        * web-platform-tests/web-animations/resources/keyframe-utils.js: Added.
+        * web-platform-tests/web-animations/resources/xhr-doc.py: Renamed from LayoutTests/http/wpt/web-animations/resources/xhr-doc.py.
+        * web-platform-tests/web-animations/testcommon.js: Renamed from LayoutTests/http/wpt/web-animations/testcommon.js.
+        * web-platform-tests/web-animations/timing-model/animation-effects/active-time-expected.txt: Renamed from LayoutTests/http/wpt/web-animations/timing-model/animation-effects/active-time-expected.txt.
+        * web-platform-tests/web-animations/timing-model/animation-effects/active-time.html: Added.
+        * web-platform-tests/web-animations/timing-model/animation-effects/current-iteration-expected.txt: Renamed from LayoutTests/http/wpt/web-animations/timing-model/animation-effects/current-iteration-expected.txt.
+        * web-platform-tests/web-animations/timing-model/animation-effects/current-iteration.html: Renamed from LayoutTests/http/wpt/web-animations/timing-model/animation-effects/current-iteration.html.
+        * web-platform-tests/web-animations/timing-model/animation-effects/local-time-expected.txt: Renamed from LayoutTests/http/wpt/web-animations/timing-model/animation-effects/local-time-expected.txt.
+        * web-platform-tests/web-animations/timing-model/animation-effects/local-time.html: Renamed from LayoutTests/http/wpt/web-animations/timing-model/animation-effects/local-time.html.
+        * web-platform-tests/web-animations/timing-model/animation-effects/phases-and-states-expected.txt: Renamed from LayoutTests/http/wpt/web-animations/timing-model/animation-effects/phases-and-states-expected.txt.
+        * web-platform-tests/web-animations/timing-model/animation-effects/phases-and-states.html: Added.
+        * web-platform-tests/web-animations/timing-model/animation-effects/simple-iteration-progress-expected.txt: Renamed from LayoutTests/http/wpt/web-animations/timing-model/animation-effects/simple-iteration-progress-expected.txt.
+        * web-platform-tests/web-animations/timing-model/animation-effects/simple-iteration-progress.html: Renamed from LayoutTests/http/wpt/web-animations/timing-model/animation-effects/simple-iteration-progress.html.
+        * web-platform-tests/web-animations/timing-model/animations/canceling-an-animation-expected.txt: Renamed from LayoutTests/http/wpt/web-animations/timing-model/animations/canceling-an-animation-expected.txt.
+        * web-platform-tests/web-animations/timing-model/animations/canceling-an-animation.html: Renamed from LayoutTests/http/wpt/web-animations/timing-model/animations/canceling-an-animation.html.
+        * web-platform-tests/web-animations/timing-model/animations/current-time-expected.txt: Renamed from LayoutTests/http/wpt/web-animations/timing-model/animations/current-time-expected.txt.
+        * web-platform-tests/web-animations/timing-model/animations/current-time.html: Renamed from LayoutTests/http/wpt/web-animations/timing-model/animations/current-time.html.
+        * web-platform-tests/web-animations/timing-model/animations/finishing-an-animation-expected.txt: Renamed from LayoutTests/http/wpt/web-animations/timing-model/animations/finishing-an-animation-expected.txt.
+        * web-platform-tests/web-animations/timing-model/animations/finishing-an-animation.html: Renamed from LayoutTests/http/wpt/web-animations/timing-model/animations/finishing-an-animation.html.
+        * web-platform-tests/web-animations/timing-model/animations/pausing-an-animation-expected.txt: Renamed from LayoutTests/http/wpt/web-animations/timing-model/animations/pausing-an-animation-expected.txt.
+        * web-platform-tests/web-animations/timing-model/animations/pausing-an-animation.html: Renamed from LayoutTests/http/wpt/web-animations/timing-model/animations/pausing-an-animation.html.
+        * web-platform-tests/web-animations/timing-model/animations/play-states-expected.txt: Added.
+        * web-platform-tests/web-animations/timing-model/animations/play-states.html: Added.
+        * web-platform-tests/web-animations/timing-model/animations/playing-an-animation-expected.txt: Renamed from LayoutTests/http/wpt/web-animations/timing-model/animations/playing-an-animation-expected.txt.
+        * web-platform-tests/web-animations/timing-model/animations/playing-an-animation.html: Renamed from LayoutTests/http/wpt/web-animations/timing-model/animations/playing-an-animation.html.
+        * web-platform-tests/web-animations/timing-model/animations/reversing-an-animation-expected.txt: Renamed from LayoutTests/http/wpt/web-animations/timing-model/animations/reversing-an-animation-expected.txt.
+        * web-platform-tests/web-animations/timing-model/animations/reversing-an-animation.html: Renamed from LayoutTests/http/wpt/web-animations/timing-model/animations/reversing-an-animation.html.
+        * web-platform-tests/web-animations/timing-model/animations/set-the-animation-start-time-expected.txt: Renamed from LayoutTests/http/wpt/web-animations/timing-model/animations/set-the-animation-start-time-expected.txt.
+        * web-platform-tests/web-animations/timing-model/animations/set-the-animation-start-time.html: Renamed from LayoutTests/http/wpt/web-animations/timing-model/animations/set-the-animation-start-time.html.
+        * web-platform-tests/web-animations/timing-model/animations/set-the-target-effect-of-an-animation-expected.txt: Renamed from LayoutTests/http/wpt/web-animations/timing-model/animations/set-the-target-effect-of-an-animation-expected.txt.
+        * web-platform-tests/web-animations/timing-model/animations/set-the-target-effect-of-an-animation.html: Renamed from LayoutTests/http/wpt/web-animations/timing-model/animations/set-the-target-effect-of-an-animation.html.
+        * web-platform-tests/web-animations/timing-model/animations/set-the-timeline-of-an-animation-expected.txt: Renamed from LayoutTests/http/wpt/web-animations/timing-model/animations/set-the-timeline-of-an-animation-expected.txt.
+        * web-platform-tests/web-animations/timing-model/animations/set-the-timeline-of-an-animation.html: Renamed from LayoutTests/http/wpt/web-animations/timing-model/animations/set-the-timeline-of-an-animation.html.
+        * web-platform-tests/web-animations/timing-model/animations/updating-the-finished-state-expected.txt: Renamed from LayoutTests/http/wpt/web-animations/timing-model/animations/updating-the-finished-state-expected.txt.
+        * web-platform-tests/web-animations/timing-model/animations/updating-the-finished-state.html: Renamed from LayoutTests/http/wpt/web-animations/timing-model/animations/updating-the-finished-state.html.
+        * web-platform-tests/web-animations/timing-model/time-transformations/transformed-progress-expected.txt: Renamed from LayoutTests/http/wpt/web-animations/timing-model/time-transformations/transformed-progress-expected.txt.
+        * web-platform-tests/web-animations/timing-model/time-transformations/transformed-progress.html: Renamed from LayoutTests/http/wpt/web-animations/timing-model/time-transformations/transformed-progress.html.
+        * web-platform-tests/web-animations/timing-model/timelines/document-timelines-expected.txt: Added.
+        * web-platform-tests/web-animations/timing-model/timelines/document-timelines.html: Added.
+        * web-platform-tests/web-animations/timing-model/timelines/timelines-expected.txt: Added.
+        * web-platform-tests/web-animations/timing-model/timelines/timelines.html: Added.
+
 2018-01-24  Manuel Rego Casasnovas  <rego@igalia.com>
 
         Move css-color & css-multicol WPT suites to the proper folder

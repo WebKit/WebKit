@@ -1,0 +1,17 @@
+
+FAIL Reversing an animation inverts the playback rate promise_test: Unhandled rejection with value: object "TypeError: animation.reverse is not a function. (In 'animation.reverse()', 'animation.reverse' is undefined)"
+FAIL Reversing an animation plays a pausing animation promise_test: Unhandled rejection with value: object "TypeError: animation.reverse is not a function. (In 'animation.reverse()', 'animation.reverse' is undefined)"
+FAIL Reversing an animation maintains the same current time animation.reverse is not a function. (In 'animation.reverse()', 'animation.reverse' is undefined)
+FAIL Reversing an animation does not cause it to leave the pending state assert_true: The animation is pending before we call reverse expected true got false
+FAIL Reversing an animation does not cause it to resolve the ready promise animation.reverse is not a function. (In 'animation.reverse()', 'animation.reverse' is undefined)
+FAIL Reversing an animation when playbackRate > 0 and currentTime > effect end should make it play from the end animation.reverse is not a function. (In 'animation.reverse()', 'animation.reverse' is undefined)
+FAIL Reversing an animation when playbackRate > 0 and currentTime < 0 should make it play from the end animation.reverse is not a function. (In 'animation.reverse()', 'animation.reverse' is undefined)
+FAIL Reversing an animation when playbackRate < 0 and currentTime < 0 should make it play from the start animation.reverse is not a function. (In 'animation.reverse()', 'animation.reverse' is undefined)
+FAIL Reversing an animation when playbackRate < 0 and currentTime > effect end should make it play from the start animation.reverse is not a function. (In 'animation.reverse()', 'animation.reverse' is undefined)
+FAIL Reversing an animation when playbackRate > 0 and currentTime < 0 and the target effect end is positive infinity should throw an exception assert_throws: reverse() should throw InvalidStateError if the playbackRate > 0 and the currentTime < 0 and the target effect is positive infinity function "() => { animation.reverse(); }" threw object "TypeError: animation.reverse is not a function. (In 'animation.reverse()', 'animation.reverse' is undefined)" that is not a DOMException InvalidStateError: property "code" is equal to undefined, expected 11
+PASS When reversing throws an exception, the playback rate remains unchanged 
+FAIL Reversing animation when playbackRate = 0 and currentTime < 0 and the target effect end is positive infinity should NOT throw an exception assert_unreached: Unexpected exception when calling reverse(): TypeError: animation.reverse is not a function. (In 'animation.reverse()', 'animation.reverse' is undefined) Reached unreachable code
+FAIL Reversing an animation when playbackRate < 0 and currentTime < 0 and the target effect end is positive infinity should make it play from the start animation.reverse is not a function. (In 'animation.reverse()', 'animation.reverse' is undefined)
+FAIL Reversing when when playbackRate == 0 should preserve the current time and playback rate animation.reverse is not a function. (In 'animation.reverse()', 'animation.reverse' is undefined)
+FAIL Reversing an animation without an active timeline throws an InvalidStateError assert_throws: function "() => { animation.reverse(); }" threw object "TypeError: animation.reverse is not a function. (In 'animation.reverse()', 'animation.reverse' is undefined)" that is not a DOMException InvalidStateError: property "code" is equal to undefined, expected 11
+

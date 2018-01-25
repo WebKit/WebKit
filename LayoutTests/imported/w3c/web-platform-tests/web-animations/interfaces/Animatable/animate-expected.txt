@@ -1,0 +1,123 @@
+
+PASS Element.animate() creates an Animation object 
+PASS Element.animate() creates an Animation object in the relevant realm of the target element 
+PASS Element.animate() creates an Animation object with a KeyframeEffect 
+PASS Element.animate() creates an Animation object with a KeyframeEffect that is created in the relevant realm of the target element 
+PASS Element.animate() creates an Animation object with a KeyframeEffect whose AnimationEffectTiming object is created in the relevant realm of the target element 
+PASS Element.animate() accepts empty keyframe lists (input: []) 
+PASS Element.animate() accepts empty keyframe lists (input: null) 
+PASS Element.animate() accepts empty keyframe lists (input: undefined) 
+FAIL Element.animate() accepts a one property two value property-indexed keyframes specification assert_equals: properties on ComputedKeyframe #0 should match expected "composite,computedOffset,easing,left,offset" but got "computedOffset,easing,left,offset"
+FAIL Element.animate() accepts a one shorthand property two value property-indexed keyframes specification assert_equals: properties on ComputedKeyframe #0 should match expected "composite,computedOffset,easing,margin,offset" but got "computedOffset,easing,marginBottom,marginLeft,marginRight,marginTop,offset"
+FAIL Element.animate() accepts a two property (one shorthand and one of its longhand components) two value property-indexed keyframes specification assert_equals: properties on ComputedKeyframe #0 should match expected "composite,computedOffset,easing,margin,marginTop,offset" but got "computedOffset,easing,marginBottom,marginLeft,marginRight,marginTop,offset"
+FAIL Element.animate() accepts a two property two value property-indexed keyframes specification assert_equals: properties on ComputedKeyframe #0 should match expected "composite,computedOffset,easing,left,offset,top" but got "computedOffset,easing,left,offset,top"
+FAIL Element.animate() accepts a two property property-indexed keyframes specification with different numbers of values assert_equals: properties on ComputedKeyframe #0 should match expected "composite,computedOffset,easing,left,offset,top" but got "computedOffset,easing,left,offset,top"
+FAIL Element.animate() accepts a property-indexed keyframes specification with an invalid value assert_equals: properties on ComputedKeyframe #0 should match expected "composite,computedOffset,easing,left,offset,top" but got "computedOffset,easing,left,offset,top"
+FAIL Element.animate() accepts a one property two value property-indexed keyframes specification that needs to stringify its values assert_equals: properties on ComputedKeyframe #0 should match expected "composite,computedOffset,easing,offset,opacity" but got "computedOffset,easing,offset,opacity"
+FAIL Element.animate() accepts a property-indexed keyframes specification with a CSS variable reference assert_equals: properties on ComputedKeyframe #0 should match expected "composite,computedOffset,easing,left,offset" but got "computedOffset,easing,left,offset"
+FAIL Element.animate() accepts a property-indexed keyframes specification with a CSS variable reference in a shorthand property assert_equals: properties on ComputedKeyframe #0 should match expected "composite,computedOffset,easing,margin,offset" but got "computedOffset,easing,marginBottom,marginLeft,marginRight,marginTop,offset"
+FAIL Element.animate() accepts a one property one value property-indexed keyframes specification assert_equals: properties on ComputedKeyframe #0 should match expected "composite,computedOffset,easing,left,offset" but got "computedOffset,easing,left,offset"
+FAIL Element.animate() accepts a one property one non-array value property-indexed keyframes specification assert_equals: properties on ComputedKeyframe #0 should match expected "composite,computedOffset,easing,left,offset" but got "computedOffset,easing,left,offset"
+FAIL Element.animate() accepts a one property two value property-indexed keyframes specification where the first value is invalid assert_equals: properties on ComputedKeyframe #0 should match expected "composite,computedOffset,easing,offset" but got "computedOffset,easing,offset"
+FAIL Element.animate() accepts a one property two value property-indexed keyframes specification where the second value is invalid assert_equals: properties on ComputedKeyframe #0 should match expected "composite,computedOffset,easing,left,offset" but got "computedOffset,easing,left,offset"
+FAIL Element.animate() accepts a property-indexed keyframe with a single offset assert_equals: properties on ComputedKeyframe #0 should match expected "composite,computedOffset,easing,left,offset" but got "computedOffset,easing,left,offset"
+FAIL Element.animate() accepts a property-indexed keyframe with an array of offsets assert_equals: properties on ComputedKeyframe #0 should match expected "composite,computedOffset,easing,left,offset" but got "computedOffset,easing,left,offset"
+FAIL Element.animate() accepts a property-indexed keyframe with an array of offsets that is too short assert_equals: properties on ComputedKeyframe #0 should match expected "composite,computedOffset,easing,left,offset" but got "computedOffset,easing,left,offset"
+FAIL Element.animate() accepts a property-indexed keyframe with an array of offsets that is too long assert_equals: properties on ComputedKeyframe #0 should match expected "composite,computedOffset,easing,left,offset" but got "computedOffset,easing,left,offset"
+FAIL Element.animate() accepts a property-indexed keyframe with an empty array of offsets assert_equals: properties on ComputedKeyframe #0 should match expected "composite,computedOffset,easing,left,offset" but got "computedOffset,easing,left,offset"
+FAIL Element.animate() accepts a property-indexed keyframe with an array of offsets with an embedded null value assert_equals: properties on ComputedKeyframe #0 should match expected "composite,computedOffset,easing,left,offset" but got "computedOffset,easing,left,offset"
+FAIL Element.animate() accepts a property-indexed keyframe with an array of offsets with a trailing null value assert_equals: properties on ComputedKeyframe #0 should match expected "composite,computedOffset,easing,left,offset" but got "computedOffset,easing,left,offset"
+FAIL Element.animate() accepts a property-indexed keyframe with an array of offsets with leading and trailing null values assert_equals: properties on ComputedKeyframe #0 should match expected "composite,computedOffset,easing,left,offset" but got "computedOffset,easing,left,offset"
+FAIL Element.animate() accepts a property-indexed keyframe with an array of offsets with adjacent null values assert_equals: properties on ComputedKeyframe #0 should match expected "composite,computedOffset,easing,left,offset" but got "computedOffset,easing,left,offset"
+FAIL Element.animate() accepts a property-indexed keyframe with an array of offsets with all null values (and too many at that) assert_equals: properties on ComputedKeyframe #0 should match expected "composite,computedOffset,easing,left,offset" but got "computedOffset,easing,left,offset"
+FAIL Element.animate() accepts a property-indexed keyframe with a single null offset assert_equals: properties on ComputedKeyframe #0 should match expected "composite,computedOffset,easing,left,offset" but got "computedOffset,easing,left,offset"
+FAIL Element.animate() accepts a property-indexed keyframe with an array of offsets that is not strictly ascending in the unused part of the array assert_equals: properties on ComputedKeyframe #0 should match expected "composite,computedOffset,easing,left,offset" but got "computedOffset,easing,left,offset"
+FAIL Element.animate() accepts a property-indexed keyframe without any specified easing assert_equals: properties on ComputedKeyframe #0 should match expected "composite,computedOffset,easing,left,offset" but got "computedOffset,easing,left,offset"
+FAIL Element.animate() accepts a property-indexed keyframe with a single easing assert_equals: properties on ComputedKeyframe #0 should match expected "composite,computedOffset,easing,left,offset" but got "computedOffset,easing,left,offset"
+FAIL Element.animate() accepts a property-indexed keyframe with an array of easings assert_equals: properties on ComputedKeyframe #0 should match expected "composite,computedOffset,easing,left,offset" but got "computedOffset,easing,left,offset"
+FAIL Element.animate() accepts a property-indexed keyframe with an array of easings that is too short assert_equals: properties on ComputedKeyframe #0 should match expected "composite,computedOffset,easing,left,offset" but got "computedOffset,easing,left,offset"
+FAIL Element.animate() accepts a property-indexed keyframe with a single-element array of easings assert_equals: properties on ComputedKeyframe #0 should match expected "composite,computedOffset,easing,left,offset" but got "computedOffset,easing,left,offset"
+FAIL Element.animate() accepts a property-indexed keyframe with an empty array of easings assert_equals: properties on ComputedKeyframe #0 should match expected "composite,computedOffset,easing,left,offset" but got "computedOffset,easing,left,offset"
+FAIL Element.animate() accepts a property-indexed keyframe with an array of easings that is too long assert_equals: properties on ComputedKeyframe #0 should match expected "composite,computedOffset,easing,left,offset" but got "computedOffset,easing,left,offset"
+PASS Element.animate() accepts a property-indexed keyframe with a single composite operation 
+PASS Element.animate() accepts a property-indexed keyframe with a composite array 
+FAIL Element.animate() accepts a property-indexed keyframe with a composite array that is too short assert_equals: value for 'composite' on ComputedKeyframe #2 expected "add" but got "replace"
+PASS Element.animate() accepts a property-indexed keyframe with a composite array that is too long 
+PASS Element.animate() accepts a property-indexed keyframe with a single-element composite array 
+FAIL Element.animate() accepts a one property one keyframe sequence assert_equals: properties on ComputedKeyframe #0 should match expected "composite,computedOffset,easing,left,offset" but got "computedOffset,easing,left,offset"
+FAIL Element.animate() accepts a one property two keyframe sequence assert_equals: properties on ComputedKeyframe #0 should match expected "composite,computedOffset,easing,left,offset" but got "computedOffset,easing,left,offset"
+FAIL Element.animate() accepts a two property two keyframe sequence assert_equals: properties on ComputedKeyframe #0 should match expected "composite,computedOffset,easing,left,offset,top" but got "computedOffset,easing,left,offset,top"
+FAIL Element.animate() accepts a one shorthand property two keyframe sequence assert_equals: properties on ComputedKeyframe #0 should match expected "composite,computedOffset,easing,margin,offset" but got "computedOffset,easing,marginBottom,marginLeft,marginRight,marginTop,offset"
+FAIL Element.animate() accepts a two property (a shorthand and one of its component longhands) two keyframe sequence assert_equals: properties on ComputedKeyframe #0 should match expected "composite,computedOffset,easing,margin,marginTop,offset" but got "computedOffset,easing,marginBottom,marginLeft,marginRight,marginTop,offset"
+FAIL Element.animate() accepts a two property keyframe sequence where one property is missing from the first keyframe assert_equals: properties on ComputedKeyframe #0 should match expected "composite,computedOffset,easing,left,offset" but got "computedOffset,easing,left,offset"
+FAIL Element.animate() accepts a two property keyframe sequence where one property is missing from the last keyframe assert_equals: properties on ComputedKeyframe #0 should match expected "composite,computedOffset,easing,left,offset,top" but got "computedOffset,easing,left,offset,top"
+FAIL Element.animate() accepts a one property two keyframe sequence that needs to stringify its values assert_equals: properties on ComputedKeyframe #0 should match expected "composite,computedOffset,easing,offset,opacity" but got "computedOffset,easing,offset,opacity"
+FAIL Element.animate() accepts a keyframe sequence with a CSS variable reference assert_equals: properties on ComputedKeyframe #0 should match expected "composite,computedOffset,easing,left,offset" but got "computedOffset,easing,left,offset"
+FAIL Element.animate() accepts a keyframe sequence with a CSS variable reference in a shorthand property assert_equals: properties on ComputedKeyframe #0 should match expected "composite,computedOffset,easing,margin,offset" but got "computedOffset,easing,marginBottom,marginLeft,marginRight,marginTop,offset"
+FAIL Element.animate() accepts a keyframe sequence with duplicate values for a given interior offset Type error
+FAIL Element.animate() accepts a keyframe sequence with duplicate values for offsets 0 and 1 Type error
+FAIL Element.animate() accepts a two property four keyframe sequence Type error
+FAIL Element.animate() accepts a single keyframe sequence with omitted offset assert_equals: properties on ComputedKeyframe #0 should match expected "composite,computedOffset,easing,left,offset" but got "computedOffset,easing,left,offset"
+FAIL Element.animate() accepts a single keyframe sequence with null offset assert_equals: properties on ComputedKeyframe #0 should match expected "composite,computedOffset,easing,left,offset" but got "computedOffset,easing,left,offset"
+FAIL Element.animate() accepts a single keyframe sequence with string offset assert_equals: properties on ComputedKeyframe #0 should match expected "composite,computedOffset,easing,left,offset" but got "computedOffset,easing,left,offset"
+FAIL Element.animate() accepts a one property keyframe sequence with some omitted offsets assert_equals: properties on ComputedKeyframe #0 should match expected "composite,computedOffset,easing,left,offset" but got "computedOffset,easing,left,offset"
+FAIL Element.animate() accepts a one property keyframe sequence with some null offsets assert_equals: properties on ComputedKeyframe #0 should match expected "composite,computedOffset,easing,left,offset" but got "computedOffset,easing,left,offset"
+FAIL Element.animate() accepts a two property keyframe sequence with some omitted offsets assert_equals: properties on ComputedKeyframe #0 should match expected "composite,computedOffset,easing,left,offset,top" but got "computedOffset,easing,left,offset,top"
+FAIL Element.animate() accepts a one property keyframe sequence with all omitted offsets assert_equals: properties on ComputedKeyframe #0 should match expected "composite,computedOffset,easing,left,offset" but got "computedOffset,easing,left,offset"
+FAIL Element.animate() accepts a keyframe sequence with different easing values, but the same easing value for a given offset Type error
+FAIL Element.animate() accepts a keyframe sequence with different composite values, but the same composite value for a given offset Type error
+PASS Element.animate() does not accept keyframes with an out-of-bounded positive offset 
+PASS Element.animate() does not accept keyframes with an out-of-bounded negative offset 
+PASS Element.animate() does not accept property-indexed keyframes not loosely sorted by offset 
+PASS Element.animate() does not accept property-indexed keyframes not loosely sorted by offset even though not all offsets are specified 
+PASS Element.animate() does not accept property-indexed keyframes with offsets out of range 
+PASS Element.animate() does not accept keyframes not loosely sorted by offset 
+PASS Element.animate() does not accept property-indexed keyframes with an invalid easing value 
+PASS Element.animate() does not accept property-indexed keyframes with an invalid easing value as one of the array values 
+PASS Element.animate() does not accept property-indexed keyframe with an invalid easing in the unused part of the array of easings 
+PASS Element.animate() does not accept empty property-indexed keyframe with an invalid easing 
+PASS Element.animate() does not accept empty property-indexed keyframe with an invalid easings array 
+PASS Element.animate() does not accept a keyframe sequence with an invalid easing value 
+PASS Element.animate() does not accept property-indexed keyframes with an invalid composite value 
+PASS Element.animate() does not accept property-indexed keyframes with an invalid composite value as one of the array values 
+PASS Element.animate() does not accept keyframes with an invalid composite value 
+PASS Element.animate() does not accept invalid easing: '' 
+PASS Element.animate() does not accept invalid easing: '7' 
+PASS Element.animate() does not accept invalid easing: 'test' 
+PASS Element.animate() does not accept invalid easing: 'initial' 
+PASS Element.animate() does not accept invalid easing: 'inherit' 
+PASS Element.animate() does not accept invalid easing: 'unset' 
+PASS Element.animate() does not accept invalid easing: 'unrecognized' 
+PASS Element.animate() does not accept invalid easing: 'var(--x)' 
+PASS Element.animate() does not accept invalid easing: 'ease-in-out, ease-out' 
+PASS Element.animate() does not accept invalid easing: 'cubic-bezier(1.1, 0, 1, 1)' 
+PASS Element.animate() does not accept invalid easing: 'cubic-bezier(0, 0, 1.1, 1)' 
+PASS Element.animate() does not accept invalid easing: 'cubic-bezier(-0.1, 0, 1, 1)' 
+PASS Element.animate() does not accept invalid easing: 'cubic-bezier(0, 0, -0.1, 1)' 
+PASS Element.animate() does not accept invalid easing: 'cubic-bezier(0.1, 0, 4, 0.4)' 
+PASS Element.animate() does not accept invalid easing: 'steps(-1, start)' 
+PASS Element.animate() does not accept invalid easing: 'steps(0.1, start)' 
+PASS Element.animate() does not accept invalid easing: 'steps(3, nowhere)' 
+PASS Element.animate() does not accept invalid easing: 'steps(-3, end)' 
+PASS Element.animate() does not accept invalid easing: 'function (a){return a}' 
+PASS Element.animate() does not accept invalid easing: 'function (x){return x}' 
+PASS Element.animate() does not accept invalid easing: 'function(x, y){return 0.3}' 
+PASS Element.animate() does not accept invalid easing: 'frames(1)' 
+PASS Element.animate() does not accept invalid easing: 'frames' 
+PASS Element.animate() does not accept invalid easing: 'frames()' 
+PASS Element.animate() does not accept invalid easing: 'frames(,)' 
+PASS Element.animate() does not accept invalid easing: 'frames(a)' 
+PASS Element.animate() does not accept invalid easing: 'frames(2.0)' 
+PASS Element.animate() does not accept invalid easing: 'frames(2.5)' 
+PASS Element.animate() does not accept invalid easing: 'frames(2 3)' 
+PASS Element.animate() accepts a double as an options argument 
+PASS Element.animate() accepts a KeyframeAnimationOptions argument 
+PASS Element.animate() accepts an absent options argument 
+PASS Element.animate() correctly sets the id attribute when no id is specified 
+PASS Element.animate() correctly sets the id attribute 
+PASS Element.animate() correctly sets the Animation's timeline 
+PASS Element.animate() correctly sets the Animation's timeline when triggered on an element in a different document 
+PASS Element.animate() calls play on the Animation 
+FAIL CSSPseudoElement.animate() creates an Animation object assert_equals: expected Element node <div class="pseudo"></div> but got null
+FAIL CSSPseudoElement.animate() creates an Animation object targeting to the correct CSSPseudoElement object assert_equals: expected Element node <div class="pseudo"></div> but got null
+

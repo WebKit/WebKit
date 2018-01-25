@@ -1,0 +1,19 @@
+
+Harness Error (TIMEOUT), message = null
+
+PASS Test exceptions when finishing non-running animation 
+PASS Test exceptions when finishing infinite animation 
+PASS Test finishing of animation 
+PASS Test finishing of animation with a current time past the effect end 
+TIMEOUT Test finishing of reversed animation Test timed out
+NOTRUN Test finishing of reversed animation with a current time less than zero 
+NOTRUN Test finish() while paused 
+PASS Test finish() while pause-pending with positive playbackRate 
+PASS Test finish() while pause-pending with negative playbackRate 
+PASS Test finish() while play-pending 
+NOTRUN Test finish() during aborted pause 
+NOTRUN Test resetting of computed style 
+NOTRUN Test finish() resolves finished promise synchronously 
+NOTRUN Test finish() resolves finished promise synchronously with an animation without a target 
+NOTRUN Test normally finished animation resolves finished promise synchronously with an animation without a target 
+
