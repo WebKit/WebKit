@@ -1,3 +1,21 @@
+2018-01-25  Zan Dobersek  <zdobersek@igalia.com>
+
+        [Cairo] Use GraphicsContextImplCairo in Nicosia::PaintingContextCairo
+        https://bugs.webkit.org/show_bug.cgi?id=182094
+
+        Reviewed by Carlos Garcia Campos.
+
+        Have Nicosia::PaintingContextCairo create a GraphicsContext object that
+        utilizes a factory function which returns a freshly-allocated
+        GraphicsContextImplCairo through which all the painting is then done.
+        This moves GraphicsLayer painting over to using the GraphicsContextImpl
+        infrastructure.
+
+        No new tests -- no changes in behavior.
+
+        * platform/graphics/nicosia/NicosiaPaintingContextCairo.cpp:
+        (Nicosia::PaintingContextCairo::PaintingContextCairo):
+
 2018-01-24  Frederic Wang  <fwang@igalia.com>
 
         ScrollingStateNode::reconcileLayerPositionForViewportRect is only called on direct children of the root
