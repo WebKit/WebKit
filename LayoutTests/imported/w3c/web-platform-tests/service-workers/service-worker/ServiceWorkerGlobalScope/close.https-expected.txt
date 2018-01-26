@@ -1,4 +1,4 @@
 
 PASS ServiceWorkerGlobalScope: close operation 
-FAIL ServiceWorkerGlobalScope close operation assert_false: expected false got true
+PASS ServiceWorkerGlobalScope close operation 
 

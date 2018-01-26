@@ -9,12 +9,12 @@ self.__proto__.__proto__.__proto__.__proto__ === {}.__proto__: true
 self.__proto__.__proto__.hasOwnProperty('navigator') === true: true
 self.__proto__.__proto__.hasOwnProperty('self') === true: true
 self.__proto__.__proto__.hasOwnProperty('location') === true: true
-self.__proto__.__proto__.hasOwnProperty('close') === true: true
+self.__proto__.__proto__.hasOwnProperty('close') === false: true
 self.__proto__.__proto__.hasOwnProperty('importScripts') === true: true
 self.__proto__.__proto__.hasOwnProperty('indexedDB') === true: true
 self.hasOwnProperty('navigator') === false: true
 self.hasOwnProperty('location') === false: true
-self.hasOwnProperty('close') === false: true
+self.hasOwnProperty('close') === true: true
 self.hasOwnProperty('postMessage') === true: true
 self.hasOwnProperty('onmessage') === true: true
 PASS successfullyParsed is true
