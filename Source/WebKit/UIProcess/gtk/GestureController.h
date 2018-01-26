@@ -54,6 +54,7 @@ public:
         m_dragGesture.reset();
         m_swipeGesture.reset();
         m_zoomGesture.reset();
+        m_longpressGesture.reset();
     }
 
 private:
@@ -62,6 +63,7 @@ private:
         void reset();
         bool isActive() const;
         void handleEvent(const GdkEvent*);
+        void simulateMouseClick(const GdkEvent*, unsigned);
 
     protected:
         Gesture(GtkGesture*, WebPageProxy&);
@@ -120,9 +122,20 @@ private:
         RunLoop::Timer<ZoomGesture> m_idle;
     };
 
+    class LongPressGesture final : public Gesture {
+    public:
+        LongPressGesture(WebPageProxy&);
+
+    private:
+        void longPressed(const GdkEvent*);
+
+        static void pressed(LongPressGesture*, double x, double y, GtkGesture*);
+    };
+
     DragGesture m_dragGesture;
     SwipeGesture m_swipeGesture;
     ZoomGesture m_zoomGesture;
+    LongPressGesture m_longpressGesture;
 };
 
 } // namespace WebKit

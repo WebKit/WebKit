@@ -43,6 +43,7 @@ GestureController::GestureController(WebPageProxy& page)
     : m_dragGesture(page)
     , m_swipeGesture(page)
     , m_zoomGesture(page)
+    , m_longpressGesture(page)
 {
 }
 
@@ -53,13 +54,14 @@ bool GestureController::handleEvent(const GdkEvent* event)
     m_dragGesture.handleEvent(event);
     m_swipeGesture.handleEvent(event);
     m_zoomGesture.handleEvent(event);
+    m_longpressGesture.handleEvent(event);
     touchEnd = (event->type == GDK_TOUCH_END) || (event->type == GDK_TOUCH_CANCEL);
     return touchEnd ? wasProcessingGestures : isProcessingGestures();
 }
 
 bool GestureController::isProcessingGestures() const
 {
-    return m_dragGesture.isActive() || m_swipeGesture.isActive() || m_zoomGesture.isActive();
+    return m_dragGesture.isActive() || m_swipeGesture.isActive() || m_zoomGesture.isActive() || m_longpressGesture.isActive();
 }
 
 GestureController::Gesture::Gesture(GtkGesture* gesture, WebPageProxy& page)
@@ -82,6 +84,30 @@ bool GestureController::Gesture::isActive() const
 void GestureController::Gesture::handleEvent(const GdkEvent* event)
 {
     gtk_event_controller_handle_event(GTK_EVENT_CONTROLLER(m_gesture.get()), event);
+}
+
+void GestureController::Gesture::simulateMouseClick(const GdkEvent* event, unsigned buttonType)
+{
+    GUniquePtr<GdkEvent> pointerEvent(gdk_event_new(GDK_MOTION_NOTIFY));
+    pointerEvent->motion.time = event->touch.time;
+    pointerEvent->motion.x = event->touch.x;
+    pointerEvent->motion.y = event->touch.y;
+    pointerEvent->motion.x_root = event->touch.x_root;
+    pointerEvent->motion.y_root = event->touch.y_root;
+    pointerEvent->motion.state = event->touch.state;
+    m_page.handleMouseEvent(NativeWebMouseEvent(pointerEvent.get(), 0));
+
+    pointerEvent.reset(gdk_event_new(GDK_BUTTON_PRESS));
+    pointerEvent->button.button = buttonType;
+    pointerEvent->button.time = event->touch.time;
+    pointerEvent->button.x = event->touch.x;
+    pointerEvent->button.y = event->touch.y;
+    pointerEvent->button.x_root = event->touch.x_root;
+    pointerEvent->button.y_root = event->touch.y_root;
+    m_page.handleMouseEvent(NativeWebMouseEvent(pointerEvent.get(), 1));
+
+    pointerEvent->type = GDK_BUTTON_RELEASE;
+    m_page.handleMouseEvent(NativeWebMouseEvent(pointerEvent.get(), 0));
 }
 
 static GUniquePtr<GdkEvent> createScrollEvent(const GdkEvent* event, double x, double y, double deltaX, double deltaY, gboolean isStop)
@@ -123,26 +149,7 @@ void GestureController::DragGesture::handleDrag(const GdkEvent* event, double x,
 void GestureController::DragGesture::handleTap(const GdkEvent* event)
 {
     ASSERT(!m_inDrag);
-    GUniquePtr<GdkEvent> pointerEvent(gdk_event_new(GDK_MOTION_NOTIFY));
-    pointerEvent->motion.time = event->touch.time;
-    pointerEvent->motion.x = event->touch.x;
-    pointerEvent->motion.y = event->touch.y;
-    pointerEvent->motion.x_root = event->touch.x_root;
-    pointerEvent->motion.y_root = event->touch.y_root;
-    pointerEvent->motion.state = event->touch.state;
-    m_page.handleMouseEvent(NativeWebMouseEvent(pointerEvent.get(), 0));
-
-    pointerEvent.reset(gdk_event_new(GDK_BUTTON_PRESS));
-    pointerEvent->button.button = 1;
-    pointerEvent->button.time = event->touch.time;
-    pointerEvent->button.x = event->touch.x;
-    pointerEvent->button.y = event->touch.y;
-    pointerEvent->button.x_root = event->touch.x_root;
-    pointerEvent->button.y_root = event->touch.y_root;
-    m_page.handleMouseEvent(NativeWebMouseEvent(pointerEvent.get(), 1));
-
-    pointerEvent->type = GDK_BUTTON_RELEASE;
-    m_page.handleMouseEvent(NativeWebMouseEvent(pointerEvent.get(), 0));
+    simulateMouseClick(event, GDK_BUTTON_PRIMARY);
 }
 
 void GestureController::DragGesture::begin(DragGesture* dragGesture, double x, double y, GtkGesture* gesture)
@@ -274,6 +281,29 @@ GestureController::ZoomGesture::ZoomGesture(WebPageProxy& page)
 {
     g_signal_connect_swapped(m_gesture.get(), "begin", G_CALLBACK(begin), this);
     g_signal_connect_swapped(m_gesture.get(), "scale-changed", G_CALLBACK(scaleChanged), this);
+}
+
+void GestureController::LongPressGesture::longPressed(const GdkEvent* event)
+{
+    simulateMouseClick(event, GDK_BUTTON_SECONDARY);
+}
+
+void GestureController::LongPressGesture::pressed(LongPressGesture* longpressGesture, double x, double y, GtkGesture* gesture)
+{
+    GdkEventSequence* sequence = gtk_gesture_single_get_current_sequence(GTK_GESTURE_SINGLE(gesture));
+    if (!gtk_gesture_handles_sequence(gesture, sequence))
+        return;
+
+    gtk_gesture_set_sequence_state(gesture, sequence, GTK_EVENT_SEQUENCE_CLAIMED);
+
+    longpressGesture->longPressed(gtk_gesture_get_last_event(gesture, sequence));
+}
+
+GestureController::LongPressGesture::LongPressGesture(WebPageProxy& page)
+    : Gesture(gtk_gesture_long_press_new(page.viewWidget()), page)
+{
+    gtk_gesture_single_set_touch_only(GTK_GESTURE_SINGLE(m_gesture.get()), TRUE);
+    g_signal_connect_swapped(m_gesture.get(), "pressed", G_CALLBACK(pressed), this);
 }
 
 } // namespace WebKit

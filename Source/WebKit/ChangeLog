@@ -1,3 +1,24 @@
+2018-01-26  Jan-Michael Brummer  <jan.brummer@tabos.org>
+
+        [GTK] Support using long-tap gesture to open context menu
+        https://bugs.webkit.org/show_bug.cgi?id=140747
+
+        Reviewed by Carlos Garcia Campos.
+
+        Add long press gesture which simulates a secondary mouse press to open context menu.
+
+        * UIProcess/gtk/GestureController.cpp:
+        (WebKit::GestureController::GestureController):
+        (WebKit::GestureController::handleEvent):
+        (WebKit::GestureController::isProcessingGestures const):
+        (WebKit::GestureController::Gesture::simulateMousePress):
+        (WebKit::GestureController::DragGesture::handleTap):
+        (WebKit::GestureController::LongPressGesture::longPressed):
+        (WebKit::GestureController::LongPressGesture::pressed):
+        (WebKit::GestureController::LongPressGesture::LongPressGesture):
+        * UIProcess/gtk/GestureController.h:
+        (WebKit::GestureController::reset):
+
 2018-01-26  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. REGRESSION(r227647): window.open() is broken in GTK and WPE after r227647.
