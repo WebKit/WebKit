@@ -1,5 +1,23 @@
 2018-01-26  Alex Christensen  <achristensen@webkit.org>
 
+        Allow cellular access for default-created ephemeral sessions
+        https://bugs.webkit.org/show_bug.cgi?id=182179
+        <rdar://problem/36572023>
+
+        Reviewed by Andy Estes.
+
+        This makes it so when we recover from a NetworkProcess crash (see r227590) on iOS, we will
+        be able to continue browsing using cell data.
+
+        * Shared/WebsiteDataStoreParameters.cpp:
+        (WebKit::WebsiteDataStoreParameters::privateSessionParameters):
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::pageBeginUsingWebsiteDataStore):
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::setPrivateBrowsingEnabled):
+
+2018-01-26  Alex Christensen  <achristensen@webkit.org>
+
         Clean up more networking code
         https://bugs.webkit.org/show_bug.cgi?id=182161
 
