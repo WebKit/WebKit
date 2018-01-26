@@ -1,3 +1,11 @@
+2018-01-26  Per Arne Vollan  <pvollan@apple.com>
+
+        [Win] Update test expectations.
+
+        Unreviewed test gardening.
+
+        * platform/win/TestExpectations:
+
 2018-01-25  Ryosuke Niwa  <rniwa@webkit.org>
 
         Make scrolling to the focused element async
