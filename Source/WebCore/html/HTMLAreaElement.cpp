@@ -230,17 +230,12 @@ void HTMLAreaElement::setFocus(bool shouldBeFocused)
 
     downcast<RenderImage>(*renderer).areaElementFocusChanged(this);
 }
-    
-void HTMLAreaElement::updateFocusAppearance(SelectionRestorationMode restorationMode, SelectionRevealMode revealMode)
+
+RefPtr<Element> HTMLAreaElement::focusAppearanceUpdateTarget()
 {
     if (!isFocusable())
-        return;
-
-    RefPtr<HTMLImageElement> imageElement = this->imageElement();
-    if (!imageElement)
-        return;
-
-    imageElement->updateFocusAppearance(restorationMode, revealMode);
+        return nullptr;
+    return imageElement();
 }
     
 bool HTMLAreaElement::supportsFocus() const

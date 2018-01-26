@@ -14,8 +14,19 @@
             position: absolute;
         }
     </style>
+    <script>
+        if (window.testRunner)
+            testRunner.waitUntilDone();
+        function runTest()
+        {
+            document.getElementById('bt').focus();
+            if (!window.testRunner)
+                return;
+            setTimeout(() => testRunner.notifyDone(), 0);
+        }
+    </script>
 </head>
-<body onload="document.getElementById('bt').focus()">
+<body onload="runTest()">
     <div id="scroller">
         <div id="contentarea">
             This tests that we can scroll to reveal something in a nested positioned block in overflow. 

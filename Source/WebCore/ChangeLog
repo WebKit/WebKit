@@ -1,3 +1,57 @@
+2018-01-25  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Make scrolling to the focused element async
+        https://bugs.webkit.org/show_bug.cgi?id=181575
+        <rdar://problem/36459767>
+
+        Reviewed by Simon Fraser.
+
+        Made the revealing of the focused element asynchronous in Element::focus. Like selection, schedule a timer when
+        a new element is focused, and only scroll to the focused element when the timer fires. If any other scrolling
+        happens meanwhile, we cancel this timer.
+
+        There are two Web exposed behavioral changes:
+        1. The scrolling position doesn't change immediately when calling Element::focus.
+        2. Only the last focused element will be revealed.
+
+        Both behavioral changes pose its own compatibility risks but we're making a conscious decision here since
+        the scrolling asynchronous has a clear performance benefit.
+
+        There is one edge case to cosnider: when the history controller restores the scrolling position, canceling the
+        timer results in a focused element in an overflow: hidden element to be never revealed. Expediate revealing of
+        the focused element in this one case instead of canceling.
+
+        Tests: fast/scrolling/scroll-to-focused-element-asynchronously.html
+               fast/scrolling/scroll-to-focused-element-canceled-by-fragment-navigation.html
+
+        * dom/Element.cpp:
+        (WebCore::Element::focus): Call updateFocusAppearance on focusAppearanceUpdateTarget to handle HTMLAreaElement
+        which delegates the focus appearance update to its image element.
+        (WebCore::Element::focusAppearanceUpdateTarget): Extracted. Returns "this" element for all but HTMLAreaElement.
+        (WebCore::Element::updateFocusAppearance): Schedule the revealing of the focused element in FrameView instead of
+        synchronously scrolling to the focused element.
+        * dom/Element.h:
+        (WebCore::Element::defaultFocusTextStateChangeIntent):
+        * html/HTMLAreaElement.cpp:
+        (WebCore::HTMLAreaElement::focusAppearanceUpdateTarget): Extracted from updateFocusAppearance.
+        (WebCore::HTMLAreaElement::updateFocusAppearance): Deleted.
+        * html/HTMLAreaElement.h:
+        * loader/HistoryController.cpp:
+        (WebCore::HistoryController::restoreScrollPositionAndViewState): Reveal the focused element
+        prior to restoring the scrolling location of the fragment navigation. This is needed to reveal a focused element
+        inside overflow: hidden element which got focused.
+        * page/FrameView.cpp:
+        (WebCore::FrameView::FrameView): Added a boolean flag and a timer for scrolling to the focused element.
+        (WebCore::FrameView::reset): Stop the timer and clear the flag.
+        (WebCore::FrameView::maintainScrollPositionAtAnchor): Ditto when scrolling to an anchor.
+        (WebCore::FrameView::setScrollPosition): Ditto when some other programatic scroll or the user scrolls the view.
+        (WebCore::FrameView::scheduleScrollToFocusedElement): Added.
+        (WebCore::FrameView::scrollToFocusedElementImmediatelyIfNeeded): Added.
+        (WebCore::FrameView::scrollToFocusedElementTimerFired): Added.
+        (WebCore::FrameView::scrollToAnchor): Stop the timer and clear the flag when scrolling to an achor.
+        (WebCore::FrameView::setWasScrolledByUser): Ditto when the user scrolls.
+        * page/FrameView.h:
+
 2018-01-25  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         REGRESSION(r217236): [iOS] PDFDocumentImage does not update its cached ImageBuffer if it has a sub-rectangle of the image

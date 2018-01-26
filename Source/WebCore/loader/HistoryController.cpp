@@ -133,7 +133,7 @@ void HistoryController::restoreScrollPositionAndViewState()
     if (!m_currentItem)
         return;
 
-    FrameView* view = m_frame.view();
+    auto view = makeRefPtr(m_frame.view());
 
     // FIXME: There is some scrolling related work that needs to happen whenever a page goes into the
     // page cache and similar work that needs to occur when it comes out. This is where we do the work
@@ -155,6 +155,8 @@ void HistoryController::restoreScrollPositionAndViewState()
 #if !PLATFORM(IOS)
     // Don't restore scroll point on iOS as FrameLoaderClient::restoreViewState() does that.
     if (view && !view->wasScrolledByUser()) {
+        view->scrollToFocusedElementImmediatelyIfNeeded();
+
         Page* page = m_frame.page();
         auto desiredScrollPosition = m_currentItem->shouldRestoreScrollPosition() ? m_currentItem->scrollPosition() : view->scrollPosition();
         LOG(Scrolling, "HistoryController::restoreScrollPositionAndViewState scrolling to %d,%d", desiredScrollPosition.x(), desiredScrollPosition.y());

@@ -1,6 +1,18 @@
 <html>This test should scroll recursively to reveal the button.
-<body onload="document.getElementById('fr').contentDocument.getElementById('bt').focus();">
-<script>if(window.testRunner) testRunner.dumpChildFrameScrollPositions();</script>
+<body onload="document.getElementById('fr').contentDocument.getElementById('bt').focus(); notifyDoneSync();">
+<script>
+if (window.testRunner) {
+    testRunner.dumpChildFrameScrollPositions();
+    testRunner.waitUntilDone();
+}
+
+function notifyDoneSync()
+{
+    if (!window.testRunner)
+        return;
+    setTimeout(() => testRunner.notifyDone(), 0);
+}
+</script>
 <div style="height:500px"></div>
 <iframe src="resources/scrollButton1.html" id="fr" name="fr"></iframe>
 <div style="height:500px"></div>

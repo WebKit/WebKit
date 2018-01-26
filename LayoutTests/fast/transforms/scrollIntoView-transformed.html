@@ -1,6 +1,7 @@
 <title>Select element scrolling when in transformed container</title>
 <script>
 
+let elements;
 function test()
 {
     if (window.testRunner) {
@@ -15,11 +16,23 @@ function test()
     document.getElementById("c-inner").scrollIntoView(true);
     document.getElementById("d-inner").scrollIntoView(false);
     
-    var selectElements = document.querySelectorAll("select");
-    for (i=0; i < selectElements.length; i++) {
-      selectElements[i].focus();
-    }
+    elements = Array.from(document.querySelectorAll("select"));
+    focusNext();
+}
 
+function focusNext()
+{
+    const firstElement = elements.shift();
+    if (firstElement) {
+        firstElement.focus();
+        setTimeout(focusNext, 0);
+    } else
+        setTimeout(checkResults, 0);
+    
+}
+
+function checkResults()
+{
     var resultString = "";
     var id1, id2, element1, element2, scrollTop1, scrollTop2;
     
@@ -64,7 +77,6 @@ function test()
     if (window.testRunner) {
       testRunner.notifyDone();
     }
-
 }
 </script>
 <style type="text/css" media="screen">

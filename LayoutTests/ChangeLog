@@ -1,3 +1,25 @@
+2018-01-25  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Make scrolling to the focused element async
+        https://bugs.webkit.org/show_bug.cgi?id=181575
+        <rdar://problem/36459767>
+
+        Reviewed by Simon Fraser.
+
+        Updated the tests per the behavioral change and added two more tests for scrolling to the focused element.
+
+        * accessibility/mac/webkit-scrollarea-position.html: Wait for the focus scrolling to take effect.
+        * fast/events/reveal-link-when-focused.html: Ditto.
+        * fast/images/imagemap-scroll.html: Ditto.
+        * fast/overflow/scroll-nested-positioned-layer-in-overflow.html: Ditto.
+        * fast/overflow/scrollRevealButton.html: Ditto.
+        * fast/transforms/scrollIntoView-transformed.html: Ditto. We need to focus each element in a seperate task
+        since only the last focused element will be revealed otherwise.
+        * fast/scrolling/scroll-to-focused-element-asynchronously-expected.txt: Added.
+        * fast/scrolling/scroll-to-focused-element-asynchronously.html: Added.
+        * fast/scrolling/scroll-to-focused-element-canceled-by-fragment-navigation-expected.txt: Added.
+        * fast/scrolling/scroll-to-focused-element-canceled-by-fragment-navigation.html: Added.
+
 2018-01-25  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         REGRESSION(r217236): [iOS] PDFDocumentImage does not update its cached ImageBuffer if it has a sub-rectangle of the image

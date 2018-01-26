@@ -18,7 +18,8 @@
     description("This tests that the WebKit generated scroll areas are correct.");
 
     if (window.accessibilityController) {
-        
+        testRunner.waitUntilDone();
+
         // Cause scroll position to be at the top.
         document.getElementById("text1").focus();
 
@@ -32,12 +33,16 @@
         // Cause focus to scroll down.
         document.getElementById("text2").focus();
 
-        // Since focus() should have scrolled down, the web.y should be greater than scroll.y since
-        // the content (web area) has moved.
-        // The web position should also be greater than when it started.
-        shouldBeTrue("scroll.y < web.y");
-        shouldBeTrue("web.y > initialWebY");
+        setTimeout(() => {
+            // Since focus() should have scrolled down, the web.y should be greater than scroll.y since the content (web area) has moved.
+            // The web position should also be greater than when it started.
+            shouldBeTrue("scroll.y < web.y");
+            shouldBeTrue("web.y > initialWebY");
+            finishJSTest();
+        }, 0);
     }
+    
+    jsTestIsAsync = true;
 
 </script>
 
