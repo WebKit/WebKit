@@ -66,8 +66,6 @@ void WebFrameNetworkingContext::ensureWebsiteDataStoreSession(WebsiteDataStorePa
         uiProcessCookieStorage = cookieStorageFromIdentifyingData(parameters.uiProcessCookieStorageIdentifier);
 
     NetworkStorageSession::ensureSession(sessionID, base + '.' + String::number(sessionID.sessionID()), WTFMove(uiProcessCookieStorage));
-
-    SessionTracker::setSession(sessionID, NetworkSession::create(WTFMove(parameters.networkSessionParameters)));
 }
 
 void WebFrameNetworkingContext::setCookieAcceptPolicyForAllContexts(HTTPCookieAcceptPolicy policy)

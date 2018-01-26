@@ -24,8 +24,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RemoteNetworkingContext_h
-#define RemoteNetworkingContext_h
+#pragma once
 
 #include <WebCore/NetworkingContext.h>
 #include <pal/SessionID.h>
@@ -34,45 +33,10 @@ namespace WebKit {
 
 struct WebsiteDataStoreParameters;
 
-class RemoteNetworkingContext final : public WebCore::NetworkingContext {
+class RemoteNetworkingContext {
 public:
-    static Ref<RemoteNetworkingContext> create(PAL::SessionID sessionID, bool shouldClearReferrerOnHTTPSToHTTPRedirect)
-    {
-        return adoptRef(*new RemoteNetworkingContext(sessionID, shouldClearReferrerOnHTTPSToHTTPRedirect));
-    }
-    virtual ~RemoteNetworkingContext();
-
     // FIXME: Remove platform-specific code and use SessionTracker.
     static void ensureWebsiteDataStoreSession(WebsiteDataStoreParameters&&);
-
-    bool shouldClearReferrerOnHTTPSToHTTPRedirect() const override { return m_shouldClearReferrerOnHTTPSToHTTPRedirect; }
-
-private:
-    RemoteNetworkingContext(PAL::SessionID sessionID, bool shouldClearReferrerOnHTTPSToHTTPRedirect)
-        : m_sessionID(sessionID)
-        , m_shouldClearReferrerOnHTTPSToHTTPRedirect(shouldClearReferrerOnHTTPSToHTTPRedirect)
-    {
-    }
-
-    bool isValid() const override;
-    WebCore::NetworkStorageSession& storageSession() const override;
-
-#if PLATFORM(COCOA)
-    void setLocalFileContentSniffingEnabled(bool value) { m_localFileContentSniffingEnabled = value; }
-    bool localFileContentSniffingEnabled() const override;
-    RetainPtr<CFDataRef> sourceApplicationAuditData() const override;
-    String sourceApplicationIdentifier() const override;
-    WebCore::ResourceError blockedError(const WebCore::ResourceRequest&) const override;
-#endif
-
-    PAL::SessionID m_sessionID;
-    bool m_shouldClearReferrerOnHTTPSToHTTPRedirect;
-
-#if PLATFORM(COCOA)
-    bool m_localFileContentSniffingEnabled = false;
-#endif
 };
 
 }
-
-#endif // RemoteNetworkingContext_h

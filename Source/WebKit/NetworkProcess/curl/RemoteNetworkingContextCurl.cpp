@@ -26,35 +26,16 @@
 #include "config.h"
 #include "RemoteNetworkingContext.h"
 
-#include "NetworkSession.h"
-#include "SessionTracker.h"
 #include "WebsiteDataStoreParameters.h"
-#include <WebCore/NetworkStorageSession.h>
 #include <WebCore/NotImplemented.h>
-#include <WebCore/ResourceError.h>
-#include <WebCore/ResourceHandle.h>
 
 using namespace WebCore;
 
 namespace WebKit {
 
-RemoteNetworkingContext::~RemoteNetworkingContext()
-{
-}
-
-bool RemoteNetworkingContext::isValid() const
-{
-    return true;
-}
-
 void RemoteNetworkingContext::ensureWebsiteDataStoreSession(WebsiteDataStoreParameters&&)
 {
     notImplemented();
-}
-
-NetworkStorageSession& RemoteNetworkingContext::storageSession() const
-{
-    return NetworkStorageSession::defaultStorageSession();
 }
 
 }

@@ -1,3 +1,41 @@
+2018-01-26  Alex Christensen  <achristensen@webkit.org>
+
+        Clean up more networking code
+        https://bugs.webkit.org/show_bug.cgi?id=182161
+
+        Reviewed by Anders Carlsson.
+
+        Two cleanups:
+        1. The WebProcess doesn't need to initialize NetworkSessions.
+        2. WebFrameNetworkingContext doesn't need to have the NetworkingContext functions to support ResourceHandles in WebKit any more.
+
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        * NetworkProcess/NetworkLoad.h:
+        * NetworkProcess/RemoteNetworkingContext.h:
+        (): Deleted.
+        * NetworkProcess/cocoa/NetworkProcessCocoa.mm:
+        * NetworkProcess/curl/RemoteNetworkingContextCurl.cpp:
+        (WebKit::RemoteNetworkingContext::~RemoteNetworkingContext): Deleted.
+        (WebKit::RemoteNetworkingContext::isValid const): Deleted.
+        (WebKit::RemoteNetworkingContext::storageSession const): Deleted.
+        * NetworkProcess/mac/RemoteNetworkingContext.mm:
+        (WebKit::RemoteNetworkingContext::~RemoteNetworkingContext): Deleted.
+        (WebKit::RemoteNetworkingContext::isValid const): Deleted.
+        (WebKit::RemoteNetworkingContext::localFileContentSniffingEnabled const): Deleted.
+        (WebKit::RemoteNetworkingContext::storageSession const): Deleted.
+        (WebKit::RemoteNetworkingContext::sourceApplicationAuditData const): Deleted.
+        (WebKit::RemoteNetworkingContext::sourceApplicationIdentifier const): Deleted.
+        (WebKit::RemoteNetworkingContext::blockedError const): Deleted.
+        * NetworkProcess/soup/RemoteNetworkingContextSoup.cpp:
+        (WebKit::RemoteNetworkingContext::~RemoteNetworkingContext): Deleted.
+        (WebKit::RemoteNetworkingContext::isValid const): Deleted.
+        (WebKit::RemoteNetworkingContext::storageSession const): Deleted.
+        * WebProcess/WebCoreSupport/mac/WebFrameNetworkingContext.mm:
+        (WebKit::WebFrameNetworkingContext::ensureWebsiteDataStoreSession):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::initializeWebProcess):
+        (WebKit::WebProcess::clearCachedCredentials):
+
 2018-01-26  Jan-Michael Brummer  <jan.brummer@tabos.org>
 
         [GTK] Support using long-tap gesture to open context menu

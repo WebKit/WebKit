@@ -273,8 +273,6 @@ void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters)
 
     platformInitializeWebProcess(WTFMove(parameters));
 
-    SessionTracker::setSession(PAL::SessionID::defaultSessionID(), NetworkSession::create({ }));
-
     // Match the QoS of the UIProcess and the scrolling thread but use a slightly lower priority.
     WTF::Thread::setCurrentThreadIsUserInteractive(-1);
 
@@ -554,10 +552,6 @@ void WebProcess::setCacheModel(uint32_t cm)
 void WebProcess::clearCachedCredentials()
 {
     NetworkStorageSession::defaultStorageSession().credentialStorage().clearCredentials();
-    if (auto* networkSession = SessionTracker::networkSession(PAL::SessionID::defaultSessionID()))
-        networkSession->clearCredentials();
-    else
-        ASSERT_NOT_REACHED();
 }
 
 WebPage* WebProcess::focusedWebPage() const
