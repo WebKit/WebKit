@@ -39,12 +39,12 @@ Ref<CachedScriptFetcher> CachedScriptFetcher::create(const String& charset)
     return adoptRef(*new CachedScriptFetcher(charset));
 }
 
-CachedResourceHandle<CachedScript> CachedScriptFetcher::requestModuleScript(Document& document, const URL& sourceURL) const
+CachedResourceHandle<CachedScript> CachedScriptFetcher::requestModuleScript(Document& document, const URL& sourceURL, String&& integrity) const
 {
-    return requestScriptWithCache(document, sourceURL, String());
+    return requestScriptWithCache(document, sourceURL, String { }, WTFMove(integrity));
 }
 
-CachedResourceHandle<CachedScript> CachedScriptFetcher::requestScriptWithCache(Document& document, const URL& sourceURL, const String& crossOriginMode) const
+CachedResourceHandle<CachedScript> CachedScriptFetcher::requestScriptWithCache(Document& document, const URL& sourceURL, const String& crossOriginMode, String&& integrity) const
 {
     if (!document.settings().isScriptEnabled())
         return nullptr;
@@ -54,6 +54,7 @@ CachedResourceHandle<CachedScript> CachedScriptFetcher::requestScriptWithCache(D
     ResourceLoaderOptions options = CachedResourceLoader::defaultCachedResourceOptions();
     options.contentSecurityPolicyImposition = hasKnownNonce ? ContentSecurityPolicyImposition::SkipPolicyCheck : ContentSecurityPolicyImposition::DoPolicyCheck;
     options.sameOriginDataURLFlag = SameOriginDataURLFlag::Set;
+    options.integrity = WTFMove(integrity);
 
     CachedResourceRequest request(ResourceRequest(sourceURL), options);
     request.setAsPotentiallyCrossOrigin(crossOriginMode, document);

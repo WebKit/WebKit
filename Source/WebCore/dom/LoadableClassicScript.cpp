@@ -114,7 +114,7 @@ void LoadableClassicScript::execute(ScriptElement& scriptElement)
 bool LoadableClassicScript::load(Document& document, const URL& sourceURL)
 {
     ASSERT(!m_cachedScript);
-    m_cachedScript = requestScriptWithCache(document, sourceURL, crossOriginMode());
+    m_cachedScript = requestScriptWithCache(document, sourceURL, crossOriginMode(), String { m_integrity });
     if (!m_cachedScript)
         return false;
     m_cachedScript->addClient(*this);

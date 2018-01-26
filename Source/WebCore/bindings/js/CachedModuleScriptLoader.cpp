@@ -63,7 +63,8 @@ CachedModuleScriptLoader::~CachedModuleScriptLoader()
 bool CachedModuleScriptLoader::load(Document& document, const URL& sourceURL)
 {
     ASSERT(!m_cachedScript);
-    m_cachedScript = m_scriptFetcher->requestModuleScript(document, sourceURL);
+    String integrity = m_parameters ? m_parameters->integrity() : String { };
+    m_cachedScript = m_scriptFetcher->requestModuleScript(document, sourceURL, WTFMove(integrity));
     if (!m_cachedScript)
         return false;
 

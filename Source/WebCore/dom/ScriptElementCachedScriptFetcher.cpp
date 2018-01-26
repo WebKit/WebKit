@@ -31,12 +31,12 @@
 
 namespace WebCore {
 
-CachedResourceHandle<CachedScript> ScriptElementCachedScriptFetcher::requestModuleScript(Document& document, const URL& sourceURL) const
+CachedResourceHandle<CachedScript> ScriptElementCachedScriptFetcher::requestModuleScript(Document& document, const URL& sourceURL, String&& integrity) const
 {
     // https://github.com/tc39/proposal-dynamic-import/blob/master/HTML Integration.md
     // If the fetcher is not module script, credential mode is always "omit".
 
-    return requestScriptWithCache(document, sourceURL, isClassicScript() ? ASCIILiteral("omit") : m_crossOriginMode);
+    return requestScriptWithCache(document, sourceURL, isClassicScript() ? ASCIILiteral("omit") : m_crossOriginMode, WTFMove(integrity));
 }
 
 }
