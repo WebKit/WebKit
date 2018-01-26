@@ -30,12 +30,8 @@
 #include <AvailabilityMacros.h>
 #include <TargetConditionals.h>
 
-#if (defined(TARGET_OS_IPHONE)  && TARGET_OS_IPHONE) || (defined(TARGET_IPHONE_SIMULATOR)  && TARGET_IPHONE_SIMULATOR)
-// FIXME: Activate VCP for iOS/iOS simulator
+// FIXME: Activate VCP for iOS/iOS simulator/MacOS
 #define ENABLE_VCP_ENCODER 0
-#elif (defined(TARGET_OS_MAC)  && TARGET_OS_MAC)
-#define ENABLE_VCP_ENCODER (__MAC_OS_X_VERSION_MAX_ALLOWED >= 101304)
-#endif
 
 #if ENABLE_VCP_ENCODER
 

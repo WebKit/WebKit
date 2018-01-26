@@ -1,3 +1,13 @@
+2018-01-26  Youenn Fablet  <youenn@apple.com>
+
+        Disable VCP for MacOS
+        https://bugs.webkit.org/show_bug.cgi?id=182183
+        <rdar://problem/36919791>
+
+        Reviewed by Eric Carlson.
+
+        * Source/webrtc/sdk/objc/Framework/Classes/VideoProcessing/VideoProcessingSoftLink.h:
+
 2018-01-19  Joseph Pecoraro  <pecoraro@apple.com>
 
         Follow-up build fix for r227206.
