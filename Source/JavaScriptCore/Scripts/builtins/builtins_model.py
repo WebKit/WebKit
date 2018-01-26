@@ -57,6 +57,7 @@ keyValueAnnotationCommentRegExp = re.compile(r"^\/\/ @(\w+)=([^=]+?)\n", re.MULT
 flagAnnotationCommentRegExp = re.compile(r"^\/\/ @(\w+)[^=]*?\n", re.MULTILINE | re.DOTALL)
 lineWithOnlySingleLineCommentRegExp = re.compile(r"^\s*\/\/\n", re.MULTILINE | re.DOTALL)
 lineWithTrailingSingleLineCommentRegExp = re.compile(r"\s*\/\/\n", re.MULTILINE | re.DOTALL)
+leadingWhitespaceRegExp = re.compile(r"^ +", re.MULTILINE | re.DOTALL)
 multipleEmptyLinesRegExp = re.compile(r"\n{2,}", re.MULTILINE | re.DOTALL)
 
 class ParseException(Exception):
@@ -125,9 +126,10 @@ class BuiltinFunction:
             overridden_name = overriddenNameMatch.group(1)
             function_source = functionOverriddenNameRegExp.sub("", function_source)
 
-        if os.getenv("CONFIGURATION", "Debug").startswith("Debug"):
+        if not os.getenv("CONFIGURATION", "Debug").startswith("Debug"):
             function_source = lineWithOnlySingleLineCommentRegExp.sub("", function_source)
             function_source = lineWithTrailingSingleLineCommentRegExp.sub("\n", function_source)
+            function_source = leadingWhitespaceRegExp.sub("", function_source)
             function_source = multipleEmptyLinesRegExp.sub("\n", function_source)
 
         function_name = functionNameRegExp.findall(function_source)[0]

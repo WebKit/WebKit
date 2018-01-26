@@ -1,3 +1,15 @@
+2018-01-26  Joseph Pecoraro  <pecoraro@apple.com>
+
+        JavaScriptCore builtins should be partially minified in Release builds not Debug builds
+        https://bugs.webkit.org/show_bug.cgi?id=182165
+
+        Reviewed by Keith Miller.
+
+        * Scripts/builtins/builtins_model.py:
+        (BuiltinFunction.fromString):
+        Apply minifications on Release builds instead of Debug builds.
+        Also eliminate leading whitespace.
+
 2018-01-26  Filip Pizlo  <fpizlo@apple.com>
 
         Disable TLS-based TLCs
