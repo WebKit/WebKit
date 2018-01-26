@@ -92,7 +92,7 @@ private:
     Heap& m_heap;
     Data* m_data { nullptr };
 
-#if ENABLE(FAST_TLS_JIT)
+#if USE(FAST_TLS_FOR_TLC)
     static const pthread_key_t tlsKey = WTF_GC_TLC_KEY;
 #endif
 };

@@ -499,7 +499,7 @@ VM::~VM()
     m_apiLock->willDestroyVM(this);
     heap.lastChanceToFinalize();
     
-#if !ENABLE(FAST_TLS_JIT)
+#if !USE(FAST_TLS_FOR_TLC)
     ThreadLocalCache::destructor(threadLocalCacheData);
 #endif
 

@@ -595,7 +595,7 @@ void AssemblyHelpers::emitAllocateWithNonNullAllocator(GPRReg resultGPR, const J
     Jump popPath;
     Jump done;
     
-#if ENABLE(FAST_TLS_JIT)
+#if USE(FAST_TLS_FOR_TLC)
     loadFromTLSPtr(fastTLSOffsetForKey(WTF_GC_TLC_KEY), scratchGPR);
 #else
     loadPtr(&vm().threadLocalCacheData, scratchGPR);

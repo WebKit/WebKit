@@ -80,6 +80,7 @@ class BlockDirectory {
 
 public:
     BlockDirectory(Heap*, size_t cellSize);
+    ~BlockDirectory();
     void setSubspace(Subspace*);
     void lastChanceToFinalize();
     void prepareForAllocation();

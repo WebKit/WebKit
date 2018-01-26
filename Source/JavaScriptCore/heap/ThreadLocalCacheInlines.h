@@ -31,7 +31,7 @@ namespace JSC {
 
 inline ThreadLocalCache::Data* ThreadLocalCache::getImpl(VM& vm)
 {
-#if ENABLE(FAST_TLS_JIT)
+#if USE(FAST_TLS_FOR_TLC)
     UNUSED_PARAM(vm);
     return static_cast<Data*>(_pthread_getspecific_direct(tlsKey));
 #else

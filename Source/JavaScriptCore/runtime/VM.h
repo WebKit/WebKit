@@ -658,7 +658,7 @@ public:
     JSObject* stringRecursionCheckFirstObject { nullptr };
     HashSet<JSObject*> stringRecursionCheckVisitedObjects;
     
-#if !ENABLE(FAST_TLS_JIT)
+#if !USE(FAST_TLS_FOR_TLC)
     ThreadLocalCache::Data* threadLocalCacheData { nullptr };
 #endif
     RefPtr<ThreadLocalCache> defaultThreadLocalCache;

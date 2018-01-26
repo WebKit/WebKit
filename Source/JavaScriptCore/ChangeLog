@@ -1,3 +1,27 @@
+2018-01-26  Filip Pizlo  <fpizlo@apple.com>
+
+        Disable TLS-based TLCs
+        https://bugs.webkit.org/show_bug.cgi?id=182175
+
+        Reviewed by Saam Barati.
+
+        Check for the new USE(FAST_TLS_FOR_TLC) flag instead of just ENABLE(FAST_TLS_JIT).
+
+        * heap/BlockDirectory.cpp:
+        (JSC::BlockDirectory::~BlockDirectory):
+        * heap/BlockDirectory.h:
+        * heap/ThreadLocalCache.cpp:
+        (JSC::ThreadLocalCache::installSlow):
+        (JSC::ThreadLocalCache::installData):
+        * heap/ThreadLocalCache.h:
+        * heap/ThreadLocalCacheInlines.h:
+        (JSC::ThreadLocalCache::getImpl):
+        * jit/AssemblyHelpers.cpp:
+        (JSC::AssemblyHelpers::emitAllocateWithNonNullAllocator):
+        * runtime/VM.cpp:
+        (JSC::VM::~VM):
+        * runtime/VM.h:
+
 2018-01-25  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/errorhandling.html crashes
