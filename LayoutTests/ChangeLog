@@ -1,3 +1,18 @@
+2018-01-25  Jason Marcell  <jmarcell@apple.com>
+
+        Cherry-pick r227430. rdar://problem/36873610
+
+    2018-01-23  Simon Fraser  <simon.fraser@apple.com>
+
+            Element with position:fixed stops scrolling at the bottom of the page, but is painted in the right place on Chacos.com.
+            https://bugs.webkit.org/show_bug.cgi?id=181741
+            rdar://problem/36593581
+
+            Reviewed by Tim Horton.
+
+            * fast/visual-viewport/ios/min-scale-greater-than-one-expected.txt: Added.
+            * fast/visual-viewport/ios/min-scale-greater-than-one.html: Added.
+
 2018-01-25  Ryan Haddad  <ryanhaddad@apple.com>
 
         Cherry-pick r227421. rdar://problem/36837397
