@@ -575,7 +575,7 @@ int codePointCompare(const StringImpl*, const StringImpl*);
 
 // FIXME: Should rename this to make clear it uses the Unicode definition of whitespace.
 // Most WebKit callers don't want that would use isASCIISpace or isHTMLSpace instead.
-bool isSpaceOrNewline(UChar);
+bool isSpaceOrNewline(UChar32);
 
 template<typename CharacterType> unsigned lengthOfNullTerminatedString(const CharacterType*);
 
@@ -736,7 +736,7 @@ inline int codePointCompare(const StringImpl* string1, const StringImpl* string2
     return codePointCompare(string1->characters16(), string1->length(), string2->characters16(), string2->length());
 }
 
-inline bool isSpaceOrNewline(UChar character)
+inline bool isSpaceOrNewline(UChar32 character)
 {
     // Use isASCIISpace() for all Latin-1 characters. This will include newlines, which aren't included in Unicode DirWS.
     return character <= 0xFF ? isASCIISpace(character) : u_charDirection(character) == U_WHITE_SPACE_NEUTRAL;

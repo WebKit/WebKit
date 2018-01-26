@@ -85,7 +85,7 @@ static String truncatedStringForLookupMenuItem(const String& original)
     unsigned maxNumberOfGraphemeClustersInLookupMenuItem = 24;
 
     String trimmed = original.stripWhiteSpace();
-    unsigned numberOfCharacters = numCharactersInGraphemeClusters(trimmed, maxNumberOfGraphemeClustersInLookupMenuItem);
+    unsigned numberOfCharacters = numCodeUnitsInGraphemeClusters(trimmed, maxNumberOfGraphemeClustersInLookupMenuItem);
     return numberOfCharacters == trimmed.length() ? trimmed : makeString(trimmed.left(numberOfCharacters), horizontalEllipsis);
 }
 

@@ -284,7 +284,7 @@ unsigned numGraphemeClusters(StringView string)
     return numGraphemeClusters;
 }
 
-unsigned numCharactersInGraphemeClusters(StringView string, unsigned numGraphemeClusters)
+unsigned numCodeUnitsInGraphemeClusters(StringView string, unsigned numGraphemeClusters)
 {
     unsigned stringLength = string.length();
 

@@ -65,82 +65,82 @@ TEST(WTF, TextBreakIteratorNumGraphemeClusters)
     EXPECT_EQ(3U, numGraphemeClusters(makeUTF16({ 'g', 0x308, 'b', 'c' })));
 }
 
-TEST(WTF, TextBreakIteratorNumCharactersInGraphemeClusters)
+TEST(WTF, TextBreakIteratorNumCodeUnitsInGraphemeClusters)
 {
-    EXPECT_EQ(0U, numCharactersInGraphemeClusters(StringView { }, 0));
-    EXPECT_EQ(0U, numCharactersInGraphemeClusters(StringView { }, 1));
+    EXPECT_EQ(0U, numCodeUnitsInGraphemeClusters(StringView { }, 0));
+    EXPECT_EQ(0U, numCodeUnitsInGraphemeClusters(StringView { }, 1));
 
-    EXPECT_EQ(0U, numCharactersInGraphemeClusters(StringView { "" }, 0));
-    EXPECT_EQ(0U, numCharactersInGraphemeClusters(StringView { "" }, 1));
+    EXPECT_EQ(0U, numCodeUnitsInGraphemeClusters(StringView { "" }, 0));
+    EXPECT_EQ(0U, numCodeUnitsInGraphemeClusters(StringView { "" }, 1));
 
-    EXPECT_EQ(0U, numCharactersInGraphemeClusters(makeUTF16({ }), 0));
-    EXPECT_EQ(0U, numCharactersInGraphemeClusters(makeUTF16({ }), 1));
+    EXPECT_EQ(0U, numCodeUnitsInGraphemeClusters(makeUTF16({ }), 0));
+    EXPECT_EQ(0U, numCodeUnitsInGraphemeClusters(makeUTF16({ }), 1));
 
-    EXPECT_EQ(1U, numCharactersInGraphemeClusters(StringView { "a" }, 1));
-    EXPECT_EQ(1U, numCharactersInGraphemeClusters(makeUTF16({ 'a' }), 1));
-    EXPECT_EQ(1U, numCharactersInGraphemeClusters(StringView { "\n" }, 1));
-    EXPECT_EQ(1U, numCharactersInGraphemeClusters(StringView { "\r" }, 1));
-    EXPECT_EQ(1U, numCharactersInGraphemeClusters(makeUTF16({ '\n' }), 1));
-    EXPECT_EQ(1U, numCharactersInGraphemeClusters(makeUTF16({ '\r' }), 1));
+    EXPECT_EQ(1U, numCodeUnitsInGraphemeClusters(StringView { "a" }, 1));
+    EXPECT_EQ(1U, numCodeUnitsInGraphemeClusters(makeUTF16({ 'a' }), 1));
+    EXPECT_EQ(1U, numCodeUnitsInGraphemeClusters(StringView { "\n" }, 1));
+    EXPECT_EQ(1U, numCodeUnitsInGraphemeClusters(StringView { "\r" }, 1));
+    EXPECT_EQ(1U, numCodeUnitsInGraphemeClusters(makeUTF16({ '\n' }), 1));
+    EXPECT_EQ(1U, numCodeUnitsInGraphemeClusters(makeUTF16({ '\r' }), 1));
 
-    EXPECT_EQ(0U, numCharactersInGraphemeClusters(StringView { "abc" }, 0));
-    EXPECT_EQ(1U, numCharactersInGraphemeClusters(StringView { "abc" }, 1));
-    EXPECT_EQ(2U, numCharactersInGraphemeClusters(StringView { "abc" }, 2));
-    EXPECT_EQ(3U, numCharactersInGraphemeClusters(StringView { "abc" }, 3));
-    EXPECT_EQ(3U, numCharactersInGraphemeClusters(StringView { "abc" }, 4));
+    EXPECT_EQ(0U, numCodeUnitsInGraphemeClusters(StringView { "abc" }, 0));
+    EXPECT_EQ(1U, numCodeUnitsInGraphemeClusters(StringView { "abc" }, 1));
+    EXPECT_EQ(2U, numCodeUnitsInGraphemeClusters(StringView { "abc" }, 2));
+    EXPECT_EQ(3U, numCodeUnitsInGraphemeClusters(StringView { "abc" }, 3));
+    EXPECT_EQ(3U, numCodeUnitsInGraphemeClusters(StringView { "abc" }, 4));
 
-    EXPECT_EQ(0U, numCharactersInGraphemeClusters(makeUTF16({ 'a', 'b', 'c' }), 0));
-    EXPECT_EQ(1U, numCharactersInGraphemeClusters(makeUTF16({ 'a', 'b', 'c' }), 1));
-    EXPECT_EQ(2U, numCharactersInGraphemeClusters(makeUTF16({ 'a', 'b', 'c' }), 2));
-    EXPECT_EQ(3U, numCharactersInGraphemeClusters(makeUTF16({ 'a', 'b', 'c' }), 3));
-    EXPECT_EQ(3U, numCharactersInGraphemeClusters(makeUTF16({ 'a', 'b', 'c' }), 4));
+    EXPECT_EQ(0U, numCodeUnitsInGraphemeClusters(makeUTF16({ 'a', 'b', 'c' }), 0));
+    EXPECT_EQ(1U, numCodeUnitsInGraphemeClusters(makeUTF16({ 'a', 'b', 'c' }), 1));
+    EXPECT_EQ(2U, numCodeUnitsInGraphemeClusters(makeUTF16({ 'a', 'b', 'c' }), 2));
+    EXPECT_EQ(3U, numCodeUnitsInGraphemeClusters(makeUTF16({ 'a', 'b', 'c' }), 3));
+    EXPECT_EQ(3U, numCodeUnitsInGraphemeClusters(makeUTF16({ 'a', 'b', 'c' }), 4));
 
-    EXPECT_EQ(0U, numCharactersInGraphemeClusters(StringView { "\r\n" }, 0));
-    EXPECT_EQ(2U, numCharactersInGraphemeClusters(StringView { "\r\n" }, 1));
-    EXPECT_EQ(2U, numCharactersInGraphemeClusters(StringView { "\r\n" }, 2));
-    EXPECT_EQ(2U, numCharactersInGraphemeClusters(StringView { "\r\n" }, 3));
+    EXPECT_EQ(0U, numCodeUnitsInGraphemeClusters(StringView { "\r\n" }, 0));
+    EXPECT_EQ(2U, numCodeUnitsInGraphemeClusters(StringView { "\r\n" }, 1));
+    EXPECT_EQ(2U, numCodeUnitsInGraphemeClusters(StringView { "\r\n" }, 2));
+    EXPECT_EQ(2U, numCodeUnitsInGraphemeClusters(StringView { "\r\n" }, 3));
 
-    EXPECT_EQ(0U, numCharactersInGraphemeClusters(makeUTF16({ '\r', '\n' }), 0));
-    EXPECT_EQ(2U, numCharactersInGraphemeClusters(makeUTF16({ '\r', '\n' }), 1));
-    EXPECT_EQ(2U, numCharactersInGraphemeClusters(makeUTF16({ '\r', '\n' }), 2));
-    EXPECT_EQ(2U, numCharactersInGraphemeClusters(makeUTF16({ '\r', '\n' }), 3));
+    EXPECT_EQ(0U, numCodeUnitsInGraphemeClusters(makeUTF16({ '\r', '\n' }), 0));
+    EXPECT_EQ(2U, numCodeUnitsInGraphemeClusters(makeUTF16({ '\r', '\n' }), 1));
+    EXPECT_EQ(2U, numCodeUnitsInGraphemeClusters(makeUTF16({ '\r', '\n' }), 2));
+    EXPECT_EQ(2U, numCodeUnitsInGraphemeClusters(makeUTF16({ '\r', '\n' }), 3));
 
-    EXPECT_EQ(0U, numCharactersInGraphemeClusters(StringView { "\n\r" }, 0));
-    EXPECT_EQ(1U, numCharactersInGraphemeClusters(StringView { "\n\r" }, 1));
-    EXPECT_EQ(2U, numCharactersInGraphemeClusters(StringView { "\n\r" }, 2));
+    EXPECT_EQ(0U, numCodeUnitsInGraphemeClusters(StringView { "\n\r" }, 0));
+    EXPECT_EQ(1U, numCodeUnitsInGraphemeClusters(StringView { "\n\r" }, 1));
+    EXPECT_EQ(2U, numCodeUnitsInGraphemeClusters(StringView { "\n\r" }, 2));
 
-    EXPECT_EQ(1U, numCharactersInGraphemeClusters(makeUTF16({ '\n', '\r' }), 1));
-    EXPECT_EQ(2U, numCharactersInGraphemeClusters(makeUTF16({ '\n', '\r' }), 2));
+    EXPECT_EQ(1U, numCodeUnitsInGraphemeClusters(makeUTF16({ '\n', '\r' }), 1));
+    EXPECT_EQ(2U, numCodeUnitsInGraphemeClusters(makeUTF16({ '\n', '\r' }), 2));
 
-    EXPECT_EQ(0U, numCharactersInGraphemeClusters(StringView { "\r\n\r" }, 0));
-    EXPECT_EQ(2U, numCharactersInGraphemeClusters(StringView { "\r\n\r" }, 1));
-    EXPECT_EQ(3U, numCharactersInGraphemeClusters(StringView { "\r\n\r" }, 2));
-    EXPECT_EQ(3U, numCharactersInGraphemeClusters(StringView { "\r\n\r" }, 3));
+    EXPECT_EQ(0U, numCodeUnitsInGraphemeClusters(StringView { "\r\n\r" }, 0));
+    EXPECT_EQ(2U, numCodeUnitsInGraphemeClusters(StringView { "\r\n\r" }, 1));
+    EXPECT_EQ(3U, numCodeUnitsInGraphemeClusters(StringView { "\r\n\r" }, 2));
+    EXPECT_EQ(3U, numCodeUnitsInGraphemeClusters(StringView { "\r\n\r" }, 3));
 
-    EXPECT_EQ(0U, numCharactersInGraphemeClusters(makeUTF16({ '\r', '\n', '\r' }), 0));
-    EXPECT_EQ(2U, numCharactersInGraphemeClusters(makeUTF16({ '\r', '\n', '\r' }), 1));
-    EXPECT_EQ(3U, numCharactersInGraphemeClusters(makeUTF16({ '\r', '\n', '\r' }), 2));
-    EXPECT_EQ(3U, numCharactersInGraphemeClusters(makeUTF16({ '\r', '\n', '\r' }), 3));
+    EXPECT_EQ(0U, numCodeUnitsInGraphemeClusters(makeUTF16({ '\r', '\n', '\r' }), 0));
+    EXPECT_EQ(2U, numCodeUnitsInGraphemeClusters(makeUTF16({ '\r', '\n', '\r' }), 1));
+    EXPECT_EQ(3U, numCodeUnitsInGraphemeClusters(makeUTF16({ '\r', '\n', '\r' }), 2));
+    EXPECT_EQ(3U, numCodeUnitsInGraphemeClusters(makeUTF16({ '\r', '\n', '\r' }), 3));
 
-    EXPECT_EQ(2U, numCharactersInGraphemeClusters(makeUTF16({ 'g', 0x308 }), 1));
-    EXPECT_EQ(3U, numCharactersInGraphemeClusters(makeUTF16({ 0x1100, 0x1161, 0x11A8 }), 1));
-    EXPECT_EQ(2U, numCharactersInGraphemeClusters(makeUTF16({ 0x0BA8, 0x0BBF }), 1));
+    EXPECT_EQ(2U, numCodeUnitsInGraphemeClusters(makeUTF16({ 'g', 0x308 }), 1));
+    EXPECT_EQ(3U, numCodeUnitsInGraphemeClusters(makeUTF16({ 0x1100, 0x1161, 0x11A8 }), 1));
+    EXPECT_EQ(2U, numCodeUnitsInGraphemeClusters(makeUTF16({ 0x0BA8, 0x0BBF }), 1));
 
-    EXPECT_EQ(1U, numCharactersInGraphemeClusters(makeUTF16({ 0x308, 'g' }), 1));
+    EXPECT_EQ(1U, numCodeUnitsInGraphemeClusters(makeUTF16({ 0x308, 'g' }), 1));
 
-    EXPECT_EQ(0U, numCharactersInGraphemeClusters(StringView { "\r\nbc" }, 0));
-    EXPECT_EQ(2U, numCharactersInGraphemeClusters(StringView { "\r\nbc" }, 1));
-    EXPECT_EQ(3U, numCharactersInGraphemeClusters(StringView { "\r\nbc" }, 2));
-    EXPECT_EQ(4U, numCharactersInGraphemeClusters(StringView { "\r\nbc" }, 3));
-    EXPECT_EQ(4U, numCharactersInGraphemeClusters(StringView { "\r\nbc" }, 4));
-    EXPECT_EQ(4U, numCharactersInGraphemeClusters(StringView { "\r\nbc" }, 5));
+    EXPECT_EQ(0U, numCodeUnitsInGraphemeClusters(StringView { "\r\nbc" }, 0));
+    EXPECT_EQ(2U, numCodeUnitsInGraphemeClusters(StringView { "\r\nbc" }, 1));
+    EXPECT_EQ(3U, numCodeUnitsInGraphemeClusters(StringView { "\r\nbc" }, 2));
+    EXPECT_EQ(4U, numCodeUnitsInGraphemeClusters(StringView { "\r\nbc" }, 3));
+    EXPECT_EQ(4U, numCodeUnitsInGraphemeClusters(StringView { "\r\nbc" }, 4));
+    EXPECT_EQ(4U, numCodeUnitsInGraphemeClusters(StringView { "\r\nbc" }, 5));
 
-    EXPECT_EQ(0U, numCharactersInGraphemeClusters(makeUTF16({ 'g', 0x308, 'b', 'c' }), 0));
-    EXPECT_EQ(2U, numCharactersInGraphemeClusters(makeUTF16({ 'g', 0x308, 'b', 'c' }), 1));
-    EXPECT_EQ(3U, numCharactersInGraphemeClusters(makeUTF16({ 'g', 0x308, 'b', 'c' }), 2));
-    EXPECT_EQ(4U, numCharactersInGraphemeClusters(makeUTF16({ 'g', 0x308, 'b', 'c' }), 3));
-    EXPECT_EQ(4U, numCharactersInGraphemeClusters(makeUTF16({ 'g', 0x308, 'b', 'c' }), 4));
-    EXPECT_EQ(4U, numCharactersInGraphemeClusters(makeUTF16({ 'g', 0x308, 'b', 'c' }), 5));
+    EXPECT_EQ(0U, numCodeUnitsInGraphemeClusters(makeUTF16({ 'g', 0x308, 'b', 'c' }), 0));
+    EXPECT_EQ(2U, numCodeUnitsInGraphemeClusters(makeUTF16({ 'g', 0x308, 'b', 'c' }), 1));
+    EXPECT_EQ(3U, numCodeUnitsInGraphemeClusters(makeUTF16({ 'g', 0x308, 'b', 'c' }), 2));
+    EXPECT_EQ(4U, numCodeUnitsInGraphemeClusters(makeUTF16({ 'g', 0x308, 'b', 'c' }), 3));
+    EXPECT_EQ(4U, numCodeUnitsInGraphemeClusters(makeUTF16({ 'g', 0x308, 'b', 'c' }), 4));
+    EXPECT_EQ(4U, numCodeUnitsInGraphemeClusters(makeUTF16({ 'g', 0x308, 'b', 'c' }), 5));
 }
 
 } // namespace TestWebKitAPI

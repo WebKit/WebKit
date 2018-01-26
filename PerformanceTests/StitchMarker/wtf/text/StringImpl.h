@@ -1065,7 +1065,7 @@ inline int codePointCompare(const StringImpl* string1, const StringImpl* string2
     return codePointCompare16(string1, string2);
 }
 
-inline bool isSpaceOrNewline(UChar c)
+inline bool isSpaceOrNewline(UChar32 c)
 {
     // Use isASCIISpace() for basic Latin-1.
     // This will include newlines, which aren't included in Unicode DirWS.

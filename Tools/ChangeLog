@@ -1,3 +1,13 @@
+2018-01-26  Chris Nardi  <cnardi@chromium.org>
+
+        Addressing post-review comments after r226614
+        https://bugs.webkit.org/show_bug.cgi?id=182151
+
+        Reviewed by Myles C. Maxfield.
+
+        * TestWebKitAPI/Tests/WTF/TextBreakIterator.cpp:
+        (TestWebKitAPI::TEST):
+
 2018-01-25  Per Arne Vollan  <pvollan@apple.com>
 
         Unreviewed, rolling out r224920.

@@ -219,24 +219,24 @@ void RenderTreeBuilder::FirstLetter::createRenderers(RenderBlock& firstLetterBlo
 
         // Account for leading spaces and punctuation.
         while (length < oldText.length() && shouldSkipForFirstLetter(oldText.characterStartingAt(length)))
-            length += numCharactersInGraphemeClusters(StringView(oldText).substring(length), 1);
+            length += numCodeUnitsInGraphemeClusters(StringView(oldText).substring(length), 1);
 
         // Account for first grapheme cluster.
-        length += numCharactersInGraphemeClusters(StringView(oldText).substring(length), 1);
+        length += numCodeUnitsInGraphemeClusters(StringView(oldText).substring(length), 1);
 
         // Keep looking for whitespace and allowed punctuation, but avoid
         // accumulating just whitespace into the :first-letter.
-        unsigned numCharacters = 0;
-        for (unsigned scanLength = length; scanLength < oldText.length(); scanLength += numCharacters) {
+        unsigned numCodeUnits = 0;
+        for (unsigned scanLength = length; scanLength < oldText.length(); scanLength += numCodeUnits) {
             UChar32 c = oldText.characterStartingAt(scanLength);
 
             if (!shouldSkipForFirstLetter(c))
                 break;
 
-            numCharacters = numCharactersInGraphemeClusters(StringView(oldText).substring(scanLength), 1);
+            numCodeUnits = numCodeUnitsInGraphemeClusters(StringView(oldText).substring(scanLength), 1);
 
             if (isPunctuationForFirstLetter(c))
-                length = scanLength + numCharacters;
+                length = scanLength + numCodeUnits;
         }
 
         auto* textNode = currentTextChild.textNode();

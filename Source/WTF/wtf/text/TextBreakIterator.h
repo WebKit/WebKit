@@ -340,9 +340,10 @@ private:
 // counted as 1 grapheme cluster.
 WTF_EXPORT_PRIVATE unsigned numGraphemeClusters(StringView);
 
-// Returns the number of characters which will be less than or equal to
-// the specified grapheme cluster length.
-WTF_EXPORT_PRIVATE unsigned numCharactersInGraphemeClusters(StringView, unsigned);
+// Returns the number of code units that create the specified number of
+// grapheme clusters. If there are fewer clusters in the string than specified,
+// the length of the string is returned.
+WTF_EXPORT_PRIVATE unsigned numCodeUnitsInGraphemeClusters(StringView, unsigned);
 
 }
 

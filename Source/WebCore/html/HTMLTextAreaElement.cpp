@@ -319,7 +319,7 @@ void HTMLTextAreaElement::handleBeforeTextInsertedEvent(BeforeTextInsertedEvent&
 
 String HTMLTextAreaElement::sanitizeUserInputValue(const String& proposedValue, unsigned maxLength)
 {
-    return proposedValue.left(numCharactersInGraphemeClusters(proposedValue, maxLength));
+    return proposedValue.left(numCodeUnitsInGraphemeClusters(proposedValue, maxLength));
 }
 
 RefPtr<TextControlInnerTextElement> HTMLTextAreaElement::innerTextElement() const
