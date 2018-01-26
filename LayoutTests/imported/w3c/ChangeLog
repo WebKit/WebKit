@@ -1,3 +1,13 @@
+2018-01-25  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/errorhandling.html crashes
+        https://bugs.webkit.org/show_bug.cgi?id=181980
+
+        Reviewed by Ryosuke Niwa.
+
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/dynamic-import/dynamic-imports-script-error-expected.txt:
+        * web-platform-tests/html/semantics/scripting-1/the-script-element/module/errorhandling-expected.txt: Added.
+
 2018-01-25  Chris Dumez  <cdumez@apple.com>
 
         Access to service workers / Cache API should be disabled in sandboxed frames without allow-same-origin flag

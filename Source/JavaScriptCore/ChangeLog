@@ -1,3 +1,19 @@
+2018-01-25  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/errorhandling.html crashes
+        https://bugs.webkit.org/show_bug.cgi?id=181980
+
+        Reviewed by Ryosuke Niwa.
+
+        We accidentally failed to propagate errored promise in instantiate and satify phase if entry.{instantiate,satisfy}
+        promises are set. Since we just returned `entry`, it becomes succeeded promise even if the dependent fetch, instantiate,
+        and satisfy promises are failed. This patch fixes error propagation by returning `entry.instantiate` and `entry.satisfy`
+        correctly.
+
+        * builtins/ModuleLoaderPrototype.js:
+        (requestInstantiate):
+        (requestSatisfy):
+
 2018-01-25  Mark Lam  <mark.lam@apple.com>
 
         Gardening: fix 32-bit build after r227643.

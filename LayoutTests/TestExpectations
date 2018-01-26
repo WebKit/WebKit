@@ -1404,8 +1404,6 @@ webkit.org/b/164539 http/tests/security/module-crossorigin-onerror-information.h
 
 webkit.org/b/165764 http/tests/misc/module-script-async.html [ Pass Timeout ]
 
-webkit.org/b/181980 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/errorhandling.html [ Crash ]
-
 # After rebasing WPT, we should investigate deterministic error handling, which is the updated spec.
 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/compilation-error-1.html [ Pass Failure ]
 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/compilation-error-2.html [ Pass Failure ]
