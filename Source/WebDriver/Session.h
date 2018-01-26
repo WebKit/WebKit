@@ -48,6 +48,7 @@ public:
 
     const String& id() const;
     const Capabilities& capabilities() const;
+    bool isConnected() const;
     Seconds scriptTimeout() const  { return m_scriptTimeout; }
     Seconds pageLoadTimeout() const { return m_pageLoadTimeout; }
     Seconds implicitWaitTimeout() const { return m_implicitWaitTimeout; }

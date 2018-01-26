@@ -71,7 +71,7 @@ private:
     };
 
     void inspectorDisconnected();
-    void sendMessageToBackend(const String&);
+    void sendMessageToBackend(long, const String&);
     void dispatchMessage(const String&);
 
 #if USE(GLIB)

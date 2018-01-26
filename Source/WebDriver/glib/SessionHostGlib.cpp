@@ -340,19 +340,38 @@ void SessionHost::sendMessageToFrontend(uint64_t connectionID, uint64_t targetID
     dispatchMessage(String::fromUTF8(message));
 }
 
-void SessionHost::sendMessageToBackend(const String& message)
+struct MessageContext {
+    long messageID;
+    SessionHost* host;
+};
+
+void SessionHost::sendMessageToBackend(long messageID, const String& message)
 {
     ASSERT(m_dbusConnection);
     ASSERT(m_connectionID);
     ASSERT(m_target.id);
 
+    auto messageContext = std::make_unique<MessageContext>(MessageContext { messageID, this });
     g_dbus_connection_call(m_dbusConnection.get(), nullptr,
         INSPECTOR_DBUS_OBJECT_PATH,
         INSPECTOR_DBUS_INTERFACE,
         "SendMessageToBackend",
         g_variant_new("(tts)", m_connectionID, m_target.id, message.utf8().data()),
         nullptr, G_DBUS_CALL_FLAGS_NO_AUTO_START,
-        -1, m_cancellable.get(), dbusConnectionCallAsyncReadyCallback, nullptr);
+        -1, m_cancellable.get(), [](GObject* source, GAsyncResult* result, gpointer userData) {
+            auto messageContext = std::unique_ptr<MessageContext>(static_cast<MessageContext*>(userData));
+            GUniqueOutPtr<GError> error;
+            GRefPtr<GVariant> resultVariant = adoptGRef(g_dbus_connection_call_finish(G_DBUS_CONNECTION(source), result, &error.outPtr()));
+            if (!resultVariant && !g_error_matches(error.get(), G_IO_ERROR, G_IO_ERROR_CANCELLED)) {
+                auto responseHandler = messageContext->host->m_commandRequests.take(messageContext->messageID);
+                if (responseHandler) {
+                    auto errorObject = JSON::Object::create();
+                    errorObject->setInteger(ASCIILiteral("code"), -32603);
+                    errorObject->setString(ASCIILiteral("message"), String::fromUTF8(error->message));
+                    responseHandler({ WTFMove(errorObject), true });
+                }
+            }
+        }, messageContext.release());
 }
 
 } // namespace WebDriver

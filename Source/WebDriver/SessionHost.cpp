@@ -55,7 +55,7 @@ long SessionHost::sendCommandToBackend(const String& command, RefPtr<JSON::Objec
         messageBuilder.append(parameters->toJSONString());
     }
     messageBuilder.append('}');
-    sendMessageToBackend(messageBuilder.toString());
+    sendMessageToBackend(sequenceID, messageBuilder.toString());
 
     return sequenceID;
 }

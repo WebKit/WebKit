@@ -69,6 +69,11 @@ const Capabilities& Session::capabilities() const
     return m_host->capabilities();
 }
 
+bool Session::isConnected() const
+{
+    return m_host->isConnected();
+}
+
 static std::optional<String> firstWindowHandleInResult(JSON::Value& result)
 {
     RefPtr<JSON::Array> handles;

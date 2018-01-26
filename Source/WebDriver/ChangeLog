@@ -1,5 +1,30 @@
 2018-01-26  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        WebDriver: service hangs after a browser crash
+        https://bugs.webkit.org/show_bug.cgi?id=182170
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        This is currently happening in the GTK+ debug bot. There's a test that makes the browser crash due to an assert,
+        hanging the whole process and preventing the rest of the tests from running. When the browser crashes, we
+        correctly handle the pending requests, by completing them with an error. However, if the client tries to send
+        another command we fail to send the message to the browser and the reply is never sent to the client. In the
+        case of the tests, delete session command is sent, but never gets a reply.
+
+        * Session.cpp:
+        (WebDriver::Session::isConnected const): Return whether the session is connected to the browser.
+        * Session.h:
+        * SessionHost.cpp:
+        (WebDriver::SessionHost::sendCommandToBackend): Pass the message ID to SessionHost::sendMessageToBackend().
+        * SessionHost.h:
+        * WebDriverService.cpp:
+        (WebDriver::WebDriverService::deleteSession): Ignore unknown errors if the session is no longer connected.
+        * glib/SessionHostGlib.cpp:
+        (WebDriver::SessionHost::sendMessageToBackend): Handle errors when sending the command by completing the request
+        with an error.
+
+2018-01-26  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         WebDriver: timeouts value and cookie expiry should be limited to max safe integer
         https://bugs.webkit.org/show_bug.cgi?id=182167
 

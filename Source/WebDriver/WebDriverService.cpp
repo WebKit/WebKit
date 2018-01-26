@@ -754,7 +754,11 @@ void WebDriverService::deleteSession(RefPtr<JSON::Object>&& parameters, Function
 
     auto session = std::exchange(m_session, nullptr);
     session->close([this, session, completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
-        completionHandler(WTFMove(result));
+        // Ignore unknown errors when closing the session if the browser is closed.
+        if (result.isError() && result.errorCode() == CommandResult::ErrorCode::UnknownError && !session->isConnected())
+            completionHandler(CommandResult::success());
+        else
+            completionHandler(WTFMove(result));
     });
 }
 
