@@ -146,7 +146,7 @@ class WebDriverTestRunner(object):
             results['subtests'] = []
             for name, status, message, _ in result.subtest_results:
                 subtest = {}
-                subtest['name'] = name
+                subtest['name'] = name.split('::', 1)[1]
                 subtest['status'] = status
                 subtest['message'] = message
                 results['subtests'].append(subtest)

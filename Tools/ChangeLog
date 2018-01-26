@@ -1,3 +1,16 @@
+2018-01-26  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        WebDriver: simplify the tests json report
+        https://bugs.webkit.org/show_bug.cgi?id=182171
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        We are duplicating the test name in every subtest name. WPT already changed the format to remove the test name
+        form the subtest name. We should do the same for simplicity and compatibility with WPT.
+
+        * Scripts/webkitpy/webdriver_tests/webdriver_test_runner.py:
+        (WebDriverTestRunner.dump_results_to_json_file):
+
 2018-01-25  Alex Christensen  <achristensen@webkit.org>
 
         REGRESSION (r221899): Web Content process hangs when webpage tries to make a new window if the WKWebView doesn’t have a UI delegate
