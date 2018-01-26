@@ -1,5 +1,23 @@
 2018-01-25  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r227567. rdar://problem/36873353
+
+    2018-01-24  Daniel Bates  <dabates@apple.com>
+
+            [CSP] Check policy for targeted windows when navigating to a JavaScript URL
+            https://bugs.webkit.org/show_bug.cgi?id=182018
+            <rdar://problem/36795781>
+
+            Reviewed by Brent Fulgham.
+
+            * http/tests/security/contentSecurityPolicy/resources/window-open-javascript-url-with-target-blocked.html: Added.
+            * http/tests/security/contentSecurityPolicy/resources/window-open-javascript-url-with-target-blocked.js: Added.
+            (done):
+            * http/tests/security/contentSecurityPolicy/window-open-javascript-url-with-target-blocked-expected.txt: Added.
+            * http/tests/security/contentSecurityPolicy/window-open-javascript-url-with-target-blocked.html: Added.
+
+2018-01-25  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r227566. rdar://problem/36722508
 
     2018-01-24  Chris Dumez  <cdumez@apple.com>
