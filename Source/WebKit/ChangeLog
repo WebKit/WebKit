@@ -1,3 +1,14 @@
+2018-01-26  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. REGRESSION(r227647): window.open() is broken in GTK and WPE after r227647.
+
+        In r227647, API::UIClient::createNewPage() was changed to use CompletionHandler instead of Function. All
+        implementations were updated expect the GLib one, and we didn't notice it because the method doesn't have the
+        final/override mark.
+
+        * UIProcess/API/glib/WebKitUIClient.cpp:
+        (UIClient::createNewPage):
+
 2018-01-25  Sergio Villar Senin  <svillar@igalia.com>
 
         [WebVR] Make WebVR available by default for developer builds

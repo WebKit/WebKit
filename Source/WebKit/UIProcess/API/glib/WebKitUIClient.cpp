@@ -47,7 +47,7 @@ public:
     }
 
 private:
-    void createNewPage(WebPageProxy& page, Ref<API::FrameInfo>&& frameInfo, WebCore::ResourceRequest&& resourceRequest, WebCore::WindowFeatures&& windowFeatures, NavigationActionData&& navigationActionData, WTF::Function<void(RefPtr<WebPageProxy>&&)>&& completionHandler)
+    void createNewPage(WebPageProxy& page, Ref<API::FrameInfo>&& frameInfo, WebCore::ResourceRequest&& resourceRequest, WebCore::WindowFeatures&& windowFeatures, NavigationActionData&& navigationActionData, CompletionHandler<void(RefPtr<WebPageProxy>&&)>&& completionHandler) final
     {
         auto userInitiatedActivity = page.process().userInitiatedActivity(navigationActionData.userGestureTokenIdentifier);
         WebKitNavigationAction navigationAction(API::NavigationAction::create(WTFMove(navigationActionData), frameInfo.ptr(), nullptr, std::nullopt, WTFMove(resourceRequest), { }, false, WTFMove(userInitiatedActivity)));
