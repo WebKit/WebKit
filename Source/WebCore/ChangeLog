@@ -1,3 +1,23 @@
+2018-01-25  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Add localizable strings for extra-zoomed form controls
+        https://bugs.webkit.org/show_bug.cgi?id=182080
+
+        Reviewed by Tim Horton.
+
+        Add new localizable strings. Additionally, run `update-webkit-localizable-strings` to re-sort
+        Localizable.strings.
+
+        * English.lproj/Localizable.strings:
+        * platform/LocalizedStrings.cpp:
+        (WebCore::formControlCancelButtonTitle):
+        (WebCore::formControlHideButtonTitle):
+        (WebCore::formControlGoButtonTitle):
+        (WebCore::formControlSearchButtonTitle):
+        (WebCore::textInputModeWriteButton):
+        (WebCore::textInputModeSpeechButton):
+        * platform/LocalizedStrings.h:
+
 2018-01-25  Chris Dumez  <cdumez@apple.com>
 
         Access to service workers / Cache API should be disabled in sandboxed frames without allow-same-origin flag

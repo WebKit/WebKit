@@ -315,6 +315,16 @@ namespace WebCore {
     WEBCORE_EXPORT String exitFullScreenButtonAccessibilityTitle();
 #endif
 
+#if ENABLE(EXTRA_ZOOM_MODE)
+    WEBCORE_EXPORT String formControlCancelButtonTitle();
+    WEBCORE_EXPORT String formControlSubmitButtonTitle();
+    WEBCORE_EXPORT String formControlHideButtonTitle();
+    WEBCORE_EXPORT String formControlGoButtonTitle();
+    WEBCORE_EXPORT String formControlSearchButtonTitle();
+    WEBCORE_EXPORT String textInputModeWriteButton();
+    WEBCORE_EXPORT String textInputModeSpeechButton();
+#endif
+
 #if USE(GLIB) && defined(GETTEXT_PACKAGE)
 #define WEB_UI_STRING(string, description) WebCore::localizedString(_(string))
 #define WEB_UI_STRING_KEY(string, key, description) WebCore::localizedString(C_(key, string))

@@ -124,6 +124,9 @@
 /* Option in segmented control for inserting a bulleted list in text editing */
 "Bulleted list" = "Bulleted list";
 
+/* Title of the Cancel button for zoomed form controls. */
+"Cancel" = "Cancel";
+
 /* Title for Cancel button label in button bar */
 "Cancel button label in button bar" = "Cancel";
 
@@ -220,6 +223,9 @@
 /* Undo action name */
 "Dictation (Undo action name)" = "Dictation";
 
+/* Text of button that exits element fullscreen. */
+"Done" = "Done";
+
 /* Download Audio To Disk context menu item */
 "Download Audio" = "Download Audio";
 
@@ -283,8 +289,14 @@
 /* WebKitErrorFrameLoadInterruptedByPolicyChange description */
 "Frame load interrupted" = "Frame load interrupted";
 
+/* Title of the Go button for zoomed form controls. */
+"Go" = "Go";
+
 /* accessibility role description for web area */
 "HTML content" = "HTML content";
+
+/* Title of the Hide button for zoomed form controls. */
+"Hide" = "Hide";
 
 /* Hide Media Controls context menu item */
 "Hide Controls" = "Hide Controls";
@@ -523,6 +535,9 @@
 /* Title for Save Image action button */
 "Save Image" = "Save Image";
 
+/* Title of the Search button for zoomed form controls. */
+"Search" = "Search";
+
 /* Search in Spotlight context menu item */
 "Search in Spotlight" = "Search in Spotlight";
 
@@ -597,6 +612,9 @@
 
 /* Title of the label to show on a snapshotted plug-in */
 "Snapshotted Plug-In" = "Snapshotted Plug-In";
+
+/* Title of the dictation button for zoomed form controls. */
+"Speak" = "Speak";
 
 /* Speech context sub-menu item */
 "Speech" = "Speech";
@@ -792,6 +810,9 @@
 
 /* WebKitErrorInternal description */
 "WebKit encountered an internal error" = "WebKit encountered an internal error";
+
+/* Title of the writing button for zoomed form controls. */
+"Write" = "Write";
 
 /* message in authentication panel */
 "Your login information will be sent securely." = "Your login information will be sent securely.";
@@ -1162,6 +1183,15 @@
 /* accessibility help text for hide closed captions button */
 "stop displaying closed captions" = "stop displaying closed captions";
 
+/* Label for the strong confirmation password auto fill button inside a text field. */
+"strong confirmation password auto fill" = "strong confirmation password auto fill";
+
+/* Label for strong password. */
+"strong password" = "strong password";
+
+/* Label for the strong password auto fill button inside a text field. */
+"strong password auto fill" = "strong password auto fill";
+
 /* The suboptimal value description for a meter element. */
 "suboptimal value" = "suboptimal value";
 
@@ -1246,14 +1276,3 @@
 /* Option in segmented control for choosing list type in text editing */
 "•" = "•";
 
-/* Label for strong password. */
-"strong password" = "strong password";
-
-/* Label for the auto fill strong password button inside a text field. */
-"strong password auto fill" = "strong password auto fill";
-
-/* Label for the auto fill strong confirmation password button inside a text field. */
-"strong confirmation password auto fill" = "strong confirmation password auto fill";
-
-/* Text of button that exits element fullscreen. */
-"Done" = "Done";
