@@ -1,3 +1,20 @@
+2018-01-25  Alex Christensen  <achristensen@webkit.org>
+
+        REGRESSION (r221899): Web Content process hangs when webpage tries to make a new window if the WKWebView doesn’t have a UI delegate
+        https://bugs.webkit.org/show_bug.cgi?id=182152
+
+        Reviewed by Joseph Pecoraro.
+
+        Call the completion handler of the default API::UIClient::createNewPage.
+
+        * UIProcess/API/APIUIClient.h:
+        (API::UIClient::createNewPage):
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetPageUIClient):
+        * UIProcess/Cocoa/UIDelegate.h:
+        * UIProcess/Cocoa/UIDelegate.mm:
+        (WebKit::UIDelegate::UIClient::createNewPage):
+
 2018-01-25  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] [WK2] Introduce new views and view controllers to support extra-zoomed text form controls

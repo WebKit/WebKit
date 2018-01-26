@@ -77,6 +77,30 @@ TEST(WebKit, WKWebViewIsPlayingAudio)
     TestWebKitAPI::Util::run(&done);
 }
 
+@interface NoUIDelegate : NSObject <WKNavigationDelegate>
+@end
+
+@implementation NoUIDelegate
+
+- (void)webView:(WKWebView *)webView decidePolicyForNavigationAction:(WKNavigationAction *)navigationAction decisionHandler:(void (^)(WKNavigationActionPolicy))decisionHandler
+{
+    if ([navigationAction.request.URL.absoluteString isEqualToString:[[[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"] absoluteString]])
+        done = true;
+    decisionHandler(WKNavigationActionPolicyAllow);
+}
+
+@end
+
+TEST(WebKit, WindowOpenWithoutUIDelegate)
+{
+    done = false;
+    auto webView = adoptNS([[WKWebView alloc] init]);
+    auto delegate = adoptNS([[NoUIDelegate alloc] init]);
+    [webView setNavigationDelegate:delegate.get()];
+    [webView loadHTMLString:@"<script>window.open('simple2.html');window.location='simple.html'</script>" baseURL:[[NSBundle mainBundle] URLForResource:@"simple2" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
+    TestWebKitAPI::Util::run(&done);
+}
+
 @interface GeolocationDelegate : NSObject <WKUIDelegatePrivate> {
     bool _allowGeolocation;
 }
