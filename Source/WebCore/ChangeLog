@@ -1,3 +1,18 @@
+2018-01-25  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Remove unnecessary developerExtrasEnabled checks
+        https://bugs.webkit.org/show_bug.cgi?id=182156
+
+        Reviewed by Matt Baker.
+
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::didLoadResourceFromMemoryCacheImpl):
+        (WebCore::InspectorInstrumentation::frameDocumentUpdatedImpl):
+        (WebCore::InspectorInstrumentation::didCreateWebSocketImpl):
+        These checks should not be needed. The step above bails if there is
+        no inspector frontend, and there can be no inspector frontend unless
+        developer extras enabled are enabled.
+
 2018-01-25  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Add localizable strings for extra-zoomed form controls
