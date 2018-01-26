@@ -1,3 +1,11 @@
+2018-01-25  Per Arne Vollan  <pvollan@apple.com>
+
+        Unreviewed, rolling out r224920.
+
+        Some Win EWS bots are not coming back up after starting reboot.
+
+        * EWSTools/start-queue-win.sh:
+
 2018-01-26  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         WebDriver: simplify the tests json report
