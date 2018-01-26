@@ -1,3 +1,27 @@
+2018-01-26  Mark Lam  <mark.lam@apple.com>
+
+        We should only append ParserArenaDeletable pointers to ParserArena::m_deletableObjects.
+        https://bugs.webkit.org/show_bug.cgi?id=182180
+        <rdar://problem/36460697>
+
+        Reviewed by Michael Saboff.
+
+        Some parser Node subclasses extend ParserArenaDeletable via multiple inheritance,
+        but not as the Node's first base class.  ParserArena::m_deletableObjects is
+        expecting pointers to objects of the shape of ParserArenaDeletable.  We ensure
+        this by allocating the Node subclass, and casting it to ParserArenaDeletable to
+        get the correct pointer to append to ParserArena::m_deletableObjects.
+
+        To simplify things, we introduce a JSC_MAKE_PARSER_ARENA_DELETABLE_ALLOCATED 
+        (analogous to WTF_MAKE_FAST_ALLOCATED) for use in Node subclasses that extends
+        ParserArenaDeletable.
+
+        * parser/NodeConstructors.h:
+        (JSC::ParserArenaDeletable::operator new):
+        * parser/Nodes.h:
+        * parser/ParserArena.h:
+        (JSC::ParserArena::allocateDeletable):
+
 2018-01-26  Joseph Pecoraro  <pecoraro@apple.com>
 
         JavaScriptCore builtins should be partially minified in Release builds not Debug builds
