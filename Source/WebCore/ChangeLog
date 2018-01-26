@@ -1,3 +1,18 @@
+2018-01-25  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Add InspectorShaderProgram to Unified Sources build
+        https://bugs.webkit.org/show_bug.cgi?id=182084
+
+        Reviewed by Dan Bernstein.
+
+        * CMakeLists.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * Sources.txt:
+        Move to Sources.txt always.
+
+        * inspector/InspectorShaderProgram.cpp:
+        Add ENABLE(WEBGL) guard to contents.
+
 2018-01-25  Ryosuke Niwa  <rniwa@webkit.org>
 
         Make scrolling to the focused element async

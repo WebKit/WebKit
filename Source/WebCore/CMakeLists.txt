@@ -1128,8 +1128,6 @@ if (ENABLE_ENCRYPTED_MEDIA)
         html/MediaEncryptedEvent.cpp
     )
     list(APPEND WebCore_IDL_FILES
-    )
-    list(APPEND WebCore_IDL_FILES
         Modules/encryptedmedia/MediaKeyMessageEvent.idl
         Modules/encryptedmedia/MediaKeySession.idl
         Modules/encryptedmedia/MediaKeySessionType.idl
@@ -1196,8 +1194,6 @@ if (ENABLE_WEBGL)
         html/canvas/WebGLVertexArrayObject.cpp
         html/canvas/WebGLVertexArrayObjectBase.cpp
         html/canvas/WebGLVertexArrayObjectOES.cpp
-
-        inspector/InspectorShaderProgram.cpp
     )
     list(APPEND WebCore_IDL_FILES
         html/canvas/ANGLEInstancedArrays.idl

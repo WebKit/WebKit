@@ -1155,6 +1155,7 @@ inspector/InspectorInstrumentation.cpp
 inspector/InspectorInstrumentationCookie.cpp
 inspector/InspectorNodeFinder.cpp
 inspector/InspectorOverlay.cpp
+inspector/InspectorShaderProgram.cpp
 inspector/InspectorStyleSheet.cpp
 inspector/InstrumentingAgents.cpp
 inspector/NetworkResourcesData.cpp
