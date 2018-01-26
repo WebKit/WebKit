@@ -1,3 +1,18 @@
+2018-01-26  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Update W3C WebDriver imported tests.
+
+        * imported/w3c/importer.json:
+        * imported/w3c/tools/wptrunner/wptrunner/executors/executormarionette.py:
+        * imported/w3c/tools/wptrunner/wptrunner/executors/pytestrunner/runner.py:
+        * imported/w3c/webdriver/tests/element_click/select.py:
+        * imported/w3c/webdriver/tests/interaction/element_clear.py:
+        * imported/w3c/webdriver/tests/sessions/new_session/support/create.py:
+        * imported/w3c/webdriver/tests/state/get_element_attribute.py:
+        * imported/w3c/webdriver/tests/state/get_element_property.py:
+        * imported/w3c/webdriver/tests/state/get_element_tag_name.py:
+        * imported/w3c/webdriver/tests/state/is_element_selected.py:
+
 2018-01-25  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         WebDriver: add support for slow tests

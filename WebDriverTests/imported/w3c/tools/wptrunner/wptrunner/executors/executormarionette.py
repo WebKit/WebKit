@@ -96,7 +96,7 @@ class MarionetteProtocol(Protocol):
     def teardown(self):
         try:
             self.marionette._request_in_app_shutdown()
-            self.marionette.delete_session(send_request=False, reset_session_id=True)
+            self.marionette.delete_session(send_request=False)
         except Exception:
             # This is typically because the session never started
             pass
