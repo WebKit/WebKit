@@ -1046,7 +1046,7 @@ void AssemblyHelpers::emitDynamicPoisonOnLoadedType(GPRReg base, GPRReg actualTy
     emitDynamicPoison(base, actualType);
 #else
     UNUSED_PARAM(base);
-    UNUSED_PARAM(actualValue);
+    UNUSED_PARAM(actualType);
     UNUSED_PARAM(expectedType);
 #endif
 }
