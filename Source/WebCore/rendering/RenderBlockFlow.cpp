@@ -127,11 +127,6 @@ RenderBlockFlow::~RenderBlockFlow()
     // Do not add any code here. Add it to willBeDestroyed() instead.
 }
 
-void RenderBlockFlow::insertedIntoTree()
-{
-    RenderBlock::insertedIntoTree();
-}
-
 void RenderBlockFlow::willBeDestroyed()
 {
     if (!renderTreeBeingDestroyed()) {
@@ -3142,11 +3137,6 @@ bool RenderBlockFlow::needsLayoutAfterFragmentRangeChange() const
         return false;
 
     return true;
-}
-
-void RenderBlockFlow::updateLogicalHeight()
-{
-    RenderBlock::updateLogicalHeight();
 }
 
 void RenderBlockFlow::setMultiColumnFlow(RenderMultiColumnFlow& fragmentedFlow)

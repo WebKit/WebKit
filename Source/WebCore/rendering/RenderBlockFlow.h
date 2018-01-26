@@ -59,7 +59,6 @@ public:
     void layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeight = 0) override;
 
 protected:
-    void insertedIntoTree() override;
     void willBeDestroyed() override;
     
     // This method is called at the start of layout to wipe away all of the floats in our floating objects list. It also
@@ -78,7 +77,6 @@ protected:
     LayoutUnit collapsedMarginAfter() const final { return maxPositiveMarginAfter() - maxNegativeMarginAfter(); }
 
     void dirtyLinesFromChangedChild(RenderObject& child) final { lineBoxes().dirtyLinesFromChangedChild(*this, child); }
-    void updateLogicalHeight() override;
 
     void paintColumnRules(PaintInfo&, const LayoutPoint&) override;
 
