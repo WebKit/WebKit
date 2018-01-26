@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -98,13 +98,15 @@ public:
     JSValue getIndexQuickly(uint32_t i) const
     {
         ASSERT_WITH_SECURITY_IMPLICATION(isMappedArgument(i));
-        return const_cast<DirectArguments*>(this)->storage()[i].get();
+        auto* ptr = &const_cast<DirectArguments*>(this)->storage()[i];
+        return preciseIndexMaskPtr(i, m_length, dynamicPoison(type(), DirectArgumentsType, ptr))->get();
     }
     
     void setIndexQuickly(VM& vm, uint32_t i, JSValue value)
     {
         ASSERT_WITH_SECURITY_IMPLICATION(isMappedArgument(i));
-        storage()[i].set(vm, this, value);
+        auto* ptr = &storage()[i];
+        preciseIndexMaskPtr(i, m_length, dynamicPoison(type(), DirectArgumentsType, ptr))->set(vm, this, value);
     }
     
     WriteBarrier<JSFunction>& callee()
@@ -116,7 +118,8 @@ public:
     {
         ASSERT(offset);
         ASSERT_WITH_SECURITY_IMPLICATION(offset.offset() < std::max(m_length, m_minCapacity));
-        return storage()[offset.offset()];
+        auto* ptr = &storage()[offset.offset()];
+        return *preciseIndexMaskPtr(offset.offset(), std::max(m_length, m_minCapacity), dynamicPoison(type(), DirectArgumentsType, ptr));
     }
     
     // Methods intended for use by the GenericArguments mixin.

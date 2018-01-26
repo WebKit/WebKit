@@ -1,3 +1,47 @@
+2018-01-24  Filip Pizlo  <fpizlo@apple.com>
+
+        DirectArguments should protect itself using dynamic poisoning and precise index masking
+        https://bugs.webkit.org/show_bug.cgi?id=182086
+
+        Reviewed by Saam Barati.
+        
+        This implements dynamic poisoning and precise index masking in DirectArguments, using the
+        helpers from <wtf/MathExtras.h> and helpers in AssemblyHelpers and FTL::LowerDFGToB3.
+        
+        We use dynamic poisoning for DirectArguments since this object did not have any additional
+        indirection inside it that could have been poisoned. So, we use the xor of the expected type
+        and the actual type as an additional input into the pointer.
+        
+        We use precise index masking for bounds checks, because it's not worth doing index masking
+        unless we know that precise index masking is too slow.
+
+        * assembler/MacroAssembler.h:
+        (JSC::MacroAssembler::lshiftPtr):
+        (JSC::MacroAssembler::rshiftPtr):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileGetByValOnDirectArguments):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetByVal):
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetMyArgumentByVal):
+        (JSC::FTL::DFG::LowerDFGToB3::preciseIndexMask64):
+        (JSC::FTL::DFG::LowerDFGToB3::preciseIndexMask32):
+        (JSC::FTL::DFG::LowerDFGToB3::dynamicPoison):
+        (JSC::FTL::DFG::LowerDFGToB3::dynamicPoisonOnLoadedType):
+        (JSC::FTL::DFG::LowerDFGToB3::dynamicPoisonOnType):
+        * jit/AssemblyHelpers.cpp:
+        (JSC::AssemblyHelpers::emitPreciseIndexMask32):
+        (JSC::AssemblyHelpers::emitDynamicPoison):
+        (JSC::AssemblyHelpers::emitDynamicPoisonOnLoadedType):
+        (JSC::AssemblyHelpers::emitDynamicPoisonOnType):
+        * jit/AssemblyHelpers.h:
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emitDirectArgumentsGetByVal):
+        * runtime/DirectArguments.h:
+        (JSC::DirectArguments::getIndexQuickly const):
+        (JSC::DirectArguments::setIndexQuickly):
+        (JSC::DirectArguments::argument):
+        * runtime/GenericArgumentsInlines.h:
+
 2018-01-25  Mark Lam  <mark.lam@apple.com>
 
         Rename some local vars from type to typedArrayType for greater clarity.

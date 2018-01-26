@@ -1392,21 +1392,26 @@ JIT::JumpList JIT::emitDirectArgumentsGetByVal(Instruction*, PatchableJump& badT
     RegisterID property = regT1;
     JSValueRegs result = JSValueRegs(regT0);
     RegisterID scratch = regT3;
+    RegisterID scratch2 = regT4;
 #else
     RegisterID base = regT0;
     RegisterID property = regT2;
     JSValueRegs result = JSValueRegs(regT1, regT0);
     RegisterID scratch = regT3;
+    RegisterID scratch2 = regT4;
 #endif
 
     load8(Address(base, JSCell::typeInfoTypeOffset()), scratch);
     badType = patchableBranch32(NotEqual, scratch, TrustedImm32(DirectArgumentsType));
+    emitDynamicPoisonOnLoadedType(base, scratch, DirectArgumentsType);
     
-    slowCases.append(branch32(AboveOrEqual, property, Address(base, DirectArguments::offsetOfLength())));
+    load32(Address(base, DirectArguments::offsetOfLength()), scratch2);
+    slowCases.append(branch32(AboveOrEqual, property, scratch2));
     slowCases.append(branchTestPtr(NonZero, Address(base, DirectArguments::offsetOfMappedArguments())));
     
-    zeroExtend32ToPtr(property, scratch);
-    loadValue(BaseIndex(base, scratch, TimesEight, DirectArguments::storageOffset()), result);
+    emitPreparePreciseIndexMask32(property, scratch2, scratch2);
+    loadValue(BaseIndex(base, property, TimesEight, DirectArguments::storageOffset()), result);
+    andPtr(scratch2, result.payloadGPR());
     
     return slowCases;
 }

@@ -1,3 +1,25 @@
+2018-01-24  Filip Pizlo  <fpizlo@apple.com>
+
+        DirectArguments should protect itself using dynamic poisoning and precise index masking
+        https://bugs.webkit.org/show_bug.cgi?id=182086
+
+        Reviewed by Saam Barati.
+        
+        Add helpers for:
+        
+        Dynamic poisoning: this means arranging to have the pointer you will dereference become an
+        invalid pointer if the type check you were relying on would have failed.
+        
+        Precise index masking: a variant of index masking that does not depend on distancing. I figured
+        I'd just try this first for DirectArguments, since I didn't think that arguments[i] was ever
+        hot enough to warrant anything better. Turns out that in all of the benchmarks that care about
+        arguments performance, we optimize things to the point that the index masking isn't on a hot
+        path anymore. Turns out, it's neutral!
+
+        * wtf/MathExtras.h:
+        (WTF::preciseIndexMask):
+        (WTF::dynamicPoison):
+
 2018-01-25  Jer Noble  <jer.noble@apple.com>
 
         Unreviewed build fix after r227631; make USE_VIDEOTOOLBOX universally enabled on iOS.

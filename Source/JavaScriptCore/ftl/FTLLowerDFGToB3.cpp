@@ -3779,7 +3779,8 @@ private:
                 ExoticObjectMode, noValue(), nullptr,
                 m_out.notNull(m_out.loadPtr(base, m_heaps.DirectArguments_mappedArguments)));
 
-            auto isOutOfBounds = m_out.aboveOrEqual(index, m_out.load32NonNegative(base, m_heaps.DirectArguments_length));
+            LValue length = m_out.load32NonNegative(base, m_heaps.DirectArguments_length);
+            auto isOutOfBounds = m_out.aboveOrEqual(index, length);
             if (m_node->arrayMode().isInBounds()) {
                 speculate(OutOfBounds, noValue(), nullptr, isOutOfBounds);
                 TypedPointer address = m_out.baseIndex(
@@ -3796,8 +3797,11 @@ private:
 
             LBasicBlock lastNext = m_out.appendTo(inBounds, slowCase);
             TypedPointer address = m_out.baseIndex(
-                m_heaps.DirectArguments_storage, base, m_out.zeroExtPtr(index));
-            ValueFromBlock fastResult = m_out.anchor(m_out.load64(address));
+                m_heaps.DirectArguments_storage,
+                dynamicPoisonOnType(base, DirectArgumentsType),
+                m_out.zeroExt(index, pointerType()));
+            ValueFromBlock fastResult = m_out.anchor(
+                preciseIndexMask32(m_out.load64(address), index, length));
             m_out.jump(continuation);
 
             m_out.appendTo(slowCase, continuation);
@@ -3974,7 +3978,7 @@ private:
     {
         InlineCallFrame* inlineCallFrame = m_node->child1()->origin.semantic.inlineCallFrame;
         
-        LValue index = lowInt32(m_node->child2());
+        LValue originalIndex = lowInt32(m_node->child2());
         
         LValue originalLimit;
         if (inlineCallFrame && !inlineCallFrame->isVarargs())
@@ -3989,7 +3993,7 @@ private:
         if (m_node->numberOfArgumentsToSkip())
             limit = m_out.sub(limit, m_out.constInt32(m_node->numberOfArgumentsToSkip()));
         
-        LValue isOutOfBounds = m_out.aboveOrEqual(index, limit);
+        LValue isOutOfBounds = m_out.aboveOrEqual(originalIndex, limit);
         LBasicBlock continuation = nullptr;
         LBasicBlock lastNext = nullptr;
         ValueFromBlock slowResult;
@@ -4004,19 +4008,11 @@ private:
         } else
             speculate(OutOfBounds, noValue(), 0, isOutOfBounds);
         
+        LValue index = originalIndex;
         if (m_node->numberOfArgumentsToSkip())
             index = m_out.add(index, m_out.constInt32(m_node->numberOfArgumentsToSkip()));
+        
         index = m_out.add(index, m_out.int32One);
-        
-        index = m_out.zeroExt(index, Int64);
-        
-        index = m_out.bitAnd(
-            index,
-            m_out.aShr(
-                m_out.sub(
-                    index,
-                    m_out.opaque(m_out.zeroExt(originalLimit, Int64))),
-                m_out.constInt32(63)));
         
         TypedPointer base;
         if (inlineCallFrame) {
@@ -4027,8 +4023,10 @@ private:
         
         LValue result;
         if (base) {
-            LValue pointer = m_out.baseIndex(base.value(), index, ScaleEight);
+            LValue pointer = m_out.baseIndex(
+                base.value(), m_out.zeroExt(index, pointerType()), ScaleEight);
             result = m_out.load64(TypedPointer(m_heaps.variables.atAnyIndex(), pointer));
+            result = preciseIndexMask32(result, originalIndex, limit);
         } else
             result = m_out.constInt64(JSValue::encode(jsUndefined()));
         
@@ -15110,6 +15108,48 @@ private:
         m_out.jump(continuation);
         
         m_out.appendTo(continuation, lastNext);
+    }
+    
+    LValue preciseIndexMask64(LValue value, LValue index, LValue limit)
+    {
+        return m_out.bitAnd(
+            value,
+            m_out.aShr(
+                m_out.sub(
+                    index,
+                    m_out.opaque(limit)),
+                m_out.constInt32(63)));
+    }
+    
+    LValue preciseIndexMask32(LValue value, LValue index, LValue limit)
+    {
+        return preciseIndexMask64(value, m_out.zeroExt(index, Int64), m_out.zeroExt(limit, Int64));
+    }
+    
+    LValue dynamicPoison(LValue value, LValue poison)
+    {
+        return m_out.add(
+            value,
+            m_out.shl(
+                m_out.zeroExt(poison, pointerType()),
+                m_out.constInt32(40)));
+    }
+    
+    LValue dynamicPoisonOnLoadedType(LValue value, LValue actualType, JSType expectedType)
+    {
+        return dynamicPoison(
+            value,
+            m_out.bitXor(
+                m_out.opaque(actualType),
+                m_out.constInt32(expectedType)));
+    }
+    
+    LValue dynamicPoisonOnType(LValue value, JSType expectedType)
+    {
+        return dynamicPoisonOnLoadedType(
+            value,
+            m_out.load8ZeroExt32(value, m_heaps.JSCell_typeInfoType),
+            expectedType);
     }
 
     template<typename... Args>
