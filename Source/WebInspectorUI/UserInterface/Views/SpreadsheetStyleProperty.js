@@ -25,7 +25,7 @@
 
 WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
 {
-    constructor(delegate, property, index)
+    constructor(delegate, property)
     {
         super();
 
@@ -34,7 +34,6 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
         this._delegate = delegate || null;
         this._property = property;
         this._element = document.createElement("div");
-        this._element.dataset.propertyIndex = index;
 
         this._contentElement = null;
         this._nameElement = null;
@@ -58,6 +57,11 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
     get nameTextField() { return this._nameTextField; }
     get valueTextField() { return this._valueTextField; }
     get enabled() { return this._property.enabled; }
+
+    set index(index)
+    {
+        this._element.dataset.propertyIndex = index;
+    }
 
     detached()
     {
