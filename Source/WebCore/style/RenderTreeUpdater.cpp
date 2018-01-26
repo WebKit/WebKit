@@ -547,6 +547,11 @@ void RenderTreeUpdater::tearDownRenderers(Element& root, TeardownType teardownTy
                 renderer->removeFromParentAndDestroyCleaningUpAnonymousWrappers();
                 element.setRenderer(nullptr);
             }
+
+            // Make sure we don't leave any renderers behind in nodes outside the composed tree.
+            if (element.shadowRoot())
+                tearDownLeftoverShadowHostChildren(element);
+
             if (element.hasCustomStyleResolveCallbacks())
                 element.didDetachRenderers();
         }
@@ -570,6 +575,29 @@ void RenderTreeUpdater::tearDownRenderers(Element& root, TeardownType teardownTy
 }
 
 void RenderTreeUpdater::tearDownRenderer(Text& text)
+{
+    auto* renderer = text.renderer();
+    if (!renderer)
+        return;
+    renderer->removeFromParentAndDestroyCleaningUpAnonymousWrappers();
+    text.setRenderer(nullptr);
+}
+
+void RenderTreeUpdater::tearDownLeftoverShadowHostChildren(Element& host)
+{
+    for (auto* hostChild = host.firstChild(); hostChild; hostChild = hostChild->nextSibling()) {
+        if (!hostChild->renderer())
+            continue;
+        if (is<Text>(*hostChild)) {
+            tearDownTextRenderer(downcast<Text>(*hostChild));
+            continue;
+        }
+        if (is<Element>(*hostChild))
+            tearDownRenderers(downcast<Element>(*hostChild), TeardownType::Full);
+    }
+}
+
+void RenderTreeUpdater::tearDownTextRenderer(Text& text)
 {
     auto* renderer = text.renderer();
     if (!renderer)

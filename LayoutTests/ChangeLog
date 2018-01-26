@@ -1,3 +1,20 @@
+2018-01-26  Jason Marcell  <jmarcell@apple.com>
+
+        Cherry-pick r227570. rdar://problem/36873398
+
+    2018-01-24  Antti Koivisto  <antti@apple.com>
+
+            Assertion failure in RenderMultiColumnSet::requiresBalancing() on fast/multicol/spanner-crash-when-adding-summary.html
+            https://bugs.webkit.org/show_bug.cgi?id=179308
+            <rdar://problem/34592771>
+
+            Reviewed by Zalan Bujtas.
+
+            Unskip fast/multicol/spanner-crash-when-adding-summary.html
+
+            * platform/ios/TestExpectations:
+            * platform/mac/TestExpectations:
+
 2018-01-26  Ryan Haddad  <ryanhaddad@apple.com>
 
         Cherry-pick r227426. rdar://problem/36837397

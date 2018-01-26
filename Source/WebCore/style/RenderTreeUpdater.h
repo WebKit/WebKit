@@ -89,6 +89,8 @@ private:
 
     enum class TeardownType { Full, RendererUpdate, RendererUpdateCancelingAnimations };
     static void tearDownRenderers(Element&, TeardownType);
+    static void tearDownTextRenderer(Text&);
+    static void tearDownLeftoverShadowHostChildren(Element&);
 
     RenderView& renderView();
 
