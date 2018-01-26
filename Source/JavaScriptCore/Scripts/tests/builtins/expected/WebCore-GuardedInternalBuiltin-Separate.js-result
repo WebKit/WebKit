@@ -206,12 +206,13 @@ inline void GuardedInternalBuiltinBuiltinFunctions::visit(JSC::SlotVisitor& visi
 namespace WebCore {
 
 const JSC::ConstructAbility s_guardedInternalBuiltinIsReadableStreamLockedCodeConstructAbility = JSC::ConstructAbility::CannotConstruct;
-const int s_guardedInternalBuiltinIsReadableStreamLockedCodeLength = 70;
+const int s_guardedInternalBuiltinIsReadableStreamLockedCodeLength = 71;
 static const JSC::Intrinsic s_guardedInternalBuiltinIsReadableStreamLockedCodeIntrinsic = JSC::NoIntrinsic;
 const char* s_guardedInternalBuiltinIsReadableStreamLockedCode =
     "(function (stream)\n" \
     "{\n" \
     "   \"use strict\";\n" \
+    "\n" \
     "    return !!stream.@reader;\n" \
     "})\n" \
 ;

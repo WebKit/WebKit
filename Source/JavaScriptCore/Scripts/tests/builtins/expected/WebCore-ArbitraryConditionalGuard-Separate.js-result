@@ -174,12 +174,13 @@ inline void ArbitraryConditionalGuardBuiltinsWrapper::exportNames()
 namespace WebCore {
 
 const JSC::ConstructAbility s_arbitraryConditionalGuardIsReadableStreamLockedCodeConstructAbility = JSC::ConstructAbility::CannotConstruct;
-const int s_arbitraryConditionalGuardIsReadableStreamLockedCodeLength = 70;
+const int s_arbitraryConditionalGuardIsReadableStreamLockedCodeLength = 71;
 static const JSC::Intrinsic s_arbitraryConditionalGuardIsReadableStreamLockedCodeIntrinsic = JSC::NoIntrinsic;
 const char* s_arbitraryConditionalGuardIsReadableStreamLockedCode =
     "(function (stream)\n" \
     "{\n" \
     "   \"use strict\";\n" \
+    "\n" \
     "    return !!stream.@reader;\n" \
     "})\n" \
 ;

@@ -128,12 +128,13 @@ JSC_FOREACH_BUILTIN_CODE(DECLARE_BUILTIN_GENERATOR)
 namespace JSC {
 
 const JSC::ConstructAbility s_builtinPrototypeEveryCodeConstructAbility = JSC::ConstructAbility::CannotConstruct;
-const int s_builtinPrototypeEveryCodeLength = 760;
+const int s_builtinPrototypeEveryCodeLength = 762;
 static const JSC::Intrinsic s_builtinPrototypeEveryCodeIntrinsic = JSC::NoIntrinsic;
 const char* s_builtinPrototypeEveryCode =
     "(function (callback )\n" \
     "{\n" \
     "    \"use strict\";\n" \
+    "\n" \
     "    if (this === null)\n" \
     "        throw new @TypeError(\"Array.prototype.every requires that |this| not be null\");\n" \
     "    \n" \
@@ -142,6 +143,7 @@ const char* s_builtinPrototypeEveryCode =
     "    \n" \
     "    var array = @Object(this);\n" \
     "    var length = @toLength(array.length);\n" \
+    "\n" \
     "    if (typeof callback !== \"function\")\n" \
     "        throw new @TypeError(\"Array.prototype.every callback must be a function\");\n" \
     "    \n" \
@@ -159,12 +161,13 @@ const char* s_builtinPrototypeEveryCode =
 ;
 
 const JSC::ConstructAbility s_builtinPrototypeForEachCodeConstructAbility = JSC::ConstructAbility::CannotConstruct;
-const int s_builtinPrototypeForEachCodeLength = 692;
+const int s_builtinPrototypeForEachCodeLength = 694;
 static const JSC::Intrinsic s_builtinPrototypeForEachCodeIntrinsic = JSC::NoIntrinsic;
 const char* s_builtinPrototypeForEachCode =
     "(function (callback )\n" \
     "{\n" \
     "    \"use strict\";\n" \
+    "\n" \
     "    if (this === null)\n" \
     "        throw new @TypeError(\"Array.prototype.forEach requires that |this| not be null\");\n" \
     "    \n" \
@@ -173,6 +176,7 @@ const char* s_builtinPrototypeForEachCode =
     "    \n" \
     "    var array = @Object(this);\n" \
     "    var length = @toLength(array.length);\n" \
+    "\n" \
     "    if (typeof callback !== \"function\")\n" \
     "        throw new @TypeError(\"Array.prototype.forEach callback must be a function\");\n" \
     "    \n" \
@@ -186,25 +190,36 @@ const char* s_builtinPrototypeForEachCode =
 ;
 
 const JSC::ConstructAbility s_builtinPrototypeMatchCodeConstructAbility = JSC::ConstructAbility::CannotConstruct;
-const int s_builtinPrototypeMatchCodeLength = 1198;
+const int s_builtinPrototypeMatchCodeLength = 1238;
 static const JSC::Intrinsic s_builtinPrototypeMatchCodeIntrinsic = JSC::NoIntrinsic;
 const char* s_builtinPrototypeMatchCode =
     "(function (strArg)\n" \
     "{\n" \
     "    \"use strict\";\n" \
+    "\n" \
     "    if (!@isObject(this))\n" \
     "        @throwTypeError(\"RegExp.prototype.@@match requires that |this| be an Object\");\n" \
+    "\n" \
     "    let regexp = this;\n" \
+    "\n" \
+    "    //\n" \
     "    if (!@hasObservableSideEffectsForRegExpMatch(regexp))\n" \
     "        return @regExpMatchFast.@call(regexp, strArg);\n" \
+    "\n" \
     "    let str = @toString(strArg);\n" \
+    "\n" \
     "    if (!regexp.global)\n" \
     "        return @regExpExec(regexp, str);\n" \
     "    \n" \
     "    let unicode = regexp.unicode;\n" \
     "    regexp.lastIndex = 0;\n" \
     "    let resultList = [];\n" \
+    "\n" \
+    "    //\n" \
+    "    //\n" \
+    "    //\n" \
     "    const maximumReasonableMatchSize = 100000000;\n" \
+    "\n" \
     "    while (true) {\n" \
     "        let result = @regExpExec(regexp, str);\n" \
     "        \n" \
@@ -213,32 +228,49 @@ const char* s_builtinPrototypeMatchCode =
     "                return null;\n" \
     "            return resultList;\n" \
     "        }\n" \
+    "\n" \
     "        if (resultList.length > maximumReasonableMatchSize)\n" \
     "            @throwOutOfMemoryError();\n" \
+    "\n" \
     "        if (!@isObject(result))\n" \
     "            @throwTypeError(\"RegExp.prototype.@@match call to RegExp.exec didn't return null or an object\");\n" \
+    "\n" \
     "        let resultString = @toString(result[0]);\n" \
+    "\n" \
     "        if (!resultString.length)\n" \
     "            regexp.lastIndex = @advanceStringIndex(str, regexp.lastIndex, unicode);\n" \
+    "\n" \
     "        resultList.@push(resultString);\n" \
     "    }\n" \
     "})\n" \
 ;
 
 const JSC::ConstructAbility s_builtinPrototypeTestCodeConstructAbility = JSC::ConstructAbility::CannotConstruct;
-const int s_builtinPrototypeTestCodeLength = 456;
+const int s_builtinPrototypeTestCodeLength = 504;
 static const JSC::Intrinsic s_builtinPrototypeTestCodeIntrinsic = JSC::RegExpTestIntrinsic;
 const char* s_builtinPrototypeTestCode =
     "(function (strArg)\n" \
     "{\n" \
     "    \"use strict\";\n" \
+    "\n" \
     "    let regexp = this;\n" \
+    "\n" \
+    "    //\n" \
     "    if (@isRegExpObject(regexp) && @tryGetById(regexp, \"exec\") === @regExpBuiltinExec)\n" \
     "        return @regExpTestFast.@call(regexp, strArg);\n" \
+    "\n" \
+    "    //\n" \
+    "    //\n" \
     "    if (!@isObject(regexp))\n" \
     "        @throwTypeError(\"RegExp.prototype.test requires that |this| be an Object\");\n" \
+    "\n" \
+    "    //\n" \
     "    let str = @toString(strArg);\n" \
+    "\n" \
+    "    //\n" \
     "    let match = @regExpExec(regexp, str);\n" \
+    "\n" \
+    "    //\n" \
     "    if (match !== null)\n" \
     "        return true;\n" \
     "    return false;\n" \

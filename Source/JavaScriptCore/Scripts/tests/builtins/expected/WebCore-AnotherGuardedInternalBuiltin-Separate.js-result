@@ -204,12 +204,13 @@ inline void AnotherGuardedInternalBuiltinBuiltinFunctions::visit(JSC::SlotVisito
 namespace WebCore {
 
 const JSC::ConstructAbility s_anotherGuardedInternalBuiltinLetsFetchCodeConstructAbility = JSC::ConstructAbility::CannotConstruct;
-const int s_anotherGuardedInternalBuiltinLetsFetchCodeLength = 82;
+const int s_anotherGuardedInternalBuiltinLetsFetchCodeLength = 83;
 static const JSC::Intrinsic s_anotherGuardedInternalBuiltinLetsFetchCodeIntrinsic = JSC::NoIntrinsic;
 const char* s_anotherGuardedInternalBuiltinLetsFetchCode =
     "(function ()\n" \
     "{\n" \
     "   \"use strict\";\n" \
+    "\n" \
     "    return @fetchRequest(new @Request(\"yes\"));\n" \
     "})\n" \
 ;

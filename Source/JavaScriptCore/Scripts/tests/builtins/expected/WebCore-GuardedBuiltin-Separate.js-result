@@ -174,12 +174,13 @@ inline void GuardedBuiltinBuiltinsWrapper::exportNames()
 namespace WebCore {
 
 const JSC::ConstructAbility s_guardedBuiltinIsReadableStreamLockedCodeConstructAbility = JSC::ConstructAbility::CannotConstruct;
-const int s_guardedBuiltinIsReadableStreamLockedCodeLength = 70;
+const int s_guardedBuiltinIsReadableStreamLockedCodeLength = 71;
 static const JSC::Intrinsic s_guardedBuiltinIsReadableStreamLockedCodeIntrinsic = JSC::NoIntrinsic;
 const char* s_guardedBuiltinIsReadableStreamLockedCode =
     "(function (stream)\n" \
     "{\n" \
     "   \"use strict\";\n" \
+    "\n" \
     "    return !!stream.@reader;\n" \
     "})\n" \
 ;

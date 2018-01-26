@@ -115,23 +115,25 @@ JSC_FOREACH_BUILTIN_CODE(DECLARE_BUILTIN_GENERATOR)
 namespace JSC {
 
 const JSC::ConstructAbility s_internalClashingNamesIsReadableStreamLockedCodeConstructAbility = JSC::ConstructAbility::CannotConstruct;
-const int s_internalClashingNamesIsReadableStreamLockedCodeLength = 70;
+const int s_internalClashingNamesIsReadableStreamLockedCodeLength = 71;
 static const JSC::Intrinsic s_internalClashingNamesIsReadableStreamLockedCodeIntrinsic = JSC::NoIntrinsic;
 const char* s_internalClashingNamesIsReadableStreamLockedCode =
     "(function (stream)\n" \
     "{\n" \
     "   \"use strict\";\n" \
+    "\n" \
     "    return !!stream.@reader;\n" \
     "})\n" \
 ;
 
 const JSC::ConstructAbility s_internalClashingNamesIsReadableStreamLockedCodeConstructAbility = JSC::ConstructAbility::CannotConstruct;
-const int s_internalClashingNamesIsReadableStreamLockedCodeLength = 70;
+const int s_internalClashingNamesIsReadableStreamLockedCodeLength = 71;
 static const JSC::Intrinsic s_internalClashingNamesIsReadableStreamLockedCodeIntrinsic = JSC::NoIntrinsic;
 const char* s_internalClashingNamesIsReadableStreamLockedCode =
     "(function (stream)\n" \
     "{\n" \
     "   \"use strict\";\n" \
+    "\n" \
     "    return !!stream.@reader;\n" \
     "})\n" \
 ;
