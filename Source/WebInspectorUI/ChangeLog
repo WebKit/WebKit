@@ -1,5 +1,24 @@
 2018-01-25  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Network - Cookies view should behave better at narrow widths, all data is hidden
+        https://bugs.webkit.org/show_bug.cgi?id=182163
+        <rdar://problem/36893241>
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Views/ResourceCookiesContentView.css:
+        (.resource-cookies .table):
+        Give these tables a reasonable minimum size so that if the inspector
+        is narrow, the content view can still be scrolled to see all of
+        the table data.
+
+        * UserInterface/Views/Table.css:
+        (.table > .header):
+        Match the data-container and mark overflow as hidden, otherwise
+        super narrow widths show header content beyond the edge.
+
+2018-01-25  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: "Displayed Columns" should not be displayed in context menu if all columns are required columns
         https://bugs.webkit.org/show_bug.cgi?id=182162
         <rdar://problem/36893758>
