@@ -494,7 +494,9 @@ constexpr unsigned preciseIndexMaskShift()
 template<typename T>
 T opaque(T pointer)
 {
+#if !OS(WINDOWS)
     asm("" : "+r"(pointer));
+#endif
     return pointer;
 }
 
