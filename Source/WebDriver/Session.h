@@ -62,7 +62,7 @@ public:
         std::optional<String> domain;
         std::optional<bool> secure;
         std::optional<bool> httpOnly;
-        std::optional<unsigned> expiry;
+        std::optional<uint64_t> expiry;
     };
 
     void waitForNavigationToComplete(Function<void (CommandResult&&)>&&);

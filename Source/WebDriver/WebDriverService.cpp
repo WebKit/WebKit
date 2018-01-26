@@ -34,6 +34,9 @@
 
 namespace WebDriver {
 
+// https://w3c.github.io/webdriver/webdriver-spec.html#dfn-maximum-safe-integer
+static const double maxSafeInteger = 9007199254740991.0; // 2 ^ 53 - 1
+
 WebDriverService::WebDriverService()
     : m_server(*this)
 {
@@ -272,20 +275,35 @@ void WebDriverService::sendResponse(Function<void (HTTPRequestHandler::Response&
     replyHandler({ result.httpStatusCode(), responseObject->toJSONString().utf8(), ASCIILiteral("application/json; charset=utf-8") });
 }
 
-static bool integerValue(JSON::Value& value, int& output)
+static std::optional<double> valueAsNumberInRange(const JSON::Value& value, double minAllowed = 0, double maxAllowed = std::numeric_limits<int>::max())
 {
-    // Bail if an integer value cannot be retrieved.
-    if (!value.asInteger(output))
-        return false;
+    double number;
+    if (!value.asDouble(number))
+        return std::nullopt;
 
+    if (std::isnan(number) || std::isinf(number))
+        return std::nullopt;
+
+    if (number < minAllowed || number > maxAllowed)
+        return std::nullopt;
+
+    return number;
+}
+
+static std::optional<uint64_t> unsignedValue(JSON::Value& value)
+{
+    auto number = valueAsNumberInRange(value, 0, maxSafeInteger);
+    if (!number)
+        return std::nullopt;
+
+    auto intValue = static_cast<uint64_t>(number.value());
     // If the contained value is a double, bail in case it doesn't match the integer
     // value, i.e. if the double value was not originally in integer form.
     // https://w3c.github.io/webdriver/webdriver-spec.html#dfn-integer
-    double doubleValue;
-    if (value.asDouble(doubleValue) && doubleValue != output)
-        return false;
+    if (number.value() != intValue)
+        return std::nullopt;
 
-    return true;
+    return intValue;
 }
 
 static std::optional<Timeouts> deserializeTimeouts(JSON::Object& timeoutsObject)
@@ -298,16 +316,17 @@ static std::optional<Timeouts> deserializeTimeouts(JSON::Object& timeoutsObject)
         if (it->key == "sessionId")
             continue;
 
-        int timeoutMS;
-        if (!integerValue(*it->value, timeoutMS) || timeoutMS < 0 || timeoutMS > INT_MAX)
+        // If value is not an integer, or it is less than 0 or greater than the maximum safe integer, return error with error code invalid argument.
+        auto timeoutMS = unsignedValue(*it->value);
+        if (!timeoutMS)
             return std::nullopt;
 
         if (it->key == "script")
-            timeouts.script = Seconds::fromMilliseconds(timeoutMS);
+            timeouts.script = Seconds::fromMilliseconds(timeoutMS.value());
         else if (it->key == "pageLoad")
-            timeouts.pageLoad = Seconds::fromMilliseconds(timeoutMS);
+            timeouts.pageLoad = Seconds::fromMilliseconds(timeoutMS.value());
         else if (it->key == "implicit")
-            timeouts.implicit = Seconds::fromMilliseconds(timeoutMS);
+            timeouts.implicit = Seconds::fromMilliseconds(timeoutMS.value());
         else
             return std::nullopt;
     }
@@ -891,21 +910,6 @@ void WebDriverService::getWindowRect(RefPtr<JSON::Object>&& parameters, Function
     // https://w3c.github.io/webdriver/webdriver-spec.html#get-window-rect
     if (findSessionOrCompleteWithError(*parameters, completionHandler))
         m_session->getWindowRect(WTFMove(completionHandler));
-}
-
-static std::optional<double> valueAsNumberInRange(const JSON::Value& value, double minAllowed = 0, double maxAllowed = INT_MAX)
-{
-    double number;
-    if (!value.asDouble(number))
-        return std::nullopt;
-
-    if (std::isnan(number) || std::isinf(number))
-        return std::nullopt;
-
-    if (number < minAllowed || number > maxAllowed)
-        return std::nullopt;
-
-    return number;
 }
 
 void WebDriverService::setWindowRect(RefPtr<JSON::Object>&& parameters, Function<void (CommandResult&&)>&& completionHandler)
@@ -1504,11 +1508,10 @@ static std::optional<Session::Cookie> deserializeCookie(JSON::Object& cookieObje
         cookie.httpOnly = httpOnly;
     }
     if (cookieObject.getValue(ASCIILiteral("expiry"), value)) {
-        int expiry;
-        if (!value->asInteger(expiry) || expiry < 0 || expiry > INT_MAX)
+        auto expiry = unsignedValue(*value);
+        if (!expiry)
             return std::nullopt;
-
-        cookie.expiry = static_cast<unsigned>(expiry);
+        cookie.expiry = expiry.value();
     }
 
     return cookie;

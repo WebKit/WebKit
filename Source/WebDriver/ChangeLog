@@ -1,3 +1,24 @@
+2018-01-26  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        WebDriver: timeouts value and cookie expiry should be limited to max safe integer
+        https://bugs.webkit.org/show_bug.cgi?id=182167
+
+        Reviewed by Žan Doberšek.
+
+        This changed recently in the spec, but our implementation was wrong in any case since we were limiting to
+        INT_MAX. Use valueAsNumberInRange() to ensure we get a valid double value in the given range, and then convert
+        to unsigned if it's a valid integer.
+
+        Fixes: imported/w3c/webdriver/tests/sessions/new_session/create_firstMatch.py::test_valid[timeouts-value10]
+               imported/w3c/webdriver/tests/sessions/new_session/create_alwaysMatch.py::test_valid[timeouts-value10]
+
+        * Session.h:
+        * WebDriverService.cpp:
+        (WebDriver::valueAsNumberInRange):
+        (WebDriver::unsignedValue):
+        (WebDriver::deserializeTimeouts):
+        (WebDriver::deserializeCookie):
+
 2018-01-25  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         WebDriver: test imported/w3c/webdriver/tests/sessions/new_session/merge.py::test_merge_browserName fails
