@@ -107,12 +107,24 @@ void PDFDocumentImage::setPdfImageCachingPolicy(PDFImageCachingPolicy pdfImageCa
 
 bool PDFDocumentImage::cacheParametersMatch(GraphicsContext& context, const FloatRect& dstRect, const FloatRect& srcRect) const
 {
-    if (dstRect.size() != m_cachedDestinationSize)
-        return false;
-
+    // Old and new source rectangles have to match.
     if (srcRect != m_cachedSourceRect)
         return false;
 
+    // Old and new scaling factors "dest / src" have to match.
+    if (dstRect.size() != m_cachedDestinationRect.size())
+        return false;
+
+    // m_cachedImageRect can be moved if srcRect and dstRect.size() did not change.
+    FloatRect movedCachedImageRect = m_cachedImageRect;
+    movedCachedImageRect.move(FloatSize(dstRect.location() - m_cachedDestinationRect.location()));
+
+    // movedCachedImageRect has to contain the whole dirty rectangle.
+    FloatRect dirtyRect = intersection(context.clipBounds(), dstRect);
+    if (!movedCachedImageRect.contains(dirtyRect))
+        return false;
+
+    // Old and new context scaling factors have to match as well.
     AffineTransform::DecomposedType decomposedTransform;
     context.getCTM(GraphicsContext::DefinitelyIncludeDeviceScale).decompose(decomposedTransform);
 
@@ -187,19 +199,14 @@ void PDFDocumentImage::decodedSizeChanged(size_t newCachedBytes)
 
 void PDFDocumentImage::updateCachedImageIfNeeded(GraphicsContext& context, const FloatRect& dstRect, const FloatRect& srcRect)
 {
-#if PLATFORM(IOS)
-    // On iOS, some clients use low-quality image interpolation always, which throws off this optimization,
-    // as we never get the subsequent high-quality paint. Since live resize is rare on iOS, disable the optimization.
-    // FIXME (136593): It's also possible to do the wrong thing here if CSS specifies low-quality interpolation via the "image-rendering"
-    // property, on all platforms. We should only do this optimization if we're actually in a ImageQualityController live resize,
-    // and are guaranteed to do a high-quality paint later.
-    bool repaintIfNecessary = true;
-#else
-    // If we have an existing image, reuse it if we're doing a low-quality paint, even if cache parameters don't match;
-    // we'll rerender when we do the subsequent high-quality paint.
-    InterpolationQuality interpolationQuality = context.imageInterpolationQuality();
-    bool repaintIfNecessary = interpolationQuality != InterpolationNone && interpolationQuality != InterpolationLow;
-#endif
+    // Clipped option is for testing only. Force re-caching the PDF with each draw.
+    bool forceUpdateCachedImage = m_pdfImageCachingPolicy == PDFImageCachingClipBoundsOnly || !m_cachedImageBuffer;
+    if (!forceUpdateCachedImage && cacheParametersMatch(context, dstRect, srcRect)) {
+        // Adjust the view-port rectangles if no re-caching will happen.
+        m_cachedImageRect.move(FloatSize(dstRect.location() - m_cachedDestinationRect.location()));
+        m_cachedDestinationRect = dstRect;
+        return;
+    }
 
     switch (m_pdfImageCachingPolicy) {
     case PDFImageCachingDisabled:
@@ -210,17 +217,11 @@ void PDFDocumentImage::updateCachedImageIfNeeded(GraphicsContext& context, const
         m_cachedImageRect = cachedImageRect(context, dstRect);
         break;
     case PDFImageCachingClipBoundsOnly:
-        m_cachedImageRect = context.clipBounds();
+        m_cachedImageRect = intersection(context.clipBounds(), dstRect);
         break;
     case PDFImageCachingEnabled:
         m_cachedImageRect = dstRect;
         break;
-    }
-
-    // Clipped option is for testing only. Force recaching the PDF with each draw.
-    if (m_pdfImageCachingPolicy != PDFImageCachingClipBoundsOnly) {
-        if (m_cachedImageBuffer && (!repaintIfNecessary || cacheParametersMatch(context, dstRect, srcRect)))
-            return;
     }
 
     FloatSize cachedImageSize = FloatRect(enclosingIntRect(m_cachedImageRect)).size();
@@ -248,8 +249,9 @@ void PDFDocumentImage::updateCachedImageIfNeeded(GraphicsContext& context, const
     drawPDFPage(bufferContext);
 
     m_cachedTransform = context.getCTM(GraphicsContext::DefinitelyIncludeDeviceScale);
-    m_cachedDestinationSize = dstRect.size();
+    m_cachedDestinationRect = dstRect;
     m_cachedSourceRect = srcRect;
+    ++m_cachingCountForTesting;
 
     IntSize internalSize = m_cachedImageBuffer->internalSize();
     decodedSizeChanged(internalSize.unclampedArea() * 4);

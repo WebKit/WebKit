@@ -139,6 +139,7 @@ public:
     bool isImageAnimating(HTMLImageElement&);
     void setClearDecoderAfterAsyncFrameRequestForTesting(HTMLImageElement&, bool enabled);
     unsigned imageDecodeCount(HTMLImageElement&);
+    unsigned pdfDocumentCachingCount(HTMLImageElement&);
     void setLargeImageAsyncDecodingEnabledForTesting(HTMLImageElement&, bool enabled);
 
     void setGridMaxTracksLimit(unsigned);

@@ -1,3 +1,41 @@
+2018-01-25  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        REGRESSION(r217236): [iOS] PDFDocumentImage does not update its cached ImageBuffer if it has a sub-rectangle of the image
+        https://bugs.webkit.org/show_bug.cgi?id=182083
+
+        Reviewed by Simon Fraser.
+
+        Test: fast/images/pdf-as-image-dest-rect-change.html
+
+        Revert the change r217236 back. Fix the issue of throwing out the cached
+        ImageBuffer of the PDF document image when moving its rectangle.
+
+        * platform/graphics/cg/PDFDocumentImage.cpp:
+        (WebCore::PDFDocumentImage::cacheParametersMatch): Return the if-statement
+        which was deleted in r217236 back but intersect it with dstRect. The context
+        clipping rectangle can be more than the dstRect.
+        (WebCore::PDFDocumentImage::updateCachedImageIfNeeded):
+        -- Remove a wrong optimization which used to work for Mac only if the context
+           interpolation quality is not set to low or none quality. This optimization
+           does not consider the case when srcRect or destRect change after caching
+           the ImageBuffer. Or even if m_cachedImageRect does not include the
+           whole clipping rectangle.
+        -- Move back the call to cacheParametersMatch() before changing the
+           m_cachedImageRect.
+        -- Always intersect the clipping rectangle with the dstRect to ensure we
+           only look at the dirty rectangle inside the image boundary.
+        -- If cacheParametersMatch() returns true, set m_cachedDestinationRect to
+           dstRect and move m_cachedImageRect by the difference between the new
+           and the old dstRects since no re-caching will happen.
+        * platform/graphics/cg/PDFDocumentImage.h:
+        * testing/Internals.cpp:
+        (WebCore::pdfDocumentImageFromImageElement):
+        (WebCore::Internals::pdfDocumentCachingCount):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+        Add an internal API which returns the number of drawing the PDF into an
+        ImageBuffer.
+
 2018-01-25  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Remove unnecessary developerExtrasEnabled checks

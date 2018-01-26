@@ -111,6 +111,7 @@ fast/attachment/attachment-borderless.html [ Skip ]
 editing/selection/character-granularity-selected-range-after-dismissing-selection.html [ Skip ]
 editing/selection/character-granularity-select-text-with-click-handler.html [ Skip ]
 editing/selection/caret-after-tap-in-editable-selection.html [ Skip ]
+fast/images/pdf-as-image-dest-rect-change.html [ Skip ]
 
 # Only iOS has selection UI drawn by UIKit
 editing/selection/character-granularity-rect.html [ Skip ]

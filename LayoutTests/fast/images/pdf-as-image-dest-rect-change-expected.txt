@@ -1,0 +1,10 @@
+Test the cached ImageBuffer of a PDF docoument image won't be thrown away if the image moves.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS internals.pdfDocumentCachingCount(window.image) is 1
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

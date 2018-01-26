@@ -104,6 +104,9 @@
 #include "MockLibWebRTCPeerConnection.h"
 #include "MockPageOverlay.h"
 #include "MockPageOverlayClient.h"
+#if USE(CG)
+#include "PDFDocumentImage.h"
+#endif
 #include "Page.h"
 #include "PageCache.h"
 #include "PageOverlay.h"
@@ -773,6 +776,14 @@ static BitmapImage* bitmapImageFromImageElement(HTMLImageElement& element)
     return image && is<BitmapImage>(image) ? &downcast<BitmapImage>(*image) : nullptr;
 }
 
+#if USE(CG)
+static PDFDocumentImage* pdfDocumentImageFromImageElement(HTMLImageElement& element)
+{
+    auto* image = imageFromImageElement(element);
+    return image && is<PDFDocumentImage>(image) ? &downcast<PDFDocumentImage>(*image) : nullptr;
+}
+#endif
+
 unsigned Internals::imageFrameIndex(HTMLImageElement& element)
 {
     auto* bitmapImage = bitmapImageFromImageElement(element);
@@ -807,6 +818,17 @@ unsigned Internals::imageDecodeCount(HTMLImageElement& element)
 {
     auto* bitmapImage = bitmapImageFromImageElement(element);
     return bitmapImage ? bitmapImage->decodeCountForTesting() : 0;
+}
+
+unsigned Internals::pdfDocumentCachingCount(HTMLImageElement& element)
+{
+#if USE(CG)
+    auto* pdfDocumentImage = pdfDocumentImageFromImageElement(element);
+    return pdfDocumentImage ? pdfDocumentImage->cachingCountForTesting() : 0;
+#else
+    UNUSED_PARAM(element);
+    return 0;
+#endif
 }
 
 void Internals::setLargeImageAsyncDecodingEnabledForTesting(HTMLImageElement& element, bool enabled)

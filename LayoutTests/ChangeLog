@@ -1,3 +1,18 @@
+2018-01-25  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        REGRESSION(r217236): [iOS] PDFDocumentImage does not update its cached ImageBuffer if it has a sub-rectangle of the image
+        https://bugs.webkit.org/show_bug.cgi?id=182083
+
+        Reviewed by Simon Fraser.
+
+        PDFDocumentImage renders only on CG platforms. Enable the new test for
+        iOS only.
+
+        * TestExpectations:
+        * fast/images/pdf-as-image-dest-rect-change-expected.txt: Added.
+        * fast/images/pdf-as-image-dest-rect-change.html: Added.
+        * platform/ios/TestExpectations:
+
 2018-01-25  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/errorhandling.html crashes
