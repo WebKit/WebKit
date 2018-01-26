@@ -1,3 +1,25 @@
+2018-01-25  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] [WK2] Introduce new views and view controllers to support extra-zoomed text form controls
+        https://bugs.webkit.org/show_bug.cgi?id=182000
+        <rdar://problem/35143035>
+
+        Reviewed by Tim Horton.
+
+        Add new files to support text form control editing while extra-zoomed.
+
+        * UIProcess/ios/forms/WKFocusedFormControlView.h: Added.
+        * UIProcess/ios/forms/WKFocusedFormControlView.mm: Added.
+        * UIProcess/ios/forms/WKFocusedFormControlViewController.h: Added.
+        * UIProcess/ios/forms/WKFocusedFormControlViewController.mm: Added.
+        * UIProcess/ios/forms/WKTextFormControlViewController.h: Added.
+        * UIProcess/ios/forms/WKTextFormControlViewController.mm: Added.
+        * UIProcess/ios/forms/WKTextInputViewController.h: Added.
+        * UIProcess/ios/forms/WKTextInputViewController.mm: Added.
+        * UIProcess/ios/forms/WKTextSuggestionButton.h: Added.
+        * UIProcess/ios/forms/WKTextSuggestionButton.mm: Added.
+        * WebKit.xcodeproj/project.pbxproj:
+
 2018-01-25  Chris Dumez  <cdumez@apple.com>
 
         Clients.get(id) should only returns clients in the service worker's origin
