@@ -722,7 +722,7 @@ static bool prefersReducedMotionEvaluate(CSSValue* value, const CSSToLengthConve
     case Settings::ForcedAccessibilityValue::Off:
         break;
     case Settings::ForcedAccessibilityValue::System:
-#if USE(NEW_THEME)
+#if USE(NEW_THEME) || PLATFORM(IOS)
         userPrefersReducedMotion = Theme::singleton().userPrefersReducedMotion();
 #endif
         break;
