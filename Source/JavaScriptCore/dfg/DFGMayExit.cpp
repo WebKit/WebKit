@@ -74,6 +74,7 @@ ExitMode mayExitImpl(Graph& graph, Node* node, StateType& state)
     case GetStack:
     case GetCallee:
     case GetArgumentCountIncludingThis:
+    case SetArgumentCountIncludingThis:
     case GetRestLength:
     case GetScope:
     case PhantomLocal:

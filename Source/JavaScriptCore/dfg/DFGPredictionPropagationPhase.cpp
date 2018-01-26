@@ -766,6 +766,9 @@ private:
             break;
         }
 
+        case SetArgumentCountIncludingThis:
+            break;
+
         case MapHash:
             setPrediction(SpecInt32Only);
             break;

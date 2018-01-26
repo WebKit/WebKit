@@ -121,6 +121,8 @@ public:
                     };
 
                     auto writeHandler = [&] (VirtualRegister operand) {
+                        if (operand.isHeader())
+                            return;
                         RELEASE_ASSERT(node->op() == PutStack || node->op() == LoadVarargs || node->op() == ForwardVarargs);
                         writes.append(operand);
                     };
@@ -288,6 +290,8 @@ public:
                     };
 
                     auto writeHandler = [&] (VirtualRegister operand) {
+                        if (operand.isHeader())
+                            return;
                         RELEASE_ASSERT(node->op() == LoadVarargs || node->op() == ForwardVarargs);
                         deferred.operand(operand) = DeadFlush;
                     };
@@ -501,6 +505,8 @@ public:
                     };
 
                     auto writeHandler = [&] (VirtualRegister operand) {
+                        if (operand.isHeader())
+                            return;
                         // LoadVarargs and ForwardVarargs are unconditional writes to the stack
                         // locations they claim to write to. They do not read from the stack 
                         // locations they write to. This makes those stack locations dead right 

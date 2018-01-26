@@ -180,6 +180,7 @@ inline CapabilityLevel canCompile(Node* node)
     case GetScope:
     case GetCallee:
     case GetArgumentCountIncludingThis:
+    case SetArgumentCountIncludingThis:
     case ToNumber:
     case ToString:
     case ToObject:

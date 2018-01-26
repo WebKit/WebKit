@@ -52,6 +52,7 @@ bool doesGC(Graph& graph, Node* node)
     case IdentityWithProfile:
     case GetCallee:
     case GetArgumentCountIncludingThis:
+    case SetArgumentCountIncludingThis:
     case GetRestLength:
     case GetLocal:
     case SetLocal:
