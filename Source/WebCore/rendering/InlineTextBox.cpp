@@ -393,13 +393,20 @@ bool InlineTextBox::emphasisMarkExistsAndIsAbove(const RenderStyle& style, bool&
 }
 
 struct InlineTextBox::MarkerSubrangeStyle {
-    bool operator==(const MarkerSubrangeStyle& other) const
+    bool operator==(const MarkerSubrangeStyle& other) const = delete;
+    bool operator!=(const MarkerSubrangeStyle& other) const = delete;
+    static bool areBackgroundMarkerSubrangeStylesEqual(const MarkerSubrangeStyle& a, const MarkerSubrangeStyle& b)
     {
-        return backgroundColor == other.backgroundColor && textStyles == other.textStyles
-            && textDecorationStyles == other.textDecorationStyles && textShadow == other.textShadow
-            && alpha == other.alpha;
+        return a.backgroundColor == b.backgroundColor;
     }
-    bool operator!=(const MarkerSubrangeStyle& other) const { return !(*this == other); }
+    static bool areForegroundMarkerSubrangeStylesEqual(const MarkerSubrangeStyle& a, const MarkerSubrangeStyle& b)
+    {
+        return a.textStyles == b.textStyles && a.textShadow == b.textShadow && a.alpha == b.alpha;
+    }
+    static bool areDecorationMarkerSubrangeStylesEqual(const MarkerSubrangeStyle& a, const MarkerSubrangeStyle& b)
+    {
+        return a.textDecorationStyles == b.textDecorationStyles && a.textShadow == b.textShadow;
+    }
 
     Color backgroundColor;
     TextPaintStyle textStyles;
@@ -510,7 +517,11 @@ void InlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, 
         }
 #endif
         auto styledSubranges = subdivideAndResolveStyle(subranges, unmarkedStyle, paintInfo);
-        paintMarkerSubranges(context, TextPaintPhase::Background, boxRect, styledSubranges);
+
+        // Coalesce styles of adjacent subranges to minimize the number of drawing commands.
+        auto coalescedStyledSubranges = coalesceAdjacentSubranges(styledSubranges, &MarkerSubrangeStyle::areBackgroundMarkerSubrangeStylesEqual);
+
+        paintMarkerSubranges(context, TextPaintPhase::Background, boxRect, coalescedStyledSubranges);
     }
 
     // FIXME: Right now, InlineTextBoxes never call addRelevantUnpaintedObject() even though they might
@@ -553,7 +564,10 @@ void InlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, 
     if (!isPrinting && paintInfo.paintBehavior & PaintBehaviorExcludeSelection)
         styledSubranges.removeAllMatching([] (const StyledMarkerSubrange& subrange) { return subrange.type == MarkerSubrange::Selection; });
 
-    paintMarkerSubranges(context, TextPaintPhase::Foreground, boxRect, styledSubranges);
+    // Coalesce styles of adjacent subranges to minimize the number of drawing commands.
+    auto coalescedStyledSubranges = coalesceAdjacentSubranges(styledSubranges, &MarkerSubrangeStyle::areForegroundMarkerSubrangeStylesEqual);
+
+    paintMarkerSubranges(context, TextPaintPhase::Foreground, boxRect, coalescedStyledSubranges);
 
     // Paint decorations
     TextDecoration textDecorations = lineStyle.textDecorationsInEffect();
@@ -587,7 +601,11 @@ void InlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, 
                 textDecorationSelectionClipOutRect.setWidth(logicalSelectionWidth);
             }
         }
-        paintMarkerSubranges(context, TextPaintPhase::Decoration, boxRect, styledSubranges, textDecorationSelectionClipOutRect);
+
+        // Coalesce styles of adjacent subranges to minimize the number of drawing commands.
+        auto coalescedStyledSubranges = coalesceAdjacentSubranges(styledSubranges, &MarkerSubrangeStyle::areDecorationMarkerSubrangeStylesEqual);
+
+        paintMarkerSubranges(context, TextPaintPhase::Decoration, boxRect, coalescedStyledSubranges, textDecorationSelectionClipOutRect);
     }
 
     // 3. Paint fancy decorations, including composition underlines and platform-specific underlines for spelling errors, grammar errors, et cetera.
@@ -765,25 +783,46 @@ auto InlineTextBox::subdivideAndResolveStyle(const Vector<MarkerSubrange>& subra
     if (subrangesToSubdivide.isEmpty())
         return { };
 
-    auto areAdjacentSubrangesWithSameStyle = [] (const StyledMarkerSubrange& a, const StyledMarkerSubrange& b) {
-        return a.endOffset == b.startOffset && a.style == b.style;
-    };
+    auto subranges = subdivide(subrangesToSubdivide);
 
-    auto subranges = subdivide(subrangesToSubdivide, OverlapStrategy::FrontmostWithLongestEffectiveRange);
-
-    // Coallesce styles of adjacent subranges to minimize the number of drawing commands.
-    Vector<StyledMarkerSubrange> styledSubranges;
-    styledSubranges.reserveInitialCapacity(subranges.size());
-    styledSubranges.uncheckedAppend(resolveStyleForSubrange(subranges[0], baseStyle, paintInfo));
+    // Compute frontmost overlapping styled subranges.
+    Vector<StyledMarkerSubrange> frontmostSubranges;
+    frontmostSubranges.reserveInitialCapacity(subranges.size());
+    frontmostSubranges.uncheckedAppend(resolveStyleForSubrange(subranges[0], baseStyle, paintInfo));
     for (auto it = subranges.begin() + 1, end = subranges.end(); it != end; ++it) {
-        StyledMarkerSubrange& previousStyledSubrange = styledSubranges.last();
-        auto currentStyledSubrange = resolveStyleForSubrange(*it, baseStyle, paintInfo);
-        if (areAdjacentSubrangesWithSameStyle(previousStyledSubrange, currentStyledSubrange)) {
-            previousStyledSubrange.endOffset = currentStyledSubrange.endOffset;
+        StyledMarkerSubrange& previousStyledSubrange = frontmostSubranges.last();
+        if (previousStyledSubrange.startOffset == it->startOffset && previousStyledSubrange.endOffset == it->endOffset) {
+            // Subranges completely cover each other.
+            previousStyledSubrange = resolveStyleForSubrange(*it, previousStyledSubrange.style, paintInfo);
             continue;
         }
-        styledSubranges.uncheckedAppend(currentStyledSubrange);
+        frontmostSubranges.uncheckedAppend(resolveStyleForSubrange(*it, baseStyle, paintInfo));
     }
+
+    return frontmostSubranges;
+}
+
+auto InlineTextBox::coalesceAdjacentSubranges(const Vector<StyledMarkerSubrange>& subrangesToCoalesce, MarkerSubrangeStylesEqualityFunction areMarkerSubrangeStylesEqual) -> Vector<StyledMarkerSubrange>
+{
+    if (subrangesToCoalesce.isEmpty())
+        return { };
+
+    auto areAdjacentSubrangesWithSameStyle = [&] (const StyledMarkerSubrange& a, const StyledMarkerSubrange& b) {
+        return a.endOffset == b.startOffset && areMarkerSubrangeStylesEqual(a.style, b.style);
+    };
+
+    Vector<StyledMarkerSubrange> styledSubranges;
+    styledSubranges.reserveInitialCapacity(subrangesToCoalesce.size());
+    styledSubranges.uncheckedAppend(subrangesToCoalesce[0]);
+    for (auto it = subrangesToCoalesce.begin() + 1, end = subrangesToCoalesce.end(); it != end; ++it) {
+        StyledMarkerSubrange& previousStyledSubrange = styledSubranges.last();
+        if (areAdjacentSubrangesWithSameStyle(previousStyledSubrange, *it)) {
+            previousStyledSubrange.endOffset = it->endOffset;
+            continue;
+        }
+        styledSubranges.uncheckedAppend(*it);
+    }
+
     return styledSubranges;
 }
 

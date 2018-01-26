@@ -70,7 +70,7 @@ struct MarkerSubrange {
     }
 };
 
-enum class OverlapStrategy { None, Frontmost, FrontmostWithLongestEffectiveRange };
+enum class OverlapStrategy { None, Frontmost };
 WEBCORE_EXPORT Vector<MarkerSubrange> subdivide(const Vector<MarkerSubrange>&, OverlapStrategy = OverlapStrategy::None);
 
 }
