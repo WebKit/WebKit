@@ -1,76 +1,16 @@
 
-FAIL .multicol 1 assert_equals: 
-<div class="multicol marginTopBottom" data-expected-width="8" data-expected-height="20">
-    <div data-offset-x="0" data-offset-y="0" data-expected-width="3" data-expected-height="20">XXXXX</div>
-    <div data-offset-x="5" data-offset-y="0" data-expected-width="3" data-expected-height="20">XXXXX</div>
-  </div>
-width expected 3 but got 0
-FAIL .multicol 2 assert_equals: 
-<div class="multicol marginTopBottom" data-expected-width="8" data-expected-height="60">
-    <div data-offset-x="0" data-offset-y="0" data-expected-width="3" data-expected-height="60">XX X X</div>
-    <div data-offset-x="5" data-offset-y="0" data-expected-width="3" data-expected-height="60">XX X X</div>
-  </div>
-width expected 3 but got 0
-FAIL .multicol 3 assert_equals: 
-<div class="multicol marginTopBottom" data-expected-width="8" data-expected-height="20">
-    <div data-offset-x="0" data-offset-y="0" data-expected-width="3" data-expected-height="20">X</div>
-    <div data-offset-x="5" data-offset-y="0" data-expected-width="3" data-expected-height="20">X</div>
-  </div>
-width expected 3 but got 0
-FAIL .multicol 4 assert_equals: 
-<div class="multicol marginTopBottom" data-expected-width="200" data-expected-height="20">
-    <div data-offset-x="0" data-offset-y="0" data-expected-width="75" data-expected-height="20">XXXXX</div>
-    <div data-offset-x="125" data-offset-y="0" data-expected-width="75" data-expected-height="20">XXXXX</div>
-  </div>
-width expected 75 but got 90
-FAIL .multicol 5 assert_equals: 
-<div class="multicol marginTopBottom" data-expected-width="200" data-expected-height="40">
-    <div data-offset-x="0" data-offset-y="0" data-expected-width="75" data-expected-height="40">XX X X</div>
-    <div data-offset-x="125" data-offset-y="0" data-expected-width="75" data-expected-height="40">XX X X</div>
-  </div>
-width expected 75 but got 90
-FAIL .multicol 6 assert_equals: 
-<div class="multicol marginTopBottom" data-expected-width="200" data-expected-height="20">
-    <div data-offset-x="0" data-offset-y="0" data-expected-width="75" data-expected-height="20">X</div>
-    <div data-offset-x="125" data-offset-y="0" data-expected-width="75" data-expected-height="20">X</div>
-  </div>
-width expected 75 but got 90
-FAIL .multicol 7 assert_equals: 
-<div class="multicol inlineBlock" data-expected-width="200" data-expected-height="20">
-  <div data-offset-x="0" data-offset-y="0" data-expected-width="75" data-expected-height="20">XXXXX</div>
-  <div data-offset-x="125" data-offset-y="0" data-expected-width="75" data-expected-height="20">XXXXX</div>
-</div>
-width expected 200 but got 220
-FAIL .multicol 8 assert_equals: 
-<div class="multicol inlineBlock" data-expected-width="240" data-expected-height="40">
-  <div data-offset-x="0" data-offset-y="0" data-expected-width="90" data-expected-height="40">XX X X</div>
-  <div data-offset-x="150" data-offset-y="0" data-expected-width="90" data-expected-height="40">XX X X</div>
-</div>
-width expected 240 but got 260
-FAIL .multicol 9 assert_equals: 
-<div class="multicol inlineBlock" data-expected-width="40" data-expected-height="20">
-  <div data-offset-x="0" data-offset-y="0" data-expected-width="15" data-expected-height="20">X</div>
-  <div data-offset-x="25" data-offset-y="0" data-expected-width="15" data-expected-height="20">X</div>
-</div>
-width expected 40 but got 60
-FAIL .multicol 10 assert_equals: 
-<div class="multicol fixed200" data-expected-width="200" data-expected-height="20">
-  <div data-offset-x="0" data-offset-y="0" data-expected-width="75" data-expected-height="20">XXXXX</div>
-  <div data-offset-x="125" data-offset-y="0" data-expected-width="75" data-expected-height="20">XXXXX</div>
-</div>
-width expected 75 but got 90
-FAIL .multicol 11 assert_equals: 
-<div class="multicol fixed200" data-expected-width="200" data-expected-height="40">
-  <div data-offset-x="0" data-offset-y="0" data-expected-width="75" data-expected-height="40">XX X X</div>
-  <div data-offset-x="125" data-offset-y="0" data-expected-width="75" data-expected-height="40">XX X X</div>
-</div>
-width expected 75 but got 90
-FAIL .multicol 12 assert_equals: 
-<div class="multicol fixed200" data-expected-width="200" data-expected-height="20">
-  <div data-offset-x="0" data-offset-y="0" data-expected-width="75" data-expected-height="20">X</div>
-  <div data-offset-x="125" data-offset-y="0" data-expected-width="75" data-expected-height="20">X</div>
-</div>
-width expected 75 but got 90
+PASS .multicol 1 
+PASS .multicol 2 
+PASS .multicol 3 
+PASS .multicol 4 
+PASS .multicol 5 
+PASS .multicol 6 
+PASS .multicol 7 
+PASS .multicol 8 
+PASS .multicol 9 
+PASS .multicol 10 
+PASS .multicol 11 
+PASS .multicol 12 
 Multicol container: fixed width
 
 X

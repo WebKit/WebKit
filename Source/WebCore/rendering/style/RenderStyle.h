@@ -34,6 +34,7 @@
 #include "DataRef.h"
 #include "FilterOperations.h"
 #include "FontDescription.h"
+#include "GapLength.h"
 #include "GraphicsTypes.h"
 #include "Length.h"
 #include "LengthBox.h"
@@ -604,8 +605,7 @@ public:
     bool hasAutoColumnCount() const { return m_rareNonInheritedData->multiCol->autoCount; }
     bool specifiesColumns() const { return !hasAutoColumnCount() || !hasAutoColumnWidth() || !hasInlineColumnAxis(); }
     ColumnFill columnFill() const { return static_cast<ColumnFill>(m_rareNonInheritedData->multiCol->fill); }
-    float columnGap() const { return m_rareNonInheritedData->multiCol->gap; }
-    bool hasNormalColumnGap() const { return m_rareNonInheritedData->multiCol->normalGap; }
+    const GapLength& columnGap() const { return m_rareNonInheritedData->multiCol->columnGap; }
     EBorderStyle columnRuleStyle() const { return m_rareNonInheritedData->multiCol->rule.style(); }
     unsigned short columnRuleWidth() const { return m_rareNonInheritedData->multiCol->ruleWidth(); }
     bool columnRuleIsTransparent() const { return m_rareNonInheritedData->multiCol->rule.isTransparent(); }
@@ -1129,8 +1129,7 @@ public:
     void setColumnCount(unsigned short c) { SET_NESTED_VAR(m_rareNonInheritedData, multiCol, autoCount, false); SET_NESTED_VAR(m_rareNonInheritedData, multiCol, count, c); }
     void setHasAutoColumnCount() { SET_NESTED_VAR(m_rareNonInheritedData, multiCol, autoCount, true); SET_NESTED_VAR(m_rareNonInheritedData, multiCol, count, 0); }
     void setColumnFill(ColumnFill columnFill) { SET_NESTED_VAR(m_rareNonInheritedData, multiCol, fill, columnFill); }
-    void setColumnGap(float f) { SET_NESTED_VAR(m_rareNonInheritedData, multiCol, normalGap, false); SET_NESTED_VAR(m_rareNonInheritedData, multiCol, gap, f); }
-    void setHasNormalColumnGap() { SET_NESTED_VAR(m_rareNonInheritedData, multiCol, normalGap, true); SET_NESTED_VAR(m_rareNonInheritedData, multiCol, gap, 0); }
+    void setColumnGap(GapLength&& gapLength) { SET_NESTED_VAR(m_rareNonInheritedData, multiCol, columnGap, WTFMove(gapLength)); }
     void setColumnRuleColor(const Color& c) { SET_BORDERVALUE_COLOR(m_rareNonInheritedData.access().multiCol, rule, c); }
     void setColumnRuleStyle(EBorderStyle b) { SET_NESTED_VAR(m_rareNonInheritedData, multiCol, rule.m_style, b); }
     void setColumnRuleWidth(unsigned short w) { SET_NESTED_VAR(m_rareNonInheritedData, multiCol, rule.m_width, w); }
@@ -1533,6 +1532,7 @@ public:
     static unsigned short initialColumnCount() { return 1; }
     static ColumnFill initialColumnFill() { return ColumnFillBalance; }
     static ColumnSpan initialColumnSpan() { return ColumnSpanNone; }
+    static GapLength initialColumnGap() { return GapLength(); }
     static const TransformOperations& initialTransform() { static NeverDestroyed<TransformOperations> ops; return ops; }
     static Length initialTransformOriginX() { return Length(50.0f, Percent); }
     static Length initialTransformOriginY() { return Length(50.0f, Percent); }

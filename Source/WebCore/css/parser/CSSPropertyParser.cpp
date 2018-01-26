@@ -1392,11 +1392,11 @@ static RefPtr<CSSValue> consumeColumnCount(CSSParserTokenRange& range)
     return consumePositiveInteger(range);
 }
 
-static RefPtr<CSSValue> consumeColumnGap(CSSParserTokenRange& range, CSSParserMode cssParserMode)
+static RefPtr<CSSValue> consumeGapLength(CSSParserTokenRange& range, CSSParserMode cssParserMode)
 {
     if (range.peek().id() == CSSValueNormal)
         return consumeIdent(range);
-    return consumeLength(range, cssParserMode, ValueRangeNonNegative);
+    return consumeLengthOrPercent(range, cssParserMode, ValueRangeNonNegative);
 }
 
 static RefPtr<CSSValue> consumeColumnSpan(CSSParserTokenRange& range)
@@ -4035,7 +4035,7 @@ RefPtr<CSSValue> CSSPropertyParser::parseSingleValue(CSSPropertyID property, CSS
     case CSSPropertyColumnCount:
         return consumeColumnCount(m_range);
     case CSSPropertyColumnGap:
-        return consumeColumnGap(m_range, m_context.mode);
+        return consumeGapLength(m_range, m_context.mode);
     case CSSPropertyColumnSpan:
         return consumeColumnSpan(m_range);
     case CSSPropertyZoom:

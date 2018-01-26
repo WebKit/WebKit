@@ -1,3 +1,68 @@
+2018-01-26  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [css-multicol] Support percentages in column-gap
+        https://bugs.webkit.org/show_bug.cgi?id=182004
+
+        Reviewed by Javier Fernandez.
+
+        This patch adds percentage support to column-gap property.
+
+        Most of the changes are related to the parsing logic,
+        the column-gap property now accepts both length and percentages,
+        on top of the "normal" initial value.
+        A new utility class GapLength has been added, as it'll be useful
+        to implement row-gap in the future.
+
+        Apart from that the muticolumn layout code has been modified
+        to resolve the percentage gaps (treating them as zero while computing
+        preferred widths) and resolving them during layout.
+        This doesn't follow the current text on the spec, but there is an
+        ongoing discussion that might cause the text is changed:
+        https://github.com/w3c/csswg-drafts/issues/509#issuecomment-355242101
+        We could update the implementation once we have a definitive answer
+        from the CSS WG.
+
+        Test: web-platform-tests/css/css-multicol/multicol-gap-percentage-001.html
+
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::ComputedStyleExtractor::valueForPropertyinStyle):
+        * css/CSSProperties.json:
+        * css/StyleBuilderConverter.h:
+        (WebCore::StyleBuilderConverter::convertGapLength):
+        * css/StyleBuilderCustom.h:
+        (WebCore::forwardInheritedValue):
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::consumeGapLength):
+        (WebCore::CSSPropertyParser::parseSingleValue):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::applyPaginationToViewport):
+        * page/animation/CSSPropertyAnimation.cpp:
+        (WebCore::blendFunc):
+        (WebCore::CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap):
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::columnGap const):
+        * rendering/RenderMultiColumnSet.cpp:
+        (WebCore::RenderMultiColumnSet::columnGap const):
+        * rendering/style/GapLength.cpp: Added.
+        (WebCore::operator<<):
+        * rendering/style/GapLength.h: Added.
+        (WebCore::GapLength::GapLength):
+        (WebCore::GapLength::isNormal const):
+        (WebCore::GapLength::length const):
+        (WebCore::GapLength::operator== const):
+        * rendering/style/RenderStyle.h:
+        (WebCore::RenderStyle::columnGap const):
+        (WebCore::RenderStyle::setColumnGap):
+        (WebCore::RenderStyle::initialColumnGap):
+        * rendering/style/StyleMultiColData.cpp:
+        (WebCore::StyleMultiColData::StyleMultiColData):
+        (WebCore::StyleMultiColData::operator== const):
+        * rendering/style/StyleMultiColData.h:
+        * style/StyleResolveForDocument.cpp:
+        (WebCore::Style::resolveForDocument):
+
 2018-01-26  Emilio Cobos Álvarez  <emilio@crisal.io>
 
         Remove unused RenderFragmentedFlow::createFragmentedFlowStyle.

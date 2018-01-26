@@ -720,7 +720,8 @@ void FrameView::applyPaginationToViewport()
     EOverflow overflowY = documentOrBodyRenderer->style().overflowY();
     if (overflowY == OPAGEDX || overflowY == OPAGEDY) {
         pagination.mode = WebCore::paginationModeForRenderStyle(documentOrBodyRenderer->style());
-        pagination.gap = static_cast<unsigned>(documentOrBodyRenderer->style().columnGap());
+        GapLength columnGapLength = documentOrBodyRenderer->style().columnGap();
+        pagination.gap = columnGapLength.isNormal() ? 0 : valueForLength(columnGapLength.length(), downcast<RenderBox>(documentOrBodyRenderer)->availableLogicalWidth()).toUnsigned();
     }
     setPagination(pagination);
 }

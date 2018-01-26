@@ -1916,6 +1916,7 @@ rendering/shapes/ShapeOutsideInfo.cpp
 rendering/style/BasicShapes.cpp
 rendering/style/ContentData.cpp
 rendering/style/FillLayer.cpp
+rendering/style/GapLength.cpp
 rendering/style/GridPosition.cpp
 rendering/style/GridPositionsResolver.cpp
 rendering/style/KeyframeList.cpp

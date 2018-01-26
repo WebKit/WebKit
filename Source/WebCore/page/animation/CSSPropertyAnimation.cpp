@@ -44,6 +44,7 @@
 #include "FloatConversion.h"
 #include "FontSelectionAlgorithm.h"
 #include "FontTaggedSettings.h"
+#include "GapLength.h"
 #include "IdentityTransformOperation.h"
 #include "Logging.h"
 #include "Matrix3DTransformOperation.h"
@@ -88,6 +89,11 @@ static inline Color blendFunc(const CSSPropertyBlendingClient*, const Color& fro
 static inline Length blendFunc(const CSSPropertyBlendingClient*, const Length& from, const Length& to, double progress)
 {
     return blend(from, to, progress);
+}
+
+static inline GapLength blendFunc(const CSSPropertyBlendingClient*, const GapLength& from, const GapLength& to, double progress)
+{
+    return (from.isNormal() || to.isNormal()) ? to : blend(from.length(), to.length(), progress);
 }
 
 static inline LengthSize blendFunc(const CSSPropertyBlendingClient* anim, const LengthSize& from, const LengthSize& to, double progress)
@@ -1519,7 +1525,7 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
 
         new PropertyWrapper<float>(CSSPropertyFontSize, &RenderStyle::computedFontSize, &RenderStyle::setFontSize),
         new PropertyWrapper<unsigned short>(CSSPropertyColumnRuleWidth, &RenderStyle::columnRuleWidth, &RenderStyle::setColumnRuleWidth),
-        new PropertyWrapper<float>(CSSPropertyColumnGap, &RenderStyle::columnGap, &RenderStyle::setColumnGap),
+        new LengthPropertyWrapper<GapLength>(CSSPropertyColumnGap, &RenderStyle::columnGap, &RenderStyle::setColumnGap),
         new PropertyWrapper<unsigned short>(CSSPropertyColumnCount, &RenderStyle::columnCount, &RenderStyle::setColumnCount),
         new PropertyWrapper<float>(CSSPropertyColumnWidth, &RenderStyle::columnWidth, &RenderStyle::setColumnWidth),
         new PropertyWrapper<float>(CSSPropertyWebkitBorderHorizontalSpacing, &RenderStyle::horizontalBorderSpacing, &RenderStyle::setHorizontalBorderSpacing),

@@ -25,6 +25,7 @@
 #pragma once
 
 #include "BorderValue.h"
+#include "GapLength.h"
 #include "RenderStyleConstants.h"
 #include <wtf/RefCounted.h>
 
@@ -49,13 +50,12 @@ public:
 
     float width { 0 };
     unsigned short count;
-    float gap { 0 };
+    GapLength columnGap;
     BorderValue rule;
     Color visitedLinkColumnRuleColor;
 
     bool autoWidth : 1;
     bool autoCount : 1;
-    bool normalGap : 1;
     unsigned fill : 1; // ColumnFill
     unsigned columnSpan : 1;
     unsigned axis : 2; // ColumnAxis

@@ -30,7 +30,6 @@ StyleMultiColData::StyleMultiColData()
     : count(RenderStyle::initialColumnCount())
     , autoWidth(true)
     , autoCount(true)
-    , normalGap(true)
     , fill(RenderStyle::initialColumnFill())
     , columnSpan(false)
     , axis(RenderStyle::initialColumnAxis())
@@ -42,12 +41,11 @@ inline StyleMultiColData::StyleMultiColData(const StyleMultiColData& other)
     : RefCounted<StyleMultiColData>()
     , width(other.width)
     , count(other.count)
-    , gap(other.gap)
+    , columnGap(other.columnGap)
     , rule(other.rule)
     , visitedLinkColumnRuleColor(other.visitedLinkColumnRuleColor)
     , autoWidth(other.autoWidth)
     , autoCount(other.autoCount)
-    , normalGap(other.normalGap)
     , fill(other.fill)
     , columnSpan(other.columnSpan)
     , axis(other.axis)
@@ -62,9 +60,9 @@ Ref<StyleMultiColData> StyleMultiColData::copy() const
 
 bool StyleMultiColData::operator==(const StyleMultiColData& other) const
 {
-    return width == other.width && count == other.count && gap == other.gap
+    return width == other.width && count == other.count && columnGap == other.columnGap
         && rule == other.rule && visitedLinkColumnRuleColor == other.visitedLinkColumnRuleColor
-        && autoWidth == other.autoWidth && autoCount == other.autoCount && normalGap == other.normalGap
+        && autoWidth == other.autoWidth && autoCount == other.autoCount
         && fill == other.fill && columnSpan == other.columnSpan
         && axis == other.axis && progression == other.progression;
 }

@@ -4306,11 +4306,11 @@
                 "aliases": [
                     "-webkit-column-gap"
                 ],
-                "custom": "All"
+                "converter": "GapLength"
             },
             "specification":  {
                 "category": "css-multicol",
-                "url": ""
+                "url": "https://drafts.csswg.org/css-multicol/#column-gap"
             }
         },
         "-webkit-column-progression": {

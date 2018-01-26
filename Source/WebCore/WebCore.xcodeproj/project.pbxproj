@@ -2390,6 +2390,7 @@
 		8AF4E55611DC5A36000ED3DE /* PerformanceNavigation.h in Headers */ = {isa = PBXBuildFile; fileRef = 8AF4E55311DC5A36000ED3DE /* PerformanceNavigation.h */; };
 		8AF4E55C11DC5A63000ED3DE /* PerformanceTiming.h in Headers */ = {isa = PBXBuildFile; fileRef = 8AF4E55911DC5A63000ED3DE /* PerformanceTiming.h */; };
 		8E4C96DD1AD4483500365A50 /* JSFetchResponse.h in Headers */ = {isa = PBXBuildFile; fileRef = 8E4C96D91AD4483500365A50 /* JSFetchResponse.h */; };
+		8EC6C963201A251600FBFA53 /* GapLength.h in Headers */ = {isa = PBXBuildFile; fileRef = 8EC6C961201A250100FBFA53 /* GapLength.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		8F67561B1288B17B0047ACA3 /* EventQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F6756191288B17B0047ACA3 /* EventQueue.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9001774012E0347800648462 /* OESStandardDerivatives.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9001773D12E0347800648462 /* OESStandardDerivatives.cpp */; };
 		9001774112E0347800648462 /* OESStandardDerivatives.h in Headers */ = {isa = PBXBuildFile; fileRef = 9001773E12E0347800648462 /* OESStandardDerivatives.h */; };
@@ -9934,8 +9935,10 @@
 		8AF4E55411DC5A36000ED3DE /* PerformanceNavigation.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = PerformanceNavigation.idl; sourceTree = "<group>"; };
 		8AF4E55911DC5A63000ED3DE /* PerformanceTiming.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PerformanceTiming.h; sourceTree = "<group>"; };
 		8AF4E55A11DC5A63000ED3DE /* PerformanceTiming.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = PerformanceTiming.idl; sourceTree = "<group>"; };
+		8E33CD93201A29C100E39093 /* GapLength.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GapLength.cpp; sourceTree = "<group>"; };
 		8E4C96D81AD4483500365A50 /* JSFetchResponse.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSFetchResponse.cpp; sourceTree = "<group>"; };
 		8E4C96D91AD4483500365A50 /* JSFetchResponse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSFetchResponse.h; sourceTree = "<group>"; };
+		8EC6C961201A250100FBFA53 /* GapLength.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GapLength.h; sourceTree = "<group>"; };
 		8F6756191288B17B0047ACA3 /* EventQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventQueue.h; sourceTree = "<group>"; };
 		8F934D831189F1EE00508D5D /* JSMainThreadExecState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSMainThreadExecState.h; sourceTree = "<group>"; };
 		8F934D841189F1EE00508D5D /* JSMainThreadExecState.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSMainThreadExecState.cpp; sourceTree = "<group>"; };
@@ -23455,6 +23458,8 @@
 				BC22746E0E83664500E7F975 /* DataRef.h */,
 				BC5EB69C0E81DAEB00B25965 /* FillLayer.cpp */,
 				BC5EB69D0E81DAEB00B25965 /* FillLayer.h */,
+				8E33CD93201A29C100E39093 /* GapLength.cpp */,
+				8EC6C961201A250100FBFA53 /* GapLength.h */,
 				CD3E251B18046B0600E27F56 /* GridArea.h */,
 				CDEF4FD617E85C8F00AEE24B /* GridLength.h */,
 				E1F817451E897A5200F22CD0 /* GridPosition.cpp */,
@@ -27343,6 +27348,7 @@
 				51A9D9EA195B931F001B2B5C /* GamepadManager.h in Headers */,
 				515BE1921D54F5FB00DD7C68 /* GamepadProvider.h in Headers */,
 				515BE1931D54F5FB00DD7C68 /* GamepadProviderClient.h in Headers */,
+				8EC6C963201A251600FBFA53 /* GapLength.h in Headers */,
 				935C477509AC4D8E00A6AAB4 /* GapRects.h in Headers */,
 				1432E8470C51493800B1500F /* GCController.h in Headers */,
 				C0C054CC1118C8E400CE2636 /* generate-bindings.pl in Headers */,
@@ -28625,7 +28631,6 @@
 				935207BE09BD410A00F2038D /* LocalizedStrings.h in Headers */,
 				BCE1C41B0D982980003B02F2 /* Location.h in Headers */,
 				A8239E0109B3CF8A00B60641 /* Logging.h in Headers */,
-				94CFD60D1FEACEFE002488AD /* RenderLinesClampSet.h in Headers */,
 				9BA273F4172206BB0097CE47 /* LogicalSelectionOffsetCaches.h in Headers */,
 				0FDCD7F31D47E655009F08BC /* LogInitialization.h in Headers */,
 				93A806171E03B51C008A1F26 /* LongRange.h in Headers */,
@@ -29159,6 +29164,8 @@
 				3C244FEAA375AC633F88BE6F /* RenderLayerModelObject.h in Headers */,
 				0BE030A20F3112FB003C1A46 /* RenderLineBoxList.h in Headers */,
 				BCEA4864097D93020094C9E4 /* RenderLineBreak.h in Headers */,
+				94CFD60A1FE9867E002488AD /* RenderLinesClampFlow.h in Headers */,
+				94CFD60D1FEACEFE002488AD /* RenderLinesClampSet.h in Headers */,
 				ABB5419F0ACDDFE4002820EB /* RenderListBox.h in Headers */,
 				A8EA7A520A191A5200A8EF5F /* RenderListItem.h in Headers */,
 				A8EA7A500A191A5200A8EF5F /* RenderListMarker.h in Headers */,
@@ -29292,7 +29299,6 @@
 				A5CE9F3F1E4C4174001BBE7C /* ResourceTiming.h in Headers */,
 				CBC2D2301CE5B8A100D1880B /* ResourceTimingInformation.h in Headers */,
 				A5071E851C56D0DC009951BE /* ResourceUsageData.h in Headers */,
-				94CFD60A1FE9867E002488AD /* RenderLinesClampFlow.h in Headers */,
 				ADBAD6EF1BCDD95700381325 /* ResourceUsageOverlay.h in Headers */,
 				A5071E871C56D0E1009951BE /* ResourceUsageThread.h in Headers */,
 				FD3160A512B026F700C1A359 /* Reverb.h in Headers */,

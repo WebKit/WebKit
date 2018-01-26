@@ -62,6 +62,7 @@ template<typename T> inline T forwardInheritedValue(T&& value) { return std::for
 inline Length forwardInheritedValue(const Length& value) { auto copy = value; return copy; }
 inline LengthSize forwardInheritedValue(const LengthSize& value) { auto copy = value; return copy; }
 inline LengthBox forwardInheritedValue(const LengthBox& value) { auto copy = value; return copy; }
+inline GapLength forwardInheritedValue(const GapLength& value) { auto copy = value; return copy; }
 
 // Note that we assume the CSS parser only allows valid CSSValue types.
 class StyleBuilderCustom {
@@ -73,7 +74,6 @@ public:
     DECLARE_PROPERTY_CUSTOM_HANDLERS(BorderImageWidth);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(BoxShadow);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(Clip);
-    DECLARE_PROPERTY_CUSTOM_HANDLERS(ColumnGap);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(Content);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(CounterIncrement);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(CounterReset);
@@ -1364,27 +1364,6 @@ inline void StyleBuilderCustom::applyValueWebkitSvgShadow(StyleResolver& styleRe
     ASSERT(!shadowValue.style);
 
     svgStyle.setShadow(std::make_unique<ShadowData>(location, blur, 0, Normal, false, color.isValid() ? color : Color::transparent));
-}
-
-inline void StyleBuilderCustom::applyInitialColumnGap(StyleResolver& styleResolver)
-{
-    styleResolver.style()->setHasNormalColumnGap();
-}
-
-inline void StyleBuilderCustom::applyInheritColumnGap(StyleResolver& styleResolver)
-{
-    if (styleResolver.parentStyle()->hasNormalColumnGap())
-        styleResolver.style()->setHasNormalColumnGap();
-    else
-        styleResolver.style()->setColumnGap(styleResolver.parentStyle()->columnGap());
-}
-
-inline void StyleBuilderCustom::applyValueColumnGap(StyleResolver& styleResolver, CSSValue& value)
-{
-    if (downcast<CSSPrimitiveValue>(value).valueID() == CSSValueNormal)
-        styleResolver.style()->setHasNormalColumnGap();
-    else
-        styleResolver.style()->setColumnGap(StyleBuilderConverter::convertComputedLength<float>(styleResolver, value));
 }
 
 inline void StyleBuilderCustom::applyInitialContent(StyleResolver& styleResolver)

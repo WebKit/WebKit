@@ -150,6 +150,8 @@ public:
 
     static Length convertPositionComponentX(StyleResolver&, const CSSValue&);
     static Length convertPositionComponentY(StyleResolver&, const CSSValue&);
+
+    static GapLength convertGapLength(StyleResolver&, const CSSValue&);
     
 private:
     friend class StyleBuilderCustom;
@@ -1536,6 +1538,11 @@ inline HangingPunctuation StyleBuilderConverter::convertHangingPunctuation(Style
             result |= downcast<CSSPrimitiveValue>(currentValue.get());
     }
     return result;
+}
+
+inline GapLength StyleBuilderConverter::convertGapLength(StyleResolver& styleResolver, const CSSValue& value)
+{
+    return (downcast<CSSPrimitiveValue>(value).valueID() == CSSValueNormal) ? GapLength() : GapLength(convertLength(styleResolver, value));
 }
 
 } // namespace WebCore

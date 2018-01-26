@@ -2926,9 +2926,9 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyinStyle(const RenderSty
         case CSSPropertyColumnFill:
             return cssValuePool.createValue(style.columnFill());
         case CSSPropertyColumnGap:
-            if (style.hasNormalColumnGap())
+            if (style.columnGap().isNormal())
                 return cssValuePool.createIdentifierValue(CSSValueNormal);
-            return zoomAdjustedPixelValue(style.columnGap(), style);
+            return zoomAdjustedPixelValueForLength(style.columnGap().length(), style);
         case CSSPropertyWebkitColumnProgression:
             return cssValuePool.createValue(style.columnProgression());
         case CSSPropertyColumnRuleColor:
