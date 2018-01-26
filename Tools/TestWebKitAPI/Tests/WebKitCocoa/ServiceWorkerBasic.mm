@@ -51,7 +51,7 @@ struct ResourceInfo {
 
 static bool done;
 
-static Deque<String> expectedMessages;
+static String expectedMessage;
 
 @interface SWMessageHandler : NSObject <WKScriptMessageHandler>
 @end
@@ -79,6 +79,17 @@ static Deque<String> expectedMessages;
     NSString *_expectedMessage;
 }
 - (instancetype)initWithExpectedMessage:(NSString *)expectedMessage;
+@end
+
+@interface SWMessageHandlerWithExpectedMessage : NSObject <WKScriptMessageHandler>
+@end
+
+@implementation SWMessageHandlerWithExpectedMessage
+- (void)userContentController:(WKUserContentController *)userContentController didReceiveScriptMessage:(WKScriptMessage *)message
+{
+    EXPECT_TRUE([[message body] isEqualToString:expectedMessage]);
+    done = true;
+}
 @end
 
 @implementation SWMessageHandlerForRestoreFromDiskTest
@@ -177,6 +188,11 @@ static const char* mainForFetchTestBytes = R"SWRESOURCE(
 <html>
 <body>
 <script>
+function log(msg)
+{
+    window.webkit.messageHandlers.sw.postMessage(msg);
+}
+
 try {
 
 function addFrame()
@@ -217,6 +233,50 @@ self.addEventListener("fetch", (event) => {
     }
 });
 
+)SWRESOURCE";
+
+static const char* scriptInterceptingFirstLoadBytes = R"SWRESOURCE(
+
+self.addEventListener("fetch", (event) => {
+    if (event.request.url.indexOf("main.html") !== -1) {
+        event.respondWith(new Response(new Blob(['Intercepted by worker <script>window.webkit.messageHandlers.sw.postMessage(\'Intercepted by worker\');</script>'], {type: 'text/html'})));
+    }
+});
+
+)SWRESOURCE";
+
+static const char* mainForFirstLoadInterceptTestBytes = R"SWRESOURCE(
+ <html>
+<body>
+<script>
+function log(msg)
+{
+    window.webkit.messageHandlers.sw.postMessage(msg);
+}
+
+try {
+
+navigator.serviceWorker.register('/sw.js').then(function(reg) {
+    if (reg.active) {
+        window.webkit.messageHandlers.sw.postMessage('Service Worker activated');
+        return;
+    }
+
+    worker = reg.installing;
+    worker.addEventListener('statechange', function() {
+        if (worker.state == 'activated')
+            window.webkit.messageHandlers.sw.postMessage('Service Worker activated');
+    });
+}).catch(function(error) {
+    log("Registration failed with: " + error);
+});
+} catch(e) {
+    log("Exception: " + e);
+}
+
+</script>
+</body>
+</html>
 )SWRESOURCE";
 
 static const char* testBytes = R"SWRESOURCE(
@@ -439,6 +499,66 @@ TEST(ServiceWorkers, FetchAfterRestoreFromDisk)
     webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
     [webView.get().configuration.processPool _registerURLSchemeServiceWorkersCanHandle:@"sw"];
 
+    request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"sw://host/main.html"]];
+    [webView loadRequest:request];
+
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+}
+
+TEST(ServiceWorkers, InterceptFirstLoadAfterRestoreFromDisk)
+{
+    ASSERT(mainForFirstLoadInterceptTestBytes);
+    ASSERT(scriptHandlingFetchBytes);
+
+    [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
+
+    // Start with a clean slate data store
+    [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+
+    RetainPtr<SWMessageHandlerWithExpectedMessage> messageHandler = adoptNS([[SWMessageHandlerWithExpectedMessage alloc] init]);
+    [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"sw"];
+
+    RetainPtr<SWSchemes> handler = adoptNS([[SWSchemes alloc] init]);
+    handler->resources.set("sw://host/main.html", ResourceInfo { @"text/html", mainForFirstLoadInterceptTestBytes });
+    handler->resources.set("sw://host/sw.js", ResourceInfo { @"application/javascript", scriptInterceptingFirstLoadBytes });
+    [configuration setURLSchemeHandler:handler.get() forURLScheme:@"SW"];
+
+    RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    [webView.get().configuration.processPool _registerURLSchemeServiceWorkersCanHandle:@"sw"];
+
+    expectedMessage = "Service Worker activated";
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"sw://host/main.html"]];
+    [webView loadRequest:request];
+
+    TestWebKitAPI::Util::run(&done);
+
+    webView = nullptr;
+    configuration = nullptr;
+    messageHandler = nullptr;
+    handler = nullptr;
+
+    done = false;
+
+    configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    messageHandler = adoptNS([[SWMessageHandlerWithExpectedMessage alloc] init]);
+    [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"sw"];
+
+    handler = adoptNS([[SWSchemes alloc] init]);
+    handler->resources.set("sw://host/main.html", ResourceInfo { @"text/html", mainForFirstLoadInterceptTestBytes });
+    handler->resources.set("sw://host/sw.js", ResourceInfo { @"application/javascript", scriptInterceptingFirstLoadBytes });
+    [configuration setURLSchemeHandler:handler.get() forURLScheme:@"SW"];
+
+    webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    [webView.get().configuration.processPool _registerURLSchemeServiceWorkersCanHandle:@"sw"];
+
+    expectedMessage = "Intercepted by worker";
     request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"sw://host/main.html"]];
     [webView loadRequest:request];
 

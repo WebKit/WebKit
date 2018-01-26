@@ -139,8 +139,13 @@ void SWServer::addRegistrationFromStore(ServiceWorkerContextData&& data)
 
     auto registration = std::make_unique<SWServerRegistration>(*this, data.registration.key, data.registration.updateViaCache, data.registration.scopeURL, data.scriptURL);
     registration->setLastUpdateTime(data.registration.lastUpdateTime);
+    auto registrationPtr = registration.get();
     addRegistration(WTFMove(registration));
-    tryInstallContextData(WTFMove(data));
+
+    auto* connection = SWServerToContextConnection::globalServerToContextConnection();
+    auto worker = SWServerWorker::create(*this, *registrationPtr, connection ? connection->identifier() : SWServerToContextConnectionIdentifier(), data.scriptURL, data.script, data.contentSecurityPolicy, data.workerType, data.serviceWorkerIdentifier);
+    registrationPtr->updateRegistrationState(ServiceWorkerRegistrationState::Active, worker.ptr());
+    worker->setState(ServiceWorkerState::Activated);
 }
 
 void SWServer::addRegistration(std::unique_ptr<SWServerRegistration>&& registration)
@@ -509,8 +514,9 @@ void SWServer::serverToContextConnectionCreated()
 
 void SWServer::installContextData(const ServiceWorkerContextData& data)
 {
-    if (!data.loadedFromDisk)
-        m_registrationStore.updateRegistration(data);
+    ASSERT_WITH_MESSAGE(!data.loadedFromDisk, "Workers we just read from disk should only be launched as needed");
+
+    m_registrationStore.updateRegistration(data);
 
     auto* connection = SWServerToContextConnection::globalServerToContextConnection();
     ASSERT(connection);
@@ -519,14 +525,6 @@ void SWServer::installContextData(const ServiceWorkerContextData& data)
     RELEASE_ASSERT(registration);
 
     auto worker = SWServerWorker::create(*this, *registration, connection->identifier(), data.scriptURL, data.script, data.contentSecurityPolicy, data.workerType, data.serviceWorkerIdentifier);
-
-    // We don't immediately launch all workers that were just read in from disk,
-    // as it is unlikely they will be needed immediately.
-    if (data.loadedFromDisk) {
-        registration->updateRegistrationState(ServiceWorkerRegistrationState::Active, worker.ptr());
-        worker->setState(ServiceWorkerState::Activated);
-        return;
-    }
 
     registration->setPreInstallationWorker(worker.ptr());
     worker->setState(SWServerWorker::State::Running);
@@ -604,7 +602,15 @@ void SWServer::terminateWorkerInternal(SWServerWorker& worker, TerminationMode m
 
     worker.setState(SWServerWorker::State::Terminating);
 
-    auto* connection = SWServerToContextConnection::connectionForIdentifier(worker.contextConnectionIdentifier());
+    auto contextConnectionIdentifier = worker.contextConnectionIdentifier();
+    ASSERT(contextConnectionIdentifier);
+    if (!contextConnectionIdentifier) {
+        LOG_ERROR("Request to terminate a worker whose contextConnectionIdentifier is invalid");
+        workerContextTerminated(worker);
+        return;
+    }
+
+    auto* connection = SWServerToContextConnection::connectionForIdentifier(*contextConnectionIdentifier);
     ASSERT(connection);
     if (!connection) {
         LOG_ERROR("Request to terminate a worker whose context connection does not exist");
@@ -631,6 +637,7 @@ void SWServer::markAllWorkersAsTerminated()
 void SWServer::workerContextTerminated(SWServerWorker& worker)
 {
     worker.setState(SWServerWorker::State::NotRunning);
+    worker.setContextConnectionIdentifier(std::nullopt);
 
     // At this point if no registrations are referencing the worker then it will be destroyed,
     // removing itself from the m_workersByID map.
@@ -640,7 +647,12 @@ void SWServer::workerContextTerminated(SWServerWorker& worker)
 
 void SWServer::fireInstallEvent(SWServerWorker& worker)
 {
-    auto* connection = SWServerToContextConnection::connectionForIdentifier(worker.contextConnectionIdentifier());
+    auto contextConnectionIdentifier = worker.contextConnectionIdentifier();
+    if (!contextConnectionIdentifier) {
+        LOG_ERROR("Request to fire install event on a worker whose contextConnectionIdentifier is invalid");
+        return;
+    }
+    auto* connection = SWServerToContextConnection::connectionForIdentifier(*contextConnectionIdentifier);
     if (!connection) {
         LOG_ERROR("Request to fire install event on a worker whose context connection does not exist");
         return;
@@ -651,7 +663,13 @@ void SWServer::fireInstallEvent(SWServerWorker& worker)
 
 void SWServer::fireActivateEvent(SWServerWorker& worker)
 {
-    auto* connection = SWServerToContextConnection::connectionForIdentifier(worker.contextConnectionIdentifier());
+    auto contextConnectionIdentifier = worker.contextConnectionIdentifier();
+    if (!contextConnectionIdentifier) {
+        LOG_ERROR("Request to fire install event on a worker whose contextConnectionIdentifier is invalid");
+        return;
+    }
+
+    auto* connection = SWServerToContextConnection::connectionForIdentifier(*contextConnectionIdentifier);
     if (!connection) {
         LOG_ERROR("Request to fire install event on a worker whose context connection does not exist");
         return;

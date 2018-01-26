@@ -1,3 +1,17 @@
+2018-01-26  Chris Dumez  <cdumez@apple.com>
+
+        Offlined content does not work for apps on home screen
+        https://bugs.webkit.org/show_bug.cgi?id=182070
+        <rdar://problem/36843906>
+
+        Reviewed by Youenn Fablet.
+
+        Add API test coverage to make sure an already registered service worker is able to intercept
+        the very first load.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ServiceWorkerBasic.mm:
+        (-[SWMessageHandlerWithExpectedMessage userContentController:didReceiveScriptMessage:]):
+
 2018-01-26  Chris Nardi  <cnardi@chromium.org>
 
         Addressing post-review comments after r226614
