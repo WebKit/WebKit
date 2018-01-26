@@ -64,6 +64,8 @@ enum class SendSyncOption {
     // Use this to inform that this sync call will suspend this process until the user responds with input.
     InformPlatformProcessWillSuspend = 1 << 0,
     UseFullySynchronousModeForTesting = 1 << 1,
+
+    DoNotProcessIncomingMessagesWhenWaitingForSyncReply = 1 << 2,
 };
 
 enum class WaitForOption {

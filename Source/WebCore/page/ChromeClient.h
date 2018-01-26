@@ -474,6 +474,8 @@ public:
     virtual void didInsertMenuItemElement(HTMLMenuItemElement&) { }
     virtual void didRemoveMenuItemElement(HTMLMenuItemElement&) { }
 
+    virtual void testIncomingSyncIPCMessageWhileWaitingForSyncReply() { }
+
 protected:
     virtual ~ChromeClient() = default;
 };
