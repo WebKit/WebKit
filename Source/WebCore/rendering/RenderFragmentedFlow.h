@@ -99,8 +99,6 @@ public:
 
     virtual void layoutFlowExcludedObjects(bool) { }
 
-    static RenderStyle createFragmentedFlowStyle(const RenderStyle* parentStyle);
-
     void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override;
 
     void repaintRectangleInFragments(const LayoutRect&) const;
