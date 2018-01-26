@@ -1,5 +1,11 @@
 2018-01-26  Filip Pizlo  <fpizlo@apple.com>
 
+        Fix style - need to use C comments.
+
+        * wtf/Platform.h:
+
+2018-01-26  Filip Pizlo  <fpizlo@apple.com>
+
         Disable TLS-based TLCs
         https://bugs.webkit.org/show_bug.cgi?id=182175
 
