@@ -776,13 +776,6 @@ CustomPasteboardDataEnabled:
   humanReadableDescription: "Enable custom clipboard types and better security model for clipboard API."
   webcoreBinding: RuntimeEnabledFeatures
 
-WebVREnabled:
-  type: bool
-  defaultValue: false
-  humanReadableName: "WebVR"
-  humanReadableDescription: "WebVR Module support"
-  webcoreBinding: RuntimeEnabledFeatures
-
 ViewportFitEnabled:
   type: bool
   defaultValue: true
@@ -1192,3 +1185,12 @@ AccessibilityObjectModelEnabled:
     humanReadableDescription: "Accessibility Object Model support"
     category: experimental
     webcoreBinding: RuntimeEnabledFeatures
+
+WebVREnabled:
+  type: bool
+  defaultValue: DEFAULT_EXPERIMENTAL_FEATURES_ENABLED
+  humanReadableName: "WebVR"
+  humanReadableDescription: "WebVR Module support"
+  webcoreBinding: RuntimeEnabledFeatures
+  category: experimental
+  condition: PLATFORM(GTK) || PLATFORM(WPE)

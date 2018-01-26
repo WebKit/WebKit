@@ -1,3 +1,15 @@
+2018-01-25  Sergio Villar Senin  <svillar@igalia.com>
+
+        [WebVR] Make WebVR available by default for developer builds
+        https://bugs.webkit.org/show_bug.cgi?id=182101
+
+        Reviewed by Michael Catanzaro.
+
+        Moved WebVR setting to the experimental features section and make it
+        available by default for developer builds for GTK and WPE.
+
+        * Shared/WebPreferences.yaml:
+
 2018-01-25  Alex Christensen  <achristensen@webkit.org>
 
         REGRESSION (r221899): Web Content process hangs when webpage tries to make a new window if the WKWebView doesn’t have a UI delegate
