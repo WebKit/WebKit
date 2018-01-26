@@ -394,6 +394,12 @@ WI.Table = class Table extends WI.View
         if (column.headerView)
             this.addSubview(column.headerView);
 
+        if (this._sortColumnIdentifier === column.identifier) {
+            let headerCell = this._headerElement.children[newColumnIndex];
+            headerCell.classList.toggle("sort-ascending", this._sortOrder === WI.Table.SortOrder.Ascending);
+            headerCell.classList.toggle("sort-descending", this._sortOrder === WI.Table.SortOrder.Descending);
+        }
+
         // We haven't yet done any layout, nothing to do.
         if (!this._columnWidths)
             return;
