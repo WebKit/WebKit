@@ -91,7 +91,7 @@ JSArray* JSArray::tryCreateUninitializedRestricted(ObjectInitializationScope& sc
         if (hasDouble(indexingType)) {
             for (; i < vectorLength; ++i)
                 butterfly->contiguousDouble().at(std::numeric_limits<uint32_t>::max(), i) = PNaN;
-        } else if (LIKELY(!hasUndecided(indexingType))) {
+        } else {
             for (; i < vectorLength; ++i)
                 butterfly->contiguous().at(std::numeric_limits<uint32_t>::max(), i).clear();
         }

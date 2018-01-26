@@ -144,7 +144,7 @@ void SpeculativeJIT::emitAllocateRawObject(GPRReg resultGPR, RegisteredStructure
         slowCases, this, operationNewRawObject, resultGPR, storageGPR,
         structure, vectorLength));
 
-    if (numElements < vectorLength && LIKELY(!hasUndecided(structure->indexingType()))) {
+    if (numElements < vectorLength) {
 #if USE(JSVALUE64)
         if (hasDouble(structure->indexingType()))
             m_jit.move(TrustedImm64(bitwise_cast<int64_t>(PNaN)), scratchGPR);
