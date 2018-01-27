@@ -1,3 +1,12 @@
+2018-01-26  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Mark imported/blink/fast/text/international-iteration-simple-text.html as flaky.
+        https://bugs.webkit.org/show_bug.cgi?id=179853
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations:
+
 2018-01-26  Per Arne Vollan  <pvollan@apple.com>
 
         [Win] Update test expectations.
