@@ -1,3 +1,19 @@
+2018-01-26  Chris Dumez  <cdumez@apple.com>
+
+        Make sure service worker code does not launch a StorageProcess unnecessarily
+        https://bugs.webkit.org/show_bug.cgi?id=182192
+        <rdar://problem/36927427>
+
+        Reviewed by Geoffrey Garen.
+
+        When calling WebProcess::existingWebToStorageProcessConnection(), make sure we do not
+        force the creation of a WebProcess connection to the StorageProcess. If there is
+        no WebProcess, just return false right away.
+
+        * WebProcess/Storage/WebServiceWorkerProvider.cpp:
+        (WebKit::WebServiceWorkerProvider::existingServiceWorkerConnectionForSession):
+        * WebProcess/WebProcess.h:
+
 2018-01-26  Alex Christensen  <achristensen@webkit.org>
 
         Allow cellular access for default-created ephemeral sessions
