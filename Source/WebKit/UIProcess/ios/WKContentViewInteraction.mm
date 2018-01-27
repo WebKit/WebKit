@@ -4169,12 +4169,14 @@ static bool isAssistableInputType(InputType type)
 
 - (void)_restoreFocusWithToken:(id <NSCopying, NSSecureCoding>)token
 {
-    --_webView->_activeFocusedStateRetainCount;
+    if (!_inputPeripheral)
+        --_webView->_activeFocusedStateRetainCount;
 }
 
 - (void)_preserveFocusWithToken:(id <NSCopying, NSSecureCoding>)token destructively:(BOOL)destructively
 {
-    ++_webView->_activeFocusedStateRetainCount;
+    if (!_inputPeripheral)
+        ++_webView->_activeFocusedStateRetainCount;
 }
 
 #pragma mark - Implementation of UIWebTouchEventsGestureRecognizerDelegate.

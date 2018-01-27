@@ -1,3 +1,19 @@
+2018-01-26  Megan Gardner  <megan_gardner@apple.com>
+
+        Don't retain focus for input peripheral views
+        https://bugs.webkit.org/show_bug.cgi?id=182204
+
+        Reviewed by Tim Horton.
+
+        Retaining focus on input peripheral views makes it so they cannot dismiss themselves with
+        the current architecture. This should probably be fixed in UIKit, as there is no reason for
+        focus to be retained on these views anyways, as they don't have keyboard input, but this
+        guards against over-aggressive retain requests.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _restoreFocusWithToken:]):
+        (-[WKContentView _preserveFocusWithToken:destructively:]):
+
 2018-01-26  Chris Dumez  <cdumez@apple.com>
 
         Make sure service worker code does not launch a StorageProcess unnecessarily
