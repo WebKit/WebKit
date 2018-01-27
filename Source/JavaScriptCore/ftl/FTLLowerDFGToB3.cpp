@@ -31,6 +31,7 @@
 #include "AirCode.h"
 #include "AirGenerationContext.h"
 #include "AllowMacroScratchRegisterUsage.h"
+#include "AllowMacroScratchRegisterUsageIf.h"
 #include "AtomicsObject.h"
 #include "B3CheckValue.h"
 #include "B3FenceValue.h"
@@ -12016,6 +12017,10 @@ private:
         LBasicBlock lastNext = m_out.insertNewBlocksBefore(continuation);
         
         PatchpointValue* patchpoint = m_out.patchpoint(pointerType());
+        if (isARM64()) {
+            // emitAllocateWithNonNullAllocator uses the scratch registers on ARM.
+            patchpoint->clobber(RegisterSet::macroScratchRegisters());
+        }
         patchpoint->effects.terminal = true;
         if (actualAllocator.isConstant())
             patchpoint->numGPScratchRegisters++;
@@ -12029,6 +12034,7 @@ private:
         
         patchpoint->setGenerator(
             [=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+                AllowMacroScratchRegisterUsageIf allowScratchIf(jit, isARM64());
                 CCallHelpers::JumpList jumpToSlowPath;
                 
                 GPRReg allocatorGPR;

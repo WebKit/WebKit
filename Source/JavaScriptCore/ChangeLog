@@ -1,3 +1,20 @@
+2018-01-26  Saam Barati  <sbarati@apple.com>
+
+        Fix emitAllocateWithNonNullAllocator to work on arm
+        https://bugs.webkit.org/show_bug.cgi?id=182187
+        <rdar://problem/36906550>
+
+        Reviewed by Filip Pizlo.
+
+        This patch unifies the x86 and ARM paths in emitAllocateWithNonNullAllocator
+        and makes it so that emitAllocateWithNonNullAllocator uses the macro scratch
+        register on ARM.
+
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::allocateHeapCell):
+        * jit/AssemblyHelpers.cpp:
+        (JSC::AssemblyHelpers::emitAllocateWithNonNullAllocator):
+
 2018-01-26  Joseph Pecoraro  <pecoraro@apple.com>
 
         Rebaselining builtin generator tests after r227685.
