@@ -1,3 +1,10 @@
+2018-01-27  Dan Bernstein  <mitz@apple.com>
+
+        HaveInternalSDK includes should be "#include?"
+        https://bugs.webkit.org/show_bug.cgi?id=179670
+
+        * gtest/xcode/Config/General.xcconfig:
+
 2018-01-18  Sergio Villar Senin  <svillar@igalia.com>
 
         [WebVR] Add OpenVR to the tree and to the build
