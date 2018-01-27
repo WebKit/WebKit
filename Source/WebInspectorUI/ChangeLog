@@ -1,5 +1,16 @@
 2018-01-26  Matt Baker  <mattbaker@apple.com>
 
+        Web Inspector: Timelines content browser NavigationBar is squashed at narrow heights
+        https://bugs.webkit.org/show_bug.cgi?id=182196
+        <rdar://problem/36929899>
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Views/NavigationBar.css:
+        (.navigation-bar):
+
+2018-01-26  Matt Baker  <mattbaker@apple.com>
+
         Web Inspector: TabBar redesign: improvements to tab layout and resize behavior
         https://bugs.webkit.org/show_bug.cgi?id=181468
         <rdar://problem/36395439>
