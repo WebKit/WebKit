@@ -1,3 +1,21 @@
+2018-01-27  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        DFG strength reduction fails to convert NumberToStringWithValidRadixConstant for 0 to constant '0'
+        https://bugs.webkit.org/show_bug.cgi?id=182213
+
+        Reviewed by Mark Lam.
+
+        toStringWithRadixInternal is originally used for the slow path if the given value is larger than radix or negative.
+        As a result, it does not accept 0 correctly, and produces an empty string. Since DFGStrengthReductionPhase uses
+        this function, it accidentally converts NumberToStringWithValidRadixConstant(0, radix) to an empty string.
+        This patch fixes toStringWithRadixInternal to accept 0. This change fixes twitch.tv's issue.
+
+        We also add a careful cast to avoid `-INT32_MIN`. It does not produce incorrect value in x86 in practice,
+        but it is UB, and a compiler may assume that the given value is never INT32_MIN and could do an incorrect optimization.
+
+        * runtime/NumberPrototype.cpp:
+        (JSC::toStringWithRadixInternal):
+
 2018-01-26  Saam Barati  <sbarati@apple.com>
 
         Fix emitAllocateWithNonNullAllocator to work on arm

@@ -1,3 +1,25 @@
+2018-01-27  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        DFG strength reduction fails to convert NumberToStringWithValidRadixConstant for 0 to constant '0'
+        https://bugs.webkit.org/show_bug.cgi?id=182213
+
+        Reviewed by Mark Lam.
+
+        * stress/int32-min-to-string.js: Added.
+        (shouldBe):
+        (test2):
+        (test4):
+        (test8):
+        (test16):
+        (test32):
+        * stress/zero-to-string.js: Added.
+        (shouldBe):
+        (test2):
+        (test4):
+        (test8):
+        (test16):
+        (test32):
+
 2018-01-23  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Add more module scope related tests with code evaluation by string
