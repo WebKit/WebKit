@@ -1,3 +1,26 @@
+2018-01-26  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Make accessibility/mac/selection-notification-focus-change.html more reliable and re-enable it
+        https://bugs.webkit.org/show_bug.cgi?id=182198
+        <rdar://problem/36930258>
+
+        Reviewed by Tim Horton.
+
+        Refactored the test by splitting each test case into its own function split by setTimeout by zero seconds
+        instead of triggering the next test case when receiving a specific notification to make the test more robust.
+
+        Also moved functions which trigger the focus move into evalAndLog so that they appear in the expected result,
+        and added more logging to make the debugging of the test easier.
+
+        Finally, added WebKit2 specific expected result because it has one extra test failure compared to WebKit1.
+
+        * accessibility/mac/selection-notification-focus-change-expected.txt:
+        * accessibility/mac/selection-notification-focus-change.html:
+        * platform/mac-wk2/accessibility/mac: Added.
+        * platform/mac-wk2/accessibility/mac/selection-notification-focus-change-expected.txt: Added.
+        * platform/mac/TestExpectations: Removed the flaky test failure expectation since this test should now have
+        the same expected result everywhere on macOS.
+
 2018-01-26  Chris Dumez  <cdumez@apple.com>
 
         Layout Test http/wpt/beacon/beacon-async-error-logging.html is flaky

@@ -23,41 +23,15 @@
             var axTextFocusChangeTwo = 0;
             var axTextFocusChangeThree = 0;
             var axTextFocusChangeFour = 0;
-            var selectCount = 0;
-            var focusCount = 0;
-            // Notification ordering:
-            // The first tab will result in 2 selection change notifications and a focus notification          selectCount=2, focusCount=1
-            // takeFocus() will result in a focus notification                                                 selectCount=2, focusCount=2
-            // The second tab will result in another 2 selection change notifications and a focus notification selectCount=1, focusCount=3
-            // (The 2 selection change notifications per tab is caused by caret browsing being enabled)
+            var tabCharacter = "\t";
+
             function notificationCallback(notification, userInfo) {
                 if (notification == "AXSelectedTextChanged") {
-                    selectCount++;
-                    if (selectCount == 1) {
-                        axTextFocusChangeOne = userInfo["AXTextSelectionChangedFocus"];
-                        shouldBeTrue("axTextFocusChangeOne");
-                    } else if (selectCount == 2) {
-                        axTextFocusChangeTwo = userInfo["AXTextSelectionChangedFocus"];
-                        shouldBeTrue("axTextFocusChangeTwo");
-
-                        shouldBeTrue("accessibilityController.accessibleElementById(\"1\").isFocusable");
-                        accessibilityController.accessibleElementById("1").takeFocus();
-                    } else if (selectCount == 3) {
-                        axTextFocusChangeThree = userInfo["AXTextSelectionChangedFocus"];
-                        shouldBeTrue("axTextFocusChangeThree");
-                    } else if (selectCount == 4) {
-                        axTextFocusChangeFour = userInfo["AXTextSelectionChangedFocus"];
-                        shouldBeTrue("axTextFocusChangeFour");
-                    }
-                } else if (notification == "AXFocusChanged") {
-                    focusCount++;
-                    if (focusCount == 2)
-                        eventSender.scheduleAsynchronousKeyDown("\t");
-                }
-                if (selectCount == 4 && focusCount == 3) {
-                    webArea.removeNotificationListener();
-                    finishJSTest();
-                }
+                    debug("Received AXSelectedTextChanged");
+                    window.userInfo = userInfo;
+                    shouldBeTrue("userInfo[\"AXTextSelectionChangedFocus\"]");
+                } else if (notification == "AXFocusChanged")
+                    debug("Received AXFocusChanged");
             }
 
             function runTest() {
@@ -68,15 +42,31 @@
                     webArea = accessibilityController.rootElement.childAtIndex(0);
                     webArea.setBoolAttributeValue("AXCaretBrowsingEnabled", true)
 
-                    addedNotification = webArea.addNotificationListener(notificationCallback);
-                    shouldBeTrue("addedNotification");
-
-                    eventSender.keyDown("\t");
+                    shouldBeTrue("webArea.addNotificationListener(notificationCallback)");
+                    evalAndLog("eventSender.keyDown(tabCharacter);");
+                    setTimeout(runTakeFocusTest, 0);
                 } else {
                     debug("window.accessibilityController is not present");
                     finishJSTest();
                 }
             }
+
+            function runTakeFocusTest() {
+                debug('');
+                shouldBeTrue("accessibilityController.accessibleElementById(\"1\").isFocusable");
+                evalAndLog("accessibilityController.accessibleElementById(\"1\").takeFocus()");
+                setTimeout(runSecondTabMoveTest, 0);
+            }
+
+            function runSecondTabMoveTest() {
+                debug('');
+                evalAndLog("eventSender.keyDown(tabCharacter)");
+                setTimeout(() => {
+                    webArea.removeNotificationListener();
+                    finishJSTest();
+                }, 0);
+            }
+
             </script>
         <script src="../../resources/js-test-post.js"></script>
     </body>

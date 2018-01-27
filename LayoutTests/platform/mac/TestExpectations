@@ -1183,7 +1183,6 @@ webkit.org/b/154753 js/basic-map.html [ Skip ]
 
 # outline: auto -focusring.
 accessibility/mac/selection-element-tabbing-to-link.html [ Pass Failure ]
-accessibility/mac/selection-notification-focus-change.html [ Pass Failure ]
 
 webkit.org/b/152506 webgl/1.0.2/conformance/extensions/get-extension.html [ Pass Timeout ]
 
