@@ -1,3 +1,29 @@
+2018-01-26  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Distinguish between an omitted and a null timeline argument to the Animation constructor
+        https://bugs.webkit.org/show_bug.cgi?id=179065
+        <rdar://problem/36869046>
+
+        Reviewed by Dean Jackson.
+
+        The Web Animations specification requires that a missing or undefined "timeline" parameter means that the
+        document's timeline should be used, but a null value should be supported. To support this, we need to provide
+        a custom Animation constructor where we can check on the ExecState whether the second argument passed is
+        undefined, which is true if an explicit "undefined" value is passed or if the argument does not exist.
+
+        * Sources.txt: Add the new JSWebAnimationCustom.cpp file.
+        * WebCore.xcodeproj/project.pbxproj: Add the new JSWebAnimationCustom.cpp file.
+        * animation/WebAnimation.cpp:
+        (WebCore::WebAnimation::create): Add a create() variant that doesn't provide an AnimationTimeline parameter
+        to clearly indicate that the provided Document's timeline should be used.
+        * animation/WebAnimation.h:
+        * animation/WebAnimation.idl:
+        * bindings/js/JSWebAnimationCustom.cpp: Added.
+        (WebCore::constructJSWebAnimation): Provide a custom Animation constructor where we check whether the second
+        argument, the timeline, is undefined.
+        * dom/Element.cpp:
+        (WebCore::Element::animate): Use the new create() variant since passing "nullptr" now means a null timeline.
+
 2018-01-26  Ricky Mondello  <rmondello@apple.com>
 
         Use the standard -webkit-autofill color on iOS

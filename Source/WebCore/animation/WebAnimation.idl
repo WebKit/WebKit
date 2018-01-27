@@ -35,8 +35,7 @@ enum AnimationPlayState {
     ActiveDOMObject,
     EnabledAtRuntime=WebAnimations,
     InterfaceName=Animation,
-    ConstructorCallWith=Document,
-    Constructor(optional AnimationEffect? effect = null, optional AnimationTimeline? timeline)
+    CustomConstructor()
 ] interface WebAnimation : EventTarget {
     attribute DOMString id;
     attribute AnimationEffect? effect;

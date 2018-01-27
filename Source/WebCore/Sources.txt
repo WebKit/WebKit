@@ -438,6 +438,7 @@ bindings/js/JSTrackCustom.cpp
 bindings/js/JSTreeWalkerCustom.cpp
 bindings/js/JSVideoTrackCustom.cpp
 bindings/js/JSVideoTrackListCustom.cpp
+bindings/js/JSWebAnimationCustom.cpp
 bindings/js/JSWebGL2RenderingContextCustom.cpp
 bindings/js/JSWebGLRenderingContextCustom.cpp
 bindings/js/JSWebGPURenderPassAttachmentDescriptorCustom.cpp

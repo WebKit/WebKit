@@ -3718,7 +3718,7 @@ ExceptionOr<Ref<WebAnimation>> Element::animate(JSC::ExecState& state, JSC::Stro
     if (keyframeEffectResult.hasException())
         return keyframeEffectResult.releaseException();
 
-    auto animation = WebAnimation::create(document(), &keyframeEffectResult.returnValue().get(), nullptr);
+    auto animation = WebAnimation::create(document(), &keyframeEffectResult.returnValue().get());
     animation->setId(id);
 
     auto animationPlayResult = animation->play();

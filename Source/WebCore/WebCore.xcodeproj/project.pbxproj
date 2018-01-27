@@ -8820,6 +8820,7 @@
 		71556CBB1F9F09FE00E78D08 /* JSAnimationEffectTiming.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSAnimationEffectTiming.cpp; sourceTree = "<group>"; };
 		7157E3D11DC1EE4B0094550E /* scrubbing-support.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = "scrubbing-support.js"; sourceTree = "<group>"; };
 		7157F061150B6564006EAABD /* SVGAnimatedTransformList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGAnimatedTransformList.cpp; sourceTree = "<group>"; };
+		715DA5D3201BB902002EF2B0 /* JSWebAnimationCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebAnimationCustom.cpp; sourceTree = "<group>"; };
 		716C8DF11E48B269005BD0DA /* volume-down-support.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = "volume-down-support.js"; sourceTree = "<group>"; };
 		716C8DF21E48B269005BD0DA /* volume-up-support.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = "volume-up-support.js"; sourceTree = "<group>"; };
 		716C8DF31E48B284005BD0DA /* volume-down-button.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = "volume-down-button.js"; sourceTree = "<group>"; };
@@ -19320,6 +19321,7 @@
 				516BB7920CE91E6800512F79 /* JSTreeWalkerCustom.cpp */,
 				BE6DF708171CA2C500DD52B8 /* JSVideoTrackCustom.cpp */,
 				BE6DF70A171CA2C500DD52B8 /* JSVideoTrackListCustom.cpp */,
+				715DA5D3201BB902002EF2B0 /* JSWebAnimationCustom.cpp */,
 				D3F3D3591A69A3B00059FC2B /* JSWebGL2RenderingContextCustom.cpp */,
 				49EED14C1051971A00099FAB /* JSWebGLRenderingContextCustom.cpp */,
 				31A088C41E737B2C003B6609 /* JSWebGPURenderingContextCustom.cpp */,

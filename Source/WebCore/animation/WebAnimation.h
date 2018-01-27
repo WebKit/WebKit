@@ -46,6 +46,7 @@ class RenderStyle;
 
 class WebAnimation final : public RefCounted<WebAnimation>, public EventTargetWithInlineData, public ActiveDOMObject {
 public:
+    static Ref<WebAnimation> create(Document&, AnimationEffect*);
     static Ref<WebAnimation> create(Document&, AnimationEffect*, AnimationTimeline*);
     ~WebAnimation();
 

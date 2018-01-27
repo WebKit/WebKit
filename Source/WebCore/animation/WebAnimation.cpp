@@ -39,16 +39,20 @@
 
 namespace WebCore {
 
+Ref<WebAnimation> WebAnimation::create(Document& document, AnimationEffect* effect)
+{
+    auto result = adoptRef(*new WebAnimation(document));
+    result->setEffect(effect);
+    result->setTimeline(&document.timeline());
+    return result;
+}
+
 Ref<WebAnimation> WebAnimation::create(Document& document, AnimationEffect* effect, AnimationTimeline* timeline)
 {
     auto result = adoptRef(*new WebAnimation(document));
-
     result->setEffect(effect);
-
-    // FIXME: the spec mandates distinguishing between an omitted timeline parameter
-    // and an explicit null or undefined value (webkit.org/b/179065).
-    result->setTimeline(timeline ? timeline : &document.timeline());
-
+    if (timeline)
+        result->setTimeline(timeline);
     return result;
 }
 

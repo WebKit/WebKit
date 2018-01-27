@@ -1,3 +1,16 @@
+2018-01-26  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Distinguish between an omitted and a null timeline argument to the Animation constructor
+        https://bugs.webkit.org/show_bug.cgi?id=179065
+
+        Reviewed by Dean Jackson.
+
+        Update WPT test output with progressions.
+
+        * web-platform-tests/web-animations/interfaces/Animation/constructor-expected.txt:
+        * web-platform-tests/web-animations/timing-model/animations/reversing-an-animation-expected.txt:
+        * web-platform-tests/web-animations/timing-model/animations/set-the-timeline-of-an-animation-expected.txt:
+
 2018-01-26  Youenn Fablet  <youenn@apple.com>
 
         CSP post checks should be done for service worker responses
