@@ -39,6 +39,7 @@ WI.TabBar = class TabBar extends WI.View
         this.element.createChild("div", "top-border");
 
         this._tabBarItems = [];
+        this._hiddenTabBarItems = [];
 
         if (tabBarItems) {
             for (let tabBarItem in tabBarItems)
@@ -51,6 +52,11 @@ WI.TabBar = class TabBar extends WI.View
         this._newTabTabBarItem.element.addEventListener("mouseenter", this._handleNewTabMouseEnter.bind(this));
         this._newTabTabBarItem.element.addEventListener("click", this._handleNewTabClick.bind(this));
         this.addTabBarItem(this._newTabTabBarItem, {suppressAnimations: true});
+
+        this._tabPickerTabBarItem = new WI.PinnedTabBarItem("Images/TabPicker.svg", WI.UIString("Show hidden tabs"));
+        this._tabPickerTabBarItem.element.classList.add("tab-picker");
+        this._tabPickerTabBarItem.element.addEventListener("contextmenu", this._handleTabPickerTabContextMenu.bind(this));
+        this.addTabBarItem(this._tabPickerTabBarItem, {suppressAnimations: true});
     }
 
     // Public
@@ -371,8 +377,11 @@ WI.TabBar = class TabBar extends WI.View
 
         this._selectedTabBarItem = tabBarItem || null;
 
-        if (this._selectedTabBarItem)
+        if (this._selectedTabBarItem) {
             this._selectedTabBarItem.selected = true;
+            if (this._selectedTabBarItem.element.classList.contains("hidden"))
+                this.needsLayout();
+        }
 
         this.dispatchEventToListeners(WI.TabBar.Event.TabBarItemSelected);
     }
@@ -394,30 +403,57 @@ WI.TabBar = class TabBar extends WI.View
         if (this.element.classList.contains("static-layout"))
             return;
 
-        this.element.classList.remove("hide-titles");
+        this.element.classList.add("calculate-width");
         this.element.classList.remove("collapsed");
 
-        let firstNormalTabItem = null;
-        for (let tabItem of this._tabBarItems) {
-            if (tabItem instanceof WI.PinnedTabBarItem)
-                continue;
-
-            firstNormalTabItem = tabItem;
-            break;
+        function forceItemHidden(item, hidden) {
+            item.element.classList.toggle("hidden", !!hidden);
         }
 
-        if (!firstNormalTabItem)
-            return;
+        for (let item of this._tabBarItems)
+            forceItemHidden(item, item === this._tabPickerTabBarItem);
 
-        if (firstNormalTabItem.element.offsetWidth >= 120)
-            return;
+        function measureItemWidth(item) {
+            if (!item[WI.TabBar.CachedWidthSymbol])
+                item[WI.TabBar.CachedWidthSymbol] = item.element.realOffsetWidth;
+            return item[WI.TabBar.CachedWidthSymbol];
+        }
 
-        this.element.classList.add("collapsed");
+        let recalculateItemWidths = () => {
+            return this._tabBarItems.reduce((total, item) => {
+                item[WI.TabBar.CachedWidthSymbol] = undefined;
+                return total + measureItemWidth(item);
+            }, 0);
+        };
 
-        if (firstNormalTabItem.element.offsetWidth >= 75)
-            return;
+        this._hiddenTabBarItems = [];
 
-        this.element.classList.add("hide-titles");
+        let totalItemWidth = recalculateItemWidths();
+        let barWidth = this.element.realOffsetWidth;
+
+        if (totalItemWidth > barWidth) {
+            this.element.classList.add("collapsed");
+            totalItemWidth = recalculateItemWidths();
+            if (totalItemWidth > barWidth) {
+                forceItemHidden(this._tabPickerTabBarItem, false);
+                totalItemWidth += measureItemWidth(this._tabPickerTabBarItem);
+            }
+
+            let tabBarItems = this._tabBarItemsFromLeftToRight();
+            let index = tabBarItems.length;
+            while (totalItemWidth > barWidth && --index >= 0) {
+                let item = tabBarItems[index];
+                if (item === this.selectedTabBarItem || item instanceof WI.PinnedTabBarItem)
+                    continue;
+
+                totalItemWidth -= measureItemWidth(item);
+                forceItemHidden(item, true);
+
+                this._hiddenTabBarItems.push(item);
+            }
+        }
+
+        this.element.classList.remove("calculate-width");
     }
 
     // Private
@@ -562,6 +598,18 @@ WI.TabBar = class TabBar extends WI.View
 
         if (tabBarItem === this._newTabTabBarItem)
             return;
+
+        if (tabBarItem === this._tabPickerTabBarItem) {
+            if (!this._hiddenTabBarItems.length)
+                return;
+
+            let contextMenu = WI.ContextMenu.createFromEvent(event);
+            for (let item of this._hiddenTabBarItems)
+                contextMenu.appendItem(item.title, () => this.selectedTabBarItem = item);
+
+            contextMenu.show();
+            return;
+        }
 
         let closeButtonElement = event.target.enclosingNodeOrSelfWithClass(WI.TabBarItem.CloseButtonStyleClassName);
         if (closeButtonElement)
@@ -785,6 +833,19 @@ WI.TabBar = class TabBar extends WI.View
         WI.showNewTabTab();
     }
 
+    _handleTabPickerTabContextMenu(event)
+    {
+        if (!this._hiddenTabBarItems.length)
+            return;
+
+        let contextMenu = WI.ContextMenu.createFromEvent(event);
+        for (let item of this._hiddenTabBarItems) {
+            contextMenu.appendItem(item.title, () => {
+                this.selectedTabBarItem = item;
+            });
+        }
+    }
+
     _handleNewTabMouseEnter(event)
     {
         if (!this._tabAnimatedClosedSinceMouseEnter || !this.element.classList.contains("static-layout") || this.element.classList.contains("animating"))
@@ -793,6 +854,8 @@ WI.TabBar = class TabBar extends WI.View
         this._finishExpandingTabsAfterClose();
     }
 };
+
+WI.TabBar.CachedWidthSymbol = Symbol("cached-width");
 
 WI.TabBar.Event = {
     TabBarItemSelected: "tab-bar-tab-bar-item-selected",

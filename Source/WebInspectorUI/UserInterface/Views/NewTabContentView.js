@@ -27,8 +27,7 @@ WI.NewTabContentView = class NewTabContentView extends WI.TabContentView
 {
     constructor(identifier)
     {
-        let {image, title} = WI.NewTabContentView.tabInfo();
-        let tabBarItem = new WI.GeneralTabBarItem(image, title);
+        let tabBarItem = WI.GeneralTabBarItem.fromTabContentViewConstructor(WI.NewTabContentView);
         tabBarItem.isDefaultTab = true;
 
         super(identifier || "new-tab", "new-tab", tabBarItem);

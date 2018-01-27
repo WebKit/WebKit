@@ -29,8 +29,7 @@ WI.CanvasTabContentView = class CanvasTabContentView extends WI.ContentBrowserTa
     {
         console.assert(!representedObject || representedObject instanceof WI.Canvas);
 
-        let {image, title} = WI.CanvasTabContentView.tabInfo();
-        let tabBarItem = new WI.GeneralTabBarItem(image, title);
+        let tabBarItem = WI.GeneralTabBarItem.fromTabContentViewConstructor(WI.CanvasTabContentView);
 
         const navigationSidebarPanelConstructor = WI.RecordingNavigationSidebarPanel;
         const detailsSidebarPanelConstructors = [WI.RecordingStateDetailsSidebarPanel, WI.RecordingTraceDetailsSidebarPanel, WI.CanvasDetailsSidebarPanel];

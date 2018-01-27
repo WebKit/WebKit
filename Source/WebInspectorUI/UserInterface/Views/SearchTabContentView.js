@@ -27,8 +27,7 @@ WI.SearchTabContentView = class SearchTabContentView extends WI.ContentBrowserTa
 {
     constructor(identifier)
     {
-        let {image, title} = WI.SearchTabContentView.tabInfo();
-        let tabBarItem = new WI.GeneralTabBarItem(image, title);
+        let tabBarItem = WI.GeneralTabBarItem.fromTabContentViewConstructor(WI.SearchTabContentView);
         let detailsSidebarPanelConstructors = [WI.ResourceDetailsSidebarPanel, WI.ProbeDetailsSidebarPanel,
             WI.DOMNodeDetailsSidebarPanel, WI.ComputedStyleDetailsSidebarPanel, WI.RulesStyleDetailsSidebarPanel];
 

@@ -27,8 +27,7 @@ WI.LayersTabContentView = class LayersTabContentView extends WI.ContentBrowserTa
 {
     constructor()
     {
-        let {image, title} = WI.LayersTabContentView.tabInfo();
-        let tabBarItem = new WI.GeneralTabBarItem(image, title);
+        let tabBarItem = WI.GeneralTabBarItem.fromTabContentViewConstructor(WI.LayersTabContentView);
 
         const navigationSidebarPanelConstructor = null;
         const detailsSidebarPanelConstructors = [WI.LayerDetailsSidebarPanel];

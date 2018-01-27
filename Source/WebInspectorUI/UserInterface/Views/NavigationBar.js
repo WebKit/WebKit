@@ -452,7 +452,6 @@ WI.NavigationBar = class NavigationBar extends WI.View
     }
 };
 
-WI.NavigationBar.CachedWidthSymbol = Symbol("cached-width");
 WI.NavigationBar.ForceHiddenSymbol = Symbol("force-hidden");
 
 WI.NavigationBar.CollapsedStyleClassName = "collapsed";

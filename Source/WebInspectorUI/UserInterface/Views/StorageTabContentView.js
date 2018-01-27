@@ -27,8 +27,7 @@ WI.StorageTabContentView = class StorageTabContentView extends WI.ContentBrowser
 {
     constructor(identifier)
     {
-        let {image, title} = WI.StorageTabContentView.tabInfo();
-        let tabBarItem = new WI.GeneralTabBarItem(image, title);
+        let tabBarItem = WI.GeneralTabBarItem.fromTabContentViewConstructor(WI.StorageTabContentView);
         let detailsSidebarPanelConstructors = [WI.ApplicationCacheDetailsSidebarPanel, WI.IndexedDatabaseDetailsSidebarPanel];
 
         super(identifier || "storage", "storage", tabBarItem, WI.StorageSidebarPanel, detailsSidebarPanelConstructors);

@@ -27,8 +27,7 @@ WI.DebuggerTabContentView = class DebuggerTabContentView extends WI.ContentBrows
 {
     constructor(identifier)
     {
-        let {image, title} = WI.DebuggerTabContentView.tabInfo();
-        let tabBarItem = new WI.GeneralTabBarItem(image, title);
+        let tabBarItem = WI.GeneralTabBarItem.fromTabContentViewConstructor(WI.DebuggerTabContentView);
         let detailsSidebarPanelConstructors = [WI.ScopeChainDetailsSidebarPanel, WI.ResourceDetailsSidebarPanel, WI.ProbeDetailsSidebarPanel];
 
         super(identifier || "debugger", "debugger", tabBarItem, WI.DebuggerSidebarPanel, detailsSidebarPanelConstructors);

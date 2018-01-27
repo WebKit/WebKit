@@ -1,3 +1,109 @@
+2018-01-26  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: TabBar redesign: improvements to tab layout and resize behavior
+        https://bugs.webkit.org/show_bug.cgi?id=181468
+        <rdar://problem/36395439>
+
+        Reviewed by Devin Rousso.
+
+        * Localizations/en.lproj/localizedStrings.js:
+
+        * UserInterface/Images/TabPicker.svg: Added.
+        New ">>" icon for the tab picker button.
+
+        * UserInterface/Views/CanvasTabContentView.js:
+        (WI.CanvasTabContentView):
+        * UserInterface/Views/ConsoleTabContentView.js:
+        (WI.ConsoleTabContentView):
+        * UserInterface/Views/DebuggerTabContentView.js:
+        (WI.DebuggerTabContentView):
+        * UserInterface/Views/ElementsTabContentView.js:
+        (WI.ElementsTabContentView):
+
+        * UserInterface/Views/GeneralTabBarItem.js:
+        (WI.GeneralTabBarItem):
+        (WI.GeneralTabBarItem.fromTabContentViewConstructor):
+        (WI.GeneralTabBarItem.prototype.get title):
+        Add missing override for getter/setter pair.
+        (WI.GeneralTabBarItem.prototype.set title):
+        (WI.GeneralTabBarItem.prototype._handleContextMenuEvent):
+        Show the close button on ephemeral tabs only (Search, New Tab).
+        Replace unused `representedObject` parameter with `isEphemeral`, which
+        determines whether to show a close button for the tab.
+
+        * UserInterface/Views/LayersTabContentView.js:
+        (WI.LayersTabContentView):
+
+        * UserInterface/Views/NavigationBar.js:
+        Remove unused symbol.
+
+        * UserInterface/Views/NetworkTabContentView.js:
+        (WI.NetworkTabContentView):
+        * UserInterface/Views/NewTabContentView.js:
+        (WI.NewTabContentView):
+
+        * UserInterface/Views/PinnedTabBarItem.js:
+        (WI.PinnedTabBarItem):
+        Remove unused parameter.
+
+        * UserInterface/Views/ResourcesTabContentView.js:
+        (WI.ResourcesTabContentView):
+        * UserInterface/Views/SearchTabContentView.js:
+        (WI.SearchTabContentView):
+        * UserInterface/Views/StorageTabContentView.js:
+        (WI.StorageTabContentView):
+
+        * UserInterface/Views/TabBar.css:
+        (.tab-bar > .item):
+        (.tab-bar.calculate-width > .item):
+        (.tab-bar > .item.pinned.tab-picker):
+        (.tab-bar > .item > .close):
+        (.tab-bar > .item > .title):
+        (.tab-bar:not(.collapsed) > .item > .title):
+        (.tab-bar.collapsed > .item:not(.pinned) > .icon):
+        (.tab-bar > .item:hover > .close):
+        (.tab-bar.collapsed > .item:hover > .close):
+        (.tab-bar:not(.collapsed) > .item.ephemeral:hover > .icon):
+        (.tab-bar.collapsed > .item.ephemeral:hover > .title):
+        (body[dir=ltr] .tab-bar > .item > .close): Deleted.
+        (body[dir=rtl] .tab-bar > .item > .close): Deleted.
+        (.tab-bar > .item > .flex-space): Deleted.
+        (.tab-bar > .item:not(.pinned) > .flex-space:last-child): Deleted.
+        (body[dir=ltr] .tab-bar > .item:not(.pinned) > .flex-space:last-child): Deleted.
+        (body[dir=rtl] .tab-bar > .item:not(.pinned) > .flex-space:last-child): Deleted.
+        (body[dir=ltr] .tab-bar > .item > .title): Deleted.
+        (body[dir=rtl] .tab-bar > .item > .title): Deleted.
+        (.tab-bar.collapsed > .item): Deleted.
+        (.tab-bar.collapsed > .item > .flex-space): Deleted.
+        (.tab-bar.collapsed > .item > .close): Deleted.
+        (body[dir=ltr] .tab-bar.collapsed > .item > .close): Deleted.
+        (body[dir=rtl] .tab-bar.collapsed > .item > .close): Deleted.
+        (.tab-bar.hide-titles > .item > .title): Deleted.
+        (.tab-bar.collapsed:not(.hide-titles) > .item:not(.pinned):hover > .icon,): Deleted.
+        (.tab-bar.collapsed:not(.hide-titles) > .item:hover > .close,): Deleted.
+        Clean up tab styles and prevent tabs from shrinking during flex layout.
+        Added new `calculate-width` class, to disable flex layout when measuring
+        the minimum width of the TabBar required to fit all tab items.
+
+        * UserInterface/Views/TabBar.js:
+        (WI.TabBar):
+        (WI.TabBar.prototype.set selectedTabBarItem):
+        (WI.TabBar.prototype.layout.forceItemHidden):
+        (WI.TabBar.prototype.layout):
+        Perform two layout passes, similar to NavigationBar. The first pass disables
+        flex layout and measures tab items at full size. If the bar isn't wide enough
+        to show all the tabs, hide their icons and measure again. If there still isn't
+        room, hide tabs starting from the end of the bar and display the tab picker.
+
+        (WI.TabBar.prototype._handleMouseDown):
+        (WI.TabBar.prototype._handleTabPickerTabContextMenu):
+
+        * UserInterface/Views/TabBarItem.js:
+        (WI.TabBarItem):
+
+        * UserInterface/Views/TimelineTabContentView.js:
+        (WI.TimelineTabContentView):
+
 2018-01-25  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Network Table: Sort indicator is not displayed when sorted column is hidden and re-shown
