@@ -1,3 +1,20 @@
+2018-01-26  Dean Jackson  <dino@apple.com>
+
+        REGRESSION (r222961): Clear function not clearing whole screen when antialias is set to false
+        https://bugs.webkit.org/show_bug.cgi?id=179368
+        <rdar://problem/36111549>
+
+        Reviewed by Sam Weinig.
+
+        When we changed from using a CAOpenGLLayer to a regular CALayer, we should
+        have also swapped the "opaque" property to "contentsOpaque".
+
+        Covered by the existing test: fast/canvas/webgl/context-attributes-alpha.html
+        (when run on some hardware!)
+
+        * platform/graphics/cocoa/WebGLLayer.mm:
+        (-[WebGLLayer initWithGraphicsContext3D:]):
+
 2018-01-26  Mark Lam  <mark.lam@apple.com>
 
         Add infrastructure for pointer preparation.
