@@ -1,3 +1,25 @@
+2018-01-26  Jason Marcell  <jmarcell@apple.com>
+
+        Apply patch. rdar://problem/36830858
+
+    [safari-605-branch] API test CSSPropertyParserTest.GridTrackLimits is failing
+    <rdar://problem/36830858>
+    
+    Reviewed by Maciej Stachowiak.
+    
+    * TestWebKitAPI/Configurations/FeatureDefines.xcconfig: Make it match the other
+    FeatureDefines.xcconfig files, otherwise it will result in test failures.
+
+    2018-01-26  Maciej Stachowiak  <mjs@apple.com>
+
+            [safari-605-branch] API test CSSPropertyParserTest.GridTrackLimits is failing
+            <rdar://problem/36830858>
+
+            Reviewed by Maciej Stachowiak.
+
+            * TestWebKitAPI/Configurations/FeatureDefines.xcconfig: Make it match the other
+            FeatureDefines.xcconfig files, otherwise it will result in test failures.
+
 2018-01-25  Jason Marcell  <jmarcell@apple.com>
 
         Cherry-pick r227590. rdar://problem/36873343
