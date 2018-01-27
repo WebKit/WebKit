@@ -665,11 +665,7 @@ input:-webkit-autofill-strong-password {
 }
 
 input:-webkit-autofill, input:-webkit-autofill-strong-password {
-#if defined(WTF_PLATFORM_IOS) && WTF_PLATFORM_IOS
-    background-color: #F7EC87 !important;
-#else
     background-color: #FAFFBD !important;
-#endif
     background-image: none !important;
     color: #000000 !important;
 }

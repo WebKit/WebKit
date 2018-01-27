@@ -1,3 +1,15 @@
+2018-01-26  Ricky Mondello  <rmondello@apple.com>
+
+        Use the standard -webkit-autofill color on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=182182
+
+        Reviewed by Tim Horton.
+
+        Update test expectations.
+
+        * platform/ios/fast/forms/auto-fill-button/input-strong-confirmation-password-auto-fill-button-expected.txt:
+        * platform/ios/fast/forms/auto-fill-button/input-strong-password-auto-fill-button-expected.txt:
+
 2018-01-26  Megan Gardner  <megan_gardner@apple.com>
 
         Don't retain focus for input peripheral views
