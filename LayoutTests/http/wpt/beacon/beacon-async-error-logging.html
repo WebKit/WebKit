@@ -7,11 +7,15 @@
 <body>
 <script>
     async_test(function(t) {
+        if (window.internals) {
+            internals.setConsoleMessageListener(function() {
+                t.done();
+            });
+        } else {
+            setTimeout(function() { t.done(); }, 500);
+        }
         let invalidHost = "http://invalid.localhost";
         assert_true(navigator.sendBeacon(invalidHost, 'test'), "sendBeacon should return true");
-        setTimeout(function() {
-            t.done();
-        }, 500);
     }, "Should log an error message in the console");
 </script>
 </body>

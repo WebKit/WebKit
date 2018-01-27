@@ -1,3 +1,17 @@
+2018-01-26  Chris Dumez  <cdumez@apple.com>
+
+        Layout Test http/wpt/beacon/beacon-async-error-logging.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=182184
+        <rdar://problem/36929478>
+
+        Reviewed by Youenn Fablet.
+
+        Stop relying on a setTimeout(500) to end the test. Instead rely on the
+        internals.setConsoleMessageListener() API to wait for the console message
+        we are expecting.
+
+        * http/wpt/beacon/beacon-async-error-logging.html:
+
 2018-01-26  Ricky Mondello  <rmondello@apple.com>
 
         Use the standard -webkit-autofill color on iOS
