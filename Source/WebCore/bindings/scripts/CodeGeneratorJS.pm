@@ -3,7 +3,7 @@
 # Copyright (C) 2006 Anders Carlsson <andersca@mac.com>
 # Copyright (C) 2006, 2007 Samuel Weinig <sam@webkit.org>
 # Copyright (C) 2006 Alexey Proskuryakov <ap@webkit.org>
-# Copyright (C) 2006-2017 Apple Inc. All rights reserved.
+# Copyright (C) 2006-2018 Apple Inc. All rights reserved.
 # Copyright (C) 2009 Cameron McCormack <cam@mcc.id.au>
 # Copyright (C) Research In Motion Limited 2010. All rights reserved.
 # Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies)
@@ -3803,6 +3803,7 @@ sub GenerateImplementation
     AddToImplIncludes("JSDOMExceptionHandling.h");
     AddToImplIncludes("JSDOMWrapperCache.h");
     AddToImplIncludes("<wtf/GetPtr.h>");
+    AddToImplIncludes("<wtf/PointerPreparations.h>");
     AddToImplIncludes("<runtime/PropertyNameArray.h>") if $indexedGetterOperation;
     AddToImplIncludes("JSDOMMapLike.h") if $interface->mapLike;
     AddJSBuiltinIncludesIfNeeded($interface);
@@ -4625,9 +4626,9 @@ END
 #if ENABLE(BINDING_INTEGRITY)
     void* actualVTablePointer = *(reinterpret_cast<void**>(impl.ptr()));
 #if PLATFORM(WIN)
-    void* expectedVTablePointer = reinterpret_cast<void*>(${vtableRefWin});
+    void* expectedVTablePointer = WTF_PREPARE_VTBL_POINTER_FOR_INSPECTION(${vtableRefWin});
 #else
-    void* expectedVTablePointer = ${vtableRefGnu};
+    void* expectedVTablePointer = WTF_PREPARE_VTBL_POINTER_FOR_INSPECTION(${vtableRefGnu});
 #endif
 
     // If this fails ${implType} does not have a vtable, so you need to add the

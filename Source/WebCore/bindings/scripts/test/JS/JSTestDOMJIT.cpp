@@ -43,6 +43,7 @@
 #include <interpreter/FrameTracers.h>
 #include <runtime/JSCInlines.h>
 #include <wtf/GetPtr.h>
+#include <wtf/PointerPreparations.h>
 
 
 namespace WebCore {

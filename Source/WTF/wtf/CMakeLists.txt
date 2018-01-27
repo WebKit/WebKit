@@ -110,6 +110,7 @@ set(WTF_HEADERS
     ParkingLot.h
     Platform.h
     PlatformRegisters.h
+    PointerPreparations.h
     Poisoned.h
     PoisonedUniquePtr.h
     PrintStream.h

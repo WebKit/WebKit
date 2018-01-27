@@ -39,6 +39,7 @@
 #include <runtime/JSCInlines.h>
 #include <runtime/ObjectConstructor.h>
 #include <wtf/GetPtr.h>
+#include <wtf/PointerPreparations.h>
 
 
 namespace WebCore {
@@ -570,9 +571,9 @@ JSC::JSValue toJSNewlyCreated(JSC::ExecState*, JSDOMGlobalObject* globalObject, 
 #if ENABLE(BINDING_INTEGRITY)
     void* actualVTablePointer = *(reinterpret_cast<void**>(impl.ptr()));
 #if PLATFORM(WIN)
-    void* expectedVTablePointer = reinterpret_cast<void*>(__identifier("??_7TestSerialization@WebCore@@6B@"));
+    void* expectedVTablePointer = WTF_PREPARE_VTBL_POINTER_FOR_INSPECTION(__identifier("??_7TestSerialization@WebCore@@6B@"));
 #else
-    void* expectedVTablePointer = &_ZTVN7WebCore17TestSerializationE[2];
+    void* expectedVTablePointer = WTF_PREPARE_VTBL_POINTER_FOR_INSPECTION(&_ZTVN7WebCore17TestSerializationE[2]);
 #endif
 
     // If this fails TestSerialization does not have a vtable, so you need to add the
