@@ -135,7 +135,6 @@ const Vector<size_t>& sizeClasses()
             // FIXME: All of these things should have IsoSubspaces.
             // https://bugs.webkit.org/show_bug.cgi?id=179876
             add(sizeof(UnlinkedFunctionCodeBlock));
-            add(sizeof(FunctionCodeBlock));
             add(sizeof(JSString));
             add(sizeof(JSFunction));
 

@@ -1,3 +1,86 @@
+2018-01-27  Filip Pizlo  <fpizlo@apple.com>
+
+        MarkedBlock should have a footer instead of a header
+        https://bugs.webkit.org/show_bug.cgi?id=182217
+
+        Reviewed by JF Bastien.
+        
+        This moves the MarkedBlock's meta-data from the header to the footer. This doesn't really
+        change anything except for some compile-time constants, so it should not affect performance.
+        
+        This change is to help protect against Spectre attacks on structure checks, which allow for
+        small-offset out-of-bounds access. By putting the meta-data at the end of the block, small
+        OOBs will only get to other objects in the same block or the block footer. The block footer
+        is not super interesting. So, if we combine this with the TLC change (r227617), this means we
+        can use blocks as the mechanism of achieving distance between objects from different origins.
+        We just need to avoid ever putting objects from different origins in the same block. That's
+        what bug 181636 is about.
+        
+        * heap/BlockDirectory.cpp:
+        (JSC::blockHeaderSize): Deleted.
+        (JSC::BlockDirectory::blockSizeForBytes): Deleted.
+        * heap/BlockDirectory.h:
+        * heap/HeapUtil.h:
+        (JSC::HeapUtil::findGCObjectPointersForMarking):
+        * heap/MarkedBlock.cpp:
+        (JSC::MarkedBlock::MarkedBlock):
+        (JSC::MarkedBlock::~MarkedBlock):
+        (JSC::MarkedBlock::Footer::Footer):
+        (JSC::MarkedBlock::Footer::~Footer):
+        (JSC::MarkedBlock::Handle::stopAllocating):
+        (JSC::MarkedBlock::Handle::lastChanceToFinalize):
+        (JSC::MarkedBlock::Handle::resumeAllocating):
+        (JSC::MarkedBlock::aboutToMarkSlow):
+        (JSC::MarkedBlock::resetMarks):
+        (JSC::MarkedBlock::assertMarksNotStale):
+        (JSC::MarkedBlock::Handle::didConsumeFreeList):
+        (JSC::MarkedBlock::markCount):
+        (JSC::MarkedBlock::clearHasAnyMarked):
+        (JSC::MarkedBlock::Handle::didAddToDirectory):
+        (JSC::MarkedBlock::Handle::didRemoveFromDirectory):
+        (JSC::MarkedBlock::Handle::sweep):
+        * heap/MarkedBlock.h:
+        (JSC::MarkedBlock::markingVersion const):
+        (JSC::MarkedBlock::lock):
+        (JSC::MarkedBlock::subspace const):
+        (JSC::MarkedBlock::footer):
+        (JSC::MarkedBlock::footer const):
+        (JSC::MarkedBlock::handle):
+        (JSC::MarkedBlock::handle const):
+        (JSC::MarkedBlock::Handle::blockFooter):
+        (JSC::MarkedBlock::isAtomAligned):
+        (JSC::MarkedBlock::Handle::cellAlign):
+        (JSC::MarkedBlock::blockFor):
+        (JSC::MarkedBlock::vm const):
+        (JSC::MarkedBlock::weakSet):
+        (JSC::MarkedBlock::cellSize):
+        (JSC::MarkedBlock::attributes const):
+        (JSC::MarkedBlock::atomNumber):
+        (JSC::MarkedBlock::areMarksStale):
+        (JSC::MarkedBlock::aboutToMark):
+        (JSC::MarkedBlock::isMarkedRaw):
+        (JSC::MarkedBlock::isMarked):
+        (JSC::MarkedBlock::testAndSetMarked):
+        (JSC::MarkedBlock::marks const):
+        (JSC::MarkedBlock::isAtom):
+        (JSC::MarkedBlock::Handle::forEachCell):
+        (JSC::MarkedBlock::hasAnyMarked const):
+        (JSC::MarkedBlock::noteMarked):
+        (WTF::MarkedBlockHash::hash):
+        (JSC::MarkedBlock::firstAtom): Deleted.
+        * heap/MarkedBlockInlines.h:
+        (JSC::MarkedBlock::marksConveyLivenessDuringMarking):
+        (JSC::MarkedBlock::Handle::isLive):
+        (JSC::MarkedBlock::Handle::specializedSweep):
+        (JSC::MarkedBlock::Handle::forEachLiveCell):
+        (JSC::MarkedBlock::Handle::forEachDeadCell):
+        (JSC::MarkedBlock::Handle::forEachMarkedCell):
+        * heap/MarkedSpace.cpp:
+        * heap/MarkedSpace.h:
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+
 2018-01-27  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         DFG strength reduction fails to convert NumberToStringWithValidRadixConstant for 0 to constant '0'
