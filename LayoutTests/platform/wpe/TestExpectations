@@ -198,8 +198,6 @@ Bug(WPE) userscripts/user-script-plugin-document.html [ Failure ]
 Bug(WPE) imported/blink [ Skip ]
 Bug(WPE) imported/mathml-in-html5 [ Skip ]
 Bug(WPE) imported/mozilla [ Skip ]
-Bug(WPE) imported/w3c/css [ Skip ]
-
 
 Bug(WPE) imported/w3c/web-platform-tests/mediacapture-fromelement [ Skip ]
 Bug(WPE) imported/w3c/web-platform-tests/mediacapture-streams [ Skip ]
@@ -255,6 +253,8 @@ imported/w3c/web-platform-tests/css/selectors/selector-placeholder-shown-type-ch
 imported/w3c/web-platform-tests/css/selectors/selector-read-write-type-change-002.html [ Pass ]
 imported/w3c/web-platform-tests/css/selectors/selector-required-type-change-002.html [ Pass ]
 
+Bug(WPE) imported/w3c/web-platform-tests/css/css-color [ Skip ]
+Bug(WPE) imported/w3c/web-platform-tests/css/css-multicol [ Skip ]
 
 # WPT: cssom
 # ==========
@@ -458,7 +458,6 @@ Bug(WPE) fast/masking [ Skip ]
 Bug(WPE) fast/media [ Skip ]
 Bug(WPE) fast/mediacapturefromelement [ Skip ]
 Bug(WPE) fast/mediastream [ Skip ]
-imported/w3c/web-platform-tests/mediacapture-streams [ Skip ]
 Bug(WPE) fast/multicol [ Skip ]
 Bug(WPE) fast/overflow [ Skip ]
 Bug(WPE) fast/picture [ Skip ]
@@ -1063,8 +1062,6 @@ webkit.org/b/175419 http/tests/workers/service [ Skip ]
 webkit.org/b/175419 http/tests/inspector/network/resource-response-service-worker.html [ Skip ]
 webkit.org/b/178576 http/wpt/service-workers [ Failure ]
 webkit.org/b/178576 imported/w3c/web-platform-tests/service-workers [ Skip ]
-webkit.org/b/178576 imported/w3c/web-platform-tests/service-workers/stub-4.6.2-cache.html [ Pass ]
-webkit.org/b/178576 imported/w3c/web-platform-tests/service-workers/stub-4.6.3-cache-storage.html [ Pass ]
 
 webkit.org/b/178316 imported/w3c/web-platform-tests/service-workers/cache-storage [ Skip ]
 webkit.org/b/178316 http/wpt/cache-storage [ Skip ]
@@ -1161,8 +1158,10 @@ webkit.org/b/181224 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4
 webkit.org/b/181224 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-setmediakeys-multiple-times-with-the-same-mediakeys.html [ Crash ]
 webkit.org/b/181225 media/encrypted-media/mock-MediaKeySystemAccess.html [ Crash ]
 
-webkit.org/b/175189 http/tests/resourceLoadStatistics/grandfathering.html [ Failure ]
 
 webkit.org/b/181533 imported/w3c/web-platform-tests/fetch/api/cors/cors-filtering.html [ Pass Failure ]
 
 webkit.org/b/181534 perf/show-hide-table-rows.html [ Pass Failure ]
+
+webkit.org/b/182222 http/tests/resourceLoadStatistics/clear-in-memory-and-persistent-store-one-hour.html [ Timeout ]
+webkit.org/b/182222 webkit.org/b/175189 webkit.org/b/175189 http/tests/resourceLoadStatistics/grandfathering.html [ Timeout ]

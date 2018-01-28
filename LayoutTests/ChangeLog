@@ -1,5 +1,13 @@
 2018-01-28  Zan Dobersek  <zdobersek@igalia.com>
 
+        Unreviewed WPE gardening.
+
+        * platform/wpe/TestExpectations: Add test failure expectations. Shuffle
+        around a few expectations and eliminate duplicate ones, removing overlap
+        warnings printed out when invoking run-webkit-tests.
+
+2018-01-28  Zan Dobersek  <zdobersek@igalia.com>
+
         Unreviewed GTK+ gardening.
 
         * platform/gtk/TestExpectations: Add failure expectations for three tests.
