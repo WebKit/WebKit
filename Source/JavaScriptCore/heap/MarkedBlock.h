@@ -174,18 +174,6 @@ public:
 
         bool isFreeListedCell(const void* target) const;
 
-        bool isNewlyAllocated(const void*);
-        void setNewlyAllocated(const void*);
-        void clearNewlyAllocated(const void*);
-        const Bitmap<atomsPerBlock>& newlyAllocated() const;
-        
-        HeapVersion newlyAllocatedVersion() const { return m_newlyAllocatedVersion; }
-        
-        inline bool isNewlyAllocatedStale() const;
-        
-        inline bool hasAnyNewlyAllocated();
-        void resetAllocated();
-        
         template <typename Functor> IterationStatus forEachCell(const Functor&);
         template <typename Functor> inline IterationStatus forEachLiveCell(const Functor&);
         template <typename Functor> inline IterationStatus forEachDeadCell(const Functor&);
@@ -232,8 +220,6 @@ public:
         size_t m_atomsPerCell { std::numeric_limits<size_t>::max() };
         size_t m_endAtom { std::numeric_limits<size_t>::max() }; // This is a fuzzy end. Always test for < m_endAtom.
             
-        Bitmap<atomsPerBlock> m_newlyAllocated;
-            
         CellAttributes m_attributes;
         bool m_isFreeListed { false };
 
@@ -242,8 +228,6 @@ public:
         size_t m_index { std::numeric_limits<size_t>::max() };
         WeakSet m_weakSet;
         
-        HeapVersion m_newlyAllocatedVersion;
-            
         MarkedBlock* m_block { nullptr };
     };
 
@@ -296,8 +280,10 @@ public:
         int16_t m_markCountBias;
 
         HeapVersion m_markingVersion;
+        HeapVersion m_newlyAllocatedVersion;
 
         Bitmap<atomsPerBlock> m_marks;
+        Bitmap<atomsPerBlock> m_newlyAllocated;
     };
         
 private:    
@@ -330,6 +316,18 @@ public:
     bool isAtom(const void*);
     void clearMarked(const void*);
     
+    bool isNewlyAllocated(const void*);
+    void setNewlyAllocated(const void*);
+    void clearNewlyAllocated(const void*);
+    const Bitmap<atomsPerBlock>& newlyAllocated() const;
+    
+    HeapVersion newlyAllocatedVersion() const { return footer().m_newlyAllocatedVersion; }
+    
+    inline bool isNewlyAllocatedStale() const;
+    
+    inline bool hasAnyNewlyAllocated();
+    void resetAllocated();
+        
     size_t cellSize();
     const CellAttributes& attributes() const;
     
@@ -584,24 +582,24 @@ inline const Bitmap<MarkedBlock::atomsPerBlock>& MarkedBlock::marks() const
     return footer().m_marks;
 }
 
-inline bool MarkedBlock::Handle::isNewlyAllocated(const void* p)
+inline bool MarkedBlock::isNewlyAllocated(const void* p)
 {
-    return m_newlyAllocated.get(m_block->atomNumber(p));
+    return footer().m_newlyAllocated.get(atomNumber(p));
 }
 
-inline void MarkedBlock::Handle::setNewlyAllocated(const void* p)
+inline void MarkedBlock::setNewlyAllocated(const void* p)
 {
-    m_newlyAllocated.set(m_block->atomNumber(p));
+    footer().m_newlyAllocated.set(atomNumber(p));
 }
 
-inline void MarkedBlock::Handle::clearNewlyAllocated(const void* p)
+inline void MarkedBlock::clearNewlyAllocated(const void* p)
 {
-    m_newlyAllocated.clear(m_block->atomNumber(p));
+    footer().m_newlyAllocated.clear(atomNumber(p));
 }
 
-inline const Bitmap<MarkedBlock::atomsPerBlock>& MarkedBlock::Handle::newlyAllocated() const
+inline const Bitmap<MarkedBlock::atomsPerBlock>& MarkedBlock::newlyAllocated() const
 {
-    return m_newlyAllocated;
+    return footer().m_newlyAllocated;
 }
 
 inline bool MarkedBlock::isAtom(const void* p)

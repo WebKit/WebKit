@@ -1,5 +1,57 @@
 2018-01-27  Filip Pizlo  <fpizlo@apple.com>
 
+        Make MarkedBlock::Footer bigger
+        https://bugs.webkit.org/show_bug.cgi?id=182220
+
+        Reviewed by JF Bastien.
+        
+        This makes the block footer larger by moving the newlyAllocated bits from the handle into
+        the footer.
+        
+        It used to be profitable to put anything we could into the handle because that would free up
+        payload space inside the block. But now that we want to use the footer for padding, it's
+        profitable to put GC state information - especially data that is used by the GC itself and so
+        is not useful for a Spectre attack - into the footer to increase object distancing.
+
+        * heap/CellContainer.cpp:
+        (JSC::CellContainer::isNewlyAllocated const):
+        * heap/IsoCellSet.cpp:
+        (JSC::IsoCellSet::sweepToFreeList):
+        * heap/MarkedBlock.cpp:
+        (JSC::MarkedBlock::Handle::Handle):
+        (JSC::MarkedBlock::Footer::Footer):
+        (JSC::MarkedBlock::Handle::stopAllocating):
+        (JSC::MarkedBlock::Handle::lastChanceToFinalize):
+        (JSC::MarkedBlock::Handle::resumeAllocating):
+        (JSC::MarkedBlock::aboutToMarkSlow):
+        (JSC::MarkedBlock::resetAllocated):
+        (JSC::MarkedBlock::Handle::resetAllocated): Deleted.
+        * heap/MarkedBlock.h:
+        (JSC::MarkedBlock::newlyAllocatedVersion const):
+        (JSC::MarkedBlock::isNewlyAllocated):
+        (JSC::MarkedBlock::setNewlyAllocated):
+        (JSC::MarkedBlock::clearNewlyAllocated):
+        (JSC::MarkedBlock::newlyAllocated const):
+        (JSC::MarkedBlock::Handle::newlyAllocatedVersion const): Deleted.
+        (JSC::MarkedBlock::Handle::isNewlyAllocated): Deleted.
+        (JSC::MarkedBlock::Handle::setNewlyAllocated): Deleted.
+        (JSC::MarkedBlock::Handle::clearNewlyAllocated): Deleted.
+        (JSC::MarkedBlock::Handle::newlyAllocated const): Deleted.
+        * heap/MarkedBlockInlines.h:
+        (JSC::MarkedBlock::isNewlyAllocatedStale const):
+        (JSC::MarkedBlock::hasAnyNewlyAllocated):
+        (JSC::MarkedBlock::Handle::isLive):
+        (JSC::MarkedBlock::Handle::specializedSweep):
+        (JSC::MarkedBlock::Handle::newlyAllocatedMode):
+        (JSC::MarkedBlock::Handle::isNewlyAllocatedStale const): Deleted.
+        (JSC::MarkedBlock::Handle::hasAnyNewlyAllocated): Deleted.
+        * heap/MarkedSpace.cpp:
+        (JSC::MarkedSpace::endMarking):
+        * heap/SlotVisitor.cpp:
+        (JSC::SlotVisitor::appendJSCellOrAuxiliary):
+
+2018-01-27  Filip Pizlo  <fpizlo@apple.com>
+
         MarkedBlock should have a footer instead of a header
         https://bugs.webkit.org/show_bug.cgi?id=182217
 

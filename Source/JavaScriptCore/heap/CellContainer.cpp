@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,9 +34,9 @@ bool CellContainer::isNewlyAllocated(HeapCell* cell) const
 {
     if (isLargeAllocation())
         return largeAllocation().isNewlyAllocated();
-    MarkedBlock::Handle& handle = markedBlock().handle();
-    return !handle.isNewlyAllocatedStale()
-        && handle.isNewlyAllocated(cell);
+    MarkedBlock& block = markedBlock();
+    return !block.isNewlyAllocatedStale()
+        && block.isNewlyAllocated(cell);
 }
 
 } // namespace JSC
