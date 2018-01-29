@@ -560,6 +560,7 @@ void WebAutomationSession::willShowJavaScriptDialog(WebPageProxy& page)
             return;
 
         if (page->pageLoadState().isLoading()) {
+            m_loadTimer.stop();
             respondToPendingFrameNavigationCallbacksWithTimeout(m_pendingNormalNavigationInBrowsingContextCallbacksPerFrame);
             respondToPendingPageNavigationCallbacksWithTimeout(m_pendingNormalNavigationInBrowsingContextCallbacksPerPage);
         }
