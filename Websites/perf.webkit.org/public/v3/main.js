@@ -11,7 +11,7 @@ function main() {
         'Shadow DOM API': () => { return !!Element.prototype.attachShadow; },
     };
 
-    for (let name in requiredFeatures) {
+    for (const name in requiredFeatures) {
         if (!requiredFeatures[name]())
             return alert(`Your browser does not support ${name}. Try using the latest Safari or Chrome.`);
     }
@@ -19,52 +19,52 @@ function main() {
     (new SpinningPage).open();
 
     Manifest.fetch().then(function (manifest) {
-        var dashboardToolbar = new DashboardToolbar;
-        var dashboardPages = [];
+        const dashboardToolbar = new DashboardToolbar;
+        const dashboardPages = [];
         if (manifest.dashboards) {
-            for (var name in manifest.dashboards)
+            for (const name in manifest.dashboards)
                 dashboardPages.push(new DashboardPage(name, manifest.dashboards[name], dashboardToolbar));
         }
 
-        var router = new PageRouter();
-        var chartsToolbar = new ChartsToolbar;
-
-        var summaryPages = [];
+        const summaryPages = [];
+        let testFreshnessPage = null;
         if (manifest.summaryPages) {
-            for (var summaryPage of manifest.summaryPages)
+            for (const summaryPage of manifest.summaryPages)
                 summaryPages.push(new SummaryPage(summaryPage));
+            testFreshnessPage = new TestFreshnessPage(manifest.summaryPages, manifest.testAgeToleranceInHours);
         }
 
-        var chartsPage = new ChartsPage(chartsToolbar);
-        var analysisCategoryPage = new AnalysisCategoryPage();
+        const chartsToolbar = new ChartsToolbar;
+        const chartsPage = new ChartsPage(chartsToolbar);
+        const analysisCategoryPage = new AnalysisCategoryPage();
 
-        var createAnalysisTaskPage = new CreateAnalysisTaskPage();
+        summaryPages.push(chartsPage);
+        summaryPages.push(analysisCategoryPage);
+        if (testFreshnessPage)
+            summaryPages.push(testFreshnessPage);
+
+        const createAnalysisTaskPage = new CreateAnalysisTaskPage();
         createAnalysisTaskPage.setParentPage(analysisCategoryPage);
 
-        var analysisTaskPage = new AnalysisTaskPage();
+        const analysisTaskPage = new AnalysisTaskPage();
         analysisTaskPage.setParentPage(analysisCategoryPage);
 
-        var buildRequestQueuePage = new BuildRequestQueuePage();
+        const buildRequestQueuePage = new BuildRequestQueuePage();
         buildRequestQueuePage.setParentPage(analysisCategoryPage);
 
-        const testHealthPage = new TestFreshnessPage(manifest.summaryPages, manifest.testAgeToleranceInHours);
-
-        var heading = new Heading(manifest.siteTitle);
-        heading.addPageGroup(summaryPages.concat([chartsPage, analysisCategoryPage, testHealthPage]));
+        const heading = new Heading(manifest.siteTitle);
+        heading.addPageGroup(summaryPages);
 
         heading.setTitle(manifest.siteTitle);
         heading.addPageGroup(dashboardPages);
 
-        var router = new PageRouter();
-        for (var summaryPage of summaryPages)
+        const router = new PageRouter();
+        for (const summaryPage of summaryPages)
             router.addPage(summaryPage);
-        router.addPage(chartsPage);
         router.addPage(createAnalysisTaskPage);
         router.addPage(analysisTaskPage);
         router.addPage(buildRequestQueuePage);
-        router.addPage(analysisCategoryPage);
-        router.addPage(testHealthPage);
-        for (var page of dashboardPages)
+        for (const page of dashboardPages)
             router.addPage(page);
 
         if (summaryPages.length)

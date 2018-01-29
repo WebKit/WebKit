@@ -1,5 +1,20 @@
 2018-01-29  Ryosuke Niwa  <rniwa@webkit.org>
 
+        REGRESSION(r225898): The perf dashboard fails to open when there are no summary pages
+        https://bugs.webkit.org/show_bug.cgi?id=182210
+
+        Rubber-stamped by Chris Dumez.
+
+        The bug was caused by TestFreshnessPage unconditionally assuming that summaryPageConfiguration is set.
+        Fixed it by not creating TestFreshnessPage when there are no summary pages specified.
+
+        Also modernized the code to use const & let instead of var.
+
+        * public/v3/main.js:
+        (main):
+
+2018-01-29  Ryosuke Niwa  <rniwa@webkit.org>
+
         Perf dashboard's page title can be set to a previously visited page
         https://bugs.webkit.org/show_bug.cgi?id=182209
 
