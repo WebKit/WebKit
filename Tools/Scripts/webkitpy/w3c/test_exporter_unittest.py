@@ -111,6 +111,7 @@ class TestExporterTest(unittest.TestCase):
         exporter = TestExporter(host, options, TestExporterTest.MockGit, TestExporterTest.MockBugzilla, MockWPTGitHub)
         exporter.do_export()
         self.assertEquals(exporter._github.calls, ['create_pr'])
+        self.assertTrue('WebKit export' in exporter._github.pull_requests_created[0][1])
         self.assertEquals(exporter._git.calls, [
             '/mock-checkout/WebKitBuild/w3c-tests/web-platform-tests',
             'fetch',

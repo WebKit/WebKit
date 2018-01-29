@@ -89,7 +89,9 @@ class TestExporter(object):
         self._branch_name = self._ensure_new_branch_name()
         self._public_branch_name = options.public_branch_name if options.public_branch_name else self._branch_name
         self._bugzilla_url = "https://bugs.webkit.org/show_bug.cgi?id=" + str(self._bug_id)
-        self._commit_message = options.message if options.message else 'WebKit export of ' + self._bugzilla_url
+        self._commit_message = options.message
+        if not self._commit_message:
+            self._commit_message = 'WebKit export of ' + self._bugzilla_url if self._bug_id else 'Export made from a WebKit repository'
 
         self._wpt_fork_remote = options.repository_remote
         if not self._wpt_fork_remote:
@@ -175,7 +177,7 @@ class TestExporter(object):
 
         _log.info('Making pull request')
         description = self._bugzilla.fetch_bug_dictionary(self._bug_id)["title"]
-        pr_number = self._github.create_pr(self._wpt_fork_remote + ':' + self._branch_name, self._commit_message, description)
+        pr_number = self._github.create_pr(self._wpt_fork_remote + ':' + self._branch_name, self._commit_message, self._commit_message + "\n" + description)
         if self._bug_id:
             self._bugzilla.post_comment_to_bug(self._bug_id, "Submitted web-platform-tests pull request: " + WPT_PR_URL + str(pr_number))
 
