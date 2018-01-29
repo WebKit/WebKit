@@ -3014,13 +3014,13 @@ void RenderBlockFlow::markLinesDirtyInBlockRange(LayoutUnit logicalTop, LayoutUn
 std::optional<int> RenderBlockFlow::firstLineBaseline() const
 {
     if (isWritingModeRoot() && !isRubyRun())
-        return std::optional<int>();
+        return std::nullopt;
 
     if (!childrenInline())
         return RenderBlock::firstLineBaseline();
 
     if (!hasLines())
-        return std::optional<int>();
+        return std::nullopt;
 
     if (auto simpleLineLayout = this->simpleLineLayout())
         return std::optional<int>(SimpleLineLayout::computeFlowFirstLineBaseline(*this, *simpleLineLayout));
@@ -3032,7 +3032,7 @@ std::optional<int> RenderBlockFlow::firstLineBaseline() const
 std::optional<int> RenderBlockFlow::inlineBlockBaseline(LineDirectionMode lineDirection) const
 {
     if (isWritingModeRoot() && !isRubyRun())
-        return std::optional<int>();
+        return std::nullopt;
 
     // Note that here we only take the left and bottom into consideration. Our caller takes the right and top into consideration.
     float boxHeight = lineDirection == HorizontalLine ? height() + m_marginBox.bottom() : width() + m_marginBox.left();
@@ -3045,7 +3045,7 @@ std::optional<int> RenderBlockFlow::inlineBlockBaseline(LineDirectionMode lineDi
     } else {
         if (!hasLines()) {
             if (!hasLineIfEmpty())
-                return std::optional<int>();
+                return std::nullopt;
             const auto& fontMetrics = firstLineStyle().fontMetrics();
             return std::optional<int>(fontMetrics.ascent()
                 + (lineHeight(true, lineDirection, PositionOfInteriorLineBoxes) - fontMetrics.height()) / 2
@@ -3063,7 +3063,7 @@ std::optional<int> RenderBlockFlow::inlineBlockBaseline(LineDirectionMode lineDi
     // According to the CSS spec http://www.w3.org/TR/CSS21/visudet.html, we shouldn't be performing this min, but should
     // instead be returning boxHeight directly. However, we feel that a min here is better behavior (and is consistent
     // enough with the spec to not cause tons of breakages).
-    return std::optional<int>(style().overflowY() == OVISIBLE ? lastBaseline : std::min(boxHeight, lastBaseline));
+    return style().overflowY() == OVISIBLE ? lastBaseline : std::min(boxHeight, lastBaseline);
 }
 
 void RenderBlockFlow::setSelectionState(SelectionState state)
