@@ -32,6 +32,7 @@ namespace WebCore {
 
 class MessagePortChannelProviderImpl : public MessagePortChannelProvider {
 public:
+    MessagePortChannelProviderImpl();
     ~MessagePortChannelProviderImpl() final;
 
 private:

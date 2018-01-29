@@ -1,3 +1,27 @@
+2018-01-29  Brady Eidson  <beidson@apple.com>
+
+        Make it possible for apps that use both WK1 and WK2 to use MessagePorts.
+        https://bugs.webkit.org/show_bug.cgi?id=182229
+
+        Reviewed by Chris Dumez.
+
+        Covered by existing LayoutTests and a new API test.
+
+        * dom/messageports/MessagePortChannel.cpp:
+        (WebCore::MessagePortChannel::checkRemotePortForActivity): Don't use the global singleton
+          provider. Instead use the provider that belongs to the owning registry.
+
+        * dom/messageports/MessagePortChannelProviderImpl.cpp:
+        (WebCore::MessagePortChannelProviderImpl::MessagePortChannelProviderImpl): Pass a reference
+          to *this to the Registry.
+        * dom/messageports/MessagePortChannelProviderImpl.h:
+
+        * dom/messageports/MessagePortChannelRegistry.cpp:
+        (WebCore::MessagePortChannelRegistry::MessagePortChannelRegistry): Keep a Provider member so
+          MessagePortChannels can get to it instead of relying on the global singleton provider.
+        * dom/messageports/MessagePortChannelRegistry.h:
+        (WebCore::MessagePortChannelRegistry::provider):
+
 2018-01-29  Per Arne Vollan  <pvollan@apple.com>
 
         Layout Test fast/events/beforeunload-dom-manipulation-crash.html is crashing

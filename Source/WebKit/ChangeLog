@@ -1,3 +1,18 @@
+2018-01-29  Brady Eidson  <beidson@apple.com>
+
+        Make it possible for apps that use both WK1 and WK2 to use MessagePorts.
+        https://bugs.webkit.org/show_bug.cgi?id=182229
+
+        Reviewed by Chris Dumez.
+
+        * UIProcess/UIMessagePortChannelProvider.cpp:
+        (WebKit::UIMessagePortChannelProvider::UIMessagePortChannelProvider):
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::m_configurationPreferenceValues): The UI process does not need to override the 
+          global singleton provider. It can remain the default ProviderImpl to allow WK1 views 
+          to work fine, too.
+
 2018-01-29  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         WebDriver: ASSERTION FAILED: !m_loadTimer.isActive()

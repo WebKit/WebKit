@@ -1,3 +1,13 @@
+2018-01-29  Brady Eidson  <beidson@apple.com>
+
+        Make it possible for apps that use both WK1 and WK2 to use MessagePorts.
+        https://bugs.webkit.org/show_bug.cgi?id=182229
+
+        Reviewed by Chris Dumez.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/MessagePortProviders.mm: Added.
+
 2018-01-29  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         WebDriver: properly recover w3c tests after a webdriver server crash

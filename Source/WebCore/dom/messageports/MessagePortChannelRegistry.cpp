@@ -30,6 +30,11 @@
 
 namespace WebCore {
 
+MessagePortChannelRegistry::MessagePortChannelRegistry(MessagePortChannelProvider& provider)
+    : m_provider(provider)
+{
+}
+
 MessagePortChannelRegistry::~MessagePortChannelRegistry()
 {
     ASSERT(m_openChannels.isEmpty());
