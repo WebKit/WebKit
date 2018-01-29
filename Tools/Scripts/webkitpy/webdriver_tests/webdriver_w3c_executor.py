@@ -25,6 +25,7 @@ import os
 import json
 import sys
 
+from multiprocessing import Process, Queue
 from webkitpy.common.system.filesystem import FileSystem
 from webkitpy.common.webkit_finder import WebKitFinder
 import webkitpy.thirdparty.autoinstalled.mozlog
@@ -129,27 +130,54 @@ class WebKitDriverProtocol(WebDriverProtocol):
 class WebDriverW3CExecutor(WdspecExecutor):
     protocol_cls = WebKitDriverProtocol
 
-    def __init__(self, driver, server, display_driver):
+    def __init__(self, driver, server, display_driver, timeout, expectations):
         WebKitDriverServer.test_env = display_driver._setup_environ_for_test()
         WebKitDriverServer.test_env.update(driver.browser_env())
         server_config = {'host': server.host(), 'ports': {'http': [str(server.port())]}}
         WdspecExecutor.__init__(self, driver.browser_name(), server_config, driver.binary_path(), None, capabilities=driver.capabilities())
 
-        if pytest_runner is None:
-            do_delayed_imports()
+        self._timeout = timeout
+        self._expectations = expectations
+        self._test_queue = Queue()
+        self._result_queue = Queue()
 
     def setup(self):
         self.runner = TestRunner()
         self.protocol.setup(self.runner)
+        args = (self._test_queue,
+                self._result_queue,
+                self.protocol.session_config['host'],
+                str(self.protocol.session_config['port']),
+                json.dumps(self.protocol.session_config['capabilities']),
+                json.dumps(self.server_config),
+                self._timeout,
+                self._expectations)
+        self._process = Process(target=WebDriverW3CExecutor._runner, args=args)
+        self._process.start()
 
     def teardown(self):
         self.protocol.teardown()
+        self._test_queue.put('TEARDOWN')
+        self._process = None
 
-    def run(self, test, timeout, expectations):
-        env = {'WD_HOST': self.protocol.session_config['host'],
-               'WD_PORT': str(self.protocol.session_config['port']),
-               'WD_CAPABILITIES': json.dumps(self.protocol.session_config['capabilities']),
-               'WD_SERVER_CONFIG': json.dumps(self.server_config)}
-        env.update(WebKitDriverServer.test_env)
-        args = ['--strict', '-p', 'no:mozlog']
-        return pytest_runner.run(test, args, timeout, env, expectations)
+    @staticmethod
+    def _runner(test_queue, result_queue, host, port, capabilities, server_config, timeout, expectations):
+        if pytest_runner is None:
+            do_delayed_imports()
+
+        while True:
+            test = test_queue.get()
+            if test == 'TEARDOWN':
+                break
+
+            env = {'WD_HOST': host,
+                   'WD_PORT': port,
+                   'WD_CAPABILITIES': capabilities,
+                   'WD_SERVER_CONFIG': server_config}
+            env.update(WebKitDriverServer.test_env)
+            args = ['--strict', '-p', 'no:mozlog']
+            result_queue.put(pytest_runner.run(test, args, timeout, env, expectations))
+
+    def run(self, test):
+        self._test_queue.put(test)
+        return self._result_queue.get()

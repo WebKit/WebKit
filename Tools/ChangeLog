@@ -1,3 +1,25 @@
+2018-01-29  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        WebDriver: properly recover w3c tests after a webdriver server crash
+        https://bugs.webkit.org/show_bug.cgi?id=182242
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        When a test makes the webdriver server crash, all other subsequent tests fail because they still try to send
+        messages to the server, gettin connection refused errors all the time. Selenium tests handle this correctly by
+        relaunching the server after every test failure, because other failures, even when not crashing the server,
+        might leave it in an bad state. WPT runner does the same for test files, it uses a subprocess to run the tests
+        and when any subtest fails, a new subsprocess is used for the following test file. We could do the same.
+
+        * Scripts/webkitpy/webdriver_tests/webdriver_test_runner_w3c.py:
+        (WebDriverTestRunnerW3C.run): Restart the executor if any subtest failed.
+        * Scripts/webkitpy/webdriver_tests/webdriver_w3c_executor.py:
+        (WebDriverW3CExecutor.__init__): Save timeout and expectations and do not import pytest.
+        (WebDriverW3CExecutor.setup): Create a subprocess to run the tests.
+        (WebDriverW3CExecutor.teardown): Send a message to the subprocess to terminate.
+        (WebDriverW3CExecutor._runner): Run the tests using pytest runner.
+        (WebDriverW3CExecutor.run): Send a message to the subprocess to run the given test and return the results message.
+
 2018-01-29  Per Arne Vollan  <pvollan@apple.com>
 
         Layout Test fast/events/beforeunload-dom-manipulation-crash.html is crashing

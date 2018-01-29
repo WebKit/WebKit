@@ -86,21 +86,25 @@ class WebDriverTestRunnerW3C(object):
     def run(self, tests=[]):
         self._server.start()
 
-        executor = WebDriverW3CExecutor(self._driver, self._server, self._display_driver)
+        executor = WebDriverW3CExecutor(self._driver, self._server, self._display_driver, self._port.get_option('timeout'), self._expectations)
         executor.setup()
-        timeout = self._port.get_option('timeout')
+        need_restart = False
         try:
             for test in tests:
                 test_name = os.path.relpath(test, self._tests_dir)
-                harness_result, test_results = executor.run(test, timeout, self._expectations)
+                harness_result, test_results = executor.run(test)
                 result = WebDriverTestResult(test_name, *harness_result)
                 if harness_result[0] == 'OK':
                     for subtest, status, message, backtrace in test_results:
                         result.add_subtest_results(self._subtest_name(subtest), status, message, backtrace)
+                        need_restart = need_restart or status in ('FAIL', 'ERROR', 'XFAIL', 'TIMEOUT')
                 else:
-                    # FIXME: handle other results.
-                    pass
+                    need_restart = True
                 self._results.append(result)
+
+                if need_restart:
+                    executor.teardown()
+                    executor.setup()
         finally:
             executor.teardown()
             self._server.stop()
