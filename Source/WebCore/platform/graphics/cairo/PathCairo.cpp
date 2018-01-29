@@ -30,7 +30,7 @@
 
 #include "CairoUtilities.h"
 #include "FloatRect.h"
-#include "GraphicsContext.h"
+#include "GraphicsContextImplCairo.h"
 #include "PlatformPathCairo.h"
 #include "StrokeStyleApplier.h"
 #include <math.h>
@@ -373,7 +373,11 @@ FloatRect Path::strokeBoundingRect(StrokeStyleApplier* applier) const
 
     cairo_t* cr = platformPath()->context();
     if (applier) {
-        GraphicsContext gc(cr);
+        GraphicsContext gc(
+            [cr](GraphicsContext& context)
+            {
+                return std::make_unique<GraphicsContextImplCairo>(context, cr);
+            });
         applier->strokeStyle(&gc);
     }
 
@@ -401,8 +405,14 @@ bool Path::strokeContains(StrokeStyleApplier* applier, const FloatPoint& point) 
 
     ASSERT(applier);
     cairo_t* cr = platformPath()->context();
-    GraphicsContext gc(cr);
-    applier->strokeStyle(&gc);
+    {
+        GraphicsContext gc(
+            [cr](GraphicsContext& context)
+            {
+                return std::make_unique<GraphicsContextImplCairo>(context, cr);
+            });
+        applier->strokeStyle(&gc);
+    }
 
     return cairo_in_stroke(cr, point.x(), point.y());
 }

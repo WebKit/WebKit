@@ -1,3 +1,39 @@
+2018-01-29  Zan Dobersek  <zdobersek@igalia.com>
+
+        [Cairo] Remove the GraphicsContext(cairo_t*) constructor
+        https://bugs.webkit.org/show_bug.cgi?id=182234
+
+        Reviewed by Carlos Garcia Campos.
+
+        Instead of using the GraphicsContext(cairo_t*) constructor, leverage the
+        GraphicsContextImplCairo class and work with an existing Cairo context
+        through that GraphicsContextImpl implementation.
+
+        A new GraphicsContextImplCairo constructor is added, expecting pointer
+        to the cairo_t object. With that, a PlatformContextCairo object is
+        created, with ownership of that object now being handled by the
+        GraphicsContextImplCairo class.
+
+        Call sites of the GraphicsContext(cairo_t*) constructor are adjusted to
+        instead provide a factory function that returns a fresh
+        GraphicsContextImplCairo object, passing that cairo_t object to its
+        constructor.
+
+        No new tests -- no change in behavior.
+
+        * platform/graphics/GraphicsContext.h:
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        (WebCore::GraphicsContext::GraphicsContext): Deleted.
+        * platform/graphics/cairo/GraphicsContextImplCairo.cpp:
+        (WebCore::GraphicsContextImplCairo::GraphicsContextImplCairo):
+        (WebCore::m_private):
+        * platform/graphics/cairo/GraphicsContextImplCairo.h:
+        * platform/graphics/cairo/PathCairo.cpp:
+        (WebCore::Path::strokeBoundingRect const):
+        (WebCore::Path::strokeContains const):
+        * platform/graphics/win/ImageCairoWin.cpp:
+        (WebCore::BitmapImage::getHBITMAPOfSize):
+
 2018-01-28  Minsheng Liu  <lambda@liu.ms>
 
         Overflow of formulas is hidden for display mathematics

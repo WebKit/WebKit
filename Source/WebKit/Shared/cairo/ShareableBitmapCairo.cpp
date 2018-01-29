@@ -31,7 +31,7 @@
 #include <WebCore/BitmapImage.h>
 #include <WebCore/CairoOperations.h>
 #include <WebCore/CairoUtilities.h>
-#include <WebCore/GraphicsContext.h>
+#include <WebCore/GraphicsContextImplCairo.h>
 #include <WebCore/PlatformContextCairo.h>
 #include <WebCore/NotImplemented.h>
 
@@ -61,7 +61,10 @@ std::unique_ptr<GraphicsContext> ShareableBitmap::createGraphicsContext()
 {
     RefPtr<cairo_surface_t> image = createCairoSurface();
     RefPtr<cairo_t> bitmapContext = adoptRef(cairo_create(image.get()));
-    return std::make_unique<GraphicsContext>(bitmapContext.get());
+    return std::make_unique<GraphicsContext>(
+        [bitmapContext = WTFMove(bitmapContext)](GraphicsContext& context) {
+            return std::make_unique<GraphicsContextImplCairo>(context, bitmapContext.get());
+        });
 }
 
 void ShareableBitmap::paint(GraphicsContext& context, const IntPoint& dstPoint, const IntRect& srcRect)

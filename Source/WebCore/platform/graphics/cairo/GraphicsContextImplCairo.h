@@ -39,6 +39,7 @@ class PlatformContextCairo;
 class GraphicsContextImplCairo final : public GraphicsContextImpl {
 public:
     GraphicsContextImplCairo(GraphicsContext&, PlatformContextCairo&);
+    GraphicsContextImplCairo(GraphicsContext&, cairo_t*);
     virtual ~GraphicsContextImplCairo();
 
     bool hasPlatformContext() const override;
@@ -107,7 +108,9 @@ public:
     FloatRect roundToDevicePixels(const FloatRect&, GraphicsContext::RoundingMode) override;
 
 private:
+    std::unique_ptr<PlatformContextCairo> m_ownedPlatformContext;
     PlatformContextCairo& m_platformContext;
+
     std::unique_ptr<GraphicsContextPlatformPrivate> m_private;
 };
 

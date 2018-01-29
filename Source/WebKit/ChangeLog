@@ -1,3 +1,22 @@
+2018-01-29  Zan Dobersek  <zdobersek@igalia.com>
+
+        [Cairo] Remove the GraphicsContext(cairo_t*) constructor
+        https://bugs.webkit.org/show_bug.cgi?id=182234
+
+        Reviewed by Carlos Garcia Campos.
+
+        Call sites of the GraphicsContext(cairo_t*) constructor are adjusted to
+        instead provide a factory function that returns a fresh
+        GraphicsContextImplCairo object, passing that cairo_t object to its
+        constructor.
+
+        * Shared/cairo/ShareableBitmapCairo.cpp:
+        (WebKit::ShareableBitmap::createGraphicsContext):
+        * UIProcess/cairo/BackingStoreCairo.cpp:
+        (WebKit::BackingStore::incorporateUpdate):
+        * WebProcess/WebPage/gtk/WebPrintOperationGtk.cpp:
+        (WebKit::WebPrintOperationGtk::renderPage):
+
 2018-01-26  Megan Gardner  <megan_gardner@apple.com>
 
         Don't retain focus for input peripheral views

@@ -26,7 +26,7 @@
 #include "config.h"
 #include "Image.h"
 #include "BitmapImage.h"
-#include "GraphicsContext.h"
+#include "GraphicsContextImplCairo.h"
 #include "RefPtrCairo.h"
 #include <cairo.h>
 #include <cairo-win32.h>
@@ -75,7 +75,11 @@ bool BitmapImage::getHBITMAPOfSize(HBITMAP bmp, const IntSize* size)
     cairo_t* targetRef = cairo_create(image);
     cairo_surface_destroy(image);
 
-    GraphicsContext gc(targetRef);
+    GraphicsContext gc(
+        [targetRef](GraphicsContext& context)
+        {
+            return std::make_unique<GraphicsContextImplCairo>(context, targetRef);
+        });
 
     FloatSize imageSize = BitmapImage::size();
     if (size)

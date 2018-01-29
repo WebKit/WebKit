@@ -576,10 +576,6 @@ public:
 #endif // PLATFORM(WIN)
 #endif // OS(WINDOWS)
 
-#if USE(CAIRO)
-    WEBCORE_EXPORT GraphicsContext(cairo_t*);
-#endif
-
     static void adjustLineToPixelBoundaries(FloatPoint& p1, FloatPoint& p2, float strokeWidth, StrokeStyle);
 
     bool supportsInternalLinks() const;

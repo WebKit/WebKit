@@ -45,6 +45,16 @@ GraphicsContextImplCairo::GraphicsContextImplCairo(GraphicsContext& context, Pla
     m_private->syncContext(m_platformContext.cr());
 }
 
+GraphicsContextImplCairo::GraphicsContextImplCairo(GraphicsContext& context, cairo_t* cairoContext)
+    : GraphicsContextImpl(context, FloatRect { }, AffineTransform { })
+    , m_ownedPlatformContext(std::make_unique<PlatformContextCairo>(cairoContext))
+    , m_platformContext(*m_ownedPlatformContext)
+    , m_private(std::make_unique<GraphicsContextPlatformPrivate>(m_platformContext))
+{
+    m_platformContext.setGraphicsContextPrivate(m_private.get());
+    m_private->syncContext(m_platformContext.cr());
+}
+
 GraphicsContextImplCairo::~GraphicsContextImplCairo()
 {
     m_platformContext.setGraphicsContextPrivate(nullptr);

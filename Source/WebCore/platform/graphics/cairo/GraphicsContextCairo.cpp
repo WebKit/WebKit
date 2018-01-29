@@ -53,15 +53,6 @@
 
 namespace WebCore {
 
-GraphicsContext::GraphicsContext(cairo_t* cr)
-{
-    if (!cr)
-        return;
-
-    m_data = new GraphicsContextPlatformPrivate(std::make_unique<PlatformContextCairo>(cr));
-    m_data->platformContext.setGraphicsContextPrivate(m_data);
-}
-
 void GraphicsContext::platformInit(PlatformContextCairo* platformContext)
 {
     if (!platformContext)

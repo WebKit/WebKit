@@ -32,7 +32,8 @@
 #include "WebPageProxy.h"
 #include <WebCore/BackingStoreBackendCairoImpl.h>
 #include <WebCore/CairoUtilities.h>
-#include <WebCore/GraphicsContext.h>
+#include <WebCore/GraphicsContextImplCairo.h>
+#include <WebCore/PlatformContextCairo.h>
 #include <WebCore/RefPtrCairo.h>
 #include <cairo.h>
 
@@ -87,8 +88,12 @@ void BackingStore::incorporateUpdate(ShareableBitmap* bitmap, const UpdateInfo& 
 
     // Paint all update rects.
     IntPoint updateRectLocation = updateInfo.updateRectBounds.location();
-    RefPtr<cairo_t> context = adoptRef(cairo_create(m_backend->surface()));
-    GraphicsContext graphicsContext(context.get());
+    RefPtr<cairo_t> cairoContext = adoptRef(cairo_create(m_backend->surface()));
+    GraphicsContext graphicsContext(
+        [cairoContext = WTFMove(cairoContext)](GraphicsContext& context)
+        {
+            return std::make_unique<GraphicsContextImplCairo>(context, cairoContext.get());
+        });
     for (const auto& updateRect : updateInfo.updateRects) {
         IntRect srcRect = updateRect;
         srcRect.move(-updateRectLocation.x(), -updateRectLocation.y());
