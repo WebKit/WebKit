@@ -1,3 +1,17 @@
+2018-01-29  Per Arne Vollan  <pvollan@apple.com>
+
+        Layout Test fast/events/beforeunload-dom-manipulation-crash.html is crashing
+        https://bugs.webkit.org/show_bug.cgi?id=181204
+        <rdar://problem/36256274>
+
+        Reviewed by Ryosuke Niwa.
+
+        Implement 'testRunner.forceImmediateCompletion()' for WK1.
+
+        * DumpRenderTree/TestRunner.cpp:
+        (forceImmediateCompletionCallback):
+        (TestRunner::staticFunctions):
+
 2018-01-29  Frederic Wang  <fwang@igalia.com>
 
         Unreviewed, add myself to some watch lists.

@@ -1,5 +1,18 @@
 2018-01-29  Per Arne Vollan  <pvollan@apple.com>
 
+        Layout Test fast/events/beforeunload-dom-manipulation-crash.html is crashing
+        https://bugs.webkit.org/show_bug.cgi?id=181204
+        <rdar://problem/36256274>
+
+        Reviewed by Ryosuke Niwa.
+
+        * fast/events/beforeunload-dom-manipulation-crash.html: Make it clear that the
+        frame element is a child of the 'del' element.
+        * fast/events/beforeunload-dom-manipulation-crash-expected.html:
+        * platform/mac-wk1/TestExpectations: Unskip test.
+
+2018-01-29  Per Arne Vollan  <pvollan@apple.com>
+
         Mark js/dom/array-with-double-assign.html as a failure on Windows.
         https://bugs.webkit.org/show_bug.cgi?id=182239
 

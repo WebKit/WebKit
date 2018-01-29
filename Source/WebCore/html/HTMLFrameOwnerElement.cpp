@@ -80,6 +80,8 @@ void HTMLFrameOwnerElement::disconnectContentFrame()
     // see if this behavior is really needed as Gecko does not allow this.
     if (RefPtr<Frame> frame = contentFrame()) {
         Ref<Frame> protect(*frame);
+        // FrameLoader::frameDetached() might dispatch an unload event.
+        ASSERT(ScriptDisallowedScope::InMainThread::isScriptAllowed());
         frame->loader().frameDetached();
         frame->disconnectOwnerElement();
     }
