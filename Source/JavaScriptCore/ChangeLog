@@ -1,3 +1,38 @@
+2018-01-28  Filip Pizlo  <fpizlo@apple.com>
+
+        LargeAllocation should do the same distancing as MarkedBlock
+        https://bugs.webkit.org/show_bug.cgi?id=182226
+
+        Reviewed by Saam Barati.
+
+        This makes LargeAllocation do the same exact distancing that MarkedBlock promises to do.
+        
+        To make that possible, this patch first makes MarkedBlock know exactly how much distancing it
+        is doing:
+        
+        - I've rationalized the payloadSize calculation. In particular, I made MarkedSpace use the
+          calculation done in MarkedBlock. MarkedSpace used to do the math a different way. This
+          keeps the old way just for a static_assert.
+        
+        - The promised amount of distancing is now codified in HeapCell.h as
+          minimumDistanceBetweenCellsFromDifferentOrigins. We assert that the footer size is at least
+          as big as this. I didn't want to just use footer size for this constant because then, if
+          you increased the size of the footer, you'd also add padding to every large allocation.
+        
+        Then this patch just adds minimumDistanceBetweenCellsFromDifferentOrigins to each large
+        allocation. It also zeroes that slice of memory to prevent any information leaks that way.
+        
+        This is perf neutral. Large allocations start out at ~8000 bytes. The amount of padding is
+        ~300 bytes. That's 3.75% space overhead for objects that are ~8000 bytes, zero overhead for
+        smaller objects, and diminishing overhead for larger objects. We allocate very few large
+        objects, so we shouldn't have any real space overhead from this.
+
+        * heap/HeapCell.h:
+        * heap/LargeAllocation.cpp:
+        (JSC::LargeAllocation::tryCreate):
+        * heap/MarkedBlock.h:
+        * heap/MarkedSpace.h:
+
 2018-01-27  Filip Pizlo  <fpizlo@apple.com>
 
         Make MarkedBlock::Footer bigger
