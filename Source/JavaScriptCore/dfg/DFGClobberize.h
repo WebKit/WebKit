@@ -1545,12 +1545,19 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
             write(HeapObjectCount);
             return;
         }
-        if (!node->isBinaryUseKind(UntypedUse)) {
+
+        if (node->op() == CompareEq && node->isBinaryUseKind(ObjectUse)) {
             def(PureValue(node));
             return;
         }
-        read(World);
-        write(Heap);
+        if (node->child1().useKind() == UntypedUse || node->child1().useKind() == ObjectUse
+            || node->child2().useKind() == UntypedUse || node->child2().useKind() == ObjectUse) {
+            read(World);
+            write(Heap);
+            return;
+        }
+
+        def(PureValue(node));
         return;
 
     case ToNumber: {

@@ -1,3 +1,17 @@
+2018-01-29  Michael Saboff  <msaboff@apple.com>
+
+        REGRESSION (r227341): DFG_ASSERT failure at JSC::DFG::AtTailAbstractState::forNode()
+        https://bugs.webkit.org/show_bug.cgi?id=182249
+
+        Reviewed by Keith Miller.
+
+        Changed clobberize() handling of CompareEq, et al to properly handle comparisons between
+        Untyped and Object values when compared against built in types.  Such comparisons can
+        invoke toNumber() or other methods.
+
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+
 2018-01-29  Matt Lewis  <jlewis3@apple.com>
 
         Unreviewed, rolling out r227725.
