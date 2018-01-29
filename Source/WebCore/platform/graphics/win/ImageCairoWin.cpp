@@ -75,11 +75,7 @@ bool BitmapImage::getHBITMAPOfSize(HBITMAP bmp, const IntSize* size)
     cairo_t* targetRef = cairo_create(image);
     cairo_surface_destroy(image);
 
-    GraphicsContext gc(
-        [targetRef](GraphicsContext& context)
-        {
-            return std::make_unique<GraphicsContextImplCairo>(context, targetRef);
-        });
+    GraphicsContext gc(GraphicsContextImplCairo::createFactory(targetRef));
 
     FloatSize imageSize = BitmapImage::size();
     if (size)

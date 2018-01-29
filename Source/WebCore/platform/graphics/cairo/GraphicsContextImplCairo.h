@@ -38,6 +38,9 @@ class PlatformContextCairo;
 
 class GraphicsContextImplCairo final : public GraphicsContextImpl {
 public:
+    static GraphicsContext::GraphicsContextImplFactory createFactory(PlatformContextCairo&);
+    static GraphicsContext::GraphicsContextImplFactory createFactory(cairo_t*);
+
     GraphicsContextImplCairo(GraphicsContext&, PlatformContextCairo&);
     GraphicsContextImplCairo(GraphicsContext&, cairo_t*);
     virtual ~GraphicsContextImplCairo();

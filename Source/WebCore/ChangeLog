@@ -1,5 +1,35 @@
 2018-01-29  Zan Dobersek  <zdobersek@igalia.com>
 
+        [Cairo] Add GraphicsContextImplCairo::createFactory() helpers
+        https://bugs.webkit.org/show_bug.cgi?id=182238
+
+        Reviewed by Carlos Garcia Campos.
+
+        Instead of duplicating lambdas that return a newly-created
+        GraphicsContextImplCairo object, provide static createFactory() helpers
+        on that class that produce GraphicsContextImplFactory wrappers which are
+        then invoked in the GraphicsContext constructor. The static functions
+        accept either the PlatformContextCairo reference or the cairo_t pointer,
+        invoking the proper GraphicsContextImplCairo constructor in the returned
+        lambda wrapper.
+
+        No new tests -- no change in functionality.
+
+        * platform/graphics/cairo/GraphicsContextImplCairo.cpp:
+        (WebCore::GraphicsContextImplCairo::createFactory):
+        * platform/graphics/cairo/GraphicsContextImplCairo.h:
+        * platform/graphics/cairo/ImageBufferCairo.cpp:
+        (WebCore::ImageBuffer::ImageBuffer):
+        * platform/graphics/cairo/PathCairo.cpp:
+        (WebCore::Path::strokeBoundingRect const):
+        (WebCore::Path::strokeContains const):
+        * platform/graphics/nicosia/NicosiaPaintingContextCairo.cpp:
+        (Nicosia::PaintingContextCairo::PaintingContextCairo):
+        * platform/graphics/win/ImageCairoWin.cpp:
+        (WebCore::BitmapImage::getHBITMAPOfSize):
+
+2018-01-29  Zan Dobersek  <zdobersek@igalia.com>
+
         Construct GraphicsContext with NonPaintingReasons::NoReason in FrameView::adjustPageHeightDeprecated()
         https://bugs.webkit.org/show_bug.cgi?id=182235
 

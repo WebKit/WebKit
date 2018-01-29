@@ -1,5 +1,22 @@
 2018-01-29  Zan Dobersek  <zdobersek@igalia.com>
 
+        [Cairo] Add GraphicsContextImplCairo::createFactory() helpers
+        https://bugs.webkit.org/show_bug.cgi?id=182238
+
+        Reviewed by Carlos Garcia Campos.
+
+        Use GraphicsContextImplCairo::createFactory() helpers throughout the
+        Cairo-specific GraphicsContext constructors in the WebKit layer.
+
+        * Shared/cairo/ShareableBitmapCairo.cpp:
+        (WebKit::ShareableBitmap::createGraphicsContext):
+        * UIProcess/cairo/BackingStoreCairo.cpp:
+        (WebKit::BackingStore::incorporateUpdate):
+        * WebProcess/WebPage/gtk/WebPrintOperationGtk.cpp:
+        (WebKit::WebPrintOperationGtk::renderPage):
+
+2018-01-29  Zan Dobersek  <zdobersek@igalia.com>
+
         [Cairo] Remove the GraphicsContext(cairo_t*) constructor
         https://bugs.webkit.org/show_bug.cgi?id=182234
 

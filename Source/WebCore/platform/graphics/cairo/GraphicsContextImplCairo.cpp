@@ -36,6 +36,24 @@
 
 namespace WebCore {
 
+GraphicsContext::GraphicsContextImplFactory GraphicsContextImplCairo::createFactory(PlatformContextCairo& platformContext)
+{
+    return GraphicsContext::GraphicsContextImplFactory(
+        [&platformContext](GraphicsContext& context)
+        {
+            return std::make_unique<GraphicsContextImplCairo>(context, platformContext);
+        });
+}
+
+GraphicsContext::GraphicsContextImplFactory GraphicsContextImplCairo::createFactory(cairo_t* cairoContext)
+{
+    return GraphicsContext::GraphicsContextImplFactory(
+        [cairoContext](GraphicsContext& context)
+        {
+            return std::make_unique<GraphicsContextImplCairo>(context, cairoContext);
+        });
+}
+
 GraphicsContextImplCairo::GraphicsContextImplCairo(GraphicsContext& context, PlatformContextCairo& platformContext)
     : GraphicsContextImpl(context, FloatRect { }, AffineTransform { })
     , m_platformContext(platformContext)

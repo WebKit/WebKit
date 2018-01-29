@@ -61,10 +61,7 @@ std::unique_ptr<GraphicsContext> ShareableBitmap::createGraphicsContext()
 {
     RefPtr<cairo_surface_t> image = createCairoSurface();
     RefPtr<cairo_t> bitmapContext = adoptRef(cairo_create(image.get()));
-    return std::make_unique<GraphicsContext>(
-        [bitmapContext = WTFMove(bitmapContext)](GraphicsContext& context) {
-            return std::make_unique<GraphicsContextImplCairo>(context, bitmapContext.get());
-        });
+    return std::make_unique<GraphicsContext>(GraphicsContextImplCairo::createFactory(bitmapContext.get()));
 }
 
 void ShareableBitmap::paint(GraphicsContext& context, const IntPoint& dstPoint, const IntRect& srcRect)

@@ -89,11 +89,7 @@ void BackingStore::incorporateUpdate(ShareableBitmap* bitmap, const UpdateInfo& 
     // Paint all update rects.
     IntPoint updateRectLocation = updateInfo.updateRectBounds.location();
     RefPtr<cairo_t> cairoContext = adoptRef(cairo_create(m_backend->surface()));
-    GraphicsContext graphicsContext(
-        [cairoContext = WTFMove(cairoContext)](GraphicsContext& context)
-        {
-            return std::make_unique<GraphicsContextImplCairo>(context, cairoContext.get());
-        });
+    GraphicsContext graphicsContext(GraphicsContextImplCairo::createFactory(cairoContext.get()));
     for (const auto& updateRect : updateInfo.updateRects) {
         IntRect srcRect = updateRect;
         srcRect.move(-updateRectLocation.x(), -updateRectLocation.y());

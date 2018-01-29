@@ -69,11 +69,7 @@ PaintingContextCairo::PaintingContextCairo(Buffer& buffer)
 
     m_cairo.context = adoptRef(cairo_create(m_cairo.surface.get()));
     m_platformContext = std::make_unique<WebCore::PlatformContextCairo>(m_cairo.context.get());
-    m_graphicsContext = std::make_unique<WebCore::GraphicsContext>(
-        [this](WebCore::GraphicsContext& context)
-        {
-            return std::make_unique<WebCore::GraphicsContextImplCairo>(context, *m_platformContext);
-        });
+    m_graphicsContext = std::make_unique<WebCore::GraphicsContext>(WebCore::GraphicsContextImplCairo::createFactory(*m_platformContext));
 }
 
 PaintingContextCairo::~PaintingContextCairo()
