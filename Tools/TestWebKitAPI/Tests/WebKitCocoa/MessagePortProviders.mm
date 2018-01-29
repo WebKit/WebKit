@@ -25,7 +25,7 @@
 
 #import "config.h"
 
-#if WK_API_ENABLED
+#if WK_API_ENABLED && PLATFORM(MAC)
 
 #import "PlatformUtilities.h"
 #import "TestWKWebView.h"
@@ -68,4 +68,4 @@ TEST(MessagePort, Providers)
 
 } // namespace TestWebKitAPI
 
-#endif // WK_API_ENABLED
+#endif // WK_API_ENABLED && PLATFORM(MAC)

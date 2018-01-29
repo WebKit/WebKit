@@ -1,3 +1,11 @@
+2018-01-29  Brady Eidson  <beidson@apple.com>
+
+        Make the API test added in r227737 be Mac-only.
+
+        Unreviewed gardening.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/MessagePortProviders.mm:
+
 2018-01-29  Matt Lewis  <jlewis3@apple.com>
 
         Unreviewed, rolling out r227731.
