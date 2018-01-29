@@ -1,3 +1,18 @@
+2018-01-29  Miguel Gomez  <magomez@igalia.com>
+
+        [CoordnatedGraphics] A child layer of a semitransparent layer isn't clipped properly
+        https://bugs.webkit.org/show_bug.cgi?id=181080
+
+        Reviewed by Žan Doberšek.
+
+        Check whether the applied clipping area is empty before drawing the children of a TextureMapperLayer. If
+        the area is empty no children will be drawn, so we can avoid drawing them.
+
+        No new tests -- no change in behavior.
+
+        * platform/graphics/texmap/TextureMapperLayer.cpp:
+        (WebCore::TextureMapperLayer::paintSelfAndChildren):
+
 2018-01-29  Zan Dobersek  <zdobersek@igalia.com>
 
         [Cairo] Add GraphicsContextImplCairo::createFactory() helpers

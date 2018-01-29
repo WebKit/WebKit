@@ -171,6 +171,14 @@ void TextureMapperLayer::paintSelfAndChildren(const TextureMapperPaintOptions& o
         clipTransform.multiply(options.transform);
         clipTransform.multiply(m_currentTransform.combined());
         options.textureMapper.beginClip(clipTransform, layerRect());
+
+        // If as a result of beginClip(), the clipping area is empty, it means that the intersection of the previous
+        // clipping area and the current one don't have any pixels in common. In this case we can skip painting the
+        // children as they will be clipped out (see https://bugs.webkit.org/show_bug.cgi?id=181080).
+        if (options.textureMapper.clipBounds().isEmpty()) {
+            options.textureMapper.endClip();
+            return;
+        }
     }
 
     for (auto* child : m_children)
