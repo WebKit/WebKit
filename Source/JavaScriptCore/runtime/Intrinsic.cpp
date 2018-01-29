@@ -169,8 +169,12 @@ const char* intrinsicName(Intrinsic intrinsic)
         return "JSWeakMapGetIntrinsic";
     case JSWeakMapHasIntrinsic:
         return "JSWeakMapHasIntrinsic";
+    case JSWeakMapSetIntrinsic:
+        return "JSWeakMapSetIntrinsic";
     case JSWeakSetHasIntrinsic:
         return "JSWeakSetHasIntrinsic";
+    case JSWeakSetAddIntrinsic:
+        return "JSWeakSetAddIntrinsic";
     case HasOwnPropertyIntrinsic:
         return "HasOwnPropertyIntrinsic";
     case AtomicsAddIntrinsic:

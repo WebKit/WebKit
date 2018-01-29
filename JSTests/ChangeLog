@@ -1,3 +1,21 @@
+2018-01-29  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [DFG][FTL] WeakMap#set should have DFG node
+        https://bugs.webkit.org/show_bug.cgi?id=180015
+
+        Reviewed by Saam Barati.
+
+        * stress/weakmap-set-change-get.js: Added.
+        (shouldBe):
+        (test):
+        * stress/weakmap-set-cse.js: Added.
+        (shouldBe):
+        (test):
+        * stress/weakset-add-change-get.js: Added.
+        (shouldBe):
+        * stress/weakset-add-cse.js: Added.
+        (shouldBe):
+
 2018-01-27  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         DFG strength reduction fails to convert NumberToStringWithValidRadixConstant for 0 to constant '0'

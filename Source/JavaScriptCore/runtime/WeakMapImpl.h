@@ -221,6 +221,9 @@ public:
         makeAndSetNewBuffer();
     }
 
+    // WeakMap operations must not cause GC. We model operations in DFG based on this guarantee.
+    // This guarantee is ensured by DisallowGC.
+
     template <typename T = WeakMapBucketType>
     ALWAYS_INLINE typename std::enable_if<std::is_same<T, WeakMapBucket<WeakMapBucketDataKeyValue>>::value, JSValue>::type get(JSObject* key)
     {

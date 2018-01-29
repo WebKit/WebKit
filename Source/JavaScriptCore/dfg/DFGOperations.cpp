@@ -57,6 +57,8 @@
 #include "JSMap.h"
 #include "JSPropertyNameEnumerator.h"
 #include "JSSet.h"
+#include "JSWeakMap.h"
+#include "JSWeakSet.h"
 #include "ObjectConstructor.h"
 #include "Operations.h"
 #include "ParseInt.h"
@@ -2693,6 +2695,20 @@ JSCell* JIT_OPERATION operationMapSet(ExecState* exec, JSCell* map, EncodedJSVal
     if (!bucket)
         return vm.sentinelMapBucket.get();
     return bucket;
+}
+
+void JIT_OPERATION operationWeakSetAdd(ExecState* exec, JSCell* set, JSCell* key, int32_t hash)
+{
+    VM& vm = exec->vm();
+    NativeCallFrameTracer tracer(&vm, exec);
+    jsCast<JSWeakSet*>(set)->add(vm, asObject(key), JSValue(), hash);
+}
+
+void JIT_OPERATION operationWeakMapSet(ExecState* exec, JSCell* map, JSCell* key, EncodedJSValue value, int32_t hash)
+{
+    VM& vm = exec->vm();
+    NativeCallFrameTracer tracer(&vm, exec);
+    jsCast<JSWeakMap*>(map)->add(vm, asObject(key), JSValue::decode(value), hash);
 }
 
 EncodedJSValue JIT_OPERATION operationGetPrototypeOfObject(ExecState* exec, JSObject* thisObject)

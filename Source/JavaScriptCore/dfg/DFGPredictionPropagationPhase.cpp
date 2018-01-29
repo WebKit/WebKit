@@ -1190,6 +1190,8 @@ private:
         case PutDynamicVar:
         case NukeStructureAndSetButterfly:
         case InitializeEntrypointArguments:
+        case WeakSetAdd:
+        case WeakMapSet:
             break;
             
         // This gets ignored because it only pretends to produce a value.

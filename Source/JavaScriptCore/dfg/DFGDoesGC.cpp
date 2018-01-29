@@ -214,6 +214,8 @@ bool doesGC(Graph& graph, Node* node)
     case LoadValueFromMapBucket:
     case ExtractValueFromWeakMapGet:
     case WeakMapGet:
+    case WeakSetAdd:
+    case WeakMapSet:
     case Unreachable:
     case ExtractCatchLocal:
     case ExtractOSREntryLocal:

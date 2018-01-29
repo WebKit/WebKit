@@ -1164,6 +1164,10 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         forNode(node).set(m_graph, m_vm.hashMapBucketMapStructure.get());
         break;
 
+    case WeakSetAdd:
+    case WeakMapSet:
+        break;
+
     case WeakMapGet:
         forNode(node).makeBytecodeTop();
         break;

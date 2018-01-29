@@ -1,3 +1,57 @@
+2018-01-29  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [DFG][FTL] WeakMap#set should have DFG node
+        https://bugs.webkit.org/show_bug.cgi?id=180015
+
+        Reviewed by Saam Barati.
+
+        This patch adds WeakMapSet and WeakSetAdd DFG nodes to handle them efficiently in DFG and FTL.
+        We also define CSE rules for them. Now, WeakMapSet and WeakSetAdd can offer the results of
+        the subsequent WeakMapGet if CSE allows.
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::addVarArgChild):
+        (JSC::DFG::ByteCodeParser::handleIntrinsicCall):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        WeakMap operations do not cause GC.
+
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileWeakSetAdd):
+        (JSC::DFG::SpeculativeJIT::compileWeakMapSet):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::callOperation):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNode):
+        (JSC::FTL::DFG::LowerDFGToB3::compileWeakSetAdd):
+        (JSC::FTL::DFG::LowerDFGToB3::compileWeakMapSet):
+        * jit/JITOperations.h:
+        * runtime/Intrinsic.cpp:
+        (JSC::intrinsicName):
+        * runtime/Intrinsic.h:
+        * runtime/WeakMapPrototype.cpp:
+        (JSC::WeakMapPrototype::finishCreation):
+        * runtime/WeakSetPrototype.cpp:
+        (JSC::WeakSetPrototype::finishCreation):
+
 2018-01-28  Filip Pizlo  <fpizlo@apple.com>
 
         LargeAllocation should do the same distancing as MarkedBlock

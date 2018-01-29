@@ -759,6 +759,12 @@ private:
         m_graph.m_varArgChildren.append(Edge(child));
         m_numPassedVarArgs++;
     }
+
+    void addVarArgChild(Edge child)
+    {
+        m_graph.m_varArgChildren.append(child);
+        m_numPassedVarArgs++;
+    }
     
     Node* addCallWithoutSettingResult(
         NodeType op, OpInfo opInfo, Node* callee, int argCount, int registerOffset,
@@ -2999,6 +3005,47 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, int resultOperand, Intrin
         Node* result = addToGraph(LogicalNot, invertedResult);
 
         set(VirtualRegister(resultOperand), result);
+        return true;
+    }
+
+    case JSWeakSetAddIntrinsic: {
+        if (argumentCountIncludingThis != 2)
+            return false;
+
+        if (m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadType))
+            return false;
+
+        insertChecks();
+        Node* base = get(virtualRegisterForArgument(0, registerOffset));
+        Node* key = get(virtualRegisterForArgument(1, registerOffset));
+        addToGraph(Check, Edge(key, ObjectUse));
+        Node* hash = addToGraph(MapHash, key);
+        addToGraph(WeakSetAdd, Edge(base, WeakSetObjectUse), Edge(key, ObjectUse), Edge(hash, Int32Use));
+        set(VirtualRegister(resultOperand), base);
+        return true;
+    }
+
+    case JSWeakMapSetIntrinsic: {
+        if (argumentCountIncludingThis != 3)
+            return false;
+
+        if (m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadType))
+            return false;
+
+        insertChecks();
+        Node* base = get(virtualRegisterForArgument(0, registerOffset));
+        Node* key = get(virtualRegisterForArgument(1, registerOffset));
+        Node* value = get(virtualRegisterForArgument(2, registerOffset));
+
+        addToGraph(Check, Edge(key, ObjectUse));
+        Node* hash = addToGraph(MapHash, key);
+
+        addVarArgChild(Edge(base, WeakMapObjectUse));
+        addVarArgChild(Edge(key, ObjectUse));
+        addVarArgChild(Edge(value));
+        addVarArgChild(Edge(hash, Int32Use));
+        addToGraph(Node::VarArg, WeakMapSet, OpInfo(0), OpInfo(0));
+        set(VirtualRegister(resultOperand), base);
         return true;
     }
 

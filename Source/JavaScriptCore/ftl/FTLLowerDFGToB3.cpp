@@ -1094,6 +1094,12 @@ private:
         case WeakMapGet:
             compileWeakMapGet();
             break;
+        case WeakSetAdd:
+            compileWeakSetAdd();
+            break;
+        case WeakMapSet:
+            compileWeakMapSet();
+            break;
         case IsObject:
             compileIsObject();
             break;
@@ -9117,6 +9123,25 @@ private:
         else
             result = bucketKey;
         setJSValue(result);
+    }
+
+    void compileWeakSetAdd()
+    {
+        LValue set = lowWeakSetObject(m_node->child1());
+        LValue key = lowObject(m_node->child2());
+        LValue hash = lowInt32(m_node->child3());
+
+        vmCall(Void, m_out.operation(operationWeakSetAdd), m_callFrame, set, key, hash);
+    }
+
+    void compileWeakMapSet()
+    {
+        LValue map = lowWeakMapObject(m_graph.varArgChild(m_node, 0));
+        LValue key = lowObject(m_graph.varArgChild(m_node, 1));
+        LValue value = lowJSValue(m_graph.varArgChild(m_node, 2));
+        LValue hash = lowInt32(m_graph.varArgChild(m_node, 3));
+
+        vmCall(Void, m_out.operation(operationWeakMapSet), m_callFrame, map, key, value, hash);
     }
 
     void compileIsObjectOrNull()

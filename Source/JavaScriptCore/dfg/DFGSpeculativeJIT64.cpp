@@ -4918,6 +4918,14 @@ void SpeculativeJIT::compile(Node* node)
         compileWeakMapGet(node);
         break;
 
+    case WeakSetAdd:
+        compileWeakSetAdd(node);
+        break;
+
+    case WeakMapSet:
+        compileWeakMapSet(node);
+        break;
+
     case StringSlice: {
         compileStringSlice(node);
         break;

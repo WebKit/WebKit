@@ -431,6 +431,8 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node)
     case LoadValueFromMapBucket:
     case ExtractValueFromWeakMapGet:
     case WeakMapGet:
+    case WeakSetAdd:
+    case WeakMapSet:
     case AtomicsAdd:
     case AtomicsAnd:
     case AtomicsCompareExchange:

@@ -170,6 +170,8 @@ JSCell* JIT_OPERATION operationCreateRest(ExecState*, Register* argumentStart, u
 JSCell* JIT_OPERATION operationNewArrayBuffer(ExecState*, Structure*, JSCell*, size_t) WTF_INTERNAL;
 JSCell* JIT_OPERATION operationSetAdd(ExecState*, JSCell*, EncodedJSValue, int32_t) WTF_INTERNAL;
 JSCell* JIT_OPERATION operationMapSet(ExecState*, JSCell*, EncodedJSValue, EncodedJSValue, int32_t) WTF_INTERNAL;
+void JIT_OPERATION operationWeakSetAdd(ExecState*, JSCell*, JSCell*, int32_t) WTF_INTERNAL;
+void JIT_OPERATION operationWeakMapSet(ExecState*, JSCell*, JSCell*, EncodedJSValue, int32_t) WTF_INTERNAL;
 double JIT_OPERATION operationFModOnInts(int32_t, int32_t) WTF_INTERNAL;
 size_t JIT_OPERATION operationObjectIsObject(ExecState*, JSGlobalObject*, JSCell*) WTF_INTERNAL;
 size_t JIT_OPERATION operationObjectIsFunction(ExecState*, JSGlobalObject*, JSCell*) WTF_INTERNAL;
