@@ -73,15 +73,6 @@ SWServer::~SWServer()
     RELEASE_ASSERT(m_connections.isEmpty());
     RELEASE_ASSERT(m_registrations.isEmpty());
     RELEASE_ASSERT(m_jobQueues.isEmpty());
-
-    ASSERT(m_taskQueue.isEmpty());
-    ASSERT(m_taskReplyQueue.isEmpty());
-
-    // For a SWServer to be cleanly shut down its thread must have finished and gone away.
-    // At this stage in development of the feature that actually never happens.
-    // But once it does start happening, this ASSERT will catch us doing it wrong.
-    Locker<Lock> locker(m_taskThreadLock);
-    ASSERT(!m_taskThread);
     
     allServers().remove(this);
 }
@@ -271,9 +262,6 @@ SWServer::SWServer(UniqueRef<SWOriginStore>&& originStore, String&& registration
 {
     UNUSED_PARAM(registrationDatabaseDirectory);
     allServers().add(this);
-    m_taskThread = Thread::create(ASCIILiteral("ServiceWorker Task Thread"), [this] {
-        taskThreadEntryPoint();
-    });
 }
 
 // https://w3c.github.io/ServiceWorker/#schedule-job-algorithm
@@ -676,47 +664,6 @@ void SWServer::fireActivateEvent(SWServerWorker& worker)
     }
 
     connection->fireActivateEvent(worker.identifier());
-}
-
-void SWServer::taskThreadEntryPoint()
-{
-    ASSERT(!isMainThread());
-
-    while (!m_taskQueue.isKilled())
-        m_taskQueue.waitForMessage().performTask();
-
-    Locker<Lock> locker(m_taskThreadLock);
-    m_taskThread = nullptr;
-}
-
-void SWServer::postTask(CrossThreadTask&& task)
-{
-    m_taskQueue.append(WTFMove(task));
-}
-
-void SWServer::postTaskReply(CrossThreadTask&& task)
-{
-    m_taskReplyQueue.append(WTFMove(task));
-
-    Locker<Lock> locker(m_mainThreadReplyLock);
-    if (m_mainThreadReplyScheduled)
-        return;
-
-    m_mainThreadReplyScheduled = true;
-    callOnMainThread([this] {
-        handleTaskRepliesOnMainThread();
-    });
-}
-
-void SWServer::handleTaskRepliesOnMainThread()
-{
-    {
-        Locker<Lock> locker(m_mainThreadReplyLock);
-        m_mainThreadReplyScheduled = false;
-    }
-
-    while (auto task = m_taskReplyQueue.tryGetMessage())
-        task->performTask();
 }
 
 void SWServer::registerConnection(Connection& connection)

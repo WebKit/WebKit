@@ -1,3 +1,22 @@
+2018-01-29  Chris Dumez  <cdumez@apple.com>
+
+        Drop unnecessary "ServiceWorker Task Thread" in SWServer
+        https://bugs.webkit.org/show_bug.cgi?id=182253
+
+        Reviewed by Youenn Fablet.
+
+        Drop unnecessary "ServiceWorker Task Thread" in SWServer. We're spinning a thread for
+        each SWServer that is never used.
+
+        * workers/service/server/SWServer.cpp:
+        (WebCore::SWServer::~SWServer):
+        (WebCore::SWServer::SWServer):
+        (WebCore::SWServer::taskThreadEntryPoint): Deleted.
+        (WebCore::SWServer::postTask): Deleted.
+        (WebCore::SWServer::postTaskReply): Deleted.
+        (WebCore::SWServer::handleTaskRepliesOnMainThread): Deleted.
+        * workers/service/server/SWServer.h:
+
 2018-01-29  Matt Lewis  <jlewis3@apple.com>
 
         Unreviewed, rolling out r227731.
