@@ -1,3 +1,17 @@
+2018-01-29  Chris Dumez  <cdumez@apple.com>
+
+        Make sure we do not re-enter Webcore during StorageToWebProcessConnection::EstablishSWServerConnection Sync IPC
+        https://bugs.webkit.org/show_bug.cgi?id=182256
+        <rdar://problem/36689233>
+
+        Reviewed by Simon Fraser.
+
+        Make sure we do not re-enter Webcore during StorageToWebProcessConnection::EstablishSWServerConnection Sync IPC as
+        this can lead to crashes such as the one in <rdar://problem/36689233>.
+
+        * WebProcess/Storage/WebSWClientConnection.cpp:
+        (WebKit::WebSWClientConnection::WebSWClientConnection):
+
 2018-01-29  Jan-Michael Brummer  <jan.brummer@tabos.org>
 
         [GTK] Zooming gesture incorrectly uses scale instead of zoom 
