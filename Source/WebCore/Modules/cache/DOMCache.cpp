@@ -31,6 +31,7 @@
 #include "HTTPParsers.h"
 #include "JSFetchRequest.h"
 #include "JSFetchResponse.h"
+#include "ReadableStreamChunk.h"
 #include "ScriptExecutionContext.h"
 #include "URL.h"
 
@@ -332,10 +333,17 @@ void DOMCache::put(RequestInfo&& info, Ref<FetchResponse>&& response, DOMPromise
     }
 
     if (response->hasReadableStreamBody()) {
-        setPendingActivity(this);
-        response->consumeBodyFromReadableStream([promise = WTFMove(promise), request = WTFMove(request), response = WTFMove(response), this](ExceptionOr<RefPtr<SharedBuffer>>&& result) mutable {
-            putWithResponseData(WTFMove(promise), WTFMove(request), WTFMove(response), WTFMove(result));
-            unsetPendingActivity(this);
+        response->consumeBodyFromReadableStream([promise = WTFMove(promise), request = WTFMove(request), response = WTFMove(response), data = SharedBuffer::create(), pendingActivity = makePendingActivity(*this), this](auto&& result) mutable {
+
+            if (result.hasException()) {
+                this->putWithResponseData(WTFMove(promise), WTFMove(request), WTFMove(response), result.releaseException().isolatedCopy());
+                return;
+            }
+
+            if (auto chunk = result.returnValue())
+                data->append(reinterpret_cast<const char*>(chunk->data), chunk->size);
+            else
+                this->putWithResponseData(WTFMove(promise), WTFMove(request), WTFMove(response), RefPtr<SharedBuffer> { WTFMove(data) });
         });
         return;
     }

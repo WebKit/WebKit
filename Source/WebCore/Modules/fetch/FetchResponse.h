@@ -30,6 +30,7 @@
 
 #include "FetchBodyOwner.h"
 #include "FetchHeaders.h"
+#include "ReadableStreamSink.h"
 #include "ResourceResponse.h"
 #include <runtime/TypedArrays.h>
 
@@ -41,6 +42,7 @@ class JSValue;
 namespace WebCore {
 
 class FetchRequest;
+struct ReadableStreamChunk;
 class ReadableStreamSource;
 
 class FetchResponse final : public FetchBodyOwner {
@@ -93,7 +95,9 @@ public:
 
     using ConsumeDataCallback = WTF::Function<void(ExceptionOr<RefPtr<SharedBuffer>>&&)>;
     void consumeBodyWhenLoaded(ConsumeDataCallback&&);
-    void consumeBodyFromReadableStream(ConsumeDataCallback&&);
+
+    using ConsumeDataByChunkCallback = WTF::Function<void(ExceptionOr<ReadableStreamChunk*>&&)>;
+    void consumeBodyFromReadableStream(ConsumeDataByChunkCallback&&);
 
     WEBCORE_EXPORT ResourceResponse resourceResponse() const;
 

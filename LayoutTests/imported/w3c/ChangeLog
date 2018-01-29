@@ -1,3 +1,19 @@
+2018-01-29  Oleksandr Skachkov  <gskachkov@gmail.com>
+
+        FetchResponse should support ConsumeData callback on chunk data is received: handling ReadableStream bodies
+        https://bugs.webkit.org/show_bug.cgi?id=182008
+
+        Reviewed by Youenn Fablet.
+
+        * web-platform-tests/service-workers/service-worker/fetch-event-respond-with-readable-stream-chunk.https-expected.txt: Added.
+        * web-platform-tests/service-workers/service-worker/fetch-event-respond-with-readable-stream-chunk.https.html: Added.
+        * web-platform-tests/service-workers/service-worker/resources/fetch-event-respond-with-readable-stream-chunk-iframe.html: Added.
+        * web-platform-tests/service-workers/service-worker/resources/fetch-event-respond-with-readable-stream-chunk-worker.js: Added.
+        (const.process):
+        (this.step):
+        (this.run):
+        (const.asyncSteps):
+
 2018-01-26  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Distinguish between an omitted and a null timeline argument to the Animation constructor

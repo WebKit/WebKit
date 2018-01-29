@@ -1,3 +1,29 @@
+2018-01-29  Oleksandr Skachkov  <gskachkov@gmail.com>
+
+        FetchResponse should support ConsumeData callback on chunk data is received: handling ReadableStream bodies
+        https://bugs.webkit.org/show_bug.cgi?id=182008
+
+        Reviewed by Youenn Fablet.
+
+        Modify FetchResponse to support ConsumeData callback with 
+        handling of ReadableStream by chunks
+
+        * Modules/cache/DOMCache.cpp:
+        (WebCore::DOMCache::put):
+        * Modules/fetch/FetchBodyConsumer.cpp:
+        (WebCore::FetchBodyConsumer::resolve):
+        * Modules/fetch/FetchResponse.cpp:
+        (WebCore::FetchResponse::consumeBodyFromReadableStream):
+        * Modules/fetch/FetchResponse.h:
+        * Modules/streams/ReadableStreamChunk.h: Added.
+        * Modules/streams/ReadableStreamSink.cpp:
+        (WebCore::ReadableStreamToSharedBufferSink::enqueue):
+        (WebCore::ReadableStreamToSharedBufferSink::close):
+        * Modules/streams/ReadableStreamSink.h:
+        * WebCore.xcodeproj/project.pbxproj:
+        * workers/service/context/ServiceWorkerFetch.cpp:
+        (WebCore::ServiceWorkerFetch::processResponse):
+
 2018-01-29  Andy Estes  <aestes@apple.com>
 
         [iOS] Restrict synthetic clicks to the origin that handled the underlying touch event

@@ -30,6 +30,7 @@
 #include "FetchBodyConsumer.h"
 
 #include "JSBlob.h"
+#include "ReadableStreamChunk.h"
 #include "TextResourceDecoder.h"
 
 namespace WebCore {
@@ -103,15 +104,16 @@ void FetchBodyConsumer::resolve(Ref<DeferredPromise>&& promise, ReadableStream* 
 {
     if (stream) {
         ASSERT(!m_sink);
-        m_sink = ReadableStreamToSharedBufferSink::create([promise = WTFMove(promise), type = m_type, contentType = m_contentType](ExceptionOr<RefPtr<SharedBuffer>>&& result) mutable {
+        m_sink = ReadableStreamToSharedBufferSink::create([promise = WTFMove(promise), data = SharedBuffer::create(), type = m_type, contentType = m_contentType](auto&& result) mutable {
             if (result.hasException()) {
                 promise->reject(result.releaseException());
                 return;
             }
 
-            auto* data = result.returnValue() && result.returnValue()->data() ? reinterpret_cast<const unsigned char*>(result.returnValue()->data()) : nullptr;
-            auto size = data ? result.returnValue()->size() : 0;
-            resolveWithTypeAndData(WTFMove(promise), type, contentType, data, size);
+            if (auto chunk = result.returnValue())
+                data->append(reinterpret_cast<const char*>(chunk->data), chunk->size);
+            else
+                resolveWithTypeAndData(WTFMove(promise), type, contentType, reinterpret_cast<const unsigned char*>(data->data()), data->size());
         });
         m_sink->pipeFrom(*stream);
         return;

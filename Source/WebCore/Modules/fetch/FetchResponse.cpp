@@ -33,6 +33,7 @@
 #include "HTTPParsers.h"
 #include "JSBlob.h"
 #include "MIMETypeRegistry.h"
+#include "ReadableStreamSink.h"
 #include "ResourceError.h"
 #include "ScriptExecutionContext.h"
 
@@ -339,7 +340,7 @@ FetchResponse::ResponseData FetchResponse::consumeBody()
     return body().take();
 }
 
-void FetchResponse::consumeBodyFromReadableStream(ConsumeDataCallback&& callback)
+void FetchResponse::consumeBodyFromReadableStream(ConsumeDataByChunkCallback&& callback)
 {
     ASSERT(m_body);
     ASSERT(m_body->readableStream());
