@@ -30,6 +30,7 @@
 
 #include "NativeWebMouseEvent.h"
 #include "NativeWebWheelEvent.h"
+#include "WebKitWebView.h"
 #include "WebPageProxy.h"
 #include <WebCore/FloatPoint.h>
 #include <WebCore/Scrollbar.h>
@@ -247,20 +248,13 @@ void GestureController::ZoomGesture::begin(ZoomGesture* zoomGesture, GdkEventSeq
 {
     gtk_gesture_set_state(gesture, GTK_EVENT_SEQUENCE_CLAIMED);
 
-    zoomGesture->m_initialScale = zoomGesture->m_page.pageScaleFactor();
+    zoomGesture->m_initialScale = zoomGesture->m_page.pageZoomFactor();
     zoomGesture->m_page.getCenterForZoomGesture(zoomGesture->center(), zoomGesture->m_initialPoint);
 }
 
 void GestureController::ZoomGesture::handleZoom()
 {
-    IntPoint scaledOriginOffset = m_viewPoint;
-    scaledOriginOffset.scale(1 / m_scale, 1 / m_scale);
-
-    IntPoint newOrigin = m_initialPoint;
-    newOrigin.moveBy(-scaledOriginOffset);
-    newOrigin.scale(m_scale, m_scale);
-
-    m_page.scalePage(m_scale, newOrigin);
+    webkit_web_view_set_zoom_level(WEBKIT_WEB_VIEW(m_page.viewWidget()), m_scale);
 }
 
 void GestureController::ZoomGesture::scaleChanged(ZoomGesture* zoomGesture, double scale, GtkGesture*)

@@ -1,3 +1,16 @@
+2018-01-29  Jan-Michael Brummer  <jan.brummer@tabos.org>
+
+        [GTK] Zooming gesture incorrectly uses scale instead of zoom 
+        https://bugs.webkit.org/show_bug.cgi?id=182174
+
+        Reviewed by Michael Catanzaro.
+
+        Switch zooming gesture to use zoom instead of scale function.
+
+        * UIProcess/gtk/GestureController.cpp:
+        (WebKit::GestureController::ZoomGesture::begin):
+        (WebKit::GestureController::ZoomGesture::handleZoom):
+
 2018-01-29  Brady Eidson  <beidson@apple.com>
 
         Make it possible for apps that use both WK1 and WK2 to use MessagePorts.
