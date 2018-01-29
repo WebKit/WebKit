@@ -1,3 +1,28 @@
+2018-01-29  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Make StyleBench compatible with run-benchmark and run-perf-tests
+        https://bugs.webkit.org/show_bug.cgi?id=182262
+
+        Reviewed by Antti Koivisto.
+
+        Copied resource files referenced from Speedometer directory since run-benchmark needs to be able
+        to checkout each benchmark separately.
+
+        Removed the code to create tests of the same name five times in makeSteps since this
+        won't be compatible with either run-benchmark or run-perf-tests.
+
+        * StyleBench/index.html: Removed the code to show warnings for local files since run-benchmark
+        doesn't use HTTP server in WebDriver mode.
+        * StyleBench/resources/benchmark-report.js: Copied from resources/benchmark-report.js.
+        * StyleBench/resources/benchmark-runner.js: Copied from resources/benchmark-runner.js.
+        (BenchmarkRunner.prototype._finalize): Use the correction factor of 8 instead of 5 in StyleBench.
+        * StyleBench/resources/gauge.png: Copied from resources/gauge.png.
+        * StyleBench/resources/gauge@2x.png: Copied from resources/gauge@2x.png.
+        * StyleBench/resources/main.css: Copied from resources/main.css.
+        * StyleBench/resources/main.js: Copied from resources/main.js.
+        * StyleBench/resources/tests.js:
+        (makeSteps): Only make each test once.
+
 2018-01-26  Chris Nardi  <cnardi@chromium.org>
 
         Addressing post-review comments after r226614
