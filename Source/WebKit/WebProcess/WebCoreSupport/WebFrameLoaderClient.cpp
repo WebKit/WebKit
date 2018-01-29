@@ -748,7 +748,10 @@ void WebFrameLoaderClient::dispatchDecidePolicyForResponse(const ResourceRespons
     WebCore::Frame* coreFrame = m_frame->coreFrame();
     if (!coreFrame)
         return function(PolicyAction::Ignore);
-    auto navigationID = static_cast<WebDocumentLoader&>(*coreFrame->loader().provisionalDocumentLoader()).navigationID();
+    auto* policyDocumentLoader = coreFrame->loader().provisionalDocumentLoader();
+    if (!policyDocumentLoader)
+        return function(PolicyAction::Ignore);
+    auto navigationID = static_cast<WebDocumentLoader&>(*policyDocumentLoader).navigationID();
     if (!webPage->sendSync(Messages::WebPageProxy::DecidePolicyForResponseSync(m_frame->frameID(), SecurityOriginData::fromFrame(coreFrame), navigationID, response, request, canShowMIMEType, listenerID, UserData(WebProcess::singleton().transformObjectsToHandles(userData.get()).get())), Messages::WebPageProxy::DecidePolicyForResponseSync::Reply(receivedPolicyAction, policyAction, downloadID), Seconds::infinity(), IPC::SendSyncOption::InformPlatformProcessWillSuspend)) {
         m_frame->didReceivePolicyDecision(listenerID, PolicyAction::Ignore, 0, { }, { });
         return;
