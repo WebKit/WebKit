@@ -296,7 +296,11 @@ void NetworkLoad::completeAuthenticationChallenge(ChallengeCompletionHandler&& c
 #if USE(PROTECTION_SPACE_AUTH_CALLBACK)
 void NetworkLoad::continueCanAuthenticateAgainstProtectionSpace(bool result)
 {
-    ASSERT(m_challengeCompletionHandler);
+    if (!m_challengeCompletionHandler) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
     auto completionHandler = std::exchange(m_challengeCompletionHandler, nullptr);
     if (!result) {
         if (NetworkSession::allowsSpecificHTTPSCertificateForHost(*m_challenge))

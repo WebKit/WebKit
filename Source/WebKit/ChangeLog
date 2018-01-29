@@ -1,3 +1,18 @@
+2018-01-29  Alex Christensen  <achristensen@webkit.org>
+
+        Fix crash when during canAuthenticateAgainstProtectionSpace
+        https://bugs.webkit.org/show_bug.cgi?id=182260
+        <rdar://problem/34911343>
+
+        Reviewed by Chris Dumez.
+
+        If we have a valid network load with no challenge completion handler and we are
+        telling it to continue with the challenge handling, something has gone wrong.
+        Maybe we've just recovered from a crashed network process.  If this happens, do nothing.
+
+        * NetworkProcess/NetworkLoad.cpp:
+        (WebKit::NetworkLoad::continueCanAuthenticateAgainstProtectionSpace):
+
 2018-01-29  Zach Li  <zacharyli323@gmail.com>
 
         Warning in 32-bit WebKit build when trying to link to SafariSafeBrowsing
