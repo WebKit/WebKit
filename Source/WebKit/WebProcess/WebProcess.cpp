@@ -424,6 +424,8 @@ void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters)
     ResourceLoadObserver::shared().setShouldLogUserInteraction(parameters.shouldLogUserInteraction);
 #endif
 
+    ResourceLoadObserver::shared().setTimeToLivePartitionFree(parameters.cookiePartitionTimeToLive);
+
     RELEASE_LOG(Process, "%p - WebProcess::initializeWebProcess: Presenting process = %d", this, WebCore::presentingApplicationPID());
 }
 

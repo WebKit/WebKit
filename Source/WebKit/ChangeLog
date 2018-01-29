@@ -1,3 +1,31 @@
+2018-01-29  Brent Fulgham  <bfulgham@apple.com>
+
+        Add telemetry to track storage access API adoption
+        https://bugs.webkit.org/show_bug.cgi?id=182197
+        <rdar://problem/35803309>
+
+        Reviewed by Chris Dumez.
+
+        Part 1: Add telemetry for the user interaction case
+        
+        This patch adds telemetry to track how frequently third-party cookies are
+        used in a first party context due to user interaction. This will help
+        understand cases where the new Storage Access API can help, and to help
+        us understand if we have considered relevant use cases in its design.
+
+        * Shared/WebProcessCreationParameters.cpp:
+        (WebKit::WebProcessCreationParameters::encode const):
+        (WebKit::WebProcessCreationParameters::decode):
+        * Shared/WebProcessCreationParameters.h:
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::platformInitializeWebProcess):
+        * UIProcess/WebResourceLoadStatisticsTelemetry.cpp:
+        (WebKit::sortedPrevalentResourceTelemetry): Update for new telemetry.
+        (WebKit::submitTopList): Update for new data types.
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::initializeWebProcess): Handle the partitioning time
+        passed from the UIProcess.
+
 2018-01-29  Alex Christensen  <achristensen@webkit.org>
 
         Fix crash when during canAuthenticateAgainstProtectionSpace

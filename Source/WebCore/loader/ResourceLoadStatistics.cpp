@@ -80,6 +80,9 @@ void ResourceLoadStatistics::encode(KeyedEncoder& encoder) const
     // Prevalent Resource
     encoder.encodeBool("isPrevalentResource", isPrevalentResource);
     encoder.encodeUInt32("dataRecordsRemoved", dataRecordsRemoved);
+
+    encoder.encodeUInt32("timesAccessedAsFirstPartyDueToUserInteraction", timesAccessedAsFirstPartyDueToUserInteraction);
+    encoder.encodeUInt32("timesAccessedAsFirstPartyDueToStorageAccessAPI", timesAccessedAsFirstPartyDueToStorageAccessAPI);
 }
 
 static void decodeHashCountedSet(KeyedDecoder& decoder, const String& label, HashCountedSet<String>& hashCountedSet)
@@ -148,7 +151,12 @@ bool ResourceLoadStatistics::decode(KeyedDecoder& decoder)
     if (!decoder.decodeDouble("lastSeen", lastSeenTimeAsDouble))
         return false;
     lastSeen = WallTime::fromRawSeconds(lastSeenTimeAsDouble);
-    
+
+    if (!decoder.decodeUInt32("timesAccessedAsFirstPartyDueToUserInteraction", timesAccessedAsFirstPartyDueToUserInteraction))
+        timesAccessedAsFirstPartyDueToUserInteraction = 0;
+    if (!decoder.decodeUInt32("timesAccessedAsFirstPartyDueToStorageAccessAPI", timesAccessedAsFirstPartyDueToStorageAccessAPI))
+        timesAccessedAsFirstPartyDueToStorageAccessAPI = 0;
+
     return true;
 }
 

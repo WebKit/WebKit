@@ -69,12 +69,14 @@ public:
     bool shouldLogUserInteraction() const { return m_shouldLogUserInteraction; }
     void setShouldLogUserInteraction(bool shouldLogUserInteraction) { m_shouldLogUserInteraction = shouldLogUserInteraction; }
 #endif
+    WEBCORE_EXPORT void setTimeToLivePartitionFree(Seconds);
 
 private:
     ResourceLoadObserver();
 
     bool shouldLog(Page*) const;
     ResourceLoadStatistics& ensureResourceStatisticsForPrimaryDomain(const String&);
+    bool wasAccessedWithinInteractionWindow(const ResourceLoadStatistics&) const;
 
     void scheduleNotificationIfNeeded();
     Vector<ResourceLoadStatistics> takeStatistics();
@@ -83,6 +85,7 @@ private:
     HashMap<String, WTF::WallTime> m_lastReportedUserInteractionMap;
     WTF::Function<void (Vector<ResourceLoadStatistics>&&)> m_notificationCallback;
     Timer m_notificationTimer;
+    Seconds m_timeToLiveCookiePartitionFree { 24_h };
 #if HAVE(CFNETWORK_STORAGE_PARTITIONING) && !RELEASE_LOG_DISABLED
     uint64_t m_loggingCounter { 0 };
     bool m_shouldLogUserInteraction { false };

@@ -1,3 +1,31 @@
+2018-01-29  Brent Fulgham  <bfulgham@apple.com>
+
+        Add telemetry to track storage access API adoption
+        https://bugs.webkit.org/show_bug.cgi?id=182197
+        <rdar://problem/35803309>
+
+        Reviewed by Chris Dumez.
+        
+        Part 1: Add telemetry for the user interaction case
+        
+        This patch adds telemetry to track how frequently third-party cookies are
+        used in a first party context due to user interaction. This will help
+        understand cases where the new Storage Access API can help, and to help
+        us understand if we have considered relevant use cases in its design.
+
+        * loader/ResourceLoadObserver.cpp:
+        (WebCore::ResourceLoadObserver::setTimeToLivePartitionFree): Let the observer
+        know the first party interaction duration.
+        (WebCore::ResourceLoadObserver::wasAccessedWithinInteractionWindow const): Added.
+        (WebCore::ResourceLoadObserver::logFrameNavigation): Note when a third party 
+        resource is accessed as a first party due to user interaction. 
+        (WebCore::ResourceLoadObserver::logSubresourceLoading): Ditto.
+        * loader/ResourceLoadObserver.h:
+        * loader/ResourceLoadStatistics.cpp:
+        (WebCore::ResourceLoadStatistics::encode const): Handle new fields.
+        (WebCore::ResourceLoadStatistics::decode): Ditto.
+        * loader/ResourceLoadStatistics.h:
+
 2018-01-29  Antti Koivisto  <antti@apple.com>
 
         CalcExpressionBlendLength::evaluate hits stack limit

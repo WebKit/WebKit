@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -154,6 +154,8 @@ void WebProcessCreationParameters::encode(IPC::Encoder& encoder) const
 #if HAVE(CFNETWORK_STORAGE_PARTITIONING) && !RELEASE_LOG_DISABLED
     encoder << shouldLogUserInteraction;
 #endif
+
+    encoder << cookiePartitionTimeToLive;
 }
 
 bool WebProcessCreationParameters::decode(IPC::Decoder& decoder, WebProcessCreationParameters& parameters)
@@ -399,6 +401,9 @@ bool WebProcessCreationParameters::decode(IPC::Decoder& decoder, WebProcessCreat
     if (!decoder.decode(parameters.shouldLogUserInteraction))
         return false;
 #endif
+
+    if (!decoder.decode(parameters.cookiePartitionTimeToLive))
+        return false;
 
     return true;
 }
