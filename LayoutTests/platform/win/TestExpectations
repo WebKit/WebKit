@@ -3893,3 +3893,6 @@ webkit.org/b/182133 fast/text/font-load-data-partitioned-alphabet.html [ Failure
 
 webkit.org/b/182158 transitions/default-timing-function.html [ Failure ]
 webkit.org/b/182159 webanimations/opacity-animation-yields-compositing.html [ Failure ]
+
+webkit.org/b/182239 js/dom/array-with-double-assign.html [ Failure ]
+webkit.org/b/182239 js/dom/array-with-double-push.html [ Failure ]
