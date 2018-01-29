@@ -1,3 +1,9 @@
+2018-01-29  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Unreviewed WPE test gardening
+
+        * platform/wpe/TestExpectations:
+
 2018-01-29  Per Arne Vollan  <pvollan@apple.com>
 
         Layout Test fast/events/beforeunload-dom-manipulation-crash.html is crashing
