@@ -307,7 +307,7 @@ void RegExp::compile(VM* vm, Yarr::YarrCharSize charSize)
 
 #if ENABLE(YARR_JIT)
     if (!pattern.m_containsBackreferences && !pattern.containsUnsignedLengthPattern() && VM::canUseRegExpJIT()) {
-        Yarr::jitCompile(pattern, charSize, vm, m_regExpJITCode);
+        Yarr::jitCompile(pattern, charSize, m_regExpJITCode);
         if (!m_regExpJITCode.failureReason()) {
             m_state = JITCode;
             return;
@@ -326,7 +326,7 @@ void RegExp::compile(VM* vm, Yarr::YarrCharSize charSize)
 
 int RegExp::match(VM& vm, const String& s, unsigned startOffset, Vector<int>& ovector)
 {
-    return matchInline(vm, s, startOffset, ovector);
+    return matchInline(vm, Concurrency::MainThread, s, startOffset, ovector);
 }
 
 bool RegExp::matchConcurrently(
@@ -337,7 +337,7 @@ bool RegExp::matchConcurrently(
     if (!hasCodeFor(s.is8Bit() ? Yarr::Char8 : Yarr::Char16))
         return false;
 
-    position = match(vm, s, startOffset, ovector);
+    position = matchInline(vm, Concurrency::Concurrent, s, startOffset, ovector);
     return true;
 }
 
@@ -363,7 +363,7 @@ void RegExp::compileMatchOnly(VM* vm, Yarr::YarrCharSize charSize)
 
 #if ENABLE(YARR_JIT)
     if (!pattern.m_containsBackreferences && !pattern.containsUnsignedLengthPattern() && VM::canUseRegExpJIT()) {
-        Yarr::jitCompile(pattern, charSize, vm, m_regExpJITCode, Yarr::MatchOnly);
+        Yarr::jitCompile(pattern, charSize, m_regExpJITCode, Yarr::MatchOnly);
         if (!m_regExpJITCode.failureReason()) {
             m_state = JITCode;
             return;
@@ -382,7 +382,7 @@ void RegExp::compileMatchOnly(VM* vm, Yarr::YarrCharSize charSize)
 
 MatchResult RegExp::match(VM& vm, const String& s, unsigned startOffset)
 {
-    return matchInline(vm, s, startOffset);
+    return matchInline(vm, Concurrency::MainThread, s, startOffset);
 }
 
 bool RegExp::matchConcurrently(VM& vm, const String& s, unsigned startOffset, MatchResult& result)
@@ -392,7 +392,7 @@ bool RegExp::matchConcurrently(VM& vm, const String& s, unsigned startOffset, Ma
     if (!hasMatchOnlyCodeFor(s.is8Bit() ? Yarr::Char8 : Yarr::Char16))
         return false;
 
-    result = match(vm, s, startOffset);
+    result = matchInline(vm, Concurrency::Concurrent, s, startOffset);
     return true;
 }
 
@@ -407,6 +407,26 @@ void RegExp::deleteCode()
     m_regExpJITCode.clear();
 #endif
     m_regExpBytecode = nullptr;
+}
+
+String RegExp::toSourceString() const
+{
+    char postfix[8] = { '/', 0, 0, 0, 0, 0, 0, 0 };
+    int index = 1;
+    if (global())
+        postfix[index++] = 'g';
+    if (ignoreCase())
+        postfix[index++] = 'i';
+    if (multiline())
+        postfix[index++] = 'm';
+    if (dotAll())
+        postfix[index++] = 's';
+    if (unicode())
+        postfix[index++] = 'u';
+    if (sticky())
+        postfix[index++] = 'y';
+
+    return makeString("/", pattern(), postfix);
 }
 
 #if ENABLE(YARR_JIT_DEBUG)

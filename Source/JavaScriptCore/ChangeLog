@@ -1,5 +1,66 @@
 2018-01-29  Yusuke Suzuki  <utatane.tea@gmail.com>
 
+        JSC Sampling Profiler: Detect tester and testee when sampling in RegExp JIT
+        https://bugs.webkit.org/show_bug.cgi?id=152729
+
+        Reviewed by Saam Barati.
+
+        This patch extends SamplingProfiler to recognize JIT RegExp execution. We record
+        executing RegExp in VM so that SamplingProfiler can detect it. This is better
+        than the previous VM::isExecutingInRegExpJIT flag approach since
+
+        1. isExecutingInRegExpJIT is set after starting executing JIT RegExp code. Thus,
+        if we suspend the thread just before executing this flag, or just after clearing
+        this flag, SamplingProfiler gets invalid frame, and frame validation fails. We
+        should set such a flag before and after executing JIT RegExp code.
+
+        2. This removes VM dependency from YarrJIT which is not essential one.
+
+        We add ExecutionContext enum to RegExp::matchInline not to mark execution if it
+        is done in non JS thread.
+
+        * bytecode/BytecodeDumper.cpp:
+        (JSC::regexpName):
+        (JSC::BytecodeDumper<Block>::dumpRegExps):
+        (JSC::regexpToSourceString): Deleted.
+        * heap/Heap.cpp:
+        (JSC::Heap::addCoreConstraints):
+        * runtime/RegExp.cpp:
+        (JSC::RegExp::compile):
+        (JSC::RegExp::match):
+        (JSC::RegExp::matchConcurrently):
+        (JSC::RegExp::compileMatchOnly):
+        (JSC::RegExp::toSourceString const):
+        * runtime/RegExp.h:
+        * runtime/RegExpInlines.h:
+        (JSC::RegExp::matchInline):
+        * runtime/RegExpMatchesArray.h:
+        (JSC::createRegExpMatchesArray):
+        * runtime/SamplingProfiler.cpp:
+        (JSC::SamplingProfiler::SamplingProfiler):
+        (JSC::SamplingProfiler::timerLoop):
+        (JSC::SamplingProfiler::takeSample):
+        (JSC::SamplingProfiler::processUnverifiedStackTraces):
+        (JSC::SamplingProfiler::StackFrame::nameFromCallee):
+        (JSC::SamplingProfiler::StackFrame::displayName):
+        (JSC::SamplingProfiler::StackFrame::displayNameForJSONTests):
+        (JSC::SamplingProfiler::StackFrame::functionStartLine):
+        (JSC::SamplingProfiler::StackFrame::functionStartColumn):
+        (JSC::SamplingProfiler::StackFrame::sourceID):
+        (JSC::SamplingProfiler::StackFrame::url):
+        (WTF::printInternal):
+        (JSC::SamplingProfiler::~SamplingProfiler): Deleted.
+        * runtime/SamplingProfiler.h:
+        * runtime/VM.h:
+        * yarr/YarrJIT.cpp:
+        (JSC::Yarr::YarrGenerator::generateEnter):
+        (JSC::Yarr::YarrGenerator::generateReturn):
+        (JSC::Yarr::YarrGenerator::YarrGenerator):
+        (JSC::Yarr::jitCompile):
+        * yarr/YarrJIT.h:
+
+2018-01-29  Yusuke Suzuki  <utatane.tea@gmail.com>
+
         [DFG][FTL] WeakMap#set should have DFG node
         https://bugs.webkit.org/show_bug.cgi?id=180015
 

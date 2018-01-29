@@ -1,5 +1,17 @@
 2018-01-29  Yusuke Suzuki  <utatane.tea@gmail.com>
 
+        JSC Sampling Profiler: Detect tester and testee when sampling in RegExp JIT
+        https://bugs.webkit.org/show_bug.cgi?id=152729
+
+        Reviewed by Saam Barati.
+
+        * stress/sampling-profiler-regexp.js: Added.
+        (platformSupportsSamplingProfiler.test):
+        (platformSupportsSamplingProfiler.baz):
+        (platformSupportsSamplingProfiler):
+
+2018-01-29  Yusuke Suzuki  <utatane.tea@gmail.com>
+
         [DFG][FTL] WeakMap#set should have DFG node
         https://bugs.webkit.org/show_bug.cgi?id=180015
 

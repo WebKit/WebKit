@@ -63,7 +63,7 @@ ALWAYS_INLINE JSArray* createRegExpMatchesArray(
     RegExp* regExp, unsigned startOffset, MatchResult& result)
 {
     Vector<int, 32> subpatternResults;
-    int position = regExp->matchInline(vm, inputValue, startOffset, subpatternResults);
+    int position = regExp->matchInline(vm, Concurrency::MainThread, inputValue, startOffset, subpatternResults);
     if (position == -1) {
         result = MatchResult::failed();
         return nullptr;

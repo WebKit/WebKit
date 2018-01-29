@@ -94,7 +94,7 @@ ALWAYS_INLINE void RegExp::compileIfNecessary(VM& vm, Yarr::YarrCharSize charSiz
 }
 
 template<typename VectorType>
-ALWAYS_INLINE int RegExp::matchInline(VM& vm, const String& s, unsigned startOffset, VectorType& ovector)
+ALWAYS_INLINE int RegExp::matchInline(VM& vm, Concurrency concurrency, const String& s, unsigned startOffset, VectorType& ovector)
 {
 #if ENABLE(REGEXP_TRACING)
     m_rtMatchCallCount++;
@@ -118,10 +118,13 @@ ALWAYS_INLINE int RegExp::matchInline(VM& vm, const String& s, unsigned startOff
 #endif
 
     if (m_state == JITCode) {
-        if (s.is8Bit())
-            result = m_regExpJITCode.execute(s.characters8(), startOffset, s.length(), offsetVector EXTRA_JIT_PARAMS).start;
-        else
-            result = m_regExpJITCode.execute(s.characters16(), startOffset, s.length(), offsetVector EXTRA_JIT_PARAMS).start;
+        {
+            RegExpJITFrameTracer tracer { vm, *this, concurrency };
+            if (s.is8Bit())
+                result = m_regExpJITCode.execute(s.characters8(), startOffset, s.length(), offsetVector EXTRA_JIT_PARAMS).start;
+            else
+                result = m_regExpJITCode.execute(s.characters16(), startOffset, s.length(), offsetVector EXTRA_JIT_PARAMS).start;
+        }
 
         if (result == Yarr::JSRegExpJITCodeFailure) {
             // JIT'ed code couldn't handle expression, so punt back to the interpreter.
@@ -202,7 +205,7 @@ ALWAYS_INLINE void RegExp::compileIfNecessaryMatchOnly(VM& vm, Yarr::YarrCharSiz
     compileMatchOnly(&vm, charSize);
 }
 
-ALWAYS_INLINE MatchResult RegExp::matchInline(VM& vm, const String& s, unsigned startOffset)
+ALWAYS_INLINE MatchResult RegExp::matchInline(VM& vm, Concurrency concurrency, const String& s, unsigned startOffset)
 {
 #if ENABLE(REGEXP_TRACING)
     m_rtMatchOnlyCallCount++;
@@ -223,10 +226,13 @@ ALWAYS_INLINE MatchResult RegExp::matchInline(VM& vm, const String& s, unsigned 
     MatchResult result;
 
     if (m_state == JITCode) {
-        if (s.is8Bit())
-            result = m_regExpJITCode.execute(s.characters8(), startOffset, s.length() EXTRA_JIT_PARAMS);
-        else
-            result = m_regExpJITCode.execute(s.characters16(), startOffset, s.length() EXTRA_JIT_PARAMS);
+        {
+            RegExpJITFrameTracer tracer { vm, *this, concurrency };
+            if (s.is8Bit())
+                result = m_regExpJITCode.execute(s.characters8(), startOffset, s.length() EXTRA_JIT_PARAMS);
+            else
+                result = m_regExpJITCode.execute(s.characters16(), startOffset, s.length() EXTRA_JIT_PARAMS);
+        }
 
 #if ENABLE(REGEXP_TRACING)
         if (!result)

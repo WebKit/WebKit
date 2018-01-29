@@ -29,7 +29,6 @@
 #include <wtf/ASCIICType.h>
 #include "LinkBuffer.h"
 #include "Options.h"
-#include "VM.h"
 #include "Yarr.h"
 #include "YarrCanonicalize.h"
 
@@ -41,7 +40,7 @@ namespace JSC { namespace Yarr {
 
 template<YarrJITCompileMode compileMode>
 class YarrGenerator : private MacroAssembler {
-    friend void jitCompile(VM*, YarrCodeBlock& jitObject, const String& pattern, unsigned& numSubpatterns, const char*& error, bool ignoreCase, bool multiline);
+    friend void jitCompile(YarrCodeBlock& jitObject, const String& pattern, unsigned& numSubpatterns, const char*& error, bool ignoreCase, bool multiline);
 
 #if CPU(ARM)
     static const RegisterID input = ARMRegisters::r0;
@@ -3337,14 +3336,10 @@ class YarrGenerator : private MacroAssembler {
 #elif CPU(MIPS)
         // Do nothing.
 #endif
-
-        store8(TrustedImm32(1), &m_vm->isExecutingInRegExpJIT);
     }
 
     void generateReturn()
     {
-        store8(TrustedImm32(0), &m_vm->isExecutingInRegExpJIT);
-
 #if CPU(X86_64)
 #if OS(WINDOWS)
         // Store the return value in the allocated space pointed by rcx.
@@ -3391,9 +3386,8 @@ class YarrGenerator : private MacroAssembler {
     }
 
 public:
-    YarrGenerator(VM* vm, YarrPattern& pattern, YarrCharSize charSize)
-        : m_vm(vm)
-        , m_pattern(pattern)
+    YarrGenerator(YarrPattern& pattern, YarrCharSize charSize)
+        : m_pattern(pattern)
         , m_charSize(charSize)
         , m_decodeSurrogatePairs(m_charSize == Char16 && m_pattern.unicode())
         , m_unicodeIgnoreCase(m_pattern.unicode() && m_pattern.ignoreCase())
@@ -3495,8 +3489,6 @@ public:
     }
 
 private:
-    VM* m_vm;
-
     YarrPattern& m_pattern;
 
     YarrCharSize m_charSize;
@@ -3560,12 +3552,12 @@ static void dumpCompileFailure(JITFailureReason failure)
     }
 }
 
-void jitCompile(YarrPattern& pattern, YarrCharSize charSize, VM* vm, YarrCodeBlock& jitObject, YarrJITCompileMode mode)
+void jitCompile(YarrPattern& pattern, YarrCharSize charSize, YarrCodeBlock& jitObject, YarrJITCompileMode mode)
 {
     if (mode == MatchOnly)
-        YarrGenerator<MatchOnly>(vm, pattern, charSize).compile(jitObject);
+        YarrGenerator<MatchOnly>(pattern, charSize).compile(jitObject);
     else
-        YarrGenerator<IncludeSubpatterns>(vm, pattern, charSize).compile(jitObject);
+        YarrGenerator<IncludeSubpatterns>(pattern, charSize).compile(jitObject);
 
     if (auto failureReason = jitObject.failureReason()) {
         if (Options::dumpCompiledRegExpPatterns())

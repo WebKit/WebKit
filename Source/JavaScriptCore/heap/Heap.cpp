@@ -2650,6 +2650,7 @@ void Heap::addCoreConstraints()
             
             slotVisitor.appendUnbarriered(m_vm->exception());
             slotVisitor.appendUnbarriered(m_vm->lastException());
+            slotVisitor.appendUnbarriered(m_vm->currentlyExecutingRegExp);
         },
         ConstraintVolatility::GreyedByExecution);
     
