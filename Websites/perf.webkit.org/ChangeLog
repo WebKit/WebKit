@@ -1,5 +1,28 @@
 2018-01-29  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Perf dashboard's page title can be set to a previously visited page
+        https://bugs.webkit.org/show_bug.cgi?id=182209
+
+        Rubber-stamped by Chris Dumez.
+
+        Before this patch, opening a page and navigating away from it could result in the page title
+        getting set to that of the previously visited page after the new page had been opened.
+
+        This bug was caused by Page.render keep setting document.title even though the page is no longer
+        the currently open page of the router. Fixed it by exiting early in Page.enqueueToRender when
+        this page is not the currently open page of the router.
+
+        Also added basic tests for Page.
+
+        * browser-tests/index.html:
+        * browser-tests/page-tests.js: Added.
+        * public/v3/pages/page.js:
+        (Page): Removed the unused second constructor argument.
+        (Page.prototype.enqueueToRender): Fixed the bug.
+        (Page.prototype.render): Use const instead of var.
+
+2018-01-29  Ryosuke Niwa  <rniwa@webkit.org>
+
         CommitLogViewer should not fetch commits in serial
         https://bugs.webkit.org/show_bug.cgi?id=182207
 
