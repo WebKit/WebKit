@@ -1,3 +1,16 @@
+2018-01-29  Matt Lewis  <jlewis3@apple.com>
+
+        Unreviewed, rolling out r227731.
+
+        This caused and assertion failure in API tests.
+
+        Reverted changeset:
+
+        "Layout Test fast/events/beforeunload-dom-manipulation-
+        crash.html is crashing"
+        https://bugs.webkit.org/show_bug.cgi?id=181204
+        https://trac.webkit.org/changeset/227731
+
 2018-01-29  Youenn Fablet  <youenn@apple.com>
 
         WPT test exporter should add WebKit export in its PR description

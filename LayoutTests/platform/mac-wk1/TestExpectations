@@ -453,6 +453,8 @@ webkit.org/b/176920 imported/w3c/web-platform-tests/streams/piping/error-propaga
 
 webkit.org/b/175886 svg/animations/smil-leak-element-instances.svg [ Pass Failure ]
 
+webkit.org/b/177020 fast/events/beforeunload-dom-manipulation-crash.html [ Skip ]
+
 # <rdar://problem/29201698> DumpRenderTree crashed in com.apple.CoreGraphics: CGDataProviderCopyData + 377
 [ HighSierra+ ] fast/canvas/webgl/tex-image-and-sub-image-2d-with-potentially-subsampled-image.html [ Crash ]
 

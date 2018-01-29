@@ -389,7 +389,6 @@ private:
     void dispatchGlobalObjectAvailableInAllWorlds();
 
     bool isNavigationAllowed() const;
-    bool isStopLoadingAllowed() const;
 
     Frame& m_frame;
     FrameLoaderClient& m_client;
