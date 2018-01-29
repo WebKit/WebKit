@@ -1,3 +1,52 @@
+2018-01-29  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add the support for running Speedometer 2.0 to run-benchmark
+        https://bugs.webkit.org/show_bug.cgi?id=182231
+
+        Reviewed by Antti Koivisto.
+
+        Made it possible to run Speedometer 2.0 using run-benchmark. To do this, this patch adds the ability to
+        aggregate results using the differently aggregated values of subtests. In particular, Speedometer 2.0
+        requires aggregating the geometric mean out of total time spent in each suite.
+
+        Also added --show-iteration-values to show individual measured values in each iteration.
+
+        * Scripts/webkitpy/benchmark_runner/benchmark_results.py:
+        (BenchmarkResults.format): Added show_iteration_values as an option.
+        (BenchmarkResults._format_tests): Ditto.
+        (BenchmarkResults._format_values): Ditto. Added the code to show the measured values for each iteration
+        when show_iteration_values is set to True. We don't emit the unit in each value so that the list of values
+        is easily parsable as a JSON array.
+        (BenchmarkResults._format_values.format_scaled): Added. A helper function.
+        (BenchmarkResults._subtest_values_by_config_iteration): Added the support for aggregating values using
+        the aggregated values of a subtest even when they were computed using a different aggregator if the subtest
+        had exactly one aggregator.
+        (BenchmarkResults._lint_results):
+        (BenchmarkResults._lint_subtest_results): Replaced parent_needing_aggregation, which is set to the parent
+        test's name only when the parent test had an aggregator, by self-explanatory parent_test and
+        parent_aggregator_list.
+        (BenchmarkResults._lint_aggregator_list): Ditto. Added raise an exception when a test has an aggregator but
+        its subtest doesn't specify the same aggregator or it has more than one aggregators, making it ambiguous.
+        (BenchmarkResults._lint_configuration):
+        * Scripts/webkitpy/benchmark_runner/benchmark_results_unittest.py:
+        (test_format_values_with_no_unit_scaling): Added.
+        (test_format_values_with_iteration_values): Added.
+        (test_format_values_with_no_unit_scaling_and_iteration_values): Added.
+        (test_aggregate_results_from_another_aggregator): Added.
+        (test_lint_results): Added a test case.
+        * Scripts/webkitpy/benchmark_runner/benchmark_runner.py:
+        (BenchmarkRunner.__init__): Added show_iteration_values as an argument.
+        (BenchmarkRunner._run_benchmark): Ditto.
+        (BenchmarkRunner.show_results): Ditto.
+        * Scripts/webkitpy/benchmark_runner/data/patches/webserver/Speedometer2.patch: Added.
+        * Scripts/webkitpy/benchmark_runner/data/plans/speedometer2.plan: Added.
+        * Scripts/webkitpy/benchmark_runner/run_benchmark.py:
+        (parse_args): Added --show-iteration-values as a boolean argument.
+        (run_benchmark_plan): Ditto.
+        (start): Ditto.
+        * Scripts/webkitpy/benchmark_runner/webserver_benchmark_runner.py:
+        (WebServerBenchmarkRunner.__init__): Ditto.
+
 2018-01-29  Brady Eidson  <beidson@apple.com>
 
         Make it possible for apps that use both WK1 and WK2 to use MessagePorts.

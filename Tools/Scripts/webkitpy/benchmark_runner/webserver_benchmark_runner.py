@@ -15,10 +15,10 @@ _log = logging.getLogger(__name__)
 class WebServerBenchmarkRunner(BenchmarkRunner):
     name = 'webserver'
 
-    def __init__(self, plan_file, local_copy, count_override, build_dir, output_file, platform, browser, scale_unit=True, device_id=None):
+    def __init__(self, plan_file, local_copy, count_override, build_dir, output_file, platform, browser, scale_unit=True, show_iteration_values=False, device_id=None):
         self._http_server_driver = HTTPServerDriverFactory.create(platform)
         self._http_server_driver.set_device_id(device_id)
-        super(WebServerBenchmarkRunner, self).__init__(plan_file, local_copy, count_override, build_dir, output_file, platform, browser, scale_unit, device_id)
+        super(WebServerBenchmarkRunner, self).__init__(plan_file, local_copy, count_override, build_dir, output_file, platform, browser, scale_unit, show_iteration_values, device_id)
 
     def _get_result(self, test_url):
         result = self._browser_driver.add_additional_results(test_url, self._http_server_driver.fetch_result())

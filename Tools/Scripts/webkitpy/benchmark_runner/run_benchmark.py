@@ -49,6 +49,7 @@ def parse_args():
     parser.add_argument('--device-id', default=None, help='Undocumented option for mobile device testing.')
     parser.add_argument('--debug', action='store_true', help='Enable debug logging.')
     parser.add_argument('--no-adjust-unit', dest='scale_unit', action='store_false', help="Don't convert to scientific notation.")
+    parser.add_argument('--show-iteration-values', dest='show_iteration_values', action='store_true', help="Show the measured value for each iteration in addition to averages.")
 
     args = parser.parse_args()
 
@@ -64,7 +65,7 @@ def parse_args():
 
 def run_benchmark_plan(args, plan):
     benchmark_runner_class = benchmark_runner_subclasses[args.driver]
-    runner = benchmark_runner_class(plan, args.local_copy, args.count, args.build_dir, args.output_file, args.platform, args.browser, args.scale_unit, args.device_id)
+    runner = benchmark_runner_class(plan, args.local_copy, args.count, args.build_dir, args.output_file, args.platform, args.browser, args.scale_unit, args.show_iteration_values, args.device_id)
     runner.execute()
 
 
@@ -79,7 +80,7 @@ def start(args):
         results_json = json.load(open(args.json_file, 'r'))
         if 'debugOutput' in results_json:
             del results_json['debugOutput']
-        BenchmarkRunner.show_results(results_json, args.scale_unit)
+        BenchmarkRunner.show_results(results_json, args.scale_unit, args.show_iteration_values)
         return
     if args.allplans:
         failed = []

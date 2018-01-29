@@ -48,11 +48,11 @@ class BenchmarkResults(object):
         self._lint_results(results)
         self._results = self._aggregate_results(results)
 
-    def format(self, scale_unit=True):
-        return self._format_tests(self._results, scale_unit)
+    def format(self, scale_unit=True, show_iteration_values=False):
+        return self._format_tests(self._results, scale_unit, show_iteration_values)
 
     @classmethod
-    def _format_tests(cls, tests, scale_unit, indent=''):
+    def _format_tests(cls, tests, scale_unit, show_iteration_values, indent=''):
         output = ''
         config_name = 'current'
         for test_name in sorted(tests.keys()):
@@ -71,13 +71,13 @@ class BenchmarkResults(object):
                     output += ':' + metric_name + ':'
                     if aggregator_name:
                         output += aggregator_name + ':'
-                    output += ' ' + cls._format_values(metric_name, metric[aggregator_name][config_name], scale_unit) + '\n'
+                    output += ' ' + cls._format_values(metric_name, metric[aggregator_name][config_name], scale_unit, show_iteration_values) + '\n'
             if 'tests' in test:
-                output += cls._format_tests(test['tests'], scale_unit, indent=(indent + ' ' * len(test_name)))
+                output += cls._format_tests(test['tests'], scale_unit, show_iteration_values, indent=(indent + ' ' * len(test_name)))
         return output
 
     @classmethod
-    def _format_values(cls, metric_name, values, scale_unit=True):
+    def _format_values(cls, metric_name, values, scale_unit=True, show_iteration_values=False):
         values = map(float, values)
         total = sum(values)
         mean = total / len(values)
@@ -95,24 +95,35 @@ class BenchmarkResults(object):
         unit = cls._unit_from_metric(metric_name)
 
         if not scale_unit:
-            return ('{mean:.3f}{unit} stdev={delta:.1%}').format(mean=mean, delta=sample_stdev / mean, unit=unit)
+            formatted_value = '{mean:.3f}{unit} stdev={delta:.1%}'.format(mean=mean, delta=sample_stdev / mean, unit=unit)
+            if show_iteration_values:
+                formatted_value += ' [' + ', '.join(map(lambda value: '{value:.3f}'.format(value=value), values)) + ']'
+            return formatted_value
 
         if unit == 'ms':
             unit = 's'
             mean = float(mean) / 1000
+            values = map(lambda value: float(value) / 1000, values)
             sample_stdev /= 1000
 
         base = 1024 if unit == 'B' else 1000
         value_sig_fig = 1 - math.floor(math.log10(sample_stdev / mean)) if sample_stdev else 3
         SI_magnitude = math.floor(math.log(mean, base))
 
-        scaled_mean = mean * math.pow(base, -SI_magnitude)
+        scaling_factor = math.pow(base, -SI_magnitude)
+        scaled_mean = mean * scaling_factor
         SI_prefix = cls.SI_prefixes[int(SI_magnitude) + 3]
 
         non_floating_digits = 1 + math.floor(math.log10(scaled_mean))
         floating_points_count = max(0, value_sig_fig - non_floating_digits)
-        return ('{mean:.' + str(int(floating_points_count)) + 'f}{prefix}{unit} stdev={delta:.1%}').format(
-            mean=scaled_mean, delta=sample_stdev / mean, prefix=SI_prefix, unit=unit)
+
+        def format_scaled(value):
+            return ('{value:.' + str(int(floating_points_count)) + 'f}').format(value=value)
+
+        formatted_value = '{mean}{prefix}{unit} stdev={delta:.1%}'.format(mean=format_scaled(scaled_mean), delta=sample_stdev / mean, prefix=SI_prefix, unit=unit)
+        if show_iteration_values:
+            formatted_value += ' [' + ', '.join(map(lambda value: format_scaled(value * scaling_factor), values)) + ']'
+        return formatted_value
 
     @classmethod
     def _unit_from_metric(cls, metric_name):
@@ -163,7 +174,14 @@ class BenchmarkResults(object):
         values_by_config_iteration = {}
         for subtest_name, subtest in subtest_results.iteritems():
             results_for_metric = subtest['metrics'].get(metric_name, {})
-            results_for_aggregator = results_for_metric.get(aggregator, results_for_metric.get(None, {}))
+            if aggregator in results_for_metric:
+                results_for_aggregator = results_for_metric.get(aggregator)
+            elif None in results_for_metric:
+                results_for_aggregator = results_for_metric.get(None)
+            elif len(results_for_metric.keys()) == 1:
+                results_for_aggregator = results_for_metric.get(results_for_metric.keys()[0])
+            else:
+                results_for_aggregator = {}
             for config_name, values in results_for_aggregator.iteritems():
                 values_by_config_iteration.setdefault(config_name, [[] for _ in values])
                 for iteration, value in enumerate(values):
@@ -176,14 +194,14 @@ class BenchmarkResults(object):
 
     @classmethod
     def _lint_results(cls, tests):
-        cls._lint_subtest_results(tests, None)
+        cls._lint_subtest_results(tests, None, None)
         return True
 
     @classmethod
-    def _lint_subtest_results(cls, subtests, parent_needing_aggregation):
+    def _lint_subtest_results(cls, subtests, parent_test, parent_aggregator_list):
         iteration_groups_by_config = {}
         for test_name, test in subtests.iteritems():
-            needs_aggregation = False
+            aggregator_list = None
 
             if 'metrics' not in test and 'tests' not in test:
                 raise TypeError('"%s" does not contain metrics or tests' % test_name)
@@ -194,21 +212,21 @@ class BenchmarkResults(object):
                     raise TypeError('The metrics in "%s" is not a dictionary' % test_name)
                 for metric_name, metric in metrics.iteritems():
                     if isinstance(metric, list):
-                        cls._lint_aggregator_list(test_name, metric_name, metric)
-                        needs_aggregation = True
+                        cls._lint_aggregator_list(test_name, metric_name, metric, parent_test, parent_aggregator_list)
+                        aggregator_list = metric
                     elif isinstance(metric, dict):
-                        cls._lint_configuration(test_name, metric_name, metric, parent_needing_aggregation, iteration_groups_by_config)
+                        cls._lint_configuration(test_name, metric_name, metric, parent_test, parent_aggregator_list, iteration_groups_by_config)
                     else:
                         raise TypeError('"%s" metric of "%s" was not an aggregator list or a dictionary of configurations: %s' % (metric_name, test_name, str(metric)))
 
             if 'tests' in test:
-                cls._lint_subtest_results(test['tests'], test_name if needs_aggregation else None)
-            elif needs_aggregation:
-                raise TypeError('"%s" requires aggregation but "SomeTest" has no subtests' % (test_name))
+                cls._lint_subtest_results(test['tests'], test_name, aggregator_list)
+            elif aggregator_list:
+                raise TypeError('"%s" requires aggregation but it has no subtests' % (test_name))
         return iteration_groups_by_config
 
     @classmethod
-    def _lint_aggregator_list(cls, test_name, metric_name, aggregator_list):
+    def _lint_aggregator_list(cls, test_name, metric_name, aggregator_list, parent_test, parent_aggregator_list):
         if len(aggregator_list) != len(set(aggregator_list)):
             raise TypeError('"%s" metric of "%s" had invalid aggregator list: %s' % (metric_name, test_name, json.dumps(aggregator_list)))
         if not aggregator_list:
@@ -218,9 +236,15 @@ class BenchmarkResults(object):
                 raise TypeError('"%s" metric of "%s" is not wrapped by a configuration; e.g. "current"' % (metric_name, test_name))
             if aggregator_name not in cls.aggregators:
                 raise TypeError('"%s" metric of "%s" uses unknown aggregator: %s' % (metric_name, test_name, aggregator_name))
+        if not parent_aggregator_list:
+            return
+        for parent_aggregator in parent_aggregator_list:
+            if parent_aggregator not in aggregator_list and len(aggregator_list) > 1:
+                raise TypeError('"%s" metric of "%s" has no value to aggregate as "%s" in a subtest "%s"' % (
+                    metric_name, parent_test, parent_aggregator, test_name))
 
     @classmethod
-    def _lint_configuration(cls, test_name, metric_name, configurations, parent_needing_aggregation, iteration_groups_by_config):
+    def _lint_configuration(cls, test_name, metric_name, configurations, parent_test, parent_aggregator_list, iteration_groups_by_config):
         # FIXME: Check that config_name is always "current".
         for config_name, values in configurations.iteritems():
             nested_list_count = [isinstance(value, list) for value in values].count(True)
@@ -237,8 +261,8 @@ class BenchmarkResults(object):
                 cls._lint_values(test_name, metric_name, values)
 
             iteration_groups_by_config.setdefault(metric_name, {}).setdefault(config_name, value_shape)
-            if parent_needing_aggregation and value_shape != iteration_groups_by_config[metric_name][config_name]:
-                raise TypeError('"%s" metric of "%s" had a mismatching subtest values' % (metric_name, parent_needing_aggregation))
+            if parent_aggregator_list and value_shape != iteration_groups_by_config[metric_name][config_name]:
+                raise TypeError('"%s" metric of "%s" had a mismatching subtest values' % (metric_name, parent_test))
 
     @classmethod
     def _lint_values(cls, test_name, metric_name, values):

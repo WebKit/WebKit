@@ -23,7 +23,7 @@ _log = logging.getLogger(__name__)
 class BenchmarkRunner(object):
     name = 'benchmark_runner'
 
-    def __init__(self, plan_file, local_copy, count_override, build_dir, output_file, platform, browser, scale_unit=True, device_id=None):
+    def __init__(self, plan_file, local_copy, count_override, build_dir, output_file, platform, browser, scale_unit=True, show_iteration_values=False, device_id=None):
         try:
             plan_file = self._find_plan_file(plan_file)
             with open(plan_file, 'r') as fp:
@@ -39,6 +39,7 @@ class BenchmarkRunner(object):
                 self._build_dir = os.path.abspath(build_dir) if build_dir else None
                 self._output_file = output_file
                 self._scale_unit = scale_unit
+                self._show_iteration_values = show_iteration_values
                 self._config = self._plan.get('config', {})
                 if device_id:
                     self._config['device_id'] = device_id
@@ -105,7 +106,7 @@ class BenchmarkRunner(object):
         results = self._wrap(results)
         output_file = self._output_file if self._output_file else self._plan['output_file']
         self._dump(self._merge({'debugOutput': debug_outputs}, results), output_file)
-        self.show_results(results, self._scale_unit)
+        self.show_results(results, self._scale_unit, self._show_iteration_values)
 
     def execute(self):
         with BenchmarkBuilder(self._plan_name, self._plan, self.name) as web_root:
@@ -154,6 +155,6 @@ class BenchmarkRunner(object):
         return a + b
 
     @classmethod
-    def show_results(cls, results, scale_unit=True):
+    def show_results(cls, results, scale_unit=True, show_iteration_values=False):
         results = BenchmarkResults(results)
-        print(results.format(scale_unit))
+        print(results.format(scale_unit, show_iteration_values))
