@@ -1,5 +1,23 @@
 2018-01-29  Zan Dobersek  <zdobersek@igalia.com>
 
+        Construct GraphicsContext with NonPaintingReasons::NoReason in FrameView::adjustPageHeightDeprecated()
+        https://bugs.webkit.org/show_bug.cgi?id=182235
+
+        Reviewed by Carlos Garcia Campos.
+
+        Pass the NonPaintingReasons::NoReason value to the GraphicsContext
+        constructor in FrameView::adjustPageHeightDeprecated(). This has the
+        same effect as when passing a null PlatformGraphicsContext to the
+        constructor, which effectively disables any painting through that
+        GraphicsContext, but doesn't have a platform-specific connotation.
+
+        No new tests -- no change in functionality.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::adjustPageHeightDeprecated):
+
+2018-01-29  Zan Dobersek  <zdobersek@igalia.com>
+
         [Cairo] Remove the GraphicsContext(cairo_t*) constructor
         https://bugs.webkit.org/show_bug.cgi?id=182234
 
