@@ -219,14 +219,6 @@ inline const CalcExpressionOperation& toCalcExpressionOperation(const CalcExpres
     return static_cast<const CalcExpressionOperation&>(value);
 }
 
-inline CalcExpressionBlendLength::CalcExpressionBlendLength(Length from, Length to, float progress)
-    : CalcExpressionNode(CalcExpressionNodeBlendLength)
-    , m_from(from)
-    , m_to(to)
-    , m_progress(progress)
-{
-}
-
 inline bool operator==(const CalcExpressionBlendLength& a, const CalcExpressionBlendLength& b)
 {
     return a.progress() == b.progress() && a.from() == b.from() && a.to() == b.to();

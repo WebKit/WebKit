@@ -167,6 +167,20 @@ void CalcExpressionLength::dump(TextStream& ts) const
     ts << m_length;
 }
 
+CalcExpressionBlendLength::CalcExpressionBlendLength(Length from, Length to, float progress)
+    : CalcExpressionNode(CalcExpressionNodeBlendLength)
+    , m_from(from)
+    , m_to(to)
+    , m_progress(progress)
+{
+    // Flatten nesting of CalcExpressionBlendLength as a speculative fix for rdar://problem/30533005.
+    // CalcExpressionBlendLength is only used as a result of animation and they don't nest in normal cases.
+    if (m_from.isCalculated() && m_from.calculationValue().expression().type() == CalcExpressionNodeBlendLength)
+        m_from = toCalcExpressionBlendLength(m_from.calculationValue().expression()).from();
+    if (m_to.isCalculated() && m_to.calculationValue().expression().type() == CalcExpressionNodeBlendLength)
+        m_to = toCalcExpressionBlendLength(m_from.calculationValue().expression()).to();
+}
+
 float CalcExpressionBlendLength::evaluate(float maxValue) const
 {
     return (1.0f - m_progress) * floatValueForLength(m_from, maxValue) + m_progress * floatValueForLength(m_to, maxValue);

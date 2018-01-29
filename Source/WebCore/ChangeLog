@@ -1,3 +1,27 @@
+2018-01-29  Antti Koivisto  <antti@apple.com>
+
+        CalcExpressionBlendLength::evaluate hits stack limit
+        https://bugs.webkit.org/show_bug.cgi?id=182243
+
+        Reviewed by Zalan Bujtas.
+
+        Speculative fix to prevent nesting of CalcExpressionBlendLength.
+
+        No test, don't know how to make one.
+
+        * platform/CalculationValue.cpp:
+        (WebCore::CalcExpressionBlendLength::CalcExpressionBlendLength):
+
+        CalcExpressionBlendLength is only used in Length values of animated style. Normally such styles are not used
+        as input for further blending but there are some paths where this could in principle happen. Repeated
+        application (for each animation frame) could construct CalcExpressionBlendLength expression that blows
+        the stack when evaluated.
+
+        Speculatively fix by flattening any nesting.
+
+        * platform/CalculationValue.h:
+        (WebCore::CalcExpressionBlendLength::CalcExpressionBlendLength): Deleted.
+
 2018-01-29  Chris Dumez  <cdumez@apple.com>
 
         Drop unnecessary "ServiceWorker Task Thread" in SWServer
