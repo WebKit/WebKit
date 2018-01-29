@@ -1,3 +1,20 @@
+2018-01-28  Minsheng Liu  <lambda@liu.ms>
+
+        Overflow of formulas is hidden for display mathematics
+        https://bugs.webkit.org/show_bug.cgi?id=160547
+
+        Reviewed by Frédéric Wang.
+
+        Previously, <math> with display="block" uses its container's logical width as logical width.
+        However, that behavior will truncate overflowed contents. The patch fixes it by setting
+        the logical width as its content width rather than its container's logical width
+        if the former is wider than the latter.
+
+        Test: mathml/presentation/display-math-horizontal-overflow.html
+
+        * rendering/mathml/RenderMathMLRow.cpp:
+        (WebCore::RenderMathMLRow::layoutBlock):
+
 2018-01-26  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Distinguish between an omitted and a null timeline argument to the Animation constructor

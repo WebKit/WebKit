@@ -43,6 +43,53 @@ RenderMathMLMath::RenderMathMLMath(MathMLRowElement& element, RenderStyle&& styl
 {
 }
 
+void RenderMathMLMath::centerChildren(LayoutUnit contentWidth)
+{
+    LayoutUnit centerBlockOffset = (logicalWidth() - contentWidth) / 2;
+    if (!style().isLeftToRightDirection())
+        centerBlockOffset = -centerBlockOffset;
+    for (auto* child = firstChildBox(); child; child = child->nextSiblingBox()) {
+        if (!child->isOutOfFlowPositioned())
+            child->setLocation(child->location() + LayoutPoint(centerBlockOffset, 0));
+    }
+}
+
+void RenderMathMLMath::layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeight)
+{
+    ASSERT(needsLayout());
+
+    if (style().display() != BLOCK) {
+        RenderMathMLRow::layoutBlock(relayoutChildren, pageLogicalHeight);
+        return;
+    }
+
+    if (!relayoutChildren && simplifiedLayout())
+        return;
+
+    recomputeLogicalWidth();
+
+    setLogicalHeight(borderAndPaddingLogicalHeight() + scrollbarLogicalHeight());
+
+    LayoutUnit width, ascent, descent;
+    stretchVerticalOperatorsAndLayoutChildren();
+    getContentBoundingBox(width, ascent, descent);
+    layoutRowItems(logicalWidth(), ascent);
+
+    // Display formulas must be centered horizontally if there is extra space left.
+    // Otherwise, logical width must be updated to the content width to avoid truncation.
+    if (width < logicalWidth())
+        centerChildren(width);
+    else
+        setLogicalWidth(width);
+
+    setLogicalHeight(borderTop() + paddingTop() + ascent + descent + borderBottom() + paddingBottom() + horizontalScrollbarHeight());
+    updateLogicalHeight();
+
+    layoutPositionedObjects(relayoutChildren);
+
+    clearNeedsLayout();
+}
+
 }
 
 #endif // ENABLE(MATHML)

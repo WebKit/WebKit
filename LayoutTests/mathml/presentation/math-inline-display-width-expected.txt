@@ -1,0 +1,14 @@
+Inline math of 100px content in a 200px container. The test passes if the bar is to the left of the container.
+
+Display math of 100px content in a 200px container. The test passes if the bar is in the middle of the container.
+
+Inline math of 400px content in a 200px container. The test passes if the bar can be scrolled horizontally to see the full content.
+
+Display math of 400px content in a 200px container. The test passes if the bar behaves exactly the same as the previous one.
+
+
+PASS inline math, 100px content, 200px container 
+PASS display math, 100px content, 200px container 
+PASS inline math, 400px content, 200px container 
+PASS display math, 400px content, 200px container 
+

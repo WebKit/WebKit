@@ -1,0 +1,82 @@
+<!doctype html>
+<html>
+  <head>
+    <title>display math overflow</title>
+    <script src="../../resources/testharness.js"></script>
+    <script src="../../resources/testharnessreport.js"></script>
+    <script>
+      setup({ "explicit_done": true });
+
+      function run() {
+        test(function() {
+          let math = document.getElementById('inline-100');
+          assert_equals(math.clientWidth, 100);
+        }, "inline math, 100px content, 200px container");
+
+        test(function() {
+          let math = document.getElementById('display-100');
+          assert_equals(math.clientWidth, 200);
+
+          let mspace = document.getElementById('space-100');
+
+          let mathBox = math.getBoundingClientRect();
+          let mspaceBox = mspace.getBoundingClientRect();
+          assert_equals(mspaceBox.left - mathBox.left, mathBox.right - mspaceBox.right);
+        }, "display math, 100px content, 200px container");
+
+        test(function() {
+          let math = document.getElementById('inline-400');
+          assert_equals(math.clientWidth, 400);
+        }, "inline math, 400px content, 200px container");
+
+        test(function() {
+          let math = document.getElementById('display-400');
+          assert_equals(math.clientWidth, 400);
+        }, "display math, 400px content, 200px container");
+        done();
+      }
+    </script>
+
+    <style>
+      #test-area div {
+        width: 200px;
+        overflow: hidden;
+        border-style: solid;
+        /* Make sure inline <math> will fill the whole <div> vertically. */
+        line-height: 0;
+      }
+    </style>
+  </head>
+  <body onload="run()">
+
+    <div id="test-area">
+      <p>Inline math of 100px content in a 200px container. The test passes if the bar is to the left of the container.</p>
+      <div>
+        <math id="inline-100" xmlns="http://www.w3.org/1998/Math/MathML">
+          <mspace width="100px" height="50px" style="background: linear-gradient(to right, red, green)"></mspace>
+        </math>
+      </div>
+
+      <p>Display math of 100px content in a 200px container. The test passes if the bar is in the middle of the container.</p>
+      <div>
+        <math id="display-100" display="block" xmlns="http://www.w3.org/1998/Math/MathML">
+          <mspace id="space-100" width="100px" height="50px" style="background: linear-gradient(to right, red, green)"></mspace>
+        </math>
+      </div>
+
+      <p>Inline math of 400px content in a 200px container. The test passes if the bar can be scrolled horizontally to see the full content.</p>
+      <div>
+        <math id="inline-400" xmlns="http://www.w3.org/1998/Math/MathML">
+          <mspace width="400px" height="50px" style="background: linear-gradient(to right, red, green)"></mspace>
+        </math>
+      </div>
+
+      <p>Display math of 400px content in a 200px container. The test passes if the bar behaves exactly the same as the previous one.</p>
+      <div>
+        <math id="display-400" display="block" xmlns="http://www.w3.org/1998/Math/MathML">
+          <mspace width="400px" height="50px" style="background: linear-gradient(to right, red, green)"></mspace>
+        </math>
+      </div>
+    </div>
+  </body>
+</html>

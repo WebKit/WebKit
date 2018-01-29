@@ -171,22 +171,8 @@ void RenderMathMLRow::layoutBlock(bool relayoutChildren, LayoutUnit)
     LayoutUnit width, ascent, descent;
     stretchVerticalOperatorsAndLayoutChildren();
     getContentBoundingBox(width, ascent, descent);
-
-    if (isRenderMathMLMath() && style().display() == BLOCK) {
-        // Display formulas must be centered horizontally.
-        layoutRowItems(logicalWidth(), ascent);
-        LayoutUnit centerBlockOffset = std::max<LayoutUnit>(0, logicalWidth() - width) / 2;
-        if (!style().isLeftToRightDirection())
-            centerBlockOffset = -centerBlockOffset;
-        for (auto* child = firstChildBox(); child; child = child->nextSiblingBox()) {
-            if (!child->isOutOfFlowPositioned())
-                child->setLocation(child->location() + LayoutPoint(centerBlockOffset, 0));
-        }
-    } else {
-        layoutRowItems(width, ascent);
-        setLogicalWidth(width);
-    }
-
+    layoutRowItems(width, ascent);
+    setLogicalWidth(width);
     setLogicalHeight(borderTop() + paddingTop() + ascent + descent + borderBottom() + paddingBottom() + horizontalScrollbarHeight());
     updateLogicalHeight();
 

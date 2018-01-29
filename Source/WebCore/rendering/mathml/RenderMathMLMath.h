@@ -41,6 +41,9 @@ public:
 private:
     bool isRenderMathMLMath() const final { return true; }
     const char* renderName() const final { return "RenderMathMLMath"; }
+
+    void centerChildren(LayoutUnit contentWidth);
+    void layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeight = 0) final;
 };
 
 }
