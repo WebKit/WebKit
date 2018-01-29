@@ -1,3 +1,9 @@
+2018-01-29  Frederic Wang  <fwang@igalia.com>
+
+        Unreviewed, add myself to some watch lists.
+
+        * Scripts/webkitpy/common/config/watchlist:
+
 2018-01-27  Dan Bernstein  <mitz@apple.com>
 
         HaveInternalSDK includes should be "#include?"
