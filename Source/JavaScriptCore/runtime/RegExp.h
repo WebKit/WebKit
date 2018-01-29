@@ -21,7 +21,6 @@
 
 #pragma once
 
-#include "Concurrency.h"
 #include "ConcurrentJSLock.h"
 #include "MatchResult.h"
 #include "RegExpKey.h"
@@ -75,8 +74,8 @@ public:
 
     // Call these versions of the match functions if you're desperate for performance.
     template<typename VectorType>
-    int matchInline(VM&, Concurrency, const String&, unsigned startOffset, VectorType& ovector);
-    MatchResult matchInline(VM&, Concurrency, const String&, unsigned startOffset);
+    int matchInline(VM&, const String&, unsigned startOffset, VectorType& ovector);
+    MatchResult matchInline(VM&, const String&, unsigned startOffset);
     
     unsigned numSubpatterns() const { return m_numSubpatterns; }
 
@@ -123,8 +122,6 @@ public:
 
     RegExpKey key() { return RegExpKey(m_flags, m_patternString); }
 
-    String toSourceString() const;
-
 protected:
     void finishCreation(VM&);
 
@@ -151,30 +148,6 @@ private:
 
 #if ENABLE(YARR_JIT_DEBUG)
     void matchCompareWithInterpreter(const String&, int startOffset, int* offsetVector, int jitResult);
-#endif
-
-#if ENABLE(YARR_JIT)
-    class RegExpJITFrameTracer {
-        WTF_MAKE_NONCOPYABLE(RegExpJITFrameTracer);
-    public:
-        ALWAYS_INLINE RegExpJITFrameTracer(VM& vm, RegExp& regExp, Concurrency concurrency)
-        {
-            if (concurrency == Concurrency::MainThread) {
-                m_vm = &vm;
-                ASSERT(!m_vm->currentlyExecutingRegExp);
-                m_vm->currentlyExecutingRegExp = &regExp;
-            }
-        }
-
-        ALWAYS_INLINE ~RegExpJITFrameTracer()
-        {
-            if (m_vm)
-                m_vm->currentlyExecutingRegExp = nullptr;
-        }
-
-    private:
-        VM* m_vm { nullptr };
-    };
 #endif
 
     RegExpState m_state { NotCompiled };

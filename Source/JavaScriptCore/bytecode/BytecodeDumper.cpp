@@ -250,9 +250,29 @@ const Identifier& BytecodeDumper<Block>::identifier(int index) const
     return block()->identifier(index);
 }
 
+static CString regexpToSourceString(RegExp* regExp)
+{
+    char postfix[7] = { '/', 0, 0, 0, 0, 0, 0 };
+    int index = 1;
+    if (regExp->global())
+        postfix[index++] = 'g';
+    if (regExp->ignoreCase())
+        postfix[index++] = 'i';
+    if (regExp->multiline())
+        postfix[index] = 'm';
+    if (regExp->dotAll())
+        postfix[index++] = 's';
+    if (regExp->unicode())
+        postfix[index++] = 'u';
+    if (regExp->sticky())
+        postfix[index++] = 'y';
+
+    return toCString("/", regExp->pattern().impl(), postfix);
+}
+
 static CString regexpName(int re, RegExp* regexp)
 {
-    return toCString(regexp->toSourceString(), "(@re", re, ")");
+    return toCString(regexpToSourceString(regexp), "(@re", re, ")");
 }
 
 template<class Instruction>
@@ -1728,7 +1748,7 @@ void BytecodeDumper<Block>::dumpRegExps(PrintStream& out)
         out.printf("\nm_regexps:\n");
         size_t i = 0;
         do {
-            out.print("  re", i, " = ", block()->regexp(i)->toSourceString(), "\n");
+            out.printf("  re%u = %s\n", static_cast<unsigned>(i), regexpToSourceString(block()->regexp(i)).data());
             ++i;
         } while (i < count);
     }

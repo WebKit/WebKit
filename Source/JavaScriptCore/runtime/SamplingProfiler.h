@@ -39,7 +39,6 @@
 
 namespace JSC {
 
-class RegExp;
 class VM;
 class ExecutableBase;
 
@@ -69,7 +68,6 @@ public:
     enum class FrameType { 
         Executable,
         Host,
-        RegExp,
         C,
         Unknown
     };
@@ -87,7 +85,6 @@ public:
         void* cCodePC { nullptr };
         ExecutableBase* executable { nullptr };
         JSObject* callee { nullptr };
-        RegExp* regExp { nullptr };
 
         struct CodeLocation {
             bool hasCodeBlockHash() const
@@ -144,7 +141,6 @@ public:
         void* topPC;
         bool topFrameIsLLInt;
         void* llintPC;
-        RegExp* regExp;
         Vector<UnprocessedStackFrame> frames;
     };
 
@@ -160,7 +156,7 @@ public:
     };
 
     SamplingProfiler(VM&, RefPtr<Stopwatch>&&);
-    ~SamplingProfiler() = default;
+    ~SamplingProfiler();
     void noticeJSLockAcquisition();
     void noticeVMEntry();
     void shutdown();
@@ -189,7 +185,7 @@ public:
 private:
     void createThreadIfNecessary(const AbstractLocker&);
     void timerLoop();
-    Seconds takeSample(const AbstractLocker&);
+    void takeSample(const AbstractLocker&, Seconds& stackTraceProcessingTime);
 
     VM& m_vm;
     WeakRandom m_weakRandom;
@@ -201,8 +197,8 @@ private:
     Lock m_lock;
     RefPtr<Thread> m_thread;
     RefPtr<Thread> m_jscExecutionThread;
-    bool m_isPaused { false };
-    bool m_isShutDown { false };
+    bool m_isPaused;
+    bool m_isShutDown;
     bool m_needsReportAtExit { false };
     HashSet<JSCell*> m_liveCellPointers;
     Vector<UnprocessedStackFrame> m_currentFrames;

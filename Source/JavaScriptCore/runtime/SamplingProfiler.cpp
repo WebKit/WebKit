@@ -276,8 +276,11 @@ private:
 
 SamplingProfiler::SamplingProfiler(VM& vm, RefPtr<Stopwatch>&& stopwatch)
     : m_vm(vm)
+    , m_weakRandom()
     , m_stopwatch(WTFMove(stopwatch))
     , m_timingInterval(Seconds::fromMicroseconds(Options::sampleInterval()))
+    , m_isPaused(false)
+    , m_isShutDown(false)
 {
     if (sReportStats) {
         sNumTotalWalks = 0;
@@ -285,6 +288,10 @@ SamplingProfiler::SamplingProfiler(VM& vm, RefPtr<Stopwatch>&& stopwatch)
     }
 
     m_currentFrames.grow(256);
+}
+
+SamplingProfiler::~SamplingProfiler()
+{
 }
 
 void SamplingProfiler::createThreadIfNecessary(const AbstractLocker&)
@@ -310,7 +317,7 @@ void SamplingProfiler::timerLoop()
                 return;
 
             if (!m_isPaused && m_jscExecutionThread)
-                stackTraceProcessingTime = takeSample(locker);
+                takeSample(locker, stackTraceProcessingTime);
 
             m_lastTime = m_stopwatch->elapsedTime();
         }
@@ -325,7 +332,7 @@ void SamplingProfiler::timerLoop()
     }
 }
 
-Seconds SamplingProfiler::takeSample(const AbstractLocker&)
+void SamplingProfiler::takeSample(const AbstractLocker&, Seconds& stackTraceProcessingTime)
 {
     ASSERT(m_lock.isLocked());
     if (m_vm.entryScope) {
@@ -343,7 +350,6 @@ Seconds SamplingProfiler::takeSample(const AbstractLocker&)
             ExecState* callFrame;
             void* machinePC;
             bool topFrameIsLLInt = false;
-            RegExp* regExp = nullptr;
             void* llintPC;
             {
                 PlatformRegisters registers;
@@ -356,9 +362,11 @@ Seconds SamplingProfiler::takeSample(const AbstractLocker&)
             // FIXME: Lets have a way of detecting when we're parsing code.
             // https://bugs.webkit.org/show_bug.cgi?id=152761
             if (ExecutableAllocator::singleton().isValidExecutableMemory(executableAllocatorLocker, machinePC)) {
-                regExp = m_vm.currentlyExecutingRegExp;
-                if (regExp)
+                if (m_vm.isExecutingInRegExpJIT) {
+                    // FIXME: We're executing a regexp. Lets gather more intersting data.
+                    // https://bugs.webkit.org/show_bug.cgi?id=152729
                     callFrame = m_vm.topCallFrame; // We need to do this or else we'd fail our backtrace validation b/c this isn't a JS frame.
+                }
             } else if (LLInt::isLLIntPC(machinePC)) {
                 topFrameIsLLInt = true;
                 // We're okay to take a normal stack trace when the PC
@@ -399,16 +407,16 @@ Seconds SamplingProfiler::takeSample(const AbstractLocker&)
                     stackTrace.uncheckedAppend(frame);
                 }
 
-                m_unprocessedStackTraces.append(UnprocessedStackTrace { nowTime, machinePC, topFrameIsLLInt, llintPC, regExp, WTFMove(stackTrace) });
+                m_unprocessedStackTraces.append(UnprocessedStackTrace { nowTime, machinePC, topFrameIsLLInt, llintPC, WTFMove(stackTrace) });
 
                 if (didRunOutOfVectorSpace)
                     m_currentFrames.grow(m_currentFrames.size() * 1.25);
             }
 
-            return MonotonicTime::now() - startTime;
+            auto endTime = MonotonicTime::now();
+            stackTraceProcessingTime = endTime - startTime;
         }
     }
-    return 0_s;
 }
 
 static ALWAYS_INLINE unsigned tryGetBytecodeIndex(unsigned llintPC, CodeBlock* codeBlock, bool& isValid)
@@ -563,44 +571,36 @@ void SamplingProfiler::processUnverifiedStackTraces()
         // Prepend the top-most inlined frame if needed and gather
         // location information about where the top frame is executing.
         size_t startIndex = 0;
-        if (!unprocessedStackTrace.frames.isEmpty()) {
-            auto& topFrame = unprocessedStackTrace.frames[0];
-            if (!!topFrame.verifiedCodeBlock) {
-                CodeBlock* topCodeBlock = topFrame.verifiedCodeBlock;
-                if (unprocessedStackTrace.topFrameIsLLInt) {
-                    // We reuse LLInt CodeBlocks for the baseline JIT, so we need to check for both jit types.
-                    // This might also be false for various reasons (known and unknown), even though
-                    // it's super unlikely. One reason that this can be false is when we throw from a DFG frame,
-                    // and we end up having to unwind past an EntryFrame, we will end up executing
-                    // inside the LLInt's handleUncaughtException. So we just protect against this
-                    // by ignoring it.
-                    unsigned bytecodeIndex = 0;
-                    if (topCodeBlock->jitType() == JITCode::InterpreterThunk || topCodeBlock->jitType() == JITCode::BaselineJIT) {
-                        bool isValidPC;
-                        unsigned bits;
+        if (unprocessedStackTrace.frames.size() && !!unprocessedStackTrace.frames[0].verifiedCodeBlock) {
+            CodeBlock* topCodeBlock = unprocessedStackTrace.frames[0].verifiedCodeBlock;
+            if (unprocessedStackTrace.topFrameIsLLInt) {
+                // We reuse LLInt CodeBlocks for the baseline JIT, so we need to check for both jit types.
+                // This might also be false for various reasons (known and unknown), even though
+                // it's super unlikely. One reason that this can be false is when we throw from a DFG frame,
+                // and we end up having to unwind past an EntryFrame, we will end up executing
+                // inside the LLInt's handleUncaughtException. So we just protect against this
+                // by ignoring it.
+                unsigned bytecodeIndex = 0;
+                if (topCodeBlock->jitType() == JITCode::InterpreterThunk || topCodeBlock->jitType() == JITCode::BaselineJIT) {
+                    bool isValidPC;
+                    unsigned bits;
 #if USE(JSVALUE64)
-                        bits = static_cast<unsigned>(bitwise_cast<uintptr_t>(unprocessedStackTrace.llintPC));
+                    bits = static_cast<unsigned>(bitwise_cast<uintptr_t>(unprocessedStackTrace.llintPC));
 #else
-                        bits = bitwise_cast<unsigned>(unprocessedStackTrace.llintPC);
+                    bits = bitwise_cast<unsigned>(unprocessedStackTrace.llintPC);
 #endif
-                        bytecodeIndex = tryGetBytecodeIndex(bits, topCodeBlock, isValidPC);
+                    bytecodeIndex = tryGetBytecodeIndex(bits, topCodeBlock, isValidPC);
 
-                        UNUSED_PARAM(isValidPC); // FIXME: do something with this info for the web inspector: https://bugs.webkit.org/show_bug.cgi?id=153455
+                    UNUSED_PARAM(isValidPC); // FIXME: do something with this info for the web inspector: https://bugs.webkit.org/show_bug.cgi?id=153455
 
-                        appendCodeBlock(topCodeBlock, bytecodeIndex);
-                        storeCalleeIntoLastFrame(topFrame.unverifiedCallee);
-                        startIndex = 1;
-                    }
-                } else if (std::optional<CodeOrigin> codeOrigin = topCodeBlock->findPC(unprocessedStackTrace.topPC)) {
-                    appendCodeOrigin(topCodeBlock, *codeOrigin);
-                    storeCalleeIntoLastFrame(topFrame.unverifiedCallee);
+                    appendCodeBlock(topCodeBlock, bytecodeIndex);
+                    storeCalleeIntoLastFrame(unprocessedStackTrace.frames[0].unverifiedCallee);
                     startIndex = 1;
                 }
-            } else if (unprocessedStackTrace.regExp) {
-                appendEmptyFrame();
-                stackTrace.frames.last().regExp = unprocessedStackTrace.regExp;
-                stackTrace.frames.last().frameType = FrameType::RegExp;
-                m_liveCellPointers.add(unprocessedStackTrace.regExp);
+            } else if (std::optional<CodeOrigin> codeOrigin = topCodeBlock->findPC(unprocessedStackTrace.topPC)) {
+                appendCodeOrigin(topCodeBlock, *codeOrigin);
+                storeCalleeIntoLastFrame(unprocessedStackTrace.frames[0].unverifiedCallee);
+                startIndex = 1;
             }
         }
 
@@ -712,11 +712,8 @@ void SamplingProfiler::clearData(const AbstractLocker&)
 
 String SamplingProfiler::StackFrame::nameFromCallee(VM& vm)
 {
-    if (!callee) {
-        if (regExp)
-            return regExp->toSourceString();
+    if (!callee)
         return String();
-    }
 
     auto scope = DECLARE_CATCH_SCOPE(vm);
     ExecState* exec = callee->globalObject()->globalExec();
@@ -750,7 +747,7 @@ String SamplingProfiler::StackFrame::displayName(VM& vm)
             return name;
     }
 
-    if (frameType == FrameType::Unknown || frameType == FrameType::C || frameType == FrameType::RegExp) {
+    if (frameType == FrameType::Unknown || frameType == FrameType::C) {
 #if HAVE(DLADDR)
         if (frameType == FrameType::C) {
             auto demangled = WTF::StackTrace::demangle(cCodePC);
@@ -786,7 +783,7 @@ String SamplingProfiler::StackFrame::displayNameForJSONTests(VM& vm)
             return name;
     }
 
-    if (frameType == FrameType::Unknown || frameType == FrameType::C || frameType == FrameType::RegExp)
+    if (frameType == FrameType::Unknown || frameType == FrameType::C)
         return ASCIILiteral("(unknown)");
     if (frameType == FrameType::Host)
         return ASCIILiteral("(host)");
@@ -813,79 +810,48 @@ String SamplingProfiler::StackFrame::displayNameForJSONTests(VM& vm)
 
 int SamplingProfiler::StackFrame::functionStartLine()
 {
-    switch (frameType) {
-    case FrameType::Executable:
-        if (executable->isHostFunction())
-            return -1;
-        return static_cast<ScriptExecutable*>(executable)->firstLine();
-
-    case FrameType::Host:
-    case FrameType::RegExp:
-    case FrameType::C:
-    case FrameType::Unknown:
+    if (frameType == FrameType::Unknown || frameType == FrameType::Host || frameType == FrameType::C)
         return -1;
-    }
-    ASSERT_NOT_REACHED();
-    return -1;
+
+    if (executable->isHostFunction())
+        return -1;
+    return static_cast<ScriptExecutable*>(executable)->firstLine();
 }
 
 unsigned SamplingProfiler::StackFrame::functionStartColumn()
 {
-    switch (frameType) {
-    case FrameType::Executable:
-        if (executable->isHostFunction())
-            return std::numeric_limits<unsigned>::max();
-        return static_cast<ScriptExecutable*>(executable)->startColumn();
-
-    case FrameType::Host:
-    case FrameType::RegExp:
-    case FrameType::C:
-    case FrameType::Unknown:
+    if (frameType == FrameType::Unknown || frameType == FrameType::Host || frameType == FrameType::C)
         return std::numeric_limits<unsigned>::max();
-    }
-    ASSERT_NOT_REACHED();
-    return std::numeric_limits<unsigned>::max();
+
+    if (executable->isHostFunction())
+        return std::numeric_limits<unsigned>::max();
+
+    return static_cast<ScriptExecutable*>(executable)->startColumn();
 }
 
 intptr_t SamplingProfiler::StackFrame::sourceID()
 {
-    switch (frameType) {
-    case FrameType::Executable:
-        if (executable->isHostFunction())
-            return -1;
-        return static_cast<ScriptExecutable*>(executable)->sourceID();
-
-    case FrameType::Host:
-    case FrameType::RegExp:
-    case FrameType::C:
-    case FrameType::Unknown:
+    if (frameType == FrameType::Unknown || frameType == FrameType::Host || frameType == FrameType::C)
         return -1;
-    }
-    ASSERT_NOT_REACHED();
-    return -1;
+
+    if (executable->isHostFunction())
+        return -1;
+
+    return static_cast<ScriptExecutable*>(executable)->sourceID();
 }
 
 String SamplingProfiler::StackFrame::url()
 {
-    switch (frameType) {
-    case FrameType::Executable: {
-        if (executable->isHostFunction())
-            return emptyString();
-
-        String url = static_cast<ScriptExecutable*>(executable)->sourceURL();
-        if (url.isEmpty())
-            return static_cast<ScriptExecutable*>(executable)->source().provider()->sourceURL(); // Fall back to sourceURL directive.
-        return url;
-    }
-
-    case FrameType::Host:
-    case FrameType::RegExp:
-    case FrameType::C:
-    case FrameType::Unknown:
+    if (frameType == FrameType::Unknown || frameType == FrameType::Host || frameType == FrameType::C)
         return emptyString();
-    }
-    ASSERT_NOT_REACHED();
-    return emptyString();
+
+    if (executable->isHostFunction())
+        return emptyString();
+
+    String url = static_cast<ScriptExecutable*>(executable)->sourceURL();
+    if (url.isEmpty())
+        return static_cast<ScriptExecutable*>(executable)->source().provider()->sourceURL(); // Fall back to sourceURL directive.
+    return url;
 }
 
 Vector<SamplingProfiler::StackTrace> SamplingProfiler::releaseStackTraces(const AbstractLocker& locker)
@@ -1113,9 +1079,6 @@ void printInternal(PrintStream& out, SamplingProfiler::FrameType frameType)
         break;
     case SamplingProfiler::FrameType::Host:
         out.print("Host");
-        break;
-    case SamplingProfiler::FrameType::RegExp:
-        out.print("RegExp");
         break;
     case SamplingProfiler::FrameType::C:
     case SamplingProfiler::FrameType::Unknown:

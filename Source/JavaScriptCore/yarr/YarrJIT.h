@@ -45,6 +45,7 @@ constexpr size_t patternContextBufferSize = 8192; // Space caller allocates to s
 
 namespace JSC {
 
+class VM;
 class ExecutablePool;
 
 namespace Yarr {
@@ -204,7 +205,7 @@ enum YarrJITCompileMode {
     MatchOnly,
     IncludeSubpatterns
 };
-void jitCompile(YarrPattern&, YarrCharSize, YarrCodeBlock& jitObject, YarrJITCompileMode = IncludeSubpatterns);
+void jitCompile(YarrPattern&, YarrCharSize, VM*, YarrCodeBlock& jitObject, YarrJITCompileMode = IncludeSubpatterns);
 
 } } // namespace JSC::Yarr
 

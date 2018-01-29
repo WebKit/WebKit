@@ -24,7 +24,6 @@
  */
 
 #include "config.h"
-#include "Concurrency.h"
 #include "ObjectPropertyConditionSet.h"
 
 #include "JSCInlines.h"
@@ -243,10 +242,14 @@ ObjectPropertyCondition generateCondition(
     return result;
 }
 
+enum Concurrency {
+    MainThread,
+    Concurrent
+};
 template<typename Functor>
 ObjectPropertyConditionSet generateConditions(
     VM& vm, JSGlobalObject* globalObject, Structure* structure, JSObject* prototype, const Functor& functor,
-    Concurrency concurrency = Concurrency::MainThread)
+    Concurrency concurrency = MainThread)
 {
     Vector<ObjectPropertyCondition> conditions;
     
@@ -286,7 +289,7 @@ ObjectPropertyConditionSet generateConditions(
         structure = object->structure(vm);
         
         if (structure->isDictionary()) {
-            if (concurrency == Concurrency::MainThread) {
+            if (concurrency == MainThread) {
                 if (structure->hasBeenFlattenedBefore()) {
                     if (ObjectPropertyConditionSetInternal::verbose)
                         dataLog("Dictionary has been flattened before, so invalid.\n");
@@ -383,7 +386,7 @@ ObjectPropertyConditionSet generateConditionsForPrototypeEquivalenceConcurrently
                 return false;
             conditions.append(result);
             return true;
-        }, Concurrency::Concurrent);
+        }, Concurrent);
 }
 
 ObjectPropertyConditionSet generateConditionsForPropertyMissConcurrently(
@@ -397,7 +400,7 @@ ObjectPropertyConditionSet generateConditionsForPropertyMissConcurrently(
                 return false;
             conditions.append(result);
             return true;
-        }, Concurrency::Concurrent);
+        }, Concurrent);
 }
 
 ObjectPropertyConditionSet generateConditionsForPropertySetterMissConcurrently(
@@ -412,7 +415,7 @@ ObjectPropertyConditionSet generateConditionsForPropertySetterMissConcurrently(
                 return false;
             conditions.append(result);
             return true;
-        }, Concurrency::Concurrent);
+        }, Concurrent);
 }
 
 ObjectPropertyCondition generateConditionForSelfEquivalence(

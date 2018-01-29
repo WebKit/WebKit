@@ -118,7 +118,6 @@ class JSWebAssemblyInstance;
 class LLIntOffsetsExtractor;
 class NativeExecutable;
 class PromiseDeferredTimer;
-class RegExp;
 class RegExpCache;
 class Register;
 class RegisterAtOffsetList;
@@ -637,7 +636,7 @@ public:
     Instruction* targetInterpreterPCForThrow;
     uint32_t osrExitIndex;
     void* osrExitJumpDestination;
-    RegExp* currentlyExecutingRegExp { nullptr };
+    bool isExecutingInRegExpJIT { false };
 
     // The threading protocol here is as follows:
     // - You can call scratchBufferForSize from any thread.
