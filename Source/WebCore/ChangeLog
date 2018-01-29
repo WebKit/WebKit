@@ -1,3 +1,46 @@
+2018-01-29  Andy Estes  <aestes@apple.com>
+
+        [iOS] Restrict synthetic clicks to the origin that handled the underlying touch event
+        https://bugs.webkit.org/show_bug.cgi?id=182252
+        <rdar://problem/21555881>
+
+        Reviewed by Tim Horton.
+
+        Test: http/tests/events/touch/ios/cross-frame-single-tap-same-origin.https.html
+
+        * dom/Document.h:
+        (WebCore::Document::handlingTouchEvent const):
+        * page/EventHandler.h:
+        (WebCore::EventHandler::touchEventTargetSubframe const):
+        (WebCore::EventHandler::touches const):
+
+        Exposed some information needed by WebPage::updatePotentialTapSecurityOrigin().
+
+        * page/Frame.h:
+        * page/ios/FrameIOS.mm:
+        (WebCore::Frame::betterApproximateNode):
+        (WebCore::Frame::qualifyingNodeAtViewportLocation):
+
+        Changed NodeQualifier from a function pointer to a WTF::Function.
+
+        (WebCore::Frame::nodeRespondingToClickEvents):
+
+        Turned ancestorRespondingToClickEvents() into a lambda that captures originRestriction. In
+        the lambda, if there is an origin restriction, return nullptr if the hit test result's inner
+        Node is not in the restricted origin.
+
+        (WebCore::Frame::nodeRespondingToScrollWheelEvents):
+
+        Turned ancestorRespondingToScrollWheelEvents() into a lambda.
+
+        (WebCore::ancestorRespondingToScrollWheelEvents):
+
+        Moved to lambda in nodeRespondingToScrollWheelEvents().
+
+        (WebCore::ancestorRespondingToClickEvents):
+
+        Moved to lambda in nodeRespondingToClickEvents().
+
 2018-01-29  Emilio Cobos Álvarez  <emilio@crisal.io>
 
         Trivially cleanup std::optional usage in RenderBlockFlow.

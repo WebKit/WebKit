@@ -1,3 +1,16 @@
+2018-01-29  Andy Estes  <aestes@apple.com>
+
+        [iOS] Restrict synthetic clicks to the origin that handled the underlying touch event
+        https://bugs.webkit.org/show_bug.cgi?id=182252
+        <rdar://problem/21555881>
+
+        Reviewed by Tim Horton.
+
+        * TestExpectations:
+        * http/tests/events/touch/ios/cross-frame-single-tap-same-origin.https-expected.txt: Added.
+        * http/tests/events/touch/ios/cross-frame-single-tap-same-origin.https.html: Added.
+        * http/tests/events/touch/ios/resources/click-target.html: Added.
+
 2018-01-29  Matt Lewis  <jlewis3@apple.com>
 
         Unreviewed, rolling out r227731.

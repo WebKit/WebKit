@@ -2504,6 +2504,7 @@ void WebPage::dispatchTouchEvent(const WebTouchEvent& touchEvent, bool& handled)
     m_lastInteractionLocation = touchEvent.position();
     CurrentEvent currentEvent(touchEvent);
     handled = handleTouchEvent(touchEvent, m_page.get());
+    updatePotentialTapSecurityOrigin(touchEvent, handled);
 }
 
 void WebPage::touchEventSync(const WebTouchEvent& touchEvent, bool& handled)
@@ -2513,6 +2514,39 @@ void WebPage::touchEventSync(const WebTouchEvent& touchEvent, bool& handled)
     dispatchAsynchronousTouchEvents(queuedEvents);
 
     dispatchTouchEvent(touchEvent, handled);
+}
+
+void WebPage::updatePotentialTapSecurityOrigin(const WebTouchEvent& touchEvent, bool wasHandled)
+{
+    if (wasHandled)
+        return;
+
+    if (!touchEvent.isPotentialTap())
+        return;
+
+    if (touchEvent.type() != WebEvent::TouchStart)
+        return;
+
+    auto& mainFrame = m_page->mainFrame();
+    auto document = mainFrame.document();
+    if (!document)
+        return;
+
+    if (!document->handlingTouchEvent())
+        return;
+
+    Frame* touchEventTargetFrame = &mainFrame;
+    while (auto subframe = touchEventTargetFrame->eventHandler().touchEventTargetSubframe())
+        touchEventTargetFrame = subframe;
+
+    auto& touches = touchEventTargetFrame->eventHandler().touches();
+    if (touches.isEmpty())
+        return;
+
+    ASSERT(touches.size() == 1);
+
+    if (auto targetDocument = touchEventTargetFrame->document())
+        m_potentialTapSecurityOrigin = &targetDocument->securityOrigin();
 }
 #elif ENABLE(TOUCH_EVENTS)
 void WebPage::touchEvent(const WebTouchEvent& touchEvent)
