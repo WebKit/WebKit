@@ -36,11 +36,29 @@ class CommitLogViewer extends ComponentBase {
         }
 
         let promise;
+        let precedingCommitPromise;
         const fetchSingleCommit = !precedingRevision || precedingRevision == lastRevision;
-        if (fetchSingleCommit)
-            promise = CommitLog.fetchForSingleRevision(repository, lastRevision);
-        else
-            promise = CommitLog.fetchBetweenRevisions(repository, precedingRevision, lastRevision);
+        if (fetchSingleCommit) {
+            promise = CommitLog.fetchForSingleRevision(repository, lastRevision).then((commits) => {
+                if (this._fetchingPromise != promise)
+                    return;
+                this._commits = commits;
+                this._precedingCommit = null;
+            });
+        } else {
+            promise = Promise.all([
+                CommitLog.fetchBetweenRevisions(repository, precedingRevision, lastRevision).then((commits) => {
+                    if (this._fetchingPromise != promise)
+                        return;
+                    this._commits = commits;
+                }),
+                CommitLog.fetchForSingleRevision(repository, precedingRevision).then((precedingCommit) => {
+                    if (this._fetchingPromise != promise)
+                        return;
+                    this._precedingCommit = null;
+                })
+            ]);
+        }
 
         this._repository = repository;
         this._fetchingPromise = promise;
@@ -48,31 +66,14 @@ class CommitLogViewer extends ComponentBase {
         this._fetchingPromise.then((commits) => {
             if (this._fetchingPromise != promise)
                 return;
-            this._commits = commits;
-            if (fetchSingleCommit) {
-                this._fetchingPromise = null;
-                this._precedingCommit = null;
-                this.enqueueToRender();
-                return;
-            }
-            return CommitLog.fetchForSingleRevision(repository, precedingRevision).then((precedingCommit) => {
-                if (this._fetchingPromise != promise)
-                    return;
-                this._fetchingPromise = null;
-                this._precedingCommit = precedingCommit[0];
-                this.enqueueToRender();
-            }, (error) => {
-                if (this._fetchingPromise != promise)
-                    return;
-                this._fetchingPromise = null;
-                this._precedingCommit = null;
-                this.enqueueToRender();
-            });
+            this._fetchingPromise = null;
+            this.enqueueToRender();
         }, (error) => {
             if (this._fetchingPromise != promise)
                 return;
             this._fetchingPromise = null;
             this._commits = null;
+            this._precedingCommit = null;
             this.enqueueToRender();
         });
 
