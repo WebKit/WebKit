@@ -1,3 +1,23 @@
+2018-01-30  Chris Dumez  <cdumez@apple.com>
+
+        Service worker registration soft updates happen too frequently
+        https://bugs.webkit.org/show_bug.cgi?id=182296
+        <rdar://problem/37031862>
+
+        Reviewed by Youenn Fablet.
+
+        Move code that updates the registration's last update check time from after
+        the script bytecheck to before, as per:
+        - https://w3c.github.io/ServiceWorker/#update (step 7.19)
+
+        This way, the last update check time gets updated even if the newly fetched
+        script is identical to the previous one, which is the common case.
+
+        * workers/service/server/SWServer.cpp:
+        (WebCore::SWServer::updateWorker):
+        * workers/service/server/SWServerJobQueue.cpp:
+        (WebCore::SWServerJobQueue::scriptFetchFinished):
+
 2018-01-30  Zalan Bujtas  <zalan@apple.com>
 
         [RenderTreeBuilder] Move childBecameNonInline to RenderTreeBuilder
