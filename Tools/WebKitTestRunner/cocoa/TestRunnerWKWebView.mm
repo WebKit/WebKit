@@ -127,7 +127,6 @@
 - (void)zoomToScale:(double)scale animated:(BOOL)animated completionHandler:(void (^)(void))completionHandler
 {
     ASSERT(!self.zoomToScaleCompletionHandler);
-    self.zoomToScaleCompletionHandler = completionHandler;
 
     if (self.scrollView.zoomScale == scale) {
         dispatch_async(dispatch_get_main_queue(), ^{
@@ -136,6 +135,7 @@
         return;
     }
 
+    self.zoomToScaleCompletionHandler = completionHandler;
     [self.scrollView setZoomScale:scale animated:animated];
 }
 
