@@ -1,5 +1,22 @@
 2018-01-30  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r227758. rdar://problem/37019506
+
+    2018-01-29  Alex Christensen  <achristensen@webkit.org>
+
+            Make policy checks more robust against null pointer dereferencing
+            https://bugs.webkit.org/show_bug.cgi?id=182263
+            <rdar://problem/34895714>
+
+            Reviewed by Tim Horton.
+
+            We're still dereferencing null.  Check everything.
+
+            * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+            (WebKit::WebFrameLoaderClient::dispatchDecidePolicyForResponse):
+
+2018-01-30  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r227754. rdar://problem/37019474
 
     2018-01-29  Alex Christensen  <achristensen@webkit.org>
