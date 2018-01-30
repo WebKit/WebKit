@@ -1,3 +1,13 @@
+2018-01-30  Sergio Villar Senin  <svillar@igalia.com>
+
+        [WebVR][GTK][WPE] Exclude OpenVR from tarballs
+        https://bugs.webkit.org/show_bug.cgi?id=182284
+
+        Reviewed by Michael Catanzaro.
+
+        * gtk/manifest.txt.in: Added ThirdParty/openvr to exclusions.
+        * wpe/manifest.txt.in: Ditto.
+
 2018-01-30  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Unreviewed, try to fix JSCOnly build

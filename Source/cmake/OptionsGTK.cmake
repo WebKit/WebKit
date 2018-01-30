@@ -87,6 +87,7 @@ WEBKIT_OPTION_DEFINE(USE_WOFF2 "Whether to enable support for WOFF2 Web Fonts." 
 # Private options specific to the GTK+ port. Changing these options is
 # completely unsupported. They are intended for use only by WebKit developers.
 WEBKIT_OPTION_DEFINE(USE_REDIRECTED_XCOMPOSITE_WINDOW "Whether to use a Redirected XComposite Window for accelerated compositing in X11." PRIVATE ON)
+WEBKIT_OPTION_DEFINE(USE_OPENVR "Whether to use OpenVR as WebVR backend." PRIVATE ${ENABLE_EXPERIMENTAL_FEATURES})
 
 # FIXME: Can we use cairo-glesv2 to avoid this conflict?
 WEBKIT_OPTION_CONFLICT(ENABLE_ACCELERATED_2D_CANVAS ENABLE_GLES2)
@@ -339,8 +340,6 @@ if (USE_LIBHYPHEN)
        message(FATAL_ERROR "libhyphen is needed for USE_LIBHYPHEN.")
     endif ()
 endif ()
-
-SET_AND_EXPOSE_TO_BUILD(USE_OPENVR TRUE)
 
 if (USE_UPOWER)
     find_package(UPowerGLib)
