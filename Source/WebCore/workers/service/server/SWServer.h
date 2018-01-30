@@ -147,7 +147,7 @@ public:
     void fireActivateEvent(SWServerWorker&);
 
     WEBCORE_EXPORT SWServerWorker* workerByID(ServiceWorkerIdentifier) const;
-    WEBCORE_EXPORT std::optional<ServiceWorkerClientData> serviceWorkerClientByID(const ServiceWorkerClientIdentifier&) const;
+    std::optional<ServiceWorkerClientData> serviceWorkerClientWithOriginByID(const ClientOrigin&, const ServiceWorkerClientIdentifier&) const;
     WEBCORE_EXPORT SWServerWorker* activeWorkerFromRegistrationID(ServiceWorkerRegistrationIdentifier);
 
     WEBCORE_EXPORT void markAllWorkersAsTerminated();
