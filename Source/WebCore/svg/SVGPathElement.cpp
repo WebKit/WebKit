@@ -420,8 +420,10 @@ FloatRect SVGPathElement::getBBox(StyleUpdateStrategy styleUpdateStrategy)
     RenderSVGPath* renderer = downcast<RenderSVGPath>(this->renderer());
 
     // FIXME: Eventually we should support getBBox for detached elements.
-    if (!renderer)
-        return FloatRect();
+    // FIXME: If the path is null it means we're calling getBBox() before laying out this element,
+    // which is an error.
+    if (!renderer || !renderer->hasPath())
+        return { };
 
     return renderer->path().boundingRect();
 }
