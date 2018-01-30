@@ -38,7 +38,7 @@ class PoisonedUniquePtr : public Poisoned<Poison, T*> {
     WTF_MAKE_FAST_ALLOCATED;
     using Base = Poisoned<Poison, T*>;
 public:
-    static constexpr bool isPoisonedUniquePtr = true;
+    static constexpr bool isPoisonedUniquePtrType = true;
     using ValueType = T;
 
     PoisonedUniquePtr() = default;
@@ -52,7 +52,7 @@ public:
         : Base(unique.release())
     { }
 
-    template<typename Other, typename = std::enable_if_t<Other::isPoisonedUniquePtr && std::is_base_of<T, typename Other::ValueType>::value>>
+    template<typename Other, typename = std::enable_if_t<Other::isPoisonedUniquePtrType && std::is_base_of<T, typename Other::ValueType>::value>>
     PoisonedUniquePtr(Other&& ptr)
         : Base(ptr.unpoisoned())
     {
@@ -93,7 +93,7 @@ public:
         return *this;
     }
 
-    template<typename Other, typename = std::enable_if_t<Other::isPoisonedUniquePtr && std::is_base_of<T, typename Other::ValueType>::value>>
+    template<typename Other, typename = std::enable_if_t<Other::isPoisonedUniquePtrType && std::is_base_of<T, typename Other::ValueType>::value>>
     PoisonedUniquePtr& operator=(Other&& ptr)
     {
         ASSERT(this == static_cast<void*>(&ptr) || this->unpoisoned() != ptr.unpoisoned());
@@ -134,7 +134,7 @@ class PoisonedUniquePtr<Poison, T[]> : public Poisoned<Poison, T*> {
     WTF_MAKE_FAST_ALLOCATED;
     using Base = Poisoned<Poison, T*>;
 public:
-    static constexpr bool isPoisonedUniquePtr = true;
+    static constexpr bool isPoisonedUniquePtrType = true;
     using ValueType = T[];
 
     PoisonedUniquePtr() = default;
@@ -143,7 +143,7 @@ public:
     PoisonedUniquePtr(PoisonedUniquePtr&& ptr) : Base(WTFMove(ptr)) { ptr.clearWithoutDestroy(); }
     PoisonedUniquePtr(std::unique_ptr<T[]>&& unique) : PoisonedUniquePtr(unique.release()) { }
 
-    template<typename Other, typename = std::enable_if_t<Other::isPoisonedUniquePtr && std::is_same<T[], typename Other::ValueType>::value>>
+    template<typename Other, typename = std::enable_if_t<Other::isPoisonedUniquePtrType && std::is_same<T[], typename Other::ValueType>::value>>
     PoisonedUniquePtr(Other&& ptr)
         : Base(ptr.unpoisoned())
     {
@@ -179,7 +179,7 @@ public:
         return *this;
     }
 
-    template<typename Other, typename = std::enable_if_t<Other::isPoisonedUniquePtr && std::is_same<T[], typename Other::ValueType>::value>>
+    template<typename Other, typename = std::enable_if_t<Other::isPoisonedUniquePtrType && std::is_same<T[], typename Other::ValueType>::value>>
     PoisonedUniquePtr& operator=(Other&& ptr)
     {
         ASSERT(this == static_cast<void*>(&ptr) || this->unpoisoned() != ptr.unpoisoned());
