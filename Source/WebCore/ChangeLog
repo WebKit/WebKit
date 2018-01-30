@@ -1,3 +1,27 @@
+2018-01-30  Chris Dumez  <cdumez@apple.com>
+
+        Make sure we never create a WebSWClientConnection with an invalid sessionID
+        https://bugs.webkit.org/show_bug.cgi?id=182276
+        <rdar://problem/36582633>
+
+        Reviewed by Alex Christensen.
+
+        Make sure we never create a WebSWClientConnection with an invalid sessionID as this
+        could corrupt our hash tables.
+
+        * dom/Document.cpp:
+        (WebCore::Document::privateBrowsingStateDidChange):
+        * workers/service/ServiceWorker.cpp:
+        (WebCore::ServiceWorker::postMessage):
+        * workers/service/ServiceWorkerContainer.cpp:
+        (WebCore::ServiceWorkerContainer::ready):
+        (WebCore::ServiceWorkerContainer::getRegistration):
+        (WebCore::ServiceWorkerContainer::didFinishGetRegistrationRequest):
+        (WebCore::ServiceWorkerContainer::getRegistrations):
+        (WebCore::ServiceWorkerContainer::didFinishGetRegistrationsRequest):
+        (WebCore::ServiceWorkerContainer::jobResolvedWithRegistration):
+        (WebCore::ServiceWorkerContainer::ensureSWClientConnection):
+
 2018-01-30  Antti Koivisto  <antti@apple.com>
 
         Avoid traversing too much when doing class change invalidation

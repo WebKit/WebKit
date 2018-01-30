@@ -56,11 +56,13 @@ WebServiceWorkerProvider::WebServiceWorkerProvider()
 
 WebCore::SWClientConnection& WebServiceWorkerProvider::serviceWorkerConnectionForSession(SessionID sessionID)
 {
+    ASSERT(sessionID.isValid());
     return WebProcess::singleton().ensureWebToStorageProcessConnection(sessionID).serviceWorkerConnectionForSession(sessionID);
 }
 
 WebCore::SWClientConnection* WebServiceWorkerProvider::existingServiceWorkerConnectionForSession(SessionID sessionID)
 {
+    ASSERT(sessionID.isValid());
     auto* webToStorageProcessConnection = WebProcess::singleton().existingWebToStorageProcessConnection();
     if (!webToStorageProcessConnection)
         return nullptr;

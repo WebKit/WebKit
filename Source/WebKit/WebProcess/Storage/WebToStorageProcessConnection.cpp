@@ -140,6 +140,7 @@ WebIDBConnectionToServer& WebToStorageProcessConnection::idbConnectionToServerFo
 #if ENABLE(SERVICE_WORKER)
 WebSWClientConnection& WebToStorageProcessConnection::serviceWorkerConnectionForSession(SessionID sessionID)
 {
+    ASSERT(sessionID.isValid());
     return *m_swConnectionsBySession.ensure(sessionID, [&] {
         auto connection = WebSWClientConnection::create(m_connection, sessionID);
 

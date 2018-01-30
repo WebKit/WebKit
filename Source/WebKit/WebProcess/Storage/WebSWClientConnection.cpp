@@ -53,6 +53,7 @@ WebSWClientConnection::WebSWClientConnection(IPC::Connection& connection, Sessio
     , m_connection(connection)
     , m_swOriginTable(makeUniqueRef<WebSWOriginTable>())
 {
+    ASSERT(sessionID.isValid());
     bool result = sendSync(Messages::StorageToWebProcessConnection::EstablishSWServerConnection(sessionID), Messages::StorageToWebProcessConnection::EstablishSWServerConnection::Reply(m_identifier), Seconds::infinity(), IPC::SendSyncOption::DoNotProcessIncomingMessagesWhenWaitingForSyncReply);
 
     ASSERT_UNUSED(result, result);
