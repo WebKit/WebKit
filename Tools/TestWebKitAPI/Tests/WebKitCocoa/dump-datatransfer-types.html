@@ -55,6 +55,9 @@ result = {};
 // Setting this flag to `true` allows the page to write custom MIME types via the DataTransfer when dragging or copying.
 writeCustomData = false;
 
+// Setting this flag to `true` strips out inline styles in markup generated when getting "text/html" from a DataTransfer.
+ignoreInlineStyles = false;
+
 // Entries in this dictionary will be supplied as custom data using DataTransfer.setData when dragging or copying.
 // This is prepopulated with sample data by default, but tests may override this as needed.
 customData = {
@@ -66,11 +69,24 @@ customData = {
     "baz/uri-list" : "https://www.webkit.org"
 };
 
+function stripInlineStylesFromPasteboardData(data)
+{
+    const parsedDocument = new DOMParser().parseFromString(data, "text/html");
+    const treeWalker = parsedDocument.createTreeWalker(parsedDocument.body, NodeFilter.SHOW_ELEMENT);
+    while (treeWalker.nextNode())
+        treeWalker.currentNode.removeAttribute("style");
+    return parsedDocument.body.innerHTML;
+}
+
 function updateResultWithEvent(event) {
     let pasteboard = event.dataTransfer || event.clipboardData;
     const eventData = {};
-    for (const type of pasteboard.types)
-        eventData[type] = pasteboard.getData(type);
+    for (const type of pasteboard.types) {
+        let pasteboardData = pasteboard.getData(type);
+        if (ignoreInlineStyles && type === "text/html")
+            pasteboardData = stripInlineStylesFromPasteboardData(pasteboardData);
+        eventData[type] = pasteboardData;
+    }
     result[event.type] = eventData;
     if (event.type === "paste" || event.type === "drop") {
         output.value = JSON.stringify(result, null, "    ");

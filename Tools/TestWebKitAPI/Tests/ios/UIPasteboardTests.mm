@@ -167,11 +167,12 @@ TEST(UIPasteboardTests, DataTransferGetDataWhenPastingURL)
 TEST(UIPasteboardTests, DataTransferGetDataWhenPastingPlatformRepresentations)
 {
     auto webView = setUpWebViewForPasteboardTests(@"dump-datatransfer-types");
+    [webView stringByEvaluatingJavaScript:@"ignoreInlineStyles = true"];
 
     // This simulates how a native app on iOS might write to the pasteboard when copying.
     RetainPtr<NSURL> testURL = [NSURL URLWithString:@"https://www.apple.com/"];
     RetainPtr<NSString> testPlainTextString = @"WebKit";
-    RetainPtr<NSString> testMarkupString = @"<a href='https://www.webkit.org/'>The WebKit Project</a>";
+    RetainPtr<NSString> testMarkupString = @"<a href=\"https://www.webkit.org/\">The WebKit Project</a>";
     auto itemProvider = adoptNS([[NSItemProvider alloc] init]);
     [itemProvider registerDataRepresentationForTypeIdentifier:(NSString *)kUTTypeHTML visibility:NSItemProviderRepresentationVisibilityAll loadHandler:^NSProgress *(DataLoadCompletionBlock completionHandler)
     {

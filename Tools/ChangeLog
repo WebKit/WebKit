@@ -1,3 +1,20 @@
+2018-01-30  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] API test UIPasteboardTests.DataTransferGetDataWhenPastingPlatformRepresentations fails after r223440
+        https://bugs.webkit.org/show_bug.cgi?id=182307
+        <rdar://problem/36041485>
+
+        Reviewed by Ryosuke Niwa.
+
+        Adjusts a failing API test that we forgot to rebaseline after r223440, which ensures that the result of reading
+        "text/html" from the DataTransfer is sanitized markup. To do this, teach the test harness
+        (dump-datatransfer-types.html) to ignore inline styles in markup if a flag is set, and then set that flag in
+        UIPasteboardTests.DataTransferGetDataWhenPastingPlatformRepresentations.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/dump-datatransfer-types.html:
+        * TestWebKitAPI/Tests/ios/UIPasteboardTests.mm:
+        (TestWebKitAPI::TEST):
+
 2018-01-30  Sergio Villar Senin  <svillar@igalia.com>
 
         [WebVR][GTK][WPE] Exclude OpenVR from tarballs
