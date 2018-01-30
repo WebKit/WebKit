@@ -171,6 +171,7 @@ struct WKAutoCorrectionData {
     RetainPtr<WKFileUploadPanel> _fileUploadPanel;
     RetainPtr<UIGestureRecognizer> _previewGestureRecognizer;
     RetainPtr<UIGestureRecognizer> _previewSecondaryGestureRecognizer;
+    Vector<bool> _focusStateStack;
 #if HAVE(LINK_PREVIEW)
     RetainPtr<UIPreviewItemController> _previewItemController;
 #endif
