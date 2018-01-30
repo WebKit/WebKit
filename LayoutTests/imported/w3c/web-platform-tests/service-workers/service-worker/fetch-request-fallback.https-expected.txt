@@ -13,8 +13,8 @@ PASS The SW must intercept the request of same origin XHR.
 PASS The SW must intercept the request of CORS-unsupported other origin XHR. 
 PASS The SW must intercept the request of CORS-supported other origin XHR. 
 PASS The SW must intercept only the first request of redirected XHR. 
-FAIL The SW must intercept only the first request for XHR which is redirected to CORS-unsupported other origin. assert_object_equals: unexpected property "1"
-FAIL The SW must intercept only the first request for XHR which is redirected to CORS-supported other origin. assert_object_equals: unexpected property "1"
+PASS The SW must intercept only the first request for XHR which is redirected to CORS-unsupported other origin. 
+PASS The SW must intercept only the first request for XHR which is redirected to CORS-supported other origin. 
 PASS The SW must intercept the request for image. 
 PASS The SW must intercept the request for other origin image. 
 PASS The SW must intercept the request for CORS-unsupported other origin image. 
