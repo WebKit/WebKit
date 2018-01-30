@@ -59,6 +59,8 @@ public:
     WEBCORE_EXPORT static RetainPtr<CFMutableDataRef> convertPostScriptDataToPDF(RetainPtr<CFDataRef>&& postScriptData);
 #endif
 
+    unsigned cachingCountForTesting() const { return m_cachingCountForTesting; }
+
 private:
     PDFDocumentImage(ImageObserver*);
     virtual ~PDFDocumentImage();
@@ -103,9 +105,10 @@ private:
     std::unique_ptr<ImageBuffer> m_cachedImageBuffer;
     FloatRect m_cachedImageRect;
     AffineTransform m_cachedTransform;
-    FloatSize m_cachedDestinationSize;
+    FloatRect m_cachedDestinationRect;
     FloatRect m_cachedSourceRect;
     size_t m_cachedBytes { 0 };
+    unsigned m_cachingCountForTesting { 0 };
 
     FloatRect m_cropBox;
     int m_rotationDegrees { 0 }; // Can only be 0, 90, 180, or 270 degrees.
