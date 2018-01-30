@@ -1,5 +1,15 @@
 2018-01-30  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r227641. rdar://problem/37019444
+
+    2018-01-25  Jer Noble  <jer.noble@apple.com>
+
+            Unreviewed build fix after r227631; make USE_VIDEOTOOLBOX universally enabled on iOS.
+
+            * wtf/Platform.h:
+
+2018-01-30  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r227631. rdar://problem/37019444
 
     2018-01-25  Jer Noble  <jer.noble@apple.com>
