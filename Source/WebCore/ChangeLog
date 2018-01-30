@@ -1,5 +1,22 @@
 2018-01-30  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r227632. rdar://problem/37019496
+
+    2018-01-25  John Wilander  <wilander@apple.com>
+
+            Make sure we have a frame as we iterate in ResourceLoadObserver::nonNullOwnerURL()
+            https://bugs.webkit.org/show_bug.cgi?id=182116
+            <rdar://problem/36210134>
+
+            Reviewed by Alex Christensen.
+
+            No new tests. No known repro case, just crash logs.
+
+            * loader/ResourceLoadObserver.cpp:
+            (WebCore::ResourceLoadObserver::nonNullOwnerURL const):
+
+2018-01-30  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r227631. rdar://problem/37019444
 
     2018-01-25  Jer Noble  <jer.noble@apple.com>
