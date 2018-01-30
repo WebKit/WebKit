@@ -56,8 +56,11 @@ DOMWindowCaches* DOMWindowCaches::from(DOMWindow* window)
     return supplement;
 }
 
-DOMCacheStorage* DOMWindowCaches::caches(DOMWindow& window)
+ExceptionOr<DOMCacheStorage*> DOMWindowCaches::caches(ScriptExecutionContext& context, DOMWindow& window)
 {
+    if (downcast<Document>(context).isSandboxed(SandboxOrigin))
+        return Exception { SecurityError, "Cache storage is disabled because the context is sandboxed and lacks the 'allow-same-origin' flag" };
+
     if (!window.isCurrentlyDisplayedInFrame())
         return nullptr;
 
