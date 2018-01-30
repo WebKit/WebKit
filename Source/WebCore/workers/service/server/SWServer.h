@@ -37,8 +37,6 @@
 #include "ServiceWorkerRegistrationData.h"
 #include "ServiceWorkerRegistrationKey.h"
 #include "ServiceWorkerTypes.h"
-#include <wtf/CrossThreadQueue.h>
-#include <wtf/CrossThreadTask.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/ObjectIdentifier.h>
@@ -137,9 +135,6 @@ public:
     void resolveUnregistrationJob(const ServiceWorkerJobData&, const ServiceWorkerRegistrationKey&, bool unregistrationResult);
     void startScriptFetch(const ServiceWorkerJobData&, FetchOptions::Cache);
 
-    void postTask(CrossThreadTask&&);
-    void postTaskReply(CrossThreadTask&&);
-
     void updateWorker(Connection&, const ServiceWorkerJobDataIdentifier&, SWServerRegistration&, const URL&, const String& script, const ContentSecurityPolicyResponseHeaders&, WorkerType);
     void terminateWorker(SWServerWorker&);
     void syncTerminateWorker(SWServerWorker&);
@@ -186,9 +181,6 @@ private:
     void registerConnection(Connection&);
     void unregisterConnection(Connection&);
 
-    void taskThreadEntryPoint();
-    void handleTaskRepliesOnMainThread();
-
     void scriptFetchFinished(Connection&, const ServiceWorkerFetchResult&);
 
     void didResolveRegistrationPromise(Connection&, const ServiceWorkerRegistrationKey&);
@@ -228,14 +220,6 @@ private:
     HashMap<ServiceWorkerClientIdentifier, ServiceWorkerClientData> m_clientsById;
     HashMap<ServiceWorkerClientIdentifier, ServiceWorkerIdentifier> m_clientToControllingWorker;
 
-    RefPtr<Thread> m_taskThread;
-    Lock m_taskThreadLock;
-
-    CrossThreadQueue<CrossThreadTask> m_taskQueue;
-    CrossThreadQueue<CrossThreadTask> m_taskReplyQueue;
-
-    Lock m_mainThreadReplyLock;
-    bool m_mainThreadReplyScheduled { false };
     UniqueRef<SWOriginStore> m_originStore;
     RegistrationStore m_registrationStore;
     Vector<ServiceWorkerContextData> m_pendingContextDatas;
