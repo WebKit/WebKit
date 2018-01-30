@@ -9,15 +9,6 @@ file(MAKE_DIRECTORY ${DERIVED_SOURCES_WEBKIT_DIR})
 add_definitions(-DBUILDING_WEBKIT)
 
 list(APPEND WebKit_SOURCES
-    NetworkProcess/Downloads/curl/DownloadCurl.cpp
-
-    NetworkProcess/cache/NetworkCacheCodersCurl.cpp
-    NetworkProcess/cache/NetworkCacheDataCurl.cpp
-    NetworkProcess/cache/NetworkCacheIOChannelCurl.cpp
-
-    NetworkProcess/curl/NetworkProcessCurl.cpp
-    NetworkProcess/curl/RemoteNetworkingContextCurl.cpp
-
     NetworkProcess/win/NetworkProcessMainWin.cpp
     NetworkProcess/win/SystemProxyWin.cpp
 
@@ -25,16 +16,10 @@ list(APPEND WebKit_SOURCES
     Platform/win/ModuleWin.cpp
     Platform/win/SharedMemoryWin.cpp
 
-    Shared/Authentication/curl/AuthenticationManagerCurl.cpp
-
-    Shared/curl/WebCoreArgumentCodersCurl.cpp
-
     Platform/IPC/win/AttachmentWin.cpp
     Platform/IPC/win/ConnectionWin.cpp
 
     StorageProcess/win/StorageProcessMainWin.cpp
-
-    WebProcess/Cookies/curl/WebCookieManagerCurl.cpp
 
     WebProcess/InjectedBundle/win/InjectedBundleWin.cpp
 
@@ -43,7 +28,6 @@ list(APPEND WebKit_SOURCES
     WebProcess/Plugins/Netscape/win/PluginProxyWin.cpp
 
     WebProcess/WebCoreSupport/win/WebContextMenuClientWin.cpp
-    WebProcess/WebCoreSupport/win/WebFrameNetworkingContext.cpp
     WebProcess/WebCoreSupport/win/WebPopupMenuWin.cpp
 
     WebProcess/WebPage/AcceleratedDrawingArea.cpp
@@ -122,6 +106,29 @@ endif ()
 if (${WTF_PLATFORM_WIN_CAIRO})
     add_definitions(-DUSE_CAIRO=1 -DUSE_CURL=1)
 
+    list(APPEND WebKit_SOURCES
+        NetworkProcess/Downloads/curl/DownloadCurl.cpp
+
+        NetworkProcess/cache/NetworkCacheCodersCurl.cpp
+        NetworkProcess/cache/NetworkCacheDataCurl.cpp
+        NetworkProcess/cache/NetworkCacheIOChannelCurl.cpp
+
+        NetworkProcess/curl/NetworkProcessCurl.cpp
+        NetworkProcess/curl/RemoteNetworkingContextCurl.cpp
+
+        Shared/Authentication/curl/AuthenticationManagerCurl.cpp
+
+        Shared/curl/WebCoreArgumentCodersCurl.cpp
+
+        WebProcess/Cookies/curl/WebCookieManagerCurl.cpp
+
+        WebProcess/WebCoreSupport/curl/WebFrameNetworkingContext.cpp
+    )
+
+    list(APPEND WebKit_INCLUDE_DIRECTORIES
+        "${WEBKIT_DIR}/UIProcess/WebCoreSupport/curl"
+    )
+
     list(APPEND WebKit_LIBRARIES
         ${OPENSSL_LIBRARIES}
         mfuuid.lib
@@ -133,17 +140,29 @@ set(SharedWebKitLibraries
     ${WebKit_LIBRARIES}
 )
 
-add_custom_target(WebKit-forwarding-headers
-                  COMMAND ${PERL_EXECUTABLE}
-                  ${WEBKIT_DIR}/Scripts/generate-forwarding-headers.pl
-                  --include-path ${WEBKIT_DIR}
-                  --output ${FORWARDING_HEADERS_DIR}
-                  --platform win
-                  --platform curl
-                  )
+WEBKIT_WRAP_SOURCELIST(${WebKit_SOURCES})
 
-set(WEBKIT_EXTRA_DEPENDENCIES
-    WebKit-forwarding-headers
+set(WebKit_FORWARDING_HEADERS_DIRECTORIES
+    Platform
+    Shared
+    UIProcess
+
+    NetworkProcess/Downloads
+
+    Platform/IPC
+
+    Shared/API
+
+    Shared/API/c
+
+    Shared/API/c/cf
+
+    UIProcess/API/c
+    UIProcess/API/cpp
+
+    WebProcess/WebPage
+
+    WebProcess/InectedBundle/API/c
 )
 
-WEBKIT_WRAP_SOURCELIST(${WebKit_SOURCES})
+WEBKIT_MAKE_FORWARDING_HEADERS(WebKit DIRECTORIES ${WebKit_FORWARDING_HEADERS_DIRECTORIES})

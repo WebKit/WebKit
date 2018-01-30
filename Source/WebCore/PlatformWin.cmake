@@ -240,6 +240,21 @@ set(WebCore_FORWARDING_HEADERS_DIRECTORIES
     workers/service
 )
 
+if (ENABLE_WEBKIT)
+    list(APPEND WebCore_FORWARDING_HEADERS_DIRECTORIES
+        Modules/applicationmanifest
+
+        dom/messageports
+
+        inspector/agents
+
+        platform/mediastream
+
+        workers/service/context
+        workers/service/server
+    )
+endif ()
+
 if (USE_CF)
     list(APPEND WebCore_INCLUDE_DIRECTORIES
         "${WEBCORE_DIR}/platform/cf"

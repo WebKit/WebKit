@@ -1,3 +1,12 @@
+2018-01-30  Basuke Suzuki  <Basuke.Suzuki@sony.com>
+
+        [WinCairo] Fix forwarding header conflict of WebKit on WinCairo
+        https://bugs.webkit.org/show_bug.cgi?id=177202
+
+        Reviewed by Alex Christensen.
+
+        * CMakeLists.txt:
+
 2018-01-29  Alex Christensen  <achristensen@webkit.org>
 
         Clean up API after bugs 178240 and 176474
