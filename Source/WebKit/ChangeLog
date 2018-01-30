@@ -1,3 +1,18 @@
+2018-01-29  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Add a build step to copy resources from WebKitAdditions as bundle resources in WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=182268
+        <rdar://problem/37003784>
+
+        Reviewed by Tim Horton and Dan Bernstein.
+
+        Adds a "Copy Additional Resources" phase when building WebKit. This phase copies resources from
+        usr/local/include/WebKitAdditions/WebKit/AdditionalResources in the build directory into the
+        unlocalized resources directory. If the AdditionalResources directory does not exist in the build
+        directory, we fall back to searching the SDK.
+
+        * WebKit.xcodeproj/project.pbxproj:
+
 2018-01-29  Youenn Fablet  <youenn@apple.com>
 
         ServiceWorkerClientFetch should not consider responses without Location headers as redirection responses
