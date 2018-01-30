@@ -144,6 +144,25 @@ class BuildRequestsFetcher {
 
         $this->commit_sets_by_id[$commit_set_id] = TRUE;
 
+        $owner_commits_rows = $this->db->query_and_fetch_all('SELECT * FROM commits, repositories
+            WHERE commit_repository = repository_id AND  commit_id
+            IN (SELECT DISTINCT(commitset_commit_owner) FROM commit_set_items
+              WHERE commitset_set = $1 AND commitset_commit_owner IS NOT NULL)', array($commit_set_id));
+
+        foreach ($owner_commits_rows as $row) {
+            $commit_id = $row['commit_id'];
+            if (array_key_exists($commit_id, $this->commits_by_id))
+                continue;
+
+            array_push($this->commits, array(
+                'id' => $commit_id,
+                'repository' => $resolve_ids ? $row['repository_name'] : $row['repository_id'],
+                'commitOwner' => NULL,
+                'revision' => $row['commit_revision'],
+                'time' => Database::to_js_time($row['commit_time'])));
+            $this->commits_by_id[$commit_id] = TRUE;
+        }
+
         array_push($this->commit_sets, array('id' => $commit_set_id, 'revisionItems' => $revision_items, 'customRoots' => $custom_roots));
     }
 

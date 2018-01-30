@@ -161,6 +161,22 @@ MockData = {
             db.insert('build_requests', {id: 707, status: statusList[3], triggerable: 1000, repository_group: 2001, platform: 65, test: 200, group: 900, order: 3, commit_set: 404}),
         ]);
     },
+    addTestGroupWithOwnerCommitNotInCommitSet(db)
+    {
+        return Promise.all([
+            this.addMockConfiguration(db),
+            this.addAnotherTriggerable(db),
+            db.insert('analysis_tasks', {id: 1080, platform: 65, metric: 300, name: 'some task with component test',
+                start_run: 801, start_run_time: '2015-10-27T12:05:27.1Z',
+                end_run: 801, end_run_time: '2015-10-27T12:05:27.1Z'}),
+            db.insert('analysis_test_groups', {id: 900, task: 1080, name: 'some test group with component test'}),
+            db.insert('commit_sets', {id: 404}),
+            db.insert('commit_set_items', {set: 404, commit: 87832}),
+            db.insert('commit_set_items', {set: 404, commit: 96336}),
+            db.insert('commit_set_items', {set: 404, commit: 2017, commit_owner: 93116, requires_build: true}),
+            db.insert('build_requests', {id: 704, status: 'pending', triggerable: 1000, repository_group: 2001, platform: 65, test: 200, group: 900, order: 0, commit_set: 404}),
+        ]);
+    },
     mockTestSyncConfigWithSingleBuilder: function ()
     {
         return {

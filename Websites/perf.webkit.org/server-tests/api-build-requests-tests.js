@@ -281,6 +281,50 @@ describe('/api/build-requests', function () {
         });
     });
 
+    it('a repository group of a build request should accepts the commit set of the same build request', async () => {
+        await MockData.addTestGroupWithOwnerCommitNotInCommitSet(TestServer.database());
+        await Manifest.fetch();
+        const buildRequests = await BuildRequest.fetchForTriggerable('build-webkit');
+        assert.equal(buildRequests.length, 1);
+
+        const test = Test.findById(200);
+        assert(test);
+
+        const platform = Platform.findById(65);
+        assert(platform);
+
+        const buildRequest = buildRequests[0];
+
+        assert.equal(buildRequest.id(), 704);
+        assert.equal(buildRequest.testGroupId(), 900);
+        assert.equal(buildRequest.test(), test);
+        assert.equal(buildRequest.platform(), platform);
+        assert.equal(buildRequest.order(), 0);
+        assert.ok(buildRequest.commitSet() instanceof CommitSet);
+        assert.ok(!buildRequest.hasFinished());
+        assert.ok(!buildRequest.hasStarted());
+        assert.ok(buildRequest.isPending());
+        assert.equal(buildRequest.statusLabel(), 'Waiting');
+
+        const osx = Repository.findById(9);
+        assert.equal(osx.name(), 'macOS');
+
+        const webkit = Repository.findById(11);
+        assert.equal(webkit.name(), 'WebKit');
+
+        const jsc = Repository.findById(213);
+        assert.equal(jsc.name(), 'JavaScriptCore');
+
+        const commitSet = buildRequest.commitSet();
+
+        assert.equal(commitSet.revisionForRepository(osx), '10.11 15A284');
+        assert.equal(commitSet.revisionForRepository(webkit), '192736');
+        assert.equal(commitSet.revisionForRepository(jsc), 'owned-jsc-9191');
+        assert.equal(commitSet.ownerRevisionForRepository(jsc), '191622');
+        assert.deepEqual(commitSet.topLevelRepositories().sort((one, another) => one.id() < another.id()), [osx, webkit]);
+        assert.ok(buildRequest.repositoryGroup().accepts(commitSet));
+    });
+
     it('should be fetchable by BuildRequest.fetchForTriggerable', () => {
         return MockData.addMockData(TestServer.database()).then(() => {
             return Manifest.fetch();

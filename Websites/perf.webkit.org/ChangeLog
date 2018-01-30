@@ -1,3 +1,19 @@
+2018-01-29  Dewei Zhu  <dewei_zhu@apple.com>
+
+        Should fetch owner commits in build-requests-fetcher.
+        https://bugs.webkit.org/show_bug.cgi?id=182266
+
+        Reviewed by Ryosuke Niwa.
+
+        In a build request, owner commit of a commit is not always one of a commit in the commit set.
+        Build request api should contain owner commits in the 'commits' field of the return value.
+
+        * public/include/build-requests-fetcher.php: Added logic to fetch owner commits and added them into 'commits'.
+        * server-tests/api-build-requests-tests.js: Added a unit test.
+        * server-tests/resources/mock-data.js:
+        (MockData.set addTestGroupWithOwnerCommitNotInCommitSet): Added a test group with a build request, the commit set of which does
+        not contain owner commit of one commit.
+
 2018-01-29  Ryosuke Niwa  <rniwa@webkit.org>
 
         Add the support for reporting Speedometer 2.0 results to perf dashboard
