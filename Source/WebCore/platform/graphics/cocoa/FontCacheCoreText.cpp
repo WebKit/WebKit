@@ -1432,7 +1432,7 @@ RetainPtr<CFSetRef> mandatoryAttributesForUserInstalledFonts(AllowUserInstalledF
 {
 #if CAN_DISALLOW_USER_INSTALLED_FONTS
     if (allowUserInstalledFonts == AllowUserInstalledFonts::No) {
-        CFTypeRef mandatoryAttributesValues[] = { kCTFontUserInstalledAttribute, kCTFontFallbackOptionAttribute };
+        CFTypeRef mandatoryAttributesValues[] = { kCTFontFamilyNameAttribute, kCTFontPostScriptNameAttribute, kCTFontNameAttribute, kCTFontEnabledAttribute, kCTFontUserInstalledAttribute, kCTFontFallbackOptionAttribute };
         return adoptCF(CFSetCreate(kCFAllocatorDefault, mandatoryAttributesValues, WTF_ARRAY_LENGTH(mandatoryAttributesValues), &kCFTypeSetCallBacks));
     }
 #else
