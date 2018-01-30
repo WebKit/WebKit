@@ -84,6 +84,7 @@ Layout/LineLayoutJapanese.html
 # Don't run the interactive runner. We run index.html
 Speedometer/index.html
 Speedometer/InteractiveRunner.html
+StyleBench/index.html
 StyleBench/InteractiveRunner.html
 
 # We skip Shapes tests for now: https://bugs.webkit.org/show_bug.cgi?id=128188

@@ -1,5 +1,11 @@
 2018-01-29  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Temporarily skip StyleBench until webkit.org/b/182088 is fixed.
+
+        * Skipped:
+
+2018-01-29  Ryosuke Niwa  <rniwa@webkit.org>
+
         Make StyleBench compatible with run-benchmark and run-perf-tests
         https://bugs.webkit.org/show_bug.cgi?id=182262
 
