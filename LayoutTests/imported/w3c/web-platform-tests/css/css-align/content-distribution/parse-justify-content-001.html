@@ -16,7 +16,7 @@
 <div id="log"></div>
 <script>
     let classes = Object.assign({"Normal":"normal", "Left":"left", "Right":"right"}, contentPositionClasses,
-                                distributionClasses, baselineClasses, overflowClasses);
+                                distributionClasses, overflowClasses);
 
     for (var key in classes) {
         let specifiedValue = classes[key];
@@ -24,10 +24,7 @@
         element.className = "justifyContent" + key;
         document.body.appendChild(element);
         test(function() {
-            let computedValue = specifiedValue;
-            if (specifiedValue === "baseline")
-                computedValue = "first baseline";
-            checkValues(element, "justifyContent", "justify-content", "", computedValue);
+            checkValues(element, "justifyContent", "justify-content", "", specifiedValue);
         }, "Checking justify-content: " + specifiedValue);
     }
 </script>

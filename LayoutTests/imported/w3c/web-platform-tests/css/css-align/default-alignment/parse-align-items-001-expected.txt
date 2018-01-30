@@ -1,19 +1,19 @@
 
 PASS Checking align-items: normal 
-FAIL Checking align-items: stretch assert_equals: align-items computed style is not what is should. expected "stretch" but got "normal"
-FAIL Checking align-items: start assert_equals: align-items computed style is not what is should. expected "start" but got "normal"
-FAIL Checking align-items: end assert_equals: align-items computed style is not what is should. expected "end" but got "normal"
-FAIL Checking align-items: self-start assert_equals: align-items computed style is not what is should. expected "self-start" but got "normal"
-FAIL Checking align-items: self-end assert_equals: align-items computed style is not what is should. expected "self-end" but got "normal"
-FAIL Checking align-items: center assert_equals: align-items computed style is not what is should. expected "center" but got "normal"
-FAIL Checking align-items: flex-start assert_equals: align-items computed style is not what is should. expected "flex-start" but got "normal"
-FAIL Checking align-items: flex-end assert_equals: align-items computed style is not what is should. expected "flex-end" but got "normal"
-FAIL Checking align-items: baseline assert_equals: align-items computed style is not what is should. expected "first baseline" but got "normal"
-FAIL Checking align-items: first baseline assert_equals: align-items computed style is not what is should. expected "first baseline" but got "normal"
-FAIL Checking align-items: last baseline assert_equals: align-items computed style is not what is should. expected "last baseline" but got "normal"
-FAIL Checking align-items: safe flex-end assert_equals: align-items computed style is not what is should. expected "safe flex-end" but got "normal"
-FAIL Checking align-items: unsafe end assert_equals: align-items computed style is not what is should. expected "unsafe end" but got "normal"
-FAIL Checking align-items: safe end assert_equals: align-items computed style is not what is should. expected "safe end" but got "normal"
-FAIL Checking align-items: unsafe flex-start assert_equals: align-items computed style is not what is should. expected "unsafe flex-start" but got "normal"
-FAIL Checking align-items: safe center assert_equals: align-items computed style is not what is should. expected "safe center" but got "normal"
+PASS Checking align-items: stretch 
+PASS Checking align-items: start 
+PASS Checking align-items: end 
+PASS Checking align-items: self-start 
+PASS Checking align-items: self-end 
+PASS Checking align-items: center 
+PASS Checking align-items: flex-start 
+PASS Checking align-items: flex-end 
+PASS Checking align-items: baseline 
+PASS Checking align-items: first baseline 
+PASS Checking align-items: last baseline 
+PASS Checking align-items: safe flex-end 
+PASS Checking align-items: unsafe end 
+PASS Checking align-items: safe end 
+PASS Checking align-items: unsafe flex-start 
+PASS Checking align-items: safe center 
 

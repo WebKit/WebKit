@@ -2,6 +2,9 @@
 PASS Checking invalid combination - justify-content: auto 
 PASS Checking invalid combination - justify-content: legacy 
 PASS Checking invalid combination - justify-content: self-start 
+PASS Checking invalid combination - justify-content: baseline 
+PASS Checking invalid combination - justify-content: first baseline 
+PASS Checking invalid combination - justify-content: last baseline 
 PASS Checking invalid combination - justify-content: auto safe 
 PASS Checking invalid combination - justify-content: auto left 
 PASS Checking invalid combination - justify-content: normal unsafe 

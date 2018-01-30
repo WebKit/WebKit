@@ -1,20 +1,20 @@
 
 PASS Checking align-content: normal 
-FAIL Checking align-content: start assert_equals: align-content computed style is not what is should. expected "start" but got "normal"
-FAIL Checking align-content: end assert_equals: align-content computed style is not what is should. expected "end" but got "normal"
-FAIL Checking align-content: center assert_equals: align-content computed style is not what is should. expected "center" but got "normal"
-FAIL Checking align-content: flex-start assert_equals: align-content computed style is not what is should. expected "flex-start" but got "normal"
-FAIL Checking align-content: flex-end assert_equals: align-content computed style is not what is should. expected "flex-end" but got "normal"
-FAIL Checking align-content: stretch assert_equals: align-content computed style is not what is should. expected "stretch" but got "normal"
-FAIL Checking align-content: space-around assert_equals: align-content computed style is not what is should. expected "space-around" but got "normal"
-FAIL Checking align-content: space-between assert_equals: align-content computed style is not what is should. expected "space-between" but got "normal"
-FAIL Checking align-content: space-evenly assert_equals: align-content computed style is not what is should. expected "space-evenly" but got "normal"
-FAIL Checking align-content: baseline assert_equals: align-content computed style is not what is should. expected "first baseline" but got "normal"
-FAIL Checking align-content: first baseline assert_equals: align-content computed style is not what is should. expected "first baseline" but got "normal"
-FAIL Checking align-content: last baseline assert_equals: align-content computed style is not what is should. expected "last baseline" but got "normal"
-FAIL Checking align-content: safe flex-end assert_equals: align-content computed style is not what is should. expected "safe flex-end" but got "normal"
-FAIL Checking align-content: unsafe end assert_equals: align-content computed style is not what is should. expected "unsafe end" but got "normal"
-FAIL Checking align-content: safe end assert_equals: align-content computed style is not what is should. expected "safe end" but got "normal"
-FAIL Checking align-content: unsafe flex-start assert_equals: align-content computed style is not what is should. expected "unsafe flex-start" but got "normal"
-FAIL Checking align-content: safe center assert_equals: align-content computed style is not what is should. expected "safe center" but got "normal"
+PASS Checking align-content: start 
+PASS Checking align-content: end 
+PASS Checking align-content: center 
+PASS Checking align-content: flex-start 
+PASS Checking align-content: flex-end 
+PASS Checking align-content: stretch 
+PASS Checking align-content: space-around 
+PASS Checking align-content: space-between 
+PASS Checking align-content: space-evenly 
+PASS Checking align-content: baseline 
+PASS Checking align-content: first baseline 
+PASS Checking align-content: last baseline 
+PASS Checking align-content: safe flex-end 
+PASS Checking align-content: unsafe end 
+PASS Checking align-content: safe end 
+PASS Checking align-content: unsafe flex-start 
+PASS Checking align-content: safe center 
 

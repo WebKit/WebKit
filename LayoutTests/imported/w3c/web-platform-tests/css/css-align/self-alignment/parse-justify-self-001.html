@@ -23,10 +23,11 @@
         element.className = "justifySelf" + key;
         document.body.appendChild(element);
         test(function() {
-            let computedValue = specifiedValue;
-            if (specifiedValue === "baseline")
-                computedValue = "first baseline";
-            checkValues(element, "justifySelf", "justify-self", "", computedValue);
+            let value = specifiedValue;
+            if (specifiedValue === "first baseline")
+                checkValues(element, "justifySelf", "justify-self", "", "baseline");
+            else
+                checkValues(element, "justifySelf", "justify-self", "", value);
         }, "Checking justify-self: " + specifiedValue);
     }
 </script>

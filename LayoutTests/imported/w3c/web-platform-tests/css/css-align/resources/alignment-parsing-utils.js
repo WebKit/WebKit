@@ -17,26 +17,27 @@ var invalidDistributionValues = ["space-between left", "space-around center", "s
                                  "space-between safe", "space-between stretch", "stretch start",
                                  "stretch baseline", "first baseline space-around"];
 
-function checkPlaceShorhand(shorthand, alignValue, justifyValue)
+function checkPlaceShorhand(shorthand, shorthandValue, alignValue, justifyValue)
 {
     var div = document.createElement("div");
-    var specifiedValue = (alignValue + " " + justifyValue).trim();
-    div.style[shorthand] = specifiedValue;
+    div.style[shorthand] = shorthandValue;
     document.body.appendChild(div);
 
-    if (alignValue === justifyValue)
-        specifiedValue = alignValue;
-
-    var resolvedValue = getComputedStyle(div).getPropertyValue(shorthand);
     if (alignValue === "first baseline")
         alignValue = "baseline";
     if (justifyValue === "first baseline")
         justifyValue = "baseline";
     if (justifyValue === "")
         justifyValue = alignValue;
-    var expectedResolvedValue = (alignValue + " " + justifyValue).trim()
 
-    assert_equals(div.style[shorthand], specifiedValue, shorthand + " specified value");
+    let specifiedValue = (alignValue + " " + justifyValue).trim();
+    if (alignValue === justifyValue)
+        specifiedValue = alignValue;
+
+    var resolvedValue = getComputedStyle(div).getPropertyValue(shorthand);
+    var expectedResolvedValue = (alignValue + " " + justifyValue).trim();
+
+    assert_equals(div.style[shorthand], specifiedValue, shorthandValue + " specified value");
     // FIXME: We need https://github.com/w3c/csswg-drafts/issues/1041 to clarify which
     // value is expected for the shorthand's 'resolved value".
     assert_in_array(resolvedValue, ["", expectedResolvedValue], shorthand + " resolved value");
@@ -47,6 +48,10 @@ function checkPlaceShorhandLonghands(shorthand, alignLonghand, justifyLonghand, 
     var div = document.createElement("div");
     div.setAttribute("style", shorthand + ": " + alignValue + " " + justifyValue);
     document.body.appendChild(div);
+    if (alignValue === "first baseline")
+        alignValue = "baseline";
+    if (justifyValue === "first baseline")
+        justifyValue = "baseline";
     if (justifyValue === "")
         justifyValue = alignValue;
     assert_equals(div.style[alignLonghand],

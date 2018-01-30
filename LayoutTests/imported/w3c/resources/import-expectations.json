@@ -73,6 +73,7 @@
     "web-platform-tests/css/reference": "import", 
     "web-platform-tests/css/resources": "import", 
     "web-platform-tests/css/selectors": "import", 
+    "web-platform-tests/css/support": "import", 
     "web-platform-tests/cssom": "import", 
     "web-platform-tests/cssom-view": "import", 
     "web-platform-tests/cssom/MediaList.xhtml": "skip", 

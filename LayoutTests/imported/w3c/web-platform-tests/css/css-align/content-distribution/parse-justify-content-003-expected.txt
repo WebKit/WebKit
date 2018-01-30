@@ -11,9 +11,6 @@ PASS Checking justify-content: stretch
 PASS Checking justify-content: space-around 
 PASS Checking justify-content: space-between 
 PASS Checking justify-content: space-evenly 
-FAIL Checking justify-content: baseline assert_equals: justify-content computed style is not what is should. expected "first baseline" but got "baseline"
-FAIL Checking justify-content: first baseline assert_equals: justify-content computed style is not what is should. expected "first baseline" but got "baseline"
-PASS Checking justify-content: last baseline 
 PASS Checking justify-content: safe flex-end 
 PASS Checking justify-content: unsafe end 
 PASS Checking justify-content: safe end 

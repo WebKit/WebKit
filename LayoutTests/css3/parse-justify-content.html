@@ -4,18 +4,6 @@
     justify-content: auto;
 }
 
-#justifyContentBaseline {
-    justify-content: baseline;
-}
-
-#justifyContentFirstBaseline {
-    justify-content: first baseline;
-}
-
-#justifyContentLastBaseline {
-    justify-content: last baseline;
-}
-
 #justifyContentSpaceBetween {
     justify-content: space-between;
 }
@@ -85,6 +73,18 @@
 }
 
 <!-- Invalid CSS cases -->
+#justifyContentBaseline {
+    justify-content: baseline;
+}
+
+#justifyContentFirstBaseline {
+    justify-content: first baseline;
+}
+
+#justifyContentLastBaseline {
+    justify-content: last baseline;
+}
+
 #justifyContentSpaceBetweenLeft {
     justify-content: space-between left;
 }
@@ -131,9 +131,6 @@
 </style>
 <p>Test that setting and getting justify-content works as expected</p>
 <div id="justifyContentAuto"></div>
-<div id="justifyContentBaseline"></div>
-<div id="justifyContentFirstBaseline"></div>
-<div id="justifyContentLastBaseline"></div>
 <div id="justifyContentSpaceBetween"></div>
 <div id="justifyContentSpaceAround"></div>
 <div id="justifyContentSpaceEvenly"></div>
@@ -160,6 +157,9 @@
 <div id="justifyContentFlexStartUnsafe"></div>
 <div id="justifyContentFlexEndSafe"></div>
 
+<div id="justifyContentBaseline"></div>
+<div id="justifyContentFirstBaseline"></div>
+<div id="justifyContentLastBaseline"></div>
 <div id="justifyContentSpaceBetweenLeft"></div>
 <div id="justifyContentSpaceAroundCenter"></div>
 <div id="justifyContentSpaceEvenlyRight"></div>
@@ -179,12 +179,6 @@
 test(function() {
     var justifyContentAuto = document.getElementById("justifyContentAuto");
     checkValues(justifyContentAuto, "justifyContent", "justify-content", "", "normal");
-    var justifyContentBaseline = document.getElementById("justifyContentBaseline");
-    checkValues(justifyContentBaseline, "justifyContent", "justify-content", "", "baseline");
-    var justifyContentLastBaseline = document.getElementById("justifyContentFirstBaseline");
-    checkValues(justifyContentLastBaseline, "justifyContent", "justify-content", "", "baseline");
-    var justifyContentLastBaseline = document.getElementById("justifyContentLastBaseline");
-    checkValues(justifyContentLastBaseline, "justifyContent", "justify-content", "", "last baseline");
     var justifyContentSpaceBetween = document.getElementById("justifyContentSpaceBetween");
     checkValues(justifyContentSpaceBetween, "justifyContent", "justify-content", "", "space-between");
     var justifyContentSpaceAround = document.getElementById("justifyContentSpaceAround");
@@ -222,6 +216,12 @@ test(function() {
 }, "Test getting justify-content values previously set through CSS.");
 
 test(function() {
+    var justifyContentBaseline = document.getElementById("justifyContentBaseline");
+    checkValues(justifyContentBaseline, "justifyContent", "justify-content", "", "normal");
+    var justifyContentLastBaseline = document.getElementById("justifyContentFirstBaseline");
+    checkValues(justifyContentLastBaseline, "justifyContent", "justify-content", "", "normal");
+    var justifyContentLastBaseline = document.getElementById("justifyContentLastBaseline");
+    checkValues(justifyContentLastBaseline, "justifyContent", "justify-content", "", "normal");
     var justifyContentEndUnsafe = document.getElementById("justifyContentEndUnsafe");
     checkValues(justifyContentEndUnsafe, "justifyContent", "justify-content", "", "normal");
     var justifyContentCenterUnsafe = document.getElementById("justifyContentCenterUnsafe");
@@ -279,12 +279,6 @@ test(function() {
     element.style.justifyContent = " unsafe right";
     checkValues(element, "justifyContent", "justify-content",  "unsafe right", "unsafe right");
 
-    element.style.justifyContent = "first baseline";
-    checkValues(element, "justifyContent", "justify-content",  "first baseline", "baseline");
-
-    element.style.justifyContent = "last baseline";
-    checkValues(element, "justifyContent", "justify-content",  "last baseline", "last baseline");
-
     element.style.justifyContent = "normal";
     checkValues(element, "justifyContent", "justify-content",  "normal", "normal");
 
@@ -333,6 +327,9 @@ test(function() {
     checkBadValues(element, "justifyContent", "justify-content",  "safe");
     checkBadValues(element, "justifyContent", "justify-content",  "start safe");
     checkBadValues(element, "justifyContent", "justify-content",  "end unsafe");
+    checkBadValues(element, "justifyContent", "justify-content",  "baseline");
+    checkBadValues(element, "justifyContent", "justify-content",  "first baseline");
+    checkBadValues(element, "justifyContent", "justify-content",  "last baseline");
 }, "Test bad combinations of justify-content");
 
 test(function() {

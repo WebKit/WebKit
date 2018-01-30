@@ -22,11 +22,12 @@
     for (var key in classes) {
         let specifiedValue = classes[key];
         test(function() {
+            element.style.justifySelf = "";
             element.style.justifySelf = specifiedValue;
-            let computedValue = specifiedValue;
-            if (specifiedValue === "baseline")
-                computedValue = "first baseline";
-            checkValues(element, "justifySelf", "justify-self",  specifiedValue, computedValue);
+            if (specifiedValue === "first baseline")
+                checkValues(element, "justifySelf", "justify-self", "baseline", "baseline");
+            else
+                checkValues(element, "justifySelf", "justify-self",  specifiedValue, specifiedValue);
         }, "Checking justify-self: " + specifiedValue);
     }
 </script>

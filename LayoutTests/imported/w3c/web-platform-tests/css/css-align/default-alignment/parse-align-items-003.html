@@ -22,11 +22,12 @@
     for (var key in classes) {
         let specifiedValue = classes[key];
         test(function() {
+            element.style.alignItems = "";
             element.style.alignItems = specifiedValue;
-            let computedValue = specifiedValue;
-            if (specifiedValue === "baseline")
-                computedValue = "first baseline";
-            checkValues(element, "alignItems", "align-items",  specifiedValue, computedValue);
+            if (specifiedValue === "first baseline")
+                checkValues(element, "alignItems", "align-items", "baseline", "baseline");
+            else
+                checkValues(element, "alignItems", "align-items",  specifiedValue, specifiedValue);
         }, "Checking align-items: " + specifiedValue);
     }
 </script>

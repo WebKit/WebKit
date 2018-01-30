@@ -9,7 +9,4 @@ PASS Checking place-content: stretch
 PASS Checking place-content: space-around 
 PASS Checking place-content: space-between 
 PASS Checking place-content: space-evenly 
-PASS Checking place-content: baseline 
-PASS Checking place-content: first baseline 
-PASS Checking place-content: last baseline 
 

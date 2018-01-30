@@ -18,16 +18,14 @@
     document.body.appendChild(element);
 
     let classes = Object.assign({"Normal":"normal", "Left":"left", "Right":"right"}, contentPositionClasses,
-                                distributionClasses, baselineClasses, overflowClasses);
+                                distributionClasses, overflowClasses);
 
     for (var key in classes) {
         let specifiedValue = classes[key];
         test(function() {
+            element.style.justifyContent = "";
             element.style.justifyContent = specifiedValue;
-            let computedValue = specifiedValue;
-            if (specifiedValue === "baseline")
-                computedValue = "first baseline";
-            checkValues(element, "justifyContent", "justify-content",  specifiedValue, computedValue);
+            checkValues(element, "justifyContent", "justify-content",  specifiedValue, specifiedValue);
         }, "Checking justify-content: " + specifiedValue);
     }
 </script>

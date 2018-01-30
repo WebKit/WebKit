@@ -23,10 +23,10 @@
         element.className = "alignSelf" + key;
         document.body.appendChild(element);
         test(function() {
-            let computedValue = specifiedValue;
-            if (specifiedValue === "baseline")
-                computedValue = "first baseline";
-            checkValues(element, "alignSelf", "align-self", "", computedValue);
+            if (specifiedValue === "first baseline")
+                checkValues(element, "alignSelf", "align-self", "", "baseline");
+            else
+                checkValues(element, "alignSelf", "align-self", "", specifiedValue);
         }, "Checking align-self: " + specifiedValue);
     }
 </script>

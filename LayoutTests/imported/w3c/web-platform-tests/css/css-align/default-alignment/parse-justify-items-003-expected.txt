@@ -10,8 +10,8 @@ PASS Checking justify-items: self-end
 PASS Checking justify-items: center 
 PASS Checking justify-items: flex-start 
 PASS Checking justify-items: flex-end 
-FAIL Checking justify-items: baseline assert_equals: justify-items computed style is not what is should. expected "first baseline" but got "baseline"
-FAIL Checking justify-items: first baseline assert_equals: justify-items computed style is not what is should. expected "first baseline" but got "baseline"
+PASS Checking justify-items: baseline 
+PASS Checking justify-items: first baseline 
 PASS Checking justify-items: last baseline 
 PASS Checking justify-items: safe flex-end 
 PASS Checking justify-items: unsafe end 

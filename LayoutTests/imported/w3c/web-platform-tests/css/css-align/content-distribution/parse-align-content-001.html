@@ -24,10 +24,10 @@
         element.className = "alignContent" + key;
         document.body.appendChild(element);
         test(function() {
-            let computedValue = specifiedValue;
-            if (specifiedValue === "baseline")
-                computedValue = "first baseline";
-            checkValues(element, "alignContent", "align-content", "", computedValue);
+            if (specifiedValue === "first baseline")
+                checkValues(element, "alignContent", "align-content", "", "baseline");
+            else
+                checkValues(element, "alignContent", "align-content", "", specifiedValue);
         }, "Checking align-content: " + specifiedValue);
     }
 </script>

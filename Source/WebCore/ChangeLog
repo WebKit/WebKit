@@ -1,3 +1,40 @@
+2018-01-30  Javier Fernandez  <jfernandez@igalia.com>
+
+        [css-align] The 'baseline' value must be invalid for the 'justify-content' property
+        https://bugs.webkit.org/show_bug.cgi?id=181794
+
+        Reviewed by Antti Koivisto.
+
+        The CSS WG has resolved that it doesn't make sense to define Baseline
+        Content-Alignment in the inline/main axis.
+
+        https://github.com/w3c/csswg-drafts/issues/1184
+
+        The spec has been updated so that <baseline-postion> is not valid for
+        the 'justify-content' property's syntax. This CL updates our parsing
+        logic to match the new spec, including the parsing logic of the
+        place-content shorthand.
+
+        Additionally, this CL updates the computed value of the
+        <baseline-position> values to match other browsers.
+
+        We don't implement support for <baseline-position> values in the
+        Content Distribution properties (align-content and justify-content),
+        so I don't expect this change to break content of sites using the CSS
+        Box Alignment feature.
+
+        No new tests, just adapt the Web Platform Tests we already have to the new CSS syntax.
+
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::getBaselineKeyword):
+        (WebCore::consumeBaselineKeyword):
+        (WebCore::consumeContentDistributionOverflowPosition):
+        (WebCore::consumeSelfPositionOverflowPosition):
+        (WebCore::CSSPropertyParser::parseSingleValue):
+        (WebCore::consumeSimplifiedContentPosition):
+        (WebCore::CSSPropertyParser::consumePlaceContentShorthand):
+        (WebCore::consumeSimplifiedItemPosition):
+
 2018-01-30  Basuke Suzuki  <Basuke.Suzuki@sony.com>
 
         [WinCairo] Fix forwarding header conflict of WebKit on WinCairo

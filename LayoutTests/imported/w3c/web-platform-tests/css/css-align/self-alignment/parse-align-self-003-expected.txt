@@ -9,8 +9,8 @@ PASS Checking align-self: self-end
 PASS Checking align-self: center 
 PASS Checking align-self: flex-start 
 PASS Checking align-self: flex-end 
-FAIL Checking align-self: baseline assert_equals: align-self computed style is not what is should. expected "first baseline" but got "baseline"
-FAIL Checking align-self: first baseline assert_equals: align-self computed style is not what is should. expected "first baseline" but got "baseline"
+PASS Checking align-self: baseline 
+PASS Checking align-self: first baseline 
 PASS Checking align-self: last baseline 
 PASS Checking align-self: safe flex-end 
 PASS Checking align-self: unsafe end 

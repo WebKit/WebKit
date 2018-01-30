@@ -2,9 +2,6 @@ Test to verify that the new place-content alignment shorthand is parsed as expec
 
 
 PASS Test getting the Computed Value of place-content's longhand properties when setting 'normal' value through CSS. 
-PASS Test getting the Computed Value of place-content's longhand properties when setting 'baseline' value through CSS. 
-PASS Test getting the Computed Value of place-content's longhand properties when setting 'first baseline' value through CSS. 
-PASS Test getting the Computed Value of place-content's longhand properties when setting 'last baseline' value through CSS. 
 PASS Test getting the Computed Value of place-content's longhand properties when setting 'start' value through CSS. 
 PASS Test getting the Computed Value of place-content's longhand properties when setting 'flex-start' value through CSS. 
 PASS Test getting the Computed Value of place-content's longhand properties when setting 'end' value through CSS. 
@@ -12,13 +9,15 @@ PASS Test getting the Computed Value of place-content's longhand properties when
 PASS Test getting the Computed Value of place-content's longhand properties when setting 'stretch' value through CSS. 
 PASS Test getting the Computed Value of place-content's longhand properties when setting 'start end' value through CSS. 
 PASS Test getting the Computed Value of place-content's longhand properties when setting 'start space-evenly' value through CSS. 
-PASS Test getting the Computed Value of place-content's longhand properties when setting 'start baseline' value through CSS. 
+PASS Test getting the Computed Value of place-content's longhand properties when setting 'baseline start' value through CSS. 
 PASS Test setting '' as incorrect value through CSS. 
 PASS Test setting 'auto' as incorrect value through CSS. 
 PASS Test setting 'none' as incorrect value through CSS. 
 PASS Test setting 'safe' as incorrect value through CSS. 
 PASS Test setting 'start safe' as incorrect value through CSS. 
+PASS Test setting 'baseline' as incorrect value through CSS. 
 PASS Test setting 'baseline safe' as incorrect value through CSS. 
+PASS Test setting 'start baseline' as incorrect value through CSS. 
 PASS Test setting 'start end left' as incorrect value through CSS. 
 PASS Test setting values through JS. 
 PASS Test setting incorrect values through JS. 

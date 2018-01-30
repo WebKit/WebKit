@@ -13,7 +13,7 @@
     element = document.createElement("div");
     document.body.appendChild(element);
 
-    let values = ["auto", "legacy", "self-start"].concat(invalidPositionValues, invalidDistributionValues);
+    let values = ["auto", "legacy", "self-start", "baseline", "first baseline", "last baseline"].concat(invalidPositionValues, invalidDistributionValues);
 
     values.forEach(function(value) {
         test(function() {

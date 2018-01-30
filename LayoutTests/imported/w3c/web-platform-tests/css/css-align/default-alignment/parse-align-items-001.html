@@ -23,10 +23,10 @@
         element.className = "alignItems" + key;
         document.body.appendChild(element);
         test(function() {
-            let computedValue = specifiedValue;
-            if (specifiedValue === "baseline")
-                computedValue = "first baseline";
-            checkValues(element, "alignItems", "align-items", "", computedValue);
+            if (specifiedValue === "first baseline")
+                checkValues(element, "alignItems", "align-items", "", "baseline");
+            else
+                checkValues(element, "alignItems", "align-items", "", specifiedValue);
         }, "Checking align-items: " + specifiedValue);
     }
 </script>

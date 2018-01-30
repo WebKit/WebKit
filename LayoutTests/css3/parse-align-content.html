@@ -246,11 +246,11 @@ test(function() {
     element.style.alignContent = "unsafe end";
     checkValues(element, "alignContent", "align-content",  "unsafe end", "unsafe end");
 
-    element.style.justifyContent = "first baseline";
-    checkValues(element, "justifyContent", "justify-content",  "first baseline", "baseline");
+    element.style.alignContent = "first baseline";
+    checkValues(element, "alignContent", "align-content",  "baseline", "baseline");
 
-    element.style.justifyContent = "last baseline";
-    checkValues(element, "justifyContent", "justify-content",  "last baseline", "last baseline");
+    element.style.alignContent = "last baseline";
+    checkValues(element, "alignContent", "align-content",  "last baseline", "last baseline");
 
     element.style.alignContent = "normal";
     checkValues(element, "alignContent", "align-content",  "normal", "normal");

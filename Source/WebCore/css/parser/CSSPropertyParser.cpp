@@ -2704,11 +2704,10 @@ static RefPtr<CSSPrimitiveValue> consumeOverflowPositionKeyword(CSSParserTokenRa
 static CSSValueID getBaselineKeyword(RefPtr<CSSValue> value)
 {
     auto& primitiveValue = downcast<CSSPrimitiveValue>(*value);
-    if (auto* pairValue = primitiveValue.pairValue()) {
-        ASSERT(pairValue->second()->valueID() == CSSValueBaseline);
-        if (pairValue->first()->valueID() == CSSValueLast)
-            return CSSValueLastBaseline;
-        return CSSValueFirstBaseline;
+    if (primitiveValue.pairValue()) {
+        ASSERT(primitiveValue.pairValue()->first()->valueID() == CSSValueLast);
+        ASSERT(primitiveValue.pairValue()->second()->valueID() == CSSValueBaseline);
+        return CSSValueLastBaseline;
     }
     ASSERT(primitiveValue.valueID() == CSSValueBaseline);
     return CSSValueBaseline;
@@ -2716,21 +2715,20 @@ static CSSValueID getBaselineKeyword(RefPtr<CSSValue> value)
 
 static RefPtr<CSSValue> consumeBaselineKeyword(CSSParserTokenRange& range)
 {
-    CSSValueID id = range.peek().id();
-    if (identMatches<CSSValueBaseline>(id))
-        return consumeIdent(range);
-
-    if (RefPtr<CSSPrimitiveValue> preference = consumeIdent<CSSValueFirst, CSSValueLast>(range)) {
-        if (range.peek().id() == CSSValueBaseline)
-            return createPrimitiveValuePair(preference.releaseNonNull(), consumeIdent(range), Pair::IdenticalValueEncoding::Coalesce);
-    }
-    return nullptr;
+    RefPtr<CSSPrimitiveValue> preference = consumeIdent<CSSValueFirst, CSSValueLast>(range);
+    RefPtr<CSSPrimitiveValue> baseline = consumeIdent<CSSValueBaseline>(range);
+    if (!baseline)
+        return nullptr;
+    if (preference && preference->valueID() == CSSValueLast)
+        return createPrimitiveValuePair(preference.releaseNonNull(), baseline.releaseNonNull(), Pair::IdenticalValueEncoding::Coalesce);
+    return baseline;
 }
 
 using IsPositionKeyword = bool (*)(CSSValueID);
 
 static RefPtr<CSSValue> consumeContentDistributionOverflowPosition(CSSParserTokenRange& range, IsPositionKeyword isPositionKeyword)
 {
+    ASSERT(isPositionKeyword);
     CSSValueID id = range.peek().id();
     if (identMatches<CSSValueNormal>(id))
         return CSSContentDistributionValue::create(CSSValueInvalid, range.consumeIncludingWhitespace().id(), CSSValueInvalid);
@@ -3113,6 +3111,7 @@ static bool isSelfPositionOrLeftOrRightKeyword(CSSValueID id)
 
 static RefPtr<CSSValue> consumeSelfPositionOverflowPosition(CSSParserTokenRange& range, IsPositionKeyword isPositionKeyword)
 {
+    ASSERT(isPositionKeyword);
     CSSValueID id = range.peek().id();
     if (isAutoOrNormalOrStretch(id))
         return consumeIdent(range);
@@ -4228,6 +4227,9 @@ RefPtr<CSSValue> CSSPropertyParser::parseSingleValue(CSSPropertyID property, CSS
     case CSSPropertyWebkitClipPath:
         return consumeWebkitClipPath(m_range, m_context);
     case CSSPropertyJustifyContent:
+        // justify-content property does not allow the <baseline-position> values.
+        if (isBaselineKeyword(m_range.peek().id()))
+            return nullptr;
         return consumeContentDistributionOverflowPosition(m_range, isContentPositionOrLeftOrRightKeyword);
     case CSSPropertyAlignContent:
         return consumeContentDistributionOverflowPosition(m_range, isContentPositionKeyword);
@@ -5523,6 +5525,7 @@ bool CSSPropertyParser::consumeGridShorthand(bool important)
 
 static RefPtr<CSSValue> consumeSimplifiedContentPosition(CSSParserTokenRange& range, IsPositionKeyword isPositionKeyword)
 {
+    ASSERT(isPositionKeyword);
     CSSValueID id = range.peek().id();
     if (identMatches<CSSValueNormal>(id) || isPositionKeyword(id))
         return CSSContentDistributionValue::create(CSSValueInvalid, range.consumeIncludingWhitespace().id(), CSSValueInvalid);
@@ -5544,9 +5547,17 @@ bool CSSPropertyParser::consumePlaceContentShorthand(bool important)
     if (m_range.atEnd())
         return false;
 
+    bool isBaseline = isBaselineKeyword(m_range.peek().id());
     RefPtr<CSSValue> alignContentValue = consumeSimplifiedContentPosition(m_range, isContentPositionKeyword);
     if (!alignContentValue)
         return false;
+
+    // justify-content property does not allow the <baseline-position> values.
+    if (m_range.atEnd() && isBaseline)
+        return false;
+    if (isBaselineKeyword(m_range.peek().id()))
+        return false;
+
     RefPtr<CSSValue> justifyContentValue = m_range.atEnd() ? alignContentValue : consumeSimplifiedContentPosition(m_range, isContentPositionOrLeftOrRightKeyword);
     if (!justifyContentValue)
         return false;
@@ -5560,6 +5571,7 @@ bool CSSPropertyParser::consumePlaceContentShorthand(bool important)
 
 static RefPtr<CSSValue> consumeSimplifiedItemPosition(CSSParserTokenRange& range, IsPositionKeyword isPositionKeyword)
 {
+    ASSERT(isPositionKeyword);
     CSSValueID id = range.peek().id();
     if (isAutoOrNormalOrStretch(id) || isPositionKeyword(id))
         return consumeIdent(range);
