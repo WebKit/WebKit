@@ -889,21 +889,12 @@ public:
         auto folded = familyName.foldCase();
         return m_familyNameToFontDescriptors.ensure(folded, [&] {
             auto familyNameString = folded.createCFString();
-            RetainPtr<CFDictionaryRef> attributes;
-#if CAN_DISALLOW_USER_INSTALLED_FONTS
-            if (m_allowUserInstalledFonts == AllowUserInstalledFonts::No) {
-                CFTypeRef keys[] = { kCTFontFamilyNameAttribute, kCTFontUserInstalledAttribute };
-                CFTypeRef values[] = { familyNameString.get(), kCFBooleanFalse };
-                attributes = adoptCF(CFDictionaryCreate(kCFAllocatorDefault, keys, values, WTF_ARRAY_LENGTH(keys), &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
-            } else
-#endif
-            {
-                CFTypeRef keys[] = { kCTFontFamilyNameAttribute };
-                CFTypeRef values[] = { familyNameString.get() };
-                attributes = adoptCF(CFDictionaryCreate(kCFAllocatorDefault, keys, values, WTF_ARRAY_LENGTH(keys), &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
-            }
+            auto attributes = adoptCF(CFDictionaryCreateMutable(kCFAllocatorDefault, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
+            CFDictionaryAddValue(attributes.get(), kCTFontFamilyNameAttribute, familyNameString.get());
+            addAttributesForUserInstalledFonts(attributes.get(), m_allowUserInstalledFonts);
             auto fontDescriptorToMatch = adoptCF(CTFontDescriptorCreateWithAttributes(attributes.get()));
-            if (auto matches = adoptCF(CTFontDescriptorCreateMatchingFontDescriptors(fontDescriptorToMatch.get(), nullptr))) {
+            RetainPtr<CFSetRef> mandatoryAttributes = mandatoryAttributesForUserInstalledFonts(m_allowUserInstalledFonts);
+            if (auto matches = adoptCF(CTFontDescriptorCreateMatchingFontDescriptors(fontDescriptorToMatch.get(), mandatoryAttributes.get()))) {
                 auto count = CFArrayGetCount(matches.get());
                 Vector<InstalledFont> result;
                 result.reserveInitialCapacity(count);
@@ -927,21 +918,13 @@ public:
 #else
             CFStringRef nameAttribute = kCTFontNameAttribute;
 #endif
-            RetainPtr<CFDictionaryRef> attributes;
-#if CAN_DISALLOW_USER_INSTALLED_FONTS
-            if (m_allowUserInstalledFonts == AllowUserInstalledFonts::No) {
-                CFTypeRef keys[] = { kCTFontEnabledAttribute, nameAttribute, kCTFontUserInstalledAttribute };
-                CFTypeRef values[] = { kCFBooleanTrue, postScriptNameString.get(), kCFBooleanFalse };
-                attributes = adoptCF(CFDictionaryCreate(kCFAllocatorDefault, keys, values, WTF_ARRAY_LENGTH(keys), &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
-            } else
-#endif
-            {
-                CFTypeRef keys[] = { kCTFontEnabledAttribute, nameAttribute };
-                CFTypeRef values[] = { kCFBooleanTrue, postScriptNameString.get() };
-                attributes = adoptCF(CFDictionaryCreate(kCFAllocatorDefault, keys, values, WTF_ARRAY_LENGTH(keys), &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
-            }
+            auto attributes = adoptCF(CFDictionaryCreateMutable(kCFAllocatorDefault, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
+            CFDictionaryAddValue(attributes.get(), kCTFontEnabledAttribute, kCFBooleanTrue);
+            CFDictionaryAddValue(attributes.get(), nameAttribute, postScriptNameString.get());
+            addAttributesForUserInstalledFonts(attributes.get(), m_allowUserInstalledFonts);
             auto fontDescriptorToMatch = adoptCF(CTFontDescriptorCreateWithAttributes(attributes.get()));
-            auto match = adoptCF(static_cast<CTFontDescriptorRef>(CTFontDescriptorCreateMatchingFontDescriptor(fontDescriptorToMatch.get(), nullptr)));
+            RetainPtr<CFSetRef> mandatoryAttributes = mandatoryAttributesForUserInstalledFonts(m_allowUserInstalledFonts);
+            auto match = adoptCF(CTFontDescriptorCreateMatchingFontDescriptor(fontDescriptorToMatch.get(), mandatoryAttributes.get()));
             return InstalledFont(match.get());
         }).iterator->value;
     }
@@ -1428,6 +1411,34 @@ const AtomicString& FontCache::platformAlternateFamilyName(const AtomicString& f
     }
 
     return nullAtom();
+}
+
+void addAttributesForUserInstalledFonts(CFMutableDictionaryRef attributes, AllowUserInstalledFonts allowUserInstalledFonts)
+{
+#if CAN_DISALLOW_USER_INSTALLED_FONTS
+    if (allowUserInstalledFonts == AllowUserInstalledFonts::No) {
+        CFDictionaryAddValue(attributes, kCTFontUserInstalledAttribute, kCFBooleanFalse);
+        CTFontFallbackOption fallbackOption = kCTFontFallbackOptionSystem;
+        auto fallbackOptionNumber = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberSInt64Type, &fallbackOption));
+        CFDictionaryAddValue(attributes, kCTFontFallbackOptionAttribute, fallbackOptionNumber.get());
+    }
+#else
+    UNUSED_PARAM(attributes);
+    UNUSED_PARAM(allowUserInstalledFonts);
+#endif
+}
+
+RetainPtr<CFSetRef> mandatoryAttributesForUserInstalledFonts(AllowUserInstalledFonts allowUserInstalledFonts)
+{
+#if CAN_DISALLOW_USER_INSTALLED_FONTS
+    if (allowUserInstalledFonts == AllowUserInstalledFonts::No) {
+        CFTypeRef mandatoryAttributesValues[] = { kCTFontUserInstalledAttribute, kCTFontFallbackOptionAttribute };
+        return adoptCF(CFSetCreate(kCFAllocatorDefault, mandatoryAttributesValues, WTF_ARRAY_LENGTH(mandatoryAttributesValues), &kCFTypeSetCallBacks));
+    }
+#else
+    UNUSED_PARAM(allowUserInstalledFonts);
+#endif
+    return nullptr;
 }
 
 }

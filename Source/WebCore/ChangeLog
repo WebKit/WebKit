@@ -1,3 +1,28 @@
+2018-01-30  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        A disallowed user-installed font may be used if its PostScript name is specified
+        https://bugs.webkit.org/show_bug.cgi?id=180951
+
+        Reviewed by Brent Fulgham.
+
+        This patch adds a new CoreText font attribute, kCTFontFallbackOptionAttribute, to the
+        fonts which WebKit creates. It also adds this attribute to web fonts, so that font
+        fallback will happen according to our rules about user-installed fonts. It also marks
+        these font attributes as "mandatory" so CoreText will be guaranteed to follow the
+        policy.
+
+        Test: fast/text/user-installed-fonts/disable.html
+
+        * platform/graphics/FontCache.h:
+        (WebCore::FontDescriptionKey::makeFlagsKey):
+        * platform/graphics/cocoa/FontCacheCoreText.cpp:
+        (WebCore::FontDatabase::collectionForFamily):
+        (WebCore::FontDatabase::fontForPostScriptName):
+        (WebCore::addAttributesForUserInstalledFonts):
+        (WebCore::mandatoryAttributesForUserInstalledFonts):
+        * platform/graphics/mac/FontCustomPlatformData.cpp:
+        (WebCore::FontCustomPlatformData::fontPlatformData):
+
 2018-01-29  Youenn Fablet  <youenn@apple.com>
 
         Cache API should make sure to resolve caches.open promises in the same order as called

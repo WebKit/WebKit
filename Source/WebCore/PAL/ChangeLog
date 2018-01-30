@@ -1,3 +1,12 @@
+2018-01-30  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        A disallowed user-installed font may be used if its PostScript name is specified
+        https://bugs.webkit.org/show_bug.cgi?id=180951
+
+        Reviewed by Brent Fulgham.
+
+        * pal/spi/cocoa/CoreTextSPI.h:
+
 2018-01-29  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthN] Add a compile-time feature flag

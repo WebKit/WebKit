@@ -22,6 +22,7 @@
 #include "FontCustomPlatformData.h"
 
 #include "FontCache.h"
+#include "FontCacheCoreText.h"
 #include "FontDescription.h"
 #include "FontPlatformData.h"
 #include "SharedBuffer.h"
@@ -36,10 +37,17 @@ FontCustomPlatformData::~FontCustomPlatformData() = default;
 
 FontPlatformData FontCustomPlatformData::fontPlatformData(const FontDescription& fontDescription, bool bold, bool italic, const FontFeatureSettings& fontFaceFeatures, const FontVariantSettings& fontFaceVariantSettings, FontSelectionSpecifiedCapabilities fontFaceCapabilities)
 {
+    auto attributes = adoptCF(CFDictionaryCreateMutable(kCFAllocatorDefault, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
+    addAttributesForUserInstalledFonts(attributes.get(), fontDescription.shouldAllowUserInstalledFonts());
+    auto modifiedFontDescriptor = adoptCF(CTFontDescriptorCreateCopyWithAttributes(m_fontDescriptor.get(), attributes.get()));
+    RetainPtr<CFSetRef> mandatoryAttributes = mandatoryAttributesForUserInstalledFonts(fontDescription.shouldAllowUserInstalledFonts());
+    auto matchingFontDescriptor = adoptCF(CTFontDescriptorCreateMatchingFontDescriptor(modifiedFontDescriptor.get(), mandatoryAttributes.get()));
+    ASSERT(matchingFontDescriptor);
+
     int size = fontDescription.computedPixelSize();
     FontOrientation orientation = fontDescription.orientation();
     FontWidthVariant widthVariant = fontDescription.widthVariant();
-    RetainPtr<CTFontRef> font = adoptCF(CTFontCreateWithFontDescriptor(m_fontDescriptor.get(), size, nullptr));
+    RetainPtr<CTFontRef> font = adoptCF(CTFontCreateWithFontDescriptor(matchingFontDescriptor.get(), size, nullptr));
     font = preparePlatformFont(font.get(), fontDescription, &fontFaceFeatures, &fontFaceVariantSettings, fontFaceCapabilities, fontDescription.computedSize());
     ASSERT(font);
     return FontPlatformData(font.get(), size, bold, italic, orientation, widthVariant, fontDescription.textRenderingMode());
