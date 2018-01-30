@@ -131,6 +131,7 @@ my (
     $webAnimationsSupport,
     $webAssemblySupport,
     $webAudioSupport,
+    $webAuthN,
     $webRTCSupport,
     $writableStreamAPISupport,
     $webglSupport,
@@ -362,6 +363,9 @@ my @features = (
 
     { option => "web-audio", desc => "Toggle Web Audio support",
       define => "ENABLE_WEB_AUDIO", value => \$webAudioSupport },
+
+    { option => "web-authn", desc => "Toggle Web Authn support",
+      define => "ENABLE_WEB_AUTHN", value => \$webAuthN },
 
     { option => "web-rtc", desc => "Toggle WebRTC support",
       define => "ENABLE_WEB_RTC", value => \$webRTCSupport },

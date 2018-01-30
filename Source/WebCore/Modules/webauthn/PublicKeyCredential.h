@@ -25,6 +25,8 @@
 
 #pragma once
 
+#if ENABLE(WEB_AUTHN)
+
 #include "BasicCredential.h"
 #include "ExceptionOr.h"
 #include <runtime/ArrayBuffer.h>
@@ -70,3 +72,5 @@ private:
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_BASIC_CREDENTIAL(PublicKeyCredential, BasicCredential::Type::PublicKey)
+
+#endif // ENABLE(WEB_AUTHN)

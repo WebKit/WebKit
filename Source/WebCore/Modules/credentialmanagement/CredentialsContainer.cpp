@@ -27,6 +27,8 @@
 #include "config.h"
 #include "CredentialsContainer.h"
 
+#if ENABLE(WEB_AUTHN)
+
 #include "AbortSignal.h"
 #include "CredentialCreationOptions.h"
 #include "CredentialRequestOptions.h"
@@ -189,3 +191,5 @@ void CredentialsContainer::preventSilentAccess(Ref<DeferredPromise>&& promise) c
 }
 
 } // namespace WebCore
+
+#endif // ENABLE(WEB_AUTHN)

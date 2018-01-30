@@ -26,6 +26,8 @@
 #include "config.h"
 #include "PublicKeyCredential.h"
 
+#if ENABLE(WEB_AUTHN)
+
 #include "Authenticator.h"
 #include "AuthenticatorResponse.h"
 #include "JSDOMPromiseDeferred.h"
@@ -214,3 +216,5 @@ void PublicKeyCredential::isUserVerifyingPlatformAuthenticatorAvailable(Ref<Defe
 }
 
 } // namespace WebCore
+
+#endif // ENABLE(WEB_AUTHN)

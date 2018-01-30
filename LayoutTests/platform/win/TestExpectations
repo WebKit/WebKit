@@ -625,8 +625,11 @@ webkit.org/b/149630 css3/font-variant-all.html [ ImageOnlyFailure ]
 
 webkit.org/b/158836 imported/w3c/web-platform-tests/encrypted-media [ Skip ]
 
-# Credential Management not supported
+# Skip anything related to WebAuthN
+http/tests/webauthn/ [ Skip ]
 http/wpt/credential-management/ [ Skip ]
+http/wpt/webauthn/ [ Skip ]
+imported/w3c/web-platform-tests/credential-management/ [ Skip ]
 
 # UIScriptController::zoomToScale is not implemented on Windows.
 webkit.org/b/180424 fast/visual-viewport/resize-event-fired.html [ Skip ]
@@ -3854,16 +3857,6 @@ webkit.org/b/181854 svg/filters/feDiffuseLighting-bottomRightPixel.html [ ImageO
 
 webkit.org/b/181869 svg/filters/fePointLight-color.svg [ ImageOnlyFailure ]
 webkit.org/b/181869 svg/filters/feSpotLight-color.svg [ ImageOnlyFailure ]
-
-webkit.org/b/182118 http/tests/webauthn/public-key-credential-create-with-invalid-parameters.https.html [ Failure ]
-webkit.org/b/182118 http/wpt/webauthn/idl.https.html [ Failure ]
-webkit.org/b/182118 http/wpt/webauthn/public-key-credential-create-failure.https.html [ Failure ]
-webkit.org/b/182118 http/wpt/webauthn/public-key-credential-create-success.https.html [ Failure ]
-webkit.org/b/182118 http/tests/webauthn/public-key-credential-same-origin-with-ancestors-2.https.html [ Skip ]
-webkit.org/b/182118 http/tests/webauthn/public-key-credential-same-origin-with-ancestors.https.html [ Skip ]
-webkit.org/b/182118 http/tests/webauthn/public-key-credential-get-with-invalid-parameters.https.html [ Failure ]
-webkit.org/b/182118 http/wpt/webauthn/public-key-credential-get-failure.https.html [ Failure ]
-webkit.org/b/182118 http/wpt/webauthn/public-key-credential-get-success.https.html [ Failure ]
 
 webkit.org/b/182119 js/dom/random-array-gc-stress.html [ Failure ]
 

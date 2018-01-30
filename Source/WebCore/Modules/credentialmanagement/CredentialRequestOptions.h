@@ -26,6 +26,8 @@
 
 #pragma once
 
+#if ENABLE(WEB_AUTHN)
+
 #include "PublicKeyCredentialRequestOptions.h"
 #include <wtf/RefCounted.h>
 
@@ -42,3 +44,5 @@ struct CredentialRequestOptions {
 };
 
 } // namespace WebCore
+
+#endif // ENABLE(WEB_AUTHN)

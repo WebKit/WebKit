@@ -1,3 +1,13 @@
+2018-01-29  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebAuthN] Add a compile-time feature flag
+        https://bugs.webkit.org/show_bug.cgi?id=182211
+        <rdar://problem/36936365>
+
+        Reviewed by Brent Fulgham.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2018-01-27  Dan Bernstein  <mitz@apple.com>
 
         HaveInternalSDK includes should be "#include?"

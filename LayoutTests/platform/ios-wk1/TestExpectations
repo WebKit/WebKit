@@ -1906,3 +1906,9 @@ webkit.org/b/180062 fast/text/user-installed-fonts [ ImageOnlyFailure ]
 
 # rdar://problem/34716163 Breaks subsequent tests using response.xml
 http/tests/xmlhttprequest/range-test.html [ Skip ]
+
+# Skip anything related to WebAuthN
+http/tests/webauthn/ [ Skip ]
+http/wpt/credential-management/ [ Skip ]
+http/wpt/webauthn/ [ Skip ]
+imported/w3c/web-platform-tests/credential-management/ [ Skip ]

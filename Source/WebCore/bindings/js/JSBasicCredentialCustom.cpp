@@ -26,9 +26,10 @@
 #include "config.h"
 #include "JSBasicCredential.h"
 
+#if ENABLE(WEB_AUTHN)
+
 #include "JSDOMBinding.h"
 #include "JSPublicKeyCredential.h"
-
 
 namespace WebCore {
 using namespace JSC;
@@ -46,3 +47,5 @@ JSValue toJS(ExecState* state, JSDOMGlobalObject* globalObject, BasicCredential&
 }
 
 } // namespace WebCore
+
+#endif // ENABLE(WEB_AUTHN)

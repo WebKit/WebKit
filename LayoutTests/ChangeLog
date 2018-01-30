@@ -1,3 +1,20 @@
+2018-01-29  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebAuthN] Add a compile-time feature flag
+        https://bugs.webkit.org/show_bug.cgi?id=182211
+        <rdar://problem/36936365>
+
+        Reviewed by Brent Fulgham.
+
+        Skip WebAuthN related tests on certain platforms as they won't
+        support it immediately.
+
+        * platform/gtk/TestExpectations:
+        * platform/ios-wk1/TestExpectations:
+        * platform/mac-wk1/TestExpectations:
+        * platform/win/TestExpectations:
+        * platform/wpe/TestExpectations:
+
 2018-01-29  Ryan Haddad  <ryanhaddad@apple.com>
 
         Mark webrtc/captureCanvas-webrtc.html as flaky on macOS.

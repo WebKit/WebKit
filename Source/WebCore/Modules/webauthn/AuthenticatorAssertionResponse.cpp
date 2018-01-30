@@ -26,6 +26,8 @@
 #include "config.h"
 #include "AuthenticatorAssertionResponse.h"
 
+#if ENABLE(WEB_AUTHN)
+
 namespace WebCore {
 
 AuthenticatorAssertionResponse::AuthenticatorAssertionResponse(RefPtr<ArrayBuffer>&& clientDataJSON, RefPtr<ArrayBuffer>&& authenticatorData, RefPtr<ArrayBuffer>&& signature, RefPtr<ArrayBuffer>&& userHandle)
@@ -52,3 +54,5 @@ ArrayBuffer* AuthenticatorAssertionResponse::userHandle() const
 }
 
 } // namespace WebCore
+
+#endif // ENABLE(WEB_AUTHN)

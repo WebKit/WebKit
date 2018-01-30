@@ -26,6 +26,8 @@
 
 #pragma once
 
+#if ENABLE(WEB_AUTHN)
+
 #include "JSDOMPromiseDeferred.h"
 #include "Timer.h"
 #include <wtf/Function.h>
@@ -88,3 +90,5 @@ private:
 };
 
 } // namespace WebCore
+
+#endif // ENABLE(WEB_AUTHN)

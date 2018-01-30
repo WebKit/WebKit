@@ -25,6 +25,8 @@
 
 #pragma once
 
+#if ENABLE(WEB_AUTHN)
+
 #include "AuthenticatorResponse.h"
 
 namespace WebCore {
@@ -51,3 +53,5 @@ private:
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_AUTHENTICATOR_RESPONSE(AuthenticatorAttestationResponse, AuthenticatorResponse::Type::Attestation)
+
+#endif // ENABLE(WEB_AUTHN)

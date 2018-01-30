@@ -25,6 +25,8 @@
 
 #pragma once
 
+#if ENABLE(WEB_AUTHN)
+
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/TypeCasts.h>
 #include <wtf/text/WTFString.h>
@@ -63,3 +65,5 @@ private:
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::ToClassName) \
     static bool isType(const WebCore::BasicCredential& credential) { return credential.credentialType() == WebCore::Type; } \
 SPECIALIZE_TYPE_TRAITS_END()
+
+#endif // ENABLE(WEB_AUTHN)

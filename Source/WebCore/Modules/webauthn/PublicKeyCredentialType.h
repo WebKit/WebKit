@@ -25,6 +25,8 @@
 
 #pragma once
 
+#if ENABLE(WEB_AUTHN)
+
 namespace WebCore {
 
 enum class PublicKeyCredentialType {
@@ -32,3 +34,5 @@ enum class PublicKeyCredentialType {
 };
 
 } // namespace WebCore
+
+#endif // ENABLE(WEB_AUTHN)

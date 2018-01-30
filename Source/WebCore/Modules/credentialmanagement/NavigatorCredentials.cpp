@@ -27,6 +27,8 @@
 #include "config.h"
 #include "NavigatorCredentials.h"
 
+#if ENABLE(WEB_AUTHN)
+
 #include "Document.h"
 #include "Frame.h"
 #include "Navigator.h"
@@ -69,3 +71,5 @@ NavigatorCredentials* NavigatorCredentials::from(Navigator* navigator)
 }
 
 } // namespace WebCore
+
+#endif // ENABLE(WEB_AUTHN)

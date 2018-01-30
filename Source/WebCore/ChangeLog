@@ -1,3 +1,55 @@
+2018-01-29  Jiewen Tan  <jiewen_tan@apple.com>
+
+        [WebAuthN] Add a compile-time feature flag
+        https://bugs.webkit.org/show_bug.cgi?id=182211
+        <rdar://problem/36936365>
+
+        Reviewed by Brent Fulgham.
+
+        Add a compile-time feature flag for WebAuthN as most of the functionality is platform
+        dependent.
+
+        No tests.
+
+        * Configurations/FeatureDefines.xcconfig:
+        * Modules/credentialmanagement/BasicCredential.cpp:
+        * Modules/credentialmanagement/BasicCredential.h:
+        * Modules/credentialmanagement/BasicCredential.idl:
+        * Modules/credentialmanagement/CredentialCreationOptions.h:
+        * Modules/credentialmanagement/CredentialCreationOptions.idl:
+        * Modules/credentialmanagement/CredentialRequestOptions.h:
+        * Modules/credentialmanagement/CredentialRequestOptions.idl:
+        * Modules/credentialmanagement/CredentialsContainer.cpp:
+        * Modules/credentialmanagement/CredentialsContainer.h:
+        * Modules/credentialmanagement/CredentialsContainer.idl:
+        * Modules/credentialmanagement/NavigatorCredentials.cpp:
+        * Modules/credentialmanagement/NavigatorCredentials.h:
+        * Modules/credentialmanagement/NavigatorCredentials.idl:
+        * Modules/webauthn/Authenticator.cpp:
+        * Modules/webauthn/Authenticator.h:
+        * Modules/webauthn/AuthenticatorAssertionResponse.cpp:
+        * Modules/webauthn/AuthenticatorAssertionResponse.h:
+        * Modules/webauthn/AuthenticatorAssertionResponse.idl:
+        * Modules/webauthn/AuthenticatorAttestationResponse.cpp:
+        * Modules/webauthn/AuthenticatorAttestationResponse.h:
+        * Modules/webauthn/AuthenticatorAttestationResponse.idl:
+        * Modules/webauthn/AuthenticatorResponse.cpp:
+        * Modules/webauthn/AuthenticatorResponse.h:
+        * Modules/webauthn/AuthenticatorResponse.idl:
+        * Modules/webauthn/PublicKeyCredential.cpp:
+        * Modules/webauthn/PublicKeyCredential.h:
+        * Modules/webauthn/PublicKeyCredential.idl:
+        * Modules/webauthn/PublicKeyCredentialCreationOptions.h:
+        * Modules/webauthn/PublicKeyCredentialCreationOptions.idl:
+        * Modules/webauthn/PublicKeyCredentialDescriptor.h:
+        * Modules/webauthn/PublicKeyCredentialDescriptor.idl:
+        * Modules/webauthn/PublicKeyCredentialRequestOptions.h:
+        * Modules/webauthn/PublicKeyCredentialRequestOptions.idl:
+        * Modules/webauthn/PublicKeyCredentialType.h:
+        * Modules/webauthn/PublicKeyCredentialType.idl:
+        * bindings/js/JSAuthenticatorResponseCustom.cpp:
+        * bindings/js/JSBasicCredentialCustom.cpp:
+
 2018-01-29  John Wilander  <wilander@apple.com>
 
         Resource Load Statistics: Introduce debug mode as experimental feature

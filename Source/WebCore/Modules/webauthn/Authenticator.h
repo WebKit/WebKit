@@ -25,6 +25,8 @@
 
 #pragma once
 
+#if ENABLE(WEB_AUTHN)
+
 #include "ExceptionOr.h"
 #include "PublicKeyCredentialCreationOptions.h"
 #include <wtf/Forward.h>
@@ -62,10 +64,10 @@ public:
     ExceptionOr<Vector<uint8_t>> makeCredential(const Vector<uint8_t>& hash, const PublicKeyCredentialCreationOptions::RpEntity&, const PublicKeyCredentialCreationOptions::UserEntity&, const Vector<PublicKeyCredentialCreationOptions::Parameters>&, const Vector<PublicKeyCredentialDescriptor>& excludeCredentialIds) const;
     ExceptionOr<AssertionReturnBundle> getAssertion(const String& rpId, const Vector<uint8_t>& hash, const Vector<PublicKeyCredentialDescriptor>& allowCredentialIds) const;
 
-#if !COMPILER(MSVC)
 private:
-#endif
     Authenticator() = default;
 };
 
 } // namespace WebCore
+
+#endif // ENABLE(WEB_AUTHN)

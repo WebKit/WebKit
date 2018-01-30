@@ -26,6 +26,8 @@
 #include "config.h"
 #include "BasicCredential.h"
 
+#if ENABLE(WEB_AUTHN)
+
 namespace WebCore {
 
 BasicCredential::BasicCredential(const String& id, Type type, Discovery discovery)
@@ -49,3 +51,5 @@ String BasicCredential::type() const
 }
 
 } // namespace WebCore
+
+#endif // ENABLE(WEB_AUTHN)

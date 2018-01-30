@@ -26,6 +26,8 @@
 #include "config.h"
 #include "JSAuthenticatorResponse.h"
 
+#if ENABLE(WEB_AUTHN)
+
 #include "JSAuthenticatorAssertionResponse.h"
 #include "JSAuthenticatorAttestationResponse.h"
 #include "JSDOMBinding.h"
@@ -48,3 +50,5 @@ JSValue toJS(ExecState* state, JSDOMGlobalObject* globalObject, AuthenticatorRes
 }
 
 } // namespace WebCore
+
+#endif // ENABLE(WEB_AUTHN)

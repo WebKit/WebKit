@@ -25,6 +25,8 @@
 
 #pragma once
 
+#if ENABLE(WEB_AUTHN)
+
 #include "BufferSource.h"
 #include "PublicKeyCredentialDescriptor.h"
 #include "PublicKeyCredentialType.h"
@@ -63,3 +65,5 @@ struct PublicKeyCredentialCreationOptions {
 };
 
 } // namespace WebCore
+
+#endif // ENABLE(WEB_AUTHN)

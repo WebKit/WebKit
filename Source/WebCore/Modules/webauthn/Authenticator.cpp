@@ -26,6 +26,8 @@
 #include "config.h"
 #include "Authenticator.h"
 
+#if ENABLE(WEB_AUTHN)
+
 #include <AuthenticatorAttestationResponse.h>
 #include <wtf/CurrentTime.h>
 #include <wtf/NeverDestroyed.h>
@@ -73,3 +75,5 @@ ExceptionOr<Authenticator::AssertionReturnBundle> Authenticator::getAssertion(co
 }
 
 } // namespace WebCore
+
+#endif // ENABLE(WEB_AUTHN)
