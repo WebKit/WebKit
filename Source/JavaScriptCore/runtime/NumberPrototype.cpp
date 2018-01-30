@@ -365,15 +365,17 @@ static String toStringWithRadixInternal(int32_t number, unsigned radix)
     uint32_t positiveNumber = number;
     if (number < 0) {
         negative = true;
-        positiveNumber = -number;
+        positiveNumber = static_cast<uint32_t>(-static_cast<int64_t>(number));
     }
 
-    while (positiveNumber) {
+    // Always loop at least once, to emit at least '0'.
+    do {
         uint32_t index = positiveNumber % radix;
         ASSERT(index < sizeof(radixDigits));
         *--p = static_cast<LChar>(radixDigits[index]);
         positiveNumber /= radix;
-    }
+    } while (positiveNumber);
+
     if (negative)
         *--p = '-';
 
