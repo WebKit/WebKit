@@ -1,5 +1,23 @@
 2018-01-30  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r227686. rdar://problem/37019446
+
+    2018-01-26  Antoine Quint  <graouts@apple.com>
+
+            [iOS] prefers-reduced-motion media query is not working
+            https://bugs.webkit.org/show_bug.cgi?id=182169
+            <rdar://problem/36801631>
+
+            Reviewed by Dean Jackson.
+
+            The code that would eventually query UIKit for the system setting was not run since USE(NEW_THEME) is off on iOS.
+            Adding a PLATFORM(IOS) flag here allows the code to run.
+
+            * css/MediaQueryEvaluator.cpp:
+            (WebCore::prefersReducedMotionEvaluate):
+
+2018-01-30  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r227680. rdar://problem/37019528
 
     2018-01-26  Youenn Fablet  <youenn@apple.com>
