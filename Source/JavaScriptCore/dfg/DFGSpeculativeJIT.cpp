@@ -6413,6 +6413,7 @@ void SpeculativeJIT::compileGetByValOnDirectArguments(Node* node)
 #if USE(JSVALUE32_64)
     GPRTemporary resultTag(this);
 #endif
+    GPRTemporary scratch(this);
     
     GPRReg baseReg = base.gpr();
     GPRReg propertyReg = property.gpr();
@@ -6423,6 +6424,7 @@ void SpeculativeJIT::compileGetByValOnDirectArguments(Node* node)
 #else
     JSValueRegs resultRegs = JSValueRegs(resultReg);
 #endif
+    GPRReg scratchReg = scratch.gpr();
     
     if (!m_compileOkay)
         return;
@@ -6435,14 +6437,20 @@ void SpeculativeJIT::compileGetByValOnDirectArguments(Node* node)
             MacroAssembler::NonZero,
             MacroAssembler::Address(baseReg, DirectArguments::offsetOfMappedArguments())));
 
-    auto isOutOfBounds = m_jit.branch32(CCallHelpers::AboveOrEqual, propertyReg, CCallHelpers::Address(baseReg, DirectArguments::offsetOfLength()));
+    m_jit.load32(CCallHelpers::Address(baseReg, DirectArguments::offsetOfLength()), scratchReg);
+    auto isOutOfBounds = m_jit.branch32(CCallHelpers::AboveOrEqual, propertyReg, scratchReg);
     if (node->arrayMode().isInBounds())
         speculationCheck(OutOfBounds, JSValueSource(), 0, isOutOfBounds);
     
+    m_jit.emitDynamicPoisonOnType(baseReg, resultReg, DirectArgumentsType);
+    m_jit.emitPreparePreciseIndexMask32(propertyReg, scratchReg, scratchReg);
+
     m_jit.loadValue(
         MacroAssembler::BaseIndex(
             baseReg, propertyReg, MacroAssembler::TimesEight, DirectArguments::storageOffset()),
         resultRegs);
+    
+    m_jit.andPtr(scratchReg, resultReg);
 
     if (!node->arrayMode().isInBounds()) {
         addSlowPathGenerator(

@@ -582,9 +582,19 @@ public:
         lshift32(trustedImm32ForShift(imm), srcDest);
     }
     
+    void lshiftPtr(TrustedImm32 imm, RegisterID srcDest)
+    {
+        lshift32(imm, srcDest);
+    }
+    
     void rshiftPtr(Imm32 imm, RegisterID srcDest)
     {
         rshift32(trustedImm32ForShift(imm), srcDest);
+    }
+
+    void rshiftPtr(TrustedImm32 imm, RegisterID srcDest)
+    {
+        rshift32(imm, srcDest);
     }
 
     void urshiftPtr(Imm32 imm, RegisterID srcDest)
@@ -906,9 +916,19 @@ public:
         lshift64(trustedImm32ForShift(imm), srcDest);
     }
 
+    void lshiftPtr(TrustedImm32 imm, RegisterID srcDest)
+    {
+        lshift64(imm, srcDest);
+    }
+
     void rshiftPtr(Imm32 imm, RegisterID srcDest)
     {
         rshift64(trustedImm32ForShift(imm), srcDest);
+    }
+
+    void rshiftPtr(TrustedImm32 imm, RegisterID srcDest)
+    {
+        rshift64(imm, srcDest);
     }
 
     void urshiftPtr(Imm32 imm, RegisterID srcDest)
