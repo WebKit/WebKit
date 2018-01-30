@@ -1,5 +1,20 @@
 2018-01-30  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r227707. rdar://problem/37019463
+
+    2018-01-26  Matt Baker  <mattbaker@apple.com>
+
+            Web Inspector: Timelines content browser NavigationBar is squashed at narrow heights
+            https://bugs.webkit.org/show_bug.cgi?id=182196
+            <rdar://problem/36929899>
+
+            Reviewed by Joseph Pecoraro.
+
+            * UserInterface/Views/NavigationBar.css:
+            (.navigation-bar):
+
+2018-01-30  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r227666. rdar://problem/37019530
 
     2018-01-25  Joseph Pecoraro  <pecoraro@apple.com>
