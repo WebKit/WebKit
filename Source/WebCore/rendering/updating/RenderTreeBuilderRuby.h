@@ -33,6 +33,7 @@ class RenderElement;
 class RenderObject;
 class RenderRubyAsBlock;
 class RenderRubyAsInline;
+class RenderRubyBase;
 class RenderRubyRun;
 class RenderTreeBuilder;
 
@@ -50,6 +51,7 @@ private:
     void moveInlineChildren(RenderRubyBase& from, RenderRubyBase& to, RenderObject* beforeChild);
     void moveBlockChildren(RenderRubyBase& from, RenderRubyBase& to, RenderObject* beforeChild);
     void moveChildrenInternal(RenderRubyBase& from, RenderRubyBase& to, RenderObject* beforeChild = nullptr);
+    RenderRubyBase* rubyBaseSafe(RenderRubyRun&);
 
     RenderTreeBuilder& m_builder;
 };

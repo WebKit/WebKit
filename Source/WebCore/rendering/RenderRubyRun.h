@@ -50,7 +50,6 @@ public:
     bool hasRubyBase() const;
     RenderRubyText* rubyText() const;
     RenderRubyBase* rubyBase() const;
-    RenderRubyBase* rubyBaseSafe(); // creates the base if it doesn't already exist
 
     void layoutExcludedChildren(bool relayoutChildren) override;
     void layout() override;
@@ -73,7 +72,6 @@ public:
     }
     bool canBreakBefore(const LazyLineBreakIterator&) const;
     
-protected:
     RenderPtr<RenderRubyBase> createRubyBase() const;
 
 private:

@@ -78,29 +78,18 @@ RenderRubyText* RenderRubyRun::rubyText() const
     // If in future it becomes necessary to support floating or positioned ruby text,
     // layout will have to be changed to handle them properly.
     ASSERT(!child || !child->isRubyText() || !child->isFloatingOrOutOfFlowPositioned());
-    return child && child->isRubyText() ? static_cast<RenderRubyText*>(child) : 0;
+    return child && child->isRubyText() ? static_cast<RenderRubyText*>(child) : nullptr;
 }
 
 RenderRubyBase* RenderRubyRun::rubyBase() const
 {
     RenderObject* child = lastChild();
-    return child && child->isRubyBase() ? static_cast<RenderRubyBase*>(child) : 0;
-}
-
-RenderRubyBase* RenderRubyRun::rubyBaseSafe()
-{
-    RenderRubyBase* base = rubyBase();
-    if (!base) {
-        auto newBase = createRubyBase();
-        base = newBase.get();
-        RenderTreeBuilder::current()->insertChildToRenderBlockFlow(*this, WTFMove(newBase));
-    }
-    return base;
+    return child && child->isRubyBase() ? static_cast<RenderRubyBase*>(child) : nullptr;
 }
 
 RenderBlock* RenderRubyRun::firstLineBlock() const
 {
-    return 0;
+    return nullptr;
 }
 
 bool RenderRubyRun::isChildAllowed(const RenderObject& child, const RenderStyle&) const
@@ -119,7 +108,7 @@ RenderPtr<RenderObject> RenderRubyRun::takeChild(RenderObject& child)
             // Ruby run without a base can happen only at the first run.
             RenderRubyRun& rightRun = downcast<RenderRubyRun>(*rightNeighbour);
             if (rightRun.hasRubyBase()) {
-                RenderRubyBase* rightBase = rightRun.rubyBaseSafe();
+                RenderRubyBase* rightBase = rightRun.rubyBase();
                 // Collect all children in a single base, then swap the bases.
                 RenderTreeBuilder::current()->moveRubyChildren(*rightBase, *base);
                 moveChildTo(&rightRun, base, RenderBoxModelObject::NormalizeAfterInsertion::No);

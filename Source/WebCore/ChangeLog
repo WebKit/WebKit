@@ -1,3 +1,27 @@
+2018-01-30  Zalan Bujtas  <zalan@apple.com>
+
+        [RenderTreeBuilder] Move RenderRubyRun::rubyBaseSafe to RenderTreeBuilder::Ruby
+        https://bugs.webkit.org/show_bug.cgi?id=182306
+        <rdar://problem/37041440>
+
+        Reviewed by Antti Koivisto.
+
+        With all the ruby mutation code moving, only RenderTreeBuilder calls RenderRubyRun::rubyBaseSafe.
+
+        No change in functionality.
+
+        * rendering/RenderRubyRun.cpp:
+        (WebCore::RenderRubyRun::rubyText const):
+        (WebCore::RenderRubyRun::rubyBase const):
+        (WebCore::RenderRubyRun::firstLineBlock const):
+        (WebCore::RenderRubyRun::takeChild):
+        (WebCore::RenderRubyRun::rubyBaseSafe): Deleted.
+        * rendering/RenderRubyRun.h:
+        * rendering/updating/RenderTreeBuilderRuby.cpp:
+        (WebCore::RenderTreeBuilder::Ruby::insertChild):
+        (WebCore::RenderTreeBuilder::Ruby::rubyBaseSafe):
+        * rendering/updating/RenderTreeBuilderRuby.h:
+
 2018-01-30  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         Unified sources for FEMorphology.cpp seems to break the windows build.
