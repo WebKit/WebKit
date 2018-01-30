@@ -1,5 +1,21 @@
 2018-01-30  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Cherry-pick r227741. rdar://problem/36912402
+
+    2018-01-29  Youenn Fablet  <youenn@apple.com>
+
+            Move http/wpt/service-workers/clone-opaque-being-loaded-response.https.html to use HTTP
+            https://bugs.webkit.org/show_bug.cgi?id=182202
+
+            Reviewed by Chris Dumez.
+
+            Some bots dislike cross origin HTTPS fetches.
+
+            * http/wpt/service-workers/clone-opaque-being-loaded-response-expected.txt: Renamed from LayoutTests/http/wpt/service-workers/clone-opaque-being-loaded-response.https-expected.txt.
+            * http/wpt/service-workers/clone-opaque-being-loaded-response.html: Renamed from LayoutTests/http/wpt/service-workers/clone-opaque-being-loaded-response.https.html.
+
+2018-01-30  Ryan Haddad  <ryanhaddad@apple.com>
+
         Unreviewed, rebaseline tests for rdar://problem/36912404&36912403.
 
         * platform/mac-elcapitan/imported/w3c/web-platform-tests/service-workers/service-worker/fetch-request-redirect.https-expected.txt: Added.
