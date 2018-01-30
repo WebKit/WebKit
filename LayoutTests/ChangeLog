@@ -1,3 +1,12 @@
+2018-01-29  Matt Lewis  <jlewis3@apple.com>
+
+        Marked imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/errorhandling.html as flaky.
+        https://bugs.webkit.org/show_bug.cgi?id=182177
+
+        Unreviewed test expectations.
+
+        * TestExpectations:
+
 2018-01-29  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthN] Add a compile-time feature flag
