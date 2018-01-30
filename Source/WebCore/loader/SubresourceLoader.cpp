@@ -297,6 +297,16 @@ void SubresourceLoader::didReceiveResponse(const ResourceResponse& response)
         return;
     }
 #endif
+#if ENABLE(SERVICE_WORKER)
+    // Implementing step 10 of https://fetch.spec.whatwg.org/#main-fetch for service worker responses.
+    if (response.source() == ResourceResponse::Source::ServiceWorker && response.url() != request().url()) {
+        auto& loader = m_documentLoader->cachedResourceLoader();
+        if (!loader.allowedByContentSecurityPolicy(m_resource->type(), response.url(), options(), ContentSecurityPolicy::RedirectResponseReceived::Yes)) {
+            cancel(ResourceError({ }, 0, response.url(), { }, ResourceError::Type::General));
+            return;
+        }
+    }
+#endif
 
     // We want redirect responses to be processed through willSendRequestInternal.
     // The only exception is redirection with no Location headers. Or in rare circumstances,
