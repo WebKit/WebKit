@@ -233,11 +233,10 @@ void DOMCacheStorage::doRemove(const String& name, DOMPromiseDeferred<IDLBoolean
             else {
                 if (result.value().hadStorageError)
                     logConsolePersistencyError(scriptExecutionContext(), name);
-                promise.resolve(true);
+                promise.resolve(!!result.value().identifier);
             }
         }
     });
-    m_caches.remove(position);
 }
 
 void DOMCacheStorage::keys(KeysPromise&& promise)

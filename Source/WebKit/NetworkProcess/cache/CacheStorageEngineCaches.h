@@ -29,6 +29,7 @@
 #include "NetworkCacheStorage.h"
 #include <WebCore/ClientOrigin.h>
 #include <wtf/CompletionHandler.h>
+#include <wtf/Deque.h>
 
 namespace WebKit {
 
@@ -39,6 +40,7 @@ class Engine;
 class Caches : public RefCounted<Caches> {
 public:
     static Ref<Caches> create(Engine& engine, WebCore::ClientOrigin&& origin, String&& rootPath, uint64_t quota) { return adoptRef(*new Caches { engine, WTFMove(origin), WTFMove(rootPath), quota }); }
+    ~Caches();
 
     static void retrieveOriginFromDirectory(const String& folderPath, WorkQueue&, WTF::CompletionHandler<void(std::optional<WebCore::ClientOrigin>&&)>&&);
 
@@ -50,7 +52,7 @@ public:
     void detach();
 
     bool isInitialized() const { return m_isInitialized; }
-    WebCore::DOMCacheEngine::CacheInfos cacheInfos(uint64_t updateCounter) const;
+    void cacheInfos(uint64_t updateCounter, WebCore::DOMCacheEngine::CacheInfosCallback&&);
 
     Cache* find(uint64_t identifier);
     void appendRepresentation(StringBuilder&) const;
@@ -86,6 +88,7 @@ private:
     static std::optional<WebCore::ClientOrigin> readOrigin(const NetworkCache::Data&);
 
     Cache* find(const String& name);
+    void clearPendingWritingCachesToDiskCallbacks();
 
     void makeDirty() { ++m_updateCounter; }
     bool isDirty(uint64_t updateCounter) const;
@@ -103,6 +106,8 @@ private:
     HashMap<NetworkCache::Key, WebCore::DOMCacheEngine::Record> m_volatileStorage;
     mutable std::optional<NetworkCache::Salt> m_volatileSalt;
     Vector<WebCore::DOMCacheEngine::CompletionCallback> m_pendingInitializationCallbacks;
+    bool m_isWritingCachesToDisk { false };
+    Deque<CompletionHandler<void(std::optional<WebCore::DOMCacheEngine::Error>)>> m_pendingWritingCachesToDiskCallbacks;
 };
 
 } // namespace CacheStorage

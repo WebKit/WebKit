@@ -138,7 +138,7 @@ void Engine::retrieveCaches(const WebCore::ClientOrigin& origin, uint64_t update
             return;
         }
 
-        callback(cachesOrError.value().get().cacheInfos(updateCounter));
+        cachesOrError.value().get().cacheInfos(updateCounter, WTFMove(callback));
     });
 }
 
