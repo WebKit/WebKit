@@ -68,6 +68,7 @@
 #include "RenderTheme.h"
 #include "RenderTreeBuilder.h"
 #include "RenderView.h"
+#include "SVGImage.h"
 #include "SVGRenderSupport.h"
 #include "Settings.h"
 #include "ShadowRoot.h"
@@ -1468,8 +1469,14 @@ bool RenderElement::repaintForPausedImageAnimationsIfNeeded(const IntRect& visib
 
     repaint();
 
-    if (auto* image = cachedImage.image())
-        image->startAnimation();
+    if (auto* image = cachedImage.image()) {
+        // SVGImages might cause a layout when starting an animation, so
+        // schedule them rather than start immediately.
+        if (is<SVGImage>(image))
+            downcast<SVGImage>(image)->scheduleStartAnimation();
+        else
+            image->startAnimation();
+    }
 
     // For directly-composited animated GIFs it does not suffice to call repaint() to resume animation. We need to mark the image as changed.
     if (is<RenderBoxModelObject>(*this))
