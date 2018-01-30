@@ -36,6 +36,7 @@ media/ios [ Skip ]
 media/controls/ipad [ Skip ]
 fast/text-autosizing [ Skip ]
 fast/css/variables/env/ios [ Skip ]
+http/tests/events/touch/ios [ Skip ]
 http/tests/preload/viewport [ Skip ]
 http/tests/gzip-content-encoding [ Skip ]
 
