@@ -42,7 +42,7 @@ typedef NS_ENUM(NSInteger, _WKPaginationMode) {
     _WKPaginationModeBottomToTop,
 } WK_API_AVAILABLE(macosx(10.10), ios(8.0));
 
-typedef NS_OPTIONS(NSInteger, _WKMediaCaptureState) {
+typedef NS_OPTIONS(NSUInteger, _WKMediaCaptureState) {
     _WKMediaCaptureStateNone = 0,
     _WKMediaCaptureStateActiveMicrophone = 1 << 0,
     _WKMediaCaptureStateActiveCamera = 1 << 1,
@@ -50,7 +50,7 @@ typedef NS_OPTIONS(NSInteger, _WKMediaCaptureState) {
     _WKMediaCaptureStateMutedCamera = 1 << 3,
 } WK_API_AVAILABLE(macosx(10.13), ios(11.0));
 
-typedef NS_OPTIONS(NSInteger, _WKMediaMutedState) {
+typedef NS_OPTIONS(NSUInteger, _WKMediaMutedState) {
     _WKMediaNoneMuted = 0,
     _WKMediaAudioMuted = 1 << 0,
     _WKMediaCaptureDevicesMuted = 1 << 1,
@@ -85,7 +85,7 @@ typedef NS_ENUM(NSInteger, _WKImmediateActionType) {
     _WKImmediateActionTelLink
 } WK_API_AVAILABLE(macosx(10.12));
 
-typedef NS_OPTIONS(NSInteger, _WKRectEdge) {
+typedef NS_OPTIONS(NSUInteger, _WKRectEdge) {
     _WKRectEdgeNone = 0,
     _WKRectEdgeLeft = 1 << CGRectMinXEdge,
     _WKRectEdgeTop = 1 << CGRectMinYEdge,
@@ -254,8 +254,8 @@ typedef NS_OPTIONS(NSInteger, _WKRectEdge) {
 
 #else
 
-@property (nonatomic, readonly) _WKRectEdge _pinnedState;
-@property (nonatomic, setter=_setRubberBandingEnabled:) _WKRectEdge _rubberBandingEnabled;
+@property (nonatomic, readonly) _WKRectEdge _pinnedState WK_API_AVAILABLE(macosx(WK_MAC_TBA));
+@property (nonatomic, setter=_setRubberBandingEnabled:) _WKRectEdge _rubberBandingEnabled WK_API_AVAILABLE(macosx(WK_MAC_TBA));
 
 @property (readonly) NSColor *_pageExtendedBackgroundColor;
 @property (nonatomic, setter=_setDrawsBackground:) BOOL _drawsBackground;
@@ -424,7 +424,7 @@ typedef NS_OPTIONS(NSInteger, _WKRectEdge) {
 - (BOOL)_tryToSwipeWithEvent:(NSEvent *)event ignoringPinnedState:(BOOL)ignoringPinnedState WK_API_AVAILABLE(macosx(WK_MAC_TBA));
 - (void)_setDidMoveSwipeSnapshotCallback:(void(^)(CGRect))callback WK_API_AVAILABLE(macosx(WK_MAC_TBA));
 @property (nonatomic, setter=_setTotalHeightOfBanners:) CGFloat _totalHeightOfBanners WK_API_AVAILABLE(macosx(WK_MAC_TBA));
-@property (nonatomic, copy, setter=_setUnderlayColor:) NSColor *_underlayColor;
+@property (nonatomic, copy, setter=_setUnderlayColor:) NSColor *_underlayColor WK_API_AVAILABLE(macosx(WK_MAC_TBA));
 @property (nonatomic, readwrite, setter=_setIgnoresNonWheelEvents:) BOOL _ignoresNonWheelEvents WK_API_AVAILABLE(macosx(WK_MAC_TBA));
 @property (nonatomic, readonly) WKPageRef _pageRefForTransitionToWKWebView  WK_API_AVAILABLE(macosx(WK_MAC_TBA));
 @property (nonatomic, readonly) BOOL _hasActiveVideoForControlsManager WK_API_AVAILABLE(macosx(10.12));

@@ -1,3 +1,19 @@
+2018-01-29  Alex Christensen  <achristensen@webkit.org>
+
+        Clean up API after bugs 178240 and 176474
+        https://bugs.webkit.org/show_bug.cgi?id=182259
+
+        Reviewed by Dan Bernstein.
+
+        NS_OPTIONS should be NSUInteger, not NSInteger.  This is how all other NS_OPTIONS in WebKit are,
+        and it's necessary if we get really big numbers as options.  Changing them won't cause binary
+        incompatibility unless someone does signed integer comparison with currently invalid values.
+
+        Added availability macros I forgot to add earlier.
+
+        * UIProcess/API/Cocoa/WKUIDelegatePrivate.h:
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+
 2018-01-29  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthN] Add a compile-time feature flag

@@ -70,7 +70,7 @@ typedef NS_ENUM(NSInteger, _WKPlugInUnavailabilityReason) {
     _WKPlugInUnavailabilityReasonInsecurePluginVersion
 } WK_API_AVAILABLE(macosx(WK_MAC_TBA));
 
-typedef NS_OPTIONS(NSInteger, _WKAutoplayEventFlags) {
+typedef NS_OPTIONS(NSUInteger, _WKAutoplayEventFlags) {
     _WKAutoplayEventFlagsNone = 0,
     _WKAutoplayEventFlagsHasAudio = 1 << 0,
 } WK_API_AVAILABLE(macosx(WK_MAC_TBA));
