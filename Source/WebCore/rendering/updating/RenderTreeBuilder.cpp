@@ -300,6 +300,24 @@ RenderObject* RenderTreeBuilder::splitAnonymousBoxesAroundChild(RenderBox& paren
     return beforeChild;
 }
 
+void RenderTreeBuilder::childFlowStateChangesAndAffectsParentBlock(RenderElement& child)
+{
+    auto* parent = child.parent();
+    if (!child.isInline()) {
+        if (is<RenderBlock>(parent))
+            blockBuilder().childBecameNonInline(downcast<RenderBlock>(*parent), child);
+        else if (is<RenderInline>(*parent))
+            inlineBuilder().childBecameNonInline(downcast<RenderInline>(*parent), child);
+    } else {
+        // An anonymous block must be made to wrap this inline.
+        auto newBlock = downcast<RenderBlock>(*parent).createAnonymousBlock();
+        auto& block = *newBlock;
+        parent->insertChildInternal(WTFMove(newBlock), &child);
+        auto thisToMove = parent->takeChildInternal(child);
+        block.insertChildInternal(WTFMove(thisToMove), nullptr);
+    }
+}
+
 void RenderTreeBuilder::insertChildToRenderInline(RenderInline& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild)
 {
     inlineBuilder().insertChild(parent, WTFMove(child), beforeChild);
@@ -343,11 +361,6 @@ void RenderTreeBuilder::insertChildToRenderTableSection(RenderTableSection& pare
 void RenderTreeBuilder::insertChildToRenderTableRow(RenderTableRow& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild)
 {
     tableBuilder().insertChild(parent, WTFMove(child), beforeChild);
-}
-
-void RenderTreeBuilder::splitFlow(RenderInline& parent, RenderObject* beforeChild, RenderPtr<RenderBlock> newBlockBox, RenderPtr<RenderObject> child, RenderBoxModelObject* oldCont)
-{
-    inlineBuilder().splitFlow(parent, beforeChild, WTFMove(newBlockBox), WTFMove(child), oldCont);
 }
 
 void RenderTreeBuilder::moveRubyChildren(RenderRubyBase& from, RenderRubyBase& to)

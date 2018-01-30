@@ -466,7 +466,6 @@ private:
 
     RenderElement* hoverAncestor() const final;
     void updateDragState(bool dragOn) final;
-    void childBecameNonInline(RenderElement&) final;
 
     LayoutRect selectionRectForRepaint(const RenderLayerModelObject* repaintContainer, bool /*clipToVisibleContent*/) final
     {

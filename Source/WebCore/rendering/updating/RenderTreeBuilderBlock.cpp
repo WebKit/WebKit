@@ -197,4 +197,12 @@ void RenderTreeBuilder::Block::insertChildIgnoringContinuation(RenderBlock& pare
     // parent object may be dead here
 }
 
+void RenderTreeBuilder::Block::childBecameNonInline(RenderBlock& parent, RenderElement&)
+{
+    m_builder.makeChildrenNonInline(parent);
+    if (parent.isAnonymousBlock() && is<RenderBlock>(parent.parent()))
+        downcast<RenderBlock>(*parent.parent()).removeLeftoverAnonymousBlock(&parent);
+    // parent may be dead here
+}
+
 }

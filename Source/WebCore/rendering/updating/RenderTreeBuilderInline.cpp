@@ -379,4 +379,18 @@ bool RenderTreeBuilder::Inline::newChildIsInline(const RenderInline& parent, con
     return child.isInline() || (m_builder.tableBuilder().childRequiresTable(parent, child) && parent.style().display() == INLINE);
 }
 
+void RenderTreeBuilder::Inline::childBecameNonInline(RenderInline& parent, RenderElement& child)
+{
+    // We have to split the parent flow.
+    auto newBox = parent.containingBlock()->createAnonymousBlock();
+    newBox->setIsContinuation();
+    auto* oldContinuation = parent.continuation();
+    if (oldContinuation)
+        oldContinuation->removeFromContinuationChain();
+    newBox->insertIntoContinuationChainAfter(parent);
+    auto* beforeChild = child.nextSibling();
+    auto removedChild = parent.takeChildInternal(child);
+    splitFlow(parent, beforeChild, WTFMove(newBox), WTFMove(removedChild), oldContinuation);
+}
+
 }

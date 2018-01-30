@@ -37,12 +37,13 @@ public:
     void insertChildIgnoringContinuation(RenderInline& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild);
 
     // Make this private once all the mutation code is in RenderTreeBuilder.
-    void splitFlow(RenderInline& parent, RenderObject* beforeChild, RenderPtr<RenderBlock> newBlockBox, RenderPtr<RenderObject> child, RenderBoxModelObject* oldCont);
+    void childBecameNonInline(RenderInline& parent, RenderElement& child);
 
 private:
     void insertChildToContinuation(RenderInline& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild);
     void splitInlines(RenderInline& parent, RenderBlock* fromBlock, RenderBlock* toBlock, RenderBlock* middleBlock, RenderObject* beforeChild, RenderBoxModelObject* oldCont);
     bool newChildIsInline(const RenderInline& parent, const RenderObject& child);
+    void splitFlow(RenderInline& parent, RenderObject* beforeChild, RenderPtr<RenderBlock> newBlockBox, RenderPtr<RenderObject> child, RenderBoxModelObject* oldCont);
 
     RenderTreeBuilder& m_builder;
 };

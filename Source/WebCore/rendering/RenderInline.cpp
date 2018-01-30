@@ -1036,20 +1036,6 @@ void RenderInline::updateDragState(bool dragOn)
         continuation->updateDragState(dragOn);
 }
 
-void RenderInline::childBecameNonInline(RenderElement& child)
-{
-    // We have to split the parent flow.
-    auto newBox = containingBlock()->createAnonymousBlock();
-    newBox->setIsContinuation();
-    RenderBoxModelObject* oldContinuation = continuation();
-    if (oldContinuation)
-        oldContinuation->removeFromContinuationChain();
-    newBox->insertIntoContinuationChainAfter(*this);
-    RenderObject* beforeChild = child.nextSibling();
-    auto removedChild = takeChildInternal(child);
-    RenderTreeBuilder::current()->splitFlow(*this, beforeChild, WTFMove(newBox), WTFMove(removedChild), oldContinuation);
-}
-
 void RenderInline::updateHitTestResult(HitTestResult& result, const LayoutPoint& point)
 {
     if (result.innerNode())

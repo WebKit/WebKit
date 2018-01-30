@@ -902,26 +902,6 @@ void RenderElement::styleWillChange(StyleDifference diff, const RenderStyle& new
         view().frameView().updateExtendBackgroundIfNecessary();
 }
 
-void RenderElement::handleDynamicFloatPositionChange()
-{
-    // We have gone from not affecting the inline status of the parent flow to suddenly
-    // having an impact.  See if there is a mismatch between the parent flow's
-    // childrenInline() state and our state.
-    setInline(style().isDisplayInlineType());
-    if (isInline() != parent()->childrenInline()) {
-        if (!isInline())
-            downcast<RenderBoxModelObject>(*parent()).childBecameNonInline(*this);
-        else {
-            // An anonymous block must be made to wrap this inline.
-            auto newBlock = downcast<RenderBlock>(*parent()).createAnonymousBlock();
-            auto& block = *newBlock;
-            parent()->insertChildInternal(WTFMove(newBlock), this);
-            auto thisToMove = parent()->takeChildInternal(*this);
-            block.insertChildInternal(WTFMove(thisToMove), nullptr);
-        }
-    }
-}
-
 void RenderElement::removeAnonymousWrappersForInlinesIfNecessary()
 {
     // FIXME: Move to RenderBlock.
@@ -972,8 +952,14 @@ void RenderElement::styleDidChange(StyleDifference diff, const RenderStyle* oldS
     updateImage(oldStyle ? oldStyle->maskBoxImage().image() : nullptr, m_style.maskBoxImage().image());
     updateShapeImage(oldStyle ? oldStyle->shapeOutside() : nullptr, m_style.shapeOutside());
 
-    if (s_affectsParentBlock)
-        handleDynamicFloatPositionChange();
+    if (s_affectsParentBlock) {
+        // We have gone from not affecting the inline status of the parent flow to suddenly
+        // having an impact. See if there is a mismatch between the parent flow's
+        // childrenInline() state and our state.
+        setInline(style().isDisplayInlineType());
+        if (isInline() != parent()->childrenInline())
+            RenderTreeBuilder::current()->childFlowStateChangesAndAffectsParentBlock(*this);
+    }
 
     if (s_noLongerAffectsParentBlock)
         parent()->removeAnonymousWrappersForInlinesIfNecessary();
