@@ -1,5 +1,20 @@
 2018-01-30  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r227616. rdar://problem/37019438
+
+    2018-01-25  Eric Carlson  <eric.carlson@apple.com>
+
+            REGRESSION(r227457): Release assert in updateLayout while destructing a media element
+            https://bugs.webkit.org/show_bug.cgi?id=182038
+            <rdar://problem/36812083>
+
+            Reviewed by Jer Noble.
+
+            * TestWebKitAPI/Tests/WebKitCocoa/NowPlayingControlsTests.mm:
+            (TestWebKitAPI::TEST): Show/hide page so controls are always updated.
+
+2018-01-30  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r227563. rdar://problem/37019479
 
     2018-01-24  Ali Juma  <ajuma@chromium.org>

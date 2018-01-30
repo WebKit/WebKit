@@ -99,6 +99,10 @@ TEST(NowPlayingControlsTests, NowPlayingControlsDoNotShowForForegroundPage)
     [webView loadTestPageNamed:@"large-video-test-now-playing"];
     [webView waitForMessage:@"playing"];
 
+    [webView setWindowVisible:NO];
+    [webView.get().window resignKeyWindow];
+    [webView expectHasActiveNowPlayingSession:YES];
+
     [webView setWindowVisible:YES];
     [webView.get().window makeKeyWindow];
     [webView expectHasActiveNowPlayingSession:NO];
