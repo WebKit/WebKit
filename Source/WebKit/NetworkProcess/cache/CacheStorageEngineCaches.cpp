@@ -50,6 +50,11 @@ static inline String cachesOriginFilename(const String& cachesRootPath)
     return WebCore::FileSystem::pathByAppendingComponent(cachesRootPath, ASCIILiteral("origin"));
 }
 
+Caches::~Caches()
+{
+    ASSERT(m_pendingWritingCachesToDiskCallbacks.isEmpty());
+}
+
 void Caches::retrieveOriginFromDirectory(const String& folderPath, WorkQueue& queue, WTF::CompletionHandler<void(std::optional<WebCore::ClientOrigin>&&)>&& completionHandler)
 {
     queue.dispatch([completionHandler = WTFMove(completionHandler), folderPath = folderPath.isolatedCopy()]() mutable {
@@ -196,10 +201,18 @@ void Caches::detach()
 {
     m_engine = nullptr;
     m_rootPath = { };
+    clearPendingWritingCachesToDiskCallbacks();
 }
 
 void Caches::clear(CompletionHandler<void()>&& completionHandler)
 {
+    if (m_isWritingCachesToDisk) {
+        m_pendingWritingCachesToDiskCallbacks.append([this, completionHandler = WTFMove(completionHandler)] (auto&& error) mutable {
+            this->clear(WTFMove(completionHandler));
+        });
+        return;
+    }
+
     if (m_engine)
         m_engine->removeFile(cachesListFilename(m_rootPath));
     if (m_storage) {
@@ -211,7 +224,15 @@ void Caches::clear(CompletionHandler<void()>&& completionHandler)
         return;
     }
     clearMemoryRepresentation();
+    clearPendingWritingCachesToDiskCallbacks();
     completionHandler();
+}
+
+void Caches::clearPendingWritingCachesToDiskCallbacks()
+{
+    auto pendingWritingCachesToDiskCallbacks = WTFMove(m_pendingWritingCachesToDiskCallbacks);
+    for (auto& callback : pendingWritingCachesToDiskCallbacks)
+        callback(Error::Internal);
 }
 
 Cache* Caches::find(const String& name)
@@ -234,6 +255,17 @@ void Caches::open(const String& name, CacheIdentifierCallback&& callback)
 {
     ASSERT(m_isInitialized);
     ASSERT(m_engine);
+
+    if (m_isWritingCachesToDisk) {
+        m_pendingWritingCachesToDiskCallbacks.append([this, name, callback = WTFMove(callback)] (auto&& error) mutable {
+            if (error) {
+                callback(makeUnexpected(error.value()));
+                return;
+            }
+            this->open(name, WTFMove(callback));
+        });
+        return;
+    }
 
     if (auto* cache = find(name)) {
         cache->open([cacheIdentifier = cache->identifier(), callback = WTFMove(callback)](std::optional<Error>&& error) mutable {
@@ -261,11 +293,22 @@ void Caches::remove(uint64_t identifier, CacheIdentifierCallback&& callback)
     ASSERT(m_isInitialized);
     ASSERT(m_engine);
 
+    if (m_isWritingCachesToDisk) {
+        m_pendingWritingCachesToDiskCallbacks.append([this, identifier, callback = WTFMove(callback)] (auto&& error) mutable {
+            if (error) {
+                callback(makeUnexpected(error.value()));
+                return;
+            }
+            this->remove(identifier, WTFMove(callback));
+        });
+        return;
+    }
+
     auto position = m_caches.findMatching([&](const auto& item) { return item.identifier() == identifier; });
 
     if (position == notFound) {
         ASSERT(m_removedCaches.findMatching([&](const auto& item) { return item.identifier() == identifier; }) != notFound);
-        callback(CacheIdentifierOperationResult { identifier, false });
+        callback(CacheIdentifierOperationResult { 0, false });
         return;
     }
 
@@ -371,6 +414,7 @@ void Caches::readCachesFromDisk(WTF::Function<void(Expected<Vector<Cache>, Error
 
 void Caches::writeCachesToDisk(CompletionCallback&& callback)
 {
+    ASSERT(!m_isWritingCachesToDisk);
     ASSERT(m_isInitialized);
     if (!shouldPersist()) {
         callback(std::nullopt);
@@ -385,8 +429,12 @@ void Caches::writeCachesToDisk(CompletionCallback&& callback)
         return;
     }
 
-    m_engine->writeFile(cachesListFilename(m_rootPath), encodeCacheNames(m_caches), [callback = WTFMove(callback)](std::optional<Error>&& error) mutable {
+    m_isWritingCachesToDisk = true;
+    m_engine->writeFile(cachesListFilename(m_rootPath), encodeCacheNames(m_caches), [this, protectedThis = makeRef(*this), callback = WTFMove(callback)](std::optional<Error>&& error) mutable {
+        m_isWritingCachesToDisk = false;
         callback(WTFMove(error));
+        while (!m_pendingWritingCachesToDiskCallbacks.isEmpty() && !m_isWritingCachesToDisk)
+            m_pendingWritingCachesToDiskCallbacks.takeFirst()(std::nullopt);
     });
 }
 
@@ -515,15 +563,26 @@ const NetworkCache::Salt& Caches::salt() const
     return m_volatileSalt.value();
 }
 
-CacheInfos Caches::cacheInfos(uint64_t updateCounter) const
+void Caches::cacheInfos(uint64_t updateCounter, CacheInfosCallback&& callback)
 {
+    if (m_isWritingCachesToDisk) {
+        m_pendingWritingCachesToDiskCallbacks.append([this, updateCounter, callback = WTFMove(callback)] (auto&& error) mutable {
+            if (error) {
+                callback(makeUnexpected(error.value()));
+                return;
+            }
+            this->cacheInfos(updateCounter, WTFMove(callback));
+        });
+        return;
+    }
+
     Vector<CacheInfo> cacheInfos;
     if (isDirty(updateCounter)) {
         cacheInfos.reserveInitialCapacity(m_caches.size());
         for (auto& cache : m_caches)
             cacheInfos.uncheckedAppend(CacheInfo { cache.identifier(), cache.name() });
     }
-    return { WTFMove(cacheInfos), m_updateCounter };
+    callback(CacheInfos { WTFMove(cacheInfos), m_updateCounter });
 }
 
 void Caches::appendRepresentation(StringBuilder& builder) const

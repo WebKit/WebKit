@@ -1,3 +1,30 @@
+2018-01-29  Youenn Fablet  <youenn@apple.com>
+
+        Cache API should make sure to resolve caches.open promises in the same order as called
+        https://bugs.webkit.org/show_bug.cgi?id=182193
+        <rdar://problem/36930363>
+
+        Reviewed by Chris Dumez.
+
+        Covered by added test.
+        Whenever opening/removing a cache requires writing to disk, wait to finish the task
+        until any disk writing task is done.
+        Applying this strategy when clearing data so that we also clear data that is pending to be written.
+        For removing cache, we now return whether a cache was actually deleted by returning zero as removed cache identifier.
+        WebCore uses that information to return true/false as promise resolution value.
+
+        * NetworkProcess/cache/CacheStorageEngine.cpp:
+        (WebKit::CacheStorage::Engine::retrieveCaches):
+        * NetworkProcess/cache/CacheStorageEngineCaches.cpp:
+        (WebKit::CacheStorage::Caches::clear):
+        (WebKit::CacheStorage::Caches::open):
+        (WebKit::CacheStorage::Caches::remove):
+        (WebKit::CacheStorage::Caches::writeCachesToDisk):
+        (WebKit::CacheStorage::Caches::cacheInfos):
+        (WebKit::CacheStorage::Caches::cacheInfos const): Deleted.
+        * NetworkProcess/cache/CacheStorageEngineCaches.h:
+        (WebKit::CacheStorage::Caches::createWeakPtr):
+
 2018-01-29  Alex Christensen  <achristensen@webkit.org>
 
         Clean up API after bugs 178240 and 176474

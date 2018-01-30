@@ -1,3 +1,17 @@
+2018-01-29  Youenn Fablet  <youenn@apple.com>
+
+        Cache API should make sure to resolve caches.open promises in the same order as called
+        https://bugs.webkit.org/show_bug.cgi?id=182193
+        <rdar://problem/36930363>
+
+        Reviewed by Chris Dumez.
+
+        Covered by LayoutTests/http/wpt/cache-storage/cache-open-delete-in-parallel.https.html.
+
+        * Modules/cache/DOMCacheStorage.cpp:
+        (WebCore::DOMCacheStorage::doRemove): Removed optimization consisting in removing the cache from DOMCacheStorage object synchronously.
+        This optimization prevents going to the network process to try deleting the cache.
+
 2018-01-29  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthN] Add a compile-time feature flag
