@@ -1,3 +1,16 @@
+2018-01-30  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Try to avoid webdriver tests step timing out in the bots.
+
+        The process itself doesn't seem to be timing out, but the buildbot is always reporting the step as finished
+        after timeout. I think there's a race condition or something in buildbot, and it keeps watching the json log
+        file even when it has already been written. This is a speculative workaround, assuming that's the problem, that
+        creates the json file before running the tests. I'll revert this if it doesn't fix the issue in the end.
+
+        * Scripts/run-webdriver-tests:
+        * Scripts/webkitpy/webdriver_tests/webdriver_test_runner.py:
+        (WebDriverTestRunner.dump_results_to_json_file):
+
 2018-01-30  Basuke Suzuki  <Basuke.Suzuki@sony.com>
 
         [WinCairo] Fix forwarding header conflict of WebKit on WinCairo
