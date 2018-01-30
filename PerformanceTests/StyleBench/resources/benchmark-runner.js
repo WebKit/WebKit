@@ -286,7 +286,7 @@ BenchmarkRunner.prototype._finalize = function () {
         var total = values.reduce(function (a, b) { return a + b });
         var geomean = Math.pow(product, 1 / values.length);
 
-        var correctionFactor = 8; // This factor makes the test score look reasonably fit within 0 to 140.
+        var correctionFactor = 1.5; // This factor makes the test score look reasonably fit within 0 to 140.
         this._measuredValues.total = total;
         this._measuredValues.mean = total / values.length;
         this._measuredValues.geomean = geomean;
