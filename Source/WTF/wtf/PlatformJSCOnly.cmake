@@ -12,11 +12,12 @@ if (WIN32)
     )
 else ()
     list(APPEND WTF_SOURCES
+        UniStdExtras.cpp
+
         text/unix/TextBreakIteratorInternalICUUnix.cpp
 
         unix/CPUTimeUnix.cpp
         unix/LanguageUnix.cpp
-        unix/UniStdExtras.cpp
     )
 endif ()
 
