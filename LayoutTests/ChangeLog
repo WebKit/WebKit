@@ -1,3 +1,15 @@
+2018-01-29  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Relax line terminators in String to make JSON subset of JS
+        https://bugs.webkit.org/show_bug.cgi?id=182232
+
+        Reviewed by Keith Miller.
+
+        * sputnik/Conformance/07_Lexical_Conventions/7.3_Line_Terminators/S7.3_A2.3-expected.txt:
+        * sputnik/Conformance/07_Lexical_Conventions/7.3_Line_Terminators/S7.3_A2.3.html:
+        * sputnik/Conformance/07_Lexical_Conventions/7.3_Line_Terminators/S7.3_A2.4-expected.txt:
+        * sputnik/Conformance/07_Lexical_Conventions/7.3_Line_Terminators/S7.3_A2.4.html:
+
 2018-01-29  Youenn Fablet  <youenn@apple.com>
 
         ServiceWorkerClientFetch should not consider responses without Location headers as redirection responses

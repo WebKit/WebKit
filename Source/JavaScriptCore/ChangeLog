@@ -1,3 +1,22 @@
+2018-01-29  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Relax line terminators in String to make JSON subset of JS
+        https://bugs.webkit.org/show_bug.cgi?id=182232
+
+        Reviewed by Keith Miller.
+
+        "Subsume JSON" spec is now stage 3[1]. Before this spec change,
+        JSON can accept \u2028 / \u2029 in string while JS cannot do that.
+        It accidentally made JSON non subset of JS.
+
+        Now we extend our JS string to accept \u2028 / \u2029 to make JSON
+        subset of JS in this spec change.
+
+        [1]: https://github.com/tc39/proposal-json-superset
+
+        * parser/Lexer.cpp:
+        (JSC::Lexer<T>::parseStringSlowCase):
+
 2018-01-29  Jiewen Tan  <jiewen_tan@apple.com>
 
         [WebAuthN] Add a compile-time feature flag

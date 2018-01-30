@@ -68,14 +68,14 @@ try {
 /**
  * @name: S7.3_A2.4;
  * @section: 7.3;
- * @assertion: PARAGRAPH SEPARATOR (U+2029) within strings is not allowed;
+ * @assertion: PARAGRAPH SEPARATOR (U+2029) within strings is allowed;
  * @description: Insert PARAGRAPH SEPARATOR (\u2029) into string;  
  * @negative
 */
 
 // CHECK#1
-if (eval("'\u2029str\u2029ing\u2029'") === "\u2029str\u2029ing\u2029") {
-  testFailed('#1: eval("\'\\u2029str\\u2029ing\\u2029\'") === "\\u2029str\\u2029ing\\u2029"');
+if (eval("'\u2029str\u2029ing\u2029'") !== "\u2029str\u2029ing\u2029") {
+  testFailed('#1: eval("\'\\u2029str\\u2029ing\\u2029\'") !== "\\u2029str\\u2029ing\\u2029"');
 }
 
 } catch (ex) {
@@ -87,11 +87,11 @@ var successfullyParsed = true;
 
 <script>
 if (!successfullyParsed)
-    printTestPassed('Expected parsing failure');
+    printTestFailed('successfullyParsed is not set');
 else if (sputnikException)
-    printTestPassed(sputnikException);
+    printTestFailed(sputnikException);
 else
-    printTestFailed("No error detected");
+    printTestPassed("");
 testPrint('<br /><span class="pass">TEST COMPLETE</span>');
 </script>
 </body>

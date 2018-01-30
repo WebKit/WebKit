@@ -68,14 +68,14 @@ try {
 /**
  * @name: S7.3_A2.3;
  * @section: 7.3;
- * @assertion: LINE SEPARATOR (U+2028) within strings is not allowed;
+ * @assertion: LINE SEPARATOR (U+2028) within strings is allowed;
  * @description: Insert LINE SEPARATOR (\u2028) into string;  
  * @negative
 */
 
 // CHECK#1
-if (eval("'\u2028str\u2028ing\u2028'") === "\u2028str\u2028ing\u2028") {
-  testFailed('#1: eval("\'\\u2028str\\u2028ing\\u2028\'") === "\\u2028str\\u2028ing\\u2028"');
+if (eval("'\u2028str\u2028ing\u2028'") !== "\u2028str\u2028ing\u2028") {
+  testFailed('#1: eval("\'\\u2028str\\u2028ing\\u2028\'") !== "\\u2028str\\u2028ing\\u2028"');
 }
 
 } catch (ex) {
@@ -87,11 +87,11 @@ var successfullyParsed = true;
 
 <script>
 if (!successfullyParsed)
-    printTestPassed('Expected parsing failure');
+    printTestFailed('successfullyParsed is not set');
 else if (sputnikException)
-    printTestPassed(sputnikException);
+    printTestFailed(sputnikException);
 else
-    printTestFailed("No error detected");
+    printTestPassed("");
 testPrint('<br /><span class="pass">TEST COMPLETE</span>');
 </script>
 </body>

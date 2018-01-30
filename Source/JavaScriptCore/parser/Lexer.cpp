@@ -1355,11 +1355,11 @@ template <bool shouldBuildStrings> auto Lexer<T>::parseStringSlowCase(JSTokenDat
             continue;
         }
         // Fast check for characters that require special handling.
-        // Catches 0, \n, \r, 0x2028, and 0x2029 as efficiently
-        // as possible, and lets through all common ASCII characters.
-        if (UNLIKELY(((static_cast<unsigned>(m_current) - 0xE) & 0x2000))) {
+        // Catches 0, \n, and \r as efficiently as possible, and lets through all common ASCII characters.
+        static_assert(std::is_unsigned<T>::value, "Lexer expects an unsigned character type");
+        if (UNLIKELY(m_current < 0xE)) {
             // New-line or end of input is not allowed
-            if (atEnd() || isLineTerminator(m_current)) {
+            if (atEnd() || m_current == '\r' || m_current == '\n') {
                 m_lexErrorMessage = ASCIILiteral("Unexpected EOF");
                 return atEnd() ? StringUnterminated : StringCannotBeParsed;
             }
