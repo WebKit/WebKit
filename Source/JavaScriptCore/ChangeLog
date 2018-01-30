@@ -1,5 +1,19 @@
 2018-01-30  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r227644. rdar://problem/37019367
+
+    2018-01-25  Mark Lam  <mark.lam@apple.com>
+
+            Gardening: fix 32-bit build after r227643.
+            https://bugs.webkit.org/show_bug.cgi?id=182086
+
+            Not reviewed.
+
+            * jit/AssemblyHelpers.cpp:
+            (JSC::AssemblyHelpers::emitDynamicPoisonOnLoadedType):
+
+2018-01-30  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r227643. rdar://problem/37019367
 
     2018-01-24  Filip Pizlo  <fpizlo@apple.com>
