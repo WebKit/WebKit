@@ -1,3 +1,10 @@
+2018-01-30  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, rebaseline tests for rdar://problem/36912404&36912403.
+
+        * platform/mac-elcapitan/imported/w3c/web-platform-tests/service-workers/service-worker/fetch-request-redirect.https-expected.txt: Added.
+        * platform/mac-elcapitan/imported/w3c/web-platform-tests/service-workers/service-worker/fetch-request-resources.https-expected.txt: Added.
+
 2018-01-29  Ryan Haddad  <ryanhaddad@apple.com>
 
         Cherry-pick r227708. rdar://problem/36915685
