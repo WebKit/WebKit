@@ -1,5 +1,14 @@
 2018-01-29  Youenn Fablet  <youenn@apple.com>
 
+        ServiceWorkerClientFetch should not consider responses without Location headers as redirection responses
+        https://bugs.webkit.org/show_bug.cgi?id=182134
+
+        Reviewed by Chris Dumez.
+
+        * TestExpectations:
+
+2018-01-29  Youenn Fablet  <youenn@apple.com>
+
         Cache API should make sure to resolve caches.open promises in the same order as called
         https://bugs.webkit.org/show_bug.cgi?id=182193
         <rdar://problem/36930363>

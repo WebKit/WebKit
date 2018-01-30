@@ -1,5 +1,18 @@
 2018-01-29  Youenn Fablet  <youenn@apple.com>
 
+        ServiceWorkerClientFetch should not consider responses without Location headers as redirection responses
+        https://bugs.webkit.org/show_bug.cgi?id=182134
+
+        Reviewed by Chris Dumez.
+
+        As per fetch spec, a response with a redirection status code but no Location header should not be considered as a redirection.
+        This is also consistent with SubresourceLoader::didReceiveResponse.
+
+        * WebProcess/Storage/ServiceWorkerClientFetch.cpp:
+        (WebKit::ServiceWorkerClientFetch::didReceiveResponse):
+
+2018-01-29  Youenn Fablet  <youenn@apple.com>
+
         Cache API should make sure to resolve caches.open promises in the same order as called
         https://bugs.webkit.org/show_bug.cgi?id=182193
         <rdar://problem/36930363>
