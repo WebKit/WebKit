@@ -881,3 +881,4 @@ webkit.org/b/181831 [ HighSierra ] fast/forms/searchfield-heights.html [ Pass Fa
 
 webkit.org/b/181957 [ Release ] http/tests/misc/resource-timing-resolution.html [ Pass Failure ]
 
+webkit.org/b/181835 webrtc/captureCanvas-webrtc.html [ Pass Timeout ]
