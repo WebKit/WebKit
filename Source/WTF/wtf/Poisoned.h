@@ -29,14 +29,9 @@
 #include <utility>
 #include <wtf/Assertions.h>
 
-#define ENABLE_POISON 1
 #define ENABLE_POISON_ASSERTS 0
 
-// Not currently supported for 32-bit or OS(WINDOWS) builds (because of missing llint support).
-// Make sure it's disabled.
-#if USE(JSVALUE32_64) || OS(WINDOWS)
-#undef ENABLE_POISON
-#define ENABLE_POISON 0
+#if !ENABLE(POISON)
 #undef ENABLE_POISON_ASSERTS
 #define ENABLE_POISON_ASSERTS 0
 #endif

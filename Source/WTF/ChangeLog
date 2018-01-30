@@ -1,3 +1,17 @@
+2018-01-30  Mark Lam  <mark.lam@apple.com>
+
+        Move ENABLE_POISON to Platform.h.
+        https://bugs.webkit.org/show_bug.cgi?id=182298
+        <rdar://problem/37032686>
+
+        Reviewed by Michael Saboff and JF Bastien.
+
+        ENABLE_POISON belongs in Platform.h to ensure that all places that depend on
+        ENABLE(POISON) will see it properly defined.
+
+        * wtf/Platform.h:
+        * wtf/Poisoned.h:
+
 2018-01-26  Mark Lam  <mark.lam@apple.com>
 
         Add infrastructure for pointer preparation.

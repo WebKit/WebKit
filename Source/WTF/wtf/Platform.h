@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2018 Apple Inc. All rights reserved.
  * Copyright (C) 2007-2009 Torch Mobile, Inc.
  * Copyright (C) 2010, 2011 Research In Motion Limited. All rights reserved.
  *
@@ -1011,6 +1011,13 @@
 
 #if ENABLE(DFG_JIT) && HAVE(MACHINE_CONTEXT) && (CPU(X86) || CPU(X86_64) || CPU(ARM64))
 #define ENABLE_SIGNAL_BASED_VM_TRAPS 1
+#endif
+
+#define ENABLE_POISON 1
+/* Not currently supported for 32-bit or OS(WINDOWS) builds (because of missing llint support). Make sure it's disabled. */
+#if USE(JSVALUE32_64) || OS(WINDOWS)
+#undef ENABLE_POISON
+#define ENABLE_POISON 0
 #endif
 
 /* CSS Selector JIT Compiler */
