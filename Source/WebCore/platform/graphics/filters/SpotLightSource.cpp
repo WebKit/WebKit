@@ -32,6 +32,7 @@
 #include "config.h"
 #include "SpotLightSource.h"
 
+#include "FilterEffect.h"
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {

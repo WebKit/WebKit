@@ -1604,7 +1604,7 @@ platform/graphics/filters/FEFlood.cpp
 platform/graphics/filters/FEGaussianBlur.cpp
 platform/graphics/filters/FELighting.cpp
 platform/graphics/filters/FEMerge.cpp
-platform/graphics/filters/FEMorphology.cpp @no-unify // FIXME: Unified sources for FEMorphology.cpp seems to break the windows build. https://bugs.webkit.org/show_bug.cgi?id=178847
+platform/graphics/filters/FEMorphology.cpp
 platform/graphics/filters/FEOffset.cpp
 platform/graphics/filters/FESpecularLighting.cpp
 platform/graphics/filters/FETile.cpp

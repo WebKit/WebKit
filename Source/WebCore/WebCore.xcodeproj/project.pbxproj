@@ -1483,7 +1483,6 @@
 		5351D4B11DF916B4008010CD /* FileHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = 5351D4AF1DF916AC008010CD /* FileHandle.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		536D5A20193E18E900CE4CAB /* HTMLSrcsetParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 536D5A1F193E18E900CE4CAB /* HTMLSrcsetParser.h */; };
 		536D5A23193E8E0C00CE4CAB /* ParsingUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = 536D5A22193E8E0C00CE4CAB /* ParsingUtilities.h */; };
-		537202291FA19AE200016B2B /* FEMorphology.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84730D671248F0B300D3A9C9 /* FEMorphology.cpp */; };
 		538EC8021F96AF81004D22A8 /* UnifiedSource1.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 538EC7FA1F96AA70004D22A8 /* UnifiedSource1.cpp */; };
 		538EC8031F96AF81004D22A8 /* UnifiedSource1-mm.mm in Sources */ = {isa = PBXBuildFile; fileRef = 538EC7F31F96AA5B004D22A8 /* UnifiedSource1-mm.mm */; };
 		538EC8041F96AF81004D22A8 /* UnifiedSource2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 538EC7EE1F96AA56004D22A8 /* UnifiedSource2.cpp */; };
@@ -30757,7 +30756,6 @@
 				5C4304B0191AC908000E2BC0 /* EXTShaderTextureLOD.cpp in Sources */,
 				727AFED41A2EA6AE000442E8 /* EXTsRGB.cpp in Sources */,
 				7728694E14F8882500F484DC /* EXTTextureFilterAnisotropic.cpp in Sources */,
-				537202291FA19AE200016B2B /* FEMorphology.cpp in Sources */,
 				7CE6CBFD187F394900D46BF5 /* FormatConverter.cpp in Sources */,
 				51A4BB0A1954D61600FA5C2E /* Gamepad.cpp in Sources */,
 				518F4FF6194CA4E60081BAAE /* GamepadButton.cpp in Sources */,

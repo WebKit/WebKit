@@ -1,3 +1,18 @@
+2018-01-30  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        Unified sources for FEMorphology.cpp seems to break the windows build.
+        https://bugs.webkit.org/show_bug.cgi?id=178847
+
+        Reviewed by Yusuke Suzuki.
+
+        Fix a compilation error.
+        platform/graphics/filters/SpotLightSource.cpp(45): error C2027: use of undefined type 'WebCore::FilterEffect'
+
+        No new tests (No behavior change)
+
+        * Sources.txt: Removed @no-unify for FEMorphology.cpp.
+        * platform/graphics/filters/SpotLightSource.cpp: Added #include "FilterEffect.h".
+
 2018-01-30  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Test fix after r227776
