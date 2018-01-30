@@ -1,3 +1,28 @@
+2018-01-30  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Release assert in updateLayout() via AXObjectCache::childrenChanged
+        https://bugs.webkit.org/show_bug.cgi?id=182279
+        <rdar://problem/36994456>
+
+        Reviewed by Antti Koivisto.
+
+        Disable the assertion in Document::updateLayout and Document::updateStyle* in this particular circumstance as fixing it
+        would require a large architectural refactoring of the accessibility code.
+
+        Test: accessibility/accessibility-object-update-during-style-resolution-crash.html
+
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::childrenChanged): Disabled the release assertion here.
+        * dom/Document.cpp:
+        (WebCore::Document::isSafeToUpdateStyleOrLayout const): Check LayoutAssertionDisableScope::shouldDisable.
+        * dom/ScriptDisallowedScope.h:
+        (WebCore::ScriptDisallowedScope::LayoutAssertionDisableScope): Added.
+        (WebCore::ScriptDisallowedScope::LayoutAssertionDisableScope::LayoutAssertionDisableScope): Added.
+        (WebCore::ScriptDisallowedScope::LayoutAssertionDisableScope::~LayoutAssertionDisableScope): Added.
+        (WebCore::ScriptDisallowedScope::LayoutAssertionDisableScope::shouldDisable): Added.
+        * page/LayoutContext.cpp:
+        (WebCore::LayoutContext::layout): Check LayoutAssertionDisableScope::shouldDisable.
+
 2018-01-30  Zalan Bujtas  <zalan@apple.com>
 
         [RenderTreeBuilder] Move RenderRubyRun::rubyBaseSafe to RenderTreeBuilder::Ruby

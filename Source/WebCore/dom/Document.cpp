@@ -314,6 +314,8 @@ using namespace HTMLNames;
 static const unsigned cMaxWriteRecursionDepth = 21;
 bool Document::hasEverCreatedAnAXObjectCache = false;
 
+unsigned ScriptDisallowedScope::LayoutAssertionDisableScope::s_layoutAssertionDisableCount = 0;
+
 // DOM Level 2 says (letters added):
 //
 // a) Name start characters must have one of the categories Ll, Lu, Lo, Lt, Nl.
@@ -1940,7 +1942,8 @@ bool Document::isSafeToUpdateStyleOrLayout() const
 {
     bool isSafeToExecuteScript = ScriptDisallowedScope::InMainThread::isScriptAllowed();
     bool isInFrameFlattening = view() && view()->isInChildFrameWithFrameFlattening();
-    return isSafeToExecuteScript || isInFrameFlattening || !isInWebProcess();
+    bool isAssertionDisabled = ScriptDisallowedScope::LayoutAssertionDisableScope::shouldDisable();
+    return isSafeToExecuteScript || isInFrameFlattening || !isInWebProcess() || isAssertionDisabled;
 }
 
 bool Document::updateStyleIfNeeded()
