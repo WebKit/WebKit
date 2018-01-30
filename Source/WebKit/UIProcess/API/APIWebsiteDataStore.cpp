@@ -95,6 +95,16 @@ void WebsiteDataStore::setResourceLoadStatisticsEnabled(bool enabled)
     m_websiteDataStore->setResourceLoadStatisticsEnabled(enabled);
 }
 
+bool WebsiteDataStore::resourceLoadStatisticsDebugMode() const
+{
+    return m_websiteDataStore->resourceLoadStatisticsDebugMode();
+}
+
+void WebsiteDataStore::setResourceLoadStatisticsDebugMode(bool enabled)
+{
+    m_websiteDataStore->setResourceLoadStatisticsDebugMode(enabled);
+}
+
 #if !PLATFORM(COCOA)
 String WebsiteDataStore::defaultMediaCacheDirectory()
 {

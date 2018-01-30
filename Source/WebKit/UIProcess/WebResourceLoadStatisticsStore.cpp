@@ -365,6 +365,14 @@ void WebResourceLoadStatisticsStore::submitTelemetry()
     });
 }
 
+void WebResourceLoadStatisticsStore::setResourceLoadStatisticsDebugMode(bool enable)
+{
+    if (enable)
+        setTimeToLiveCookiePartitionFree(30_s);
+    else
+        resetParametersToDefaultValues();
+}
+
 void WebResourceLoadStatisticsStore::logUserInteraction(const URL& url)
 {
     if (url.isBlankURL() || url.isEmpty())
@@ -375,7 +383,8 @@ void WebResourceLoadStatisticsStore::logUserInteraction(const URL& url)
         statistics.hadUserInteraction = true;
         statistics.mostRecentUserInteractionTime = WallTime::now();
 
-        updateCookiePartitioningForDomains({ }, { }, { primaryDomain }, ShouldClearFirst::No);
+        if (statistics.isMarkedForCookiePartitioning || statistics.isMarkedForCookieBlocking)
+            updateCookiePartitioningForDomains({ }, { }, { primaryDomain }, ShouldClearFirst::No);
     });
 }
 

@@ -1,3 +1,31 @@
+2018-01-29  John Wilander  <wilander@apple.com>
+
+        Resource Load Statistics: Introduce debug mode as experimental feature
+        https://bugs.webkit.org/show_bug.cgi?id=182199
+        <rdar://problem/36930364>
+
+        Reviewed by Alex Christensen.
+
+        No new tests. This adds an experimental feature.
+
+        The only changes to default behavior are:
+        - Increased resolution on timestamps which is needed to be able to set shorter
+          timeouts in debug mode.
+        - Only update partitioning and blocking table when needed. This is an optimization
+          which pays off in less XPC with shorter timeouts.
+
+        * loader/ResourceLoadObserver.cpp:
+        (WebCore::reduceTimeResolution):
+        (WebCore::ResourceLoadObserver::logFrameNavigation):
+        (WebCore::ResourceLoadObserver::logSubresourceLoading):
+        (WebCore::ResourceLoadObserver::logWebSocketLoading):
+        (WebCore::ResourceLoadObserver::logUserInteractionWithReducedTimeResolution):
+        (WebCore::reduceToHourlyTimeResolution): Deleted.
+        * page/RuntimeEnabledFeatures.h:
+        (WebCore::RuntimeEnabledFeatures::setResourceLoadStatisticsDebugMode):
+        (WebCore::RuntimeEnabledFeatures::resourceLoadStatisticsDebugMode const):
+        * page/Settings.yaml:
+
 2018-01-29  Oleksandr Skachkov  <gskachkov@gmail.com>
 
         FetchResponse should support ConsumeData callback on chunk data is received: handling ReadableStream bodies

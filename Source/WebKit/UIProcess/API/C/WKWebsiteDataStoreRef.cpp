@@ -63,6 +63,11 @@ bool WKWebsiteDataStoreGetResourceLoadStatisticsEnabled(WKWebsiteDataStoreRef da
     return WebKit::toImpl(dataStoreRef)->resourceLoadStatisticsEnabled();
 }
 
+void WKWebsiteDataStoreSetResourceLoadStatisticsDebugMode(WKWebsiteDataStoreRef dataStoreRef, bool enable)
+{
+    WebKit::toImpl(dataStoreRef)->setResourceLoadStatisticsDebugMode(enable);
+}
+
 void WKWebsiteDataStoreSetStatisticsLastSeen(WKWebsiteDataStoreRef dataStoreRef, WKStringRef host, double seconds)
 {
     auto* store = WebKit::toImpl(dataStoreRef)->websiteDataStore().resourceLoadStatistics();

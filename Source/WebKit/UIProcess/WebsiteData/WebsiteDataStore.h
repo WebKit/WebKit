@@ -100,6 +100,8 @@ public:
 
     bool resourceLoadStatisticsEnabled() const;
     void setResourceLoadStatisticsEnabled(bool);
+    bool resourceLoadStatisticsDebugMode() const;
+    void setResourceLoadStatisticsDebugMode(bool);
 
     uint64_t cacheStoragePerOriginQuota() const { return m_resolvedConfiguration.cacheStoragePerOriginQuota; }
     void setCacheStoragePerOriginQuota(uint64_t quota) { m_resolvedConfiguration.cacheStoragePerOriginQuota = quota; }
@@ -197,6 +199,7 @@ private:
 
     const RefPtr<StorageManager> m_storageManager;
     RefPtr<WebResourceLoadStatisticsStore> m_resourceLoadStatistics;
+    bool m_resourceLoadStatisticsDebugMode { false };
 
     Ref<WorkQueue> m_queue;
 

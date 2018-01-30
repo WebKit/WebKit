@@ -139,6 +139,8 @@ public:
     void clearInMemory();
     void grandfatherExistingWebsiteData(CompletionHandler<void()>&&);
 
+    void setResourceLoadStatisticsDebugMode(bool);
+
     void setStatisticsTestingCallback(Function<void (const String&)>&& callback) { m_statisticsTestingCallback = WTFMove(callback); }
     void logTestingEvent(const String&);
 

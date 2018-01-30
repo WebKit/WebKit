@@ -47,6 +47,8 @@ public:
 
     bool resourceLoadStatisticsEnabled() const;
     void setResourceLoadStatisticsEnabled(bool);
+    bool resourceLoadStatisticsDebugMode() const;
+    void setResourceLoadStatisticsDebugMode(bool);
 
     WebKit::WebsiteDataStore& websiteDataStore() { return m_websiteDataStore.get(); }
     HTTPCookieStore& httpCookieStore();

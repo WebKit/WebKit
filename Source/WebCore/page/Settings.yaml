@@ -711,3 +711,6 @@ touchEventEmulationEnabled:
 
 mediaCapabilitiesEnabled:
   initial: false
+
+resourceLoadStatisticsDebugMode:
+  initial: false

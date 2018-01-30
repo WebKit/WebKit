@@ -1413,6 +1413,17 @@ void WebsiteDataStore::setResourceLoadStatisticsEnabled(bool enabled)
         processPool->setResourceLoadStatisticsEnabled(false);
 }
 
+bool WebsiteDataStore::resourceLoadStatisticsDebugMode() const
+{
+    return m_resourceLoadStatisticsDebugMode;
+}
+
+void WebsiteDataStore::setResourceLoadStatisticsDebugMode(bool enabled)
+{
+    m_resourceLoadStatisticsDebugMode = enabled;
+    m_resourceLoadStatistics->setResourceLoadStatisticsDebugMode(enabled);
+}
+
 void WebsiteDataStore::enableResourceLoadStatisticsAndSetTestingCallback(Function<void (const String&)>&& callback)
 {
     if (m_resourceLoadStatistics) {

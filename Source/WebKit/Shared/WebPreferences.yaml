@@ -1194,3 +1194,11 @@ WebVREnabled:
   webcoreBinding: RuntimeEnabledFeatures
   category: experimental
   condition: PLATFORM(GTK) || PLATFORM(WPE)
+
+ResourceLoadStatisticsDebugMode:
+  type: bool
+  defaultValue: false
+  humanReadableName: "ITP Debug Mode"
+  humanReadableDescription: "Intelligent Tracking Prevention Debug Mode"
+  category: experimental
+  webcoreBinding: RuntimeEnabledFeatures
