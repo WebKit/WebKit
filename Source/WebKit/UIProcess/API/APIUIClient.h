@@ -30,6 +30,7 @@
 #include "WebHitTestResultData.h"
 #include "WebPageProxy.h"
 #include <WebCore/FloatRect.h>
+#include <wtf/CompletionHandler.h>
 
 #if PLATFORM(IOS)
 OBJC_CLASS NSArray;
@@ -71,7 +72,7 @@ class UIClient {
 public:
     virtual ~UIClient() { }
 
-    virtual void createNewPage(WebKit::WebPageProxy&, Ref<FrameInfo>&&, WebCore::ResourceRequest&&, WebCore::WindowFeatures&&, WebKit::NavigationActionData&&, WTF::Function<void(RefPtr<WebKit::WebPageProxy>&&)>&&) { }
+    virtual void createNewPage(WebKit::WebPageProxy&, Ref<FrameInfo>&&, WebCore::ResourceRequest&&, WebCore::WindowFeatures&&, WebKit::NavigationActionData&&, CompletionHandler<void(RefPtr<WebKit::WebPageProxy>&&)>&& completionHandler) { completionHandler(nullptr); }
     virtual void showPage(WebKit::WebPageProxy*) { }
     virtual void fullscreenMayReturnToInline(WebKit::WebPageProxy*) { }
     virtual void didEnterFullscreen(WebKit::WebPageProxy*) { }
