@@ -832,7 +832,7 @@ TEST(WKAttachmentTests, InsertPastedImageAsAttachment)
     }
 }
 
-TEST(WKAttachmentTests, InsertPastedAttributedStringContainingImage)
+TEST(WKAttachmentTests, DISABLED_InsertPastedAttributedStringContainingImage)
 {
     platformCopyRichTextWithImage();
 
@@ -858,7 +858,7 @@ TEST(WKAttachmentTests, InsertPastedAttributedStringContainingImage)
     }
 }
 
-TEST(WKAttachmentTests, InsertPastedAttributedStringContainingMultipleAttachments)
+TEST(WKAttachmentTests, DISABLED_InsertPastedAttributedStringContainingMultipleAttachments)
 {
     platformCopyRichTextWithMultipleAttachments();
 

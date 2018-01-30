@@ -1,3 +1,10 @@
+2018-01-30  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, disable tests for rdar://problem/37032930&37032931.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WKAttachmentTests.mm:
+        (TestWebKitAPI::TEST):
+
 2018-01-30  Jason Marcell  <jmarcell@apple.com>
 
         Cherry-pick r227765. rdar://problem/37019523
