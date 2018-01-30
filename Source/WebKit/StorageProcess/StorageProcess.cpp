@@ -404,6 +404,7 @@ void StorageProcess::didGetSandboxExtensionsForBlobFiles(uint64_t requestID, San
 #if ENABLE(SERVICE_WORKER)
 SWServer& StorageProcess::swServerForSession(PAL::SessionID sessionID)
 {
+    ASSERT(sessionID.isValid());
     auto result = m_swServers.add(sessionID, nullptr);
     if (!result.isNewEntry) {
         ASSERT(result.iterator->value);
