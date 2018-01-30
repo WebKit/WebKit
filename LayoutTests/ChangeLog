@@ -1,3 +1,11 @@
+2018-01-30  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Unreviewed WPE test gardening
+
+        This test now has a global flakiness expectation
+
+        * platform/wpe/TestExpectations:
+
 2018-01-30  Frederic Wang  <fwang@igalia.com>
 
         Use document.scrollingElement to access viewport scroll properties in tests
