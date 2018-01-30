@@ -1,5 +1,23 @@
 2018-01-30  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r227712. rdar://problem/37019428
+
+    2018-01-26  Chris Dumez  <cdumez@apple.com>
+
+            Layout Test http/wpt/beacon/beacon-async-error-logging.html is flaky
+            https://bugs.webkit.org/show_bug.cgi?id=182184
+            <rdar://problem/36929478>
+
+            Reviewed by Youenn Fablet.
+
+            Stop relying on a setTimeout(500) to end the test. Instead rely on the
+            internals.setConsoleMessageListener() API to wait for the console message
+            we are expecting.
+
+            * http/wpt/beacon/beacon-async-error-logging.html:
+
+2018-01-30  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r227710. rdar://problem/37019457
 
     2018-01-26  Megan Gardner  <megan_gardner@apple.com>
