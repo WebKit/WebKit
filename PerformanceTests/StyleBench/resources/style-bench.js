@@ -102,7 +102,7 @@ class StyleBench
     static nthPseudoClassConfiguration()
     {
         return Object.assign(this.defaultConfiguration(), {
-            name: ':nth pseudo classes',
+            name: 'Nth pseudo classes',
             pseudoClassChance: 0.1,
             pseudoClasses: [
                 'nth-child(2n+1)',
