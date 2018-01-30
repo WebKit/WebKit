@@ -102,7 +102,7 @@ void MediaSessionManagerMac::sessionWillEndPlayback(PlatformMediaSession& sessio
 void MediaSessionManagerMac::clientCharacteristicsChanged(PlatformMediaSession&)
 {
     LOG(Media, "MediaSessionManagerMac::clientCharacteristicsChanged");
-    updateNowPlayingInfo();
+    scheduleUpdateNowPlayingInfo();
 }
 
 PlatformMediaSession* MediaSessionManagerMac::nowPlayingEligibleSession()
