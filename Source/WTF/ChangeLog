@@ -1,5 +1,16 @@
 2018-01-30  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r227648. rdar://problem/37019367
+
+    2018-01-25  Filip Pizlo  <fpizlo@apple.com>
+
+            Unreviewed, fix windows build.
+
+            * wtf/MathExtras.h:
+            (WTF::opaque):
+
+2018-01-30  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r227643. rdar://problem/37019367
 
     2018-01-24  Filip Pizlo  <fpizlo@apple.com>
