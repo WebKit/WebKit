@@ -29,6 +29,7 @@
 
 .resource-cookies .table {
     border: 1px solid var(--border-color);
+    min-width: 600px;
 }
 
 .resource-cookies .table > .header {
