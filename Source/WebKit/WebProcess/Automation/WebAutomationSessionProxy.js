@@ -88,7 +88,7 @@ let AutomationSessionProxy = class AutomationSessionProxy
 
     _jsonStringify(original)
     {
-        return JSON.stringify(original, (key, value) => this._replaceJSONValue(key, value)) || "";
+        return JSON.stringify(original, (key, value) => this._replaceJSONValue(key, value)) || "null";
     }
 
     _reviveJSONValue(key, value)

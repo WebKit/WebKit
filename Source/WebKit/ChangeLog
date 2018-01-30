@@ -1,3 +1,23 @@
+2018-01-29  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        WebDriver: evaluateJavaScriptFunction should return null when return value is undefined
+        https://bugs.webkit.org/show_bug.cgi?id=180350
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        undefined can't be converted to JSON string, in which case JSON.stringify() returns undefined and we handle that
+        case to return an empty string. We currently handle this case for execute script commands, but not in all other
+        cases where we use evaluateJavaScriptFunction. It would be simpler if evaluateJavaScriptFunction returned null,
+        because in that case we wouldn't need to handle it as a special case.
+
+        15.2 Executing Script
+        https://w3c.github.io/webdriver/webdriver-spec.html#dfn-json-clone
+
+        Fixes: imported/w3c/webdriver/tests/state/get_element_property.py::test_element_non_existent
+
+        * WebProcess/Automation/WebAutomationSessionProxy.js:
+        (let.AutomationSessionProxy.prototype._jsonStringify): Return "null" instead of "" when undefined is given.
+
 2018-01-29  Ryosuke Niwa  <rniwa@webkit.org>
 
         Release assert in updateLayout while waiting for sync reply to WebPageProxy::HasInsecureContent

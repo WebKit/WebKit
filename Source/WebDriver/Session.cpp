@@ -1800,10 +1800,6 @@ void Session::executeScript(const String& script, RefPtr<JSON::Array>&& argument
                 completionHandler(CommandResult::fail(CommandResult::ErrorCode::UnknownError));
                 return;
             }
-            if (valueString.isEmpty()) {
-                completionHandler(CommandResult::success());
-                return;
-            }
             RefPtr<JSON::Value> resultValue;
             if (!JSON::Value::parseJSON(valueString, resultValue)) {
                 completionHandler(CommandResult::fail(CommandResult::ErrorCode::UnknownError));
