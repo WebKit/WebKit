@@ -175,6 +175,8 @@ private:
     void registerUserDefaultsIfNeeded();
 #endif
 
+    bool wasAccessedAsFirstPartyDueToUserInteraction(const WebCore::ResourceLoadStatistics& current, const WebCore::ResourceLoadStatistics& updated);
+
     struct Parameters {
         size_t pruneEntriesDownTo { 800 };
         size_t maxStatisticsEntries { 1000 };

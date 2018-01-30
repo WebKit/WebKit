@@ -1,3 +1,34 @@
+2018-01-30  Brent Fulgham  <bfulgham@apple.com>
+
+        Add telemetry to track storage access API adoption
+        https://bugs.webkit.org/show_bug.cgi?id=182197
+        <rdar://problem/35803309>
+
+        Reviewed by Chris Dumez.
+        
+        This patch also handled aggregating the counts in the UIProcess, which has access to
+        the right data.
+
+        The original patch assumed the WebContent process kept track of user interaction. This is
+        only tracked in the UIProcess, so we can get rid of some of the logging code adding in
+        r227755.
+
+        * Shared/WebProcessCreationParameters.cpp:
+        (WebKit::WebProcessCreationParameters::encode const): Rollout of r227755 changes not
+        needed to track the statistics.
+        (WebKit::WebProcessCreationParameters::decode): Ditto.
+        * Shared/WebProcessCreationParameters.h:
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::platformInitializeWebProcess): Ditto.
+        * UIProcess/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::wasAccessedAsFirstPartyDueToUserInteraction): Moved from
+        the WebContent process, which does not keep track of user interaction.
+        (WebKit::WebResourceLoadStatisticsStore::mergeStatistics): Aggregate counts while processing
+        the statistics.
+        * UIProcess/WebResourceLoadStatisticsStore.h:
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::initializeWebProcess):
+
 2018-01-30  Chris Dumez  <cdumez@apple.com>
 
         Make sure we never create a WebSWClientConnection with an invalid sessionID

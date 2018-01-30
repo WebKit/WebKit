@@ -132,16 +132,6 @@ static WallTime reduceTimeResolution(WallTime time)
     return WallTime::fromRawSeconds(std::floor(time.secondsSinceEpoch() / timestampResolution) * timestampResolution.seconds());
 }
 
-void ResourceLoadObserver::setTimeToLivePartitionFree(Seconds value)
-{
-    m_timeToLiveCookiePartitionFree = value;
-}
-
-bool ResourceLoadObserver::wasAccessedWithinInteractionWindow(const ResourceLoadStatistics& statistic) const
-{
-    return WallTime::now() <= statistic.mostRecentUserInteractionTime + m_timeToLiveCookiePartitionFree;
-}
-
 void ResourceLoadObserver::logFrameNavigation(const Frame& frame, const Frame& topFrame, const ResourceRequest& newRequest, const URL& redirectUrl)
 {
     ASSERT(frame.document());
@@ -181,8 +171,6 @@ void ResourceLoadObserver::logFrameNavigation(const Frame& frame, const Frame& t
         && !(areDomainsAssociated(page, targetPrimaryDomain, mainFramePrimaryDomain) || areDomainsAssociated(page, targetPrimaryDomain, sourcePrimaryDomain))) {
         auto& targetStatistics = ensureResourceStatisticsForPrimaryDomain(targetPrimaryDomain);
         targetStatistics.lastSeen = reduceTimeResolution(WallTime::now());
-        if (targetStatistics.hadUserInteraction && wasAccessedWithinInteractionWindow(targetStatistics))
-            targetStatistics.timesAccessedAsFirstPartyDueToUserInteraction++;
         if (targetStatistics.subframeUnderTopFrameOrigins.add(mainFramePrimaryDomain).isNewEntry)
             shouldCallNotificationCallback = true;
     }
@@ -240,8 +228,6 @@ void ResourceLoadObserver::logSubresourceLoading(const Frame* frame, const Resou
     {
         auto& targetStatistics = ensureResourceStatisticsForPrimaryDomain(targetPrimaryDomain);
         targetStatistics.lastSeen = reduceTimeResolution(WallTime::now());
-        if (targetStatistics.hadUserInteraction && wasAccessedWithinInteractionWindow(targetStatistics))
-            targetStatistics.timesAccessedAsFirstPartyDueToUserInteraction++;
         if (targetStatistics.subresourceUnderTopFrameOrigins.add(mainFramePrimaryDomain).isNewEntry)
             shouldCallNotificationCallback = true;
     }

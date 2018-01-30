@@ -154,8 +154,6 @@ void WebProcessCreationParameters::encode(IPC::Encoder& encoder) const
 #if HAVE(CFNETWORK_STORAGE_PARTITIONING) && !RELEASE_LOG_DISABLED
     encoder << shouldLogUserInteraction;
 #endif
-
-    encoder << cookiePartitionTimeToLive;
 }
 
 bool WebProcessCreationParameters::decode(IPC::Decoder& decoder, WebProcessCreationParameters& parameters)
@@ -401,9 +399,6 @@ bool WebProcessCreationParameters::decode(IPC::Decoder& decoder, WebProcessCreat
     if (!decoder.decode(parameters.shouldLogUserInteraction))
         return false;
 #endif
-
-    if (!decoder.decode(parameters.cookiePartitionTimeToLive))
-        return false;
 
     return true;
 }

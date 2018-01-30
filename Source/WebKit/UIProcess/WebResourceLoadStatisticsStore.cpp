@@ -757,6 +757,16 @@ void WebResourceLoadStatisticsStore::clearInMemory()
     updateCookiePartitioningForDomains({ }, { }, { }, ShouldClearFirst::Yes);
 }
 
+bool WebResourceLoadStatisticsStore::wasAccessedAsFirstPartyDueToUserInteraction(const ResourceLoadStatistics& current, const ResourceLoadStatistics& updated)
+{
+    if (!current.hadUserInteraction && !updated.hadUserInteraction)
+        return false;
+
+    auto mostRecentUserInteractionTime = std::max(current.mostRecentUserInteractionTime, updated.mostRecentUserInteractionTime);
+
+    return updated.lastSeen <= mostRecentUserInteractionTime + m_parameters.timeToLiveCookiePartitionFree;
+}
+
 void WebResourceLoadStatisticsStore::mergeStatistics(Vector<ResourceLoadStatistics>&& statistics)
 {
     ASSERT(!RunLoop::isMain());
@@ -764,8 +774,11 @@ void WebResourceLoadStatisticsStore::mergeStatistics(Vector<ResourceLoadStatisti
         auto result = m_resourceStatisticsMap.ensure(statistic.highLevelDomain, [&statistic] {
             return WTFMove(statistic);
         });
-        if (!result.isNewEntry)
+        if (!result.isNewEntry) {
+            if (wasAccessedAsFirstPartyDueToUserInteraction(result.iterator->value, statistic))
+                result.iterator->value.timesAccessedAsFirstPartyDueToUserInteraction++;
             result.iterator->value.merge(statistic);
+        }
     }
 }
 

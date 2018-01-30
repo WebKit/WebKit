@@ -1,3 +1,24 @@
+2018-01-30  Brent Fulgham  <bfulgham@apple.com>
+
+        Add telemetry to track storage access API adoption
+        https://bugs.webkit.org/show_bug.cgi?id=182197
+        <rdar://problem/35803309>
+
+        Reviewed by Chris Dumez.
+        
+        Partial roll-out of r227755.
+
+        The original patch assumed the WebContent process kept track of user interaction. This is
+        only tracked in the UIProcess, so we can get rid of some of the logging code adding in
+        r227755.
+
+        * loader/ResourceLoadObserver.cpp:
+        (WebCore::ResourceLoadObserver::logFrameNavigation):
+        (WebCore::ResourceLoadObserver::logSubresourceLoading):
+        (WebCore::ResourceLoadObserver::setTimeToLivePartitionFree): Deleted.
+        (WebCore::ResourceLoadObserver::wasAccessedWithinInteractionWindow const): Deleted.
+        * loader/ResourceLoadObserver.h:
+
 2018-01-30  Chris Dumez  <cdumez@apple.com>
 
         Make sure we never create a WebSWClientConnection with an invalid sessionID

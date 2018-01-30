@@ -188,7 +188,6 @@ struct WebProcessCreationParameters {
 #if HAVE(CFNETWORK_STORAGE_PARTITIONING) && !RELEASE_LOG_DISABLED
     bool shouldLogUserInteraction { false };
 #endif
-    Seconds cookiePartitionTimeToLive;
 };
 
 } // namespace WebKit

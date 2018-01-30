@@ -279,11 +279,6 @@ void WebProcessPool::platformInitializeWebProcess(WebProcessCreationParameters& 
 #if HAVE(CFNETWORK_STORAGE_PARTITIONING) && !RELEASE_LOG_DISABLED
     parameters.shouldLogUserInteraction = [defaults boolForKey:WebKitLogCookieInformationDefaultsKey];
 #endif
-
-    Seconds timeToLiveUserInteraction([[NSUserDefaults standardUserDefaults] doubleForKey:@"ResourceLoadStatisticsTimeToLiveUserInteraction"]);
-    if (timeToLiveUserInteraction < 0_s || timeToLiveUserInteraction > 24_h * 30)
-        timeToLiveUserInteraction = 24_h;
-    parameters.cookiePartitionTimeToLive = timeToLiveUserInteraction;
 }
 
 void WebProcessPool::platformInitializeNetworkProcess(NetworkProcessCreationParameters& parameters)
