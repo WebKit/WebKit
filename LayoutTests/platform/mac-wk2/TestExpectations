@@ -875,7 +875,7 @@ webkit.org/b/181839 [ Debug ] inspector/debugger/breakpoint-action-log.html [ Pa
 
 webkit.org/b/181753 [ HighSierra Release ] http/wpt/service-workers/update-service-worker.https.html [ Pass Failure ]
 
-webkit.org/b/181482 http/tests/resourceLoadStatistics/grandfathering.html [ Skip ]
+webkit.org/b/181482 http/tests/resourceLoadStatistics/grandfathering.html [ Pass ]
 
 webkit.org/b/181831 [ HighSierra ] fast/forms/searchfield-heights.html [ Pass Failure ]
 

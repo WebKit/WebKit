@@ -1,3 +1,19 @@
+2018-01-29  John Wilander  <wilander@apple.com>
+
+        Switch grandfathering layout test to trigger on data record scanning instead of data record modification
+        https://bugs.webkit.org/show_bug.cgi?id=181482
+        <rdar://problem/36549026>
+
+        Unreviewed test gardening.
+
+        * http/tests/resourceLoadStatistics/grandfathering.html:
+            Switched from
+            testRunner.installStatisticsDidModifyDataRecordsCallback()
+            to
+            testRunner.installStatisticsDidScanDataRecordsCallback().
+        * platform/mac-wk2/TestExpectations:
+            Marked as [ Pass ] again.
+
 2018-01-29  Andy Estes  <aestes@apple.com>
 
         [iOS] Restrict synthetic clicks to the origin that handled the underlying touch event
