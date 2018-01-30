@@ -1722,3 +1722,5 @@ webkit.org/b/179851 imported/w3c/web-platform-tests/html/browsers/offline/manife
 
 webkit.org/b/182177 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/errorhandling.html [ Pass Failure ]
 
+webkit.org/b/182311 imported/w3c/web-platform-tests/service-workers/service-worker/navigation-redirect.https.html [ Skip ]
+
