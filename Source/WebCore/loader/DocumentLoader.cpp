@@ -751,7 +751,6 @@ void DocumentLoader::responseReceived(const ResourceResponse& response)
     } else if (response.isMultipart())
         m_isLoadingMultipartContent = true;
 
-    ASSERT(!response.url().isNull());
     m_response = response;
 
     if (m_identifierForLoadWithoutResourceLoader) {
