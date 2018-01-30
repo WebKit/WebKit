@@ -1,3 +1,19 @@
+2018-01-29  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Release assert in updateLayout while waiting for sync reply to WebPageProxy::HasInsecureContent
+        https://bugs.webkit.org/show_bug.cgi?id=182273
+
+        Reviewed by Chris Dumez.
+
+        The assertion was caused by unrelated sync IPCs being processed while WebContent process is waiting for
+        the reply to WebPageProxy::HasInsecureContent. Since this IPC can be used while creating CachedFrame,
+        it's not safe to execute arbitrary code.
+
+        Fixed the bug by using DoNotProcessIncomingMessagesWhenWaitingForSyncReply added in r227566.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::savePlatformDataToCachedFrame):
+
 2018-01-29  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Add a build step to copy resources from WebKitAdditions as bundle resources in WebKit
