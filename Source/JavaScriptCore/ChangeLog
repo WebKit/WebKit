@@ -1,5 +1,29 @@
 2018-01-29  Yusuke Suzuki  <utatane.tea@gmail.com>
 
+        [JSC] Implement trimStart and trimEnd
+        https://bugs.webkit.org/show_bug.cgi?id=182233
+
+        Reviewed by Mark Lam.
+
+        String.prototype.{trimStart,trimEnd} are now stage 3[1].
+        String.prototype.{trimLeft,trimRight} are alias to these functions.
+
+        We rename these functions to trimStart and trimEnd, and put them as
+        trimLeft and trimRight too.
+
+        [1]: https://tc39.github.io/proposal-string-left-right-trim/
+
+        * runtime/StringPrototype.cpp:
+        (JSC::StringPrototype::finishCreation):
+        (JSC::trimString):
+        (JSC::stringProtoFuncTrim):
+        (JSC::stringProtoFuncTrimStart):
+        (JSC::stringProtoFuncTrimEnd):
+        (JSC::stringProtoFuncTrimLeft): Deleted.
+        (JSC::stringProtoFuncTrimRight): Deleted.
+
+2018-01-29  Yusuke Suzuki  <utatane.tea@gmail.com>
+
         [JSC] Relax line terminators in String to make JSON subset of JS
         https://bugs.webkit.org/show_bug.cgi?id=182232
 

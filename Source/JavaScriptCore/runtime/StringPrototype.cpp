@@ -76,8 +76,8 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncLocaleCompare(ExecState*);
 EncodedJSValue JSC_HOST_CALL stringProtoFuncToLocaleLowerCase(ExecState*);
 EncodedJSValue JSC_HOST_CALL stringProtoFuncToLocaleUpperCase(ExecState*);
 EncodedJSValue JSC_HOST_CALL stringProtoFuncTrim(ExecState*);
-EncodedJSValue JSC_HOST_CALL stringProtoFuncTrimLeft(ExecState*);
-EncodedJSValue JSC_HOST_CALL stringProtoFuncTrimRight(ExecState*);
+EncodedJSValue JSC_HOST_CALL stringProtoFuncTrimStart(ExecState*);
+EncodedJSValue JSC_HOST_CALL stringProtoFuncTrimEnd(ExecState*);
 EncodedJSValue JSC_HOST_CALL stringProtoFuncStartsWith(ExecState*);
 EncodedJSValue JSC_HOST_CALL stringProtoFuncEndsWith(ExecState*);
 EncodedJSValue JSC_HOST_CALL stringProtoFuncIncludes(ExecState*);
@@ -153,13 +153,18 @@ void StringPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject, JSStr
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("toLocaleUpperCase", stringProtoFuncToUpperCase, static_cast<unsigned>(PropertyAttribute::DontEnum), 0);
 #endif
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("trim", stringProtoFuncTrim, static_cast<unsigned>(PropertyAttribute::DontEnum), 0);
-    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("trimLeft", stringProtoFuncTrimLeft, static_cast<unsigned>(PropertyAttribute::DontEnum), 0);
-    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("trimRight", stringProtoFuncTrimRight, static_cast<unsigned>(PropertyAttribute::DontEnum), 0);
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("startsWith", stringProtoFuncStartsWith, static_cast<unsigned>(PropertyAttribute::DontEnum), 1);
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("endsWith", stringProtoFuncEndsWith, static_cast<unsigned>(PropertyAttribute::DontEnum), 1);
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("includes", stringProtoFuncIncludes, static_cast<unsigned>(PropertyAttribute::DontEnum), 1);
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("normalize", stringProtoFuncNormalize, static_cast<unsigned>(PropertyAttribute::DontEnum), 0);
     JSC_NATIVE_INTRINSIC_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().charCodeAtPrivateName(), stringProtoFuncCharCodeAt, static_cast<unsigned>(PropertyAttribute::DontEnum), 1, CharCodeAtIntrinsic);
+
+    JSFunction* trimStartFunction = JSFunction::create(vm, globalObject, 0, ASCIILiteral("trimStart"), stringProtoFuncTrimStart, NoIntrinsic);
+    JSFunction* trimEndFunction = JSFunction::create(vm, globalObject, 0, ASCIILiteral("trimEnd"), stringProtoFuncTrimEnd, NoIntrinsic);
+    putDirectWithoutTransition(vm, Identifier::fromString(&vm, "trimStart"), trimStartFunction, static_cast<unsigned>(PropertyAttribute::DontEnum));
+    putDirectWithoutTransition(vm, Identifier::fromString(&vm, "trimLeft"), trimStartFunction, static_cast<unsigned>(PropertyAttribute::DontEnum));
+    putDirectWithoutTransition(vm, Identifier::fromString(&vm, "trimEnd"), trimEndFunction, static_cast<unsigned>(PropertyAttribute::DontEnum));
+    putDirectWithoutTransition(vm, Identifier::fromString(&vm, "trimRight"), trimEndFunction, static_cast<unsigned>(PropertyAttribute::DontEnum));
 
     JSFunction* iteratorFunction = JSFunction::create(vm, globalObject, 0, ASCIILiteral("[Symbol.iterator]"), stringProtoFuncIterator, NoIntrinsic);
     putDirectWithoutTransition(vm, vm.propertyNames->iteratorSymbol, iteratorFunction, static_cast<unsigned>(PropertyAttribute::DontEnum));
@@ -1669,8 +1674,8 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncToLocaleUpperCase(ExecState* state)
 #endif // ENABLE(INTL)
 
 enum {
-    TrimLeft = 1,
-    TrimRight = 2
+    TrimStart = 1,
+    TrimEnd = 2
 };
 
 static inline JSValue trimString(ExecState* exec, JSValue thisValue, int trimKind)
@@ -1684,12 +1689,12 @@ static inline JSValue trimString(ExecState* exec, JSValue thisValue, int trimKin
     RETURN_IF_EXCEPTION(scope, { });
 
     unsigned left = 0;
-    if (trimKind & TrimLeft) {
+    if (trimKind & TrimStart) {
         while (left < str.length() && isStrWhiteSpace(str[left]))
             left++;
     }
     unsigned right = str.length();
-    if (trimKind & TrimRight) {
+    if (trimKind & TrimEnd) {
         while (right > left && isStrWhiteSpace(str[right - 1]))
             right--;
     }
@@ -1705,19 +1710,19 @@ static inline JSValue trimString(ExecState* exec, JSValue thisValue, int trimKin
 EncodedJSValue JSC_HOST_CALL stringProtoFuncTrim(ExecState* exec)
 {
     JSValue thisValue = exec->thisValue();
-    return JSValue::encode(trimString(exec, thisValue, TrimLeft | TrimRight));
+    return JSValue::encode(trimString(exec, thisValue, TrimStart | TrimEnd));
 }
 
-EncodedJSValue JSC_HOST_CALL stringProtoFuncTrimLeft(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL stringProtoFuncTrimStart(ExecState* exec)
 {
     JSValue thisValue = exec->thisValue();
-    return JSValue::encode(trimString(exec, thisValue, TrimLeft));
+    return JSValue::encode(trimString(exec, thisValue, TrimStart));
 }
 
-EncodedJSValue JSC_HOST_CALL stringProtoFuncTrimRight(ExecState* exec)
+EncodedJSValue JSC_HOST_CALL stringProtoFuncTrimEnd(ExecState* exec)
 {
     JSValue thisValue = exec->thisValue();
-    return JSValue::encode(trimString(exec, thisValue, TrimRight));
+    return JSValue::encode(trimString(exec, thisValue, TrimEnd));
 }
 
 static inline unsigned clampAndTruncateToUnsigned(double value, unsigned min, unsigned max)
