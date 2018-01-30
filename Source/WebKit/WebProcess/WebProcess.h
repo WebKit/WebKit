@@ -176,6 +176,7 @@ public:
 #endif
 
     void webToStorageProcessConnectionClosed(WebToStorageProcessConnection*);
+    WebToStorageProcessConnection* existingWebToStorageProcessConnection() { return m_webToStorageProcessConnection.get(); }
     WebToStorageProcessConnection& ensureWebToStorageProcessConnection(PAL::SessionID initialSessionID);
 
     void setCacheModel(uint32_t);

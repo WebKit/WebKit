@@ -604,7 +604,7 @@ window.webkit.messageHandlers.regularPage.postMessage(result);
 </script>
 )SWRESOURCE";
 
-TEST(ServiceWorkers, StorageConnectionCreation)
+TEST(ServiceWorkers, SWProcessConnectionCreation)
 {
     ASSERT(mainBytes);
     ASSERT(scriptBytes);
@@ -688,6 +688,47 @@ TEST(ServiceWorkers, StorageConnectionCreation)
         done = true;
     }];
     TestWebKitAPI::Util::run(&done);
+}
+
+TEST(ServiceWorkers, StorageProcessConnectionCreation)
+{
+    ASSERT(mainBytes);
+    ASSERT(scriptBytes);
+
+    [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
+
+    RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+
+    done = false;
+    [[configuration websiteDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    setConfigurationInjectedBundlePath(configuration.get());
+
+    RetainPtr<RegularPageMessageHandler> regularPageMessageHandler = adoptNS([[RegularPageMessageHandler alloc] init]);
+    [[configuration userContentController] addScriptMessageHandler:regularPageMessageHandler.get() name:@"regularPage"];
+
+    RetainPtr<SWSchemes> handler = adoptNS([[SWSchemes alloc] init]);
+    handler->resources.set("sw://host/regularPageWithoutConnection.html", ResourceInfo { @"text/html", regularPageWithoutConnectionBytes });
+    [configuration setURLSchemeHandler:handler.get() forURLScheme:@"SW"];
+
+    RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+
+    EXPECT_EQ(0, webView.get().configuration.processPool._storageProcessIdentifier);
+
+    // Test that a regular page does not trigger a storage process if there is no registered service worker.
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"sw://host/regularPageWithoutConnection.html"]];
+
+    [webView loadRequest:request];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    // Make sure than loading the simple page did not start a storage process.
+    EXPECT_EQ(0, webView.get().configuration.processPool._storageProcessIdentifier);
 }
 
 #endif // WK_HAVE_C_SPI
