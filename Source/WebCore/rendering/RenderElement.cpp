@@ -1470,8 +1470,6 @@ bool RenderElement::repaintForPausedImageAnimationsIfNeeded(const IntRect& visib
     repaint();
 
     if (auto* image = cachedImage.image()) {
-        // SVGImages might cause a layout when starting an animation, so
-        // schedule them rather than start immediately.
         if (is<SVGImage>(image))
             downcast<SVGImage>(image)->scheduleStartAnimation();
         else
