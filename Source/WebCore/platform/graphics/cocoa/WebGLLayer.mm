@@ -54,8 +54,7 @@ using namespace WebCore;
     self = [super init];
     _devicePixelRatio = context->getContextAttributes().devicePixelRatio;
 #if PLATFORM(MAC)
-    if (!context->getContextAttributes().alpha)
-        self.opaque = YES;
+    self.contentsOpaque = !context->getContextAttributes().alpha;
     self.transform = CATransform3DIdentity;
     self.contentsScale = _devicePixelRatio;
 #endif
