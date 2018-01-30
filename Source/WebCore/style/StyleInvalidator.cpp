@@ -143,7 +143,11 @@ void Invalidator::invalidateStyleForTree(Element& root, SelectorFilter* filter)
 {
     if (invalidateIfNeeded(root, filter) == CheckDescendants::No)
         return;
+    invalidateStyleForDescendants(root, filter);
+}
 
+void Invalidator::invalidateStyleForDescendants(Element& root, SelectorFilter* filter)
+{
     Vector<Element*, 20> parentStack;
     Element* previousElement = &root;
     auto descendants = descendantsOfType<Element>(root);
@@ -203,6 +207,36 @@ void Invalidator::invalidateStyle(Element& element)
 
     // Don't use SelectorFilter as the rule sets here tend to be small and the filter would have setup cost deep in the tree.
     invalidateStyleForTree(element, nullptr);
+}
+
+void Invalidator::invalidateStyleWithMatchElement(Element& element, MatchElement matchElement)
+{
+    switch (matchElement) {
+    case MatchElement::Subject: {
+        invalidateIfNeeded(element, nullptr);
+        break;
+    }
+    case MatchElement::Parent: {
+        auto children = childrenOfType<Element>(element);
+        for (auto& child : children)
+            invalidateIfNeeded(child, nullptr);
+        break;
+    }
+    case MatchElement::Ancestor: {
+        invalidateStyleForDescendants(element, nullptr);
+        break;
+    }
+    case MatchElement::DirectSibling:
+    case MatchElement::IndirectSibling:
+    case MatchElement::ParentSibling:
+    case MatchElement::AncestorSibling:
+        // FIXME: Currently sibling invalidation happens during style resolution tree walk. It should be done here too.
+        element.invalidateStyle();
+        break;
+    case MatchElement::Host:
+        // FIXME: Handle this here as well.
+        break;
+    }
 }
 
 }

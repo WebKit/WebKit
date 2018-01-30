@@ -33,14 +33,19 @@ namespace WebCore {
 class RuleData;
 class StyleRule;
 
+enum class MatchElement { Subject, Parent, Ancestor, DirectSibling, IndirectSibling, ParentSibling, AncestorSibling, Host };
+constexpr unsigned matchElementCount = static_cast<unsigned>(MatchElement::Host) + 1;
+
 struct RuleFeature {
-    RuleFeature(StyleRule* rule, unsigned selectorIndex)
+    RuleFeature(StyleRule* rule, unsigned selectorIndex, std::optional<MatchElement> matchElement = std::nullopt)
         : rule(rule)
         , selectorIndex(selectorIndex)
+        , matchElement(matchElement)
     {
     }
     StyleRule* rule;
     unsigned selectorIndex;
+    std::optional<MatchElement> matchElement;
 };
 
 struct RuleFeatureSet {
@@ -55,9 +60,9 @@ struct RuleFeatureSet {
     HashSet<AtomicString> attributeLocalNamesInRules;
     Vector<RuleFeature> siblingRules;
     Vector<RuleFeature> uncommonAttributeRules;
-    HashMap<AtomicString, std::unique_ptr<Vector<RuleFeature>>> ancestorClassRules;
-    HashMap<AtomicString, std::unique_ptr<Vector<RuleFeature>>> subjectClassRules;
-    HashSet<AtomicString> otherClassesInRules;
+    
+    HashMap<AtomicString, std::unique_ptr<Vector<RuleFeature>>> classRules;
+    HashSet<AtomicString> classesAffectingHost;
 
     struct AttributeRules {
         WTF_MAKE_FAST_ALLOCATED;
@@ -71,8 +76,6 @@ struct RuleFeatureSet {
     bool usesFirstLetterRules { false };
 
 private:
-    enum class MatchElement { Subject, Parent, Ancestor, DirectSibling, IndirectSibling, ParentSibling, AncestorSibling, Host };
-
     static MatchElement computeNextMatchElement(MatchElement, CSSSelector::RelationType);
     static MatchElement computeSubSelectorMatchElement(MatchElement, const CSSSelector&);
 

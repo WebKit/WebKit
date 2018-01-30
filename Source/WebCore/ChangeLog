@@ -1,3 +1,58 @@
+2018-01-30  Antti Koivisto  <antti@apple.com>
+
+        Avoid traversing too much when doing class change invalidation
+        https://bugs.webkit.org/show_bug.cgi?id=181604
+
+        Reviewed by Zalan Bujtas.
+
+        We are now collecting information about which part of the tree a change in class can potentially affect.
+        Use the information to traverse only the required elements in Style::Invalidator.
+
+        The same mechanism can be later used for attribute and id change invalidation.
+
+        * css/DocumentRuleSets.cpp:
+        (WebCore::DocumentRuleSets::collectFeatures const):
+        (WebCore::DocumentRuleSets::classInvalidationRuleSets const):
+        (WebCore::DocumentRuleSets::subjectClassRules const): Deleted.
+        (WebCore::DocumentRuleSets::ancestorClassRules const): Deleted.
+
+            Remove separate subject and ancestor invalidation RuleSets. Instead collect all invalidation rulesets
+            to a vector along with their MatchElements.
+
+        * css/DocumentRuleSets.h:
+        * css/RuleFeature.cpp:
+        (WebCore::RuleFeatureSet::computeNextMatchElement):
+        (WebCore::RuleFeatureSet::computeSubSelectorMatchElement):
+        (WebCore::RuleFeatureSet::collectFeatures):
+
+            Similarly collect all class invalidation RuleFeatures to a general HashMap along with the MatchElement.
+
+        (WebCore::RuleFeatureSet::add):
+        (WebCore::RuleFeatureSet::clear):
+        (WebCore::RuleFeatureSet::shrinkToFit):
+        * css/RuleFeature.h:
+        (WebCore::RuleFeature::RuleFeature):
+        * style/ClassChangeInvalidation.cpp:
+        (WebCore::Style::ClassChangeInvalidation::computeInvalidation):
+
+            Find out InvalidationRuleSets to use.
+
+        (WebCore::Style::ClassChangeInvalidation::invalidateStyleWithRuleSets):
+
+            Pass them to Style::Invalidator.
+
+        * style/ClassChangeInvalidation.h:
+        * style/StyleInvalidator.cpp:
+        (WebCore::Style::Invalidator::invalidateStyleForTree):
+        (WebCore::Style::Invalidator::invalidateStyleForDescendants):
+        (WebCore::Style::Invalidator::invalidateStyleWithMatchElement):
+
+            Traverse only the part of the tree needed by the given MatchElement.
+
+        * style/StyleInvalidator.h:
+        * style/StyleSharingResolver.cpp:
+        (WebCore::Style::SharingResolver::classNamesAffectedByRules const):
+
 2018-01-30  Javier Fernandez  <jfernandez@igalia.com>
 
         [css-align] The 'baseline' value must be invalid for the 'justify-content' property

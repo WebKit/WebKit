@@ -89,26 +89,13 @@ void ClassChangeInvalidation::computeInvalidation(const SpaceSplitString& oldCla
 
     bool shouldInvalidateCurrent = false;
     bool mayAffectStyleInShadowTree = false;
-    ClassChangeVector classesAffectingDescendant;
-    ClassChangeVector classesAffectingCurrent;
 
     traverseRuleFeatures(m_element, [&] (const RuleFeatureSet& features, bool mayAffectShadowTree) {
         for (auto* changedClass : changedClasses) {
-            bool mayAffectStyle = false;
-            if (features.otherClassesInRules.contains(changedClass)) {
-                shouldInvalidateCurrent = true;
-                mayAffectStyle = true;
-            }
-            if (features.ancestorClassRules.contains(changedClass)) {
-                classesAffectingDescendant.append(changedClass);
-                mayAffectStyle = true;
-            }
-            if (features.subjectClassRules.contains(changedClass)) {
-                classesAffectingCurrent.append(changedClass);
-                mayAffectStyle = true;
-            }
-            if (mayAffectStyle && mayAffectShadowTree)
+            if (mayAffectShadowTree && features.classRules.contains(changedClass))
                 mayAffectStyleInShadowTree = true;
+            if (features.classesAffectingHost.contains(changedClass))
+                shouldInvalidateCurrent = true;
         }
     });
 
@@ -118,31 +105,24 @@ void ClassChangeInvalidation::computeInvalidation(const SpaceSplitString& oldCla
         return;
     }
 
+    if (shouldInvalidateCurrent)
+        m_element.invalidateStyle();
+
     auto& ruleSets = m_element.styleResolver().ruleSets();
 
-    if (childrenOfType<Element>(m_element).first()) {
-        for (auto* changedClass : classesAffectingDescendant) {
-            if (auto* rules = ruleSets.ancestorClassRules(changedClass))
-                m_invalidationRuleSets.append(rules);
+    for (auto* changedClass : changedClasses) {
+        if (auto* invalidationRuleSets = ruleSets.classInvalidationRuleSets(changedClass)) {
+            for (auto& invalidationRuleSet : *invalidationRuleSets)
+                m_invalidationRuleSets.append(&invalidationRuleSet);
         }
-    }
-
-    if (shouldInvalidateCurrent) {
-        m_element.invalidateStyle();
-        return;
-    }
-
-    for (auto* changedClass : classesAffectingCurrent) {
-        if (auto* rules = ruleSets.subjectClassRules(changedClass))
-            m_invalidationRuleSets.append(rules);
     }
 }
 
 void ClassChangeInvalidation::invalidateStyleWithRuleSets()
 {
-    for (auto* rules : m_invalidationRuleSets) {
-        Invalidator invalidator(*rules);
-        invalidator.invalidateStyle(m_element);
+    for (auto* invalidationRuleSet : m_invalidationRuleSets) {
+        Invalidator invalidator(*invalidationRuleSet->ruleSet);
+        invalidator.invalidateStyleWithMatchElement(m_element, invalidationRuleSet->matchElement);
     }
 }
 

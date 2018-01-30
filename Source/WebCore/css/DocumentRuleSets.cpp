@@ -167,26 +167,31 @@ void DocumentRuleSets::collectFeatures() const
     m_siblingRuleSet = makeRuleSet(m_features.siblingRules);
     m_uncommonAttributeRuleSet = makeRuleSet(m_features.uncommonAttributeRules);
 
-    m_subjectClassRuleSets.clear();
-    m_ancestorClassRuleSets.clear();
+    m_classInvalidationRuleSets.clear();
     m_ancestorAttributeRuleSetsForHTML.clear();
 
     m_features.shrinkToFit();
 }
 
-RuleSet* DocumentRuleSets::subjectClassRules(const AtomicString& className) const
+const Vector<InvalidationRuleSet>* DocumentRuleSets::classInvalidationRuleSets(const AtomicString& className) const
 {
-    return m_subjectClassRuleSets.ensure(className, [&] {
-        auto* rules = m_features.subjectClassRules.get(className);
-        return rules ? makeRuleSet(*rules) : nullptr;
-    }).iterator->value.get();
-}
-
-RuleSet* DocumentRuleSets::ancestorClassRules(const AtomicString& className) const
-{
-    return m_ancestorClassRuleSets.ensure(className, [&] {
-        auto* rules = m_features.ancestorClassRules.get(className);
-        return rules ? makeRuleSet(*rules) : nullptr;
+    return m_classInvalidationRuleSets.ensure(className, [&] () -> std::unique_ptr<Vector<InvalidationRuleSet>> {
+        auto* features = m_features.classRules.get(className);
+        if (!features)
+            return nullptr;
+        std::array<std::unique_ptr<RuleSet>, matchElementCount> matchElementArray;
+        for (auto& feature : *features) {
+            auto& ruleSet = matchElementArray[static_cast<unsigned>(*feature.matchElement)];
+            if (!ruleSet)
+                ruleSet = std::make_unique<RuleSet>();
+            ruleSet->addRule(feature.rule, feature.selectorIndex);
+        }
+        auto invalidationRuleSets = std::make_unique<Vector<InvalidationRuleSet>>();
+        for (unsigned i = 0; i < matchElementArray.size(); ++i) {
+            if (matchElementArray[i])
+                invalidationRuleSets->append({ static_cast<MatchElement>(i), WTFMove(matchElementArray[i]) });
+        }
+        return invalidationRuleSets;
     }).iterator->value.get();
 }
 

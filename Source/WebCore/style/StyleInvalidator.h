@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "RuleFeature.h"
 #include <wtf/Forward.h>
 
 namespace WebCore {
@@ -49,11 +50,13 @@ public:
     void invalidateStyle(Document&);
     void invalidateStyle(ShadowRoot&);
     void invalidateStyle(Element&);
+    void invalidateStyleWithMatchElement(Element&, MatchElement);
 
 private:
     enum class CheckDescendants { Yes, No };
     CheckDescendants invalidateIfNeeded(Element&, const SelectorFilter*);
     void invalidateStyleForTree(Element&, SelectorFilter*);
+    void invalidateStyleForDescendants(Element&, SelectorFilter*);
 
     std::unique_ptr<RuleSet> m_ownedRuleSet;
     const RuleSet& m_ruleSet;

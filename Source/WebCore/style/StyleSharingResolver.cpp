@@ -340,13 +340,8 @@ bool SharingResolver::sharingCandidateHasIdenticalStyleAffectingAttributes(const
 bool SharingResolver::classNamesAffectedByRules(const SpaceSplitString& classNames) const
 {
     for (unsigned i = 0; i < classNames.size(); ++i) {
-        if (m_ruleSets.features().otherClassesInRules.contains(classNames[i]))
+        if (m_ruleSets.features().classRules.contains(classNames[i]))
             return true;
-        if (m_ruleSets.features().ancestorClassRules.contains(classNames[i]))
-            return true;
-        if (m_ruleSets.features().subjectClassRules.contains(classNames[i]))
-            return true;
-
     }
     return false;
 }

@@ -33,6 +33,7 @@ namespace WebCore {
 class DocumentRuleSets;
 class RuleSet;
 class SpaceSplitString;
+struct InvalidationRuleSet;
 
 namespace Style {
 
@@ -48,7 +49,7 @@ private:
     const bool m_isEnabled;
     Element& m_element;
 
-    Vector<const RuleSet*, 4> m_invalidationRuleSets;
+    Vector<const InvalidationRuleSet*, 4> m_invalidationRuleSets;
 };
 
 inline ClassChangeInvalidation::ClassChangeInvalidation(Element& element, const SpaceSplitString& oldClasses, const SpaceSplitString& newClasses)
