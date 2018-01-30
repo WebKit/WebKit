@@ -1,3 +1,17 @@
+2018-01-30  Don Olmstead  <don.olmstead@sony.com>
+
+        [CMake] Make WTF headers copies
+        https://bugs.webkit.org/show_bug.cgi?id=182274
+
+        Reviewed by Alex Christensen.
+
+        * wtf/CMakeLists.txt:
+        * wtf/PlatformGTK.cmake:
+        * wtf/PlatformJSCOnly.cmake:
+        * wtf/PlatformMac.cmake:
+        * wtf/PlatformWPE.cmake:
+        * wtf/PlatformWin.cmake:
+
 2018-01-30  Mark Lam  <mark.lam@apple.com>
 
         Move ENABLE_POISON to Platform.h.
