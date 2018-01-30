@@ -35,6 +35,7 @@ namespace WebCore {
 
 class MessagePortChannelRegistry {
 public:
+    WEBCORE_EXPORT MessagePortChannelRegistry(MessagePortChannelProvider&);
     WEBCORE_EXPORT ~MessagePortChannelRegistry();
     
     WEBCORE_EXPORT void didCreateMessagePortChannel(const MessagePortIdentifier& port1, const MessagePortIdentifier& port2);
@@ -50,8 +51,12 @@ public:
     WEBCORE_EXPORT void messagePortChannelCreated(MessagePortChannel&);
     WEBCORE_EXPORT void messagePortChannelDestroyed(MessagePortChannel&);
 
+    MessagePortChannelProvider& provider() { return m_provider; }
+
 private:
     HashMap<MessagePortIdentifier, MessagePortChannel*> m_openChannels;
+    MessagePortChannelProvider& m_provider;
+
 };
 
 } // namespace WebCore

@@ -33,6 +33,11 @@
 
 namespace WebCore {
 
+MessagePortChannelProviderImpl::MessagePortChannelProviderImpl()
+    : m_registry(*this)
+{
+}
+
 MessagePortChannelProviderImpl::~MessagePortChannelProviderImpl()
 {
     ASSERT_NOT_REACHED();

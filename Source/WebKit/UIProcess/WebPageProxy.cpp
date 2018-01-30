@@ -415,11 +415,6 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, uin
         this->dispatchActivityStateChange();
     });
 #endif
-
-    static std::once_flag once;
-    std::call_once(once, [] {
-        MessagePortChannelProvider::setSharedProvider(UIMessagePortChannelProvider::singleton());
-    });
 }
 
 WebPageProxy::~WebPageProxy()

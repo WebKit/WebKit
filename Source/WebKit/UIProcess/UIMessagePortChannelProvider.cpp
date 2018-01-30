@@ -41,6 +41,7 @@ UIMessagePortChannelProvider& UIMessagePortChannelProvider::singleton()
 }
 
 UIMessagePortChannelProvider::UIMessagePortChannelProvider()
+    : m_registry(*this)
 {
 }
 
