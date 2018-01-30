@@ -1,3 +1,16 @@
+2018-01-30  Jason Marcell  <jmarcell@apple.com>
+
+        Cherry-pick r227631. rdar://problem/37019444
+
+    2018-01-25  Jer Noble  <jer.noble@apple.com>
+
+            Move ImageDecoderAVFObjC from using AVSampleBufferGenerator to AVAssetReaderOutput for parsing
+            https://bugs.webkit.org/show_bug.cgi?id=182091
+
+            Reviewed by Eric Carlson.
+
+            * platform/ios/imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/update-the-source-set-expected.txt: Added.
+
 2018-01-30  Ryan Haddad  <ryanhaddad@apple.com>
 
         Cherry-pick r227741. rdar://problem/36912402

@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(MEDIA_SOURCE)
-
 #include <map>
 #include <wtf/MediaTime.h>
 #include <wtf/RefPtr.h>
@@ -45,6 +43,7 @@ public:
     typedef MapType::reverse_iterator reverse_iterator;
     typedef MapType::const_reverse_iterator const_reverse_iterator;
     typedef std::pair<iterator, iterator> iterator_range;
+    typedef MapType::value_type value_type;
 
     iterator begin() { return m_samples.begin(); }
     const_iterator begin() const { return m_samples.begin(); }
@@ -79,6 +78,7 @@ public:
     typedef MapType::reverse_iterator reverse_iterator;
     typedef MapType::const_reverse_iterator const_reverse_iterator;
     typedef std::pair<reverse_iterator, reverse_iterator> reverse_iterator_range;
+    typedef MapType::value_type value_type;
 
     iterator begin() { return m_samples.begin(); }
     const_iterator begin() const { return m_samples.begin(); }
@@ -107,6 +107,7 @@ public:
     SampleMap() = default;
 
     WEBCORE_EXPORT bool empty() const;
+    size_t size() const { return m_decodeOrder.m_samples.size(); }
     WEBCORE_EXPORT void clear();
     WEBCORE_EXPORT void addSample(MediaSample&);
     WEBCORE_EXPORT void removeSample(MediaSample*);
@@ -133,5 +134,3 @@ inline void SampleMap::addRange(I begin, I end)
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(MEDIA_SOURCE)

@@ -26,8 +26,6 @@
 #include "config.h"
 #include "SampleMap.h"
 
-#if ENABLE(MEDIA_SOURCE)
-
 #include "MediaSample.h"
 
 namespace WebCore {
@@ -310,5 +308,3 @@ DecodeOrderSampleMap::reverse_iterator_range DecodeOrderSampleMap::findDependent
 }
 
 }
-
-#endif

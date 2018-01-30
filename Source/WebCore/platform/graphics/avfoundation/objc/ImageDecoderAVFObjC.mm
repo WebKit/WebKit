@@ -26,7 +26,7 @@
 #import "config.h"
 #import "ImageDecoderAVFObjC.h"
 
-#if HAVE(AVSAMPLEBUFFERGENERATOR)
+#if HAVE(AVASSETREADER)
 
 #import "AVFoundationMIMETypeCache.h"
 #import "AffineTransform.h"
@@ -36,14 +36,15 @@
 #import "FloatSize.h"
 #import "Logging.h"
 #import "MIMETypeRegistry.h"
+#import "MediaSampleAVFObjC.h"
 #import "SharedBuffer.h"
 #import "UTIUtilities.h"
 #import "WebCoreDecompressionSession.h"
 #import <AVFoundation/AVAsset.h>
+#import <AVFoundation/AVAssetReader.h>
+#import <AVFoundation/AVAssetReaderOutput.h>
 #import <AVFoundation/AVAssetResourceLoader.h>
 #import <AVFoundation/AVAssetTrack.h>
-#import <AVFoundation/AVSampleBufferGenerator.h>
-#import <AVFoundation/AVSampleCursor.h>
 #import <AVFoundation/AVTime.h>
 #import <VideoToolbox/VTUtilities.h>
 #import <map>
@@ -56,14 +57,15 @@
 #import <wtf/Vector.h>
 
 #import <pal/cf/CoreMediaSoftLink.h>
+#import "CoreVideoSoftLink.h"
 #import "VideoToolboxSoftLink.h"
 
 #pragma mark - Soft Linking
 
 SOFT_LINK_FRAMEWORK_OPTIONAL(AVFoundation)
 SOFT_LINK_CLASS_OPTIONAL(AVFoundation, AVURLAsset)
-SOFT_LINK_CLASS_OPTIONAL(AVFoundation, AVSampleBufferGenerator)
-SOFT_LINK_CLASS_OPTIONAL(AVFoundation, AVSampleBufferRequest)
+SOFT_LINK_CLASS_OPTIONAL(AVFoundation, AVAssetReader)
+SOFT_LINK_CLASS_OPTIONAL(AVFoundation, AVAssetReaderTrackOutput)
 SOFT_LINK_POINTER_OPTIONAL(AVFoundation, AVMediaCharacteristicVisual, NSString *)
 SOFT_LINK_POINTER_OPTIONAL(AVFoundation, AVURLAssetReferenceRestrictionsKey, NSString *)
 SOFT_LINK_POINTER_OPTIONAL(AVFoundation, AVURLAssetUsesNoPersistentCacheKey, NSString *)
@@ -267,15 +269,51 @@ static ImageDecoderAVFObjC::RotationProperties transformToRotationProperties(Aff
     return rotation;
 }
 
-struct ImageDecoderAVFObjC::SampleData {
-    Seconds duration { 0 };
-    bool hasAlpha { false };
-    IntSize frameSize;
-    RetainPtr<CMSampleBufferRef> sample;
-    RetainPtr<CGImageRef> image;
-    MediaTime decodeTime;
-    MediaTime presentationTime;
+class ImageDecoderAVFObjCSample : public MediaSampleAVFObjC {
+public:
+    static Ref<ImageDecoderAVFObjCSample> create(RetainPtr<CMSampleBufferRef>&& sampleBuffer)
+    {
+        return adoptRef(*new ImageDecoderAVFObjCSample(WTFMove(sampleBuffer)));
+    }
+
+    CGImageRef image() const { return m_image.get(); }
+    void setImage(RetainPtr<CGImageRef>&& image)
+    {
+        m_image = WTFMove(image);
+        if (!m_image) {
+            m_hasAlpha = false;
+            return;
+        }
+
+        auto alphaInfo = CGImageGetAlphaInfo(m_image.get());
+        m_hasAlpha = alphaInfo != kCGImageAlphaNone && alphaInfo != kCGImageAlphaNoneSkipLast && alphaInfo != kCGImageAlphaNoneSkipFirst;
+    }
+
+    SampleFlags flags() const override
+    {
+        return (SampleFlags)(MediaSampleAVFObjC::flags() | (m_hasAlpha ? HasAlpha : 0));
+    }
+
+private:
+    ImageDecoderAVFObjCSample(RetainPtr<CMSampleBufferRef>&& sample)
+        : MediaSampleAVFObjC(WTFMove(sample))
+    {
+    }
+
+    RetainPtr<CGImageRef> m_image;
+    bool m_hasAlpha { false };
 };
+
+static ImageDecoderAVFObjCSample* toSample(PresentationOrderSampleMap::value_type pair)
+{
+    return (ImageDecoderAVFObjCSample*)pair.second.get();
+}
+
+template <typename Iterator>
+ImageDecoderAVFObjCSample* toSample(Iterator iter)
+{
+    return (ImageDecoderAVFObjCSample*)iter->second.get();
+}
 
 #pragma mark - ImageDecoderAVFObjC
 
@@ -348,37 +386,24 @@ AVAssetTrack *ImageDecoderAVFObjC::firstEnabledTrack()
     return [videoTracks objectAtIndex:firstEnabledIndex];
 }
 
-void ImageDecoderAVFObjC::readSampleMetadata()
+void ImageDecoderAVFObjC::readSamples()
 {
-    if (!m_sampleData.isEmpty())
+    if (!m_sampleData.empty())
         return;
 
-    // NOTE: there is no API to return the number of samples in the sample table. Instead,
-    // simply increment the sample in decode order by an arbitrarily large number.
-    RetainPtr<AVSampleCursor> cursor = [m_track makeSampleCursorAtFirstSampleInDecodeOrder];
-    int64_t sampleCount = 0;
-    if (cursor)
-        sampleCount = 1 + [cursor stepInDecodeOrderByCount:std::numeric_limits<int32_t>::max()];
+    auto assetReader = adoptNS([allocAVAssetReaderInstance() initWithAsset:m_asset.get() error:nil]);
+    auto assetReaderOutput = adoptNS([allocAVAssetReaderTrackOutputInstance() initWithTrack:m_track.get() outputSettings:nil]);
 
-    // NOTE: there is no API to return the first sample cursor in presentation order. Instead,
-    // simply decrement sample in presentation order by an arbitrarily large number.
-    [cursor stepInPresentationOrderByCount:std::numeric_limits<int32_t>::min()];
+    assetReaderOutput.get().alwaysCopiesSampleData = NO;
+    [assetReader addOutput:assetReaderOutput.get()];
+    [assetReader startReading];
 
-    ASSERT(sampleCount >= 0);
-    m_sampleData.resize(static_cast<size_t>(sampleCount));
-
-    if (!m_generator)
-        m_generator = adoptNS([allocAVSampleBufferGeneratorInstance() initWithAsset:m_asset.get() timebase:nil]);
-
-    for (size_t index = 0; index < static_cast<size_t>(sampleCount); ++index) {
-        auto& sampleData = m_sampleData[index];
-        sampleData.duration = Seconds(PAL::CMTimeGetSeconds([cursor currentSampleDuration]));
-        sampleData.decodeTime = PAL::toMediaTime([cursor decodeTimeStamp]);
-        sampleData.presentationTime = PAL::toMediaTime([cursor presentationTimeStamp]);
-        auto request = adoptNS([allocAVSampleBufferRequestInstance() initWithStartCursor:cursor.get()]);
-        sampleData.sample = adoptCF([m_generator createSampleBufferForRequest:request.get()]);
-        m_presentationTimeToIndex.insert(std::make_pair(sampleData.presentationTime, index));
-        [cursor stepInPresentationOrderByCount:1];
+    while (auto sampleBuffer = adoptCF([assetReaderOutput copyNextSampleBuffer])) {
+        // NOTE: Some samples emitted by the AVAssetReader simply denote the boundary of edits
+        // and do not carry media data.
+        if (!(PAL::CMSampleBufferGetNumSamples(sampleBuffer.get())))
+            continue;
+        m_sampleData.addSample(ImageDecoderAVFObjCSample::create(WTFMove(sampleBuffer)).get());
     }
 }
 
@@ -406,7 +431,7 @@ bool ImageDecoderAVFObjC::storeSampleBuffer(CMSampleBufferRef sampleBuffer)
     }
 
     auto presentationTime = PAL::toMediaTime(PAL::CMSampleBufferGetPresentationTimeStamp(sampleBuffer));
-    auto indexIter = m_presentationTimeToIndex.find(presentationTime);
+    auto iter = m_sampleData.presentationOrder().findSampleWithPresentationTime(presentationTime);
 
     if (m_rotation && !m_rotation.value().isIdentity()) {
         auto& rotation = m_rotation.value();
@@ -447,21 +472,16 @@ bool ImageDecoderAVFObjC::storeSampleBuffer(CMSampleBufferRef sampleBuffer)
         return false;
     }
 
-    ASSERT(indexIter->second < m_sampleData.size());
-    auto& sampleData = m_sampleData[indexIter->second];
-    sampleData.image = adoptCF(rawImage);
-    sampleData.sample = nullptr;
-
-    auto alphaInfo = CGImageGetAlphaInfo(rawImage);
-    sampleData.hasAlpha = (alphaInfo != kCGImageAlphaNone && alphaInfo != kCGImageAlphaNoneSkipLast && alphaInfo != kCGImageAlphaNoneSkipFirst);
+    ASSERT(iter != m_sampleData.presentationOrder().end());
+    toSample(iter)->setImage(adoptCF(rawImage));
 
     return true;
 }
 
 void ImageDecoderAVFObjC::advanceCursor()
 {
-    if (![m_cursor stepInDecodeOrderByCount:1])
-        m_cursor = [m_track makeSampleCursorAtFirstSampleInDecodeOrder];
+    if (m_cursor == m_sampleData.decodeOrder().end() || ++m_cursor == m_sampleData.decodeOrder().end())
+        m_cursor = m_sampleData.decodeOrder().begin();
 }
 
 void ImageDecoderAVFObjC::setTrack(AVAssetTrack *track)
@@ -474,21 +494,20 @@ void ImageDecoderAVFObjC::setTrack(AVAssetTrack *track)
     m_sampleData.clear();
     m_size.reset();
     m_rotation.reset();
-    m_cursor = nullptr;
-    m_generator = nullptr;
+    m_cursor = m_sampleData.decodeOrder().end();
     m_rotationSession = nullptr;
 
     [track loadValuesAsynchronouslyForKeys:@[@"naturalSize", @"preferredTransform"] completionHandler:[protectedThis = makeRefPtr(this)] () mutable {
         callOnMainThread([protectedThis = WTFMove(protectedThis)] {
             protectedThis->readTrackMetadata();
-            protectedThis->readSampleMetadata();
+            protectedThis->readSamples();
         });
     }];
 }
 
 EncodedDataStatus ImageDecoderAVFObjC::encodedDataStatus() const
 {
-    if (m_sampleData.isEmpty())
+    if (m_sampleData.empty())
         return EncodedDataStatus::Unknown;
     return EncodedDataStatus::Complete;
 }
@@ -510,7 +529,7 @@ RepetitionCount ImageDecoderAVFObjC::repetitionCount() const
     // In the absence of instructions to the contrary, assume all media formats repeat infinitely.
     // FIXME: Future media formats may embed repeat count information, and when that is available
     // through AVAsset, account for it here.
-    return RepetitionCountInfinite;
+    return frameCount() > 1 ? RepetitionCountInfinite : RepetitionCountNone;
 }
 
 String ImageDecoderAVFObjC::uti() const
@@ -530,14 +549,11 @@ IntSize ImageDecoderAVFObjC::frameSizeAtIndex(size_t, SubsamplingLevel) const
 
 bool ImageDecoderAVFObjC::frameIsCompleteAtIndex(size_t index) const
 {
-    if (index >= m_sampleData.size())
+    auto* sampleData = sampleAtIndex(index);
+    if (!sampleData)
         return false;
 
-    auto sampleData = m_sampleData[index];
-    if (!sampleData.sample)
-        return false;
-
-    return PAL::CMSampleBufferDataIsReady(sampleData.sample.get());
+    return PAL::CMSampleBufferDataIsReady(sampleData->sampleBuffer());
 }
 
 ImageOrientation ImageDecoderAVFObjC::frameOrientationAtIndex(size_t) const
@@ -547,16 +563,17 @@ ImageOrientation ImageDecoderAVFObjC::frameOrientationAtIndex(size_t) const
 
 Seconds ImageDecoderAVFObjC::frameDurationAtIndex(size_t index) const
 {
-    if (index < m_sampleData.size())
-        return m_sampleData[index].duration;
-    return { };
+    auto* sampleData = sampleAtIndex(index);
+    if (!sampleData)
+        return { };
+
+    return Seconds(sampleData->duration().toDouble());
 }
 
 bool ImageDecoderAVFObjC::frameHasAlphaAtIndex(size_t index) const
 {
-    if (index < m_sampleData.size())
-        return m_sampleData[index].hasAlpha;
-    return false;
+    auto* sampleData = sampleAtIndex(index);
+    return sampleData ? sampleData->hasAlpha() : false;
 }
 
 bool ImageDecoderAVFObjC::frameAllowSubsamplingAtIndex(size_t index) const
@@ -577,57 +594,42 @@ NativeImagePtr ImageDecoderAVFObjC::createFrameImageAtIndex(size_t index, Subsam
 {
     LockHolder holder { m_sampleGeneratorLock };
 
-    if (index >= m_sampleData.size())
+    auto* sampleData = sampleAtIndex(index);
+    if (!sampleData)
         return nullptr;
 
-    auto& sampleData = m_sampleData[index];
-    if (sampleData.image)
-        return sampleData.image;
+    if (auto image = sampleData->image())
+        return image;
 
-    if (!m_cursor)
-        m_cursor = [m_track makeSampleCursorAtFirstSampleInDecodeOrder];
+    if (m_cursor == m_sampleData.decodeOrder().end())
+        m_cursor = m_sampleData.decodeOrder().begin();
 
-    auto frameCursor = [m_track makeSampleCursorWithPresentationTimeStamp:PAL::toCMTime(sampleData.presentationTime)];
-    if ([frameCursor comparePositionInDecodeOrderWithPositionOfCursor:m_cursor.get()] == NSOrderedAscending)  {
+    auto decodeTime = sampleData->decodeTime();
+
+    if (decodeTime < m_cursor->second->decodeTime()) {
         // Rewind cursor to the last sync sample to begin decoding
-        m_cursor = adoptNS([frameCursor copy]);
+        m_cursor = m_sampleData.decodeOrder().findSampleWithDecodeKey({decodeTime, sampleData->presentationTime()});
         do {
-            if ([m_cursor currentSampleSyncInfo].sampleIsFullSync)
+            if (m_cursor->second->isSync())
                 break;
-        } while ([m_cursor stepInDecodeOrderByCount:-1] == -1);
-
+        } while (--m_cursor != m_sampleData.decodeOrder().begin());
     }
-
-    if (!m_generator)
-        m_generator = adoptNS([allocAVSampleBufferGeneratorInstance() initWithAsset:m_asset.get() timebase:nil]);
 
     RetainPtr<CGImageRef> image;
     while (true) {
-        if ([frameCursor comparePositionInDecodeOrderWithPositionOfCursor:m_cursor.get()] == NSOrderedAscending)
+        if (decodeTime < m_cursor->second->decodeTime())
             return nullptr;
 
-        auto presentationTime = PAL::toMediaTime(m_cursor.get().presentationTimeStamp);
-        auto indexIter = m_presentationTimeToIndex.find(presentationTime);
-
-        if (indexIter == m_presentationTimeToIndex.end())
+        auto cursorSample = toSample(m_cursor)->sampleBuffer();
+        if (!cursorSample)
             break;
 
-        auto& cursorSampleData = m_sampleData[indexIter->second];
-
-        if (!cursorSampleData.sample) {
-            auto request = adoptNS([allocAVSampleBufferRequestInstance() initWithStartCursor:m_cursor.get()]);
-            cursorSampleData.sample = adoptCF([m_generator createSampleBufferForRequest:request.get()]);
-        }
-
-        if (!cursorSampleData.sample)
-            break;
-
-        if (!storeSampleBuffer(cursorSampleData.sample.get()))
+        if (!storeSampleBuffer(cursorSample))
             break;
 
         advanceCursor();
-        if (sampleData.image)
-            return sampleData.image;
+        if (auto image = sampleData->image())
+            return image;
     }
 
     advanceCursor();
@@ -649,15 +651,37 @@ void ImageDecoderAVFObjC::setData(SharedBuffer& data, bool allDataReceived)
         if (!m_track)
             setTrack(firstEnabledTrack());
 
+        if (!m_track)
+            return;
+
         readTrackMetadata();
-        readSampleMetadata();
+        readSamples();
     }
 }
 
 void ImageDecoderAVFObjC::clearFrameBufferCache(size_t index)
 {
-    for (size_t i = 0; i < index; ++i)
-        m_sampleData[i].image = nullptr;
+    size_t i = 0;
+    for (auto& samplePair : m_sampleData.presentationOrder()) {
+        toSample(samplePair)->setImage(nullptr);
+        if (++i > index)
+            break;
+    }
+}
+
+const ImageDecoderAVFObjCSample* ImageDecoderAVFObjC::sampleAtIndex(size_t index) const
+{
+    if (index >= m_sampleData.size())
+        return nullptr;
+
+    // FIXME: std::map is not random-accessible; this can get expensive if callers repeatedly call
+    // with monotonically increasing indexes. Investigate adding an O(1) side structure to make this
+    // style of access faster.
+    auto iter = m_sampleData.presentationOrder().begin();
+    for (size_t i = 0; i != index; ++i)
+        ++iter;
+    
+    return toSample(iter);
 }
 
 }

@@ -25,17 +25,18 @@
 
 #pragma once
 
-#if HAVE(AVSAMPLEBUFFERGENERATOR)
+#if HAVE(AVASSETREADER)
 
 #include "ImageDecoder.h"
+#include "SampleMap.h"
 #include <map>
 #include <wtf/Lock.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
 OBJC_CLASS AVAssetTrack;
-OBJC_CLASS AVSampleBufferGenerator;
-OBJC_CLASS AVSampleCursor;
+OBJC_CLASS AVAssetReader;
+OBJC_CLASS AVAssetReaderTrackOutput;
 OBJC_CLASS AVURLAsset;
 OBJC_CLASS WebCoreSharedBufferResourceLoaderDelegate;
 typedef struct opaqueCMSampleBuffer* CMSampleBufferRef;
@@ -49,6 +50,7 @@ class MediaTime;
 namespace WebCore {
 
 class ContentType;
+class ImageDecoderAVFObjCSample;
 class PixelBufferConformerCV;
 class WebCoreDecompressionSession;
 
@@ -101,26 +103,25 @@ private:
     ImageDecoderAVFObjC(SharedBuffer&, const String& mimeType, AlphaOption, GammaAndColorProfileOption);
 
     AVAssetTrack *firstEnabledTrack();
-    void readSampleMetadata();
+    void readSamples();
     void readTrackMetadata();
     bool storeSampleBuffer(CMSampleBufferRef);
     void advanceCursor();
     void setTrack(AVAssetTrack *);
 
+    const ImageDecoderAVFObjCSample* sampleAtIndex(size_t) const;
+
     String m_mimeType;
     String m_uti;
     RetainPtr<AVURLAsset> m_asset;
     RetainPtr<AVAssetTrack> m_track;
-    RetainPtr<AVSampleCursor> m_cursor;
-    RetainPtr<AVSampleBufferGenerator> m_generator;
     RetainPtr<WebCoreSharedBufferResourceLoaderDelegate> m_loader;
     RetainPtr<VTImageRotationSessionRef> m_rotationSession;
     RetainPtr<CVPixelBufferPoolRef> m_rotationPool;
     Ref<WebCoreDecompressionSession> m_decompressionSession;
 
-    struct SampleData;
-    std::map<WTF::MediaTime, size_t> m_presentationTimeToIndex;
-    Vector<SampleData> m_sampleData;
+    SampleMap m_sampleData;
+    DecodeOrderSampleMap::iterator m_cursor;
     Lock m_sampleGeneratorLock;
     bool m_isAllDataReceived { false };
     std::optional<IntSize> m_size;
