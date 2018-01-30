@@ -1,3 +1,32 @@
+2018-01-30  Frederic Wang  <fwang@igalia.com>
+
+        Use document.scrollingElement to access viewport scroll properties in tests
+        https://bugs.webkit.org/show_bug.cgi?id=182241
+
+        Reviewed by Antonio Gomes.
+
+        Many tests use document.body in standard mode in order to access scroll properties of the
+        viewport. This is incorrect per the CSSOM View specification but WebKit does not follow the
+        spec at the moment (see bug 5991). This replaces several of these instances with
+        document.scrollingElement, so that tests will still work when WebKit's behavior is changed.
+
+        * fast/multicol/scrolling-overflow.html:
+        * fast/scrolling/latching/iframe_in_iframe.html:
+        * fast/scrolling/latching/scroll-div-no-latching.html:
+        * fast/scrolling/latching/scroll-latched-nested-div.html:
+        * fast/scrolling/latching/scroll-nested-iframe.html:
+        * http/tests/navigation/anchor-frames-expected.txt:
+        * http/tests/navigation/anchor-frames-gbk-expected.txt:
+        * http/tests/navigation/anchor-frames-same-origin-expected.txt:
+        * http/tests/navigation/resources/frame-with-anchor-gbk.html:
+        * http/tests/navigation/resources/frame-with-anchor-same-origin.html:
+        * http/tests/navigation/resources/frame-with-anchor.html:
+        * tiled-drawing/resources/scroll-and-load-page.html:
+        * tiled-drawing/scrolling/fast-scroll-mainframe-zoom.html:
+        * tiled-drawing/scrolling/frames/resources/autoscrolling-frame-with-fixed.html:
+        * tiled-drawing/scrolling/iframe_in_iframe.html:
+        * tiled-drawing/tiled-drawing-scroll-position-page-cache-restoration-expected.txt:
+
 2018-01-29  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Implement trimStart and trimEnd

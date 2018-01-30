@@ -32,9 +32,9 @@ var continueCount = 5;
 function checkForScroll()
 {
     // The IFrame should not have scrolled at all.
-    var pageScrollPositionAfter = document.body.scrollTop;
-    var iFrameScrollPositionAfter = window.frames['target'].document.body.scrollTop;
-    var innerIFrameScrollPositionAfter = iframeTarget.contentWindow.frames['target'].document.body.scrollTop;
+    var pageScrollPositionAfter = document.scrollingElement.scrollTop;
+    var iFrameScrollPositionAfter = window.frames['target'].document.scrollingElement.scrollTop;
+    var innerIFrameScrollPositionAfter = iframeTarget.contentWindow.frames['target'].document.scrollingElement.scrollTop;
 
     if (pageScrollPositionBefore != pageScrollPositionAfter)
         testFailed("Page received wheel events.");
@@ -57,14 +57,14 @@ function checkForScroll()
 
 function scrollTest()
 {
-    pageScrollPositionBefore = document.body.scrollTop;
+    pageScrollPositionBefore = document.scrollingElement.scrollTop;
 
     iframeTarget = document.getElementById('target');
 
-    var iFrameBody = window.frames['target'].document.body;
-    iFrameScrollPositionBefore = iFrameBody.scrollTop;
+    var iFrameScrollingElement = window.frames['target'].document.scrollingElement;
+    iFrameScrollPositionBefore = iFrameScrollingElement.scrollTop;
 
-    innerIFrameTarget = iframeTarget.contentWindow.frames['target'].document.body;
+    innerIFrameTarget = iframeTarget.contentWindow.frames['target'].document.scrollingElement;
     innerIFrameScrollPositionBefore = innerIFrameTarget.scrollTop;
 
     // Scroll the #source until we reach the #target.

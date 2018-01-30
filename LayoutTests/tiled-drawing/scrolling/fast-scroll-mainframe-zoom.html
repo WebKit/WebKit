@@ -11,8 +11,8 @@
 
             function checkForScrollOffset()
             {
-                var pageScrollPositionAfter = document.body.scrollTop;
-                var pageScrollHeightAfter = document.body.scrollHeight;
+                var pageScrollPositionAfter = document.scrollingElement.scrollTop;
+                var pageScrollHeightAfter = document.scrollingElement.scrollHeight;
 
                 if (pageScrollPositionAfter + 100 >= pageScrollPositionBefore)
                     testFailed("Page did not properly handle rubber banding state.");
@@ -26,8 +26,8 @@
             function zoomPageOut()
             {
                 if (!zoomOutCount) {
-                    pageScrollPositionBefore = document.body.scrollTop;
-                    pageScrollHeightBefore = document.body.scrollHeight;
+                    pageScrollPositionBefore = document.scrollingElement.scrollTop;
+                    pageScrollHeightBefore = document.scrollingElement.scrollHeight;
                 }
 
                 eventSender.zoomPageOut();

@@ -1,3 +1,19 @@
+2018-01-30  Frederic Wang  <fwang@igalia.com>
+
+        Use document.scrollingElement to access viewport scroll properties in tests
+        https://bugs.webkit.org/show_bug.cgi?id=182241
+
+        Reviewed by Antonio Gomes.
+
+        Many tests use document.body in standard mode in order to access scroll properties of the
+        viewport. This is incorrect per the CSSOM View specification but WebKit does not follow the
+        spec at the moment (see bug 5991). This replaces several of these instances with
+        document.scrollingElement, so that tests will still work when WebKit's behavior is changed.
+        The change in that web-platform-tests test are imported from
+        https://github.com/w3c/web-platform-tests/commit/fc33ef7641427a3f1388093c54b24f292c21b34d
+
+        * web-platform-tests/html/browsers/browsing-the-web/scroll-to-fragid/003.html:
+
 2018-01-29  Youenn Fablet  <youenn@apple.com>
 
         ServiceWorkerClientFetch should not consider responses without Location headers as redirection responses

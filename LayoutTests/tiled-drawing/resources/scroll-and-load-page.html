@@ -13,7 +13,7 @@
         {
             if (e.persisted) {
                 setTimeout(function () {
-                    var log = 'document.body.scrollTop = ' + document.body.scrollTop + '\n\n';
+                    var log = 'document.scrollingElement.scrollTop = ' + document.scrollingElement.scrollTop + '\n\n';
                     if (window.internals)
                         log += internals.layerTreeAsText(window.document, internals.LAYER_TREE_INCLUDES_VISIBLE_RECTS | internals.LAYER_TREE_INCLUDES_TILE_CACHES);
                     window.opener.finishedTest(log);

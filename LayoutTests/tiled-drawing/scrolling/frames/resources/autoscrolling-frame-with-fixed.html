@@ -21,7 +21,7 @@
         function doScroll()
         {
             window.setTimeout(function() {
-                document.body.scrollTop = 120;
+                document.scrollingElement.scrollTop = 120;
                 window.parent.frameDidChange();
             }, 0);
         }

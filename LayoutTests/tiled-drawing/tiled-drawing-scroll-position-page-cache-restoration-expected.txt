@@ -1,4 +1,4 @@
-document.body.scrollTop = 1000
+document.scrollingElement.scrollTop = 1000
 
 (GraphicsLayer
   (anchor 0.00 0.00)

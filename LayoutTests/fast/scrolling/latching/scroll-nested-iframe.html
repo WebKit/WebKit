@@ -21,8 +21,8 @@ var continueCount = 5;
 function checkForScroll() {
 
     // The IFrame should not have scrolled at all.
-    var pageScrollPositionAfter = document.body.scrollTop;
-    var iFrameScrollPositionAfter = window.frames['scrollable_iframe'].document.body.scrollTop;
+    var pageScrollPositionAfter = document.scrollingElement.scrollTop;
+    var iFrameScrollPositionAfter = window.frames['scrollable_iframe'].document.scrollingElement.scrollTop;
 
     if (iFrameScrollPositionBefore != iFrameScrollPositionAfter)
         testPassed("iframe did scroll.");
@@ -34,14 +34,14 @@ function checkForScroll() {
 
 function scrollTest() {
     // See where our IFrame lives:
-    pageScrollPositionBefore = document.body.scrollTop;
+    pageScrollPositionBefore = document.scrollingElement.scrollTop;
 
     iframeTarget = document.getElementById('scrollable_iframe');
 
-    var iFrameBody = window.frames['scrollable_iframe'].document.body;
-    iFrameBody.scrollTop = iFrameBody.scrollHeight - iframeTarget.clientHeight - 100;
+    var iFrameScrollingElement = window.frames['scrollable_iframe'].document.scrollingElement;
+    iFrameScrollingElement.scrollTop = iFrameScrollingElement.scrollHeight - iframeTarget.clientHeight - 100;
 
-    iFrameScrollPositionBefore = iFrameBody.scrollTop;
+    iFrameScrollPositionBefore = iFrameScrollingElement.scrollTop;
 
     // Scroll the #source until we reach the #target.
     var startPosX = iframeTarget.offsetLeft + 20;

@@ -14,10 +14,10 @@
           shouldBeTrue('document.body.offsetHeight > document.documentElement.clientHeight');
 
           // We should be scrolled at least a little bit
-          shouldBeTrue('document.body.scrollTop > 0');
+          shouldBeTrue('document.scrollingElement.scrollTop > 0');
 
           // And the bottom of the viewable area should be at least 2000 pixels from the top, due to the spacer element above.
-          shouldBeTrue('document.body.scrollTop + document.documentElement.clientHeight > 2000');
+          shouldBeTrue('document.scrollingElement.scrollTop + document.documentElement.clientHeight > 2000');
 
           finishJSTest();
       }, 0);
