@@ -1,3 +1,23 @@
+2018-01-30  Brent Fulgham  <bfulgham@apple.com>
+
+        Add telemetry to track storage access API adoption
+        https://bugs.webkit.org/show_bug.cgi?id=182197
+        <rdar://problem/35803309>
+
+        Reviewed by Chris Dumez.
+
+        Part 2: Add telemetry for the Storage Access API case
+
+        This change increments a counter when an origin is loaded in a first part context because
+        it was granted Storage Access API permissions.
+
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::logCookieInformation const): Add logging to indicate
+        loads that happened with the Storage Access API enabled.
+        * UIProcess/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::requestStorageAccess): Increment counter for
+        loads using the new API.
+
 2018-01-30  Megan Gardner  <megan_gardner@apple.com>
 
         Make preserve and restore focus more likely to be symmetrical
