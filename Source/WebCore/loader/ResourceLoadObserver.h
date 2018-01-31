@@ -64,11 +64,14 @@ public:
 
     WEBCORE_EXPORT void notifyObserver();
     WEBCORE_EXPORT void clearState();
+    WEBCORE_EXPORT void setTimeToLivePartitionFree(Seconds);
+
 private:
     ResourceLoadObserver();
 
     bool shouldLog(Page*) const;
     ResourceLoadStatistics& ensureResourceStatisticsForPrimaryDomain(const String&);
+    bool wasAccessedWithinInteractionWindow(const ResourceLoadStatistics&) const;
 
     void scheduleNotificationIfNeeded();
     Vector<ResourceLoadStatistics> takeStatistics();
@@ -77,6 +80,7 @@ private:
     HashMap<String, WTF::WallTime> m_lastReportedUserInteractionMap;
     WTF::Function<void (Vector<ResourceLoadStatistics>&&)> m_notificationCallback;
     Timer m_notificationTimer;
+    Seconds m_timeToLiveCookiePartitionFree { 24_h };
 
     URL nonNullOwnerURL(const Document&) const;
 };

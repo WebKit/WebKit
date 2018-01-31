@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -275,6 +275,11 @@ void WebProcessPool::platformInitializeWebProcess(WebProcessCreationParameters& 
     if (isSafari && !parameters.shouldCaptureAudioInUIProcess && mediaDevicesEnabled)
         SandboxExtension::createHandleForGenericExtension("com.apple.webkit.microphone", parameters.audioCaptureExtensionHandle);
 #endif
+
+    Seconds timeToLiveUserInteraction([[NSUserDefaults standardUserDefaults] doubleForKey:@"ResourceLoadStatisticsTimeToLiveUserInteraction"]);
+    if (timeToLiveUserInteraction < 0_s || timeToLiveUserInteraction > 24_h * 30)
+        timeToLiveUserInteraction = 24_h;
+    parameters.cookiePartitionTimeToLive = timeToLiveUserInteraction;
 }
 
 void WebProcessPool::platformInitializeNetworkProcess(NetworkProcessCreationParameters& parameters)

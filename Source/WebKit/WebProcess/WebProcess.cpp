@@ -429,6 +429,8 @@ void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters)
 #if ENABLE(WEBASSEMBLY)
     JSC::Wasm::enableFastMemory();
 #endif
+
+    ResourceLoadObserver::shared().setTimeToLivePartitionFree(parameters.cookiePartitionTimeToLive);
 }
 
 void WebProcess::registerURLSchemeAsEmptyDocument(const String& urlScheme)

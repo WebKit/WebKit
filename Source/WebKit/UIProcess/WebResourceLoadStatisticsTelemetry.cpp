@@ -51,6 +51,8 @@ struct PrevalentResourceTelemetry {
     unsigned subframeUnderTopFrameOrigins;
     unsigned subresourceUnderTopFrameOrigins;
     unsigned subresourceUniqueRedirectsTo;
+    unsigned timesAccessedAsFirstPartyDueToUserInteraction;
+    unsigned timesAccessedAsFirstPartyDueToStorageAccessAPI;
 };
 
 static Vector<PrevalentResourceTelemetry> sortedPrevalentResourceTelemetry(const WebResourceLoadStatisticsStore& store)
@@ -68,7 +70,9 @@ static Vector<PrevalentResourceTelemetry> sortedPrevalentResourceTelemetry(const
             daysSinceUserInteraction,
             statistic.subframeUnderTopFrameOrigins.size(),
             statistic.subresourceUnderTopFrameOrigins.size(),
-            statistic.subresourceUniqueRedirectsTo.size()
+            statistic.subresourceUniqueRedirectsTo.size(),
+            statistic.timesAccessedAsFirstPartyDueToUserInteraction,
+            statistic.timesAccessedAsFirstPartyDueToStorageAccessAPI
         });
     });
 
@@ -146,25 +150,33 @@ static WebPageProxy* nonEphemeralWebPageProxy()
     
 static void submitTopList(unsigned numberOfResourcesFromTheTop, const Vector<PrevalentResourceTelemetry>& sortedPrevalentResources, const Vector<PrevalentResourceTelemetry>& sortedPrevalentResourcesWithoutUserInteraction, WebPageProxy& webPageProxy)
 {
-    WTF::Function<unsigned(const PrevalentResourceTelemetry& telemetry)> subframeUnderTopFrameOriginsGetter = [] (const PrevalentResourceTelemetry& t) {
+    WTF::Function<unsigned(const PrevalentResourceTelemetry& telemetry)> subframeUnderTopFrameOriginsGetter = [] (auto& t) {
         return t.subframeUnderTopFrameOrigins;
     };
-    WTF::Function<unsigned(const PrevalentResourceTelemetry& telemetry)> subresourceUnderTopFrameOriginsGetter = [] (const PrevalentResourceTelemetry& t) {
+    WTF::Function<unsigned(const PrevalentResourceTelemetry& telemetry)> subresourceUnderTopFrameOriginsGetter = [] (auto& t) {
         return t.subresourceUnderTopFrameOrigins;
     };
-    WTF::Function<unsigned(const PrevalentResourceTelemetry& telemetry)> subresourceUniqueRedirectsToGetter = [] (const PrevalentResourceTelemetry& t) {
+    WTF::Function<unsigned(const PrevalentResourceTelemetry& telemetry)> subresourceUniqueRedirectsToGetter = [] (auto& t) {
         return t.subresourceUniqueRedirectsTo;
     };
-    WTF::Function<unsigned(const PrevalentResourceTelemetry& telemetry)> numberOfTimesDataRecordsRemovedGetter = [] (const PrevalentResourceTelemetry& t) {
+    WTF::Function<unsigned(const PrevalentResourceTelemetry& telemetry)> numberOfTimesDataRecordsRemovedGetter = [] (auto& t) {
         return t.numberOfTimesDataRecordsRemoved;
     };
-    
+    WTF::Function<unsigned(const PrevalentResourceTelemetry& telemetry)> numberOfTimesAccessedAsFirstPartyDueToUserInteractionGetter = [] (auto& t) {
+        return t.timesAccessedAsFirstPartyDueToUserInteraction;
+    };
+    WTF::Function<unsigned(const PrevalentResourceTelemetry& telemetry)> numberOfTimesAccessedAsFirstPartyDueToStorageAccessAPIGetter = [] (auto& t) {
+        return t.timesAccessedAsFirstPartyDueToStorageAccessAPI;
+    };
+
     unsigned topPrevalentResourcesWithUserInteraction = numberOfResourcesWithUserInteraction(sortedPrevalentResources, 0, numberOfResourcesFromTheTop - 1);
     unsigned topSubframeUnderTopFrameOrigins = median(sortedPrevalentResourcesWithoutUserInteraction, 0, numberOfResourcesFromTheTop - 1, subframeUnderTopFrameOriginsGetter);
     unsigned topSubresourceUnderTopFrameOrigins = median(sortedPrevalentResourcesWithoutUserInteraction, 0, numberOfResourcesFromTheTop - 1, subresourceUnderTopFrameOriginsGetter);
     unsigned topSubresourceUniqueRedirectsTo = median(sortedPrevalentResourcesWithoutUserInteraction, 0, numberOfResourcesFromTheTop - 1, subresourceUniqueRedirectsToGetter);
     unsigned topNumberOfTimesDataRecordsRemoved = median(sortedPrevalentResourcesWithoutUserInteraction, 0, numberOfResourcesFromTheTop - 1, numberOfTimesDataRecordsRemovedGetter);
-    
+    unsigned topNumberOfTimesAccessedAsFirstPartyDueToUserInteraction = median(sortedPrevalentResourcesWithoutUserInteraction, 0, numberOfResourcesFromTheTop - 1, numberOfTimesAccessedAsFirstPartyDueToUserInteractionGetter);
+    unsigned topNumberOfTimesAccessedAsFirstPartyDueToStorageAccessAPI = median(sortedPrevalentResourcesWithoutUserInteraction, 0, numberOfResourcesFromTheTop - 1, numberOfTimesAccessedAsFirstPartyDueToStorageAccessAPIGetter);
+
     StringBuilder preambleBuilder;
     preambleBuilder.appendLiteral("top");
     preambleBuilder.appendNumber(numberOfResourcesFromTheTop);
@@ -180,6 +192,10 @@ static void submitTopList(unsigned numberOfResourcesFromTheTop, const Vector<Pre
         topSubresourceUniqueRedirectsTo, significantFiguresForLoggedValues, ShouldSample::No);
     webPageProxy.logDiagnosticMessageWithValue(DiagnosticLoggingKeys::resourceLoadStatisticsTelemetryKey(), descriptionPreamble + "NumberOfTimesDataRecordsRemoved",
         topNumberOfTimesDataRecordsRemoved, significantFiguresForLoggedValues, ShouldSample::No);
+    webPageProxy.logDiagnosticMessageWithValue(DiagnosticLoggingKeys::resourceLoadStatisticsTelemetryKey(), descriptionPreamble + "NumberOfTimesAccessedAsFirstPartyDueToUserInteraction",
+        topNumberOfTimesAccessedAsFirstPartyDueToUserInteraction, significantFiguresForLoggedValues, ShouldSample::No);
+    webPageProxy.logDiagnosticMessageWithValue(DiagnosticLoggingKeys::resourceLoadStatisticsTelemetryKey(), descriptionPreamble + "NumberOfTimesAccessedAsFirstPartyDueToStorageAccessAPI",
+        topNumberOfTimesAccessedAsFirstPartyDueToStorageAccessAPI, significantFiguresForLoggedValues, ShouldSample::No);
 }
     
 static void submitTopLists(const Vector<PrevalentResourceTelemetry>& sortedPrevalentResources, const Vector<PrevalentResourceTelemetry>& sortedPrevalentResourcesWithoutUserInteraction, WebPageProxy& webPageProxy)
