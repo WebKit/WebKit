@@ -1,3 +1,15 @@
+2018-01-30  Ryosuke Niwa  <rniwa@webkit.org>
+
+        REGRESSION(r227550): Resource timing API is disabled on macOS
+        https://bugs.webkit.org/show_bug.cgi?id=182318
+
+        Reviewed by Chris Dumez.
+
+        Resource timing API should be enabled by default all versions of macOS we support now.
+
+        * Shared/WebPreferences.yaml:
+        * Shared/WebPreferencesDefaultValues.h:
+
 2018-01-30  Tim Horton  <timothy_horton@apple.com>
 
         WKWebView layout is sometimes wrong after rotation on iPhone X

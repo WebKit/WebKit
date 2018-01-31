@@ -716,7 +716,7 @@ ModernMediaControlsEnabled:
 
 ResourceTimingEnabled:
   type: bool
-  defaultValue: DEFAULT_RESOURCE_TIMING_ENABLED
+  defaultValue: true
   humanReadableName: "Resource Timing"
   humanReadableDescription: "Enable ResourceTiming API"
   webcoreBinding: RuntimeEnabledFeatures
