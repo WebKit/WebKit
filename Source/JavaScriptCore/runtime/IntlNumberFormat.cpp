@@ -364,7 +364,7 @@ void IntlNumberFormat::createNumberFormat(ExecState& state)
         scope.assertNoException();
     }
 
-    UNumberFormatStyle style;
+    UNumberFormatStyle style = UNUM_DEFAULT;
     switch (m_style) {
     case Style::Decimal:
         style = UNUM_DECIMAL;

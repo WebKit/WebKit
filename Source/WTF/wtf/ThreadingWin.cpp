@@ -267,7 +267,7 @@ void Thread::establishPlatformSpecificHandle(HANDLE handle, ThreadIdentifier thr
     m_id = threadID;
 }
 
-#define InvalidThread ((Thread*)(0xbbadbeef))
+#define InvalidThread reinterpret_cast<Thread*>(static_cast<uintptr_t>(0xbbadbeef))
 
 static std::mutex& threadMapMutex()
 {

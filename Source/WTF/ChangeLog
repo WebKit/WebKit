@@ -1,3 +1,18 @@
+2018-01-30  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Win] Warning fix.
+        https://bugs.webkit.org/show_bug.cgi?id=177007
+
+        Reviewed by Yusuke Suzuki.
+
+        A 32 bit integer should not be casted to a pointer directly in 64
+        bit Windows. It should be casted to a uintptr_t beforehand.
+
+        Rules for Using Pointers (Windows)
+        https://msdn.microsoft.com/library/windows/desktop/aa384242
+
+        * wtf/ThreadingWin.cpp (InvalidThread): Casted 0xbbadbeef to uintptr_t.
+
 2018-01-30  Don Olmstead  <don.olmstead@sony.com>
 
         Unreviewed build fix for JSCOnly after r227845.
