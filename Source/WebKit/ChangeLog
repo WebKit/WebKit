@@ -1,3 +1,9 @@
+2018-01-31  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Unreviewed iOS build fix.
+
+        * UIProcess/API/Cocoa/WKWebsiteDataStorePrivate.h:
+
 2018-01-30  John Wilander  <wilander@apple.com>
 
         Add callbacks to testRunner.statisticsSetShouldPartitionCookiesForHost() and testRunner.statisticsUpdateCookiePartitioning()

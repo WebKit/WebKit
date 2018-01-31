@@ -74,9 +74,9 @@ typedef NS_OPTIONS(NSUInteger, _WKWebsiteDataStoreFetchOptions) {
 - (void)_resourceLoadStatisticsSetPruneEntriesDownTo:(size_t)entries WK_API_AVAILABLE(macosx(10.13), ios(11.0));
 - (void)_resourceLoadStatisticsProcessStatisticsAndDataRecords WK_API_AVAILABLE(macosx(10.13), ios(11.0));
 - (void)_resourceLoadStatisticsUpdateCookiePartitioning WK_API_DEPRECATED_WITH_REPLACEMENT("_resourceLoadStatisticsUpdateCookiePartitioning", macosx(10.13, WK_MAC_TBA), ios(11.0, WK_IOS_TBA));
-- (void)_resourceLoadStatisticsUpdateCookiePartitioning:(void (^)())completionHandler WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
+- (void)_resourceLoadStatisticsUpdateCookiePartitioning:(void (^)(void))completionHandler WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
 - (void)_resourceLoadStatisticsSetShouldPartitionCookies:(BOOL)value forHost:(NSString *)host WK_API_DEPRECATED_WITH_REPLACEMENT("_resourceLoadStatisticsSetShouldPartitionCookies", macosx(10.13, WK_MAC_TBA), ios(11.0, WK_IOS_TBA));
-- (void)_resourceLoadStatisticsSetShouldPartitionCookies:(BOOL)value forHost:(NSString *)host completionHandler:(void (^)())completionHandler WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
+- (void)_resourceLoadStatisticsSetShouldPartitionCookies:(BOOL)value forHost:(NSString *)host completionHandler:(void (^)(void))completionHandler WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
 - (void)_resourceLoadStatisticsSubmitTelemetry WK_API_AVAILABLE(macosx(10.13), ios(11.0));
 - (void)_resourceLoadStatisticsSetNotifyPagesWhenDataRecordsWereScanned:(BOOL)value WK_API_AVAILABLE(macosx(10.13), ios(11.0));
 - (void)_resourceLoadStatisticsSetShouldClassifyResourcesBeforeDataRecordsRemoval:(BOOL)value WK_API_AVAILABLE(macosx(10.13), ios(11.0));
