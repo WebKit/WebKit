@@ -27,6 +27,5 @@ messages -> StorageToWebProcessConnection LegacyReceiver {
 #endif
 #if ENABLE(SERVICE_WORKER)
     EstablishSWServerConnection(PAL::SessionID sessionID) -> (WebCore::SWServerConnectionIdentifier serverConnectionIdentifier)
-    RemoveSWServerConnection(WebCore::SWServerConnectionIdentifier serverConnectionIdentifier)
 #endif
 }
