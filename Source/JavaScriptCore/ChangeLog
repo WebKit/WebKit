@@ -1,3 +1,19 @@
+2018-01-31  Saam Barati  <sbarati@apple.com>
+
+        clean up pushToSaveImmediateWithoutTouchingRegisters a bit
+        https://bugs.webkit.org/show_bug.cgi?id=181774
+
+        Reviewed by JF Bastien.
+
+        This function on ARM64 was considering what to do with the scratch
+        register. And conditionally invalidated what was in it. This is not
+        relevant though, since the function always recovers what was in that
+        register. This patch just switches it to using dataTempRegister
+        directly and updates the comment to describe why it can do so safely.
+
+        * assembler/MacroAssemblerARM64.h:
+        (JSC::MacroAssemblerARM64::pushToSaveImmediateWithoutTouchingRegisters):
+
 2018-01-30  Mark Lam  <mark.lam@apple.com>
 
         Apply poisoning to TypedArray vector pointers.

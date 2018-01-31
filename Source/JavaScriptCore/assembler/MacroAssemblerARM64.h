@@ -2203,8 +2203,11 @@ public:
     
     void pushToSaveImmediateWithoutTouchingRegisters(TrustedImm32 imm)
     {
-        // We invalidate any cached values in dataTempRegister if temp register caching is enabled.
-        RegisterID reg = m_allowScratchRegister ? getCachedDataTempRegisterIDAndInvalidate() : dataTempRegister;
+        // We can use any non-hardware reserved register here since we restore its value.
+        // We pick dataTempRegister arbitrarily. We don't need to invalidate it here since
+        // we restore its original value.
+        RegisterID reg = dataTempRegister;
+
         pushPair(reg, reg);
         move(imm, reg);
         store64(reg, stackPointerRegister);
