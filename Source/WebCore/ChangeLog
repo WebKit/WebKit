@@ -1,5 +1,24 @@
 2018-01-30  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r227625. rdar://problem/37019502
+
+    2018-01-25  Youenn Fablet  <youenn@apple.com>
+
+            DocumentLoader should interrupt ongoing load when getting a redirection from network that matches a service worker
+            https://bugs.webkit.org/show_bug.cgi?id=182115
+
+            Reviewed by Alex Christensen.
+
+            Covered by rebased test.
+
+            In case a navigation load is going to the network process,
+            we need to interrupt it if having a redirection that leads to a new request going to a service worker.
+
+            * loader/DocumentLoader.cpp:
+            (WebCore::DocumentLoader::redirectReceived):
+
+2018-01-30  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r227796. rdar://problem/37037868
 
     2018-01-30  Chris Dumez  <cdumez@apple.com>

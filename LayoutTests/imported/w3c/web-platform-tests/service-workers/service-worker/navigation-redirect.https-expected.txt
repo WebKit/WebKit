@@ -5,7 +5,7 @@ Harness Error (TIMEOUT), message = null
 FAIL Normal redirect to same-origin scope. promise_test: Unhandled rejection with value: object "NotSupportedError: Passing MessagePort objects to postMessage is not yet supported"
 FAIL Normal redirect to other-origin scope. promise_test: Unhandled rejection with value: object "NotSupportedError: Passing MessagePort objects to postMessage is not yet supported"
 FAIL SW-fallbacked redirect to same-origin out-scope. promise_test: Unhandled rejection with value: object "NotSupportedError: Passing MessagePort objects to postMessage is not yet supported"
-FAIL SW-fallbacked redirect to same-origin same-scope. promise_test: Unhandled rejection with value: object "NotSupportedError: Passing MessagePort objects to postMessage is not yet supported"
+PASS SW-fallbacked redirect to same-origin same-scope. 
 FAIL SW-fallbacked redirect to same-origin other-scope. promise_test: Unhandled rejection with value: object "NotSupportedError: Passing MessagePort objects to postMessage is not yet supported"
 FAIL SW-fallbacked redirect to other-origin out-scope. promise_test: Unhandled rejection with value: object "NotSupportedError: Passing MessagePort objects to postMessage is not yet supported"
 FAIL SW-fallbacked redirect to other-origin in-scope. promise_test: Unhandled rejection with value: object "NotSupportedError: Passing MessagePort objects to postMessage is not yet supported"

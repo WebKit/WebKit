@@ -108,6 +108,7 @@ void ServiceWorkerClientFetch::didReceiveResponse(ResourceResponse&& response)
             callback(Result::Succeeded);
         return;
     }
+    response.setSource(ResourceResponse::Source::ServiceWorker);
 
     if (response.isRedirection()) {
         m_redirectionStatus = RedirectionStatus::Receiving;
@@ -134,7 +135,6 @@ void ServiceWorkerClientFetch::didReceiveResponse(ResourceResponse&& response)
             response.setTextEncodingName(ASCIILiteral("UTF-8"));
         }
     }
-    response.setSource(ResourceResponse::Source::ServiceWorker);
 
     // As per https://fetch.spec.whatwg.org/#main-fetch step 9, copy request's url list in response's url list if empty.
     if (response.url().isNull())
