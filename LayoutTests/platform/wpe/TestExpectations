@@ -1170,8 +1170,7 @@ webkit.org/b/181533 imported/w3c/web-platform-tests/fetch/api/cors/cors-filterin
 
 webkit.org/b/181534 perf/show-hide-table-rows.html [ Pass Failure ]
 
-webkit.org/b/182222 http/tests/resourceLoadStatistics/clear-in-memory-and-persistent-store-one-hour.html [ Timeout ]
-webkit.org/b/182222 webkit.org/b/175189 webkit.org/b/175189 http/tests/resourceLoadStatistics/grandfathering.html [ Timeout ]
+webkit.org/b/182317 http/tests/resourceLoadStatistics/grandfathering.html [ Failure ]
 
 webkit.org/b/182240 svg/animations/svgenum-animation-7.html [ Pass Crash ]
 

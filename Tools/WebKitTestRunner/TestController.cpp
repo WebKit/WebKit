@@ -2639,21 +2639,21 @@ void TestController::setStatisticsPruneEntriesDownTo(unsigned entries)
     WKWebsiteDataStoreSetStatisticsPruneEntriesDownTo(dataStore, entries);
 }
 
+void TestController::statisticsClearThroughWebsiteDataRemovalCallback(void* userData)
+{
+    static_cast<TestController*>(userData)->m_currentInvocation->didClearStatisticsThroughWebsiteDataRemoval();
+}
+
 void TestController::statisticsClearInMemoryAndPersistentStore()
 {
     auto* dataStore = WKContextGetWebsiteDataStore(platformContext());
-    WKWebsiteDataStoreStatisticsClearInMemoryAndPersistentStore(dataStore);
+    WKWebsiteDataStoreStatisticsClearInMemoryAndPersistentStore(dataStore, this, statisticsClearThroughWebsiteDataRemovalCallback);
 }
 
 void TestController::statisticsClearInMemoryAndPersistentStoreModifiedSinceHours(unsigned hours)
 {
     auto* dataStore = WKContextGetWebsiteDataStore(platformContext());
-    WKWebsiteDataStoreStatisticsClearInMemoryAndPersistentStoreModifiedSinceHours(dataStore, hours);
-}
-
-void TestController::statisticsClearThroughWebsiteDataRemovalCallback(void* userData)
-{
-    static_cast<TestController*>(userData)->m_currentInvocation->didClearStatisticsThroughWebsiteDataRemoval();
+    WKWebsiteDataStoreStatisticsClearInMemoryAndPersistentStoreModifiedSinceHours(dataStore, hours, this, statisticsClearThroughWebsiteDataRemovalCallback);
 }
 
 void TestController::statisticsClearThroughWebsiteDataRemoval()

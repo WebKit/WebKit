@@ -1,3 +1,17 @@
+2018-01-31  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        REGRESSION(r227223): http/tests/resourceLoadStatistics/clear-in-memory-and-persistent-store-one-hour.html, http/tests/resourceLoadStatistics/grandfathering.html timing out on GTK, WPE
+        https://bugs.webkit.org/show_bug.cgi?id=182222
+
+        Reviewed by Alex Christensen.
+
+        Add callbacks to notify when resource load statistics deletion is complete.
+
+        * UIProcess/API/C/WKWebsiteDataStoreRef.cpp:
+        (WKWebsiteDataStoreStatisticsClearInMemoryAndPersistentStore):
+        (WKWebsiteDataStoreStatisticsClearInMemoryAndPersistentStoreModifiedSinceHours):
+        * UIProcess/API/C/WKWebsiteDataStoreRef.h:
+
 2018-01-31  Tim Horton  <timothy_horton@apple.com>
 
         Occasional null deref under WebPageProxy::updateBackingStoreDiscardableState()
