@@ -3,10 +3,12 @@ Testing ButtonsContainer layout.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS container.children.length is 3
-PASS container.children[0] is tenPtWideButton
-PASS container.children[1] is twentyPtWideButton
-PASS container.children[2] is thirtyPtWideButton
+PASS container.children.length is 5
+PASS tenPtWideButton.visible is true
+PASS disabledButton.visible is false
+PASS twentyPtWideButton.visible is true
+PASS droppedButton.visible is false
+PASS thirtyPtWideButton.visible is true
 PASS tenPtWideButton.x is 20
 PASS twentyPtWideButton.x is 40
 PASS thirtyPtWideButton.x is 70

@@ -14,13 +14,11 @@ const container = new ButtonsContainer({
     buttonMargin: 10
 });
 
-container.buttons = [new Button, new Button, new Button];
+container.children = [new Button, new Button, new Button];
 
 scheduler.frameDidFire = function()
 {
-    shouldBe("container.buttons.length", "3");
     shouldBe("container.children.length", "3");
-    shouldBe("container.buttons", "container.children");
     finishMediaControlsTest();
 };
 

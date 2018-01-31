@@ -1,3 +1,33 @@
+2018-01-31  Antoine Quint  <graouts@apple.com>
+
+        [Modern Media Controls] Turn media/modern-media-controls/start-support tests back on
+        https://bugs.webkit.org/show_bug.cgi?id=182297
+
+        Reviewed by Jon Lee and Eric Carlson.
+
+        Update tests to account for the new variable name for the playPauseButton and ensure we only listen to the
+        fullscreen event once to avoid flakiness in cases where we might exit fullscreen before the test completes.
+
+        We also update other tests that tested the behavior of ButtonsContainer.
+
+        * media/modern-media-controls/buttons-container/buttons-container-buttons-property-expected.txt:
+        * media/modern-media-controls/buttons-container/buttons-container-buttons-property.html:
+        * media/modern-media-controls/buttons-container/buttons-container-constructor-expected.txt:
+        * media/modern-media-controls/buttons-container/buttons-container-constructor.html:
+        * media/modern-media-controls/buttons-container/buttons-container-layout-expected.txt:
+        * media/modern-media-controls/buttons-container/buttons-container-layout.html:
+        * media/modern-media-controls/macos-inline-media-controls/macos-inline-media-controls-rtl-expected.txt:
+        * media/modern-media-controls/macos-inline-media-controls/macos-inline-media-controls-rtl.html:
+        * media/modern-media-controls/macos-inline-media-controls/macos-inline-media-controls-top-right-controls-bar-hidden-when-mute-button-disabled-expected.txt:
+        * media/modern-media-controls/macos-inline-media-controls/macos-inline-media-controls-top-right-controls-bar-hidden-when-mute-button-disabled.html:
+        * media/modern-media-controls/pip-support/pip-support-click.html:
+        * media/modern-media-controls/start-support/start-support-click-to-start.html:
+        * media/modern-media-controls/start-support/start-support-fullscreen.html:
+        * media/modern-media-controls/start-support/start-support-lowPowerMode-expected.txt:
+        * media/modern-media-controls/start-support/start-support-lowPowerMode.html:
+        * platform/ios/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2018-01-31  Saam Barati  <sbarati@apple.com>
 
         JSC incorrectly interpreting script, sets Global Property instead of Global Lexical variable (LiteralParser / JSONP path)

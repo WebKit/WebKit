@@ -129,7 +129,7 @@ class InlineMediaControls extends MediaControls
             return;
 
         // Update the top left controls bar.
-        this._topLeftControlsBarContainer.buttons = this._topLeftContainerButtons();
+        this._topLeftControlsBarContainer.children = this._topLeftContainerButtons();
         this._topLeftControlsBarContainer.layout();
         this.topLeftControlsBar.width = this._topLeftControlsBarContainer.width;
         this.topLeftControlsBar.visible = this._topLeftControlsBarContainer.children.length > 0;
@@ -160,9 +160,9 @@ class InlineMediaControls extends MediaControls
         // Iterate through controls to see if we need to drop any of them. Reset all default states before we proceed.
         this.bottomControlsBar.visible = true;
         this.playPauseButton.style = Button.Styles.Bar;
-        this.leftContainer.buttons = this._leftContainerButtons();
-        this.rightContainer.buttons = this._rightContainerButtons();
-        this.rightContainer.buttons.concat(this.leftContainer.buttons).forEach(button => delete button.dropped);
+        this.leftContainer.children = this._leftContainerButtons();
+        this.rightContainer.children = this._rightContainerButtons();
+        this.rightContainer.children.concat(this.leftContainer.children).forEach(button => delete button.dropped);
         this.muteButton.style = this.preferredMuteButtonStyle;
         this.muteButton.usesRTLIconVariant = false;
 
@@ -232,7 +232,8 @@ class InlineMediaControls extends MediaControls
 
     // Private
 
-    _updateBottomControlsBarLabel() {
+    _updateBottomControlsBarLabel()
+    {
         this.bottomControlsBar.element.setAttribute("aria-label", this._shouldUseAudioLayout ? UIString("Audio Controls") : UIString("Video Controls"));
     }
     
@@ -284,7 +285,7 @@ class InlineMediaControls extends MediaControls
         delete this.muteButton.dropped;
         this.muteButton.style = Button.Styles.Bar;
         this.muteButton.usesRTLIconVariant = !this.usesLTRUserInterfaceLayoutDirection;
-        this._topRightControlsBarContainer.buttons = [this.muteButton];
+        this._topRightControlsBarContainer.children = [this.muteButton];
         this._topRightControlsBarContainer.layout();
         this.topRightControlsBar.width = this._topRightControlsBarContainer.width;
         children.push(this.topRightControlsBar);

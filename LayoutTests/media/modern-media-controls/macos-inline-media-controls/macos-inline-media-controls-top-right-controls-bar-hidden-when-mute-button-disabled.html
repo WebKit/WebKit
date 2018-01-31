@@ -15,7 +15,7 @@ shouldBe("mediaControls.topRightControlsBar.parent", "mediaControls");
 debug("")
 debug("Mute button is disabled");
 mediaControls.muteButton.enabled = false;
-shouldBe("mediaControls.muteButton.parent.parent", "mediaControls.topRightControlsBar");
+shouldBe("mediaControls.muteButton.parent.parent", "mediaControls.bottomControlsBar");
 shouldBeNull("mediaControls.topRightControlsBar.parent");
 
 debug("");

@@ -3,14 +3,14 @@
 <script src="../resources/media-controls-utils.js" type="text/javascript"></script>
 <body>
 <video src="../../content/test.mp4" style="width: 320px; height: 240px;" controls></video>
-<div id="shadow"></div>
+<div id="shadow" style="width: 320px; height: 240px;"></div>
 <script type="text/javascript">
 
 window.jsTestIsAsync = true;
 
 description("Testing the <code>MediaController</code> click-to-start behavior.");
 
-const shadowRoot = document.querySelector("div#shadow").attachShadow({ mode: "open" });
+const shadowRoot = document.querySelector("div#shadow");
 const media = document.querySelector("video");
 const mediaController = createControls(shadowRoot, media, null);
 
@@ -18,14 +18,14 @@ media.addEventListener("loadedmetadata", function() {
     shouldBeTrue("mediaController.controls.showsStartButton");
     debug("");
     debug("Pressing on the start button");
-    window.requestAnimationFrame(() => pressOnElement(mediaController.controls.startButton.element));
+    window.requestAnimationFrame(() => pressOnElement(mediaController.controls.playPauseButton.element));
 });
 
 media.addEventListener("play", function() {
     debug("Media is playing");
     shouldBeFalse("mediaController.controls.showsStartButton");
     debug("");
-    shadowRoot.host.remove();
+    shadowRoot.remove();
     media.remove();
     finishJSTest();
 });

@@ -8,14 +8,14 @@ PASS defaultContainer.element.className.trim() is "buttons-container"
 PASS defaultContainer.buttonMargin is 16
 PASS defaultContainer.leftMargin is 16
 PASS defaultContainer.rightMargin is 16
-PASS defaultContainer.buttons is []
+PASS defaultContainer.children is []
 PASS containerWithParameters.element.localName is "div"
 PASS containerWithParameters.element.classList.contains('buttons-container') is true
 PASS containerWithParameters.element.classList.contains('foo') is true
 PASS containerWithParameters.buttonMargin is 10
 PASS containerWithParameters.leftMargin is 20
 PASS containerWithParameters.rightMargin is 20
-PASS containerWithParameters.buttons is buttons
+PASS containerWithParameters.children is buttons
 PASS successfullyParsed is true
 
 TEST COMPLETE

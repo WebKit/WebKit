@@ -8,7 +8,7 @@ PASS mediaControls.muteButton.parent.parent is mediaControls.topRightControlsBar
 PASS mediaControls.topRightControlsBar.parent is mediaControls
 
 Mute button is disabled
-PASS mediaControls.muteButton.parent.parent is mediaControls.topRightControlsBar
+PASS mediaControls.muteButton.parent.parent is mediaControls.bottomControlsBar
 PASS mediaControls.topRightControlsBar.parent is null
 
 PASS successfullyParsed is true

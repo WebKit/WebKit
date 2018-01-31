@@ -28,14 +28,15 @@ const container = new ButtonsContainer({
     buttonMargin: 10,
     leftMargin: 20,
     rightMargin: 20,
-    buttons: [tenPtWideButton, disabledButton, twentyPtWideButton, droppedButton, thirtyPtWideButton]
+    children: [tenPtWideButton, disabledButton, twentyPtWideButton, droppedButton, thirtyPtWideButton]
 });
 
-container.layout();
-shouldBe("container.children.length", "3");
-shouldBe("container.children[0]", "tenPtWideButton");
-shouldBe("container.children[1]", "twentyPtWideButton");
-shouldBe("container.children[2]", "thirtyPtWideButton");
+shouldBe("container.children.length", "5");
+shouldBeTrue("tenPtWideButton.visible");
+shouldBeFalse("disabledButton.visible");
+shouldBeTrue("twentyPtWideButton.visible");
+shouldBeFalse("droppedButton.visible");
+shouldBeTrue("thirtyPtWideButton.visible");
 shouldBe("tenPtWideButton.x", "20");
 shouldBe("twentyPtWideButton.x", "40");
 shouldBe("thirtyPtWideButton.x", "70");

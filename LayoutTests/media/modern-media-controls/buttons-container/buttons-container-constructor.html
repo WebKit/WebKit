@@ -11,14 +11,14 @@ shouldBeEqualToString("defaultContainer.element.className.trim()", "buttons-cont
 shouldBe("defaultContainer.buttonMargin", "16");
 shouldBe("defaultContainer.leftMargin", "16");
 shouldBe("defaultContainer.rightMargin", "16");
-shouldBe("defaultContainer.buttons", "[]");
+shouldBe("defaultContainer.children", "[]");
 
 const buttons = [new Button, new Button];
 const containerWithParameters = new ButtonsContainer({
     buttonMargin: 10,
     leftMargin: 20,
     rightMargin: 20,
-    buttons: buttons,
+    children: buttons,
     cssClassName: "foo"
 });
 shouldBeEqualToString("containerWithParameters.element.localName", "div");
@@ -27,7 +27,7 @@ shouldBeTrue("containerWithParameters.element.classList.contains('foo')");
 shouldBe("containerWithParameters.buttonMargin", "10");
 shouldBe("containerWithParameters.leftMargin", "20");
 shouldBe("containerWithParameters.rightMargin", "20");
-shouldBe("containerWithParameters.buttons", "buttons");
+shouldBe("containerWithParameters.children", "buttons");
 
 </script>
 <script src="../../../resources/js-test-post.js"></script>

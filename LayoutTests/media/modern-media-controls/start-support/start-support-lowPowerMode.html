@@ -26,12 +26,12 @@ function endTest()
 media.addEventListener("canplaythrough", function() {
     debug("Received 'canplaythrough' event");
     // We should display the start button since we denied autoplay and the user needs a way to start playback.
-    shouldBecomeEqual("!!internals.shadowRoot(media).querySelector('button.start')", "true", function() {
+    shouldBecomeEqual("!!internals.shadowRoot(media).querySelector('button.play-pause')", "true", function() {
         shouldBeFalse("media.controls");
 
         debug("Pressing on the start button");
         hasUserGesture = true;
-        pressOnElement(internals.shadowRoot(media).querySelector('button.start'));
+        pressOnElement(internals.shadowRoot(media).querySelector('button.play-pause'));
     });
 });
 
@@ -39,7 +39,7 @@ media.addEventListener("play", function() {
     debug("Received 'play' event");
     shouldBeFalse("media.controls");
     if (hasUserGesture) {
-        shouldBecomeEqual("internals.shadowRoot(media).querySelector('button.start')", "null", endTest);
+        shouldBecomeEqual("internals.shadowRoot(media).querySelector('button.play-pause')", "null", endTest);
     } else {
         testFailed("Media started playing without user interaction");
         endTest();

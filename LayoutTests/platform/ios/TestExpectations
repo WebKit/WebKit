@@ -3228,6 +3228,7 @@ media/modern-media-controls/scrubber-support [ Pass ]
 media/modern-media-controls/skip-back-button [ Pass ]
 media/modern-media-controls/skip-forward-button [ Pass ]
 media/modern-media-controls/slider [ Pass ]
+media/modern-media-controls/start-support [ Pass ]
 media/modern-media-controls/status-label [ Pass ]
 media/modern-media-controls/status-support [ Pass ]
 media/modern-media-controls/time-control [ Pass ]
@@ -3253,6 +3254,8 @@ media/modern-media-controls/mute-support/mute-support-press-on-button.html [ Ski
 media/modern-media-controls/pip-support/ipad/pip-support-tap.html [ Skip ]
 media/modern-media-controls/placard-support/ipad [ Skip ]
 media/modern-media-controls/scrubber-support/ipad/scrubber-support-drag.html [ Skip ]
+media/modern-media-controls/start-support/start-support-click-to-start.html [ Skip ]
+media/modern-media-controls/start-support/start-support-lowPowerMode.html [ Skip ]
 
 # There is no focus state for on iOS
 media/modern-media-controls/button/button-focus-state.html [ Skip ]
@@ -3267,6 +3270,7 @@ media/modern-media-controls/media-controller/media-controller-fullscreen-ltr.htm
 media/modern-media-controls/media-controller/media-controller-inline-to-fullscreen-to-inline.html [ Skip ]
 media/modern-media-controls/media-controller/media-controller-inline-to-fullscreen-to-pip-to-inline.html [ Skip ]
 media/modern-media-controls/placard-support/placard-support-airplay-fullscreen.html [ Skip ]
+media/modern-media-controls/start-support/start-support-fullscreen.html [ Skip ]
 
 # These tests specifically test iOS-only media controls features
 media/modern-media-controls/ios-inline-media-controls/ios-inline-media-controls-button-padding.html [ Pass ]

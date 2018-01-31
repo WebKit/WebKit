@@ -22,7 +22,7 @@ function step1()
     debug("muted = false");
     debug("usesLTRUserInterfaceLayoutDirection = true");
     shouldBecomeEqual("mediaControls.muteButton.iconName", "Icons.Volume", () => {
-        shouldBecomeEqual("mediaControls.topLeftControlsBar.children[1].buttons", "[mediaControls.fullscreenButton, mediaControls.pipButton]", () => {
+        shouldBecomeEqual("mediaControls.topLeftControlsBar.children[1].children", "[mediaControls.fullscreenButton, mediaControls.pipButton]", () => {
             shouldBecomeEqualToString("getComputedStyle(mediaControls.topLeftControlsBar.element).left", "6px", step2);
         });
     });
@@ -36,7 +36,7 @@ function step2()
     debug("usesLTRUserInterfaceLayoutDirection = false");
     mediaControls.usesLTRUserInterfaceLayoutDirection = false;
     shouldBecomeEqual("mediaControls.muteButton.iconName", "Icons.Volume", () => {
-        shouldBecomeEqual("mediaControls.topLeftControlsBar.children[1].buttons", "[mediaControls.pipButton, mediaControls.fullscreenButton]", () => {
+        shouldBecomeEqual("mediaControls.topLeftControlsBar.children[1].children", "[mediaControls.pipButton, mediaControls.fullscreenButton]", () => {
             shouldBecomeEqualToString("getComputedStyle(mediaControls.topLeftControlsBar.element).right", "6px", step3);
         });
     });
@@ -50,7 +50,7 @@ function step3()
     debug("usesLTRUserInterfaceLayoutDirection = false");
     mediaControls.width = 250;
     shouldBecomeEqual("mediaControls.muteButton.iconName", "Icons.VolumeRTL", () => {
-        shouldBecomeEqual("mediaControls.topLeftControlsBar.children[1].buttons", "[mediaControls.pipButton, mediaControls.fullscreenButton]", () => {
+        shouldBecomeEqual("mediaControls.topLeftControlsBar.children[1].children", "[mediaControls.pipButton, mediaControls.fullscreenButton]", () => {
             shouldBecomeEqualToString("getComputedStyle(mediaControls.topLeftControlsBar.element).right", "6px", step4);
         });
     });
@@ -64,7 +64,7 @@ function step4()
     debug("usesLTRUserInterfaceLayoutDirection = false");
     mediaControls.muteButton.muted = true;
     shouldBecomeEqual("mediaControls.muteButton.iconName", "Icons.VolumeMutedRTL", () => {
-        shouldBecomeEqual("mediaControls.topLeftControlsBar.children[1].buttons", "[mediaControls.pipButton, mediaControls.fullscreenButton]", () => {
+        shouldBecomeEqual("mediaControls.topLeftControlsBar.children[1].children", "[mediaControls.pipButton, mediaControls.fullscreenButton]", () => {
             shouldBecomeEqualToString("getComputedStyle(mediaControls.topLeftControlsBar.element).right", "6px", step5);
         });
     });
@@ -78,7 +78,7 @@ function step5()
     debug("usesLTRUserInterfaceLayoutDirection = true");
     mediaControls.usesLTRUserInterfaceLayoutDirection = true;
     shouldBecomeEqual("mediaControls.muteButton.iconName", "Icons.VolumeMuted", () => {
-        shouldBecomeEqual("mediaControls.topLeftControlsBar.children[1].buttons", "[mediaControls.fullscreenButton, mediaControls.pipButton]", () => {
+        shouldBecomeEqual("mediaControls.topLeftControlsBar.children[1].children", "[mediaControls.fullscreenButton, mediaControls.pipButton]", () => {
             shouldBecomeEqualToString("getComputedStyle(mediaControls.topLeftControlsBar.element).left", "6px", done);
         });
     });

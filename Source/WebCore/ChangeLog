@@ -1,3 +1,50 @@
+2018-01-31  Antoine Quint  <graouts@apple.com>
+
+        [Modern Media Controls] Turn media/modern-media-controls/start-support tests back on
+        https://bugs.webkit.org/show_bug.cgi?id=182297
+
+        Reviewed by Jon Lee and Eric Carlson.
+
+        We identified one cause of flakiness when turning those tests back on and fix it in this patch. There would be
+        cases where the play/pause button would never actually become visible because we would first set it as one of
+        the buttons in the left container in the bottom controls bar before we would identify that we should show the
+        prominent play/pause button, and then once we did, we would add it as a child to the InlineMediaControls. But,
+        because the actual layout of the ButtonsContainer would happen in a rAF due to being a layout() method, we would
+        remove the play/pause button from the InlineMediaControls and set it as a child of the left container even
+        though it wasn't visible.
+
+        Performing the layout of a ButtonsContainer should really happen immediately when we set the buttons, so in this
+        patch we remove the "buttons" property and clients of ButtonsContainer can simply add or remove children which
+        will be laid out in a row. To support this, we've added two notification methods to LayoutNode, one that indicates
+        when children have changed, didChangeChildren(), which we override in ButtonsContainer to perform a synchronous
+        layout. The other method is willRemoveChild() which we also override in ButtonsContainer, this time to reset
+        the "x" and "visible" properties which we set while performing layout.
+        
+        This fixes flakiness for media/modern-media-controls/start-support/start-support-click-to-start.html, and maybe
+        other modern-media-controls tests that could have been affected by this unexpected behavior.
+
+        * Modules/modern-media-controls/controls/buttons-container.js:
+        (ButtonsContainer.prototype.willRemoveChild):
+        (ButtonsContainer.prototype.didChangeChildren):
+        (ButtonsContainer.prototype.layout):
+        (ButtonsContainer.prototype.get buttons): Deleted.
+        (ButtonsContainer.prototype.set buttons): Deleted.
+        * Modules/modern-media-controls/controls/inline-media-controls.js:
+        (InlineMediaControls.prototype.layout):
+        (InlineMediaControls.prototype._updateBottomControlsBarLabel):
+        (InlineMediaControls.prototype._addTopRightBarWithMuteButtonToChildren):
+        (InlineMediaControls):
+        * Modules/modern-media-controls/controls/layout-node.js:
+        (LayoutNode.prototype.set children):
+        (LayoutNode.prototype.addChild):
+        (LayoutNode.prototype.removeChild):
+        (LayoutNode.prototype.willRemoveChild):
+        (LayoutNode.prototype.didChangeChildren):
+        * Modules/modern-media-controls/controls/macos-fullscreen-media-controls.js:
+        (MacOSFullscreenMediaControls.prototype.layout):
+        * Modules/modern-media-controls/media/media-controller.js: Drive-by fix to correctly set the value passed as
+        data-auto-hide-delay on a <video> element.
+
 2018-01-31  Zalan Bujtas  <zalan@apple.com>
 
         [RenderTreeBuilder] Move RenderMultiColumnFlow::resolveMovedChild to RenderTreeBuilder.
