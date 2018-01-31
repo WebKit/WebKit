@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -294,6 +294,14 @@ bool NetworkStorageSession::hasStorageAccessForFrame(const String& resourceDomai
         return false;
     
     return it2->value == resourceDomain;
+}
+
+bool NetworkStorageSession::hasStorageAccessForFrame(const ResourceRequest& request, uint64_t frameID, uint64_t pageID) const
+{
+    if (!cookieStoragePartitioningEnabled)
+        return false;
+
+    return hasStorageAccessForFrame(getPartitioningDomain(request.url()), getPartitioningDomain(request.firstPartyForCookies()), frameID, pageID);
 }
 
 void NetworkStorageSession::grantStorageAccessForFrame(const String& resourceDomain, const String& firstPartyDomain, uint64_t frameID, uint64_t pageID)

@@ -304,7 +304,9 @@ void WebResourceLoadStatisticsStore::requestStorageAccess(String&& subFrameHost,
             callback(true);
             return;
         }
-        
+
+        subFrameStatistic.timesAccessedAsFirstPartyDueToStorageAccessAPI++;
+
         m_grantStorageAccessForFrameHandler(subFramePrimaryDomain, topFramePrimaryDomain, frameID, pageID, WTFMove(callback));
     });
 }
