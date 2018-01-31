@@ -1698,3 +1698,5 @@ fast/canvas/webgl/webgl2/sequences.html [ Skip ]
 
 # Skip because this times out with Modern EME disabled
 platform/mac/media/encrypted-media/fps-requestMediaKeySystemAccess.html
+
+webkit.org/b/182311 imported/w3c/web-platform-tests/service-workers/service-worker/navigation-redirect.https.html [ Skip ]

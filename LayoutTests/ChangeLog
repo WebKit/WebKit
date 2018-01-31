@@ -1,3 +1,16 @@
+2018-01-31  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Cherry-pick r227857. rdar://problem/37073937
+
+    2018-01-30  Matt Lewis  <jlewis3@apple.com>
+
+            Skipping imported/w3c/web-platform-tests/service-workers/service-worker/navigation-redirect.https.html.
+            https://bugs.webkit.org/show_bug.cgi?id=182311
+
+            Unreviewed test expectations.
+
+            * TestExpectations:
+
 2018-01-31  Jason Marcell  <jmarcell@apple.com>
 
         Cherry-pick r227898. rdar://problem/37079009
