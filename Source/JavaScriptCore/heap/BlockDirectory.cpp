@@ -45,6 +45,10 @@ BlockDirectory::BlockDirectory(Heap* heap, size_t cellSize)
     heap->threadLocalCacheLayout().allocateOffset(this);
 }
 
+BlockDirectory::~BlockDirectory()
+{
+}
+
 void BlockDirectory::setSubspace(Subspace* subspace)
 {
     m_attributes = subspace->attributes();

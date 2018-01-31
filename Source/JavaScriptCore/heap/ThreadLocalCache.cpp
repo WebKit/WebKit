@@ -72,7 +72,7 @@ void ThreadLocalCache::destroyData(Data* data)
 
 void ThreadLocalCache::installSlow(VM& vm)
 {
-#if ENABLE(FAST_TLS_JIT)
+#if USE(FAST_TLS_FOR_TLC)
     static std::once_flag onceFlag;
     std::call_once(
         onceFlag,
@@ -91,7 +91,7 @@ void ThreadLocalCache::installSlow(VM& vm)
 
 void ThreadLocalCache::installData(VM& vm, Data* data)
 {
-#if ENABLE(FAST_TLS_JIT)
+#if USE(FAST_TLS_FOR_TLC)
     UNUSED_PARAM(vm);
     _pthread_setspecific_direct(tlsKey, data);
 #else

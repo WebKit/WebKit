@@ -1,3 +1,20 @@
+2018-01-31  Jason Marcell  <jmarcell@apple.com>
+
+        Cherry-pick r227683. rdar://problem/37019334
+
+    2018-01-26  Filip Pizlo  <fpizlo@apple.com>
+
+            Disable TLS-based TLCs
+            https://bugs.webkit.org/show_bug.cgi?id=182175
+
+            Reviewed by Saam Barati.
+
+            Add a flag for TLS-based TLCs and set it to 0. We can re-enable this feature when we need to use TLCs for
+            actual thread-local allocation and when we fix the fact that WebCore context switches JSC VMs without telling
+            us.
+
+            * wtf/Platform.h:
+
 2018-01-30  Jason Marcell  <jmarcell@apple.com>
 
         Cherry-pick r227617. rdar://problem/37019352
