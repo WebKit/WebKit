@@ -1,3 +1,21 @@
+2018-01-30  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [WinCairo] syntheticBoldOffset makes a font with embedded bitmap fonts shown as double strike in HiDPI
+        https://bugs.webkit.org/show_bug.cgi?id=182093
+
+        Reviewed by Alex Christensen.
+
+        WebKit draws texts doubly by shifting 1px for fonts without bold
+        fonts but bold font is desired. This synthetic bold method draws
+        fonts with embedded bitmap fonts look like double strike in HiDPI.
+
+        No new tests (Covered by the existing tests).
+
+        * platform/graphics/win/FontCacheWin.cpp:
+        (WebCore::createGDIFont): Overwrite lfWeight if the desired weight
+        is bold and matched font weight is't bold and in WinCairo port.
+        Fix wrong indentation.
+
 2018-01-30  Youenn Fablet  <youenn@apple.com> and Oleksandr Skachkov  <gskachkov@gmail.com>
 
         FetchResponse should support ConsumeData callback on chunk data is received
