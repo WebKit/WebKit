@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -2870,6 +2870,7 @@ private:
                 m_indexInBlock, SpecNone, GetButterfly, origin, Edge(array, CellUse));
         }
         
+        ASSERT(arrayMode.type() == Array::String || arrayMode.typedArrayType() != NotTypedArray);
         return m_insertionSet.insertNode(
             m_indexInBlock, SpecNone, GetIndexedPropertyStorage, origin,
             OpInfo(arrayMode.asWord()), Edge(array, KnownCellUse));

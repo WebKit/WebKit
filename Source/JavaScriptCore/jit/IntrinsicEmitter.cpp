@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -107,22 +107,31 @@ void IntrinsicGetterAccessCase::emitIntrinsicGetter(AccessGenerationState& state
     case TypedArrayByteOffsetIntrinsic: {
         GPRReg scratchGPR = state.scratchGPR;
 
-        CCallHelpers::Jump emptyByteOffset = jit.branch32(
-            MacroAssembler::NotEqual,
+        CCallHelpers::Jump notEmptyByteOffset = jit.branch32(
+            MacroAssembler::Equal,
             MacroAssembler::Address(baseGPR, JSArrayBufferView::offsetOfMode()),
             TrustedImm32(WastefulTypedArray));
 
+        jit.move(TrustedImmPtr(0), valueGPR);
+        CCallHelpers::Jump done = jit.jump();
+
+        notEmptyByteOffset.link(&jit);
+
+        // We need to load the butterfly before the vector because baseGPR and valueGPR
+        // can be the same register.
         jit.loadPtr(MacroAssembler::Address(baseGPR, JSObject::butterflyOffset()), scratchGPR);
-        jit.loadPtr(MacroAssembler::Address(baseGPR, JSArrayBufferView::offsetOfVector()), valueGPR);
+        jit.loadPtr(MacroAssembler::Address(baseGPR, JSArrayBufferView::offsetOfPoisonedVector()), valueGPR);
+        CCallHelpers::Jump nullVector = jit.branchTestPtr(MacroAssembler::Zero, valueGPR);
+
+#if ENABLE(POISON)
+        auto typedArrayType = structure()->classInfo()->typedArrayStorageType;
+        jit.xorPtr(TrustedImmPtr(JSArrayBufferView::poisonFor(typedArrayType)), valueGPR);
+#endif
         jit.loadPtr(MacroAssembler::Address(scratchGPR, Butterfly::offsetOfArrayBuffer()), scratchGPR);
         jit.loadPtr(MacroAssembler::Address(scratchGPR, ArrayBuffer::offsetOfData()), scratchGPR);
         jit.subPtr(scratchGPR, valueGPR);
 
-        CCallHelpers::Jump done = jit.jump();
-        
-        emptyByteOffset.link(&jit);
-        jit.move(TrustedImmPtr(0), valueGPR);
-        
+        nullVector.link(&jit);
         done.link(&jit);
         
         jit.boxInt32(valueGPR, valueRegs);

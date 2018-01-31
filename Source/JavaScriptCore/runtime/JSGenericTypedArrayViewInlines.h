@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -504,7 +504,7 @@ size_t JSGenericTypedArrayView<Adaptor>::estimatedSize(JSCell* cell)
 
     if (thisObject->m_mode == OversizeTypedArray)
         return Base::estimatedSize(thisObject) + thisObject->byteSize();
-    if (thisObject->m_mode == FastTypedArray && thisObject->m_vector)
+    if (thisObject->m_mode == FastTypedArray && thisObject->m_poisonedVector)
         return Base::estimatedSize(thisObject) + thisObject->byteSize();
 
     return Base::estimatedSize(thisObject);
@@ -517,7 +517,7 @@ void JSGenericTypedArrayView<Adaptor>::visitChildren(JSCell* cell, SlotVisitor& 
     
     switch (thisObject->m_mode) {
     case FastTypedArray: {
-        if (void* vector = thisObject->m_vector.getMayBeNull())
+        if (void* vector = thisObject->m_poisonedVector.getMayBeNull())
             visitor.markAuxiliary(vector);
         break;
     }
@@ -585,7 +585,7 @@ ArrayBuffer* JSGenericTypedArrayView<Adaptor>::slowDownAndWasteMemory(JSArrayBuf
     }
 
     thisObject->butterfly()->indexingHeader()->setArrayBuffer(buffer.get());
-    thisObject->m_vector.setWithoutBarrier(buffer->data());
+    thisObject->m_poisonedVector.setWithoutBarrier(buffer->data());
     WTF::storeStoreFence();
     thisObject->m_mode = WastefulTypedArray;
     heap->addReference(thisObject, buffer.get());

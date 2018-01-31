@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -132,7 +132,7 @@ JSArrayBufferView::JSArrayBufferView(VM& vm, ConstructionContext& context)
     , m_mode(context.mode())
 {
     setButterflyWithIndexingMask(vm, context.butterfly(), WTF::computeIndexingMask(length()));
-    m_vector.setWithoutBarrier(context.vector());
+    m_poisonedVector.setWithoutBarrier(context.vector());
 }
 
 void JSArrayBufferView::finishCreation(VM& vm)
@@ -193,7 +193,7 @@ void JSArrayBufferView::finalize(JSCell* cell)
     JSArrayBufferView* thisObject = static_cast<JSArrayBufferView*>(cell);
     ASSERT(thisObject->m_mode == OversizeTypedArray || thisObject->m_mode == WastefulTypedArray);
     if (thisObject->m_mode == OversizeTypedArray)
-        Gigacage::free(Gigacage::Primitive, thisObject->m_vector.get());
+        Gigacage::free(Gigacage::Primitive, thisObject->m_poisonedVector.get());
 }
 
 JSArrayBuffer* JSArrayBufferView::unsharedJSBuffer(ExecState* exec)
@@ -211,7 +211,7 @@ void JSArrayBufferView::neuter()
     RELEASE_ASSERT(hasArrayBuffer());
     RELEASE_ASSERT(!isShared());
     m_length = 0;
-    m_vector.clear();
+    m_poisonedVector.clear();
 }
 
 } // namespace JSC

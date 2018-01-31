@@ -1,3 +1,22 @@
+2018-01-30  Mark Lam  <mark.lam@apple.com>
+
+        Apply poisoning to TypedArray vector pointers.
+        https://bugs.webkit.org/show_bug.cgi?id=182155
+        <rdar://problem/36286266>
+
+        Reviewed by JF Bastien.
+
+        1. Added the ability to poison a CagedPtr.
+
+        2. Prevent CagedPtr from being implicitly instantiated, and add operator= methods
+           instead.  This is because implicitly instantiated CagedPtrs with a poisoned
+           trait may silently use a wrong poison value.
+
+        * wtf/CagedPtr.h:
+        (WTF::CagedPtr::CagedPtr):
+        (WTF::CagedPtr::get const):
+        (WTF::CagedPtr::operator=):
+
 2018-01-30  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [Win] Warning fix.

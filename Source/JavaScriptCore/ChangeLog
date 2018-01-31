@@ -1,3 +1,130 @@
+2018-01-30  Mark Lam  <mark.lam@apple.com>
+
+        Apply poisoning to TypedArray vector pointers.
+        https://bugs.webkit.org/show_bug.cgi?id=182155
+        <rdar://problem/36286266>
+
+        Reviewed by JF Bastien.
+
+        The TypeArray's vector pointer is now poisoned.  The poison value is chosen based
+        on a TypeArray's jsType.  The JSType must be between FirstTypedArrayType and
+        LastTypedArrayType.  At runtime, we enforce that the index is well-behaved by
+        masking it against TypedArrayPoisonIndexMask.  TypedArrayPoisonIndexMask (16) is
+        the number of TypedArray types (10) rounded up to the next power of 2.
+        Accordingly, we reserve an array of TypedArrayPoisonIndexMask poisons so that we
+        can use index masking on the index, and be guaranteed that the masked index will
+        be within bounds of the poisons array.
+
+        1. Fixed both DFG and FTL versions of compileGetTypedArrayByteOffset() to not
+           do any unnecessary work if the TypedArray vector is null.
+
+           FTL's cagedMayBeNull() is no longer needed because it is only used by
+           compileGetTypedArrayByteOffset(), and we need to enhance it to handle unpoisoning
+           in a TypedArray specific way.  So, might as well do the work inline in
+           compileGetTypedArrayByteOffset() instead.
+
+        2. Removed an unnecessary null-check in DFGSpeculativeJIT's compileNewTypedArrayWithSize()
+           because there's already a null check above it that ensures that sizeGPR is
+           never null.
+
+        3. In LLInt's _llint_op_get_by_val, move the TypedArray length check before the
+           loading of the vector for unpoisoning and uncaging.  We don't need the vector
+           if the length is 0.
+
+        Implementation notes on the need to null check the TypeArray vector:
+
+        1. DFG::SpeculativeJIT::jumpForTypedArrayIsNeuteredIfOutOfBounds() does not need a
+           m_poisonedVector null check because the function is a null check.
+
+        2. DFG::SpeculativeJIT::compileGetIndexedPropertyStorage() does not need a
+           m_poisonedVector null check because it is followed by a call to
+           cageTypedArrayStorage() which assumes that storageReg cannot be null.
+
+        3. DFG::SpeculativeJIT::compileGetTypedArrayByteOffset() already has a
+           m_poisonedVector null check.
+
+        4. DFG::SpeculativeJIT::compileNewTypedArrayWithSize() does not need a vector null
+           check because the poisoning code is preceded by a sizeGPR null check, which
+           ensures that the storageGPR (vector to be poisoned) is not null.
+
+        5. FTL's compileGetIndexedPropertyStorage() does not need a m_poisonedVector null
+           check because it is followed by a call to caged() which assumes that the
+           vector cannot be null.
+
+        6. FTL's compileGetTypedArrayByteOffset() already has a m_poisonedVector null check.
+
+        7. FTL's compileNewTypedArray() does not need a vector null check because the
+           poisoning code is preceded by a size null check, which ensures that the
+           storage (vector to be poisoned) is not null.
+
+        8. FTL's speculateTypedArrayIsNotNeutered() does not need a
+           m_poisonedVector null check because the function is a null check.
+
+        9. IntrinsicGetterAccessCase::emitIntrinsicGetter()'s TypedArrayByteOffsetIntrinsic
+           case needs a null check so that it does not try to unpoison a null vector.
+
+        10. JIT::emitIntTypedArrayGetByVal() does not need a vector null check because
+            we already do a length check even before loading the vector.
+
+        11. JIT::emitFloatTypedArrayGetByVal() does not need a vector null check because
+            we already do a length check even before loading the vector.
+
+        12. JIT::emitIntTypedArrayPutByVal() does not need a vector null check because
+            we already do a length check even before loading the vector.
+
+        13. JIT::emitFloatTypedArrayPutByVal() does not need a vector null check because
+            we already do a length check even before loading the vector.
+
+        14. LLInt's loadTypedArrayCaged() does not need a vector null check because its
+            client will do a TypedArray length check before calling it.
+
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::checkArray):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::hasArrayMode):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::jumpForTypedArrayIsNeuteredIfOutOfBounds):
+        (JSC::DFG::SpeculativeJIT::compileGetIndexedPropertyStorage):
+        (JSC::DFG::SpeculativeJIT::compileGetTypedArrayByteOffset):
+        (JSC::DFG::SpeculativeJIT::compileNewTypedArrayWithSize):
+        * ftl/FTLAbstractHeapRepository.h:
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetIndexedPropertyStorage):
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetTypedArrayByteOffset):
+        (JSC::FTL::DFG::LowerDFGToB3::compileNewTypedArray):
+        (JSC::FTL::DFG::LowerDFGToB3::speculateTypedArrayIsNotNeutered):
+        (JSC::FTL::DFG::LowerDFGToB3::cagedMayBeNull): Deleted.
+        * jit/IntrinsicEmitter.cpp:
+        (JSC::IntrinsicGetterAccessCase::emitIntrinsicGetter):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emitIntTypedArrayGetByVal):
+        (JSC::JIT::emitFloatTypedArrayGetByVal):
+        (JSC::JIT::emitIntTypedArrayPutByVal):
+        (JSC::JIT::emitFloatTypedArrayPutByVal):
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * offlineasm/arm64.rb:
+        * offlineasm/x86.rb:
+        * runtime/CagedBarrierPtr.h:
+        * runtime/JSArrayBufferView.cpp:
+        (JSC::JSArrayBufferView::JSArrayBufferView):
+        (JSC::JSArrayBufferView::finalize):
+        (JSC::JSArrayBufferView::neuter):
+        * runtime/JSArrayBufferView.h:
+        (JSC::JSArrayBufferView::vector const):
+        (JSC::JSArrayBufferView::offsetOfPoisonedVector):
+        (JSC::JSArrayBufferView::poisonFor):
+        (JSC::JSArrayBufferView::Poison::key):
+        (JSC::JSArrayBufferView::offsetOfVector): Deleted.
+        * runtime/JSCPoison.cpp:
+        (JSC::initializePoison):
+        * runtime/JSCPoison.h:
+        * runtime/JSGenericTypedArrayViewInlines.h:
+        (JSC::JSGenericTypedArrayView<Adaptor>::estimatedSize):
+        (JSC::JSGenericTypedArrayView<Adaptor>::visitChildren):
+        (JSC::JSGenericTypedArrayView<Adaptor>::slowDownAndWasteMemory):
+        * runtime/JSObject.h:
+
 2018-01-30  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [Win] Warning fix.
