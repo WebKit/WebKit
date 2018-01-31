@@ -128,9 +128,9 @@ RefPtr<SharedTask<MarkedBlock::Handle*()>> Subspace::parallelNotEmptyMarkedBlock
 
 void Subspace::sweep()
 {
-    forEachAllocator(
-        [&] (MarkedAllocator& allocator) {
-            allocator.sweep();
+    forEachDirectory(
+        [&] (BlockDirectory& directory) {
+            directory.sweep();
         });
 }
 

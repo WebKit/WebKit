@@ -52,7 +52,7 @@ RefPtr<SharedTask<MarkedBlock::Handle*()>> IsoCellSet::parallelNotEmptyMarkedBlo
     public:
         Task(IsoCellSet& set)
             : m_set(set)
-            , m_allocator(set.m_subspace.m_allocator)
+            , m_directory(set.m_subspace.m_directory)
         {
         }
         
@@ -61,18 +61,18 @@ RefPtr<SharedTask<MarkedBlock::Handle*()>> IsoCellSet::parallelNotEmptyMarkedBlo
             if (m_done)
                 return nullptr;
             auto locker = holdLock(m_lock);
-            auto bits = m_allocator.m_markingNotEmpty & m_set.m_blocksWithBits;
+            auto bits = m_directory.m_markingNotEmpty & m_set.m_blocksWithBits;
             m_index = bits.findBit(m_index, true);
-            if (m_index >= m_allocator.m_blocks.size()) {
+            if (m_index >= m_directory.m_blocks.size()) {
                 m_done = true;
                 return nullptr;
             }
-            return m_allocator.m_blocks[m_index++];
+            return m_directory.m_blocks[m_index++];
         }
         
     private:
         IsoCellSet& m_set;
-        MarkedAllocator& m_allocator;
+        BlockDirectory& m_directory;
         size_t m_index { 0 };
         Lock m_lock;
         bool m_done { false };
