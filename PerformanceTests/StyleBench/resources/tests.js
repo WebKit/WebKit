@@ -1,7 +1,7 @@
 function makeSteps(count)
 {
     const steps = [];
-    for (i = 1; i <= count; ++i) {
+    for (i = 0; i < count; ++i) {
         steps.push(new BenchmarkTestStep(`Adding classes - ${i}`, (bench, contentWindow, contentDocument) => {
             bench.addClasses(25);
         }));

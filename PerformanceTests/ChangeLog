@@ -1,3 +1,15 @@
+2018-01-30  Ryosuke Niwa  <rniwa@webkit.org>
+
+        StyleBench: Generate more mutation steps
+        https://bugs.webkit.org/show_bug.cgi?id=182291
+
+        Rubber-stamped by Antti Koivisto
+
+        Use zero-based index instead of one-based index.
+
+        * StyleBench/resources/tests.js:
+        (makeSteps):
+
 2018-01-30  Antti Koivisto  <antti@apple.com>
 
         StyleBench: Generate more mutation steps
