@@ -36,7 +36,7 @@ namespace JSC {
 typedef enum { StrictJSON, NonStrictJSON, JSONP } ParserMode;
 
 enum JSONPPathEntryType {
-    JSONPPathEntryTypeDeclare, // var pathEntryName = JSON
+    JSONPPathEntryTypeDeclareVar, // var pathEntryName = JSON
     JSONPPathEntryTypeDot, // <prior entries>.pathEntryName = JSON
     JSONPPathEntryTypeLookup, // <prior entries>[pathIndex] = JSON
     JSONPPathEntryTypeCall // <prior entries>(JSON)

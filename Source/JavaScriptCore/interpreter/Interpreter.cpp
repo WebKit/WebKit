@@ -827,7 +827,7 @@ JSValue Interpreter::executeProgram(const SourceCode& source, CallFrame* callFra
             Vector<JSONPPathEntry> JSONPPath;
             JSONPPath.swap(JSONPData[entry].m_path);
             JSValue JSONPValue = JSONPData[entry].m_value.get();
-            if (JSONPPath.size() == 1 && JSONPPath[0].m_type == JSONPPathEntryTypeDeclare) {
+            if (JSONPPath.size() == 1 && JSONPPath[0].m_type == JSONPPathEntryTypeDeclareVar) {
                 globalObject->addVar(callFrame, JSONPPath[0].m_pathEntryName);
                 RETURN_IF_EXCEPTION(throwScope, { });
                 PutPropertySlot slot(globalObject);
@@ -838,20 +838,39 @@ JSValue Interpreter::executeProgram(const SourceCode& source, CallFrame* callFra
             }
             JSValue baseObject(globalObject);
             for (unsigned i = 0; i < JSONPPath.size() - 1; i++) {
-                ASSERT(JSONPPath[i].m_type != JSONPPathEntryTypeDeclare);
+                ASSERT(JSONPPath[i].m_type != JSONPPathEntryTypeDeclareVar);
                 switch (JSONPPath[i].m_type) {
                 case JSONPPathEntryTypeDot: {
                     if (i == 0) {
-                        PropertySlot slot(globalObject, PropertySlot::InternalMethodType::Get);
-                        if (!globalObject->getPropertySlot(callFrame, JSONPPath[i].m_pathEntryName, slot)) {
-                            RETURN_IF_EXCEPTION(throwScope, JSValue());
-                            if (entry)
-                                return throwException(callFrame, throwScope, createUndefinedVariableError(callFrame, JSONPPath[i].m_pathEntryName));
-                            goto failedJSONP;
+                        RELEASE_ASSERT(baseObject == globalObject);
+
+                        auto doGet = [&] (JSSegmentedVariableObject* scope) {
+                            PropertySlot slot(scope, PropertySlot::InternalMethodType::Get);
+                            if (scope->getPropertySlot(callFrame, JSONPPath[i].m_pathEntryName, slot))
+                                return slot.getValue(callFrame, JSONPPath[i].m_pathEntryName);
+                            return JSValue();
+                        };
+
+                        JSValue result = doGet(globalObject->globalLexicalEnvironment());
+                        RETURN_IF_EXCEPTION(throwScope, JSValue());
+                        if (result) {
+                            baseObject = result;
+                            continue;
                         }
-                        baseObject = slot.getValue(callFrame, JSONPPath[i].m_pathEntryName);
-                    } else
-                        baseObject = baseObject.get(callFrame, JSONPPath[i].m_pathEntryName);
+
+                        result = doGet(globalObject);
+                        RETURN_IF_EXCEPTION(throwScope, JSValue());
+                        if (result) {
+                            baseObject = result;
+                            continue;
+                        }
+
+                        if (entry)
+                            return throwException(callFrame, throwScope, createUndefinedVariableError(callFrame, JSONPPath[i].m_pathEntryName));
+                        goto failedJSONP;
+                    }
+
+                    baseObject = baseObject.get(callFrame, JSONPPath[i].m_pathEntryName);
                     RETURN_IF_EXCEPTION(throwScope, JSValue());
                     continue;
                 }
@@ -865,6 +884,15 @@ JSValue Interpreter::executeProgram(const SourceCode& source, CallFrame* callFra
                     return jsUndefined();
                 }
             }
+
+            if (JSONPPath.size() == 1 && JSONPPath.last().m_type != JSONPPathEntryTypeLookup) {
+                RELEASE_ASSERT(baseObject == globalObject);
+                JSGlobalLexicalEnvironment* scope = globalObject->globalLexicalEnvironment();
+                if (scope->hasProperty(callFrame, JSONPPath.last().m_pathEntryName))
+                    baseObject = scope;
+                RETURN_IF_EXCEPTION(throwScope, JSValue());
+            }
+
             PutPropertySlot slot(baseObject);
             switch (JSONPPath.last().m_type) {
             case JSONPPathEntryTypeCall: {
@@ -877,7 +905,7 @@ JSValue Interpreter::executeProgram(const SourceCode& source, CallFrame* callFra
                 MarkedArgumentBuffer jsonArg;
                 jsonArg.append(JSONPValue);
                 ASSERT(!jsonArg.hasOverflowed());
-                JSValue thisValue = JSONPPath.size() == 1 ? jsUndefined(): baseObject;
+                JSValue thisValue = JSONPPath.size() == 1 ? jsUndefined() : baseObject;
                 JSONPValue = JSC::call(callFrame, function, callType, callData, thisValue, jsonArg);
                 RETURN_IF_EXCEPTION(throwScope, JSValue());
                 break;
@@ -894,7 +922,7 @@ JSValue Interpreter::executeProgram(const SourceCode& source, CallFrame* callFra
             }
             default:
                 RELEASE_ASSERT_NOT_REACHED();
-                    return jsUndefined();
+                return jsUndefined();
             }
             result = JSONPValue;
         }
