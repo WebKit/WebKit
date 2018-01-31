@@ -1,3 +1,15 @@
+2018-01-31  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Cherry-pick r227748. rdar://problem/37075786
+
+    2018-01-29  Brady Eidson  <beidson@apple.com>
+
+            Make the API test added in r227737 be Mac-only.
+
+            Unreviewed gardening.
+
+            * TestWebKitAPI/Tests/WebKitCocoa/MessagePortProviders.mm:
+
 2018-01-30  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, disable tests for rdar://problem/37032930&37032931.
