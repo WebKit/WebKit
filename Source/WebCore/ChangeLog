@@ -1,3 +1,20 @@
+2018-01-30  Chris Nardi  <cnardi@chromium.org>
+
+        Use double-quotes when serializing font-feature-settings
+        https://bugs.webkit.org/show_bug.cgi?id=182201
+
+        According to the CSSOM spec, all strings should be serialized with double-quotes. The feature
+        tag value was previously serialized with single-quotes; change this to double-quotes to match
+        the spec and non-WebKit browsers.
+
+        Reviewed by Myles C. Maxfield.
+
+        Updated css3/font-feature-settings-parsing.html, fast/css/inherited-properties-rare-text.html,
+        and fast/text/font-face-javascript.html.
+
+        * css/CSSFontFeatureValue.cpp:
+        (WebCore::CSSFontFeatureValue::customCSSText const):
+
 2018-01-30  Brent Fulgham  <bfulgham@apple.com>
 
         Add telemetry to track storage access API adoption
