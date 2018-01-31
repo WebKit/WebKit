@@ -1,3 +1,19 @@
+2018-01-31  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Web Automation: cookies returned by automation should have expiry time in seconds
+        https://bugs.webkit.org/show_bug.cgi?id=182293
+
+        Reviewed by Brian Burg.
+
+        When creating a WebCore::Cookie from a WebDriver object we convert the given expiry time to milliseconds, but
+        when creating a WebDriver object from a WebCore::Cookie we are keeping the milliseconds. We should convert to
+        seconds for consistency, so that the WebDriver always handles seconds.
+
+        Fixes: imported/w3c/webdriver/tests/cookies/get_named_cookie.py::test_get_named_cookie
+
+        * UIProcess/Automation/WebAutomationSession.cpp:
+        (WebKit::buildObjectForCookie): Convert expiry to seconds.
+
 2018-01-31  Ryosuke Niwa  <rniwa@webkit.org>
 
         Unreviewed iOS build fix.
