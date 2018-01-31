@@ -139,9 +139,9 @@ WI.WebSocketContentView = class WebSocketContentView extends WI.ContentView
     {
         let node;
         if (this._showTimeColumn)
-            node = new WI.WebSocketDataGridNode(Object.shallowMerge({data, time}, attributes));
+            node = new WI.WebSocketDataGridNode({...attributes, data, time});
         else
-            node = new WI.WebSocketDataGridNode(Object.shallowMerge({data}, attributes));
+            node = new WI.WebSocketDataGridNode({...attributes, data});
 
         this._dataGrid.appendChild(node);
 

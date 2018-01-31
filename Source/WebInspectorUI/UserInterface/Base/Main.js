@@ -773,10 +773,11 @@ WI.handlePossibleLinkClick = function(event, frame, options = {})
     event.preventDefault();
     event.stopPropagation();
 
-    this.openURL(anchorElement.href, frame, Object.shallowMerge(options, {
+    this.openURL(anchorElement.href, frame, {
+        ...options,
         lineNumber: anchorElement.lineNumber,
         ignoreSearchTab: !WI.isShowingSearchTab(),
-    }));
+    });
 
     return true;
 };
@@ -814,7 +815,7 @@ WI.openURL = function(url, frame, options = {})
 
     if (resource) {
         let positionToReveal = new WI.SourceCodePosition(options.lineNumber, 0);
-        this.showSourceCode(resource, Object.shallowMerge(options, {positionToReveal}));
+        this.showSourceCode(resource, {...options, positionToReveal});
         return;
     }
 
@@ -1155,33 +1156,37 @@ WI.showSourceCode = function(sourceCode, options = {})
 
 WI.showSourceCodeLocation = function(sourceCodeLocation, options = {})
 {
-    this.showSourceCode(sourceCodeLocation.displaySourceCode, Object.shallowMerge(options, {
+    this.showSourceCode(sourceCodeLocation.displaySourceCode, {
+        ...options,
         positionToReveal: sourceCodeLocation.displayPosition(),
-    }));
+    });
 };
 
 WI.showOriginalUnformattedSourceCodeLocation = function(sourceCodeLocation, options = {})
 {
-    this.showSourceCode(sourceCodeLocation.sourceCode, Object.shallowMerge(options, {
+    this.showSourceCode(sourceCodeLocation.sourceCode, {
+        ...options,
         positionToReveal: sourceCodeLocation.position(),
         forceUnformatted: true,
-    }));
+    });
 };
 
 WI.showOriginalOrFormattedSourceCodeLocation = function(sourceCodeLocation, options = {})
 {
-    this.showSourceCode(sourceCodeLocation.sourceCode, Object.shallowMerge(options, {
+    this.showSourceCode(sourceCodeLocation.sourceCode, {
+        ...options,
         positionToReveal: sourceCodeLocation.formattedPosition(),
-    }));
+    });
 };
 
 WI.showOriginalOrFormattedSourceCodeTextRange = function(sourceCodeTextRange, options = {})
 {
     var textRangeToSelect = sourceCodeTextRange.formattedTextRange;
-    this.showSourceCode(sourceCodeTextRange.sourceCode, Object.shallowMerge(options, {
+    this.showSourceCode(sourceCodeTextRange.sourceCode, {
+        ...options,
         positionToReveal: textRangeToSelect.startPosition(),
         textRangeToSelect,
-    }));
+    });
 };
 
 WI.showResourceRequest = function(resource, options = {})
@@ -2313,9 +2318,14 @@ WI.linkifyLocation = function(url, sourceCodePosition, options = {})
     }
 
     let sourceCodeLocation = sourceCode.createSourceCodeLocation(sourceCodePosition.lineNumber, sourceCodePosition.columnNumber);
-    let linkElement = WI.createSourceCodeLocationLink(sourceCodeLocation, Object.shallowMerge(options, {dontFloat: true}));
+    let linkElement = WI.createSourceCodeLocationLink(sourceCodeLocation, {
+        ...options,
+        dontFloat: true,
+    });
+
     if (options.className)
         linkElement.classList.add(options.className);
+
     return linkElement;
 };
 

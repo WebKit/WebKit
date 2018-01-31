@@ -65,7 +65,7 @@ WI.linkifyNodeReference = function(node, options = {})
 
     let link = document.createElement("span");
     link.append(displayName);
-    return WI.linkifyNodeReferenceElement(node, link, Object.shallowMerge(options, {displayName}));
+    return WI.linkifyNodeReferenceElement(node, link, {...options, displayName});
 };
 
 WI.linkifyNodeReferenceElement = function(node, element, options = {})

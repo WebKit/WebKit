@@ -1601,7 +1601,7 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
             this.expand();
         }
 
-        this._startEditingAsHTML(commitCallback, Object.shallowMerge(options, {position}));
+        this._startEditingAsHTML(commitCallback, {...options, position});
     }
 
     _addHTML(event)
