@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -39,15 +39,12 @@ public:
     ~DOMGCOutputConstraint();
     
 protected:
-    JSC::ConstraintParallelism executeImpl(JSC::SlotVisitor&) override;
-    void doParallelWorkImpl(JSC::SlotVisitor&) override;
-    void finishParallelWorkImpl(JSC::SlotVisitor&) override;
+    void executeImpl(JSC::SlotVisitor&) override;
 
 private:
     JSC::VM& m_vm;
     JSVMClientData& m_clientData;
     uint64_t m_lastExecutionVersion;
-    Vector<RefPtr<SharedTask<void(SlotVisitor&)>>> m_tasks;
 };
 
 } // namespace WebCore

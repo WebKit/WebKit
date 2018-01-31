@@ -32,6 +32,7 @@
 #include <wtf/FastMalloc.h>
 #include <wtf/Lock.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/SharedTask.h>
 #include <wtf/text/CString.h>
 
 namespace JSC {
@@ -59,7 +60,7 @@ public:
     
     size_t lastVisitCount() const { return m_lastVisitCount; }
     
-    ConstraintParallelism execute(SlotVisitor&);
+    void execute(SlotVisitor&);
     
     JS_EXPORT_PRIVATE virtual double quickWorkEstimate(SlotVisitor& visitor);
     
@@ -67,8 +68,7 @@ public:
     
     void prepareToExecute(const AbstractLocker& constraintSolvingLocker, SlotVisitor&);
     
-    void doParallelWork(SlotVisitor&);
-    void finishParallelWork(SlotVisitor&);
+    void doParallelWork(SlotVisitor&, SharedTask<void(SlotVisitor&)>&);
     
     ConstraintVolatility volatility() const { return m_volatility; }
     
@@ -76,10 +76,8 @@ public:
     ConstraintParallelism parallelism() const { return m_parallelism; }
 
 protected:
-    virtual ConstraintParallelism executeImpl(SlotVisitor&) = 0;
+    virtual void executeImpl(SlotVisitor&) = 0;
     JS_EXPORT_PRIVATE virtual void prepareToExecuteImpl(const AbstractLocker& constraintSolvingLocker, SlotVisitor&);
-    virtual void doParallelWorkImpl(SlotVisitor&);
-    virtual void finishParallelWorkImpl(SlotVisitor&);
     
 private:
     friend class MarkingConstraintSet; // So it can set m_index.

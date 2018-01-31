@@ -329,6 +329,7 @@ void MarkedBlock::Handle::didAddToDirectory(BlockDirectory* directory, size_t in
     
     m_index = index;
     m_directory = directory;
+    m_block->m_subspace = directory->subspace();
     
     size_t cellSize = directory->cellSize();
     m_atomsPerCell = (cellSize + atomSize - 1) / atomSize;
@@ -356,6 +357,7 @@ void MarkedBlock::Handle::didRemoveFromDirectory()
     
     m_index = std::numeric_limits<size_t>::max();
     m_directory = nullptr;
+    m_block->m_subspace = nullptr;
 }
 
 #if !ASSERT_DISABLED

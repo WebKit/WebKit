@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -339,6 +339,7 @@ public:
 #endif
     
     IsoSubspace directEvalExecutableSpace;
+    IsoSubspace executableToCodeBlockEdgeSpace;
     IsoSubspace functionExecutableSpace;
     IsoSubspace indirectEvalExecutableSpace;
     IsoSubspace inferredTypeSpace;
@@ -352,9 +353,47 @@ public:
     IsoSubspace weakSetSpace;
     IsoSubspace weakMapSpace;
     
+    IsoCellSet executableToCodeBlockEdgesWithConstraints;
+    IsoCellSet executableToCodeBlockEdgesWithFinalizers;
     IsoCellSet inferredTypesWithFinalizers;
     IsoCellSet inferredValuesWithFinalizers;
+    
+    struct SpaceAndFinalizerSet {
+        IsoSubspace space;
+        IsoCellSet finalizerSet;
+        
+        template<typename... Arguments>
+        SpaceAndFinalizerSet(Arguments&&... arguments)
+            : space(std::forward<Arguments>(arguments)...)
+            , finalizerSet(space)
+        {
+        }
+        
+        static IsoCellSet& finalizerSetFor(Subspace& space)
+        {
+            return *bitwise_cast<IsoCellSet*>(
+                bitwise_cast<char*>(&space) -
+                OBJECT_OFFSETOF(SpaceAndFinalizerSet, space) +
+                OBJECT_OFFSETOF(SpaceAndFinalizerSet, finalizerSet));
+        }
+    };
+    
+    SpaceAndFinalizerSet evalCodeBlockSpace;
+    SpaceAndFinalizerSet functionCodeBlockSpace;
+    SpaceAndFinalizerSet moduleProgramCodeBlockSpace;
+    SpaceAndFinalizerSet programCodeBlockSpace;
 
+    template<typename Func>
+    void forEachCodeBlockSpace(const Func& func)
+    {
+        // This should not include webAssemblyCodeBlockSpace because this is about subsclasses of
+        // JSC::CodeBlock.
+        func(evalCodeBlockSpace);
+        func(functionCodeBlockSpace);
+        func(moduleProgramCodeBlockSpace);
+        func(programCodeBlockSpace);
+    }
+    
     VMType vmType;
     ClientData* clientData;
     EntryFrame* topEntryFrame;
@@ -418,6 +457,7 @@ public:
     Strong<Structure> setIteratorStructure;
     Strong<Structure> mapIteratorStructure;
     Strong<Structure> bigIntStructure;
+    Strong<Structure> executableToCodeBlockEdgeStructure;
 
     Strong<JSCell> emptyPropertyNameEnumerator;
     Strong<JSCell> sentinelSetBucket;

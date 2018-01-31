@@ -48,10 +48,18 @@ public:
     
     bool contains(HeapCell* cell) const;
     
+    JS_EXPORT_PRIVATE RefPtr<SharedTask<MarkedBlock::Handle*()>> parallelNotEmptyMarkedBlockSource();
+    
     // This will have to do a combined search over whatever Subspace::forEachMarkedCell uses and
     // our m_blocksWithBits.
     template<typename Func>
     void forEachMarkedCell(const Func&);
+
+    template<typename Func>
+    RefPtr<SharedTask<void(SlotVisitor&)>> forEachMarkedCellInParallel(const Func&);
+    
+    template<typename Func>
+    void forEachLiveCell(const Func&);
     
 private:
     friend class IsoSubspace;

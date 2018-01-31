@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2009-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "ExecutableToCodeBlockEdge.h"
 #include "ScriptExecutable.h"
 #include "SourceCode.h"
 #include <wtf/Box.h>
@@ -68,9 +69,12 @@ public:
     // for example, argumentsRegister().
     FunctionCodeBlock* eitherCodeBlock()
     {
+        ExecutableToCodeBlockEdge* edge;
         if (m_codeBlockForCall)
-            return m_codeBlockForCall.get();
-        return m_codeBlockForConstruct.get();
+            edge = m_codeBlockForCall.get();
+        else
+            edge = m_codeBlockForConstruct.get();
+        return bitwise_cast<FunctionCodeBlock*>(ExecutableToCodeBlockEdge::unwrap(edge));
     }
         
     bool isGeneratedForCall() const
@@ -80,17 +84,17 @@ public:
 
     FunctionCodeBlock* codeBlockForCall()
     {
-        return m_codeBlockForCall.get();
+        return bitwise_cast<FunctionCodeBlock*>(ExecutableToCodeBlockEdge::unwrap(m_codeBlockForCall.get()));
     }
 
     bool isGeneratedForConstruct() const
     {
-        return m_codeBlockForConstruct.get();
+        return !!m_codeBlockForConstruct;
     }
 
     FunctionCodeBlock* codeBlockForConstruct()
     {
-        return m_codeBlockForConstruct.get();
+        return bitwise_cast<FunctionCodeBlock*>(ExecutableToCodeBlockEdge::unwrap(m_codeBlockForConstruct.get()));
     }
         
     bool isGeneratedFor(CodeSpecializationKind kind)
@@ -204,8 +208,8 @@ private:
     
     unsigned m_parametersStartOffset;
     WriteBarrier<UnlinkedFunctionExecutable> m_unlinkedExecutable;
-    WriteBarrier<FunctionCodeBlock> m_codeBlockForCall;
-    WriteBarrier<FunctionCodeBlock> m_codeBlockForConstruct;
+    WriteBarrier<ExecutableToCodeBlockEdge> m_codeBlockForCall;
+    WriteBarrier<ExecutableToCodeBlockEdge> m_codeBlockForConstruct;
     RefPtr<TypeSet> m_returnStatementTypeSet;
     WriteBarrier<InferredValue> m_singletonFunction;
     WriteBarrier<Structure> m_cachedPolyProtoStructure;

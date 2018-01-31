@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -49,16 +49,15 @@ DOMGCOutputConstraint::~DOMGCOutputConstraint()
 {
 }
 
-ConstraintParallelism DOMGCOutputConstraint::executeImpl(SlotVisitor&)
+void DOMGCOutputConstraint::executeImpl(SlotVisitor& visitor)
 {
     Heap& heap = m_vm.heap;
     
     if (heap.mutatorExecutionVersion() == m_lastExecutionVersion)
-        return ConstraintParallelism::Sequential;
+        return;
     
     m_lastExecutionVersion = heap.mutatorExecutionVersion();
     
-    RELEASE_ASSERT(m_tasks.isEmpty());
     m_clientData.forEachOutputConstraintSpace(
         [&] (Subspace& subspace) {
             auto func = [] (SlotVisitor& visitor, HeapCell* heapCell, HeapCell::Kind) {
@@ -66,22 +65,9 @@ ConstraintParallelism DOMGCOutputConstraint::executeImpl(SlotVisitor&)
                 cell->methodTable(visitor.vm())->visitOutputConstraints(cell, visitor);
             };
             
-            m_tasks.append(subspace.forEachMarkedCellInParallel(func));
+            visitor.addParallelConstraintTask(subspace.forEachMarkedCellInParallel(func));
         });
-    
-    return ConstraintParallelism::Parallel;
 }
         
-void DOMGCOutputConstraint::doParallelWorkImpl(SlotVisitor& visitor)
-{
-    for (auto& task : m_tasks)
-        task->run(visitor);
-}
-        
-void DOMGCOutputConstraint::finishParallelWorkImpl(SlotVisitor&)
-{
-    m_tasks.clear();
-}
-
 } // namespace WebCore
 

@@ -72,7 +72,10 @@ inline void ConservativeRoots::genericAddPointer(void* p, HeapVersion markingVer
 
     HeapUtil::findGCObjectPointersForMarking(
         m_heap, markingVersion, newlyAllocatedVersion, filter, p,
-        [&] (void* p) {
+        [&] (void* p, HeapCell::Kind cellKind) {
+            if (cellKind == HeapCell::JSCell)
+                markHook.markKnownJSCell(static_cast<JSCell*>(p));
+            
             if (m_size == m_capacity)
                 grow();
             
@@ -103,17 +106,13 @@ void ConservativeRoots::genericAddSpan(void* begin, void* end, MarkHook& markHoo
 class DummyMarkHook {
 public:
     void mark(void*) { }
+    void markKnownJSCell(JSCell*) { }
 };
 
 void ConservativeRoots::add(void* begin, void* end)
 {
     DummyMarkHook dummy;
     genericAddSpan(begin, end, dummy);
-}
-
-void ConservativeRoots::add(void* begin, void* end, JITStubRoutineSet& jitStubRoutines)
-{
-    genericAddSpan(begin, end, jitStubRoutines);
 }
 
 class CompositeMarkHook {
@@ -128,7 +127,12 @@ public:
     void mark(void* address)
     {
         m_stubRoutines.mark(address);
-        m_codeBlocks.mark(m_codeBlocksLocker, address);
+    }
+    
+    void markKnownJSCell(JSCell* cell)
+    {
+        if (cell->type() == CodeBlockType)
+            m_codeBlocks.mark(m_codeBlocksLocker, jsCast<CodeBlock*>(cell));
     }
 
 private:

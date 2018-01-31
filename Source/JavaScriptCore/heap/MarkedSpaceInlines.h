@@ -40,7 +40,11 @@ template<typename Functor> inline void MarkedSpace::forEachLiveCell(const Functo
 {
     BlockIterator end = m_blocks.set().end();
     for (BlockIterator it = m_blocks.set().begin(); it != end; ++it) {
-        if ((*it)->handle().forEachLiveCell(functor) == IterationStatus::Done)
+        IterationStatus result = (*it)->handle().forEachLiveCell(
+            [&] (size_t, HeapCell* cell, HeapCell::Kind kind) -> IterationStatus {
+                return functor(cell, kind);
+            });
+        if (result == IterationStatus::Done)
             return;
     }
     for (LargeAllocation* allocation : m_largeAllocations) {

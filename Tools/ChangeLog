@@ -1,3 +1,19 @@
+2018-01-30  Jason Marcell  <jmarcell@apple.com>
+
+        Cherry-pick r226783. rdar://problem/37077980
+
+    2018-01-11  Filip Pizlo  <fpizlo@apple.com>
+
+            CodeBlocks should be in IsoSubspaces
+            https://bugs.webkit.org/show_bug.cgi?id=180884
+
+            Reviewed by Saam Barati.
+
+            Remove some less important benchmarks from the default run. Doing run-jsc-benchmarks
+            shouldn't take a long time due to benchmarks we don't optimize for.
+
+            * Scripts/run-jsc-benchmarks:
+
 2018-01-31  Ryan Haddad  <ryanhaddad@apple.com>
 
         Cherry-pick r227748. rdar://problem/37075786

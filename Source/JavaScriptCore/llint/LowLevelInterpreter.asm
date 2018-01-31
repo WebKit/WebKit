@@ -947,6 +947,7 @@ macro functionForCallCodeBlockGetter(targetRegister)
     end
     loadp JSFunction::m_executable[targetRegister], targetRegister
     loadp FunctionExecutable::m_codeBlockForCall[targetRegister], targetRegister
+    loadp ExecutableToCodeBlockEdge::m_codeBlock[targetRegister], targetRegister
 end
 
 macro functionForConstructCodeBlockGetter(targetRegister)
@@ -957,6 +958,7 @@ macro functionForConstructCodeBlockGetter(targetRegister)
     end
     loadp JSFunction::m_executable[targetRegister], targetRegister
     loadp FunctionExecutable::m_codeBlockForConstruct[targetRegister], targetRegister
+    loadp ExecutableToCodeBlockEdge::m_codeBlock[targetRegister], targetRegister
 end
 
 macro notFunctionCodeBlockGetter(targetRegister)
