@@ -275,11 +275,6 @@ void WebProcessPool::platformInitializeWebProcess(WebProcessCreationParameters& 
     if (isSafari && !parameters.shouldCaptureAudioInUIProcess && mediaDevicesEnabled)
         SandboxExtension::createHandleForGenericExtension("com.apple.webkit.microphone", parameters.audioCaptureExtensionHandle);
 #endif
-
-    Seconds timeToLiveUserInteraction([[NSUserDefaults standardUserDefaults] doubleForKey:@"ResourceLoadStatisticsTimeToLiveUserInteraction"]);
-    if (timeToLiveUserInteraction < 0_s || timeToLiveUserInteraction > 24_h * 30)
-        timeToLiveUserInteraction = 24_h;
-    parameters.cookiePartitionTimeToLive = timeToLiveUserInteraction;
 }
 
 void WebProcessPool::platformInitializeNetworkProcess(NetworkProcessCreationParameters& parameters)

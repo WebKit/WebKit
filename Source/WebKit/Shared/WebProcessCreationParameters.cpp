@@ -151,7 +151,6 @@ void WebProcessCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << proxySettings;
 #endif
 
-    encoder << cookiePartitionTimeToLive;
 }
 
 bool WebProcessCreationParameters::decode(IPC::Decoder& decoder, WebProcessCreationParameters& parameters)
@@ -392,9 +391,6 @@ bool WebProcessCreationParameters::decode(IPC::Decoder& decoder, WebProcessCreat
     if (!decoder.decode(parameters.proxySettings))
         return false;
 #endif
-
-    if (!decoder.decode(parameters.cookiePartitionTimeToLive))
-        return false;
 
     return true;
 }

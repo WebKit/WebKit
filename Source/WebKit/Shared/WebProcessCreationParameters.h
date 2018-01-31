@@ -184,7 +184,6 @@ struct WebProcessCreationParameters {
 #if USE(SOUP)
     WebCore::SoupNetworkProxySettings proxySettings;
 #endif
-    Seconds cookiePartitionTimeToLive;
 };
 
 } // namespace WebKit
