@@ -1,3 +1,16 @@
+2018-01-30  Jason Marcell  <jmarcell@apple.com>
+
+        Cherry-pick r227649. rdar://problem/37019344
+
+    2018-01-25  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+            imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/module/errorhandling.html crashes
+            https://bugs.webkit.org/show_bug.cgi?id=181980
+
+            Reviewed by Ryosuke Niwa.
+
+            * TestExpectations:
+
 2018-01-30  Ryan Haddad  <ryanhaddad@apple.com>
 
         Cherry-pick r227867. rdar://problem/36912402

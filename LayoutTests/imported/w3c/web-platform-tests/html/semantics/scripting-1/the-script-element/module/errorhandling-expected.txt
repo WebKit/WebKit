@@ -1,0 +1,15 @@
+CONSOLE MESSAGE: TypeError: 'text/plain' is not a valid JavaScript MIME type.
+CONSOLE MESSAGE: TypeError: 'text/plain' is not a valid JavaScript MIME type.
+CONSOLE MESSAGE: line 1: SyntaxError: No identifiers allowed directly after numeric literal
+CONSOLE MESSAGE: line 1: SyntaxError: No identifiers allowed directly after numeric literal
+CONSOLE MESSAGE: line 1: SyntaxError: No identifiers allowed directly after numeric literal
+CONSOLE MESSAGE: line 1: SyntaxError: No identifiers allowed directly after numeric literal
+html-script-module-errorHandling
+
+
+FAIL IFrame test: 'iframe_parseError_Root' assert_equals: Unexpected _errorReported value expected "error" but got ""
+PASS IFrame test: 'iframe_parseError_Dependent' 
+PASS IFrame test: 'iframe_parseError_DependentMultiple' 
+PASS External root module with non-script mimetype 
+PASS Module with imported non-script mimetype 
+

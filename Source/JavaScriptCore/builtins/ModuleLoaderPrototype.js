@@ -193,7 +193,7 @@ function requestInstantiate(entry, parameters, fetcher)
         // Now fetching request succeeds. Then even if instantiation fails, we should cache it.
         // Instantiation won't be retried.
         if (entry.instantiate)
-            return entry;
+            return entry.instantiate;
         entry.instantiate = instantiatePromise;
 
         var key = entry.key;
@@ -229,7 +229,7 @@ function requestSatisfy(entry, parameters, fetcher, visited)
     visited.@add(entry);
     var satisfyPromise = this.requestInstantiate(entry, parameters, fetcher).then((entry) => {
         if (entry.satisfy)
-            return entry;
+            return entry.satisfy;
 
         var depLoads = @newArrayWithSize(entry.dependencies.length);
         for (var i = 0, length = entry.dependencies.length; i < length; ++i) {
