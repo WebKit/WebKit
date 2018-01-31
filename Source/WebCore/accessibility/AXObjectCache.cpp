@@ -95,6 +95,7 @@
 #include "RenderTableRow.h"
 #include "RenderView.h"
 #include "SVGElement.h"
+#include "ScriptDisallowedScope.h"
 #include "ScrollView.h"
 #include "TextBoundaries.h"
 #include "TextControlInnerElements.h"
@@ -832,7 +833,7 @@ void AXObjectCache::childrenChanged(Node* node, Node* newChild)
         handleMenuOpened(newChild);
         handleLiveRegionCreated(newChild);
     }
-    
+
     childrenChanged(get(node));
 }
 
@@ -840,6 +841,9 @@ void AXObjectCache::childrenChanged(RenderObject* renderer, RenderObject* newChi
 {
     if (!renderer)
         return;
+
+    // FIXME: Refactor the code to avoid calling updateLayout in this call stack.
+    ScriptDisallowedScope::LayoutAssertionDisableScope disableScope;
     
     if (newChild) {
         handleMenuOpened(newChild->node());
