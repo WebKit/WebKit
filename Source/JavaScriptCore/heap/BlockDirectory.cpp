@@ -90,19 +90,6 @@ MarkedBlock::Handle* BlockDirectory::findBlockForAllocation()
     return m_blocks[m_allocationCursor];
 }
 
-static size_t blockHeaderSize()
-{
-    return WTF::roundUpToMultipleOf<MarkedBlock::atomSize>(sizeof(MarkedBlock));
-}
-
-size_t BlockDirectory::blockSizeForBytes(size_t bytes)
-{
-    size_t minBlockSize = MarkedBlock::blockSize;
-    size_t minAllocationSize = blockHeaderSize() + WTF::roundUpToMultipleOf<MarkedBlock::atomSize>(bytes);
-    minAllocationSize = WTF::roundUpToMultipleOf(WTF::pageSize(), minAllocationSize);
-    return std::max(minBlockSize, minAllocationSize);
-}
-
 MarkedBlock::Handle* BlockDirectory::tryAllocateBlock()
 {
     SuperSamplerScope superSamplerScope(false);

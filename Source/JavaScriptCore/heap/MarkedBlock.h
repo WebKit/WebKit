@@ -43,7 +43,6 @@ class MarkedSpace;
 class SlotVisitor;
 class Subspace;
 
-typedef uintptr_t Bits;
 typedef uint32_t HeapVersion;
 
 // A marked block is a page-aligned container for heap-allocated objects.
@@ -60,16 +59,18 @@ class MarkedBlock {
     friend struct VerifyMarked;
 
 public:
+    class Footer;
     class Handle;
 private:
+    friend class Footer;
     friend class Handle;
 public:
-    static const size_t atomSize = 16; // bytes
-    static const size_t blockSize = 16 * KB;
-    static const size_t blockMask = ~(blockSize - 1); // blockSize must be a power of two.
+    static constexpr size_t atomSize = 16; // bytes
+    static constexpr size_t blockSize = 16 * KB;
+    static constexpr size_t blockMask = ~(blockSize - 1); // blockSize must be a power of two.
 
-    static const size_t atomsPerBlock = blockSize / atomSize;
-
+    static constexpr size_t atomsPerBlock = blockSize / atomSize;
+    
     static_assert(!(MarkedBlock::atomSize & (MarkedBlock::atomSize - 1)), "MarkedBlock::atomSize must be a power of two.");
     static_assert(!(MarkedBlock::blockSize & (MarkedBlock::blockSize - 1)), "MarkedBlock::blockSize must be a power of two.");
     
@@ -103,6 +104,7 @@ public:
         ~Handle();
             
         MarkedBlock& block();
+        MarkedBlock::Footer& blockFooter();
             
         void* cellAlign(void*);
             
@@ -244,10 +246,71 @@ public:
             
         MarkedBlock* m_block { nullptr };
     };
+
+private:    
+    static constexpr size_t atomAlignmentMask = atomSize - 1;
+
+    typedef char Atom[atomSize];
+
+public:
+    class Footer {
+    public:
+        Footer(VM&, Handle&);
+        ~Footer();
         
+    private:
+        friend class LLIntOffsetsExtractor;
+        friend class MarkedBlock;
+        
+        Handle& m_handle;
+        VM* m_vm;
+        Subspace* m_subspace;
+
+        CountingLock m_lock;
+    
+        // The actual mark count can be computed by doing: m_biasedMarkCount - m_markCountBias. Note
+        // that this count is racy. It will accurately detect whether or not exactly zero things were
+        // marked, but if N things got marked, then this may report anything in the range [1, N] (or
+        // before unbiased, it would be [1 + m_markCountBias, N + m_markCountBias].)
+        int16_t m_biasedMarkCount;
+    
+        // We bias the mark count so that if m_biasedMarkCount >= 0 then the block should be retired.
+        // We go to all this trouble to make marking a bit faster: this way, marking knows when to
+        // retire a block using a js/jns on m_biasedMarkCount.
+        //
+        // For example, if a block has room for 100 objects and retirement happens whenever 90% are
+        // live, then m_markCountBias will be -90. This way, when marking begins, this will cause us to
+        // set m_biasedMarkCount to -90 as well, since:
+        //
+        //     m_biasedMarkCount = actualMarkCount + m_markCountBias.
+        //
+        // Marking an object will increment m_biasedMarkCount. Once 90 objects get marked, we will have
+        // m_biasedMarkCount = 0, which will trigger retirement. In other words, we want to set
+        // m_markCountBias like so:
+        //
+        //     m_markCountBias = -(minMarkedBlockUtilization * cellsPerBlock)
+        //
+        // All of this also means that you can detect if any objects are marked by doing:
+        //
+        //     m_biasedMarkCount != m_markCountBias
+        int16_t m_markCountBias;
+
+        HeapVersion m_markingVersion;
+
+        Bitmap<atomsPerBlock> m_marks;
+    };
+        
+private:    
+    Footer& footer();
+    const Footer& footer() const;
+
+public:
+    static constexpr size_t endAtom = (blockSize - sizeof(Footer)) / atomSize;
+
     static MarkedBlock::Handle* tryCreate(Heap&, AlignedMemoryAllocator*);
         
     Handle& handle();
+    const Handle& handle() const;
         
     VM* vm() const;
     inline Heap* heap() const;
@@ -255,7 +318,6 @@ public:
 
     static bool isAtomAligned(const void*);
     static MarkedBlock* blockFor(const void*);
-    static size_t firstAtom();
     size_t atomNumber(const void*);
         
     size_t markCount();
@@ -295,20 +357,19 @@ public:
     void resetMarks();
     
     bool isMarkedRaw(const void* p);
-    HeapVersion markingVersion() const { return m_markingVersion; }
+    HeapVersion markingVersion() const { return footer().m_markingVersion; }
     
     const Bitmap<atomsPerBlock>& marks() const;
     
-    CountingLock& lock() { return m_lock; }
+    CountingLock& lock() { return footer().m_lock; }
     
-    Subspace* subspace() const { return m_subspace; }
+    Subspace* subspace() const { return footer().m_subspace; }
+    
+    static constexpr size_t offsetOfFooter = endAtom * atomSize;
 
 private:
-    static const size_t atomAlignmentMask = atomSize - 1;
-
-    typedef char Atom[atomSize];
-
     MarkedBlock(VM&, Handle&);
+    ~MarkedBlock();
     Atom* atoms();
         
     JS_EXPORT_PRIVATE void aboutToMarkSlow(HeapVersion markingVersion);
@@ -318,48 +379,26 @@ private:
     
     inline bool marksConveyLivenessDuringMarking(HeapVersion markingVersion);
     inline bool marksConveyLivenessDuringMarking(HeapVersion myMarkingVersion, HeapVersion markingVersion);
-        
-    Handle& m_handle;
-    VM* m_vm;
-    Subspace* m_subspace;
-
-    CountingLock m_lock;
-    
-    // The actual mark count can be computed by doing: m_biasedMarkCount - m_markCountBias. Note
-    // that this count is racy. It will accurately detect whether or not exactly zero things were
-    // marked, but if N things got marked, then this may report anything in the range [1, N] (or
-    // before unbiased, it would be [1 + m_markCountBias, N + m_markCountBias].)
-    int16_t m_biasedMarkCount;
-    
-    // We bias the mark count so that if m_biasedMarkCount >= 0 then the block should be retired.
-    // We go to all this trouble to make marking a bit faster: this way, marking knows when to
-    // retire a block using a js/jns on m_biasedMarkCount.
-    //
-    // For example, if a block has room for 100 objects and retirement happens whenever 90% are
-    // live, then m_markCountBias will be -90. This way, when marking begins, this will cause us to
-    // set m_biasedMarkCount to -90 as well, since:
-    //
-    //     m_biasedMarkCount = actualMarkCount + m_markCountBias.
-    //
-    // Marking an object will increment m_biasedMarkCount. Once 90 objects get marked, we will have
-    // m_biasedMarkCount = 0, which will trigger retirement. In other words, we want to set
-    // m_markCountBias like so:
-    //
-    //     m_markCountBias = -(minMarkedBlockUtilization * cellsPerBlock)
-    //
-    // All of this also means that you can detect if any objects are marked by doing:
-    //
-    //     m_biasedMarkCount != m_markCountBias
-    int16_t m_markCountBias;
-
-    HeapVersion m_markingVersion;
-
-    Bitmap<atomsPerBlock> m_marks;
 };
+
+inline MarkedBlock::Footer& MarkedBlock::footer()
+{
+    return *bitwise_cast<MarkedBlock::Footer*>(atoms() + endAtom);
+}
+
+inline const MarkedBlock::Footer& MarkedBlock::footer() const
+{
+    return const_cast<MarkedBlock*>(this)->footer();
+}
 
 inline MarkedBlock::Handle& MarkedBlock::handle()
 {
-    return m_handle;
+    return footer().m_handle;
+}
+
+inline const MarkedBlock::Handle& MarkedBlock::handle() const
+{
+    return const_cast<MarkedBlock*>(this)->handle();
 }
 
 inline MarkedBlock& MarkedBlock::Handle::block()
@@ -367,9 +406,9 @@ inline MarkedBlock& MarkedBlock::Handle::block()
     return *m_block;
 }
 
-inline size_t MarkedBlock::firstAtom()
+inline MarkedBlock::Footer& MarkedBlock::Handle::blockFooter()
 {
-    return WTF::roundUpToMultipleOf<atomSize>(sizeof(MarkedBlock)) / atomSize;
+    return block().footer();
 }
 
 inline MarkedBlock::Atom* MarkedBlock::atoms()
@@ -379,13 +418,13 @@ inline MarkedBlock::Atom* MarkedBlock::atoms()
 
 inline bool MarkedBlock::isAtomAligned(const void* p)
 {
-    return !(reinterpret_cast<Bits>(p) & atomAlignmentMask);
+    return !(reinterpret_cast<uintptr_t>(p) & atomAlignmentMask);
 }
 
 inline void* MarkedBlock::Handle::cellAlign(void* p)
 {
-    Bits base = reinterpret_cast<Bits>(block().atoms() + firstAtom());
-    Bits bits = reinterpret_cast<Bits>(p);
+    uintptr_t base = reinterpret_cast<uintptr_t>(block().atoms());
+    uintptr_t bits = reinterpret_cast<uintptr_t>(p);
     bits -= base;
     bits -= bits % cellSize();
     bits += base;
@@ -394,7 +433,7 @@ inline void* MarkedBlock::Handle::cellAlign(void* p)
 
 inline MarkedBlock* MarkedBlock::blockFor(const void* p)
 {
-    return reinterpret_cast<MarkedBlock*>(reinterpret_cast<Bits>(p) & blockMask);
+    return reinterpret_cast<MarkedBlock*>(reinterpret_cast<uintptr_t>(p) & blockMask);
 }
 
 inline BlockDirectory* MarkedBlock::Handle::directory() const
@@ -419,7 +458,7 @@ inline VM* MarkedBlock::Handle::vm() const
 
 inline VM* MarkedBlock::vm() const
 {
-    return m_vm;
+    return footer().m_vm;
 }
 
 inline WeakSet& MarkedBlock::Handle::weakSet()
@@ -429,7 +468,7 @@ inline WeakSet& MarkedBlock::Handle::weakSet()
 
 inline WeakSet& MarkedBlock::weakSet()
 {
-    return m_handle.weakSet();
+    return handle().weakSet();
 }
 
 inline void MarkedBlock::Handle::shrink()
@@ -454,7 +493,7 @@ inline size_t MarkedBlock::Handle::cellSize()
 
 inline size_t MarkedBlock::cellSize()
 {
-    return m_handle.cellSize();
+    return handle().cellSize();
 }
 
 inline const CellAttributes& MarkedBlock::Handle::attributes() const
@@ -464,7 +503,7 @@ inline const CellAttributes& MarkedBlock::Handle::attributes() const
 
 inline const CellAttributes& MarkedBlock::attributes() const
 {
-    return m_handle.attributes();
+    return handle().attributes();
 }
 
 inline bool MarkedBlock::Handle::needsDestruction() const
@@ -494,17 +533,17 @@ inline size_t MarkedBlock::Handle::size()
 
 inline size_t MarkedBlock::atomNumber(const void* p)
 {
-    return (reinterpret_cast<Bits>(p) - reinterpret_cast<Bits>(this)) / atomSize;
+    return (reinterpret_cast<uintptr_t>(p) - reinterpret_cast<uintptr_t>(this)) / atomSize;
 }
 
 inline bool MarkedBlock::areMarksStale(HeapVersion markingVersion)
 {
-    return markingVersion != m_markingVersion;
+    return markingVersion != footer().m_markingVersion;
 }
 
 inline Dependency MarkedBlock::aboutToMark(HeapVersion markingVersion)
 {
-    HeapVersion version = m_markingVersion;
+    HeapVersion version = footer().m_markingVersion;
     if (UNLIKELY(version != markingVersion))
         aboutToMarkSlow(markingVersion);
     return Dependency::fence(version);
@@ -517,32 +556,32 @@ inline void MarkedBlock::Handle::assertMarksNotStale()
 
 inline bool MarkedBlock::isMarkedRaw(const void* p)
 {
-    return m_marks.get(atomNumber(p));
+    return footer().m_marks.get(atomNumber(p));
 }
 
 inline bool MarkedBlock::isMarked(HeapVersion markingVersion, const void* p)
 {
-    HeapVersion version = m_markingVersion;
+    HeapVersion version = footer().m_markingVersion;
     if (UNLIKELY(version != markingVersion))
         return false;
-    return m_marks.get(atomNumber(p), Dependency::fence(version));
+    return footer().m_marks.get(atomNumber(p), Dependency::fence(version));
 }
 
 inline bool MarkedBlock::isMarked(const void* p, Dependency dependency)
 {
     assertMarksNotStale();
-    return m_marks.get(atomNumber(p), dependency);
+    return footer().m_marks.get(atomNumber(p), dependency);
 }
 
 inline bool MarkedBlock::testAndSetMarked(const void* p, Dependency dependency)
 {
     assertMarksNotStale();
-    return m_marks.concurrentTestAndSet(atomNumber(p), dependency);
+    return footer().m_marks.concurrentTestAndSet(atomNumber(p), dependency);
 }
 
 inline const Bitmap<MarkedBlock::atomsPerBlock>& MarkedBlock::marks() const
 {
-    return m_marks;
+    return footer().m_marks;
 }
 
 inline bool MarkedBlock::Handle::isNewlyAllocated(const void* p)
@@ -569,12 +608,9 @@ inline bool MarkedBlock::isAtom(const void* p)
 {
     ASSERT(MarkedBlock::isAtomAligned(p));
     size_t atomNumber = this->atomNumber(p);
-    size_t firstAtom = MarkedBlock::firstAtom();
-    if (atomNumber < firstAtom) // Filters pointers into MarkedBlock metadata.
+    if (atomNumber % handle().m_atomsPerCell) // Filters pointers into cell middles.
         return false;
-    if ((atomNumber - firstAtom) % m_handle.m_atomsPerCell) // Filters pointers into cell middles.
-        return false;
-    if (atomNumber >= m_handle.m_endAtom) // Filters pointers into invalid cells out of the range.
+    if (atomNumber >= handle().m_endAtom) // Filters pointers into invalid cells out of the range.
         return false;
     return true;
 }
@@ -583,7 +619,7 @@ template <typename Functor>
 inline IterationStatus MarkedBlock::Handle::forEachCell(const Functor& functor)
 {
     HeapCell::Kind kind = m_attributes.cellKind;
-    for (size_t i = firstAtom(); i < m_endAtom; i += m_atomsPerCell) {
+    for (size_t i = 0; i < m_endAtom; i += m_atomsPerCell) {
         HeapCell* cell = reinterpret_cast_ptr<HeapCell*>(&m_block->atoms()[i]);
         if (functor(cell, kind) == IterationStatus::Done)
             return IterationStatus::Done;
@@ -593,15 +629,15 @@ inline IterationStatus MarkedBlock::Handle::forEachCell(const Functor& functor)
 
 inline bool MarkedBlock::hasAnyMarked() const
 {
-    return m_biasedMarkCount != m_markCountBias;
+    return footer().m_biasedMarkCount != footer().m_markCountBias;
 }
 
 inline void MarkedBlock::noteMarked()
 {
     // This is racy by design. We don't want to pay the price of an atomic increment!
-    int16_t biasedMarkCount = m_biasedMarkCount;
+    int16_t biasedMarkCount = footer().m_biasedMarkCount;
     ++biasedMarkCount;
-    m_biasedMarkCount = biasedMarkCount;
+    footer().m_biasedMarkCount = biasedMarkCount;
     if (UNLIKELY(!biasedMarkCount))
         noteMarkedSlow();
 }
@@ -616,7 +652,7 @@ struct MarkedBlockHash : PtrHash<JSC::MarkedBlock*> {
         // Aligned VM regions tend to be monotonically increasing integers,
         // which is a great hash function, but we have to remove the low bits,
         // since they're always zero, which is a terrible hash function!
-        return reinterpret_cast<JSC::Bits>(key) / JSC::MarkedBlock::blockSize;
+        return reinterpret_cast<uintptr_t>(key) / JSC::MarkedBlock::blockSize;
     }
 };
 

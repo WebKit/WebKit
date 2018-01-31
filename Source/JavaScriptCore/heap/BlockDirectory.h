@@ -113,8 +113,6 @@ public:
 
     bool isPagedOut(double deadline);
     
-    static size_t blockSizeForBytes(size_t);
-    
     Lock& bitvectorLock() { return m_bitvectorLock; }
 
 #define BLOCK_DIRECTORY_BIT_ACCESSORS(lowerBitName, capitalBitName)     \

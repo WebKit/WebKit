@@ -67,7 +67,7 @@ inline MarkedSpace* MarkedBlock::Handle::space() const
 
 inline bool MarkedBlock::marksConveyLivenessDuringMarking(HeapVersion markingVersion)
 {
-    return marksConveyLivenessDuringMarking(m_markingVersion, markingVersion);
+    return marksConveyLivenessDuringMarking(footer().m_markingVersion, markingVersion);
 }
 
 inline bool MarkedBlock::marksConveyLivenessDuringMarking(HeapVersion myMarkingVersion, HeapVersion markingVersion)
@@ -138,8 +138,9 @@ ALWAYS_INLINE bool MarkedBlock::Handle::isLive(HeapVersion markingVersion, HeapV
     // impact on perf - around 2% on splay if you get it wrong.
 
     MarkedBlock& block = this->block();
+    MarkedBlock::Footer& footer = block.footer();
     
-    auto count = block.m_lock.tryOptimisticFencelessRead();
+    auto count = footer.m_lock.tryOptimisticFencelessRead();
     if (count.value) {
         Dependency fenceBefore = Dependency::fence(count.input);
         MarkedBlock::Handle* fencedThis = fenceBefore.consume(this);
@@ -149,25 +150,26 @@ ALWAYS_INLINE bool MarkedBlock::Handle::isLive(HeapVersion markingVersion, HeapV
         HeapVersion myNewlyAllocatedVersion = fencedThis->m_newlyAllocatedVersion;
         if (myNewlyAllocatedVersion == newlyAllocatedVersion) {
             bool result = fencedThis->isNewlyAllocated(cell);
-            if (block.m_lock.fencelessValidate(count.value, Dependency::fence(result)))
+            if (footer.m_lock.fencelessValidate(count.value, Dependency::fence(result)))
                 return result;
         } else {
             MarkedBlock& fencedBlock = *fenceBefore.consume(&block);
+            MarkedBlock::Footer& fencedFooter = fencedBlock.footer();
             
-            HeapVersion myMarkingVersion = fencedBlock.m_markingVersion;
+            HeapVersion myMarkingVersion = fencedFooter.m_markingVersion;
             if (myMarkingVersion != markingVersion
                 && (!isMarking || !fencedBlock.marksConveyLivenessDuringMarking(myMarkingVersion, markingVersion))) {
-                if (block.m_lock.fencelessValidate(count.value, Dependency::fence(myMarkingVersion)))
+                if (footer.m_lock.fencelessValidate(count.value, Dependency::fence(myMarkingVersion)))
                     return false;
             } else {
-                bool result = fencedBlock.m_marks.get(block.atomNumber(cell));
-                if (block.m_lock.fencelessValidate(count.value, Dependency::fence(result)))
+                bool result = fencedFooter.m_marks.get(block.atomNumber(cell));
+                if (footer.m_lock.fencelessValidate(count.value, Dependency::fence(result)))
                     return result;
             }
         }
     }
     
-    auto locker = holdLock(block.m_lock);
+    auto locker = holdLock(footer.m_lock);
 
     ASSERT(!isFreeListed());
     
@@ -182,7 +184,7 @@ ALWAYS_INLINE bool MarkedBlock::Handle::isLive(HeapVersion markingVersion, HeapV
             return false;
     }
     
-    return block.m_marks.get(block.atomNumber(cell));
+    return footer.m_marks.get(block.atomNumber(cell));
 }
 
 inline bool MarkedBlock::Handle::isLiveCell(HeapVersion markingVersion, HeapVersion newlyAllocatedVersion, bool isMarking, const void* p)
@@ -240,6 +242,7 @@ void MarkedBlock::Handle::specializedSweep(FreeList* freeList, MarkedBlock::Hand
     SuperSamplerScope superSamplerScope(false);
 
     MarkedBlock& block = this->block();
+    MarkedBlock::Footer& footer = block.footer();
     
     if (false)
         dataLog(RawPointer(this), "/", RawPointer(&block), ": MarkedBlock::Handle::specializedSweep!\n");
@@ -262,12 +265,12 @@ void MarkedBlock::Handle::specializedSweep(FreeList* freeList, MarkedBlock::Hand
         && newlyAllocatedMode == DoesNotHaveNewlyAllocated) {
         
         // This is an incredibly powerful assertion that checks the sanity of our block bits.
-        if (marksMode == MarksNotStale && !block.m_marks.isEmpty()) {
+        if (marksMode == MarksNotStale && !footer.m_marks.isEmpty()) {
             WTF::dataFile().atomically(
                 [&] (PrintStream& out) {
                     out.print("Block ", RawPointer(&block), ": marks not empty!\n");
-                    out.print("Block lock is held: ", block.m_lock.isHeld(), "\n");
-                    out.print("Marking version of block: ", block.m_markingVersion, "\n");
+                    out.print("Block lock is held: ", footer.m_lock.isHeld(), "\n");
+                    out.print("Marking version of block: ", footer.m_markingVersion, "\n");
                     out.print("Marking version of heap: ", space()->markingVersion(), "\n");
                     UNREACHABLE_FOR_PLATFORM();
                 });
@@ -276,12 +279,12 @@ void MarkedBlock::Handle::specializedSweep(FreeList* freeList, MarkedBlock::Hand
         char* startOfLastCell = static_cast<char*>(cellAlign(block.atoms() + m_endAtom - 1));
         char* payloadEnd = startOfLastCell + cellSize;
         RELEASE_ASSERT(payloadEnd - MarkedBlock::blockSize <= bitwise_cast<char*>(&block));
-        char* payloadBegin = bitwise_cast<char*>(block.atoms() + firstAtom());
+        char* payloadBegin = bitwise_cast<char*>(block.atoms());
         
         if (sweepMode == SweepToFreeList)
             setIsFreeListed();
         if (space()->isMarking())
-            block.m_lock.unlock();
+            footer.m_lock.unlock();
         if (destructionMode != BlockHasNoDestructors) {
             for (char* cell = payloadBegin; cell < payloadEnd; cell += cellSize)
                 destroy(cell);
@@ -320,9 +323,9 @@ void MarkedBlock::Handle::specializedSweep(FreeList* freeList, MarkedBlock::Hand
             ++count;
         }
     };
-    for (size_t i = firstAtom(); i < m_endAtom; i += m_atomsPerCell) {
+    for (size_t i = 0; i < m_endAtom; i += m_atomsPerCell) {
         if (emptyMode == NotEmpty
-            && ((marksMode == MarksNotStale && block.m_marks.get(i))
+            && ((marksMode == MarksNotStale && footer.m_marks.get(i))
                 || (newlyAllocatedMode == HasNewlyAllocated && m_newlyAllocated.get(i)))) {
             isEmpty = false;
             continue;
@@ -340,7 +343,7 @@ void MarkedBlock::Handle::specializedSweep(FreeList* freeList, MarkedBlock::Hand
         m_newlyAllocatedVersion = MarkedSpace::nullVersion;
     
     if (space()->isMarking())
-        block.m_lock.unlock();
+        footer.m_lock.unlock();
     
     if (destructionMode == BlockHasDestructorsAndCollectorIsRunning) {
         for (size_t i : deadCells)
@@ -492,7 +495,7 @@ inline IterationStatus MarkedBlock::Handle::forEachLiveCell(const Functor& funct
     // https://bugs.webkit.org/show_bug.cgi?id=180315
     
     HeapCell::Kind kind = m_attributes.cellKind;
-    for (size_t i = firstAtom(); i < m_endAtom; i += m_atomsPerCell) {
+    for (size_t i = 0; i < m_endAtom; i += m_atomsPerCell) {
         HeapCell* cell = reinterpret_cast_ptr<HeapCell*>(&m_block->atoms()[i]);
         if (!isLive(cell))
             continue;
@@ -507,7 +510,7 @@ template <typename Functor>
 inline IterationStatus MarkedBlock::Handle::forEachDeadCell(const Functor& functor)
 {
     HeapCell::Kind kind = m_attributes.cellKind;
-    for (size_t i = firstAtom(); i < m_endAtom; i += m_atomsPerCell) {
+    for (size_t i = 0; i < m_endAtom; i += m_atomsPerCell) {
         HeapCell* cell = reinterpret_cast_ptr<HeapCell*>(&m_block->atoms()[i]);
         if (isLive(cell))
             continue;
@@ -527,8 +530,8 @@ inline IterationStatus MarkedBlock::Handle::forEachMarkedCell(const Functor& fun
     WTF::loadLoadFence();
     if (areMarksStale)
         return IterationStatus::Continue;
-    for (size_t i = firstAtom(); i < m_endAtom; i += m_atomsPerCell) {
-        if (!block.m_marks.get(i))
+    for (size_t i = 0; i < m_endAtom; i += m_atomsPerCell) {
+        if (!block.footer().m_marks.get(i))
             continue;
 
         HeapCell* cell = reinterpret_cast_ptr<HeapCell*>(&m_block->atoms()[i]);

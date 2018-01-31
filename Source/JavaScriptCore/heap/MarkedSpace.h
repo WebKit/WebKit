@@ -50,25 +50,25 @@ class MarkedSpace {
     WTF_MAKE_NONCOPYABLE(MarkedSpace);
 public:
     // sizeStep is really a synonym for atomSize; it's no accident that they are the same.
-    static const size_t sizeStep = MarkedBlock::atomSize;
+    static constexpr size_t sizeStep = MarkedBlock::atomSize;
     
     // Sizes up to this amount get a size class for each size step.
-    static const size_t preciseCutoff = 80;
+    static constexpr size_t preciseCutoff = 80;
     
-    // The amount of available payload in a block is the block's size minus the header. But the
+    // The amount of available payload in a block is the block's size minus the footer. But the
     // header size might not be atom size aligned, so we round down the result accordingly.
-    static const size_t blockPayload = (MarkedBlock::blockSize - sizeof(MarkedBlock)) & ~(MarkedBlock::atomSize - 1);
+    static constexpr size_t blockPayload = (MarkedBlock::blockSize - sizeof(MarkedBlock::Footer)) & ~(MarkedBlock::atomSize - 1);
     
     // The largest cell we're willing to allocate in a MarkedBlock the "normal way" (i.e. using size
     // classes, rather than a large allocation) is half the size of the payload, rounded down. This
     // ensures that we only use the size class approach if it means being able to pack two things
     // into one block.
-    static const size_t largeCutoff = (blockPayload / 2) & ~(sizeStep - 1);
+    static constexpr size_t largeCutoff = (blockPayload / 2) & ~(sizeStep - 1);
 
-    static const size_t numSizeClasses = largeCutoff / sizeStep;
+    static constexpr size_t numSizeClasses = largeCutoff / sizeStep;
     
-    static const HeapVersion nullVersion = 0; // The version of freshly allocated blocks.
-    static const HeapVersion initialVersion = 2; // The version that the heap starts out with. Set to make sure that nextVersion(nullVersion) != initialVersion.
+    static constexpr HeapVersion nullVersion = 0; // The version of freshly allocated blocks.
+    static constexpr HeapVersion initialVersion = 2; // The version that the heap starts out with. Set to make sure that nextVersion(nullVersion) != initialVersion.
     
     static HeapVersion nextVersion(HeapVersion version)
     {

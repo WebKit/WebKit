@@ -307,7 +307,7 @@ end
 _handleUncaughtException:
     loadp Callee + PayloadOffset[cfr], t3
     andp MarkedBlockMask, t3
-    loadp MarkedBlock::m_vm[t3], t3
+    loadp MarkedBlockFooterOffset + MarkedBlock::Footer::m_vm[t3], t3
     restoreCalleeSavesFromVMEntryFrameCalleeSavesBuffer(t3, t0)
     loadp VM::callFrameForCatch[t3], cfr
     storep 0, VM::callFrameForCatch[t3]
@@ -634,7 +634,7 @@ end
 macro branchIfException(label)
     loadp Callee + PayloadOffset[cfr], t3
     andp MarkedBlockMask, t3
-    loadp MarkedBlock::m_vm[t3], t3
+    loadp MarkedBlockFooterOffset + MarkedBlock::Footer::m_vm[t3], t3
     btiz VM::m_exception[t3], .noException
     jmp label
 .noException:
@@ -2000,7 +2000,7 @@ _llint_op_catch:
     # and have set VM::targetInterpreterPCForThrow.
     loadp Callee + PayloadOffset[cfr], t3
     andp MarkedBlockMask, t3
-    loadp MarkedBlock::m_vm[t3], t3
+    loadp MarkedBlockFooterOffset + MarkedBlock::Footer::m_vm[t3], t3
     restoreCalleeSavesFromVMEntryFrameCalleeSavesBuffer(t3, t0)
     loadp VM::callFrameForCatch[t3], cfr
     storep 0, VM::callFrameForCatch[t3]
@@ -2015,7 +2015,7 @@ _llint_op_catch:
 .isCatchableException:
     loadp Callee + PayloadOffset[cfr], t3
     andp MarkedBlockMask, t3
-    loadp MarkedBlock::m_vm[t3], t3
+    loadp MarkedBlockFooterOffset + MarkedBlock::Footer::m_vm[t3], t3
 
     loadi VM::m_exception[t3], t0
     storei 0, VM::m_exception[t3]
@@ -2053,7 +2053,7 @@ _llint_throw_from_slow_path_trampoline:
     # This essentially emulates the JIT's throwing protocol.
     loadp Callee[cfr], t1
     andp MarkedBlockMask, t1
-    loadp MarkedBlock::m_vm[t1], t1
+    loadp MarkedBlockFooterOffset + MarkedBlock::Footer::m_vm[t1], t1
     copyCalleeSavesToVMEntryFrameCalleeSavesBuffer(t1, t2)
     jmp VM::targetMachinePCForThrow[t1]
 
@@ -2072,7 +2072,7 @@ macro nativeCallTrampoline(executableOffsetToFunction)
     if X86 or X86_WIN
         subp 8, sp # align stack pointer
         andp MarkedBlockMask, t1
-        loadp MarkedBlock::m_vm[t1], t3
+        loadp MarkedBlockFooterOffset + MarkedBlock::Footer::m_vm[t1], t3
         storep cfr, VM::topCallFrame[t3]
         move cfr, a0  # a0 = ecx
         storep a0, [sp]
@@ -2082,7 +2082,7 @@ macro nativeCallTrampoline(executableOffsetToFunction)
         call executableOffsetToFunction[t1]
         loadp Callee + PayloadOffset[cfr], t3
         andp MarkedBlockMask, t3
-        loadp MarkedBlock::m_vm[t3], t3
+        loadp MarkedBlockFooterOffset + MarkedBlock::Footer::m_vm[t3], t3
         addp 8, sp
     elsif ARM or ARMv7 or ARMv7_TRADITIONAL or C_LOOP or MIPS
         if MIPS
@@ -2095,7 +2095,7 @@ macro nativeCallTrampoline(executableOffsetToFunction)
         end
         # t1 already contains the Callee.
         andp MarkedBlockMask, t1
-        loadp MarkedBlock::m_vm[t1], t1
+        loadp MarkedBlockFooterOffset + MarkedBlock::Footer::m_vm[t1], t1
         storep cfr, VM::topCallFrame[t1]
         move cfr, a0
         loadi Callee + PayloadOffset[cfr], t1
@@ -2108,7 +2108,7 @@ macro nativeCallTrampoline(executableOffsetToFunction)
         end
         loadp Callee + PayloadOffset[cfr], t3
         andp MarkedBlockMask, t3
-        loadp MarkedBlock::m_vm[t3], t3
+        loadp MarkedBlockFooterOffset + MarkedBlock::Footer::m_vm[t3], t3
         if MIPS
             addp 24, sp
         else
@@ -2140,7 +2140,7 @@ macro internalFunctionCallTrampoline(offsetOfFunction)
     if X86 or X86_WIN
         subp 8, sp # align stack pointer
         andp MarkedBlockMask, t1
-        loadp MarkedBlock::m_vm[t1], t3
+        loadp MarkedBlockFooterOffset + MarkedBlock::Footer::m_vm[t1], t3
         storep cfr, VM::topCallFrame[t3]
         move cfr, a0  # a0 = ecx
         storep a0, [sp]
@@ -2149,13 +2149,13 @@ macro internalFunctionCallTrampoline(offsetOfFunction)
         call offsetOfFunction[t1]
         loadp Callee + PayloadOffset[cfr], t3
         andp MarkedBlockMask, t3
-        loadp MarkedBlock::m_vm[t3], t3
+        loadp MarkedBlockFooterOffset + MarkedBlock::Footer::m_vm[t3], t3
         addp 8, sp
     elsif ARM or ARMv7 or ARMv7_TRADITIONAL or C_LOOP or MIPS
         subp 8, sp # align stack pointer
         # t1 already contains the Callee.
         andp MarkedBlockMask, t1
-        loadp MarkedBlock::m_vm[t1], t1
+        loadp MarkedBlockFooterOffset + MarkedBlock::Footer::m_vm[t1], t1
         storep cfr, VM::topCallFrame[t1]
         move cfr, a0
         loadi Callee + PayloadOffset[cfr], t1
@@ -2167,7 +2167,7 @@ macro internalFunctionCallTrampoline(offsetOfFunction)
         end
         loadp Callee + PayloadOffset[cfr], t3
         andp MarkedBlockMask, t3
-        loadp MarkedBlock::m_vm[t3], t3
+        loadp MarkedBlockFooterOffset + MarkedBlock::Footer::m_vm[t3], t3
         addp 8, sp
     else
         error

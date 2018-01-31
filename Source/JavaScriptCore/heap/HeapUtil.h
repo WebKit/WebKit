@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -124,7 +124,7 @@ public:
     
         // Also, a butterfly could point at the end of an object plus sizeof(IndexingHeader). In that
         // case, this is pointing to the object to the right of the one we should be marking.
-        if (candidate->atomNumber(alignedPointer) > MarkedBlock::firstAtom()
+        if (candidate->atomNumber(alignedPointer) > 0
             && pointer <= alignedPointer + sizeof(IndexingHeader))
             tryPointer(alignedPointer - candidate->cellSize());
     }
