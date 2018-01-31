@@ -33,6 +33,7 @@
 #include "FetchEvent.h"
 #include "FetchRequest.h"
 #include "FetchResponse.h"
+#include "ReadableStreamChunk.h"
 #include "ResourceRequest.h"
 #include "ServiceWorker.h"
 #include "ServiceWorkerClientIdentifier.h"
@@ -53,16 +54,16 @@ static void processResponse(Ref<Client>&& client, FetchResponse* response)
     client->didReceiveResponse(response->resourceResponse());
 
     if (response->hasReadableStreamBody()) {
-        // FIXME: We should send the body as chunks.
-        response->consumeBodyFromReadableStream([client = WTFMove(client)] (ExceptionOr<RefPtr<SharedBuffer>>&& result) mutable {
+        response->consumeBodyFromReadableStream([client = WTFMove(client)] (auto&& result) mutable {
             if (result.hasException()) {
                 client->didFail();
                 return;
             }
 
-            if (auto buffer = result.releaseReturnValue())
-                client->didReceiveData(buffer.releaseNonNull());
-            client->didFinish();
+            if (auto chunk = result.returnValue())
+                client->didReceiveData(SharedBuffer::create(reinterpret_cast<const char*>(chunk->data), chunk->size));
+            else
+                client->didFinish();
         });
         return;
     }
