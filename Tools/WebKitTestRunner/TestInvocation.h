@@ -72,6 +72,7 @@ public:
     void notifyDownloadDone();
 
     void didClearStatisticsThroughWebsiteDataRemoval();
+    void didSetPartitionOrBlockCookiesForHost();
 
     void didRemoveAllSessionCredentials();
     

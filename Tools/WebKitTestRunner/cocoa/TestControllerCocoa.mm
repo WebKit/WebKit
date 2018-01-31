@@ -376,12 +376,16 @@ void TestController::statisticsProcessStatisticsAndDataRecords()
 
 void TestController::statisticsUpdateCookiePartitioning()
 {
-    [globalWebViewConfiguration.websiteDataStore _resourceLoadStatisticsUpdateCookiePartitioning];
+    [globalWebViewConfiguration.websiteDataStore _resourceLoadStatisticsUpdateCookiePartitioning:^() {
+        m_currentInvocation->didSetPartitionOrBlockCookiesForHost();
+    }];
 }
 
 void TestController::statisticsSetShouldPartitionCookiesForHost(WKStringRef hostName, bool value)
 {
-    [globalWebViewConfiguration.websiteDataStore _resourceLoadStatisticsSetShouldPartitionCookies:value forHost:toNSString(hostName)];
+    [globalWebViewConfiguration.websiteDataStore _resourceLoadStatisticsSetShouldPartitionCookies:value forHost:toNSString(hostName) completionHandler:^() {
+        m_currentInvocation->didSetPartitionOrBlockCookiesForHost();
+    }];
 }
 
 void TestController::statisticsSubmitTelemetry()

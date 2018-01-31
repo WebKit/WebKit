@@ -244,7 +244,7 @@ void WKWebsiteDataStoreStatisticsUpdateCookiePartitioning(WKWebsiteDataStoreRef 
     if (!store)
         return;
 
-    store->scheduleCookiePartitioningUpdate();
+    store->scheduleCookiePartitioningUpdate([]() { });
 }
 
 void WKWebsiteDataStoreSetStatisticsShouldPartitionCookiesForHost(WKWebsiteDataStoreRef dataStoreRef, WKStringRef host, bool value)
@@ -254,9 +254,9 @@ void WKWebsiteDataStoreSetStatisticsShouldPartitionCookiesForHost(WKWebsiteDataS
         return;
 
     if (value)
-        store->scheduleCookiePartitioningUpdateForDomains({ WebKit::toImpl(host)->string() }, { }, { }, WebKit::ShouldClearFirst::No);
+        store->scheduleCookiePartitioningUpdateForDomains({ WebKit::toImpl(host)->string() }, { }, { }, WebKit::ShouldClearFirst::No, []() { });
     else
-        store->scheduleClearPartitioningStateForDomains({ WebKit::toImpl(host)->string() });
+        store->scheduleClearPartitioningStateForDomains({ WebKit::toImpl(host)->string() }, []() { });
 }
 
 void WKWebsiteDataStoreStatisticsSubmitTelemetry(WKWebsiteDataStoreRef dataStoreRef)
