@@ -1,3 +1,12 @@
+2018-01-30  Don Olmstead  <don.olmstead@sony.com>
+
+        JSExports.h should be included as <JavaScriptCore/JSExportMacros.h>
+        https://bugs.webkit.org/show_bug.cgi?id=182312
+
+        Reviewed by Michael Catanzaro.
+
+        * config.h:
+
 2018-01-30  Brent Fulgham  <bfulgham@apple.com>
 
         Add telemetry to track storage access API adoption

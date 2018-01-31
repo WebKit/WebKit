@@ -27,7 +27,7 @@
 #include "cmakeconfig.h"
 #endif
 
-#include <runtime/JSExportMacros.h>
+#include <JavaScriptCore/JSExportMacros.h>
 #ifndef BUILDING_JSCONLY__
 #include <WebCore/PlatformExportMacros.h>
 #include <pal/ExportMacros.h>

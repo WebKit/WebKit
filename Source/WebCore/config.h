@@ -34,8 +34,8 @@
 #endif
 
 #include "PlatformExportMacros.h"
+#include <JavaScriptCore/JSExportMacros.h>
 #include <pal/ExportMacros.h>
-#include <runtime/JSExportMacros.h>
 
 #ifdef __APPLE__
 #define HAVE_FUNC_USLEEP 1

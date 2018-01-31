@@ -1,3 +1,14 @@
+2018-01-30  Don Olmstead  <don.olmstead@sony.com>
+
+        JSExports.h should be included as <JavaScriptCore/JSExportMacros.h>
+        https://bugs.webkit.org/show_bug.cgi?id=182312
+
+        Reviewed by Michael Catanzaro.
+
+        * DumpRenderTree/config.h:
+        * TestWebKitAPI/config.h:
+        * WebKitTestRunner/config.h:
+
 2018-01-30  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] API test UIPasteboardTests.DataTransferGetDataWhenPastingPlatformRepresentations fails after r223440

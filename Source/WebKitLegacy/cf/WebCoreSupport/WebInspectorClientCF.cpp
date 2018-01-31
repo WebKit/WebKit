@@ -43,7 +43,7 @@
 
 // NOTE: These need to appear up top, as they declare macros
 // used in the JS and WTF headers.
-#include <runtime/JSExportMacros.h>
+#include <JavaScriptCore/JSExportMacros.h>
 #include <wtf/ExportMacros.h>
 
 #include "WebInspectorClient.h"

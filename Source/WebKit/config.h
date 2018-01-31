@@ -28,9 +28,9 @@
 #include "cmakeconfig.h"
 #endif
 
+#include <JavaScriptCore/JSExportMacros.h>
 #include <WebCore/PlatformExportMacros.h>
 #include <pal/ExportMacros.h>
-#include <runtime/JSExportMacros.h>
 #include <wtf/DisallowCType.h>
 
 #if PLATFORM(WIN)

@@ -26,7 +26,7 @@
 #include "cmakeconfig.h"
 #endif
 
+#include <JavaScriptCore/JSExportMacros.h>
 #include <WebCore/PlatformExportMacros.h>
 #include <WebKit/WebKit2_C.h>
 #include <pal/ExportMacros.h>
-#include <runtime/JSExportMacros.h>
