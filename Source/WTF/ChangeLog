@@ -1,5 +1,15 @@
 2018-01-31  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r227684. rdar://problem/37019334
+
+    2018-01-26  Filip Pizlo  <fpizlo@apple.com>
+
+            Fix style - need to use C comments.
+
+            * wtf/Platform.h:
+
+2018-01-31  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r227683. rdar://problem/37019334
 
     2018-01-26  Filip Pizlo  <fpizlo@apple.com>
