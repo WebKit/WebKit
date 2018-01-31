@@ -92,12 +92,10 @@ public:
     void setBodyData(ResponseData&&, uint64_t bodySizeWithPadding);
 
     bool isLoading() const { return !!m_bodyLoader; }
-
-    using ConsumeDataCallback = WTF::Function<void(ExceptionOr<RefPtr<SharedBuffer>>&&)>;
-    void consumeBodyWhenLoaded(ConsumeDataCallback&&);
+    bool isBodyReceivedByChunk() const { return isLoading() || hasReadableStreamBody(); }
 
     using ConsumeDataByChunkCallback = WTF::Function<void(ExceptionOr<ReadableStreamChunk*>&&)>;
-    void consumeBodyFromReadableStream(ConsumeDataByChunkCallback&&);
+    void consumeBodyReceivedByChunk(ConsumeDataByChunkCallback&&);
 
     WEBCORE_EXPORT ResourceResponse resourceResponse() const;
 
@@ -128,7 +126,7 @@ private:
         bool start(ScriptExecutionContext&, const FetchRequest&);
         void stop();
 
-        void setConsumeDataCallback(ConsumeDataCallback&& consumeDataCallback) { m_consumeDataCallback = WTFMove(consumeDataCallback); }
+        void consumeDataByChunk(ConsumeDataByChunkCallback&&);
 
 #if ENABLE(STREAMS_API)
         RefPtr<SharedBuffer> startStreaming();
@@ -143,7 +141,7 @@ private:
 
         FetchResponse& m_response;
         NotificationCallback m_responseCallback;
-        ConsumeDataCallback m_consumeDataCallback;
+        ConsumeDataByChunkCallback m_consumeDataCallback;
         std::unique_ptr<FetchLoader> m_loader;
     };
 

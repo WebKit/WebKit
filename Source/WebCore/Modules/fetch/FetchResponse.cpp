@@ -225,7 +225,7 @@ void FetchResponse::BodyLoader::didSucceed()
         m_response.closeStream();
 #endif
     if (auto consumeDataCallback = WTFMove(m_consumeDataCallback))
-        consumeDataCallback(m_response.body().consumer().takeData());
+        consumeDataCallback(nullptr);
 
     if (m_loader->isStarted()) {
         Ref<FetchResponse> protector(m_response);
@@ -290,7 +290,18 @@ void FetchResponse::BodyLoader::didReceiveResponse(const ResourceResponse& resou
 void FetchResponse::BodyLoader::didReceiveData(const char* data, size_t size)
 {
 #if ENABLE(STREAMS_API)
-    ASSERT(m_response.m_readableStreamSource);
+    ASSERT(m_response.m_readableStreamSource || m_consumeDataCallback);
+#else
+    ASSERT(m_consumeDataCallback);
+#endif
+
+    if (m_consumeDataCallback) {
+        ReadableStreamChunk chunk { reinterpret_cast<const uint8_t*>(data), size };
+        m_consumeDataCallback(&chunk);
+        return;
+    }
+
+#if ENABLE(STREAMS_API)
     auto& source = *m_response.m_readableStreamSource;
 
     if (!source.isPulling()) {
@@ -327,9 +338,21 @@ void FetchResponse::BodyLoader::stop()
         m_loader->stop();
 }
 
+void FetchResponse::BodyLoader::consumeDataByChunk(ConsumeDataByChunkCallback&& consumeDataCallback)
+{
+    ASSERT(!m_consumeDataCallback);
+    m_consumeDataCallback = WTFMove(consumeDataCallback);
+    auto data = m_loader->startStreaming();
+    if (!data)
+        return;
+
+    ReadableStreamChunk chunk { reinterpret_cast<const uint8_t*>(data->data()), data->size() };
+    m_consumeDataCallback(&chunk);
+}
+
 FetchResponse::ResponseData FetchResponse::consumeBody()
 {
-    ASSERT(!isLoading());
+    ASSERT(!isBodyReceivedByChunk());
 
     if (isBodyNull())
         return nullptr;
@@ -340,25 +363,19 @@ FetchResponse::ResponseData FetchResponse::consumeBody()
     return body().take();
 }
 
-void FetchResponse::consumeBodyFromReadableStream(ConsumeDataByChunkCallback&& callback)
+void FetchResponse::consumeBodyReceivedByChunk(ConsumeDataByChunkCallback&& callback)
 {
-    ASSERT(m_body);
-    ASSERT(m_body->readableStream());
-
+    ASSERT(isBodyReceivedByChunk());
     ASSERT(!isDisturbed());
     m_isDisturbed = true;
 
-    m_body->consumer().extract(*m_body->readableStream(), WTFMove(callback));
-}
+    if (hasReadableStreamBody()) {
+        m_body->consumer().extract(*m_body->readableStream(), WTFMove(callback));
+        return;
+    }
 
-void FetchResponse::consumeBodyWhenLoaded(ConsumeDataCallback&& callback)
-{
     ASSERT(isLoading());
-
-    ASSERT(!isDisturbed());
-    m_isDisturbed = true;
-
-    m_bodyLoader->setConsumeDataCallback(WTFMove(callback));
+    m_bodyLoader->consumeDataByChunk(WTFMove(callback));
 }
 
 void FetchResponse::setBodyData(ResponseData&& data, uint64_t bodySizeWithPadding)

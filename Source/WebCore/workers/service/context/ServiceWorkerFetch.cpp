@@ -53,8 +53,8 @@ static void processResponse(Ref<Client>&& client, FetchResponse* response)
 
     client->didReceiveResponse(response->resourceResponse());
 
-    if (response->hasReadableStreamBody()) {
-        response->consumeBodyFromReadableStream([client = WTFMove(client)] (auto&& result) mutable {
+    if (response->isBodyReceivedByChunk()) {
+        response->consumeBodyReceivedByChunk([client = WTFMove(client)] (auto&& result) mutable {
             if (result.hasException()) {
                 client->didFail();
                 return;
@@ -64,20 +64,6 @@ static void processResponse(Ref<Client>&& client, FetchResponse* response)
                 client->didReceiveData(SharedBuffer::create(reinterpret_cast<const char*>(chunk->data), chunk->size));
             else
                 client->didFinish();
-        });
-        return;
-    }
-    if (response->isLoading()) {
-        // FIXME: We should send the body as chunks.
-        response->consumeBodyWhenLoaded([client = WTFMove(client)] (ExceptionOr<RefPtr<SharedBuffer>>&& result) mutable {
-            if (result.hasException()) {
-                client->didFail();
-                return;
-            }
-
-            if (auto buffer = result.releaseReturnValue())
-                client->didReceiveData(buffer.releaseNonNull());
-            client->didFinish();
         });
         return;
     }
