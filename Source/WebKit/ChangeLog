@@ -1,3 +1,32 @@
+2018-01-30  Tim Horton  <timothy_horton@apple.com>
+
+        WKWebView layout is sometimes wrong after rotation on iPhone X
+        https://bugs.webkit.org/show_bug.cgi?id=182304
+        <rdar://problem/34158671>
+
+        Reviewed by Simon Fraser.
+
+        * Platform/spi/ios/UIKitSPI.h:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _computedContentInset]):
+        (-[WKWebView _scrollViewSystemContentInset]):
+        (activeMinimumLayoutSize):
+        It turns out that it is not always safe to look at the safe area insets of
+        children from inside layoutSubviews, even after the call to super.
+
+        Instead, make use of the fact that WKScrollView and WKWebView have identical
+        coordinate spaces, and map WKWebView's safe area insets into the WKScrollView.
+        It's safe to use the scroll view's affected-edges and contentScrollInset,
+        because those aren't updated at the same outside-of-layout time that
+        safe area insets are.
+
+        We could alternatively move all calls to activeMinimumLayoutSize outside
+        of layoutSubviews, but that seems like a larger and riskier change.
+
+        All attempts to write a test have failed; this depends heavily on use of
+        autolayout and the mechanism by which the system updates system-owned
+        safe area insets during device rotation.
+
 2018-01-30  Don Olmstead  <don.olmstead@sony.com>
 
         JSExports.h should be included as <JavaScriptCore/JSExportMacros.h>

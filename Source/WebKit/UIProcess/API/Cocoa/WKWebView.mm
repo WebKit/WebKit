@@ -1567,7 +1567,7 @@ static WebCore::Color scrollViewBackgroundColor(WKWebView *webView)
 
 #if __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000
     if (self._safeAreaShouldAffectObscuredInsets)
-        insets = UIEdgeInsetsAdd(insets, [_scrollView _systemContentInset], self._effectiveObscuredInsetEdgesAffectedBySafeArea);
+        insets = UIEdgeInsetsAdd(insets, self._scrollViewSystemContentInset, self._effectiveObscuredInsetEdgesAffectedBySafeArea);
 #endif
 
     return insets;
@@ -2463,14 +2463,22 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
     _enclosingScrollViewScrollTimer = nil;
 }
 
+- (UIEdgeInsets)_scrollViewSystemContentInset
+{
+    // It's not safe to access the scroll view's safeAreaInsets or _systemContentInset from
+    // inside our layoutSubviews implementation, because they aren't updated until afterwards.
+    // Instead, depend on the fact that the UIScrollView and WKWebView are in the same coordinate
+    // space, and map the WKWebView's own insets into the scroll view manually.
+    return UIEdgeInsetsAdd([_scrollView _contentScrollInset], self.safeAreaInsets, [_scrollView _edgesApplyingSafeAreaInsetsToContentInset]);
+}
+
 static WebCore::FloatSize activeMinimumLayoutSize(WKWebView *webView, const CGRect& bounds)
 {
     if (webView->_overridesMinimumLayoutSize)
         return WebCore::FloatSize(webView->_minimumLayoutSizeOverride);
 
 #if __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000
-    UIEdgeInsets systemContentInset = [webView->_scrollView _systemContentInset];
-    return WebCore::FloatSize(UIEdgeInsetsInsetRect(CGRectMake(0, 0, bounds.size.width, bounds.size.height), systemContentInset).size);
+    return WebCore::FloatSize(UIEdgeInsetsInsetRect(CGRectMake(0, 0, bounds.size.width, bounds.size.height), webView._scrollViewSystemContentInset).size);
 #else
     return WebCore::FloatSize(bounds.size);
 #endif
