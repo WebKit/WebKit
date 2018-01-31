@@ -1,3 +1,16 @@
+2018-01-31  Mark Lam  <mark.lam@apple.com>
+
+        Build fix for CLoop after r227874.
+        https://bugs.webkit.org/show_bug.cgi?id=182155
+        <rdar://problem/36286266>
+
+        Not reviewed.
+
+        Just needed support for lea of a LabelReference in cloop.rb (just like those
+        added for arm64.rb and x86.rb).
+
+        * offlineasm/cloop.rb:
+
 2018-01-31  Keith Miller  <keith_miller@apple.com>
 
         Canonicalize aquiring the JSCell lock.
