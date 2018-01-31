@@ -1,3 +1,18 @@
+2018-01-31  Youenn Fablet  <youenn@apple.com>
+
+        com.apple.WebKit.Storage crashing at com.apple.WebCore: WebCore::SWServerRegistration::removeClientUsingRegistration
+        https://bugs.webkit.org/show_bug.cgi?id=182316
+        <rdar://problem/37025976>
+
+        Reviewed by Chris Dumez.
+
+        SWServer.m_clientToControllingWorker and SWServerRegistration.m_clientsUsingRegistration might currently get out of sync.
+        This is a defensive fix to ensure storage process will not crash in Release.
+        We keep the ASSERT as this probably means there is an abnormal situation that other patches might fix.
+
+        * workers/service/server/SWServerRegistration.cpp:
+        (WebCore::SWServerRegistration::removeClientUsingRegistration):
+
 2018-01-31  Antoine Quint  <graouts@apple.com>
 
         [Modern Media Controls] Turn media/modern-media-controls/start-support tests back on
