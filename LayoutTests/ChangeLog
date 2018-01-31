@@ -1,3 +1,18 @@
+2018-01-30  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Cherry-pick r227867. rdar://problem/36912402
+
+    2018-01-30  Youenn Fablet  <youenn@apple.com>
+
+            Move http/wpt/service-workers/clone-opaque-being-loaded-response.https.html to use HTTP
+            https://bugs.webkit.org/show_bug.cgi?id=182202
+            <rdar://problem/36912402>
+
+            Reviewed by Chris Dumez.
+            Follow-up to ensure subresource load is also done in HTTP and not HTTPS
+
+            * http/wpt/service-workers/clone-opaque-being-loaded-response-worker.js:
+
 2018-01-30  Jason Marcell  <jmarcell@apple.com>
 
         Cherry-pick r227768. rdar://problem/37019510
