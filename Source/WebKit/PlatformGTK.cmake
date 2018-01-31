@@ -1089,136 +1089,138 @@ else ()
     set(PREV_LOADER_LIBRARY_PATH "$ENV{LD_LIBRARY_PATH}")
 endif ()
 
-string(COMPARE EQUAL "${PREV_LOADER_LIBRARY_PATH}" "" ld_library_path_does_not_exist)
-if (ld_library_path_does_not_exist)
-    set(INTROSPECTION_ADDITIONAL_LIBRARY_PATH
-        "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}"
+if (ENABLE_INTROSPECTION)
+    string(COMPARE EQUAL "${PREV_LOADER_LIBRARY_PATH}" "" ld_library_path_does_not_exist)
+    if (ld_library_path_does_not_exist)
+        set(INTROSPECTION_ADDITIONAL_LIBRARY_PATH
+            "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}"
+        )
+    else ()
+        set(INTROSPECTION_ADDITIONAL_LIBRARY_PATH
+            "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}:${PREV_LOADER_LIBRARY_PATH}"
+        )
+    endif ()
+
+    # Add required -L flags from ${CMAKE_SHARED_LINKER_FLAGS} for g-ir-scanner
+    string(REGEX MATCHALL "-L[^ ]*"
+        INTROSPECTION_ADDITIONAL_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS}")
+
+    add_custom_command(
+        OUTPUT ${CMAKE_BINARY_DIR}/WebKit2-${WEBKITGTK_API_VERSION}.gir
+        DEPENDS WebKit
+        DEPENDS ${CMAKE_BINARY_DIR}/JavaScriptCore-${WEBKITGTK_API_VERSION}.gir
+        COMMAND CC=${CMAKE_C_COMPILER} CFLAGS=-Wno-deprecated-declarations LDFLAGS=
+            ${LOADER_LIBRARY_PATH_VAR}="${INTROSPECTION_ADDITIONAL_LIBRARY_PATH}"
+            ${INTROSPECTION_SCANNER}
+            --quiet
+            --warn-all
+            --symbol-prefix=webkit
+            --identifier-prefix=WebKit
+            --namespace=WebKit2
+            --nsversion=${WEBKITGTK_API_VERSION}
+            --include=GObject-2.0
+            --include=Gtk-3.0
+            --include=Soup-2.4
+            --include-uninstalled=${CMAKE_BINARY_DIR}/JavaScriptCore-${WEBKITGTK_API_VERSION}.gir
+            --library=webkit2gtk-${WEBKITGTK_API_VERSION}
+            --library=javascriptcoregtk-${WEBKITGTK_API_VERSION}
+            -L${CMAKE_LIBRARY_OUTPUT_DIRECTORY}
+            ${INTROSPECTION_ADDITIONAL_LINKER_FLAGS}
+            --no-libtool
+            --pkg=gobject-2.0
+            --pkg=gtk+-3.0
+            --pkg=libsoup-2.4
+            --pkg-export=webkit2gtk-${WEBKITGTK_API_VERSION}
+            --output=${CMAKE_BINARY_DIR}/WebKit2-${WEBKITGTK_API_VERSION}.gir
+            --c-include="webkit2/webkit2.h"
+            -DBUILDING_WEBKIT
+            -DWEBKIT2_COMPILATION
+            -I${CMAKE_SOURCE_DIR}/Source
+            -I${WEBKIT_DIR}
+            -I${JAVASCRIPTCORE_DIR}
+            -I${JAVASCRIPTCORE_DIR}/ForwardingHeaders
+            -I${DERIVED_SOURCES_DIR}
+            -I${DERIVED_SOURCES_WEBKIT2GTK_DIR}
+            -I${FORWARDING_HEADERS_WEBKIT2GTK_DIR}
+            ${WebKit2GTK_INSTALLED_HEADERS}
+            ${WEBKIT_DIR}/Shared/API/glib/*.cpp
+            ${WEBKIT_DIR}/UIProcess/API/glib/*.cpp
+            ${WEBKIT_DIR}/UIProcess/API/gtk/*.cpp
     )
-else ()
-    set(INTROSPECTION_ADDITIONAL_LIBRARY_PATH
-        "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}:${PREV_LOADER_LIBRARY_PATH}"
+
+    add_custom_command(
+        OUTPUT ${CMAKE_BINARY_DIR}/WebKit2WebExtension-${WEBKITGTK_API_VERSION}.gir
+        DEPENDS ${CMAKE_BINARY_DIR}/JavaScriptCore-${WEBKITGTK_API_VERSION}.gir
+        DEPENDS ${CMAKE_BINARY_DIR}/WebKit2-${WEBKITGTK_API_VERSION}.gir
+        COMMAND CC=${CMAKE_C_COMPILER} CFLAGS=-Wno-deprecated-declarations
+            LDFLAGS="${INTROSPECTION_ADDITIONAL_LDFLAGS}"
+            ${LOADER_LIBRARY_PATH_VAR}="${INTROSPECTION_ADDITIONAL_LIBRARY_PATH}"
+            ${INTROSPECTION_SCANNER}
+            --quiet
+            --warn-all
+            --symbol-prefix=webkit
+            --identifier-prefix=WebKit
+            --namespace=WebKit2WebExtension
+            --nsversion=${WEBKITGTK_API_VERSION}
+            --include=GObject-2.0
+            --include=Gtk-3.0
+            --include=Soup-2.4
+            --include-uninstalled=${CMAKE_BINARY_DIR}/JavaScriptCore-${WEBKITGTK_API_VERSION}.gir
+            --library=webkit2gtk-${WEBKITGTK_API_VERSION}
+            --library=javascriptcoregtk-${WEBKITGTK_API_VERSION}
+            ${INTROSPECTION_ADDITIONAL_LIBRARIES}
+            -L${CMAKE_LIBRARY_OUTPUT_DIRECTORY}
+            ${INTROSPECTION_ADDITIONAL_LINKER_FLAGS}
+            --no-libtool
+            --pkg=gobject-2.0
+            --pkg=gtk+-3.0
+            --pkg=libsoup-2.4
+            --pkg-export=webkit2gtk-web-extension-${WEBKITGTK_API_VERSION}
+            --output=${CMAKE_BINARY_DIR}/WebKit2WebExtension-${WEBKITGTK_API_VERSION}.gir
+            --c-include="webkit2/webkit-web-extension.h"
+            -DBUILDING_WEBKIT
+            -DWEBKIT2_COMPILATION
+            -I${CMAKE_SOURCE_DIR}/Source
+            -I${WEBKIT_DIR}
+            -I${JAVASCRIPTCORE_DIR}
+            -I${JAVASCRIPTCORE_DIR}/ForwardingHeaders
+            -I${DERIVED_SOURCES_DIR}
+            -I${DERIVED_SOURCES_WEBKIT2GTK_DIR}
+            -I${FORWARDING_HEADERS_DIR}
+            -I${FORWARDING_HEADERS_WEBKIT2GTK_DIR}
+            -I${FORWARDING_HEADERS_WEBKIT2GTK_EXTENSION_DIR}
+            -I${WEBKIT_DIR}/WebProcess/InjectedBundle/API/gtk
+            ${WebKitDOM_INSTALLED_HEADERS}
+            ${WebKit2WebExtension_INSTALLED_HEADERS}
+            ${WEBKIT_DIR}/Shared/API/glib/WebKitContextMenu.cpp
+            ${WEBKIT_DIR}/Shared/API/glib/WebKitContextMenuItem.cpp
+            ${WEBKIT_DIR}/Shared/API/glib/WebKitHitTestResult.cpp
+            ${WEBKIT_DIR}/Shared/API/glib/WebKitURIRequest.cpp
+            ${WEBKIT_DIR}/Shared/API/glib/WebKitURIResponse.cpp
+            ${WEBKIT_DIR}/UIProcess/API/gtk/WebKitContextMenu.h
+            ${WEBKIT_DIR}/UIProcess/API/gtk/WebKitContextMenuActions.h
+            ${WEBKIT_DIR}/UIProcess/API/gtk/WebKitContextMenuItem.h
+            ${WEBKIT_DIR}/UIProcess/API/gtk/WebKitHitTestResult.h
+            ${WEBKIT_DIR}/UIProcess/API/gtk/WebKitURIRequest.h
+            ${WEBKIT_DIR}/UIProcess/API/gtk/WebKitURIResponse.h
+            ${WEBKIT_DIR}/WebProcess/InjectedBundle/API/glib/*.cpp
     )
+
+    add_custom_command(
+        OUTPUT ${CMAKE_BINARY_DIR}/WebKit2-${WEBKITGTK_API_VERSION}.typelib
+        DEPENDS ${CMAKE_BINARY_DIR}/WebKit2-${WEBKITGTK_API_VERSION}.gir
+        COMMAND ${INTROSPECTION_COMPILER} --includedir=${CMAKE_BINARY_DIR} ${CMAKE_BINARY_DIR}/WebKit2-${WEBKITGTK_API_VERSION}.gir -o ${CMAKE_BINARY_DIR}/WebKit2-${WEBKITGTK_API_VERSION}.typelib
+    )
+
+    add_custom_command(
+        OUTPUT ${CMAKE_BINARY_DIR}/WebKit2WebExtension-${WEBKITGTK_API_VERSION}.typelib
+        DEPENDS ${CMAKE_BINARY_DIR}/WebKit2WebExtension-${WEBKITGTK_API_VERSION}.gir
+        COMMAND ${INTROSPECTION_COMPILER} --includedir=${CMAKE_BINARY_DIR} ${CMAKE_BINARY_DIR}/WebKit2WebExtension-${WEBKITGTK_API_VERSION}.gir -o ${CMAKE_BINARY_DIR}/WebKit2WebExtension-${WEBKITGTK_API_VERSION}.typelib
+    )
+
+    ADD_TYPELIB(${CMAKE_BINARY_DIR}/WebKit2-${WEBKITGTK_API_VERSION}.typelib)
+    ADD_TYPELIB(${CMAKE_BINARY_DIR}/WebKit2WebExtension-${WEBKITGTK_API_VERSION}.typelib)
 endif ()
-
-# Add required -L flags from ${CMAKE_SHARED_LINKER_FLAGS} for g-ir-scanner
-string(REGEX MATCHALL "-L[^ ]*"
-    INTROSPECTION_ADDITIONAL_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS}")
-
-add_custom_command(
-    OUTPUT ${CMAKE_BINARY_DIR}/WebKit2-${WEBKITGTK_API_VERSION}.gir
-    DEPENDS WebKit
-    DEPENDS ${CMAKE_BINARY_DIR}/JavaScriptCore-${WEBKITGTK_API_VERSION}.gir
-    COMMAND CC=${CMAKE_C_COMPILER} CFLAGS=-Wno-deprecated-declarations LDFLAGS=
-        ${LOADER_LIBRARY_PATH_VAR}="${INTROSPECTION_ADDITIONAL_LIBRARY_PATH}"
-        ${INTROSPECTION_SCANNER}
-        --quiet
-        --warn-all
-        --symbol-prefix=webkit
-        --identifier-prefix=WebKit
-        --namespace=WebKit2
-        --nsversion=${WEBKITGTK_API_VERSION}
-        --include=GObject-2.0
-        --include=Gtk-3.0
-        --include=Soup-2.4
-        --include-uninstalled=${CMAKE_BINARY_DIR}/JavaScriptCore-${WEBKITGTK_API_VERSION}.gir
-        --library=webkit2gtk-${WEBKITGTK_API_VERSION}
-        --library=javascriptcoregtk-${WEBKITGTK_API_VERSION}
-        -L${CMAKE_LIBRARY_OUTPUT_DIRECTORY}
-        ${INTROSPECTION_ADDITIONAL_LINKER_FLAGS}
-        --no-libtool
-        --pkg=gobject-2.0
-        --pkg=gtk+-3.0
-        --pkg=libsoup-2.4
-        --pkg-export=webkit2gtk-${WEBKITGTK_API_VERSION}
-        --output=${CMAKE_BINARY_DIR}/WebKit2-${WEBKITGTK_API_VERSION}.gir
-        --c-include="webkit2/webkit2.h"
-        -DBUILDING_WEBKIT
-        -DWEBKIT2_COMPILATION
-        -I${CMAKE_SOURCE_DIR}/Source
-        -I${WEBKIT_DIR}
-        -I${JAVASCRIPTCORE_DIR}
-        -I${JAVASCRIPTCORE_DIR}/ForwardingHeaders
-        -I${DERIVED_SOURCES_DIR}
-        -I${DERIVED_SOURCES_WEBKIT2GTK_DIR}
-        -I${FORWARDING_HEADERS_WEBKIT2GTK_DIR}
-        ${WebKit2GTK_INSTALLED_HEADERS}
-        ${WEBKIT_DIR}/Shared/API/glib/*.cpp
-        ${WEBKIT_DIR}/UIProcess/API/glib/*.cpp
-        ${WEBKIT_DIR}/UIProcess/API/gtk/*.cpp
-)
-
-add_custom_command(
-    OUTPUT ${CMAKE_BINARY_DIR}/WebKit2WebExtension-${WEBKITGTK_API_VERSION}.gir
-    DEPENDS ${CMAKE_BINARY_DIR}/JavaScriptCore-${WEBKITGTK_API_VERSION}.gir
-    DEPENDS ${CMAKE_BINARY_DIR}/WebKit2-${WEBKITGTK_API_VERSION}.gir
-    COMMAND CC=${CMAKE_C_COMPILER} CFLAGS=-Wno-deprecated-declarations
-        LDFLAGS="${INTROSPECTION_ADDITIONAL_LDFLAGS}"
-        ${LOADER_LIBRARY_PATH_VAR}="${INTROSPECTION_ADDITIONAL_LIBRARY_PATH}"
-        ${INTROSPECTION_SCANNER}
-        --quiet
-        --warn-all
-        --symbol-prefix=webkit
-        --identifier-prefix=WebKit
-        --namespace=WebKit2WebExtension
-        --nsversion=${WEBKITGTK_API_VERSION}
-        --include=GObject-2.0
-        --include=Gtk-3.0
-        --include=Soup-2.4
-        --include-uninstalled=${CMAKE_BINARY_DIR}/JavaScriptCore-${WEBKITGTK_API_VERSION}.gir
-        --library=webkit2gtk-${WEBKITGTK_API_VERSION}
-        --library=javascriptcoregtk-${WEBKITGTK_API_VERSION}
-        ${INTROSPECTION_ADDITIONAL_LIBRARIES}
-        -L${CMAKE_LIBRARY_OUTPUT_DIRECTORY}
-        ${INTROSPECTION_ADDITIONAL_LINKER_FLAGS}
-        --no-libtool
-        --pkg=gobject-2.0
-        --pkg=gtk+-3.0
-        --pkg=libsoup-2.4
-        --pkg-export=webkit2gtk-web-extension-${WEBKITGTK_API_VERSION}
-        --output=${CMAKE_BINARY_DIR}/WebKit2WebExtension-${WEBKITGTK_API_VERSION}.gir
-        --c-include="webkit2/webkit-web-extension.h"
-        -DBUILDING_WEBKIT
-        -DWEBKIT2_COMPILATION
-        -I${CMAKE_SOURCE_DIR}/Source
-        -I${WEBKIT_DIR}
-        -I${JAVASCRIPTCORE_DIR}
-        -I${JAVASCRIPTCORE_DIR}/ForwardingHeaders
-        -I${DERIVED_SOURCES_DIR}
-        -I${DERIVED_SOURCES_WEBKIT2GTK_DIR}
-        -I${FORWARDING_HEADERS_DIR}
-        -I${FORWARDING_HEADERS_WEBKIT2GTK_DIR}
-        -I${FORWARDING_HEADERS_WEBKIT2GTK_EXTENSION_DIR}
-        -I${WEBKIT_DIR}/WebProcess/InjectedBundle/API/gtk
-        ${WebKitDOM_INSTALLED_HEADERS}
-        ${WebKit2WebExtension_INSTALLED_HEADERS}
-        ${WEBKIT_DIR}/Shared/API/glib/WebKitContextMenu.cpp
-        ${WEBKIT_DIR}/Shared/API/glib/WebKitContextMenuItem.cpp
-        ${WEBKIT_DIR}/Shared/API/glib/WebKitHitTestResult.cpp
-        ${WEBKIT_DIR}/Shared/API/glib/WebKitURIRequest.cpp
-        ${WEBKIT_DIR}/Shared/API/glib/WebKitURIResponse.cpp
-        ${WEBKIT_DIR}/UIProcess/API/gtk/WebKitContextMenu.h
-        ${WEBKIT_DIR}/UIProcess/API/gtk/WebKitContextMenuActions.h
-        ${WEBKIT_DIR}/UIProcess/API/gtk/WebKitContextMenuItem.h
-        ${WEBKIT_DIR}/UIProcess/API/gtk/WebKitHitTestResult.h
-        ${WEBKIT_DIR}/UIProcess/API/gtk/WebKitURIRequest.h
-        ${WEBKIT_DIR}/UIProcess/API/gtk/WebKitURIResponse.h
-        ${WEBKIT_DIR}/WebProcess/InjectedBundle/API/glib/*.cpp
-)
-
-add_custom_command(
-    OUTPUT ${CMAKE_BINARY_DIR}/WebKit2-${WEBKITGTK_API_VERSION}.typelib
-    DEPENDS ${CMAKE_BINARY_DIR}/WebKit2-${WEBKITGTK_API_VERSION}.gir
-    COMMAND ${INTROSPECTION_COMPILER} --includedir=${CMAKE_BINARY_DIR} ${CMAKE_BINARY_DIR}/WebKit2-${WEBKITGTK_API_VERSION}.gir -o ${CMAKE_BINARY_DIR}/WebKit2-${WEBKITGTK_API_VERSION}.typelib
-)
-
-add_custom_command(
-    OUTPUT ${CMAKE_BINARY_DIR}/WebKit2WebExtension-${WEBKITGTK_API_VERSION}.typelib
-    DEPENDS ${CMAKE_BINARY_DIR}/WebKit2WebExtension-${WEBKITGTK_API_VERSION}.gir
-    COMMAND ${INTROSPECTION_COMPILER} --includedir=${CMAKE_BINARY_DIR} ${CMAKE_BINARY_DIR}/WebKit2WebExtension-${WEBKITGTK_API_VERSION}.gir -o ${CMAKE_BINARY_DIR}/WebKit2WebExtension-${WEBKITGTK_API_VERSION}.typelib
-)
-
-ADD_TYPELIB(${CMAKE_BINARY_DIR}/WebKit2-${WEBKITGTK_API_VERSION}.typelib)
-ADD_TYPELIB(${CMAKE_BINARY_DIR}/WebKit2WebExtension-${WEBKITGTK_API_VERSION}.typelib)
 
 install(TARGETS webkit2gtkinjectedbundle
         DESTINATION "${LIB_INSTALL_DIR}/webkit2gtk-${WEBKITGTK_API_VERSION}/injected-bundle"
