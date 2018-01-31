@@ -184,6 +184,11 @@ static void checkJSONWithLogging(NSString *jsonString, NSDictionary *expected)
         NSLog(@"Expected JSON: %@ to match values: %@", jsonString, expected);
 }
 
+static NSData *testIconImageData()
+{
+    return [NSData dataWithContentsOfURL:[[NSBundle mainBundle] URLForResource:@"icon" withExtension:@"png" subdirectory:@"TestWebKitAPI.resources"]];
+}
+
 static void runTestWithTemporaryTextFile(void(^runTest)(NSURL *fileURL))
 {
     NSString *fileName = [NSString stringWithFormat:@"drag-drop-text-file-%@.txt", [NSUUID UUID].UUIDString];
@@ -212,7 +217,7 @@ static void runTestWithTemporaryFolder(void(^runTest)(NSURL *folderURL))
     NSError *error = nil;
     NSFileManager *defaultManager = [NSFileManager defaultManager];
     [defaultManager createDirectoryAtURL:temporaryFolder.get() withIntermediateDirectories:NO attributes:nil error:&error];
-    [UIImagePNGRepresentation(testIconImage()) writeToURL:[temporaryFolder.get() URLByAppendingPathComponent:@"icon.png" isDirectory:NO] atomically:YES];
+    [testIconImageData() writeToURL:[temporaryFolder.get() URLByAppendingPathComponent:@"icon.png" isDirectory:NO] atomically:YES];
     [testZIPArchive() writeToURL:[temporaryFolder.get() URLByAppendingPathComponent:@"archive.zip" isDirectory:NO] atomically:YES];
 
     NSURL *firstSubdirectory = [temporaryFolder.get() URLByAppendingPathComponent:@"subdirectory1" isDirectory:YES];
@@ -1016,8 +1021,8 @@ TEST(DataInteractionTests, ExternalSourceDataTransferItemGetFolderAsEntry)
         @"DIR: /somedirectory",
         @"DIR: /somedirectory/subdirectory1",
         @"DIR: /somedirectory/subdirectory2",
-        @"FILE: /somedirectory/archive.zip ('application/zip', 988 bytes)",
-        @"FILE: /somedirectory/icon.png ('image/png', 42130 bytes)",
+        [NSString stringWithFormat:@"FILE: /somedirectory/archive.zip ('application/zip', %tu bytes)", testZIPArchive().length],
+        [NSString stringWithFormat:@"FILE: /somedirectory/icon.png ('image/png', %tu bytes)", testIconImageData().length],
         @"FILE: /somedirectory/subdirectory1/text-file-1.txt ('text/plain', 43 bytes)",
         @"FILE: /somedirectory/subdirectory2/text-file-2.txt ('text/plain', 44 bytes)"
     ];

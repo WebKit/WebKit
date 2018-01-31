@@ -1,3 +1,20 @@
+2018-01-31  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS WK2] API test DataInteractionTests.ExternalSourceDataTransferItemGetFolderAsEntry is failing after an SDK update
+        https://bugs.webkit.org/show_bug.cgi?id=182339
+        <rdar://problem/36041396>
+
+        Reviewed by Andy Estes.
+
+        This API test wasn't meant to be dependent on the size of an image generated using UIImagePNGRepresentation().
+        To make this test robust against changes to image encoding, write the raw data to the test folder instead and
+        check against the length of the data written.
+
+        * TestWebKitAPI/Tests/ios/DataInteractionTests.mm:
+        (testIconImageData):
+        (runTestWithTemporaryFolder):
+        (TestWebKitAPI::TEST):
+
 2018-01-31  Dan Bernstein  <mitz@apple.com>
 
         [macOS] MiniBrowser isn’t app-sandboxed
