@@ -879,5 +879,3 @@ webkit.org/b/181957 [ Release ] http/tests/misc/resource-timing-resolution.html 
 
 webkit.org/b/181835 webrtc/captureCanvas-webrtc.html [ Pass Timeout ]
 
-webkit.org/b/182007 [ Release ] fast/workers/worker-cloneport.html [ Pass Failure ]
-
