@@ -1,3 +1,23 @@
+2018-01-31  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Release assertion in Performance::resourceTimingBufferFullTimerFired when the resource timing buffer is shrunk
+        https://bugs.webkit.org/show_bug.cgi?id=182319
+        <rdar://problem/36904312>
+
+        Reviewed by Chris Dumez.
+
+        The crash was caused by a wrong release assertion. Handle author scripts shrinking the resource timing buffer
+        while resourcetimingbufferfull event is being dispatched.
+
+        Also fixed a bug that a superflous resourcetimingbufferfull event will be fired when new resource timing entries
+        are queued while resourcetimingbufferfull event is being dispatched.
+
+        Test: http/tests/performance/performance-resource-timing-resourcetimingbufferfull-queue-resource-entry.html
+              http/tests/performance/performance-resource-timing-resourcetimingbufferfull-shrinking-buffer-crash.html
+
+        * page/Performance.cpp:
+        (WebCore::Performance::resourceTimingBufferFullTimerFired): 
+
 2018-01-31  Youenn Fablet  <youenn@apple.com>
 
         com.apple.WebKit.Storage crashing at com.apple.WebCore: WebCore::SWServerRegistration::removeClientUsingRegistration
