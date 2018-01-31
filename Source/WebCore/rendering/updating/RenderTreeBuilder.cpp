@@ -318,6 +318,55 @@ void RenderTreeBuilder::childFlowStateChangesAndAffectsParentBlock(RenderElement
     }
 }
 
+static bool isAnonymousAndSafeToDelete(RenderElement& element)
+{
+    if (!element.isAnonymous())
+        return false;
+    if (element.isRenderView() || element.isRenderFragmentedFlow())
+        return false;
+    return true;
+}
+
+static RenderObject& findDestroyRootIncludingAnonymous(RenderObject& renderer)
+{
+    auto* destroyRoot = &renderer;
+    while (true) {
+        auto& destroyRootParent = *destroyRoot->parent();
+        if (!isAnonymousAndSafeToDelete(destroyRootParent))
+            break;
+        bool destroyingOnlyChild = destroyRootParent.firstChild() == destroyRoot && destroyRootParent.lastChild() == destroyRoot;
+        if (!destroyingOnlyChild)
+            break;
+        destroyRoot = &destroyRootParent;
+    }
+    return *destroyRoot;
+}
+
+void RenderTreeBuilder::removeFromParentAndDestroyCleaningUpAnonymousWrappers(RenderObject& child)
+{
+    // If the tree is destroyed, there is no need for a clean-up phase.
+    if (child.renderTreeBeingDestroyed()) {
+        child.removeFromParentAndDestroy();
+        return;
+    }
+
+    // Remove intruding floats from sibling blocks before detaching.
+    if (is<RenderBox>(child) && child.isFloatingOrOutOfFlowPositioned())
+        downcast<RenderBox>(child).removeFloatingOrPositionedChildFromBlockLists();
+    auto& destroyRoot = findDestroyRootIncludingAnonymous(child);
+    if (is<RenderTableRow>(destroyRoot))
+        downcast<RenderTableRow>(destroyRoot).collapseAndDestroyAnonymousSiblingRows();
+
+    auto& destroyRootParent = *destroyRoot.parent();
+    destroyRootParent.removeAndDestroyChild(destroyRoot);
+    destroyRootParent.removeAnonymousWrappersForInlinesIfNecessary();
+
+    // Anonymous parent might have become empty, try to delete it too.
+    if (isAnonymousAndSafeToDelete(destroyRootParent) && !destroyRootParent.firstChild())
+        removeFromParentAndDestroyCleaningUpAnonymousWrappers(destroyRootParent);
+    // WARNING: child is deleted here.
+}
+
 void RenderTreeBuilder::insertChildToRenderInline(RenderInline& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild)
 {
     inlineBuilder().insertChild(parent, WTFMove(child), beforeChild);

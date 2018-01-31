@@ -551,7 +551,7 @@ void RenderTreeUpdater::tearDownRenderers(Element& root, TeardownType teardownTy
             GeneratedContent::removeAfterPseudoElement(element);
 
             if (auto* renderer = element.renderer()) {
-                renderer->removeFromParentAndDestroyCleaningUpAnonymousWrappers();
+                RenderTreeBuilder::current()->removeFromParentAndDestroyCleaningUpAnonymousWrappers(*renderer);
                 element.setRenderer(nullptr);
             }
 
@@ -586,7 +586,7 @@ void RenderTreeUpdater::tearDownTextRenderer(Text& text)
     auto* renderer = text.renderer();
     if (!renderer)
         return;
-    renderer->removeFromParentAndDestroyCleaningUpAnonymousWrappers();
+    RenderTreeBuilder::current()->removeFromParentAndDestroyCleaningUpAnonymousWrappers(*renderer);
     text.setRenderer(nullptr);
 }
 

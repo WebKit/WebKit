@@ -77,6 +77,7 @@ public:
     void moveRubyChildren(RenderRubyBase& from, RenderRubyBase& to);
     void childFlowStateChangesAndAffectsParentBlock(RenderElement& child);
     RenderObject* resolveMovedChildForMultiColumnFlow(RenderFragmentedFlow& enclosingFragmentedFlow, RenderObject* beforeChild);
+    void removeFromParentAndDestroyCleaningUpAnonymousWrappers(RenderObject& child);
 
 private:
     class FirstLetter;

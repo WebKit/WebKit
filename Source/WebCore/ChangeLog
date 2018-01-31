@@ -1,3 +1,29 @@
+2018-01-31  Zalan Bujtas  <zalan@apple.com>
+
+        [RenderTreeBuilder] Move RenderObject::removeFromParentAndDestroyCleaningUpAnonymousWrappers to RenderTreeBuilder.
+        https://bugs.webkit.org/show_bug.cgi?id=182348
+        <rdar://problem/37082837>
+
+        Reviewed by Antti Koivisto.
+
+        All the callsites are in the RenderTreeUpdater by now.
+
+        No change in functionality.
+
+        * rendering/RenderObject.cpp:
+        (WebCore::isAnonymousAndSafeToDelete): Deleted.
+        (WebCore::findDestroyRootIncludingAnonymous): Deleted.
+        (WebCore::RenderObject::removeFromParentAndDestroyCleaningUpAnonymousWrappers): Deleted.
+        * rendering/RenderObject.h:
+        * rendering/updating/RenderTreeBuilder.cpp:
+        (WebCore::isAnonymousAndSafeToDelete):
+        (WebCore::findDestroyRootIncludingAnonymous):
+        (WebCore::RenderTreeBuilder::removeFromParentAndDestroyCleaningUpAnonymousWrappers):
+        * rendering/updating/RenderTreeBuilder.h:
+        * rendering/updating/RenderTreeUpdater.cpp:
+        (WebCore::RenderTreeUpdater::tearDownRenderers):
+        (WebCore::RenderTreeUpdater::tearDownTextRenderer):
+
 2018-01-31  Ryosuke Niwa  <rniwa@webkit.org>
 
         Release assertion in Performance::resourceTimingBufferFullTimerFired when the resource timing buffer is shrunk

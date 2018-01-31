@@ -753,7 +753,6 @@ public:
     virtual void imageChanged(WrappedImagePtr, const IntRect* = nullptr) { }
 
     void removeFromParentAndDestroy();
-    void removeFromParentAndDestroyCleaningUpAnonymousWrappers();
 
     CSSAnimationController& animation() const;
 
