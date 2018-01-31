@@ -142,7 +142,7 @@ public:
     void set(HTTPHeaderName, const String& value);
     void add(HTTPHeaderName, const String& value);
     bool addIfNotPresent(HTTPHeaderName, const String&);
-    bool contains(HTTPHeaderName) const;
+    WEBCORE_EXPORT bool contains(HTTPHeaderName) const;
     WEBCORE_EXPORT bool remove(HTTPHeaderName);
 
     // Instead of passing a string literal to any of these functions, just use a HTTPHeaderName instead.

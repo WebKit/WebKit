@@ -110,9 +110,8 @@ void ServiceWorkerClientFetch::didReceiveResponse(ResourceResponse&& response)
     }
     response.setSource(ResourceResponse::Source::ServiceWorker);
 
-    if (response.isRedirection()) {
+    if (response.isRedirection() && response.httpHeaderFields().contains(HTTPHeaderName::Location)) {
         m_redirectionStatus = RedirectionStatus::Receiving;
-        // FIXME: Get shouldClearReferrerOnHTTPSToHTTPRedirect value from
         m_loader->willSendRequest(m_loader->request().redirectedRequest(response, m_shouldClearReferrerOnHTTPSToHTTPRedirect), response, [protectedThis = makeRef(*this), this](ResourceRequest&& request) {
             if (request.isNull() || !m_callback)
                 return;
