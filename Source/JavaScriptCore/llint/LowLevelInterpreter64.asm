@@ -376,15 +376,32 @@ macro checkSwitchToJITForLoop()
         end)
 end
 
-macro loadCaged(basePtr, mask, source, dest, scratch)
-    loadp source, dest
+macro uncage(basePtr, mask, ptr, scratch)
     if GIGACAGE_ENABLED and not C_LOOP
         loadp basePtr, scratch
         btpz scratch, .done
-        andp mask, dest
-        addp scratch, dest
+        andp mask, ptr
+        addp scratch, ptr
     .done:
     end
+end
+
+macro loadCaged(basePtr, mask, source, dest, scratch)
+    loadp source, dest
+    uncage(basePtr, mask, dest, scratch)
+end
+
+macro loadTypedArrayCaged(basePtr, mask, source, typeIndex, dest, scratch)
+    if POISON
+        andp TypedArrayPoisonIndexMask, typeIndex
+        leap _g_typedArrayPoisons, dest
+        loadp [dest, typeIndex, 8], dest
+        loadp source, scratch
+        xorp scratch, dest
+    else
+        loadp source, dest
+    end
+    uncage(basePtr, mask, dest, scratch)
 end
 
 macro loadVariable(operand, value)
@@ -1541,9 +1558,9 @@ _llint_op_get_by_val:
     biaeq t2, NumberOfTypedArrayTypesExcludingDataView, .opGetByValSlow
     
     # Sweet, now we know that we have a typed array. Do some basic things now.
-    loadCaged(_g_gigacageBasePtrs + Gigacage::BasePtrs::primitive, constexpr PRIMITIVE_GIGACAGE_MASK, JSArrayBufferView::m_vector[t0], t3, t5)
     biaeq t1, JSArrayBufferView::m_length[t0], .opGetByValSlow
-    
+    loadTypedArrayCaged(_g_gigacageBasePtrs + Gigacage::BasePtrs::primitive, constexpr PRIMITIVE_GIGACAGE_MASK, JSArrayBufferView::m_poisonedVector[t0], t2, t3, t5)
+
     # Now bisect through the various types:
     #    Int8ArrayType,
     #    Uint8ArrayType,

@@ -394,6 +394,7 @@ const Float64ArrayType = constexpr Float64ArrayType
 
 const FirstArrayType = constexpr FirstTypedArrayType
 const NumberOfTypedArrayTypesExcludingDataView = constexpr NumberOfTypedArrayTypesExcludingDataView
+const TypedArrayPoisonIndexMask = constexpr TypedArrayPoisonIndexMask
 
 # Type flags constants.
 const MasqueradesAsUndefined = constexpr MasqueradesAsUndefined
