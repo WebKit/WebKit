@@ -33,6 +33,12 @@
             "testShouldScrollOverflowElementsIfClickPointIsOutOfViewButElementIsInView": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/181730"}}
             },
+            "testShouldBeAbleToClickElementInAFrameThatIsOutOfView": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/181731"}}
+            },
+            "testShouldBeAbleToClickElementThatIsOutOfViewInAFrame": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/181731"}}
+            },
             "testShouldBeAbleToClickElementThatIsOutOfViewInAFrameThatIsOutOfView": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/181731"}}
             },
@@ -40,9 +46,6 @@
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/181731"}}
             },
             "testShouldBeAbleToClickElementThatIsOutOfViewInANestedFrameThatIsOutOfView": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/181731"}}
-            },
-            "testShouldNotScrollWhenGettingElementSize": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/181731"}}
             },
             "testShouldBeAbleToClickElementInATallFrame": {
@@ -87,8 +90,18 @@
             }
         }
     },
+    "imported/selenium/py/test/selenium/webdriver/common/page_load_timeout_tests.py": {
+        "subtests": {
+            "testClickShouldTimeout": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/182332"}}
+            }
+        }
+    },
     "imported/selenium/py/test/selenium/webdriver/common/select_class_tests.py": {
         "subtests": {
+            "testSelectByVisibleTextShouldNormalizeSpaces": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/174617"}}
+            },
             "testSelectByIndexMultiple": {
                 "expected": {"all": {"slow": true}}
             },
@@ -104,11 +117,80 @@
         "subtests": {
             "testReadALargeAmountOfData": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/181737"}}
+            },
+            "testShouldConvertANonBreakingSpaceIntoANormalSpaceCharacter": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/174617"}}
+            },
+            "testShouldTreatANonBreakingSpaceAsAnyOtherWhitespaceCharacterWhenCollapsingWhitespace": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/174617"}}
+            },
+            "testHavingInlineElementsShouldNotAffectHowTextIsReturned": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/174617"}}
+            },
+            "testShouldBeAbleToSetMoreThanOneLineOfTextInATextArea": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/174617"}}
+            },
+            "testShouldHandleSiblingBlockLevelElements": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/174617"}}
+            },
+            "testShouldOnlyIncludeVisibleText": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/174617"}}
+            }
+        }
+    },
+    "imported/selenium/py/test/selenium/webdriver/common/typing_tests.py": {
+        "subtests": {
+            "testNumericShiftKeys": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/182333"}}
+            },
+            "testUppercaseAlphaKeys": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/182333"}}
+            },
+            "testAllPrintableKeys": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/182333"}}
+            },
+            "testNumberpadAndFunctionKeys": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/182333"}}
+            }
+        }
+    },
+    "imported/selenium/py/test/selenium/webdriver/common/visibility_tests.py": {
+        "subtests": {
+            "testShouldNotBeAbleToClickOnAnElementThatIsNotDisplayed": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/182334"}}
+            },
+            "testShouldNotBeAbleToToggleAnElementThatIsNotDisplayed": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/182334"}}
+            },
+            "testShouldNotBeAbleToSelectAnElementThatIsNotDisplayed": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/182334"}}
+            },
+            "testShouldNotBeAbleToTypeAnElementThatIsNotDisplayed": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/182334"}}
+            },
+            "testShouldSayElementsWithNegativeTransformAreNotDisplayed": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/182334"}}
+            },
+            "testShouldSayElementsWithParentWithNegativeTransformAreNotDisplayed": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/182334"}}
             }
         }
     },
     "imported/selenium/py/test/selenium/webdriver/common/w3c_interaction_tests.py": {
         "expected": {"all": {"status": ["SKIP"], "bug": "webkit.org/b/174616"}}
+    },
+    "imported/selenium/py/test/selenium/webdriver/common/window_tests.py": {
+        "subtests": {
+            "testShouldMaximizeTheWindow": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/180398"}}
+            },
+            "test_should_fullscreen_the_current_window": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/180398"}}
+            },
+            "test_should_minimize_the_current_window": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/180398"}}
+            }
+        }
     },
     "imported/w3c/webdriver/tests/actions/key.py": {
         "expected": {"all": {"status": ["SKIP"], "bug": "webkit.org/b/174616"}}
@@ -162,6 +244,13 @@
     "imported/w3c/webdriver/tests/contexts/json_serialize_windowproxy.py": {
         "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/180397"}}
     },
+    "imported/w3c/webdriver/tests/cookies/get_named_cookie.py": {
+        "subtests": {
+            "test_duplicated_cookie": {
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/182330"}}
+            }
+        }
+    },
     "imported/w3c/webdriver/tests/document_handling/page_source.py": {
         "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/180399"}}
     },
@@ -171,6 +260,9 @@
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/180400"}}
             }
         }
+    },
+    "imported/w3c/webdriver/tests/element_send_keys/form_controls.py": {
+        "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/182331"}}
     },
     "imported/w3c/webdriver/tests/element_send_keys/interactability.py": {
         "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/181644"}}
@@ -325,9 +417,6 @@
     },
     "imported/w3c/webdriver/tests/sessions/new_session/default_values.py": {
         "subtests": {
-            "test_ignore_non_spec_fields_in_capabilities": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/180409"}}
-            },
             "test_valid_but_unmatchable_key": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/180410"}}
             }
