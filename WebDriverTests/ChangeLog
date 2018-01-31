@@ -1,3 +1,27 @@
+2018-01-31  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Update W3C WebDriver imported tests.
+
+        * imported/w3c/importer.json:
+        * imported/w3c/tools/wptrunner/requirements_sauce.txt:
+        * imported/w3c/tools/wptrunner/tox.ini:
+        * imported/w3c/tools/wptrunner/wptrunner/browsers/sauce.py:
+        * imported/w3c/tools/wptrunner/wptrunner/executors/executormarionette.py:
+        * imported/w3c/tools/wptrunner/wptrunner/executors/pytestrunner/runner.py:
+        * imported/w3c/tools/wptrunner/wptrunner/metadata.py:
+        * imported/w3c/webdriver/OWNERS:
+        * imported/w3c/webdriver/tests/__init__.py:
+        * imported/w3c/webdriver/tests/actions/mouse.py:
+        * imported/w3c/webdriver/tests/actions/mouse_dblclick.py:
+        * imported/w3c/webdriver/tests/actions/support/mouse.py:
+        * imported/w3c/webdriver/tests/cookies/add_cookie.py:
+        * imported/w3c/webdriver/tests/cookies/delete_cookie.py:
+        * imported/w3c/webdriver/tests/cookies/get_named_cookie.py:
+        * imported/w3c/webdriver/tests/element_send_keys/form_controls.py: Added.
+        * imported/w3c/webdriver/tests/element_send_keys/interactability.py:
+        * imported/w3c/webdriver/tests/interaction/element_clear.py:
+        * imported/w3c/webdriver/tests/support/asserts.py:
+
 2018-01-26  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Update W3C WebDriver imported tests.

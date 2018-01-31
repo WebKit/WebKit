@@ -190,7 +190,7 @@ def run(path, args, timeout, env, expectations, ignore_param=None):
 
     with TemporaryDirectory() as cache_directory:
         try:
-            cmd = ['--verbose',
+            cmd = ['-vv',
                    '--capture=no',
                    '--basetemp=%s' % cache_directory,
                    '--showlocals',

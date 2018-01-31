@@ -1,7 +1,27 @@
+# META: timeout=long
+
 import pytest
 
-from tests.support.asserts import assert_error, assert_success
+from tests.support.asserts import (
+    assert_element_has_focus,
+    assert_error,
+    assert_success,
+)
 from tests.support.inline import inline
+
+
+def add_event_listeners(element):
+    element.session.execute_script("""
+        let [target] = arguments;
+        window.events = [];
+        for (let expected of ["focus", "blur", "change"]) {
+          target.addEventListener(expected, ({type}) => window.events.push(type));
+        }
+        """, args=(element,))
+
+
+def get_events(session):
+    return session.execute_script("return window.events")
 
 
 @pytest.fixture(scope="session")
@@ -84,11 +104,17 @@ def test_keyboard_interactable(session):
 def test_input(session, type, value, default):
     session.url = inline("<input type=%s value='%s'>" % (type, value))
     element = session.find.css("input", all=False)
+    add_event_listeners(element)
     assert element.property("value") == value
 
     response = element_clear(session, element)
     assert_success(response)
     assert element.property("value") == default
+    events = get_events(session)
+    assert "focus" in events
+    assert "change" in events
+    assert "blur" in events
+    assert_element_has_focus(session.execute_script("return document.body"))
 
 
 @pytest.mark.parametrize("type",
@@ -144,11 +170,16 @@ def test_input_readonly(session, type):
 def test_textarea(session):
     session.url = inline("<textarea>foobar</textarea>")
     element = session.find.css("textarea", all=False)
+    add_event_listeners(element)
     assert element.property("value") == "foobar"
 
     response = element_clear(session, element)
     assert_success(response)
     assert element.property("value") == ""
+    events = get_events(session)
+    assert "focus" in events
+    assert "change" in events
+    assert "blur" in events
 
 
 def test_textarea_disabled(session):
@@ -190,7 +221,7 @@ def test_input_file_multiple(session, text_file):
 
 def test_select(session):
     session.url = inline("""
-        <select disabled>
+        <select>
           <option>foo
         </select>
         """)
@@ -231,32 +262,15 @@ def test_button_with_subtree(session):
 def test_contenteditable(session):
     session.url = inline("<p contenteditable>foobar</p>")
     element = session.find.css("p", all=False)
+    add_event_listeners(element)
     assert element.property("innerHTML") == "foobar"
 
     response = element_clear(session, element)
     assert_success(response)
     assert element.property("innerHTML") == ""
+    assert get_events(session) == ["focus", "change", "blur"]
+    assert_element_has_focus(session.execute_script("return document.body"))
 
-
-def test_contenteditable_focus(session):
-    session.url = inline("""
-        <p contenteditable>foobar</p>
-
-        <script>
-        window.events = [];
-        let p = document.querySelector("p");
-        for (let ev of ["focus", "blur"]) {
-          p.addEventListener(ev, ({type}) => window.events.push(type));
-        }
-        </script>
-        """)
-    element = session.find.css("p", all=False)
-    assert element.property("innerHTML") == "foobar"
-
-    response = element_clear(session, element)
-    assert_success(response)
-    assert element.property("innerHTML") == ""
-    assert session.execute_script("return window.events") == ["focus", "blur"]
 
 
 def test_designmode(session):
@@ -268,48 +282,19 @@ def test_designmode(session):
     response = element_clear(session, element)
     assert_success(response)
     assert element.property("innerHTML") == "<br>"
-
-
-def test_resettable_element_focus(session):
-    session.url = inline("""
-        <input value="foobar">
-
-        <script>
-        window.events = [];
-        let input = document.querySelector("input");
-        for (let ev of ["focus", "blur"]) {
-          input.addEventListener(ev, ({type}) => window.events.push(type));
-        }
-        </script>
-        """)
-    element = session.find.css("input", all=False)
-    assert element.property("value") == "foobar"
-
-    response = element_clear(session, element)
-    assert_success(response)
-    assert element.property("value") == ""
-    assert session.execute_script("return window.events") == ["focus", "blur"]
+    assert_element_has_focus(session.execute_script("return document.body"))
 
 
 def test_resettable_element_focus_when_empty(session):
-    session.url = inline("""
-        <input>
-
-        <script>
-        window.events = [];
-        let p = document.querySelector("input");
-        for (let ev of ["focus", "blur"]) {
-          p.addEventListener(ev, ({type}) => window.events.push(type));
-        }
-        </script>
-        """)
+    session.url = inline("<input>")
     element = session.find.css("input", all=False)
+    add_event_listeners(element)
     assert element.property("value") == ""
 
     response = element_clear(session, element)
     assert_success(response)
     assert element.property("value") == ""
-    assert session.execute_script("return window.events") == []
+    assert get_events(session) == []
 
 
 @pytest.mark.parametrize("type,invalid_value",

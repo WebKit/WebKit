@@ -52,7 +52,7 @@ def run(path, server_config, session_config, timeout=0):
     with TemporaryDirectory() as cache:
         try:
             pytest.main(["--strict",  # turn warnings into errors
-                         "--verbose",  # show each individual subtest
+                         "-vv",  # show each individual subtest and full failure logs
                          "--capture", "no",  # enable stdout/stderr from tests
                          "--basetemp", cache,  # temporary directory
                          "--showlocals",  # display contents of variables in local scope

@@ -1,3 +1,16 @@
+2018-01-31  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Update W3C WebDriver imported tests.
+
+        Show full pytest failure logs.
+
+        pytest truncates long lists when printing a failed assertion.
+        This is not great for debugging and arguably it should be the
+        default to show the full diff when comparing lists.
+
+        * Scripts/webkitpy/webdriver_tests/pytest_runner.py:
+        (run):
+
 2018-01-30  John Wilander  <wilander@apple.com>
 
         Add callbacks to testRunner.statisticsSetShouldPartitionCookiesForHost() and testRunner.statisticsUpdateCookiePartitioning()
