@@ -1,3 +1,15 @@
+2018-01-30  Basuke Suzuki  <Basuke.Suzuki@sony.com>
+
+        [webkitpy] Config file for apache is copied twice.
+        https://bugs.webkit.org/show_bug.cgi?id=182131
+
+        Reviewed by Daniel Bates.
+
+        * Scripts/webkitpy/layout_tests/servers/apache_http_server.py:
+        (LayoutTestApacheHttpd.__init__):
+        (LayoutTestApacheHttpd._copy_apache_config_file):
+        (LayoutTestApacheHttpd._get_apache_config_file_path): Deleted.
+
 2018-01-30  Don Olmstead  <don.olmstead@sony.com>
 
         JSExports.h should be included as <JavaScriptCore/JSExportMacros.h>
