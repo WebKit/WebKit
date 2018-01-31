@@ -1,3 +1,21 @@
+2018-01-31  Philippe Normand  <pnormand@igalia.com>
+
+        [JHBuild] Add gstreamer-vaapi in moduleset
+        https://bugs.webkit.org/show_bug.cgi?id=182283
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        GStreamer-VAAPI is required for hardware-accelerated video
+        playback support on Intel and AMD (using radeosi driver)
+        platforms.
+
+        * gstreamer/jhbuild.modules: Add gstreamer-vaapi.
+        * gtk/install-dependencies: Install libva.
+        * wpe/install-dependencies: Ditto.
+        * Scripts/webkitpy/port/gtk.py:
+        (GtkPort.setup_environ_for_server): Disable va-api support when
+        testing because it's incompatible with Mesa's softGL driver.
+
 2018-01-31  Charlie Turner  <cturner@igalia.com>
 
         [WPE] Update jhbuild dependencies

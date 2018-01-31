@@ -121,7 +121,6 @@ class GtkPort(Port):
         environment['LIBOVERLAY_SCROLLBAR'] = '0'
         environment['TEST_RUNNER_INJECTED_BUNDLE_FILENAME'] = self._build_path('lib', 'libTestRunnerInjectedBundle.so')
         environment['TEST_RUNNER_TEST_PLUGIN_PATH'] = self._build_path('lib', 'plugins')
-        environment['OWR_USE_TEST_SOURCES'] = '1'
         self._copy_value_from_environ_if_set(environment, 'WEBKIT_OUTPUTDIR')
 
         # Configure the software libgl renderer if jhbuild ready and we test inside a virtualized window system
@@ -130,14 +129,16 @@ class GtkPort(Port):
                                                                   ignore_errors=True).strip()
             dri_libgl_path = os.path.join(llvmpipe_libgl_path, "dri")
             if os.path.exists(os.path.join(llvmpipe_libgl_path, "libGL.so")) and os.path.exists(os.path.join(dri_libgl_path, "swrast_dri.so")):
-                    # Force the Gallium llvmpipe software rasterizer
-                    environment['LIBGL_ALWAYS_SOFTWARE'] = "1"
-                    environment['LIBGL_DRIVERS_PATH'] = dri_libgl_path
-                    environment['LD_LIBRARY_PATH'] = llvmpipe_libgl_path
-                    if os.environ.get('LD_LIBRARY_PATH'):
-                            environment['LD_LIBRARY_PATH'] += ':%s' % os.environ.get('LD_LIBRARY_PATH')
+                # Make sure va-api support gets disabled because it's incompatible with Mesa's softGL driver.
+                environment['LIBVA_DRIVER_NAME'] = "null"
+                # Force the Gallium llvmpipe software rasterizer
+                environment['LIBGL_ALWAYS_SOFTWARE'] = "1"
+                environment['LIBGL_DRIVERS_PATH'] = dri_libgl_path
+                environment['LD_LIBRARY_PATH'] = llvmpipe_libgl_path
+                if os.environ.get('LD_LIBRARY_PATH'):
+                    environment['LD_LIBRARY_PATH'] += ':%s' % os.environ.get('LD_LIBRARY_PATH')
             else:
-                    _log.warning("Can't find Gallium llvmpipe driver. Try to run update-webkitgtk-libs")
+                _log.warning("Can't find Gallium llvmpipe driver. Try to run update-webkitgtk-libs")
         if self.get_option("leaks"):
             # Turn off GLib memory optimisations https://wiki.gnome.org/Valgrind.
             environment['G_SLICE'] = 'always-malloc'

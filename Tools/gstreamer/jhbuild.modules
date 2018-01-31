@@ -10,6 +10,7 @@
       <dep package="gst-plugins-good"/>
       <dep package="gst-plugins-bad"/>
       <dep package="gst-libav"/>
+      <dep package="gstreamer-vaapi"/>
     </dependencies>
   </metamodule>
 
@@ -102,5 +103,16 @@
             repo="gstreamer"
             hash="sha256:2a56aa5d2d8cd912f2bce17f174713d2c417ca298f1f9c28ee66d4aa1e1d9e62"/>
   </autotools>
+
+  <autotools id="gstreamer-vaapi">
+    <branch module="gstreamer-vaapi/gstreamer-vaapi-${version}.tar.xz" version="1.12.4"
+            repo="gstreamer"
+            hash="sha256:1c2d77242e1f30c4d1394636cae9f6877228a017960fca96881e0080d8b6e9c9"/>
+    <dependencies>
+      <dep package="gstreamer"/>
+      <dep package="gst-plugins-base"/>
+      <dep package="gst-plugins-bad"/>
+    </dependencies>
+   </autotools>
 
 </moduleset>

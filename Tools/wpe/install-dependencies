@@ -118,6 +118,7 @@ function installDependenciesWithApt {
         libsrtp0-dev \
         libtheora-dev \
         libtool-bin \
+        libva-dev \
         libvorbis-dev \
         libvpx-dev \
         libxcb-xkb-dev \
@@ -203,6 +204,7 @@ function installDependenciesWithPacman {
         libsrtp \
         libtheora \
         libv4l-dev \
+        libva \
         libvorbis \
         libvpx \
         libxcb \
@@ -284,6 +286,7 @@ function installDependenciesWithDnf {
         libsrtp-devel \
         libtheora-devel \
         libv4l-devel \
+        libva-devel \
         libvorbis-devel \
         libvpx-devel \
         libxcb-devel \
