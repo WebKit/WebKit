@@ -167,31 +167,6 @@ void RenderMultiColumnFlow::willBeRemovedFromTree()
     RenderFragmentedFlow::willBeRemovedFromTree();
 }
 
-RenderObject* RenderMultiColumnFlow::resolveMovedChild(RenderObject* child) const
-{
-    if (!child)
-        return nullptr;
-
-    if (child->style().columnSpan() != ColumnSpanAll || !is<RenderBox>(*child)) {
-        // We only need to resolve for column spanners.
-        return child;
-    }
-    // The renderer for the actual DOM node that establishes a spanner is moved from its original
-    // location in the render tree to becoming a sibling of the column sets. In other words, it's
-    // moved out from the flow thread (and becomes a sibling of it). When we for instance want to
-    // create and insert a renderer for the sibling node immediately preceding the spanner, we need
-    // to map that spanner renderer to the spanner's placeholder, which is where the new inserted
-    // renderer belongs.
-    if (RenderMultiColumnSpannerPlaceholder* placeholder = findColumnSpannerPlaceholder(downcast<RenderBox>(child)))
-        return placeholder;
-
-    // This is an invalid spanner, or its placeholder hasn't been created yet. This happens when
-    // moving an entire subtree into the flow thread, when we are processing the insertion of this
-    // spanner's preceding sibling, and we obviously haven't got as far as processing this spanner
-    // yet.
-    return child;
-}
-
 bool RenderMultiColumnFlow::isColumnSpanningDescendant(const RenderBox& descendantBox) const
 {
     return descendantBox.style().columnSpan() == ColumnSpanAll;

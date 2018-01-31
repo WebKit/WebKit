@@ -388,4 +388,9 @@ void RenderTreeBuilder::updateAfterDescendants(RenderElement& renderer)
         multiColumnBuilder().updateAfterDescendants(downcast<RenderBlockFlow>(renderer));
 }
 
+RenderObject* RenderTreeBuilder::resolveMovedChildForMultiColumnFlow(RenderFragmentedFlow& enclosingFragmentedFlow, RenderObject* beforeChild)
+{
+    return multiColumnBuilder().resolveMovedChild(enclosingFragmentedFlow, beforeChild);
+}
+
 }

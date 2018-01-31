@@ -36,6 +36,10 @@ public:
     MultiColumn(RenderTreeBuilder&);
 
     void updateAfterDescendants(RenderBlockFlow&);
+    // Some renderers (column spanners) are moved out of the flow thread to live among column
+    // sets. If |child| is such a renderer, resolve it to the placeholder that lives at the original
+    // location in the tree.
+    RenderObject* resolveMovedChild(RenderFragmentedFlow& enclosingFragmentedFlow, RenderObject* beforeChild);
 
 private:
     void createFragmentedFlow(RenderBlockFlow&);

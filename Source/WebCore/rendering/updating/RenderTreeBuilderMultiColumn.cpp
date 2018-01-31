@@ -139,4 +139,36 @@ void RenderTreeBuilder::MultiColumn::destroyFragmentedFlow(RenderBlockFlow& flow
         m_builder.insertChild(*parentAndSpanner.first, WTFMove(parentAndSpanner.second));
 }
 
+
+RenderObject* RenderTreeBuilder::MultiColumn::resolveMovedChild(RenderFragmentedFlow& enclosingFragmentedFlow, RenderObject* beforeChild)
+{
+    if (!beforeChild)
+        return nullptr;
+
+    if (!is<RenderBox>(*beforeChild))
+        return beforeChild;
+
+    if (!is<RenderMultiColumnFlow>(enclosingFragmentedFlow))
+        return beforeChild;
+
+    // We only need to resolve for column spanners.
+    if (beforeChild->style().columnSpan() != ColumnSpanAll)
+        return beforeChild;
+
+    // The renderer for the actual DOM node that establishes a spanner is moved from its original
+    // location in the render tree to becoming a sibling of the column sets. In other words, it's
+    // moved out from the flow thread (and becomes a sibling of it). When we for instance want to
+    // create and insert a renderer for the sibling node immediately preceding the spanner, we need
+    // to map that spanner renderer to the spanner's placeholder, which is where the new inserted
+    // renderer belongs.
+    if (auto* placeholder = downcast<RenderMultiColumnFlow>(enclosingFragmentedFlow).findColumnSpannerPlaceholder(downcast<RenderBox>(beforeChild)))
+        return placeholder;
+
+    // This is an invalid spanner, or its placeholder hasn't been created yet. This happens when
+    // moving an entire subtree into the flow thread, when we are processing the insertion of this
+    // spanner's preceding sibling, and we obviously haven't got as far as processing this spanner
+    // yet.
+    return beforeChild;
+}
+
 }

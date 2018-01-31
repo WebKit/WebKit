@@ -41,7 +41,7 @@ void RenderTreeBuilder::BlockFlow::insertChild(RenderBlockFlow& parent, RenderPt
         return m_builder.insertChild(*parent.multiColumnFlow(), WTFMove(child), beforeChild);
     auto* beforeChildOrPlaceholder = beforeChild;
     if (auto* containingFragmentedFlow = parent.enclosingFragmentedFlow())
-        beforeChildOrPlaceholder = containingFragmentedFlow->resolveMovedChild(beforeChild);
+        beforeChildOrPlaceholder = m_builder.resolveMovedChildForMultiColumnFlow(*containingFragmentedFlow, beforeChild);
     m_builder.insertChildToRenderBlock(parent, WTFMove(child), beforeChildOrPlaceholder);
 }
 

@@ -76,6 +76,7 @@ public:
     RenderObject* splitAnonymousBoxesAroundChild(RenderBox& parent, RenderObject* beforeChild);
     void moveRubyChildren(RenderRubyBase& from, RenderRubyBase& to);
     void childFlowStateChangesAndAffectsParentBlock(RenderElement& child);
+    RenderObject* resolveMovedChildForMultiColumnFlow(RenderFragmentedFlow& enclosingFragmentedFlow, RenderObject* beforeChild);
 
 private:
     class FirstLetter;

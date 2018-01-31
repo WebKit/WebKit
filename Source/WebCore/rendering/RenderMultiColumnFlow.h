@@ -108,7 +108,6 @@ private:
     const char* renderName() const override;
     void addFragmentToThread(RenderFragmentContainer*) override;
     void willBeRemovedFromTree() override;
-    RenderObject* resolveMovedChild(RenderObject* child) const override;
     void fragmentedFlowDescendantInserted(RenderObject&) override;
     void fragmentedFlowRelativeWillBeRemoved(RenderObject&) override;
     void fragmentedFlowDescendantBoxLaidOut(RenderBox*) override;
