@@ -1,3 +1,15 @@
+2018-01-31  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add the support for running StyleBench to run-benchmark
+        https://bugs.webkit.org/show_bug.cgi?id=182323
+
+        Reviewed by Antti Koivisto.
+
+        Added the plan file and the patch needed to run StyleBench using run-benchmark as of r227863.
+
+        * Scripts/webkitpy/benchmark_runner/data/patches/webserver/StyleBench.patch: Added.
+        * Scripts/webkitpy/benchmark_runner/data/plans/stylebench.plan: Added.
+
 2018-01-31  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS WK2] API test DataInteractionTests.ExternalSourceDataTransferItemGetFolderAsEntry is failing after an SDK update
