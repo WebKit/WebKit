@@ -126,8 +126,8 @@ void IsoCellSet::sweepToFreeList(MarkedBlock::Handle* block)
         RELEASE_ASSERT_NOT_REACHED();
     }
     
-    if (block->hasAnyNewlyAllocated()) {
-        m_bits[block->index()]->concurrentFilter(block->newlyAllocated());
+    if (block->block().hasAnyNewlyAllocated()) {
+        m_bits[block->index()]->concurrentFilter(block->block().newlyAllocated());
         return;
     }
 

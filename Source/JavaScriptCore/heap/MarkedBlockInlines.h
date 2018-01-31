@@ -40,12 +40,12 @@ inline unsigned MarkedBlock::Handle::cellsPerBlock()
     return MarkedSpace::blockPayload / cellSize();
 }
 
-inline bool MarkedBlock::Handle::isNewlyAllocatedStale() const
+inline bool MarkedBlock::isNewlyAllocatedStale() const
 {
-    return m_newlyAllocatedVersion != space()->newlyAllocatedVersion();
+    return footer().m_newlyAllocatedVersion != space()->newlyAllocatedVersion();
 }
 
-inline bool MarkedBlock::Handle::hasAnyNewlyAllocated()
+inline bool MarkedBlock::hasAnyNewlyAllocated()
 {
     return !isNewlyAllocatedStale();
 }
@@ -143,19 +143,18 @@ ALWAYS_INLINE bool MarkedBlock::Handle::isLive(HeapVersion markingVersion, HeapV
     auto count = footer.m_lock.tryOptimisticFencelessRead();
     if (count.value) {
         Dependency fenceBefore = Dependency::fence(count.input);
+        MarkedBlock& fencedBlock = *fenceBefore.consume(&block);
+        MarkedBlock::Footer& fencedFooter = fencedBlock.footer();
         MarkedBlock::Handle* fencedThis = fenceBefore.consume(this);
         
-        ASSERT(!fencedThis->isFreeListed());
+        ASSERT_UNUSED(fencedThis, !fencedThis->isFreeListed());
         
-        HeapVersion myNewlyAllocatedVersion = fencedThis->m_newlyAllocatedVersion;
+        HeapVersion myNewlyAllocatedVersion = fencedFooter.m_newlyAllocatedVersion;
         if (myNewlyAllocatedVersion == newlyAllocatedVersion) {
-            bool result = fencedThis->isNewlyAllocated(cell);
+            bool result = fencedBlock.isNewlyAllocated(cell);
             if (footer.m_lock.fencelessValidate(count.value, Dependency::fence(result)))
                 return result;
         } else {
-            MarkedBlock& fencedBlock = *fenceBefore.consume(&block);
-            MarkedBlock::Footer& fencedFooter = fencedBlock.footer();
-            
             HeapVersion myMarkingVersion = fencedFooter.m_markingVersion;
             if (myMarkingVersion != markingVersion
                 && (!isMarking || !fencedBlock.marksConveyLivenessDuringMarking(myMarkingVersion, markingVersion))) {
@@ -173,9 +172,9 @@ ALWAYS_INLINE bool MarkedBlock::Handle::isLive(HeapVersion markingVersion, HeapV
 
     ASSERT(!isFreeListed());
     
-    HeapVersion myNewlyAllocatedVersion = m_newlyAllocatedVersion;
+    HeapVersion myNewlyAllocatedVersion = footer.m_newlyAllocatedVersion;
     if (myNewlyAllocatedVersion == newlyAllocatedVersion)
-        return isNewlyAllocated(cell);
+        return block.isNewlyAllocated(cell);
     
     if (block.areMarksStale(markingVersion)) {
         if (!isMarking)
@@ -326,7 +325,7 @@ void MarkedBlock::Handle::specializedSweep(FreeList* freeList, MarkedBlock::Hand
     for (size_t i = 0; i < m_endAtom; i += m_atomsPerCell) {
         if (emptyMode == NotEmpty
             && ((marksMode == MarksNotStale && footer.m_marks.get(i))
-                || (newlyAllocatedMode == HasNewlyAllocated && m_newlyAllocated.get(i)))) {
+                || (newlyAllocatedMode == HasNewlyAllocated && footer.m_newlyAllocated.get(i)))) {
             isEmpty = false;
             continue;
         }
@@ -340,7 +339,7 @@ void MarkedBlock::Handle::specializedSweep(FreeList* freeList, MarkedBlock::Hand
     // We only want to discard the newlyAllocated bits if we're creating a FreeList,
     // otherwise we would lose information on what's currently alive.
     if (sweepMode == SweepToFreeList && newlyAllocatedMode == HasNewlyAllocated)
-        m_newlyAllocatedVersion = MarkedSpace::nullVersion;
+        footer.m_newlyAllocatedVersion = MarkedSpace::nullVersion;
     
     if (space()->isMarking())
         footer.m_lock.unlock();
@@ -464,7 +463,7 @@ inline MarkedBlock::Handle::ScribbleMode MarkedBlock::Handle::scribbleMode()
 
 inline MarkedBlock::Handle::NewlyAllocatedMode MarkedBlock::Handle::newlyAllocatedMode()
 {
-    return hasAnyNewlyAllocated() ? HasNewlyAllocated : DoesNotHaveNewlyAllocated;
+    return block().hasAnyNewlyAllocated() ? HasNewlyAllocated : DoesNotHaveNewlyAllocated;
 }
 
 inline MarkedBlock::Handle::MarksMode MarkedBlock::Handle::marksMode()

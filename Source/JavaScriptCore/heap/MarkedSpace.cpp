@@ -44,6 +44,11 @@ const Vector<size_t>& sizeClasses()
         [] {
             result = new Vector<size_t>();
             
+            if (Options::dumpSizeClasses()) {
+                dataLog("Block size: ", MarkedBlock::blockSize, "\n");
+                dataLog("Footer size: ", sizeof(MarkedBlock::Footer), "\n");
+            }
+            
             auto add = [&] (size_t sizeClass) {
                 sizeClass = WTF::roundUpToMultipleOf<MarkedBlock::atomSize>(sizeClass);
                 if (Options::dumpSizeClasses())
@@ -424,7 +429,7 @@ void MarkedSpace::endMarking()
     if (UNLIKELY(nextVersion(m_newlyAllocatedVersion) == initialVersion)) {
         forEachBlock(
             [&] (MarkedBlock::Handle* handle) {
-                handle->resetAllocated();
+                handle->block().resetAllocated();
             });
     }
     
