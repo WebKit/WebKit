@@ -1,5 +1,20 @@
 2018-01-31  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        WebDriver: add domains to server config in w3c tests
+        https://bugs.webkit.org/show_bug.cgi?id=182294
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        Several cookie tests expect server_config to have a domains key.
+
+        Fixes: imported/w3c/webdriver/tests/cookies/add_cookie.py::test_add_domain_cookie
+               imported/w3c/webdriver/tests/cookies/add_cookie.py::test_add_session_cookie_with_leading_dot_character_in_domain
+
+        * Scripts/webkitpy/webdriver_tests/webdriver_w3c_executor.py:
+        (WebDriverW3CExecutor.__init__):
+
+2018-01-31  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Unreviewed. Update W3C WebDriver imported tests.
 
         Show full pytest failure logs.
