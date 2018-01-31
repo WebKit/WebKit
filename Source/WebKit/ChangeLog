@@ -1,5 +1,58 @@
 2018-01-31  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        REGRESSION(r227544): [GTK] contextMenuEvent is NULL on CONTEXT_MENU call
+        https://bugs.webkit.org/show_bug.cgi?id=182224
+
+        Reviewed by Michael Catanzaro.
+
+        Move the gestures handling to WebKitWebViewBase. This patch adds GestureControllerClient class, created and
+        implemented by WebKitWebViewBase and used by GestureController instead of the WebPageProxy. This way we ensure
+        events are handled consistently.
+
+        * UIProcess/API/gtk/PageClientImpl.cpp:
+        (WebKit::PageClientImpl::doneWithTouchEvent): Cast the GdkEvent since GestureController no longer works wirth
+        const GdkEvents.
+        (WebKit::PageClientImpl::zoom): Use webkit_web_view_set_zoom_level() in case of WebKitWebView or
+        WebPageProxy::setPageZoomFactor() otherwise.
+        * UIProcess/API/gtk/PageClientImpl.h:
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (ClickCounter::currentClickCountForGdkButtonEvent): Receive a GdkEvent to avoid casts.
+        (webkitWebViewBaseHandleMouseEvent): Helper function to handle mouse events.
+        (webkitWebViewBaseButtonPressEvent): Use webkitWebViewBaseHandleMouseEvent.
+        (webkitWebViewBaseButtonReleaseEvent): Ditto.
+        (webkitWebViewBaseHandleWheelEvent): Helper function to handle wheel events.
+        (webkitWebViewBaseScrollEvent): Use webkitWebViewBaseHandleWheelEvent.
+        (webkitWebViewBaseMotionNotifyEvent): Use webkitWebViewBaseHandleMouseEvent.
+        (webkitWebViewBaseCrossingNotifyEvent): Ditto.
+        (webkitWebViewBaseGestureController): Pass the widget and client to GestureController.
+        * UIProcess/gtk/GestureController.cpp:
+        (WebKit::GestureController::GestureController): Receives a widget and client now.
+        (WebKit::GestureController::handleEvent): Remove the const.
+        (WebKit::GestureController::Gesture::Gesture): Initialize client.
+        (WebKit::GestureController::Gesture::handleEvent): Remove the const.
+        (WebKit::GestureController::DragGesture::startDrag): Use the client instead of WebPageProxy.
+        (WebKit::GestureController::DragGesture::handleDrag): Ditto.
+        (WebKit::GestureController::DragGesture::handleTap): Ditto.
+        (WebKit::GestureController::DragGesture::begin): Ignore the const returned by gtk_gesture_get_last_event().
+        (WebKit::GestureController::DragGesture::update): Ditto.
+        (WebKit::GestureController::DragGesture::end): Ditto.
+        (WebKit::GestureController::DragGesture::DragGesture): Receives a widget and client now.
+        (WebKit::GestureController::SwipeGesture::startMomentumScroll): Use the client instead of WebPageProxy.
+        (WebKit::GestureController::SwipeGesture::swipe): Ignore the const returned by gtk_gesture_get_last_event().
+        (WebKit::GestureController::SwipeGesture::SwipeGesture): Receives a widget and client now.
+        (WebKit::GestureController::ZoomGesture::begin): Start the zoom.
+        (WebKit::GestureController::ZoomGesture::startZoom): Use the client instead of WebPageProxy.
+        (WebKit::GestureController::ZoomGesture::handleZoom): Ditto.
+        (WebKit::GestureController::ZoomGesture::ZoomGesture): Receives a widget and client now.
+        (WebKit::GestureController::LongPressGesture::longPressed): Use the client instead of WebKitWebView.
+        (WebKit::GestureController::LongPressGesture::pressed): Ignore the const returned by gtk_gesture_get_last_event().
+        (WebKit::GestureController::LongPressGesture::LongPressGesture): Receives a widget and client now.
+        (WebKit::GestureController::Gesture::simulateMouseClick): Deleted.
+        (WebKit::createScrollEvent): Deleted.
+        * UIProcess/gtk/GestureController.h:
+
+2018-01-31  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Web Automation: cookies returned by automation should have expiry time in seconds
         https://bugs.webkit.org/show_bug.cgi?id=182293
 

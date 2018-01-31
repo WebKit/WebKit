@@ -95,9 +95,8 @@ public:
         previousClickButton = 0;
     }
 
-    int currentClickCountForGdkButtonEvent(GdkEventButton* buttonEvent)
+    int currentClickCountForGdkButtonEvent(GdkEvent* event)
     {
-        GdkEvent* event = reinterpret_cast<GdkEvent*>(buttonEvent);
         int doubleClickDistance = 250;
         int doubleClickTime = 5;
         g_object_get(gtk_settings_get_for_screen(gdk_event_get_screen(event)),
@@ -118,10 +117,10 @@ public:
         }
 
         if ((event->type == GDK_2BUTTON_PRESS || event->type == GDK_3BUTTON_PRESS)
-            || ((std::abs(buttonEvent->x - previousClickPoint.x()) < doubleClickDistance)
-                && (std::abs(buttonEvent->y - previousClickPoint.y()) < doubleClickDistance)
+            || ((std::abs(event->button.x - previousClickPoint.x()) < doubleClickDistance)
+                && (std::abs(event->button.y - previousClickPoint.y()) < doubleClickDistance)
                 && (eventTime - previousClickTime < static_cast<unsigned>(doubleClickTime))
-                && (buttonEvent->button == previousClickButton)))
+                && (event->button.button == previousClickButton)))
             currentClickCount++;
         else
             currentClickCount = 1;
@@ -129,7 +128,7 @@ public:
         double x, y;
         gdk_event_get_coords(event, &x, &y);
         previousClickPoint = IntPoint(x, y);
-        previousClickButton = buttonEvent->button;
+        previousClickButton = event->button.button;
         previousClickTime = eventTime;
 
         return currentClickCount;
@@ -741,7 +740,50 @@ static gboolean webkitWebViewBaseKeyReleaseEvent(GtkWidget* widget, GdkEventKey*
     return GDK_EVENT_STOP;
 }
 
-static gboolean webkitWebViewBaseButtonPressEvent(GtkWidget* widget, GdkEventButton* buttonEvent)
+static void webkitWebViewBaseHandleMouseEvent(WebKitWebViewBase* webViewBase, GdkEvent* event)
+{
+    WebKitWebViewBasePrivate* priv = webViewBase->priv;
+    ASSERT(!priv->authenticationDialog);
+
+    int clickCount = 0;
+
+    switch (event->type) {
+    case GDK_BUTTON_PRESS:
+    case GDK_2BUTTON_PRESS:
+    case GDK_3BUTTON_PRESS: {
+        // For double and triple clicks GDK sends both a normal button press event
+        // and a specific type (like GDK_2BUTTON_PRESS). If we detect a special press
+        // coming up, ignore this event as it certainly generated the double or triple
+        // click. The consequence of not eating this event is two DOM button press events
+        // are generated.
+        GUniquePtr<GdkEvent> nextEvent(gdk_event_peek());
+        if (nextEvent && (nextEvent->any.type == GDK_2BUTTON_PRESS || nextEvent->any.type == GDK_3BUTTON_PRESS))
+            return;
+
+        priv->inputMethodFilter.notifyMouseButtonPress();
+
+        // If it's a right click event save it as a possible context menu event.
+        if (event->button.button == GDK_BUTTON_SECONDARY)
+            priv->contextMenuEvent.reset(gdk_event_copy(event));
+
+        clickCount = priv->clickCounter.currentClickCountForGdkButtonEvent(event);
+    }
+        FALLTHROUGH;
+    case GDK_BUTTON_RELEASE:
+        gtk_widget_grab_focus(GTK_WIDGET(webViewBase));
+        break;
+    case GDK_MOTION_NOTIFY:
+    case GDK_ENTER_NOTIFY:
+    case GDK_LEAVE_NOTIFY:
+        break;
+    default:
+        ASSERT_NOT_REACHED();
+    }
+
+    priv->pageProxy->handleMouseEvent(NativeWebMouseEvent(event, clickCount));
+}
+
+static gboolean webkitWebViewBaseButtonPressEvent(GtkWidget* widget, GdkEventButton* event)
 {
     WebKitWebViewBase* webViewBase = WEBKIT_WEB_VIEW_BASE(widget);
     WebKitWebViewBasePrivate* priv = webViewBase->priv;
@@ -749,25 +791,8 @@ static gboolean webkitWebViewBaseButtonPressEvent(GtkWidget* widget, GdkEventBut
     if (priv->authenticationDialog)
         return GDK_EVENT_STOP;
 
-    gtk_widget_grab_focus(widget);
+    webkitWebViewBaseHandleMouseEvent(webViewBase, reinterpret_cast<GdkEvent*>(event));
 
-    priv->inputMethodFilter.notifyMouseButtonPress();
-
-    // For double and triple clicks GDK sends both a normal button press event
-    // and a specific type (like GDK_2BUTTON_PRESS). If we detect a special press
-    // coming up, ignore this event as it certainly generated the double or triple
-    // click. The consequence of not eating this event is two DOM button press events
-    // are generated.
-    GUniquePtr<GdkEvent> nextEvent(gdk_event_peek());
-    if (nextEvent && (nextEvent->any.type == GDK_2BUTTON_PRESS || nextEvent->any.type == GDK_3BUTTON_PRESS))
-        return GDK_EVENT_STOP;
-
-    // If it's a right click event save it as a possible context menu event.
-    if (buttonEvent->button == 3)
-        priv->contextMenuEvent.reset(gdk_event_copy(reinterpret_cast<GdkEvent*>(buttonEvent)));
-
-    priv->pageProxy->handleMouseEvent(NativeWebMouseEvent(reinterpret_cast<GdkEvent*>(buttonEvent),
-        priv->clickCounter.currentClickCountForGdkButtonEvent(buttonEvent)));
     return GDK_EVENT_STOP;
 }
 
@@ -779,10 +804,19 @@ static gboolean webkitWebViewBaseButtonReleaseEvent(GtkWidget* widget, GdkEventB
     if (priv->authenticationDialog)
         return GDK_EVENT_STOP;
 
-    gtk_widget_grab_focus(widget);
-    priv->pageProxy->handleMouseEvent(NativeWebMouseEvent(reinterpret_cast<GdkEvent*>(event), 0 /* currentClickCount */));
+    webkitWebViewBaseHandleMouseEvent(webViewBase, reinterpret_cast<GdkEvent*>(event));
 
     return GDK_EVENT_STOP;
+}
+
+static void webkitWebViewBaseHandleWheelEvent(WebKitWebViewBase* webViewBase, GdkEvent* event, std::optional<WebWheelEvent::Phase> phase = std::nullopt, std::optional<WebWheelEvent::Phase> momentum = std::nullopt)
+{
+    WebKitWebViewBasePrivate* priv = webViewBase->priv;
+    ASSERT(!priv->authenticationDialog);
+    if (phase)
+        priv->pageProxy->handleWheelEvent(NativeWebWheelEvent(event, phase.value(), momentum.value_or(WebWheelEvent::Phase::PhaseNone)));
+    else
+        priv->pageProxy->handleWheelEvent(NativeWebWheelEvent(event));
 }
 
 static gboolean webkitWebViewBaseScrollEvent(GtkWidget* widget, GdkEventScroll* event)
@@ -796,7 +830,7 @@ static gboolean webkitWebViewBaseScrollEvent(GtkWidget* widget, GdkEventScroll* 
     if (priv->authenticationDialog)
         return GDK_EVENT_PROPAGATE;
 
-    priv->pageProxy->handleWheelEvent(NativeWebWheelEvent(reinterpret_cast<GdkEvent*>(event)));
+    webkitWebViewBaseHandleWheelEvent(webViewBase, reinterpret_cast<GdkEvent*>(event));
 
     return GDK_EVENT_STOP;
 }
@@ -825,7 +859,7 @@ static gboolean webkitWebViewBaseMotionNotifyEvent(GtkWidget* widget, GdkEventMo
         return widgetClass->motion_notify_event ? widgetClass->motion_notify_event(widget, event) : GDK_EVENT_PROPAGATE;
     }
 
-    priv->pageProxy->handleMouseEvent(NativeWebMouseEvent(reinterpret_cast<GdkEvent*>(event), 0 /* currentClickCount */));
+    webkitWebViewBaseHandleMouseEvent(webViewBase, reinterpret_cast<GdkEvent*>(event));
 
     return GDK_EVENT_PROPAGATE;
 }
@@ -866,7 +900,7 @@ static gboolean webkitWebViewBaseCrossingNotifyEvent(GtkWidget* widget, GdkEvent
         copiedEvent->crossing.y = y;
     }
 
-    priv->pageProxy->handleMouseEvent(NativeWebMouseEvent(copiedEvent ? copiedEvent.get() : event, 0 /* currentClickCount */));
+    webkitWebViewBaseHandleMouseEvent(webViewBase, copiedEvent ? copiedEvent.get() : event);
 
     return GDK_EVENT_PROPAGATE;
 }
@@ -960,11 +994,109 @@ static gboolean webkitWebViewBaseTouchEvent(GtkWidget* widget, GdkEventTouch* ev
 #endif // ENABLE(TOUCH_EVENTS)
 
 #if HAVE(GTK_GESTURES)
+class ViewGestureController final : public GestureControllerClient {
+    WTF_MAKE_FAST_ALLOCATED;
+
+public:
+    explicit ViewGestureController(WebKitWebViewBase* webViewBase)
+        : m_webView(webViewBase)
+    {
+    }
+
+private:
+    static GUniquePtr<GdkEvent> createScrollEvent(GdkEventTouch* event, const FloatPoint& point, const FloatPoint& delta, bool isStop = false)
+    {
+        GUniquePtr<GdkEvent> scrollEvent(gdk_event_new(GDK_SCROLL));
+        scrollEvent->scroll.time = event->time;
+        scrollEvent->scroll.x = point.x();
+        scrollEvent->scroll.y = point.y();
+        scrollEvent->scroll.x_root = event->x_root;
+        scrollEvent->scroll.y_root = event->y_root;
+        scrollEvent->scroll.direction = GDK_SCROLL_SMOOTH;
+        scrollEvent->scroll.delta_x = delta.x();
+        scrollEvent->scroll.delta_y = delta.y();
+        scrollEvent->scroll.state = event->state;
+#if GTK_CHECK_VERSION(3, 20, 0)
+        scrollEvent->scroll.is_stop = isStop;
+#else
+        UNUSED_PARAM(isStop);
+#endif
+        return scrollEvent;
+    }
+
+    void simulateMouseClick(const GdkEventTouch* event, unsigned button)
+    {
+        GUniquePtr<GdkEvent> pointerEvent(gdk_event_new(GDK_MOTION_NOTIFY));
+        pointerEvent->motion.time = event->time;
+        pointerEvent->motion.x = event->x;
+        pointerEvent->motion.y = event->y;
+        pointerEvent->motion.x_root = event->x_root;
+        pointerEvent->motion.y_root = event->y_root;
+        pointerEvent->motion.state = event->state;
+        webkitWebViewBaseHandleMouseEvent(m_webView, pointerEvent.get());
+
+        pointerEvent.reset(gdk_event_new(GDK_BUTTON_PRESS));
+        pointerEvent->button.button = button;
+        pointerEvent->button.time = event->time;
+        pointerEvent->button.x = event->x;
+        pointerEvent->button.y = event->y;
+        pointerEvent->button.x_root = event->x_root;
+        pointerEvent->button.y_root = event->y_root;
+        webkitWebViewBaseHandleMouseEvent(m_webView, pointerEvent.get());
+
+        pointerEvent->type = GDK_BUTTON_RELEASE;
+        webkitWebViewBaseHandleMouseEvent(m_webView, pointerEvent.get());
+    }
+
+    void tap(GdkEventTouch* event) final
+    {
+        simulateMouseClick(event, GDK_BUTTON_PRIMARY);
+    }
+
+    void startDrag(GdkEventTouch* event, const FloatPoint& startPoint) final
+    {
+        GUniquePtr<GdkEvent> scrollEvent = createScrollEvent(event, startPoint, { });
+        webkitWebViewBaseHandleWheelEvent(m_webView, scrollEvent.get(), WebWheelEvent::Phase::PhaseBegan);
+    }
+
+    void drag(GdkEventTouch* event, const FloatPoint& point, const FloatPoint& delta) final
+    {
+        GUniquePtr<GdkEvent> scrollEvent = createScrollEvent(event, point, delta);
+        webkitWebViewBaseHandleWheelEvent(m_webView, scrollEvent.get(), WebWheelEvent::Phase::PhaseChanged);
+    }
+
+    void swipe(GdkEventTouch* event, const FloatPoint& velocity) final
+    {
+        GUniquePtr<GdkEvent> scrollEvent = createScrollEvent(event, FloatPoint::narrowPrecision(event->x, event->y), velocity, true);
+        webkitWebViewBaseHandleWheelEvent(m_webView, scrollEvent.get(), WebWheelEvent::Phase::PhaseNone, WebWheelEvent::Phase::PhaseBegan);
+    }
+
+    void startZoom(const IntPoint& center, double& initialScale, IntPoint& initialPoint) final
+    {
+        auto* page = webkitWebViewBaseGetPage(m_webView);
+        ASSERT(page);
+        initialScale = page->pageZoomFactor();
+        page->getCenterForZoomGesture(center, initialPoint);
+    }
+
+    void zoom(double scale) final
+    {
+        m_webView->priv->pageClient->zoom(scale);
+    }
+
+    void longPress(GdkEventTouch* event) final
+    {
+        simulateMouseClick(event, GDK_BUTTON_SECONDARY);
+    }
+
+    WebKitWebViewBase* m_webView;
+};
+
 GestureController& webkitWebViewBaseGestureController(WebKitWebViewBase* webViewBase)
 {
     WebKitWebViewBasePrivate* priv = webViewBase->priv;
     if (!priv->gestureController)
-        priv->gestureController = std::make_unique<GestureController>(*priv->pageProxy);
+        priv->gestureController = std::make_unique<GestureController>(GTK_WIDGET(webViewBase), std::make_unique<ViewGestureController>(webViewBase));
     return *priv->gestureController;
 }
 #endif

@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef GestureController_h
-#define GestureController_h
+#pragma once
 
 #if HAVE(GTK_GESTURES)
 
@@ -34,20 +33,36 @@
 #include <wtf/glib/GRefPtr.h>
 
 typedef union _GdkEvent GdkEvent;
+typedef struct _GdkEventTouch GdkEventTouch;
 typedef struct _GdkEventSequence GdkEventSequence;
 typedef struct _GtkGesture GtkGesture;
 
 namespace WebKit {
-class WebPageProxy;
+
+class GestureControllerClient {
+public:
+    virtual void tap(GdkEventTouch*) = 0;
+
+    virtual void startDrag(GdkEventTouch*, const WebCore::FloatPoint&) = 0;
+    virtual void drag(GdkEventTouch*, const WebCore::FloatPoint&, const WebCore::FloatPoint&) = 0;
+
+    virtual void swipe(GdkEventTouch*, const WebCore::FloatPoint&) = 0;
+
+    virtual void startZoom(const WebCore::IntPoint& center, double& initialScale, WebCore::IntPoint& initialPoint) = 0;
+    virtual void zoom(double) = 0;
+
+    virtual void longPress(GdkEventTouch*) = 0;
+};
 
 class GestureController {
     WTF_MAKE_NONCOPYABLE(GestureController);
+    WTF_MAKE_FAST_ALLOCATED;
 
 public:
-    GestureController(WebPageProxy&);
+    GestureController(GtkWidget*, std::unique_ptr<GestureControllerClient>&&);
 
     bool isProcessingGestures() const;
-    bool handleEvent(const GdkEvent*);
+    bool handleEvent(GdkEvent*);
 
     void reset()
     {
@@ -62,25 +77,24 @@ private:
     public:
         void reset();
         bool isActive() const;
-        void handleEvent(const GdkEvent*);
-        void simulateMouseClick(const GdkEvent*, unsigned);
+        void handleEvent(GdkEvent*);
 
     protected:
-        Gesture(GtkGesture*, WebPageProxy&);
+        Gesture(GtkGesture*, GestureControllerClient&);
 
         GRefPtr<GtkGesture> m_gesture;
-        WebPageProxy& m_page;
+        GestureControllerClient& m_client;
     };
 
     class DragGesture final : public Gesture {
     public:
-        DragGesture(WebPageProxy&);
+        DragGesture(GtkWidget*, GestureControllerClient&);
 
     private:
         // Notify that a drag started, allowing to stop kinetic deceleration.
-        void startDrag(const GdkEvent*);
-        void handleDrag(const GdkEvent*, double x, double y);
-        void handleTap(const GdkEvent*);
+        void startDrag(GdkEvent*);
+        void handleDrag(GdkEvent*, double x, double y);
+        void handleTap(GdkEvent*);
         void longPressFired();
 
         static void begin(DragGesture*, double x, double y, GtkGesture*);
@@ -91,32 +105,33 @@ private:
         WebCore::FloatPoint m_offset;
         RunLoop::Timer<DragGesture> m_longPressTimeout;
         GRefPtr<GtkGesture> m_longPress;
-        bool m_inDrag;
+        bool m_inDrag { false };
     };
 
     class SwipeGesture final : public Gesture {
     public:
-        SwipeGesture(WebPageProxy&);
+        SwipeGesture(GtkWidget*, GestureControllerClient&);
 
     private:
-        void startMomentumScroll(const GdkEvent*, double velocityX, double velocityY);
+        void startMomentumScroll(GdkEvent*, double velocityX, double velocityY);
 
         static void swipe(SwipeGesture*, double velocityX, double velocityY, GtkGesture*);
     };
 
     class ZoomGesture final : public Gesture {
     public:
-        ZoomGesture(WebPageProxy&);
+        ZoomGesture(GtkWidget*, GestureControllerClient&);
 
     private:
         WebCore::IntPoint center() const;
+        void startZoom();
         void handleZoom();
 
         static void begin(ZoomGesture*, GdkEventSequence*, GtkGesture*);
         static void scaleChanged(ZoomGesture*, double scale, GtkGesture*);
 
-        gdouble m_initialScale;
-        gdouble m_scale;
+        double m_initialScale { 0 };
+        double m_scale { 0 };
         WebCore::IntPoint m_initialPoint;
         WebCore::IntPoint m_viewPoint;
         RunLoop::Timer<ZoomGesture> m_idle;
@@ -124,14 +139,15 @@ private:
 
     class LongPressGesture final : public Gesture {
     public:
-        LongPressGesture(WebPageProxy&);
+        LongPressGesture(GtkWidget*, GestureControllerClient&);
 
     private:
-        void longPressed(const GdkEvent*);
+        void longPressed(GdkEvent*);
 
         static void pressed(LongPressGesture*, double x, double y, GtkGesture*);
     };
 
+    std::unique_ptr<GestureControllerClient> m_client;
     DragGesture m_dragGesture;
     SwipeGesture m_swipeGesture;
     ZoomGesture m_zoomGesture;
@@ -141,5 +157,3 @@ private:
 } // namespace WebKit
 
 #endif // HAVE(GTK_GESTURES)
-
-#endif // GestureController_h
