@@ -1793,3 +1793,5 @@ webkit.org/b/181966 media/W3C/video/events/event_order_loadstart_progress.html [
 
 webkit.org/b/181969 fast/events/message-port.html [ Skip ]
 
+webkit.org/b/181831 [ HighSierra+ ] fast/forms/searchfield-heights.html [ Pass Failure ]
+
