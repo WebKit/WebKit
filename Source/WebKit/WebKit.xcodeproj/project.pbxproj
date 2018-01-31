@@ -1584,7 +1584,7 @@
 		A5C0F0AC2000658500536536 /* WKInspectorWindow.mm in Sources */ = {isa = PBXBuildFile; fileRef = A5C0F0A92000656E00536536 /* WKInspectorWindow.mm */; };
 		A5D3504E1D78F5B3005124A9 /* RemoteWebInspectorProxyMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = A5D3504D1D78F0D2005124A9 /* RemoteWebInspectorProxyMac.mm */; };
 		A5EFD38C16B0E88C00B2F0E8 /* WKPageVisibilityTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = A5EFD38B16B0E88C00B2F0E8 /* WKPageVisibilityTypes.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		A78CCDDA193AC9F4005ECC25 /* com.apple.WebKit.Databases.sb in CopyFiles */ = {isa = PBXBuildFile; fileRef = A78CCDD7193AC9E3005ECC25 /* com.apple.WebKit.Databases.sb */; };
+		A78CCDDA193AC9F4005ECC25 /* com.apple.WebKit.Storage.sb in CopyFiles */ = {isa = PBXBuildFile; fileRef = A78CCDD7193AC9E3005ECC25 /* com.apple.WebKit.Storage.sb */; };
 		A78CCDDB193AC9F8005ECC25 /* com.apple.WebKit.Networking.sb in CopyFiles */ = {isa = PBXBuildFile; fileRef = A78CCDD8193AC9E3005ECC25 /* com.apple.WebKit.Networking.sb */; };
 		A78CCDDC193AC9FB005ECC25 /* com.apple.WebKit.WebContent.sb in CopyFiles */ = {isa = PBXBuildFile; fileRef = A78CCDD9193AC9E3005ECC25 /* com.apple.WebKit.WebContent.sb */; };
 		A7D792D61767CB6E00881CBE /* ActivityAssertion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A7D792D51767CB6E00881CBE /* ActivityAssertion.cpp */; };
@@ -2056,7 +2056,7 @@
 		DF58C6361371ACA000F9A37C /* NativeWebWheelEventMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = DF58C6351371ACA000F9A37C /* NativeWebWheelEventMac.mm */; };
 		E105FE5418D7B9DE008F57A8 /* EditingRange.h in Headers */ = {isa = PBXBuildFile; fileRef = E105FE5318D7B9DE008F57A8 /* EditingRange.h */; };
 		E115C714190F89E400ECC516 /* StorageProcessIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = E1FEF39C190F791C00731658 /* StorageProcessIOS.mm */; };
-		E115C716190F8A2500ECC516 /* com.apple.WebKit.Databases.sb in Resources */ = {isa = PBXBuildFile; fileRef = E115C715190F8A2500ECC516 /* com.apple.WebKit.Databases.sb */; };
+		E115C716190F8A2500ECC516 /* com.apple.WebKit.Storage.sb in Resources */ = {isa = PBXBuildFile; fileRef = E115C715190F8A2500ECC516 /* com.apple.WebKit.Storage.sb */; };
 		E11D35AE16B63D1B006D23D7 /* com.apple.WebProcess.sb in Resources */ = {isa = PBXBuildFile; fileRef = E1967E37150AB5E200C73169 /* com.apple.WebProcess.sb */; };
 		E14A954916E016A40068DE82 /* NetworkProcessPlatformStrategies.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E14A954716E016A40068DE82 /* NetworkProcessPlatformStrategies.cpp */; };
 		E14A954A16E016A40068DE82 /* NetworkProcessPlatformStrategies.h in Headers */ = {isa = PBXBuildFile; fileRef = E14A954816E016A40068DE82 /* NetworkProcessPlatformStrategies.h */; };
@@ -2324,8 +2324,8 @@
 			dstPath = "$(INSTALL_PATH)";
 			dstSubfolderSpec = 0;
 			files = (
-				A78CCDDA193AC9F4005ECC25 /* com.apple.WebKit.Databases.sb in CopyFiles */,
 				A78CCDDB193AC9F8005ECC25 /* com.apple.WebKit.Networking.sb in CopyFiles */,
+				A78CCDDA193AC9F4005ECC25 /* com.apple.WebKit.Storage.sb in CopyFiles */,
 				A78CCDDC193AC9FB005ECC25 /* com.apple.WebKit.WebContent.sb in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -4041,7 +4041,7 @@
 		A5D3504D1D78F0D2005124A9 /* RemoteWebInspectorProxyMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = RemoteWebInspectorProxyMac.mm; sourceTree = "<group>"; };
 		A5EFD38B16B0E88C00B2F0E8 /* WKPageVisibilityTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKPageVisibilityTypes.h; sourceTree = "<group>"; };
 		A72D5D7F1236CBA800A88B15 /* APISerializedScriptValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APISerializedScriptValue.h; sourceTree = "<group>"; };
-		A78CCDD7193AC9E3005ECC25 /* com.apple.WebKit.Databases.sb */ = {isa = PBXFileReference; lastKnownFileType = text; path = com.apple.WebKit.Databases.sb; sourceTree = "<group>"; };
+		A78CCDD7193AC9E3005ECC25 /* com.apple.WebKit.Storage.sb */ = {isa = PBXFileReference; lastKnownFileType = text; path = com.apple.WebKit.Storage.sb; sourceTree = "<group>"; };
 		A78CCDD8193AC9E3005ECC25 /* com.apple.WebKit.Networking.sb */ = {isa = PBXFileReference; lastKnownFileType = text; path = com.apple.WebKit.Networking.sb; sourceTree = "<group>"; };
 		A78CCDD9193AC9E3005ECC25 /* com.apple.WebKit.WebContent.sb */ = {isa = PBXFileReference; lastKnownFileType = text; path = com.apple.WebKit.WebContent.sb; sourceTree = "<group>"; };
 		A7BD9863194653D400D35698 /* Databases-iOS.entitlements */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = "Databases-iOS.entitlements"; sourceTree = "<group>"; };
@@ -4551,7 +4551,7 @@
 		DF58C6311371AC5800F9A37C /* NativeWebWheelEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NativeWebWheelEvent.h; sourceTree = "<group>"; };
 		DF58C6351371ACA000F9A37C /* NativeWebWheelEventMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = NativeWebWheelEventMac.mm; sourceTree = "<group>"; };
 		E105FE5318D7B9DE008F57A8 /* EditingRange.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EditingRange.h; sourceTree = "<group>"; };
-		E115C715190F8A2500ECC516 /* com.apple.WebKit.Databases.sb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = com.apple.WebKit.Databases.sb; sourceTree = "<group>"; };
+		E115C715190F8A2500ECC516 /* com.apple.WebKit.Storage.sb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = com.apple.WebKit.Storage.sb; sourceTree = "<group>"; };
 		E133FD891423DD7F00FC7BFB /* WebKit.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = WebKit.icns; path = Resources/WebKit.icns; sourceTree = "<group>"; };
 		E14A954716E016A40068DE82 /* NetworkProcessPlatformStrategies.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = NetworkProcessPlatformStrategies.cpp; path = NetworkProcess/NetworkProcessPlatformStrategies.cpp; sourceTree = "<group>"; };
 		E14A954816E016A40068DE82 /* NetworkProcessPlatformStrategies.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NetworkProcessPlatformStrategies.h; path = NetworkProcess/NetworkProcessPlatformStrategies.h; sourceTree = "<group>"; };
@@ -4597,7 +4597,7 @@
 		E1E552C316AE065E004ED653 /* SandboxInitializationParameters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SandboxInitializationParameters.h; sourceTree = "<group>"; };
 		E1EE53DC11F8CF9F00CCBEE4 /* InjectedBundlePageEditorClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InjectedBundlePageEditorClient.h; sourceTree = "<group>"; };
 		E1EE53E611F8CFFB00CCBEE4 /* InjectedBundlePageEditorClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InjectedBundlePageEditorClient.cpp; sourceTree = "<group>"; };
-		E1FEF39A190F76F300731658 /* com.apple.WebKit.Databases.sb.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = com.apple.WebKit.Databases.sb.in; sourceTree = "<group>"; };
+		E1FEF39A190F76F300731658 /* com.apple.WebKit.Storage.sb.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = com.apple.WebKit.Storage.sb.in; sourceTree = "<group>"; };
 		E1FEF39C190F791C00731658 /* StorageProcessIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = StorageProcessIOS.mm; sourceTree = "<group>"; };
 		E413F59B1AC1ADB600345360 /* NetworkCacheEntry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkCacheEntry.h; sourceTree = "<group>"; };
 		E413F59E1AC1AF9D00345360 /* NetworkCacheEntry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkCacheEntry.cpp; sourceTree = "<group>"; };
@@ -6521,7 +6521,7 @@
 		517DD5C0180DB7AA0081660B /* mac */ = {
 			isa = PBXGroup;
 			children = (
-				E1FEF39A190F76F300731658 /* com.apple.WebKit.Databases.sb.in */,
+				E1FEF39A190F76F300731658 /* com.apple.WebKit.Storage.sb.in */,
 				51E35201180F5D1E00E53BE9 /* StorageProcessMac.mm */,
 			);
 			path = mac;
@@ -6887,8 +6887,8 @@
 		A78CCDD6193AC9E3005ECC25 /* ios */ = {
 			isa = PBXGroup;
 			children = (
-				A78CCDD7193AC9E3005ECC25 /* com.apple.WebKit.Databases.sb */,
 				A78CCDD8193AC9E3005ECC25 /* com.apple.WebKit.Networking.sb */,
+				A78CCDD7193AC9E3005ECC25 /* com.apple.WebKit.Storage.sb */,
 				A78CCDD9193AC9E3005ECC25 /* com.apple.WebKit.WebContent.sb */,
 			);
 			path = ios;
@@ -8126,9 +8126,9 @@
 				517CF0E1163A486C00C2950F /* CacheStorageEngineConnectionMessageReceiver.cpp */,
 				51FAEC361B0657310009C4E7 /* ChildProcessMessageReceiver.cpp */,
 				51FAEC371B0657310009C4E7 /* ChildProcessMessages.h */,
-				E115C715190F8A2500ECC516 /* com.apple.WebKit.Databases.sb */,
 				E17AE2C216B9C63A001C42F1 /* com.apple.WebKit.NetworkProcess.sb */,
 				7A1506721DD56298001F4B58 /* com.apple.WebKit.plugin-common.sb */,
+				E115C715190F8A2500ECC516 /* com.apple.WebKit.Storage.sb */,
 				E1967E37150AB5E200C73169 /* com.apple.WebProcess.sb */,
 				1AB7D6171288B9D900CFD08C /* DownloadProxyMessageReceiver.cpp */,
 				1AB7D6181288B9D900CFD08C /* DownloadProxyMessages.h */,
@@ -9882,8 +9882,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E115C716190F8A2500ECC516 /* com.apple.WebKit.Databases.sb in Resources */,
 				E17AE2C316B9C63A001C42F1 /* com.apple.WebKit.NetworkProcess.sb in Resources */,
+				E115C716190F8A2500ECC516 /* com.apple.WebKit.Storage.sb in Resources */,
 				E11D35AE16B63D1B006D23D7 /* com.apple.WebProcess.sb in Resources */,
 				6BE969C11E54D452008B7483 /* corePrediction_model in Resources */,
 				8DC2EF530486A6940098B216 /* InfoPlist.strings in Resources */,
@@ -10077,7 +10077,7 @@
 			files = (
 			);
 			inputPaths = (
-				"$(SRCROOT)/Resources/SandboxProfiles/ios/com.apple.WebKit.Databases.sb",
+				"$(SRCROOT)/Resources/SandboxProfiles/ios/com.apple.WebKit.Storage.sb",
 				"$(SRCROOT)/Resources/SandboxProfiles/ios/com.apple.WebKit.Networking.sb",
 				"$(SRCROOT)/Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb",
 			);
