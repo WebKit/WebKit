@@ -69,6 +69,7 @@ namespace WebCore {
 
 SVGImage::SVGImage(ImageObserver& observer)
     : Image(&observer)
+    , m_startAnimationTimer(*this, &SVGImage::startAnimationTimerFired)
 {
 }
 
@@ -377,6 +378,19 @@ void SVGImage::computeIntrinsicDimensions(Length& intrinsicWidth, Length& intrin
         intrinsicRatio = FloatSize(floatValueForLength(intrinsicWidth, 0), floatValueForLength(intrinsicHeight, 0));
 }
 
+void SVGImage::startAnimationTimerFired()
+{
+    startAnimation();
+}
+
+void SVGImage::scheduleStartAnimation()
+{
+    auto rootElement = this->rootElement();
+    if (!rootElement || !rootElement->animationsPaused())
+        return;
+    m_startAnimationTimer.startOneShot(0_s);
+}
+
 void SVGImage::startAnimation()
 {
     auto rootElement = this->rootElement();
@@ -388,6 +402,7 @@ void SVGImage::startAnimation()
 
 void SVGImage::stopAnimation()
 {
+    m_startAnimationTimer.stop();
     auto rootElement = this->rootElement();
     if (!rootElement)
         return;

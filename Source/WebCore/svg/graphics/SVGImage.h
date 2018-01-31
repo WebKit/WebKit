@@ -60,6 +60,8 @@ public:
     void resetAnimation() final;
     bool isAnimating() const final;
 
+    void scheduleStartAnimation();
+
 #if USE(CAIRO)
     NativeImagePtr nativeImageForCurrentFrame(const GraphicsContext* = nullptr) final;
 #endif
@@ -89,6 +91,8 @@ private:
     // FIXME: Implement this to be less conservative.
     bool currentFrameKnownToBeOpaque() const final { return false; }
 
+    void startAnimationTimerFired();
+
     explicit SVGImage(ImageObserver&);
     ImageDrawResult draw(GraphicsContext&, const FloatRect& fromRect, const FloatRect& toRect, CompositeOperator, BlendMode, DecodingMode, ImageOrientationDescription) final;
     ImageDrawResult drawForContainer(GraphicsContext&, const FloatSize containerSize, float containerZoom, const URL& initialFragmentURL, const FloatRect& dstRect, const FloatRect& srcRect, CompositeOperator, BlendMode);
@@ -100,6 +104,8 @@ private:
     std::unique_ptr<SVGImageChromeClient> m_chromeClient;
     std::unique_ptr<Page> m_page;
     FloatSize m_intrinsicSize;
+
+    Timer m_startAnimationTimer;
 };
 
 bool isInSVGImage(const Element*);
