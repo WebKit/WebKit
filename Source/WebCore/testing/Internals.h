@@ -141,6 +141,7 @@ public:
     unsigned imageDecodeCount(HTMLImageElement&);
     unsigned pdfDocumentCachingCount(HTMLImageElement&);
     void setLargeImageAsyncDecodingEnabledForTesting(HTMLImageElement&, bool enabled);
+    void setForceUpdateImageDataEnabledForTesting(HTMLImageElement&, bool enabled);
 
     void setGridMaxTracksLimit(unsigned);
 

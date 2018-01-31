@@ -836,6 +836,12 @@ void Internals::setLargeImageAsyncDecodingEnabledForTesting(HTMLImageElement& el
     if (auto* bitmapImage = bitmapImageFromImageElement(element))
         bitmapImage->setLargeImageAsyncDecodingEnabledForTesting(enabled);
 }
+    
+void Internals::setForceUpdateImageDataEnabledForTesting(HTMLImageElement& element, bool enabled)
+{
+    if (auto* cachedImage = element.cachedImage())
+        cachedImage->setForceUpdateImageDataEnabledForTesting(enabled);
+}
 
 void Internals::setGridMaxTracksLimit(unsigned maxTrackLimit)
 {

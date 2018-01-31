@@ -431,7 +431,7 @@ void CachedImage::updateBufferInternal(SharedBuffer& data)
 
     // Don't update the image with the new buffer very often. Changing the decoder
     // internal data and repainting the observers sometimes are very expensive operations.
-    if (shouldDeferUpdateImageData())
+    if (!m_forceUpdateImageDataEnabledForTesting && shouldDeferUpdateImageData())
         return;
 
     EncodedDataStatus encodedDataStatus = EncodedDataStatus::Unknown;

@@ -291,7 +291,12 @@ void BitmapImage::drawPattern(GraphicsContext& ctxt, const FloatRect& destRect, 
         return;
 
     if (!ctxt.drawLuminanceMask()) {
+        // If new data is received, the current incomplete decoded frame has to be destroyed.
+        if (m_currentFrameDecodingStatus == DecodingStatus::Invalid)
+            m_source->destroyIncompleteDecodedData();
+        
         Image::drawPattern(ctxt, destRect, tileRect, transform, phase, spacing, op, blendMode);
+        m_currentFrameDecodingStatus = frameDecodingStatusAtIndex(m_currentFrame);
         return;
     }
 

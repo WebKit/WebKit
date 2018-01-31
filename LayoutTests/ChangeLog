@@ -1,3 +1,17 @@
+2018-01-31  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        BitmapImage::drawPattern() may not draw a complete frame even after all the data is received
+        https://bugs.webkit.org/show_bug.cgi?id=182277
+
+        Reviewed by Simon Fraser.
+
+        * http/tests/images/draw-pattern-slow-load-large-image-expected.html: Added.
+        * http/tests/images/draw-pattern-slow-load-large-image.html: Added.
+        * http/tests/resources/load-and-stall.php: Add a new argument to allow
+        repeating the stall till the end of the file. This simulates real slow
+        network where sending data and stalling happens constantly and not only
+        a single time.
+
 2018-01-31  Chris Dumez  <cdumez@apple.com>
 
         REGRESSION (r227340): Layout Test fast/workers/worker-cloneport.html is a flaky failure

@@ -1,3 +1,30 @@
+2018-01-31  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        BitmapImage::drawPattern() may not draw a complete frame even after all the data is received
+        https://bugs.webkit.org/show_bug.cgi?id=182277
+
+        Reviewed by Simon Fraser.
+
+        BitmapImage::drawPattern() needs to destroy the incomplete decoded frame
+        before trying to draw it as a pattern.
+
+        Test: http/tests/images/draw-pattern-slow-load-large-image.html
+
+        * loader/cache/CachedImage.cpp:
+        (WebCore::CachedImage::updateBufferInternal): We need to disable CachedImage
+        data buffering for testing. This simulates slow network where intervals
+        between data chunks can last for seconds.
+        * loader/cache/CachedImage.h:
+        * platform/graphics/BitmapImage.cpp:
+        (WebCore::BitmapImage::drawPattern): Destroy the incomplete decoded frame
+        before drawing this frame as a pattern. We do not destroy incomplete decoded
+        frame once new data is received because it may be drawn by async image
+        drawing while waiting for the newer frame to finish decoding.
+        * testing/Internals.cpp:
+        (WebCore::Internals::setForceUpdateImageDataEnabledForTesting):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2018-01-31  Ryosuke Niwa  <rniwa@webkit.org>
 
         Add a release assertion to ensure timers are deleted in the right thread
