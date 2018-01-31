@@ -1,3 +1,15 @@
+2018-01-30  Youenn Fablet  <youenn@apple.com> and Oleksandr Skachkov  <gskachkov@gmail.com>
+
+        FetchResponse should support ConsumeData callback on chunk data is received
+        https://bugs.webkit.org/show_bug.cgi?id=181600
+        <rdar://problem/36932547>
+
+        Reviewed by Alex Christensen.
+
+        * web-platform-tests/service-workers/service-worker/fetch-event-respond-with-body-loaded-in-chunk.https-expected.txt: Added.
+        * web-platform-tests/service-workers/service-worker/fetch-event-respond-with-body-loaded-in-chunk.https.html: Added.
+        * web-platform-tests/service-workers/service-worker/resources/fetch-event-respond-with-body-loaded-in-chunk-worker.js: Added.
+
 2018-01-30  Javier Fernandez  <jfernandez@igalia.com>
 
         [css-align] The 'baseline' value must be invalid for the 'justify-content' property

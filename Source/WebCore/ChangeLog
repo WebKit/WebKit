@@ -1,3 +1,30 @@
+2018-01-30  Youenn Fablet  <youenn@apple.com> and Oleksandr Skachkov  <gskachkov@gmail.com>
+
+        FetchResponse should support ConsumeData callback on chunk data is received
+        https://bugs.webkit.org/show_bug.cgi?id=181600
+        <rdar://problem/36932547>
+
+        Reviewed by Alex Christensen.
+
+        Test: imported/w3c/web-platform-tests/service-workers/service-worker/fetch-event-respond-with-body-loaded-in-chunk.https.html
+
+        Apply same read-by-chunk strategy for body coming from network as for body coming from ReadableStream.
+        Refactor to have one consumeBodyReceivedByChunk method for both cases.
+        This allows streaming data from a service worker to WebProcess as would be done by NetworkProcess.
+
+        * Modules/cache/DOMCache.cpp:
+        (WebCore::DOMCache::addAll):
+        (WebCore::DOMCache::put):
+        * Modules/fetch/FetchResponse.cpp:
+        (WebCore::FetchResponse::BodyLoader::didSucceed):
+        (WebCore::FetchResponse::BodyLoader::didReceiveData):
+        (WebCore::FetchResponse::BodyLoader::consumeDataByChunk):
+        (WebCore::FetchResponse::consumeBody):
+        (WebCore::FetchResponse::consumeBodyReceivedByChunk):
+        * Modules/fetch/FetchResponse.h:
+        * workers/service/context/ServiceWorkerFetch.cpp:
+        (WebCore::ServiceWorkerFetch::processResponse):
+
 2018-01-30  Don Olmstead  <don.olmstead@sony.com>
 
         JSExports.h should be included as <JavaScriptCore/JSExportMacros.h>
