@@ -584,14 +584,16 @@ void AssemblyHelpers::emitRandomThunk(VM& vm, GPRReg scratch0, GPRReg scratch1, 
 
 void AssemblyHelpers::emitAllocateWithNonNullAllocator(GPRReg resultGPR, const JITAllocator& allocator, GPRReg allocatorGPR, GPRReg scratchGPR, JumpList& slowPath)
 {
-    // NOTE: This is carefully written so that we can call it while we disallow scratch
-    // register usage.
-        
     if (Options::forceGCSlowPaths()) {
         slowPath.append(jump());
         return;
     }
-    
+
+    // NOTE, some invariants of this function:
+    // - When going to the slow path, we must leave resultGPR with zero in it.
+    // - We *can not* use RegisterSet::macroScratchRegisters on x86.
+    // - We *can* use RegisterSet::macroScratchRegisters on ARM.
+
     Jump popPath;
     Jump done;
     
@@ -600,19 +602,11 @@ void AssemblyHelpers::emitAllocateWithNonNullAllocator(GPRReg resultGPR, const J
 #else
     loadPtr(&vm().threadLocalCacheData, scratchGPR);
 #endif
-    if (!isX86())
-        load32(Address(scratchGPR, ThreadLocalCache::offsetOfSizeInData()), resultGPR);
     if (allocator.isConstant()) {
-        if (isX86())
-            slowPath.append(branch32(BelowOrEqual, Address(scratchGPR, ThreadLocalCache::offsetOfSizeInData()), TrustedImm32(allocator.allocator().offset())));
-        else
-            slowPath.append(branch32(BelowOrEqual, resultGPR, TrustedImm32(allocator.allocator().offset())));
+        slowPath.append(branch32(BelowOrEqual, Address(scratchGPR, ThreadLocalCache::offsetOfSizeInData()), TrustedImm32(allocator.allocator().offset())));
         addPtr(TrustedImm32(ThreadLocalCache::offsetOfFirstAllocatorInData() + allocator.allocator().offset()), scratchGPR, allocatorGPR);
     } else {
-        if (isX86())
-            slowPath.append(branch32(BelowOrEqual, Address(scratchGPR, ThreadLocalCache::offsetOfSizeInData()), allocatorGPR));
-        else
-            slowPath.append(branch32(BelowOrEqual, resultGPR, allocatorGPR));
+        slowPath.append(branch32(BelowOrEqual, Address(scratchGPR, ThreadLocalCache::offsetOfSizeInData()), allocatorGPR));
         addPtr(TrustedImm32(ThreadLocalCache::offsetOfFirstAllocatorInData()), allocatorGPR);
         addPtr(scratchGPR, allocatorGPR);
     }
@@ -622,35 +616,20 @@ void AssemblyHelpers::emitAllocateWithNonNullAllocator(GPRReg resultGPR, const J
     if (allocator.isConstant())
         add32(TrustedImm32(-allocator.allocator().cellSize(vm().heap)), resultGPR, scratchGPR);
     else {
-        if (isX86()) {
-            move(resultGPR, scratchGPR);
-            sub32(Address(allocatorGPR, LocalAllocator::offsetOfCellSize()), scratchGPR);
-        } else {
-            load32(Address(allocatorGPR, LocalAllocator::offsetOfCellSize()), scratchGPR);
-            sub32(resultGPR, scratchGPR, scratchGPR);
-        }
+        move(resultGPR, scratchGPR);
+        sub32(Address(allocatorGPR, LocalAllocator::offsetOfCellSize()), scratchGPR);
     }
     negPtr(resultGPR);
     store32(scratchGPR, Address(allocatorGPR, LocalAllocator::offsetOfFreeList() + FreeList::offsetOfRemaining()));
     Address payloadEndAddr = Address(allocatorGPR, LocalAllocator::offsetOfFreeList() + FreeList::offsetOfPayloadEnd());
-    if (isX86())
-        addPtr(payloadEndAddr, resultGPR);
-    else {
-        loadPtr(payloadEndAddr, scratchGPR);
-        addPtr(scratchGPR, resultGPR);
-    }
-        
+    addPtr(payloadEndAddr, resultGPR);
+
     done = jump();
         
     popPath.link(this);
         
     loadPtr(Address(allocatorGPR, LocalAllocator::offsetOfFreeList() + FreeList::offsetOfScrambledHead()), resultGPR);
-    if (isX86())
-        xorPtr(Address(allocatorGPR, LocalAllocator::offsetOfFreeList() + FreeList::offsetOfSecret()), resultGPR);
-    else {
-        loadPtr(Address(allocatorGPR, LocalAllocator::offsetOfFreeList() + FreeList::offsetOfSecret()), scratchGPR);
-        xorPtr(scratchGPR, resultGPR);
-    }
+    xorPtr(Address(allocatorGPR, LocalAllocator::offsetOfFreeList() + FreeList::offsetOfSecret()), resultGPR);
     slowPath.append(branchTestPtr(Zero, resultGPR));
         
     // The object is half-allocated: we have what we know is a fresh object, but
