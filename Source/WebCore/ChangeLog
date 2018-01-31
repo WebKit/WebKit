@@ -1,3 +1,15 @@
+2018-01-31  Youenn Fablet  <youenn@apple.com>
+
+        Change SWServer::claim to set the iterator value as soon as possible
+        https://bugs.webkit.org/show_bug.cgi?id=182337
+
+        Reviewed by Chris Dumez.
+
+        No change of behavior, this is a "let's go safe way" fix.
+
+        * workers/service/server/SWServer.cpp:
+        (WebCore::SWServer::claim):
+
 2018-01-31  Zalan Bujtas  <zalan@apple.com>
 
         [RenderTreeBuilder] Move RenderObject::removeFromParentAndDestroyCleaningUpAnonymousWrappers to RenderTreeBuilder.

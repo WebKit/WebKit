@@ -420,11 +420,12 @@ void SWServer::claim(SWServerWorker& worker)
 
         auto result = m_clientToControllingWorker.add(clientData.identifier, worker.identifier());
         if (!result.isNewEntry) {
-            if (result.iterator->value == worker.identifier())
+            auto previousIdentifier = result.iterator->value;
+            if (previousIdentifier == worker.identifier())
                 return;
-            if (auto* controllingRegistration = registrationFromServiceWorkerIdentifier(result.iterator->value))
-                controllingRegistration->removeClientUsingRegistration(clientData.identifier);
             result.iterator->value = worker.identifier();
+            if (auto* controllingRegistration = registrationFromServiceWorkerIdentifier(previousIdentifier))
+                controllingRegistration->removeClientUsingRegistration(clientData.identifier);
         }
         registration->controlClient(clientData.identifier);
     });
