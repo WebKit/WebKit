@@ -1,3 +1,33 @@
+2018-01-31  Dewei Zhu  <dewei_zhu@apple.com>
+
+        Should chose the best match during 'route' if there are multiple matches.
+        https://bugs.webkit.org/show_bug.cgi?id=182326
+
+        Reviewed by Ryosuke Niwa.
+
+        r227749 made a change that 'analysisCategoryPage' will be added before 'analysisTaskPage'.
+        As route names for both pages starts with 'analysis', whichever added first will be chosen.
+        For a route like 'analysis/task/1'. As a result, 'analysisCategoryPage' will be chosen and
+        this is not expected behavior. Adding the logic on the cases when route name does not extact
+        match the route name, always choose the longest mathcing route name.
+
+        Also modernized the code of 'page-router.js' to use const & let instead of var.
+
+        Added a browser test to guard against this bug.
+
+        * browser-tests/index.html: Import 'page-router-tests.js'.
+        * browser-tests/page-router-tests.js: Added unit test to guard against this bug.
+        * public/v3/pages/page-router.js:
+        (PageRouter.prototype.route): Added logic to find best matching in the case of inexact match.
+        (PageRouter.prototype.pageDidOpen):
+        (PageRouter.prototype._updateURLState):
+        (PageRouter.prototype._serializeToHash):
+        (PageRouter.prototype._deserializeFromHash):
+        (PageRouter.prototype._serializeHashQueryValue):
+        (PageRouter.prototype._deserializeHashQueryValue):
+        (PageRouter.prototype._countOccurrences):
+        (PageRouter):
+
 2018-01-29  Dewei Zhu  <dewei_zhu@apple.com>
 
         Should fetch owner commits in build-requests-fetcher.

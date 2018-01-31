@@ -25,23 +25,31 @@ class PageRouter {
 
     route()
     {
-        var destinationPage = this._defaultPage;
-        var parsed = this._deserializeFromHash(location.hash);
+        let destinationPage = this._defaultPage;
+        const parsed = this._deserializeFromHash(location.hash);
         if (parsed.route) {
-            var hashUrl = parsed.route;
-            var queryIndex = hashUrl.indexOf('?');
+            let hashUrl = parsed.route;
+            let bestMatchingRouteName = null;
+            const queryIndex = hashUrl.indexOf('?');
             if (queryIndex >= 0)
                 hashUrl = hashUrl.substring(0, queryIndex);
 
-            for (var page of this._pages) {
-                var routeName = page.routeName();
-                if (routeName == hashUrl
-                    || (hashUrl.startsWith(routeName) && hashUrl.charAt(routeName.length) == '/')) {
-                    parsed.state.remainingRoute = hashUrl.substring(routeName.length + 1);
+            for (const page of this._pages) {
+                const routeName = page.routeName();
+
+                if (routeName == hashUrl) {
+                    bestMatchingRouteName = routeName;
                     destinationPage = page;
                     break;
+                } else if (hashUrl.startsWith(routeName) && hashUrl.charAt(routeName.length) == '/'
+                    && (!bestMatchingRouteName || bestMatchingRouteName.length < routeName.length)) {
+                    bestMatchingRouteName = routeName;
+                    destinationPage = page;
                 }
             }
+
+            if (bestMatchingRouteName)
+                parsed.state.remainingRoute = hashUrl.substring(bestMatchingRouteName.length + 1);
         }
 
         if (!destinationPage)
@@ -60,7 +68,7 @@ class PageRouter {
     pageDidOpen(page)
     {
         console.assert(page instanceof Page);
-        var pageDidChange = this._currentPage != page;
+        const pageDidChange = this._currentPage != page;
         this._currentPage = page;
         if (pageDidChange)
             this.scheduleUrlStateUpdate();
@@ -82,7 +90,7 @@ class PageRouter {
     {
         this._historyTimer = null;
         console.assert(this._currentPage);
-        var currentPage = this._currentPage;
+        const currentPage = this._currentPage;
         this._hash = this._serializeToHash(currentPage.routeName(), currentPage.serializeState());
         location.hash = this._hash;
     }
@@ -97,10 +105,10 @@ class PageRouter {
 
     _serializeToHash(route, state)
     {
-        var params = [];
-        for (var key in state)
+        const params = [];
+        for (const key in state)
             params.push(key + '=' + this._serializeHashQueryValue(state[key]));
-        var query = params.length ? ('?' + params.join('&')) : '';
+        const query = params.length ? ('?' + params.join('&')) : '';
         return `#/${route}${query}`;
     }
     
@@ -111,13 +119,13 @@ class PageRouter {
 
         hash = unescape(hash); // For Firefox.
 
-        var queryIndex = hash.indexOf('?');
-        var route;
-        var state = {};
+        const queryIndex = hash.indexOf('?');
+        let route;
+        const state = {};
         if (queryIndex >= 0) {
             route = hash.substring(2, queryIndex);
-            for (var part of hash.substring(queryIndex + 1).split('&')) {
-                var keyValuePair = part.split('=');
+            for (const part of hash.substring(queryIndex + 1).split('&')) {
+                const keyValuePair = part.split('=');
                 state[keyValuePair[0]] = this._deserializeHashQueryValue(keyValuePair[1]);
             }
         } else
@@ -129,8 +137,8 @@ class PageRouter {
     _serializeHashQueryValue(value)
     {
         if (value instanceof Array) {
-            var serializedItems = [];
-            for (var item of value)
+            const serializedItems = [];
+            for (const item of value)
                 serializedItems.push(this._serializeHashQueryValue(item));
             return '(' + serializedItems.join('-') + ')';
         }
@@ -143,11 +151,11 @@ class PageRouter {
     _deserializeHashQueryValue(value)
     {
         if (value.charAt(0) == '(') {
-            var nestingLevel = 0;
-            var end = 0;
-            var start = 1;
-            var result = [];
-            for (var character of value) {
+            let nestingLevel = 0;
+            let end = 0;
+            let start = 1;
+            const result = [];
+            for (const character of value) {
                 if (character == '(')
                     nestingLevel++;
                 else if (character == ')') {
@@ -176,7 +184,7 @@ class PageRouter {
 
     _countOccurrences(string, regex)
     {
-        var match = string.match(regex);
+        const match = string.match(regex);
         return match ? match.length : 0;
     }
 }
