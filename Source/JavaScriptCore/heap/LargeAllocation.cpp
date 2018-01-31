@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,9 +35,18 @@ namespace JSC {
 
 LargeAllocation* LargeAllocation::tryCreate(Heap& heap, size_t size, Subspace* subspace)
 {
-    void* space = subspace->alignedMemoryAllocator()->tryAllocateAlignedMemory(alignment, headerSize() + size);
+    // This includes padding at the end of the allocation to maintain the distancing constraint.
+    constexpr size_t distancing = minimumDistanceBetweenCellsFromDifferentOrigins;
+    size_t sizeBeforeDistancing = headerSize() + size;
+    size_t sizeIncludingDistancing = sizeBeforeDistancing + distancing;
+    
+    void* space = subspace->alignedMemoryAllocator()->tryAllocateAlignedMemory(alignment, sizeIncludingDistancing);
     if (!space)
         return nullptr;
+    
+    // Make sure that the padding does not contain useful things.
+    memset(static_cast<char*>(space) + sizeBeforeDistancing, 0, distancing);
+    
     if (scribbleFreeCells())
         scribble(space, size);
     return new (NotNull, space) LargeAllocation(heap, size, subspace);

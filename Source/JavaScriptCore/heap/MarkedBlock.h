@@ -285,14 +285,19 @@ public:
         Bitmap<atomsPerBlock> m_marks;
         Bitmap<atomsPerBlock> m_newlyAllocated;
     };
-        
+    
 private:    
     Footer& footer();
     const Footer& footer() const;
 
 public:
     static constexpr size_t endAtom = (blockSize - sizeof(Footer)) / atomSize;
+    static constexpr size_t payloadSize = endAtom * atomSize;
+    static constexpr size_t footerSize = blockSize - payloadSize;
 
+    static_assert(payloadSize == ((blockSize - sizeof(MarkedBlock::Footer)) & ~(atomSize - 1)), "Payload size computed the alternate way should give the same result");
+    static_assert(footerSize >= minimumDistanceBetweenCellsFromDifferentOrigins, "Footer is not big enough to create the necessary distance between objects from different origins");
+    
     static MarkedBlock::Handle* tryCreate(Heap&, AlignedMemoryAllocator*);
         
     Handle& handle();

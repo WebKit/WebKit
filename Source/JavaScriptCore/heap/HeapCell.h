@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,6 +36,8 @@ class MarkedBlock;
 class Subspace;
 class VM;
 struct CellAttributes;
+
+static constexpr unsigned minimumDistanceBetweenCellsFromDifferentOrigins = sizeof(void*) == 8 ? 304 : 288;
 
 class HeapCell {
 public:
