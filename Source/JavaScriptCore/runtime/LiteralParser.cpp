@@ -63,7 +63,7 @@ bool LiteralParser<CharType>::tryJSONPParse(Vector<JSONPData>& results, bool nee
         if (name == vm.propertyNames->varKeyword) {
             if (m_lexer.next() != TokIdentifier)
                 return false;
-            entry.m_type = JSONPPathEntryTypeDeclare;
+            entry.m_type = JSONPPathEntryTypeDeclareVar;
             entry.m_pathEntryName = Identifier::fromString(&vm, m_lexer.currentToken()->start, m_lexer.currentToken()->end - m_lexer.currentToken()->start);
             path.append(entry);
         } else {
@@ -74,7 +74,7 @@ bool LiteralParser<CharType>::tryJSONPParse(Vector<JSONPData>& results, bool nee
         if (isLexerKeyword(entry.m_pathEntryName))
             return false;
         TokenType tokenType = m_lexer.next();
-        if (entry.m_type == JSONPPathEntryTypeDeclare && tokenType != TokAssign)
+        if (entry.m_type == JSONPPathEntryTypeDeclareVar && tokenType != TokAssign)
             return false;
         while (tokenType != TokAssign) {
             switch (tokenType) {

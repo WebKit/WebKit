@@ -1,7 +1,7 @@
-CONSOLE MESSAGE: line 30: Unhandled Promise Rejection: TypeError: undefined is not an object (evaluating 'registration.unregister')
 
-FAIL initialize global state assert_unreached: unregister and register should not fail: Error: assert_equals: expected (string) "root" but got (object) null Reached unreachable code
-FAIL import script previously imported at worker evaluation time promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'registration.installing')"
-FAIL import script previously imported at worker install time promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'registration.installing')"
-FAIL import script not previously imported promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'registration.installing')"
+PASS initialize global state 
+PASS import script previously imported at worker evaluation time 
+PASS import script previously imported at worker install time 
+FAIL import script not previously imported assert_equals: expected (string) "TypeError" but got (object) null
+PASS Tests for importScripts: import scripts updated flag 
 

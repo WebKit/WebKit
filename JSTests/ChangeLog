@@ -1,3 +1,17 @@
+2018-01-31  Saam Barati  <sbarati@apple.com>
+
+        JSC incorrectly interpreting script, sets Global Property instead of Global Lexical variable (LiteralParser / JSONP path)
+        https://bugs.webkit.org/show_bug.cgi?id=182074
+        <rdar://problem/36846261>
+
+        Reviewed by Mark Lam.
+
+        * stress/jsonp-program-evaluate-path-must-consider-global-lexical-environment.js: Added.
+        (assert):
+        (let.func):
+        (let.o.foo):
+        (varFunc):
+
 2018-01-30  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Unreviewed, update test262 expects

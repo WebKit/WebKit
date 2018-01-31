@@ -871,15 +871,15 @@ CONSOLE MESSAGE: line 38: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: line 38: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: line 36: OtherScriptError: Error thrown from other script with Secret
 CONSOLE MESSAGE: line 42: 
-CONSOLE MESSAGE: line 43: Test thrown Error from a script from another domain
-CONSOLE MESSAGE: line 9:    [case 33] var e = new Error('Error thrown from other script with Secret');
-CONSOLE MESSAGE: line 11:    [case 33] e.name = 'OtherScriptError'
-CONSOLE MESSAGE: line 17:       [Error] e = 'OtherScriptError: Error thrown from other script with Secret'
-CONSOLE MESSAGE: line 18:       [Error] e.name = 'OtherScriptError'
-CONSOLE MESSAGE: line 19:       [Error] e.message = 'Error thrown from other script with Secret'
-CONSOLE MESSAGE: line 20:       [Error] e.toString() = 'OtherScriptError: Error thrown from other script with Secret'
+CONSOLE MESSAGE: line 43: Test thrown EvalError from a script from another domain
+CONSOLE MESSAGE: line 9:    [case 33] var e = new EvalError('Error thrown from other script with Secret');
+CONSOLE MESSAGE: line 11:    [case 33] e.name = 'OtherScriptEvalError'
+CONSOLE MESSAGE: line 17:       [EvalError] e = 'OtherScriptEvalError: Error thrown from other script with Secret'
+CONSOLE MESSAGE: line 18:       [EvalError] e.name = 'OtherScriptEvalError'
+CONSOLE MESSAGE: line 19:       [EvalError] e.message = 'Error thrown from other script with Secret'
+CONSOLE MESSAGE: line 20:       [EvalError] e.toString() = 'OtherScriptEvalError: Error thrown from other script with Secret'
 CONSOLE MESSAGE: line 24:    [case 33] throw e;
-CONSOLE MESSAGE: line 31:    [case 33] Caught: OtherScriptError: Error thrown from other script with Secret
+CONSOLE MESSAGE: line 31:    [case 33] Caught: OtherScriptEvalError: Error thrown from other script with Secret
 CONSOLE MESSAGE: line 32:    [case 33]    re-throw e;
 CONSOLE MESSAGE: line 47:    [case 33] in window.onerror: err = Script error.
 CONSOLE MESSAGE: line 48:    [case 33] in window.onerror: err.name = undefined
@@ -889,17 +889,17 @@ CONSOLE MESSAGE: line 38: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: line 38: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: line 38: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: line 38: PASSED: Did not see any Secret from another domain
-CONSOLE MESSAGE: line 36: OtherScriptError: Error thrown from other script with Secret
+CONSOLE MESSAGE: line 36: OtherScriptEvalError: Error thrown from other script with Secret
 CONSOLE MESSAGE: line 42: 
-CONSOLE MESSAGE: line 43: Test thrown Error from a script from another domain
-CONSOLE MESSAGE: line 9:    [case 34] var e = new Error('Error thrown from other script with Secret');
-CONSOLE MESSAGE: line 11:    [case 34] e.name = 'OtherScriptError'
-CONSOLE MESSAGE: line 17:       [Error] e = 'OtherScriptError: Error thrown from other script with Secret'
-CONSOLE MESSAGE: line 18:       [Error] e.name = 'OtherScriptError'
-CONSOLE MESSAGE: line 19:       [Error] e.message = 'Error thrown from other script with Secret'
-CONSOLE MESSAGE: line 20:       [Error] e.toString() = 'OtherScriptError: Error thrown from other script with Secret'
+CONSOLE MESSAGE: line 43: Test thrown RangeError from a script from another domain
+CONSOLE MESSAGE: line 9:    [case 34] var e = new RangeError('Error thrown from other script with Secret');
+CONSOLE MESSAGE: line 11:    [case 34] e.name = 'OtherScriptRangeError'
+CONSOLE MESSAGE: line 17:       [RangeError] e = 'OtherScriptRangeError: Error thrown from other script with Secret'
+CONSOLE MESSAGE: line 18:       [RangeError] e.name = 'OtherScriptRangeError'
+CONSOLE MESSAGE: line 19:       [RangeError] e.message = 'Error thrown from other script with Secret'
+CONSOLE MESSAGE: line 20:       [RangeError] e.toString() = 'OtherScriptRangeError: Error thrown from other script with Secret'
 CONSOLE MESSAGE: line 24:    [case 34] throw e;
-CONSOLE MESSAGE: line 31:    [case 34] Caught: OtherScriptError: Error thrown from other script with Secret
+CONSOLE MESSAGE: line 31:    [case 34] Caught: OtherScriptRangeError: Error thrown from other script with Secret
 CONSOLE MESSAGE: line 32:    [case 34]    re-throw e;
 CONSOLE MESSAGE: line 47:    [case 34] in window.onerror: err = Script error.
 CONSOLE MESSAGE: line 48:    [case 34] in window.onerror: err.name = undefined
@@ -909,17 +909,17 @@ CONSOLE MESSAGE: line 38: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: line 38: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: line 38: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: line 38: PASSED: Did not see any Secret from another domain
-CONSOLE MESSAGE: line 36: OtherScriptError: Error thrown from other script with Secret
+CONSOLE MESSAGE: line 36: OtherScriptRangeError: Error thrown from other script with Secret
 CONSOLE MESSAGE: line 42: 
-CONSOLE MESSAGE: line 43: Test thrown Error from a script from another domain
-CONSOLE MESSAGE: line 9:    [case 35] var e = new Error('Error thrown from other script with Secret');
-CONSOLE MESSAGE: line 11:    [case 35] e.name = 'OtherScriptError'
-CONSOLE MESSAGE: line 17:       [Error] e = 'OtherScriptError: Error thrown from other script with Secret'
-CONSOLE MESSAGE: line 18:       [Error] e.name = 'OtherScriptError'
-CONSOLE MESSAGE: line 19:       [Error] e.message = 'Error thrown from other script with Secret'
-CONSOLE MESSAGE: line 20:       [Error] e.toString() = 'OtherScriptError: Error thrown from other script with Secret'
+CONSOLE MESSAGE: line 43: Test thrown ReferenceError from a script from another domain
+CONSOLE MESSAGE: line 9:    [case 35] var e = new ReferenceError('Error thrown from other script with Secret');
+CONSOLE MESSAGE: line 11:    [case 35] e.name = 'OtherScriptReferenceError'
+CONSOLE MESSAGE: line 17:       [ReferenceError] e = 'OtherScriptReferenceError: Error thrown from other script with Secret'
+CONSOLE MESSAGE: line 18:       [ReferenceError] e.name = 'OtherScriptReferenceError'
+CONSOLE MESSAGE: line 19:       [ReferenceError] e.message = 'Error thrown from other script with Secret'
+CONSOLE MESSAGE: line 20:       [ReferenceError] e.toString() = 'OtherScriptReferenceError: Error thrown from other script with Secret'
 CONSOLE MESSAGE: line 24:    [case 35] throw e;
-CONSOLE MESSAGE: line 31:    [case 35] Caught: OtherScriptError: Error thrown from other script with Secret
+CONSOLE MESSAGE: line 31:    [case 35] Caught: OtherScriptReferenceError: Error thrown from other script with Secret
 CONSOLE MESSAGE: line 32:    [case 35]    re-throw e;
 CONSOLE MESSAGE: line 47:    [case 35] in window.onerror: err = Script error.
 CONSOLE MESSAGE: line 48:    [case 35] in window.onerror: err.name = undefined
@@ -929,17 +929,17 @@ CONSOLE MESSAGE: line 38: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: line 38: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: line 38: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: line 38: PASSED: Did not see any Secret from another domain
-CONSOLE MESSAGE: line 36: OtherScriptError: Error thrown from other script with Secret
+CONSOLE MESSAGE: line 36: OtherScriptReferenceError: Error thrown from other script with Secret
 CONSOLE MESSAGE: line 42: 
-CONSOLE MESSAGE: line 43: Test thrown Error from a script from another domain
-CONSOLE MESSAGE: line 9:    [case 36] var e = new Error('Error thrown from other script with Secret');
-CONSOLE MESSAGE: line 11:    [case 36] e.name = 'OtherScriptError'
-CONSOLE MESSAGE: line 17:       [Error] e = 'OtherScriptError: Error thrown from other script with Secret'
-CONSOLE MESSAGE: line 18:       [Error] e.name = 'OtherScriptError'
-CONSOLE MESSAGE: line 19:       [Error] e.message = 'Error thrown from other script with Secret'
-CONSOLE MESSAGE: line 20:       [Error] e.toString() = 'OtherScriptError: Error thrown from other script with Secret'
+CONSOLE MESSAGE: line 43: Test thrown SyntaxError from a script from another domain
+CONSOLE MESSAGE: line 9:    [case 36] var e = new SyntaxError('Error thrown from other script with Secret');
+CONSOLE MESSAGE: line 11:    [case 36] e.name = 'OtherScriptSyntaxError'
+CONSOLE MESSAGE: line 17:       [SyntaxError] e = 'OtherScriptSyntaxError: Error thrown from other script with Secret'
+CONSOLE MESSAGE: line 18:       [SyntaxError] e.name = 'OtherScriptSyntaxError'
+CONSOLE MESSAGE: line 19:       [SyntaxError] e.message = 'Error thrown from other script with Secret'
+CONSOLE MESSAGE: line 20:       [SyntaxError] e.toString() = 'OtherScriptSyntaxError: Error thrown from other script with Secret'
 CONSOLE MESSAGE: line 24:    [case 36] throw e;
-CONSOLE MESSAGE: line 31:    [case 36] Caught: OtherScriptError: Error thrown from other script with Secret
+CONSOLE MESSAGE: line 31:    [case 36] Caught: OtherScriptSyntaxError: Error thrown from other script with Secret
 CONSOLE MESSAGE: line 32:    [case 36]    re-throw e;
 CONSOLE MESSAGE: line 47:    [case 36] in window.onerror: err = Script error.
 CONSOLE MESSAGE: line 48:    [case 36] in window.onerror: err.name = undefined
@@ -949,17 +949,17 @@ CONSOLE MESSAGE: line 38: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: line 38: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: line 38: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: line 38: PASSED: Did not see any Secret from another domain
-CONSOLE MESSAGE: line 36: OtherScriptError: Error thrown from other script with Secret
+CONSOLE MESSAGE: line 36: OtherScriptSyntaxError: Error thrown from other script with Secret
 CONSOLE MESSAGE: line 42: 
-CONSOLE MESSAGE: line 43: Test thrown Error from a script from another domain
-CONSOLE MESSAGE: line 9:    [case 37] var e = new Error('Error thrown from other script with Secret');
-CONSOLE MESSAGE: line 11:    [case 37] e.name = 'OtherScriptError'
-CONSOLE MESSAGE: line 17:       [Error] e = 'OtherScriptError: Error thrown from other script with Secret'
-CONSOLE MESSAGE: line 18:       [Error] e.name = 'OtherScriptError'
-CONSOLE MESSAGE: line 19:       [Error] e.message = 'Error thrown from other script with Secret'
-CONSOLE MESSAGE: line 20:       [Error] e.toString() = 'OtherScriptError: Error thrown from other script with Secret'
+CONSOLE MESSAGE: line 43: Test thrown TypeError from a script from another domain
+CONSOLE MESSAGE: line 9:    [case 37] var e = new TypeError('Error thrown from other script with Secret');
+CONSOLE MESSAGE: line 11:    [case 37] e.name = 'OtherScriptTypeError'
+CONSOLE MESSAGE: line 17:       [TypeError] e = 'OtherScriptTypeError: Error thrown from other script with Secret'
+CONSOLE MESSAGE: line 18:       [TypeError] e.name = 'OtherScriptTypeError'
+CONSOLE MESSAGE: line 19:       [TypeError] e.message = 'Error thrown from other script with Secret'
+CONSOLE MESSAGE: line 20:       [TypeError] e.toString() = 'OtherScriptTypeError: Error thrown from other script with Secret'
 CONSOLE MESSAGE: line 24:    [case 37] throw e;
-CONSOLE MESSAGE: line 31:    [case 37] Caught: OtherScriptError: Error thrown from other script with Secret
+CONSOLE MESSAGE: line 31:    [case 37] Caught: OtherScriptTypeError: Error thrown from other script with Secret
 CONSOLE MESSAGE: line 32:    [case 37]    re-throw e;
 CONSOLE MESSAGE: line 47:    [case 37] in window.onerror: err = Script error.
 CONSOLE MESSAGE: line 48:    [case 37] in window.onerror: err.name = undefined
@@ -969,17 +969,17 @@ CONSOLE MESSAGE: line 38: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: line 38: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: line 38: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: line 38: PASSED: Did not see any Secret from another domain
-CONSOLE MESSAGE: line 36: OtherScriptError: Error thrown from other script with Secret
+CONSOLE MESSAGE: line 36: OtherScriptTypeError: Error thrown from other script with Secret
 CONSOLE MESSAGE: line 42: 
-CONSOLE MESSAGE: line 43: Test thrown Error from a script from another domain
-CONSOLE MESSAGE: line 9:    [case 38] var e = new Error('Error thrown from other script with Secret');
-CONSOLE MESSAGE: line 11:    [case 38] e.name = 'OtherScriptError'
-CONSOLE MESSAGE: line 17:       [Error] e = 'OtherScriptError: Error thrown from other script with Secret'
-CONSOLE MESSAGE: line 18:       [Error] e.name = 'OtherScriptError'
-CONSOLE MESSAGE: line 19:       [Error] e.message = 'Error thrown from other script with Secret'
-CONSOLE MESSAGE: line 20:       [Error] e.toString() = 'OtherScriptError: Error thrown from other script with Secret'
+CONSOLE MESSAGE: line 43: Test thrown URIError from a script from another domain
+CONSOLE MESSAGE: line 9:    [case 38] var e = new URIError('Error thrown from other script with Secret');
+CONSOLE MESSAGE: line 11:    [case 38] e.name = 'OtherScriptURIError'
+CONSOLE MESSAGE: line 17:       [URIError] e = 'OtherScriptURIError: Error thrown from other script with Secret'
+CONSOLE MESSAGE: line 18:       [URIError] e.name = 'OtherScriptURIError'
+CONSOLE MESSAGE: line 19:       [URIError] e.message = 'Error thrown from other script with Secret'
+CONSOLE MESSAGE: line 20:       [URIError] e.toString() = 'OtherScriptURIError: Error thrown from other script with Secret'
 CONSOLE MESSAGE: line 24:    [case 38] throw e;
-CONSOLE MESSAGE: line 31:    [case 38] Caught: OtherScriptError: Error thrown from other script with Secret
+CONSOLE MESSAGE: line 31:    [case 38] Caught: OtherScriptURIError: Error thrown from other script with Secret
 CONSOLE MESSAGE: line 32:    [case 38]    re-throw e;
 CONSOLE MESSAGE: line 47:    [case 38] in window.onerror: err = Script error.
 CONSOLE MESSAGE: line 48:    [case 38] in window.onerror: err.name = undefined
@@ -989,7 +989,7 @@ CONSOLE MESSAGE: line 38: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: line 38: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: line 38: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: line 38: PASSED: Did not see any Secret from another domain
-CONSOLE MESSAGE: line 36: OtherScriptError: Error thrown from other script with Secret
+CONSOLE MESSAGE: line 36: OtherScriptURIError: Error thrown from other script with Secret
 CONSOLE MESSAGE: line 42: 
 CONSOLE MESSAGE: line 43: Test thrown Error from a script from another domain
 CONSOLE MESSAGE: line 9:    [case 39] var e = new Error('Error thrown from other script with Secret');
@@ -1019,19 +1019,19 @@ CONSOLE MESSAGE: line 38: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: line 38: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: line 36: Error: Error thrown from other script with Secret
 CONSOLE MESSAGE: line 42: 
-CONSOLE MESSAGE: line 43: Test thrown Error from a script from another domain
-CONSOLE MESSAGE: line 9:    [case 40] var e = new Error('Error thrown from other script with Secret');
-CONSOLE MESSAGE: line 11:    [case 40] e.name = 'OtherScriptError'
+CONSOLE MESSAGE: line 43: Test thrown EvalError from a script from another domain
+CONSOLE MESSAGE: line 9:    [case 40] var e = new EvalError('Error thrown from other script with Secret');
+CONSOLE MESSAGE: line 11:    [case 40] e.name = 'OtherScriptEvalError'
 CONSOLE MESSAGE: line 67:    [case 40] in 'name' getter[8]: error.message = 'Error thrown from other script with Secret'
 CONSOLE MESSAGE: line 38: PASSED: Did not see any Secret from another domain
-CONSOLE MESSAGE: line 17:       [Error] e = 'GetterErrorName: getter[8] Error thrown from other script with Secret: Error thrown from other script with Secret'
+CONSOLE MESSAGE: line 17:       [EvalError] e = 'GetterErrorName: getter[8] Error thrown from other script with Secret: Error thrown from other script with Secret'
 CONSOLE MESSAGE: line 67:    [case 40] in 'name' getter[9]: error.message = 'Error thrown from other script with Secret'
 CONSOLE MESSAGE: line 38: PASSED: Did not see any Secret from another domain
-CONSOLE MESSAGE: line 18:       [Error] e.name = 'GetterErrorName: getter[9] Error thrown from other script with Secret'
-CONSOLE MESSAGE: line 19:       [Error] e.message = 'Error thrown from other script with Secret'
+CONSOLE MESSAGE: line 18:       [EvalError] e.name = 'GetterErrorName: getter[9] Error thrown from other script with Secret'
+CONSOLE MESSAGE: line 19:       [EvalError] e.message = 'Error thrown from other script with Secret'
 CONSOLE MESSAGE: line 67:    [case 40] in 'name' getter[10]: error.message = 'Error thrown from other script with Secret'
 CONSOLE MESSAGE: line 38: PASSED: Did not see any Secret from another domain
-CONSOLE MESSAGE: line 20:       [Error] e.toString() = 'GetterErrorName: getter[10] Error thrown from other script with Secret: Error thrown from other script with Secret'
+CONSOLE MESSAGE: line 20:       [EvalError] e.toString() = 'GetterErrorName: getter[10] Error thrown from other script with Secret: Error thrown from other script with Secret'
 CONSOLE MESSAGE: line 24:    [case 40] throw e;
 CONSOLE MESSAGE: line 67:    [case 40] in 'name' getter[11]: error.message = 'Error thrown from other script with Secret'
 CONSOLE MESSAGE: line 38: PASSED: Did not see any Secret from another domain
@@ -1047,19 +1047,19 @@ CONSOLE MESSAGE: line 38: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: line 38: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: line 36: Error: Error thrown from other script with Secret
 CONSOLE MESSAGE: line 42: 
-CONSOLE MESSAGE: line 43: Test thrown Error from a script from another domain
-CONSOLE MESSAGE: line 9:    [case 41] var e = new Error('Error thrown from other script with Secret');
-CONSOLE MESSAGE: line 11:    [case 41] e.name = 'OtherScriptError'
+CONSOLE MESSAGE: line 43: Test thrown RangeError from a script from another domain
+CONSOLE MESSAGE: line 9:    [case 41] var e = new RangeError('Error thrown from other script with Secret');
+CONSOLE MESSAGE: line 11:    [case 41] e.name = 'OtherScriptRangeError'
 CONSOLE MESSAGE: line 67:    [case 41] in 'name' getter[12]: error.message = 'Error thrown from other script with Secret'
 CONSOLE MESSAGE: line 38: PASSED: Did not see any Secret from another domain
-CONSOLE MESSAGE: line 17:       [Error] e = 'GetterErrorName: getter[12] Error thrown from other script with Secret: Error thrown from other script with Secret'
+CONSOLE MESSAGE: line 17:       [RangeError] e = 'GetterErrorName: getter[12] Error thrown from other script with Secret: Error thrown from other script with Secret'
 CONSOLE MESSAGE: line 67:    [case 41] in 'name' getter[13]: error.message = 'Error thrown from other script with Secret'
 CONSOLE MESSAGE: line 38: PASSED: Did not see any Secret from another domain
-CONSOLE MESSAGE: line 18:       [Error] e.name = 'GetterErrorName: getter[13] Error thrown from other script with Secret'
-CONSOLE MESSAGE: line 19:       [Error] e.message = 'Error thrown from other script with Secret'
+CONSOLE MESSAGE: line 18:       [RangeError] e.name = 'GetterErrorName: getter[13] Error thrown from other script with Secret'
+CONSOLE MESSAGE: line 19:       [RangeError] e.message = 'Error thrown from other script with Secret'
 CONSOLE MESSAGE: line 67:    [case 41] in 'name' getter[14]: error.message = 'Error thrown from other script with Secret'
 CONSOLE MESSAGE: line 38: PASSED: Did not see any Secret from another domain
-CONSOLE MESSAGE: line 20:       [Error] e.toString() = 'GetterErrorName: getter[14] Error thrown from other script with Secret: Error thrown from other script with Secret'
+CONSOLE MESSAGE: line 20:       [RangeError] e.toString() = 'GetterErrorName: getter[14] Error thrown from other script with Secret: Error thrown from other script with Secret'
 CONSOLE MESSAGE: line 24:    [case 41] throw e;
 CONSOLE MESSAGE: line 67:    [case 41] in 'name' getter[15]: error.message = 'Error thrown from other script with Secret'
 CONSOLE MESSAGE: line 38: PASSED: Did not see any Secret from another domain
@@ -1075,19 +1075,19 @@ CONSOLE MESSAGE: line 38: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: line 38: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: line 36: Error: Error thrown from other script with Secret
 CONSOLE MESSAGE: line 42: 
-CONSOLE MESSAGE: line 43: Test thrown Error from a script from another domain
-CONSOLE MESSAGE: line 9:    [case 42] var e = new Error('Error thrown from other script with Secret');
-CONSOLE MESSAGE: line 11:    [case 42] e.name = 'OtherScriptError'
+CONSOLE MESSAGE: line 43: Test thrown ReferenceError from a script from another domain
+CONSOLE MESSAGE: line 9:    [case 42] var e = new ReferenceError('Error thrown from other script with Secret');
+CONSOLE MESSAGE: line 11:    [case 42] e.name = 'OtherScriptReferenceError'
 CONSOLE MESSAGE: line 67:    [case 42] in 'name' getter[16]: error.message = 'Error thrown from other script with Secret'
 CONSOLE MESSAGE: line 38: PASSED: Did not see any Secret from another domain
-CONSOLE MESSAGE: line 17:       [Error] e = 'GetterErrorName: getter[16] Error thrown from other script with Secret: Error thrown from other script with Secret'
+CONSOLE MESSAGE: line 17:       [ReferenceError] e = 'GetterErrorName: getter[16] Error thrown from other script with Secret: Error thrown from other script with Secret'
 CONSOLE MESSAGE: line 67:    [case 42] in 'name' getter[17]: error.message = 'Error thrown from other script with Secret'
 CONSOLE MESSAGE: line 38: PASSED: Did not see any Secret from another domain
-CONSOLE MESSAGE: line 18:       [Error] e.name = 'GetterErrorName: getter[17] Error thrown from other script with Secret'
-CONSOLE MESSAGE: line 19:       [Error] e.message = 'Error thrown from other script with Secret'
+CONSOLE MESSAGE: line 18:       [ReferenceError] e.name = 'GetterErrorName: getter[17] Error thrown from other script with Secret'
+CONSOLE MESSAGE: line 19:       [ReferenceError] e.message = 'Error thrown from other script with Secret'
 CONSOLE MESSAGE: line 67:    [case 42] in 'name' getter[18]: error.message = 'Error thrown from other script with Secret'
 CONSOLE MESSAGE: line 38: PASSED: Did not see any Secret from another domain
-CONSOLE MESSAGE: line 20:       [Error] e.toString() = 'GetterErrorName: getter[18] Error thrown from other script with Secret: Error thrown from other script with Secret'
+CONSOLE MESSAGE: line 20:       [ReferenceError] e.toString() = 'GetterErrorName: getter[18] Error thrown from other script with Secret: Error thrown from other script with Secret'
 CONSOLE MESSAGE: line 24:    [case 42] throw e;
 CONSOLE MESSAGE: line 67:    [case 42] in 'name' getter[19]: error.message = 'Error thrown from other script with Secret'
 CONSOLE MESSAGE: line 38: PASSED: Did not see any Secret from another domain
@@ -1103,19 +1103,19 @@ CONSOLE MESSAGE: line 38: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: line 38: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: line 36: Error: Error thrown from other script with Secret
 CONSOLE MESSAGE: line 42: 
-CONSOLE MESSAGE: line 43: Test thrown Error from a script from another domain
-CONSOLE MESSAGE: line 9:    [case 43] var e = new Error('Error thrown from other script with Secret');
-CONSOLE MESSAGE: line 11:    [case 43] e.name = 'OtherScriptError'
+CONSOLE MESSAGE: line 43: Test thrown SyntaxError from a script from another domain
+CONSOLE MESSAGE: line 9:    [case 43] var e = new SyntaxError('Error thrown from other script with Secret');
+CONSOLE MESSAGE: line 11:    [case 43] e.name = 'OtherScriptSyntaxError'
 CONSOLE MESSAGE: line 67:    [case 43] in 'name' getter[20]: error.message = 'Error thrown from other script with Secret'
 CONSOLE MESSAGE: line 38: PASSED: Did not see any Secret from another domain
-CONSOLE MESSAGE: line 17:       [Error] e = 'GetterErrorName: getter[20] Error thrown from other script with Secret: Error thrown from other script with Secret'
+CONSOLE MESSAGE: line 17:       [SyntaxError] e = 'GetterErrorName: getter[20] Error thrown from other script with Secret: Error thrown from other script with Secret'
 CONSOLE MESSAGE: line 67:    [case 43] in 'name' getter[21]: error.message = 'Error thrown from other script with Secret'
 CONSOLE MESSAGE: line 38: PASSED: Did not see any Secret from another domain
-CONSOLE MESSAGE: line 18:       [Error] e.name = 'GetterErrorName: getter[21] Error thrown from other script with Secret'
-CONSOLE MESSAGE: line 19:       [Error] e.message = 'Error thrown from other script with Secret'
+CONSOLE MESSAGE: line 18:       [SyntaxError] e.name = 'GetterErrorName: getter[21] Error thrown from other script with Secret'
+CONSOLE MESSAGE: line 19:       [SyntaxError] e.message = 'Error thrown from other script with Secret'
 CONSOLE MESSAGE: line 67:    [case 43] in 'name' getter[22]: error.message = 'Error thrown from other script with Secret'
 CONSOLE MESSAGE: line 38: PASSED: Did not see any Secret from another domain
-CONSOLE MESSAGE: line 20:       [Error] e.toString() = 'GetterErrorName: getter[22] Error thrown from other script with Secret: Error thrown from other script with Secret'
+CONSOLE MESSAGE: line 20:       [SyntaxError] e.toString() = 'GetterErrorName: getter[22] Error thrown from other script with Secret: Error thrown from other script with Secret'
 CONSOLE MESSAGE: line 24:    [case 43] throw e;
 CONSOLE MESSAGE: line 67:    [case 43] in 'name' getter[23]: error.message = 'Error thrown from other script with Secret'
 CONSOLE MESSAGE: line 38: PASSED: Did not see any Secret from another domain
@@ -1131,19 +1131,19 @@ CONSOLE MESSAGE: line 38: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: line 38: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: line 36: Error: Error thrown from other script with Secret
 CONSOLE MESSAGE: line 42: 
-CONSOLE MESSAGE: line 43: Test thrown Error from a script from another domain
-CONSOLE MESSAGE: line 9:    [case 44] var e = new Error('Error thrown from other script with Secret');
-CONSOLE MESSAGE: line 11:    [case 44] e.name = 'OtherScriptError'
+CONSOLE MESSAGE: line 43: Test thrown TypeError from a script from another domain
+CONSOLE MESSAGE: line 9:    [case 44] var e = new TypeError('Error thrown from other script with Secret');
+CONSOLE MESSAGE: line 11:    [case 44] e.name = 'OtherScriptTypeError'
 CONSOLE MESSAGE: line 67:    [case 44] in 'name' getter[24]: error.message = 'Error thrown from other script with Secret'
 CONSOLE MESSAGE: line 38: PASSED: Did not see any Secret from another domain
-CONSOLE MESSAGE: line 17:       [Error] e = 'GetterErrorName: getter[24] Error thrown from other script with Secret: Error thrown from other script with Secret'
+CONSOLE MESSAGE: line 17:       [TypeError] e = 'GetterErrorName: getter[24] Error thrown from other script with Secret: Error thrown from other script with Secret'
 CONSOLE MESSAGE: line 67:    [case 44] in 'name' getter[25]: error.message = 'Error thrown from other script with Secret'
 CONSOLE MESSAGE: line 38: PASSED: Did not see any Secret from another domain
-CONSOLE MESSAGE: line 18:       [Error] e.name = 'GetterErrorName: getter[25] Error thrown from other script with Secret'
-CONSOLE MESSAGE: line 19:       [Error] e.message = 'Error thrown from other script with Secret'
+CONSOLE MESSAGE: line 18:       [TypeError] e.name = 'GetterErrorName: getter[25] Error thrown from other script with Secret'
+CONSOLE MESSAGE: line 19:       [TypeError] e.message = 'Error thrown from other script with Secret'
 CONSOLE MESSAGE: line 67:    [case 44] in 'name' getter[26]: error.message = 'Error thrown from other script with Secret'
 CONSOLE MESSAGE: line 38: PASSED: Did not see any Secret from another domain
-CONSOLE MESSAGE: line 20:       [Error] e.toString() = 'GetterErrorName: getter[26] Error thrown from other script with Secret: Error thrown from other script with Secret'
+CONSOLE MESSAGE: line 20:       [TypeError] e.toString() = 'GetterErrorName: getter[26] Error thrown from other script with Secret: Error thrown from other script with Secret'
 CONSOLE MESSAGE: line 24:    [case 44] throw e;
 CONSOLE MESSAGE: line 67:    [case 44] in 'name' getter[27]: error.message = 'Error thrown from other script with Secret'
 CONSOLE MESSAGE: line 38: PASSED: Did not see any Secret from another domain
@@ -1159,19 +1159,19 @@ CONSOLE MESSAGE: line 38: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: line 38: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: line 36: Error: Error thrown from other script with Secret
 CONSOLE MESSAGE: line 42: 
-CONSOLE MESSAGE: line 43: Test thrown Error from a script from another domain
-CONSOLE MESSAGE: line 9:    [case 45] var e = new Error('Error thrown from other script with Secret');
-CONSOLE MESSAGE: line 11:    [case 45] e.name = 'OtherScriptError'
+CONSOLE MESSAGE: line 43: Test thrown URIError from a script from another domain
+CONSOLE MESSAGE: line 9:    [case 45] var e = new URIError('Error thrown from other script with Secret');
+CONSOLE MESSAGE: line 11:    [case 45] e.name = 'OtherScriptURIError'
 CONSOLE MESSAGE: line 67:    [case 45] in 'name' getter[28]: error.message = 'Error thrown from other script with Secret'
 CONSOLE MESSAGE: line 38: PASSED: Did not see any Secret from another domain
-CONSOLE MESSAGE: line 17:       [Error] e = 'GetterErrorName: getter[28] Error thrown from other script with Secret: Error thrown from other script with Secret'
+CONSOLE MESSAGE: line 17:       [URIError] e = 'GetterErrorName: getter[28] Error thrown from other script with Secret: Error thrown from other script with Secret'
 CONSOLE MESSAGE: line 67:    [case 45] in 'name' getter[29]: error.message = 'Error thrown from other script with Secret'
 CONSOLE MESSAGE: line 38: PASSED: Did not see any Secret from another domain
-CONSOLE MESSAGE: line 18:       [Error] e.name = 'GetterErrorName: getter[29] Error thrown from other script with Secret'
-CONSOLE MESSAGE: line 19:       [Error] e.message = 'Error thrown from other script with Secret'
+CONSOLE MESSAGE: line 18:       [URIError] e.name = 'GetterErrorName: getter[29] Error thrown from other script with Secret'
+CONSOLE MESSAGE: line 19:       [URIError] e.message = 'Error thrown from other script with Secret'
 CONSOLE MESSAGE: line 67:    [case 45] in 'name' getter[30]: error.message = 'Error thrown from other script with Secret'
 CONSOLE MESSAGE: line 38: PASSED: Did not see any Secret from another domain
-CONSOLE MESSAGE: line 20:       [Error] e.toString() = 'GetterErrorName: getter[30] Error thrown from other script with Secret: Error thrown from other script with Secret'
+CONSOLE MESSAGE: line 20:       [URIError] e.toString() = 'GetterErrorName: getter[30] Error thrown from other script with Secret: Error thrown from other script with Secret'
 CONSOLE MESSAGE: line 24:    [case 45] throw e;
 CONSOLE MESSAGE: line 67:    [case 45] in 'name' getter[31]: error.message = 'Error thrown from other script with Secret'
 CONSOLE MESSAGE: line 38: PASSED: Did not see any Secret from another domain
@@ -1213,17 +1213,17 @@ CONSOLE MESSAGE: line 38: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: line 38: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: line 36: OtherScriptError: Error thrown from other script with Secret
 CONSOLE MESSAGE: line 42: 
-CONSOLE MESSAGE: line 43: Test thrown Error from a script from another domain
-CONSOLE MESSAGE: line 9:    [case 47] var e = new Error('Error thrown from other script with Secret');
-CONSOLE MESSAGE: line 11:    [case 47] e.name = 'OtherScriptError'
+CONSOLE MESSAGE: line 43: Test thrown EvalError from a script from another domain
+CONSOLE MESSAGE: line 9:    [case 47] var e = new EvalError('Error thrown from other script with Secret');
+CONSOLE MESSAGE: line 11:    [case 47] e.name = 'OtherScriptEvalError'
 CONSOLE MESSAGE: line 95:    [case 47] in 'toString' getter[35]: error.message = 'Error thrown from other script with Secret'
 CONSOLE MESSAGE: line 38: PASSED: Did not see any Secret from another domain
-CONSOLE MESSAGE: line 17:       [Error] e = 'GetterErrorToString: getter[35] Error thrown from other script with Secret'
-CONSOLE MESSAGE: line 18:       [Error] e.name = 'OtherScriptError'
-CONSOLE MESSAGE: line 19:       [Error] e.message = 'Error thrown from other script with Secret'
+CONSOLE MESSAGE: line 17:       [EvalError] e = 'GetterErrorToString: getter[35] Error thrown from other script with Secret'
+CONSOLE MESSAGE: line 18:       [EvalError] e.name = 'OtherScriptEvalError'
+CONSOLE MESSAGE: line 19:       [EvalError] e.message = 'Error thrown from other script with Secret'
 CONSOLE MESSAGE: line 95:    [case 47] in 'toString' getter[36]: error.message = 'Error thrown from other script with Secret'
 CONSOLE MESSAGE: line 38: PASSED: Did not see any Secret from another domain
-CONSOLE MESSAGE: line 20:       [Error] e.toString() = 'GetterErrorToString: getter[36] Error thrown from other script with Secret'
+CONSOLE MESSAGE: line 20:       [EvalError] e.toString() = 'GetterErrorToString: getter[36] Error thrown from other script with Secret'
 CONSOLE MESSAGE: line 24:    [case 47] throw e;
 CONSOLE MESSAGE: line 95:    [case 47] in 'toString' getter[37]: error.message = 'Error thrown from other script with Secret'
 CONSOLE MESSAGE: line 38: PASSED: Did not see any Secret from another domain
@@ -1237,19 +1237,19 @@ CONSOLE MESSAGE: line 38: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: line 38: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: line 38: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: line 38: PASSED: Did not see any Secret from another domain
-CONSOLE MESSAGE: line 36: OtherScriptError: Error thrown from other script with Secret
+CONSOLE MESSAGE: line 36: OtherScriptEvalError: Error thrown from other script with Secret
 CONSOLE MESSAGE: line 42: 
-CONSOLE MESSAGE: line 43: Test thrown Error from a script from another domain
-CONSOLE MESSAGE: line 9:    [case 48] var e = new Error('Error thrown from other script with Secret');
-CONSOLE MESSAGE: line 11:    [case 48] e.name = 'OtherScriptError'
+CONSOLE MESSAGE: line 43: Test thrown RangeError from a script from another domain
+CONSOLE MESSAGE: line 9:    [case 48] var e = new RangeError('Error thrown from other script with Secret');
+CONSOLE MESSAGE: line 11:    [case 48] e.name = 'OtherScriptRangeError'
 CONSOLE MESSAGE: line 95:    [case 48] in 'toString' getter[38]: error.message = 'Error thrown from other script with Secret'
 CONSOLE MESSAGE: line 38: PASSED: Did not see any Secret from another domain
-CONSOLE MESSAGE: line 17:       [Error] e = 'GetterErrorToString: getter[38] Error thrown from other script with Secret'
-CONSOLE MESSAGE: line 18:       [Error] e.name = 'OtherScriptError'
-CONSOLE MESSAGE: line 19:       [Error] e.message = 'Error thrown from other script with Secret'
+CONSOLE MESSAGE: line 17:       [RangeError] e = 'GetterErrorToString: getter[38] Error thrown from other script with Secret'
+CONSOLE MESSAGE: line 18:       [RangeError] e.name = 'OtherScriptRangeError'
+CONSOLE MESSAGE: line 19:       [RangeError] e.message = 'Error thrown from other script with Secret'
 CONSOLE MESSAGE: line 95:    [case 48] in 'toString' getter[39]: error.message = 'Error thrown from other script with Secret'
 CONSOLE MESSAGE: line 38: PASSED: Did not see any Secret from another domain
-CONSOLE MESSAGE: line 20:       [Error] e.toString() = 'GetterErrorToString: getter[39] Error thrown from other script with Secret'
+CONSOLE MESSAGE: line 20:       [RangeError] e.toString() = 'GetterErrorToString: getter[39] Error thrown from other script with Secret'
 CONSOLE MESSAGE: line 24:    [case 48] throw e;
 CONSOLE MESSAGE: line 95:    [case 48] in 'toString' getter[40]: error.message = 'Error thrown from other script with Secret'
 CONSOLE MESSAGE: line 38: PASSED: Did not see any Secret from another domain
@@ -1263,19 +1263,19 @@ CONSOLE MESSAGE: line 38: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: line 38: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: line 38: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: line 38: PASSED: Did not see any Secret from another domain
-CONSOLE MESSAGE: line 36: OtherScriptError: Error thrown from other script with Secret
+CONSOLE MESSAGE: line 36: OtherScriptRangeError: Error thrown from other script with Secret
 CONSOLE MESSAGE: line 42: 
-CONSOLE MESSAGE: line 43: Test thrown Error from a script from another domain
-CONSOLE MESSAGE: line 9:    [case 49] var e = new Error('Error thrown from other script with Secret');
-CONSOLE MESSAGE: line 11:    [case 49] e.name = 'OtherScriptError'
+CONSOLE MESSAGE: line 43: Test thrown ReferenceError from a script from another domain
+CONSOLE MESSAGE: line 9:    [case 49] var e = new ReferenceError('Error thrown from other script with Secret');
+CONSOLE MESSAGE: line 11:    [case 49] e.name = 'OtherScriptReferenceError'
 CONSOLE MESSAGE: line 95:    [case 49] in 'toString' getter[41]: error.message = 'Error thrown from other script with Secret'
 CONSOLE MESSAGE: line 38: PASSED: Did not see any Secret from another domain
-CONSOLE MESSAGE: line 17:       [Error] e = 'GetterErrorToString: getter[41] Error thrown from other script with Secret'
-CONSOLE MESSAGE: line 18:       [Error] e.name = 'OtherScriptError'
-CONSOLE MESSAGE: line 19:       [Error] e.message = 'Error thrown from other script with Secret'
+CONSOLE MESSAGE: line 17:       [ReferenceError] e = 'GetterErrorToString: getter[41] Error thrown from other script with Secret'
+CONSOLE MESSAGE: line 18:       [ReferenceError] e.name = 'OtherScriptReferenceError'
+CONSOLE MESSAGE: line 19:       [ReferenceError] e.message = 'Error thrown from other script with Secret'
 CONSOLE MESSAGE: line 95:    [case 49] in 'toString' getter[42]: error.message = 'Error thrown from other script with Secret'
 CONSOLE MESSAGE: line 38: PASSED: Did not see any Secret from another domain
-CONSOLE MESSAGE: line 20:       [Error] e.toString() = 'GetterErrorToString: getter[42] Error thrown from other script with Secret'
+CONSOLE MESSAGE: line 20:       [ReferenceError] e.toString() = 'GetterErrorToString: getter[42] Error thrown from other script with Secret'
 CONSOLE MESSAGE: line 24:    [case 49] throw e;
 CONSOLE MESSAGE: line 95:    [case 49] in 'toString' getter[43]: error.message = 'Error thrown from other script with Secret'
 CONSOLE MESSAGE: line 38: PASSED: Did not see any Secret from another domain
@@ -1289,19 +1289,19 @@ CONSOLE MESSAGE: line 38: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: line 38: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: line 38: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: line 38: PASSED: Did not see any Secret from another domain
-CONSOLE MESSAGE: line 36: OtherScriptError: Error thrown from other script with Secret
+CONSOLE MESSAGE: line 36: OtherScriptReferenceError: Error thrown from other script with Secret
 CONSOLE MESSAGE: line 42: 
-CONSOLE MESSAGE: line 43: Test thrown Error from a script from another domain
-CONSOLE MESSAGE: line 9:    [case 50] var e = new Error('Error thrown from other script with Secret');
-CONSOLE MESSAGE: line 11:    [case 50] e.name = 'OtherScriptError'
+CONSOLE MESSAGE: line 43: Test thrown SyntaxError from a script from another domain
+CONSOLE MESSAGE: line 9:    [case 50] var e = new SyntaxError('Error thrown from other script with Secret');
+CONSOLE MESSAGE: line 11:    [case 50] e.name = 'OtherScriptSyntaxError'
 CONSOLE MESSAGE: line 95:    [case 50] in 'toString' getter[44]: error.message = 'Error thrown from other script with Secret'
 CONSOLE MESSAGE: line 38: PASSED: Did not see any Secret from another domain
-CONSOLE MESSAGE: line 17:       [Error] e = 'GetterErrorToString: getter[44] Error thrown from other script with Secret'
-CONSOLE MESSAGE: line 18:       [Error] e.name = 'OtherScriptError'
-CONSOLE MESSAGE: line 19:       [Error] e.message = 'Error thrown from other script with Secret'
+CONSOLE MESSAGE: line 17:       [SyntaxError] e = 'GetterErrorToString: getter[44] Error thrown from other script with Secret'
+CONSOLE MESSAGE: line 18:       [SyntaxError] e.name = 'OtherScriptSyntaxError'
+CONSOLE MESSAGE: line 19:       [SyntaxError] e.message = 'Error thrown from other script with Secret'
 CONSOLE MESSAGE: line 95:    [case 50] in 'toString' getter[45]: error.message = 'Error thrown from other script with Secret'
 CONSOLE MESSAGE: line 38: PASSED: Did not see any Secret from another domain
-CONSOLE MESSAGE: line 20:       [Error] e.toString() = 'GetterErrorToString: getter[45] Error thrown from other script with Secret'
+CONSOLE MESSAGE: line 20:       [SyntaxError] e.toString() = 'GetterErrorToString: getter[45] Error thrown from other script with Secret'
 CONSOLE MESSAGE: line 24:    [case 50] throw e;
 CONSOLE MESSAGE: line 95:    [case 50] in 'toString' getter[46]: error.message = 'Error thrown from other script with Secret'
 CONSOLE MESSAGE: line 38: PASSED: Did not see any Secret from another domain
@@ -1315,19 +1315,19 @@ CONSOLE MESSAGE: line 38: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: line 38: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: line 38: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: line 38: PASSED: Did not see any Secret from another domain
-CONSOLE MESSAGE: line 36: OtherScriptError: Error thrown from other script with Secret
+CONSOLE MESSAGE: line 36: OtherScriptSyntaxError: Error thrown from other script with Secret
 CONSOLE MESSAGE: line 42: 
-CONSOLE MESSAGE: line 43: Test thrown Error from a script from another domain
-CONSOLE MESSAGE: line 9:    [case 51] var e = new Error('Error thrown from other script with Secret');
-CONSOLE MESSAGE: line 11:    [case 51] e.name = 'OtherScriptError'
+CONSOLE MESSAGE: line 43: Test thrown TypeError from a script from another domain
+CONSOLE MESSAGE: line 9:    [case 51] var e = new TypeError('Error thrown from other script with Secret');
+CONSOLE MESSAGE: line 11:    [case 51] e.name = 'OtherScriptTypeError'
 CONSOLE MESSAGE: line 95:    [case 51] in 'toString' getter[47]: error.message = 'Error thrown from other script with Secret'
 CONSOLE MESSAGE: line 38: PASSED: Did not see any Secret from another domain
-CONSOLE MESSAGE: line 17:       [Error] e = 'GetterErrorToString: getter[47] Error thrown from other script with Secret'
-CONSOLE MESSAGE: line 18:       [Error] e.name = 'OtherScriptError'
-CONSOLE MESSAGE: line 19:       [Error] e.message = 'Error thrown from other script with Secret'
+CONSOLE MESSAGE: line 17:       [TypeError] e = 'GetterErrorToString: getter[47] Error thrown from other script with Secret'
+CONSOLE MESSAGE: line 18:       [TypeError] e.name = 'OtherScriptTypeError'
+CONSOLE MESSAGE: line 19:       [TypeError] e.message = 'Error thrown from other script with Secret'
 CONSOLE MESSAGE: line 95:    [case 51] in 'toString' getter[48]: error.message = 'Error thrown from other script with Secret'
 CONSOLE MESSAGE: line 38: PASSED: Did not see any Secret from another domain
-CONSOLE MESSAGE: line 20:       [Error] e.toString() = 'GetterErrorToString: getter[48] Error thrown from other script with Secret'
+CONSOLE MESSAGE: line 20:       [TypeError] e.toString() = 'GetterErrorToString: getter[48] Error thrown from other script with Secret'
 CONSOLE MESSAGE: line 24:    [case 51] throw e;
 CONSOLE MESSAGE: line 95:    [case 51] in 'toString' getter[49]: error.message = 'Error thrown from other script with Secret'
 CONSOLE MESSAGE: line 38: PASSED: Did not see any Secret from another domain
@@ -1341,19 +1341,19 @@ CONSOLE MESSAGE: line 38: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: line 38: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: line 38: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: line 38: PASSED: Did not see any Secret from another domain
-CONSOLE MESSAGE: line 36: OtherScriptError: Error thrown from other script with Secret
+CONSOLE MESSAGE: line 36: OtherScriptTypeError: Error thrown from other script with Secret
 CONSOLE MESSAGE: line 42: 
-CONSOLE MESSAGE: line 43: Test thrown Error from a script from another domain
-CONSOLE MESSAGE: line 9:    [case 52] var e = new Error('Error thrown from other script with Secret');
-CONSOLE MESSAGE: line 11:    [case 52] e.name = 'OtherScriptError'
+CONSOLE MESSAGE: line 43: Test thrown URIError from a script from another domain
+CONSOLE MESSAGE: line 9:    [case 52] var e = new URIError('Error thrown from other script with Secret');
+CONSOLE MESSAGE: line 11:    [case 52] e.name = 'OtherScriptURIError'
 CONSOLE MESSAGE: line 95:    [case 52] in 'toString' getter[50]: error.message = 'Error thrown from other script with Secret'
 CONSOLE MESSAGE: line 38: PASSED: Did not see any Secret from another domain
-CONSOLE MESSAGE: line 17:       [Error] e = 'GetterErrorToString: getter[50] Error thrown from other script with Secret'
-CONSOLE MESSAGE: line 18:       [Error] e.name = 'OtherScriptError'
-CONSOLE MESSAGE: line 19:       [Error] e.message = 'Error thrown from other script with Secret'
+CONSOLE MESSAGE: line 17:       [URIError] e = 'GetterErrorToString: getter[50] Error thrown from other script with Secret'
+CONSOLE MESSAGE: line 18:       [URIError] e.name = 'OtherScriptURIError'
+CONSOLE MESSAGE: line 19:       [URIError] e.message = 'Error thrown from other script with Secret'
 CONSOLE MESSAGE: line 95:    [case 52] in 'toString' getter[51]: error.message = 'Error thrown from other script with Secret'
 CONSOLE MESSAGE: line 38: PASSED: Did not see any Secret from another domain
-CONSOLE MESSAGE: line 20:       [Error] e.toString() = 'GetterErrorToString: getter[51] Error thrown from other script with Secret'
+CONSOLE MESSAGE: line 20:       [URIError] e.toString() = 'GetterErrorToString: getter[51] Error thrown from other script with Secret'
 CONSOLE MESSAGE: line 24:    [case 52] throw e;
 CONSOLE MESSAGE: line 95:    [case 52] in 'toString' getter[52]: error.message = 'Error thrown from other script with Secret'
 CONSOLE MESSAGE: line 38: PASSED: Did not see any Secret from another domain
@@ -1367,5 +1367,5 @@ CONSOLE MESSAGE: line 38: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: line 38: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: line 38: PASSED: Did not see any Secret from another domain
 CONSOLE MESSAGE: line 38: PASSED: Did not see any Secret from another domain
-CONSOLE MESSAGE: line 36: OtherScriptError: Error thrown from other script with Secret
+CONSOLE MESSAGE: line 36: OtherScriptURIError: Error thrown from other script with Secret
 Should not be able to read the secret text from another site.
