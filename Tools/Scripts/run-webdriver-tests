@@ -74,14 +74,6 @@ if port.name() in ['gtk', 'wpe']:
         print '*** Warning: jhbuild environment not present. Run update-webkitgtk-libs before build-webkit to ensure proper testing.'
         print '***'
 
-if options.json_output is not None:
-    # Create the json output file now, because buildbot watches it and it seems
-    # that creating it a t once after the tests causes problems.
-    directory = os.path.dirname(options.json_output)
-    if directory and not os.path.exists(directory):
-        os.makedirs(directory)
-    open(options.json_output, 'wb').close()
-
 port._display_server = options.display_server
 runner = WebDriverTestRunner(port)
 runner.run(args)
