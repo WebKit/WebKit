@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,28 +23,17 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#include "config.h"
+#include "Allocator.h"
 
-#include "BlockDirectory.h"
-#include "FreeListInlines.h"
-#include "VM.h"
+#include "Heap.h"
+#include "ThreadLocalCacheLayout.h"
 
 namespace JSC {
 
-template <typename Functor> inline void BlockDirectory::forEachBlock(const Functor& functor)
+unsigned Allocator::cellSize(Heap& heap) const
 {
-    m_live.forEachSetBit(
-        [&] (size_t index) {
-            functor(m_blocks[index]);
-        });
-}
-
-template <typename Functor> inline void BlockDirectory::forEachNotEmptyBlock(const Functor& functor)
-{
-    m_markingNotEmpty.forEachSetBit(
-        [&] (size_t index) {
-            functor(m_blocks[index]);
-        });
+    return heap.threadLocalCacheLayout().directory(m_offset)->cellSize();
 }
 
 } // namespace JSC

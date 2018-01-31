@@ -57,8 +57,6 @@ struct FreeCell {
 };
 
 class FreeList {
-    WTF_MAKE_NONCOPYABLE(FreeList);
-    
 public:
     FreeList(unsigned cellSize);
     ~FreeList();

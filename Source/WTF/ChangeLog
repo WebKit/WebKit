@@ -1,5 +1,18 @@
 2018-01-30  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r227617. rdar://problem/37019352
+
+    2018-01-25  Filip Pizlo  <fpizlo@apple.com>
+
+            JSC GC should support TLCs (thread local caches)
+            https://bugs.webkit.org/show_bug.cgi?id=181559
+
+            Reviewed by Mark Lam and Saam Barati.
+
+            * wtf/Bitmap.h: Just fixing a compile error.
+
+2018-01-30  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r226783. rdar://problem/37077980
 
     2018-01-04  Filip Pizlo  <fpizlo@apple.com>

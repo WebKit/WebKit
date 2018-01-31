@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,27 +25,43 @@
 
 #pragma once
 
-#include "BlockDirectory.h"
-#include "FreeListInlines.h"
-#include "VM.h"
+#include <wtf/FastMalloc.h>
+#include <wtf/Lock.h>
+#include <wtf/Noncopyable.h>
+#include <wtf/Vector.h>
 
 namespace JSC {
 
-template <typename Functor> inline void BlockDirectory::forEachBlock(const Functor& functor)
-{
-    m_live.forEachSetBit(
-        [&] (size_t index) {
-            functor(m_blocks[index]);
-        });
-}
+class BlockDirectory;
 
-template <typename Functor> inline void BlockDirectory::forEachNotEmptyBlock(const Functor& functor)
-{
-    m_markingNotEmpty.forEachSetBit(
-        [&] (size_t index) {
-            functor(m_blocks[index]);
-        });
-}
+// Each Heap has a ThreadLocalCacheLayout that helps us figure out how to allocate a ThreadLocalCache
+// for that Heap.
+
+class ThreadLocalCacheLayout {
+    WTF_MAKE_NONCOPYABLE(ThreadLocalCacheLayout);
+    WTF_MAKE_FAST_ALLOCATED;
+    
+public:
+    ThreadLocalCacheLayout();
+    ~ThreadLocalCacheLayout();
+
+    // BlockDirectory calls this during creation and this fills in BlockDirectory::offset.
+    void allocateOffset(BlockDirectory*);
+    
+    struct Snapshot {
+        size_t size;
+        Vector<BlockDirectory*> directories;
+    };
+    
+    Snapshot snapshot();
+    
+    BlockDirectory* directory(unsigned offset);
+    
+private:
+    Lock m_lock;
+    size_t m_size { 0 };
+    Vector<BlockDirectory*> m_directories;
+};
 
 } // namespace JSC
 

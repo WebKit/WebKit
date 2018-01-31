@@ -466,6 +466,7 @@ ftl/FTLThunks.cpp
 ftl/FTLValueRange.cpp
 
 heap/AlignedMemoryAllocator.cpp
+heap/Allocator.cpp
 heap/BlockDirectory.cpp
 heap/CellAttributes.cpp
 heap/CellContainer.cpp
@@ -500,6 +501,7 @@ heap/IsoCellSet.cpp
 heap/IsoSubspace.cpp
 heap/JITStubRoutineSet.cpp
 heap/LargeAllocation.cpp
+heap/LocalAllocator.cpp
 heap/MachineStackMarker.cpp
 heap/MarkStack.cpp
 heap/MarkStackMergingConstraint.cpp
@@ -518,6 +520,8 @@ heap/StopIfNecessaryTimer.cpp
 heap/Subspace.cpp
 heap/SynchronousStopTheWorldMutatorScheduler.cpp
 heap/Synchronousness.cpp
+heap/ThreadLocalCache.cpp
+heap/ThreadLocalCacheLayout.cpp
 heap/VisitRaceKey.cpp
 heap/Weak.cpp
 heap/WeakBlock.cpp

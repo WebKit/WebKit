@@ -31,6 +31,7 @@
 #include "VisitRaceKey.h"
 #include <wtf/Forward.h>
 #include <wtf/MonotonicTime.h>
+#include <wtf/SharedTask.h>
 #include <wtf/text/CString.h>
 
 namespace JSC {
@@ -41,6 +42,7 @@ class Heap;
 class HeapCell;
 class HeapSnapshotBuilder;
 class MarkedBlock;
+class MarkingConstraint;
 class MarkingConstraintSolver;
 class UnconditionalFinalizer;
 template<typename T> class Weak;

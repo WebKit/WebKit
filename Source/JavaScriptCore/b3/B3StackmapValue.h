@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -99,7 +99,8 @@ public:
     // This is a helper for something you might do a lot of: append a value that should be constrained
     // to SomeRegister.
     void appendSomeRegister(Value*);
-
+    void appendSomeRegisterWithClobber(Value*);
+    
     const Vector<ValueRep>& reps() const { return m_reps; }
 
     // Stackmaps allow you to specify that the operation may clobber some registers. Clobbering a register

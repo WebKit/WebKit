@@ -84,6 +84,7 @@ class SlotVisitor;
 class SpaceTimeMutatorScheduler;
 class StopIfNecessaryTimer;
 class SweepingScope;
+class ThreadLocalCacheLayout;
 class VM;
 class WeakGCMapBase;
 struct CurrentThreadState;
@@ -373,6 +374,8 @@ public:
     template<typename Func>
     void forEachSlotVisitor(const Func&);
     unsigned numberOfSlotVisitors();
+    
+    ThreadLocalCacheLayout& threadLocalCacheLayout() { return *m_threadLocalCacheLayout; }
 
 private:
     friend class AllocatingScope;
@@ -715,6 +718,8 @@ private:
     
     CurrentThreadState* m_currentThreadState { nullptr };
     WTF::Thread* m_currentThread { nullptr }; // It's OK if this becomes a dangling pointer.
+    
+    std::unique_ptr<ThreadLocalCacheLayout> m_threadLocalCacheLayout;
 };
 
 } // namespace JSC
