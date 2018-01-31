@@ -191,6 +191,7 @@ TimerBase::TimerBase()
 
 TimerBase::~TimerBase()
 {
+    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(canAccessThreadLocalDataForThread(m_thread.get()));
     stop();
     ASSERT(!inHeap());
     m_wasDeleted = true;

@@ -1,3 +1,20 @@
+2018-01-31  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add a release assertion to ensure timers are deleted in the right thread
+        https://bugs.webkit.org/show_bug.cgi?id=182351
+
+        Reviewed by David Kilzer.
+
+        Added a relese assertion in ~TimerBase that the current thread is the one in which the timer was created.
+
+        We use canAccessThreadLocalDataForThread for this purpose since the condition is more complicated
+        when WebThread is being used.
+
+        * platform/Timer.cpp:
+        (WebCore::TimerBase::~TimerBase): Added the assertion.
+        * platform/Timer.h:
+        (WebCore::TimerBase::m_thread): Always store the current thread in a timer.
+
 2018-01-31  Youenn Fablet  <youenn@apple.com>
 
         Change SWServer::claim to set the iterator value as soon as possible

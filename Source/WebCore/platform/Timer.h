@@ -103,9 +103,7 @@ private:
     bool m_wasDeleted { false };
     Vector<TimerBase*>* m_cachedThreadGlobalTimerHeap { nullptr };
 
-#ifndef NDEBUG
     Ref<Thread> m_thread { Thread::current() };
-#endif
 
     friend class ThreadTimers;
     friend class TimerHeapLessThanFunction;
