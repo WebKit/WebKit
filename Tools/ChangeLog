@@ -1,3 +1,37 @@
+2018-01-31  Charlie Turner  <cturner@igalia.com>
+
+        [WPE] Update jhbuild dependencies
+        https://bugs.webkit.org/show_bug.cgi?id=182286
+
+        This upgrades the following packages,
+        glib 2.44.1 -> 2.54.3
+        glib-networking 2.42.0 -> 2.54.1
+        libsoup 2.48.0 -> 2.60.3
+
+        The initial reason for performing these upgrades was that when
+        visiting https://youtube.com, WPE was getting TLS certificate
+        errors. After upgrading glib-networking, these were fixed, but the
+        upgrade introduced dependencies on newer versions of the other
+        packages upgraded in this commit.
+
+        The upgrade to glib caused a linking error in gstreamer, the
+        following errors were being logged during linking,
+
+        //usr/lib/x86_64-linux-gnu/libpangoft2-1.0.so.0: undefined reference to `hb_glib_script_from_script'
+        //usr/lib/x86_64-linux-gnu/libpangoft2-1.0.so.0: undefined reference to `hb_glib_get_unicode_funcs'
+        //usr/lib/x86_64-linux-gnu/libpangoft2-1.0.so.0: undefined reference to `hb_glib_script_to_script'
+
+        This was fixed by adding the glib package built in the jhbuild to
+        harfbuzz.
+
+        Finally, the upgrade of glib caused the glib-warning-fix.patch to
+        no longer apply, so this patch was removed.
+
+        Reviewed by Michael Catanzaro.
+
+        * wpe/jhbuild.modules: Added dependecies.
+        * wpe/patches/glib-warning-fix.patch: Removed.
+
 2018-01-31  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed, rolling out r227782.
