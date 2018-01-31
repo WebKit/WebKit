@@ -94,7 +94,7 @@ void UnlinkedCodeBlock::visitChildren(JSCell* cell, SlotVisitor& visitor)
     UnlinkedCodeBlock* thisObject = jsCast<UnlinkedCodeBlock*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Base::visitChildren(thisObject, visitor);
-    auto locker = holdLock(*thisObject);
+    auto locker = holdLock(thisObject->cellLock());
     for (FunctionExpressionVector::iterator ptr = thisObject->m_functionDecls.begin(), end = thisObject->m_functionDecls.end(); ptr != end; ++ptr)
         visitor.append(*ptr);
     for (FunctionExpressionVector::iterator ptr = thisObject->m_functionExprs.begin(), end = thisObject->m_functionExprs.end(); ptr != end; ++ptr)
@@ -317,7 +317,7 @@ void UnlinkedCodeBlock::setInstructions(std::unique_ptr<UnlinkedInstructionStrea
 {
     ASSERT(instructions);
     {
-        auto locker = holdLock(*this);
+        auto locker = holdLock(cellLock());
         m_unlinkedInstructions = WTFMove(instructions);
     }
     Heap::heap(this)->reportExtraMemoryAllocated(m_unlinkedInstructions->sizeInBytes());
@@ -392,7 +392,7 @@ void UnlinkedCodeBlock::applyModification(BytecodeRewriter& rewriter, UnpackedIn
 
 void UnlinkedCodeBlock::shrinkToFit()
 {
-    auto locker = holdLock(*this);
+    auto locker = holdLock(cellLock());
     
     m_jumpTargets.shrinkToFit();
     m_identifiers.shrinkToFit();

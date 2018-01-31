@@ -71,7 +71,7 @@ void JSPropertyNameEnumerator::finishCreation(VM& vm, uint32_t indexedLength, ui
     m_endGenericPropertyIndex = vector.size();
 
     {
-        auto locker = lockDuringMarking(vm.heap, *this);
+        auto locker = lockDuringMarking(vm.heap, cellLock());
         m_propertyNames.resizeToFit(vector.size());
     }
     for (unsigned i = 0; i < vector.size(); ++i) {
@@ -89,7 +89,7 @@ void JSPropertyNameEnumerator::visitChildren(JSCell* cell, SlotVisitor& visitor)
 {
     Base::visitChildren(cell, visitor);
     JSPropertyNameEnumerator* thisObject = jsCast<JSPropertyNameEnumerator*>(cell);
-    auto locker = holdLock(*thisObject);
+    auto locker = holdLock(thisObject->cellLock());
     for (auto& propertyName : thisObject->m_propertyNames)
         visitor.append(propertyName);
     visitor.append(thisObject->m_prototypeChain);

@@ -383,7 +383,7 @@ ALWAYS_INLINE Structure* JSObject::visitButterflyImpl(SlotVisitor& visitor)
     lastOffset = structure->lastOffset();
     IndexingType indexingType = structure->indexingType();
     Dependency indexingTypeDependency = Dependency::fence(indexingType);
-    Locker<JSCell> locker(NoLockingNecessary);
+    Locker<JSCellLock> locker(NoLockingNecessary);
     switch (indexingType) {
     case ALL_CONTIGUOUS_INDEXING_TYPES:
     case ALL_ARRAY_STORAGE_INDEXING_TYPES:
@@ -391,7 +391,7 @@ ALWAYS_INLINE Structure* JSObject::visitButterflyImpl(SlotVisitor& visitor)
         // that can happen when the butterfly is used for array storage. We conservatively
         // assume that a contiguous butterfly may transform into an array storage one, though
         // this is probably more conservative than necessary.
-        locker = Locker<JSCell>(*this);
+        locker = holdLock(cellLock());
         break;
     default:
         break;
@@ -1358,7 +1358,7 @@ ArrayStorage* JSObject::convertContiguousToArrayStorage(VM& vm, NonPropertyTrans
     // Fortunately, we have the JSCell lock for this purpose!
     
     if (vm.heap.mutatorShouldBeFenced()) {
-        auto locker = holdLock(*this);
+        auto locker = holdLock(cellLock());
         m_butterflyIndexingMask = newStorage->butterfly()->computeIndexingMask();
         setStructureIDDirectly(nuke(structureID()));
         WTF::storeStoreFence();

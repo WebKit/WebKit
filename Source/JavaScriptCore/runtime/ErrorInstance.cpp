@@ -117,7 +117,7 @@ void ErrorInstance::finishCreation(ExecState* exec, VM& vm, const String& messag
 
     std::unique_ptr<Vector<StackFrame>> stackTrace = getStackTrace(exec, vm, this, useCurrentFrame);
     {
-        auto locker = holdLock(*this);
+        auto locker = holdLock(cellLock());
         m_stackTrace = WTFMove(stackTrace);
     }
     vm.heap.writeBarrier(this);
@@ -209,7 +209,7 @@ bool ErrorInstance::materializeErrorInfoIfNeeded(VM& vm)
     
     addErrorInfo(vm, m_stackTrace.get(), this);
     {
-        auto locker = holdLock(*this);
+        auto locker = holdLock(cellLock());
         m_stackTrace = nullptr;
     }
     
@@ -234,7 +234,7 @@ void ErrorInstance::visitChildren(JSCell* cell, SlotVisitor& visitor)
     Base::visitChildren(thisObject, visitor);
 
     {
-        auto locker = holdLock(*thisObject);
+        auto locker = holdLock(thisObject->cellLock());
         if (thisObject->m_stackTrace) {
             for (StackFrame& frame : *thisObject->m_stackTrace)
                 frame.visitChildren(visitor);

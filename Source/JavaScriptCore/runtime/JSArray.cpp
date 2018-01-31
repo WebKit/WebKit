@@ -802,7 +802,7 @@ bool JSArray::shiftCountWithArrayStorage(VM& vm, unsigned startIndex, unsigned c
         return true;
     
     DisallowGC disallowGC;
-    auto locker = holdLock(*this);
+    auto locker = holdLock(cellLock());
     
     if (startIndex + count > vectorLength)
         count = vectorLength - startIndex;
@@ -1005,7 +1005,7 @@ bool JSArray::unshiftCountWithArrayStorage(ExecState* exec, unsigned startIndex,
     // Need to have GC deferred around the unshiftCountSlowCase(), since that leaves the butterfly in
     // a weird state: some parts of it will be left uninitialized, which we will fill in here.
     DeferGC deferGC(vm.heap);
-    auto locker = holdLock(*this);
+    auto locker = holdLock(cellLock());
     
     if (moveFront && storage->m_indexBias >= count) {
         Butterfly* newButterfly = storage->butterfly()->unshift(structure(), count);

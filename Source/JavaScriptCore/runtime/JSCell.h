@@ -50,6 +50,7 @@ class PropertyDescriptor;
 class PropertyName;
 class PropertyNameArray;
 class Structure;
+class JSCellLock;
 
 enum class GCDeferralContextArgPresense {
     HasArg,
@@ -120,10 +121,11 @@ public:
     // Each cell has a built-in lock. Currently it's simply available for use if you need it. It's
     // a full-blown WTF::Lock. Note that this lock is currently used in JSArray and that lock's
     // ordering with the Structure lock is that the Structure lock must be acquired first.
-    void lock();
-    bool tryLock();
-    void unlock();
-    bool isLocked() const;
+
+    // We use this abstraction to make it easier to grep for places where we lock cells.
+    // to lock a cell you can just do:
+    // auto locker = holdLock(cell->cellLocker());
+    JSCellLock& cellLock() { return *reinterpret_cast<JSCellLock*>(this); }
     
     JSType type() const;
     IndexingType indexingTypeAndMisc() const;
@@ -272,16 +274,26 @@ protected:
 
 private:
     friend class LLIntOffsetsExtractor;
+    friend class JSCellLock;
 
     JS_EXPORT_PRIVATE JSObject* toObjectSlow(ExecState*, JSGlobalObject*) const;
-    JS_EXPORT_PRIVATE void lockSlow();
-    JS_EXPORT_PRIVATE void unlockSlow();
 
     StructureID m_structureID;
     IndexingType m_indexingTypeAndMisc; // DO NOT store to this field. Always CAS.
     JSType m_type;
     TypeInfo::InlineTypeFlags m_flags;
     CellState m_cellState;
+};
+
+class JSCellLock : public JSCell {
+public:
+    void lock();
+    bool tryLock();
+    void unlock();
+    bool isLocked() const;
+private:
+    JS_EXPORT_PRIVATE void lockSlow();
+    JS_EXPORT_PRIVATE void unlockSlow();
 };
 
 template<typename To, typename From>

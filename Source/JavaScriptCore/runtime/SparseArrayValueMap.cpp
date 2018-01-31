@@ -77,7 +77,7 @@ SparseArrayValueMap::AddResult SparseArrayValueMap::add(JSObject* array, unsigne
     AddResult result;
     size_t capacity;
     {
-        auto locker = holdLock(*this);
+        auto locker = holdLock(cellLock());
         SparseArrayEntry entry;
         entry.setWithoutWriteBarrier(jsUndefined());
         
@@ -95,13 +95,13 @@ SparseArrayValueMap::AddResult SparseArrayValueMap::add(JSObject* array, unsigne
 
 void SparseArrayValueMap::remove(iterator it)
 {
-    auto locker = holdLock(*this);
+    auto locker = holdLock(cellLock());
     m_map.remove(it);
 }
 
 void SparseArrayValueMap::remove(unsigned i)
 {
-    auto locker = holdLock(*this);
+    auto locker = holdLock(cellLock());
     m_map.remove(i);
 }
 
@@ -197,9 +197,9 @@ JSValue SparseArrayEntry::getNonSparseMode() const
 void SparseArrayValueMap::visitChildren(JSCell* thisObject, SlotVisitor& visitor)
 {
     Base::visitChildren(thisObject, visitor);
-    
+
+    auto locker = holdLock(thisObject->cellLock());
     SparseArrayValueMap* thisMap = jsCast<SparseArrayValueMap*>(thisObject);
-    auto locker = holdLock(*thisMap);
     iterator end = thisMap->m_map.end();
     for (iterator it = thisMap->m_map.begin(); it != end; ++it)
         visitor.append(it->value);
