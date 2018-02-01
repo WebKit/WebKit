@@ -51,7 +51,7 @@ private:
     void moveInlineChildren(RenderRubyBase& from, RenderRubyBase& to, RenderObject* beforeChild);
     void moveBlockChildren(RenderRubyBase& from, RenderRubyBase& to, RenderObject* beforeChild);
     void moveChildrenInternal(RenderRubyBase& from, RenderRubyBase& to, RenderObject* beforeChild = nullptr);
-    RenderRubyBase* rubyBaseSafe(RenderRubyRun&);
+    RenderRubyBase& rubyBaseSafe(RenderRubyRun&);
 
     RenderTreeBuilder& m_builder;
 };

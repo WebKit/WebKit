@@ -221,7 +221,7 @@ void RenderTreeBuilder::Ruby::insertChild(RenderRubyRun& parent, RenderPtr<Rende
             auto& run = *newRun;
             m_builder.insertChild(*ruby, WTFMove(newRun), &parent);
             m_builder.insertChild(run, WTFMove(child));
-            moveChildrenInternal(*rubyBaseSafe(parent), *rubyBaseSafe(run), beforeChild);
+            moveChildrenInternal(rubyBaseSafe(parent), rubyBaseSafe(run), beforeChild);
         }
         return;
     }
@@ -229,7 +229,7 @@ void RenderTreeBuilder::Ruby::insertChild(RenderRubyRun& parent, RenderPtr<Rende
     // (append it instead if beforeChild is the ruby text)
     if (beforeChild && beforeChild->isRubyText())
         beforeChild = nullptr;
-    m_builder.insertChild(*rubyBaseSafe(parent), WTFMove(child), beforeChild);
+    m_builder.insertChild(rubyBaseSafe(parent), WTFMove(child), beforeChild);
 }
 
 RenderElement& RenderTreeBuilder::Ruby::findOrCreateParentForChild(RenderRubyAsBlock& parent, const RenderObject& child, RenderObject*& beforeChild)
@@ -356,7 +356,7 @@ RenderElement& RenderTreeBuilder::Ruby::findOrCreateParentForChild(RenderRubyAsI
     return *lastRun;
 }
 
-RenderRubyBase* RenderTreeBuilder::Ruby::rubyBaseSafe(RenderRubyRun& rubyRun)
+RenderRubyBase& RenderTreeBuilder::Ruby::rubyBaseSafe(RenderRubyRun& rubyRun)
 {
     auto* base = rubyRun.rubyBase();
     if (!base) {
@@ -364,7 +364,7 @@ RenderRubyBase* RenderTreeBuilder::Ruby::rubyBaseSafe(RenderRubyRun& rubyRun)
         base = newBase.get();
         m_builder.insertChildToRenderBlockFlow(rubyRun, WTFMove(newBase));
     }
-    return base;
+    return *base;
 }
 
 }
