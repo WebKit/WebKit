@@ -1,3 +1,24 @@
+2018-02-01  Ms2ger  <Ms2ger@igalia.com>
+
+        Update imagebitmap tests.
+        https://bugs.webkit.org/show_bug.cgi?id=182335
+
+        Unreviewed test gardening.
+
+        * web-platform-tests/2dcontext/imagebitmap/common.sub.js: Renamed from LayoutTests/imported/w3c/web-platform-tests/2dcontext/imagebitmap/common.js.
+        * web-platform-tests/2dcontext/imagebitmap/createImageBitmap-drawImage-expected.txt:
+        * web-platform-tests/2dcontext/imagebitmap/createImageBitmap-drawImage.html:
+        * web-platform-tests/2dcontext/imagebitmap/createImageBitmap-invalid-args-expected.txt:
+        * web-platform-tests/2dcontext/imagebitmap/createImageBitmap-invalid-args.html:
+        * web-platform-tests/2dcontext/imagebitmap/createImageBitmap-origin.sub-expected.txt: Added.
+        * web-platform-tests/2dcontext/imagebitmap/createImageBitmap-origin.sub.html: Added.
+        * web-platform-tests/2dcontext/imagebitmap/w3c-import.log:
+        * web-platform-tests/common/namespaces.js: Added.
+        * web-platform-tests/common/w3c-import.log:
+        * web-platform-tests/images/pattern.mp4: Added.
+        * web-platform-tests/images/pattern.svg: Added.
+        * web-platform-tests/images/w3c-import.log:
+
 2018-01-31  Saam Barati  <sbarati@apple.com>
 
         JSC incorrectly interpreting script, sets Global Property instead of Global Lexical variable (LiteralParser / JSONP path)

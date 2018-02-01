@@ -1,3 +1,14 @@
+2018-02-01  Ms2ger  <Ms2ger@igalia.com>
+
+        Update imagebitmap tests.
+        https://bugs.webkit.org/show_bug.cgi?id=182335
+
+        Unreviewed test gardening.
+
+        * platform/gtk/imported/w3c/web-platform-tests/2dcontext/imagebitmap/createImageBitmap-drawImage-expected.txt: Removed.
+        * platform/gtk/imported/w3c/web-platform-tests/2dcontext/imagebitmap/createImageBitmap-invalid-args-expected.txt:
+        * platform/gtk/imported/w3c/web-platform-tests/2dcontext/imagebitmap/createImageBitmap-origin.sub-expected.txt: Added.
+
 2018-02-01  Antti Koivisto  <antti@apple.com>
 
         Invalidate style for sibling combinators accurately on class change

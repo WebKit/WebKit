@@ -14,7 +14,8 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
-/LayoutTests/imported/w3c/web-platform-tests/2dcontext/imagebitmap/common.js
+/LayoutTests/imported/w3c/web-platform-tests/2dcontext/imagebitmap/common.sub.js
 /LayoutTests/imported/w3c/web-platform-tests/2dcontext/imagebitmap/createImageBitmap-drawImage.html
 /LayoutTests/imported/w3c/web-platform-tests/2dcontext/imagebitmap/createImageBitmap-invalid-args.html
+/LayoutTests/imported/w3c/web-platform-tests/2dcontext/imagebitmap/createImageBitmap-origin.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/2dcontext/imagebitmap/createImageBitmap-sizeOverflow.html
