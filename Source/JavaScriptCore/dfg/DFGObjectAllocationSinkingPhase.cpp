@@ -1532,7 +1532,6 @@ private:
                 where->origin.withSemantic(
                     allocation.identifier()->origin.semantic),
                 OpInfo(executable));
-            break;
         }
 
         case Allocation::Kind::Activation: {
@@ -1553,7 +1552,6 @@ private:
                 where->origin.withSemantic(
                     allocation.identifier()->origin.semantic),
                 OpInfo(regExp));
-            break;
         }
 
         default:
@@ -2306,7 +2304,6 @@ private:
                 OpInfo(data),
                 Edge(base, KnownCellUse),
                 value->defaultEdge());
-            break;
         }
 
         case ClosureVarPLoc: {
@@ -2316,7 +2313,6 @@ private:
                 OpInfo(location.info()),
                 Edge(base, KnownCellUse),
                 value->defaultEdge());
-            break;
         }
 
         case RegExpObjectLastIndexPLoc: {
@@ -2326,13 +2322,14 @@ private:
                 OpInfo(true),
                 Edge(base, KnownCellUse),
                 value->defaultEdge());
-            break;
         }
 
         default:
             DFG_CRASH(m_graph, base, "Bad location kind");
             break;
         }
+
+        RELEASE_ASSERT_NOT_REACHED();
     }
 
     // This is a great way of asking value->isStillValid() without having to worry about getting

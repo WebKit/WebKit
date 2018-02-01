@@ -1,3 +1,16 @@
+2018-02-01  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        -Wreturn-type warning in DFGObjectAllocationSinkingPhase.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=182389
+
+        Reviewed by Yusuke Suzuki.
+
+        Fix the warning.
+
+        As a bonus, remove a couple unreachable breaks for good measure.
+
+        * dfg/DFGObjectAllocationSinkingPhase.cpp:
+
 2018-02-01  Chris Dumez  <cdumez@apple.com>
 
         Queue a microtask when a waitUntil() promise is settled
