@@ -3,22 +3,46 @@
 <input id="c" type="text" value="this text field has a lot of text in it so that it needs to scrol">
 <p>Tests scrolling back to the beginning when a text field blurs. The first field should be scrolled to the left, the second and third scrolled to the right.</p>
 <script>
-var a = document.getElementById("a");
-a.focus();
-a.setSelectionRange(66, 66);
-if (window.eventSender) {
-    eventSender.keyDown("l");
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+function wait(seconds)
+{
+    return new Promise((resolve) => setTimeout(resolve, seconds))
 }
-var b = document.getElementById("b");
-b.focus();
-b.setSelectionRange(66, 66);
-if (window.eventSender) {
-    eventSender.keyDown("l");
+
+async function runTest()
+{
+    if (!window.eventSender) {
+        document.body.innerHTML += 'This test requires eventSender.keyDown';
+        return;
+    }
+
+    var a = document.getElementById("a");
+    a.focus();
+    await wait(0);
+    a.setSelectionRange(66, 66);
+    if (window.eventSender)
+        eventSender.keyDown("l");
+
+    var b = document.getElementById("b");
+    b.focus();
+    await wait(0);
+    b.setSelectionRange(66, 66);
+    if (window.eventSender)
+        eventSender.keyDown("l");
+
+    var c = document.getElementById("c");
+    c.focus();
+    await wait(0);
+    c.setSelectionRange(66, 66);
+    if (window.eventSender)
+        eventSender.keyDown("l");
+
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
-var c = document.getElementById("c");
-c.focus();
-c.setSelectionRange(66, 66);
-if (window.eventSender) {
-    eventSender.keyDown("l");
-}
+
+window.onload = runTest;
+
 </script>

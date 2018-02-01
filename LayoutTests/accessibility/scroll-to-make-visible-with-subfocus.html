@@ -20,6 +20,7 @@ function runTest() {
     var targetAccessibleObject;
     if (window.accessibilityController) {
         target.focus();
+        internals.updateLayoutIgnorePendingStylesheetsAndRunPostLayoutTasks();
         targetAccessibleObject = accessibilityController.focusedElement;
     }
 

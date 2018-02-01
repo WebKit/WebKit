@@ -2,17 +2,29 @@
 <head>
 <script src=../../editing/editing.js language="JavaScript" type="text/JavaScript" ></script>
 <script>
-function test()
+function wait(seconds)
 {
+    return new Promise((resolve) => setTimeout(resolve, 0), seconds);
+}
+
+async function test()
+{
+    if (window.testRunner)
+        testRunner.waitUntilDone();
+
     var res = document.getElementById('res');
     var ta = document.getElementById('ta');
 
     // Send caret to bottom of textarea
     ta.focus();
+    await wait(0);
     ta.setSelectionRange(ta.value.length, ta.value.length);
+    await wait(0);
     ta.blur();
+    await wait(0);
 
     ta.focus();
+    await wait(0);
     ta.setSelectionRange(44, 44);
     typeCharacterCommand(' ');
     typeCharacterCommand('P');
@@ -20,6 +32,8 @@ function test()
     typeCharacterCommand('s');
     typeCharacterCommand('s');
 
+    if (window.testRunner)
+        testRunner.notifyDone();
 }
 </script>
 </head>

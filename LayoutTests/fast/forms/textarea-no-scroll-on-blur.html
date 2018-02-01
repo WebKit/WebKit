@@ -1,21 +1,34 @@
 <html>
 <head>
 <script>
-    function test() {
-        if (window.testRunner)
+    function wait(seconds) {
+        return new Promise((resolve) => setTimeout(resolve, 0), seconds);
+    }
+
+    async function test() {
+        if (window.testRunner) {
             testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
 
         var ta = document.getElementById('ta');
 
         // Send caret to bottom of textarea
         ta.focus();
         ta.setSelectionRange(ta.value.length, ta.value.length);
+        await wait(0);
         ta.blur();
 
+        await wait(0);
         ta.focus();
+        await wait(0);
         ta.blur();
-        if (ta.scrollTop != 0)
-            document.getElementById('res').innerHTML = "Test Passed";
+        await wait(0);
+
+        document.getElementById('res').innerHTML = ta.scrollTop != 0 ? "Test Passed" : "Test Failed";
+
+        if (window.testRunner)
+            testRunner.notifyDone();
     }
 </script>
 </head>
@@ -29,6 +42,6 @@ This tests that we don't scroll back to the top when leaving a textarea
 4
 5
 </textarea>
-<div id="res">Test Failed</div>
+<div id="res"></div>
 </body>
 </html>

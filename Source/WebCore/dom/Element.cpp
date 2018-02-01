@@ -2423,9 +2423,6 @@ void Element::focus(bool restorePreviousSelection, FocusDirection direction)
             return;
     }
 
-    // Setting the focused node above might have invalidated the layout due to scripts.
-    document().updateLayoutIgnorePendingStylesheets();
-
     SelectionRevealMode revealMode = SelectionRevealMode::Reveal;
 #if PLATFORM(IOS)
     // Focusing a form element triggers animation in UIKit to scroll to the right position.

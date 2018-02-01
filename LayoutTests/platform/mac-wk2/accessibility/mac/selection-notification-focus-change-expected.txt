@@ -18,9 +18,7 @@ Received AXFocusChanged
 eventSender.keyDown(tabCharacter)
 Received AXFocusChanged
 Received AXSelectedTextChanged
-FAIL userInfo["AXTextSelectionChangedFocus"] should be true (of type boolean). Was undefined (of type undefined).
-Received AXSelectedTextChanged
-FAIL userInfo["AXTextSelectionChangedFocus"] should be true (of type boolean). Was undefined (of type undefined).
+PASS userInfo["AXTextSelectionChangedFocus"] is true
 PASS successfullyParsed is true
 
 TEST COMPLETE

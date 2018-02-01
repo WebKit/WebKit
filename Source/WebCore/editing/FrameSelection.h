@@ -347,6 +347,7 @@ private:
     IntRect m_absCaretBounds;
 
     SelectionRevealMode m_selectionRevealMode { SelectionRevealMode::DoNotReveal };
+    AXTextStateChangeIntent m_selectionRevealIntent;
 
     bool m_caretInsidePositionFixed : 1;
     bool m_absCaretBoundsDirty : 1;

@@ -25,14 +25,17 @@ if (window.testRunner)
     if (window.accessibilityController) {
 
         document.getElementById("cell2").focus();
+        internals.updateLayoutIgnorePendingStylesheetsAndRunPostLayoutTasks();
         var cell2 = accessibilityController.focusedElement;
 
         document.getElementById("header").focus();
+        internals.updateLayoutIgnorePendingStylesheetsAndRunPostLayoutTasks();
         var header = accessibilityController.focusedElement;
 
         shouldBeTrue("cell2.cellForColumnAndRow(2, 0).isEqual(header)");
 
         document.getElementById("cell5").focus();
+        internals.updateLayoutIgnorePendingStylesheetsAndRunPostLayoutTasks();
         var cell6 = accessibilityController.focusedElement;
         shouldBeTrue("header.cellForColumnAndRow(1, 2).isEqual(cell6)");
 

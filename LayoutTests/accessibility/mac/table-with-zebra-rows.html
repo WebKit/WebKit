@@ -24,9 +24,9 @@
     description("This tests that tables with zebra striped rows are exposed as AXTables.");
 
     if (window.accessibilityController) {
-
-          document.getElementById("table1").focus();
-          shouldBe("accessibilityController.focusedElement.role", "'AXRole: AXTable'");
+        document.getElementById("table1").focus();
+        internals.updateLayoutIgnorePendingStylesheetsAndRunPostLayoutTasks();
+        shouldBe("accessibilityController.focusedElement.role", "'AXRole: AXTable'");
     }
 
 </script>

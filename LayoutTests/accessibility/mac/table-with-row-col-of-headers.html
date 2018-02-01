@@ -58,18 +58,21 @@
     description("This tests that tables that have THs in the first row or first column will be exposed as AXTables.");
 
     if (window.accessibilityController) {
+        document.getElementById("table1").focus();
+        internals.updateLayoutIgnorePendingStylesheetsAndRunPostLayoutTasks();
+        shouldBe("accessibilityController.focusedElement.role", "'AXRole: AXTable'");
 
-          document.getElementById("table1").focus();
-          shouldBe("accessibilityController.focusedElement.role", "'AXRole: AXTable'");
+        document.getElementById("table2").focus();
+        internals.updateLayoutIgnorePendingStylesheetsAndRunPostLayoutTasks();
+        shouldBe("accessibilityController.focusedElement.role", "'AXRole: AXTable'");
 
-          document.getElementById("table2").focus();
-          shouldBe("accessibilityController.focusedElement.role", "'AXRole: AXTable'");
+        document.getElementById("table3").focus();
+        internals.updateLayoutIgnorePendingStylesheetsAndRunPostLayoutTasks();
+        shouldBe("accessibilityController.focusedElement.role", "'AXRole: AXGroup'");
 
-          document.getElementById("table3").focus();
-          shouldBe("accessibilityController.focusedElement.role", "'AXRole: AXGroup'");
-
-          document.getElementById("table4").focus();
-          shouldBe("accessibilityController.focusedElement.role", "'AXRole: AXGroup'");
+        document.getElementById("table4").focus();
+        internals.updateLayoutIgnorePendingStylesheetsAndRunPostLayoutTasks();
+        shouldBe("accessibilityController.focusedElement.role", "'AXRole: AXGroup'");
     }
 
 </script>

@@ -1,3 +1,26 @@
+2018-02-01  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Some test cases in accessibility/mac/selection-notification-focus-change.html fail
+        https://bugs.webkit.org/show_bug.cgi?id=182212
+        <rdar://problem/36937147>
+
+        Reviewed by Antti Koivisto and Wenson Hsieh.
+
+        The failure was caused by the async update of the selection appearance not preserving selection reveal intent.
+        Fixed the bug by storing the intent in a member variable and using it later.
+
+        * dom/Element.cpp:
+        (WebCore::Element::focus): Removed an unnecessary synchronous layout update.
+        * editing/FrameSelection.cpp:
+        (WebCore::FrameSelection::setNeedsSelectionUpdate): Use the default intent to preserve the old behavior.
+        (WebCore::FrameSelection::respondToNodeModification): Ditto.
+        (WebCore::FrameSelection::setSelection): Save the selection reveal intent.
+        (WebCore::FrameSelection::updateAppearanceAfterLayoutOrStyleChange): Use the saved intent.
+        * editing/FrameSelection.h:
+        * page/FocusController.cpp:
+        (WebCore::FocusController::advanceFocusDirectionally): Always update the layout before invoking
+        nodeRectInAbsoluteCoordinates.
+
 2018-02-01  Zalan Bujtas  <zalan@apple.com>
 
         [RenderTreeBuilder] Move RenderRubyRun::rubyBaseSafe to RenderTreeBuilder::Ruby

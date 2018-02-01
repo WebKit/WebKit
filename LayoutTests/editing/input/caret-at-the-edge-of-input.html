@@ -6,14 +6,21 @@
 <input type="text" name="input-edit" id="input-edit" size="10" value="012345678901234567890123456789" />
 <script>
 
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
 var inputEdit = document.getElementById("input-edit");
 inputEdit.focus();
-var inputEditContent = inputEdit.value;
-inputEdit.setSelectionRange(0, 0);
-if (window.eventSender) {
-    for (var i = 0; i < inputEdit.size * 1.2; ++i)
-        eventSender.keyDown(inputEditContent[i]);
-}
+setTimeout(() => {
+    var inputEditContent = inputEdit.value;
+    inputEdit.setSelectionRange(0, 0);
+
+    if (window.eventSender) {
+        for (var i = 0; i < inputEdit.size * 1.2; ++i)
+            eventSender.keyDown(inputEditContent[i]);
+        testRunner.notifyDone();
+    }
+}, 0);
 
 </script>
 </body>

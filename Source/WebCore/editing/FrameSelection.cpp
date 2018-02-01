@@ -374,6 +374,7 @@ void FrameSelection::setSelection(const VisibleSelection& selection, SetSelectio
         m_selectionRevealMode = SelectionRevealMode::DoNotReveal;
     m_alwaysAlignCursorOnScrollWhenRevealingSelection = align == AlignCursorOnScrollAlways;
 
+    m_selectionRevealIntent = intent;
     m_pendingSelectionUpdate = true;
 
     if (document->hasPendingStyleRecalc())
@@ -402,6 +403,7 @@ static void updateSelectionByUpdatingLayoutOrStyle(Frame& frame)
 
 void FrameSelection::setNeedsSelectionUpdate()
 {
+    m_selectionRevealIntent = AXTextStateChangeIntent();
     m_pendingSelectionUpdate = true;
     if (RenderView* view = m_frame->contentRenderer())
         view->selection().clear();
@@ -526,6 +528,7 @@ void FrameSelection::respondToNodeModification(Node& node, bool baseRemoved, boo
             renderView->selection().clear();
 
             // Trigger a selection update so the selection will be set again.
+            m_selectionRevealIntent = AXTextStateChangeIntent();
             m_pendingSelectionUpdate = true;
             renderView->frameView().scheduleSelectionUpdate();
         }
@@ -2447,7 +2450,7 @@ void FrameSelection::updateAppearanceAfterLayoutOrStyleChange()
         client->updateEditorStateAfterLayoutIfEditabilityChanged();
 
     setCaretRectNeedsUpdate();
-    updateAndRevealSelection(AXTextStateChangeIntent());
+    updateAndRevealSelection(m_selectionRevealIntent);
     updateDataDetectorsForSelection();
 }
 

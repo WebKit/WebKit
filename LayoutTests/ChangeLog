@@ -1,3 +1,30 @@
+2018-02-01  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Some test cases in accessibility/mac/selection-notification-focus-change.html fail
+        https://bugs.webkit.org/show_bug.cgi?id=182212
+        <rdar://problem/36937147>
+
+        Reviewed by Antti Koivisto and Wenson Hsieh.
+
+        Updated and rebaselined the tests.
+
+        * accessibility/ios-simulator/header-elements.html: Force the layout after each call to element.focus
+        now that element.focus no longer updates the layout synchronously. Ordinarily, this will happen next time
+        the layout is updated for paint, by JS API, etc... but we have to force the accessibility tree to be
+        up-to-date for testing purposes.
+        * accessibility/ios-simulator/table-cell-for-row-col.html: Ditto.
+        * accessibility/mac/selection-notification-focus-change-expected.txt: Now all the test cases are passing.
+        * accessibility/mac/table-with-row-col-of-headers.html: Force the layout after each call to element.focus.
+        * accessibility/mac/table-with-zebra-rows.html: Ditto.
+        * accessibility/scroll-to-global-point-main-window.html: Ditto.
+        * accessibility/scroll-to-make-visible-with-subfocus.html: Ditto.
+        * editing/input/caret-at-the-edge-of-input.html: Wait for the focused element to reveal itself by a timer.
+        * fast/forms/input-text-scroll-left-on-blur.html: Ditto.
+        * fast/forms/textarea-no-scroll-on-blur.html: Ditto.
+        * fast/forms/textarea-scrolled-type.html: Ditto.
+        * platform/mac-wk2/accessibility/mac/selection-notification-focus-change-expected.txt: Rebaselined. We now
+        get one less AXTextSelectionChangedFocus notification because selection updates are now coalesced as expected.
+
 2018-02-01  Antoine Quint  <graouts@apple.com>
 
         [Modern Media Controls] Turn media/modern-media-controls/ios-inline-media-controls back on

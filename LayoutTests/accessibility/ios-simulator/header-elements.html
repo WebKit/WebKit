@@ -25,9 +25,11 @@ if (window.testRunner)
     if (window.accessibilityController) {
 
         document.getElementById("button").focus();
+        internals.updateLayoutIgnorePendingStylesheetsAndRunPostLayoutTasks();
         var button = accessibilityController.focusedElement;
 
         document.getElementById("header").focus();
+        internals.updateLayoutIgnorePendingStylesheetsAndRunPostLayoutTasks();
         var header = accessibilityController.focusedElement;
         shouldBeTrue("button.headerElementAtIndex(0).isEqual(header)");
     }
