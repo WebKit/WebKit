@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <script src="/js-test-resources/js-test.js"></script>
 </head>
-<body>
+<body onload="runTest()">
 <script>
     description("Tests that partitioning is added mid-flight in redirects.");
     jsTestIsAsync = true;
@@ -14,6 +14,16 @@
             testRunner.statisticsResetToConsistentState();
         internals.setResourceLoadStatisticsEnabled(enable);
         testRunner.setCookieStoragePartitioningEnabled(enable);
+    }
+
+    if (document.location.hash === "") {
+        setEnableFeature(true);
+        if (testRunner.isStatisticsPrevalentResource("http://localhost"))
+            testFailed("Localhost was classified as prevalent resource before the test starts.");
+        // Make sure the network process is up-to-date.
+        testRunner.statisticsSetShouldPartitionCookiesForHost("localhost", false);
+        testRunner.dumpChildFramesAsText();
+        document.location.hash = "step1";
     }
 
     const partitionHost = "127.0.0.1:8000";
@@ -57,12 +67,11 @@
                 // Set localhost as prevalent and with non-recent user interaction to put it in the partitioning category.
                 document.location.hash = "step5";
                 testRunner.setStatisticsPrevalentResource("http://localhost", true);
+                testRunner.setStatisticsHasHadNonRecentUserInteraction("http://localhost");
+                testRunner.statisticsUpdateCookiePartitioning();
                 if (!testRunner.isStatisticsPrevalentResource("http://localhost"))
                     testFailed("Host did not get set as prevalent resource.");
-                testRunner.setStatisticsHasHadNonRecentUserInteraction("http://localhost");
-                testRunner.statisticsUpdateCookiePartitioning(function() {
-                    runTest();
-                });
+                runTest();
                 break;
             case "#step5":
                 // Check that no cookie gets sent for localhost under 127.0.0.1 since localhost is partitioned.
@@ -94,18 +103,6 @@
                 finishJSTest();
                 break;
         }
-    }
-
-    if (document.location.hash === "") {
-        setEnableFeature(true);
-        if (testRunner.isStatisticsPrevalentResource("http://localhost"))
-            testFailed("Localhost was classified as prevalent resource before the test started.");
-        testRunner.dumpChildFramesAsText();
-        document.location.hash = "step1";
-        // Make sure the network process is up-to-date.
-        testRunner.statisticsSetShouldPartitionCookiesForHost("localhost", false, runTest);
-    } else {
-        runTest();
     }
 </script>
 </body>

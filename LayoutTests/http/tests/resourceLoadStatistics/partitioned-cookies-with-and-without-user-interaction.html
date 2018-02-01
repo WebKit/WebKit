@@ -5,7 +5,7 @@
     <title>Test for Partitioned Cookies With and Without User Interaction</title>
     <script src="../../resources/js-test-pre.js"></script>
 </head>
-<body>
+<body onload="runTest()">
 <script>
     const partitionHost = "127.0.0.1:8000";
     const thirdPartyOrigin = "http://localhost:8000";
@@ -73,13 +73,11 @@
     if (document.location.host === partitionHost && document.location.hash == "" && window.testRunner && window.internals) {
         setEnableFeature(true);
 
+        testRunner.statisticsSetShouldPartitionCookiesForHost("localhost", true);
+
         testRunner.waitUntilDone();
         testRunner.dumpChildFramesAsText();
         document.location.hash = "step1";
-
-        testRunner.statisticsSetShouldPartitionCookiesForHost("localhost", true, runTest);
-    } else {
-        runTest();
     }
 </script>
 </body>

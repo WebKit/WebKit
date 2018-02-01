@@ -69,18 +69,14 @@
             case "#step4":
                 // Flag localhost for partitioning and set a partitioned cookie.
                 document.location.hash = "step5";
-                testRunner.statisticsSetShouldPartitionCookiesForHost(thirdPartyHostname, true, runTest);
-                break;
-            case "#step5":
-                // Flag localhost for partitioning and set a partitioned cookie.
-                document.location.hash = "step6";
+                testRunner.statisticsSetShouldPartitionCookiesForHost(thirdPartyHostname, true);
                 openIframe(thirdPartyBaseUrl + subPathToSetPartitionedThirdPartyCookie + "&message=Setting partitioned, third party cookie.", runTest);
                 break;
-            case "#step6":
-                document.location.hash = "step7";
+            case "#step5":
+                document.location.hash = "step6";
                 openIframe(thirdPartyBaseUrl + subPathToGetCookies + "&message=Should only receive partitioned, third party cookie.", setUserInteractionAndContinue);
                 break;
-            case "#step7":
+            case "#step6":
                 openIframe(thirdPartyBaseUrl + subPathToGetCookies + "&message=After user interaction, should receive non-partitioned cookies set in a first-party context and in a third-party context.", finishTest);
                 break;
         }
@@ -89,17 +85,17 @@
     if (document.location.host === partitionHost && document.location.hash == "" && window.testRunner && window.internals) {
         setEnableFeature(true);
 
-        testRunner.waitUntilDone();
-        testRunner.dumpChildFramesAsText();
-        document.location.hash = "step1";
-
         // Start test with third party as non-prevalent
         testRunner.setStatisticsPrevalentResource(thirdPartyHostname, false);
         testRunner.setStatisticsHasHadUserInteraction(thirdPartyOrigin, false);
-        testRunner.statisticsSetShouldPartitionCookiesForHost(thirdPartyHostname, false, runTest);
-    } else {
-        runTest();
+        testRunner.statisticsSetShouldPartitionCookiesForHost(thirdPartyHostname, false);
+
+        testRunner.waitUntilDone();
+        testRunner.dumpChildFramesAsText();
+        document.location.hash = "step1";
     }
+
+    runTest();
 </script>
 </body>
 </html>

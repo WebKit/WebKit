@@ -651,7 +651,6 @@ enum {
     StatisticsDidScanDataRecordsCallbackID,
     StatisticsDidRunTelemetryCallbackID,
     StatisticsDidClearThroughWebsiteDataRemovalCallbackID,
-    StatisticsDidSetPartitionOrBlockCookiesForHostCallbackID,
     DidRemoveAllSessionCredentialsCallbackID,
     GetApplicationManifestCallbackID,
     FirstUIScriptCallbackID = 100
@@ -1554,18 +1553,14 @@ void TestRunner::statisticsProcessStatisticsAndDataRecords()
     WKBundlePostSynchronousMessage(InjectedBundle::singleton().bundle(), messageName.get(), 0, nullptr);
 }
 
-void TestRunner::statisticsUpdateCookiePartitioning(JSValueRef callback)
+void TestRunner::statisticsUpdateCookiePartitioning()
 {
-    cacheTestRunnerCallback(StatisticsDidSetPartitionOrBlockCookiesForHostCallbackID, callback);
-
     WKRetainPtr<WKStringRef> messageName(AdoptWK, WKStringCreateWithUTF8CString("StatisticsUpdateCookiePartitioning"));
     WKBundlePostSynchronousMessage(InjectedBundle::singleton().bundle(), messageName.get(), 0, nullptr);
 }
 
-void TestRunner::statisticsSetShouldPartitionCookiesForHost(JSStringRef hostName, bool value, JSValueRef callback)
+void TestRunner::statisticsSetShouldPartitionCookiesForHost(JSStringRef hostName, bool value)
 {
-    cacheTestRunnerCallback(StatisticsDidSetPartitionOrBlockCookiesForHostCallbackID, callback);
-
     Vector<WKRetainPtr<WKStringRef>> keys;
     Vector<WKRetainPtr<WKTypeRef>> values;
     
@@ -1587,11 +1582,6 @@ void TestRunner::statisticsSetShouldPartitionCookiesForHost(JSStringRef hostName
     WKRetainPtr<WKDictionaryRef> messageBody(AdoptWK, WKDictionaryCreate(rawKeys.data(), rawValues.data(), rawKeys.size()));
     
     WKBundlePostSynchronousMessage(InjectedBundle::singleton().bundle(), messageName.get(), messageBody.get(), nullptr);
-}
-
-void TestRunner::statisticsCallDidSetPartitionOrBlockCookiesForHostCallback()
-{
-    callTestRunnerCallback(StatisticsDidSetPartitionOrBlockCookiesForHostCallbackID);
 }
 
 void TestRunner::statisticsSubmitTelemetry()

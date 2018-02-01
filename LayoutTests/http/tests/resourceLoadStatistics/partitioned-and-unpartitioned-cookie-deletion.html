@@ -86,25 +86,24 @@
         }
     }
 
+
     if (document.location.host === partitionHost && document.location.hash === "" && window.testRunner && window.internals) {
         setEnableFeature(true);
 
         testRunner.setStatisticsShouldClassifyResourcesBeforeDataRecordsRemoval(false);
         testRunner.setStatisticsMinimumTimeBetweenDataRecordsRemoval(0);
 
-        testRunner.waitUntilDone();
-        testRunner.dumpChildFramesAsText();
-        document.location.hash = "step1";
-
+        testRunner.statisticsSetShouldPartitionCookiesForHost("localhost", true);
         testRunner.setStatisticsPrevalentResource("http://localhost", true);
         if (!testRunner.isStatisticsPrevalentResource("http://localhost"))
             testFailed("Host did not get set as prevalent resource.");
 
-        testRunner.statisticsSetShouldPartitionCookiesForHost("localhost", true, runTest);
-    } else {
-        runTest();
+        testRunner.waitUntilDone();
+        testRunner.dumpChildFramesAsText();
+        document.location.hash = "step1";
     }
 
+    runTest();
 </script>
 </body>
 </html>
