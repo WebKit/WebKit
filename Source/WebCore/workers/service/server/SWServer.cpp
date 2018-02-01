@@ -189,7 +189,6 @@ void SWServer::clearAll(WTF::CompletionHandler<void()>&& completionHandler)
         m_registrations.begin()->value->clear();
     ASSERT(m_registrationsByID.isEmpty());
     m_pendingContextDatas.clear();
-    m_pendingJobs.clear();
     m_originStore->clearAll();
     m_registrationStore.clearAll(WTFMove(completionHandler));
 }
@@ -208,10 +207,6 @@ void SWServer::clear(const SecurityOrigin& origin, WTF::CompletionHandler<void()
 
     m_pendingContextDatas.removeAllMatching([&](auto& contextData) {
         return contextData.registration.key.relatesToOrigin(origin);
-    });
-
-    m_pendingJobs.removeAllMatching([&](auto& job) {
-        return job.registrationKey().relatesToOrigin(origin);
     });
 
     // Calling SWServerRegistration::clear() takes care of updating m_registrations, m_originStore and m_registrationStore.
@@ -268,11 +263,6 @@ SWServer::SWServer(UniqueRef<SWOriginStore>&& originStore, String&& registration
 void SWServer::scheduleJob(ServiceWorkerJobData&& jobData)
 {
     ASSERT(m_connections.contains(jobData.connectionIdentifier()));
-
-    if (!SWServerToContextConnection::globalServerToContextConnection()) {
-        m_pendingJobs.append(WTFMove(jobData));
-        return;
-    }
 
     // FIXME: Per the spec, check if this job is equivalent to the last job on the queue.
     // If it is, stack it along with that job.
@@ -494,10 +484,6 @@ void SWServer::serverToContextConnectionCreated()
         for (auto& callback : item.value)
             callback(success, *connection);
     }
-
-    auto pendingJobs = WTFMove(m_pendingJobs);
-    for (auto& jobData : pendingJobs)
-        scheduleJob(WTFMove(jobData));
 }
 
 void SWServer::installContextData(const ServiceWorkerContextData& data)

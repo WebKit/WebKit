@@ -1,3 +1,26 @@
+2018-02-01  Chris Dumez  <cdumez@apple.com>
+
+        We no longer need to queue service worker jobs until the connection to the service worker process has been established
+        https://bugs.webkit.org/show_bug.cgi?id=182375
+
+        Reviewed by Youenn Fablet.
+
+        We no longer need to queue service worker jobs until the connection to the service worker process
+        has been established. We initially did this to work around the fact that registrations restored
+        from disk would not have an active worker until the service worker process had been established. 
+        However, this issue has been fixed in r227696.
+
+        This is basically a revert of r227220, which is no longer needed after r227696.
+
+        No new tests, initial fix was covered by an API test that still passes.
+
+        * workers/service/server/SWServer.cpp:
+        (WebCore::SWServer::clearAll):
+        (WebCore::SWServer::clear):
+        (WebCore::SWServer::scheduleJob):
+        (WebCore::SWServer::serverToContextConnectionCreated):
+        * workers/service/server/SWServer.h:
+
 2018-02-01  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Shift + mouse scroll should scroll horizontally
