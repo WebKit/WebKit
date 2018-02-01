@@ -162,8 +162,14 @@ RunLoop::TimerBase::TimerBase(RunLoop& runLoop)
     g_source_set_priority(m_source.get(), RunLoopSourcePriority::RunLoopTimer);
     g_source_set_name(m_source.get(), "[WebKit] RunLoop::Timer work");
     g_source_set_callback(m_source.get(), [](gpointer userData) -> gboolean {
+        // fired() executes the user's callback. It may destroy timer,
+        // so we must check if the source is still active afterwards
+        // before it is safe to dereference timer again.
         RunLoop::TimerBase* timer = static_cast<RunLoop::TimerBase*>(userData);
+        GSource* source = timer->m_source.get();
         timer->fired();
+        if (g_source_is_destroyed(source))
+            return G_SOURCE_REMOVE;
         if (timer->m_isRepeating)
             timer->updateReadyTime();
         return G_SOURCE_CONTINUE;
