@@ -1,0 +1,42 @@
+<script src="../../../resources/js-test-pre.js"></script>
+<script src="../resources/media-controls-loader.js" type="text/javascript"></script>
+<body>
+<script type="text/javascript">
+
+description("Testing the <code>MacOSInlineMediaControls</code> handling of placards.");
+
+const mediaControls = new MacOSInlineMediaControls;
+
+debug("By default, no placard is shown.");
+shouldBeNull("mediaControls.placard");
+shouldBe("mediaControls.children", "[mediaControls.topLeftControlsBar, mediaControls.bottomControlsBar]");
+
+debug("");
+debug("Showing the Airplay placard");
+mediaControls.placard = mediaControls.airplayPlacard;
+shouldBe("mediaControls.placard", "mediaControls.airplayPlacard");
+shouldBe("mediaControls.children", "[mediaControls.airplayPlacard, mediaControls.topLeftControlsBar, mediaControls.bottomControlsBar]");
+
+debug("");
+debug("Showing the Invalid placard, hides the controls bar");
+mediaControls.placard = mediaControls.invalidPlacard;
+shouldBe("mediaControls.placard", "mediaControls.invalidPlacard");
+shouldBe("mediaControls.children", "[mediaControls.invalidPlacard]");
+
+debug("");
+debug("Showing the PiP placard, hides the controls bar");
+mediaControls.placard = mediaControls.pipPlacard;
+shouldBe("mediaControls.placard", "mediaControls.pipPlacard");
+shouldBe("mediaControls.children", "[mediaControls.pipPlacard]");
+
+debug("");
+debug("Hide placard");
+mediaControls.placard = null;
+shouldBeNull("mediaControls.placard");
+shouldBe("mediaControls.children", "[mediaControls.topLeftControlsBar, mediaControls.bottomControlsBar]");
+
+debug("");
+
+</script>
+<script src="../../../resources/js-test-post.js"></script>
+</body>

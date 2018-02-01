@@ -1466,7 +1466,7 @@ media/modern-media-controls/macos-fullscreen-media-controls/macos-fullscreen-med
 media/modern-media-controls/macos-fullscreen-media-controls/macos-fullscreen-media-controls-volume-controls-hidden-when-mute-button-disabled.html [ Pass ]
 media/modern-media-controls/macos-inline-media-controls [ Pass ]
 media/modern-media-controls/media-controller [ Pass ]
-media/modern-media-controls/media-controls/media-controls-display-above-captions.html [ Pass ]
+media/modern-media-controls/media-controls [ Pass ]
 media/modern-media-controls/media-documents [ Pass ]
 media/modern-media-controls/mute-button [ Pass ]
 media/modern-media-controls/mute-support [ Pass ]

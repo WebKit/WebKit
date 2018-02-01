@@ -14,12 +14,9 @@ debug("");
 shouldBe("mediaControls.width", "300");
 shouldBe("mediaControls.height", "150");
 shouldBe("mediaControls.layoutTraits", "LayoutTraits.macOS");
-shouldBeFalse("mediaControls.showsStartButton");
 
 debug("");
-shouldBeTrue("mediaControls.startButton instanceof StartButton");
 shouldBeTrue("mediaControls.playPauseButton instanceof PlayPauseButton");
-shouldBeTrue("mediaControls.skipBackButton instanceof SkipBackButton");
 shouldBeTrue("mediaControls.airplayButton instanceof AirplayButton");
 shouldBeTrue("mediaControls.pipButton instanceof PiPButton");
 shouldBeTrue("mediaControls.fullscreenButton instanceof FullscreenButton");
@@ -30,9 +27,10 @@ shouldBeTrue("mediaControls.invalidPlacard instanceof InvalidPlacard");
 shouldBeTrue("mediaControls.pipPlacard instanceof PiPPlacard");
 
 debug("");
-shouldBeTrue("mediaControls.controlsBar instanceof ControlsBar");
-shouldBeEqualToString("mediaControls.controlsBar.element.localName", "div");
-shouldBeEqualToString("mediaControls.controlsBar.element.className", "controls-bar");
+shouldBeTrue("mediaControls.bottomControlsBar instanceof ControlsBar");
+shouldBeEqualToString("mediaControls.bottomControlsBar.element.localName", "div");
+shouldBeTrue("mediaControls.bottomControlsBar.element.classList.contains('controls-bar')");
+shouldBeTrue("mediaControls.bottomControlsBar.element.classList.contains('bottom')");
 
 debug("");
 const mediaControlsWithArguments = new MediaControls({ width: 600, height: 300, layoutTraits: LayoutTraits.macOS });

@@ -7,12 +7,11 @@ description("Testing the visibility of <code>MediaControls</code> when one of it
 
 const mediaControls = new MediaControls({ layoutTraits: LayoutTraits.macOS });
 
-shouldBeFalse("mediaControls.controlsBar.faded");
-mediaControls.controlsBar.faded = true;
-shouldBeTrue("mediaControls.controlsBar.faded");
-let focusin = new Event("focusin");
-mediaControls.controlsBar.element.dispatchEvent(focusin);
-shouldBeFalse("mediaControls.controlsBar.faded");
+shouldBeFalse("mediaControls.faded");
+mediaControls.faded = true;
+shouldBeTrue("mediaControls.faded");
+mediaControls.element.dispatchEvent(new Event("focusin"));
+shouldBeFalse("mediaControls.faded");
 
 debug("");
 

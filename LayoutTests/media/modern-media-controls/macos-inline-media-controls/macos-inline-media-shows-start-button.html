@@ -3,19 +3,19 @@
 <body>
 <script type="text/javascript">
 
-description("Testing the <code>MediaControls</code> showsStartButton property.");
+description("Testing the <code>MacOSInlineMediaControls</code> showsStartButton property.");
 
-const mediaControls = new MediaControls({ layoutTraits: LayoutTraits.macOS });
+const mediaControls = new MacOSInlineMediaControls;
 
 debug("Default where showsStartButton = false");
 shouldBeFalse("mediaControls.showsStartButton");
-shouldBe("mediaControls.children", "[mediaControls.controlsBar]");
+shouldBe("mediaControls.children", "[mediaControls.topLeftControlsBar, mediaControls.bottomControlsBar]");
 
 debug("");
 debug("showsStartButton = true");
 mediaControls.showsStartButton = true;
 shouldBeTrue("mediaControls.showsStartButton");
-shouldBe("mediaControls.children", "[mediaControls.startButton]");
+shouldBe("mediaControls.children", "[mediaControls.playPauseButton]");
 
 debug("");
 

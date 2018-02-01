@@ -1,3 +1,31 @@
+2018-02-01  Antoine Quint  <graouts@apple.com>
+
+        [Modern Media Controls] Turn media/modern-media-controls/media-controls back on
+        https://bugs.webkit.org/show_bug.cgi?id=182377
+
+        Reviewed by Dean Jackson.
+
+        Update tests to match the modern-media-controls design and expectations, moving 3 tests under
+        media/modern-media-controls/macos-inline-media-controls since they are testing functionality
+        that is now specific to inline media controls.
+
+        * media/modern-media-controls/macos-inline-media-controls/macos-inline-media-controls-bar-always-ltr-expected.txt: Renamed from LayoutTests/media/modern-media-controls/media-controls/media-controls-controls-bar-always-ltr-expected.txt.
+        * media/modern-media-controls/macos-inline-media-controls/macos-inline-media-controls-bar-always-ltr.html: Renamed from LayoutTests/media/modern-media-controls/media-controls/media-controls-controls-bar-always-ltr.html.
+        * media/modern-media-controls/macos-inline-media-controls/macos-inline-media-controls-placard-expected.txt: Added.
+        * media/modern-media-controls/macos-inline-media-controls/macos-inline-media-controls-placard.html: Added.
+        * media/modern-media-controls/macos-inline-media-controls/macos-inline-media-shows-start-button-expected.txt: Renamed from LayoutTests/media/modern-media-controls/media-controls/media-controls-start-button-expected.txt.
+        * media/modern-media-controls/macos-inline-media-controls/macos-inline-media-shows-start-button.html: Renamed from LayoutTests/media/modern-media-controls/media-controls/media-controls-start-button.html.
+        * media/modern-media-controls/media-controls/media-controls-appear-when-focus-expected.txt:
+        * media/modern-media-controls/media-controls/media-controls-appear-when-focus.html:
+        * media/modern-media-controls/media-controls/media-controls-constructor-expected.txt:
+        * media/modern-media-controls/media-controls/media-controls-constructor.html:
+        * media/modern-media-controls/media-controls/media-controls-placard-compressed-metrics-expected.txt:
+        * media/modern-media-controls/media-controls/media-controls-placard-compressed-metrics.html:
+        * media/modern-media-controls/media-controls/media-controls-placard-expected.txt: Removed.
+        * media/modern-media-controls/media-controls/media-controls-placard.html: Removed.
+        * platform/ios/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2018-02-01  Ms2ger  <Ms2ger@igalia.com>
 
         Update imagebitmap tests.

@@ -3,9 +3,9 @@ Testing placard metrics constraints.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-mediaControls.showPlacard(mediaControls.airplayPlacard)
+mediaControls.placard = mediaControls.airplayPlacard
 PASS placardContainer.children.length is 3
-PASS placardContainer.children[0] instanceof IconButton is true
+PASS placardContainer.children[0] instanceof Button is true
 PASS placardContainer.children[1].element.className is "title"
 PASS placardContainer.children[2].element.className is "description"
 
@@ -33,7 +33,7 @@ PASS placardContainer.children.length is 0
 mediaControls.width = 170
 mediaControls.height = 170
 PASS placardContainer.children.length is 3
-PASS placardContainer.children[0] instanceof IconButton is true
+PASS placardContainer.children[0] instanceof Button is true
 PASS placardContainer.children[1].element.className is "title"
 PASS placardContainer.children[2].element.className is "description"
 

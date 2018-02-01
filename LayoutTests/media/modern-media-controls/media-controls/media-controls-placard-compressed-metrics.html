@@ -7,11 +7,11 @@ description("Testing placard metrics constraints.");
 
 const mediaControls = new MediaControls({ layoutTraits: LayoutTraits.macOS, width: 400, height: 300 });
 
-mediaControls.showPlacard(mediaControls.airplayPlacard);
+mediaControls.placard = mediaControls.airplayPlacard;
 const placardContainer = mediaControls.placard.children[0];
-debug("mediaControls.showPlacard(mediaControls.airplayPlacard)");
+debug("mediaControls.placard = mediaControls.airplayPlacard");
 shouldBe("placardContainer.children.length", "3");
-shouldBeTrue("placardContainer.children[0] instanceof IconButton");
+shouldBeTrue("placardContainer.children[0] instanceof Button");
 shouldBeEqualToString("placardContainer.children[1].element.className", "title");
 shouldBeEqualToString("placardContainer.children[2].element.className", "description");
 
@@ -52,7 +52,7 @@ debug("mediaControls.height = 170");
 mediaControls.width = 170;
 mediaControls.height = 170;
 shouldBe("placardContainer.children.length", "3");
-shouldBeTrue("placardContainer.children[0] instanceof IconButton");
+shouldBeTrue("placardContainer.children[0] instanceof Button");
 shouldBeEqualToString("placardContainer.children[1].element.className", "title");
 shouldBeEqualToString("placardContainer.children[2].element.className", "description");
 

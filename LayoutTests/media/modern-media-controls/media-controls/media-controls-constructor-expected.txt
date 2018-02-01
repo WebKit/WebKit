@@ -9,11 +9,8 @@ PASS mediaControls.element.className is "media-controls"
 PASS mediaControls.width is 300
 PASS mediaControls.height is 150
 PASS mediaControls.layoutTraits is LayoutTraits.macOS
-PASS mediaControls.showsStartButton is false
 
-PASS mediaControls.startButton instanceof StartButton is true
 PASS mediaControls.playPauseButton instanceof PlayPauseButton is true
-PASS mediaControls.skipBackButton instanceof SkipBackButton is true
 PASS mediaControls.airplayButton instanceof AirplayButton is true
 PASS mediaControls.pipButton instanceof PiPButton is true
 PASS mediaControls.fullscreenButton instanceof FullscreenButton is true
@@ -23,9 +20,10 @@ PASS mediaControls.airplayPlacard instanceof AirplayPlacard is true
 PASS mediaControls.invalidPlacard instanceof InvalidPlacard is true
 PASS mediaControls.pipPlacard instanceof PiPPlacard is true
 
-PASS mediaControls.controlsBar instanceof ControlsBar is true
-PASS mediaControls.controlsBar.element.localName is "div"
-PASS mediaControls.controlsBar.element.className is "controls-bar"
+PASS mediaControls.bottomControlsBar instanceof ControlsBar is true
+PASS mediaControls.bottomControlsBar.element.localName is "div"
+PASS mediaControls.bottomControlsBar.element.classList.contains('controls-bar') is true
+PASS mediaControls.bottomControlsBar.element.classList.contains('bottom') is true
 
 PASS mediaControlsWithArguments.width is 600
 PASS mediaControlsWithArguments.height is 300
