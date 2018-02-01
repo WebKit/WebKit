@@ -1,3 +1,30 @@
+2018-02-01  Dean Jackson  <dino@apple.com>
+
+        REGRESSION (r219342): Scaled HTML widget is not responding to a clicks outside the body
+        https://bugs.webkit.org/show_bug.cgi?id=182394
+        <rdar://problem/34840816>
+
+        Reviewed by Simon Fraser.
+
+        If a scale < 1 is applied to the page, then the visual viewport will be bigger
+        than the layout viewport. Our hit testing code would then ignore any hits
+        that were outside the layout viewport.
+
+        The fix is to only apply a hit testing clip if the page is scaling up, not down.
+
+        Update the existing fast/dom/elementFromPoint-scaled-scrolled.html test.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::layoutViewportToAbsoluteRect const): Deleted. This helper is
+        no longer used, and it would have probably been more confusing to have it accept
+        a flag to ignore the scale if it is less than 1.
+        * page/FrameView.h:
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::hitTest): No need to take the layout rect, remove the origin,
+        and pass it to a helper that added the origin back. The only thing the helper was
+        doing for us was applying a scale factor, which we only want to do if it was
+        scaling up.
+
 2018-02-01  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Structured cloning a Symbol should throw

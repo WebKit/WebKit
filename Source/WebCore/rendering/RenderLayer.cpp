@@ -4933,8 +4933,10 @@ bool RenderLayer::hitTest(const HitTestRequest& request, const HitTestLocation& 
     if (!request.ignoreClipping()) {
         if (renderer().settings().visualViewportEnabled()) {
             auto& frameView = renderer().view().frameView();
-            LayoutRect layoutViewportBounds({ }, frameView.layoutViewportRect().size());
-            LayoutRect absoluteLayoutViewportRect = LayoutRect(frameView.layoutViewportToAbsoluteRect(layoutViewportBounds));
+            LayoutRect absoluteLayoutViewportRect = frameView.layoutViewportRect();
+            auto scaleFactor = frameView.frame().frameScaleFactor();
+            if (scaleFactor > 1)
+                absoluteLayoutViewportRect.scale(scaleFactor);
             hitTestArea.intersect(absoluteLayoutViewportRect);
         } else
             hitTestArea.intersect(renderer().view().frameView().visibleContentRect(LegacyIOSDocumentVisibleRect));
