@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="../../resources/testharness.js"></script>
+    <script src="../../resources/testharnessreport.js"></script>
+</head>
+<body>
+<script>
+test(() => {
+    assert_throws("DATA_CLONE_ERR", () => {
+        window.postMessage(Symbol("Cocoa"), "*");
+    });
+    assert_throws("DATA_CLONE_ERR", () => {
+        window.postMessage({0: Symbol("Cocoa")}, "*");
+    });
+    assert_throws("DATA_CLONE_ERR", () => {
+        window.postMessage({hello: Symbol("Cocoa")}, "*");
+    });
+    assert_throws("DATA_CLONE_ERR", () => {
+        window.postMessage([Symbol("Cocoa")], "*");
+    });
+}, "Tests that posting a message that contains Symbols fails.");
+</script>
+</body>
+</html>

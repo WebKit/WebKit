@@ -1,3 +1,13 @@
+2018-02-01  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Structured cloning a Symbol should throw
+        https://bugs.webkit.org/show_bug.cgi?id=182380
+
+        Reviewed by Darin Adler.
+
+        * js/dom/post-message-symbol-expected.txt: Added.
+        * js/dom/post-message-symbol.html: Added.
+
 2018-02-01  Antoine Quint  <graouts@apple.com>
 
         [Modern Media Controls] Turn media/modern-media-controls/macos-fullscreen-media-controls back on

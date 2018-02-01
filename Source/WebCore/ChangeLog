@@ -1,3 +1,21 @@
+2018-02-01  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Structured cloning a Symbol should throw
+        https://bugs.webkit.org/show_bug.cgi?id=182380
+
+        Reviewed by Darin Adler.
+
+        Test: js/dom/post-message-symbol.html
+
+        * bindings/js/SerializedScriptValue.cpp:
+        (WebCore::CloneSerializer::dumpIfTerminal):
+        Structured cloning should throw "DataCloneError" DOMException if it finds Symbol.
+        Remove unused `isNumber()` case. It is done in dumpImmediate.
+        (WebCore::CloneSerializer::serializeUndefined): Deleted.
+        (WebCore::CloneSerializer::serializeBoolean): Deleted.
+        (WebCore::CloneSerializer::serializeNumber): Deleted.
+        Remove unused functions.
+
 2018-02-01  Chris Dumez  <cdumez@apple.com>
 
         We no longer need to queue service worker jobs until the connection to the service worker process has been established

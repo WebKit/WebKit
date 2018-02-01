@@ -561,30 +561,6 @@ public:
         return writeLittleEndian(out, string.characters16(), string.length());
     }
 
-    static void serializeUndefined(Vector<uint8_t>& out)
-    {
-        writeLittleEndian(out, CurrentVersion);
-        writeLittleEndian<uint8_t>(out, UndefinedTag);
-    }
-
-    static void serializeBoolean(bool value, Vector<uint8_t>& out)
-    {
-        writeLittleEndian(out, CurrentVersion);
-        writeLittleEndian<uint8_t>(out, value ? TrueTag : FalseTag);
-    }
-
-    static void serializeNumber(double value, Vector<uint8_t>& out)
-    {
-        writeLittleEndian(out, CurrentVersion);
-        writeLittleEndian<uint8_t>(out, DoubleTag);
-        union {
-            double d;
-            int64_t i;
-        } u;
-        u.d = value;
-        writeLittleEndian(out, u.i);
-    }
-
 private:
     typedef HashMap<JSObject*, uint32_t> ObjectPool;
 
@@ -903,15 +879,15 @@ private:
             dumpImmediate(value);
             return true;
         }
+        ASSERT(value.isCell());
 
         if (value.isString()) {
             dumpString(asString(value)->value(m_exec));
             return true;
         }
 
-        if (value.isNumber()) {
-            write(DoubleTag);
-            write(value.asNumber());
+        if (value.isSymbol()) {
+            code = SerializationReturnCode::DataCloneError;
             return true;
         }
 
