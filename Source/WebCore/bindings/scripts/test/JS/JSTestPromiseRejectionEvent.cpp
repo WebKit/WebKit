@@ -52,25 +52,49 @@ template<> TestPromiseRejectionEvent::Init convertDictionary<TestPromiseRejectio
         return { };
     }
     TestPromiseRejectionEvent::Init result;
-    JSValue bubblesValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "bubbles"));
+    JSValue bubblesValue;
+    if (isNullOrUndefined)
+        bubblesValue = jsUndefined();
+    else {
+        bubblesValue = object->get(&state, Identifier::fromString(&state, "bubbles"));
+        RETURN_IF_EXCEPTION(throwScope, { });
+    }
     if (!bubblesValue.isUndefined()) {
         result.bubbles = convert<IDLBoolean>(state, bubblesValue);
         RETURN_IF_EXCEPTION(throwScope, { });
     } else
         result.bubbles = false;
-    JSValue cancelableValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "cancelable"));
+    JSValue cancelableValue;
+    if (isNullOrUndefined)
+        cancelableValue = jsUndefined();
+    else {
+        cancelableValue = object->get(&state, Identifier::fromString(&state, "cancelable"));
+        RETURN_IF_EXCEPTION(throwScope, { });
+    }
     if (!cancelableValue.isUndefined()) {
         result.cancelable = convert<IDLBoolean>(state, cancelableValue);
         RETURN_IF_EXCEPTION(throwScope, { });
     } else
         result.cancelable = false;
-    JSValue composedValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "composed"));
+    JSValue composedValue;
+    if (isNullOrUndefined)
+        composedValue = jsUndefined();
+    else {
+        composedValue = object->get(&state, Identifier::fromString(&state, "composed"));
+        RETURN_IF_EXCEPTION(throwScope, { });
+    }
     if (!composedValue.isUndefined()) {
         result.composed = convert<IDLBoolean>(state, composedValue);
         RETURN_IF_EXCEPTION(throwScope, { });
     } else
         result.composed = false;
-    JSValue promiseValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "promise"));
+    JSValue promiseValue;
+    if (isNullOrUndefined)
+        promiseValue = jsUndefined();
+    else {
+        promiseValue = object->get(&state, Identifier::fromString(&state, "promise"));
+        RETURN_IF_EXCEPTION(throwScope, { });
+    }
     if (!promiseValue.isUndefined()) {
         result.promise = convert<IDLPromise<IDLAny>>(state, promiseValue);
         RETURN_IF_EXCEPTION(throwScope, { });
@@ -78,7 +102,13 @@ template<> TestPromiseRejectionEvent::Init convertDictionary<TestPromiseRejectio
         throwRequiredMemberTypeError(state, throwScope, "promise", "TestPromiseRejectionEventInit", "Promise");
         return { };
     }
-    JSValue reasonValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "reason"));
+    JSValue reasonValue;
+    if (isNullOrUndefined)
+        reasonValue = jsUndefined();
+    else {
+        reasonValue = object->get(&state, Identifier::fromString(&state, "reason"));
+        RETURN_IF_EXCEPTION(throwScope, { });
+    }
     if (!reasonValue.isUndefined()) {
         result.reason = convert<IDLAny>(state, reasonValue);
         RETURN_IF_EXCEPTION(throwScope, { });

@@ -429,131 +429,269 @@ template<> TestObj::Dictionary convertDictionary<TestObj::Dictionary>(ExecState&
         return { };
     }
     TestObj::Dictionary result;
-    JSValue annotatedTypeInSequenceMemberValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "annotatedTypeInSequenceMember"));
+    JSValue annotatedTypeInSequenceMemberValue;
+    if (isNullOrUndefined)
+        annotatedTypeInSequenceMemberValue = jsUndefined();
+    else {
+        annotatedTypeInSequenceMemberValue = object->get(&state, Identifier::fromString(&state, "annotatedTypeInSequenceMember"));
+        RETURN_IF_EXCEPTION(throwScope, { });
+    }
     if (!annotatedTypeInSequenceMemberValue.isUndefined()) {
         result.annotatedTypeInSequenceMember = convert<IDLSequence<IDLClampAdaptor<IDLLong>>>(state, annotatedTypeInSequenceMemberValue);
         RETURN_IF_EXCEPTION(throwScope, { });
     }
-    JSValue annotatedTypeInUnionMemberValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "annotatedTypeInUnionMember"));
+    JSValue annotatedTypeInUnionMemberValue;
+    if (isNullOrUndefined)
+        annotatedTypeInUnionMemberValue = jsUndefined();
+    else {
+        annotatedTypeInUnionMemberValue = object->get(&state, Identifier::fromString(&state, "annotatedTypeInUnionMember"));
+        RETURN_IF_EXCEPTION(throwScope, { });
+    }
     if (!annotatedTypeInUnionMemberValue.isUndefined()) {
         result.annotatedTypeInUnionMember = convert<IDLUnion<IDLDOMString, IDLClampAdaptor<IDLLong>>>(state, annotatedTypeInUnionMemberValue);
         RETURN_IF_EXCEPTION(throwScope, { });
     }
-    JSValue anyTypedefValueValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "anyTypedefValue"));
+    JSValue anyTypedefValueValue;
+    if (isNullOrUndefined)
+        anyTypedefValueValue = jsUndefined();
+    else {
+        anyTypedefValueValue = object->get(&state, Identifier::fromString(&state, "anyTypedefValue"));
+        RETURN_IF_EXCEPTION(throwScope, { });
+    }
     if (!anyTypedefValueValue.isUndefined()) {
         result.anyTypedefValue = convert<IDLAny>(state, anyTypedefValueValue);
         RETURN_IF_EXCEPTION(throwScope, { });
     } else
         result.anyTypedefValue = jsUndefined();
-    JSValue anyValueValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "anyValue"));
+    JSValue anyValueValue;
+    if (isNullOrUndefined)
+        anyValueValue = jsUndefined();
+    else {
+        anyValueValue = object->get(&state, Identifier::fromString(&state, "anyValue"));
+        RETURN_IF_EXCEPTION(throwScope, { });
+    }
     if (!anyValueValue.isUndefined()) {
         result.anyValue = convert<IDLAny>(state, anyValueValue);
         RETURN_IF_EXCEPTION(throwScope, { });
     } else
         result.anyValue = jsUndefined();
-    JSValue anyValueWithNullDefaultValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "anyValueWithNullDefault"));
+    JSValue anyValueWithNullDefaultValue;
+    if (isNullOrUndefined)
+        anyValueWithNullDefaultValue = jsUndefined();
+    else {
+        anyValueWithNullDefaultValue = object->get(&state, Identifier::fromString(&state, "anyValueWithNullDefault"));
+        RETURN_IF_EXCEPTION(throwScope, { });
+    }
     if (!anyValueWithNullDefaultValue.isUndefined()) {
         result.anyValueWithNullDefault = convert<IDLAny>(state, anyValueWithNullDefaultValue);
         RETURN_IF_EXCEPTION(throwScope, { });
     } else
         result.anyValueWithNullDefault = jsNull();
-    JSValue booleanWithDefaultValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "booleanWithDefault"));
+    JSValue booleanWithDefaultValue;
+    if (isNullOrUndefined)
+        booleanWithDefaultValue = jsUndefined();
+    else {
+        booleanWithDefaultValue = object->get(&state, Identifier::fromString(&state, "booleanWithDefault"));
+        RETURN_IF_EXCEPTION(throwScope, { });
+    }
     if (!booleanWithDefaultValue.isUndefined()) {
         result.booleanWithDefault = convert<IDLBoolean>(state, booleanWithDefaultValue);
         RETURN_IF_EXCEPTION(throwScope, { });
     } else
         result.booleanWithDefault = false;
-    JSValue booleanWithoutDefaultValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "booleanWithoutDefault"));
+    JSValue booleanWithoutDefaultValue;
+    if (isNullOrUndefined)
+        booleanWithoutDefaultValue = jsUndefined();
+    else {
+        booleanWithoutDefaultValue = object->get(&state, Identifier::fromString(&state, "booleanWithoutDefault"));
+        RETURN_IF_EXCEPTION(throwScope, { });
+    }
     if (!booleanWithoutDefaultValue.isUndefined()) {
         result.booleanWithoutDefault = convert<IDLBoolean>(state, booleanWithoutDefaultValue);
         RETURN_IF_EXCEPTION(throwScope, { });
     }
-    JSValue bufferSourceValueValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "bufferSourceValue"));
+    JSValue bufferSourceValueValue;
+    if (isNullOrUndefined)
+        bufferSourceValueValue = jsUndefined();
+    else {
+        bufferSourceValueValue = object->get(&state, Identifier::fromString(&state, "bufferSourceValue"));
+        RETURN_IF_EXCEPTION(throwScope, { });
+    }
     if (!bufferSourceValueValue.isUndefined()) {
         result.bufferSourceValue = convert<IDLUnion<IDLArrayBufferView, IDLArrayBuffer>>(state, bufferSourceValueValue);
         RETURN_IF_EXCEPTION(throwScope, { });
     }
-    JSValue dictionaryMemberValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "dictionaryMember"));
+    JSValue dictionaryMemberValue;
+    if (isNullOrUndefined)
+        dictionaryMemberValue = jsUndefined();
+    else {
+        dictionaryMemberValue = object->get(&state, Identifier::fromString(&state, "dictionaryMember"));
+        RETURN_IF_EXCEPTION(throwScope, { });
+    }
     if (!dictionaryMemberValue.isUndefined()) {
         result.dictionaryMember = convert<IDLDictionary<TestObj::DictionaryThatShouldTolerateNull>>(state, dictionaryMemberValue);
         RETURN_IF_EXCEPTION(throwScope, { });
     }
-    JSValue enumerationValueWithDefaultValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "enumerationValueWithDefault"));
+    JSValue enumerationValueWithDefaultValue;
+    if (isNullOrUndefined)
+        enumerationValueWithDefaultValue = jsUndefined();
+    else {
+        enumerationValueWithDefaultValue = object->get(&state, Identifier::fromString(&state, "enumerationValueWithDefault"));
+        RETURN_IF_EXCEPTION(throwScope, { });
+    }
     if (!enumerationValueWithDefaultValue.isUndefined()) {
         result.enumerationValueWithDefault = convert<IDLEnumeration<TestObj::EnumType>>(state, enumerationValueWithDefaultValue);
         RETURN_IF_EXCEPTION(throwScope, { });
     } else
         result.enumerationValueWithDefault = TestObj::EnumType::EnumValue1;
-    JSValue enumerationValueWithEmptyStringDefaultValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "enumerationValueWithEmptyStringDefault"));
+    JSValue enumerationValueWithEmptyStringDefaultValue;
+    if (isNullOrUndefined)
+        enumerationValueWithEmptyStringDefaultValue = jsUndefined();
+    else {
+        enumerationValueWithEmptyStringDefaultValue = object->get(&state, Identifier::fromString(&state, "enumerationValueWithEmptyStringDefault"));
+        RETURN_IF_EXCEPTION(throwScope, { });
+    }
     if (!enumerationValueWithEmptyStringDefaultValue.isUndefined()) {
         result.enumerationValueWithEmptyStringDefault = convert<IDLEnumeration<TestObj::EnumType>>(state, enumerationValueWithEmptyStringDefaultValue);
         RETURN_IF_EXCEPTION(throwScope, { });
     } else
         result.enumerationValueWithEmptyStringDefault = TestObj::EnumType::EmptyString;
-    JSValue enumerationValueWithoutDefaultValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "enumerationValueWithoutDefault"));
+    JSValue enumerationValueWithoutDefaultValue;
+    if (isNullOrUndefined)
+        enumerationValueWithoutDefaultValue = jsUndefined();
+    else {
+        enumerationValueWithoutDefaultValue = object->get(&state, Identifier::fromString(&state, "enumerationValueWithoutDefault"));
+        RETURN_IF_EXCEPTION(throwScope, { });
+    }
     if (!enumerationValueWithoutDefaultValue.isUndefined()) {
         result.enumerationValueWithoutDefault = convert<IDLEnumeration<TestObj::EnumType>>(state, enumerationValueWithoutDefaultValue);
         RETURN_IF_EXCEPTION(throwScope, { });
     }
-    JSValue fooAliasValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "fooAlias"));
+    JSValue fooAliasValue;
+    if (isNullOrUndefined)
+        fooAliasValue = jsUndefined();
+    else {
+        fooAliasValue = object->get(&state, Identifier::fromString(&state, "fooAlias"));
+        RETURN_IF_EXCEPTION(throwScope, { });
+    }
     if (!fooAliasValue.isUndefined()) {
         result.foo = convert<IDLAny>(state, fooAliasValue);
         RETURN_IF_EXCEPTION(throwScope, { });
     } else
         result.foo = jsUndefined();
-    JSValue fooWithDefaultAliasValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "fooWithDefaultAlias"));
+    JSValue fooWithDefaultAliasValue;
+    if (isNullOrUndefined)
+        fooWithDefaultAliasValue = jsUndefined();
+    else {
+        fooWithDefaultAliasValue = object->get(&state, Identifier::fromString(&state, "fooWithDefaultAlias"));
+        RETURN_IF_EXCEPTION(throwScope, { });
+    }
     if (!fooWithDefaultAliasValue.isUndefined()) {
         result.fooWithDefault = convert<IDLAny>(state, fooWithDefaultAliasValue);
         RETURN_IF_EXCEPTION(throwScope, { });
     } else
         result.fooWithDefault = 0;
-    JSValue integerValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "integer"));
+    JSValue integerValue;
+    if (isNullOrUndefined)
+        integerValue = jsUndefined();
+    else {
+        integerValue = object->get(&state, Identifier::fromString(&state, "integer"));
+        RETURN_IF_EXCEPTION(throwScope, { });
+    }
     if (!integerValue.isUndefined()) {
         result.integer = convert<IDLLong>(state, integerValue);
         RETURN_IF_EXCEPTION(throwScope, { });
     }
-    JSValue integerWithDefaultValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "integerWithDefault"));
+    JSValue integerWithDefaultValue;
+    if (isNullOrUndefined)
+        integerWithDefaultValue = jsUndefined();
+    else {
+        integerWithDefaultValue = object->get(&state, Identifier::fromString(&state, "integerWithDefault"));
+        RETURN_IF_EXCEPTION(throwScope, { });
+    }
     if (!integerWithDefaultValue.isUndefined()) {
         result.integerWithDefault = convert<IDLLong>(state, integerWithDefaultValue);
         RETURN_IF_EXCEPTION(throwScope, { });
     } else
         result.integerWithDefault = 0;
-    JSValue largeIntegerValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "largeInteger"));
+    JSValue largeIntegerValue;
+    if (isNullOrUndefined)
+        largeIntegerValue = jsUndefined();
+    else {
+        largeIntegerValue = object->get(&state, Identifier::fromString(&state, "largeInteger"));
+        RETURN_IF_EXCEPTION(throwScope, { });
+    }
     if (!largeIntegerValue.isUndefined()) {
         result.largeInteger = convert<IDLLongLong>(state, largeIntegerValue);
         RETURN_IF_EXCEPTION(throwScope, { });
     }
-    JSValue largeIntegerWithDefaultValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "largeIntegerWithDefault"));
+    JSValue largeIntegerWithDefaultValue;
+    if (isNullOrUndefined)
+        largeIntegerWithDefaultValue = jsUndefined();
+    else {
+        largeIntegerWithDefaultValue = object->get(&state, Identifier::fromString(&state, "largeIntegerWithDefault"));
+        RETURN_IF_EXCEPTION(throwScope, { });
+    }
     if (!largeIntegerWithDefaultValue.isUndefined()) {
         result.largeIntegerWithDefault = convert<IDLLongLong>(state, largeIntegerWithDefaultValue);
         RETURN_IF_EXCEPTION(throwScope, { });
     } else
         result.largeIntegerWithDefault = 0;
-    JSValue nullableIntegerWithDefaultValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "nullableIntegerWithDefault"));
+    JSValue nullableIntegerWithDefaultValue;
+    if (isNullOrUndefined)
+        nullableIntegerWithDefaultValue = jsUndefined();
+    else {
+        nullableIntegerWithDefaultValue = object->get(&state, Identifier::fromString(&state, "nullableIntegerWithDefault"));
+        RETURN_IF_EXCEPTION(throwScope, { });
+    }
     if (!nullableIntegerWithDefaultValue.isUndefined()) {
         result.nullableIntegerWithDefault = convert<IDLNullable<IDLLong>>(state, nullableIntegerWithDefaultValue);
         RETURN_IF_EXCEPTION(throwScope, { });
     } else
         result.nullableIntegerWithDefault = std::nullopt;
-    JSValue nullableNodeValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "nullableNode"));
+    JSValue nullableNodeValue;
+    if (isNullOrUndefined)
+        nullableNodeValue = jsUndefined();
+    else {
+        nullableNodeValue = object->get(&state, Identifier::fromString(&state, "nullableNode"));
+        RETURN_IF_EXCEPTION(throwScope, { });
+    }
     if (!nullableNodeValue.isUndefined()) {
         result.nullableNode = convert<IDLNullable<IDLInterface<Node>>>(state, nullableNodeValue);
         RETURN_IF_EXCEPTION(throwScope, { });
     } else
         result.nullableNode = nullptr;
-    JSValue nullableStringWithDefaultValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "nullableStringWithDefault"));
+    JSValue nullableStringWithDefaultValue;
+    if (isNullOrUndefined)
+        nullableStringWithDefaultValue = jsUndefined();
+    else {
+        nullableStringWithDefaultValue = object->get(&state, Identifier::fromString(&state, "nullableStringWithDefault"));
+        RETURN_IF_EXCEPTION(throwScope, { });
+    }
     if (!nullableStringWithDefaultValue.isUndefined()) {
         result.nullableStringWithDefault = convert<IDLNullable<IDLDOMString>>(state, nullableStringWithDefaultValue);
         RETURN_IF_EXCEPTION(throwScope, { });
     } else
         result.nullableStringWithDefault = String();
-    JSValue nullableUnionMemberValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "nullableUnionMember"));
+    JSValue nullableUnionMemberValue;
+    if (isNullOrUndefined)
+        nullableUnionMemberValue = jsUndefined();
+    else {
+        nullableUnionMemberValue = object->get(&state, Identifier::fromString(&state, "nullableUnionMember"));
+        RETURN_IF_EXCEPTION(throwScope, { });
+    }
     if (!nullableUnionMemberValue.isUndefined()) {
         result.nullableUnionMember = convert<IDLNullable<IDLUnion<IDLLong, IDLInterface<Node>>>>(state, nullableUnionMemberValue);
         RETURN_IF_EXCEPTION(throwScope, { });
     } else
         result.nullableUnionMember = std::nullopt;
-    JSValue requiredBufferSourceValueValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "requiredBufferSourceValue"));
+    JSValue requiredBufferSourceValueValue;
+    if (isNullOrUndefined)
+        requiredBufferSourceValueValue = jsUndefined();
+    else {
+        requiredBufferSourceValueValue = object->get(&state, Identifier::fromString(&state, "requiredBufferSourceValue"));
+        RETURN_IF_EXCEPTION(throwScope, { });
+    }
     if (!requiredBufferSourceValueValue.isUndefined()) {
         result.requiredBufferSourceValue = convert<IDLUnion<IDLArrayBufferView, IDLArrayBuffer>>(state, requiredBufferSourceValueValue);
         RETURN_IF_EXCEPTION(throwScope, { });
@@ -561,114 +699,240 @@ template<> TestObj::Dictionary convertDictionary<TestObj::Dictionary>(ExecState&
         throwRequiredMemberTypeError(state, throwScope, "requiredBufferSourceValue", "TestDictionary", "(ArrayBufferView or ArrayBuffer)");
         return { };
     }
-    JSValue restrictedDoubleValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "restrictedDouble"));
+    JSValue restrictedDoubleValue;
+    if (isNullOrUndefined)
+        restrictedDoubleValue = jsUndefined();
+    else {
+        restrictedDoubleValue = object->get(&state, Identifier::fromString(&state, "restrictedDouble"));
+        RETURN_IF_EXCEPTION(throwScope, { });
+    }
     if (!restrictedDoubleValue.isUndefined()) {
         result.restrictedDouble = convert<IDLDouble>(state, restrictedDoubleValue);
         RETURN_IF_EXCEPTION(throwScope, { });
     }
-    JSValue restrictedDoubleWithDefaultValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "restrictedDoubleWithDefault"));
+    JSValue restrictedDoubleWithDefaultValue;
+    if (isNullOrUndefined)
+        restrictedDoubleWithDefaultValue = jsUndefined();
+    else {
+        restrictedDoubleWithDefaultValue = object->get(&state, Identifier::fromString(&state, "restrictedDoubleWithDefault"));
+        RETURN_IF_EXCEPTION(throwScope, { });
+    }
     if (!restrictedDoubleWithDefaultValue.isUndefined()) {
         result.restrictedDoubleWithDefault = convert<IDLDouble>(state, restrictedDoubleWithDefaultValue);
         RETURN_IF_EXCEPTION(throwScope, { });
     } else
         result.restrictedDoubleWithDefault = 0;
-    JSValue restrictedFloatValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "restrictedFloat"));
+    JSValue restrictedFloatValue;
+    if (isNullOrUndefined)
+        restrictedFloatValue = jsUndefined();
+    else {
+        restrictedFloatValue = object->get(&state, Identifier::fromString(&state, "restrictedFloat"));
+        RETURN_IF_EXCEPTION(throwScope, { });
+    }
     if (!restrictedFloatValue.isUndefined()) {
         result.restrictedFloat = convert<IDLFloat>(state, restrictedFloatValue);
         RETURN_IF_EXCEPTION(throwScope, { });
     }
-    JSValue restrictedFloatWithDefaultValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "restrictedFloatWithDefault"));
+    JSValue restrictedFloatWithDefaultValue;
+    if (isNullOrUndefined)
+        restrictedFloatWithDefaultValue = jsUndefined();
+    else {
+        restrictedFloatWithDefaultValue = object->get(&state, Identifier::fromString(&state, "restrictedFloatWithDefault"));
+        RETURN_IF_EXCEPTION(throwScope, { });
+    }
     if (!restrictedFloatWithDefaultValue.isUndefined()) {
         result.restrictedFloatWithDefault = convert<IDLFloat>(state, restrictedFloatWithDefaultValue);
         RETURN_IF_EXCEPTION(throwScope, { });
     } else
         result.restrictedFloatWithDefault = 0;
-    JSValue sequenceOfStringsValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "sequenceOfStrings"));
+    JSValue sequenceOfStringsValue;
+    if (isNullOrUndefined)
+        sequenceOfStringsValue = jsUndefined();
+    else {
+        sequenceOfStringsValue = object->get(&state, Identifier::fromString(&state, "sequenceOfStrings"));
+        RETURN_IF_EXCEPTION(throwScope, { });
+    }
     if (!sequenceOfStringsValue.isUndefined()) {
         result.sequenceOfStrings = convert<IDLSequence<IDLDOMString>>(state, sequenceOfStringsValue);
         RETURN_IF_EXCEPTION(throwScope, { });
     }
-    JSValue smallIntegerClampedValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "smallIntegerClamped"));
+    JSValue smallIntegerClampedValue;
+    if (isNullOrUndefined)
+        smallIntegerClampedValue = jsUndefined();
+    else {
+        smallIntegerClampedValue = object->get(&state, Identifier::fromString(&state, "smallIntegerClamped"));
+        RETURN_IF_EXCEPTION(throwScope, { });
+    }
     if (!smallIntegerClampedValue.isUndefined()) {
         result.smallIntegerClamped = convert<IDLClampAdaptor<IDLByte>>(state, smallIntegerClampedValue);
         RETURN_IF_EXCEPTION(throwScope, { });
     }
-    JSValue smallIntegerWithDefaultValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "smallIntegerWithDefault"));
+    JSValue smallIntegerWithDefaultValue;
+    if (isNullOrUndefined)
+        smallIntegerWithDefaultValue = jsUndefined();
+    else {
+        smallIntegerWithDefaultValue = object->get(&state, Identifier::fromString(&state, "smallIntegerWithDefault"));
+        RETURN_IF_EXCEPTION(throwScope, { });
+    }
     if (!smallIntegerWithDefaultValue.isUndefined()) {
         result.smallIntegerWithDefault = convert<IDLByte>(state, smallIntegerWithDefaultValue);
         RETURN_IF_EXCEPTION(throwScope, { });
     }
-    JSValue smallUnsignedIntegerEnforcedRangeValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "smallUnsignedIntegerEnforcedRange"));
+    JSValue smallUnsignedIntegerEnforcedRangeValue;
+    if (isNullOrUndefined)
+        smallUnsignedIntegerEnforcedRangeValue = jsUndefined();
+    else {
+        smallUnsignedIntegerEnforcedRangeValue = object->get(&state, Identifier::fromString(&state, "smallUnsignedIntegerEnforcedRange"));
+        RETURN_IF_EXCEPTION(throwScope, { });
+    }
     if (!smallUnsignedIntegerEnforcedRangeValue.isUndefined()) {
         result.smallUnsignedIntegerEnforcedRange = convert<IDLEnforceRangeAdaptor<IDLOctet>>(state, smallUnsignedIntegerEnforcedRangeValue);
         RETURN_IF_EXCEPTION(throwScope, { });
     }
-    JSValue smallUnsignedIntegerWithDefaultValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "smallUnsignedIntegerWithDefault"));
+    JSValue smallUnsignedIntegerWithDefaultValue;
+    if (isNullOrUndefined)
+        smallUnsignedIntegerWithDefaultValue = jsUndefined();
+    else {
+        smallUnsignedIntegerWithDefaultValue = object->get(&state, Identifier::fromString(&state, "smallUnsignedIntegerWithDefault"));
+        RETURN_IF_EXCEPTION(throwScope, { });
+    }
     if (!smallUnsignedIntegerWithDefaultValue.isUndefined()) {
         result.smallUnsignedIntegerWithDefault = convert<IDLOctet>(state, smallUnsignedIntegerWithDefaultValue);
         RETURN_IF_EXCEPTION(throwScope, { });
     } else
         result.smallUnsignedIntegerWithDefault = 0;
-    JSValue stringTreatNullAsEmptyStringValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "stringTreatNullAsEmptyString"));
+    JSValue stringTreatNullAsEmptyStringValue;
+    if (isNullOrUndefined)
+        stringTreatNullAsEmptyStringValue = jsUndefined();
+    else {
+        stringTreatNullAsEmptyStringValue = object->get(&state, Identifier::fromString(&state, "stringTreatNullAsEmptyString"));
+        RETURN_IF_EXCEPTION(throwScope, { });
+    }
     if (!stringTreatNullAsEmptyStringValue.isUndefined()) {
         result.stringTreatNullAsEmptyString = convert<IDLTreatNullAsEmptyAdaptor<IDLDOMString>>(state, stringTreatNullAsEmptyStringValue);
         RETURN_IF_EXCEPTION(throwScope, { });
     }
-    JSValue stringWithDefaultValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "stringWithDefault"));
+    JSValue stringWithDefaultValue;
+    if (isNullOrUndefined)
+        stringWithDefaultValue = jsUndefined();
+    else {
+        stringWithDefaultValue = object->get(&state, Identifier::fromString(&state, "stringWithDefault"));
+        RETURN_IF_EXCEPTION(throwScope, { });
+    }
     if (!stringWithDefaultValue.isUndefined()) {
         result.stringWithDefault = convert<IDLDOMString>(state, stringWithDefaultValue);
         RETURN_IF_EXCEPTION(throwScope, { });
     } else
         result.stringWithDefault = ASCIILiteral("defaultString");
-    JSValue stringWithoutDefaultValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "stringWithoutDefault"));
+    JSValue stringWithoutDefaultValue;
+    if (isNullOrUndefined)
+        stringWithoutDefaultValue = jsUndefined();
+    else {
+        stringWithoutDefaultValue = object->get(&state, Identifier::fromString(&state, "stringWithoutDefault"));
+        RETURN_IF_EXCEPTION(throwScope, { });
+    }
     if (!stringWithoutDefaultValue.isUndefined()) {
         result.stringWithoutDefault = convert<IDLDOMString>(state, stringWithoutDefaultValue);
         RETURN_IF_EXCEPTION(throwScope, { });
     }
-    JSValue unionMemberValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "unionMember"));
+    JSValue unionMemberValue;
+    if (isNullOrUndefined)
+        unionMemberValue = jsUndefined();
+    else {
+        unionMemberValue = object->get(&state, Identifier::fromString(&state, "unionMember"));
+        RETURN_IF_EXCEPTION(throwScope, { });
+    }
     if (!unionMemberValue.isUndefined()) {
         result.unionMember = convert<IDLUnion<IDLLong, IDLInterface<Node>>>(state, unionMemberValue);
         RETURN_IF_EXCEPTION(throwScope, { });
     }
-    JSValue unrestrictedDoubleValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "unrestrictedDouble"));
+    JSValue unrestrictedDoubleValue;
+    if (isNullOrUndefined)
+        unrestrictedDoubleValue = jsUndefined();
+    else {
+        unrestrictedDoubleValue = object->get(&state, Identifier::fromString(&state, "unrestrictedDouble"));
+        RETURN_IF_EXCEPTION(throwScope, { });
+    }
     if (!unrestrictedDoubleValue.isUndefined()) {
         result.unrestrictedDouble = convert<IDLUnrestrictedDouble>(state, unrestrictedDoubleValue);
         RETURN_IF_EXCEPTION(throwScope, { });
     }
-    JSValue unrestrictedDoubleWithDefaultValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "unrestrictedDoubleWithDefault"));
+    JSValue unrestrictedDoubleWithDefaultValue;
+    if (isNullOrUndefined)
+        unrestrictedDoubleWithDefaultValue = jsUndefined();
+    else {
+        unrestrictedDoubleWithDefaultValue = object->get(&state, Identifier::fromString(&state, "unrestrictedDoubleWithDefault"));
+        RETURN_IF_EXCEPTION(throwScope, { });
+    }
     if (!unrestrictedDoubleWithDefaultValue.isUndefined()) {
         result.unrestrictedDoubleWithDefault = convert<IDLUnrestrictedDouble>(state, unrestrictedDoubleWithDefaultValue);
         RETURN_IF_EXCEPTION(throwScope, { });
     } else
         result.unrestrictedDoubleWithDefault = 0;
-    JSValue unrestrictedFloatValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "unrestrictedFloat"));
+    JSValue unrestrictedFloatValue;
+    if (isNullOrUndefined)
+        unrestrictedFloatValue = jsUndefined();
+    else {
+        unrestrictedFloatValue = object->get(&state, Identifier::fromString(&state, "unrestrictedFloat"));
+        RETURN_IF_EXCEPTION(throwScope, { });
+    }
     if (!unrestrictedFloatValue.isUndefined()) {
         result.unrestrictedFloat = convert<IDLUnrestrictedFloat>(state, unrestrictedFloatValue);
         RETURN_IF_EXCEPTION(throwScope, { });
     }
-    JSValue unrestrictedFloatWithDefaultValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "unrestrictedFloatWithDefault"));
+    JSValue unrestrictedFloatWithDefaultValue;
+    if (isNullOrUndefined)
+        unrestrictedFloatWithDefaultValue = jsUndefined();
+    else {
+        unrestrictedFloatWithDefaultValue = object->get(&state, Identifier::fromString(&state, "unrestrictedFloatWithDefault"));
+        RETURN_IF_EXCEPTION(throwScope, { });
+    }
     if (!unrestrictedFloatWithDefaultValue.isUndefined()) {
         result.unrestrictedFloatWithDefault = convert<IDLUnrestrictedFloat>(state, unrestrictedFloatWithDefaultValue);
         RETURN_IF_EXCEPTION(throwScope, { });
     } else
         result.unrestrictedFloatWithDefault = 0;
-    JSValue unsignedIntegerValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "unsignedInteger"));
+    JSValue unsignedIntegerValue;
+    if (isNullOrUndefined)
+        unsignedIntegerValue = jsUndefined();
+    else {
+        unsignedIntegerValue = object->get(&state, Identifier::fromString(&state, "unsignedInteger"));
+        RETURN_IF_EXCEPTION(throwScope, { });
+    }
     if (!unsignedIntegerValue.isUndefined()) {
         result.unsignedInteger = convert<IDLUnsignedLong>(state, unsignedIntegerValue);
         RETURN_IF_EXCEPTION(throwScope, { });
     }
-    JSValue unsignedIntegerWithDefaultValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "unsignedIntegerWithDefault"));
+    JSValue unsignedIntegerWithDefaultValue;
+    if (isNullOrUndefined)
+        unsignedIntegerWithDefaultValue = jsUndefined();
+    else {
+        unsignedIntegerWithDefaultValue = object->get(&state, Identifier::fromString(&state, "unsignedIntegerWithDefault"));
+        RETURN_IF_EXCEPTION(throwScope, { });
+    }
     if (!unsignedIntegerWithDefaultValue.isUndefined()) {
         result.unsignedIntegerWithDefault = convert<IDLUnsignedLong>(state, unsignedIntegerWithDefaultValue);
         RETURN_IF_EXCEPTION(throwScope, { });
     } else
         result.unsignedIntegerWithDefault = 0;
-    JSValue unsignedLargeIntegerValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "unsignedLargeInteger"));
+    JSValue unsignedLargeIntegerValue;
+    if (isNullOrUndefined)
+        unsignedLargeIntegerValue = jsUndefined();
+    else {
+        unsignedLargeIntegerValue = object->get(&state, Identifier::fromString(&state, "unsignedLargeInteger"));
+        RETURN_IF_EXCEPTION(throwScope, { });
+    }
     if (!unsignedLargeIntegerValue.isUndefined()) {
         result.unsignedLargeInteger = convert<IDLUnsignedLongLong>(state, unsignedLargeIntegerValue);
         RETURN_IF_EXCEPTION(throwScope, { });
     }
-    JSValue unsignedLargeIntegerWithDefaultValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "unsignedLargeIntegerWithDefault"));
+    JSValue unsignedLargeIntegerWithDefaultValue;
+    if (isNullOrUndefined)
+        unsignedLargeIntegerWithDefaultValue = jsUndefined();
+    else {
+        unsignedLargeIntegerWithDefaultValue = object->get(&state, Identifier::fromString(&state, "unsignedLargeIntegerWithDefault"));
+        RETURN_IF_EXCEPTION(throwScope, { });
+    }
     if (!unsignedLargeIntegerWithDefaultValue.isUndefined()) {
         result.unsignedLargeIntegerWithDefault = convert<IDLUnsignedLongLong>(state, unsignedLargeIntegerWithDefaultValue);
         RETURN_IF_EXCEPTION(throwScope, { });
@@ -827,12 +1091,24 @@ template<> TestObj::DictionaryThatShouldNotTolerateNull convertDictionary<TestOb
         return { };
     }
     TestObj::DictionaryThatShouldNotTolerateNull result;
-    JSValue booleanWithoutDefaultValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "booleanWithoutDefault"));
+    JSValue booleanWithoutDefaultValue;
+    if (isNullOrUndefined)
+        booleanWithoutDefaultValue = jsUndefined();
+    else {
+        booleanWithoutDefaultValue = object->get(&state, Identifier::fromString(&state, "booleanWithoutDefault"));
+        RETURN_IF_EXCEPTION(throwScope, { });
+    }
     if (!booleanWithoutDefaultValue.isUndefined()) {
         result.booleanWithoutDefault = convert<IDLBoolean>(state, booleanWithoutDefaultValue);
         RETURN_IF_EXCEPTION(throwScope, { });
     }
-    JSValue nonNullableNodeValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "nonNullableNode"));
+    JSValue nonNullableNodeValue;
+    if (isNullOrUndefined)
+        nonNullableNodeValue = jsUndefined();
+    else {
+        nonNullableNodeValue = object->get(&state, Identifier::fromString(&state, "nonNullableNode"));
+        RETURN_IF_EXCEPTION(throwScope, { });
+    }
     if (!nonNullableNodeValue.isUndefined()) {
         result.nonNullableNode = convert<IDLInterface<Node>>(state, nonNullableNodeValue);
         RETURN_IF_EXCEPTION(throwScope, { });
@@ -840,7 +1116,13 @@ template<> TestObj::DictionaryThatShouldNotTolerateNull convertDictionary<TestOb
         throwRequiredMemberTypeError(state, throwScope, "nonNullableNode", "TestDictionaryThatShouldNotTolerateNull", "Node");
         return { };
     }
-    JSValue requiredDictionaryMemberValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "requiredDictionaryMember"));
+    JSValue requiredDictionaryMemberValue;
+    if (isNullOrUndefined)
+        requiredDictionaryMemberValue = jsUndefined();
+    else {
+        requiredDictionaryMemberValue = object->get(&state, Identifier::fromString(&state, "requiredDictionaryMember"));
+        RETURN_IF_EXCEPTION(throwScope, { });
+    }
     if (!requiredDictionaryMemberValue.isUndefined()) {
         result.requiredDictionaryMember = convert<IDLDictionary<TestObj::Dictionary>>(state, requiredDictionaryMemberValue);
         RETURN_IF_EXCEPTION(throwScope, { });
@@ -848,7 +1130,13 @@ template<> TestObj::DictionaryThatShouldNotTolerateNull convertDictionary<TestOb
         throwRequiredMemberTypeError(state, throwScope, "requiredDictionaryMember", "TestDictionaryThatShouldNotTolerateNull", "TestDictionary");
         return { };
     }
-    JSValue requiredEnumerationValueValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "requiredEnumerationValue"));
+    JSValue requiredEnumerationValueValue;
+    if (isNullOrUndefined)
+        requiredEnumerationValueValue = jsUndefined();
+    else {
+        requiredEnumerationValueValue = object->get(&state, Identifier::fromString(&state, "requiredEnumerationValue"));
+        RETURN_IF_EXCEPTION(throwScope, { });
+    }
     if (!requiredEnumerationValueValue.isUndefined()) {
         result.requiredEnumerationValue = convert<IDLEnumeration<TestObj::EnumType>>(state, requiredEnumerationValueValue);
         RETURN_IF_EXCEPTION(throwScope, { });
@@ -870,12 +1158,24 @@ template<> TestObj::DictionaryThatShouldTolerateNull convertDictionary<TestObj::
         return { };
     }
     TestObj::DictionaryThatShouldTolerateNull result;
-    JSValue booleanWithoutDefaultValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "booleanWithoutDefault"));
+    JSValue booleanWithoutDefaultValue;
+    if (isNullOrUndefined)
+        booleanWithoutDefaultValue = jsUndefined();
+    else {
+        booleanWithoutDefaultValue = object->get(&state, Identifier::fromString(&state, "booleanWithoutDefault"));
+        RETURN_IF_EXCEPTION(throwScope, { });
+    }
     if (!booleanWithoutDefaultValue.isUndefined()) {
         result.booleanWithoutDefault = convert<IDLBoolean>(state, booleanWithoutDefaultValue);
         RETURN_IF_EXCEPTION(throwScope, { });
     }
-    JSValue enumerationValueValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "enumerationValue"));
+    JSValue enumerationValueValue;
+    if (isNullOrUndefined)
+        enumerationValueValue = jsUndefined();
+    else {
+        enumerationValueValue = object->get(&state, Identifier::fromString(&state, "enumerationValue"));
+        RETURN_IF_EXCEPTION(throwScope, { });
+    }
     if (!enumerationValueValue.isUndefined()) {
         result.enumerationValue = convert<IDLEnumeration<TestObj::EnumType>>(state, enumerationValueValue);
         RETURN_IF_EXCEPTION(throwScope, { });
@@ -894,12 +1194,24 @@ template<> AlternateDictionaryName convertDictionary<AlternateDictionaryName>(Ex
         return { };
     }
     AlternateDictionaryName result;
-    JSValue booleanWithoutDefaultValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "booleanWithoutDefault"));
+    JSValue booleanWithoutDefaultValue;
+    if (isNullOrUndefined)
+        booleanWithoutDefaultValue = jsUndefined();
+    else {
+        booleanWithoutDefaultValue = object->get(&state, Identifier::fromString(&state, "booleanWithoutDefault"));
+        RETURN_IF_EXCEPTION(throwScope, { });
+    }
     if (!booleanWithoutDefaultValue.isUndefined()) {
         result.booleanWithoutDefault = convert<IDLBoolean>(state, booleanWithoutDefaultValue);
         RETURN_IF_EXCEPTION(throwScope, { });
     }
-    JSValue enumerationValueValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "enumerationValue"));
+    JSValue enumerationValueValue;
+    if (isNullOrUndefined)
+        enumerationValueValue = jsUndefined();
+    else {
+        enumerationValueValue = object->get(&state, Identifier::fromString(&state, "enumerationValue"));
+        RETURN_IF_EXCEPTION(throwScope, { });
+    }
     if (!enumerationValueValue.isUndefined()) {
         result.enumerationValue = convert<IDLEnumeration<TestObj::EnumType>>(state, enumerationValueValue);
         RETURN_IF_EXCEPTION(throwScope, { });
@@ -918,12 +1230,24 @@ template<> TestObj::ParentDictionary convertDictionary<TestObj::ParentDictionary
         return { };
     }
     TestObj::ParentDictionary result;
-    JSValue parentMember1Value = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "parentMember1"));
+    JSValue parentMember1Value;
+    if (isNullOrUndefined)
+        parentMember1Value = jsUndefined();
+    else {
+        parentMember1Value = object->get(&state, Identifier::fromString(&state, "parentMember1"));
+        RETURN_IF_EXCEPTION(throwScope, { });
+    }
     if (!parentMember1Value.isUndefined()) {
         result.parentMember1 = convert<IDLBoolean>(state, parentMember1Value);
         RETURN_IF_EXCEPTION(throwScope, { });
     }
-    JSValue parentMember2Value = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "parentMember2"));
+    JSValue parentMember2Value;
+    if (isNullOrUndefined)
+        parentMember2Value = jsUndefined();
+    else {
+        parentMember2Value = object->get(&state, Identifier::fromString(&state, "parentMember2"));
+        RETURN_IF_EXCEPTION(throwScope, { });
+    }
     if (!parentMember2Value.isUndefined()) {
         result.parentMember2 = convert<IDLBoolean>(state, parentMember2Value);
         RETURN_IF_EXCEPTION(throwScope, { });
@@ -942,22 +1266,46 @@ template<> TestObj::ChildDictionary convertDictionary<TestObj::ChildDictionary>(
         return { };
     }
     TestObj::ChildDictionary result;
-    JSValue parentMember1Value = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "parentMember1"));
+    JSValue parentMember1Value;
+    if (isNullOrUndefined)
+        parentMember1Value = jsUndefined();
+    else {
+        parentMember1Value = object->get(&state, Identifier::fromString(&state, "parentMember1"));
+        RETURN_IF_EXCEPTION(throwScope, { });
+    }
     if (!parentMember1Value.isUndefined()) {
         result.parentMember1 = convert<IDLBoolean>(state, parentMember1Value);
         RETURN_IF_EXCEPTION(throwScope, { });
     }
-    JSValue parentMember2Value = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "parentMember2"));
+    JSValue parentMember2Value;
+    if (isNullOrUndefined)
+        parentMember2Value = jsUndefined();
+    else {
+        parentMember2Value = object->get(&state, Identifier::fromString(&state, "parentMember2"));
+        RETURN_IF_EXCEPTION(throwScope, { });
+    }
     if (!parentMember2Value.isUndefined()) {
         result.parentMember2 = convert<IDLBoolean>(state, parentMember2Value);
         RETURN_IF_EXCEPTION(throwScope, { });
     }
-    JSValue childMember1Value = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "childMember1"));
+    JSValue childMember1Value;
+    if (isNullOrUndefined)
+        childMember1Value = jsUndefined();
+    else {
+        childMember1Value = object->get(&state, Identifier::fromString(&state, "childMember1"));
+        RETURN_IF_EXCEPTION(throwScope, { });
+    }
     if (!childMember1Value.isUndefined()) {
         result.childMember1 = convert<IDLBoolean>(state, childMember1Value);
         RETURN_IF_EXCEPTION(throwScope, { });
     }
-    JSValue childMember2Value = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "childMember2"));
+    JSValue childMember2Value;
+    if (isNullOrUndefined)
+        childMember2Value = jsUndefined();
+    else {
+        childMember2Value = object->get(&state, Identifier::fromString(&state, "childMember2"));
+        RETURN_IF_EXCEPTION(throwScope, { });
+    }
     if (!childMember2Value.isUndefined()) {
         result.childMember2 = convert<IDLBoolean>(state, childMember2Value);
         RETURN_IF_EXCEPTION(throwScope, { });
@@ -978,7 +1326,13 @@ template<> TestObj::ConditionalDictionaryA convertDictionary<TestObj::Conditiona
         return { };
     }
     TestObj::ConditionalDictionaryA result;
-    JSValue stringWithoutDefaultValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "stringWithoutDefault"));
+    JSValue stringWithoutDefaultValue;
+    if (isNullOrUndefined)
+        stringWithoutDefaultValue = jsUndefined();
+    else {
+        stringWithoutDefaultValue = object->get(&state, Identifier::fromString(&state, "stringWithoutDefault"));
+        RETURN_IF_EXCEPTION(throwScope, { });
+    }
     if (!stringWithoutDefaultValue.isUndefined()) {
         result.stringWithoutDefault = convert<IDLDOMString>(state, stringWithoutDefaultValue);
         RETURN_IF_EXCEPTION(throwScope, { });
@@ -1001,7 +1355,13 @@ template<> TestObj::ConditionalDictionaryB convertDictionary<TestObj::Conditiona
         return { };
     }
     TestObj::ConditionalDictionaryB result;
-    JSValue stringWithoutDefaultValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "stringWithoutDefault"));
+    JSValue stringWithoutDefaultValue;
+    if (isNullOrUndefined)
+        stringWithoutDefaultValue = jsUndefined();
+    else {
+        stringWithoutDefaultValue = object->get(&state, Identifier::fromString(&state, "stringWithoutDefault"));
+        RETURN_IF_EXCEPTION(throwScope, { });
+    }
     if (!stringWithoutDefaultValue.isUndefined()) {
         result.stringWithoutDefault = convert<IDLDOMString>(state, stringWithoutDefaultValue);
         RETURN_IF_EXCEPTION(throwScope, { });
@@ -1024,7 +1384,13 @@ template<> TestObj::ConditionalDictionaryC convertDictionary<TestObj::Conditiona
         return { };
     }
     TestObj::ConditionalDictionaryC result;
-    JSValue stringWithoutDefaultValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "stringWithoutDefault"));
+    JSValue stringWithoutDefaultValue;
+    if (isNullOrUndefined)
+        stringWithoutDefaultValue = jsUndefined();
+    else {
+        stringWithoutDefaultValue = object->get(&state, Identifier::fromString(&state, "stringWithoutDefault"));
+        RETURN_IF_EXCEPTION(throwScope, { });
+    }
     if (!stringWithoutDefaultValue.isUndefined()) {
         result.stringWithoutDefault = convert<IDLDOMString>(state, stringWithoutDefaultValue);
         RETURN_IF_EXCEPTION(throwScope, { });

@@ -93,7 +93,7 @@ PASS new MessageEvent('eventType', { ports: 12345 }).ports threw exception TypeE
 PASS new MessageEvent('eventType', { ports: 18446744073709551615 }).ports threw exception TypeError: Value is not a sequence.
 PASS new MessageEvent('eventType', { ports: NaN }).ports threw exception TypeError: Value is not a sequence.
 PASS new MessageEvent('eventType', { get ports() { return 123; } }).ports threw exception TypeError: Value is not a sequence.
-PASS new MessageEvent('eventType', { get ports() { throw 'MessageEvent Error'; } }) threw exception TypeError: Value is not a sequence.
+PASS new MessageEvent('eventType', { get ports() { throw 'MessageEvent Error'; } }) threw exception MessageEvent Error.
 PASS new MessageEvent('eventType', { ports: {valueOf: function () { return [channel.port1, channel.port2, channel.port2]; } } }).ports[0] threw exception TypeError: Type error.
 PASS new MessageEvent('eventType', { bubbles: true, cancelable: true, data: test_object, origin: 'wonderful', lastEventId: 'excellent', source: window, ports: [channel.port1, channel.port2, channel2.port1] }).bubbles is true
 PASS new MessageEvent('eventType', { bubbles: true, cancelable: true, data: test_object, origin: 'wonderful', lastEventId: 'excellent', source: window, ports: [channel.port1, channel.port2, channel2.port1] }).cancelable is true

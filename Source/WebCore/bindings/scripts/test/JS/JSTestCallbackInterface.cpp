@@ -90,12 +90,24 @@ template<> TestCallbackInterface::Dictionary convertDictionary<TestCallbackInter
         return { };
     }
     TestCallbackInterface::Dictionary result;
-    JSValue optionalMemberValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "optionalMember"));
+    JSValue optionalMemberValue;
+    if (isNullOrUndefined)
+        optionalMemberValue = jsUndefined();
+    else {
+        optionalMemberValue = object->get(&state, Identifier::fromString(&state, "optionalMember"));
+        RETURN_IF_EXCEPTION(throwScope, { });
+    }
     if (!optionalMemberValue.isUndefined()) {
         result.optionalMember = convert<IDLLong>(state, optionalMemberValue);
         RETURN_IF_EXCEPTION(throwScope, { });
     }
-    JSValue requiredMemberValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "requiredMember"));
+    JSValue requiredMemberValue;
+    if (isNullOrUndefined)
+        requiredMemberValue = jsUndefined();
+    else {
+        requiredMemberValue = object->get(&state, Identifier::fromString(&state, "requiredMember"));
+        RETURN_IF_EXCEPTION(throwScope, { });
+    }
     if (!requiredMemberValue.isUndefined()) {
         result.requiredMember = convert<IDLUSVString>(state, requiredMemberValue);
         RETURN_IF_EXCEPTION(throwScope, { });

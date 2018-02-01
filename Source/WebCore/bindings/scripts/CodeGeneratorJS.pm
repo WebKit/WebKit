@@ -2319,7 +2319,13 @@ sub GenerateDictionaryImplementationContent
             my $implementedAsKey = $member->extendedAttributes->{ImplementedAs} || $key;
 
             # 4.2. Let value be an ECMAScript value, depending on Type(V):
-            $result .= "    JSValue ${key}Value = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, \"${key}\"));\n";
+            $result .= "    JSValue ${key}Value;\n";
+            $result .= "    if (isNullOrUndefined)\n";
+            $result .= "        ${key}Value = jsUndefined();\n";
+            $result .= "    else {\n";
+            $result .= "        ${key}Value = object->get(&state, Identifier::fromString(&state, \"${key}\"));\n";
+            $result .= "        RETURN_IF_EXCEPTION(throwScope, { });\n";
+            $result .= "    }\n";
 
             my $IDLType = GetIDLType($typeScope, $type);
 

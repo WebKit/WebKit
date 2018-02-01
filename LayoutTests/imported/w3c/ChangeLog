@@ -1,5 +1,17 @@
 2018-02-01  Chris Dumez  <cdumez@apple.com>
 
+        Add missing RETURN_IF_EXCEPTION() after object->get() calls in convertDictionary<>()
+        https://bugs.webkit.org/show_bug.cgi?id=182392
+        <rdar://problem/37119215>
+
+        Reviewed by Geoffrey Garen.
+
+        Rebaseline WPT test now that all checks are passing.
+
+        * web-platform-tests/service-workers/service-worker/ServiceWorkerGlobalScope/extendable-message-event-constructor.https-expected.txt:
+
+2018-02-01  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed, rebaseline imported/w3c/web-platform-tests/service-workers/service-worker/performance-timeline.https.html
 
         * web-platform-tests/service-workers/service-worker/performance-timeline.https-expected.txt:

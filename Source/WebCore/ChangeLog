@@ -1,3 +1,37 @@
+2018-02-01  Chris Dumez  <cdumez@apple.com>
+
+        Add missing RETURN_IF_EXCEPTION() after object->get() calls in convertDictionary<>()
+        https://bugs.webkit.org/show_bug.cgi?id=182392
+        <rdar://problem/37119215>
+
+        Reviewed by Geoffrey Garen.
+
+        Add missing RETURN_IF_EXCEPTION() after object->get() calls in convertDictionary<>(),
+        given that getting the property from the object can throw an exception.
+
+        No new tests, rebaselined existing test.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateDictionaryImplementationContent):
+        * bindings/scripts/test/JS/JSTestCallbackInterface.cpp:
+        (WebCore::convertDictionary<TestCallbackInterface::Dictionary>):
+        * bindings/scripts/test/JS/JSTestEventConstructor.cpp:
+        (WebCore::convertDictionary<TestEventConstructor::Init>):
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::convertDictionary<TestObj::Dictionary>):
+        (WebCore::convertDictionary<TestObj::DictionaryThatShouldNotTolerateNull>):
+        (WebCore::convertDictionary<TestObj::DictionaryThatShouldTolerateNull>):
+        (WebCore::convertDictionary<AlternateDictionaryName>):
+        (WebCore::convertDictionary<TestObj::ParentDictionary>):
+        (WebCore::convertDictionary<TestObj::ChildDictionary>):
+        (WebCore::convertDictionary<TestObj::ConditionalDictionaryA>):
+        (WebCore::convertDictionary<TestObj::ConditionalDictionaryB>):
+        (WebCore::convertDictionary<TestObj::ConditionalDictionaryC>):
+        * bindings/scripts/test/JS/JSTestPromiseRejectionEvent.cpp:
+        (WebCore::convertDictionary<TestPromiseRejectionEvent::Init>):
+        * bindings/scripts/test/JS/JSTestStandaloneDictionary.cpp:
+        (WebCore::convertDictionary<DictionaryImplName>):
+
 2018-02-01  Ryosuke Niwa  <rniwa@webkit.org>
 
         Some test cases in accessibility/mac/selection-notification-focus-change.html fail

@@ -1,3 +1,15 @@
+2018-02-01  Chris Dumez  <cdumez@apple.com>
+
+        Add missing RETURN_IF_EXCEPTION() after object->get() calls in convertDictionary<>()
+        https://bugs.webkit.org/show_bug.cgi?id=182392
+        <rdar://problem/37119215>
+
+        Reviewed by Geoffrey Garen.
+
+        Rebaseline existing test now that output is slightly different.
+
+        * fast/events/constructors/message-event-constructor-expected.txt:
+
 2018-02-01  Ryosuke Niwa  <rniwa@webkit.org>
 
         Some test cases in accessibility/mac/selection-notification-focus-change.html fail
