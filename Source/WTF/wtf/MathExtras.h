@@ -515,7 +515,7 @@ template<typename T, typename U>
 inline T* dynamicPoison(U actual, U expected, T* pointer)
 {
     static_assert(sizeof(U) == 1, "Poisoning only works for bytes at the moment");
-#if CPU(X86_64) || CPU(ARM64)
+#if CPU(X86_64) || (CPU(ARM64) && !defined(__ILP32__))
     return bitwise_cast<T*>(
         bitwise_cast<char*>(pointer) +
         (static_cast<uintptr_t>(opaque(actual) ^ expected) << bytePoisonShift));

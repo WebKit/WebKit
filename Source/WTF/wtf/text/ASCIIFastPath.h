@@ -150,8 +150,13 @@ inline void copyLCharsFromUCharSource(LChar* destination, const UChar* source, s
         const uintptr_t lengthLeft = end - destination;
         const LChar* const simdEnd = destination + (lengthLeft & ~memoryAccessMask);
         do {
+#if defined(__ILP32__)
+            asm("ld2   { v0.16B, v1.16B }, [%w[SOURCE]], #32\n\t"
+                "st1   { v0.16B }, [%w[DESTINATION]], #16\n\t"
+#else
             asm("ld2   { v0.16B, v1.16B }, [%[SOURCE]], #32\n\t"
                 "st1   { v0.16B }, [%[DESTINATION]], #16\n\t"
+#endif
                 : [SOURCE]"+r" (source), [DESTINATION]"+r" (destination)
                 :
                 : "memory", "v0", "v1");
