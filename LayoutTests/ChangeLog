@@ -1,3 +1,13 @@
+2018-02-01  Matt Lewis  <jlewis3@apple.com>
+
+        Skipped http/tests/resourceLoadStatistics/non-prevalent-resource-with-user-interaction.html on macOS WK2.
+        https://bugs.webkit.org/show_bug.cgi?id=182366
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+        * platform/wk2/TestExpectations:
+
 2018-02-01  Chris Dumez  <cdumez@apple.com>
 
         Add missing RETURN_IF_EXCEPTION() after object->get() calls in convertDictionary<>()

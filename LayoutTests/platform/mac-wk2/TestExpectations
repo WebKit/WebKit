@@ -879,3 +879,5 @@ webkit.org/b/181957 [ Release ] http/tests/misc/resource-timing-resolution.html 
 
 webkit.org/b/181835 webrtc/captureCanvas-webrtc.html [ Pass Timeout ]
 
+webkit.org/b/182366 http/tests/resourceLoadStatistics/non-prevalent-resource-with-user-interaction.html [ Skip ]
+

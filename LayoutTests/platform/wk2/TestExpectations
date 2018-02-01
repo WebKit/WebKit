@@ -672,7 +672,6 @@ http/tests/misc/will-send-request-with-client-provided-http-body.html [ Pass ]
 imported/w3c/web-platform-tests/fetch/api/request/request-cache-only-if-cached.html [ Failure ]
 
 # Resource Load Statistics are only supported in WebKit2.
-http/tests/resourceLoadStatistics/non-prevalent-resource-with-user-interaction.html [ Pass ]
 http/tests/resourceLoadStatistics/prevalent-resource-with-user-interaction.html [ Pass ]
 http/tests/resourceLoadStatistics/non-prevalent-resource-without-user-interaction.html [ Pass ]
 http/tests/resourceLoadStatistics/prevalent-resource-without-user-interaction.html [ Pass ]
