@@ -1,5 +1,16 @@
 2018-01-31  Brent Fulgham  <bfulgham@apple.com>
 
+        Follow-up to r227939.
+        https://bugs.webkit.org/show_bug.cgi?id=182354
+        <rdar://problem/37046844>
+
+        Make sure the correct sandbox is used on iOS as well.
+
+        * StorageProcess/ios/StorageProcessIOS.mm:
+        (WebKit::StorageProcess::initializeSandbox):
+
+2018-01-31  Brent Fulgham  <bfulgham@apple.com>
+
         REGRESSION(r220094): com.apple.WebKit.Storage lost its sandbox
         https://bugs.webkit.org/show_bug.cgi?id=182354
         <rdar://problem/37046844>
