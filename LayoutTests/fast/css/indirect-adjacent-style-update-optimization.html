@@ -63,8 +63,8 @@ var allSources = document.querySelectorAll("source");
 for (var i = 0; i < allSources.length; ++i)
     allSources[i].classList.remove("property");
 
-debug("Source should require a style recalc.");
-shouldBeTrue('elementsWithTagnameNeedsStyleRecalc(["SOURCE"])');
+debug("Target should require a style recalc.");
+shouldBeTrue('elementsWithTagnameNeedsStyleRecalc(["TARGET"])');
 
 debug("We should no longer have a match. Let's add back the class \"property\". Then we get the style of everything except &lt;source&gt; and &lt;target&gt;. Since none of the style touched above are related to the dirty elements, &lt;source&gt; should still require a style recalc.");
 
@@ -82,7 +82,7 @@ for (var i = 0; i < others.length; ++i) {
         debug("Something horribly wrong is happening.");
 }
 
-shouldBeTrue('elementsWithTagnameNeedsStyleRecalc(["SOURCE"])');
+shouldBeTrue('elementsWithTagnameNeedsStyleRecalc(["TARGET"])');
 
 debug("We should match again now that property is back.");
 testColor(true);

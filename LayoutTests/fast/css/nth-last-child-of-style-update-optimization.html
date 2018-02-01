@@ -51,8 +51,8 @@ var allContent = document.querySelectorAll("*");
 for (var i = 0; i < allContent.length; ++i) {
     var node = allContent[i];
     if (internals.nodeNeedsStyleRecalc(node)) {
-        if (node !== target1 && node !== target1.parentNode) {
-            testFailed("Invalidating the style of target1 should never invalidate more than target1 and its parent.");
+        if (node !== target1 && node !== target1.previousElementSibling) {
+            testFailed("Invalidating the style of target1 should never invalidate more than target1 and its siblings.");
             break;
         }
     }
@@ -68,8 +68,8 @@ var allContent = document.querySelectorAll("*");
 for (var i = 0; i < allContent.length; ++i) {
     var node = allContent[i];
     if (internals.nodeNeedsStyleRecalc(node)) {
-        if (node !== target2 && node !== target2.parentNode) {
-            testFailed("Invalidating the style of target1 should never invalidate more than target1 and its parent.");
+        if (node !== target2 && node !== target2.previousElementSibling) {
+            testFailed("Invalidating the style of target2 should never invalidate more than target1 and its siblings.");
             break;
         }
     }

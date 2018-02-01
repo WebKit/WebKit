@@ -35,9 +35,28 @@
 
 namespace WebCore {
 
+static bool isSiblingOrSubject(MatchElement matchElement)
+{
+    switch (matchElement) {
+    case MatchElement::Subject:
+    case MatchElement::IndirectSibling:
+    case MatchElement::DirectSibling:
+    case MatchElement::AnySibling:
+        return true;
+    case MatchElement::Parent:
+    case MatchElement::Ancestor:
+    case MatchElement::ParentSibling:
+    case MatchElement::AncestorSibling:
+    case MatchElement::Host:
+        return false;
+    }
+    ASSERT_NOT_REACHED();
+    return false;
+}
+
 MatchElement RuleFeatureSet::computeNextMatchElement(MatchElement matchElement, CSSSelector::RelationType relation)
 {
-    if (matchElement == MatchElement::Subject || matchElement == MatchElement::IndirectSibling || matchElement == MatchElement::DirectSibling) {
+    if (isSiblingOrSubject(matchElement)) {
         switch (relation) {
         case CSSSelector::Subselector:
             return matchElement;
@@ -46,8 +65,12 @@ MatchElement RuleFeatureSet::computeNextMatchElement(MatchElement matchElement, 
         case CSSSelector::Child:
             return MatchElement::Parent;
         case CSSSelector::IndirectAdjacent:
+            if (matchElement == MatchElement::AnySibling)
+                return MatchElement::AnySibling;
             return MatchElement::IndirectSibling;
         case CSSSelector::DirectAdjacent:
+            if (matchElement == MatchElement::AnySibling)
+                return MatchElement::AnySibling;
             return matchElement == MatchElement::Subject ? MatchElement::DirectSibling : MatchElement::IndirectSibling;
         case CSSSelector::ShadowDescendant:
             return MatchElement::Host;
@@ -76,9 +99,8 @@ MatchElement RuleFeatureSet::computeSubSelectorMatchElement(MatchElement matchEl
     if (selector.match() == CSSSelector::PseudoClass) {
         auto type = selector.pseudoClassType();
         // For :nth-child(n of .some-subselector) where an element change may affect other elements similar to sibling combinators.
-        // FIXME: This is not entirely accurate but good enough for current users.
         if (type == CSSSelector::PseudoClassNthChild || type == CSSSelector::PseudoClassNthLastChild)
-            return MatchElement::IndirectSibling;
+            return MatchElement::AnySibling;
 
         // Similarly for :host().
         if (type == CSSSelector::PseudoClassHost)

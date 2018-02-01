@@ -33,7 +33,7 @@ namespace WebCore {
 class RuleData;
 class StyleRule;
 
-enum class MatchElement { Subject, Parent, Ancestor, DirectSibling, IndirectSibling, ParentSibling, AncestorSibling, Host };
+enum class MatchElement { Subject, Parent, Ancestor, DirectSibling, IndirectSibling, AnySibling, ParentSibling, AncestorSibling, Host };
 constexpr unsigned matchElementCount = static_cast<unsigned>(MatchElement::Host) + 1;
 
 struct RuleFeature {

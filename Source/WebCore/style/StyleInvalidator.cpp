@@ -227,11 +227,29 @@ void Invalidator::invalidateStyleWithMatchElement(Element& element, MatchElement
         break;
     }
     case MatchElement::DirectSibling:
+        if (auto* sibling = element.nextElementSibling())
+            invalidateIfNeeded(*sibling, nullptr);
+        break;
     case MatchElement::IndirectSibling:
+        for (auto* sibling = element.nextElementSibling(); sibling; sibling = sibling->nextElementSibling())
+            invalidateIfNeeded(*sibling, nullptr);
+        break;
+    case MatchElement::AnySibling: {
+        auto parentChildren = childrenOfType<Element>(*element.parentNode());
+        for (auto& parentChild : parentChildren)
+            invalidateIfNeeded(parentChild, nullptr);
+        break;
+    }
     case MatchElement::ParentSibling:
+        for (auto* sibling = element.nextElementSibling(); sibling; sibling = sibling->nextElementSibling()) {
+            auto siblingChildren = childrenOfType<Element>(*sibling);
+            for (auto& siblingChild : siblingChildren)
+                invalidateIfNeeded(siblingChild, nullptr);
+        }
+        break;
     case MatchElement::AncestorSibling:
-        // FIXME: Currently sibling invalidation happens during style resolution tree walk. It should be done here too.
-        element.invalidateStyle();
+        for (auto* sibling = element.nextElementSibling(); sibling; sibling = sibling->nextElementSibling())
+            invalidateStyleForDescendants(*sibling, nullptr);
         break;
     case MatchElement::Host:
         // FIXME: Handle this here as well.

@@ -774,9 +774,6 @@ inline void Node::updateAncestorsForStyleRecalc()
     if (it != end) {
         it->setDirectChildNeedsStyleRecalc();
 
-        if (it->childrenAffectedByPropertyBasedBackwardPositionalRules())
-            it->adjustStyleValidity(Style::Validity::SubtreeInvalid, Style::InvalidationMode::Normal);
-
         for (; it != end; ++it) {
             // Iterator skips over shadow roots.
             if (auto* shadowRoot = it->shadowRoot())
