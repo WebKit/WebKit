@@ -4,29 +4,12 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 PASS mediaControls.element.localName is "div"
-FAIL mediaControls.element.className should be media-controls ios inline. Was media-controls inline ios.
+PASS mediaControls.element.classList.contains('media-controls') is true
+PASS mediaControls.element.classList.contains('inline') is true
+PASS mediaControls.element.classList.contains('ios') is true
 PASS mediaControls.layoutTraits is LayoutTraits.iOS
-
-Controls bar
-FAIL mediaControls.controlsBar.children.length should be 2. Threw exception TypeError: undefined is not an object (evaluating 'mediaControls.controlsBar.children')
-FAIL mediaControls.controlsBar.children[0] instanceof ButtonsContainer should be true. Threw exception TypeError: undefined is not an object (evaluating 'mediaControls.controlsBar.children')
-FAIL mediaControls.controlsBar.children[1] instanceof ButtonsContainer should be true. Threw exception TypeError: undefined is not an object (evaluating 'mediaControls.controlsBar.children')
-
-Left container
-FAIL mediaControls.controlsBar.children[0].buttons should be [object Object],[object Object]. Threw exception TypeError: undefined is not an object (evaluating 'mediaControls.controlsBar.children')
-FAIL mediaControls.controlsBar.children[0].element.className should be buttons-container left. Threw exception TypeError: undefined is not an object (evaluating 'mediaControls.controlsBar.children')
-FAIL mediaControls.controlsBar.children[0].leftMargin should be 24. Threw exception TypeError: undefined is not an object (evaluating 'mediaControls.controlsBar.children')
-FAIL mediaControls.controlsBar.children[0].rightMargin should be 24. Threw exception TypeError: undefined is not an object (evaluating 'mediaControls.controlsBar.children')
-FAIL mediaControls.controlsBar.children[0].buttonMargin should be 24. Threw exception TypeError: undefined is not an object (evaluating 'mediaControls.controlsBar.children')
-
-Right container
-FAIL mediaControls.controlsBar.children[1].buttons should be [object Object],[object Object],[object Object]. Threw exception TypeError: undefined is not an object (evaluating 'mediaControls.controlsBar.children')
-FAIL mediaControls.controlsBar.children[1].element.className should be buttons-container right. Threw exception TypeError: undefined is not an object (evaluating 'mediaControls.controlsBar.children')
-FAIL mediaControls.controlsBar.children[1].leftMargin should be 24. Threw exception TypeError: undefined is not an object (evaluating 'mediaControls.controlsBar.children')
-FAIL mediaControls.controlsBar.children[1].rightMargin should be 24. Threw exception TypeError: undefined is not an object (evaluating 'mediaControls.controlsBar.children')
-FAIL mediaControls.controlsBar.children[1].buttonMargin should be 24. Threw exception TypeError: undefined is not an object (evaluating 'mediaControls.controlsBar.children')
-PASS accessibilityController.accessibleElementById('groupping-label').description is "AXDescription: Video Controls"
-PASS accessibilityController.accessibleElementById('groupping-label').description is "AXDescription: Audio Controls"
+PASS accessibilityController.accessibleElementById('groupping-label').description is "AXLabel: Video Controls"
+PASS accessibilityController.accessibleElementById('groupping-label').description is "AXLabel: Audio Controls"
 
 PASS successfullyParsed is true
 

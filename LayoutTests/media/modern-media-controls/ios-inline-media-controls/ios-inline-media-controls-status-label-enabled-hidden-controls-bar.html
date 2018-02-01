@@ -17,20 +17,20 @@ scheduler.frameDidFire = function()
 
     switch (numberOfFrames) {
     case 1:
-        mediaControls.controlsBar.visible = false;
+        mediaControls.bottomControlsBar.visible = false;
         debug("Making the controls bar invisible");
         shouldBeNull("mediaControls.statusLabel.parent");
         break;
     case 2:
         debug("");
-        debug("Setting statusLabel.enabled = true");
-        mediaControls.statusLabel.enabled = true;
+        debug("Enabling statusLabel");
+        mediaControls.statusLabel.text = "Loading…";
         break;
     case 3:
-        mediaControls.controlsBar.visible = true;
+        mediaControls.bottomControlsBar.visible = true;
         debug("");
         debug("Making the controls bar visible again");
-        shouldBe("mediaControls.statusLabel.parent", "mediaControls.controlsBar");
+        shouldBe("mediaControls.statusLabel.parent", "mediaControls.bottomControlsBar");
 
         debug("");
         finishMediaControlsTest();

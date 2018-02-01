@@ -4,12 +4,14 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 Default state
-PASS mediaControls.controlsBar.children.includes(mediaControls.statusLabel) is false
-PASS mediaControls.controlsBar.children.includes(mediaControls.timeControl) is true
+PASS mediaControls.statusLabel.enabled is false
+PASS mediaControls.statusLabel.parent is null
+PASS mediaControls.timeControl.parent is mediaControls.bottomControlsBar
 
-After setting statusLabel.enabled = true
-PASS mediaControls.controlsBar.children.includes(mediaControls.statusLabel) is true
-PASS mediaControls.controlsBar.children.includes(mediaControls.timeControl) is false
+After setting statusLabel.text to a non-null string
+PASS mediaControls.statusLabel.enabled is true
+PASS mediaControls.statusLabel.parent is mediaControls.bottomControlsBar
+PASS mediaControls.timeControl.parent is null
 
 PASS successfullyParsed is true
 

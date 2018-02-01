@@ -24,18 +24,18 @@ scheduler.frameDidFire = function()
 {
     document.body.appendChild(mediaControls.element);
 
-    style = window.getComputedStyle(mediaControls.controlsBar.element);
-    bounds = mediaControls.controlsBar.element.getBoundingClientRect();
+    style = window.getComputedStyle(mediaControls.bottomControlsBar.element);
+    bounds = mediaControls.bottomControlsBar.element.getBoundingClientRect();
     
-    shouldBeEqualToString("style.left", "0px");
-    shouldBeEqualToString("style.bottom", "0px");
-    shouldBeEqualToString("style.width", "680px");
-    shouldBeEqualToString("style.height", "50px");
+    shouldBeEqualToString("style.left", "6px");
+    shouldBeEqualToString("style.bottom", "6px");
+    shouldBeEqualToString("style.width", "668px");
+    shouldBeEqualToString("style.height", "31px");
 
-    shouldBe("bounds.left", "0");
-    shouldBe("bounds.top", "250");
-    shouldBe("bounds.width", "680");
-    shouldBe("bounds.height", "50");
+    shouldBe("bounds.left", "6");
+    shouldBe("bounds.top", "263");
+    shouldBe("bounds.width", "668");
+    shouldBe("bounds.height", "31");
 
     mediaControls.element.remove();
 

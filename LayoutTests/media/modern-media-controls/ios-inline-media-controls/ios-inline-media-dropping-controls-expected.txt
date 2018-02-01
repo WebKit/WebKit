@@ -3,20 +3,12 @@ Testing IOSInlineMediaControls and dropping controls.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-TimeControl is visible
-TimeControl is not visible
+PASS ready() became true
 
-AirplayButton is visible
-AirplayButton is not visible
-
-PiPButton is visible
-PiPButton is not visible
-
-SkipBackButton is visible
-SkipBackButton is not visible
-
-FullscreenButton is visible
-FullscreenButton is not visible
+SkipForwardButton was dropped at 384.
+SkipBackButton was dropped at 355.
+AirplayButton was dropped at 326.
+TracksButton was dropped at 294.
 
 PASS successfullyParsed is true
 

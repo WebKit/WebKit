@@ -3206,6 +3206,7 @@ media/modern-media-controls/fullscreen-button [ Pass ]
 media/modern-media-controls/fullscreen-support [ Pass ]
 media/modern-media-controls/icon-service [ Pass ]
 media/modern-media-controls/invalid-placard [ Pass ]
+media/modern-media-controls/ios-inline-media-controls [ Pass ]
 media/modern-media-controls/layout-item [ Pass ]
 media/modern-media-controls/layout-node [ Pass ]
 media/modern-media-controls/localized-strings [ Pass ]
@@ -3271,9 +3272,6 @@ media/modern-media-controls/media-controller/media-controller-inline-to-fullscre
 media/modern-media-controls/media-controller/media-controller-inline-to-fullscreen-to-pip-to-inline.html [ Skip ]
 media/modern-media-controls/placard-support/placard-support-airplay-fullscreen.html [ Skip ]
 media/modern-media-controls/start-support/start-support-fullscreen.html [ Skip ]
-
-# These tests specifically test iOS-only media controls features
-media/modern-media-controls/ios-inline-media-controls/ios-inline-media-controls-button-padding.html [ Pass ]
 
 # These tests are designed to work only on macOS
 media/modern-media-controls/button/button-click-on-edges.html [ Skip ]

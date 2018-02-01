@@ -1,3 +1,34 @@
+2018-02-01  Antoine Quint  <graouts@apple.com>
+
+        [Modern Media Controls] Turn media/modern-media-controls/ios-inline-media-controls back on
+        https://bugs.webkit.org/show_bug.cgi?id=182390
+
+        Reviewed by Eric Carlson.
+
+        Update tests to match the modern-media-controls design and expectations.
+
+        * media/modern-media-controls/ios-inline-media-controls/ios-inline-media-controls-button-padding-expected.txt: Removed.
+        * media/modern-media-controls/ios-inline-media-controls/ios-inline-media-controls-button-padding.html: Removed.
+        * media/modern-media-controls/ios-inline-media-controls/ios-inline-media-controls-buttons-styles-expected.txt: Removed.
+        * media/modern-media-controls/ios-inline-media-controls/ios-inline-media-controls-buttons-styles.html: Removed.
+        * media/modern-media-controls/ios-inline-media-controls/ios-inline-media-controls-constructor-expected.txt:
+        * media/modern-media-controls/ios-inline-media-controls/ios-inline-media-controls-constructor.html:
+        * media/modern-media-controls/ios-inline-media-controls/ios-inline-media-controls-controls-bar-styles-expected.txt:
+        * media/modern-media-controls/ios-inline-media-controls/ios-inline-media-controls-controls-bar-styles.html:
+        * media/modern-media-controls/ios-inline-media-controls/ios-inline-media-controls-layout-expected.txt:
+        * media/modern-media-controls/ios-inline-media-controls/ios-inline-media-controls-layout.html:
+        * media/modern-media-controls/ios-inline-media-controls/ios-inline-media-controls-status-label-enabled-hidden-controls-bar-expected.txt:
+        * media/modern-media-controls/ios-inline-media-controls/ios-inline-media-controls-status-label-enabled-hidden-controls-bar.html:
+        * media/modern-media-controls/ios-inline-media-controls/ios-inline-media-controls-status-label-expected.txt:
+        * media/modern-media-controls/ios-inline-media-controls/ios-inline-media-controls-status-label.html:
+        * media/modern-media-controls/ios-inline-media-controls/ios-inline-media-controls-tight-padding-expected.txt: Removed.
+        * media/modern-media-controls/ios-inline-media-controls/ios-inline-media-controls-tight-padding.html: Removed.
+        * media/modern-media-controls/ios-inline-media-controls/ios-inline-media-controls-time-control-styles-expected.txt:
+        * media/modern-media-controls/ios-inline-media-controls/ios-inline-media-controls-time-control-styles.html:
+        * media/modern-media-controls/ios-inline-media-controls/ios-inline-media-dropping-controls-expected.txt:
+        * media/modern-media-controls/ios-inline-media-controls/ios-inline-media-dropping-controls.html:
+        * platform/ios/TestExpectations:
+
 2018-02-01  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, rebaseline imported/w3c/web-platform-tests/service-workers/service-worker/performance-timeline.https.html

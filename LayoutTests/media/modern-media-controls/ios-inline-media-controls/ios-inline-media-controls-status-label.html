@@ -18,14 +18,16 @@ scheduler.frameDidFire = function()
 
     if (numberOfFrames == 1) {
         debug("Default state");
-        shouldBeFalse("mediaControls.controlsBar.children.includes(mediaControls.statusLabel)");
-        shouldBeTrue("mediaControls.controlsBar.children.includes(mediaControls.timeControl)");
-        mediaControls.statusLabel.enabled = true;
+        shouldBeFalse("mediaControls.statusLabel.enabled");
+        shouldBeNull("mediaControls.statusLabel.parent");
+        shouldBe("mediaControls.timeControl.parent", "mediaControls.bottomControlsBar");
+        mediaControls.statusLabel.text = "Loading…";
     } else if (numberOfFrames == 2) {
         debug("");
-        debug("After setting statusLabel.enabled = true");
-        shouldBeTrue("mediaControls.controlsBar.children.includes(mediaControls.statusLabel)");
-        shouldBeFalse("mediaControls.controlsBar.children.includes(mediaControls.timeControl)");
+        debug("After setting statusLabel.text to a non-null string");
+        shouldBeTrue("mediaControls.statusLabel.enabled");
+        shouldBe("mediaControls.statusLabel.parent", "mediaControls.bottomControlsBar");
+        shouldBeNull("mediaControls.timeControl.parent");
         debug("");
         finishMediaControlsTest();
     }

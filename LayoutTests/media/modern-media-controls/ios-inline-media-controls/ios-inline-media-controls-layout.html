@@ -8,7 +8,7 @@ description("Testing the <code>IOSInlineMediaControls</code> layout.");
 
 window.jsTestIsAsync = true;
 
-const mediaControls = new IOSInlineMediaControls({ width: 680, height: 50 });
+const mediaControls = new IOSInlineMediaControls({ width: 680, height: 350 });
 
 const iconButtons = [
     mediaControls.playPauseButton,
@@ -23,16 +23,43 @@ scheduler.frameDidFire = function()
     if (iconButtons.some(button => button.width == 0))
         return;
 
-    shouldBeTrue("mediaControls.controlsBar.children[0] instanceof ButtonsContainer");
-    shouldBeTrue("mediaControls.controlsBar.children[1] instanceof LayoutNode");
-    shouldBeTrue("mediaControls.controlsBar.children[2] instanceof ButtonsContainer");
+    shouldBe("mediaControls.children.length", "3");
+    shouldBe("mediaControls.children[0]", "mediaControls.topLeftControlsBar");
+    shouldBe("mediaControls.children[1]", "mediaControls.bottomControlsBar");
+    shouldBe("mediaControls.children[2]", "mediaControls.topRightControlsBar");
 
-    shouldBe("mediaControls.timeControl.x", "118");
+    shouldBe("mediaControls.topLeftControlsBar.children.length", "2");
+    shouldBeTrue("mediaControls.topLeftControlsBar.children[0] instanceof BackgroundTint");
+    shouldBeTrue("mediaControls.topLeftControlsBar.children[1] instanceof ButtonsContainer");
+    shouldBe("mediaControls.topLeftControlsBar.children[1].children.length", "2");
+    shouldBe("mediaControls.topLeftControlsBar.children[1].children[0]", "mediaControls.pipButton");
+    shouldBe("mediaControls.topLeftControlsBar.children[1].children[1]", "mediaControls.fullscreenButton");
 
-    shouldBe("mediaControls.timeControl.width", "393");
+    shouldBe("mediaControls.bottomControlsBar.children.length", "4");
+    shouldBeTrue("mediaControls.bottomControlsBar.children[0] instanceof BackgroundTint");
+    shouldBe("mediaControls.bottomControlsBar.children[1]", "mediaControls.leftContainer");
+    shouldBe("mediaControls.bottomControlsBar.children[2]", "mediaControls.timeControl");
+    shouldBe("mediaControls.bottomControlsBar.children[3]", "mediaControls.rightContainer");
 
-    shouldBe("mediaControls.controlsBar.children[0].children", "[mediaControls.playPauseButton, mediaControls.skipBackButton]");
-    shouldBe("mediaControls.controlsBar.children[2].children", "[mediaControls.airplayButton, mediaControls.pipButton, mediaControls.fullscreenButton]");
+    shouldBe("mediaControls.leftContainer.children.length", "3");
+    shouldBe("mediaControls.leftContainer.children[0]", "mediaControls.skipBackButton");
+    shouldBe("mediaControls.leftContainer.children[1]", "mediaControls.playPauseButton");
+    shouldBe("mediaControls.leftContainer.children[2]", "mediaControls.skipForwardButton");
+
+    shouldBe("mediaControls.timeControl.children.length", "3");
+    shouldBe("mediaControls.timeControl.children[0]", "mediaControls.timeControl.elapsedTimeLabel");
+    shouldBe("mediaControls.timeControl.children[1]", "mediaControls.timeControl.scrubber");
+    shouldBe("mediaControls.timeControl.children[2]", "mediaControls.timeControl.remainingTimeLabel");
+
+    shouldBe("mediaControls.rightContainer.children.length", "2");
+    shouldBe("mediaControls.rightContainer.children[0]", "mediaControls.airplayButton");
+    shouldBe("mediaControls.rightContainer.children[1]", "mediaControls.tracksButton");
+
+    shouldBe("mediaControls.topRightControlsBar.children.length", "2");
+    shouldBeTrue("mediaControls.topRightControlsBar.children[0] instanceof BackgroundTint");
+    shouldBeTrue("mediaControls.topRightControlsBar.children[1] instanceof ButtonsContainer");
+    shouldBe("mediaControls.topRightControlsBar.children[1].children.length", "1");
+    shouldBe("mediaControls.topRightControlsBar.children[1].children[0]", "mediaControls.muteButton");
 
     finishMediaControlsTest();
 };
