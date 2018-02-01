@@ -209,4 +209,38 @@ bool RenderTreeBuilder::Table::childRequiresTable(const RenderElement& parent, c
     return false;
 }
 
+void RenderTreeBuilder::Table::collapseAndDestroyAnonymousSiblingRows(RenderTableRow& row)
+{
+    auto* section = row.section();
+    if (!section)
+        return;
+
+    // All siblings generated?
+    for (auto* current = section->firstRow(); current; current = current->nextRow()) {
+        if (current == &row)
+            continue;
+        if (!current->isAnonymous())
+            return;
+    }
+
+    RenderTableRow* rowToInsertInto = nullptr;
+    auto* currentRow = section->firstRow();
+    while (currentRow) {
+        if (currentRow == &row) {
+            currentRow = currentRow->nextRow();
+            continue;
+        }
+        if (!rowToInsertInto) {
+            rowToInsertInto = currentRow;
+            currentRow = currentRow->nextRow();
+            continue;
+        }
+        currentRow->moveAllChildrenTo(rowToInsertInto, RenderBoxModelObject::NormalizeAfterInsertion::No);
+        auto toDestroy = section->takeChild(*currentRow);
+        currentRow = currentRow->nextRow();
+    }
+    if (rowToInsertInto)
+        rowToInsertInto->setNeedsLayout();
+}
+
 }

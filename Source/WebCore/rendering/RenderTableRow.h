@@ -63,7 +63,7 @@ public:
 
     bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction) override;
 
-    void collapseAndDestroyAnonymousSiblingRows();
+    RenderTableSection* section() const { return downcast<RenderTableSection>(parent()); }
 
 private:
     static RenderPtr<RenderTableRow> createTableRowWithStyle(Document&, const RenderStyle&);
@@ -85,8 +85,6 @@ private:
     void imageChanged(WrappedImagePtr, const IntRect* = 0) override;
 
     void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override;
-
-    RenderTableSection* section() const { return downcast<RenderTableSection>(parent()); }
 
     void firstChild() const = delete;
     void lastChild() const = delete;

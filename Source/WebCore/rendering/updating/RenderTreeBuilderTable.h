@@ -50,6 +50,8 @@ public:
 
     bool childRequiresTable(const RenderElement& parent, const RenderObject& child);
 
+    void collapseAndDestroyAnonymousSiblingRows(RenderTableRow&);
+
 private:
     RenderTreeBuilder& m_builder;
 };
