@@ -27,10 +27,16 @@
         if (window.internals)
             window.internals.setPageScaleFactor(2, 0, 0);
 
-        shouldBe("window.document.body.scrollTop", "0");
+        // Note that with CSSOMViewScrollingAPI enabled, the HTML body is potentially scrollable.
+        // Hence document.scrollingElement is null and we can't use document.body.scrollTop to
+        // retrieve the vertical scroll offset of the viewport.
+        // See https://drafts.csswg.org/cssom-view/#potentially-scrollable,
+        // https://drafts.csswg.org/cssom-view/#dom-document-scrollingelement
+        // and https://drafts.csswg.org/cssom-view/#dom-element-scrolltop
+        shouldBe("window.scrollY", "0");
 
         document.body.onscroll = function() {
-            shouldBe("window.document.body.scrollTop", "100");
+            shouldBe("window.scrollY", "100");
             finishJSTest();
         }
 
