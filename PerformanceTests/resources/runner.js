@@ -223,7 +223,7 @@ if (window.testRunner) {
             var prefix = currentTest.name || '';
             if (currentTest.description)
                 PerfTestRunner.log("Description: " + currentTest.description);
-            metric = {'fps': 'FrameRate', 'runs/s': 'Runs', 'ms': 'Time'}[PerfTestRunner.unit];
+            metric = {'fps': 'FrameRate', 'runs/s': 'Runs', 'pt': 'Score', 'ms': 'Time'}[PerfTestRunner.unit];
             var suffix = currentTest.aggregator ? ':' + currentTest.aggregator : '';
             PerfTestRunner.logStatistics(results, PerfTestRunner.unit, prefix + ":" + metric + suffix);
             if (jsHeapResults.length) {

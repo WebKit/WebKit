@@ -227,7 +227,7 @@ function PerfTestMetric(name, metric) {
     var testResults = [];
     var cachedUnit = null;
     var cachedScalingFactor = null;
-    var unit = {'FrameRate': 'fps', 'Runs': 'runs/s', 'Time': 'ms', 'Malloc': 'bytes', 'JSHeap': 'bytes'}[metric];
+    var unit = {'FrameRate': 'fps', 'Runs': 'runs/s', 'Score': 'pt', 'Time': 'ms', 'Malloc': 'bytes', 'JSHeap': 'bytes'}[metric];
 
     // We can't do this in TestResult because all results for each test need to share the same unit and the same scaling factor.
     function computeScalingFactorIfNeeded() {

@@ -1,3 +1,27 @@
+2018-01-31  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Make run-perf-tests work with StyleBench and re-enable it
+        https://bugs.webkit.org/show_bug.cgi?id=182322
+
+        Reviewed by Antti Koivisto.
+
+        This patch updates the test harness to report new metrics of StyleBench.
+
+        Replaced the total time by the geometric mean of the time spent in each suite, and added scores
+        as a metric in addition to time. Also, updated the PerfTestRunner harness and the results template
+        to support "Score" metric with "pt" as its unit.
+
+        * Skipped: Unskipped the test.
+        * StyleBench/resources/benchmark-report.js:
+        (window.benchmarkClient.willStartFirstIteration..createTest): Added the unit as an optional argument
+        to report the score in addition to time. Also report the geomean of time instead of the total time.
+        (window.benchmarkClient.willStartFirstIteration): Report the geomean of time.
+        (window.benchmarkClient.didRunSuites): Record the entire measuredValues instead of just tests.
+        (window.benchmarkClient.didFinishLastIteration): Report the scores.
+        * resources/results-template.html: Added "Score" as a metric and "pt" as its unit.
+        * resources/runner.js:
+        (PerfTestRunner..finish): Ditto.
+
 2018-01-30  Ryosuke Niwa  <rniwa@webkit.org>
 
         StyleBench: Generate more mutation steps
