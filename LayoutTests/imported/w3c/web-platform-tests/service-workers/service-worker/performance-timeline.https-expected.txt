@@ -1,7 +1,9 @@
 
 
+Harness Error (TIMEOUT), message = null
+
 PASS Test Performance Timeline API in Service Worker 
-FAIL empty service worker fetch event included in performance timings assert_greater_than: Slow service worker request should measure increased delay. expected a number greater than 1152.1 but got 151.59999999999997
-FAIL User Timing promise_test: Unhandled rejection with value: object "TypeError: performance.mark is not a function. (In 'performance.mark('startMark')', 'performance.mark' is undefined)"
-FAIL Resource Timing promise_test: Unhandled rejection with value: object "TypeError: performance.getEntriesByType is not a function. (In 'performance.getEntriesByType('resource')', 'performance.getEntriesByType' is undefined)"
+FAIL empty service worker fetch event included in performance timings assert_greater_than: Slow service worker request should measure increased delay. expected a number greater than 1061 but got 61
+PASS User Timing 
+TIMEOUT Resource Timing Test timed out
 

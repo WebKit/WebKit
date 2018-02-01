@@ -1,3 +1,9 @@
+2018-02-01  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, rebaseline imported/w3c/web-platform-tests/service-workers/service-worker/performance-timeline.https.html
+
+        * web-platform-tests/service-workers/service-worker/performance-timeline.https-expected.txt:
+
 2018-02-01  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r227958 and r227972.
