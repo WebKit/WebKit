@@ -670,6 +670,7 @@ void InlineFlowBox::placeBoxesInBlockDirection(LayoutUnit top, LayoutUnit maxHei
         } else if (!child->renderer().isBR()) {
             const auto& box = downcast<RenderBox>(child->renderer());
             newLogicalTopIncludingMargins = newLogicalTop;
+            // We may flip lines in case of verticalLR mode, so we can assume verticalRL for now.
             LayoutUnit overSideMargin = child->isHorizontal() ? box.marginTop() : box.marginRight();
             LayoutUnit underSideMargin = child->isHorizontal() ? box.marginBottom() : box.marginLeft();
             newLogicalTop += overSideMargin;

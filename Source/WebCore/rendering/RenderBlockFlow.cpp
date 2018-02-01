@@ -3057,7 +3057,9 @@ std::optional<int> RenderBlockFlow::inlineBlockBaseline(LineDirectionMode lineDi
         else {
             bool isFirstLine = lastRootBox() == firstRootBox();
             const auto& style = isFirstLine ? firstLineStyle() : this->style();
-            lastBaseline = lastRootBox()->logicalTop() + style.fontMetrics().ascent(lastRootBox()->baselineType());
+            // InlineFlowBox::placeBoxesInBlockDirection will flip lines in case of verticalLR mode, so we can assume verticalRL for now.
+            lastBaseline = style.fontMetrics().ascent(lastRootBox()->baselineType())
+                + (style.isFlippedLinesWritingMode() ? logicalHeight() - lastRootBox()->logicalBottom() : lastRootBox()->logicalTop());
         }
     }
     // According to the CSS spec http://www.w3.org/TR/CSS21/visudet.html, we shouldn't be performing this min, but should

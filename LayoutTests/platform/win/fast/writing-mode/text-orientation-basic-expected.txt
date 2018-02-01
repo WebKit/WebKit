@@ -35,8 +35,8 @@ layer at (0,0) size 785x704
             RenderText {#text} at (126,1) size 41x173
               text run at (126,1) width 173: "Hello world"
           RenderBR {BR} at (135,174) size 0x0
-        RenderText {#text} at (1,175) size 41x9
-          text run at (1,175) width 9: " "
+        RenderText {#text} at (126,175) size 41x9
+          text run at (126,175) width 9: " "
         RenderBlock {DIV} at (0,184) size 168x175 [border: (1px solid #008000)]
           RenderInline {SPAN} at (0,0) size 40x173
             RenderText {#text} at (2,1) size 40x173

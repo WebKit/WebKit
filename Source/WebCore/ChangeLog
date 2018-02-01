@@ -1,3 +1,43 @@
+2018-01-31  Javier Fernandez  <jfernandez@igalia.com>
+
+        inline-block baseline not computed correctly for vertical-lr
+        https://bugs.webkit.org/show_bug.cgi?id=170176
+
+        Reviewed by Manuel Rego Casasnovas.
+
+        When computing the baseline position of inline-block elements we use the
+        InlineFlow logicalTop and the FontMetrics ascent. The issue comes from
+        the fact that these units are incompatible. The logicalTop of a
+        vertical-lr element is offset to the left edge, while the ascent is the
+        distance from the right edge.
+
+        We need to either use logical value for the FontMetrics ascent so we can
+        compute the correctly the baselines of vertical-lr elements, or just using
+        the logicalBottom for these cases.
+
+        The approach based on a logicalAscent API for FontMetrics would require
+        a lot of work because inline-block logic assumes everything is vertical-rl
+        and at some point, flips the elements along the block-axis in case of
+        vertical-lr mode.
+
+        While it'd be desirable to get rid of this flipping logic, this patch tries
+        first the simpler approach of using logicalBottom, which aligns with the
+        currently implemented logic.
+
+        Tests: fast/inline-block/baseline-vertical-01.html
+               fast/inline-block/baseline-vertical-02.html
+               fast/inline-block/baseline-vertical-03.html
+               fast/inline-block/baseline-vertical-04.html
+               fast/inline-block/baseline-vertical-05.html
+               fast/inline-block/baseline-vertical-06.html
+               fast/inline-block/baseline-vertical-07.html
+               fast/inline-block/baseline-vertical-08.html
+
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::placeBoxesInBlockDirection):
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::inlineBlockBaseline const):
+
 2018-01-31  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         BitmapImage::drawPattern() may not draw a complete frame even after all the data is received

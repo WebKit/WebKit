@@ -64,7 +64,7 @@ layer at (0,0) size 800x600
             text run at (0,128) width 128: "4444"
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {DIV} at (0,176) size 784x176
-        RenderBlock {DIV} at (0,8) size 160x144
+        RenderBlock {DIV} at (0,24) size 160x144
           RenderText {#text} at (0,0) size 160x32
             text run at (0,0) width 160: "1111 "
           RenderBR {BR} at (0,0) size 0x0
@@ -82,9 +82,9 @@ layer at (0,0) size 800x600
           RenderBR {BR} at (0,0) size 0x0
           RenderText {#text} at (0,112) size 128x32
             text run at (0,112) width 128: "4444"
-        RenderText {#text} at (160,10) size 4x18
-          text run at (160,10) width 4: " "
-        RenderBlock {DIV} at (164,8) size 160x144
+        RenderText {#text} at (160,138) size 4x18
+          text run at (160,138) width 4: " "
+        RenderBlock {DIV} at (164,24) size 160x144
           RenderText {#text} at (0,0) size 160x32
             text run at (0,0) width 160: "1111 "
           RenderBR {BR} at (0,0) size 0x0
@@ -102,8 +102,8 @@ layer at (0,0) size 800x600
           RenderBR {BR} at (0,0) size 0x0
           RenderText {#text} at (0,112) size 128x32
             text run at (0,112) width 128: "4444"
-        RenderText {#text} at (324,10) size 4x18
-          text run at (324,10) width 4: " "
+        RenderText {#text} at (324,138) size 4x18
+          text run at (324,138) width 4: " "
         RenderBlock {DIV} at (328,8) size 160x160
           RenderText {#text} at (0,0) size 160x32
             text run at (0,0) width 160: "1111 "

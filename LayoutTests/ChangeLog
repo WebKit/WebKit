@@ -1,3 +1,55 @@
+2018-01-31  Javier Fernandez  <jfernandez@igalia.com>
+
+        inline-block baseline not computed correctly for vertical-lr
+        https://bugs.webkit.org/show_bug.cgi?id=170176
+
+        Reviewed by Manuel Rego Casasnovas.
+
+        Tests to evaluate the baseline alignment in vertical modes.
+        Additionally, several tests were rebaselined.
+
+        Some of the new tests are marked as Failure for the ios-sim
+        platform because of pixel rounding errors in the absolute
+        positioned elements used as reference.
+
+        Finally, there are color differences in the border-styles-vertical-lr-expected.png
+        caused by changes in the gtk+ platform. Those differences were not noticeable until
+        now that the patch causes diffs in the expected.txt files.
+
+        * fast/inline-block/baseline-vertical-01-expected.html: Added.
+        * fast/inline-block/baseline-vertical-01.html: Added.
+        * fast/inline-block/baseline-vertical-02-expected.html: Added.
+        * fast/inline-block/baseline-vertical-02.html: Added.
+        * fast/inline-block/baseline-vertical-03-expected.html: Added.
+        * fast/inline-block/baseline-vertical-03.html: Added.
+        * fast/inline-block/baseline-vertical-04-expected.html: Added.
+        * fast/inline-block/baseline-vertical-04.html: Added.
+        * fast/inline-block/baseline-vertical-05-expected.html: Added.
+        * fast/inline-block/baseline-vertical-05.html: Added.
+        * fast/inline-block/baseline-vertical-06-expected.html: Added.
+        * fast/inline-block/baseline-vertical-06.html: Added.
+        * fast/inline-block/baseline-vertical-07-expected.html: Added.
+        * fast/inline-block/baseline-vertical-07.html: Added.
+        * fast/inline-block/baseline-vertical-08-expected.html: Added.
+        * fast/inline-block/baseline-vertical-08.html: Added.
+        * fast/text/emphasis-avoid-ruby-expected.png:
+        * fast/text/emphasis-avoid-ruby-expected.txt:
+        * fast/text/emphasis-overlap-expected.png:
+        * fast/text/emphasis-overlap-expected.txt:
+        * platform/gtk/fast/backgrounds/background-leakage-transforms-expected.png:
+        * platform/gtk/fast/backgrounds/background-leakage-transforms-expected.txt:
+        * platform/gtk/fast/writing-mode/border-styles-vertical-lr-expected.png:
+        * platform/gtk/fast/writing-mode/border-styles-vertical-lr-expected.txt:
+        * platform/ios-simulator/TestExpectations:
+        * platform/ios/fast/backgrounds/background-leakage-transforms-expected.png: Added.
+        * platform/ios/fast/backgrounds/background-leakage-transforms-expected.txt:
+        * platform/ios/fast/writing-mode/border-styles-vertical-lr-expected.png:
+        * platform/ios/fast/writing-mode/border-styles-vertical-lr-expected.txt:
+        * platform/mac/fast/backgrounds/background-leakage-transforms-expected.png:
+        * platform/mac/fast/backgrounds/background-leakage-transforms-expected.txt:
+        * platform/mac/fast/writing-mode/border-styles-vertical-lr-expected.txt:
+        * platform/win/fast/writing-mode/text-orientation-basic-expected.txt:
+
 2018-01-31  Alicia Boya García  <aboya@igalia.com>
 
         Unreviewed GTK+ test gardening.

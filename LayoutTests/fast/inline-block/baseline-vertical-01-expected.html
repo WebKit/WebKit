@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style>
+body { font: 10px/1 monospace; }
+#container {
+   position: relative;
+   background: grey;
+   text-orientation: sideways;
+   width: 250px;
+   height: 500px;
+   writing-mode: vertical-lr;
+}
+#container :nth-child(1) {
+   font: 24px/1 ahem;
+   border-width: 4px 10px 6px 8px;
+   border-style: solid;
+   padding: 12px 6px 14px 6px;
+   left: 45px;
+   top: 20px;
+}
+#container :nth-child(2) {
+   font: 40px/1 ahem;
+   border-width: 8px 6px 10px 4px;
+   border-style: solid;
+   padding: 6px 12px 16px 14px;
+   left: 38px;
+   top: 100px;
+}
+#container :nth-child(3) {
+   font: 60px/1 ahem;
+   border-width: 2px 5px 3px 4px;
+   border-style: solid;
+   padding: 6px 3px 12px 8px;
+   left: 40px;
+   top: 214px;
+}
+#container :nth-child(4) {
+   font: 80px/1 ahem;
+   border-width: 12px 6px 14px 16px;
+   border-style: solid;
+   padding: 20px 12px 8px 24px;
+   left: 8px;
+   top: 305px;
+}
+#container > div { position: absolute; }
+</style>
+
+<p>Test verifying inline-block elements are baseline aligned in a VerticalLR and LTR container</p>
+<div id="container">
+    <div>É</div><div>É</div><div>É</div><div>É</div>
+</div>

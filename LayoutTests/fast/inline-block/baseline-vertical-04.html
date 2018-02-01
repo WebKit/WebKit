@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style>
+body { font: 10px/1 monospace; }
+#container {
+   position: relative;
+   background: grey;
+   text-orientation: sideways;
+   width: 250px;
+   height: 500px;
+   writing-mode: vertical-lr;
+   direction: rtl;
+}
+#container :nth-child(1) {
+   font: 24px/1 ahem;
+   border-width: 4px 10px 6px 8px;
+   border-style: solid;
+   padding: 12px 6px 14px 6px;
+   margin: 20px 12px 8px 24px;
+}
+#container :nth-child(2) {
+   font: 40px/1 ahem;
+   border-width: 8px 6px 10px 4px;
+   border-style: solid;
+   padding: 6px 12px 16px 14px;
+   margin: 12px 20px 24px 8px;
+}
+#container :nth-child(3) {
+   font: 60px/1 ahem;
+   border-width: 2px 5px 3px 4px;
+   border-style: solid;
+   padding: 6px 3px 12px 8px;
+   margin: 10px 6px 4px 12px;
+}
+#container :nth-child(4) {
+   font: 80px/1 ahem;
+   border-width: 12px 6px 14px 16px;
+   border-style: solid;
+   padding: 20px 12px 8px 24px;
+   margin: 4px 10px 6px 8px;
+}
+#container > div { display: inline-block; }
+#container :nth-child(1) { padding-left: 60px; }
+#container :nth-child(3) { padding-right: 30px; }
+</style>
+
+<p>Test verifying inline-block elements with extra padding are baseline aligned in a VerticalLR and RTL container</p>
+<div id="container">
+    <div>É</div><div>É</div><div>É</div><div>É</div>
+</div>

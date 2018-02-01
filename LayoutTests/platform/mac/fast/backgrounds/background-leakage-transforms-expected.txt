@@ -44,8 +44,8 @@ layer at (8,304) size 158x540
         text run at (2,122) width 4: " "
       RenderBlock {DIV} at (16,136) size 110x100 [bgcolor=#000000] [border: (20px double #FFFFFF)]
       RenderText {#text} at (0,0) size 0x0
-    RenderText {#text} at (128,268) size 18x4
-      text run at (128,268) width 4: " "
+    RenderText {#text} at (12,268) size 18x4
+      text run at (12,268) width 4: " "
     RenderBlock {DIV} at (10,282) size 138x248 [bgcolor=#808080]
       RenderBlock {DIV} at (16,12) size 110x100 [bgcolor=#FFFFFF] [border: (20px solid #0000FF7F)]
       RenderText {#text} at (2,122) size 18x4
