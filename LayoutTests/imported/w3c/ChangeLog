@@ -1,3 +1,15 @@
+2018-02-01  Chris Dumez  <cdumez@apple.com>
+
+        Queue a microtask when a waitUntil() promise is settled
+        https://bugs.webkit.org/show_bug.cgi?id=182372
+        <rdar://problem/37101019>
+
+        Reviewed by Mark Lam.
+
+        Reaseline WPT test now that all checks are passing.
+
+        * web-platform-tests/service-workers/service-worker/extendable-event-async-waituntil.https-expected.txt:
+
 2018-02-01  Ms2ger  <Ms2ger@igalia.com>
 
         Update imagebitmap tests.

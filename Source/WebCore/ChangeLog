@@ -1,3 +1,22 @@
+2018-02-01  Chris Dumez  <cdumez@apple.com>
+
+        Queue a microtask when a waitUntil() promise is settled
+        https://bugs.webkit.org/show_bug.cgi?id=182372
+        <rdar://problem/37101019>
+
+        Reviewed by Mark Lam.
+
+        Queue a microtask when a waitUntil() promise is settled, as per:
+        - https://w3c.github.io/ServiceWorker/#dom-extendableevent-waituntil (step 5)
+
+        Otherwise, we decrement m_pendingPromiseCount too quickly and it may cause
+        following calls to waitUntil() to throw when they shouldn't.
+
+        No new tests, rebaselined existing test.
+
+        * workers/service/ExtendableEvent.cpp:
+        (WebCore::ExtendableEvent::addExtendLifetimePromise):
+
 2018-02-01  Antti Koivisto  <antti@apple.com>
 
         Invalidate style for sibling combinators accurately on class change

@@ -832,7 +832,7 @@ public:
     static bool shouldInterruptScriptBeforeTimeout(const JSGlobalObject*) { return false; }
     static RuntimeFlags javaScriptRuntimeFlags(const JSGlobalObject*) { return RuntimeFlags(); }
 
-    void queueMicrotask(Ref<Microtask>&&);
+    JS_EXPORT_PRIVATE void queueMicrotask(Ref<Microtask>&&);
 
     bool evalEnabled() const { return m_evalEnabled; }
     bool webAssemblyEnabled() const { return m_webAssemblyEnabled; }
