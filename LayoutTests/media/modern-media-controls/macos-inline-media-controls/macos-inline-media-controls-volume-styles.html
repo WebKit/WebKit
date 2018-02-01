@@ -9,29 +9,32 @@ description("Testing the <code>MacOSInlineMediaControls</code> computed styles."
 window.jsTestIsAsync = true;
 
 const mediaControls = new MacOSInlineMediaControls({ width: 680, height: 300 });
-mediaControls.volumeSlider.parent.visible = true;
+document.body.appendChild(mediaControls.element);
 
 let volumeSliderContainerStyle, volumeSliderStyle;
-scheduler.frameDidFire = function()
-{
-    document.body.appendChild(mediaControls.element);
 
+shouldBecomeEqual("mediaControls.volumeSlider.parent.element.parentNode", "mediaControls.element", () => {
     volumeSliderContainerStyle = window.getComputedStyle(mediaControls.volumeSlider.parent.element);
     shouldBeEqualToString("volumeSliderContainerStyle.position", "absolute");
-    shouldBeEqualToString("volumeSliderContainerStyle.bottom", "50px");
-    shouldBeEqualToString("volumeSliderContainerStyle.width", "81px");
+    shouldBeEqualToString("volumeSliderContainerStyle.left", "566px");
+    shouldBeEqualToString("volumeSliderContainerStyle.top", "226px");
+    shouldBeEqualToString("volumeSliderContainerStyle.width", "94px");
     shouldBeEqualToString("volumeSliderContainerStyle.height", "31px");
-    shouldBeEqualToString("volumeSliderContainerStyle.transform", "matrix(0.00000000000000006123233995736766, -1, 1, 0.00000000000000006123233995736766, -25, -25)");
+    shouldBeEqualToString("volumeSliderContainerStyle.transform", "matrix(0.00000000000000006123233995736766, -1, 1, 0.00000000000000006123233995736766, -30, -26.000000000000004)");
 
     volumeSliderStyle = window.getComputedStyle(mediaControls.volumeSlider.element);
-    shouldBeEqualToString("volumeSliderStyle.left", "11px");
-    shouldBeEqualToString("volumeSliderStyle.top", "10px");
+    shouldBeEqualToString("volumeSliderStyle.marginLeft", "6px");
+    shouldBeEqualToString("volumeSliderStyle.width", "60px");
+    shouldBeEqualToString("volumeSliderStyle.height", "16px");
 
     mediaControls.element.remove();
 
     debug("");
     finishMediaControlsTest();
-};
+});
+
+// Simulate the mouse entering the volume button.
+window.requestAnimationFrame(() => mediaControls.muteButton.element.dispatchEvent(new MouseEvent("mouseenter")));
 
 </script>
 <script src="../../../resources/js-test-post.js"></script>

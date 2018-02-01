@@ -8,11 +8,9 @@ description("Testing <code>MacOSInlineMediaControls</code> width change while th
 
 window.jsTestIsAsync = true;
 
-const mediaControls = new MacOSInlineMediaControls({ width: 600 });
+const mediaControls = new MacOSInlineMediaControls({ width: 600, height: 400 });
 
-const leftContainer = mediaControls.controlsBar.children[1];
-const rightContainer = mediaControls.controlsBar.children[2];
-const buttons = leftContainer.buttons.concat(rightContainer.buttons);
+const buttons = mediaControls.leftContainer.children.concat(mediaControls.rightContainer.children);
 
 let numberOfFrames = 0;
 let expectedRightContainerX = 0;
@@ -25,9 +23,9 @@ scheduler.frameDidFire = function()
 
     switch (numberOfFrames) {
     case 1:
-        mediaControls.controlsBar.visible = false;
+        mediaControls.bottomControlsBar.visible = false;
         debug("Making the controls bar invisible.");
-        expectedRightContainerX = rightContainer.x;
+        expectedRightContainerX = mediaControls.rightContainer.x;
         break;
     case 2:
         debug("");
@@ -35,10 +33,10 @@ scheduler.frameDidFire = function()
         mediaControls.width += 100;
         break;
     case 3:
-        mediaControls.controlsBar.visible = true;
+        mediaControls.bottomControlsBar.visible = true;
         debug("");
         debug("Making the controls bar visible again.");
-        shouldBe("rightContainer.x", "expectedRightContainerX + 100");
+        shouldBe("mediaControls.rightContainer.x", "expectedRightContainerX + 100");
 
         debug("");
         finishMediaControlsTest();

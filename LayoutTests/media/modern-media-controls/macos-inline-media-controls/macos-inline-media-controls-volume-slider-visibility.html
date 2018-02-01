@@ -9,28 +9,28 @@ const mediaControls = new MacOSInlineMediaControls;
 const volumeSliderContainer = mediaControls.volumeSlider.parent;
 
 debug("Default state")
-shouldBeFalse("volumeSliderContainer.visible");
+shouldBeNull("volumeSliderContainer.parent");
 
 debug("");
 debug("Mouse enters the mute button");
 mediaControls.muteButton.element.dispatchEvent(new MouseEvent("mouseenter"));
-shouldBeTrue("volumeSliderContainer.visible");
+shouldBe("volumeSliderContainer.parent", "mediaControls");
 
 debug("");
 debug("Mouse leaves the mute button");
 mediaControls.muteButton.element.dispatchEvent(new MouseEvent("mouseleave"));
-shouldBeFalse("volumeSliderContainer.visible");
+shouldBeNull("volumeSliderContainer.parent");
 
 debug("");
 debug("Mouse enters the mute button, then leaves it but enters the volume slider container");
 mediaControls.muteButton.element.dispatchEvent(new MouseEvent("mouseenter"));
 mediaControls.muteButton.element.dispatchEvent(new MouseEvent("mouseleave", { relatedTarget: volumeSliderContainer.element }));
-shouldBeTrue("volumeSliderContainer.visible");
+shouldBe("volumeSliderContainer.parent", "mediaControls");
 
 debug("");
 debug("Mouse leaves the volume slider container");
 volumeSliderContainer.element.dispatchEvent(new MouseEvent("mouseleave"));
-shouldBeFalse("volumeSliderContainer.visible");
+shouldBeNull("volumeSliderContainer.parent");
 
 debug("");
 

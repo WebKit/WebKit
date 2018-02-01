@@ -4,19 +4,19 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 Default state
-PASS volumeSliderContainer.visible is false
+PASS volumeSliderContainer.parent is null
 
 Mouse enters the mute button
-PASS volumeSliderContainer.visible is true
+PASS volumeSliderContainer.parent is mediaControls
 
 Mouse leaves the mute button
-PASS volumeSliderContainer.visible is false
+PASS volumeSliderContainer.parent is null
 
 Mouse enters the mute button, then leaves it but enters the volume slider container
-PASS volumeSliderContainer.visible is true
+PASS volumeSliderContainer.parent is mediaControls
 
 Mouse leaves the volume slider container
-PASS volumeSliderContainer.visible is false
+PASS volumeSliderContainer.parent is null
 
 PASS successfullyParsed is true
 

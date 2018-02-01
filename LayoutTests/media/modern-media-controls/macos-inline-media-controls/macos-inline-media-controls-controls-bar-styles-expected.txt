@@ -3,14 +3,14 @@ Testing the MacOSInlineMediaControls computed styles.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS style.left is "0px"
-PASS style.bottom is "0px"
-PASS style.width is "680px"
-PASS style.height is "50px"
-PASS bounds.left is 0
-PASS bounds.top is 250
-PASS bounds.width is 680
-PASS bounds.height is 50
+PASS style.left is "6px"
+PASS style.bottom is "6px"
+PASS style.width is "668px"
+PASS style.height is "31px"
+PASS bounds.left is 6
+PASS bounds.top is 263
+PASS bounds.width is 668
+PASS bounds.height is 31
 
 PASS successfullyParsed is true
 

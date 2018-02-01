@@ -3277,6 +3277,7 @@ media/modern-media-controls/ios-inline-media-controls/ios-inline-media-controls-
 
 # These tests are designed to work only on macOS
 media/modern-media-controls/button/button-click-on-edges.html [ Skip ]
+media/modern-media-controls/macos-inline-media-controls [ Skip ]
 media/modern-media-controls/placard-support/placard-support-pip.html [ Skip ]
 media/modern-media-controls/media-controller/media-controller-auto-hide-mouse-enter-and-mouse-leave.html [ Skip ]
 media/modern-media-controls/media-controller/media-controller-auto-hide-mouse-enter-over-controls-bar.html [ Skip ]

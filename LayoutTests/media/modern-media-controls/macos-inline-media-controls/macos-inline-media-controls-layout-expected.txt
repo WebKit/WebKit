@@ -3,15 +3,32 @@ Testing the MacOSInlineMediaControls layout.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS mediaControls.controlsBar.children[0] instanceof BackgroundTint is true
-PASS mediaControls.controlsBar.children[1] instanceof ButtonsContainer is true
-PASS mediaControls.controlsBar.children[2] instanceof TimeControl is true
-PASS mediaControls.controlsBar.children[3] instanceof ButtonsContainer is true
-PASS mediaControls.timeControl.x is 118
-PASS mediaControls.timeControl.width == expectedTimeControlWidth is true
-PASS mediaControls.controlsBar.children[1].children is [mediaControls.playPauseButton, mediaControls.skipBackButton]
-PASS mediaControls.controlsBar.children[3].children is [mediaControls.muteButton, mediaControls.airplayButton, mediaControls.pipButton, mediaControls.tracksButton, mediaControls.fullscreenButton]
-PASS mediaControls.volumeSlider.parent.x == expectedVolumeSliderContainerX is true
+PASS mediaControls.children.length is 2
+PASS mediaControls.children[0] is mediaControls.topLeftControlsBar
+PASS mediaControls.children[1] is mediaControls.bottomControlsBar
+PASS mediaControls.topLeftControlsBar.children.length is 2
+PASS mediaControls.topLeftControlsBar.children[0] instanceof BackgroundTint is true
+PASS mediaControls.topLeftControlsBar.children[1] instanceof ButtonsContainer is true
+PASS mediaControls.topLeftControlsBar.children[1].children.length is 2
+PASS mediaControls.topLeftControlsBar.children[1].children[0] is mediaControls.pipButton
+PASS mediaControls.topLeftControlsBar.children[1].children[1] is mediaControls.fullscreenButton
+PASS mediaControls.bottomControlsBar.children.length is 4
+PASS mediaControls.bottomControlsBar.children[0] instanceof BackgroundTint is true
+PASS mediaControls.bottomControlsBar.children[1] is mediaControls.leftContainer
+PASS mediaControls.bottomControlsBar.children[2] is mediaControls.timeControl
+PASS mediaControls.bottomControlsBar.children[3] is mediaControls.rightContainer
+PASS mediaControls.leftContainer.children.length is 3
+PASS mediaControls.leftContainer.children[0] is mediaControls.skipBackButton
+PASS mediaControls.leftContainer.children[1] is mediaControls.playPauseButton
+PASS mediaControls.leftContainer.children[2] is mediaControls.skipForwardButton
+PASS mediaControls.timeControl.children.length is 3
+PASS mediaControls.timeControl.children[0] is mediaControls.timeControl.elapsedTimeLabel
+PASS mediaControls.timeControl.children[1] is mediaControls.timeControl.scrubber
+PASS mediaControls.timeControl.children[2] is mediaControls.timeControl.remainingTimeLabel
+PASS mediaControls.rightContainer.children.length is 3
+PASS mediaControls.rightContainer.children[0] is mediaControls.muteButton
+PASS mediaControls.rightContainer.children[1] is mediaControls.airplayButton
+PASS mediaControls.rightContainer.children[2] is mediaControls.tracksButton
 PASS successfullyParsed is true
 
 TEST COMPLETE

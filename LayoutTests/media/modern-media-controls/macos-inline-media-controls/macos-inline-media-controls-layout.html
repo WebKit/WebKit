@@ -8,7 +8,7 @@ description("Testing the <code>MacOSInlineMediaControls</code> layout.");
 
 window.jsTestIsAsync = true;
 
-const mediaControls = new MacOSInlineMediaControls({ width: 680, height: 50 });
+const mediaControls = new MacOSInlineMediaControls({ width: 680, height: 400 });
 
 const iconButtons = [
     mediaControls.playPauseButton,
@@ -20,29 +20,42 @@ const iconButtons = [
     mediaControls.fullscreenButton
 ];
 
-// There is a 4-pixel difference in metrics between 1x and 2x due to the volume button having a different width.
-const is1x = window.devicePixelRatio == 1;
-const expectedTimeControlWidth = is1x ? 286 : 290;
-const expectedVolumeSliderContainerX = is1x ? 428 : 432;
-
 scheduler.frameDidFire = function()
 {
     if (iconButtons.some(button => button.width == 0))
         return;
 
-    shouldBeTrue("mediaControls.controlsBar.children[0] instanceof BackgroundTint");
-    shouldBeTrue("mediaControls.controlsBar.children[1] instanceof ButtonsContainer");
-    shouldBeTrue("mediaControls.controlsBar.children[2] instanceof TimeControl");
-    shouldBeTrue("mediaControls.controlsBar.children[3] instanceof ButtonsContainer");
+    shouldBe("mediaControls.children.length", "2");
+    shouldBe("mediaControls.children[0]", "mediaControls.topLeftControlsBar");
+    shouldBe("mediaControls.children[1]", "mediaControls.bottomControlsBar");
 
-    shouldBe("mediaControls.timeControl.x", "118");
+    shouldBe("mediaControls.topLeftControlsBar.children.length", "2");
+    shouldBeTrue("mediaControls.topLeftControlsBar.children[0] instanceof BackgroundTint");
+    shouldBeTrue("mediaControls.topLeftControlsBar.children[1] instanceof ButtonsContainer");
+    shouldBe("mediaControls.topLeftControlsBar.children[1].children.length", "2");
+    shouldBe("mediaControls.topLeftControlsBar.children[1].children[0]", "mediaControls.pipButton");
+    shouldBe("mediaControls.topLeftControlsBar.children[1].children[1]", "mediaControls.fullscreenButton");
 
-    shouldBeTrue("mediaControls.timeControl.width == expectedTimeControlWidth");
+    shouldBe("mediaControls.bottomControlsBar.children.length", "4");
+    shouldBeTrue("mediaControls.bottomControlsBar.children[0] instanceof BackgroundTint");
+    shouldBe("mediaControls.bottomControlsBar.children[1]", "mediaControls.leftContainer");
+    shouldBe("mediaControls.bottomControlsBar.children[2]", "mediaControls.timeControl");
+    shouldBe("mediaControls.bottomControlsBar.children[3]", "mediaControls.rightContainer");
 
-    shouldBe("mediaControls.controlsBar.children[1].children", "[mediaControls.playPauseButton, mediaControls.skipBackButton]");
-    shouldBe("mediaControls.controlsBar.children[3].children", "[mediaControls.muteButton, mediaControls.airplayButton, mediaControls.pipButton, mediaControls.tracksButton, mediaControls.fullscreenButton]");
+    shouldBe("mediaControls.leftContainer.children.length", "3");
+    shouldBe("mediaControls.leftContainer.children[0]", "mediaControls.skipBackButton");
+    shouldBe("mediaControls.leftContainer.children[1]", "mediaControls.playPauseButton");
+    shouldBe("mediaControls.leftContainer.children[2]", "mediaControls.skipForwardButton");
 
-    shouldBeTrue("mediaControls.volumeSlider.parent.x == expectedVolumeSliderContainerX");
+    shouldBe("mediaControls.timeControl.children.length", "3");
+    shouldBe("mediaControls.timeControl.children[0]", "mediaControls.timeControl.elapsedTimeLabel");
+    shouldBe("mediaControls.timeControl.children[1]", "mediaControls.timeControl.scrubber");
+    shouldBe("mediaControls.timeControl.children[2]", "mediaControls.timeControl.remainingTimeLabel");
+
+    shouldBe("mediaControls.rightContainer.children.length", "3");
+    shouldBe("mediaControls.rightContainer.children[0]", "mediaControls.muteButton");
+    shouldBe("mediaControls.rightContainer.children[1]", "mediaControls.airplayButton");
+    shouldBe("mediaControls.rightContainer.children[2]", "mediaControls.tracksButton");
 
     finishMediaControlsTest();
 };

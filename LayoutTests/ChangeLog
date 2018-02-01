@@ -1,3 +1,44 @@
+2018-01-31  Antoine Quint  <graouts@apple.com>
+
+        [Modern Media Controls] Turn media/modern-media-controls/macos-inline-media-controls back on
+        https://bugs.webkit.org/show_bug.cgi?id=182338
+
+        Reviewed by Eric Carlson.
+
+        Update tests to match the modern-media-controls designs and expectations. Certain tests didn't make any sense anymore
+        and were removed, for instance tests related to the compact mode.
+
+        * media/modern-media-controls/macos-inline-media-controls/macos-inline-media-controls-audio-background-expected.txt: Removed.
+        * media/modern-media-controls/macos-inline-media-controls/macos-inline-media-controls-audio-background.html: Removed.
+        * media/modern-media-controls/macos-inline-media-controls/macos-inline-media-controls-buttons-styles-expected.txt: Removed.
+        * media/modern-media-controls/macos-inline-media-controls/macos-inline-media-controls-buttons-styles.html: Removed.
+        * media/modern-media-controls/macos-inline-media-controls/macos-inline-media-controls-compact-buttons-styles-expected.txt: Removed.
+        * media/modern-media-controls/macos-inline-media-controls/macos-inline-media-controls-compact-buttons-styles.html: Removed.
+        * media/modern-media-controls/macos-inline-media-controls/macos-inline-media-controls-compact-controls-bar-styles-expected.txt: Removed.
+        * media/modern-media-controls/macos-inline-media-controls/macos-inline-media-controls-compact-controls-bar-styles.html: Removed.
+        * media/modern-media-controls/macos-inline-media-controls/macos-inline-media-controls-compact-expected.txt: Removed.
+        * media/modern-media-controls/macos-inline-media-controls/macos-inline-media-controls-compact.html: Removed.
+        * media/modern-media-controls/macos-inline-media-controls/macos-inline-media-controls-controls-bar-styles-expected.txt:
+        * media/modern-media-controls/macos-inline-media-controls/macos-inline-media-controls-controls-bar-styles.html:
+        * media/modern-media-controls/macos-inline-media-controls/macos-inline-media-controls-layout-expected.txt:
+        * media/modern-media-controls/macos-inline-media-controls/macos-inline-media-controls-layout.html:
+        * media/modern-media-controls/macos-inline-media-controls/macos-inline-media-controls-resize-with-hidden-controls-bar-expected.txt:
+        * media/modern-media-controls/macos-inline-media-controls/macos-inline-media-controls-resize-with-hidden-controls-bar.html:
+        * media/modern-media-controls/macos-inline-media-controls/macos-inline-media-controls-start-button-style-expected.txt:
+        * media/modern-media-controls/macos-inline-media-controls/macos-inline-media-controls-start-button-style.html:
+        * media/modern-media-controls/macos-inline-media-controls/macos-inline-media-controls-status-label-expected.txt:
+        * media/modern-media-controls/macos-inline-media-controls/macos-inline-media-controls-status-label.html:
+        * media/modern-media-controls/macos-inline-media-controls/macos-inline-media-controls-time-control-styles-expected.txt:
+        * media/modern-media-controls/macos-inline-media-controls/macos-inline-media-controls-time-control-styles.html:
+        * media/modern-media-controls/macos-inline-media-controls/macos-inline-media-controls-volume-slider-visibility-expected.txt:
+        * media/modern-media-controls/macos-inline-media-controls/macos-inline-media-controls-volume-slider-visibility.html:
+        * media/modern-media-controls/macos-inline-media-controls/macos-inline-media-controls-volume-styles-expected.txt:
+        * media/modern-media-controls/macos-inline-media-controls/macos-inline-media-controls-volume-styles.html:
+        * media/modern-media-controls/macos-inline-media-controls/macos-inline-media-dropping-controls-expected.txt:
+        * media/modern-media-controls/macos-inline-media-controls/macos-inline-media-dropping-controls.html:
+        * platform/ios/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2018-01-31  Per Arne Vollan  <pvollan@apple.com>
 
         Layout Test fast/events/beforeunload-dom-manipulation-crash.html is crashing

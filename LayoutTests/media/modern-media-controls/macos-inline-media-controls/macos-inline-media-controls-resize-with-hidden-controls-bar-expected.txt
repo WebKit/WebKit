@@ -8,7 +8,7 @@ Making the controls bar invisible.
 Making the controls 100px wider
 
 Making the controls bar visible again.
-PASS rightContainer.x is expectedRightContainerX + 100
+PASS mediaControls.rightContainer.x is expectedRightContainerX + 100
 
 PASS successfullyParsed is true
 

@@ -15,10 +15,10 @@ document.body.appendChild(mediaControls.element);
 let style;
 scheduler.frameDidFire = function()
 {
-    if (mediaControls.startButton.element.getBoundingClientRect().width == 0)
+    if (mediaControls.playPauseButton.element.getBoundingClientRect().width == 0)
         return;
 
-    shouldBeEqualToString("getComputedStyle(mediaControls.startButton.element.firstElementChild).webkitBackdropFilter", "saturate(1.8) blur(20px)");
+    shouldBeEqualToString("getComputedStyle(mediaControls.playPauseButton.element.firstElementChild.firstElementChild).webkitBackdropFilter", "saturate(1.8) blur(17.5px)");
 
     mediaControls.element.remove();
     finishMediaControlsTest();

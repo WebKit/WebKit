@@ -8,57 +8,34 @@ description("Testing <code>MacOSInlineMediaControls</code> and dropping controls
 
 window.jsTestIsAsync = true;
 
-const mediaControls = new MacOSInlineMediaControls;
+const mediaControls = new MacOSInlineMediaControls({ width: 680, height: 300 });
+mediaControls.shouldUseSingleBarLayout = true;
 
-// There is a 4-pixel difference in metrics between 1x and 2x due to the volume button having a different width.
-const is1x = window.devicePixelRatio == 1;
-const expectedWidthsForDrop = [
-    [mediaControls.timeControl, is1x ? 655 : 651],
-    [mediaControls.airplayButton, is1x ? 394 : 390],
-    [mediaControls.pipButton, is1x ? 345 : 341],
-    [mediaControls.tracksButton, is1x ? 294 : 290],
-    [mediaControls.muteButton, is1x ? 245 : 241],
-    [mediaControls.skipBackButton, 187],
-    [mediaControls.fullscreenButton, 139]
-];
-
-function dumpControlVisibility(control)
-{
-    let visibilityString = "visible";
-    if (!control.parent)
-        visibilityString = "not " + visibilityString;
-    debug(`${control.constructor.name} is ${visibilityString}`);
-}
-
-const iconButtons = [
-    mediaControls.playPauseButton,
+const droppableControls = [
+    mediaControls.skipForwardButton,
     mediaControls.skipBackButton,
     mediaControls.airplayButton,
-    mediaControls.pipButton,
     mediaControls.tracksButton,
-    mediaControls.muteButton,
-    mediaControls.fullscreenButton
+    mediaControls.pipButton,
+    mediaControls.fullscreenButton,
+    mediaControls.muteButton
 ];
 
-scheduler.frameDidFire = function()
+function ready()
 {
-    if (iconButtons.some(button => button.width == 0))
-        return;
+    return droppableControls.concat(mediaControls.playPauseButton).every(button => button.width > 0);
+}
 
-    for (let [control, width] of expectedWidthsForDrop) {
-        mediaControls.width = width + 1;
-        mediaControls.layout();
-        dumpControlVisibility(control);
-
-        mediaControls.width = width;
-        mediaControls.layout();
-        dumpControlVisibility(control);
-
-        debug("");
-    }
-
-    finishMediaControlsTest();
-};
+shouldBecomeEqual("ready()", "true", () => {
+    debug("");
+    droppableControls.forEach(control => {
+        while (control.visible)
+            mediaControls.width--;
+        debug(`${control.constructor.name} was dropped at ${mediaControls.width + 1}.`);
+    });
+    debug("");
+    finishJSTest();
+});
 
 </script>
 <script src="../../../resources/js-test-post.js"></script>
