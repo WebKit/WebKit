@@ -1,3 +1,9 @@
+2018-01-31  Andres Gomez  <agomez@igalia.com>
+
+        Unreviewed. Remove WebInspectorUI watchlist and remove myself from 2 watchlists more
+
+        * Scripts/webkitpy/common/config/watchlist:
+
 2018-01-31  Per Arne Vollan  <pvollan@apple.com>
 
         Layout Test fast/events/beforeunload-dom-manipulation-crash.html is crashing

@@ -194,9 +194,6 @@
                         r"|Source/WebCore/html/canvas/WebGLRenderingContext\.idl"
                         r"|Source/WebCore/html/canvas/WebGLRenderingContextBase\.idl",
         },
-        "WebInspectorUIImages": {
-            "filename": r"Source/WebInspectorUI/UserInterface/Images",
-        },
         "WebSocket": {
             "filename": r"Source/WebCore/Modules/websockets"
                         r"|Source/WebCore/platform/network/(|.+/)SocketStream.*",
@@ -380,8 +377,8 @@
         "FrameLoader": [ "japhet@chromium.org", "cdumez@apple.com", "dbates@webkit.org" ],
         "Geolocation": [ "benjamin@webkit.org" ],
         "GraphicsLayer": [ "simon.fraser@apple.com", "kondapallykalyan@gmail.com", "sergio.correia@openbossa.org" ],
-        "GStreamerGraphics": [ "alexis@webkit.org", "pnormand@igalia.com", "gns@gnome.org", "cgarcia@igalia.com", "calvaris@igalia.com", "vjaquez@igalia.com", "agomez@igalia.com" ],
-        "GStreamerAudio": [ "pnormand@igalia.com", "sergio.correia@openbossa.org", "calvaris@igalia.com", "vjaquez@igalia.com", "agomez@igalia.com" ],
+        "GStreamerGraphics": [ "alexis@webkit.org", "pnormand@igalia.com", "gns@gnome.org", "cgarcia@igalia.com", "calvaris@igalia.com", "vjaquez@igalia.com" ],
+        "GStreamerAudio": [ "pnormand@igalia.com", "sergio.correia@openbossa.org", "calvaris@igalia.com", "vjaquez@igalia.com" ],
         "GtkWebKit2PublicAPI": [ "cgarcia@igalia.com", "gns@gnome.org", "berto@igalia.com", "mcatanzaro@igalia.com" ],
         "HTML": [ "esprehn+autocc@chromium.org", "gyuyoung.kim@webkit.org", "cdumez@apple.com" ],
         "History": [ "cdumez@apple.com" ],
@@ -414,7 +411,6 @@
         "WebInspectorBackend": [ "joepeck@webkit.org" ],
         "WebInspectorGenerator": [ "bburg@apple.com", "joepeck@webkit.org" ],
         "WebInspectorRecording": [ "webkit@devinrousso.com" ],
-        "WebInspectorUIImages": [ "agomez@igalia.com" ],
         "JSBuiltins": [ "joepeck@webkit.org" ],
         "JSBuiltinsGenerator": [ "bburg@apple.com" ],
         "WebKitGTKTranslations": [ "gns@gnome.org", "berto@igalia.com", "cgarcia@igalia.com", "mcatanzaro@igalia.com" ],
