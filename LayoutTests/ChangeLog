@@ -1,3 +1,12 @@
+2018-02-01  Matt Lewis  <jlewis3@apple.com>
+
+        Followup test expectation adjustment from r227947.
+        
+
+        Unreviewed test expectations.
+
+        * platform/ios-simulator/TestExpectations:
+
 2018-02-01  Dean Jackson  <dino@apple.com>
 
         REGRESSION (r219342): Scaled HTML widget is not responding to a clicks outside the body

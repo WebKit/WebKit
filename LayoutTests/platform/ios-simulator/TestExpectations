@@ -57,10 +57,10 @@ wasm/iframe-parent-postmessage.html [ Skip ]
 wasm/window-postmessage.html [ Skip ]
 
 # These tests seem to fail due pixel rounding errors in the absolute positioned elements used as reference.
-fast/inline-block/baseline-vertical-01.html [ Failure ]
-fast/inline-block/baseline-vertical-02.html [ Failure ]
-fast/inline-block/baseline-vertical-03.html [ Failure ]
-fast/inline-block/baseline-vertical-04.html [ Failure ]
+webkit.org/b/170176 fast/inline-block/baseline-vertical-01.html [ ImageOnlyFailure ]
+webkit.org/b/170176 fast/inline-block/baseline-vertical-02.html [ ImageOnlyFailure ]
+webkit.org/b/170176 fast/inline-block/baseline-vertical-03.html [ ImageOnlyFailure ]
+webkit.org/b/170176 fast/inline-block/baseline-vertical-04.html [ ImageOnlyFailure ]
 
 # WebGL tests which need triaging https://bugs.webkit.org/b/174100
 webgl/1.0.2/conformance/uniforms/uniform-default-values.html [ Failure ]
