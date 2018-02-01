@@ -41,6 +41,8 @@ namespace WebKit {
 
 class GestureControllerClient {
 public:
+    virtual ~GestureControllerClient() = default;
+
     virtual void tap(GdkEventTouch*) = 0;
 
     virtual void startDrag(GdkEventTouch*, const WebCore::FloatPoint&) = 0;
