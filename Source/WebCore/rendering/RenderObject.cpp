@@ -62,6 +62,7 @@
 #include "RenderScrollbarPart.h"
 #include "RenderTableRow.h"
 #include "RenderTheme.h"
+#include "RenderTreeBuilder.h"
 #include "RenderView.h"
 #include "RenderWidget.h"
 #include "SVGRenderSupport.h"
@@ -257,7 +258,7 @@ void RenderObject::setParent(RenderElement* parent)
 void RenderObject::removeFromParentAndDestroy()
 {
     ASSERT(m_parent);
-    m_parent->removeAndDestroyChild(*this);
+    m_parent->removeAndDestroyChild(*RenderTreeBuilder::current(), *this);
 }
 
 RenderObject* RenderObject::nextInPreOrder() const

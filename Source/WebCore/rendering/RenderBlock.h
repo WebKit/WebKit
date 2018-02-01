@@ -74,7 +74,7 @@ public:
     virtual void deleteLines();
 
     void addChild(RenderTreeBuilder&, RenderPtr<RenderObject> newChild, RenderObject* beforeChild = 0) override;
-    RenderPtr<RenderObject> takeChild(RenderObject&) override;
+    RenderPtr<RenderObject> takeChild(RenderTreeBuilder&, RenderObject&) override;
 
     virtual void layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeight = 0);
 

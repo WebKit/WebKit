@@ -89,8 +89,8 @@ public:
     virtual bool isChildAllowed(const RenderObject&, const RenderStyle&) const { return true; }
     virtual void addChild(RenderTreeBuilder&, RenderPtr<RenderObject>, RenderObject* beforeChild);
     virtual void addChildIgnoringContinuation(RenderTreeBuilder&, RenderPtr<RenderObject> newChild, RenderObject* beforeChild = nullptr);
-    virtual RenderPtr<RenderObject> takeChild(RenderObject&) WARN_UNUSED_RETURN;
-    void removeAndDestroyChild(RenderObject&);
+    virtual RenderPtr<RenderObject> takeChild(RenderTreeBuilder&, RenderObject&) WARN_UNUSED_RETURN;
+    void removeAndDestroyChild(RenderTreeBuilder&, RenderObject&);
 
     // The following functions are used when the render tree hierarchy changes to make sure layers get
     // properly added and removed. Since containership can be implemented by any subclass, and since a hierarchy

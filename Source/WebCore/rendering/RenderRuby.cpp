@@ -93,7 +93,7 @@ void RenderRubyAsInline::styleDidChange(StyleDifference diff, const RenderStyle*
     propagateStyleToAnonymousChildren(PropagateToAllChildren);
 }
 
-RenderPtr<RenderObject> RenderRubyAsInline::takeChild(RenderObject& child)
+RenderPtr<RenderObject> RenderRubyAsInline::takeChild(RenderTreeBuilder& builder, RenderObject& child)
 {
     // If the child's parent is *this (must be a ruby run or generated content or anonymous block),
     // just use the normal remove method.
@@ -101,20 +101,20 @@ RenderPtr<RenderObject> RenderRubyAsInline::takeChild(RenderObject& child)
 #ifndef ASSERT_DISABLED
         ASSERT(isRubyChildForNormalRemoval(child));
 #endif
-        return RenderInline::takeChild(child);
+        return RenderInline::takeChild(builder, child);
     }
     // If the child's parent is an anoymous block (must be generated :before/:after content)
     // just use the block's remove method.
     if (isAnonymousRubyInlineBlock(child.parent())) {
         ASSERT(child.isBeforeContent() || child.isAfterContent());
         auto& parent = *child.parent();
-        auto takenChild = parent.takeChild(child);
+        auto takenChild = parent.takeChild(builder, child);
         parent.removeFromParentAndDestroy();
         return takenChild;
     }
 
     // Otherwise find the containing run and remove it from there.
-    return findRubyRunParent(child).takeChild(child);
+    return findRubyRunParent(child).takeChild(builder, child);
 }
 
 //=== ruby as block object ===
@@ -132,7 +132,7 @@ void RenderRubyAsBlock::styleDidChange(StyleDifference diff, const RenderStyle* 
     propagateStyleToAnonymousChildren(PropagateToAllChildren);
 }
 
-RenderPtr<RenderObject> RenderRubyAsBlock::takeChild(RenderObject& child)
+RenderPtr<RenderObject> RenderRubyAsBlock::takeChild(RenderTreeBuilder& builder, RenderObject& child)
 {
     // If the child's parent is *this (must be a ruby run or generated content or anonymous block),
     // just use the normal remove method.
@@ -140,20 +140,20 @@ RenderPtr<RenderObject> RenderRubyAsBlock::takeChild(RenderObject& child)
 #ifndef ASSERT_DISABLED
         ASSERT(isRubyChildForNormalRemoval(child));
 #endif
-        return RenderBlockFlow::takeChild(child);
+        return RenderBlockFlow::takeChild(builder, child);
     }
     // If the child's parent is an anoymous block (must be generated :before/:after content)
     // just use the block's remove method.
     if (isAnonymousRubyInlineBlock(child.parent())) {
         ASSERT(child.isBeforeContent() || child.isAfterContent());
         auto& parent = *child.parent();
-        auto takenChild = parent.takeChild(child);
+        auto takenChild = parent.takeChild(builder, child);
         parent.removeFromParentAndDestroy();
         return takenChild;
     }
 
     // Otherwise find the containing run and remove it from there.
-    return findRubyRunParent(child).takeChild(child);
+    return findRubyRunParent(child).takeChild(builder, child);
 }
 
 } // namespace WebCore

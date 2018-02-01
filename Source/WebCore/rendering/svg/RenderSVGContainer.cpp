@@ -95,10 +95,10 @@ void RenderSVGContainer::addChild(RenderTreeBuilder& builder, RenderPtr<RenderOb
     builder.insertChildToSVGContainer(*this, WTFMove(newChild), beforeChild);
 }
 
-RenderPtr<RenderObject> RenderSVGContainer::takeChild(RenderObject& child)
+RenderPtr<RenderObject> RenderSVGContainer::takeChild(RenderTreeBuilder& builder, RenderObject& child)
 {
     SVGResourcesCache::clientWillBeRemovedFromTree(child);
-    return RenderSVGModelObject::takeChild(child);
+    return RenderSVGModelObject::takeChild(builder, child);
 }
 
 bool RenderSVGContainer::selfWillPaint()

@@ -85,9 +85,9 @@ void RenderGrid::addChild(RenderTreeBuilder& builder, RenderPtr<RenderObject> ne
     dirtyGrid();
 }
 
-RenderPtr<RenderObject> RenderGrid::takeChild(RenderObject& child)
+RenderPtr<RenderObject> RenderGrid::takeChild(RenderTreeBuilder& builder, RenderObject& child)
 {
-    auto takenChild = RenderBlock::takeChild(child);
+    auto takenChild = RenderBlock::takeChild(builder, child);
 
     // Positioned grid items do not take up space or otherwise participate in the layout of the grid,
     // for that reason we don't need to mark the grid as dirty when they are removed.

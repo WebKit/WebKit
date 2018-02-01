@@ -525,13 +525,13 @@ void RenderSVGText::addChild(RenderTreeBuilder& builder, RenderPtr<RenderObject>
     builder.insertChildToSVGText(*this, WTFMove(newChild), beforeChild);
 }
 
-RenderPtr<RenderObject> RenderSVGText::takeChild(RenderObject& child)
+RenderPtr<RenderObject> RenderSVGText::takeChild(RenderTreeBuilder& builder, RenderObject& child)
 {
     SVGResourcesCache::clientWillBeRemovedFromTree(child);
 
     Vector<SVGTextLayoutAttributes*, 2> affectedAttributes;
     subtreeChildWillBeRemoved(&child, affectedAttributes);
-    auto takenChild = RenderSVGBlock::takeChild(child);
+    auto takenChild = RenderSVGBlock::takeChild(builder, child);
     subtreeChildWasRemoved(affectedAttributes);
     return takenChild;
 }

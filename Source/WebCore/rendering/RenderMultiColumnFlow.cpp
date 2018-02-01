@@ -274,7 +274,7 @@ RenderObject* RenderMultiColumnFlow::processPossibleSpannerDescendant(RenderObje
         auto newPlaceholder = RenderMultiColumnSpannerPlaceholder::createAnonymous(*this, downcast<RenderBox>(descendant), container->style());
         auto& placeholder = *newPlaceholder;
         RenderTreeBuilder::current()->insertChild(*container, WTFMove(newPlaceholder), descendant.nextSibling());
-        auto takenDescendant = container->takeChild(descendant);
+        auto takenDescendant = container->takeChild(*RenderTreeBuilder::current(), descendant);
         
         // This is a guard to stop an ancestor flow thread from processing the spanner.
         gShiftingSpanner = true;

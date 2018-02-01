@@ -209,7 +209,7 @@ void RenderTreeBuilder::Ruby::insertChild(RenderRubyRun& parent, RenderPtr<Rende
             // in order to avoid automatic removal of the ruby run in case there is no
             // other child besides the old ruby text.
             parent.addChild(m_builder, WTFMove(child), beforeChild);
-            auto takenBeforeChild = parent.RenderBlockFlow::takeChild(*beforeChild);
+            auto takenBeforeChild = parent.RenderBlockFlow::takeChild(m_builder, *beforeChild);
             m_builder.insertChild(*newRun, WTFMove(takenBeforeChild));
             return;
         }

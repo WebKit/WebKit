@@ -70,16 +70,16 @@ void RenderButton::setInnerRenderer(RenderBlock& innerRenderer)
     updateAnonymousChildStyle(m_inner->mutableStyle());
 }
 
-RenderPtr<RenderObject> RenderButton::takeChild(RenderObject& oldChild)
+RenderPtr<RenderObject> RenderButton::takeChild(RenderTreeBuilder& builder, RenderObject& oldChild)
 {
     // m_inner should be the only child, but checking for direct children who
     // are not m_inner prevents security problems when that assumption is
     // violated.
     if (&oldChild == m_inner || !m_inner || oldChild.parent() == this) {
         ASSERT(&oldChild == m_inner || !m_inner);
-        return RenderFlexibleBox::takeChild(oldChild);
+        return RenderFlexibleBox::takeChild(builder, oldChild);
     }
-    return m_inner->takeChild(oldChild);
+    return m_inner->takeChild(builder, oldChild);
 }
     
 void RenderButton::updateAnonymousChildStyle(RenderStyle& childStyle) const

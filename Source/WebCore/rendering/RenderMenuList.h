@@ -70,7 +70,7 @@ private:
     bool isMenuList() const override { return true; }
 
     void addChild(RenderTreeBuilder&, RenderPtr<RenderObject> newChild, RenderObject* beforeChild = 0) override;
-    RenderPtr<RenderObject> takeChild(RenderObject&) override;
+    RenderPtr<RenderObject> takeChild(RenderTreeBuilder&, RenderObject&) override;
     bool createsAnonymousWrapper() const override { return true; }
 
     void updateFromElement() override;

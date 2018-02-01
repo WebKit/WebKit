@@ -97,7 +97,7 @@ bool RenderRubyRun::isChildAllowed(const RenderObject& child, const RenderStyle&
     return child.isInline() || child.isRubyText();
 }
 
-RenderPtr<RenderObject> RenderRubyRun::takeChild(RenderObject& child)
+RenderPtr<RenderObject> RenderRubyRun::takeChild(RenderTreeBuilder& builder, RenderObject& child)
 {
     // If the child is a ruby text, then merge the ruby base with the base of
     // the right sibling run, if possible.
@@ -119,13 +119,13 @@ RenderPtr<RenderObject> RenderRubyRun::takeChild(RenderObject& child)
         }
     }
 
-    auto takenChild = RenderBlockFlow::takeChild(child);
+    auto takenChild = RenderBlockFlow::takeChild(builder, child);
 
     if (!beingDestroyed() && !renderTreeBeingDestroyed()) {
         // Check if our base (if any) is now empty. If so, destroy it.
         RenderBlock* base = rubyBase();
         if (base && !base->firstChild()) {
-            auto takenBase = RenderBlockFlow::takeChild(*base);
+            auto takenBase = RenderBlockFlow::takeChild(builder, *base);
             base->deleteLines();
         }
     }

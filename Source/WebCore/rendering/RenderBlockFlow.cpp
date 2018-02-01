@@ -3849,14 +3849,14 @@ void RenderBlockFlow::addChild(RenderTreeBuilder& builder, RenderPtr<RenderObjec
     builder.insertChildToRenderBlockFlow(*this, WTFMove(newChild), beforeChild);
 }
 
-RenderPtr<RenderObject> RenderBlockFlow::takeChild(RenderObject& oldChild)
+RenderPtr<RenderObject> RenderBlockFlow::takeChild(RenderTreeBuilder& builder, RenderObject& oldChild)
 {
     if (!renderTreeBeingDestroyed()) {
         RenderFragmentedFlow* fragmentedFlow = multiColumnFlow();
         if (fragmentedFlow && fragmentedFlow != &oldChild)
             fragmentedFlow->fragmentedFlowRelativeWillBeRemoved(oldChild);
     }
-    return RenderBlock::takeChild(oldChild);
+    return RenderBlock::takeChild(builder, oldChild);
 }
 
 void RenderBlockFlow::checkForPaginationLogicalHeightChange(bool& relayoutChildren, LayoutUnit& pageLogicalHeight, bool& pageLogicalHeightChanged)

@@ -582,12 +582,12 @@ void RenderBlock::dropAnonymousBoxChild(RenderBlock& child)
     child.deleteLines();
 }
 
-RenderPtr<RenderObject> RenderBlock::takeChild(RenderObject& oldChild)
+RenderPtr<RenderObject> RenderBlock::takeChild(RenderTreeBuilder& builder, RenderObject& oldChild)
 {
     // No need to waste time in merging or removing empty anonymous blocks.
     // We can just bail out if our document is getting destroyed.
     if (renderTreeBeingDestroyed())
-        return RenderBox::takeChild(oldChild);
+        return RenderBox::takeChild(builder, oldChild);
 
     // If this child is a block, and if our previous and next siblings are both anonymous blocks
     // with inline content, then we can fold the inline content back together.
@@ -637,7 +637,7 @@ RenderPtr<RenderObject> RenderBlock::takeChild(RenderObject& oldChild)
 
     invalidateLineLayoutPath();
 
-    auto takenChild = RenderBox::takeChild(oldChild);
+    auto takenChild = RenderBox::takeChild(builder, oldChild);
 
     RenderObject* child = prev ? prev : next;
     if (canMergeAnonymousBlocks && child && !child->previousSibling() && !child->nextSibling() && canDropAnonymousBlockChild()) {

@@ -480,14 +480,14 @@ void RenderElement::addChildIgnoringContinuation(RenderTreeBuilder& builder, Ren
     builder.insertChild(*this, WTFMove(newChild), beforeChild);
 }
 
-RenderPtr<RenderObject> RenderElement::takeChild(RenderObject& oldChild)
+RenderPtr<RenderObject> RenderElement::takeChild(RenderTreeBuilder&, RenderObject& oldChild)
 {
     return takeChildInternal(oldChild);
 }
 
-void RenderElement::removeAndDestroyChild(RenderObject& oldChild)
+void RenderElement::removeAndDestroyChild(RenderTreeBuilder& builder, RenderObject& oldChild)
 {
-    auto toDestroy = takeChild(oldChild);
+    auto toDestroy = takeChild(builder, oldChild);
 }
 
 void RenderElement::destroyLeftoverChildren()
@@ -495,7 +495,7 @@ void RenderElement::destroyLeftoverChildren()
     while (m_firstChild) {
         if (auto* node = m_firstChild->node())
             node->setRenderer(nullptr);
-        removeAndDestroyChild(*m_firstChild);
+        removeAndDestroyChild(*RenderTreeBuilder::current(), *m_firstChild);
     }
 }
 

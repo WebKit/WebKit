@@ -174,7 +174,7 @@ void RenderTreeBuilder::FirstLetter::updateStyle(RenderBlock& firstLetterBlock, 
         while (RenderObject* child = firstLetter->firstChild()) {
             if (is<RenderText>(*child))
                 downcast<RenderText>(*child).removeAndDestroyTextBoxes();
-            auto toMove = firstLetter->takeChild(*child);
+            auto toMove = firstLetter->takeChild(m_builder, *child);
             m_builder.insertChild(*newFirstLetter, WTFMove(toMove));
         }
 
@@ -185,7 +185,7 @@ void RenderTreeBuilder::FirstLetter::updateStyle(RenderBlock& firstLetterBlock, 
             remainingText->setFirstLetter(*newFirstLetter);
             newFirstLetter->setFirstLetterRemainingText(*remainingText);
         }
-        firstLetterContainer->removeAndDestroyChild(*firstLetter);
+        firstLetterContainer->removeAndDestroyChild(m_builder, *firstLetter);
         m_builder.insertChild(*firstLetterContainer, WTFMove(newFirstLetter), nextSibling);
         return;
     }
@@ -241,7 +241,7 @@ void RenderTreeBuilder::FirstLetter::createRenderers(RenderBlock& firstLetterBlo
 
         auto* textNode = currentTextChild.textNode();
         auto* beforeChild = currentTextChild.nextSibling();
-        firstLetterContainer->removeAndDestroyChild(currentTextChild);
+        firstLetterContainer->removeAndDestroyChild(m_builder, currentTextChild);
 
         // Construct a text fragment for the text after the first letter.
         // This text fragment might be empty.

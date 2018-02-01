@@ -79,7 +79,7 @@ void RenderTreeBuilder::MultiColumn::createFragmentedFlow(RenderBlockFlow& flow)
             // Move the spanner back to its original position.
             auto& spannerOriginalParent = *placeholder->parent();
             // Detaching the spanner takes care of removing the placeholder (and merges the RenderMultiColumnSets).
-            auto spannerToReInsert = spanner->parent()->takeChild(*spanner);
+            auto spannerToReInsert = spanner->parent()->takeChild(m_builder, *spanner);
             m_builder.insertChild(spannerOriginalParent, WTFMove(spannerToReInsert));
         }
     }
@@ -127,7 +127,7 @@ void RenderTreeBuilder::MultiColumn::destroyFragmentedFlow(RenderBlockFlow& flow
             spannerOriginalParent = &flow;
         // Detaching the spanner takes care of removing the placeholder (and merges the RenderMultiColumnSets).
         auto* spanner = placeholder->spanner();
-        parentAndSpannerList.append(std::make_pair(spannerOriginalParent, spanner->parent()->takeChild(*spanner)));
+        parentAndSpannerList.append(std::make_pair(spannerOriginalParent, spanner->parent()->takeChild(m_builder, *spanner)));
     }
     while (auto* columnSet = multiColumnFlow.firstMultiColumnSet())
         columnSet->removeFromParentAndDestroy();

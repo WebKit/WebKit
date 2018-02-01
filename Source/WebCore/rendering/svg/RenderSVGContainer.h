@@ -49,7 +49,7 @@ protected:
     void layout() override;
 
     void addChild(RenderTreeBuilder&, RenderPtr<RenderObject> child, RenderObject* beforeChild = 0) final;
-    RenderPtr<RenderObject> takeChild(RenderObject&) final;
+    RenderPtr<RenderObject> takeChild(RenderTreeBuilder&, RenderObject&) final;
     void addFocusRingRects(Vector<LayoutRect>&, const LayoutPoint& additionalOffset, const RenderLayerModelObject* paintContainer = 0) final;
 
     FloatRect objectBoundingBox() const final { return m_objectBoundingBox; }

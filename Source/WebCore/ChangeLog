@@ -1,3 +1,79 @@
+2018-02-01  Zalan Bujtas  <zalan@apple.com>
+
+        [RenderTreeBuilder] Introduce RenderTreeBuilder to takeChild()
+        https://bugs.webkit.org/show_bug.cgi?id=182373
+        <rdar://problem/37101484>
+
+        Reviewed by Antti Koivisto.
+        
+        This is in preparation for moving mutation code out of takeChild. 
+
+        No change in functionality.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::takeChild):
+        * rendering/RenderBlock.h:
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::takeChild):
+        * rendering/RenderBlockFlow.h:
+        * rendering/RenderButton.cpp:
+        (WebCore::RenderButton::takeChild):
+        * rendering/RenderButton.h:
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::takeChild):
+        (WebCore::RenderElement::removeAndDestroyChild):
+        (WebCore::RenderElement::destroyLeftoverChildren):
+        * rendering/RenderElement.h:
+        * rendering/RenderFullScreen.cpp:
+        (WebCore::RenderFullScreen::wrapExistingRenderer):
+        (WebCore::RenderFullScreen::unwrapRenderer):
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::takeChild):
+        * rendering/RenderGrid.h:
+        * rendering/RenderMenuList.cpp:
+        (RenderMenuList::takeChild):
+        * rendering/RenderMenuList.h:
+        * rendering/RenderMultiColumnFlow.cpp:
+        (WebCore::RenderMultiColumnFlow::processPossibleSpannerDescendant):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::removeFromParentAndDestroy):
+        * rendering/RenderRuby.cpp:
+        (WebCore::RenderRubyAsInline::takeChild):
+        (WebCore::RenderRubyAsBlock::takeChild):
+        * rendering/RenderRuby.h:
+        * rendering/RenderRubyRun.cpp:
+        (WebCore::RenderRubyRun::takeChild):
+        * rendering/RenderRubyRun.h:
+        * rendering/RenderTableRow.cpp:
+        (WebCore::RenderTableRow::collapseAndDestroyAnonymousSiblingRows): Deleted.
+        * rendering/RenderTableRow.h:
+        * rendering/svg/RenderSVGContainer.cpp:
+        (WebCore::RenderSVGContainer::takeChild):
+        * rendering/svg/RenderSVGContainer.h:
+        * rendering/svg/RenderSVGInline.cpp:
+        (WebCore::RenderSVGInline::takeChild):
+        * rendering/svg/RenderSVGInline.h:
+        * rendering/svg/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::takeChild):
+        * rendering/svg/RenderSVGRoot.h:
+        * rendering/svg/RenderSVGText.cpp:
+        (WebCore::RenderSVGText::takeChild):
+        * rendering/svg/RenderSVGText.h:
+        * rendering/updating/RenderTreeBuilder.cpp:
+        (WebCore::RenderTreeBuilder::collapseAndDestroyAnonymousSiblingRows):
+        (WebCore::RenderTreeBuilder::removeFromParentAndDestroyCleaningUpAnonymousWrappers):
+        * rendering/updating/RenderTreeBuilder.h:
+        * rendering/updating/RenderTreeBuilderFirstLetter.cpp:
+        (WebCore::RenderTreeBuilder::FirstLetter::updateStyle):
+        (WebCore::RenderTreeBuilder::FirstLetter::createRenderers):
+        * rendering/updating/RenderTreeBuilderList.cpp:
+        (WebCore::RenderTreeBuilder::List::updateItemMarker):
+        * rendering/updating/RenderTreeBuilderMultiColumn.cpp:
+        (WebCore::RenderTreeBuilder::MultiColumn::createFragmentedFlow):
+        (WebCore::RenderTreeBuilder::MultiColumn::destroyFragmentedFlow):
+        * rendering/updating/RenderTreeBuilderRuby.cpp:
+        (WebCore::RenderTreeBuilder::Ruby::insertChild):
+
 2018-02-01  Dean Jackson  <dino@apple.com>
 
         REGRESSION (r219342): Scaled HTML widget is not responding to a clicks outside the body

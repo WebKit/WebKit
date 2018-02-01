@@ -358,7 +358,7 @@ void RenderTreeBuilder::removeFromParentAndDestroyCleaningUpAnonymousWrappers(Re
         tableBuilder().collapseAndDestroyAnonymousSiblingRows(downcast<RenderTableRow>(destroyRoot));
 
     auto& destroyRootParent = *destroyRoot.parent();
-    destroyRootParent.removeAndDestroyChild(destroyRoot);
+    destroyRootParent.removeAndDestroyChild(*this, destroyRoot);
     destroyRootParent.removeAnonymousWrappersForInlinesIfNecessary();
 
     // Anonymous parent might have become empty, try to delete it too.
