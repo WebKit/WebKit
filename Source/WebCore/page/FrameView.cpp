@@ -4070,22 +4070,22 @@ void FrameView::didPaintContents(GraphicsContext& context, const IntRect& dirtyR
 void FrameView::paintContents(GraphicsContext& context, const IntRect& dirtyRect, SecurityOriginPaintPolicy securityOriginPaintPolicy)
 {
 #ifndef NDEBUG
-    bool fillWithRed;
+    bool fillWithWarningColor;
     if (frame().document()->printing())
-        fillWithRed = false; // Printing, don't fill with red (can't remember why).
+        fillWithWarningColor = false; // Printing, don't fill with red (can't remember why).
     else if (frame().ownerElement())
-        fillWithRed = false; // Subframe, don't fill with red.
+        fillWithWarningColor = false; // Subframe, don't fill with red.
     else if (isTransparent())
-        fillWithRed = false; // Transparent, don't fill with red.
+        fillWithWarningColor = false; // Transparent, don't fill with red.
     else if (m_paintBehavior & PaintBehaviorSelectionOnly)
-        fillWithRed = false; // Selections are transparent, don't fill with red.
+        fillWithWarningColor = false; // Selections are transparent, don't fill with red.
     else if (m_nodeToDraw)
-        fillWithRed = false; // Element images are transparent, don't fill with red.
+        fillWithWarningColor = false; // Element images are transparent, don't fill with red.
     else
-        fillWithRed = true;
+        fillWithWarningColor = true;
     
-    if (fillWithRed)
-        context.fillRect(dirtyRect, Color(0xFF, 0, 0));
+    if (fillWithWarningColor)
+        context.fillRect(dirtyRect, Color(255, 64, 255));
 #endif
 
     RenderView* renderView = this->renderView();

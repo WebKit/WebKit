@@ -1,3 +1,17 @@
+2018-01-31  Simon Fraser  <simon.fraser@apple.com>
+
+        Use different debug red colors for different contexts
+        https://bugs.webkit.org/show_bug.cgi?id=182362
+
+        Reviewed by Tim Horton.
+
+        Pure red is used elsehwere in the system as a debug color indicator, so use different
+        shades of red for WebKit in the two places where we paint a reddish wash in debug builds,
+        so they are identifiable.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::paintContents):
+
 2018-01-31  Don Olmstead  <don.olmstead@sony.com>
 
         [CMake] Make JavaScriptCore headers copies
