@@ -162,10 +162,10 @@ BuildbotIteration.prototype = {
         if (!this.failed)
             return undefined;
 
-        console.assert(this._firstFailedStep);
-
-        if (!this._firstFailedStep.logs)
+        if (!this.queue.buildbot.VERSION_LESS_THAN_09)
             return this.queue.buildbot.buildPageURLForIteration(this);
+
+        console.assert(this._firstFailedStep);
 
         for (var i = 0; i < this._firstFailedStep.logs.length; ++i) {
             if (this._firstFailedStep.logs[i][0] == kind)

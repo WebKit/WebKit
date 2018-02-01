@@ -1,3 +1,15 @@
+2018-02-01  Aakash Jain  <aakash_jain@apple.com>
+
+        Bubbles intermittently disappear from bot watchers dashboard
+        https://bugs.webkit.org/show_bug.cgi?id=182085
+
+        Reviewed by Alexey Proskuryakov.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/BuildbotIteration.js:
+        (BuildbotIteration.prototype.failureLogURL): failureLogURL doesn't depend on step in Buildbot 0.9.
+        Return the Build Page URL for Buildbot Buildbot 0.9. Earlier code was also doing the same using a
+        confusing if (!this._firstFailedStep.logs) statement which is always false for Buildbot 0.9.
+
 2018-02-01  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Problem with Washington Post images
