@@ -1,0 +1,16 @@
+
+PASS createImageBitmap from an HTMLCanvasElement, and drawImage on the created ImageBitmap 
+FAIL createImageBitmap from an HTMLCanvasElement with negative sw/sh, and drawImage on the created ImageBitmap promise_test: Unhandled rejection with value: object "RangeError: Cannot create ImageBitmap with a negative width or height"
+FAIL createImageBitmap from an HTMLVideoElement, and drawImage on the created ImageBitmap promise_test: Unhandled rejection with value: object "TypeError: createImageBitmap with HTMLVideoElement is not implemented"
+FAIL createImageBitmap from an HTMLVideoElement with negative sw/sh, and drawImage on the created ImageBitmap promise_test: Unhandled rejection with value: object "RangeError: Cannot create ImageBitmap with a negative width or height"
+PASS createImageBitmap from an HTMLImageElement, and drawImage on the created ImageBitmap 
+FAIL createImageBitmap from an HTMLImageElement with negative sw/sh, and drawImage on the created ImageBitmap promise_test: Unhandled rejection with value: object "RangeError: Cannot create ImageBitmap with a negative width or height"
+FAIL createImageBitmap from an OffscreenCanvas, and drawImage on the created ImageBitmap promise_test: Unhandled rejection with value: object "TypeError: null is not an object (evaluating 'testCtx.fillStyle = "rgb(255, 0, 0)"')"
+FAIL createImageBitmap from an OffscreenCanvas with negative sw/sh, and drawImage on the created ImageBitmap promise_test: Unhandled rejection with value: object "TypeError: null is not an object (evaluating 'testCtx.fillStyle = "rgb(255, 0, 0)"')"
+FAIL createImageBitmap from an ImageData, and drawImage on the created ImageBitmap promise_test: Unhandled rejection with value: object "TypeError: createImageBitmap with ImageData is not implemented"
+FAIL createImageBitmap from an ImageData with negative sw/sh, and drawImage on the created ImageBitmap promise_test: Unhandled rejection with value: object "RangeError: Cannot create ImageBitmap with a negative width or height"
+PASS createImageBitmap from an ImageBitmap, and drawImage on the created ImageBitmap 
+FAIL createImageBitmap from an ImageBitmap with negative sw/sh, and drawImage on the created ImageBitmap promise_test: Unhandled rejection with value: object "RangeError: Cannot create ImageBitmap with a negative width or height"
+FAIL createImageBitmap from a Blob, and drawImage on the created ImageBitmap promise_test: Unhandled rejection with value: object "TypeError: createImageBitmap with ArrayBuffer or Blob is not implemented"
+FAIL createImageBitmap from a Blob with negative sw/sh, and drawImage on the created ImageBitmap promise_test: Unhandled rejection with value: object "RangeError: Cannot create ImageBitmap with a negative width or height"
+

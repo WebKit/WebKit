@@ -43,7 +43,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/common/large.py
 /LayoutTests/imported/w3c/web-platform-tests/common/media.js
 /LayoutTests/imported/w3c/web-platform-tests/common/media.js.headers
-/LayoutTests/imported/w3c/web-platform-tests/common/namespaces.js
 /LayoutTests/imported/w3c/web-platform-tests/common/object-association.js
 /LayoutTests/imported/w3c/web-platform-tests/common/object-association.js.headers
 /LayoutTests/imported/w3c/web-platform-tests/common/performance-timeline-utils.js
