@@ -21,14 +21,12 @@ description("Testing the <code>MacOSFullscreenMediaControls</code> computed styl
 window.jsTestIsAsync = true;
 
 const mediaControls = new MacOSFullscreenMediaControls;
+document.getElementById("container").appendChild(mediaControls.element);
 
 let style, bounds;
-scheduler.frameDidFire = function()
-{
-    document.getElementById("container").appendChild(mediaControls.element);
-
-    style = window.getComputedStyle(mediaControls.controlsBar.element);
-    bounds = mediaControls.controlsBar.element.getBoundingClientRect();
+shouldBecomeEqual("document.body.contains(mediaControls.bottomControlsBar.element)", "true", () => {
+    style = window.getComputedStyle(mediaControls.bottomControlsBar.element);
+    bounds = mediaControls.bottomControlsBar.element.getBoundingClientRect();
     
     shouldBeEqualToString("style.bottom", "25px");
     shouldBeEqualToString("style.width", "468px");
@@ -44,7 +42,7 @@ scheduler.frameDidFire = function()
 
     debug("");
     finishMediaControlsTest();
-};
+});
 
 </script>
 <script src="../../../resources/js-test-post.js"></script>

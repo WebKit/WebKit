@@ -12,7 +12,9 @@ const mediaControls = new MacOSFullscreenMediaControls;
 document.body.appendChild(mediaControls.element);
 
 shouldBecomeEqualToString("window.getComputedStyle(mediaControls.volumeSlider.element).left", "30px", () => {
-    shouldBeEqualToString("window.getComputedStyle(mediaControls.volumeSlider.element).top", "19px");
+    shouldBeEqualToString("window.getComputedStyle(mediaControls.volumeSlider.element).top", "0px");
+    shouldBeEqualToString("window.getComputedStyle(mediaControls.volumeSlider.element).width", "60px");
+    shouldBeEqualToString("window.getComputedStyle(mediaControls.volumeSlider.element).height", "16px");
     mediaControls.element.remove();
 
     debug("");

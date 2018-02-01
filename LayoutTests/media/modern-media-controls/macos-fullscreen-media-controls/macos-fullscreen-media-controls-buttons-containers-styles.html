@@ -28,21 +28,21 @@ description("Testing the <code>MacOSFullscreenMediaControls</code> computed styl
 window.jsTestIsAsync = true;
 
 const mediaControls = new MacOSFullscreenMediaControls;
-const centerContainer = mediaControls.controlsBar.children[2];
-const rightContainer = mediaControls.controlsBar.children[3];
-const buttons = centerContainer.buttons.concat(rightContainer.buttons);
+const centerContainer = mediaControls.bottomControlsBar.children[2];
+const rightContainer = mediaControls.bottomControlsBar.children[3];
+const buttons = centerContainer.children.concat(rightContainer.children);
 
 document.getElementById("container").appendChild(mediaControls.element);
 
 debug("");
 shouldBecomeEqual("centerContainer.element.getBoundingClientRect().width", "178", () => {
     shouldBe("centerContainer.element.getBoundingClientRect().left", "311");
-    shouldBe("centerContainer.element.getBoundingClientRect().top", "500");
+    shouldBe("centerContainer.element.getBoundingClientRect().top", "503");
     shouldBe("centerContainer.element.getBoundingClientRect().height", "44");
 
     debug("");
-    shouldBecomeEqual("Math.floor(rightContainer.element.getBoundingClientRect().width)", "138", () => {
-        shouldBeCloseTo("rightContainer.element.getBoundingClientRect().left", 496, 0.5);
+    shouldBecomeEqual("Math.floor(rightContainer.element.getBoundingClientRect().width)", "140", () => {
+        shouldBeCloseTo("rightContainer.element.getBoundingClientRect().left", 494, 0.5);
         shouldBe("rightContainer.element.getBoundingClientRect().top", "500");
         shouldBe("rightContainer.element.getBoundingClientRect().height", "44");
 
