@@ -1,3 +1,32 @@
+2018-01-31  Per Arne Vollan  <pvollan@apple.com>
+
+        Layout Test fast/events/beforeunload-dom-manipulation-crash.html is crashing
+        https://bugs.webkit.org/show_bug.cgi?id=181204
+        <rdar://problem/36256274>
+
+        Reviewed by Ryosuke Niwa.
+
+        When a frame element is moved in the DOM tree during the execution of a beforeunload handler,
+        the frame will be detached when removed from its previous position in the DOM tree. When being
+        detached, an attempt will also be made to stop the load by calling FrameLoader::stopAllLoaders().
+        However, this method will return early when executed in a beforeunload handler, since navigation
+        is not allowed then. The end result is a detached frame which will continue to load, and hitting
+        asserts in DocumentLoader::dataReceived(), and DocumentLoader::notifyFinished(). It should be
+        possible to stop a frame load, even when executing a beforeunload handler.
+
+        No new tests. Covered by the existing test fast/events/beforeunload-dom-manipulation-crash.html.
+
+        * history/PageCache.cpp:
+        (WebCore::PageCache::addIfCacheable): Fix a failing API test by allowing scripts to be executed
+        under the PageCache::prune method.
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::isStopLoadingAllowed const):
+        (WebCore::FrameLoader::stopAllLoaders):
+        * loader/FrameLoader.h:
+        * svg/graphics/SVGImage.cpp:
+        (WebCore::SVGImage::~SVGImage): Disable scripts disallowed assertions in this scope, since it is
+        safe in this context.
+
 2018-01-31  Javier Fernandez  <jfernandez@igalia.com>
 
         inline-block baseline not computed correctly for vertical-lr

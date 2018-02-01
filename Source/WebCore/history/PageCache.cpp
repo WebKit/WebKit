@@ -431,13 +431,14 @@ void PageCache::addIfCacheable(HistoryItem& item, Page* page)
 
     setPageCacheState(*page, Document::InPageCache);
 
-    // Make sure we no longer fire any JS events past this point.
-    ScriptDisallowedScope::InMainThread scriptDisallowedScope;
+    {
+        // Make sure we don't fire any JS events in this scope.
+        ScriptDisallowedScope::InMainThread scriptDisallowedScope;
 
-    item.m_cachedPage = std::make_unique<CachedPage>(*page);
-    item.m_pruningReason = PruningReason::None;
-    m_items.add(&item);
-    
+        item.m_cachedPage = std::make_unique<CachedPage>(*page);
+        item.m_pruningReason = PruningReason::None;
+        m_items.add(&item);
+    }
     prune(PruningReason::ReachedMaxSize);
 }
 
