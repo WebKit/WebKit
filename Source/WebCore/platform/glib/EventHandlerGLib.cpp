@@ -128,14 +128,19 @@ OptionSet<PlatformEvent::Modifier> EventHandler::accessKeyModifiers()
 // horizontal scrollbar while scrolling with the wheel; we need to
 // add the deltas and ticks here so that this behavior is consistent
 // for styled scrollbars.
-bool EventHandler::shouldTurnVerticalTicksIntoHorizontal(const HitTestResult& result, const PlatformWheelEvent& event) const
+bool EventHandler::shouldSwapScrollDirection(const HitTestResult& result, const PlatformWheelEvent& event) const
 {
 #if PLATFORM(GTK)
     FrameView* view = m_frame.view();
     Scrollbar* scrollbar = view ? view->scrollbarAtPoint(event.position()) : nullptr;
     if (!scrollbar)
         scrollbar = result.scrollbar();
-    return scrollbar && scrollbar->orientation() == HorizontalScrollbar;
+    if (!scrollbar)
+        return false;
+
+    // The directions are already swapped when shift key is pressed, but when scrolling
+    // over scrollbars we always want to follow the scrollbar direction.
+    return scrollbar->orientation() == HorizontalScrollbar ? !event.shiftKey() : event.shiftKey();
 #else
     UNUSED_PARAM(result);
     UNUSED_PARAM(event);

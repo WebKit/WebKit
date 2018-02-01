@@ -1,5 +1,28 @@
 2018-02-01  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] Shift + mouse scroll should scroll horizontally
+        https://bugs.webkit.org/show_bug.cgi?id=181629
+
+        Reviewed by Michael Catanzaro.
+
+        We currently turn vertical scroll into horizontal when scrolling over the horizontal scrollbar. When Shift key is
+        pressed, we still want to scroll in the scrollbar direction when scrolling over a scrollbar, so we need to swap
+        directions in both scrollbars depending on whther the Shift key is pressed or not.
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::shouldSwapScrollDirection const): Renamed.
+        (WebCore::EventHandler::handleWheelEvent): Use the new name.
+        (WebCore::EventHandler::shouldTurnVerticalTicksIntoHorizontal const): Deleted.
+        * page/EventHandler.h:
+        * platform/PlatformWheelEvent.h:
+        (WebCore::PlatformWheelEvent::copySwappingDirection const): Swap the direction of the event.
+        (WebCore::PlatformWheelEvent::copyTurningVerticalTicksIntoHorizontalTicks const): Deleted.
+        * platform/glib/EventHandlerGLib.cpp:
+        (WebCore::EventHandler::shouldSwapScrollDirection const): Take into account whether the Shift key is present.
+        (WebCore::EventHandler::shouldTurnVerticalTicksIntoHorizontal const): Deleted.
+
+2018-02-01  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] Problem with Washington Post images
         https://bugs.webkit.org/show_bug.cgi?id=181421
 

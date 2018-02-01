@@ -384,7 +384,7 @@ private:
 
     bool logicalScrollOverflow(ScrollLogicalDirection, ScrollGranularity, Node* startingNode = nullptr);
     
-    bool shouldTurnVerticalTicksIntoHorizontal(const HitTestResult&, const PlatformWheelEvent&) const;
+    bool shouldSwapScrollDirection(const HitTestResult&, const PlatformWheelEvent&) const;
     
     bool mouseDownMayStartSelect() const { return m_mouseDownMayStartSelect; }
 

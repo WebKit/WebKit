@@ -1,5 +1,17 @@
 2018-02-01  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] Shift + mouse scroll should scroll horizontally
+        https://bugs.webkit.org/show_bug.cgi?id=181629
+
+        Reviewed by Michael Catanzaro.
+
+        Swap scroll direction when Shift is pressed for consistency with GtkScrolledWindow.
+
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewBaseScrollEvent):
+
+2018-02-01  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         REGRESSION(r227893): fast/events/touch/touch-stale-node-crash.html and other tests crash
         https://bugs.webkit.org/show_bug.cgi?id=182350
 

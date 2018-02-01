@@ -830,6 +830,27 @@ static gboolean webkitWebViewBaseScrollEvent(GtkWidget* widget, GdkEventScroll* 
     if (priv->authenticationDialog)
         return GDK_EVENT_PROPAGATE;
 
+    // Shift+Wheel scrolls in the perpendicular direction.
+    if (event->state & GDK_SHIFT_MASK) {
+        switch (event->direction) {
+        case GDK_SCROLL_UP:
+            event->direction = GDK_SCROLL_LEFT;
+            break;
+        case GDK_SCROLL_LEFT:
+            event->direction = GDK_SCROLL_UP;
+            break;
+        case GDK_SCROLL_DOWN:
+            event->direction = GDK_SCROLL_RIGHT;
+            break;
+        case GDK_SCROLL_RIGHT:
+            event->direction = GDK_SCROLL_DOWN;
+            break;
+        case GDK_SCROLL_SMOOTH:
+            std::swap(event->delta_x, event->delta_y);
+            break;
+        }
+    }
+
     webkitWebViewBaseHandleWheelEvent(webViewBase, reinterpret_cast<GdkEvent*>(event));
 
     return GDK_EVENT_STOP;

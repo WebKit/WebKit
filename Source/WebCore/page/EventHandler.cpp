@@ -2639,7 +2639,7 @@ bool EventHandler::isInsideScrollbar(const IntPoint& windowPoint) const
 
 #if !PLATFORM(GTK) && !PLATFORM(WPE)
 
-bool EventHandler::shouldTurnVerticalTicksIntoHorizontal(const HitTestResult&, const PlatformWheelEvent&) const
+bool EventHandler::shouldSwapScrollDirection(const HitTestResult&, const PlatformWheelEvent&) const
 {
     return false;
 }
@@ -2783,10 +2783,7 @@ bool EventHandler::handleWheelEvent(const PlatformWheelEvent& event)
 
     // FIXME: It should not be necessary to do this mutation here.
     // Instead, the handlers should know convert vertical scrolls appropriately.
-    PlatformWheelEvent adjustedEvent = event;
-    if (shouldTurnVerticalTicksIntoHorizontal(result, event))
-        adjustedEvent = event.copyTurningVerticalTicksIntoHorizontalTicks();
-
+    PlatformWheelEvent adjustedEvent = shouldSwapScrollDirection(result, event) ? event.copySwappingDirection() : event;
     platformRecordWheelEvent(adjustedEvent);
 
     if (element) {
