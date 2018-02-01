@@ -40,8 +40,7 @@
     }
 
     function fireShouldPartitionCookiesHandlerAndContinue() {
-        testRunner.statisticsUpdateCookiePartitioning();
-        runTest();
+        testRunner.statisticsUpdateCookiePartitioning(runTest);
     }
 
     function setShortCookiePartitioningTimeOutPlusFireShouldPartitionCookiesHandlerAndContinue() {

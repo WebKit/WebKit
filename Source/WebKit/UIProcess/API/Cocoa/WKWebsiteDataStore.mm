@@ -497,23 +497,43 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
 
 - (void)_resourceLoadStatisticsUpdateCookiePartitioning
 {
-    auto* store = _websiteDataStore->websiteDataStore().resourceLoadStatistics();
-    if (!store)
-        return;
+    [self _resourceLoadStatisticsUpdateCookiePartitioning:^() { }];
+}
 
-    store->scheduleCookiePartitioningUpdate();
+- (void)_resourceLoadStatisticsUpdateCookiePartitioning:(void (^)())completionHandler
+{
+    auto* store = _websiteDataStore->websiteDataStore().resourceLoadStatistics();
+    if (!store) {
+        completionHandler();
+        return;
+    }
+    
+    store->scheduleCookiePartitioningUpdate([completionHandler = makeBlockPtr(completionHandler)]() {
+        completionHandler();
+    });
 }
 
 - (void)_resourceLoadStatisticsSetShouldPartitionCookies:(BOOL)value forHost:(NSString *)host
 {
+    [self _resourceLoadStatisticsSetShouldPartitionCookies:value forHost:host completionHandler:^() { }];
+}
+
+- (void)_resourceLoadStatisticsSetShouldPartitionCookies:(BOOL)value forHost:(NSString *)host completionHandler:(void (^)())completionHandler
+{
     auto* store = _websiteDataStore->websiteDataStore().resourceLoadStatistics();
-    if (!store)
+    if (!store) {
+        completionHandler();
         return;
+    }
 
     if (value)
-        store->scheduleCookiePartitioningUpdateForDomains({ host }, { }, { }, WebKit::ShouldClearFirst::No);
+        store->scheduleCookiePartitioningUpdateForDomains({ host }, { }, { }, WebKit::ShouldClearFirst::No, [completionHandler = makeBlockPtr(completionHandler)]() {
+            completionHandler();
+        });
     else
-        store->scheduleClearPartitioningStateForDomains({ host });
+        store->scheduleClearPartitioningStateForDomains({ host }, [completionHandler = makeBlockPtr(completionHandler)]() {
+            completionHandler();
+        });
 }
 
 - (void)_resourceLoadStatisticsSubmitTelemetry

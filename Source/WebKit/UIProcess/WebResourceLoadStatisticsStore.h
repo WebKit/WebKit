@@ -106,9 +106,9 @@ public:
     void setSubframeUnderTopFrameOrigin(const WebCore::URL& subframe, const WebCore::URL& topFrame);
     void setSubresourceUnderTopFrameOrigin(const WebCore::URL& subresource, const WebCore::URL& topFrame);
     void setSubresourceUniqueRedirectTo(const WebCore::URL& subresource, const WebCore::URL& hostNameRedirectedTo);
-    void scheduleCookiePartitioningUpdate();
-    void scheduleCookiePartitioningUpdateForDomains(const Vector<String>& domainsToPartition, const Vector<String>& domainsToBlock, const Vector<String>& domainsToNeitherPartitionNorBlock, ShouldClearFirst);
-    void scheduleClearPartitioningStateForDomains(const Vector<String>& domains);
+    void scheduleCookiePartitioningUpdate(CompletionHandler<void()>&&);
+    void scheduleCookiePartitioningUpdateForDomains(const Vector<String>& domainsToPartition, const Vector<String>& domainsToBlock, const Vector<String>& domainsToNeitherPartitionNorBlock, ShouldClearFirst, CompletionHandler<void()>&&);
+    void scheduleClearPartitioningStateForDomains(const Vector<String>& domains, CompletionHandler<void()>&&);
     void scheduleStatisticsAndDataRecordsProcessing();
     void submitTelemetry();
     void scheduleCookiePartitioningStateReset();
@@ -162,9 +162,9 @@ private:
     bool hasHadUnexpiredRecentUserInteraction(WebCore::ResourceLoadStatistics&) const;
     void includeTodayAsOperatingDateIfNecessary();
     Vector<String> topPrivatelyControlledDomainsToRemoveWebsiteDataFor();
-    void updateCookiePartitioning();
-    void updateCookiePartitioningForDomains(const Vector<String>& domainsToPartition, const Vector<String>& domainsToBlock, const Vector<String>& domainsToNeitherPartitionNorBlock, ShouldClearFirst);
-    void clearPartitioningStateForDomains(const Vector<String>& domains);
+    void updateCookiePartitioning(CompletionHandler<void()>&&);
+    void updateCookiePartitioningForDomains(const Vector<String>& domainsToPartition, const Vector<String>& domainsToBlock, const Vector<String>& domainsToNeitherPartitionNorBlock, ShouldClearFirst, CompletionHandler<void()>&&);
+    void clearPartitioningStateForDomains(const Vector<String>& domains, CompletionHandler<void()>&&);
     void mergeStatistics(Vector<WebCore::ResourceLoadStatistics>&&);
     WebCore::ResourceLoadStatistics& ensureResourceStatisticsForPrimaryDomain(const String&);
     void processStatisticsAndDataRecords();

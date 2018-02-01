@@ -367,8 +367,9 @@ public:
     void statisticsDidRunTelemetryCallback(unsigned totalPrevalentResources, unsigned totalPrevalentResourcesWithUserInteraction, unsigned top3SubframeUnderTopFrameOrigins);
     void statisticsNotifyObserver();
     void statisticsProcessStatisticsAndDataRecords();
-    void statisticsUpdateCookiePartitioning();
-    void statisticsSetShouldPartitionCookiesForHost(JSStringRef hostName, bool value);
+    void statisticsUpdateCookiePartitioning(JSValueRef callback);
+    void statisticsSetShouldPartitionCookiesForHost(JSStringRef hostName, bool value, JSValueRef callback);
+    void statisticsCallDidSetPartitionOrBlockCookiesForHostCallback();
     void statisticsSubmitTelemetry();
     void setStatisticsLastSeen(JSStringRef hostName, double seconds);
     void setStatisticsPrevalentResource(JSStringRef hostName, bool value);
