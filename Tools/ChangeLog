@@ -1,5 +1,17 @@
 2018-02-01  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] Problem with Washington Post images
+        https://bugs.webkit.org/show_bug.cgi?id=181421
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        Add test case for the new user agent quirk.
+
+        * TestWebKitAPI/Tests/WebCore/UserAgentQuirks.cpp:
+        (TestWebKitAPI::TEST):
+
+2018-02-01  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] MiniBrowser settings are just a list of names
         https://bugs.webkit.org/show_bug.cgi?id=182005
 

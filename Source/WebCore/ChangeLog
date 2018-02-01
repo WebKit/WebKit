@@ -1,5 +1,20 @@
 2018-02-01  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] Problem with Washington Post images
+        https://bugs.webkit.org/show_bug.cgi?id=181421
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        This is because Washington Post is using the user agent to decide the image formats it serves. In the case of
+        chromium the images are served as webp, for firefox jpeg is used and in our case it's assuming we are safari and
+        it's providing jp2 images that we don't support. Add a user agent quirk to pretend to be chromium for
+        washingtonpost.com.
+
+        * platform/UserAgentQuirks.cpp:
+        (WebCore::urlRequiresChromeBrowser):
+
+2018-02-01  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [SOUP] Ensure domain is valid when converting a WebCore Cookie to Soup
         https://bugs.webkit.org/show_bug.cgi?id=182328
 
