@@ -1,3 +1,20 @@
+2018-02-01  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [SOUP] Ensure domain is valid when converting a WebCore Cookie to Soup
+        https://bugs.webkit.org/show_bug.cgi?id=182328
+
+        Reviewed by Michael Catanzaro.
+
+        soup_cookie_parse() adds the initial '.' to the domain if missing before creating the SoupCookie, but
+        soup_cookie_new() allows for domain to be a hostname that needs to match exactly. When converting a WebCore
+        Cookie into a SoupCookie we always want the domain to be considered as such and not as a hostname, so we need to
+        prepend the '.' if missing.
+
+        Fixes: imported/w3c/webdriver/tests/cookies/add_cookie.py::test_add_domain_cookie
+
+        * platform/network/soup/CookieSoup.cpp:
+        (WebCore::Cookie::toSoupCookie const):
+
 2018-02-01  Zalan Bujtas  <zalan@apple.com>
 
         [RenderTreeBuilder] Move RenderTableRow::collapseAndDestroyAnonymousSiblingRows to RenderTreeBuilder
