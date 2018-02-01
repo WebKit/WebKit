@@ -8,7 +8,7 @@ Visit [WebKit Feature Status](https://webkit.org/status/) page to see which Web 
 
 ## Trying the Latest
 
-[Downloading Safari Technology Preview](https://webkit.org/downloads/) to test the latest version of WebKit.
+On macOS, [download Safari Technology Preview](https://webkit.org/downloads/) to test the latest version of WebKit. On Linux, download [Epiphany Technology Preview](https://webkitgtk.org/epiphany-tech-preview). On Windows, you'll have to build it yourself.
 
 ## Reporting Bugs
 
@@ -40,7 +40,7 @@ For information about this, and other aspects of using Git with WebKit, read [th
 
 ### Checking out the Subversion Repository
 
-Run the following command to check out WebKit's subversion repository:
+If you don't want to use Git, run the following command to check out WebKit's Subversion repository:
 
 ```
 svn checkout https://svn.webkit.org/repository/webkit/trunk WebKit
@@ -48,7 +48,7 @@ svn checkout https://svn.webkit.org/repository/webkit/trunk WebKit
 
 ## Building WebKit
 
-### Building Mac Port
+### Building macOS Port
 
 Install Xcode and its command line tools if you haven't done so already:
 
@@ -74,7 +74,7 @@ If you don't use a custom build location in Xcode preferences, you have to updat
 The first time after you install a new Xcode, you will need to run the following command to enable Xcode to build command line tools for iOS Simulator:
 
 ```
- sudo Tools/Scripts/configure-xcode-for-ios-development
+sudo Tools/Scripts/configure-xcode-for-ios-development
 ```
 
 Without this step, you will see the error message: "`target specifies product type ‘com.apple.product-type.tool’, but there’s no such product type for the ‘iphonesimulator’ platform.`" when building target `JSCLLIntOffsetsExtractor` of project `JavaScriptCore`.
@@ -85,26 +85,43 @@ Run the following command to build a debug build with debugging symbols and asse
 Tools/Scripts/build-webkit --debug --ios-simulator.
 ```
 
-### Building GTK+ Port
+### Building the GTK+ Port
 
-Install the dependencies by running the following command:
+For production builds:
+
+```
+cmake -DPORT=GTK -DCMAKE_BUILD_TYPE=RelWithDebInfo -GNinja
+ninja
+sudo ninja install
+```
+
+For development builds:
+
 ```
 Tools/gtk/install-dependencies
-```
-
-Then run the following command to build additional dependencies:
-```
 Tools/Scripts/update-webkitgtk-libs
+Tools/Scripts/build-webkit --gtk --debug
 ```
 
-Run the following command to build WebKit with debugging symbols for GTK+ port:
+For more information on building WebKitGTK+, see the [wiki page](https://trac.webkit.org/wiki/BuildingGtk).
+
+### Building the WPE Port
+
+For production builds:
 
 ```
-Tools/Scripts/build-webkit --debug --gtk
+cmake -DPORT=WPE -DCMAKE_BUILD_TYPE=RelWithDebInfo -GNinja
+ninja
+sudo ninja install
 ```
 
-Note that the procedure for building a release tarball is different.
-For more information, see the [wiki page](https://trac.webkit.org/wiki/BuildingGtk).
+For development builds:
+
+```
+Tools/wpe/install-dependencies
+Tools/Scripts/update-webkitwpe-libs
+Tools/Scripts/build-webkit --wpe --debug
+```
 
 ### Building Windows Port
 
@@ -137,6 +154,16 @@ run-safari --debug --ios-simulator
 ```
 
 In both cases, if you have built release builds instead, use `--release` instead of `--debug`.
+
+### Linux Ports
+
+If you have a development build, you can use the run-minibrowser script, e.g.:
+
+```
+run-minibrowser --debug --wpe
+```
+
+Pass one of `--gtk`, `--jsc-only`, or `--wpe` to indicate the port to use.
 
 ## Contribute
 

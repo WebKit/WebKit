@@ -1,3 +1,16 @@
+2018-01-31  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Update ReadMe.md
+        https://bugs.webkit.org/show_bug.cgi?id=182314
+
+        Reviewed by Alex Christensen.
+
+        Add download link for Epiphany Technology Preview. Improve build instructions for GTK. Add
+        build instructions for WPE. Add instructions to run MiniBrowser on Linux. Miscellaneous
+        typographical adjustments.
+
+        * ReadMe.md:
+
 2018-01-30  Sergio Villar Senin  <svillar@igalia.com>
 
         [WebVR][GTK][WPE] Exclude OpenVR from tarballs
