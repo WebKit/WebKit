@@ -1,3 +1,14 @@
+2018-02-01  Ms2ger  <Ms2ger@igalia.com>
+
+        [WPE] Update test expectations for r227958
+        https://bugs.webkit.org/show_bug.cgi?id=182391
+
+        Unreviewed test gardening.
+
+        * platform/wpe/imported/w3c/web-platform-tests/2dcontext/imagebitmap/createImageBitmap-drawImage-expected.txt: Removed.
+        * platform/wpe/imported/w3c/web-platform-tests/2dcontext/imagebitmap/createImageBitmap-invalid-args-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/2dcontext/imagebitmap/createImageBitmap-origin.sub-expected.txt: Added.
+
 2018-02-01  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Structured cloning a Symbol should throw
