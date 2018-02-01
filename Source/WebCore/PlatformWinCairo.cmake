@@ -4,7 +4,6 @@ include(platform/ImageDecoders.cmake)
 include(platform/TextureMapper.cmake)
 
 list(APPEND WebCore_INCLUDE_DIRECTORIES
-    "${FORWARDING_HEADERS_DIR}/JavaScriptCore"
     "${DirectX_INCLUDE_DIRS}"
     "${WEBKIT_LIBRARIES_DIR}/include"
     "${WEBCORE_DIR}/loader/archive/cf"

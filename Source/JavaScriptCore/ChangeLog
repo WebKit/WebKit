@@ -1,3 +1,19 @@
+2018-01-31  Don Olmstead  <don.olmstead@sony.com>
+
+        [CMake] Make JavaScriptCore headers copies
+        https://bugs.webkit.org/show_bug.cgi?id=182303
+
+        Reviewed by Alex Christensen.
+
+        * CMakeLists.txt:
+        * PlatformGTK.cmake:
+        * PlatformJSCOnly.cmake:
+        * PlatformMac.cmake:
+        * PlatformWPE.cmake:
+        * PlatformWin.cmake:
+        * shell/CMakeLists.txt:
+        * shell/PlatformWin.cmake:
+
 2018-01-31  Saam Barati  <sbarati@apple.com>
 
         Replace tryLargeMemalignVirtual with tryLargeZeroedMemalignVirtual and use it to allocate large zeroed memory in Wasm

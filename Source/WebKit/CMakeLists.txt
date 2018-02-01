@@ -86,6 +86,7 @@ set(WebKit_INCLUDE_DIRECTORIES
     "${WEBKIT_DIR}/WebProcess/WebStorage"
     "${DERIVED_SOURCES_WEBKIT_DIR}"
     "${DERIVED_SOURCES_WEBKIT_DIR}/include"
+    "${CMAKE_SOURCE_DIR}/Source"
     "${CMAKE_SOURCE_DIR}/WebKitLibraries"
 )
 

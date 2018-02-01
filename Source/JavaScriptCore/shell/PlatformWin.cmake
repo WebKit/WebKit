@@ -1,4 +1,4 @@
-include_directories(./ ${JavaScriptCore_INCLUDE_DIRECTORIES})
+include_directories(./ PRIVATE ${JavaScriptCore_INCLUDE_DIRECTORIES} ${JavaScriptCore_PRIVATE_INCLUDE_DIRECTORIES})
 include_directories(SYSTEM ${JavaScriptCore_SYSTEM_INCLUDE_DIRECTORIES})
 add_library(jscLib SHARED ${JSC_SOURCES})
 

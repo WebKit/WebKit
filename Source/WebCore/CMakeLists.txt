@@ -18,6 +18,7 @@ list(APPEND WebCore_UNIFIED_SOURCE_LIST_FILES
 set(WebCore_INCLUDE_DIRECTORIES
     "${CMAKE_BINARY_DIR}"
     "${WEBCORE_DIR}"
+    "${WEBCORE_DIR}/ForwardingHeaders"
     "${WEBCORE_DIR}/Modules/airplay"
     "${WEBCORE_DIR}/Modules/beacon"
     "${WEBCORE_DIR}/Modules/applepay"
@@ -143,7 +144,6 @@ set(WebCore_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/xml/parser"
     "${DERIVED_SOURCES_WEBCORE_DIR}"
     "${PAL_DIR}"
-    "${CMAKE_SOURCE_DIR}/Source"
 )
 
 set(WebCore_SYSTEM_INCLUDE_DIRECTORIES

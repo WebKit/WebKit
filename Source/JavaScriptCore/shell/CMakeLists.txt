@@ -34,7 +34,7 @@ WEBKIT_INCLUDE_CONFIG_FILES_IF_EXISTS()
 
 WEBKIT_WRAP_SOURCELIST(${JSC_SOURCES})
 WEBKIT_WRAP_SOURCELIST(${TESTAPI_SOURCES})
-include_directories(./ ${JavaScriptCore_INCLUDE_DIRECTORIES})
+include_directories(./ ${JavaScriptCore_INCLUDE_DIRECTORIES} ${JavaScriptCore_PRIVATE_INCLUDE_DIRECTORIES})
 include_directories(SYSTEM ${JavaScriptCore_SYSTEM_INCLUDE_DIRECTORIES})
 add_executable(jsc ${JSC_SOURCES})
 target_link_libraries(jsc ${JSC_LIBRARIES})

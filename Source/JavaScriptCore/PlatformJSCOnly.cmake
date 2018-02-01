@@ -8,9 +8,3 @@ if (USE_GLIB)
         ${GLIB_LIBRARIES}
     )
 endif ()
-
-if (APPLE)
-    list(APPEND JavaScriptCore_INCLUDE_DIRECTORIES
-        ${JAVASCRIPTCORE_DIR}/icu
-    )
-endif ()
