@@ -41,14 +41,22 @@ void* tryMalloc(Kind, size_t size)
     return FastMalloc::tryMalloc(size);
 }
 
-void* tryAllocateVirtualPages(Kind, size_t size)
+void* tryAllocateZeroedVirtualPages(Kind, size_t size)
 {
-    return OSAllocator::reserveUncommitted(size);
+    size = roundUpToMultipleOf(WTF::pageSize(), size);
+    void* result = OSAllocator::reserveAndCommit(size);
+#if !ASSERT_DISABLED
+    if (result) {
+        for (size_t i = 0; i < size / sizeof(uintptr_t); ++i)
+            ASSERT(static_cast<uintptr_t*>(result)[i] == 0);
+    }
+#endif
+    return result;
 }
 
 void freeVirtualPages(Kind, void* basePtr, size_t size)
 {
-    OSAllocator::releaseDecommitted(basePtr, size);
+    OSAllocator::decommitAndRelease(basePtr, size);
 }
 
 } // namespace Gigacage
@@ -93,9 +101,9 @@ void free(Kind kind, void* p)
     WTF::compilerFence();
 }
 
-void* tryAllocateVirtualPages(Kind kind, size_t size)
+void* tryAllocateZeroedVirtualPages(Kind kind, size_t size)
 {
-    void* result = bmalloc::api::tryLargeMemalignVirtual(WTF::pageSize(), size, bmalloc::heapKind(kind));
+    void* result = bmalloc::api::tryLargeZeroedMemalignVirtual(WTF::pageSize(), size, bmalloc::heapKind(kind));
     WTF::compilerFence();
     return result;
 }

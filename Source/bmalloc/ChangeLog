@@ -1,3 +1,47 @@
+2018-01-31  Saam Barati  <sbarati@apple.com>
+
+        Replace tryLargeMemalignVirtual with tryLargeZeroedMemalignVirtual and use it to allocate large zeroed memory in Wasm
+        https://bugs.webkit.org/show_bug.cgi?id=182064
+        <rdar://problem/36840132>
+
+        Reviewed by Geoffrey Garen.
+
+        This patch replaces the tryLargeMemalignVirtual API with tryLargeZeroedMemalignVirtual.
+        By doing that, we're able to remove the AllocationKind enum. To zero the memory,
+        tryLargeZeroedMemalignVirtual uses mmap(... MAP_ANON ...) over previously mmapped
+        memory. This both purges the any resident memory for the virtual range and ensures
+        that the pages in the range are zeroed. Most OSs should implement this by taking a
+        page fault and zero filling on first access. Therefore, this API is returning pages
+        that will result in page faults on first access. Hence, the name 'virtual' in the API.
+        This API differs from the old API in that users of it need not call madvise themselves.
+        The memory is ready to go.
+
+        * bmalloc.xcodeproj/project.pbxproj:
+        * bmalloc/AllocationKind.h: Removed.
+        * bmalloc/DebugHeap.cpp:
+        (bmalloc::DebugHeap::memalignLarge):
+        (bmalloc::DebugHeap::freeLarge):
+        * bmalloc/DebugHeap.h:
+        * bmalloc/Heap.cpp:
+        (bmalloc::Heap::splitAndAllocate):
+        (bmalloc::Heap::tryAllocateLarge):
+        (bmalloc::Heap::allocateLarge):
+        (bmalloc::Heap::shrinkLarge):
+        (bmalloc::Heap::deallocateLarge):
+        * bmalloc/Heap.h:
+        * bmalloc/IsoPage.cpp:
+        (bmalloc::IsoPageBase::allocatePageMemory):
+        * bmalloc/VMAllocate.h:
+        (bmalloc::vmZeroAndPurge):
+        * bmalloc/VMHeap.cpp:
+        (bmalloc::VMHeap::tryAllocateLargeChunk):
+        * bmalloc/VMHeap.h:
+        * bmalloc/bmalloc.cpp:
+        (bmalloc::api::tryLargeZeroedMemalignVirtual):
+        (bmalloc::api::freeLargeVirtual):
+        (bmalloc::api::tryLargeMemalignVirtual): Deleted.
+        * bmalloc/bmalloc.h:
+
 2018-01-19  Keith Miller  <keith_miller@apple.com>
 
         HaveInternalSDK includes should be "#include?"

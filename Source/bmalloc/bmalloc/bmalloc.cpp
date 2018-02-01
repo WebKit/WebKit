@@ -39,12 +39,26 @@ void freeOutOfLine(void* object, HeapKind kind)
     free(object, kind);
 }
 
-void* tryLargeMemalignVirtual(size_t alignment, size_t size, HeapKind kind)
+void* tryLargeZeroedMemalignVirtual(size_t alignment, size_t size, HeapKind kind)
 {
+    BASSERT(isPowerOfTwo(alignment));
+
+    size_t pageSize = vmPageSize();
+    alignment = roundUpToMultipleOf(pageSize, alignment);
+    size = roundUpToMultipleOf(pageSize, size);
+
     kind = mapToActiveHeapKind(kind);
     Heap& heap = PerProcess<PerHeapKind<Heap>>::get()->at(kind);
-    std::lock_guard<StaticMutex> lock(Heap::mutex());
-    return heap.tryAllocateLarge(lock, alignment, size, AllocationKind::Virtual);
+
+    void* result;
+    {
+        std::lock_guard<StaticMutex> lock(Heap::mutex());
+        result = heap.tryAllocateLarge(lock, alignment, size);
+    }
+
+    if (result)
+        vmZeroAndPurge(result, size);
+    return result;
 }
 
 void freeLargeVirtual(void* object, HeapKind kind)
@@ -52,7 +66,7 @@ void freeLargeVirtual(void* object, HeapKind kind)
     kind = mapToActiveHeapKind(kind);
     Heap& heap = PerProcess<PerHeapKind<Heap>>::get()->at(kind);
     std::lock_guard<StaticMutex> lock(Heap::mutex());
-    heap.deallocateLarge(lock, object, AllocationKind::Virtual);
+    heap.deallocateLarge(lock, object);
 }
 
 void scavenge()

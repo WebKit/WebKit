@@ -26,7 +26,6 @@
 #ifndef Heap_h
 #define Heap_h
 
-#include "AllocationKind.h"
 #include "BumpRange.h"
 #include "Chunk.h"
 #include "HeapKind.h"
@@ -67,9 +66,9 @@ public:
     void derefSmallLine(std::lock_guard<StaticMutex>&, Object, LineCache&);
     void deallocateLineCache(std::lock_guard<StaticMutex>&, LineCache&);
 
-    void* allocateLarge(std::lock_guard<StaticMutex>&, size_t alignment, size_t, AllocationKind = AllocationKind::Physical);
-    void* tryAllocateLarge(std::lock_guard<StaticMutex>&, size_t alignment, size_t, AllocationKind = AllocationKind::Physical);
-    void deallocateLarge(std::lock_guard<StaticMutex>&, void*, AllocationKind = AllocationKind::Physical);
+    void* allocateLarge(std::lock_guard<StaticMutex>&, size_t alignment, size_t);
+    void* tryAllocateLarge(std::lock_guard<StaticMutex>&, size_t alignment, size_t);
+    void deallocateLarge(std::lock_guard<StaticMutex>&, void*);
 
     bool isLarge(std::lock_guard<StaticMutex>&, void*);
     size_t largeSize(std::lock_guard<StaticMutex>&, void*);
@@ -110,7 +109,7 @@ private:
     void mergeLargeLeft(EndTag*&, BeginTag*&, Range&, bool& inVMHeap);
     void mergeLargeRight(EndTag*&, BeginTag*&, Range&, bool& inVMHeap);
 
-    LargeRange splitAndAllocate(LargeRange&, size_t alignment, size_t, AllocationKind);
+    LargeRange splitAndAllocate(LargeRange&, size_t alignment, size_t);
 
     HeapKind m_kind;
     

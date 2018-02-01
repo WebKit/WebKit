@@ -25,7 +25,6 @@
 
 #pragma once
 
-#include "AllocationKind.h"
 #include "StaticMutex.h"
 #include <mutex>
 #include <unordered_map>
@@ -45,8 +44,8 @@ public:
     void* realloc(void*, size_t);
     void free(void*);
     
-    void* memalignLarge(size_t alignment, size_t, AllocationKind);
-    void freeLarge(void* base, AllocationKind);
+    void* memalignLarge(size_t alignment, size_t);
+    void freeLarge(void* base);
 
 private:
 #if BOS(DARWIN)

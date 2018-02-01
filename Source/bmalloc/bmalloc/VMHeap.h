@@ -26,7 +26,6 @@
 #ifndef VMHeap_h
 #define VMHeap_h
 
-#include "AllocationKind.h"
 #include "Chunk.h"
 #include "FixedVector.h"
 #include "HeapKind.h"
@@ -49,7 +48,7 @@ class VMHeap {
 public:
     VMHeap(std::lock_guard<StaticMutex>&);
     
-    LargeRange tryAllocateLargeChunk(size_t alignment, size_t, AllocationKind);
+    LargeRange tryAllocateLargeChunk(size_t alignment, size_t);
 };
 
 } // namespace bmalloc
