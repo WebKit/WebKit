@@ -126,7 +126,8 @@ static void browser_settings_dialog_init(BrowserSettingsDialog *dialog)
     GtkBox *contentArea = GTK_BOX(gtk_dialog_get_content_area(GTK_DIALOG(dialog)));
     gtk_box_set_spacing(contentArea, 2);
 
-    gtk_window_set_default_size(GTK_WINDOW(dialog), 400, 300);
+    gtk_window_set_default_size(GTK_WINDOW(dialog), 600, 400);
+    gtk_window_set_type_hint(GTK_WINDOW(dialog), GDK_WINDOW_TYPE_HINT_DIALOG);
     gtk_window_set_title(GTK_WINDOW(dialog), "WebKit View Settings");
     gtk_window_set_destroy_with_parent(GTK_WINDOW(dialog), TRUE);
     gtk_container_set_border_width(GTK_CONTAINER(dialog), 5);
@@ -160,6 +161,8 @@ static void browser_settings_dialog_init(BrowserSettingsDialog *dialog)
 
 static void browserSettingsDialogConstructed(GObject *object)
 {
+    G_OBJECT_CLASS(browser_settings_dialog_parent_class)->constructed(object);
+
     BrowserSettingsDialog *dialog = BROWSER_SETTINGS_DIALOG(object);
     WebKitSettings *settings = dialog->settings;
     GtkListStore *model = gtk_list_store_new(SETTINGS_LIST_N_COLUMNS, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING,

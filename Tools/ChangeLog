@@ -1,3 +1,17 @@
+2018-02-01  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] MiniBrowser settings are just a list of names
+        https://bugs.webkit.org/show_bug.cgi?id=182005
+
+        Reviewed by Sergio Villar Senin.
+
+        The default size we are using is too small to show the values column, and the window is not resizable because
+        GObjectClass::constructed() is not called in the parent class.
+
+        * MiniBrowser/gtk/BrowserSettingsDialog.c:
+        (browser_settings_dialog_init): Use 600x400 as default size.
+        (browserSettingsDialogConstructed): Chain up to parent constructed.
+
 2018-01-31  Andres Gomez  <agomez@igalia.com>
 
         Unreviewed. Remove WebInspectorUI watchlist and remove myself from 2 watchlists more
