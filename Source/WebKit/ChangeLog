@@ -1,3 +1,98 @@
+2018-02-01  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Extra zoom mode] Implement basic support for interacting with text form controls
+        https://bugs.webkit.org/show_bug.cgi?id=182401
+        <rdar://problem/35143035>
+
+        Reviewed by Tim Horton.
+
+        Add UI support for interacting with and editing text form controls when extra zoom mode is enabled. See below
+        for more details.
+
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.mm:
+        (-[WKWebViewConfiguration init]):
+        (-[WKWebViewConfiguration encodeWithCoder:]):
+        (-[WKWebViewConfiguration initWithCoder:]):
+        (-[WKWebViewConfiguration copyWithZone:]):
+        (-[WKWebViewConfiguration _textInteractionGesturesEnabled]):
+        (-[WKWebViewConfiguration _setTextInteractionGesturesEnabled:]):
+        (-[WKWebViewConfiguration _longPressActionsEnabled]):
+        (-[WKWebViewConfiguration _setLongPressActionsEnabled:]):
+
+        Introduce two new web view configuration flags: `textInteractionGesturesEnabled` and `longPressActionsEnabled`.
+        The former determines whether text interaction gestures (i.e. text selection, moving the caret, showing UI for
+        IME, etc.) are enabled. The latter determines whether or not long press actions (i.e. touch callout, share
+        sheet, etc.) are enabled. These are disabled by default only in extra zoom mode.
+
+        * UIProcess/API/Cocoa/WKWebViewConfigurationPrivate.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::setTextAsync):
+
+        Add a way to set the text value of a currently edited text form control. This will either set the text value of
+        an input, a. la. autofill, or overwrite the contents of a contenteditable area by selecting everything and
+        inserting the given text.
+
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::focusNextAssistedNode):
+
+        Add a default argument for the completion callback.
+
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView setupInteraction]):
+        (-[WKContentView _displayFormNodeInputView]):
+        (-[WKContentView _actionForLongPressFromPositionInformation:]):
+        (-[WKContentView hasSelectablePositionAtPoint:]):
+        (-[WKContentView pointIsNearMarkedText:]):
+        (-[WKContentView textInteractionGesture:shouldBeginAtPoint:]):
+        (-[WKContentView insertionPointColor]):
+
+        Respect the web view configuration flags above by bailing early from text interaction and long press action
+        sheet methods.
+
+        (-[WKContentView _startAssistingKeyboard]):
+        (-[WKContentView _startAssistingNode:userIsInteracting:blurPreviousNode:changingActivityState:userObject:]):
+
+        Add a flag indicating whether we are in the process of changing focus from one node to another. We use this to
+        decide whether or not we want to present the text input view controller right away, or just reload the focused
+        form control overlay. When we stop "assisting" a node, we also keep the focused form control overlay up if we're
+        only changing focus to another form control.
+
+        (-[WKContentView _stopAssistingNode]):
+        (-[WKContentView presentFocusedFormControlViewController:]):
+        (-[WKContentView dismissFocusedFormControlViewController:]):
+        (-[WKContentView shouldPresentTextInputViewController:]):
+        (-[WKContentView presentTextInputViewController:]):
+        (-[WKContentView dismissTextInputViewController:]):
+
+        Introduce helpers for managing presentation of the focused form control overlay and text input view controller.
+        All -present and -dismiss helpers here are idempotent. These view controllers are presented from the content
+        view's view controller for fullscreen presentation.
+
+        (-[WKContentView textInputController:didCommitText:]):
+        (-[WKContentView textInputController:didRequestDismissalWithAction:]):
+        (-[WKContentView focusedFormControlControllerDidSubmit:]):
+        (-[WKContentView focusedFormControlControllerDidCancel:]):
+        (-[WKContentView focusedFormControlControllerDidBeginEditing:]):
+        (-[WKContentView highlightedRectForFocusedFormControlController:inCoordinateSpace:]):
+        (-[WKContentView actionNameForFocusedFormControlController:]):
+        (-[WKContentView focusedFormControlControllerDidRequestNextNode:]):
+        (-[WKContentView focusedFormControlControllerDidRequestPreviousNode:]):
+        (-[WKContentView hasNextNodeForFocusedFormControlController:]):
+        (-[WKContentView hasPreviousNodeForFocusedFormControlController:]):
+
+        Implement delegate methods for the focused form control and text input view controllers. This mainly involves
+        straightforward plumbing of pieces of AssistedNodeInformation on the content view.
+
+        (-[WKContentView pointIsInAssistedNode:]): Deleted.
+
+        Remove a method that was still implemented only for binary compatibility with iOS 10.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::setTextAsync):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2018-02-01  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Shift + mouse scroll should scroll horizontally

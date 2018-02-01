@@ -130,6 +130,8 @@ static _WKDragLiftDelay toDragLiftDelay(NSUInteger value)
     BOOL _inlineMediaPlaybackRequiresPlaysInlineAttribute;
     BOOL _allowsInlineMediaPlaybackAfterFullscreen;
     _WKDragLiftDelay _dragLiftDelay;
+    BOOL _textInteractionGesturesEnabled;
+    BOOL _longPressActionsEnabled;
 #endif
 
     BOOL _invisibleAutoplayNotPermitted;
@@ -225,7 +227,14 @@ static _WKDragLiftDelay toDragLiftDelay(NSUInteger value)
 #if PLATFORM(IOS)
     _selectionGranularity = WKSelectionGranularityDynamic;
     _dragLiftDelay = toDragLiftDelay([[NSUserDefaults standardUserDefaults] integerForKey:@"WebKitDebugDragLiftDelay"]);
+#if ENABLE(EXTRA_ZOOM_MODE)
+    _textInteractionGesturesEnabled = NO;
+    _longPressActionsEnabled = NO;
+#else
+    _textInteractionGesturesEnabled = YES;
+    _longPressActionsEnabled = YES;
 #endif
+#endif // PLATFORM(IOS)
 
     _mediaContentTypesRequiringHardwareSupport = Settings::defaultMediaContentTypesRequiringHardwareSupport();
     _allowMediaContentTypesRequiringHardwareSupportAsFallback = YES;
@@ -265,6 +274,8 @@ static _WKDragLiftDelay toDragLiftDelay(NSUInteger value)
     [coder encodeBool:self.allowsPictureInPictureMediaPlayback forKey:@"allowsPictureInPictureMediaPlayback"];
     [coder encodeBool:self.ignoresViewportScaleLimits forKey:@"ignoresViewportScaleLimits"];
     [coder encodeInteger:self._dragLiftDelay forKey:@"dragLiftDelay"];
+    [coder encodeBool:self._textInteractionGesturesEnabled forKey:@"textInteractionGesturesEnabled"];
+    [coder encodeBool:self._longPressActionsEnabled forKey:@"longPressActionsEnabled"];
 #else
     [coder encodeInteger:self.userInterfaceDirectionPolicy forKey:@"userInterfaceDirectionPolicy"];
 #endif
@@ -293,6 +304,8 @@ static _WKDragLiftDelay toDragLiftDelay(NSUInteger value)
     self.allowsPictureInPictureMediaPlayback = [coder decodeBoolForKey:@"allowsPictureInPictureMediaPlayback"];
     self.ignoresViewportScaleLimits = [coder decodeBoolForKey:@"ignoresViewportScaleLimits"];
     self._dragLiftDelay = toDragLiftDelay([coder decodeIntegerForKey:@"dragLiftDelay"]);
+    self._textInteractionGesturesEnabled = [coder decodeBoolForKey:@"textInteractionGesturesEnabled"];
+    self._longPressActionsEnabled = [coder decodeBoolForKey:@"longPressActionsEnabled"];
 #else
     auto userInterfaceDirectionPolicyCandidate = static_cast<WKUserInterfaceDirectionPolicy>([coder decodeIntegerForKey:@"userInterfaceDirectionPolicy"]);
     if (userInterfaceDirectionPolicyCandidate == WKUserInterfaceDirectionPolicyContent || userInterfaceDirectionPolicyCandidate == WKUserInterfaceDirectionPolicySystem)
@@ -347,6 +360,8 @@ static _WKDragLiftDelay toDragLiftDelay(NSUInteger value)
     configuration->_selectionGranularity = self->_selectionGranularity;
     configuration->_ignoresViewportScaleLimits = self->_ignoresViewportScaleLimits;
     configuration->_dragLiftDelay = self->_dragLiftDelay;
+    configuration->_textInteractionGesturesEnabled = self->_textInteractionGesturesEnabled;
+    configuration->_longPressActionsEnabled = self->_longPressActionsEnabled;
 #endif
 #if PLATFORM(MAC)
     configuration->_cpuLimit = self->_cpuLimit;
@@ -664,6 +679,28 @@ static NSString *defaultApplicationNameForUserAgent()
 {
     _dragLiftDelay = dragLiftDelay;
 }
+
+- (BOOL)_textInteractionGesturesEnabled
+{
+    return _textInteractionGesturesEnabled;
+}
+
+- (void)_setTextInteractionGesturesEnabled:(BOOL)enabled
+{
+    _textInteractionGesturesEnabled = enabled;
+}
+
+- (BOOL)_longPressActionsEnabled
+{
+    return _longPressActionsEnabled;
+}
+
+- (void)_setLongPressActionsEnabled:(BOOL)enabled
+{
+    _longPressActionsEnabled = enabled;
+}
+
+
 #endif // PLATFORM(IOS)
 
 - (BOOL)_invisibleAutoplayNotPermitted

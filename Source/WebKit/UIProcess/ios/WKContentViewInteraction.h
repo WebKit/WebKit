@@ -83,8 +83,9 @@ class WebPageProxy;
 @class _UIHighlightView;
 @class _UIWebHighlightLongPressGestureRecognizer;
 
-#if ENABLE(DATA_INTERACTION)
-@class _UITextDragCaretView;
+#if ENABLE(EXTRA_ZOOM_MODE)
+@class WKFocusedFormControlViewController;
+@class WKTextInputViewController;
 #endif
 
 typedef void (^UIWKAutocorrectionCompletionHandler)(UIWKAutocorrectionRects *rectsForInput);
@@ -229,6 +230,7 @@ struct WKAutoCorrectionData {
     BOOL _becomingFirstResponder;
     BOOL _resigningFirstResponder;
     BOOL _needsDeferredEndScrollingSelectionUpdate;
+    BOOL _isChangingFocus;
 
 #if ENABLE(DATA_INTERACTION)
     WebKit::DragDropInteractionState _dragDropInteractionState;
@@ -238,6 +240,11 @@ struct WKAutoCorrectionData {
     BOOL _isAnimatingConcludeEditDrag;
     RetainPtr<UIView> _visibleContentViewSnapshot;
     RetainPtr<_UITextDragCaretView> _editDropCaretView;
+#endif
+
+#if ENABLE(EXTRA_ZOOM_MODE)
+    RetainPtr<WKTextInputViewController> _textInputViewController;
+    RetainPtr<WKFocusedFormControlViewController> _focusedFormControlViewController;
 #endif
 }
 
