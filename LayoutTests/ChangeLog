@@ -1,3 +1,9 @@
+2018-01-31  Alicia Boya García  <aboya@igalia.com>
+
+        Unreviewed GTK+ test gardening.
+
+        * platform/gtk/TestExpectations:
+
 2018-01-31  Alex Christensen  <achristensen@webkit.org>
 
         Unreviewed, rolling out r227942.
