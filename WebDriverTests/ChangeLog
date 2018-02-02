@@ -1,3 +1,27 @@
+2018-02-02  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Update Selenium WebDriver imported tests.
+
+        * imported/selenium/importer.json:
+        * imported/selenium/py/selenium/__init__.py:
+        * imported/selenium/py/selenium/webdriver/remote/errorhandler.py:
+        * imported/selenium/py/selenium/webdriver/remote/remote_connection.py:
+        * imported/selenium/py/test/selenium/webdriver/common/alerts_tests.py:
+        * imported/selenium/py/test/selenium/webdriver/common/click_scrolling_tests.py:
+        * imported/selenium/py/test/selenium/webdriver/common/correct_event_firing_tests.py:
+        * imported/selenium/py/test/selenium/webdriver/common/driver_element_finding_tests.py:
+        * imported/selenium/py/test/selenium/webdriver/common/element_attribute_tests.py:
+        * imported/selenium/py/test/selenium/webdriver/common/executing_async_javascript_tests.py:
+        * imported/selenium/py/test/selenium/webdriver/common/frame_switching_tests.py:
+        * imported/selenium/py/test/selenium/webdriver/common/interactions_tests.py:
+        * imported/selenium/py/test/selenium/webdriver/common/page_load_timeout_tests.py:
+        * imported/selenium/py/test/selenium/webdriver/common/page_loading_tests.py:
+        * imported/selenium/py/test/selenium/webdriver/common/rendered_webelement_tests.py:
+        * imported/selenium/py/test/selenium/webdriver/common/stale_reference_tests.py:
+        * imported/selenium/py/test/selenium/webdriver/common/webdriverwait_tests.py:
+        * imported/selenium/py/test/selenium/webdriver/common/window_switching_tests.py:
+        * imported/selenium/py/test/selenium/webdriver/common/window_tests.py:
+
 2018-01-31  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed gardening. Update expectations of several WebDriver tests.
