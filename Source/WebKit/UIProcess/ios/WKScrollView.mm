@@ -34,6 +34,10 @@
 
 using namespace WebKit;
 
+#if USE(APPLE_INTERNAL_SDK)
+#import <WebKitAdditions/WKScrollViewAdditionsBefore.mm>
+#endif
+
 @interface UIScrollView (UIScrollViewInternalHack)
 - (CGFloat)_rubberBandOffsetForOffset:(CGFloat)newOffset maxOffset:(CGFloat)maxOffset minOffset:(CGFloat)minOffset range:(CGFloat)range outside:(BOOL *)outside;
 @end
@@ -134,6 +138,10 @@ using namespace WebKit;
     _contentInsetAdjustmentBehaviorWasExternallyOverridden = (self.contentInsetAdjustmentBehavior != UIScrollViewContentInsetAdjustmentAutomatic);
 #endif
     
+#if ENABLE(EXTRA_ZOOM_MODE)
+    [self _configureScrollingForExtraZoomMode];
+#endif
+
     return self;
 }
 
@@ -310,6 +318,20 @@ static inline bool valuesAreWithinOnePixel(CGFloat a, CGFloat b)
     if (!CGSizeEqualToSize(rubberbandAmount, CGSizeZero))
         [self _restoreContentOffsetWithRubberbandAmount:rubberbandAmount];
 }
+
+- (void)addGestureRecognizer:(UIGestureRecognizer *)gestureRecognizer
+{
+    [super addGestureRecognizer:gestureRecognizer];
+
+#if ENABLE(EXTRA_ZOOM_MODE)
+    if (gestureRecognizer == self.pinchGestureRecognizer)
+        gestureRecognizer.allowedTouchTypes = @[];
+#endif
+}
+
+#if USE(APPLE_INTERNAL_SDK)
+#import <WebKitAdditions/WKScrollViewAdditionsAfter.mm>
+#endif
 
 @end
 

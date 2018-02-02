@@ -1,3 +1,30 @@
+2018-02-02  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Extra Zoom Mode] Implement support for indirect mainframe scrolling
+        https://bugs.webkit.org/show_bug.cgi?id=182421
+        <rdar://problem/35142694>
+
+        Reviewed by Tim Horton.
+
+        Makes a few small adjustments to WKScrollView to improve mainframe scrolling, and disable the pinch gesture for
+        zooming. See below for more details.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+
+        Remove a now-unneeded WebKitAdditions import.
+
+        * UIProcess/ios/WKScrollView.mm:
+        (-[WKScrollView initWithFrame:]):
+
+        Add imports for -Before and -After versions of WKScrollViewAdditions.
+
+        (-[WKScrollView addGestureRecognizer:]):
+
+        Override -addGestureRecognizer here to prevent touches on the pinch gesture recognizer from being recognized.
+        I chose this approach instead of just disabling the gesture in -initWithFrame: because (1) the pinch gesture
+        recognizer is lazily created when setting minimum or maximum zoom scales, rather than immediately in
+        -initWithFrame:, and (2) even if we set the -enabled to NO, UIKit later resets it to YES in other codepaths.
+
 2018-02-01  Tim Horton  <timothy_horton@apple.com>
 
         WebKit fails to build (_startAssistingNode has conflicting parameters)
