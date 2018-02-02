@@ -403,16 +403,6 @@ String WebProcessPool::legacyPlatformDefaultIndexedDBDatabaseDirectory()
     return FileSystem::pathByAppendingComponent(legacyPlatformDefaultWebSQLDatabaseDirectory(), "___IndexedDB");
 }
 
-String WebProcessPool::legacyPlatformDefaultServiceWorkerRegistrationDirectory()
-{
-    registerUserDefaultsIfNeeded();
-
-    NSString *directory = [[NSUserDefaults standardUserDefaults] objectForKey:WebServiceWorkerRegistrationDirectoryDefaultsKey];
-    if (!directory || ![directory isKindOfClass:[NSString class]])
-        directory = @"~/Library/WebKit/ServiceWorkers";
-    return stringByResolvingSymlinksInPath([directory stringByStandardizingPath]);
-}
-
 String WebProcessPool::legacyPlatformDefaultLocalStorageDirectory()
 {
     registerUserDefaultsIfNeeded();

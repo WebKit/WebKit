@@ -1,3 +1,39 @@
+2018-02-02  Youenn Fablet  <youenn@apple.com>
+
+        Configure serviceWorkerRegistrationDirectory on the web site data store and move it to a Caches subfolder as a default
+        https://bugs.webkit.org/show_bug.cgi?id=182403
+
+        Reviewed by Alex Christensen.
+
+        WebsiteDataStore is the place to set configuration information such as service worker registration path.
+        This patch updates WebKit code accordingly.
+        By default, the service worker registration path is in a Caches subfolder, similarly to cache API path.
+
+        * UIProcess/API/APIProcessPoolConfiguration.cpp:
+        (API::ProcessPoolConfiguration::createWithLegacyOptions):
+        (API::ProcessPoolConfiguration::createWithWebsiteDataStoreConfiguration):
+        (API::ProcessPoolConfiguration::ProcessPoolConfiguration):
+        (API::ProcessPoolConfiguration::copy):
+        * UIProcess/API/APIProcessPoolConfiguration.h:
+        * UIProcess/API/C/WKContextConfigurationRef.cpp:
+        (WKContextConfigurationCopyServiceWorkerDatabaseDirectory): Deleted.
+        (WKContextConfigurationSetServiceWorkerDatabaseDirectory): Deleted.
+        * UIProcess/API/C/WKContextConfigurationRef.h:
+        * UIProcess/API/Cocoa/APIWebsiteDataStoreCocoa.mm:
+        (API::WebsiteDataStore::defaultServiceWorkerRegistrationDirectory):
+        * UIProcess/API/Cocoa/WKWebsiteDataStore.mm:
+        (-[WKWebsiteDataStore _serviceWorkerRegistrationDirectory]):
+        (-[WKWebsiteDataStore _setServiceWorkerRegistrationDirectory:]):
+        * UIProcess/API/Cocoa/WKWebsiteDataStorePrivate.h:
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::ensureStorageProcessAndWebsiteDataStore):
+        (WebKit::WebProcessPool::initializeNewWebProcess):
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+        (WebKit::WebsiteDataStore::serviceWorkerRegistrationDirectory const):
+        (WebKit::WebsiteDataStore::setServiceWorkerRegistrationDirectory):
+        * UIProcess/gtk/WebProcessPoolGtk.cpp:
+        * UIProcess/gtk/WebProcessPoolWPE.cpp:
+
 2018-02-02  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Extra Zoom Mode] Implement support for indirect mainframe scrolling

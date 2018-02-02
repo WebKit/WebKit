@@ -107,6 +107,8 @@ public:
     void setCacheStoragePerOriginQuota(uint64_t quota) { m_resolvedConfiguration.cacheStoragePerOriginQuota = quota; }
     const String& cacheStorageDirectory() const { return m_resolvedConfiguration.cacheStorageDirectory; }
     void setCacheStorageDirectory(String&& directory) { m_resolvedConfiguration.cacheStorageDirectory = WTFMove(directory); }
+    const String& serviceWorkerRegistrationDirectory() const { return m_resolvedConfiguration.serviceWorkerRegistrationDirectory; }
+    void setServiceWorkerRegistrationDirectory(String&& directory) { m_resolvedConfiguration.serviceWorkerRegistrationDirectory = WTFMove(directory); }
 
     WebResourceLoadStatisticsStore* resourceLoadStatistics() const { return m_resourceLoadStatistics.get(); }
     void clearResourceLoadStatisticsInWebProcesses(CompletionHandler<void()>&&);

@@ -83,6 +83,9 @@ void initializeWebViewConfiguration(const char* libraryPath, WKStringRef injecte
     if (libraryPath) {
         String cacheStorageDirectory = String(libraryPath) + '/' + "CacheStorage";
         [poolWebsiteDataStore _setCacheStorageDirectory: cacheStorageDirectory];
+
+        String serviceWorkerRegistrationDirectory = String(libraryPath) + '/' + "ServiceWorkers";
+        [poolWebsiteDataStore _setServiceWorkerRegistrationDirectory: serviceWorkerRegistrationDirectory];
     }
 
     [globalWebViewConfiguration.websiteDataStore _setResourceLoadStatisticsEnabled:YES];
