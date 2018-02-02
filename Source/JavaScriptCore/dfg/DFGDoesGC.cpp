@@ -205,7 +205,6 @@ bool doesGC(Graph& graph, Node* node)
     case CPUIntrinsic:
     case CheckTraps:
     case StringFromCharCode:
-    case MapHash:
     case NormalizeMapKey:
     case GetMapBucket:
     case GetMapBucketHead:
@@ -355,6 +354,18 @@ bool doesGC(Graph& graph, Node* node)
     case SetAdd:
     case MapSet:
         return true;
+
+    case MapHash:
+        switch (node->child1().useKind()) {
+        case BooleanUse:
+        case Int32Use:
+        case SymbolUse:
+        case ObjectUse:
+            return false;
+        default:
+            // We might resolve a rope.
+            return true;
+        }
         
     case MultiPutByOffset:
         return node->multiPutByOffsetData().reallocatesStorage();
