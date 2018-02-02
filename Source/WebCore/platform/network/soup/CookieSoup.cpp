@@ -60,13 +60,8 @@ SoupCookie* Cookie::toSoupCookie() const
     if (name.isNull() || value.isNull() || domain.isNull() || path.isNull())
         return nullptr;
 
-    // soup_cookie_new() will handle the given domain as a hostname if it doesn't start with '.'.
-    auto cookieDomain = domain.utf8();
-    if (cookieDomain.length() && !g_hostname_is_ip_address(cookieDomain.data()) && cookieDomain.data()[0] != '.')
-        cookieDomain = makeString('.', domain).utf8();
-
     SoupCookie* soupCookie = soup_cookie_new(name.utf8().data(), value.utf8().data(),
-        cookieDomain.data(), path.utf8().data(), -1);
+        domain.utf8().data(), path.utf8().data(), -1);
 
     soup_cookie_set_http_only(soupCookie, httpOnly);
     soup_cookie_set_secure(soupCookie, secure);
