@@ -1,3 +1,23 @@
+2018-02-01  Geoffrey Garen  <ggaren@apple.com>
+
+        Make MallocBench easier for non-WebKit engineers to run
+        https://bugs.webkit.org/show_bug.cgi?id=182415
+
+        Reviewed by Saam Barati.
+
+        * MallocBench/MallocBench.xcodeproj/project.pbxproj: Use c++14 so we
+        can make_unique.
+
+        Specify that we support all Darwin platforms so you can test them.
+
+        * MallocBench/run-malloc-benchmarks: Specify the path to MallocBench
+        and libmbmalloc explicitly, rather than computing them implicitly
+        using webkitdirs. Non-WebKit folks don't have the directory structure
+        required by webkitdirs.
+
+        Remove Linux-specific and cmake-specific behaviors because we only
+        needed them in the world of implicit path computation.
+
 2018-01-31  Ryosuke Niwa  <rniwa@webkit.org>
 
         Make run-perf-tests work with StyleBench and re-enable it

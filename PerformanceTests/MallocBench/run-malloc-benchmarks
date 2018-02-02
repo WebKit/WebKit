@@ -4,32 +4,6 @@
 require 'getoptlong'
 require 'pathname'
 
-$binDir = "#{File.expand_path(File.dirname(__FILE__))}"
-$productDir = `perl -e 'use lib \"#{$binDir}/../../Tools/Scripts\"; use webkitdirs; print productDir()'`
-
-def determineOS
-    case RbConfig::CONFIG["host_os"]
-    when /darwin/i
-        "darwin"
-    when /linux/i
-        "linux"
-    when /mswin|mingw|cygwin/
-        "windows"
-    else
-        $stderr.puts "Warning: unable to determine host operating system"
-        nil
-    end
-end
-
-$hostOS = determineOS unless $hostOS
-$cmake = false
-
-if $hostOS == 'darwin'
-    $libraryExtension = "dylib"
-else
-    $libraryExtension = "so"
-end
-
 $benchmarks_all = [
     # Single-threaded benchmarks.
     "churn",
@@ -96,26 +70,25 @@ $benchmarks = $benchmarks_all
 $heap = 0
 
 def usage
-	puts "run-malloc-benchmarks [options] <Name:/path/to/dylib> [<Name:/path/to/dylib>]"
+	puts "run-malloc-benchmarks [options] /path/to/MallocBench Name:/path/to/libmbmalloc.dylib [ Name:/path/to/libmbmalloc.dylib ]"
 	puts
 	puts "    Runs a suite of memory allocation and access benchmarks."
     puts
-    puts "    <Name:/path/to/dylib> is a symbolic name followed by a folder containing a libmbmalloc.dylib."
+    puts "    <Name:/path/to/libmbmalloc.dylib> is a symbolic name followed by a path to libmbmalloc.dylib."
     puts
     puts "    Specify \"SystemMalloc\" to test the built-in libc malloc."
     puts "    Specify \"NanoMalloc\" to test the built-in libc malloc using the NanoMalloc zone."
     puts
     puts "    Example usage:"
     puts
-    puts "        run-malloc-benchmarks SystemMalloc NanoMalloc"
-    puts "        run-malloc-benchmarks FastMalloc:/path/to/FastMalloc/Build/Products/Release/"
-    puts "        run-malloc-benchmarks --benchmark churn SystemMalloc FastMalloc:/path/to/FastMalloc/Build/Products/Release/"
+    puts "        run-malloc-benchmarks /BUILD/MallocBench SystemMalloc:/BUILD/libmbmalloc.dylib NanoMalloc:/BUILD/libmbmalloc.dylib"
+    puts "        run-malloc-benchmarks /BUILD/MallocBench FastMalloc:/BUILD/FastMalloc/libmbmalloc.dylib"
+    puts "        run-malloc-benchmarks --benchmark churn SystemMalloc:/BUILD/libmbmalloc.dylib FastMalloc:/BUILD/FastMalloc/libmbmalloc.dylib"
     puts
 	puts "Options:"
     puts
     puts "    --benchmark <benchmark>      Select a single benchmark to run instead of the full suite."
     puts "    --heap <heap>                Set a baseline heap size."
-    puts "    --cmake                      Specify if build directory layout is for CMake."
     puts
 end
 
@@ -125,7 +98,7 @@ class Dylib
 
     def initialize(name, path)
         @name = name
-        @path = File.join(path, "libmbmalloc.#{$libraryExtension}")
+        @path = path
     end
 end
 
@@ -238,7 +211,6 @@ end
 def parseOptions
     GetoptLong.new(
         ['--benchmark', GetoptLong::REQUIRED_ARGUMENT],
-        ['--cmake', GetoptLong::NO_ARGUMENT],
         ['--memory', GetoptLong::NO_ARGUMENT],
         ['--memory_warning', GetoptLong::NO_ARGUMENT],
         ['--heap', GetoptLong::REQUIRED_ARGUMENT],
@@ -252,8 +224,6 @@ def parseOptions
             $benchmarks = $benchmarks_memory
         when '--memory_warning'
             $benchmarks = $benchmarks_memory_warning
-        when '--cmake'
-            $cmake = true
         when '--heap'
             $heap = arg
         when '--help'
@@ -264,39 +234,35 @@ def parseOptions
         end
     }
 
-    if $cmake
-        $libraryDir = "#{$productDir}/lib"
-        $systemMallocLibraryDir = "#{$productDir}/lib/system"
-        $binaryDir = "#{$productDir}/bin"
-    else
-        $libraryDir = $productDir
-        $binaryDir = $productDir
-        $systemMallocLibraryDir = $productDir
+    if ARGV.length < 1
+        puts "Error: No MallocBench specified."
+        exit 1
     end
 
-    if ARGV.length < 1
+    if ARGV.length < 2
         puts "Error: No dylib specified."
         exit 1
     end
 
+    $mallocBench = File.absolute_path(ARGV.shift)
+    if !File.exists?($mallocBench)
+        puts "File not found: #{$mallocBench}."
+        exit 1
+    end
+
+    $buildDir = Pathname.new($mallocBench).dirname
+
     dylibs = []
     ARGV.each {
         | arg |
-        if arg == "SystemMalloc"
-            dylib = Dylib.new("SystemMalloc", $systemMallocLibraryDir)
-        elsif arg == "NanoMalloc"
-            dylib = Dylib.new("NanoMalloc", $libraryDir)
-        else
-            name = arg.split(":")[0]
-            path = arg.split(":")[1]
-            if !name || name.length < 1 ||
-                !path || path.length < 1
-                puts "Invalid <Name:/path/to/dylib>: '#{arg}'."
-                exit 1
-            end
-
-            dylib = Dylib.new(name, File.expand_path(path))
+        name, path = arg.split(":")
+        if !name || name.length < 1 ||
+            !path || path.length < 1
+            puts "Invalid <Name:/path/to/dylib>: '#{arg}'."
+            exit 1
         end
+
+        dylib = Dylib.new(name, File.expand_path(path))
 
         if !File.exists?(dylib.path)
             puts "File not found: #{dylib.path}."
@@ -328,8 +294,10 @@ def runBenchmarks(dylibs)
             env += "LD_LIBRARY_PATH='#{Pathname.new(dylib.path).dirname}' "
             if dylib.name == "NanoMalloc"
                 env += "MallocNanoZone=1 "
+            elsif dylib.name == "SystemMalloc"
+                env += "MallocNanoZone=0 "
             end
-            input = "cd '#{$productDir}'; #{env} '#{$binaryDir}/MallocBench' --benchmark #{benchmark} --heap #{$heap}}"
+            input = "cd '#{$buildDir}'; #{env} '#{$mallocBench}' --benchmark #{benchmark} --heap #{$heap}}"
             output =`#{input}`
             splitOutput = output.split("\n")
 
