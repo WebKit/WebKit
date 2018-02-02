@@ -1,3 +1,20 @@
+2018-02-01  Chris Dumez  <cdumez@apple.com>
+
+        When SW install fails, null out registration.installing before setting worker state to "redundant"
+        https://bugs.webkit.org/show_bug.cgi?id=182416
+        <rdar://problem/37141997>
+
+        Reviewed by Youenn Fablet.
+
+        When SW install fails, null out registration.installing before setting worker state to "redundant".
+        This does not match the spec but this is what Firefox and Chrome do. This is also what the
+        web-platform-tests expect.
+
+        Test: http/tests/workers/service/install-fails.html
+
+        * workers/service/server/SWServerJobQueue.cpp:
+        (WebCore::SWServerJobQueue::didFinishInstall):
+
 2018-02-01  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Test fix after r227848.

@@ -185,13 +185,14 @@ void SWServerJobQueue::didFinishInstall(const ServiceWorkerJobDataIdentifier& jo
     ASSERT(registration->installingWorker()->identifier() == identifier);
 
     if (!wasSuccessful) {
-        auto* worker = m_server.workerByID(identifier);
+        RefPtr<SWServerWorker> worker = m_server.workerByID(identifier);
         RELEASE_ASSERT(worker);
 
-        // Run the Update Worker State algorithm passing registration's installing worker and redundant as the arguments.
-        registration->updateWorkerState(*worker, ServiceWorkerState::Redundant);
+        worker->terminate();
         // Run the Update Registration State algorithm passing registration, "installing" and null as the arguments.
         registration->updateRegistrationState(ServiceWorkerRegistrationState::Installing, nullptr);
+        // Run the Update Worker State algorithm passing registration's installing worker and redundant as the arguments.
+        registration->updateWorkerState(*worker, ServiceWorkerState::Redundant);
 
         // If newestWorker is null, invoke Clear Registration algorithm passing registration as its argument.
         if (!registration->getNewestWorker())
