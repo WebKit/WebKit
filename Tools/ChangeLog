@@ -1,3 +1,15 @@
+2018-02-02  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed, rolling out r227999.
+
+        It didn't fix the problem
+
+        Reverted changeset:
+
+        "Unreviewed. Try to avoid webdriver tests step timing out in
+        the bots."
+        https://trac.webkit.org/changeset/227999
+
 2018-02-02  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         Start timeout for the run-buildbot-test script is too aggressive
