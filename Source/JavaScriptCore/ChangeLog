@@ -1,3 +1,32 @@
+2018-02-01  Mark Lam  <mark.lam@apple.com>
+
+        Fix broken bounds check in FTL's compileGetMyArgumentByVal().
+        https://bugs.webkit.org/show_bug.cgi?id=182419
+        <rdar://problem/37044945>
+
+        Reviewed by Saam Barati.
+
+        In compileGetMyArgumentByVal(), it computes:
+            limit = m_out.sub(limit, m_out.constInt32(m_node->numberOfArgumentsToSkip()));
+            ...
+            LValue isOutOfBounds = m_out.aboveOrEqual(originalIndex, limit);
+
+        where the original "limit" is the number of arguments passed in by the caller.
+        If the original limit is less than numberOfArgumentsToSkip, the resultant limit
+        will be a large unsigned number.  As a result, this will defeat the bounds check
+        that follows it.
+
+        Note: later on in compileGetMyArgumentByVal(), we have to adjust adjust the index
+        value by adding numberOfArgumentsToSkip to it, in order to determine the actual
+        entry in the arguments array to get.
+
+        The fix is to just add numberOfArgumentsToSkip to index upfront (instead of
+        subtracting it from limit), and doing an overflow speculation check on that
+        addition before doing the bounds check.
+
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetMyArgumentByVal):
+
 2018-02-01  Keith Miller  <keith_miller@apple.com>
 
         Fix crashes due to mishandling custom sections.

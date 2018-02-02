@@ -4009,20 +4009,23 @@ private:
         
         LValue originalIndex = lowInt32(m_node->child2());
         
-        LValue originalLimit;
+        LValue numberOfArgsIncludingThis;
         if (inlineCallFrame && !inlineCallFrame->isVarargs())
-            originalLimit = m_out.constInt32(inlineCallFrame->argumentCountIncludingThis);
+            numberOfArgsIncludingThis = m_out.constInt32(inlineCallFrame->argumentCountIncludingThis);
         else {
             VirtualRegister argumentCountRegister = AssemblyHelpers::argumentCount(inlineCallFrame);
-            originalLimit = m_out.load32(payloadFor(argumentCountRegister));
+            numberOfArgsIncludingThis = m_out.load32(payloadFor(argumentCountRegister));
         }
         
-        LValue limit = m_out.sub(originalLimit, m_out.int32One);
-        
-        if (m_node->numberOfArgumentsToSkip())
-            limit = m_out.sub(limit, m_out.constInt32(m_node->numberOfArgumentsToSkip()));
-        
-        LValue isOutOfBounds = m_out.aboveOrEqual(originalIndex, limit);
+        LValue numberOfArgs = m_out.sub(numberOfArgsIncludingThis, m_out.int32One);
+        LValue indexToCheck = originalIndex;
+        if (m_node->numberOfArgumentsToSkip()) {
+            CheckValue* check = m_out.speculateAdd(indexToCheck, m_out.constInt32(m_node->numberOfArgumentsToSkip()));
+            blessSpeculation(check, Overflow, noValue(), nullptr, m_origin);
+            indexToCheck = check;
+        }
+
+        LValue isOutOfBounds = m_out.aboveOrEqual(indexToCheck, numberOfArgs);
         LBasicBlock continuation = nullptr;
         LBasicBlock lastNext = nullptr;
         ValueFromBlock slowResult;
@@ -4035,14 +4038,10 @@ private:
             
             lastNext = m_out.appendTo(normalCase, continuation);
         } else
-            speculate(OutOfBounds, noValue(), 0, isOutOfBounds);
+            speculate(OutOfBounds, noValue(), nullptr, isOutOfBounds);
         
-        LValue index = originalIndex;
-        if (m_node->numberOfArgumentsToSkip())
-            index = m_out.add(index, m_out.constInt32(m_node->numberOfArgumentsToSkip()));
-        
-        index = m_out.add(index, m_out.int32One);
-        
+        LValue index = m_out.add(indexToCheck, m_out.int32One);
+
         TypedPointer base;
         if (inlineCallFrame) {
             if (inlineCallFrame->argumentCountIncludingThis > 1)
@@ -4055,7 +4054,7 @@ private:
             LValue pointer = m_out.baseIndex(
                 base.value(), m_out.zeroExt(index, pointerType()), ScaleEight);
             result = m_out.load64(TypedPointer(m_heaps.variables.atAnyIndex(), pointer));
-            result = preciseIndexMask32(result, originalIndex, limit);
+            result = preciseIndexMask32(result, indexToCheck, numberOfArgs);
         } else
             result = m_out.constInt64(JSValue::encode(jsUndefined()));
         
