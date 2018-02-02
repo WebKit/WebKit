@@ -1,3 +1,37 @@
+2018-02-02  Devin Rousso  <webkit@devinrousso.com>
+
+        Web Inspector: Styles Redesign: Pasting multiple properties should create properties instead of a bad property
+        https://bugs.webkit.org/show_bug.cgi?id=179622
+        <rdar://problem/35511170>
+
+        Reviewed by Matt Baker.
+
+        * UserInterface/Views/SpreadsheetStyleProperty.js:
+        (WI.SpreadsheetStyleProperty.prototype._remove):
+        (WI.SpreadsheetStyleProperty.prototype._update):
+        (WI.SpreadsheetStyleProperty.prototype.spreadsheetTextFieldDidCommit):
+        (WI.SpreadsheetStyleProperty.prototype._handleNamePaste):
+        When the user pastes into the name field, parse the text for a list of name-value pairs and
+        replace the property being edited with the text of those pairs.
+
+        * UserInterface/Views/SpreadsheetCSSStyleDeclarationEditor.js:
+        (WI.SpreadsheetCSSStyleDeclarationEditor):
+        (WI.SpreadsheetCSSStyleDeclarationEditor.prototype.layout):
+        (WI.SpreadsheetCSSStyleDeclarationEditor.prototype.addBlankProperty):
+        (WI.SpreadsheetCSSStyleDeclarationEditor.prototype.spreadsheetStylePropertyFocusMoved):
+        (WI.SpreadsheetCSSStyleDeclarationEditor.prototype.spreadsheetStylePropertyAddBlankPropertySoon):
+        (WI.SpreadsheetCSSStyleDeclarationEditor.prototype.spreadsheetStylePropertyRemoved):
+        (WI.SpreadsheetCSSStyleDeclarationEditor.prototype._propertiesChanged):
+        (WI.SpreadsheetCSSStyleDeclarationEditor.prototype.spreadsheetCSSStyleDeclarationEditorFocusMoved): Deleted.
+        Calling `addBlankProperty` will trigger a layout on the next frame, but that might be before
+        the CSSAgent has had a chance to finish refreshing, so we need a way to defer the creation
+        of a new property until after we have finished the next layout (which is after the refresh).
+        Drive-by: fix naming of some delegate functions.
+
+        * UserInterface/Models/CSSProperty.js:
+        (WI.CSSProperty.prototype.replaceWithText):
+        Provide a way for replacing the property with new text.
+
 2018-02-02  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: TabBar redesign: remove New Tab button and add experimental feature flag
