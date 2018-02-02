@@ -1,3 +1,11 @@
+2018-02-02  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Rebaseline imported/w3c/web-platform-tests/2dcontext/imagebitmap/createImageBitmap-invalid-args.html for iOS.
+
+        Unreviewed test gardening.
+
+        * platform/ios/imported/w3c/web-platform-tests/2dcontext/imagebitmap/createImageBitmap-invalid-args-expected.txt: Added.
+
 2018-02-02  Antoine Quint  <graouts@apple.com>
 
         [Modern Media Controls] Turn media/modern-media-controls/volume-* back on
