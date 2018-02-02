@@ -128,6 +128,10 @@ class InlineMediaControls extends MediaControls
         if (!this.bottomControlsBar)
             return;
 
+        // Ensure the tracks panel is a child if it were presented.
+        if (this.tracksPanel.presented)
+            children.push(this.tracksPanel);
+
         // Update the top left controls bar.
         this._topLeftControlsBarContainer.children = this._topLeftContainerButtons();
         this._topLeftControlsBarContainer.layout();

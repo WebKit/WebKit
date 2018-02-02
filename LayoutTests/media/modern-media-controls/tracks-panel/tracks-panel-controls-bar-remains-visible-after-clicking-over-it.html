@@ -1,53 +1,41 @@
 <script src="../../../resources/js-test-pre.js"></script>
 <script src="../resources/media-controls-loader.js" type="text/javascript"></script>
+<script src="../resources/media-controls-utils.js" type="text/javascript"></script>
 <body>
-<style type="text/css" media="screen">
-    
-    .media-controls {
-        position: absolute;
-        top: 0;
-        left: 0;
-    }
-    
-</style>
+<video src="../../content/CC+Subtitles.mov" style="position: absolute; left: 0; top: 0; width: 640px; height: 360px;" controls autoplay data-auto-hide-delay="250"></video>
 <script type="text/javascript">
 
 window.jsTestIsAsync = true;
 
 description("Clicking on the controls bar to dismiss the tracks panel should not hide the controls bar, only the track panel.");
 
-const mediaControls = new MacOSInlineMediaControls({ width: 680, height: 300 });
+const media = document.querySelector("video");
+const shadowRoot = window.internals.shadowRoot(media);
 
-document.body.appendChild(mediaControls.element);
+shouldBecomeEqual("shadowRoot.querySelector('button.tracks').getBoundingClientRect().width > 0", "true", () => {
+    pressOnElement(shadowRoot.querySelector("button.tracks"), () => {
+        shouldBecomeEqual("shadowRoot.contains(shadowRoot.querySelector('.tracks-panel'))", "true", () => {
+            shouldBecomeEqual("media.currentTime > 0.250", "true", () => {
 
-let trackElement;
+                debug("");
+                debug("We've waited long enough so that the controls bar should be faded should the tracks panel not be visible.");
+                shouldBeFalse("shadowRoot.querySelector('.media-controls').classList.contains('faded')");
 
-mediaControls.controlsBar.autoHideDelay = 250;
-mediaControls.controlsBar.fadesWhileIdle = true;
+                debug("");
+                debug("Click on the controls bar to dismiss the panel, the controls bar should remain visible.");
+                eventSender.mouseMoveTo(632, 339);
+                eventSender.mouseDown();
+                eventSender.mouseUp();
 
-debug("mediaControls.showTracksPanel()");
-mediaControls.showTracksPanel();
+                shouldBecomeEqual("shadowRoot.contains(shadowRoot.querySelector('.tracks-panel'))", "false", () => {
+                    shouldBeFalse("shadowRoot.querySelector('.media-controls').classList.contains('faded')");
+                    media.remove();
+                    finishJSTest();
+                });
 
-shouldBecomeEqual("mediaControls.tracksPanel.element.parentNode", "mediaControls.element", () => {
-    // Let's wait a while to see that the controls bar is still visible.
-    setTimeout(() => {
-        debug("");
-        debug("We've waited long enough so that the controls bar should be faded should the tracks panel not be visible");
-        shouldBeFalse("mediaControls.controlsBar.faded");
-
-        debug("");
-        debug("Click on the controls bar to dismiss the panel, the controls bar should remain visible");
-        eventSender.mouseMoveTo(670, 290);
-        eventSender.mouseDown();
-        eventSender.mouseUp();
-
-        shouldBeFalse("mediaControls.controlsBar.faded");
-        shouldBeFalse("mediaControls.tracksPanel.presented");
-
-        debug("");
-        mediaControls.element.remove();
-        finishJSTest();
-    }, mediaControls.controlsBar.autoHideDelay);
+            });
+        });
+    });
 });
 
 </script>

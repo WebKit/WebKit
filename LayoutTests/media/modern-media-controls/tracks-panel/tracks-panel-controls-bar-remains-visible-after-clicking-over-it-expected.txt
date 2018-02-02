@@ -3,16 +3,16 @@ Clicking on the controls bar to dismiss the tracks panel should not hide the con
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-mediaControls.showTracksPanel()
-PASS mediaControls.tracksPanel.element.parentNode became mediaControls.element
+PASS shadowRoot.querySelector('button.tracks').getBoundingClientRect().width > 0 became true
+PASS shadowRoot.contains(shadowRoot.querySelector('.tracks-panel')) became true
+PASS media.currentTime > 0.250 became true
 
-We've waited long enough so that the controls bar should be faded should the tracks panel not be visible
-PASS mediaControls.controlsBar.faded is false
+We've waited long enough so that the controls bar should be faded should the tracks panel not be visible.
+PASS shadowRoot.querySelector('.media-controls').classList.contains('faded') is false
 
-Click on the controls bar to dismiss the panel, the controls bar should remain visible
-PASS mediaControls.controlsBar.faded is false
-PASS mediaControls.tracksPanel.presented is false
-
+Click on the controls bar to dismiss the panel, the controls bar should remain visible.
+PASS shadowRoot.contains(shadowRoot.querySelector('.tracks-panel')) became false
+PASS shadowRoot.querySelector('.media-controls').classList.contains('faded') is false
 PASS successfullyParsed is true
 
 TEST COMPLETE

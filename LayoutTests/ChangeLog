@@ -1,3 +1,29 @@
+2018-02-02  Antoine Quint  <graouts@apple.com>
+
+        [Modern Media Controls] Turn media/modern-media-controls/tracks-panel and media/modern-media-controls/tracks-support back on
+        https://bugs.webkit.org/show_bug.cgi?id=182426
+
+        Reviewed by Dean Jackson.
+
+        Update tests to match the modern-media-controls design and expectations. One test fails currently due to an issue with the
+        auto-hide behavior, it is tracked in webkit.org/b/182425.
+
+        * media/modern-media-controls/tracks-panel/tracks-panel-controls-bar-remains-visible-after-clicking-over-it-expected.txt:
+        * media/modern-media-controls/tracks-panel/tracks-panel-controls-bar-remains-visible-after-clicking-over-it.html:
+        * media/modern-media-controls/tracks-panel/tracks-panel-position-and-size-expected.txt:
+        * media/modern-media-controls/tracks-panel/tracks-panel-position-and-size.html:
+        * media/modern-media-controls/tracks-panel/tracks-panel-prevent-controls-bar-from-fading-expected.txt:
+        * media/modern-media-controls/tracks-panel/tracks-panel-prevent-controls-bar-from-fading.html:
+        * media/modern-media-controls/tracks-support/tracks-support-audio-tracks-expected.txt:
+        * media/modern-media-controls/tracks-support/tracks-support-audio-tracks.html:
+        * media/modern-media-controls/tracks-support/tracks-support-captions-offset-with-controls-bar-expected.txt:
+        * media/modern-media-controls/tracks-support/tracks-support-captions-offset-with-controls-bar.html:
+        * media/modern-media-controls/tracks-support/tracks-support-show-panel-fullscreen-expected.txt:
+        * media/modern-media-controls/tracks-support/tracks-support-show-panel-fullscreen.html:
+        * media/modern-media-controls/tracks-support/tracks-support-text-tracks-expected.txt:
+        * media/modern-media-controls/tracks-support/tracks-support-text-tracks.html:
+        * platform/mac/TestExpectations:
+
 2018-02-02  Ms2ger  <Ms2ger@igalia.com>
 
         imagebitmap gardening

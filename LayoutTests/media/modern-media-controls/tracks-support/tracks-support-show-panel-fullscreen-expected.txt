@@ -7,9 +7,9 @@ PASS internals.shadowRoot(media).querySelector("button.fullscreen") became diffe
 PASS internals.shadowRoot(media).querySelector("button.fullscreen").getBoundingClientRect().width became different from 0
 PASS internals.shadowRoot(media).querySelector("button.tracks") became different from null
 PASS internals.shadowRoot(media).querySelector("button.tracks").getBoundingClientRect().width became different from 0
-PASS internals.shadowRoot(media).querySelector("button.tracks").getBoundingClientRect().right became 583
+PASS internals.shadowRoot(media).querySelector("button.tracks").getBoundingClientRect().right became 582
 PASS internals.shadowRoot(media).querySelector('.tracks-panel') became different from null
-PASS internals.shadowRoot(media).querySelector('.tracks-panel').style.right is "217px"
+PASS internals.shadowRoot(media).querySelector('.tracks-panel').style.right is "218px"
 PASS internals.shadowRoot(media).querySelector('.tracks-panel').style.bottom is "101px"
 
 PASS successfullyParsed is true

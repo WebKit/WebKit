@@ -17,10 +17,10 @@ media.addEventListener("webkitfullscreenchange", () => {
 
     shouldBecomeDifferent(`internals.shadowRoot(media).querySelector("button.tracks")`, "null", () => {
         shouldBecomeDifferent(`internals.shadowRoot(media).querySelector("button.tracks").getBoundingClientRect().width`, "0", () => {
-            shouldBecomeEqual(`internals.shadowRoot(media).querySelector("button.tracks").getBoundingClientRect().right`, "583", () => {
+            shouldBecomeEqual(`internals.shadowRoot(media).querySelector("button.tracks").getBoundingClientRect().right`, "582", () => {
                 pressOnElement(internals.shadowRoot(media).querySelector("button.tracks"));
                 shouldBecomeDifferent(`internals.shadowRoot(media).querySelector('.tracks-panel')`, "null", () => {
-                    shouldBeEqualToString("internals.shadowRoot(media).querySelector('.tracks-panel').style.right", "217px");
+                    shouldBeEqualToString("internals.shadowRoot(media).querySelector('.tracks-panel').style.right", "218px");
                     shouldBeEqualToString("internals.shadowRoot(media).querySelector('.tracks-panel').style.bottom", "101px");
                     debug("");
                     media.remove();

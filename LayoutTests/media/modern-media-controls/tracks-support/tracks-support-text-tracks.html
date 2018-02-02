@@ -1,7 +1,7 @@
 <script src="../../../resources/js-test-pre.js"></script>
 <script src="../resources/media-controls-loader.js" type="text/javascript"></script>
 <body>
-<video src="../../content/counting-subtitled.m4v" style="width: 320px; height: 240px;"></video>
+<video src="../../content/counting-subtitled.m4v" style="width: 320px; height: 240px;" preload="preload"></video>
 <div id="shadow"></div>
 <script type="text/javascript">
 
@@ -13,8 +13,12 @@ const shadowRoot = document.querySelector("div#shadow").attachShadow({ mode: "op
 const media = document.querySelector("video");
 const mediaController = createControls(shadowRoot, media, null);
 
-media.addEventListener("loadedmetadata", function() {
-    shouldBeTrue("mediaController.controls.tracksButton.enabled");
+debug("The tracks button should be disabled initially as we wait for metadata and text tracks to be added.");
+shouldBeFalse("mediaController.controls.tracksButton.enabled");
+
+debug("");
+debug("Eventually the text tracks will be added and the tracks button will be enabled.");
+shouldBecomeEqual("mediaController.controls.tracksButton.enabled", "true", () => {
     debug("");
     shadowRoot.host.remove();
     media.remove();

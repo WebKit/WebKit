@@ -51,10 +51,10 @@ shouldBecomeDifferent("mediaControls.tracksButton.element.getBoundingClientRect(
     debug("mediaControls.showTracksPanel()");
     mediaControls.showTracksPanel();
     window.requestAnimationFrame(() => {
-        shouldBeEqualToString("mediaControls.tracksPanel.element.style.right", "69px");
-        shouldBeEqualToString("mediaControls.tracksPanel.element.style.bottom", "51px");
-        shouldBeEqualToString("getComputedStyle(mediaControls.tracksPanel.element).height", "239px");
-        shouldBeEqualToString("getComputedStyle(mediaControls.tracksPanel.element.lastElementChild).height", "239px");
+        shouldBeEqualToString("mediaControls.tracksPanel.element.style.right", "22px");
+        shouldBeEqualToString("mediaControls.tracksPanel.element.style.bottom", "38px");
+        shouldBeEqualToString("getComputedStyle(mediaControls.tracksPanel.element).height", "252px");
+        shouldBeEqualToString("getComputedStyle(mediaControls.tracksPanel.element.lastElementChild).height", "252px");
         shouldBeEqualToString("getComputedStyle(mediaControls.tracksPanel.element.lastElementChild).overflowY", "scroll");
         debug("");
         mediaControls.element.remove();

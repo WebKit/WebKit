@@ -15,7 +15,7 @@ const shadowRoot = window.internals.shadowRoot(media);
 media.addEventListener("play", () => {
     media.pause();
 
-    shouldBeEqualToString("getComputedStyle(shadowRoot.lastElementChild.firstElementChild).height", "calc(100% - 25px)");
+    shouldBeEqualToString("getComputedStyle(shadowRoot.lastElementChild.firstElementChild).height", "calc((100% - 31px) - 6px)");
     media.remove();
     finishJSTest();
 });

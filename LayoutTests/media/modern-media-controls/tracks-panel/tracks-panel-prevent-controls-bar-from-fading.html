@@ -22,8 +22,8 @@ document.body.appendChild(mediaControls.element);
 
 let trackElement;
 
-mediaControls.controlsBar.autoHideDelay = 250;
-mediaControls.controlsBar.fadesWhileIdle = true;
+mediaControls.autoHideController.autoHideDelay = 250;
+mediaControls.autoHideController.fadesWhileIdle = true;
 
 debug("mediaControls.showTracksPanel()");
 mediaControls.showTracksPanel();
@@ -33,26 +33,26 @@ shouldBecomeEqual("mediaControls.tracksPanel.element.parentNode", "mediaControls
     setTimeout(() => {
         debug("");
         debug("We've waited long enough so that the controls bar should be faded should the tracks panel not be visible");
-        shouldBeFalse("mediaControls.controlsBar.faded");
+        shouldBeFalse("mediaControls.faded");
 
         debug("");
         debug("Now enter and exit the media controls, the controls bar should remain visible");
         eventSender.mouseMoveTo(700, 10);
         eventSender.mouseMoveTo(650, 10);
         eventSender.mouseMoveTo(700, 10);
-        shouldBeFalse("mediaControls.controlsBar.faded");
+        shouldBeFalse("mediaControls.faded");
 
         // And now dismiss the tracks panel and check that the controls bar
         // fades out as well.
         debug("");
         debug("mediaControls.hideTracksPanel()");
         mediaControls.hideTracksPanel();
-        shouldBeTrue("mediaControls.controlsBar.faded");
+        shouldBeTrue("mediaControls.faded");
 
         debug("");
         mediaControls.element.remove();
         finishJSTest();
-    }, mediaControls.controlsBar.autoHideDelay);
+    }, mediaControls.autoHideController.autoHideDelay);
 });
 
 </script>

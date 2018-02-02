@@ -3,7 +3,11 @@ Testing the TracksSupport behavior with audio tracks.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS mediaController.controls.tracksButton.enabled is true
+The tracks button should be disabled initially as we wait for metadata and audio tracks to be added.
+PASS mediaController.controls.tracksButton.enabled is false
+
+Eventually the audio tracks will be added and the tracks button will be enabled.
+PASS mediaController.controls.tracksButton.enabled became true
 
 PASS successfullyParsed is true
 
