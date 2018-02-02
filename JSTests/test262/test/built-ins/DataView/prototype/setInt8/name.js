@@ -6,7 +6,7 @@ esid: sec-dataview.prototype.setint8
 es6id: 24.2.4.15
 description: >
   DataView.prototype.setInt8.name is "setInt8".
-info: >
+info: |
   DataView.prototype.setInt8 ( byteOffset, value )
 
   17 ECMAScript Standard Built-in Objects:

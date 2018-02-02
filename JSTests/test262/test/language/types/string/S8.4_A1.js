@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     Any variable that has been assigned with string literal has the type
     string
 es5id: 8.4_A1

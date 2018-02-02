@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     It is permissible but not necessary to have one argument for each formal
     parameter to be specified
 es5id: 15.3.2.1_A2_T3

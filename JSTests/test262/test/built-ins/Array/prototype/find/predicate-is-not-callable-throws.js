@@ -5,7 +5,7 @@ esid: sec-array.prototype.find
 es6id: 22.1.3.8
 description: >
   Throws a TypeError exception if predicate is not callable.
-info: >
+info: |
   22.1.3.8 Array.prototype.find ( predicate[ , thisArg ] )
 
   ...

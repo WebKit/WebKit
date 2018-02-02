@@ -5,7 +5,7 @@ es6id: 13.6.7
 description: >
     Completion value when expression is true without an `else` clause and body
     returns a normal completion.
-info: >
+info: |
     IfStatement : if ( Expression ) Statement
 
     [...]

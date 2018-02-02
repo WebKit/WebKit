@@ -3,7 +3,7 @@
 /*---
 es6id: 19.3.1
 description: Super need to be called to initialize Boolean internals
-info: >
+info: |
   19.3.1 The Boolean Constructor
 
   ...

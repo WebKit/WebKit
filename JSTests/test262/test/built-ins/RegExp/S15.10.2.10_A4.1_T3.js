@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     CharacterEscape :: UnicodeEscapeSequence :: u HexDigit HexDigit HexDigit
     HexDigit
 es5id: 15.10.2.10_A4.1_T3

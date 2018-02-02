@@ -3,7 +3,7 @@
 /*---
 es6id: 22.2.3.31
 description: If this value is not Object, return undefined.
-info: >
+info: |
   22.2.3.31 get %TypedArray%.prototype [ @@toStringTag ]
 
   1. Let O be the this value.

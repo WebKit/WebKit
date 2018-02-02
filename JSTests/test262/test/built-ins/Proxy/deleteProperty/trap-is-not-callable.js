@@ -4,7 +4,7 @@
 es6id: 9.5.10
 description: >
     Throws when trap is not callable.
-info: >
+info: |
     9.5.10 [[Delete]] (P)
 
     6. Let trap be GetMethod(handler, "deleteProperty").

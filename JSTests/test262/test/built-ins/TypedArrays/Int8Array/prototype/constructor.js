@@ -6,7 +6,7 @@ es6id: 22.2.6.2
 esid: sec-typedarray.prototype.constructor
 description: >
   The initial value of Int8Array.prototype.constructor is the Int8Array object.
-info: >
+info: |
   The initial value of Int8Array.prototype.constructor is the intrinsic
   object %Int8Array%.
 

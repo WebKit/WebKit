@@ -5,7 +5,7 @@
 es6id: 19.1.3.4
 description: >
   Object.prototype.propertyIsEnumerable.name is "propertyIsEnumerable".
-info: >
+info: |
   Object.prototype.propertyIsEnumerable ( V )
 
   17 ECMAScript Standard Built-in Objects:

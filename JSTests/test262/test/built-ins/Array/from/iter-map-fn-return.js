@@ -4,7 +4,7 @@
 esid: sec-array.from
 es6id: 22.1.2.1
 description: Value returned by mapping function (traversed via iterator)
-info: >
+info: |
     [...]
     2. If mapfn is undefined, let mapping be false.
     3. else

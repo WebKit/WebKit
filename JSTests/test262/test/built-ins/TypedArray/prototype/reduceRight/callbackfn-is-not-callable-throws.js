@@ -4,7 +4,7 @@
 esid: sec-%typedarray%.prototype.reduceright
 description: >
   Throws TypeError if callbackfn is not callable
-info: >
+info: |
   22.2.3.21 %TypedArray%.prototype.reduceRight ( callbackfn [ , initialValue ] )
 
   %TypedArray%.prototype.reduceRight is a distinct function that implements the

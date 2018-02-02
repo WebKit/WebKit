@@ -3,7 +3,7 @@
 /*---
 description: Resolving with a reference to the promise itself
 es6id: 25.4.3.1
-info: >
+info: |
     [...]
     8. Let resolvingFunctions be CreateResolvingFunctions(promise).
     9. Let completion be Call(executor, undefined,

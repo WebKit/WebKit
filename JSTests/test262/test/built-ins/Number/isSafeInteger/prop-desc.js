@@ -6,7 +6,7 @@ es6id: 20.1.2.5
 esid: sec-number.issafeinteger
 description: >
   "isSafeInteger" property of Number
-info: >
+info: |
   17 ECMAScript Standard Built-in Objects:
 
   Every other data property described in clauses 18 through 26 and in Annex B.2

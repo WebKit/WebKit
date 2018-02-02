@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     Step 4 of defineProperty calls the [[DefineOwnProperty]] internal method
     of O to define the property. For newly defined data properties, attributes
     missing from desc should have values set to the defaults from 8.6.1.

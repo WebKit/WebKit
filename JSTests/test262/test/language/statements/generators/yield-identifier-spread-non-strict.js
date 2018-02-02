@@ -4,13 +4,14 @@
 /*---
 description: Mixed use of object spread and yield as a valid identifier in a function body inside a generator body in non strict mode (Generator function declaration - valid for non-strict only cases)
 esid: prod-GeneratorDeclaration
-features: [Symbol, object-spread]
+features: [Symbol, object-spread, generators]
 flags: [generated, noStrict]
 info: |
     14.4 Generator Function Definitions
 
     GeneratorDeclaration[Yield, Await, Default]:
       function * BindingIdentifier[?Yield, ?Await] ( FormalParameters[+Yield, ~Await] ) { GeneratorBody }
+
 
     Spread Properties
 

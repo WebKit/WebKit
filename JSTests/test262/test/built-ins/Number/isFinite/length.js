@@ -5,7 +5,7 @@
 es6id: 20.1.2.2
 description: >
   Number.isFinite.length is 1.
-info: >
+info: |
   Number.isFinite ( number )
 
   17 ECMAScript Standard Built-in Objects:

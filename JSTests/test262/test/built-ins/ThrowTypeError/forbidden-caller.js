@@ -5,7 +5,7 @@
 esid: sec-%throwtypeerror%
 description: >
   %ThrowTypeError% does not have an own "caller" property.
-info: >
+info: |
   %ThrowTypeError% ( )
 
   The %ThrowTypeError% intrinsic is an anonymous built-in function

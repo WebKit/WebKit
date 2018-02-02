@@ -5,7 +5,7 @@
 es6id: 8.1.1.4.1
 description: >
     `Symbol.unscopables` is not referenced when finding bindings in global scope
-info: >
+info: |
     1. Let envRec be the global Environment Record for which the method was
        invoked.
     2. Let DclRec be envRec.[[DeclarativeRecord]].

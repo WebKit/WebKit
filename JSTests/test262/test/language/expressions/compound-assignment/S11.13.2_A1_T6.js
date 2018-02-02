@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     White Space and Line Terminator between LeftHandSideExpression and "@="
     or between "@=" and AssignmentExpression are allowed
 es5id: 11.13.2_A1_T6

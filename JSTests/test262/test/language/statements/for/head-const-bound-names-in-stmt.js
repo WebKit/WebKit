@@ -9,7 +9,7 @@ info: |
     It is a Syntax Error if any element of the BoundNames of LexicalDeclaration
     also occurs in the VarDeclaredNames of Statement.
 negative:
-  phase: early
+  phase: parse
   type: SyntaxError
 esid: sec-for-statement
 es6id: 13.7.4

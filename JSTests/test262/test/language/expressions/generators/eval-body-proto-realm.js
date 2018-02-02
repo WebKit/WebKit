@@ -5,7 +5,7 @@ esid: sec-generator-function-definitions-runtime-semantics-evaluatebody
 es6id: 14.4.11
 description: >
     Default [[Prototype]] value derived from realm of the generator function
-info: >
+info: |
     1. Let G be ? OrdinaryCreateFromConstructor(functionObject,
        "%GeneratorPrototype%", « [[GeneratorState]], [[GeneratorContext]] »).
     [...]
@@ -18,7 +18,7 @@ info: >
        a. Let realm be ? GetFunctionRealm(constructor).
        b. Let proto be realm's intrinsic object named intrinsicDefaultProto.
     [...]
-features: [cross-realm]
+features: [generators, cross-realm]
 ---*/
 
 var other = $262.createRealm().global;

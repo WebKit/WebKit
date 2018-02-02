@@ -3,7 +3,7 @@
 /*---
 es6id: 12.2.8.5
 description: Abrupt completion when evaluating expression of TemplateLiteral
-info: >
+info: |
     TemplateLiteral : TemplateHead Expression TemplateSpans
 
     1. Let head be the TV of TemplateHead as defined in 11.8.6.

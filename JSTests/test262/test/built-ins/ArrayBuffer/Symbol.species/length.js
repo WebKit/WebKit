@@ -6,7 +6,7 @@ esid: sec-get-arraybuffer-@@species
 es6id: 24.1.3.3
 description: >
   get ArrayBuffer [ @@species ].length is 0.
-info: >
+info: |
   get ArrayBuffer [ @@species ]
 
   17 ECMAScript Standard Built-in Objects:

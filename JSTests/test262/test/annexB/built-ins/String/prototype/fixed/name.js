@@ -5,7 +5,7 @@
 es6id: B.2.3.6
 description: >
   String.prototype.fixed.name is "fixed".
-info: >
+info: |
   String.prototype.fixed ( )
 
   17 ECMAScript Standard Built-in Objects:

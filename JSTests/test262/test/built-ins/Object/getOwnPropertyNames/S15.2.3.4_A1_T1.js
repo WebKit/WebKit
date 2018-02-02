@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     Object.getOwnProperties and Object.prototype.hasOwnProperty should
     agree on what the own properties are.
 es5id: 15.2.3.4_A1_T1

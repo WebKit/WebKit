@@ -4,7 +4,7 @@
 esid: sec-get-regexp.prototype.dotall
 description: >
   RegExp.prototype.dotAll name
-info: >
+info: |
   17 ECMAScript Standard Built-in Objects
 
   Functions that are specified as get or set accessor functions of built-in

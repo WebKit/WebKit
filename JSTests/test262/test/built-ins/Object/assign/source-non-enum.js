@@ -3,7 +3,7 @@
 /*---
 es6id: 19.1.2.1
 description: Does not assign non-enumerable source properties
-info: >
+info: |
     [...]
     5. For each element nextSource of sources, in ascending index order,
        c. Repeat for each element nextKey of keys in List order,

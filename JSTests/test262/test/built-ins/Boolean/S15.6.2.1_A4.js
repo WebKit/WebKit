@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     The [[Class]] property of the newly constructed object
     is set to "Boolean"
 esid: sec-boolean-constructor

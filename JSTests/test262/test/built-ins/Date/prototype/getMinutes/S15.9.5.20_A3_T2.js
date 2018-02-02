@@ -3,7 +3,7 @@
 
 /*---
 esid: sec-date.prototype.getminutes
-info: >
+info: |
     The Date.prototype.getMinutes property "length" has { ReadOnly, !
     DontDelete, DontEnum } attributes
 es5id: 15.9.5.20_A3_T2

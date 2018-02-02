@@ -30,7 +30,7 @@ info: |
 
   1. Assert: Type(iterResult) is Object.
   2. Return ToBoolean(? Get(iterResult, "done")).
-features: [Symbol.iterator]
+features: [generators, Symbol.iterator]
 ---*/
 
 var thrown = new Test262Error();

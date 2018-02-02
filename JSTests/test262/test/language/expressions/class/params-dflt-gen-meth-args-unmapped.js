@@ -4,7 +4,7 @@
 description: Referencing the arguments object from a default parameter (class expression method)
 esid: sec-class-definitions-runtime-semantics-evaluation
 es6id: 14.5.16
-features: [default-parameters]
+features: [generators, default-parameters]
 info: |
     ClassExpression : class BindingIdentifieropt ClassTail
 

@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     The production Atom :: . evaluates as follows:
     i) Let A be the set of all characters except the four line terminator characters <LF>, <CR>, <LS>, or <PS>
     ii) Call CharacterSetMatcher(A, false) and return its Matcher result

@@ -204,27 +204,24 @@ iter.next("next-arg-1").then(v => {
   assert.sameValue(log.length, 8, "log.length");
 
   iter.next("next-arg-2").then(v => {
-    assert.sameValue(log[8].name, "get next");
-    assert.sameValue(log[8].thisValue.name, "syncIterator", "get next thisValue");
+    assert.sameValue(log[8].name, "call next");
+    assert.sameValue(log[8].thisValue.name, "syncIterator", "next thisValue");
+    assert.sameValue(log[8].args.length, 1, "next args.length");
+    assert.sameValue(log[8].args[0], "next-arg-2", "next args[0]");
 
-    assert.sameValue(log[9].name, "call next");
-    assert.sameValue(log[9].thisValue.name, "syncIterator", "next thisValue");
-    assert.sameValue(log[9].args.length, 1, "next args.length");
-    assert.sameValue(log[9].args[0], "next-arg-2", "next args[0]");
+    assert.sameValue(log[9].name, "get next done (2)");
+    assert.sameValue(log[9].thisValue.name, "next-result-2", "get next done thisValue");
 
-    assert.sameValue(log[10].name, "get next done (2)");
-    assert.sameValue(log[10].thisValue.name, "next-result-2", "get next done thisValue");
+    assert.sameValue(log[10].name, "get next value (2)");
+    assert.sameValue(log[10].thisValue.name, "next-result-2", "get next value thisValue");
 
-    assert.sameValue(log[11].name, "get next value (2)");
-    assert.sameValue(log[11].thisValue.name, "next-result-2", "get next value thisValue");
-
-    assert.sameValue(log[12].name, "after yield*");
-    assert.sameValue(log[12].value, "next-value-2");
+    assert.sameValue(log[11].name, "after yield*");
+    assert.sameValue(log[11].value, "next-value-2");
 
     assert.sameValue(v.value, "return-value");
     assert.sameValue(v.done, true);
 
-    assert.sameValue(log.length, 13, "log.length");
+    assert.sameValue(log.length, 12, "log.length");
   }).then($DONE, $DONE);
 }).catch($DONE);
 

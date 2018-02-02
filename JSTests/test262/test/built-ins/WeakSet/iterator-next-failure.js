@@ -5,7 +5,7 @@ es6id: 23.4.1.1
 esid: sec-weakset-iterable
 description: >
   Return abrupt from next iterator step.
-info: >
+info: |
   23.4.1.1 WeakSet ( [ iterable ] )
 
   ...

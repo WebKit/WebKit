@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     Evaluate the production ObjectLiteral: { PropertyName :
     AssignmentExpression }
 es5id: 11.1.5_A2

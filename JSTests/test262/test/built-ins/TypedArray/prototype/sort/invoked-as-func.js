@@ -3,7 +3,7 @@
 /*---
 es6id: 22.2.3.25
 description: Throws a TypeError exception when invoked as a function
-info: >
+info: |
   22.2.3.25 %TypedArray%.prototype.sort ( comparefn )
 
   ...

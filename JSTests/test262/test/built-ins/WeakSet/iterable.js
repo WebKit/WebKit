@@ -5,7 +5,7 @@ es6id: 23.4.1.1
 esid: sec-weakset-iterable
 description: >
   Returns the new WeakSet adding the objects from the iterable parameter.
-info: >
+info: |
   WeakSet ( [ iterable ] )
 
   ...

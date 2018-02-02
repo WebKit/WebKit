@@ -3,7 +3,7 @@
 /*---
 es6id: 12.2.8.5
 description: Evaluation of NoSubstitutionTemplate
-info: >
+info: |
     12.2.8.5 Runtime Semantics: Evaluation
     TemplateLiteral : NoSubstitutionTemplate
 

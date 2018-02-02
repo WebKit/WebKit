@@ -4,7 +4,7 @@
 es6id: 22.2.3.31
 description: >
   Return undefined if this value does not have a [[TypedArrayName]] internal slot
-info: >
+info: |
   22.2.3.31 get %TypedArray%.prototype [ @@toStringTag ]
 
   1. Let O be the this value.

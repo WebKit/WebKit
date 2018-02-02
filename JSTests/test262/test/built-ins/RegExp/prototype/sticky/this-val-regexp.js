@@ -5,7 +5,7 @@
 description: >
     `sticky` accessor function invoked on a RegExp instance
 es6id: 21.2.5.12
-info: >
+info: |
     21.2.5.12 get RegExp.prototype.sticky
 
     4. Let flags be the value of R’s [[OriginalFlags]] internal slot.

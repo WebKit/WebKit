@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     Empty string, 0, false are all equal (==) to each other, since they all
     evaluate to 0
 es5id: 8.4_A8

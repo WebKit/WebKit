@@ -6,7 +6,7 @@ esid: sec-dataview.prototype.setint16
 description: >
   RangeError exception for negative or non-integral index is thrown before
   the value conversion.
-info: >
+info: |
   ...
   3. Return SetViewValue(v, byteOffset, littleEndian, "Int16", value).
 

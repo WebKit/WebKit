@@ -6,7 +6,7 @@ esid: sec-get-regexp.prototype.source
 es6id: 21.2.5.10
 description: >
   get RegExp.prototype.source.name is "get source".
-info: >
+info: |
   get RegExp.prototype.source
 
   17 ECMAScript Standard Built-in Objects

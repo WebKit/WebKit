@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     If ToUint32(P) is less than the value of
     the length property of A, then return
 es5id: 15.4.5.1_A2.2_T1

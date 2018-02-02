@@ -4,7 +4,7 @@
 es6id: 23.1.3.6
 description: >
   Map.prototype.get.name value and descriptor.
-info: >
+info: |
   Map.prototype.get ( key )
 
   17 ECMAScript Standard Built-in Objects

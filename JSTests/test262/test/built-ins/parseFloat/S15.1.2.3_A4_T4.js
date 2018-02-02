@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     Compute the longest prefix of Result(2), which might be Result(2) itself,
     which satisfies the syntax of a StrDecimalLiteral
 es5id: 15.1.2.3_A4_T4

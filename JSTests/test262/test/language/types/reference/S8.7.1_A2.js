@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     Delete operator can't delete reference, so it returns false to be applyed
     to reference
 es5id: 8.7.1_A2

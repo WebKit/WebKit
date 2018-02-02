@@ -4,7 +4,7 @@
 es6id: 19.5.6.1.1
 description: >
   A new instance has the message property if created with a parameter
-info: >
+info: |
   19.5.6.1.1 NativeError ( message )
 
   ...

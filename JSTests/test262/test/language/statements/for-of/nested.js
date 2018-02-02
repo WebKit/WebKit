@@ -4,6 +4,7 @@
 es6id: 13.6.4.13
 description: >
     Nested statements should operate independently.
+features: [generators]
 ---*/
 
 function* values() {

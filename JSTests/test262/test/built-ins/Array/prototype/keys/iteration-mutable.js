@@ -5,7 +5,7 @@ esid: sec-array.prototype.keys
 es6id: 22.1.3.13
 description: >
   New items in the array are accessible via iteration until iterator is "done".
-info: >
+info: |
   When an item is added to the array after the iterator is created but
   before the iterator is "done" (as defined by 22.1.5.2.1), the new item's
   key should be accessible via iteration. When an item is added to the

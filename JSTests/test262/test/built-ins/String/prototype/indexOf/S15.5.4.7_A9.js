@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     The String.prototype.indexOf.length property does not have the attribute
     DontDelete
 es5id: 15.5.4.7_A9

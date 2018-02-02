@@ -5,7 +5,7 @@
 description: >
     Behavior when error is thrown during retrieval of `global` property
 es6id: 21.2.5.8
-info: >
+info: |
     [...]
     8. Let global be ToBoolean(Get(rx, "global")).
     9. ReturnIfAbrupt(global).

@@ -4,7 +4,7 @@
 esid: sec-%typedarray%.prototype.some
 description: >
   Integer indexed values are not cached before iteration
-info: >
+info: |
   22.2.3.25 %TypedArray%.prototype.some ( callbackfn [ , thisArg ] )
 
   %TypedArray%.prototype.some is a distinct function that implements the same

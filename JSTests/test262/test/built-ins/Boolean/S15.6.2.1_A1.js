@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     When Boolean is called as part of a new expression it is
     a constructor: it initialises the newly created object
 esid: sec-boolean-constructor

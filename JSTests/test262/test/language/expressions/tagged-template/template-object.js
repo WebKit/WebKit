@@ -3,7 +3,7 @@
 /*---
 es6id: 12.3.7
 description: Properties of the template object
-info: >
+info: |
     The first argument to a tagged template should be a template object as
     defined by the GetTemplateObject abstract operation.
 includes: [propertyHelper.js]

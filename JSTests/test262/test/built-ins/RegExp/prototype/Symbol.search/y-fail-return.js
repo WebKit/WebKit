@@ -4,7 +4,7 @@
 /*---
 description: Stops match execution after first match failure
 es6id: 21.2.5.9
-info: >
+info: |
     21.2.5.9 RegExp.prototype [ @@search ] ( string )
 
     [...]

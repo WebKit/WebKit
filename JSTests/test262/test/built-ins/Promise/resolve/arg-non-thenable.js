@@ -5,7 +5,7 @@
 description: >
     `Promise.resolve` invoked with an object whose `then` property is not callable
 es6id: 25.4.4.5
-info: >
+info: |
     6. Let resolveResult be Call(promiseCapability.[[Resolve]], undefined,
        «x»).
 

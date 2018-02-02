@@ -5,7 +5,7 @@
 es6id: 19.4.3.3
 description: >
   Symbol.prototype.valueOf.name is "valueOf".
-info: >
+info: |
   Symbol.prototype.valueOf ( )
 
   17 ECMAScript Standard Built-in Objects:

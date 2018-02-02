@@ -5,7 +5,7 @@
 esid: sec-dataview.prototype.getint32
 description: >
   DataView.prototype.getInt32.length is 1.
-info: >
+info: |
   DataView.prototype.getInt32 ( byteOffset [ , littleEndian ] )
 
   17 ECMAScript Standard Built-in Objects:

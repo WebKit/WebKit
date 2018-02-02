@@ -5,7 +5,7 @@
 description: SingleNameBinding assigns name to "anonymous" generator functions (static class expression generator method)
 esid: sec-runtime-semantics-bindingclassdeclarationevaluation
 es6id: 14.5.15
-features: [destructuring-binding]
+features: [generators, destructuring-binding]
 flags: [generated]
 info: |
     ClassDeclaration : class BindingIdentifier ClassTail
@@ -72,6 +72,7 @@ info: |
           [...]
     7. If environment is undefined, return PutValue(lhs, v).
     8. Return InitializeReferencedBinding(lhs, v).
+
 ---*/
 
 var callCount = 0;

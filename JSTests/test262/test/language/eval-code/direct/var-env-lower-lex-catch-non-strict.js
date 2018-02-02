@@ -4,7 +4,7 @@
 esid: sec-evaldeclarationinstantiation
 es6id: 18.2.1.2
 description: Variable collision with lexical binding in lower scope
-info: >
+info: |
     Annex B extensions permit re-declarations from FunctionDeclaration,
     VariableStatement, the VariableDeclarationList of a for statement, and the
     ForBinding of a for-in statement. Bindings from the ForBinding of a for-of

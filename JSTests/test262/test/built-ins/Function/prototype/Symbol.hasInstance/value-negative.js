@@ -4,7 +4,7 @@
 es6id: 19.2.3.6
 description: >
     Constructor is not defined in the argument's prototype chain
-info: >
+info: |
     1. Let F be the this value.
     2. Return OrdinaryHasInstance(F, V).
 

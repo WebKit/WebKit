@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     A strict delete should either succeed, returning true, or it
     should fail by throwing a TypeError. Under no circumstances
     should a strict delete return false.

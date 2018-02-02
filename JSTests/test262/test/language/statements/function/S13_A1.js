@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     "x=function y(){}" statement does not store a reference to the new
     function in the varaible y(Identifier)
 es5id: 13_A1

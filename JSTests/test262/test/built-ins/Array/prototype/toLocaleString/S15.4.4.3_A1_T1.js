@@ -3,7 +3,7 @@
 
 /*---
 esid: sec-array.prototype.tolocalestring
-info: >
+info: |
     The elements of the array are converted to strings using their
     toLocaleString methods, and these strings are then concatenated, separated
     by occurrences of a separator string that has been derived in an

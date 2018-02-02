@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     The value of the internal [[Prototype]] property of the Error constructor
     is the Function prototype object(15.3.4)
 es5id: 15.11.3_A1_T1

@@ -5,7 +5,7 @@
 es6id: 21.1.3.8
 description: >
   String.prototype.indexOf.name is "indexOf".
-info: >
+info: |
   String.prototype.indexOf ( searchString [ , position ] )
 
   17 ECMAScript Standard Built-in Objects:

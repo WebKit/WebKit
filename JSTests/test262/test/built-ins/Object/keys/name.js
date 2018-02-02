@@ -5,7 +5,7 @@
 es6id: 19.1.2.14
 description: >
   Object.keys.name is "keys".
-info: >
+info: |
   Object.keys ( O )
 
   17 ECMAScript Standard Built-in Objects:

@@ -4,7 +4,7 @@
 es6id: 23.1.3.1
 description: >
   Map.prototype.entries.name value and descriptor.
-info: >
+info: |
   Map.prototype.clear ( )
 
   17 ECMAScript Standard Built-in Objects

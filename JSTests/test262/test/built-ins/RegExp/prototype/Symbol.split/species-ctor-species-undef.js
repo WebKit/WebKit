@@ -6,7 +6,7 @@ es6id: 21.2.5.11
 description: >
     RegExp used when the `Symbol.species` property of the `this` value's
     constructor is `undefined` or `null`
-info: >
+info: |
     [...]
     5. Let C be SpeciesConstructor(rx, %RegExp%).
     [...]

@@ -6,7 +6,7 @@ description: redeclaration with ClassDeclaration (ClassDeclaration in SwitchStat
 esid: sec-switch-statement-static-semantics-early-errors
 flags: [generated]
 negative:
-  phase: early
+  phase: parse
   type: SyntaxError
 info: |
     SwitchStatement : switch ( Expression ) CaseBlock

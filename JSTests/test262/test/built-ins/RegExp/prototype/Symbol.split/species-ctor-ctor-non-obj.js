@@ -4,7 +4,7 @@
 /*---
 es6id: 21.2.5.11
 description: TypeError when `constructor` property is defined but not an object
-info: >
+info: |
     [...]
     5. Let C be SpeciesConstructor(rx, %RegExp%).
     6. ReturnIfAbrupt(C).

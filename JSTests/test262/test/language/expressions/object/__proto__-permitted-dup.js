@@ -4,7 +4,7 @@
 esid: sec-object-initializer
 es6id: 12.2.6
 description: Permitted duplicate `__proto__` property
-info: >
+info: |
     Annex B defines an early error for duplicate PropertyName of `__proto__`,
     but this does not apply to properties created from other productions.
 

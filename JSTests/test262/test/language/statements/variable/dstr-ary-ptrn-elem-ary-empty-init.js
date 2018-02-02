@@ -5,7 +5,7 @@
 description: BindingElement with array binding pattern and initializer is used (`var` statement)
 esid: sec-variable-statement-runtime-semantics-evaluation
 es6id: 13.3.2.4
-features: [destructuring-binding]
+features: [generators, destructuring-binding]
 flags: [generated]
 info: |
     VariableDeclaration : BindingPattern Initializer
@@ -27,6 +27,7 @@ info: |
        b. Let v be ? GetValue(defaultValue).
     4. Return the result of performing BindingInitialization of BindingPattern
        with v and environment as the arguments.
+
 ---*/
 var initCount = 0;
 var iterCount = 0;

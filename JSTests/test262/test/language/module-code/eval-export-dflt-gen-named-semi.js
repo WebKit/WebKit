@@ -6,6 +6,7 @@ description: >
     be terminated with a semicolon or newline
 esid: sec-moduleevaluation
 flags: [module]
+features: [generators]
 ---*/
 
 var count = 0;

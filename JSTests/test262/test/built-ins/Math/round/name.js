@@ -5,7 +5,7 @@
 es6id: 20.2.2.28
 description: >
   Math.round.name is "round".
-info: >
+info: |
   Math.round ( x )
 
   17 ECMAScript Standard Built-in Objects:

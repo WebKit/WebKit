@@ -5,7 +5,7 @@
 es6id: 21.1.3.21
 description: >
   String.prototype.toLocaleUpperCase.name is "toLocaleUpperCase".
-info: >
+info: |
   String.prototype.toLocaleUpperCase ( [ reserved1 [ , reserved2 ] ] )
 
   17 ECMAScript Standard Built-in Objects:

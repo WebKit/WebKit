@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     when String.prototype.indexOf(searchString, position) is called first Call ToString, giving it the this value as its argument.
     Then Call ToString(searchString) and Call ToNumber(position)
 es5id: 15.5.4.7_A4_T4

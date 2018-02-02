@@ -5,7 +5,7 @@
 esid: sec-tonumber-applied-to-the-string-type
 description: >
   Ensure U+180E is not recognized as whitespace, convert to Number by explicit transformation
-info: >
+info: |
   7.1.3.1 ToNumber Applied to the String Type
 
   If the grammar cannot interpret the String as an expansion of

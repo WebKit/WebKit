@@ -4,7 +4,7 @@
 es6id: 13.7.5.11
 description: >
     Completion value when head has no declaration and no iteration occurs
-info: >
+info: |
     IterationStatement : for ( LeftHandSideExpression in Expression ) Statement
 
     1. Let keyResult be ForIn/OfHeadEvaluation( « », Expression, enumerate).

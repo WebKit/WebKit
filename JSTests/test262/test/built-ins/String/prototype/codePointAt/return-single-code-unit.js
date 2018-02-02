@@ -4,7 +4,7 @@
 es6id: 21.1.3.3
 description: >
   Return single code unit value of the element at index position.
-info: >
+info: |
   21.1.3.3 String.prototype.codePointAt ( pos )
 
   1. Let O be RequireObjectCoercible(this value).

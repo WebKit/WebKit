@@ -5,7 +5,7 @@
 es6id: B.2.3.5
 description: >
   String.prototype.bold.length is 0.
-info: >
+info: |
   String.prototype.bold ( )
 
   17 ECMAScript Standard Built-in Objects:

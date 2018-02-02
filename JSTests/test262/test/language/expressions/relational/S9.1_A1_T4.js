@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     Result of primitive conversion from object is a default value for the
     Object
 es5id: 9.1_A1_T4

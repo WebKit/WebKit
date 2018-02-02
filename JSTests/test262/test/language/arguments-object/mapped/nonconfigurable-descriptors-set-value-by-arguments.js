@@ -3,7 +3,7 @@
 
 /*---
 description: Mapped arguments property descriptor change with non-configurable property
-info: >
+info: |
     Mapping keep working when property is set to non-configurable and its
     value is changed using arguments[i] where "i" is the argument index.
 flags: [noStrict]

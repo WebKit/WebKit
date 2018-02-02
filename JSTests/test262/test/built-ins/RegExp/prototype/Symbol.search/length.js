@@ -3,7 +3,7 @@
 /*---
 es6id: 21.2.5.9
 description: RegExp.prototype[Symbol.search] `length` property
-info: >
+info: |
     ES6 section 17:
 
     Every built-in Function object, including constructors, has a length

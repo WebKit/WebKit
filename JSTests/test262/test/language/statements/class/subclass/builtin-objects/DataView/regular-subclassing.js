@@ -3,7 +3,7 @@
 /*---
 es6id: 24.2.2
 description: Subclassing the DataView object
-info: >
+info: |
   24.2.2 The DataView Constructor
 
   ...

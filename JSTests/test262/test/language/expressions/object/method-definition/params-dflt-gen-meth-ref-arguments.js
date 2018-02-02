@@ -4,7 +4,7 @@
 description: Referencing the arguments object from a default parameter (generator method)
 esid: sec-generator-function-definitions-runtime-semantics-propertydefinitionevaluation
 es6id: 14.4.13
-features: [default-parameters]
+features: [generators, default-parameters]
 info: |
     GeneratorMethod :
         * PropertyName ( StrictFormalParameters ) { GeneratorBody }

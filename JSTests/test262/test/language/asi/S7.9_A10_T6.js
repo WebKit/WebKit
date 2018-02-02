@@ -6,7 +6,7 @@ info: Check {} for automatic semicolon insertion
 es5id: 7.9_A10_T6
 description: Checking if execution of "{} \n * 1" fails
 negative:
-  phase: early
+  phase: parse
   type: SyntaxError
 ---*/
 

@@ -4,9 +4,10 @@
 /*---
 description: redeclaration with FunctionDeclaration (GeneratorDeclaration in SwitchStatement)
 esid: sec-switch-statement-static-semantics-early-errors
+features: [generators]
 flags: [generated]
 negative:
-  phase: early
+  phase: parse
   type: SyntaxError
 info: |
     SwitchStatement : switch ( Expression ) CaseBlock

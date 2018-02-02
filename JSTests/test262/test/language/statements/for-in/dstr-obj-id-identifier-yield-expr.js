@@ -8,7 +8,7 @@ es6id: 13.7.5.11
 features: [generators, destructuring-binding]
 flags: [generated, noStrict]
 negative:
-  phase: early
+  phase: parse
   type: SyntaxError
 info: |
     IterationStatement :

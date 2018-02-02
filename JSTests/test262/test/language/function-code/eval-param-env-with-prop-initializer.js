@@ -4,7 +4,7 @@
 /*---
 esid: sec-function-definitions-runtime-semantics-iteratorbindinginitialization
 description: If a property initializer contains a direct eval call, a new declarative environment is created.
-info: >
+info: |
   Runtime Semantics: IteratorBindingInitialization
 
   FormalParameter : BindingElement

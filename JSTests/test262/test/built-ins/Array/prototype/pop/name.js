@@ -6,7 +6,7 @@ esid: sec-array.prototype.pop
 es6id: 22.1.3.16
 description: >
   Array.prototype.pop.name is "pop".
-info: >
+info: |
   Array.prototype.pop ( )
 
   17 ECMAScript Standard Built-in Objects:

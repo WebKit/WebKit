@@ -5,7 +5,7 @@
 esid: sec-dataview.prototype.setfloat32
 description: >
   DataView.prototype.setFloat32.length is 2.
-info: >
+info: |
   DataView.prototype.setFloat32 ( byteOffset, value [ , littleEndian ] )
 
   17 ECMAScript Standard Built-in Objects:

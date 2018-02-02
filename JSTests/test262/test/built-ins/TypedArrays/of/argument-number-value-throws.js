@@ -4,7 +4,7 @@
 esid: sec-%typedarray%.of
 description: >
   Return abrupt from object value
-info: >
+info: |
   22.2.2.2 %TypedArray%.of ( ...items )
 
   ...

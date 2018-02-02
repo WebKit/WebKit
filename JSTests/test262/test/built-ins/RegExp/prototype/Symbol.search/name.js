@@ -3,7 +3,7 @@
 /*---
 es6id: 21.2.5.9
 description: RegExp.prototype[Symbol.search] `name` property
-info: >
+info: |
     The value of the name property of this function is "[Symbol.search]".
 
     ES6 Section 17:

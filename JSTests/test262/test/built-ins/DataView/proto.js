@@ -6,7 +6,7 @@ esid: sec-properties-of-the-dataview-constructor
 es6id: 24.2.3
 description: >
   The prototype of DataView is Function.prototype
-info: >
+info: |
   The value of the [[Prototype]] internal slot of the DataView constructor is
   the intrinsic object %FunctionPrototype%.
 ---*/

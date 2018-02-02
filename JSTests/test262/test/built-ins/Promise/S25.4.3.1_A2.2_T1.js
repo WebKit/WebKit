@@ -2,7 +2,7 @@
 // See LICENSE for details.
 
 /*---
-info: >
+info: |
     Promise throws TypeError when 'this' is constructed but unsettled promise
 es6id: S25.4.3.1_A2.2_T1
 author: Sam Mikes

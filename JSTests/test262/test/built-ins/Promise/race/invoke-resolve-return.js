@@ -3,7 +3,7 @@
 /*---
 description: Use of the value returned by the constructor's `resolve` method.
 es6id: 25.4.4.1
-info: >
+info: |
     [...]
     6. Let promiseCapability be NewPromiseCapability(C).
     [...]

@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     The RegExp.prototype.exec.length property does not have the attribute
     DontDelete
 es5id: 15.10.6.2_A9

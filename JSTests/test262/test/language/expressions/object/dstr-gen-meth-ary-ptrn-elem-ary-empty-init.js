@@ -5,7 +5,7 @@
 description: BindingElement with array binding pattern and initializer is used (generator method)
 esid: sec-generator-function-definitions-runtime-semantics-propertydefinitionevaluation
 es6id: 14.4.13
-features: [destructuring-binding]
+features: [generators, destructuring-binding]
 flags: [generated]
 info: |
     GeneratorMethod :
@@ -54,6 +54,7 @@ info: |
        b. Let v be ? GetValue(defaultValue).
     4. Return the result of performing BindingInitialization of BindingPattern
        with v and environment as the arguments.
+
 ---*/
 var initCount = 0;
 var iterCount = 0;

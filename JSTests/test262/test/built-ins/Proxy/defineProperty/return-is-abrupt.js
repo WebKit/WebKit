@@ -4,7 +4,7 @@
 es6id: 9.5.6
 description: >
     Trap return is an abrupt.
-info: >
+info: |
     [[DefineOwnProperty]] (P, Desc)
 
     ...

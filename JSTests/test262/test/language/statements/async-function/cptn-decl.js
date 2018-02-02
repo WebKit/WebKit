@@ -3,7 +3,7 @@
 /*---
 esid: sec-async-function-definitions-runtime-semantics-evaluation
 description: Async function declaration completion value is empty.
-info: >
+info: |
     AsyncFunctionDeclaration : async [no LineTerminator here] function BindingIdentifier ( FormalParameters ) { AsyncFunctionBody }
 
     1. Return NormalCompletion(empty).

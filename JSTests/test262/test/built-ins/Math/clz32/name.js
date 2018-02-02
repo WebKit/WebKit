@@ -5,7 +5,7 @@
 es6id: 20.2.2.11
 description: >
   Math.clz32.name is "clz32".
-info: >
+info: |
   Math.clz32 ( x )
 
   17 ECMAScript Standard Built-in Objects:

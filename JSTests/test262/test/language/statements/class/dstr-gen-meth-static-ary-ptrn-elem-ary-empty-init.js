@@ -5,7 +5,7 @@
 description: BindingElement with array binding pattern and initializer is used (static class expression generator method)
 esid: sec-runtime-semantics-bindingclassdeclarationevaluation
 es6id: 14.5.15
-features: [destructuring-binding]
+features: [generators, destructuring-binding]
 flags: [generated]
 info: |
     ClassDeclaration : class BindingIdentifier ClassTail
@@ -70,6 +70,7 @@ info: |
        b. Let v be ? GetValue(defaultValue).
     4. Return the result of performing BindingInitialization of BindingPattern
        with v and environment as the arguments.
+
 ---*/
 var initCount = 0;
 var iterCount = 0;

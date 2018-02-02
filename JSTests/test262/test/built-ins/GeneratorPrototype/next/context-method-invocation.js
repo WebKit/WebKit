@@ -5,6 +5,7 @@ es6id: 25.2
 description: >
     When a generator function is invoked as a method of an object, its context
     is that object.
+features: [generators]
 ---*/
 
 var context;

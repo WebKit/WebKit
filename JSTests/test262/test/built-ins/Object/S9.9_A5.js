@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     ToObject conversion from String: create a new String object
     whose [[value]] property is set to the value of the string
 es5id: 9.9_A5

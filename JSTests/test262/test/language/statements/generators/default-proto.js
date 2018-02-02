@@ -24,6 +24,7 @@ info: |
        a. Let realm be ? GetFunctionRealm(constructor).
        b. Let proto be realm's intrinsic object named intrinsicDefaultProto.
     [...]
+features: [generators]
 ---*/
 
 function* g() {}

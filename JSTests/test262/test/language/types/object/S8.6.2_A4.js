@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     [[HasInstance]] returns a boolean value indicating whether Value
     delegates behaviour to this object
 es5id: 8.6.2_A4

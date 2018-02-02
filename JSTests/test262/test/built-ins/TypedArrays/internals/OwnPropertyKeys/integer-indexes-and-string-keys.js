@@ -5,7 +5,7 @@
 esid: sec-integer-indexed-exotic-objects-ownpropertykeys
 description: >
   Return integer index + non numeric string keys
-info: >
+info: |
   9.4.5.6 [[OwnPropertyKeys]] ()
 
   ...

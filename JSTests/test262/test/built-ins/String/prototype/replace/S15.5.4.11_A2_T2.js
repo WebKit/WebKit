@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     The $ replacements are done left-to-right, and, once such are placement is performed, the new
     replacement text is not subject to further replacements
 es5id: 15.5.4.11_A2_T2

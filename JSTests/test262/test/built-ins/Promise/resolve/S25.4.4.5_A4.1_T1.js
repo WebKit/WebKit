@@ -2,7 +2,7 @@
 // See LICENSE for details.
 
 /*---
-info: >
+info: |
     Section 25.4.1.4.2
 es6id: S25.4.4.5_A3.1_T1
 author: Sam Mikes

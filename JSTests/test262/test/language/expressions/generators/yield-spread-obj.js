@@ -4,7 +4,7 @@
 /*---
 description: Use yield value in a object spread position (Unnamed generator expression)
 esid: prod-GeneratorExpression
-features: [object-spread]
+features: [object-spread, generators]
 flags: [generated]
 includes: [compareArray.js]
 info: |
@@ -12,6 +12,7 @@ info: |
 
     GeneratorExpression:
       function * BindingIdentifier opt ( FormalParameters ) { GeneratorBody }
+
 
     Spread Properties
 

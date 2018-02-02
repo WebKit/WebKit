@@ -4,7 +4,7 @@
 esid: sec-%typedarray%.prototype.foreach
 description: >
   [[ArrayLength]] is accessed in place of performing a [[Get]] of "length"
-info: >
+info: |
   22.2.3.12 %TypedArray%.prototype.forEach ( callbackfn [ , thisArg ] )
 
   %TypedArray%.prototype.forEach is a distinct function that implements the same

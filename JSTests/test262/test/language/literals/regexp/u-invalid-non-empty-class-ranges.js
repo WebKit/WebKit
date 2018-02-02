@@ -22,7 +22,7 @@ info: |
 
     The `u` flag precludes the Annex B extension that enables this pattern.
 negative:
-  phase: early
+  phase: parse
   type: SyntaxError
 ---*/
 

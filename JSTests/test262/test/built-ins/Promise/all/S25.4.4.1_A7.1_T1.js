@@ -2,7 +2,7 @@
 // See LICENSE for details.
 
 /*---
-info: >
+info: |
     Promise.all with 1-element array
     should accept an array with settled promise
 es6id: S25.4.4.1_A6.1_T2

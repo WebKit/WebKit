@@ -5,7 +5,7 @@
 es6id: B.2.1.1
 description: >
   escape.name is "escape".
-info: >
+info: |
   escape (string)
 
   17 ECMAScript Standard Built-in Objects:

@@ -4,7 +4,7 @@
 es6id: 23.1.1.1
 description: >
   Closes iterator if item second entry completes abruptly.
-info: >
+info: |
   Map ( [ iterable ] )
 
   ...

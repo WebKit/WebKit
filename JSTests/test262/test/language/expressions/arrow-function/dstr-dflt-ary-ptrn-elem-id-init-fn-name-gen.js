@@ -5,7 +5,7 @@
 description: SingleNameBinding assigns name to "anonymous" generator functions (arrow function expression (default parameter))
 esid: sec-arrow-function-definitions-runtime-semantics-evaluation
 es6id: 14.2.16
-features: [destructuring-binding, default-parameters]
+features: [generators, destructuring-binding, default-parameters]
 flags: [generated]
 info: |
     ArrowFunction : ArrowParameters => ConciseBody
@@ -50,6 +50,7 @@ info: |
           [...]
     7. If environment is undefined, return PutValue(lhs, v).
     8. Return InitializeReferencedBinding(lhs, v).
+
 ---*/
 
 var callCount = 0;

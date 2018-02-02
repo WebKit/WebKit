@@ -4,7 +4,7 @@
 /*---
 description: JSON serialization of BigInt values with replacer
 esid: sec-serializejsonproperty
-info: >
+info: |
   Runtime Semantics: SerializeJSONProperty ( key, holder )
 
   3. If ReplacerFunction is not undefined, then

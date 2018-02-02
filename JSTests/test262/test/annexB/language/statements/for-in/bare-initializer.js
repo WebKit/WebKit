@@ -5,7 +5,7 @@ esid: sec-initializers-in-forin-statement-heads
 description: >
     for-in heads prohibit AssignmentExpressions
 negative:
-  phase: early
+  phase: parse
   type: SyntaxError
 ---*/
 

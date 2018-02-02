@@ -5,7 +5,7 @@
 es6id: 22.2.3.11
 description: >
   %TypedArray%.prototype.findIndex.length is 1.
-info: >
+info: |
   %TypedArray%.prototype.findIndex (predicate [ , thisArg ] )
 
   17 ECMAScript Standard Built-in Objects:

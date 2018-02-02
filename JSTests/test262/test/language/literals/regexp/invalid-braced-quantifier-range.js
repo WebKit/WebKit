@@ -9,14 +9,14 @@ info: |
         ^$\.*+?()[]{}|
 
     PatternCharacter ::
-        SourceCharacterbut not SyntaxCharacter
+        SourceCharacter but not SyntaxCharacter
 
     Although Annex B extends the definition of Term to include
     ExtendedPatternCharacter, it also introduces the InvalidBracedQuantifier
     pattern with a higher precedence. This makes the SyntaxError for such
     patterns consistent between Annex-B and non-Annex-B environments.
 negative:
-  phase: early
+  phase: parse
   type: SyntaxError
 ---*/
 

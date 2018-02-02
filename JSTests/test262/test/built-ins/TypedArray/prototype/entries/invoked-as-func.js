@@ -3,7 +3,7 @@
 /*---
 es6id: 22.2.3.6
 description: Throws a TypeError exception when invoked as a function
-info: >
+info: |
   22.2.3.6 %TypedArray%.prototype.entries ( )
 
   The following steps are taken:

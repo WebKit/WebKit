@@ -3,7 +3,7 @@
 /*---
 es6id: 25.2.1
 description: Subclassing GeneratorFunction
-info: >
+info: |
   25.2.1 The GeneratorFunction Constructor
 
   ...

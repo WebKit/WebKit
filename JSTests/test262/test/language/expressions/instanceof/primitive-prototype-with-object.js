@@ -5,7 +5,7 @@
 es6id: 12.9.3
 description: >
   Throws a TypeError if `prototype` property is not an Object.
-info: >
+info: |
   12.9.3 Runtime Semantics: Evaluation
   RelationalExpression : RelationalExpression instanceof ShiftExpression
     ...

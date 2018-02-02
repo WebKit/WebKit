@@ -6,7 +6,7 @@ esid: sec-date.prototype.getfullyear
 es6id: 20.3.4.4
 description: >
   Date.prototype.getFullYear.name is "getFullYear".
-info: >
+info: |
   Date.prototype.getFullYear ( )
 
   17 ECMAScript Standard Built-in Objects:

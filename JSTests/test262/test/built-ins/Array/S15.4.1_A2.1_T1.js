@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     The length property of the newly constructed object;
     is set to the number of arguments
 es5id: 15.4.1_A2.1_T1

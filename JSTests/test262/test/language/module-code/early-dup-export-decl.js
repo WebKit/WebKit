@@ -7,8 +7,9 @@ description: >
     duplicate entries.
 flags: [module]
 negative:
-  phase: early
+  phase: parse
   type: SyntaxError
+features: [generators]
 ---*/
 
 throw "Test262: This statement should not be evaluated.";

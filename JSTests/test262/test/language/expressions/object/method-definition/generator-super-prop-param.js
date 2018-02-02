@@ -2,7 +2,7 @@
 // See LICENSE for details.
 
 /*---
-info: >
+info: |
  GeneratorMethod can reference SuperProperty in arg
 es6id: 14.4.1
 author: Sam Mikes

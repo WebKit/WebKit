@@ -3,7 +3,7 @@
 
 /*---
 esid: sec-array-exotic-objects-defineownproperty-p-desc
-info: >
+info: |
     For every integer k that is less than the value of
     the length property of A but not less than ToUint32(length),
     if A itself has a property (not an inherited property) named ToString(k),

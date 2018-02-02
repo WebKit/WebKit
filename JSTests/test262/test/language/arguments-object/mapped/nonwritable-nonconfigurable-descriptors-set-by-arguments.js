@@ -3,7 +3,7 @@
 
 /*---
 description: Mapped arguments property descriptor change to non-writable and non-configurable
-info: >
+info: |
     Mapping stop working when property is set to non-writable. Change the
     descriptor using [[DefineOwnProperty]] to {writable: false}, set argument[0] = 2 and then
     change property descriptor to {configurable: false}.

@@ -4,7 +4,7 @@
 /*---
 es6id: 25.4.4.1.2
 description: The `length` property of Promise.all Resolve Element functions
-info: >
+info: |
   The length property of a Promise.all resolve element function is 1.
 
   17 ECMAScript Standard Built-in Objects:

@@ -4,7 +4,7 @@
 esid: sec-typedarray-typedarray
 description: >
   Use default ArrayBuffer constructor on undefined buffer.constructor.@@species
-info: >
+info: |
   22.2.4.3 TypedArray ( typedArray )
 
   This description applies only if the TypedArray function is called with at

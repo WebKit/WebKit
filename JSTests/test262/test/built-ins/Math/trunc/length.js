@@ -4,7 +4,7 @@
 /*---
 description: length property of Math.trunc
 es6id: 20.2.2.35
-info: >
+info: |
   Math.trunc ( x )
 
   17 ECMAScript Standard Built-in Objects:

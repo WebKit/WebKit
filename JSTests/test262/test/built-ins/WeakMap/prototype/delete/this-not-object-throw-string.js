@@ -4,7 +4,7 @@
 es6id: 23.3.3.2
 esid: sec-weakmap.prototype.delete
 description: Throws TypeError if `this` is not Object.
-info: >
+info: |
   WeakMap.prototype.delete ( value )
 
   1. Let M be the this value.

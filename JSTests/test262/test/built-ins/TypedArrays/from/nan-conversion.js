@@ -4,7 +4,7 @@
 esid: sec-%typedarray%.from
 description: >
   Test NaN conversions
-info: >
+info: |
   9.4.5.9 IntegerIndexedElementSet ( O, index, value )
 
   ...

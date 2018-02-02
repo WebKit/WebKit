@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     Return the string consisting of the most significant
     digit of the decimal representation of s, followed by a decimal point '.',
     followed by the remaining k-1 digits of the decimal representation of s,

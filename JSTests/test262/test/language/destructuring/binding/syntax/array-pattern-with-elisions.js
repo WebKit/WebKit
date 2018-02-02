@@ -5,7 +5,7 @@
 es6id: 13.3.3
 description: >
   The ArrayBindingPattern with elisions only
-info: >
+info: |
   Destructuring Binding Patterns - Syntax
 
   ArrayBindingPattern[Yield] :

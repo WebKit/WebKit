@@ -5,7 +5,7 @@
 es6id: 22.2.3.24
 description: >
   %TypedArray%.prototype.some.name is "some".
-info: >
+info: |
   %TypedArray%.prototype.some ( callbackfn [ , thisArg ] )
 
   17 ECMAScript Standard Built-in Objects:

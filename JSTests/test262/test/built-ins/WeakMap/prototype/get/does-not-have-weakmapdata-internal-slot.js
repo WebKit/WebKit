@@ -5,7 +5,7 @@ es6id: 23.3.3.3
 esid: sec-weakmap.prototype.get
 description: >
   Throws a TypeError if `this` does not have a [[WeakMapData]] internal slot.
-info: >
+info: |
   WeakMap.prototype.get ( key )
 
   ...

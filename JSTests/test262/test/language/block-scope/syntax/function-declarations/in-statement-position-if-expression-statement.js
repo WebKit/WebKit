@@ -6,7 +6,7 @@ description: >
     function declarations in statement position in strict mode:
     if ( Expression ) Statement
 negative:
-  phase: early
+  phase: parse
   type: SyntaxError
 flags: [onlyStrict]
 ---*/

@@ -5,7 +5,7 @@
 es6id: B.2.3.11
 description: >
   String.prototype.small.name is "small".
-info: >
+info: |
   String.prototype.small ( )
 
   17 ECMAScript Standard Built-in Objects:

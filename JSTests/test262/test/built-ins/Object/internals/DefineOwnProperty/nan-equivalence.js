@@ -19,7 +19,7 @@ info: |
   9.1.6.1 OrdinaryDefineOwnProperty
 
   1. Let current be ? O.[[GetOwnProperty]](P).
-  2. Let extensible be the value of the [[Extensible]] internal slot of O.
+  2. Let extensible be O.[[Extensible]].
   3. Return ValidateAndApplyPropertyDescriptor(O, P, extensible, Desc,
      current).
 
@@ -28,27 +28,34 @@ info: |
   [...]
   7. Else if IsDataDescriptor(current) and IsDataDescriptor(Desc) are both true,
      then
-    a. If the [[Configurable]] field of current is false, then
+    a. If current.[[Configurable]] is false and current.[[Writable]] is false,
+       then
       [...]
-    b. Else the [[Configurable]] field of current is true, so any change is
-       acceptable.
   [...]
   9. If O is not undefined, then
     a. For each field of Desc that is present, set the corresponding attribute
        of the property named P of object O to the value of the field.
   10. Return true.
-features: [Float64Array, Uint8Array]
+features: [Float64Array, Uint8Array, Uint16Array]
 includes: [nans.js]
 ---*/
+
+var isLittleEndian = new Uint8Array(new Uint16Array([1]).buffer)[0] !== 0;
 
 var float = new Float64Array(1);
 var ints = new Uint8Array(float.buffer);
 var len = distinctNaNs.length;
-var idx, jdx, subject, first, second;
+
 function byteValue(value) {
   float[0] = value;
-  return ints[0] + (ints[1] << 8) + (ints[2] << 16) + (ints[3] << 32) +
-    (ints[4] << 64) + (ints[5] << 64) + (ints[6] << 128) + (ints[7] << 256);
+
+  var hex = "0123456789ABCDEF";
+  var s = "";
+  for (var i = 0; i < 8; ++i) {
+    var v = ints[isLittleEndian ? 7 - i : i];
+    s += hex[(v >> 4) & 0xf] + hex[v & 0xf];
+  }
+  return s;
 }
 
 /**
@@ -57,21 +64,23 @@ function byteValue(value) {
  * cannot be verified and this test is expected to pass without evaluating any
  * assertions.
  */
-for (idx = 0; idx < len; ++idx) {
-  for (jdx = 0 ; jdx < len; ++jdx) {
-    first = distinctNaNs[idx];
-    second = distinctNaNs[jdx];
-    if (byteValue(first) === byteValue(second)) {
+for (var idx = 0; idx < len; ++idx) {
+  for (var jdx = 0; jdx < len; ++jdx) {
+    // NB: Don't store the distinct NaN values as global variables, because
+    // global variables are properties of the global object. And in this test
+    // we want to ensure NaN-valued properties in objects are properly handled,
+    // so storing NaN values in the (global) object defeats the purpose.
+    if (byteValue(distinctNaNs[idx]) === byteValue(distinctNaNs[jdx])) {
       continue;
     }
 
-    subject = {};
-    subject.prop = first;
-    subject.prop = second;
+    var subject = {};
+    subject.prop = distinctNaNs[idx];
+    subject.prop = distinctNaNs[jdx];
 
     assert.sameValue(
       byteValue(subject.prop),
-      byteValue(second),
+      byteValue(distinctNaNs[jdx]),
       'Property value was re-set'
     );
   }

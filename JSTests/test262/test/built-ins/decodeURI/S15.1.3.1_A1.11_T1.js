@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     If B = 1110xxxx (n = 3) and (string.charAt(k + 4) and
     string.charAt(k + 5)) or (string.charAt(k + 7) and
     string.charAt(k + 8)) do not represent hexadecimal digits, throw URIError

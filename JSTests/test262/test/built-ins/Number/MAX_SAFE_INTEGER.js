@@ -4,7 +4,7 @@
 description: Property descriptor for `Number.MAX_SAFE_INTEGER`
 esid: sec-number.max_safe_integer
 es6id: 20.1.2.6
-info: >
+info: |
     The value of Number.MAX_SAFE_INTEGER is 9007199254740991
 
     This property has the attributes { [[Writable]]: false, [[Enumerable]]:

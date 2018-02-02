@@ -3,7 +3,7 @@
 /*---
 description: Resolving with a reference to the promise itself
 es6id: 25.4.4.3
-info: >
+info: |
     [...]
     6. Let promiseCapability be NewPromiseCapability(C).
     [...]

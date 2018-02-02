@@ -6,7 +6,7 @@
 esid: sec-sharedarraybuffer-length
 description: >
   Throws a RangeError if length >= 2 ** 53
-info: >
+info: |
   SharedArrayBuffer( length )
 
   1. If NewTarget is undefined, throw a TypeError exception.

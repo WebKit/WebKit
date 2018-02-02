@@ -6,7 +6,7 @@ esid: sec-date.prototype.gethours
 es6id: 20.3.4.5
 description: >
   Date.prototype.getHours.name is "getHours".
-info: >
+info: |
   Date.prototype.getHours ( )
 
   17 ECMAScript Standard Built-in Objects:

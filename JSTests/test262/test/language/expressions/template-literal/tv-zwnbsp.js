@@ -3,7 +3,7 @@
 /*---
 es6id: 11.1.8.6.1
 description: Template values of the zero width no-break space character
-info: >
+info: |
     The zero width no-break space format-control character may be used within
     template literals.
 ---*/

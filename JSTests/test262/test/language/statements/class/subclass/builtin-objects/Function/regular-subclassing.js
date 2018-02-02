@@ -3,7 +3,7 @@
 /*---
 es6id: 19.2.1
 description: Subclassing Function
-info: >
+info: |
   19.2.1 The Function Constructor
 
   ...

@@ -4,7 +4,7 @@
 es6id: 22.1.1
 description: >
   Constructor calling super() with a single argument creates an Array object
-info: >
+info: |
   22.1.1 The Array Constructor
 
   The Array constructor is designed to be subclassable. It may be used as the

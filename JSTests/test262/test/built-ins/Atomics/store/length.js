@@ -6,7 +6,7 @@
 esid: sec-atomics.store
 description: >
   Atomics.store.length is 3.
-info: >
+info: |
   Atomics.store ( ia, index, val )
 
   17 ECMAScript Standard Built-in Objects:

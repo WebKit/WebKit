@@ -7,7 +7,7 @@ description: >
     SyntaxError expected: reserved words used as Identifier
     Names in UTF8: debugger
 negative:
-  phase: early
+  phase: parse
   type: SyntaxError
 ---*/
 

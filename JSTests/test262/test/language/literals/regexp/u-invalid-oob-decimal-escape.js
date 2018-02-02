@@ -11,7 +11,7 @@ info: |
     When the "unicode" flag is set, this algorithm is honored irrespective of
     the presence of Annex B extensions.
 negative:
-  phase: early
+  phase: parse
   type: SyntaxError
 ---*/
 

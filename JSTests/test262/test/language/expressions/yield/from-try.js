@@ -5,6 +5,7 @@ es6id: 25.2
 description: >
     The behavior of `yield` expressions should not be affected when they appear
     within the `try` block of `try` statements.
+features: [generators]
 ---*/
 
 function* g() {

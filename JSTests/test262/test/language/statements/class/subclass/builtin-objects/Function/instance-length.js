@@ -3,7 +3,7 @@
 /*---
 es6id: 19.2.4.1
 description: Subclassed Function instances has length and name properties
-info: >
+info: |
   19.2.4.1 length
 
   The value of the length property is an integer that indicates the typical

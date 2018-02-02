@@ -3,7 +3,7 @@
 
 /*---
 description: null and undefined source should be ignored,result should be original object.
-es6id:  19.1.2.1.5.a
+esid: sec-object.assign
 ---*/
 
 var target = new Object();

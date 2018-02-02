@@ -4,7 +4,7 @@
 es6id: 12.10.3
 description: >
     Behavior when error thrown while accessing `Symbol.toPrimitive` property
-info: >
+info: |
     [...]
     7. Return the result of performing Abstract Equality Comparison rval ==
        lval.

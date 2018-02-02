@@ -5,6 +5,7 @@ es6id: 25.2
 description: >
     Generator function instances are correctly reported as instances of the
     GeneratorFunction intrinsic.
+features: [generators]
 ---*/
 
 var GeneratorFunction = Object.getPrototypeOf(function* () {}).constructor;

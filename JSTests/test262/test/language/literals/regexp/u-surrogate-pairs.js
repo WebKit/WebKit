@@ -4,7 +4,7 @@
 /*---
 description: Out-of-range value of hexadecimal digits in UnicodeEscapeSequence
 es6id: 21.2.2.10
-info: >
+info: |
     21.2.2.10 CharacterEscape
 
     The production RegExpUnicodeEscapeSequence :: u LeadSurrogate \u

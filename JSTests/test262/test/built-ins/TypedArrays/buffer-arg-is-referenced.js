@@ -4,7 +4,7 @@
 esid: sec-typedarray-buffer-byteoffset-length
 description: >
   Reuse buffer argument instead of making a new clone
-info: >
+info: |
   22.2.4.5 TypedArray ( buffer [ , byteOffset [ , length ] ] )
 
   This description applies only if the TypedArray function is called with at

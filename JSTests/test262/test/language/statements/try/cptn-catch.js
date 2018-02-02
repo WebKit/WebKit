@@ -3,7 +3,7 @@
 /*---
 es6id: 13.15.8
 description: Completion value from `catch` clause of a try..catch statement
-info: >
+info: |
     TryStatement : try Block Catch
 
     1. Let B be the result of evaluating Block.

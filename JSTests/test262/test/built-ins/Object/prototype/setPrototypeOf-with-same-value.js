@@ -4,7 +4,7 @@
 esid: sec-immutable-prototype-exotic-objects-setprototypeof-v
 description: >
   Object.prototype's [[SetPrototypeOf]] returns true if value is same
-info: >
+info: |
   9.4.7.1 [[SetPrototypeOf]] (V)
 
   ...

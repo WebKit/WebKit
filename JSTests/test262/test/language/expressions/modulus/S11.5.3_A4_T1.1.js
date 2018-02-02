@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     The result of a ECMAScript floating-point remainder operation is
     determined by the rules of IEEE arithmetics
 es5id: 11.5.3_A4_T1.1

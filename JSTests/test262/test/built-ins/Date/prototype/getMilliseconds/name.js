@@ -6,7 +6,7 @@ esid: sec-date.prototype.getmilliseconds
 es6id: 20.3.4.6
 description: >
   Date.prototype.getMilliseconds.name is "getMilliseconds".
-info: >
+info: |
   Date.prototype.getMilliseconds ( )
 
   17 ECMAScript Standard Built-in Objects:

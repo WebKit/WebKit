@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     Once the exact MV for a string numeric literal has been
     determined, it is then rounded to a value of the Number type with 20
     significant digits by replacing each significant digit after the 20th

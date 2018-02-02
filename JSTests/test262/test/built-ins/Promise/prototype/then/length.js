@@ -3,7 +3,7 @@
 /*---
 es6id: 25.4.5.3
 description: Promise.prototype.then `length` property
-info: >
+info: |
     ES6 Section 17:
     Every built-in Function object, including constructors, has a length
     property whose value is an integer. Unless otherwise specified, this value

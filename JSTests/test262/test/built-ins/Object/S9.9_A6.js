@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     ToObject conversion from Object: The result is the input
     argument (no conversion)
 es5id: 9.9_A6

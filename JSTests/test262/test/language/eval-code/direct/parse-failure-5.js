@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     If Result(3).type is not normal, then Result(3).type must be throw.
     Throw Result(3).value as an exception
 es5id: 15.1.2.1_A3.3_T3

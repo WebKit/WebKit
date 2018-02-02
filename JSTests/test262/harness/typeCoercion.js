@@ -323,6 +323,24 @@ function testNotCoercibleToString(test) {
   testNotCoercibleToPrimitive("string", test);
 }
 
+function testCoercibleToBooleanTrue(test) {
+  test(true);
+  test(1);
+  test("string");
+  test(Symbol("1"));
+  test({});
+}
+
+function testCoercibleToBooleanFalse(test) {
+  test(undefined);
+  test(null);
+  test(false);
+  test(0);
+  test(-0);
+  test(NaN);
+  test("");
+}
+
 function testCoercibleToBigIntZero(test) {
   function testPrimitiveValue(value) {
     test(value);

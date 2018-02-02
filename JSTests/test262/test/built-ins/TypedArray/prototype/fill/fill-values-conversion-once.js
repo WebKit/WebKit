@@ -4,7 +4,7 @@
 esid: sec-%typedarray%.prototype.fill
 description: >
   Fills all the elements with non numeric values values.
-info: >
+info: |
   22.2.3.8 %TypedArray%.prototype.fill (value [ , start [ , end ] ] )
 
   ...

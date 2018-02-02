@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     VariableDeclaration within Eval statement is initialized as the program
     reaches the eval statement
 es5id: 12.2_A5

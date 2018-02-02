@@ -5,7 +5,7 @@
 es6id: 25.4.5.3
 description: >
   Promise reaction jobs do not check for cyclic resolutions.
-info: >
+info: |
   Promise.prototype.then ( onFulfilled , onRejected )
 
   ...

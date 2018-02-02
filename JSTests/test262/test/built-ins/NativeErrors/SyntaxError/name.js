@@ -5,7 +5,7 @@
 es6id: 19.5.6.1
 description: >
   SyntaxError.name is "SyntaxError".
-info: >
+info: |
   17 ECMAScript Standard Built-in Objects:
     Every built-in Function object, including constructors, that is not
     identified as an anonymous function has a name property whose value

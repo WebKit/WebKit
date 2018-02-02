@@ -5,7 +5,7 @@
 esid: sec-Intl.Collator.prototype.resolvedOptions
 description: >
   Intl.Collator.prototype.resolvedOptions.name is "resolvedOptions".
-info: >
+info: |
   10.3.5 Intl.Collator.prototype.resolvedOptions ()
 
   17 ECMAScript Standard Built-in Objects:

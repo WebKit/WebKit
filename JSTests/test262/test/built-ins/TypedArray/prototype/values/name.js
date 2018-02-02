@@ -5,7 +5,7 @@
 es6id: 22.2.3.29
 description: >
   %TypedArray%.prototype.values.name is "values".
-info: >
+info: |
   %TypedArray%.prototype.values ( )
 
   17 ECMAScript Standard Built-in Objects:

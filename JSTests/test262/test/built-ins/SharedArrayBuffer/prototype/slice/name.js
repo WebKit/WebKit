@@ -5,7 +5,7 @@
 /*---
 description: >
   SharedArrayBuffer.prototype.slice.name is "slice".
-info: >
+info: |
   SharedArrayBuffer.prototype.slice ( start, end )
 
   17 ECMAScript Standard Built-in Objects:

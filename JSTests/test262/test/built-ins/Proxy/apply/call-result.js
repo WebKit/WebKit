@@ -4,7 +4,7 @@
 es6id: 9.5.13
 description: >
     Return the result from the trap method.
-info: >
+info: |
     [[Call]] (thisArgument, argumentsList)
 
     9. Return Call(trap, handler, «target, thisArgument, argArray»).

@@ -5,7 +5,7 @@
 es6id: 22.2.3.17
 description: >
   get %TypedArray%.prototype.length.name is "get length".
-info: >
+info: |
   get %TypedArray%.prototype.length
 
   17 ECMAScript Standard Built-in Objects:

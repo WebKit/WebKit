@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     Type(x) and Type(y) are Number-s minus NaN, +0, -0.
     Return true, if x is the same number value as y; otherwise, return false
 es5id: 11.9.4_A4.3

@@ -6,7 +6,7 @@
 esid: sec-sharedarraybuffer-length
 description: >
   Throws a RangeError if requested Data Block is too large.
-info: >
+info: |
   SharedArrayBuffer( length )
 
   ...

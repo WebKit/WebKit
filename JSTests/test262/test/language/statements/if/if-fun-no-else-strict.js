@@ -6,9 +6,9 @@ esid: sec-if-statement
 es6id: 13.6
 flags: [onlyStrict]
 negative:
-  phase: early
+  phase: parse
   type: SyntaxError
-info: >
+info: |
     The following rules for IfStatement augment those in 13.6:
 
     IfStatement[Yield, Return]:

@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     Finite nonzero values  that are Normalised having the form s*m*2**e
     where s is +1 or -1, m is a positive integer less than 2**53 but not
     less than s**52 and e is an integer ranging from -1074 to 971

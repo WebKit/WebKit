@@ -2,9 +2,9 @@
 // This code is governed by the BSD license found in the LICENSE file.
 /*---
 esid: sec-%typedarray%.prototype.subarray
-description: |
+description: >
   Throws a TypeError exception when `this` is not a TypedArray instance
-info: >
+info: |
   22.2.3.9 %TypedArray%.prototype.subarray( begin , end )
 
   The following steps are taken:

@@ -5,7 +5,7 @@ esid: sec-array.prototype.copywithin
 es6id: 22.1.3.3
 description: >
   Copy values with non-negative target, start and end positions.
-info: >
+info: |
   22.1.3.3 Array.prototype.copyWithin (target, start [ , end ] )
 
   ...

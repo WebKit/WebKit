@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     Since LineTerminator(LT) between Postfix Increment/Decrement Operator(I/DO) and operand is admitted,
     Additive/Substract Operator(A/SO) in combination with I/DO separated by LT or white spaces after automatic semicolon insertion gives valid result
 es5id: 7.9_A5.8_T1

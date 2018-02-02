@@ -4,7 +4,7 @@
 esid: sec-typedarray-typedarray
 description: >
   The new typedArray instance from a typedArray argument is extensible
-info: >
+info: |
   22.2.4.3 TypedArray ( typedArray )
 
   ...

@@ -4,7 +4,7 @@
 es6id: 23.1.3.3
 description: >
   Throws a TypeError if `this` does not have a [[MapData]] internal slot.
-info: >
+info: |
   Map.prototype.delete ( key )
 
   1. Let M be the this value.

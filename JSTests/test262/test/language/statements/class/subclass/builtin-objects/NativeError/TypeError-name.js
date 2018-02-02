@@ -4,7 +4,7 @@
 es6id: 19.5.6.1.1
 description: >
   The name property on a new instance
-info: >
+info: |
   19.5.6.3.3 NativeError.prototype.name
 
   The initial value of the name property of the prototype for a given

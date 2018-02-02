@@ -4,7 +4,7 @@
 /*---
 esid: sec-todatestring
 description: Invalid Dates are rendered as "Invalid Date"
-info: >
+info: |
   ToDateString ( tv )
 
   ...

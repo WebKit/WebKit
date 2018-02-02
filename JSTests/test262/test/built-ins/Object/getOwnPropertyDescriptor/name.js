@@ -5,7 +5,7 @@
 es6id: 19.1.2.6
 description: >
   Object.getOwnPropertyDescriptor.name is "getOwnPropertyDescriptor".
-info: >
+info: |
   Object.getOwnPropertyDescriptor ( O, P )
 
   17 ECMAScript Standard Built-in Objects:

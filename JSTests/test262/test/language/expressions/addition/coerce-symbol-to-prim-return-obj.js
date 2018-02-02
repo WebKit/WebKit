@@ -5,7 +5,7 @@ esid: sec-addition-operator-plus-runtime-semantics-evaluation
 es6id: 12.7.3.1
 description: >
     Behavior when coercion via `Symbol.toPrimitive` yields an Object
-info: >
+info: |
     [...]
     5. Let lprim be ? ToPrimitive(lval).
     6. Let rprim be ? ToPrimitive(rval).

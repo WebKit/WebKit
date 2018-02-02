@@ -5,7 +5,7 @@ es6id: 9.5.6
 description: >
     Throw a TypeError exception if Desc is not configurable and target property
     descriptor is undefined, and trap result is true.
-info: >
+info: |
     [[DefineOwnProperty]] (P, Desc)
 
     ...

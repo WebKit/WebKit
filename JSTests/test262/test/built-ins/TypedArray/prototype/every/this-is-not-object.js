@@ -3,7 +3,7 @@
 /*---
 esid: sec-%typedarray%.prototype.every
 description: Throws a TypeError exception when `this` is not Object
-info: >
+info: |
   22.2.3.7 %TypedArray%.prototype.every ( callbackfn [ , thisArg ] )
 
   This function is not generic. ValidateTypedArray is applied to the this value

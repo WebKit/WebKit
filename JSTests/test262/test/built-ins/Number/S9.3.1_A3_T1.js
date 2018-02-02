@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     The MV of StringNumericLiteral ::: StrWhiteSpaceopt StrNumericLiteral
     StrWhiteSpaceopt is the MV of StrNumericLiteral, no matter whether white
     space is present or not

@@ -5,7 +5,7 @@ es6id: 23.2.5.2.1
 description: >
   Throws a TypeError if `this` does not have all of the internal slots of a Set
   Iterator Instance.
-info: >
+info: |
   %SetIteratorPrototype%.next ( )
 
   1. Let O be the this value.

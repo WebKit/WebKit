@@ -40,7 +40,7 @@ info: |
                     like-named lexical declaration.
           iii. Let thisLex be thisLex's outer environment reference.
 flags: [noStrict]
-features: [let]
+features: [generators, let]
 ---*/
 
 var o = {

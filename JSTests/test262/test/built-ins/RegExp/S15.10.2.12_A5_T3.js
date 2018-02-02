@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     The production CharacterClassEscape :: d evaluates by returning the
     ten-element set of characters containing the characters 0 through 9
     inclusive

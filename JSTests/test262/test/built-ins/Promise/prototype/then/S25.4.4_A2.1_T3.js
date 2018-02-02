@@ -2,7 +2,7 @@
 // See LICENSE for details.
 
 /*---
-info: >
+info: |
    Misc sequencing tests
    inspired by https://github.com/promises-aplus/promises-tests/issues/61
    Case "T2b"

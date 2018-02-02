@@ -4,7 +4,7 @@
 es6id: 23.1.3.6
 description: >
   Throws a TypeError if `this` object does not have a [[MapData]] internal slot.
-info: >
+info: |
   Map.prototype.get ( key )
 
   ...

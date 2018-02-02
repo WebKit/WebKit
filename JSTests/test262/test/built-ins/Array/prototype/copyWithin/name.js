@@ -5,7 +5,7 @@ esid: sec-array.prototype.copywithin
 es6id: 22.1.3.3
 description: >
   Array.prototype.copyWithin.name value and descriptor.
-info: >
+info: |
   22.1.3.3 Array.prototype.copyWithin (target, start [ , end ] )
 
   17 ECMAScript Standard Built-in Objects

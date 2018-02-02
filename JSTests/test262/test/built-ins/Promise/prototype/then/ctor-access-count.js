@@ -3,7 +3,7 @@
 /*---
 es6id: 25.4.5.3
 description: The instance's `constructor` property is accessed exactly once
-info: >
+info: |
     1. Let promise be the this value.
     2. If IsPromise(promise) is false, throw a TypeError exception.
     3. Let C be SpeciesConstructor(promise, %Promise%).

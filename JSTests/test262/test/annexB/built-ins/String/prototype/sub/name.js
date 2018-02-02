@@ -5,7 +5,7 @@
 es6id: B.2.3.13
 description: >
   String.prototype.sub.name is "sub".
-info: >
+info: |
   String.prototype.sub ( )
 
   17 ECMAScript Standard Built-in Objects:

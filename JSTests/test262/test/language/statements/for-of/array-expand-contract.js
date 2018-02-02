@@ -4,7 +4,7 @@
 /*---
 description: >
     Array entry insertion and removal items during traversal using for..of
-info: >
+info: |
     New entries inserted into an Array instance during traversal should not be
     visited if they are removed prior to visitation.
 es6id: 13.6.4

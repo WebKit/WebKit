@@ -5,7 +5,7 @@ es6id: 24.1.4.1
 esid: sec-get-arraybuffer.prototype.bytelength
 description: >
   "byteLength" property of ArrayBuffer.prototype
-info: >
+info: |
   ArrayBuffer.prototype.byteLength is an accessor property whose set accessor
   function is undefined.
 

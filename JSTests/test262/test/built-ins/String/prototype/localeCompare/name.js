@@ -5,7 +5,7 @@
 es6id: 21.1.3.10
 description: >
   String.prototype.localeCompare.name is "localeCompare".
-info: >
+info: |
   String.prototype.localeCompare ( that [, reserved1 [ , reserved2 ] ] )
 
   17 ECMAScript Standard Built-in Objects:

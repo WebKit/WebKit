@@ -6,7 +6,7 @@ es6id: 11.6.2
 description: The `await` token is not permitted as an identifier in module code
 flags: [module]
 negative:
-  phase: early
+  phase: parse
   type: SyntaxError
 ---*/
 

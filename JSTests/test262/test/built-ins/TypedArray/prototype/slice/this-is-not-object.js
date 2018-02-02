@@ -3,7 +3,7 @@
 /*---
 esid: sec-%typedarray%.prototype.slice
 description: Throws a TypeError exception when `this` is not Object
-info: >
+info: |
   22.2.3.24 %TypedArray%.prototype.slice ( start, end )
 
   The following steps are taken:

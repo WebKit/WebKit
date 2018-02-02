@@ -4,7 +4,7 @@
 /*---
 es6id: 21.2.5.11
 description: The `y` flag is always used in constructing the "splitter" object
-info: >
+info: |
     [...]
     5. Let C be SpeciesConstructor(rx, %RegExp%).
     [...]

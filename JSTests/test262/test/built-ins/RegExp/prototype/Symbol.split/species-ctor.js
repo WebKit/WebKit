@@ -4,7 +4,7 @@
 /*---
 es6id: 21.2.5.11
 description: Invocation of custom species constructor
-info: >
+info: |
     [...]
     5. Let C be SpeciesConstructor(rx, %RegExp%).
     [...]

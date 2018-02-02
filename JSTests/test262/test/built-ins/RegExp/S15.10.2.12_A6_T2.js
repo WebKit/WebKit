@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     The production CharacterClassEscape :: D evaluates by returning the set of all characters not
     included in the set returned by CharacterClassEscape :: d
 es5id: 15.10.2.12_A6_T2

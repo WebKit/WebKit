@@ -1,9 +1,10 @@
 // This file was procedurally generated from the following sources:
 // - src/class-fields/computed-symbol-names.case
-// - src/class-fields/default/cls-expr-same-line-generator.template
+// - src/class-fields/productions/cls-expr-same-line-generator.template
 /*---
 description: Computed property symbol names (field definitions followed by a generator method in the same line)
-features: [Symbol, computed-property-names, class-fields, generators]
+esid: prod-FieldDefinition
+features: [Symbol, computed-property-names, class, class-fields-public, generators]
 flags: [generated]
 includes: [propertyHelper.js]
 info: |
@@ -25,6 +26,7 @@ var y = Symbol();
 
 var C = class {
   [x]; [y] = 42; *m() { return 42; }
+
 }
 
 var c = new C();

@@ -4,7 +4,7 @@
 es6id: 26.1.11
 description: >
   Returns target's own non enumerable property keys.
-info: >
+info: |
   26.1.11 Reflect.ownKeys ( target )
 
   ...

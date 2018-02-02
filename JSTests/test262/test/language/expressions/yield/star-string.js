@@ -5,6 +5,7 @@ es6id: 25.2
 description: >
     When a string is the operand of a `yield *` expression, the generator
     should produce an iterator that visits each character in order.
+features: [generators]
 ---*/
 
 function* g() {

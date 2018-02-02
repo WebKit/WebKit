@@ -5,7 +5,7 @@
 esid: sec-%throwtypeerror%
 description: >
   %ThrowTypeError%.length is 0.
-info: >
+info: |
   %ThrowTypeError% ( )
 
   The length property of a %ThrowTypeError% function has the attributes

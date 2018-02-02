@@ -5,7 +5,7 @@ es6id: 9.5.3
 description: >
     The trap is called with handler on its context and the target object as the
     first parabeter
-info: >
+info: |
     [[IsExtensible]] ( )
 
     ...

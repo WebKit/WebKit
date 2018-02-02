@@ -5,7 +5,7 @@
 /*---
 description: >
   Returns zero-length buffer if `start` index exceeds `end` index.
-info: >
+info: |
   SharedArrayBuffer.prototype.slice ( start, end )
 
 ---*/

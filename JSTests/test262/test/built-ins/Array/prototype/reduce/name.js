@@ -6,7 +6,7 @@ esid: sec-array.prototype.reduce
 es6id: 22.1.3.18
 description: >
   Array.prototype.reduce.name is "reduce".
-info: >
+info: |
   Array.prototype.reduce ( callbackfn [ , initialValue ] )
 
   17 ECMAScript Standard Built-in Objects:

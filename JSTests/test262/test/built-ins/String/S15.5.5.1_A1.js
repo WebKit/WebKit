@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     length property contains the number of characters in the String value
     represented by this String object
 es5id: 15.5.5.1_A1

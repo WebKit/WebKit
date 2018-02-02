@@ -6,7 +6,7 @@ description: >
     let declarations with initialisers in statement positions: 
     while ( Expression ) Statement
 negative:
-  phase: early
+  phase: parse
   type: SyntaxError
 ---*/
 

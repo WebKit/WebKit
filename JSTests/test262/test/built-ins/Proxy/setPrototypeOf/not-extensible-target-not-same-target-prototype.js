@@ -6,7 +6,7 @@ description: >
     Throws a TypeError exception if boolean trap result is true, target is
     not extensible, and the given parameter is not the same object as the target
     prototype.
-info: >
+info: |
     [[SetPrototypeOf]] (V)
 
     ...

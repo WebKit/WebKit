@@ -5,7 +5,7 @@ es6id: 13.1
 description: >
     const declarations mixed: with, without initialiser
 negative:
-  phase: early
+  phase: parse
   type: SyntaxError
 ---*/
 

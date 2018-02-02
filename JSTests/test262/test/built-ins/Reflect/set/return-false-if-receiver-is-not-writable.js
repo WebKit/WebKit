@@ -4,7 +4,7 @@
 es6id: 26.1.13
 description: >
   Return false if receiver is not writable.
-info: >
+info: |
   26.1.13 Reflect.set ( target, propertyKey, V [ , receiver ] )
 
   ...

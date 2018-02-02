@@ -4,7 +4,7 @@
 es6id: 23.1.5.2.1
 description: >
   Throws a TypeError if `this` value is not an Object.
-info: >
+info: |
   From Map.prototype.keys()
 
   %MapIteratorPrototype%.next ( )

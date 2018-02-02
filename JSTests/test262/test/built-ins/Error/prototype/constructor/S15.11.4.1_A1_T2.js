@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     The initial value of Error.prototype.constructor is the built-in Error
     constructor
 es5id: 15.11.4.1_A1_T2

@@ -33,6 +33,7 @@ var typeErrorCases =
   [
     null,
     [null],
+    [undefined],
     [true],
     [NaN],
     [2],

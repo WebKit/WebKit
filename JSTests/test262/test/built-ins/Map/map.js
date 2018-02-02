@@ -4,7 +4,7 @@
 es6id: 23.1.1.1
 description: >
   Map descriptor as a standard built-in object.
-info: >
+info: |
   Map ( [ iterable ] )
 
   17 ECMAScript Standard Built-in Objects

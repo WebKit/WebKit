@@ -3,7 +3,7 @@
 /*---
 esid: sec-integer-indexed-exotic-objects-defineownproperty-p-desc
 description: Consistent canonicalization of NaN values
-info: >
+info: |
   9.4.5.3 [[DefineOwnProperty]] ( P, Desc)
 
   ...

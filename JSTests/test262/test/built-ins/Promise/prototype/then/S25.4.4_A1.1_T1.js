@@ -2,7 +2,7 @@
 // See LICENSE for details.
 
 /*---
-info: >
+info: |
    Misc sequencing tests
    inspired by https://github.com/getify/native-promise-only/issues/34#issuecomment-54282002
 es6id: S25.4.2.1_A3.2_T2

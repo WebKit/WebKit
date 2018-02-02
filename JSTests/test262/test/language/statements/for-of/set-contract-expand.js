@@ -3,7 +3,7 @@
 
 /*---
 description: Set entry removal and re-insertion during traversal using for..of
-info: >
+info: |
     Entries removed from a Set instance during traversal should be visited if
     they are re-inserted prior to iterator exhaustion.
 es6id: 13.6.4

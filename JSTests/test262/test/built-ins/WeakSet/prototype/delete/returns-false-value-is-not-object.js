@@ -5,7 +5,7 @@ es6id: 23.4.3.3
 esid: sec-weakset.prototype.delete
 description: >
   Return false if value is not a non-null Object.
-info: >
+info: |
   WeakSet.prototype.delete ( value )
 
   4. If Type(value) is not Object, return false.

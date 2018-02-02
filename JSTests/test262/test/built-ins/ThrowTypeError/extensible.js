@@ -5,7 +5,7 @@
 esid: sec-%throwtypeerror%
 description: >
   %ThrowTypeError% is not extensible.
-info: >
+info: |
   %ThrowTypeError% ( )
 
   The value of the [[Extensible]] internal slot of a %ThrowTypeError%

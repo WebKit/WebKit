@@ -4,7 +4,7 @@
 es6id: 26.1.14
 description: >
   Throws a TypeError if proto is a Symbol
-info: >
+info: |
   26.1.14 Reflect.setPrototypeOf ( target, proto )
 
   ...

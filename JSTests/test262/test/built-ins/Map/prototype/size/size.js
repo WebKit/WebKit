@@ -4,7 +4,7 @@
 es6id: 23.1.3.10
 description: >
   Property type and descriptor.
-info: >
+info: |
   get Map.prototype.size
 
   17 ECMAScript Standard Built-in Objects

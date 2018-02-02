@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     Step 4 of defineProperty calls the [[DefineOwnProperty]] internal method
     of O to define the property. For non-configurable properties, step 11.a.ii
     of [[DefineOwnProperty]] permits setting a getter if absent.

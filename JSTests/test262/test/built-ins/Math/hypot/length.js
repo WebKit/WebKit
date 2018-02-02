@@ -5,7 +5,7 @@
 es6id: 20.2.2.18
 author: Ryan Lewis
 description: Math.hypot.length should return 2.
-info: >
+info: |
   Math.hypot ( value1, value2, ...values )
 
   17 ECMAScript Standard Built-in Objects:

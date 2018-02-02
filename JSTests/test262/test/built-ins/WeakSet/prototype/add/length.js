@@ -4,7 +4,7 @@
 es6id: 23.4.3.1
 esid: sec-weakset.prototype.add
 description: WeakSet.prototype.add.length descriptor
-info: >
+info: |
   WeakSet.prototype.add ( value )
 
   17 ECMAScript Standard Built-in Objects

@@ -4,7 +4,7 @@
 esid: sec-date.prototype-@@toprimitive
 es6id: 20.3.4.45
 description: Date.prototype[Symbol.toPrimitive] `name` property
-info: >
+info: |
     The value of the name property of this function is "[Symbol.toPrimitive]".
 
     ES6 Section 17:

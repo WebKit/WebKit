@@ -4,7 +4,7 @@
 es6id: 26.1.11
 description: >
   Returns empty array when target has now own properties.
-info: >
+info: |
   26.1.11 Reflect.ownKeys ( target )
 
   ...

@@ -4,7 +4,7 @@
 es6id: 22.2.3.17
 description: >
   "length" property of TypedArrayPrototype
-info: >
+info: |
   %TypedArray%.prototype.length is an accessor property whose set accessor
   function is undefined.
 

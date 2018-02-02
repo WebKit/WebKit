@@ -5,7 +5,7 @@ esid: sec-if-statement-runtime-semantics-evaluation
 description: >
     Completion value when expression is true without an `else` clause and body
     returns an empty abrupt completion
-info: >
+info: |
     IfStatement : if ( Expression ) Statement
 
     3. If exprValue is false, then

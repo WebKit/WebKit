@@ -6,7 +6,7 @@ esid: sec-date.parse
 es6id: 20.3.3.2
 description: >
   Date.parse.name is "parse".
-info: >
+info: |
   Date.parse ( string )
 
   17 ECMAScript Standard Built-in Objects:

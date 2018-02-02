@@ -5,7 +5,7 @@
 es6id: 19.1.2.13
 description: >
   Object.isSealed.name is "isSealed".
-info: >
+info: |
   Object.isSealed ( O )
 
   17 ECMAScript Standard Built-in Objects:

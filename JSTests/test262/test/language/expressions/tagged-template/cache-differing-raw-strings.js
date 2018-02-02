@@ -3,7 +3,7 @@
 /*---
 es6id: 12.2.8
 description: Templates are cached according to their "raw" representation
-info: >
+info: |
     The internal template registry should be queried according to the "raw"
     strings of the tagged template.
 ---*/

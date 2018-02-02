@@ -5,7 +5,7 @@ es6id: 23.3.1.1
 esid: sec-weakmap-iterable
 description: >
   Return abrupt after getting `set` method.
-info: >
+info: |
   23.3.1.1 WeakMap ( [ iterable ] )
 
   ...

@@ -5,7 +5,7 @@
 es6id: 22.2.3.31
 description: >
   get %TypedArray%.prototype [ @@toStringTag ].length is 0.
-info: >
+info: |
   get %TypedArray%.prototype [ @@toStringTag ]
 
   17 ECMAScript Standard Built-in Objects:

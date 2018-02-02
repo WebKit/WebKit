@@ -4,7 +4,7 @@
 es6id: 9.5.2
 description: >
     Trap returns abrupt.
-info: >
+info: |
     [[SetPrototypeOf]] (V)
 
     9. Let booleanTrapResult be ToBoolean(Call(trap, handler, «target, V»)).

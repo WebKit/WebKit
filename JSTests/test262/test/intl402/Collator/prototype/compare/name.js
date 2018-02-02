@@ -5,7 +5,7 @@
 esid: sec-Intl.Collator.prototype.compare
 description: >
   get Intl.Collator.prototype.compare.name is "get compare".
-info: >
+info: |
   10.3.3 get Intl.Collator.prototype.compare
 
   17 ECMAScript Standard Built-in Objects:

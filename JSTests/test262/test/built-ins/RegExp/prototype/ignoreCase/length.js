@@ -5,7 +5,7 @@
 es6id: 21.2.5.5
 description: >
   get RegExp.prototype.ignoreCase.length is 0.
-info: >
+info: |
   get RegExp.prototype.ignoreCase
 
   17 ECMAScript Standard Built-in Objects:

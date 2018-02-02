@@ -3,7 +3,7 @@
 /*---
 es6id: 11.8.6.1
 description: Template values of the template head pattern
-info: >
+info: |
     The TV and TRV of TemplateHead :: `${ is the empty code unit sequence.
     The TV of TemplateHead :: ` TemplateCharacters ${ is the TV of
     TemplateCharacters.

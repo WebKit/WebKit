@@ -3,7 +3,7 @@
 /*---
 esid: sec-%typedarray%.from
 description: Returns error produced by interpreting length property as a length
-info: >
+info: |
   22.2.2.1 %TypedArray%.from ( source [ , mapfn [ , thisArg ] ] )
 
   ...

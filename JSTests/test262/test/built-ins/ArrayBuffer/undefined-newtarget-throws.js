@@ -6,7 +6,7 @@ esid: sec-arraybuffer-length
 es6id: 24.1.2.1
 description: >
   Throws a TypeError if ArrayBuffer is called as a function.
-info: >
+info: |
   ArrayBuffer( length )
 
   ArrayBuffer called with argument length performs the following steps:

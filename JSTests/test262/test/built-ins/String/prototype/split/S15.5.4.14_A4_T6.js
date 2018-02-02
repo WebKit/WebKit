@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     String.prototype.split (separator, limit) returns an Array object into which substrings of the result of converting this object to a string have
     been stored. If separator is a regular expression then
     inside of SplitMatch helper the [[Match]] method of R is called giving it the arguments corresponding

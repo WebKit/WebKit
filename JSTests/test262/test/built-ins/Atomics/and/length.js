@@ -6,7 +6,7 @@
 esid: sec-atomics.and
 description: >
   Atomics.and.length is 3.
-info: >
+info: |
   Atomics.and ( ia, index, val )
 
   17 ECMAScript Standard Built-in Objects:

@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     If Result(3).type is normal and its completion value is a value V,
     then return the value V
 es5id: 15.1.2.1_A3.1_T1

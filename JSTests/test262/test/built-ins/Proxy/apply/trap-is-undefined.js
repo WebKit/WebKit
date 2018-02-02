@@ -6,7 +6,7 @@ es6id: 9.5.13
 esid: sec-proxy-object-internal-methods-and-internal-slots-call-thisargument-argumentslist
 description: >
     If the apply trap value is undefined, propagate the call to the target object.
-info: >
+info: |
     [[Call]] (thisArgument, argumentsList)
 
     ...

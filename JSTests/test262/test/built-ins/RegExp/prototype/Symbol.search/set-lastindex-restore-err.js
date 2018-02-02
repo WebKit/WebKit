@@ -6,7 +6,7 @@ es6id: 21.2.5.9
 description: >
     Behavior when error thrown while restoring `lastIndex` property following
     match execution
-info: >
+info: |
     [...]
     8. If SameValue(currentLastIndex, previousLastIndex) is false, then
         a. Perform ? Set(rx, "lastIndex", previousLastIndex, true).

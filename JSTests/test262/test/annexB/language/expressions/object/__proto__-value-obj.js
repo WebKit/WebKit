@@ -6,7 +6,7 @@ es6id: B.3.1
 description: >
   The value of the `__proto__` property key is assigned to the [[Prototype]]
   internal slot (Object value)
-info: >
+info: |
   __proto__ Property Names in Object Initializers
 
   ...

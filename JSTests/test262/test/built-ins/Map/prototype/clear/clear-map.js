@@ -4,7 +4,7 @@
 es6id: 23.1.3.1
 description: >
   Clears a Map.
-info: >
+info: |
   Map.prototype.clear ( )
 
   ...

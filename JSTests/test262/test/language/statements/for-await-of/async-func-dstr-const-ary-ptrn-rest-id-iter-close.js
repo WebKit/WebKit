@@ -4,7 +4,7 @@
 /*---
 description: The iterator is properly consumed by the destructuring pattern (for-await-of statement in an async function)
 esid: sec-for-in-and-for-of-statements-runtime-semantics-labelledevaluation
-features: [destructuring-binding, async-iteration]
+features: [generators, destructuring-binding, async-iteration]
 flags: [generated, async]
 info: |
     IterationStatement :

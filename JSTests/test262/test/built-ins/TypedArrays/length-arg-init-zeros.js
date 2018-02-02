@@ -3,7 +3,7 @@
 /*---
 esid: sec-typedarray-length
 description: All bytes are initialized to zero
-info: >
+info: |
   22.2.4.2 TypedArray ( length )
 
   This description applies only if the TypedArray function is called with at

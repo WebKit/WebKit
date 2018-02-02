@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     Type(x) and Type(y) are Object-s.
     Return true, if x and y are references to the same Object; otherwise, return false
 es5id: 11.9.4_A7

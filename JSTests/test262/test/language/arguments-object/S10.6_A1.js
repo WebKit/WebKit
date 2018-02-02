@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     When control enters an execution context for function code,
     an arguments object is created and initialised
 es5id: 10.6_A1

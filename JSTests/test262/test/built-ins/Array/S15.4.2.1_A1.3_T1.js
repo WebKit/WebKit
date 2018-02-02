@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     This description of Array constructor applies if and only if
     the Array constructor is given no arguments or at least two arguments
 es5id: 15.4.2.1_A1.3_T1

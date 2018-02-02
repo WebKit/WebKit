@@ -3,11 +3,11 @@
 
 /*---
 author: Caitlin Potter <caitp@igalia.com>
-esid: 14.4
+esid: sec-generator-function-definitions
 description: >
   A newline may not precede the `*` token in a `yield` expression.
 negative:
-  phase: early
+  phase: parse
   type: SyntaxError
 features: [async-iteration]
 ---*/

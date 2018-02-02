@@ -3,7 +3,7 @@
 /*---
 es6id: 11.8.6.1
 description: Template values of multiple template characters
-info: >
+info: |
     The TV of TemplateCharacters :: TemplateCharacter TemplateCharacters is a
     sequence consisting of the code units in the TV of TemplateCharacter
     followed by all the code units in the TV of TemplateCharacters in order.

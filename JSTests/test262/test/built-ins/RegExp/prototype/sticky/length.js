@@ -5,7 +5,7 @@
 es6id: 21.2.5.12
 description: >
   get RegExp.prototype.sticky.length is 0.
-info: >
+info: |
   get RegExp.prototype.sticky
 
   17 ECMAScript Standard Built-in Objects:

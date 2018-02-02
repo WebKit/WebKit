@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     String.prototype.toLocaleLowerCase() return a string, but not a String
     object
 es5id: 15.5.4.17_A2_T1

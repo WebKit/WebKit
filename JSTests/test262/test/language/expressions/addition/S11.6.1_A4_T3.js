@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     The result of an addition is determined using the rules of IEEE 754
     double-precision arithmetics
 es5id: 11.6.1_A4_T3

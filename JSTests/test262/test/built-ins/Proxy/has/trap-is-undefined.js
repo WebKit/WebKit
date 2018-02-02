@@ -4,7 +4,7 @@
 es6id: 9.5.7
 description: >
     Return target.[[HasProperty]](P) if trap is undefined.
-info: >
+info: |
     [[HasProperty]] (P)
 
     ...

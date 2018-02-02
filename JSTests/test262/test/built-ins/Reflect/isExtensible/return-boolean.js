@@ -4,7 +4,7 @@
 es6id: 26.1.10
 description: >
   Returns the boolean result.
-info: >
+info: |
   26.1.10 Reflect.isExtensible (target)
 
   ...

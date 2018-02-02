@@ -1,9 +1,10 @@
 // This file was procedurally generated from the following sources:
 // - src/class-fields/string-literal-names.case
-// - src/class-fields/default/cls-expr-regular-definitions.template
+// - src/class-fields/productions/cls-expr-regular-definitions.template
 /*---
 description: String literal names (regular fields defintion)
-features: [class-fields]
+esid: prod-FieldDefinition
+features: [class, class-fields-public]
 flags: [generated]
 includes: [propertyHelper.js]
 info: |
@@ -23,6 +24,7 @@ info: |
 var C = class {
   'a'; "b"; 'c' = 39;
   "d" = 42
+
 }
 
 var c = new C();

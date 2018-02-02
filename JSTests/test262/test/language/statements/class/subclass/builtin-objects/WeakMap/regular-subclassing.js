@@ -3,7 +3,7 @@
 /*---
 es6id: 23.3.1
 description: Subclassing the WeakMap object
-info: >
+info: |
   23.3.1 The WeakMap Constructor
 
   ...

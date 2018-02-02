@@ -5,7 +5,7 @@
 es6id: 20.2.2.2
 description: >
   Math.acos.name is "acos".
-info: >
+info: |
   Math.acos ( x )
 
   17 ECMAScript Standard Built-in Objects:

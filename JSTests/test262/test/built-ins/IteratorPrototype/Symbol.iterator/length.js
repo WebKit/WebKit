@@ -3,7 +3,7 @@
 /*---
 es6id: 25.1.2.1
 description: Length of IteratorPrototype[ @@iterator ]
-info: >
+info: |
     ES6 Section 17:
     Every built-in Function object, including constructors, has a length
     property whose value is an integer. Unless otherwise specified, this value

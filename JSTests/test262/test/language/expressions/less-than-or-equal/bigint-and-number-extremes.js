@@ -20,19 +20,23 @@ info: |
 features: [BigInt]
 ---*/
 
-assert.sameValue(1n <= Number.MAX_VALUE, true);
-assert.sameValue(Number.MAX_VALUE <= 1n, false);
-assert.sameValue(1n <= -Number.MAX_VALUE, false);
-assert.sameValue(-Number.MAX_VALUE <= 1n, true);
+assert.sameValue(1n <= Number.MAX_VALUE, true, "1n <= Number.MAX_VALUE");
+assert.sameValue(Number.MAX_VALUE <= 1n, false, "Number.MAX_VALUE <= 1n");
+assert.sameValue(1n <= -Number.MAX_VALUE, false, "1n <= -Number.MAX_VALUE");
+assert.sameValue(-Number.MAX_VALUE <= 1n, true, "-Number.MAX_VALUE <= 1n");
 assert.sameValue(
   0xfffffffffffff7ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffn <= Number.MAX_VALUE,
-  true);
+  true,
+  "0xfffffffffffff7ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffn <= Number.MAX_VALUE");
 assert.sameValue(
   Number.MAX_VALUE <= 0xfffffffffffff7ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffn,
-  false);
+  false,
+  "Number.MAX_VALUE <= 0xfffffffffffff7ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffn");
 assert.sameValue(
   0xfffffffffffff800000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001n <= Number.MAX_VALUE,
-  false);
+  false,
+  "0xfffffffffffff800000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001n <= Number.MAX_VALUE");
 assert.sameValue(
   Number.MAX_VALUE <= 0xfffffffffffff800000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001n,
-  true);
+  true,
+  "Number.MAX_VALUE <= 0xfffffffffffff800000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001n");

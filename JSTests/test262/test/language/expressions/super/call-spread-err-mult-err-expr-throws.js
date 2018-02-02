@@ -5,6 +5,7 @@
 description: Spread operator following other arguments when evaluation throws (SuperCall)
 esid: sec-super-keyword-runtime-semantics-evaluation
 es6id: 12.3.5.1
+features: [generators]
 flags: [generated]
 info: |
     SuperCall : super Arguments
@@ -24,6 +25,7 @@ info: |
     2. Let spreadRef be the result of evaluating AssignmentExpression.
     3. Let iterator be GetIterator(GetValue(spreadRef) ).
     4. ReturnIfAbrupt(iterator).
+
 ---*/
 
 class Test262ParentClass {

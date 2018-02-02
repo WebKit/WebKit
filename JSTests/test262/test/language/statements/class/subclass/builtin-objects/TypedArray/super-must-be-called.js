@@ -3,7 +3,7 @@
 /*---
 es6id: 22.2.4
 description: Super need to be called to initialize internals
-info: >
+info: |
   22.2.4 The TypedArray Constructors
 
   ...

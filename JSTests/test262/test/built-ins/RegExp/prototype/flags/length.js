@@ -6,7 +6,7 @@ esid: sec-get-regexp.prototype.flags
 es6id: 21.2.5.3
 description: >
   get RegExp.prototype.flags.length is 0.
-info: >
+info: |
   get RegExp.prototype.flags
 
   17 ECMAScript Standard Built-in Objects:

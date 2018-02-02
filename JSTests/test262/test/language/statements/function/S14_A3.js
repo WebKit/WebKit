@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     Global FunctionDeclaration cannot be defined within the body of another
     FunctionDeclaration
 es5id: 14_A3

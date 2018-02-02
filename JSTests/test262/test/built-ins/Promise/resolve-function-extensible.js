@@ -4,7 +4,7 @@
 /*---
 es6id: 25.4.1.3.2
 description: The [[Extensible]] slot of Promise Resolve functions
-info: >
+info: |
   17 ECMAScript Standard Built-in Objects:
     Unless specified otherwise, the [[Extensible]] internal slot
     of a built-in object initially has the value true.

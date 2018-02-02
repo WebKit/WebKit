@@ -6,7 +6,7 @@ description: >
     `Promise.prototype.then` invoked on a constructor value that throws an
     error
 es6id: 25.4.5.3
-info: >
+info: |
     1. Let promise be the this value.
     [...]
     3. Let C be SpeciesConstructor(promise, %Promise%).

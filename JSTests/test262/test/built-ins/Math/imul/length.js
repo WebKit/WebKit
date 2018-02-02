@@ -4,7 +4,7 @@
 /*---
 es6id: 20.2.2.19
 description: length property of Math.imul
-info: >
+info: |
   Math.imul ( x, y )
 
   17 ECMAScript Standard Built-in Objects:

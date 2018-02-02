@@ -4,7 +4,7 @@
 /*---
 esid: sec-%typedarray%.prototype.includes
 description: Get "length" uses internal ArrayLength
-info: >
+info: |
   22.2.3.13 %TypedArray%.prototype.includes ( searchElement [ , fromIndex ] )
 
   %TypedArray%.prototype.includes is a distinct function that implements the

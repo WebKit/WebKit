@@ -3,7 +3,7 @@
 /*---
 esid: sec-integer-indexed-exotic-objects-set-p-v-receiver
 description: Consistent canonicalization of NaN values
-info: >
+info: |
   9.4.5.5 [[Set]] ( P, V, Receiver)
 
   ...

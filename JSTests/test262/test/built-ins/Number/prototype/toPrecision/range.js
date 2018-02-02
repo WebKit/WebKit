@@ -4,7 +4,7 @@
 /*---
 esid: sec-number.prototype.toprecision
 description: Number.prototype.toPrecision permits fractionDigits from 1 to 100
-info: >
+info: |
   Number.prototype.toPrecision ( fractionDigits )
 
   ...

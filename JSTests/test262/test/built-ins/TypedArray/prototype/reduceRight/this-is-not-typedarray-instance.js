@@ -2,9 +2,9 @@
 // This code is governed by the BSD license found in the LICENSE file.
 /*---
 esid: sec-%typedarray%.prototype.reduceright
-description: |
+description: >
   Throws a TypeError exception when `this` is not a TypedArray instance
-info: >
+info: |
   22.2.3.21 %TypedArray%.prototype.reduceRight ( callbackfn [ , initialValue ] )
 
   This function is not generic. ValidateTypedArray is applied to the this value

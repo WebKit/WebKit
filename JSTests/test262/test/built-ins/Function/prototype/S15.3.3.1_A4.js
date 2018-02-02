@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     Detects whether the value of a function's "prototype" property
     as seen by normal object operations might deviate from the value
     as seem by Object.getOwnPropertyDescriptor

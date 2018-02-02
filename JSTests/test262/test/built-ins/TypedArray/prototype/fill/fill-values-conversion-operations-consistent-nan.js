@@ -4,7 +4,7 @@
 esid: sec-%typedarray%.prototype.fill
 es6id: 22.2.3.8
 description: Consistent canonicalization of NaN values
-info: >
+info: |
   22.2.3.8 %TypedArray%.prototype.fill (value [ , start [ , end ] ] )
 
   %TypedArray%.prototype.fill is a distinct function that implements the same

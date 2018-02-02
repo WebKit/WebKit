@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     When the production "do Statement while ( Expression )" is evaluated,
     Statement is evaluated first
 es5id: 12.6.1_A1

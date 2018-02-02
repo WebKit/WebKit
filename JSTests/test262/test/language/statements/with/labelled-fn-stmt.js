@@ -17,7 +17,7 @@ info: |
   In the absence of Annex B.3.2, a SyntaxError should be produced due to the
   labelled function declaration itself.
 negative:
-  phase: early
+  phase: parse
   type: SyntaxError
 ---*/
 

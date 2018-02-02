@@ -4,7 +4,7 @@
 es6id: 9.5.9
 description: >
     Trap returns abrupt.
-info: >
+info: |
     [[Set]] ( P, V, Receiver)
 
     ...

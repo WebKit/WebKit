@@ -4,7 +4,7 @@
 es6id: 23.1.3.5
 description: >
   Throws a TypeError if first argument is not callable.
-info: >
+info: |
   Map.prototype.forEach ( callbackfn [ , thisArg ] )
 
   4. If IsCallable(callbackfn) is false, throw a TypeError exception.

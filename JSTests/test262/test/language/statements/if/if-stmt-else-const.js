@@ -5,7 +5,7 @@ description: Lexical declaration (const) not allowed in statement position
 esid: sec-if-statement
 es6id: 13.6
 negative:
-  phase: early
+  phase: parse
   type: SyntaxError
 ---*/
 

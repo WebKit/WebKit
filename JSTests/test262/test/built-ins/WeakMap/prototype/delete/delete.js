@@ -5,7 +5,7 @@ es6id: 23.3.3.2
 esid: sec-weakmap.prototype.delete
 description: >
   WeakMap.prototype.delete property descriptor
-info: >
+info: |
   WeakMap.prototype.delete ( value )
 
   17 ECMAScript Standard Built-in Objects

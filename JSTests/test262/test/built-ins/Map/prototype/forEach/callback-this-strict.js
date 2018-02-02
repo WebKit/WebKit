@@ -5,7 +5,7 @@ es6id: 23.1.3.5
 description: >
   If a thisArg is not provided, undefined will be used as the this value for
   each invocation of callbackfn.
-info: >
+info: |
   Map.prototype.forEach ( callbackfn [ , thisArg ] )
 
   ...

@@ -2,7 +2,7 @@
 // See LICENSE for details.
 
 /*---
-info: >
+info: |
  Set has a property at `Symbol.species`
 esid: sec-get-set-@@species
 es6id: 23.2.2.2

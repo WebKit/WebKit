@@ -5,7 +5,7 @@ esid: sec-array.prototype.fill
 es6id: 22.1.3.6
 description: >
   Fills elements from coerced to Integer `start` and `end` values
-info: >
+info: |
   22.1.3.6 Array.prototype.fill (value [ , start [ , end ] ] )
 
   ...

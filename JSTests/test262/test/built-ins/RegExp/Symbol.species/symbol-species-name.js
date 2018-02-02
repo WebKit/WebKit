@@ -4,7 +4,7 @@
 es6id: 21.2.4.2
 description: >
   RegExp[Symbol.species] accessor property get name
-info: >
+info: |
   21.2.4.2 get RegExp [ @@species ]
 
   ...

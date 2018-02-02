@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     The production IterationStatement: "for (var VariableDeclarationNoIn in
     Expression) Statement"
 es5id: 12.6.4_A5.1

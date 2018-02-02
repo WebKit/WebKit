@@ -5,7 +5,7 @@
 description: >
     `unicode` accessor invoked on a non-object value
 es6id: 21.2.5.15
-info: >
+info: |
     21.2.5.15 get RegExp.prototype.unicode
 
     1. Let R be the this value.

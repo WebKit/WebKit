@@ -5,7 +5,7 @@
 description: Do not replace $<> preceded with $
 esid: sec-getsubstitution
 features: [regexp-named-groups]
-info: >
+info: |
   Runtime Semantics: GetSubstitution( matched, str, position, captures, namedCaptures, replacement )
 
   12. These $ replacements are done left-to-right, and, once such a replacement is performed,

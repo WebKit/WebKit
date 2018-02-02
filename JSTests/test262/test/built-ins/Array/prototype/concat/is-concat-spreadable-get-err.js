@@ -4,7 +4,7 @@
 es6id: 22.1.3.1
 esid: sec-array.prototype.concat
 description: Error thrown when accessing `Symbol.isConcatSpreadable` property
-info: >
+info: |
     1. Let O be ToObject(this value).
     2. ReturnIfAbrupt(O).
     3. Let A be ArraySpeciesCreate(O, 0).

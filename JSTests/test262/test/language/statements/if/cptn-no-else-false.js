@@ -3,7 +3,7 @@
 /*---
 es6id: 13.6.7
 description: Completion value when expression is false without an `else` clause
-info: >
+info: |
     IfStatement : if ( Expression ) Statement
 
     [...]

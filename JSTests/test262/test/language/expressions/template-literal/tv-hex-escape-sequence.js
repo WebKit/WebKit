@@ -3,7 +3,7 @@
 /*---
 es6id: 11.8.6.1
 description: Template values of hex escape sequences
-info: >
+info: |
     The TV of TemplateCharacter :: \ EscapeSequence is the SV of
     EscapeSequence.
     The SV of UnicodeEscapeSequence :: u{ HexDigits } is the UTF16Encoding

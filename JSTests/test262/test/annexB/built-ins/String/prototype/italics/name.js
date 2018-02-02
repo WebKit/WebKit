@@ -5,7 +5,7 @@
 es6id: B.2.3.9
 description: >
   String.prototype.italics.name is "italics".
-info: >
+info: |
   String.prototype.italics ( )
 
   17 ECMAScript Standard Built-in Objects:

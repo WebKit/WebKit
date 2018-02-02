@@ -3,7 +3,7 @@
 /*---
 es6id: 22.2.3.9
 description: Throws a TypeError exception when invoked as a function
-info: >
+info: |
   22.2.3.9 %TypedArray%.prototype.filter ( callbackfn [ , thisArg ] )
 
   1. Let O be the this value.

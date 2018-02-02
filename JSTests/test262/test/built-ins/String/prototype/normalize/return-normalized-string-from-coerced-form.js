@@ -4,7 +4,7 @@
 es6id: 21.1.3.12
 description: >
   Returns normalized string from coerced form.
-info: >
+info: |
   21.1.3.12 String.prototype.normalize ( [ form ] )
 
   ...

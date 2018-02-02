@@ -4,9 +4,10 @@
 /*---
 description: It's a syntax error if a FunctionRestParameter is followed by a trailing comma (generator function expression)
 esid: sec-generator-function-definitions-runtime-semantics-evaluation
+features: [generators]
 flags: [generated]
 negative:
-  phase: early
+  phase: parse
   type: SyntaxError
 info: |
     GeneratorExpression : function * ( FormalParameters ) { GeneratorBody }
@@ -38,6 +39,7 @@ info: |
         b. Let formalStatus be IteratorBindingInitialization for formals with
            iteratorRecord and env as arguments.
     [...]
+
 
     Trailing comma in the parameters list
 

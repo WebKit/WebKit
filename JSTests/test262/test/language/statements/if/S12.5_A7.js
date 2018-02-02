@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     In the "if" statement empty statement is allowed and is evaluated to
     "undefined"
 es5id: 12.5_A7

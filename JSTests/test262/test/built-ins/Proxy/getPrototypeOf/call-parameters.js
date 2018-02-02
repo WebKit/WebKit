@@ -4,7 +4,7 @@
 es6id: 9.5.1
 description: >
     Trap is called with handler as context and target as the first parameter.
-info: >
+info: |
     [[GetPrototypeOf]] ( )
 
     ...

@@ -8,7 +8,7 @@ es6id: 14.3.8
 features: [destructuring-binding, default-parameters]
 flags: [generated]
 negative:
-  phase: early
+  phase: parse
   type: SyntaxError
 info: |
     MethodDefinition : PropertyName ( StrictFormalParameters ) { FunctionBody }

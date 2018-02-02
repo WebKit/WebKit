@@ -4,9 +4,10 @@
 esid: sec-generator-function-definitions
 es6id: 14.4
 description: YieldExpression may be followed by a TemplateMiddle construct
-info: >
+info: |
   The syntactic context immediately following yield requires use of the
   InputElementRegExpOrTemplateTail lexical goal.
+features: [generators]
 ---*/
 
 var complete = false;

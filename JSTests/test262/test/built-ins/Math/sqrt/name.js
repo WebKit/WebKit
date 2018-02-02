@@ -5,7 +5,7 @@
 es6id: 20.2.2.32
 description: >
   Math.sqrt.name is "sqrt".
-info: >
+info: |
   Math.sqrt ( x )
 
   17 ECMAScript Standard Built-in Objects:

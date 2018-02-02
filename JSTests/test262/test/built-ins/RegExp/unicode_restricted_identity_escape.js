@@ -3,7 +3,7 @@
 
 /*---
 description: B.1.4 is not applied for Unicode RegExp - Identity escape with basic latin characters
-info: >
+info: |
     The compatibility extensions defined in B.1.4 Regular Expressions Patterns
     are not applied for Unicode RegExps.
     Tested extension: "IdentityEscape[U] :: [~U] SourceCharacter but not c"

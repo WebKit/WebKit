@@ -4,7 +4,7 @@
 es6id: 23.1.1.1
 description: >
   Throws a TypeError if Map is called without a newTarget.
-info: >
+info: |
   Map ( [ iterable ] )
 
   When the Map function is called with optional argument the following steps

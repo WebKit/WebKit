@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     The value of the internal [[Prototype]] property of the RegExp prototype
     object is the Object prototype
 es5id: 15.10.6_A1_T2

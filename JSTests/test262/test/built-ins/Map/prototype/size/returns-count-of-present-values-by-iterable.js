@@ -4,7 +4,7 @@
 es6id: 23.1.3.10
 description: >
   Returns count of present values inserted via iterable argument.
-info: >
+info: |
   get Map.prototype.size
 
   5. Let count be 0.

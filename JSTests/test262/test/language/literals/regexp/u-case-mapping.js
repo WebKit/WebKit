@@ -4,7 +4,7 @@
 /*---
 description: Case mapping of astral symbols
 es6id: 21.2.2.8.2
-info: >
+info: |
     21.2.2.8.2 Runtime Semantics: Canonicalize ( ch )
 
     The abstract operation Canonicalize takes a character parameter ch and

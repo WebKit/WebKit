@@ -4,7 +4,7 @@
 es6id: 26.1.10
 description: >
   Reflect.isExtensible is configurable, writable and not enumerable.
-info: >
+info: |
   26.1.10 Reflect.isExtensible (target)
 
   17 ECMAScript Standard Built-in Objects

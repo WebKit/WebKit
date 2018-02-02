@@ -5,7 +5,7 @@
 description: BindingElement with array binding pattern and initializer is used (method)
 esid: sec-runtime-semantics-definemethod
 es6id: 14.3.8
-features: [destructuring-binding]
+features: [generators, destructuring-binding]
 flags: [generated]
 info: |
     MethodDefinition : PropertyName ( StrictFormalParameters ) { FunctionBody }
@@ -51,6 +51,7 @@ info: |
        b. Let v be ? GetValue(defaultValue).
     4. Return the result of performing BindingInitialization of BindingPattern
        with v and environment as the arguments.
+
 ---*/
 var initCount = 0;
 var iterCount = 0;

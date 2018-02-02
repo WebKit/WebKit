@@ -6,7 +6,7 @@ esid: sec-date.prototype.tolocaletimestring
 es6id: 20.3.4.40
 description: >
   Date.prototype.toLocaleTimeString.name is "toLocaleTimeString".
-info: >
+info: |
   Date.prototype.toLocaleTimeString ( [ reserved1 [ , reserved2 ] ] )
 
   17 ECMAScript Standard Built-in Objects:

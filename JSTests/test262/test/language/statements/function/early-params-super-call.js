@@ -4,10 +4,10 @@
 esid: sec-function-definitions-static-semantics-early-errors
 es6id: 14.1.2
 description: Parameters may not contain a "super" call
-info: >
+info: |
   It is a Syntax Error if FormalParameters Contains SuperProperty is true.
 negative:
-  phase: early
+  phase: parse
   type: SyntaxError
 ---*/
 

@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     Every execution context has associated with it a scope chain.
     A scope chain is a list of objects that are searched when evaluating an
     Identifier

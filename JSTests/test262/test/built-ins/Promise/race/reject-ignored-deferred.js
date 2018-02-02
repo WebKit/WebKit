@@ -5,7 +5,7 @@ description: >
     Resolved promises ignore rejections through deferred invocation of the
     provided resolving function
 es6id: 25.4.4.3
-info: >
+info: |
     [...]
     6. Let promiseCapability be NewPromiseCapability(C).
     [...]

@@ -2,20 +2,30 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: Result of applying "typeof" operator to null is "object"
-es5id: 11.4.3_A3.2
-es6id: 12.5.6.1
-description: typeof null === "object"
+esid: sec-typeof-operator-runtime-semantics-evaluation
+description: typeof Object (implements [[Call]]) === "function"
+info: |
+  The typeof Operator
+
+  Runtime Semantics: Evaluation
+
+    ...
+    Return a String according to Table 35.
+
+  #table-35
+
+  Null "object"
+
 ---*/
 
 assert.sameValue(
   typeof null,
    "object",
-  '#1: typeof null === "object". Actual: ' + (typeof null)
+  'typeof null === "object"'
 );
 
 assert.sameValue(
   typeof RegExp("0").exec("1"),
    "object",
-  '#2: typeof RegExp("0").exec("1") === "object". Actual: ' + (typeof RegExp("0").exec("1"))
+  'typeof RegExp("0").exec("1") === "object"'
 );

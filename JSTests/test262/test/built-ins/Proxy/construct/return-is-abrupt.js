@@ -4,7 +4,7 @@
 es6id: 9.5.14
 description: >
     Return abrupt from constructor call.
-info: >
+info: |
     [[Construct]] ( argumentsList, newTarget)
 
     9. Let newObj be Call(trap, handler, «target, argArray, newTarget »).

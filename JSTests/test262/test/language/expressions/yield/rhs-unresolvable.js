@@ -9,6 +9,7 @@ info: |
 
   1. Let exprRef be the result of evaluating AssignmentExpression.
   2. Let value be ? GetValue(exprRef).
+features: [generators]
 ---*/
 
 var err;

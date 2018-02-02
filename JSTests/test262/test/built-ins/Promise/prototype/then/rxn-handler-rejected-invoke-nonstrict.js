@@ -2,7 +2,7 @@
 // See LICENSE for details.
 
 /*---
-info: >
+info: |
     [...]
     6. Else, let handlerResult be Call(handler, undefined, «argument»).
 es6id: S25.4.2.1_A3.2_T1

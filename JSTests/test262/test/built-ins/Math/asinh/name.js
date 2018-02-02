@@ -5,7 +5,7 @@
 es6id: 20.2.2.5
 description: >
   Math.asinh.name is "asinh".
-info: >
+info: |
   Math.asinh ( x )
 
   17 ECMAScript Standard Built-in Objects:

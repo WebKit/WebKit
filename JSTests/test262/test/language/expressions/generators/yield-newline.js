@@ -2,10 +2,11 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-  description: >
-      Newlines terminate `yield` expressions.
-  es6id: 14.4
- ---*/
+description: >
+    Newlines terminate `yield` expressions.
+es6id: 14.4
+features: [generators]
+---*/
 
 var iter, result;
 var g = function*() {

@@ -3,7 +3,7 @@
 /*---
 esid: sec-integer-indexed-exotic-objects-hasproperty-p
 description: Return false if P's value is not an integer
-info: >
+info: |
   9.4.5.2 [[HasProperty]](P)
 
   ...

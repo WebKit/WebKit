@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     The production ReturnStatement : return Expression; is evaluated as:
     i)   Evaluate Expression.
     ii)  Call GetValue(Result(2)).

@@ -4,7 +4,7 @@
 esid: sec-%typedarray%.of
 description: >
   Throws a TypeError if argument is a Symbol
-info: >
+info: |
   9.4.5.9 IntegerIndexedElementSet ( O, index, value )
 
   ...

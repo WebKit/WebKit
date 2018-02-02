@@ -2,7 +2,7 @@
 // See LICENSE for details.
 
 /*---
-info: >
+info: |
  ArrayBuffer has a property at `Symbol.species`
 esid: sec-get-arraybuffer-@@species
 es6id: 24.1.3.3

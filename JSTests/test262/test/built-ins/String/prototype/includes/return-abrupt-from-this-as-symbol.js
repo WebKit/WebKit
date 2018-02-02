@@ -4,7 +4,7 @@
 es6id: 21.1.3.7
 description: >
   Returns abrupt from ToString(this) where this is a Symbol
-info: >
+info: |
   21.1.3.7 String.prototype.includes ( searchString [ , position ] )
 
   1. Let O be RequireObjectCoercible(this value).

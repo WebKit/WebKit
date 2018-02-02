@@ -5,7 +5,7 @@
 esid: sec-get-regexp.prototype.dotall
 description: >
     `dotAll` accessor function invoked on a RegExp instance
-info: >
+info: |
     21.2.5.12 get RegExp.prototype.dotAll
 
     4. Let flags be the value of R’s [[OriginalFlags]] internal slot.

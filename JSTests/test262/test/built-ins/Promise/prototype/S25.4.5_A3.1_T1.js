@@ -2,7 +2,7 @@
 // See LICENSE for details.
 
 /*---
-info: >
+info: |
     Promise.prototype.constructor is the Promise constructor
 es6id: S25.4.5_A3.1_T1
 author: Sam Mikes

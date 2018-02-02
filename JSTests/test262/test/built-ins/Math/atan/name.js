@@ -5,7 +5,7 @@
 es6id: 20.2.2.6
 description: >
   Math.atan.name is "atan".
-info: >
+info: |
   Math.atan ( x )
 
   17 ECMAScript Standard Built-in Objects:

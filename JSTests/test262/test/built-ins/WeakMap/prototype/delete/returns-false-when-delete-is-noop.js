@@ -5,7 +5,7 @@ es6id: 23.3.3.2
 esid: sec-weakmap.prototype.delete
 description: >
   Return false if entry is not in the WeakMap.
-info: >
+info: |
   WeakMap.prototype.delete ( value )
 
   ...

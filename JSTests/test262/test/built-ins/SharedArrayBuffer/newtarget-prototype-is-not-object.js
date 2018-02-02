@@ -6,7 +6,7 @@
 esid: sec-sharedarraybuffer-length
 description: >
   [[Prototype]] defaults to %SharedArrayBufferPrototype% if NewTarget.prototype is not an object.
-info: >
+info: |
   SharedArrayBuffer( length )
 
   SharedArrayBuffer called with argument length performs the following steps:

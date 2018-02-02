@@ -5,7 +5,7 @@
 es6id: 22.2.3.27
 description: >
   %TypedArray%.prototype.toLocaleString.length is 0.
-info: >
+info: |
   %TypedArray%.prototype.toLocaleString ([ reserved1 [ , reserved2 ] ])
 
   17 ECMAScript Standard Built-in Objects:

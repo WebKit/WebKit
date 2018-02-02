@@ -3,7 +3,7 @@
 /*---
 es6id: 22.2.3.20
 description: Requires a [[TypedArrayName]] internal slot.
-info: >
+info: |
   22.2.3.20 %TypedArray%.prototype.reduceRight ( callbackfn [ , initialValue ] )
 
   ...

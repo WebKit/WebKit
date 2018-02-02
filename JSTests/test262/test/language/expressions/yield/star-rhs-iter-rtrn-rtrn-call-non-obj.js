@@ -25,7 +25,7 @@ info: |
             received.[[Value]] »).
         v. If Type(innerReturnResult) is not Object, throw a TypeError
            exception.
-features: [Symbol.iterator]
+features: [generators, Symbol.iterator]
 ---*/
 
 var badIter = {};

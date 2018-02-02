@@ -4,7 +4,7 @@
 es6id: 23.1.3.9
 description: >
   Map.prototype.set.length value and descriptor.
-info: >
+info: |
   Map.prototype.set ( key , value )
 
   17 ECMAScript Standard Built-in Objects

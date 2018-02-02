@@ -5,7 +5,7 @@
 es6id: 22.2.3.21
 description: >
   %TypedArray%.prototype.reverse.length is 0.
-info: >
+info: |
   %TypedArray%.prototype.reverse ( )
 
   17 ECMAScript Standard Built-in Objects:

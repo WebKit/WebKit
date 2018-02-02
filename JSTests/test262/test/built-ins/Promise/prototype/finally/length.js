@@ -4,7 +4,7 @@
 author: Jordan Harband
 description: Promise.prototype.finally `length` property
 esid: sec-promise.prototype.finally
-info: >
+info: |
     ES6 Section 17:
     Every built-in Function object, including constructors, has a length
     property whose value is an integer. Unless otherwise specified, this value

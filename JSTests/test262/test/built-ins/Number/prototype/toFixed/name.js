@@ -5,7 +5,7 @@
 es6id: 20.1.3.3
 description: >
   Number.prototype.toFixed.name is "toFixed".
-info: >
+info: |
   Number.prototype.toFixed ( fractionDigits )
 
   17 ECMAScript Standard Built-in Objects:

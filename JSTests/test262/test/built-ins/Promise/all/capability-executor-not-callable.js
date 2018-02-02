@@ -5,7 +5,7 @@
 es6id: 25.4.4.1
 description: >
   Throws a TypeError if either resolve or reject capability is not callable.
-info: >
+info: |
   Promise.all ( iterable )
 
   ...

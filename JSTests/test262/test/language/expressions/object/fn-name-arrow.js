@@ -4,7 +4,7 @@
 /*---
 es6id: 12.2.6.9
 description: Assignment of function `name` attribute (ArrowFunction)
-info: >
+info: |
     6. If IsAnonymousFunctionDefinition(AssignmentExpression) is true, then
        a. Let hasNameProperty be HasOwnProperty(propValue, "name").
        b. ReturnIfAbrupt(hasNameProperty).

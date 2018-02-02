@@ -5,7 +5,7 @@
 esid: sec-destructuring-binding-patterns
 description: >
   The rest parameter can be a binding pattern.
-info: >
+info: |
   Destructuring Binding Patterns - Syntax
 
   BindingRestElement[Yield]:

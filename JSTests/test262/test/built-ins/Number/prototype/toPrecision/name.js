@@ -5,7 +5,7 @@
 es6id: 20.1.3.5
 description: >
   Number.prototype.toPrecision.name is "toPrecision".
-info: >
+info: |
   Number.prototype.toPrecision ( precision )
 
   17 ECMAScript Standard Built-in Objects:

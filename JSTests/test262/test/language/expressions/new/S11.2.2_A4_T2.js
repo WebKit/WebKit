@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     If NewExpression or MemberExpression does not implement internal
     [[Construct]] method, throw TypeError
 es5id: 11.2.2_A4_T2

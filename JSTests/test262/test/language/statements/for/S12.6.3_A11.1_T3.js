@@ -2,14 +2,14 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     If (Evaluate Statement).type is "continue" and (Evaluate
     Statement).target is in the current label set, iteration of labeled
     "var-loop" breaks
 es5id: 12.6.3_A11.1_T3
 description: Trying to continue non-existent label
 negative:
-  phase: early
+  phase: parse
   type: SyntaxError
 ---*/
 

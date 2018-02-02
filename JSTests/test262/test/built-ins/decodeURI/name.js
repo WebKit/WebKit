@@ -6,7 +6,7 @@ es6id: 18.2.6.2
 esid: sec-decodeuri-encodeduri
 description: >
   decodeURI.name is "decodeURI".
-info: >
+info: |
   decodeURI (encodedURI)
 
   17 ECMAScript Standard Built-in Objects:

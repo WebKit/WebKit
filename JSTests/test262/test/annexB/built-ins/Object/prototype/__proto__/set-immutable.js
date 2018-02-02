@@ -3,7 +3,7 @@
 /*---
 esid: sec-object.prototype.__proto__
 description: Called on an immutable prototype exotic object
-info: >
+info: |
     [...]
     4. Let status be ? O.[[SetPrototypeOf]](proto).
     5. If status is false, throw a TypeError exception.

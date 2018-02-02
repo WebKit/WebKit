@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     String.prototype.split(separator, limit):
     i) can be transferred to other kinds of objects for use as a method.
     separator and limit can be any kinds of object since:

@@ -7,25 +7,66 @@ description: >
   Test that Atomics.wake wakes zero waiters if that's what the count is.
 ---*/
 
+
+var NUMAGENT = 3;
+
+var WAKEUP = 0;                 // Agents wait here
+var RUNNING = 1;                // Accounting of live agents here
+var NUMELEM = 2;
+
+var WAKECOUNT = 0;
+
+for ( var i=0 ; i < NUMAGENT ; i++ ) {
 $262.agent.start(
 `
 $262.agent.receiveBroadcast(function (sab) {
   var ia = new Int32Array(sab);
-  $262.agent.report(Atomics.wait(ia, 0, 0, 1000)); // We will timeout eventually
+  Atomics.add(ia, ${RUNNING}, 1);
+  // Waiters that are not woken will time out eventually.
+  $262.agent.report(Atomics.wait(ia, ${WAKEUP}, 0, 2000));
   $262.agent.leaving();
 })
 `);
+}
 
-var ia = new Int32Array(new SharedArrayBuffer(Int32Array.BYTES_PER_ELEMENT));
-
+var ia = new Int32Array(new SharedArrayBuffer(NUMELEM * Int32Array.BYTES_PER_ELEMENT));
 $262.agent.broadcast(ia.buffer);
-$262.agent.sleep(500);                             // Give the agent a chance to wait
-assert.sameValue(Atomics.wake(ia, 0, 0), 0);    // Don't actually wake it
-assert.sameValue(getReport(), "timed-out");
+
+// Wait for agents to be running.
+waitUntil(ia, RUNNING, NUMAGENT);
+
+// Then wait some more to give the agents a fair chance to wait.  If we don't,
+// we risk sending the wakeup before agents are sleeping, and we hang.
+$262.agent.sleep(500);
+
+// There's a slight risk we'll fail to wake the desired count, if the preceding
+// sleep() took much longer than anticipated and workers have started timing
+// out.
+assert.sameValue(Atomics.wake(ia, 0, WAKECOUNT), WAKECOUNT);
+
+// Collect and check results
+var rs = [];
+for ( var i=0; i < NUMAGENT; i++ )
+    rs.push(getReport());
+rs.sort();
+
+for ( var i=0; i < WAKECOUNT; i++ )
+    assert.sameValue(rs[i], "ok");
+for ( var i=WAKECOUNT; i < NUMAGENT; i++ )
+    assert.sameValue(rs[i], "timed-out");
 
 function getReport() {
     var r;
     while ((r = $262.agent.getReport()) == null)
         $262.agent.sleep(100);
     return r;
+}
+
+function waitUntil(ia, k, value) {
+    var i = 0;
+    while (Atomics.load(ia, k) !== value && i < 15) {
+        $262.agent.sleep(100);
+        i++;
+    }
+    assert.sameValue(Atomics.load(ia, k), value, "All agents are running");
 }

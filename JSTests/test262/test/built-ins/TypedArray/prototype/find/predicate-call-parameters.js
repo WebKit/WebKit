@@ -5,7 +5,7 @@ esid: sec-%typedarray%.prototype.find
 es6id: 22.2.3.10
 description: >
   Predicate called as F.call( thisArg, kValue, k, O ) for each array entry.
-info: >
+info: |
   22.2.3.10 %TypedArray%.prototype.find (predicate [ , thisArg ] )
 
   %TypedArray%.prototype.find is a distinct function that implements the same

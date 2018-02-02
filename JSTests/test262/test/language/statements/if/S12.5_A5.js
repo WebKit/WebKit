@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     FunctionDeclaration inside the "if" Expression is evaluated as true and
     function will not be declarated
 es5id: 12.5_A5

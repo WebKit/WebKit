@@ -5,7 +5,7 @@
 es6id: 20.1.3.2
 description: >
   Number.prototype.toExponential.name is "toExponential".
-info: >
+info: |
   Number.prototype.toExponential ( fractionDigits )
 
   17 ECMAScript Standard Built-in Objects:

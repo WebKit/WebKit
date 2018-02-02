@@ -5,7 +5,7 @@
 description: >
     `Promise.all` invoked on a non-object value
 es6id: 25.4.4.1
-info: >
+info: |
     1. Let C be the this value.
     2. If Type(C) is not Object, throw a TypeError exception.
 features: [Symbol]

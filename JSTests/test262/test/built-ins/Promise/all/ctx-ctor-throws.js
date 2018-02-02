@@ -5,7 +5,7 @@
 description: >
     `Promise.all` invoked on a constructor value that throws an error
 es6id: 25.4.4.1
-info: >
+info: |
     1. Let C be the this value.
     [...]
     6. Let promiseCapability be NewPromiseCapability(C).

@@ -4,7 +4,7 @@
 /*---
 es6id: 14.5.15
 description: Assignment of function `name` attribute
-info: >
+info: |
     ClassDeclaration : class BindingIdentifier ClassTail
 
     [...]

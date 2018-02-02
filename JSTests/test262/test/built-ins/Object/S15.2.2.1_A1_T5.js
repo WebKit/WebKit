@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     When the Object constructor is called with no arguments the following steps are taken:
     (The argument value was not supplied or its type was Null or Undefined.)
     i)	Create a new native ECMAScript object.

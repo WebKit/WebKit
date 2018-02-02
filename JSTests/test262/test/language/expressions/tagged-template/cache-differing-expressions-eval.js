@@ -3,7 +3,7 @@
 /*---
 es6id: 12.2.8
 description: Template caching using distinct expressions within `eval`
-info: >
+info: |
     Previously-created template objects should be retrieved from the internal
     template registry when their source is identical but their expressions
     evaluate to different values and the tagged template is being evaluated in

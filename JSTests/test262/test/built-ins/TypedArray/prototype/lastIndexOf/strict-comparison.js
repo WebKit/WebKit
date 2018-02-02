@@ -3,7 +3,7 @@
 /*---
 esid: sec-%typedarray%.prototype.lastindexof
 description: search element is compared using strict comparing (===)
-info: >
+info: |
   22.2.3.17 %TypedArray%.prototype.lastIndexOf ( searchElement [ , fromIndex ] )
 
   %TypedArray%.prototype.lastIndexOf is a distinct function that implements the

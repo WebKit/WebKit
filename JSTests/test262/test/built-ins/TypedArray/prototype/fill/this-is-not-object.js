@@ -3,7 +3,7 @@
 /*---
 esid: sec-%typedarray%.prototype.fill
 description: Throws a TypeError exception when `this` is not Object
-info: >
+info: |
   22.2.3.8 %TypedArray%.prototype.fill (value [ , start [ , end ] ] )
 
   This function is not generic. ValidateTypedArray is applied to the this value

@@ -8,7 +8,7 @@ description: >
     Includes ...rest
 
 negative:
-  phase: early
+  phase: parse
   type: SyntaxError
 ---*/
 

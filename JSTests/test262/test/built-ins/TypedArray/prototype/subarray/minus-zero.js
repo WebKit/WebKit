@@ -3,7 +3,7 @@
 /*---
 esid: sec-%typedarray%.prototype.subarray
 description: -0 values on begin and end
-info: >
+info: |
   22.2.3.27 %TypedArray%.prototype.subarray( begin , end )
 includes: [testTypedArray.js, compareArray.js]
 features: [TypedArray]

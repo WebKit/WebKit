@@ -3,7 +3,7 @@
 /*---
 esid: sec-integer-indexed-exotic-objects-getownproperty-p
 description: Returns undefined when P is -0.
-info: >
+info: |
   9.4.5.1 [[GetOwnProperty]] ( P )
 
   ...

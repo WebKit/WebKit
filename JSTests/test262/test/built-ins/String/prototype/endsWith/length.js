@@ -4,7 +4,7 @@
 es6id: 21.1.3.6
 description: >
   String.prototype.endsWith.length value and descriptor.
-info: >
+info: |
   21.1.3.6 String.prototype.endsWith ( searchString [ , endPosition] )
 
   The length property of the endsWith method is 1.

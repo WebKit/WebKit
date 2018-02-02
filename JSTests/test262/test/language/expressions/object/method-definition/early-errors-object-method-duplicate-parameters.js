@@ -7,7 +7,7 @@ esid: pending
 description: >
   Early error rules for StrictFormalParameters are applied
 negative:
-  phase: early
+  phase: parse
   type: SyntaxError
 ---*/
 

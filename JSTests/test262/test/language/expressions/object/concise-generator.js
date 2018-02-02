@@ -4,6 +4,7 @@
 es6id: 12.2.5
 description: >
     super method calls in object literal concise generator
+features: [generators]
 ---*/
 var proto = {
   method() {

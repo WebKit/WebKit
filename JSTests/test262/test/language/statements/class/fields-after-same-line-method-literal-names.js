@@ -1,9 +1,10 @@
 // This file was procedurally generated from the following sources:
 // - src/class-fields/literal-names.case
-// - src/class-fields/default/cls-decl-after-same-line-method.template
+// - src/class-fields/productions/cls-decl-after-same-line-method.template
 /*---
 description: Literal property names (field definitions after a method in the same line)
-features: [class-fields]
+esid: prod-FieldDefinition
+features: [class, class-fields-public]
 flags: [generated]
 includes: [propertyHelper.js]
 info: |
@@ -25,6 +26,7 @@ const fn = function() {}
 class C {
   m() { return 42; } a; b = 42;
   c = fn;
+
 }
 
 var c = new C();

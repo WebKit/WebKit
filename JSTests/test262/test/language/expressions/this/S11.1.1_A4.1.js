@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     Being in anonymous code, "this" and eval("this"), called as a function,
     return the global object
 es5id: 11.1.1_A4.1

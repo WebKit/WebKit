@@ -5,7 +5,7 @@
 es6id: 21.2.5.13
 description: >
   RegExp.prototype.test.name is "test".
-info: >
+info: |
   RegExp.prototype.test( S )
 
   17 ECMAScript Standard Built-in Objects:

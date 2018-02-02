@@ -4,7 +4,7 @@
 /*---
 description: length property of Math.atanh
 es6id: 20.2.2.7
-info: >
+info: |
   Math.atanh ( x )
 
   17 ECMAScript Standard Built-in Objects:

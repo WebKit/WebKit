@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     If the value of this last parameter (which has the same
     name as some previous parameters do) was not supplied by the
     caller, the value of the corresponding property is undefined

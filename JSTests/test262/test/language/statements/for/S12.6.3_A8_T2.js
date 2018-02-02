@@ -8,7 +8,7 @@ description: >
     Checking if execution of "for(index=0; {index++;index<100;};
     index*2;) {  arr.add(""+index);}" fails
 negative:
-  phase: early
+  phase: parse
   type: SyntaxError
 ---*/
 

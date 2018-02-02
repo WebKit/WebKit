@@ -1,9 +1,10 @@
 // This file was procedurally generated from the following sources:
 // - src/class-fields/computed-names.case
-// - src/class-fields/default/cls-expr-multiple-definitions.template
+// - src/class-fields/productions/cls-expr-multiple-definitions.template
 /*---
 description: Computed property names (multiple fields definitions)
-features: [computed-property-names, class-fields]
+esid: prod-FieldDefinition
+features: [computed-property-names, class, class-fields-public]
 flags: [generated]
 includes: [propertyHelper.js]
 info: |
@@ -25,9 +26,10 @@ var x = "b";
 var C = class {
   foo = "foobar";
   m() { return 42 }
-  static ["a"] = 39; [x] = 42; [10] = "meep"; ["not initialized"]
+  [x] = 42; [10] = "meep"; ["not initialized"]
   m2() { return 39 }
   bar = "barbaz";
+
 }
 
 var c = new C();
@@ -72,16 +74,6 @@ verifyProperty(c, "bar", {
   enumerable: true,
   configurable: true,
   writable: true,
-});
-
-assert.sameValue(Object.hasOwnProperty.call(C.prototype, "a"), false);
-assert.sameValue(Object.hasOwnProperty.call(c, "a"), false);
-
-verifyProperty(C, "a", {
-  value: 39,
-  enumerable: true,
-  writable: true,
-  configurable: true
 });
 
 assert.sameValue(Object.hasOwnProperty.call(C.prototype, "b"), false);

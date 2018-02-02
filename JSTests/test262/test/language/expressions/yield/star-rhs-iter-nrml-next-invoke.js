@@ -22,7 +22,7 @@ info: |
   2. Else,
      a. Let result be ? Invoke(iterator, "next", « value »).
      [...]
-features: [Symbol.iterator]
+features: [generators, Symbol.iterator]
 ---*/
 
 var args, thisValue;

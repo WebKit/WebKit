@@ -2,7 +2,7 @@
 // See LICENSE for details.
 
 /*---
-info: >
+info: |
     Promise catches exceptions thrown from executor and turns
     them into reject
 es6id: S25.4.3.1_A4.1_T1

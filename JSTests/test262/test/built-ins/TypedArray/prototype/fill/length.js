@@ -5,7 +5,7 @@
 es6id: 22.2.3.8
 description: >
   %TypedArray%.prototype.fill.length is 1.
-info: >
+info: |
   %TypedArray%.prototype.fill (value [ , start [ , end ] ] )
 
   17 ECMAScript Standard Built-in Objects:

@@ -5,7 +5,7 @@
 es6id: 19.1.2.11
 description: >
   Object.isExtensible.name is "isExtensible".
-info: >
+info: |
   Object.isExtensible ( O )
 
   17 ECMAScript Standard Built-in Objects:

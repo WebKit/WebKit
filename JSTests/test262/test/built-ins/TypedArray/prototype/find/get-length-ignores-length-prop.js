@@ -5,7 +5,7 @@ esid: sec-%typedarray%.prototype.find
 es6id: 22.2.3.10
 description: >
   [[Get]] of "length" uses [[ArrayLength]]
-info: >
+info: |
   22.2.3.10 %TypedArray%.prototype.find (predicate [ , thisArg ] )
 
   %TypedArray%.prototype.find is a distinct function that implements the same

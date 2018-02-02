@@ -1,9 +1,10 @@
 // This file was procedurally generated from the following sources:
 // - src/class-fields/computed-symbol-names.case
-// - src/class-fields/default/cls-expr-multiple-stacked-definitions.template
+// - src/class-fields/productions/cls-expr-multiple-stacked-definitions.template
 /*---
 description: Computed property symbol names (multiple stacked fields definitions through ASI)
-features: [Symbol, computed-property-names, class-fields]
+esid: prod-FieldDefinition
+features: [Symbol, computed-property-names, class, class-fields-public]
 flags: [generated]
 includes: [propertyHelper.js]
 info: |
@@ -27,6 +28,7 @@ var C = class {
   [x]; [y] = 42
   foo = "foobar"
   bar = "barbaz";
+
 }
 
 var c = new C();

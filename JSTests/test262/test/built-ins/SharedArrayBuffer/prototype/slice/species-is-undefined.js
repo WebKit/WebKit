@@ -5,7 +5,7 @@
 /*---
 description: >
   Uses default constructor is species constructor is undefined.
-info: >
+info: |
   SharedArrayBuffer.prototype.slice ( start, end )
 
 features: [Symbol.species]

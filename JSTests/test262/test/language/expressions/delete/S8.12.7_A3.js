@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     When the [[Delete]] method of O is called with property name P,
     removes the property with name P from O and return true
 es5id: 8.12.7_A3

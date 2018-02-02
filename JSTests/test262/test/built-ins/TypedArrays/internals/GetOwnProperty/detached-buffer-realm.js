@@ -5,7 +5,7 @@ esid: sec-integer-indexed-exotic-objects-getownproperty-p
 description: >
   Throws a TypeError if this has a detached buffer (honoring the Realm of the
   current execution context)
-info: >
+info: |
   9.4.5.1 [[GetOwnProperty]] ( P )
 
   ...

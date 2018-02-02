@@ -4,7 +4,7 @@
 es6id: 26.1.7
 description: >
   Return abrupt result from getting the property descriptor.
-info: >
+info: |
   26.1.7 Reflect.getOwnPropertyDescriptor ( target, propertyKey )
 
   ...

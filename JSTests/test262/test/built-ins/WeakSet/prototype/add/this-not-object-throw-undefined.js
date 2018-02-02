@@ -4,7 +4,7 @@
 es6id: 23.4.3.1
 esid: sec-weakset.prototype.add
 description: Throws TypeError if `this` is not Object.
-info: >
+info: |
   WeakSet.prototype.add ( value )
 
   1. Let S be the this value.

@@ -23,6 +23,7 @@ info: |
     5. Perform ? InitializeBoundName("*default*", value, env).
     [...]
 flags: [module]
+features: [generators]
 ---*/
 
 export default (function* () { return 24601; });

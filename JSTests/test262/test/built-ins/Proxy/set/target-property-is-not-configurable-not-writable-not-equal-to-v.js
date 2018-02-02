@@ -7,7 +7,7 @@ description: >
 
     Throws a TypeError when target property is not configurable neither writable
     and its value is not strictly equal to V.
-info: >
+info: |
     14. If targetDesc is not undefined, then
         a. If IsDataDescriptor(targetDesc) and targetDesc.[[Configurable]] is
         false and targetDesc.[[Writable]] is false, then

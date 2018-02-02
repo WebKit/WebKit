@@ -4,7 +4,7 @@
 es6id: 21.1.2.4
 description: >
   Returns abrupt completion from ToObject(template.raw.length).
-info: >
+info: |
   21.1.2.4 String.raw ( template , ...substitutions )
 
   1. Let substitutions be a List consisting of all of the arguments passed to

@@ -4,7 +4,7 @@
 es6id: 21.1.3.3
 description: >
   Return UTF16 Decode value of the lead and trail elements at index position.
-info: >
+info: |
   21.1.3.3 String.prototype.codePointAt ( pos )
 
   ...

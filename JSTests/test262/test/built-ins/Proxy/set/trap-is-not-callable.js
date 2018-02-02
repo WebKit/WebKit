@@ -4,7 +4,7 @@
 es6id: 9.5.9
 description: >
     Trap is not callable.
-info: >
+info: |
     [[Set]] ( P, V, Receiver)
 
     6. Let trap be GetMethod(handler, "set").

@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     When Function object(F) is constructed the following steps from 9 to 11 take place
     9.Create a new object as would be constructed by the expression new Object().
     10. Set the constructor property of Result(9) to F. This property is given attributes { DontEnum }.

@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     While evaluating The production IterationStatement: "while ( Expression )
     Statement", Expression is evaluated first
 es5id: 12.6.2_A2

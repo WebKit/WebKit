@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     The String.prototype.toLowerCase.length property has the attribute
     DontEnum
 es5id: 15.5.4.16_A8

@@ -5,7 +5,7 @@ esid: sec-proxy-object-internal-methods-and-internal-slots-ownpropertykeys
 description: >
     The result List must contain the keys of all non-configurable own properties
     of the target object.
-info: >
+info: |
     [[OwnPropertyKeys]] ( )
 
     ...

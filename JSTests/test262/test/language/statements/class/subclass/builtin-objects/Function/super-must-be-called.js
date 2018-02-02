@@ -4,7 +4,7 @@
 es6id: 19.2.1
 description: >
   super must be called to initialize Function internal slots
-info: >
+info: |
   19.2.1 The Function Constructor
 
   ...

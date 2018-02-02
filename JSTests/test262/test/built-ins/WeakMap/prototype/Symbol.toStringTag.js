@@ -5,7 +5,7 @@ es6id: 23.3.3.6
 esid: sec-weakmap.prototype-@@tostringtag
 description: >
     `Symbol.toStringTag` property descriptor
-info: >
+info: |
     The initial value of the @@toStringTag property is the String value
     "WeakMap".
 

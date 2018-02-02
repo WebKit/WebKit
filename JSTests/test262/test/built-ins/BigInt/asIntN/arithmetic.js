@@ -3,7 +3,7 @@
 /*---
 esid: pending
 description: BigInt.asIntN arithmetic test cases
-info: >
+info: |
   BigInt.asIntN ( bits, bigint )
 
   3. Let mod be a BigInt representing bigint modulo 2**bits.

@@ -5,7 +5,7 @@
 es6id: 19.5.6.3.1
 description: >
   The initial value of URIError.prototype.constructor is the URIError object.
-info: >
+info: |
   The initial value of the constructor property of the prototype for a given NativeError
   constructor is the corresponding intrinsic object %NativeError% (19.5.6.1).
 

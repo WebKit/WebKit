@@ -4,7 +4,7 @@
 es6id: 26.1.4
 description: >
   Return boolean result.
-info: >
+info: |
   26.1.4 Reflect.deleteProperty ( target, propertyKey )
 
   ...

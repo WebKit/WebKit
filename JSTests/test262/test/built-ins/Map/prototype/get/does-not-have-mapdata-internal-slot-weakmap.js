@@ -4,7 +4,7 @@
 es6id: 23.1.3.6
 description: >
   Throws a TypeError if `this` is a WeakMap object.
-info: >
+info: |
   Map.prototype.get ( key )
 
   ...

@@ -5,7 +5,7 @@
 /*---
 description: >
   ToInteger(start) is called before ToInteger(end).
-info: >
+info: |
   SharedArrayBuffer.prototype.slice ( start, end )
 
 ---*/

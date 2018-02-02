@@ -4,7 +4,7 @@
 es6id: 21.2.5.15
 description: >
     `unicode` property descriptor
-info: >
+info: |
     RegExp.prototype.unicode is an accessor property whose set accessor
     function is undefined.
 ---*/

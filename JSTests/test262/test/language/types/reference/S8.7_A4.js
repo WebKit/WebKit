@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     Object Modification Resulting in a New Object for Not a Self-Modified
     Object leads to loss of integrity
 es5id: 8.7_A4

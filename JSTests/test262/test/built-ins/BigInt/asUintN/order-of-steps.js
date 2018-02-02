@@ -3,7 +3,7 @@
 /*---
 esid: pending
 description: BigInt.asUintN order of parameter type coercion
-info: >
+info: |
   BigInt.asUintN ( bits, bigint )
 
   1. Let bits be ? ToIndex(bits).

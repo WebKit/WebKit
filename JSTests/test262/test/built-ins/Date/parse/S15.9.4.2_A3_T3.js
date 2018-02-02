@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     The Date.parse property "length" has { ReadOnly, DontDelete, DontEnum }
     attributes
 esid: sec-date.parse

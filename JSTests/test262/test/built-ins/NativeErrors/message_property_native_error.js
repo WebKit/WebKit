@@ -3,7 +3,7 @@
 
 /*---
 description: NativeError constructor creates own message property
-info: >
+info: |
   19.5.6.1.1 NativeError ( message )
 
   ...

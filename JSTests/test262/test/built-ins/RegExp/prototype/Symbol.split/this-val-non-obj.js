@@ -4,7 +4,7 @@
 /*---
 description: The `this` value must be an object
 es6id: 21.2.5.11
-info: >
+info: |
     1. Let rx be the this value.
     2. If Type(rx) is not Object, throw a TypeError exception.
 features: [Symbol.split]

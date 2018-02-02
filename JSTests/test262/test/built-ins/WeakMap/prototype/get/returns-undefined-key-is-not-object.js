@@ -5,7 +5,7 @@ es6id: 23.3.3.3
 esid: sec-weakmap.prototype.get
 description: >
   Returns undefined when key is not an Object.
-info: >
+info: |
   WeakMap.prototype.get ( key )
 
   ...

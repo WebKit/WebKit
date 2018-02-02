@@ -5,7 +5,7 @@
 description: BindingElement with object binding pattern and initializer is not used (class expression method)
 esid: sec-class-definitions-runtime-semantics-evaluation
 es6id: 14.5.16
-features: [destructuring-binding]
+features: [generators, destructuring-binding]
 flags: [generated]
 info: |
     ClassExpression : class BindingIdentifieropt ClassTail

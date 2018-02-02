@@ -2,7 +2,7 @@
 // See LICENSE for details.
 
 /*---
-info: >
+info: |
  Array has a property at `Symbol.species`
 esid: sec-get-array-@@species
 es6id: 22.1.2.5

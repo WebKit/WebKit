@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     If there is already a property of the variable object with the
     name of a declared variable, the value of the property and its attributes
     are not changed

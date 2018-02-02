@@ -6,7 +6,7 @@ es6id: 22.2.5
 esid: sec-properties-of-the-typedarray-constructors
 description: >
   Int8Array.name is "Int8Array".
-info: >
+info: |
   Each TypedArray constructor has a name property whose value is the
   String value of the constructor name specified for it in Table 49.
 

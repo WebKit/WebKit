@@ -4,7 +4,7 @@
 /*---
 description: BindingElement with array binding pattern and initializer is used (async generator method)
 esid: sec-asyncgenerator-definitions-propertydefinitionevaluation
-features: [async-iteration]
+features: [generators, async-iteration]
 flags: [generated, async]
 info: |
     AsyncGeneratorMethod :
@@ -32,6 +32,7 @@ info: |
        b. Let v be ? GetValue(defaultValue).
     4. Return the result of performing BindingInitialization of BindingPattern
        with v and environment as the arguments.
+
 ---*/
 var initCount = 0;
 var iterCount = 0;

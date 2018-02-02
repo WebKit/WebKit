@@ -2,7 +2,7 @@
 // See LICENSE for details.
 
 /*---
-info: >
+info: |
  Map has a property at `Symbol.species`
 esid: sec-get-map-@@species
 es6id: 23.1.2.2

@@ -4,7 +4,7 @@
 esid: sec-%typedarray%.prototype.filter
 description: >
   Custom @@species constructor throws if it does not return a compatible object
-info: >
+info: |
   22.2.3.9 %TypedArray%.prototype.filter ( callbackfn [ , thisArg ] )
 
   ...

@@ -43,6 +43,7 @@ info: |
          function * BindingIdentifier[?Yield] ( FormalParameters[Yield] ) { GeneratorBody }
          [+Default] function * ( FormalParameters[Yield] ) { GeneratorBody }
 flags: [module]
+features: [generators]
 ---*/
 
 assert.sameValue(g().next().value, 23, 'generator function value is hoisted');

@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     RegularExpressionFirstChar :: NonTerminator but not * or \ or /,
     RegularExpressionChars :: [empty], RegularExpressionFlags :: [empty]
 es5id: 7.8.5_A1.1_T2

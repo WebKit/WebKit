@@ -5,7 +5,7 @@
 description: SingleNameBinding assigns name to "anonymous" generator functions (try statement)
 esid: sec-runtime-semantics-catchclauseevaluation
 es6id: 13.15.7
-features: [destructuring-binding]
+features: [generators, destructuring-binding]
 flags: [generated]
 info: |
     Catch : catch ( CatchParameter ) Block
@@ -28,6 +28,7 @@ info: |
           [...]
     7. If environment is undefined, return PutValue(lhs, v).
     8. Return InitializeReferencedBinding(lhs, v).
+
 ---*/
 
 var ranCatch = false;

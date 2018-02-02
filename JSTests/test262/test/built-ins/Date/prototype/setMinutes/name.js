@@ -6,7 +6,7 @@ esid: sec-date.prototype.setminutes
 es6id: 20.3.4.24
 description: >
   Date.prototype.setMinutes.name is "setMinutes".
-info: >
+info: |
   Date.prototype.setMinutes ( min [ , sec [ , ms ] ] )
 
   17 ECMAScript Standard Built-in Objects:

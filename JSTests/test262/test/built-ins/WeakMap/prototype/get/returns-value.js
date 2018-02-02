@@ -5,7 +5,7 @@ es6id: 23.3.3.3
 esid: sec-weakmap.prototype.get
 description: >
   Returns the value from the specified key
-info: >
+info: |
   WeakMap.prototype.get ( key )
 
   4. Let entries be the List that is the value of M’s [[WeakMapData]] internal

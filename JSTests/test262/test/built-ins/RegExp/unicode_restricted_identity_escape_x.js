@@ -3,7 +3,7 @@
 
 /*---
 description: B.1.4 is not applied for Unicode RegExp - Incomplete hexadecimal escape sequences
-info: >
+info: |
     The compatibility extensions defined in B.1.4 Regular Expressions Patterns
     are not applied for Unicode RegExp.
     Tested extension: "IdentityEscape[U] :: [~U] SourceCharacter but not c"

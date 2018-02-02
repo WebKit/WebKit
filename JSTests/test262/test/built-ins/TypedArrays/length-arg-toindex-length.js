@@ -4,7 +4,7 @@
 esid: sec-typedarray-length
 description: >
   ToIndex(length) operations
-info: >
+info: |
   22.2.4.2 TypedArray ( length )
 
   This description applies only if the TypedArray function is called with at

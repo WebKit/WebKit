@@ -5,7 +5,7 @@
 es6id: 20.2.2.35
 description: >
   Math.trunc.name is "trunc".
-info: >
+info: |
   Math.trunc ( x )
 
   17 ECMAScript Standard Built-in Objects:

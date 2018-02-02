@@ -5,7 +5,7 @@
 esid: sec-%typedarray%.prototype.map
 description: >
   Verify conversion values on returned instance
-info: >
+info: |
   22.2.3.19 %TypedArray%.prototype.map ( callbackfn [ , thisArg ] )
 
   ...

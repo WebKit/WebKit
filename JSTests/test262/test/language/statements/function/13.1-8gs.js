@@ -7,7 +7,7 @@ description: >
     Strict Mode - SyntaxError is thrown if a FunctionExpression has
     two identical parameters
 negative:
-  phase: early
+  phase: parse
   type: SyntaxError
 flags: [onlyStrict]
 ---*/

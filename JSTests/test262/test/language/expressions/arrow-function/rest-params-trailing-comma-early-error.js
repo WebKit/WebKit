@@ -6,7 +6,7 @@ description: It's a syntax error if a FunctionRestParameter is followed by a tra
 esid: sec-arrow-function-definitions-runtime-semantics-evaluation
 flags: [generated]
 negative:
-  phase: early
+  phase: parse
   type: SyntaxError
 info: |
     ArrowFunction : ArrowParameters => ConciseBody

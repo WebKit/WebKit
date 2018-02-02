@@ -5,7 +5,7 @@
 es6id: 21.1.2.1
 description: >
   String.fromCharCode.name is "fromCharCode".
-info: >
+info: |
   String.fromCharCode ( ...codeUnits )
 
   17 ECMAScript Standard Built-in Objects:

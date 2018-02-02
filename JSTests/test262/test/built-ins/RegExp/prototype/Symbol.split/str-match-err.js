@@ -5,7 +5,7 @@
 es6id: 21.2.5.11
 description: >
     Behavior when error thrown while executing match for non-empty string
-info: >
+info: |
     [...]
     24. Repeat, while q < size
         [...]

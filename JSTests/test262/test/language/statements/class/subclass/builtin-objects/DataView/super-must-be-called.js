@@ -3,7 +3,7 @@
 /*---
 es6id: 24.2.2
 description: Super need to be called to initialize internals
-info: >
+info: |
   24.2.2 The DataView Constructor
 
   ...

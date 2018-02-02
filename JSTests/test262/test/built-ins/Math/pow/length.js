@@ -5,7 +5,7 @@
 esid: sec-math.pow
 description: >
   Math.pow.length is 2.
-info: >
+info: |
   Math.pow ( x, y )
 
   17 ECMAScript Standard Built-in Objects:

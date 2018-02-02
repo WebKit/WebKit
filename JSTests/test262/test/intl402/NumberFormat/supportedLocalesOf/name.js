@@ -5,7 +5,7 @@
 esid: sec-Intl.NumberFormat.supportedLocalesOf
 description: >
   Intl.NumberFormat.supportedLocalesOf.name is "supportedLocalesOf".
-info: >
+info: |
   11.3.2 Intl.NumberFormat.supportedLocalesOf (locales [ , options ])
 
   17 ECMAScript Standard Built-in Objects:

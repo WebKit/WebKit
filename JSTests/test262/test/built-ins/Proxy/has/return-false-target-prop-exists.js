@@ -5,7 +5,7 @@ es6id: 9.5.7
 description: >
     The result of [[HasProperty]] is a Boolean value and will affect has
     checkings. False returned when target property exists;
-info: >
+info: |
     [[HasProperty]] (P)
 
     ...

@@ -1,9 +1,10 @@
 // This file was procedurally generated from the following sources:
 // - src/class-fields/string-literal-names.case
-// - src/class-fields/default/cls-decl-after-same-line-async-method.template
+// - src/class-fields/productions/cls-decl-after-same-line-async-method.template
 /*---
 description: String literal names (field definitions after an async method in the same line)
-features: [class-fields, async-functions]
+esid: prod-FieldDefinition
+features: [class, class-fields-public, async-functions]
 flags: [generated, async]
 includes: [propertyHelper.js]
 info: |
@@ -23,6 +24,7 @@ info: |
 class C {
   async m() { return 42; } 'a'; "b"; 'c' = 39;
   "d" = 42;
+
 }
 
 var c = new C();

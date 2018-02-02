@@ -6,7 +6,7 @@ es6id: 22.1.5.2.1
 esid: sec-%arrayiteratorprototype%.next
 description: >
   %ArrayIteratorPrototype%.next.length is 0.
-info: >
+info: |
   %ArrayIteratorPrototype%.next( )
 
   17 ECMAScript Standard Built-in Objects:

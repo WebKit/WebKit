@@ -1,9 +1,10 @@
 // This file was procedurally generated from the following sources:
 // - src/class-fields/string-literal-names.case
-// - src/class-fields/default/cls-expr-new-sc-line-generator.template
+// - src/class-fields/productions/cls-expr-new-sc-line-generator.template
 /*---
 description: String literal names (field definitions followed by a method in a new line with a semicolon)
-features: [class-fields, generators]
+esid: prod-FieldDefinition
+features: [class, class-fields-public, generators]
 flags: [generated]
 includes: [propertyHelper.js]
 info: |
@@ -24,6 +25,7 @@ var C = class {
   'a'; "b"; 'c' = 39;
   "d" = 42;
   *m() { return 42; }
+
 }
 
 var c = new C();

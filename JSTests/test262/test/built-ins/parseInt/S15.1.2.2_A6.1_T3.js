@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     If S contains any character that is not a radix-R digit,
     then let Z be the substring of S consisting of all characters before
     the first such character; otherwise, let Z be S

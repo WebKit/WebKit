@@ -4,7 +4,7 @@
 /*---
 es6id: 18.2.1.2
 description: Throws a TypeError if a global generator function cannot be defined.
-info: >
+info: |
   Runtime Semantics: EvalDeclarationInstantiation( body, varEnv, lexEnv, strict)
 
   ...
@@ -20,6 +20,7 @@ info: >
           c. If fnDefinable is false, throw TypeError exception.
         ...
 flags: [noStrict]
+features: [generators]
 ---*/
 
 var error;

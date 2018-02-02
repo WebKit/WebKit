@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     The Function.prototype.call.length property does not have the attribute
     DontDelete
 es5id: 15.3.4.4_A9

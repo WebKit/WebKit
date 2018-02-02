@@ -8,7 +8,7 @@ description: >
     Checking if execution of single "continue" without any
     IterationStatement fails
 negative:
-  phase: early
+  phase: parse
   type: SyntaxError
 ---*/
 

@@ -6,7 +6,7 @@ description: redeclaration with const-LexicalDeclaration (ClassDeclaration in Sw
 esid: sec-switch-statement-static-semantics-early-errors
 flags: [generated]
 negative:
-  phase: early
+  phase: parse
   type: SyntaxError
 info: |
     SwitchStatement : switch ( Expression ) CaseBlock

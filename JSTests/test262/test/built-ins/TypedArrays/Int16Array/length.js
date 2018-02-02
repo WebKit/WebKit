@@ -6,7 +6,7 @@ es6id: 22.2.5
 esid: sec-properties-of-the-typedarray-constructors
 description: >
   Int16Array.length is 3.
-info: >
+info: |
   Besides a length property (whose value is 3), [...].
 
   17 ECMAScript Standard Built-in Objects:

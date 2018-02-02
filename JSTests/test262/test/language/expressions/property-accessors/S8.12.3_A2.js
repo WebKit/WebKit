@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     [[Get]](P) method should return undefined when property P does not exist
     both in instance and prototype
 es5id: 8.12.3_A2

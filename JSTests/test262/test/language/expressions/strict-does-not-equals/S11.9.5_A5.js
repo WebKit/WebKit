@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     Type(x) and Type(y) are String-s.
     Return false, if x and y are exactly the same sequence of characters; otherwise, return true
 es5id: 11.9.5_A5

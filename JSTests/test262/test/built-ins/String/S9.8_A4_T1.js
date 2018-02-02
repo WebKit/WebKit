@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     Result of String conversion from string value is the input argument (no
     conversion)
 es5id: 9.8_A4_T1

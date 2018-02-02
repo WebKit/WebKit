@@ -5,6 +5,7 @@ es6id: 25.3.1.3
 description: >
     Resuming abruptly from a generator in the 'completed' state should honor the
     abrupt completion and remain in the 'completed' state.
+features: [generators]
 ---*/
 
 function* G() {}

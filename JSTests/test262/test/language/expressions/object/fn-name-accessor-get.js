@@ -4,7 +4,7 @@
 /*---
 es6id: 14.3.9
 description: Assignment of function `name` attribute ("get" accessor)
-info: >
+info: |
     MethodDefinition : get PropertyName ( ) { FunctionBody }
 
     [...]

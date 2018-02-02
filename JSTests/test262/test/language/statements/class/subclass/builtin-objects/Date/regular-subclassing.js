@@ -3,7 +3,7 @@
 /*---
 es6id: 20.3.2
 description: Subclassing the String object
-info: >
+info: |
   20.3.2 The Date Constructor
 
   ...

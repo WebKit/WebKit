@@ -5,6 +5,7 @@
 description: Spread operator following other arguments when evaluation throws (`new` operator)
 esid: sec-new-operator-runtime-semantics-evaluation
 es6id: 12.3.3.1
+features: [generators]
 flags: [generated]
 info: |
     MemberExpression : new MemberExpression Arguments
@@ -26,6 +27,7 @@ info: |
     2. Let spreadRef be the result of evaluating AssignmentExpression.
     3. Let iterator be GetIterator(GetValue(spreadRef) ).
     4. ReturnIfAbrupt(iterator).
+
 ---*/
 
 assert.throws(Test262Error, function() {

@@ -5,7 +5,7 @@
 author: Rick Waldron
 esid: sec-unary-operators
 description: Exponentiation Operator expression precedence of unary operators
-info: >
+info: |
   ExponentiationExpression :
     UnaryExpression
     ...

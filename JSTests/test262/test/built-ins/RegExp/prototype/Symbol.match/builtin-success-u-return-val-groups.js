@@ -5,7 +5,7 @@
 description: >
     Return value after successful match with extended unicode capturing groups
 es6id: 21.2.5.6
-info: >
+info: |
     [...]
     5. Let global be ToBoolean(Get(rx, "global")).
     6. ReturnIfAbrupt(global).

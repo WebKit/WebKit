@@ -7,7 +7,7 @@ description: >
     Strict Mode - Use Strict Directive Prologue is ''use strict';'
     which appears twice in the code
 negative:
-  phase: early
+  phase: parse
   type: SyntaxError
 flags: [raw]
 ---*/

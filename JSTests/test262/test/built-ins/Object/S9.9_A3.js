@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     ToObject conversion from Boolean: create a new Boolean object
     whose [[value]] property is set to the value of the boolean
 es5id: 9.9_A3

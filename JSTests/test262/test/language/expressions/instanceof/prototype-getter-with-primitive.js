@@ -5,7 +5,7 @@
 es6id: 12.9.3
 description: >
   "prototype" property is not retrieved when left-hand side expression in `instanceof` is primitive.
-info: >
+info: |
   12.9.3 Runtime Semantics: Evaluation
   RelationalExpression : RelationalExpression instanceof ShiftExpression
     ...

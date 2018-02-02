@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     When the production "do Statement while ( Expression )" is evaluated,
     then (normal, V, empty) is returned
 es5id: 12.6.1_A3

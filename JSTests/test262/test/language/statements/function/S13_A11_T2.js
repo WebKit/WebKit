@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     Since arguments property has attribute { DontDelete }, only its elements
     can be deleted
 es5id: 13_A11_T2

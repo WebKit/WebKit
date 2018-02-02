@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     The production CharacterEscape :: r evaluates by returning
     the character \u000D
 es5id: 15.10.2.10_A1.5_T1

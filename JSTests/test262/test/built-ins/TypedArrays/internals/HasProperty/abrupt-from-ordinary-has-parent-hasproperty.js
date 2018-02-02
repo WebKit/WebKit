@@ -3,7 +3,7 @@
 /*---
 esid: sec-integer-indexed-exotic-objects-hasproperty-p
 description: Return abrupt from OrdinaryHasProperty parent's [[HasProperty]]
-info: >
+info: |
   9.4.5.2 [[HasProperty]](P)
 
   ...

@@ -15,7 +15,7 @@ info: |
 
   1. If method was not passed, then
      a. Let method be ? GetMethod(obj, @@iterator).
-features: [Symbol.iterator]
+features: [generators, Symbol.iterator]
 ---*/
 
 var thrown = new Test262Error();

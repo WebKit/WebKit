@@ -4,7 +4,7 @@
 es6id: 23.1.3.8
 description: >
   Throws a TypeError if `this` is a Set object.
-info: >
+info: |
   Map.prototype.keys ()
 
   1. Let M be the this value.

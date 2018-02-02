@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     it isn't clear what specific requirements of the specificaiton are being tested here. This test should 
     probably be replaced by some more targeted tests.  AllenWB
 es5id: 11.1.5-0-2

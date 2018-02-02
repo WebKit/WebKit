@@ -3,7 +3,7 @@
 
 /*---
 description: String.prototype.toUpperCase() iterates over code points
-info: >
+info: |
     21.1.3.24 String.prototype.toUpperCase ( )
 
     This function behaves in exactly the same way as String.prototype.toLowerCase,

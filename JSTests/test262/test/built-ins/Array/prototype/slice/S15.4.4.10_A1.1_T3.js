@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     If start is positive, use min(start, length).
     If end is positive, use min(end, length)
 esid: sec-array.prototype.slice

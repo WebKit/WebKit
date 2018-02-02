@@ -4,7 +4,7 @@
 es6id: 23.1.3.8
 description: >
   Throws a TypeError if `this` is not an Object.
-info: >
+info: |
   Map.prototype.keys ()
 
   ...

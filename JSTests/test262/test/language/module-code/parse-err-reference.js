@@ -4,7 +4,7 @@
 description: Early ReferenceError resulting from module parsing
 esid: sec-parsemodule
 negative:
-  phase: early
+  phase: parse
   type: ReferenceError
 info: |
     [...]

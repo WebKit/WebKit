@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     If a particular API exists (document.createElement, as happens to
     exist in a browser environment), check if the form objects it makes
     obey the constraints that even host objects must obey. In this

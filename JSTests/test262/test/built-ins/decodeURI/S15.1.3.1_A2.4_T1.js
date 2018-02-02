@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     If B1 = 1110xxxx ([0xE0 - 0xEF]), B2, B3 = 10xxxxxxx ([0x80 - 0xBF]),
     without [B1, B2] = [0xE0, 0x80 - 0x9F], [0xED, 0xA0 - 0xBF] (0xD800 -
     0xDFFF), return UTF8(B1, B2, B3)

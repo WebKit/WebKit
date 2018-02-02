@@ -4,7 +4,7 @@
 esid: sec-%throwtypeerror%
 description: >
   %ThrowTypeError% is defined once for each realm.
-info: >
+info: |
   %ThrowTypeError% ( )
 
   The %ThrowTypeError% intrinsic is an anonymous built-in function

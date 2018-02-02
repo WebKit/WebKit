@@ -3,7 +3,7 @@
 
 /*---
 description: Test Object.Assign(target,...sources), string have own enumerable properties, so it can be wrapped to objects.
-es6id:  19.1.2.1.5.c
+esid: sec-object.assign
 ---*/
 
 var target = new Object();

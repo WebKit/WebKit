@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     The apply method performs a function call using the [[Call]] property of
     the object. If the object does not have a [[Call]] property, a TypeError
     exception is thrown

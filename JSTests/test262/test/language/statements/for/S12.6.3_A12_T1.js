@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     If (Evaluate Statement).type is "break" and (Evaluate Statement).target
     is in the current label set, (normal, (Evaluate Statement), empty) is
     returned while evaluating a loop

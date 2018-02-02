@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     Being in function code, "this" and eval("this"), called as a
     constructors, return the object
 es5id: 11.1.1_A3.2

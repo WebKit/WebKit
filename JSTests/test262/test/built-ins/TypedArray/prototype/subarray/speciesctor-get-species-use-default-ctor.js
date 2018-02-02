@@ -4,7 +4,7 @@
 esid: sec-%typedarray%.prototype.subarray
 description: >
   Use defaultConstructor if @@species is either undefined or null
-info: >
+info: |
   22.2.3.27 %TypedArray%.prototype.subarray( begin , end )
 
   ...

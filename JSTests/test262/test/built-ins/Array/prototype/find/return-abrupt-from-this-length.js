@@ -5,7 +5,7 @@ esid: sec-array.prototype.find
 es6id: 22.1.3.8
 description: >
   Return abrupt from ToLength(Get(O, "length")).
-info: >
+info: |
   22.1.3.8 Array.prototype.find ( predicate[ , thisArg ] )
 
   1. Let O be ToObject(this value).

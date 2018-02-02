@@ -4,7 +4,7 @@
 /*---
 description: length property of Math.tanh
 es6id: 20.2.2.34
-info: >
+info: |
   Math.tanh ( x )
 
   17 ECMAScript Standard Built-in Objects:

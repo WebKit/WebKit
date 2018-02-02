@@ -3,7 +3,7 @@
 /*---
 description: AnnexB extension not honored in strict mode
 es6id: B.3.3.3
-info: >
+info: |
     Function declaration in the `default` clause of a `switch` statement in
     eval code
 

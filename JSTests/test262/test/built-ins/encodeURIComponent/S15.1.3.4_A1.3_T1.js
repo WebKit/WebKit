@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     If string.charAt(k) in [0xD800 - 0xDBFF] and string.charAt(k+1) not in
     [0xDC00 - 0xDFFF], throw URIError
 es5id: 15.1.3.4_A1.3_T1

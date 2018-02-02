@@ -2,7 +2,7 @@
 // See LICENSE for details.
 
 /*---
-info: >
+info: |
     Promise.all expects an iterable argument;
     fails if recieves an abrupt completion
     ref 7.4.1 non-Object fails CheckIterable

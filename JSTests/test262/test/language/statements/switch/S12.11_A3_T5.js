@@ -6,7 +6,7 @@ info: Syntax constructions of switch statement
 es5id: 12.11_A3_T5
 description: Introducing statement not followed by "case" keyword
 negative:
-  phase: early
+  phase: parse
   type: SyntaxError
 ---*/
 

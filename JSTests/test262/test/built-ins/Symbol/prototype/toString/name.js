@@ -5,7 +5,7 @@
 es6id: 19.4.3.2
 description: >
   Symbol.prototype.toString.name is "toString".
-info: >
+info: |
   Symbol.prototype.toString ( )
 
   17 ECMAScript Standard Built-in Objects:

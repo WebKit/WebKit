@@ -4,7 +4,7 @@
 es6id: 26.1.1
 description: >
   Return target result
-info: >
+info: |
   26.1.1 Reflect.apply ( target, thisArgument, argumentsList )
 
   ...

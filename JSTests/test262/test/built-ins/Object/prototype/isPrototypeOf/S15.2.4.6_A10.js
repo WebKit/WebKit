@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     The Object.prototype.isPrototypeOf.length property has the attribute
     ReadOnly
 es5id: 15.2.4.6_A10

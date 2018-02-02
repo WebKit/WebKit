@@ -4,7 +4,7 @@
 es6id: 23.1.3.4
 description: >
   Returns an iterator.
-info: >
+info: |
   Map.prototype.entries ( )
 
   ...

@@ -6,7 +6,7 @@ es6id: 22.2.6.2
 esid: sec-typedarray.prototype.constructor
 description: >
   The initial value of Uint16Array.prototype.constructor is the Uint16Array object.
-info: >
+info: |
   The initial value of Uint16Array.prototype.constructor is the intrinsic
   object %Uint16Array%.
 

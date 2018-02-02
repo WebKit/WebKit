@@ -11,7 +11,7 @@ info: |
     PropertyName[?Yield] ( StrictFormalParameters ) { FunctionBody }
 features: [generators, default-parameters]
 negative:
-  phase: early
+  phase: parse
   type: SyntaxError
 ---*/
 

@@ -4,7 +4,7 @@
 es6id: 23.1.3.5
 description: >
   Property type and descriptor.
-info: >
+info: |
   Map.prototype.forEach ( callbackfn [ , thisArg ] )
 
   17 ECMAScript Standard Built-in Objects

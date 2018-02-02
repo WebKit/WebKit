@@ -5,7 +5,7 @@ es6id: 23.4.3.4
 esid: sec-weakset.prototype.has
 description: >
   Return false when value is not present in the WeakSet entries.
-info: >
+info: |
   WeakSet.prototype.has ( value )
 
   ...

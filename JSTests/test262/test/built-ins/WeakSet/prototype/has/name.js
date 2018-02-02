@@ -5,7 +5,7 @@ es6id: 23.4.3.4
 esid: sec-weakset.prototype.has
 description: >
   WeakSet.prototype.has.name value and writability.
-info: >
+info: |
   WeakSet.prototype.has ( value )
 
   17 ECMAScript Standard Built-in Objects

@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     Since assertion evaluating do not change endIndex repetition of assertion
     does the same result
 es5id: 15.10.2.6_A5_T1

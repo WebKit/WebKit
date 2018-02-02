@@ -4,7 +4,7 @@
 esid: sec-%typedarray%.from
 description: >
   `from` is %TypedArray%.from
-info: >
+info: |
   22.2.1 The %TypedArray% Intrinsic Object
 
   The %TypedArray% intrinsic object is a constructor function object that all of

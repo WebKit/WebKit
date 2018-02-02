@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     The internal helper function CharacterRange takes two CharSet parameters A and B and performs the
     following:
     2. Let a be the one character in CharSet A.

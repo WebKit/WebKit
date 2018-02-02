@@ -3,7 +3,7 @@
 /*---
 esid: sec-integer-indexed-exotic-objects-getownproperty-p
 description: Returns undefined when P is not a valid index number.
-info: >
+info: |
   9.4.5.1 [[GetOwnProperty]] ( P )
 
   ...

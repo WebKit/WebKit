@@ -5,7 +5,7 @@ esid: sec-date-value
 es6id: 20.3.2.2
 description: >
     Behavior when coercion via `Symbol.toPrimitive` yields a primitive value
-info: >
+info: |
   [...]
   3. If NewTarget is not undefined, then
      a. If Type(value) is Object and value has a [[DateValue]] internal slot,

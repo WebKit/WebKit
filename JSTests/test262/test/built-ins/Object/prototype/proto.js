@@ -4,7 +4,7 @@
 esid: sec-properties-of-the-object-prototype-object
 description: >
   The value of the [[Prototype]] internal slot of Object.prototype is null
-info: >
+info: |
   19.1.3 Properties of the Object Prototype Object
 
   The value of the [[Prototype]] internal slot of the Object prototype object is

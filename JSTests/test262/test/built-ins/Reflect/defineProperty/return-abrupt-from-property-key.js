@@ -4,7 +4,7 @@
 es6id: 26.1.3
 description: >
   Return abrupt from ToPropertyKey(propertyKey)
-info: >
+info: |
   26.1.3 Reflect.defineProperty ( target, propertyKey, attributes )
 
   ...

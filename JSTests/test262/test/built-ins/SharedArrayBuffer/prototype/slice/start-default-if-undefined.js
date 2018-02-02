@@ -5,7 +5,7 @@
 /*---
 description: >
   The `start` index defaults to 0 if undefined.
-info: >
+info: |
   SharedArrayBuffer.prototype.slice ( start, end )
 ---*/
 

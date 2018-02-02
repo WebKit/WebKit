@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     Result of number conversion from object value is the result
     of conversion from primitive value
 es5id: 9.3_A5_T1

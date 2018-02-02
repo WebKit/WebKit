@@ -4,7 +4,7 @@
 es6id: 26.1.14
 description: >
   Reflect.setPrototypeOf.name value and property descriptor
-info: >
+info: |
   26.1.14 Reflect.setPrototypeOf ( target, proto )
 
   17 ECMAScript Standard Built-in Objects

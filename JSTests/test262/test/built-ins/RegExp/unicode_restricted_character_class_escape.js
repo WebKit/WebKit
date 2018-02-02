@@ -3,7 +3,7 @@
 
 /*---
 description: B.1.4 is not applied for Unicode RegExp - ClassEscape in range expression
-info: >
+info: |
     The compatibility extensions defined in B.1.4 Regular Expressions Patterns
     are not applied for Unicode RegExp.
     Tested extension: "ClassAtomNoDashInRange :: \ ClassEscape but only if ClassEscape evaluates to a CharSet with exactly one character"

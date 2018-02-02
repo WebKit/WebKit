@@ -4,7 +4,7 @@
 es6id: 23.1.1.1
 description: >
   new Map calls `set` for each item on the iterable argument in order.
-info: >
+info: |
   Map ( [ iterable ] )
 
   ...

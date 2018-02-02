@@ -4,7 +4,7 @@
 /*---
 description: SingleNameBinding assigns name to "anonymous" generator functions (async generator function expression)
 esid: sec-asyncgenerator-definitions-evaluation
-features: [async-iteration]
+features: [generators, async-iteration]
 flags: [generated, async]
 info: |
     AsyncGeneratorExpression : async [no LineTerminator here] function * ( FormalParameters ) {
@@ -29,6 +29,7 @@ info: |
           [...]
     7. If environment is undefined, return PutValue(lhs, v).
     8. Return InitializeReferencedBinding(lhs, v).
+
 ---*/
 
 

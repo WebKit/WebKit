@@ -4,7 +4,7 @@
 /*---
 description: length property of Math.expm1
 es6id: 20.2.2.15
-info: >
+info: |
   Math.expm1 ( x )
 
   17 ECMAScript Standard Built-in Objects:

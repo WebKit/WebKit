@@ -2,7 +2,7 @@
 // See LICENSE for details.
 
 /*---
-info: >
+info: |
     [...]
     5. Let rejectResult be Call(promiseCapability.[[Reject]], undefined, «r»).
     [...]

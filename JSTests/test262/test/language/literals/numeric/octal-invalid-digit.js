@@ -4,7 +4,7 @@
 /*---
 es6id: 11.8.3
 description: Octal-integer-literal-like sequence containing an invalid digit
-info: >
+info: |
     OctalIntegerLiteral ::
       0o OctalDigits
       0O OctalDigits
@@ -14,7 +14,7 @@ info: >
     OctalDigit :: one of
       0 1 2 3 4 5 6 7
 negative:
-  phase: early
+  phase: parse
   type: SyntaxError
 ---*/
 

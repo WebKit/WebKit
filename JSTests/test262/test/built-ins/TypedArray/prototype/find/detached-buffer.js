@@ -3,7 +3,7 @@
 /*---
 esid: sec-%typedarray%.prototype.find
 description: Throws a TypeError if this has a detached buffer
-info: >
+info: |
   22.2.3.10 %TypedArray%.prototype.find (predicate [ , thisArg ] )
 
   This function is not generic. ValidateTypedArray is applied to the this value

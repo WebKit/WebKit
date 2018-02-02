@@ -5,7 +5,7 @@
 es6id: 19.4.2.5
 description: >
   Symbol.keyFor.name is "keyFor".
-info: >
+info: |
   Symbol.keyFor ( sym )
 
   17 ECMAScript Standard Built-in Objects:

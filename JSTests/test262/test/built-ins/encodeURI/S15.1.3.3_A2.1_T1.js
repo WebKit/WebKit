@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     If string.charAt(k) in [0x0000 - 0x007F]\[uriReserved, uriUnescaped, #],
     return 1 octet (00000000 0zzzzzzz -> 0zzzzzzz)
 es5id: 15.1.3.3_A2.1_T1

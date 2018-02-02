@@ -4,7 +4,7 @@
 /*---
 es6id: 14.1.20
 description: Assignment of function `name` attribute
-info: >
+info: |
     FunctionExpression : function ( FormalParameters ) { FunctionBody }
 
     1. If the function code for FunctionExpression is strict mode code, let

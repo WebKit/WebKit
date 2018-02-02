@@ -1,12 +1,23 @@
 // Copyright (C) 2015 the V8 project authors. All rights reserved.
 // This code is governed by the BSD license found in the LICENSE file.
 /*---
-es6id: 13.6.4.13 S5.h.ii
+esid: sec-runtime-semantics-forin-div-ofbodyevaluation-lhs-stmt-iterator-lhskind-labelset
 description: >
-    If the left-hand side is not a lexical binding and the assignment produces
-    an error, the iterator should be closed and the error forwarded to the
-    runtime.
-features: [Symbol.iterator]
+  If the left-hand side is not a lexical binding and the assignment produces
+  an error, the iterator should be closed and the error forwarded to the
+  runtime.
+info: |
+  ...
+  If destructuring is false, then
+    If lhsRef is an abrupt completion, then
+      Let status be lhsRef.
+    Else if lhsKind is lexicalBinding, then
+      Let status be InitializeReferencedBinding(lhsRef, nextValue).
+    Else,
+      Let status be PutValue(lhsRef, nextValue).
+  ...
+
+features: [for-of,Symbol.iterator]
 ---*/
 
 var callCount = 0;

@@ -6,7 +6,7 @@ es6id: 22.2.6.1
 esid: sec-properties-of-typedarray-prototype-objects
 description: >
   The initial value of Uint8Array.prototype.BYTES_PER_ELEMENT is 1.
-info: >
+info: |
   The value of TypedArray.prototype.BYTES_PER_ELEMENT is the Number value
   of the Element Size value specified in Table 49 for TypedArray.
 

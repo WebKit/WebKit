@@ -3,7 +3,7 @@
 /*---
 es6id: 19.5.6.1
 description: Super need to be called to initialize internals
-info: >
+info: |
   19.5.6.1  NativeError Constructors
 
   ...

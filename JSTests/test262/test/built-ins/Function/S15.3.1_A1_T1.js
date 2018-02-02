@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     The function call Function(…) is equivalent to the object creation expression
     new Function(…) with the same arguments.
 es5id: 15.3.1_A1_T1

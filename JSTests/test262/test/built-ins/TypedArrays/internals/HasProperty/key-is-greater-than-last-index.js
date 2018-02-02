@@ -3,7 +3,7 @@
 /*---
 esid: sec-integer-indexed-exotic-objects-hasproperty-p
 description: Return false if P's value is >= this's [[ArrayLength]]
-info: >
+info: |
   9.4.5.2 [[HasProperty]](P)
 
   ...

@@ -3,7 +3,7 @@
 /*---
 es6id: 12.2.8.5
 description: Primitive value in expression position of TemplateMiddleList
-info: >
+info: |
     TemplateMiddleList : TemplateMiddle Expression
 
     1. Let head be the TV of TemplateMiddle as defined in 11.8.6.

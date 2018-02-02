@@ -4,7 +4,7 @@
 /*---
 es6id: 19.4.3.4
 description: Symbol.prototype[Symbol.toPrimitive] property descriptor
-info: >
+info: |
     This property has the attributes { [[Writable]]: false, [[Enumerable]]:
     false, [[Configurable]]: true }.
 includes: [propertyHelper.js]

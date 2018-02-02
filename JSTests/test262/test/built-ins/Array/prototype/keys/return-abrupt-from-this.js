@@ -5,7 +5,7 @@ esid: sec-array.prototype.keys
 es6id: 22.1.3.13
 description: >
   Return abrupt from ToObject(this value).
-info: >
+info: |
   22.1.3.13 Array.prototype.keys ( )
 
   1. Let O be ToObject(this value).

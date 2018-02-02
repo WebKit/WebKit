@@ -4,7 +4,7 @@
 /*---
 description: Invocation of `exec` method
 es6id: 21.2.5.8
-info: >
+info: |
     [...]
     13. Repeat, while done is false
         a. Let result be RegExpExec(rx, S).

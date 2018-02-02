@@ -4,7 +4,7 @@
 es6id: 13.6.4
 description: >
     Unmapped arguments object mutation via alias during traversal using for..of
-info: >
+info: |
     "Unmapped" arguments objects should be able to be traversed using a
     `for..of` loop, and dynamic changes to the formal parameters should not be
     reflected in the iterated values.

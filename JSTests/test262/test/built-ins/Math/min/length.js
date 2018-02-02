@@ -5,7 +5,7 @@
 esid: sec-math.min
 description: >
   "length" property of Math.min
-info: >
+info: |
   Math.min ( value1, value2, ...values )
 
   17 ECMAScript Standard Built-in Objects:

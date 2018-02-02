@@ -5,7 +5,7 @@ es6id: 9.5.8
 description: >
     Proxy must report the same value for a non-writable, non-configurable
     property.
-info: >
+info: |
     [[Get]] (P, Receiver)
 
     13. If targetDesc is not undefined, then

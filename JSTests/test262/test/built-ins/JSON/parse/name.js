@@ -5,7 +5,7 @@
 es6id: 24.3.1
 description: >
   JSON.parse.name is "parse".
-info: >
+info: |
   JSON.parse ( text [ , reviver ] )
 
   17 ECMAScript Standard Built-in Objects:

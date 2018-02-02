@@ -3,7 +3,7 @@
 /*---
 es6id: 11.8.6.1
 description: Template values of line continuations
-info: >
+info: |
     The TV of LineContinuation :: \ LineTerminatorSequence is the empty code
     unit sequence.
     The TRV of LineContinuation :: \ LineTerminatorSequence is the sequence

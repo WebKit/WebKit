@@ -3,7 +3,7 @@
 /*---
 es6id: 25.4.5.3
 description: PerformPromiseThen on a rejected promise
-info: >
+info: |
     7. Return PerformPromiseThen(promise, onFulfilled, onRejected,
        resultCapability).
 

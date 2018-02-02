@@ -3,7 +3,7 @@
 /*---
 es6id: 13.15.8
 description: Completion value from `finally` clause of a try..finally statement
-info: >
+info: |
     TryStatement : try Block Finally
 
     1. Let B be the result of evaluating Block.

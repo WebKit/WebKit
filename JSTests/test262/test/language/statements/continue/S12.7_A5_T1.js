@@ -2,14 +2,14 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     When "continue Identifier" is evaluated Identifier must be label in the
     label set of an enclosing (but not crossing function boundaries)
     IterationStatement
 es5id: 12.7_A5_T1
 description: Trying to continue another labeled loop
 negative:
-  phase: early
+  phase: parse
   type: SyntaxError
 ---*/
 

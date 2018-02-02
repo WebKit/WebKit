@@ -5,7 +5,7 @@
 es6id: 20.2.2.9
 description: >
   Math.cbrt.name is "cbrt".
-info: >
+info: |
   Math.cbrt ( x )
 
   17 ECMAScript Standard Built-in Objects:

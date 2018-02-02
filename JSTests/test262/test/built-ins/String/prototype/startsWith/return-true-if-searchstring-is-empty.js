@@ -4,7 +4,7 @@
 es6id: 21.1.3.18
 description: >
   Returns true if searchString.length == 0.
-info: >
+info: |
   21.1.3.18 String.prototype.startsWith ( searchString [ , position ] )
 
   ...

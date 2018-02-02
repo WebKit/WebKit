@@ -3,7 +3,7 @@
 /*---
 es6id: 19.4.1
 description: Symbol can be used as the value of an extends
-info: >
+info: |
   19.4.1 The Symbol Constructor
 
   ...

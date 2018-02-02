@@ -5,6 +5,7 @@ es6id: 25.2
 description: >
     Formal parameters are valid yield expression operands.
 flags: [noStrict]
+features: [generators]
 ---*/
 
 function* g(a, b, c, d) {

@@ -5,7 +5,7 @@
 es6id: 20.2.2.1
 description: >
   Math.abs.name is "abs".
-info: >
+info: |
   Math.abs ( x )
 
   17 ECMAScript Standard Built-in Objects:

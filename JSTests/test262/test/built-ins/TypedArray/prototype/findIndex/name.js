@@ -5,7 +5,7 @@
 es6id: 22.2.3.11
 description: >
   %TypedArray%.prototype.findIndex.name is "findIndex".
-info: >
+info: |
   %TypedArray%.prototype.findIndex (predicate [ , thisArg ] )
 
   17 ECMAScript Standard Built-in Objects:

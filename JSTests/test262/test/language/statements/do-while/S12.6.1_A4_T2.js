@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     "break" within a "do-while" Statement is allowed and performed as
     described in 12.8
 es5id: 12.6.1_A4_T2

@@ -5,7 +5,7 @@
 esid: sec-Intl.DateTimeFormat.supportedLocalesOf
 description: >
   Intl.DateTimeFormat.supportedLocalesOf.name is "supportedLocalesOf".
-info: >
+info: |
   12.3.2 Intl.DateTimeFormat.supportedLocalesOf (locales [ , options ])
 
   17 ECMAScript Standard Built-in Objects:

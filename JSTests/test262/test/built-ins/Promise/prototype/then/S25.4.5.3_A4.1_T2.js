@@ -2,7 +2,7 @@
 // See LICENSE for details.
 
 /*---
-info: >
+info: |
     PerformPromiseThen
     Ref 25.4.5.3.1
 es6id: S25.4.5.3_A4.1_T2

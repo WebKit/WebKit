@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     ToNumber(first expression) is called first, and then ToNumber(second
     expression)
 es5id: 11.7.3_A2.3_T1

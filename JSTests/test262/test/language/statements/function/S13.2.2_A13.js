@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     Calling a function as a constructor is inadmissible as long as
     this.any_Function is declared by eval and called
 es5id: 13.2.2_A13

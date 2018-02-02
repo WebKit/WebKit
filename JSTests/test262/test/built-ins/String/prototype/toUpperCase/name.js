@@ -5,7 +5,7 @@
 es6id: 21.1.3.24
 description: >
   String.prototype.toUpperCase.name is "toUpperCase".
-info: >
+info: |
   String.prototype.toUpperCase ( )
 
   17 ECMAScript Standard Built-in Objects:

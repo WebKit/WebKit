@@ -4,7 +4,7 @@
 es6id: 23.1.3.6
 description: >
   Returns the value from the specified key on different types.
-info: >
+info: |
   Map.prototype.get ( key )
 
   4. Let entries be the List that is the value of M’s [[MapData]] internal slot.

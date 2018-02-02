@@ -4,6 +4,7 @@
 /*---
 description: Use yield value in a array spread position (Static generator method as a ClassExpression element)
 esid: prod-GeneratorMethod
+features: [generators]
 flags: [generated]
 info: |
     ClassElement :
@@ -16,6 +17,7 @@ info: |
 
     GeneratorMethod :
       * PropertyName ( UniqueFormalParameters ) { GeneratorBody }
+
 
     Array Initializer
 

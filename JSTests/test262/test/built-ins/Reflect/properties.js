@@ -4,7 +4,7 @@
 es6id: 26.1
 description: >
   Reflect is configurable, writable and not enumerable.
-info: >
+info: |
   17 ECMAScript Standard Built-in Objects
 includes: [propertyHelper.js]
 ---*/

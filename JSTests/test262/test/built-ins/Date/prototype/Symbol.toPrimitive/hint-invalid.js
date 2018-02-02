@@ -4,7 +4,7 @@
 esid: sec-date.prototype-@@toprimitive
 es6id: 20.3.4.45
 description: Behavior when an invalid `hint` argument is specified
-info: >
+info: |
     1. Let O be the this value.
     2. If Type(O) is not Object, throw a TypeError exception.
     3. If hint is the String value "string" or the String value "default", then

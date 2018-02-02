@@ -2,14 +2,14 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     It is an early Reference Error if LeftHandSideExpression is neither an
     ObjectLiteral nor an ArrayLiteral and IsValidSimpleAssignmentTarget of
     LeftHandSideExpression is false.
 es6id: 12.14.1
 description: Assignment with non-simple target
 negative:
-  phase: early
+  phase: parse
   type: ReferenceError
 ---*/
 

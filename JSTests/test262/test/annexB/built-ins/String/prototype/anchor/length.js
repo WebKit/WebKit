@@ -5,7 +5,7 @@
 es6id: B.2.3.2
 description: >
   String.prototype.anchor.length is 1.
-info: >
+info: |
   String.prototype.anchor ( name )
 
   17 ECMAScript Standard Built-in Objects:

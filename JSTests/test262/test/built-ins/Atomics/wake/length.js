@@ -6,7 +6,7 @@
 esid: sec-atomics.wake
 description: >
   Atomics.wake.length is 3.
-info: >
+info: |
   Atomics.wake ( ia, index, count )
 
   17 ECMAScript Standard Built-in Objects:

@@ -3,7 +3,7 @@
 /*---
 es6id: 22.1.1
 description: Super need to be called to initialize internals
-info: >
+info: |
   22.1.1 The Array Constructor
 
   ...

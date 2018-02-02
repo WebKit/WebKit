@@ -4,7 +4,7 @@
 es6id: 23.1.1.1
 description: >
   The new Map object's prototype is Map.prototype
-info: >
+info: |
   Map ( [ iterable ] )
 
   When the Map function is called with optional argument the following steps

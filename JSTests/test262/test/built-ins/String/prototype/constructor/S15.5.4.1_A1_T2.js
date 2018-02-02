@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     The initial value of String.prototype.constructor is the built-in String
     constructor
 es5id: 15.5.4.1_A1_T2

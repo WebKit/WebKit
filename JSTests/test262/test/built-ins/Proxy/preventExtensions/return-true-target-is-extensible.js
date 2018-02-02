@@ -5,7 +5,7 @@ es6id: 9.5.4
 description: >
     Throws a TypeError exception if boolean trap result is true and target is
     extensible.
-info: >
+info: |
     [[PreventExtensions]] ( )
 
     ...

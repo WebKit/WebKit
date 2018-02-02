@@ -4,7 +4,7 @@
 /*---
 es6id: 21.2.5.11
 description: Length coercion of `lastIndex` property of splitter after a match
-info: >
+info: |
     [...]
     24. Repeat, while q < size
         a. Let setStatus be Set(splitter, "lastIndex", q, true).

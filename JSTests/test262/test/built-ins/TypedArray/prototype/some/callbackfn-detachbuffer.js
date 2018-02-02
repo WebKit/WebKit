@@ -4,7 +4,7 @@
 esid: sec-%typedarray%.prototype.some
 description: >
   Instance buffer can be detached during loop
-info: >
+info: |
   22.2.3.25 %TypedArray%.prototype.some ( callbackfn [ , thisArg ] )
 
   %TypedArray%.prototype.some is a distinct function that implements the same

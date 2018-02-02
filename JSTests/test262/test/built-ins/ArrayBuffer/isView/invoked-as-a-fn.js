@@ -5,7 +5,7 @@
 esid: sec-arraybuffer.isview
 description: >
   `isView` can be invoked as a function
-info: >
+info: |
   24.1.3.1 ArrayBuffer.isView ( arg )
 
   1. If Type(arg) is not Object, return false.

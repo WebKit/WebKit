@@ -5,7 +5,7 @@
 es6id: B.2.3.8
 description: >
   String.prototype.fontsize.length is 1.
-info: >
+info: |
   String.prototype.fontsize ( size )
 
   17 ECMAScript Standard Built-in Objects:

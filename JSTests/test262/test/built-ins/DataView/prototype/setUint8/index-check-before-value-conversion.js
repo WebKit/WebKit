@@ -6,7 +6,7 @@ esid: sec-dataview.prototype.setuint8
 description: >
   RangeError exception for negative or non-integral index is thrown before
   the value conversion.
-info: >
+info: |
   ...
   3. Return SetViewValue(v, byteOffset, littleEndian, "Uint8", value).
 

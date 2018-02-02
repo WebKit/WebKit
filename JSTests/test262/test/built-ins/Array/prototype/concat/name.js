@@ -6,7 +6,7 @@ esid: sec-array.prototype.concat
 es6id: 22.1.3.1
 description: >
   Array.prototype.concat.name is "concat".
-info: >
+info: |
   Array.prototype.concat ( ...arguments )
 
   17 ECMAScript Standard Built-in Objects:

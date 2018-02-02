@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     If Result.type is break and Result.target is in the current
     label set, return (normal, Result.value, empty)
 es5id: 12.11_A1_T1

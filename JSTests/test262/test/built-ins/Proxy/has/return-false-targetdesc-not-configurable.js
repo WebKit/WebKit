@@ -5,7 +5,7 @@ es6id: 9.5.7
 description: >
     A property cannot be reported as non-existent, if it exists as a
     non-configurable own property of the target object.
-info: >
+info: |
     [[HasProperty]] (P)
 
     ...

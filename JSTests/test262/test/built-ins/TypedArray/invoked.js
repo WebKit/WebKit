@@ -3,7 +3,7 @@
 /*---
 esid: pending
 description: Throw a TypeError exception if directly invoked.
-info: >
+info: |
   22.2.1.1 %TypedArray% ( )
 
   1. Throw a TypeError Exception

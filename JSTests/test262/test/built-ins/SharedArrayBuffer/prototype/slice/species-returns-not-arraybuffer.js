@@ -5,7 +5,7 @@
 /*---
 description: >
   Throws a TypeError if new object is not an SharedArrayBuffer instance.
-info: >
+info: |
   SharedArrayBuffer.prototype.slice ( start, end )
 
 features: [Symbol.species]

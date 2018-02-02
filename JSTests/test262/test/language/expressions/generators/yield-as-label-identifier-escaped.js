@@ -4,15 +4,17 @@
 /*---
 description: yield is a reserved keyword within generator function bodies and may not be used as a label identifier. (Unnamed generator expression)
 esid: prod-GeneratorExpression
+features: [generators]
 flags: [generated]
 negative:
-  phase: early
+  phase: parse
   type: SyntaxError
 info: |
     14.4 Generator Function Definitions
 
     GeneratorExpression:
       function * BindingIdentifier opt ( FormalParameters ) { GeneratorBody }
+
 
     LabelIdentifier : Identifier
 

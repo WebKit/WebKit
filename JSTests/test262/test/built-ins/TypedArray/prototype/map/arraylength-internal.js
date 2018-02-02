@@ -4,7 +4,7 @@
 esid: sec-%typedarray%.prototype.map
 description: >
   [[ArrayLength]] is accessed in place of performing a [[Get]] of "length"
-info: >
+info: |
   22.2.3.19 %TypedArray%.prototype.map ( callbackfn [ , thisArg ] )
 
   ...

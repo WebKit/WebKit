@@ -6,7 +6,7 @@ esid: sec-arraybuffer.prototype.slice
 es6id: 24.1.4.3
 description: >
   The `end` index defaults to [[ArrayBufferByteLength]] if undefined.
-info: >
+info: |
   ArrayBuffer.prototype.slice ( start, end )
 
   ...

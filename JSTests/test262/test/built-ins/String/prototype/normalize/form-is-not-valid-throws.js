@@ -4,7 +4,7 @@
 es6id: 21.1.3.12
 description: >
   Throws a RangeError if ToString(form) value is not a valid form name.
-info: >
+info: |
   21.1.3.12 String.prototype.normalize ( [ form ] )
 
   ...

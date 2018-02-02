@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     White Space and Line Terminator between ShiftExpression and ">>" or
     between ">>" and AdditiveExpression are allowed
 es5id: 11.7.2_A1

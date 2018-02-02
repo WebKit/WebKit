@@ -4,7 +4,7 @@
 description: AnnexB extension not honored in strict mode
 es6id: B.3.3.1
 flags: [onlyStrict]
-info: >
+info: |
     Block statement in function code containing a function declaration
 
     B.3.3.1 Changes to FunctionDeclarationInstantiation

@@ -5,7 +5,7 @@
 es6id: 21.1.3.19
 description: >
   String.prototype.substring.name is "substring".
-info: >
+info: |
   String.prototype.substring ( start, end )
 
   17 ECMAScript Standard Built-in Objects:

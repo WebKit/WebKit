@@ -7,7 +7,7 @@ esid: pending
 description: >
   Async function expressions are not a simple assignment target.
 negative:
-  phase: early
+  phase: parse
   type: ReferenceError
 ---*/
 

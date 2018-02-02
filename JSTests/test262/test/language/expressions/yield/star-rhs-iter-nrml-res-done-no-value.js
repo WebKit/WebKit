@@ -18,7 +18,7 @@ info: |
         ii. Let done be ? IteratorComplete(innerResult).
         iii. If done is true, then
              1. Return ? IteratorValue(innerResult).
-features: [Symbol.iterator]
+features: [generators, Symbol.iterator]
 ---*/
 
 var badIter = {};

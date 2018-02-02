@@ -5,7 +5,7 @@
 esid: prod-annexB-ClassAtomNoDash
 description: >
   Invalid \c in a range behaves like [\\c-_]
-info: >
+info: |
   ClassAtomNoDash :: `\`
 
   The production ClassAtomNoDash :: `\` evaluates as follows:

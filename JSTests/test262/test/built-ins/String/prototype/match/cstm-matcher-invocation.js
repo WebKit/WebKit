@@ -4,7 +4,7 @@
 /*---
 description: Invocation of @@match property of user-supplied objects
 es6id: 21.1.3.11
-info: >
+info: |
     [...]
     3. If regexp is neither undefined nor null, then
        a. Let matcher be GetMethod(regexp, @@match).

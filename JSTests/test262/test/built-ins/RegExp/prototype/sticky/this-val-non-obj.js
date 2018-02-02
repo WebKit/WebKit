@@ -5,7 +5,7 @@
 description: >
     `sticky` accessor invoked on a non-object value
 es6id: 21.2.5.12
-info: >
+info: |
     21.2.5.12 get RegExp.prototype.sticky
 
     1. Let R be the this value.

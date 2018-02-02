@@ -37,7 +37,7 @@ info: |
   6. If completion.[[Type]] is throw, return Completion(completion).
   7. If innerResult.[[Type]] is throw, return Completion(innerResult).
   8. If Type(innerResult.[[Value]]) is not Object, throw a TypeError exception.
-features: [Symbol.iterator]
+features: [generators, Symbol.iterator]
 ---*/
 
 var badIter = {};

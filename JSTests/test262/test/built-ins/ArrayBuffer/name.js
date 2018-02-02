@@ -5,7 +5,7 @@
 esid: sec-arraybuffer-constructor
 description: >
   ArrayBuffer.name is "ArrayBuffer".
-info: >
+info: |
   17 ECMAScript Standard Built-in Objects:
 
   Every built-in Function object, including constructors, that is not

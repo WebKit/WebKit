@@ -5,7 +5,7 @@
 description: SingleNameBinding assigns name to "anonymous" generator functions (try statement)
 esid: sec-runtime-semantics-catchclauseevaluation
 es6id: 13.15.7
-features: [destructuring-binding]
+features: [generators, destructuring-binding]
 flags: [generated]
 info: |
     Catch : catch ( CatchParameter ) Block
@@ -27,6 +27,7 @@ info: |
           ii. ReturnIfAbrupt(hasNameProperty).
           iii. If hasNameProperty is false, perform SetFunctionName(v,
                bindingId).
+
 ---*/
 
 var ranCatch = false;

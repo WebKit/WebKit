@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     If the caller supplies fewer parameter values than there are
     formal parameters, the extra formal parameters have value undefined
 es5id: 10.2.1_A1

@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     toString: If radix is the number 10 or undefined, then this
     number value is given as an argument to the ToString operator.
     the resulting string value is returned

@@ -3,7 +3,7 @@
 
 /*---
 esid: sec-array.prototype.concat
-info: >
+info: |
     When the concat method is called with zero or more arguments item1, item2,
     etc., it returns an array containing the array elements of the object followed by
     the array elements of each argument in order

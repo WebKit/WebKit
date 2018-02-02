@@ -4,7 +4,7 @@
 /*---
 description: Invocation of @@split property of user-supplied objects
 es6id: 21.1.3.17
-info: >
+info: |
     [...]
     3. If separator is neither undefined nor null, then
        a. Let splitter be GetMethod(separator, @@split).

@@ -2,14 +2,14 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     If (Evaluate Statement).type is "break" and (Evaluate Statement).target
     is in the current label set, (normal, (Evaluate Statement), empty) is
     returned while evaluating a loop
 es5id: 12.6.3_A12_T3
 description: Trying to break non-existent label
 negative:
-  phase: early
+  phase: parse
   type: SyntaxError
 ---*/
 

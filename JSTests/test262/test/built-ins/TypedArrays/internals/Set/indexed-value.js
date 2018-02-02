@@ -4,7 +4,7 @@
 esid: sec-integer-indexed-exotic-objects-set-p-v-receiver
 description: >
   Returns true after setting value
-info: >
+info: |
   9.4.5.5 [[Set]] ( P, V, Receiver)
 
   ...

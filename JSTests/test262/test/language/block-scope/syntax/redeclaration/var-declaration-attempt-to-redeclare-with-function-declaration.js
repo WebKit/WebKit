@@ -6,7 +6,7 @@ description: redeclaration with FunctionDeclaration (VariableDeclaration in Bloc
 esid: sec-block-static-semantics-early-errors
 flags: [generated]
 negative:
-  phase: early
+  phase: parse
   type: SyntaxError
 info: |
     Block : { StatementList }

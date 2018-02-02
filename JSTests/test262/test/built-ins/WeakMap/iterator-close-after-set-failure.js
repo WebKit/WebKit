@@ -5,7 +5,7 @@ es6id: 23.3.1.1
 esid: sec-weakmap-iterable
 description: >
   Return IteratorClose(iter, status) if fail on adding value on constructing.
-info: >
+info: |
   WeakMap ( [ iterable ] )
 
   ...

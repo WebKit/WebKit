@@ -19,7 +19,7 @@ info: |
 
   1. Return false.
 negative:
-  phase: early
+  phase: parse
   type: ReferenceError
 ---*/
 

@@ -5,7 +5,7 @@
 es6id: 20.2.2.24
 description: >
   Math.max.name is "max".
-info: >
+info: |
   Math.max ( value1, value2 , …values )
 
   17 ECMAScript Standard Built-in Objects:

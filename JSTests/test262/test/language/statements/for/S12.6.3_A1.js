@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     The "for {;;}" for Statement with empty expressions is allowed and leads
     to performing an infinite loop
 es5id: 12.6.3_A1

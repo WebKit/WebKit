@@ -4,7 +4,7 @@
 es6id: 13.7.5.11
 description: >
     Completion value when head has a declaration and iteration is cancelled
-info: >
+info: |
     IterationStatement : for ( var ForBinding of AssignmentExpression ) Statement
 
     1. Let keyResult be the result of performing ForIn/OfHeadEvaluation( « »,

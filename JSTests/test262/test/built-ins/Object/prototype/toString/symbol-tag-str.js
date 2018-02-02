@@ -5,7 +5,7 @@
 description: >
     String values of `Symbol.toStringTag` property are honored
 es6id: 19.1.3.6
-info: >
+info: |
     16. Let tag be Get (O, @@toStringTag).
     17. ReturnIfAbrupt(tag).
     18. If Type(tag) is not String, let tag be builtinTag.

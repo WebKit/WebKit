@@ -3,7 +3,7 @@
 /*---
 esid: sec-get-%typedarray%.prototype-@@tostringtag
 description: Return undefined when `this` is not Object
-info: >
+info: |
   22.2.3.32 get %TypedArray%.prototype [ @@toStringTag ]
 
   1. Let O be the this value.

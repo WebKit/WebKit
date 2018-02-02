@@ -2,7 +2,7 @@
 // See LICENSE for details.
 
 /*---
-info: >
+info: |
     Promise reaction jobs have predictable environment
 es6id: S25.4.2.1_A2.1_T1
 author: Sam Mikes

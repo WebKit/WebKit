@@ -6,7 +6,7 @@ esid: sec-date.prototype.setutcmilliseconds
 es6id: 20.3.4.31
 description: >
   Date.prototype.setUTCMilliseconds.name is "setUTCMilliseconds".
-info: >
+info: |
   Date.prototype.setUTCMilliseconds ( ms )
 
   17 ECMAScript Standard Built-in Objects:

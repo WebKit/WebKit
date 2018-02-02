@@ -6,7 +6,7 @@ esid: sec-number.prototype.tofixed
 es6id: 20.1.3.3
 description: >
   Number.prototype.toFixed.length is 1.
-info: >
+info: |
   Number.prototype.toFixed ( fractionDigits )
 
   17 ECMAScript Standard Built-in Objects:

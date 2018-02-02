@@ -4,7 +4,7 @@
 author: Jordan Harband
 description: Promise.prototype.finally `name` property
 esid: sec-promise.prototype.finally
-info: >
+info: |
     ES Section 17:
 
     Every built-in Function object, including constructors, that is not

@@ -5,7 +5,7 @@
 es6id: 12.9.3
 description: >
   Does not throw a TypeError if left-hand side expression and `prototype` property are both primitive values.
-info: >
+info: |
   12.9.3 Runtime Semantics: Evaluation
   RelationalExpression : RelationalExpression instanceof ShiftExpression
     ...

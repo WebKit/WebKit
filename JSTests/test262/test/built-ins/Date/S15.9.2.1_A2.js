@@ -3,7 +3,7 @@
 
 /*---
 esid: sec-date-year-month-date-hours-minutes-seconds-ms
-info: >
+info: |
     All of the arguments are optional, any arguments supplied are
     accepted but are completely ignored. A string is created and returned as
     if by the expression (new Date()).toString()

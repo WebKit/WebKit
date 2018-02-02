@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     If the eval function is called with some argument, then use a first
     argument
 es5id: 15.1.2.1_A1.2_T1

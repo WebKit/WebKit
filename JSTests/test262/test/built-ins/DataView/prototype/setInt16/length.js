@@ -5,7 +5,7 @@
 esid: sec-dataview.prototype.setint16
 description: >
   DataView.prototype.setInt16.length is 2.
-info: >
+info: |
   DataView.prototype.setInt16 ( byteOffset, value [ , littleEndian ] )
 
   17 ECMAScript Standard Built-in Objects:

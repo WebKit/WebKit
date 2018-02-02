@@ -4,7 +4,7 @@
 esid: sec-%typedarray%.from
 description: >
   Assert mapfn arguments
-info: >
+info: |
   22.2.2.1 %TypedArray%.from ( source [ , mapfn [ , thisArg ] ] )
 
   ...

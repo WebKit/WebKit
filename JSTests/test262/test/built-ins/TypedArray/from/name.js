@@ -5,7 +5,7 @@
 es6id: 22.2.2.1
 description: >
   %TypedArray%.from.name is "from".
-info: >
+info: |
   %TypedArray%.from ( source [ , mapfn [ , thisArg ] ] )
 
   17 ECMAScript Standard Built-in Objects:

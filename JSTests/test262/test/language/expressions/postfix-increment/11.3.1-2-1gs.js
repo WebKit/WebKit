@@ -7,7 +7,7 @@ description: >
     Strict Mode - SyntaxError is throw if the identifier arguments
     appear as a PostfixExpression(arguments++)
 negative:
-  phase: early
+  phase: parse
   type: SyntaxError
 flags: [onlyStrict]
 ---*/

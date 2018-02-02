@@ -4,7 +4,7 @@
 es6id: 23.1.3.3
 description: >
   Map.prototype.delete.name value and descriptor.
-info: >
+info: |
   Map.prototype.delete ( key )
 
   17 ECMAScript Standard Built-in Objects

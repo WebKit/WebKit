@@ -5,7 +5,7 @@ es6id: 23.3.1.1
 esid: sec-weakmap-iterable
 description: >
   Closes iterator if item first entry completes abruptly.
-info: >
+info: |
   WeakMap ( [ iterable ] )
 
   ...

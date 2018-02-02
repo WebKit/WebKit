@@ -4,7 +4,7 @@
 es6id: 21.1.3.7
 description: >
   Returns true if searchString appears as a substring of the given string.
-info: >
+info: |
   21.1.3.7 String.prototype.includes ( searchString [ , position ] )
 
   ...

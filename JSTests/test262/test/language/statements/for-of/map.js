@@ -3,7 +3,7 @@
 
 /*---
 description: Map traversal using for..of
-info: >
+info: |
     Map instances should be able to be traversed using a `for...of` loop.
 es6id: 13.6.4
 features: [Map]

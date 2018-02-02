@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     Since a function is an object, it might be set to [[Prototype]] property
     of a new created object through [[Construct]] property
 es5id: 13.2.2_A1_T1

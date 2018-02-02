@@ -3,7 +3,7 @@
 /*---
 es6id: 23.1.3.12
 description: Initial state of the Symbol.iterator property
-info: >
+info: |
   The initial value of the @@iterator property is the same function object as
   the initial value of the entries property.
 

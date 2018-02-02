@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     The production CharacterClassEscape :: s evaluates by returning the set of characters
     containing the characters that are on the right-hand side of the WhiteSpace (7.2) or LineTerminator (7.3) productions
 es5id: 15.10.2.12_A1_T1

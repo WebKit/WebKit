@@ -4,7 +4,7 @@
 es6id: 9.5.14
 description: >
     Return the result from the trap method.
-info: >
+info: |
     [[Construct]] ( argumentsList, newTarget)
 
     12. Return newObj

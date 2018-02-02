@@ -6,6 +6,7 @@ description: >
     When a generator is paused within a `try` block of a `try..finally`
     statement, `return` should interrupt control flow as if a `return`
     statement had appeared at that location in the function body.
+features: [generators]
 ---*/
 
 var inTry = 0;

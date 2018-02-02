@@ -5,7 +5,7 @@ esid: sec-%typedarray%.prototype.slice
 description: >
   Custom @@species constructor throws if it returns an instance with a detached
   buffer
-info: >
+info: |
   22.2.3.24 %TypedArray%.prototype.slice ( start, end )
 
   ...

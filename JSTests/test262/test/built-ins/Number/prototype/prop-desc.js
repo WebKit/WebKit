@@ -6,7 +6,7 @@ es6id: 20.1.2.15
 esid: sec-number.prototype
 description: >
   "prototype" property of Number
-info: >
+info: |
   Number.prototype
 
   This property has the attributes { [[Writable]]: false, [[Enumerable]]: false,

@@ -3,7 +3,7 @@
 /*---
 es6id: 25.4.3
 description: Super need to be called to initialize internals
-info: >
+info: |
   25.4.3 The Promise Constructor
 
   ...

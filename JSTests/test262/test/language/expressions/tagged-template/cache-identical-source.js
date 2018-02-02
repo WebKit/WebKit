@@ -3,7 +3,7 @@
 /*---
 es6id: 12.2.8
 description: Template caching using identical expressions
-info: >
+info: |
     Previously-created template objects should be retrieved from the internal
     template registry when their source is identical.
 ---*/

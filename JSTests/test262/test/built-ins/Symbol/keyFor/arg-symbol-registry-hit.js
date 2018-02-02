@@ -4,7 +4,7 @@
 esid: sec-symbol.keyfor
 es6id: 19.4.2.5
 description: Called with Symbol value that exists in the global symbol registry
-info: >
+info: |
     1. If Type(sym) is not Symbol, throw a TypeError exception.
     2. For each element e of the GlobalSymbolRegistry List (see 19.4.2.1),
        a. If SameValue(e.[[Symbol]], sym) is true, return e.[[Key]].

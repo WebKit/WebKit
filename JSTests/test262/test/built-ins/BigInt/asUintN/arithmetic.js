@@ -3,7 +3,7 @@
 /*---
 esid: pending
 description: BigInt.asUintN arithmetic test cases
-info: >
+info: |
   BigInt.asUintN ( bits, bigint )
 
   3. Return a BigInt representing bigint modulo 2**bits.

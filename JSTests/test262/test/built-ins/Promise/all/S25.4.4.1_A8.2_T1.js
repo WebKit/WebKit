@@ -2,12 +2,11 @@
 // See LICENSE for details.
 
 /*---
-info: >
+info: |
     Promise.all with 2-element array
 es6id: S25.4.4.1_A8.1_T1
 author: Sam Mikes
 description: Promise.all() rejects when a promise in its array rejects
-includes: [promiseHelper.js]
 flags: [async]
 ---*/
 

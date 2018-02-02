@@ -5,7 +5,7 @@
 /*---
 description: >
   Throws a TypeError if species constructor is not an object.
-info: >
+info: |
   SharedArrayBuffer.prototype.slice ( start, end )
 
 features: [Symbol.species]

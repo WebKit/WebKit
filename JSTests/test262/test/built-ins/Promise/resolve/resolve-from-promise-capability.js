@@ -5,7 +5,7 @@
 es6id: 25.4.4.5
 description: >
   Resolve function is called after Promise constructor returns.
-info: >
+info: |
   Promise.resolve ( x )
 
   ...

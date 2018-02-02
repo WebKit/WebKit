@@ -4,7 +4,7 @@
 es6id: 22.2.3.6
 esid: sec-%typedarray%.prototype.entries
 description: Return an iterator for the entries.
-info: >
+info: |
   22.2.3.6 %TypedArray%.prototype.entries ( )
 
   ...

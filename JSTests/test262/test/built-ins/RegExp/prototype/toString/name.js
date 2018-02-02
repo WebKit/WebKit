@@ -5,7 +5,7 @@
 es6id: 21.2.5.14
 description: >
   RegExp.prototype.toString.name is "toString".
-info: >
+info: |
   RegExp.prototype.toString ( )
 
   17 ECMAScript Standard Built-in Objects:

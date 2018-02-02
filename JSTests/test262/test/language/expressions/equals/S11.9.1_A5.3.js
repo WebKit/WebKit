@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     If Type(x) is String and Type(y) is Number,
     return the result of comparison ToNumber(x) == y
 es5id: 11.9.1_A5.3

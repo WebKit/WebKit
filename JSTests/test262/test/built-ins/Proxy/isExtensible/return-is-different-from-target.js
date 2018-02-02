@@ -5,7 +5,7 @@ es6id: 9.5.3
 description: >
     Throws a TypeError exception if boolean trap result is not the same as
     target.[[IsExtensible]]() result
-info: >
+info: |
     [[IsExtensible]] ( )
 
     ...

@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     Refer 13.1; 
     It is a SyntaxError if any Identifier value occurs more than once within a FormalParameterList of a strict mode
     FunctionDeclaration or FunctionExpression.

@@ -3,7 +3,7 @@
 /*---
 es6id: 19.1.2.18
 description: Object.setPrototypeOf '`length` property'
-info: >
+info: |
     ES6 Section 17:
     Every built-in Function object, including constructors, has a length
     property whose value is an integer. Unless otherwise specified, this value

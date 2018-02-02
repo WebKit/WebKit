@@ -3,7 +3,7 @@
 /*---
 description: The head's declaration may not contain duplicate entries
 negative:
-  phase: early
+  phase: parse
   type: SyntaxError
 info: |
     It is a Syntax Error if the BoundNames of ForDeclaration contains any

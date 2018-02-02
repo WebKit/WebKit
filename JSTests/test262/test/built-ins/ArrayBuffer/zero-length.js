@@ -6,7 +6,7 @@ esid: sec-arraybuffer-length
 es6id: 24.1.2.1
 description: >
   The `length` parameter can be zero.
-info: >
+info: |
   ArrayBuffer( length )
 
   ...

@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     If 1 > s > -1, and -6 < n <= 0, return the string consisting of the
     character '0', followed by a decimal point '.', followed by -n occurrences
     of the character '0', followed by the k digits of the decimal

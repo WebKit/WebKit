@@ -8,7 +8,7 @@ es6id: 13.3.2.4
 features: [object-rest, destructuring-binding]
 flags: [generated]
 negative:
-  phase: early
+  phase: parse
   type: SyntaxError
 info: |
     VariableDeclaration : BindingPattern Initializer

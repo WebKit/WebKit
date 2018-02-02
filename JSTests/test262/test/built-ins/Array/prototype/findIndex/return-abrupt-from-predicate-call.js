@@ -5,7 +5,7 @@ esid: sec-array.prototype.findindex
 es6id: 22.1.3.9
 description: >
   Return abrupt from predicate call.
-info: >
+info: |
   22.1.3.9 Array.prototype.findIndex ( predicate[ , thisArg ] )
 
   ...

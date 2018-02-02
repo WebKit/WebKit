@@ -7,7 +7,7 @@ esid: pending
 description: >
   It is a syntax error if AsyncGeneratorBody contains SuperProperty is true.
 negative:
-  phase: early
+  phase: parse
   type: SyntaxError
 features: [async-iteration]
 ---*/

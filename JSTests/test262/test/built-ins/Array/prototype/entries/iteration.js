@@ -5,7 +5,7 @@ esid: sec-array.prototype.entries
 es6id: 22.1.3.4
 description: >
   The return is a valid iterator with the array's numeric properties.
-info: >
+info: |
   22.1.3.4 Array.prototype.entries ( )
 
   1. Let O be ToObject(this value).

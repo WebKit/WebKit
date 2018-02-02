@@ -4,7 +4,7 @@
 esid: sec-proxy-object-internal-methods-and-internal-slots-ownpropertykeys
 description: >
     The returned list must not contain any duplicate entries.
-info: >
+info: |
     [[OwnPropertyKeys]] ( )
 
     ...

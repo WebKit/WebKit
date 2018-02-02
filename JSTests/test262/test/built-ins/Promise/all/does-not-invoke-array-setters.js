@@ -5,7 +5,7 @@
 es6id: 25.4.4.1.1
 description: >
   Indexed setter properties on Array.prototype are not invoked.
-info: >
+info: |
   Runtime Semantics: PerformPromiseAll( iteratorRecord, constructor, resultCapability)
 
   ...

@@ -4,7 +4,7 @@
 esid: sec-array.prototype.findindex
 es6id: 22.1.3.9
 description: Property type and descriptor.
-info: >
+info: |
   17 ECMAScript Standard Built-in Objects
 includes: [propertyHelper.js]
 ---*/

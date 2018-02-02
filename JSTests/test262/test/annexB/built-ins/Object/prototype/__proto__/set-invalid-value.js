@@ -4,7 +4,7 @@
 esid: sec-object.prototype.__proto__
 es6id: B.2.2.1
 description: Called with a value that is neither an Object nor Null
-info: >
+info: |
     1. Let O be ? RequireObjectCoercible(this value).
     2. If Type(proto) is neither Object nor Null, return undefined.
 features: [Symbol]

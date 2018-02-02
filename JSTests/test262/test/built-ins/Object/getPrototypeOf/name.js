@@ -5,7 +5,7 @@
 es6id: 19.1.2.9
 description: >
   Object.getPrototypeOf.name is "getPrototypeOf".
-info: >
+info: |
   Object.getPrototypeOf ( O )
 
   17 ECMAScript Standard Built-in Objects:

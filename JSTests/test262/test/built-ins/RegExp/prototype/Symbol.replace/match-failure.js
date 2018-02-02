@@ -4,7 +4,7 @@
 /*---
 description: Return original string when no matches occur
 es6id: 21.2.5.8
-info: >
+info: |
     21.2.5.8 RegExp.prototype [ @@replace ] ( string, replaceValue )
 
     [...]

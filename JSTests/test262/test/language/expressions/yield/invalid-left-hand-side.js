@@ -17,7 +17,7 @@ info: |
     CallExpression[?Yield]
 features: [generators]
 negative:
-  phase: early
+  phase: parse
   type: SyntaxError
 ---*/
 

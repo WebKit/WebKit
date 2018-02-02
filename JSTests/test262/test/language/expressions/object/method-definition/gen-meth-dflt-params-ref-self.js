@@ -4,7 +4,7 @@
 /*---
 description: Referencing a parameter from within its own initializer (generator method)
 esid: sec-generator-function-definitions-runtime-semantics-propertydefinitionevaluation
-features: [default-parameters]
+features: [default-parameters, generators]
 flags: [generated]
 info: |
     GeneratorMethod :
@@ -41,6 +41,7 @@ info: |
         b. Let formalStatus be IteratorBindingInitialization for formals with
            iteratorRecord and env as arguments.
     [...]
+
 
     14.1.19 Runtime Semantics: IteratorBindingInitialization
 

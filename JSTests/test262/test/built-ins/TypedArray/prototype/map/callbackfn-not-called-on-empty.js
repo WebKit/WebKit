@@ -4,7 +4,7 @@
 esid: sec-%typedarray%.prototype.map
 description: >
   callbackfn is not called on empty instances
-info: >
+info: |
   22.2.3.19 %TypedArray%.prototype.map ( callbackfn [ , thisArg ] )
 
   ...

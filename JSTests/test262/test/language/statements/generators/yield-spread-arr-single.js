@@ -4,12 +4,14 @@
 /*---
 description: Use yield value in a array spread position (Generator Function declaration)
 esid: prod-GeneratorDeclaration
+features: [generators]
 flags: [generated]
 info: |
     14.4 Generator Function Definitions
 
     GeneratorDeclaration :
       function * BindingIdentifier ( FormalParameters ) { GeneratorBody }
+
 
     Array Initializer
 

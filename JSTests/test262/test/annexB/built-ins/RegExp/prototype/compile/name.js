@@ -5,7 +5,7 @@
 es6id: B.2.5.1
 description: >
   RegExp.prototype.compile.name is "compile".
-info: >
+info: |
   RegExp.prototype.compile (pattern, flags )
 
   17 ECMAScript Standard Built-in Objects:

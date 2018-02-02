@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     Appearing of continue within eval statement that is within an
     IterationStatement yields SyntaxError
 es5id: 12.7_A7

@@ -5,7 +5,7 @@
 es5id: 15.5.4.10_A11
 es6id: 21.1.3.11
 description: Checking String.prototype.match.length
-info: >
+info: |
     The length property of the match method is 1.
 
     ES6 Section 17:

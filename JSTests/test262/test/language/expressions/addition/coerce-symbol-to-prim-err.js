@@ -6,7 +6,7 @@ es6id: 12.7.3.1
 description: >
     Behavior when error thrown by invocation of `Symbol.toPrimitive` method
     during coercion
-info: >
+info: |
     [...]
     5. Let lprim be ? ToPrimitive(lval).
     6. Let rprim be ? ToPrimitive(rval).

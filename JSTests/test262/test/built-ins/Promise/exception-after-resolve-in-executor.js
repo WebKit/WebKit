@@ -5,7 +5,7 @@
 es6id: 25.4.3.1
 description: >
   Already resolved promise is not rejected when executor throws an exception.
-info: >
+info: |
   Promise ( executor )
 
   ...

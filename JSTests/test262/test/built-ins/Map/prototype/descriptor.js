@@ -3,7 +3,7 @@
 /*---
 es6id: 23.1.2.1
 description: Map.prototype property attributes.
-info: >
+info: |
   This property has the attributes { [[Writable]]: false, [[Enumerable]]: false,
   [[Configurable]]: false }.
 includes: [propertyHelper.js]

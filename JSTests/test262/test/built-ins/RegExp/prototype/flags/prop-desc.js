@@ -5,7 +5,7 @@
 esid: sec-get-regexp.prototype.flags
 description: >
   get RegExp.prototype.flags property descriptor
-info: >
+info: |
   get RegExp.prototype.flags
 
   RegExp.prototype.flags is an accessor property whose set accessor

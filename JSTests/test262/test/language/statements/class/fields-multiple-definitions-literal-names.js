@@ -1,9 +1,10 @@
 // This file was procedurally generated from the following sources:
 // - src/class-fields/literal-names.case
-// - src/class-fields/default/cls-decl-multiple-definitions.template
+// - src/class-fields/productions/cls-decl-multiple-definitions.template
 /*---
 description: Literal property names (multiple fields definitions)
-features: [class-fields]
+esid: prod-FieldDefinition
+features: [class, class-fields-public]
 flags: [generated]
 includes: [propertyHelper.js]
 info: |
@@ -29,6 +30,7 @@ class C {
   c = fn
   m2() { return 39 }
   bar = "barbaz";
+
 }
 
 var c = new C();

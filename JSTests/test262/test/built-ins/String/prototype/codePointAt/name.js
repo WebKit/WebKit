@@ -4,7 +4,7 @@
 es6id: 21.1.3.3
 description: >
   String.prototype.codePointAt.name value and descriptor.
-info: >
+info: |
   21.1.3.3 String.prototype.codePointAt ( pos )
 
   17 ECMAScript Standard Built-in Objects

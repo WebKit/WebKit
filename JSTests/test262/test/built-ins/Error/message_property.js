@@ -3,7 +3,7 @@
 
 /*---
 description: Error constructor creates own message property
-info: >
+info: |
   19.5.1.1 Error ( message )
 
   ...

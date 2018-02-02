@@ -5,7 +5,7 @@ es6id: 9.5.5
 description: >
     Throws a TypeError exception if trap result is undefined and target property
     descriptor is undefined.
-info: >
+info: |
     [[GetOwnProperty]] (P)
 
     ...

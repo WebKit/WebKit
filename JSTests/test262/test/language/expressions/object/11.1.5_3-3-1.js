@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     Refer 11.1.5; 
     The production
     PropertyNameAndValueList : PropertyAssignment 

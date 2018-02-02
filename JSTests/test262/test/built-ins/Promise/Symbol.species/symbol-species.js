@@ -2,7 +2,7 @@
 // See LICENSE for details.
 
 /*---
-info: >
+info: |
  Promise has a property at `Symbol.species`
 es6id: 6.1.5.1
 author: Sam Mikes

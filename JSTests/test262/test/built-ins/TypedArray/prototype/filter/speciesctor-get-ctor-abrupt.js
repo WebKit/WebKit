@@ -3,7 +3,7 @@
 /*---
 esid: sec-%typedarray%.prototype.filter
 description: Return abrupt from SpeciesConstructor's get Constructor
-info: >
+info: |
   22.2.3.9 %TypedArray%.prototype.filter ( callbackfn [ , thisArg ] )
 
   ...

@@ -5,7 +5,7 @@
 esid: sec-get-regexp.prototype.flags
 description: >
   RegExp.prototype.flags come in a single order, independent of source order
-info: >
+info: |
   4. Let global be ToBoolean(? Get(R, "global")).
   5. If global is true, append "g" as the last code unit of result.
   6. Let ignoreCase be ToBoolean(? Get(R, "ignoreCase")).

@@ -4,7 +4,7 @@
 esid: sec-symbol.search
 es6id: 19.4.2.9
 description: Value shared by all realms
-info: >
+info: |
   Unless otherwise specified, well-known symbols values are shared by all
   realms.
 features: [cross-realm, Symbol.search]

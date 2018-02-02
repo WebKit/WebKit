@@ -6,7 +6,7 @@ esid: sec-array.prototype.slice
 es6id: 22.1.3.22
 description: >
   Array.prototype.slice.name is "slice".
-info: >
+info: |
   Array.prototype.slice (start, end)
 
   17 ECMAScript Standard Built-in Objects:

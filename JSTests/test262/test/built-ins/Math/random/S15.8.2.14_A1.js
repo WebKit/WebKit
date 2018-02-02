@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     Math.random() returns a number value with positive sign, greater than or
     equal to 0 but less than 1
 es5id: 15.8.2.14_A1

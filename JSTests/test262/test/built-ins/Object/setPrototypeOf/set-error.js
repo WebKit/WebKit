@@ -4,7 +4,7 @@
 es6id: 19.1.2.18
 description: >
     Object.setPrototypeOf invoked with an object whose prototype cannot be set
-info: >
+info: |
     1. Let O be RequireObjectCoercible(O).
     2. ReturnIfAbrupt(O).
     3. If Type(proto) is neither Object nor Null, throw a TypeError exception.

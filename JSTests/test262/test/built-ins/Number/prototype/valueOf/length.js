@@ -5,7 +5,7 @@
 es6id: 20.1.3.7
 description: >
   Number.prototype.valueOf.length is 0.
-info: >
+info: |
   Number.prototype.valueOf ( )
 
   17 ECMAScript Standard Built-in Objects:

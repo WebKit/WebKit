@@ -5,7 +5,7 @@
 es6id: 19.5.6.3.2
 description: >
   The initial value of RangeError.prototype.message is the empty string.
-info: >
+info: |
   The initial value of the message property of the prototype for a given NativeError
   constructor is the empty String.
 

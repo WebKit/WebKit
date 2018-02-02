@@ -3,7 +3,7 @@
 /*---
 es6id: 25.4.5.1
 description: Promise.prototype.catch invokes `then` method
-info: >
+info: |
     1. Let promise be the this value.
     2. Return Invoke(promise, "then", «undefined, onRejected»).
 ---*/

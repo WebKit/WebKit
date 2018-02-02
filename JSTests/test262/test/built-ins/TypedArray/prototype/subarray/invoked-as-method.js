@@ -3,7 +3,7 @@
 /*---
 es6id: 22.2.3.26
 description: Requires a [[TypedArrayName]] internal slot.
-info: >
+info: |
   22.2.3.26 %TypedArray%.prototype.subarray( [ begin [ , end ] ] )
 
   1. Let O be the this value.

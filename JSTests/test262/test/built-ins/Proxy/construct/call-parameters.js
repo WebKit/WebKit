@@ -6,7 +6,7 @@ description: >
     trap is called with handler object as its context, and parameters are:
     target, an array list with the called arguments and the new target, and the
     constructor new.target.
-info: >
+info: |
     [[Construct]] ( argumentsList, newTarget)
 
     9. Let newObj be Call(trap, handler, «target, argArray, newTarget »).

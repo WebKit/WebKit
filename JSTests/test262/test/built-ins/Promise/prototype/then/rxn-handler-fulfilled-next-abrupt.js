@@ -3,7 +3,7 @@
 /*---
 description: Abrupt completions should not preclude additional jobs
 es6id: 25.4.2.1
-info: >
+info: |
     [...]
     7. If handlerResult is an abrupt completion, then
        a. Let status be Call(promiseCapability.[[Reject]], undefined,

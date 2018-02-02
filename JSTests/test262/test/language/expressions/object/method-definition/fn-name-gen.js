@@ -5,7 +5,7 @@
 es6id: 14.4.13
 description: >
     Assignment of function `name` attribute (GeneratorMethod)
-info: >
+info: |
     GeneratorMethod :
         * PropertyName ( StrictFormalParameters ) { GeneratorBody }
 

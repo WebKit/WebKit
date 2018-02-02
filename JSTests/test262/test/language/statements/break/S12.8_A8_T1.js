@@ -8,7 +8,7 @@ description: >
     Checking if using "break Identifier" from within catch Block
     appears to be invalid
 negative:
-  phase: early
+  phase: parse
   type: SyntaxError
 ---*/
 

@@ -5,7 +5,7 @@
 es6id: 19.5.3.4
 description: >
   Error.prototype.toString.length is 0.
-info: >
+info: |
   Error.prototype.toString ( )
 
   17 ECMAScript Standard Built-in Objects:

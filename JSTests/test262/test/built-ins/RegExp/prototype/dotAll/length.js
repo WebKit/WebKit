@@ -5,7 +5,7 @@
 esid: sec-get-regexp.prototype.dotall
 description: >
   get RegExp.prototype.dotAll.length is 0.
-info: >
+info: |
   get RegExp.prototype.dotAll
 
   17 ECMAScript Standard Built-in Objects:

@@ -5,7 +5,7 @@
 esid: sec-Intl.DateTimeFormat.prototype.resolvedOptions
 description: >
   Intl.DateTimeFormat.prototype.resolvedOptions.name is "resolvedOptions".
-info: >
+info: |
   12.4.4 Intl.DateTimeFormat.prototype.resolvedOptions ()
 
   17 ECMAScript Standard Built-in Objects:

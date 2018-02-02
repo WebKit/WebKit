@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     If Type(Primitive(x)) is not String or Type(Primitive(y)) is not String,
     then operator x >= y returns ToNumber(x) >= ToNumber(y)
 es5id: 11.8.4_A3.1_T2.7

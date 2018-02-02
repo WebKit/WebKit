@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     A newly created object using the Object contructor has its [[Extensible]]
     property set to true by default (15.2.2.1, step 8).
 es5id: 15.2.3.13-0-3

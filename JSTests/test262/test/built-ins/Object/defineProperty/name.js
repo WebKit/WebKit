@@ -5,7 +5,7 @@
 es6id: 19.1.2.4
 description: >
   Object.defineProperty.name is "defineProperty".
-info: >
+info: |
   Object.defineProperty ( O, P, Attributes )
 
   17 ECMAScript Standard Built-in Objects:

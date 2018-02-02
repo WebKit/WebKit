@@ -5,7 +5,7 @@
 es6id: 19.4.2.1
 description: >
   Symbol.for.name is "for".
-info: >
+info: |
   Symbol.for ( key )
 
   17 ECMAScript Standard Built-in Objects:

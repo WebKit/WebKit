@@ -5,7 +5,7 @@ esid: sec-%typedarray%.prototype.findindex
 es6id: 22.2.3.11
 description: >
   Return -1 if predicate always returns a boolean false value.
-info: >
+info: |
   22.2.3.11 %TypedArray%.prototype.findIndex ( predicate [ , thisArg ] )
 
   %TypedArray%.prototype.findIndex is a distinct function that implements the

@@ -5,7 +5,7 @@
 es6id: 19.1.2.15
 description: >
   Object.preventExtensions.name is "preventExtensions".
-info: >
+info: |
   Object.preventExtensions ( O )
 
   17 ECMAScript Standard Built-in Objects:

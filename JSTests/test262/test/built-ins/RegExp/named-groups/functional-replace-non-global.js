@@ -6,7 +6,7 @@ description: >
   Function argument to String.prototype.replace gets groups as the last argument
 esid: sec-regexp.prototype-@@replace
 features: [regexp-named-groups]
-info: >
+info: |
   RegExp.prototype [ @@replace ] ( string, replaceValue )
     14. Repeat, for each result in results,
       j. Let namedCaptures be ? Get(result, "groups").

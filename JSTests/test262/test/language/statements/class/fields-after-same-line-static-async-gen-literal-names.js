@@ -1,9 +1,10 @@
 // This file was procedurally generated from the following sources:
 // - src/class-fields/literal-names.case
-// - src/class-fields/default/cls-decl-after-same-line-static-async-gen.template
+// - src/class-fields/productions/cls-decl-after-same-line-static-async-gen.template
 /*---
 description: Literal property names (field definitions after a static async generator in the same line)
-features: [class-fields, async-iteration]
+esid: prod-FieldDefinition
+features: [class, class-fields-public, async-iteration]
 flags: [generated, async]
 includes: [propertyHelper.js]
 info: |
@@ -25,6 +26,7 @@ const fn = function() {}
 class C {
   static async *m() { return 42; } a; b = 42;
   c = fn;
+
 }
 
 var c = new C();

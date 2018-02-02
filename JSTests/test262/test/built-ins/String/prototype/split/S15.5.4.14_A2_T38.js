@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     String.prototype.split (separator, limit) returns an Array object into which substrings of the result of converting this object to a string have
     been stored. The substrings are determined by searching from left to right for occurrences of
     separator; these occurrences are not part of any substring in the returned array, but serve to divide up

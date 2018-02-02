@@ -4,7 +4,7 @@
 es6id: 23.3.3.5
 esid: sec-weakmap.prototype.set
 description: Returns `this` when new value is duplicate.
-info: >
+info: |
   WeakMap.prototype.set ( key, value )
 
   1. Let M be the this value.

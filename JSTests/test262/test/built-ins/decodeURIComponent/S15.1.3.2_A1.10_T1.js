@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     If B = 110xxxxx (n = 2) and string.charAt(k + 4) and
     string.charAt(k + 5) do not represent hexadecimal digits, throw URIError
 es5id: 15.1.3.2_A1.10_T1

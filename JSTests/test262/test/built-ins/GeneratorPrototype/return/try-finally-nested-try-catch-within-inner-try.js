@@ -7,6 +7,7 @@ description: >
     `try` block of a `try..catch` statement, `return` should interrupt control
     flow as if a `return` statement had appeared at that location in the
     function body.
+features: [generators]
 ---*/
 
 var inTry = 0;

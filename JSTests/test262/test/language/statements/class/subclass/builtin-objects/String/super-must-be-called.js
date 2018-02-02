@@ -3,7 +3,7 @@
 /*---
 es6id: 21.1.1
 description: Super need to be called to initialize internals
-info: >
+info: |
   21.1.1 The String Constructor
 
   ...

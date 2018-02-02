@@ -6,7 +6,7 @@ author: Jeff Walden
 es6id: 13.3.1.1
 description: >
     let: |let let| split across two lines is not subject to automatic semicolon insertion.
-info: >
+info: |
   |let| followed by a name is a lexical declaration.  This is so even if the
   name is on a new line.  ASI applies *only* if an offending token not allowed
   by the grammar is encountered, and there's no [no LineTerminator here]
@@ -23,7 +23,7 @@ info: >
   just chosen, per 5.3, are validated to recognize the Script as invalid.  Thus
   the eval script can't be evaluated, and a SyntaxError is thrown.
 negative:
-  phase: early
+  phase: parse
   type: SyntaxError
 ---*/
 

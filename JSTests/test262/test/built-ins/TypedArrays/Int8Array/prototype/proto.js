@@ -6,7 +6,7 @@ es6id: 22.2.6
 esid: sec-properties-of-typedarray-prototype-objects
 description: >
   The prototype of Int8Array.prototype is %TypedArrayPrototype%.
-info: >
+info: |
   The value of the [[Prototype]] internal slot of a TypedArray prototype
   object is the intrinsic object %TypedArrayPrototype% (22.2.3).
 includes: [testTypedArray.js]

@@ -1,9 +1,10 @@
 // This file was procedurally generated from the following sources:
 // - src/class-fields/computed-symbol-names.case
-// - src/class-fields/default/cls-decl-wrapped-in-sc.template
+// - src/class-fields/productions/cls-decl-wrapped-in-sc.template
 /*---
 description: Computed property symbol names (fields definition wrapped in semicolons)
-features: [Symbol, computed-property-names, class-fields]
+esid: prod-FieldDefinition
+features: [Symbol, computed-property-names, class, class-fields-public]
 flags: [generated]
 includes: [propertyHelper.js]
 info: |
@@ -27,6 +28,7 @@ class C {
   ;;;;
   ;;;;;;[x]; [y] = 42;;;;;;;
   ;;;;
+
 }
 
 var c = new C();

@@ -3,7 +3,7 @@
 /*---
 es6id: 12.3.7
 description: Template objects are frozen (as demonstrated outside of strict mode)
-info: >
+info: |
     The first argument to a tagged template should be frozen and define a `raw`
     property that is also frozen.
 flags: [noStrict]

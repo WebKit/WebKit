@@ -4,7 +4,7 @@
 es6id: 19.2.3.6
 description: >
     Error thrown when invoking argument's [[GetPrototypeOf]] internal method
-info: >
+info: |
     1. Let F be the this value.
     2. Return OrdinaryHasInstance(F, V).
 

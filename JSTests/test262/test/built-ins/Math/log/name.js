@@ -5,7 +5,7 @@
 es6id: 20.2.2.20
 description: >
   Math.log.name is "log".
-info: >
+info: |
   Math.log ( x )
 
   17 ECMAScript Standard Built-in Objects:

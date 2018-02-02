@@ -6,7 +6,7 @@ description: >
     redeclaration within block:
     attempt to redeclare let binding with var
 negative:
-  phase: early
+  phase: parse
   type: SyntaxError
 ---*/
 

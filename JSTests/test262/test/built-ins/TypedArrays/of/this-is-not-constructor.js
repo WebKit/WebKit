@@ -4,7 +4,7 @@
 esid: sec-%typedarray%.of
 description: >
   Throws a TypeError exception if this is not a constructor
-info: >
+info: |
   22.2.2.2 %TypedArray%.of ( ...items )
 
   ...

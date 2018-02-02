@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     The toString function is not generic; it throws a TypeError exception if
     its this value is not a String object. Therefore, it cannot be
     transferred to other kinds of objects for use as a method

@@ -3,7 +3,7 @@
 /*---
 description: Resolving with a resolved Promise instance whose `then` method has been overridden
 es6id: 25.4.4.5
-info: >
+info: |
     [...]
     6. Let resolveResult be Call(promiseCapability.[[Resolve]], undefined,
        «x»).

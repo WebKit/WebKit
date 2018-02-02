@@ -4,7 +4,7 @@
 es6id: 26.1.7
 description: >
   Return undefined for an non existing own property.
-info: >
+info: |
   26.1.7 Reflect.getOwnPropertyDescriptor ( target, propertyKey )
 
   ...

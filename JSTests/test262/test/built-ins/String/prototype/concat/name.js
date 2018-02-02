@@ -5,7 +5,7 @@
 es6id: 21.1.3.4
 description: >
   String.prototype.concat.name is "concat".
-info: >
+info: |
   String.prototype.concat ( ...args )
 
   17 ECMAScript Standard Built-in Objects:

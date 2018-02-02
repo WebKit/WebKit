@@ -5,7 +5,7 @@
 es6id: B.2.3.7
 description: >
   String.prototype.fontcolor.length is 1.
-info: >
+info: |
   String.prototype.fontcolor ( color )
 
   17 ECMAScript Standard Built-in Objects:

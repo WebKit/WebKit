@@ -4,7 +4,7 @@
 es6id: 22.2.3.28
 description: >
   "toString" property of TypedArrayPrototype
-info: >
+info: |
   22.2.3.28 %TypedArray%.prototype.toString ( )
 
   The initial value of the %TypedArray%.prototype.toString data property is the

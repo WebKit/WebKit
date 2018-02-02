@@ -2,7 +2,7 @@
 // See LICENSE for details.
 
 /*---
-info: >
+info: |
     Promise.race throws on invalid 'this'
     Note: must have at least one element in array, or else Promise.race
     never exercises the code that throws

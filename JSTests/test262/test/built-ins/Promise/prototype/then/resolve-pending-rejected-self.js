@@ -3,7 +3,7 @@
 /*---
 description: Resolving with a reference to the promise itself from a pending promise that is later rejected
 es6id: 25.4.5.3
-info: >
+info: |
     [...]
     7. Return PerformPromiseThen(promise, onFulfilled, onRejected,
        resultCapability).

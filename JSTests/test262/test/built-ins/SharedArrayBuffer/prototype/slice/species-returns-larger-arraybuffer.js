@@ -5,7 +5,7 @@
 /*---
 description: >
   Does not throw TypeError if new SharedArrayBuffer is too large.
-info: >
+info: |
   SharedArrayBuffer.prototype.slice ( start, end )
 
 features: [Symbol.species]

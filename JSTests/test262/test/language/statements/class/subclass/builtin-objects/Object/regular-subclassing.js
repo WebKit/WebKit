@@ -3,7 +3,7 @@
 /*---
 es6id: 19.1.1
 description: Subclassing Object
-info: >
+info: |
   19.1.1 The Object Constructor
 
   The Object constructor is designed to be subclassable. It may be used as the

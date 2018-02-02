@@ -5,7 +5,7 @@
 description: >
     Substitution pattern: text after match
 es6id: 21.2.5.8
-info: >
+info: |
     16. Repeat, for each result in results,
         [...]
         m. If functionalReplace is true, then

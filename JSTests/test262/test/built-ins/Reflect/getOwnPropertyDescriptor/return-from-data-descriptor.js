@@ -4,7 +4,7 @@
 es6id: 26.1.7
 description: >
   Return a property descriptor object as a data descriptor.
-info: >
+info: |
   26.1.7 Reflect.getOwnPropertyDescriptor ( target, propertyKey )
 
   ...

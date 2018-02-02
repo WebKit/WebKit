@@ -7,7 +7,7 @@ description: >
     Strict Mode - octal extension is forbidden in strict mode (after a
     hex number is assigned to a variable)
 negative:
-  phase: early
+  phase: parse
   type: SyntaxError
 flags: [onlyStrict]
 ---*/

@@ -5,7 +5,7 @@
 es6id: 20.2.2.25
 description: >
   Math.min.name is "min".
-info: >
+info: |
   Math.min ( value1, value2 , …values )
 
   17 ECMAScript Standard Built-in Objects:

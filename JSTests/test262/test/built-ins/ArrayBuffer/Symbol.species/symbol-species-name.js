@@ -5,7 +5,7 @@ esid: sec-get-arraybuffer-@@species
 es6id: 24.1.3.3
 description: >
   ArrayBuffer[Symbol.species] accessor property get name
-info: >
+info: |
   24.1.3.3 get ArrayBuffer [ @@species ]
 
   ...

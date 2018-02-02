@@ -5,7 +5,7 @@
 esid: sec-unicode-format-control-characters
 description: >
   Mongolian Vowel Separator can appear in regular expression literals (eval code).
-info: >
+info: |
   11.1 Unicode Format-Control Characters
 
   The Unicode format-control characters (i.e., the characters in category “Cf”

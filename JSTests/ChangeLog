@@ -1,3 +1,21 @@
+2018-02-02  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Update test262 to Jan 30 version
+        https://bugs.webkit.org/show_bug.cgi?id=182288
+
+        Rubber stamped by Saam Barati.
+
+        This patch updates test262 to the latest one, Jan 30 version.
+        Since added and changed files are too many, we cannot create ChangeLog.
+        The following files are changed.
+
+        Several files are intentionally omitted due to merge failures. We should investigate how to merge files
+        including some special line terminators (like u2028, u2029).
+
+        * test262.yaml:
+        * test262/test262-Revision.txt:
+        * test262/*:
+
 2018-02-02  Guillaume Emont  <guijemont@igalia.com>
 
         JSTests: Skip mozilla/js1_5/Array/regress-157652.js on all memory limited platforms

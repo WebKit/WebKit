@@ -5,7 +5,7 @@
 es6id: 19.2.3.3
 description: >
   Function.prototype.call.name is "call".
-info: >
+info: |
   Function.prototype.call (thisArg , ...args)
 
   17 ECMAScript Standard Built-in Objects:

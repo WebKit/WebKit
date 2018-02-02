@@ -6,7 +6,7 @@ es6id: 20.1.3.7
 esid: sec-number.prototype.valueof
 description: >
   "valueOf" property of Number.prototype
-info: >
+info: |
   17 ECMAScript Standard Built-in Objects:
 
   Every other data property described in clauses 18 through 26 and in Annex B.2

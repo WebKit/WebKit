@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     White Space and Line Terminator between BitwiseANDExpression and "&" or
     between "&" and EqualityExpression are allowed
 es5id: 11.10.1_A1

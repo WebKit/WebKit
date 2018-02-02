@@ -4,7 +4,7 @@
 es6id: 23.1.3.3
 description: >
   Deleting an entry does not break a [[MapData]] List.
-info: >
+info: |
   Map.prototype.delete ( key )
 
   4. Let entries be the List that is the value of M’s [[MapData]] internal slot.

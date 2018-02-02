@@ -4,7 +4,7 @@
 /*---
 description: length property of Math.cbrt
 es6id: 20.2.2.9
-info: >
+info: |
   Math.cbrt ( x )
 
   17 ECMAScript Standard Built-in Objects:

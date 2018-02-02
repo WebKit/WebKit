@@ -5,7 +5,7 @@
 es6id: 20.2.2.7
 description: >
   Math.atanh.name is "atanh".
-info: >
+info: |
   Math.atanh ( x )
 
   17 ECMAScript Standard Built-in Objects:

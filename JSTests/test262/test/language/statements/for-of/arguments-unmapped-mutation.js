@@ -3,7 +3,7 @@
 /*---
 es6id: 13.6.4
 description: Unmapped arguments object mutation during traversal using for..of
-info: >
+info: |
     "Unmapped" arguments objects should be able to be traversed using a
     `for..of` loop, and dynamic changes to their contents should be reflected
     in the iterated values.

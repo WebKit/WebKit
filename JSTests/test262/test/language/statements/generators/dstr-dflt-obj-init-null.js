@@ -5,7 +5,7 @@
 description: Value specifed for object binding pattern must be object coercible (null) (generator function declaration (default parameter))
 esid: sec-generator-function-definitions-runtime-semantics-instantiatefunctionobject
 es6id: 14.4.12
-features: [destructuring-binding, default-parameters]
+features: [generators, destructuring-binding, default-parameters]
 flags: [generated]
 info: |
     GeneratorDeclaration : function * ( FormalParameters ) { GeneratorBody }

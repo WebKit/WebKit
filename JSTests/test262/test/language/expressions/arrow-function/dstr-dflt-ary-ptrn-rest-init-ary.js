@@ -8,7 +8,7 @@ es6id: 14.2.16
 features: [destructuring-binding, default-parameters]
 flags: [generated]
 negative:
-  phase: early
+  phase: parse
   type: SyntaxError
 info: |
     ArrowFunction : ArrowParameters => ConciseBody

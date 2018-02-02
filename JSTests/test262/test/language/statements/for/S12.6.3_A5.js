@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     "in"-expression wrapped into "eval" statement is allowed as a
     ExpressionNoIn in "for (ExpressionNoIn; FirstExpression;
     SecondExpression) Statement" IterationStatement

@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     White Space and Line Terminator between EqualityExpression and "!==" or
     between "!==" and RelationalExpression are allowed
 es5id: 11.9.5_A1

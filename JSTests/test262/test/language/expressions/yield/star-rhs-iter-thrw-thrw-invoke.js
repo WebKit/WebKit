@@ -20,7 +20,7 @@ info: |
             1. Let innerResult be ? Call(throw, iterator, « received.[[Value]]
                »).
             [...]
-features: [Symbol.iterator]
+features: [generators, Symbol.iterator]
 ---*/
 
 var args, thisValue;

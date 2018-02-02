@@ -3,7 +3,7 @@
 
 /*---
 description: Array entry insertion during traversal using for..of
-info: >
+info: |
     New entries inserted into an Array instance during traversal should be
     visited.
 es6id: 13.6.4

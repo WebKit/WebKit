@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     If pos is a value of Number type that is an integer, then the result of
     x.charAt(pos) is equal to the result of x.substring(pos, pos+1)
 es5id: 15.5.4.4_A4_T1

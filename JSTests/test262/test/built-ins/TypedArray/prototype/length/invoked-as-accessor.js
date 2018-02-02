@@ -4,7 +4,7 @@
 es6id: 22.2.3.17
 description: >
   Requires this value to have a [[ViewedArrayBuffer]] internal slot
-info: >
+info: |
   22.2.3.17 get %TypedArray%.prototype.length
 
   1. Let O be the this value.

@@ -5,7 +5,7 @@
 description: >
     `Promise.race` invoked on a non-constructor value
 es6id: 25.4.4.3
-info: >
+info: |
     [...]
     6. Let promiseCapability be NewPromiseCapability(C).
     7. ReturnIfAbrupt(promiseCapability).

@@ -4,7 +4,7 @@
 es6id: 26.1.4
 description: >
   Reflect.deleteProperty is configurable, writable and not enumerable.
-info: >
+info: |
   26.1.4 Reflect.deleteProperty ( target, propertyKey )
 
   17 ECMAScript Standard Built-in Objects

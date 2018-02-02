@@ -3,7 +3,7 @@
 /*---
 es6id: 22.2.4
 description: Subclassing TypedArrays
-info: >
+info: |
   22.2.4 The TypedArray Constructors
 
   ...

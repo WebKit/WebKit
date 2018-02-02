@@ -3,7 +3,7 @@
 /*---
 es6id: 19.4.3.4
 description: Behavior when `this` value is neither a Symbol nor an Object
-info: >
+info: |
     1. Let s be the this value.
     2. If Type(s) is Symbol, return s.
     3. If Type(s) is not Object, throw a TypeError exception.

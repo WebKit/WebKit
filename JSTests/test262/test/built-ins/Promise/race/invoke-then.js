@@ -5,7 +5,7 @@
 description: >
     Invocation of the instance's `then` method
 es6id: 25.4.4.3
-info: >
+info: |
     11. Let result be PerformPromiseRace(iteratorRecord, C, promiseCapability).
 
     [...]

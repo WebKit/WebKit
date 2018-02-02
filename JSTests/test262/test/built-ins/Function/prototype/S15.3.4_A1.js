@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     The Function prototype object is itself a Function object (its [[Class]]
     is "Function")
 es5id: 15.3.4_A1

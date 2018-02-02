@@ -4,7 +4,7 @@
 es6id: 23.1.3.8
 description: >
   Returns an iterator on an empty Map object.
-info: >
+info: |
   Map.prototype.keys ()
 
   ...

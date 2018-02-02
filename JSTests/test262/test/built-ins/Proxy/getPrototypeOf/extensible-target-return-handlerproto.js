@@ -4,7 +4,7 @@
 es6id: 9.5.1
 description: >
     Return trap result if it's an Object and target is extensible.
-info: >
+info: |
     [[GetPrototypeOf]] ( )
 
     ...

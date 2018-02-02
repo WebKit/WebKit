@@ -15,7 +15,7 @@ info: |
     StringValue of IdentifierName is: "implements", "interface", "let", "package",
     "private", "protected", "public", "static", or "yield".
 negative:
-  phase: early
+  phase: parse
   type: SyntaxError
 flags: [onlyStrict]
 ---*/

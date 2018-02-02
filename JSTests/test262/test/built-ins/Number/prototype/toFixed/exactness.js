@@ -4,7 +4,7 @@
 /*---
 esid: sec-number.prototype.tofixed
 description: Number.prototype.toFixed does not use ToString's cleaner rounding
-info: >
+info: |
   Number.prototype.toFixed ( fractionDigits )
 
   ...

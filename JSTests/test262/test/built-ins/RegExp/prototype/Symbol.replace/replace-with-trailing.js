@@ -5,7 +5,7 @@
 description: >
     Return value when replacement pattern does not match final code point
 es6id: 21.2.5.8
-info: >
+info: |
     [...]
     18. Return the String formed by concatenating the code units of
         accumulatedResult with the substring of S consisting of the code units

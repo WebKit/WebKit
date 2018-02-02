@@ -4,7 +4,7 @@
 /*---
 description: Arguments of functional replaceValue
 es6id: 21.2.5.8
-info: >
+info: |
     16. Repeat, for each result in results,
         [...]
         m. If functionalReplace is true, then

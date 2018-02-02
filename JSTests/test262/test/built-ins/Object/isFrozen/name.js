@@ -5,7 +5,7 @@
 es6id: 19.1.2.12
 description: >
   Object.isFrozen.name is "isFrozen".
-info: >
+info: |
   Object.isFrozen ( O )
 
   17 ECMAScript Standard Built-in Objects:

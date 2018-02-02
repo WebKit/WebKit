@@ -5,7 +5,7 @@
 es6id: 20.2.2.10
 description: >
   Math.ceil.length is 1.
-info: >
+info: |
   Math.ceil ( x )
 
   17 ECMAScript Standard Built-in Objects:

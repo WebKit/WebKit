@@ -3,7 +3,7 @@
 /*---
 es6id: 19.2.4.2
 description: Subclassed Function instances has length and name properties
-info: >
+info: |
   19.2.4.2 name
 
   The value of the name property is an String that is descriptive of the

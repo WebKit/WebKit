@@ -2,9 +2,8 @@
 // This code is governed by the BSD license found in the LICENSE file.
 /*---
 esid: sec-additional-syntax-numeric-literals
-es6id: B1.1
 description: NonOctalDecimalIntegerLiteral is not enabled in strict mode code
-info: >
+info: |
      DecimalIntegerLiteral ::
        0
        NonZeroDigit DecimalDigits[opt]
@@ -23,7 +22,7 @@ info: >
        8 9
 flags: [onlyStrict]
 negative:
-  phase: early
+  phase: parse
   type: SyntaxError
 ---*/
 

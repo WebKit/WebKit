@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     local vars must not be visible outside with block
     local functions must not be visible outside with block
     local function expresssions should not be visible outside with block

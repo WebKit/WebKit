@@ -4,7 +4,7 @@
 /*---
 description: SingleNameBinding assigns name to "anonymous" generator functions (static class expression async generator method (default parameter))
 esid: sec-class-definitions-runtime-semantics-evaluation
-features: [async-iteration]
+features: [generators, async-iteration]
 flags: [generated, async]
 info: |
     ClassExpression : class BindingIdentifieropt ClassTail
@@ -52,6 +52,7 @@ info: |
           ii. ReturnIfAbrupt(hasNameProperty).
           iii. If hasNameProperty is false, perform SetFunctionName(v,
                bindingId).
+
 ---*/
 
 

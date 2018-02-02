@@ -4,7 +4,7 @@
 /*---
 description: The length property of the assign method should be 2
 es6id:  19.1.2.1
-info: >
+info: |
     The length property of the assign method is 2.
 
     ES6 Section 17:

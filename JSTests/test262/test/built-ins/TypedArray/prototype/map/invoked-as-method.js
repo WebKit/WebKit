@@ -3,7 +3,7 @@
 /*---
 es6id: 22.2.3.18
 description: Requires a [[TypedArrayName]] internal slot.
-info: >
+info: |
   22.2.3.18 %TypedArray%.prototype.map ( callbackfn [ , thisArg ] )
 
   1. Let O be the this value.

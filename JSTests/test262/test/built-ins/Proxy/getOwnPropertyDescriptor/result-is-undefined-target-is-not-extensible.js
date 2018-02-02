@@ -5,7 +5,7 @@ es6id: 9.5.5
 description: >
     Throws a TypeError exception if trap result is undefined and target is not
     extensible
-info: >
+info: |
     [[GetOwnProperty]] (P)
 
     ...

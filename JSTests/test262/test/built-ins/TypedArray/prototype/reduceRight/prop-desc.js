@@ -4,7 +4,7 @@
 es6id: 22.2.3.20
 description: >
   "reduceRight" property of TypedArrayPrototype
-info: >
+info: |
   ES6 section 17: Every other data property described in clauses 18 through 26
   and in Annex B.2 has the attributes { [[Writable]]: true,
   [[Enumerable]]: false, [[Configurable]]: true } unless otherwise specified.

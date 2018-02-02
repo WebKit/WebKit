@@ -7,7 +7,7 @@ esid: pending
 description: >
   It is a SyntaxError if FormalParameters contains eval in strict mode.
 negative:
-  phase: early
+  phase: parse
   type: SyntaxError
 flags: [onlyStrict]
 features: [async-iteration]

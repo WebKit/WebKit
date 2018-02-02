@@ -5,7 +5,7 @@ esid: sec-initializers-in-forin-statement-heads
 description: >
     for-in initializers in strict mode are prohibited
 negative:
-  phase: early
+  phase: parse
   type: SyntaxError
 flags: [onlyStrict]
 ---*/

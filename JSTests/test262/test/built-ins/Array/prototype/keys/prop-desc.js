@@ -5,7 +5,7 @@ esid: sec-array.prototype.keys
 es6id: 22.1.3.13
 description: >
   Property type and descriptor.
-info: >
+info: |
   22.1.3.13 Array.prototype.keys ( )
 
   17 ECMAScript Standard Built-in Objects

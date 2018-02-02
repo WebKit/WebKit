@@ -5,7 +5,7 @@ es6id: 23.3.3
 esid: sec-properties-of-the-weakmap-prototype-object
 description: >
   The WeakMap.prototype's prototype is Object.prototype.
-info: >
+info: |
   23.3.3 Properties of the WeakMap Prototype Object
 
   The WeakMap prototype object is the intrinsic object %WeakMapPrototype%. The

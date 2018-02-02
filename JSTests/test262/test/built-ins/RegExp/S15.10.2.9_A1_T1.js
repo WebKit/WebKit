@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     An escape sequence of the form \ followed by a nonzero decimal number n
     matches the result of the nth set of capturing parentheses (see
     15.10.2.11)

@@ -5,7 +5,7 @@
 es6id: 20.2.2.12
 description: >
   Math.cos.length is 1.
-info: >
+info: |
   Math.cos ( x )
 
   17 ECMAScript Standard Built-in Objects:

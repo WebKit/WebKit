@@ -4,7 +4,7 @@
 esid: sec-integer-indexed-exotic-objects-set-p-v-receiver
 description: >
   Does not throw on an instance with a detached buffer if key is not a number
-info: >
+info: |
   9.4.5.5 [[Set]] ( P, V, Receiver)
 
   ...

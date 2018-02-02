@@ -4,7 +4,7 @@
 /*---
 es6id: 21.2.5.9
 description: Return value following successful match
-info: >
+info: |
     [...]
     14. Return Get(result, "index").
 features: [Symbol.search]

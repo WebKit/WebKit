@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     Step 4 of defineProperty calls the [[DefineOwnProperty]] internal method
     of O to define the property. For newly defined properties, step 4.a.1 of
     [[DefineOwnProperty]] creates a data property if handed a generic desc.

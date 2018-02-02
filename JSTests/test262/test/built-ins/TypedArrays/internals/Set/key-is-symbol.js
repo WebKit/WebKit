@@ -4,7 +4,7 @@
 esid: sec-integer-indexed-exotic-objects-set-p-v-receiver
 description: >
   Use OrginarySet if key is a Symbol
-info: >
+info: |
   9.4.5.5 [[Set]] ( P, V, Receiver)
 
   ...

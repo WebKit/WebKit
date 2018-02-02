@@ -26,7 +26,7 @@ info: |
     2. If HasInitializer of FormalsList is true or HasInitializer of
     FormalParameter is true, return count.
     3. Return count+1.
-features: [default-parameters]
+features: [generators, default-parameters]
 includes: [propertyHelper.js]
 ---*/
 

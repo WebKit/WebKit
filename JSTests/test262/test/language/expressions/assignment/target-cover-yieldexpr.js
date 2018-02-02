@@ -22,7 +22,7 @@ info: |
   1. Return false.
 features: [generators]
 negative:
-  phase: early
+  phase: parse
   type: ReferenceError
 ---*/
 

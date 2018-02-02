@@ -4,7 +4,7 @@
 es6id: 9.5.6
 description: >
     Trap returns a boolean. Checking on false values.
-info: >
+info: |
     [[DefineOwnProperty]] (P, Desc)
 
     ...

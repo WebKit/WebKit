@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     This test should be run without any built-ins being added/augmented.
     The last paragraph in section 15 says "every other property described
     in this section has the attribute {... [[Enumerable]] : false ...}

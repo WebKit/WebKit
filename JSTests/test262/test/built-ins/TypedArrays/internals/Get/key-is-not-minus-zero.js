@@ -4,7 +4,7 @@
 esid: sec-integer-indexed-exotic-objects-get-p-receiver
 description: >
   Return undefined if key is numeric index is -0.
-info: >
+info: |
   9.4.5.4 [[Get]] (P, Receiver)
 
   ...

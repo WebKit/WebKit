@@ -7,7 +7,7 @@ description: >
     It is a Syntax Error if any element of the BoundNames of CatchParameter
     also occurs in the LexicallyDeclaredNames of Block.
 negative:
-  phase: early
+  phase: parse
   type: SyntaxError
 features: [let]
 ---*/

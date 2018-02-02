@@ -5,7 +5,7 @@ esid: sec-dataview.prototype-@@tostringtag
 es6id: 24.2.4.21
 description: >
     `Symbol.toStringTag` property descriptor
-info: >
+info: |
     The initial value of the @@toStringTag property is the String value
     "DataView".
 

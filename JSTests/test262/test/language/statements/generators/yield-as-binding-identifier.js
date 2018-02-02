@@ -4,15 +4,17 @@
 /*---
 description: yield is a reserved keyword within generator function bodies and may not be used as a binding identifier. (Generator Function declaration)
 esid: prod-GeneratorDeclaration
+features: [generators]
 flags: [generated]
 negative:
-  phase: early
+  phase: parse
   type: SyntaxError
 info: |
     14.4 Generator Function Definitions
 
     GeneratorDeclaration :
       function * BindingIdentifier ( FormalParameters ) { GeneratorBody }
+
 
     BindingIdentifier : Identifier
 

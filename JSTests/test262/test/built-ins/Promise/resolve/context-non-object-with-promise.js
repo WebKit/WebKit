@@ -5,7 +5,7 @@
 es6id: 25.4.4.5
 description: >
   Throws a TypeError if `this` is not an Object.
-info: >
+info: |
   Promise.resolve ( x )
 
   1. Let C be the this value.

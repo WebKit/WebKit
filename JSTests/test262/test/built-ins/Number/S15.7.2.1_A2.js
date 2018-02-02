@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     The [[Prototype]] property of the newly constructed object
     is set to the original Number prototype object, the one that is the
     initial value of Number.prototype

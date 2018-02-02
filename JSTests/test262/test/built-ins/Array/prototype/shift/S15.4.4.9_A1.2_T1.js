@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     The first element of the array is removed from the array and
     returned
 esid: sec-array.prototype.shift

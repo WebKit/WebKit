@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     note that prior to the finally ES5 draft SameValue was used for comparisions
     and hence NaNs could be found using indexOf *
 esid: sec-array.prototype.indexof

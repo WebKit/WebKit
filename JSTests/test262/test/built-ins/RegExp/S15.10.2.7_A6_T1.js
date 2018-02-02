@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     The production QuantifierPrefix :: { DecimalDigits , }evaluates as follows:
     i) Let i be the MV of DecimalDigits
     ii) Return the two results i and \infty

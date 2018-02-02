@@ -2,7 +2,7 @@
 // See LICENSE for details.
 
 /*---
-info: >
+info: |
     Promise.race rejects when GetIterator() returns an abrupt completion
     4. Let iterator be GetIterator(iterable).
     5. IfAbruptRejectPromise(iterator, promiseCapability)

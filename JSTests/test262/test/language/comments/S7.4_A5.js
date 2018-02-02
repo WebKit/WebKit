@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     Single line comments can contain any Unicode character without Line
     Terminators
 es5id: 7.4_A5

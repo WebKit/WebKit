@@ -4,7 +4,7 @@
 esid: sec-array.from
 es6id: 22.1.2.1
 description: Return empty array if items argument is an ArrayBuffer
-info: >
+info: |
   22.1.2.1 Array.from ( items [ , mapfn [ , thisArg ] ] )
 
   ...

@@ -5,7 +5,7 @@
 description: >
     lastIndex is advanced according to width of astral symbols following match failure
 es6id: 21.2.5.11
-info: >
+info: |
     21.2.5.11 RegExp.prototype [ @@split ] ( string, limit )
 
     [...]

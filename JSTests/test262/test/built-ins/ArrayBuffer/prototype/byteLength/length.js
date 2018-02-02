@@ -6,7 +6,7 @@ esid: sec-get-arraybuffer.prototype.bytelength
 es6id: 24.1.4.1
 description: >
   get ArrayBuffer.prototype.byteLength.length is 0.
-info: >
+info: |
   get ArrayBuffer.prototype.byteLength
 
   17 ECMAScript Standard Built-in Objects:

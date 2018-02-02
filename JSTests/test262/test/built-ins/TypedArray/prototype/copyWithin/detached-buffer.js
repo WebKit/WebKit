@@ -3,7 +3,7 @@
 /*---
 esid: sec-%typedarray%.prototype.copywithin
 description: Throws a TypeError if this has a detached buffer
-info: >
+info: |
   22.2.3.5 %TypedArray%.prototype.copyWithin (target, start [, end ] )
 
   This function is not generic. ValidateTypedArray is applied to the this value

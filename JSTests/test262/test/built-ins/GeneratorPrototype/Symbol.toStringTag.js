@@ -4,7 +4,7 @@
 /*---
 description: >
     `Symbol.toStringTag` property descriptor
-info: >
+info: |
     The initial value of the @@toStringTag property is the String value
     "Generator".
 
@@ -12,7 +12,7 @@ info: >
     false, [[Configurable]]: true }.
 es6id: 25.3.1.5
 includes: [propertyHelper.js]
-features: [Symbol.toStringTag]
+features: [generators, Symbol.toStringTag]
 ---*/
 
 var GeneratorPrototype = Object.getPrototypeOf(

@@ -4,7 +4,7 @@
 /*---
 description: Boolean coercion of `unicode` property
 es6id: 21.2.5.8
-info: >
+info: |
     21.2.5.6 RegExp.prototype [ @@replace ] ( string )
 
     [...]

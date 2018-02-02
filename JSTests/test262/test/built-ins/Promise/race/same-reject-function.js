@@ -5,7 +5,7 @@
 es6id: 25.4.4.3.1
 description: >
   Each Promise.race element is called with the same reject function.
-info: >
+info: |
   Runtime Semantics: PerformPromiseRace ( iteratorRecord, promiseCapability, C )
 
   ...

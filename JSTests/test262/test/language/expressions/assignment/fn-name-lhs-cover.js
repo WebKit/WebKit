@@ -4,7 +4,7 @@
 /*---
 es6id: 12.14.4
 description: Left-hand side as a CoverParenthesizedExpression
-info: >
+info: |
     AssignmentExpression[In, Yield] :
         LeftHandSideExpression[?Yield] = AssignmentExpression[?In, ?Yield]
 

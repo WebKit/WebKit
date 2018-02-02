@@ -4,7 +4,7 @@
 es6id: 21.1.3.18
 description: >
   Throws a TypeError if searchString is a RegExp.
-info: >
+info: |
   21.1.3.18 String.prototype.startsWith ( searchString [ , position ] )
 
   ...

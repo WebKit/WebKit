@@ -3,7 +3,7 @@
 /*---
 es6id: 23.4.1
 description: Subclassing the WeakSet object
-info: >
+info: |
   23.4.1 The WeakSet Constructor
 
   ...

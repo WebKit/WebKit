@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     The result of a floating-point multiplication is governed by the rules of
     IEEE 754 double-precision arithmetics
 es5id: 11.5.1_A4_T1.1

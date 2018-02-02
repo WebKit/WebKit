@@ -2,9 +2,9 @@
 // This code is governed by the BSD license found in the LICENSE file.
 /*---
 esid: sec-integer-indexed-exotic-objects-defineownproperty-p-desc
-description: |
+description: >
   Sets an ordinary property value if numeric key is not a CanonicalNumericIndex
-info: >
+info: |
   9.4.5.3 [[DefineOwnProperty]] ( P, Desc)
   ...
   3. If Type(P) is String, then

@@ -4,7 +4,7 @@
 es6id: 25.4.4.6
 description: >
   Promise[Symbol.species] accessor property get name
-info: >
+info: |
   25.4.4.6 get Promise [ @@species ]
 
   ...

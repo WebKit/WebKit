@@ -3,7 +3,7 @@
 
 /*---
 description: String.prototype.toLowerCase() iterates over code points
-info: >
+info: |
     21.1.3.22 String.prototype.toLowerCase ( )
 
     ...

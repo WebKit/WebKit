@@ -4,7 +4,7 @@
 es6id: 23.2.5.2.1
 description: >
   Throws a TypeError if `this` value is not an Object.
-info: >
+info: |
   From Set.prototype.entries()
 
   %SetIteratorPrototype%.next ( )

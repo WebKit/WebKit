@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     Objects that implement internal method [[Construct]] are called
     constructors. Math object is NOT constructor
 es5id: 8.6.2_A7

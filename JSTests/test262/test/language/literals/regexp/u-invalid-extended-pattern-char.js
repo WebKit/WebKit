@@ -11,7 +11,7 @@ info: |
     Term[U] ::
          [~U] ExtendedAtom
 negative:
-  phase: early
+  phase: parse
   type: SyntaxError
 ---*/
 

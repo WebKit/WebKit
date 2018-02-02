@@ -7,7 +7,7 @@ description: >
     Strict Mode - SyntaxError is thrown if a VariableDeclarationNoIn
     occurs within strict code and its Identifier is arguments
 negative:
-  phase: early
+  phase: parse
   type: SyntaxError
 flags: [onlyStrict]
 ---*/

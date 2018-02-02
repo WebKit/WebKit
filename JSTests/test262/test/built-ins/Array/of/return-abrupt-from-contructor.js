@@ -5,7 +5,7 @@ esid: sec-array.of
 es6id: 22.1.2.3
 description: >
   Return abrupt from this' constructor
-info: >
+info: |
   Array.of ( ...items )
 
   1. Let len be the actual number of arguments passed to this function.

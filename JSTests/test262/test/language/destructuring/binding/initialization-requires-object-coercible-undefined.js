@@ -5,7 +5,7 @@
 es6id: 13.3.3.5
 description: >
   Cannot convert undefined argument value to object
-info: >
+info: |
   13.3.3.5 Runtime Semantics: BindingInitialization
 
   BindingPattern : ObjectBindingPattern

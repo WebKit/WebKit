@@ -4,7 +4,7 @@
 esid: sec-integer-indexed-exotic-objects-getownproperty-p
 description: >
   Returns a descriptor object from an index property
-info: >
+info: |
   9.4.5.1 [[GetOwnProperty]] ( P )
 
   ...

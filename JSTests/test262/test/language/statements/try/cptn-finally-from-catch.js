@@ -5,7 +5,7 @@ es6id: 13.15.8
 description: >
     Completion value from `finally` clause of a try..catch..finally statement
     (following execution of `catch` block)
-info: >
+info: |
     TryStatement : try Block Catch Finally
 
     1. Let B be the result of evaluating Block.

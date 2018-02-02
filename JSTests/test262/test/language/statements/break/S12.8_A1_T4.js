@@ -8,7 +8,7 @@ description: >
     Checking if break Identifier with no loop, placed into a  block,
     fails
 negative:
-  phase: early
+  phase: parse
   type: SyntaxError
 ---*/
 

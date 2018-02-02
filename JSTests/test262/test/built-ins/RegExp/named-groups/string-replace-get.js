@@ -5,7 +5,7 @@
 description: Named substitutions are found by getting the property from the groups object
 esid: sec-getsubstitution
 features: [regexp-named-groups]
-info: >
+info: |
   Runtime Semantics: GetSubstitution( matched, str, position, captures, namedCaptures, replacement )
 
   Table: Replacement Text Symbol Substitutions

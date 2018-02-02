@@ -4,7 +4,7 @@
 /*---
 description: Replaces consecutive matches when the `g` flag is present
 es6id: 21.2.5.8
-info: >
+info: |
     21.2.5.8 RegExp.prototype [ @@replace ] ( string, replaceValue )
 
     [...]

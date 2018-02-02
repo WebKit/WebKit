@@ -17,7 +17,7 @@ info: |
   - It is a Syntax Error if ArrowParameters Contains YieldExpression is true. 
 features: [generators, default-parameters]
 negative:
-  phase: early
+  phase: parse
   type: SyntaxError
 ---*/
 

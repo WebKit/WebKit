@@ -5,7 +5,7 @@
 description: >
     Behavior when error is thrown while coercing `0` property of match result
 es6id: 21.2.5.6
-info: >
+info: |
     7. If global is false, then
        [...]
     8. Else global is true,

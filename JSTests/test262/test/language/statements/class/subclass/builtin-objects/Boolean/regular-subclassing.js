@@ -3,7 +3,7 @@
 /*---
 es6id: 19.3.1
 description: Subclassing Function
-info: >
+info: |
   19.3.1 The Boolean Constructor
 
   The Boolean constructor is designed to be subclassable. It may be used as the

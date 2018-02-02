@@ -4,7 +4,7 @@
 esid: sec-%typedarray%.prototype.reduce
 description: >
   Instance buffer can be detached during loop
-info: >
+info: |
   22.2.3.20 %TypedArray%.prototype.reduce ( callbackfn [ , initialValue ] )
 
   %TypedArray%.prototype.reduce is a distinct function that implements the same

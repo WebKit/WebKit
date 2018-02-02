@@ -3,7 +3,7 @@
 /*---
 esid: sec-%typedarray%.prototype.tostring
 description: Throws a TypeError if this has a detached buffer
-info: >
+info: |
   22.2.3.29 %TypedArray%.prototype.toString ()
 
   ...

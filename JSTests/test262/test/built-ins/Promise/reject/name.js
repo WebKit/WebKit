@@ -3,7 +3,7 @@
 /*---
 es6id: 25.4.4.4
 description: Promise.reject `name` property
-info: >
+info: |
     ES6 Section 17:
 
     Every built-in Function object, including constructors, that is not

@@ -4,7 +4,7 @@
 es6id: 23.1.3.5
 description: >
   Repeats for each non-empty record, in original key insertion order.
-info: >
+info: |
   Map.prototype.forEach ( callbackfn [ , thisArg ] )
 
   ...

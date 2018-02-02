@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     Step 4 of defineProperty calls the [[DefineOwnProperty]] internal method
     of O passing 'true' for the Throw flag. In this case, step 3 of
     [[DefineOwnProperty]] requires that it throw a TypeError exception when

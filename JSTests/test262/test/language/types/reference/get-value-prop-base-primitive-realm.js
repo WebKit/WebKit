@@ -7,7 +7,7 @@ description: >
   When the base of a property reference is primitive, it is coerced to an
   object during value retrieval (honoring the realm of the current execution
   context)
-info: >
+info: |
   [...]
   5. If IsPropertyReference(V) is true, then
      a. If HasPrimitiveBase(V) is true, then

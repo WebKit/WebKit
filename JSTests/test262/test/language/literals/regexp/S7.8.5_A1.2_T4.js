@@ -2,16 +2,26 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: "RegularExpressionFirstChar :: * or \\ or / or [empty] is incorrect"
-es5id: 7.8.5_A1.2_T4
-description: "[empty]"
+esid: sec-literals-regular-expression-literals
+info: |
+  RegularExpressionLiteral::
+    / RegularExpressionBody / RegularExpressionFlags
+
+  RegularExpressionBody ::
+    RegularExpressionFirstChar RegularExpressionChars
+
+  RegularExpressionChars::
+    [empty]
+
+  MemberExpression . IdentifierName
+
+description: A regular expression may not be empty.
 negative:
-  phase: early
+  phase: parse
   type: SyntaxError
 ---*/
 
 throw "Test262: This statement should not be evaluated.";
 
-//CHECK#1
 //
 .source;

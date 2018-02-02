@@ -5,7 +5,7 @@
 es6id: 26.2.2.1
 description: >
   Proxy.revocable.name is "revocable".
-info: >
+info: |
   Proxy.revocable ( target, handler )
 
   17 ECMAScript Standard Built-in Objects:

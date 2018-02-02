@@ -19,13 +19,13 @@ info: |
 features: [BigInt]
 ---*/
 
-assert.sameValue(1n >= Infinity, false);
-assert.sameValue(Infinity >= 1n, true);
-assert.sameValue(-1n >= Infinity, false);
-assert.sameValue(Infinity >= -1n, true);
-assert.sameValue(1n >= -Infinity, true);
-assert.sameValue(-Infinity >= 1n, false);
-assert.sameValue(-1n >= -Infinity, true);
-assert.sameValue(-Infinity >= -1n, false);
-assert.sameValue(0n >= NaN, false);
-assert.sameValue(NaN >= 0n, false);
+assert.sameValue(1n >= Infinity, false, "1n >= Infinity");
+assert.sameValue(Infinity >= 1n, true, "Infinity >= 1n");
+assert.sameValue(-1n >= Infinity, false, "-1n >= Infinity");
+assert.sameValue(Infinity >= -1n, true, "Infinity >= -1n");
+assert.sameValue(1n >= -Infinity, true, "1n >= -Infinity");
+assert.sameValue(-Infinity >= 1n, false, "-Infinity >= 1n");
+assert.sameValue(-1n >= -Infinity, true, "-1n >= -Infinity");
+assert.sameValue(-Infinity >= -1n, false, "-Infinity >= -1n");
+assert.sameValue(0n >= NaN, false, "0n >= NaN");
+assert.sameValue(NaN >= 0n, false, "NaN >= 0n");

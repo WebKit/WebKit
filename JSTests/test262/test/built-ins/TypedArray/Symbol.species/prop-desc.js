@@ -4,7 +4,7 @@
 es6id: 22.2.2.4
 description: >
   @@species property of TypedArray
-info: >
+info: |
   22.2.2.4 get %TypedArray% [ @@species ]
 
   %TypedArray%[@@species] is an accessor property whose set accessor function

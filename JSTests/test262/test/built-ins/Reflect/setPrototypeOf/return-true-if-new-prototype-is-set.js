@@ -4,7 +4,7 @@
 es6id: 26.1.14
 description: >
   Return true if the new prototype is set.
-info: >
+info: |
   26.1.14 Reflect.setPrototypeOf ( target, proto )
 
   ...

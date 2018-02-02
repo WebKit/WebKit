@@ -6,7 +6,7 @@ esid: sec-array.prototype.some
 es6id: 22.1.3.23
 description: >
   Array.prototype.some.name is "some".
-info: >
+info: |
   Array.prototype.some ( callbackfn [ , thisArg ] )
 
   17 ECMAScript Standard Built-in Objects:

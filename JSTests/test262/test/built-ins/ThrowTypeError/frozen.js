@@ -5,7 +5,7 @@
 esid: sec-%throwtypeerror%
 description: >
   The integrity level of %ThrowTypeError% is "frozen".
-info: >
+info: |
   %ThrowTypeError% ( )
 
   The value of the [[Extensible]] internal slot of a %ThrowTypeError%

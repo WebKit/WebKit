@@ -4,7 +4,7 @@
 es6id: 26.1
 description: >
   The Reflect object is an ordinary object.
-info: >
+info: |
   26.1 The Reflect Object
 
   The Reflect object is the %Reflect% intrinsic object and the initial value of

@@ -5,7 +5,7 @@
 es6id: B.2.3.8
 description: >
   String.prototype.fontsize.name is "fontsize".
-info: >
+info: |
   String.prototype.fontsize ( color )
 
   17 ECMAScript Standard Built-in Objects:

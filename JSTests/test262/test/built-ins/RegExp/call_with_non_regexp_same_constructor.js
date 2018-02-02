@@ -3,7 +3,7 @@
 
 /*---
 description: RegExp returns its input argument if constructor is same-value
-info: >
+info: |
   21.2.3.1 RegExp ( pattern, flags )
 
   ...

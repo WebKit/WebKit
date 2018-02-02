@@ -4,7 +4,7 @@
 /*---
 es6id: 21.2.5.11
 description: Behavior when error thrown while coercing `limit` argument
-info: >
+info: |
     [...]
     17. If limit is undefined, let lim be 253–1; else let lim be
         ToLength(limit).

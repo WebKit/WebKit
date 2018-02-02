@@ -4,7 +4,7 @@
 es6id: 26.1.8
 description: >
   Skip own properties to return the internal [[Prototype]] object.
-info: >
+info: |
   26.1.8 Reflect.getPrototypeOf ( target )
 
   ...

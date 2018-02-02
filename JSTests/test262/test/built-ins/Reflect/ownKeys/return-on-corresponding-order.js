@@ -4,7 +4,7 @@
 es6id: 26.1.11
 description: >
   Returns keys in their corresponding order.
-info: >
+info: |
   26.1.11 Reflect.ownKeys ( target )
 
   ...

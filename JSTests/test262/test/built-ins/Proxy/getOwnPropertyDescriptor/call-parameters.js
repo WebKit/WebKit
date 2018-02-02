@@ -4,7 +4,7 @@
 es6id: 9.5.5
 description: >
     Trap is called with hander context and parameters are target and P
-info: >
+info: |
     [[GetOwnProperty]] (P)
 
     ...

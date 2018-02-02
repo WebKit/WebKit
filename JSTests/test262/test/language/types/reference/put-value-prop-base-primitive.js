@@ -6,7 +6,7 @@ es6id: 6.2.3.2
 description: >
   When the base of a property reference is primitive, it is coerced to an
   object during value assignment
-info: >
+info: |
   [...]
   6. Else if IsPropertyReference(V) is true, then
      a. If HasPrimitiveBase(V) is true, then

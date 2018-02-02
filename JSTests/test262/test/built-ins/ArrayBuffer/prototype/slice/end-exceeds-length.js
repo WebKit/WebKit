@@ -6,7 +6,7 @@ esid: sec-arraybuffer.prototype.slice
 es6id: 24.1.4.3
 description: >
   Large `end` index is clamped to [[ArrayBufferByteLength]].
-info: >
+info: |
   ArrayBuffer.prototype.slice ( start, end )
 
   ...

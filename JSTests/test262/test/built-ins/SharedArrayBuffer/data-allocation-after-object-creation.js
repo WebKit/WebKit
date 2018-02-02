@@ -6,7 +6,7 @@
 esid: sec-sharedarraybuffer-length
 description: >
   The new SharedArrayBuffer instance is created prior to allocating the Data Block.
-info: >
+info: |
   SharedArrayBuffer( length )
 
   ...

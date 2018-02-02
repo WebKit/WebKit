@@ -40,6 +40,7 @@ info: |
        and N2 as its target binding and record that the binding is initialized.
     6. Return NormalCompletion(empty).
 flags: [module]
+features: [generators]
 ---*/
 
 assert.sameValue(

@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     The Number prototype object is itself a Number object
     (its [[Class]] is "Number") whose value is +0
 es5id: 15.7.4_A1

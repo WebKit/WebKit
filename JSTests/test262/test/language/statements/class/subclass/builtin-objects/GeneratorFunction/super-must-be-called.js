@@ -4,7 +4,7 @@
 es6id: 25.2.1
 description: >
   super must be called to initialize GeneratorFunction internal slots
-info: >
+info: |
   25.2.1 The GeneratorFunction Constructor
 
   ...

@@ -5,7 +5,7 @@
 es6id: 20.2.2.2
 description: >
   Math.acos.length is 1.
-info: >
+info: |
   Math.acos ( x )
 
   17 ECMAScript Standard Built-in Objects:

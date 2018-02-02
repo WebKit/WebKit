@@ -5,7 +5,7 @@
 es6id: 19.1.3.6
 description: >
   Object.prototype.toString.name is "toString".
-info: >
+info: |
   Object.prototype.toString ( )
 
   17 ECMAScript Standard Built-in Objects:

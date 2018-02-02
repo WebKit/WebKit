@@ -3,7 +3,7 @@
 /*---
 es6id: 23.1.1.1
 description: Map.name value and descriptor.
-info: >
+info: |
   Map ( [ iterable ] )
 
   17 ECMAScript Standard Built-in Objects

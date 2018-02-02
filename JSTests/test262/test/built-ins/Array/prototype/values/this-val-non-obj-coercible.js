@@ -5,7 +5,7 @@ esid: sec-array.prototype.values
 es6id: 22.1.3.29
 description: >
     `this` value not object coercible
-info: >
+info: |
     1. Let O be ToObject(this value).
     2. ReturnIfAbrupt(O).
 ---*/

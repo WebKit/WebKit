@@ -4,7 +4,7 @@
 esid: pending
 description: >
   TypedArray has a "length" property whose value is 0.
-info: >
+info: |
   22.2.1.1 %TypedArray% ()
 
   The length property of the %TypedArray% constructor function is 0.

@@ -37,7 +37,7 @@ info: |
   2. Assert: completion is a Completion Record.
   3. Let return be ? GetMethod(iterator, "return").
   4. If return is undefined, return Completion(completion).
-features: [Symbol.iterator]
+features: [generators, Symbol.iterator]
 ---*/
 
 var badIter = {};

@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     Since LineTerminator between "break" and Identifier is not allowed,
     "break" is evaluated without label
 es5id: 12.8_A2

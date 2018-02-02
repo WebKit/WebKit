@@ -4,7 +4,7 @@
 /*---
 description: BindingElement with array binding pattern and initializer is used (for-await-of statement)
 esid: sec-for-in-and-for-of-statements-runtime-semantics-labelledevaluation
-features: [destructuring-binding, async-iteration]
+features: [generators, destructuring-binding, async-iteration]
 flags: [generated, async]
 info: |
     IterationStatement :
@@ -43,6 +43,7 @@ info: |
        b. Let v be ? GetValue(defaultValue).
     4. Return the result of performing BindingInitialization of BindingPattern
        with v and environment as the arguments.
+
 ---*/
 var initCount = 0;
 var iterCount = 0;

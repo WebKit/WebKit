@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     The production QuantifierPrefix :: { DecimalDigits , DecimalDigits }
     evaluates as ...
 es5id: 15.10.2.7_A1_T12

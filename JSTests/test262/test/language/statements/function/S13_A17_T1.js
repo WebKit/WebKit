@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     Function call cannot appear in the program before the FunctionExpression
     appears
 es5id: 13_A17_T1

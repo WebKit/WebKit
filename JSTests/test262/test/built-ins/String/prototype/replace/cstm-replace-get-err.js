@@ -4,7 +4,7 @@
 /*---
 description: Behavior when error is thrown accessing @@replace property
 es6id: 21.1.3.14
-info: >
+info: |
     [...]
     3. If searchValue is neither undefined nor null, then
        a. Let replacer be GetMethod(searchValue, @@replace).

@@ -5,7 +5,7 @@ esid: sec-array.prototype.find
 es6id: 22.1.3.8
 description: >
   Predicate thisArg as F.call( thisArg, kValue, k, O ) for each array entry.
-info: >
+info: |
   22.1.3.8 Array.prototype.find ( predicate[ , thisArg ] )
 
   ...

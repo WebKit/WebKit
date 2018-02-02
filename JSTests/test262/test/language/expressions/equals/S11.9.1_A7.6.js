@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     If Type(x) is Object and Type(y) is String,
     return ToPrimitive(x) == y
 es5id: 11.9.1_A7.6

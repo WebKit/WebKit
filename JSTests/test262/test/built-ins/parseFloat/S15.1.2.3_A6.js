@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     parseFloat may interpret only a leading portion of the string as
     a number value; it ignores any characters that cannot be interpreted as part
     of the notation of an decimal literal, and no indication is given that any such

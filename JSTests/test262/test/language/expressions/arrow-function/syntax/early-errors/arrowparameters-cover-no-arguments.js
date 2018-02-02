@@ -15,7 +15,7 @@ description: >
     No parameters named "arguments"
 
 negative:
-  phase: early
+  phase: parse
   type: SyntaxError
 flags: [onlyStrict]
 ---*/

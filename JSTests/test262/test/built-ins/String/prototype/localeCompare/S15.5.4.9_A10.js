@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     The String.prototype.localeCompare.length property has the attribute
     ReadOnly
 es5id: 15.5.4.9_A10

@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     The MV of StrUnsignedDecimalLiteral::: DecimalDigits ExponentPart
     is the MV of DecimalDigits times 10<sup><small>e</small></sup>, where e is the MV of ExponentPart
 es5id: 9.3.1_A12

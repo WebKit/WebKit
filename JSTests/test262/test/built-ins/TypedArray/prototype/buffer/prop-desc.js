@@ -4,7 +4,7 @@
 es6id: 22.2.3.1
 description: >
   "buffer" property of TypedArrayPrototype
-info: >
+info: |
   %TypedArray%.prototype.buffer is an accessor property whose set accessor
   function is undefined.
 

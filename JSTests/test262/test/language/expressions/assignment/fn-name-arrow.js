@@ -4,7 +4,7 @@
 /*---
 es6id: 12.14.4
 description: Assignment of function `name` attribute (ArrowFunction)
-info: >
+info: |
     AssignmentExpression[In, Yield] :
         LeftHandSideExpression[?Yield] = AssignmentExpression[?In, ?Yield]
 

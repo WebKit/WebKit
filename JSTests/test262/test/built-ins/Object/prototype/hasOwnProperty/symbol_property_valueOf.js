@@ -3,7 +3,7 @@
 
 /*---
 description: Object.prototype.hasOwnProperty with symbol and valueOf conversion
-info: >
+info: |
   19.1.3.2 Object.prototype.hasOwnProperty ( V )
 
   1. Let P be ToPropertyKey(V).

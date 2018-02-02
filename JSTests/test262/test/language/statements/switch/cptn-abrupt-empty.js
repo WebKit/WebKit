@@ -4,7 +4,7 @@
 es6id: 13.12.11
 description: >
     Completion value when case block is empty
-info: >
+info: |
     SwitchStatement : switch ( Expression ) CaseBlock
 
     [...]

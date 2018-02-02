@@ -4,7 +4,7 @@
 es6id: 21.1.3.18
 description: >
   Property type and descriptor.
-info: >
+info: |
   21.1.3.18 String.prototype.startsWith ( searchString [ , position ] )
 
   17 ECMAScript Standard Built-in Objects

@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     If m is less than zero, return the string concatenation of the
     string "-" and ToString(-m)
 es5id: 9.8.1_A3

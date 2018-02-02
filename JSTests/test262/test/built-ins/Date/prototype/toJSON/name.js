@@ -6,7 +6,7 @@ esid: sec-date.prototype.tojson
 es6id: 20.3.4.37
 description: >
   Date.prototype.toJSON.name is "toJSON".
-info: >
+info: |
   Date.prototype.toJSON ( key )
 
   17 ECMAScript Standard Built-in Objects:

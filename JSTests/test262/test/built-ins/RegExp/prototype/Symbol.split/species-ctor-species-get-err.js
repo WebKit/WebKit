@@ -6,7 +6,7 @@ es6id: 21.2.5.11
 description: >
     Behavior when error thrown while accessing `Symbol.species` property of
     constructor
-info: >
+info: |
     [...]
     5. Let C be SpeciesConstructor(rx, %RegExp%).
     6. ReturnIfAbrupt(C).

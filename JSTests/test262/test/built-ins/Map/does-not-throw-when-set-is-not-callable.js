@@ -5,7 +5,7 @@ es6id: 23.1.1.1
 description: >
   Creating a new Map object without arguments doesn't throw if `set` is not
   callable
-info: >
+info: |
   Map ( [ iterable ] )
 
   When the Set function is called with optional argument iterable the following steps are taken:

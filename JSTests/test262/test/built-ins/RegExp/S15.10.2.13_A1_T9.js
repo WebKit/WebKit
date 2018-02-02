@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     The production CharacterClass :: [ [lookahead \notin {^}] ClassRanges ]
     evaluates by evaluating ClassRanges to obtain a CharSet and returning
     that CharSet and the boolean false

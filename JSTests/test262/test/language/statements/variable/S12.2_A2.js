@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     Variables are defined with global scope (that is, they are created as
     members of the global object, as described in 10.1.3) using property
     attributes { DontDelete}

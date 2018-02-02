@@ -6,7 +6,7 @@ esid: sec-%throwtypeerror%
 description: >
   The value of the [[Prototype]] internal slot of %ThrowTypeError% is the
   intrinsic object %FunctionPrototype%.
-info: >
+info: |
   8.2.2 CreateIntrinsics ( realmRec )
 
   ...

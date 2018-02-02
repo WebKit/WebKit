@@ -5,7 +5,7 @@ es6id: 23.3.3.3
 esid: sec-weakmap.prototype.get
 description: >
   Property type and descriptor.
-info: >
+info: |
   WeakMap.prototype.get ( key )
 
   17 ECMAScript Standard Built-in Objects

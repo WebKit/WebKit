@@ -5,7 +5,7 @@
 description: If a named group was not reached, it is replaced by the empty string
 esid: sec-getsubstitution
 features: [regexp-named-groups]
-info: >
+info: |
   Runtime Semantics: GetSubstitution( matched, str, position, captures, namedCaptures, replacement )
 
   Table: Replacement Text Symbol Substitutions

@@ -4,7 +4,7 @@
 es6id: 9.5.5
 description: >
     Trap returns abrupt.
-info: >
+info: |
     [[GetOwnProperty]] (P)
 
     ...

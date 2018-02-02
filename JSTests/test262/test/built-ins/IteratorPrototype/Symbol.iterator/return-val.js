@@ -3,7 +3,7 @@
 /*---
 es6id: 25.1.2.1
 description: Descriptor for `name` property
-info: >
+info: |
     1. Return the this value.
 features: [Symbol.iterator]
 ---*/

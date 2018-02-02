@@ -5,7 +5,7 @@
 esid: sec-array.from
 es6id: 22.1.2.1
 description: Calling from with a valid map function with thisArg
-info: >
+info: |
   22.1.2.1 Array.from ( items [ , mapfn [ , thisArg ] ] )
 
   ...

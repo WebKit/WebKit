@@ -4,7 +4,7 @@
 es6id: 26.1.14
 description: >
   Return false if target and proto are the same, without setting a new prototype.
-info: >
+info: |
   26.1.14 Reflect.setPrototypeOf ( target, proto )
 
   ...

@@ -4,7 +4,7 @@
 /*---
 es6id: 19.2.3.2
 description: Error thrown when accessing target's `name` property
-info: >
+info: |
     12. Let targetName be Get(Target, "name").
     13. ReturnIfAbrupt(targetName).
 ---*/

@@ -4,7 +4,7 @@
 esid: sec-%typedarray%.prototype.join
 description: >
   Concatenates the result of toString for each value with custom separator
-info: >
+info: |
   22.2.3.15 %TypedArray%.prototype.join ( separator )
 
   %TypedArray%.prototype.join is a distinct function that implements the same

@@ -3,7 +3,7 @@
 /*---
 esid: sec-additional-properties-of-the-object.prototype-object
 description: Object.prototype.__defineGetter__ `length` property
-info: >
+info: |
     ES6 Section 17:
     Every built-in Function object, including constructors, has a length
     property whose value is an integer. Unless otherwise specified, this value

@@ -4,7 +4,7 @@
 /*---
 esid: sec-timeclip
 description: TimeClip converts negative zero to positive zero
-info: >
+info: |
   20.3.1.15 TimeClip (time)
 
   ...

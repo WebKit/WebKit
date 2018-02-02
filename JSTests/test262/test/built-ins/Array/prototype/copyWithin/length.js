@@ -4,7 +4,7 @@
 esid: sec-array.prototype.copywithin
 es6id: 22.1.3.3
 description: Array.prototype.copyWithin.length value and descriptor.
-info: >
+info: |
   22.1.3.3 Array.prototype.copyWithin (target, start [ , end ] )
 
   The length property of the copyWithin method is 2.

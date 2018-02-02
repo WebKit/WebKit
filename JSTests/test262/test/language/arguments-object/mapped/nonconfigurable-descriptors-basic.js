@@ -3,7 +3,7 @@
 
 /*---
 description: Mapped arguments object with non-configurable property property descriptor behavior
-info: >
+info: |
     Descriptor of a mapped value is updated when property is made non-configurable.
 flags: [noStrict]
 esid: sec-arguments-exotic-objects-defineownproperty-p-desc

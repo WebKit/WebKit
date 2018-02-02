@@ -3,7 +3,7 @@
 
 /*---
 description: Mapped arguments property descriptor change to non-writable, non-enumerable and non-configurable
-info: >
+info: |
     Change the descriptor using [[DefineOwnProperty]] to {writable: false, enumerable: false},
     set argument[0] = 2 and then change property descriptor to {configurable: false}.
     The descriptor's enumerable property continues with its configured value.

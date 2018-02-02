@@ -5,7 +5,7 @@ esid: sec-super-keyword
 es6id: 12.3.5
 description: >
     Default [[Prototype]] value derived from realm of the newTarget value
-info: >
+info: |
     1. Let newTarget be GetNewTarget().
     [...]
     6. Let result be ? Construct(func, argList, newTarget).

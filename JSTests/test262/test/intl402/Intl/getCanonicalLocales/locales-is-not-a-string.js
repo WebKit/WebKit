@@ -19,6 +19,7 @@ function assertArray(l, r) {
 }
 
 assertArray(gCL(), []);
+assertArray(gCL(undefined), []);
 assertArray(gCL(false), []);
 assertArray(gCL(true), []);
 assertArray(gCL(Symbol("foo")), []);

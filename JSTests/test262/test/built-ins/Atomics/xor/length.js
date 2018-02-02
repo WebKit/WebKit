@@ -6,7 +6,7 @@
 esid: sec-atomics.xor
 description: >
   Atomics.xor.length is 3.
-info: >
+info: |
   Atomics.xor ( ia, index, val )
 
   17 ECMAScript Standard Built-in Objects:

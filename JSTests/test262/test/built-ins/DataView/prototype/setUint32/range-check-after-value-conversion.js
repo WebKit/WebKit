@@ -5,7 +5,7 @@
 esid: sec-dataview.prototype.setuint32
 description: >
   Index bounds checks are performed after value conversion.
-info: >
+info: |
   ...
   3. Return SetViewValue(v, byteOffset, littleEndian, "Uint32", value).
 

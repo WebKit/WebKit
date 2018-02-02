@@ -5,7 +5,7 @@
 es6id: 25.4.2.2
 description: >
   Already resolved promise is not rejected when then() function throws an exception.
-info: >
+info: |
   PromiseResolveThenableJob ( promiseToResolve, thenable, then )
 
   1. Let resolvingFunctions be CreateResolvingFunctions(promiseToResolve).

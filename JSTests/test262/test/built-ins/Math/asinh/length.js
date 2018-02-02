@@ -4,7 +4,7 @@
 /*---
 description: length property of Math.asinh
 es6id: 20.2.2.5
-info: >
+info: |
   Math.asinh ( x )
 
   17 ECMAScript Standard Built-in Objects:

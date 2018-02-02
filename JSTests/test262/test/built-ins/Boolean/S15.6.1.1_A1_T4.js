@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     Returns a boolean value (not a Boolean object) computed by
     ToBoolean(value)
 esid: sec-terms-and-definitions-boolean-value

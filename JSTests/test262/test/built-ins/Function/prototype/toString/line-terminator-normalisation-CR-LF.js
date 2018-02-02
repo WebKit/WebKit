@@ -4,7 +4,7 @@
 /*---
 esid: sec-function-definitions-runtime-semantics-instantiatefunctionobject
 description: Function.prototype.toString line terminator normalisation (CR-LF)
-info: >
+info: |
   Function.prototype.toString should not normalise line terminator sequences to Line Feed characters.
   This file uses (Carriage Return, Line Feed) sequences as line terminators.
 ---*/

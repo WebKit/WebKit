@@ -5,7 +5,7 @@
 es6id: 21.1.3.2
 description: >
   String.prototype.charCodeAt.name is "charCodeAt".
-info: >
+info: |
   String.prototype.charCodeAt ( pos )
 
   17 ECMAScript Standard Built-in Objects:

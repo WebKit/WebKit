@@ -4,7 +4,7 @@
 /*---
 es6id: 14.1.19
 description: Assignment of function `name` attribute
-info: >
+info: |
     FunctionDeclaration :
         function BindingIdentifier ( FormalParameters ) { FunctionBody }
 

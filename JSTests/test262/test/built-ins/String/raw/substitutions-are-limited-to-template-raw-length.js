@@ -4,7 +4,7 @@
 es6id: 21.1.2.4
 description: >
   Limit appended substitutions arguments to template.raw.length - 1.
-info: >
+info: |
   21.1.2.4 String.raw ( template , ...substitutions )
 
   ...

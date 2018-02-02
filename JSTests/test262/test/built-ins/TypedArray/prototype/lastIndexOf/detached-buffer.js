@@ -3,7 +3,7 @@
 /*---
 esid: sec-%typedarray%.prototype.lastindexof
 description: Throws a TypeError if this has a detached buffer
-info: >
+info: |
   22.2.3.17 %TypedArray%.prototype.lastIndexOf ( searchElement [ , fromIndex ] )
 
   This function is not generic. ValidateTypedArray is applied to the this value

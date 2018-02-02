@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     Using arguments object within a "with" Expression that is nested in a
     function is admitted
 es5id: 13.2.2_A18_T2

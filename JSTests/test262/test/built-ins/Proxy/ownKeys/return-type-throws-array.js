@@ -5,7 +5,7 @@ esid: sec-proxy-object-internal-methods-and-internal-slots-ownpropertykeys
 description: >
     The returned list must not have entries whose type does not match
     « String, Symbol ».
-info: >
+info: |
     [[OwnPropertyKeys]] ( )
 
     ...

@@ -7,7 +7,7 @@ esid: prod-AsyncGeneratorMethod
 features: [async-iteration]
 flags: [generated, onlyStrict]
 negative:
-  phase: early
+  phase: parse
   type: SyntaxError
 info: |
     ClassElement :

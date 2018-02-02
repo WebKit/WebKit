@@ -3,7 +3,7 @@
 /*---
 es6id: 24.1.2
 description: Super need to be called to initialize internals
-info: >
+info: |
   24.1.2 The ArrayBuffer Constructor
 
   ...

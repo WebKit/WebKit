@@ -4,7 +4,7 @@
 es6id: 26.1.8
 description: >
   Throws a TypeError if target is a Symbol
-info: >
+info: |
   26.1.8 Reflect.getPrototypeOf ( target )
 
   1. If Type(target) is not Object, throw a TypeError exception.

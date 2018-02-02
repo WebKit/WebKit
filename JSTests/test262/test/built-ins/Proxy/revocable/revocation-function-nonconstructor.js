@@ -4,7 +4,7 @@
 /*---
 es6id: 26.2.2.1.1
 description: Proxy Revocation functions are not constructors
-info: >
+info: |
   17 ECMAScript Standard Built-in Objects:
     Built-in function objects that are not identified as constructors do not
     implement the [[Construct]] internal method unless otherwise specified

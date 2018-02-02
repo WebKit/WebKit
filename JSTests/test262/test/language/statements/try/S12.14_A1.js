@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     The production TryStatement : try Block Catch is evaluated as follows: 2.
     If Result(1).type is not throw, return Result(1)
 es5id: 12.14_A1

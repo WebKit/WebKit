@@ -4,7 +4,7 @@
 /*---
 description: Return value when matches occur with the `global` flag
 es6id: 21.2.5.6
-info: >
+info: |
     [...]
     7. If global is false, then
        [...]

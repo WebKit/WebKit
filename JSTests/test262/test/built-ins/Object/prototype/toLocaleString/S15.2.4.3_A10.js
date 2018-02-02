@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     The Object.prototype.toLocaleString.length property has the attribute
     ReadOnly
 es5id: 15.2.4.3_A10

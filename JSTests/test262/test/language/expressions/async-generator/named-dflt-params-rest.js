@@ -7,7 +7,7 @@ esid: sec-asyncgenerator-definitions-evaluation
 features: [default-parameters, async-iteration]
 flags: [generated]
 negative:
-  phase: early
+  phase: parse
   type: SyntaxError
 info: |
     AsyncGeneratorExpression : async [no LineTerminator here] function * BindingIdentifier

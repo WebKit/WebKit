@@ -5,7 +5,7 @@ esid: sec-array.prototype.fill
 es6id: 22.1.3.6
 description: >
   Array.prototype.fill.name value and descriptor.
-info: >
+info: |
   22.1.3.6 Array.prototype.fill (value [ , start [ , end ] ] )
 
   17 ECMAScript Standard Built-in Objects

@@ -5,7 +5,7 @@ es6id: 23.4.3.3
 esid: sec-weakset.prototype.delete
 description: >
   Delete an entry from initial iterable.
-info: >
+info: |
   WeakSet.prototype.delete ( value )
 
   ...

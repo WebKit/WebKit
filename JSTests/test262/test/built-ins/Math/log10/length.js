@@ -4,7 +4,7 @@
 /*---
 es6id: 20.2.2.20
 description: length property of Math.log10
-info: >
+info: |
   Math.log10 ( x )
 
   17 ECMAScript Standard Built-in Objects:

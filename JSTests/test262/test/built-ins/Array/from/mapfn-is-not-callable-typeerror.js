@@ -4,7 +4,7 @@
 esid: sec-array.from
 es6id: 22.1.2.1
 description: Throws a TypeError if mapFn is not callable
-info: >
+info: |
   22.1.2.1 Array.from ( items [ , mapfn [ , thisArg ] ] )
 
   ...

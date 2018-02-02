@@ -4,7 +4,7 @@
 es6id: 21.1.3.13
 description: >
   If ToInteger(count) is zero, returns an empty String.
-info: >
+info: |
   21.1.3.13 String.prototype.repeat ( count )
 
   8. Let T be a String value that is made from n copies of S appended together.

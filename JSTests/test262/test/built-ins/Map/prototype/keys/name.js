@@ -4,7 +4,7 @@
 es6id: 23.1.3.8
 description: >
   Map.prototype.keys.name value and descriptor.
-info: >
+info: |
   Map.prototype.keys ()
 
   17 ECMAScript Standard Built-in Objects

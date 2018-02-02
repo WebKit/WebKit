@@ -6,7 +6,7 @@ description: >
     [[Delete]] (P)
 
     9. Let booleanTrapResult be ToBoolean(Call(trap, handler, «target, P»)).
-info: >
+info: |
     6.1.7.2 Object Internal Methods and Internal Slots
 
     (...) Receiver is used as the this value when evaluating the code

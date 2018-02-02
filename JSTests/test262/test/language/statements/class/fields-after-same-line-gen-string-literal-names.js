@@ -1,9 +1,10 @@
 // This file was procedurally generated from the following sources:
 // - src/class-fields/string-literal-names.case
-// - src/class-fields/default/cls-decl-after-same-line-gen.template
+// - src/class-fields/productions/cls-decl-after-same-line-gen.template
 /*---
 description: String literal names (field definitions after a generator in the same line)
-features: [class-fields]
+esid: prod-FieldDefinition
+features: [generators, class, class-fields-public]
 flags: [generated]
 includes: [propertyHelper.js]
 info: |
@@ -23,6 +24,7 @@ info: |
 class C {
   *m() { return 42; } 'a'; "b"; 'c' = 39;
   "d" = 42;
+
 }
 
 var c = new C();

@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     Every Array object has a length property whose value is
     always a nonnegative integer less than 2^32. The value of the length property is
     numerically greater than the name of every property whose name is an array index

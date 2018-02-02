@@ -6,7 +6,7 @@ esid: sec-with-statement
 es6id: 13.11
 flags: [noStrict]
 negative:
-  phase: early
+  phase: parse
   type: SyntaxError
 ---*/
 

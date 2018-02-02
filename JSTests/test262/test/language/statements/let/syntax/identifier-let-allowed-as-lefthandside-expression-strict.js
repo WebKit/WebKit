@@ -7,7 +7,7 @@ description: >
     identifier "let" disallowed as lefthandside expression in strict mode
 flags: [onlyStrict]
 negative:
-  phase: early
+  phase: parse
   type: SyntaxError
 ---*/
 

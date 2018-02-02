@@ -30,7 +30,7 @@ info: |
         { ExportsList }
         { ExportsList , }
 negative:
-  phase: early
+  phase: resolution
   type: ReferenceError
 flags: [module]
 ---*/

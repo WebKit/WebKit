@@ -4,7 +4,7 @@
 es6id: 26.1.12
 description: >
   Always returns true when target is an ordinary object.
-info: >
+info: |
   26.1.12 Reflect.preventExtensions ( target )
 
   ...

@@ -5,7 +5,7 @@
 /*---
 description: >
   SharedArrayBuffer.prototype.slice is not a constructor function.
-info: >
+info: |
   SharedArrayBuffer.prototype.slice ( start, end )
 
   17 ECMAScript Standard Built-in Objects:

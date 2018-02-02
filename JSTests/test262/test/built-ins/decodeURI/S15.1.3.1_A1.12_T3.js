@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     If B = 11110xxx (n = 4) and (string.charAt(k + 4) and
     string.charAt(k + 5)) or (string.charAt(k + 7) and
     string.charAt(k + 8)) or (string.charAt(k + 10) and
@@ -21,7 +21,7 @@ var interval = [[0x00, 0x29], [0x40,0x40], [0x47, 0x60], [0x67, 0xFFFF]];
 for (var indexI = 0; indexI < interval.length; indexI++) {
   for (var indexJ = interval[indexI][0]; indexJ <= interval[indexI][1]; indexJ++) {
     try {
-      decodeURI("%F0%" + "%A0%A0" + String.fromCharCode(indexJ, indexJ));
+      decodeURI("%F0" + "%A0%A0%" + String.fromCharCode(indexJ, indexJ));
       result = false;
     } catch (e) {
       if ((e instanceof URIError) !== true) {

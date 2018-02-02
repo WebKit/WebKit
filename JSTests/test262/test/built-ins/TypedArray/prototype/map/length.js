@@ -5,7 +5,7 @@
 es6id: 22.2.3.18
 description: >
   %TypedArray%.prototype.map.length is 1.
-info: >
+info: |
   %TypedArray%.prototype.map ( callbackfn [ , thisArg ] )
 
   17 ECMAScript Standard Built-in Objects:

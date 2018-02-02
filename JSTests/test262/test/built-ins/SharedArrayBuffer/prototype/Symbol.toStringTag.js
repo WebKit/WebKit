@@ -4,7 +4,7 @@
 /*---
 description: >
     `Symbol.toStringTag` property descriptor
-info: >
+info: |
     The initial value of the @@toStringTag property is the String value
     "SharedArrayBuffer".
 

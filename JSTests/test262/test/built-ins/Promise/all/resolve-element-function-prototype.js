@@ -4,7 +4,7 @@
 /*---
 es6id: 25.4.4.1.2
 description: The [[Prototype]] of Promise.all Resolve Element functions
-info: >
+info: |
   17 ECMAScript Standard Built-in Objects:
     Unless otherwise specified every built-in function and every built-in
     constructor has the Function prototype object, which is the initial

@@ -14,46 +14,30 @@ author: Norbert Lindenberg
 
 /**
  * @description Calls the provided function for every service constructor in
- * the Intl object, until f returns a falsy value. It returns the result of the
- * last call to f, mapped to a boolean.
+ * the Intl object.
  * @param {Function} f the function to call for each service constructor in
  *   the Intl object.
  *   @param {Function} Constructor the constructor object to test with.
- * @result {Boolean} whether the test succeeded.
  */
 function testWithIntlConstructors(f) {
   var constructors = ["Collator", "NumberFormat", "DateTimeFormat"];
-  return constructors.every(function (constructor) {
+
+  // Optionally supported Intl constructors.
+  ["PluralRules"].forEach(function(constructor) {
+    if (typeof Intl[constructor] === "function") {
+      constructors[constructors.length] = constructor;
+    }
+  });
+
+  constructors.forEach(function (constructor) {
     var Constructor = Intl[constructor];
-    var result;
     try {
-      result = f(Constructor);
+      f(Constructor);
     } catch (e) {
       e.message += " (Testing with " + constructor + ".)";
       throw e;
     }
-    return result;
   });
-}
-
-
-/**
- * Returns the name of the given constructor object, which must be one of
- * Intl.Collator, Intl.NumberFormat, or Intl.DateTimeFormat.
- * @param {object} Constructor a constructor
- * @return {string} the name of the constructor
- */
-function getConstructorName(Constructor) {
-  switch (Constructor) {
-    case Intl.Collator:
-      return "Collator";
-    case Intl.NumberFormat:
-      return "NumberFormat";
-    case Intl.DateTimeFormat:
-      return "DateTimeFormat";
-    default:
-      $ERROR("test internal error: unknown Constructor");
-  }
 }
 
 
@@ -121,16 +105,9 @@ function taintArray() {
 }
 
 
-// auxiliary data for getLocaleSupportInfo
-var languages = ["zh", "es", "en", "hi", "ur", "ar", "ja", "pa"];
-var scripts = ["Latn", "Hans", "Deva", "Arab", "Jpan", "Hant"];
-var countries = ["CN", "IN", "US", "PK", "JP", "TW", "HK", "SG"];
-var localeSupportInfo = {};
-
-
 /**
  * Gets locale support info for the given constructor object, which must be one
- * of Intl.Collator, Intl.NumberFormat, Intl.DateTimeFormat.
+ * of Intl constructors.
  * @param {object} Constructor the constructor for which to get locale support info
  * @return {object} locale support info with the following properties:
  *   supported: array of fully supported language tags
@@ -138,10 +115,9 @@ var localeSupportInfo = {};
  *   unsupported: array of unsupported language tags
  */
 function getLocaleSupportInfo(Constructor) {
-  var constructorName = getConstructorName(Constructor);
-  if (localeSupportInfo[constructorName] !== undefined) {
-    return localeSupportInfo[constructorName];
-  }
+  var languages = ["zh", "es", "en", "hi", "ur", "ar", "ja", "pa"];
+  var scripts = ["Latn", "Hans", "Deva", "Arab", "Jpan", "Hant"];
+  var countries = ["CN", "IN", "US", "PK", "JP", "TW", "HK", "SG"];
 
   var allTags = [];
   var i, j, k;
@@ -169,7 +145,7 @@ function getLocaleSupportInfo(Constructor) {
   for (i = 0; i < allTags.length; i++) {
     var request = allTags[i];
     var result = new Constructor([request], {localeMatcher: "lookup"}).resolvedOptions().locale;
-     if (request === result) {
+    if (request === result) {
       supported.push(request);
     } else if (request.indexOf(result) === 0) {
       byFallback.push(request);
@@ -178,13 +154,11 @@ function getLocaleSupportInfo(Constructor) {
     }
   }
 
-  localeSupportInfo[constructorName] = {
+  return {
     supported: supported,
     byFallback: byFallback,
     unsupported: unsupported
   };
-
-  return localeSupportInfo[constructorName];
 }
 
 
@@ -249,10 +223,10 @@ function isCanonicalizedStructurallyValidLanguageTag(locale) {
   var __tagMappings = {
     // property names must be in lower case; values in canonical form
 
-    // grandfathered tags from IANA language subtag registry, file date 2011-08-25
+    // grandfathered tags from IANA language subtag registry, file date 2017-12-14
     "art-lojban": "jbo",
     "cel-gaulish": "cel-gaulish",
-    "en-gb-oed": "en-GB-oed",
+    "en-gb-oed": "en-GB-oxendict",
     "i-ami": "ami",
     "i-bnn": "bnn",
     "i-default": "i-default",
@@ -276,7 +250,7 @@ function isCanonicalizedStructurallyValidLanguageTag(locale) {
     "zh-min": "zh-min",
     "zh-min-nan": "nan",
     "zh-xiang": "hsn",
-    // deprecated redundant tags from IANA language subtag registry, file date 2011-08-25
+    // deprecated redundant tags from IANA language subtag registry, file date 2017-12-14
     "sgn-br": "bzs",
     "sgn-co": "csn",
     "sgn-de": "gsg",
@@ -302,7 +276,7 @@ function isCanonicalizedStructurallyValidLanguageTag(locale) {
     "zh-gan": "gan",
     "zh-wuu": "wuu",
     "zh-yue": "yue",
-    // deprecated variant with prefix from IANA language subtag registry, file date 2011-08-25
+    // deprecated variant with prefix from IANA language subtag registry, file date 2017-12-14
     "ja-latn-hepburn-heploc": "ja-Latn-alalc97"
   };
 
@@ -314,24 +288,85 @@ function isCanonicalizedStructurallyValidLanguageTag(locale) {
    */
   var __subtagMappings = {
     // property names and values must be in canonical case
-    // language subtags with Preferred-Value mappings from IANA language subtag registry, file date 2011-08-25
+    // language subtags with Preferred-Value mappings from IANA language subtag registry, file date 2017-12-14
     "in": "id",
     "iw": "he",
     "ji": "yi",
     "jw": "jv",
     "mo": "ro",
+    "aam": "aas",
+    "adp": "dz",
+    "aue": "ktz",
     "ayx": "nun",
+    "bgm": "bcg",
+    "bjd": "drl",
+    "ccq": "rki",
     "cjr": "mom",
+    "cka": "cmr",
     "cmk": "xch",
+    "coy": "pij",
+    "cqu": "quh",
     "drh": "khk",
     "drw": "prs",
     "gav": "dev",
+    "gfx": "vaj",
+    "ggn": "gvr",
+    "gti": "nyc",
+    "guv": "duz",
+    "hrr": "jal",
+    "ibi": "opa",
+    "ilw": "gal",
+    "jeg": "oyb",
+    "kgc": "tdf",
+    "kgh": "kml",
+    "koj": "kwv",
+    "krm": "bmf",
+    "ktr": "dtp",
+    "kvs": "gdj",
+    "kwq": "yam",
+    "kxe": "tvd",
+    "kzj": "dtp",
+    "kzt": "dtp",
+    "lii": "raq",
+    "lmm": "rmx",
+    "meg": "cir",
     "mst": "mry",
+    "mwj": "vaj",
     "myt": "mry",
+    "nad": "xny",
+    "nnx": "ngv",
+    "nts": "pij",
+    "oun": "vaj",
+    "pcr": "adx",
+    "pmc": "huw",
+    "pmu": "phr",
+    "ppa": "bfy",
+    "ppr": "lcq",
+    "pry": "prt",
+    "puz": "pub",
+    "sca": "hle",
+    "skk": "oyb",
+    "tdu": "dtp",
+    "thc": "tpo",
+    "thx": "oyb",
     "tie": "ras",
     "tkk": "twm",
+    "tlw": "weo",
+    "tmp": "tyj",
+    "tne": "kak",
     "tnf": "prs",
-    // region subtags with Preferred-Value mappings from IANA language subtag registry, file date 2011-08-25
+    "tsf": "taj",
+    "uok": "ema",
+    "xba": "cax",
+    "xia": "acn",
+    "xkh": "waw",
+    "xsj": "suj",
+    "ybd": "rki",
+    "yma": "lrr",
+    "ymt": "mtm",
+    "yos": "zom",
+    "yuu": "yug",
+    // region subtags with Preferred-Value mappings from IANA language subtag registry, file date 2017-12-14
     "BU": "MM",
     "DD": "DE",
     "FX": "FR",
@@ -347,7 +382,7 @@ function isCanonicalizedStructurallyValidLanguageTag(locale) {
    * Spec: IANA Language Subtag Registry.
    */
   var __extlangMappings = {
-    // extlang subtags with Preferred-Value mappings from IANA language subtag registry, file date 2011-08-25
+    // extlang subtags with Preferred-Value mappings from IANA language subtag registry, file date 2017-12-14
     // values are arrays with [0] the replacement value, [1] (if present) the prefix to be removed
     "aao": ["aao", "ar"],
     "abh": ["abh", "ar"],
@@ -427,6 +462,7 @@ function isCanonicalizedStructurallyValidLanguageTag(locale) {
     "fsl": ["fsl", "sgn"],
     "fss": ["fss", "sgn"],
     "gan": ["gan", "zh"],
+    "gds": ["gds", "sgn"],
     "gom": ["gom", "kok"],
     "gse": ["gse", "sgn"],
     "gsg": ["gsg", "sgn"],
@@ -445,6 +481,7 @@ function isCanonicalizedStructurallyValidLanguageTag(locale) {
     "hsl": ["hsl", "sgn"],
     "hsn": ["hsn", "zh"],
     "icl": ["icl", "sgn"],
+    "iks": ["iks", "sgn"],
     "ils": ["ils", "sgn"],
     "inl": ["inl", "sgn"],
     "ins": ["ins", "sgn"],
@@ -509,6 +546,7 @@ function isCanonicalizedStructurallyValidLanguageTag(locale) {
     "ors": ["ors", "ms"],
     "pel": ["pel", "ms"],
     "pga": ["pga", "ar"],
+    "pgz": ["pgz", "sgn"],
     "pks": ["pks", "sgn"],
     "prl": ["prl", "sgn"],
     "prz": ["prz", "sgn"],
@@ -522,8 +560,8 @@ function isCanonicalizedStructurallyValidLanguageTag(locale) {
     "psr": ["psr", "sgn"],
     "pys": ["pys", "sgn"],
     "rms": ["rms", "sgn"],
-    "rsi": ["rsi", "sgn"],
     "rsl": ["rsl", "sgn"],
+    "rsm": ["rsm", "sgn"],
     "sdl": ["sdl", "sgn"],
     "sfb": ["sfb", "sgn"],
     "sfs": ["sfs", "sgn"],
@@ -532,6 +570,7 @@ function isCanonicalizedStructurallyValidLanguageTag(locale) {
     "shu": ["shu", "ar"],
     "slf": ["slf", "sgn"],
     "sls": ["sls", "sgn"],
+    "sqk": ["sqk", "sgn"],
     "sqs": ["sqs", "sgn"],
     "ssh": ["ssh", "ar"],
     "ssp": ["ssp", "sgn"],
@@ -541,6 +580,7 @@ function isCanonicalizedStructurallyValidLanguageTag(locale) {
     "swh": ["swh", "sw"],
     "swl": ["swl", "sgn"],
     "syy": ["syy", "sgn"],
+    "szs": ["szs", "sgn"],
     "tmw": ["tmw", "ms"],
     "tse": ["tse", "sgn"],
     "tsm": ["tsm", "sgn"],
@@ -561,19 +601,21 @@ function isCanonicalizedStructurallyValidLanguageTag(locale) {
     "vsi": ["vsi", "sgn"],
     "vsl": ["vsl", "sgn"],
     "vsv": ["vsv", "sgn"],
+    "wbs": ["wbs", "sgn"],
     "wuu": ["wuu", "zh"],
     "xki": ["xki", "sgn"],
     "xml": ["xml", "sgn"],
     "xmm": ["xmm", "ms"],
     "xms": ["xms", "sgn"],
-    "yds": ["yds", "sgn"],
+    "ygs": ["ygs", "sgn"],
+    "yhs": ["yhs", "sgn"],
     "ysl": ["ysl", "sgn"],
     "yue": ["yue", "zh"],
     "zib": ["zib", "sgn"],
     "zlm": ["zlm", "ms"],
     "zmi": ["zmi", "ms"],
     "zsl": ["zsl", "sgn"],
-    "zsm": ["zsm", "ms"]
+    "zsm": ["zsm", "ms"],
   };
 
 
@@ -672,7 +714,6 @@ function isCanonicalizedStructurallyValidLanguageTag(locale) {
  *   @param {boolean} noReturn whether the resulting value of the property is not returned.
  *   @param {boolean} isILD whether the resulting value of the property is implementation and locale dependent.
  *   @param {object} extra additional option to pass along, properties are value -> {option: value}.
- * @return {boolean} whether the test succeeded.
  */
 function testOption(Constructor, property, type, values, fallback, testOptions) {
   var isOptional = testOptions !== undefined && testOptions.isOptional === true;
@@ -784,82 +825,6 @@ function testOption(Constructor, property, type, values, fallback, testOptions) 
       }
     }
   }
-
-  return true;
-}
-
-
-/**
- * Tests whether the named property of the given object has a valid value
- * and the default attributes of the properties of an object literal.
- * @param {Object} obj the object to be tested.
- * @param {string} property the name of the property
- * @param {Function|Array} valid either a function that tests value for validity and returns a boolean,
- *   an array of valid values.
- * @exception if the property has an invalid value.
- */
-function testProperty(obj, property, valid) {
-  var desc = Object.getOwnPropertyDescriptor(obj, property);
-  if (!desc.writable) {
-    $ERROR("Property " + property + " must be writable.");
-  }
-  if (!desc.enumerable) {
-    $ERROR("Property " + property + " must be enumerable.");
-  }
-  if (!desc.configurable) {
-    $ERROR("Property " + property + " must be configurable.");
-  }
-  var value = desc.value;
-  var isValid = (typeof valid === "function") ? valid(value) : (valid.indexOf(value) !== -1);
-  if (!isValid) {
-    $ERROR("Property value " + value + " is not allowed for property " + property + ".");
-  }
-}
-
-
-/**
- * Tests whether the named property of the given object, if present at all, has a valid value
- * and the default attributes of the properties of an object literal.
- * @param {Object} obj the object to be tested.
- * @param {string} property the name of the property
- * @param {Function|Array} valid either a function that tests value for validity and returns a boolean,
- *   an array of valid values.
- * @exception if the property is present and has an invalid value.
- */
-function mayHaveProperty(obj, property, valid) {
-  if (obj.hasOwnProperty(property)) {
-    testProperty(obj, property, valid);
-  }
-}
-
-
-/**
- * Tests whether the given object has the named property with a valid value
- * and the default attributes of the properties of an object literal.
- * @param {Object} obj the object to be tested.
- * @param {string} property the name of the property
- * @param {Function|Array} valid either a function that tests value for validity and returns a boolean,
- *   an array of valid values.
- * @exception if the property is missing or has an invalid value.
- */
-function mustHaveProperty(obj, property, valid) {
-  if (!obj.hasOwnProperty(property)) {
-    $ERROR("Object is missing property " + property + ".");
-  }
-  testProperty(obj, property, valid);
-}
-
-
-/**
- * Tests whether the given object does not have the named property.
- * @param {Object} obj the object to be tested.
- * @param {string} property the name of the property
- * @exception if the property is present.
- */
-function mustNotHaveProperty(obj, property) {
-  if (obj.hasOwnProperty(property)) {
-    $ERROR("Object has property it mustn't have: " + property + ".");
-  }
 }
 
 
@@ -911,69 +876,89 @@ function testForUnwantedRegExpChanges(testFunc) {
 
 function isValidNumberingSystem(name) {
 
-  // source: CLDR file common/bcp47/number.xml; version CLDR 21.
+  // source: CLDR file common/bcp47/number.xml; version CLDR 32.
   var numberingSystems = [
+    "adlm",
+    "ahom",
     "arab",
     "arabext",
     "armn",
     "armnlow",
     "bali",
     "beng",
+    "bhks",
     "brah",
     "cakm",
     "cham",
+    "cyrl",
     "deva",
     "ethi",
     "finance",
     "fullwide",
     "geor",
+    "gonm",
     "grek",
     "greklow",
     "gujr",
     "guru",
+    "hanidays",
     "hanidec",
     "hans",
     "hansfin",
     "hant",
     "hantfin",
     "hebr",
+    "hmng",
     "java",
     "jpan",
     "jpanfin",
     "kali",
     "khmr",
     "knda",
-    "osma",
     "lana",
     "lanatham",
     "laoo",
     "latn",
     "lepc",
     "limb",
+    "mathbold",
+    "mathdbl",
+    "mathmono",
+    "mathsanb",
+    "mathsans",
     "mlym",
+    "modi",
     "mong",
+    "mroo",
     "mtei",
     "mymr",
     "mymrshan",
+    "mymrtlng",
     "native",
+    "newa",
     "nkoo",
     "olck",
     "orya",
+    "osma",
     "roman",
     "romanlow",
     "saur",
     "shrd",
+    "sind",
+    "sinh",
     "sora",
     "sund",
-    "talu",
     "takr",
+    "talu",
     "taml",
     "tamldec",
     "telu",
     "thai",
+    "tirh",
     "tibt",
     "traditio",
-    "vaii"
+    "vaii",
+    "wara",
   ];
 
   var excluded = [
@@ -995,6 +980,7 @@ function isValidNumberingSystem(name) {
 var numberingSystemDigits = {
   arab: "٠١٢٣٤٥٦٧٨٩",
   arabext: "۰۱۲۳۴۵۶۷۸۹",
+  bali: "\u1B50\u1B51\u1B52\u1B53\u1B54\u1B55\u1B56\u1B57\u1B58\u1B59",
   beng: "০১২৩৪৫৬৭৮৯",
   deva: "०१२३४५६७८९",
   fullwide: "０１２３４５６７８９",
@@ -1005,6 +991,7 @@ var numberingSystemDigits = {
   knda: "೦೧೨೩೪೫೬೭೮೯",
   laoo: "໐໑໒໓໔໕໖໗໘໙",
   latn: "0123456789",
+  limb: "\u1946\u1947\u1948\u1949\u194A\u194B\u194C\u194D\u194E\u194F",
   mlym: "൦൧൨൩൪൫൬൭൮൯",
   mong: "᠐᠑᠒᠓᠔᠕᠖᠗᠘᠙",
   mymr: "၀၁၂၃၄၅၆၇၈၉",
@@ -1135,22 +1122,6 @@ function getDateTimeComponentValues(component) {
 
 
 /**
- * Tests that the given value is valid for the given date-time component.
- * @param {string} component a date-time component.
- * @param {string} value the value to be tested.
- * @return {boolean} true if the test succeeds.
- * @exception if the test fails.
- */
-
-function testValidDateTimeComponentValue(component, value) {
-  if (getDateTimeComponentValues(component).indexOf(value) === -1) {
-    $ERROR("Invalid value " + value + " for date-time component " + component + ".");
-  }
-  return true;
-}
-
-
-/**
  * @description Tests whether timeZone is a String value representing a
  * structurally valid and canonicalized time zone name, as defined in
  * sections 6.4.1 and 6.4.2 of the ECMAScript Internationalization API
@@ -1169,7 +1140,7 @@ function isCanonicalizedStructurallyValidTimeZoneName(timeZone) {
   var fileName = fileNameComponent + "(?:/" + fileNameComponent + ")*";
   var etcName = "(?:Etc/)?GMT[+-]\\d{1,2}";
   var systemVName = "SystemV/[A-Z]{3}\\d{1,2}(?:[A-Z]{3})?";
-  var legacyName = etcName + "|" + systemVName + "|CST6CDT|EST5EDT|MST7MDT|PST8PDT|NZ|Canada/East-Saskatchewan";
+  var legacyName = etcName + "|" + systemVName + "|CST6CDT|EST5EDT|MST7MDT|PST8PDT|NZ";
   var zoneNamePattern = new RegExp("^(?:" + fileName + "|" + legacyName + ")$");
 
   if (typeof timeZone !== "string") {
@@ -1184,24 +1155,4 @@ function isCanonicalizedStructurallyValidTimeZoneName(timeZone) {
     return false;
   }
   return zoneNamePattern.test(timeZone);
-}
-
-
-/**
- * Verifies that the actual array matches the expected one in length, elements,
- * and element order.
- * @param {Array} expected the expected array.
- * @param {Array} actual the actual array.
- * @return {boolean} true if the test succeeds.
- * @exception if the test fails.
- */
-function testArraysAreSame(expected, actual) {
-  var i;
-  for (i = 0; i < Math.max(actual.length, expected.length); i++) {
-    if (actual[i] !== expected[i]) {
-      $ERROR("Result array element at index " + i + " should be \"" +
-        expected[i] + "\" but is \"" + actual[i] + "\".");
-    }
-  }
-  return true;
 }

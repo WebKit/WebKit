@@ -5,7 +5,7 @@
 es6id: 20.2.2.12
 description: >
   Math.cos.name is "cos".
-info: >
+info: |
   Math.cos ( x )
 
   17 ECMAScript Standard Built-in Objects:

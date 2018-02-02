@@ -3,7 +3,7 @@
 /*---
 esid: sec-%typedarray%.prototype.values
 description: Throws a TypeError exception when `this` is not Object
-info: >
+info: |
   22.2.3.30 %TypedArray%.prototype.values ( )
 
   The following steps are taken:

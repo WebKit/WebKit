@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     The slice function is intentionally generic.
     It does not require that its this value be an Array object
 esid: sec-array.prototype.slice

@@ -26,7 +26,7 @@ info: |
             5. If done is true, then
                [...]
             6. Let received be GeneratorYield(innerResult).
-features: [Symbol.iterator]
+features: [generators, Symbol.iterator]
 ---*/
 
 var quickIter = {};

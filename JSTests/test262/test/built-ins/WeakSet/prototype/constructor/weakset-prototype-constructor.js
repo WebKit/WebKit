@@ -5,7 +5,7 @@ es6id: 23.4.3.2
 esid: sec-weakset.prototype.constructor
 description: >
   WeakSet.prototype.constructor property descriptor
-info: >
+info: |
   WeakSet ( [ iterable ] )
 
   17 ECMAScript Standard Built-in Objects

@@ -6,7 +6,7 @@ description: >
     for declaration:
     disallow multiple lexical bindings, with initializer
 negative:
-  phase: early
+  phase: parse
   type: SyntaxError
 ---*/
 

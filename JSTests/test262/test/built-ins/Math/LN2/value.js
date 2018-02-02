@@ -4,7 +4,7 @@
 description: Math.LN2 is a numeric value
 esid: sec-math.ln2
 es6id: 20.2.1.3
-info: >
+info: |
     The Number value for the natural logarithm of 2, which is approximately
     0.6931471805599453.
 

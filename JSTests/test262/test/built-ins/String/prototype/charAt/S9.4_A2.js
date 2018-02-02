@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     If ToNumber(value) is +0, -0, +Infinity, or -Infinity,
     return ToNumber(value)
 es5id: 9.4_A2

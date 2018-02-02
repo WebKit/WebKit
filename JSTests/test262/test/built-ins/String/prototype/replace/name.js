@@ -5,7 +5,7 @@
 es6id: 21.1.3.14
 description: >
   String.prototype.replace.name is "replace".
-info: >
+info: |
   String.prototype.replace (searchValue, replaceValue )
 
   17 ECMAScript Standard Built-in Objects:

@@ -4,7 +4,7 @@
 es6id: 9.5.7
 description: >
     `.. in Object.create(proxy)` triggers trap.call(handler, target, P);
-info: >
+info: |
     [[HasProperty]] (P)
 
     ...

@@ -5,7 +5,7 @@ esid: sec-array.prototype.entries
 es6id: 22.1.3.4
 description: >
   The method should return an Iterator instance.
-info: >
+info: |
   22.1.3.4 Array.prototype.entries ( )
 
   1. Let O be ToObject(this value).

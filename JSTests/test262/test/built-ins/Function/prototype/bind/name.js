@@ -5,7 +5,7 @@
 es6id: 19.2.3.2
 description: >
   Function.prototype.bind.name is "bind".
-info: >
+info: |
   Function.prototype.bind ( thisArg , ...args)
 
   17 ECMAScript Standard Built-in Objects:

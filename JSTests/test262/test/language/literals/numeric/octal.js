@@ -4,7 +4,7 @@
 /*---
 es6id: 11.8.3.1
 description: Mathematical value of valid octal integer literals
-info: >
+info: |
     The MV of StrNumericLiteral ::: OctalIntegerLiteral is the MV of
     OctalIntegerLiteral.
     The MV of OctalIntegerLiteral :: 0o OctalDigits is the MV of OctalDigits.

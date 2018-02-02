@@ -1,9 +1,10 @@
 // This file was procedurally generated from the following sources:
 // - src/class-fields/computed-names.case
-// - src/class-fields/default/cls-decl-regular-definitions.template
+// - src/class-fields/productions/cls-decl-regular-definitions.template
 /*---
 description: Computed property names (regular fields defintion)
-features: [computed-property-names, class-fields]
+esid: prod-FieldDefinition
+features: [computed-property-names, class, class-fields-public]
 flags: [generated]
 includes: [propertyHelper.js]
 info: |
@@ -23,20 +24,11 @@ var x = "b";
 
 
 class C {
-  static ["a"] = 39; [x] = 42; [10] = "meep"; ["not initialized"]
+  [x] = 42; [10] = "meep"; ["not initialized"]
+
 }
 
 var c = new C();
-
-assert.sameValue(Object.hasOwnProperty.call(C.prototype, "a"), false);
-assert.sameValue(Object.hasOwnProperty.call(c, "a"), false);
-
-verifyProperty(C, "a", {
-  value: 39,
-  enumerable: true,
-  writable: true,
-  configurable: true
-});
 
 assert.sameValue(Object.hasOwnProperty.call(C.prototype, "b"), false);
 assert.sameValue(Object.hasOwnProperty.call(C, "b"), false);

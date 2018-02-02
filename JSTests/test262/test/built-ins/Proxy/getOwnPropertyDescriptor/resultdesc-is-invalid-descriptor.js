@@ -5,7 +5,7 @@ es6id: 9.5.5
 description: >
     Throws a TypeError exception if trap result and target property descriptors
     are not compatible.
-info: >
+info: |
     [[GetOwnProperty]] (P)
 
     ...

@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     Compute the mathematical integer value
     that is represented by Z in radix-R notation, using the
     letters A-Z and a-z for digits with values 10 through 35.

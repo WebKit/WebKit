@@ -5,7 +5,7 @@
 esid: sec-Intl.DateTimeFormat
 description: >
   Intl.DateTimeFormat.name is "DateTimeFormat".
-info: >
+info: |
   12.2.1 Intl.DateTimeFormat ([ locales [ , options ]])
 
   17 ECMAScript Standard Built-in Objects:

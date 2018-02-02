@@ -5,7 +5,7 @@
 es6id: 25.4.5.3
 description: >
   Throws a TypeError if capabilities executor already called with non-undefined values.
-info: >
+info: |
   Promise.prototype.then ( onFulfilled , onRejected )
 
   ...

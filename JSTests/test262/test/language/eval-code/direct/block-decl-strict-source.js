@@ -3,7 +3,7 @@
 /*---
 description: AnnexB extension not honored in strict mode
 es6id: B.3.3.2
-info: >
+info: |
     Block statement in eval code containing a function declaration
 
     B.3.3.3 Changes to EvalDeclarationInstantiation

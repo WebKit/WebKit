@@ -3,7 +3,7 @@
 /*---
 es6id: 20.1.1
 description: Subclassing the Number object
-info: >
+info: |
   20.1.1 The Number Constructor
 
   ...

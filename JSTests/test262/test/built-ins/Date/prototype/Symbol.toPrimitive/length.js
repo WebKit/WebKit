@@ -4,7 +4,7 @@
 esid: sec-date.prototype-@@toprimitive
 es6id: 20.3.4.45
 description: Date.prototype[Symbol.toPrimitive] `length` property
-info: >
+info: |
     ES6 section 17:
 
     Every built-in Function object, including constructors, has a length

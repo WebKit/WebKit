@@ -4,7 +4,7 @@
 /*---
 es6id: 8.1.1.2.1
 description: Non-object values of `Symbol.unscopables` property are ignored
-info: >
+info: |
     [...]
     6. If the withEnvironment flag of envRec is false, return true.
     7. Let unscopables be Get(bindings, @@unscopables).

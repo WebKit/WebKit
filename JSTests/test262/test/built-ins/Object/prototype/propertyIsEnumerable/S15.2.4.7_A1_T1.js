@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     The propertyIsEnumerable method does not consider objects in the
     prototype chain
 es5id: 15.2.4.7_A1_T1

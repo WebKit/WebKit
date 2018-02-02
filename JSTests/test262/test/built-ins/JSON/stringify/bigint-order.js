@@ -4,7 +4,7 @@
 /*---
 description: BigInt stringify order of steps
 esid: sec-serializejsonproperty
-info: >
+info: |
   Runtime Semantics: SerializeJSONProperty ( key, holder )
 
   2. If Type(value) is Object or BigInt, then

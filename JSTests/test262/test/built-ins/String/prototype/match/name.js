@@ -5,7 +5,7 @@
 es6id: 21.1.3.11
 description: >
   String.prototype.match.name is "match".
-info: >
+info: |
   String.prototype.match ( regexp )
 
   17 ECMAScript Standard Built-in Objects:

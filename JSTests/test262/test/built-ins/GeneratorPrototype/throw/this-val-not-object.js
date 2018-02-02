@@ -17,7 +17,7 @@ info: |
   25.3.3.2 GeneratorValidate
 
   1. If Type(generator) is not Object, throw a TypeError exception.
-features: [Symbol]
+features: [generators, Symbol]
 ---*/
 
 function* g() {}

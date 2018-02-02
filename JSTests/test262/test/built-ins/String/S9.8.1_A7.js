@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     If 1 <= s < 1e21 or -1e21 s < -1 and s has a fractional
     component, return the string consisting of the most significant n digits of
     the decimal representation of s, followed by a decimal point '.',

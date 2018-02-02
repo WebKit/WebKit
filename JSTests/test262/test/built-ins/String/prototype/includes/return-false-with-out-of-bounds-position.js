@@ -4,7 +4,7 @@
 es6id: 21.1.3.7
 description: >
   Returns false if position is >= this.length and searchString.length > 0.
-info: >
+info: |
   21.1.3.7 String.prototype.includes ( searchString [ , position ] )
 
   ...

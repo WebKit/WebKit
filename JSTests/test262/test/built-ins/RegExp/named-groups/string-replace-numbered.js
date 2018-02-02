@@ -5,7 +5,7 @@
 description: Named groups may be accessed in their replacement string by number
 esid: sec-getsubstitution
 features: [regexp-named-groups]
-info: >
+info: |
   Runtime Semantics: GetSubstitution( matched, str, position, captures, namedCaptures, replacement )
 
   Table: Replacement Text Symbol Substitutions

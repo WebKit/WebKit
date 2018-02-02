@@ -5,7 +5,7 @@ esid: sec-proxy-object-internal-methods-and-internal-slots-ownpropertykeys
 description: >
     If target is not extensible, the result can't contain keys names not
     contained in the target object.
-info: >
+info: |
     [[OwnPropertyKeys]] ( )
 
     ...

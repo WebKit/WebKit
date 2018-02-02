@@ -6,7 +6,7 @@
 esid: sec-atomics.load
 description: >
   Atomics.load.length is 2.
-info: >
+info: |
   Atomics.load ( ia, index )
 
   17 ECMAScript Standard Built-in Objects:

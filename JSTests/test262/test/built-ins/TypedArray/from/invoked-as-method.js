@@ -4,7 +4,7 @@
 esid: sec-%typedarray%.from
 description: >
   "from" cannot be invoked as a method of %TypedArray%
-info: >
+info: |
   22.2.2.1 %TypedArray%.from ( source [ , mapfn [ , thisArg ] ] )
 
   ...

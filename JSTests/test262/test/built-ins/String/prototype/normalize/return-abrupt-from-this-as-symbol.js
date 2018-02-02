@@ -4,7 +4,7 @@
 es6id: 21.1.3.12
 description: >
   Returns abrupt from ToString(this) where this is a Symbol
-info: >
+info: |
   21.1.3.12 String.prototype.normalize ( [ form ] )
 
   1. Let O be RequireObjectCoercible(this value).

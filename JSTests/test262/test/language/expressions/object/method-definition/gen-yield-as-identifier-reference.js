@@ -4,15 +4,17 @@
 /*---
 description: yield is a reserved keyword within generator function bodies and may not be used as an identifier reference. (Generator method)
 esid: prod-GeneratorMethod
+features: [generators]
 flags: [generated]
 negative:
-  phase: early
+  phase: parse
   type: SyntaxError
 info: |
     14.4 Generator Function Definitions
 
     GeneratorMethod[Yield, Await]:
       * PropertyName[?Yield, ?Await] ( UniqueFormalParameters[+Yield, ~Await] ) { GeneratorBody }
+
 
     IdentifierReference : Identifier
 

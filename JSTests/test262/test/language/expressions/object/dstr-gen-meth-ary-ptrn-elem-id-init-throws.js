@@ -5,7 +5,7 @@
 description: Destructuring initializer returns an abrupt completion (generator method)
 esid: sec-generator-function-definitions-runtime-semantics-propertydefinitionevaluation
 es6id: 14.4.13
-features: [destructuring-binding]
+features: [generators, destructuring-binding]
 flags: [generated]
 info: |
     GeneratorMethod :

@@ -4,7 +4,7 @@
 /*---
 es6id: 26.2.2.1.1
 description: The `length` property of Proxy Revocation functions
-info: >
+info: |
   The length property of a Proxy revocation function is 0.
 
   17 ECMAScript Standard Built-in Objects:

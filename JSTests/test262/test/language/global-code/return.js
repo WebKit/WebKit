@@ -13,7 +13,7 @@ info: |
   ScriptBody :
     StatementList[~Yield, ~Return]
 negative:
-  phase: early
+  phase: parse
   type: SyntaxError
 ---*/
 

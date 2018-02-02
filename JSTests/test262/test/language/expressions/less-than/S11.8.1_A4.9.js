@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     If x is less than y and these values are both finite non-zero, return
     true; otherwise, return false
 es5id: 11.8.1_A4.9

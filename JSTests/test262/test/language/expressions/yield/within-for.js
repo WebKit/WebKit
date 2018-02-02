@@ -4,6 +4,7 @@
 es6id: 25.2
 description: >
     `yield` expressions should suspend `for` loop iteration.
+features: [generators]
 ---*/
 
 function* g() {

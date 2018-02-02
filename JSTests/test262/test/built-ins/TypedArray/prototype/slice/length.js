@@ -5,7 +5,7 @@
 es6id: 22.2.3.23
 description: >
   %TypedArray%.prototype.slice.length is 2.
-info: >
+info: |
   %TypedArray%.prototype.slice ( start, end )
 
   17 ECMAScript Standard Built-in Objects:

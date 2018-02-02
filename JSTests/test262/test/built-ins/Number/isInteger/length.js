@@ -5,7 +5,7 @@
 es6id: 20.1.2.3
 description: >
   Number.isInteger.length is 1.
-info: >
+info: |
   Number.isInteger ( number )
 
   17 ECMAScript Standard Built-in Objects:

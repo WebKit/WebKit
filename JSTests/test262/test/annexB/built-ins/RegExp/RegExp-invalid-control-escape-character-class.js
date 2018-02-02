@@ -5,11 +5,12 @@
 esid: prod-annexB-ClassAtomNoDash
 description: >
   Character classes containing an invalid control escape behave like [\\c]
-info: >
+info: |
   ClassAtomNoDash :: `\`
 
   The production ClassAtomNoDash :: `\` evaluates as follows:
     1. Return the CharSet containing the single character `\`.
+features: [generators]
 ---*/
 
 function* invalidControls() {

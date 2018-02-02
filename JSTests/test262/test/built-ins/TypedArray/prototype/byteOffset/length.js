@@ -5,7 +5,7 @@
 es6id: 22.2.3.3
 description: >
   get %TypedArray%.prototype.byteOffset.length is 0.
-info: >
+info: |
   get %TypedArray%.prototype.byteOffset
 
   17 ECMAScript Standard Built-in Objects:

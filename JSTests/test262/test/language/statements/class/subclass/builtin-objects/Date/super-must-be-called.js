@@ -3,7 +3,7 @@
 /*---
 es6id: 20.3.2
 description: Super need to be called to initialize internals
-info: >
+info: |
   20.3.2 The Date Constructor
 
   ...

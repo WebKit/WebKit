@@ -4,7 +4,7 @@
 es6id: 26.1.9
 description: >
   Reflect.has is configurable, writable and not enumerable.
-info: >
+info: |
   26.1.9 Reflect.has ( target, propertyKey )
 
   17 ECMAScript Standard Built-in Objects

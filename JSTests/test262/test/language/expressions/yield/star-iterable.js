@@ -5,7 +5,7 @@ es6id: 25.2
 description: >
     When an iterator is the operand of a `yield *` expression, the generator
     should produce an iterator that visits each iterated item.
-features: [Symbol.iterator]
+features: [generators, Symbol.iterator]
 ---*/
 
 var results = [{ value: 1 }, { value: 8 }, { value: 34, done: true }];

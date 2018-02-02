@@ -4,7 +4,7 @@
 es6id: 23.3.3.4
 esid: sec-weakmap.prototype.has
 description: Throws TypeError if `this` is not Object.
-info: >
+info: |
   WeakMap.prototype.has ( value )
 
   1. Let S be the this value.

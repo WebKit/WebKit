@@ -3,7 +3,7 @@
 /*---
 esid: sec-get-%typedarray%.prototype.byteoffset
 description: Returns 0 if the instance has a detached buffer
-info: >
+info: |
   22.2.3.3 get %TypedArray%.prototype.byteOffset
 
   ...

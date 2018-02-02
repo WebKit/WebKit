@@ -5,7 +5,7 @@
 es6id: 20.2.2.27
 description: >
   Math.random.name is "random".
-info: >
+info: |
   Math.random ( )
 
   17 ECMAScript Standard Built-in Objects:

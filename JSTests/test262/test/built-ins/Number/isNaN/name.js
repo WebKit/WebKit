@@ -5,7 +5,7 @@
 es6id: 20.1.2.4
 description: >
   Number.isNaN.name is "isNaN".
-info: >
+info: |
   Number.isNaN ( number )
 
   17 ECMAScript Standard Built-in Objects:

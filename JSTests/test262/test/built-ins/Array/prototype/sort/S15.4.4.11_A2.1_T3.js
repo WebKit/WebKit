@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     If ToString([[Get]] ToString(j)) < ToString([[Get]] ToString(k)), return -1.
     If ToString([[Get]] ToString(j)) > ToString([[Get]] ToString(k)), return 1;
     return -1

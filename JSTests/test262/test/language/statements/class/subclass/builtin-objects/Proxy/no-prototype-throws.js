@@ -3,7 +3,7 @@
 /*---
 es6id: 14.5.14
 description: The Proxy Object is not subclasseable without a prototype
-info: >
+info: |
   14.5.14 Runtime Semantics: ClassDefinitionEvaluation
 
   5. If ClassHeritageopt is not present, then

@@ -6,7 +6,7 @@
 esid: sec-sharedarraybuffer-length
 description: >
   Throws a TypeError if SharedArrayBuffer is called as a function.
-info: >
+info: |
   SharedArrayBuffer( length )
 
   SharedArrayBuffer called with argument length performs the following steps:

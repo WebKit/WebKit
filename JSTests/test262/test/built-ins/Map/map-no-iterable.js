@@ -5,7 +5,7 @@ es6id: 23.1.1.1
 description: >
   Returns the new Map object with the new empty list if the iterable argument is
   undefined.
-info: >
+info: |
   Map ( [ iterable ] )
 
   ...

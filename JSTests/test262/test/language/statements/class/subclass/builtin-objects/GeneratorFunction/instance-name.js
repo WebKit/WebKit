@@ -3,7 +3,7 @@
 /*---
 es6id: 25.2.4.2
 description: Subclassed GeneratorFunction instances `name` property
-info: >
+info: |
   25.2.4.2 name
 
   The specification for the name property of Function instances given in

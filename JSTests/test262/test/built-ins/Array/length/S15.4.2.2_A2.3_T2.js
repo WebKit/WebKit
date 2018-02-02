@@ -3,7 +3,7 @@
 
 /*---
 esid: sec-array-len
-info: >
+info: |
     If the argument len is not a Number, then the length property of
     the newly constructed object is set to 1 and the 0 property of
     the newly constructed object is set to len

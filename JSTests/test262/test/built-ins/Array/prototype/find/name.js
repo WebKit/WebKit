@@ -5,7 +5,7 @@ esid: sec-array.prototype.find
 es6id: 22.1.3.8
 description: >
   Array.prototype.find.name value and descriptor.
-info: >
+info: |
   22.1.3.8 Array.prototype.find ( predicate [ , thisArg ] )
 
   17 ECMAScript Standard Built-in Objects

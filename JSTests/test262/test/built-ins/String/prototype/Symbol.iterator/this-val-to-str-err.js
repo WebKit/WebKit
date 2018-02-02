@@ -3,7 +3,7 @@
 /*---
 es6id: 25.1.3.27
 description: Error thrown coercing `this` value to a string
-info: >
+info: |
     1. Let O be RequireObjectCoercible(this value).
     2. Let S be ToString(O).
     3. ReturnIfAbrupt(S).

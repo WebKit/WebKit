@@ -5,7 +5,7 @@
 es6id: 21.1.3.25
 description: >
   String.prototype.trim.name is "trim".
-info: >
+info: |
   String.prototype.trim ( )
 
   17 ECMAScript Standard Built-in Objects:

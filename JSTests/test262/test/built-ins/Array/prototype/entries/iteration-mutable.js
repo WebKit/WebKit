@@ -5,7 +5,7 @@ esid: sec-array.prototype.entries
 es6id: 22.1.3.4
 description: >
   New items in the array are accessible via iteration until iterator is "done".
-info: >
+info: |
   The method should return a valid iterator with the context as the
   IteratedObject. When an item is added to the array after the iterator is
   created but before the iterator is "done" (as defined by 22.1.5.2.1) the

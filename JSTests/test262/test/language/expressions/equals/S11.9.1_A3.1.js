@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     Return true, if x and y are both true or both false; otherwise, return
     false
 es5id: 11.9.1_A3.1

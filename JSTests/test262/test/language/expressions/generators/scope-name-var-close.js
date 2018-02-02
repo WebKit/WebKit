@@ -13,6 +13,7 @@ info: |
     7. Let closure be GeneratorFunctionCreate(Normal, FormalParameters,
        GeneratorBody, funcEnv, strict).
     [...]
+features: [generators]
 ---*/
 
 var probe;

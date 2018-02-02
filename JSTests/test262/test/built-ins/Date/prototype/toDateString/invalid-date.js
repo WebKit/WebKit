@@ -4,7 +4,7 @@
 /*---
 esid: sec-date.prototype.todatestring
 description: Invalid Dates are rendered as "Invalid Date"
-info: >
+info: |
   Date.prototype.toDateString ( )
 
   ...

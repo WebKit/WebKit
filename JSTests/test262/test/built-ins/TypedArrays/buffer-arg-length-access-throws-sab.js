@@ -5,7 +5,7 @@
 esid: sec-typedarray-buffer-byteoffset-length
 description: >
   Returns abrupt from ToLength(length)
-info: >
+info: |
   22.2.4.5 TypedArray ( buffer [ , byteOffset [ , length ] ] )
 
   This description applies only if the TypedArray function is called with at

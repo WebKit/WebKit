@@ -2,7 +2,7 @@
 // See LICENSE for details.
 
 /*---
-info: >
+info: |
     Promise executor has predictable environment
     'this' should be global object in sloppy mode,
     undefined in strict mode

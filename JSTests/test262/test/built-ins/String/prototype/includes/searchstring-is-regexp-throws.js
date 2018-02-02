@@ -4,7 +4,7 @@
 es6id: 21.1.3.7
 description: >
   Throws a TypeError if searchString is a RegExp.
-info: >
+info: |
   21.1.3.7 String.prototype.includes ( searchString [ , position ] )
 
   ...

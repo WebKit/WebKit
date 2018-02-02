@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     If B1 = 110xxxxx ([0xC0 - 0xDF]), B2 = 10xxxxxx ([0x80 - 0xBF), without
     B1 = [0xC0, 0xC1], return UTF8(B1, B2)
 es5id: 15.1.3.1_A2.3_T1

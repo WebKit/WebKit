@@ -4,7 +4,7 @@
 /*---
 es6id: 21.2.5.11
 description: String coercion of `flags` property
-info: >
+info: |
     [...]
     7. Let flags be ToString(Get(rx, "flags")).
     [...]

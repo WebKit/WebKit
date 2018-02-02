@@ -5,7 +5,7 @@
 es6id: 22.2.2.4
 description: >
   get %TypedArray% [ @@species ].name is "get [Symbol.species]".
-info: >
+info: |
   get %TypedArray% [ @@species ]
 
   17 ECMAScript Standard Built-in Objects:

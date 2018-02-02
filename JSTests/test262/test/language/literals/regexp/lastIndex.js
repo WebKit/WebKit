@@ -2,7 +2,6 @@
 // This code is governed by the BSD license found in the LICENSE file.
 /*---
 esid: sec-regular-expression-literals-runtime-semantics-evaluation
-es6id: 12.2.8.2
 description: Initial state of the `lastIndex` property
 info: |
   [...]
@@ -11,7 +10,7 @@ info: |
   21.2.3.2.3 Runtime Semantics: RegExpCreate
 
   1. Let obj be ? RegExpAlloc(%RegExp%).
-  2. Return ? RegExpInitialize(obj, P, F). 
+  2. Return ? RegExpInitialize(obj, P, F).
 
   21.2.3.2.2 Runtime Semantics: RegExpInitialize
 

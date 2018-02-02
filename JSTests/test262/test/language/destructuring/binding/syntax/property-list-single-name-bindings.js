@@ -5,7 +5,7 @@
 es6id: 13.3.3
 description: >
   The ObjectBindingPattern with a simple property list and single name binding
-info: >
+info: |
   Destructuring Binding Patterns - Syntax
 
   ObjectBindingPattern[Yield] :

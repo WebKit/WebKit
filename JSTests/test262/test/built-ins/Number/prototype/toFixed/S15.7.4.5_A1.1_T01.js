@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     Step 1: Let f be ToInteger(fractionDigits). (If fractionDigits
     is undefined, this step produces the value 0)
 es5id: 15.7.4.5_A1.1_T01

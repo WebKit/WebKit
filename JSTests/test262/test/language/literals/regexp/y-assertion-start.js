@@ -4,7 +4,7 @@
 esid: sec-assertion
 es6id: 21.2.2.6
 description: The `y` flag has no effect on the `^` assertion
-info: >
+info: |
   Even when the y flag is used with a pattern, ^ always matches only at the
   beginning of Input, or (if Multiline is true) at the beginning of a line.
 ---*/

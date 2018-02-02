@@ -4,7 +4,7 @@
 es6id: 26.1.6
 description: >
   Return value from a receiver.
-info: >
+info: |
   26.1.6 Reflect.get ( target, propertyKey [ , receiver ])
 
   ...

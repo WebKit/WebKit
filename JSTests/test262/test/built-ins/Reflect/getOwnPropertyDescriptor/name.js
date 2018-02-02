@@ -4,7 +4,7 @@
 es6id: 26.1.7
 description: >
   Reflect.getOwnPropertyDescriptor.name value and property descriptor
-info: >
+info: |
   26.1.7 Reflect.getOwnPropertyDescriptor ( target, propertyKey )
 
   17 ECMAScript Standard Built-in Objects

@@ -4,7 +4,7 @@
 /*---
 esid: sec-date.prototype.todatestring
 description: Test the format of the date from toDateString
-info: >
+info: |
   Date.prototype.toDateString ( )
 
   5. Return DateString(_t_).

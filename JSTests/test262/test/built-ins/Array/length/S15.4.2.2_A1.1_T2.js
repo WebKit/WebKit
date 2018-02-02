@@ -3,7 +3,7 @@
 
 /*---
 esid: sec-array-len
-info: >
+info: |
     The [[Prototype]] property of the newly constructed object
     is set to the original Array prototype object, the one that
     is the initial value of Array.prototype

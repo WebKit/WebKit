@@ -5,7 +5,7 @@
 esid: sec-Intl.NumberFormat
 description: >
   Intl.NumberFormat.name is "NumberFormat".
-info: >
+info: |
   11.2.1 Intl.NumberFormat ([ locales [ , options ]])
 
   17 ECMAScript Standard Built-in Objects:

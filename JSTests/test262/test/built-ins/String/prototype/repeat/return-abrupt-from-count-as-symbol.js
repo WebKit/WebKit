@@ -4,7 +4,7 @@
 es6id: 21.1.3.13
 description: >
   Returns abrupt from ToInteger(count) where count is a Symbol
-info: >
+info: |
   21.1.3.13 String.prototype.repeat ( count )
 
   4. Let n be ToInteger(count).

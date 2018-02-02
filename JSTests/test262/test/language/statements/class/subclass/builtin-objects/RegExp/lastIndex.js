@@ -3,7 +3,7 @@
 /*---
 es6id: 21.2.6.1
 description: Instances has the own property lastIndex
-info: >
+info: |
   21.2.6.1 lastIndex
 
   The value of the lastIndex property specifies the String index at which to

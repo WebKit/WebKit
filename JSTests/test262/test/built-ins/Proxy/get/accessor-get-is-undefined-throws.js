@@ -7,7 +7,7 @@ description: >
 
     if trap result is not undefined, then proxy must report the same value for a
     non-configurable accessor property with an undefined get.
-info: >
+info: |
     13. If targetDesc is not undefined, then
         b. If IsAccessorDescriptor(targetDesc) and targetDesc.[[Configurable]]
         is false and targetDesc.[[Get]] is undefined, then

@@ -4,7 +4,7 @@
 es6id: 9.5.10
 description: >
     Trap return is an abrupt.
-info: >
+info: |
     9. Let booleanTrapResult be ToBoolean(Call(trap, handler, «target, P»)).
     10. ReturnIfAbrupt(booleanTrapResult).
 ---*/

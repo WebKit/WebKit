@@ -5,7 +5,7 @@
 es6id: 12.9.4
 description: >
     Arguments and 'this' value when invoking constructor's @@hasInstance property
-info: >
+info: |
     1. If Type(C) is not Object, throw a TypeError exception.
     2. Let instOfHandler be GetMethod(C,@@hasInstance).
     3. ReturnIfAbrupt(instOfHandler).

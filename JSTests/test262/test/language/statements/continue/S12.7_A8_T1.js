@@ -8,7 +8,7 @@ description: >
     Checking if execution of "continue Identifier" within catch Block
     fails
 negative:
-  phase: early
+  phase: parse
   type: SyntaxError
 ---*/
 

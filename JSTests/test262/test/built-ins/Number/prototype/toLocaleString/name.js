@@ -5,7 +5,7 @@
 es6id: 20.1.3.4
 description: >
   Number.prototype.toLocaleString.name is "toLocaleString".
-info: >
+info: |
   Number.prototype.toLocaleString( [ reserved1 [ , reserved2 ] ])
 
   17 ECMAScript Standard Built-in Objects:

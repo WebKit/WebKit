@@ -4,7 +4,7 @@
 esid: sec-date-constructor
 es6id: 20.3.2
 description: Constructor "name" property descriptor
-info: >
+info: |
   17 ECMAScript Standard Built-in Objects:
 
   Every built-in Function object, including constructors, that is not

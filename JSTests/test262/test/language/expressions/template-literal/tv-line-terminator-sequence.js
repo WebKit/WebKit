@@ -3,7 +3,7 @@
 /*---
 es6id: 11.8.6.1
 description: Template values of line terminator sequences
-info: >
+info: |
     The TV of TemplateCharacter :: LineTerminatorSequence is the TRV of
     LineTerminatorSequence.
     The TRV of LineTerminatorSequence :: <LF> is the code unit value 0x000A.

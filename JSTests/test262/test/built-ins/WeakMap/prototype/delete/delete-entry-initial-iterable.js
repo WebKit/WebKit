@@ -5,7 +5,7 @@ es6id: 23.3.3.2
 esid: sec-weakmap.prototype.delete
 description: >
   Delete an entry from initial iterable.
-info: >
+info: |
   WeakMap.prototype.delete ( value )
 
   ...

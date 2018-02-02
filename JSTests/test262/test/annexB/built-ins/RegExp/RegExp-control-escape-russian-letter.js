@@ -8,6 +8,7 @@ es6id: B.1.4
 description: >
   "ControlLetter :: RUSSIAN ALPHABET is incorrect"
   Instead, fall back to semantics to match literal "\\c"
+features: [generators]
 ---*/
 
 function* invalidControls() {

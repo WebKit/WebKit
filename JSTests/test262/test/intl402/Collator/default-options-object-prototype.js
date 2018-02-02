@@ -6,7 +6,7 @@ esid: sec-initializecollator
 description: >
   Monkey-patching Object.prototype does not change the default
   options for Collator as a null prototype is used.
-info: >
+info: |
   InitializeCollator ( collator, locales, options )
 
     1. If _options_ is *undefined*, then

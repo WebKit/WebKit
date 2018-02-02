@@ -1,10 +1,10 @@
 // Copyright (C) 2013 the V8 project authors. All rights reserved.
 // This code is governed by the BSD license found in the LICENSE file.
 /*---
-es6id: 7.2.
+esid: sec-object.is
 description: >
     Object.is/SameValue: Symbol
-features: [Symbol]
+features: [Object.is,Symbol]
 ---*/
 var symA = Symbol('66');
 var symB = Symbol('66');

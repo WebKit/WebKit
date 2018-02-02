@@ -5,7 +5,7 @@
 es6id: 20.2.2.3
 description: >
   Math.acosh.name is "acosh".
-info: >
+info: |
   Math.acosh ( x )
 
   17 ECMAScript Standard Built-in Objects:

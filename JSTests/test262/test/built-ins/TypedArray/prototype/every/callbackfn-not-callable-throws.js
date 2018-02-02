@@ -3,7 +3,7 @@
 /*---
 esid: sec-%typedarray%.prototype.every
 description: Throws a TypeError if callbackfn is not callable
-info: >
+info: |
   22.2.3.7 %TypedArray%.prototype.every ( callbackfn [ , thisArg ] )
 
   %TypedArray%.prototype.every is a distinct function that implements the same

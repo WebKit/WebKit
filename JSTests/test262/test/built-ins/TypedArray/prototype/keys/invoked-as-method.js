@@ -3,7 +3,7 @@
 /*---
 es6id: 22.2.3.15
 description: Requires a [[TypedArrayName]] internal slot.
-info: >
+info: |
   22.2.3.15 %TypedArray%.prototype.keys ( )
 
   1. Let O be the this value.

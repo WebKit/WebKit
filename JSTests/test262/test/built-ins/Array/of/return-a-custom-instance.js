@@ -5,7 +5,7 @@ esid: sec-array.of
 es6id: 22.1.2.3
 description: >
   Returns an instance from a custom constructor.
-info: >
+info: |
   Array.of ( ...items )
 
   ...

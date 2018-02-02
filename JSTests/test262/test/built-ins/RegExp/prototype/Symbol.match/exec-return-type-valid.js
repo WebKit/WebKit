@@ -4,7 +4,7 @@
 /*---
 description: Behavior when `exec` method returns value of valid type
 es6id: 21.2.5.6
-info: >
+info: |
     [...]
     7. If global is false, then
        a. Return RegExpExec(rx, S).

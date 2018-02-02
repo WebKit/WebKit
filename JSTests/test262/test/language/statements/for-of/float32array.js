@@ -3,7 +3,7 @@
 /*---
 es6id: 13.6.4
 description: Float32Array traversal using for..of
-info: >
+info: |
     Float32Array instances should be able to be traversed using a `for..of`
     loop.
 features: [TypedArray]

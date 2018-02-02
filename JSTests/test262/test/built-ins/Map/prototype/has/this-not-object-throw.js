@@ -4,7 +4,7 @@
 es6id: 23.1.3.7
 description: >
   Throws a TypeError if `this` is not an Object.
-info: >
+info: |
   Map.prototype.has ( key )
 
   1. Let M be the this value.

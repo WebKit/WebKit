@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     Number([value]) returns a number value (not a Number object) computed by
     ToNumber(value) if value was supplied
 es5id: 15.7.1.1_A1

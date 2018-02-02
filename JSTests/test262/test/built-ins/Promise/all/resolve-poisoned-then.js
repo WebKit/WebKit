@@ -3,7 +3,7 @@
 /*---
 description: Resolving with an object with a "poisoned" `then` property
 es6id: 25.4.4.1
-info: >
+info: |
     [...]
     6. Let promiseCapability be NewPromiseCapability(C).
     [...]

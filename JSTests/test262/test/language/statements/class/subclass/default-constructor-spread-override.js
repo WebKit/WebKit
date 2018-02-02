@@ -5,7 +5,7 @@
 esid: sec-runtime-semantics-classdefinitionevaluation
 description: >
   Default class constructor uses standard iterator spread semantics.
-info: >
+info: |
   14.5.14 Runtime Semantics: ClassDefinitionEvaluation
     ...
     10. If constructor is empty, then

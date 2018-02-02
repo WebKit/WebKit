@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 /*---
 description: Expression within statement is a candidate for tail-call optimization.
-esid: static-semantics-hasproductionintailposition
+esid: sec-static-semantics-hascallintailposition
 flags: [onlyStrict]
 features: [tail-call-optimization]
 includes: [tcoHelper.js]

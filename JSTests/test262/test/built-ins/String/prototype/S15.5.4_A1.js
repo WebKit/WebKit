@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     The String prototype object is itself a String object (its [[Class]] is "String")
 es5id: 15.5.4_A1
 description: >

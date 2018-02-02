@@ -3,7 +3,7 @@
 /*---
 es6id: 19.4.2.2
 description: Property descriptor
-info: >
+info: |
     This property has the attributes { [[Writable]]: false, [[Enumerable]]:
     false, [[Configurable]]: false }.
 includes: [propertyHelper.js]

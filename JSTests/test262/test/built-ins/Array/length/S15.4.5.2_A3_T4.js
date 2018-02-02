@@ -3,7 +3,7 @@
 
 /*---
 esid: sec-properties-of-array-instances-length
-info: >
+info: |
     If the length property is changed, every property whose name
     is an array index whose value is not smaller than the new length is automatically deleted
 es5id: 15.4.5.2_A3_T4

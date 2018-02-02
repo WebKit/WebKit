@@ -3,12 +3,12 @@
 
 /*---
 description: Expression not allowed in head's AssignmentExpression position
-info: >
+info: |
     IterationStatement :
         for ( var ForBinding of AssignmentExpression ) Statement
 es6id: 13.7
 negative:
-  phase: early
+  phase: parse
   type: SyntaxError
 ---*/
 

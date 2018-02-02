@@ -3,7 +3,7 @@
 
 /*---
 description: Map entry insertion during traversal using for..of
-info: >
+info: |
     New entries inserted into a Map instance during traversal should not be
     visited if they are removed prior to visitation.
 es6id: 13.6.4

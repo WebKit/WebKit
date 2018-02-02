@@ -4,7 +4,7 @@
 es6id: 21.1.2.2
 description: >
   The the arguments list is empty, an empty string is returned.
-info: >
+info: |
   String.fromCodePoint ( ...codePoints )
 
   1. Let codePoints be a List containing the arguments passed to this function.

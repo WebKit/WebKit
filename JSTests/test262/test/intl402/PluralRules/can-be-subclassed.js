@@ -5,7 +5,7 @@
 esid: sec-intl-pluralrules-constructor
 description: Tests that Intl.PluralRules can be subclassed.
 author: Zibi Braniecki
-includes: [testIntl.js]
+includes: [compareArray.js]
 ---*/
 
 // get a plural-rules and have it format an array of dates for comparison with the subclass
@@ -25,4 +25,4 @@ class MyPluralRules extends Intl.PluralRules {
 
 var pr = new MyPluralRules(locales);
 var actual = a.map(pr.select.bind(pr));
-testArraysAreSame(referenceSelected, actual);
+assert.compareArray(actual, referenceSelected);

@@ -4,7 +4,7 @@
 /*---
 esid: sec-get-regexp.prototype.flags
 description: Boolean coercion of the unicode property
-info: >
+info: |
   get RegExp.prototype.flags
 
   ...

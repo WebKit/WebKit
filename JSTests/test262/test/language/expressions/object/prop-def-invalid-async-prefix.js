@@ -26,7 +26,7 @@ info: |
       4. Return the result of performing BindingInitialization for
          BindingPattern passing rval and undefined as arguments.
 negative:
-  phase: early
+  phase: parse
   type: SyntaxError
 ---*/
 

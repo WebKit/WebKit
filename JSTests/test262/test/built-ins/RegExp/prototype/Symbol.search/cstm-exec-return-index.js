@@ -4,7 +4,7 @@
 /*---
 es6id: 21.2.5.9
 description: Index value returned by a custom `exec` method
-info: >
+info: |
     [...]
     9. Let result be RegExpExec(rx, S).
     [...]

@@ -3,7 +3,7 @@
 /*---
 es6id: 23.2.1
 description: Subclassing the Set object
-info: >
+info: |
   23.2.1 The Set Constructor
 
   ...

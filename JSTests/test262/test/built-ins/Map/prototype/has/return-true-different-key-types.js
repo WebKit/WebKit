@@ -4,7 +4,7 @@
 es6id: 23.1.3.7
 description: >
   Returns true for existing keys, using different key types.
-info: >
+info: |
   Map.prototype.has ( key )
 
   5. Repeat for each Record {[[key]], [[value]]} p that is an element of

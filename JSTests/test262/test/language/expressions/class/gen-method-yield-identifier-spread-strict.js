@@ -4,10 +4,10 @@
 /*---
 description: It's an early error if the AssignmentExpression is a function body with yield as an identifier in strict mode. (Generator method as a ClassExpression element)
 esid: prod-GeneratorMethod
-features: [object-spread]
+features: [object-spread, generators]
 flags: [generated, onlyStrict]
 negative:
-  phase: early
+  phase: parse
   type: SyntaxError
 info: |
     ClassElement :
@@ -20,6 +20,7 @@ info: |
 
     GeneratorMethod :
       * PropertyName ( UniqueFormalParameters ) { GeneratorBody }
+
 
     Spread Properties
 

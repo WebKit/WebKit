@@ -22,7 +22,7 @@ info: |
         iii. If return is undefined, return Completion(received).
         iv. Let innerReturnResult be ? Call(return, iterator, «
             received.[[Value]] »).
-features: [Symbol.iterator]
+features: [generators, Symbol.iterator]
 ---*/
 
 var thrown = new Test262Error();

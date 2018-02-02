@@ -4,7 +4,7 @@
 es6id: 22.2.3.3
 description: >
   "byteOffset" property of TypedArrayPrototype
-info: >
+info: |
   %TypedArray%.prototype.byteOffset is an accessor property whose set accessor
   function is undefined.
 

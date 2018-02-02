@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     When "instanceof" returns true it means that
     GetValue(RelationalExpression) is constructed with ShiftExpression
 es5id: 11.8.6_A7_T1

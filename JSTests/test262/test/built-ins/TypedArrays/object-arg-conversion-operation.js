@@ -5,7 +5,7 @@
 esid: sec-typedarray-object
 description: >
   Verify conversion values on returned instance
-info: >
+info: |
   22.2.4.4 TypedArray ( object )
 
   This description applies only if the TypedArray function is called with at

@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     unescapedURISet containing one instance of each character valid in
     uriUnescaped
 es5id: 15.1.3.3_A3.2_T1

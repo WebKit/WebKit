@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     If pattern is an object R whose [[Class]] property is "RegExp" and flags
     is undefined, then return R unchanged
 es5id: 15.10.3.1_A1_T3

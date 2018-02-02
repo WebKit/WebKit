@@ -5,7 +5,7 @@ es6id: 23.4.3.5
 esid: sec-weakset.prototype-@@tostringtag
 description: >
     `Symbol.toStringTag` property descriptor
-info: >
+info: |
     The initial value of the @@toStringTag property is the String value
     "WeakSet".
 

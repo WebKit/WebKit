@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     If length equal zero, call the [[Put]] method of this object
     with arguments "length" and 0 and return undefined
 esid: sec-array.prototype.pop

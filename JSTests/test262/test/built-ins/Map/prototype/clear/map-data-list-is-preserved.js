@@ -4,7 +4,7 @@
 es6id: 23.1.3.1
 description: >
   The existing [[MapData]] List is preserved.
-info: >
+info: |
   The existing [[MapData]] List is preserved because there may be existing
   MapIterator objects that are suspended midway through iterating over that
   List.

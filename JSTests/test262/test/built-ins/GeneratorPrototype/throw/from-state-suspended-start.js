@@ -6,6 +6,7 @@ description: >
     Resuming abruptly from a generator in the 'suspendedStart' state should
     honor the abrupt completion and trigger a transition into the 'completed'
     state.
+features: [generators]
 ---*/
 
 function E() {}

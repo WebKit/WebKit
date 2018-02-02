@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     RegExp.prototype.exec behavior depends on global property.
     Let global is true and let I = If ToInteger(lastIndex).
     Then if I<0 orI>length then set lastIndex to 0 and return null

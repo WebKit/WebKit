@@ -5,7 +5,7 @@
 /*---
 description: >
   SharedArrayBuffer.prototype.slice has default data property attributes.
-info: >
+info: |
   SharedArrayBuffer.prototype.slice ( start, end )
 
   17 ECMAScript Standard Built-in Objects:

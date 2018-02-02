@@ -5,7 +5,7 @@ es6id: 9.5.6
 description: >
     Throw a TypeError exception if Desc and target property descriptor are not
     compatible and trap result is true.
-info: >
+info: |
     [[DefineOwnProperty]] (P, Desc)
 
     ...

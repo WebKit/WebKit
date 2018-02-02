@@ -4,7 +4,7 @@
 esid: sec-%typedarray%.prototype.every
 description: >
   Returns false if any callbackfn call returns a coerced false.
-info: >
+info: |
   22.2.3.7 %TypedArray%.prototype.every ( callbackfn [ , thisArg ] )
 
   %TypedArray%.prototype.every is a distinct function that implements the same

@@ -2,17 +2,23 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
-    RegularExpressionFirstChar :: BackslashSequence :: \LineTerminator is
-    incorrect
-es5id: 7.8.5_A1.5_T2
-description: Line Feed, with eval
+esid: prod-RegularExpressionBackslashSequence
+info: |
+  RegularExpressionBackslashSequence ::
+  \ RegularExpressionNonTerminator
+
+  RegularExpressionNonTerminator ::
+    SourceCharacter but not LineTerminator
+
+description: >
+  A RegularExpressionBackslashSequence may not contain a <LF>, evaluated
+
 ---*/
 
 //CHECK#1
-try {      
-   eval("/\\\u000A/").source;   
-   $ERROR('#1.1: RegularExpressionFirstChar :: BackslashSequence :: \\Line Feed is incorrect. Actual: ' + (eval("/\\\u000A/").source)); 
+try {
+   eval("/\\\u000A/").source;
+   $ERROR('#1.1: RegularExpressionFirstChar :: BackslashSequence :: \\Line Feed is incorrect. Actual: ' + (eval("/\\\u000A/").source));
 }
 catch (e) {
   if ((e instanceof SyntaxError) !== true) {

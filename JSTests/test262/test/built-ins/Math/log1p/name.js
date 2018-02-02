@@ -5,7 +5,7 @@
 es6id: 20.2.2.21
 description: >
   Math.log1p.name is "log1p".
-info: >
+info: |
   Math.log1p ( x )
 
   17 ECMAScript Standard Built-in Objects:

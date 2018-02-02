@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     The Boolean prototype object is itself a Boolean object
     (its [[Class]] is "Boolean") whose value is false
 es5id: 15.6.4_A1

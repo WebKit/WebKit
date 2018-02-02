@@ -6,7 +6,7 @@ es6id: 18.2.5
 esid: sec-parseint-string-radix
 description: >
   parseInt.name is "parseInt".
-info: >
+info: |
   parseInt (string , radix)
 
   17 ECMAScript Standard Built-in Objects:

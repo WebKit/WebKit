@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     If Type(y) is Number and Type(y) is Boolean,
     return the result of comparison x == ToNumber(y)
 es5id: 11.9.1_A3.3

@@ -3,12 +3,12 @@
 
 /*---
 description: DecimalEscape used with `u` flag
-info: >
+info: |
     DecimalEscape is not allowed when the `u` flag is set (regardless of Annex
     B extensions--see ES6 section B.1.4).
 es6id: 21.2.1
 negative:
-  phase: early
+  phase: parse
   type: SyntaxError
 ---*/
 

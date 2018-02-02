@@ -4,7 +4,7 @@
 es6id: 26.1.4
 description: >
   Delete property.
-info: >
+info: |
   26.1.4 Reflect.deleteProperty ( target, propertyKey )
 
   ...

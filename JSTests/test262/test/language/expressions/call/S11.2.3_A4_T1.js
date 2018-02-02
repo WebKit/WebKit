@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     If MemberExpression does not implement the internal [[Call]] method,
     throw TypeError
 es5id: 11.2.3_A4_T1

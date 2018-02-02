@@ -4,7 +4,7 @@
 es6id: 22.2.2
 description: >
   TypedArray has a 'name' property whose value is "TypedArray".
-info: >
+info: |
   22.2.2 Properties of the %TypedArray% Intrinsic Object
 
   Besides a length property whose value is 3 and a name property whose value is

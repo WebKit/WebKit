@@ -5,7 +5,7 @@ es6id: 9.5.7
 description: >
     A property cannot be reported as non-existent, if it exists as an own
     property of the target object and the target object is not extensible.
-info: >
+info: |
     [[HasProperty]] (P)
 
     ...

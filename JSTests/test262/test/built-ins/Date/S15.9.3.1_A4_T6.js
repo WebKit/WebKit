@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     The [[Value]] property of the newly constructed object
     is set by following steps:
     1. Call ToNumber(year)

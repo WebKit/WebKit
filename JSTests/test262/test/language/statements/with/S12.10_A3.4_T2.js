@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     No matter how control leaves the embedded 'Statement',
     the scope chain is always restored to its former state
 es5id: 12.10_A3.4_T2

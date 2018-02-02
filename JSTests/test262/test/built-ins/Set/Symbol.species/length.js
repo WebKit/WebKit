@@ -5,7 +5,7 @@
 es6id: 23.2.2.2
 description: >
   get Set [ @@species ].length is 0.
-info: >
+info: |
   get Set [ @@species ]
 
   17 ECMAScript Standard Built-in Objects:

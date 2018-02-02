@@ -3,7 +3,7 @@
 /*---
 es6id: 19.2.3.6
 description: Function.prototype[Symbol.hasInstance] property descriptor
-info: >
+info: |
     This property has the attributes { [[Writable]]: false, [[Enumerable]]:
     false, [[Configurable]]: false }.
 features: [Symbol.hasInstance]

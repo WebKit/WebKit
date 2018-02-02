@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     Passing arguments by value differs from by reference and do not change
     values to be passed
 es5id: 8.7_A6

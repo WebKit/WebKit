@@ -5,7 +5,7 @@
 es6id: 21.2.4.2
 description: >
   get RegExp [ @@species ].length is 0.
-info: >
+info: |
   get RegExp [ @@species ]
 
   17 ECMAScript Standard Built-in Objects:

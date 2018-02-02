@@ -4,12 +4,14 @@
 /*---
 description: Use of yield as a valid identifier in a function body inside a generator body in non strict mode (Generator named expression - valid for non-strict only cases)
 esid: prod-GeneratorExpression
+features: [generators]
 flags: [generated, noStrict]
 info: |
     14.4 Generator Function Definitions
 
     GeneratorExpression:
       function * BindingIdentifier opt ( FormalParameters ) { GeneratorBody }
+
 ---*/
 
 var callCount = 0;

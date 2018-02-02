@@ -5,7 +5,7 @@
 es6id: 13.3.3
 description: >
   The ArrayBindingPattern with Object patterns on the element list
-info: >
+info: |
   Destructuring Binding Patterns - Syntax
 
   ArrayBindingPattern[Yield] :

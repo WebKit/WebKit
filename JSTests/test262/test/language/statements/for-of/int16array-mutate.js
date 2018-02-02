@@ -3,7 +3,7 @@
 /*---
 es6id: 13.6.4
 description: Int16Array mutation during traversal using for..of
-info: >
+info: |
     Int16Array instances should be able to be traversed using a `for..of` loop,
     and dynamic changes to their contents should be reflected in the iterated
     values.

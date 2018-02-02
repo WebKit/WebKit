@@ -5,7 +5,7 @@
 es6id: 22.2.3.6
 description: >
   %TypedArray%.prototype.entries.name is "entries".
-info: >
+info: |
   %TypedArray%.prototype.entries ( )
 
   17 ECMAScript Standard Built-in Objects:

@@ -4,7 +4,7 @@
 /*---
 es6id: 21.2.5.11
 description: Length coercion of `limit` argument
-info: >
+info: |
     [...]
     17. If limit is undefined, let lim be 2^32-1; else let lim be ? ToUint32(limit).
     [...]

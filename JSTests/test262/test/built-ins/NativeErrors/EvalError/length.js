@@ -5,7 +5,7 @@
 es6id: 19.5.6.2
 description: >
   EvalError.length is 1.
-info: >
+info: |
   NativeError ( message )
 
   19.5.6.2 Properties of the NativeError Constructors

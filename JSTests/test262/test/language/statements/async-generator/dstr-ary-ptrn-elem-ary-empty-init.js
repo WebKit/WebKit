@@ -4,7 +4,7 @@
 /*---
 description: BindingElement with array binding pattern and initializer is used (async generator function declaration)
 esid: sec-asyncgenerator-definitions-instantiatefunctionobject
-features: [async-iteration]
+features: [generators, async-iteration]
 flags: [generated, async]
 info: |
     AsyncGeneratorDeclaration : async [no LineTerminator here] function * BindingIdentifier
@@ -27,6 +27,7 @@ info: |
        b. Let v be ? GetValue(defaultValue).
     4. Return the result of performing BindingInitialization of BindingPattern
        with v and environment as the arguments.
+
 ---*/
 var initCount = 0;
 var iterCount = 0;

@@ -4,7 +4,7 @@
 /*---
 description: Literal astral symbols within a pattern
 es6id: 21.2.2.8.2
-info: >
+info: |
     21.2.2.2 Pattern
 
     The production Pattern :: Disjunction evaluates as follows:

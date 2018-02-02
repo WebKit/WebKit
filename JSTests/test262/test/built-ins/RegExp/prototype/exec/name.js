@@ -5,7 +5,7 @@
 es6id: 21.2.5.2
 description: >
   RegExp.prototype.exec.name is "exec".
-info: >
+info: |
   RegExp.prototype.exec ( string )
 
   17 ECMAScript Standard Built-in Objects:

@@ -3,7 +3,7 @@
 /*---
 es6id: 19.1.2.1
 description: Invoked as a constructor
-info: >
+info: |
     ES6 Section 9.3:
 
     Built-in function objects that are not identified as constructors do not

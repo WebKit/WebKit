@@ -5,7 +5,7 @@
 es6id: 22.2.3.2
 description: >
   get %TypedArray%.prototype.byteLength.length is 0.
-info: >
+info: |
   get %TypedArray%.prototype.byteLength
 
   17 ECMAScript Standard Built-in Objects:

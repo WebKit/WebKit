@@ -4,7 +4,7 @@
 /*---
 description: Use yield value in a object spread position (Geenerator method as a ClassDeclaration element)
 esid: prod-GeneratorMethod
-features: [object-spread]
+features: [object-spread, generators]
 flags: [generated]
 includes: [compareArray.js]
 info: |
@@ -18,6 +18,7 @@ info: |
 
     GeneratorMethod :
       * PropertyName ( UniqueFormalParameters ) { GeneratorBody }
+
 
     Spread Properties
 

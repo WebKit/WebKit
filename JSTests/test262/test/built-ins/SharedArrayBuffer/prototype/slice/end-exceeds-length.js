@@ -5,7 +5,7 @@
 /*---
 description: >
   Large `end` index is clamped to [[ArrayBufferByteLength]].
-info: >
+info: |
   SharedArrayBuffer.prototype.slice ( start, end )
 
 ---*/

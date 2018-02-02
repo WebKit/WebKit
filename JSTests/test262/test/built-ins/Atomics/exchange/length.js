@@ -6,7 +6,7 @@
 esid: sec-atomics.exchange
 description: >
   Atomics.exchange.length is 3.
-info: >
+info: |
   Atomics.exchange ( ia, index, val )
 
   17 ECMAScript Standard Built-in Objects:

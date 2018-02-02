@@ -5,7 +5,7 @@
 es6id: B.2.4.2
 description: >
   Date.prototype.setYear.length is 1.
-info: >
+info: |
   Date.prototype.setYear ( )
 
   17 ECMAScript Standard Built-in Objects:

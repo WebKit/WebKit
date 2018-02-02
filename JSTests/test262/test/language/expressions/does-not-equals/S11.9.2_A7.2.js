@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     If Type(x) is Object and Type(y) is Boolean,
     return ToPrimitive(x) != y
 es5id: 11.9.2_A7.2

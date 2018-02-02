@@ -3,7 +3,7 @@
 /*---
 es6id: 21.2.3
 description: Subclassing the RegExp object
-info: >
+info: |
   21.2.3 The RegExp Constructor
 
   ...

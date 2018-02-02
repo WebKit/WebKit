@@ -5,7 +5,7 @@
 es6id: 22.2.3.7
 description: >
   %TypedArray%.prototype.every.name is "every".
-info: >
+info: |
   %TypedArray%.prototype.every ( callbackfn [ , thisArg ] )
 
   17 ECMAScript Standard Built-in Objects:

@@ -4,7 +4,7 @@
 esid: sec-array.prototype.values
 es6id: 22.1.3.29
 description: Array.prototype.values property descriptor
-info: >
+info: |
     Every other data property described in clauses 18 through 26 and in Annex
     B.2 has the attributes { [[Writable]]: true, [[Enumerable]]: false,
     [[Configurable]]: true } unless otherwise specified.

@@ -4,7 +4,7 @@
 es6id: 26.1.7
 description: >
   Use a symbol value on property key.
-info: >
+info: |
   26.1.7 Reflect.getOwnPropertyDescriptor ( target, propertyKey )
 
   ...

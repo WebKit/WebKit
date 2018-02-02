@@ -5,7 +5,7 @@ es6id: 23.3.3.1
 esid: sec-weakmap.prototype.constructor
 description: >
   WeakMap.prototype.constructor value and property descriptor
-info: >
+info: |
   The initial value of WeakMap.prototype.constructor is the %WeakMap%
   intrinsic object.
 

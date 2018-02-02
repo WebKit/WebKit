@@ -5,7 +5,7 @@
 esid: sec-grammar-notation
 description: >
   The `let` contextual keyword must not contain Unicode escape sequences.
-info: >
+info: |
   Terminal symbols of the lexical, RegExp, and numeric string grammars are shown
   in fixed width font, both in the productions of the grammars and throughout this
   specification whenever the text directly refers to such a terminal symbol. These

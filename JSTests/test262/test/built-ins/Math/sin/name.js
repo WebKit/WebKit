@@ -5,7 +5,7 @@
 es6id: 20.2.2.30
 description: >
   Math.sin.name is "sin".
-info: >
+info: |
   Math.sin ( x )
 
   17 ECMAScript Standard Built-in Objects:

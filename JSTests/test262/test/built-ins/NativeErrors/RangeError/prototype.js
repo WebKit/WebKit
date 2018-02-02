@@ -5,7 +5,7 @@
 es6id: 19.5.6.2.1
 description: >
   The initial value of RangeError.prototype is the RangeError prototype object.
-info: >
+info: |
   The initial value of NativeError.prototype is a NativeError prototype object (19.5.6.3).
   Each NativeError constructor has a distinct prototype object.
   This property has the attributes { [[Writable]]: false, [[Enumerable]]: false, [[Configurable]]: false }.

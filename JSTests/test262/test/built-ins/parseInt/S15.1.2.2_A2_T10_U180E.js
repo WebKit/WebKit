@@ -7,7 +7,7 @@ es6id: 18.2.5
 esid: sec-parseint-string-radix
 description: >
   Leading U+180E is not recognized as whitespace
-info: >
+info: |
   18.2.5 parseInt (string , radix)
 
   ...

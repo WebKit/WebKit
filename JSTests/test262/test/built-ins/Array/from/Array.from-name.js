@@ -4,7 +4,7 @@
 esid: sec-array.from
 es6id: 22.1.2.1
 description: '`name` property'
-info: >
+info: |
     ES6 Section 17:
 
     Every built-in Function object, including constructors, that is not

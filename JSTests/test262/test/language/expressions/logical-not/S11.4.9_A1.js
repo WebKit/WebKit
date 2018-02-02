@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     White Space and Line Terminator between "!" and UnaryExpression are
     allowed
 es5id: 11.4.9_A1

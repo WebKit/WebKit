@@ -3,7 +3,7 @@
 /*---
 es6id: 11.8.6.1
 description: Template values of single characters
-info: >
+info: |
     The TV of TemplateCharacters :: TemplateCharacter is the TV of
     TemplateCharacter.
     The TV of TemplateCharacter :: SourceCharacter but not one of ` or \ or $

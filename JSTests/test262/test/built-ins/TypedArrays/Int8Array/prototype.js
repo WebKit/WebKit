@@ -6,7 +6,7 @@ es6id: 22.2.5.2
 esid: sec-typedarray.prototype
 description: >
   The initial value of Int8Array.prototype is the Int8Array prototype object.
-info: >
+info: |
   The initial value of TypedArray.prototype is the corresponding TypedArray prototype intrinsic object (22.2.6).
 
   This property has the attributes { [[Writable]]: false, [[Enumerable]]: false, [[Configurable]]: false }.

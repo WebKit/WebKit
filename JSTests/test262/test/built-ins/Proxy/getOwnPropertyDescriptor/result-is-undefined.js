@@ -5,7 +5,7 @@ es6id: 9.5.5
 description: >
     Return undefined if trap result is undefined and target is extensible and
     the target property descriptor is configurable.
-info: >
+info: |
     [[GetOwnProperty]] (P)
 
     ...

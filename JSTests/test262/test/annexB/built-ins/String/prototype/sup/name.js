@@ -5,7 +5,7 @@
 es6id: B.2.3.14
 description: >
   String.prototype.sup.name is "sup".
-info: >
+info: |
   String.prototype.sup ( )
 
   17 ECMAScript Standard Built-in Objects:

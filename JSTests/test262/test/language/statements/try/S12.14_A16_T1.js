@@ -2,13 +2,13 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     TryStatement: "try Block Catch" or "try Block Finally" or "try Block
     Catch Finally"
 es5id: 12.14_A16_T1
 description: Checking if pure "try" syntax construction passes
 negative:
-  phase: early
+  phase: parse
   type: SyntaxError
 ---*/
 

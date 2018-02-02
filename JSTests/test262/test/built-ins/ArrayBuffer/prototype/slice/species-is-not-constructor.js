@@ -6,7 +6,7 @@ esid: sec-arraybuffer.prototype.slice
 es6id: 24.1.4.3
 description: >
   Throws a TypeError if species constructor is not a constructor function.
-info: >
+info: |
   ArrayBuffer.prototype.slice ( start, end )
 
   ...

@@ -6,15 +6,20 @@ description: finally on a fulfilled promise can not override the resolution valu
 esid: sec-promise.prototype.finally
 features: [Promise.prototype.finally]
 flags: [async]
+includes: [promiseHelper.js]
 ---*/
-
+var sequence = [];
 var obj = {};
-
 var p = Promise.resolve(obj);
 
 p.finally(function () {
+  sequence.push(1);
   assert.sameValue(arguments.length, 0, 'onFinally receives zero args');
   return {};
 }).then(function (x) {
+  sequence.push(2);
   assert.sameValue(x, obj, 'onFinally can not override the resolution value');
-}).then($DONE).catch($ERROR);
+}).then(function() {
+  checkSequence(sequence, "All expected callbacks called in correct order");
+  $DONE();
+}).catch($ERROR);

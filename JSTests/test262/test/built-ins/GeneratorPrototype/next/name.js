@@ -5,7 +5,7 @@
 es6id: 25.3.1.2
 description: >
   Generator.prototype.next.name is "next".
-info: >
+info: |
   Generator.prototype.next ( value )
 
   17 ECMAScript Standard Built-in Objects:
@@ -17,6 +17,7 @@ info: >
     object, if it exists, has the attributes { [[Writable]]: false,
     [[Enumerable]]: false, [[Configurable]]: true }.
 includes: [propertyHelper.js]
+features: [generators]
 ---*/
 
 function* g() {}

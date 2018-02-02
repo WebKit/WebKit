@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     The [[Value]] property of the newly constructed object
     with supplied "undefined" argument should be NaN
 esid: sec-date-year-month-date-hours-minutes-seconds-ms

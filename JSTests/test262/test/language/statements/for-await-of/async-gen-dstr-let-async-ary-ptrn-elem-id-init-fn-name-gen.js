@@ -4,7 +4,7 @@
 /*---
 description: SingleNameBinding assigns name to "anonymous" generator functions (for-await-of statement)
 esid: sec-for-in-and-for-of-statements-runtime-semantics-labelledevaluation
-features: [destructuring-binding, async-iteration]
+features: [generators, destructuring-binding, async-iteration]
 flags: [generated, async]
 info: |
     IterationStatement :
@@ -47,6 +47,7 @@ info: |
           [...]
     6. If environment is undefined, return PutValue(lhs, v).
     7. Return InitializeReferencedBinding(lhs, v).
+
 ---*/
 
 var iterCount = 0;

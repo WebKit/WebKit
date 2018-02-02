@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     If 1 <= s < 1e21 or -1e21 s < -1, return the string
     consisting of the k digits of the decimal representation of s (in order,
     with no leading zeroes), followed by n-k occurrences of the character '0'

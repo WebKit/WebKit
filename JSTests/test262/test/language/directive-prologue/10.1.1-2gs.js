@@ -7,7 +7,7 @@ description: >
     Strict Mode - Use Strict Directive Prologue is ''use strict''
     which lost the last character ';'
 negative:
-  phase: early
+  phase: parse
   type: SyntaxError
 flags: [raw]
 ---*/

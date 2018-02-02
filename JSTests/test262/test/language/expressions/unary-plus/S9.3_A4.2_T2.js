@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     Result of number conversion from number value equals to the input
     argument (no conversion)
 es5id: 9.3_A4.2_T2

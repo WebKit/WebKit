@@ -5,7 +5,7 @@
 es6id: B.2.4.1
 description: >
   Date.prototype.getYear.name is "getYear".
-info: >
+info: |
   Date.prototype.getYear ( )
 
   17 ECMAScript Standard Built-in Objects:

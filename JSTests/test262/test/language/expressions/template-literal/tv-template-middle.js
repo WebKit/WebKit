@@ -3,7 +3,7 @@
 /*---
 es6id: 11.8.6.1
 description: Template values of the template middle pattern
-info: >
+info: |
     The TV and TRV of TemplateMiddle :: }${ is the empty code unit sequence.
     The TRV of TemplateMiddle :: } TemplateCharacters ${ is the TRV of
     TemplateCharacters.

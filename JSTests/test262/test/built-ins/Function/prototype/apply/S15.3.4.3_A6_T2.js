@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     if argArray is neither an array nor an arguments object (see 10.1.8), a
     TypeError exception is thrown
 es5id: 15.3.4.3_A6_T2

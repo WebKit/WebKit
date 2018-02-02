@@ -4,7 +4,7 @@
 esid: sec-integer-indexed-exotic-objects-hasproperty-p
 description: >
   Return boolean from Symbol properties
-info: >
+info: |
   9.4.5.2 [[HasProperty]](P)
 
   ...

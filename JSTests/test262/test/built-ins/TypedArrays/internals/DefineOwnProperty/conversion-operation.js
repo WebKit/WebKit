@@ -5,7 +5,7 @@
 esid: sec-integer-indexed-exotic-objects-defineownproperty-p-desc
 description: >
   Verify conversion after defining value
-info: >
+info: |
   9.4.5.3 [[DefineOwnProperty]] ( P, Desc)
 
   ...

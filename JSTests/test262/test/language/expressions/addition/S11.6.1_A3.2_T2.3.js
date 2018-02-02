@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     If Type(Primitive(x)) is String or Type(Primitive(y)) is String, then
     operator x + y returns the result of concatenating ToString(x) followed
     by ToString(y)

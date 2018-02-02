@@ -4,7 +4,7 @@
 /*---
 es6id: 25.4.1.3.2
 description: The `length` property of Promise Resolve functions
-info: >
+info: |
   The length property of a promise resolve function is 1.
 
   17 ECMAScript Standard Built-in Objects:

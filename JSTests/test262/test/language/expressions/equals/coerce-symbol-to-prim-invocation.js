@@ -3,7 +3,7 @@
 /*---
 es6id: 12.10.3
 description: Invocation of `Symbol.toPrimitive` method during coercion
-info: >
+info: |
     [...]
     7. Return the result of performing Abstract Equality Comparison rval ==
        lval.

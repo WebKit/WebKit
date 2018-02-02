@@ -4,7 +4,7 @@
 es6id: 22.1.2.5
 description: >
   Array[Symbol.species] accessor property get name
-info: >
+info: |
   22.1.2.5 get Array [ @@species ]
 
   ...

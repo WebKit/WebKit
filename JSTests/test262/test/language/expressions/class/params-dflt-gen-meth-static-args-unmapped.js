@@ -4,7 +4,7 @@
 description: Referencing the arguments object from a default parameter (static class expression generator method)
 esid: sec-class-definitions-runtime-semantics-evaluation
 es6id: 14.5.16
-features: [default-parameters]
+features: [generators, default-parameters]
 info: |
     ClassExpression : class BindingIdentifieropt ClassTail
 
@@ -67,7 +67,7 @@ info: |
        FormalsList using iteratorRecord and environment as the arguments.
     2. ReturnIfAbrupt(status).
     3. Return the result of performing IteratorBindingInitialization for
-       FormalParameter using iteratorRecord and environment as the arguments. 
+       FormalParameter using iteratorRecord and environment as the arguments.
 ---*/
 
 var callCount = 0;

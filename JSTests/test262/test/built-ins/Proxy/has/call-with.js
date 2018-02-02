@@ -4,7 +4,7 @@
 es6id: 9.5.7
 description: >
     A `with` variable check trigger trap.call(handler, target, P);
-info: >
+info: |
     [[HasProperty]] (P)
 
     ...

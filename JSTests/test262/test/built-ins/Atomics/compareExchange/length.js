@@ -6,7 +6,7 @@
 esid: sec-atomics.compareexchange
 description: >
   Atomics.compareExchange.length is 4.
-info: >
+info: |
   Atomics.compareExchange ( ia, index, expect, replace )
 
   17 ECMAScript Standard Built-in Objects:

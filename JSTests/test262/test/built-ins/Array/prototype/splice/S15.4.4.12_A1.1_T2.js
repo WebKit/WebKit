@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     If start is positive, use min(start, length).
     If deleteCount is positive, use min(deleteCount, length - start)
 esid: sec-array.prototype.splice

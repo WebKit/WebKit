@@ -4,7 +4,7 @@
 description: The `import` declaration may not appear within a ScriptBody
 esid: sec-scripts
 negative:
-  phase: early
+  phase: parse
   type: SyntaxError
 info: |
      A.5 Scripts and Modules

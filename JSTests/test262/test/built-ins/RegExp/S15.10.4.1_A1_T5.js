@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     If pattern is an object R whose [[Class]] property is "RegExp" and flags is undefined, then let P be
     the pattern used to construct R and let F be the flags used to construct R
 es5id: 15.10.4.1_A1_T5

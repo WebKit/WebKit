@@ -5,7 +5,7 @@
 es6id: 19.5.6.3.3
 description: >
   The initial value of SyntaxError.prototype.name is "SyntaxError".
-info: >
+info: |
   The initial value of the name property of the prototype for a given NativeError
   constructor is a string consisting of the name of the constructor (the name used
   instead of NativeError).

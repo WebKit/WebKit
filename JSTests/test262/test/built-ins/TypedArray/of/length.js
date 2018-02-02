@@ -5,7 +5,7 @@
 esid: sec-%typedarray%-of
 description: >
   %TypedArray%.of.length is 0.
-info: >
+info: |
   %TypedArray%.of ( ...items )
 
   17 ECMAScript Standard Built-in Objects:

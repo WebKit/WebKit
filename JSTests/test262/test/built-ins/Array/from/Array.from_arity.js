@@ -6,7 +6,7 @@ esid: sec-array.from
 es6id: 22.1.2.1
 description: >
   The length property of the Array.from method is 1.
-info: >
+info: |
   22.1.2.1 Array.from ( items [ , mapfn [ , thisArg ] ] )
 
   ...

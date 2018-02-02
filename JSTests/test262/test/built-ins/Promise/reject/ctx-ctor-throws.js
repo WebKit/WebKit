@@ -5,7 +5,7 @@
 description: >
     `Promise.reject` invoked on a constructor value that throws an error
 es6id: 25.4.4.4
-info: >
+info: |
     1. Let C be the this value.
     [...]
     3. Let promiseCapability be NewPromiseCapability(C).

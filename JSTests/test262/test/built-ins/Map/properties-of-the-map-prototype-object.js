@@ -4,7 +4,7 @@
 es6id: 23.1.3
 description: >
   The prototype of Map.prototype is Object.prototype.
-info: >
+info: |
   The Map prototype object is the intrinsic object %MapPrototype%. The value
   of the [[Prototype]] internal slot of the Map prototype object is the
   intrinsic object %ObjectPrototype% (19.1.3). The Map prototype object is an

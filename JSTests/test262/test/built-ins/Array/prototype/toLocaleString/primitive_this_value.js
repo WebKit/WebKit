@@ -4,7 +4,7 @@
 /*---
 esid: sec-array.prototype.tolocalestring
 description: Array.prototype.toLocaleString called with primitive element
-info: >
+info: |
   22.1.3.26 Array.prototype.toLocaleString ( [ reserved1 [ , reserved2 ] ] )
 
   ...

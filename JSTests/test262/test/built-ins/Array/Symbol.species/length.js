@@ -5,7 +5,7 @@
 es6id: 22.1.2.5
 description: >
   get Array [ @@species ].length is 0.
-info: >
+info: |
   get Array [ @@species ]
 
   17 ECMAScript Standard Built-in Objects:

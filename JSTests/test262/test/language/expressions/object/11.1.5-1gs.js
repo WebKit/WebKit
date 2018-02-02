@@ -8,7 +8,7 @@ description: >
     Identifier in a PropertySetParameterList of a PropertyAssignment
     that is contained in strict code
 negative:
-  phase: early
+  phase: parse
   type: SyntaxError
 flags: [onlyStrict]
 ---*/

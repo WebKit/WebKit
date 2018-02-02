@@ -5,7 +5,7 @@
 esid: sec-arraybuffer-constructor
 description: >
   ArrayBuffer.length is 1.
-info: >
+info: |
   ArrayBuffer ( length )
 
   17 ECMAScript Standard Built-in Objects:

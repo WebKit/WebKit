@@ -5,10 +5,10 @@
 description: Rest element (array binding pattern) may not be followed by any element (class expression method)
 esid: sec-class-definitions-runtime-semantics-evaluation
 es6id: 14.5.16
-features: [destructuring-binding]
+features: [generators, destructuring-binding]
 flags: [generated]
 negative:
-  phase: early
+  phase: parse
   type: SyntaxError
 info: |
     ClassExpression : class BindingIdentifieropt ClassTail

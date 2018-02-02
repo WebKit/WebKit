@@ -5,7 +5,7 @@ es6id: 21.1.2.4
 description: >
   Returns the string value appending from the same index order using String.raw
   as a tag function.
-info: >
+info: |
   21.1.2.4 String.raw ( template , ...substitutions )
 
   ...

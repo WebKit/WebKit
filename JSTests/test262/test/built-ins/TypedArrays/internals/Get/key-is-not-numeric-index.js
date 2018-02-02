@@ -4,7 +4,7 @@
 esid: sec-integer-indexed-exotic-objects-get-p-receiver
 description: >
   Use OrginaryGet if key is not a CanonicalNumericIndex
-info: >
+info: |
   9.4.5.4 [[Get]] (P, Receiver)
 
   ...

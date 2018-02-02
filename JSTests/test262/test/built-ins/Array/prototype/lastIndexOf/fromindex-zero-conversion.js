@@ -4,7 +4,7 @@
 esid: sec-array.prototype.lastindexof
 description: >
   Return +0 when fromIndex is -0 and return index refers to the first position
-info: >
+info: |
   22.1.3.15 Array.prototype.lastIndexOf ( searchElement [ , fromIndex ] )
 
   ...

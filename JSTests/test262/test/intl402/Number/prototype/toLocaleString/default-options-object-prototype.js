@@ -6,7 +6,7 @@ esid: sec-initializenumberformat
 description: >
   Monkey-patching Object.prototype does not change the default
   options for NumberFormat as a null prototype is used.
-info: >
+info: |
   InitializeNumberFormat ( numberFormat, locales, options )
 
     1. If _options_ is *undefined*, then

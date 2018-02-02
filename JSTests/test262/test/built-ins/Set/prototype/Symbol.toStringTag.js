@@ -4,7 +4,7 @@
 es6id: 23.2.3.12
 description: >
     `Symbol.toStringTag` property descriptor
-info: >
+info: |
     The initial value of the @@toStringTag property is the String value
     "Set".
 

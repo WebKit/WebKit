@@ -6,7 +6,7 @@ es6id: 22.2.5.1
 esid: sec-typedarray.bytes_per_element
 description: >
   The initial value of Int16Array.BYTES_PER_ELEMENT is 2.
-info: >
+info: |
   The value of TypedArray.BYTES_PER_ELEMENT is the Number value of the
   Element Size value specified in Table 49 for TypedArray.
 

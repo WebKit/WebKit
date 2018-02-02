@@ -5,7 +5,7 @@
 description: >
     `unicode` accessor function invoked on a RegExp instance
 es6id: 21.2.5.15
-info: >
+info: |
     21.2.5.15 get RegExp.prototype.unicode
 
     [...]

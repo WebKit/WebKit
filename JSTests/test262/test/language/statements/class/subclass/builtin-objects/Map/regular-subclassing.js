@@ -3,7 +3,7 @@
 /*---
 es6id: 23.1.1
 description: Subclassing the Map object
-info: >
+info: |
   23.1.1 The Map Constructor
 
   ...

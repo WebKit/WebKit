@@ -4,7 +4,7 @@
 /*---
 es6id: 20.2.2.13
 description: Length property of Math.cosh is 1
-info: >
+info: |
   Math.cosh ( x )
 
   17 ECMAScript Standard Built-in Objects:

@@ -19,7 +19,7 @@ info: |
      c. Else,
         i. Assert: received.[[Type]] is return.
         ii. Let return be ? GetMethod(iterator, "return").
-features: [Symbol.iterator]
+features: [generators, Symbol.iterator]
 ---*/
 
 var thrown = new Test262Error();

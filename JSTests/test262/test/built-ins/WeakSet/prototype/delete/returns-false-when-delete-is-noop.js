@@ -5,7 +5,7 @@ es6id: 23.4.3.3
 esid: sec-weakset.prototype.delete
 description: >
   Return false if entry wasn't in the WeakSet.
-info: >
+info: |
   WeakSet.prototype.delete ( value )
 
   ...

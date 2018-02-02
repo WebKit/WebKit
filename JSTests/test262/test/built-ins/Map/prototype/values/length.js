@@ -4,7 +4,7 @@
 es6id: 23.1.3.11
 description: >
   Map.prototype.values.length value and descriptor.
-info: >
+info: |
   Map.prototype.values ()
 
   17 ECMAScript Standard Built-in Objects

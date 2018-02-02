@@ -4,7 +4,7 @@
 /*---
 description: lastIndex read but not written when global and sticky are unset.
 es6id: 21.2.5.2.2
-info: >
+info: |
     21.2.5.2.2 Runtime Semantics: RegExpBuiltinExec ( R, S )
 
     [...]

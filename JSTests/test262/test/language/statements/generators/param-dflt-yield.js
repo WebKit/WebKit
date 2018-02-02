@@ -13,9 +13,9 @@ info: |
   YieldExpression cannot be used within the FormalParameters of a generator
   function because any expressions that are part of FormalParameters are
   evaluated before the resulting generator object is in a resumable state.
-features: [default-parameters]
+features: [generators, default-parameters]
 negative:
-  phase: early
+  phase: parse
   type: SyntaxError
 ---*/
 

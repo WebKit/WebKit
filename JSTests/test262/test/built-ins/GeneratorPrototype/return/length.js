@@ -5,7 +5,7 @@
 es6id: 25.3.1.3
 description: >
   Generator.prototype.return.length is 1.
-info: >
+info: |
   Generator.prototype.return ( value )
 
   17 ECMAScript Standard Built-in Objects:
@@ -20,6 +20,7 @@ info: >
     object has the attributes { [[Writable]]: false, [[Enumerable]]: false,
     [[Configurable]]: true }.
 includes: [propertyHelper.js]
+features: [generators]
 ---*/
 
 function* g() {}

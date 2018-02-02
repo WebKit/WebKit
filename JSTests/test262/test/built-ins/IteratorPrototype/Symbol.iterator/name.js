@@ -3,7 +3,7 @@
 /*---
 es6id: 25.1.2.1
 description: Descriptor for `name` property
-info: >
+info: |
   The value of the name property of this function is "[Symbol.iterator]".
 
   ES6 Section 17: ECMAScript Standard Built-in Objects

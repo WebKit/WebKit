@@ -5,7 +5,7 @@
 es6id: 19.1.2.17
 description: >
   Object.seal.name is "seal".
-info: >
+info: |
   Object.seal ( O )
 
   17 ECMAScript Standard Built-in Objects:

@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     The 0 property of the newly constructed object is set to item0
     (if supplied); the 1 property of the newly constructed object is set to item1
     (if supplied); and, in general, for as many arguments as there are, the k property

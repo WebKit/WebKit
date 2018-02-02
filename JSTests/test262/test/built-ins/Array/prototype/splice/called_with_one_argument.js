@@ -3,7 +3,7 @@
 
 /*---
 description: Array.prototype.splice deletes length-start elements when called with one argument
-info: >
+info: |
   22.1.3.25 Array.prototype.splice (start, deleteCount , ...items )
 
   ...

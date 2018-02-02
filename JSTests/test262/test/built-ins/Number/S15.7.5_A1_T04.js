@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     Number instances have no special properties beyond those
     inherited from the Number prototype object
 es5id: 15.7.5_A1_T04

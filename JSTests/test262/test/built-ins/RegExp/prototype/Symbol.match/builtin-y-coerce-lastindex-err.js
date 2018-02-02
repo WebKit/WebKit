@@ -4,7 +4,7 @@
 /*---
 description: Behavior when coercion of `lastIndex` attribute throws an error
 es6id: 21.2.5.6
-info: >
+info: |
     [...]
     7. If global is false, then
        a. Return RegExpExec(rx, S).

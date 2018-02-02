@@ -3,7 +3,7 @@
 /*---
 es6id: 23.3.1
 description: Super need to be called to initialize internals
-info: >
+info: |
   23.3.1 The WeakMap Constructor
 
   ...

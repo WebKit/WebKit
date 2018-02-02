@@ -2,25 +2,18 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-description: SyntaxError is thrown for malformed replacements
+description: A missing > following $< means that the $< is taken literally
+  in a replacement string in the context of named capture substitution.
 esid: sec-getsubstitution
 features: [regexp-named-groups]
-info: >
-  Runtime Semantics: GetSubstitution( matched, str, position, captures, namedCaptures, replacement )
-
-  Table: Replacement Text Symbol Substitutions
-
-  Unicode Characters: $<
-  Replacement text:
-    2. Otherwise,
-      a. Scan until the next >, throwing a SyntaxError exception if one is not found, and let the enclosed substring be groupName.
 ---*/
 
 let source = "(?<fst>.)(?<snd>.)|(?<thd>x)";
-for (let flags of ["", "u", "g", "gu"]) {
+for (let flags of ["", "u"]) {
   let re = new RegExp(source, flags);
-  assert.throws(SyntaxError, () => "abcd".replace(re, "$<snd"),
-                "unclosed named group in replacement should throw a SyntaxError");
-  assert.throws(SyntaxError, () => "abcd".replace(re, "$<>"),
-                "empty named group in replacement should throw a SyntaxError");
+  assert.sameValue("$<sndcd", "abcd".replace(re, "$<snd"));
+}
+for (let flags of ["g", "gu"]) {
+  let re = new RegExp(source, flags);
+  assert.sameValue("$<snd$<snd", "abcd".replace(re, "$<snd"));
 }

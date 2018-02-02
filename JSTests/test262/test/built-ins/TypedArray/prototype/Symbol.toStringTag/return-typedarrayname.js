@@ -2,9 +2,9 @@
 // This code is governed by the BSD license found in the LICENSE file.
 /*---
 esid: sec-get-%typedarray%.prototype-@@tostringtag
-description: |
+description: >
   Return value from the [[TypedArrayName]] internal slot
-info: >
+info: |
   22.2.3.32 get %TypedArray%.prototype [ @@toStringTag ]
 
   ...

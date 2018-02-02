@@ -4,7 +4,7 @@
 es6id: 21.1.3.3
 description: >
   Return value on coerced values on ToInteger(position).
-info: >
+info: |
   21.1.3.3 String.prototype.codePointAt ( pos )
 
   ...

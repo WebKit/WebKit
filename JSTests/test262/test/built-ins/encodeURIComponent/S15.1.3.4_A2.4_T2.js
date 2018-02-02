@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     If string.charAt(k) in [0xD800 - 0xDBFF] and string.charAt(k+1) in
     [0xDC00 � 0xDFFF], return 4 octets (000wwwxx xxxxyyyy yyzzzzzz ->
     11110www 10xxxxxx 10yyyyyy 10zzzzzz)

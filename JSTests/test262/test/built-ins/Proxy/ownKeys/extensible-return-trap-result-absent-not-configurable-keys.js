@@ -5,7 +5,7 @@ esid: sec-proxy-object-internal-methods-and-internal-slots-ownpropertykeys
 description: >
     If target is extensible, return the non-falsy trap result if target doesn't
     contain any non-configurable keys.
-info: >
+info: |
     [[OwnPropertyKeys]] ( )
 
     ...

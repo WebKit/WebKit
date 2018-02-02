@@ -4,7 +4,7 @@
 es6id: 22.1.4.1
 description: >
   Instances has the own property length
-info: >
+info: |
   22.1.4.1 length
 
   The length property of an Array instance is a data property whose value is
@@ -13,7 +13,6 @@ info: >
 
   The length property initially has the attributes { [[Writable]]: true,
   [[Enumerable]]: false, [[Configurable]]: false }.
-includes: [propertyHelper.js]
 ---*/
 
 class Ar extends Array {}

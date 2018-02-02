@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     toString: If radix is an integer from 2 to 36, but not 10,
     the result is a string, the choice of which is implementation-dependent
 es5id: 15.7.4.2_A2_T31

@@ -5,7 +5,7 @@
 /*---
 description: >
   The `end` index defaults to [[ArrayBufferByteLength]] if undefined.
-info: >
+info: |
   SharedArrayBuffer.prototype.slice ( start, end )
 
 ---*/

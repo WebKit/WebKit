@@ -16,6 +16,7 @@ info: |
          i. Let argumentsObjectNeeded be false.
   [...]
 flags: [noStrict]
+features: [generators]
 ---*/
 
 var args;

@@ -4,7 +4,7 @@
 es6id: 9.5.14
 description: >
     Throws a TypeError if trap result is not an Object: Number
-info: >
+info: |
     [[Construct]] ( argumentsList, newTarget)
 
     11. If Type(newObj) is not Object, throw a TypeError exception.

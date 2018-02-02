@@ -5,7 +5,7 @@
 es6id: 19.1.2.2
 description: >
   Object.create.name is "create".
-info: >
+info: |
   Object.create ( O [ , Properties ] )
 
   17 ECMAScript Standard Built-in Objects:

@@ -2,10 +2,10 @@
 // This code is governed by the BSD license found in the LICENSE file.
 /*---
 esid: sec-integer-indexed-exotic-objects-defineownproperty-p-desc
-description: |
+description: >
   Returns false if key is a numeric index and Descriptor is an
   AccessorDescriptor
-info: >
+info: |
   9.4.5.3 [[DefineOwnProperty]] ( P, Desc)
   ...
   3. If Type(P) is String, then

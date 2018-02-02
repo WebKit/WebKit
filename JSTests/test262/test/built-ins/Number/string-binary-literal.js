@@ -4,7 +4,7 @@
 /*---
 es6id: 20.1.1.1
 description: Mathematical value of valid binary integer literals
-info: >
+info: |
     20.1.1.1 Number ( [ value ] )
 
     When Number is called with argument number, the following steps are taken:

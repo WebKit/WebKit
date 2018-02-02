@@ -4,7 +4,7 @@
 /*---
 es6id: 25.4.4.1.2
 description: The `name` property of Promise.all Resolve Element functions
-info: >
+info: |
   A promise resolve function is an anonymous built-in function.
 
   17 ECMAScript Standard Built-in Objects:

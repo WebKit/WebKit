@@ -4,7 +4,7 @@
 /*---
 es6id: 21.2.5.11
 description: RegExp.prototype[Symbol.split] property descriptor
-info: >
+info: |
     ES6 Section 17
 
     Every other data property described in clauses 18 through 26 and in Annex

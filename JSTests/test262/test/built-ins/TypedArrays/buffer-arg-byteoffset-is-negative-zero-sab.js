@@ -5,7 +5,7 @@
 esid: pending
 description: >
   TypedArray's [[ByteOffset]] internal slot is always a positive number, test with negative zero.
-info: >
+info: |
   %TypedArray% ( buffer [ , byteOffset [ , length ] ] )
 
   ...

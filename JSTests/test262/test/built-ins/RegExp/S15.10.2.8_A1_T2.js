@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     The form (?= Disjunction ) specifies a zero-width positive lookahead.
     In order for it to succeed, the pattern inside Disjunction must match at the current position, but the current position is not advanced before matching the sequel.
     If Disjunction can match at the current position in several ways, only the first one is tried

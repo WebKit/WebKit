@@ -4,7 +4,7 @@
 es6id: 26.2.2.1.1
 description: >
     Calling the revoked function returns undefined
-info: >
+info: |
     Proxy Revocation Functions
 
     ...

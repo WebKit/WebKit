@@ -4,7 +4,7 @@
 es6id: 21.1.3.3
 description: >
   Returns code point of LeadSurrogate if not followed by a valid TrailSurrogate.
-info: >
+info: |
   21.1.3.3 String.prototype.codePointAt ( pos )
 
   ...

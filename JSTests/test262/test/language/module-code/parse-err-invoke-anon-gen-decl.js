@@ -16,9 +16,10 @@ info: |
       export default ClassDeclaration[Default]
       export default [lookahead ∉ { function, class }] AssignmentExpression[In];
 negative:
-  phase: early
+  phase: parse
   type: SyntaxError
 flags: [module]
+features: [generators]
 ---*/
 
 throw "Test262: This statement should not be evaluated.";

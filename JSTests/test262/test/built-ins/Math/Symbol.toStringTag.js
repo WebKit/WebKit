@@ -4,7 +4,7 @@
 es6id: 20.2.1.9
 description: >
     `Symbol.toStringTag` property descriptor
-info: >
+info: |
     The initial value of the @@toStringTag property is the String value
     "Math".
 

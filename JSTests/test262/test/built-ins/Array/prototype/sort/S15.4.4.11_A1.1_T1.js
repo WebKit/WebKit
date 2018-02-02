@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     If this object does not have a property named by ToString(j),
     and this object does not have a property named by ToString(k), return +0
 esid: sec-array.prototype.sort

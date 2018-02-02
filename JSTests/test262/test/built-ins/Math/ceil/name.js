@@ -5,7 +5,7 @@
 es6id: 20.2.2.10
 description: >
   Math.ceil.name is "ceil".
-info: >
+info: |
   Math.ceil ( x )
 
   17 ECMAScript Standard Built-in Objects:

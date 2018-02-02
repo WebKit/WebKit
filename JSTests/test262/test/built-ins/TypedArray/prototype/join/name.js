@@ -5,7 +5,7 @@
 es6id: 22.2.3.14
 description: >
   %TypedArray%.prototype.join.name is "join".
-info: >
+info: |
   %TypedArray%.prototype.join ( separator )
 
   17 ECMAScript Standard Built-in Objects:

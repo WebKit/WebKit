@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     The MV of StrUnsignedDecimalLiteral:::. DecimalDigits ExponentPart
     is the MV of DecimalDigits times 10<sup><small>e-n</small></sup>, where n is
     the number of characters in DecimalDigits and e is the MV of ExponentPart

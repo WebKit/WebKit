@@ -5,7 +5,7 @@
 es6id: 22.2.3.22
 description: >
   %TypedArray%.prototype.set.name is "set".
-info: >
+info: |
   %TypedArray%.prototype.set ( overloaded [ , offset ])
 
   17 ECMAScript Standard Built-in Objects:

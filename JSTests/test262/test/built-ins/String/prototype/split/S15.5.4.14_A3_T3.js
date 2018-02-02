@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     String.prototype.split() returns an Array object with:
     i) length equaled to 1,
     ii) [[Get]](0) equaled to the result of converting this object to a string

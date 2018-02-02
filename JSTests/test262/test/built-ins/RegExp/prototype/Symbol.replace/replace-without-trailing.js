@@ -4,7 +4,7 @@
 /*---
 description: Return value when replacement pattern matches final code point
 es6id: 21.2.5.8
-info: >
+info: |
     [...]
     17. If nextSourcePosition ≥ lengthS, return accumulatedResult.
 features: [Symbol.replace]

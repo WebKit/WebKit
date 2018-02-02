@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     "Delete" operator removes property, which is reference to the object, not
     the object
 es5id: 11.4.1_A4

@@ -6,7 +6,7 @@ es6id: 20.1.2.10
 esid: sec-number.nan
 description: >
   "NaN" property descriptor and value of Number
-info: >
+info: |
   20.1.2.10 Number.NaN
 
   The value of Number.NaN is NaN.

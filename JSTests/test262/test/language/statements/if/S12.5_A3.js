@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     When the production "IfStatement: if ( Expression ) Statement else
     Statement" is evaluated, Expression is evaluated first
 es5id: 12.5_A3

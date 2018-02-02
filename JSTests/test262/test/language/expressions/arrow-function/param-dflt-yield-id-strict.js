@@ -12,7 +12,7 @@ info: |
 features: [default-parameters]
 flags: [onlyStrict]
 negative:
-  phase: early
+  phase: parse
   type: SyntaxError
 ---*/
 

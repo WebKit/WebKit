@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     The production FunctionDeclaration: "function Identifier (
     FormalParameterList_opt ) { FunctionBody }" is processed by function
     declarations

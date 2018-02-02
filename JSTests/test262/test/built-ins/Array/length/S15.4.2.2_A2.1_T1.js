@@ -3,7 +3,7 @@
 
 /*---
 esid: sec-array-len
-info: >
+info: |
     If the argument len is a Number and ToUint32(len) is equal to len,
     then the length property of the newly constructed object is set to ToUint32(len)
 es5id: 15.4.2.2_A2.1_T1

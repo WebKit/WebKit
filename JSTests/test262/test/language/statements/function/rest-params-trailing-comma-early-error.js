@@ -6,7 +6,7 @@ description: It's a syntax error if a FunctionRestParameter is followed by a tra
 esid: sec-function-definitions-runtime-semantics-instantiatefunctionobject
 flags: [generated]
 negative:
-  phase: early
+  phase: parse
   type: SyntaxError
 info: |
     FunctionDeclaration :

@@ -5,7 +5,7 @@
 esid: sec-math.pow
 description: >
   Math.pow.name is "pow".
-info: >
+info: |
   Math.pow ( x, y )
 
   17 ECMAScript Standard Built-in Objects:

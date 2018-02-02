@@ -3,7 +3,7 @@
 /*---
 es6id: 19.4.1
 description: Symbol subclass called with the new operator throws on super()
-info: >
+info: |
   19.4.1 The Symbol Constructor
 
   ...

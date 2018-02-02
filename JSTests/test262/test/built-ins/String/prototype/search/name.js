@@ -5,7 +5,7 @@
 es6id: 21.1.3.15
 description: >
   String.prototype.search.name is "search".
-info: >
+info: |
   String.prototype.search ( regexp )
 
   17 ECMAScript Standard Built-in Objects:

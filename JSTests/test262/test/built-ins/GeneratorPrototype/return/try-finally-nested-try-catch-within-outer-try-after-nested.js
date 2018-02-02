@@ -7,6 +7,7 @@ description: >
     and following a nested `try..catch` statment, `return` should interrupt
     control flow as if a `return` statement had appeared at that location in
     the function body.
+features: [generators]
 ---*/
 
 var inCatch = 0;

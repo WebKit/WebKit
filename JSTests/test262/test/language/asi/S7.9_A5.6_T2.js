@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     Since LineTerminator between Postfix Increment/Decrement Operator(I/DO) and operand is not allowed but
     between Prefix I/DO and operand admitted, Postfix I/DO in combination with prefix I/DO after automatic semicolon insertion gives valid result
 es5id: 7.9_A5.6_T2

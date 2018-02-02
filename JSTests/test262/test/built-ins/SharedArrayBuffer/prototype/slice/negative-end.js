@@ -5,7 +5,7 @@
 /*---
 description: >
   Negative `end` index is relative to [[ArrayBufferByteLength]].
-info: >
+info: |
   SharedArrayBuffer.prototype.slice ( start, end )
 
 ---*/

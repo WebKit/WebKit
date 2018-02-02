@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     If neither x, nor y is a prefix of each other, returned result of strings
     comparison applies a simple lexicographic ordering to the sequences of
     code point value values

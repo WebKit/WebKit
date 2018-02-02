@@ -4,7 +4,7 @@
 es6id: 23.3.3.5
 esid: sec-weakmap.prototype.set
 description: WeakMap.prototype.set.name descriptor
-info: >
+info: |
   WeakMap.prototype.set ( value )
 
   17 ECMAScript Standard Built-in Objects

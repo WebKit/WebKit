@@ -3,7 +3,7 @@
 /*---
 es6id: 25.4.4.6
 description: Promise `Symbol.species` accessor function return value
-info: >
+info: |
     1. Return the this value.
 features: [Symbol.species]
 ---*/

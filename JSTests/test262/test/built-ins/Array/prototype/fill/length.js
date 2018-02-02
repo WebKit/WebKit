@@ -4,7 +4,7 @@
 esid: sec-array.prototype.fill
 es6id: 22.1.3.6
 description: Array.prototype.fill.length value and descriptor.
-info: >
+info: |
   17 ECMAScript Standard Built-in Objects
 includes: [propertyHelper.js]
 ---*/

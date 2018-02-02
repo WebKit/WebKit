@@ -2,7 +2,7 @@
 // See LICENSE for details.
 
 /*---
-info: >
+info: |
     Promise throws TypeError when executor is not callable
 es6id: S25.4.3.1_A3.1_T1
 author: Sam Mikes

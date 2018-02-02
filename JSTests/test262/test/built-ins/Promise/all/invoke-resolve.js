@@ -5,7 +5,7 @@
 description: >
     Invocation of the constructor's `resolve` method
 es6id: 25.4.4.1
-info: >
+info: |
     11. Let result be PerformPromiseAll(iteratorRecord, C, promiseCapability).
 
     [...]

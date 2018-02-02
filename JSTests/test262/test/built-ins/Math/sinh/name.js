@@ -5,7 +5,7 @@
 es6id: 20.2.2.31
 description: >
   Math.sinh.name is "sinh".
-info: >
+info: |
   Math.sinh ( x )
 
   17 ECMAScript Standard Built-in Objects:

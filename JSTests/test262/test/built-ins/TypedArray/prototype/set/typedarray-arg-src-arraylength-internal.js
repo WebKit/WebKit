@@ -4,7 +4,7 @@
 esid: sec-%typedarray%.prototype.set-typedarray-offset
 description: >
   Uses typedArray's internal [[ArrayLength]]
-info: >
+info: |
   22.2.3.23.2 %TypedArray%.prototype.set(typedArray [ , offset ] )
 
   1. Assert: typedArray has a [[TypedArrayName]] internal slot. If it does not,

@@ -4,7 +4,7 @@
 /*---
 esid: sec-date.prototype.toutcstring
 description: Test the format of the date from toUTCString
-info: >
+info: |
   Date.prototype.toUTCString ( )
 
   4. Return the String value formed by concatenating DateString(_tv_, `", "`), `" "`, and TimeString(_tv_).

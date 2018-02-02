@@ -4,7 +4,7 @@
 es6id: 23.1.1.1
 description: >
   new Map returns abrupt from getting Map.prototype.set.
-info: >
+info: |
   Map ( [ iterable ] )
 
   ...

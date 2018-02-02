@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     White Space and Line Terminator between LogicalORExpression and "?" or
     between "?" and AssignmentExpression or between AssignmentExpression and
     ":" or between ":" and AssignmentExpression are allowed

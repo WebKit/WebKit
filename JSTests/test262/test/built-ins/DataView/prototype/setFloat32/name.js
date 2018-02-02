@@ -6,7 +6,7 @@ esid: sec-dataview.prototype.setfloat32
 es6id: 24.2.4.13
 description: >
   DataView.prototype.setFloat32.name is "setFloat32".
-info: >
+info: |
   DataView.prototype.setFloat32 ( byteOffset, value [ , littleEndian ] )
 
   17 ECMAScript Standard Built-in Objects:

@@ -4,7 +4,7 @@
 es6id: 9.5.7
 description: >
     Trap returns abrupt. Using `with`.
-info: >
+info: |
     [[HasProperty]] (P)
 
     ...

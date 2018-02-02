@@ -6,7 +6,7 @@ description: >
     const declarations without initialisers in statement positions: 
     label: Statement
 negative:
-  phase: early
+  phase: parse
   type: SyntaxError
 ---*/
 

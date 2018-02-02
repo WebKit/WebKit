@@ -5,7 +5,7 @@
 es6id: 22.2.3.13
 description: >
   %TypedArray%.prototype.indexOf.name is "indexOf".
-info: >
+info: |
   %TypedArray%.prototype.indexOf (searchElement [ , fromIndex ] )
 
   17 ECMAScript Standard Built-in Objects:

@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     When Function object(F) is constructed the length property of F is set to
     the number of formal properties specified in FormalParameterList
 es5id: 13.2_A3

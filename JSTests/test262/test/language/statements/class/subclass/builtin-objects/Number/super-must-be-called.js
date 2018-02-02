@@ -3,7 +3,7 @@
 /*---
 es6id: 20.1.1
 description: Super need to be called to initialize internals
-info: >
+info: |
   20.1.1 The Number Constructor
 
   ...

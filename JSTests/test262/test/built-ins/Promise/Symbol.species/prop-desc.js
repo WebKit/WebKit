@@ -3,7 +3,7 @@
 /*---
 es6id: 25.4.4.6
 description: Promise `Symbol.species` property
-info: >
+info: |
     Promise[@@species] is an accessor property whose set accessor function is
     undefined.
 

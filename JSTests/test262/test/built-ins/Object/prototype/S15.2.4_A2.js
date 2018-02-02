@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     The value of the internal [[Class]] property of Object prototype object
     is "Object"
 es5id: 15.2.4_A2

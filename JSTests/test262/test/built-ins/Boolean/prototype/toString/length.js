@@ -6,7 +6,7 @@ esid: sec-boolean.prototype.tostring
 es6id: 19.3.3.2
 description: >
   Boolean.prototype.toString.length is 0.
-info: >
+info: |
   Boolean.prototype.toString ( )
 
   17 ECMAScript Standard Built-in Objects:

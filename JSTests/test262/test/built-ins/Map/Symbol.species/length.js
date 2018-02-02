@@ -5,7 +5,7 @@
 es6id: 23.1.2.2
 description: >
   get Map [ @@species ].length is 0.
-info: >
+info: |
   get Map [ @@species ]
 
   17 ECMAScript Standard Built-in Objects:

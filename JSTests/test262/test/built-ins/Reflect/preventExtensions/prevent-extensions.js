@@ -4,7 +4,7 @@
 es6id: 26.1.12
 description: >
   Prevent extentions on target.
-info: >
+info: |
   26.1.12 Reflect.preventExtensions ( target )
 
   ...

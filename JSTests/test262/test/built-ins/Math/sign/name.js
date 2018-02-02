@@ -5,7 +5,7 @@
 es6id: 20.2.2.29
 description: >
   Math.sign.name is "sign".
-info: >
+info: |
   Math.sign ( x )
 
   17 ECMAScript Standard Built-in Objects:

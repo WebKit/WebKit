@@ -6,7 +6,7 @@ description: >
     function declarations in statement position in strict mode:
     do Statement while ( Expression )
 negative:
-  phase: early
+  phase: parse
   type: SyntaxError
 flags: [onlyStrict]
 ---*/

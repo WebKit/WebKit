@@ -5,7 +5,7 @@
 description: Abrupt completion returned by GetIterator (class expression method (default parameter))
 esid: sec-class-definitions-runtime-semantics-evaluation
 es6id: 14.5.16
-features: [Symbol.iterator, destructuring-binding, default-parameters]
+features: [Symbol.iterator, generators, destructuring-binding, default-parameters]
 flags: [generated]
 info: |
     ClassDeclaration : class BindingIdentifier ClassTail

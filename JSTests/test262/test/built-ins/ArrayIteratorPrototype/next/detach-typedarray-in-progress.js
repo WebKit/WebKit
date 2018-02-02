@@ -3,7 +3,7 @@
 /*---
 esid: sec-%arrayiteratorprototype%.next
 description: If the underlying TypedArray is detached during iteration, throw
-info: >
+info: |
   %ArrayIteratorPrototype%.next( )
 
   ...

@@ -4,15 +4,17 @@
 /*---
 description: It's an early error if the generator body has another function body with yield as an identifier in strict mode. (Generator Function declaration)
 esid: prod-GeneratorDeclaration
+features: [generators]
 flags: [generated, onlyStrict]
 negative:
-  phase: early
+  phase: parse
   type: SyntaxError
 info: |
     14.4 Generator Function Definitions
 
     GeneratorDeclaration :
       function * BindingIdentifier ( FormalParameters ) { GeneratorBody }
+
 ---*/
 throw "Test262: This statement should not be evaluated.";
 

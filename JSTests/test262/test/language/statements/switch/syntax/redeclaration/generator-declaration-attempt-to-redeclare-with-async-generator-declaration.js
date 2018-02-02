@@ -4,10 +4,10 @@
 /*---
 description: redeclaration with AsyncGeneratorDeclaration (GeneratorDeclaration in SwitchStatement)
 esid: sec-switch-statement-static-semantics-early-errors
-features: [async-iteration]
+features: [async-iteration, generators]
 flags: [generated]
 negative:
-  phase: early
+  phase: parse
   type: SyntaxError
 info: |
     SwitchStatement : switch ( Expression ) CaseBlock

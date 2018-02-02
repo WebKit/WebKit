@@ -5,7 +5,7 @@ esid: sec-%typedarray%.prototype.copywithin
 es6id: 22.2.3.5
 description: >
   Max values of target and start positions are this.length.
-info: >
+info: |
   22.2.3.5 %TypedArray%.prototype.copyWithin (target, start [ , end ] )
 
   %TypedArray%.prototype.copyWithin is a distinct function that implements the

@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     White Space and Line Terminator between BitwiseORExpression and "|" or
     between "|" and BitwiseXORExpression are allowed
 es5id: 11.10.3_A1

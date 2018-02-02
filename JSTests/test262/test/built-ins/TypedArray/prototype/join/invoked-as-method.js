@@ -3,7 +3,7 @@
 /*---
 es6id: 22.2.3.14
 description: Requires a [[TypedArrayName]] internal slot.
-info: >
+info: |
   22.2.3.14 %TypedArray%.prototype.join ( separator )
 
   This function is not generic. ValidateTypedArray is applied to the this value

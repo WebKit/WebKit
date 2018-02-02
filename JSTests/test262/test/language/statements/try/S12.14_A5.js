@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     The production TryStatement: "try Block Finally" and the production
     TryStatement: "try Block Catch Finally"
 es5id: 12.14_A5

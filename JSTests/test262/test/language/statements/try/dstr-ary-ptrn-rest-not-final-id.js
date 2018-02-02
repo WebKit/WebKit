@@ -8,7 +8,7 @@ es6id: 13.15.7
 features: [destructuring-binding]
 flags: [generated]
 negative:
-  phase: early
+  phase: parse
   type: SyntaxError
 info: |
     Catch : catch ( CatchParameter ) Block

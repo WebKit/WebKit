@@ -5,7 +5,7 @@
 es6id: 21.2.5.4
 description: >
   get RegExp.prototype.global.length is 0.
-info: >
+info: |
   get RegExp.prototype.global
 
   17 ECMAScript Standard Built-in Objects:

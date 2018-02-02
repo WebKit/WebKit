@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     The Identifier in a FunctionExpression can be referenced from inside the
     FunctionExpression's FunctionBody to allow the function calling itself
     recursively

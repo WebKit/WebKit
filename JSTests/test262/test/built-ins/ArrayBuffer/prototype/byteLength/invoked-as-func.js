@@ -4,7 +4,7 @@
 es6id: 24.1.4.1
 esid: sec-get-arraybuffer.prototype.bytelength
 description: Throws a TypeError exception when invoked as a function
-info: >
+info: |
   24.1.4.1 get ArrayBuffer.prototype.byteLength
 
   1. Let O be the this value.

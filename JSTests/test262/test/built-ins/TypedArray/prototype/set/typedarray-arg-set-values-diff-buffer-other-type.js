@@ -5,7 +5,7 @@ esid: sec-%typedarray%.prototype.set-typedarray-offset
 description: >
   Set values from different instances using the different buffer and different
   type.
-info: >
+info: |
   22.2.3.23.2 %TypedArray%.prototype.set(typedArray [ , offset ] )
 
   1. Assert: typedArray has a [[TypedArrayName]] internal slot. If it does not,

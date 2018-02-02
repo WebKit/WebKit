@@ -4,7 +4,7 @@
 esid: sec-%typedarray%.prototype.every
 description: >
   Does not interact over non-integer properties
-info: >
+info: |
   22.2.3.7 %TypedArray%.prototype.every ( callbackfn [ , thisArg ] )
 
   ...

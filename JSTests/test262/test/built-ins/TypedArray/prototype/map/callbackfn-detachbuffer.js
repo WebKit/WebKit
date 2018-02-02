@@ -4,7 +4,7 @@
 esid: sec-%typedarray%.prototype.map
 description: >
   Instance buffer can be detached during loop
-info: >
+info: |
   22.2.3.19 %TypedArray%.prototype.map ( callbackfn [ , thisArg ] )
 
   ...

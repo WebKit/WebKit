@@ -4,7 +4,7 @@
 es6id: 23.1.2.2
 description: >
   Map[Symbol.species] accessor property get name
-info: >
+info: |
   23.1.2.2 get Map [ @@species ]
 
   ...

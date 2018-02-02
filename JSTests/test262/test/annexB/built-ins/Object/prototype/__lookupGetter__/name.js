@@ -3,7 +3,7 @@
 /*---
 esid: sec-additional-properties-of-the-object.prototype-object
 description: Object.prototype.__lookupGetter__ `name` property
-info: >
+info: |
     ES6 Section 17:
 
     Every built-in Function object, including constructors, that is not

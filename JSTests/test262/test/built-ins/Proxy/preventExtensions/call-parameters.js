@@ -5,7 +5,7 @@ es6id: 9.5.4
 description: >
     Trap is called with handler on its context and target as the first
     parameter.
-info: >
+info: |
     [[PreventExtensions]] ( )
 
     ...

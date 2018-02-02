@@ -5,7 +5,7 @@ description: >
     Resolved promises ignore rejections through immediate invocation of the
     provided resolving function
 es6id: 25.4.3.1
-info: >
+info: |
     [...]
     9. Let completion be Call(executor, undefined,
        «resolvingFunctions.[[Resolve]], resolvingFunctions.[[Reject]]»).

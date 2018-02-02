@@ -4,7 +4,7 @@
 es6id: 22.2.2.4
 description: >
   @@species property returns the `this` value
-info: >
+info: |
   22.2.2.4 get %TypedArray% [ @@species ]
 
   1. Return the this value.

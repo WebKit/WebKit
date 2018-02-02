@@ -5,7 +5,7 @@
 esid: sec-dataview.prototype.setfloat32
 description: >
   RangeError exception for negative index is thrown before the value conversion.
-info: >
+info: |
   ...
   3. Return SetViewValue(v, byteOffset, littleEndian, "Float32", value).
 

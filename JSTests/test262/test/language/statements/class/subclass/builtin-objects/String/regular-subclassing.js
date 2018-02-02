@@ -3,7 +3,7 @@
 /*---
 es6id: 21.1.1
 description: Subclassing the String object
-info: >
+info: |
   21.1.1 The String Constructor
 
   ...

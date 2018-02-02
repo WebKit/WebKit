@@ -3,7 +3,7 @@
 
 /*---
 description: IdentityEscape for Unicode RegExp
-info: >
+info: |
     IdentityEscape for Unicode RegExps is restricted to SyntaxCharacter and U+002F (SOLIDUS)
 es6id: 21.1.2
 ---*/

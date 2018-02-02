@@ -5,7 +5,7 @@ esid: sec-array.of
 es6id: 22.1.2.3
 description: >
   Array.of.length value and property descriptor
-info: >
+info: |
   Array.of ( ...items )
 
   The length property of the of function is 0.

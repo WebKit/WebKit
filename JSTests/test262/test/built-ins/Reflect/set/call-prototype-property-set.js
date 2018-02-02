@@ -4,7 +4,7 @@
 es6id: 26.1.13
 description: >
   Call accessor's set from target's prototype.
-info: >
+info: |
   26.1.13 Reflect.set ( target, propertyKey, V [ , receiver ] )
 
   ...

@@ -3,7 +3,7 @@
 
 /*---
 author: Caitlin Potter <caitp@igalia.com>
-esid: 14.4
+esid: sec-generator-function-definitions
 description: >
   Newlines terminate `yield` expressions.
 flags: [async]

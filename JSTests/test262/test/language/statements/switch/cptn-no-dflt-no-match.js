@@ -3,7 +3,7 @@
 /*---
 es6id: 13.12.11
 description: Completion value when no cases match
-info: >
+info: |
     SwitchStatement : switch ( Expression ) CaseBlock
 
     [...]

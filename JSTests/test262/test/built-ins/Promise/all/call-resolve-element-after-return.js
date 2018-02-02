@@ -5,7 +5,7 @@
 es6id: 25.4.4.1.2
 description: >
   Cannot change result value of resolved Promise.all element after Promise.all() returned.
-info: >
+info: |
   Promise.all Resolve Element Functions
 
   1. Let alreadyCalled be the value of F's [[AlreadyCalled]] internal slot.

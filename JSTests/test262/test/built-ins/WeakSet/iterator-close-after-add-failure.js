@@ -5,7 +5,7 @@ es6id: 23.4.1.1
 esid: sec-weakset-iterable
 description: >
   Return IteratorClose(iter, status) if fail on adding value on constructing.
-info: >
+info: |
   WeakSet ( [ iterable ] )
 
   ...

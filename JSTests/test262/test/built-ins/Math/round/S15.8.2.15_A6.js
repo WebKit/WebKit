@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     If x is equal to 0 or greater than 0, or if x is less than -0.5,
     Math.round(x) is equal to Math.floor(x+0.5)
 es5id: 15.8.2.15_A6

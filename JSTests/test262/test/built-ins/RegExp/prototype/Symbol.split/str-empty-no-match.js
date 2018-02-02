@@ -4,7 +4,7 @@
 /*---
 es6id: 21.2.5.11
 description: Unsuccessful match of empty string
-info: >
+info: |
     [...]
     22. If size = 0, then
         a. Let z be RegExpExec(splitter, S).

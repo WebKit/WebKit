@@ -4,7 +4,7 @@
 es6id: 12.10.3
 description: >
     Behavior when coercion via `Symbol.toPrimitive` yields a primitive value
-info: >
+info: |
     [...]
     7. Return the result of performing Abstract Equality Comparison rval ==
        lval.

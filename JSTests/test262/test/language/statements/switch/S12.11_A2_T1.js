@@ -6,7 +6,7 @@ info: There can be only one DefaultClause
 es5id: 12.11_A2_T1
 description: Duplicate DefaultClause
 negative:
-  phase: early
+  phase: parse
   type: SyntaxError
 ---*/
 

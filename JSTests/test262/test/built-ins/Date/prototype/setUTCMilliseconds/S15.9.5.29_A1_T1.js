@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     The Date.prototype property "setUTCMilliseconds" has { DontEnum }
     attributes
 esid: sec-date.prototype.setutcmilliseconds

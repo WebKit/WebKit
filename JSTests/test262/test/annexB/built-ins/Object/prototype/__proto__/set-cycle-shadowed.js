@@ -6,7 +6,7 @@ es6id: B.2.2.1
 description: >
     Cycles are not detected when a Proxy exotic object exists in the prototype
     chain
-info: >
+info: |
     [...]
     4. Let status be ? O.[[SetPrototypeOf]](proto).
     5. If status is false, throw a TypeError exception.

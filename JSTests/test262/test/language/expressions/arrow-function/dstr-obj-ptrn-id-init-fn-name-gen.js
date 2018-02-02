@@ -5,7 +5,7 @@
 description: SingleNameBinding assigns name to "anonymous" generator functions (arrow function expression)
 esid: sec-arrow-function-definitions-runtime-semantics-evaluation
 es6id: 14.2.16
-features: [destructuring-binding]
+features: [generators, destructuring-binding]
 flags: [generated]
 info: |
     ArrowFunction : ArrowParameters => ConciseBody
@@ -49,6 +49,7 @@ info: |
           ii. ReturnIfAbrupt(hasNameProperty).
           iii. If hasNameProperty is false, perform SetFunctionName(v,
                bindingId).
+
 ---*/
 
 var callCount = 0;

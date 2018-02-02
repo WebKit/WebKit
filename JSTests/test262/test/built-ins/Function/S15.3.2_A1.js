@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     When Function is called as part of a new expression, it is a constructor:
     it initialises the newly created object
 es5id: 15.3.2_A1

@@ -5,7 +5,7 @@
 es6id: 21.2.5.9
 description: >
     Behavior when error thrown while initially setting `lastIndex` property
-info: >
+info: |
     [...]
     7. Let status be Set(rx, "lastIndex", 0, true).
     8. ReturnIfAbrupt(status).

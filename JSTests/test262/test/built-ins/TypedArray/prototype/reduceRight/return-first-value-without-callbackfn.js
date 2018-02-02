@@ -5,7 +5,7 @@ esid: sec-%typedarray%.prototype.reduceright
 description: >
   Returns [0] without calling callbackfn if length is 1 and initialValue is not
   present.
-info: >
+info: |
   22.2.3.21 %TypedArray%.prototype.reduceRight ( callbackfn [ , initialValue ] )
 
   %TypedArray%.prototype.reduceRight is a distinct function that implements the

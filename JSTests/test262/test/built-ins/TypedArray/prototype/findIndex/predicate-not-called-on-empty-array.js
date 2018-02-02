@@ -5,7 +5,7 @@ esid: sec-%typedarray%.prototype.findindex
 es6id: 22.2.3.11
 description: >
   Predicate is not called on an empty instance
-info: >
+info: |
   22.2.3.11 %TypedArray%.prototype.findIndex ( predicate [ , thisArg ] )
 
   %TypedArray%.prototype.findIndex is a distinct function that implements the

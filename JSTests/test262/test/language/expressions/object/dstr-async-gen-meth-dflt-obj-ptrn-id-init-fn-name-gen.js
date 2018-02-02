@@ -4,7 +4,7 @@
 /*---
 description: SingleNameBinding assigns name to "anonymous" generator functions (async generator method (default parameter))
 esid: sec-asyncgenerator-definitions-propertydefinitionevaluation
-features: [async-iteration]
+features: [generators, async-iteration]
 flags: [generated, async]
 info: |
     AsyncGeneratorMethod :
@@ -33,6 +33,7 @@ info: |
           ii. ReturnIfAbrupt(hasNameProperty).
           iii. If hasNameProperty is false, perform SetFunctionName(v,
                bindingId).
+
 ---*/
 
 

@@ -6,7 +6,7 @@ es6id: 9.5.14
 description: >
     If trap is undefined, propagate the construct to the target object,
     honoring the Realm of the newTarget value
-info: >
+info: |
     [[Construct]] ( argumentsList, newTarget)
 
     7. If trap is undefined, then

@@ -4,10 +4,10 @@
 /*---
 description: redeclaration with GeneratorDeclaration (AsyncFunctionDeclaration in BlockStatement)
 esid: sec-block-static-semantics-early-errors
-features: [async-functions]
+features: [generators, async-functions]
 flags: [generated]
 negative:
-  phase: early
+  phase: parse
   type: SyntaxError
 info: |
     Block : { StatementList }

@@ -3,7 +3,7 @@
 
 /*---
 description: Array.prototype.splice sets length when called with no arguments
-info: >
+info: |
   22.1.3.25 Array.prototype.splice (start, deleteCount , ...items )
 
   ...

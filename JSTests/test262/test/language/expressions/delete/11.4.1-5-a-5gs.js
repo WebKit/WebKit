@@ -7,7 +7,7 @@ description: >
     Strict Mode - SyntaxError is thrown when deleting a variable which
     is primitive type(boolean)
 negative:
-  phase: early
+  phase: parse
   type: SyntaxError
 flags: [onlyStrict]
 ---*/

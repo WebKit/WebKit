@@ -5,6 +5,7 @@ es6id: 25.2
 description: >
     When a generator body contains a lone yield statement, it should produce an
     iterable that visits the yielded value and then completes.
+features: [generators]
 ---*/
 
 function* g() { yield 1; }

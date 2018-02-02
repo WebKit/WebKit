@@ -3,7 +3,7 @@
 
 /*---
 description: Test Object.Assign(target,...sources).
-es6id:  19.1.2.1.5.c
+esid: sec-object.assign
 ---*/
 
 //"a" will be an property of the final object and the value should be 1

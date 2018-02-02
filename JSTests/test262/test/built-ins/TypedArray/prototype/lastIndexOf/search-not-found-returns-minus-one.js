@@ -3,7 +3,7 @@
 /*---
 esid: sec-%typedarray%.prototype.lastindexof
 description: returns -1 if the element if not found
-info: >
+info: |
   22.2.3.17 %TypedArray%.prototype.lastIndexOf ( searchElement [ , fromIndex ] )
 
   %TypedArray%.prototype.lastIndexOf is a distinct function that implements the

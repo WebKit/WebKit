@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     RegExp.prototype.exec behavior depends on global property.
     If global is true next exec calling start to match from lastIndex position
 es5id: 15.10.6.2_A4_T7

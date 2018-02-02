@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     Properties of the object being enumerated may be deleted during
     enumeration
 es5id: 12.6.4_A7_T2

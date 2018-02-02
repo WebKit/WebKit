@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     A property can have attribute DontDelete like NaN propertie of Number
     object
 es5id: 8.6.1_A3

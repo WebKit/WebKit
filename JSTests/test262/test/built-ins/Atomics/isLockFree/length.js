@@ -6,7 +6,7 @@
 esid: sec-atomics.islockfree
 description: >
   Atomics.isLockFree.length is 1.
-info: >
+info: |
   Atomics.isLockFree ( x )
 
   17 ECMAScript Standard Built-in Objects:

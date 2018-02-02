@@ -6,7 +6,7 @@ esid: sec-date.prototype.gettimezoneoffset
 es6id: 20.3.4.11
 description: >
   Date.prototype.getTimezoneOffset.name is "getTimezoneOffset".
-info: >
+info: |
   Date.prototype.getTimezoneOffset ( )
 
   17 ECMAScript Standard Built-in Objects:

@@ -4,7 +4,7 @@
 esid: sec-%typedarray%.from
 description: >
   Calls and return abrupt completion from custom constructor
-info: >
+info: |
   22.2.2.1 %TypedArray%.from ( source [ , mapfn [ , thisArg ] ] )
 
   ...

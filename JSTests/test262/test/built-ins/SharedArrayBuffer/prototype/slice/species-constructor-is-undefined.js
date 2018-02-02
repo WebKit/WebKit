@@ -5,7 +5,7 @@
 /*---
 description: >
   Uses default constructor is `constructor` property is undefined.
-info: >
+info: |
   SharedArrayBuffer.prototype.slice ( start, end )
 ---*/
 

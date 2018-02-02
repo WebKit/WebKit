@@ -5,7 +5,7 @@
 esid: sec-dataview.prototype.getint16
 description: >
   DataView.prototype.getInt16.length is 1.
-info: >
+info: |
   DataView.prototype.getInt16 ( byteOffset [ , littleEndian ] )
 
   17 ECMAScript Standard Built-in Objects:

@@ -5,7 +5,7 @@
 es6id: 22.2.3.4
 description: >
   Initial state of the constructor property
-info: >
+info: |
   The initial value of %TypedArray%.prototype.constructor is the %TypedArray% intrinsic object.
 
   Per ES6 section 17, the method should exist on the %TypedArray% prototype, and it

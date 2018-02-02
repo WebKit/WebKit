@@ -3,7 +3,7 @@
 
 /*---
 description: Error in Array entry access during traversal using for..of
-info: >
+info: |
     If retrieving an element from the array produces an error, that error
     should be forwarded to the run time.
 es6id: 13.6.4

@@ -4,7 +4,7 @@
 es6id: 13.7.3.6
 description: >
     Completion value when iteration completes due to expression value
-info: >
+info: |
     IterationStatement : while ( Expression ) Statement
 
     1. Let V = undefined.

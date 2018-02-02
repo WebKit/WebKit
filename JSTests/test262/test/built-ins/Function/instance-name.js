@@ -4,7 +4,7 @@
 /*---
 es6id: 19.2.1.1
 description: Assignment of function `name` attribute
-info: >
+info: |
     [...]
     3. Return CreateDynamicFunction(C, NewTarget, "normal", args).
 

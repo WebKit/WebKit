@@ -4,7 +4,7 @@
 /*---
 es6id: 26.2.2.1.1
 description: The `name` property of Proxy Revocation functions
-info: >
+info: |
   A Proxy revocation function is an anonymous function.
 
   17 ECMAScript Standard Built-in Objects:

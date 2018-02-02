@@ -4,7 +4,7 @@
 /*---
 es6id: 14.5.16
 description: Assignment of function `name` attribute
-info: >
+info: |
     ClassExpression : class BindingIdentifieropt ClassTail
 
     5. If className is not undefined, then

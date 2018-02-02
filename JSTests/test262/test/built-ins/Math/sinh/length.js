@@ -4,7 +4,7 @@
 /*---
 description: length property of Math.sinh
 es6id: 20.2.2.31
-info: >
+info: |
   Math.sinh ( x )
 
   17 ECMAScript Standard Built-in Objects:

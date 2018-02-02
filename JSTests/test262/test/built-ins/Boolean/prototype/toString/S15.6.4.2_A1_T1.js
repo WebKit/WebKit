@@ -3,7 +3,7 @@
 
 /*---
 esid: sec-boolean.prototype.tostring
-info: >
+info: |
     toString: If this boolean value is true, then the string "true"
     is returned, otherwise, this boolean value must be false, and the string
     "false" is returned

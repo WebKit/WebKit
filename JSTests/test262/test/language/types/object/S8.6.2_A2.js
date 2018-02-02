@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     Properties of the [[Prototype]] object
     are visible as properties of the child object for the purposes of get access, but not for put access
 es5id: 8.6.2_A2

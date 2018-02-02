@@ -5,7 +5,7 @@ esid: sec-array.prototype.entries
 es6id: 22.1.3.4
 description: >
   Array.prototype.entries.length value and descriptor.
-info: >
+info: |
   22.1.3.4 Array.prototype.entries ( )
 
   17 ECMAScript Standard Built-in Objects

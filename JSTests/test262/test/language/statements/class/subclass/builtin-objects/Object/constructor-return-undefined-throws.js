@@ -3,7 +3,7 @@
 /*---
 es6id: 9.2.2
 description: Throws a ReferenceError if constructor result is undefined
-info: >
+info: |
   9.2.2 [[Construct]] ( argumentsList, newTarget)
 
   ...

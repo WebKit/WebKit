@@ -5,6 +5,7 @@ es6id: 25.2
 description: >
     The `next` method returns an object that has "own" properties `value` and
     `done` and that inherits directly from the Object prototype.
+features: [generators]
 ---*/
 
 function* g() {}

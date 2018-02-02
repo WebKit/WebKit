@@ -18,6 +18,7 @@ info: |
            [[Enumerable]]: false, [[Configurable]]: false}).
     [...]
 includes: [propertyHelper.js]
+features: [generators]
 ---*/
 
 var GeneratorFunction = Object.getPrototypeOf(function* () {}).constructor;

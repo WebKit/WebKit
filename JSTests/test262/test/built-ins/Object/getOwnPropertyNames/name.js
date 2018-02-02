@@ -5,7 +5,7 @@
 es6id: 19.1.2.7
 description: >
   Object.getOwnPropertyNames.name is "getOwnPropertyNames".
-info: >
+info: |
   Object.getOwnPropertyNames ( O )
 
   17 ECMAScript Standard Built-in Objects:

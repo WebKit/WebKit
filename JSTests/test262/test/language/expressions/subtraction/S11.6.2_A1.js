@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     White Space and Line Terminator between AdditiveExpression and "-" or
     between "-" and MultiplicativeExpression are allowed
 es5id: 11.6.2_A1

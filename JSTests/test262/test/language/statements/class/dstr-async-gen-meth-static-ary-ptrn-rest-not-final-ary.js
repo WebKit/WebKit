@@ -7,7 +7,7 @@ esid: sec-runtime-semantics-bindingclassdeclarationevaluation
 features: [async-iteration]
 flags: [generated, async]
 negative:
-  phase: early
+  phase: parse
   type: SyntaxError
 info: |
     ClassDeclaration : class BindingIdentifier ClassTail

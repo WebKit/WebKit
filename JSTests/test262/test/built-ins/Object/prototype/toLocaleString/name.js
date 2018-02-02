@@ -5,7 +5,7 @@
 es6id: 19.1.3.5
 description: >
   Object.prototype.toLocaleString.name is "toLocaleString".
-info: >
+info: |
   Object.prototype.toLocaleString ( [ reserved1 [ , reserved2 ] ] )
 
   17 ECMAScript Standard Built-in Objects:

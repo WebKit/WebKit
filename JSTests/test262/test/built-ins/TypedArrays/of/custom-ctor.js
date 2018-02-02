@@ -4,7 +4,7 @@
 esid: sec-%typedarray%.of
 description: >
   Calls and return abrupt from custom constructor
-info: >
+info: |
   22.2.2.2 %TypedArray%.of ( ...items )
 
   ...

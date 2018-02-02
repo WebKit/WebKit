@@ -5,7 +5,7 @@ es6id: 23.3.3.4
 esid: sec-weakmap.prototype.has
 description: >
   Returns false if value is not an Object.
-info: >
+info: |
   WeakMap.prototype.has ( value )
 
   5. If Type(key) is not Object, return false.

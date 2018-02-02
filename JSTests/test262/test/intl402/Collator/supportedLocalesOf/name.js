@@ -5,7 +5,7 @@
 esid: sec-Intl.Collator.supportedLocalesOf
 description: >
   Intl.Collator.supportedLocalesOf.name is "supportedLocalesOf".
-info: >
+info: |
   10.2.2 Intl.Collator.supportedLocalesOf (locales [ , options ])
 
   17 ECMAScript Standard Built-in Objects:

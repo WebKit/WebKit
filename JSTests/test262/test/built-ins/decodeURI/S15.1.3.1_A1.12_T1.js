@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     If B = 11110xxx (n = 4) and (string.charAt(k + 4) and
     string.charAt(k + 5)) or (string.charAt(k + 7) and
     string.charAt(k + 8)) or (string.charAt(k + 10) and

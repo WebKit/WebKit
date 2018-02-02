@@ -5,7 +5,7 @@ es6id: 23.3.3.2
 esid: sec-weakmap.prototype.delete
 description: >
   Return false if value is not an Object.
-info: >
+info: |
   WeakMap.prototype.delete ( value )
 
   5. If Type(key) is not Object, return false.

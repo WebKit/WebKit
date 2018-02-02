@@ -4,7 +4,7 @@
 /*---
 es6id: 20.2.2.21
 description: length property of Math.log1p
-info: >
+info: |
   Math.log1p ( x )
 
   17 ECMAScript Standard Built-in Objects:

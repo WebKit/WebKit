@@ -5,7 +5,7 @@
 es6id: B.2.3.12
 description: >
   String.prototype.strike.length is 0.
-info: >
+info: |
   String.prototype.strike ( )
 
   17 ECMAScript Standard Built-in Objects:

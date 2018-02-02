@@ -5,7 +5,7 @@
 es6id: 22.2.3.31
 description: >
   get %TypedArray%.prototype [ @@toStringTag ].name is "get [Symbol.toStringTag]".
-info: >
+info: |
   get %TypedArray%.prototype [ @@toStringTag ]
 
   17 ECMAScript Standard Built-in Objects:

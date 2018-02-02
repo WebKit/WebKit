@@ -24,7 +24,7 @@ info: |
                propagated. Normal completions from an inner throw method are
                processed similarly to an inner next.
             3. If Type(innerResult) is not Object, throw a TypeError exception.
-features: [Symbol.iterator]
+features: [generators, Symbol.iterator]
 ---*/
 
 var badIter = {};

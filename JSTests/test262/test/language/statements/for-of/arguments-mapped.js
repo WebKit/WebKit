@@ -3,7 +3,7 @@
 /*---
 es6id: 13.6.4
 description: Mapped arguments object traversal using for..of
-info: >
+info: |
     "Mapped" arguments objects should be able to be traversed using a `for..of`
     loop.
 flags: [noStrict]

@@ -5,7 +5,7 @@
 es6id: B.2.3.4
 description: >
   String.prototype.blink.length is 0.
-info: >
+info: |
   String.prototype.blink ( )
 
   17 ECMAScript Standard Built-in Objects:

@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     The specification does not provide any means for a program to access
     [[class]] value except through Object.prototype.toString
 es5id: 8.6.2_A3

@@ -4,7 +4,7 @@
 esid: sec-object.prototype.__proto__
 es6id: B.2.2.1
 description: Setting valid value on an ordinary object
-info: >
+info: |
     [...]
     4. Let status be ? O.[[SetPrototypeOf]](proto).
     5. If status is false, throw a TypeError exception.

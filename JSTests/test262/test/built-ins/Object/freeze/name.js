@@ -5,7 +5,7 @@
 es6id: 19.1.2.5
 description: >
   Object.freeze.name is "freeze".
-info: >
+info: |
   Object.freeze ( O )
 
   17 ECMAScript Standard Built-in Objects:

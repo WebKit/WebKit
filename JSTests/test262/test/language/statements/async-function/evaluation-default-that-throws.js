@@ -6,7 +6,7 @@ author: Brian Terlson <brian.terlson@microsoft.com>
 esid: pending
 description: >
   If a default expression throws, the promise is rejected.
-info: >
+info: |
   This is different from generators which will throw the error out of the generator
   when it is called.
 flags: [async]

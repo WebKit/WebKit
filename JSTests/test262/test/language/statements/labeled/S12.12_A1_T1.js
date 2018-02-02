@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     Labelled statements are only used in conjunction with labelled
     break and continue statements
 es5id: 12.12_A1_T1

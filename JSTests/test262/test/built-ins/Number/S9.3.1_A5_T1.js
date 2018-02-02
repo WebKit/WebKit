@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     The MV of StrDecimalLiteral::: - StrUnsignedDecimalLiteral is the negative
     of the MV of StrUnsignedDecimalLiteral. (the negative of this 0 is also 0)
 es5id: 9.3.1_A5_T1

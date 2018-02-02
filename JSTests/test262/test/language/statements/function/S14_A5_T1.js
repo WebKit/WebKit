@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     The Identifer within a FunctionDeclaration can be written in both letters
     and unicode
 es5id: 14_A5_T1

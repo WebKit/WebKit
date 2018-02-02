@@ -5,7 +5,7 @@
 /*---
 description: >
   Throws TypeError if `constructor` property is not an object.
-info: >
+info: |
   SharedArrayBuffer.prototype.slice ( start, end )
 
 features: [Symbol]

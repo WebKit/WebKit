@@ -7,6 +7,7 @@ description: >
     the GeneratorFunction intrinsic creates a valid generator whose body is the
     last argument evaluated as source code and whose formal parameters are
     defined by the preceeding arguments.
+features: [generators]
 ---*/
 
 var GeneratorFunction = Object.getPrototypeOf(function* () {}).constructor;

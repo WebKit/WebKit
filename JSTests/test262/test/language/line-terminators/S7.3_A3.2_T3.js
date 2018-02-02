@@ -6,7 +6,7 @@ info: Single line comments can not contain CARRIAGE RETURN (U+000D) inside
 es5id: 7.3_A3.2_T3
 description: Insert real CARRIAGE RETURN into single line comment
 negative:
-  phase: early
+  phase: parse
   type: SyntaxError
 ---*/
 

@@ -5,7 +5,7 @@
 es6id: 20.2.2.16
 description: >
   Math.floor.length is 1.
-info: >
+info: |
   Math.floor ( x )
 
   17 ECMAScript Standard Built-in Objects:

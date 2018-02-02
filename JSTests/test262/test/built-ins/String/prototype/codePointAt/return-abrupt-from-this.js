@@ -4,7 +4,7 @@
 es6id: 21.1.3.3
 description: >
   Returns abrupt from ToString(this)
-info: >
+info: |
   21.1.3.3 String.prototype.codePointAt ( pos )
 
   1. Let O be RequireObjectCoercible(this value).

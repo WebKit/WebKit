@@ -6,18 +6,24 @@ description: finally on a rejected promise can override the rejection reason
 esid: sec-promise.prototype.finally
 features: [Promise.prototype.finally]
 flags: [async]
+includes: [promiseHelper.js]
 ---*/
-
+var sequence = [];
 var original = {};
 var thrown = {};
 
 var p = Promise.reject(original);
 
 p.finally(function () {
+  sequence.push(1);
   assert.sameValue(arguments.length, 0, 'onFinally receives zero args');
   throw thrown;
 }).then(function () {
   $ERROR('promise is rejected; onFulfill should not be called');
 }).catch(function (reason) {
+  sequence.push(2);
   assert.sameValue(reason, thrown, 'onFinally can override the rejection reason by throwing');
-}).then($DONE).catch($ERROR);
+}).then(function() {
+  checkSequence(sequence, "All expected callbacks called in correct order");
+  $DONE();
+}).catch($ERROR);

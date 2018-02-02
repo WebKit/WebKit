@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     VariableDeclaration in "var VariableDeclarationListNoIn" of for
     IterationStatement is allowed
 es5id: 12.6.3_A13

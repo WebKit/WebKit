@@ -4,7 +4,7 @@
 esid: sec-typedarray
 description: >
   Return abrupt completion getting newTarget's prototype
-info: >
+info: |
   22.2.4.1 TypedArray( )
 
   This description applies only if the TypedArray function is called with no

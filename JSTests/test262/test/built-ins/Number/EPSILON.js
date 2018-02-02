@@ -6,7 +6,7 @@ es6id: 20.1.2.1
 esid: sec-number.epsilon
 description: >
   "EPSILON" property of Number
-info: >
+info: |
   20.1.2.1 Number.EPSILON
 
   The value of Number.EPSILON is the difference between 1 and the smallest value

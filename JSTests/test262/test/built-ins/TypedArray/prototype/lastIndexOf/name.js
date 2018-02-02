@@ -5,7 +5,7 @@
 es6id: 22.2.3.16
 description: >
   %TypedArray%.prototype.lastIndexOf.name is "lastIndexOf".
-info: >
+info: |
   %TypedArray%.prototype.lastIndexOf ( searchElement [ , fromIndex ] )
 
   17 ECMAScript Standard Built-in Objects:

@@ -3,7 +3,7 @@
 /*---
 es6id: 22.2.3.12
 description: Requires a [[TypedArrayName]] internal slot.
-info: >
+info: |
   22.2.3.12 %TypedArray%.prototype.forEach ( callbackfn [ , thisArg ] )
 
   This function is not generic. ValidateTypedArray is applied to the this value

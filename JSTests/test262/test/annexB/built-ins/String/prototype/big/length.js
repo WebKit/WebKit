@@ -5,7 +5,7 @@
 es6id: B.2.3.3
 description: >
   String.prototype.big.length is 0.
-info: >
+info: |
   String.prototype.big ( )
 
   17 ECMAScript Standard Built-in Objects:

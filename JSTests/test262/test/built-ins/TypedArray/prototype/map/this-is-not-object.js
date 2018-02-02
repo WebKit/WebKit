@@ -3,7 +3,7 @@
 /*---
 esid: sec-%typedarray%.prototype.map
 description: Throws a TypeError exception when `this` is not Object
-info: >
+info: |
   22.2.3.19 %TypedArray%.prototype.map ( callbackfn [ , thisArg ] )
 
   1. Let O be the this value.

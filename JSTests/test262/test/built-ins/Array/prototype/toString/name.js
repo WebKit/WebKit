@@ -6,7 +6,7 @@ esid: sec-array.prototype.tostring
 es6id: 22.1.3.27
 description: >
   Array.prototype.toString.name is "toString".
-info: >
+info: |
   Array.prototype.toString ( )
 
   17 ECMAScript Standard Built-in Objects:

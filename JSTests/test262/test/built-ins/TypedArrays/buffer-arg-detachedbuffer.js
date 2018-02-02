@@ -3,7 +3,7 @@
 /*---
 esid: sec-typedarray-buffer-byteoffset-length
 description: If TypedArray() is passed a detached buffer, throw
-info: >
+info: |
   22.2.4.5 TypedArray ( buffer [ , byteOffset [ , length ] ] )
 
   ...

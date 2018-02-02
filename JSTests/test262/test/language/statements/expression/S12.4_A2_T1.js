@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     The production ExpressionStatement : [lookahead \notin {{, function}] Expression; is evaluated as follows:
     1. Evaluate Expression.
     2. Call GetValue(Result(1)).

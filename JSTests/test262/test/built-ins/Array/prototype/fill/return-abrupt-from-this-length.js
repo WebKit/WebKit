@@ -5,7 +5,7 @@ esid: sec-array.prototype.fill
 es6id: 22.1.3.6
 description: >
   Return abrupt from ToLength(Get(O, "length")).
-info: >
+info: |
   22.1.3.6 Array.prototype.fill (value [ , start [ , end ] ] )
 
   1. Let O be ToObject(this value).

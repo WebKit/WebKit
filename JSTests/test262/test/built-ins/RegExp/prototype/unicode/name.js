@@ -4,7 +4,7 @@
 es6id: 21.2.5.15
 description: >
     "name" property of `unicode` accessor function
-info: >
+info: |
     The value of the name property of this function is "get ".
 
     ES6 section 17:

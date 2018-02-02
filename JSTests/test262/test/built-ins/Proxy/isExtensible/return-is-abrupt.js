@@ -4,7 +4,7 @@
 es6id: 9.5.3
 description: >
     Trap returns abrupt.
-info: >
+info: |
     [[IsExtensible]] ( )
 
     ...

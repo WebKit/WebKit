@@ -3,7 +3,7 @@
 
 /*---
 description: Object.prototype.propertyIsEnumerable called with symbol property key
-info: >
+info: |
   19.1.3.4 Object.prototype.propertyIsEnumerable ( V )
 
   1. Let P be ToPropertyKey(V).

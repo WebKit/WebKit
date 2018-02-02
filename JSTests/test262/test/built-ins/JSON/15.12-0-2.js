@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     This test should be run without any built-ins being added/augmented.
     The name JSON must be bound to an object, and must not support [[Construct]].
     step 4 in 11.2.2 should throw a TypeError exception.

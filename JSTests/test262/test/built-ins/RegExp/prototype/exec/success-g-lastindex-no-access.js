@@ -4,7 +4,7 @@
 /*---
 description: lastIndex is accessed when global is set.
 es6id: 21.2.5.2.2
-info: >
+info: |
     21.2.5.2.2 Runtime Semantics: RegExpBuiltinExec ( R, S )
 
     [...]

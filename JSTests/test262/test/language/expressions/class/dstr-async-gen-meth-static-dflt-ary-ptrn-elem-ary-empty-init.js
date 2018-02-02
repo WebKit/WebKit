@@ -4,7 +4,7 @@
 /*---
 description: BindingElement with array binding pattern and initializer is used (static class expression async generator method (default parameter))
 esid: sec-class-definitions-runtime-semantics-evaluation
-features: [async-iteration]
+features: [generators, async-iteration]
 flags: [generated, async]
 info: |
     ClassExpression : class BindingIdentifieropt ClassTail
@@ -51,6 +51,7 @@ info: |
        b. Let v be ? GetValue(defaultValue).
     4. Return the result of performing BindingInitialization of BindingPattern
        with v and environment as the arguments.
+
 ---*/
 var initCount = 0;
 var iterCount = 0;

@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     RegExp.prototype.exec(string) Performs a regular expression match of ToString(string) against the regular expression and
     returns an Array object containing the results of the match, or null if the string did not match
 es5id: 15.10.6.2_A1_T14

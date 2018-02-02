@@ -31,7 +31,7 @@ info: |
                 [[Target]]: empty}.
         viii. Let received be GeneratorYield(innerReturnResult).
 
-features: [Symbol.iterator]
+features: [generators, Symbol.iterator]
 ---*/
 
 var quickIter = {};

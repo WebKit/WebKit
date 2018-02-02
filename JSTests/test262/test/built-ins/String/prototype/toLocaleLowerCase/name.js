@@ -5,7 +5,7 @@
 es6id: 21.1.3.20
 description: >
   String.prototype.toLocaleLowerCase.name is "toLocaleLowerCase".
-info: >
+info: |
   String.prototype.toLocaleLowerCase ( [ reserved1 [ , reserved2 ] ] )
 
   17 ECMAScript Standard Built-in Objects:

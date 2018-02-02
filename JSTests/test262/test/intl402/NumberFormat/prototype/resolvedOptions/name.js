@@ -5,7 +5,7 @@
 esid: sec-Intl.NumberFormat.prototype.resolvedOptions
 description: >
   Intl.NumberFormat.prototype.resolvedOptions.name is "resolvedOptions".
-info: >
+info: |
   11.4.4 Intl.NumberFormat.prototype.resolvedOptions ()
 
   17 ECMAScript Standard Built-in Objects:

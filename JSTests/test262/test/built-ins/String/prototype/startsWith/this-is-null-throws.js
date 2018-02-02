@@ -4,7 +4,7 @@
 es6id: 21.1.3.18
 description: >
   Throws TypeError when `this` is null
-info: >
+info: |
   21.1.3.18 String.prototype.startsWith ( searchString [ , position ] )
 
   1. Let O be RequireObjectCoercible(this value).

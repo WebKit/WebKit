@@ -6,7 +6,7 @@ info: Syntax constructions of switch statement
 es5id: 12.11_A3_T1
 description: Checking if execution of "switch() {}" fails
 negative:
-  phase: early
+  phase: parse
   type: SyntaxError
 ---*/
 

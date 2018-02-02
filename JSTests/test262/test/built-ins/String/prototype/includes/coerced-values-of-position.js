@@ -4,7 +4,7 @@
 es6id: 21.1.3.7
 description: >
   Returns based on coerced values of position.
-info: >
+info: |
   21.1.3.7 String.prototype.includes ( searchString [ , position ] )
 
   ...

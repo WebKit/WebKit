@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     In case-insignificant matches all characters are implicitly converted to
     upper case immediately before they are compared
 es5id: 15.10.2.8_A5_T2

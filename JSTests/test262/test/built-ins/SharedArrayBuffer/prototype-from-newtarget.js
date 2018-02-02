@@ -6,7 +6,7 @@
 esid: sec-sharedarraybuffer-length
 description: >
   The [[Prototype]] internal slot is computed from NewTarget.
-info: >
+info: |
   SharedArrayBuffer( length )
 
   SharedArrayBuffer called with argument length performs the following steps:

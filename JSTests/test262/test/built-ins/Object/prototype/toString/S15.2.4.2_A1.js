@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     When the toString method is called, the following steps are taken:
     i) Get the [[Class]] property of this object
     ii) Compute a string value by concatenating the three strings "[object ", Result(1), and "]"

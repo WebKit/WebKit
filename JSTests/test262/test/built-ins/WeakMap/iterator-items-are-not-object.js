@@ -5,7 +5,7 @@ es6id: 23.3.1.1
 esid: sec-weakmap-iterable
 description: >
   Throws a TypeError if iterable itens are not Objects.
-info: >
+info: |
   WeakMap ( [ iterable ] )
 
   ...

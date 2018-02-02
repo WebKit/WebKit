@@ -7,7 +7,7 @@ description: >
 esid: sec-numeric-literal-static-semantics-early-errors
 features: [BigInt]
 negative:
-  phase: early
+  phase: parse
   type: SyntaxError
 ---*/
 

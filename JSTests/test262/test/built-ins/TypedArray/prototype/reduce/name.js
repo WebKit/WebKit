@@ -5,7 +5,7 @@
 es6id: 22.2.3.19
 description: >
   %TypedArray%.prototype.reduce.name is "reduce".
-info: >
+info: |
   %TypedArray%.prototype.reduce ( callbackfn [ , thisArg ] )
 
   17 ECMAScript Standard Built-in Objects:

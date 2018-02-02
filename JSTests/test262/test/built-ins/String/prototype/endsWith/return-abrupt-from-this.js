@@ -4,7 +4,7 @@
 es6id: 21.1.3.6
 description: >
   Returns abrupt from ToString(this)
-info: >
+info: |
   21.1.3.6 String.prototype.endsWith ( searchString [ , endPosition] )
 
   1. Let O be RequireObjectCoercible(this value).

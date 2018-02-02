@@ -6,6 +6,7 @@ description: >
     The operand to a `yield` expression should honor the semantics of the
     `with` statement.
 flags: [noStrict]
+features: [generators]
 ---*/
 
 function* g() {

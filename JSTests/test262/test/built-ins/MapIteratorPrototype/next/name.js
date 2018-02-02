@@ -5,7 +5,7 @@
 es6id: 23.1.5.2.1
 description: >
   %MapIteratorPrototype%.next.name is "next".
-info: >
+info: |
   %MapIteratorPrototype%.next ( )
 
   17 ECMAScript Standard Built-in Objects:

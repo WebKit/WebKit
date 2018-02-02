@@ -5,7 +5,7 @@
 es6id: 19.1.3.3
 description: >
   Object.prototype.isPrototypeOf.name is "isPrototypeOf".
-info: >
+info: |
   Object.prototype.isPrototypeOf ( V )
 
   17 ECMAScript Standard Built-in Objects:

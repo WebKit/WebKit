@@ -33,6 +33,7 @@ info: |
   3. Assert: generator also has a [[GeneratorContext]] internal slot.
   4. Let state be generator.[[GeneratorState]].
   5. If state is "executing", throw a TypeError exception.
+features: [generators]
 ---*/
 
 var iter, result;

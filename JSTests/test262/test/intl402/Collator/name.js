@@ -5,7 +5,7 @@
 esid: sec-Intl.Collator
 description: >
   Intl.Collator.name is "Collator".
-info: >
+info: |
   10.1.2 Intl.Collator ([ locales [ , options ]])
 
   17 ECMAScript Standard Built-in Objects:

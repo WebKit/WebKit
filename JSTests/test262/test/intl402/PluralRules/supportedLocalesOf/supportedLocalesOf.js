@@ -8,7 +8,21 @@ description: >
     built-in objects defined by the introduction of chapter 17 of the
     ECMAScript Language Specification.
 author: Zibi Braniecki
-includes: [testBuiltInObject.js]
+includes: [isConstructor.js]
+features: [Reflect.construct]
 ---*/
 
-testBuiltInObject(Intl.PluralRules.supportedLocalesOf, true, false, [], 1);
+assert.sameValue(Object.prototype.toString.call(Intl.PluralRules.supportedLocalesOf), "[object Function]",
+                 "The [[Class]] internal property of a built-in function must be " +
+                 "\"Function\".");
+
+assert(Object.isExtensible(Intl.PluralRules.supportedLocalesOf),
+       "Built-in objects must be extensible.");
+
+assert.sameValue(Object.getPrototypeOf(Intl.PluralRules.supportedLocalesOf), Function.prototype);
+
+assert.sameValue(Intl.PluralRules.supportedLocalesOf.hasOwnProperty("prototype"), false,
+                 "Built-in functions that aren't constructors must not have a prototype property.");
+
+assert.sameValue(isConstructor(Intl.PluralRules.supportedLocalesOf), false,
+                 "Built-in functions don't implement [[Construct]] unless explicitly specified.");

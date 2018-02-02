@@ -4,7 +4,7 @@
 es6id: 26.1.1
 description: >
   Throws a TypeError if `target` is not callable.
-info: >
+info: |
   26.1.1 Reflect.apply ( target, thisArgument, argumentsList )
 
   1. If IsCallable(target) is false, throw a TypeError exception.

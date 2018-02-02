@@ -3,7 +3,7 @@
 /*---
 es6id: 19.1.2.18
 description: Object.setPrototypeOf invoked with a non-object-coercible value
-info: >
+info: |
     1. Let O be RequireObjectCoercible(O).
     2. ReturnIfAbrupt(O).
 ---*/

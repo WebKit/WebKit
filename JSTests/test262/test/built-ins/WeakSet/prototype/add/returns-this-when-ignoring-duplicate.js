@@ -4,7 +4,7 @@
 es6id: 23.4.3.1
 esid: sec-weakset.prototype.add
 description: Returns `this` when new value is duplicate.
-info: >
+info: |
   WeakSet.prototype.add ( value )
 
   1. Let S be this value.

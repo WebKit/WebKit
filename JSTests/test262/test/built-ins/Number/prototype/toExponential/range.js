@@ -4,7 +4,7 @@
 /*---
 esid: sec-number.prototype.toexponential
 description: Number.prototype.toExponential permits fractionDigits from 0 to 100
-info: >
+info: |
   Number.prototype.toExponential ( fractionDigits )
 
   ...

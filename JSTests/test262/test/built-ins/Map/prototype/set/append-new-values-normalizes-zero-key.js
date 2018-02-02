@@ -4,7 +4,7 @@
 es6id: 23.1.3.9
 description: >
   Appends new value in the map normalizing +0 and -0.
-info: >
+info: |
   Map.prototype.set ( key , value )
 
   ...

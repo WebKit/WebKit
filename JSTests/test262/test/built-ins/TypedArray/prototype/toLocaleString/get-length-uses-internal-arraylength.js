@@ -3,7 +3,7 @@
 /*---
 esid: sec-%typedarray%.prototype.tolocalestring
 description:  Get "length" uses internal ArrayLength
-info: >
+info: |
   22.2.3.28 %TypedArray%.prototype.toLocaleString ([ reserved1 [ , reserved2 ] ])
 
   %TypedArray%.prototype.toLocaleString is a distinct function that implements

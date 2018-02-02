@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     The value of the internal [[Prototype]] property of the String
     constructor is the Function prototype object
 es5id: 15.5.3_A2_T2

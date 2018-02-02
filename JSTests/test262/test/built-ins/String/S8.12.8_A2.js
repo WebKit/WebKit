@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     This should generate no TypeError,
     Cause we overload toString method so it return non Primitive value
     but we overloaded valueOf method too.

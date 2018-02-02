@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     If string.charAt(k) in [0xE000 - 0xFFFF], return 3 octets (xxxxyyyy
     yyzzzzzz -> 1110xxxx 10yyyyyy 10zzzzzz)
 es5id: 15.1.3.3_A2.5_T1

@@ -4,7 +4,7 @@
 description: Math.E is a numeric value
 esid: sec-math.e
 es6id: 20.2.1.1
-info: >
+info: |
     The Number value for e, the base of the natural logarithms, which is
     approximately 2.7182818284590452354.
 

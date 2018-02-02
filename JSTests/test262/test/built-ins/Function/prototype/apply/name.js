@@ -5,7 +5,7 @@
 es6id: 19.2.3.1
 description: >
   Function.prototype.apply.name is "apply".
-info: >
+info: |
   Function.prototype.apply ( thisArg, argArray )
 
   17 ECMAScript Standard Built-in Objects:

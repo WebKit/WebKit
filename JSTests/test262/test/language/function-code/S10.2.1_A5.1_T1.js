@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     For each VariableDeclaration or VariableDeclarationNoIn in the
     code, create a property of the variable object whose name is the Identifier
     in the VariableDeclaration or VariableDeclarationNoIn, whose value is

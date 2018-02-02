@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     The production StatementList  Statement is evaluated as follows
     1. Evaluate Statement.
     2. If an exception was thrown, return (throw, V, empty) where V is the exception

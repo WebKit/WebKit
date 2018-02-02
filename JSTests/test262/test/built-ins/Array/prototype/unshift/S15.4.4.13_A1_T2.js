@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     The arguments are prepended to the start of the array, such that
     their order within the array is the same as the order in which they appear in
     the argument list

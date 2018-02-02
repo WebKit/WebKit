@@ -16,6 +16,7 @@ info: |
     11. Set the LexicalEnvironment of currentContext to originalEnv.
     [...]
 flags: [noStrict]
+features: [generators]
 ---*/
 
 var x = 'outside';

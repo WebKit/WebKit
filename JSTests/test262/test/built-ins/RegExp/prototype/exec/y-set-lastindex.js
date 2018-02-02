@@ -4,7 +4,7 @@
 /*---
 description: Sets the `lastIndex` property to the end index of the first match
 es6id: 21.2.5.2
-info: >
+info: |
     21.2.5.2 RegExp.prototype.exec ( string )
 
     [...]

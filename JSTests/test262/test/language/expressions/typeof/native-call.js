@@ -2,64 +2,75 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
-    Result of applying "typeof" operator to the object that is native and
-    implements [[Call]] is "function"
-es5id: 11.4.3_A3.7
-es6id: 12.5.6.1
-description: typeof (object with [[Call]]) === "function"
+esid: sec-typeof-operator-runtime-semantics-evaluation
+description: typeof Object (implements [[Call]]) === "function"
+info: |
+  The typeof Operator
+
+  Runtime Semantics: Evaluation
+
+    ...
+    Return a String according to Table 35.
+
+  #table-35
+
+  Object (implements [[Call]]) "function"
+
+
 ---*/
 
 assert.sameValue(
   typeof new Function(),
    "function",
-  '#1: typeof new Function() === "function". Actual: ' + (typeof new Function())
+  'typeof new Function() === "function"'
 );
 
 assert.sameValue(
   typeof Function(),
    "function",
-  '#2: typeof Function() === "function". Actual: ' + (typeof Function())
+  'typeof Function() === "function"'
 );
 
 assert.sameValue(
   typeof Object,
    "function",
-  '#3: typeof Object === "function". Actual: ' + (typeof Object)
+  'typeof Object === "function"'
 );
 
 assert.sameValue(
   typeof String,
    "function",
-  '#4: typeof String === "function". Actual: ' + (typeof String)
+  'typeof String === "function"'
 );
 
 assert.sameValue(
   typeof Boolean,
    "function",
-  '#5: typeof Boolean === "function". Actual: ' + (typeof Boolean)
+  'typeof Boolean === "function"'
 );
 
 assert.sameValue(
   typeof Number,
    "function",
-  '#6: typeof Number === "function". Actual: ' + (typeof Number)
+  'typeof Number === "function"'
 );
 
 assert.sameValue(
   typeof Date,
    "function",
-  '#7: typeof Date === "function". Actual: ' + (typeof Date)
+  'typeof Date === "function"'
 );
 
 assert.sameValue(
   typeof Error,
    "function",
-  '#8: typeof Error === "function". Actual: ' + (typeof Error)
+  'typeof Error === "function"'
 );
 
 assert.sameValue(
   typeof RegExp,
    "function",
-  '#9: typeof RegExp === "function". Actual: ' + (typeof RegExp)
+  'typeof RegExp === "function"'
 );
+
+// TODO: Should this be extended to include all built-ins?

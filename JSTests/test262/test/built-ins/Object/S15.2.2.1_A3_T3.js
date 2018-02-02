@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     When the Object constructor is called with one argument value and
     the type of value is String, return ToObject(string)
 es5id: 15.2.2.1_A3_T3

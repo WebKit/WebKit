@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     When the [[Construct]] property for a Function object F is called:
     A new native ECMAScript object is created.
     Gets the value of the [[Prototype]] property of the F(Denote it PROTO_VAL).

@@ -5,7 +5,7 @@
 description: Rest object contains just unextracted data (generator method (default parameter))
 esid: sec-generator-function-definitions-runtime-semantics-propertydefinitionevaluation
 es6id: 14.4.13
-features: [object-rest, destructuring-binding, default-parameters]
+features: [object-rest, generators, destructuring-binding, default-parameters]
 flags: [generated]
 includes: [propertyHelper.js]
 info: |

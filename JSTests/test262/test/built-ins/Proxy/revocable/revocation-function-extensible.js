@@ -4,7 +4,7 @@
 /*---
 es6id: 26.2.2.1.1
 description: The [[Extensible]] slot of Proxy Revocation functions
-info: >
+info: |
   17 ECMAScript Standard Built-in Objects:
     Unless specified otherwise, the [[Extensible]] internal slot
     of a built-in object initially has the value true.

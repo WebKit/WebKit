@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     Assume F is a Function object. When the [[HasInstance]] method of
     F is called with value V and V is an object, the following steps
     are taken: i) Call the [[Get]] method of F with property name

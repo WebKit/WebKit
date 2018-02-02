@@ -7,7 +7,7 @@ esid: pending
 description: >
   It is a syntax error if AsyncGeneratorBody contains SuperCall is true.
 negative:
-  phase: early
+  phase: parse
   type: SyntaxError
 features: [async-iteration]
 ---*/

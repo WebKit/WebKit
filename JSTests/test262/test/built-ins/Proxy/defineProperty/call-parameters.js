@@ -5,7 +5,7 @@ es6id: 9.5.6
 description: >
     Trap is called with handler as context and parameters are target, P, and the
     descriptor object.
-info: >
+info: |
     [[DefineOwnProperty]] (P, Desc)
 
     ...

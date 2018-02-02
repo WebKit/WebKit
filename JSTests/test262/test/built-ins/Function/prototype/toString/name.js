@@ -5,7 +5,7 @@
 es6id: 19.2.3.5
 description: >
   Function.prototype.toString.name is "toString".
-info: >
+info: |
   Function.prototype.toString ( )
 
   17 ECMAScript Standard Built-in Objects:

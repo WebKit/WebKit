@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     pattern is an object R whose [[Class]] property is "RegExp" and flags
     is not undefined. If ToString(pattern) is not a valid flags arguments,
     then throw a SyntaxError exception

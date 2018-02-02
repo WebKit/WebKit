@@ -4,7 +4,7 @@
 esid: sec-typedarray-object
 description: >
   Return abrupt from getting length property on the object argument
-info: >
+info: |
   22.2.4.4 TypedArray ( object )
 
   This description applies only if the TypedArray function is called with at

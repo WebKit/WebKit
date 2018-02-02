@@ -5,7 +5,7 @@ esid: sec-%typedarray%.prototype.slice
 description: >
   Throws a TypeError buffer is detached on Get custom constructor. Using other
   targetType
-info: >
+info: |
   22.2.3.24 %TypedArray%.prototype.slice ( start, end )
 
   ...

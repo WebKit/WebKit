@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     The initial value of Boolean.prototype is the Boolean
     prototype object
 esid: sec-boolean.prototype

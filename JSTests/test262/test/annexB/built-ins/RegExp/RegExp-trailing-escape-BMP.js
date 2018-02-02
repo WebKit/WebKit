@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     RegularExpressionChar :: BackslashSequence :: \NonTerminator,
     RegularExpressionFlags :: [empty]
 es5id: 7.8.5_A2.4_T2

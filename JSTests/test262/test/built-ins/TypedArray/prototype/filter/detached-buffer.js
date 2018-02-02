@@ -3,7 +3,7 @@
 /*---
 esid: sec-%typedarray%.prototype.filter
 description: Throws a TypeError if this has a detached buffer
-info: >
+info: |
   22.2.3.9 %TypedArray%.prototype.filter ( callbackfn [ , thisArg ] )
 
   This function is not generic. ValidateTypedArray is applied to the this value

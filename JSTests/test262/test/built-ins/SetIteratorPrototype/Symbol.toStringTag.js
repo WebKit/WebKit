@@ -4,7 +4,7 @@
 es6id: 23.2.5.2.2
 description: >
     `Symbol.toStringTag` property descriptor
-info: >
+info: |
     The initial value of the @@toStringTag property is the String value
     "Set Iterator".
 

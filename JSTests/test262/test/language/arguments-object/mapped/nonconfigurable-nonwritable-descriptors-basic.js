@@ -3,7 +3,7 @@
 
 /*---
 description: Mapped arguments property descriptor change with non-configurable and non-writable property
-info: >
+info: |
     Mapping stop working when property is set to non-writable. The
     descriptor's value need to be the one set before the property be configured as
     writable: false.

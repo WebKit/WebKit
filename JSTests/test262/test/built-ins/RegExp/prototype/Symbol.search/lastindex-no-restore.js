@@ -4,7 +4,7 @@
 /*---
 es6id: 21.2.5.9
 description: Behavior when some lastIndex writes should be skipped.
-info: >
+info: |
     [...]
     4. Let previousLastIndex be ? Get(rx, "lastIndex").
     5. If SameValue(previousLastIndex, 0) is false, then

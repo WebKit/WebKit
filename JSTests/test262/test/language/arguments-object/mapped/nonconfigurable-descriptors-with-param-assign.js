@@ -3,7 +3,7 @@
 
 /*---
 description: Property descriptor of mapped arguments object with non-configurable property
-info: >
+info: |
     Mapping keep working when property is set to non-configurable, and its
     descriptor needs to change properly.
 flags: [noStrict]

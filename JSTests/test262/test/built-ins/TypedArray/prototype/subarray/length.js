@@ -5,7 +5,7 @@
 es6id: 22.2.3.26
 description: >
   %TypedArray%.prototype.subarray.length is 2.
-info: >
+info: |
   %TypedArray%.prototype.subarray( [ begin [ , end ] ] )
 
   17 ECMAScript Standard Built-in Objects:

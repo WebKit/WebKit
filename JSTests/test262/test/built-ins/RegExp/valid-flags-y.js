@@ -4,7 +4,7 @@
 /*---
 es6id: 21.2.3.1
 description: The `y` flag is accepted by the RegExp constructor
-info: >
+info: |
     [...]
     10. Return RegExpInitialize(O, P, F).
 

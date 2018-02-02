@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     1, true, non-empty string and others in expression is evaluated to true
     when using operator "new"
 es5id: 12.5_A1.2_T2

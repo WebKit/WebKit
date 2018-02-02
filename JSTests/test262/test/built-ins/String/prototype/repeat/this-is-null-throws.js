@@ -4,7 +4,7 @@
 es6id: 21.1.3.13
 description: >
   Throws TypeError when `this` is null
-info: >
+info: |
   21.1.3.13 String.prototype.repeat ( count )
 
   1. Let O be RequireObjectCoercible(this value).

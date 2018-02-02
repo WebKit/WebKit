@@ -3,7 +3,7 @@
 /*---
 es6id: 9.2.2
 description: The Type of the return value must be an Object
-info: >
+info: |
   9.2.2 [[Construct]] ( argumentsList, newTarget)
 
   ...

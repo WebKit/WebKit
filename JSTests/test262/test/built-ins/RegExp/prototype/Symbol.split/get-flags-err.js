@@ -4,7 +4,7 @@
 /*---
 es6id: 21.2.5.11
 description: Behavior when error thrown while accessing `flags` property
-info: >
+info: |
     [...]
     7. Let flags be ToString(Get(rx, "flags")).
     8. ReturnIfAbrupt(flags).

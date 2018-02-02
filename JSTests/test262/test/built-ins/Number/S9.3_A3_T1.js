@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     Result of number conversion from boolean value is 1 if the argument is
     true, else is +0
 es5id: 9.3_A3_T1

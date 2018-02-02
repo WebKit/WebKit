@@ -4,7 +4,7 @@
 es6id: 23.1.3.10
 description: >
   Throws a TypeError if `this` is not an Object.
-info: >
+info: |
   get Map.prototype.size
 
   1. Let M be the this value.
@@ -13,7 +13,6 @@ info: >
   exception.
   ...
 
-includes: [propertyHelper.js]
 features: [Symbol]
 ---*/
 

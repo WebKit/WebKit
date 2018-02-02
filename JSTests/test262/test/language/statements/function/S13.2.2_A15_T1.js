@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     When the [[Construct]] property for a Function object F is called,
     and the object created in the function is returned, the object (declared with "this" within a function) will be strong and healthy
 es5id: 13.2.2_A15_T1

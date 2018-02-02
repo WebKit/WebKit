@@ -4,7 +4,7 @@
 esid: sec-object.prototype.__proto__
 es6id: B.2.2.1
 description: Abrupt completion from ToObject
-info: >
+info: |
     1. Let O be ? ToObject(this value).
 ---*/
 

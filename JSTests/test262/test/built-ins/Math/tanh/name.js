@@ -5,7 +5,7 @@
 es6id: 20.2.2.34
 description: >
   Math.tanh.name is "tanh".
-info: >
+info: |
   Math.tanh ( x )
 
   17 ECMAScript Standard Built-in Objects:

@@ -6,7 +6,7 @@ description: >
     for declaration:
     disallow initialization assignment
 negative:
-  phase: early
+  phase: parse
   type: SyntaxError
 ---*/
 

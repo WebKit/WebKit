@@ -7,7 +7,7 @@ description: >
     StrictMode - SyntaxError is thrown if 'arguments' occurs as the
     Identifier of a FunctionDeclaration
 negative:
-  phase: early
+  phase: parse
   type: SyntaxError
 flags: [onlyStrict]
 ---*/

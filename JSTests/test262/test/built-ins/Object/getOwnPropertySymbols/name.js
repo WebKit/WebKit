@@ -5,7 +5,7 @@
 es6id: 19.1.2.8
 description: >
   Object.getOwnPropertySymbols.name is "getOwnPropertySymbols".
-info: >
+info: |
   Object.getOwnPropertySymbols ( O )
 
   17 ECMAScript Standard Built-in Objects:

@@ -4,7 +4,7 @@
 esid: sec-%typedarray%.prototype.map
 description: >
   Does not copy non-integer properties to returned value
-info: >
+info: |
   22.2.3.19 %TypedArray%.prototype.map ( callbackfn [ , thisArg ] )
 
   ...

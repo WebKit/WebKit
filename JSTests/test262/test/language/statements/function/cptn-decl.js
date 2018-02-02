@@ -3,7 +3,7 @@
 /*---
 esid: sec-function-definitions-runtime-semantics-evaluation
 description: Function declaration completion value is empty.
-info: >
+info: |
     FunctionDeclaration : function BindingIdentifier ( FormalParameters ) { FunctionBody }
 
     1. Return NormalCompletion(empty).

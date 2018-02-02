@@ -4,7 +4,7 @@
 es6id: 9.5.3
 description: >
     Return target.[[IsExtensible]]() if trap is undefined.
-info: >
+info: |
     [[IsExtensible]] ( )
 
     ...

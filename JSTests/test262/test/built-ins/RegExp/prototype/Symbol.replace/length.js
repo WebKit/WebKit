@@ -3,7 +3,7 @@
 /*---
 es6id: 21.2.5.8
 description: RegExp.prototype[Symbol.replace] `length` property
-info: >
+info: |
     ES6 Section 17:
     Every built-in Function object, including constructors, has a length
     property whose value is an integer. Unless otherwise specified, this value

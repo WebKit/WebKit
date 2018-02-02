@@ -4,7 +4,7 @@
 es6id: 21.1.2.4
 description: >
   Throws a TypeError if nextKey is Symbol
-info: >
+info: |
   21.1.2.4 String.raw ( template , ...substitutions )
 
   ...

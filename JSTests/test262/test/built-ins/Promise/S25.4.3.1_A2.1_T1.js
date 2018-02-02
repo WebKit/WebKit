@@ -2,7 +2,7 @@
 // See LICENSE for details.
 
 /*---
-info: >
+info: |
     Promise throws TypeError when 'this' is not Object
 es6id: S25.4.3.1_A2.1_T1
 author: Sam Mikes

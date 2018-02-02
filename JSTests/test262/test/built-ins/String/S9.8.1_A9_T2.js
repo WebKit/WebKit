@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     Return the string consisting of the single digit of s,
     followed by lowercase character 'e', followed by a plus sign '+' or minus
     sign '-' according to whether n-1 is positive or negative, followed by the

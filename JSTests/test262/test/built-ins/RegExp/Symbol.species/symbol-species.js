@@ -2,7 +2,7 @@
 // See LICENSE for details.
 
 /*---
-info: >
+info: |
  RegExp has a property at `Symbol.species`
 esid: sec-get-regexp-@@species
 es6id: 21.2.4.2

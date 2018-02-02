@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     "throw Expression" returns (throw, GetValue(Result(1)), empty), where 1
     evaluates Expression
 es5id: 12.13_A2_T4

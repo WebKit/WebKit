@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     RegExp.prototype.test behavior depends on the lastIndex property:
     ToLength(lastIndex) is the starting point for the search, so
     negative numbers result in searching from 0.

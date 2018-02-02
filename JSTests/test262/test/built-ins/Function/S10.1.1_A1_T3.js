@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     Program functions are defined in source text by a FunctionDeclaration or created dynamically either
     by using a FunctionExpression or by using the built-in Function object as a constructor
 es5id: 10.1.1_A1_T3

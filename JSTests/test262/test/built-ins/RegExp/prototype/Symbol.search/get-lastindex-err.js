@@ -4,7 +4,7 @@
 /*---
 es6id: 21.2.5.9
 description: Behavior when error thrown while accessing `lastIndex` property
-info: >
+info: |
     [...]
     5. Let previousLastIndex be Get(rx, "lastIndex").
     6. ReturnIfAbrupt(previousLastIndex).

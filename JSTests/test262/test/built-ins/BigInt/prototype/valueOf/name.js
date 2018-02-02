@@ -4,7 +4,7 @@
 /*---
 esid: sec-bigint.prototype.valueof
 description: BigInt.prototype.valueOf.name property descriptor
-info: >
+info: |
   BigInt.prototype.valueOf ( )
 
   17 ECMAScript Standard Built-in Objects

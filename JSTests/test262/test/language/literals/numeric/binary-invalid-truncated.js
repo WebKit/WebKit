@@ -4,7 +4,7 @@
 /*---
 es6id: 11.8.3
 description: Binary-integer-literal-like sequence without any digits
-info: >
+info: |
     BinaryIntegerLiteral ::
       0b BinaryDigits
       0B BinaryDigits
@@ -14,7 +14,7 @@ info: >
     BinaryDigit :: one of
       0 1
 negative:
-  phase: early
+  phase: parse
   type: SyntaxError
 ---*/
 

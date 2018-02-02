@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     White Space and Line Terminator between RelationalExpression and "<" or
     between "<" and ShiftExpression are allowed
 es5id: 11.8.1_A1

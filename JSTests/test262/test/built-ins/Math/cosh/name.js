@@ -5,7 +5,7 @@
 es6id: 20.2.2.13
 description: >
   Math.cosh.name is "cosh".
-info: >
+info: |
   Math.cosh ( x )
 
   17 ECMAScript Standard Built-in Objects:

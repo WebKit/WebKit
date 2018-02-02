@@ -5,7 +5,7 @@
 esid: sec-%typedarray%.from
 description: >
   %TypedArray%.from.length is 1.
-info: >
+info: |
   %TypedArray%.from ( source [ , mapfn [ , thisArg ] ] )
 
   17 ECMAScript Standard Built-in Objects:

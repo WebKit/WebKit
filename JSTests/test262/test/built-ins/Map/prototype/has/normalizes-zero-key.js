@@ -4,7 +4,7 @@
 es6id: 23.1.3.7
 description: >
   -0 and +0 are normalized to +0;
-info: >
+info: |
   Map.prototype.has ( key )
 
   5. Repeat for each Record {[[key]], [[value]]} p that is an element of

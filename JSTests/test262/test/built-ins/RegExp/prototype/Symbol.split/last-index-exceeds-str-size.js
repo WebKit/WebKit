@@ -4,7 +4,7 @@
 /*---
 esid: sec-regexp.prototype-@@split
 description: The `lastIndex` property is clamped to the string size.
-info: >
+info: |
   RegExp.prototype [ @@split ] ( string, limit )
 
   ...

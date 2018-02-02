@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     Using "try" with "catch" or "finally" statement within/without a "for-in"
     statement
 es5id: 12.14_A12_T3

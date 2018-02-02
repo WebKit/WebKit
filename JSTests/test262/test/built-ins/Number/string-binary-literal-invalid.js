@@ -4,7 +4,7 @@
 /*---
 es6id: 20.1.1.1
 description: Invalid binary literals yield NaN
-info: >
+info: |
     BinaryIntegerLiteral ::
       0b BinaryDigits
       0B BinaryDigits
@@ -18,3 +18,9 @@ info: >
 assert.sameValue(Number('0b2'), NaN, 'invalid digit');
 assert.sameValue(Number('00b0'), NaN, 'leading zero');
 assert.sameValue(Number('0b'), NaN, 'omitted digits');
+assert.sameValue(Number('+0b1'), NaN, 'plus sign');
+assert.sameValue(Number('-0b1'), NaN, 'minus sign');
+assert.sameValue(Number('0b1.01'), NaN, 'fractional part');
+assert.sameValue(Number('0b1e10'), NaN, 'exponent part');
+assert.sameValue(Number('0b1e-10'), NaN, 'exponent part with a minus sign');
+assert.sameValue(Number('0b1e+10'), NaN, 'exponent part with a plus sign');

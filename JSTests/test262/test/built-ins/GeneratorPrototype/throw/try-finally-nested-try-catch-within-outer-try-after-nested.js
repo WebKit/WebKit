@@ -7,6 +7,7 @@ description: >
     and following a nested `try..catch` statment, `throw` should interrupt
     control flow as if a `throw` statement had appeared at that location in the
     function body.
+features: [generators]
 ---*/
 
 var unreachable = 0;

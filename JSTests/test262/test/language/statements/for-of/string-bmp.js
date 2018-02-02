@@ -3,7 +3,7 @@
 
 /*---
 description: String traversal using for..of
-info: >
+info: |
     String literals should be able to be traversed using a `for...of` loop. The
     loop body should execute once for every BMP character.
 es6id: 13.6.4

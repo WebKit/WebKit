@@ -6,7 +6,7 @@ esid: sec-date.prototype.sethours
 es6id: 20.3.4.22
 description: >
   Date.prototype.setHours.name is "setHours".
-info: >
+info: |
   Date.prototype.setHours ( hour [ , min [ , sec [ , ms ] ] ] )
 
   17 ECMAScript Standard Built-in Objects:

@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     The Date property "prototype" has { DontEnum, DontDelete, ReadOnly }
     attributes
 esid: sec-date.prototype

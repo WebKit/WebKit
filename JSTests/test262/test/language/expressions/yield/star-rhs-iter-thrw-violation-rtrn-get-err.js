@@ -32,7 +32,7 @@ info: |
   1. Assert: Type(iterator) is Object.
   2. Assert: completion is a Completion Record.
   3. Let return be ? GetMethod(iterator, "return").
-features: [Symbol.iterator]
+features: [generators, Symbol.iterator]
 ---*/
 
 var thrown = new Test262Error();

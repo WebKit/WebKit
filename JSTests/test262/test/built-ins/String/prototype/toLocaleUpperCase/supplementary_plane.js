@@ -3,7 +3,7 @@
 
 /*---
 description: String.prototype.toLocaleUpperCase() iterates over code points
-info: >
+info: |
     21.1.3.21 String.prototype.toLocaleUpperCase()
     ...
     This function interprets a String value as a sequence of UTF-16 encoded

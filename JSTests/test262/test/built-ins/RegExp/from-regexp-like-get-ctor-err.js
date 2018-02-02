@@ -5,7 +5,7 @@
 description: >
     Behavior when accessing `constructor` property of RegExp-like objects
 es6id: 21.2.3.1
-info: >
+info: |
     1. Let patternIsRegExp be IsRegExp(pattern).
     [...]
     3. If NewTarget is not undefined, let newTarget be NewTarget.

@@ -3,7 +3,7 @@
 
 /*---
 description: Expression is allowed in head
-info: >
+info: |
     IterationStatement : for ( ForDeclaration in Expression ) Statement
 
     1. Let keyResult be the result of performing

@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     MemberExpression calls ToObject(MemberExpression) and
     ToString(Expression). CallExpression calls ToObject(CallExpression) and
     ToString(Expression)

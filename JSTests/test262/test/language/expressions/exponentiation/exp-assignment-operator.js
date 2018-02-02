@@ -5,7 +5,7 @@
 author: Rick Waldron
 esid: sec-assignment-operators-runtime-semantics-evaluation
 description: Compound Exponentiation Assignment Operator
-info: >
+info: |
     AssignmentExpression:
       LeftHandSideExpression AssignmentOperator AssignmentExpression
 

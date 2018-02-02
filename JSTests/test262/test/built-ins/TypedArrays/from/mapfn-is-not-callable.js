@@ -3,7 +3,7 @@
 /*---
 esid: sec-%typedarray%.from
 description: Throw a TypeError exception is mapfn is not callable
-info: >
+info: |
   22.2.2.1 %TypedArray%.from ( source [ , mapfn [ , thisArg ] ] )
 
   ...

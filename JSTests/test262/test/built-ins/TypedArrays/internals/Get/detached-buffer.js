@@ -4,7 +4,7 @@
 esid: sec-integer-indexed-exotic-objects-get-p-receiver
 description: >
   Throws a TypeError if key has a numeric index and object has a detached buffer
-info: >
+info: |
   9.4.5.4 [[Get]] (P, Receiver)
 
   ...

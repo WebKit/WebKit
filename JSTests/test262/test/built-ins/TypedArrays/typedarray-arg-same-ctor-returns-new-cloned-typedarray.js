@@ -4,7 +4,7 @@
 esid: sec-typedarray-typedarray
 description: >
   Same typedArray ctor argument returns a new cloned typedArray
-info: >
+info: |
   22.2.4.3 TypedArray ( typedArray )
 
   This description applies only if the TypedArray function is called with at

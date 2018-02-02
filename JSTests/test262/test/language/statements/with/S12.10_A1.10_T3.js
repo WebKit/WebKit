@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     The with statement adds a computed object to the front of the
     scope chain of the current execution context
 es5id: 12.10_A1.10_T3

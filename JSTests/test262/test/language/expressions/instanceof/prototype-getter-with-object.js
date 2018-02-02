@@ -5,7 +5,7 @@
 es6id: 12.9.3
 description: >
   "prototype" property is retrieved when left-hand side expression in `instanceof` is object.
-info: >
+info: |
   12.9.3 Runtime Semantics: Evaluation
   RelationalExpression : RelationalExpression instanceof ShiftExpression
     ...

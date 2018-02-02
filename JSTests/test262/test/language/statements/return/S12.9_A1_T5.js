@@ -8,7 +8,7 @@ description: >
     Checking if execution of "return" with no function, placed into a
     Block, fails
 negative:
-  phase: early
+  phase: parse
   type: SyntaxError
 ---*/
 

@@ -5,7 +5,7 @@
 es6id: 25.4.4.6
 description: >
   get Promise [ @@species ].length is 0.
-info: >
+info: |
   get Promise [ @@species ]
 
   17 ECMAScript Standard Built-in Objects:

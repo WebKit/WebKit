@@ -4,7 +4,7 @@
 /*---
 description: Invocation of @@match property of internally-created RegExps
 es6id: 21.1.3.11
-info: >
+info: |
     [...]
     6. Let rx be RegExpCreate(regexp, undefined) (see 21.2.3.2.3).
     7. ReturnIfAbrupt(rx).

@@ -5,7 +5,7 @@ es6id: 23.4.3.3
 esid: sec-weakset.prototype.delete
 description: >
   WeakSet.prototype.delete property descriptor
-info: >
+info: |
   WeakSet.prototype.delete ( value )
 
   17 ECMAScript Standard Built-in Objects

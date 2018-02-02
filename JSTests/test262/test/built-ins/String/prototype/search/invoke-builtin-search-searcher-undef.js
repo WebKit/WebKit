@@ -5,7 +5,7 @@
 description: >
     Invocation of @@search property of internally-created RegExps when `this` value has an `undefined` @@search property
 es6id: 21.1.3.15
-info: >
+info: |
     [...]
     3. If regexp is neither undefined nor null, then
        a. Let searcher be GetMethod(regexp, @@search).

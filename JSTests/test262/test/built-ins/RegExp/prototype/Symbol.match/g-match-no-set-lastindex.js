@@ -4,7 +4,7 @@
 /*---
 description: The `lastIndex` is not set after a non-zero-width match
 es6id: 21.2.5.6
-info: >
+info: |
     7. If global is false, then
        [...]
     8. Else global is true,

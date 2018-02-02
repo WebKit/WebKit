@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     While evaluating "for (ExpressionNoIn ;  ; Expression) Statement",
     Statement is evaulated first
 es5id: 12.6.3_A2.1

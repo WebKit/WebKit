@@ -4,7 +4,7 @@
 es6id: 9.5.6
 description: >
     Return target.[[DefineOwnProperty]](P, Desc) if trap is undefined.
-info: >
+info: |
     [[DefineOwnProperty]] (P, Desc)
 
     ...

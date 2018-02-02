@@ -4,7 +4,7 @@
 es6id: 21.2.5.5
 description: >
   RegExp.prototype.ignoreCase name
-info: >
+info: |
   17 ECMAScript Standard Built-in Objects
 
   Functions that are specified as get or set accessor functions of built-in

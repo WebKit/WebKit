@@ -4,7 +4,7 @@
 description: Module dependencies are resolved following a depth-first strategy
 esid: sec-moduledeclarationinstantiation
 negative:
-  phase: early
+  phase: resolution
   type: ReferenceError
 flags: [module]
 ---*/

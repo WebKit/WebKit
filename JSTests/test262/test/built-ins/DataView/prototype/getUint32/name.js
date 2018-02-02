@@ -6,7 +6,7 @@ esid: sec-dataview.prototype.getuint32
 es6id: 24.2.4.12
 description: >
   DataView.prototype.getUint32.name is "getUint32".
-info: >
+info: |
   DataView.prototype.getUint32 ( byteOffset [ , littleEndian ] )
 
   17 ECMAScript Standard Built-in Objects:

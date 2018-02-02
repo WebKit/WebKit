@@ -1,3 +1,4 @@
 typeCoercion.js: [Symbol.toPrimitive, BigInt]
 testAtomics.js: [ArrayBuffer, Atomics, DataView, SharedArrayBuffer, arrow-function, let, for-of]
 testTypedArray.js: [TypedArray]
+isConstructor.js: [Reflect.construct]

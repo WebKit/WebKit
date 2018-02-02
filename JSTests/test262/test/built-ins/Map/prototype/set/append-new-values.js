@@ -4,7 +4,7 @@
 es6id: 23.1.3.9
 description: >
   Append a new value as the last element of entries.
-info: >
+info: |
   Map.prototype.set ( key , value )
 
   ...

@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     Evaluate the production ArrayLiteral: [ Elision, AssignmentExpression,
     Elision ]
 es5id: 11.1.4_A1.6

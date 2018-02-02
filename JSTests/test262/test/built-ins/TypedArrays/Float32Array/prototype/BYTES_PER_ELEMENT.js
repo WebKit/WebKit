@@ -6,7 +6,7 @@ es6id: 22.2.6.1
 esid: sec-typedarray.prototype.bytes_per_element
 description: >
   The initial value of Float32Array.prototype.BYTES_PER_ELEMENT is 4.
-info: >
+info: |
   The value of TypedArray.prototype.BYTES_PER_ELEMENT is the Number value
   of the Element Size value specified in Table 49 for TypedArray.
 

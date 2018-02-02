@@ -6,7 +6,7 @@ esid: sec-array.prototype.indexof
 es6id: 22.1.3.12
 description: >
   Array.prototype.indexOf.name is "indexOf".
-info: >
+info: |
   Array.prototype.indexOf ( searchElement [ , fromIndex ] )
 
   17 ECMAScript Standard Built-in Objects:

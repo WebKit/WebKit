@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     If [[Get]] ToString(j) is undefined, return 1.
     If [[]Get] ToString(k) is undefined, return -1
 esid: sec-array.prototype.sort

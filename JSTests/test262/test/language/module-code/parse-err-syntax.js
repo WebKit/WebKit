@@ -4,7 +4,7 @@
 description: Early SyntaxError resulting from module parsing
 esid: sec-parsemodule
 negative:
-  phase: early
+  phase: parse
   type: SyntaxError
 info: |
     [...]

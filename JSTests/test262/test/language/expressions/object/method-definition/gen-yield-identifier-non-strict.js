@@ -4,12 +4,14 @@
 /*---
 description: Use of yield as a valid identifier in a function body inside a generator body in non strict mode (Generator method - valid for non-strict only cases)
 esid: prod-GeneratorMethod
+features: [generators]
 flags: [generated, noStrict]
 info: |
     14.4 Generator Function Definitions
 
     GeneratorMethod[Yield, Await]:
       * PropertyName ( UniqueFormalParameters ) { GeneratorBody }
+
 ---*/
 
 var callCount = 0;

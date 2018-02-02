@@ -5,7 +5,7 @@
 es6id: 21.1.3.16
 description: >
   String.prototype.slice.name is "slice".
-info: >
+info: |
   String.prototype.slice ( start, end )
 
   17 ECMAScript Standard Built-in Objects:

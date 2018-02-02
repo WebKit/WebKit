@@ -3,7 +3,7 @@
 /*---
 esid: sec-get-%typedarray%.prototype.bytelength
 description: Returns 0 if the instance has a detached buffer
-info: >
+info: |
   22.2.3.2 get %TypedArray%.prototype.byteLength
 
   ...

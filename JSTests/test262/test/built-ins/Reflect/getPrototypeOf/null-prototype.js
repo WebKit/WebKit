@@ -4,7 +4,7 @@
 es6id: 26.1.8
 description: >
   Return null prototype.
-info: >
+info: |
   26.1.8 Reflect.getPrototypeOf ( target )
 
   ...

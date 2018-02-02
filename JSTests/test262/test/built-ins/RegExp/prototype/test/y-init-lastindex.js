@@ -4,7 +4,7 @@
 /*---
 description: Honors initial value of the `lastIndex` property
 es6id: 21.2.5.13
-info: >
+info: |
     21.2.5.13 RegExp.prototype.test( S )
 
     [...]

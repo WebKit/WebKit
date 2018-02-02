@@ -4,7 +4,7 @@
 esid: sec-integer-indexed-exotic-objects-get-p-receiver
 description: >
   Does not throw on an instance with a detached buffer if key is a Symbol
-info: >
+info: |
   9.4.5.4 [[Get]] (P, Receiver)
 
   ...

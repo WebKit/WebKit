@@ -5,7 +5,7 @@
 description: >
     Behavior when error thrown during string coercion of first parameter
 es6id: 21.2.5.6
-info: >
+info: |
     21.2.5.6 RegExp.prototype [ @@match ] ( string )
 
     [...]

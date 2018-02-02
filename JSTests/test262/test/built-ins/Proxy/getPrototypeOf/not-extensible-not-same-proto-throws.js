@@ -5,7 +5,7 @@ es6id: 9.5.1
 description: >
     Throws a TypeError if the target is not extensible and the trap result is
     not the same as the target.[[GetPrototypeOf]] result.
-info: >
+info: |
     [[GetPrototypeOf]] ( )
 
     ...

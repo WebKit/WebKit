@@ -2,7 +2,7 @@
 // See LICENSE for details.
 
 /*---
-info: >
+info: |
     Promise.all expects an iterable argument;
     fails if GetIterator returns an abrupt completion.
 es6id: S25.4.4.1_A3.1_T3

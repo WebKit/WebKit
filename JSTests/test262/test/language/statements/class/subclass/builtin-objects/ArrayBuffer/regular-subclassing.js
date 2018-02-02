@@ -3,7 +3,7 @@
 /*---
 es6id: 24.1.2
 description: Subclassing the ArrayBuffer object
-info: >
+info: |
   24.1.2 The ArrayBuffer Constructor
 
   ...

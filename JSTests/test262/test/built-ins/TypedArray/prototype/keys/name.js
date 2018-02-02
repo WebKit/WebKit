@@ -5,7 +5,7 @@
 es6id: 22.2.3.15
 description: >
   %TypedArray%.prototype.keys.name is "keys".
-info: >
+info: |
   %TypedArray%.prototype.keys ( )
 
   17 ECMAScript Standard Built-in Objects:

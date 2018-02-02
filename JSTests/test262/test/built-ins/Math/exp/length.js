@@ -5,7 +5,7 @@
 es6id: 20.2.2.14
 description: >
   Math.exp.length is 1.
-info: >
+info: |
   Math.exp ( x )
 
   17 ECMAScript Standard Built-in Objects:

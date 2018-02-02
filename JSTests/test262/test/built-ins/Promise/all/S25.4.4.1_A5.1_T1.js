@@ -2,7 +2,7 @@
 // See LICENSE for details.
 
 /*---
-info: >
+info: |
     Promise.all expects an iterable argument;
     rejects if IteratorStep() throws
 es6id: S25.4.4.1_A5.1_T1

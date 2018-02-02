@@ -3,7 +3,7 @@
 
 /*---
 description: Array.prototype.reverse only gets present properties - delete property with getter
-info: >
+info: |
   22.1.3.20 Array.prototype.reverse ( )
 
   ...

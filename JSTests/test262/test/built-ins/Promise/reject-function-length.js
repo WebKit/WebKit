@@ -4,7 +4,7 @@
 /*---
 es6id: 25.4.1.3.1
 description: The `length` property of Promise Reject functions
-info: >
+info: |
   The length property of a promise reject function is 1.
 
   17 ECMAScript Standard Built-in Objects:

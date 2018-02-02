@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     The production CharacterClassEscape :: S evaluates by returning
     the set of all characters not included in the set returned by
     CharacterClassEscape :: s

@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     If Type(NewExpression) or Type(MemberExpression) is not Object, throw
     TypeError
 es5id: 11.2.2_A3_T4

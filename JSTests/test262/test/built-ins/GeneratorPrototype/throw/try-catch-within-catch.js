@@ -6,6 +6,7 @@ description: >
     When a generator is paused within the `catch` block of a `try..catch`
     statement, `throw` should interrupt control flow as if a `throw` statement
     had appeared at that location in the function body.
+features: [generators]
 ---*/
 
 var unreachable = 0;

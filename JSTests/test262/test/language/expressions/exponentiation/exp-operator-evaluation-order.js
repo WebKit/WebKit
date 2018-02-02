@@ -5,7 +5,7 @@
 author: Rick Waldron, André Bargull
 esid: sec-exp-operator-runtime-semantics-evaluation
 description: Exponentiation Operator expression order of evaluation
-info: >
+info: |
     ExponentiationExpression:
       UpdateExpression ** ExponentiationExpression
 

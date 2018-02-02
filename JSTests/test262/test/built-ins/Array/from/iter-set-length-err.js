@@ -4,7 +4,7 @@
 esid: sec-array.from
 es6id: 22.1.2.1
 description: Error setting length of object (traversed via iterator)
-info: >
+info: |
     [...]
     6. If usingIterator is not undefined, then
        [...]

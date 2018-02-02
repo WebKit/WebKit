@@ -5,7 +5,7 @@
 esid: sec-math.max
 description: >
   "length" property of Math.max
-info: >
+info: |
   Math.max ( value1, value2, ...values )
 
   17 ECMAScript Standard Built-in Objects:

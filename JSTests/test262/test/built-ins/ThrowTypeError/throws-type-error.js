@@ -5,7 +5,7 @@
 esid: sec-%throwtypeerror%
 description: >
   %ThrowTypeError% throws a TypeError when called.
-info: >
+info: |
   %ThrowTypeError% ( )
 
   When %ThrowTypeError% is called it performs the following steps:

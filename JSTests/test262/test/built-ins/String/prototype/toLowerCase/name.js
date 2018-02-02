@@ -5,7 +5,7 @@
 es6id: 21.1.3.22
 description: >
   String.prototype.toLowerCase.name is "toLowerCase".
-info: >
+info: |
   String.prototype.toLowerCase ( )
 
   17 ECMAScript Standard Built-in Objects:

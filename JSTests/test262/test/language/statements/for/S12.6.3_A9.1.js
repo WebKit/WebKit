@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     The result of evaluating "for( ExpNoIn;Exp;Exp)" loop is returning
     (normal, evalValue, empty)
 es5id: 12.6.3_A9.1

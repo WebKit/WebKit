@@ -3,7 +3,7 @@
 /*---
 es6id: 25.4.3
 description: Subclassing the Promise object
-info: >
+info: |
   25.4.3 The Promise Constructor
 
   ...

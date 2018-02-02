@@ -3,7 +3,7 @@
 /*---
 es6id: 19.4.3.4
 description: Symbol.prototype[Symbol.toPrimitive] `length` property
-info: >
+info: |
     ES6 section 17:
 
     Every built-in Function object, including constructors, has a length

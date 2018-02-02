@@ -5,7 +5,7 @@
 description: >
     Behavior when error thrown from `flags` property of a RegExp-like object
 es6id: 21.2.3.1
-info: >
+info: |
     1. Let patternIsRegExp be IsRegExp(pattern).
     [...]
     6. Else if patternIsRegExp is true, then

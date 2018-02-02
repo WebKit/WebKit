@@ -6,7 +6,7 @@ esid: sec-get-arraybuffer.prototype.bytelength
 description: >
   Throws a TypeError exception when `this` does not have a [[ArrayBufferData]]
   internal slot
-info: >
+info: |
   24.1.4.1 get ArrayBuffer.prototype.byteLength
 
   1. Let O be the this value.

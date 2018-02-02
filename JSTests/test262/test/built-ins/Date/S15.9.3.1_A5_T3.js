@@ -1,7 +1,7 @@
 // Copyright 2009 the Sputnik authors.  All rights reserved.
 // This code is governed by the BSD license found in the LICENSE file.
 /*---
-info: >
+info: |
     The [[Value]] property of the newly constructed object
     is set by following steps:
     8. If Result(1) is not NaN and 0 <= ToInteger(Result(1)) <= 99, Result(8) is

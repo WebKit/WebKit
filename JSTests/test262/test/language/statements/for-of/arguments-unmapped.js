@@ -3,7 +3,7 @@
 /*---
 es6id: 13.6.4
 description: Unmapped arguments object traversal using for..of
-info: >
+info: |
     "Umapped" arguments objects should be able to be traversed using a
     `for..of` loop.
 flags: [noStrict]

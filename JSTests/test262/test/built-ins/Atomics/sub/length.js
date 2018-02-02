@@ -6,7 +6,7 @@
 esid: sec-atomics.sub
 description: >
   Atomics.sub.length is 3.
-info: >
+info: |
   Atomics.sub ( ia, index, val )
 
   17 ECMAScript Standard Built-in Objects:

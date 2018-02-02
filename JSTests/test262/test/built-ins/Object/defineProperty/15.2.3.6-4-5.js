@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     Step 4 of defineProperty calls the [[DefineOwnProperty]] internal method
     of O to define the property. Step 6 of [[DefineOwnProperty]] returns if
     every field of desc also occurs in current and every field in desc has

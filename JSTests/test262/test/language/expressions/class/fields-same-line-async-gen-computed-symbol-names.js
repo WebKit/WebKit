@@ -1,9 +1,10 @@
 // This file was procedurally generated from the following sources:
 // - src/class-fields/computed-symbol-names.case
-// - src/class-fields/default/cls-expr-after-same-line-async-gen.template
+// - src/class-fields/productions/cls-expr-after-same-line-async-gen.template
 /*---
 description: Computed property symbol names (field definitions after an async generator in the same line)
-features: [Symbol, computed-property-names, class-fields, async-iteration]
+esid: prod-FieldDefinition
+features: [Symbol, computed-property-names, class, class-fields-public, async-iteration]
 flags: [generated, async]
 includes: [propertyHelper.js]
 info: |
@@ -25,6 +26,7 @@ var y = Symbol();
 
 var C = class {
   async *m() { return 42; } [x]; [y] = 42;
+
 }
 
 var c = new C();

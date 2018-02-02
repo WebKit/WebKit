@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     Since when call is used for Function constructor themself new function instance creates
     and then first argument(thisArg) should be ignored
 es5id: 15.3_A3_T3

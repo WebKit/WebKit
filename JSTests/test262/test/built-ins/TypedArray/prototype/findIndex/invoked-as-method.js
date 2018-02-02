@@ -3,7 +3,7 @@
 /*---
 es6id: 22.2.3.11
 description: Requires a [[TypedArrayName]] internal slot.
-info: >
+info: |
   22.2.3.11 %TypedArray%.prototype.findIndex ( predicate [ , thisArg ] )
 
   This function is not generic. ValidateTypedArray is applied to the this value

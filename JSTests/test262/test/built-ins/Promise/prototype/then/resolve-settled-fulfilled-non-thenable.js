@@ -3,7 +3,7 @@
 /*---
 description: Resolving with a non-thenable object value from a fulfilled promise
 es6id: 25.4.5.3
-info: >
+info: |
     [...]
     7. Return PerformPromiseThen(promise, onFulfilled, onRejected,
        resultCapability).

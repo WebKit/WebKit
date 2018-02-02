@@ -5,7 +5,7 @@
 esid: sec-Intl.DateTimeFormat.prototype.format
 description: >
   get Intl.DateTimeFormat.prototype.format.name is "get format".
-info: >
+info: |
   12.4.3 get Intl.DateTimeFormat.prototype.format
 
   17 ECMAScript Standard Built-in Objects:

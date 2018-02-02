@@ -4,7 +4,7 @@
 /*---
 es6id: 13.3.1.4
 description: Assignment of function `name` attribute (ArrowFunction)
-info: >
+info: |
     LexicalBinding : BindingIdentifier Initializer
 
     [...]

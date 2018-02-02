@@ -5,7 +5,7 @@
 es6id: 22.2.3.21
 description: >
   %TypedArray%.prototype.reverse.name is "reverse".
-info: >
+info: |
   %TypedArray%.prototype.reverse ( )
 
   17 ECMAScript Standard Built-in Objects:

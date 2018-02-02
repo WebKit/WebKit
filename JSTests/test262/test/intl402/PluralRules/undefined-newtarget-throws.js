@@ -22,6 +22,4 @@ testWithIntlConstructors(function (Constructor) {
     assert.throws(TypeError, function() {
         Intl.PluralRules.call(obj)
     }, "Intl.PluralRules throws when called as a function with an Intl-object as this-value");
-
-    return true;
 });

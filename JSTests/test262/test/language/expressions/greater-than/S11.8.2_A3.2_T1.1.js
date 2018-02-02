@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     If Type(Primitive(x)) is String and Type(Primitive(y)) is String, then
     operator x > y returns ToString(x) > ToString(y)
 es5id: 11.8.2_A3.2_T1.1

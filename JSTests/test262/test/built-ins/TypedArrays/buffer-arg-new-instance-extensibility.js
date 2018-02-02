@@ -4,7 +4,7 @@
 esid: sec-typedarray-buffer-byteoffset-length
 description: >
   The new typedArray instance from a buffer argument is extensible
-info: >
+info: |
   22.2.4.5 TypedArray ( buffer [ , byteOffset [ , length ] ] )
 
   ...

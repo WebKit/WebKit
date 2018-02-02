@@ -4,7 +4,7 @@
 /*---
 description: Accumulates consecutive matches when `g` flag is present
 es6id: 21.2.5.6
-info: >
+info: |
     21.2.5.6 RegExp.prototype [ @@match ] ( string )
 
     [...]

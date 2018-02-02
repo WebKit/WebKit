@@ -8,7 +8,7 @@ description: >
 flags: [module]
 features: [let, const]
 negative:
-  phase: early
+  phase: parse
   type: SyntaxError
 ---*/
 

@@ -4,7 +4,7 @@
 /*---
 description: Unicode escape interpreted as the Mathematical Value of HexDigits
 es6id: 21.2.2.10
-info: >
+info: |
     21.2.2.10 CharacterEscape
 
     The production RegExpUnicodeEscapeSequence :: u{ HexDigits } evaluates as

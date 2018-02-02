@@ -4,7 +4,7 @@
 es6id: 25.2.4.1
 description: >
   Subclassed GeneratorFunction instances `length` property
-info: >
+info: |
   25.2.4.1 length
 
   The value of the length property is an integer that indicates the typical

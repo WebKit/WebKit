@@ -4,7 +4,7 @@
 es6id: 21.1.2.4
 description: >
   Returns the string value.
-info: >
+info: |
   21.1.2.4 String.raw ( template , ...substitutions )
 
   ...

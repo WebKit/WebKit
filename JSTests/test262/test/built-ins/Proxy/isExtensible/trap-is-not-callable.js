@@ -4,7 +4,7 @@
 es6id: 9.5.3
 description: >
     Throws a TypeError exception if trap is not callable.
-info: >
+info: |
     [[IsExtensible]] ( )
 
     ...

@@ -3,7 +3,7 @@
 /*---
 es6id: 21.1.4
 description: Instances has the own property length
-info: >
+info: |
   21.1.4 Properties of String Instances
 
   ...

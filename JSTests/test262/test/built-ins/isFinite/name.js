@@ -6,7 +6,7 @@ es6id: 18.2.2
 esid: sec-isfinite-number
 description: >
   isFinite.name is "isFinite".
-info: >
+info: |
   isFinite (number)
 
   17 ECMAScript Standard Built-in Objects:

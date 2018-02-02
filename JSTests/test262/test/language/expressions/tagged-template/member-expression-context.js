@@ -3,7 +3,7 @@
 /*---
 es6id: 12.3.7
 description: Invocation context for member expressions
-info: >
+info: |
     A tagged template is a function call where the arguments of the call are
     derived from a TemplateLiteral. The actual arguments include a template
     object and the values produced by evaluating the expressions embedded

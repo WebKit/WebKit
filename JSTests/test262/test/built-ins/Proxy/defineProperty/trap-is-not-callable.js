@@ -4,7 +4,7 @@
 es6id: 9.5.6
 description: >
     Throw a TypeError exception if trap is not callable.
-info: >
+info: |
     [[DefineOwnProperty]] (P, Desc)
 
     ...

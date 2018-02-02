@@ -3,7 +3,7 @@
 
 /*---
 esid: sec-date.prototype.getday
-info: >
+info: |
     The Date.prototype.getDay property "length" has { ReadOnly, DontDelete,
     DontEnum } attributes
 es5id: 15.9.5.16_A3_T1

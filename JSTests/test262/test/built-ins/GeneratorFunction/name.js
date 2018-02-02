@@ -4,7 +4,7 @@
 esid: sec-properties-of-the-generatorfunction-constructor
 es6id: 25.2.2
 description: Function "name" property
-info: >
+info: |
   The value of the name property of the GeneratorFunction is
   "GeneratorFunction".
 
@@ -17,6 +17,7 @@ info: >
   if it exists, has the attributes { [[Writable]]: false, [[Enumerable]]:
   false, [[Configurable]]: true }.
 includes: [propertyHelper.js]
+features: [generators]
 ---*/
 
 var GeneratorFunction = Object.getPrototypeOf(function* () {}).constructor;

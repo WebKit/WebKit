@@ -5,7 +5,7 @@
 description: SingleNameBinding assigns name to "anonymous" generator functions (`let` statement)
 esid: sec-let-and-const-declarations-runtime-semantics-evaluation
 es6id: 13.3.1.4
-features: [destructuring-binding]
+features: [generators, destructuring-binding]
 flags: [generated]
 info: |
     LexicalBinding : BindingPattern Initializer
@@ -30,6 +30,7 @@ info: |
           [...]
     7. If environment is undefined, return PutValue(lhs, v).
     8. Return InitializeReferencedBinding(lhs, v).
+
 ---*/
 
 let [gen = function* () {}, xGen = function* x() {}] = [];

@@ -4,7 +4,7 @@
 /*---
 es6id: 19.2.3.2
 description: Assignment of function `name` attribute
-info: >
+info: |
     12. Let targetName be Get(Target, "name").
     13. ReturnIfAbrupt(targetName).
     14. If Type(targetName) is not String, let targetName be the empty string.

@@ -3,7 +3,7 @@
 /*---
 es6id: 21.2.5.11
 description: RegExp.prototype[Symbol.split] `length` property
-info: >
+info: |
     The length property of the @@split method is 2.
 
     ES6 Section 17:

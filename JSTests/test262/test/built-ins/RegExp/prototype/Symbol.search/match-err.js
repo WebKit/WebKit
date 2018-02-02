@@ -4,7 +4,7 @@
 /*---
 es6id: 21.2.5.9
 description: Behavior when error thrown while executing match
-info: >
+info: |
     [...]
     9. Let result be RegExpExec(rx, S).
     10. ReturnIfAbrupt(result).

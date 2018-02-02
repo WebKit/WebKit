@@ -2,7 +2,7 @@
 // See LICENSE for details.
 
 /*---
-info: >
+info: |
     Promise.race must throw TypeError per
     CreatePromiseCapabilityRecord step 8 when
     promiseCapabliity.[[Resolve]] is not callable

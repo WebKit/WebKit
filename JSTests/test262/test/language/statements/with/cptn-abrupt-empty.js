@@ -4,7 +4,7 @@
 esid: sec-with-statement-runtime-semantics-evaluation
 description: >
     Statement completion value when body returns an empty abrupt completion
-info: >
+info: |
     WithStatement : with ( Expression ) Statement
 
     [...]

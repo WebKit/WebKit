@@ -4,7 +4,7 @@
 es6id: 26.1.2
 description: >
   Throws a TypeError if `target` is not a constructor.
-info: >
+info: |
   26.1.2 Reflect.construct ( target, argumentsList [, newTarget] )
 
   1. If IsConstructor(target) is false, throw a TypeError exception.

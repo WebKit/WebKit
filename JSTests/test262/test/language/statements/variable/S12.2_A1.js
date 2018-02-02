@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     Variables are created when the program is entered. Variables are initialised to "undefined"
     when created. A variable with an Initialiser is assigned the value of its AssignmentExpression when the
     VariableStatement is executed, not when the variable is created

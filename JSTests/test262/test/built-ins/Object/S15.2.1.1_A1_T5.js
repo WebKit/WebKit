@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     When the Object(value) is called and the value is null, undefined or not supplied,
     create and return a new Object object if the object constructor had been called with the same arguments (15.2.2.1)
 es5id: 15.2.1.1_A1_T5

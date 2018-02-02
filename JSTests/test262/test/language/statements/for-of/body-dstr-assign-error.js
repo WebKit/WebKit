@@ -1,12 +1,24 @@
 // Copyright (C) 2015 the V8 project authors. All rights reserved.
 // This code is governed by the BSD license found in the LICENSE file.
 /*---
-es6id: 13.6.4.13 S5.i.i
+esid: sec-runtime-semantics-forin-div-ofheadevaluation-tdznames-expr-iterationkind
 description: >
     If the left-hand side requires a DestructuringAssignment operation and that
     operation produces an error, the iterator should be closed and the error
     forwarded to the runtime.
-features: [Symbol.iterator]
+info: |
+  ...
+  Else,
+    If lhsKind is assignment, then
+      Let status be the result of performing DestructuringAssignmentEvaluation of
+      assignmentPattern using nextValue as the argument.
+  ...
+  If status is an abrupt completion, then
+    Set the running execution context's LexicalEnvironment to oldEnv.
+    If iterationKind is enumerate, then
+      Return status.
+
+features: [destructuring-assignment,for-of,Symbol.iterator]
 ---*/
 
 var callCount = 0;

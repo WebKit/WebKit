@@ -4,7 +4,7 @@
 description: AnnexB extension not honored in strict mode
 es6id: B.3.3.1
 flags: [onlyStrict]
-info: >
+info: |
     Function declaration in the `case` clause of a `switch` statement in
     function code
 

@@ -4,7 +4,7 @@
 esid: sec-integer-indexed-exotic-objects-defineownproperty-p-desc
 description: >
   Returns false for non-numeric index property value if `this` is not extensible
-info: >
+info: |
   9.4.5.3 [[DefineOwnProperty]] ( P, Desc)
   ...
   3. If Type(P) is String, then

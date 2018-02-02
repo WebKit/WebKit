@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     The activation object is initialised with a property with name arguments
     and attributes {DontDelete}
 es5id: 10.1.6_A1_T1

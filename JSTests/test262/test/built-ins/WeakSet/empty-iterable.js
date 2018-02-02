@@ -5,7 +5,7 @@ es6id: 23.4.1.1
 esid: sec-weakset-iterable
 description: >
   If the iterable argument is empty, return new Weakset object.
-info: >
+info: |
   23.4.1.1 WeakSet ( [ iterable ] )
 
   ...

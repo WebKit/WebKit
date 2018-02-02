@@ -5,7 +5,7 @@
 es6id: B.2.3.10
 description: >
   String.prototype.link.name is "link".
-info: >
+info: |
   String.prototype.link ( url )
 
   17 ECMAScript Standard Built-in Objects:

@@ -4,7 +4,7 @@
 es6id: 23.1.1.1
 description: >
   Throws a TypeError if iterable items are not Objects.
-info: >
+info: |
   Map ( [ iterable ] )
 
   ...

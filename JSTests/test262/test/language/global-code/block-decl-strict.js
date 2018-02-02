@@ -4,7 +4,7 @@
 description: AnnexB extension not honored in strict mode (Block statement in the global scope containing a function declaration)
 es6id: B.3.3.2
 flags: [onlyStrict]
-info: >
+info: |
     B.3.3.2 Changes to GlobalDeclarationInstantiation
 
     1. 1. Let strict be IsStrict of script

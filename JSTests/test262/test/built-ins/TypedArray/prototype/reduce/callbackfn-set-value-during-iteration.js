@@ -5,7 +5,7 @@
 esid: sec-%typedarray%.prototype.reduce
 description: >
   Integer indexed values changed during iteration
-info: >
+info: |
   22.2.3.20 %TypedArray%.prototype.reduce ( callbackfn [ , initialValue ] )
 
   %TypedArray%.prototype.reduce is a distinct function that implements the same

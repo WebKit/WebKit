@@ -3,7 +3,7 @@
 /*---
 es6id: 12.2.8.5
 description: Abrupt completion when converting expression value of TemplateMiddleList
-info: >
+info: |
     TemplateMiddleList : TemplateMiddleList TemplateMiddle Expression
 
     1. Let rest be the result of evaluating TemplateMiddleList .

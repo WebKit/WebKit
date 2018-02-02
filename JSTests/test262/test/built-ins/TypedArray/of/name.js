@@ -5,7 +5,7 @@
 es6id: 22.2.2.2
 description: >
   %TypedArray%.of.name is "of".
-info: >
+info: |
   %TypedArray%.of ( ...items )
 
   17 ECMAScript Standard Built-in Objects:

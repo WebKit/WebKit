@@ -3,7 +3,7 @@
 /*---
 es6id: 11.8.6.1
 description: Template values of templates without substitution patterns
-info: >
+info: |
     The TV and TRV of NoSubstitutionTemplate :: `` is the empty code unit
     sequence.
     The TV of NoSubstitutionTemplate :: ` TemplateCharacters ` is the TV of

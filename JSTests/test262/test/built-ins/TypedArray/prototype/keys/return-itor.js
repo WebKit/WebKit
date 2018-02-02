@@ -4,7 +4,7 @@
 es6id: 22.2.3.16
 esid: sec-%typedarray%.prototype.keys
 description: Return an iterator for the keys.
-info: >
+info: |
   22.2.3.16 %TypedArray%.prototype.keys ( )
 
   ...

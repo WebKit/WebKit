@@ -13,7 +13,7 @@ info: |
     LogicalORExpression[?In, ?Yield]
     LogicalORExpression[?In, ?Yield] ? AssignmentExpression[+In, ?Yield] : AssignmentExpression[?In, ?Yield]
 negative:
-  phase: early
+  phase: parse
   type: SyntaxError
 ---*/
 

@@ -2,15 +2,28 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: "RegularExpressionChar :: BackslashSequence :: \\LineTerminator is incorrect"
-es5id: 7.8.5_A2.5_T4
-description: Carriage Return, with eval
+esid: prod-RegularExpressionBackslashSequence
+info: |
+  RegularExpressionBackslashSequence ::
+    \ RegularExpressionNonTerminator
+
+  RegularExpressionNonTerminator ::
+    SourceCharacter but not LineTerminator
+
+  LineTerminator ::
+    <LF>
+    <CR>
+    <LS>
+    <PS>
+
+description: >
+  A regular expression may not contain a <LF> as a SourceCharacter, evaluated
 ---*/
 
 //CHECK#1
 try {
    eval("/a\\\u000D/").source;
-   $ERROR('#1.1: RegularExpressionChar :: BackslashSequence :: \\Carriage Return is incorrect. Actual: ' + (eval("/a\\\u000D/").source)); 
+   $ERROR('#1.1: RegularExpressionChar :: BackslashSequence :: \\Carriage Return is incorrect. Actual: ' + (eval("/a\\\u000D/").source));
 }
 catch (e) {
   if ((e instanceof SyntaxError) !== true) {

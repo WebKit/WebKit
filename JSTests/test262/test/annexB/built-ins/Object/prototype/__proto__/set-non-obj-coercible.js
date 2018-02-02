@@ -4,7 +4,7 @@
 esid: sec-object.prototype.__proto__
 es6id: B.2.2.1
 description: Called on a value that is not object-coercible
-info: >
+info: |
     1. Let O be ? RequireObjectCoercible(this value).
 ---*/
 

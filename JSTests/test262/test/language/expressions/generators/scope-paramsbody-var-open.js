@@ -18,6 +18,7 @@ info: |
         d. Set the VariableEnvironment of calleeContext to varEnv.
         e. Let instantiatedVarNames be a new empty List.
         [...]
+features: [generators]
 ---*/
 
 var x = 'outside';

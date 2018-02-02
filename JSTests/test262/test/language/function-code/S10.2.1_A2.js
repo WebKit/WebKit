@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     If two or more formal parameters share the same name, hence
     the same property, the corresponding property is given the value that was
     supplied for the last parameter with this name

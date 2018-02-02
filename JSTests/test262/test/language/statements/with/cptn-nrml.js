@@ -3,7 +3,7 @@
 /*---
 es6id: 13.11.7
 description: Statement completion value when body returns a normal completion
-info: >
+info: |
     WithStatement : with ( Expression ) Statement
 
     [...]

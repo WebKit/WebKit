@@ -5,7 +5,7 @@
 esid: sec-array.of
 es6id: 22.1.2.3
 description: Array.of does not use prototype properties for arguments.
-info: >
+info: |
   It defines elements rather than assigning to them.
 ---*/
 

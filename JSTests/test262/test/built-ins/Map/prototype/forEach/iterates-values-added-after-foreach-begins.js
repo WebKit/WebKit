@@ -4,7 +4,7 @@
 es6id: 23.1.3.5
 description: >
   New keys are visited if created during forEach execution.
-info: >
+info: |
   Map.prototype.forEach ( callbackfn [ , thisArg ] )
 
   ...

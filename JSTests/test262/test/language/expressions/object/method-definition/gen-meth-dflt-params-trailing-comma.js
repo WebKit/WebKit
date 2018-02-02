@@ -4,6 +4,7 @@
 /*---
 description: A trailing comma should not increase the respective length, using default parameters (generator method)
 esid: sec-generator-function-definitions-runtime-semantics-propertydefinitionevaluation
+features: [generators]
 flags: [generated]
 info: |
     GeneratorMethod :
@@ -40,6 +41,7 @@ info: |
         b. Let formalStatus be IteratorBindingInitialization for formals with
            iteratorRecord and env as arguments.
     [...]
+
 
     Trailing comma in the parameters list
 

@@ -4,7 +4,7 @@
 esid: sec-ecmascript-function-objects-call-thisargument-argumentslist
 es6id: 9.2.1
 description: The "this" value is wrapped in an object using the callee realm
-info: >
+info: |
   [...]
   6. Perform OrdinaryCallBindThis(F, calleeContext, thisArgument).
   [...]

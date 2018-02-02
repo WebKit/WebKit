@@ -4,7 +4,7 @@
 es6id: 9.5.8
 description: >
     Trap returns abrupt.
-info: >
+info: |
     [[Get]] (P, Receiver)
 
     9. Let trapResult be Call(trap, handler, «target, P, Receiver»).

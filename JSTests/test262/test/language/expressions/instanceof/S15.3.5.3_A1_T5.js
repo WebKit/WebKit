@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     Assume F is a Function object. When the [[HasInstance]] method of F is
     called with value V, the following steps are taken: i) If V is not an
     object, return false

@@ -4,7 +4,7 @@
 es6id: 21.1.2.2
 description: >
   String.fromCodePoint.name
-info: >
+info: |
   String.fromCodePoint ( ...codePoints )
 
   17 ECMAScript Standard Built-in Objects

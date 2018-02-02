@@ -4,12 +4,14 @@
 /*---
 description: Use yield value in a array spread position (Generator method)
 esid: prod-GeneratorMethod
+features: [generators]
 flags: [generated]
 info: |
     14.4 Generator Function Definitions
 
     GeneratorMethod[Yield, Await]:
       * PropertyName[?Yield, ?Await] ( UniqueFormalParameters[+Yield, ~Await] ) { GeneratorBody }
+
 
     Array Initializer
 

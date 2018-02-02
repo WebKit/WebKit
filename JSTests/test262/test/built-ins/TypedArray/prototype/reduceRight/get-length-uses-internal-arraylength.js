@@ -3,7 +3,7 @@
 /*---
 esid: sec-%typedarray%.prototype.reduceright
 description: Get "length" uses internal ArrayLength
-info: >
+info: |
   22.2.3.21 %TypedArray%.prototype.reduceRight ( callbackfn [ , initialValue ] )
 
   %TypedArray%.prototype.reduceRight is a distinct function that implements the

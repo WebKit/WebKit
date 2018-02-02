@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     The production EmptyStatement ; is evaluated as follows Return (normal,
     empty, empty)
 es5id: 12.3_A1

@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     We overload valueOf method so it return non Primitive value
     Thus [[DefaultValue]] must return Object.toString() value
 es5id: 8.12.8_A3

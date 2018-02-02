@@ -5,7 +5,7 @@
 /*---
 description: >
   The `start` index parameter is converted to an integral numeric value.
-info: >
+info: |
   SharedArrayBuffer.prototype.slice ( start, end )
 ---*/
 

@@ -6,7 +6,7 @@ description: redeclaration with VariableDeclaration (LexicalDeclaration (const) 
 esid: sec-block-static-semantics-early-errors
 flags: [generated]
 negative:
-  phase: early
+  phase: parse
   type: SyntaxError
 info: |
     Block : { StatementList }

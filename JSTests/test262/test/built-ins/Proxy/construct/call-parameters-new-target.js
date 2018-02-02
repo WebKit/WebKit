@@ -7,7 +7,7 @@ esid: sec-proxy-object-internal-methods-and-internal-slots-construct-argumentsli
 description: >
     trap is called with handler object as its context, and parameters are:
     target, an array list with the called arguments and the NewTarget
-info: >
+info: |
     [[Construct]] (argumentsList, newTarget)
 
     9. Let newObj be Call(trap, handler, «target, argArray, newTarget»).

@@ -5,7 +5,7 @@
 es6id: 22.2.3.5
 description: >
   %TypedArray%.prototype.copyWithin.name is "copyWithin".
-info: >
+info: |
   %TypedArray%.prototype.copyWithin (target, start [, end ] )
 
   17 ECMAScript Standard Built-in Objects:

@@ -6,7 +6,7 @@ esid: sec-dataview.prototype.getuint16
 es6id: 24.2.4.11
 description: >
   DataView.prototype.getUint16.name is "getUint16".
-info: >
+info: |
   DataView.prototype.getUint16 ( byteOffset [ , littleEndian ] )
 
   17 ECMAScript Standard Built-in Objects:

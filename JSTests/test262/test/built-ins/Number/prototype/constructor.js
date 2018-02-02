@@ -6,7 +6,7 @@ es6id: 20.1.3.1
 esid: sec-number.prototype.constructor
 description: >
   Property descriptor and value for Number.prototype.constructor
-info: >
+info: |
   Number.prototype.constructor
 
   The initial value of Number.prototype.constructor is the intrinsic object

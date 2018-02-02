@@ -3,7 +3,7 @@
 
 /*---
 description: Mapped arguments property descriptor change with non-configurable, non-enumerable and non-writable property
-info: >
+info: |
     Mapping stop working when property is set to non-writable. The
     descriptor's enumerable property is the one set before the mapping removal.
 flags: [noStrict]

@@ -4,7 +4,7 @@
 /*---
 es6id: 21.2.5.11
 description: String coercion of `string` argument
-info: >
+info: |
     [...]
     3. Let S be ToString(string).
     [...]

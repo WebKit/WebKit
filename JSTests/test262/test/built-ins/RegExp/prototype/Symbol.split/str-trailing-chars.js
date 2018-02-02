@@ -4,7 +4,7 @@
 /*---
 es6id: 21.2.5.11
 description: Characters after the final match are appended to the result
-info: >
+info: |
     [...]
     25. Let T be a String value equal to the substring of S consisting of the
         elements at indices p (inclusive) through size (exclusive).

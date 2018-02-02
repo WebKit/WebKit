@@ -5,7 +5,7 @@
 es6id: B.2.3.1
 description: >
   String.prototype.substr.name is "substr".
-info: >
+info: |
   String.prototype.substr (start, length)
 
   17 ECMAScript Standard Built-in Objects:

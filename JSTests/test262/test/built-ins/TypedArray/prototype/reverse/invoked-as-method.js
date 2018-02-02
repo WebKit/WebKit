@@ -3,7 +3,7 @@
 /*---
 es6id: 22.2.3.21
 description: Requires a [[TypedArrayName]] internal slot.
-info: >
+info: |
   22.2.3.21 %TypedArray%.prototype.reverse ( )
 
   ...

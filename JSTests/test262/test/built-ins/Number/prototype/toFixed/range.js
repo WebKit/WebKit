@@ -4,7 +4,7 @@
 /*---
 esid: sec-number.prototype.tofixed
 description: Number.prototype.toFixed permits fractionDigits from 0 to 100
-info: >
+info: |
   Number.prototype.toFixed ( fractionDigits )
 
   ...

@@ -4,7 +4,7 @@
 esid: sec-symbol.for
 es6id: 19.4.2.1
 description: Creation of a unique Symbol value
-info: >
+info: |
     1. Let stringKey be ? ToString(key).
     2. For each element e of the GlobalSymbolRegistry List,
        a. If SameValue(e.[[Key]], stringKey) is true, return e.[[Symbol]].

@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     If B = 1110xxxx (n = 3) and string.charAt(k + 3),
     string.charAt(k + 6) not equal "%", throw URIError
 es5id: 15.1.3.2_A1.8_T1

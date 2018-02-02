@@ -4,7 +4,7 @@
 /*---
 description: Named backreferences in Unicode RegExps
 esid: sec-atomescape
-info: >
+info: |
   The production AtomEscape :: [+N] k GroupName evaluates as follows:
 
     1. Search the enclosing RegExp for an instance of a GroupSpecifier for an

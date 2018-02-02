@@ -5,6 +5,7 @@ es6id: 25.2
 description: >
     Free variables captured within the GeneratorFunction closure are valid
     yield expression operands.
+features: [generators]
 ---*/
 
 var a = 1;

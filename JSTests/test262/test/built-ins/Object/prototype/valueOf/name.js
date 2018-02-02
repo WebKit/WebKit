@@ -5,7 +5,7 @@
 es6id: 19.1.3.7
 description: >
   Object.prototype.valueOf.name is "valueOf".
-info: >
+info: |
   Object.prototype.valueOf ( )
 
   17 ECMAScript Standard Built-in Objects:

@@ -4,13 +4,14 @@
 /*---
 description: Assignment of function `name` attribute
 es6id: 14.4.12
-info: >
+info: |
     GeneratorDeclaration :
         function * BindingIdentifier ( FormalParameters ) { GeneratorBody }
 
     [...]
     6. Perform SetFunctionName(F, name).
 includes: [propertyHelper.js]
+features: [generators]
 ---*/
 
 function* g() {}

@@ -4,7 +4,7 @@
 es6id: 23.1.1.1
 description: >
   The iterator is closed when `Map.prototype.set` throws an error.
-info: >
+info: |
   Map ( [ iterable ] )
 
   ...

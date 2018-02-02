@@ -3,7 +3,7 @@
 /*---
 es6id: 23.1.3.2
 description: Map.prototype.constructor value and descriptor
-info: >
+info: |
   The initial value of Map.prototype.constructor is the intrinsic object %Map%.
 includes: [propertyHelper.js]
 ---*/

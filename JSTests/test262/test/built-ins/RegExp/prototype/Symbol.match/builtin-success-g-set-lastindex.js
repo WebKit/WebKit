@@ -4,7 +4,7 @@
 /*---
 description: Setting `lastIndex` after a "global" match success
 esid: sec-regexp.prototype-@@match
-info: >
+info: |
     [...]
     5. Let global be ToBoolean(Get(rx, "global")).
     6. ReturnIfAbrupt(global).

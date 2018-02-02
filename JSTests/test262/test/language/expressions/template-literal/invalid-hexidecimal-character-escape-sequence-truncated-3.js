@@ -4,7 +4,7 @@
 esid: sec-template-literal-lexical-components
 description: Invalid hexidecimal character escape sequence
 negative:
-  phase: early
+  phase: parse
   type: SyntaxError
 ---*/
 

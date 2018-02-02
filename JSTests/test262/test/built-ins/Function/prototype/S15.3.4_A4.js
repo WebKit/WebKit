@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     The Function prototype object does not have a valueOf property of its
     own. however, it inherits the valueOf property from the Object prototype
     Object

@@ -5,7 +5,7 @@
 es6id: 20.1.2.5
 description: >
   Number.isSafeInteger.name is "isSafeInteger".
-info: >
+info: |
   Number.isSafeInteger ( number )
 
   17 ECMAScript Standard Built-in Objects:

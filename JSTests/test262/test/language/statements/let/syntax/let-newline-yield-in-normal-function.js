@@ -5,13 +5,13 @@
 esid: sec-let-and-const-declarations
 description: >
   `let yield` does not permit ASI in between, as `yield` is a BindingIdentifier
-info: >
+info: |
   `yield` is a perfectly cromulent binding name in any context grammatically, just
   prohibited by static semantics in some contexts.  Therefore ASI can never apply
   between `let` (where a LexicalDeclaration is permitted) and `yield`,
   so a subsequent `0` where `=` was expected is a syntax error.
 negative:
-  phase: early
+  phase: parse
   type: SyntaxError
 ---*/
 

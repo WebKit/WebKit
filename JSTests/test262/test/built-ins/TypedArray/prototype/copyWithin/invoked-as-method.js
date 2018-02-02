@@ -3,7 +3,7 @@
 /*---
 es6id: 22.2.3.5
 description: Requires a [[TypedArrayName]] internal slot.
-info: >
+info: |
   22.2.3.5 %TypedArray%.prototype.copyWithin (target, start [, end ] )
 
   This function is not generic. ValidateTypedArray is applied to the this value

@@ -5,7 +5,7 @@
 es6id: 20.2.2.8
 description: >
   Math.atan2.length is 2.
-info: >
+info: |
   Math.atan2 ( y, x )
 
   17 ECMAScript Standard Built-in Objects:

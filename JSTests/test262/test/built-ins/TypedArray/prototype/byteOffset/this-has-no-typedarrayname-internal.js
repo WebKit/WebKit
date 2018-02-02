@@ -3,10 +3,10 @@
 /*---
 esid: sec-get-%typedarray%.prototype.byteoffset
 es6id: 22.2.3.3
-description: |
+description: >
   Throws a TypeError exception when `this` does not have a [[TypedArrayName]]
   internal slot
-info: >
+info: |
   22.2.3.3 get %TypedArray%.prototype.byteOffset
 
   1. Let O be the this value.

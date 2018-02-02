@@ -3,7 +3,7 @@
 /*---
 es6id: 23.1.1
 description: Super need to be called to initialize internals
-info: >
+info: |
   23.1.1 The Map Constructor
 
   ...

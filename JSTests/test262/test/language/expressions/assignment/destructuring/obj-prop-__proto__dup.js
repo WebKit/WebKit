@@ -4,7 +4,7 @@
 esid: sec-destructuring-assignment
 es6id: 12.14.5
 description: Duplicate __proto__ property names
-info: >
+info: |
     Annex B defines an early error for duplicate PropertyName of `__proto__`,
     in object initializers, but this does not apply to Object Assignment
     patterns

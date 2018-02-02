@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     While using "while" within an eval statement, source "break" is allowed
     and (normal, V, empty) is returned
 es5id: 12.6.2_A5

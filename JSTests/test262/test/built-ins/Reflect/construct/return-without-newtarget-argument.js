@@ -4,7 +4,7 @@
 es6id: 26.1.2
 description: >
   Return target result
-info: >
+info: |
   26.1.2 Reflect.construct ( target, argumentsList [, newTarget] )
 
   ...

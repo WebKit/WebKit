@@ -5,7 +5,7 @@
 es6id: 20.1.3.6
 description: >
   Number.prototype.toString.name is "toString".
-info: >
+info: |
   Number.prototype.toString ( [ radix ] )
 
   17 ECMAScript Standard Built-in Objects:

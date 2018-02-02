@@ -4,7 +4,7 @@
 esid: sec-%typedarray%.of
 description: >
   Return a new TypedArray
-info: >
+info: |
   9.4.5.5 [[Set]] ( P, V, Receiver)
 
   ...

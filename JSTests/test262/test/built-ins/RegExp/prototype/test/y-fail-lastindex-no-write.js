@@ -4,7 +4,7 @@
 /*---
 description: Match failure with non-writable `lastIndex` property
 es6id: 21.2.5.13
-info: >
+info: |
     21.2.5.13 RegExp.prototype.test( S )
 
     [...]

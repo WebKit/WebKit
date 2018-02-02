@@ -6,6 +6,7 @@ description: >
     Runtime Semantics: ClassDefinitionEvaluation
 
     If superclass has a [[FunctionKind]] internal slot whose value is "generator", throw a TypeError exception.
+features: [generators]
 ---*/
 function * G() {}
 

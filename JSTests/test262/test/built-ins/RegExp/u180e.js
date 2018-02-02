@@ -5,7 +5,7 @@
 esid: prod-CharacterClassEscape
 description: >
   U+180E is no longer a Unicode `Space_Separator` symbol as of Unicode v6.3.0.
-info: >
+info: |
   21.2.2.12 CharacterClassEscape
 
   ...

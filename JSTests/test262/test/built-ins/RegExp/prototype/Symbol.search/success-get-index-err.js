@@ -5,7 +5,7 @@
 es6id: 21.2.5.9
 description: >
     Behavior when error thrown while accessing `index` property of match result
-info: >
+info: |
     [...]
     14. Return Get(result, "index").
 features: [Symbol.search]

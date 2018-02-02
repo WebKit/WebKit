@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     When Date is called as part of a new expression it is
     a constructor: it initializes the newly created object
 esid: sec-date-year-month-date-hours-minutes-seconds-ms

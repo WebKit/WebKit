@@ -4,7 +4,7 @@
 es6id: 23.1.3.9
 description: >
   Map.prototype.set returns the given `this` map object.
-info: >
+info: |
   Map.prototype.set ( key , value )
 
   1. Let M be the this value.

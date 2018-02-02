@@ -4,7 +4,7 @@
 es6id: 26.1.2
 description: >
   Throws a TypeError if `newTarget` is not a constructor.
-info: >
+info: |
   26.1.2 Reflect.construct ( target, argumentsList [, newTarget] )
 
   ...

@@ -5,7 +5,7 @@
 es6id: 19.1.3.2
 description: >
   Object.prototype.hasOwnProperty.name is "hasOwnProperty".
-info: >
+info: |
   Object.prototype.hasOwnProperty ( V )
 
   17 ECMAScript Standard Built-in Objects:

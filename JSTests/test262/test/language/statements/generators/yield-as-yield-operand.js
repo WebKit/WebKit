@@ -2,11 +2,12 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-  description: >
-      `yield` expressions may be used as the right-hand-side of other `yield`
-      expressions.
-  es6id: 14.4
- ---*/
+description: >
+    `yield` expressions may be used as the right-hand-side of other `yield`
+    expressions.
+es6id: 14.4
+features: [generators]
+---*/
 
 var iter, result;
 function* g() {

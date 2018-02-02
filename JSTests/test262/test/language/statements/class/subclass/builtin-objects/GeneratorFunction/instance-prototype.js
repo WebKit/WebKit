@@ -4,7 +4,7 @@
 es6id: 25.2.4.3
 description: >
   Subclassed GeneratorFunction instances `prototype` property
-info: >
+info: |
   25.2.4.3 prototype
 
   Whenever a GeneratorFunction instance is created another ordinary object is

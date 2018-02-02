@@ -5,7 +5,7 @@
 esid: sec-%typedarray%.prototype.includes
 description: >
   %TypedArray%.prototype.includes.length is 1.
-info: >
+info: |
   %TypedArray%.prototype.includes ( searchElement [ , fromIndex ] )
 
   17 ECMAScript Standard Built-in Objects:

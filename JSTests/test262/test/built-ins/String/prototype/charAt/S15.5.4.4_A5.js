@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     When String.prototype.charAt(pos) calls first calls ToString, giving it
     the this value as its argument
 es5id: 15.5.4.4_A5

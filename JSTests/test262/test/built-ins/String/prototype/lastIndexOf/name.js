@@ -5,7 +5,7 @@
 es6id: 21.1.3.9
 description: >
   String.prototype.lastIndexOf.name is "lastIndexOf".
-info: >
+info: |
   String.prototype.lastIndexOf ( searchString [ , position ] )
 
   17 ECMAScript Standard Built-in Objects:

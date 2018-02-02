@@ -7,6 +7,7 @@ description: >
     that is non-enumerable, non-writable, and configurable.
 includes: [propertyHelper.js]
 es6id: 25.3.1
+features: [generators]
 ---*/
 
 function* g() {}

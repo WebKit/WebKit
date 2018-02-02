@@ -4,7 +4,7 @@
 esid: sec-integer-indexed-exotic-objects-getownproperty-p
 description: >
   Returns an ordinary property value if key is not a CanonicalNumericIndex
-info: >
+info: |
   9.4.5.1 [[GetOwnProperty]] ( P )
 
   ...

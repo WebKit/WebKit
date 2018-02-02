@@ -4,7 +4,7 @@
 es6id: 13.7.2.6
 description: >
     Completion value when iteration completes due to an empty abrupt completion
-info: >
+info: |
     IterationStatement : do Statement while ( Expression ) ;
 
     1. Let V = undefined.

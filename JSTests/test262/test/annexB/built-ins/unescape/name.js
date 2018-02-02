@@ -5,7 +5,7 @@
 es6id: B.2.1.2
 description: >
   unescape.name is "unescape".
-info: >
+info: |
   unescape (string)
 
   17 ECMAScript Standard Built-in Objects:

@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     If string.charAt(k) in [0xD800 - 0xDBFF] and string.length = k + 1, throw
     URIError
 es5id: 15.1.3.4_A1.2_T1

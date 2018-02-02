@@ -6,7 +6,7 @@ es6id: 18.2.4
 esid: sec-parsefloat-string
 description: >
   Leading U+180E is not recognized as whitespace
-info: >
+info: |
   18.2.4 parseFloat (string)
 
   ...

@@ -5,7 +5,7 @@
 description: >
     Behavior when position is decremented during result accumulation
 es6id: 21.2.5.8
-info: >
+info: |
     16. Repeat, for each result in results,
         [...]
         p. If position ≥ nextSourcePosition, then

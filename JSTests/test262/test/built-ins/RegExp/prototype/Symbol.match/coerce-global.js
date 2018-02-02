@@ -4,7 +4,7 @@
 /*---
 description: Boolean coercion of `global` property
 esid: sec-regexp.prototype-@@match
-info: >
+info: |
     21.2.5.6 RegExp.prototype [ @@match ] ( string )
 
     [...]

@@ -4,7 +4,7 @@
 es6id: 22.2.3.31
 description: >
   "@@toStringTag" property of TypedArrayPrototype
-info: >
+info: |
   22.2.3.31 get %TypedArray%.prototype [ @@toStringTag ]
 
   %TypedArray%.prototype[@@toStringTag] is an accessor property whose set

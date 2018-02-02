@@ -5,7 +5,7 @@
 es6id: 21.1.3.1
 description: >
   String.prototype.charAt.name is "charAt".
-info: >
+info: |
   String.prototype.charAt ( pos )
 
   17 ECMAScript Standard Built-in Objects:

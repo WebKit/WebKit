@@ -2,38 +2,48 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: Result of appying "typeof" operator to number is "number"
-es5id: 11.4.3_A3.4
-es6id: 12.5.6.1
-description: typeof (number value) === "number"
+esid: sec-typeof-operator-runtime-semantics-evaluation
+description: typeof Number literal
+info: |
+  The typeof Operator
+
+  Runtime Semantics: Evaluation
+
+    ...
+    Return a String according to Table 35.
+
+  #table-35
+
+  Number "number"
+
 ---*/
 
 assert.sameValue(
   typeof 1,
   "number",
-  'typeof 1 === "number". Actual: ' + (typeof 1)
+  'typeof 1 === "number"'
 );
 
 assert.sameValue(
   typeof NaN,
   "number",
-  'typeof NaN === "number". Actual: ' + (typeof NaN)
+  'typeof NaN === "number"'
 );
 
 assert.sameValue(
   typeof Infinity,
   "number",
-  'typeof Infinity === "number". Actual: ' + (typeof Infinity)
+  'typeof Infinity === "number"'
 );
 
 assert.sameValue(
   typeof -Infinity,
   "number",
-  'typeof -Infinity === "number". Actual: ' + (typeof -Infinity)
+  'typeof -Infinity === "number"'
 );
 
 assert.sameValue(
   typeof Math.PI,
   "number",
-  'typeof Math.PI === "number". Actual: ' + (typeof Math.PI)
+  'typeof Math.PI === "number"'
 );

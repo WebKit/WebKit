@@ -5,7 +5,7 @@
 es6id: 24.3.2
 description: >
   JSON.stringify.name is "stringify".
-info: >
+info: |
   JSON.stringify ( value [ , replacer [ , space ] ] )
 
   17 ECMAScript Standard Built-in Objects:

@@ -4,7 +4,7 @@
 es6id: 26.1.6
 description: >
   Return abrupt result from get a property value.
-info: >
+info: |
   26.1.6 Reflect.get ( target, propertyKey [ , receiver ])
 
   ...

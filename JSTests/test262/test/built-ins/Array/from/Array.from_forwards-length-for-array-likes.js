@@ -7,7 +7,7 @@ es6id: 22.1.2.1
 description: >
   If this is a constructor, and items doesn't have an @@iterator,
   returns a new instance of this
-info: >
+info: |
   22.1.2.1 Array.from ( items [ , mapfn [ , thisArg ] ] )
 
   4. Let usingIterator be GetMethod(items, @@iterator).

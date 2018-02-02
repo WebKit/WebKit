@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     The PropertyName is undefined, ToString(BooleanLiteral),
     ToString(nullLiteral)
 es5id: 11.1.5_A4.3

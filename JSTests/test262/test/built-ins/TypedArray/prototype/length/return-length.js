@@ -2,9 +2,9 @@
 // This code is governed by the BSD license found in the LICENSE file.
 /*---
 esid: sec-get-%typedarray%.prototype.length
-description: |
+description: >
   Return value from the [[ArrayLength]] internal slot
-info: >
+info: |
   22.2.3.18 get %TypedArray%.prototype.length
 
   ...

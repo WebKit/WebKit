@@ -5,7 +5,7 @@
 es6id: 21.1.3.17
 description: >
   String.prototype.split.name is "split".
-info: >
+info: |
   String.prototype.split ( separator, limit )
 
   17 ECMAScript Standard Built-in Objects:

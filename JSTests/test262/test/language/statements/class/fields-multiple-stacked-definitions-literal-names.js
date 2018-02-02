@@ -1,9 +1,10 @@
 // This file was procedurally generated from the following sources:
 // - src/class-fields/literal-names.case
-// - src/class-fields/default/cls-decl-multiple-stacked-definitions.template
+// - src/class-fields/productions/cls-decl-multiple-stacked-definitions.template
 /*---
 description: Literal property names (multiple stacked fields definitions through ASI)
-features: [class-fields]
+esid: prod-FieldDefinition
+features: [class, class-fields-public]
 flags: [generated]
 includes: [propertyHelper.js]
 info: |
@@ -27,6 +28,7 @@ class C {
   c = fn
   foo = "foobar"
   bar = "barbaz";
+
 }
 
 var c = new C();

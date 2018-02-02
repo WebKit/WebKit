@@ -4,7 +4,7 @@
 es6id: 23.1.3.9
 description: >
   Replaces a value in the map.
-info: >
+info: |
   Map.prototype.set ( key , value )
 
   ...

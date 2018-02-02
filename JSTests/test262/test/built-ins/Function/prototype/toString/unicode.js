@@ -4,7 +4,7 @@
 /*---
 esid: sec-function.prototype.tostring
 description: Function.prototype.toString on a function with Unicode escape sequences
-info: >
+info: |
   Function.prototype.toString returns a slice of the source text before
   any potential Unicode escape sequence substitution in identifiers
 ---*/

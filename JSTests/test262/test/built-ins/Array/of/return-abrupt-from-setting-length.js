@@ -5,7 +5,7 @@ esid: sec-array.of
 es6id: 22.1.2.3
 description: >
   Return abrupt from setting the length property.
-info: >
+info: |
   Array.of ( ...items )
 
   ...

@@ -6,7 +6,7 @@ esid: sec-arraybuffer.prototype.slice
 es6id: 24.1.4.3
 description: >
   Uses default constructor is species constructor is null.
-info: >
+info: |
   ArrayBuffer.prototype.slice ( start, end )
 
   ...

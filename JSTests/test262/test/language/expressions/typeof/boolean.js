@@ -2,26 +2,31 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: Result of applying "typeof" operator to boolean is "boolean"
-es5id: 11.4.3_A3.3
-es6id: 12.5.6.1
-description: typeof (boolean value) === "boolean"
+esid: sec-typeof-operator-runtime-semantics-evaluation
+description: typeof Boolean literal
+info: |
+  The typeof Operator
+
+  Runtime Semantics: Evaluation
+
+    ...
+    Return a String according to Table 35.
+
+  #table-35
+
+  Boolean "boolean"
+
+
 ---*/
 
 assert.sameValue(
   typeof true,
    "boolean",
-  '#1: typeof true === "boolean". Actual: ' + (typeof true)
+  'typeof true === "boolean"'
 );
 
 assert.sameValue(
   typeof false,
    "boolean",
-  '#2: typeof false === "boolean". Actual: ' + (typeof false)
-);
-
-assert.sameValue(
-  typeof !-1,
-   "boolean",
-  '#3: typeof !-1 === "boolean". Actual: ' + (typeof !-1)
+  'typeof false === "boolean"'
 );

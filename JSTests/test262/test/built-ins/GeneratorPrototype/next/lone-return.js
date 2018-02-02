@@ -5,6 +5,7 @@ es6id: 25.2
 description: >
     When a generator body contains a lone return statement, it should produce
     an iterator that immediately completes with the returned value.
+features: [generators]
 ---*/
 
 function* g() { return 23; }

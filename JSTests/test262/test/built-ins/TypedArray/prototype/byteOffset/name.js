@@ -5,7 +5,7 @@
 es6id: 22.2.3.3
 description: >
   get %TypedArray%.prototype.byteOffset.name is "get byteOffset".
-info: >
+info: |
   get %TypedArray%.prototype.byteOffset
 
   17 ECMAScript Standard Built-in Objects:

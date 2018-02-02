@@ -5,7 +5,7 @@
 description: >
     `Promise.resolve` invoked on a constructor value
 es6id: 25.4.4.5
-info: >
+info: |
     1. Let C be the this value.
     [...]
     4. Let promiseCapability be NewPromiseCapability(C).

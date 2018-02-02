@@ -4,7 +4,7 @@
 es6id: 23.1.3.5
 description: >
   Map state with deleted values during forEach.
-info: >
+info: |
   Map.prototype.forEach ( callbackfn [ , thisArg ] )
 
   ...

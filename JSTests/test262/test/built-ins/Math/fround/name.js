@@ -5,7 +5,7 @@
 es6id: 20.2.2.17
 description: >
   Math.fround.name is "fround".
-info: >
+info: |
   Math.fround ( x )
 
   17 ECMAScript Standard Built-in Objects:

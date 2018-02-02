@@ -3,7 +3,7 @@
 /*---
 es6id: 22.2.3.16
 description: Throws a TypeError exception when invoked as a function
-info: >
+info: |
   22.2.3.16 %TypedArray%.prototype.lastIndexOf ( searchElement [ , fromIndex ] )
 
   This function is not generic. ValidateTypedArray is applied to the this value

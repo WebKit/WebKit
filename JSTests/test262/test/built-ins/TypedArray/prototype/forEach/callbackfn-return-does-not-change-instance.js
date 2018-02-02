@@ -4,7 +4,7 @@
 esid: sec-%typedarray%.prototype.foreach
 description: >
   The callbackfn return does not change the instance
-info: >
+info: |
   22.2.3.12 %TypedArray%.prototype.forEach ( callbackfn [ , thisArg ] )
 
   %TypedArray%.prototype.forEach is a distinct function that implements the same

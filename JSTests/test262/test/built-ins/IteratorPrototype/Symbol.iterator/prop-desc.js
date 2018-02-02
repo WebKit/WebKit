@@ -3,7 +3,7 @@
 /*---
 es6id: 25.1.2.1
 description: Property descriptor
-info: >
+info: |
     ES6 Section 17
 
     Every other data property described in clauses 18 through 26 and in Annex

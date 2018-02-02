@@ -2,16 +2,29 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: "RegularExpressionFirstChar :: LineTerminator is incorrect"
-es5id: 7.8.5_A1.3_T1
-description: Line Feed, without eval
+esid: prod-RegularExpressionNonTerminator
+info: |
+  RegularExpressionBody ::
+    RegularExpressionFirstChar RegularExpressionChars
+
+  RegularExpressionChars ::
+    [empty]
+    RegularExpressionChars RegularExpressionChar
+
+  RegularExpressionFirstChar ::
+    RegularExpressionNonTerminator but not one of * or \ or / or [
+
+  RegularExpressionNonTerminator ::
+    SourceCharacter but not LineTerminator
+
+description: >
+  The first character of a regular expression may not be a <LF> (\u000A)
 negative:
-  phase: early
+  phase: parse
   type: SyntaxError
 ---*/
 
 throw "Test262: This statement should not be evaluated.";
 
-//CHECK#1
 /
 /

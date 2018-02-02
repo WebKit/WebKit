@@ -1,9 +1,10 @@
 // This file was procedurally generated from the following sources:
 // - src/class-fields/computed-names.case
-// - src/class-fields/default/cls-decl-after-same-line-static-async-gen.template
+// - src/class-fields/productions/cls-decl-after-same-line-static-async-gen.template
 /*---
 description: Computed property names (field definitions after a static async generator in the same line)
-features: [computed-property-names, class-fields, async-iteration]
+esid: prod-FieldDefinition
+features: [computed-property-names, class, class-fields-public, async-iteration]
 flags: [generated, async]
 includes: [propertyHelper.js]
 info: |
@@ -23,7 +24,8 @@ var x = "b";
 
 
 class C {
-  static async *m() { return 42; } static ["a"] = 39; [x] = 42; [10] = "meep"; ["not initialized"];
+  static async *m() { return 42; } [x] = 42; [10] = "meep"; ["not initialized"];
+
 }
 
 var c = new C();
@@ -36,16 +38,6 @@ verifyProperty(C, "m", {
   configurable: true,
   writable: true,
 }, {restore: true});
-
-assert.sameValue(Object.hasOwnProperty.call(C.prototype, "a"), false);
-assert.sameValue(Object.hasOwnProperty.call(c, "a"), false);
-
-verifyProperty(C, "a", {
-  value: 39,
-  enumerable: true,
-  writable: true,
-  configurable: true
-});
 
 assert.sameValue(Object.hasOwnProperty.call(C.prototype, "b"), false);
 assert.sameValue(Object.hasOwnProperty.call(C, "b"), false);

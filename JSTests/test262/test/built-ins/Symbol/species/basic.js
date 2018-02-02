@@ -2,7 +2,7 @@
 // See LICENSE for details.
 
 /*---
-info: >
+info: |
  Symbol.species is a well-known symbol
 es6id: 19.4.2.10
 author: Sam Mikes

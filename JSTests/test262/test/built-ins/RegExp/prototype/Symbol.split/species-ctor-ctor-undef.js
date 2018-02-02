@@ -4,7 +4,7 @@
 /*---
 es6id: 21.2.5.11
 description: RegExp used when `this` value does not define a constructor
-info: >
+info: |
     [...]
     5. Let C be SpeciesConstructor(rx, %RegExp%).
     [...]

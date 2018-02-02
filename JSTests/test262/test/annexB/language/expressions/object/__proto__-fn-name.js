@@ -4,7 +4,7 @@
 /*---
 es6id: B.3.1
 description: Function name is not assigned based on the property name
-info: >
+info: |
     [...]
     6. If propKey is the String value "__proto__" and if
        IsComputedPropertyKey(propKey) is false, then
@@ -15,7 +15,6 @@ info: >
        a. Let hasNameProperty be HasOwnProperty(propValue, "name").
        b. ReturnIfAbrupt(hasNameProperty).
        c. If hasNameProperty is false, perform SetFunctionName(propValue, propKey).
-includes: [propertyHelper.js]
 ---*/
 
 var o;

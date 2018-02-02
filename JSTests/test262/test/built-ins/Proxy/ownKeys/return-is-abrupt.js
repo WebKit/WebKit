@@ -4,7 +4,7 @@
 esid: sec-proxy-object-internal-methods-and-internal-slots-ownpropertykeys
 description: >
     Trap returns abrupt.
-info: >
+info: |
     [[OwnPropertyKeys]] ( )
 
     ...

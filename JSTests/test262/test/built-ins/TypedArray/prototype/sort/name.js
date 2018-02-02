@@ -5,7 +5,7 @@
 es6id: 22.2.3.25
 description: >
   %TypedArray%.prototype.sort.name is "sort".
-info: >
+info: |
   %TypedArray%.prototype.sort ( comparefn )
 
   17 ECMAScript Standard Built-in Objects:

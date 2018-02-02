@@ -5,7 +5,7 @@
 esid: sec-typedarray-buffer-byteoffset-length
 description: >
   Throws a RangeError if ToInteger(byteOffset) modulo elementSize is not 0
-info: >
+info: |
   22.2.4.5 TypedArray ( buffer [ , byteOffset [ , length ] ] )
 
   This description applies only if the TypedArray function is called with at

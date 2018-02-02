@@ -4,7 +4,7 @@
 /*---
 es6id: 25.4.1.5.1
 description: The `length` property of GetCapabilitiesExecutor functions
-info: >
+info: |
   The length property of a GetCapabilitiesExecutor function is 2.
 
   17 ECMAScript Standard Built-in Objects:

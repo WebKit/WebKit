@@ -5,9 +5,8 @@ description: >
     HTML-like comments are not available in module code
     (SingleLineHTMLCloseComment)
 esid: sec-html-like-comments
-es6id: B1.3
 negative:
-  phase: early
+  phase: parse
   type: SyntaxError
 flags: [module]
 ---*/

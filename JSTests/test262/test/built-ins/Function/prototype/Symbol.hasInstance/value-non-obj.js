@@ -3,7 +3,7 @@
 /*---
 es6id: 19.2.3.6
 description: Non-object argument
-info: >
+info: |
     1. Let F be the this value.
     2. Return OrdinaryHasInstance(F, V).
 

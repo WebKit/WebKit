@@ -7,7 +7,7 @@ esid: sec-async-arrow-function-definitions
 features: [default-parameters]
 flags: [generated]
 negative:
-  phase: early
+  phase: parse
   type: SyntaxError
 info: |
     14.7 Async Arrow Function Definitions

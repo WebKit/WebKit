@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     If multi line comments csn not nest, they can contain any Unicode
     character
 es5id: 7.4_A6

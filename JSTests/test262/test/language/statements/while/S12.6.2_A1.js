@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     Expression from "while" IterationStatement is evaluated first; "false",
     "0", "null", "undefined" and "empty" strings used as the Expression are
     evaluated to "false"

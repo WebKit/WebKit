@@ -4,7 +4,7 @@
 esid: sec-integer-indexed-exotic-objects-defineownproperty-p-desc
 description: >
   Redefine a non-numerical key on a non-extensible instance
-info: >
+info: |
   9.4.5.3 [[DefineOwnProperty]] ( P, Desc)
   ...
   3. If Type(P) is String, then

@@ -4,7 +4,7 @@
 /*---
 esid: sec-date.prototype.totimestring
 description: Test the format of the time from toTimeString
-info: >
+info: |
   Date.prototype.toTimeString ( )
 
   5. Return the String value formed by concatenating TimeString(_t_) and TimeZoneString(_tv_).

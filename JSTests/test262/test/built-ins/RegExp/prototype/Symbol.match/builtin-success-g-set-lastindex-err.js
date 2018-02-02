@@ -6,7 +6,7 @@ description: >
     Behavior when error thrown while setting `lastIndex` after a "global" match
     success
 es6id: 21.2.5.6
-info: >
+info: |
     [...]
     5. Let global be ToBoolean(Get(rx, "global")).
     6. ReturnIfAbrupt(global).

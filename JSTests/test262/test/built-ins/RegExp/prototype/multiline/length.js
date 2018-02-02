@@ -5,7 +5,7 @@
 es6id: 21.2.5.7
 description: >
   get RegExp.prototype.multiline.length is 0.
-info: >
+info: |
   get RegExp.prototype.multiline
 
   17 ECMAScript Standard Built-in Objects:

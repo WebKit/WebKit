@@ -4,6 +4,7 @@
 es6id: 25.2
 description: >
     Yield expressions are valid yield expression operands.
+features: [generators]
 ---*/
 
 function* g() {

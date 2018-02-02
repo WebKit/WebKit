@@ -4,7 +4,7 @@
 /*---
 esid: sec-get-regexp.prototype.dotall
 description: Invoked on an object without an [[OriginalFlags]] internal slot
-info: >
+info: |
     get RegExp.prototype.dotAll
 
     1. Let R be the this value.

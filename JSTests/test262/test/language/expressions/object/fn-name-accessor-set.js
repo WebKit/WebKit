@@ -4,7 +4,7 @@
 /*---
 es6id: 14.3.9
 description: Assignment of function `name` attribute ("set" accessor)
-info: >
+info: |
     MethodDefinition :
         set PropertyName ( PropertySetParameterList ) { FunctionBody }
 

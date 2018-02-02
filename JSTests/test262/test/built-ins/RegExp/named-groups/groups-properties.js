@@ -6,7 +6,7 @@ description: Properties of the groups object are created with CreateDataProperty
 includes: [compareArray.js, propertyHelper.js]
 esid: sec-regexpbuiltinexec
 features: [regexp-named-groups]
-info: >
+info: |
   Runtime Semantics: RegExpBuiltinExec ( R, S )
     25. For each integer i such that i > 0 and i ≤ n
       f. If the ith capture of R was defined with a GroupName,

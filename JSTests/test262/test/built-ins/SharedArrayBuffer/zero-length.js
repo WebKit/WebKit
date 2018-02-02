@@ -6,7 +6,7 @@
 esid: sec-sharedarraybuffer-length
 description: >
   The `length` parameter can be zero.
-info: >
+info: |
   SharedArrayBuffer( length )
 
   ...

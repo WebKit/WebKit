@@ -5,7 +5,7 @@
 es6id: 19.1.2.3
 description: >
   Object.defineProperties.name is "defineProperties".
-info: >
+info: |
   Object.defineProperties ( O, Properties )
 
   17 ECMAScript Standard Built-in Objects:

@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     The abtract operation ToPropertyDescriptor is used to package the
     into a property desc. Step 10 of ToPropertyDescriptor throws a TypeError
     if the property desc ends up having a mix of accessor and data property elements.

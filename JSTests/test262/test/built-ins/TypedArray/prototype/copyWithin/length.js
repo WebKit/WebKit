@@ -5,7 +5,7 @@
 es6id: 22.2.3.5
 description: >
   %TypedArray%.prototype.copyWithin.length is 2.
-info: >
+info: |
   %TypedArray%.prototype.copyWithin (target, start [, end ] )
 
   17 ECMAScript Standard Built-in Objects:

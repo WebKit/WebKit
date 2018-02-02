@@ -4,7 +4,7 @@
 es6id: 22.2.2.3
 description: >
   "prototype" property of TypedArray
-info: >
+info: |
   22.2.2.3 %TypedArray%.prototype
 
   This property has the attributes { [[Writable]]: false, [[Enumerable]]:

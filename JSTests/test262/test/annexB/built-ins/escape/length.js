@@ -5,7 +5,7 @@
 es6id: B.2.1.1
 description: >
   escape.length is 1.
-info: >
+info: |
   escape (string)
 
   17 ECMAScript Standard Built-in Objects:

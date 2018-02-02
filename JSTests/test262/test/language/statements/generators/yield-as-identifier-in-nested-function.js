@@ -2,12 +2,13 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-  description: >
-      `yield` is not a reserved keyword within normal function bodies declared
-      within generator function bodies.
-  es6id: 12.1.1
-  flags: [noStrict]
- ---*/
+description: >
+    `yield` is not a reserved keyword within normal function bodies declared
+    within generator function bodies.
+es6id: 12.1.1
+flags: [noStrict]
+features: [generators]
+---*/
 
 var result;
 function* g() {

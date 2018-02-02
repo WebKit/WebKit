@@ -4,7 +4,7 @@
 /*---
 es6id: 11.8.3.1
 description: Mathematical value of valid binary integer literals
-info: >
+info: |
     The MV of BinaryIntegerLiteral :: 0b BinaryDigits is the MV of
     BinaryDigits.
     The MV of BinaryIntegerLiteral :: 0B BinaryDigits is the MV of

@@ -4,7 +4,7 @@
 /*---
 es6id: 18.2.1.2
 description: Throws a TypeError if a global variable cannot be defined.
-info: >
+info: |
   Runtime Semantics: EvalDeclarationInstantiation( body, varEnv, lexEnv, strict)
 
   ...

@@ -5,7 +5,7 @@
 es6id: 20.2.2.15
 description: >
   Math.expm1.name is "expm1".
-info: >
+info: |
   Math.expm1 ( x )
 
   17 ECMAScript Standard Built-in Objects:

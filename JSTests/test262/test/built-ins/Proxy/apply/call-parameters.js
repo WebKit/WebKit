@@ -5,7 +5,7 @@ es6id: 9.5.13
 description: >
     trap is called with handler object as its context, and parameters are:
     target, the call context and and an array list with the called arguments
-info: >
+info: |
     [[Call]] (thisArgument, argumentsList)
 
     9. Return Call(trap, handler, «target, thisArgument, argArray»).

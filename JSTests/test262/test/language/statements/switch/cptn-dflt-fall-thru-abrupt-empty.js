@@ -5,7 +5,7 @@ es6id: 13.12.11
 description: >
     Completion value when execution continues through multiple cases and ends
     with an empty abrupt completion in the default case
-info: >
+info: |
     SwitchStatement : switch ( Expression ) CaseBlock
 
     [...]

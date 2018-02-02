@@ -6,7 +6,7 @@ esid: sec-date.prototype.setdate
 es6id: 20.3.4.20
 description: >
   Date.prototype.setDate.name is "setDate".
-info: >
+info: |
   Date.prototype.setDate ( date )
 
   17 ECMAScript Standard Built-in Objects:

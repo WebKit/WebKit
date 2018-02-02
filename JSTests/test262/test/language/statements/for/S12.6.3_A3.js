@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     While evaluating "for (ExpressionNoIn; FirstExpression; SecondExpression)
     Statement", ExpressionNoIn is evaulated first, FirstExpressoin is
     evaluated second

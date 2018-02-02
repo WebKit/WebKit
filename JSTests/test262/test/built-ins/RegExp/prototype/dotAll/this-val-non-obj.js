@@ -5,7 +5,7 @@
 esid: sec-get-regexp.prototype.dotall
 description: >
     `dotAll` accessor invoked on a non-object value
-info: >
+info: |
     get RegExp.prototype.dotAll
 
     1. Let R be the this value.

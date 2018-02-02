@@ -6,7 +6,7 @@ description: >
     Behavior when there is an error thrown while accessing the `exec` method of
     "global" instances
 es6id: 21.2.5.6
-info: >
+info: |
     7. If global is false, then
        [...]
     8. Else global is true,

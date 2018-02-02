@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     FunctionDeclaration can be overrided by other FunctionDeclaration with
     the same Identifier
 es5id: 13_A6_T1

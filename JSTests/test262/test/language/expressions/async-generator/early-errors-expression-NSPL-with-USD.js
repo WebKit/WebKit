@@ -8,7 +8,7 @@ description: >
   It is a Syntax Error if ContainsUseStrict of AsyncGeneratorBody is true and
   IsSimpleParameterList of UniqueFormalParameters is false.
 negative:
-  phase: early
+  phase: parse
   type: SyntaxError
 features: [async-iteration]
 ---*/

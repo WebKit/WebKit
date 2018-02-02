@@ -4,7 +4,7 @@
 /*---
 esid: sec-date-value
 description: Date constructor called with Date object
-info: >
+info: |
   20.3.2.2 Date ( value )
 
   ...

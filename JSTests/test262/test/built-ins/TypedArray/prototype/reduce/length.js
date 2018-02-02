@@ -5,7 +5,7 @@
 es6id: 22.2.3.19
 description: >
   %TypedArray%.prototype.reduce.length is 1.
-info: >
+info: |
   %TypedArray%.prototype.reduce ( callbackfn [ , thisArg ] )
 
   17 ECMAScript Standard Built-in Objects:

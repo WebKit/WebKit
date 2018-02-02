@@ -4,7 +4,7 @@
 es6id: 23.1.3.5
 description: >
   Returns error from callback result is abrupt.
-info: >
+info: |
   Map.prototype.forEach ( callbackfn [ , thisArg ] )
 
   ...

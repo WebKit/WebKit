@@ -5,7 +5,7 @@ es6id: 26.1.13
 description: >
   Return false if target property turns to a data descriptor and receiver
   property is an accessor descriptor.
-info: >
+info: |
   26.1.13 Reflect.set ( target, propertyKey, V [ , receiver ] )
 
   ...

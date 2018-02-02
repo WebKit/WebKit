@@ -10,7 +10,7 @@ description: >
     (set)
 
 negative:
-  phase: early
+  phase: parse
   type: SyntaxError
 ---*/
 

@@ -7,7 +7,7 @@ esid: pending
 description: >
   await is not a simple assignment target and cannot be assigned to.
 negative:
-  phase: early
+  phase: parse
   type: ReferenceError
 ---*/
 

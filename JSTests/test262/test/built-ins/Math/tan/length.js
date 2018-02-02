@@ -5,7 +5,7 @@
 es6id: 20.2.2.33
 description: >
   Math.tan.length is 1.
-info: >
+info: |
   Math.tan ( x )
 
   17 ECMAScript Standard Built-in Objects:

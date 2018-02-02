@@ -6,7 +6,7 @@ description: >
     let declarations without initialisers in statement positions: 
     if ( Expression ) Statement
 negative:
-  phase: early
+  phase: parse
   type: SyntaxError
 ---*/
 

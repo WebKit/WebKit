@@ -4,7 +4,7 @@
 /*---
 description: length property of Math.sign
 es6id: 20.2.2.29
-info: >
+info: |
   Math.sign ( x )
 
   17 ECMAScript Standard Built-in Objects:

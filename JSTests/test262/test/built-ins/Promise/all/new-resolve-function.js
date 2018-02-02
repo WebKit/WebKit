@@ -5,7 +5,7 @@
 es6id: 25.4.4.1.1
 description: >
   Each Promise.all element is called with a new Promise.all Resolve Element function.
-info: >
+info: |
   Runtime Semantics: PerformPromiseAll( iteratorRecord, constructor, resultCapability)
 
   ...

@@ -3,7 +3,7 @@
 /*---
 es6id: 12.2.8
 description: Templates are cached according to the number of "raw" strings
-info: >
+info: |
     The internal template registry should be queried according to the number of
     "raw" strings in the tagged template.
 ---*/

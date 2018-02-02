@@ -2,16 +2,32 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: "RegularExpressionChar :: LineTerminator is incorrect"
-es5id: 7.8.5_A2.3_T1
-description: Line Feed, without eval
+esid: sec-literals-regular-expression-literals
+info: |
+  RegularExpressionChar ::
+    RegularExpressionBackslashSequence
+
+
+  RegularExpressionBackslashSequence ::
+    \ RegularExpressionNonTerminator
+
+  RegularExpressionNonTerminator ::
+    SourceCharacter but not LineTerminator
+
+  LineTerminator ::
+    <LF>
+    <CR>
+    <LS>
+    <PS>
+
+description: >
+  A regular expression may not contain a <LF> as a SourceCharacter
 negative:
-  phase: early
+  phase: parse
   type: SyntaxError
 ---*/
 
 throw "Test262: This statement should not be evaluated.";
 
-//CHECK#1
 /a
 /

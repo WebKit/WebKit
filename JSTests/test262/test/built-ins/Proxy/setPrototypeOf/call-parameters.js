@@ -5,7 +5,7 @@ es6id: 9.5.2
 description: >
     Trap is called with handler on its context, first parameter is target and
     second parameter is the given value.
-info: >
+info: |
     [[SetPrototypeOf]] (V)
 
     ...

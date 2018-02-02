@@ -7,7 +7,7 @@ esid: pending
 description: >
   Await is not allowed as an identifier in functions nested in async functions
 negative:
-  phase: early
+  phase: parse
   type: SyntaxError
 ---*/
 

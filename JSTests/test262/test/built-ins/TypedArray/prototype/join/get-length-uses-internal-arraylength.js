@@ -3,7 +3,7 @@
 /*---
 esid: sec-%typedarray%.prototype.join
 description: Get "length" uses internal ArrayLength
-info: >
+info: |
   22.2.3.15 %TypedArray%.prototype.join ( separator )
 
   %TypedArray%.prototype.join is a distinct function that implements the same

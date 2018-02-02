@@ -5,7 +5,7 @@ esid: sec-array.prototype.fill
 es6id: 22.1.3.6
 description: >
   Returns `this`.
-info: >
+info: |
   12. Return O.
 ---*/
 

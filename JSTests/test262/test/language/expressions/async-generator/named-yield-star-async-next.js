@@ -185,36 +185,33 @@ iter.next("next-arg-1").then(v => {
   assert.sameValue(log.length, 9, "log.length");
 
   iter.next("next-arg-2").then(v => {
-    assert.sameValue(log[9].name, "get next");
-    assert.sameValue(log[9].thisValue.name, "asyncIterator", "get next thisValue");
+    assert.sameValue(log[9].name, "call next");
+    assert.sameValue(log[9].thisValue.name, "asyncIterator", "next thisValue");
+    assert.sameValue(log[9].args.length, 1, "next args.length");
+    assert.sameValue(log[9].args[0], "next-arg-2", "next args[0]");
 
-    assert.sameValue(log[10].name, "call next");
-    assert.sameValue(log[10].thisValue.name, "asyncIterator", "next thisValue");
-    assert.sameValue(log[10].args.length, 1, "next args.length");
-    assert.sameValue(log[10].args[0], "next-arg-2", "next args[0]");
+    assert.sameValue(log[10].name, "get next then (2)");
+    assert.sameValue(log[10].thisValue.name, "next-promise-2", "get next then thisValue");
 
-    assert.sameValue(log[11].name, "get next then (2)");
-    assert.sameValue(log[11].thisValue.name, "next-promise-2", "get next then thisValue");
+    assert.sameValue(log[11].name, "call next then (2)");
+    assert.sameValue(log[11].thisValue.name, "next-promise-2", "next then thisValue");
+    assert.sameValue(log[11].args.length, 2, "next then args.length");
+    assert.sameValue(typeof log[11].args[0], "function", "next then args[0]");
+    assert.sameValue(typeof log[11].args[1], "function", "next then args[1]");
 
-    assert.sameValue(log[12].name, "call next then (2)");
-    assert.sameValue(log[12].thisValue.name, "next-promise-2", "next then thisValue");
-    assert.sameValue(log[12].args.length, 2, "next then args.length");
-    assert.sameValue(typeof log[12].args[0], "function", "next then args[0]");
-    assert.sameValue(typeof log[12].args[1], "function", "next then args[1]");
+    assert.sameValue(log[12].name, "get next done (2)");
+    assert.sameValue(log[12].thisValue.name, "next-result-2", "get next done thisValue");
 
-    assert.sameValue(log[13].name, "get next done (2)");
-    assert.sameValue(log[13].thisValue.name, "next-result-2", "get next done thisValue");
+    assert.sameValue(log[13].name, "get next value (2)");
+    assert.sameValue(log[13].thisValue.name, "next-result-2", "get next value thisValue");
 
-    assert.sameValue(log[14].name, "get next value (2)");
-    assert.sameValue(log[14].thisValue.name, "next-result-2", "get next value thisValue");
-
-    assert.sameValue(log[15].name, "after yield*");
-    assert.sameValue(log[15].value, "next-value-2");
+    assert.sameValue(log[14].name, "after yield*");
+    assert.sameValue(log[14].value, "next-value-2");
 
     assert.sameValue(v.value, "return-value");
     assert.sameValue(v.done, true);
 
-    assert.sameValue(log.length, 16, "log.length");
+    assert.sameValue(log.length, 15, "log.length");
   }).then($DONE, $DONE);
 }).catch($DONE);
 

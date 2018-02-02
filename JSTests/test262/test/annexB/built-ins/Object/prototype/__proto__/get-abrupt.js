@@ -4,7 +4,7 @@
 esid: sec-object.prototype.__proto__
 es6id: B.2.2.1
 description: Abrupt completion from [[GetPrototypeOf]]
-info: >
+info: |
     1. Let O be ? ToObject(this value).
     2. Return ? O.[[GetPrototypeOf]]().
 features: [Proxy]

@@ -5,7 +5,7 @@
 description: >
     Errors thrown by `unicode` accessor are forwarded to the runtime for global patterns
 es6id: 21.2.5.8
-info: >
+info: |
     21.2.5.8 RegExp.prototype [ @@replace ] ( string, replaceValue )
 
     [...]

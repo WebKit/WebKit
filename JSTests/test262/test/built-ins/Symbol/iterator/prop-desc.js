@@ -4,7 +4,7 @@
 es6id: 19.4.2.4
 description: >
     `Symbol.iterator` property descriptor
-info: >
+info: |
     This property has the attributes { [[Writable]]: false, [[Enumerable]]:
     false, [[Configurable]]: false }.
 includes: [propertyHelper.js]

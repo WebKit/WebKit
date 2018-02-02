@@ -3,7 +3,7 @@
 /*---
 es6id: 22.2.3.27
 description: Requires a [[TypedArrayName]] internal slot.
-info: >
+info: |
   22.2.3.27 %TypedArray%.prototype.toLocaleString ([ reserved1 [ , reserved2 ] ])
 
   ...

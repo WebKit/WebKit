@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     Function declaration in function code - If the variable object
     already has a property with the name of Function Identifier, replace its
     value and attributes. Semantically, this step must follow the creation of

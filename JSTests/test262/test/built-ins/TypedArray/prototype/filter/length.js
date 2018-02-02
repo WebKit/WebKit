@@ -5,7 +5,7 @@
 es6id: 22.2.3.9
 description: >
   %TypedArray%.prototype.filter.length is 1.
-info: >
+info: |
   %TypedArray%.prototype.filter ( callbackfn [ , thisArg ] )
 
   17 ECMAScript Standard Built-in Objects:

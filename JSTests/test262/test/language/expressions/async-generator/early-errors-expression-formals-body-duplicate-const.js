@@ -8,7 +8,7 @@ description: >
   It is a SyntaxError if BoundNames of FormalParameters also occurs in the
   LexicallyDeclaredNames of AsyncFunctionBody
 negative:
-  phase: early
+  phase: parse
   type: SyntaxError
 features: [async-iteration]
 ---*/

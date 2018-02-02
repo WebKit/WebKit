@@ -3,7 +3,7 @@
 /*---
 description: Resolving with a non-thenable object value
 es6id: 25.4.4.1
-info: >
+info: |
     [...]
     6. Let promiseCapability be NewPromiseCapability(C).
     [...]

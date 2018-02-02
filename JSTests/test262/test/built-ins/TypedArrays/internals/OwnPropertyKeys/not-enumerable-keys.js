@@ -5,7 +5,7 @@
 esid: sec-integer-indexed-exotic-objects-ownpropertykeys
 description: >
   List not-enumerable own keys
-info: >
+info: |
   9.4.5.6 [[OwnPropertyKeys]] ()
 
   ...

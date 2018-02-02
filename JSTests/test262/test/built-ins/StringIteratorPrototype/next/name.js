@@ -5,7 +5,7 @@
 es6id: 21.1.5.2.1
 description: >
   %StringIteratorPrototype%.next.name is "next".
-info: >
+info: |
   %StringIteratorPrototype%.next ( )
 
   17 ECMAScript Standard Built-in Objects:

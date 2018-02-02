@@ -5,7 +5,7 @@
 esid: sec-Intl.NumberFormat.prototype.format
 description: >
   The bound NumberFormat format function is an anonymous function.
-info: >
+info: |
   11.4.3 get Intl.NumberFormat.prototype.compare
 
   ...

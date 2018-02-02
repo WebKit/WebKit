@@ -7,7 +7,7 @@ esid: prod-AsyncGeneratorMethod
 features: [object-spread, async-iteration]
 flags: [generated, onlyStrict]
 negative:
-  phase: early
+  phase: parse
   type: SyntaxError
 info: |
     Async Generator Function Definitions

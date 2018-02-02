@@ -5,7 +5,7 @@
 description: >
     String values of `Symbol.toStringTag` property override built-in tags
 es6id: 19.1.3.6
-info: >
+info: |
     1. If the this value is undefined, return "[object Undefined]".
     2. If the this value is null, return "[object Null]".
 

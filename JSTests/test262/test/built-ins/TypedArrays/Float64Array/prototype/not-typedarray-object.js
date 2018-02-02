@@ -6,7 +6,7 @@ es6id: 22.2.6
 esid: sec-properties-of-typedarray-prototype-objects
 description: >
   Float64Array.prototype is not a TypedArray instance object.
-info: >
+info: |
   A TypedArray prototype object is an ordinary object. It does not have
   a [[ViewedArrayBuffer]] or any other of the internal slots that are
   specific to TypedArray instance objects.

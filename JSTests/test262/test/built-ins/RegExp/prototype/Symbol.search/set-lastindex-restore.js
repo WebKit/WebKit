@@ -4,7 +4,7 @@
 /*---
 es6id: 21.2.5.9
 description: The `lastIndex` value is restored following match execution
-info: >
+info: |
     [...]
     8. If SameValue(currentLastIndex, previousLastIndex) is false, then
        a. Perform ? Set(rx, "lastIndex", previousLastIndex, true).

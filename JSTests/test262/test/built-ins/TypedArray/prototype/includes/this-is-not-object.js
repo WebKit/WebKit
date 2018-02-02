@@ -4,7 +4,7 @@
 es6id: 22.2.3.14
 esid: sec-%typedarray%.prototype.includes
 description: Throws a TypeError exception when `this` is not Object
-info: >
+info: |
   22.2.3.14 %TypedArray%.prototype.includes ( searchElement [ , fromIndex ] )
 
   This function is not generic. ValidateTypedArray is applied to the this value

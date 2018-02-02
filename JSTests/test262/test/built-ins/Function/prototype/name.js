@@ -4,7 +4,7 @@
 /*---
 es6id: 19.2.3
 description: FunctionPrototype `name` property
-info: >
+info: |
     The value of the name property of the Function prototype object is the
     empty String.
 

@@ -4,10 +4,10 @@
 /*---
 description: RestParameter does not support an initializer (static class expression generator method)
 esid: sec-runtime-semantics-bindingclassdeclarationevaluation
-features: [default-parameters]
+features: [default-parameters, generators]
 flags: [generated]
 negative:
-  phase: early
+  phase: parse
   type: SyntaxError
 info: |
     ClassDeclaration : class BindingIdentifier ClassTail
@@ -60,6 +60,7 @@ info: |
         b. Let formalStatus be IteratorBindingInitialization for formals with
            iteratorRecord and env as arguments.
     [...]
+
 
     14.1 Function Definitions
 

@@ -5,7 +5,7 @@
 es6id: 22.2.3.26
 description: >
   %TypedArray%.prototype.subarray.name is "subarray".
-info: >
+info: |
   %TypedArray%.prototype.subarray( [ begin [ , end ] ] )
 
   17 ECMAScript Standard Built-in Objects:

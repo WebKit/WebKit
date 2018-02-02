@@ -3,7 +3,7 @@
 /*---
 es6id: 23.1.2
 description: Map.length is 0.
-info: >
+info: |
   Properties of the Map Constructor
 
   Besides the length property (whose value is 0)

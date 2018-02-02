@@ -4,7 +4,7 @@
 esid: sec-%typedarray%.of
 description: >
   Custom constructor needs to instantiate a TypedArray
-info: >
+info: |
   22.2.2.2 %TypedArray%.of ( ...items )
 
   ...

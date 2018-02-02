@@ -5,7 +5,7 @@ es6id: 9.5.14
 esid: sec-proxy-object-internal-methods-and-internal-slots-construct-argumentslist-newtarget
 description: >
     If the construct trap is not set, propagate the construct to the target object.
-info: >
+info: |
     [[Construct]] (argumentsList, newTarget)
 
     7. If trap is undefined, then

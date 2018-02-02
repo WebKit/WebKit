@@ -4,7 +4,7 @@
 esid: sec-proxy-object-internal-methods-and-internal-slots-ownpropertykeys
 description: >
     Trap is not callable.
-info: >
+info: |
     [[OwnPropertyKeys]] ( )
 
     5. Let trap be ? GetMethod(handler, "ownKeys").

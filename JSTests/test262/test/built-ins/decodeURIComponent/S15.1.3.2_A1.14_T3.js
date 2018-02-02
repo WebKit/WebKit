@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     If B = 1110xxxx (n = 3) and C != 10xxxxxx (C - first of octets after B),
     throw URIError
 es5id: 15.1.3.2_A1.14_T3

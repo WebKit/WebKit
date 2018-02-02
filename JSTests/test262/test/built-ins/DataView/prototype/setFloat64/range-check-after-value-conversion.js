@@ -5,7 +5,7 @@
 esid: sec-dataview.prototype.setfloat64
 description: >
   Index bounds checks are performed after value conversion.
-info: >
+info: |
   ...
   3. Return SetViewValue(v, byteOffset, littleEndian, "Float64", value).
 

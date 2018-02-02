@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-info: >
+info: |
     Delete operator deletes pure property, so it returns true to be applyed
     to this.property
 es5id: 8.7.1_A1

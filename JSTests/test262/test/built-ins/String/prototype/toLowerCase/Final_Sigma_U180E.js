@@ -6,7 +6,7 @@ esid: sec-string.prototype.tolowercase
 description: >
     Check if String.prototype.toLowerCase supports conditional mappings defined in SpecialCasings,
     test Final_Sigma context with Mongolian Vowel Separator
-info: >
+info: |
     The result must be derived according to the locale-insensitive case mappings in the Unicode Character
     Database (this explicitly includes not only the UnicodeData.txt file, but also all locale-insensitive
     mappings in the SpecialCasings.txt file that accompanies it).
