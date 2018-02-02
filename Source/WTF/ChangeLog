@@ -1,3 +1,18 @@
+2018-02-02  Mark Lam  <mark.lam@apple.com>
+
+        More ARM64_32 fixes.
+        https://bugs.webkit.org/show_bug.cgi?id=182441
+        <rdar://problem/37162310>
+
+        Reviewed by Dan Bernstein.
+
+        My previous speculative ARM64_32 build fix in copyLCharsFromUCharSource() was wrong.
+        I've now fixed it to choose the default implementation case instead of the ARM64
+        case if the target is ARM64_32.
+
+        * wtf/text/ASCIIFastPath.h:
+        (WTF::copyLCharsFromUCharSource):
+
 2018-02-02  Konstantin Tokarev  <annulen@yandex.ru>
 
         Unreviewed build fix for JSCOnly on macOS after r227845.

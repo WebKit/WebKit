@@ -1,3 +1,19 @@
+2018-02-02  Mark Lam  <mark.lam@apple.com>
+
+        More ARM64_32 fixes.
+        https://bugs.webkit.org/show_bug.cgi?id=182441
+        <rdar://problem/37162310>
+
+        Reviewed by Dan Bernstein.
+
+        I also disabled more dynamicPoisoning code in ARM64_32.  This code assumes a
+        64-bit pointer which is not applicable here.
+
+        * jit/AssemblyHelpers.cpp:
+        (JSC::AssemblyHelpers::emitDynamicPoison):
+        (JSC::AssemblyHelpers::emitDynamicPoisonOnLoadedType):
+        (JSC::AssemblyHelpers::emitDynamicPoisonOnType):
+
 2018-02-02  Saam Barati  <sbarati@apple.com>
 
         MapHash should return true to doesGC in the DFG depending on useKind because it might resolve a rope
