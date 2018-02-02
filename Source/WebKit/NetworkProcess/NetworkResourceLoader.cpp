@@ -717,10 +717,31 @@ bool NetworkResourceLoader::shouldLogCookieInformation() const
 
 void NetworkResourceLoader::logCookieInformation() const
 {
+    ASSERT(shouldLogCookieInformation());
+
     auto networkStorageSession = WebCore::NetworkStorageSession::storageSession(sessionID());
     ASSERT(networkStorageSession);
 
+#define LOCAL_LOG(str, ...) \
+    RELEASE_LOG_IF_ALLOWED("logCookieInformation: pageID = %" PRIu64 ", frameID = %" PRIu64 ", resourceID = %" PRIu64 ": " str, pageID(), frameID(), identifier(), ##__VA_ARGS__)
+
+    auto escapeForJSON = [](String s) {
+        return s.replace('\\', "\\\\").replace('"', "\\\"");
+    };
+
     auto url = originalRequest().url();
+    if (networkStorageSession->shouldBlockCookies(originalRequest())) {
+        auto escapedURL = escapeForJSON(url.string());
+        auto escapedReferrer = escapeForJSON(originalRequest().httpReferrer());
+
+        LOCAL_LOG(R"({ "url": "%{public}s",)", escapedURL.utf8().data());
+        LOCAL_LOG(R"(  "partition": "%{public}s",)", "BLOCKED");
+        LOCAL_LOG(R"(  "hasStorageAccess": %{public}s,)", "false");
+        LOCAL_LOG(R"(  "referer": "%{public}s",)", escapedReferrer.utf8().data());
+        LOCAL_LOG(R"(  "cookies": []})");
+        return;
+    }
+
     auto partition = WebCore::URL(ParsedURLString, networkStorageSession->cookieStoragePartition(originalRequest(), frameID(), pageID()));
     bool hasStorageAccessForFrame = networkStorageSession->hasStorageAccessForFrame(originalRequest(), frameID(), pageID());
 
@@ -728,13 +749,6 @@ void NetworkResourceLoader::logCookieInformation() const
     bool result = WebCore::getRawCookies(*networkStorageSession, partition, url, frameID(), pageID(), cookies);
 
     if (result) {
-#define LOCAL_LOG(str, ...) \
-        RELEASE_LOG_IF_ALLOWED("logCookieInformation: pageID = %" PRIu64 ", frameID = %" PRIu64 ", resourceID = %" PRIu64 ": " str, pageID(), frameID(), identifier(), ##__VA_ARGS__)
-
-        auto escapeForJSON = [](String s) {
-            s.replace('\\', "\\\\").replace('"', "\\\"");
-            return s;
-        };
         auto escapedURL = escapeForJSON(url.string());
         auto escapedPartition = escapeForJSON(partition.string());
         auto escapedReferrer = escapeForJSON(originalRequest().httpReferrer());
