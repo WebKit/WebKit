@@ -1,3 +1,15 @@
+2018-02-02  Konstantin Tokarev  <annulen@yandex.ru>
+
+        Unreviewed build fix for JSCOnly on macOS after r227845.
+        https://bugs.webkit.org/show_bug.cgi?id=182274
+
+        Reverted part of r227845 that moved CommonCryptoSPI.h
+        handling into PlatformMac, because it is needed for all
+        ports which can be built on macOS.
+
+        * wtf/CMakeLists.txt:
+        * wtf/PlatformMac.cmake:
+
 2018-02-02  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [GTK] fast/events/message-channel-gc-4.html is flaky

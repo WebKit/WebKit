@@ -22,7 +22,6 @@ list(APPEND WTF_HEADERS
     spi/cocoa/NSMapTableSPI.h
     spi/cocoa/SecuritySPI.h
 
-    spi/darwin/CommonCryptoSPI.h
     spi/darwin/SandboxSPI.h
     spi/darwin/XPCSPI.h
     spi/darwin/dyldSPI.h
@@ -62,7 +61,6 @@ list(APPEND WTF_SOURCES
 
 list(APPEND WTF_PRIVATE_INCLUDE_DIRECTORIES
     "${WTF_DIR}/icu"
-    "${WTF_DIR}/wtf/spi/darwin"
     ${DERIVED_SOURCES_WTF_DIR}
 )
 

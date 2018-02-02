@@ -445,6 +445,15 @@ set(WTF_LIBRARIES
     ${CMAKE_DL_LIBS}
 )
 
+if (CMAKE_SYSTEM_NAME MATCHES "Darwin")
+    list(APPEND WTF_HEADERS
+        spi/darwin/CommonCryptoSPI.h
+    )
+list(APPEND WTF_PRIVATE_INCLUDE_DIRECTORIES
+        "${WTF_DIR}/wtf/spi/darwin"
+    )
+endif ()
+
 if (NOT USE_SYSTEM_MALLOC)
     list(APPEND WTF_LIBRARIES bmalloc)
 endif ()
