@@ -1,3 +1,13 @@
+2018-02-01  Youenn Fablet  <youenn@apple.com>
+
+        Delay service worker process creation until actually needed by SWServer
+        https://bugs.webkit.org/show_bug.cgi?id=182301
+
+        Reviewed by Chris Dumez.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ServiceWorkerBasic.mm:
+        (function):
+
 2018-02-01  Aakash Jain  <aakash_jain@apple.com>
 
         Bubbles intermittently disappear from bot watchers dashboard

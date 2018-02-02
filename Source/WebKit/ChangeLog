@@ -1,3 +1,24 @@
+2018-02-01  Youenn Fablet  <youenn@apple.com>
+
+        Delay service worker process creation until actually needed by SWServer
+        https://bugs.webkit.org/show_bug.cgi?id=182301
+
+        Reviewed by Chris Dumez.
+
+        Do not create a service worker process at creation of the first SWServerConnection.
+        Wait for a WebProcess message that needs it:
+        - postMessage message
+        - fetchEvent message
+        - job scheduling.
+
+        * StorageProcess/ServiceWorker/WebSWServerConnection.cpp:
+        (WebKit::WebSWServerConnection::startFetch):
+        (WebKit::WebSWServerConnection::postMessageToServiceWorker):
+        (WebKit::WebSWServerConnection::scheduleJobInServer):
+        * StorageProcess/ServiceWorker/WebSWServerConnection.h:
+        * StorageProcess/StorageToWebProcessConnection.cpp:
+        (WebKit::StorageToWebProcessConnection::establishSWServerConnection):
+
 2018-02-01  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Extra zoom mode] Implement basic support for interacting with text form controls

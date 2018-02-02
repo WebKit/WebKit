@@ -216,14 +216,6 @@ void SWServer::clear(const SecurityOrigin& origin, WTF::CompletionHandler<void()
     m_registrationStore.flushChanges(WTFMove(completionHandler));
 }
 
-void SWServer::Connection::scheduleJobInServer(ServiceWorkerJobData&& jobData)
-{
-    LOG(ServiceWorker, "Scheduling ServiceWorker job %s in server", jobData.identifier().loggingString().utf8().data());
-    ASSERT(identifier() == jobData.connectionIdentifier());
-
-    m_server.scheduleJob(WTFMove(jobData));
-}
-
 void SWServer::Connection::finishFetchingScriptInServer(const ServiceWorkerFetchResult& result)
 {
     m_server.scriptFetchFinished(*this, result);

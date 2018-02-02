@@ -92,7 +92,6 @@ public:
         WEBCORE_EXPORT explicit Connection(SWServer&);
         SWServer& server() { return m_server; }
 
-        WEBCORE_EXPORT void scheduleJobInServer(ServiceWorkerJobData&&);
         WEBCORE_EXPORT void finishFetchingScriptInServer(const ServiceWorkerFetchResult&);
         WEBCORE_EXPORT void addServiceWorkerRegistrationInServer(ServiceWorkerRegistrationIdentifier);
         WEBCORE_EXPORT void removeServiceWorkerRegistrationInServer(ServiceWorkerRegistrationIdentifier);
@@ -129,7 +128,7 @@ public:
     void removeRegistration(const ServiceWorkerRegistrationKey&);
     WEBCORE_EXPORT Vector<ServiceWorkerRegistrationData> getRegistrations(const SecurityOriginData& topOrigin, const URL& clientURL);
 
-    void scheduleJob(ServiceWorkerJobData&&);
+    WEBCORE_EXPORT void scheduleJob(ServiceWorkerJobData&&);
     void rejectJob(const ServiceWorkerJobData&, const ExceptionData&);
     void resolveRegistrationJob(const ServiceWorkerJobData&, const ServiceWorkerRegistrationData&, ShouldNotifyWhenResolved);
     void resolveUnregistrationJob(const ServiceWorkerJobData&, const ServiceWorkerRegistrationKey&, bool unregistrationResult);
@@ -176,6 +175,8 @@ public:
     void registrationStoreDatabaseFailedToOpen();
 
     WEBCORE_EXPORT void getOriginsWithRegistrations(WTF::Function<void(const HashSet<SecurityOriginData>&)>);
+
+    PAL::SessionID sessionID() const { return m_sessionID; }
 
 private:
     void registerConnection(Connection&);

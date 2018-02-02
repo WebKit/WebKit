@@ -169,9 +169,6 @@ void StorageToWebProcessConnection::establishSWServerConnection(SessionID sessio
 
     auto addResult = m_swConnections.add(serverConnectionIdentifier, WTFMove(connection));
     ASSERT_UNUSED(addResult, addResult.isNewEntry);
-
-    if (!StorageProcess::singleton().globalServerToContextConnection())
-        StorageProcess::singleton().createServerToContextConnection(sessionID);
 }
 
 void StorageToWebProcessConnection::workerContextProcessConnectionCreated()

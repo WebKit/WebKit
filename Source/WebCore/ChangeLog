@@ -1,3 +1,16 @@
+2018-02-01  Youenn Fablet  <youenn@apple.com>
+
+        Delay service worker process creation until actually needed by SWServer
+        https://bugs.webkit.org/show_bug.cgi?id=182301
+
+        Reviewed by Chris Dumez.
+
+        Rename SWServer::Connection::scheduleJobInServer to scheduleJob.
+        Add sessionID getter from an SWServer.
+
+        * workers/service/server/SWServer.h:
+        (WebCore::SWServer::sessionID const):
+
 2018-02-01  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         REGRESSION(r227594) [WinCairo] NULL pointer crash in GraphicsContext::getWindowsContext
