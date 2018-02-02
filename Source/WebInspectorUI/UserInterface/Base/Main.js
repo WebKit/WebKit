@@ -270,8 +270,12 @@ WI.contentLoaded = function()
     // Create the user interface elements.
     this.toolbar = new WI.Toolbar(document.getElementById("toolbar"));
 
-    this.tabBar = new WI.TabBar(document.getElementById("tab-bar"));
-    this.tabBar.addEventListener(WI.TabBar.Event.OpenDefaultTab, this._openDefaultTab, this);
+    if (WI.settings.experimentalEnableNewTabBar.value)
+        this.tabBar = new WI.TabBar(document.getElementById("tab-bar"));
+    else {
+        this.tabBar = new WI.LegacyTabBar(document.getElementById("tab-bar"));
+        this.tabBar.addEventListener(WI.TabBar.Event.OpenDefaultTab, this._openDefaultTab, this);
+    }
 
     this._contentElement = document.getElementById("content");
     this._contentElement.setAttribute("role", "main");
@@ -601,7 +605,8 @@ WI._tryToRestorePendingTabs = function()
 
     this._pendingOpenTabs = stillPendingOpenTabs;
 
-    this.tabBrowser.tabBar.updateNewTabTabBarItemState();
+    if (!WI.settings.experimentalEnableNewTabBar.value)
+        this.tabBrowser.tabBar.updateNewTabTabBarItemState();
 };
 
 WI.showNewTabTab = function(options)
@@ -632,7 +637,7 @@ WI.isNewTabWithTypeAllowed = function(tabType)
 
     if (tabClass === WI.NewTabContentView) {
         let allTabs = Array.from(this.knownTabClasses());
-        let addableTabs = allTabs.filter((tabClass) => !tabClass.isEphemeral());
+        let addableTabs = allTabs.filter((tabClass) => !tabClass.tabInfo().isEphemeral);
         let canMakeNewTab = addableTabs.some((tabClass) => WI.isNewTabWithTypeAllowed(tabClass.Type));
         return canMakeNewTab;
     }

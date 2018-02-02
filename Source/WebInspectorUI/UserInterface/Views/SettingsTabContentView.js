@@ -44,12 +44,8 @@ WI.SettingsTabContentView = class SettingsTabContentView extends WI.TabContentVi
         return {
             image: "Images/Gear.svg",
             title: WI.UIString("Settings"),
+            isEphemeral: true,
         };
-    }
-
-    static isEphemeral()
-    {
-        return true;
     }
 
     static shouldSaveTab()
@@ -254,6 +250,9 @@ WI.SettingsTabContentView = class SettingsTabContentView extends WI.TabContentVi
             experimentalSettingsView.addSeparator();
         }
 
+        experimentalSettingsView.addSetting(WI.UIString("User Interface:"), WI.settings.experimentalEnableNewTabBar, WI.UIString("Enable New Tab Bar"));
+        experimentalSettingsView.addSeparator();
+
         let reloadInspectorButton = document.createElement("button");
         reloadInspectorButton.textContent = WI.UIString("Reload Web Inspector");
         reloadInspectorButton.addEventListener("click", () => { window.location.reload(); });
@@ -271,6 +270,7 @@ WI.SettingsTabContentView = class SettingsTabContentView extends WI.TabContentVi
         listenForChange(WI.settings.experimentalLegacyStyleEditor);
         listenForChange(WI.settings.experimentalLegacyVisualSidebar);
         listenForChange(WI.settings.experimentalEnableLayersTab);
+        listenForChange(WI.settings.experimentalEnableNewTabBar);
 
         this.addSettingsView(experimentalSettingsView);
     }

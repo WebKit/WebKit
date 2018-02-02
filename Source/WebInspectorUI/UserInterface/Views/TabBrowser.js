@@ -283,7 +283,7 @@ WI.TabBrowser = class TabBrowser extends WI.View
 
         this._recentTabContentViews.remove(tabContentView);
 
-        if (!tabContentView.constructor.isEphemeral())
+        if (!tabContentView.constructor.tabInfo().isEphemeral)
             this._closedTabClasses.add(tabContentView.constructor);
 
         this._contentViewContainer.closeContentView(tabContentView);

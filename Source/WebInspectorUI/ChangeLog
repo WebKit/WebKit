@@ -1,3 +1,133 @@
+2018-02-02  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: TabBar redesign: remove New Tab button and add experimental feature flag
+        https://bugs.webkit.org/show_bug.cgi?id=182342
+        <rdar://problem/37078662>
+
+        Reviewed by Devin Rousso.
+
+        This patch adds a new experimental setting group, "User Interface", with
+        a single setting, "Enable New TabBar". When enabled, the New Tab button is
+        no longer available in the top-level TabBar. The 'open tabs' context menu
+        no longer allows the last non-ephemeral open tab to be closed (unchecked).
+
+        * Localizations/en.lproj/localizedStrings.js:
+
+        * UserInterface/Base/Main.js:
+        (WI.contentLoaded):
+        (WI._tryToRestorePendingTabs):
+        Retain legacy behavior behind experimental feature setting.
+        (WI.isNewTabWithTypeAllowed):
+
+        * UserInterface/Base/Setting.js:
+        * UserInterface/Main.html:
+
+        * UserInterface/Views/CanvasTabContentView.js:
+        (WI.CanvasTabContentView):
+        * UserInterface/Views/ConsoleTabContentView.js:
+        (WI.ConsoleTabContentView):
+        * UserInterface/Views/DebuggerTabContentView.js:
+        (WI.DebuggerTabContentView):
+        * UserInterface/Views/ElementsTabContentView.js:
+        (WI.ElementsTabContentView):
+
+        * UserInterface/Views/GeneralTabBarItem.js:
+        (WI.GeneralTabBarItem):
+        (WI.GeneralTabBarItem.prototype.fromTabInfo):
+        (WI.GeneralTabBarItem.prototype.get isEphemeral):
+        (WI.GeneralTabBarItem.fromTabContentViewConstructor): Deleted.
+
+        * UserInterface/Views/LayersTabContentView.js:
+        (WI.LayersTabContentView):
+
+        * UserInterface/Views/LegacyTabBar.js: Copied from Source/WebInspectorUI/UserInterface/Views/TabBar.js.
+        (WI.LegacyTabBar):
+        (WI.LegacyTabBar.prototype.get newTabTabBarItem):
+        (WI.LegacyTabBar.prototype.updateNewTabTabBarItemState):
+        (WI.LegacyTabBar.prototype.addTabBarItem):
+        (WI.LegacyTabBar.prototype.insertTabBarItem.animateTabs):
+        (WI.LegacyTabBar.prototype.insertTabBarItem.removeStyles):
+        (WI.LegacyTabBar.prototype.insertTabBarItem):
+        (WI.LegacyTabBar.prototype.removeTabBarItem.animateTabs):
+        (WI.LegacyTabBar.prototype.removeTabBarItem.removeStyles):
+        (WI.LegacyTabBar.prototype.removeTabBarItem):
+        (WI.LegacyTabBar.prototype.selectPreviousTab):
+        (WI.LegacyTabBar.prototype.selectNextTab):
+        (WI.LegacyTabBar.prototype.get selectedTabBarItem):
+        (WI.LegacyTabBar.prototype.set selectedTabBarItem):
+        (WI.LegacyTabBar.prototype.get tabBarItems):
+        (WI.LegacyTabBar.prototype.get normalTabCount):
+        (WI.LegacyTabBar.prototype.layout.forceItemHidden):
+        (WI.LegacyTabBar.prototype.layout):
+        (WI.LegacyTabBar.prototype._tabBarItemsFromLeftToRight):
+        (WI.LegacyTabBar.prototype._findTabBarItem):
+        (WI.LegacyTabBar.prototype._hasMoreThanOneNormalTab):
+        (WI.LegacyTabBar.prototype._openDefaultTab):
+        (WI.LegacyTabBar.prototype._recordTabBarItemSizesAndPositions):
+        (WI.LegacyTabBar.prototype._applyTabBarItemSizesAndPositions):
+        (WI.LegacyTabBar.prototype._clearTabBarItemSizesAndPositions):
+        (WI.LegacyTabBar.prototype._finishExpandingTabsAfterClose.):
+        (WI.LegacyTabBar.prototype._finishExpandingTabsAfterClose):
+        (WI.LegacyTabBar.prototype._handleMouseDown):
+        (WI.LegacyTabBar.prototype._handleClick):
+        (WI.LegacyTabBar.prototype._handleMouseMoved):
+        (WI.LegacyTabBar.prototype._handleMouseUp):
+        (WI.LegacyTabBar.prototype._handleMouseLeave):
+        (WI.LegacyTabBar.prototype._handleContextMenu):
+        (WI.LegacyTabBar.prototype._handleNewTabClick):
+        (WI.LegacyTabBar.prototype._handleTabPickerTabContextMenu):
+        (WI.LegacyTabBar.prototype._handleNewTabMouseEnter):
+
+        * UserInterface/Views/NetworkTabContentView.js:
+        (WI.NetworkTabContentView):
+        * UserInterface/Views/NewTabContentView.js:
+        (WI.NewTabContentView):
+        (WI.NewTabContentView.tabInfo):
+        (WI.NewTabContentView.isEphemeral): Deleted.
+        * UserInterface/Views/ResourcesTabContentView.js:
+        (WI.ResourcesTabContentView):
+        * UserInterface/Views/SearchTabContentView.js:
+        (WI.SearchTabContentView):
+        (WI.SearchTabContentView.tabInfo):
+        (WI.SearchTabContentView.isEphemeral): Deleted.
+
+        * UserInterface/Views/SettingsTabContentView.js:
+        (WI.SettingsTabContentView.tabInfo):
+        (WI.SettingsTabContentView.prototype._createExperimentalSettingsView):
+        (WI.SettingsTabContentView.isEphemeral): Deleted.
+
+        * UserInterface/Views/StorageTabContentView.js:
+        (WI.StorageTabContentView):
+
+        * UserInterface/Views/TabBar.css:
+        * UserInterface/Views/TabBar.js:
+        (WI.TabBar):
+        (WI.TabBar.prototype.insertTabBarItem):
+        (WI.TabBar.prototype.removeTabBarItem):
+        (WI.TabBar.prototype.set selectedTabBarItem):
+        (WI.TabBar.prototype.get normalNonEphemeralTabCount):
+        (WI.TabBar.prototype._handleMouseDown):
+        (WI.TabBar.prototype._handleClick):
+        (WI.TabBar.prototype._handleMouseMoved):
+        (WI.TabBar.prototype._handleMouseLeave):
+        (WI.TabBar.prototype._handleContextMenu):
+        (WI.TabBar.prototype._handleTabPickerTabContextMenu):
+        (WI.TabBar.prototype.get newTabTabBarItem): Deleted.
+        (WI.TabBar.prototype.updateNewTabTabBarItemState): Deleted.
+        (WI.TabBar.prototype._openDefaultTab): Deleted.
+        (WI.TabBar.prototype._handleNewTabClick): Deleted.
+        (WI.TabBar.prototype._handleNewTabMouseEnter): Deleted.
+        Remove support for the New Tab button and default tab. Without a default
+        tab, there is nothing to display when no tabs are open, so prevent the
+        last non-pinned tab from being removed.
+
+        * UserInterface/Views/TabBrowser.js:
+        (WI.TabBrowser._tabBarItemRemoved):
+        * UserInterface/Views/TabContentView.js:
+        (WI.TabContentView.isEphemeral): Deleted.
+        * UserInterface/Views/TimelineTabContentView.js:
+        (WI.TimelineTabContentView):
+
 2018-01-30  Devin Rousso  <webkit@devinrousso.com>
 
         Web Inspector: Replace Object.shallowMerge with ES2018 spread operator

@@ -27,7 +27,7 @@ WI.SearchTabContentView = class SearchTabContentView extends WI.ContentBrowserTa
 {
     constructor(identifier)
     {
-        let tabBarItem = WI.GeneralTabBarItem.fromTabContentViewConstructor(WI.SearchTabContentView);
+        let tabBarItem = WI.GeneralTabBarItem.fromTabInfo(WI.SearchTabContentView.tabInfo());
         let detailsSidebarPanelConstructors = [WI.ResourceDetailsSidebarPanel, WI.ProbeDetailsSidebarPanel,
             WI.DOMNodeDetailsSidebarPanel, WI.ComputedStyleDetailsSidebarPanel, WI.RulesStyleDetailsSidebarPanel];
 
@@ -44,12 +44,8 @@ WI.SearchTabContentView = class SearchTabContentView extends WI.ContentBrowserTa
         return {
             image: "Images/SearchResults.svg",
             title: WI.UIString("Search"),
+            isEphemeral: true,
         };
-    }
-
-    static isEphemeral()
-    {
-        return true;
     }
 
     // Public

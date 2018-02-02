@@ -26,11 +26,13 @@
 
 WI.GeneralTabBarItem = class GeneralTabBarItem extends WI.TabBarItem
 {
-    constructor(image, title, isEphemeral)
+    constructor(image, title, isEphemeral = false)
     {
         super(image, title);
 
-        if (isEphemeral) {
+        this._isEphemeral = isEphemeral;
+
+        if (this._isEphemeral) {
             this.element.classList.add("ephemeral");
 
             let closeButtonElement = document.createElement("div");
@@ -42,14 +44,14 @@ WI.GeneralTabBarItem = class GeneralTabBarItem extends WI.TabBarItem
         }
     }
 
-    static fromTabContentViewConstructor(constructor)
+    static fromTabInfo({image, title, isEphemeral})
     {
-        let {image, title} = constructor.tabInfo();
-        let isEphemeral = constructor.isEphemeral();
         return new WI.GeneralTabBarItem(image, title, isEphemeral);
     }
 
     // Public
+
+    get isEphemeral() { return this._isEphemeral; }
 
     get title()
     {

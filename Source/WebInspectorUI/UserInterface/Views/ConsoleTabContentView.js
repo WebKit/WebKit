@@ -27,7 +27,7 @@ WI.ConsoleTabContentView = class ConsoleTabContentView extends WI.ContentBrowser
 {
     constructor(identifier)
     {
-        let tabBarItem = WI.GeneralTabBarItem.fromTabContentViewConstructor(WI.ConsoleTabContentView);
+        let tabBarItem = WI.GeneralTabBarItem.fromTabInfo(WI.ConsoleTabContentView.tabInfo());
 
         super(identifier || "console", "console", tabBarItem, null, null, true);
     }

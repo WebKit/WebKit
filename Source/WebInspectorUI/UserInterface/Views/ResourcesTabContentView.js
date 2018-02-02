@@ -27,7 +27,7 @@ WI.ResourcesTabContentView = class ResourcesTabContentView extends WI.ContentBro
 {
     constructor(identifier)
     {
-        let tabBarItem = WI.GeneralTabBarItem.fromTabContentViewConstructor(WI.ResourcesTabContentView);
+        let tabBarItem = WI.GeneralTabBarItem.fromTabInfo(WI.ResourcesTabContentView.tabInfo());
         const detailsSidebarPanelConstructors = [WI.ResourceDetailsSidebarPanel, WI.ProbeDetailsSidebarPanel];
         super(identifier || "resources", "resources", tabBarItem, WI.ResourceSidebarPanel, detailsSidebarPanelConstructors);
     }

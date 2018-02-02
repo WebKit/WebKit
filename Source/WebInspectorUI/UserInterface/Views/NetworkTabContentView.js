@@ -27,7 +27,7 @@ WI.NetworkTabContentView = class NetworkTabContentView extends WI.TabContentView
 {
     constructor(identifier)
     {
-        let tabBarItem = WI.GeneralTabBarItem.fromTabContentViewConstructor(WI.NetworkTabContentView);
+        let tabBarItem = WI.GeneralTabBarItem.fromTabInfo(WI.NetworkTabContentView.tabInfo());
 
         super(identifier || "network", "network", tabBarItem);
 

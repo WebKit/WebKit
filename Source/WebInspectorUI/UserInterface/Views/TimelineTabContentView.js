@@ -27,7 +27,7 @@ WI.TimelineTabContentView = class TimelineTabContentView extends WI.ContentBrows
 {
     constructor(identifier)
     {
-        let tabBarItem = WI.GeneralTabBarItem.fromTabContentViewConstructor(WI.TimelineTabContentView);
+        let tabBarItem = WI.GeneralTabBarItem.fromTabInfo(WI.TimelineTabContentView.tabInfo());
         let detailsSidebarPanelConstructors = [WI.ResourceDetailsSidebarPanel, WI.ProbeDetailsSidebarPanel];
 
         super(identifier || "timeline", "timeline", tabBarItem, null, detailsSidebarPanelConstructors);
