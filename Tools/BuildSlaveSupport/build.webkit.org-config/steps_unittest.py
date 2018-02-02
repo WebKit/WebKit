@@ -448,9 +448,6 @@ expected_build_steps = {
     'Apple iOS 11 Simulator Debug (Build)': ['configure build', 'svn', 'kill old processes', 'delete WebKitBuild directory', 'delete stale build files', 'compile-webkit', 'archive-built-product', 'upload', 'archive-built-product', 'upload', 'transfer-to-s3', 'trigger'],
     'Apple iOS 11 Simulator Debug WK2 (Tests)': ['configure build', 'svn', 'kill old processes', 'delete WebKitBuild directory', 'delete stale build files', 'download-built-product', 'extract-built-product', 'layout-test', 'run-api-tests', 'webkitpy-test', 'webkitperl-test', 'bindings-generation-tests', 'builtins-generator-tests', 'dashboard-tests', 'archive-test-results', 'upload', 'MasterShellCommand'],
 
-    'JSCOnly Linux ARMv7 Thumb2 Release': ['configure build', 'wait-for-svn-server', 'svn', 'delete WebKitBuild directory', 'delete stale build files', 'compile-webkit', 'jscore-test'],
-    'JSCOnly Linux ARMv7 Traditional Release': ['configure build', 'wait-for-svn-server', 'svn', 'delete WebKitBuild directory', 'delete stale build files', 'compile-webkit', 'jscore-test'],
-    'JSCOnly Linux AArch64 Release': ['configure build', 'wait-for-svn-server', 'svn', 'delete WebKitBuild directory', 'delete stale build files', 'compile-webkit', 'jscore-test'],
     'JSCOnly Linux MIPS32el Release': ['configure build', 'svn', 'delete WebKitBuild directory', 'delete stale build files', 'compile-webkit', 'jscore-test'],
 
     'GTK Linux 32-bit Release': ['configure build', 'svn', 'kill old processes', 'delete WebKitBuild directory', 'delete stale build files', 'jhbuild', 'compile-webkit', 'jscore-test', 'webkitpy-test', 'webkitperl-test', 'bindings-generation-tests', 'builtins-generator-tests', 'dashboard-tests', 'API tests', 'webdriver-test'],
