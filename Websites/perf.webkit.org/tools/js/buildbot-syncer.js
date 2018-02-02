@@ -7,33 +7,31 @@ require('./v3-models.js');
 class BuildbotBuildEntry {
     constructor(syncer, rawData)
     {
-        assert.equal(syncer.builderName(), rawData['builderName']);
+        this.initialize(syncer, rawData);
+    }
+
+    initialize(syncer, rawData)
+    {
+        assert.equal(syncer.builderID(), rawData['builderid']);
 
         this._syncer = syncer;
-        this._slaveName = null;
-        this._buildRequestId = null;
-        this._isInProgress = rawData['currentStep'] || (rawData['times'] && !rawData['times'][1]);
+        this._buildRequestId = rawData['buildrequestid'];
+        this._hasFinished = rawData['complete'];
+        this._isPending = 'claimed' in rawData && !rawData['claimed'];
+        this._isInProgress = !this._isPending && !this._hasFinished;
         this._buildNumber = rawData['number'];
-
-        for (let propertyTuple of (rawData['properties'] || [])) {
-            // e.g. ['build_request_id', '16733', 'Force Build Form']
-            const name = propertyTuple[0];
-            const value = propertyTuple[1];
-            if (name == syncer._slavePropertyName)
-                this._slaveName = value;
-            else if (name == syncer._buildRequestPropertyName)
-                this._buildRequestId = value;
-        }
+        this._workerName = rawData['properties'] && rawData['properties']['workername'] ? rawData['properties']['workername'][0] : null
     }
 
     syncer() { return this._syncer; }
     buildNumber() { return this._buildNumber; }
-    slaveName() { return this._slaveName; }
+    slaveName() { return this._workerName; }
+    workerName() { return this._workerName; }
     buildRequestId() { return this._buildRequestId; }
-    isPending() { return typeof(this._buildNumber) != 'number'; }
+    isPending() { return this._isPending; }
     isInProgress() { return this._isInProgress; }
-    hasFinished() { return !this.isPending() && !this.isInProgress(); }
-    url() { return this.isPending() ? this._syncer.url() : this._syncer.urlForBuildNumber(this._buildNumber); }
+    hasFinished() { return this._hasFinished; }
+    url() { return this.isPending() ? this._syncer.urlForPendingBuild(this._buildRequestId) : this._syncer.urlForBuildNumber(this._buildNumber); }
 
     buildRequestStatusIfUpdateIsNeeded(request)
     {
@@ -52,6 +50,39 @@ class BuildbotBuildEntry {
         }
         return null;
     }
+}
+
+class BuildbotBuildEntryDeprecated extends BuildbotBuildEntry {
+    constructor(syncer, rawData)
+    {
+        super(syncer, rawData);
+        this.initialize(syncer, rawData);
+    }
+
+    initialize(syncer, rawData)
+    {
+        assert.equal(syncer.builderName(), rawData['builderName']);
+
+        this._syncer = syncer;
+        this._workerName = null;
+        this._buildRequestId = null;
+        this._buildNumber = rawData['number'];
+        this._isInProgress = rawData['currentStep'] || (rawData['times'] && !rawData['times'][1]);
+        this._isPending = typeof(this._buildNumber) != 'number';
+        this._hasFinished =  !this.isPending() && !this.isInProgress();
+
+        for (let propertyTuple of (rawData['properties'] || [])) {
+            // e.g. ['build_request_id', '16733', 'Force Build Form']
+            const name = propertyTuple[0];
+            const value = propertyTuple[1];
+            if (name == syncer._slavePropertyName)
+                this._workerName = value;
+            else if (name == syncer._buildRequestPropertyName)
+                this._buildRequestId = value;
+        }
+    }
+
+    url() { return this.isPending() ? this._syncer.url() : this._syncer.urlForBuildNumberDeprecated(this._buildNumber); }
 }
 
 
@@ -74,6 +105,7 @@ class BuildbotSyncer {
     }
 
     builderName() { return this._builderName; }
+    builderID() { return this._builderID; }
 
     addTestConfiguration(test, platform, propertiesTemplate)
     {
@@ -164,8 +196,8 @@ class BuildbotSyncer {
 
     pullBuildbot(count)
     {
-        return this._remote.getJSON(this.pathForPendingBuildsJSON()).then((content) => {
-            let pendingEntries = content.map((entry) => new BuildbotBuildEntry(this, entry));
+        return this._remote.getJSON(this.pathForPendingBuildsJSONDeprecated()).then((content) => {
+            let pendingEntries = content.map((entry) => new BuildbotBuildEntryDeprecated(this, entry));
             return this._pullRecentBuilds(count).then((entries) => {
                 let entryByRequest = {};
 
@@ -201,13 +233,14 @@ class BuildbotSyncer {
             for (let index of selectedBuilds) {
                 const entry = content[index];
                 if (entry && !entry['error'])
-                    entries.push(new BuildbotBuildEntry(this, entry));
+                    entries.push(new BuildbotBuildEntryDeprecated(this, entry));
             }
             return entries;
         });
     }
 
-    pathForPendingBuildsJSON() { return `/json/builders/${escape(this._builderName)}/pendingBuilds`; }
+    pathForPendingBuildsJSONDeprecated() { return `/json/builders/${escape(this._builderName)}/pendingBuilds`; }
+    pathForPendingBuilds() { return `/api/v2/builders/${this._builderID}/buildrequests?complete=false&claimed=false`; }
     pathForBuildJSON(selectedBuilds)
     {
         return `/json/builders/${escape(this._builderName)}/builds/?` + selectedBuilds.map((number) => 'select=' + number).join('&');
@@ -215,7 +248,9 @@ class BuildbotSyncer {
     pathForForceBuild() { return `/builders/${escape(this._builderName)}/force`; }
 
     url() { return this._remote.url(`/builders/${escape(this._builderName)}/`); }
-    urlForBuildNumber(number) { return this._remote.url(`/builders/${escape(this._builderName)}/builds/${number}`); }
+    urlForBuildNumberDeprecated(number) { return this._remote.url(`/builders/${escape(this._builderName)}/builds/${number}`); }
+    urlForBuildNumber(number) { return this._remote.url(`/#/builders/${this._builderID}/builds/${number}`); }
+    urlForPendingBuild(buildRequestId) { return this._remote.url(`/#/buildrequests/${buildRequestId}`); }
 
     _propertiesForBuildRequest(buildRequest, requestsInGroup)
     {
@@ -588,4 +623,5 @@ class BuildbotSyncer {
 if (typeof module != 'undefined') {
     module.exports.BuildbotSyncer = BuildbotSyncer;
     module.exports.BuildbotBuildEntry = BuildbotBuildEntry;
+    module.exports.BuildbotBuildEntryDeprecated = BuildbotBuildEntryDeprecated;
 }

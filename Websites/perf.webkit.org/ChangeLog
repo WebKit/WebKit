@@ -1,3 +1,36 @@
+2018-02-01  Aakash Jain  <aakash_jain@apple.com>
+
+        Create BuildbotBuildEntry in Buildbot syncer in Buildbot 0.9 format
+        https://bugs.webkit.org/show_bug.cgi?id=182036
+
+        Reviewed by Ryosuke Niwa.
+
+        * tools/js/buildbot-syncer.js:
+        (BuildbotBuildEntry): Class for Buildbot entry in Buildbot 0.9 data format.
+        (BuildbotBuildEntryDeprecated): Renamed from BuildbotBuildEntry, sub-classed from BuildBotEntry. Handles Buildbot 0.8 data format.
+        (BuildbotBuildEntryDeprecated.prototype.url): URL in buildbot 0.8 format.
+        (BuildbotSyncer.prototype.builderID): Added.
+        (BuildbotSyncer.prototype.pathForPendingBuildsJSONDeprecated): Renamed from BuildbotSyncer.prototype.pathForPendingBuildsJSON.
+        (BuildbotSyncer.prototype.pathForPendingBuilds): Path for pending builds in Buildbot 0.9 format.
+        (BuildbotSyncer.prototype.urlForBuildNumberDeprecated): Deprecated. Renamed from urlForBuildNumber.
+        (BuildbotSyncer.prototype.urlForBuildNumber): Updated in Buildbot 0.9 format.
+        (BuildbotSyncer.prototype.urlForPendingBuild): Buildbot 0.9 has individual webpage for pending buildrequests as well. URL to that page.
+        * unit-tests/buildbot-syncer-tests.js: Renamed BuildbotBuildEntry to BuildbotBuildEntryDeprecated.
+        (sampleBuildData): Sample build data. Common method for in-progress and finished build data.
+        (samplePendingBuildData): Sample data for a pending build. Separate method so that we can easily create sample data with multiple builds.
+        (sampleInProgressBuildData): Ditto for in-progress build.
+        (sampleFinishedBuildData): Ditto for finished build.
+        (samplePendingBuild): Sample data for single pending build.
+        (sampleInProgressBuild): Ditto for in-progress build.
+        (sampleFinishedBuild): Ditto for finished build.
+        (samplePendingBuildDeprecated): Renamed from samplePendingBuild.
+        (sampleInProgressBuildDeprecated): Renamed from sampleInProgressBuild.
+        (sampleFinishedBuildDeprecated): Renamed from sampleFinishedBuild.
+        (BuildbotBuildEntry.it: Added unit-test for creating BuildbotBuildEntry for pending build.
+        (BuildbotBuildEntry.it: Added unit-test for creating BuildbotBuildEntry for in-progress build.
+        (BuildbotBuildEntry.it: Added unit-test for creating BuildbotBuildEntry for finished build.
+        (BuildbotBuildEntry.it: Added unit-test for creating BuildbotBuildEntry for mix of in-progress and finished build.
+
 2018-01-31  Dewei Zhu  <dewei_zhu@apple.com>
 
         Should chose the best match during 'route' if there are multiple matches.
