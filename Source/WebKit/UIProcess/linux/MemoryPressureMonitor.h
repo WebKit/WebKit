@@ -38,7 +38,7 @@ namespace WebKit {
 
 class MemoryPressureMonitor {
     WTF_MAKE_NONCOPYABLE(MemoryPressureMonitor);
-    friend class NeverDestroyed<MemoryPressureMonitor>;
+    friend NeverDestroyed<MemoryPressureMonitor>;
 public:
     static MemoryPressureMonitor& singleton();
     static bool isEnabled();

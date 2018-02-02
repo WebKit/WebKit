@@ -36,7 +36,7 @@ namespace WebKit {
 
 class ServicesController {
     WTF_MAKE_NONCOPYABLE(ServicesController);
-    friend class NeverDestroyed<ServicesController>;
+    friend NeverDestroyed<ServicesController>;
 public:
     static ServicesController& singleton();
 

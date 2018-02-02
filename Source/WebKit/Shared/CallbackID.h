@@ -96,7 +96,7 @@ private:
     template <typename CallbackType> friend class SpecificCallbackMap;
     friend class OptionalCallbackID;
     friend struct WTF::CallbackIDHash;
-    friend struct HashTraits<WebKit::CallbackID>;
+    friend HashTraits<WebKit::CallbackID>;
 
     uint64_t m_id { HashTraits<uint64_t>::emptyValue() };
 };

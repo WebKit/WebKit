@@ -37,7 +37,7 @@ namespace WebKit {
 
 class PluginInfoCache {
     WTF_MAKE_NONCOPYABLE(PluginInfoCache);
-    friend class NeverDestroyed<PluginInfoCache>;
+    friend NeverDestroyed<PluginInfoCache>;
 public:
     static PluginInfoCache& singleton();
 

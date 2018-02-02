@@ -41,7 +41,7 @@ namespace WebKit {
 
 class WorkQueuePool {
     WTF_MAKE_NONCOPYABLE(WorkQueuePool);
-    friend class NeverDestroyed<WorkQueuePool>;
+    friend NeverDestroyed<WorkQueuePool>;
 public:
     static WorkQueuePool& singleton()
     {

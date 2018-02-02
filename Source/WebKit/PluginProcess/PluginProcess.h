@@ -45,7 +45,8 @@ struct PluginProcessCreationParameters;
 class PluginProcess : public ChildProcess
 {
     WTF_MAKE_NONCOPYABLE(PluginProcess);
-    friend class NeverDestroyed<PluginProcess>;
+    friend NeverDestroyed<PluginProcess>;
+
 public:
     static PluginProcess& singleton();
 

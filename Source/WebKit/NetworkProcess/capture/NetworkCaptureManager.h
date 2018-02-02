@@ -55,7 +55,7 @@ class Resource;
  */
 class Manager {
     WTF_MAKE_NONCOPYABLE(Manager);
-    friend class WTF::NeverDestroyed<Manager>;
+    friend NeverDestroyed<Manager>;
 
 public:
     enum RecordReplayMode {

@@ -31,7 +31,7 @@ namespace WebKit {
 
 class HardwareAccelerationManager {
     WTF_MAKE_NONCOPYABLE(HardwareAccelerationManager);
-    friend class NeverDestroyed<HardwareAccelerationManager>;
+    friend NeverDestroyed<HardwareAccelerationManager>;
 public:
     static HardwareAccelerationManager& singleton();
 

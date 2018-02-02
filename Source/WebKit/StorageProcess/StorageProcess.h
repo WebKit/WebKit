@@ -66,7 +66,7 @@ class StorageProcess : public ChildProcess
 #endif
 {
     WTF_MAKE_NONCOPYABLE(StorageProcess);
-    friend class NeverDestroyed<StorageProcess>;
+    friend NeverDestroyed<StorageProcess>;
 public:
     static StorageProcess& singleton();
     ~StorageProcess();

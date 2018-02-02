@@ -51,7 +51,7 @@ enum class WebsiteDataFetchOption;
 
 class PluginProcessManager {
     WTF_MAKE_NONCOPYABLE(PluginProcessManager);
-    friend class NeverDestroyed<PluginProcessManager>;
+    friend NeverDestroyed<PluginProcessManager>;
 public:
     static PluginProcessManager& singleton();
 

@@ -1,3 +1,36 @@
+2018-02-02  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Win] MSVC doesn't seem to like "friend class NeverDestroyed<Foo>"
+        https://bugs.webkit.org/show_bug.cgi?id=182081
+
+        Reviewed by Yusuke Suzuki.
+
+        The template friend class, which belongs to a different namespace,
+        can't access private member if its friend declaration is specified
+        without the namespace and with class keyword.
+
+        Replaced "friend class NeverDestroyed<Foo>" with "friend NeverDestroyed<Foo>".
+
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/capture/NetworkCaptureManager.h:
+        * PluginProcess/PluginProcess.h:
+        * Shared/CallbackID.h:
+        * Shared/CoordinatedGraphics/threadedcompositor/CompositingRunLoop.cpp:
+        * StorageProcess/StorageProcess.h:
+        * UIProcess/Plugins/PluginProcessManager.h:
+        * UIProcess/Plugins/gtk/PluginInfoCache.h:
+        * UIProcess/WebPageProxy.cpp:
+        * UIProcess/WebPasteboardProxy.h:
+        * UIProcess/gtk/AcceleratedBackingStoreX11.cpp:
+        * UIProcess/gtk/HardwareAccelerationManager.h:
+        * UIProcess/gtk/WaylandCompositor.h:
+        * UIProcess/linux/MemoryPressureMonitor.h:
+        * UIProcess/mac/ServicesController.h:
+        * WebProcess/InjectedBundle/API/glib/WebKitExtensionManager.h:
+        * WebProcess/Plugins/WebPluginInfoProvider.h:
+        * WebProcess/WebCoreSupport/WebPasteboardOverrides.h:
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.h:
+
 2018-02-02  Youenn Fablet  <youenn@apple.com>
 
         Configure serviceWorkerRegistrationDirectory on the web site data store and move it to a Caches subfolder as a default

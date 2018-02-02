@@ -50,7 +50,7 @@ class WebPageProxy;
 
 class WaylandCompositor {
     WTF_MAKE_NONCOPYABLE(WaylandCompositor);
-    friend class NeverDestroyed<WaylandCompositor>;
+    friend NeverDestroyed<WaylandCompositor>;
 public:
     static WaylandCompositor& singleton();
 

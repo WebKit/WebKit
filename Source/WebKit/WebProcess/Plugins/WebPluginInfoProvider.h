@@ -31,7 +31,7 @@
 namespace WebKit {
 
 class WebPluginInfoProvider final : public WebCore::PluginInfoProvider {
-    friend class NeverDestroyed<WebPluginInfoProvider>;
+    friend NeverDestroyed<WebPluginInfoProvider>;
 
 public:
     static WebPluginInfoProvider& singleton();

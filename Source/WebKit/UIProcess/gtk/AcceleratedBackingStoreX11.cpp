@@ -51,7 +51,7 @@ static std::optional<int> s_damageErrorBase;
 
 class XDamageNotifier {
     WTF_MAKE_NONCOPYABLE(XDamageNotifier);
-    friend class NeverDestroyed<XDamageNotifier>;
+    friend NeverDestroyed<XDamageNotifier>;
 public:
     static XDamageNotifier& singleton()
     {

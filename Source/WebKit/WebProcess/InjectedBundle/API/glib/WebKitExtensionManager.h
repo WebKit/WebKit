@@ -51,7 +51,7 @@ private:
     Vector<Module*> m_extensionModules;
     GRefPtr<WebKitWebExtension> m_extension;
 
-    friend class NeverDestroyed<WebKitExtensionManager>;
+    friend NeverDestroyed<WebKitExtensionManager>;
 };
 
 } // namespace WebKit
