@@ -1919,10 +1919,6 @@ webkit.org/b/181529 imported/blink/http/tests/webfont/animation-assert.html [ Pa
 webkit.org/b/181766 imported/w3c/web-platform-tests/html/semantics/text-level-semantics/the-br-element/br-bidi-in-inline-ancestors.html [ Pass Timeout ]
 webkit.org/b/181767 fast/hidpi/filters-hue-rotate.html [ Pass ImageOnlyFailure ]
 
-webkit.org/b/182104 fast/events/message-channel-gc-4.html [ Pass Crash ]
-
-webkit.org/b/182105 fast/workers/worker-cloneport.html [ Pass Crash ]
-
 webkit.org/b/179947 imported/w3c/web-platform-tests/html/semantics/text-level-semantics/the-bdi-element/bdi-auto-dir-default.html [ Pass Timeout ]
 webkit.org/b/182364 imported/w3c/web-platform-tests/fetch/security/embedded-credentials.tentative.sub.html [ Pass Timeout Crash ]
 

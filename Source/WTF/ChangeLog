@@ -1,3 +1,17 @@
+2018-02-02  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [GTK] fast/events/message-channel-gc-4.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=182104
+
+        Reviewed by Carlos Garcia Campos.
+
+        RELEASE_ASSERT of ThreadSpecific::set fails because
+        RunLoop::current is called even in GC thread since r227275.
+
+        * wtf/RunLoop.cpp:
+        (WTF::RunLoop::current):
+        Let the second template argument of ThreadSpecific CanBeGCThread::True.
+
 2018-02-01  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [WPE][GTK] Make RunLoop::TimerBase robust to its own deletion inside its source callback

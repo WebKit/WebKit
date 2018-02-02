@@ -1,3 +1,13 @@
+2018-02-02  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [GTK] fast/events/message-channel-gc-4.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=182104
+
+        Reviewed by Carlos Garcia Campos.
+
+        * platform/gtk/TestExpectations:
+        Unmarked fast/events/message-channel-gc-4.html and fast/workers/worker-cloneport.html.
+
 2018-02-01  Chris Dumez  <cdumez@apple.com>
 
         When SW install fails, null out registration.installing before setting worker state to "redundant"

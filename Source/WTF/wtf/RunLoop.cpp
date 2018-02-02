@@ -58,7 +58,7 @@ void RunLoop::initializeMainRunLoop()
 
 RunLoop& RunLoop::current()
 {
-    static NeverDestroyed<ThreadSpecific<Holder>> runLoopHolder;
+    static NeverDestroyed<ThreadSpecific<Holder, CanBeGCThread::True>> runLoopHolder;
     return runLoopHolder.get()->runLoop();
 }
 
