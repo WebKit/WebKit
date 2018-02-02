@@ -55,20 +55,19 @@ auto ModuleParser::parse() -> Result
     WASM_PARSER_FAIL_IF(!parseUInt32(versionNumber), "can't parse version number");
     WASM_PARSER_FAIL_IF(versionNumber != expectedVersionNumber, "unexpected version number ", versionNumber, " expected ", expectedVersionNumber);
 
-    Section previousSection = Section::Custom;
+    // This is not really a known section.
+    Section previousKnownSection = Section::Begin;
     while (m_offset < length()) {
         uint8_t sectionByte;
 
         WASM_PARSER_FAIL_IF(!parseUInt7(sectionByte), "can't get section byte");
 
         Section section = Section::Custom;
-        if (sectionByte) {
-            if (isValidSection(sectionByte))
-                section = static_cast<Section>(sectionByte);
-        }
+        WASM_PARSER_FAIL_IF(!decodeSection(sectionByte, section));
+        ASSERT(section != Section::Begin);
 
         uint32_t sectionLength;
-        WASM_PARSER_FAIL_IF(!validateOrder(previousSection, section), "invalid section order, ", previousSection, " followed by ", section);
+        WASM_PARSER_FAIL_IF(!validateOrder(previousKnownSection, section), "invalid section order, ", previousKnownSection, " followed by ", section);
         WASM_PARSER_FAIL_IF(!parseVarUInt32(sectionLength), "can't get ", section, " section's length");
         WASM_PARSER_FAIL_IF(sectionLength > length() - m_offset, section, "section of size ", sectionLength, " would overflow Module's size");
 
@@ -80,18 +79,25 @@ auto ModuleParser::parse() -> Result
             WASM_FAIL_IF_HELPER_FAILS(parse ## NAME());             \
             break;                                                  \
         }
-        FOR_EACH_WASM_SECTION(WASM_SECTION_PARSE)
+        FOR_EACH_KNOWN_WASM_SECTION(WASM_SECTION_PARSE)
 #undef WASM_SECTION_PARSE
 
         case Section::Custom: {
             WASM_FAIL_IF_HELPER_FAILS(parseCustom(sectionLength));
             break;
         }
+
+        case Section::Begin: {
+            RELEASE_ASSERT_NOT_REACHED();
+            break;
+        }
         }
 
         WASM_PARSER_FAIL_IF(end != m_offset, "parsing ended before the end of ", section, " section");
 
-        previousSection = section;
+
+        if (isKnownSection(section))
+            previousKnownSection = section;
     }
 
     return { };

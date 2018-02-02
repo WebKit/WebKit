@@ -1,3 +1,25 @@
+2018-02-01  Keith Miller  <keith_miller@apple.com>
+
+        Fix crashes due to mishandling custom sections.
+        https://bugs.webkit.org/show_bug.cgi?id=182404
+        <rdar://problem/36935863>
+
+        Reviewed by Saam Barati.
+
+        This also cleans up some of our validation code. We also
+        mistakenly, allowed unknown (different from custom sections with
+        id: 0) section ids.
+
+        * wasm/WasmModuleParser.cpp:
+        (JSC::Wasm::ModuleParser::parse):
+        * wasm/WasmModuleParser.h:
+        * wasm/WasmSections.h:
+        (JSC::Wasm::isKnownSection):
+        (JSC::Wasm::decodeSection):
+        (JSC::Wasm::validateOrder):
+        (JSC::Wasm::makeString):
+        (JSC::Wasm::isValidSection): Deleted.
+
 2018-02-01  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         -Wreturn-type warning in DFGObjectAllocationSinkingPhase.cpp

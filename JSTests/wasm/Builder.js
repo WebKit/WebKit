@@ -575,7 +575,7 @@ export default class Builder {
 
             case "Element":
                 this[section] = function(...args) {
-                    if (args.length !== 0)
+                    if (args.length !== 0 && this._checked)
                         throw new Error("You're doing it wrong. This element does not take arguments. You must chain the call with another Element()");
 
                     const s = this._addSection(section);
