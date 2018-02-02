@@ -1,3 +1,20 @@
+2018-02-02  Chris Dumez  <cdumez@apple.com>
+
+        Clearing a registration should null out its workers before setting their state to "redundant"
+        https://bugs.webkit.org/show_bug.cgi?id=182418
+        <rdar://problem/37142874>
+
+        Reviewed by Youenn Fablet.
+
+        Clearing a registration should null out its workers before setting their state to "redundant".
+        This seems to match Firefox and Chrome.
+
+        No new tests, rebaselined existing test.
+
+        * workers/service/server/SWServerRegistration.cpp:
+        (WebCore::SWServerRegistration::clear):
+        (WebCore::clearRegistrationWorker): Deleted.
+
 2018-02-02  Antoine Quint  <graouts@apple.com>
 
         [Modern Media Controls] Turn media/modern-media-controls/tracks-panel and media/modern-media-controls/tracks-support back on

@@ -1,3 +1,16 @@
+2018-02-02  Chris Dumez  <cdumez@apple.com>
+
+        Clearing a registration should null out its workers before setting their state to "redundant"
+        https://bugs.webkit.org/show_bug.cgi?id=182418
+        <rdar://problem/37142874>
+
+        Reviewed by Youenn Fablet.
+
+        Rebaseline WPT test now that all checks are passing. I verified that this test is passing
+        in both Firefox and Chrome.
+
+        * web-platform-tests/service-workers/service-worker/activation.https-expected.txt:
+
 2018-02-02  Ms2ger  <Ms2ger@igalia.com>
 
         Update imagebitmap tests.
