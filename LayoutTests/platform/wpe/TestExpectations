@@ -151,6 +151,7 @@ webkit.org/b/169917 webgl/1.0.3/conformance/rendering/many-draw-calls.html [ Slo
 fast/canvas/canvas-blend-image.html [ Failure ]
 fast/canvas/canvas-blend-solid.html [ Failure ]
 fast/canvas/canvas-createPattern-video-loading.html [ Failure ]
+webkit.org/b/182432 fast/canvas/canvas-createPattern-video-modify.html [ Failure ]
 fast/canvas/canvas-ellipse-zero-lineto.html [ Failure ]
 fast/canvas/canvas-gradient-addStop-error.html [ Failure ]
 fast/canvas/canvas-imageSmoothingQuality.html [ Failure ]

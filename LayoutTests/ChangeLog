@@ -1,3 +1,12 @@
+2018-02-02  Claudio Saavedra  <csaavedra@igalia.com>
+
+        [GTK][Wayland][WPE] fast/canvas/canvas-createPattern-video-modify.html failing
+        https://bugs.webkit.org/show_bug.cgi?id=182432
+
+        Unreviewed gardening.
+        * platform/gtk-wayland/TestExpectations:
+        * platform/wpe/TestExpectations:
+
 2018-02-02  Ms2ger  <Ms2ger@igalia.com>
 
         Update imagebitmap tests.
