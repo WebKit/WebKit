@@ -1,3 +1,18 @@
+2018-02-02  Guillaume Emont  <guijemont@igalia.com>
+
+        JSTests: Skip mozilla/js1_5/Array/regress-157652.js on all memory limited platforms
+        https://bugs.webkit.org/show_bug.cgi?id=182411
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        This is skipped only on arm memory limited platforms. Until recently
+        it was not a problem on MIPS as the butterfly was not initialized. But
+        since r227435, the butterfly is initialized in that test and therefore
+        memory is allocated, and the test typically takes around 512M, which
+        means it generally gets OOM-killed on the MIPS buildbot.
+
+        * mozilla/mozilla-tests.yaml:
+
 2018-02-01  Mark Lam  <mark.lam@apple.com>
 
         Fix broken bounds check in FTL's compileGetMyArgumentByVal().
