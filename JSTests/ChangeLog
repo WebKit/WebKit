@@ -1,3 +1,17 @@
+2018-02-02  Saam Barati  <sbarati@apple.com>
+
+        When BytecodeParser inserts Unreachable after ForceOSRExit it needs to update ArgumentPositions for Flushes it inserts
+        https://bugs.webkit.org/show_bug.cgi?id=182368
+        <rdar://problem/36932466>
+
+        Reviewed by Mark Lam.
+
+        * stress/flush-after-force-exit-in-bytecodeparser-needs-to-update-argument-positions.js: Added.
+        (runNearStackLimit.t):
+        (runNearStackLimit):
+        (try.runNearStackLimit):
+        (catch):
+
 2018-02-02  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Update test262 to Jan 30 version

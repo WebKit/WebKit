@@ -525,17 +525,17 @@ private:
             ASSERT(!m_graph.hasDebuggerEnabled());
             numArguments = inlineCallFrame->argumentsWithFixup.size();
             if (inlineCallFrame->isClosureCall)
-                addFlushDirect(remapOperand(inlineCallFrame, VirtualRegister(CallFrameSlot::callee)));
+                addFlushDirect(inlineCallFrame, remapOperand(inlineCallFrame, VirtualRegister(CallFrameSlot::callee)));
             if (inlineCallFrame->isVarargs())
-                addFlushDirect(remapOperand(inlineCallFrame, VirtualRegister(CallFrameSlot::argumentCount)));
+                addFlushDirect(inlineCallFrame, remapOperand(inlineCallFrame, VirtualRegister(CallFrameSlot::argumentCount)));
         } else
             numArguments = m_graph.baselineCodeBlockFor(inlineCallFrame)->numParameters();
 
         for (unsigned argument = numArguments; argument--;)
-            addFlushDirect(remapOperand(inlineCallFrame, virtualRegisterForArgument(argument)));
+            addFlushDirect(inlineCallFrame, remapOperand(inlineCallFrame, virtualRegisterForArgument(argument)));
 
         if (m_graph.needsScopeRegister())
-            addFlushDirect(m_graph.m_codeBlock->scopeRegister());
+            addFlushDirect(nullptr, m_graph.m_codeBlock->scopeRegister());
     }
 
     template<typename AddFlushDirectFunc, typename AddPhantomLocalDirectFunc>
@@ -553,7 +553,7 @@ private:
 
                 for (unsigned local = codeBlock->m_numCalleeLocals; local--;) {
                     if (livenessAtBytecode[local])
-                        addPhantomLocalDirect(remapOperand(inlineCallFrame, virtualRegisterForLocal(local)));
+                        addPhantomLocalDirect(inlineCallFrame, remapOperand(inlineCallFrame, virtualRegisterForLocal(local)));
                 }
             });
     }
@@ -600,14 +600,14 @@ private:
 
     void flush(InlineStackEntry* inlineStackEntry)
     {
-        auto addFlushDirect = [&] (VirtualRegister reg) { flushDirect(reg); };
+        auto addFlushDirect = [&] (InlineCallFrame*, VirtualRegister reg) { flushDirect(reg); };
         flushImpl(inlineStackEntry->m_inlineCallFrame, addFlushDirect);
     }
 
     void flushForTerminal()
     {
-        auto addFlushDirect = [&] (VirtualRegister reg) { flushDirect(reg); };
-        auto addPhantomLocalDirect = [&] (VirtualRegister reg) { phantomLocalDirect(reg); };
+        auto addFlushDirect = [&] (InlineCallFrame*, VirtualRegister reg) { flushDirect(reg); };
+        auto addPhantomLocalDirect = [&] (InlineCallFrame*, VirtualRegister reg) { phantomLocalDirect(reg); };
         flushForTerminalImpl(currentCodeOrigin(), addFlushDirect, addPhantomLocalDirect);
     }
 
@@ -1031,6 +1031,8 @@ private:
     FrozenValue* m_constantNaN;
     FrozenValue* m_constantOne;
     Vector<Node*, 16> m_constants;
+
+    HashMap<InlineCallFrame*, Vector<ArgumentPosition*>, WTF::DefaultHash<InlineCallFrame*>::Hash, WTF::NullableHashTraits<InlineCallFrame*>> m_inlineCallFrameToArgumentPositions;
 
     // The number of arguments passed to the function.
     unsigned m_numArguments;
@@ -6454,13 +6456,7 @@ ByteCodeParser::InlineStackEntry::InlineStackEntry(
     }
     
     int argumentCountIncludingThisWithFixup = std::max<int>(argumentCountIncludingThis, codeBlock->numParameters());
-    m_argumentPositions.resize(argumentCountIncludingThisWithFixup);
-    for (int i = 0; i < argumentCountIncludingThisWithFixup; ++i) {
-        byteCodeParser->m_graph.m_argumentPositions.append(ArgumentPosition());
-        ArgumentPosition* argumentPosition = &byteCodeParser->m_graph.m_argumentPositions.last();
-        m_argumentPositions[i] = argumentPosition;
-    }
-    
+
     if (m_caller) {
         // Inline case.
         ASSERT(codeBlock != byteCodeParser->m_codeBlock);
@@ -6510,6 +6506,14 @@ ByteCodeParser::InlineStackEntry::InlineStackEntry(
         for (size_t i = 0; i < codeBlock->numberOfSwitchJumpTables(); ++i)
             m_switchRemap[i] = i;
     }
+    
+    m_argumentPositions.resize(argumentCountIncludingThisWithFixup);
+    for (int i = 0; i < argumentCountIncludingThisWithFixup; ++i) {
+        byteCodeParser->m_graph.m_argumentPositions.append(ArgumentPosition());
+        ArgumentPosition* argumentPosition = &byteCodeParser->m_graph.m_argumentPositions.last();
+        m_argumentPositions[i] = argumentPosition;
+    }
+    byteCodeParser->m_inlineCallFrameToArgumentPositions.add(m_inlineCallFrame, m_argumentPositions);
     
     byteCodeParser->m_inlineStackTop = this;
 }
@@ -6661,17 +6665,27 @@ void ByteCodeParser::parse()
 
                     insertionSet.insertNode(block->size(), SpecNone, ExitOK, endOrigin);
 
-                    auto insertLivenessPreservingOp = [&] (NodeType op, VirtualRegister operand) {
+                    auto insertLivenessPreservingOp = [&] (InlineCallFrame* inlineCallFrame, NodeType op, VirtualRegister operand) {
                         VariableAccessData* variable = mapping.operand(operand);
                         if (!variable) {
                             variable = newVariableAccessData(operand);
                             mapping.operand(operand) = variable;
                         }
+
+                        VirtualRegister argument = operand - (inlineCallFrame ? inlineCallFrame->stackOffset : 0);
+                        if (argument.isArgument() && !argument.isHeader()) {
+                            const Vector<ArgumentPosition*>& arguments = m_inlineCallFrameToArgumentPositions.get(inlineCallFrame);
+                            arguments[argument.toArgument()]->addVariable(variable);
+                        }
+
                         insertionSet.insertNode(block->size(), SpecNone, op, endOrigin, OpInfo(variable));
                     };
-                    auto addFlushDirect = [&] (VirtualRegister operand) { insertLivenessPreservingOp(Flush, operand); };
-                    auto addPhantomLocalDirect = [&] (VirtualRegister operand) { insertLivenessPreservingOp(PhantomLocal, operand); };
-
+                    auto addFlushDirect = [&] (InlineCallFrame* inlineCallFrame, VirtualRegister operand) {
+                        insertLivenessPreservingOp(inlineCallFrame, Flush, operand);
+                    };
+                    auto addPhantomLocalDirect = [&] (InlineCallFrame* inlineCallFrame, VirtualRegister operand) {
+                        insertLivenessPreservingOp(inlineCallFrame, PhantomLocal, operand);
+                    };
                     flushForTerminalImpl(endOrigin.semantic, addFlushDirect, addPhantomLocalDirect);
 
                     insertionSet.insertNode(block->size(), SpecNone, Unreachable, endOrigin);

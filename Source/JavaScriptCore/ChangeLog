@@ -1,3 +1,25 @@
+2018-02-02  Saam Barati  <sbarati@apple.com>
+
+        When BytecodeParser inserts Unreachable after ForceOSRExit it needs to update ArgumentPositions for Flushes it inserts
+        https://bugs.webkit.org/show_bug.cgi?id=182368
+        <rdar://problem/36932466>
+
+        Reviewed by Mark Lam.
+
+        When preserving liveness when inserting Unreachable nodes after ForceOSRExit,
+        we must add the VariableAccessData to the given argument position. Otherwise,
+        we may end up with a VariableAccessData that doesn't respect the shouldNeverUnbox bit.
+        If we end up with such a situation, it can lead to invalid IR after the
+        arguments elimination phase optimizes a GetByVal to a GetStack.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::flushImpl):
+        (JSC::DFG::ByteCodeParser::flushForTerminalImpl):
+        (JSC::DFG::ByteCodeParser::flush):
+        (JSC::DFG::ByteCodeParser::flushForTerminal):
+        (JSC::DFG::ByteCodeParser::InlineStackEntry::InlineStackEntry):
+        (JSC::DFG::ByteCodeParser::parse):
+
 2018-02-02  Mark Lam  <mark.lam@apple.com>
 
         More ARM64_32 fixes.
