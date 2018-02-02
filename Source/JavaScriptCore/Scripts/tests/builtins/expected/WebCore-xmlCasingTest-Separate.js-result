@@ -33,10 +33,10 @@
 
 #if ENABLE(STREAMS_API)
 
-#include <builtins/BuiltinUtils.h>
-#include <bytecode/UnlinkedFunctionExecutable.h>
-#include <runtime/Identifier.h>
-#include <runtime/JSFunction.h>
+#include <JavaScriptCore/BuiltinUtils.h>
+#include <JavaScriptCore/Identifier.h>
+#include <JavaScriptCore/JSFunction.h>
+#include <JavaScriptCore/UnlinkedFunctionExecutable.h>
 
 namespace JSC {
 class FunctionExecutable;
@@ -209,13 +209,13 @@ inline void xmlCasingTestBuiltinFunctions::visit(JSC::SlotVisitor& visitor)
 #if ENABLE(STREAMS_API)
 
 #include "WebCoreJSClientData.h"
-#include <heap/HeapInlines.h>
-#include <runtime/IdentifierInlines.h>
-#include <runtime/Intrinsic.h>
-#include <runtime/JSCJSValueInlines.h>
-#include <runtime/JSCellInlines.h>
-#include <runtime/StructureInlines.h>
-#include <runtime/VM.h>
+#include <JavaScriptCore/HeapInlines.h>
+#include <JavaScriptCore/IdentifierInlines.h>
+#include <JavaScriptCore/Intrinsic.h>
+#include <JavaScriptCore/JSCJSValueInlines.h>
+#include <JavaScriptCore/JSCellInlines.h>
+#include <JavaScriptCore/StructureInlines.h>
+#include <JavaScriptCore/VM.h>
 
 namespace WebCore {
 

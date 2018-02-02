@@ -1,3 +1,18 @@
+2018-02-02  Don Olmstead  <don.olmstead@sony.com>
+
+        JS Builtins should include JavaScriptCore headers directly
+        https://bugs.webkit.org/show_bug.cgi?id=182445
+
+        Reviewed by Yusuke Suzuki.
+
+        * Scripts/builtins/builtins_generator.py:
+        * Scripts/tests/builtins/expected/WebCore-AnotherGuardedInternalBuiltin-Separate.js-result:
+        * Scripts/tests/builtins/expected/WebCore-ArbitraryConditionalGuard-Separate.js-result:
+        * Scripts/tests/builtins/expected/WebCore-GuardedBuiltin-Separate.js-result:
+        * Scripts/tests/builtins/expected/WebCore-GuardedInternalBuiltin-Separate.js-result:
+        * Scripts/tests/builtins/expected/WebCore-UnguardedBuiltin-Separate.js-result:
+        * Scripts/tests/builtins/expected/WebCore-xmlCasingTest-Separate.js-result:
+
 2018-02-02  Saam Barati  <sbarati@apple.com>
 
         When BytecodeParser inserts Unreachable after ForceOSRExit it needs to update ArgumentPositions for Flushes it inserts
