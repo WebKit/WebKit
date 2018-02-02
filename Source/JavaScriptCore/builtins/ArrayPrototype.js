@@ -164,6 +164,31 @@ function forEach(callback /*, thisArg */)
     }
 }
 
+@globalPrivate
+function arraySpeciesCreate(array, length)
+{
+    "use strict";
+
+    var constructor;
+    var arrayConstructorInRealm = @Array;
+    if (@isArray(array)) {
+        constructor = array.constructor;
+        // We have this check so that if some array from a different global object
+        // calls this map they don't get an array with the Array.prototype of the
+        // other global object.
+        if (@isArrayConstructor(constructor) && arrayConstructorInRealm !== constructor)
+            constructor = @undefined;
+        else if (@isObject(constructor)) {
+            constructor = constructor.@speciesSymbol;
+            if (constructor === null)
+                constructor = @undefined;
+        }
+    }
+    if (constructor === arrayConstructorInRealm || constructor === @undefined)
+        return @newArrayWithSize(length);
+    return new constructor(length);
+}
+
 function filter(callback /*, thisArg */)
 {
     "use strict";
@@ -176,26 +201,7 @@ function filter(callback /*, thisArg */)
     
     var thisArg = @argument(1);
 
-    // Do 9.4.2.3 ArraySpeciesCreate
-    var result;
-    var constructor;
-    if (@isArray(array)) {
-        constructor = array.constructor;
-        // We have this check so that if some array from a different global object
-        // calls this map they don't get an array with the Array.prototype of the
-        // other global object.
-        if (@isArrayConstructor(constructor) && @Array !== constructor)
-            constructor = @undefined;
-        if (@isObject(constructor)) {
-            constructor = constructor.@speciesSymbol;
-            if (constructor === null)
-                constructor = @undefined;
-        }
-    }
-    if (constructor === @Array || constructor === @undefined)
-        result = @newArrayWithSize(0);
-    else
-        result = new constructor(0);
+    var result = @arraySpeciesCreate(array, 0);
 
     var nextIndex = 0;
     for (var i = 0; i < length; i++) {
@@ -222,26 +228,7 @@ function map(callback /*, thisArg */)
     
     var thisArg = @argument(1);
 
-    // Do 9.4.2.3 ArraySpeciesCreate
-    var result;
-    var constructor;
-    if (@isArray(array)) {
-        constructor = array.constructor;
-        // We have this check so that if some array from a different global object
-        // calls this map they don't get an array with the Array.prototype of the
-        // other global object.
-        if (@isArrayConstructor(constructor) && @Array !== constructor)
-            constructor = @undefined;
-        if (@isObject(constructor)) {
-            constructor = constructor.@speciesSymbol;
-            if (constructor === null)
-                constructor = @undefined;
-        }
-    }
-    if (constructor === @Array || constructor === @undefined)
-        result = @newArrayWithSize(length);
-    else
-        result = new constructor(length);
+    var result = @arraySpeciesCreate(array, length);
 
     for (var i = 0; i < length; i++) {
         if (!(i in array))
@@ -617,28 +604,10 @@ function concatSlowPath()
 
     var currentElement = @toObject(this, "Array.prototype.concat requires that |this| not be null or undefined");
 
-    var constructor;
-    if (@isArray(currentElement)) {
-        constructor = currentElement.constructor;
-        // We have this check so that if some array from a different global object
-        // calls this map they don't get an array with the Array.prototype of the
-        // other global object.
-        if (@isArrayConstructor(constructor) && @Array !== constructor)
-            constructor = @undefined;
-        else if (@isObject(constructor)) {
-            constructor = constructor.@speciesSymbol;
-            if (constructor === null)
-                constructor = @Array;
-        }
-    }
+    var result = @arraySpeciesCreate(currentElement, 0);
+    var resultIsArray = @isJSArray(result);
 
     var argCount = arguments.length;
-    var result;
-    if (constructor === @Array || constructor === @undefined)
-        result = @newArrayWithSize(0);
-    else
-        result = new constructor(0);
-    var resultIsArray = @isJSArray(result);
 
     var resultIndex = 0;
     var argIndex = 0;

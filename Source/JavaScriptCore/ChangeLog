@@ -1,3 +1,20 @@
+2018-02-02  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Clean up ArraySpeciesCreate
+        https://bugs.webkit.org/show_bug.cgi?id=182434
+
+        Reviewed by Saam Barati.
+
+        We have duplicate code in filter, map, concatSlowPath.
+        This patch creates a new global private function @arraySpeciesCreate,
+        and use it.
+
+        * builtins/ArrayPrototype.js:
+        (globalPrivate.arraySpeciesCreate):
+        (filter):
+        (map):
+        (globalPrivate.concatSlowPath):
+
 2018-02-01  Mark Lam  <mark.lam@apple.com>
 
         Fix broken bounds check in FTL's compileGetMyArgumentByVal().
