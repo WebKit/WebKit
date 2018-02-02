@@ -34,18 +34,17 @@ namespace WebCore {
 class LocalWindowsContext {
     WTF_MAKE_NONCOPYABLE(LocalWindowsContext);
 public:
-    LocalWindowsContext(GraphicsContext& graphicsContext, const IntRect& rect, bool supportAlphaBlend = true, bool mayCreateBitmap = true)
+    LocalWindowsContext(GraphicsContext& graphicsContext, const IntRect& rect, bool supportAlphaBlend = true)
         : m_graphicsContext(graphicsContext)
         , m_rect(rect)
         , m_supportAlphaBlend(supportAlphaBlend)
-        , m_mayCreateBitmap(mayCreateBitmap)
     {
-        m_hdc = m_graphicsContext.getWindowsContext(m_rect, m_supportAlphaBlend, m_mayCreateBitmap);
+        m_hdc = m_graphicsContext.getWindowsContext(m_rect, m_supportAlphaBlend);
     }
 
     ~LocalWindowsContext()
     {
-        m_graphicsContext.releaseWindowsContext(m_hdc, m_rect, m_supportAlphaBlend, m_mayCreateBitmap);
+        m_graphicsContext.releaseWindowsContext(m_hdc, m_rect, m_supportAlphaBlend);
     }
 
     HDC hdc() const { return m_hdc; }
@@ -55,7 +54,6 @@ private:
     HDC m_hdc;
     IntRect m_rect;
     bool m_supportAlphaBlend;
-    bool m_mayCreateBitmap;
 };
 
 } // namespace WebCore

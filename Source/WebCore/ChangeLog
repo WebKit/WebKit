@@ -1,3 +1,38 @@
+2018-02-01  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        REGRESSION(r227594) [WinCairo] NULL pointer crash in GraphicsContext::getWindowsContext
+        https://bugs.webkit.org/show_bug.cgi?id=182282
+
+        Reviewed by Žan Doberšek.
+
+        ImageBufferCairo has been changed to use GraphicsContextImplCairo
+        in r227594. But, GraphicsContext::getWindowsContext doesn't care
+        the case of using GraphicsContextImpl and crashes due to null
+        dereference of GraphicsContext::m_data.
+
+        GraphicsContext::getWindowsContext should create a HDC in that case.
+
+        Remove the argument mayCreateBitmap because it is always
+        true at the moment.
+
+        No new tests (Covered by the existing tests)
+
+        * platform/graphics/GraphicsContext.h:
+        Removed a argument mayCreateBitmap of getWindowsContext and releaseWindowsContext.
+        * platform/graphics/win/GraphicsContextCGWin.cpp:
+        (WebCore::GraphicsContext::releaseWindowsContext): Ditto.
+        * platform/graphics/win/GraphicsContextCairoWin.cpp:
+        (WebCore::GraphicsContext::releaseWindowsContext): Ditto.
+        * platform/graphics/win/GraphicsContextDirect2D.cpp:
+        (WebCore::GraphicsContext::releaseWindowsContext): Ditto.
+        * platform/graphics/win/GraphicsContextWin.cpp:
+        (WebCore::GraphicsContext::getWindowsContext):
+        Create a HDC if m_impl is null. Removed a argument mayCreateBitmap.
+        * platform/graphics/win/LocalWindowsContext.h:
+        (WebCore::LocalWindowsContext::LocalWindowsContext):
+        Removed m_mayCreateBitmap.
+        (WebCore::LocalWindowsContext::~LocalWindowsContext): Ditto.
+
 2018-02-01  Christopher Reid  <chris.reid@sony.com>
 
         [Curl] Use SQLite database in cookie jar implementation for Curl port
