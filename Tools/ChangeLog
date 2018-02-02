@@ -1,5 +1,21 @@
 2018-02-02  Youenn Fablet  <youenn@apple.com>
 
+        Clearing all service worker registrations should wait for importing service worker registration to finish
+        https://bugs.webkit.org/show_bug.cgi?id=182407
+
+        Reviewed by Chris Dumez.
+
+        Make sure we finish clearing service worker registrations before running tests.
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::resetStateToConsistentValues):
+        (WTR::ClearServiceWorkerRegistrationsCallbackContext::ClearServiceWorkerRegistrationsCallbackContext):
+        (WTR::clearServiceWorkerRegistrationsCallback):
+        (WTR::TestController::clearServiceWorkerRegistrations):
+        * WebKitTestRunner/TestController.h:
+
+2018-02-02  Youenn Fablet  <youenn@apple.com>
+
         Configure serviceWorkerRegistrationDirectory on the web site data store and move it to a Caches subfolder as a default
         https://bugs.webkit.org/show_bug.cgi?id=182403
 

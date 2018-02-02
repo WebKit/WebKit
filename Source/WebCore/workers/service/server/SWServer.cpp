@@ -114,6 +114,11 @@ void SWServer::registrationStoreImportComplete()
     ASSERT(!m_importCompleted);
     m_importCompleted = true;
     m_originStore->importComplete();
+
+    auto clearCallbacks = WTFMove(m_clearCompletionCallbacks);
+    for (auto& callback : clearCallbacks)
+        callback();
+
     performGetOriginsWithRegistrationsCallbacks();
 }
 
@@ -182,8 +187,16 @@ Vector<ServiceWorkerRegistrationData> SWServer::getRegistrations(const SecurityO
     return matchingRegistrationDatas;
 }
 
-void SWServer::clearAll(WTF::CompletionHandler<void()>&& completionHandler)
+void SWServer::clearAll(CompletionHandler<void()>&& completionHandler)
 {
+    if (!m_importCompleted) {
+        m_clearCompletionCallbacks.append([this, completionHandler = WTFMove(completionHandler)] () mutable {
+            ASSERT(m_importCompleted);
+            clearAll(WTFMove(completionHandler));
+        });
+        return;
+    }
+
     m_jobQueues.clear();
     while (!m_registrations.isEmpty())
         m_registrations.begin()->value->clear();
@@ -193,8 +206,16 @@ void SWServer::clearAll(WTF::CompletionHandler<void()>&& completionHandler)
     m_registrationStore.clearAll(WTFMove(completionHandler));
 }
 
-void SWServer::clear(const SecurityOrigin& origin, WTF::CompletionHandler<void()>&& completionHandler)
+void SWServer::clear(const SecurityOrigin& origin, CompletionHandler<void()>&& completionHandler)
 {
+    if (!m_importCompleted) {
+        m_clearCompletionCallbacks.append([this, origin = makeRef(origin), completionHandler = WTFMove(completionHandler)] () mutable {
+            ASSERT(m_importCompleted);
+            clear(origin, WTFMove(completionHandler));
+        });
+        return;
+    }
+
     m_jobQueues.removeIf([&](auto& keyAndValue) {
         return keyAndValue.key.relatesToOrigin(origin);
     });
@@ -208,6 +229,9 @@ void SWServer::clear(const SecurityOrigin& origin, WTF::CompletionHandler<void()
     m_pendingContextDatas.removeAllMatching([&](auto& contextData) {
         return contextData.registration.key.relatesToOrigin(origin);
     });
+
+    if (registrationsToRemove.isEmpty())
+        return;
 
     // Calling SWServerRegistration::clear() takes care of updating m_registrations, m_originStore and m_registrationStore.
     for (auto* registration : registrationsToRemove)
@@ -771,7 +795,7 @@ void SWServer::Connection::resolveRegistrationReadyRequests(SWServerRegistration
     });
 }
 
-void SWServer::getOriginsWithRegistrations(WTF::Function<void(const HashSet<SecurityOriginData>&)> callback)
+void SWServer::getOriginsWithRegistrations(Function<void(const HashSet<SecurityOriginData>&)>&& callback)
 {
     m_getOriginsWithRegistrationsCallbacks.append(WTFMove(callback));
 
