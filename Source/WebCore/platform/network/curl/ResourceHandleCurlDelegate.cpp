@@ -33,10 +33,12 @@
 #if USE(CURL)
 
 #include "AuthenticationChallenge.h"
+#include "CookieJarCurl.h"
 #include "CredentialStorage.h"
 #include "CurlCacheManager.h"
 #include "CurlRequest.h"
 #include "HTTPParsers.h"
+#include "NetworkStorageSession.h"
 #include "ResourceHandleInternal.h"
 #include "SharedBuffer.h"
 #include "TextEncoding.h"
@@ -190,6 +192,20 @@ void ResourceHandleCurlDelegate::curlDidSendData(unsigned long long bytesSent, u
     m_handle->client()->didSendData(m_handle, bytesSent, totalBytesToBeSent);
 }
 
+static void handleCookieHeaders(const CurlResponse& response)
+{
+    static const auto setCookieHeader = "set-cookie: ";
+
+    auto& defaultStorageSession = NetworkStorageSession::defaultStorageSession();
+    const CookieJarCurl& cookieJar = defaultStorageSession.cookieStorage();
+    for (auto header : response.headers) {
+        if (header.startsWithIgnoringASCIICase(setCookieHeader)) {
+            String setCookieString = header.right(header.length() - strlen(setCookieHeader));
+            cookieJar.setCookiesFromHTTPResponse(defaultStorageSession, response.url, setCookieString);
+        }
+    }
+}
+
 void ResourceHandleCurlDelegate::curlDidReceiveResponse(const CurlResponse& receivedResponse)
 {
     ASSERT(isMainThread());
@@ -202,6 +218,8 @@ void ResourceHandleCurlDelegate::curlDidReceiveResponse(const CurlResponse& rece
 
     if (m_curlRequest)
         m_handle->getInternal()->m_response.setDeprecatedNetworkLoadMetrics(m_curlRequest->getNetworkLoadMetrics());
+
+    handleCookieHeaders(receivedResponse);
 
     if (response().shouldRedirect()) {
         willSendRequest();

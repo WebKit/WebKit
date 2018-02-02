@@ -1,3 +1,33 @@
+2018-02-01  Christopher Reid  <chris.reid@sony.com>
+
+        [Curl] Use SQLite database in cookie jar implementation for Curl port
+        https://bugs.webkit.org/show_bug.cgi?id=174942
+
+        Reviewed by Alex Christensen.
+
+        No new tests, Set-Cookie is already tested in Layout tests.
+
+        Adding an initial SQLite CookieJar implementation to the curl network layer.
+        WebCore will now parse and handle both HTTP and DOM cookies instead of using libcurl.
+        This currently supports cookie storage and retrieval.
+        Cookie deletion is not yet implemented.
+
+        * platform/Curl.cmake:
+        * platform/network/NetworkStorageSession.h: Added cookieDB storage in curl.
+        * platform/network/curl/CookieJarCurl.cpp: Removed the old curl cookie handling.
+        * platform/network/curl/CookieJarCurl.h:
+        * platform/network/curl/CookieJarCurlDatabase.cpp: Added.
+        * platform/network/curl/CookieJarCurlDatabase.h: Added.
+        * platform/network/curl/CookieJarDB.cpp: Added.
+        * platform/network/curl/CookieJarDB.h: Added.
+        * platform/network/curl/CookieUtil.cpp: Added.
+        * platform/network/curl/CookieUtil.h: Added.
+        * platform/network/curl/CurlContext.cpp: Removed the old curl cookie handling.
+        * platform/network/curl/CurlContext.h:
+        * platform/network/curl/CurlRequest.cpp: Added handlers for HTTP response cookies.
+        * platform/network/curl/NetworkStorageSessionCurl.cpp:
+        * platform/network/curl/ResourceHandleCurlDelegate.cpp:
+
 2018-02-01  Chris Dumez  <cdumez@apple.com>
 
         Add missing RETURN_IF_EXCEPTION() after object->get() calls in convertDictionary<>()

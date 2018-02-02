@@ -42,38 +42,6 @@
 
 namespace WebCore {
 
-static CString cookieJarPath()
-{
-    char* cookieJarPath = getenv("CURL_COOKIE_JAR_PATH");
-    if (cookieJarPath)
-        return cookieJarPath;
-
-#if OS(WINDOWS)
-    char executablePath[MAX_PATH];
-    char appDataDirectory[MAX_PATH];
-    char cookieJarFullPath[MAX_PATH];
-    char cookieJarDirectory[MAX_PATH];
-
-    if (FAILED(::SHGetFolderPathA(0, CSIDL_LOCAL_APPDATA | CSIDL_FLAG_CREATE, 0, 0, appDataDirectory))
-        || FAILED(::GetModuleFileNameA(0, executablePath, MAX_PATH)))
-        return "cookies.dat";
-
-    ::PathRemoveExtensionA(executablePath);
-    LPSTR executableName = ::PathFindFileNameA(executablePath);
-    sprintf_s(cookieJarDirectory, MAX_PATH, "%s/%s", appDataDirectory, executableName);
-    sprintf_s(cookieJarFullPath, MAX_PATH, "%s/cookies.dat", cookieJarDirectory);
-
-    if (::SHCreateDirectoryExA(0, cookieJarDirectory, 0) != ERROR_SUCCESS
-        && ::GetLastError() != ERROR_FILE_EXISTS
-        && ::GetLastError() != ERROR_ALREADY_EXISTS)
-        return "cookies.dat";
-
-    return cookieJarFullPath;
-#else
-    return "cookies.dat";
-#endif
-}
-
 // CurlContext -------------------------------------------------------------------
 
 CurlContext& CurlContext::singleton()
@@ -83,10 +51,8 @@ CurlContext& CurlContext::singleton()
 }
 
 CurlContext::CurlContext()
-: m_cookieJarFileName { cookieJarPath() }
-, m_cookieJar { std::make_unique<CookieJarCurlFileSystem>() }
 {
-    initCookieSession();
+    initShareHandle();
 
 #ifndef NDEBUG
     m_verbose = getenv("DEBUG_CURL");
@@ -105,26 +71,14 @@ CurlContext::~CurlContext()
 #endif
 }
 
-// Cookie =======================
-
-void CurlContext::initCookieSession()
+void CurlContext::initShareHandle()
 {
-    // Curl saves both persistent cookies, and session cookies to the cookie file.
-    // The session cookies should be deleted before starting a new session.
-
     CURL* curl = curl_easy_init();
 
     if (!curl)
         return;
 
     curl_easy_setopt(curl, CURLOPT_SHARE, m_shareHandle.handle());
-
-    if (!m_cookieJarFileName.isNull()) {
-        curl_easy_setopt(curl, CURLOPT_COOKIEFILE, m_cookieJarFileName.data());
-        curl_easy_setopt(curl, CURLOPT_COOKIEJAR, m_cookieJarFileName.data());
-    }
-
-    curl_easy_setopt(curl, CURLOPT_COOKIESESSION, 1);
 
     curl_easy_cleanup(curl);
 }
@@ -481,26 +435,6 @@ void CurlHandle::setSslCertType(const char* type)
 void CurlHandle::setSslKeyPassword(const char* password)
 {
     curl_easy_setopt(m_handle, CURLOPT_KEYPASSWD, password);
-}
-
-void CurlHandle::enableCookieJarIfExists()
-{
-    const char* cookieJar = CurlContext::singleton().getCookieJarFileName();
-    if (cookieJar)
-        curl_easy_setopt(m_handle, CURLOPT_COOKIEJAR, cookieJar);
-}
-
-void CurlHandle::setCookieList(const char* cookieList)
-{
-    if (!cookieList)
-        return;
-
-    curl_easy_setopt(m_handle, CURLOPT_COOKIELIST, cookieList);
-}
-
-void CurlHandle::fetchCookieList(CurlSList &cookies) const
-{
-    curl_easy_getinfo(m_handle, CURLINFO_COOKIELIST, static_cast<struct curl_slist**>(cookies));
 }
 
 void CurlHandle::enableProxyIfExists()

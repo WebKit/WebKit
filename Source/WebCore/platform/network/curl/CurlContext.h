@@ -26,7 +26,6 @@
 
 #pragma once
 
-#include "CookieJarCurl.h"
 #include "CurlSSLHandle.h"
 #include "URL.h"
 
@@ -110,11 +109,6 @@ public:
 
     const CurlShareHandle& shareHandle() { return m_shareHandle; }
 
-    // Cookie
-    const char* getCookieJarFileName() const { return m_cookieJarFileName.data(); }
-    void setCookieJarFileName(const char* cookieJarFileName) { m_cookieJarFileName = CString(cookieJarFileName); }
-    CookieJarCurl& cookieJar() { return *m_cookieJar; }
-
     // Proxy
     const ProxyInfo& proxyInfo() const { return m_proxy; }
     void setProxyInfo(const ProxyInfo& info) { m_proxy = info;  }
@@ -133,13 +127,11 @@ public:
 
 private:
     ProxyInfo m_proxy;
-    CString m_cookieJarFileName;
     CurlShareHandle m_shareHandle;
-    std::unique_ptr<CookieJarCurl> m_cookieJar;
     CurlSSLHandle m_sslHandle;
 
     CurlContext();
-    void initCookieSession();
+    void initShareHandle();
 
 #ifndef NDEBUG
     FILE* m_logFile { nullptr };
@@ -255,10 +247,6 @@ public:
     void setSslCert(const char*);
     void setSslCertType(const char*);
     void setSslKeyPassword(const char*);
-
-    void enableCookieJarIfExists();
-    void setCookieList(const char*);
-    void fetchCookieList(CurlSList &cookies) const;
 
     void enableProxyIfExists();
 

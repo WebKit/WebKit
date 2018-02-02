@@ -28,29 +28,17 @@ class URL;
 
 class CookieJarCurl {
 public:
-    virtual std::pair<String, bool> cookiesForDOM(const NetworkStorageSession&, const URL& firstParty, const URL&, std::optional<uint64_t> frameID, std::optional<uint64_t> pageID, IncludeSecureCookies) = 0;
-    virtual void setCookiesFromDOM(const NetworkStorageSession&, const URL& firstParty, const URL&, std::optional<uint64_t> frameID, std::optional<uint64_t> pageID, const String&) = 0;
-    virtual bool cookiesEnabled(const NetworkStorageSession&) = 0;
-    virtual std::pair<String, bool> cookieRequestHeaderFieldValue(const NetworkStorageSession&, const URL& firstParty, const URL&, std::optional<uint64_t> frameID, std::optional<uint64_t> pageID, IncludeSecureCookies) = 0;
-    virtual bool getRawCookies(const NetworkStorageSession&, const URL& firstParty, const URL&, std::optional<uint64_t> frameID, std::optional<uint64_t> pageID, Vector<Cookie>&) = 0;
-    virtual void deleteCookie(const NetworkStorageSession&, const URL&, const String&) = 0;
-    virtual void getHostnamesWithCookies(const NetworkStorageSession&, HashSet<String>& hostnames) = 0;
-    virtual void deleteCookiesForHostnames(const NetworkStorageSession&, const Vector<String>& cookieHostNames) = 0;
-    virtual void deleteAllCookies(const NetworkStorageSession&) = 0;
-    virtual void deleteAllCookiesModifiedSince(const NetworkStorageSession&, WallTime) = 0;
-};
-
-class CookieJarCurlFileSystem : public CookieJarCurl {
-    std::pair<String, bool> cookiesForDOM(const NetworkStorageSession&, const URL& firstParty, const URL&, std::optional<uint64_t> frameID, std::optional<uint64_t> pageID, IncludeSecureCookies) override;
-    void setCookiesFromDOM(const NetworkStorageSession&, const URL& firstParty, const URL&, std::optional<uint64_t> frameID, std::optional<uint64_t> pageID, const String&) override;
-    bool cookiesEnabled(const NetworkStorageSession&) override;
-    std::pair<String, bool> cookieRequestHeaderFieldValue(const NetworkStorageSession&, const URL& firstParty, const URL&, std::optional<uint64_t> frameID, std::optional<uint64_t> pageID, IncludeSecureCookies) override;
-    bool getRawCookies(const NetworkStorageSession&, const URL& firstParty, const URL&, std::optional<uint64_t> frameID, std::optional<uint64_t> pageID, Vector<Cookie>&) override;
-    void deleteCookie(const NetworkStorageSession&, const URL&, const String&) override;
-    void getHostnamesWithCookies(const NetworkStorageSession&, HashSet<String>& hostnames) override;
-    void deleteCookiesForHostnames(const NetworkStorageSession&, const Vector<String>& cookieHostNames) override;
-    void deleteAllCookies(const NetworkStorageSession&) override;
-    void deleteAllCookiesModifiedSince(const NetworkStorageSession&, WallTime) override;
+    virtual std::pair<String, bool> cookiesForDOM(const NetworkStorageSession&, const URL& firstParty, const URL&, std::optional<uint64_t> frameID, std::optional<uint64_t> pageID, IncludeSecureCookies) const = 0;
+    virtual void setCookiesFromDOM(const NetworkStorageSession&, const URL& firstParty, const URL&, std::optional<uint64_t> frameID, std::optional<uint64_t> pageID, const String&) const = 0;
+    virtual void setCookiesFromHTTPResponse(const NetworkStorageSession&, const URL&, const String&) const = 0;
+    virtual bool cookiesEnabled(const NetworkStorageSession&) const = 0;
+    virtual std::pair<String, bool> cookieRequestHeaderFieldValue(const NetworkStorageSession&, const URL& firstParty, const URL&, std::optional<uint64_t> frameID, std::optional<uint64_t> pageID, IncludeSecureCookies) const = 0;
+    virtual bool getRawCookies(const NetworkStorageSession&, const URL& firstParty, const URL&, std::optional<uint64_t> frameID, std::optional<uint64_t> pageID, Vector<Cookie>&) const = 0;
+    virtual void deleteCookie(const NetworkStorageSession&, const URL&, const String&) const = 0;
+    virtual void getHostnamesWithCookies(const NetworkStorageSession&, HashSet<String>& hostnames) const = 0;
+    virtual void deleteCookiesForHostnames(const NetworkStorageSession&, const Vector<String>& cookieHostNames) const = 0;
+    virtual void deleteAllCookies(const NetworkStorageSession&) const = 0;
+    virtual void deleteAllCookiesModifiedSince(const NetworkStorageSession&, WallTime) const = 0;
 };
 
 } // namespace WebCore

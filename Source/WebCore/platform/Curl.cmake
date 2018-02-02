@@ -5,7 +5,10 @@ list(APPEND WebCore_INCLUDE_DIRECTORIES
 list(APPEND WebCore_SOURCES
     platform/network/curl/AuthenticationChallengeCurl.cpp
     platform/network/curl/CookieJarCurl.cpp
+    platform/network/curl/CookieJarCurlDatabase.cpp
+    platform/network/curl/CookieJarDB.cpp
     platform/network/curl/CookieStorageCurl.cpp
+    platform/network/curl/CookieUtil.cpp
     platform/network/curl/CredentialStorageCurl.cpp
     platform/network/curl/CurlCacheEntry.cpp
     platform/network/curl/CurlCacheManager.cpp

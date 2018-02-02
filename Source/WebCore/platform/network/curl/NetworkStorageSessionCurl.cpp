@@ -29,6 +29,10 @@
 #if USE(CURL)
 
 #include "Cookie.h"
+#include "CookieJarCurlDatabase.h"
+#include "CookieJarDB.h"
+#include "CurlContext.h"
+#include "FileSystem.h"
 #include "NetworkingContext.h"
 #include "ResourceHandle.h"
 
@@ -37,9 +41,26 @@
 
 namespace WebCore {
 
+static String defaultCookieJarPath()
+{
+    static const char* defaultFileName = "cookie.jar.db";
+    char* cookieJarPath = getenv("CURL_COOKIE_JAR_PATH");
+    if (cookieJarPath)
+        return cookieJarPath;
+
+    String cookieJarDirectory = FileSystem::localUserSpecificStorageDirectory();
+
+    if (!FileSystem::makeAllDirectories(cookieJarDirectory))
+        return defaultFileName;
+
+    return FileSystem::pathByAppendingComponent(cookieJarDirectory, defaultFileName);
+}
+
 NetworkStorageSession::NetworkStorageSession(PAL::SessionID sessionID, NetworkingContext* context)
     : m_sessionID(sessionID)
     , m_context(context)
+    , m_cookieDatabase(defaultCookieJarPath())
+    , m_cookieStorage(makeUniqueRef<CookieJarCurlDatabase>())
 {
 }
 

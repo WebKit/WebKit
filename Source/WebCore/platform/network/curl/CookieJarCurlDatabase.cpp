@@ -1,0 +1,138 @@
+/*
+ * Copyright (C) 2018 Sony Interactive Entertainment Inc.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ * notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ * notice, this list of conditions and the following disclaimer in the
+ * documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS BE LIABLE FOR ANY
+ * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+ * ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#pragma once
+
+#include "config.h"
+#include "CookieJarCurlDatabase.h"
+
+#if USE(CURL)
+#include "Cookie.h"
+#include "CookieJarDB.h"
+#include "NetworkStorageSession.h"
+#include "NotImplemented.h"
+#include "URL.h"
+
+#include <wtf/Optional.h>
+#include <wtf/text/StringBuilder.h>
+#include <wtf/text/WTFString.h>
+
+namespace WebCore {
+
+static String cookiesForSession(const NetworkStorageSession& session, const URL&, const URL& url, bool httponly)
+{
+    StringBuilder cookies;
+
+    CookieJarDB& cookieJarDB = session.cookieDatabase();
+    auto isHttpOnly = (httponly ? std::nullopt : std::optional<bool> {false});
+    auto secure = url.protocolIs("https") ? std::nullopt : std::optional<bool> {false};
+
+    Vector<Cookie> results;
+    if (cookieJarDB.searchCookies(url.string(), isHttpOnly, secure, std::nullopt, results)) {
+        for (auto result : results) {
+            if (!cookies.isEmpty())
+                cookies.append("; ");
+            cookies.append(result.name);
+            cookies.append("=");
+            cookies.append(result.value);
+        }
+    }
+    return cookies.toString();
+}
+
+void CookieJarCurlDatabase::setCookiesFromDOM(const NetworkStorageSession& session, const URL& firstParty, const URL& url, std::optional<uint64_t> frameID, std::optional<uint64_t> pageID, const String& value) const
+{
+    UNUSED_PARAM(frameID);
+    UNUSED_PARAM(pageID);
+
+    CookieJarDB& cookieJarDB = session.cookieDatabase();
+    cookieJarDB.setCookie(url.string(), value, true);
+}
+
+void CookieJarCurlDatabase::setCookiesFromHTTPResponse(const NetworkStorageSession& session, const URL& url, const String& value) const
+{
+    CookieJarDB& cookieJarDB = session.cookieDatabase();
+    cookieJarDB.setCookie(url.string(), value, false);
+}
+
+std::pair<String, bool> CookieJarCurlDatabase::cookiesForDOM(const NetworkStorageSession& session, const URL& firstParty, const URL& url, std::optional<uint64_t> frameID, std::optional<uint64_t> pageID, IncludeSecureCookies) const
+{
+    UNUSED_PARAM(frameID);
+    UNUSED_PARAM(pageID);
+
+    // FIXME: This should filter secure cookies out if the caller requests it.
+    return { cookiesForSession(session, firstParty, url, false), false };
+}
+
+std::pair<String, bool> CookieJarCurlDatabase::cookieRequestHeaderFieldValue(const NetworkStorageSession& session, const URL& firstParty, const URL& url, std::optional<uint64_t> frameID, std::optional<uint64_t> pageID, IncludeSecureCookies) const
+{
+    UNUSED_PARAM(frameID);
+    UNUSED_PARAM(pageID);
+
+    // FIXME: This should filter secure cookies out if the caller requests it.
+    return { cookiesForSession(session, firstParty, url, true), false };
+}
+
+bool CookieJarCurlDatabase::cookiesEnabled(const NetworkStorageSession& session) const
+{
+    return true;
+}
+
+bool CookieJarCurlDatabase::getRawCookies(const NetworkStorageSession& session, const URL& firstParty, const URL&, std::optional<uint64_t> frameID, std::optional<uint64_t> pageID, Vector<Cookie>& rawCookies) const
+{
+    UNUSED_PARAM(frameID);
+    UNUSED_PARAM(pageID);
+
+    CookieJarDB& cookieJarDB = session.cookieDatabase();
+    return cookieJarDB.searchCookies(firstParty.string(), std::nullopt, std::nullopt, std::nullopt, rawCookies);
+}
+
+void CookieJarCurlDatabase::deleteCookie(const NetworkStorageSession&, const URL& url, const String& cookieName) const
+{
+    // FIXME: Not yet implemented
+}
+
+void CookieJarCurlDatabase::getHostnamesWithCookies(const NetworkStorageSession&, HashSet<String>& hostnames) const
+{
+    // FIXME: Not yet implemented
+}
+
+void CookieJarCurlDatabase::deleteCookiesForHostnames(const NetworkStorageSession&, const Vector<String>& cookieHostNames) const
+{
+    // FIXME: Not yet implemented
+}
+
+void CookieJarCurlDatabase::deleteAllCookies(const NetworkStorageSession&) const
+{
+    // FIXME: Not yet implemented
+}
+
+void CookieJarCurlDatabase::deleteAllCookiesModifiedSince(const NetworkStorageSession&, WallTime) const
+{
+    // FIXME: Not yet implemented
+}
+
+} // namespace WebCore
+
+#endif // USE(CURL)

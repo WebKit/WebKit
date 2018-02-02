@@ -200,7 +200,6 @@ CURL* CurlRequest::setupTransfer()
     m_curlHandle->setTimeout(timeoutMilliseconds);
 
     m_curlHandle->enableProxyIfExists();
-    m_curlHandle->enableCookieJarIfExists();
 
     m_curlHandle->setSslVerifyPeer(CurlHandle::VerifyPeer::Enable);
     m_curlHandle->setSslVerifyHost(CurlHandle::VerifyHost::StrictNameCheck);
