@@ -55,7 +55,9 @@ scheduler.frameDidFire = function() {
 mediaController.controls.showsStartButton = false;
 
 media.addEventListener("volumechange", () => {
-    shouldBe("media.volume", "0.5");
+    // Because the slider has a 9pt-wide knob and tests are ran at 1x, we can't get 0.5 here, and instead get 0.51 since
+    // the slider will only increment on whole pixels.
+    shouldBe("media.volume", "0.51");
     container.remove();
     media.remove();
     finishJSTest();

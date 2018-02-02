@@ -4,7 +4,7 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 PASS mediaController.controls.volumeSlider.parent.visible is true
-PASS media.volume is 0.5
+PASS media.volume is 0.51
 PASS successfullyParsed is true
 
 TEST COMPLETE

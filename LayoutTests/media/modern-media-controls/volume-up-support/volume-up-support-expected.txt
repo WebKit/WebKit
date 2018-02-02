@@ -3,8 +3,10 @@ Testing clicking on the volume up button correctly sets the volume to 1.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS !!window.internals.shadowRoot(media).querySelector('button.volume-up') became true
+PASS !!internals.shadowRoot(media).querySelector("button.volume-up") became true
+PASS media.webkitDisplayingFullscreen is true
 PASS media.volume is 0.5
+PASS volumeSlider.getBoundingClientRect().left became 196
 
 Pressing on the volume up button
 PASS media.volume is 1

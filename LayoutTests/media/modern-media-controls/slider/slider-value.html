@@ -1,16 +1,21 @@
 <script src="../../../resources/js-test-pre.js"></script>
 <script src="../resources/media-controls-loader.js" type="text/javascript"></script>
+<style type="text/css" media="screen">
+    .slider { position: absolute; }
+</style>
 <body>
 <script type="text/javascript">
 
-description("Testing the <code>VolumeSlider</code> value property.");
+description("Testing the <code>Slider</code> value property.");
 
 window.jsTestIsAsync = true;
 
-const slider = new VolumeSlider;
+const KNOB_WIDTH = 9;
+
+const slider = new Slider;
 slider.x = 10;
 slider.y = 32;
-slider.width = 200;
+slider.width = 200 + KNOB_WIDTH;
 
 slider.uiDelegate = {
 
@@ -36,7 +41,7 @@ const input = slider.children[1].element;
 
 function dragSlider(fromPx, toPx) {
     const bounds = input.getBoundingClientRect();
-    const minX = bounds.left;
+    const minX = bounds.left + KNOB_WIDTH / 2;
     const centerY = bounds.top + bounds.height / 2;
 
     eventSender.mouseMoveTo(minX + fromPx, centerY);

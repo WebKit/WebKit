@@ -2,8 +2,8 @@
 <script src="../../../resources/js-test-pre.js"></script>
 <script src="../resources/media-controls-utils.js" type="text/javascript"></script>
 <body>
+<button id="fullscreen" style="position: absolute; left: 0; top: 0;">Enter fullscreen</button>
 <video src="../../content/test.mp4" style="width: 320px; height: 240px;" controls></video>
-<div id="shadow"></div>
 <script type="text/javascript">
 
 window.jsTestIsAsync = true;
@@ -11,26 +11,53 @@ window.jsTestIsAsync = true;
 description("Testing clicking on the volume down button correctly sets the volume to 0.");
 
 const media = document.querySelector("video");
-const button = document.body.appendChild(document.createElement("button"));
+const button = document.querySelector("#fullscreen");
 
-button.addEventListener("click", () => media.webkitEnterFullscreen());
+media.volume = 0.5;
 
-media.addEventListener("loadedmetadata", () => {
-    pressOnElement(button);
-    shouldBecomeEqual('!!window.internals.shadowRoot(media).lastChild.querySelector("button.volume-down")', "true", () => {
-        shouldBeTrue("media.webkitDisplayingFullscreen");
-        shouldBe("media.volume", "1");
+function enterFullscreen()
+{
+    if (!("eventSender" in window)) {
+        debug("This test is designed to run in DRT");
+        return;
+    }
 
-        shouldBeCloseTo("media.volume", "0", () => {
-            debug("");
-            media.remove();
-            button.remove();
+    // Click a button so we may enter fullscreen.
+    button.addEventListener("click", event => {
+        try {
+            media.webkitEnterFullscreen();
+        } catch(e) {
+            debug("Toggling fullscreen failed");
             finishJSTest();
-        });
+        }
+    });
 
-        debug("");
-        debug("Pressing on the volume down button");
-        pressOnElement(window.internals.shadowRoot(media).lastElementChild.lastElementChild.querySelector("button.volume-down"));
+    pressOnElement(button);
+}
+
+let volumeDownButton, volumeSlider;
+media.addEventListener("loadedmetadata", () => {
+    enterFullscreen();
+    shouldBecomeEqual('!!internals.shadowRoot(media).querySelector("button.volume-down")', "true", () => {
+        shouldBeTrue("media.webkitDisplayingFullscreen");
+        shouldBe("media.volume", "0.5");
+
+        volumeDownButton = internals.shadowRoot(media).querySelector("button.volume-down");
+        volumeSlider = internals.shadowRoot(media).querySelector(".slider.volume");
+
+        shouldBecomeEqual('volumeSlider.getBoundingClientRect().left', "196", () => {
+            media.addEventListener("volumechange", () => {
+                shouldBe("media.volume", "0");
+                debug("");
+                media.remove();
+                button.remove();
+                finishJSTest();
+            });
+
+            debug("");
+            debug("Pressing on the volume down button");
+            pressOnElement(volumeDownButton);
+        });
     });
 });
 

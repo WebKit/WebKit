@@ -1495,6 +1495,8 @@ media/modern-media-controls/time-labels-support [ Pass ]
 media/modern-media-controls/tracks-panel [ Pass ]
 media/modern-media-controls/tracks-support [ Pass ]
 media/modern-media-controls/tracks-button [ Pass ]
+media/modern-media-controls/volume-down-support [ Pass ]
+media/modern-media-controls/volume-support [ Pass ]
 media/modern-media-controls/volume-up-support [ Pass ]
 
 # These tests are iOS-specific
