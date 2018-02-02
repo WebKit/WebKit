@@ -1,5 +1,32 @@
 2018-02-02  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] WebDriver: tests step always times out in the bot
+        https://bugs.webkit.org/show_bug.cgi?id=182437
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        The process itself is not timing out, but the buildbot step is. This is because we are leaking the Xvfb
+        processes. We should ensure that only one driver is executed and it's stopped before the process finishes.
+
+        * Scripts/run-webdriver-tests: Call teardown() after run().
+        * Scripts/webkitpy/webdriver_tests/webdriver_selenium_executor.py:
+        (WebDriverSeleniumExecutor.__init__): Receive the env directly instead of the display driver.
+        * Scripts/webkitpy/webdriver_tests/webdriver_test_runner.py:
+        (WebDriverTestRunner.__init__): Use the driver class directly instead of using the DriverProxy. Get the env from
+        the display driver once and pass it to the test runners.
+        (WebDriverTestRunner.teardown): Stop the display server.
+        * Scripts/webkitpy/webdriver_tests/webdriver_test_runner_selenium.py:
+        (WebDriverTestRunnerSelenium.__init__): Receive the env directly instead of the display driver.
+        (WebDriverTestRunnerSelenium.collect_tests): Pass the env to the executor.
+        (WebDriverTestRunnerSelenium.run): Ditto.
+        * Scripts/webkitpy/webdriver_tests/webdriver_test_runner_w3c.py:
+        (WebDriverTestRunnerW3C.__init__): Receive the env directly instead of the display driver.
+        (WebDriverTestRunnerW3C.run): Pass the env to the executor.
+        * Scripts/webkitpy/webdriver_tests/webdriver_w3c_executor.py:
+        (WebDriverW3CExecutor.__init__): Receive the env directly instead of the display driver.
+
+2018-02-02  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Unreviewed, rolling out r227999.
 
         It didn't fix the problem

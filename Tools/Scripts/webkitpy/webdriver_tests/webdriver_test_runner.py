@@ -43,7 +43,7 @@ class WebDriverTestRunner(object):
         _log.info('Test configuration: %s' % self._port.test_configuration())
         _log.info('Using display server %s' % (self._port._display_server))
 
-        self._display_driver = self._port.create_driver(worker_number=0, no_timeout=True)._make_driver(pixel_tests=False)
+        self._display_driver = self._port._driver_class()(self._port, worker_number=0, pixel_tests=False, no_timeout=True)
         if not self._display_driver.check_driver(self._port):
             raise RuntimeError("Failed to check driver %s" % self._display_driver.__class__.__name__)
 
@@ -57,7 +57,11 @@ class WebDriverTestRunner(object):
         build_type = 'Debug' if self._port.get_option('debug') else 'Release'
         self._expectations = TestExpectations(self._port.name(), expectations_file, build_type)
 
-        self._runners = [runner_cls(self._port, driver, self._display_driver, self._expectations) for runner_cls in self.RUNNER_CLASSES]
+        env = self._display_driver._setup_environ_for_test()
+        self._runners = [runner_cls(self._port, driver, env, self._expectations) for runner_cls in self.RUNNER_CLASSES]
+
+    def teardown(self):
+        self._display_driver.stop()
 
     def run(self, tests=[]):
         runner_tests = [runner.collect_tests(tests) for runner in self._runners]

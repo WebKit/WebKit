@@ -35,10 +35,10 @@ _log = logging.getLogger(__name__)
 
 class WebDriverTestRunnerW3C(object):
 
-    def __init__(self, port, driver, display_driver, expectations):
+    def __init__(self, port, driver, env, expectations):
         self._port = port
         self._driver = driver
-        self._display_driver = display_driver
+        self._env = env
         self._expectations = expectations
         self._results = []
         self._tests_dir = WebKitFinder(self._port.host.filesystem).path_from_webkit_base('WebDriverTests')
@@ -86,7 +86,7 @@ class WebDriverTestRunnerW3C(object):
     def run(self, tests=[]):
         self._server.start()
 
-        executor = WebDriverW3CExecutor(self._driver, self._server, self._display_driver, self._port.get_option('timeout'), self._expectations)
+        executor = WebDriverW3CExecutor(self._driver, self._server, self._env, self._port.get_option('timeout'), self._expectations)
         executor.setup()
         need_restart = False
         try:

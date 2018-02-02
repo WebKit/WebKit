@@ -40,9 +40,9 @@ _log = logging.getLogger(__name__)
 
 class WebDriverSeleniumExecutor(object):
 
-    def __init__(self, driver, display_driver):
+    def __init__(self, driver, env):
         self._driver_name = driver.selenium_name()
-        self._env = display_driver._setup_environ_for_test()
+        self._env = env
         self._env.update(driver.browser_env())
 
         self._args = ['--driver=%s' % self._driver_name, '--driver-binary=%s' % driver.binary_path().encode()]

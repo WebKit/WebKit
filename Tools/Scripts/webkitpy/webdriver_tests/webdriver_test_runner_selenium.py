@@ -34,10 +34,10 @@ _log = logging.getLogger(__name__)
 
 class WebDriverTestRunnerSelenium(object):
 
-    def __init__(self, port, driver, display_driver, expectations):
+    def __init__(self, port, driver, env, expectations):
         self._port = port
         self._driver = driver
-        self._display_driver = display_driver
+        self._env = env
         self._expectations = expectations
         self._results = []
         self._tests_dir = WebKitFinder(self._port.host.filesystem).path_from_webkit_base('WebDriverTests')
@@ -48,7 +48,7 @@ class WebDriverTestRunnerSelenium(object):
 
         skipped = [os.path.join(self._tests_dir, test) for test in self._expectations.skipped_tests()]
         relative_tests_dir = os.path.join('imported', 'selenium', 'py', 'test')
-        executor = WebDriverSeleniumExecutor(self._driver, self._display_driver)
+        executor = WebDriverSeleniumExecutor(self._driver, self._env)
         # Collected tests are relative to test directory.
         base_dir = os.path.join(self._tests_dir, os.path.dirname(relative_tests_dir))
         collected_tests = [os.path.join(base_dir, test) for test in executor.collect(os.path.join(self._tests_dir, relative_tests_dir))]
@@ -69,7 +69,7 @@ class WebDriverTestRunnerSelenium(object):
         if self._driver.selenium_name() is None:
             return
 
-        executor = WebDriverSeleniumExecutor(self._driver, self._display_driver)
+        executor = WebDriverSeleniumExecutor(self._driver, self._env)
         timeout = self._port.get_option('timeout')
         for test in tests:
             test_name = os.path.relpath(test, self._tests_dir)
