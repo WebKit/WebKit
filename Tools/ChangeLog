@@ -1,3 +1,12 @@
+2018-02-02  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Try to avoid webdriver tests step timing out in the bots.
+
+        This is another speculative workaround. Carlos Lopez suggested to use os._exit() instead of sys.exit() as a
+        workaround for a bug in python2.7 when using multiprocess module.
+
+        * Scripts/run-webdriver-tests:
+
 2018-02-01  Youenn Fablet  <youenn@apple.com>
 
         Delay service worker process creation until actually needed by SWServer

@@ -24,6 +24,7 @@
 
 import logging
 import optparse
+import os
 import sys
 
 from webkitpy.common.host import Host
@@ -61,7 +62,7 @@ try:
     port = Host().port_factory.get(options.platform, options)
 except NotImplementedError, e:
     _log.error(str(e))
-    sys.exit(-1)
+    os._exit(-1)
 
 if port.name() in ['gtk', 'wpe']:
     import os
@@ -82,5 +83,5 @@ retval = runner.process_results()
 if options.json_output is not None:
     runner.dump_results_to_json_file(options.json_output)
 
-sys.exit(retval)
+os._exit(retval)
 
