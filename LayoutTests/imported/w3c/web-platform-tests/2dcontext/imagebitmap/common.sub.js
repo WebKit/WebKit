@@ -38,18 +38,54 @@ function makeVideo() {
         video.oncanplaythrough = function() {
             resolve(video);
         };
-        video.src = "/images/pattern.ogv";
+        video.onerror = reject;
+        video.src = getVideoURI("/images/pattern");
     });
 }
 
-function makeImage() {
-    return new Promise(resolve => {
-        var img = new Image();
-        img.onload = function() {
-            resolve(img);
-        };
-        img.src = "/images/pattern.png";
-    });
+function makeDataUrlVideo() {
+    const toDataUrl = (type, buffer) => {
+        const encoded = btoa(String.fromCodePoint(...new Uint8Array(buffer)));
+        return `data:${type};base64,${encoded}`
+    };
+
+    return fetch(getVideoURI("/images/pattern"))
+        .then(response => Promise.all([response.headers.get("Content-Type"), response.arrayBuffer()]))
+        .then(([type, data]) => {
+            return new Promise(function(resolve, reject) {
+                var video = document.createElement("video");
+                video.oncanplaythrough = function() {
+                    resolve(video);
+                };
+                video.onerror = reject;
+                video.src = toDataUrl(type, data);
+            });
+        });
+}
+
+function makeMakeHTMLImage(src) {
+    return function() {
+        return new Promise(resolve => {
+            var img = new Image();
+            img.onload = function() {
+                resolve(img);
+            };
+            img.src = src;
+        });
+    }
+}
+
+function makeMakeSVGImage(src) {
+    return function() {
+        return new Promise((resolve, reject) => {
+            var image = document.createElementNS(NAMESPACES.svg, "image");
+            image.onload = () => resolve(image);
+            image.onerror = reject;
+            image.setAttribute("externalResourcesRequired", "true");
+            image.setAttributeNS(NAMESPACES.xlink, 'xlink:href', src);
+            document.body.appendChild(image);
+        });
+    }
 }
 
 function makeImageData() {
@@ -99,7 +135,11 @@ function makeBlob() {
 var imageSourceTypes = [
     { name: 'an HTMLCanvasElement', factory: makeCanvas },
     { name: 'an HTMLVideoElement',  factory: makeVideo },
-    { name: 'an HTMLImageElement',  factory: makeImage },
+    { name: 'an HTMLVideoElement from a data URL', factory: makeDataUrlVideo },
+    { name: 'a bitmap HTMLImageElement', factory: makeMakeHTMLImage("/images/pattern.png") },
+    { name: 'a vector HTMLImageElement', factory: makeMakeHTMLImage("/images/pattern.svg") },
+    { name: 'a bitmap SVGImageElement', factory: makeMakeSVGImage("/images/pattern.png") },
+    { name: 'a vector SVGImageElement', factory: makeMakeSVGImage("/images/pattern.svg") },
     { name: 'an OffscreenCanvas',   factory: makeOffscreenCanvas },
     { name: 'an ImageData',         factory: makeImageData },
     { name: 'an ImageBitmap',       factory: makeImageBitmap },
