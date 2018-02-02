@@ -133,8 +133,8 @@ def wait_for_master_ready(master_workdir):
     while True:
         if os.path.isfile(os.path.join(master_workdir, '.master-is-ready')):
             return
-        if master_ready_check_counter > 15:
-            raise RuntimeError('ERROR: Aborting after waiting 15 seconds for the master to start.')
+        if master_ready_check_counter > 60:
+            raise RuntimeError('ERROR: Aborting after waiting 60 seconds for the master to start.')
         sleep(1)
         master_ready_check_counter += 1
 

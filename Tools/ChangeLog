@@ -1,5 +1,18 @@
 2018-02-02  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
+        Start timeout for the run-buildbot-test script is too aggressive
+        https://bugs.webkit.org/show_bug.cgi?id=182429
+
+        Reviewed by Carlos Garcia Campos.
+
+        15 seconds is not enough waiting for the update database process
+        to complete on a system backed with rotational HDDs. Raise it to 60.
+
+        * BuildSlaveSupport/build.webkit.org-config/run-buildbot-test.py:
+        (wait_for_master_ready):
+
+2018-02-02  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
         re-add ARM JSCOnly bots on buildbot waterfall
         https://bugs.webkit.org/show_bug.cgi?id=182428
 
