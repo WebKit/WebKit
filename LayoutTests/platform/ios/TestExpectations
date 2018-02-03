@@ -3312,3 +3312,6 @@ webkit.org/b/181499 [ Release ] imported/w3c/web-platform-tests/service-workers/
 webkit.org/b/181838 js/slow-stress/Int32Array-alloc-huge-long-lived.html [ Slow ]
 
 webkit.org/b/182422 imported/w3c/web-platform-tests/2dcontext/imagebitmap/createImageBitmap-origin.sub.html [ Pass Failure Crash ]
+
+# <rdar://problem/36386435>
+fast/visual-viewport/resize-event-fired.html [ Skip ]
