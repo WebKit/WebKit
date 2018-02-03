@@ -27,7 +27,7 @@
 #include "JSDOMGlobalObject.h"
 #include "JSTestNode.h"
 #include "ScriptExecutionContext.h"
-#include <runtime/JSArray.h>
+#include <JavaScriptCore/JSArray.h>
 
 
 namespace WebCore {

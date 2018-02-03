@@ -22,7 +22,7 @@
 
 #include "JSDOMWrapper.h"
 #include "TestPluginInterface.h"
-#include <runtime/CallData.h>
+#include <JavaScriptCore/CallData.h>
 #include <wtf/NeverDestroyed.h>
 
 namespace WebCore {

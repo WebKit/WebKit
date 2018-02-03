@@ -28,8 +28,8 @@
 #include "JSDOMExceptionHandling.h"
 #include "JSDOMOperation.h"
 #include "JSDOMWrapperCache.h"
-#include <runtime/JSCInlines.h>
-#include <runtime/ObjectConstructor.h>
+#include <JavaScriptCore/JSCInlines.h>
+#include <JavaScriptCore/ObjectConstructor.h>
 #include <wtf/GetPtr.h>
 #include <wtf/PointerPreparations.h>
 

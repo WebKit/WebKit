@@ -22,7 +22,7 @@
 
 #include "JSDOMWrapper.h"
 #include "TestException.h"
-#include <runtime/ErrorPrototype.h>
+#include <JavaScriptCore/ErrorPrototype.h>
 #include <wtf/NeverDestroyed.h>
 
 namespace WebCore {

@@ -40,8 +40,8 @@
 #include "JSDOMWrapperCache.h"
 #include "JSElement.h"
 #include "JSNodeList.h"
-#include <interpreter/FrameTracers.h>
-#include <runtime/JSCInlines.h>
+#include <JavaScriptCore/FrameTracers.h>
+#include <JavaScriptCore/JSCInlines.h>
 #include <wtf/GetPtr.h>
 #include <wtf/PointerPreparations.h>
 

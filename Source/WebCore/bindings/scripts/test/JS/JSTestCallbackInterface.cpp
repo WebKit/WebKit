@@ -38,9 +38,9 @@
 #include "JSTestObj.h"
 #include "ScriptExecutionContext.h"
 #include "SerializedScriptValue.h"
-#include <runtime/FunctionPrototype.h>
-#include <runtime/JSCInlines.h>
-#include <runtime/JSString.h>
+#include <JavaScriptCore/FunctionPrototype.h>
+#include <JavaScriptCore/JSCInlines.h>
+#include <JavaScriptCore/JSString.h>
 #include <wtf/NeverDestroyed.h>
 
 

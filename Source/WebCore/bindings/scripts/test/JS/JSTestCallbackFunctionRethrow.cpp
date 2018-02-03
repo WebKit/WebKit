@@ -27,7 +27,7 @@
 #include "JSDOMExceptionHandling.h"
 #include "JSDOMGlobalObject.h"
 #include "ScriptExecutionContext.h"
-#include <runtime/JSArray.h>
+#include <JavaScriptCore/JSArray.h>
 
 
 namespace WebCore {

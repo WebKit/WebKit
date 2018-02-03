@@ -403,7 +403,7 @@ sub AddToIncludesForIDLType
     }
 
     if ($codeGenerator->IsSequenceOrFrozenArrayType($type)) {
-        AddToIncludes("<runtime/JSArray.h>", $includesRef, $conditional);
+        AddToIncludes("<JavaScriptCore/JSArray.h>", $includesRef, $conditional);
         AddToIncludes("JSDOMConvertSequences.h", $includesRef, $conditional);
 
         AddToIncludesForIDLType(@{$type->subtypes}[0], $includesRef, $conditional);
@@ -2038,8 +2038,8 @@ sub GenerateEnumerationImplementationContent
     my ($enumeration, $className, $interface, $conditionalString) = @_;
 
     # FIXME: A little ugly to have this be a side effect instead of a return value.
-    AddToImplIncludes("<runtime/JSString.h>");
-    AddToImplIncludes("<runtime/JSCInlines.h>");
+    AddToImplIncludes("<JavaScriptCore/JSString.h>");
+    AddToImplIncludes("<JavaScriptCore/JSCInlines.h>");
     AddToImplIncludes("JSDOMConvertEnumeration.h");
 
     my $result = "";
@@ -2269,7 +2269,7 @@ sub GenerateDictionaryImplementationContent
     }
 
     # FIXME: A little ugly to have this be a side effect instead of a return value.
-    AddToImplIncludes("<runtime/JSCInlines.h>");
+    AddToImplIncludes("<JavaScriptCore/JSCInlines.h>");
     AddToImplIncludes("JSDOMConvertDictionary.h");
 
     # https://heycam.github.io/webidl/#es-dictionary
@@ -2359,7 +2359,7 @@ sub GenerateDictionaryImplementationContent
 
     if ($dictionary->extendedAttributes->{JSGenerateToJSObject}) {
         AddToImplIncludes("JSDOMGlobalObject.h");
-        AddToImplIncludes("<runtime/ObjectConstructor.h>");
+        AddToImplIncludes("<JavaScriptCore/ObjectConstructor.h>");
 
         $result .= "JSC::JSObject* convertDictionaryToJS(JSC::ExecState& state, JSDOMGlobalObject& globalObject, const ${className}& dictionary)\n";
         $result .= "{\n";
@@ -2479,7 +2479,7 @@ sub GenerateHeader
     } else {
         $headerIncludes{"JSDOMWrapper.h"} = 1;
         if ($interface->isException) {
-            $headerIncludes{"<runtime/ErrorPrototype.h>"} = 1;
+            $headerIncludes{"<JavaScriptCore/ErrorPrototype.h>"} = 1;
         }
     }
 
@@ -2629,7 +2629,7 @@ sub GenerateHeader
 
     if (InstanceOverridesGetCallData($interface)) {
         push(@headerContent, "    static JSC::CallType getCallData(JSC::JSCell*, JSC::CallData&);\n\n");
-        $headerIncludes{"<runtime/CallData.h>"} = 1;
+        $headerIncludes{"<JavaScriptCore/CallData.h>"} = 1;
         $structureFlags{"JSC::TypeOfShouldCallGetCallData"} = 1;
     }
     
@@ -2936,14 +2936,14 @@ sub GenerateHeader
 
     # CheckSubClass Snippet function.
     if ($interface->extendedAttributes->{DOMJIT}) {
-        $headerIncludes{"<jit/Snippet.h>"} = 1;
+        $headerIncludes{"<JavaScriptCore/Snippet.h>"} = 1;
         push(@headerContent, "#if ENABLE(JIT)\n");
         push(@headerContent, "Ref<JSC::Snippet> checkSubClassSnippetFor${className}();\n");
         push(@headerContent, "#endif\n");
     }
 
     if ($hasDOMJITAttributes) {
-        $headerIncludes{"<domjit/DOMJITGetterSetter.h>"} = 1;
+        $headerIncludes{"<JavaScriptCore/DOMJITGetterSetter.h>"} = 1;
         push(@headerContent,"// DOM JIT Attributes\n\n");
         foreach my $attribute (@{$interface->attributes}) {
             next unless $attribute->extendedAttributes->{DOMJIT};
@@ -3415,7 +3415,7 @@ sub GenerateOverloadDispatcher
 
             # FIXME: Avoid invoking GetMethod(object, Symbol.iterator) again in convert<IDLSequence<T>>(...).
             $overload = GetOverloadThatMatches($S, $d, \&$isSequenceOrFrozenArrayParameter);
-            &$generateOverloadCallIfNecessary($overload, "hasIteratorMethod(*state, distinguishingArg)", "<runtime/IteratorOperations.h>");
+            &$generateOverloadCallIfNecessary($overload, "hasIteratorMethod(*state, distinguishingArg)", "<JavaScriptCore/IteratorOperations.h>");
 
             $overload = GetOverloadThatMatches($S, $d, \&$isDictionaryOrRecordOrObjectOrCallbackInterfaceParameter);
             &$generateOverloadCallIfNecessary($overload, "distinguishingArg.isObject()");
@@ -3729,7 +3729,7 @@ sub addUnscopableProperties
     }
     return if scalar(@unscopables) == 0;
 
-    AddToImplIncludes("<runtime/ObjectConstructor.h>");
+    AddToImplIncludes("<JavaScriptCore/ObjectConstructor.h>");
     push(@implContent, "    JSObject& unscopables = *constructEmptyObject(globalObject()->globalExec(), globalObject()->nullPrototypeObjectStructure());\n");
     foreach my $unscopable (@unscopables) {
         push(@implContent, "    unscopables.putDirect(vm, Identifier::fromString(&vm, \"$unscopable\"), jsBoolean(true));\n");
@@ -3804,13 +3804,13 @@ sub GenerateImplementation
     # - Add default header template
     push(@implContentHeader, GenerateImplementationContentHeader($interface));
 
-    AddToImplIncludes("<runtime/JSCInlines.h>");
+    AddToImplIncludes("<JavaScriptCore/JSCInlines.h>");
     AddToImplIncludes("JSDOMBinding.h");
     AddToImplIncludes("JSDOMExceptionHandling.h");
     AddToImplIncludes("JSDOMWrapperCache.h");
     AddToImplIncludes("<wtf/GetPtr.h>");
     AddToImplIncludes("<wtf/PointerPreparations.h>");
-    AddToImplIncludes("<runtime/PropertyNameArray.h>") if $indexedGetterOperation;
+    AddToImplIncludes("<JavaScriptCore/PropertyNameArray.h>") if $indexedGetterOperation;
     AddToImplIncludes("JSDOMMapLike.h") if $interface->mapLike;
     AddJSBuiltinIncludesIfNeeded($interface);
 
@@ -4169,11 +4169,11 @@ sub GenerateImplementation
         }
 
         if (InterfaceNeedsIterator($interface)) {
-            AddToImplIncludes("<builtins/BuiltinNames.h>");
+            AddToImplIncludes("<JavaScriptCore/BuiltinNames.h>");
             if (IsKeyValueIterableInterface($interface) or $interface->mapLike) {
                 push(@implContent, "    putDirect(vm, vm.propertyNames->iteratorSymbol, getDirect(vm, vm.propertyNames->builtinNames().entriesPublicName()), static_cast<unsigned>(JSC::PropertyAttribute::DontEnum));\n");
             } else {
-                AddToImplIncludes("<runtime/ArrayPrototype.h>");
+                AddToImplIncludes("<JavaScriptCore/ArrayPrototype.h>");
                 push(@implContent, "    putDirect(vm, vm.propertyNames->iteratorSymbol, globalObject()->arrayPrototype()->getDirect(vm, vm.propertyNames->builtinNames().valuesPrivateName()), static_cast<unsigned>(JSC::PropertyAttribute::DontEnum));\n");
             }
         }
@@ -5161,7 +5161,7 @@ sub GenerateOperationDefinition
             push(@$outputArray, "#if ${conditionalString}\n");
         }
 
-        AddToImplIncludes("<interpreter/FrameTracers.h>", $conditional);
+        AddToImplIncludes("<JavaScriptCore/FrameTracers.h>", $conditional);
         my $unsafeFunctionName = "unsafe" . $codeGenerator->WK_ucfirst($functionName);
         push(@$outputArray, "JSC::EncodedJSValue JIT_OPERATION ${unsafeFunctionName}(JSC::ExecState* state, $className* castedThis");
         foreach my $argument (@{$operation->arguments}) {
@@ -5251,7 +5251,7 @@ sub GenerateSerializerDefinition
     my $serializerFunctionName = "toJSON";
     my $serializerNativeFunctionName = $codeGenerator->WK_lcfirst($className) . "PrototypeFunction" . $codeGenerator->WK_ucfirst($serializerFunctionName);
 
-    AddToImplIncludes("<runtime/ObjectConstructor.h>");
+    AddToImplIncludes("<JavaScriptCore/ObjectConstructor.h>");
 
     push(@implContent, "JSC::JSObject* JS${interfaceName}::serialize(ExecState& state, ${className}& thisObject, JSDOMGlobalObject& globalObject, ThrowScope& throwScope)\n");
     push(@implContent, "{\n");
@@ -7133,7 +7133,7 @@ sub GenerateConstructorHelperMethods
         my $parentClassName = "JS" . $interface->parentType->name;
         push(@$outputArray, "    return ${parentClassName}::getConstructor(vm, &globalObject);\n");
     } else {
-        AddToImplIncludes("<runtime/FunctionPrototype.h>");
+        AddToImplIncludes("<JavaScriptCore/FunctionPrototype.h>");
         push(@$outputArray, "    UNUSED_PARAM(vm);\n");
         push(@$outputArray, "    return globalObject.functionPrototype();\n");
     }

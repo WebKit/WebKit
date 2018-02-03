@@ -24,7 +24,7 @@
 #include "JSDOMConvertEnumeration.h"
 #include "JSDOMWrapper.h"
 #include "TestObj.h"
-#include <runtime/CallData.h>
+#include <JavaScriptCore/CallData.h>
 #include <wtf/NeverDestroyed.h>
 
 namespace WebCore {

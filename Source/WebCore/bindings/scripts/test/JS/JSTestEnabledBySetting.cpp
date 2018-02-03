@@ -31,8 +31,8 @@
 #include "JSTestSubObj.h"
 #include "Settings.h"
 #include "WebCoreJSClientData.h"
-#include <runtime/FunctionPrototype.h>
-#include <runtime/JSCInlines.h>
+#include <JavaScriptCore/FunctionPrototype.h>
+#include <JavaScriptCore/JSCInlines.h>
 #include <wtf/GetPtr.h>
 #include <wtf/PointerPreparations.h>
 

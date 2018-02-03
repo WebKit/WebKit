@@ -34,9 +34,9 @@
 #include "JSDOMWrapperCache.h"
 #include "RuntimeEnabledFeatures.h"
 #include "ScriptExecutionContext.h"
-#include <builtins/BuiltinNames.h>
-#include <runtime/JSCInlines.h>
-#include <runtime/ObjectConstructor.h>
+#include <JavaScriptCore/BuiltinNames.h>
+#include <JavaScriptCore/JSCInlines.h>
+#include <JavaScriptCore/ObjectConstructor.h>
 #include <wtf/GetPtr.h>
 #include <wtf/PointerPreparations.h>
 
