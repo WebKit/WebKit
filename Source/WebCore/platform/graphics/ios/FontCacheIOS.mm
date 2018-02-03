@@ -75,11 +75,6 @@ FontPlatformData* FontCache::getCustomFallbackFont(const UInt32 c, const FontDes
     return getCachedFontPlatformData(description, *family);
 }
 
-Ref<Font> FontCache::lastResortFallbackFont(const FontDescription& fontDescription)
-{
-    return *fontForFamily(fontDescription, AtomicString(".PhoneFallback", AtomicString::ConstructFromLiteral));
-}
-
 static RetainPtr<CTFontDescriptorRef> baseSystemFontDescriptor(FontSelectionValue weight, bool bold, float size)
 {
     CTFontUIFontType fontType = kCTFontUIFontSystem;

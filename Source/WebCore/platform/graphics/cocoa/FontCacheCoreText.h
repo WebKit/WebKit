@@ -56,7 +56,8 @@ RetainPtr<CTFontRef> platformFontWithFamilySpecialCase(const AtomicString& famil
 RetainPtr<CTFontRef> platformFontWithFamily(const AtomicString& family, FontSelectionRequest, TextRenderingMode, float size);
 bool requiresCustomFallbackFont(UChar32 character);
 FontSelectionCapabilities capabilitiesForFontDescriptor(CTFontDescriptorRef);
-void addAttributesForUserInstalledFonts(CFMutableDictionaryRef attributes, AllowUserInstalledFonts);
-RetainPtr<CFSetRef> mandatoryAttributesForUserInstalledFonts(AllowUserInstalledFonts);
+void addAttributesForInstalledFonts(CFMutableDictionaryRef attributes, AllowUserInstalledFonts);
+void addAttributesForWebFonts(CFMutableDictionaryRef attributes, AllowUserInstalledFonts);
+RetainPtr<CFSetRef> installedFontMandatoryAttributes(AllowUserInstalledFonts);
 
 }

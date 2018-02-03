@@ -1,3 +1,32 @@
+2018-02-02  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Test fix after r227995
+        https://bugs.webkit.org/show_bug.cgi?id=180951
+
+        Unreviewed.
+
+        Webfonts shouldn't be run through CTFontDescriptorCreateMatchingFontDescriptor().
+        Also, unify macOS's and iOS's implementation of FontCache::lastResortFallbackFont().
+
+        Covered by existing tests.
+
+        * platform/graphics/cocoa/FontCacheCoreText.cpp:
+        (WebCore::FontDatabase::collectionForFamily):
+        (WebCore::FontDatabase::fontForPostScriptName):
+        (WebCore::addAttributesForInstalledFonts):
+        (WebCore::addAttributesForWebFonts):
+        (WebCore::installedFontMandatoryAttributes):
+        (WebCore::FontCache::lastResortFallbackFont):
+        (WebCore::addAttributesForUserInstalledFonts): Deleted.
+        (WebCore::mandatoryAttributesForUserInstalledFonts): Deleted.
+        * platform/graphics/cocoa/FontCacheCoreText.h:
+        * platform/graphics/ios/FontCacheIOS.mm:
+        (WebCore::FontCache::lastResortFallbackFont): Deleted.
+        * platform/graphics/mac/FontCacheMac.mm:
+        (WebCore::FontCache::lastResortFallbackFont): Deleted.
+        * platform/graphics/mac/FontCustomPlatformData.cpp:
+        (WebCore::FontCustomPlatformData::fontPlatformData):
+
 2018-02-02  Basuke Suzuki  <Basuke.Suzuki@sony.com>
 
         Fix build error after r 227457 with VIDEO and WEB_AUDIO disabled

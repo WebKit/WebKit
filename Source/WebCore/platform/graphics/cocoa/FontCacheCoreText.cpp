@@ -891,9 +891,9 @@ public:
             auto familyNameString = folded.createCFString();
             auto attributes = adoptCF(CFDictionaryCreateMutable(kCFAllocatorDefault, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
             CFDictionaryAddValue(attributes.get(), kCTFontFamilyNameAttribute, familyNameString.get());
-            addAttributesForUserInstalledFonts(attributes.get(), m_allowUserInstalledFonts);
+            addAttributesForInstalledFonts(attributes.get(), m_allowUserInstalledFonts);
             auto fontDescriptorToMatch = adoptCF(CTFontDescriptorCreateWithAttributes(attributes.get()));
-            RetainPtr<CFSetRef> mandatoryAttributes = mandatoryAttributesForUserInstalledFonts(m_allowUserInstalledFonts);
+            RetainPtr<CFSetRef> mandatoryAttributes = installedFontMandatoryAttributes(m_allowUserInstalledFonts);
             if (auto matches = adoptCF(CTFontDescriptorCreateMatchingFontDescriptors(fontDescriptorToMatch.get(), mandatoryAttributes.get()))) {
                 auto count = CFArrayGetCount(matches.get());
                 Vector<InstalledFont> result;
@@ -921,9 +921,9 @@ public:
             auto attributes = adoptCF(CFDictionaryCreateMutable(kCFAllocatorDefault, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
             CFDictionaryAddValue(attributes.get(), kCTFontEnabledAttribute, kCFBooleanTrue);
             CFDictionaryAddValue(attributes.get(), nameAttribute, postScriptNameString.get());
-            addAttributesForUserInstalledFonts(attributes.get(), m_allowUserInstalledFonts);
+            addAttributesForInstalledFonts(attributes.get(), m_allowUserInstalledFonts);
             auto fontDescriptorToMatch = adoptCF(CTFontDescriptorCreateWithAttributes(attributes.get()));
-            RetainPtr<CFSetRef> mandatoryAttributes = mandatoryAttributesForUserInstalledFonts(m_allowUserInstalledFonts);
+            RetainPtr<CFSetRef> mandatoryAttributes = installedFontMandatoryAttributes(m_allowUserInstalledFonts);
             auto match = adoptCF(CTFontDescriptorCreateMatchingFontDescriptor(fontDescriptorToMatch.get(), mandatoryAttributes.get()));
             return InstalledFont(match.get());
         }).iterator->value;
@@ -1413,7 +1413,7 @@ const AtomicString& FontCache::platformAlternateFamilyName(const AtomicString& f
     return nullAtom();
 }
 
-void addAttributesForUserInstalledFonts(CFMutableDictionaryRef attributes, AllowUserInstalledFonts allowUserInstalledFonts)
+void addAttributesForInstalledFonts(CFMutableDictionaryRef attributes, AllowUserInstalledFonts allowUserInstalledFonts)
 {
 #if CAN_DISALLOW_USER_INSTALLED_FONTS
     if (allowUserInstalledFonts == AllowUserInstalledFonts::No) {
@@ -1428,7 +1428,21 @@ void addAttributesForUserInstalledFonts(CFMutableDictionaryRef attributes, Allow
 #endif
 }
 
-RetainPtr<CFSetRef> mandatoryAttributesForUserInstalledFonts(AllowUserInstalledFonts allowUserInstalledFonts)
+void addAttributesForWebFonts(CFMutableDictionaryRef attributes, AllowUserInstalledFonts allowUserInstalledFonts)
+{
+#if CAN_DISALLOW_USER_INSTALLED_FONTS
+    if (allowUserInstalledFonts == AllowUserInstalledFonts::No) {
+        CTFontFallbackOption fallbackOption = kCTFontFallbackOptionSystem;
+        auto fallbackOptionNumber = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberSInt64Type, &fallbackOption));
+        CFDictionaryAddValue(attributes, kCTFontFallbackOptionAttribute, fallbackOptionNumber.get());
+    }
+#else
+    UNUSED_PARAM(attributes);
+    UNUSED_PARAM(allowUserInstalledFonts);
+#endif
+}
+
+RetainPtr<CFSetRef> installedFontMandatoryAttributes(AllowUserInstalledFonts allowUserInstalledFonts)
 {
 #if CAN_DISALLOW_USER_INSTALLED_FONTS
     if (allowUserInstalledFonts == AllowUserInstalledFonts::No) {
@@ -1439,6 +1453,20 @@ RetainPtr<CFSetRef> mandatoryAttributesForUserInstalledFonts(AllowUserInstalledF
     UNUSED_PARAM(allowUserInstalledFonts);
 #endif
     return nullptr;
+}
+
+Ref<Font> FontCache::lastResortFallbackFont(const FontDescription& fontDescription)
+{
+    // FIXME: Would be even better to somehow get the user's default font here.  For now we'll pick
+    // the default that the user would get without changing any prefs.
+    if (RefPtr<Font> font = fontForFamily(fontDescription, AtomicString("Times", AtomicString::ConstructFromLiteral)))
+        return *font;
+
+    // The Times fallback will almost always work, but in the highly unusual case where
+    // the user doesn't have it, we fall back on Lucida Grande because that's
+    // guaranteed to be there, according to Nathan Taylor. This is good enough
+    // to avoid a crash at least.
+    return *fontForFamily(fontDescription, AtomicString("Lucida Grande", AtomicString::ConstructFromLiteral), nullptr, nullptr, { }, false);
 }
 
 }
