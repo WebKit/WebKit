@@ -57,7 +57,7 @@ public:
     
     unsigned shadowIndex(Node* node) const
     {
-        DFG_ASSERT(m_graph, node, node->op() == Phi);
+        DFG_ASSERT(m_graph, node, node->op() == Phi, node->op());
         return shadowIndex(node->index());
     }
     

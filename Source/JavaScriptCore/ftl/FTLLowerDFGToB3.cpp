@@ -1667,8 +1667,8 @@ private:
         StackAccessData* data = m_node->stackAccessData();
         AbstractValue& value = m_state.variables().operand(data->local);
         
-        DFG_ASSERT(m_graph, m_node, isConcrete(data->format));
-        DFG_ASSERT(m_graph, m_node, data->format != FlushedDouble); // This just happens to not arise for GetStacks, right now. It would be trivial to support.
+        DFG_ASSERT(m_graph, m_node, isConcrete(data->format), data->format);
+        DFG_ASSERT(m_graph, m_node, data->format != FlushedDouble, data->format); // This just happens to not arise for GetStacks, right now. It would be trivial to support.
         
         if (isInt32Speculation(value.m_type))
             setInt32(m_out.load32(payloadFor(data->machineLocal)));
@@ -2069,7 +2069,7 @@ private:
             setInt32(m_out.ctlz32(operand));
             return;
         }
-        DFG_ASSERT(m_graph, m_node, m_node->child1().useKind() == UntypedUse);
+        DFG_ASSERT(m_graph, m_node, m_node->child1().useKind() == UntypedUse, m_node->child1().useKind());
         LValue argument = lowJSValue(m_node->child1());
         LValue result = vmCall(Int32, m_out.operation(operationArithClz32), m_callFrame, argument);
         setInt32(result);
@@ -2360,7 +2360,7 @@ private:
         }
             
         default: {
-            DFG_ASSERT(m_graph, m_node, m_node->child1().useKind() == UntypedUse);
+            DFG_ASSERT(m_graph, m_node, m_node->child1().useKind() == UntypedUse, m_node->child1().useKind());
             LValue argument = lowJSValue(m_node->child1());
             LValue result = vmCall(Double, m_out.operation(operationArithAbs), m_callFrame, argument);
             setDouble(result);
@@ -2600,7 +2600,7 @@ private:
             return;
         }
 
-        DFG_ASSERT(m_graph, m_node, m_node->child1().useKind() == UntypedUse);
+        DFG_ASSERT(m_graph, m_node, m_node->child1().useKind() == UntypedUse, m_node->child1().useKind());
         LValue argument = lowJSValue(m_node->child1());
         setJSValue(vmCall(Int64, m_out.operation(operationArithRound), m_callFrame, argument));
     }
@@ -2616,7 +2616,7 @@ private:
                 setDouble(integerValue);
             return;
         }
-        DFG_ASSERT(m_graph, m_node, m_node->child1().useKind() == UntypedUse);
+        DFG_ASSERT(m_graph, m_node, m_node->child1().useKind() == UntypedUse, m_node->child1().useKind());
         LValue argument = lowJSValue(m_node->child1());
         setJSValue(vmCall(Int64, m_out.operation(operationArithFloor), m_callFrame, argument));
     }
@@ -2632,7 +2632,7 @@ private:
                 setDouble(integerValue);
             return;
         }
-        DFG_ASSERT(m_graph, m_node, m_node->child1().useKind() == UntypedUse);
+        DFG_ASSERT(m_graph, m_node, m_node->child1().useKind() == UntypedUse, m_node->child1().useKind());
         LValue argument = lowJSValue(m_node->child1());
         setJSValue(vmCall(Int64, m_out.operation(operationArithCeil), m_callFrame, argument));
     }
@@ -2648,7 +2648,7 @@ private:
                 setDouble(result);
             return;
         }
-        DFG_ASSERT(m_graph, m_node, m_node->child1().useKind() == UntypedUse);
+        DFG_ASSERT(m_graph, m_node, m_node->child1().useKind() == UntypedUse, m_node->child1().useKind());
         LValue argument = lowJSValue(m_node->child1());
         setJSValue(vmCall(Int64, m_out.operation(operationArithTrunc), m_callFrame, argument));
     }
@@ -2723,7 +2723,7 @@ private:
         }
             
         default:
-            DFG_ASSERT(m_graph, m_node, m_node->child1().useKind() == UntypedUse);
+            DFG_ASSERT(m_graph, m_node, m_node->child1().useKind() == UntypedUse, m_node->child1().useKind());
             ArithProfile* arithProfile = m_ftlState.graph.baselineCodeBlockFor(m_node->origin.semantic)->arithProfileForBytecodeOffset(m_node->origin.semantic.bytecodeIndex);
             auto repatchingFunction = operationArithNegateOptimize;
             auto nonRepatchingFunction = operationArithNegate;
@@ -3366,7 +3366,7 @@ private:
     
     void compilePutById()
     {
-        DFG_ASSERT(m_graph, m_node, m_node->child1().useKind() == CellUse);
+        DFG_ASSERT(m_graph, m_node, m_node->child1().useKind() == CellUse, m_node->child1().useKind());
 
         Node* node = m_node;
         LValue base = lowCell(node->child1());
@@ -3472,7 +3472,7 @@ private:
             return;
         }
 
-        DFG_ASSERT(m_graph, m_node, isTypedView(m_node->arrayMode().typedArrayType()));
+        DFG_ASSERT(m_graph, m_node, isTypedView(m_node->arrayMode().typedArrayType()), m_node->arrayMode().typedArrayType());
         LValue poisonedVector = m_out.loadPtr(cell, m_heaps.JSArrayBufferView_poisonedVector);
 #if ENABLE(POISON)
         auto typedArrayType = m_node->arrayMode().typedArrayType();
@@ -3706,7 +3706,7 @@ private:
                 LValue isHole = m_out.isZero64(result);
                 if (m_node->arrayMode().isSaneChain()) {
                     DFG_ASSERT(
-                        m_graph, m_node, m_node->arrayMode().type() == Array::Contiguous);
+                        m_graph, m_node, m_node->arrayMode().type() == Array::Contiguous, m_node->arrayMode().type());
                     result = m_out.select(
                         isHole, m_out.constInt64(JSValue::encode(jsUndefined())), result);
                 } else
@@ -6134,7 +6134,7 @@ private:
             return;
         }
 
-        DFG_ASSERT(m_graph, m_node, childEdge.useKind() == Int32Use);
+        DFG_ASSERT(m_graph, m_node, childEdge.useKind() == Int32Use, childEdge.useKind());
 
         LValue value = lowInt32(childEdge);
         
@@ -6315,7 +6315,7 @@ private:
                 else
                     storage = m_out.loadPtr(base, m_heaps.JSObject_butterfly);
             } else {
-                DFG_ASSERT(m_graph, m_node, variant.kind() == PutByIdVariant::Transition);
+                DFG_ASSERT(m_graph, m_node, variant.kind() == PutByIdVariant::Transition, variant.kind());
                 m_graph.m_plan.transitions.addLazily(
                     codeBlock(), m_node->origin.semantic.codeOriginOwner(),
                     variant.oldStructureForTransition(), variant.newStructure());
@@ -6510,7 +6510,7 @@ private:
             return;
         }
 
-        DFG_ASSERT(m_graph, m_node, m_node->isBinaryUseKind(UntypedUse));
+        DFG_ASSERT(m_graph, m_node, m_node->isBinaryUseKind(UntypedUse), m_node->child1().useKind(), m_node->child2().useKind());
         nonSpeculativeCompare(
             [&] (LValue left, LValue right) {
                 return m_out.equal(left, right);
@@ -6675,7 +6675,7 @@ private:
             return;
         }
 
-        DFG_ASSERT(m_graph, m_node, m_node->isBinaryUseKind(UntypedUse));
+        DFG_ASSERT(m_graph, m_node, m_node->isBinaryUseKind(UntypedUse), m_node->child1().useKind(), m_node->child2().useKind());
         nonSpeculativeCompare(
             [&] (LValue left, LValue right) {
                 return m_out.equal(left, right);
@@ -9311,7 +9311,7 @@ private:
     
     void compileIn()
     {
-        DFG_ASSERT(m_graph, m_node, m_node->child1().useKind() == CellUse);
+        DFG_ASSERT(m_graph, m_node, m_node->child1().useKind() == CellUse, m_node->child1().useKind());
 
         Node* node = m_node;
         Edge base = node->child1();
@@ -11253,7 +11253,7 @@ private:
             return;
         }
 
-        DFG_ASSERT(m_graph, m_node, m_node->isBinaryUseKind(UntypedUse));
+        DFG_ASSERT(m_graph, m_node, m_node->isBinaryUseKind(UntypedUse), m_node->child1().useKind(), m_node->child2().useKind());
         nonSpeculativeCompare(intFunctor, fallbackFunction);
     }
 
@@ -12980,11 +12980,11 @@ private:
         }
         
         if (checkedExactLength) {
-            DFG_ASSERT(m_graph, m_node, alreadyCheckedLength == minLength);
+            DFG_ASSERT(m_graph, m_node, alreadyCheckedLength == minLength, alreadyCheckedLength, minLength);
             DFG_ASSERT(m_graph, m_node, allLengthsEqual);
         }
         
-        DFG_ASSERT(m_graph, m_node, minLength >= commonChars);
+        DFG_ASSERT(m_graph, m_node, minLength >= commonChars, minLength, commonChars);
         
         if (!allLengthsEqual && alreadyCheckedLength < minLength)
             m_out.check(m_out.below(length, m_out.constInt32(minLength)), unsure(fallThrough));
@@ -13004,12 +13004,12 @@ private:
             // We've already checked that the input string is a prefix of all of the cases,
             // so we just check length to jump to that case.
             
-            DFG_ASSERT(m_graph, m_node, cases[begin].string->length() == commonChars);
+            DFG_ASSERT(m_graph, m_node, cases[begin].string->length() == commonChars, cases[begin].string->length(), commonChars);
             for (unsigned i = begin + 1; i < end; ++i)
-                DFG_ASSERT(m_graph, m_node, cases[i].string->length() > commonChars);
+                DFG_ASSERT(m_graph, m_node, cases[i].string->length() > commonChars, cases[i].string->length(), commonChars);
             
             if (allLengthsEqual) {
-                DFG_ASSERT(m_graph, m_node, end == begin + 1);
+                DFG_ASSERT(m_graph, m_node, end == begin + 1, end, begin);
                 m_out.jump(cases[begin].target);
                 return;
             }
@@ -13030,7 +13030,7 @@ private:
         // commonChars. Use a binary switch on the next unchecked character, i.e.
         // string[commonChars].
         
-        DFG_ASSERT(m_graph, m_node, end >= begin + 2);
+        DFG_ASSERT(m_graph, m_node, end >= begin + 2, end, begin);
         
         LValue uncheckedChar = m_out.load8ZeroExt32(buffer, m_heaps.characters8[commonChars]);
         
@@ -13733,7 +13733,7 @@ private:
             return result;
         }
 
-        DFG_ASSERT(m_graph, m_node, !(provenType(edge) & SpecInt32Only));
+        DFG_ASSERT(m_graph, m_node, !(provenType(edge) & SpecInt32Only), provenType(edge));
         terminate(Uncountable);
         return m_out.int32Zero;
     }
@@ -13741,7 +13741,7 @@ private:
     enum Int52Kind { StrictInt52, Int52 };
     LValue lowInt52(Edge edge, Int52Kind kind)
     {
-        DFG_ASSERT(m_graph, m_node, edge.useKind() == Int52RepUse);
+        DFG_ASSERT(m_graph, m_node, edge.useKind() == Int52RepUse, edge.useKind());
         
         LoweredNodeValue value;
         
@@ -13767,7 +13767,7 @@ private:
             break;
         }
 
-        DFG_ASSERT(m_graph, m_node, !provenType(edge));
+        DFG_ASSERT(m_graph, m_node, !provenType(edge), provenType(edge));
         terminate(Uncountable);
         return m_out.int64Zero;
     }
@@ -13815,7 +13815,7 @@ private:
     
     LValue lowCell(Edge edge, OperandSpeculationMode mode = AutomaticOperandSpeculation)
     {
-        DFG_ASSERT(m_graph, m_node, mode == ManualOperandSpeculation || DFG::isCell(edge.useKind()));
+        DFG_ASSERT(m_graph, m_node, mode == ManualOperandSpeculation || DFG::isCell(edge.useKind()), edge.useKind());
         
         if (edge->op() == JSConstant) {
             FrozenValue* value = edge->constant();
@@ -13836,7 +13836,7 @@ private:
             return uncheckedValue;
         }
         
-        DFG_ASSERT(m_graph, m_node, !(provenType(edge) & SpecCellCheck));
+        DFG_ASSERT(m_graph, m_node, !(provenType(edge) & SpecCellCheck), provenType(edge));
         terminate(Uncountable);
         return m_out.intPtrZero;
     }
@@ -13951,28 +13951,28 @@ private:
             return result;
         }
         
-        DFG_ASSERT(m_graph, m_node, !(provenType(edge) & SpecBoolean));
+        DFG_ASSERT(m_graph, m_node, !(provenType(edge) & SpecBoolean), provenType(edge));
         terminate(Uncountable);
         return m_out.booleanFalse;
     }
     
     LValue lowDouble(Edge edge)
     {
-        DFG_ASSERT(m_graph, m_node, isDouble(edge.useKind()));
+        DFG_ASSERT(m_graph, m_node, isDouble(edge.useKind()), edge.useKind());
         
         LoweredNodeValue value = m_doubleValues.get(edge.node());
         if (isValid(value))
             return value.value();
-        DFG_ASSERT(m_graph, m_node, !provenType(edge));
+        DFG_ASSERT(m_graph, m_node, !provenType(edge), provenType(edge));
         terminate(Uncountable);
         return m_out.doubleZero;
     }
     
     LValue lowJSValue(Edge edge, OperandSpeculationMode mode = AutomaticOperandSpeculation)
     {
-        DFG_ASSERT(m_graph, m_node, mode == ManualOperandSpeculation || edge.useKind() == UntypedUse);
-        DFG_ASSERT(m_graph, m_node, !isDouble(edge.useKind()));
-        DFG_ASSERT(m_graph, m_node, edge.useKind() != Int52RepUse);
+        DFG_ASSERT(m_graph, m_node, mode == ManualOperandSpeculation || edge.useKind() == UntypedUse, m_node->op(), edge.useKind());
+        DFG_ASSERT(m_graph, m_node, !isDouble(edge.useKind()), m_node->op(), edge.useKind());
+        DFG_ASSERT(m_graph, m_node, edge.useKind() != Int52RepUse, m_node->op(), edge.useKind());
         
         if (edge->hasConstant()) {
             LValue result = m_out.constInt64(JSValue::encode(edge->asJSValue()));

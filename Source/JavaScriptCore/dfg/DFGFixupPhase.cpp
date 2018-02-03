@@ -3623,7 +3623,7 @@ private:
                         default:
                             // This can only arise if we have a Check node, and in that case, we can
                             // just remove the original check.
-                            DFG_ASSERT(m_graph, node, node->op() == Check);
+                            DFG_ASSERT(m_graph, node, node->op() == Check, node->op(), edge.useKind());
                             knownUseKind = UntypedUse;
                             break;
                         }

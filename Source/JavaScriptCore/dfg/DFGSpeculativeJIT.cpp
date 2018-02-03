@@ -4287,7 +4287,7 @@ void SpeculativeJIT::compileArithAbs(Node* node)
     }
 
     default: {
-        DFG_ASSERT(m_jit.graph(), node, node->child1().useKind() == UntypedUse);
+        DFG_ASSERT(m_jit.graph(), node, node->child1().useKind() == UntypedUse, node->child1().useKind());
         JSValueOperand op1(this, node->child1());
         JSValueRegs op1Regs = op1.jsValueRegs();
         flushRegisters();
@@ -5457,7 +5457,7 @@ void SpeculativeJIT::compileArithRounding(Node* node)
         return;
     }
 
-    DFG_ASSERT(m_jit.graph(), node, node->child1().useKind() == UntypedUse);
+    DFG_ASSERT(m_jit.graph(), node, node->child1().useKind() == UntypedUse, node->child1().useKind());
 
     JSValueOperand argument(this, node->child1());
     JSValueRegs argumentRegs = argument.jsValueRegs();
@@ -11536,7 +11536,7 @@ void SpeculativeJIT::compileNewObject(Node* node)
 
 void SpeculativeJIT::compileToPrimitive(Node* node)
 {
-    DFG_ASSERT(m_jit.graph(), node, node->child1().useKind() == UntypedUse);
+    DFG_ASSERT(m_jit.graph(), node, node->child1().useKind() == UntypedUse, node->child1().useKind());
     JSValueOperand argument(this, node->child1());
     JSValueRegsTemporary result(this, Reuse, argument);
 
