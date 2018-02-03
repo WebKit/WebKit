@@ -2,6 +2,17 @@
 
         Clearing all service worker registrations should wait for importing service worker registration to finish
         https://bugs.webkit.org/show_bug.cgi?id=182407
+        <rdar://problem/37167523>
+
+        Reviewed by Chris Dumez.
+
+        * workers/service/server/SWServer.cpp:
+        (WebCore::SWServer::clear): ensure completion handler is called on early exit case.
+
+2018-02-02  Youenn Fablet  <youenn@apple.com>
+
+        Clearing all service worker registrations should wait for importing service worker registration to finish
+        https://bugs.webkit.org/show_bug.cgi?id=182407
 
         Reviewed by Chris Dumez.
 
