@@ -1,5 +1,16 @@
 2018-02-02  Youenn Fablet  <youenn@apple.com>
 
+        Configure serviceWorkerRegistrationDirectory on the web site data store and move it to a Caches subfolder as a default
+        https://bugs.webkit.org/show_bug.cgi?id=182403
+        <rdar://problem/36673358>
+
+        Reviewed by Alex Christensen.
+
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::legacyWebsiteDataStoreConfiguration): Setting serviceWorkerRegistrationDirectory for legacy stores.
+
+2018-02-02  Youenn Fablet  <youenn@apple.com>
+
         Clearing all service worker registrations should wait for importing service worker registration to finish
         https://bugs.webkit.org/show_bug.cgi?id=182407
 
