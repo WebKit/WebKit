@@ -1,3 +1,13 @@
+2018-02-02  Basuke Suzuki  <Basuke.Suzuki@sony.com>
+
+        Fix build error after r 227457 with VIDEO and WEB_AUDIO disabled
+        https://bugs.webkit.org/show_bug.cgi?id=182395
+
+        Reviewed by Eric Carlson
+
+        * platform/audio/PlatformMediaSessionManager.cpp:
+        (WebCore::PlatformMediaSessionManager::updateNowPlayingInfoIfNecessary):
+
 2018-02-02  Don Olmstead  <don.olmstead@sony.com>
 
         Remove WebCore/ForwardingHeaders directory

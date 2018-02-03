@@ -462,6 +462,13 @@ PlatformMediaSession* PlatformMediaSessionManager::findSession(const Function<bo
     return foundSession;
 }
 
+#else // ENABLE(VIDEO) || ENABLE(WEB_AUDIO)
+
+void PlatformMediaSessionManager::updateNowPlayingInfoIfNecessary()
+{
+
+}
+
 #endif // ENABLE(VIDEO) || ENABLE(WEB_AUDIO)
 
 } // namespace WebCore
