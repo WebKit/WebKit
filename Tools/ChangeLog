@@ -1,3 +1,12 @@
+2018-02-03  Charlie Turner  <cturner@igalia.com>
+
+        Add libmount to WPE dependencies
+        https://bugs.webkit.org/show_bug.cgi?id=182345
+
+        Reviewed by Michael Catanzaro.
+
+        * wpe/install-dependencies:
+
 2018-02-02  Youenn Fablet  <youenn@apple.com>
 
         W3C test exporter should allow exporting newly added files
