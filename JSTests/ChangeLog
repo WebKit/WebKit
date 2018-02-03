@@ -1,3 +1,12 @@
+2018-02-02  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Update test262 to Jan 30 version
+        https://bugs.webkit.org/show_bug.cgi?id=182288
+
+        Unreviewed test gardening.
+
+        * test262.yaml: Remove entry for missing test language/expressions/assignment/white-space.js
+
 2018-02-02  Saam Barati  <sbarati@apple.com>
 
         When BytecodeParser inserts Unreachable after ForceOSRExit it needs to update ArgumentPositions for Flushes it inserts
