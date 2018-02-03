@@ -1,3 +1,11 @@
+2018-02-03  Alexey Proskuryakov  <ap@apple.com>
+
+        Tweak availability macros for CAN_DISALLOW_USER_INSTALLED_FONTS
+
+        Rubber-stamped by Maciej Stachowiak.
+
+        * platform/graphics/cocoa/FontCacheCoreText.cpp:
+
 2018-02-02  Daniel Bates  <dabates@apple.com>
 
         Clean up FrameLoader::receivedFirstData()
