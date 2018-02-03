@@ -37,7 +37,7 @@
 #include "GuardedInternalBuiltinBuiltins.h"
 #include "UnguardedBuiltinBuiltins.h"
 #include "xmlCasingTestBuiltins.h"
-#include <runtime/VM.h>
+#include <JavaScriptCore/VM.h>
 
 namespace WebCore {
 
@@ -188,8 +188,8 @@ private:
 #include "AnotherGuardedInternalBuiltinBuiltins.h"
 #include "GuardedInternalBuiltinBuiltins.h"
 #include "xmlCasingTestBuiltins.h"
-#include <heap/WeakInlines.h>
-#include <runtime/VM.h>
+#include <JavaScriptCore/VM.h>
+#include <JavaScriptCore/WeakInlines.h>
 
 namespace WebCore {
 
@@ -264,10 +264,10 @@ private:
 
 #include "JSDOMGlobalObject.h"
 #include "WebCoreJSClientData.h"
-#include <heap/HeapInlines.h>
-#include <heap/SlotVisitorInlines.h>
-#include <runtime/JSCJSValueInlines.h>
-#include <runtime/StructureInlines.h>
+#include <JavaScriptCore/HeapInlines.h>
+#include <JavaScriptCore/JSCJSValueInlines.h>
+#include <JavaScriptCore/SlotVisitorInlines.h>
+#include <JavaScriptCore/StructureInlines.h>
 
 namespace WebCore {
 
