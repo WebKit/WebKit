@@ -588,7 +588,7 @@ class Git(SCM, SVNRepository):
         return self._run_git(['reset', '--hard', commit])
 
     def apply_mail_patch(self, options):
-        return self._run_git(['apply'] + options)
+        return self._run_git(['apply', '--index'] + options)
 
     def commit(self, options):
         return self._run_git(['commit'] + options)
