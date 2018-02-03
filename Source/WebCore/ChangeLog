@@ -1,3 +1,13 @@
+2018-02-02  Daniel Bates  <dabates@apple.com>
+
+        Clean up FrameLoader::receivedFirstData()
+        https://bugs.webkit.org/show_bug.cgi?id=182361
+
+        Reviewed by Andy Estes.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::receivedFirstData):
+
 2018-02-02  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Test fix after r227995
