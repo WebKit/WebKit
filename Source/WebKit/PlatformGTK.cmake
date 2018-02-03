@@ -72,8 +72,6 @@ list(APPEND WebKit_SOURCES
     Shared/API/glib/WebKitURIRequest.cpp
     Shared/API/glib/WebKitURIResponse.cpp
 
-    Shared/Authentication/soup/AuthenticationManagerSoup.cpp
-
     Shared/CoordinatedGraphics/CoordinatedBackingStore.cpp
     Shared/CoordinatedGraphics/CoordinatedGraphicsScene.cpp
     Shared/CoordinatedGraphics/SimpleViewportController.cpp
