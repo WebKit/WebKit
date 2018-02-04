@@ -1,3 +1,20 @@
+2018-02-03  Tim Horton  <timothy_horton@apple.com>
+
+        UI process sometimes crashes under -[WKContentView _lookupForWebView:]
+        https://bugs.webkit.org/show_bug.cgi?id=182460
+        <rdar://problem/33260602>
+
+        Reviewed by Wenson Hsieh.
+
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _lookupForWebView:]):
+        If you have a range selection, but no rects for the selection, retrieving
+        the 0th element of selectionRects will crash the UI process. To fix, in
+        this case, use the rect for the starting caret instead.
+
+        It doesn't seem like the presentationRect is actually currently used for
+        the Lookup service, so the only impact is that we shouldn't crash anymore.
+
 2018-02-02  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Remove remaining dead !USE(NETWORK_SESSION) code

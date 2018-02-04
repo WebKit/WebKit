@@ -2004,15 +2004,22 @@ FOR_EACH_WKCONTENTVIEW_ACTION(FORWARD_ACTION_TO_WKWEBVIEW)
             return;
         if (!selectedText)
             return;
-        
-        CGRect presentationRect = view->_page->editorState().selectionIsRange ? view->_page->editorState().postLayoutData().selectionRects[0].rect() : view->_page->editorState().postLayoutData().caretRectAtStart;
+
+        auto& editorState = view->_page->editorState();
+        auto& postLayoutData = editorState.postLayoutData();
+        CGRect presentationRect;
+        if (editorState.selectionIsRange && !postLayoutData.selectionRects.isEmpty())
+            presentationRect = postLayoutData.selectionRects[0].rect();
+        else
+            presentationRect = postLayoutData.caretRectAtStart;
         
         String selectionContext = textBefore + selectedText + textAfter;
-        if (view->_textSelectionAssistant) {
-            [view->_textSelectionAssistant lookup:selectionContext withRange:NSMakeRange(textBefore.length(), selectedText.length()) fromRect:presentationRect];
-        } else {
-            [view->_webSelectionAssistant lookup:selectionContext withRange:NSMakeRange(textBefore.length(), selectedText.length()) fromRect:presentationRect];
-        }
+        NSRange selectedRangeInContext = NSMakeRange(textBefore.length(), selectedText.length());
+
+        if (auto textSelectionAssistant = view->_textSelectionAssistant)
+            [textSelectionAssistant lookup:selectionContext withRange:selectedRangeInContext fromRect:presentationRect];
+        else
+            [view->_webSelectionAssistant lookup:selectionContext withRange:selectedRangeInContext fromRect:presentationRect];
     });
 }
 
