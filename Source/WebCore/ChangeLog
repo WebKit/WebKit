@@ -1,3 +1,30 @@
+2018-02-04  Zan Dobersek  <zdobersek@igalia.com>
+
+        Simplify GraphicsContext3D::paintToCanvas()
+        https://bugs.webkit.org/show_bug.cgi?id=182459
+
+        Reviewed by Michael Catanzaro.
+
+        Cairo-specific paintToCanvas() method is dropped in favor of the more
+        common one that operates on a GraphicsContext object. The platform
+        context object is then retrieved inside the Cairo-speficic
+        paintToCanvas() implementation, and not at the call site in
+        GraphicsContext3D::paintRenderingResultsToCanvas().
+
+        GraphicsContext3D::paintToCanvas() is also modified so that the image
+        and canvas sizes are passed through IntSize objects, and not through
+        a width-and-height pair of integer values.
+
+        No new tests -- no change in behavior.
+
+        * platform/graphics/GraphicsContext3D.h:
+        * platform/graphics/cairo/GraphicsContext3DCairo.cpp:
+        (WebCore::GraphicsContext3D::paintToCanvas):
+        * platform/graphics/cg/GraphicsContext3DCG.cpp:
+        (WebCore::GraphicsContext3D::paintToCanvas):
+        * platform/graphics/opengl/GraphicsContext3DOpenGLCommon.cpp:
+        (WebCore::GraphicsContext3D::paintRenderingResultsToCanvas):
+
 2018-02-03  Alexey Proskuryakov  <ap@apple.com>
 
         Tweak availability macros for CAN_DISALLOW_USER_INSTALLED_FONTS

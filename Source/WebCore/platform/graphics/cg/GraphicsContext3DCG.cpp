@@ -500,38 +500,37 @@ static void releaseImageData(void*, const void* data, size_t)
     fastFree(const_cast<void*>(data));
 }
 
-void GraphicsContext3D::paintToCanvas(const unsigned char* imagePixels, int imageWidth, int imageHeight, int canvasWidth, int canvasHeight, GraphicsContext& context)
+void GraphicsContext3D::paintToCanvas(const unsigned char* imagePixels, const IntSize& imageSize, const IntSize& canvasSize, GraphicsContext& context)
 {
-    if (!imagePixels || imageWidth <= 0 || imageHeight <= 0 || canvasWidth <= 0 || canvasHeight <= 0)
+    if (!imagePixels || imageSize.isEmpty() || canvasSize.isEmpty())
         return;
-    int rowBytes = imageWidth * 4;
+    int rowBytes = imageSize.width() * 4;
     RetainPtr<CGDataProviderRef> dataProvider;
 
     if (context.isAcceleratedContext()) {
         unsigned char* copiedPixels;
 
-        if (!tryFastCalloc(imageHeight, rowBytes).getValue(copiedPixels))
+        if (!tryFastCalloc(imageSize.height(), rowBytes).getValue(copiedPixels))
             return;
 
-        memcpy(copiedPixels, imagePixels, rowBytes * imageHeight);
-        dataProvider = adoptCF(CGDataProviderCreateWithData(0, copiedPixels, rowBytes * imageHeight, releaseImageData));
+        memcpy(copiedPixels, imagePixels, rowBytes * imageSize.height());
+        dataProvider = adoptCF(CGDataProviderCreateWithData(0, copiedPixels, rowBytes * imageSize.height(), releaseImageData));
     } else
-        dataProvider = adoptCF(CGDataProviderCreateWithData(0, imagePixels, rowBytes * imageHeight, 0));
+        dataProvider = adoptCF(CGDataProviderCreateWithData(0, imagePixels, rowBytes * imageSize.height(), 0));
 
-    RetainPtr<CGImageRef> cgImage = adoptCF(CGImageCreate(imageWidth, imageHeight, 8, 32, rowBytes, sRGBColorSpaceRef(), kCGImageAlphaPremultipliedFirst | kCGBitmapByteOrder32Host,
+    RetainPtr<CGImageRef> cgImage = adoptCF(CGImageCreate(imageSize.width(), imageSize.height(), 8, 32, rowBytes, sRGBColorSpaceRef(), kCGImageAlphaPremultipliedFirst | kCGBitmapByteOrder32Host,
         dataProvider.get(), 0, false, kCGRenderingIntentDefault));
 
     // CSS styling may cause the canvas's content to be resized on
     // the page. Go back to the Canvas to figure out the correct
     // width and height to draw.
-    FloatRect canvasRect(0, 0, canvasWidth, canvasHeight);
-    FloatSize imageSize(imageWidth, imageHeight);
+    FloatRect canvasRect(FloatPoint(), canvasSize);
     // We want to completely overwrite the previous frame's
     // rendering results.
 
     GraphicsContextStateSaver stateSaver(context);
     context.scale(FloatSize(1, -1));
-    context.translate(0, -imageHeight);
+    context.translate(0, -imageSize.height());
     context.setImageInterpolationQuality(InterpolationNone);
     context.drawNativeImage(cgImage, imageSize, canvasRect, FloatRect(FloatPoint(), imageSize), CompositeCopy);
 }

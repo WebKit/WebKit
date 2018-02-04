@@ -343,31 +343,35 @@ bool GraphicsContext3D::ImageExtractor::extractImage(bool premultiplyAlpha, bool
     return true;
 }
 
-void GraphicsContext3D::paintToCanvas(const unsigned char* imagePixels, int imageWidth, int imageHeight, int canvasWidth, int canvasHeight, PlatformContextCairo* context)
+void GraphicsContext3D::paintToCanvas(const unsigned char* imagePixels, const IntSize& imageSize, const IntSize& canvasSize, GraphicsContext& context)
 {
-    if (!imagePixels || imageWidth <= 0 || imageHeight <= 0 || canvasWidth <= 0 || canvasHeight <= 0 || !context)
+    if (!imagePixels || imageSize.isEmpty() || canvasSize.isEmpty())
         return;
 
-    cairo_t *cr = context->cr();
-    context->save();
+    PlatformContextCairo* platformContext = context.platformContext();
+    if (!platformContext)
+        return;
 
-    cairo_rectangle(cr, 0, 0, canvasWidth, canvasHeight);
+    cairo_t* cr = platformContext->cr();
+    platformContext->save();
+
+    cairo_rectangle(cr, 0, 0, canvasSize.width(), canvasSize.height());
     cairo_set_operator(cr, CAIRO_OPERATOR_CLEAR);
     cairo_paint(cr);
 
     RefPtr<cairo_surface_t> imageSurface = adoptRef(cairo_image_surface_create_for_data(
-        const_cast<unsigned char*>(imagePixels), CAIRO_FORMAT_ARGB32, imageWidth, imageHeight, imageWidth * 4));
+        const_cast<unsigned char*>(imagePixels), CAIRO_FORMAT_ARGB32, imageSize.width(), imageSize.height(), imageSize.width() * 4));
 
     // OpenGL keeps the pixels stored bottom up, so we need to flip the image here.
-    cairo_translate(cr, 0, imageHeight);
+    cairo_translate(cr, 0, imageSize.height());
     cairo_scale(cr, 1, -1);
 
     cairo_set_operator(cr, CAIRO_OPERATOR_OVER);
     cairo_set_source_surface(cr, imageSurface.get(), 0, 0);
-    cairo_rectangle(cr, 0, 0, canvasWidth, -canvasHeight);
+    cairo_rectangle(cr, 0, 0, canvasSize.width(), -canvasSize.height());
 
     cairo_fill(cr);
-    context->restore();
+    platformContext->restore();
 }
 
 void GraphicsContext3D::setContextLostCallback(std::unique_ptr<ContextLostCallback>)

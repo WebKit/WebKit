@@ -98,9 +98,6 @@ class ImageData;
 class IntRect;
 class IntSize;
 class WebGLRenderingContextBase;
-#if USE(CAIRO)
-class PlatformContextCairo;
-#endif
 #if USE(TEXTURE_MAPPER)
 class TextureMapperGC3DPlatformLayer;
 #endif
@@ -1130,12 +1127,7 @@ public:
     GC3Dboolean isVertexArray(Platform3DObject);
     void bindVertexArray(Platform3DObject);
 
-#if PLATFORM(GTK) || USE(CAIRO)
-    void paintToCanvas(const unsigned char* imagePixels, int imageWidth, int imageHeight,
-                       int canvasWidth, int canvasHeight, PlatformContextCairo* context);
-#elif USE(CG)
-    void paintToCanvas(const unsigned char* imagePixels, int imageWidth, int imageHeight, int canvasWidth, int canvasHeight, GraphicsContext&);
-#endif
+    void paintToCanvas(const unsigned char* imagePixels, const IntSize& imageSize, const IntSize& canvasSize, GraphicsContext&);
 
     void markContextChanged();
     void markLayerComposited();
