@@ -1,5 +1,4 @@
-# Project name.
-project(openvr_api)
+set(OPENVR_SOURCE_DIR ${CMAKE_SOURCE_DIR}/Source/ThirdParty/openvr)
 
 set( LIBNAME "openvr_api" )
 
@@ -25,7 +24,7 @@ elseif(WIN32)
 endif()
 
 # Add include folders.
-include_directories(${PROJECT_SOURCE_DIR}/../src ${PROJECT_SOURCE_DIR}/../headers ${PROJECT_SOURCE_DIR}/../src/vrcommon)
+include_directories(${OPENVR_SOURCE_DIR}/src ${OPENVR_SOURCE_DIR}/headers ${OPENVR_SOURCE_DIR}/src/vrcommon)
 
 if(USE_CUSTOM_LIBCXX)
        link_directories(
@@ -68,26 +67,32 @@ elseif(BUILD_FRAMEWORK)
        set( LIBNAME "OpenVR" )
        add_library( ${LIBNAME} 
             SHARED ${SOURCE_FILES}
-            ${PROJECT_SOURCE_DIR}/../headers/openvr.h
-            ${PROJECT_SOURCE_DIR}/../headers/openvr_api.cs
-            ${PROJECT_SOURCE_DIR}/../headers/openvr_api.json
-            ${PROJECT_SOURCE_DIR}/../headers/openvr_capi.h
-            ${PROJECT_SOURCE_DIR}/../headers/openvr_driver.h
+            ${OPENVR_SOURCE_DIR}/headers/openvr.h
+            ${OPENVR_SOURCE_DIR}/headers/openvr_api.cs
+            ${OPENVR_SOURCE_DIR}/headers/openvr_api.json
+            ${OPENVR_SOURCE_DIR}/headers/openvr_capi.h
+            ${OPENVR_SOURCE_DIR}/headers/openvr_driver.h
        )
        set_target_properties(OpenVR PROPERTIES
               FRAMEWORK TRUE
               FRAMEWORK_VERSION A
               MACOSX_FRAMEWORK_IDENTIFIER com.valvesoftware.OpenVR.framework
-              MACOSX_FRAMEWORK_INFO_PLIST ${PROJECT_SOURCE_DIR}/../src/Info.plist
+              MACOSX_FRAMEWORK_INFO_PLIST ${OPENVR_SOURCE_DIR}/src/Info.plist
               # "current version" in semantic format in Mach-O binary file
               VERSION 1.0.6
               # "compatibility version" in semantic format in Mach-O binary file
               SOVERSION 1.0.0
-              PUBLIC_HEADER "${PROJECT_SOURCE_DIR}/../headers/openvr.h;${PROJECT_SOURCE_DIR}/../headers/openvr_api.cs;${PROJECT_SOURCE_DIR}/../headers/openvr_api.json;${PROJECT_SOURCE_DIR}/../headers/openvr_capi.h;${PROJECT_SOURCE_DIR}/../headers/openvr_driver.h"
+              PUBLIC_HEADER "${OPENVR_SOURCE_DIR}/headers/openvr.h;${OPENVR_SOURCE_DIR}/headers/openvr_api.cs;${OPENVR_SOURCE_DIR}/headers/openvr_api.json;${OPENVR_SOURCE_DIR}/headers/openvr_capi.h;${OPENVR_SOURCE_DIR}/headers/openvr_driver.h"
               LINKER_LANGUAGE CXX
        )
 else()
        add_library(${LIBNAME} STATIC ${SOURCE_FILES})
+endif()
+
+if (COMPILER_IS_GCC_OR_CLANG)
+    WEBKIT_ADD_TARGET_CXX_FLAGS(${LIBNAME} -Wno-unknown-pragmas
+                                           -Wno-unused-parameter
+                                           -Wno-unused-variable)
 endif()
 
 if(USE_CUSTOM_LIBCXX)

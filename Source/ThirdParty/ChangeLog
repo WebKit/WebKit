@@ -1,3 +1,33 @@
+2018-02-04  Zan Dobersek  <zdobersek@igalia.com>
+
+        Lots of build warnings from Source/ThirdParty/openvr
+        https://bugs.webkit.org/show_bug.cgi?id=182117
+
+        Reviewed by Michael Catanzaro.
+
+        Suppress OpenVR compiler warnings by listing -Wno-unknown-pragmas,
+        -Wno-unused-parameter and -Wno-unused-variable options among the
+        libopenvr_api.so CXX flags.
+
+        CMake configuration warning about default project variables for the
+        openvr_api project is avoided by removing the openvr_api project and
+        instead setting the OPENVR_SOURCE_DIR to the path of the OpenVR
+        source directory under Source/ThirdParty/.
+
+        Another compiler warning is removed by fixing the return condition in
+        the Path_WriteBinaryFile() function to perform an equality comparison
+        instead of an assignment. This has already been fixed upstream.
+
+        All changes to the OpenVR code are reflected in the separately-managed
+        patch files kept in the patches/ directory.
+
+        * openvr/README.webkit:
+        * openvr/patches/Path_WriteBinaryFile-fix-return-condition.patch: Added.
+        * openvr/patches/cmake-build.patch:
+        * openvr/src/CMakeLists.txt:
+        * openvr/src/vrcommon/pathtools_public.cpp:
+        (Path_WriteBinaryFile):
+
 2018-01-30  Don Olmstead  <don.olmstead@sony.com>
 
         [CMake] Make WTF headers copies
