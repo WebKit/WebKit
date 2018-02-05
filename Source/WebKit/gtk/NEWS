@@ -1,3 +1,19 @@
+==================
+WebKitGTK+ 2.19.90
+==================
+
+What's new in WebKitGTK+ 2.19.90?
+
+  - WebSockets use system proxy settings now (requires libsoup 2.61.90).
+  - Show the context menu on long-press gesture.
+  - Add support for Shift + mouse scroll to scroll horizontally.
+  - Fix zoom gesture to actually zoom instead of changing the page scale.
+  - Implement support for Graphics ARIA roles.
+  - Make sleep inhibitors work under Flatpak.
+  - Add get element CSS value command to WebDriver.
+  - Fix a crash aftter a swipe gesture.
+  - Fix several crashes and rendering issues.
+
 =================
 WebKitGTK+ 2.19.6
 =================
