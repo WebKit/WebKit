@@ -1,3 +1,22 @@
+2018-02-02  Aakash Jain  <aakash_jain@apple.com>
+
+        Add support for fetching recent builds in Buildbot 0.9 format in BuildbotSyncer
+        https://bugs.webkit.org/show_bug.cgi?id=179743
+
+        Reviewed by Ryosuke Niwa.
+
+        * tools/js/buildbot-syncer.js:
+        (BuildbotSyncer.prototype._pullRecentBuildsDeprecated): Renamed from _pullRecentBuilds. This method fetch
+        from Buildbot 0.8 server.
+        (BuildbotSyncer.prototype._pullRecentBuilds): Method to fetch recent builds from Buildbot 0.9 server.
+        (BuildbotSyncer.prototype.pathForRecentBuilds): URL for fetching recent builds from Buildbot 0.9 server.
+        (BuildbotSyncer.prototype.pathForBuildJSONDeprecated): Renamed from pathForBuildJSON.
+        * unit-tests/buildbot-syncer-tests.js:
+        (_pullRecentBuilds.it): unit-test - should not fetch recent builds when count is zero.
+        (_pullRecentBuilds.it): unit-test - should pull the right number of recent builds.
+        (_pullRecentBuilds.it): unit-test - should handle unexpected error while fetching recent builds.
+        (_pullRecentBuilds.it): unit-test - should create BuildbotBuildEntry after fetching recent builds.
+
 2018-02-01  Aakash Jain  <aakash_jain@apple.com>
 
         Create BuildbotBuildEntry in Buildbot syncer in Buildbot 0.9 format

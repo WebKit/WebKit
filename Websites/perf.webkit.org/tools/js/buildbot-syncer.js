@@ -198,7 +198,7 @@ class BuildbotSyncer {
     {
         return this._remote.getJSON(this.pathForPendingBuildsJSONDeprecated()).then((content) => {
             let pendingEntries = content.map((entry) => new BuildbotBuildEntryDeprecated(this, entry));
-            return this._pullRecentBuilds(count).then((entries) => {
+            return this._pullRecentBuildsDeprecated(count).then((entries) => {
                 let entryByRequest = {};
 
                 for (let entry of pendingEntries)
@@ -219,7 +219,7 @@ class BuildbotSyncer {
         });
     }
 
-    _pullRecentBuilds(count)
+    _pullRecentBuildsDeprecated(count)
     {
         if (!count)
             return Promise.resolve([]);
@@ -228,7 +228,7 @@ class BuildbotSyncer {
         for (let i = 0; i < count; i++)
             selectedBuilds[i] = -i - 1;
 
-        return this._remote.getJSON(this.pathForBuildJSON(selectedBuilds)).then((content) => {
+        return this._remote.getJSON(this.pathForBuildJSONDeprecated(selectedBuilds)).then((content) => {
             const entries = [];
             for (let index of selectedBuilds) {
                 const entry = content[index];
@@ -239,12 +239,25 @@ class BuildbotSyncer {
         });
     }
 
+    _pullRecentBuilds(count)
+    {
+        if (!count)
+            return Promise.resolve([]);
+
+        return this._remote.getJSON(this.pathForRecentBuilds(count)).then((content) => {
+            if (!('builds' in content))
+                return [];
+            return content.builds.map((build) => new BuildbotBuildEntry(this, build));
+        });
+    }
+
     pathForPendingBuildsJSONDeprecated() { return `/json/builders/${escape(this._builderName)}/pendingBuilds`; }
     pathForPendingBuilds() { return `/api/v2/builders/${this._builderID}/buildrequests?complete=false&claimed=false`; }
-    pathForBuildJSON(selectedBuilds)
+    pathForBuildJSONDeprecated(selectedBuilds)
     {
         return `/json/builders/${escape(this._builderName)}/builds/?` + selectedBuilds.map((number) => 'select=' + number).join('&');
     }
+    pathForRecentBuilds(count) { return `/api/v2/builders/${this._builderID}/builds?limit=${count}&order=-number&property=*`; }
     pathForForceBuild() { return `/builders/${escape(this._builderName)}/force`; }
 
     url() { return this._remote.url(`/builders/${escape(this._builderName)}/`); }
