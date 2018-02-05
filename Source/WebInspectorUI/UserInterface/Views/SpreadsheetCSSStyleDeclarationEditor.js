@@ -39,6 +39,7 @@ WI.SpreadsheetCSSStyleDeclarationEditor = class SpreadsheetCSSStyleDeclarationEd
         this._focused = false;
 
         this._propertyPendingStartEditing = null;
+        this._pendingAddBlankPropertyIndexOffset = NaN;
         this._filterText = null;
     }
 
@@ -90,6 +91,9 @@ WI.SpreadsheetCSSStyleDeclarationEditor = class SpreadsheetCSSStyleDeclarationEd
 
         if (this._filterText)
             this.applyFilter(this._filterText);
+
+        if (!isNaN(this._pendingAddBlankPropertyIndexOffset))
+            this.addBlankProperty(this._propertyViews.length - 1 - this._pendingAddBlankPropertyIndexOffset);
     }
 
     detached()
@@ -204,6 +208,8 @@ WI.SpreadsheetCSSStyleDeclarationEditor = class SpreadsheetCSSStyleDeclarationEd
 
     addBlankProperty(index)
     {
+        this._pendingAddBlankPropertyIndexOffset = NaN;
+
         if (index === -1) {
             // Append to the end.
             index = this._propertyViews.length;
@@ -213,9 +219,9 @@ WI.SpreadsheetCSSStyleDeclarationEditor = class SpreadsheetCSSStyleDeclarationEd
         this.needsLayout();
     }
 
-    spreadsheetCSSStyleDeclarationEditorFocusMoved({direction, movedFromProperty, willRemoveProperty})
+    spreadsheetStylePropertyFocusMoved(propertyView, {direction, willRemoveProperty})
     {
-        let movedFromIndex = this._propertyViews.indexOf(movedFromProperty);
+        let movedFromIndex = this._propertyViews.indexOf(propertyView);
         console.assert(movedFromIndex !== -1, "Property doesn't exist, focusing on a selector as a fallback.");
         if (movedFromIndex === -1) {
             if (this._style.selectorEditable)
@@ -254,12 +260,21 @@ WI.SpreadsheetCSSStyleDeclarationEditor = class SpreadsheetCSSStyleDeclarationEd
 
     // SpreadsheetStyleProperty delegate
 
+    spreadsheetStylePropertyAddBlankPropertySoon(propertyView, {index})
+    {
+        if (isNaN(index))
+            index = this._propertyViews.length;
+        this._pendingAddBlankPropertyIndexOffset = this._propertyViews.length - index;
+    }
+
     spreadsheetStylePropertyRemoved(propertyView)
     {
         this._propertyViews.remove(propertyView);
 
         for (let index = 0; index < this._propertyViews.length; index++)
             this._propertyViews[index].index = index;
+
+        this._focused = false;
     }
 
     stylePropertyInlineSwatchActivated()
@@ -322,7 +337,7 @@ WI.SpreadsheetCSSStyleDeclarationEditor = class SpreadsheetCSSStyleDeclarationEd
 
     _propertiesChanged(event)
     {
-        if (this.editing) {
+        if (this.editing && isNaN(this._pendingAddBlankPropertyIndexOffset)) {
             for (let propertyView of this._propertyViews)
                 propertyView.updateStatus();
         } else

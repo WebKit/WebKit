@@ -131,6 +131,11 @@ WI.CSSProperty = class CSSProperty extends WI.Object
         this._updateStyleText(forceRemove);
     }
 
+    replaceWithText(text)
+    {
+        this._updateOwnerStyleText(this._text, text, true);
+    }
+
     commentOut(disabled)
     {
         console.assert(this._enabled === disabled, "CSS property is already " + (disabled ? "disabled" : "enabled"));
