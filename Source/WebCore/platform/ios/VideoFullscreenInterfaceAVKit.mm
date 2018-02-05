@@ -590,7 +590,13 @@ void VideoFullscreenInterfaceAVKit::applicationDidBecomeActive()
     // If we are both in PiP and in Fullscreen (i.e., via auto-PiP), and we did not stop fullscreen upon returning, it must be
     // because the originating view is not visible, so hide the fullscreen window.
     if (m_currentMode.hasFullscreen() && m_currentMode.hasPictureInPicture()) {
-        [m_playerViewController exitFullScreenAnimated:NO completionHandler:[protectedThis = makeRefPtr(this), this] (BOOL, NSError *) {
+        [[m_playerViewController view] layoutIfNeeded];
+        [m_playerViewController exitFullScreenAnimated:NO completionHandler:[protectedThis = makeRefPtr(this), this] (BOOL success, NSError* error) {
+            if (!success) {
+                WTFLogAlways("-[AVPlayerViewController exitFullScreenAnimated:completionHandler:] failed with error %s", [[error localizedDescription] UTF8String]);
+                ASSERT_NOT_REACHED();
+            }
+
             [m_window setHidden:YES];
             [[m_playerViewController view] setHidden:YES];
         }];
@@ -713,8 +719,15 @@ void VideoFullscreenInterfaceAVKit::enterFullscreenStandard()
         return;
     }
 
-    [m_playerViewController enterFullScreenAnimated:YES completionHandler:[this, protectedThis = makeRefPtr(this)] (BOOL succeeded, NSError*) {
-        UNUSED_PARAM(succeeded);
+    [[m_playerViewController view] layoutIfNeeded];
+    [m_playerViewController enterFullScreenAnimated:YES completionHandler:[this, protectedThis = makeRefPtr(this)] (BOOL succeeded, NSError* error) {
+        if (!succeeded) {
+            WTFLogAlways("-[AVPlayerViewController enterFullScreenAnimated:completionHandler:] failed with error %s", [[error localizedDescription] UTF8String]);
+            ASSERT_NOT_REACHED();
+            m_videoFullscreenModel->requestFullscreenMode(HTMLMediaElementEnums::VideoFullscreenModeNone, YES);
+            return;
+        }
+
         LOG(Fullscreen, "VideoFullscreenInterfaceAVKit::enterFullscreenStandard - lambda(%p) - succeeded(%s)", this, boolString(succeeded));
         [m_playerViewController setShowsPlaybackControls:YES];
 
@@ -742,20 +755,30 @@ void VideoFullscreenInterfaceAVKit::exitFullscreen(const IntRect& finalRect)
     WebAVPlayerLayer *playerLayer = (WebAVPlayerLayer *)[m_playerLayerView playerLayer];
     if ([playerLayer videoGravity] != getAVLayerVideoGravityResizeAspect())
         [playerLayer setVideoGravity:getAVLayerVideoGravityResizeAspect()];
-    [[m_playerViewController view] layoutIfNeeded];
 
+    [[m_playerViewController view] layoutIfNeeded];
     if (m_currentMode.isPictureInPicture()) {
         m_shouldReturnToFullscreenWhenStoppingPiP = false;
         [m_window setHidden:NO];
         [m_playerViewController stopPictureInPicture];
     } else if (m_currentMode.hasPictureInPicture() && m_currentMode.hasFullscreen()) {
-        [m_playerViewController exitFullScreenAnimated:NO completionHandler:[protectedThis = makeRefPtr(this), this] (BOOL, NSError*) {
+        [m_playerViewController exitFullScreenAnimated:NO completionHandler:[protectedThis = makeRefPtr(this), this] (BOOL success, NSError* error) {
+            if (!success) {
+                WTFLogAlways("-[AVPlayerViewController exitFullScreenAnimated:completionHandler:] failed with error %s", [[error localizedDescription] UTF8String]);
+                ASSERT_NOT_REACHED();
+            }
+
             clearMode(HTMLMediaElementEnums::VideoFullscreenModeStandard);
             [m_window setHidden:NO];
             [m_playerViewController stopPictureInPicture];
         }];
     } else if (m_currentMode.isFullscreen()) {
-        [m_playerViewController exitFullScreenAnimated:YES completionHandler:[protectedThis = makeRefPtr(this), this] (BOOL, NSError*) mutable {
+        [m_playerViewController exitFullScreenAnimated:YES completionHandler:[protectedThis = makeRefPtr(this), this] (BOOL success, NSError* error) mutable {
+            if (!success) {
+                WTFLogAlways("-[AVPlayerViewController exitFullScreenAnimated:completionHandler:] failed with error %s", [[error localizedDescription] UTF8String]);
+                ASSERT_NOT_REACHED();
+            }
+
             m_exitCompleted = true;
 
             [CATransaction begin];
@@ -786,8 +809,15 @@ void VideoFullscreenInterfaceAVKit::cleanupFullscreen()
     
     if (m_currentMode.hasPictureInPicture())
         [m_playerViewController stopPictureInPicture];
-    if (m_currentMode.hasFullscreen())
-        [m_playerViewController exitFullScreenAnimated:NO completionHandler:[] (BOOL, NSError *) { }];
+    if (m_currentMode.hasFullscreen()) {
+        [[m_playerViewController view] layoutIfNeeded];
+        [m_playerViewController exitFullScreenAnimated:NO completionHandler:[] (BOOL success, NSError* error) {
+            if (!success) {
+                WTFLogAlways("-[AVPlayerViewController exitFullScreenAnimated:completionHandler:] failed with error %s", [[error localizedDescription] UTF8String]);
+                ASSERT_NOT_REACHED();
+            }
+        }];
+    }
     
     [[m_playerViewController view] removeFromSuperview];
     if (m_viewController)
@@ -872,7 +902,12 @@ void VideoFullscreenInterfaceAVKit::didStartPictureInPicture()
 
     if (m_currentMode.hasFullscreen()) {
         if (![m_playerViewController pictureInPictureWasStartedWhenEnteringBackground]) {
-            [m_playerViewController exitFullScreenAnimated:YES completionHandler:[protectedThis = makeRefPtr(this), this] (BOOL, NSError *) {
+            [[m_playerViewController view] layoutIfNeeded];
+            [m_playerViewController exitFullScreenAnimated:YES completionHandler:[protectedThis = makeRefPtr(this), this] (BOOL success, NSError* error) {
+                if (!success) {
+                    WTFLogAlways("-[AVPlayerViewController exitFullScreenAnimated:completionHandler:] failed with error %s", [[error localizedDescription] UTF8String]);
+                    ASSERT_NOT_REACHED();
+                }
                 [m_window setHidden:YES];
                 [[m_playerViewController view] setHidden:YES];
             }];
@@ -954,11 +989,18 @@ void VideoFullscreenInterfaceAVKit::prepareForPictureInPictureStopWithCompletion
         [m_window setHidden:NO];
         [[m_playerViewController view] setHidden:NO];
 
-        [m_playerViewController enterFullScreenAnimated:YES completionHandler:^(BOOL success, NSError *error) {
-            UNUSED_PARAM(error);
+        [[m_playerViewController view] layoutIfNeeded];
+        [m_playerViewController enterFullScreenAnimated:YES completionHandler:^(BOOL succeeded, NSError *error) {
+            if (!succeeded) {
+                WTFLogAlways("-[AVPlayerViewController enterFullScreenAnimated:completionHandler:] failed with error %s", [[error localizedDescription] UTF8String]);
+                ASSERT_NOT_REACHED();
+                m_videoFullscreenModel->requestFullscreenMode(HTMLMediaElementEnums::VideoFullscreenModeNone, YES);
+                return;
+            }
+
             m_restoringFullscreenForPictureInPictureStop = false;
             setMode(HTMLMediaElementEnums::VideoFullscreenModeStandard);
-            completionHandler(success);
+            completionHandler(succeeded);
             if (m_fullscreenChangeObserver)
                 m_fullscreenChangeObserver->didEnterFullscreen();
         }];
@@ -1006,6 +1048,7 @@ void VideoFullscreenInterfaceAVKit::applicationDidBecomeActive()
     // If we are both in PiP and in Fullscreen (i.e., via auto-PiP), and we did not stop fullscreen upon returning, it must be
     // because the originating view is not visible, so hide the fullscreen window.
     if (m_currentMode.hasFullscreen() && m_currentMode.hasPictureInPicture()) {
+        [[m_playerViewController view] layoutIfNeeded];
         [m_playerViewController exitFullScreenAnimated:NO completionHandler:[protectedThis = makeRefPtr(this), this] (BOOL success, NSError *error) {
             exitFullscreenHandler(success, error);
         }];
@@ -1066,8 +1109,15 @@ void VideoFullscreenInterfaceAVKit::cleanupFullscreen()
     
     if (m_currentMode.hasPictureInPicture())
         [m_playerViewController stopPictureInPicture];
-    if (m_currentMode.hasFullscreen())
-        [m_playerViewController exitFullScreenAnimated:NO completionHandler:[] (BOOL, NSError *) { }];
+    if (m_currentMode.hasFullscreen()) {
+        [[m_playerViewController view] layoutIfNeeded];
+        [m_playerViewController exitFullScreenAnimated:NO completionHandler:[] (BOOL success, NSError* error) {
+            if (!success) {
+                WTFLogAlways("-[AVPlayerViewController exitFullScreenAnimated:completionHandler:] failed with error %s", [[error localizedDescription] UTF8String]);
+                ASSERT_NOT_REACHED();
+            }
+        }];
+    }
     
     [[m_playerViewController view] removeFromSuperview];
     if (m_viewController)
@@ -1153,6 +1203,7 @@ void VideoFullscreenInterfaceAVKit::didStartPictureInPicture()
 
     if (m_currentMode.hasFullscreen()) {
         if (![m_playerViewController pictureInPictureWasStartedWhenEnteringBackground]) {
+            [[m_playerViewController view] layoutIfNeeded];
             [m_playerViewController exitFullScreenAnimated:YES completionHandler:[protectedThis = makeRefPtr(this), this] (BOOL success, NSError *error) {
                 exitFullscreenHandler(success, error);
             }];
@@ -1235,6 +1286,7 @@ void VideoFullscreenInterfaceAVKit::prepareForPictureInPictureStopWithCompletion
         [m_window setHidden:NO];
         [[m_playerViewController view] setHidden:NO];
 
+        [[m_playerViewController view] layoutIfNeeded];
         [m_playerViewController enterFullScreenAnimated:YES completionHandler:^(BOOL success, NSError *error) {
             enterFullscreenHandler(success, error);
             completionHandler(success);
@@ -1418,6 +1470,7 @@ void VideoFullscreenInterfaceAVKit::doEnterFullscreen()
 {
     m_standby = m_targetStandby;
 
+    [[m_playerViewController view] layoutIfNeeded];
     if (m_targetMode.hasFullscreen() && !m_currentMode.hasFullscreen()) {
         m_enterFullscreenNeedsEnterFullscreen = true;
         [m_playerViewController enterFullScreenAnimated:YES completionHandler:[this, protectedThis = makeRefPtr(this)] (BOOL success, NSError *error) {
@@ -1501,8 +1554,13 @@ void VideoFullscreenInterfaceAVKit::doExitFullscreen()
     });
 }
 
-void VideoFullscreenInterfaceAVKit::exitFullscreenHandler(BOOL success, NSError *)
+void VideoFullscreenInterfaceAVKit::exitFullscreenHandler(BOOL success, NSError* error)
 {
+    if (!success) {
+        WTFLogAlways("-[AVPlayerViewController exitFullScreenAnimated:completionHandler:] failed with error %s", [[error localizedDescription] UTF8String]);
+        ASSERT_NOT_REACHED();
+    }
+
     UNUSED_PARAM(success);
     LOG(Fullscreen, "VideoFullscreenInterfaceAVKit::didExitFullscreen(%p) - %d", this, success);
 
@@ -1526,11 +1584,16 @@ void VideoFullscreenInterfaceAVKit::exitFullscreenHandler(BOOL success, NSError 
         doExitFullscreen();
 }
 
-void VideoFullscreenInterfaceAVKit::enterFullscreenHandler(BOOL success, NSError *)
+void VideoFullscreenInterfaceAVKit::enterFullscreenHandler(BOOL success, NSError* error)
 {
-    UNUSED_PARAM(success);
-    LOG(Fullscreen, "VideoFullscreenInterfaceAVKit::enterFullscreenStandard - lambda(%p) - success(%s)", this, boolString(success));
+    if (!succeeded) {
+        WTFLogAlways("-[AVPlayerViewController enterFullScreenAnimated:completionHandler:] failed with error %s", [[error localizedDescription] UTF8String]);
+        ASSERT_NOT_REACHED();
+        m_videoFullscreenModel->requestFullscreenMode(HTMLMediaElementEnums::VideoFullscreenModeNone, YES);
+        return;
+    }
 
+    LOG(Fullscreen, "VideoFullscreenInterfaceAVKit::enterFullscreenStandard - lambda(%p)", this);
     setMode(HTMLMediaElementEnums::VideoFullscreenModeStandard);
     [m_playerViewController setShowsPlaybackControls:YES];
 
