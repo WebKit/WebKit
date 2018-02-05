@@ -28,7 +28,7 @@
 
 #if USE(ARMV7_DISASSEMBLER)
 
-#include "ARMv7/ARMv7DOpcode.h"
+#include "ARMv7DOpcode.h"
 #include "MacroAssemblerCodeRef.h"
 
 namespace JSC {

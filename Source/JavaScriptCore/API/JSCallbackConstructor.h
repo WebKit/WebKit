@@ -26,8 +26,8 @@
 #ifndef JSCallbackConstructor_h
 #define JSCallbackConstructor_h
 
+#include "JSDestructibleObject.h"
 #include "JSObjectRef.h"
-#include "runtime/JSDestructibleObject.h"
 
 namespace JSC {
 

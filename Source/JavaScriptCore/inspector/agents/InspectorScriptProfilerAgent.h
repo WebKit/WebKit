@@ -26,9 +26,9 @@
 #pragma once
 
 #include "Debugger.h"
+#include "InspectorAgentBase.h"
 #include "InspectorBackendDispatchers.h"
 #include "InspectorFrontendDispatchers.h"
-#include "inspector/InspectorAgentBase.h"
 #include <wtf/Noncopyable.h>
 
 namespace JSC {

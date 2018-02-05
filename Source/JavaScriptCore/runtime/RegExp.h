@@ -25,12 +25,12 @@
 #include "MatchResult.h"
 #include "RegExpKey.h"
 #include "Structure.h"
-#include "yarr/Yarr.h"
+#include "Yarr.h"
 #include <wtf/Forward.h>
 #include <wtf/text/WTFString.h>
 
 #if ENABLE(YARR_JIT)
-#include "yarr/YarrJIT.h"
+#include "YarrJIT.h"
 #endif
 
 namespace JSC {

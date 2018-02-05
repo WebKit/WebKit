@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include <heap/Heap.h>
+#include "Heap.h"
 #include <wtf/Locker.h>
 
 namespace JSC {

@@ -33,7 +33,7 @@
 
 #include "InspectorEnvironment.h"
 #include "InspectorProtocolObjects.h"
-#include "bindings/ScriptObject.h"
+#include "ScriptObject.h"
 #include <wtf/Forward.h>
 #include <wtf/RefPtr.h>
 

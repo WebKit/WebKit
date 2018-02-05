@@ -28,7 +28,7 @@
 
 #if USE(ARM64_DISASSEMBLER)
 
-#include "ARM64/A64DOpcode.h"
+#include "A64DOpcode.h"
 #include "MacroAssemblerCodeRef.h"
 
 namespace JSC {
