@@ -1,5 +1,18 @@
 2018-02-04  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r227865. rdar://problem/37145460
+
+    2018-01-30  Matt Lewis  <jlewis3@apple.com>
+
+            Marked fast/workers/worker-cloneport.html as flaky on macOS Release.
+            https://bugs.webkit.org/show_bug.cgi?id=182007
+
+            Unreviewed test gardening.
+
+            * platform/mac-wk2/TestExpectations:
+
+2018-02-04  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r227997. rdar://problem/37220136
 
     2018-02-01  Chris Dumez  <cdumez@apple.com>

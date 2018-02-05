@@ -864,3 +864,5 @@ webkit.org/b/181167 imported/w3c/web-platform-tests/service-workers/service-work
 webkit.org/b/181069 fast/mediastream/MediaStream-MediaElement-setObject-null.html [ Pass Failure ]
 
 webkit.org/b/181502 swipe/pushstate-with-manual-scrollrestoration.html [ Failure ]
+
+webkit.org/b/182007 [ Release ] fast/workers/worker-cloneport.html [ Pass Failure ]
