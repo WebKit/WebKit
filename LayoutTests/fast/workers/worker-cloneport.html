@@ -57,7 +57,8 @@ function resendPort(evt)
         // This only fires in the case of a test failure, so it does not slow down test running.
         var timer = setTimeout(function() {
             log("FAILURE: Received: " + itemNum + " events - expected: " + numMessages);
-        }, 1000);
+            reportDone();
+        }, 8000);
         evt.ports[0].onmessage = function(event) {
             var done = false;
             if (event.data == itemNum) {
