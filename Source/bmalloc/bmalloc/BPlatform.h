@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -61,6 +61,14 @@
 #elif TARGET_OS_MAC
 #define BPLATFORM_MAC 1
 #endif
+#endif
+
+#if BPLATFORM(MAC) || BPLATFORM(IOS)
+#define BPLATFORM_COCOA 1
+#endif
+
+#if defined(TARGET_OS_WATCH) && TARGET_OS_WATCH
+#define BPLATFORM_WATCHOS 1
 #endif
 
 /* ==== Policy decision macros: these define policy choices for a particular port. ==== */

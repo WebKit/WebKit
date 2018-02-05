@@ -1,3 +1,61 @@
+2018-02-05  JF Bastien  <jfbastien@apple.com>
+
+        Gigacage: enable only for WebContent process and token executables
+        https://bugs.webkit.org/show_bug.cgi?id=182457
+        <rdar://problem/35875011>
+
+        Reviewed by Keith Miller.
+
+        Gigacage is a solid security improvement, but it's probably best
+        to roll it out incrementally to the most valuable targets first
+        and progressively try out more and more over time rather than
+        outright enabling it everywhere. We've gotten some reports that it
+        has some side-effects that weren't expected, so for now let's
+        enable it for the WebContent process, JSC, and other executables
+        we know, and then later we'll enable more gigacage uses.
+
+        For now I've chosen the following bundles:
+
+          - com.apple.WebKit.WebContent.Development
+          - com.apple.WebKit.WebContent
+          - com.apple.WebProcess
+
+        And the following processes:
+
+          - jsc
+          - wasm
+          - anything starting with "test", to match the JSC tests
+
+        I tried a different approach first, where I add a function to turn
+        gigacage on or off and crash if gigacage is initialized without
+        having been told what to do. Doing this in ChildProcess and a
+        bunch of the process initialization methods isn't sufficient. I
+        got MiniBrowser working, but some other builds use static globals
+        which themselves use hash and string which are allocate with
+        bmalloc and therefore which initialize gigacage before main is
+        called and before the process gets a chance to opt in our out. It
+        gets tricky with API calls too, because we have to do the right
+        thing in any entry an API user could plausibly use, even the
+        private ones, so I endend up having to initialize gigacage in e.g.
+        WebPreferencesExperimentalFeatures.cpp.erb.
+
+        Another approach could be to create a free-for-all gigacage
+        entitlement, and opt-in the processes we want..
+
+        As a follow-up we can also check that gigacage allocation always
+        succeeds if it was allowed for that process. With my change I
+        expect it to always succeed.
+
+        * CMakeLists.txt:
+        * bmalloc.xcodeproj/project.pbxproj:
+        * bmalloc/BPlatform.h:
+        * bmalloc/Gigacage.cpp:
+        (Gigacage::shouldBeEnabled):
+        * bmalloc/ProcessCheck.h: Added.
+        (bmalloc::gigacageEnabledForProcess):
+        * bmalloc/ProcessCheck.mm: Added.
+        (bmalloc::gigacageEnabledForProcess):
+
 2018-02-05  Joseph Pecoraro  <pecoraro@apple.com>
 
         Multiple bmalloc scavenger threads is unexpected
