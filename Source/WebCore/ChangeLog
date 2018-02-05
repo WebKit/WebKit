@@ -1,3 +1,14 @@
+2018-02-05  Don Olmstead  <don.olmstead@sony.com>
+
+        Abstract heap generator should include JavaScriptCore headers directly
+        https://bugs.webkit.org/show_bug.cgi?id=182501
+
+        Reviewed by Alex Christensen.
+
+        No new tests. No change in behavior.
+
+        * domjit/generate-abstract-heap.rb:
+
 2018-02-05  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Extra zoom mode] Implement number pad UI when editing `tel` and `number` inputs
