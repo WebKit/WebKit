@@ -1,3 +1,13 @@
+2018-02-05  Youenn Fablet  <youenn@apple.com>
+
+        WebsiteDataStore::resolveDirectoriesIfNecessary() should not overwrite its resolved serviceWorkerRegistrationDirectory  if already set
+        https://bugs.webkit.org/show_bug.cgi?id=182514
+
+        Reviewed by Chris Dumez.
+
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::resolveDirectoriesIfNecessary):
+
 2018-02-05  Brent Fulgham  <bfulgham@apple.com>
 
         [iOS] Storage process is using the wrong sandbox profile filename
