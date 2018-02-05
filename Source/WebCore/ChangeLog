@@ -1,3 +1,17 @@
+2018-02-05  John Wilander  <wilander@apple.com>
+
+        Build fix for r228115, simple naming issue succeeded —> success.
+        https://bugs.webkit.org/show_bug.cgi?id=182507
+        <rdar://problem/37248566>
+
+        Reviewed by Eric Carlson.
+
+        No new tests. Build fix.
+
+        * platform/ios/VideoFullscreenInterfaceAVKit.mm:
+        (VideoFullscreenInterfaceAVKit::enterFullscreenHandler):
+            succeeded —> success
+
 2018-02-05  Matt Lewis  <jlewis3@apple.com>
 
         Unreviewed, rolling out r228086.
