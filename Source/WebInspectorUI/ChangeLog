@@ -1,3 +1,16 @@
+2018-02-05  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Add an experimental setting to enable Sources tab
+        https://bugs.webkit.org/show_bug.cgi?id=182461
+
+        Reviewed by Brian Burg.
+
+        This patch only adds a setting. It doesn't add the Sources tab.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Base/Setting.js:
+        * UserInterface/Views/SettingsTabContentView.js:
+
 2018-02-02  Devin Rousso  <webkit@devinrousso.com>
 
         Web Inspector: Styles Redesign: Pasting multiple properties should create properties instead of a bad property
