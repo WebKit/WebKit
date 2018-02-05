@@ -53,7 +53,8 @@ namespace CookieUtil {
 
 bool isIPAddress(const String& hostname)
 {
-    return URL::hostIsIPAddress(hostname);
+    // Assuming that hosts ending in a digit are IP Addresses
+    return !hostname.isEmpty() && isASCIIDigit(hostname[hostname.length() - 1]);
 }
 
 bool domainMatch(const String& cookieDomain, const String& host)

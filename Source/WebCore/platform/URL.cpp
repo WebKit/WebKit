@@ -1035,12 +1035,4 @@ TextStream& operator<<(TextStream& ts, const URL& url)
     return ts;
 }
 
-#if !PLATFORM(COCOA) && !USE(SOUP)
-bool URL::hostIsIPAddress(const String& host)
-{
-    // Assume that any host that ends with a digit is trying to be an IP address.
-    return !host.isEmpty() && isASCIIDigit(host[host.length() - 1]);
-}
-#endif
-
 } // namespace WebCore
