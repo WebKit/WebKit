@@ -1,5 +1,21 @@
 2018-02-04  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r227932. rdar://problem/37145456
+
+    2018-01-31  Youenn Fablet  <youenn@apple.com>
+
+            Change SWServer::claim to set the iterator value as soon as possible
+            https://bugs.webkit.org/show_bug.cgi?id=182337
+
+            Reviewed by Chris Dumez.
+
+            No change of behavior, this is a "let's go safe way" fix.
+
+            * workers/service/server/SWServer.cpp:
+            (WebCore::SWServer::claim):
+
+2018-02-04  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r227926. rdar://problem/37145475
 
     2018-01-31  Ryosuke Niwa  <rniwa@webkit.org>
