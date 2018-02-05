@@ -230,8 +230,10 @@ void SWServer::clear(const SecurityOrigin& origin, CompletionHandler<void()>&& c
         return contextData.registration.key.relatesToOrigin(origin);
     });
 
-    if (registrationsToRemove.isEmpty())
+    if (registrationsToRemove.isEmpty()) {
+        completionHandler();
         return;
+    }
 
     // Calling SWServerRegistration::clear() takes care of updating m_registrations, m_originStore and m_registrationStore.
     for (auto* registration : registrationsToRemove)
