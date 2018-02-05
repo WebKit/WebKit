@@ -823,7 +823,11 @@ void PageClientImpl::requestPasswordForQuickLookDocument(const String& fileName,
 
 void PageClientImpl::prepareToDragPromisedBlob(const WebCore::PromisedBlobInfo& info)
 {
+#if ENABLE(DRAG_SUPPORT)
     [m_contentView _prepareToDragPromisedBlob:info];
+#else
+    UNUSED_PARAM(info);
+#endif
 }
 
 } // namespace WebKit
