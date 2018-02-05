@@ -1,3 +1,17 @@
+2018-02-05  Basuke Suzuki  <Basuke.Suzuki@sony.com>
+
+        [Win] Enable multi CPU building on MSBuild.
+        https://bugs.webkit.org/show_bug.cgi?id=182446
+
+        Compiling itself already uses multi cores, but other stuff is still on single core.
+        This patch enables that by passing an argument to MSBuild.exe.
+
+        Reviewed by Alex Christensen.
+
+        * Scripts/webkitdirs.pm:
+        (determineNumberOfCPUs):
+        (buildVisualStudioProject):
+
 2018-02-05  Alicia Boya García  <aboya@igalia.com>
 
         Fix bug in MediaTime comparison for negative values with different scale.
