@@ -1,5 +1,64 @@
 2018-02-04  Zan Dobersek  <zdobersek@igalia.com>
 
+        [Cairo] Split TexMap functionality out of GraphicsContext3DCairo
+        https://bugs.webkit.org/show_bug.cgi?id=182465
+
+        Reviewed by Michael Catanzaro.
+
+        Take the Non-Cairo GraphicsContext3D functionality that's stashed in
+        GraphicsContext3DCairo and move it into the GraphicsContext3DTextureMapper
+        file.
+
+        In GraphicsContext3DCairo.cpp, only the Cairo-specific GraphicsContext3D
+        functionality remains, specifically ImageExtractor and paintToCanvas().
+
+        Everything else is moved into GraphicsContext3DTextureMapper.cpp. This
+        filename and its location under platform/graphics/texmap/ was chosen
+        since all the ports using this file (GTK, WPE, WinCairo) are also using
+        the TextureMapper module. Various #if-guards are simplified in the
+        moved-over code to reflect this.
+
+        GraphicsContext3DCairo.cpp now better reflects GraphicsContext3DCG.cpp,
+        with both implementing functionality specific to a 2D painting library,
+        whereas GraphicsContext3DTextureMapper.cpp reflects
+        GraphicsContext3DCocoa.cpp in covering functionality needed to integrate
+        the GraphicsContext3D output into the platform-specific composition
+        system.
+
+        No new tests -- no change in behavior.
+
+        * platform/TextureMapper.cmake:
+        * platform/graphics/cairo/GraphicsContext3DCairo.cpp:
+        (WebCore::activeContexts): Deleted.
+        (WebCore::GraphicsContext3D::create): Deleted.
+        (WebCore::GraphicsContext3D::GraphicsContext3D): Deleted.
+        (WebCore::GraphicsContext3D::~GraphicsContext3D): Deleted.
+        (WebCore::GraphicsContext3D::setContextLostCallback): Deleted.
+        (WebCore::GraphicsContext3D::setErrorMessageCallback): Deleted.
+        (WebCore::GraphicsContext3D::makeContextCurrent): Deleted.
+        (WebCore::GraphicsContext3D::checkGPUStatus): Deleted.
+        (WebCore::GraphicsContext3D::platformGraphicsContext3D): Deleted.
+        (WebCore::GraphicsContext3D::platformTexture const): Deleted.
+        (WebCore::GraphicsContext3D::isGLES2Compliant const): Deleted.
+        (WebCore::GraphicsContext3D::platformLayer const): Deleted.
+        (WebCore::GraphicsContext3D::getExtensions): Deleted.
+        * platform/graphics/texmap/GraphicsContext3DTextureMapper.cpp: Copied from Source/WebCore/platform/graphics/cairo/GraphicsContext3DCairo.cpp.
+        (WebCore::activeContexts):
+        (WebCore::GraphicsContext3D::create):
+        (WebCore::GraphicsContext3D::GraphicsContext3D):
+        (WebCore::GraphicsContext3D::~GraphicsContext3D):
+        (WebCore::GraphicsContext3D::setContextLostCallback):
+        (WebCore::GraphicsContext3D::setErrorMessageCallback):
+        (WebCore::GraphicsContext3D::makeContextCurrent):
+        (WebCore::GraphicsContext3D::checkGPUStatus):
+        (WebCore::GraphicsContext3D::platformGraphicsContext3D):
+        (WebCore::GraphicsContext3D::platformTexture const):
+        (WebCore::GraphicsContext3D::isGLES2Compliant const):
+        (WebCore::GraphicsContext3D::platformLayer const):
+        (WebCore::GraphicsContext3D::getExtensions):
+
+2018-02-04  Zan Dobersek  <zdobersek@igalia.com>
+
         Simplify GraphicsContext3D::paintToCanvas()
         https://bugs.webkit.org/show_bug.cgi?id=182459
 
