@@ -1,3 +1,20 @@
+2018-02-05  Daniel Bates  <dabates@apple.com>
+
+        REGRESSION (r222795): Nike app "Refused to set unsafe header" when adding and viewing cart
+        https://bugs.webkit.org/show_bug.cgi?id=182491
+        <rdar://problem/36533447>
+
+        Reviewed by Brent Fulgham.
+
+        Exempt Nike from the XHR header restrictions in r222795.
+
+        Following r222795 only Dashboard widgets are allowed to set arbitrary XHR headers.
+        However Nike also depends on such functionality.
+
+        * platform/RuntimeApplicationChecks.h:
+        * platform/cocoa/RuntimeApplicationChecksCocoa.mm:
+        (WebCore::IOSApplication::isNike):
+
 2018-02-02  Brent Fulgham  <bfulgham@apple.com>
 
         Improve NetworkResourceLoader logging so it can be used for 'setCookiesFromDOM'
