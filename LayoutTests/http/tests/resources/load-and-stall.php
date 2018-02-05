@@ -2,6 +2,7 @@
 $name = $_GET['name'];
 $stallAt = $_GET['stallAt'];
 $stallFor = $_GET['stallFor'];
+$stallRepeat = $_GET['stallRepeat'];
 $mimeType = $_GET['mimeType'];
 
 $file = fopen($name, "rb");
@@ -13,26 +14,37 @@ header("Content-Length: " . filesize($name));
 
 if (isset($stallAt) && isset($stallFor)) {
     $stallAt = (int)$stallAt;
-    $stallFor = (int)$stallFor;
     if ($stallAt > filesize($name))
         die("Incorrect value for stallAt.");
-    $written = 0;
-    while ($written < $stallAt) {
-        $write = 1024;
-        if ($write > $stallAt - $written)
-            $write = $stallAt - $written;
 
-        echo(fread($file, $write));
-        $written += $write;
-        flush();
-        ob_flush();
+    $writtenTotal = 0;
+    $fileSize = filesize($name);
+
+    while ($writtenTotal < $fileSize) {
+        $stallAt = min($stallAt, $fileSize - $writtenTotal);
+        $written = 0;
+
+        while ($written < $stallAt) {
+            $write = min(1024, $stallAt - $written);
+            echo(fread($file, $write));
+            $written += $write;
+            flush();
+            ob_flush();
+        }
+
+        $writtenTotal += $written;
+        $remaining = $fileSize - $writtenTotal;
+        if (!$remaining)
+            break;
+
+        usleep($stallFor * 1000000);
+        if (!isset($stallRepeat) || !$stallRepeat)
+            $stallAt = $remaining;
     }
-    usleep($stallFor * 1000000);
-    echo(fread($file, filesize($name) - $stallAt));
 } else {
     echo(fread($file, filesize($name)));
+    flush();
+    ob_flush();
 }
-flush();
-ob_flush();
 fclose($file);
 ?>

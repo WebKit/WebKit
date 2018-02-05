@@ -87,6 +87,8 @@ public:
 
     void addPendingImageDrawingClient(CachedImageClient&);
 
+    void setForceUpdateImageDataEnabledForTesting(bool enabled) { m_forceUpdateImageDataEnabledForTesting =  enabled; }
+    
 private:
     void clear();
 
@@ -178,6 +180,7 @@ private:
     std::unique_ptr<SVGImageCache> m_svgImageCache;
     bool m_isManuallyCached { false };
     bool m_shouldPaintBrokenImage { true };
+    bool m_forceUpdateImageDataEnabledForTesting { false };
 };
 
 } // namespace WebCore
