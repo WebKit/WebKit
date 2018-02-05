@@ -1,3 +1,19 @@
+2018-02-05  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add DoNotProcessIncomingMessagesWhenWaitingForSyncReply to GetPlugins and RootViewToScreen
+        https://bugs.webkit.org/show_bug.cgi?id=182458
+
+        Reviewed by Chris Dumez.
+
+        Added DoNotProcessIncomingMessagesWhenWaitingForSyncReply to GetPlugins and RootViewToScreen
+        which are found to get sent from WebContent process while ScriptDisallowedScope is present
+        by a work-in-progress patch on webkit.org/b/182449.
+
+        * WebProcess/Plugins/WebPluginInfoProvider.cpp:
+        (WebKit::WebPluginInfoProvider::populatePluginCache):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::rootViewToScreen):
+
 2018-02-05  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r227964 and r228087.
