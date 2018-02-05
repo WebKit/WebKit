@@ -48,8 +48,6 @@ class SocketStreamHandleClient;
 class SocketStreamHandleImpl final : public SocketStreamHandle {
 public:
     static Ref<SocketStreamHandleImpl> create(const URL&, SocketStreamHandleClient&, PAL::SessionID, const String&, SourceApplicationAuditToken&&);
-    static Ref<SocketStreamHandle> create(GSocketConnection*, SocketStreamHandleClient&);
-
     virtual ~SocketStreamHandleImpl();
 
     void platformSend(const char* data, size_t length, Function<void(bool)>&&) final;
@@ -64,16 +62,16 @@ private:
     void beginWaitingForSocketWritability();
     void stopWaitingForSocketWritability();
 
-    static void connectedCallback(GSocketClient*, GAsyncResult*, SocketStreamHandleImpl*);
+    static void connectedCallback(GObject*, GAsyncResult*, SocketStreamHandleImpl*);
     static void readReadyCallback(GInputStream*, GAsyncResult*, SocketStreamHandleImpl*);
     static gboolean writeReadyCallback(GPollableOutputStream*, SocketStreamHandleImpl*);
 
-    void connected(GRefPtr<GSocketConnection>&&);
+    void connected(GRefPtr<GIOStream>&&);
     void readBytes(gssize);
     void didFail(SocketStreamError&&);
     void writeReady();
 
-    GRefPtr<GSocketConnection> m_socketConnection;
+    GRefPtr<GIOStream> m_stream;
     GRefPtr<GInputStream> m_inputStream;
     GRefPtr<GPollableOutputStream> m_outputStream;
     GRefPtr<GSource> m_writeReadySource;

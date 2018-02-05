@@ -653,6 +653,19 @@ class ProxyTest : public WebViewTest {
 public:
     MAKE_GLIB_TEST_FIXTURE(ProxyTest);
 
+#if SOUP_CHECK_VERSION(2, 61, 90)
+    enum class WebSocketServerType {
+        Unknown,
+        NoProxy,
+        Proxy
+    };
+
+    static void webSocketProxyServerCallback(SoupServer*, SoupWebsocketConnection*, const char* path, SoupClientContext*, gpointer userData)
+    {
+        static_cast<ProxyTest*>(userData)->webSocketConnected(ProxyTest::WebSocketServerType::Proxy);
+    }
+#endif
+
     ProxyTest()
     {
         // This "proxy server" is actually just a different instance of the main
@@ -662,6 +675,10 @@ public:
         // work, not whether we can write a soup proxy server.
         m_proxyServer.run(serverCallback);
         g_assert(m_proxyServer.baseURI());
+#if SOUP_CHECK_VERSION(2, 61, 90)
+        m_proxyServer.addWebSocketHandler(webSocketProxyServerCallback, this);
+        g_assert(m_proxyServer.baseWebSocketURI());
+#endif
     }
 
     CString loadURIAndGetMainResourceData(const char* uri)
@@ -679,8 +696,36 @@ public:
         return port;
     }
 
+#if SOUP_CHECK_VERSION(2, 61, 90)
+    void webSocketConnected(WebSocketServerType serverType)
+    {
+        m_webSocketRequestReceived = serverType;
+        quitMainLoop();
+    }
+
+    WebSocketServerType createWebSocketAndWaitUntilConnected()
+    {
+        m_webSocketRequestReceived = WebSocketServerType::Unknown;
+        GUniquePtr<char> createWebSocket(g_strdup_printf("var ws = new WebSocket('%s');", kServer->getWebSocketURIForPath("/foo").data()));
+        webkit_web_view_run_javascript(m_webView, createWebSocket.get(), nullptr, nullptr, nullptr);
+        g_main_loop_run(m_mainLoop);
+        return m_webSocketRequestReceived;
+    }
+#endif
+
     WebKitTestServer m_proxyServer;
+
+#if SOUP_CHECK_VERSION(2, 61, 90)
+    WebSocketServerType m_webSocketRequestReceived { WebSocketServerType::Unknown };
+#endif
 };
+
+#if SOUP_CHECK_VERSION(2, 61, 90)
+static void webSocketServerCallback(SoupServer*, SoupWebsocketConnection*, const char*, SoupClientContext*, gpointer userData)
+{
+    static_cast<ProxyTest*>(userData)->webSocketConnected(ProxyTest::WebSocketServerType::NoProxy);
+}
+#endif
 
 static void ephemeralViewloadChanged(WebKitWebView* webView, WebKitLoadEvent loadEvent, WebViewTest* test)
 {
@@ -697,6 +742,13 @@ static void testWebContextProxySettings(ProxyTest* test, gconstpointer)
     auto mainResourceData = test->loadURIAndGetMainResourceData(kServer->getURIForPath("/echoPort").data());
     ASSERT_CMP_CSTRING(mainResourceData, ==, serverPortAsString.get());
 
+#if SOUP_CHECK_VERSION(2, 61, 90)
+    // WebSocket requests should also be received by kServer.
+    kServer->addWebSocketHandler(webSocketServerCallback, test);
+    auto serverType = test->createWebSocketAndWaitUntilConnected();
+    g_assert(serverType == ProxyTest::WebSocketServerType::NoProxy);
+#endif
+
     // Set default proxy URI to point to proxyServer. Requests to kServer should be received by proxyServer instead.
     GUniquePtr<char> proxyURI(soup_uri_to_string(test->m_proxyServer.baseURI(), FALSE));
     WebKitNetworkProxySettings* settings = webkit_network_proxy_settings_new(proxyURI.get(), nullptr);
@@ -705,6 +757,12 @@ static void testWebContextProxySettings(ProxyTest* test, gconstpointer)
     mainResourceData = test->loadURIAndGetMainResourceData(kServer->getURIForPath("/echoPort").data());
     ASSERT_CMP_CSTRING(mainResourceData, ==, proxyServerPortAsString.get());
     webkit_network_proxy_settings_free(settings);
+
+#if SOUP_CHECK_VERSION(2, 61, 90)
+    // WebSocket requests should also be received by proxyServer.
+    serverType = test->createWebSocketAndWaitUntilConnected();
+    g_assert(serverType == ProxyTest::WebSocketServerType::Proxy);
+#endif
 
     // Proxy settings also affect ephemeral web views.
     auto webView = Test::adoptView(g_object_new(WEBKIT_TYPE_WEB_VIEW,
@@ -766,6 +824,10 @@ static void testWebContextProxySettings(ProxyTest* test, gconstpointer)
     webkit_web_context_set_network_proxy_settings(test->m_webContext.get(), WEBKIT_NETWORK_PROXY_MODE_DEFAULT, nullptr);
     mainResourceData = test->loadURIAndGetMainResourceData(kServer->getURIForPath("/echoPort").data());
     ASSERT_CMP_CSTRING(mainResourceData, ==, serverPortAsString.get());
+
+#if SOUP_CHECK_VERSION(2, 61, 90)
+    kServer->removeWebSocketHandler();
+#endif
 }
 
 void beforeAll()

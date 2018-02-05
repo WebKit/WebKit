@@ -1,5 +1,31 @@
 2018-02-05  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [SOUP] WebSockets must use system proxy settings
+        https://bugs.webkit.org/show_bug.cgi?id=126384
+
+        Reviewed by Michael Catanzaro.
+
+        Check also WebSockets in /webkit2/WebKitWebContext/proxy.
+
+        * TestWebKitAPI/Tests/WebKitGLib/TestWebKitWebContext.cpp:
+        (ProxyTest::webSocketProxyServerCallback):
+        (ProxyTest::ProxyTest):
+        (ProxyTest::webSocketConnected):
+        (ProxyTest::createWebSocketAndWaitUntilConnected):
+        (webSocketServerCallback):
+        (testWebContextProxySettings):
+        * TestWebKitAPI/glib/WebKitGLib/WebKitTestServer.cpp:
+        (WebKitTestServer::~WebKitTestServer):
+        (WebKitTestServer::addWebSocketHandler):
+        (WebKitTestServer::removeWebSocketHandler):
+        (WebKitTestServer::getWebSocketURIForPath const):
+        (WebKitTestServer::getURIForPath const):
+        * TestWebKitAPI/glib/WebKitGLib/WebKitTestServer.h:
+        (WebKitTestServer::baseURI const):
+        (WebKitTestServer::baseWebSocketURI const):
+
+2018-02-05  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Add a way to check if a host is an IP address
         https://bugs.webkit.org/show_bug.cgi?id=182427
 

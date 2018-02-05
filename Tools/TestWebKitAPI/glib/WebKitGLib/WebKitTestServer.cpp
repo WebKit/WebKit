@@ -53,6 +53,10 @@ WebKitTestServer::WebKitTestServer(ServerOptions options)
 WebKitTestServer::~WebKitTestServer()
 {
     soup_uri_free(m_baseURI);
+#if SOUP_CHECK_VERSION(2, 50, 0)
+    if (m_baseWebSocketURI)
+        soup_uri_free(m_baseWebSocketURI);
+#endif
 }
 
 void WebKitTestServer::run(SoupServerCallback serverCallback)
@@ -68,11 +72,48 @@ void WebKitTestServer::run(SoupServerCallback serverCallback)
     }
 }
 
-CString WebKitTestServer::getURIForPath(const char* path)
+#if SOUP_CHECK_VERSION(2, 50, 0)
+void WebKitTestServer::addWebSocketHandler(SoupServerWebsocketCallback callback, gpointer userData)
+{
+    m_baseWebSocketURI = soup_uri_new_with_base(m_baseURI, "/websocket/");
+    m_baseWebSocketURI->scheme = m_baseWebSocketURI->scheme == SOUP_URI_SCHEME_HTTP ? SOUP_URI_SCHEME_WS : SOUP_URI_SCHEME_WSS;
+
+    if (m_queue) {
+        m_queue->dispatch([this, callback, userData] {
+            soup_server_add_websocket_handler(m_soupServer.get(), "/websocket", nullptr, nullptr, callback, userData, nullptr);
+        });
+    } else
+        soup_server_add_websocket_handler(m_soupServer.get(), "/websocket", nullptr, nullptr, callback, userData, nullptr);
+}
+
+void WebKitTestServer::removeWebSocketHandler()
+{
+    soup_uri_free(m_baseWebSocketURI);
+    m_baseWebSocketURI = nullptr;
+
+    if (m_queue) {
+        m_queue->dispatch([this] {
+            soup_server_remove_handler(m_soupServer.get(), "/websocket");
+        });
+    } else
+        soup_server_remove_handler(m_soupServer.get(), "/websocket");
+}
+
+CString WebKitTestServer::getWebSocketURIForPath(const char* path) const
+{
+    g_assert(m_baseWebSocketURI);
+    g_assert(path && *path == '/');
+    SoupURI* uri = soup_uri_new_with_base(m_baseWebSocketURI, path + 1); // Ignore the leading slash.
+    GUniquePtr<gchar> uriString(soup_uri_to_string(uri, FALSE));
+    soup_uri_free(uri);
+    return uriString.get();
+}
+#endif // SOUP_CHECK_VERSION(2, 50, 0)
+
+CString WebKitTestServer::getURIForPath(const char* path) const
 {
     SoupURI* uri = soup_uri_new_with_base(m_baseURI, path);
     GUniquePtr<gchar> uriString(soup_uri_to_string(uri, FALSE));
     soup_uri_free(uri);
     return uriString.get();
 }
-

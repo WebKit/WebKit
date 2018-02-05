@@ -36,13 +36,22 @@ public:
     WebKitTestServer(ServerOptions = ServerHTTP);
     virtual ~WebKitTestServer();
 
-    SoupURI* baseURI() { return m_baseURI; }
-
-    CString getURIForPath(const char* path);
+    SoupURI* baseURI() const { return m_baseURI; }
+    CString getURIForPath(const char* path) const;
     void run(SoupServerCallback);
+
+#if SOUP_CHECK_VERSION(2, 50, 0)
+    void addWebSocketHandler(SoupServerWebsocketCallback, gpointer userData);
+    void removeWebSocketHandler();
+    SoupURI* baseWebSocketURI() const { return m_baseWebSocketURI; }
+    CString getWebSocketURIForPath(const char* path) const;
+#endif
 
 private:
     GRefPtr<SoupServer> m_soupServer;
-    SoupURI* m_baseURI;
+    SoupURI* m_baseURI { nullptr };
+#if SOUP_CHECK_VERSION(2, 50, 0)
+    SoupURI* m_baseWebSocketURI { nullptr };
+#endif
     RefPtr<WorkQueue> m_queue;
 };

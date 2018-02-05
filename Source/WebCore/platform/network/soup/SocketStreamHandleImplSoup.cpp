@@ -55,6 +55,15 @@ static gboolean wssConnectionAcceptCertificateCallback(GTlsConnection*, GTlsCert
     return TRUE;
 }
 
+#if SOUP_CHECK_VERSION(2, 61, 90)
+static void wssSocketClientEventCallback(SoupSession*, GSocketClientEvent event, GIOStream* connection)
+{
+    if (event != G_SOCKET_CLIENT_TLS_HANDSHAKING)
+        return;
+
+    g_signal_connect(connection, "accept-certificate", G_CALLBACK(wssConnectionAcceptCertificateCallback), nullptr);
+}
+#else
 static void wssSocketClientEventCallback(GSocketClient*, GSocketClientEvent event, GSocketConnectable*, GIOStream* connection)
 {
     if (event != G_SOCKET_CLIENT_TLS_HANDSHAKING)
@@ -62,32 +71,40 @@ static void wssSocketClientEventCallback(GSocketClient*, GSocketClientEvent even
 
     g_signal_connect(connection, "accept-certificate", G_CALLBACK(wssConnectionAcceptCertificateCallback), nullptr);
 }
+#endif
 
-Ref<SocketStreamHandleImpl> SocketStreamHandleImpl::create(const URL& url, SocketStreamHandleClient& client, PAL::SessionID, const String&, SourceApplicationAuditToken&&)
+Ref<SocketStreamHandleImpl> SocketStreamHandleImpl::create(const URL& url, SocketStreamHandleClient& client, PAL::SessionID sessionID, const String&, SourceApplicationAuditToken&&)
 {
     Ref<SocketStreamHandleImpl> socket = adoptRef(*new SocketStreamHandleImpl(url, client));
 
+    // FIXME: Using DeprecatedGlobalSettings from here is a layering violation.
+    bool allowsAnySSLCertificate = url.protocolIs("wss") && DeprecatedGlobalSettings::allowsAnySSLCertificate();
+
+#if SOUP_CHECK_VERSION(2, 61, 90)
+    auto* networkStorageSession = NetworkStorageSession::storageSession(sessionID);
+    if (!networkStorageSession)
+        return socket;
+
+    auto uri = url.createSoupURI();
+    Ref<SocketStreamHandle> protectedSocketStreamHandle = socket.copyRef();
+    soup_session_connect_async(networkStorageSession->getOrCreateSoupNetworkSession().soupSession(), uri.get(), socket->m_cancellable.get(),
+        allowsAnySSLCertificate ? reinterpret_cast<SoupSessionConnectProgressCallback>(wssSocketClientEventCallback) : nullptr,
+        reinterpret_cast<GAsyncReadyCallback>(connectedCallback), &protectedSocketStreamHandle.leakRef());
+#else
+    UNUSED_PARAM(sessionID);
     unsigned port = url.port() ? url.port().value() : (url.protocolIs("wss") ? 443 : 80);
     GRefPtr<GSocketClient> socketClient = adoptGRef(g_socket_client_new());
     if (url.protocolIs("wss")) {
         g_socket_client_set_tls(socketClient.get(), TRUE);
-        // FIXME: Using DeprecatedGlobalSettings from here is a layering violation.
-        if (DeprecatedGlobalSettings::allowsAnySSLCertificate())
+        if (allowsAnySSLCertificate)
             g_signal_connect(socketClient.get(), "event", G_CALLBACK(wssSocketClientEventCallback), nullptr);
     }
     Ref<SocketStreamHandle> protectedSocketStreamHandle = socket.copyRef();
     g_socket_client_connect_to_host_async(socketClient.get(), url.host().utf8().data(), port, socket->m_cancellable.get(),
         reinterpret_cast<GAsyncReadyCallback>(connectedCallback), &protectedSocketStreamHandle.leakRef());
+#endif
+
     return socket;
-}
-
-Ref<SocketStreamHandle> SocketStreamHandleImpl::create(GSocketConnection* socketConnection, SocketStreamHandleClient& client)
-{
-    Ref<SocketStreamHandleImpl> socket = adoptRef(*new SocketStreamHandleImpl(URL(), client));
-
-    GRefPtr<GSocketConnection> connection = socketConnection;
-    socket->connected(WTFMove(connection));
-    return WTFMove(socket);
 }
 
 SocketStreamHandleImpl::SocketStreamHandleImpl(const URL& url, SocketStreamHandleClient& client)
@@ -102,11 +119,11 @@ SocketStreamHandleImpl::~SocketStreamHandleImpl()
     LOG(Network, "SocketStreamHandle %p delete", this);
 }
 
-void SocketStreamHandleImpl::connected(GRefPtr<GSocketConnection>&& socketConnection)
+void SocketStreamHandleImpl::connected(GRefPtr<GIOStream>&& stream)
 {
-    m_socketConnection = WTFMove(socketConnection);
-    m_outputStream = G_POLLABLE_OUTPUT_STREAM(g_io_stream_get_output_stream(G_IO_STREAM(m_socketConnection.get())));
-    m_inputStream = g_io_stream_get_input_stream(G_IO_STREAM(m_socketConnection.get()));
+    m_stream = WTFMove(stream);
+    m_outputStream = G_POLLABLE_OUTPUT_STREAM(g_io_stream_get_output_stream(m_stream.get()));
+    m_inputStream = g_io_stream_get_input_stream(m_stream.get());
     m_readBuffer = std::make_unique<char[]>(READ_BUFFER_SIZE);
 
     RefPtr<SocketStreamHandleImpl> protectedThis(this);
@@ -117,25 +134,29 @@ void SocketStreamHandleImpl::connected(GRefPtr<GSocketConnection>&& socketConnec
     m_client.didOpenSocketStream(*this);
 }
 
-void SocketStreamHandleImpl::connectedCallback(GSocketClient* client, GAsyncResult* result, SocketStreamHandleImpl* handle)
+void SocketStreamHandleImpl::connectedCallback(GObject* object, GAsyncResult* result, SocketStreamHandleImpl* handle)
 {
     RefPtr<SocketStreamHandle> protectedThis = adoptRef(handle);
 
     // Always finish the connection, even if this SocketStreamHandle was cancelled earlier.
     GUniqueOutPtr<GError> error;
-    GRefPtr<GSocketConnection> socketConnection = adoptGRef(g_socket_client_connect_to_host_finish(client, result, &error.outPtr()));
+#if SOUP_CHECK_VERSION(2, 61, 90)
+    GRefPtr<GIOStream> stream = adoptGRef(soup_session_connect_finish(SOUP_SESSION(object), result, &error.outPtr()));
+#else
+    GRefPtr<GIOStream> stream = adoptGRef(G_IO_STREAM(g_socket_client_connect_to_host_finish(G_SOCKET_CLIENT(object), result, &error.outPtr())));
+#endif
 
     // The SocketStreamHandle has been cancelled, so just close the connection, ignoring errors.
     if (g_cancellable_is_cancelled(handle->m_cancellable.get())) {
-        if (socketConnection)
-            g_io_stream_close(G_IO_STREAM(socketConnection.get()), nullptr, nullptr);
+        if (stream)
+            g_io_stream_close(stream.get(), nullptr, nullptr);
         return;
     }
 
     if (error)
-        handle->didFail(SocketStreamError(error->code, String(), error->message));
+        handle->didFail(SocketStreamError(error->code, { }, error->message));
     else
-        handle->connected(WTFMove(socketConnection));
+        handle->connected(WTFMove(stream));
 }
 
 void SocketStreamHandleImpl::readBytes(gssize bytesRead)
@@ -225,12 +246,12 @@ void SocketStreamHandleImpl::platformClose()
     g_cancellable_cancel(m_cancellable.get());
     stopWaitingForSocketWritability();
 
-    if (m_socketConnection) {
+    if (m_stream) {
         GUniqueOutPtr<GError> error;
-        g_io_stream_close(G_IO_STREAM(m_socketConnection.get()), nullptr, &error.outPtr());
+        g_io_stream_close(m_stream.get(), nullptr, &error.outPtr());
         if (error)
-            didFail(SocketStreamError(error->code, String(), error->message));
-        m_socketConnection = nullptr;
+            didFail(SocketStreamError(error->code, { }, error->message));
+        m_stream = nullptr;
     }
 
     m_outputStream = nullptr;

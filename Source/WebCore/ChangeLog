@@ -1,5 +1,23 @@
 2018-02-05  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [SOUP] WebSockets must use system proxy settings
+        https://bugs.webkit.org/show_bug.cgi?id=126384
+
+        Reviewed by Michael Catanzaro.
+
+        Use soup_session_connect_async() when available to create the WebSockets connection instead of GSocketClient
+        directly.
+
+        * platform/network/soup/SocketStreamHandleImpl.h:
+        * platform/network/soup/SocketStreamHandleImplSoup.cpp:
+        (WebCore::wssSocketClientEventCallback):
+        (WebCore::SocketStreamHandleImpl::create):
+        (WebCore::SocketStreamHandleImpl::connected):
+        (WebCore::SocketStreamHandleImpl::connectedCallback):
+        (WebCore::SocketStreamHandleImpl::platformClose):
+
+2018-02-05  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Add a way to check if a host is an IP address
         https://bugs.webkit.org/show_bug.cgi?id=182427
 
