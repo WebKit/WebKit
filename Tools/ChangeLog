@@ -1,5 +1,53 @@
 2018-02-05  Daniel Bates  <dabates@apple.com>
 
+        REGRESSION (r217572): run-webkit-tests exits without emitting newline character
+        https://bugs.webkit.org/show_bug.cgi?id=182360
+
+        Rubber-stamped by Aakash Jain.
+
+        Fixes an annoyance where run-webkit-tests always exits without printing a newline character.
+        In the terminal this looks like:
+
+            $ Tools/Scripts/run-webkit-tests
+            Expected to fail, but passed: (7)
+            ...
+            Stopping WebSocket server ...$
+
+        This bug was caused by code added in r217572 to stop all run-webkit-tests started servers (e.g. an HTTP
+        server) from an at-exit handler. When run-webkit-tests runs successfully (i.e. without error or
+        control-C interruption) we would stop all such servers twice: once as part of ending the test
+        run and once from the at-exit handler. The latter never prints a trailing newline character hence
+        the state of the terminal (as depicted above). Instead LayoutTestRunner.stop_servers() should only
+        stop servers that it started in LayoutTestRunner.start_servers().
+
+        * Scripts/webkitpy/layout_tests/controllers/layout_test_runner.py:
+        (LayoutTestRunner.__init__):
+        (LayoutTestRunner.start_servers):
+        (LayoutTestRunner.stop_servers):
+        Only start servers that run-webkit-tests has not already started and only stop servers that
+        run-webkit-tests started.
+
+        * Scripts/webkitpy/layout_tests/controllers/layout_test_runner_unittest.py:
+        (LayoutTestRunnerTests.test_servers_started.is_websocket_server_running):
+        (LayoutTestRunnerTests.test_servers_started):
+        (LayoutTestRunnerTests.test_servers_started.is_websocket_servers_running): Deleted.
+        Update due to rename below.
+
+        * Scripts/webkitpy/layout_tests/servers/websocket_server.py:
+        (is_web_socket_server_running): Added.
+        (PyWebSocket.is_running): Deleted.
+
+        * Scripts/webkitpy/port/base.py:
+        (Port.is_http_server_running): Check if we already started the server ourself.
+        (Port.is_websocket_server_running): Formerly named is_websocket_servers_running. Modified
+        to check if we already started the server ourself. Take a similar approach as the other
+        Port.is_*_running methods and only check if an existing WebSocket server is running on the
+        non-secure server port. This is a simple heuristic and should be sufficient in practice.
+        (Port.is_wpt_server_running): Check if we already started the server ourself.
+        (Port.is_websocket_servers_running): Deleted; renamed to is_websocket_server_running().
+
+2018-02-05  Daniel Bates  <dabates@apple.com>
+
         prepare-ChangeLog gets confused about Python docstrings that contain the word "class" or "def"
         https://bugs.webkit.org/show_bug.cgi?id=182405
 

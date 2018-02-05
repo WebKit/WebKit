@@ -29,15 +29,12 @@
 
 """A class to help start/stop the PyWebSocket server used by layout tests."""
 
-import errno
 import logging
 import os
-import socket
 import sys
 import time
 
-from webkitpy.layout_tests.servers import http_server
-from webkitpy.layout_tests.servers import http_server_base
+from webkitpy.layout_tests.servers import http_server, http_server_base
 
 _log = logging.getLogger(__name__)
 
@@ -107,18 +104,6 @@ class PyWebSocket(http_server.Lighttpd):
             self._log_prefix = _WSS_LOG_NAME
         else:
             self._log_prefix = _WS_LOG_NAME
-
-    def is_running(self):
-        s = socket.socket()
-        try:
-            s.connect(('localhost', self._port))
-        except IOError as e:
-            if e.errno not in (errno.ECONNREFUSED, errno.ECONNRESET):
-                raise
-            return False
-        finally:
-            s.close()
-        return True
 
     def ports_to_forward(self):
         return [self._port]
@@ -190,3 +175,7 @@ class PyWebSocket(http_server.Lighttpd):
         if self._wsout:
             self._wsout.close()
             self._wsout = None
+
+
+def is_web_socket_server_running():
+    return http_server_base.HttpServerBase._is_running_on_port(PyWebSocket.DEFAULT_WS_PORT)
