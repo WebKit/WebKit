@@ -1,3 +1,35 @@
+2018-02-05  Antoine Quint  <graouts@apple.com>
+
+        [Modern Media Controls] Turn media/modern-media-controls tests back on by default
+        https://bugs.webkit.org/show_bug.cgi?id=182482
+
+        Reviewed by Eric Carlson.
+
+        After updating a significant amount of tests under media/modern-media-controls over the last week, we can stop skipping
+        tests in this directory by default, and instead skip tests that do not apply on a per-platform basis. This patch does that
+        along with fixing a few remaining tests and adding some more for the new behavior of display 3, 4, 5 or 6 digits for time
+        labels depending on the overall video duration.
+
+        * TestExpectations:
+        * http/tests/media/modern-media-controls/macos-fullscreen-media-controls/macos-fullscreen-media-controls-live-broadcast-expected.txt:
+        * http/tests/media/modern-media-controls/macos-fullscreen-media-controls/macos-fullscreen-media-controls-live-broadcast.html:
+        * http/tests/media/modern-media-controls/skip-back-support/skip-back-support-button-click-expected.txt:
+        * http/tests/media/modern-media-controls/skip-back-support/skip-back-support-button-click.html:
+        * http/tests/media/modern-media-controls/status-support/status-support-loading-expected.txt:
+        * http/tests/media/modern-media-controls/status-support/status-support-loading.html:
+        * http/tests/media/modern-media-controls/time-control/1-to-10-hours-expected.txt: Added.
+        * http/tests/media/modern-media-controls/time-control/1-to-10-hours.html: Added.
+        * http/tests/media/modern-media-controls/time-control/10-hours-or-more-expected.txt: Added.
+        * http/tests/media/modern-media-controls/time-control/10-hours-or-more.html: Added.
+        * http/tests/media/modern-media-controls/time-control/10-minutes-to-1-hour-expected.txt: Added.
+        * http/tests/media/modern-media-controls/time-control/10-minutes-to-1-hour.html: Added.
+        * http/tests/media/modern-media-controls/time-control/less-than-10-minutes-expected.txt: Renamed from LayoutTests/http/tests/media/modern-media-controls/time-labels-support/long-time-expected.txt.
+        * http/tests/media/modern-media-controls/time-control/less-than-10-minutes.html: Renamed from LayoutTests/http/tests/media/modern-media-controls/time-labels-support/long-time.html.
+        * media/modern-media-controls/scrubber-support/scrubber-support-drag.html: Make this test more reliable by going a little further
+        left of the slider's left-most point to ensure we always get a 0-value.
+        * platform/ios/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2018-02-05  Antti Koivisto  <antti@apple.com>
 
         Crash on sfgate.com because mismatching link preload types

@@ -7,7 +7,7 @@ PASS media.duration became Number.POSITIVE_INFINITY
 PASS mediaController.controls.rewindButton.enabled is false
 PASS mediaController.controls.forwardButton.enabled is false
 PASS mediaController.controls.timeControl.parent is null
-PASS mediaController.controls.statusLabel.parent is mediaController.controls.controlsBar
+PASS mediaController.controls.statusLabel.parent is mediaController.controls.bottomControlsBar
 
 PASS successfullyParsed is true
 

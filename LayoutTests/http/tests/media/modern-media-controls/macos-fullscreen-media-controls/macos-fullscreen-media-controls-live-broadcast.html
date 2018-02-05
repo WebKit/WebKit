@@ -2,7 +2,7 @@
 <script src="/media-resources/modern-media-controls/resources/media-controls-loader.js"></script>
 <script src="/media-resources/modern-media-controls/resources/media-controls-utils.js"></script>
 <body>
-<video src="../../resources/hls/test-live.php" style="width: 800px;" autoplay></video>
+<video src="../../resources/hls/test-live.php" style="width: 400px; height: 300px;" autoplay></video>
 <div id="shadow"></div>
 <script type="text/javascript">
 
@@ -22,7 +22,7 @@ media.addEventListener("webkitfullscreenchange", () => {
         shouldBeFalse("mediaController.controls.rewindButton.enabled");
         shouldBeFalse("mediaController.controls.forwardButton.enabled");
         shouldBe("mediaController.controls.timeControl.parent", "null");
-        shouldBe("mediaController.controls.statusLabel.parent", "mediaController.controls.controlsBar");
+        shouldBe("mediaController.controls.statusLabel.parent", "mediaController.controls.bottomControlsBar");
 
         debug("");
         media.remove();
@@ -35,6 +35,7 @@ media.addEventListener("play", () => {
     media.pause();
 
     const button = document.body.appendChild(document.createElement("button"));
+    button.textContent = "Enter fullscreen";
     button.addEventListener("click", event => media.webkitEnterFullscreen());
     pressOnElement(button);
     button.remove();

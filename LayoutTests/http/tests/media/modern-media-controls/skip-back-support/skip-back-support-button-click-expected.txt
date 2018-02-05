@@ -3,10 +3,10 @@ Testing the SkipBackSupport behavior by clicking on the mute button.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-Media seeked to currentTime = 50
+Media seeked to currentTime = 25
 
 Dispatching click event to the skip back button
-Media seeked to currentTime = 20
+Media seeked to currentTime = 10
 
 Dispatching click event to the skip back button
 Media seeked to currentTime = 0

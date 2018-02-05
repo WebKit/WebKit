@@ -38,7 +38,7 @@ scheduler.frameDidFire = function() {
     media.pause();
 
     const dragStartX = bounds.left + bounds.width / 2;
-    const dragEndX = bounds.left;
+    const dragEndX = bounds.left - 1;
     const centerY = bounds.top + bounds.height / 2;
 
     media.addEventListener("timeupdate", () => {

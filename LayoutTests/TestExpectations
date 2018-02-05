@@ -1593,10 +1593,6 @@ webkit.org/b/5991 imported/w3c/web-platform-tests/cssom-view/scrollingElement.ht
 # FileAPI
 webkit.org/b/172099 imported/w3c/web-platform-tests/FileAPI/url/url_xmlhttprequest_img.html [ ImageOnlyFailure ]
 
-# All modern-media-controls tests are disabled for the time being.
-http/tests/media/modern-media-controls [ Skip ]
-media/modern-media-controls [ Skip ]
-
 # Secure Contexts tests that timeout
 imported/w3c/web-platform-tests/secure-contexts/basic-dedicated-worker.html [ Skip ]
 imported/w3c/web-platform-tests/secure-contexts/basic-dedicated-worker.https.html [ Skip ]
