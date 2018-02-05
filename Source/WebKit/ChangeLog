@@ -1,5 +1,22 @@
 2018-02-04  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r228041. rdar://problem/37220123
+
+    2018-02-02  Youenn Fablet  <youenn@apple.com>
+
+            CacheStorage should check for origin file presence when computing the origin of a folder
+            https://bugs.webkit.org/show_bug.cgi?id=182454
+
+            Reviewed by Chris Dumez.
+
+            In case caches is opened for an origin but no cache is added, we do not have a caches name file but we do have an origin filename.
+            We should be checking the origin filename anyway since we will be reading it afterwards.
+
+            * NetworkProcess/cache/CacheStorageEngineCaches.cpp:
+            (WebKit::CacheStorage::Caches::retrieveOriginFromDirectory):
+
+2018-02-04  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r228033. rdar://problem/37220144
 
     2018-02-02  Youenn Fablet  <youenn@apple.com>

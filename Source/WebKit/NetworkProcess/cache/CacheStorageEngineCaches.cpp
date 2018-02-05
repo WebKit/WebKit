@@ -57,15 +57,15 @@ Caches::~Caches()
 
 void Caches::retrieveOriginFromDirectory(const String& folderPath, WorkQueue& queue, WTF::CompletionHandler<void(std::optional<WebCore::ClientOrigin>&&)>&& completionHandler)
 {
-    queue.dispatch([completionHandler = WTFMove(completionHandler), folderPath = folderPath.isolatedCopy()]() mutable {
-        if (!WebCore::FileSystem::fileExists(cachesListFilename(folderPath))) {
+    queue.dispatch([completionHandler = WTFMove(completionHandler), filename = cachesOriginFilename(folderPath)]() mutable {
+        if (!WebCore::FileSystem::fileExists(filename)) {
             RunLoop::main().dispatch([completionHandler = WTFMove(completionHandler)]() mutable {
                 completionHandler(std::nullopt);
             });
             return;
         }
 
-        auto channel = IOChannel::open(cachesOriginFilename(folderPath), IOChannel::Type::Read);
+        auto channel = IOChannel::open(filename, IOChannel::Type::Read);
         channel->read(0, std::numeric_limits<size_t>::max(), nullptr, [completionHandler = WTFMove(completionHandler)](const Data& data, int error) mutable {
             ASSERT(RunLoop::isMain());
             if (error) {
