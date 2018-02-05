@@ -1,3 +1,37 @@
+2018-02-05  John Wilander  <wilander@apple.com>
+
+        Storage Access API: Add testRunner.getAllStorageAccessEntries() to make testing easier and more explicit
+        https://bugs.webkit.org/show_bug.cgi?id=181601
+        <rdar://problem/36475837>
+
+        Reviewed by Alex Christensen.
+
+        http/tests/storageAccess/request-and-grant-access-then-detach-should-not-have-access.html
+        was found to be flaky. With the testRunner.hasStorageAccessEntry() getter
+        it's possible to check access even if a frame doesn't respond timely to
+        postMessage after detach and attach.
+
+        * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl:
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp:
+        (WTR::InjectedBundle::didReceiveMessageToPage):
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::setStorageAccessAPIEnabled):
+            Just moved for source file grouping.
+        (WTR::TestRunner::getAllStorageAccessEntries):
+        (WTR::TestRunner::callDidReceiveAllStorageAccessEntriesCallback):
+        * WebKitTestRunner/InjectedBundle/TestRunner.h:
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::getAllStorageAccessEntries):
+            Note that this is just stubbed out, i.e. not implemented.
+        * WebKitTestRunner/TestController.h:
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR::TestInvocation::didReceiveSynchronousMessageFromInjectedBundle):
+        (WTR::TestInvocation::didReceiveAllStorageAccessEntries):
+        * WebKitTestRunner/TestInvocation.h:
+        * WebKitTestRunner/cocoa/TestControllerCocoa.mm:
+        (WTR::TestController::getAllStorageAccessEntries):
+            This is the Cocoa-specific version of this test infrastructure.
+
 2018-02-05  Basuke Suzuki  <Basuke.Suzuki@sony.com>
 
         [Win] Enable multi CPU building on MSBuild.

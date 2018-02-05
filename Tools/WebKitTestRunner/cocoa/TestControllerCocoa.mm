@@ -459,6 +459,18 @@ void TestController::statisticsResetToConsistentState()
 {
     [globalWebViewConfiguration.websiteDataStore _resourceLoadStatisticsResetToConsistentState];
 }
+
+void TestController::getAllStorageAccessEntries()
+{
+    [globalWebViewConfiguration.websiteDataStore _getAllStorageAccessEntries:^(NSArray<NSString *> *nsDomains) {
+        Vector<String> domains;
+        domains.reserveInitialCapacity(nsDomains.count);
+        for (NSString *domain : nsDomains)
+            domains.uncheckedAppend(domain);
+        m_currentInvocation->didReceiveAllStorageAccessEntries(domains);
+    }];
+}
+
 #endif // WK_API_ENABLED
 
 } // namespace WTR

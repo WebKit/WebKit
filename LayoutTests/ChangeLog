@@ -1,3 +1,23 @@
+2018-02-05  John Wilander  <wilander@apple.com>
+
+        Storage Access API: Add testRunner.getAllStorageAccessEntries() to make testing easier and more explicit
+        https://bugs.webkit.org/show_bug.cgi?id=181601
+        <rdar://problem/36475837>
+
+        Reviewed by Alex Christensen.
+
+        http/tests/storageAccess/request-and-grant-access-then-detach-should-not-have-access.html
+        was found to be flaky. With the testRunner.hasStorageAccessEntry() getter
+        it's possible to check access even if a frame doesn't respond timely to
+        postMessage after detach and attach.
+
+        * http/tests/storageAccess/request-and-grant-access-then-detach-should-not-have-access-expected.txt:
+        * http/tests/storageAccess/request-and-grant-access-then-detach-should-not-have-access.html:
+        * platform/mac-wk2/TestExpectations:
+            http/tests/storageAccess/request-and-grant-access-then-navigate-should-not-have-access.html
+            no longer marked as flaky. Note that the wrong test was marked flaky. It should have been
+            http/tests/storageAccess/request-and-grant-access-then-detach-should-not-have-access.html.
+
 2018-02-05  Matt Lewis  <jlewis3@apple.com>
 
         Skipped imported/w3c/web-platform-tests/2dcontext/imagebitmap/createImageBitmap-origin.sub.html

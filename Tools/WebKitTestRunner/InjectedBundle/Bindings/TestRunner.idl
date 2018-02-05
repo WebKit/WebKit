@@ -176,7 +176,6 @@ interface TestRunner {
     // Cookies testing
     void setAlwaysAcceptCookies(boolean accept);
     void setCookieStoragePartitioningEnabled(boolean enabled);
-    void setStorageAccessAPIEnabled(boolean enabled);
 
     void overridePreference(DOMString preference, DOMString value);
 
@@ -297,6 +296,10 @@ interface TestRunner {
     void statisticsClearInMemoryAndPersistentStoreModifiedSinceHours(unsigned long hours, object callback);
     void statisticsClearThroughWebsiteDataRemoval(object callback);
     void statisticsResetToConsistentState();
+
+    // Storage Access API
+    void setStorageAccessAPIEnabled(boolean enabled);
+    void getAllStorageAccessEntries(object callback);
 
     // Open panel
     void setOpenPanelFiles(object filesArray);

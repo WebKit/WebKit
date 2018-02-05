@@ -433,6 +433,20 @@ void NetworkProcessProxy::storageAccessRequestResult(bool wasGranted, uint64_t c
     auto callback = m_storageAccessResponseCallbackMap.take(contextId);
     callback(wasGranted);
 }
+
+void NetworkProcessProxy::getAllStorageAccessEntries(PAL::SessionID sessionID, CompletionHandler<void(Vector<String>&& domains)>&& callback)
+{
+    auto contextId = nextRequestStorageAccessContextId();
+    auto addResult = m_allStorageAccessEntriesCallbackMap.add(contextId, WTFMove(callback));
+    ASSERT_UNUSED(addResult, addResult.isNewEntry);
+    send(Messages::NetworkProcess::GetAllStorageAccessEntries(sessionID, contextId), 0);
+}
+
+void NetworkProcessProxy::allStorageAccessEntriesResult(Vector<String>&& domains, uint64_t contextId)
+{
+    auto callback = m_allStorageAccessEntriesCallbackMap.take(contextId);
+    callback(WTFMove(domains));
+}
 #endif
 
 void NetworkProcessProxy::sendProcessWillSuspendImminently()

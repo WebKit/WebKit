@@ -80,6 +80,7 @@ public:
 
 #if HAVE(CFNETWORK_STORAGE_PARTITIONING)
     void hasStorageAccessForFrame(PAL::SessionID, const String& resourceDomain, const String& firstPartyDomain, uint64_t frameID, uint64_t pageID, CompletionHandler<void(bool)>&& callback);
+    void getAllStorageAccessEntries(PAL::SessionID, CompletionHandler<void(Vector<String>&& domains)>&&);
     void grantStorageAccessForFrame(PAL::SessionID, const String& resourceDomain, const String& firstPartyDomain, uint64_t frameID, uint64_t pageID, CompletionHandler<void(bool)>&& callback);
 #endif
 
@@ -134,6 +135,7 @@ private:
 #endif
 #if HAVE(CFNETWORK_STORAGE_PARTITIONING)
     void storageAccessRequestResult(bool wasGranted, uint64_t contextId);
+    void allStorageAccessEntriesResult(Vector<String>&& domains, uint64_t contextId);
 #endif
 
     // ProcessLauncher::Client
@@ -157,6 +159,7 @@ private:
 
     HashMap<uint64_t, CompletionHandler<void(bool success)>> m_writeBlobToFilePathCallbackMap;
     HashMap<uint64_t, WTF::CompletionHandler<void(bool wasGranted)>> m_storageAccessResponseCallbackMap;
+    HashMap<uint64_t, CompletionHandler<void(Vector<String>&& domains)>> m_allStorageAccessEntriesCallbackMap;
 };
 
 } // namespace WebKit

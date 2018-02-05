@@ -1202,6 +1202,12 @@ void WebsiteDataStore::hasStorageAccessForFrameHandler(const String& resourceDom
         processPool->networkProcess()->hasStorageAccessForFrame(m_sessionID, resourceDomain, firstPartyDomain, frameID, pageID, WTFMove(callback));
 }
 
+void WebsiteDataStore::getAllStorageAccessEntries(CompletionHandler<void(Vector<String>&& domains)>&& callback)
+{
+    for (auto& processPool : processPools())
+        processPool->networkProcess()->getAllStorageAccessEntries(m_sessionID, WTFMove(callback));
+}
+
 void WebsiteDataStore::grantStorageAccessForFrameHandler(const String& resourceDomain, const String& firstPartyDomain, uint64_t frameID, uint64_t pageID, WTF::CompletionHandler<void(bool wasGranted)>&& callback)
 {
     for (auto& processPool : processPools())

@@ -2698,6 +2698,11 @@ void TestController::statisticsResetToConsistentState()
     WKWebsiteDataStoreStatisticsResetToConsistentState(dataStore);
 }
 
+void TestController::getAllStorageAccessEntries()
+{
+    // FIXME: Implement C API version of this test.
+}
+
 #endif
 
 } // namespace WTR

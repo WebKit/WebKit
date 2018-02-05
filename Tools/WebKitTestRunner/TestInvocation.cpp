@@ -835,7 +835,12 @@ WKRetainPtr<WKTypeRef> TestInvocation::didReceiveSynchronousMessageFromInjectedB
         WKCookieManagerSetStorageAccessAPIEnabled(WKContextGetCookieManager(TestController::singleton().context()), WKBooleanGetValue(accept));
         return nullptr;
     }
-    
+
+    if (WKStringIsEqualToUTF8CString(messageName, "GetAllStorageAccessEntries")) {
+        TestController::singleton().getAllStorageAccessEntries();
+        return nullptr;
+    }
+
     if (WKStringIsEqualToUTF8CString(messageName, "SetAllowsAnySSLCertificate")) {
         TestController::singleton().setAllowsAnySSLCertificate(WKBooleanGetValue(static_cast<WKBooleanRef>(messageBody)));
         return nullptr;
@@ -1349,6 +1354,17 @@ void TestInvocation::didSetPartitionOrBlockCookiesForHost()
 {
     WKRetainPtr<WKStringRef> messageName = adoptWK(WKStringCreateWithUTF8CString("CallDidSetPartitionOrBlockCookiesForHost"));
     WKPagePostMessageToInjectedBundle(TestController::singleton().mainWebView()->page(), messageName.get(), 0);
+}
+
+void TestInvocation::didReceiveAllStorageAccessEntries(Vector<String>& domains)
+{
+    WKRetainPtr<WKStringRef> messageName = adoptWK(WKStringCreateWithUTF8CString("CallDidReceiveAllStorageAccessEntries"));
+    
+    WKRetainPtr<WKMutableArrayRef> messageBody(AdoptWK, WKMutableArrayCreate());
+    for (auto& domain : domains)
+        WKArrayAppendItem(messageBody.get(), adoptWK(WKStringCreateWithUTF8CString(domain.utf8().data())).get());
+    
+    WKPagePostMessageToInjectedBundle(TestController::singleton().mainWebView()->page(), messageName.get(), messageBody.get());
 }
 
 void TestInvocation::didRemoveAllSessionCredentials()
