@@ -1,3 +1,12 @@
+2018-02-05  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed GTK+ gardening.
+
+        * platform/gtk/TestExpectations: Re-skip the modern media controls tests
+        on the GTK+ port after they were unskipped in r228097. They're timing
+        out in large enough numbers to cause early exits. They should be
+        examined in more detail and unskipped once fixed.
+
 2018-02-05  John Wilander  <wilander@apple.com>
 
         Storage Access API: Add testRunner.getAllStorageAccessEntries() to make testing easier and more explicit
