@@ -1,5 +1,18 @@
 2018-02-04  Zan Dobersek  <zdobersek@igalia.com>
 
+        [Cairo] Correctly calculate stride in GraphicsContext3D::paintToCanvas()
+        https://bugs.webkit.org/show_bug.cgi?id=182466
+
+        Reviewed by Michael Catanzaro.
+
+        * platform/graphics/cairo/GraphicsContext3DCairo.cpp:
+        (WebCore::GraphicsContext3D::paintToCanvas):
+        Use cairo_format_stride_for_width() to obtain stride that Cairo thinks
+        is appropriate for the given width, taking into account internal
+        alignment requirements.
+
+2018-02-04  Zan Dobersek  <zdobersek@igalia.com>
+
         [Cairo] Split TexMap functionality out of GraphicsContext3DCairo
         https://bugs.webkit.org/show_bug.cgi?id=182465
 
