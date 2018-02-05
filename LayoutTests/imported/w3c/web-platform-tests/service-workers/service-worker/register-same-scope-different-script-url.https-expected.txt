@@ -2,6 +2,6 @@
 PASS Register different scripts concurrently 
 PASS Register then register new script URL 
 PASS Register then register new script URL that 404s 
-FAIL Register then register new script that does not install assert_unreached: unexpected rejection: assert_equals: on redundant, installing should be null expected null but got object "[object ServiceWorker]" Reached unreachable code
+PASS Register then register new script that does not install 
 PASS Register same-scope new script url effect on controller 
 
