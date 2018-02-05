@@ -52,6 +52,14 @@ function runTest() {
     shouldBeNull("document.elementFromPoint(-85, 15)");
     shouldBe("document.elementFromPoint(215, 315)", "b2");
 
+    window.scrollTo(0, 0);
+    if (window.internals)
+        window.internals.setPageScaleFactor(0.5, 0, 0);
+    // b2 is now technically outside the 800x600 scaled viewport rect,
+    // but should still be found.
+
+    shouldBe("document.elementFromPoint(525, 425)", "b2");
+
     finishJSTest();
 }
 </script>

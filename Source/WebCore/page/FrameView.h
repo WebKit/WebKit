@@ -473,7 +473,6 @@ public:
     WEBCORE_EXPORT FloatRect clientToDocumentRect(FloatRect) const;
     WEBCORE_EXPORT FloatPoint clientToDocumentPoint(FloatPoint) const;
 
-    FloatRect layoutViewportToAbsoluteRect(FloatRect) const;
     FloatPoint layoutViewportToAbsolutePoint(FloatPoint) const;
 
     // Unlike client coordinates, layout viewport coordinates are affected by page zoom.
