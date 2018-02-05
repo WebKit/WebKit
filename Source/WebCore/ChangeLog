@@ -1,3 +1,13 @@
+2018-02-05  Antti Koivisto  <antti@apple.com>
+
+        Make ASSERT_WITH_SECURITY_IMPLICATION in CachedResourceClientWalker::next a release assert
+        https://bugs.webkit.org/show_bug.cgi?id=182492
+
+        Reviewed by Youenn Fablet.
+
+        * loader/cache/CachedResourceClientWalker.h:
+        (WebCore::CachedResourceClientWalker::next):
+
 2018-02-05  John Wilander  <wilander@apple.com>
 
         Storage Access API: Add testRunner.getAllStorageAccessEntries() to make testing easier and more explicit
