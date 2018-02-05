@@ -4,15 +4,15 @@ PASS createImageBitmap from an HTMLCanvasElement scaled down, and drawImage on t
 PASS createImageBitmap from an HTMLCanvasElement scaled up, and drawImage on the created ImageBitmap 
 PASS createImageBitmap from an HTMLCanvasElement resized, and drawImage on the created ImageBitmap 
 FAIL createImageBitmap from an HTMLCanvasElement with negative sw/sh, and drawImage on the created ImageBitmap promise_test: Unhandled rejection with value: object "RangeError: Cannot create ImageBitmap with a negative width or height"
-FAIL createImageBitmap from an HTMLVideoElement, and drawImage on the created ImageBitmap promise_test: Unhandled rejection with value: object "TypeError: createImageBitmap with HTMLVideoElement is not implemented"
-FAIL createImageBitmap from an HTMLVideoElement scaled down, and drawImage on the created ImageBitmap promise_test: Unhandled rejection with value: object "TypeError: createImageBitmap with HTMLVideoElement is not implemented"
-FAIL createImageBitmap from an HTMLVideoElement scaled up, and drawImage on the created ImageBitmap promise_test: Unhandled rejection with value: object "TypeError: createImageBitmap with HTMLVideoElement is not implemented"
-FAIL createImageBitmap from an HTMLVideoElement resized, and drawImage on the created ImageBitmap promise_test: Unhandled rejection with value: object "TypeError: createImageBitmap with HTMLVideoElement is not implemented"
+PASS createImageBitmap from an HTMLVideoElement, and drawImage on the created ImageBitmap 
+PASS createImageBitmap from an HTMLVideoElement scaled down, and drawImage on the created ImageBitmap 
+PASS createImageBitmap from an HTMLVideoElement scaled up, and drawImage on the created ImageBitmap 
+PASS createImageBitmap from an HTMLVideoElement resized, and drawImage on the created ImageBitmap 
 FAIL createImageBitmap from an HTMLVideoElement with negative sw/sh, and drawImage on the created ImageBitmap promise_test: Unhandled rejection with value: object "RangeError: Cannot create ImageBitmap with a negative width or height"
-FAIL createImageBitmap from an HTMLVideoElement from a data URL, and drawImage on the created ImageBitmap promise_test: Unhandled rejection with value: object "TypeError: createImageBitmap with HTMLVideoElement is not implemented"
-FAIL createImageBitmap from an HTMLVideoElement from a data URL scaled down, and drawImage on the created ImageBitmap promise_test: Unhandled rejection with value: object "TypeError: createImageBitmap with HTMLVideoElement is not implemented"
-FAIL createImageBitmap from an HTMLVideoElement from a data URL scaled up, and drawImage on the created ImageBitmap promise_test: Unhandled rejection with value: object "TypeError: createImageBitmap with HTMLVideoElement is not implemented"
-FAIL createImageBitmap from an HTMLVideoElement from a data URL resized, and drawImage on the created ImageBitmap promise_test: Unhandled rejection with value: object "TypeError: createImageBitmap with HTMLVideoElement is not implemented"
+PASS createImageBitmap from an HTMLVideoElement from a data URL, and drawImage on the created ImageBitmap 
+PASS createImageBitmap from an HTMLVideoElement from a data URL scaled down, and drawImage on the created ImageBitmap 
+PASS createImageBitmap from an HTMLVideoElement from a data URL scaled up, and drawImage on the created ImageBitmap 
+PASS createImageBitmap from an HTMLVideoElement from a data URL resized, and drawImage on the created ImageBitmap 
 FAIL createImageBitmap from an HTMLVideoElement from a data URL with negative sw/sh, and drawImage on the created ImageBitmap promise_test: Unhandled rejection with value: object "RangeError: Cannot create ImageBitmap with a negative width or height"
 PASS createImageBitmap from a bitmap HTMLImageElement, and drawImage on the created ImageBitmap 
 PASS createImageBitmap from a bitmap HTMLImageElement scaled down, and drawImage on the created ImageBitmap 

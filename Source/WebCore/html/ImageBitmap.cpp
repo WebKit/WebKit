@@ -114,6 +114,21 @@ static bool taintsOrigin(CachedImage& cachedImage)
     return false;
 }
 
+static bool taintsOrigin(SecurityOrigin* origin, HTMLVideoElement& video)
+{
+    if (!video.hasSingleSecurityOrigin())
+        return true;
+
+    if (video.player()->didPassCORSAccessCheck())
+        return false;
+
+    auto url = video.currentSrc();
+    if (url.protocolIsData())
+        return false;
+
+    return !origin->canRequest(url);
+}
+
 // https://html.spec.whatwg.org/multipage/imagebitmap-and-animations.html#cropped-to-the-source-rectangle-with-formatting
 static ExceptionOr<IntRect> croppedSourceRectangleWithFormatting(IntSize inputSize, ImageBitmapOptions& options, std::optional<IntRect> rect)
 {
@@ -363,35 +378,66 @@ void ImageBitmap::createPromise(ScriptExecutionContext&, RefPtr<HTMLCanvasElemen
 }
 
 #if ENABLE(VIDEO)
-void ImageBitmap::createPromise(ScriptExecutionContext&, RefPtr<HTMLVideoElement>& videoElement, ImageBitmapOptions&& options, std::optional<IntRect> rect, ImageBitmap::Promise&& promise)
+void ImageBitmap::createPromise(ScriptExecutionContext& scriptExecutionContext, RefPtr<HTMLVideoElement>& video, ImageBitmapOptions&& options, std::optional<IntRect> rect, ImageBitmap::Promise&& promise)
 {
-    UNUSED_PARAM(videoElement);
-    UNUSED_PARAM(options);
-    UNUSED_PARAM(rect);
+    // https://html.spec.whatwg.org/multipage/#dom-createimagebitmap
+    // WHATWG HTML 2102913b313078cd8eeac7e81e6a8756cbd3e773
+    // Steps 3-7.
+    // (Step 3 is handled in croppedSourceRectangleWithFormatting.)
 
-    // 2. If the video element's networkState attribute is NETWORK_EMPTY, then return
-    //    a promise rejected with an "InvalidStateError" DOMException and abort these
-    //    steps.
+    // 4. Check the usability of the image argument. If this throws an exception
+    //    or returns bad, then return p rejected with an "InvalidStateError"
+    //    DOMException.
+    if (video->readyState() == HTMLMediaElement::HAVE_NOTHING || video->readyState() == HTMLMediaElement::HAVE_METADATA) {
+        promise.reject(InvalidStateError, "Cannot create ImageBitmap before the HTMLVideoElement has data");
+        return;
+    }
 
-    // 3. If the video element's readyState attribute is either HAVE_NOTHING or
-    //    HAVE_METADATA, then return a promise rejected with an "InvalidStateError"
-    //    DOMException and abort these steps.
+    // 5. Let imageBitmap be a new ImageBitmap object.
+    auto imageBitmap = create();
 
-    // 4. Create a new ImageBitmap object.
+    // 6.1. If image's networkState attribute is NETWORK_EMPTY, then return p
+    //      rejected with an "InvalidStateError" DOMException.
+    if (video->networkState() == HTMLMediaElement::NETWORK_EMPTY) {
+        promise.reject(InvalidStateError, "Cannot create ImageBitmap before the HTMLVideoElement has data");
+        return;
+    }
 
-    // 5. Let the ImageBitmap object's bitmap data be a copy of the frame at the current
-    //    playback position, at the media resource's intrinsic width and intrinsic height
-    //    (i.e. after any aspect-ratio correction has been applied), cropped to the source
-    //    rectangle with formatting.
+    // 6.2. Set imageBitmap's bitmap data to a copy of the frame at the current
+    //      playback position, at the media resource's intrinsic width and
+    //      intrinsic height (i.e., after any aspect-ratio correction has been
+    //      applied), cropped to the source rectangle with formatting.
+    auto size = video->player() ? roundedIntSize(video->player()->naturalSize()) : IntSize();
+    auto maybeSourceRectangle = croppedSourceRectangleWithFormatting(size, options, WTFMove(rect));
+    if (maybeSourceRectangle.hasException()) {
+        promise.reject(maybeSourceRectangle.releaseException());
+        return;
+    }
+    auto sourceRectangle = maybeSourceRectangle.releaseReturnValue();
 
-    // 6. If the origin of the video element is not the same origin as the origin specified
-    //    by the entry settings object, then set the origin-clean flag of the ImageBitmap
-    //    object's bitmap to false.
+    auto outputSize = outputSizeForSourceRectangle(sourceRectangle, options);
+    auto bitmapData = ImageBuffer::create(FloatSize(outputSize.width(), outputSize.height()), bufferRenderingMode);
 
-    // 7. Return a new promise, but continue running these steps in parallel.
+    {
+        GraphicsContext& c = bitmapData->context();
+        GraphicsContextStateSaver stateSaver(c);
+        c.clip(FloatRect(FloatPoint(), outputSize));
+        auto scaleX = float(outputSize.width()) / float(sourceRectangle.width());
+        auto scaleY = float(outputSize.height()) / float(sourceRectangle.height());
+        c.scale(FloatSize(scaleX, scaleY));
+        c.translate(-sourceRectangle.location());
+        video->paintCurrentFrameInContext(c, FloatRect(FloatPoint(), size));
+    }
 
-    // 8. Resolve the promise with the new ImageBitmap object as the value.
-    promise.reject(TypeError, "createImageBitmap with HTMLVideoElement is not implemented");
+    imageBitmap->m_bitmapData = WTFMove(bitmapData);
+
+    // 6.3. If the origin of image's video is not same origin with entry
+    //      settings object's origin, then set the origin-clean flag of
+    //      image's bitmap to false.
+    imageBitmap->m_originClean = !taintsOrigin(scriptExecutionContext.securityOrigin(), *video);
+
+    // 6.4.1. Resolve p with imageBitmap.
+    promise.resolve(WTFMove(imageBitmap));
 }
 #endif
 

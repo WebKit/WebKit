@@ -1,3 +1,22 @@
+2018-02-05  Ms2ger  <Ms2ger@igalia.com>
+
+        Implement createImageBitmap(HTMLVideoElement)
+        https://bugs.webkit.org/show_bug.cgi?id=182388
+
+        Reviewed by Žan Doberšek.
+
+        The implementation is inspired by CanvasRenderingContext2DBase::drawImage().
+
+        Tests:
+
+        - web-platform-tests/2dcontext/imagebitmap/createImageBitmap-drawImage.html
+        - web-platform-tests/2dcontext/imagebitmap/createImageBitmap-invalid-args.html
+
+
+        * html/ImageBitmap.cpp:
+        (WebCore::taintsOrigin): Add function to help with the implementation.
+        (WebCore::ImageBitmap::createPromise): Fill in implementation.
+
 2018-02-05  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed, rolling out r228085.
