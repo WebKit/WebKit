@@ -7,7 +7,6 @@ PASS `data` is specified
 PASS `origin` is specified 
 PASS `lastEventId` is specified 
 PASS `source` is specified 
-FAIL `ports` is specified assert_throws: function "function () {
-      createEvent({ get ports() { throw { name: 'Error' }; } }); }" threw object "TypeError: Value is not a sequence" ("TypeError") expected object "[object Object]" ("Error")
+PASS `ports` is specified 
 PASS all initial values are specified 
 

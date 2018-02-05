@@ -47,17 +47,35 @@ template<> DictionaryImplName convertDictionary<DictionaryImplName>(ExecState& s
         return { };
     }
     DictionaryImplName result;
-    JSValue boolMemberValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "boolMember"));
+    JSValue boolMemberValue;
+    if (isNullOrUndefined)
+        boolMemberValue = jsUndefined();
+    else {
+        boolMemberValue = object->get(&state, Identifier::fromString(&state, "boolMember"));
+        RETURN_IF_EXCEPTION(throwScope, { });
+    }
     if (!boolMemberValue.isUndefined()) {
         result.boolMember = convert<IDLBoolean>(state, boolMemberValue);
         RETURN_IF_EXCEPTION(throwScope, { });
     }
-    JSValue enumMemberValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "enumMember"));
+    JSValue enumMemberValue;
+    if (isNullOrUndefined)
+        enumMemberValue = jsUndefined();
+    else {
+        enumMemberValue = object->get(&state, Identifier::fromString(&state, "enumMember"));
+        RETURN_IF_EXCEPTION(throwScope, { });
+    }
     if (!enumMemberValue.isUndefined()) {
         result.enumMember = convert<IDLEnumeration<TestStandaloneDictionary::EnumInStandaloneDictionaryFile>>(state, enumMemberValue);
         RETURN_IF_EXCEPTION(throwScope, { });
     }
-    JSValue stringMemberValue = isNullOrUndefined ? jsUndefined() : object->get(&state, Identifier::fromString(&state, "stringMember"));
+    JSValue stringMemberValue;
+    if (isNullOrUndefined)
+        stringMemberValue = jsUndefined();
+    else {
+        stringMemberValue = object->get(&state, Identifier::fromString(&state, "stringMember"));
+        RETURN_IF_EXCEPTION(throwScope, { });
+    }
     if (!stringMemberValue.isUndefined()) {
         result.stringMember = convert<IDLDOMString>(state, stringMemberValue);
         RETURN_IF_EXCEPTION(throwScope, { });
