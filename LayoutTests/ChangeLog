@@ -1,5 +1,23 @@
 2018-02-04  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r227992. rdar://problem/37145465
+
+    2018-02-01  Megan Gardner  <megan_gardner@apple.com>
+
+            Fix race-condition in fast/forms/ios/ipad/select-form-run-twice.html
+            https://bugs.webkit.org/show_bug.cgi?id=182370
+
+            Reviewed by Tim Horton.
+
+            There is the potential for multiple button clicks, due to looping function calls that can cause timed functions to
+            still be running in the next test, causing crashes. Guarding against repeated clicks, and cancelling the timers should
+            clean up this problem.
+
+            * fast/forms/ios/ipad/select-form-run-twice.html:
+            * fast/forms/ios/ipad/unfocus-inside-fixed-hittest.html:
+
+2018-02-04  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r227985. rdar://problem/37145479
 
     2018-02-01  Chris Dumez  <cdumez@apple.com>

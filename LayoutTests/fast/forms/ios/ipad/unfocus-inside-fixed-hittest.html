@@ -30,19 +30,10 @@
         
     </style>
     <script src="../resources/zooming-test-utils.js"></script>
+    <script src="../../../../resources/basic-gestures.js"></script>
     <script>
         if (window.testRunner)
             testRunner.waitUntilDone();
-
-        function getSingleTapUIScript(x, y)
-        {
-            return `
-                (function() {
-                    uiController.singleTapAtPoint(${x}, ${y}, function() {
-                        uiController.uiScriptComplete('');
-                    });
-                })();`
-        }
 
         function getScrollDownUIScript(x, y)
         {
@@ -74,29 +65,33 @@
         }
 
         var clicked = false;
+        var timeoutID;
         function buttonClicked()
         {
-            document.getElementById('result').textContent = 'PASS: hit testing found #target after select interaction';
-            if (window.testRunner)
-                testRunner.notifyDone();
+            window.clearTimeout(timeoutID);
+            if (!clicked) {
+                clicked = true;
+                document.getElementById('result').textContent = 'PASS: hit testing found #target after select interaction';
+                if (window.testRunner)
+                    testRunner.notifyDone();
+            }
         }
 
-        function tryTapOnButton()
+        async function tryTapOnButton()
         {
             var point = getPointInsideElement(document.getElementById('target'), 10, 10);
-            testRunner.runUIScript(getSingleTapUIScript(point.x, point.y), function() {
-            });
-            
+            await tapAtPoint(point.x, point.y);
+
             // We have to keep retrying, because the dimming view behind the popover animates out,
             // and we currently have no callback when that animation completes.
-            window.setTimeout(tryTapOnButton, 100);
+            if (!clicked)
+                timeoutID = window.setTimeout(tryTapOnButton, 100);
         }
 
         function doTest()
         {
             if (!window.testRunner)
                 return;
-
             testRunner.waitUntilDone();
             testRunner.dumpAsText();
 
@@ -111,6 +106,7 @@
         }
         
         window.addEventListener('load', doTest, false);
+        
     </script>
 </head>
 <body>

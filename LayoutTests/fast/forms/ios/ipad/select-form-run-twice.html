@@ -64,33 +64,60 @@
                 })();`
         }
 
+        var firstButtonIsClicked = false;
+        var finalButtonIsClicked = false;
+        var firstButtonTimeoutID;
+        var finalButtonTimeoutID;
+        
         function firstButtonClicked()
         {
-            document.getElementById('nextStep').textContent = 'PASS: hit testing found #nextButton after first select interaction';
-            var selectElement = document.getElementsByTagName('select')[0];
-            var point = getPointInsideElement(selectElement, 10, 10);
-            testRunner.runUIScript(getTapOnSelectUIScript(point.x, point.y, 5), function() {
-                document.getElementById('select-value2').textContent = selectElement.value;
-                    tryTapOnButton('finalTarget');
-            });
+            clearTimeout(firstButtonTimeoutID);
+            if (!firstButtonIsClicked) {
+                firstButtonIsClicked = true;
+                
+                document.getElementById('nextStep').textContent = 'PASS: hit testing found #nextButton after first select interaction';
+                var selectElement = document.getElementsByTagName('select')[0];
+                var point = getPointInsideElement(selectElement, 10, 10);
+                testRunner.runUIScript(getTapOnSelectUIScript(point.x, point.y, 5), function() {
+                    document.getElementById('select-value2').textContent = selectElement.value;
+                        tryTapOnFinalButton();
+                });
+            }
         }
     
         function finalButtonClicked()
         {
-            document.getElementById('result').textContent = 'PASS: hit testing found #finalTarget after select interaction';
-            if (window.testRunner)
-                testRunner.notifyDone();
+            clearTimeout(finalButtonTimeoutID);
+            if (!finalButtonIsClicked) {
+                finalButtonIsClicked = true;
+                document.getElementById('result').textContent = 'PASS: hit testing found #finalTarget after select interaction';
+                if (window.testRunner)
+                    testRunner.notifyDone();
+            }
         }
 
-        async function tryTapOnButton(target)
+        async function tryTapOnFirstButton()
         {
-            var point = getPointInsideElement(document.getElementById(target), 10, 10);
-            await tapAtPoint(point.x, point.y);
+            var firstPoint = getPointInsideElement(document.getElementById('firstTarget'), 10, 10);
+            await tapAtPoint(firstPoint.x, firstPoint.y);
             
             // We have to keep retrying, because the dimming view behind the popover animates out,
             // and we currently have no callback when that animation completes.
-            window.setTimeout(tryTapOnButton.bind(this, target), 100);
+            if (!firstButtonIsClicked)
+                firstButtonTimeoutID = window.setTimeout(tryTapOnFirstButton, 100);
         }
+    
+        async function tryTapOnFinalButton()
+        {
+            var finalPoint = getPointInsideElement(document.getElementById('finalTarget'), 10, 10);
+            await tapAtPoint(finalPoint.x, finalPoint.y);
+            
+            // We have to keep retrying, because the dimming view behind the popover animates out,
+            // and we currently have no callback when that animation completes.
+            if (!finalButtonIsClicked)
+                finalButtonTimeoutID = window.setTimeout(tryTapOnFinalButton, 100);
+        }
+    
 
         function doTest()
         {
@@ -105,7 +132,7 @@
                 var point = getPointInsideElement(selectElement, 10, 10);
                 testRunner.runUIScript(getTapOnSelectUIScript(point.x, point.y, 2), function() {
                     document.getElementById('select-value').textContent = selectElement.value;
-                    tryTapOnButton('firstTarget');
+                    tryTapOnFirstButton();
                 });
             });
         }
