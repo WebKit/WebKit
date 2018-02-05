@@ -1740,4 +1740,4 @@ webkit.org/b/181969 fast/events/message-port.html [ Skip ]
 webkit.org/b/181831 [ HighSierra+ ] fast/forms/searchfield-heights.html [ Pass Failure ]
 
 webkit.org/b/182422 imported/w3c/web-platform-tests/2dcontext/imagebitmap/createImageBitmap-drawImage.html [ Pass Failure ]
-webkit.org/b/182422 imported/w3c/web-platform-tests/2dcontext/imagebitmap/createImageBitmap-origin.sub.html [ Pass Failure Crash ]
+webkit.org/b/182422 imported/w3c/web-platform-tests/2dcontext/imagebitmap/createImageBitmap-origin.sub.html [ Skip ]
