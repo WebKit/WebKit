@@ -284,7 +284,7 @@ private:
 
 #if ENABLE(WEB_RTC)
     bool m_isPeerConnectionEnabled { true };
-    bool m_webRTCLegacyAPIEnabled { false };
+    bool m_webRTCLegacyAPIEnabled { true };
 #endif
 
 #if ENABLE(LEGACY_CSS_VENDOR_PREFIXES)
@@ -338,7 +338,7 @@ private:
     bool m_isWebGPUEnabled { false };
 #endif
 
-    bool m_isImageBitmapOffscreenCanvasEnabled { true };
+    bool m_isImageBitmapOffscreenCanvasEnabled { false };
 
     bool m_isCacheAPIEnabled { false };
     bool m_isFetchAPIEnabled { true };

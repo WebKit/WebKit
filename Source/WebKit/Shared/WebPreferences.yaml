@@ -1097,7 +1097,7 @@ SpringTimingFunctionEnabled:
 
 ImageBitmapOffscreenCanvasEnabled:
   type: bool
-  defaultValue: true
+  defaultValue: false
   humanReadableName: "ImageBitmap and OffscreenCanvas"
   humanReadableDescription: "Support for the ImageBitmap and OffscreenCanvas APIs"
   category: experimental
@@ -1113,7 +1113,7 @@ LinkPreloadEnabled:
 
 WebRTCLegacyAPIEnabled:
   type: bool
-  defaultValue: false
+  defaultValue: true
   humanReadableName: "Enable Legacy WebRTC API"
   humanReadableDescription: "Enable Legacy WebRTC API"
   webcoreBinding: RuntimeEnabledFeatures

@@ -1,5 +1,20 @@
 2018-02-04  Jason Marcell  <jmarcell@apple.com>
 
+        Apply patch. rdar://problem/36547114
+
+    Disable some runtime feature flags on safari-605-branch
+
+    2018-02-04  Maciej Stachowiak  <mjs@apple.com>
+
+            Disable some runtime feature flags on safari-605-branch
+            <rdar://problem/36547114>
+
+            Reviewed by Maciej Stachowiak.
+
+            * Shared/WebPreferences.yaml: Disable offscreen canvas. Enable WebRTC legacy API
+
+2018-02-04  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r228050. rdar://problem/37220143
 
     2018-02-03  Tim Horton  <timothy_horton@apple.com>
