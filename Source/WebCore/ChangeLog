@@ -1,3 +1,15 @@
+2018-02-05  Matt Lewis  <jlewis3@apple.com>
+
+        Unreviewed, rolling out r228103.
+
+        This caused multiple tests to crash.
+
+        Reverted changeset:
+
+        "Use downcast in createLinkPreloadResourceClient"
+        https://bugs.webkit.org/show_bug.cgi?id=182488
+        https://trac.webkit.org/changeset/228103
+
 2018-02-05  Eric Carlson  <eric.carlson@apple.com>
 
         [iOS] VideoFullscreenInterfaceAVKit should not ignore errors
