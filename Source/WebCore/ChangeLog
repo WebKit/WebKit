@@ -1,3 +1,61 @@
+2018-02-05  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [css-grid] Rename gutter properties to remove "grid-" prefix
+        https://bugs.webkit.org/show_bug.cgi?id=180290
+
+        Reviewed by Javier Fernandez.
+
+        This patch applies the resoultion of the CSS WG to unprefix
+        the CSS Grid Layout gutter properties:
+        https://github.com/w3c/csswg-drafts/issues/1696
+
+        column-gap already existed before, as it's part of Multicol.
+        The patch adds the new properties row-gap and gap, and keep the legacy ones
+        as aliases:
+        - grid-column-gap => column-gap
+        - grid-row-gap => row-gap
+        - grid-gap => gap
+
+        As column-gap was already animatable, this change takes advantage
+        to make animatable row-gap too.
+
+        Tests: imported/w3c/web-platform-tests/css/css-align/gaps/
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::ComputedStyleExtractor::valueForPropertyinStyle):
+        * css/CSSProperties.json:
+        * css/StyleProperties.cpp:
+        * css/parser/CSSParserFastPaths.cpp:
+        (WebCore::isSimpleLengthPropertyID):
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::CSSPropertyParser::parseSingleValue):
+        (WebCore::CSSPropertyParser::parseShorthand):
+        * page/animation/CSSPropertyAnimation.cpp:
+        (WebCore::CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap):
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::availableSpaceForGutters const):
+        (WebCore::RenderGrid::gridGap const):
+        * rendering/style/RenderStyle.h:
+        (WebCore::RenderStyle::gridAutoRows const):
+        (WebCore::RenderStyle::columnGap const):
+        (WebCore::RenderStyle::rowGap const):
+        (WebCore::RenderStyle::setGridItemRowEnd):
+        (WebCore::RenderStyle::setColumnGap):
+        (WebCore::RenderStyle::setRowGap):
+        (WebCore::RenderStyle::initialRowGap):
+        * rendering/style/StyleGridData.cpp:
+        (WebCore::StyleGridData::StyleGridData):
+        * rendering/style/StyleGridData.h:
+        (WebCore::StyleGridData::operator== const):
+        * rendering/style/StyleMultiColData.cpp:
+        (WebCore::StyleMultiColData::StyleMultiColData):
+        (WebCore::StyleMultiColData::operator== const):
+        * rendering/style/StyleMultiColData.h:
+        * rendering/style/StyleRareNonInheritedData.cpp:
+        (WebCore::StyleRareNonInheritedData::StyleRareNonInheritedData):
+        (WebCore::StyleRareNonInheritedData::operator== const):
+        * rendering/style/StyleRareNonInheritedData.h:
+
 2018-02-05  Ms2ger  <Ms2ger@igalia.com>
 
         Implement createImageBitmap(HTMLVideoElement)

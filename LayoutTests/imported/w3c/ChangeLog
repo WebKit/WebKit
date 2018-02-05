@@ -1,3 +1,57 @@
+2018-02-05  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [css-grid] Rename gutter properties to remove "grid-" prefix
+        https://bugs.webkit.org/show_bug.cgi?id=180290
+
+        Reviewed by Javier Fernandez.
+
+        Imported WPT tests from css/css-align/gaps/.
+        And also update the tests on css/css-grid/alignment/ gutter tests.
+
+        * web-platform-tests/css/css-align/gaps/column-gap-animation-001-expected.txt: Added.
+        * web-platform-tests/css/css-align/gaps/column-gap-animation-001.html: Added.
+        * web-platform-tests/css/css-align/gaps/column-gap-animation-002-expected.txt: Added.
+        * web-platform-tests/css/css-align/gaps/column-gap-animation-002.html: Added.
+        * web-platform-tests/css/css-align/gaps/column-gap-animation-003-expected.txt: Added.
+        * web-platform-tests/css/css-align/gaps/column-gap-animation-003.html: Added.
+        * web-platform-tests/css/css-align/gaps/column-gap-parsing-001-expected.txt: Added.
+        * web-platform-tests/css/css-align/gaps/column-gap-parsing-001.html: Added.
+        * web-platform-tests/css/css-align/gaps/gap-animation-001-expected.txt: Added.
+        * web-platform-tests/css/css-align/gaps/gap-animation-001.html: Added.
+        * web-platform-tests/css/css-align/gaps/gap-animation-002-expected.txt: Added.
+        * web-platform-tests/css/css-align/gaps/gap-animation-002.html: Added.
+        * web-platform-tests/css/css-align/gaps/gap-animation-003-expected.txt: Added.
+        * web-platform-tests/css/css-align/gaps/gap-animation-003.html: Added.
+        * web-platform-tests/css/css-align/gaps/gap-animation-004-expected.txt: Added.
+        * web-platform-tests/css/css-align/gaps/gap-animation-004.html: Added.
+        * web-platform-tests/css/css-align/gaps/gap-parsing-001-expected.txt: Added.
+        * web-platform-tests/css/css-align/gaps/gap-parsing-001.html: Added.
+        * web-platform-tests/css/css-align/gaps/grid-column-gap-parsing-001-expected.txt: Added.
+        * web-platform-tests/css/css-align/gaps/grid-column-gap-parsing-001.html: Added.
+        * web-platform-tests/css/css-align/gaps/grid-gap-parsing-001-expected.txt: Added.
+        * web-platform-tests/css/css-align/gaps/grid-gap-parsing-001.html: Added.
+        * web-platform-tests/css/css-align/gaps/grid-row-gap-parsing-001-expected.txt: Added.
+        * web-platform-tests/css/css-align/gaps/grid-row-gap-parsing-001.html: Added.
+        * web-platform-tests/css/css-align/gaps/row-gap-animation-001-expected.txt: Added.
+        * web-platform-tests/css/css-align/gaps/row-gap-animation-001.html: Added.
+        * web-platform-tests/css/css-align/gaps/row-gap-animation-002-expected.txt: Added.
+        * web-platform-tests/css/css-align/gaps/row-gap-animation-002.html: Added.
+        * web-platform-tests/css/css-align/gaps/row-gap-animation-003-expected.txt: Added.
+        * web-platform-tests/css/css-align/gaps/row-gap-animation-003.html: Added.
+        * web-platform-tests/css/css-align/gaps/row-gap-parsing-001-expected.txt: Added.
+        * web-platform-tests/css/css-align/gaps/row-gap-parsing-001.html: Added.
+        * web-platform-tests/css/css-align/gaps/w3c-import.log: Added.
+        * web-platform-tests/css/css-grid/alignment/grid-gutters-001-expected.html:
+        * web-platform-tests/css/css-grid/alignment/grid-gutters-002-expected.html:
+        * web-platform-tests/css/css-grid/alignment/grid-gutters-003-expected.html:
+        * web-platform-tests/css/css-grid/alignment/grid-gutters-004-expected.html:
+        * web-platform-tests/css/css-grid/alignment/grid-gutters-005-expected.html:
+        * web-platform-tests/css/css-grid/alignment/grid-gutters-006-expected.html:
+        * web-platform-tests/css/css-grid/alignment/grid-gutters-007-expected.html:
+        * web-platform-tests/css/css-grid/alignment/grid-gutters-008-expected.html:
+        * web-platform-tests/css/css-grid/alignment/grid-gutters-009-expected.html:
+        * web-platform-tests/css/css-grid/alignment/grid-gutters-010-expected.html:
+
 2018-02-05  Ms2ger  <Ms2ger@igalia.com>
 
         Implement createImageBitmap(HTMLVideoElement)

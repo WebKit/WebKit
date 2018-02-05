@@ -210,11 +210,11 @@
     document.body.style.gridColumnGap = "20px";
     var anotherElement = document.createElement("div");
     document.body.appendChild(anotherElement);
-    shouldBeEqualToString("getComputedStyle(anotherElement, '').getPropertyValue('grid-column-gap')", "0px");
-    shouldBeEqualToString("getComputedStyle(anotherElement, '').getPropertyValue('grid-row-gap')", "0px");
+    shouldBeEqualToString("getComputedStyle(anotherElement, '').getPropertyValue('grid-column-gap')", "normal");
+    shouldBeEqualToString("getComputedStyle(anotherElement, '').getPropertyValue('grid-row-gap')", "normal");
     anotherElement.style.grid = "inherit";
-    shouldBeEqualToString("getComputedStyle(anotherElement, '').getPropertyValue('grid-column-gap')", "0px");
-    shouldBeEqualToString("getComputedStyle(anotherElement, '').getPropertyValue('grid-row-gap')", "0px");
+    shouldBeEqualToString("getComputedStyle(anotherElement, '').getPropertyValue('grid-column-gap')", "normal");
+    shouldBeEqualToString("getComputedStyle(anotherElement, '').getPropertyValue('grid-row-gap')", "normal");
 </script>
 </body>
 </html>
