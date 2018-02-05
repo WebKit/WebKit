@@ -1,3 +1,15 @@
+2018-02-05  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Add a way to check if a host is an IP address
+        https://bugs.webkit.org/show_bug.cgi?id=182427
+
+        Reviewed by Alex Christensen.
+
+        Add unit test for URL::hostIsIPAddress().
+
+        * TestWebKitAPI/Tests/WebCore/URL.cpp:
+        (TestWebKitAPI::TEST_F):
+
 2018-02-03  Charlie Turner  <cturner@igalia.com>
 
         Add libmount to WPE dependencies

@@ -40,11 +40,9 @@ OriginAccessEntry::OriginAccessEntry(const String& protocol, const String& host,
     , m_host(host.convertToASCIILowercase())
     , m_subdomainSettings(subdomainSetting)
     , m_ipAddressSettings(ipAddressSetting)
+    , m_hostIsIPAddress(URL::hostIsIPAddress(m_host))
 {
     ASSERT(subdomainSetting == AllowSubdomains || subdomainSetting == DisallowSubdomains);
-
-    // Assume that any host that ends with a digit is trying to be an IP address.
-    m_hostIsIPAddress = !m_host.isEmpty() && isASCIIDigit(m_host[m_host.length() - 1]);
 }
 
 bool OriginAccessEntry::matchesOrigin(const SecurityOrigin& origin) const
@@ -69,7 +67,7 @@ bool OriginAccessEntry::matchesOrigin(const SecurityOrigin& origin) const
 
     // IP addresses are not domains: https://url.spec.whatwg.org/#concept-domain
     // Don't try to do subdomain matching on IP addresses.
-    if (m_hostIsIPAddress && m_ipAddressSettings == TreatIPAddressAsIPAddress)
+    if (m_ipAddressSettings == TreatIPAddressAsIPAddress && (m_hostIsIPAddress || URL::hostIsIPAddress(origin.host())))
         return false;
     
     // Match subdomains.
