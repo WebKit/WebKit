@@ -6284,6 +6284,9 @@ void WebPageProxy::updateBackingStoreDiscardableState()
 {
     ASSERT(isValid());
 
+    if (!m_drawingArea)
+        return;
+
     bool isDiscardable;
 
     if (!m_process->isResponsive())
