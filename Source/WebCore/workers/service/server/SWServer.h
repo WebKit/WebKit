@@ -223,7 +223,6 @@ private:
     UniqueRef<SWOriginStore> m_originStore;
     RegistrationStore m_registrationStore;
     Vector<ServiceWorkerContextData> m_pendingContextDatas;
-    Vector<ServiceWorkerJobData> m_pendingJobs;
     HashMap<ServiceWorkerIdentifier, Vector<RunServiceWorkerCallback>> m_serviceWorkerRunRequests;
     PAL::SessionID m_sessionID;
     bool m_importCompleted { false };
