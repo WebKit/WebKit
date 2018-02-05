@@ -453,7 +453,7 @@ public:
                     if (!isConcrete(format)) {
                         DFG_ASSERT(
                             m_graph, node,
-                            deferred.operand(data->local) != ConflictingFlush);
+                            deferred.operand(data->local) != ConflictingFlush, deferred.operand(data->local));
                         
                         // This means there is no deferral. No deferral means that the most
                         // authoritative value for this stack slot is what is stored in the stack. So,
@@ -466,7 +466,7 @@ public:
                     // would have stored a value with a certain format. That format must match our
                     // format. But more importantly, we can simply use the value that the PutStack would
                     // have stored and get rid of the GetStack.
-                    DFG_ASSERT(m_graph, node, format == data->format);
+                    DFG_ASSERT(m_graph, node, format == data->format, format, data->format);
                     
                     Node* incoming = mapping.operand(data->local);
                     node->child1() = incoming->defaultEdge();
@@ -534,7 +534,7 @@ public:
                     if (DFGPutStackSinkingPhaseInternal::verbose)
                         dataLog("Creating Upsilon for ", operand, " at ", pointerDump(block), "->", pointerDump(successorBlock), "\n");
                     FlushFormat format = deferredAtHead[successorBlock].operand(operand);
-                    DFG_ASSERT(m_graph, nullptr, isConcrete(format));
+                    DFG_ASSERT(m_graph, nullptr, isConcrete(format), format);
                     UseKind useKind = uncheckedUseKindFor(format);
                     
                     // We need to get a value for the stack slot. This phase doesn't really have a

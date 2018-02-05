@@ -66,7 +66,8 @@ Node* emitCodeToGetArgumentsArrayLength(
         graph, arguments,
         arguments->op() == CreateDirectArguments || arguments->op() == CreateScopedArguments
         || arguments->op() == CreateClonedArguments || arguments->op() == CreateRest
-        || arguments->op() == PhantomDirectArguments || arguments->op() == PhantomClonedArguments || arguments->op() == PhantomCreateRest);
+        || arguments->op() == PhantomDirectArguments || arguments->op() == PhantomClonedArguments || arguments->op() == PhantomCreateRest,
+        arguments->op());
     
     InlineCallFrame* inlineCallFrame = arguments->origin.semantic.inlineCallFrame;
 

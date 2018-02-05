@@ -467,7 +467,7 @@ private:
         // FIXME: We could support StoreBarrier(UntypedUse:). That would be sort of cool.
         // But right now we don't need it.
 
-        DFG_ASSERT(m_graph, m_node, isCell(base.useKind()));
+        DFG_ASSERT(m_graph, m_node, isCell(base.useKind()), m_node->op(), base.useKind());
         
         // Barriers are always inserted after the node that they service. Therefore, we always know
         // that the thing is a cell now.

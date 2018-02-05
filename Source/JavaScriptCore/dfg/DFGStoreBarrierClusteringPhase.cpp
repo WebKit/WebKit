@@ -116,7 +116,7 @@ private:
                 continue;
             
             DFG_ASSERT(m_graph, node, !node->origin.wasHoisted);
-            DFG_ASSERT(m_graph, node, node->child1().useKind() == KnownCellUse);
+            DFG_ASSERT(m_graph, node, node->child1().useKind() == KnownCellUse, node->op(), node->child1().useKind());
             
             NodeOrigin origin = node->origin;
             m_neededBarriers.append(ChildAndOrigin(node->child1().node(), origin.semantic));

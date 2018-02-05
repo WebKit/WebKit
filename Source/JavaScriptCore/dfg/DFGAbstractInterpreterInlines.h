@@ -763,7 +763,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                     forNode(node->child1()).m_type));
             break;
         default:
-            DFG_ASSERT(m_graph, node, node->child1().useKind() == UntypedUse);
+            DFG_ASSERT(m_graph, node, node->child1().useKind() == UntypedUse, node->child1().useKind());
             clobberWorld(node->origin.semantic, clobberLimit);
             forNode(node).setType(SpecBytecodeNumber);
             break;
@@ -978,7 +978,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             forNode(node).setType(typeOfDoubleAbs(forNode(node->child1()).m_type));
             break;
         default:
-            DFG_ASSERT(m_graph, node, node->child1().useKind() == UntypedUse);
+            DFG_ASSERT(m_graph, node, node->child1().useKind() == UntypedUse, node->child1().useKind());
             clobberWorld(node->origin.semantic, clobberLimit);
             forNode(node).setType(SpecFullNumber);
             break;
@@ -1055,7 +1055,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             else if (node->child1().useKind() == DoubleRepUse)
                 forNode(node).setType(typeOfDoubleRounding(forNode(node->child1()).m_type));
         } else {
-            DFG_ASSERT(m_graph, node, node->child1().useKind() == UntypedUse);
+            DFG_ASSERT(m_graph, node, node->child1().useKind() == UntypedUse, node->child1().useKind());
             clobberWorld(node->origin.semantic, clobberLimit);
             forNode(node).setType(SpecFullNumber);
         }

@@ -126,7 +126,7 @@ public:
             // This is guaranteed because we expect the CFG not to have unreachable code. Therefore, a
             // loop header must have a predecessor. (Also, we don't allow the root block to be a loop,
             // which cuts out the one other way of having a loop header with only one predecessor.)
-            DFG_ASSERT(m_graph, header->at(0), header->predecessors.size() > 1);
+            DFG_ASSERT(m_graph, header->at(0), header->predecessors.size() > 1, header->predecessors.size());
             
             for (unsigned i = header->predecessors.size(); i--;) {
                 BasicBlock* predecessor = header->predecessors[i];
@@ -155,7 +155,7 @@ public:
             // This is guaranteed because the header has multiple predecessors and critical edges are
             // broken. Therefore the predecessors must all have one successor, which implies that they
             // must end in a Jump.
-            DFG_ASSERT(m_graph, preHeader->terminal(), preHeader->terminal()->op() == Jump);
+            DFG_ASSERT(m_graph, preHeader->terminal(), preHeader->terminal()->op() == Jump, preHeader->terminal()->op());
 
             if (!preHeader->terminal()->origin.exitOK)
                 continue;
@@ -346,7 +346,7 @@ private:
         // It just so happens that all of the nodes we currently know how to hoist
         // don't have var-arg children. That may change and then we can fix this
         // code. But for now we just assert that's the case.
-        DFG_ASSERT(m_graph, node, !(node->flags() & NodeHasVarArgs));
+        DFG_ASSERT(m_graph, node, !(node->flags() & NodeHasVarArgs), node->op(), node->flags());
         
         nodeRef = m_graph.addNode(Check, originalOrigin, node->children);
         
