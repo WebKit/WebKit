@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<body>
+<style>
+#container div { width: 10px; height: 10px; }
+</style>
+<script src="/resources/js-test-pre.js"></script>
+<div id="container"></div>
+<script>
+
+description('This tests clearing the resource timing buffer during a resourcetimingbufferfull event.<br>'
+    + 'WebKit should not hit a release assertion.');
+
+window.onload = () => {
+    const iframe = document.createElement('iframe');
+    document.getElementById('container').appendChild(iframe);
+    const doc = iframe.contentDocument;
+
+    const promises = [];
+    for (let i = 0; i < 5; i++) {
+        const img = doc.createElement('img');
+        img.src = `../../resources/square100.png?resource=${i}`;
+        promises[i] = new Promise((resolve) => {
+            img.onload = resolve;
+        });
+        doc.body.appendChild(img);
+    }
+    Promise.all(promises).then(runTest);
+}
+
+function runTest()
+{
+    shouldBe('performance.clearResourceTimings(); performance.getEntriesByType("resource").length', '0');
+    evalAndLog('performance.setResourceTimingBufferSize(2); fetchImages(0, 3)');
+    shouldBe('originalResources = performance.getEntriesByType("resource"); originalResources.length', '2');
+    shouldBeEqualToString('originalResources[0].initiatorType', 'css');
+    shouldBeEqualToString('new URL(originalResources[0].name).search', '?resource=0');
+    shouldBeEqualToString('originalResources[1].initiatorType', 'css');
+    shouldBeEqualToString('new URL(originalResources[1].name).search', '?resource=1');
+    shouldBe('resourcetimingbufferfullEventCount', '0');
+}
+
+let resourceIndex = 0;
+function fetchImages(startingIndex, pastEndingIndex)
+{
+    const container = document.getElementById('container');
+    for (let i = startingIndex; i < pastEndingIndex; i++) {
+        const div = document.createElement('div');
+        div.style.backgroundImage = `url('../../resources/square100.png?resource=${i}')`;
+        container.appendChild(div);
+    }
+    container.getBoundingClientRect();
+}
+
+let resourcetimingbufferfullEventCount = 0;
+performance.onresourcetimingbufferfull = () => {
+    resourcetimingbufferfullEventCount++;
+    debug('');
+    debug(`Inside resourcetimingbufferfull ${resourcetimingbufferfullEventCount}`);
+    evalAndLog('performance.setResourceTimingBufferSize(10); fetchImages(3, 4)');
+    shouldBe('resourcesAfterShrinkingBuffer = performance.getEntriesByType("resource"); resourcesAfterShrinkingBuffer.length', '2');
+    shouldBe('resourcesAfterShrinkingBuffer[0]', 'originalResources[0]');
+    shouldBe('resourcesAfterShrinkingBuffer[1]', 'originalResources[1]');
+    setTimeout(() => {
+        debug('');
+        debug('After resourcetimingbufferfull');
+        shouldBe('finalResources = performance.getEntriesByType("resource"); finalResources.length', '4');
+        shouldBe('resourcetimingbufferfullEventCount', '1');
+        shouldBe('finalResources[0]', 'originalResources[0]');
+        shouldBe('finalResources[1]', 'originalResources[1]');
+        shouldBeEqualToString('finalResources[2].initiatorType', 'css');
+        shouldBeEqualToString('new URL(finalResources[2].name).search', '?resource=2');
+        shouldBeEqualToString('finalResources[3].initiatorType', 'css');
+        shouldBeEqualToString('new URL(finalResources[3].name).search', '?resource=3');        
+        finishJSTest();
+    }, 0);
+}
+
+var jsTestIsAsync = true;
+
+</script>
+<script src="/resources/js-test-post.js"></script>
+</body>
+</html>

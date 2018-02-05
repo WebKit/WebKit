@@ -213,30 +213,31 @@ void Performance::resourceTimingBufferFullTimerFired()
 {
     while (!m_backupResourceTimingBuffer.isEmpty()) {
         auto backupBuffer = WTFMove(m_backupResourceTimingBuffer);
+        ASSERT(m_backupResourceTimingBuffer.isEmpty());
 
         m_resourceTimingBufferFullFlag = true;
         dispatchEvent(Event::create(eventNames().resourcetimingbufferfullEvent, true, false));
 
-        RELEASE_ASSERT(m_resourceTimingBufferSize >= m_resourceTimingBuffer.size());
-        unsigned remainingBufferSize = m_resourceTimingBufferSize - m_resourceTimingBuffer.size();
-        bool bufferIsStillFullAfterDispatchingEvent = !remainingBufferSize;
-        if (bufferIsStillFullAfterDispatchingEvent) {
+        if (m_resourceTimingBufferFullFlag) {
             for (auto& entry : backupBuffer)
                 queueEntry(*entry);
             // Dispatching resourcetimingbufferfull event may have inserted more entries.
             for (auto& entry : m_backupResourceTimingBuffer)
                 queueEntry(*entry);
+            m_backupResourceTimingBuffer.clear();
             break;
         }
 
-        unsigned i = 0;
+        // More entries may have added while dispatching resourcetimingbufferfull event.
+        backupBuffer.appendVector(m_backupResourceTimingBuffer);
+        m_backupResourceTimingBuffer.clear();
+
         for (auto& entry : backupBuffer) {
-            if (i < remainingBufferSize) {
+            if (!isResourceTimingBufferFull()) {
                 m_resourceTimingBuffer.append(entry.copyRef());
                 queueEntry(*entry);
             } else
                 m_backupResourceTimingBuffer.append(entry.copyRef());
-            i++;
         }
     }
     m_waitingForBackupBufferToBeProcessed = false;

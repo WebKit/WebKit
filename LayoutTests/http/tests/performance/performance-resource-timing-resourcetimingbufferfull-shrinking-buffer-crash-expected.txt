@@ -1,0 +1,34 @@
+This tests clearing the resource timing buffer during a resourcetimingbufferfull event.
+WebKit should not hit a release assertion.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS performance.getEntriesByType("resource").length is 0
+performance.setResourceTimingBufferSize(2)
+fetchImages(3).then(checkInitialState)
+PASS originalResources = performance.getEntriesByType("resource"); originalResources.length is 2
+PASS originalResources[0].initiatorType is "fetch"
+PASS new URL(originalResources[0].name).search is "?resource=0"
+PASS originalResources[1].initiatorType is "fetch"
+PASS new URL(originalResources[1].name).search is "?resource=1"
+PASS resourcetimingbufferfullEventCount is 0
+
+Inside resourcetimingbufferfull 1
+performance.setResourceTimingBufferSize(1)
+PASS resourcesAfterShrinkingBuffer = performance.getEntriesByType("resource"); resourcesAfterShrinkingBuffer.length is 2
+PASS resourcesAfterShrinkingBuffer[0] is originalResources[0]
+PASS resourcesAfterShrinkingBuffer[1] is originalResources[1]
+
+Inside resourcetimingbufferfull 2
+PASS performance.clearResourceTimings(); performance.getEntriesByType("resource").length is 0
+
+After resourcetimingbufferfull
+PASS resourcetimingbufferfullEventCount is 2
+PASS resourcesAfterClearing = performance.getEntriesByType("resource"); resourcesAfterClearing.length is 1
+PASS resourcesAfterClearing[0].initiatorType is "fetch"
+PASS new URL(resourcesAfterClearing[0].name).search is "?resource=2"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
