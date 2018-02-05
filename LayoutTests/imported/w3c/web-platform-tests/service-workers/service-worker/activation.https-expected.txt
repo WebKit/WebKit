@@ -3,5 +3,5 @@
 PASS loss of controllees triggers activation 
 PASS finishing a request triggers activation 
 PASS skipWaiting bypasses no controllee requirement 
-FAIL finishing a request triggers unregister assert_equals: expected null but got object "[object ServiceWorker]"
+PASS finishing a request triggers unregister 
 

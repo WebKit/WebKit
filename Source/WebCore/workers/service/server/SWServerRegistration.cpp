@@ -228,17 +228,6 @@ bool SWServerRegistration::tryClear()
 }
 
 // https://w3c.github.io/ServiceWorker/#clear-registration
-static void clearRegistrationWorker(SWServerRegistration& registration, SWServerWorker* worker, ServiceWorkerRegistrationState state)
-{
-    if (!worker)
-        return;
-
-    worker->terminate();
-    registration.updateWorkerState(*worker, ServiceWorkerState::Redundant);
-    registration.updateRegistrationState(state, nullptr);
-}
-
-// https://w3c.github.io/ServiceWorker/#clear-registration
 void SWServerRegistration::clear()
 {
     if (m_preInstallationWorker) {
@@ -247,9 +236,28 @@ void SWServerRegistration::clear()
         m_preInstallationWorker = nullptr;
     }
 
-    clearRegistrationWorker(*this, installingWorker(), ServiceWorkerRegistrationState::Installing);
-    clearRegistrationWorker(*this, waitingWorker(), ServiceWorkerRegistrationState::Waiting);
-    clearRegistrationWorker(*this, activeWorker(), ServiceWorkerRegistrationState::Active);
+    RefPtr<SWServerWorker> installingWorker = this->installingWorker();
+    if (installingWorker) {
+        installingWorker->terminate();
+        updateRegistrationState(ServiceWorkerRegistrationState::Installing, nullptr);
+    }
+    RefPtr<SWServerWorker> waitingWorker = this->waitingWorker();
+    if (waitingWorker) {
+        waitingWorker->terminate();
+        updateRegistrationState(ServiceWorkerRegistrationState::Waiting, nullptr);
+    }
+    RefPtr<SWServerWorker> activeWorker = this->activeWorker();
+    if (activeWorker) {
+        activeWorker->terminate();
+        updateRegistrationState(ServiceWorkerRegistrationState::Active, nullptr);
+    }
+
+    if (installingWorker)
+        updateWorkerState(*installingWorker, ServiceWorkerState::Redundant);
+    if (waitingWorker)
+        updateWorkerState(*waitingWorker, ServiceWorkerState::Redundant);
+    if (activeWorker)
+        updateWorkerState(*activeWorker, ServiceWorkerState::Redundant);
 
     // Remove scope to registration map[scopeString].
     m_server.removeRegistration(key());
