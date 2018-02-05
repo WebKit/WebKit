@@ -74,7 +74,7 @@ String WebsiteDataStore::defaultIndexedDBDatabaseDirectory()
 
 String WebsiteDataStore::defaultServiceWorkerRegistrationDirectory()
 {
-    return websiteDataDirectoryFileSystemRepresentation("ServiceWorkers");
+    return cacheDirectoryFileSystemRepresentation("ServiceWorkers");
 }
 
 String WebsiteDataStore::defaultLocalStorageDirectory()
