@@ -189,6 +189,8 @@ private:
     void addClientServiceWorkerRegistration(Connection&, ServiceWorkerRegistrationIdentifier);
     void removeClientServiceWorkerRegistration(Connection&, ServiceWorkerRegistrationIdentifier);
 
+    void terminatePreinstallationWorker(SWServerWorker&);
+
     WEBCORE_EXPORT SWServerRegistration* doRegistrationMatching(const SecurityOriginData& topOrigin, const URL& clientURL);
     bool runServiceWorker(ServiceWorkerIdentifier);
 

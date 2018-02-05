@@ -126,7 +126,7 @@ void ServiceWorkerContainer::addRegistration(const String& relativeScriptURL, co
         return;
     }
 
-    ServiceWorkerJobData jobData(ensureSWClientConnection().serverConnectionIdentifier());
+    ServiceWorkerJobData jobData(ensureSWClientConnection().serverConnectionIdentifier(), contextIdentifier());
 
     jobData.scriptURL = context->completeURL(relativeScriptURL);
     if (!jobData.scriptURL.isValid()) {
@@ -191,7 +191,7 @@ void ServiceWorkerContainer::removeRegistration(const URL& scopeURL, Ref<Deferre
         return;
     }
 
-    ServiceWorkerJobData jobData(m_swConnection->serverConnectionIdentifier());
+    ServiceWorkerJobData jobData(m_swConnection->serverConnectionIdentifier(), contextIdentifier());
     jobData.clientCreationURL = context->url();
     jobData.topOrigin = SecurityOriginData::fromSecurityOrigin(context->topOrigin());
     jobData.type = ServiceWorkerJobType::Unregister;
@@ -216,7 +216,7 @@ void ServiceWorkerContainer::updateRegistration(const URL& scopeURL, const URL& 
         return;
     }
 
-    ServiceWorkerJobData jobData(m_swConnection->serverConnectionIdentifier());
+    ServiceWorkerJobData jobData(m_swConnection->serverConnectionIdentifier(), contextIdentifier());
     jobData.clientCreationURL = context.url();
     jobData.topOrigin = SecurityOriginData::fromSecurityOrigin(context.topOrigin());
     jobData.type = ServiceWorkerJobType::Update;

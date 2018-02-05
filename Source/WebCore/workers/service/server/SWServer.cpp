@@ -327,10 +327,9 @@ void SWServer::startScriptFetch(const ServiceWorkerJobData& jobData, FetchOption
 {
     LOG(ServiceWorker, "Server issuing startScriptFetch for current job %s in client", jobData.identifier().loggingString().utf8().data());
     auto* connection = m_connections.get(jobData.connectionIdentifier());
-    if (!connection)
-        return;
-
-    connection->startScriptFetchInClient(jobData.identifier().jobIdentifier, jobData.registrationKey(), cachePolicy);
+    ASSERT_WITH_MESSAGE(connection, "If the connection was lost, this job should have been cancelled");
+    if (connection)
+        connection->startScriptFetchInClient(jobData.identifier().jobIdentifier, jobData.registrationKey(), cachePolicy);
 }
 
 void SWServer::scriptFetchFinished(Connection& connection, const ServiceWorkerFetchResult& result)
@@ -353,8 +352,13 @@ void SWServer::scriptContextFailedToStart(const std::optional<ServiceWorkerJobDa
 
     RELEASE_LOG_ERROR(ServiceWorker, "%p - SWServer::scriptContextFailedToStart: Failed to start SW for job %s, error: %s", this, jobDataIdentifier->loggingString().utf8().data(), message.utf8().data());
 
-    if (auto* jobQueue = m_jobQueues.get(worker.registrationKey()))
-        jobQueue->scriptContextFailedToStart(*jobDataIdentifier, worker.identifier(), message);
+    auto* jobQueue = m_jobQueues.get(worker.registrationKey());
+    if (!jobQueue || !jobQueue->isCurrentlyProcessingJob(*jobDataIdentifier)) {
+        // The job which started this worker has been canceled, terminate this worker.
+        terminatePreinstallationWorker(worker);
+        return;
+    }
+    jobQueue->scriptContextFailedToStart(*jobDataIdentifier, worker.identifier(), message);
 }
 
 void SWServer::scriptContextStarted(const std::optional<ServiceWorkerJobDataIdentifier>& jobDataIdentifier, SWServerWorker& worker)
@@ -362,8 +366,21 @@ void SWServer::scriptContextStarted(const std::optional<ServiceWorkerJobDataIden
     if (!jobDataIdentifier)
         return;
 
-    if (auto* jobQueue = m_jobQueues.get(worker.registrationKey()))
-        jobQueue->scriptContextStarted(*jobDataIdentifier, worker.identifier());
+    auto* jobQueue = m_jobQueues.get(worker.registrationKey());
+    if (!jobQueue || !jobQueue->isCurrentlyProcessingJob(*jobDataIdentifier)) {
+        // The job which started this worker has been canceled, terminate this worker.
+        terminatePreinstallationWorker(worker);
+        return;
+    }
+    jobQueue->scriptContextStarted(*jobDataIdentifier, worker.identifier());
+}
+
+void SWServer::terminatePreinstallationWorker(SWServerWorker& worker)
+{
+    worker.terminate();
+    auto* registration = getRegistration(worker.registrationKey());
+    if (registration && registration->preInstallationWorker() == &worker)
+        registration->setPreInstallationWorker(nullptr);
 }
 
 void SWServer::didFinishInstall(const std::optional<ServiceWorkerJobDataIdentifier>& jobDataIdentifier, SWServerWorker& worker, bool wasSuccessful)
@@ -508,6 +525,13 @@ void SWServer::installContextData(const ServiceWorkerContextData& data)
 {
     ASSERT_WITH_MESSAGE(!data.loadedFromDisk, "Workers we just read from disk should only be launched as needed");
 
+    if (data.jobDataIdentifier) {
+        // Abort if the job that scheduled this has been cancelled.
+        auto* jobQueue = m_jobQueues.get(data.registration.key);
+        if (!jobQueue || !jobQueue->isCurrentlyProcessingJob(*data.jobDataIdentifier))
+            return;
+    }
+
     m_registrationStore.updateRegistration(data);
 
     auto* connection = SWServerToContextConnection::globalServerToContextConnection();
@@ -631,6 +655,9 @@ void SWServer::workerContextTerminated(SWServerWorker& worker)
     worker.setState(SWServerWorker::State::NotRunning);
     worker.setContextConnectionIdentifier(std::nullopt);
 
+    if (auto* jobQueue = m_jobQueues.get(worker.registrationKey()))
+        jobQueue->cancelJobsFromServiceWorker(worker.identifier());
+
     // At this point if no registrations are referencing the worker then it will be destroyed,
     // removing itself from the m_workersByID map.
     auto result = m_runningOrTerminatingWorkers.take(worker.identifier());
@@ -684,6 +711,9 @@ void SWServer::unregisterConnection(Connection& connection)
 
     for (auto& registration : m_registrations.values())
         registration->unregisterServerConnection(connection.identifier());
+
+    for (auto& jobQueue : m_jobQueues.values())
+        jobQueue->cancelJobsFromConnection(connection.identifier());
 }
 
 SWServerRegistration* SWServer::doRegistrationMatching(const SecurityOriginData& topOrigin, const URL& clientURL)
