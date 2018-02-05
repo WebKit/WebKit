@@ -1,3 +1,15 @@
+2018-02-05  Alicia Boya García  <aboya@igalia.com>
+
+        Fix bug in MediaTime comparison for negative values with different scale.
+        https://bugs.webkit.org/show_bug.cgi?id=182433
+
+        Improved test coverage for MediaTime::compare().
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        * TestWebKitAPI/Tests/WTF/MediaTime.cpp:
+        (TestWebKitAPI::TEST):
+
 2018-02-05  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [SOUP] WebSockets must use system proxy settings

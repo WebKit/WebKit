@@ -85,6 +85,12 @@ TEST(WTF, MediaTime)
     EXPECT_EQ(MediaTime(1, 1) != MediaTime(2, 1), true);
     EXPECT_EQ(MediaTime(2, 1) == MediaTime(2, 1), true);
     EXPECT_EQ(MediaTime(2, 1) == MediaTime(4, 2), true);
+    EXPECT_EQ(MediaTime(-2, 1) < MediaTime(-1, 1), true);
+    EXPECT_EQ(MediaTime(-2, 1) <= MediaTime(-1, 1), true);
+    EXPECT_EQ(MediaTime(-1, 1) < MediaTime(-2, 1), false);
+    EXPECT_EQ(MediaTime(-1, 1) < MediaTime(2, 1), true);
+    EXPECT_EQ(MediaTime(1, 1) > MediaTime(-2, 1), true);
+    EXPECT_EQ(MediaTime(-8, 10) >= MediaTime(-1, 1), true);
     EXPECT_TRUE((bool)MediaTime(1, 1));
     EXPECT_TRUE(!MediaTime(0, 1));
 

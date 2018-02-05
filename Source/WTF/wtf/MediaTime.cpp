@@ -391,11 +391,19 @@ MediaTime::ComparisonFlags MediaTime::compare(const MediaTime& rhs) const
     if (m_timeValue == rhs.m_timeValue)
         return m_timeScale < rhs.m_timeScale ? GreaterThan : LessThan;
 
-    if (m_timeValue < rhs.m_timeValue && m_timeScale > rhs.m_timeScale)
-        return LessThan;
+    if (m_timeValue >= 0) {
+        if (m_timeValue < rhs.m_timeValue && m_timeScale > rhs.m_timeScale)
+            return LessThan;
 
-    if (m_timeValue > rhs.m_timeValue && m_timeScale < rhs.m_timeScale)
-        return GreaterThan;
+        if (m_timeValue > rhs.m_timeValue && m_timeScale < rhs.m_timeScale)
+            return GreaterThan;
+    } else {
+        if (m_timeValue < rhs.m_timeValue && m_timeScale < rhs.m_timeScale)
+            return LessThan;
+
+        if (m_timeValue > rhs.m_timeValue && m_timeScale > rhs.m_timeScale)
+            return GreaterThan;
+    }
 
     int64_t lhsFactor;
     int64_t rhsFactor;
