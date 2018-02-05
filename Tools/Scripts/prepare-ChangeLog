@@ -1783,8 +1783,13 @@ sub get_function_line_ranges_for_python($$)
 
     my @ranges;
 
+    my $multilineStringLiteralSentinelRegEx = qr#(?:"""|''')#;
+    my $multilineStringLiteralStartRegEx = qr#^\s*$multilineStringLiteralSentinelRegEx#;
+    my $multilineStringLiteralEndRegEx = qr#$multilineStringLiteralSentinelRegEx\s*$#;
+
     my @scopeStack = ({ line => 0, indent => -1, name => undef });
     my $lastLine = 0;
+    my $inComment = 0;
     until ($lastLine) {
         $_ = <$fileHandle>;
         unless ($_) {
@@ -1795,7 +1800,7 @@ sub get_function_line_ranges_for_python($$)
             $lastLine = 1;
         }
         chomp;
-        next unless /^(\s*)([^#].*)$/;
+        next unless /^(\s*)([^#].*)$/; # Skip non-indented lines that begin with a comment.
 
         my $indent = length $1;
         my $rest = $2;
@@ -1823,6 +1828,17 @@ sub get_function_line_ranges_for_python($$)
             $scope = $scopeStack[-1];
             $scope->{line} = $.;
         }
+
+        # Skip multi-line string literals and docstrings.
+        next if /$multilineStringLiteralStartRegEx.*$multilineStringLiteralEndRegEx/;
+        if (!$inComment && /$multilineStringLiteralStartRegEx/) {
+            $inComment = 1;
+        } elsif ($inComment && /$multilineStringLiteralEndRegEx/) {
+            $inComment = 0;
+        }
+        next if $inComment;
+
+        next if /^\s*[#'"]/; # Skip indented and non-indented lines that begin with a comment or string literal (includes docstrings).
 
         next unless $rest =~ /(?:class|def)\s+(\w+)/;
         my $name = $1;

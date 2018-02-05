@@ -1,3 +1,32 @@
+2018-02-05  Daniel Bates  <dabates@apple.com>
+
+        prepare-ChangeLog gets confused about Python docstrings that contain the word "class" or "def"
+        https://bugs.webkit.org/show_bug.cgi?id=182405
+
+        Reviewed by David Kilzer.
+
+        String literal statements, including docstrings, do not demarcate a new scope in Python.
+        So, do not treat them like they do when building up the list of modified functions.
+
+        * Scripts/prepare-ChangeLog:
+        (get_function_line_ranges_for_python):
+        * Scripts/webkitperl/prepare-ChangeLog_unittest/resources/python_unittests-expected.txt:
+        The expected ending line number for the last "pass" statement inside the scope of Class5 changed
+        from 97 to 98 because empty lines do not effect scope. This is consistent with the parsing
+        of the second "pass" statement in the scope of class Class5. A "pass" is a null operation that
+        is used as a syntactic placeholder when a statement is required. Ideally we would make
+        the parsing code smarter so as to avoid emitting ranges for "pass" statements that serve
+        not syntactic purpose.
+        * Scripts/webkitperl/prepare-ChangeLog_unittest/resources/python_unittests.py:
+        (Class5):
+        (Class6):
+        (Class6.__init__):
+        (Class7):
+        (Class7.__init__):
+        (Class8):
+        (Class8.__init__):
+        Add some more tests.
+
 2018-02-05  Matt Lewis  <jlewis3@apple.com>
 
         Unreviewed, rolling out r228086.
