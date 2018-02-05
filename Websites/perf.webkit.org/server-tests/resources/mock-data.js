@@ -196,7 +196,8 @@ MockData = {
                 'some-test': {'test': ['some test']}
             },
             'builders': {
-                'builder-1': {'builder': 'some-builder-1'},
+                'builder-1': {'builder': 'some-builder-1',
+                     properties: {forcescheduler: 'force-some-builder-1'}} 
             },
             'testConfigurations': [
                 {
@@ -226,8 +227,8 @@ MockData = {
                 'some-test': {'test': ['some test']},
             },
             'builders': {
-                'builder-1': {'builder': 'some-builder-1'},
-                'builder-2': {'builder': 'some builder 2'},
+                'builder-1': {'builder': 'some-builder-1', properties: {forcescheduler: 'force-some-builder-1'}},
+                'builder-2': {'builder': 'some builder 2', properties: {forcescheduler: 'force-some-builder-2'}},
             },
             'testConfigurations': [
                 {

@@ -57,7 +57,7 @@ describe('BuildbotTriggerable', function () {
             }).then(() => {
                 assert.equal(MockRemoteAPI.requests[2].method, 'POST');
                 assert.equal(MockRemoteAPI.requests[2].url, '/builders/some-builder-1/force');
-                assert.deepEqual(MockRemoteAPI.requests[2].data, {'wk': '191622', 'os': '10.11 15A284', 'build-request-id': '702'});
+                assert.deepEqual(MockRemoteAPI.requests[2].data, {'wk': '191622', 'os': '10.11 15A284', 'build-request-id': '702', 'forcescheduler': 'force-some-builder-1'});
                 MockRemoteAPI.requests[2].resolve('OK');
                 return MockRemoteAPI.waitForRequest();
             }).then(() => {
@@ -167,7 +167,7 @@ describe('BuildbotTriggerable', function () {
                 assert.equal(MockRemoteAPI.requests.length, 5);
                 assert.equal(MockRemoteAPI.requests[4].method, 'POST');
                 assert.equal(MockRemoteAPI.requests[4].url, '/builders/some%20builder%202/force');
-                assert.deepEqual(MockRemoteAPI.requests[4].data, {'wk': '191622', 'os': '10.11 15A284', 'build-request-id': '700'});
+                assert.deepEqual(MockRemoteAPI.requests[4].data, {'wk': '191622', 'os': '10.11 15A284', 'build-request-id': '700', 'forcescheduler': 'force-some-builder-2'});
                 MockRemoteAPI.requests[4].resolve('OK');
                 return MockRemoteAPI.waitForRequest();
             }).then(() => {
@@ -322,7 +322,7 @@ describe('BuildbotTriggerable', function () {
                 assert.equal(MockRemoteAPI.requests.length, 5);
                 assert.equal(MockRemoteAPI.requests[4].method, 'POST');
                 assert.equal(MockRemoteAPI.requests[4].url, '/builders/some-builder-1/force');
-                assert.deepEqual(MockRemoteAPI.requests[4].data, {'wk': '191622', 'os': '10.11 15A284', 'build-request-id': '702'});
+                assert.deepEqual(MockRemoteAPI.requests[4].data, {'wk': '191622', 'os': '10.11 15A284', 'build-request-id': '702', 'forcescheduler': 'force-some-builder-1'});
                 MockRemoteAPI.requests[4].resolve('OK');
                 return MockRemoteAPI.waitForRequest();
             }).then(() => {
@@ -468,7 +468,7 @@ describe('BuildbotTriggerable', function () {
                 assert.equal(MockRemoteAPI.requests.length, 5);
                 assert.equal(MockRemoteAPI.requests[4].method, 'POST');
                 assert.equal(MockRemoteAPI.requests[4].url, '/builders/some%20builder%202/force');
-                assert.deepEqual(MockRemoteAPI.requests[4].data, {'wk': '191622', 'os': '10.11 15A284', 'build-request-id': '710'});
+                assert.deepEqual(MockRemoteAPI.requests[4].data, {'wk': '191622', 'os': '10.11 15A284', 'build-request-id': '710', 'forcescheduler': 'force-some-builder-2'});
                 MockRemoteAPI.requests[4].resolve('OK');
                 return MockRemoteAPI.waitForRequest();
             }).then(() => {
@@ -568,11 +568,11 @@ describe('BuildbotTriggerable', function () {
                 assert.equal(MockRemoteAPI.requests.length, 6);
                 assert.equal(MockRemoteAPI.requests[4].method, 'POST');
                 assert.equal(MockRemoteAPI.requests[4].url, '/builders/some%20builder%202/force');
-                assert.deepEqual(MockRemoteAPI.requests[4].data, {'wk': '192736', 'os': '10.11 15A284', 'build-request-id': '701'});
+                assert.deepEqual(MockRemoteAPI.requests[4].data, {'wk': '192736', 'os': '10.11 15A284', 'build-request-id': '701', 'forcescheduler': 'force-some-builder-2'});
                 MockRemoteAPI.requests[4].resolve('OK');
                 assert.equal(MockRemoteAPI.requests[5].method, 'POST');
                 assert.equal(MockRemoteAPI.requests[5].url, '/builders/some-builder-1/force');
-                assert.deepEqual(MockRemoteAPI.requests[5].data, {'wk': '192736', 'os': '10.11 15A284', 'build-request-id': '711'});
+                assert.deepEqual(MockRemoteAPI.requests[5].data, {'wk': '192736', 'os': '10.11 15A284', 'build-request-id': '711', 'forcescheduler': 'force-some-builder-1'});
                 MockRemoteAPI.requests[5].resolve('OK');
                 return MockRemoteAPI.waitForRequest();
             }).then(() => {
@@ -665,7 +665,7 @@ describe('BuildbotTriggerable', function () {
                 assert.equal(requests.length, 3);
                 assert.equal(requests[2].method, 'POST');
                 assert.equal(requests[2].url, '/builders/some-builder-1/force');
-                assert.deepEqual(requests[2].data, {'wk': '191622', 'os': '10.11 15A284', 'build-request-id': '700'});
+                assert.deepEqual(requests[2].data, {'wk': '191622', 'os': '10.11 15A284', 'build-request-id': '700', 'forcescheduler': 'force-some-builder-1'});
                 return new Promise((resolve) => setTimeout(resolve, 10));
             }).then(() => {
                 assert.equal(requests.length, 3);
@@ -738,7 +738,7 @@ describe('BuildbotTriggerable', function () {
             }).then(() => {
                 assert.equal(requests.length, 3);
                 assertRequestAndResolve(requests[2], 'POST', '/builders/some-builder-1/force');
-                assert.deepEqual(requests[2].data, {'wk': '192736', 'os': '10.11 15A284', 'build-request-id': '701'});
+                assert.deepEqual(requests[2].data, {'wk': '192736', 'os': '10.11 15A284', 'build-request-id': '701', 'forcescheduler': 'force-some-builder-1'});
                 return MockRemoteAPI.waitForRequest();
             }).then(() => {
                 assert.equal(requests.length, 4);
@@ -805,7 +805,7 @@ describe('BuildbotTriggerable', function () {
                 assert.equal(MockRemoteAPI.requests.length, 3);
                 assert.equal(MockRemoteAPI.requests[2].method, 'POST');
                 assert.equal(MockRemoteAPI.requests[2].url, '/builders/some-builder-1/force');
-                assert.deepEqual(MockRemoteAPI.requests[2].data, {'wk': '192736', 'os': '10.11 15A284', 'build-request-id': '701'});
+                assert.deepEqual(MockRemoteAPI.requests[2].data, {'wk': '192736', 'os': '10.11 15A284', 'build-request-id': '701', 'forcescheduler': 'force-some-builder-1'});
                 MockRemoteAPI.requests[2].resolve('OK');
                 return MockRemoteAPI.waitForRequest();
             }).then(() => {
@@ -931,7 +931,7 @@ describe('BuildbotTriggerable', function () {
                 assert.equal(MockRemoteAPI.requests.length, 3);
                 assert.equal(MockRemoteAPI.requests[2].method, 'POST');
                 assert.equal(MockRemoteAPI.requests[2].url, '/builders/some-builder-1/force');
-                assert.deepEqual(MockRemoteAPI.requests[2].data, {'wk': '191622', 'os': '10.11 15A284', 'build-request-id': '710'});
+                assert.deepEqual(MockRemoteAPI.requests[2].data, {'wk': '191622', 'os': '10.11 15A284', 'build-request-id': '710', 'forcescheduler': 'force-some-builder-1'});
                 MockRemoteAPI.requests[2].resolve('OK');
             });
         });

@@ -140,6 +140,7 @@ class BuildbotSyncer {
         assert(!this._slavesWithNewRequests.has(slaveName));
         let properties = this._propertiesForBuildRequest(newRequest, requestsInGroup);
 
+        assert(properties['forcescheduler'], `forcescheduler was not specified in buildbot properties for build request ${newRequest.id()} on platform "${newRequest.platform().name()}" for builder "${this.builderName()}"`);
         assert.equal(!this._slavePropertyName, !slaveName);
         if (this._slavePropertyName)
             properties[this._slavePropertyName] = slaveName;
@@ -148,7 +149,19 @@ class BuildbotSyncer {
             properties[this._platformPropertyName] = newRequest.platform().name();
 
         this._slavesWithNewRequests.add(slaveName);
-        return this._remote.postFormUrlencodedData(this.pathForForceBuild(), properties);
+        return this.scheduleBuildOnBuildbotDeprecated(properties);
+    }
+
+    scheduleBuildOnBuildbotDeprecated(properties)
+    {
+        return this._remote.postFormUrlencodedData(this.pathForForceBuildDeprecated(), properties);
+    }
+
+    scheduleBuildOnBuildbot(properties)
+    {
+        const data = {jsonrpc: '2.0', method: 'force', id: properties[this._buildRequestPropertyName], params: properties};
+        const path = this.pathForForceBuild(properties['forcescheduler']);
+        return this._remote.postJSON(path, data);
     }
 
     scheduleRequestInGroupIfAvailable(newRequest, requestsInGroup, slaveName)
@@ -258,7 +271,8 @@ class BuildbotSyncer {
         return `/json/builders/${escape(this._builderName)}/builds/?` + selectedBuilds.map((number) => 'select=' + number).join('&');
     }
     pathForRecentBuilds(count) { return `/api/v2/builders/${this._builderID}/builds?limit=${count}&order=-number&property=*`; }
-    pathForForceBuild() { return `/builders/${escape(this._builderName)}/force`; }
+    pathForForceBuildDeprecated() { return `/builders/${escape(this._builderName)}/force`; }
+    pathForForceBuild(schedulerName) { return `/api/v2/forceschedulers/${schedulerName}`; }
 
     url() { return this._remote.url(`/builders/${escape(this._builderName)}/`); }
     urlForBuildNumberDeprecated(number) { return this._remote.url(`/builders/${escape(this._builderName)}/builds/${number}`); }

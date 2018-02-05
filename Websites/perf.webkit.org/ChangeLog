@@ -1,5 +1,24 @@
 2018-02-02  Aakash Jain  <aakash_jain@apple.com>
 
+        Add support for submitting build request to Buildbot 0.9 server in BuildbotSyncer
+        https://bugs.webkit.org/show_bug.cgi?id=182218
+
+        Reviewed by Ryosuke Niwa.
+
+        * tools/js/buildbot-syncer.js:
+        (BuildbotSyncer.prototype.scheduleRequest): Added assert to ensure forcescheduler property is always defined. Builds can not
+        be scheduled on Buildbot without this property. Updated unit-tests and server-tests accordingly.
+        (BuildbotSyncer.prototype.scheduleBuildOnBuildbotDeprecated): Method to schedule build request on Buildbot 0.8 server.
+        (BuildbotSyncer.prototype.scheduleBuildOnBuildbot): Method to schedule build request on Buildbot 0.9 server.
+        (BuildbotSyncer.prototype.pathForForceBuildDeprecated): Path for scheudling build on Buildbot 0.8 server.
+        (BuildbotSyncer.prototype.pathForForceBuild): Path for scheudling build on Buildbot 0.9 server.
+        * unit-tests/buildbot-syncer-tests.js:
+        (smallConfiguration): Added test-case for scheduleBuildOnBuildbot. Also added forcescheduler property in sample data.
+        * server-tests/resources/mock-data.js: Added forcescheduler property in sample data.
+        * server-tests/tools-buildbot-triggerable-tests.js: Updated server-tests to take care of added forcescheduler property.
+
+2018-02-02  Aakash Jain  <aakash_jain@apple.com>
+
         Add support for fetching recent builds in Buildbot 0.9 format in BuildbotSyncer
         https://bugs.webkit.org/show_bug.cgi?id=179743
 

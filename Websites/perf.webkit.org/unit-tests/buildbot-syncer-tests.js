@@ -134,6 +134,7 @@ function smallConfiguration()
         'builders': {
             'some-builder': {
                 'builder': 'some builder',
+                'properties': {'forcescheduler': 'some-builder-ForceScheduler'}
             }
         },
         'testConfigurations': [{
@@ -1673,6 +1674,33 @@ describe('BuildbotSyncer', () => {
         });
     });
 
+    describe('scheduleBuildOnBuildbot', () => {
+        it('should schedule a build request on Buildbot', async () => {
+            const syncer = BuildbotSyncer._loadConfig(MockRemoteAPI, sampleiOSConfig(), builderNameToIDMap())[0];
+            const request = createSampleBuildRequest(MockModels.iphone, MockModels.speedometer);
+            const properties = syncer._propertiesForBuildRequest(request, [request]);
+            const promise  = syncer.scheduleBuildOnBuildbot(properties);
+
+            assert.equal(requests.length, 1);
+            assert.equal(requests[0].method, 'POST');
+            assert.equal(requests[0].url, '/api/v2/forceschedulers/ABTest-iPhone-RunBenchmark-Tests-ForceScheduler');
+            requests[0].resolve();
+            await promise;
+            assert.deepEqual(requests[0].data, {
+                'id': '16733-' + MockModels.iphone.id(),
+                'jsonrpc': '2.0',
+                'method': 'force',
+                'params': {
+                    'build_request_id': '16733-' + MockModels.iphone.id(),
+                    'desired_image': '13A452',
+                    'opensource': '197463',
+                    'forcescheduler': 'ABTest-iPhone-RunBenchmark-Tests-ForceScheduler',
+                    'test_name': 'speedometer'
+                }
+            });
+        });
+    });
+
     describe('scheduleRequest', () => {
         it('should schedule a build request on a specified slave', () => {
             let syncer = BuildbotSyncer._loadConfig(MockRemoteAPI, sampleiOSConfig(), builderNameToIDMap())[0];
@@ -1720,7 +1748,7 @@ describe('BuildbotSyncer', () => {
                 assert.equal(requests.length, 1);
                 assert.equal(requests[0].url, '/builders/some%20builder/force');
                 assert.equal(requests[0].method, 'POST');
-                assert.deepEqual(requests[0].data, {id: '16733-' + MockModels.somePlatform.id(), 'os': '13A452', 'wk': '197463'});
+                assert.deepEqual(requests[0].data, {id: '16733-' + MockModels.somePlatform.id(), 'os': '13A452', 'wk': '197463', 'forcescheduler': 'some-builder-ForceScheduler'});
             });
         });
 
@@ -1733,7 +1761,7 @@ describe('BuildbotSyncer', () => {
                 assert.equal(requests.length, 1);
                 assert.equal(requests[0].url, '/builders/some%20builder/force');
                 assert.equal(requests[0].method, 'POST');
-                assert.deepEqual(requests[0].data, {id: '16733-' + MockModels.somePlatform.id(), 'os': '13A452', 'wk': '197463'});
+                assert.deepEqual(requests[0].data, {id: '16733-' + MockModels.somePlatform.id(), 'os': '13A452', 'wk': '197463', 'forcescheduler': 'some-builder-ForceScheduler'});
             });
         });
 
