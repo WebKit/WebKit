@@ -1,3 +1,10 @@
+2018-02-05  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, unskip fetch-event-respond-with-partial-stream.https.html as it no longer times out
+
+        * web-platform-tests/service-workers/service-worker/fetch-event-respond-with-partial-stream.https-expected.txt:
+        * web-platform-tests/service-workers/service-worker/import-scripts-redirect.https-expected.txt:
+
 2018-02-05  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [css-grid] Rename gutter properties to remove "grid-" prefix

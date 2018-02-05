@@ -1,5 +1,3 @@
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT respondWith() streams data to an intercepted fetch() Test timed out
+PASS respondWith() streams data to an intercepted fetch() 
 

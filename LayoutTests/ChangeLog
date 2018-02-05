@@ -1,3 +1,9 @@
+2018-02-05  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, unskip fetch-event-respond-with-partial-stream.https.html as it no longer times out
+
+        * TestExpectations:
+
 2018-02-05  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed GTK+ gardening.
