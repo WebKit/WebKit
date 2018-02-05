@@ -355,6 +355,11 @@ if (USE_WOFF2)
     endif ()
 endif ()
 
+# https://bugs.webkit.org/show_bug.cgi?id=182247
+if (ENABLED_COMPILER_SANITIZERS)
+    set(ENABLE_INTROSPECTION OFF)
+endif ()
+
 # Override the cached variables, gtk-doc and gobject-introspection do not really work when cross-building.
 if (CMAKE_CROSSCOMPILING)
     set(ENABLE_GTKDOC OFF)

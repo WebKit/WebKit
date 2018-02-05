@@ -155,6 +155,21 @@ if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" AND NOT "${LOWERCASE_CMAKE_HOST_SY
     set(CMAKE_SHARED_LINKER_FLAGS_DEBUG "-Wl,--no-keep-memory ${CMAKE_SHARED_LINKER_FLAGS_DEBUG}")
 endif ()
 
+if (COMPILER_IS_GCC_OR_CLANG)
+    # Careful: this needs to be above where ENABLED_COMPILER_SANITIZERS is set.
+    # Also, it's not possible to use the normal prepend/append macros for
+    # -fsanitize=address, because check_cxx_compiler_flag will report it's
+    # unsupported, because it causes the build to fail if not used when linking.
+    option(ENABLE_ADDRESS_SANITIZER "Enable address sanitizer" OFF)
+    if (ENABLE_ADDRESS_SANITIZER)
+        WEBKIT_PREPEND_GLOBAL_COMPILER_FLAGS(-fno-omit-frame-pointer
+                                             -fno-optimize-sibling-calls)
+        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fsanitize=address")
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=address")
+        set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_THREAD_LIBS_INIT} ${CMAKE_EXE_LINKER_FLAGS} -fsanitize=address")
+        set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_THREAD_LIBS_INIT} ${CMAKE_SHARED_LINKER_FLAGS} -fsanitize=address")
+    endif ()
+endif ()
 
 if (NOT MSVC)
     string(REGEX MATCHALL "-fsanitize=[^ ]*" ENABLED_COMPILER_SANITIZERS ${CMAKE_CXX_FLAGS})
