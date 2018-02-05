@@ -736,6 +736,10 @@
 		2E5C770E1FA7D429005932C3 /* APIAttachment.h in Headers */ = {isa = PBXBuildFile; fileRef = 2E5C770C1FA7D429005932C3 /* APIAttachment.h */; };
 		2E5C770F1FA7D429005932C3 /* APIAttachment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E5C770D1FA7D429005932C3 /* APIAttachment.cpp */; };
 		2E7A944A1BBD97C300945547 /* _WKFocusedElementInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 2E7A94491BBD95C600945547 /* _WKFocusedElementInfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		2EA7B3D12026CEF8009CE5AC /* WKNumberPadViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2EA7B3CF2026CEF8009CE5AC /* WKNumberPadViewController.h */; };
+		2EA7B3D22026CEF8009CE5AC /* WKNumberPadViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2EA7B3D02026CEF8009CE5AC /* WKNumberPadViewController.mm */; };
+		2EA7B3D52026CF23009CE5AC /* WKNumberPadView.h in Headers */ = {isa = PBXBuildFile; fileRef = 2EA7B3D32026CF23009CE5AC /* WKNumberPadView.h */; };
+		2EA7B3D62026CF23009CE5AC /* WKNumberPadView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2EA7B3D42026CF23009CE5AC /* WKNumberPadView.mm */; };
 		2F809DD71FBD1BC9005FE63A /* TouchBarMenuItemData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2F809DD51FBD1BC9005FE63A /* TouchBarMenuItemData.cpp */; };
 		2F8336861FA139DF00C6E080 /* TouchBarMenuData.h in Headers */ = {isa = PBXBuildFile; fileRef = 2FD43B911FA006A10083F51C /* TouchBarMenuData.h */; };
 		2F8336871FA13A1E00C6E080 /* TouchBarMenuData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2FD43B921FA006A30083F51C /* TouchBarMenuData.cpp */; };
@@ -3090,6 +3094,10 @@
 		2E5C770C1FA7D429005932C3 /* APIAttachment.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = APIAttachment.h; sourceTree = "<group>"; };
 		2E5C770D1FA7D429005932C3 /* APIAttachment.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = APIAttachment.cpp; sourceTree = "<group>"; };
 		2E7A94491BBD95C600945547 /* _WKFocusedElementInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = _WKFocusedElementInfo.h; sourceTree = "<group>"; };
+		2EA7B3CF2026CEF8009CE5AC /* WKNumberPadViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = WKNumberPadViewController.h; path = ios/forms/WKNumberPadViewController.h; sourceTree = "<group>"; };
+		2EA7B3D02026CEF8009CE5AC /* WKNumberPadViewController.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = WKNumberPadViewController.mm; path = ios/forms/WKNumberPadViewController.mm; sourceTree = "<group>"; };
+		2EA7B3D32026CF23009CE5AC /* WKNumberPadView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = WKNumberPadView.h; path = ios/forms/WKNumberPadView.h; sourceTree = "<group>"; };
+		2EA7B3D42026CF23009CE5AC /* WKNumberPadView.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = WKNumberPadView.mm; path = ios/forms/WKNumberPadView.mm; sourceTree = "<group>"; };
 		2F809DD51FBD1BC9005FE63A /* TouchBarMenuItemData.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TouchBarMenuItemData.cpp; sourceTree = "<group>"; };
 		2F809DD91FBD1BF2005FE63A /* TouchBarMenuItemData.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TouchBarMenuItemData.h; sourceTree = "<group>"; };
 		2FD43B911FA006A10083F51C /* TouchBarMenuData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TouchBarMenuData.h; sourceTree = "<group>"; };
@@ -8342,6 +8350,10 @@
 				C57193B918C149D0002D0F12 /* WKFormSelectPicker.mm */,
 				0F08CF531D63C14000B48DF1 /* WKFormSelectPopover.h */,
 				C57193BA18C149D0002D0F12 /* WKFormSelectPopover.mm */,
+				2EA7B3D32026CF23009CE5AC /* WKNumberPadView.h */,
+				2EA7B3D42026CF23009CE5AC /* WKNumberPadView.mm */,
+				2EA7B3CF2026CEF8009CE5AC /* WKNumberPadViewController.h */,
+				2EA7B3D02026CEF8009CE5AC /* WKNumberPadViewController.mm */,
 				2E16B69F2016E680008996D6 /* WKTextFormControlViewController.h */,
 				2E16B6A02016E680008996D6 /* WKTextFormControlViewController.mm */,
 				2E16B6C82017B768008996D6 /* WKTextInputViewController.h */,
@@ -9446,6 +9458,8 @@
 				37183D57182F4E700080C811 /* WKNSURLExtras.h in Headers */,
 				37BF2F061947DEB400723C48 /* WKNSURLRequest.h in Headers */,
 				BC407602124FF0270068F20A /* WKNumber.h in Headers */,
+				2EA7B3D52026CF23009CE5AC /* WKNumberPadView.h in Headers */,
+				2EA7B3D12026CEF8009CE5AC /* WKNumberPadViewController.h in Headers */,
 				7CD5EBB91746A15B000C1C45 /* WKObjCTypeWrapperRef.h in Headers */,
 				378E1A40181EDA010031007A /* WKObject.h in Headers */,
 				1ACC50F21CBC381D003C7D03 /* WKOpenPanelParameters.h in Headers */,
@@ -11109,6 +11123,8 @@
 				37183D56182F4E700080C811 /* WKNSURLExtras.mm in Sources */,
 				37BF2F071947DEB400723C48 /* WKNSURLRequest.mm in Sources */,
 				BC407601124FF0270068F20A /* WKNumber.cpp in Sources */,
+				2EA7B3D62026CF23009CE5AC /* WKNumberPadView.mm in Sources */,
+				2EA7B3D22026CEF8009CE5AC /* WKNumberPadViewController.mm in Sources */,
 				7CD5EBB81746A15B000C1C45 /* WKObjCTypeWrapperRef.mm in Sources */,
 				374436881820E7240049579F /* WKObject.mm in Sources */,
 				1ACC50F11CBC381D003C7D03 /* WKOpenPanelParameters.mm in Sources */,

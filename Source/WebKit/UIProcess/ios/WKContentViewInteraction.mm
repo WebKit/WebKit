@@ -47,6 +47,7 @@
 #import "WKImagePreviewViewController.h"
 #import "WKInspectorNodeSearchGestureRecognizer.h"
 #import "WKNSURLExtras.h"
+#import "WKNumberPadViewController.h"
 #import "WKPreviewActionItemIdentifiers.h"
 #import "WKPreviewActionItemInternal.h"
 #import "WKPreviewElementInfoInternal.h"
@@ -3931,8 +3932,8 @@ static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
     [self useSelectionAssistantWithGranularity:WKSelectionGranularityCharacter];
 
 #if ENABLE(EXTRA_ZOOM_MODE)
-    if (!_isChangingFocus && [self shouldPresentTextInputViewController:_assistedNodeInformation])
-        [self presentTextInputViewController:YES];
+    if (!_isChangingFocus)
+        [self presentViewControllerForAssistedNode:_assistedNodeInformation];
 #else
     [self reloadInputViews];
 #endif
@@ -4088,6 +4089,7 @@ static bool isAssistableInputType(InputType type)
 
 #if ENABLE(EXTRA_ZOOM_MODE)
     [self dismissTextInputViewController:YES];
+    [self dismissNumberPadViewController:YES];
     if (!_isChangingFocus)
         [self dismissFocusedFormControlViewController:[_focusedFormControlViewController isVisible]];
 #endif
@@ -4111,6 +4113,15 @@ static bool isAssistableInputType(InputType type)
     [[UIViewController _viewControllerForFullScreenPresentationFromView:self] presentViewController:_focusedFormControlViewController.get() animated:animated completion:nil];
 }
 
+- (void)dismissNumberPadViewController:(BOOL)animated
+{
+    if (!_numberPadViewController)
+        return;
+
+    auto numberPadViewController = WTFMove(_numberPadViewController);
+    [numberPadViewController dismissViewControllerAnimated:animated completion:nil];
+}
+
 - (void)dismissFocusedFormControlViewController:(BOOL)animated
 {
     if (!_focusedFormControlViewController)
@@ -4120,7 +4131,17 @@ static bool isAssistableInputType(InputType type)
     _focusedFormControlViewController = nil;
 }
 
-- (BOOL)shouldPresentTextInputViewController:(const AssistedNodeInformation&)info
+- (void)presentNumberPadViewController:(BOOL)animated
+{
+    if (_numberPadViewController)
+        return;
+
+    _numberPadViewController = adoptNS([[WKNumberPadViewController alloc] initWithText:_assistedNodeInformation.value textSuggestions:@[]]);
+    [_numberPadViewController setDelegate:self];
+    [_focusedFormControlViewController presentViewController:_numberPadViewController.get() animated:animated completion:nil];
+}
+
+- (void)presentViewControllerForAssistedNode:(const AssistedNodeInformation&)info
 {
     switch (info.elementType) {
     case InputType::ContentEditable:
@@ -4130,9 +4151,15 @@ static bool isAssistableInputType(InputType type)
     case InputType::Search:
     case InputType::Email:
     case InputType::URL:
-        return true;
+        [self presentTextInputViewController:YES];
+        break;
+    case InputType::Number:
+    case InputType::NumberPad:
+    case InputType::Phone:
+        [self presentNumberPadViewController:YES];
+        break;
     default:
-        return false;
+        break;
     }
 }
 
@@ -4177,6 +4204,7 @@ static bool isAssistableInputType(InputType type)
 
     [_focusedFormControlViewController show:NO];
     [self dismissTextInputViewController:YES];
+    [self dismissNumberPadViewController:YES];
 }
 
 - (void)focusedFormControlControllerDidSubmit:(WKFocusedFormControlViewController *)controller
@@ -4192,8 +4220,7 @@ static bool isAssistableInputType(InputType type)
 
 - (void)focusedFormControlControllerDidBeginEditing:(WKFocusedFormControlViewController *)controller
 {
-    if ([self shouldPresentTextInputViewController:_assistedNodeInformation])
-        [self presentTextInputViewController:YES];
+    [self presentViewControllerForAssistedNode:_assistedNodeInformation];
 }
 
 - (CGRect)highlightedRectForFocusedFormControlController:(WKFocusedFormControlViewController *)controller inCoordinateSpace:(id <UICoordinateSpace>)coordinateSpace

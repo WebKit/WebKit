@@ -1,3 +1,18 @@
+2018-02-05  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Extra zoom mode] Implement number pad UI when editing `tel` and `number` inputs
+        https://bugs.webkit.org/show_bug.cgi?id=182472
+        <rdar://problem/35143057>
+
+        Reviewed by Tim Horton.
+
+        Adds a localized string for the "Done" button text in extra zoomed form controls.
+
+        * English.lproj/Localizable.strings:
+        * platform/LocalizedStrings.cpp:
+        (WebCore::formControlDoneButtonTitle):
+        * platform/LocalizedStrings.h:
+
 2018-02-05  John Wilander  <wilander@apple.com>
 
         Build fix for r228115, simple naming issue succeeded —> success.

@@ -226,6 +226,9 @@
 /* Text of button that exits element fullscreen. */
 "Done" = "Done";
 
+/* Title of the Done button for zoomed form controls. */
+"Done (extra zoomed form controls)" = "Done";
+
 /* Download Audio To Disk context menu item */
 "Download Audio" = "Download Audio";
 

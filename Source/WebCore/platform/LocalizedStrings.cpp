@@ -1031,6 +1031,11 @@ String webCryptoMasterKeyKeychainComment()
 
 #if ENABLE(EXTRA_ZOOM_MODE)
 
+String formControlDoneButtonTitle()
+{
+    return WEB_UI_STRING("Done (extra zoomed form controls)", "Title of the Done button for zoomed form controls.");
+}
+
 String formControlCancelButtonTitle()
 {
     return WEB_UI_STRING("Cancel", "Title of the Cancel button for zoomed form controls.");

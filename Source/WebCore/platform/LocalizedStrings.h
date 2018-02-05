@@ -317,7 +317,7 @@ namespace WebCore {
 
 #if ENABLE(EXTRA_ZOOM_MODE)
     WEBCORE_EXPORT String formControlCancelButtonTitle();
-    WEBCORE_EXPORT String formControlSubmitButtonTitle();
+    WEBCORE_EXPORT String formControlDoneButtonTitle();
     WEBCORE_EXPORT String formControlHideButtonTitle();
     WEBCORE_EXPORT String formControlGoButtonTitle();
     WEBCORE_EXPORT String formControlSearchButtonTitle();

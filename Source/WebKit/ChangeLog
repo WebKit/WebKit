@@ -1,3 +1,45 @@
+2018-02-05  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Extra zoom mode] Implement number pad UI when editing `tel` and `number` inputs
+        https://bugs.webkit.org/show_bug.cgi?id=182472
+        <rdar://problem/35143057>
+
+        Reviewed by Tim Horton.
+
+        Allows the user to edit numeric input types using a number pad. See below comments for more detail.
+
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _startAssistingKeyboard]):
+        (-[WKContentView _stopAssistingNode]):
+
+        Dismiss the number pad, if it is present.
+
+        (-[WKContentView dismissNumberPadViewController:]):
+        (-[WKContentView presentNumberPadViewController:]):
+
+        Add new helpers for showing and hiding the number pad view controller.
+
+        (-[WKContentView presentViewControllerForAssistedNode:]):
+        (-[WKContentView textInputController:didRequestDismissalWithAction:]):
+
+        Dismiss the number pad, if it is present.
+
+        (-[WKContentView focusedFormControlControllerDidBeginEditing:]):
+        (-[WKContentView shouldPresentTextInputViewController:]): Deleted.
+
+        Remove -shouldPresentTextInputViewController and replace it with -presentViewControllerForAssistedNode:, which
+        presents the appropriate view controller given "assisted" node information.
+
+        * UIProcess/ios/forms/WKNumberPadView.h: Added.
+        * UIProcess/ios/forms/WKNumberPadView.mm: Added.
+        * UIProcess/ios/forms/WKNumberPadViewController.h: Added.
+        * UIProcess/ios/forms/WKNumberPadViewController.mm: Added.
+
+        Add "WebKitAdditions harness" files for the new number pad view and view controller classes.
+
+        * WebKit.xcodeproj/project.pbxproj:
+
 2018-02-05  Youenn Fablet  <youenn@apple.com>
 
         Add logging to CacheStorageEngineConnection
