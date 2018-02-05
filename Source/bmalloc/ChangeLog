@@ -1,3 +1,37 @@
+2018-02-05  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Multiple bmalloc scavenger threads is unexpected
+        https://bugs.webkit.org/show_bug.cgi?id=182474
+        <rdar://problem/37175526>
+
+        Reviewed by Filip Pizlo.
+
+        * bmalloc/Heap.cpp:
+        (bmalloc::Heap::Heap):
+        * bmalloc/IsoDirectoryInlines.h:
+        (bmalloc::passedNumPages>::takeFirstEligible):
+        (bmalloc::passedNumPages>::didBecome):
+        * bmalloc/bmalloc.cpp:
+        (bmalloc::api::scavenge):
+        (bmalloc::api::setScavengerThreadQOSClass):
+        Switch to SafePerProcess for Scavenger to ensure one instance
+        for the entire process.
+
+        * bmalloc/PerProcess.h:
+        (bmalloc::PerProcess::get):
+        (bmalloc::PerProcess::getFastCase):
+        (bmalloc::PerProcess::getSlowCase):
+        (bmalloc::SafePerProcess::get):
+        (bmalloc::SafePerProcess::getFastCase):
+        (bmalloc::SafePerProcess::getSlowCase):
+        Duplicate the class with a version that can ensure
+        single instances by requiring exporting symbols that
+        can be created with macros.
+
+        * bmalloc/Scavenger.cpp:
+        * bmalloc/Scavenger.h:
+        Export symbols to ensure all images get the same instance.
+
 2018-01-31  Saam Barati  <sbarati@apple.com>
 
         Replace tryLargeMemalignVirtual with tryLargeZeroedMemalignVirtual and use it to allocate large zeroed memory in Wasm
