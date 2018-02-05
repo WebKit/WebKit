@@ -192,6 +192,8 @@ public:
 
     void removeAllSessionCredentials();
 
+    void clearServiceWorkerRegistrations();
+
     void clearDOMCache(WKStringRef origin);
     void clearDOMCaches();
     bool hasDOMCache(WKStringRef origin);

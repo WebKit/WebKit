@@ -175,7 +175,7 @@ public:
     void registrationStoreImportComplete();
     void registrationStoreDatabaseFailedToOpen();
 
-    WEBCORE_EXPORT void getOriginsWithRegistrations(WTF::Function<void(const HashSet<SecurityOriginData>&)>);
+    WEBCORE_EXPORT void getOriginsWithRegistrations(Function<void(const HashSet<SecurityOriginData>&)>&&);
 
 private:
     void registerConnection(Connection&);
@@ -226,7 +226,8 @@ private:
     HashMap<ServiceWorkerIdentifier, Vector<RunServiceWorkerCallback>> m_serviceWorkerRunRequests;
     PAL::SessionID m_sessionID;
     bool m_importCompleted { false };
-    Vector<WTF::Function<void(const HashSet<SecurityOriginData>&)>> m_getOriginsWithRegistrationsCallbacks;
+    Vector<CompletionHandler<void()>> m_clearCompletionCallbacks;
+    Vector<Function<void(const HashSet<SecurityOriginData>&)>> m_getOriginsWithRegistrationsCallbacks;
 };
 
 } // namespace WebCore
