@@ -76,6 +76,7 @@ SVGImage::SVGImage(ImageObserver& observer)
 SVGImage::~SVGImage()
 {
     if (m_page) {
+        ScriptDisallowedScope::DisableAssertionsInScope disabledScope;
         // Store m_page in a local variable, clearing m_page, so that SVGImageChromeClient knows we're destructed.
         std::unique_ptr<Page> currentPage = WTFMove(m_page);
         currentPage->mainFrame().loader().frameDetached(); // Break both the loader and view references to the frame

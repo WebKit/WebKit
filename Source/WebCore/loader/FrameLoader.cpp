@@ -1254,6 +1254,11 @@ bool FrameLoader::isNavigationAllowed() const
     return m_pageDismissalEventBeingDispatched == PageDismissalType::None && NavigationDisabler::isNavigationAllowed(m_frame);
 }
 
+bool FrameLoader::isStopLoadingAllowed() const
+{
+    return m_pageDismissalEventBeingDispatched == PageDismissalType::None;
+}
+
 struct SharedBool : public RefCounted<SharedBool> {
     bool value { false };
 };
@@ -1667,13 +1672,16 @@ void FrameLoader::reload(OptionSet<ReloadOption> options)
 void FrameLoader::stopAllLoaders(ClearProvisionalItemPolicy clearProvisionalItemPolicy)
 {
     ASSERT(!m_frame.document() || m_frame.document()->pageCacheState() != Document::InPageCache);
-    if (!isNavigationAllowed())
+    if (!isStopLoadingAllowed())
         return;
 
     // If this method is called from within this method, infinite recursion can occur (3442218). Avoid this.
     if (m_inStopAllLoaders)
         return;
-    
+
+    // This method might dispatch events.
+    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(ScriptDisallowedScope::InMainThread::isScriptAllowed());
+
     // Calling stopLoading() on the provisional document loader can blow away
     // the frame from underneath.
     Ref<Frame> protect(m_frame);
