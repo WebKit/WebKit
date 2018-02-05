@@ -1,3 +1,16 @@
+2018-02-05  Konstantin Tokarev  <annulen@yandex.ru>
+
+        [cmake] Fix build with ICU configured without collation support
+        https://bugs.webkit.org/show_bug.cgi?id=182498
+
+        Reviewed by Alex Christensen.
+
+        WebKit has CollatorDefault.cpp providing necessary stubs when
+        UCONFIG_NO_COLLATION is defined, however it is not included in cmake
+        file list.
+
+        * wtf/CMakeLists.txt:
+
 2018-02-05  Alicia Boya García  <aboya@igalia.com>
 
         Fix bug in MediaTime comparison for negative values with different scale.

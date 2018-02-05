@@ -459,6 +459,8 @@ if (NOT USE_SYSTEM_MALLOC)
 endif ()
 
 list(APPEND WTF_SOURCES
+    unicode/CollatorDefault.cpp
+
     unicode/icu/CollatorICU.cpp
 )
 set(WTF_SYSTEM_INCLUDE_DIRECTORIES
