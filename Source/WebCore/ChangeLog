@@ -1,3 +1,17 @@
+2018-02-05  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed, rolling out r228085.
+
+        Pixel data stride is imposed by OpenGL and shouldn't be
+        adjusted for Cairo
+
+        Reverted changeset:
+
+        "[Cairo] Correctly calculate stride in
+        GraphicsContext3D::paintToCanvas()"
+        https://bugs.webkit.org/show_bug.cgi?id=182466
+        https://trac.webkit.org/changeset/228085
+
 2018-02-05  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [SOUP] WebSockets must use system proxy settings
