@@ -1,3 +1,46 @@
+2018-02-05  Daniel Bates  <dabates@apple.com>
+
+        Disallow evaluating JavaScript from NPP_Destroy() in WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=181889
+        <rdar://problem/36674701>
+
+        Reviewed by Brent Fulgham.
+
+        Make the behavior of WebKit match the behavior of WebKitLegacy on Mac.
+
+        * Shared/Plugins/NPObjectMessageReceiver.cpp:
+        (WebKit::NPObjectMessageReceiver::hasMethod):
+        (WebKit::NPObjectMessageReceiver::invoke):
+        (WebKit::NPObjectMessageReceiver::invokeDefault):
+        (WebKit::NPObjectMessageReceiver::hasProperty):
+        (WebKit::NPObjectMessageReceiver::getProperty):
+        (WebKit::NPObjectMessageReceiver::setProperty):
+        (WebKit::NPObjectMessageReceiver::removeProperty):
+        (WebKit::NPObjectMessageReceiver::enumerate):
+        (WebKit::NPObjectMessageReceiver::construct):
+        Bail out if the plugin is executing NPP_Destroy().
+
+        * WebProcess/Plugins/Plugin.cpp:
+        (WebKit::Plugin::destroyPlugin):
+        * WebProcess/Plugins/Plugin.h:
+        (WebKit::Plugin::isBeingDestroyed const):
+        Move bookkeeping of whether the plugin is being destroyed from PluginView
+        to here. This makes it straightforward for NPObjectMessageReceiver to query
+        this information.
+
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::~PluginView):
+        (WebKit::PluginView::destroyPluginAndReset):
+        (WebKit::PluginView::recreateAndInitialize):
+        (WebKit::PluginView::protectPluginFromDestruction):
+        (WebKit::PluginView::unprotectPluginFromDestruction):
+        Move bookkeeping of whether the plugin is being destroyed from here
+        to Plugin.
+
+        * WebProcess/Plugins/PluginView.h:
+        (WebKit::PluginView::isBeingDestroyed const): Turn around and ask the plugin if it
+        is being destroyed, if we have one.
+
 2018-02-05  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         WebDriver: addCookie command should prepend a dot to domain if missing

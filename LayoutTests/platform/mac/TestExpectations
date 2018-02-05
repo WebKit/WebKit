@@ -189,8 +189,6 @@ http/tests/images/webp-partial-load.html
 http/tests/images/webp-progressive-load.html
 fast/images/animated-webp-expected.html
 
-# Times out because plugins aren't allowed to execute JS after NPP_Destroy has been called in WebKit1's OOP plugins implementation
-webkit.org/b/48929 plugins/evaluate-js-after-removing-plugin-element.html
 
 # DRT does not support toggling caret browsing on / off
 editing/selection/caret-mode-paragraph-keys-navigation.html
@@ -435,12 +433,16 @@ http/tests/misc/willCacheResponse-delegate-callback.html [ Failure ]
 http/tests/xmlhttprequest/basic-auth-nopassword.html [ Failure ]
 
 # --- Plugins ---
-# WebKit1 OOP plug-ins: Can't evaluate JavaScript from NPP_Destroy.
-plugins/document-open.html
-plugins/geturlnotify-during-document-teardown.html
-plugins/nested-plugin-objects.html
-plugins/netscape-destroy-plugin-script-objects.html
-plugins/open-and-close-window-with-plugin.html
+# Out-of-process plug-ins are disallowed from evaluating JavaScript from NPP_Destroy().
+plugins/attach-during-destroy.html [ WontFix ]
+plugins/destroy-reentry.html [ WontFix ]
+plugins/document-open.html [ WontFix ]
+webkit.org/b/48929 plugins/evaluate-js-after-removing-plugin-element.html [ WontFix ]
+plugins/geturlnotify-during-document-teardown.html [ WontFix ]
+plugins/js-from-destroy.html [ WontFix ]
+plugins/nested-plugin-objects.html [ WontFix ]
+plugins/netscape-destroy-plugin-script-objects.html [ WontFix ]
+plugins/open-and-close-window-with-plugin.html [ WontFix ]
 
 # WebKit1 OOP plug-ins: No support for getting the form value.
 plugins/form-value.html

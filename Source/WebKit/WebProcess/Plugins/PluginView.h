@@ -70,7 +70,7 @@ public:
 
     WebCore::Frame* frame() const;
 
-    bool isBeingDestroyed() const { return m_isBeingDestroyed; }
+    bool isBeingDestroyed() const { return !m_plugin || m_plugin->isBeingDestroyed(); }
 
     void manualLoadDidReceiveResponse(const WebCore::ResourceResponse&);
     void manualLoadDidReceiveData(const char* bytes, int length);
@@ -248,7 +248,6 @@ private:
     bool m_isInitialized { false };
     bool m_isWaitingForSynchronousInitialization { false };
     bool m_isWaitingUntilMediaCanStart { false };
-    bool m_isBeingDestroyed { false };
     bool m_pluginProcessHasCrashed { false };
 
 #if ENABLE(PRIMARY_SNAPSHOTTED_PLUGIN_HEURISTIC)

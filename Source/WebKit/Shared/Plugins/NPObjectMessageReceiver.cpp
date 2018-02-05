@@ -60,7 +60,7 @@ void NPObjectMessageReceiver::deallocate()
 
 void NPObjectMessageReceiver::hasMethod(const NPIdentifierData& methodNameData, bool& returnValue)
 {
-    if (!m_npObject->_class->hasMethod) {
+    if (m_plugin->isBeingDestroyed() || !m_npObject->_class->hasMethod) {
         returnValue = false;
         return;
     }
@@ -70,7 +70,7 @@ void NPObjectMessageReceiver::hasMethod(const NPIdentifierData& methodNameData, 
 
 void NPObjectMessageReceiver::invoke(const NPIdentifierData& methodNameData, const Vector<NPVariantData>& argumentsData, bool& returnValue, NPVariantData& resultData)
 {
-    if (!m_npObject->_class->invoke) {
+    if (m_plugin->isBeingDestroyed() || !m_npObject->_class->invoke) {
         returnValue = false;
         return;
     }
@@ -100,7 +100,7 @@ void NPObjectMessageReceiver::invoke(const NPIdentifierData& methodNameData, con
 
 void NPObjectMessageReceiver::invokeDefault(const Vector<NPVariantData>& argumentsData, bool& returnValue, NPVariantData& resultData)
 {
-    if (!m_npObject->_class->invokeDefault) {
+    if (m_plugin->isBeingDestroyed() || !m_npObject->_class->invokeDefault) {
         returnValue = false;
         return;
     }
@@ -130,7 +130,7 @@ void NPObjectMessageReceiver::invokeDefault(const Vector<NPVariantData>& argumen
 
 void NPObjectMessageReceiver::hasProperty(const NPIdentifierData& propertyNameData, bool& returnValue)
 {
-    if (!m_npObject->_class->hasProperty) {
+    if (m_plugin->isBeingDestroyed() || !m_npObject->_class->hasProperty) {
         returnValue = false;
         return;
     }
@@ -140,7 +140,7 @@ void NPObjectMessageReceiver::hasProperty(const NPIdentifierData& propertyNameDa
 
 void NPObjectMessageReceiver::getProperty(const NPIdentifierData& propertyNameData, bool& returnValue, NPVariantData& resultData)
 {
-    if (!m_npObject->_class->getProperty) {
+    if (m_plugin->isBeingDestroyed() || !m_npObject->_class->getProperty) {
         returnValue = false;
         return;
     }
@@ -162,7 +162,7 @@ void NPObjectMessageReceiver::getProperty(const NPIdentifierData& propertyNameDa
 
 void NPObjectMessageReceiver::setProperty(const NPIdentifierData& propertyNameData, const NPVariantData& propertyValueData, bool& returnValue)
 {
-    if (!m_npObject->_class->setProperty) {
+    if (m_plugin->isBeingDestroyed() || !m_npObject->_class->setProperty) {
         returnValue = false;
         return;
     }
@@ -178,7 +178,7 @@ void NPObjectMessageReceiver::setProperty(const NPIdentifierData& propertyNameDa
 
 void NPObjectMessageReceiver::removeProperty(const NPIdentifierData& propertyNameData, bool& returnValue)
 {
-    if (!m_npObject->_class->removeProperty) {
+    if (m_plugin->isBeingDestroyed() || !m_npObject->_class->removeProperty) {
         returnValue = false;
         return;
     }
@@ -188,7 +188,7 @@ void NPObjectMessageReceiver::removeProperty(const NPIdentifierData& propertyNam
 
 void NPObjectMessageReceiver::enumerate(bool& returnValue, Vector<NPIdentifierData>& identifiersData)
 {
-    if (!NP_CLASS_STRUCT_VERSION_HAS_ENUM(m_npObject->_class) || !m_npObject->_class->enumerate) {
+    if (m_plugin->isBeingDestroyed() || !NP_CLASS_STRUCT_VERSION_HAS_ENUM(m_npObject->_class) || !m_npObject->_class->enumerate) {
         returnValue = false;
         return;
     }
@@ -208,7 +208,7 @@ void NPObjectMessageReceiver::enumerate(bool& returnValue, Vector<NPIdentifierDa
 
 void NPObjectMessageReceiver::construct(const Vector<NPVariantData>& argumentsData, bool& returnValue, NPVariantData& resultData)
 {
-    if (!NP_CLASS_STRUCT_VERSION_HAS_CTOR(m_npObject->_class) || !m_npObject->_class->construct) {
+    if (m_plugin->isBeingDestroyed() || !NP_CLASS_STRUCT_VERSION_HAS_CTOR(m_npObject->_class) || !m_npObject->_class->construct) {
         returnValue = false;
         return;
     }

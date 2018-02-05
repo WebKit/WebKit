@@ -125,11 +125,6 @@ http/tests/globalhistory/history-delegate-basic-refresh-redirect.html
 # <https://bugs.webkit.org/show_bug.cgi?id=56531>
 transitions/default-timing-function.html
 
-# WebKitTestRunner needs testRunner.setCallCloseOnWebViews
-# http://webkit.org/b/46714
-plugins/geturlnotify-during-document-teardown.html
-plugins/open-and-close-window-with-plugin.html
-
 # Sometimes fails
 # http://webkit.org/b/58990
 editing/undo/undo-iframe-location-change.html
@@ -512,6 +507,17 @@ fast/preloader/document-write-2.html [ Pass Failure ]
 
 ########################################
 ### START OF (4) Features that are not supported in WebKit2 and likely never will be
+
+# Plug-ins are disallowed from evaluating JavaScript from NPP_Destroy().
+plugins/attach-during-destroy.html [ WontFix ]
+plugins/destroy-reentry.html [ WontFix ]
+plugins/document-open.html [ WontFix ]
+webkit.org/b/48929 plugins/evaluate-js-after-removing-plugin-element.html [ WontFix ]
+plugins/geturlnotify-during-document-teardown.html [ WontFix ]
+plugins/js-from-destroy.html [ WontFix ]
+plugins/nested-plugin-objects.html [ WontFix ]
+plugins/netscape-destroy-plugin-script-objects.html [ WontFix ]
+plugins/open-and-close-window-with-plugin.html [ WontFix ]
 
 # Internals.registerDefaultPortForProtocol() does not affect NetworkProcess. We should
 # look to remove it and write these test to make use of an HTTP server running on port 80.

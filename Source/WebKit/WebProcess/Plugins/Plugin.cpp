@@ -28,6 +28,7 @@
 
 #include "WebCoreArgumentCoders.h"
 #include <WebCore/IntPoint.h>
+#include <wtf/SetForScope.h>
 
 using namespace WebCore;
 
@@ -98,9 +99,12 @@ bool Plugin::initialize(PluginController* pluginController, const Parameters& pa
 
 void Plugin::destroyPlugin()
 {
+    ASSERT(!m_isBeingDestroyed);
+    SetForScope<bool> scope { m_isBeingDestroyed, true };
+
     destroy();
 
-    m_pluginController = 0;
+    m_pluginController = nullptr;
 }
 
 void Plugin::updateControlTints(GraphicsContext&)
