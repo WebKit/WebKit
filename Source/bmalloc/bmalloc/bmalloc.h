@@ -69,8 +69,11 @@ inline void* realloc(void* object, size_t newSize, HeapKind kind = HeapKind::Pri
     return Cache::reallocate(kind, object, newSize);
 }
 
-// Returns null for failure
-BEXPORT void* tryLargeMemalignVirtual(size_t alignment, size_t size, HeapKind kind = HeapKind::Primary);
+// Returns null on failure.
+// This API will give you zeroed pages that are ready to be used. These pages
+// will page fault on first access. It returns to you memory that initially only
+// uses up virtual address space, not `size` bytes of physical memory.
+BEXPORT void* tryLargeZeroedMemalignVirtual(size_t alignment, size_t size, HeapKind kind = HeapKind::Primary);
 
 inline void free(void* object, HeapKind kind = HeapKind::Primary)
 {

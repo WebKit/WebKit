@@ -115,15 +115,13 @@ void DebugHeap::free(void* object)
 // FIXME: This looks an awful lot like the code in wtf/Gigacage.cpp for large allocation.
 // https://bugs.webkit.org/show_bug.cgi?id=175086
 
-void* DebugHeap::memalignLarge(size_t alignment, size_t size, AllocationKind allocationKind)
+void* DebugHeap::memalignLarge(size_t alignment, size_t size)
 {
     alignment = roundUpToMultipleOf(m_pageSize, alignment);
     size = roundUpToMultipleOf(m_pageSize, size);
     void* result = tryVMAllocate(alignment, size);
     if (!result)
         return nullptr;
-    if (allocationKind == AllocationKind::Virtual)
-        vmDeallocatePhysicalPages(result, size);
     {
         std::lock_guard<std::mutex> locker(m_lock);
         m_sizeMap[result] = size;
@@ -131,7 +129,7 @@ void* DebugHeap::memalignLarge(size_t alignment, size_t size, AllocationKind all
     return result;
 }
 
-void DebugHeap::freeLarge(void* base, AllocationKind)
+void DebugHeap::freeLarge(void* base)
 {
     if (!base)
         return;
