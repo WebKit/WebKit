@@ -135,8 +135,8 @@ static void assertManifestHasDefaultValues(const URL& manifestURL, const URL& do
     EXPECT_TRUE(manifest.name.isNull());
     EXPECT_TRUE(manifest.shortName.isNull());
     EXPECT_TRUE(manifest.description.isNull());
-    EXPECT_TRUE(manifest.scope.isEmpty());
-    EXPECT_STREQ(manifest.startURL.string().utf8().data(), documentURL.string().utf8().data());
+    EXPECT_STREQ("https://example.com/", manifest.scope.string().utf8().data());
+    EXPECT_STREQ(documentURL.string().utf8().data(), manifest.startURL.string().utf8().data());
 }
 
 TEST_F(ApplicationManifestParserTest, DefaultManifest)
@@ -247,27 +247,32 @@ TEST_F(ApplicationManifestParserTest, ShortName)
 
 TEST_F(ApplicationManifestParserTest, Scope)
 {
-    testScope("123", String());
-    testScope("null", String());
-    testScope("true", String());
-    testScope("{ }", String());
-    testScope("[ ]", String());
-    testScope("\"\"", String());
+    // If the scope is not a string or not a valid URL, return the default scope (the parent path of the start URL).
+    m_documentURL = { { }, "https://example.com/a/page?queryParam=value#fragment" };
+    m_manifestURL = { { }, "https://example.com/manifest.json" };
+    testScope("123", "https://example.com/a/");
+    testScope("null", "https://example.com/a/");
+    testScope("true", "https://example.com/a/");
+    testScope("{ }", "https://example.com/a/");
+    testScope("[ ]", "https://example.com/a/");
+    testScope("\"\"", "https://example.com/a/");
+    testScope("\"http:?\"", "https://example.com/a/");
 
-    testScope("\"http:?\"", String());
+    m_documentURL = { { }, "https://example.com/a/pageEndingWithSlash/" };
+    testScope("null", "https://example.com/a/pageEndingWithSlash/");
 
-    // If scope URL is not same origin as document URL, return undefined.
+    // If scope URL is not same origin as document URL, return the default scope.
     m_documentURL = { { }, "https://example.com/home" };
     m_manifestURL = { { }, "https://other-site.com/manifest.json" };
-    testScope("\"https://other-site.com/some-scope\"", String());
+    testScope("\"https://other-site.com/some-scope\"", "https://example.com/");
 
     m_documentURL = { { }, "https://example.com/app/home" };
     m_manifestURL = { { }, "https://example.com/app/manifest.json" };
 
-    // If start URL is not within scope of scope URL, return undefined
-    testScope("\"https://example.com/subdirectory\"", String());
+    // If start URL is not within scope of scope URL, return the default scope.
+    testScope("\"https://example.com/subdirectory\"", "https://example.com/app/");
     testScope("\"https://example.com/app\"", "https://example.com/app");
-    testScope("\"https://example.com/APP\"", String());
+    testScope("\"https://example.com/APP\"", "https://example.com/app/");
     testScope("\"https://example.com/a\"", "https://example.com/a");
 
     m_documentURL = { { }, "https://example.com/a/b/c/index" };

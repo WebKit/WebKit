@@ -193,35 +193,37 @@ static bool isInScope(const URL& scopeURL, const URL& targetURL)
 
 URL ApplicationManifestParser::parseScope(const JSON::Object& manifest, const URL& documentURL, const URL& startURL)
 {
+    URL defaultScope { startURL, "./" };
+
     RefPtr<JSON::Value> value;
     if (!manifest.getValue("scope", value))
-        return { };
+        return defaultScope;
 
     String stringValue;
     if (!value->asString(stringValue)) {
         logManifestPropertyNotAString(ASCIILiteral("scope"));
-        return { };
+        return defaultScope;
     }
 
     if (stringValue.isEmpty())
-        return { };
+        return defaultScope;
 
     URL scopeURL(m_manifestURL, stringValue);
     if (!scopeURL.isValid()) {
         logManifestPropertyInvalidURL(ASCIILiteral("scope"));
-        return { };
+        return defaultScope;
     }
 
     if (!protocolHostAndPortAreEqual(scopeURL, documentURL)) {
         auto scopeURLOrigin = SecurityOrigin::create(scopeURL);
         auto documentOrigin = SecurityOrigin::create(documentURL);
         logDeveloperWarning(ASCIILiteral("The scope's origin of \"") + scopeURLOrigin->toString() + ASCIILiteral("\" is different from the document's origin of \"") + documentOrigin->toString() + ASCIILiteral("\"."));
-        return { };
+        return defaultScope;
     }
 
     if (!isInScope(scopeURL, startURL)) {
         logDeveloperWarning(ASCIILiteral("The start URL is not within scope of the provided scope URL."));
-        return { };
+        return defaultScope;
     }
 
     return scopeURL;

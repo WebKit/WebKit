@@ -1,5 +1,23 @@
 2018-02-04  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r228036. rdar://problem/37220130
+
+    2018-02-02  David Quesada  <david_quesada@apple.com>
+
+            WebAppManifest scope should default to the containing directory of start_url if 'scope' is not specified
+            https://bugs.webkit.org/show_bug.cgi?id=182363
+            rdar://problem/37093498
+
+            Reviewed by Ryosuke Niwa.
+
+            Updated ApplicationManifestParserTests to account for the new default scope behavior.
+
+            * TestWebKitAPI/Tests/WebCore/ApplicationManifestParser.cpp:
+            (assertManifestHasDefaultValues):
+            (TEST_F):
+
+2018-02-04  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r228025. rdar://problem/37220140
 
     2018-02-02  Youenn Fablet  <youenn@apple.com>

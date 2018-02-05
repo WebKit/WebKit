@@ -1,5 +1,26 @@
 2018-02-04  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r228036. rdar://problem/37220130
+
+    2018-02-02  David Quesada  <david_quesada@apple.com>
+
+            WebAppManifest scope should default to the containing directory of start_url if 'scope' is not specified
+            https://bugs.webkit.org/show_bug.cgi?id=182363
+            rdar://problem/37093498
+
+            Reviewed by Ryosuke Niwa.
+
+            If an app manifest doesn't specify a scope, we should default to the "parent directory" of
+            the start URL, rather than leaving the app unbounded. This is more reasonable than using the
+            entire internet as the app scope.
+
+            No new tests, updates to the existing tests verify the new behavior.
+
+            * Modules/applicationmanifest/ApplicationManifestParser.cpp:
+            (WebCore::ApplicationManifestParser::parseScope):
+
+2018-02-04  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r228034. rdar://problem/37220140
 
     2018-02-02  Youenn Fablet  <youenn@apple.com>
