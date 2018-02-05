@@ -199,7 +199,7 @@ void WebBackForwardList::goToItem(WebBackForwardListItem& item)
         m_entries.remove(m_currentIndex);
         targetIndex = notFound;
         for (size_t i = 0; i < m_entries.size(); ++i) {
-            if (m_entries[0].ptr() == &item) {
+            if (m_entries[i].ptr() == &item) {
                 targetIndex = i;
                 break;
             }

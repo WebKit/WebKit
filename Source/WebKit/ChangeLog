@@ -1,5 +1,21 @@
 2018-02-04  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r227990. rdar://problem/37145451
+
+    2018-02-01  David Kilzer  <ddkilzer@apple.com>
+
+            REGRESSION (r222824): UI process crashes in WebKit::WebBackForwardList::backItem const
+            <https://webkit.org/b/182409>
+            <rdar://problem/35495094>
+
+            Reviewed by Alex Christensen.
+
+            * UIProcess/WebBackForwardList.cpp:
+            (WebKit::WebBackForwardList::goToItem): Fix typo so the for loop
+            actually checks each value in m_entries.
+
+2018-02-04  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r227927. rdar://problem/37145549
 
     2018-01-31  Tim Horton  <timothy_horton@apple.com>
