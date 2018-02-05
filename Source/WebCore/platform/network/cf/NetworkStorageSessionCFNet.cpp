@@ -296,14 +296,6 @@ bool NetworkStorageSession::hasStorageAccessForFrame(const String& resourceDomai
     return it2->value == resourceDomain;
 }
 
-bool NetworkStorageSession::hasStorageAccessForFrame(const ResourceRequest& request, uint64_t frameID, uint64_t pageID) const
-{
-    if (!cookieStoragePartitioningEnabled)
-        return false;
-
-    return hasStorageAccessForFrame(getPartitioningDomain(request.url()), getPartitioningDomain(request.firstPartyForCookies()), frameID, pageID);
-}
-
 Vector<String> NetworkStorageSession::getAllStorageAccessEntries() const
 {
     Vector<String> entries;

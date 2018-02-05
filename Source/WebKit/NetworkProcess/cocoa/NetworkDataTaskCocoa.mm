@@ -198,12 +198,22 @@ NetworkDataTaskCocoa::NetworkDataTaskCocoa(NetworkSession& session, NetworkDataT
 
 #if HAVE(CFNETWORK_STORAGE_PARTITIONING)
     if (auto shouldBlockCookies = session.networkStorageSession().shouldBlockCookies(request)) {
+#if HAVE(CFNETWORK_STORAGE_PARTITIONING) && !RELEASE_LOG_DISABLED
+        if (NetworkProcess::singleton().shouldLogCookieInformation())
+            RELEASE_LOG_IF(m_session->sessionID().isAlwaysOnLoggingAllowed(), Network, "%p - NetworkDataTaskCocoa::logCookieInformation: pageID = %llu, frameID = %llu, taskID = %lu: Blocking cookies for URL %s", this, pageID, frameID, (unsigned long)[m_task taskIdentifier], nsRequest.URL.absoluteString.UTF8String);
+#else
         LOG(NetworkSession, "%llu Blocking cookies for URL %s", [m_task taskIdentifier], nsRequest.URL.absoluteString.UTF8String);
+#endif
         applyCookieBlockingPolicy(shouldBlockCookies);
     } else {
         auto storagePartition = session.networkStorageSession().cookieStoragePartition(request, m_frameID, m_pageID);
         if (!storagePartition.isEmpty()) {
+#if HAVE(CFNETWORK_STORAGE_PARTITIONING) && !RELEASE_LOG_DISABLED
+            if (NetworkProcess::singleton().shouldLogCookieInformation())
+                RELEASE_LOG_IF(m_session->sessionID().isAlwaysOnLoggingAllowed(), Network, "%p - NetworkDataTaskCocoa::logCookieInformation: pageID = %llu, frameID = %llu, taskID = %lu: Partitioning cookies for URL %s", this, pageID, frameID, (unsigned long)[m_task taskIdentifier], nsRequest.URL.absoluteString.UTF8String);
+#else
             LOG(NetworkSession, "%llu Partitioning cookies for URL %s", [m_task taskIdentifier], nsRequest.URL.absoluteString.UTF8String);
+#endif
             applyCookiePartitioningPolicy(storagePartition, emptyString());
         }
     }

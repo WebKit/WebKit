@@ -1,3 +1,33 @@
+2018-02-02  Brent Fulgham  <bfulgham@apple.com>
+
+        Improve NetworkResourceLoader logging so it can be used for 'setCookiesFromDOM'
+        https://bugs.webkit.org/show_bug.cgi?id=182455
+        <rdar://problem/36626601>
+
+        Reviewed by Chris Dumez.
+
+        Refactor "logCookieInformation" so that it can be used for resource loads and DOM cookie
+        manipulation. Place the generally useful logic in a static method that can be invoked
+        from other places in the NetworkProcess.
+
+        Call the new refactored method from NetworkConnectionToWebProcess::setCookiesFromDOM so
+        we can perform logging there as well.
+
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::setCookiesFromDOM): Call the new logging method
+        (when enabled).
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::shouldLogCookieInformation): Changed to static method.
+        (WebKit::escapeForJSON): Made a static function so it could be shared between multiple
+        methods.
+        (WebKit::NetworkResourceLoader::logCookieInformation const): Refactor into two methods.
+        (WebKit::NetworkResourceLoader::logCookieInformation): Ditto.
+        (WebKit::NetworkResourceLoader::shouldLogCookieInformation const): Deleted.
+        * NetworkProcess/NetworkResourceLoader.h:
+        * NetworkProcess/cocoa/NetworkDataTaskCocoa.mm:
+        (WebKit::NetworkDataTaskCocoa::NetworkDataTaskCocoa): Switch to user-enabled release logging
+        to track partitioning and blocking behavior.
+
 2018-02-05  John Wilander  <wilander@apple.com>
 
         Storage Access API: Add testRunner.getAllStorageAccessEntries() to make testing easier and more explicit

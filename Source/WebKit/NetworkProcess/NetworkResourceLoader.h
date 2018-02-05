@@ -36,6 +36,7 @@
 
 namespace WebCore {
 class BlobDataFileReference;
+class NetworkStorageSession;
 class ResourceRequest;
 }
 
@@ -103,6 +104,11 @@ public:
     bool isMainResource() const { return m_parameters.request.requester() == WebCore::ResourceRequest::Requester::Main; }
     bool isAlwaysOnLoggingAllowed() const;
 
+#if HAVE(CFNETWORK_STORAGE_PARTITIONING) && !RELEASE_LOG_DISABLED
+    static bool shouldLogCookieInformation();
+    static void logCookieInformation(const String& label, const void* loggedObject, const WebCore::NetworkStorageSession&, const WebCore::URL& partition, const WebCore::URL&, const String& referrer, std::optional<uint64_t> frameID, std::optional<uint64_t> pageID, std::optional<uint64_t> identifier);
+#endif
+
 private:
     NetworkResourceLoader(const NetworkResourceLoadParameters&, NetworkConnectionToWebProcess&, RefPtr<Messages::NetworkConnectionToWebProcess::PerformSynchronousLoad::DelayedReply>&&);
 
@@ -135,7 +141,6 @@ private:
     void invalidateSandboxExtensions();
 
 #if HAVE(CFNETWORK_STORAGE_PARTITIONING) && !RELEASE_LOG_DISABLED
-    bool shouldLogCookieInformation() const;
     void logCookieInformation() const;
 #endif
 

@@ -710,9 +710,14 @@ bool NetworkResourceLoader::shouldCaptureExtraNetworkLoadMetrics() const
 }
 
 #if HAVE(CFNETWORK_STORAGE_PARTITIONING) && !RELEASE_LOG_DISABLED
-bool NetworkResourceLoader::shouldLogCookieInformation() const
+bool NetworkResourceLoader::shouldLogCookieInformation()
 {
     return NetworkProcess::singleton().shouldLogCookieInformation();
+}
+
+static String escapeForJSON(String s)
+{
+    return s.replace('\\', "\\\\").replace('"', "\\\"");
 }
 
 void NetworkResourceLoader::logCookieInformation() const
@@ -724,10 +729,6 @@ void NetworkResourceLoader::logCookieInformation() const
 
 #define LOCAL_LOG(str, ...) \
     RELEASE_LOG_IF_ALLOWED("logCookieInformation: pageID = %" PRIu64 ", frameID = %" PRIu64 ", resourceID = %" PRIu64 ": " str, pageID(), frameID(), identifier(), ##__VA_ARGS__)
-
-    auto escapeForJSON = [](String s) {
-        return s.replace('\\', "\\\\").replace('"', "\\\"");
-    };
 
     auto url = originalRequest().url();
     if (networkStorageSession->shouldBlockCookies(originalRequest())) {
@@ -741,54 +742,72 @@ void NetworkResourceLoader::logCookieInformation() const
         LOCAL_LOG(R"(  "cookies": []})");
         return;
     }
+#undef LOCAL_LOG
 
     auto partition = WebCore::URL(ParsedURLString, networkStorageSession->cookieStoragePartition(originalRequest(), frameID(), pageID()));
-    bool hasStorageAccessForFrame = networkStorageSession->hasStorageAccessForFrame(originalRequest(), frameID(), pageID());
+    NetworkResourceLoader::logCookieInformation("NetworkResourceLoader", reinterpret_cast<const void*>(this), *networkStorageSession, partition, url, originalRequest().httpReferrer(), frameID(), pageID(), identifier());
+}
+
+void NetworkResourceLoader::logCookieInformation(const String& label, const void* loggedObject, const WebCore::NetworkStorageSession& networkStorageSession, const WebCore::URL& partition, const WebCore::URL& url, const String& referrer, std::optional<uint64_t> frameID, std::optional<uint64_t> pageID, std::optional<uint64_t> identifier)
+{
+    ASSERT(shouldLogCookieInformation());
 
     Vector<WebCore::Cookie> cookies;
-    bool result = WebCore::getRawCookies(*networkStorageSession, partition, url, frameID(), pageID(), cookies);
+    if (!WebCore::getRawCookies(networkStorageSession, partition, url, frameID, pageID, cookies))
+        return;
 
-    if (result) {
-        auto escapedURL = escapeForJSON(url.string());
-        auto escapedPartition = escapeForJSON(partition.string());
-        auto escapedReferrer = escapeForJSON(originalRequest().httpReferrer());
+    auto escapeIDForJSON = [](std::optional<uint64_t> value) {
+        return value ? String::number(value.value()) : String("None");
+    };
 
-        LOCAL_LOG(R"({ "url": "%{public}s",)", escapedURL.utf8().data());
-        LOCAL_LOG(R"(  "partition": "%{public}s",)", escapedPartition.utf8().data());
-        LOCAL_LOG(R"(  "hasStorageAccess": %{public}s,)", hasStorageAccessForFrame ? "true" : "false");
-        LOCAL_LOG(R"(  "referer": "%{public}s",)", escapedReferrer.utf8().data());
-        LOCAL_LOG(R"(  "cookies": [)");
+    auto escapedURL = escapeForJSON(url.string());
+    auto escapedPartition = escapeForJSON(partition.string());
+    auto escapedReferrer = escapeForJSON(referrer);
+    auto escapedFrameID = escapeIDForJSON(frameID);
+    auto escapedPageID = escapeIDForJSON(pageID);
+    auto escapedIdentifier = escapeIDForJSON(identifier);
+    bool hasStorageAccessForFrame = (frameID && pageID) ? networkStorageSession.hasStorageAccessForFrame(url.string(), partition.string(), frameID.value(), pageID.value()) : false;
 
-        auto size = cookies.size();
-        decltype(size) count = 0;
-        for (const auto& cookie : cookies) {
-            const char* trailingComma = ",";
-            if (++count == size)
-                trailingComma = "";
+#define LOCAL_LOG_IF_ALLOWED(fmt, ...) RELEASE_LOG_IF(networkStorageSession.sessionID().isAlwaysOnLoggingAllowed(), Network, "%p - %s::" fmt, loggedObject, label.utf8().data(), ##__VA_ARGS__)
+#define LOCAL_LOG(str, ...) \
+    LOCAL_LOG_IF_ALLOWED("logCookieInformation: pageID = %s, frameID = %s, resourceID = %s: " str, escapedPageID.utf8().data(), escapedFrameID.utf8().data(), escapedIdentifier.utf8().data(), ##__VA_ARGS__)
 
-            auto escapedName = escapeForJSON(cookie.name);
-            auto escapedValue = escapeForJSON(cookie.value);
-            auto escapedDomain = escapeForJSON(cookie.domain);
-            auto escapedPath = escapeForJSON(cookie.path);
-            auto escapedComment = escapeForJSON(cookie.comment);
-            auto escapedCommentURL = escapeForJSON(cookie.commentURL.string());
+    LOCAL_LOG(R"({ "url": "%{public}s",)", escapedURL.utf8().data());
+    LOCAL_LOG(R"(  "partition": "%{public}s",)", escapedPartition.utf8().data());
+    LOCAL_LOG(R"(  "hasStorageAccess": %{public}s,)", hasStorageAccessForFrame ? "true" : "false");
+    LOCAL_LOG(R"(  "referer": "%{public}s",)", escapedReferrer.utf8().data());
+    LOCAL_LOG(R"(  "cookies": [)");
 
-            LOCAL_LOG(R"(  { "name": "%{public}s",)", escapedName.utf8().data());
-            LOCAL_LOG(R"(    "value": "%{public}s",)", escapedValue.utf8().data());
-            LOCAL_LOG(R"(    "domain": "%{public}s",)", escapedDomain.utf8().data());
-            LOCAL_LOG(R"(    "path": "%{public}s",)", escapedPath.utf8().data());
-            LOCAL_LOG(R"(    "created": %f,)", cookie.created);
-            LOCAL_LOG(R"(    "expires": %f,)", cookie.expires);
-            LOCAL_LOG(R"(    "httpOnly": %{public}s,)", cookie.httpOnly ? "true" : "false");
-            LOCAL_LOG(R"(    "secure": %{public}s,)", cookie.secure ? "true" : "false");
-            LOCAL_LOG(R"(    "session": %{public}s,)", cookie.session ? "true" : "false");
-            LOCAL_LOG(R"(    "comment": "%{public}s",)", escapedComment.utf8().data());
-            LOCAL_LOG(R"(    "commentURL": "%{public}s")", escapedCommentURL.utf8().data());
-            LOCAL_LOG(R"(  }%{public}s)", trailingComma);
-        }
-        LOCAL_LOG(R"(]})");
-#undef LOCAL_LOG
+    auto size = cookies.size();
+    decltype(size) count = 0;
+    for (const auto& cookie : cookies) {
+        const char* trailingComma = ",";
+        if (++count == size)
+            trailingComma = "";
+
+        auto escapedName = escapeForJSON(cookie.name);
+        auto escapedValue = escapeForJSON(cookie.value);
+        auto escapedDomain = escapeForJSON(cookie.domain);
+        auto escapedPath = escapeForJSON(cookie.path);
+        auto escapedComment = escapeForJSON(cookie.comment);
+        auto escapedCommentURL = escapeForJSON(cookie.commentURL.string());
+
+        LOCAL_LOG(R"(  { "name": "%{public}s",)", escapedName.utf8().data());
+        LOCAL_LOG(R"(    "value": "%{public}s",)", escapedValue.utf8().data());
+        LOCAL_LOG(R"(    "domain": "%{public}s",)", escapedDomain.utf8().data());
+        LOCAL_LOG(R"(    "path": "%{public}s",)", escapedPath.utf8().data());
+        LOCAL_LOG(R"(    "created": %f,)", cookie.created);
+        LOCAL_LOG(R"(    "expires": %f,)", cookie.expires);
+        LOCAL_LOG(R"(    "httpOnly": %{public}s,)", cookie.httpOnly ? "true" : "false");
+        LOCAL_LOG(R"(    "secure": %{public}s,)", cookie.secure ? "true" : "false");
+        LOCAL_LOG(R"(    "session": %{public}s,)", cookie.session ? "true" : "false");
+        LOCAL_LOG(R"(    "comment": "%{public}s",)", escapedComment.utf8().data());
+        LOCAL_LOG(R"(    "commentURL": "%{public}s")", escapedCommentURL.utf8().data());
+        LOCAL_LOG(R"(  }%{public}s)", trailingComma);
     }
+    LOCAL_LOG(R"(]})");
+#undef LOCAL_LOG
+#undef LOCAL_LOG_IF_ALLOWED
 }
 #endif
 

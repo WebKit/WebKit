@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -342,7 +342,14 @@ void NetworkConnectionToWebProcess::cookiesForDOM(PAL::SessionID sessionID, cons
 
 void NetworkConnectionToWebProcess::setCookiesFromDOM(PAL::SessionID sessionID, const URL& firstParty, const URL& url, std::optional<uint64_t> frameID, std::optional<uint64_t> pageID, const String& cookieString)
 {
-    WebCore::setCookiesFromDOM(storageSession(sessionID), firstParty, url, frameID, pageID, cookieString);
+    auto& networkStorageSession = storageSession(sessionID);
+    WebCore::setCookiesFromDOM(networkStorageSession, firstParty, url, frameID, pageID, cookieString);
+#if HAVE(CFNETWORK_STORAGE_PARTITIONING) && !RELEASE_LOG_DISABLED
+    if (NetworkProcess::singleton().shouldLogCookieInformation()) {
+        auto partition = WebCore::URL(ParsedURLString, networkStorageSession.cookieStoragePartition(firstParty, url, frameID, pageID));
+        NetworkResourceLoader::logCookieInformation("NetworkConnectionToWebProcess::setCookiesFromDOM", reinterpret_cast<const void*>(this), networkStorageSession, partition, url, emptyString(), frameID, pageID, std::nullopt);
+    }
+#endif
 }
 
 void NetworkConnectionToWebProcess::cookiesEnabled(PAL::SessionID sessionID, bool& result)
