@@ -1,5 +1,19 @@
 2018-02-06  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r228137. rdar://problem/37264553
+
+    2018-02-05  Youenn Fablet  <youenn@apple.com>
+
+            WebsiteDataStore::resolveDirectoriesIfNecessary() should not overwrite its resolved serviceWorkerRegistrationDirectory  if already set
+            https://bugs.webkit.org/show_bug.cgi?id=182514
+
+            Reviewed by Chris Dumez.
+
+            * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+            (WebKit::WebsiteDataStore::resolveDirectoriesIfNecessary):
+
+2018-02-06  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r228125. rdar://problem/37264500
 
     2018-02-05  Ryosuke Niwa  <rniwa@webkit.org>
