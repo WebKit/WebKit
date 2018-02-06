@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2007-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -165,7 +165,8 @@ public:
     // Marks a file:// origin as being in a domain defined by its path.
     // FIXME 81578: The naming of this is confusing. Files with restricted access to other local files
     // still can have other privileges that can be remembered, thereby not making them unique.
-    void enforceFilePathSeparation();
+    void setEnforcesFilePathSeparation();
+    bool enforcesFilePathSeparation() const { return m_enforcesFilePathSeparation; }
 
     // Convert this SecurityOrigin into a string. The string
     // representation of a SecurityOrigin is similar to a URL, except it
@@ -229,7 +230,7 @@ private:
     bool m_domainWasSetInDOM { false };
     bool m_canLoadLocalResources { false };
     StorageBlockingPolicy m_storageBlockingPolicy { AllowAllStorage };
-    bool m_enforceFilePathSeparation { false };
+    bool m_enforcesFilePathSeparation { false };
     bool m_needsStorageAccessFromFileURLsQuirk { false };
     bool m_isPotentiallyTrustworthy { false };
 };

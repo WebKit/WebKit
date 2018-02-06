@@ -513,6 +513,7 @@ set(JavaScriptCore_FORWARDING_HEADERS
     heap/MutatorState.h
     heap/RegisterState.h
     heap/RunningScope.h
+    heap/SecurityOriginToken.h
     heap/SimpleMarkingConstraint.h
     heap/SlotVisitor.h
     heap/SlotVisitorInlines.h

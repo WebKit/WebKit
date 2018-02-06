@@ -33,12 +33,13 @@ namespace JSC {
 
 class BlockDirectory;
 class GCDeferralContext;
+class ThreadLocalCache;
 
 class LocalAllocator : public BasicRawSentinelNode<LocalAllocator> {
     WTF_MAKE_NONCOPYABLE(LocalAllocator);
     
 public:
-    LocalAllocator(BlockDirectory*);
+    LocalAllocator(ThreadLocalCache*, BlockDirectory*);
     LocalAllocator(LocalAllocator&&);
     ~LocalAllocator();
     
@@ -53,8 +54,12 @@ public:
     static ptrdiff_t offsetOfCellSize();
     
     bool isFreeListedCell(const void*) const;
+    
+    ThreadLocalCache* tlc() const { return m_tlc; }
 
 private:
+    friend class BlockDirectory;
+    
     void reset();
     JS_EXPORT_PRIVATE void* allocateSlowCase(GCDeferralContext*, AllocationFailureMode failureMode);
     void didConsumeFreeList();
@@ -63,11 +68,16 @@ private:
     void* allocateIn(MarkedBlock::Handle*);
     ALWAYS_INLINE void doTestCollectionsIfNeeded(GCDeferralContext*);
 
+    ThreadLocalCache* m_tlc;
     BlockDirectory* m_directory;
     unsigned m_cellSize;
     FreeList m_freeList;
     MarkedBlock::Handle* m_currentBlock { nullptr };
     MarkedBlock::Handle* m_lastActiveBlock { nullptr };
+    
+    // After you do something to a block based on one of these cursors, you clear the bit in the
+    // corresponding bitvector and leave the cursor where it was.
+    size_t m_allocationCursor { 0 }; // Points to the next block that is a candidate for allocation.
 };
 
 inline ptrdiff_t LocalAllocator::offsetOfFreeList()

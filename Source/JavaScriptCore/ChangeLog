@@ -1,3 +1,73 @@
+2018-01-28  Filip Pizlo  <fpizlo@apple.com>
+
+        Global objects should be able to use TLCs to allocate from different blocks from each other
+        https://bugs.webkit.org/show_bug.cgi?id=182227
+
+        Reviewed by JF Bastien.
+        
+        This uses TLCs to create at least `minimumDistanceBetweenCellsFromDifferenOrigins` bytes of
+        distance between objects from different origins, using the following combination of things. For
+        short lets refer to that constant as K.
+        
+        - Since r227721, LargeAllocation puts K bytes padding at the end of each allocation.
+        
+        - Since r227718, MarkedBlock puts at least K bytes in its footer.
+        
+        - Since r227617, global objects can have their own TLCs, which make them allocate from a
+          different set of blocks than other global objects. The TLC of a global object comes into
+          effect when you enter the VM via that global object.
+        
+        - With this change, TLCs and blocks both have security origins. A TLC will only use blocks that
+          share the same security origin or empty blocks (in which case we zero the block and change
+          its security origin).
+        
+        WebCore determines the TLC-GlobalObject mapping. By default, global objects would simply use
+        the VM's default TLC. WebCore makes it so that DOM windows (but not worker global objects) get
+        a TLC based on their document's SecurityOrigin.
+        
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Sources.txt:
+        * heap/BlockDirectory.cpp:
+        (JSC::BlockDirectory::findBlockForAllocation):
+        (JSC::BlockDirectory::prepareForAllocation):
+        * heap/BlockDirectory.h:
+        * heap/LocalAllocator.cpp:
+        (JSC::LocalAllocator::LocalAllocator):
+        (JSC::LocalAllocator::reset):
+        (JSC::LocalAllocator::~LocalAllocator):
+        (JSC::LocalAllocator::allocateSlowCase):
+        (JSC::LocalAllocator::tryAllocateWithoutCollecting):
+        * heap/LocalAllocator.h:
+        (JSC::LocalAllocator::tlc const):
+        * heap/MarkStackMergingConstraint.cpp:
+        * heap/MarkStackMergingConstraint.h:
+        * heap/MarkedBlock.cpp:
+        (JSC::MarkedBlock::Handle::associateWithOrigin):
+        * heap/MarkedBlock.h:
+        (JSC::MarkedBlock::Handle::securityOriginToken const):
+        * heap/SecurityOriginToken.cpp: Added.
+        (JSC::uniqueSecurityOriginToken):
+        * heap/SecurityOriginToken.h: Added.
+        * heap/ThreadLocalCache.cpp:
+        (JSC::ThreadLocalCache::create):
+        (JSC::ThreadLocalCache::ThreadLocalCache):
+        (JSC::ThreadLocalCache::allocateData):
+        (JSC::ThreadLocalCache::installSlow):
+        * heap/ThreadLocalCache.h:
+        (JSC::ThreadLocalCache::securityOriginToken const):
+        * heap/ThreadLocalCacheInlines.h:
+        (JSC::ThreadLocalCache::install):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::JSGlobalObject):
+        (JSC::JSGlobalObject::createThreadLocalCache):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::threadLocalCache):
+        (JSC::JSGlobalObject::threadLocalCache const): Deleted.
+        * runtime/VMEntryScope.cpp:
+        (JSC::VMEntryScope::VMEntryScope):
+        (JSC::VMEntryScope::~VMEntryScope):
+        * runtime/VMEntryScope.h:
+
 2018-02-05  Don Olmstead  <don.olmstead@sony.com>
 
         JavaScriptCore files should not be included relatively

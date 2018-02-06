@@ -32,8 +32,9 @@
 
 namespace JSC {
 
-LocalAllocator::LocalAllocator(BlockDirectory* directory)
-    : m_directory(directory)
+LocalAllocator::LocalAllocator(ThreadLocalCache* tlc, BlockDirectory* directory)
+    : m_tlc(tlc)
+    , m_directory(directory)
     , m_cellSize(directory->m_cellSize)
     , m_freeList(m_cellSize)
 {
@@ -42,11 +43,13 @@ LocalAllocator::LocalAllocator(BlockDirectory* directory)
 }
 
 LocalAllocator::LocalAllocator(LocalAllocator&& other)
-    : m_directory(other.m_directory)
+    : m_tlc(other.m_tlc)
+    , m_directory(other.m_directory)
     , m_cellSize(other.m_cellSize)
     , m_freeList(WTFMove(other.m_freeList))
     , m_currentBlock(other.m_currentBlock)
     , m_lastActiveBlock(other.m_lastActiveBlock)
+    , m_allocationCursor(other.m_allocationCursor)
 {
     other.reset();
     if (other.isOnList()) {
@@ -61,6 +64,7 @@ void LocalAllocator::reset()
     m_freeList.clear();
     m_currentBlock = nullptr;
     m_lastActiveBlock = nullptr;
+    m_allocationCursor = 0;
 }
 
 LocalAllocator::~LocalAllocator()
@@ -80,6 +84,15 @@ LocalAllocator::~LocalAllocator()
     //   that it is not reachable. Therefore, the TLC should still be in a fully reset state at the
     //   time of destruction because for it to get into any other state, someone must have allocated
     //   in it (which is impossible because it's supposedly unreachable).
+    //
+    // My biggest worry with these assertions is that there will be some TLC that gets set as the
+    // current one but then never reset, and in the meantime the global object that owns it gets
+    // destroyed.
+    //
+    // Note that if we did hold onto some memory and we wanted to return it then this could be weird.
+    // We would potentially have to stopAllocating(). That would mean having to return a block to the
+    // BlockDirectory. It's not clear that the BlockDirectory is prepared to handle that during
+    // sweeping another block, for example.
     bool ok = true;
     if (!m_freeList.allocationWillFail()) {
         dataLog("FATAL: ", RawPointer(this), "->~LocalAllocator has non-empty free-list.\n");
@@ -164,6 +177,7 @@ void* LocalAllocator::allocateSlowCase(GCDeferralContext* deferralContext, Alloc
         else
             return nullptr;
     }
+    block->associateWithOrigin(m_tlc->securityOriginToken());
     m_directory->addBlock(block);
     result = allocateIn(block);
     ASSERT(result);
@@ -201,7 +215,7 @@ void* LocalAllocator::tryAllocateWithoutCollecting()
     ASSERT(m_freeList.allocationWillFail());
     
     for (;;) {
-        MarkedBlock::Handle* block = m_directory->findBlockForAllocation();
+        MarkedBlock::Handle* block = m_directory->findBlockForAllocation(*this);
         if (!block)
             break;
 
@@ -220,6 +234,7 @@ void* LocalAllocator::tryAllocateWithoutCollecting()
             // because there is a remote chance that a block may have both canAllocateButNotEmpty
             // and empty set at the same time.
             block->removeFromDirectory();
+            block->associateWithOrigin(m_tlc->securityOriginToken());
             m_directory->addBlock(block);
             return allocateIn(block);
         }

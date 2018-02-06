@@ -1,3 +1,45 @@
+2018-02-05  Filip Pizlo  <fpizlo@apple.com>
+
+        Global objects should be able to use TLCs to allocate from different blocks from each other
+        https://bugs.webkit.org/show_bug.cgi?id=182227
+
+        Reviewed by Daniel Bates and Chris Dumez.
+
+        No new tests because no change in behavior.
+        
+        Adopt JSC TLC API to put distance between objects from different security origins. WebCore has
+        a subclass of ThreadLocalCache that supports hash-consing based on the relevant origin data
+        using the existing SecurityOriginHash. It's Document's job to initiate this, but all of the
+        logic is in WebCore::OriginThreadLocalCache.
+        
+        Workers don't opt into this. They just get the VM's default TLC all the time.
+
+        * ForwardingHeaders/heap/ThreadLocalCache.h: Added.
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSDOMGlobalObject.cpp:
+        (WebCore::JSDOMGlobalObject::JSDOMGlobalObject):
+        * bindings/js/JSDOMGlobalObject.h:
+        * bindings/js/JSDOMWindowBase.cpp:
+        (WebCore::JSDOMWindowBase::JSDOMWindowBase):
+        * dom/Document.cpp:
+        (WebCore::Document::initSecurityContext):
+        (WebCore::Document::threadLocalCache):
+        * dom/Document.h:
+        * page/OriginThreadLocalCache.cpp: Added.
+        (WebCore::threadLocalCacheMap):
+        (WebCore::OriginThreadLocalCache::create):
+        (WebCore::OriginThreadLocalCache::~OriginThreadLocalCache):
+        (WebCore::OriginThreadLocalCache::OriginThreadLocalCache):
+        * page/OriginThreadLocalCache.h: Added.
+        * page/SecurityOrigin.cpp:
+        (WebCore::SecurityOrigin::passesFileCheck const):
+        (WebCore::SecurityOrigin::setEnforcesFilePathSeparation):
+        (WebCore::SecurityOrigin::toString const):
+        (WebCore::SecurityOrigin::enforceFilePathSeparation): Deleted.
+        * page/SecurityOrigin.h:
+        (WebCore::SecurityOrigin::enforcesFilePathSeparation const):
+
 2018-02-05  Per Arne Vollan  <pvollan@apple.com>
 
         [Win] Release assert failed under NetworkStateNotifier::singleton.

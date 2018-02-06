@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,32 +23,46 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#pragma once
+#include "config.h"
+#include "OriginThreadLocalCache.h"
 
-#include <functional>
-#include <wtf/Vector.h>
+#include "CommonVM.h"
+#include "SecurityOriginHash.h"
+#include <wtf/HashMap.h>
+#include <wtf/NeverDestroyed.h>
 
-namespace JSC {
+namespace WebCore {
 
-class JSGlobalObject;
-class ThreadLocalCache;
-class VM;
+typedef HashMap<RefPtr<SecurityOrigin>, OriginThreadLocalCache*> ThreadLocalCacheMap;
 
-class VMEntryScope {
-public:
-    JS_EXPORT_PRIVATE VMEntryScope(VM&, JSGlobalObject*);
-    JS_EXPORT_PRIVATE ~VMEntryScope();
+static ThreadLocalCacheMap& threadLocalCacheMap()
+{
+    static NeverDestroyed<ThreadLocalCacheMap> map;
+    return map;
+}
 
-    VM& vm() const { return m_vm; }
-    JSGlobalObject* globalObject() const { return m_globalObject; }
+Ref<OriginThreadLocalCache> OriginThreadLocalCache::create(SecurityOrigin& key)
+{
+    auto iter = threadLocalCacheMap().find(&key);
+    if (iter != threadLocalCacheMap().end())
+        return *iter->value;
+    
+    return adoptRef(*new OriginThreadLocalCache(key));
+}
 
-    void addDidPopListener(std::function<void ()>);
+OriginThreadLocalCache::~OriginThreadLocalCache()
+{
+    bool result = threadLocalCacheMap().remove(m_key);
+    RELEASE_ASSERT(result);
+}
 
-private:
-    VM& m_vm;
-    JSGlobalObject* m_globalObject;
-    Vector<std::function<void ()>> m_didPopListeners;
-    RefPtr<ThreadLocalCache> m_previousTLC;
-};
+OriginThreadLocalCache::OriginThreadLocalCache(SecurityOrigin& key)
+    : ThreadLocalCache(commonVM().heap, JSC::uniqueSecurityOriginToken())
+    , m_key(&key)
+{
+    auto result = threadLocalCacheMap().add(&key, this);
+    RELEASE_ASSERT(result);
+}
 
-} // namespace JSC
+} // namespace WebCore
+

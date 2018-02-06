@@ -488,6 +488,15 @@ bool MarkedBlock::Handle::isFreeListedCell(const void* target) const
     return m_directory->isFreeListedCell(target);
 }
 
+void MarkedBlock::Handle::associateWithOrigin(SecurityOriginToken securityOriginToken)
+{
+    if (m_securityOriginToken == securityOriginToken)
+        return;
+    
+    memset(&block(), 0, endAtom * atomSize);
+    m_securityOriginToken = securityOriginToken;
+}
+
 } // namespace JSC
 
 namespace WTF {

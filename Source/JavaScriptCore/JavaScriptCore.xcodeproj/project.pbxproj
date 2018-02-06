@@ -294,6 +294,7 @@
 		0F426A481460CBB300131F8F /* ValueRecovery.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F426A451460CBAB00131F8F /* ValueRecovery.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F426A491460CBB700131F8F /* VirtualRegister.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F426A461460CBAB00131F8F /* VirtualRegister.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F426A4B1460CD6E00131F8F /* DataFormat.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F426A4A1460CD6B00131F8F /* DataFormat.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0F42B3C3201EC9FF00357031 /* SecurityOriginToken.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F42B3C2201EC9FD00357031 /* SecurityOriginToken.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F431738146BAC69007E3890 /* ListableHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F431736146BAC65007E3890 /* ListableHandler.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F4570391BE44C910062A629 /* AirEliminateDeadCode.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F4570371BE44C910062A629 /* AirEliminateDeadCode.h */; };
 		0F45703D1BE45F0A0062A629 /* AirReportUsedRegisters.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F45703B1BE45F0A0062A629 /* AirReportUsedRegisters.h */; };
@@ -2262,6 +2263,8 @@
 		0F426A451460CBAB00131F8F /* ValueRecovery.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ValueRecovery.h; sourceTree = "<group>"; };
 		0F426A461460CBAB00131F8F /* VirtualRegister.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VirtualRegister.h; sourceTree = "<group>"; };
 		0F426A4A1460CD6B00131F8F /* DataFormat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataFormat.h; sourceTree = "<group>"; };
+		0F42B3C0201EB50900357031 /* Allocator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Allocator.cpp; sourceTree = "<group>"; };
+		0F42B3C2201EC9FD00357031 /* SecurityOriginToken.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SecurityOriginToken.h; sourceTree = "<group>"; };
 		0F431736146BAC65007E3890 /* ListableHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ListableHandler.h; sourceTree = "<group>"; };
 		0F4570361BE44C910062A629 /* AirEliminateDeadCode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AirEliminateDeadCode.cpp; path = b3/air/AirEliminateDeadCode.cpp; sourceTree = "<group>"; };
 		0F4570371BE44C910062A629 /* AirEliminateDeadCode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AirEliminateDeadCode.h; path = b3/air/AirEliminateDeadCode.h; sourceTree = "<group>"; };
@@ -5559,21 +5562,14 @@
 		142E312A134FF0A600AFADB5 /* heap */ = {
 			isa = PBXGroup;
 			children = (
-				0F75A054200D25EF0038E2CF /* Allocator.h */,
-				0F75A05D200D25F10038E2CF /* AllocatorInlines.h */,
-				0F75A059200D25F00038E2CF /* LocalAllocator.cpp */,
-				0F75A057200D25F00038E2CF /* LocalAllocator.h */,
-				0F75A05A200D25F00038E2CF /* LocalAllocatorInlines.h */,
-				0F75A058200D25F00038E2CF /* ThreadLocalCache.cpp */,
-				0F75A055200D25EF0038E2CF /* ThreadLocalCache.h */,
-				0F75A056200D25EF0038E2CF /* ThreadLocalCacheInlines.h */,
-				0F75A05B200D25F10038E2CF /* ThreadLocalCacheLayout.cpp */,
-				0F75A05C200D25F10038E2CF /* ThreadLocalCacheLayout.h */,
 				0FEC3C501F33A41600F59B6C /* AlignedMemoryAllocator.cpp */,
 				0FEC3C511F33A41600F59B6C /* AlignedMemoryAllocator.h */,
 				0FA7620A1DB959F600B7A2FD /* AllocatingScope.h */,
 				0FDCE11B1FAE61F4006F3901 /* AllocationFailureMode.h */,
+				0F42B3C0201EB50900357031 /* Allocator.cpp */,
+				0F75A054200D25EF0038E2CF /* Allocator.h */,
 				0F30CB5D1FCE46B4004B5323 /* AllocatorForMode.h */,
+				0F75A05D200D25F10038E2CF /* AllocatorInlines.h */,
 				0FB4677E1FDDA6E5003FCB09 /* AtomIndices.h */,
 				C2B916C414DA040C00CBAC86 /* BlockDirectory.cpp */,
 				C2B916C114DA014E00CBAC86 /* BlockDirectory.h */,
@@ -5674,6 +5670,9 @@
 				0F070A451D543A89006E7232 /* LargeAllocation.cpp */,
 				0F070A461D543A89006E7232 /* LargeAllocation.h */,
 				0F431736146BAC65007E3890 /* ListableHandler.h */,
+				0F75A059200D25F00038E2CF /* LocalAllocator.cpp */,
+				0F75A057200D25F00038E2CF /* LocalAllocator.h */,
+				0F75A05A200D25F00038E2CF /* LocalAllocatorInlines.h */,
 				0F208AD61DF0925A007D3269 /* LockDuringMarking.h */,
 				14B7233F12D7D0DA003BD5ED /* MachineStackMarker.cpp */,
 				14B7234012D7D0DA003BD5ED /* MachineStackMarker.h */,
@@ -5703,6 +5702,7 @@
 				0FD0E5EF1E46BF230006AB08 /* RegisterState.h */,
 				0F7CF94E1DBEEE860098CC12 /* ReleaseHeapAccessScope.h */,
 				0F2C63A91E4FA42C00C13839 /* RunningScope.h */,
+				0F42B3C2201EC9FD00357031 /* SecurityOriginToken.h */,
 				0F4D8C761FCA3CF2001D32AC /* SimpleMarkingConstraint.cpp */,
 				0F4D8C771FCA3CF3001D32AC /* SimpleMarkingConstraint.h */,
 				C225494215F7DBAA0065E898 /* SlotVisitor.cpp */,
@@ -5724,6 +5724,11 @@
 				0FD79A2C1EBBBDB200DA88D3 /* Synchronousness.h */,
 				0F1FB38A1E173A6200A9BE50 /* SynchronousStopTheWorldMutatorScheduler.cpp */,
 				0F1FB38B1E173A6200A9BE50 /* SynchronousStopTheWorldMutatorScheduler.h */,
+				0F75A058200D25F00038E2CF /* ThreadLocalCache.cpp */,
+				0F75A055200D25EF0038E2CF /* ThreadLocalCache.h */,
+				0F75A056200D25EF0038E2CF /* ThreadLocalCacheInlines.h */,
+				0F75A05B200D25F10038E2CF /* ThreadLocalCacheLayout.cpp */,
+				0F75A05C200D25F10038E2CF /* ThreadLocalCacheLayout.h */,
 				141448CC13A1783700F5BA1A /* TinyBloomFilter.h */,
 				0F5F08CE146C762F000472A9 /* UnconditionalFinalizer.h */,
 				0F4D8C721FC7A973001D32AC /* VisitCounter.h */,
@@ -8522,6 +8527,7 @@
 				0F7C39FF1C90C55B00480151 /* DFGOpInfo.h in Headers */,
 				A7D89CFE17A0B8CC00773AD8 /* DFGOSRAvailabilityAnalysisPhase.h in Headers */,
 				0FD82E57141DAF1000179C94 /* DFGOSREntry.h in Headers */,
+				0F42B3C3201EC9FF00357031 /* SecurityOriginToken.h in Headers */,
 				0FD8A32617D51F5700CA2C40 /* DFGOSREntrypointCreationPhase.h in Headers */,
 				0FC0976A1468A6F700CF2442 /* DFGOSRExit.h in Headers */,
 				0F235BEC17178E7300690C7F /* DFGOSRExitBase.h in Headers */,
