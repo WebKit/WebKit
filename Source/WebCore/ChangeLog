@@ -1,5 +1,23 @@
 2018-02-06  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r228119. rdar://problem/37264495
+
+    2018-02-05  John Wilander  <wilander@apple.com>
+
+            Build fix for r228115, simple naming issue succeeded —> success.
+            https://bugs.webkit.org/show_bug.cgi?id=182507
+            <rdar://problem/37248566>
+
+            Reviewed by Eric Carlson.
+
+            No new tests. Build fix.
+
+            * platform/ios/VideoFullscreenInterfaceAVKit.mm:
+            (VideoFullscreenInterfaceAVKit::enterFullscreenHandler):
+                succeeded —> success
+
+2018-02-06  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r228115. rdar://problem/37264495
 
     2018-02-05  Eric Carlson  <eric.carlson@apple.com>
