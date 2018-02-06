@@ -1268,13 +1268,13 @@ void WKPageSetPageLoaderClient(WKPageRef pageRef, const WKPageLoaderClientBase* 
                 m_client.pluginDidFail(toAPI(&page), kWKErrorCodeCannotLoadPlugIn, toAPI(&pluginInformation), m_client.base.clientInfo);
         }
 
-        void didBlockInsecurePluginVersion(WebPageProxy& page, API::Dictionary* pluginInformation) override
+        void didBlockInsecurePluginVersion(WebPageProxy& page, API::Dictionary& pluginInformation) override
         {
             if (m_client.pluginDidFail_deprecatedForUseWithV1)
-                m_client.pluginDidFail_deprecatedForUseWithV1(toAPI(&page), kWKErrorCodeInsecurePlugInVersion, toAPI(pluginInformation->get<API::String>(pluginInformationMIMETypeKey())), toAPI(pluginInformation->get<API::String>(pluginInformationBundleIdentifierKey())), toAPI(pluginInformation->get<API::String>(pluginInformationBundleVersionKey())), m_client.base.clientInfo);
+                m_client.pluginDidFail_deprecatedForUseWithV1(toAPI(&page), kWKErrorCodeInsecurePlugInVersion, toAPI(pluginInformation.get<API::String>(pluginInformationMIMETypeKey())), toAPI(pluginInformation.get<API::String>(pluginInformationBundleIdentifierKey())), toAPI(pluginInformation.get<API::String>(pluginInformationBundleVersionKey())), m_client.base.clientInfo);
 
             if (m_client.pluginDidFail)
-                m_client.pluginDidFail(toAPI(&page), kWKErrorCodeInsecurePlugInVersion, toAPI(pluginInformation), m_client.base.clientInfo);
+                m_client.pluginDidFail(toAPI(&page), kWKErrorCodeInsecurePlugInVersion, toAPI(&pluginInformation), m_client.base.clientInfo);
         }
 
         PluginModuleLoadPolicy pluginLoadPolicy(WebPageProxy& page, PluginModuleLoadPolicy currentPluginLoadPolicy, API::Dictionary& pluginInformation, String& unavailabilityDescription) override

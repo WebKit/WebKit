@@ -6162,20 +6162,12 @@ void WebPageProxy::didFailToInitializePlugin(const String& mimeType, const Strin
 
 void WebPageProxy::didBlockInsecurePluginVersion(const String& mimeType, const String& pluginURLString, const String& frameURLString, const String& pageURLString, bool replacementObscured)
 {
-    RefPtr<API::Dictionary> pluginInformation;
-
-#if PLATFORM(COCOA) && ENABLE(NETSCAPE_PLUGIN_API)
     String newMimeType = mimeType;
     PluginModuleInfo plugin = m_process->processPool().pluginInfoStore().findPlugin(newMimeType, URL(URL(), pluginURLString));
-    pluginInformation = createPluginInformationDictionary(plugin, frameURLString, mimeType, pageURLString, String(), String(), replacementObscured);
-#else
-    UNUSED_PARAM(mimeType);
-    UNUSED_PARAM(pluginURLString);
-    UNUSED_PARAM(frameURLString);
-    UNUSED_PARAM(pageURLString);
-    UNUSED_PARAM(replacementObscured);
-#endif
+    auto pluginInformation = createPluginInformationDictionary(plugin, frameURLString, mimeType, pageURLString, String(), String(), replacementObscured);
 
+    if (m_navigationClient->didBlockInsecurePluginVersion(*this, pluginInformation.get()))
+        return;
     m_loaderClient->didBlockInsecurePluginVersion(*this, pluginInformation.get());
 }
 #endif // ENABLE(NETSCAPE_PLUGIN_API)

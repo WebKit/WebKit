@@ -105,7 +105,7 @@ public:
 #if ENABLE(NETSCAPE_PLUGIN_API)
     virtual WebKit::PluginModuleLoadPolicy pluginLoadPolicy(WebKit::WebPageProxy&, WebKit::PluginModuleLoadPolicy currentPluginLoadPolicy, API::Dictionary&, WTF::String& /* unavailabilityDescription */) { return currentPluginLoadPolicy; }
     virtual void didFailToInitializePlugin(WebKit::WebPageProxy&, API::Dictionary&) { }
-    virtual void didBlockInsecurePluginVersion(WebKit::WebPageProxy&, API::Dictionary*) { }
+    virtual void didBlockInsecurePluginVersion(WebKit::WebPageProxy&, API::Dictionary&) { }
 #endif // ENABLE(NETSCAPE_PLUGIN_API)
 
 #if ENABLE(WEBGL)

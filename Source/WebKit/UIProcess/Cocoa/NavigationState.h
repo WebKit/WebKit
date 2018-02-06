@@ -121,6 +121,7 @@ private:
         void resolveWebGLLoadPolicy(WebPageProxy&, const WebCore::URL&, WTF::Function<void(WebCore::WebGLLoadPolicy)>&& completionHandler) const final;
         bool willGoToBackForwardListItem(WebPageProxy&, WebBackForwardListItem&, bool inPageCache, API::Object*) final;
         bool didFailToInitializePlugIn(WebPageProxy&, API::Dictionary&) final;
+        bool didBlockInsecurePluginVersion(WebPageProxy&, API::Dictionary&) final;
         WebKit::PluginModuleLoadPolicy decidePolicyForPluginLoad(WebKit::WebPageProxy&, WebKit::PluginModuleLoadPolicy, API::Dictionary&, WTF::String&) final;
         bool didChangeBackForwardList(WebPageProxy&, WebBackForwardListItem*, const Vector<Ref<WebBackForwardListItem>>&) final;
 #endif
@@ -222,6 +223,7 @@ private:
         bool webViewResolveWebGLLoadPolicyForURL : 1;
         bool webViewBackForwardListItemAddedRemoved : 1;
         bool webViewDidFailToInitializePlugInWithInfo : 1;
+        bool webViewDidBlockInsecurePluginVersionWithInfo : 1;
         bool webViewWillGoToBackForwardListItemInPageCache : 1;
         bool webViewDecidePolicyForPluginLoadWithCurrentPolicyPluginInfoUnavailabilityDescription : 1;
 #endif

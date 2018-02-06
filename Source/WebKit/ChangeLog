@@ -1,3 +1,40 @@
+2018-02-06  Jeff Miller  <jeffm@apple.com>
+
+        Add WKNavigationDelegate SPI to tell the client when an insecure plug-in is blocked
+        https://bugs.webkit.org/show_bug.cgi?id=182540
+
+        Reviewed by Alex Christensen.
+
+        * UIProcess/API/APILoaderClient.h:
+        (API::LoaderClient::didBlockInsecurePluginVersion):
+        Changed to take a dictionary reference.
+
+        * UIProcess/API/APINavigationClient.h:
+        (API::NavigationClient::didBlockInsecurePluginVersion):
+        Added.
+
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetPageLoaderClient):
+        Changed didBlockInsecurePluginVersion() to take a dictionary reference.
+
+        * UIProcess/API/Cocoa/WKNavigationDelegatePrivate.h:
+        Added -_webView:didBlockInsecurePluginVersionWithInfo:.
+
+        * UIProcess/Cocoa/NavigationState.h:
+        * UIProcess/Cocoa/NavigationState.mm:
+        (WebKit::NavigationState::setNavigationDelegate):
+        Initialize webViewDidBlockInsecurePluginVersionWithInfo.
+
+        (WebKit::NavigationState::NavigationClient::didBlockInsecurePluginVersion):
+        Added.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didBlockInsecurePluginVersion):
+        Remove check for PLATFORM(COCOA) (we don't check for this in didFailToInitializePlugin() where we
+        also use createPluginInformationDictionary()) and ENABLE(NETSCAPE_PLUGIN_API) (we're already inside
+        an #if ENABLE(NETSCAPE_PLUGIN_API block) and use auto for pluginInformation. Attempt to use the
+        navigation client before the loader client.
+
 2018-02-06  Youenn Fablet  <youenn@apple.com>
 
         HasServiceWorkerRegistration bit should be sent when creating a new page
