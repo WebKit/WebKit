@@ -1,3 +1,20 @@
+2018-02-06  Antoine Quint  <graouts@apple.com>
+
+        [Modern Media Controls] Test at media/modern-media-controls/tracks-panel/tracks-panel-controls-bar-remains-visible-after-clicking-over-it.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=182425
+
+        Reviewed by Dean Jackson.
+
+        This test failed because the controls bar would not hit test at the moment we synthesized a mousemove over the controls bar as the first step towards
+        synthesizing a click on the controls bar to dismiss the tracks panel. Indeed, it would have "pointer-events" set to "none" until the tracks panel was
+        dismissed, which would only happen after the click event had been propagated. All we need to do is to ensure that none of the controls within the controls
+        bar get activated as a result of clicking over them when the tracks panel is visible, so we instead set "pointer-events" to "none" on all children of a
+        controls bar rather than the controls bar itself, which can thus still hit test.
+
+        * Modules/modern-media-controls/controls/media-controls.css:
+        (.media-controls.shows-tracks-panel > .controls-bar > *,):
+        (.media-controls.shows-tracks-panel > .controls-bar,): Deleted.
+
 2018-02-06  Chris Dumez  <cdumez@apple.com>
 
         Service workers registrations are saved to disk before the install / activation succeeds

@@ -97,7 +97,7 @@
     transition: opacity 0.1s linear;
 }
 
-.media-controls.shows-tracks-panel > .controls-bar,
+.media-controls.shows-tracks-panel > .controls-bar > *,
 .media-controls.shows-tracks-panel > button {
     pointer-events: none;
 }

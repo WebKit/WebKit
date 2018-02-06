@@ -1462,7 +1462,6 @@ media/modern-media-controls/media-controller/media-controller-auto-hide.html [ P
 
 webkit.org/b/178126 media/modern-media-controls/media-controller/media-controller-auto-hide-mouse-enter-over-controls-bar.html [ Skip ]
 webkit.org/b/178127 media/modern-media-controls/media-controller/media-controller-video-with-only-audio.html [ Skip ]
-webkit.org/b/182425 media/modern-media-controls/tracks-panel/tracks-panel-controls-bar-remains-visible-after-clicking-over-it.html [ Failure ]
 
 # This test relies on the control overlay not being visible in the top left. But the test now fails on Mac because
 # the image is dumped after the video is loaded and the control overlay is displayed. It seems the test still works
