@@ -695,7 +695,7 @@ size_t MediaElementSession::maximumMediaSourceBufferSize(const SourceBuffer& buf
 static bool isMainContentForPurposesOfAutoplay(const HTMLMediaElement& element)
 {
     Document& document = element.document();
-    if (element.isSuspended() || !element.hasAudio() || !element.hasVideo())
+    if (!document.hasLivingRenderTree() || document.activeDOMObjectsAreStopped() || element.isSuspended() || !element.hasAudio() || !element.hasVideo())
         return false;
 
     // Elements which have not yet been laid out, or which are not yet in the DOM, cannot be main content.
@@ -715,7 +715,7 @@ static bool isMainContentForPurposesOfAutoplay(const HTMLMediaElement& element)
         return false;
 
     // Main content elements must be in the main frame.
-    if (!document.frame() || !document.frame()->isMainFrame() || !document.isSafeToUpdateStyleOrLayout())
+    if (!document.frame() || !document.frame()->isMainFrame())
         return false;
 
     MainFrame& mainFrame = document.frame()->mainFrame();

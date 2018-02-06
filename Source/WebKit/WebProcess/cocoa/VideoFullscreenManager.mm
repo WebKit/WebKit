@@ -59,7 +59,7 @@ namespace WebKit {
 static IntRect inlineVideoFrame(HTMLVideoElement& element)
 {
     auto& document = element.document();
-    if (!document.isSafeToUpdateStyleOrLayout())
+    if (!document.hasLivingRenderTree() || document.activeDOMObjectsAreStopped())
         return { };
 
     document.updateLayoutIgnorePendingStylesheets();

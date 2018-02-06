@@ -1,3 +1,17 @@
+2018-02-05  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Release assertion in inlineVideoFrame
+        https://bugs.webkit.org/show_bug.cgi?id=182513
+        <rdar://problem/37159363>
+
+        Reviewed by Zalan Bujtas.
+
+        Fixed the bug. Don't try to update the layout when there is no live render tree or active DOM objects
+        had been stopped: i.e. during a document destruction.
+
+        * WebProcess/cocoa/VideoFullscreenManager.mm:
+        (WebKit::inlineVideoFrame):
+
 2018-02-05  Yousuke Kimoto  <yousuke.kimoto@sony.com>
 
         [WinCairo] Refine WebKitLegacy and WebKit build for wincairo
