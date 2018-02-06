@@ -1,5 +1,23 @@
 2018-02-06  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r228151. rdar://problem/37264535
+
+    2018-02-05  Ryosuke Niwa  <rniwa@webkit.org>
+
+            Release assertion in inlineVideoFrame
+            https://bugs.webkit.org/show_bug.cgi?id=182513
+            <rdar://problem/37159363>
+
+            Reviewed by Zalan Bujtas.
+
+            Fixed the bug. Don't try to update the layout when there is no live render tree or active DOM objects
+            had been stopped: i.e. during a document destruction.
+
+            * WebProcess/cocoa/VideoFullscreenManager.mm:
+            (WebKit::inlineVideoFrame):
+
+2018-02-06  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r228137. rdar://problem/37264553
 
     2018-02-05  Youenn Fablet  <youenn@apple.com>

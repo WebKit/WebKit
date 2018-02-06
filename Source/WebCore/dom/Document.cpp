@@ -1938,10 +1938,11 @@ bool Document::needsStyleRecalc() const
     return false;
 }
 
-bool Document::isSafeToUpdateStyleOrLayout() const
+static bool isSafeToUpdateStyleOrLayout(const Document& document)
 {
     bool isSafeToExecuteScript = ScriptDisallowedScope::InMainThread::isScriptAllowed();
-    bool isInFrameFlattening = view() && view()->isInChildFrameWithFrameFlattening();
+    auto* frameView = document.view();
+    bool isInFrameFlattening = frameView && frameView->isInChildFrameWithFrameFlattening();
     bool isAssertionDisabled = ScriptDisallowedScope::LayoutAssertionDisableScope::shouldDisable();
     return isSafeToExecuteScript || isInFrameFlattening || !isInWebProcess() || isAssertionDisabled;
 }
@@ -1964,7 +1965,7 @@ bool Document::updateStyleIfNeeded()
     }
 
     // The early exit above for !needsStyleRecalc() is needed when updateWidgetPositions() is called in runOrScheduleAsynchronousTasks().
-    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(isSafeToUpdateStyleOrLayout());
+    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(isSafeToUpdateStyleOrLayout(*this));
 
     resolveStyle();
     return true;
@@ -1980,7 +1981,7 @@ void Document::updateLayout()
         ASSERT_NOT_REACHED();
         return;
     }
-    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(isSafeToUpdateStyleOrLayout());
+    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(isSafeToUpdateStyleOrLayout(*this));
 
     RenderView::RepaintRegionAccumulator repaintRegionAccumulator(renderView());
 
