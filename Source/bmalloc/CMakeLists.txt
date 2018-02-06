@@ -34,6 +34,7 @@ set(bmalloc_SOURCES
 
 if (CMAKE_SYSTEM_NAME MATCHES "Darwin")
     list(APPEND bmalloc_SOURCES
+        bmalloc/ProcessCheck.mm
         bmalloc/Zone.cpp
     )
 endif ()
