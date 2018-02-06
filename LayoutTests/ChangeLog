@@ -1,3 +1,14 @@
+2018-02-06  Andy Estes  <aestes@apple.com>
+
+        [Payment Request] show() should take an optional PaymentDetailsUpdate promise
+        https://bugs.webkit.org/show_bug.cgi?id=182538
+        <rdar://problem/36754552>
+
+        Reviewed by Tim Horton.
+
+        * http/tests/paymentrequest/payment-request-show-method.https-expected.txt:
+        * http/tests/paymentrequest/payment-request-show-method.https.html:
+
 2018-02-06  Daniel Bates  <dabates@apple.com>
 
         Make mixed content basic auth tests more robust

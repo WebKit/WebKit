@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -307,13 +307,19 @@ ExceptionOr<ApplePaySessionPaymentRequest::TotalAndLineItems> ApplePayPaymentHan
     return ApplePaySessionPaymentRequest::TotalAndLineItems { WTFMove(total), WTFMove(lineItems) };
 }
 
-ExceptionOr<void> ApplePayPaymentHandler::detailsUpdated(const AtomicString& eventType, const String& error)
+ExceptionOr<void> ApplePayPaymentHandler::detailsUpdated(PaymentRequest::UpdateReason reason, const String& error)
 {
-    if (eventType == eventNames().shippingaddresschangeEvent)
+    using Reason = PaymentRequest::UpdateReason;
+    switch (reason) {
+    case Reason::ShowDetailsResolved:
+        return { };
+    case Reason::ShippingAddressChanged:
         return shippingAddressUpdated(error);
-
-    if (eventType == eventNames().shippingoptionchangeEvent)
+    case Reason::ShippingOptionChanged:
         return shippingOptionUpdated();
+    case Reason::PaymentMethodChanged:
+        return paymentMethodUpdated();
+    }
 
     ASSERT_NOT_REACHED();
     return { };
@@ -338,6 +344,9 @@ ExceptionOr<void> ApplePayPaymentHandler::merchantValidationCompleted(JSC::JSVal
 
 ExceptionOr<void> ApplePayPaymentHandler::shippingAddressUpdated(const String& error)
 {
+    ASSERT(m_isUpdating);
+    m_isUpdating = false;
+
     ShippingContactUpdate update;
 
     if (m_paymentRequest->paymentOptions().requestShipping && m_paymentRequest->paymentDetails().shippingOptions.isEmpty()) {
@@ -358,6 +367,9 @@ ExceptionOr<void> ApplePayPaymentHandler::shippingAddressUpdated(const String& e
 
 ExceptionOr<void> ApplePayPaymentHandler::shippingOptionUpdated()
 {
+    ASSERT(m_isUpdating);
+    m_isUpdating = false;
+
     ShippingMethodUpdate update;
 
     auto newTotalAndLineItems = computeTotalAndLineItems();
@@ -371,6 +383,9 @@ ExceptionOr<void> ApplePayPaymentHandler::shippingOptionUpdated()
 
 ExceptionOr<void> ApplePayPaymentHandler::paymentMethodUpdated()
 {
+    ASSERT(m_isUpdating);
+    m_isUpdating = false;
+
     PaymentMethodUpdate update;
 
     auto newTotalAndLineItems = computeTotalAndLineItems();
@@ -427,6 +442,8 @@ static Ref<PaymentAddress> convert(const ApplePayPaymentContact& contact)
 
 void ApplePayPaymentHandler::didAuthorizePayment(const Payment& payment)
 {
+    ASSERT(!m_isUpdating);
+
     auto applePayPayment = payment.toApplePayPayment(version());
     auto& execState = *document().execState();
     auto lock = JSC::JSLockHolder { &execState };
@@ -437,18 +454,27 @@ void ApplePayPaymentHandler::didAuthorizePayment(const Payment& payment)
 
 void ApplePayPaymentHandler::didSelectShippingMethod(const ApplePaySessionPaymentRequest::ShippingMethod& shippingMethod)
 {
+    ASSERT(!m_isUpdating);
+    m_isUpdating = true;
+
     m_paymentRequest->shippingOptionChanged(shippingMethod.identifier);
 }
 
 void ApplePayPaymentHandler::didSelectShippingContact(const PaymentContact& shippingContact)
 {
+    ASSERT(!m_isUpdating);
+    m_isUpdating = true;
+
     m_paymentRequest->shippingAddressChanged(convert(shippingContact.toApplePayPaymentContact(version())));
 }
 
 void ApplePayPaymentHandler::didSelectPaymentMethod(const PaymentMethod& paymentMethod)
 {
+    ASSERT(!m_isUpdating);
+    m_isUpdating = true;
+
     m_selectedPaymentMethodType = paymentMethod.toApplePayPaymentMethod().type;
-    paymentMethodUpdated();
+    m_paymentRequest->paymentMethodChanged();
 }
 
 void ApplePayPaymentHandler::didCancelPaymentSession()

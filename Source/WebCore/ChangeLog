@@ -1,3 +1,69 @@
+2018-02-06  Andy Estes  <aestes@apple.com>
+
+        [Payment Request] show() should take an optional PaymentDetailsUpdate promise
+        https://bugs.webkit.org/show_bug.cgi?id=182538
+        <rdar://problem/36754552>
+
+        Reviewed by Tim Horton.
+
+        Taught show() to take an optional promise for a PaymentDetailsUpdate.
+
+        Added test cases to http/tests/paymentrequest/payment-request-show-method.https.html.
+
+        * Modules/applepay/paymentrequest/ApplePayPaymentHandler.cpp:
+        (WebCore::ApplePayPaymentHandler::detailsUpdated):
+
+        Changed to take a PaymentRequest::UpdateReason instead of a eventType string.
+
+        (WebCore::ApplePayPaymentHandler::shippingAddressUpdated):
+        (WebCore::ApplePayPaymentHandler::shippingOptionUpdated):
+        (WebCore::ApplePayPaymentHandler::paymentMethodUpdated):
+        (WebCore::ApplePayPaymentHandler::didAuthorizePayment):
+        (WebCore::ApplePayPaymentHandler::didSelectShippingMethod):
+        (WebCore::ApplePayPaymentHandler::didSelectShippingContact):
+        (WebCore::ApplePayPaymentHandler::didSelectPaymentMethod):
+
+        Asserted that only one of the PaymentSession delegates is executing at a time.
+
+        * Modules/applepay/paymentrequest/ApplePayPaymentHandler.h:
+        * Modules/paymentrequest/PaymentHandler.h:
+
+        Changed detailsUpdated to take a PaymentRequest::UpdateReason instead of a eventType string.
+
+        * Modules/paymentrequest/PaymentRequest.cpp:
+        (WebCore::PaymentRequest::show):
+
+        If there is a details promise, call updateWith() with UpdateReason::ShowDetailsResolved.
+
+        (WebCore::PaymentRequest::shippingAddressChanged):
+        (WebCore::PaymentRequest::shippingOptionChanged):
+        (WebCore::PaymentRequest::paymentMethodChanged):
+
+        Used whenDetailsSettled() to ensure that update events do not start before the show()
+        details promise settles.
+
+        (WebCore::PaymentRequest::updateWith):
+        (WebCore::PaymentRequest::settleDetailsPromise):
+
+        Changed to use a PaymentRequest::UpdateReason instead of a eventType string.
+
+        (WebCore::PaymentRequest::whenDetailsSettled):
+
+        If there is a details promise, wait for it to settle before executing the callback.
+
+        * Modules/paymentrequest/PaymentRequest.h:
+
+        Defined enum class UpdateReason.
+
+        * Modules/paymentrequest/PaymentRequest.idl:
+
+        Updated show() to take an optional Promise<PaymentDetailsUpdate>.
+
+        * Modules/paymentrequest/PaymentRequestUpdateEvent.cpp:
+        (WebCore::PaymentRequestUpdateEvent::updateWith):
+
+        Map the event type to a PaymentRequest::UpdateReason.
+
 2018-02-06  Dean Jackson  <dino@apple.com>
 
         REGRESSION: WebGL no longer producing a transparent canvas on iOS

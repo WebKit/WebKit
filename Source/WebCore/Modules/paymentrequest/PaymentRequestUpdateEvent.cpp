@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -53,7 +53,20 @@ ExceptionOr<void> PaymentRequestUpdateEvent::updateWith(Ref<DOMPromise>&& detail
     if (m_waitForUpdate)
         return Exception { InvalidStateError };
 
-    auto exception = m_paymentRequest->updateWith(*this, WTFMove(detailsPromise));
+    stopPropagation();
+    stopImmediatePropagation();
+
+    PaymentRequest::UpdateReason reason;
+    if (type() == eventNames().shippingaddresschangeEvent)
+        reason = PaymentRequest::UpdateReason::ShippingAddressChanged;
+    else if (type() == eventNames().shippingoptionchangeEvent)
+        reason = PaymentRequest::UpdateReason::ShippingOptionChanged;
+    else {
+        ASSERT_NOT_REACHED();
+        return Exception { TypeError };
+    }
+
+    auto exception = m_paymentRequest->updateWith(reason, WTFMove(detailsPromise));
     if (exception.hasException())
         return exception.releaseException();
 
