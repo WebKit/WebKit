@@ -1,3 +1,12 @@
+2018-02-06  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Add missing #if ENABLE(VIDEO) after r228092.
+        https://bugs.webkit.org/show_bug.cgi?id=182539
+
+        Reviewed by Michael Catanzaro.
+
+        * html/ImageBitmap.cpp:
+
 2018-02-06  Antoine Quint  <graouts@apple.com>
 
         [Modern Media Controls] Test at media/modern-media-controls/tracks-panel/tracks-panel-controls-bar-remains-visible-after-clicking-over-it.html fails

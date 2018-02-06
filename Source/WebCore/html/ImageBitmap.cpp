@@ -112,6 +112,7 @@ static bool taintsOrigin(CachedImage& cachedImage)
     return false;
 }
 
+#if ENABLE(VIDEO)
 static bool taintsOrigin(SecurityOrigin* origin, HTMLVideoElement& video)
 {
     if (!video.hasSingleSecurityOrigin())
@@ -126,6 +127,7 @@ static bool taintsOrigin(SecurityOrigin* origin, HTMLVideoElement& video)
 
     return !origin->canRequest(url);
 }
+#endif
 
 // https://html.spec.whatwg.org/multipage/imagebitmap-and-animations.html#cropped-to-the-source-rectangle-with-formatting
 static ExceptionOr<IntRect> croppedSourceRectangleWithFormatting(IntSize inputSize, ImageBitmapOptions& options, std::optional<IntRect> rect)
