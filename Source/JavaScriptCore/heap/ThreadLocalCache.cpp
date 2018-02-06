@@ -32,13 +32,14 @@
 
 namespace JSC {
 
-RefPtr<ThreadLocalCache> ThreadLocalCache::create(Heap& heap)
+RefPtr<ThreadLocalCache> ThreadLocalCache::create(Heap& heap, SecurityOriginToken securityOriginToken)
 {
-    return adoptRef(new ThreadLocalCache(heap));
+    return adoptRef(new ThreadLocalCache(heap, securityOriginToken));
 }
 
-ThreadLocalCache::ThreadLocalCache(Heap& heap)
+ThreadLocalCache::ThreadLocalCache(Heap& heap, SecurityOriginToken securityOriginToken)
     : m_heap(heap)
+    , m_securityOriginToken(securityOriginToken)
 {
     m_data = allocateData();
 }
@@ -59,7 +60,7 @@ ThreadLocalCache::Data* ThreadLocalCache::allocateData()
     for (size_t offset = 0; offset < oldSize; offset += sizeof(LocalAllocator))
         new (&allocator(*result, offset)) LocalAllocator(WTFMove(allocator(*m_data, offset)));
     for (size_t offset = oldSize; offset < layout.size; offset += sizeof(LocalAllocator))
-        new (&allocator(*result, offset)) LocalAllocator(layout.directories[offset / sizeof(LocalAllocator)]);
+        new (&allocator(*result, offset)) LocalAllocator(this, layout.directories[offset / sizeof(LocalAllocator)]);
     return result;
 }
 
@@ -70,7 +71,7 @@ void ThreadLocalCache::destroyData(Data* data)
     fastFree(data);
 }
 
-void ThreadLocalCache::installSlow(VM& vm)
+void ThreadLocalCache::installSlow(VM& vm, RefPtr<ThreadLocalCache>* previous)
 {
 #if USE(FAST_TLS_FOR_TLC)
     static std::once_flag onceFlag;
@@ -83,8 +84,13 @@ void ThreadLocalCache::installSlow(VM& vm)
     
     ref();
     
-    if (RefPtr<ThreadLocalCache> oldCache = get(vm))
-        oldCache->deref();
+    if (ThreadLocalCache::Data* oldCacheData = getImpl(vm)) {
+        ThreadLocalCache* oldCache = oldCacheData->cache;
+        if (previous)
+            *previous = adoptRef(oldCache);
+        else
+            oldCache->deref();
+    }
     
     installData(vm, m_data);
 }

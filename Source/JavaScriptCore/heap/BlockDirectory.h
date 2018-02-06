@@ -43,6 +43,7 @@ class Heap;
 class IsoCellSet;
 class MarkedSpace;
 class LLIntOffsetsExtractor;
+class ThreadLocalCache;
 class ThreadLocalCacheLayout;
 
 #define FOR_EACH_BLOCK_DIRECTORY_BIT(macro) \
@@ -162,12 +163,13 @@ public:
     void dumpBits(PrintStream& = WTF::dataFile());
     
 private:
-    friend class LocalAllocator;
     friend class IsoCellSet;
+    friend class LocalAllocator;
+    friend class LocalSideAllocator;
     friend class MarkedBlock;
     friend class ThreadLocalCacheLayout;
     
-    MarkedBlock::Handle* findBlockForAllocation();
+    MarkedBlock::Handle* findBlockForAllocation(LocalAllocator&);
     
     MarkedBlock::Handle* tryAllocateBlock();
     
@@ -184,8 +186,7 @@ private:
     
     // After you do something to a block based on one of these cursors, you clear the bit in the
     // corresponding bitvector and leave the cursor where it was.
-    size_t m_allocationCursor { 0 }; // Points to the next block that is a candidate for allocation.
-    size_t m_emptyCursor { 0 }; // Points to the next block that is a candidate for empty allocation (allocating in empty blocks).
+    size_t m_emptyCursor { 0 };
     size_t m_unsweptCursor { 0 }; // Points to the next block that is a candidate for incremental sweeping.
     
     unsigned m_cellSize;

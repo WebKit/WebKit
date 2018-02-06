@@ -26,6 +26,9 @@
 #include "config.h"
 #include "MarkStackMergingConstraint.h"
 
+#include "GCSegmentedArrayInlines.h"
+#include "JSCInlines.h"
+
 namespace JSC {
 
 MarkStackMergingConstraint::MarkStackMergingConstraint(Heap& heap)

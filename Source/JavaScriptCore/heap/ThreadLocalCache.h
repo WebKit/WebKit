@@ -25,9 +25,13 @@
 
 #pragma once
 
+#include "AllocationFailureMode.h"
+#include "LocalAllocator.h"
+#include "SecurityOriginToken.h"
 #include <wtf/FastMalloc.h>
 #include <wtf/FastTLS.h>
 #include <wtf/ThreadSafeRefCounted.h>
+#include <wtf/Vector.h>
 
 namespace JSC {
 
@@ -39,9 +43,9 @@ class ThreadLocalCache : public ThreadSafeRefCounted<ThreadLocalCache> {
     WTF_MAKE_FAST_ALLOCATED;
     
 public:
-    static RefPtr<ThreadLocalCache> create(Heap&);
+    JS_EXPORT_PRIVATE static RefPtr<ThreadLocalCache> create(Heap&, SecurityOriginToken = uniqueSecurityOriginToken());
     
-    JS_EXPORT_PRIVATE ~ThreadLocalCache();
+    JS_EXPORT_PRIVATE virtual ~ThreadLocalCache();
 
     static RefPtr<ThreadLocalCache> get(VM&);
     
@@ -49,7 +53,7 @@ public:
     // optimizing for the case that you're just installing the cache that is already installed. This
     // assumes a relatively small number of caches or low chance of actual context switch combined
     // with possibly high rate of "I may have context switched" sites that call this out of paranoia.
-    void install(VM&);
+    void install(VM&, RefPtr<ThreadLocalCache>* = nullptr);
     
     static LocalAllocator& allocator(VM&, size_t offset);
     
@@ -59,10 +63,13 @@ public:
     static ptrdiff_t offsetOfSizeInData() { return OBJECT_OFFSETOF(Data, size); }
     static ptrdiff_t offsetOfFirstAllocatorInData() { return OBJECT_OFFSETOF(Data, allocator); }
     
+    SecurityOriginToken securityOriginToken() const { return m_securityOriginToken; }
+
+protected:    
+    JS_EXPORT_PRIVATE ThreadLocalCache(Heap&, SecurityOriginToken);
+    
 private:
     friend class VM;
-    
-    ThreadLocalCache(Heap&);
     
     struct Data {
         size_t size;
@@ -76,7 +83,7 @@ private:
     void destroyData(Data*);
     static LocalAllocator& allocator(Data& data, size_t offset);
 
-    void installSlow(VM&);
+    void installSlow(VM&, RefPtr<ThreadLocalCache>*);
     static void installData(VM&, Data*);
     
     LocalAllocator& allocatorSlow(VM&, size_t offset);
@@ -91,6 +98,8 @@ private:
     // it's correct for immortal caches.
     Heap& m_heap;
     Data* m_data { nullptr };
+    
+    SecurityOriginToken m_securityOriginToken;
 
 #if USE(FAST_TLS_FOR_TLC)
     static const pthread_key_t tlsKey = WTF_GC_TLC_KEY;

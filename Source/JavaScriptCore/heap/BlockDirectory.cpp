@@ -33,6 +33,7 @@
 #include "JSCInlines.h"
 #include "MarkedBlockInlines.h"
 #include "SuperSampler.h"
+#include "ThreadLocalCacheInlines.h"
 #include "VM.h"
 #include <wtf/CurrentTime.h>
 
@@ -80,14 +81,20 @@ MarkedBlock::Handle* BlockDirectory::findEmptyBlockToSteal()
     return m_blocks[m_emptyCursor];
 }
 
-MarkedBlock::Handle* BlockDirectory::findBlockForAllocation()
+MarkedBlock::Handle* BlockDirectory::findBlockForAllocation(LocalAllocator& allocator)
 {
-    m_allocationCursor = (m_canAllocateButNotEmpty | m_empty).findBit(m_allocationCursor, true);
-    if (m_allocationCursor >= m_blocks.size())
-        return nullptr;
-    
-    setIsCanAllocateButNotEmpty(NoLockingNecessary, m_allocationCursor, false);
-    return m_blocks[m_allocationCursor];
+    for (;;) {
+        allocator.m_allocationCursor = (m_canAllocateButNotEmpty | m_empty).findBit(allocator.m_allocationCursor, true);
+        if (allocator.m_allocationCursor >= m_blocks.size())
+            return nullptr;
+        
+        size_t blockIndex = allocator.m_allocationCursor++;
+        MarkedBlock::Handle* result = m_blocks[blockIndex];
+        if (result->securityOriginToken() == allocator.tlc()->securityOriginToken()) {
+            setIsCanAllocateButNotEmpty(NoLockingNecessary, blockIndex, false);
+            return result;
+        }
+    }
 }
 
 MarkedBlock::Handle* BlockDirectory::tryAllocateBlock()
@@ -183,8 +190,6 @@ void BlockDirectory::prepareForAllocation()
             allocator->prepareForAllocation();
         });
     
-    m_allocationCursor = 0;
-    m_emptyCursor = 0;
     m_unsweptCursor = 0;
     
     m_eden.clearAll();

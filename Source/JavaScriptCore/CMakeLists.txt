@@ -354,6 +354,8 @@ set(JavaScriptCore_FORWARDING_HEADERS_DIRECTORIES
     inspector/augmentable
     inspector/remote
 
+    heap/SecurityOriginToken.h
+
     wasm/js
 )
 

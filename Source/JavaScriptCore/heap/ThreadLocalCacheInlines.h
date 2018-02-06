@@ -26,6 +26,7 @@
 #pragma once
 
 #include "ThreadLocalCache.h"
+#include "VM.h"
 
 namespace JSC {
 
@@ -47,11 +48,14 @@ inline RefPtr<ThreadLocalCache> ThreadLocalCache::get(VM& vm)
     return nullptr;
 }
 
-inline void ThreadLocalCache::install(VM& vm)
+inline void ThreadLocalCache::install(VM& vm, RefPtr<ThreadLocalCache>* previous)
 {
-    if (getImpl(vm) == m_data)
+    if (getImpl(vm) == m_data) {
+        if (previous)
+            *previous = nullptr;
         return;
-    installSlow(vm);
+    }
+    installSlow(vm, previous);
 }
 
 inline LocalAllocator& ThreadLocalCache::allocator(VM& vm, size_t offset)
