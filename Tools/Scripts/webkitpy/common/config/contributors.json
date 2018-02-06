@@ -3696,6 +3696,14 @@
          "liachen@rim.com"
       ]
    },
+   "Lorenzo Tilve" : {
+      "emails" : [
+         "ltilve@igalia.com"
+      ],
+      "nicks" : [
+         "ltilve"
+      ]
+   },
    "Lucas De Marchi" : {
       "emails" : [
          "demarchi@webkit.org",

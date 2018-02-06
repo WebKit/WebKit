@@ -1,3 +1,13 @@
+2018-02-06  Andres Gomez  <agomez@igalia.com>
+
+        Unreviewed, add Lorenzo Tilve to contributors.json
+
+        We need to add Loren to the contributors list in order to CC him
+        in Bugzilla.
+
+        * Scripts/webkitpy/common/config/contributors.json: Added Lorenzo
+          Tilve.
+
 2018-02-05  Yousuke Kimoto  <yousuke.kimoto@sony.com>
 
         [WinCairo] Refine WebKitLegacy and WebKit build for wincairo
