@@ -1,3 +1,15 @@
+2018-02-05  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Test gardening after r228044
+        https://bugs.webkit.org/show_bug.cgi?id=182517
+
+        Unreviewed.
+
+        * platform/ios/fast/css-generated-content/initial-letter-basic-expected.txt:
+        * platform/ios/fast/css-generated-content/initial-letter-border-padding-expected.txt:
+        * platform/ios/fast/css-generated-content/initial-letter-raised-expected.txt:
+        * platform/ios/fast/css-generated-content/initial-letter-sunken-expected.txt:
+
 2018-02-05  Simon Fraser  <simon.fraser@apple.com>
 
         iOS WK2: fast/visual-viewport/resize-event-fired.html crashes with GuardMalloc
