@@ -1,5 +1,22 @@
 2018-02-05  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r228135. rdar://problem/37232614
+
+    2018-02-05  Brent Fulgham  <bfulgham@apple.com>
+
+            [iOS] Storage process is using the wrong sandbox profile filename
+            https://bugs.webkit.org/show_bug.cgi?id=182500
+            <rdar://problem/37232614>
+
+            Reviewed by David Kilzer.
+
+            The iOS entitlements file was still referencing the old Databases sandbox profile, even though the
+            process has been renamed 'Storage'.
+
+            * Configurations/Databases-iOS.entitlements:
+
+2018-02-05  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r227989. rdar://problem/37145565
 
     2018-02-01  Youenn Fablet  <youenn@apple.com>
