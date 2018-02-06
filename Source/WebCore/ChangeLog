@@ -1,3 +1,25 @@
+2018-02-06  Chris Dumez  <cdumez@apple.com>
+
+        Service workers registrations are saved to disk before the install / activation succeeds
+        https://bugs.webkit.org/show_bug.cgi?id=182535
+        <rdar://problem/36591485>
+
+        Reviewed by Youenn Fablet.
+
+        Service workers registrations are saved to disk before the install / activation succeeds.
+        This means if the browser exits before the install / activation succeeds, we may restore
+        from disk a registration with an “active” worker which may have never been installed /
+        activated.
+
+        To address the issue, we now delay saving the registration to disk until after the service
+        worker has been activated.
+
+        No new tests, restoration from disk is covered by API tests that still pass.
+
+        * workers/service/server/SWServer.cpp:
+        (WebCore::SWServer::didFinishActivation):
+        (WebCore::SWServer::installContextData):
+
 2018-02-06  Ms2ger  <Ms2ger@igalia.com>
 
         Initialize ImageBitmap::m_bitmapData in the constructor.

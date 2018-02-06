@@ -401,8 +401,12 @@ void SWServer::didFinishActivation(SWServerWorker& worker)
 {
     RELEASE_LOG(ServiceWorker, "%p - SWServer::didFinishActivation: Finished activation for service worker %llu", this, worker.identifier().toUInt64());
 
-    if (auto* registration = getRegistration(worker.registrationKey()))
-        registration->didFinishActivation(worker.identifier());
+    auto* registration = getRegistration(worker.registrationKey());
+    if (!registration)
+        return;
+
+    m_registrationStore.updateRegistration(worker.contextData());
+    registration->didFinishActivation(worker.identifier());
 }
 
 // https://w3c.github.io/ServiceWorker/#clients-getall
@@ -531,8 +535,6 @@ void SWServer::installContextData(const ServiceWorkerContextData& data)
         if (!jobQueue || !jobQueue->isCurrentlyProcessingJob(*data.jobDataIdentifier))
             return;
     }
-
-    m_registrationStore.updateRegistration(data);
 
     auto* connection = SWServerToContextConnection::globalServerToContextConnection();
     ASSERT(connection);
