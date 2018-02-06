@@ -1,3 +1,12 @@
+2018-02-05  Yousuke Kimoto  <yousuke.kimoto@sony.com>
+
+        [WinCairo] Refine WebKitLegacy and WebKit build for wincairo
+        https://bugs.webkit.org/show_bug.cgi?id=182478
+
+        Reviewed by Alex Christensen.
+
+        * Source/cmake/OptionsWinCairo.cmake: Added a ENABLE_WIN_CAIRO_WEBKIT option to build webkit for wincairo.
+
 2018-02-05  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Unreviewed, fix build using the new ENABLE_ADDRESS_SANITIZER option

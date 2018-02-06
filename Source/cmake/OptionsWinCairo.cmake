@@ -2,6 +2,10 @@ set(WTF_PLATFORM_WIN_CAIRO 1)
 
 include(OptionsWin)
 
+if (ENABLE_WIN_CAIRO_WEBKIT)
+    set(ENABLE_WEBKIT ON)
+endif ()
+
 find_package(Cairo 1.14.10 REQUIRED)
 find_package(CURL 7.56.1 REQUIRED)
 find_package(JPEG 1.5.2 REQUIRED)

@@ -1,3 +1,15 @@
+2018-02-05  Yousuke Kimoto  <yousuke.kimoto@sony.com>
+
+        [WinCairo] Refine WebKitLegacy and WebKit build for wincairo
+        https://bugs.webkit.org/show_bug.cgi?id=182478
+
+        Reviewed by Alex Christensen.
+
+        Fixed a typo of forwarding header path for InjectedBundle and copying header
+        method, which should use FLATTENED.
+
+        * PlatformWin.cmake: Fix a typo of a forwarding header path for InjectedBundle and use FLATTENED.
+
 2018-02-05  Youenn Fablet  <youenn@apple.com>
 
         WebsiteDataStore::resolveDirectoriesIfNecessary() should not overwrite its resolved serviceWorkerRegistrationDirectory  if already set

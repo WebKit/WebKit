@@ -139,27 +139,31 @@ set(test_webkitlegacy_LIBRARIES
     WebKitLegacy${DEBUG_SUFFIX}
     gtest
 )
-add_library(TestWebKitLegacyLib SHARED
-    ${test_main_SOURCES}
-    ${TESTWEBKITAPI_DIR}/TestsController.cpp
-    ${TESTWEBKITAPI_DIR}/Tests/WebKitLegacy/win/ScaleWebView.cpp
-    ${TESTWEBKITAPI_DIR}/Tests/WebKitLegacy/win/WebViewDestruction.cpp
-    ${TESTWEBKITAPI_DIR}/win/HostWindow.cpp
-)
 
-target_link_libraries(TestWebKitLegacyLib ${test_webkitlegacy_LIBRARIES})
+if (ENABLE_WEBKIT_LEGACY)
+    add_library(TestWebKitLegacyLib SHARED
+        ${test_main_SOURCES}
+        ${TESTWEBKITAPI_DIR}/TestsController.cpp
+        ${TESTWEBKITAPI_DIR}/Tests/WebKitLegacy/win/ScaleWebView.cpp
+        ${TESTWEBKITAPI_DIR}/Tests/WebKitLegacy/win/WebViewDestruction.cpp
+        ${TESTWEBKITAPI_DIR}/win/HostWindow.cpp
+    )
 
-add_executable(TestWebKitLegacy
-    ${TOOLS_DIR}/win/DLLLauncher/DLLLauncherMain.cpp
-)
-target_link_libraries(TestWebKitLegacy shlwapi)
+    target_link_libraries(TestWebKitLegacyLib ${test_webkitlegacy_LIBRARIES})
 
-add_test(TestWebKitLegacy ${TESTWEBKITAPI_RUNTIME_OUTPUT_DIRECTORY}/TestWebKitLegacy)
-set_tests_properties(TestWebKitLegacy PROPERTIES TIMEOUT 60)
+    add_executable(TestWebKitLegacy
+        ${TOOLS_DIR}/win/DLLLauncher/DLLLauncherMain.cpp
+    )
+    target_link_libraries(TestWebKitLegacy shlwapi)
+
+    add_test(TestWebKitLegacy ${TESTWEBKITAPI_RUNTIME_OUTPUT_DIRECTORY}/TestWebKitLegacy)
+    set_tests_properties(TestWebKitLegacy PROPERTIES TIMEOUT 60)
+
+    add_dependencies(TestWebKitLegacy TestWebKitLegacyLib)
+endif ()
 
 set(test_main_SOURCES
     ${TOOLS_DIR}/win/DLLLauncher/DLLLauncherMain.cpp
 )
 
 add_dependencies(TestWebCore TestWebCoreLib)
-add_dependencies(TestWebKitLegacy TestWebKitLegacyLib)

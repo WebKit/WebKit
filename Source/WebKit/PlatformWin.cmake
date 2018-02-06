@@ -12,12 +12,12 @@ list(APPEND WebKit_SOURCES
     NetworkProcess/win/NetworkProcessMainWin.cpp
     NetworkProcess/win/SystemProxyWin.cpp
 
+    Platform/IPC/win/AttachmentWin.cpp
+    Platform/IPC/win/ConnectionWin.cpp
+
     Platform/win/LoggingWin.cpp
     Platform/win/ModuleWin.cpp
     Platform/win/SharedMemoryWin.cpp
-
-    Platform/IPC/win/AttachmentWin.cpp
-    Platform/IPC/win/ConnectionWin.cpp
 
     StorageProcess/win/StorageProcessMainWin.cpp
 
@@ -160,7 +160,10 @@ set(WebKit_FORWARDING_HEADERS_DIRECTORIES
 
     WebProcess/WebPage
 
-    WebProcess/InectedBundle/API/c
+    WebProcess/InjectedBundle/API/c
 )
 
-WEBKIT_MAKE_FORWARDING_HEADERS(WebKit DIRECTORIES ${WebKit_FORWARDING_HEADERS_DIRECTORIES})
+WEBKIT_MAKE_FORWARDING_HEADERS(WebKit
+    DIRECTORIES ${WebKit_FORWARDING_HEADERS_DIRECTORIES}
+    FLATTENED
+)
