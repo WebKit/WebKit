@@ -177,7 +177,7 @@ imported/w3c/web-platform-tests/service-workers/service-worker/navigation-redire
 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-request-css-images.https.html [ Skip ]
 
 webkit.org/b/179248 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-event-within-sw.https.html [ Pass Failure ]
-imported/w3c/web-platform-tests/service-workers/service-worker/fetch-event-respond-with-response-body-with-invalid-chunk.https.html [ Pass Failure ]
+webkit.org/b/182541 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-event-respond-with-response-body-with-invalid-chunk.https.html [ Pass Failure ]
 imported/w3c/web-platform-tests/service-workers/service-worker/websocket.https.html [ Pass Failure ]
 imported/w3c/web-platform-tests/streams/readable-byte-streams/detached-buffers.serviceworker.https.html [ Pass Failure ]
 
