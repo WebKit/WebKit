@@ -82,8 +82,8 @@ public:
 private:
     friend class PendingImageBitmap;
 
-    static Ref<ImageBitmap> create();
-    ImageBitmap();
+    static Ref<ImageBitmap> create(std::unique_ptr<ImageBuffer>&&);
+    ImageBitmap(std::unique_ptr<ImageBuffer>&&);
 
     static void createPromise(ScriptExecutionContext&, RefPtr<HTMLImageElement>&, ImageBitmapOptions&&, std::optional<IntRect>, Promise&&);
 #if ENABLE(VIDEO)

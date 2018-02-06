@@ -56,14 +56,12 @@ static RenderingMode bufferRenderingMode = Unaccelerated;
 
 Ref<ImageBitmap> ImageBitmap::create(IntSize size)
 {
-    auto imageBitmap = adoptRef(*new ImageBitmap);
-    imageBitmap->m_bitmapData = ImageBuffer::create(FloatSize(size.width(), size.height()), bufferRenderingMode);
-    return imageBitmap;
+    return create(ImageBuffer::create(FloatSize(size.width(), size.height()), bufferRenderingMode));
 }
 
-Ref<ImageBitmap> ImageBitmap::create()
+Ref<ImageBitmap> ImageBitmap::create(std::unique_ptr<ImageBuffer>&& buffer)
 {
-    return adoptRef(*new ImageBitmap);
+    return adoptRef(*new ImageBitmap(WTFMove(buffer)));
 }
 
 void ImageBitmap::createPromise(ScriptExecutionContext& scriptExecutionContext, ImageBitmap::Source&& source, ImageBitmapOptions&& options, ImageBitmap::Promise&& promise)
@@ -281,10 +279,6 @@ void ImageBitmap::createPromise(ScriptExecutionContext&, RefPtr<HTMLImageElement
         return;
     }
 
-    // 7. Create a new ImageBitmap object.
-
-    auto imageBitmap = create();
-
     // 8. Let the ImageBitmap object's bitmap data be a copy of image's media data, cropped to
     //    the source rectangle with formatting. If this is an animated image, the ImageBitmap
     //    object's bitmap data must only be taken from the default image of the animation (the
@@ -312,7 +306,8 @@ void ImageBitmap::createPromise(ScriptExecutionContext&, RefPtr<HTMLImageElement
 
     bitmapData->context().drawImage(*imageForRender, destRect, sourceRectangle.releaseReturnValue(), paintingOptions);
 
-    imageBitmap->m_bitmapData = WTFMove(bitmapData);
+    // 7. Create a new ImageBitmap object.
+    auto imageBitmap = create(WTFMove(bitmapData));
 
     // 9. If the origin of image's image is not the same origin as the origin specified by the
     //    entry settings object, then set the origin-clean flag of the ImageBitmap object's
@@ -336,9 +331,6 @@ void ImageBitmap::createPromise(ScriptExecutionContext&, RefPtr<HTMLCanvasElemen
         promise.reject(InvalidStateError, "Cannot create ImageBitmap from a canvas that has zero width or height");
         return;
     }
-
-    // 3. Create a new ImageBitmap object.
-    auto imageBitmap = create();
 
     // 4. Let the ImageBitmap object's bitmap data be a copy of the canvas element's bitmap
     //    data, cropped to the source rectangle with formatting.
@@ -364,7 +356,8 @@ void ImageBitmap::createPromise(ScriptExecutionContext&, RefPtr<HTMLCanvasElemen
 
     bitmapData->context().drawImage(*imageForRender, destRect, sourceRectangle.releaseReturnValue(), paintingOptions);
 
-    imageBitmap->m_bitmapData = WTFMove(bitmapData);
+    // 3. Create a new ImageBitmap object.
+    auto imageBitmap = create(WTFMove(bitmapData));
 
     // 5. Set the origin-clean flag of the ImageBitmap object's bitmap to the same value as
     //    the origin-clean flag of the canvas element's bitmap.
@@ -392,9 +385,6 @@ void ImageBitmap::createPromise(ScriptExecutionContext& scriptExecutionContext, 
         promise.reject(InvalidStateError, "Cannot create ImageBitmap before the HTMLVideoElement has data");
         return;
     }
-
-    // 5. Let imageBitmap be a new ImageBitmap object.
-    auto imageBitmap = create();
 
     // 6.1. If image's networkState attribute is NETWORK_EMPTY, then return p
     //      rejected with an "InvalidStateError" DOMException.
@@ -429,7 +419,8 @@ void ImageBitmap::createPromise(ScriptExecutionContext& scriptExecutionContext, 
         video->paintCurrentFrameInContext(c, FloatRect(FloatPoint(), size));
     }
 
-    imageBitmap->m_bitmapData = WTFMove(bitmapData);
+    // 5. Let imageBitmap be a new ImageBitmap object.
+    auto imageBitmap = create(WTFMove(bitmapData));
 
     // 6.3. If the origin of image's video is not same origin with entry
     //      settings object's origin, then set the origin-clean flag of
@@ -450,9 +441,6 @@ void ImageBitmap::createPromise(ScriptExecutionContext&, RefPtr<ImageBitmap>& ex
         return;
     }
 
-    // 3. Create a new ImageBitmap object.
-    auto imageBitmap = create();
-
     // 4. Let the ImageBitmap object's bitmap data be a copy of the image argument's
     //    bitmap data, cropped to the source rectangle with formatting.
     auto sourceRectangle = croppedSourceRectangleWithFormatting(existingImageBitmap->buffer()->logicalSize(), options, WTFMove(rect));
@@ -472,7 +460,8 @@ void ImageBitmap::createPromise(ScriptExecutionContext&, RefPtr<ImageBitmap>& ex
 
     bitmapData->context().drawImage(*imageForRender, destRect, sourceRectangle.releaseReturnValue(), paintingOptions);
 
-    imageBitmap->m_bitmapData = WTFMove(bitmapData);
+    // 3. Create a new ImageBitmap object.
+    auto imageBitmap = create(WTFMove(bitmapData));
 
     // 5. Set the origin-clean flag of the ImageBitmap object's bitmap to the same
     //    value as the origin-clean flag of the bitmap of the image argument.
@@ -605,7 +594,11 @@ void ImageBitmap::createPromise(ScriptExecutionContext&, RefPtr<ImageData>& imag
     promise.reject(TypeError, "createImageBitmap with ImageData is not implemented");
 }
 
-ImageBitmap::ImageBitmap() = default;
+ImageBitmap::ImageBitmap(std::unique_ptr<ImageBuffer>&& buffer)
+    : m_bitmapData(WTFMove(buffer))
+{
+    ASSERT(m_bitmapData);
+}
 
 ImageBitmap::~ImageBitmap() = default;
 
