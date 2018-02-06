@@ -185,7 +185,6 @@ imported/w3c/web-platform-tests/service-workers/service-worker/uncontrolled-page
 imported/w3c/web-platform-tests/service-workers/service-worker/websocket.https.html [ Pass Failure ]
 imported/w3c/web-platform-tests/service-workers/service-worker/windowclient-navigate.https.html [ Pass Failure ]
 imported/w3c/web-platform-tests/streams/readable-byte-streams/detached-buffers.serviceworker.https.html [ Pass Failure ]
-imported/w3c/web-platform-tests/service-workers/service-worker/update.https.html [ Pass Failure ]
 
 webkit.org/b/181901 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-cors-xhr.https.html [ DumpJSConsoleLogInStdErr Pass Failure ]
 webkit.org/b/181897 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-canvas-tainting.https.html [ DumpJSConsoleLogInStdErr Pass Failure ]

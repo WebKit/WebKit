@@ -1,3 +1,9 @@
+2018-02-06  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, unskip service-worker/update.https.html now that it is no longer flaky
+
+        * TestExpectations:
+
 2018-02-05  Youenn Fablet  <youenn@apple.com>
 
         Crash in imported/w3c/web-platform-tests/2dcontext/imagebitmap/createImageBitmap-origin.sub.html
