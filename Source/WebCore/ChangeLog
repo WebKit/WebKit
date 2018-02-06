@@ -1,5 +1,31 @@
 2018-02-05  Jason Marcell  <jmarcell@apple.com>
 
+        Apply patch. rdar://problem/37145473
+
+    Temporarily replace RELEASE_ASSERT with ASSERT in FrameLoader::stopAllLoaders.
+
+    2018-02-05  Per Arne Vollan  <pvollan@apple.com>
+
+            Temporarily replace RELEASE_ASSERT with ASSERT in FrameLoader::stopAllLoaders.
+            https://bugs.webkit.org/show_bug.cgi?id=182489
+
+            Reviewed by Ryosuke Niwa.
+
+            On trunk, we currently have a release assert that asserts that scripts are allowed when calling
+            FrameLoader::stopAllLoaders. This is correct since stopAllLoaders might dispatch events. We should
+            continue to have the release assert in trunk, because we should catch when this happens. However,
+            there still might be cases where the assert fails, but the backtrace will turn out to be one where
+            scripting could be allowed. The release assert in trunk will help us catch these cases. On the
+            branch, however, we should avoid crashing in these cases, and replace the release assert with a
+            debug assert. If approved, this patch should only land on a branch, not on trunk.
+
+            No new tests, covered by existing tests.
+
+            * loader/FrameLoader.cpp:
+            (WebCore::FrameLoader::stopAllLoaders):
+
+2018-02-05  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r228096. rdar://problem/37240973
 
     2018-02-05  Antti Koivisto  <antti@apple.com>

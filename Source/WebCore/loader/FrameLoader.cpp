@@ -1680,7 +1680,7 @@ void FrameLoader::stopAllLoaders(ClearProvisionalItemPolicy clearProvisionalItem
         return;
 
     // This method might dispatch events.
-    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(ScriptDisallowedScope::InMainThread::isScriptAllowed());
+    ASSERT_WITH_SECURITY_IMPLICATION(ScriptDisallowedScope::InMainThread::isScriptAllowed());
 
     // Calling stopLoading() on the provisional document loader can blow away
     // the frame from underneath.
