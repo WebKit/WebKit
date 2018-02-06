@@ -1,3 +1,23 @@
+2018-02-06  Dean Jackson  <dino@apple.com>
+
+        REGRESSION: WebGL no longer producing a transparent canvas on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=182550
+        <rdar://problem/37234491>
+
+        Reviewed by Eric Carlson.
+
+        Due to some weirdness GL_RGBA8 is sometimes different between iOS and
+        other platforms. Only tell the WebGLLayer that it is opaque when it really
+        is not transparent.
+
+        Covered by existing test: fast/canvas/webgl/context-attributes-alpha
+
+        * platform/graphics/cocoa/GraphicsContext3DCocoa.mm:
+        (WebCore::GraphicsContext3D::setRenderbufferStorageFromDrawable): Look at the context
+        attributes to decide if we should use an opaque layer.
+        * platform/graphics/cocoa/WebGLLayer.mm: Ditto.
+        (-[WebGLLayer initWithGraphicsContext3D:]):
+
 2018-02-06  Andy Estes  <aestes@apple.com>
 
         [WebIDL] Support optional Promise arguments

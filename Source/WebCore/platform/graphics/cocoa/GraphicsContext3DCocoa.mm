@@ -602,7 +602,7 @@ void GraphicsContext3D::setRenderbufferStorageFromDrawable(GC3Dsizei width, GC3D
     CGRect previousBounds = [m_webGLLayer.get() bounds];
 
     [m_webGLLayer setBounds:CGRectMake(0, 0, width, height)];
-    [m_webGLLayer setOpaque:(m_internalColorFormat != GL_RGBA8)];
+    [m_webGLLayer setOpaque:!m_attrs.alpha];
 
     [m_contextObj renderbufferStorage:GL_RENDERBUFFER fromDrawable:static_cast<id<EAGLDrawable>>(m_webGLLayer.get())];
 
