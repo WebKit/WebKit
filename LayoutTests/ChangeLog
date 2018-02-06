@@ -1,5 +1,11 @@
 2018-02-06  Chris Dumez  <cdumez@apple.com>
 
+        Unreviewed, unskip service-worker/about-blank-replacement.https.html as it is no longer flaky
+
+        * TestExpectations:
+
+2018-02-06  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed, unskip service-worker/service-worker-csp-connect.https.html as it is no longer flaky
 
         * TestExpectations:
