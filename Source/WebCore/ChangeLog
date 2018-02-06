@@ -1,3 +1,17 @@
+2018-02-05  Youenn Fablet  <youenn@apple.com>
+
+        Crash in imported/w3c/web-platform-tests/2dcontext/imagebitmap/createImageBitmap-origin.sub.html
+        https://bugs.webkit.org/show_bug.cgi?id=182422
+        <rdar://problem/37182665>
+
+        Reviewed by Alex Christensen.
+
+        Covered by test no longer crashing in Debug mode.
+        Make sure completionHandler is called on the main thread.
+
+        * platform/network/cocoa/WebCoreNSURLSession.mm:
+        (-[WebCoreNSURLSessionDataTask resource:receivedRedirect:request:completionHandler:]):
+
 2018-02-05  Filip Pizlo  <fpizlo@apple.com>
 
         Global objects should be able to use TLCs to allocate from different blocks from each other

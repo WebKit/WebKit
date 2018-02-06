@@ -1,3 +1,13 @@
+2018-02-05  Youenn Fablet  <youenn@apple.com>
+
+        Crash in imported/w3c/web-platform-tests/2dcontext/imagebitmap/createImageBitmap-origin.sub.html
+        https://bugs.webkit.org/show_bug.cgi?id=182422
+        <rdar://problem/37182665>
+
+        Reviewed by Alex Christensen.
+
+        * platform/mac/TestExpectations:
+
 2018-02-05  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Test gardening after r228044
