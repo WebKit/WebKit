@@ -68,6 +68,8 @@ class ObjCBackendDispatcherHeaderGenerator(ObjCGenerator):
         sections.append(Template(ObjCTemplates.BackendDispatcherHeaderPostlude).substitute(None, **header_args))
         return '\n\n'.join(sections)
 
+    # Private methods.
+
     def _generate_objc_forward_declarations(self):
         lines = []
         for domain in self.domains_to_generate():

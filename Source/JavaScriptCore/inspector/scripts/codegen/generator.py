@@ -119,6 +119,25 @@ class Generator:
     def generate_license(self):
         return Template(Templates.CopyrightBlock).substitute(None, inputFilename=os.path.basename(self._input_filepath))
 
+    def generate_includes_from_entries(self, entries):
+        includes = set()
+        for entry in entries:
+            (allowed_framework_names, data) = entry
+            (framework_name, header_path) = data
+
+            allowed_frameworks = allowed_framework_names + ["Test"]
+            if self.model().framework.name not in allowed_frameworks:
+                continue
+
+            if framework_name == "WTF":
+                includes.add("#include <%s>" % header_path)
+            elif self.model().framework.name != framework_name:
+                includes.add("#include <%s/%s>" % (framework_name, os.path.basename(header_path)))
+            else:
+                includes.add("#include \"%s\"" % os.path.basename(header_path))
+
+        return sorted(list(includes))
+
     # These methods are overridden by subclasses.
     def non_supplemental_domains(self):
         return filter(lambda domain: not domain.is_supplemental, self.model().domains)

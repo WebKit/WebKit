@@ -49,15 +49,9 @@ class CppBackendDispatcherHeaderGenerator(CppGenerator):
         return filter(lambda domain: len(self.commands_for_domain(domain)) > 0, Generator.domains_to_generate(self))
 
     def generate_output(self):
-        headers = [
-            '"%sProtocolObjects.h"' % self.protocol_name(),
-            '<inspector/InspectorBackendDispatcher.h>',
-            '<wtf/text/WTFString.h>']
-
         typedefs = [('String', 'ErrorString')]
-
         header_args = {
-            'includes': '\n'.join(['#include ' + header for header in headers]),
+            'includes': self._generate_secondary_header_includes(),
             'typedefs': '\n'.join(['typedef %s %s;' % typedef for typedef in typedefs]),
         }
 
@@ -74,6 +68,15 @@ class CppBackendDispatcherHeaderGenerator(CppGenerator):
         return "\n\n".join(sections)
 
     # Private methods.
+
+    def _generate_secondary_header_includes(self):
+        header_includes = [
+            (["JavaScriptCore", "WebKit"], (self.model().framework.name, "%sProtocolObjects.h" % self.protocol_name())),
+            (["JavaScriptCore", "WebKit"], ("JavaScriptCore", "inspector/InspectorBackendDispatcher.h")),
+            (["JavaScriptCore", "WebKit"], ("WTF", "wtf/text/WTFString.h"))
+        ]
+
+        return '\n'.join(self.generate_includes_from_entries(header_includes))
 
     def _generate_alternate_handler_forward_declarations_for_domains(self, domains):
         if not domains:

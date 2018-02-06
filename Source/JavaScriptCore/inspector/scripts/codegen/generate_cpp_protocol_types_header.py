@@ -50,13 +50,8 @@ class CppProtocolTypesHeaderGenerator(CppGenerator):
         domains = self.domains_to_generate()
         self.calculate_types_requiring_shape_assertions(domains)
 
-        headers = set([
-            '<inspector/InspectorProtocolTypes.h>',
-            '<wtf/Assertions.h>',
-        ])
-
         header_args = {
-            'includes': '\n'.join(['#include ' + header for header in sorted(headers)]),
+            'includes': self._generate_secondary_header_includes(),
             'typedefs': '',
         }
 
@@ -78,6 +73,14 @@ class CppProtocolTypesHeaderGenerator(CppGenerator):
     # Private methods.
 
     # FIXME: move builders out of classes, uncomment forward declaration
+
+    def _generate_secondary_header_includes(self):
+        header_includes = [
+            (["JavaScriptCore", "WebKit"], ("JavaScriptCore", "inspector/InspectorProtocolTypes.h")),
+            (["JavaScriptCore", "WebKit"], ("WTF", "wtf/Assertions.h"))
+        ]
+
+        return '\n'.join(self.generate_includes_from_entries(header_includes))
 
     def _generate_forward_declarations(self, domains):
         sections = []

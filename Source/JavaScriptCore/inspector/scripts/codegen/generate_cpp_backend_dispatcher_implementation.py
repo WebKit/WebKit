@@ -48,13 +48,7 @@ class CppBackendDispatcherImplementationGenerator(CppGenerator):
         return filter(lambda domain: len(self.commands_for_domain(domain)) > 0, Generator.domains_to_generate(self))
 
     def generate_output(self):
-        secondary_headers = [
-            '<inspector/InspectorFrontendRouter.h>',
-            '<wtf/JSONValues.h>',
-            '<wtf/NeverDestroyed.h>',
-            '<wtf/text/CString.h>']
-
-        secondary_includes = ['#include %s' % header for header in secondary_headers]
+        secondary_includes = self._generate_secondary_header_includes()
 
         if self.model().framework.setting('alternate_dispatchers', False):
             secondary_includes.append('')
@@ -76,6 +70,17 @@ class CppBackendDispatcherImplementationGenerator(CppGenerator):
         return "\n\n".join(sections)
 
     # Private methods.
+
+    def _generate_secondary_header_includes(self):
+        header_includes = [
+            (["JavaScriptCore", "WebKit"], ("JavaScriptCore", "inspector/InspectorFrontendRouter.h")),
+            (["JavaScriptCore", "WebKit"], ("WTF", "wtf/JSONValues.h")),
+            (["JavaScriptCore", "WebKit"], ("WTF", "wtf/NeverDestroyed.h")),
+            (["JavaScriptCore", "WebKit"], ("WTF", "wtf/text/CString.h"))
+        ]
+
+        return self.generate_includes_from_entries(header_includes)
+
 
     def _generate_handler_class_destructor_for_domain(self, domain):
         destructor_args = {
