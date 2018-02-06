@@ -1,3 +1,17 @@
+2018-02-06  Daniel Bates  <dabates@apple.com>
+
+        Make mixed content basic auth tests more robust
+        https://bugs.webkit.org/show_bug.cgi?id=182537
+
+        Reviewed by Chris Dumez.
+
+        Load the test image programmatically instead of declaratively to avoid output flakiness caused by
+        the preload scanner preloading the test image. The preload scanner performs mixed content checks
+        and this can cause duplicate mixed content warnings in the test output.
+
+        * http/tests/security/mixedContent/secure-redirect-to-insecure-redirect-to-basic-auth-secure-image.https.html:
+        * http/tests/security/mixedContent/secure-redirect-to-secure-redirect-to-basic-auth-secure-image.https.html:
+
 2018-02-06  Antoine Quint  <graouts@apple.com>
 
         [Modern Media Controls] Test at media/modern-media-controls/tracks-panel/tracks-panel-controls-bar-remains-visible-after-clicking-over-it.html fails
