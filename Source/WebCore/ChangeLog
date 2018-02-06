@@ -1,5 +1,34 @@
 2018-02-06  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r228115. rdar://problem/37264495
+
+    2018-02-05  Eric Carlson  <eric.carlson@apple.com>
+
+            [iOS] VideoFullscreenInterfaceAVKit should not ignore errors
+            https://bugs.webkit.org/show_bug.cgi?id=182497
+            <rdar://problem/36986898>
+
+            Reviewed by Jer Noble.
+
+            Always call layoutIfNeeded before calling -[AVPlayerViewController enterFullScreenAnimated:completionHandler]
+            or -[AVPlayerViewController exitFullScreenAnimated:completionHandler] because they both fail
+            if the view needs layout. Also don't ignore errors returned by those calls.
+
+            No new tests, the failure is non deterministic and I was not able to reproduce in a test.
+
+            * platform/ios/VideoFullscreenInterfaceAVKit.mm:
+            (VideoFullscreenInterfaceAVKit::applicationDidBecomeActive):
+            (VideoFullscreenInterfaceAVKit::enterFullscreenStandard):
+            (VideoFullscreenInterfaceAVKit::exitFullscreen):
+            (VideoFullscreenInterfaceAVKit::cleanupFullscreen):
+            (VideoFullscreenInterfaceAVKit::didStartPictureInPicture):
+            (VideoFullscreenInterfaceAVKit::prepareForPictureInPictureStopWithCompletionHandler):
+            (VideoFullscreenInterfaceAVKit::doEnterFullscreen):
+            (VideoFullscreenInterfaceAVKit::exitFullscreenHandler):
+            (VideoFullscreenInterfaceAVKit::enterFullscreenHandler):
+
+2018-02-06  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r228114. rdar://problem/37264445
 
     2018-02-05  Daniel Bates  <dabates@apple.com>
