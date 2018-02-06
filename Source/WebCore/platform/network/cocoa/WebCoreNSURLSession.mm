@@ -389,7 +389,10 @@ void WebCoreNSURLSessionDataTaskClient::dataReceived(PlatformMediaResource& reso
 
 void WebCoreNSURLSessionDataTaskClient::redirectReceived(PlatformMediaResource& resource, ResourceRequest&& request, const ResourceResponse& response, CompletionHandler<void(ResourceRequest&&)>&& completionHandler)
 {
-    [m_task resource:resource receivedRedirect:response request:WTFMove(request) completionHandler:WTFMove(completionHandler)];
+    [m_task resource:resource receivedRedirect:response request:WTFMove(request) completionHandler: [completionHandler = WTFMove(completionHandler)] (auto&& request) {
+        ASSERT(isMainThread());
+        completionHandler(WTFMove(request));
+    }];
 }
 
 void WebCoreNSURLSessionDataTaskClient::accessControlCheckFailed(PlatformMediaResource& resource, const ResourceError& error)
@@ -618,20 +621,32 @@ void WebCoreNSURLSessionDataTaskClient::loadFinished(PlatformMediaResource& reso
 - (void)resource:(PlatformMediaResource&)resource receivedRedirect:(const ResourceResponse&)response request:(ResourceRequest&&)request completionHandler:(CompletionHandler<void(ResourceRequest&&)>&&)completionHandler
 {
     ASSERT_UNUSED(resource, &resource == _resource);
-    [self.session addDelegateOperation:[strongSelf = retainPtr(self), response = retainPtr(response.nsURLResponse()), request = WTFMove(request), completionHandler = WTFMove(completionHandler)] () mutable {
+    [self.session addDelegateOperation:[strongSelf = retainPtr(self), response = retainPtr(response.nsURLResponse()), request = request.isolatedCopy(), completionHandler = WTFMove(completionHandler)] () mutable {
         if (![response isKindOfClass:[NSHTTPURLResponse class]]) {
             ASSERT_NOT_REACHED();
-            return completionHandler(WTFMove(request));
+            callOnMainThread([request = WTFMove(request), completionHandler = WTFMove(completionHandler)] () mutable {
+                completionHandler(WTFMove(request));
+            });
+            return;
         }
         
         id<NSURLSessionDataDelegate> dataDelegate = (id<NSURLSessionDataDelegate>)strongSelf.get().session.delegate;
         if ([dataDelegate respondsToSelector:@selector(URLSession:task:willPerformHTTPRedirection:newRequest:completionHandler:)]) {
             auto completionHandlerBlock = BlockPtr<void(NSURLRequest *)>::fromCallable([completionHandler = WTFMove(completionHandler)](NSURLRequest *newRequest) mutable {
+                if (!isMainThread()) {
+                    callOnMainThread([request = ResourceRequest { newRequest }, completionHandler = WTFMove(completionHandler)] () mutable {
+                        completionHandler(WTFMove(request));
+                    });
+                    return;
+                }
                 completionHandler(newRequest);
             });
             [dataDelegate URLSession:(NSURLSession *)strongSelf.get().session task:(NSURLSessionTask *)strongSelf.get() willPerformHTTPRedirection:(NSHTTPURLResponse *)response.get() newRequest:request.nsURLRequest(DoNotUpdateHTTPBody) completionHandler:completionHandlerBlock.get()];
-        } else
-            completionHandler(WTFMove(request));
+        } else {
+            callOnMainThread([request = WTFMove(request), completionHandler = WTFMove(completionHandler)] () mutable {
+                completionHandler(WTFMove(request));
+            });
+        }
     }];
 }
 

@@ -1,5 +1,19 @@
 2018-02-06  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r228150. rdar://problem/37264467
+
+    2018-02-05  Youenn Fablet  <youenn@apple.com>
+
+            Crash in imported/w3c/web-platform-tests/2dcontext/imagebitmap/createImageBitmap-origin.sub.html
+            https://bugs.webkit.org/show_bug.cgi?id=182422
+            <rdar://problem/37182665>
+
+            Reviewed by Alex Christensen.
+
+            * platform/mac/TestExpectations:
+
+2018-02-06  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r228147. rdar://problem/37264529
 
     2018-02-05  Myles C. Maxfield  <mmaxfield@apple.com>
