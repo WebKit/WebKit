@@ -1,3 +1,17 @@
+2018-02-05  Simon Fraser  <simon.fraser@apple.com>
+
+        iOS WK2: fast/visual-viewport/resize-event-fired.html crashes with GuardMalloc
+        https://bugs.webkit.org/show_bug.cgi?id=182504
+        rdar://problem/36386435
+
+        Reviewed by Wenson Hsieh.
+        
+        Don't end the test until both the resize handler has been called, and the zoom is complete, to
+        avoid leaving dangling zoom completion handlers.
+
+        * fast/visual-viewport/resize-event-fired.html:
+        * platform/ios/TestExpectations:
+
 2018-02-05  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, unskip fetch-event-respond-with-partial-stream.https.html as it no longer times out
