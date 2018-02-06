@@ -135,9 +135,9 @@ std::optional<CachedResource::Type> LinkLoader::resourceTypeFromAsAttribute(cons
     return std::nullopt;
 }
 
-static std::unique_ptr<LinkPreloadResourceClient> createLinkPreloadResourceClient(CachedResource& resource, LinkLoader& loader, CachedResource::Type type)
+static std::unique_ptr<LinkPreloadResourceClient> createLinkPreloadResourceClient(CachedResource& resource, LinkLoader& loader)
 {
-    switch (type) {
+    switch (resource.type()) {
     case CachedResource::ImageResource:
         return LinkPreloadImageResourceClient::create(loader, static_cast<CachedImage&>(resource));
     case CachedResource::Script:
@@ -239,8 +239,11 @@ std::unique_ptr<LinkPreloadResourceClient> LinkLoader::preloadIfNeeded(const Lin
     linkRequest.setAsPotentiallyCrossOrigin(crossOriginMode, document);
     auto cachedLinkResource = document.cachedResourceLoader().preload(type.value(), WTFMove(linkRequest)).value_or(nullptr);
 
+    if (cachedLinkResource && cachedLinkResource->type() != *type)
+        return nullptr;
+
     if (cachedLinkResource && loader)
-        return createLinkPreloadResourceClient(*cachedLinkResource, *loader, type.value());
+        return createLinkPreloadResourceClient(*cachedLinkResource, *loader);
     return nullptr;
 }
 

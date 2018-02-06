@@ -1,5 +1,31 @@
 2018-02-05  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r228096. rdar://problem/37240973
+
+    2018-02-05  Antti Koivisto  <antti@apple.com>
+
+            Crash on sfgate.com because mismatching link preload types
+            https://bugs.webkit.org/show_bug.cgi?id=182483
+            <rdar://problem/37065331>
+
+            Reviewed by Daniel Bates.
+
+            Preloading the same URL with different 'as' types causes some confusion.
+
+            Test: http/tests/preload/link-preload-type-mismatch.html
+
+            * loader/LinkLoader.cpp:
+            (WebCore::createLinkPreloadResourceClient):
+
+                Ensure we use the actual resource type when creating the client.
+
+            (WebCore::LinkLoader::preloadIfNeeded):
+
+                Don't construct client if the types don't match. This can happen if there is an existing
+                preload for the same resource with different type.
+
+2018-02-05  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r227989. rdar://problem/37145565
 
     2018-02-01  Youenn Fablet  <youenn@apple.com>
