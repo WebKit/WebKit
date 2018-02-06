@@ -1,5 +1,17 @@
 2018-02-06  Andres Gomez  <agomez@igalia.com>
 
+        Unreviewed, canonicalize contributors.json
+
+        After Thibault's addition, automatic checks complain about
+        contributors.json with:
+
+        "[...] Use "validate-committer-lists --canonicalize" to reformat
+        it. [...]"
+
+        * Scripts/webkitpy/common/config/contributors.json: Canonicalize.
+
+2018-02-06  Andres Gomez  <agomez@igalia.com>
+
         Unreviewed, add Lorenzo Tilve to contributors.json
 
         We need to add Loren to the contributors list in order to CC him

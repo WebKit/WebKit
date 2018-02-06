@@ -5351,14 +5351,14 @@
       "status" : "committer"
    },
    "Thibault Saunier" : {
-     "emails" : [
-       "tsaunier@igalia.com",
-       "tsaunier@gnome.org"
-     ],
-     "expertise" : "WebRTC",
-     "nicks" : [
-       "thiblahute"
-     ]
+      "emails" : [
+         "tsaunier@igalia.com",
+         "tsaunier@gnome.org"
+      ],
+      "expertise" : "WebRTC",
+      "nicks" : [
+         "thiblahute"
+      ]
    },
    "Thomas Sepez" : {
       "emails" : [
