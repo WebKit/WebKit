@@ -1,3 +1,32 @@
+2018-02-06  Keith Miller  <keith_miller@apple.com>
+
+        put_to_scope/get_from_scope should not cache lexical scopes when expecting a global object
+        https://bugs.webkit.org/show_bug.cgi?id=182549
+        <rdar://problem/36189995>
+
+        Reviewed by Saam Barati.
+
+        Previously, the llint/baseline caching for put_to_scope and
+        get_from_scope would cache lexical environments when the
+        varInjectionWatchpoint had been fired for global properties. Code
+        in the DFG does not follow this same assumption so we could
+        potentially return the wrong result. Additionally, the baseline
+        would write barrier the global object rather than the lexical
+        enviroment object. This patch makes it so that we do not cache
+        anything other than the global object for when the resolve type is
+        GlobalPropertyWithVarInjectionChecks or GlobalProperty.
+
+        * assembler/MacroAssembler.cpp:
+        (JSC::MacroAssembler::jitAssert):
+        * assembler/MacroAssembler.h:
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emit_op_get_from_scope):
+        (JSC::JIT::emit_op_put_to_scope):
+        * runtime/CommonSlowPaths.h:
+        (JSC::CommonSlowPaths::tryCachePutToScopeGlobal):
+        (JSC::CommonSlowPaths::tryCacheGetFromScopeGlobal):
+        * runtime/Options.h:
+
 2018-01-28  Filip Pizlo  <fpizlo@apple.com>
 
         Global objects should be able to use TLCs to allocate from different blocks from each other
