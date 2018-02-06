@@ -242,6 +242,12 @@ bool IOSApplication::isCardiogram()
     return isCardiogram;
 }
 
+bool IOSApplication::isNike()
+{
+    static bool isNike = applicationBundleIsEqualTo("com.nike.omega");
+    return isNike;
+}
+
 #endif
 
 } // namespace WebCore
