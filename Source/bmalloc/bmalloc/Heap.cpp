@@ -64,7 +64,7 @@ Heap::Heap(HeapKind kind, std::lock_guard<StaticMutex>&)
 #endif
     }
     
-    m_scavenger = PerProcess<Scavenger>::get();
+    m_scavenger = SafePerProcess<Scavenger>::get();
 }
 
 bool Heap::usingGigacage()

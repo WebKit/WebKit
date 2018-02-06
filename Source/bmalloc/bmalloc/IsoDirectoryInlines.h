@@ -51,7 +51,7 @@ EligibilityResult<Config> IsoDirectory<Config, passedNumPages>::takeFirstEligibl
     if (pageIndex >= numPages)
         return EligibilityKind::Full;
     
-    Scavenger& scavenger = *PerProcess<Scavenger>::get();
+    Scavenger& scavenger = *SafePerProcess<Scavenger>::get();
     scavenger.didStartGrowing();
     
     IsoPage<Config>* page = m_pages[pageIndex];
@@ -100,7 +100,7 @@ void IsoDirectory<Config, passedNumPages>::didBecome(IsoPage<Config>* page, IsoP
         if (verbose)
             fprintf(stderr, "%p: %p did become empty.\n", this, page);
         m_empty[pageIndex] = true;
-        PerProcess<Scavenger>::get()->schedule(IsoPageBase::pageSize);
+        SafePerProcess<Scavenger>::get()->schedule(IsoPageBase::pageSize);
         return;
     }
     BCRASH();
