@@ -9,7 +9,7 @@
             testRunner.waitUntilDone();
         }
     
-        function runTest()
+        async function runTest()
         {
             if (!testRunner.runUIScript)
                 return;
@@ -23,26 +23,22 @@
             var dragX = secondTargetRect.x + secondTargetRect.width / 2;
             var dragY = secondTargetRect.y + secondTargetRect.height / 2;
         
-            if (testRunner.runUIScript) {
-                testRunner.runUIScript(longPressAndHoldAtPoint(pressPointX, pressPointY), function(result) {
-                    if (document.getSelection().toString() == "magna")
-                        output += 'PASS: Correct Selection';
-                    else
-                        output += 'FAIL: failed to select a word as a result of a long press. Incorrect Selection: ' + document.getSelection().toString();
-                    output += '<br>';
+            await longPressAndHoldAtPoint(pressPointX, pressPointY);
+            if (document.getSelection().toString() == "magna")
+                output += 'PASS: Correct Selection';
+            else
+                output += 'FAIL: failed to select a word as a result of a long press. Incorrect Selection: ' + document.getSelection().toString();
+            output += '<br>';
 
-                    testRunner.runUIScript(continueTouchAndDragFromPointToPoint(pressPointX, pressPointY, dragX, dragY), function(result) {
-                        if (document.getSelection().toString() == "labore")
-                            output += 'PASS: Correct Selection';
-                        else
-                            output += 'FAIL: failed to reduce selection to a single character by dragging down. Incorrect Selection: ' +     document.getSelection().toString();
-                        output += '<br>';
-                        output += result;
-                        document.getElementById('target').innerHTML = output;
-                        testRunner.notifyDone();
-                    });
-                });
-            }
+            var result = await continueTouchAndDragFromPointToPoint(pressPointX, pressPointY, dragX, dragY);
+            if (document.getSelection().toString() == "labore")
+                output += 'PASS: Correct Selection';
+            else
+                output += 'FAIL: failed to reduce selection to a single character by dragging down. Incorrect Selection: ' + document.getSelection().toString();
+            output += '<br>';
+            output += result;
+            document.getElementById('target').innerHTML = output;
+            testRunner.notifyDone();
         }
 
         window.addEventListener('load', runTest, false);

@@ -9,7 +9,7 @@
             testRunner.waitUntilDone();
         }
     
-        function runTest()
+        async function runTest()
         {
             if (!testRunner.runUIScript)
                 return;
@@ -20,24 +20,20 @@
             var pressPointX = targetRect.x + targetRect.width / 2;
             var pressPointY = targetRect.y + targetRect.height / 2;
             
-            if (testRunner.runUIScript) {
-                testRunner.runUIScript(longPressAtPoint(pressPointX, pressPointY), function(result) {
-                    if (document.getSelection().toString() == "PressMe")
-                        output += 'PASS: Correct Selection';
-                    else
-                        output += 'FAIL: failed to select a word as a result of a long press. Incorrect Selection: ' + document.getSelection().toString();
-                    output += '<br>';
-                    testRunner.runUIScript(tapAtPoint(100, 100), function(result) {
-                        if (document.getSelection().toString() == "")
-                            output += 'PASS: Cleared selection';
-                        else
-                            output += 'FAIL: failed to clear selection after tap.' + document.getSelection().toString();
-                        output += '<br>';
-                        document.getElementById('target').innerHTML = output;
-                        testRunner.notifyDone();
-                    });
-                });
-            }
+            await longPressAtPoint(pressPointX, pressPointY);
+            if (document.getSelection().toString() == "PressMe")
+                output += 'PASS: Correct Selection';
+            else
+                output += 'FAIL: failed to select a word as a result of a long press. Incorrect Selection: ' + document.getSelection().toString();
+            output += '<br>';
+            await tapAtPoint(100, 100);
+            if (document.getSelection().toString() == "")
+                output += 'PASS: Cleared selection';
+            else
+                output += 'FAIL: failed to clear selection after tap.' + document.getSelection().toString();
+            output += '<br>';
+            document.getElementById('target').innerHTML = output;
+            testRunner.notifyDone();
         }
 
         window.addEventListener('load', runTest, false);

@@ -9,7 +9,7 @@
             testRunner.waitUntilDone();
         }
 
-        function runTest()
+        async function runTest()
         {
             if (!testRunner.runUIScript)
                 return;
@@ -20,18 +20,15 @@
             var pressPointX = targetRect.x + targetRect.width / 2;
             var pressPointY = targetRect.y + targetRect.height / 2;
             
-            if (testRunner.runUIScript) {                
-                testRunner.runUIScript(longPressAtPoint(pressPointX, pressPointY), function(result) {
-                    if (document.getSelection().toString() == "PressMe")
-                        output += 'PASS: Correct Selection';
-                    else
-                        output += 'FAIL: failed to select a word as a result of a long press';
-                    output += '<br>';
-                    output += result;
-                    document.getElementById('target').innerHTML = output;
-                    testRunner.notifyDone();
-                });
-            }
+            var result = await longPressAtPoint(pressPointX, pressPointY);
+            if (document.getSelection().toString() == "PressMe")
+                output += 'PASS: Correct Selection';
+            else
+                output += 'FAIL: failed to select a word as a result of a long press';
+            output += '<br>';
+            output += result;
+            document.getElementById('target').innerHTML = output;
+            testRunner.notifyDone();
         }
 
         window.addEventListener('load', runTest, false);
