@@ -1,5 +1,11 @@
 2018-02-06  Chris Dumez  <cdumez@apple.com>
 
+        Unreviewed, unskip readable-byte-streams/detached-buffers.serviceworker.https.html as it is no longer flaky
+
+        * TestExpectations:
+
+2018-02-06  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed, add bug number of service-worker/fetch-event-respond-with-response-body-with-invalid-chunk.https.html
 
         * TestExpectations:
