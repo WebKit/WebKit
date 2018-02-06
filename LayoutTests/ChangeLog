@@ -1,5 +1,11 @@
 2018-02-06  Chris Dumez  <cdumez@apple.com>
 
+        Unreviewed, mark service-worker/windowclient-navigate.https.html as slow instead of flaky
+
+        * TestExpectations:
+
+2018-02-06  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed, unskip service-worker/registration-service-worker-attributes.https.html now that it is no longer flaky
 
         * TestExpectations:
