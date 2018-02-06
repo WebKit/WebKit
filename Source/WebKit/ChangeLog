@@ -1,3 +1,19 @@
+2018-02-06  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Unreviewed, fix format specifiers added in r228116
+        https://bugs.webkit.org/show_bug.cgi?id=182456
+        <rdar://problem/37181006>
+
+        * NetworkProcess/cache/CacheStorageEngineConnection.cpp:
+        (WebKit::CacheStorageEngineConnection::open):
+        (WebKit::CacheStorageEngineConnection::remove):
+        (WebKit::CacheStorageEngineConnection::caches):
+        (WebKit::CacheStorageEngineConnection::retrieveRecords):
+        (WebKit::CacheStorageEngineConnection::deleteMatchingRecords):
+        (WebKit::CacheStorageEngineConnection::putRecords):
+        (WebKit::CacheStorageEngineConnection::reference):
+        (WebKit::CacheStorageEngineConnection::dereference):
+
 2018-02-05  Chris Dumez  <cdumez@apple.com>
 
         Avoid unnecessarily constructing RunLoops for GC AutomaticThreads in Connection::sendMessage() after r228001
