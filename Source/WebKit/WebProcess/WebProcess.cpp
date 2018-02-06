@@ -411,9 +411,7 @@ void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters)
 #endif
 
 #if ENABLE(SERVICE_WORKER)
-    auto& serviceWorkerProvider = WebServiceWorkerProvider::singleton();
-    serviceWorkerProvider.setHasRegisteredServiceWorkers(parameters.hasRegisteredServiceWorkers);
-    ServiceWorkerProvider::setSharedProvider(serviceWorkerProvider);
+    ServiceWorkerProvider::setSharedProvider(WebServiceWorkerProvider::singleton());
 #endif
 
 #if ENABLE(WEBASSEMBLY)

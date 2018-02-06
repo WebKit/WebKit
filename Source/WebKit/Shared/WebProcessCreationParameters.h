@@ -131,10 +131,6 @@ struct WebProcessCreationParameters {
     bool hasRichContentServices { false };
 #endif
 
-#if ENABLE(SERVICE_WORKER)
-    bool hasRegisteredServiceWorkers { true };
-#endif
-
     Seconds terminationTimeout;
 
     TextCheckerState textCheckerState;

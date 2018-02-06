@@ -1,3 +1,12 @@
+2018-02-06  Youenn Fablet  <youenn@apple.com>
+
+        HasServiceWorkerRegistration bit should be sent when creating a new page
+        https://bugs.webkit.org/show_bug.cgi?id=182410
+
+        Reviewed by Chris Dumez.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/ServiceWorkerBasic.mm:
+
 2018-02-06  Andres Gomez  <agomez@igalia.com>
 
         [GTK][WPE] Add dependencies watching lists for WKGTK+ and WPE

@@ -166,6 +166,10 @@ struct WebPageCreationParameters {
     std::optional<WebCore::ApplicationManifest> applicationManifest;
 #endif
 
+#if ENABLE(SERVICE_WORKER)
+    bool hasRegisteredServiceWorkers { true };
+#endif
+
     // WebRTC members.
     bool iceCandidateFilteringEnabled { true };
     bool enumeratingAllNetworkInterfacesEnabled { false };

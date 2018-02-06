@@ -49,10 +49,10 @@ public:
 
     WEBCORE_EXPORT void registerServiceWorkerClients(PAL::SessionID);
 
-    void setHasRegisteredServiceWorkers(bool value) { m_hasRegisteredServiceWorkers = value; }
+    void setMayHaveRegisteredServiceWorkers() { m_mayHaveRegisteredServiceWorkers = true; }
 
 private:
-    bool m_hasRegisteredServiceWorkers { true };
+    bool m_mayHaveRegisteredServiceWorkers { false };
 };
 
 } // namespace WebCore

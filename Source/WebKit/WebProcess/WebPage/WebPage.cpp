@@ -186,6 +186,7 @@
 #include <WebCore/SchemeRegistry.h>
 #include <WebCore/ScriptController.h>
 #include <WebCore/SerializedScriptValue.h>
+#include <WebCore/ServiceWorkerProvider.h>
 #include <WebCore/Settings.h>
 #include <WebCore/ShadowRoot.h>
 #include <WebCore/SharedBuffer.h>
@@ -564,6 +565,11 @@ WebPage::WebPage(uint64_t pageID, WebPageCreationParameters&& parameters)
 #if PLATFORM(COCOA)
     m_page->settings().setContentDispositionAttachmentSandboxEnabled(true);
     setSmartInsertDeleteEnabled(parameters.smartInsertDeleteEnabled);
+#endif
+
+#if ENABLE(SERVICE_WORKER)
+    if (parameters.hasRegisteredServiceWorkers)
+        ServiceWorkerProvider::singleton().setMayHaveRegisteredServiceWorkers();
 #endif
 
 #if ENABLE(WEB_RTC)

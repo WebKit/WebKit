@@ -1,3 +1,18 @@
+2018-02-06  Youenn Fablet  <youenn@apple.com>
+
+        HasServiceWorkerRegistration bit should be sent when creating a new page
+        https://bugs.webkit.org/show_bug.cgi?id=182410
+
+        Reviewed by Chris Dumez.
+
+        Covered by new API test.
+
+        Changed the default value of service workers being registered to false.
+        Every page created in the process will be responsible to change the value to true,
+        at which time the value will be kept to true for the lifetime of the process.
+
+        * workers/service/ServiceWorkerProvider.h:
+
 2018-02-06  Ross Kirsling  <ross.kirsling@sony.com>
 
         Add missing #if ENABLE(VIDEO) after r228092.

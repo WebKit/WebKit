@@ -104,6 +104,9 @@ void WebPageCreationParameters::encode(IPC::Encoder& encoder) const
 #if ENABLE(APPLICATION_MANIFEST)
     encoder << applicationManifest;
 #endif
+#if ENABLE(SERVICE_WORKER)
+    encoder << hasRegisteredServiceWorkers;
+#endif
     encoder << iceCandidateFilteringEnabled;
     encoder << enumeratingAllNetworkInterfacesEnabled;
     encoder << userContentWorlds;
@@ -282,6 +285,10 @@ std::optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::
     if (!applicationManifest)
         return std::nullopt;
     parameters.applicationManifest = WTFMove(*applicationManifest);
+#endif
+#if ENABLE(SERVICE_WORKER)
+    if (!decoder.decode(parameters.hasRegisteredServiceWorkers))
+        return std::nullopt;
 #endif
 
     if (!decoder.decode(parameters.iceCandidateFilteringEnabled))

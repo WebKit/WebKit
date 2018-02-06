@@ -601,6 +601,8 @@ void WebProcessPool::establishWorkerContextConnectionToStorageProcess(StoragePro
     if (m_serviceWorkerProcess)
         return;
 
+    m_mayHaveRegisteredServiceWorkers.clear();
+
     WebsiteDataStore* websiteDataStore = nullptr;
     if (sessionID)
         websiteDataStore = WebsiteDataStore::existingNonDefaultDataStoreForSessionID(*sessionID);
@@ -814,13 +816,6 @@ void WebProcessPool::initializeNewWebProcess(WebProcessProxy& process, WebsiteDa
     parameters.hasSelectionServices = serviceController.hasSelectionServices();
     parameters.hasRichContentServices = serviceController.hasRichContentServices();
     serviceController.refreshExistingServices();
-#endif
-
-#if ENABLE(SERVICE_WORKER)
-    String serviceWorkerRegistrationDirectory = websiteDataStore.resolvedServiceWorkerRegistrationDirectory();
-    if (serviceWorkerRegistrationDirectory.isEmpty())
-        serviceWorkerRegistrationDirectory = API::WebsiteDataStore::defaultServiceWorkerRegistrationDirectory();
-    parameters.hasRegisteredServiceWorkers = ServiceWorkerProcessProxy::hasRegisteredServiceWorkers(serviceWorkerRegistrationDirectory);
 #endif
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
@@ -1053,6 +1048,21 @@ void WebProcessPool::updateServiceWorkerUserAgent(const String& userAgent)
     m_serviceWorkerUserAgent = userAgent;
     if (m_serviceWorkerProcess)
         m_serviceWorkerProcess->setUserAgent(m_serviceWorkerUserAgent);
+}
+
+bool WebProcessPool::mayHaveRegisteredServiceWorkers(const WebsiteDataStore& store)
+{
+    if (serviceWorkerProxy())
+        return true;
+
+    String serviceWorkerRegistrationDirectory = store.resolvedServiceWorkerRegistrationDirectory();
+    if (serviceWorkerRegistrationDirectory.isEmpty())
+        serviceWorkerRegistrationDirectory = API::WebsiteDataStore::defaultDataStoreConfiguration().serviceWorkerRegistrationDirectory;
+
+    return m_mayHaveRegisteredServiceWorkers.ensure(serviceWorkerRegistrationDirectory, [&] {
+        // FIXME: Make this computation on a background thread.
+        return ServiceWorkerProcessProxy::hasRegisteredServiceWorkers(serviceWorkerRegistrationDirectory);
+    }).iterator->value;
 }
 #endif
 

@@ -1,3 +1,38 @@
+2018-02-06  Youenn Fablet  <youenn@apple.com>
+
+        HasServiceWorkerRegistration bit should be sent when creating a new page
+        https://bugs.webkit.org/show_bug.cgi?id=182410
+
+        Reviewed by Chris Dumez.
+
+        Move the bit computation at page creation time.
+        This allows computing the bit based on the web site data store and not only on the pool configuration.
+        WebPage uses that bit to activate service worker registration matching for the whole process.
+
+        In case there is a service worker process proxy created, the bit is set to true by default.
+
+        Bit is computed by checking for database file presence.
+        This information is cached in a map for efficiency reasons and cleared when a service worker process proxy is created.
+
+        * Shared/WebPageCreationParameters.cpp:
+        (WebKit::WebPageCreationParameters::encode const):
+        (WebKit::WebPageCreationParameters::decode):
+        * Shared/WebPageCreationParameters.h:
+        * Shared/WebProcessCreationParameters.cpp:
+        (WebKit::WebProcessCreationParameters::encode const):
+        (WebKit::WebProcessCreationParameters::decode):
+        * Shared/WebProcessCreationParameters.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::initializeWebPage):
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::establishWorkerContextConnectionToStorageProcess):
+        (WebKit::WebProcessPool::initializeNewWebProcess):
+        (WebKit::WebProcessPool::mayHaveRegisteredServiceWorkers):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::m_cpuLimit):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::initializeWebProcess):
+
 2018-02-06  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Unreviewed, fix format specifiers added in r228116
