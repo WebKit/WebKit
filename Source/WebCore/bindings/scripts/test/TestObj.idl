@@ -239,6 +239,7 @@ enum TestConfidence { "high", "kinda-low" };
     void    methodWithOptionalNullableWrapperIsNull(optional TestObj? obj = null);
     void    methodWithOptionalXPathNSResolver(optional XPathNSResolver? resolver);
     void    methodWithOptionalRecord(optional record<DOMString, long>? record = null);
+    void    methodWithOptionalPromise(optional Promise<void> promise);
 
     // Callback interface parameters.
     void    methodWithCallbackArg(TestCallbackInterface callback);

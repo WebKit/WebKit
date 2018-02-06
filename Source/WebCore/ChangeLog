@@ -1,3 +1,27 @@
+2018-02-06  Andy Estes  <aestes@apple.com>
+
+        [WebIDL] Support optional Promise arguments
+        https://bugs.webkit.org/show_bug.cgi?id=182399
+        <rdar://problem/36754552>
+
+        Reviewed by Sam Weinig and Chris Dumez.
+
+        Previously, declaring a Promise argument as optional would result in a native type of
+        std::optional<RefPtr<DOMPromise>>. This is wasteful, since RefPtr can represent an optional
+        argument by storing nullptr. Further, PassArgumentExpression() assumed Promises were never
+        optional and tried to pass the argument as a Ref by calling RefPtr::releaseNonNull().
+
+        This patch removes the std::optional wrapper around optional Promises and simply passes the
+        promise as a RefPtr to native code.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (PassArgumentExpression):
+        (GenerateParametersCheck):
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::jsTestObjPrototypeFunctionMethodWithOptionalPromiseBody):
+        (WebCore::jsTestObjPrototypeFunctionMethodWithOptionalPromise):
+        * bindings/scripts/test/TestObj.idl:
+
 2018-02-06  Youenn Fablet  <youenn@apple.com>
 
         HasServiceWorkerRegistration bit should be sent when creating a new page

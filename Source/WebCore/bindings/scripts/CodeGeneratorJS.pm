@@ -1538,13 +1538,13 @@ sub PassArgumentExpression
     my $type = $context->type;
 
     return "WTFMove(${name})" if $type->isNullable;
-    
+
     if ($codeGenerator->IsBufferSourceType($type)) {
         return "*${name}" if $type->name eq "ArrayBuffer";
         return "${name}.releaseNonNull()";
     }
 
-    return "${name}.releaseNonNull()" if $codeGenerator->IsCallbackInterface($type) || $codeGenerator->IsCallbackFunction($type) || $codeGenerator->IsPromiseType($type);
+    return "${name}.releaseNonNull()" if $codeGenerator->IsCallbackInterface($type) || $codeGenerator->IsCallbackFunction($type) || ($codeGenerator->IsPromiseType($type) && (ref($context) ne "IDLArgument" || !$context->isOptional));
     return "*${name}" if $codeGenerator->IsWrapperType($type);
     return "WTFMove(${name})";
 }
@@ -5656,11 +5656,17 @@ sub GenerateParametersCheck
                     }
                 } else {
                     my $argumentIDLType = GetIDLType($interface, $argument->type);
-                    my $defaultValue = "std::optional<Converter<$argumentIDLType>::ReturnType>()";
+
+                    my $defaultValue;
+                    if ($codeGenerator->IsPromiseType($argument->type)) {
+                        $defaultValue = "nullptr";
+                    } else {
+                        $defaultValue = "std::optional<Converter<$argumentIDLType>::ReturnType>()";
+                        $nativeValueCastFunction = "std::optional<Converter<$argumentIDLType>::ReturnType>";
+                    }
 
                     $optionalCheck = "state->argument($argumentIndex).isUndefined() ? $defaultValue : ";
                     $argumentLookupForConversion = "state->uncheckedArgument($argumentIndex)";
-                    $nativeValueCastFunction = "std::optional<Converter<$argumentIDLType>::ReturnType>";
                 }
             } else {
                 if ($argument->extendedAttributes->{ReturnValue}) {
@@ -5670,7 +5676,7 @@ sub GenerateParametersCheck
                     $argumentLookupForConversion = "state->uncheckedArgument($argumentIndex)";
                 }
             }
-    
+
             my $globalObjectReference = $operation->isStatic ? "*jsCast<JSDOMGlobalObject*>(state->lexicalGlobalObject())" : "*castedThis->globalObject()";
             my $argumentExceptionThrower = GetArgumentExceptionThrower($interface, $argument, $argumentIndex, $quotedFunctionName);
 
