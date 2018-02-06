@@ -58,11 +58,11 @@ void NetworkStateNotifier::updateStateWithoutNotifying()
 
 void CALLBACK NetworkStateNotifier::addressChangeCallback(void*, BOOLEAN timedOut)
 {
-    // NotifyAddrChange only notifies us of a single address change. Now that we've been notified,
-    // we need to call it again so we'll get notified the *next* time.
-    singleton().registerForAddressChange();
-
     callOnMainThread([] {
+        // NotifyAddrChange only notifies us of a single address change. Now that we've been notified,
+        // we need to call it again so we'll get notified the *next* time.
+        singleton().registerForAddressChange();
+
         singleton().updateStateSoon();
     });
 }

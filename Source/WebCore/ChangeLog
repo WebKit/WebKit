@@ -1,3 +1,20 @@
+2018-02-05  Per Arne Vollan  <pvollan@apple.com>
+
+        [Win] Release assert failed under NetworkStateNotifier::singleton.
+        https://bugs.webkit.org/show_bug.cgi?id=182516
+
+        Reviewed by Brent Fulgham.
+
+        The callback NetworkStateNotifier::addressChangeCallback will always be called on a
+        worker thread on Windows. Since the method NetworkStateNotifier::singleton() is
+        called by NetworkStateNotifier::addressChangeCallback, but has to be called on the
+        on the main thread, the call has to be moved there.
+
+        No new tests. I have not been able to reproduce the crash.
+
+        * platform/network/win/NetworkStateNotifierWin.cpp:
+        (WebCore::NetworkStateNotifier::addressChangeCallback):
+
 2018-02-05  Don Olmstead  <don.olmstead@sony.com>
 
         Abstract heap generator should include JavaScriptCore headers directly
