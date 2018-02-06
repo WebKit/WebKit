@@ -238,6 +238,7 @@
     (iokit-property-regex #"^IOAudioEngineNum(ActiveUserClients|SampleFramesPerBuffer)")
     (iokit-property "IOAudioSampleRate")
     (iokit-property "IOAudioStreamSampleFormatByteOrder")
+    (iokit-property-regex #"^IOAV(.*)(De|En)code$")
     (iokit-property "IOBusyInterest")
     (iokit-property "IOCFPlugInTypes")
     (iokit-property "IOChildIndex")

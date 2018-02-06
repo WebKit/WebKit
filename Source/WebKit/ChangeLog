@@ -1,3 +1,15 @@
+2018-02-06  Brent Fulgham  <bfulgham@apple.com>
+
+        [macOS] Correct sandbox violation triggered by Chase.com
+        https://bugs.webkit.org/show_bug.cgi?id=182519
+        <rdar://problem/37121757>
+
+        Reviewed by Eric Carlson.
+
+        Hitting a sandbox violation when attempting to check status of IOAV*En/Decode support.
+
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2018-02-06  Jeff Miller  <jeffm@apple.com>
 
         Add WKNavigationDelegate SPI to tell the client when an insecure plug-in is blocked
