@@ -78,6 +78,8 @@ private:
     bool canSuspendForDocumentSuspension() const final;
     void stop() final;
 
+    bool isAlwaysOnLoggingAllowed() const;
+
     ServiceWorkerData m_data;
     bool m_isStopped { false };
     RefPtr<PendingActivity<ServiceWorker>> m_pendingActivityForEventDispatch;
