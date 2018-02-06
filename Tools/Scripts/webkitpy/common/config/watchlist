@@ -122,6 +122,14 @@
         "ScrollingCoordinator": {
             "filename": r"Source/WebCore/page/scrolling/",
         },
+        "WPEDependencies": {
+            "filename": r"Tools/wpe/install-dependencies"
+                        r"|Tools/wpe/jhbuild*",
+        },
+        "WebKitGTKDependencies": {
+            "filename": r"Tools/gtk/install-dependencies"
+                        r"|Tools/gtk/jhbuild*",
+        },
         "WebKitGTKTranslations": {
             "filename": r"Source/WebCore/platform/gtk/po/",
         },
@@ -413,6 +421,8 @@
         "WebInspectorRecording": [ "webkit@devinrousso.com" ],
         "JSBuiltins": [ "joepeck@webkit.org" ],
         "JSBuiltinsGenerator": [ "bburg@apple.com" ],
+        "WPEDependencies": [ "aperez@igalia.com", "clopez@igalia.com" ],
+        "WebKitGTKDependencies": [ "agomez@igalia.com", "ltilve@igalia.com", "clopez@igalia.com" ],
         "WebKitGTKTranslations": [ "gns@gnome.org", "berto@igalia.com", "cgarcia@igalia.com", "mcatanzaro@igalia.com" ],
         "WebSocket": [ "yutak@chromium.org", "toyoshim+watchlist@chromium.org" ],
         "XSS": [ "dbates@webkit.org" ],
