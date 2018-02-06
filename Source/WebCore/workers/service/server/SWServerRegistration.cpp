@@ -72,7 +72,6 @@ SWServerWorker* SWServerRegistration::getNewestWorker()
 
 void SWServerRegistration::setPreInstallationWorker(SWServerWorker* worker)
 {
-    ASSERT(!m_preInstallationWorker || !worker);
     m_preInstallationWorker = worker;
 }
 
