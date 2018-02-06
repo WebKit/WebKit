@@ -149,6 +149,9 @@ void WebSWServerConnection::startFetch(uint64_t fetchIdentifier, ServiceWorkerRe
             return;
         }
 
+        if (!StorageProcess::singleton().globalServerToContextConnection())
+            StorageProcess::singleton().createServerToContextConnection(server().sessionID());
+
         server().runServiceWorkerIfNecessary(serviceWorkerIdentifier, [weakThis = WTFMove(weakThis), this, fetchIdentifier, serviceWorkerIdentifier, request = WTFMove(request), options = WTFMove(options), formData = WTFMove(formData), referrer = WTFMove(referrer)](bool success, auto& contextConnection) {
             if (!weakThis)
                 return;
@@ -189,12 +192,27 @@ void WebSWServerConnection::postMessageToServiceWorker(ServiceWorkerIdentifier d
     if (!sourceData)
         return;
 
+    if (!StorageProcess::singleton().globalServerToContextConnection())
+        StorageProcess::singleton().createServerToContextConnection(server().sessionID());
+
     // It's possible this specific worker cannot be re-run (e.g. its registration has been removed)
     server().runServiceWorkerIfNecessary(destinationIdentifier, [destinationIdentifier, message = WTFMove(message), sourceData = WTFMove(*sourceData)](bool success, auto& contextConnection) mutable {
         if (success)
             sendToContextProcess(contextConnection, Messages::WebSWContextManagerConnection::PostMessageToServiceWorker { destinationIdentifier, WTFMove(message), WTFMove(sourceData) });
     });
 }
+
+void WebSWServerConnection::scheduleJobInServer(ServiceWorkerJobData&& jobData)
+{
+    if (!StorageProcess::singleton().globalServerToContextConnection())
+        StorageProcess::singleton().createServerToContextConnection(server().sessionID());
+
+    SWSERVERCONNECTION_RELEASE_LOG_IF_ALLOWED("Scheduling ServiceWorker job %s in server", jobData.identifier().loggingString().utf8().data());
+    ASSERT(identifier() == jobData.connectionIdentifier());
+
+    server().scheduleJob(WTFMove(jobData));
+}
+
 
 void WebSWServerConnection::didReceiveFetchResponse(uint64_t fetchIdentifier, const ResourceResponse& response)
 {
