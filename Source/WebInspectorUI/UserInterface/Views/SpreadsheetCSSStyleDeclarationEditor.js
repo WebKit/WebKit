@@ -105,6 +105,12 @@ WI.SpreadsheetCSSStyleDeclarationEditor = class SpreadsheetCSSStyleDeclarationEd
             propertyView.detached();
     }
 
+    hidden()
+    {
+        for (let propertyView of this._propertyViews)
+            propertyView.hidden();
+    }
+
     get style()
     {
         return this._style;

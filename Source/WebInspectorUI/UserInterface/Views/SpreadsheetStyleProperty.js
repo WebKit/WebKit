@@ -74,6 +74,14 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
             this._valueTextField.detached();
     }
 
+    hidden()
+    {
+        if (this._nameTextField && this._nameTextField.editing)
+            this._nameTextField.element.blur();
+        else if (this._valueTextField && this._valueTextField.editing)
+            this._valueTextField.element.blur();
+    }
+
     highlight()
     {
         this._element.classList.add("highlighted");

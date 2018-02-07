@@ -1,3 +1,24 @@
+2018-02-07  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Styles: completion popover doesn't hide when switching panels
+        https://bugs.webkit.org/show_bug.cgi?id=182464
+        <rdar://problem/37202763>
+
+        Reviewed by Timothy Hatcher.
+
+        Hide completion popover by triggering blur event on the focused text field.
+        Removing text fields from the DOM tree would hide the completion popovers as well,
+        but switching sidebar panels doesn't remove them from the DOM.
+
+        * UserInterface/Views/SpreadsheetCSSStyleDeclarationEditor.js:
+        (WI.SpreadsheetCSSStyleDeclarationEditor.prototype.hidden):
+        * UserInterface/Views/SpreadsheetCSSStyleDeclarationSection.js:
+        (WI.SpreadsheetCSSStyleDeclarationSection.prototype.hidden):
+        * UserInterface/Views/SpreadsheetRulesStyleDetailsPanel.js:
+        (WI.SpreadsheetRulesStyleDetailsPanel.prototype.hidden):
+        * UserInterface/Views/SpreadsheetStyleProperty.js:
+        (WI.SpreadsheetStyleProperty.prototype.hidden):
+
 2018-02-06  Devin Rousso  <webkit@devinrousso.com>
 
         Web Inspector: Replace isAncestor and isDescendant with native DOM contains method

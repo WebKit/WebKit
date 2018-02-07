@@ -147,6 +147,14 @@ WI.SpreadsheetRulesStyleDetailsPanel = class SpreadsheetRulesStyleDetailsPanel e
         super.refresh(significantChange);
     }
 
+    hidden()
+    {
+        for (let section of this._sections)
+            section.hidden();
+
+        super.hidden();
+    }
+
     scrollToSectionAndHighlightProperty(property)
     {
         if (!this._visible) {
