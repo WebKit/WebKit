@@ -700,7 +700,7 @@ webkit.org/b/171763 compositing/tiling/non-active-window-tiles-size.html [ Pass 
 
 webkit.org/b/171837 [ Debug ] http/tests/security/storage-blocking-loosened-plugin.html [ Pass Failure ]
 
-webkit.org/b/171862 [ Sierra Debug ] storage/indexeddb/modern/idbtransaction-objectstore-failures.html [ Pass Failure ]
+webkit.org/b/171862  storage/indexeddb/modern/idbtransaction-objectstore-failures.html [ Pass Failure ]
 
 webkit.org/b/171935 [ Sierra ] tiled-drawing/scrolling/fast-scroll-select-latched-mainframe.html [ Pass Failure ]
 

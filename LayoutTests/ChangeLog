@@ -1,3 +1,12 @@
+2018-02-07  Matt Lewis  <jlewis3@apple.com>
+
+        Adjusted test expectations for storage/indexeddb/modern/idbtransaction-objectstore-failures.html.
+        https://bugs.webkit.org/show_bug.cgi?id=171862
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
 2018-02-07  Daniel Bates  <dabates@apple.com>
 
         Log error when authentication challenge is blocked due to an insecure request
