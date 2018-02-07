@@ -1,3 +1,32 @@
+2018-02-01  Antti Koivisto  <antti@apple.com>
+
+        StyleBench: Attribute selectors and other improvements
+        https://bugs.webkit.org/show_bug.cgi?id=182387
+
+        Reviewed by Joseph Pecoraro.
+
+        - Add some attributes to elements in all tests
+        - Add some attribute selectors to stylesheets in all tests
+        - Also add some * selectors to all stylesheets.
+        - Add attribute mutation step to all suites
+        - Make test steps do more mutations (25->100) and reduce the number of steps to keep testing time in check.
+          Too fast steps were running into timer resolution limits.
+
+        * StyleBench/resources/style-bench.js:
+        (defaultConfiguration):
+        (prototype.randomAttributeName):
+        (prototype.randomAttributeValue):
+        (prototype.randomAttributeSelector):
+        (prototype.makeCompoundSelector):
+        (prototype.makeElement):
+        (prototype.addClasses):
+        (prototype.removeClasses):
+        (prototype.mutateAttributes):
+        (prototype.async.runForever):
+        * StyleBench/resources/tests.js:
+        (makeSteps):
+        (makeSuite):
+
 2018-02-01  Geoffrey Garen  <ggaren@apple.com>
 
         Make MallocBench easier for non-WebKit engineers to run

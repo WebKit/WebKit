@@ -1,18 +1,21 @@
-function makeSteps(count)
+function makeSteps(configuration)
 {
     const steps = [];
-    for (i = 0; i < count; ++i) {
+    for (i = 0; i < configuration.stepCount; ++i) {
         steps.push(new BenchmarkTestStep(`Adding classes - ${i}`, (bench, contentWindow, contentDocument) => {
-            bench.addClasses(25);
+            bench.addClasses(configuration.mutationsPerStep);
         }));
         steps.push(new BenchmarkTestStep(`Removing classes - ${i}`, (bench, contentWindow, contentDocument) => {
-            bench.removeClasses(25);
+            bench.removeClasses(configuration.mutationsPerStep);
+        }));
+        steps.push(new BenchmarkTestStep(`Mutating attributes - ${i}`, (bench, contentWindow, contentDocument) => {
+            bench.mutateAttributes(configuration.mutationsPerStep);
         }));
         steps.push(new BenchmarkTestStep(`Adding leaf elements - ${i}`, (bench, contentWindow, contentDocument) => {
-            bench.addLeafElements(25);
+            bench.addLeafElements(configuration.mutationsPerStep);
         }));
         steps.push(new BenchmarkTestStep(`Removing leaf elements - ${i}`, (bench, contentWindow, contentDocument) => {
-            bench.removeLeafElements(25);
+            bench.removeLeafElements(configuration.mutationsPerStep);
         }));
     }
     return steps;
@@ -28,7 +31,7 @@ function makeSuite(configuration)
                 return contentWindow.createBenchmark(configuration);
             });
         },
-        tests: makeSteps(10),
+        tests: makeSteps(configuration),
     };
 }
 
