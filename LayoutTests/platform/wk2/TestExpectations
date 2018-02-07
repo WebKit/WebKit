@@ -705,6 +705,8 @@ http/tests/resourceLoadStatistics/add-partitioning-to-redirect.html [ Skip ]
 http/tests/resourceLoadStatistics/add-blocking-to-redirect.html [ Skip ]
 http/tests/resourceLoadStatistics/remove-partitioning-in-redirect.html [ Skip ]
 http/tests/resourceLoadStatistics/remove-blocking-in-redirect.html [ Skip ]
+http/tests/resourceLoadStatistics/strip-referrer-to-origin-for-prevalent-subresource-redirects.html [ Skip ]
+http/tests/resourceLoadStatistics/strip-referrer-to-origin-for-prevalent-subresource-requests.html [ Skip ]
 
 ### END OF (5) Progressions, expected successes that are expected failures in WebKit1.
 ########################################

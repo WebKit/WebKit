@@ -67,7 +67,7 @@ bool SecurityPolicy::shouldHideReferrer(const URL& url, const String& referrer)
     return !URLIsSecureURL;
 }
 
-static String referrerToOriginString(const String& referrer)
+String SecurityPolicy::referrerToOriginString(const String& referrer)
 {
     String originString = SecurityOrigin::createFromString(referrer)->toString();
     if (originString == "null")

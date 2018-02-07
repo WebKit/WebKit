@@ -1,3 +1,25 @@
+2018-02-07  John Wilander  <wilander@apple.com>
+
+        Restrict Referer to just the origin for third parties in private mode and third parties ITP blocks cookies for in regular mode
+        https://bugs.webkit.org/show_bug.cgi?id=182559
+        <rdar://problem/36990337>
+
+        Reviewed by Andy Estes.
+
+        * NetworkProcess/cocoa/NetworkDataTaskCocoa.h:
+        * NetworkProcess/cocoa/NetworkDataTaskCocoa.mm:
+        (WebKit::NetworkDataTaskCocoa::isThirdPartyRequest):
+            New convenience function. Checks whether the resource shares
+            partition with the first party.
+        (WebKit::NetworkDataTaskCocoa::NetworkDataTaskCocoa):
+            Now strips the referrer to just the origin for:
+            1. All third party requests in private mode.
+            2. Third party requests to domains that ITP blocks cookies for.
+        (WebKit::NetworkDataTaskCocoa::willPerformHTTPRedirection):
+            Now strips the referrer in redirects to just the origin for:
+            1. All third party requests in private mode.
+            2. Third party requests to domains that ITP blocks cookies for.
+
 2018-02-07  Daniel Bates  <dabates@apple.com>
 
         Log error when authentication challenge is blocked due to an insecure request

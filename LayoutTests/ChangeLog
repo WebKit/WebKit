@@ -1,3 +1,31 @@
+2018-02-07  John Wilander  <wilander@apple.com>
+
+        Restrict Referer to just the origin for third parties in private mode and third parties ITP blocks cookies for in regular mode
+        https://bugs.webkit.org/show_bug.cgi?id=182559
+        <rdar://problem/36990337>
+
+        Reviewed by Andy Estes.
+
+        * TestExpectations:
+            New tests marked as [ Skip ]. The change only applies to iOS and Mac.
+        * http/tests/resourceLoadStatistics/resources/echo-referrer.php: Added.
+        * http/tests/resourceLoadStatistics/strip-referrer-to-origin-for-prevalent-subresource-redirects-expected.txt: Added.
+        * http/tests/resourceLoadStatistics/strip-referrer-to-origin-for-prevalent-subresource-redirects.html: Added.
+        * http/tests/resourceLoadStatistics/strip-referrer-to-origin-for-prevalent-subresource-requests-expected.txt: Added.
+        * http/tests/resourceLoadStatistics/strip-referrer-to-origin-for-prevalent-subresource-requests.html: Added.
+        * http/tests/security/resources/echo-referrer.php: Added.
+        * http/tests/security/resources/redirect.php: Added.
+        * http/tests/security/strip-referrer-to-origin-for-third-party-redirects-in-private-mode-expected.txt: Added.
+        * http/tests/security/strip-referrer-to-origin-for-third-party-redirects-in-private-mode.html: Added.
+        * http/tests/security/strip-referrer-to-origin-for-third-party-requests-in-private-mode-expected.txt: Added.
+        * http/tests/security/strip-referrer-to-origin-for-third-party-requests-in-private-mode.html: Added.
+        * platform/ios/TestExpectations:
+            New tests marked as [ Pass ].
+        * platform/mac-wk2/TestExpectations:
+            New tests marked as [ Pass ].
+        * platform/wk2/TestExpectations:
+            New tests marked as [ Skip ].
+
 2018-02-07  Matt Lewis  <jlewis3@apple.com>
 
         Adjusted test expectations for storage/indexeddb/modern/idbtransaction-objectstore-failures.html.

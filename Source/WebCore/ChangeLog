@@ -1,3 +1,30 @@
+2018-02-07  John Wilander  <wilander@apple.com>
+
+        Restrict Referer to just the origin for third parties in private mode and third parties ITP blocks cookies for in regular mode
+        https://bugs.webkit.org/show_bug.cgi?id=182559
+        <rdar://problem/36990337>
+
+        Reviewed by Andy Estes.
+
+        Tests: http/tests/resourceLoadStatistics/strip-referrer-to-origin-for-prevalent-subresource-redirects.html
+               http/tests/resourceLoadStatistics/strip-referrer-to-origin-for-prevalent-subresource-requests.html
+               http/tests/security/strip-referrer-to-origin-for-third-party-redirects-in-private-mode.html
+               http/tests/security/strip-referrer-to-origin-for-third-party-requests-in-private-mode.html
+
+        * page/SecurityPolicy.cpp:
+        (WebCore::SecurityPolicy::referrerToOriginString):
+            Now exposed within WebCore. This is to make sure we create a proper referrer
+            string in WebCore::ResourceRequestBase::setExistingHTTPReferrerToOriginString().
+        (WebCore::referrerToOriginString): Deleted.
+            Used to be internal.
+        * page/SecurityPolicy.h:
+        * platform/network/ResourceRequestBase.cpp:
+        (WebCore::ResourceRequestBase::setExistingHTTPReferrerToOriginString):
+            New, exported function used in WebKit. Note that this function does not
+            set the referrer if the request has none since before.
+        * platform/network/ResourceRequestBase.h:
+
+
 2018-02-07  Zalan Bujtas  <zalan@apple.com>
 
         [RenderTreeBuilder] Remove RenderElement::destroyLeftoverChildren.

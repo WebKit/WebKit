@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="/js-test-resources/js-test.js"></script>
+</head>
+<body>
+<script>
+    description("Tests that only the origin is sent as referrer for prevalent resources without user interaction.");
+    jsTestIsAsync = true;
+    testRunner.dumpChildFramesAsText();
+
+    function setEnableFeature(enable) {
+        if (!enable)
+            testRunner.statisticsResetToConsistentState();
+        internals.setResourceLoadStatisticsEnabled(enable);
+        testRunner.setCookieStoragePartitioningEnabled(enable);
+    }
+
+    function openIframe(url, onLoadHandler) {
+        const element = document.createElement("iframe");
+        element.src = url;
+        if (onLoadHandler) {
+            element.onload = onLoadHandler;
+        }
+        document.body.appendChild(element);
+    }
+
+    setEnableFeature(true);
+    if (testRunner.isStatisticsPrevalentResource("http://localhost"))
+        testFailed("Localhost was classified as prevalent resource before the test started.");
+
+    var referrer;
+    fetch("resources/echo-referrer.php").then(function(response) {
+        return response.text();
+    }).then(function(data) {
+        referrer = data;
+        shouldBeEqualToString("referrer", "http://127.0.0.1:8000/resourceLoadStatistics/strip-referrer-to-origin-for-prevalent-subresource-requests.html");
+
+        testRunner.setStatisticsPrevalentResource("http://localhost", true);
+        if (!testRunner.isStatisticsPrevalentResource("http://localhost"))
+            testFailed("Host did not get set as prevalent resource.");
+
+        testRunner.statisticsUpdateCookiePartitioning(function() {
+            fetch("http://localhost:8000/resourceLoadStatistics/resources/echo-referrer.php").then(function(response) {
+                return response.text();
+            }).then(function(data) {
+                referrer = data;
+                shouldBeEqualToString("referrer", "http://127.0.0.1:8000/");
+
+                openIframe("resources/redirect.php?redirectTo=http://localhost:8000/resourceLoadStatistics/resources/echo-referrer.php", finishJSTest);
+
+            }).catch(function(error) {
+                console.log(error.message);
+                finishJSTest();
+            });
+        });
+
+    }).catch(function(error) {
+        console.log(error.message);
+        finishJSTest();
+    });
+
+</script>
+</body>
+</html>

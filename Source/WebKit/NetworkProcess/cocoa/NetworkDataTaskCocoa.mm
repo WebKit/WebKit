@@ -141,6 +141,11 @@ void NetworkDataTaskCocoa::applyCookiePartitioningPolicy(const String& requiredS
 }
 #endif
 
+bool NetworkDataTaskCocoa::isThirdPartyRequest(const WebCore::ResourceRequest& request)
+{
+    return request.partitionName(request.url().host()) != request.partitionName(request.firstPartyForCookies().host());
+}
+
 NetworkDataTaskCocoa::NetworkDataTaskCocoa(NetworkSession& session, NetworkDataTaskClient& client, const WebCore::ResourceRequest& requestWithCredentials, uint64_t frameID, uint64_t pageID, WebCore::StoredCredentialsPolicy storedCredentialsPolicy, WebCore::ContentSniffingPolicy shouldContentSniff, WebCore::ContentEncodingSniffingPolicy shouldContentEncodingSniff, bool shouldClearReferrerOnHTTPSToHTTPRedirect, PreconnectOnly shouldPreconnectOnly)
     : NetworkDataTask(session, client, requestWithCredentials, storedCredentialsPolicy, shouldClearReferrerOnHTTPSToHTTPRedirect)
     , m_frameID(frameID)
@@ -171,7 +176,14 @@ NetworkDataTaskCocoa::NetworkDataTaskCocoa(NetworkSession& session, NetworkDataT
         applyBasicAuthorizationHeader(request, m_initialCredential);
     }
 #endif
-    
+
+    bool shouldBlockCookies = false;
+#if HAVE(CFNETWORK_STORAGE_PARTITIONING)
+    shouldBlockCookies = session.networkStorageSession().shouldBlockCookies(request);
+#endif
+    if (shouldBlockCookies || (m_session->sessionID().isEphemeral() && isThirdPartyRequest(request)))
+        request.setExistingHTTPReferrerToOriginString();
+
     NSURLRequest *nsRequest = request.nsURLRequest(WebCore::UpdateHTTPBody);
     applySniffingPoliciesAndBindRequestToInferfaceIfNeeded(nsRequest, shouldContentSniff == WebCore::SniffContent && !url.isLocalFile(), shouldContentEncodingSniff == WebCore::ContentEncodingSniffingPolicy::Sniff);
 
@@ -197,7 +209,7 @@ NetworkDataTaskCocoa::NetworkDataTaskCocoa(NetworkSession& session, NetworkDataT
     }
 
 #if HAVE(CFNETWORK_STORAGE_PARTITIONING)
-    if (auto shouldBlockCookies = session.networkStorageSession().shouldBlockCookies(request)) {
+    if (shouldBlockCookies) {
 #if HAVE(CFNETWORK_STORAGE_PARTITIONING) && !RELEASE_LOG_DISABLED
         if (NetworkProcess::singleton().shouldLogCookieInformation())
             RELEASE_LOG_IF(m_session->sessionID().isAlwaysOnLoggingAllowed(), Network, "%p - NetworkDataTaskCocoa::logCookieInformation: pageID = %llu, frameID = %llu, taskID = %lu: Blocking cookies for URL %s", this, pageID, frameID, (unsigned long)[m_task taskIdentifier], nsRequest.URL.absoluteString.UTF8String);
@@ -312,10 +324,18 @@ void NetworkDataTaskCocoa::willPerformHTTPRedirection(WebCore::ResourceResponse&
         }
 #endif
     }
-    
+
+    bool shouldBlockCookies = false;
 #if HAVE(CFNETWORK_STORAGE_PARTITIONING)
-    auto shouldBlockCookies = m_session->networkStorageSession().shouldBlockCookies(request);
+    shouldBlockCookies = m_session->networkStorageSession().shouldBlockCookies(request);
     LOG(NetworkSession, "%llu %s cookies for redirect URL %s", [m_task taskIdentifier], (shouldBlockCookies ? "Blocking" : "Not blocking"), request.url().string().utf8().data());
+#endif
+
+    if (shouldBlockCookies || (m_session->sessionID().isEphemeral() && isThirdPartyRequest(request)))
+        request.setExistingHTTPReferrerToOriginString();
+
+#if HAVE(CFNETWORK_STORAGE_PARTITIONING)
+    // Always apply the policy since blocking may need to be turned on or off in a redirect.
     applyCookieBlockingPolicy(shouldBlockCookies);
 
     if (!shouldBlockCookies) {

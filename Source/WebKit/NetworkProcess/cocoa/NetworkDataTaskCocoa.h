@@ -82,6 +82,7 @@ private:
     void applyCookieBlockingPolicy(bool shouldBlock);
     void applyCookiePartitioningPolicy(const String& requiredStoragePartition, const String& currentStoragePartition);
 #endif
+    bool isThirdPartyRequest(const WebCore::ResourceRequest&);
 
     RefPtr<SandboxExtension> m_sandboxExtension;
     RetainPtr<NSURLSessionDataTask> m_task;
