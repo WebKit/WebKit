@@ -110,6 +110,7 @@ MOCK add_patch_to_bug: bug_id=50000, description=Patch for landing, mark_for_rev
     def test_prepare(self):
         options = MockOptions()
         options.sort_xcode_project = False
+        options.non_interactive = True
         expected_logs = "MOCK create_bug\nbug_title: Mock user response\nbug_description: Mock user response\ncomponent: MOCK component\ncc: MOCK cc\n"
         self.assert_execute_outputs(Prepare(), [], expected_logs=expected_logs, options=options)
 

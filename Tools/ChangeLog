@@ -1,3 +1,20 @@
+2018-02-06  Ross Kirsling  <ross.kirsling@sony.com>
+
+        webkit-patch upload should ask for confirmation before creating a new bug
+        https://bugs.webkit.org/show_bug.cgi?id=182551
+
+        Reviewed by Daniel Bates.
+
+        It is quite easy to paste unintended text into the bug number prompt. This creates a junk bug with an uneditable
+        first comment, which could result in embarrassment or potentially even a proprietary information leak.
+
+        * Scripts/webkitpy/tool/commands/upload_unittest.py:
+        (test_prepare):
+        * Scripts/webkitpy/tool/steps/promptforbugortitle.py:
+        (PromptForBugOrTitle):
+        (PromptForBugOrTitle.options):
+        (PromptForBugOrTitle.run):
+
 2018-02-06  Youenn Fablet  <youenn@apple.com>
 
         HasServiceWorkerRegistration bit should be sent when creating a new page

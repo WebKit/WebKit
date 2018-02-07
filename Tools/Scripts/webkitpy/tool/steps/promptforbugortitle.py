@@ -27,9 +27,16 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 from webkitpy.tool.steps.abstractstep import AbstractStep
+from webkitpy.tool.steps.options import Options
 
 
 class PromptForBugOrTitle(AbstractStep):
+    @classmethod
+    def options(cls):
+        return AbstractStep.options() + [
+            Options.non_interactive,
+        ]
+
     def run(self, state):
         # No need to prompt if we alrady have the bug_id.
         if state.get("bug_id"):
@@ -40,6 +47,8 @@ class PromptForBugOrTitle(AbstractStep):
         try:
             state["bug_id"] = int(user_response)
         except ValueError as TypeError:
+            if not self._options.non_interactive and not self._tool.user.confirm("Are you sure you want to create a new bug?", default="n"):
+                self._exit(1)
             state["bug_title"] = user_response
             # FIXME: This is kind of a lame description.
             state["bug_description"] = user_response
