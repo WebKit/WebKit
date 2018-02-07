@@ -67,7 +67,7 @@ private:
     void didNotHandle();
 
     WebServiceWorkerProvider& m_serviceWorkerProvider;
-    Ref<WebCore::ResourceLoader> m_loader;
+    RefPtr<WebCore::ResourceLoader> m_loader;
     uint64_t m_identifier { 0 };
     Ref<WebSWClientConnection> m_connection;
     Callback m_callback;
