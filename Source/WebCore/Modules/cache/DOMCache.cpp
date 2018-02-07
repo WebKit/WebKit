@@ -320,6 +320,11 @@ void DOMCache::put(RequestInfo&& info, Ref<FetchResponse>&& response, DOMPromise
     }
     auto request = requestOrException.releaseReturnValue();
 
+    if (response->loadingError()) {
+        promise.reject(Exception { TypeError, String { response->loadingError()->localizedDescription() } });
+        return;
+    }
+
     if (hasResponseVaryStarHeaderValue(response.get())) {
         promise.reject(Exception { TypeError, ASCIILiteral("Response has a '*' Vary header value") });
         return;

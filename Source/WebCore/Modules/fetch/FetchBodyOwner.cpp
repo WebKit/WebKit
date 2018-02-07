@@ -312,6 +312,12 @@ void FetchBodyOwner::consumeBodyAsStream()
 {
     ASSERT(m_readableStreamSource);
 
+    if (m_loadingError) {
+        auto errorMessage = m_loadingError->localizedDescription();
+        m_readableStreamSource->error(errorMessage.isEmpty() ? ASCIILiteral("Loading failed") : errorMessage);
+        return;
+    }
+
     body().consumeAsStream(*this, *m_readableStreamSource);
     if (!m_readableStreamSource->isPulling())
         m_readableStreamSource = nullptr;

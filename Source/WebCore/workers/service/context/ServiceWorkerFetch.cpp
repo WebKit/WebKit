@@ -53,6 +53,11 @@ static void processResponse(Ref<Client>&& client, FetchResponse* response)
 
     client->didReceiveResponse(response->resourceResponse());
 
+    if (response->loadingError()) {
+        client->didFail();
+        return;
+    }
+
     if (response->isBodyReceivedByChunk()) {
         response->consumeBodyReceivedByChunk([client = WTFMove(client)] (auto&& result) mutable {
             if (result.hasException()) {

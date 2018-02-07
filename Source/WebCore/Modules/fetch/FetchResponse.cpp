@@ -176,6 +176,7 @@ ExceptionOr<Ref<FetchResponse>> FetchResponse::clone(ScriptExecutionContext& con
         m_internalResponse.setHTTPHeaderFields(HTTPHeaderMap { headers().internalHeaders() });
 
     auto clone = FetchResponse::create(context, std::nullopt, headers().guard(), ResourceResponse { m_internalResponse });
+    clone->m_loadingError = m_loadingError;
     clone->cloneBody(*this);
     clone->m_opaqueLoadIdentifier = m_opaqueLoadIdentifier;
     clone->m_bodySizeWithPadding = m_bodySizeWithPadding;
@@ -236,6 +237,9 @@ void FetchResponse::BodyLoader::didSucceed()
 void FetchResponse::BodyLoader::didFail(const ResourceError& error)
 {
     ASSERT(m_response.hasPendingActivity());
+
+    m_response.m_loadingError = error;
+
     if (auto responseCallback = WTFMove(m_responseCallback))
         responseCallback(Exception { TypeError, String(error.localizedDescription()) });
 

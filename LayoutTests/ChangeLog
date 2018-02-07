@@ -1,5 +1,18 @@
 2018-02-06  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r228199. rdar://problem/37294597
+
+    2018-02-06  Youenn Fablet  <youenn@apple.com>
+
+            imported/w3c/web-platform-tests/service-workers/service-worker/fetch-event-respond-with-response-body-with-invalid-chunk.https.html is flaky
+            https://bugs.webkit.org/show_bug.cgi?id=182541
+
+            Reviewed by Chris Dumez.
+
+            * TestExpectations:
+
+2018-02-06  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r228198. rdar://problem/37294605
 
     2018-02-06  Chris Dumez  <cdumez@apple.com>

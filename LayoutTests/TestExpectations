@@ -181,7 +181,6 @@ webkit.org/b/179342 http/tests/workers/service/registration-task-queue-schedulin
 imported/w3c/web-platform-tests/service-workers/service-worker/about-blank-replacement.https.html [ Pass Failure ]
 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-canvas-tainting-cache.https.html [ DumpJSConsoleLogInStdErr Pass Failure ]
 webkit.org/b/179248 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-event-within-sw.https.html [ Pass Failure ]
-imported/w3c/web-platform-tests/service-workers/service-worker/fetch-event-respond-with-response-body-with-invalid-chunk.https.html [ Pass Failure ]
 imported/w3c/web-platform-tests/service-workers/service-worker/multiple-update.https.html [ Pass Failure ]
 imported/w3c/web-platform-tests/service-workers/service-worker/performance-timeline.https.html [ Pass Failure ]
 imported/w3c/web-platform-tests/service-workers/service-worker/registration-service-worker-attributes.https.html [ Pass Failure ]
