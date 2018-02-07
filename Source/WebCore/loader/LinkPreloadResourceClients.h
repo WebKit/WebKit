@@ -36,6 +36,7 @@
 #include "CachedResourceHandle.h"
 #include "CachedScript.h"
 #include "CachedStyleSheetClient.h"
+#include "CachedTextTrack.h"
 
 #include <wtf/WeakPtr.h>
 
@@ -76,14 +77,19 @@ private:
     CachedResourceHandle<CachedResource> m_resource;
 };
 
-class LinkPreloadScriptResourceClient: public LinkPreloadResourceClient, CachedResourceClient {
+class LinkPreloadDefaultResourceClient: public LinkPreloadResourceClient, CachedResourceClient {
 public:
-    static std::unique_ptr<LinkPreloadScriptResourceClient> create(LinkLoader& loader, CachedScript& resource)
+    static std::unique_ptr<LinkPreloadDefaultResourceClient> create(LinkLoader& loader, CachedScript& resource)
     {
-        return std::unique_ptr<LinkPreloadScriptResourceClient>(new LinkPreloadScriptResourceClient(loader, resource));
+        return std::unique_ptr<LinkPreloadDefaultResourceClient>(new LinkPreloadDefaultResourceClient(loader, resource));
     }
 
-    virtual ~LinkPreloadScriptResourceClient() = default;
+    static std::unique_ptr<LinkPreloadDefaultResourceClient> create(LinkLoader& loader, CachedTextTrack& resource)
+    {
+        return std::unique_ptr<LinkPreloadDefaultResourceClient>(new LinkPreloadDefaultResourceClient(loader, resource));
+    }
+
+    virtual ~LinkPreloadDefaultResourceClient() = default;
 
 
     void notifyFinished(CachedResource& resource) override { triggerEvents(resource); }
@@ -92,7 +98,7 @@ public:
     bool shouldMarkAsReferenced() const override { return false; }
 
 private:
-    LinkPreloadScriptResourceClient(LinkLoader& loader, CachedScript& resource)
+    LinkPreloadDefaultResourceClient(LinkLoader& loader, CachedResource& resource)
         : LinkPreloadResourceClient(loader, resource)
     {
         addResource(*this);
