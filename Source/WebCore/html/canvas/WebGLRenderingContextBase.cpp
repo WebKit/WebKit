@@ -5922,6 +5922,7 @@ ImageBuffer* WebGLRenderingContextBase::LRUImageBufferCache::imageBuffer(const I
         if (buf->logicalSize() != size)
             continue;
         bubbleToFront(i);
+        buf->context().clearRect(FloatRect({ }, FloatSize(size)));
         return buf;
     }
 

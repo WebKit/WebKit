@@ -1,3 +1,13 @@
+2018-02-06  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Rendering SVG images with same size as WebGL texture doesn't work correctly
+        https://bugs.webkit.org/show_bug.cgi?id=182367
+
+        Reviewed by Dean Jackson.
+
+        * webgl/webgl-texture-image-buffer-reuse-expected.html: Added.
+        * webgl/webgl-texture-image-buffer-reuse.html: Added.
+
 2018-02-06  Matt Lewis  <jlewis3@apple.com>
 
         Marked transitions/transition-display-property.html as flaky.
