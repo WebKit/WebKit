@@ -191,12 +191,6 @@ WI.appendContextMenuItemsForDOMNode = function(contextMenu, domNode, options = {
 
     contextMenu.appendSeparator();
 
-    if (!options.excludeRevealElement && domNode.ownerDocument) {
-        contextMenu.appendItem(WI.UIString("Reveal in DOM Tree"), () => {
-            WI.domTreeManager.inspectElement(domNode.id);
-        });
-    }
-
     if (!options.excludeLogElement && !domNode.isInUserAgentShadowTree() && !domNode.isPseudoElement()) {
         let label = isElement ? WI.UIString("Log Element") : WI.UIString("Log Node");
         contextMenu.appendItem(label, () => {
@@ -205,6 +199,18 @@ WI.appendContextMenuItemsForDOMNode = function(contextMenu, domNode, options = {
                 const addSpecialUserLogClass = true;
                 WI.consoleLogViewController.appendImmediateExecutionWithResult(text, remoteObject, addSpecialUserLogClass);
             });
+        });
+    }
+
+    if (!options.excludeRevealElement && window.DOMAgent && domNode.ownerDocument) {
+        contextMenu.appendItem(WI.UIString("Reveal in DOM Tree"), () => {
+            WI.domTreeManager.inspectElement(domNode.id);
+        });
+    }
+
+    if (!options.excludeRevealLayer && window.LayerTreeAgent && domNode.parentNode) {
+        contextMenu.appendItem(WI.UIString("Reveal in Layers Tab"), () => {
+            WI.showLayersTab({nodeToSelect: domNode});
         });
     }
 

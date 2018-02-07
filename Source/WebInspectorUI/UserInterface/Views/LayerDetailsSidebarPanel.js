@@ -33,10 +33,12 @@ WI.LayerDetailsSidebarPanel = class LayerDetailsSidebarPanel extends WI.DetailsS
         this.element.classList.add("layer");
 
         this._layers = [];
-        this._dataGridNodesByLayerId = new Map;
+        this._layerIdToSelect = null;
 
         this._dataGrid = null;
         this._hoveredDataGridNode = null;
+        this._dataGridNodesByLayerId = new Map;
+
         this._bottomBar = null;
         this._layersCountLabel = null;
         this._layersMemoryLabel = null;
@@ -57,6 +59,8 @@ WI.LayerDetailsSidebarPanel = class LayerDetailsSidebarPanel extends WI.DetailsS
 
     selectNodeByLayerId(layerId)
     {
+        this._layerIdToSelect = null;
+
         let node = this._dataGridNodesByLayerId.get(layerId);
         if (node === this._dataGrid.selectedNode)
             return;
@@ -66,6 +70,8 @@ WI.LayerDetailsSidebarPanel = class LayerDetailsSidebarPanel extends WI.DetailsS
             node.revealAndSelect(suppressEvent);
         else if (this._dataGrid.selectedNode)
             this._dataGrid.selectedNode.deselect(suppressEvent);
+        else
+            this._layerIdToSelect = layerId;
     }
 
     // Private
@@ -205,6 +211,9 @@ WI.LayerDetailsSidebarPanel = class LayerDetailsSidebarPanel extends WI.DetailsS
         });
 
         this._sortDataGrid();
+
+        if (this._layerIdToSelect)
+            this.selectNodeByLayerId(this._layerIdToSelect);
     }
 
     _updateBottomBar(newLayers)

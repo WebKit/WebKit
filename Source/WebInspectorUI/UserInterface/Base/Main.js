@@ -920,6 +920,11 @@ WI.showElementsTab = function()
     this.tabBrowser.showTabForContentView(tabContentView);
 };
 
+WI.isShowingElementsTab = function()
+{
+    return this.tabBrowser.selectedTabContentView instanceof WI.ElementsTabContentView;
+};
+
 WI.showDebuggerTab = function(options)
 {
     var tabContentView = this.tabBrowser.bestTabContentViewForClass(WI.DebuggerTabContentView);
@@ -986,6 +991,21 @@ WI.showTimelineTab = function()
     if (!tabContentView)
         tabContentView = new WI.TimelineTabContentView;
     this.tabBrowser.showTabForContentView(tabContentView);
+};
+
+WI.showLayersTab = function(options = {})
+{
+    let tabContentView = this.tabBrowser.bestTabContentViewForClass(WI.LayersTabContentView);
+    if (!tabContentView)
+        tabContentView = new WI.LayersTabContentView;
+    if (options.nodeToSelect)
+        tabContentView.selectLayerForNode(options.nodeToSelect);
+    this.tabBrowser.showTabForContentView(tabContentView);
+};
+
+WI.isShowingLayersTab = function()
+{
+    return this.tabBrowser.selectedTabContentView instanceof WI.LayersTabContentView;
 };
 
 WI.indentString = function()

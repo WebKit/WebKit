@@ -1,3 +1,33 @@
+2018-02-06  Devin Rousso  <webkit@devinrousso.com>
+
+        Web Inspector: Elements tab should have "Jump to Layer" functionality
+        https://bugs.webkit.org/show_bug.cgi?id=181800
+
+        Reviewed by Joseph Pecoraro.
+
+        * Localizations/en.lproj/localizedStrings.js:
+
+        * UserInterface/Base/Main.js:
+        (WI.isShowingElementsTab):
+        (WI.showLayersTab):
+        (WI.isShowingLayersTab):
+
+        * UserInterface/Views/ContextMenuUtilities.js:
+        (WI.appendContextMenuItemsForDOMNode):
+
+        * UserInterface/Views/LayersTabContentView.js:
+        (WI.LayersTabContentView.prototype.selectLayerForNode):
+
+        * UserInterface/Views/Layers3DContentView.js:
+        (WI.Layers3DContentView):
+        (WI.Layers3DContentView.prototype.selectLayerForNode):
+        (WI.Layers3DContentView.prototype.layout):
+
+        * UserInterface/Views/LayerDetailsSidebarPanel.js:
+        (WI.LayerDetailsSidebarPanel):
+        (WI.LayerDetailsSidebarPanel.prototype.selectNodeByLayerId):
+        (WI.LayerDetailsSidebarPanel.prototype._updateDataGrid):
+
 2018-02-06  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Rename String.prototype.trimEnd to avoid conflicts with native trimEnd

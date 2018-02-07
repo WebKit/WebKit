@@ -61,6 +61,11 @@ WI.LayersTabContentView = class LayersTabContentView extends WI.ContentBrowserTa
     get type() { return WI.LayersTabContentView.Type; }
     get supportsSplitContentBrowser() { return false; }
 
+    selectLayerForNode(node)
+    {
+        this._layers3DContentView.selectLayerForNode(node);
+    }
+
     shown()
     {
         super.shown();

@@ -45,6 +45,7 @@ WI.Layers3DContentView = class Layers3DContentView extends WI.ContentView
         this._layers = [];
         this._layerGroupsById = new Map;
         this._selectedLayerGroup = null;
+        this._nodeToSelect = null;
 
         this._renderer = null;
         this._camera = null;
@@ -110,6 +111,31 @@ WI.Layers3DContentView = class Layers3DContentView extends WI.ContentView
         this._centerOnSelection();
     }
 
+    selectLayerForNode(node)
+    {
+        if (!this._layers.length) {
+            this._nodeToSelect = node;
+            return;
+        }
+
+        this._nodeToSelect = null;
+
+        let layer = null;
+        while (node && !layer) {
+            layer = this._layers.find((layer) => layer.nodeId === node.id);
+            if (!layer)
+                node = node.parentNode;
+        }
+
+        console.assert(layer, "There should always be a top level (document) layer");
+        if (!layer)
+            return;
+
+        this.selectLayerById(layer.layerId);
+
+        this.dispatchEventToListeners(WI.Layers3DContentView.Event.SelectedLayerChanged, {layerId: layer.layerId});
+    }
+
     // Protected
 
     initialLayout()
@@ -154,8 +180,12 @@ WI.Layers3DContentView = class Layers3DContentView extends WI.ContentView
 
             WI.layerTreeManager.layersForNode(node, (layers) => {
                 this._updateLayers(layers);
+
                 if (documentWasUpdated)
                     this._resetCamera();
+
+                if (this._nodeToSelect)
+                    this.selectLayerForNode(this._nodeToSelect);
             });
         });
     }
