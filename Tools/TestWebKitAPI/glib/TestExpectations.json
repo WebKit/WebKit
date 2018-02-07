@@ -65,9 +65,6 @@
             "WebKit.NewFirstVisuallyNonEmptyLayoutForImages": {
                 "expected": {"gtk": {"status": ["FAIL", "PASS"], "bug": "webkit.org/b/85066"}}
             },
-            "WebKit.NewFirstVisuallyNonEmptyLayoutFrames": {
-                "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/85037"}}
-            },
             "WebKit.SpacebarScrolling": {
                 "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/84961"}}
             },
