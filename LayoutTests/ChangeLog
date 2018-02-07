@@ -1,3 +1,12 @@
+2018-02-06  Matt Lewis  <jlewis3@apple.com>
+
+        Marked transitions/transition-display-property.html as flaky.
+        https://bugs.webkit.org/show_bug.cgi?id=182554
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations:
+
 2018-02-06  Youenn Fablet  <youenn@apple.com>
 
         imported/w3c/web-platform-tests/service-workers/service-worker/fetch-event-respond-with-response-body-with-invalid-chunk.https.html is flaky

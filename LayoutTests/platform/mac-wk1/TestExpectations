@@ -496,3 +496,6 @@ http/tests/webauthn/ [ Skip ]
 http/wpt/credential-management/ [ Skip ]
 http/wpt/webauthn/ [ Skip ]
 imported/w3c/web-platform-tests/credential-management/ [ Skip ]
+
+webkit.org/b/182554 transitions/transition-display-property.html [ Pass ImageOnlyFailure ]
+
