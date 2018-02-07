@@ -1,3 +1,13 @@
+2018-02-06  Leo Balter  <leonardo.balter@gmail.com>
+
+        Nit fix for ruby script called through Perl
+        https://bugs.webkit.org/show_bug.cgi?id=182552
+
+        Reviewed by Yusuke Suzuki.
+
+        * BuildSlaveSupport/build.webkit.org-config/steps.py:
+        (RunTest262Tests):
+
 2018-02-06  Don Olmstead  <don.olmstead@sony.com>
 
         Remove WebCore/ForwardingHeaders directory
