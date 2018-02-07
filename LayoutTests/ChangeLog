@@ -1,3 +1,17 @@
+2018-02-07  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        REGRESSION(r226396): File paths are inserted when dropping image files
+        https://bugs.webkit.org/show_bug.cgi?id=182557
+        <rdar://problem/37294120>
+
+        Reviewed by Ryosuke Niwa.
+
+        Tweak an existing layout test that drops a file into a contenteditable, to check that no text is inserted into
+        the editable element after dropping.
+
+        * editing/pasteboard/drag-files-to-editable-element-as-URLs-expected.txt:
+        * editing/pasteboard/drag-files-to-editable-element-as-URLs.html:
+
 2018-02-07  John Wilander  <wilander@apple.com>
 
         Restrict Referer to just the origin for third parties in private mode and third parties ITP blocks cookies for in regular mode

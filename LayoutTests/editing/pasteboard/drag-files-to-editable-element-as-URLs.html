@@ -6,7 +6,7 @@
 <div id="editable" contentEditable=true style="width:200px; height:200px"></div>
 <script src="../../resources/js-test-pre.js"></script>
 <script>
-description('If we drag files onto an editable area, then attachments should be inserted into the editable area.');
+description('If we drag files onto an editable area, then attachments should not be inserted into the editable area since attachment elements are disabled.');
 
 var editable = document.getElementById("editable");
 if (window.eventSender) {
@@ -14,6 +14,7 @@ if (window.eventSender) {
     shouldBeUndefined('window.HTMLAttachmentElement');
     shouldBeTrue('document.createElement("attachment") instanceof HTMLUnknownElement');
     shouldBe('editable.querySelector("attachment")', 'null');
+    shouldBe('editable.textContent', '""');
     editable.innerHTML = '';
 }
 

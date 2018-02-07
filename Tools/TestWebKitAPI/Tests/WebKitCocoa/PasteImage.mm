@@ -140,6 +140,7 @@ TEST(PasteImage, PasteGIFFile)
     EXPECT_WK_STREQ("1", [webView stringByEvaluatingJavaScript:@"dataTransfer.files.length"]);
     EXPECT_WK_STREQ("image/gif", [webView stringByEvaluatingJavaScript:@"file = dataTransfer.files[0]; file.type"]);
     EXPECT_WK_STREQ("sunset-in-cupertino-400px.gif", [webView stringByEvaluatingJavaScript:@"file.name"]);
+    EXPECT_WK_STREQ("", [webView stringByEvaluatingJavaScript:@"editor.textContent"]);
 
     [webView stringByEvaluatingJavaScript:@"insertFileAsImage(file)"];
     [webView waitForMessage:@"loaded"];
@@ -161,6 +162,7 @@ TEST(PasteImage, PasteJPEGFile)
     EXPECT_WK_STREQ("1", [webView stringByEvaluatingJavaScript:@"dataTransfer.files.length"]);
     EXPECT_WK_STREQ("image/jpeg", [webView stringByEvaluatingJavaScript:@"file = dataTransfer.files[0]; file.type"]);
     EXPECT_WK_STREQ("sunset-in-cupertino-600px.jpg", [webView stringByEvaluatingJavaScript:@"file.name"]);
+    EXPECT_WK_STREQ("", [webView stringByEvaluatingJavaScript:@"editor.textContent"]);
 
     [webView stringByEvaluatingJavaScript:@"insertFileAsImage(file)"];
     [webView waitForMessage:@"loaded"];
@@ -182,6 +184,7 @@ TEST(PasteImage, PastePNGFile)
     EXPECT_WK_STREQ("1", [webView stringByEvaluatingJavaScript:@"dataTransfer.files.length"]);
     EXPECT_WK_STREQ("image/png", [webView stringByEvaluatingJavaScript:@"file = dataTransfer.files[0]; file.type"]);
     EXPECT_WK_STREQ("sunset-in-cupertino-200px.png", [webView stringByEvaluatingJavaScript:@"file.name"]);
+    EXPECT_WK_STREQ("", [webView stringByEvaluatingJavaScript:@"editor.textContent"]);
 
     [webView stringByEvaluatingJavaScript:@"insertFileAsImage(file)"];
     [webView waitForMessage:@"loaded"];
@@ -203,6 +206,7 @@ TEST(PasteImage, PasteTIFFFile)
     EXPECT_WK_STREQ("1", [webView stringByEvaluatingJavaScript:@"dataTransfer.files.length"]);
     EXPECT_WK_STREQ("image/tiff", [webView stringByEvaluatingJavaScript:@"file = dataTransfer.files[0]; file.type"]);
     EXPECT_WK_STREQ("sunset-in-cupertino-100px.tiff", [webView stringByEvaluatingJavaScript:@"file.name"]);
+    EXPECT_WK_STREQ("", [webView stringByEvaluatingJavaScript:@"editor.textContent"]);
 
     [webView stringByEvaluatingJavaScript:@"insertFileAsImage(file)"];
     [webView waitForMessage:@"loaded"];

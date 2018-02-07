@@ -1,3 +1,37 @@
+2018-02-07  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        REGRESSION(r226396): File paths are inserted when dropping image files
+        https://bugs.webkit.org/show_bug.cgi?id=182557
+        <rdar://problem/37294120>
+
+        Reviewed by Ryosuke Niwa.
+
+        Reverts unintended changes in <http://trac.webkit.org/r226396>. Before r226396, WebContentReader::readFilenames
+        (a helper function in macOS-specific code) contained logic to create and insert attachment elements if
+        ENABLE(ATTACHMENT_ELEMENT); otherwise, it would fall back to inserting the visible URL as a text node. Since we
+        enable the attachment element on all Cocoa platforms via xcconfig files, this was effectively dead code.
+
+        However, when r226396 (which moved this out from macOS to Cocoa platform code) refactored this helper function,
+        it also moved this chunk of code out of the !ENABLE(ATTACHMENT) conditional and into a PLATFORM(MAC) guard,
+        which means that we now fall back to inserting file paths as text when attachment elements are disabled. To fix
+        this, we simply remove the (previously) dead code.
+
+        A more subtle difference is that we no longer always return true from WebContentReader::readFilePaths. This
+        means that when we drop files, we no longer skip over the early return in documentFragmentFromDragData when
+        we've made a fragment, so we read the file path as a URL. To address this, we just restore the pre-macOS 10.13.4
+        behavior of initializing the document fragment.
+
+        Test: modified editing/pasteboard/drag-files-to-editable-element-as-URLs.html.
+
+        * editing/WebContentReader.cpp:
+        (WebCore::WebContentReader::ensureFragment): Deleted.
+
+        Remove this helper, as it was only used in WebContentReader::readFilePaths.
+
+        * editing/WebContentReader.h:
+        * editing/cocoa/WebContentReaderCocoa.mm:
+        (WebCore::WebContentReader::readFilePaths):
+
 2018-02-07  John Wilander  <wilander@apple.com>
 
         Restrict Referer to just the origin for third parties in private mode and third parties ITP blocks cookies for in regular mode

@@ -649,27 +649,20 @@ bool WebContentReader::readFilePaths(const Vector<String>& paths)
         return false;
 
     auto& document = *frame.document();
-    bool readAnyFilePath = false;
-    for (auto& path : paths) {
+    if (!fragment)
+        fragment = document.createDocumentFragment();
+
 #if ENABLE(ATTACHMENT_ELEMENT)
-        if (RuntimeEnabledFeatures::sharedFeatures().attachmentElementEnabled()) {
+    if (RuntimeEnabledFeatures::sharedFeatures().attachmentElementEnabled()) {
+        for (auto& path : paths) {
             auto attachment = HTMLAttachmentElement::create(HTMLNames::attachmentTag, document);
             attachment->setFile(File::create(path), HTMLAttachmentElement::UpdateDisplayAttributes::Yes);
-            ensureFragment().appendChild(attachment);
-            readAnyFilePath = true;
-            continue;
+            fragment->appendChild(attachment);
         }
-#endif
-#if PLATFORM(MAC)
-        // FIXME: Does (and should) any macOS client depend on inserting file paths as plain text in web content?
-        // If not, we should just remove this.
-        auto paragraph = createDefaultParagraphElement(document);
-        paragraph->appendChild(document.createTextNode(userVisibleString([NSURL fileURLWithPath:path])));
-        ensureFragment().appendChild(paragraph);
-        readAnyFilePath = true;
-#endif
     }
-    return readAnyFilePath;
+#endif
+
+    return true;
 }
 
 }
