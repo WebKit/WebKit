@@ -1491,6 +1491,7 @@ JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalNu
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalNullableWrapperIsNull(JSC::ExecState*);
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalXPathNSResolver(JSC::ExecState*);
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalRecord(JSC::ExecState*);
+JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalPromise(JSC::ExecState*);
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithCallbackArg(JSC::ExecState*);
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithNonCallbackArgAndCallbackArg(JSC::ExecState*);
 JSC::EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithCallbackAndOptionalArg(JSC::ExecState*);
@@ -2165,6 +2166,7 @@ static const HashTableValue JSTestObjPrototypeTableValues[] =
     { "methodWithOptionalNullableWrapperIsNull", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionMethodWithOptionalNullableWrapperIsNull), (intptr_t) (0) } },
     { "methodWithOptionalXPathNSResolver", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionMethodWithOptionalXPathNSResolver), (intptr_t) (0) } },
     { "methodWithOptionalRecord", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionMethodWithOptionalRecord), (intptr_t) (0) } },
+    { "methodWithOptionalPromise", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionMethodWithOptionalPromise), (intptr_t) (0) } },
     { "methodWithCallbackArg", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionMethodWithCallbackArg), (intptr_t) (1) } },
     { "methodWithNonCallbackArgAndCallbackArg", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionMethodWithNonCallbackArgAndCallbackArg), (intptr_t) (2) } },
     { "methodWithCallbackAndOptionalArg", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsTestObjPrototypeFunctionMethodWithCallbackAndOptionalArg), (intptr_t) (0) } },
@@ -6635,6 +6637,22 @@ static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithOptionalRe
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalRecord(ExecState* state)
 {
     return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionMethodWithOptionalRecordBody>(*state, "methodWithOptionalRecord");
+}
+
+static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithOptionalPromiseBody(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
+    UNUSED_PARAM(throwScope);
+    auto& impl = castedThis->wrapped();
+    auto promise = state->argument(0).isUndefined() ? nullptr : convert<IDLPromise<IDLVoid>>(*state, state->uncheckedArgument(0));
+    RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
+    impl.methodWithOptionalPromise(WTFMove(promise));
+    return JSValue::encode(jsUndefined());
+}
+
+EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalPromise(ExecState* state)
+{
+    return IDLOperation<JSTestObj>::call<jsTestObjPrototypeFunctionMethodWithOptionalPromiseBody>(*state, "methodWithOptionalPromise");
 }
 
 static inline JSC::EncodedJSValue jsTestObjPrototypeFunctionMethodWithCallbackArgBody(JSC::ExecState* state, typename IDLOperation<JSTestObj>::ClassParameter castedThis, JSC::ThrowScope& throwScope)
