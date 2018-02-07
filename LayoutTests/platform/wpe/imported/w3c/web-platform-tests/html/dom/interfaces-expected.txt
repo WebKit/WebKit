@@ -5,7 +5,7 @@ CONSOLE MESSAGE: line 251: callback not yet supported
 CONSOLE MESSAGE: line 251: callback not yet supported
 CONSOLE MESSAGE: line 251: callback not yet supported
 CONSOLE MESSAGE: line 251: callback not yet supported
-CONSOLE MESSAGE: WebSocket network error: Error resolving 'foo': No address associated with hostname
+CONSOLE MESSAGE: WebSocket network error: Error resolving âfooâ: No address associated with hostname
 HTML IDL tests
 
 

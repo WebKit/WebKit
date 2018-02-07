@@ -1,3 +1,25 @@
+2018-02-07  Ms2ger  <Ms2ger@igalia.com>
+
+        [WPE] Test gardening
+        https://bugs.webkit.org/show_bug.cgi?id=182568
+
+        Unreviewed test gardening.
+
+        * platform/wpe/TestExpectations:
+          - imported/w3c/web-platform-tests/css/css-shapes/shape-outside/values/shape-margin-001.html: fixed in r226404.
+          - imported/w3c/web-platform-tests/css/css-shapes/shape-outside/values/shape-outside-shape-arguments-000.html: fixed in r226404.
+          - imported/w3c/web-platform-tests/XMLHttpRequest/getallresponseheaders.htm: fixed in r227900.
+          - imported/w3c/web-platform-tests/XMLHttpRequest/status-async.htm: fixed in r227900.
+          - imported/w3c/web-platform-tests/XMLHttpRequest/status-basic.htm: fixed in r227900.
+          - imported/w3c/web-platform-tests/XMLHttpRequest/status-error.htm: fixed in r227900.
+          - svg/custom/filter-update-different-root.html: fixed in r225797.
+          - svg/filters/color-space-conversion.svg: fixed in r225797.
+          - svg/filters/container-with-filters.svg: fixed in r225797.
+          - svg/filters/feComposite-background-rect-control-operators.svg: fixed in r225797.
+          - svg/filters/feDisplacementMap-filterUnits.svg: fixed in r225797.
+        * platform/wpe/imported/w3c/web-platform-tests/html/dom/interfaces-expected.txt:
+          update for error message change, probably in r227900.
+
 2018-02-06  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Rename String.prototype.trimEnd to avoid conflicts with native trimEnd
