@@ -109,6 +109,8 @@ using WebCore::PlatformMedia;
     [(NSView*)[window contentView] setLayer:[CALayer layer]];
     [[window contentView] setWantsLayer:YES];
 
+    ASSERT([NSApp isRunning]);
+
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(applicationDidResignActive:) name:NSApplicationDidResignActiveNotification object:NSApp];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(applicationDidChangeScreenParameters:) name:NSApplicationDidChangeScreenParametersNotification object:NSApp];
 }
@@ -338,6 +340,7 @@ static NSWindow *createBackgroundFullscreenWindow(NSRect frame, int level)
             options |= NSApplicationPresentationAutoHideDock;
     }
 
+    ASSERT([NSApp isRunning]);
     NSApp.presentationOptions = options;
 }
 

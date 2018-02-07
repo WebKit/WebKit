@@ -658,10 +658,15 @@ void Pasteboard::setDragImage(DragImage image, const IntPoint& location)
 
     // Hack: We must post an event to wake up the NSDragManager, which is sitting in a nextEvent call
     // up the stack from us because the CoreFoundation drag manager does not use the run loop by itself.
-    // This is the most innocuous event to use, per Kristen Forster.
-    NSEvent* event = [NSEvent mouseEventWithType:NSEventTypeMouseMoved location:NSZeroPoint
-        modifierFlags:0 timestamp:0 windowNumber:0 context:nil eventNumber:0 clickCount:0 pressure:0];
-    [NSApp postEvent:event atStart:YES];
+    // This is the most innocuous event to use, per Kristin Forster.
+    // This is only relevant in WK1. Do not execute in the WebContent process, since it is now using
+    // NSRunLoop, and not the NSApplication run loop.
+    if ([NSApp isRunning]) {
+        NSEvent* event = [NSEvent mouseEventWithType:NSEventTypeMouseMoved location:NSZeroPoint
+            modifierFlags:0 timestamp:0 windowNumber:0 context:nil eventNumber:0 clickCount:0 pressure:0];
+        ASSERT([NSApp isRunning]);
+        [NSApp postEvent:event atStart:YES];
+    }
 }
 #endif
 

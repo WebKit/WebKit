@@ -36,6 +36,7 @@ void EventLoop::cycle()
         return;
     }
 #endif
+    ASSERT([NSApp isRunning]);
     [NSApp setWindowsNeedUpdate:YES];
     if (NSEvent *event = [NSApp nextEventMatchingMask:NSEventMaskAny untilDate:[NSDate dateWithTimeIntervalSinceNow:0.05] inMode:NSDefaultRunLoopMode dequeue:YES])
         [NSApp sendEvent:event];

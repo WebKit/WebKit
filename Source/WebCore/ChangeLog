@@ -1,3 +1,33 @@
+2018-02-07  Per Arne Vollan  <pvollan@apple.com>
+
+        Assert that NSApp is not running in the WebProcess.
+        https://bugs.webkit.org/show_bug.cgi?id=182553
+        <rdar://problem/37316144>
+        
+        Reviewed by Simon Fraser.
+
+        In WebCore, there are a few places where NSApp is referenced. Since the WebContent process
+        is no longer using the NSApplication run loop, and NSApp is no longer guaranteed to be
+        valid, we should make sure that the NSApp is not referenced by the WebContent process or
+        the Network process, by asserting that the NSApplication event loop is running when NSApp
+        is referenced. It is still ok for the UIProcess to reference NSApp. Adding these assert
+        will help catch references to NSApp when the NSApplication run loop is not used.
+        Also, do not post a fake mouse event in PasteBoard::setDragImage when the NSApplication
+        run loop is not running, since this is only relevant in WK1.
+
+        No new tests, covered by existing tests. 
+
+        * page/mac/EventHandlerMac.mm:
+        (WebCore::lastEventIsMouseUp):
+        (WebCore::EventHandler::sendFakeEventsAfterWidgetTracking):
+        * platform/mac/PasteboardMac.mm:
+        (WebCore::Pasteboard::setDragImage):
+        * platform/mac/WebVideoFullscreenController.mm:
+        (-[WebVideoFullscreenController windowDidLoad]):
+        (-[WebVideoFullscreenController updateMenuAndDockForFullscreen]):
+        * platform/mac/WebWindowAnimation.mm:
+        (WebCore::WebWindowAnimationDurationFromDuration):
+
 2018-02-07  Youenn Fablet  <youenn@apple.com>
 
         ASSERTION FAILED: m_timeOrigin in Performance::Performance()
