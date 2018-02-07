@@ -1014,7 +1014,6 @@ Bug(WPE) perf/accessibility-title-ui-element.html [ Failure ]
 webkit.org/b/177873 http/wpt/beacon/beacon-async-error-logging.html [ Failure ]
 
 webkit.org/b/182050 http/wpt/fetch/response-opaque-clone.html [ Failure ]
-webkit.org/b/177872 http/wpt/fetch/response-status-text.html [ Failure ]
 webkit.org/b/180749 http/wpt/offscreen-canvas/transferToImageBitmap-webgl.html [ ImageOnlyFailure ]
 webkit.org/b/168543 http/wpt/resource-timing/rt-nextHopProtocol.html [ Failure ]
 webkit.org/b/168543 http/wpt/resource-timing/rt-nextHopProtocol.worker.html [ Failure ]

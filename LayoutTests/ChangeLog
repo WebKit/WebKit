@@ -1,5 +1,14 @@
 2018-02-07  Ms2ger  <Ms2ger@igalia.com>
 
+        [WPE] Enable http/wpt/fetch/response-status-text.html
+        https://bugs.webkit.org/show_bug.cgi?id=177872
+
+        Unreviewed test gardening.
+
+        * platform/wpe/TestExpectations: the test appears to pass since r227900.
+
+2018-02-07  Ms2ger  <Ms2ger@igalia.com>
+
         [WPE] Test gardening
         https://bugs.webkit.org/show_bug.cgi?id=182568
 
