@@ -1,3 +1,16 @@
+2018-02-07  Brent Fulgham  <bfulgham@apple.com>
+
+        Improve NetworkResourceLoader logging to capture redirect cases
+        https://bugs.webkit.org/show_bug.cgi?id=182573
+        <rdar://problem/37316714>
+
+        Reviewed by Chris Dumez.
+
+        Add logging for cookie partitioning or blocking during redirects.
+
+        * NetworkProcess/cocoa/NetworkDataTaskCocoa.mm:
+        (WebKit::NetworkDataTaskCocoa::willPerformHTTPRedirection):
+
 2018-02-07  John Wilander  <wilander@apple.com>
 
         Restrict Referer to just the origin for third parties in private mode and third parties ITP blocks cookies for in regular mode
