@@ -281,7 +281,7 @@ WI.incrementElementValue = function(element, delta)
         return false;
 
     let range = selection.getRangeAt(0);
-    if (!range.commonAncestorContainer.isSelfOrDescendant(element))
+    if (!element.contains(range.commonAncestorContainer))
         return false;
 
     let wordRange = range.startContainer.rangeOfWord(range.startOffset, WI.EditingSupport.StyleValueDelimiters, element);

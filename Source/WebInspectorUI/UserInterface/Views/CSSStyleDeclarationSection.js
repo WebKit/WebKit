@@ -707,7 +707,7 @@ WI.CSSStyleDeclarationSection = class CSSStyleDeclarationSection extends WI.Obje
             return;
         }
 
-        if (event.relatedTarget && event.relatedTarget.isDescendant(this.element)) {
+        if (event.relatedTarget && this.element.contains(event.relatedTarget)) {
             this._editorActive = true;
             this.focus();
         }

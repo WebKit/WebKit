@@ -42,7 +42,7 @@ WI.ShaderProgramTreeElement = class ShaderProgramTreeElement extends WI.GeneralT
 
     selectOnMouseDown(event)
     {
-        if (event.target.isSelfOrDescendant(this._statusElement))
+        if (this._statusElement.contains(event.target))
             return;
 
         super.selectOnMouseDown(event);

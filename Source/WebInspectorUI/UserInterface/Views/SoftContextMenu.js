@@ -216,7 +216,7 @@ WI.SoftContextMenu = class SoftContextMenu
     _menuItemMouseOut(event)
     {
         const shouldUnhighlight = !this._subMenu || !event.relatedTarget ||
-            this._contextMenuElement.isSelfOrAncestor(event.relatedTarget) ||
+            this._contextMenuElement.contains(event.relatedTarget) ||
             event.relatedTarget.classList.contains("soft-context-menu-glass-pane");
 
         if (shouldUnhighlight)

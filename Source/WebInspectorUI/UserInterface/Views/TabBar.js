@@ -99,7 +99,7 @@ WI.TabBar = class TabBar extends WI.View
         var nextSibling = this._tabBarItems[index + 1];
         let nextSiblingElement = nextSibling ? nextSibling.element : this._tabBarItems.lastValue.element;
 
-        if (this.element.isAncestor(nextSiblingElement))
+        if (this.element.contains(nextSiblingElement))
             this.element.insertBefore(tabBarItem.element, nextSiblingElement);
         else
             this.element.appendChild(tabBarItem.element);

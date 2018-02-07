@@ -139,7 +139,7 @@ WI.DetailsSection = class DetailsSection extends WI.Object
 
     _headerElementClicked(event)
     {
-        if (event.target.isSelfOrDescendant(this._optionsElement))
+        if (this._optionsElement && this._optionsElement.contains(event.target))
             return;
 
         var collapsed = this.collapsed;

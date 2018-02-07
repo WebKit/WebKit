@@ -305,7 +305,8 @@ WI.BoxModelDetailsSectionRow = class BoxModelDetailsSectionRow extends WI.Detail
             return;
 
         var selectionRange = selection.getRangeAt(0);
-        if (!selectionRange.commonAncestorContainer.isSelfOrDescendant(element))
+        console.assert(selectionRange, "We should have a range if we are handling a key down event");
+        if (!element.contains(selectionRange.commonAncestorContainer))
             return;
 
         var originalValue = element.textContent;

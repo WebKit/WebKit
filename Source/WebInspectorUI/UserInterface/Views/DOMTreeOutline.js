@@ -328,7 +328,7 @@ WI.DOMTreeOutline = class DOMTreeOutline extends WI.TreeOutline
     _onmouseout(event)
     {
         var nodeUnderMouse = document.elementFromPoint(event.pageX, event.pageY);
-        if (nodeUnderMouse && nodeUnderMouse.isDescendant(this.element))
+        if (nodeUnderMouse && this.element.contains(nodeUnderMouse))
             return;
 
         if (this._previousHoveredElement) {

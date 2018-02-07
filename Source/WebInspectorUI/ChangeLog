@@ -1,5 +1,44 @@
 2018-02-06  Devin Rousso  <webkit@devinrousso.com>
 
+        Web Inspector: Replace isAncestor and isDescendant with native DOM contains method
+        https://bugs.webkit.org/show_bug.cgi?id=182069
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Base/Main.js:
+        (WI.restoreFocusFromElement):
+        (WI._mouseDown):
+        (WI._focusedContentBrowser):
+        (WI._focusedContentView):
+        * UserInterface/Base/Utilities.js:
+        (Node.prototype.traverseNextNode):
+        (Node.prototype.isAncestor): Deleted.
+        (Node.prototype.isDescendant): Deleted.
+        (Node.prototype.isSelfOrAncestor): Deleted.
+        (Node.prototype.isSelfOrDescendant): Deleted.
+        * UserInterface/Views/BoxModelDetailsSectionRow.js:
+        (WI.BoxModelDetailsSectionRow.prototype._handleKeyDown):
+        * UserInterface/Views/CSSStyleDeclarationSection.js:
+        (WI.CSSStyleDeclarationSection.prototype._handleSelectorPaste):
+        * UserInterface/Views/DOMTreeOutline.js:
+        (WI.DOMTreeOutline.prototype._onmouseout):
+        * UserInterface/Views/DetailsSection.js:
+        (WI.DetailsSection.prototype._headerElementClicked):
+        * UserInterface/Views/EditingSupport.js:
+        (WI.incrementElementValue):
+        * UserInterface/Views/LogContentView.js:
+        (WI.LogContentView.prototype._handleContextMenuEvent):
+        * UserInterface/Views/ShaderProgramTreeElement.js:
+        (WI.ShaderProgramTreeElement.prototype.selectOnMouseDown):
+        * UserInterface/Views/SoftContextMenu.js:
+        (WI.SoftContextMenu.prototype._menuItemMouseOut):
+        * UserInterface/Views/SpreadsheetCSSStyleDeclarationEditor.js:
+        (WI.SpreadsheetCSSStyleDeclarationEditor.prototype.initialLayout):
+        * UserInterface/Views/TabBar.js:
+        (WI.TabBar.prototype.insertTabBarItem):
+
+2018-02-06  Devin Rousso  <webkit@devinrousso.com>
+
         Web Inspector: Elements tab should have "Jump to Layer" functionality
         https://bugs.webkit.org/show_bug.cgi?id=181800
 
