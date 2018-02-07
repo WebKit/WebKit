@@ -25,10 +25,10 @@
 
 #import "config.h"
 
-#import "runtime/ObjectPrototype.h"
 #import "JSDOMBinding.h"
 #import "ObjCRuntimeObject.h"
 #import "objc_instance.h"
+#import <JavaScriptCore/ObjectPrototype.h>
 
 namespace JSC {
 namespace Bindings {

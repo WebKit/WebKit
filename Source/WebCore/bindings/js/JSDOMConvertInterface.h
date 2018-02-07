@@ -27,7 +27,7 @@
 
 #include "IDLTypes.h"
 #include "JSDOMConvertBase.h"
-#include <runtime/Error.h>
+#include <JavaScriptCore/Error.h>
 
 namespace WebCore {
 

@@ -48,8 +48,8 @@
 #include "WorkerReportingProxy.h"
 #include "WorkerScriptLoader.h"
 #include "WorkerThread.h"
-#include <inspector/ScriptArguments.h>
-#include <inspector/ScriptCallStack.h>
+#include <JavaScriptCore/ScriptArguments.h>
+#include <JavaScriptCore/ScriptCallStack.h>
 
 namespace WebCore {
 using namespace Inspector;

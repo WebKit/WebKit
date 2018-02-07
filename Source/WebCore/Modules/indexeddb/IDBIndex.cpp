@@ -36,8 +36,7 @@
 #include "IDBRequest.h"
 #include "IDBTransaction.h"
 #include "Logging.h"
-#include <heap/HeapInlines.h>
-
+#include <JavaScriptCore/HeapInlines.h>
 
 namespace WebCore {
 using namespace JSC;

@@ -28,7 +28,7 @@
 
 #include "Element.h"
 #include "NodeRareData.h"
-#include <runtime/Identifier.h>
+#include <JavaScriptCore/Identifier.h>
 
 namespace WebCore {
 

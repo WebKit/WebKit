@@ -46,10 +46,9 @@
 #include "SerializedScriptValue.h"
 #include "SharedBuffer.h"
 #include "ThreadSafeDataBuffer.h"
-#include <runtime/ArrayBuffer.h>
-#include <runtime/DateInstance.h>
-#include <runtime/ObjectConstructor.h>
-
+#include <JavaScriptCore/ArrayBuffer.h>
+#include <JavaScriptCore/DateInstance.h>
+#include <JavaScriptCore/ObjectConstructor.h>
 
 namespace WebCore {
 using namespace JSC;

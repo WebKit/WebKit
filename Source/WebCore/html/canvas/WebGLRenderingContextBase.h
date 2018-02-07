@@ -42,8 +42,8 @@
 #include "WebGLStateTracker.h"
 #include "WebGLTexture.h"
 #include "WebGLVertexArrayObjectOES.h"
+#include <JavaScriptCore/ConsoleTypes.h>
 #include <memory>
-#include <runtime/ConsoleTypes.h>
 
 #if ENABLE(WEBGL2)
 #include "WebGLVertexArrayObject.h"

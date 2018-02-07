@@ -42,6 +42,7 @@
 #import "WebTypesInternal.h"
 #import "WebView.h"
 #import <Foundation/NSURLResponse.h>
+#import <JavaScriptCore/RegularExpression.h>
 #import <WebCore/Document.h>
 #import <WebCore/DocumentLoader.h>
 #import <WebCore/Editor.h>
@@ -61,7 +62,6 @@
 #import <WebCore/ScriptDisallowedScope.h>
 #import <WebCore/TextResourceDecoder.h>
 #import <WebKitLegacy/DOMHTMLInputElement.h>
-#import <yarr/RegularExpression.h>
 #import <wtf/Assertions.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/StdLibExtras.h>

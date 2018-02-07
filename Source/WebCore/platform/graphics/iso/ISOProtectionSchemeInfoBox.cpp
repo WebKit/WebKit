@@ -28,7 +28,7 @@
 
 #include "ISOSchemeInformationBox.h"
 #include "ISOSchemeTypeBox.h"
-#include <runtime/DataView.h>
+#include <JavaScriptCore/DataView.h>
 
 using JSC::DataView;
 

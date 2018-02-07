@@ -29,7 +29,7 @@
 
 #include "DOMWrapperWorld.h"
 #include "JSMessageChannel.h"
-#include <heap/SlotVisitorInlines.h>
+#include <JavaScriptCore/SlotVisitorInlines.h>
 
 namespace WebCore {
 

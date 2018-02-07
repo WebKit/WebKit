@@ -29,11 +29,11 @@
 #if ENABLE(RESOURCE_USAGE)
 
 #include <JavaScriptCore/GCActivityCallback.h>
-#include <heap/Heap.h>
+#include <JavaScriptCore/Heap.h>
+#include <JavaScriptCore/VM.h>
 #include <mach/mach.h>
 #include <mach/vm_statistics.h>
 #include <pal/spi/cocoa/MachVMSPI.h>
-#include <runtime/VM.h>
 
 namespace WebCore {
 

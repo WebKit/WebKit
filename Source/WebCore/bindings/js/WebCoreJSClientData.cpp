@@ -28,15 +28,14 @@
 
 #include "DOMGCOutputConstraint.h"
 #include "JSDOMBinding.h"
-#include <heap/FastMallocAlignedMemoryAllocator.h>
-#include <heap/HeapInlines.h>
-#include <heap/MarkingConstraint.h>
-#include <heap/SubspaceInlines.h>
-#include <runtime/JSDestructibleObjectHeapCellType.h>
-#include <runtime/JSSegmentedVariableObjectHeapCellType.h>
-#include <runtime/VM.h>
+#include <JavaScriptCore/FastMallocAlignedMemoryAllocator.h>
+#include <JavaScriptCore/HeapInlines.h>
+#include <JavaScriptCore/JSDestructibleObjectHeapCellType.h>
+#include <JavaScriptCore/JSSegmentedVariableObjectHeapCellType.h>
+#include <JavaScriptCore/MarkingConstraint.h>
+#include <JavaScriptCore/SubspaceInlines.h>
+#include <JavaScriptCore/VM.h>
 #include <wtf/MainThread.h>
-
 
 namespace WebCore {
 using namespace JSC;

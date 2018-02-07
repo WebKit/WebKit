@@ -28,8 +28,8 @@
 
 #if ENABLE(APPLE_PAY)
 
+#import <JavaScriptCore/JSONObject.h>
 #import <pal/spi/cocoa/PassKitSPI.h>
-#import <runtime/JSONObject.h>
 #import <wtf/SoftLinking.h>
 
 #if PLATFORM(MAC)

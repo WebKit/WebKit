@@ -31,6 +31,7 @@
 #import "WebLocalizableStringsInternal.h"
 #import "WebPlatformStrategies.h"
 #import "WebViewPrivate.h"
+#import <JavaScriptCore/InitializeThreading.h>
 #import <WebCore/BreakLines.h>
 #import <WebCore/PathUtilities.h>
 #import <WebCore/ResourceRequest.h>
@@ -38,8 +39,6 @@
 #import <WebCore/WebBackgroundTaskController.h>
 #import <WebCore/WebCoreThreadSystemInterface.h>
 #import <wtf/spi/darwin/dyldSPI.h>
-
-#import <runtime/InitializeThreading.h>
 
 using namespace WebCore;
 

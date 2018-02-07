@@ -34,8 +34,8 @@
 
 #include "ScriptState.h"
 #include "WorkerGlobalScope.h"
-#include <inspector/InjectedScript.h>
-#include <inspector/InjectedScriptManager.h>
+#include <JavaScriptCore/InjectedScript.h>
+#include <JavaScriptCore/InjectedScriptManager.h>
 
 namespace WebCore {
 

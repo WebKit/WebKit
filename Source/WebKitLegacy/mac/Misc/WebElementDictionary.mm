@@ -36,6 +36,7 @@
 #import "WebTypesInternal.h"
 #import "WebView.h"
 #import "WebViewPrivate.h"
+#import <JavaScriptCore/InitializeThreading.h>
 #import <WebCore/DragController.h>
 #import <WebCore/Frame.h>
 #import <WebCore/HitTestResult.h>
@@ -43,7 +44,6 @@
 #import <WebCore/WebCoreObjCExtras.h>
 #import <WebKitLegacy/DOMCore.h>
 #import <WebKitLegacy/DOMExtensions.h>
-#import <runtime/InitializeThreading.h>
 #import <wtf/MainThread.h>
 #import <wtf/RunLoop.h>
 

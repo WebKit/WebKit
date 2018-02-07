@@ -28,9 +28,9 @@
 
 #include "JSDOMConvertBufferSource.h"
 #include "JSDOMWrapperCache.h"
-#include <heap/HeapInlines.h>
-#include <runtime/IdentifierInlines.h>
-#include <runtime/JSObjectInlines.h>
+#include <JavaScriptCore/HeapInlines.h>
+#include <JavaScriptCore/IdentifierInlines.h>
+#include <JavaScriptCore/JSObjectInlines.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/WTFString.h>
 

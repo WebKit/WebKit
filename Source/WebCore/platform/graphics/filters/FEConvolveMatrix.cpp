@@ -25,11 +25,10 @@
 #include "FEConvolveMatrix.h"
 
 #include "Filter.h"
-#include <wtf/text/TextStream.h>
-
-#include <runtime/Uint8ClampedArray.h>
+#include <JavaScriptCore/Uint8ClampedArray.h>
 #include <wtf/ParallelJobs.h>
 #include <wtf/WorkQueue.h>
+#include <wtf/text/TextStream.h>
 
 namespace WebCore {
 

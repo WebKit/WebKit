@@ -28,10 +28,10 @@
 
 #if ENABLE(RESOURCE_USAGE) && OS(LINUX)
 
+#include <JavaScriptCore/GCActivityCallback.h>
+#include <JavaScriptCore/VM.h>
 #include <errno.h>
 #include <fcntl.h>
-#include <heap/GCActivityCallback.h>
-#include <runtime/VM.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/stat.h>

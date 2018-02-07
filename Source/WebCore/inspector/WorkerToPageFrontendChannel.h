@@ -28,7 +28,7 @@
 #include "WorkerDebuggerProxy.h"
 #include "WorkerGlobalScope.h"
 #include "WorkerThread.h"
-#include <inspector/InspectorFrontendChannel.h>
+#include <JavaScriptCore/InspectorFrontendChannel.h>
 
 namespace WebCore {
 

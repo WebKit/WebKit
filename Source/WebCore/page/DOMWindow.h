@@ -35,7 +35,7 @@
 #include "ScrollToOptions.h"
 #include "ScrollTypes.h"
 #include "Supplementable.h"
-#include <heap/HandleTypes.h>
+#include <JavaScriptCore/HandleTypes.h>
 #include <wtf/Function.h>
 #include <wtf/HashSet.h>
 #include <wtf/WeakPtr.h>

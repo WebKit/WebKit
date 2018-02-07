@@ -33,8 +33,7 @@
 #include "JSDOMConvertNullable.h"
 #include "JSDOMConvertStrings.h"
 #include "SerializedScriptValue.h"
-#include <runtime/JSFunction.h>
-
+#include <JavaScriptCore/JSFunction.h>
 
 namespace WebCore {
 using namespace JSC;

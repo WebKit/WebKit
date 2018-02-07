@@ -26,10 +26,9 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import <JavaScriptCore/InspectorFrontendChannel.h>
 #import <WebCore/InspectorClient.h>
-
 #import <WebCore/InspectorFrontendClientLocal.h>
-#import <inspector/InspectorFrontendChannel.h>
 #import <wtf/Forward.h>
 #import <wtf/HashMap.h>
 #import <wtf/RetainPtr.h>

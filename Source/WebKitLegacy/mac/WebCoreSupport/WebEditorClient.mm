@@ -53,6 +53,7 @@
 #import "WebNSURLExtras.h"
 #import "WebResourceInternal.h"
 #import "WebViewInternal.h"
+#import <JavaScriptCore/InitializeThreading.h>
 #import <WebCore/ArchiveResource.h>
 #import <WebCore/Document.h>
 #import <WebCore/DocumentFragment.h>
@@ -79,7 +80,6 @@
 #import <WebCore/WebContentReader.h>
 #import <WebCore/WebCoreObjCExtras.h>
 #import <pal/spi/mac/NSSpellCheckerSPI.h>
-#import <runtime/InitializeThreading.h>
 #import <wtf/MainThread.h>
 #import <wtf/RefPtr.h>
 #import <wtf/RunLoop.h>

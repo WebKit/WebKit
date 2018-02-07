@@ -39,9 +39,8 @@
 #include "JSMainThreadExecState.h"
 #include "JSMainThreadExecStateInstrumentation.h"
 #include "ScriptExecutionContext.h"
-#include <heap/WeakInlines.h>
-#include <runtime/JSLock.h>
-
+#include <JavaScriptCore/JSLock.h>
+#include <JavaScriptCore/WeakInlines.h>
 
 namespace WebCore {
 using namespace JSC;

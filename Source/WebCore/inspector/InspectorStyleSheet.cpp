@@ -57,9 +57,9 @@
 #include "StyleRuleImport.h"
 #include "StyleSheetContents.h"
 #include "StyleSheetList.h"
-#include <inspector/ContentSearchUtilities.h>
+#include <JavaScriptCore/ContentSearchUtilities.h>
+#include <JavaScriptCore/RegularExpression.h>
 #include <wtf/text/StringBuilder.h>
-#include <yarr/RegularExpression.h>
 
 using JSON::ArrayOf;
 using WebCore::RuleSourceDataList;

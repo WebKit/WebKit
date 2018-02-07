@@ -27,9 +27,9 @@
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
 
-#include "LegacyCDM.h"
 #include "ExceptionOr.h"
-#include <runtime/Uint8Array.h>
+#include "LegacyCDM.h"
+#include <JavaScriptCore/Uint8Array.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {

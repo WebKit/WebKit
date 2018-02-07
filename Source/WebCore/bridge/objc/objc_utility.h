@@ -29,8 +29,8 @@
 #include <CoreFoundation/CoreFoundation.h>
 
 #include "objc_header.h"
-#include <runtime/Error.h>
-#include <runtime/JSObject.h>
+#include <JavaScriptCore/Error.h>
+#include <JavaScriptCore/JSObject.h>
 
 OBJC_CLASS NSString;
 

@@ -28,10 +28,9 @@
 
 #include "CustomEvent.h"
 #include "DOMWrapperWorld.h"
-#include <runtime/JSCInlines.h>
-#include <runtime/JSCJSValue.h>
-#include <runtime/Structure.h>
-
+#include <JavaScriptCore/JSCInlines.h>
+#include <JavaScriptCore/JSCJSValue.h>
+#include <JavaScriptCore/Structure.h>
 
 namespace WebCore {
 using namespace JSC;

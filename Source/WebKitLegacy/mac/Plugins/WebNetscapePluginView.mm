@@ -51,6 +51,8 @@
 #import "WebUIDelegatePrivate.h"
 #import "WebViewInternal.h"
 #import <Carbon/Carbon.h>
+#import <JavaScriptCore/InitializeThreading.h>
+#import <JavaScriptCore/JSLock.h>
 #import <WebCore/CommonVM.h>
 #import <WebCore/CookieJar.h>
 #import <WebCore/DocumentLoader.h>
@@ -74,8 +76,6 @@
 #import <objc/runtime.h>
 #import <pal/spi/cg/CoreGraphicsSPI.h>
 #import <pal/spi/mac/QuickDrawSPI.h>
-#import <runtime/InitializeThreading.h>
-#import <runtime/JSLock.h>
 #import <wtf/Assertions.h>
 #import <wtf/MainThread.h>
 #import <wtf/RunLoop.h>

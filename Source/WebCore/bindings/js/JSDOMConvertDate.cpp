@@ -22,11 +22,10 @@
 #include "config.h"
 #include "JSDOMConvertDate.h"
 
-#include <heap/HeapInlines.h>
-#include <runtime/DateInstance.h>
-#include <runtime/JSCJSValueInlines.h>
-#include <runtime/JSGlobalObject.h>
-
+#include <JavaScriptCore/DateInstance.h>
+#include <JavaScriptCore/HeapInlines.h>
+#include <JavaScriptCore/JSCJSValueInlines.h>
+#include <JavaScriptCore/JSGlobalObject.h>
 
 namespace WebCore {
 using namespace JSC;

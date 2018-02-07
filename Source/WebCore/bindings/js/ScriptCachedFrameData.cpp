@@ -40,10 +40,9 @@
 #include "PageConsoleClient.h"
 #include "PageGroup.h"
 #include "ScriptController.h"
-#include <heap/StrongInlines.h>
-#include <runtime/JSLock.h>
-#include <runtime/WeakGCMapInlines.h>
-
+#include <JavaScriptCore/JSLock.h>
+#include <JavaScriptCore/StrongInlines.h>
+#include <JavaScriptCore/WeakGCMapInlines.h>
 
 namespace WebCore {
 using namespace JSC;

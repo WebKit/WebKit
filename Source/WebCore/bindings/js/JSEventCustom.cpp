@@ -35,7 +35,7 @@
 #include "EventInterfaces.h"
 #include "JSDOMBinding.h"
 #include "JSDataTransfer.h"
-#include <runtime/JSLock.h>
+#include <JavaScriptCore/JSLock.h>
 #include <wtf/text/AtomicString.h>
 
 

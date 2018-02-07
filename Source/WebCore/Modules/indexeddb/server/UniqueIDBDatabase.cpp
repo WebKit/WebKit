@@ -42,14 +42,13 @@
 #include "Logging.h"
 #include "SerializedScriptValue.h"
 #include "UniqueIDBDatabaseConnection.h"
-#include <heap/HeapInlines.h>
-#include <heap/StrongInlines.h>
-#include <runtime/AuxiliaryBarrierInlines.h>
-#include <runtime/StructureInlines.h>
+#include <JavaScriptCore/AuxiliaryBarrierInlines.h>
+#include <JavaScriptCore/HeapInlines.h>
+#include <JavaScriptCore/StrongInlines.h>
+#include <JavaScriptCore/StructureInlines.h>
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/Scope.h>
-
 
 namespace WebCore {
 using namespace JSC;

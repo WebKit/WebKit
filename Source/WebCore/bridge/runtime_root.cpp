@@ -28,10 +28,10 @@
 
 #include "BridgeJSC.h"
 #include "runtime_object.h"
-#include <heap/StrongInlines.h>
-#include <heap/Weak.h>
-#include <heap/WeakInlines.h>
-#include <runtime/JSGlobalObject.h>
+#include <JavaScriptCore/JSGlobalObject.h>
+#include <JavaScriptCore/StrongInlines.h>
+#include <JavaScriptCore/Weak.h>
+#include <JavaScriptCore/WeakInlines.h>
 #include <wtf/HashSet.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/Ref.h>

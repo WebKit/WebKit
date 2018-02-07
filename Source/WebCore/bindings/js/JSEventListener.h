@@ -21,9 +21,9 @@
 
 #include "DOMWrapperWorld.h"
 #include "EventListener.h"
-#include <heap/StrongInlines.h>
-#include <heap/Weak.h>
-#include <heap/WeakInlines.h>
+#include <JavaScriptCore/StrongInlines.h>
+#include <JavaScriptCore/Weak.h>
+#include <JavaScriptCore/WeakInlines.h>
 #include <wtf/Ref.h>
 #include <wtf/TypeCasts.h>
 #include <wtf/text/TextPosition.h>

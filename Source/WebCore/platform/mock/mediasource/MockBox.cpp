@@ -28,12 +28,12 @@
 
 #if ENABLE(MEDIA_SOURCE)
 
+#include <JavaScriptCore/ArrayBuffer.h>
+#include <JavaScriptCore/DataView.h>
 #include <JavaScriptCore/HeapInlines.h>
+#include <JavaScriptCore/Int8Array.h>
 #include <JavaScriptCore/JSCJSValueInlines.h>
 #include <JavaScriptCore/TypedArrayInlines.h>
-#include <runtime/ArrayBuffer.h>
-#include <runtime/DataView.h>
-#include <runtime/Int8Array.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/StringBuilder.h>
 

@@ -108,10 +108,10 @@
 #include "markup.h"
 #include "npruntime_impl.h"
 #include "runtime_root.h"
+#include <JavaScriptCore/RegularExpression.h>
 #include <wtf/RefCountedLeakCounter.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/StringBuilder.h>
-#include <yarr/RegularExpression.h>
 
 #if PLATFORM(IOS)
 #include "WKContentObservation.h"

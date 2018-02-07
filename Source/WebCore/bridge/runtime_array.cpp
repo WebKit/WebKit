@@ -26,10 +26,10 @@
 #include "config.h"
 #include "runtime_array.h"
 
-#include <runtime/ArrayPrototype.h>
-#include <runtime/Error.h>
-#include <runtime/PropertyNameArray.h>
 #include "JSDOMBinding.h"
+#include <JavaScriptCore/ArrayPrototype.h>
+#include <JavaScriptCore/Error.h>
+#include <JavaScriptCore/PropertyNameArray.h>
 
 using namespace WebCore;
 

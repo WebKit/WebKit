@@ -36,9 +36,8 @@
 #include "JSDOMWindowProperties.h"
 #include "JSEventTarget.h"
 #include "ScriptController.h"
-#include <heap/StrongInlines.h>
-#include <runtime/JSObject.h>
-
+#include <JavaScriptCore/JSObject.h>
+#include <JavaScriptCore/StrongInlines.h>
 
 namespace WebCore {
 using namespace JSC;

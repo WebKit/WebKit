@@ -24,7 +24,7 @@
 #include "FrameLoaderTypes.h"
 #include "JSDOMWindowProxy.h"
 #include <JavaScriptCore/JSBase.h>
-#include <heap/Strong.h>
+#include <JavaScriptCore/Strong.h>
 #include <wtf/Forward.h>
 #include <wtf/RefPtr.h>
 #include <wtf/text/TextPosition.h>

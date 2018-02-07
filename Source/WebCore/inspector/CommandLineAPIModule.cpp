@@ -29,8 +29,8 @@
 #include "CommandLineAPIModuleSource.h"
 #include "JSDOMGlobalObject.h"
 #include "WebInjectedScriptManager.h"
-#include <heap/HeapInlines.h>
-#include <inspector/InjectedScript.h>
+#include <JavaScriptCore/HeapInlines.h>
+#include <JavaScriptCore/InjectedScript.h>
 
 namespace WebCore {
 

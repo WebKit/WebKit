@@ -26,7 +26,7 @@
 #pragma once
 
 #include "WorkerGlobalScope.h"
-#include <runtime/ConsoleClient.h>
+#include <JavaScriptCore/ConsoleClient.h>
 #include <wtf/Forward.h>
 
 namespace JSC {

@@ -29,19 +29,19 @@
 
 #include "NP_jsobject.h"
 
-#include "c_utility.h"
-#include "c_instance.h"
 #include "IdentifierRep.h"
 #include "JSDOMBinding.h"
+#include "c_instance.h"
+#include "c_utility.h"
 #include "npruntime_priv.h"
 #include "runtime_root.h"
-#include <runtime/CatchScope.h>
-#include <runtime/Error.h>
-#include <runtime/JSGlobalObject.h>
-#include <runtime/JSLock.h>
-#include <runtime/PropertyNameArray.h>
-#include <parser/SourceCode.h>
-#include <runtime/Completion.h>
+#include <JavaScriptCore/CatchScope.h>
+#include <JavaScriptCore/Completion.h>
+#include <JavaScriptCore/Error.h>
+#include <JavaScriptCore/JSGlobalObject.h>
+#include <JavaScriptCore/JSLock.h>
+#include <JavaScriptCore/PropertyNameArray.h>
+#include <JavaScriptCore/SourceCode.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/WTFString.h>
 

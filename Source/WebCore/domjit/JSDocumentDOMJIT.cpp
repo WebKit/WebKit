@@ -35,9 +35,8 @@
 #include "JSDOMWrapper.h"
 #include "JSElement.h"
 #include "JSHTMLElement.h"
-#include <jit/Snippet.h>
-#include <jit/SnippetParams.h>
-
+#include <JavaScriptCore/Snippet.h>
+#include <JavaScriptCore/SnippetParams.h>
 
 namespace WebCore {
 using namespace JSC;

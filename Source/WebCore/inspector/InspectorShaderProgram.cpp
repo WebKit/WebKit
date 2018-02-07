@@ -35,7 +35,7 @@
 #include "WebGLProgram.h"
 #include "WebGLRenderingContextBase.h"
 #include "WebGLShader.h"
-#include <inspector/IdentifiersFactory.h>
+#include <JavaScriptCore/IdentifiersFactory.h>
 
 namespace WebCore {
 

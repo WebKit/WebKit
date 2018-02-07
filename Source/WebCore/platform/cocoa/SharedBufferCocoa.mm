@@ -27,7 +27,7 @@
 #include "SharedBuffer.h"
 
 #include "WebCoreObjCExtras.h"
-#include <runtime/InitializeThreading.h>
+#include <JavaScriptCore/InitializeThreading.h>
 #include <string.h>
 #include <wtf/MainThread.h>
 

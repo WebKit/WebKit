@@ -36,7 +36,7 @@
 #include "HTTPHeaderValues.h"
 #include "HTTPParsers.h"
 #include "ReadableStreamSource.h"
-#include <runtime/ArrayBufferView.h>
+#include <JavaScriptCore/ArrayBufferView.h>
 
 namespace WebCore {
 

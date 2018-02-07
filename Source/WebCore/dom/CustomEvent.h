@@ -27,7 +27,7 @@
 
 #include "Event.h"
 #include "SerializedScriptValue.h"
-#include <bindings/ScriptValue.h>
+#include <JavaScriptCore/ScriptValue.h>
 
 namespace WebCore {
 

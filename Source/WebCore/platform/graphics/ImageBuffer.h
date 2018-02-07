@@ -31,11 +31,11 @@
 #include "ColorSpace.h"
 #include "GraphicsTypes.h"
 #include "GraphicsTypes3D.h"
-#include "IntSize.h"
 #include "ImageBufferData.h"
+#include "IntSize.h"
 #include "PlatformLayer.h"
+#include <JavaScriptCore/Uint8ClampedArray.h>
 #include <memory>
-#include <runtime/Uint8ClampedArray.h>
 #include <wtf/Forward.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>

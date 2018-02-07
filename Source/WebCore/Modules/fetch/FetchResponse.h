@@ -32,7 +32,7 @@
 #include "FetchHeaders.h"
 #include "ReadableStreamSink.h"
 #include "ResourceResponse.h"
-#include <runtime/TypedArrays.h>
+#include <JavaScriptCore/TypedArrays.h>
 
 namespace JSC {
 class ExecState;

@@ -40,10 +40,9 @@
 #include "ScriptController.h"
 #include "WorkerGlobalScope.h"
 #include "WorkerScriptController.h"
-#include <heap/StrongInlines.h>
-#include <interpreter/CallFrame.h>
-#include <runtime/JSGlobalObject.h>
-
+#include <JavaScriptCore/CallFrame.h>
+#include <JavaScriptCore/JSGlobalObject.h>
+#include <JavaScriptCore/StrongInlines.h>
 
 namespace WebCore {
 

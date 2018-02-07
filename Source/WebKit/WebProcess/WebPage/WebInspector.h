@@ -28,7 +28,7 @@
 #include "APIObject.h"
 #include "Connection.h"
 #include "MessageReceiver.h"
-#include <inspector/InspectorFrontendChannel.h>
+#include <JavaScriptCore/InspectorFrontendChannel.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/text/WTFString.h>
 

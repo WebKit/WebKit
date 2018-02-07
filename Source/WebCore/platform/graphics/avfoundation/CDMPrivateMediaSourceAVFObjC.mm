@@ -33,10 +33,11 @@
 #import "ContentType.h"
 #import "LegacyCDM.h"
 #import "MediaPlayerPrivateMediaSourceAVFObjC.h"
-#import "VideoToolboxSoftLink.h"
+#import <JavaScriptCore/RegularExpression.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/text/StringView.h>
-#import <yarr/RegularExpression.h>
+
+#import "VideoToolboxSoftLink.h"
 
 using JSC::Yarr::RegularExpression;
 

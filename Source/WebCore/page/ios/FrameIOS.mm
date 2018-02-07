@@ -66,7 +66,7 @@
 #import "VisiblePosition.h"
 #import "VisibleUnits.h"
 #import "WAKWindow.h"
-#import <runtime/JSLock.h>
+#import <JavaScriptCore/JSLock.h>
 #import <wtf/BlockObjCExceptions.h>
 #import <wtf/text/TextStream.h>
 

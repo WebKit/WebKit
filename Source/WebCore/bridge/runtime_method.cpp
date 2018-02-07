@@ -30,8 +30,8 @@
 #include "JSHTMLElement.h"
 #include "JSPluginElementFunctions.h"
 #include "runtime_object.h"
-#include <runtime/Error.h>
-#include <runtime/FunctionPrototype.h>
+#include <JavaScriptCore/Error.h>
+#include <JavaScriptCore/FunctionPrototype.h>
 
 using namespace WebCore;
 

@@ -32,8 +32,7 @@
 #include "IDBKey.h"
 #include "IDBKeyData.h"
 #include "ScriptExecutionContext.h"
-#include <runtime/JSCJSValue.h>
-
+#include <JavaScriptCore/JSCJSValue.h>
 
 namespace WebCore {
 using namespace JSC;

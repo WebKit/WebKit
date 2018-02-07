@@ -26,7 +26,7 @@
 
 #pragma once
 
-#include <inspector/ScriptDebugServer.h>
+#include <JavaScriptCore/ScriptDebugServer.h>
 
 namespace WebCore {
 

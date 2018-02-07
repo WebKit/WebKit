@@ -1,3 +1,26 @@
+2018-02-06  Don Olmstead  <don.olmstead@sony.com>
+
+        Remove WebCore/ForwardingHeaders directory
+        https://bugs.webkit.org/show_bug.cgi?id=182347
+
+        Reviewed by Keith Miller.
+
+        * Platform/mac/StringUtilities.mm:
+        * Shared/Cocoa/WebKit2InitializeCocoa.mm:
+        * Shared/WebKit2Initialize.cpp:
+        * Shared/linux/WebMemorySamplerLinux.cpp:
+        * Shared/mac/WebMemorySampler.mac.mm:
+        * UIProcess/WebProcessPool.cpp:
+        * WebProcess/InjectedBundle/API/APIInjectedBundlePageUIClient.h:
+        * WebProcess/InjectedBundle/API/glib/WebKitConsoleMessagePrivate.h:
+        * WebProcess/Plugins/Netscape/NPRuntimeObjectMap.h:
+        * WebProcess/Plugins/Netscape/NetscapePlugin.cpp:
+        * WebProcess/Plugins/PluginProcessConnection.cpp:
+        * WebProcess/Plugins/PluginView.cpp:
+        * WebProcess/WebPage/WebInspector.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+
 2018-02-06  Chris Dumez  <cdumez@apple.com>
 
         Layout Test imported/w3c/web-platform-tests/service-workers/service-worker/fetch-waits-for-activate.https.html is a flaky failure on macOS and iOS

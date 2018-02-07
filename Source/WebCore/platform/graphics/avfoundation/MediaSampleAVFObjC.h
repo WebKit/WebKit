@@ -26,9 +26,8 @@
 #pragma once
 
 #include "MediaSample.h"
+#include <JavaScriptCore/Uint8ClampedArray.h>
 #include <pal/avfoundation/MediaTimeAVFoundation.h>
-
-#include <runtime/Uint8ClampedArray.h>
 #include <wtf/Forward.h>
 
 namespace WebCore {

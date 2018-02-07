@@ -32,8 +32,7 @@
 #include "ReadableByteStreamInternalsBuiltins.h"
 #include "ReadableStreamInternalsBuiltins.h"
 #include "WebCoreJSClientData.h"
-#include <runtime/JSCInlines.h>
-
+#include <JavaScriptCore/JSCInlines.h>
 
 namespace WebCore {
 using namespace JSC;

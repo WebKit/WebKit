@@ -29,7 +29,7 @@
 #if ENABLE(INDEXED_DATABASE)
 
 #include "IDBCursor.h"
-#include <heap/HeapInlines.h>
+#include <JavaScriptCore/HeapInlines.h>
 
 namespace WebCore {
 namespace IDBClient {

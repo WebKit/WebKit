@@ -33,8 +33,8 @@
 
 #include "Blob.h"
 #include "TextEncoding.h"
-#include <runtime/ArrayBuffer.h>
-#include <runtime/ArrayBufferView.h>
+#include <JavaScriptCore/ArrayBuffer.h>
+#include <JavaScriptCore/ArrayBufferView.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/LineEnding.h>
 

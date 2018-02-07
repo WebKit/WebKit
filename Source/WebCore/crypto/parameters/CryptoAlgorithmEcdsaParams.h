@@ -26,8 +26,8 @@
 #pragma once
 
 #include "CryptoAlgorithmParameters.h"
-#include <heap/Strong.h>
-#include <runtime/JSObject.h>
+#include <JavaScriptCore/JSObject.h>
+#include <JavaScriptCore/Strong.h>
 #include <wtf/Variant.h>
 
 #if ENABLE(SUBTLE_CRYPTO)

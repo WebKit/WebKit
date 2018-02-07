@@ -32,17 +32,17 @@
 #include "InbandTextTrackPrivateClient.h"
 #include "Logging.h"
 #include "MediaPlayer.h"
+#include <JavaScriptCore/ArrayBuffer.h>
+#include <JavaScriptCore/DataView.h>
+#include <JavaScriptCore/Int8Array.h>
 #include <pal/avfoundation/MediaTimeAVFoundation.h>
-#include <runtime/ArrayBuffer.h>
-#include <runtime/DataView.h>
-#include <runtime/Int8Array.h>
+#include <pal/cf/CoreMediaSoftLink.h>
 #include <wtf/MediaTime.h>
 #include <wtf/StringPrintStream.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/WTFString.h>
 #include <wtf/unicode/CharacterNames.h>
-#include <pal/cf/CoreMediaSoftLink.h>
 
 namespace WebCore {
 

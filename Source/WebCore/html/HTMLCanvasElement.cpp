@@ -52,9 +52,9 @@
 #include "ScriptController.h"
 #include "Settings.h"
 #include "StringAdaptors.h"
+#include <JavaScriptCore/JSCInlines.h>
+#include <JavaScriptCore/JSLock.h>
 #include <math.h>
-#include <runtime/JSCInlines.h>
-#include <runtime/JSLock.h>
 #include <wtf/RAMSize.h>
 #include <wtf/text/StringBuilder.h>
 

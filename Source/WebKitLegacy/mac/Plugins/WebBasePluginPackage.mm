@@ -33,18 +33,17 @@
 #import "WebNetscapePluginPackage.h"
 #import "WebPluginPackage.h"
 #import "WebTypesInternal.h"
+#import <JavaScriptCore/InitializeThreading.h>
 #import <algorithm>
 #import <mach-o/arch.h>
 #import <mach-o/fat.h>
 #import <mach-o/loader.h>
-#import <runtime/InitializeThreading.h>
 #import <wtf/Assertions.h>
 #import <wtf/MainThread.h>
 #import <wtf/ObjcRuntimeExtras.h>
 #import <wtf/RunLoop.h>
 #import <wtf/Vector.h>
 #import <wtf/text/CString.h>
-
 
 #define JavaCocoaPluginIdentifier   "com.apple.JavaPluginCocoa"
 #define JavaCarbonPluginIdentifier  "com.apple.JavaAppletPlugin"

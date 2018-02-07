@@ -1,4 +1,0 @@
-#ifndef WebCore_FWD_PerGlobalObjectWrapperWorld_h
-#define WebCore_FWD_PerGlobalObjectWrapperWorld_h
-#include <JavaScriptCore/PerGlobalObjectWrapperWorld.h>
-#endif

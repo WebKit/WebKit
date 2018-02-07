@@ -30,8 +30,8 @@
 #include "objc_instance.h"
 #include "runtime_array.h"
 #include "runtime_object.h"
-#include <runtime/JSGlobalObject.h>
-#include <runtime/JSLock.h>
+#include <JavaScriptCore/JSGlobalObject.h>
+#include <JavaScriptCore/JSLock.h>
 #include <wtf/Assertions.h>
 
 #if !defined(_C_LNG_LNG)

@@ -30,11 +30,10 @@
 
 #include "AudioTrackPrivate.h"
 #include "ContentType.h"
-#include "LegacyCDMSession.h"
 #include "InbandTextTrackPrivate.h"
 #include "IntRect.h"
-#include "URL.h"
 #include "LayoutRect.h"
+#include "LegacyCDMSession.h"
 #include "MediaPlayerEnums.h"
 #include "NativeImage.h"
 #include "PlatformLayer.h"
@@ -42,8 +41,9 @@
 #include "PlatformMediaSession.h"
 #include "SecurityOriginHash.h"
 #include "Timer.h"
+#include "URL.h"
 #include "VideoTrackPrivate.h"
-#include <runtime/Uint8Array.h>
+#include <JavaScriptCore/Uint8Array.h>
 #include <wtf/Forward.h>
 #include <wtf/Function.h>
 #include <wtf/HashSet.h>

@@ -39,6 +39,7 @@
 #import "WebNetscapePluginView.h"
 #import "WebResourceLoadScheduler.h"
 #import <Foundation/NSURLResponse.h>
+#import <JavaScriptCore/JSLock.h>
 #import <WebCore/CommonVM.h>
 #import <WebCore/Document.h>
 #import <WebCore/DocumentLoader.h>
@@ -51,7 +52,6 @@
 #import <WebCore/SecurityPolicy.h>
 #import <WebCore/WebCoreURLResponse.h>
 #import <pal/spi/cf/CFNetworkSPI.h>
-#import <runtime/JSLock.h>
 #import <wtf/CompletionHandler.h>
 #import <wtf/HashMap.h>
 #import <wtf/NeverDestroyed.h>

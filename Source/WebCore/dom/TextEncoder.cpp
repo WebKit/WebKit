@@ -26,8 +26,8 @@
 #include "TextEncoder.h"
 
 #include <JavaScriptCore/GenericTypedArrayViewInlines.h>
+#include <JavaScriptCore/JSCInlines.h>
 #include <JavaScriptCore/JSGenericTypedArrayViewInlines.h>
-#include <runtime/JSCInlines.h>
 
 namespace WebCore {
 

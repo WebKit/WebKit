@@ -32,8 +32,8 @@
 #pragma once
 
 #include "InspectorWebAgentBase.h"
-#include <inspector/InspectorFrontendDispatchers.h>
-#include <inspector/agents/InspectorRuntimeAgent.h>
+#include <JavaScriptCore/InspectorFrontendDispatchers.h>
+#include <JavaScriptCore/InspectorRuntimeAgent.h>
 
 namespace JSC {
 class ExecState;

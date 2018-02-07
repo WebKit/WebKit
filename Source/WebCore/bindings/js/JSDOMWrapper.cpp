@@ -30,8 +30,7 @@
 #include "DOMWrapperWorld.h"
 #include "JSDOMWindow.h"
 #include "WebCoreJSClientData.h"
-#include <runtime/Error.h>
-
+#include <JavaScriptCore/Error.h>
 
 namespace WebCore {
 using namespace JSC;

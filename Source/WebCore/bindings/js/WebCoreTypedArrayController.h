@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include <runtime/JSGlobalObject.h>
-#include <runtime/TypedArrayController.h>
+#include <JavaScriptCore/JSGlobalObject.h>
+#include <JavaScriptCore/TypedArrayController.h>
 
 namespace JSC {
 class WeakHandleOwner;

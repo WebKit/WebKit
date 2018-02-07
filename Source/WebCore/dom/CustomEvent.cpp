@@ -26,7 +26,7 @@
 #include "config.h"
 #include "CustomEvent.h"
 
-#include <runtime/JSCInlines.h>
+#include <JavaScriptCore/JSCInlines.h>
 
 namespace WebCore {
 

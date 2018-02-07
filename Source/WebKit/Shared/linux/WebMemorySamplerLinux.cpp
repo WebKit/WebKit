@@ -28,12 +28,12 @@
 
 #if ENABLE(MEMORY_SAMPLER)
 
+#include <JavaScriptCore/JSCInlines.h>
+#include <JavaScriptCore/JSLock.h>
 #include <JavaScriptCore/MemoryStatistics.h>
 #include <WebCore/CommonVM.h>
 #include <WebCore/JSDOMWindow.h>
 #include <WebCore/NotImplemented.h>
-#include <runtime/JSCInlines.h>
-#include <runtime/JSLock.h>
 #include <string.h>
 #include <sys/sysinfo.h>
 #include <wtf/CurrentTime.h>

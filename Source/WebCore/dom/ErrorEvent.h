@@ -33,7 +33,7 @@
 
 #include "Event.h"
 #include "SerializedScriptValue.h"
-#include <heap/Strong.h>
+#include <JavaScriptCore/Strong.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {

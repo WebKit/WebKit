@@ -27,7 +27,7 @@
 #pragma once
 
 #include "JSDOMConvert.h"
-#include <runtime/IteratorPrototype.h>
+#include <JavaScriptCore/IteratorPrototype.h>
 #include <type_traits>
 
 namespace WebCore {

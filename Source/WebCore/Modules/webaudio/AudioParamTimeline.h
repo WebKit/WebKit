@@ -29,7 +29,7 @@
 #pragma once
 
 #include "AudioContext.h"
-#include <runtime/Float32Array.h>
+#include <JavaScriptCore/Float32Array.h>
 #include <wtf/Lock.h>
 #include <wtf/Vector.h>
 

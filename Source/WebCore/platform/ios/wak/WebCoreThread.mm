@@ -38,8 +38,8 @@
 #import "WebCoreThreadRun.h"
 #import "WKUtilities.h"
 
-#import <runtime/InitializeThreading.h>
-#import <runtime/JSLock.h>
+#import <JavaScriptCore/InitializeThreading.h>
+#import <JavaScriptCore/JSLock.h>
 #import <wtf/Assertions.h>
 #import <wtf/MainThread.h>
 #import <wtf/RecursiveLockAdapter.h>

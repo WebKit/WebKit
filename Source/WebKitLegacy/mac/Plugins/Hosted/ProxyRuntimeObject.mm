@@ -25,9 +25,9 @@
 
 #if USE(PLUGIN_HOST_PROCESS)
 
-#include "runtime/ObjectPrototype.h"
-#include "ProxyInstance.h"
 #include "ProxyRuntimeObject.h"
+#include "ProxyInstance.h"
+#include <JavaScriptCore/ObjectPrototype.h>
 
 using namespace JSC;
 

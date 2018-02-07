@@ -33,9 +33,8 @@
 
 #include "DOMWrapperWorld.h"
 #include "JSHistory.h"
-#include <heap/HeapInlines.h>
-#include <runtime/JSCJSValueInlines.h>
-
+#include <JavaScriptCore/HeapInlines.h>
+#include <JavaScriptCore/JSCJSValueInlines.h>
 
 namespace WebCore {
 using namespace JSC;

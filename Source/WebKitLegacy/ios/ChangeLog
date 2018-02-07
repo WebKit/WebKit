@@ -1,3 +1,12 @@
+2018-02-06  Don Olmstead  <don.olmstead@sony.com>
+
+        Remove WebCore/ForwardingHeaders directory
+        https://bugs.webkit.org/show_bug.cgi?id=182347
+
+        Reviewed by Keith Miller.
+
+        * Misc/WebUIKitSupport.mm:
+
 2017-12-07  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Use StaticLock instead of NeverDestroyed<Lock>

@@ -28,7 +28,7 @@
 
 #include "InspectorInstrumentation.h"
 #include "JSMainThreadExecState.h"
-#include <runtime/FunctionExecutable.h>
+#include <JavaScriptCore/FunctionExecutable.h>
 
 namespace WebCore {
 

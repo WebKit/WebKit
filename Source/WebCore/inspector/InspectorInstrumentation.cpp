@@ -65,13 +65,12 @@
 #include "WebConsoleAgent.h"
 #include "WebGLRenderingContextBase.h"
 #include "WebSocketFrame.h"
-#include <inspector/ConsoleMessage.h>
-#include <inspector/ScriptArguments.h>
-#include <inspector/ScriptCallStack.h>
-#include <inspector/agents/InspectorDebuggerAgent.h>
-#include <runtime/ConsoleTypes.h>
+#include <JavaScriptCore/ConsoleMessage.h>
+#include <JavaScriptCore/ConsoleTypes.h>
+#include <JavaScriptCore/InspectorDebuggerAgent.h>
+#include <JavaScriptCore/ScriptArguments.h>
+#include <JavaScriptCore/ScriptCallStack.h>
 #include <wtf/StdLibExtras.h>
-
 
 namespace WebCore {
 

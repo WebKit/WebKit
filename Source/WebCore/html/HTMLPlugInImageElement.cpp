@@ -52,7 +52,7 @@
 #include "SubframeLoader.h"
 #include "TypedElementDescendantIterator.h"
 #include "UserGestureIndicator.h"
-#include <runtime/CatchScope.h>
+#include <JavaScriptCore/CatchScope.h>
 
 namespace WebCore {
 

@@ -1,3 +1,13 @@
+2018-02-06  Don Olmstead  <don.olmstead@sony.com>
+
+        Remove WebCore/ForwardingHeaders directory
+        https://bugs.webkit.org/show_bug.cgi?id=182347
+
+        Reviewed by Keith Miller.
+
+        * gtest/CMakeLists.txt:
+        * gtest/include/gtest/internal/gtest-port.h:
+
 2018-02-05  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Unreviewed, silence -Wimplicit-fallthrough in openvr

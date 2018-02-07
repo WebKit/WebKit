@@ -25,9 +25,9 @@
 
 #pragma once
 
-#include <heap/Weak.h>
-#include <runtime/JSCJSValueInlines.h>
-#include <runtime/JSObject.h>
+#include <JavaScriptCore/JSCJSValueInlines.h>
+#include <JavaScriptCore/JSObject.h>
+#include <JavaScriptCore/Weak.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 

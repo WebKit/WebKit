@@ -28,8 +28,8 @@
 
 #include "JSDOMWrapper.h"
 #include "Node.h"
-#include <interpreter/FrameTracers.h>
-#include <jit/SnippetParams.h>
+#include <JavaScriptCore/FrameTracers.h>
+#include <JavaScriptCore/SnippetParams.h>
 
 #if ENABLE(JIT)
 

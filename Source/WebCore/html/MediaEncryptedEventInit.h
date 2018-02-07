@@ -31,7 +31,7 @@
 #if ENABLE(ENCRYPTED_MEDIA)
 
 #include "Event.h"
-#include <runtime/ArrayBuffer.h>
+#include <JavaScriptCore/ArrayBuffer.h>
 
 namespace WebCore {
 

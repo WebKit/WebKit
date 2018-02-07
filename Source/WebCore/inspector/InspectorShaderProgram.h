@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include <inspector/InspectorProtocolObjects.h>
+#include <JavaScriptCore/InspectorProtocolObjects.h>
 
 namespace WebCore {
 

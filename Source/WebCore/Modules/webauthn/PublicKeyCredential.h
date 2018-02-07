@@ -29,7 +29,7 @@
 
 #include "BasicCredential.h"
 #include "ExceptionOr.h"
-#include <runtime/ArrayBuffer.h>
+#include <JavaScriptCore/ArrayBuffer.h>
 #include <wtf/Forward.h>
 
 namespace WebCore {

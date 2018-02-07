@@ -33,9 +33,8 @@
 #include "JSDOMBinding.h"
 #include "JSMainThreadExecState.h"
 #include "JSMainThreadExecStateInstrumentation.h"
-#include <runtime/Exception.h>
+#include <JavaScriptCore/Exception.h>
 
-    
 namespace WebCore {
 using namespace JSC;
 

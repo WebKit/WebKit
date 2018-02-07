@@ -35,10 +35,10 @@
 #include "CachedScriptFetcher.h"
 #include "CachedScriptSourceProvider.h"
 #include "URL.h"
-#include <parser/SourceCode.h>
-#include <parser/SourceProvider.h>
-#include <wtf/text/TextPosition.h>
+#include <JavaScriptCore/SourceCode.h>
+#include <JavaScriptCore/SourceProvider.h>
 #include <wtf/RefPtr.h>
+#include <wtf/text/TextPosition.h>
 
 namespace WebCore {
 

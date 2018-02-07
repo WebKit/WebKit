@@ -29,11 +29,11 @@
 #ifndef WebInspectorClient_h
 #define WebInspectorClient_h
 
+#include <JavaScriptCore/InspectorFrontendChannel.h>
 #include <WebCore/COMPtr.h>
 #include <WebCore/InspectorClient.h>
 #include <WebCore/InspectorFrontendClientLocal.h>
 #include <WebCore/WindowMessageListener.h>
-#include <inspector/InspectorFrontendChannel.h>
 #include <windows.h>
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>

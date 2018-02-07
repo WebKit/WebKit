@@ -1,3 +1,42 @@
+2018-02-06  Don Olmstead  <don.olmstead@sony.com>
+
+        Remove WebCore/ForwardingHeaders directory
+        https://bugs.webkit.org/show_bug.cgi?id=182347
+
+        Reviewed by Keith Miller.
+
+        * Carbon/CarbonWindowAdapter.mm:
+        * DOM/WebDOMOperations.mm:
+        * History/WebBackForwardList.mm:
+        * History/WebHistoryItem.mm:
+        * Misc/WebCache.mm:
+        * Misc/WebElementDictionary.mm:
+        * Misc/WebIconDatabase.mm:
+        * Misc/WebStringTruncator.mm:
+        * Plugins/Hosted/NetscapePluginInstanceProxy.mm:
+        * Plugins/Hosted/ProxyInstance.mm:
+        * Plugins/Hosted/ProxyRuntimeObject.mm:
+        * Plugins/Hosted/WebHostedNetscapePluginView.mm:
+        * Plugins/WebBaseNetscapePluginView.mm:
+        * Plugins/WebBasePluginPackage.mm:
+        * Plugins/WebNetscapePluginStream.mm:
+        * Plugins/WebNetscapePluginView.mm:
+        * Plugins/WebPluginController.mm:
+        * WebCoreSupport/WebEditorClient.mm:
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        * WebCoreSupport/WebInspectorClient.h:
+        * WebCoreSupport/WebInspectorClient.mm:
+        * WebView/WebDataSource.mm:
+        * WebView/WebFrame.mm:
+        * WebView/WebHTMLRepresentation.mm:
+        * WebView/WebHTMLView.mm:
+        * WebView/WebPreferences.mm:
+        * WebView/WebScriptDebugDelegate.mm:
+        * WebView/WebScriptDebugger.h:
+        * WebView/WebTextIterator.mm:
+        * WebView/WebView.mm:
+        * WebView/WebViewData.mm:
+
 2018-01-30  Don Olmstead  <don.olmstead@sony.com>
 
         JSExports.h should be included as <JavaScriptCore/JSExportMacros.h>

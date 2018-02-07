@@ -70,10 +70,10 @@
 #import <HIToolbox/HIView.h>
 #import <assert.h>
 
+#import <JavaScriptCore/InitializeThreading.h>
 #import <WebCore/WebCoreObjCExtras.h>
 #import <pal/spi/mac/HIToolboxSPI.h>
 #import <pal/spi/mac/NSWindowSPI.h>
-#import <runtime/InitializeThreading.h>
 #import <wtf/Assertions.h>
 #import <wtf/MainThread.h>
 #import <wtf/RunLoop.h>

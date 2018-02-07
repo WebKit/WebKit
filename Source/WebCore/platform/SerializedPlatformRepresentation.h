@@ -27,7 +27,7 @@
 
 #if ENABLE(VIDEO)
 
-#include <runtime/JSCInlines.h>
+#include <JavaScriptCore/JSCInlines.h>
 #include <wtf/RefCounted.h>
 
 namespace WebCore {

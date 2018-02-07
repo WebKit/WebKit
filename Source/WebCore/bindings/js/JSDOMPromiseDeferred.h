@@ -28,8 +28,8 @@
 #include "ExceptionOr.h"
 #include "JSDOMConvert.h"
 #include "JSDOMGuardedObject.h"
-#include <runtime/CatchScope.h>
-#include <runtime/JSPromiseDeferred.h>
+#include <JavaScriptCore/CatchScope.h>
+#include <JavaScriptCore/JSPromiseDeferred.h>
 
 namespace WebCore {
 

@@ -28,9 +28,9 @@
 
 #include "CustomElementReactionQueue.h"
 #include "JSDOMBinding.h"
-#include <runtime/CatchScope.h>
-#include <runtime/Completion.h>
-#include <runtime/Microtask.h>
+#include <JavaScriptCore/CatchScope.h>
+#include <JavaScriptCore/Completion.h>
+#include <JavaScriptCore/Microtask.h>
 #include <wtf/MainThread.h>
 
 namespace WebCore {

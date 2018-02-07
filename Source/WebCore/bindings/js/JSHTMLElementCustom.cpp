@@ -34,8 +34,8 @@
 #include "JSDOMConstructorBase.h"
 #include "JSNodeCustom.h"
 #include "ScriptExecutionContext.h"
-#include <runtime/InternalFunction.h>
-#include <runtime/JSWithScope.h>
+#include <JavaScriptCore/InternalFunction.h>
+#include <JavaScriptCore/JSWithScope.h>
 
 namespace WebCore {
 

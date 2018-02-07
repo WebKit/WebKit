@@ -28,6 +28,13 @@
 #include "config.h"
 #include "PluginView.h"
 
+#include "PluginDatabase.h"
+#include "PluginDebug.h"
+#include "PluginMainThreadScheduler.h"
+#include "PluginMessageThrottlerWin.h"
+#include "PluginPackage.h"
+#include <JavaScriptCore/JSCJSValue.h>
+#include <JavaScriptCore/JSLock.h>
 #include <WebCore/BitmapImage.h>
 #include <WebCore/BitmapInfo.h>
 #include <WebCore/BridgeJSC.h>
@@ -56,19 +63,12 @@
 #include <WebCore/MouseEvent.h>
 #include <WebCore/Page.h>
 #include <WebCore/PlatformMouseEvent.h>
-#include "PluginDatabase.h"
-#include "PluginDebug.h"
-#include "PluginMainThreadScheduler.h"
-#include "PluginMessageThrottlerWin.h"
-#include "PluginPackage.h"
 #include <WebCore/RenderWidget.h>
 #include <WebCore/Settings.h>
 #include <WebCore/WebCoreInstanceHandle.h>
 #include <WebCore/c_instance.h>
 #include <WebCore/npruntime_impl.h>
 #include <WebCore/runtime_root.h>
-#include <runtime/JSCJSValue.h>
-#include <runtime/JSLock.h>
 #include <wtf/ASCIICType.h>
 #include <wtf/text/WTFString.h>
 #include <wtf/text/win/WCharStringExtras.h>

@@ -28,8 +28,8 @@
 
 #include "DOMWrapperWorld.h"
 #include "JSDOMPromise.h"
-#include <heap/HeapInlines.h>
-#include <heap/StrongInlines.h>
+#include <JavaScriptCore/HeapInlines.h>
+#include <JavaScriptCore/StrongInlines.h>
 
 namespace WebCore {
 using namespace JSC;

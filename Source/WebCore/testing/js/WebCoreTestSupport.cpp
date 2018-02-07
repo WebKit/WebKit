@@ -42,9 +42,9 @@
 #include "URLParser.h"
 #include "WheelEventTestTrigger.h"
 #include <JavaScriptCore/APICast.h>
+#include <JavaScriptCore/CallFrame.h>
+#include <JavaScriptCore/IdentifierInlines.h>
 #include <JavaScriptCore/JSValueRef.h>
-#include <interpreter/CallFrame.h>
-#include <runtime/IdentifierInlines.h>
 
 using namespace WebCore;
 

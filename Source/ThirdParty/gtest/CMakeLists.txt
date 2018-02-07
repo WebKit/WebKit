@@ -8,8 +8,6 @@ set(GTEST_DIR "${THIRDPARTY_DIR}/gtest")
 set(GTEST_INCLUDE_DIRECTORIES
     "${GTEST_DIR}"
     "${GTEST_DIR}/include"
-    "${JAVASCRIPTCORE_DIR}"
-    "${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}"
     "${FORWARDING_HEADERS_DIR}"
 )
 
@@ -48,6 +46,7 @@ endif ()
 target_link_libraries(gtest
     WTF
 )
+add_dependencies(gtest JavaScriptCoreForwardingHeaders)
 
 if (CMAKE_USE_PTHREADS_INIT)
     target_link_libraries(gtest ${CMAKE_THREAD_LIBS_INIT})

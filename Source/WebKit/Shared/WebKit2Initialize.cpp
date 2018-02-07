@@ -27,8 +27,8 @@
 #include "WebKit2Initialize.h"
 
 #include "LogInitialization.h"
+#include <JavaScriptCore/InitializeThreading.h>
 #include <WebCore/LogInitialization.h>
-#include <runtime/InitializeThreading.h>
 #include <wtf/MainThread.h>
 #include <wtf/RunLoop.h>
 

@@ -27,12 +27,12 @@
 #include "WebJavaScriptCollector.h"
 
 #include <JavaScriptCore/Heap.h>
+#include <JavaScriptCore/JSLock.h>
 #include <JavaScriptCore/VM.h>
 #include <WebCore/CommonVM.h>
 #include <WebCore/DOMWindow.h>
 #include <WebCore/GCController.h>
 #include <WebCore/JSDOMWindow.h>
-#include <runtime/JSLock.h>
 
 using namespace JSC;
 using namespace WebCore;

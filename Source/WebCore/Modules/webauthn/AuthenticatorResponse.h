@@ -27,7 +27,7 @@
 
 #if ENABLE(WEB_AUTHN)
 
-#include <runtime/ArrayBuffer.h>
+#include <JavaScriptCore/ArrayBuffer.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/TypeCasts.h>
 

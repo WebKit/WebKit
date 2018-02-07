@@ -62,13 +62,13 @@
 #include "StyleScope.h"
 #include "TextEncoding.h"
 #include "UserGestureIndicator.h"
-#include <inspector/ContentSearchUtilities.h>
-#include <inspector/IdentifiersFactory.h>
+#include <JavaScriptCore/ContentSearchUtilities.h>
+#include <JavaScriptCore/IdentifiersFactory.h>
+#include <JavaScriptCore/RegularExpression.h>
 #include <wtf/ListHashSet.h>
 #include <wtf/Stopwatch.h>
 #include <wtf/text/Base64.h>
 #include <wtf/text/StringBuilder.h>
-#include <yarr/RegularExpression.h>
 
 #if ENABLE(APPLICATION_MANIFEST)
 #include "CachedApplicationManifest.h"

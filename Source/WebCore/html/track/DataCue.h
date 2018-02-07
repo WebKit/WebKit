@@ -30,8 +30,8 @@
 
 #include "SerializedPlatformRepresentation.h"
 #include "TextTrackCue.h"
-#include <runtime/ArrayBuffer.h>
-#include <runtime/JSCJSValue.h>
+#include <JavaScriptCore/ArrayBuffer.h>
+#include <JavaScriptCore/JSCJSValue.h>
 #include <wtf/MediaTime.h>
 
 namespace WebCore {

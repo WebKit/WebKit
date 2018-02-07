@@ -27,10 +27,10 @@
 
 #include "ExceptionOr.h"
 #include "XPathNSResolver.h"
-#include <heap/Strong.h>
-#include <heap/StrongInlines.h>
-#include <runtime/JSCInlines.h>
-#include <runtime/JSCJSValue.h>
+#include <JavaScriptCore/JSCInlines.h>
+#include <JavaScriptCore/JSCJSValue.h>
+#include <JavaScriptCore/Strong.h>
+#include <JavaScriptCore/StrongInlines.h>
 
 namespace WebCore {
 

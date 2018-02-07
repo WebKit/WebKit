@@ -31,7 +31,7 @@
 
 #pragma once
 
-#include <heap/Strong.h>
+#include <JavaScriptCore/Strong.h>
 #include <wtf/HashMap.h>
 
 namespace WebCore {

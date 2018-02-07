@@ -27,9 +27,9 @@
 #pragma once
 
 #include "ExceptionOr.h"
-#include <heap/Strong.h>
-#include <runtime/ArrayBuffer.h>
-#include <runtime/JSCJSValue.h>
+#include <JavaScriptCore/ArrayBuffer.h>
+#include <JavaScriptCore/JSCJSValue.h>
+#include <JavaScriptCore/Strong.h>
 #include <wtf/Forward.h>
 #include <wtf/Function.h>
 #include <wtf/text/WTFString.h>

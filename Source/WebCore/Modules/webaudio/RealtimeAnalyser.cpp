@@ -31,10 +31,10 @@
 #include "AudioBus.h"
 #include "AudioUtilities.h"
 #include "VectorMath.h"
+#include <JavaScriptCore/Float32Array.h>
+#include <JavaScriptCore/Uint8Array.h>
 #include <algorithm>
 #include <complex>
-#include <runtime/Float32Array.h>
-#include <runtime/Uint8Array.h>
 #include <wtf/MainThread.h>
 #include <wtf/MathExtras.h>
 

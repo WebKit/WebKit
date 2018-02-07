@@ -29,7 +29,7 @@
 #include "BridgeJSC.h"
 #include "JSDOMBinding.h"
 #include "objc_header.h"
-#include <runtime/JSGlobalObject.h>
+#include <JavaScriptCore/JSGlobalObject.h>
 #include <wtf/RetainPtr.h>
 
 namespace JSC {

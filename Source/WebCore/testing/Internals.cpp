@@ -161,11 +161,11 @@
 #include "WorkerThread.h"
 #include "WritingDirection.h"
 #include "XMLHttpRequest.h"
-#include <bytecode/CodeBlock.h>
-#include <inspector/InspectorAgentBase.h>
-#include <inspector/InspectorFrontendChannel.h>
-#include <runtime/JSCInlines.h>
-#include <runtime/JSCJSValue.h>
+#include <JavaScriptCore/CodeBlock.h>
+#include <JavaScriptCore/InspectorAgentBase.h>
+#include <JavaScriptCore/InspectorFrontendChannel.h>
+#include <JavaScriptCore/JSCInlines.h>
+#include <JavaScriptCore/JSCJSValue.h>
 #include <wtf/JSONValues.h>
 #include <wtf/Language.h>
 #include <wtf/MemoryPressureHandler.h>

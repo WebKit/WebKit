@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include <runtime/ScriptFetchParameters.h>
+#include <JavaScriptCore/ScriptFetchParameters.h>
 
 namespace WebCore {
 

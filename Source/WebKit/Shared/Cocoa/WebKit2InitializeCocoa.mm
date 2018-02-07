@@ -27,9 +27,9 @@
 #import "WebKit2Initialize.h"
 
 #import "LogInitialization.h"
+#import <JavaScriptCore/InitializeThreading.h>
 #import <WebCore/LogInitialization.h>
 #import <mutex>
-#import <runtime/InitializeThreading.h>
 #import <wtf/MainThread.h>
 #import <wtf/RunLoop.h>
 

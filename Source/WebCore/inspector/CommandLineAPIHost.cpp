@@ -41,11 +41,11 @@
 #include "JSEventListener.h"
 #include "Pasteboard.h"
 #include "Storage.h"
-#include <bindings/ScriptValue.h>
-#include <inspector/agents/InspectorAgent.h>
-#include <inspector/agents/InspectorConsoleAgent.h>
-#include <runtime/JSCInlines.h>
-#include <runtime/JSLock.h>
+#include <JavaScriptCore/InspectorAgent.h>
+#include <JavaScriptCore/InspectorConsoleAgent.h>
+#include <JavaScriptCore/JSCInlines.h>
+#include <JavaScriptCore/JSLock.h>
+#include <JavaScriptCore/ScriptValue.h>
 #include <wtf/JSONValues.h>
 #include <wtf/RefPtr.h>
 #include <wtf/StdLibExtras.h>

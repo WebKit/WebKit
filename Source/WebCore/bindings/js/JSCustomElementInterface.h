@@ -28,9 +28,9 @@
 
 #include "ActiveDOMCallback.h"
 #include "QualifiedName.h"
-#include <heap/Weak.h>
-#include <heap/WeakInlines.h>
-#include <runtime/JSObject.h>
+#include <JavaScriptCore/JSObject.h>
+#include <JavaScriptCore/Weak.h>
+#include <JavaScriptCore/WeakInlines.h>
 #include <wtf/Forward.h>
 #include <wtf/Function.h>
 #include <wtf/RefCounted.h>

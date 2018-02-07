@@ -32,8 +32,8 @@
 #pragma once
 
 #include "JSDOMWrapper.h"
-#include <heap/Weak.h>
-#include <heap/WeakInlines.h>
+#include <JavaScriptCore/Weak.h>
+#include <JavaScriptCore/WeakInlines.h>
 
 namespace WebCore {
 

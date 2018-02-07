@@ -26,17 +26,17 @@
 #import "config.h"
 #import "WebMemorySampler.h"
 
-#if ENABLE(MEMORY_SAMPLER)  
+#if ENABLE(MEMORY_SAMPLER)
 
+#import <JavaScriptCore/JSLock.h>
 #import <JavaScriptCore/MemoryStatistics.h>
 #import <JavaScriptCore/VM.h>
+#import <WebCore/CommonVM.h>
 #import <mach/mach.h>
-#import <mach/task.h>
 #import <mach/mach_types.h>
+#import <mach/task.h>
 #import <malloc/malloc.h>
 #import <notify.h>
-#import <runtime/JSLock.h>
-#import <WebCore/CommonVM.h>
 #import <wtf/CurrentTime.h>
 
 using namespace WebCore;

@@ -30,7 +30,7 @@
 
 #include "GPUBuffer.h"
 #include "WebGPURenderingContext.h"
-#include <runtime/ArrayBuffer.h>
+#include <JavaScriptCore/ArrayBuffer.h>
 
 namespace WebCore {
 

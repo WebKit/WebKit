@@ -29,7 +29,7 @@
 
 #include "EventNames.h"
 #include "History.h"
-#include <runtime/JSCInlines.h>
+#include <JavaScriptCore/JSCInlines.h>
 
 namespace WebCore {
 

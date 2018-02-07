@@ -30,7 +30,7 @@
 
 #include "InstrumentingAgents.h"
 #include "ResourceUsageThread.h"
-#include <inspector/InspectorEnvironment.h>
+#include <JavaScriptCore/InspectorEnvironment.h>
 #include <wtf/Stopwatch.h>
 
 

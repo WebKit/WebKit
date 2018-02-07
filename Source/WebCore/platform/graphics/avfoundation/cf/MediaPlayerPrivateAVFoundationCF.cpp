@@ -62,8 +62,8 @@
 #include <delayimp.h>
 #include <dispatch/dispatch.h>
 #if HAVE(AVFOUNDATION_LOADER_DELEGATE) && ENABLE(LEGACY_ENCRYPTED_MEDIA)
-#include <runtime/DataView.h>
-#include <runtime/Uint16Array.h>
+#include <JavaScriptCore/DataView.h>
+#include <JavaScriptCore/Uint16Array.h>
 #endif
 #include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>

@@ -37,9 +37,9 @@
 #import "WebCoreNSErrorExtras.h"
 #import <AVFoundation/AVError.h>
 #import <CoreMedia/CMBase.h>
+#import <JavaScriptCore/TypedArrayInlines.h>
 #import <objc/objc-runtime.h>
 #import <pal/spi/mac/AVFoundationSPI.h>
-#import <runtime/TypedArrayInlines.h>
 #import <wtf/SoftLinking.h>
 #import <wtf/UUID.h>
 

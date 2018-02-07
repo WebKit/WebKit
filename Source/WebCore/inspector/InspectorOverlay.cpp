@@ -56,7 +56,7 @@
 #include "Settings.h"
 #include "SocketProvider.h"
 #include "StyledElement.h"
-#include <inspector/InspectorProtocolObjects.h>
+#include <JavaScriptCore/InspectorProtocolObjects.h>
 #include <wtf/JSONValues.h>
 
 

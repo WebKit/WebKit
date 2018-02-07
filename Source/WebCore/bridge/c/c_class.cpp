@@ -32,9 +32,9 @@
 #include "c_instance.h"
 #include "c_runtime.h"
 #include "npruntime_impl.h"
-#include <runtime/Identifier.h>
-#include <runtime/JSGlobalObject.h>
-#include <runtime/JSObject.h>
+#include <JavaScriptCore/Identifier.h>
+#include <JavaScriptCore/JSGlobalObject.h>
+#include <JavaScriptCore/JSObject.h>
 #include <wtf/text/StringHash.h>
 
 namespace JSC { namespace Bindings {

@@ -26,7 +26,7 @@
 #pragma once
 
 #import "WebScriptObject.h"
-#import <runtime/JSCJSValue.h>
+#import <JavaScriptCore/JSCJSValue.h>
 #import <wtf/RefPtr.h>
 
 namespace JSC {

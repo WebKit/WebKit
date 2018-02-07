@@ -26,11 +26,10 @@
 
 #include "Filter.h"
 #include "GraphicsContext.h"
-#include <wtf/text/TextStream.h>
-
-#include <runtime/Uint8ClampedArray.h>
+#include <JavaScriptCore/Uint8ClampedArray.h>
 #include <wtf/MathExtras.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/text/TextStream.h>
 
 namespace WebCore {
 

@@ -27,13 +27,12 @@
 #include "GCController.h"
 
 #include "CommonVM.h"
-#include <runtime/VM.h>
-#include <runtime/JSLock.h>
-#include <heap/Heap.h>
-#include <wtf/StdLibExtras.h>
+#include <JavaScriptCore/Heap.h>
+#include <JavaScriptCore/JSLock.h>
+#include <JavaScriptCore/VM.h>
 #include <wtf/FastMalloc.h>
 #include <wtf/NeverDestroyed.h>
-
+#include <wtf/StdLibExtras.h>
 
 namespace WebCore {
 using namespace JSC;

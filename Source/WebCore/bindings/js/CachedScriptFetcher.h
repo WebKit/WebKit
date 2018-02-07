@@ -26,7 +26,7 @@
 #pragma once
 
 #include "CachedResourceHandle.h"
-#include <runtime/ScriptFetcher.h>
+#include <JavaScriptCore/ScriptFetcher.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {

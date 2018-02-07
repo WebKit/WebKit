@@ -47,6 +47,7 @@
 #import "WebProcessCreationParameters.h"
 #import "WebProcessProxyMessages.h"
 #import "WebsiteDataStoreParameters.h"
+#import <JavaScriptCore/ConfigFile.h>
 #import <JavaScriptCore/Options.h>
 #import <WebCore/AXObjectCache.h>
 #import <WebCore/CPUMonitor.h>
@@ -68,7 +69,6 @@
 #import <pal/spi/cocoa/pthreadSPI.h>
 #import <pal/spi/mac/NSAccessibilitySPI.h>
 #import <pal/spi/mac/NSApplicationSPI.h>
-#import <runtime/ConfigFile.h>
 #import <stdio.h>
 
 #if PLATFORM(IOS)

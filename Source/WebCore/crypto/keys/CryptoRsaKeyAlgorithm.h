@@ -26,7 +26,7 @@
 #pragma once
 
 #include "CryptoKeyAlgorithm.h"
-#include <runtime/Uint8Array.h>
+#include <JavaScriptCore/Uint8Array.h>
 
 namespace WebCore {
 

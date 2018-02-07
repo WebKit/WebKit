@@ -36,12 +36,12 @@
 #include "JSDOMWindow.h"
 #include "NP_jsobject.h"
 #include "c_instance.h"
-#include <runtime/JSGlobalObject.h>
-#include <runtime/JSLock.h>
 #include "npruntime_impl.h"
 #include "npruntime_priv.h"
 #include "runtime_object.h"
 #include "runtime_root.h"
+#include <JavaScriptCore/JSGlobalObject.h>
+#include <JavaScriptCore/JSLock.h>
 #include <wtf/Assertions.h>
 #include <wtf/text/WTFString.h>
 

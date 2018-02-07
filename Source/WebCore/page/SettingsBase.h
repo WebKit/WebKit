@@ -36,7 +36,7 @@
 #include "Timer.h"
 #include "URL.h"
 #include "WritingMode.h"
-#include <runtime/RuntimeFlags.h>
+#include <JavaScriptCore/RuntimeFlags.h>
 #include <unicode/uscript.h>
 #include <wtf/HashMap.h>
 #include <wtf/RefCounted.h>

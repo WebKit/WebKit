@@ -30,7 +30,7 @@
 
 #include "GPUBasedCanvasRenderingContext.h"
 #include "GPUDevice.h"
-#include <runtime/ArrayBuffer.h>
+#include <JavaScriptCore/ArrayBuffer.h>
 
 namespace WebCore {
 

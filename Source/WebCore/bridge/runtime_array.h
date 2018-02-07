@@ -28,7 +28,7 @@
 
 #include "BridgeJSC.h"
 #include "JSDOMBinding.h"
-#include <runtime/ArrayPrototype.h>
+#include <JavaScriptCore/ArrayPrototype.h>
 
 namespace JSC {
     

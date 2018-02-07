@@ -26,7 +26,7 @@
 
 #pragma once
 
-#include <builtins/BuiltinUtils.h>
+#include <JavaScriptCore/BuiltinUtils.h>
 
 namespace WebCore {
 

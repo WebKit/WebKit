@@ -32,7 +32,7 @@
 #pragma once
 
 #include "MessageWithMessagePorts.h"
-#include <runtime/RuntimeFlags.h>
+#include <JavaScriptCore/RuntimeFlags.h>
 #include <wtf/MonotonicTime.h>
 
 namespace PAL {

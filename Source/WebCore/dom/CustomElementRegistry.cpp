@@ -35,7 +35,7 @@
 #include "MathMLNames.h"
 #include "QualifiedName.h"
 #include "ShadowRoot.h"
-#include <runtime/JSCJSValueInlines.h>
+#include <JavaScriptCore/JSCJSValueInlines.h>
 #include <wtf/text/AtomicString.h>
 
 namespace WebCore {

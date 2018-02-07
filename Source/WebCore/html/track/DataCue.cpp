@@ -32,9 +32,8 @@
 #include "Logging.h"
 #include "TextTrack.h"
 #include "TextTrackCueList.h"
-#include <runtime/JSCInlines.h>
-#include <runtime/Protect.h>
-
+#include <JavaScriptCore/JSCInlines.h>
+#include <JavaScriptCore/Protect.h>
 
 namespace WebCore {
 using namespace JSC;

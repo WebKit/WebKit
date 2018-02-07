@@ -28,9 +28,9 @@
 
 #include "JSDOMConvertBufferSource.h"
 #include "JSDOMGlobalObject.h"
-#include <runtime/ArrayBuffer.h>
-#include <runtime/JSArrayBuffer.h>
-#include <runtime/JSCInlines.h>
+#include <JavaScriptCore/ArrayBuffer.h>
+#include <JavaScriptCore/JSArrayBuffer.h>
+#include <JavaScriptCore/JSCInlines.h>
 
 namespace WebCore {
 

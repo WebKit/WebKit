@@ -29,10 +29,9 @@
 #include "ActiveDOMCallback.h"
 #include "JSDOMGlobalObject.h"
 #include "JSMainThreadExecState.h"
-#include <heap/StrongInlines.h>
-#include <runtime/Microtask.h>
+#include <JavaScriptCore/Microtask.h>
+#include <JavaScriptCore/StrongInlines.h>
 #include <wtf/Ref.h>
-
 
 namespace WebCore {
 using namespace JSC;

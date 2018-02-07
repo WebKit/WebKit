@@ -28,7 +28,7 @@
 
 #include "JSDOMBinding.h"
 #include "runtime_method.h"
-#include <runtime/Error.h>
+#include <JavaScriptCore/Error.h>
 
 using namespace WebCore;
 

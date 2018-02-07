@@ -22,8 +22,7 @@
 #include "config.h"
 #include "JSDOMWrapperCache.h"
 
-#include <runtime/JSCInlines.h>
-
+#include <JavaScriptCore/JSCInlines.h>
 
 namespace WebCore {
 using namespace JSC;
