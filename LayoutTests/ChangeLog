@@ -1,3 +1,13 @@
+2018-02-06  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Rename String.prototype.trimEnd to avoid conflicts with native trimEnd
+        https://bugs.webkit.org/show_bug.cgi?id=182545
+
+        Reviewed by Brian Burg.
+
+        * inspector/unit-tests/string-utilities-expected.txt:
+        * inspector/unit-tests/string-utilities.html:
+
 2018-02-06  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Rendering SVG images with same size as WebGL texture doesn't work correctly

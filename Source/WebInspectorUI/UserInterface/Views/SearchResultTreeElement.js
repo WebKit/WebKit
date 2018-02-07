@@ -59,8 +59,7 @@ WI.SearchResultTreeElement = class SearchResultTreeElement extends WI.GeneralTre
         } else
             modifiedTitle = title;
 
-        // Truncate the tail of the title so the tooltip isn't so large.
-        modifiedTitle = modifiedTitle.trimEnd(searchTermIndex + searchTerm.length + charactersToShowAfterSearchMatch);
+        modifiedTitle = modifiedTitle.truncateEnd(searchTermIndex + searchTerm.length + charactersToShowAfterSearchMatch);
 
         console.assert(modifiedTitle.substring(searchTermIndex, searchTermIndex + searchTerm.length).toLowerCase() === searchTerm.toLowerCase());
 

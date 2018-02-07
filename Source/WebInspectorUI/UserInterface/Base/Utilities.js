@@ -579,10 +579,12 @@ Object.defineProperty(String.prototype, "isUpperCase",
     }
 });
 
-Object.defineProperty(String.prototype, "trimMiddle",
+Object.defineProperty(String.prototype, "truncateMiddle",
 {
     value(maxLength)
     {
+        "use strict";
+
         if (this.length <= maxLength)
             return this;
         var leftHalf = maxLength >> 1;
@@ -591,10 +593,12 @@ Object.defineProperty(String.prototype, "trimMiddle",
     }
 });
 
-Object.defineProperty(String.prototype, "trimEnd",
+Object.defineProperty(String.prototype, "truncateEnd",
 {
     value(maxLength)
     {
+        "use strict";
+
         if (this.length <= maxLength)
             return this;
         return this.substr(0, maxLength - 1) + ellipsis;

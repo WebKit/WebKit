@@ -1,6 +1,7 @@
 <!doctype html>
 <html>
 <head>
+<meta charset="utf-8">
 <script src="../../http/tests/inspector/resources/inspector-test.js"></script>
 <script>
 function test()
@@ -74,6 +75,28 @@ function test()
             InspectorTest.expectEqual("1\n".lastLine, "", "Last line of a string with a traling line break should be empty.");
             InspectorTest.expectEqual("".lastLine, "", "Last line of an empty string is the same empty string.");
 
+            return true;
+        }
+    });
+
+    suite.addTestCase({
+        name: "String.prototype.truncateMiddle",
+        test() {
+            const ellipsis = "\u2026";
+            InspectorTest.expectEqual("abcdef".truncateMiddle(6), "abcdef", "String stays the same.");
+            InspectorTest.expectEqual("abcdef".truncateMiddle(5), `ab${ellipsis}ef`, "Ellipsis is inserted in the middle.");
+            InspectorTest.expectEqual("abcdef".truncateMiddle(4), `ab${ellipsis}f`, "Ellipsis is inserted after the second character.");
+            return true;
+        }
+    });
+
+    suite.addTestCase({
+        name: "String.prototype.truncateEnd",
+        test() {
+            const ellipsis = "\u2026";
+            InspectorTest.expectEqual("abcdef".truncateEnd(6), "abcdef", "String stays the same.");
+            InspectorTest.expectEqual("abcdef".truncateEnd(5), "abcd" + ellipsis, "Ellipsis is inserted in the middle.");
+            InspectorTest.expectEqual("abcdef".truncateEnd(4), "abc" + ellipsis, "Ellipsis is inserted after the third character.");
             return true;
         }
     });

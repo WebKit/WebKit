@@ -336,7 +336,7 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
             if (className) {
                 let span = document.createElement("span");
                 span.classList.add(className);
-                span.textContent = token.value.trimMiddle(maxValueLength);
+                span.textContent = token.value.truncateMiddle(maxValueLength);
                 return span;
             }
 
