@@ -86,6 +86,7 @@ class WebPageProxy;
 #if ENABLE(EXTRA_ZOOM_MODE)
 @class WKFocusedFormControlViewController;
 @class WKNumberPadViewController;
+@class WKSelectMenuViewController;
 @class WKTextInputViewController;
 #endif
 
@@ -247,6 +248,7 @@ struct WKAutoCorrectionData {
     RetainPtr<WKTextInputViewController> _textInputViewController;
     RetainPtr<WKFocusedFormControlViewController> _focusedFormControlViewController;
     RetainPtr<WKNumberPadViewController> _numberPadViewController;
+    RetainPtr<WKSelectMenuViewController> _selectMenuViewController;
 #endif
 }
 

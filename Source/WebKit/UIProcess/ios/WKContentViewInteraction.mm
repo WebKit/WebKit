@@ -51,6 +51,7 @@
 #import "WKPreviewActionItemIdentifiers.h"
 #import "WKPreviewActionItemInternal.h"
 #import "WKPreviewElementInfoInternal.h"
+#import "WKSelectMenuViewController.h"
 #import "WKTextInputViewController.h"
 #import "WKUIDelegatePrivate.h"
 #import "WKWebViewConfiguration.h"
@@ -122,7 +123,7 @@
 
 #if ENABLE(EXTRA_ZOOM_MODE)
 
-@interface WKContentView (ExtraZoomMode) <WKTextFormControlViewControllerDelegate, WKFocusedFormControlViewControllerDelegate>
+@interface WKContentView (ExtraZoomMode) <WKTextFormControlViewControllerDelegate, WKFocusedFormControlViewControllerDelegate, WKSelectMenuViewControllerDelegate>
 @end
 
 #endif
@@ -3931,10 +3932,7 @@ static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
 {
     [self useSelectionAssistantWithGranularity:WKSelectionGranularityCharacter];
 
-#if ENABLE(EXTRA_ZOOM_MODE)
-    if (!_isChangingFocus)
-        [self presentViewControllerForAssistedNode:_assistedNodeInformation];
-#else
+#if !ENABLE(EXTRA_ZOOM_MODE)
     [self reloadInputViews];
 #endif
 }
@@ -4027,14 +4025,16 @@ static bool isAssistableInputType(InputType type)
     _inputPeripheral = nil;
     _traits = nil;
 
-#if ENABLE(EXTRA_ZOOM_MODE)
-    [self presentFocusedFormControlViewController:NO];
-#endif
-
     if (![self isFirstResponder])
         [self becomeFirstResponder];
 
+#if ENABLE(EXTRA_ZOOM_MODE)
+    [self presentFocusedFormControlViewController:NO];
+    if (!_isChangingFocus)
+        [self presentViewControllerForAssistedNode:_assistedNodeInformation];
+#else
     [self reloadInputViews];
+#endif
     
     switch (information.elementType) {
     case InputType::Select:
@@ -4090,6 +4090,7 @@ static bool isAssistableInputType(InputType type)
 #if ENABLE(EXTRA_ZOOM_MODE)
     [self dismissTextInputViewController:YES];
     [self dismissNumberPadViewController:YES];
+    [self dismissSelectMenuViewController:YES];
     if (!_isChangingFocus)
         [self dismissFocusedFormControlViewController:[_focusedFormControlViewController isVisible]];
 #endif
@@ -4102,6 +4103,25 @@ static bool isAssistableInputType(InputType type)
 }
 
 #if ENABLE(EXTRA_ZOOM_MODE)
+
+- (void)presentSelectMenuViewController:(BOOL)animated
+{
+    if (_selectMenuViewController)
+        return;
+
+    _selectMenuViewController = adoptNS([[WKSelectMenuViewController alloc] init]);
+    [_selectMenuViewController setDelegate:self];
+    [_focusedFormControlViewController presentViewController:_selectMenuViewController.get() animated:animated completion:nil];
+}
+
+- (void)dismissSelectMenuViewController:(BOOL)animated
+{
+    if (!_selectMenuViewController)
+        return;
+
+    auto selectMenuViewController = WTFMove(_selectMenuViewController);
+    [selectMenuViewController dismissViewControllerAnimated:animated completion:nil];
+}
 
 - (void)presentFocusedFormControlViewController:(BOOL)animated
 {
@@ -4157,6 +4177,9 @@ static bool isAssistableInputType(InputType type)
     case InputType::NumberPad:
     case InputType::Phone:
         [self presentNumberPadViewController:YES];
+        break;
+    case InputType::Select:
+        [self presentSelectMenuViewController:YES];
         break;
     default:
         break;
@@ -4256,6 +4279,82 @@ static bool isAssistableInputType(InputType type)
 - (BOOL)hasPreviousNodeForFocusedFormControlController:(WKFocusedFormControlViewController *)controller
 {
     return _assistedNodeInformation.hasPreviousNode;
+}
+
+#pragma mark - WKSelectMenuViewControllerDelegate
+
+- (void)selectMenu:(WKSelectMenuViewController *)selectMenu didSelectItemAtIndex:(NSUInteger)index
+{
+    if (!_assistedNodeInformation.isMultiSelect)
+        _page->setAssistedNodeSelectedIndex(index, false);
+
+    _page->blurAssistedNode();
+}
+
+- (void)didCancelSelectionInSelectMenu:(WKSelectMenuViewController *)selectMenu
+{
+    _page->blurAssistedNode();
+}
+
+- (NSUInteger)numberOfItemsInSelectMenu:(WKSelectMenuViewController *)selectMenu
+{
+    return self.assistedNodeSelectOptions.size();
+}
+
+- (NSString *)selectMenu:(WKSelectMenuViewController *)selectMenu displayTextForItemAtIndex:(NSUInteger)index
+{
+    auto& options = self.assistedNodeSelectOptions;
+    if (index >= options.size()) {
+        ASSERT_NOT_REACHED();
+        return @"";
+    }
+
+    return options[index].text;
+}
+
+- (void)selectMenu:(WKSelectMenuViewController *)selectMenu didCheckItemAtIndex:(NSUInteger)index checked:(BOOL)checked
+{
+    ASSERT(_assistedNodeInformation.isMultiSelect);
+    if (index >= self.assistedNodeSelectOptions.size()) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    auto& option = self.assistedNodeSelectOptions[index];
+    if (option.isSelected == checked) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    _page->setAssistedNodeSelectedIndex(index, true);
+    option.isSelected = checked;
+}
+
+- (BOOL)selectMenuSupportsMultipleSelection:(WKSelectMenuViewController *)selectMenu
+{
+    return _assistedNodeInformation.isMultiSelect;
+}
+
+- (BOOL)selectMenu:(WKSelectMenuViewController *)selectMenu hasCheckedOptionAtIndex:(NSUInteger)index
+{
+    if (index >= self.assistedNodeSelectOptions.size()) {
+        ASSERT_NOT_REACHED();
+        return NO;
+    }
+
+    return self.assistedNodeSelectOptions[index].isSelected;
+}
+
+- (NSUInteger)startingIndexForSelectMenu:(WKSelectMenuViewController *)selectMenu
+{
+    if (_assistedNodeInformation.isMultiSelect)
+        return 0;
+
+    auto firstSelectedIndex = self.assistedNodeSelectOptions.findMatching([&] (auto& option) {
+        return option.isSelected;
+    });
+
+    return firstSelectedIndex == notFound ? 0 : firstSelectedIndex;
 }
 
 #endif // ENABLE(EXTRA_ZOOM_MODE)
