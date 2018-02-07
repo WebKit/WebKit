@@ -205,6 +205,8 @@ public:
     ProcessID networkProcessIdentifier();
     ProcessID storageProcessIdentifier();
 
+    WebPageGroup& defaultPageGroup() { return m_defaultPageGroup.get(); }
+
     void setAlwaysUsesComplexTextCodePath(bool);
     void setShouldUseFontSmoothing(bool);
     
