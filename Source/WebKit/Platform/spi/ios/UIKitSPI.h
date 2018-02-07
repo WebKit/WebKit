@@ -307,6 +307,7 @@ typedef enum {
 
 @interface UIResponder ()
 - (void)_handleKeyUIEvent:(UIEvent *)event;
+- (void)_wheelChangedWithEvent:(UIEvent *)event;
 @end
 
 @class CADisplay;

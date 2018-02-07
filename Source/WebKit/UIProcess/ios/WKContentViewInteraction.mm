@@ -4359,6 +4359,24 @@ static bool isAssistableInputType(InputType type)
 
 #endif // ENABLE(EXTRA_ZOOM_MODE)
 
+- (void)_wheelChangedWithEvent:(UIEvent *)event
+{
+#if ENABLE(EXTRA_ZOOM_MODE)
+    if ([_numberPadViewController handleWheelEvent:event])
+        return;
+
+    if ([_textInputViewController handleWheelEvent:event])
+        return;
+
+    if ([_selectMenuViewController handleWheelEvent:event])
+        return;
+
+    if ([_focusedFormControlViewController handleWheelEvent:event])
+        return;
+#endif
+    [super _wheelChangedWithEvent:event];
+}
+
 - (void)_selectionChanged
 {
     _selectionNeedsUpdate = YES;
