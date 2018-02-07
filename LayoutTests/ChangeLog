@@ -1,3 +1,15 @@
+2018-02-06  Chris Dumez  <cdumez@apple.com>
+
+        Layout Test imported/w3c/web-platform-tests/service-workers/service-worker/fetch-waits-for-activate.https.html is a flaky failure on macOS and iOS
+        https://bugs.webkit.org/show_bug.cgi?id=181392
+        <rdar://problem/36384136>
+
+        Reviewed by Youenn Fablet.
+
+        Unskip test that is no longer flaky.
+
+        * platform/mac-wk2/TestExpectations:
+
 2018-02-06  Andy Estes  <aestes@apple.com>
 
         [Payment Request] show() should take an optional PaymentDetailsUpdate promise

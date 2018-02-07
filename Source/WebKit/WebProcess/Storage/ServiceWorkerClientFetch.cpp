@@ -100,53 +100,61 @@ std::optional<ResourceError> ServiceWorkerClientFetch::validateResponse(const Re
 
 void ServiceWorkerClientFetch::didReceiveResponse(ResourceResponse&& response)
 {
-    auto protectedThis = makeRef(*this);
+    callOnMainThread([this, protectedThis = makeRef(*this), response = WTFMove(response)]() mutable {
+        if (!m_loader)
+            return;
 
-    if (auto error = validateResponse(response)) {
-        m_loader->didFail(error.value());
+        if (auto error = validateResponse(response)) {
+            m_loader->didFail(error.value());
+            if (auto callback = WTFMove(m_callback))
+                callback(Result::Succeeded);
+            return;
+        }
+        response.setSource(ResourceResponse::Source::ServiceWorker);
+
+        if (response.isRedirection() && response.httpHeaderFields().contains(HTTPHeaderName::Location)) {
+            m_redirectionStatus = RedirectionStatus::Receiving;
+            m_loader->willSendRequest(m_loader->request().redirectedRequest(response, m_shouldClearReferrerOnHTTPSToHTTPRedirect), response, [protectedThis = makeRef(*this), this](ResourceRequest&& request) {
+                if (request.isNull() || !m_callback)
+                    return;
+
+                ASSERT(request == m_loader->request());
+                if (m_redirectionStatus == RedirectionStatus::Received) {
+                    start();
+                    return;
+                }
+                m_redirectionStatus = RedirectionStatus::Following;
+            });
+            return;
+        }
+
+        // In case of main resource and mime type is the default one, we set it to text/html to pass more service worker WPT tests.
+        // FIXME: We should refine our MIME type sniffing strategy for synthetic responses.
+        if (m_loader->originalRequest().requester() == ResourceRequest::Requester::Main) {
+            if (response.mimeType() == defaultMIMEType()) {
+                response.setMimeType(ASCIILiteral("text/html"));
+                response.setTextEncodingName(ASCIILiteral("UTF-8"));
+            }
+        }
+
+        // As per https://fetch.spec.whatwg.org/#main-fetch step 9, copy request's url list in response's url list if empty.
+        if (response.url().isNull())
+            response.setURL(m_loader->request().url());
+
+        m_loader->didReceiveResponse(response);
         if (auto callback = WTFMove(m_callback))
             callback(Result::Succeeded);
-        return;
-    }
-    response.setSource(ResourceResponse::Source::ServiceWorker);
-
-    if (response.isRedirection() && response.httpHeaderFields().contains(HTTPHeaderName::Location)) {
-        m_redirectionStatus = RedirectionStatus::Receiving;
-        m_loader->willSendRequest(m_loader->request().redirectedRequest(response, m_shouldClearReferrerOnHTTPSToHTTPRedirect), response, [protectedThis = makeRef(*this), this](ResourceRequest&& request) {
-            if (request.isNull() || !m_callback)
-                return;
-
-            ASSERT(request == m_loader->request());
-            if (m_redirectionStatus == RedirectionStatus::Received) {
-                start();
-                return;
-            }
-            m_redirectionStatus = RedirectionStatus::Following;
-        });
-        return;
-    }
-
-    // In case of main resource and mime type is the default one, we set it to text/html to pass more service worker WPT tests.
-    // FIXME: We should refine our MIME type sniffing strategy for synthetic responses.
-    if (m_loader->originalRequest().requester() == ResourceRequest::Requester::Main) {
-        if (response.mimeType() == defaultMIMEType()) {
-            response.setMimeType(ASCIILiteral("text/html"));
-            response.setTextEncodingName(ASCIILiteral("UTF-8"));
-        }
-    }
-
-    // As per https://fetch.spec.whatwg.org/#main-fetch step 9, copy request's url list in response's url list if empty.
-    if (response.url().isNull())
-        response.setURL(m_loader->request().url());
-
-    m_loader->didReceiveResponse(response);
-    if (auto callback = WTFMove(m_callback))
-        callback(Result::Succeeded);
+    });
 }
 
 void ServiceWorkerClientFetch::didReceiveData(const IPC::DataReference& data, int64_t encodedDataLength)
 {
-    m_loader->didReceiveData(reinterpret_cast<const char*>(data.data()), data.size(), encodedDataLength, DataPayloadBytes);
+    callOnMainThread([this, protectedThis = makeRef(*this), data = data.vector(), encodedDataLength] {
+        if (!m_loader)
+            return;
+
+        m_loader->didReceiveData(reinterpret_cast<const char*>(data.data()), data.size(), encodedDataLength, DataPayloadBytes);
+    });
 }
 
 void ServiceWorkerClientFetch::didReceiveFormData(const IPC::FormDataReference&)
@@ -156,50 +164,64 @@ void ServiceWorkerClientFetch::didReceiveFormData(const IPC::FormDataReference&)
 
 void ServiceWorkerClientFetch::didFinish()
 {
-    switch (m_redirectionStatus) {
-    case RedirectionStatus::None:
-        break;
-    case RedirectionStatus::Receiving:
-        m_redirectionStatus = RedirectionStatus::Received;
-        return;
-    case RedirectionStatus::Following:
-        start();
-        return;
-    case RedirectionStatus::Received:
-        ASSERT_NOT_REACHED();
-        m_redirectionStatus = RedirectionStatus::None;
-    }
+    callOnMainThread([this, protectedThis = makeRef(*this)] {
+        if (!m_loader)
+            return;
 
-    ASSERT(!m_callback);
+        switch (m_redirectionStatus) {
+        case RedirectionStatus::None:
+            break;
+        case RedirectionStatus::Receiving:
+            m_redirectionStatus = RedirectionStatus::Received;
+            return;
+        case RedirectionStatus::Following:
+            start();
+            return;
+        case RedirectionStatus::Received:
+            ASSERT_NOT_REACHED();
+            m_redirectionStatus = RedirectionStatus::None;
+        }
 
-    auto protectedThis = makeRef(*this);
-    m_loader->didFinishLoading(NetworkLoadMetrics { });
-    m_serviceWorkerProvider.fetchFinished(m_identifier);
+        ASSERT(!m_callback);
+
+        m_loader->didFinishLoading(NetworkLoadMetrics { });
+        m_serviceWorkerProvider.fetchFinished(m_identifier);
+    });
 }
 
 void ServiceWorkerClientFetch::didFail()
 {
-    auto protectedThis = makeRef(*this);
-    m_loader->didFail({ ResourceError::Type::General });
+    callOnMainThread([this, protectedThis = makeRef(*this)] {
+        if (!m_loader)
+            return;
 
-    if (auto callback = WTFMove(m_callback))
-        callback(Result::Succeeded);
+        m_loader->didFail({ ResourceError::Type::General });
 
-    m_serviceWorkerProvider.fetchFinished(m_identifier);
+        if (auto callback = WTFMove(m_callback))
+            callback(Result::Succeeded);
+
+        m_serviceWorkerProvider.fetchFinished(m_identifier);
+    });
 }
 
 void ServiceWorkerClientFetch::didNotHandle()
 {
-    if (auto callback = WTFMove(m_callback))
-        callback(Result::Unhandled);
+    callOnMainThread([this, protectedThis = makeRef(*this)] {
+        if (!m_loader)
+            return;
 
-    m_serviceWorkerProvider.fetchFinished(m_identifier);
+        if (auto callback = WTFMove(m_callback))
+            callback(Result::Unhandled);
+
+        m_serviceWorkerProvider.fetchFinished(m_identifier);
+    });
 }
 
 void ServiceWorkerClientFetch::cancel()
 {
     if (auto callback = WTFMove(m_callback))
         callback(Result::Cancelled);
+    m_loader = nullptr;
 }
 
 } // namespace WebKit

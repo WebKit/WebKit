@@ -1,3 +1,26 @@
+2018-02-06  Chris Dumez  <cdumez@apple.com>
+
+        Layout Test imported/w3c/web-platform-tests/service-workers/service-worker/fetch-waits-for-activate.https.html is a flaky failure on macOS and iOS
+        https://bugs.webkit.org/show_bug.cgi?id=181392
+        <rdar://problem/36384136>
+
+        Reviewed by Youenn Fablet.
+
+        All tasks from the StorageProcess to the WebContent process to update registrations
+        and service workers state are posted to the runloop. However, the fetch callbacks
+        do not do so. This means that fetch results might come in out of order with regards
+        to the registration / service worker state updates. The test was flaky because an
+        intercepted load would sometimes finish before the task to update the service worker
+        state to "activated" was processed by the runloop. We address the issue by having
+        the ServiceWorkerClientFetch callbacks schedule tasks to the runloop too.
+
+        * WebProcess/Storage/ServiceWorkerClientFetch.cpp:
+        (WebKit::ServiceWorkerClientFetch::didReceiveResponse):
+        (WebKit::ServiceWorkerClientFetch::didReceiveData):
+        (WebKit::ServiceWorkerClientFetch::didFinish):
+        (WebKit::ServiceWorkerClientFetch::didFail):
+        (WebKit::ServiceWorkerClientFetch::didNotHandle):
+
 2018-02-06  Brent Fulgham  <bfulgham@apple.com>
 
         [macOS] Correct sandbox violation triggered by Chase.com
