@@ -1,3 +1,12 @@
+2018-02-06  Youenn Fablet  <youenn@apple.com>
+
+        imported/w3c/web-platform-tests/service-workers/service-worker/fetch-event-respond-with-response-body-with-invalid-chunk.https.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=182541
+
+        Reviewed by Chris Dumez.
+
+        * TestExpectations:
+
 2018-02-06  Chris Dumez  <cdumez@apple.com>
 
         Layout Test imported/w3c/web-platform-tests/service-workers/service-worker/fetch-waits-for-activate.https.html is a flaky failure on macOS and iOS

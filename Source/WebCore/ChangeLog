@@ -1,3 +1,28 @@
+2018-02-06  Youenn Fablet  <youenn@apple.com>
+
+        imported/w3c/web-platform-tests/service-workers/service-worker/fetch-event-respond-with-response-body-with-invalid-chunk.https.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=182541
+
+        Reviewed by Chris Dumez.
+
+        Covered by test being no longer flaky.
+        In case of loading error when getting the response body, we were only reporting
+        the error if there was a callback set or a ReadableStream already created.
+        Otherwise, we were just stopping loading and if creating a ReadableStream, we were just returning an empty body.
+
+        FetchBodyOwner now stores a loading error.
+        In case a readable stream is created, it will error it if there is a loading error.
+        If there is not and the loading failed later on, the stream will be errored using the current code path.
+
+        * Modules/cache/DOMCache.cpp:
+        (WebCore::DOMCache::put):
+        * Modules/fetch/FetchResponse.cpp:
+        (WebCore::FetchResponse::clone):
+        (WebCore::FetchResponse::BodyLoader::didFail):
+        * Modules/fetch/FetchResponse.h:
+        * workers/service/context/ServiceWorkerFetch.cpp:
+        (WebCore::ServiceWorkerFetch::processResponse):
+
 2018-02-06  Andy Estes  <aestes@apple.com>
 
         [Payment Request] show() should take an optional PaymentDetailsUpdate promise
