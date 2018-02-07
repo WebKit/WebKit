@@ -730,7 +730,13 @@ void WebPageProxy::initializeWebPage()
     }
 #endif
 
-    process().send(Messages::WebProcess::CreateWebPage(m_pageID, creationParameters()), 0);
+    auto parameters = creationParameters();
+
+#if ENABLE(SERVICE_WORKER)
+    parameters.hasRegisteredServiceWorkers = process().processPool().mayHaveRegisteredServiceWorkers(m_websiteDataStore);
+#endif
+
+    process().send(Messages::WebProcess::CreateWebPage(m_pageID, parameters), 0);
 
     m_needsToFinishInitializingWebPageAfterProcessLaunch = true;
     finishInitializingWebPageAfterProcessLaunch();

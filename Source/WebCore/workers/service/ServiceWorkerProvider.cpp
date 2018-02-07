@@ -49,7 +49,7 @@ bool ServiceWorkerProvider::mayHaveServiceWorkerRegisteredForOrigin(PAL::Session
 {
     auto* connection = existingServiceWorkerConnectionForSession(sessionID);
     if (!connection)
-        return m_hasRegisteredServiceWorkers;
+        return m_mayHaveRegisteredServiceWorkers;
 
     return connection->mayHaveServiceWorkerRegisteredForOrigin(origin);
 }
