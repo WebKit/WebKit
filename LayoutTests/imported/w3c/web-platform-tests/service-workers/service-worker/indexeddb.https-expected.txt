@@ -1,8 +1,5 @@
-CONSOLE MESSAGE: line 14: NotFoundError: Failed to execute 'transaction' on 'IDBDatabase': One of the specified object stores was not found.
 
-Harness Error (FAIL), message = NotFoundError: Failed to execute 'transaction' on 'IDBDatabase': One of the specified object stores was not found.
-
-TIMEOUT Verify Indexed DB operation in a Service Worker Test timed out
-NOTRUN clean up: registration 
-NOTRUN clean up: database 
+PASS Verify Indexed DB operation in a Service Worker 
+PASS clean up: registration 
+PASS clean up: database 
 

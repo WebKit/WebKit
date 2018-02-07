@@ -1,3 +1,15 @@
+2018-02-07  Chris Dumez  <cdumez@apple.com>
+
+        IndexedDB in service workers is using a memory backed store
+        https://bugs.webkit.org/show_bug.cgi?id=182574
+        <rdar://problem/37316205>
+
+        Reviewed by Youenn Fablet.
+
+        Rebaseline WPT test that is now passing.
+
+        * web-platform-tests/service-workers/service-worker/indexeddb.https-expected.txt:
+
 2018-02-05  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, unskip fetch-event-respond-with-partial-stream.https.html as it no longer times out
