@@ -1472,6 +1472,8 @@ media/modern-media-controls/media-documents/background-color-and-centering.html 
 [ ElCapitan ] media/modern-media-controls/placard-support/placard-support-pip.html [ Skip ]
 media/modern-media-controls/pip-support/ipad [ Skip ]
 
+webkit.org/b/169158 media/modern-media-controls/tracks-support/tracks-support-show-panel-after-dragging-controls.html [ Skip ]
+
 webkit.org/b/170907 [ Debug ] imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/hkdf.worker.html [ Pass Failure Timeout ]
 
 webkit.org/b/173328 [ ElCapitan Sierra ] fast/text/system-font-fallback-emoji.html [ Failure ]
