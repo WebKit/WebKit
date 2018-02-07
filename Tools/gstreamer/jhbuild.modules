@@ -112,7 +112,15 @@
       <dep package="gstreamer"/>
       <dep package="gst-plugins-base"/>
       <dep package="gst-plugins-bad"/>
+      <dep package="libva"/>
     </dependencies>
    </autotools>
+
+   <autotools id="libva" autogenargs="--enable-va-messaging=no">
+     <branch module="intel/libva/releases/download/${version}/libva-${version}.tar.bz2" version="2.0.0"
+             hash="sha1:762a49f8925ca1d0531c5071afbd629ffea93b90"
+            checkoutdir="libva-${version}" repo="github-tarball"/>
+   </autotools>
+
 
 </moduleset>

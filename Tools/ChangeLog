@@ -1,3 +1,14 @@
+2018-02-07  Philippe Normand  <pnormand@igalia.com>
+
+        [JHBuild] Add libva in moduleset
+        https://bugs.webkit.org/show_bug.cgi?id=182384
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        * gstreamer/jhbuild.modules: Add libva and disable spurious message output.
+        * gtk/install-dependencies: Remove libva from dependencies.
+        * wpe/install-dependencies: Ditto.
+
 2018-02-07  Ms2ger  <Ms2ger@igalia.com>
 
         [GTK] Enable WebKit.NewFirstVisuallyNonEmptyLayoutFrames test

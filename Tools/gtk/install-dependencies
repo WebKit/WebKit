@@ -196,7 +196,6 @@ function installDependenciesWithApt {
         libproxy-dev \
         libssl-dev \
         libtiff5-dev \
-        libva-dev \
         libv4l-dev \
         libxcb-composite0-dev \
         libxcb-xfixes0-dev \
@@ -347,7 +346,6 @@ function installDependenciesWithPacman {
         libpciaccess \
         libproxy \
         libtiff \
-        libva \
         libxfixes \
         libxfont \
         libxcb \
@@ -510,7 +508,6 @@ function installDependenciesWithDnf {
         libpciaccess-devel \
         libproxy-devel \
         libtiff-devel \
-        libva-devel \
         libxcb-devel \
         libxkbfile-devel \
         libxkbcommon-x11-devel \
