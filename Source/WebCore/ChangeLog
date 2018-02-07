@@ -1,3 +1,28 @@
+2018-02-07  Zalan Bujtas  <zalan@apple.com>
+
+        [RenderTreeBuilder] Remove RenderElement::destroyLeftoverChildren.
+        https://bugs.webkit.org/show_bug.cgi?id=182518
+        <rdar://problem/37256035>
+
+        Reviewed by Antti Koivisto.
+
+        Remove leftover children before we call takeChild() on the parent (as opposed to when
+        we finally call destroy() on the parent).
+        This patch also explicitly destroys the top level pagination renderers.
+
+        Covered by existing tests.
+
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::removeAndDestroyChild):
+        (WebCore::RenderElement::destroyLeftoverChildren): Deleted.
+        * rendering/RenderElement.h:
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::destroy):
+        * rendering/updating/RenderTreeUpdater.cpp:
+        (WebCore::RenderTreeUpdater::tearDownRenderers):
+        (WebCore::RenderTreeUpdater::tearDownLeftoverPaginationRenderersIfNeeded):
+        * rendering/updating/RenderTreeUpdater.h:
+
 2018-02-07  Daniel Bates  <dabates@apple.com>
 
         Log error when authentication challenge is blocked due to an insecure request

@@ -1477,9 +1477,6 @@ void RenderObject::destroy()
     RELEASE_ASSERT(!m_previous);
     RELEASE_ASSERT(!m_bitfields.beingDestroyed());
 
-    if (is<RenderElement>(*this))
-        downcast<RenderElement>(*this).destroyLeftoverChildren();
-
     m_bitfields.setBeingDestroyed(true);
 
 #if PLATFORM(IOS)
