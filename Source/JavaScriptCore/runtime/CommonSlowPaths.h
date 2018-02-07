@@ -138,8 +138,11 @@ inline void tryCachePutToScopeGlobal(
     }
     
     if (resolveType == GlobalProperty || resolveType == GlobalPropertyWithVarInjectionChecks) {
+        JSGlobalObject* globalObject = codeBlock->globalObject();
+        ASSERT(globalObject == scope || globalObject->varInjectionWatchpoint()->hasBeenInvalidated());
         if (!slot.isCacheablePut()
             || slot.base() != scope
+            || scope != globalObject
             || !scope->structure()->propertyAccessesAreCacheable())
             return;
         
@@ -183,9 +186,11 @@ inline void tryCacheGetFromScopeGlobal(
     }
 
     // Covers implicit globals. Since they don't exist until they first execute, we didn't know how to cache them at compile time.
-    if (slot.isCacheableValue() && slot.slotBase() == scope && scope->structure()->propertyAccessesAreCacheable()) {
-        if (resolveType == GlobalProperty || resolveType == GlobalPropertyWithVarInjectionChecks) {
-            CodeBlock* codeBlock = exec->codeBlock();
+    if (resolveType == GlobalProperty || resolveType == GlobalPropertyWithVarInjectionChecks) {
+        CodeBlock* codeBlock = exec->codeBlock();
+        JSGlobalObject* globalObject = codeBlock->globalObject();
+        ASSERT(scope == globalObject || globalObject->varInjectionWatchpoint()->hasBeenInvalidated());
+        if (slot.isCacheableValue() && slot.slotBase() == scope && scope == globalObject && scope->structure()->propertyAccessesAreCacheable()) {
             Structure* structure = scope->structure(vm);
             {
                 ConcurrentJSLocker locker(codeBlock->m_lock);

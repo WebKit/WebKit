@@ -43,6 +43,7 @@
 #include "ScopedArgumentsTable.h"
 #include "SlowPathCall.h"
 #include "StructureStubInfo.h"
+#include <wtf/ScopedLambda.h>
 #include <wtf/StringPrintStream.h>
 
 
@@ -857,12 +858,16 @@ void JIT::emit_op_get_from_scope(Instruction* currentInstruction)
         switch (resolveType) {
         case GlobalProperty:
         case GlobalPropertyWithVarInjectionChecks: {
-            emitLoadWithStructureCheck(scope, structureSlot); // Structure check covers var injection.
+            emitLoadWithStructureCheck(scope, structureSlot); // Structure check covers var injection since we don't cache structures for anything but the GlobalObject. Additionally, resolve_scope handles checking for the var injection.
             GPRReg base = regT0;
             GPRReg result = regT0;
             GPRReg offset = regT1;
             GPRReg scratch = regT2;
-            
+
+            jitAssert(scopedLambda<Jump(void)>([&] () -> Jump {
+                return branchPtr(Equal, base, TrustedImmPtr(m_codeBlock->globalObject()));
+            }));
+
             load32(operandSlot, offset);
             if (!ASSERT_DISABLED) {
                 Jump isOutOfLine = branch32(GreaterThanOrEqual, offset, TrustedImm32(firstOutOfLineOffset));
@@ -985,9 +990,13 @@ void JIT::emit_op_put_to_scope(Instruction* currentInstruction)
         switch (resolveType) {
         case GlobalProperty:
         case GlobalPropertyWithVarInjectionChecks: {
-            emitLoadWithStructureCheck(scope, structureSlot); // Structure check covers var injection.
+            emitLoadWithStructureCheck(scope, structureSlot); // Structure check covers var injection since we don't cache structures for anything but the GlobalObject. Additionally, resolve_scope handles checking for the var injection.
             emitGetVirtualRegister(value, regT2);
-            
+
+            jitAssert(scopedLambda<Jump(void)>([&] () -> Jump {
+                return branchPtr(Equal, regT0, TrustedImmPtr(m_codeBlock->globalObject()));
+            }));
+
             loadPtr(Address(regT0, JSObject::butterflyOffset()), regT0);
             loadPtr(operandSlot, regT1);
             negPtr(regT1);
