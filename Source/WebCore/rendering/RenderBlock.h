@@ -396,7 +396,6 @@ public:
     void adjustBorderBoxRectForPainting(LayoutRect&) override;
     LayoutRect paintRectToClipOutFromBorder(const LayoutRect&) override;
     void addChildIgnoringContinuation(RenderTreeBuilder&, RenderPtr<RenderObject> newChild, RenderObject* beforeChild) override;
-    virtual void removeLeftoverAnonymousBlock(RenderBlock* child);
     bool isInlineBlockOrInlineTable() const final { return isInline() && isReplaced(); }
 
 protected:

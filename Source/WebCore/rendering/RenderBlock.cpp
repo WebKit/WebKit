@@ -482,58 +482,6 @@ void RenderBlock::deleteLines()
         cache->deferRecomputeIsIgnored(element());
 }
 
-void RenderBlock::removeLeftoverAnonymousBlock(RenderBlock* child)
-{
-    ASSERT(child->isAnonymousBlock());
-    ASSERT(!child->childrenInline());
-    
-    if (child->continuation())
-        return;
-    
-    RenderObject* firstAnChild = child->firstChild();
-    RenderObject* lastAnChild = child->lastChild();
-    if (firstAnChild) {
-        RenderObject* o = firstAnChild;
-        while (o) {
-            o->setParent(this);
-            o = o->nextSibling();
-        }
-        firstAnChild->setPreviousSibling(child->previousSibling());
-        lastAnChild->setNextSibling(child->nextSibling());
-        if (child->previousSibling())
-            child->previousSibling()->setNextSibling(firstAnChild);
-        if (child->nextSibling())
-            child->nextSibling()->setPreviousSibling(lastAnChild);
-            
-        if (child == firstChild())
-            setFirstChild(firstAnChild);
-        if (child == lastChild())
-            setLastChild(lastAnChild);
-    } else {
-        if (child == firstChild())
-            setFirstChild(child->nextSibling());
-        if (child == lastChild())
-            setLastChild(child->previousSibling());
-
-        if (child->previousSibling())
-            child->previousSibling()->setNextSibling(child->nextSibling());
-        if (child->nextSibling())
-            child->nextSibling()->setPreviousSibling(child->previousSibling());
-    }
-
-    child->setFirstChild(nullptr);
-    child->m_next = nullptr;
-
-    // Remove all the information in the flow thread associated with the leftover anonymous block.
-    child->resetFragmentedFlowStateOnRemoval();
-
-    child->setParent(nullptr);
-    child->setPreviousSibling(nullptr);
-    child->setNextSibling(nullptr);
-
-    child->destroy();
-}
-
 static bool canDropAnonymousBlock(const RenderBlock& anonymousBlock)
 {
     if (anonymousBlock.beingDestroyed() || anonymousBlock.continuation())

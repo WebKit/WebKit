@@ -499,6 +499,51 @@ void RenderElement::destroyLeftoverChildren()
     }
 }
 
+RenderObject* RenderElement::attachRendererInternal(RenderPtr<RenderObject> child, RenderObject* beforeChild)
+{
+    child->setParent(this);
+
+    if (m_firstChild == beforeChild)
+        m_firstChild = child.get();
+
+    if (beforeChild) {
+        auto* previousSibling = beforeChild->previousSibling();
+        if (previousSibling)
+            previousSibling->setNextSibling(child.get());
+        child->setPreviousSibling(previousSibling);
+        child->setNextSibling(beforeChild);
+        beforeChild->setPreviousSibling(child.get());
+        return child.release();
+    }
+    if (m_lastChild)
+        m_lastChild->setNextSibling(child.get());
+    child->setPreviousSibling(m_lastChild);
+    m_lastChild = child.get();
+    return child.release();
+}
+
+RenderPtr<RenderObject> RenderElement::detachRendererInternal(RenderObject& renderer)
+{
+    auto* parent = renderer.parent();
+    ASSERT(parent);
+    auto* nextSibling = renderer.nextSibling();
+
+    if (renderer.previousSibling())
+        renderer.previousSibling()->setNextSibling(nextSibling);
+    if (nextSibling)
+        nextSibling->setPreviousSibling(renderer.previousSibling());
+
+    if (parent->firstChild() == &renderer)
+        parent->m_firstChild = nextSibling;
+    if (parent->lastChild() == &renderer)
+        parent->m_lastChild = renderer.previousSibling();
+
+    renderer.setPreviousSibling(nullptr);
+    renderer.setNextSibling(nullptr);
+    renderer.setParent(nullptr);
+    return RenderPtr<RenderObject>(&renderer);
+}
+
 void RenderElement::insertChildInternal(RenderPtr<RenderObject> newChildPtr, RenderObject* beforeChild)
 {
     RELEASE_ASSERT_WITH_MESSAGE(!view().frameView().layoutContext().layoutState(), "Layout must not mutate render tree");
@@ -514,26 +559,7 @@ void RenderElement::insertChildInternal(RenderPtr<RenderObject> newChildPtr, Ren
     ASSERT(!is<RenderText>(beforeChild) || !downcast<RenderText>(*beforeChild).inlineWrapperForDisplayContents());
 
     // Take the ownership.
-    auto* newChild = newChildPtr.release();
-
-    newChild->setParent(this);
-
-    if (m_firstChild == beforeChild)
-        m_firstChild = newChild;
-
-    if (beforeChild) {
-        RenderObject* previousSibling = beforeChild->previousSibling();
-        if (previousSibling)
-            previousSibling->setNextSibling(newChild);
-        newChild->setPreviousSibling(previousSibling);
-        newChild->setNextSibling(beforeChild);
-        beforeChild->setPreviousSibling(newChild);
-    } else {
-        if (lastChild())
-            lastChild()->setNextSibling(newChild);
-        newChild->setPreviousSibling(lastChild());
-        m_lastChild = newChild;
-    }
+    auto* newChild = attachRendererInternal(WTFMove(newChildPtr), beforeChild);
 
     newChild->initializeFragmentedFlowStateOnInsertion();
     if (!renderTreeBeingDestroyed()) {
@@ -599,34 +625,19 @@ RenderPtr<RenderObject> RenderElement::takeChildInternal(RenderObject& oldChild)
     // WARNING: There should be no code running between willBeRemovedFromTree and the actual removal below.
     // This is needed to avoid race conditions where willBeRemovedFromTree would dirty the tree's structure
     // and the code running here would force an untimely rebuilding, leaving |oldChild| dangling.
-    
-    RenderObject* nextSibling = oldChild.nextSibling();
-
-    if (oldChild.previousSibling())
-        oldChild.previousSibling()->setNextSibling(nextSibling);
-    if (nextSibling)
-        nextSibling->setPreviousSibling(oldChild.previousSibling());
-
-    if (m_firstChild == &oldChild)
-        m_firstChild = nextSibling;
-    if (m_lastChild == &oldChild)
-        m_lastChild = oldChild.previousSibling();
-
-    oldChild.setPreviousSibling(nullptr);
-    oldChild.setNextSibling(nullptr);
-    oldChild.setParent(nullptr);
+    auto childToTake = detachRendererInternal(oldChild);
 
     // rendererRemovedFromTree walks the whole subtree. We can improve performance
     // by skipping this step when destroying the entire tree.
-    if (!renderTreeBeingDestroyed() && is<RenderElement>(oldChild))
-        RenderCounter::rendererRemovedFromTree(downcast<RenderElement>(oldChild));
+    if (!renderTreeBeingDestroyed() && is<RenderElement>(*childToTake))
+        RenderCounter::rendererRemovedFromTree(downcast<RenderElement>(*childToTake));
 
     if (!renderTreeBeingDestroyed()) {
         if (AXObjectCache* cache = document().existingAXObjectCache())
             cache->childrenChanged(this);
     }
 
-    return RenderPtr<RenderObject>(&oldChild);
+    return childToTake;
 }
 
 RenderBlock* RenderElement::containingBlockForFixedPosition() const

@@ -78,7 +78,6 @@ private:
     bool isRubyRun() const override { return true; }
     const char* renderName() const override { return "RenderRubyRun (anonymous)"; }
     bool createsAnonymousWrapper() const override { return true; }
-    void removeLeftoverAnonymousBlock(RenderBlock*) override { }
 
 private:
     UChar m_lastCharacter;
