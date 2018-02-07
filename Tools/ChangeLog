@@ -1,5 +1,16 @@
 2018-02-07  Ms2ger  <Ms2ger@igalia.com>
 
+        [GTK] Enable WebKit.InjectedBundleFrameHitTest test
+        https://bugs.webkit.org/show_bug.cgi?id=120303
+
+        Unreviewed test gardening.
+
+        It does not appear to have failed since we started running it again in r226944.
+
+        * TestWebKitAPI/glib/TestExpectations.json:
+
+2018-02-07  Ms2ger  <Ms2ger@igalia.com>
+
         [GTK] Enable WebKit.ForceRepaint test
         https://bugs.webkit.org/show_bug.cgi?id=105532
 

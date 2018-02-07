@@ -77,9 +77,6 @@
             "WebKit.DidAssociateFormControls": {
                 "expected": {"gtk": {"status": ["TIMEOUT"], "bug": "webkit.org/b/120302"}}
             },
-            "WebKit.InjectedBundleFrameHitTest": {
-                "expected": {"gtk": {"status": ["TIMEOUT"], "bug": "webkit.org/b/120303"}}
-            },
             "WebKit.TerminateTwice": {
                 "expected": {"gtk": {"status": ["SKIP"], "bug": "webkit.org/b/121970"}}
             },
