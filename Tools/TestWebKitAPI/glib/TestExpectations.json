@@ -71,9 +71,6 @@
             "WebKit.WKConnection": {
                 "expected": {"gtk": {"status": ["FAIL", "TIMEOUT"], "bug": "webkit.org/b/84959"}}
             },
-            "WebKit.ForceRepaint": {
-                "expected": {"gtk": {"status": ["TIMEOUT"], "bug": "webkit.org/b/105532"}}
-            },
             "WebKit.ReloadPageAfterCrash": {
                 "expected": {"gtk": {"status": ["TIMEOUT", "PASS"], "bug": "webkit.org/b/110129"}}
             },
