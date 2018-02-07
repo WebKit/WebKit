@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -380,7 +380,7 @@ static ExceptionOr<JSC::JSValue> parse(ScriptExecutionContext& context, const St
 }
 
 // https://www.w3.org/TR/payment-request/#show()-method
-void PaymentRequest::show(Document& document, ShowPromise&& promise)
+void PaymentRequest::show(Document& document, RefPtr<DOMPromise>&& detailsPromise, ShowPromise&& promise)
 {
     if (!document.frame()) {
         promise.reject(Exception { AbortError });
@@ -442,6 +442,12 @@ void PaymentRequest::show(Document& document, ShowPromise&& promise)
     ASSERT(!m_activePaymentHandler);
     m_activePaymentHandler = WTFMove(selectedPaymentHandler);
     setPendingActivity(this); // unsetPendingActivity() is called below in stop()
+
+    if (!detailsPromise)
+        return;
+
+    exception = updateWith(UpdateReason::ShowDetailsResolved, detailsPromise.releaseNonNull());
+    ASSERT(!exception.hasException());
 }
 
 void PaymentRequest::abortWithException(Exception&& exception)
@@ -531,23 +537,28 @@ bool PaymentRequest::canSuspendForDocumentSuspension() const
 
 void PaymentRequest::shippingAddressChanged(Ref<PaymentAddress>&& shippingAddress)
 {
-    ASSERT(m_state == State::Interactive);
-    m_shippingAddress = WTFMove(shippingAddress);
-    if (m_isUpdating)
-        return;
-    dispatchEvent(PaymentRequestUpdateEvent::create(eventNames().shippingaddresschangeEvent, *this));
+    whenDetailsSettled([this, protectedThis = makeRefPtr(this), shippingAddress = makeRefPtr(shippingAddress.get())]() mutable {
+        m_shippingAddress = WTFMove(shippingAddress);
+        dispatchEvent(PaymentRequestUpdateEvent::create(eventNames().shippingaddresschangeEvent, *this));
+    });
 }
 
 void PaymentRequest::shippingOptionChanged(const String& shippingOption)
 {
-    ASSERT(m_state == State::Interactive);
-    m_shippingOption = shippingOption;
-    if (m_isUpdating)
-        return;
-    dispatchEvent(PaymentRequestUpdateEvent::create(eventNames().shippingoptionchangeEvent, *this));
+    whenDetailsSettled([this, protectedThis = makeRefPtr(this), shippingOption]() mutable {
+        m_shippingOption = shippingOption;
+        dispatchEvent(PaymentRequestUpdateEvent::create(eventNames().shippingoptionchangeEvent, *this));
+    });
 }
 
-ExceptionOr<void> PaymentRequest::updateWith(Event& event, Ref<DOMPromise>&& promise)
+void PaymentRequest::paymentMethodChanged()
+{
+    whenDetailsSettled([this, protectedThis = makeRefPtr(this)] {
+        m_activePaymentHandler->detailsUpdated(UpdateReason::PaymentMethodChanged, { });
+    });
+}
+
+ExceptionOr<void> PaymentRequest::updateWith(UpdateReason reason, Ref<DOMPromise>&& promise)
 {
     if (m_state != State::Interactive)
         return Exception { InvalidStateError };
@@ -555,13 +566,12 @@ ExceptionOr<void> PaymentRequest::updateWith(Event& event, Ref<DOMPromise>&& pro
     if (m_isUpdating)
         return Exception { InvalidStateError };
 
-    event.stopPropagation();
-    event.stopImmediatePropagation();
     m_isUpdating = true;
 
+    ASSERT(!m_detailsPromise);
     m_detailsPromise = WTFMove(promise);
-    m_detailsPromise->whenSettled([this, protectedThis = makeRefPtr(this), type = event.type()]() {
-        settleDetailsPromise(type);
+    m_detailsPromise->whenSettled([this, protectedThis = makeRefPtr(this), reason]() {
+        settleDetailsPromise(reason);
     });
 
     return { };
@@ -595,10 +605,11 @@ ExceptionOr<void> PaymentRequest::completeMerchantValidation(Event& event, Ref<D
     return { };
 }
 
-void PaymentRequest::settleDetailsPromise(const AtomicString& type)
+void PaymentRequest::settleDetailsPromise(UpdateReason reason)
 {
     auto scopeExit = makeScopeExit([&] {
         m_isUpdating = false;
+        m_detailsPromise = nullptr;
     });
 
     if (m_state != State::Interactive)
@@ -641,11 +652,29 @@ void PaymentRequest::settleDetailsPromise(const AtomicString& type)
     m_details.modifiers = WTFMove(paymentDetailsUpdate.modifiers);
     m_serializedModifierData = WTFMove(std::get<1>(shippingOptionAndModifierData));
 
-    auto result = m_activePaymentHandler->detailsUpdated(type, paymentDetailsUpdate.error);
+    auto result = m_activePaymentHandler->detailsUpdated(reason, paymentDetailsUpdate.error);
     if (result.hasException()) {
         abortWithException(result.releaseException());
         return;
     }
+}
+
+void PaymentRequest::whenDetailsSettled(std::function<void()>&& callback)
+{
+    if (!m_detailsPromise) {
+        ASSERT(m_state == State::Interactive);
+        ASSERT(!m_isUpdating);
+        callback();
+        return;
+    }
+
+    m_detailsPromise->whenSettled([this, protectedThis = makeRefPtr(this), callback = WTFMove(callback)] {
+        if (m_state != State::Interactive)
+            return;
+
+        ASSERT(!m_isUpdating);
+        callback();
+    });
 }
 
 void PaymentRequest::accept(const String& methodName, JSC::Strong<JSC::JSObject>&& details, Ref<PaymentAddress>&& shippingAddress, const String& payerName, const String& payerEmail, const String& payerPhone)

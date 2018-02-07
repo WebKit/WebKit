@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -45,18 +45,19 @@ class PaymentHandler;
 class PaymentResponse;
 enum class PaymentComplete;
 enum class PaymentShippingType;
+struct PaymentDetailsUpdate;
 struct PaymentMethodData;
 
 class PaymentRequest final : public RefCounted<PaymentRequest>, public ActiveDOMObject, public EventTargetWithInlineData {
 public:
-    using ShowPromise = DOMPromiseDeferred<IDLInterface<PaymentResponse>>;
     using AbortPromise = DOMPromiseDeferred<void>;
     using CanMakePaymentPromise = DOMPromiseDeferred<IDLBoolean>;
+    using ShowPromise = DOMPromiseDeferred<IDLInterface<PaymentResponse>>;
 
     static ExceptionOr<Ref<PaymentRequest>> create(Document&, Vector<PaymentMethodData>&&, PaymentDetailsInit&&, PaymentOptions&&);
     ~PaymentRequest();
 
-    void show(Document&, ShowPromise&&);
+    void show(Document&, RefPtr<DOMPromise>&& detailsPromise, ShowPromise&&);
     ExceptionOr<void> abort(AbortPromise&&);
     void canMakePayment(Document&, CanMakePaymentPromise&&);
 
@@ -71,6 +72,13 @@ public:
         Closed,
     };
 
+    enum class UpdateReason {
+        ShowDetailsResolved,
+        ShippingAddressChanged,
+        ShippingOptionChanged,
+        PaymentMethodChanged,
+    };
+
     State state() const { return m_state; }
 
     const PaymentOptions& paymentOptions() const { return m_options; }
@@ -79,7 +87,8 @@ public:
 
     void shippingAddressChanged(Ref<PaymentAddress>&&);
     void shippingOptionChanged(const String& shippingOption);
-    ExceptionOr<void> updateWith(Event&, Ref<DOMPromise>&&);
+    void paymentMethodChanged();
+    ExceptionOr<void> updateWith(UpdateReason, Ref<DOMPromise>&&);
     ExceptionOr<void> completeMerchantValidation(Event&, Ref<DOMPromise>&&);
     void accept(const String& methodName, JSC::Strong<JSC::JSObject>&& details, Ref<PaymentAddress>&& shippingAddress, const String& payerName, const String& payerEmail, const String& payerPhone);
     void complete(std::optional<PaymentComplete>&&);
@@ -97,7 +106,8 @@ private:
 
     PaymentRequest(Document&, PaymentOptions&&, PaymentDetailsInit&&, Vector<String>&& serializedModifierData, Vector<Method>&& serializedMethodData, String&& selectedShippingOption);
 
-    void settleDetailsPromise(const AtomicString& type);
+    void settleDetailsPromise(UpdateReason);
+    void whenDetailsSettled(std::function<void()>&&);
     void abortWithException(Exception&&);
 
     // ActiveDOMObject

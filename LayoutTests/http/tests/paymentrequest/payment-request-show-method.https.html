@@ -75,4 +75,64 @@ user_activation_test(async t => {
   internals.mockPaymentCoordinator.cancelPayment();
   await promise_rejects(t, "AbortError", acceptPromise);
 }, `If the user aborts the payment request algorithm, then return a promise rejected with an "AbortError" DOMException.`);
+
+user_activation_test(async t => {
+  const request = new PaymentRequest(defaultMethods, defaultDetails);
+  const expectedLabel = "Updated Total";
+  const expectedAmount = "2.00";
+  const details = {
+      total: {
+          label: expectedLabel,
+          amount: {
+              currency: "USD",
+              value: expectedAmount,
+          },
+      },
+  };
+  const acceptPromise = request.show(details);
+  internals.mockPaymentCoordinator.changePaymentMethod({ type: 'credit' });
+  internals.mockPaymentCoordinator.acceptPayment();
+  const result = await acceptPromise;
+  assert_equals(internals.mockPaymentCoordinator.total.label, expectedLabel);
+  assert_equals(internals.mockPaymentCoordinator.total.amount, expectedAmount);
+  result.complete("success");
+}, `A request is updated when show()'s detail promise resolves.`);
+
+user_activation_test(async t => {
+  const request = new PaymentRequest(defaultMethods, defaultDetails);
+  const expectedLabel = "Updated Total";
+  const expectedAmount = "2.00";
+
+  var shippingAddressChanged = false;
+  const shippingAddressChangedPromise = new Promise((resolve) => {
+    request.onshippingaddresschange = () => {
+      shippingAddressChanged = true;
+      resolve();
+    };
+  });
+
+  const detailsPromise = new Promise((resolve) => {
+    const details = {
+      total: {
+        label: expectedLabel,
+        amount: {
+          currency: "USD",
+          value: expectedAmount,
+        },
+      },
+    };
+
+    request.onmerchantvalidation = (event) => {
+      const sessionPromise = new Promise((resolve) => resolve({ }));
+      event.complete(sessionPromise);
+      sessionPromise.then(() => window.setTimeout(() => {
+        assert_equals(shippingAddressChanged, false, "shippingaddresschange does not fire before the details promise resolves.");
+        resolve(details);
+      }));
+    };
+  });
+
+  request.show(detailsPromise).catch(() => {});
+  await shippingAddressChangedPromise;
+}, `Change events do not occur until show()'s detail promise resolves.`);
 </script>
