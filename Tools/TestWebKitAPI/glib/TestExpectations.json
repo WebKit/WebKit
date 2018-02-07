@@ -79,12 +79,6 @@
             },
             "WebKit.TerminateTwice": {
                 "expected": {"gtk": {"status": ["SKIP"], "bug": "webkit.org/b/121970"}}
-            },
-            "WebKit.GeolocationTransitionToHighAccuracy": {
-                "expected": {"gtk": {"status": ["CRASH"], "bug": "webkit.org/b/125068"}}
-            },
-            "WebKit.GeolocationTransitionToLowAccuracy": {
-                "expected": {"gtk": {"status": ["CRASH"], "bug": "webkit.org/b/125068"}}
             }
         }
     },
