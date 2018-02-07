@@ -1,0 +1,3 @@
+CONSOLE MESSAGE: Blocked http://127.0.0.1:8000/security/mixedContent/resources/subresource/protected-page.php from asking for credentials because it is insecure content.
+CONSOLE MESSAGE: Blocked http://127.0.0.1:8000/security/mixedContent/resources/subresource/protected-page.php from asking for credentials because it was navigated to from a secure page or went through an insecure redirect.
+Unauthorized.

@@ -430,6 +430,11 @@ void NetworkResourceLoader::didFailLoading(const ResourceError& error)
     cleanup();
 }
 
+void NetworkResourceLoader::didBlockAuthenticationChallenge()
+{
+    send(Messages::WebResourceLoader::DidBlockAuthenticationChallenge());
+}
+
 void NetworkResourceLoader::willSendRedirectedRequest(ResourceRequest&& request, WebCore::ResourceRequest&& redirectRequest, ResourceResponse&& redirectResponse)
 {
     ++m_redirectCount;

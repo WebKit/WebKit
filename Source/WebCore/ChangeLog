@@ -1,3 +1,46 @@
+2018-02-07  Daniel Bates  <dabates@apple.com>
+
+        Log error when authentication challenge is blocked due to an insecure request
+        https://bugs.webkit.org/show_bug.cgi?id=182358
+
+        Reviewed by Andy Estes.
+
+        Emit an error message to Web Inspector console that explains why an authentication
+        challenge was blocked so that a developer can fix up their site.
+
+        Tests: http/tests/security/mixedContent/insecure-basic-auth-image.https.html
+               http/tests/security/mixedContent/secure-page-navigates-to-basic-auth-insecure-page.https.html
+               http/tests/security/mixedContent/secure-page-navigates-to-basic-auth-secure-page-via-insecure-redirect.https.html
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::receivedFirstData): Log to the console an error message
+        if the document we are loading was forbidden from prompting for credentials.
+        Also removed duplicate assertion to ensure document is non-null and update
+        call to LinkLoader::loadLinksFromHeader() to use local variable to access
+        the document we are loading instead of asking the frame for it, again.
+        (WebCore::FrameLoader::reportAuthenticationChallengeBlocked): Added.
+        * loader/FrameLoader.h:
+
+        * loader/ResourceLoader.cpp:
+        (WebCore::ResourceLoader::init):
+        (WebCore::ResourceLoader::willSendRequestInternal):
+        Track the decision to forbid asking for credentials due to Fetch spec. requirements (m_canAskClientForCredentials)
+        independently from the decision to forbid them due to making an insecure request (m_wasInsecureRequestSeen)
+        so that we know the reason why we blocked asking for credentials when we receive an authentication challenge.
+
+        (WebCore::ResourceLoader::didBlockAuthenticationChallenge): Added.
+        (WebCore::ResourceLoader::isAllowedToAskUserForCredentials const): Modified code now that we track
+        whether we have seen an insecure request so far independently from decision to forbid prompting for
+        credentials due to a Fetch spec. requirement.
+
+        (WebCore::ResourceLoader::didReceiveAuthenticationChallenge):
+        Store a bit whether we have seen an insecure request when loading the resource so far. Disallow
+        asking for credentials if we have seen an insecure request so far. Once we receive a response
+
+        * loader/ResourceLoader.h:
+        (WebCore::ResourceLoader::wasAuthenticationChallengeBlocked const): Added.
+        (WebCore::ResourceLoader::wasInsecureRequestSeen const): Added.
+
 2018-02-06  Matt Lewis  <jlewis3@apple.com>
 
         Removed the assertions from VideoFullscreenInterfaceAVKit.mm temporarily to stop the resulting crashes during debugging.

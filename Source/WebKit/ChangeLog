@@ -1,3 +1,24 @@
+2018-02-07  Daniel Bates  <dabates@apple.com>
+
+        Log error when authentication challenge is blocked due to an insecure request
+        https://bugs.webkit.org/show_bug.cgi?id=182358
+
+        Reviewed by Andy Estes.
+
+        Have network process notify the web process when it blocks an authentication challenge.
+
+        * NetworkProcess/NetworkLoad.cpp:
+        (WebKit::NetworkLoad::completeAuthenticationChallenge):
+        * NetworkProcess/NetworkLoadClient.h:
+        (WebKit::NetworkLoadClient::didBlockAuthenticationChallenge):
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::didBlockAuthenticationChallenge):
+        * NetworkProcess/NetworkResourceLoader.h:
+        * WebProcess/Network/WebResourceLoader.cpp:
+        (WebKit::WebResourceLoader::didBlockAuthenticationChallenge):
+        * WebProcess/Network/WebResourceLoader.h:
+        * WebProcess/Network/WebResourceLoader.messages.in:
+
 2018-02-07  Chris Dumez  <cdumez@apple.com>
 
         IndexedDB in service workers is using a memory backed store

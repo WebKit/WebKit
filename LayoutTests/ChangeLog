@@ -1,3 +1,31 @@
+2018-02-07  Daniel Bates  <dabates@apple.com>
+
+        Log error when authentication challenge is blocked due to an insecure request
+        https://bugs.webkit.org/show_bug.cgi?id=182358
+
+        Reviewed by Andy Estes.
+
+        Add more tests and update expected results of existing tests now that we emit console messages.
+
+        Also fixed a typo in LayoutTests/http/tests/security/mixedContent/secure-redirect-to-secure-redirect-to-basic-auth-insecure-image.https.html
+        so that it tests what it actually claims to test and made the test programmatically load the image
+        to avoid output flakiness caused by the preload scanner preloading it. The preload scanner performs
+        mixed content checks and this can cause duplicate mixed content warnings in the test output.
+
+        * http/tests/security/mixedContent/insecure-basic-auth-image.https-expected.txt: Added.
+        * http/tests/security/mixedContent/insecure-basic-auth-image.https.html: Copied from LayoutTests/http/tests/security/mixedContent/secure-redirect-to-secure-redirect-to-basic-auth-insecure-image.https.html.
+        * http/tests/security/mixedContent/insecure-download-redirects-to-basic-auth-secure-download.https-expected.txt:
+        * http/tests/security/mixedContent/insecure-image-redirects-to-basic-auth-secure-image-expected.txt:
+        * http/tests/security/mixedContent/resources/subresource/protected-page.php: Added.
+        * http/tests/security/mixedContent/resources/subresource2/protected-image.php: Added.
+        * http/tests/security/mixedContent/secure-page-navigates-to-basic-auth-insecure-page.https-expected.txt: Added.
+        * http/tests/security/mixedContent/secure-page-navigates-to-basic-auth-insecure-page.https.html: Added.
+        * http/tests/security/mixedContent/secure-page-navigates-to-basic-auth-secure-page-via-insecure-redirect.https-expected.txt: Added.
+        * http/tests/security/mixedContent/secure-page-navigates-to-basic-auth-secure-page-via-insecure-redirect.https.html: Added.
+        * http/tests/security/mixedContent/secure-redirect-to-insecure-redirect-to-basic-auth-secure-image.https-expected.txt:
+        * http/tests/security/mixedContent/secure-redirect-to-secure-redirect-to-basic-auth-insecure-image.https-expected.txt:
+        * http/tests/security/mixedContent/secure-redirect-to-secure-redirect-to-basic-auth-insecure-image.https.html:
+
 2018-02-07  Chris Dumez  <cdumez@apple.com>
 
         IndexedDB in service workers is using a memory backed store

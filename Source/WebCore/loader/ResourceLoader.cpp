@@ -133,7 +133,8 @@ void ResourceLoader::init(ResourceRequest&& clientRequest, CompletionHandler<voi
 #endif
     
     m_defersLoading = m_options.defersLoadingPolicy == DefersLoadingPolicy::AllowDefersLoading && m_frame->page()->defersLoading();
-    m_canAskClientForCredentials = m_options.clientCredentialPolicy == ClientCredentialPolicy::MayAskClientForCredentials && !isMixedContent(clientRequest.url());
+    m_canAskClientForCredentials = m_options.clientCredentialPolicy == ClientCredentialPolicy::MayAskClientForCredentials;
+    m_wasInsecureRequestSeen = isMixedContent(clientRequest.url());
 
     if (m_options.securityCheck == DoSecurityCheck && !m_frame->document()->securityOrigin().canDisplay(clientRequest.url())) {
         FrameLoader::reportLocalLoadFailed(m_frame.get(), clientRequest.url().string());
@@ -404,7 +405,7 @@ void ResourceLoader::willSendRequestInternal(ResourceRequest&& request, const Re
     bool isRedirect = !redirectResponse.isNull();
 
     if (isMixedContent(m_request.url()) || (isRedirect && isMixedContent(request.url())))
-        m_canAskClientForCredentials = false;
+        m_wasInsecureRequestSeen = true;
 
     if (isRedirect)
         platformStrategies()->loaderStrategy()->crossOriginRedirectReceived(this, request.url());
@@ -460,6 +461,31 @@ static void logResourceResponseSource(Frame* frame, ResourceResponse::Source sou
     }
 
     frame->page()->diagnosticLoggingClient().logDiagnosticMessage(DiagnosticLoggingKeys::resourceResponseSourceKey(), sourceKey, ShouldSample::Yes);
+}
+
+void ResourceLoader::didBlockAuthenticationChallenge()
+{
+    m_wasAuthenticationChallengeBlocked = true;
+
+    if (!m_canAskClientForCredentials)
+        return;
+
+    if (!m_wasInsecureRequestSeen)
+        return;
+
+    // Comparing the initial request URL and final request URL does not tell us whether a redirect happened or not since
+    // a server can serve a redirect to the same URL that was requested. However, this is good enough for our purpose.
+    bool wasRedirected = m_request.url() != originalRequest().url();
+
+    bool isMixedContent = this->isMixedContent(m_request.url());
+    String reason;
+    if (isMixedContent && wasRedirected)
+        reason = makeString("it is insecure content that was loaded via a redirect from ", originalRequest().url().stringCenterEllipsizedToLength());
+    else if (isMixedContent)
+        reason = ASCIILiteral { "it is insecure content" };
+    else
+        reason = makeString("it was loaded via an insecure redirect from ", originalRequest().url().stringCenterEllipsizedToLength());
+    FrameLoader::reportAuthenticationChallengeBlocked(m_frame.get(), m_request.url(), reason);
 }
 
 void ResourceLoader::didReceiveResponse(const ResourceResponse& r)
@@ -713,6 +739,8 @@ bool ResourceLoader::isAllowedToAskUserForCredentials() const
 {
     if (!m_canAskClientForCredentials)
         return false;
+    if (m_wasInsecureRequestSeen)
+        return false;
     return m_options.credentials == FetchOptions::Credentials::Include || (m_options.credentials == FetchOptions::Credentials::SameOrigin && m_frame->document()->securityOrigin().canRequest(originalRequest().url()));
 }
 
@@ -730,6 +758,7 @@ void ResourceLoader::didReceiveAuthenticationChallenge(ResourceHandle* handle, c
             frameLoader()->notifier().didReceiveAuthenticationChallenge(this, challenge);
             return;
         }
+        didBlockAuthenticationChallenge();
     }
     challenge.authenticationClient()->receivedRequestToContinueWithoutCredential(challenge);
     ASSERT(!m_handle || !m_handle->hasAuthenticationChallenge());

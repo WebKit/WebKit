@@ -115,6 +115,7 @@
 #include "SerializedScriptValue.h"
 #include "Settings.h"
 #include "SubframeLoader.h"
+#include "SubresourceLoader.h"
 #include "TextResourceDecoder.h"
 #include "UserContentController.h"
 #include "UserGestureIndicator.h"
@@ -677,6 +678,10 @@ void FrameLoader::receivedFirstData()
 
     ASSERT(m_frame.document());
     auto& document = *m_frame.document();
+
+    auto* mainResourceLoader = documentLoader.mainResourceLoader();
+    if (mainResourceLoader && mainResourceLoader->wasAuthenticationChallengeBlocked() && mainResourceLoader->wasInsecureRequestSeen())
+        reportAuthenticationChallengeBlocked(&m_frame, document.url(), ASCIILiteral { "it was navigated to from a secure page or went through an insecure redirect" });
 
     LinkLoader::loadLinksFromHeader(documentLoader.response().httpHeaderField(HTTPHeaderName::Link), document.url(), document, LinkLoader::MediaAttributeCheck::MediaAttributeEmpty);
 
@@ -1550,6 +1555,14 @@ void FrameLoader::reportBlockedPortFailed(Frame* frame, const String& url)
         return;
     
     frame->document()->addConsoleMessage(MessageSource::Security, MessageLevel::Error, "Not allowed to use restricted network port: " + url);
+}
+
+void FrameLoader::reportAuthenticationChallengeBlocked(Frame* frame, const URL& url, const String& reason)
+{
+    if (!frame)
+        return;
+
+    frame->document()->addConsoleMessage(MessageSource::Security, MessageLevel::Error, makeString("Blocked ", url.stringCenterEllipsizedToLength(), " from asking for credentials because ", reason, '.'));
 }
 
 const ResourceRequest& FrameLoader::initialRequest() const

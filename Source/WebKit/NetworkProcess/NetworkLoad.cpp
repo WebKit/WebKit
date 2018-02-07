@@ -280,6 +280,7 @@ void NetworkLoad::completeAuthenticationChallenge(ChallengeCompletionHandler&& c
 {
     bool isServerTrustEvaluation = m_challenge->protectionSpace().authenticationScheme() == ProtectionSpaceAuthenticationSchemeServerTrustEvaluationRequested;
     if (!isAllowedToAskUserForCredentials() && !isServerTrustEvaluation) {
+        m_client.get().didBlockAuthenticationChallenge();
         completionHandler(AuthenticationChallengeDisposition::UseCredential, { });
         return;
     }
