@@ -1,3 +1,19 @@
+2018-02-08  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Styles: Typing value and quickly moving focus away may display outdated value in UI
+        https://bugs.webkit.org/show_bug.cgi?id=182588
+        <rdar://problem/37332161>
+
+        Reviewed by Matt Baker.
+
+        CSSProperty models were updated with a 250ms delay. Quickly adding a blank property after modifying
+        an existing property could result in outdated values being shown.
+
+        This patch removes the 250ms delay.
+
+        * UserInterface/Views/SpreadsheetStyleProperty.js:
+        (WI.SpreadsheetStyleProperty.prototype.spreadsheetTextFieldDidChange):
+
 2018-02-07  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: replace isAncestor with Node.contains() in LegacyTabBar
