@@ -385,7 +385,7 @@
     <pkg-config>libdrm.pc</pkg-config>
     <branch module="/libdrm/libdrm-${version}.tar.bz2" version="2.4.89"
             repo="dri.freedesktop.org"
-            hash="sha256:c376b9ba0974700632939139397a12d4e3c93c31835a27dda855159441713e70"/>
+            hash="sha256:629f9782aabbb4809166de5f24d26fe0766055255038f16935602d89f136a02e"/>
   </autotools>
 
   <autotools id="mesa"

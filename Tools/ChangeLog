@@ -1,5 +1,11 @@
 2018-02-08  Philippe Normand  <pnormand@igalia.com>
 
+        Unreviewed, final GTK build fix attempt after r228267.
+
+        * gtk/jhbuild.modules: sha256sum for libdrm was for the tar.gz archive. Oops.
+
+2018-02-08  Philippe Normand  <pnormand@igalia.com>
+
         Unreviewed, GTK build fix attempt after r228267.
 
         * gtk/jhbuild.modules: Update to libdrm version 2.4.89, Mesa 17 requires at least version 2.4.75.
