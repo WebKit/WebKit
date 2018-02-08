@@ -26,6 +26,7 @@
 #include "HTMLElement.h"
 #include "JSDOMConvertNullable.h"
 #include "JSDOMConvertStrings.h"
+#include "JSDOMGlobalObject.h"
 #include "JSDocument.h"
 #include "JSEvent.h"
 #include "JSEventTarget.h"
@@ -93,18 +94,6 @@ static void handleBeforeUnloadEventReturnValue(BeforeUnloadEvent& event, const S
     event.preventDefault();
     if (event.returnValue().isEmpty())
         event.setReturnValue(returnValue);
-}
-
-static JSDOMGlobalObject* toJSDOMGlobalObject(ScriptExecutionContext& context, DOMWrapperWorld& world)
-{
-    if (is<Document>(context))
-        return toJSDOMWindow(downcast<Document>(context).frame(), world);
-
-    if (is<WorkerGlobalScope>(context))
-        return downcast<WorkerGlobalScope>(context).script()->workerGlobalScopeWrapper();
-
-    ASSERT_NOT_REACHED();
-    return nullptr;
 }
 
 void JSEventListener::handleEvent(ScriptExecutionContext& scriptExecutionContext, Event& event)

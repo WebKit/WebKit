@@ -274,4 +274,16 @@ JSDOMGlobalObject& callerGlobalObject(ExecState& state)
     return *jsCast<JSDOMGlobalObject*>(iter.globalObject() ? iter.globalObject() : state.vmEntryGlobalObject());
 }
 
+JSDOMGlobalObject* toJSDOMGlobalObject(ScriptExecutionContext& context, DOMWrapperWorld& world)
+{
+    if (is<Document>(context))
+        return toJSDOMWindow(downcast<Document>(context).frame(), world);
+
+    if (is<WorkerGlobalScope>(context))
+        return downcast<WorkerGlobalScope>(context).script()->workerGlobalScopeWrapper();
+
+    ASSERT_NOT_REACHED();
+    return nullptr;
+}
+
 } // namespace WebCore

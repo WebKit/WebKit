@@ -1,3 +1,15 @@
+2018-02-08  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, tiny partial rollout of r228260 as it caused some worker failures
+
+        * bindings/js/JSDOMGlobalObject.cpp:
+        (WebCore::toJSDOMGlobalObject):
+        * bindings/js/JSDOMGlobalObject.h:
+        * bindings/js/JSErrorHandler.cpp:
+        (WebCore::JSErrorHandler::handleEvent):
+        * bindings/js/JSEventListener.cpp:
+        (WebCore::toJSDOMGlobalObject): Deleted.
+
 2018-02-08  Zalan Bujtas  <zalan@apple.com>
 
         [RenderTreeBuilder] Move RenderElement::removeAnonymousWrappersForInlinesIfNecessary to RenderTreeBuilder

@@ -126,4 +126,6 @@ inline JSC::JSObject* getDOMConstructor(JSC::VM& vm, const JSDOMGlobalObject& gl
 
 WEBCORE_EXPORT JSDOMGlobalObject& callerGlobalObject(JSC::ExecState&);
 
+JSDOMGlobalObject* toJSDOMGlobalObject(ScriptExecutionContext&, DOMWrapperWorld&);
+
 } // namespace WebCore

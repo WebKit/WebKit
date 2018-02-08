@@ -71,7 +71,7 @@ void JSErrorHandler::handleEvent(ScriptExecutionContext& scriptExecutionContext,
     if (!jsFunction)
         return;
 
-    auto* globalObject = toJSDOMWindow(downcast<Document>(scriptExecutionContext).frame(), isolatedWorld());
+    auto* globalObject = toJSDOMGlobalObject(scriptExecutionContext, isolatedWorld());
     if (!globalObject)
         return;
 
