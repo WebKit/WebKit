@@ -1,3 +1,16 @@
+2018-02-08  Miguel Gomez  <magomez@igalia.com>
+
+        [GTK] WaylandCompositor misusing eglGetProcAddress
+        https://bugs.webkit.org/show_bug.cgi?id=182490
+
+        Reviewed by Michael Catanzaro.
+
+        Check that the appropriate extensions are available before calling eglGetProcAddress, as even
+        getting a non null value from it, the functionality can be disabled at runtime.
+
+        * UIProcess/gtk/WaylandCompositor.cpp:
+        (WebKit::WaylandCompositor::initializeEGL):
+
 2018-02-08  Frederic Wang  <fwang@igalia.com>
 
         Add scrolling node types to distinguish main frames and subframes.
