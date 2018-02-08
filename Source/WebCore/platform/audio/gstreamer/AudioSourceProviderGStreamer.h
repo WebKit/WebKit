@@ -23,6 +23,7 @@
 
 #include "AudioSourceProvider.h"
 #include "GRefPtrGStreamer.h"
+#include "MainThreadNotifier.h"
 #include <gst/gst.h>
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
@@ -53,6 +54,10 @@ public:
     void clearAdapters();
 
 private:
+    enum MainThreadNotification {
+        DeinterleavePadsConfigured = 1 << 0,
+    };
+    Ref<MainThreadNotifier<MainThreadNotification>> m_notifier;
     GRefPtr<GstElement> m_audioSinkBin;
     AudioSourceProviderClient* m_client;
     int m_deinterleaveSourcePads;
