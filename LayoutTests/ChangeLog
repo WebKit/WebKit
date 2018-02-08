@@ -1,3 +1,9 @@
+2018-02-08  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, land test results for rdar://problem/37331740.
+
+        * inspector/canvas/recording-2d-expected.txt:
+
 2018-02-07  Jason Marcell  <jmarcell@apple.com>
 
         Cherry-pick r228230. rdar://problem/37319241
