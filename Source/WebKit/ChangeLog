@@ -1,3 +1,16 @@
+2018-02-08  Matt Lewis  <jlewis3@apple.com>
+
+        Unreviewed, rolling out r228262.
+
+        This broke an internal build alongside r228261.
+
+        Reverted changeset:
+
+        "WebDriver: addCookie command should prepend a dot to domain
+        if missing"
+        https://bugs.webkit.org/show_bug.cgi?id=182328
+        https://trac.webkit.org/changeset/228262
+
 2018-02-08  Miguel Gomez  <magomez@igalia.com>
 
         [GTK] WaylandCompositor misusing eglGetProcAddress
