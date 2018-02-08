@@ -395,10 +395,10 @@
     <!--- WARNING: At jhbuildrc, when we define the path to the Gallium llvmpipe software rasterizer (needed by XvfbDriver),
           we assume that the directory is named "Mesa". So, don't change the checkoutdir name even if you update the version.  -->
     <branch checkoutdir="Mesa"
-            version="11.0.6"
-            module="/archive/older-versions/11.x/${version}/mesa-${version}.tar.xz"
+            version="17.3.3"
+            module="/archive/mesa-${version}.tar.xz"
             repo="mesa.freedesktop.org"
-            hash="sha256:8340e64cdc91999840404c211496f3de38e7b4cb38db34e2f72f1642c5134760">
+            hash="sha256:41bac5de0ef6adc1f41a1ec0f80c19e361298ce02fa81b5f9ba4fdca33a9379b">
     </branch>
     <dependencies>
       <dep package="llvm"/>
