@@ -172,7 +172,7 @@ bool CookieJarDB::checkDatabaseCorruptionAndRemoveIfNeeded()
     if (isOnMemory())
         return false;
 
-    struct stat st = { 0 };
+    struct stat st;
     int ret = stat(getCorruptionMarkerPath().utf8().data(), &st);
     if (!ret)
         return false;
@@ -445,7 +445,7 @@ int CookieJarDB::deleteCookieInternal(const String& name, const String& domain, 
     return statement->step();
 }
 
-int CookieJarDB::deleteCookies(const String& url)
+int CookieJarDB::deleteCookies(const String&)
 {
     // NOT IMPLEMENTED
     // TODO: this function will be called if application calls WKCookieManagerDeleteCookiesForHostname() in WKCookieManager.h.

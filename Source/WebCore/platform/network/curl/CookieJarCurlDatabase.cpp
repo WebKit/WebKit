@@ -22,8 +22,6 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
-
 #include "config.h"
 #include "CookieJarCurlDatabase.h"
 
@@ -65,6 +63,7 @@ void CookieJarCurlDatabase::setCookiesFromDOM(const NetworkStorageSession& sessi
 {
     UNUSED_PARAM(frameID);
     UNUSED_PARAM(pageID);
+    UNUSED_PARAM(firstParty);
 
     CookieJarDB& cookieJarDB = session.cookieDatabase();
     cookieJarDB.setCookie(url.string(), value, true);
@@ -96,7 +95,7 @@ std::pair<String, bool> CookieJarCurlDatabase::cookieRequestHeaderFieldValue(con
 
 bool CookieJarCurlDatabase::cookiesEnabled(const NetworkStorageSession& session) const
 {
-    return true;
+    return session.cookieDatabase().isEnabled();
 }
 
 bool CookieJarCurlDatabase::getRawCookies(const NetworkStorageSession& session, const URL& firstParty, const URL&, std::optional<uint64_t> frameID, std::optional<uint64_t> pageID, Vector<Cookie>& rawCookies) const
@@ -108,17 +107,17 @@ bool CookieJarCurlDatabase::getRawCookies(const NetworkStorageSession& session, 
     return cookieJarDB.searchCookies(firstParty.string(), std::nullopt, std::nullopt, std::nullopt, rawCookies);
 }
 
-void CookieJarCurlDatabase::deleteCookie(const NetworkStorageSession&, const URL& url, const String& cookieName) const
+void CookieJarCurlDatabase::deleteCookie(const NetworkStorageSession&, const URL&, const String&) const
 {
     // FIXME: Not yet implemented
 }
 
-void CookieJarCurlDatabase::getHostnamesWithCookies(const NetworkStorageSession&, HashSet<String>& hostnames) const
+void CookieJarCurlDatabase::getHostnamesWithCookies(const NetworkStorageSession&, HashSet<String>&) const
 {
     // FIXME: Not yet implemented
 }
 
-void CookieJarCurlDatabase::deleteCookiesForHostnames(const NetworkStorageSession&, const Vector<String>& cookieHostNames) const
+void CookieJarCurlDatabase::deleteCookiesForHostnames(const NetworkStorageSession&, const Vector<String>&) const
 {
     // FIXME: Not yet implemented
 }

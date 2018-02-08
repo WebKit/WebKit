@@ -59,8 +59,8 @@ static String defaultCookieJarPath()
 NetworkStorageSession::NetworkStorageSession(PAL::SessionID sessionID, NetworkingContext* context)
     : m_sessionID(sessionID)
     , m_context(context)
-    , m_cookieDatabase(defaultCookieJarPath())
     , m_cookieStorage(makeUniqueRef<CookieJarCurlDatabase>())
+    , m_cookieDatabase(defaultCookieJarPath())
 {
 }
 
