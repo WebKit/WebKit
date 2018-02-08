@@ -1207,7 +1207,12 @@ void WebAutomationSession::addSingleCookie(ErrorString& errorString, const Strin
     // Inherit the domain/host from the main frame's URL if it is not explicitly set.
     if (domain.isEmpty())
         domain = activeURL.host();
-
+    else if (domain[0] != '.') {
+        // RFC 2965: If an explicitly specified value does not start with a dot, the user agent supplies a leading dot.
+        // Assume that any host that ends with a digit is trying to be an IP address.
+        if (!WebCore::URL::hostIsIPAddress(domain))
+            domain = makeString('.', domain);
+    }
     cookie.domain = domain;
 
     if (!cookieObject.getString(WTF::ASCIILiteral("path"), cookie.path))
