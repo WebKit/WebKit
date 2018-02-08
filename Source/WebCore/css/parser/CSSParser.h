@@ -71,7 +71,7 @@ public:
     static RefPtr<CSSValue> parseSingleValue(CSSPropertyID, const String&, const CSSParserContext& = strictCSSParserContext());
 
     WEBCORE_EXPORT bool parseDeclaration(MutableStyleProperties&, const String&);
-    static Ref<ImmutableStyleProperties> parseInlineStyleDeclaration(const String&, Element*);
+    static Ref<ImmutableStyleProperties> parseInlineStyleDeclaration(const String&, const Element*);
 
     void parseSelector(const String&, CSSSelectorList&);
 
