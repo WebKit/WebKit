@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2018 Apple Inc. All rights reserved.
  * Copyright (c) 2010 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -35,11 +35,6 @@
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
-#include <wtf/text/WTFString.h>
-
-namespace Deprecated {
-class ScriptValue;
-}
 
 namespace JSC {
 class ExecState;
@@ -50,24 +45,22 @@ namespace Inspector {
 
 class JS_EXPORT_PRIVATE ScriptArguments : public RefCounted<ScriptArguments> {
 public:
-    static Ref<ScriptArguments> create(JSC::ExecState*, Vector<Deprecated::ScriptValue>& arguments);
-    static Ref<ScriptArguments> createEmpty(JSC::ExecState*);
+    static Ref<ScriptArguments> create(JSC::ExecState&, Vector<JSC::Strong<JSC::Unknown>>&& arguments);
     ~ScriptArguments();
 
-    const Deprecated::ScriptValue& argumentAt(size_t) const;
+    JSC::JSValue argumentAt(size_t) const;
     size_t argumentCount() const { return m_arguments.size(); }
 
     JSC::ExecState* globalState() const;
 
     bool getFirstArgumentAsString(String& result);
-    bool isEqual(ScriptArguments*) const;
+    bool isEqual(const ScriptArguments&) const;
 
 private:
-    ScriptArguments(JSC::ExecState*);
-    ScriptArguments(JSC::ExecState*, Vector<Deprecated::ScriptValue>& arguments);
+    ScriptArguments(JSC::ExecState&, Vector<JSC::Strong<JSC::Unknown>>&& arguments);
 
     JSC::Strong<JSC::JSGlobalObject> m_globalObject;
-    Vector<Deprecated::ScriptValue> m_arguments;
+    Vector<JSC::Strong<JSC::Unknown>> m_arguments;
 };
 
 } // namespace Inspector

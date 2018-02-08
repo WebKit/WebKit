@@ -1,3 +1,66 @@
+2018-01-13  Darin Adler  <darin@apple.com>
+
+        Event improvements
+        https://bugs.webkit.org/show_bug.cgi?id=179591
+
+        Reviewed by Chris Dumez.
+
+        Remove all uses of ScriptValue other than in the implementation of ScriptObject.
+
+        * bindings/ScriptFunctionCall.cpp: Removed include of ScriptValue.h.
+
+        * bindings/ScriptObject.cpp: Removed unused overload of ScriptObject constructor.
+        * bindings/ScriptObject.h: Ditto.
+
+        * bindings/ScriptValue.cpp:
+        (Deprecated::ScriptValue::~ScriptValue): Deleted.
+        (Deprecated::ScriptValue::getString const): Deleted.
+        (Deprecated::ScriptValue::toString const): Deleted.
+        (Deprecated::ScriptValue::isEqual const): Deleted.
+        (Deprecated::ScriptValue::isNull const): Deleted.
+        (Deprecated::ScriptValue::isUndefined const): Deleted.
+        (Deprecated::ScriptValue::isObject const): Deleted.
+        (Deprecated::ScriptValue::isFunction const): Deleted.
+        (Deprecated::ScriptValue::toInspectorValue const): Deleted.
+        * bindings/ScriptValue.h: Removed many unused functions. Made the rest
+        protected since this is now used only in ScriptObject.
+
+        * inspector/ConsoleMessage.cpp:
+        (Inspector::ConsoleMessage::addToFrontend): Stop using ScriptValue.
+        (Inspector::ConsoleMessage::isEqual const): Updated for change to ScriptArguments::isEqual.
+
+        * inspector/ScriptArguments.cpp:
+        (Inspector::ScriptArguments::create): Take a Vector of JSC::Strong, not ScriptValue,
+        use rvalue reference with move instead of lvalue reference with swap, and take execution
+        state by reference instead of pointer.
+        (Inspector::ScriptArguments::createEmpty): Deleted. Can now use create instead.
+        (Inspector::ScriptArguments::ScriptArguments): Ditto.
+        (Inspector::ScriptArguments::~ScriptArguments): Deleted.
+        (Inspector::ScriptArguments::argumentAt const): Updated to use JSC::Strong.
+        (Inspector::ScriptArguments::getFirstArgumentAsString): Ditto.
+        (Inspector::ScriptArguments::isEqual const): Ditto. Also changed to use JS internals
+        instead of calling through the C API.
+        * inspector/ScriptArguments.h: Updated for the above.
+
+        * inspector/ScriptCallStackFactory.cpp:
+        (Inspector::createScriptArguments): Updated for changes to ScriptArguments.
+
+        * inspector/ScriptDebugServer.cpp: Removed include of ScriptValue.h.
+        * inspector/agents/InspectorAgent.cpp: Ditto.
+        * inspector/agents/InspectorDebuggerAgent.cpp: Ditto.
+        (Inspector::InspectorDebuggerAgent::evaluateOnCallFrame): Use JSC::Strong instead
+        of ScriptValue.
+        (Inspector::InspectorDebuggerAgent::currentCallFrames): Ditto.
+        * inspector/agents/InspectorDebuggerAgent.h: Ditto.
+        * runtime/ConsoleClient.cpp:
+        (JSC::ConsoleClient::printConsoleMessageWithArguments): Ditto.
+        (JSC::ConsoleClient::clear): Use ScriptArguments::create and pass an empty vector
+        instead of calling a separate createEmpty function.
+
+        * runtime/VM.cpp:
+        (JSC::VM::createLeaked): Deleted.
+        * runtime/VM.h: Deleted createLeaked.
+
 2018-02-06  Brian Burg  <bburg@apple.com>
 
         Web Inspector: protocol generator should automatically deduce the correct include style to use

@@ -1,3 +1,32 @@
+2018-01-13  Darin Adler  <darin@apple.com>
+
+        Event improvements
+        https://bugs.webkit.org/show_bug.cgi?id=179591
+
+        Reviewed by Chris Dumez.
+
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMWheelEvent.cpp:
+        (webkit_dom_wheel_event_init_wheel_event): Updated to call initWebKitWheelEvent.
+
+        * WebProcess/Plugins/PluginView.cpp: Removed include of ScriptValue.h.
+
+        * WebProcess/WebCoreSupport/gtk/WebEditorClientGtk.cpp:
+        (WebKit::WebEditorClient::executePendingEditorCommands):
+        Updated for name change from keyEvent to underlyingPlatformEvent.
+        (WebKit::WebEditorClient::handleInputMethodKeydown): Ditto.
+        * WebProcess/WebCoreSupport/wpe/WebEditorClientWPE.cpp:
+        (WebKit::WebEditorClient::handleKeyboardEvent): Ditto.
+        (WebKit::WebEditorClient::handleInputMethodKeydown): Ditto.
+
+        * WebProcess/WebPage/WebPage.cpp: Removed include of ScriptValue.h.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::handleEditingKeyboardEvent): Updated for name change from
+        keyEvent to underlyingPlatformEvent.
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::executeKeypressCommandsInternal): Ditto.
+        (WebKit::WebPage::handleEditingKeyboardEvent): Ditto.
+
 2018-02-07  Antti Koivisto  <antti@apple.com> and Youenn Fablet  <youenn@apple.com>
 
         REGRESSION(r227758): Webpage fails to load due to crash in com.apple.WebKit: WebKit::WebFrameLoaderClient::dispatchDecidePolicyForResponse + 267

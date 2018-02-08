@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies)
+ * Copyright (C) 2011-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,11 +27,11 @@
 // FIXME: This should be exposed to workers as well.
 [
     Constructor(DOMString type, optional CustomEventInit eventInitDict),
-    ConstructorCallWith=ScriptState,
+    JSCustomMarkFunction,
 ] interface CustomEvent : Event {
     [CustomGetter] readonly attribute any detail;
 
-    [CallWith=ScriptState] void initCustomEvent(DOMString type, optional boolean bubbles = false, optional boolean cancelable = false, optional any detail = null);
+    void initCustomEvent(DOMString type, optional boolean bubbles = false, optional boolean cancelable = false, optional any detail = null);
 };
 
 dictionary CustomEventInit : EventInit {

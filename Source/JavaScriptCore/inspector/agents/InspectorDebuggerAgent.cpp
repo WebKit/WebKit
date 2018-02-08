@@ -41,7 +41,6 @@
 #include "ScriptCallStackFactory.h"
 #include "ScriptDebugServer.h"
 #include "ScriptObject.h"
-#include "ScriptValue.h"
 #include <wtf/JSONValues.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/Stopwatch.h>
@@ -827,9 +826,9 @@ void InspectorDebuggerAgent::setPauseOnAssertions(ErrorString&, bool enabled)
     m_pauseOnAssertionFailures = enabled;
 }
 
-void InspectorDebuggerAgent::evaluateOnCallFrame(ErrorString& errorString, const String& callFrameId, const String& expression, const String* const objectGroup, const bool* const includeCommandLineAPI, const bool* const doNotPauseOnExceptionsAndMuteConsole, const bool* const returnByValue, const bool* generatePreview, const bool* saveResult, RefPtr<Inspector::Protocol::Runtime::RemoteObject>& result, Inspector::Protocol::OptOutput<bool>* out_wasThrown, Inspector::Protocol::OptOutput<int>* out_savedResultIndex)
+void InspectorDebuggerAgent::evaluateOnCallFrame(ErrorString& errorString, const String& callFrameId, const String& expression, const String* objectGroup, const bool* includeCommandLineAPI, const bool* doNotPauseOnExceptionsAndMuteConsole, const bool* returnByValue, const bool* generatePreview, const bool* saveResult, RefPtr<Inspector::Protocol::Runtime::RemoteObject>& result, Inspector::Protocol::OptOutput<bool>* outWasThrown, Inspector::Protocol::OptOutput<int>* outSavedResultIndex)
 {
-    if (m_currentCallStack.hasNoValue()) {
+    if (!m_currentCallStack) {
         errorString = ASCIILiteral("Not paused");
         return;
     }
@@ -840,9 +839,10 @@ void InspectorDebuggerAgent::evaluateOnCallFrame(ErrorString& errorString, const
         return;
     }
 
-    JSC::Debugger::PauseOnExceptionsState previousPauseOnExceptionsState = m_scriptDebugServer.pauseOnExceptionsState();
-    if (doNotPauseOnExceptionsAndMuteConsole ? *doNotPauseOnExceptionsAndMuteConsole : false) {
-        if (previousPauseOnExceptionsState != JSC::Debugger::DontPauseOnExceptions)
+    auto pauseState = m_scriptDebugServer.pauseOnExceptionsState();
+    bool pauseAndMute = doNotPauseOnExceptionsAndMuteConsole && *doNotPauseOnExceptionsAndMuteConsole;
+    if (pauseAndMute) {
+        if (pauseState != JSC::Debugger::DontPauseOnExceptions)
             m_scriptDebugServer.setPauseOnExceptionsState(JSC::Debugger::DontPauseOnExceptions);
         muteConsole();
     }
@@ -850,17 +850,16 @@ void InspectorDebuggerAgent::evaluateOnCallFrame(ErrorString& errorString, const
     // FIXME: remove this bridging code when generated protocol commands no longer use OptOutput<T>.
     bool wasThrown;
     std::optional<int> savedResultIndex;
-
-    injectedScript.evaluateOnCallFrame(errorString, m_currentCallStack, callFrameId, expression, objectGroup ? *objectGroup : "", includeCommandLineAPI ? *includeCommandLineAPI : false, returnByValue ? *returnByValue : false, generatePreview ? *generatePreview : false, saveResult ? *saveResult : false, result, wasThrown, savedResultIndex);
-
-    *out_wasThrown = wasThrown;
+    injectedScript.evaluateOnCallFrame(errorString, m_currentCallStack.get(), callFrameId, expression,
+        objectGroup ? *objectGroup : emptyString(), includeCommandLineAPI && *includeCommandLineAPI, returnByValue && *returnByValue, generatePreview && *generatePreview, saveResult && *saveResult,
+        result, wasThrown, savedResultIndex);
+    *outWasThrown = wasThrown;
     if (savedResultIndex.has_value())
-        *out_savedResultIndex = savedResultIndex.value();
+        *outSavedResultIndex = savedResultIndex.value();
 
-    if (doNotPauseOnExceptionsAndMuteConsole ? *doNotPauseOnExceptionsAndMuteConsole : false) {
+    if (pauseAndMute) {
         unmuteConsole();
-        if (m_scriptDebugServer.pauseOnExceptionsState() != previousPauseOnExceptionsState)
-            m_scriptDebugServer.setPauseOnExceptionsState(previousPauseOnExceptionsState);
+        m_scriptDebugServer.setPauseOnExceptionsState(pauseState);
     }
 }
 
@@ -880,7 +879,7 @@ Ref<JSON::ArrayOf<Inspector::Protocol::Debugger::CallFrame>> InspectorDebuggerAg
     if (injectedScript.hasNoValue())
         return JSON::ArrayOf<Inspector::Protocol::Debugger::CallFrame>::create();
 
-    return injectedScript.wrapCallFrames(m_currentCallStack);
+    return injectedScript.wrapCallFrames(m_currentCallStack.get());
 }
 
 String InspectorDebuggerAgent::sourceMapURLForScript(const Script& script)

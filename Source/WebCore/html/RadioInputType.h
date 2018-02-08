@@ -46,7 +46,7 @@ private:
     void handleClickEvent(MouseEvent&) final;
     void handleKeydownEvent(KeyboardEvent&) final;
     void handleKeyupEvent(KeyboardEvent&) final;
-    bool isKeyboardFocusable(KeyboardEvent&) const final;
+    bool isKeyboardFocusable(KeyboardEvent*) const final;
     bool shouldSendChangeEventAfterCheckedChanged() final;
     void willDispatchClick(InputElementClickState&) final;
     void didDispatchClick(Event&, const InputElementClickState&) final;

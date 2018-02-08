@@ -125,7 +125,6 @@
 #import <JavaScriptCore/JSCJSValue.h>
 #import <JavaScriptCore/JSLock.h>
 #import <JavaScriptCore/JSValueRef.h>
-#import <JavaScriptCore/ScriptValue.h>
 #import <WebCore/AlternativeTextUIController.h>
 #import <WebCore/ApplicationCacheStorage.h>
 #import <WebCore/BackForwardController.h>

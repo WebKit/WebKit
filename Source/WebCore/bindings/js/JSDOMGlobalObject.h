@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2017 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008-2018 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -37,17 +37,16 @@
 namespace WebCore {
 
 class DOMGuardedObject;
-class Document;
 class Event;
 class DOMWrapperWorld;
 class ScriptExecutionContext;
 
-typedef HashMap<const JSC::ClassInfo*, JSC::WriteBarrier<JSC::Structure>> JSDOMStructureMap;
-typedef HashMap<const JSC::ClassInfo*, JSC::WriteBarrier<JSC::JSObject>> JSDOMConstructorMap;
-typedef HashSet<DOMGuardedObject*> DOMGuardedObjectSet;
+using JSDOMStructureMap = HashMap<const JSC::ClassInfo*, JSC::WriteBarrier<JSC::Structure>>;
+using JSDOMConstructorMap = HashMap<const JSC::ClassInfo*, JSC::WriteBarrier<JSC::JSObject>>;
+using DOMGuardedObjectSet = HashSet<DOMGuardedObject*>;
 
 class WEBCORE_EXPORT JSDOMGlobalObject : public JSC::JSGlobalObject {
-    typedef JSC::JSGlobalObject Base;
+    using Base = JSC::JSGlobalObject;
 protected:
     struct JSDOMGlobalObjectData;
 
@@ -98,7 +97,6 @@ protected:
     JSDOMConstructorMap m_constructors;
     DOMGuardedObjectSet m_guardedObjects;
 
-    Event* m_currentEvent;
     Ref<DOMWrapperWorld> m_world;
     uint8_t m_worldIsNormal;
     Lock m_gcLock;
@@ -106,6 +104,8 @@ protected:
 private:
     void addBuiltinGlobals(JSC::VM&);
     friend void JSBuiltinInternalFunctions::initialize(JSDOMGlobalObject&);
+
+    Event* m_currentEvent { nullptr };
 
     JSBuiltinInternalFunctions m_builtinInternalFunctions;
 };
@@ -123,12 +123,6 @@ inline JSC::JSObject* getDOMConstructor(JSC::VM& vm, const JSDOMGlobalObject& gl
     mutableGlobalObject.constructors(locker).add(ConstructorClass::info(), temp).iterator->value.set(vm, &globalObject, constructor);
     return constructor;
 }
-
-JSDOMGlobalObject* toJSDOMGlobalObject(Document*, JSC::ExecState*);
-JSDOMGlobalObject* toJSDOMGlobalObject(ScriptExecutionContext*, JSC::ExecState*);
-
-JSDOMGlobalObject* toJSDOMGlobalObject(Document*, DOMWrapperWorld&);
-JSDOMGlobalObject* toJSDOMGlobalObject(ScriptExecutionContext*, DOMWrapperWorld&);
 
 WEBCORE_EXPORT JSDOMGlobalObject& callerGlobalObject(JSC::ExecState&);
 

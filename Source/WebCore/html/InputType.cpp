@@ -555,7 +555,7 @@ bool InputType::hasCustomFocusLogic() const
     return true;
 }
 
-bool InputType::isKeyboardFocusable(KeyboardEvent& event) const
+bool InputType::isKeyboardFocusable(KeyboardEvent* event) const
 {
     return !element().isReadOnly() && element().isTextFormControlKeyboardFocusable(event);
 }

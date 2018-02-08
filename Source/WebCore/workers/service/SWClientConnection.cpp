@@ -131,7 +131,7 @@ void SWClientConnection::postMessageToServiceWorkerClient(DocumentIdentifier des
 
     MessageEventSource source = RefPtr<ServiceWorker> { ServiceWorker::getOrCreate(*destinationDocument, WTFMove(sourceData)) };
 
-    auto messageEvent = MessageEvent::create(MessagePort::entanglePorts(*destinationDocument, WTFMove(message.transferredPorts)), WTFMove(message.message), sourceOrigin, { }, WTFMove(source));
+    auto messageEvent = MessageEvent::create(MessagePort::entanglePorts(*destinationDocument, WTFMove(message.transferredPorts)), message.message.releaseNonNull(), sourceOrigin, { }, WTFMove(source));
     container->dispatchEvent(messageEvent);
 }
 

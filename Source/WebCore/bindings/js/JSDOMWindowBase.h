@@ -19,19 +19,32 @@
 
 #pragma once
 
-#include "JSDOMBinding.h"
+#include "DOMWindow.h"
 #include "JSDOMGlobalObject.h"
+#include "JSDOMWrapperCache.h"
+#include <JavaScriptCore/AuxiliaryBarrierInlines.h>
+#include <JavaScriptCore/HeapInlines.h>
+#include <JavaScriptCore/JSArray.h>
+#include <JavaScriptCore/JSCJSValueInlines.h>
+#include <JavaScriptCore/JSCellInlines.h>
+#include <JavaScriptCore/JSObjectInlines.h>
+#include <JavaScriptCore/Lookup.h>
+#include <JavaScriptCore/ObjectConstructor.h>
+#include <JavaScriptCore/SlotVisitorInlines.h>
+#include <JavaScriptCore/StructureInlines.h>
+#include <JavaScriptCore/WriteBarrier.h>
+#include <cstddef>
 #include <wtf/Forward.h>
+#include <wtf/GetPtr.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
-class DOMWindow;
-class Frame;
 class DOMWrapperWorld;
+class Frame;
 class JSDOMWindow;
-class JSDOMWindowProxy;
-
 class JSDOMWindowBasePrivate;
+class JSDOMWindowProxy;
 
 class WEBCORE_EXPORT JSDOMWindowBase : public JSDOMGlobalObject {
     typedef JSDOMGlobalObject Base;

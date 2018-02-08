@@ -344,23 +344,16 @@ void ScriptExecutionContext::willDestroyDestructionObserver(ContextDestructionOb
     m_destructionObservers.remove(&observer);
 }
 
-bool ScriptExecutionContext::sanitizeScriptError(String& errorMessage, int& lineNumber, int& columnNumber, String& sourceURL, JSC::Strong<JSC::Unknown>& error, CachedScript* cachedScript)
+// FIXME: Should this function be in SecurityContext or SecurityOrigin instead?
+bool ScriptExecutionContext::canIncludeErrorDetails(CachedScript* script, const String& sourceURL)
 {
     ASSERT(securityOrigin());
-    if (cachedScript) {
-        ASSERT(cachedScript->origin());
-        ASSERT(securityOrigin()->toString() == cachedScript->origin()->toString());
-        if (cachedScript->isCORSSameOrigin())
-            return false;
-    } else if (securityOrigin()->canRequest(completeURL(sourceURL)))
-        return false;
-
-    errorMessage = ASCIILiteral { "Script error." };
-    sourceURL = { };
-    lineNumber = 0;
-    columnNumber = 0;
-    error = { };
-    return true;
+    if (script) {
+        ASSERT(script->origin());
+        ASSERT(securityOrigin()->toString() == script->origin()->toString());
+        return script->isCORSSameOrigin();
+    }
+    return securityOrigin()->canRequest(completeURL(sourceURL));
 }
 
 void ScriptExecutionContext::reportException(const String& errorMessage, int lineNumber, int columnNumber, const String& sourceURL, JSC::Exception* exception, RefPtr<ScriptCallStack>&& callStack, CachedScript* cachedScript)
@@ -414,21 +407,19 @@ void ScriptExecutionContext::addConsoleMessage(MessageSource source, MessageLeve
 
 bool ScriptExecutionContext::dispatchErrorEvent(const String& errorMessage, int lineNumber, int columnNumber, const String& sourceURL, JSC::Exception* exception, CachedScript* cachedScript)
 {
-    EventTarget* target = errorEventTarget();
+    auto* target = errorEventTarget();
     if (!target)
         return false;
 
-    String message = errorMessage;
-    int line = lineNumber;
-    int column = columnNumber;
-    String sourceName = sourceURL;
-    JSC::Strong<JSC::Unknown> error = exception && exception->value() ? JSC::Strong<JSC::Unknown>(vm(), exception->value()) : JSC::Strong<JSC::Unknown>();
-    sanitizeScriptError(message, line, column, sourceName, error, cachedScript);
+    RefPtr<ErrorEvent> errorEvent;
+    if (canIncludeErrorDetails(cachedScript, sourceURL))
+        errorEvent = ErrorEvent::create(errorMessage, sourceURL, lineNumber, columnNumber, { vm(), exception ? exception->value() : JSC::jsNull() });
+    else
+        errorEvent = ErrorEvent::create(ASCIILiteral { "Script error." }, { }, 0, 0, { });
 
     ASSERT(!m_inDispatchErrorEvent);
     m_inDispatchErrorEvent = true;
-    Ref<ErrorEvent> errorEvent = ErrorEvent::create(message, sourceName, line, column, error);
-    target->dispatchEvent(errorEvent);
+    target->dispatchEvent(*errorEvent);
     m_inDispatchErrorEvent = false;
     return errorEvent->defaultPrevented();
 }

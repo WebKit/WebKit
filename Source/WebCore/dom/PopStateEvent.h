@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2009-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,7 +27,7 @@
 #pragma once
 
 #include "Event.h"
-#include <JavaScriptCore/ScriptValue.h>
+#include "JSValueInWrappedObject.h"
 
 namespace WebCore {
 
@@ -43,10 +43,10 @@ public:
         JSC::JSValue state;
     };
 
-    static Ref<PopStateEvent> create(JSC::ExecState&, const AtomicString&, const Init&, IsTrusted = IsTrusted::No);
+    static Ref<PopStateEvent> create(const AtomicString&, const Init&, IsTrusted = IsTrusted::No);
     static Ref<PopStateEvent> createForBindings();
 
-    JSC::JSValue state() const { return m_state; }
+    const JSValueInWrappedObject& state() const { return m_state; }
     SerializedScriptValue* serializedState() const { return m_serializedState.get(); }
 
     RefPtr<SerializedScriptValue> trySerializeState(JSC::ExecState&);
@@ -55,12 +55,12 @@ public:
 
 private:
     PopStateEvent() = default;
-    PopStateEvent(JSC::ExecState&, const AtomicString&, const Init&, IsTrusted);
+    PopStateEvent(const AtomicString&, const Init&, IsTrusted);
     PopStateEvent(RefPtr<SerializedScriptValue>&&, History*);
 
     EventInterface eventInterface() const final;
 
-    Deprecated::ScriptValue m_state;
+    JSValueInWrappedObject m_state;
     RefPtr<SerializedScriptValue> m_serializedState;
     bool m_triedToSerialize { false };
     RefPtr<History> m_history;

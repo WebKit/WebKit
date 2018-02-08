@@ -130,9 +130,11 @@ HRESULT WebScriptWorld::standardWorld(_COM_Outptr_opt_ IWebScriptWorld** outWorl
 
 HRESULT WebScriptWorld::scriptWorldForGlobalContext(JSGlobalContextRef context, IWebScriptWorld** outWorld)
 {
+    if (!context)
+        return E_POINTER;
     if (!outWorld)
         return E_POINTER;
-    return findOrCreateWorld(currentWorld(toJS(context))).copyRefTo(outWorld);
+    return findOrCreateWorld(currentWorld(*toJS(context))).copyRefTo(outWorld);
 }
 
 HRESULT WebScriptWorld::unregisterWorld()

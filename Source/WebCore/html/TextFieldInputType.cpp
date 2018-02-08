@@ -73,7 +73,7 @@ TextFieldInputType::~TextFieldInputType()
         m_innerSpinButton->removeSpinButtonOwner();
 }
 
-bool TextFieldInputType::isKeyboardFocusable(KeyboardEvent&) const
+bool TextFieldInputType::isKeyboardFocusable(KeyboardEvent*) const
 {
 #if PLATFORM(IOS)
     if (element().isReadOnly())

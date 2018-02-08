@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2003-2017 Apple Inc. All Rights Reserved.
+ *  Copyright (C) 2003-2018 Apple Inc. All Rights Reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -21,9 +21,7 @@
 #include "JSLazyEventListener.h"
 
 #include "CachedScriptFetcher.h"
-#include "ContainerNode.h"
 #include "ContentSecurityPolicy.h"
-#include "Document.h"
 #include "Element.h"
 #include "Frame.h"
 #include "JSNode.h"
@@ -36,33 +34,50 @@
 #include <wtf/RefCountedLeakCounter.h>
 #include <wtf/StdLibExtras.h>
 
-
 namespace WebCore {
 using namespace JSC;
 
 DEFINE_DEBUG_ONLY_GLOBAL(WTF::RefCountedLeakCounter, eventListenerCounter, ("JSLazyEventListener"));
 
-JSLazyEventListener::JSLazyEventListener(const String& functionName, const String& eventParameterName, const String& code, ContainerNode* node, const String& sourceURL, const TextPosition& sourcePosition, JSObject* wrapper, DOMWrapperWorld& isolatedWorld)
-    : JSEventListener(0, wrapper, true, isolatedWorld)
-    , m_functionName(functionName)
-    , m_eventParameterName(eventParameterName)
-    , m_code(code)
-    , m_sourceURL(sourceURL)
-    , m_sourcePosition(sourcePosition)
-    , m_originalNode(node)
-{
-    // We don't retain the original node because we assume it
-    // will stay alive as long as this handler object is around
-    // and we need to avoid a reference cycle. If JS transfers
-    // this handler to another node, initializeJSFunction will
-    // be called and then originalNode is no longer needed.
+struct JSLazyEventListener::CreationArguments {
+    const QualifiedName& attributeName;
+    const AtomicString& attributeValue;
+    Document& document;
+    ContainerNode* node;
+    JSObject* wrapper;
+    bool shouldUseSVGEventName;
+};
 
+static const String& eventParameterName(bool shouldUseSVGEventName)
+{
+    static NeverDestroyed<const String> eventString(MAKE_STATIC_STRING_IMPL("event"));
+    static NeverDestroyed<const String> evtString(MAKE_STATIC_STRING_IMPL("evt"));
+    return shouldUseSVGEventName ? evtString : eventString;
+}
+
+static TextPosition convertZeroToOne(const TextPosition& position)
+{
     // A JSLazyEventListener can be created with a line number of zero when it is created with
     // a setAttribute call from JavaScript, so make the line number 1 in that case.
-    if (m_sourcePosition == TextPosition::belowRangePosition())
-        m_sourcePosition = TextPosition();
+    if (position == TextPosition::belowRangePosition())
+        return { };
+    return position;
+}
 
-    ASSERT(m_eventParameterName == "evt" || m_eventParameterName == "event");
+JSLazyEventListener::JSLazyEventListener(const CreationArguments& arguments, const String& sourceURL, const TextPosition& sourcePosition)
+    : JSEventListener(nullptr, arguments.wrapper, true, mainThreadNormalWorld())
+    , m_functionName(arguments.attributeName.localName().string())
+    , m_eventParameterName(eventParameterName(arguments.shouldUseSVGEventName))
+    , m_code(arguments.attributeValue)
+    , m_sourceURL(sourceURL)
+    , m_sourcePosition(convertZeroToOne(sourcePosition))
+    , m_originalNode(arguments.node)
+{
+    // We don't ref m_originalNode because we assume it will stay alive as long as this
+    // handler object is around and we need to avoid a reference cycle. If JS transfers
+    // this handler to another node, initializeJSFunction will be called and after that
+    // m_originalNode will never be looked at again.
+    // FIXME: Doesn't seem clear that is guaranteed to be true in the general case.
 
 #ifndef NDEBUG
     eventListenerCounter.increment();
@@ -79,28 +94,27 @@ JSLazyEventListener::~JSLazyEventListener()
 JSObject* JSLazyEventListener::initializeJSFunction(ScriptExecutionContext& executionContext) const
 {
     ASSERT(is<Document>(executionContext));
-    ASSERT(!m_code.isNull());
-    ASSERT(!m_eventParameterName.isNull());
-    if (m_code.isNull() || m_eventParameterName.isNull())
-        return nullptr;
+
+    auto& executionContextDocument = downcast<Document>(executionContext);
 
     // As per the HTML specification [1], if this is an element's event handler, then document should be the
     // element's document. The script execution context may be different from the node's document if the
     // node's document was created by JavaScript.
     // [1] https://html.spec.whatwg.org/multipage/webappapis.html#getting-the-current-value-of-the-event-handler
-    Document& document = m_originalNode ? m_originalNode->document() : downcast<Document>(executionContext);
-
+    auto& document = m_originalNode ? m_originalNode->document() : executionContextDocument;
     if (!document.frame())
         return nullptr;
 
     if (!document.contentSecurityPolicy()->allowInlineEventHandlers(m_sourceURL, m_sourcePosition.m_line))
         return nullptr;
 
-    ScriptController& script = document.frame()->script();
+    auto& script = document.frame()->script();
     if (!script.canExecuteScripts(AboutToCreateEventListener) || script.isPaused())
         return nullptr;
 
-    JSDOMGlobalObject* globalObject = toJSDOMGlobalObject(&executionContext, isolatedWorld());
+    if (!executionContextDocument.frame())
+        return nullptr;
+    auto* globalObject = toJSDOMWindow(*executionContextDocument.frame(), isolatedWorld());
     if (!globalObject)
         return nullptr;
 
@@ -118,10 +132,10 @@ JSObject* JSLazyEventListener::initializeJSFunction(ScriptExecutionContext& exec
     // declared, regardless of any newlines in our JavaScript source text.
     int overrideLineNumber = m_sourcePosition.m_line.oneBasedInt();
 
-    JSObject* jsFunction = constructFunctionSkippingEvalEnabledCheck(
-        exec, exec->lexicalGlobalObject(), args, Identifier::fromString(exec, m_functionName),
-        SourceOrigin { m_sourceURL, CachedScriptFetcher::create(document.charset()) }, m_sourceURL, m_sourcePosition, overrideLineNumber);
-
+    JSObject* jsFunction = constructFunctionSkippingEvalEnabledCheck(exec,
+        exec->lexicalGlobalObject(), args, Identifier::fromString(exec, m_functionName),
+        SourceOrigin { m_sourceURL, CachedScriptFetcher::create(document.charset()) },
+        m_sourceURL, m_sourcePosition, overrideLineNumber);
     if (UNLIKELY(scope.exception())) {
         reportCurrentException(exec);
         scope.clearException();
@@ -141,24 +155,9 @@ JSObject* JSLazyEventListener::initializeJSFunction(ScriptExecutionContext& exec
         // (and the document, and the form - see JSHTMLElement::eventHandlerScope)
         listenerAsFunction->setScope(vm, jsCast<JSNode*>(wrapper())->pushEventHandlerScope(exec, listenerAsFunction->scope()));
     }
+
     return jsFunction;
 }
-
-static const String& eventParameterName(bool isSVGEvent)
-{
-    static NeverDestroyed<const String> eventString(MAKE_STATIC_STRING_IMPL("event"));
-    static NeverDestroyed<const String> evtString(MAKE_STATIC_STRING_IMPL("evt"));
-    return isSVGEvent ? evtString : eventString;
-}
-
-struct JSLazyEventListener::CreationArguments {
-    const QualifiedName& attributeName;
-    const AtomicString& attributeValue;
-    Document& document;
-    ContainerNode* node;
-    JSC::JSObject* wrapper;
-    bool shouldUseSVGEventName;
-};
 
 RefPtr<JSLazyEventListener> JSLazyEventListener::create(const CreationArguments& arguments)
 {
@@ -175,9 +174,7 @@ RefPtr<JSLazyEventListener> JSLazyEventListener::create(const CreationArguments&
         sourceURL = arguments.document.url().string();
     }
 
-    return adoptRef(*new JSLazyEventListener(arguments.attributeName.localName().string(),
-        eventParameterName(arguments.shouldUseSVGEventName), arguments.attributeValue,
-        arguments.node, sourceURL, position, arguments.wrapper, mainThreadNormalWorld()));
+    return adoptRef(*new JSLazyEventListener(arguments, sourceURL, position));
 }
 
 RefPtr<JSLazyEventListener> JSLazyEventListener::create(Element& element, const QualifiedName& attributeName, const AtomicString& attributeValue)

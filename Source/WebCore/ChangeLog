@@ -1,3 +1,414 @@
+2018-01-13  Darin Adler  <darin@apple.com>
+
+        Event improvements
+        https://bugs.webkit.org/show_bug.cgi?id=179591
+
+        Reviewed by Chris Dumez.
+
+        - removed all use of Deprecated::ScriptValue
+
+        - fixed uses of JSC::Strong that can lead to reference cycles in CustomEvent,
+          MessageEvent, and PopStateEvent, refactoring to share more code
+
+        - removed incorrect use of CachedAttribute on attributes that can change values
+          (should have fixed a bug; can we find a way to test this?)
+
+        - did a more thorough job of clearing state from events, including clearing
+          certain things before dispatching, and clearing more in initKeyboardEvent
+          (may have fixed some obscure low-severity bugs; can we find a way to test this?)
+
+        - removed "dummy" keyboard events
+
+        - reworked code that omits details from error events for security reasons;
+          old approach was "sanitizing" the error by removing the details if not
+          allowed, new approach is adding the details only if allowed
+
+        * Modules/encryptedmedia/NavigatorEME.h: Added forward declaration needed
+        to compile.
+
+        * Modules/indexeddb/IDBCursor.h: Added comment about incorrect use of JSC::Strong.
+        * Modules/indexeddb/IDBRequest.h: Ditto.
+        * Modules/paymentrequest/PaymentResponse.h: Ditto.
+
+        * WebCore.xcodeproj/project.pbxproj: Added JSValueInWrappedObject.h.
+
+        * bindings/js/CommonVM.cpp:
+        (WebCore::commonVMSlow): Use VM::create instead of VM::createLeaked. Also use
+        local variable instead of the global.
+
+        * bindings/js/DOMWrapperWorld.h: Put the inline bodies of the currentWorld and
+        worldForDOMObject functions separate from the declarations; long term goal is
+        that the declarations serve as documentation, and are not interspersed with the
+        implementations. Changed currentWorld to take a reference instead of a pointer
+        to ExecState. Added isWorldCompatible function.
+
+        * bindings/js/JSCustomElementInterface.cpp:
+        (WebCore::JSCustomElementInterface::upgradeElement): Use toJSDOMWindow instead
+        of toJSDOMGlobalObject and added check for null.
+        (WebCore::JSCustomElementInterface::invokeCallback): Ditto.
+
+        * bindings/js/JSCustomEventCustom.cpp:
+        (WebCore::JSCustomEvent::detail const): Use cachedPropertyValue.
+        (WebCore::JSCustomEvent::visitAdditionalChildren): Added. Needed now that we are
+        using JSValueInWrappedObject instead of JSC::Strong.
+
+        * bindings/js/JSDOMConvertEventListener.h:
+        (WebCore::Converter<IDLEventListener<T>>::convert): Pass a reference.
+        * bindings/js/JSDOMGlobalObject.cpp:
+        (WebCore::toJSDOMGlobalObject): Ditto.
+
+        * bindings/js/JSDOMGlobalObject.cpp:
+        (WebCore::JSDOMGlobalObject::JSDOMGlobalObject): Moved initialization to nullptr
+        to the header.
+        (WebCore::toJSDOMGlobalObject): Deleted.
+        * bindings/js/JSDOMGlobalObject.h: Updated for the above.
+
+        * bindings/js/JSDOMWindowBase.h: Updated includes. Added "DOMWindow.h" but also
+        expanded the deprecated "JSDOMBinding.h" into all the things it includes.
+
+        * bindings/js/JSDOMWindowProxy.cpp:
+        (WebCore::JSDOMWindowProxy::finishCreation): Tweak argument type to match usage.
+        (WebCore::JSDOMWindowProxy::create): Moved here from header, rolled in the code
+        that creates the structure.
+        (WebCore::JSDOMWindowProxy::setWindow): Take a reference instead of a pointer
+        or a RefPtr&&.
+        (WebCore::JSDOMWindowProxy::toWrapped): Use ? : instead of if.
+        (WebCore::toJS): Pass a reference.
+        * bindings/js/JSDOMWindowProxy.h: Updated for abvoe changes.
+
+        * bindings/js/JSDOMWrapper.cpp:
+        (WebCore::cloneAcrossWorlds): Added.
+        * bindings/js/JSDOMWrapper.h: Ditto.
+
+        * bindings/js/JSErrorHandler.cpp:
+        (WebCore::JSErrorHandler::JSErrorHandler): Changed to take a reference.
+        Marked inline.
+        (WebCore::JSErrorHandler::create): Moved here from header. No longer inline, but
+        the constructor is now inline, so same number of levels of function calls, and
+        less code compiled at the call site and less to compile in the header.
+        (WebCore::JSErrorHandler::handleEvent): Use toJSDOMWindow instead
+        of toJSDOMGlobalObject.
+        * bindings/js/JSErrorHandler.h: Ditto. Also made createJSErrorHandler take
+        references instead of pointers.
+
+        * bindings/js/JSEventListener.cpp:
+        (WebCore::JSEventListener::create): Moved here from the header.
+        (WebCore::createEventListenerForEventHandlerAttribute): Updated for change to
+        currentWorld.
+        (WebCore::toJSDOMGlobalObject): Moved here from JSDOMGlobalObject.cpp because
+        this is the only place this function is used now. Also, this was one of four
+        different overrides and so it was good to delete the other three. Also updated
+        to take a reference rather than a "must not be null" pointer.
+        (WebCore::JSEventListener::handleEvent): Coding style tweaks.
+        (WebCore::JSEventListener::virtualisAttribute const): Deleted. Now isAttribute
+        is virtual and uses final as needed to remain inline-able and efficient.
+        (WebCore::JSEventListener::operator== const): Use is<> and downcast<> instead
+        of JSEventListener::cast.
+        (WebCore::eventHandlerAttribute):  Updated for change to currentWorld.
+        (WebCore::setEventHandlerAttribute): Ditto.
+        (WebCore::setWindowEventHandlerAttribute): Ditto.
+        (WebCore::setDocumentEventHandlerAttribute): Ditto.
+
+        * bindings/js/JSEventListener.h: Moved create functions into the cpp file.
+        Removed the cast function, since callers can use is<> and downcast<> instead.
+        Use final rather than override and made isAttribute override the virtual
+        function in the base class, eliminating virtualIsAttribute.
+
+        * bindings/js/JSExtendableMessageEventCustom.cpp:
+        (WebCore::JSExtendableMessageEvent::data const): Use isWorldCompatible.
+        Still need to return here and fix the reference cycle for this class.
+
+        * bindings/js/JSLazyEventListener.cpp:
+        (WebCore::eventParameterName): Moved up so it can be used by the constructor.
+        (WebCore::convertZeroToOne): Added, so that the constructor can fix up text
+        positions passed in to it as part of initializing a data member.
+        (WebCore::JSLazyEventListener::JSLazyEventListener): Changed to take
+        a CreationArguments object instead of lots of separate arguments.
+        (WebCore::JSLazyEventListener::initializeJSFunction const): Removed unneeded
+        checks of m_code and m_eventParameterName, both guaranteed not to be null
+        by the constructor. Tweaked coding style a bit.
+        (WebCore::JSLazyEventListener::create): Pass CreationArguments object.
+        * bindings/js/JSLazyEventListener.h: Updated for above changes. Changed the
+        m_eventParameterName to be a reference since it's always a global string
+        that is never destroyed.
+
+        * bindings/js/JSMessageEventCustom.cpp:
+        (WebCore::JSMessageEvent::data const): Use cachedPropertyValue and also
+        updated for the new version of MessageEvent that uses a Variant instead
+        of a type plus separate functions for each type.
+        (WebCore::JSMessageEvent::visitAdditionalChildren): Added. Needed now that we are
+        using JSValueInWrappedObject instead of JSC::Strong.
+
+        * bindings/js/JSPopStateEventCustom.cpp:
+        (WebCore::JSPopStateEvent::state const): Use isWorldCompatible and also updated
+        to use JSValueInWrappedObject instead of JSC::Strong. Would be nice to share more
+        code with CustomEvent and MessageEvent, but at the moment they are subtly different.
+        Changed cacheState from a function to a lambda.
+        (WebCore::JSPopStateEvent::visitAdditionalChildren): Added. Needed now that we are
+        using JSValueInWrappedObject instead of JSC::Strong.
+
+        * bindings/js/JSValueInWrappedObject.h: Added.
+
+        * bindings/js/ScriptCachedFrameData.cpp:
+        (WebCore::ScriptCachedFrameData::restore): Updated for changes to JSDOMWindowProxy.
+        * bindings/js/ScriptController.cpp:
+        (WebCore::ScriptController::createWindowProxy): Ditto.
+        (WebCore::ScriptController::setDOMWindowForWindowProxy): Ditto.
+
+        * bindings/js/WorkerScriptController.cpp: Removed include of ScriptValue.h.
+        (WebCore::WorkerScriptController::evaluate): Reworked to use the new
+        canIncludeErrorDetails instead of sanitizeScriptError. Added a FIXME about the
+        strange handling of the error message out argument.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateRuntimeEnableConditionalString): Pass a reference to worldForDOMObject.
+        (GenerateImplementation): Removed an incorrect comment about a removed error
+        check that is truly unneeded.
+        (GenerateAttributeGetterBodyDefinition): Pass a reference to worldForDOMObject.
+        (GenerateAttributeSetterBodyDefinition): Pass references to createJSErrorHandler
+        and worldForDOMObject.
+        (GenerateCallWith): Pass a reference to worldForDOMObject.
+
+        * bindings/scripts/test/JS/JSTestGlobalObject.cpp: Updated for above changes.
+        * bindings/scripts/test/JS/JSTestNamedGetterCallWith.cpp: Ditto.
+        * bindings/scripts/test/JS/JSTestObj.cpp: Ditto.
+
+        * dom/CustomEvent.cpp:
+        (WebCore::CustomEvent::CustomEvent): Marked inline. Removed now unneeded
+        ExecState argument.
+        (WebCore::CustomEvent::create): Moved here from header. No longer inline, but
+        the constructor is now inline, so same number of levels of function calls, and
+        less code compiled at the call site and less to compile in the header.
+        (WebCore::CustomEvent::initCustomEvent): Updated to use JSValueInWrappedObject.
+        (WebCore::CustomEvent::trySerializeDetail): Deleted. Now handled by bindings.
+        * dom/CustomEvent.h: Updated for the above.
+        * dom/CustomEvent.idl: Added JSCustomMarkFunction and removed
+        CallWith=ScriptState.
+
+        * dom/Document.cpp:
+        (WebCore::Document::shouldBypassMainWorldContentSecurityPolicy const):
+        Updated to pass reference to currentWorld but also rewrote to be more direct.
+
+        * dom/Element.cpp:
+        (WebCore::Element::isKeyboardFocusable const): Take a pointer instead of a
+        reference to the keyboard event. This function can be called with no event;
+        before this patch we were using a "dummy event".
+        * dom/Element.h: Ditto.
+
+        * dom/ErrorEvent.cpp:
+        (WebCore::ErrorEvent::error): Use isWorldCompatible.
+
+        * dom/Event.cpp:
+        (WebCore::Event::create): Moved here from header.
+        (WebCore::Event::createForBindings): Ditto.
+        (WebCore::Event::initEvent): Updated to use the name m_canceled instead of
+        the name m_defaultPrevented.
+        (WebCore::Event::resetBeforeDispatch): Added. Clears m_defaultHandled so
+        a value left over from a previous dispatch doesn't affect the next dispatch.
+
+        * dom/Event.h: Renamed m_defaultPrevented to m_canceled to match specification
+        terminology and be slightly clearer. Added resetBeforeDispatch. Removed the
+        setDefaultPrevented function.
+
+        * dom/EventDispatcher.cpp:
+        (WebCore::EventDispatcher::dispatchEvent): Added call to resetBeforeDispatch.
+
+        * dom/EventListener.h: Made isAttribute virtual and got rid of virtualIsAttribute,
+        which was an alternative to using "final" before we had that in the language.
+
+        * dom/EventTarget.cpp:
+        (WebCore::EventTarget::dispatchEvent): Added call to resetBeforeDispatch.
+
+        * dom/KeyboardEvent.cpp:
+        (WebCore::KeyboardEvent::KeyboardEvent): Removed unneeded code that initializes
+        m_handledByInputMethod to false; we do that in the class definition now.
+        (WebCore::KeyboardEvent::create): Moved here from header.
+        (WebCore::KeyboardEvent::createForBindings): Ditto.
+        (WebCore::KeyboardEvent::initKeyboardEvent): Added code to reset m_charCode,
+        m_isComposing, m_keyCode, m_repeat, m_underlyingPlatformEvent, m_which, m_code,
+        and m_key. These are needed now that we can reuse an existing event; we don't
+        want them getting out of sync with the other data members.
+        (WebCore::KeyboardEvent::keyCode const): Updated for name change from m_keyEvent
+        to m_underlyingPlatformEvent.
+        (WebCore::KeyboardEvent::charCode const): Ditto.
+        (WebCore::findKeyboardEvent): Deleted. Was unused.
+        * dom/KeyboardEvent.h: Updated for the above. Removed KeyboardEvent::createForDummy.
+
+        * dom/MessageEvent.cpp:
+        (WebCore::MessageEvent::MessageEvent): Removed unnneded ExecState argument.
+        Simplified since m_data is now a Variant.
+        (WebCore::MessageEvent::create): More of the same.
+        (WebCore::MessageEvent::initMessageEvent): Ditto.
+        (WebCore::MessageEvent::trySerializeData): Deleted.
+        (WebCore::MessageEvent::data const): Deleted.
+        * dom/MessageEvent.h: Use a Variant.
+        * dom/MessageEvent.idl: Added JSCustomMarkFunction and removed
+        CallWith=ScriptState and CachedAttribute.
+
+        * dom/MouseEvent.h: Removed obsolete comment.
+        * dom/MouseEvent.idl: Wrap line differently.
+
+        * dom/PopStateEvent.cpp:
+        (WebCore::PopStateEvent::PopStateEvent): Removed unneeded ExecState argument.
+        Updated to use JSValueInWrappedObject.
+        (WebCore::PopStateEvent::create): Ditto.
+        (WebCore::PopStateEvent::trySerializeState): Ditto.
+        * dom/PopStateEvent.h: Ditto.
+        * dom/PopStateEvent.idl: Use JSCustomMarkFunction, and don't use
+        ConstructorCallWith=ScriptState.
+
+        * dom/ScriptExecutionContext.cpp:
+        (WebCore::ScriptExecutionContext::sanitizeScriptError): Deleted.
+        (WebCore::ScriptExecutionContext::canIncludeErrorDetails): Added.
+        (WebCore::ScriptExecutionContext::dispatchErrorEvent): Clarify by
+        using canIncludeErrorDetails instead of sanitizeScriptError.
+        * dom/ScriptExecutionContext.h: Ditto.
+
+        * dom/WheelEvent.cpp:
+        (WebCore::WheelEvent::WheelEvent): Updated for name change and also to
+        eliminate m_initializedWithPlatformWheelEvent.
+        (WebCore::WheelEvent::create): Moved here from header.
+        (WebCore::WheelEvent::createForBindings): Ditto.
+        (WebCore::WheelEvent::initWebKitWheelEvent): Renamed from initWheelEvent.
+        * dom/WheelEvent.h: Renamed initWheelEvent to initWebKitWheelEvent since
+        there is no standard init function for wheel events and we have this only
+        for backward compatibility. Got rid of the separate boolean
+        m_initializedWithPlatformWheelEvent and instead made the renamed
+        m_wheelEvent, m_underlyingPlatformEvent, optional for when there is no
+        underlying platform event.
+
+        * html/BaseDateAndTimeInputType.cpp:
+        (WebCore::BaseDateAndTimeInputType::isKeyboardFocusable const): Take a
+        pointer to the event so we can handle the case where there is no event.
+        * html/BaseDateAndTimeInputType.h: Ditto.
+        * html/HTMLAnchorElement.cpp:
+        (WebCore::HTMLAnchorElement::isKeyboardFocusable const): Ditto.
+        * html/HTMLAnchorElement.h: Ditto.
+        * html/HTMLAreaElement.cpp:
+        (WebCore::HTMLAreaElement::isKeyboardFocusable const): Ditto.
+        * html/HTMLAreaElement.h: Ditto.
+        * html/HTMLDocument.cpp: Added include of "DOMWindow.h".
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::HTMLFormControlElement::isKeyboardFocusable const): Take
+        pointer to the event.
+        * html/HTMLFormControlElement.h: Ditto.
+        * html/HTMLFrameOwnerElement.cpp:
+        (WebCore::HTMLFrameOwnerElement::isKeyboardFocusable const): Ditto.
+        * html/HTMLFrameOwnerElement.h: Ditto.
+        * html/HTMLIFrameElement.h: Ditto.
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::isKeyboardFocusable const): Ditto.
+        (WebCore::HTMLInputElement::isTextFormControlKeyboardFocusable const): Ditto.
+        * html/HTMLInputElement.h: Ditto.
+        * html/HTMLPlugInElement.cpp:
+        (WebCore::HTMLPlugInElement::isKeyboardFocusable const): Ditto.
+        * html/HTMLPlugInElement.h: Ditto.
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::isKeyboardFocusable const): Ditto.
+        * html/HTMLSelectElement.h: Ditto.
+        * html/HTMLTextAreaElement.cpp:
+        (WebCore::HTMLTextAreaElement::isKeyboardFocusable const): Ditto.
+        * html/HTMLTextAreaElement.h: Ditto.
+        * html/InputType.cpp:
+        (WebCore::InputType::isKeyboardFocusable const): Ditto.
+        * html/InputType.h: Ditto.
+        * html/RadioInputType.cpp:
+        (WebCore::RadioInputType::isKeyboardFocusable const): Ditto.
+        * html/RadioInputType.h: Ditto.
+        * html/TextFieldInputType.cpp:
+        (WebCore::TextFieldInputType::isKeyboardFocusable const): Ditto.
+        * html/TextFieldInputType.h: Ditto.
+
+        * inspector/CommandLineAPIHost.cpp:
+        (WebCore::listenerEntriesFromListenerInfo): Pass reference to currentWorld.
+        Use is<> and downcast<> instead of JSEventListener::cast.
+        * inspector/PageScriptDebugServer.cpp:
+        (WebCore::PageScriptDebugServer::isContentScript const): Pass reference to
+        currentWorld.
+        * inspector/agents/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::buildObjectForEventListener):
+        Use is<> and downcast<> instead of JSEventListener::cast.
+
+        * mathml/MathMLElement.cpp:
+        (WebCore::MathMLElement::isKeyboardFocusable const): Take a
+        pointer to the event so we can handle the case where there is no event.
+        * mathml/MathMLElement.h: Ditto.
+
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::dispatchEvent): Added call to resetBeforeDispatch.
+        All event dispatching paths now need to do this; there are 3.
+
+        * page/EventHandler.cpp:
+        (WebCore::handleWheelEventInAppropriateEnclosingBox): Use the new
+        underlyingPlatformEvent function, less confusing than calling a function
+        named wheelEvent() on an object of type WheelEvent. Also, it returns
+        a const& to std::optional instead of a pointer, so updated for that.
+        (WebCore::EventHandler::defaultWheelEventHandler): Ditto.
+        (WebCore::EventHandler::internalKeyEvent): Use preventDefault instead
+        of setDefaultPrevented(true).
+        (WebCore::EventHandler::tabsToLinks const): Take a pointer.
+        (WebCore::EventHandler::defaultArrowEventHandler): Pass a pointer.
+        (WebCore::EventHandler::defaultTabEventHandler): Ditto.
+        * page/EventHandler.h: Updated for the above.
+
+        * page/EventSource.cpp:
+        (WebCore::EventSource::dispatchMessageEvent): Pass a reference rather
+        than a pointer when creating a message event.
+
+        * page/FocusController.cpp:
+        (WebCore::isFocusableElementOrScopeOwner): Use a pointer instead of reference
+        for keyboard event.
+        (WebCore::isNonFocusableScopeOwner): Ditto.
+        (WebCore::isFocusableScopeOwner): Ditto.
+        (WebCore::shadowAdjustedTabIndex): Ditto.
+        (WebCore::FocusController::findFocusableElementDescendingIntoSubframes):
+        Renamed to use simpler terminology than "descending down into frame document".
+        Changed to take a pointer instead of reference.
+        (WebCore::FocusController::setInitialFocus): Pass nullptr instead of
+        using KeyboardEvent::createForDummy.
+        (WebCore::FocusController::advanceFocus): Pointer instead of reference.
+        (WebCore::FocusController::advanceFocusInDocumentOrder): Ditto.
+        (WebCore::FocusController::findFocusableElementAcrossFocusScope): Ditto.
+        (WebCore::FocusController::findFocusableElementWithinScope): Ditto.
+        (WebCore::FocusController::nextFocusableElementWithinScope): Ditto.
+        (WebCore::FocusController::previousFocusableElementWithinScope): Ditto.
+        (WebCore::FocusController::findFocusableElementOrScopeOwner): Ditto.
+        (WebCore::FocusController::findElementWithExactTabIndex): Ditto.
+        (WebCore::nextElementWithGreaterTabIndex): Ditto.
+        (WebCore::previousElementWithLowerTabIndex): Ditto.
+        (WebCore::FocusController::nextFocusableElement): Ditto.
+        (WebCore::FocusController::previousFocusableElement): Ditto.
+        (WebCore::FocusController::nextFocusableElementOrScopeOwner): Ditto.
+        (WebCore::FocusController::previousFocusableElementOrScopeOwner): Ditto.
+        (WebCore::FocusController::findFocusCandidateInContainer): Ditto.
+        (WebCore::FocusController::advanceFocusDirectionallyInContainer): Ditto.
+        (WebCore::FocusController::advanceFocusDirectionally): Ditto.
+        * page/FocusController.h: Updated for the above.
+
+        * page/PageConsoleClient.cpp:
+        (WebCore::objectArgumentAt): Added. Helper to make functions below simpler.
+        (WebCore::canvasRenderingContext): Factored out logic to get the context
+        from either a canvas or a canvas rendering context from the functions below.
+        Also updated to not use ScriptValue and to use auto quite a bit more.
+        (WebCore::PageConsoleClient::record): Updated to use the functions above.
+        (WebCore::PageConsoleClient::recordEnd): Ditto.
+
+        * page/ios/EventHandlerIOS.mm:
+        (WebCore::EventHandler::tabsToAllFormControls const): Take a pointer
+        instead of a reference.
+        * page/mac/EventHandlerMac.mm:
+        (WebCore::EventHandler::tabsToAllFormControls const): Ditto.
+        * page/win/EventHandlerWin.cpp:
+        (WebCore::EventHandler::tabsToAllFormControls const): Ditto.
+        * platform/glib/EventHandlerGLib.cpp:
+        (WebCore::EventHandler::tabsToAllFormControls const): Ditto.
+        * svg/SVGAElement.cpp:
+        (WebCore::SVGAElement::isKeyboardFocusable const): Ditto.
+        * svg/SVGAElement.h: Ditto.
+
+        * testing/Internals.cpp:
+        (WebCore::Internals::isFromCurrentWorld const): Use isWorldCompatible.
+
 2018-02-07  Andy Estes  <aestes@apple.com>
 
         ASSERTION FAILED: vm->currentThreadIsHoldingAPILock() seen with http/tests/paymentrequest/payment-request-show-method.https.html

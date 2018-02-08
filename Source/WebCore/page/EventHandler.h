@@ -199,8 +199,8 @@ public:
     WEBCORE_EXPORT bool scrollRecursively(ScrollDirection, ScrollGranularity, Node* startingNode = nullptr);
     WEBCORE_EXPORT bool logicalScrollRecursively(ScrollLogicalDirection, ScrollGranularity, Node* startingNode = nullptr);
 
-    bool tabsToLinks(KeyboardEvent&) const;
-    bool tabsToAllFormControls(KeyboardEvent&) const;
+    bool tabsToLinks(KeyboardEvent*) const;
+    bool tabsToAllFormControls(KeyboardEvent*) const;
 
     WEBCORE_EXPORT bool mouseMoved(const PlatformMouseEvent&);
     WEBCORE_EXPORT bool passMouseMovedEventToScrollbars(const PlatformMouseEvent&);

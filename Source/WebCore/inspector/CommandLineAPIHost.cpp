@@ -95,17 +95,18 @@ static Vector<CommandLineAPIHost::ListenerEntry> listenerEntriesFromListenerInfo
 
     Vector<CommandLineAPIHost::ListenerEntry> entries;
     for (auto& eventListener : listenerInfo.eventListenerVector) {
-        auto jsListener = JSEventListener::cast(&eventListener->callback());
-        if (!jsListener) {
+        if (!is<JSEventListener>(eventListener->callback())) {
             ASSERT_NOT_REACHED();
             continue;
         }
 
+        auto& jsListener = downcast<JSEventListener>(eventListener->callback());
+
         // Hide listeners from other contexts.
-        if (&jsListener->isolatedWorld() != &currentWorld(&state))
+        if (&jsListener.isolatedWorld() != &currentWorld(state))
             continue;
 
-        auto function = jsListener->jsFunction(document);
+        auto function = jsListener.jsFunction(document);
         if (!function)
             continue;
 

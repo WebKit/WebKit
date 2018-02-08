@@ -558,11 +558,6 @@ Ref<VM> VM::create(HeapType heapType)
     return adoptRef(*new VM(Default, heapType));
 }
 
-Ref<VM> VM::createLeaked(HeapType heapType)
-{
-    return create(heapType);
-}
-
 bool VM::sharedInstanceExists()
 {
     return sharedInstanceInternal();

@@ -141,6 +141,8 @@ void EventDispatcher::dispatchEvent(Node& node, Event& event)
 
     ChildNodesLazySnapshot::takeChildNodesLazySnapshot();
 
+    event.resetBeforeDispatch();
+
     event.setTarget(EventPath::eventTargetRespectingTargetRules(node));
     if (!event.target())
         return;
@@ -183,6 +185,7 @@ void EventDispatcher::dispatchEvent(const Vector<EventTarget*>& targets, Event& 
     EventPath eventPath { targets };
     event.setTarget(*targets.begin());
     event.setEventPath(eventPath);
+    event.resetBeforeDispatch();
     dispatchEventInDOM(event, eventPath);
     event.resetAfterDispatch();
 }

@@ -39,7 +39,6 @@
 #include "ScriptCallFrame.h"
 #include "ScriptCallStack.h"
 #include "ScriptCallStackFactory.h"
-#include "ScriptValue.h"
 
 namespace Inspector {
 
@@ -231,8 +230,8 @@ void ConsoleMessage::addToFrontend(ConsoleFrontendDispatcher& consoleFrontendDis
             auto argumentsObject = JSON::ArrayOf<Inspector::Protocol::Runtime::RemoteObject>::create();
             if (m_arguments && m_arguments->argumentCount()) {
                 if (m_type == MessageType::Table && generatePreview && m_arguments->argumentCount()) {
-                    Deprecated::ScriptValue table = m_arguments->argumentAt(0);
-                    Deprecated::ScriptValue columns = m_arguments->argumentCount() > 1 ? m_arguments->argumentAt(1) : Deprecated::ScriptValue();
+                    auto table = m_arguments->argumentAt(0);
+                    auto columns = m_arguments->argumentCount() > 1 ? m_arguments->argumentAt(1) : JSC::JSValue();
                     auto inspectorValue = injectedScript.wrapTable(table, columns);
                     if (!inspectorValue) {
                         ASSERT_NOT_REACHED();
@@ -284,7 +283,7 @@ void ConsoleMessage::updateRepeatCountInConsole(ConsoleFrontendDispatcher& conso
 bool ConsoleMessage::isEqual(ConsoleMessage* msg) const
 {
     if (m_arguments) {
-        if (!m_arguments->isEqual(msg->m_arguments.get()))
+        if (!msg->m_arguments || !m_arguments->isEqual(*msg->m_arguments))
             return false;
 
         // Never treat objects as equal - their properties might change over time.

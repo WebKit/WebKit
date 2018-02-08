@@ -100,7 +100,7 @@ static WorldMap& allWorlds()
 
 + (WebScriptWorld *)scriptWorldForGlobalContext:(JSGlobalContextRef)context
 {
-    return [self findOrCreateWorld:currentWorld(toJS(context))];
+    return [self findOrCreateWorld:currentWorld(*toJS(context))];
 }
 
 #if JSC_OBJC_API_ENABLED

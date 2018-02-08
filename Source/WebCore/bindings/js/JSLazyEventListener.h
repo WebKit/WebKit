@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2003-2016 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003-2018 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -43,14 +43,13 @@ public:
 private:
     struct CreationArguments;
     static RefPtr<JSLazyEventListener> create(const CreationArguments&);
+    JSLazyEventListener(const CreationArguments&, const String& sourceURL, const TextPosition&);
 
-    JSLazyEventListener(const String& functionName, const String& eventParameterName, const String& code, ContainerNode*, const String& sourceURL, const TextPosition&, JSC::JSObject* wrapper, DOMWrapperWorld& isolatedWorld);
-
-    JSC::JSObject* initializeJSFunction(ScriptExecutionContext&) const override;
-    bool wasCreatedFromMarkup() const override { return true; }
+    JSC::JSObject* initializeJSFunction(ScriptExecutionContext&) const final;
+    bool wasCreatedFromMarkup() const final { return true; }
 
     String m_functionName;
-    String m_eventParameterName;
+    const String& m_eventParameterName;
     String m_code;
     String m_sourceURL;
     TextPosition m_sourcePosition;

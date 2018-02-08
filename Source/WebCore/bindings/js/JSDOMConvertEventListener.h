@@ -37,7 +37,7 @@ template<typename T> struct Converter<IDLEventListener<T>> : DefaultConverter<ID
     {
         auto scope = DECLARE_THROW_SCOPE(state.vm());
 
-        auto listener = T::create(value, thisObject, false, currentWorld(&state));
+        auto listener = T::create(value, thisObject, false, currentWorld(state));
         if (!listener)
             throwTypeError(&state, scope);
     

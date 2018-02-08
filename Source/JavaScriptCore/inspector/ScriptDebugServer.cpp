@@ -37,7 +37,6 @@
 #include "JSCInlines.h"
 #include "JSJavaScriptCallFrame.h"
 #include "JavaScriptCallFrame.h"
-#include "ScriptValue.h"
 #include "SourceProvider.h"
 #include <wtf/NeverDestroyed.h>
 #include <wtf/SetForScope.h>

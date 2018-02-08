@@ -45,27 +45,12 @@ JS_EXPORT_PRIVATE RefPtr<JSON::Value> toInspectorValue(JSC::ExecState&, JSC::JSV
 namespace Deprecated {
 
 class JS_EXPORT_PRIVATE ScriptValue {
-public:
-    ScriptValue() { }
+protected:
+    ScriptValue() = default;
     ScriptValue(JSC::VM& vm, JSC::JSValue value) : m_value(vm, value) { }
-    virtual ~ScriptValue();
 
-    operator JSC::JSValue() const { return jsValue(); }
     JSC::JSValue jsValue() const { return m_value.get(); }
-    bool getString(JSC::ExecState*, String& result) const;
-    String toString(JSC::ExecState*) const;
-    bool isEqual(JSC::ExecState*, const ScriptValue&) const;
-    bool isNull() const;
-    bool isUndefined() const;
-    bool isObject() const;
-    bool isFunction() const;
     bool hasNoValue() const { return !m_value; }
-
-    void clear() { m_value.clear(); }
-
-    bool operator==(const ScriptValue& other) const { return m_value == other.m_value; }
-
-    RefPtr<JSON::Value> toInspectorValue(JSC::ExecState*) const;
 
 private:
     JSC::Strong<JSC::Unknown> m_value;

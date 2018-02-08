@@ -35,7 +35,6 @@
 #include "InspectorFrontendDispatchers.h"
 #include "ScriptBreakpoint.h"
 #include "ScriptDebugListener.h"
-#include "ScriptValue.h"
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/Noncopyable.h>
@@ -181,7 +180,7 @@ private:
     ScriptDebugServer& m_scriptDebugServer;
     Listener* m_listener { nullptr };
     JSC::ExecState* m_pausedScriptState { nullptr };
-    Deprecated::ScriptValue m_currentCallStack;
+    JSC::Strong<JSC::Unknown> m_currentCallStack;
     ScriptsMap m_scripts;
     BreakpointIdentifierToDebugServerBreakpointIDsMap m_breakpointIdentifierToDebugServerBreakpointIDs;
     BreakpointIdentifierToBreakpointMap m_javaScriptBreakpoints;

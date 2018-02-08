@@ -139,11 +139,11 @@ void ScriptController::destroyWindowProxy(DOMWrapperWorld& world)
 JSDOMWindowProxy& ScriptController::createWindowProxy(DOMWrapperWorld& world)
 {
     ASSERT(!m_windowProxies.contains(&world));
+    ASSERT(m_frame.document()->domWindow());
 
     VM& vm = world.vm();
 
-    auto* structure = JSDOMWindowProxy::createStructure(vm, jsNull());
-    Strong<JSDOMWindowProxy> windowProxy(vm, JSDOMWindowProxy::create(vm, m_frame.document()->domWindow(), structure, world));
+    Strong<JSDOMWindowProxy> windowProxy(vm, &JSDOMWindowProxy::create(vm, *m_frame.document()->domWindow(), world));
     Strong<JSDOMWindowProxy> windowProxy2(windowProxy);
     m_windowProxies.add(&world, windowProxy);
     world.didCreateWindowProxy(this);
@@ -317,6 +317,8 @@ void ScriptController::clearWindowProxiesNotMatchingDOMWindow(DOMWindow* newDOMW
 
 void ScriptController::setDOMWindowForWindowProxy(DOMWindow* newDOMWindow)
 {
+    ASSERT(newDOMWindow);
+
     if (m_windowProxies.isEmpty())
         return;
     
@@ -326,7 +328,7 @@ void ScriptController::setDOMWindowForWindowProxy(DOMWindow* newDOMWindow)
         if (&windowProxy->window()->wrapped() == newDOMWindow)
             continue;
         
-        windowProxy->setWindow(newDOMWindow);
+        windowProxy->setWindow(*newDOMWindow);
         
         // An m_cacheableBindingRootObject persists between page navigations
         // so needs to know about the new JSDOMWindow.

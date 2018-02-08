@@ -77,6 +77,8 @@ private:
     Ref<PaymentRequest> m_request;
     String m_requestId;
     String m_methodName;
+    // FIXME: The following use of JSC::Strong is incorrect and can lead to storage leaks
+    // due to reference cycles; we should use JSValueInWrappedObject instead.
     JSC::Strong<JSC::JSObject> m_details;
     RefPtr<PaymentAddress> m_shippingAddress;
     String m_shippingOption;

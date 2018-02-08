@@ -57,7 +57,7 @@ public:
         BUBBLING_PHASE = 3
     };
 
-    static Ref<Event> create(const AtomicString& type, bool canBubble, bool cancelable);
+    WEBCORE_EXPORT static Ref<Event> create(const AtomicString& type, bool canBubble, bool cancelable);
     static Ref<Event> createForBindings();
     static Ref<Event> create(const AtomicString& type, const EventInit&, IsTrusted = IsTrusted::No);
 
@@ -95,8 +95,8 @@ public:
     bool isTrusted() const { return m_isTrusted; }
     void setUntrusted() { m_isTrusted = false; }
 
-    bool legacyReturnValue() const { return !defaultPrevented(); }
-    void setLegacyReturnValue(bool returnValue) { setDefaultPrevented(!returnValue); }
+    bool legacyReturnValue() const { return !m_wasCanceled; }
+    void setLegacyReturnValue(bool returnValue) { m_wasCanceled = !returnValue; }
 
     virtual EventInterface eventInterface() const { return EventInterfaceType; }
 
@@ -118,11 +118,11 @@ public:
     bool propagationStopped() const { return m_propagationStopped || m_immediatePropagationStopped; }
     bool immediatePropagationStopped() const { return m_immediatePropagationStopped; }
 
+    void resetBeforeDispatch();
     void resetAfterDispatch();
 
-    bool defaultPrevented() const { return m_defaultPrevented; }
+    bool defaultPrevented() const { return m_wasCanceled; }
     void preventDefault();
-    void setDefaultPrevented(bool defaultPrevented) { m_defaultPrevented = defaultPrevented; }
 
     bool defaultHandled() const { return m_defaultHandled; }
     void setDefaultHandled() { m_defaultHandled = true; }
@@ -144,7 +144,7 @@ public:
 
 protected:
     explicit Event(IsTrusted = IsTrusted::No);
-    WEBCORE_EXPORT Event(const AtomicString& type, bool canBubble, bool cancelable);
+    Event(const AtomicString& type, bool canBubble, bool cancelable);
     Event(const AtomicString& type, bool canBubble, bool cancelable, MonotonicTime timestamp);
     Event(const AtomicString& type, const EventInit&, IsTrusted);
 
@@ -160,7 +160,7 @@ private:
 
     bool m_propagationStopped { false };
     bool m_immediatePropagationStopped { false };
-    bool m_defaultPrevented { false };
+    bool m_wasCanceled { false };
     bool m_defaultHandled { false };
     bool m_isTrusted { false };
     bool m_isExecutingPassiveEventListener { false };
@@ -174,25 +174,10 @@ private:
     RefPtr<Event> m_underlyingEvent;
 };
 
-inline Ref<Event> Event::create(const AtomicString& type, bool canBubble, bool cancelable)
-{
-    return adoptRef(*new Event(type, canBubble, cancelable));
-}
-
-inline Ref<Event> Event::createForBindings()
-{
-    return adoptRef(*new Event);
-}
-
-inline Ref<Event> Event::create(const AtomicString& type, const EventInit& initializer, IsTrusted isTrusted)
-{
-    return adoptRef(*new Event(type, initializer, isTrusted));
-}
-
 inline void Event::preventDefault()
 {
     if (m_cancelable && !m_isExecutingPassiveEventListener)
-        m_defaultPrevented = true;
+        m_wasCanceled = true;
     // FIXME: Specification suggests we log something to the console when preventDefault is called but
     // doesn't do anything because the event is not cancelable or is executing passive event listeners.
 }

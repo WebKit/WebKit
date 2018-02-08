@@ -52,7 +52,7 @@ namespace WebCore {
 const Seconds EventHandler::TextDragDelay { 0_s };
 #endif
 
-bool EventHandler::tabsToAllFormControls(KeyboardEvent&) const
+bool EventHandler::tabsToAllFormControls(KeyboardEvent*) const
 {
     // We always allow tabs to all controls
     return true;

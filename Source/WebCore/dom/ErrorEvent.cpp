@@ -67,19 +67,19 @@ EventInterface ErrorEvent::eventInterface() const
     return ErrorEventInterfaceType;
 }
 
-JSValue ErrorEvent::error(ExecState& exec, JSGlobalObject& globalObject)
+JSValue ErrorEvent::error(ExecState& state, JSGlobalObject& globalObject)
 {    
     auto error = m_error.get();
     if (!error)
         return jsNull();
 
-    if (error.isObject() && &worldForDOMObject(error.getObject()) != &currentWorld(&exec)) {
+    if (!isWorldCompatible(state, error)) {
         // We need to make sure ErrorEvents do not leak their error property across isolated DOM worlds.
         // Ideally, we would check that the worlds have different privileges but that's not possible yet.
-        auto serializedError = trySerializeError(exec);
+        auto serializedError = trySerializeError(state);
         if (!serializedError)
             return jsNull();
-        return serializedError->deserialize(exec, &globalObject);
+        return serializedError->deserialize(state, &globalObject);
     }
 
     return error;

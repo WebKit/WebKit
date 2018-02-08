@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2010 Google Inc. All rights reserved.
- * Copyright (C) 2013-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -44,13 +44,17 @@
 #include <JavaScriptCore/VMEntryScope.h>
 #include <wtf/Ref.h>
 
-
 namespace WebCore {
 using namespace JSC;
 
-JSErrorHandler::JSErrorHandler(JSObject* function, JSObject* wrapper, bool isAttribute, DOMWrapperWorld& world)
-    : JSEventListener(function, wrapper, isAttribute, world)
+inline JSErrorHandler::JSErrorHandler(JSObject& listener, JSObject& wrapper, bool isAttribute, DOMWrapperWorld& world)
+    : JSEventListener(&listener, &wrapper, isAttribute, world)
 {
+}
+
+Ref<JSErrorHandler> JSErrorHandler::create(JSC::JSObject& listener, JSC::JSObject& wrapper, bool isAttribute, DOMWrapperWorld& world)
+{
+    return adoptRef(*new JSErrorHandler(listener, wrapper, isAttribute, world));
 }
 
 JSErrorHandler::~JSErrorHandler() = default;
@@ -60,8 +64,6 @@ void JSErrorHandler::handleEvent(ScriptExecutionContext& scriptExecutionContext,
     if (!is<ErrorEvent>(event))
         return JSEventListener::handleEvent(scriptExecutionContext, event);
 
-    ErrorEvent& errorEvent = downcast<ErrorEvent>(event);
-
     VM& vm = scriptExecutionContext.vm();
     JSLockHolder lock(vm);
 
@@ -69,7 +71,7 @@ void JSErrorHandler::handleEvent(ScriptExecutionContext& scriptExecutionContext,
     if (!jsFunction)
         return;
 
-    JSDOMGlobalObject* globalObject = toJSDOMGlobalObject(&scriptExecutionContext, isolatedWorld());
+    auto* globalObject = toJSDOMWindow(downcast<Document>(scriptExecutionContext).frame(), isolatedWorld());
     if (!globalObject)
         return;
 
@@ -84,6 +86,8 @@ void JSErrorHandler::handleEvent(ScriptExecutionContext& scriptExecutionContext,
         Event* savedEvent = globalObject->currentEvent();
         globalObject->setCurrentEvent(&event);
 
+        auto& errorEvent = downcast<ErrorEvent>(event);
+
         MarkedArgumentBuffer args;
         args.append(toJS<IDLDOMString>(*exec, errorEvent.message()));
         args.append(toJS<IDLUSVString>(*exec, errorEvent.filename()));
@@ -92,7 +96,6 @@ void JSErrorHandler::handleEvent(ScriptExecutionContext& scriptExecutionContext,
         args.append(errorEvent.error(*exec, *globalObject));
         ASSERT(!args.hasOverflowed());
 
-        VM& vm = globalObject->vm();
         VMEntryScope entryScope(vm, vm.entryScope ? vm.entryScope->globalObject() : globalObject);
 
         InspectorInstrumentationCookie cookie = JSMainThreadExecState::instrumentFunctionCall(&scriptExecutionContext, callType, callData);

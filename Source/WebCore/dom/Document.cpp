@@ -2477,13 +2477,9 @@ void Document::resumeDeviceMotionAndOrientationUpdates()
 
 bool Document::shouldBypassMainWorldContentSecurityPolicy() const
 {
-    JSC::CallFrame* callFrame = commonVM().topCallFrame;
-    if (callFrame == JSC::CallFrame::noCaller())
-        return false;
-    DOMWrapperWorld& domWrapperWorld = currentWorld(callFrame);
-    if (domWrapperWorld.isNormal())
-        return false;
-    return true;
+    // Bypass this policy when the world is known, and it not the normal world.
+    auto& callFrame = *commonVM().topCallFrame;
+    return &callFrame != JSC::CallFrame::noCaller() && !currentWorld(callFrame).isNormal();
 }
 
 void Document::platformSuspendOrStopActiveDOMObjects()

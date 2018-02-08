@@ -113,7 +113,7 @@ private:
     void reset() final;
     bool hasCustomFocusLogic() const final;
     bool isMouseFocusable() const final;
-    bool isKeyboardFocusable(KeyboardEvent&) const final;
+    bool isKeyboardFocusable(KeyboardEvent*) const final;
     void updateFocusAppearance(SelectionRestorationMode, SelectionRevealMode) final;
 
     void accessKeyAction(bool sendMouseEvents) final;

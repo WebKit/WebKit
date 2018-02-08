@@ -3029,8 +3029,7 @@ Ref<SerializedScriptValue> Internals::deserializeBuffer(ArrayBuffer& buffer) con
 
 bool Internals::isFromCurrentWorld(JSC::JSValue value) const
 {
-    auto& state = *contextDocument()->vm().topCallFrame;
-    return !value.isObject() || &worldForDOMObject(asObject(value)) == &currentWorld(&state);
+    return isWorldCompatible(*contextDocument()->vm().topCallFrame, value);
 }
 
 void Internals::setUsesOverlayScrollbars(bool enabled)

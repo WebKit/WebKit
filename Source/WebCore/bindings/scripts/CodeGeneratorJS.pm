@@ -3678,7 +3678,7 @@ sub GenerateRuntimeEnableConditionalString
 
         AddToImplIncludes("DOMWrapperWorld.h");
 
-        push(@conjuncts, "worldForDOMObject(this)." . ToMethodName($context->extendedAttributes->{EnabledForWorld}) . "()");
+        push(@conjuncts, "worldForDOMObject(*this)." . ToMethodName($context->extendedAttributes->{EnabledForWorld}) . "()");
     }
 
     if ($context->extendedAttributes->{EnabledBySetting}) {
@@ -4503,11 +4503,6 @@ sub GenerateImplementation
         push(@implContent, "}\n\n");
     }
 
-    # Cached attributes are indeed allowed when there is a custom mark/visitChildren function.
-    # The custom function must make sure to account for the cached attribute.
-    # Uncomment the below line to temporarily enforce generated mark functions when cached attributes are present.
-    # die "Can't generate binding for class with cached attribute and custom mark." if $numCachedAttributes > 0 and $interface->extendedAttributes->{JSCustomMarkFunction};
-
     if ($indexedGetterOperation) {
         $implIncludes{"URL.h"} = 1 if $indexedGetterOperation->type->name eq "DOMString";
         if ($interfaceName =~ /^HTML\w*Collection$/ or $interfaceName eq "RadioNodeList") {
@@ -4718,7 +4713,7 @@ sub GenerateAttributeGetterBodyDefinition
             : $attribute->extendedAttributes->{DocumentEventHandler} ? "documentEventHandlerAttribute"
             : "eventHandlerAttribute";
         my $eventName = EventHandlerAttributeEventName($attribute);
-        push(@$outputArray, "    return $getter(thisObject.wrapped(), $eventName, worldForDOMObject(&thisObject));\n");
+        push(@$outputArray, "    return $getter(thisObject.wrapped(), $eventName, worldForDOMObject(thisObject));\n");
     } elsif ($codeGenerator->IsConstructorType($attribute->type)) {
         my $constructorType = $attribute->type->name;
         $constructorType =~ s/Constructor$//;
@@ -4849,7 +4844,7 @@ sub GenerateAttributeSetterBodyDefinition
         # FIXME: Find a way to do this special case without hardcoding the class and attribute names here.
         if (($interface->type->name eq "DOMWindow" or $interface->type->name eq "WorkerGlobalScope") and $attribute->name eq "onerror") {
             AddToImplIncludes("JSErrorHandler.h", $conditional);
-            push(@$outputArray, "    thisObject.wrapped().setAttributeEventListener($eventName, createJSErrorHandler(&state, value, &thisObject), worldForDOMObject(&thisObject));\n");
+            push(@$outputArray, "    thisObject.wrapped().setAttributeEventListener($eventName, createJSErrorHandler(state, value, thisObject), worldForDOMObject(thisObject));\n");
         } else {
             AddToImplIncludes("JSEventListener.h", $conditional);
             my $setter = $attribute->extendedAttributes->{WindowEventHandler} ? "setWindowEventHandlerAttribute"
@@ -5495,7 +5490,7 @@ sub GenerateCallWith
         push(@callWithArgs, "${globalObject}->runtimeFlags()");
     }
     if ($codeGenerator->ExtendedAttributeContains($callWith, "World")) {
-        push(@callWithArgs, "worldForDOMObject(&${thisReference})");
+        push(@callWithArgs, "worldForDOMObject(${thisReference})");
     }
 
     return @callWithArgs;

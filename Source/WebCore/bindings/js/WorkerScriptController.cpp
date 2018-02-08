@@ -41,7 +41,6 @@
 #include <JavaScriptCore/GCActivityCallback.h>
 #include <JavaScriptCore/JSLock.h>
 #include <JavaScriptCore/PromiseDeferredTimer.h>
-#include <JavaScriptCore/ScriptValue.h>
 #include <JavaScriptCore/StrongInlines.h>
 
 namespace WebCore {
@@ -140,11 +139,11 @@ void WorkerScriptController::evaluate(const ScriptSourceCode& sourceCode, NakedP
 
     initScriptIfNeeded();
 
-    ExecState* exec = m_workerGlobalScopeWrapper->globalExec();
-    VM& vm = exec->vm();
-    JSLockHolder lock(vm);
+    auto& state = *m_workerGlobalScopeWrapper->globalExec();
+    VM& vm = state.vm();
+    JSLockHolder lock { vm };
 
-    JSC::evaluate(exec, sourceCode.jsSourceCode(), m_workerGlobalScopeWrapper->globalThis(), returnedException);
+    JSC::evaluate(&state, sourceCode.jsSourceCode(), m_workerGlobalScopeWrapper->globalThis(), returnedException);
 
     if ((returnedException && isTerminatedExecutionException(vm, returnedException)) || isTerminatingExecution()) {
         forbidExecution();
@@ -152,15 +151,18 @@ void WorkerScriptController::evaluate(const ScriptSourceCode& sourceCode, NakedP
     }
 
     if (returnedException) {
-        String errorMessage = returnedException->value().toWTFString(exec);
-        int lineNumber = 0;
-        int columnNumber = 0;
-        String sourceURL = sourceCode.url().string();
-        JSC::Strong<JSC::Unknown> error;
-        if (m_workerGlobalScope->sanitizeScriptError(errorMessage, lineNumber, columnNumber, sourceURL, error, sourceCode.cachedScript()))
-            returnedException = JSC::Exception::create(vm, createError(exec, errorMessage.impl()));
-        if (returnedExceptionMessage)
-            *returnedExceptionMessage = errorMessage;
+        if (m_workerGlobalScope->canIncludeErrorDetails(sourceCode.cachedScript(), sourceCode.url().string())) {
+            // FIXME: It's not great that this can run arbitrary code to string-ify the value of the exception.
+            // Do we need to do anything to handle that properly, if it, say, raises another exception?
+            if (returnedExceptionMessage)
+                *returnedExceptionMessage = returnedException->value().toWTFString(&state);
+        } else {
+            // Overwrite the detailed error with a generic error.
+            String genericErrorMessage { ASCIILiteral { "Script error." } };
+            if (returnedExceptionMessage)
+                *returnedExceptionMessage = genericErrorMessage;
+            returnedException = JSC::Exception::create(vm, createError(&state, genericErrorMessage));
+        }
     }
 }
 

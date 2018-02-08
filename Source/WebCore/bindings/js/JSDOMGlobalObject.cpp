@@ -58,7 +58,6 @@ const ClassInfo JSDOMGlobalObject::s_info = { "DOMGlobalObject", &JSGlobalObject
 
 JSDOMGlobalObject::JSDOMGlobalObject(VM& vm, Structure* structure, Ref<DOMWrapperWorld>&& world, const GlobalObjectMethodTable* globalObjectMethodTable, RefPtr<JSC::ThreadLocalCache>&& threadLocalCache)
     : JSGlobalObject(vm, structure, globalObjectMethodTable, WTFMove(threadLocalCache))
-    , m_currentEvent(0)
     , m_world(WTFMove(world))
     , m_worldIsNormal(m_world->isNormal())
     , m_builtinInternalFunctions(vm)
@@ -235,40 +234,6 @@ void JSDOMGlobalObject::setCurrentEvent(Event* currentEvent)
 Event* JSDOMGlobalObject::currentEvent() const
 {
     return m_currentEvent;
-}
-
-JSDOMGlobalObject* toJSDOMGlobalObject(Document* document, JSC::ExecState* exec)
-{
-    return toJSDOMWindow(document->frame(), currentWorld(exec));
-}
-
-JSDOMGlobalObject* toJSDOMGlobalObject(ScriptExecutionContext* scriptExecutionContext, JSC::ExecState* exec)
-{
-    if (is<Document>(*scriptExecutionContext))
-        return toJSDOMGlobalObject(downcast<Document>(scriptExecutionContext), exec);
-
-    if (is<WorkerGlobalScope>(*scriptExecutionContext))
-        return downcast<WorkerGlobalScope>(*scriptExecutionContext).script()->workerGlobalScopeWrapper();
-
-    ASSERT_NOT_REACHED();
-    return nullptr;
-}
-
-JSDOMGlobalObject* toJSDOMGlobalObject(Document* document, DOMWrapperWorld& world)
-{
-    return toJSDOMWindow(document->frame(), world);
-}
-
-JSDOMGlobalObject* toJSDOMGlobalObject(ScriptExecutionContext* scriptExecutionContext, DOMWrapperWorld& world)
-{
-    if (is<Document>(*scriptExecutionContext))
-        return toJSDOMGlobalObject(downcast<Document>(scriptExecutionContext), world);
-
-    if (is<WorkerGlobalScope>(*scriptExecutionContext))
-        return downcast<WorkerGlobalScope>(*scriptExecutionContext).script()->workerGlobalScopeWrapper();
-
-    ASSERT_NOT_REACHED();
-    return nullptr;
 }
 
 JSDOMGlobalObject& callerGlobalObject(ExecState& state)

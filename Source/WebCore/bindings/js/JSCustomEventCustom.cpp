@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,27 +33,19 @@
 #include <JavaScriptCore/Structure.h>
 
 namespace WebCore {
-using namespace JSC;
-    
-JSValue JSCustomEvent::detail(ExecState& state) const
+
+JSC::JSValue JSCustomEvent::detail(JSC::ExecState& state) const
 {
-    auto& event = wrapped();
+    return cachedPropertyValue(state, *this, wrapped().cachedDetail(), [this] {
+        JSC::JSValue detail = wrapped().detail();
+        return detail ? detail : jsNull();
+    });
+}
 
-    auto detail = event.detail();
-    if (!detail)
-        return jsNull();
-
-    if (detail.isObject() && &worldForDOMObject(detail.getObject()) != &currentWorld(&state)) {
-        // We need to make sure CustomEvents do not leak their detail property across isolated DOM worlds.
-        // Ideally, we would check that the worlds have different privileges but that's not possible yet.
-        auto serializedDetail = event.trySerializeDetail(state);
-        if (!serializedDetail)
-            return jsNull();
-        return serializedDetail->deserialize(state, globalObject());
-    }
-
-    return detail;
+void JSCustomEvent::visitAdditionalChildren(JSC::SlotVisitor& visitor)
+{
+    wrapped().detail().visit(visitor);
+    wrapped().cachedDetail().visit(visitor);
 }
 
 } // namespace WebCore
-

@@ -111,7 +111,7 @@ protected:
 private:
     const AtomicString& formControlType() const final;
     
-    bool isKeyboardFocusable(KeyboardEvent&) const final;
+    bool isKeyboardFocusable(KeyboardEvent*) const final;
     bool isMouseFocusable() const final;
 
     void dispatchFocusEvent(RefPtr<Element>&& oldFocusedElement, FocusDirection) final;

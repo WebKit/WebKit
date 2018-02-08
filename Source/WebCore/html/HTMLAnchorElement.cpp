@@ -118,7 +118,7 @@ static bool hasNonEmptyBox(RenderBoxModelObject* renderer)
     return false;
 }
 
-bool HTMLAnchorElement::isKeyboardFocusable(KeyboardEvent& event) const
+bool HTMLAnchorElement::isKeyboardFocusable(KeyboardEvent* event) const
 {
     if (!isLink())
         return HTMLElement::isKeyboardFocusable(event);

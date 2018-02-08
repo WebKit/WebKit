@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,7 +28,6 @@
 
 #pragma once
 
-#include "DOMWindow.h"
 #include "JSDOMWindow.h"
 #include <JavaScriptCore/JSProxy.h>
 
@@ -36,44 +35,32 @@ namespace WebCore {
 
 class Frame;
 
-class JSDOMWindowProxy : public JSC::JSProxy {
-    typedef JSC::JSProxy Base;
+class JSDOMWindowProxy final : public JSC::JSProxy {
+    using Base = JSC::JSProxy;
 public:
+    static JSDOMWindowProxy& create(JSC::VM&, DOMWindow&, DOMWrapperWorld&);
     static void destroy(JSCell*);
 
-    JSDOMWindow* window() const { return JSC::jsCast<JSDOMWindow*>(target()); }
-    void setWindow(JSC::VM&, JSDOMWindow*);
-    void setWindow(RefPtr<DOMWindow>&&);
-
     DECLARE_INFO;
+
+    JSDOMWindow* window() const { return JSC::jsCast<JSDOMWindow*>(target()); }
+    void setWindow(JSC::VM&, JSDOMWindow&);
+    void setWindow(DOMWindow&);
 
     DOMWindow& wrapped() const;
     static WEBCORE_EXPORT DOMWindow* toWrapped(JSC::VM&, JSC::JSObject*);
 
-    static JSDOMWindowProxy* create(JSC::VM& vm, RefPtr<DOMWindow>&& window, JSC::Structure* structure, DOMWrapperWorld& world)
-    {
-        JSDOMWindowProxy* proxy = new (NotNull, JSC::allocateCell<JSDOMWindowProxy>(vm.heap)) JSDOMWindowProxy(vm, structure, world);
-        proxy->finishCreation(vm, WTFMove(window));
-        return proxy;
-    }
-
-    static JSC::Structure* createStructure(JSC::VM& vm, JSC::JSValue prototype)
-    {
-        return JSC::Structure::create(vm, 0, prototype, JSC::TypeInfo(JSC::PureForwardingProxyType, StructureFlags), info());
-    }
-
     DOMWrapperWorld& world() { return m_world; }
 
-protected:
-    JSDOMWindowProxy(JSC::VM&, JSC::Structure*, DOMWrapperWorld&);
-    void finishCreation(JSC::VM&, RefPtr<DOMWindow>&&);
+private:
+    JSDOMWindowProxy(JSC::VM&, JSC::Structure&, DOMWrapperWorld&);
+    void finishCreation(JSC::VM&, DOMWindow&);
 
     Ref<DOMWrapperWorld> m_world;
 };
 
-// JSDOMWindowProxy is a little odd in that it's not a traditional wrapper and has no back pointer. It
-// is however strongly owned by Frame (via its ScriptController), and therefore, to get the JSDOMWindowProxy
-// a Frame is passed.
+// JSDOMWindowProxy is a little odd in that it's not a traditional wrapper and has no back pointer.
+// It is, however, strongly owned by Frame via its ScriptController, so we can get one from a frame.
 JSC::JSValue toJS(JSC::ExecState*, Frame&);
 inline JSC::JSValue toJS(JSC::ExecState* state, Frame* frame) { return frame ? toJS(state, *frame) : JSC::jsNull(); }
 

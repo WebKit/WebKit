@@ -43,7 +43,6 @@
 #import "WebUIDelegatePrivate.h"
 #import "WebViewInternal.h"
 #import <JavaScriptCore/InspectorAgentBase.h>
-#import <JavaScriptCore/ScriptValue.h>
 #import <WebCore/InspectorController.h>
 #import <WebCore/InspectorFrontendClient.h>
 #import <WebCore/MainFrame.h>

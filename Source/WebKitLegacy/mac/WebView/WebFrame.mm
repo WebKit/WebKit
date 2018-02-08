@@ -57,7 +57,6 @@
 #import <JavaScriptCore/JSContextInternal.h>
 #import <JavaScriptCore/JSLock.h>
 #import <JavaScriptCore/JSObject.h>
-#import <JavaScriptCore/ScriptValue.h>
 #import <WebCore/AXObjectCache.h>
 #import <WebCore/AccessibilityObject.h>
 #import <WebCore/CSSAnimationController.h>

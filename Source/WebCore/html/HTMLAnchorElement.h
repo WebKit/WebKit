@@ -75,7 +75,7 @@ protected:
 private:
     bool supportsFocus() const override;
     bool isMouseFocusable() const override;
-    bool isKeyboardFocusable(KeyboardEvent&) const override;
+    bool isKeyboardFocusable(KeyboardEvent*) const override;
     void defaultEventHandler(Event&) final;
     void setActive(bool active = true, bool pause = false) final;
     void accessKeyAction(bool sendMouseEvents) final;

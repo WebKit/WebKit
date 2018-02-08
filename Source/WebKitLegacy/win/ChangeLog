@@ -1,3 +1,20 @@
+2018-01-13  Darin Adler  <darin@apple.com>
+
+        Event improvements
+        https://bugs.webkit.org/show_bug.cgi?id=179591
+
+        Reviewed by Chris Dumez.
+
+        * Plugins/PluginView.cpp: Removed include of ScriptValue.h.
+        * WebFrame.cpp: Ditto.
+
+        * WebScriptWorld.cpp:
+        (WebScriptWorld::scriptWorldForGlobalContext): Pass reference to currentWorld.
+
+        * WebView.cpp: Removed include of ScriptValue.h.
+        (WebView::handleEditingKeyboardEvent): Updated for name change from
+        keyEvent to underlyingPlatformEvent.
+
 2018-02-06  Don Olmstead  <don.olmstead@sony.com>
 
         Remove WebCore/ForwardingHeaders directory

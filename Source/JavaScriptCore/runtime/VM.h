@@ -245,7 +245,7 @@ struct ScratchBuffer {
 class VM : public ThreadSafeRefCounted<VM>, public DoublyLinkedListNode<VM> {
 public:
     // WebCore has a one-to-one mapping of threads to VMs;
-    // either create() or createLeaked() should only be called once
+    // create() should only be called once
     // on a thread, this is the 'default' VM (it uses the
     // thread's default string uniquing table from Thread::current()).
     // API contexts created using the new context group aware interface
@@ -264,7 +264,6 @@ public:
     JS_EXPORT_PRIVATE static VM& sharedInstance();
 
     JS_EXPORT_PRIVATE static Ref<VM> create(HeapType = SmallHeap);
-    JS_EXPORT_PRIVATE static Ref<VM> createLeaked(HeapType = SmallHeap);
     static Ref<VM> createContextGroup(HeapType = SmallHeap);
     JS_EXPORT_PRIVATE ~VM();
 

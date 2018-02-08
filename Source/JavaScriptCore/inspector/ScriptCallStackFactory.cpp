@@ -41,7 +41,6 @@
 #include "JSCInlines.h"
 #include "ScriptArguments.h"
 #include "ScriptCallFrame.h"
-#include "ScriptValue.h"
 #include "StackVisitor.h"
 #include <wtf/text/WTFString.h>
 
@@ -191,14 +190,14 @@ Ref<ScriptCallStack> createScriptCallStackFromException(JSC::ExecState* exec, JS
     return ScriptCallStack::create(frames);
 }
 
-Ref<ScriptArguments> createScriptArguments(JSC::ExecState* exec, unsigned skipArgumentCount)
+Ref<ScriptArguments> createScriptArguments(JSC::ExecState* state, unsigned skipArgumentCount)
 {
-    VM& vm = exec->vm();
-    Vector<Deprecated::ScriptValue> arguments;
-    size_t argumentCount = exec->argumentCount();
+    VM& vm = state->vm();
+    Vector<JSC::Strong<JSC::Unknown>> arguments;
+    size_t argumentCount = state->argumentCount();
     for (size_t i = skipArgumentCount; i < argumentCount; ++i)
-        arguments.append(Deprecated::ScriptValue(vm, exec->uncheckedArgument(i)));
-    return ScriptArguments::create(exec, arguments);
+        arguments.append({ vm, state->uncheckedArgument(i) });
+    return ScriptArguments::create(*state, WTFMove(arguments));
 }
 
 } // namespace Inspector

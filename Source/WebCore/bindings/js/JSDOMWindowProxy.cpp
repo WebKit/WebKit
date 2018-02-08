@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -40,21 +40,28 @@
 #include <JavaScriptCore/StrongInlines.h>
 
 namespace WebCore {
-using namespace JSC;
 
 const ClassInfo JSDOMWindowProxy::s_info = { "JSDOMWindowProxy", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSDOMWindowProxy) };
 
-JSDOMWindowProxy::JSDOMWindowProxy(VM& vm, Structure* structure, DOMWrapperWorld& world)
-    : Base(vm, structure)
+inline JSDOMWindowProxy::JSDOMWindowProxy(VM& vm, Structure& structure, DOMWrapperWorld& world)
+    : Base(vm, &structure)
     , m_world(world)
 {
 }
 
-void JSDOMWindowProxy::finishCreation(VM& vm, RefPtr<DOMWindow>&& window)
+void JSDOMWindowProxy::finishCreation(VM& vm, DOMWindow& window)
 {
     Base::finishCreation(vm);
     ASSERT(inherits(vm, info()));
-    setWindow(WTFMove(window));
+    setWindow(window);
+}
+
+JSDOMWindowProxy& JSDOMWindowProxy::create(JSC::VM& vm, DOMWindow& window, DOMWrapperWorld& world)
+{
+    auto& structure = *JSC::Structure::create(vm, 0, jsNull(), JSC::TypeInfo(JSC::PureForwardingProxyType, StructureFlags), info());
+    auto& proxy = *new (NotNull, JSC::allocateCell<JSDOMWindowProxy>(vm.heap)) JSDOMWindowProxy(vm, structure, world);
+    proxy.finishCreation(vm, window);
+    return proxy;
 }
 
 void JSDOMWindowProxy::destroy(JSCell* cell)
@@ -62,43 +69,41 @@ void JSDOMWindowProxy::destroy(JSCell* cell)
     static_cast<JSDOMWindowProxy*>(cell)->JSDOMWindowProxy::~JSDOMWindowProxy();
 }
 
-void JSDOMWindowProxy::setWindow(VM& vm, JSDOMWindow* window)
+void JSDOMWindowProxy::setWindow(VM& vm, JSDOMWindow& window)
 {
-    ASSERT_ARG(window, window);
-    setTarget(vm, window);
-    structure()->setGlobalObject(vm, window);
+    setTarget(vm, &window);
+    structure()->setGlobalObject(vm, &window);
     GCController::singleton().garbageCollectSoon();
 }
 
-void JSDOMWindowProxy::setWindow(RefPtr<DOMWindow>&& domWindow)
+void JSDOMWindowProxy::setWindow(DOMWindow& domWindow)
 {
     // Replacing JSDOMWindow via telling JSDOMWindowProxy to use the same DOMWindow it already uses makes no sense,
     // so we'd better never try to.
-    ASSERT(!window() || domWindow.get() != &window()->wrapped());
-    // Explicitly protect the global object's prototype so it isn't collected
-    // when we allocate the global object. (Once the global object is fully
-    // constructed, it can mark its own prototype.)
-    
+    ASSERT(!window() || &domWindow != &window()->wrapped());
+
     VM& vm = commonVM();
-    Structure* prototypeStructure = JSDOMWindowPrototype::createStructure(vm, nullptr, jsNull());
-    Strong<JSDOMWindowPrototype> prototype(vm, JSDOMWindowPrototype::create(vm, nullptr, prototypeStructure));
+    auto& prototypeStructure = *JSDOMWindowPrototype::createStructure(vm, nullptr, jsNull());
 
-    Structure* structure = JSDOMWindow::createStructure(vm, nullptr, prototype.get());
-    JSDOMWindow* jsDOMWindow = JSDOMWindow::create(vm, structure, *domWindow, this);
-    prototype->structure()->setGlobalObject(vm, jsDOMWindow);
+    // Explicitly protect the prototype so it isn't collected when we allocate the global object.
+    // (Once the global object is fully constructed, it will mark its own prototype.)
+    // FIXME: Why do we need to protect this when there's a pointer to it on the stack?
+    // Perhaps the issue is that structure objects aren't seen when scanning the stack?
+    Strong<JSDOMWindowPrototype> prototype(vm, JSDOMWindowPrototype::create(vm, nullptr, &prototypeStructure));
 
-    Structure* windowPropertiesStructure = JSDOMWindowProperties::createStructure(vm, jsDOMWindow, JSEventTarget::prototype(vm, *jsDOMWindow));
-    JSDOMWindowProperties* windowProperties = JSDOMWindowProperties::create(windowPropertiesStructure, *jsDOMWindow);
+    auto& windowStructure = *JSDOMWindow::createStructure(vm, nullptr, prototype.get());
+    auto& window = *JSDOMWindow::create(vm, &windowStructure, domWindow, this);
+    prototype->structure()->setGlobalObject(vm, &window);
 
-    prototype->structure()->setPrototypeWithoutTransition(vm, windowProperties);
-    setWindow(vm, jsDOMWindow);
-    ASSERT(jsDOMWindow->globalObject() == jsDOMWindow);
-    ASSERT(prototype->globalObject() == jsDOMWindow);
+    auto& propertiesStructure = *JSDOMWindowProperties::createStructure(vm, &window, JSEventTarget::prototype(vm, window));
+    auto& properties = *JSDOMWindowProperties::create(&propertiesStructure, window);
+    prototype->structure()->setPrototypeWithoutTransition(vm, &properties);
+
+    setWindow(vm, window);
+
+    ASSERT(window.globalObject() == &window);
+    ASSERT(prototype->globalObject() == &window);
 }
-
-// ----
-// JSDOMWindow methods
-// ----
 
 DOMWindow& JSDOMWindowProxy::wrapped() const
 {
@@ -108,18 +113,12 @@ DOMWindow& JSDOMWindowProxy::wrapped() const
 DOMWindow* JSDOMWindowProxy::toWrapped(VM& vm, JSObject* value)
 {
     auto* wrapper = jsDynamicDowncast<JSDOMWindowProxy*>(vm, value);
-    if (!wrapper)
-        return nullptr;
-    return &wrapper->window()->wrapped();
+    return wrapper ? &wrapper->window()->wrapped() : nullptr;
 }
 
-// ----
-// Conversion methods
-// ----
-
-JSValue toJS(ExecState* exec, Frame& frame)
+JSValue toJS(ExecState* state, Frame& frame)
 {
-    return frame.script().windowProxy(currentWorld(exec));
+    return frame.script().windowProxy(currentWorld(*state));
 }
 
 JSDOMWindowProxy* toJSDOMWindowProxy(Frame& frame, DOMWrapperWorld& world)

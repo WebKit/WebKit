@@ -2276,12 +2276,12 @@ void JSTestObjPrototype::finishCreation(VM& vm)
         JSObject::deleteProperty(this, globalObject()->globalExec(), propertyName);
     }
 #endif
-    if (!(worldForDOMObject(this).someWorld() && RuntimeEnabledFeatures::sharedFeatures().testFeatureEnabled())) {
+    if (!(worldForDOMObject(*this).someWorld() && RuntimeEnabledFeatures::sharedFeatures().testFeatureEnabled())) {
         auto propertyName = Identifier::fromString(&vm, reinterpret_cast<const LChar*>("enabledInSpecificWorldWhenRuntimeFeatureEnabled"), strlen("enabledInSpecificWorldWhenRuntimeFeatureEnabled"));
         VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);
         JSObject::deleteProperty(this, globalObject()->globalExec(), propertyName);
     }
-    if (!worldForDOMObject(this).someWorld()) {
+    if (!worldForDOMObject(*this).someWorld()) {
         auto propertyName = Identifier::fromString(&vm, reinterpret_cast<const LChar*>("worldSpecificMethod"), strlen("worldSpecificMethod"));
         VM::DeletePropertyModeScope scope(vm, VM::DeletePropertyMode::IgnoreConfigurable);
         JSObject::deleteProperty(this, globalObject()->globalExec(), propertyName);
@@ -3991,7 +3991,7 @@ static inline JSValue jsTestObjOnfooGetter(ExecState& state, JSTestObj& thisObje
 {
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
-    return eventHandlerAttribute(thisObject.wrapped(), eventNames().fooEvent, worldForDOMObject(&thisObject));
+    return eventHandlerAttribute(thisObject.wrapped(), eventNames().fooEvent, worldForDOMObject(thisObject));
 }
 
 EncodedJSValue jsTestObjOnfoo(ExecState* state, EncodedJSValue thisValue, PropertyName)
@@ -4015,7 +4015,7 @@ static inline JSValue jsTestObjOnwebkitfooGetter(ExecState& state, JSTestObj& th
 {
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
-    return eventHandlerAttribute(thisObject.wrapped(), eventNames().fooEvent, worldForDOMObject(&thisObject));
+    return eventHandlerAttribute(thisObject.wrapped(), eventNames().fooEvent, worldForDOMObject(thisObject));
 }
 
 EncodedJSValue jsTestObjOnwebkitfoo(ExecState* state, EncodedJSValue thisValue, PropertyName)

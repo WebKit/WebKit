@@ -259,7 +259,7 @@ void MessagePort::dispatchMessages()
                 if (contextIsWorker && downcast<WorkerGlobalScope>(*m_scriptExecutionContext).isClosing())
                     return;
                 auto ports = MessagePort::entanglePorts(*m_scriptExecutionContext, WTFMove(message.transferredPorts));
-                dispatchEvent(MessageEvent::create(WTFMove(ports), WTFMove(message.message)));
+                dispatchEvent(MessageEvent::create(WTFMove(ports), message.message.releaseNonNull()));
             }
         };
 

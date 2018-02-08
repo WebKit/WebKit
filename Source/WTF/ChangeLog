@@ -1,3 +1,13 @@
+2018-02-06  Darin Adler  <darin@apple.com>
+
+        Event improvements
+        https://bugs.webkit.org/show_bug.cgi?id=179591
+
+        Reviewed by Chris Dumez.
+
+        * wtf/text/OrdinalNumber.h: Added som missing const.
+        * wtf/text/TextPosition.h: Ditto.
+
 2018-02-06  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [GTK] fast/events/message-channel-gc-4.html is flaky

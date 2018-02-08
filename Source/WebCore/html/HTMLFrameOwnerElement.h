@@ -64,7 +64,7 @@ protected:
     void setSandboxFlags(SandboxFlags);
 
 private:
-    bool isKeyboardFocusable(KeyboardEvent&) const override;
+    bool isKeyboardFocusable(KeyboardEvent*) const override;
     bool isFrameOwnerElement() const final { return true; }
 
     Frame* m_contentFrame;

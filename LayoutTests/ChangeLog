@@ -1,3 +1,13 @@
+2018-01-13  Darin Adler  <darin@apple.com>
+
+        Event improvements
+        https://bugs.webkit.org/show_bug.cgi?id=179591
+
+        Reviewed by Chris Dumez.
+
+        * fast/dom/reference-cycle-leaks-expected.txt: Expect success for the
+        CustomEvent, MessageEvent, and PopStateEvent cycle leak checks.
+
 2018-02-07  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         [iOS] Skip webgl/webgl-texture-image-buffer-reuse.html

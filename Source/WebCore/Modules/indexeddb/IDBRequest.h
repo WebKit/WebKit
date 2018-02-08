@@ -68,6 +68,8 @@ public:
 
     virtual ~IDBRequest();
 
+    // FIXME: The following use of JSC::Strong is incorrect and can lead to storage leaks
+    // due to reference cycles; we should use JSValueInWrappedObject instead.
     using Result = Variant<RefPtr<IDBCursor>, RefPtr<IDBDatabase>, JSC::Strong<JSC::Unknown>>;
     ExceptionOr<std::optional<Result>> result() const;
 

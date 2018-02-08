@@ -378,18 +378,15 @@ bool WebPage::allowsUserScaling() const
 
 bool WebPage::handleEditingKeyboardEvent(KeyboardEvent* event)
 {
-    const PlatformKeyboardEvent* platformEvent = event->keyEvent();
+    auto* platformEvent = event->underlyingPlatformEvent();
     if (!platformEvent)
         return false;
 
     // FIXME: Interpret the event immediately upon receiving it in UI process, without sending to WebProcess first.
     bool eventWasHandled = false;
     bool sendResult = WebProcess::singleton().parentProcessConnection()->sendSync(Messages::WebPageProxy::InterpretKeyEvent(editorState(), platformEvent->type() == PlatformKeyboardEvent::Char),
-                                                                               Messages::WebPageProxy::InterpretKeyEvent::Reply(eventWasHandled), m_pageID);
-    if (!sendResult)
-        return false;
-
-    return eventWasHandled;
+        Messages::WebPageProxy::InterpretKeyEvent::Reply(eventWasHandled), m_pageID);
+    return sendResult && eventWasHandled;
 }
 
 void WebPage::sendComplexTextInputToPlugin(uint64_t, const String&)

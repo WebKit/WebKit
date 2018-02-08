@@ -311,9 +311,9 @@ static inline bool handleWheelEventInAppropriateEnclosingBox(Node* startNode, Wh
     RenderBox* currentEnclosingBox = &initialEnclosingBox;
     while (currentEnclosingBox) {
         if (RenderLayer* boxLayer = currentEnclosingBox->layer()) {
-            const PlatformWheelEvent* platformEvent = wheelEvent.wheelEvent();
+            auto platformEvent = wheelEvent.underlyingPlatformEvent();
             bool scrollingWasHandled;
-            if (platformEvent != nullptr) {
+            if (platformEvent) {
                 auto copiedEvent = platformEvent->copyWithDeltasAndVelocity(filteredPlatformDelta.width(), filteredPlatformDelta.height(), filteredVelocity);
                 scrollingWasHandled = boxLayer->handleWheelEvent(copiedEvent);
             } else
@@ -2829,15 +2829,15 @@ void EventHandler::defaultWheelEventHandler(Node* startNode, WheelEvent& wheelEv
     if (!startNode)
         return;
     
-    Ref<Frame> protectedFrame(m_frame);
+    auto protectedFrame = makeRef(m_frame);
 
     FloatSize filteredPlatformDelta(wheelEvent.deltaX(), wheelEvent.deltaY());
     FloatSize filteredVelocity;
-    if (const PlatformWheelEvent* platformWheelEvent = wheelEvent.wheelEvent()) {
+    if (auto platformWheelEvent = wheelEvent.underlyingPlatformEvent()) {
         filteredPlatformDelta.setWidth(platformWheelEvent->deltaX());
         filteredPlatformDelta.setHeight(platformWheelEvent->deltaY());
     }
-    
+
 #if PLATFORM(MAC)
     ScrollLatchingState* latchedState = m_frame.mainFrame().latchingState();
     Element* stopElement = latchedState ? latchedState->previousWheelScrolledElement() : nullptr;
@@ -2849,11 +2849,10 @@ void EventHandler::defaultWheelEventHandler(Node* startNode, WheelEvent& wheelEv
 #else
     Element* stopElement = nullptr;
 #endif
-    
-    
+
     if (handleWheelEventInAppropriateEnclosingBox(startNode, wheelEvent, &stopElement, filteredPlatformDelta, filteredVelocity))
         wheelEvent.setDefaultHandled();
-    
+
 #if PLATFORM(MAC)
     if (latchedState && !latchedState->wheelEventElement())
         latchedState->setPreviousWheelScrolledElement(stopElement);
@@ -3242,9 +3241,9 @@ bool EventHandler::internalKeyEvent(const PlatformKeyboardEvent& initialKeyEvent
     PlatformKeyboardEvent keyDownEvent = initialKeyEvent;    
     if (keyDownEvent.type() != PlatformEvent::RawKeyDown)
         keyDownEvent.disambiguateKeyDownEvent(PlatformEvent::RawKeyDown, backwardCompatibilityMode);
-    Ref<KeyboardEvent> keydown = KeyboardEvent::create(keyDownEvent, m_frame.document()->defaultView());
+    auto keydown = KeyboardEvent::create(keyDownEvent, m_frame.document()->defaultView());
     if (matchedAnAccessKey)
-        keydown->setDefaultPrevented(true);
+        keydown->preventDefault();
     keydown->setTarget(element);
 
     if (initialKeyEvent.type() == PlatformEvent::RawKeyDown) {
@@ -3274,6 +3273,7 @@ bool EventHandler::internalKeyEvent(const PlatformKeyboardEvent& initialKeyEvent
         keydown->stopPropagation();
 
     element->dispatchEvent(keydown);
+
     // If frame changed as a result of keydown dispatch, then return early to avoid sending a subsequent keypress message to the new frame.
     bool changedFocusedFrame = m_frame.page() && &m_frame != &m_frame.page()->focusController().focusedOrMainFrame();
     bool keydownResult = keydown->defaultHandled() || keydown->defaultPrevented() || changedFocusedFrame;
@@ -3292,10 +3292,10 @@ bool EventHandler::internalKeyEvent(const PlatformKeyboardEvent& initialKeyEvent
     keyPressEvent.disambiguateKeyDownEvent(PlatformEvent::Char, backwardCompatibilityMode);
     if (keyPressEvent.text().isEmpty())
         return keydownResult;
-    Ref<KeyboardEvent> keypress = KeyboardEvent::create(keyPressEvent, m_frame.document()->defaultView());
+    auto keypress = KeyboardEvent::create(keyPressEvent, m_frame.document()->defaultView());
     keypress->setTarget(element);
     if (keydownResult)
-        keypress->setDefaultPrevented(true);
+        keypress->preventDefault();
 #if PLATFORM(COCOA)
     keypress->keypressCommands() = keydown->keypressCommands();
 #endif
@@ -3817,7 +3817,7 @@ bool EventHandler::eventInvertsTabsToLinksClientCallResult(KeyboardEvent& event)
 #endif
 }
 
-bool EventHandler::tabsToLinks(KeyboardEvent& event) const
+bool EventHandler::tabsToLinks(KeyboardEvent* event) const
 {
     // FIXME: This function needs a better name. It can be called for keypresses other than Tab when spatial navigation is enabled.
 
@@ -3826,7 +3826,7 @@ bool EventHandler::tabsToLinks(KeyboardEvent& event) const
         return false;
 
     bool tabsToLinksClientCallResult = page->chrome().client().keyboardUIMode() & KeyboardAccessTabsToLinks;
-    return eventInvertsTabsToLinksClientCallResult(event) ? !tabsToLinksClientCallResult : tabsToLinksClientCallResult;
+    return (event && eventInvertsTabsToLinksClientCallResult(*event)) ? !tabsToLinksClientCallResult : tabsToLinksClientCallResult;
 }
 
 void EventHandler::defaultTextInputEventHandler(TextEvent& event)
@@ -3907,7 +3907,7 @@ void EventHandler::defaultArrowEventHandler(FocusDirection focusDirection, Keybo
     if (m_frame.document()->inDesignMode())
         return;
 
-    if (page->focusController().advanceFocus(focusDirection, event))
+    if (page->focusController().advanceFocus(focusDirection, &event))
         event.setDefaultHandled();
 }
 
@@ -3933,7 +3933,7 @@ void EventHandler::defaultTabEventHandler(KeyboardEvent& event)
     if (m_frame.document()->inDesignMode())
         return;
 
-    if (page->focusController().advanceFocus(focusDirection, event))
+    if (page->focusController().advanceFocus(focusDirection, &event))
         event.setDefaultHandled();
 }
 

@@ -34,7 +34,6 @@
 #include "WebFrameLoaderClient.h"
 #include <JavaScriptCore/JSCJSValue.h>
 #include <JavaScriptCore/JSLock.h>
-#include <JavaScriptCore/ScriptValue.h>
 #include <WebCore/BridgeJSC.h>
 #include <WebCore/Chrome.h>
 #include <WebCore/CommonVM.h>

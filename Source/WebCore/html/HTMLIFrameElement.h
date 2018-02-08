@@ -43,7 +43,7 @@ private:
     HTMLIFrameElement(const QualifiedName&, Document&);
 
 #if PLATFORM(IOS)
-    bool isKeyboardFocusable(KeyboardEvent&) const final { return false; }
+    bool isKeyboardFocusable(KeyboardEvent*) const final { return false; }
 #endif
 
     void parseAttribute(const QualifiedName&, const AtomicString&) final;

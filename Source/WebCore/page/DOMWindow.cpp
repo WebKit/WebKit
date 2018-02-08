@@ -160,7 +160,7 @@ public:
 
     Ref<MessageEvent> event(ScriptExecutionContext& context)
     {
-        return MessageEvent::create(MessagePort::entanglePorts(context, WTFMove(m_message.transferredPorts)), WTFMove(m_message.message), m_origin, { }, MessageEventSource(RefPtr<DOMWindow>(WTFMove(m_source))));
+        return MessageEvent::create(MessagePort::entanglePorts(context, WTFMove(m_message.transferredPorts)), m_message.message.releaseNonNull(), m_origin, { }, MessageEventSource(RefPtr<DOMWindow>(WTFMove(m_source))));
     }
 
     SecurityOrigin* targetOrigin() const { return m_targetOrigin.get(); }
@@ -2059,6 +2059,7 @@ void DOMWindow::dispatchEvent(Event& event, EventTarget* target)
     event.setTarget(target ? target : this);
     event.setCurrentTarget(this);
     event.setEventPhase(Event::AT_TARGET);
+    event.resetBeforeDispatch();
     auto cookie = InspectorInstrumentation::willDispatchEventOnWindow(frame(), event, *this);
     fireEventListeners(event);
     InspectorInstrumentation::didDispatchEventOnWindow(cookie);

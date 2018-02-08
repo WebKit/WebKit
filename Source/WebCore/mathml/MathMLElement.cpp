@@ -167,7 +167,7 @@ bool MathMLElement::canStartSelection() const
     return hasEditableStyle();
 }
 
-bool MathMLElement::isKeyboardFocusable(KeyboardEvent& event) const
+bool MathMLElement::isKeyboardFocusable(KeyboardEvent* event) const
 {
     if (isFocusable() && StyledElement::supportsFocus())
         return StyledElement::isKeyboardFocusable(event);

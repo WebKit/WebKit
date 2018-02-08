@@ -357,7 +357,7 @@ bool HTMLFormControlElement::supportsFocus() const
     return !isDisabledFormControl();
 }
 
-bool HTMLFormControlElement::isKeyboardFocusable(KeyboardEvent& event) const
+bool HTMLFormControlElement::isKeyboardFocusable(KeyboardEvent* event) const
 {
     return isFocusable()
         && document().frame()

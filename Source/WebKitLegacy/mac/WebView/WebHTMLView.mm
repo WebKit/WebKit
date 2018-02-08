@@ -6148,7 +6148,7 @@ static BOOL writingDirectionKeyBindingsEnabled()
     // We assume the IM will *not* consume hotkey sequences
     parameters.consumedByIM = savingCommands && !event->metaKey();
 
-    const PlatformKeyboardEvent* platformEvent = event->keyEvent();
+    auto* platformEvent = event->underlyingPlatformEvent();
     if (!platformEvent)
         return NO;
 
@@ -6224,7 +6224,7 @@ static BOOL writingDirectionKeyBindingsEnabled()
     // embedded as the whole view, as in Mail, and tabs should input tabs as expected
     // in a text editor.
     
-    if (const PlatformKeyboardEvent* platformEvent = wcEvent->keyEvent()) {
+    if (auto* platformEvent = wcEvent->underlyingPlatformEvent()) {
         WebEvent *event = platformEvent->event();
         if (![[self _webView] isEditable] && event.isTabKey) 
             return NO;

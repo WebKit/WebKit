@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies)
+ * Copyright (C) 2011-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,38 +31,38 @@
 
 namespace WebCore {
 
-CustomEvent::CustomEvent(IsTrusted isTrusted)
+inline CustomEvent::CustomEvent(IsTrusted isTrusted)
     : Event(isTrusted)
 {
 }
 
-CustomEvent::CustomEvent(JSC::ExecState& state, const AtomicString& type, const Init& initializer, IsTrusted isTrusted)
+inline CustomEvent::CustomEvent(const AtomicString& type, const Init& initializer, IsTrusted isTrusted)
     : Event(type, initializer, isTrusted)
-    , m_detail(state.vm(), initializer.detail)
+    , m_detail(initializer.detail)
 {
 }
 
 CustomEvent::~CustomEvent() = default;
 
-void CustomEvent::initCustomEvent(JSC::ExecState& state, const AtomicString& type, bool canBubble, bool cancelable, JSC::JSValue detail)
+Ref<CustomEvent> CustomEvent::create(IsTrusted isTrusted)
+{
+    return adoptRef(*new CustomEvent(isTrusted));
+}
+
+Ref<CustomEvent> CustomEvent::create(const AtomicString& type, const Init& initializer, IsTrusted isTrusted)
+{
+    return adoptRef(*new CustomEvent(type, initializer, isTrusted));
+}
+
+void CustomEvent::initCustomEvent(const AtomicString& type, bool canBubble, bool cancelable, JSC::JSValue detail)
 {
     if (isBeingDispatched())
         return;
 
     initEvent(type, canBubble, cancelable);
 
-    m_detail = { state.vm(), detail };
-    m_serializedDetail = nullptr;
-    m_triedToSerialize = false;
-}
-
-RefPtr<SerializedScriptValue> CustomEvent::trySerializeDetail(JSC::ExecState& state)
-{
-    if (!m_triedToSerialize) {
-        m_serializedDetail = SerializedScriptValue::create(state, m_detail, SerializationErrorMode::NonThrowing);
-        m_triedToSerialize = true;
-    }
-    return m_serializedDetail;
+    m_detail = detail;
+    m_cachedDetail = { };
 }
 
 EventInterface CustomEvent::eventInterface() const

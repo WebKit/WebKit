@@ -220,7 +220,7 @@ void HTMLPlugInElement::defaultEventHandler(Event& event)
     HTMLFrameOwnerElement::defaultEventHandler(event);
 }
 
-bool HTMLPlugInElement::isKeyboardFocusable(KeyboardEvent&) const
+bool HTMLPlugInElement::isKeyboardFocusable(KeyboardEvent*) const
 {
     // FIXME: Why is this check needed?
     if (!document().page())

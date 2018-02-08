@@ -308,7 +308,7 @@ void HTMLSelectElement::parseAttribute(const QualifiedName& name, const AtomicSt
         HTMLFormControlElementWithState::parseAttribute(name, value);
 }
 
-bool HTMLSelectElement::isKeyboardFocusable(KeyboardEvent& event) const
+bool HTMLSelectElement::isKeyboardFocusable(KeyboardEvent* event) const
 {
     if (renderer())
         return isFocusable();

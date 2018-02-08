@@ -415,7 +415,7 @@ bool HTMLInputElement::hasCustomFocusLogic() const
     return m_inputType->hasCustomFocusLogic();
 }
 
-bool HTMLInputElement::isKeyboardFocusable(KeyboardEvent& event) const
+bool HTMLInputElement::isKeyboardFocusable(KeyboardEvent* event) const
 {
     return m_inputType->isKeyboardFocusable(event);
 }
@@ -430,7 +430,7 @@ bool HTMLInputElement::isTextFormControlFocusable() const
     return HTMLTextFormControlElement::isFocusable();
 }
 
-bool HTMLInputElement::isTextFormControlKeyboardFocusable(KeyboardEvent& event) const
+bool HTMLInputElement::isTextFormControlKeyboardFocusable(KeyboardEvent* event) const
 {
     return HTMLTextFormControlElement::isKeyboardFocusable(event);
 }

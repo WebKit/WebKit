@@ -81,7 +81,7 @@ bool EventHandler::widgetDidHandleWheelEvent(const PlatformWheelEvent& wheelEven
     return downcast<FrameView>(widget).frame().eventHandler().handleWheelEvent(wheelEvent);
 }
 
-bool EventHandler::tabsToAllFormControls(KeyboardEvent&) const
+bool EventHandler::tabsToAllFormControls(KeyboardEvent*) const
 {
     return true;
 }

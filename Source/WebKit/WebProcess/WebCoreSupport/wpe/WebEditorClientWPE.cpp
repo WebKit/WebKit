@@ -214,7 +214,7 @@ void WebEditorClient::handleKeyboardEvent(WebCore::KeyboardEvent* event)
 
     // FIXME: Reorder the checks in a more sensible way.
 
-    const PlatformKeyboardEvent* platformEvent = event->keyEvent();
+    auto* platformEvent = event->underlyingPlatformEvent();
     if (!platformEvent)
         return;
 
@@ -237,7 +237,7 @@ void WebEditorClient::handleKeyboardEvent(WebCore::KeyboardEvent* event)
 
 void WebEditorClient::handleInputMethodKeydown(WebCore::KeyboardEvent* event)
 {
-    const PlatformKeyboardEvent* platformEvent = event->keyEvent();
+    auto* platformEvent = event->underlyingPlatformEvent();
     if (platformEvent && platformEvent->windowsVirtualKeyCode() == VK_PROCESSKEY)
         event->preventDefault();
 }

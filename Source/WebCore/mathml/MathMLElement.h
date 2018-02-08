@@ -1,3 +1,4 @@
+
 /*
  * Copyright (C) 2009 Alex Milowski (alex@milowski.com). All rights reserved.
  * Copyright (C) 2010 Apple Inc. All rights reserved.
@@ -105,7 +106,7 @@ protected:
 
 private:
     bool canStartSelection() const final;
-    bool isKeyboardFocusable(KeyboardEvent&) const final;
+    bool isKeyboardFocusable(KeyboardEvent*) const final;
     bool isMouseFocusable() const final;
     bool isURLAttribute(const Attribute&) const final;
     bool supportsFocus() const final;

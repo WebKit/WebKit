@@ -187,6 +187,7 @@ void EventTarget::dispatchEvent(Event& event)
     event.setTarget(this);
     event.setCurrentTarget(this);
     event.setEventPhase(Event::AT_TARGET);
+    event.resetBeforeDispatch();
     fireEventListeners(event);
     event.resetAfterDispatch();
 }
