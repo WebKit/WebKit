@@ -1,3 +1,23 @@
+2018-02-07  John Wilander  <wilander@apple.com>
+
+        Switch testRunner.installStatisticsDidModifyDataRecordsCallback() to testRunner.installStatisticsDidScanDataRecordsCallback() in two tests
+        https://bugs.webkit.org/show_bug.cgi?id=182366
+        <rdar://problem/37094805>
+
+        Unreviewed test gardening.
+
+        This change is an attempt to make two flaky test cases stable.
+        It also skips http/tests/resourceLoadStatistics/user-interaction-only-reported-once-within-short-period-of-time.html
+        because the timestamp resolution of 5 seconds is now so short that we run into timing flakiness.
+
+        * http/tests/resourceLoadStatistics/non-prevalent-resource-with-user-interaction.html:
+        * http/tests/resourceLoadStatistics/non-prevalent-resource-without-user-interaction.html:
+        * platform/mac-wk2/TestExpectations:
+            Removed [ Skip ] entry for http/tests/resourceLoadStatistics/non-prevalent-resource-with-user-interaction.html
+            Added [ Skip ] entry for http/tests/resourceLoadStatistics/user-interaction-only-reported-once-within-short-period-of-time.html
+        * platform/wk2/TestExpectations:
+            Now both the above test cases are marked [ Pass ].
+
 2018-02-07  Ryan Haddad  <ryanhaddad@apple.com>
 
         Skip media/modern-media-controls/tracks-support/tracks-support-show-panel-after-dragging-controls.html.

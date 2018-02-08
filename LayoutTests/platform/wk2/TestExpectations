@@ -679,6 +679,7 @@ imported/w3c/web-platform-tests/fetch/api/request/request-cache-only-if-cached.h
 
 # Resource Load Statistics are only supported in WebKit2.
 http/tests/resourceLoadStatistics/prevalent-resource-with-user-interaction.html [ Pass ]
+http/tests/resourceLoadStatistics/non-prevalent-resource-with-user-interaction.html [ Pass ]
 http/tests/resourceLoadStatistics/non-prevalent-resource-without-user-interaction.html [ Pass ]
 http/tests/resourceLoadStatistics/prevalent-resource-without-user-interaction.html [ Pass ]
 http/tests/resourceLoadStatistics/prevalent-resource-with-user-interaction-timeout.html [ Pass ]
