@@ -1,3 +1,21 @@
+2018-02-07  Andy Estes  <aestes@apple.com>
+
+        ASSERTION FAILED: vm->currentThreadIsHoldingAPILock() seen with http/tests/paymentrequest/payment-request-show-method.https.html
+        https://bugs.webkit.org/show_bug.cgi?id=182591
+
+        Reviewed by Youenn Fablet.
+
+        Fixes assertion failures in http/tests/paymentrequest/payment-request-show-method.https.html.
+
+        DOMPromise::whenSettled() calls the JSC API without first aquiring the API lock, and
+        r228195 added a call to whenSettled() where the lock is not guaranteed to be already
+        acquired.
+
+        Fix this by creating a JSLockHolder in DOMPromise::whenSettled().
+
+        * bindings/js/JSDOMPromise.cpp:
+        (WebCore::DOMPromise::whenSettled):
+
 2018-02-07  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r228243.
