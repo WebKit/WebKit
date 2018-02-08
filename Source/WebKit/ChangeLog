@@ -1,3 +1,17 @@
+2018-02-07  Antti Koivisto  <antti@apple.com> and Youenn Fablet  <youenn@apple.com>
+
+        REGRESSION(r227758): Webpage fails to load due to crash in com.apple.WebKit: WebKit::WebFrameLoaderClient::dispatchDecidePolicyForResponse + 267
+        https://bugs.webkit.org/show_bug.cgi?id=182532
+        <rdar://problem/36414017>
+
+        Reviewed by Chris Dumez.
+
+        No test case, don't know how to make one. The repro involves multipart HTTP streaming and details are hazy.
+        We were calling a function that was WTFMoved away just a few lines above.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDecidePolicyForResponse):
+
 2018-02-07  Tim Horton  <timothy_horton@apple.com>
 
         Evernote device management web view sometimes displays at the wrong scale
