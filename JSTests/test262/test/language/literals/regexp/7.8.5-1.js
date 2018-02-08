@@ -9,7 +9,6 @@ description: >
     RegularExpressionBackslashSequence is a LineTerminator.
 ---*/
 
-
 assert.throws(SyntaxError, function() {
             eval("var regExp = /\\\rn/;");
 });
