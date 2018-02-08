@@ -1,5 +1,11 @@
 2018-02-08  Philippe Normand  <pnormand@igalia.com>
 
+        Unreviewed, GTK build fix attempt after r228267.
+
+        * gtk/jhbuild.modules: Update to libdrm version 2.4.89, Mesa 17 requires at least version 2.4.75.
+
+2018-02-08  Philippe Normand  <pnormand@igalia.com>
+
         [JHBuild] Update Mesa to version 17
         https://bugs.webkit.org/show_bug.cgi?id=182599
 

@@ -383,9 +383,9 @@
 
   <autotools id="libdrm" autogen-sh="configure">
     <pkg-config>libdrm.pc</pkg-config>
-    <branch module="/libdrm/libdrm-2.4.65.tar.bz2" version="2.4.65"
+    <branch module="/libdrm/libdrm-${version}.tar.bz2" version="2.4.89"
             repo="dri.freedesktop.org"
-            hash="sha256:71960ac8bde7d710992b1bc8879935e8300a870c36bd06f22412d0447e3d96c4"/>
+            hash="sha256:c376b9ba0974700632939139397a12d4e3c93c31835a27dda855159441713e70"/>
   </autotools>
 
   <autotools id="mesa"
