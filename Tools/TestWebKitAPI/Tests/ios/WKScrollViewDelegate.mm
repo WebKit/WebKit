@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,7 +29,10 @@
 
 #import "PlatformUtilities.h"
 #import "Test.h"
+#import "TestWKWebView.h"
 #import <WebKit/WKWebView.h>
+
+// WKScrollViewDelegateCrash
 
 static bool delegateIsDeallocated;
 
@@ -61,6 +64,56 @@ TEST(WKWebView, WKScrollViewDelegateCrash)
     TestWebKitAPI::Util::run(&delegateIsDeallocated);
 
     EXPECT_NULL(webView.scrollView.delegate);
+}
+
+}
+
+// WKScrollViewDelegateCannotOverrideViewForZooming
+
+static BOOL didCallViewForZoomingInScrollView;
+
+@interface WKScrollViewDelegateWithViewForZoomingOverridden : NSObject <UIScrollViewDelegate>
+@property (nonatomic, assign) CGFloat overrideScale;
+@end
+
+@implementation WKScrollViewDelegateWithViewForZoomingOverridden
+
+- (UIView *)viewForZoomingInScrollView:(UIScrollView *)scrollView
+{
+    didCallViewForZoomingInScrollView = true;
+
+    UIView *fakeZoomingView = [[UIView alloc] init];
+    fakeZoomingView.layer.affineTransform = CGAffineTransformMakeScale(_overrideScale, _overrideScale);
+    return fakeZoomingView;
+}
+
+@end
+
+namespace TestWebKitAPI {
+
+TEST(WKWebView, WKScrollViewDelegateCannotOverrideViewForZooming)
+{
+    TestWKWebView *webView = [[TestWKWebView alloc] init];
+    WKScrollViewDelegateWithViewForZoomingOverridden *delegateForScrollView = [[WKScrollViewDelegateWithViewForZoomingOverridden alloc] init];
+    @autoreleasepool {
+        webView.scrollView.delegate = delegateForScrollView;
+    }
+
+    [webView synchronouslyLoadHTMLString:@"<meta name='viewport' content='initial-scale=1'>"];
+    [webView waitForNextPresentationUpdate];
+
+    // Have WKScrollView's external delegate return a view with scale=2 from viewForZoomingInScrollView.
+    delegateForScrollView.overrideScale = 2;
+
+    [webView synchronouslyLoadHTMLString:@"<meta name='viewport' content='initial-scale=2'>"];
+    [webView waitForNextPresentationUpdate];
+
+    @autoreleasepool {
+        webView.scrollView.delegate = nil;
+    }
+
+    EXPECT_FALSE(didCallViewForZoomingInScrollView);
+    EXPECT_EQ(2, [[webView scrollView] zoomScale]);
 }
 
 }

@@ -1,3 +1,30 @@
+2018-02-07  Tim Horton  <timothy_horton@apple.com>
+
+        Evernote device management web view sometimes displays at the wrong scale
+        https://bugs.webkit.org/show_bug.cgi?id=182590
+        <rdar://problem/36633687>
+
+        Reviewed by Simon Fraser.
+
+        Evernote implements the WKWebView's scroll view's delegate method
+        viewForZoomingInScrollView: and returns nil. This results in
+        WKScrollView's zoomScale always returning 1, no matter what the
+        WKContentView's actual scale is. This will result in us never updating
+        the WKContentView's scale to 1. When loading a page that has a few
+        scale changes during load but ends up at scale 1, we get stuck at whatever
+        intermediate scale immediately preceded settling on 1.
+
+        Fix this by not forwarding viewForZoomingInScrollView: to the external
+        WKScrollView delegate; we are in charge of the contents of the scroll
+        view (including which view scrollView's zoomScale should track), and
+        overriding viewForZoomingInScrollView: is only ever going to lead to
+        a broken WebKit.
+
+        * UIProcess/ios/WKScrollView.mm:
+        (shouldForwardScrollViewDelegateMethodToExternalDelegate):
+        (-[WKScrollViewDelegateForwarder forwardInvocation:]):
+        (-[WKScrollViewDelegateForwarder forwardingTargetForSelector:]):
+
 2018-02-07  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Extra zoom mode] Delegate scrolling from the content view to input view controllers

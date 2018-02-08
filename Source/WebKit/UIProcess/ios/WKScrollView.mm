@@ -79,12 +79,23 @@ using namespace WebKit;
     return [super respondsToSelector:aSelector] || [_internalDelegate respondsToSelector:aSelector] || [_externalDelegate.get() respondsToSelector:aSelector];
 }
 
+static BOOL shouldForwardScrollViewDelegateMethodToExternalDelegate(SEL selector)
+{
+    // We cannot forward viewForZoomingInScrollView: to the external delegate, because WebKit
+    // owns the content of the scroll view, and depends on viewForZoomingInScrollView being the
+    // content view. Any other view returned by the external delegate will break our behavior.
+    if (sel_isEqual(selector, @selector(viewForZoomingInScrollView:)))
+        return NO;
+
+    return YES;
+}
+
 - (void)forwardInvocation:(NSInvocation *)anInvocation
 {
     auto externalDelegate = _externalDelegate.get();
     SEL aSelector = [anInvocation selector];
     BOOL internalDelegateWillRespond = [_internalDelegate respondsToSelector:aSelector];
-    BOOL externalDelegateWillRespond = [externalDelegate respondsToSelector:aSelector];
+    BOOL externalDelegateWillRespond = shouldForwardScrollViewDelegateMethodToExternalDelegate(aSelector) && [externalDelegate respondsToSelector:aSelector];
 
     if (internalDelegateWillRespond && externalDelegateWillRespond)
         [_internalDelegate _willInvokeUIScrollViewDelegateCallback];
@@ -104,7 +115,7 @@ using namespace WebKit;
 - (id)forwardingTargetForSelector:(SEL)aSelector
 {
     BOOL internalDelegateWillRespond = [_internalDelegate respondsToSelector:aSelector];
-    BOOL externalDelegateWillRespond = [_externalDelegate.get() respondsToSelector:aSelector];
+    BOOL externalDelegateWillRespond = shouldForwardScrollViewDelegateMethodToExternalDelegate(aSelector) && [_externalDelegate.get() respondsToSelector:aSelector];
 
     if (internalDelegateWillRespond && !externalDelegateWillRespond)
         return _internalDelegate;
