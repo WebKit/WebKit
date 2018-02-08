@@ -42,7 +42,7 @@
 
 
     function fireDataModificationHandlerAndContinue() {
-        testRunner.installStatisticsDidModifyDataRecordsCallback(function() {
+        testRunner.installStatisticsDidScanDataRecordsCallback(function() {
             runTest();
         });
         testRunner.statisticsProcessStatisticsAndDataRecords();
