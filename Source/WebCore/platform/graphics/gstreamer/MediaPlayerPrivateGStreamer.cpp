@@ -2185,8 +2185,11 @@ void MediaPlayerPrivateGStreamer::createGSTPlayBin()
         // If not using accelerated compositing, let GStreamer handle
         // the image-orientation tag.
         GstElement* videoFlip = gst_element_factory_make("videoflip", nullptr);
-        g_object_set(videoFlip, "method", 8, nullptr);
-        g_object_set(m_pipeline.get(), "video-filter", videoFlip, nullptr);
+        if (videoFlip) {
+            g_object_set(videoFlip, "method", 8, nullptr);
+            g_object_set(m_pipeline.get(), "video-filter", videoFlip, nullptr);
+        } else
+            GST_WARNING("The videoflip element is missing, video rotation support is now disabled. Please check your gst-plugins-good installation.");
     }
 
     GRefPtr<GstPad> videoSinkPad = adoptGRef(gst_element_get_static_pad(m_videoSink.get(), "sink"));

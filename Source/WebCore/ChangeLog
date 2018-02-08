@@ -1,3 +1,15 @@
+2018-02-08  Philippe Normand  <pnormand@igalia.com>
+
+        [GStreamer] WebKit improperly handles missing GStreamer elements
+        https://bugs.webkit.org/show_bug.cgi?id=171205
+
+        Reviewed by Michael Catanzaro.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::createGSTPlayBin): Add a
+        test checking the videoflip element was correctly created. It
+        might not be available on some exotic distros such as Gentoo.
+
 2018-02-08  Chris Fleizach  <cfleizach@apple.com>
 
         AX: Defer attribute computation until needed.
