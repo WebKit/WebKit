@@ -1,3 +1,18 @@
+2018-02-08  Chris Dumez  <cdumez@apple.com>
+
+        Form submission after navigation fails when decidePolicyForNavigationAction is async
+        https://bugs.webkit.org/show_bug.cgi?id=182412
+        <rdar://problem/35181099>
+
+        Reviewed by Alex Christensen.
+
+        Import layout test coverage from Alex's earlier patch.
+
+        * http/tests/navigation/resources/a.html: Added.
+        * http/tests/navigation/resources/b.html: Added.
+        * http/tests/navigation/sync-form-submit-iframe-expected.txt: Added.
+        * http/tests/navigation/sync-form-submit-iframe.html: Added.
+
 2018-02-08  Per Arne Vollan  <pvollan@apple.com>
 
         Mark accessibility/aria-hidden-updates-alldescendants.html as a failure on Windows.
