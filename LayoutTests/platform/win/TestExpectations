@@ -3889,3 +3889,5 @@ webkit.org/b/182159 webanimations/opacity-animation-yields-compositing.html [ Fa
 
 webkit.org/b/182239 js/dom/array-with-double-assign.html [ Failure ]
 webkit.org/b/182239 js/dom/array-with-double-push.html [ Failure ]
+
+webkit.org/b/182626 accessibility/aria-hidden-updates-alldescendants.html [ Failure ]
