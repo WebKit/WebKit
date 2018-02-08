@@ -1,3 +1,12 @@
+2018-02-07  Youenn Fablet  <youenn@apple.com>
+
+        Remove www1/www2 URLs from service worker tests
+        https://bugs.webkit.org/show_bug.cgi?id=182548
+
+        Reviewed by Chris Dumez.
+
+        * TestExpectations:
+
 2018-02-07  John Wilander  <wilander@apple.com>
 
         Switch testRunner.installStatisticsDidModifyDataRecordsCallback() to testRunner.installStatisticsDidScanDataRecordsCallback() in two tests
