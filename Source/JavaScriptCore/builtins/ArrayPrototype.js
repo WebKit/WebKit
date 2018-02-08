@@ -184,7 +184,7 @@ function filter(callback /*, thisArg */)
         // We have this check so that if some array from a different global object
         // calls this map they don't get an array with the Array.prototype of the
         // other global object.
-        if (@isArrayConstructor(constructor) && @Array !== constructor)
+        if (@Array !== constructor && @isArrayConstructor(constructor))
             constructor = @undefined;
         if (@isObject(constructor)) {
             constructor = constructor.@speciesSymbol;
@@ -230,7 +230,7 @@ function map(callback /*, thisArg */)
         // We have this check so that if some array from a different global object
         // calls this map they don't get an array with the Array.prototype of the
         // other global object.
-        if (@isArrayConstructor(constructor) && @Array !== constructor)
+        if (@Array !== constructor && @isArrayConstructor(constructor))
             constructor = @undefined;
         if (@isObject(constructor)) {
             constructor = constructor.@speciesSymbol;
@@ -623,7 +623,7 @@ function concatSlowPath()
         // We have this check so that if some array from a different global object
         // calls this map they don't get an array with the Array.prototype of the
         // other global object.
-        if (@isArrayConstructor(constructor) && @Array !== constructor)
+        if (@Array !== constructor && @isArrayConstructor(constructor))
             constructor = @undefined;
         else if (@isObject(constructor)) {
             constructor = constructor.@speciesSymbol;
@@ -737,4 +737,108 @@ function copyWithin(target, start /*, end */)
     }
 
     return array;
+}
+
+@globalPrivate
+function arraySpeciesCreate(array, length)
+{
+    "use strict";
+
+    if (!@isArray(array))
+        return @newArrayWithSize(length);
+
+    var constructor = array.constructor;
+    var arrayConstructorInRealm = @Array;
+    // We have this check so that if some array from a different global object
+    // calls this map they don't get an array with the Array.prototype of the
+    // other global object.
+    if (arrayConstructorInRealm !== constructor && @isArrayConstructor(constructor))
+        return @newArrayWithSize(length);
+
+    if (@isObject(constructor)) {
+        constructor = constructor.@speciesSymbol;
+        if (constructor == null)
+            return @newArrayWithSize(length);
+    }
+
+    if (constructor === arrayConstructorInRealm || constructor === @undefined)
+        return @newArrayWithSize(length);
+    return new constructor(length);
+}
+
+@globalPrivate
+function flattenIntoArray(target, source, sourceLength, targetIndex, depth)
+{
+    "use strict";
+
+    for (var sourceIndex = 0; sourceIndex < sourceLength; ++sourceIndex) {
+        if (sourceIndex in source) {
+            var element = source[sourceIndex];
+            if (depth > 0 && @isArray(element))
+                targetIndex = @flattenIntoArray(target, element, @toLength(element.length), targetIndex, depth - 1);
+            else {
+                if (targetIndex >= @MAX_SAFE_INTEGER)
+                    @throwTypeError("flatten array exceeds 2**53 - 1");
+                @putByValDirect(target, targetIndex, element);
+                ++targetIndex;
+            }
+        }
+    }
+    return targetIndex;
+}
+
+function flatten()
+{
+    "use strict";
+
+    var array = @toObject(this, "Array.prototype.flatten requires that |this| not be null or undefined");
+    var length = @toLength(array.length);
+
+    var depthNum = 1;
+    var depth = @argument(0);
+    if (depth !== @undefined)
+        depthNum = @toInteger(depth);
+
+    var result = @arraySpeciesCreate(array, 0);
+
+    @flattenIntoArray(result, array, length, 0, depthNum);
+    return result;
+}
+
+@globalPrivate
+function flattenIntoArrayWithCallback(target, source, sourceLength, targetIndex, callback, thisArg)
+{
+    "use strict";
+
+    for (var sourceIndex = 0; sourceIndex < sourceLength; ++sourceIndex) {
+        if (sourceIndex in source) {
+            var element = callback.@call(thisArg, source[sourceIndex], sourceIndex, source);
+            if (@isArray(element))
+                targetIndex = @flattenIntoArray(target, element, @toLength(element.length), targetIndex, 0);
+            else {
+                if (targetIndex >= @MAX_SAFE_INTEGER)
+                    @throwTypeError("flatten array exceeds 2**53 - 1");
+                @putByValDirect(target, targetIndex, element);
+                ++targetIndex;
+            }
+        }
+    }
+    return target;
+}
+
+function flatMap(callback)
+{
+    "use strict";
+
+    var array = @toObject(this, "Array.prototype.flatMap requires that |this| not be null or undefined");
+    var length = @toLength(array.length);
+
+    if (typeof callback !== "function")
+        @throwTypeError("Array.prototype.flatMap callback must be a function");
+
+    var thisArg = @argument(1);
+
+    var result = @arraySpeciesCreate(array, 0);
+
+    return @flattenIntoArrayWithCallback(result, array, length, 0, callback, thisArg);
 }

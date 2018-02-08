@@ -1,3 +1,23 @@
+2018-02-06  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Implement Array.prototype.flatMap and Array.prototype.flatten
+        https://bugs.webkit.org/show_bug.cgi?id=182440
+
+        Reviewed by Darin Adler.
+
+        * stress/array-flatmap.js: Added.
+        (shouldBe):
+        (shouldBeArray):
+        (shouldThrow):
+        (var):
+        * stress/array-flatten.js: Added.
+        (shouldBe):
+        (shouldBeArray):
+        * test262.yaml:
+        * test262/test/built-ins/Array/prototype/flatMap/depth-always-one.js:
+        (3.flatMap):
+        Pick test262 82c6148980332febe92a544a1fb653718e9fdb57 change.
+
 2018-02-06  Keith Miller  <keith_miller@apple.com>
 
         put_to_scope/get_from_scope should not cache lexical scopes when expecting a global object
