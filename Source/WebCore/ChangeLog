@@ -1,3 +1,16 @@
+2018-02-07  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, rolling out r228243.
+
+        Introduced an assertion failure with API test
+        FullscreenZoomInitialFrame.WebKit
+
+        Reverted changeset:
+
+        "Assert that NSApp is not running in the WebProcess."
+        https://bugs.webkit.org/show_bug.cgi?id=182553
+        https://trac.webkit.org/changeset/228243
+
 2018-02-07  Christopher Reid  <chris.reid@sony.com>
 
         [Curl] Cookie Database has some warnings when compiled in clang

@@ -38,7 +38,6 @@ static const CGFloat slowMotionFactor = 10;
 
 static NSTimeInterval WebWindowAnimationDurationFromDuration(NSTimeInterval duration)
 {
-    ASSERT([NSApp isRunning]);
     return ([[NSApp currentEvent] modifierFlags] & NSEventModifierFlagShift) ? duration * slowMotionFactor : duration;
 }
 

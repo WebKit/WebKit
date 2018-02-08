@@ -196,8 +196,6 @@ static bool lastEventIsMouseUp()
     // that state. Handling this was critical when we used AppKit widgets for form elements.
     // It's not clear in what cases this is helpful now -- it's possible it can be removed. 
 
-    ASSERT([NSApp isRunning]);
-
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
     NSEvent *currentEventAfterHandlingMouseDown = [NSApp currentEvent];
     return EventHandler::currentNSEvent() != currentEventAfterHandlingMouseDown
@@ -572,7 +570,6 @@ void EventHandler::sendFakeEventsAfterWidgetTracking(NSEvent *initiatingEvent)
     m_sendingEventToSubview = false;
     int eventType = [initiatingEvent type];
     if (eventType == NSEventTypeLeftMouseDown || eventType == NSEventTypeKeyDown) {
-        ASSERT([NSApp isRunning]);
         NSEvent *fakeEvent = nil;
         if (eventType == NSEventTypeLeftMouseDown) {
             fakeEvent = [NSEvent mouseEventWithType:NSEventTypeLeftMouseUp
