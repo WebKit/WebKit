@@ -1,3 +1,9 @@
+2018-02-08  Miguel Gomez  <magomez@igalia.com>
+
+        Unreviewed GTK+ gardening after r228270.
+
+        * platform/gtk/TestExpectations:
+
 2018-02-08  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer] LayoutTest webaudio/silent-audio-interrupted-in-background.html makes its subsequent test flaky crash
