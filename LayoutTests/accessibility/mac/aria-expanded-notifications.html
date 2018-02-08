@@ -58,6 +58,9 @@
         var addedNotification = accessibilityController.addNotificationListener(notifyCallback);
         shouldBe("addedNotification", "true");
 
+        accessibilityController.accessibleElementById("tree0");
+        accessibilityController.accessibleElementById("tree0_item0");
+
         // the first aria-expanded should generate row count, row collapsed.
         document.getElementById("tree0_item0").setAttribute("aria-expanded", "false");
 

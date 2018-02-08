@@ -2017,7 +2017,9 @@ bool AccessibilityNodeObject::hasAttributesRequiredForInclusion() const
     if (AccessibilityObject::hasAttributesRequiredForInclusion())
         return true;
 
-    if (!ariaAccessibilityDescription().isEmpty())
+    // Avoid calculating the actual description here, which is expensive.
+    // This means there might be more accessible elements in the tree if the labelledBy points to invalid elements, but that shouldn't cause any real problems.
+    if (getAttribute(aria_labelledbyAttr).length() || getAttribute(aria_labeledbyAttr).length() || getAttribute(aria_labelAttr).length())
         return true;
 
     return false;

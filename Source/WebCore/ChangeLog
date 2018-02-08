@@ -1,3 +1,44 @@
+2018-02-08  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: Defer attribute computation until needed.
+        https://bugs.webkit.org/show_bug.cgi?id=182386
+        <rdar://problem/37115277>
+
+        Reviewed by Zalan Bujtas.
+
+        Accessibility is doing too much work when handling attribute changes. Here's how we can improve this:
+           1) Defer attribute changes while the tree is dirty (and coalesce them). 
+           2) Don't create AXObjects when an attribute changes unnecessarily. If no client has requested an ax object, it's likely no work needs to be done
+                 (with the exception of a few attributes like aria-modal)
+           3) Stop calculating the entire accessible ARIA label when trying to decide if an element should be ignored. That's generally wasteful and the
+                 consequence of including more AX elements in the tree is very minimal.
+
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::rendererNeedsDeferredUpdate):
+        (WebCore::nodeAndRendererAreValid):
+        (WebCore::AXObjectCache::remove):
+        (WebCore::AXObjectCache::handleAriaExpandedChange):
+        (WebCore::AXObjectCache::handleAriaRoleChanged):
+        (WebCore::AXObjectCache::deferAttributeChangeIfNeeded):
+        (WebCore::AXObjectCache::shouldProcessAttributeChange):
+        (WebCore::AXObjectCache::handleAttributeChange):
+        (WebCore::AXObjectCache::prepareForDocumentDestruction):
+        (WebCore::AXObjectCache::performDeferredCacheUpdate):
+        (WebCore::AXObjectCache::deferRecomputeIsIgnoredIfNeeded):
+        (WebCore::AXObjectCache::deferRecomputeIsIgnored):
+        (WebCore::AXObjectCache::deferTextChangedIfNeeded):
+        (WebCore::AXObjectCache::deferSelectedChildrenChangedIfNeeded):
+        (WebCore::AXObjectCache::handleAttributeChanged): Deleted.
+        * accessibility/AXObjectCache.h:
+        (WebCore::AXObjectCache::deferAttributeChangeIfNeeded):
+        (WebCore::AXObjectCache::handleAttributeChanged): Deleted.
+        * accessibility/AccessibilityNodeObject.cpp:
+        (WebCore::AccessibilityNodeObject::hasAttributesRequiredForInclusion const):
+        * accessibility/AccessibleNode.cpp:
+        (WebCore::AccessibleNode::notifyAttributeChanged):
+        * dom/Element.cpp:
+        (WebCore::Element::attributeChanged): 
+
 2018-02-08  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, tiny partial rollout of r228260 as it caused some worker failures

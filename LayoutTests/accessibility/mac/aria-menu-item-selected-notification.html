@@ -39,7 +39,7 @@
         window.jsTestIsAsync = true;
 
         var addedNotification = accessibilityController.addNotificationListener(ariaCallback);
-        accessibilityController.rootElement;
+        accessibilityController.accessibleElementById("menu");
 
         shouldBe("addedNotification", "true");
 

@@ -1,3 +1,30 @@
+2018-02-08  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: Defer attribute computation until needed.
+        https://bugs.webkit.org/show_bug.cgi?id=182386
+        <rdar://problem/37115277>
+
+        Reviewed by Zalan Bujtas.
+
+        Update tests to reflect new world of delayed attribute handling for accessibility.
+
+        * accessibility/canvas-fallback-content.html:
+             Make test async so attributes can be checked after deferred handling.
+        * accessibility/mac/aria-expanded-notifications.html:
+             Access elements through AX tree so attribute changes generate notifications.
+        * accessibility/mac/aria-listbox-selectedchildren-change.html:
+             Make test async so attributes can be checked after deferred handling.
+        * accessibility/mac/aria-menu-item-selected-notification.html:
+             Access menu item through AX tree so attribute changes generate notifications.
+        * accessibility/mac/aria-modal-auto-focus.html:
+             Access buttons after delay so attributes have time to be deferred.
+        * accessibility/mac/element-busy-changed.html:
+             Process second attribute change after delay so we generate two notifications.
+        * accessibility/mac/expanded-notification.html:
+             Set attributes after a delay so they generate individual notifications.
+        * accessibility/notification-listeners.html:
+              Access elements through AX tree so attribute changes generate notifications.
+
 2018-02-08  Miguel Gomez  <magomez@igalia.com>
 
         Unreviewed GTK+ gardening after r228270.
