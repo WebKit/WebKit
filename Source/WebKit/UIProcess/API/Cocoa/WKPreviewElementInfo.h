@@ -27,6 +27,8 @@
 
 #if WK_API_ENABLED && TARGET_OS_IPHONE
 
+#import <Foundation/Foundation.h>
+
 NS_ASSUME_NONNULL_BEGIN
 
 WK_CLASS_AVAILABLE(ios(10.0))

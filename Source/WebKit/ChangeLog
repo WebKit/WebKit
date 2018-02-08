@@ -1,3 +1,18 @@
+2018-02-08  Tim Horton  <timothy_horton@apple.com>
+
+        Make WebKit public headers modules-safe
+        https://bugs.webkit.org/show_bug.cgi?id=182611
+        <rdar://problem/37160164>
+
+        Reviewed by Dan Bernstein.
+
+        * UIProcess/API/Cocoa/WKPreviewElementInfo.h:
+        * UIProcess/API/Cocoa/WKSnapshotConfiguration.h:
+        Import headers without which these WebKit headers can not be used alone.
+
+        * WebKit.xcodeproj/project.pbxproj:
+        Make WKWindowFeaturesPrivate a private header like it was supposed to be.
+
 2018-02-08  Matt Lewis  <jlewis3@apple.com>
 
         Unreviewed, rolling out r228262.

@@ -27,6 +27,7 @@
 
 #if WK_API_ENABLED
 
+#import <CoreGraphics/CGGeometry.h>
 #import <Foundation/Foundation.h>
 
 NS_ASSUME_NONNULL_BEGIN
