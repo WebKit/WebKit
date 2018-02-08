@@ -1,3 +1,53 @@
+2018-02-08  Zalan Bujtas  <zalan@apple.com>
+
+        [RenderTreeBuilder] Introduce RenderTreeBuilder to moveChild(ren)To() functions
+        https://bugs.webkit.org/show_bug.cgi?id=182596
+        <rdar://problem/37340553>
+
+        Reviewed by Sam Weinig.
+
+        This is in preparation for moving mutation code out of moveChildTo/moveChildrenTo. 
+
+        No change in functionality.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::dropAnonymousBoxChild):
+        (WebCore::RenderBlock::takeChild):
+        * rendering/RenderBlock.h:
+        (WebCore::RenderBlock::moveAllChildrenIncludingFloatsTo):
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::styleDidChange):
+        (WebCore::RenderBlockFlow::moveAllChildrenIncludingFloatsTo):
+        * rendering/RenderBlockFlow.h:
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::moveChildTo):
+        (WebCore::RenderBoxModelObject::moveChildrenTo):
+        * rendering/RenderBoxModelObject.h:
+        (WebCore::RenderBoxModelObject::moveChildTo):
+        (WebCore::RenderBoxModelObject::moveAllChildrenTo):
+        (WebCore::RenderBoxModelObject::moveChildrenTo):
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::styleDidChange):
+        (WebCore::RenderElement::removeAnonymousWrappersForInlinesIfNecessary): Deleted.
+        * rendering/RenderElement.h:
+        * rendering/RenderRubyRun.cpp:
+        (WebCore::RenderRubyRun::takeChild):
+        * rendering/updating/RenderTreeBuilder.cpp:
+        (WebCore::RenderTreeBuilder::makeChildrenNonInline):
+        (WebCore::RenderTreeBuilder::splitAnonymousBoxesAroundChild):
+        (WebCore::RenderTreeBuilder::removeAnonymousWrappersForInlineChildrenIfNeeded):
+        (WebCore::RenderTreeBuilder::childFlowStateChangesAndNoLongerAffectsParentBlock):
+        (WebCore::RenderTreeBuilder::removeFromParentAndDestroyCleaningUpAnonymousWrappers):
+        * rendering/updating/RenderTreeBuilder.h:
+        * rendering/updating/RenderTreeBuilderMultiColumn.cpp:
+        (WebCore::RenderTreeBuilder::MultiColumn::createFragmentedFlow):
+        (WebCore::RenderTreeBuilder::MultiColumn::destroyFragmentedFlow):
+        * rendering/updating/RenderTreeBuilderRuby.cpp:
+        (WebCore::RenderTreeBuilder::Ruby::moveInlineChildren):
+        (WebCore::RenderTreeBuilder::Ruby::moveBlockChildren):
+        * rendering/updating/RenderTreeBuilderTable.cpp:
+        (WebCore::RenderTreeBuilder::Table::collapseAndDestroyAnonymousSiblingRows):
+
 2018-02-08  Matt Lewis  <jlewis3@apple.com>
 
         Unreviewed, rolling out r228261.

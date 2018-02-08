@@ -235,7 +235,7 @@ void RenderTreeBuilder::Table::collapseAndDestroyAnonymousSiblingRows(RenderTabl
             currentRow = currentRow->nextRow();
             continue;
         }
-        currentRow->moveAllChildrenTo(rowToInsertInto, RenderBoxModelObject::NormalizeAfterInsertion::No);
+        currentRow->moveAllChildrenTo(m_builder, rowToInsertInto, RenderBoxModelObject::NormalizeAfterInsertion::No);
         auto toDestroy = section->takeChild(m_builder, *currentRow);
         currentRow = currentRow->nextRow();
     }
