@@ -1,3 +1,29 @@
+2018-02-05  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Add a way to check if a host is an IP address
+        https://bugs.webkit.org/show_bug.cgi?id=182427
+
+        Reviewed by Alex Christensen.
+
+        There are several places where this is needed. We currently just assume that any host ending in a digit is an IP
+        address, except in PublicSuffix where platform specific code is used. This patch adds URL::hostIsIPAddress()
+        platform specific implementations, falling back to current assumption if there isn't an implementation for the
+        platform.
+
+        * page/OriginAccessEntry.cpp:
+        (WebCore::OriginAccessEntry::OriginAccessEntry): Use URL::hostIsIPAddress().
+        * platform/URL.cpp:
+        (WebCore::URL::hostIsIPAddress): Fallback implementation.
+        * platform/URL.h:
+        * platform/mac/PublicSuffixMac.mm:
+        (WebCore::topPrivatelyControlledDomain): Use URL::hostIsIPAddress().
+        * platform/mac/URLMac.mm:
+        (WebCore::URL::hostIsIPAddress): Move implementation from PublicSuffixMac.mm.
+        * platform/network/curl/CookieUtil.cpp:
+        (WebCore::CookieUtil::isIPAddress): Use URL::hostIsIPAddress().
+        * platform/soup/URLSoup.cpp:
+        (WebCore::URL::hostIsIPAddress): Use g_hostname_is_ip_address().
+
 2018-01-13  Darin Adler  <darin@apple.com>
 
         Event improvements
