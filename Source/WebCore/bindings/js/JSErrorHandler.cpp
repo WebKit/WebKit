@@ -96,6 +96,7 @@ void JSErrorHandler::handleEvent(ScriptExecutionContext& scriptExecutionContext,
         args.append(errorEvent.error(*exec, *globalObject));
         ASSERT(!args.hasOverflowed());
 
+        VM& vm = globalObject->vm();
         VMEntryScope entryScope(vm, vm.entryScope ? vm.entryScope->globalObject() : globalObject);
 
         InspectorInstrumentationCookie cookie = JSMainThreadExecState::instrumentFunctionCall(&scriptExecutionContext, callType, callData);

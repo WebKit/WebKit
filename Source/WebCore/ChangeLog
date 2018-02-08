@@ -1,3 +1,10 @@
+2018-02-07  Darin Adler  <darin@apple.com>
+
+        Try to fix ErrorEvent tests seen failing on buildbot after fix for bug 179591.
+
+        * bindings/js/JSErrorHandler.cpp:
+        (WebCore::JSErrorHandler::handleEvent): Add back line of code accidentally removed.
+
 2018-02-05  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Add a way to check if a host is an IP address
