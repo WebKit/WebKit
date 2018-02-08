@@ -1,3 +1,12 @@
+2018-02-07  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: replace isAncestor with Node.contains() in LegacyTabBar
+        https://bugs.webkit.org/show_bug.cgi?id=182586
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Views/LegacyTabBar.js:
+
 2018-02-07  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Styles: completion popover doesn't hide when switching panels
