@@ -1,3 +1,15 @@
+2018-02-08  Matt Lewis  <jlewis3@apple.com>
+
+        Unreviewed, rolling out r228261.
+
+        This broke an internal build
+
+        Reverted changeset:
+
+        "Add a way to check if a host is an IP address"
+        https://bugs.webkit.org/show_bug.cgi?id=182427
+        https://trac.webkit.org/changeset/228261
+
 2018-02-08  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer] WebKit improperly handles missing GStreamer elements

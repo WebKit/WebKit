@@ -28,13 +28,8 @@
 
 #import "CFURLExtras.h"
 #import "URLParser.h"
-#import "WebCoreNSURLExtras.h"
 #import <wtf/ObjcRuntimeExtras.h>
 #import <wtf/text/CString.h>
-
-@interface NSString (WebCoreNSURLExtras)
-- (BOOL)_web_looksLikeIPAddress;
-@end
 
 namespace WebCore {
 
@@ -77,11 +72,6 @@ RetainPtr<CFURLRef> URL::createCFURL() const
     URLCharBuffer buffer;
     copyToBuffer(buffer);
     return createCFURLFromBuffer(buffer.data(), buffer.size());
-}
-
-bool URL::hostIsIPAddress(const String& host)
-{
-    return [host _web_looksLikeIPAddress];
 }
 
 }

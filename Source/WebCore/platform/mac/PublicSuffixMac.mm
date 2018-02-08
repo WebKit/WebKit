@@ -28,8 +28,12 @@
 
 #if ENABLE(PUBLIC_SUFFIX_LIST)
 
-#import "URL.h"
+#import "WebCoreNSURLExtras.h"
 #import <pal/spi/cf/CFNetworkSPI.h>
+
+@interface NSString (WebCoreNSURLExtras)
+- (BOOL)_web_looksLikeIPAddress;
+@end
 
 namespace WebCore {
 
@@ -41,7 +45,7 @@ bool isPublicSuffix(const String& domain)
 
 String topPrivatelyControlledDomain(const String& domain)
 {
-    if (URL::hostIsIPAddress(domain))
+    if ([domain _web_looksLikeIPAddress])
         return domain;
 
     if (!domain.isAllASCII())

@@ -66,11 +66,6 @@ GUniquePtr<SoupURI> URL::createSoupURI() const
     return GUniquePtr<SoupURI>(soup_uri_new(string().utf8().data()));
 }
 
-bool URL::hostIsIPAddress(const String& host)
-{
-    return !host.isEmpty() && g_hostname_is_ip_address(host.utf8().data());
-}
-
 } // namespace WebCore
 
 #endif
