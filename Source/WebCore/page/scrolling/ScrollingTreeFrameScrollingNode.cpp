@@ -36,9 +36,10 @@
 
 namespace WebCore {
 
-ScrollingTreeFrameScrollingNode::ScrollingTreeFrameScrollingNode(ScrollingTree& scrollingTree, ScrollingNodeID nodeID)
-    : ScrollingTreeScrollingNode(scrollingTree, FrameScrollingNode, nodeID)
+ScrollingTreeFrameScrollingNode::ScrollingTreeFrameScrollingNode(ScrollingTree& scrollingTree, ScrollingNodeType nodeType, ScrollingNodeID nodeID)
+    : ScrollingTreeScrollingNode(scrollingTree, nodeType, nodeID)
 {
+    ASSERT(isFrameScrollingNode());
 }
 
 ScrollingTreeFrameScrollingNode::~ScrollingTreeFrameScrollingNode() = default;

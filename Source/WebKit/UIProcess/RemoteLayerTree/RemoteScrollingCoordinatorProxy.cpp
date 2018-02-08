@@ -103,7 +103,8 @@ void RemoteScrollingCoordinatorProxy::connectStateNodeLayers(ScrollingStateTree&
             currNode->setLayer(layerTreeHost.getLayer(currNode->layer()));
 
         switch (currNode->nodeType()) {
-        case FrameScrollingNode: {
+        case MainFrameScrollingNode:
+        case SubframeScrollingNode: {
             ScrollingStateFrameScrollingNode& scrollingStateNode = downcast<ScrollingStateFrameScrollingNode>(*currNode);
             
             if (scrollingStateNode.hasChangedProperty(ScrollingStateScrollingNode::ScrolledContentsLayer))

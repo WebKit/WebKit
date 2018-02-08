@@ -36,11 +36,11 @@ namespace WebCore {
 
 class ScrollingTreeFrameScrollingNodeIOS : public ScrollingTreeFrameScrollingNode {
 public:
-    WEBCORE_EXPORT static Ref<ScrollingTreeFrameScrollingNodeIOS> create(ScrollingTree&, ScrollingNodeID);
+    WEBCORE_EXPORT static Ref<ScrollingTreeFrameScrollingNodeIOS> create(ScrollingTree&, ScrollingNodeType, ScrollingNodeID);
     virtual ~ScrollingTreeFrameScrollingNodeIOS();
 
 protected:
-    ScrollingTreeFrameScrollingNodeIOS(ScrollingTree&, ScrollingNodeID);
+    ScrollingTreeFrameScrollingNodeIOS(ScrollingTree&, ScrollingNodeType, ScrollingNodeID);
 
     // ScrollingTreeNode member functions.
     void commitStateBeforeChildren(const ScrollingStateNode&) override;

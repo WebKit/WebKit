@@ -113,11 +113,12 @@ void RemoteScrollingTree::scrollingTreeNodeRequestsScroll(ScrollingNodeID nodeID
 Ref<ScrollingTreeNode> RemoteScrollingTree::createScrollingTreeNode(ScrollingNodeType nodeType, ScrollingNodeID nodeID)
 {
     switch (nodeType) {
-    case FrameScrollingNode:
+    case MainFrameScrollingNode:
+    case SubframeScrollingNode:
 #if PLATFORM(IOS)
-        return ScrollingTreeFrameScrollingNodeIOS::create(*this, nodeID);
+        return ScrollingTreeFrameScrollingNodeIOS::create(*this, nodeType, nodeID);
 #else
-        return ScrollingTreeFrameScrollingNodeMac::create(*this, nodeID);
+        return ScrollingTreeFrameScrollingNodeMac::create(*this, nodeType, nodeID);
 #endif
     case OverflowScrollingNode:
 #if PLATFORM(IOS)

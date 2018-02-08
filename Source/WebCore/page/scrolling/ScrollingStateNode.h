@@ -197,7 +197,7 @@ public:
     bool isFixedNode() const { return m_nodeType == FixedNode; }
     bool isStickyNode() const { return m_nodeType == StickyNode; }
     bool isScrollingNode() const { return isFrameScrollingNode() || isOverflowScrollingNode(); }
-    bool isFrameScrollingNode() const { return m_nodeType == FrameScrollingNode; }
+    bool isFrameScrollingNode() const { return m_nodeType == MainFrameScrollingNode || m_nodeType == SubframeScrollingNode; }
     bool isOverflowScrollingNode() const { return m_nodeType == OverflowScrollingNode; }
 
     virtual Ref<ScrollingStateNode> clone(ScrollingStateTree& adoptiveTree) = 0;

@@ -61,7 +61,7 @@ public:
     FloatRect fixedPositionRect() { return FloatRect(lastCommittedScrollPosition(), scrollableAreaSize()); };
 
 protected:
-    ScrollingTreeFrameScrollingNode(ScrollingTree&, ScrollingNodeID);
+    ScrollingTreeFrameScrollingNode(ScrollingTree&, ScrollingNodeType, ScrollingNodeID);
 
     void scrollBy(const FloatSize&);
     void scrollByWithoutContentEdgeConstraints(const FloatSize&);

@@ -1,3 +1,28 @@
+2018-02-08  Frederic Wang  <fwang@igalia.com>
+
+        Add scrolling node types to distinguish main frames and subframes.
+        https://bugs.webkit.org/show_bug.cgi?id=182533
+
+        Reviewed by Simon Fraser.
+
+        * Shared/RemoteLayerTree/RemoteScrollingCoordinatorTransaction.cpp: Replace the case of
+        FrameScrollingNode with MainFrameScrollingNode and SubframeScrollingNode.
+        (WebKit::encodeNodeAndDescendants):
+        (WebKit::RemoteScrollingCoordinatorTransaction::decode):
+        (WebKit::dump):
+        * UIProcess/RemoteLayerTree/RemoteScrollingCoordinatorProxy.cpp: Ditto.
+        (WebKit::RemoteScrollingCoordinatorProxy::connectStateNodeLayers):
+        * UIProcess/RemoteLayerTree/RemoteScrollingTree.cpp: Ditto and pass the node type to the
+        constructor of the frame scrolling node.
+        (WebKit::RemoteScrollingTree::createScrollingTreeNode):
+        * UIProcess/RemoteLayerTree/ios/RemoteScrollingCoordinatorProxyIOS.mm: Replace the case of
+        FrameScrollingNode with MainFrameScrollingNode and SubframeScrollingNode.
+        (WebKit::RemoteScrollingCoordinatorProxy::connectStateNodeLayers):
+        * UIProcess/RemoteLayerTree/ios/ScrollingTreeScrollingNodeDelegateIOS.mm: In order to
+        determine whether the node is a main frame or subframe, use the node type instead of checking
+        whether the node as a parent.
+        (WebKit::ScrollingTreeScrollingNodeDelegateIOS::updateChildNodesAfterScroll):
+
 2018-02-05  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         WebDriver: addCookie command should prepend a dot to domain if missing

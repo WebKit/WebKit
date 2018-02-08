@@ -50,7 +50,7 @@ public:
     bool isFixedNode() const { return nodeType() == FixedNode; }
     bool isStickyNode() const { return nodeType() == StickyNode; }
     bool isScrollingNode() const { return isFrameScrollingNode() || isOverflowScrollingNode(); }
-    bool isFrameScrollingNode() const { return nodeType() == FrameScrollingNode; }
+    bool isFrameScrollingNode() const { return nodeType() == MainFrameScrollingNode || nodeType() == SubframeScrollingNode; }
     bool isOverflowScrollingNode() const { return nodeType() == OverflowScrollingNode; }
 
     virtual void commitStateBeforeChildren(const ScrollingStateNode&) = 0;

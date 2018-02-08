@@ -1,3 +1,62 @@
+2018-02-08  Frederic Wang  <fwang@igalia.com>
+
+        Add scrolling node types to distinguish main frames and subframes.
+        https://bugs.webkit.org/show_bug.cgi?id=182533
+
+        Reviewed by Simon Fraser.
+
+        This patch splits FrameScrollingNode type into two types: MainFrameScrollingNode and
+        SubframeScrollingNode. This is needed because new places in the code are likely to
+        distinguish them e.g. in ScrollingTreeScrollingNodeDelegateIOS::updateChildNodesAfterScroll
+        or when iOS frame scrolling is introduced (see bug 173833).
+
+        No new tests, behavior unchanged.
+
+        * page/scrolling/AsyncScrollingCoordinator.cpp:
+        (WebCore::AsyncScrollingCoordinator::ensureRootStateNodeForFrameView): This is only called
+        for main frames, so pass MainFrameScrollingNode.
+        * page/scrolling/ScrollingCoordinator.cpp:
+        (WebCore::operator<<): Distinguish subframe and main frame when dumping.
+        * page/scrolling/ScrollingCoordinator.h: Split FrameScrollingNode into two cases.
+        * page/scrolling/ScrollingStateFrameScrollingNode.cpp: Add node type to constructor and
+        ASSERT it remains of type FrameScrollingNode.
+        (WebCore::ScrollingStateFrameScrollingNode::create):
+        (WebCore::ScrollingStateFrameScrollingNode::ScrollingStateFrameScrollingNode):
+        * page/scrolling/ScrollingStateFrameScrollingNode.h: Add node type to constructor.
+        * page/scrolling/ScrollingStateNode.h:
+        (WebCore::ScrollingStateNode::isFrameScrollingNode const): Includes the two cases.
+        * page/scrolling/ScrollingStateTree.cpp:
+        (WebCore::ScrollingStateTree::createNode): Split FrameScrollingNode into two cases and pass
+        the node type.
+        (WebCore::ScrollingStateTree::attachNode): The first case only happens for main frames while
+        the second case only happens with subframes. Use the appriate node type.
+        * page/scrolling/ScrollingTreeFrameScrollingNode.cpp: Add node type to constructor and
+        ASSERT it remains of type FrameScrollingNode.
+        (WebCore::ScrollingTreeFrameScrollingNode::ScrollingTreeFrameScrollingNode):
+        * page/scrolling/ScrollingTreeFrameScrollingNode.h: Add node type to constructor.
+        * page/scrolling/ScrollingTreeNode.h: Includes the two cases.
+        (WebCore::ScrollingTreeNode::isFrameScrollingNode const):
+        * page/scrolling/ios/ScrollingTreeFrameScrollingNodeIOS.h: Add node type to constructor.
+        * page/scrolling/ios/ScrollingTreeFrameScrollingNodeIOS.mm: Ditto.
+        (WebCore::ScrollingTreeFrameScrollingNodeIOS::create):
+        (WebCore::ScrollingTreeFrameScrollingNodeIOS::ScrollingTreeFrameScrollingNodeIOS):
+        * page/scrolling/ios/ScrollingTreeIOS.cpp: Split FrameScrollingNode into two cases.
+        (WebCore::ScrollingTreeIOS::createScrollingTreeNode):
+        * page/scrolling/mac/ScrollingTreeFrameScrollingNodeMac.h: Add node type to constructor.
+        * page/scrolling/mac/ScrollingTreeFrameScrollingNodeMac.mm: Ditto.
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::create):
+        (WebCore::ScrollingTreeFrameScrollingNodeMac::ScrollingTreeFrameScrollingNodeMac):
+        * page/scrolling/mac/ScrollingTreeMac.cpp: Split FrameScrollingNode into two cases.
+        (ScrollingTreeMac::createScrollingTreeNode):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::reattachSubframeScrollLayers): Distinguish the cases of
+        main frames and subframes.
+        (WebCore::scrollCoordinationRoleForNodeType): Split FrameScrollingNode into two cases.
+        (WebCore::RenderLayerCompositor::updateScrollCoordinationForThisFrame): Distinguish the cases
+        of main frames and subframes.
+        (WebCore::RenderLayerCompositor::updateScrollCoordinatedLayer): Split FrameScrollingNode into
+        two cases.
+
 2018-02-07  Darin Adler  <darin@apple.com>
 
         Try to fix ErrorEvent tests seen failing on buildbot after fix for bug 179591.

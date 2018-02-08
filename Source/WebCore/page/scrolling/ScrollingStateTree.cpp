@@ -72,8 +72,9 @@ Ref<ScrollingStateNode> ScrollingStateTree::createNode(ScrollingNodeType nodeTyp
         return ScrollingStateFixedNode::create(*this, nodeID);
     case StickyNode:
         return ScrollingStateStickyNode::create(*this, nodeID);
-    case FrameScrollingNode:
-        return ScrollingStateFrameScrollingNode::create(*this, nodeID);
+    case MainFrameScrollingNode:
+    case SubframeScrollingNode:
+        return ScrollingStateFrameScrollingNode::create(*this, nodeType, nodeID);
     case OverflowScrollingNode:
         return ScrollingStateOverflowScrollingNode::create(*this, nodeID);
     }
@@ -116,7 +117,7 @@ ScrollingNodeID ScrollingStateTree::attachNode(ScrollingNodeType nodeType, Scrol
         // If we're resetting the root node, we should clear the HashMap and destroy the current children.
         clear();
 
-        setRootStateNode(ScrollingStateFrameScrollingNode::create(*this, newNodeID));
+        setRootStateNode(ScrollingStateFrameScrollingNode::create(*this, MainFrameScrollingNode, newNodeID));
         newNode = rootStateNode();
         m_hasNewRootStateNode = true;
     } else {
@@ -124,7 +125,7 @@ ScrollingNodeID ScrollingStateTree::attachNode(ScrollingNodeType nodeType, Scrol
         if (!parent)
             return 0;
 
-        if (nodeType == FrameScrollingNode && parentID) {
+        if (nodeType == SubframeScrollingNode && parentID) {
             if (auto orphanedNode = m_orphanedSubframeNodes.take(newNodeID)) {
                 newNode = orphanedNode.get();
                 parent->appendChild(orphanedNode.releaseNonNull());

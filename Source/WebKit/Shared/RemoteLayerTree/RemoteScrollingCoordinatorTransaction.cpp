@@ -334,7 +334,8 @@ static void encodeNodeAndDescendants(IPC::Encoder& encoder, const ScrollingState
     ++encodedNodeCount;
 
     switch (stateNode.nodeType()) {
-    case FrameScrollingNode:
+    case MainFrameScrollingNode:
+    case SubframeScrollingNode:
         encoder << downcast<ScrollingStateFrameScrollingNode>(stateNode);
         break;
     case OverflowScrollingNode:
@@ -418,7 +419,8 @@ bool RemoteScrollingCoordinatorTransaction::decode(IPC::Decoder& decoder)
         ASSERT(!parentNodeID || newNode->parent());
         
         switch (nodeType) {
-        case FrameScrollingNode:
+        case MainFrameScrollingNode:
+        case SubframeScrollingNode:
             if (!decoder.decode(downcast<ScrollingStateFrameScrollingNode>(*newNode)))
                 return false;
             break;
@@ -561,7 +563,8 @@ static void dump(TextStream& ts, const ScrollingStateNode& node, bool changedPro
         ts.dumpProperty("layer", static_cast<GraphicsLayer::PlatformLayerID>(node.layer()));
     
     switch (node.nodeType()) {
-    case FrameScrollingNode:
+    case MainFrameScrollingNode:
+    case SubframeScrollingNode:
         dump(ts, downcast<ScrollingStateFrameScrollingNode>(node), changedPropertiesOnly);
         break;
     case OverflowScrollingNode:

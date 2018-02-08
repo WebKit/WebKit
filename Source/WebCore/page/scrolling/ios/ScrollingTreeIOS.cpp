@@ -86,8 +86,9 @@ void ScrollingTreeIOS::scrollingTreeNodeDidScroll(ScrollingNodeID nodeID, const 
 Ref<ScrollingTreeNode> ScrollingTreeIOS::createScrollingTreeNode(ScrollingNodeType nodeType, ScrollingNodeID nodeID)
 {
     switch (nodeType) {
-    case FrameScrollingNode:
-        return ScrollingTreeFrameScrollingNodeIOS::create(*this, nodeID);
+    case MainFrameScrollingNode:
+    case SubframeScrollingNode:
+        return ScrollingTreeFrameScrollingNodeIOS::create(*this, nodeType, nodeID);
     case OverflowScrollingNode:
         ASSERT_NOT_REACHED();
         break;
