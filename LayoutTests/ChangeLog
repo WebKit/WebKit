@@ -1,3 +1,12 @@
+2018-02-08  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Mark fast/dom/adopt-node-crash-2.html as flaky.
+        https://bugs.webkit.org/show_bug.cgi?id=182589
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
 2018-02-08  Chris Fleizach  <cfleizach@apple.com>
 
         AX: Defer attribute computation until needed.
