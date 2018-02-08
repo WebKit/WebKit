@@ -1121,6 +1121,7 @@ webkit.org/b/167203 inspector/worker/debugger-shared-breakpoint.html [ Pass Fail
 webkit.org/b/155607 inspector/heap/snapshot.html [ Pass Timeout ]
 webkit.org/b/143719 inspector/console/console-api.html [ Pass Timeout ]
 webkit.org/b/156078 inspector/console/heapSnapshot.html [ Pass Timeout ]
+webkit.org/b/182620 inspector/console/clearMessages.html [ Pass Timeout ]
 webkit.org/b/158006 inspector/console/console-time.html [ Pass Timeout ]
 webkit.org/b/156634 inspector/formatting/formatting-javascript.html [ Pass Timeout ]
 webkit.org/b/158948 inspector/timeline [ Pass Timeout ]
