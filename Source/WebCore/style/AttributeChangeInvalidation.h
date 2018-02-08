@@ -29,7 +29,7 @@
 
 namespace WebCore {
 
-class RuleSet;
+struct InvalidationRuleSet;
 
 namespace Style {
 
@@ -40,12 +40,12 @@ public:
 
 private:
     void invalidateStyle(const QualifiedName&, const AtomicString& oldValue, const AtomicString& newValue);
-    void invalidateDescendants();
+    void invalidateStyleWithRuleSets();
 
     const bool m_isEnabled;
     Element& m_element;
 
-    const RuleSet* m_descendantInvalidationRuleSet { nullptr };
+    Vector<const InvalidationRuleSet*, 4> m_invalidationRuleSets;
 };
 
 inline AttributeChangeInvalidation::AttributeChangeInvalidation(Element& element, const QualifiedName& attributeName, const AtomicString& oldValue, const AtomicString& newValue)
@@ -55,14 +55,14 @@ inline AttributeChangeInvalidation::AttributeChangeInvalidation(Element& element
     if (!m_isEnabled)
         return;
     invalidateStyle(attributeName, oldValue, newValue);
-    invalidateDescendants();
+    invalidateStyleWithRuleSets();
 }
 
 inline AttributeChangeInvalidation::~AttributeChangeInvalidation()
 {
     if (!m_isEnabled)
         return;
-    invalidateDescendants();
+    invalidateStyleWithRuleSets();
 }
     
 }

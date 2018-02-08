@@ -1,3 +1,69 @@
+2018-02-08  Antti Koivisto  <antti@apple.com>
+
+        Use invalidation rulesets for attribute selectors
+        https://bugs.webkit.org/show_bug.cgi?id=182569
+
+        Reviewed by Zalan Bujtas.
+
+        Attribute change style invalidation should use invalidation rulesets, similarly how class change invalidation already does.
+        We'll invalidate fewer unnecessary elements immediately and enable more significant future gains.
+
+        * css/DocumentRuleSets.cpp:
+        (WebCore::DocumentRuleSets::collectFeatures const):
+        (WebCore::DocumentRuleSets::classInvalidationRuleSets const):
+        (WebCore::DocumentRuleSets::attributeInvalidationRuleSets const):
+
+        Make and cache invalidation RuleSets for an attribute.
+
+        (WebCore::DocumentRuleSets::ancestorAttributeRulesForHTML const): Deleted.
+        * css/DocumentRuleSets.h:
+        * css/RuleFeature.cpp:
+        (WebCore::RuleFeatureSet::recursivelyCollectFeaturesFromSelector):
+
+        Collect attribute selectors along with match elements.
+
+        (WebCore::RuleFeatureSet::collectFeatures):
+        (WebCore::RuleFeatureSet::add):
+        (WebCore::RuleFeatureSet::registerContentAttribute):
+
+        Separate hash to deal with invalidation of content:attr(foo) special case.
+
+        (WebCore::RuleFeatureSet::clear):
+        (WebCore::RuleFeatureSet::shrinkToFit):
+        (WebCore::makeAttributeSelectorKey): Deleted.
+        * css/RuleFeature.h:
+        (WebCore::RuleFeature::RuleFeature):
+        * css/StyleBuilderCustom.h:
+        (WebCore::StyleBuilderCustom::applyValueContent):
+        (WebCore::StyleBuilderCustom::applyValueAlt):
+
+        Use registerContentAttribute()
+
+        * html/HTMLEmbedElement.cpp:
+        (WebCore::hasTypeOrSrc):
+        (WebCore::HTMLEmbedElement::parseAttribute):
+
+            Invalidate style if both type and src attributes go missing as this changes result of rendererIsNeeded().
+            This was previously relying on any attribute change invalidating style.
+
+        (WebCore::HTMLEmbedElement::rendererIsNeeded):
+        * style/AttributeChangeInvalidation.cpp:
+        (WebCore::Style::AttributeChangeInvalidation::invalidateStyle):
+
+        Collect the invalidation rulesets for this attribute change.
+        Also check if any attribute selector actually changes state, unlike with classes attribute changes may
+        often not lead to a selector becoming non-matching.
+
+        (WebCore::Style::AttributeChangeInvalidation::invalidateStyleWithRuleSets):
+        (WebCore::Style::AttributeChangeInvalidation::invalidateDescendants): Deleted.
+        * style/AttributeChangeInvalidation.h:
+        (WebCore::Style::AttributeChangeInvalidation::AttributeChangeInvalidation):
+        (WebCore::Style::AttributeChangeInvalidation::~AttributeChangeInvalidation):
+        * style/ClassChangeInvalidation.cpp:
+        (WebCore::Style::ClassChangeInvalidation::computeInvalidation):
+
+        Should not bail on shadow tree invalidation as we may also need to invalidate siblings.
+
 2018-02-08  Zalan Bujtas  <zalan@apple.com>
 
         [RenderTreeBuilder] Introduce RenderTreeBuilder to moveChild(ren)To() functions

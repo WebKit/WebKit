@@ -168,47 +168,46 @@ void DocumentRuleSets::collectFeatures() const
     m_uncommonAttributeRuleSet = makeRuleSet(m_features.uncommonAttributeRules);
 
     m_classInvalidationRuleSets.clear();
-    m_ancestorAttributeRuleSetsForHTML.clear();
+    m_attributeInvalidationRuleSets.clear();
 
     m_features.shrinkToFit();
 }
 
-const Vector<InvalidationRuleSet>* DocumentRuleSets::classInvalidationRuleSets(const AtomicString& className) const
+static Vector<InvalidationRuleSet>* ensureInvalidationRuleSets(const AtomicString& key, HashMap<AtomicString, std::unique_ptr<Vector<InvalidationRuleSet>>>& ruleSetMap, const HashMap<AtomicString, std::unique_ptr<Vector<RuleFeature>>>& ruleFeatures)
 {
-    return m_classInvalidationRuleSets.ensure(className, [&] () -> std::unique_ptr<Vector<InvalidationRuleSet>> {
-        auto* features = m_features.classRules.get(className);
+    return ruleSetMap.ensure(key, [&] () -> std::unique_ptr<Vector<InvalidationRuleSet>> {
+        auto* features = ruleFeatures.get(key);
         if (!features)
             return nullptr;
+
         std::array<std::unique_ptr<RuleSet>, matchElementCount> matchElementArray;
+        std::array<Vector<const CSSSelector*>, matchElementCount> invalidationSelectorArray;
         for (auto& feature : *features) {
-            auto& ruleSet = matchElementArray[static_cast<unsigned>(*feature.matchElement)];
+            auto arrayIndex = static_cast<unsigned>(*feature.matchElement);
+            auto& ruleSet = matchElementArray[arrayIndex];
             if (!ruleSet)
                 ruleSet = std::make_unique<RuleSet>();
             ruleSet->addRule(feature.rule, feature.selectorIndex);
+            if (feature.invalidationSelector)
+                invalidationSelectorArray[arrayIndex].append(feature.invalidationSelector);
         }
         auto invalidationRuleSets = std::make_unique<Vector<InvalidationRuleSet>>();
         for (unsigned i = 0; i < matchElementArray.size(); ++i) {
             if (matchElementArray[i])
-                invalidationRuleSets->append({ static_cast<MatchElement>(i), WTFMove(matchElementArray[i]) });
+                invalidationRuleSets->append({ static_cast<MatchElement>(i), WTFMove(matchElementArray[i]), WTFMove(invalidationSelectorArray[i]) });
         }
         return invalidationRuleSets;
     }).iterator->value.get();
 }
 
-const DocumentRuleSets::AttributeRules* DocumentRuleSets::ancestorAttributeRulesForHTML(const AtomicString& attributeName) const
+const Vector<InvalidationRuleSet>* DocumentRuleSets::classInvalidationRuleSets(const AtomicString& className) const
 {
-    auto addResult = m_ancestorAttributeRuleSetsForHTML.add(attributeName, nullptr);
-    auto& value = addResult.iterator->value;
-    if (addResult.isNewEntry) {
-        if (auto* rules = m_features.ancestorAttributeRulesForHTML.get(attributeName)) {
-            value = std::make_unique<AttributeRules>();
-            value->attributeSelectors.reserveCapacity(rules->selectors.size());
-            for (auto* selector : rules->selectors.values())
-                value->attributeSelectors.uncheckedAppend(selector);
-            value->ruleSet = makeRuleSet(rules->features);
-        }
-    }
-    return value.get();
+    return ensureInvalidationRuleSets(className, m_classInvalidationRuleSets, m_features.classRules);
+}
+
+const Vector<InvalidationRuleSet>* DocumentRuleSets::attributeInvalidationRuleSets(const AtomicString& attributeName) const
+{
+    return ensureInvalidationRuleSets(attributeName, m_attributeInvalidationRuleSets, m_features.attributeRules);
 }
 
 } // namespace WebCore
