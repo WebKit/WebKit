@@ -915,35 +915,6 @@ void RenderElement::styleWillChange(StyleDifference diff, const RenderStyle& new
         view().frameView().updateExtendBackgroundIfNecessary();
 }
 
-void RenderElement::removeAnonymousWrappersForInlinesIfNecessary()
-{
-    // FIXME: Move to RenderBlock.
-    if (!is<RenderBlock>(*this))
-        return;
-    RenderBlock& thisBlock = downcast<RenderBlock>(*this);
-    if (!thisBlock.canDropAnonymousBlockChild())
-        return;
-
-    // We have changed to floated or out-of-flow positioning so maybe all our parent's
-    // children can be inline now. Bail if there are any block children left on the line,
-    // otherwise we can proceed to stripping solitary anonymous wrappers from the inlines.
-    // FIXME: We should also handle split inlines here - we exclude them at the moment by returning
-    // if we find a continuation.
-    RenderObject* current = firstChild();
-    while (current && ((current->isAnonymousBlock() && !downcast<RenderBlock>(*current).isContinuation()) || current->style().isFloating() || current->style().hasOutOfFlowPosition()))
-        current = current->nextSibling();
-
-    if (current)
-        return;
-
-    RenderObject* next;
-    for (current = firstChild(); current; current = next) {
-        next = current->nextSibling();
-        if (current->isAnonymousBlock())
-            thisBlock.dropAnonymousBoxChild(downcast<RenderBlock>(*current));
-    }
-}
-
 #if !PLATFORM(IOS)
 static bool areNonIdenticalCursorListsEqual(const RenderStyle* a, const RenderStyle* b)
 {
@@ -975,7 +946,7 @@ void RenderElement::styleDidChange(StyleDifference diff, const RenderStyle* oldS
     }
 
     if (s_noLongerAffectsParentBlock)
-        parent()->removeAnonymousWrappersForInlinesIfNecessary();
+        RenderTreeBuilder::current()->childFlowStateChangesAndNoLongerAffectsParentBlock(*this);
 
     SVGRenderSupport::styleChanged(*this, oldStyle);
 

@@ -318,6 +318,40 @@ void RenderTreeBuilder::childFlowStateChangesAndAffectsParentBlock(RenderElement
     }
 }
 
+void RenderTreeBuilder::removeAnonymousWrappersForInlineChildrenIfNeeded(RenderElement& parent)
+{
+    if (!is<RenderBlock>(parent))
+        return;
+    auto& blockParent = downcast<RenderBlock>(parent);
+    if (!blockParent.canDropAnonymousBlockChild())
+        return;
+
+    // We have changed to floated or out-of-flow positioning so maybe all our parent's
+    // children can be inline now. Bail if there are any block children left on the line,
+    // otherwise we can proceed to stripping solitary anonymous wrappers from the inlines.
+    // FIXME: We should also handle split inlines here - we exclude them at the moment by returning
+    // if we find a continuation.
+    auto* current = blockParent.firstChild();
+    while (current && ((current->isAnonymousBlock() && !downcast<RenderBlock>(*current).isContinuation()) || current->style().isFloating() || current->style().hasOutOfFlowPosition()))
+        current = current->nextSibling();
+
+    if (current)
+        return;
+
+    RenderObject* next;
+    for (current = blockParent.firstChild(); current; current = next) {
+        next = current->nextSibling();
+        if (current->isAnonymousBlock())
+            blockParent.dropAnonymousBoxChild(downcast<RenderBlock>(*current));
+    }
+}
+
+void RenderTreeBuilder::childFlowStateChangesAndNoLongerAffectsParentBlock(RenderElement& child)
+{
+    ASSERT(child.parent());
+    removeAnonymousWrappersForInlineChildrenIfNeeded(*child.parent());
+}
+
 static bool isAnonymousAndSafeToDelete(RenderElement& element)
 {
     if (!element.isAnonymous())
@@ -359,7 +393,7 @@ void RenderTreeBuilder::removeFromParentAndDestroyCleaningUpAnonymousWrappers(Re
 
     auto& destroyRootParent = *destroyRoot.parent();
     destroyRootParent.removeAndDestroyChild(*this, destroyRoot);
-    destroyRootParent.removeAnonymousWrappersForInlinesIfNecessary();
+    removeAnonymousWrappersForInlineChildrenIfNeeded(destroyRootParent);
 
     // Anonymous parent might have become empty, try to delete it too.
     if (isAnonymousAndSafeToDelete(destroyRootParent) && !destroyRootParent.firstChild())
