@@ -1459,8 +1459,9 @@ void RenderObject::insertedIntoTree()
     if (!isFloating() && parent()->childrenInline())
         parent()->dirtyLinesFromChangedChild(*this);
 
-    if (RenderFragmentedFlow* fragmentedFlow = enclosingFragmentedFlow())
-        fragmentedFlow->fragmentedFlowDescendantInserted(*this);
+    auto* fragmentedFlow = enclosingFragmentedFlow();
+    if (is<RenderMultiColumnFlow>(fragmentedFlow))
+        RenderTreeBuilder::current()->multiColumnDescendantInserted(downcast<RenderMultiColumnFlow>(*fragmentedFlow), *this);
 }
 
 void RenderObject::willBeRemovedFromTree()

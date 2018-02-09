@@ -79,6 +79,7 @@ public:
     void childFlowStateChangesAndNoLongerAffectsParentBlock(RenderElement& child);
     RenderObject* resolveMovedChildForMultiColumnFlow(RenderFragmentedFlow& enclosingFragmentedFlow, RenderObject* beforeChild);
     void removeFromParentAndDestroyCleaningUpAnonymousWrappers(RenderObject& child);
+    void multiColumnDescendantInserted(RenderMultiColumnFlow&, RenderObject& newDescendant);
 
 private:
     class FirstLetter;

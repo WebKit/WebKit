@@ -40,8 +40,6 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(RenderMultiColumnFlow);
 
-bool RenderMultiColumnFlow::gShiftingSpanner = false;
-
 RenderMultiColumnFlow::RenderMultiColumnFlow(Document& document, RenderStyle&& style)
     : RenderFragmentedFlow(document, WTFMove(style))
     , m_spannerMap(std::make_unique<SpannerMap>())
@@ -135,14 +133,9 @@ void RenderMultiColumnFlow::layout()
     m_lastSetWorkedOn = nullptr;
 }
 
-static RenderMultiColumnSet* findSetRendering(const RenderMultiColumnFlow& fragmentedFlow, const RenderObject& renderer)
+bool RenderMultiColumnFlow::isColumnSpanningDescendant(const RenderBox& descendantBox) const
 {
-    // Find the set inside which the specified renderer would be rendered.
-    for (auto* multicolSet = fragmentedFlow.firstMultiColumnSet(); multicolSet; multicolSet = multicolSet->nextSiblingMultiColumnSet()) {
-        if (multicolSet->containsRendererInFragmentedFlow(renderer))
-            return multicolSet;
-    }
-    return nullptr;
+    return descendantBox.style().columnSpan() == ColumnSpanAll;
 }
 
 void RenderMultiColumnFlow::addFragmentToThread(RenderFragmentContainer* RenderFragmentContainer)
@@ -167,196 +160,9 @@ void RenderMultiColumnFlow::willBeRemovedFromTree()
     RenderFragmentedFlow::willBeRemovedFromTree();
 }
 
-bool RenderMultiColumnFlow::isColumnSpanningDescendant(const RenderBox& descendantBox) const
-{
-    return descendantBox.style().columnSpan() == ColumnSpanAll;
-}
-
-static bool isValidColumnSpanner(const RenderMultiColumnFlow& fragmentedFlow, const RenderObject& descendant)
-{
-    // We assume that we're inside the flow thread. This function is not to be called otherwise.
-    ASSERT(descendant.isDescendantOf(&fragmentedFlow));
-    // First make sure that the renderer itself has the right properties for becoming a spanner.
-    if (!is<RenderBox>(descendant))
-        return false;
-
-    auto& descendantBox = downcast<RenderBox>(descendant);
-    if (descendantBox.isFloatingOrOutOfFlowPositioned())
-        return false;
-
-    if (!fragmentedFlow.isColumnSpanningDescendant(descendantBox))
-        return false;
-
-    auto* parent = descendantBox.parent();
-    if (!is<RenderBlockFlow>(*parent) || parent->childrenInline()) {
-        // Needs to be block-level.
-        return false;
-    }
-    
-    // We need to have the flow thread as the containing block. A spanner cannot break out of the flow thread.
-    auto* enclosingFragmentedFlow = descendantBox.enclosingFragmentedFlow();
-    if (enclosingFragmentedFlow != &fragmentedFlow)
-        return false;
-
-    // This looks like a spanner, but if we're inside something unbreakable, it's not to be treated as one.
-    for (auto* ancestor = descendantBox.containingBlock(); ancestor; ancestor = ancestor->containingBlock()) {
-        if (is<RenderView>(*ancestor))
-            return false;
-        if (is<RenderFragmentedFlow>(*ancestor)) {
-            // Don't allow any intervening non-multicol fragmentation contexts. The spec doesn't say
-            // anything about disallowing this, but it's just going to be too complicated to
-            // implement (not to mention specify behavior).
-            return ancestor == &fragmentedFlow;
-        }
-        // This ancestor (descendent of the fragmentedFlow) will create columns later. The spanner belongs to it.
-        if (is<RenderBlockFlow>(*ancestor) && downcast<RenderBlockFlow>(*ancestor).willCreateColumns())
-            return false;
-        ASSERT(ancestor->style().columnSpan() != ColumnSpanAll || !isValidColumnSpanner(fragmentedFlow, *ancestor));
-        if (ancestor->isUnsplittableForPagination())
-            return false;
-    }
-    ASSERT_NOT_REACHED();
-    return false;
-}
-
-static RenderObject* spannerPlacehoderCandidate(const RenderObject& renderer, const RenderMultiColumnFlow& stayWithin)
-{
-    // Spanner candidate is a next sibling/ancestor's next child within the flow thread and
-    // it is in the same inflow/out-of-flow layout context.
-    if (renderer.isOutOfFlowPositioned())
-        return nullptr;
-
-    ASSERT(renderer.isDescendantOf(&stayWithin));
-    auto* current = &renderer;
-    while (true) {
-        // Skip to the first in-flow sibling.
-        auto* nextSibling = current->nextSibling();
-        while (nextSibling && nextSibling->isOutOfFlowPositioned())
-            nextSibling = nextSibling->nextSibling();
-        if (nextSibling)
-            return nextSibling;
-        // No sibling candidate, jump to the parent and check its siblings.
-        current = current->parent();
-        if (!current || current == &stayWithin || current->isOutOfFlowPositioned())
-            return nullptr;
-    }
-    return nullptr;
-}
-
-RenderObject* RenderMultiColumnFlow::processPossibleSpannerDescendant(RenderObject*& subtreeRoot, RenderObject& descendant)
-{
-    RenderBlockFlow* multicolContainer = multiColumnBlockFlow();
-    RenderObject* nextRendererInFragmentedFlow = spannerPlacehoderCandidate(descendant, *this);
-    RenderObject* insertBeforeMulticolChild = nullptr;
-    RenderObject* nextDescendant = &descendant;
-
-    if (isValidColumnSpanner(*this, descendant)) {
-        // This is a spanner (column-span:all). Such renderers are moved from where they would
-        // otherwise occur in the render tree to becoming a direct child of the multicol container,
-        // so that they live among the column sets. This simplifies the layout implementation, and
-        // basically just relies on regular block layout done by the RenderBlockFlow that
-        // establishes the multicol container.
-        RenderBlockFlow* container = downcast<RenderBlockFlow>(descendant.parent());
-        RenderMultiColumnSet* setToSplit = nullptr;
-        if (nextRendererInFragmentedFlow) {
-            setToSplit = findSetRendering(*this, descendant);
-            if (setToSplit) {
-                setToSplit->setNeedsLayout();
-                insertBeforeMulticolChild = setToSplit->nextSibling();
-            }
-        }
-        // Moving a spanner's renderer so that it becomes a sibling of the column sets requires us
-        // to insert an anonymous placeholder in the tree where the spanner's renderer otherwise
-        // would have been. This is needed for a two reasons: We need a way of separating inline
-        // content before and after the spanner, so that it becomes separate line boxes. Secondly,
-        // this placeholder serves as a break point for column sets, so that, when encountered, we
-        // end flowing one column set and move to the next one.
-        auto newPlaceholder = RenderMultiColumnSpannerPlaceholder::createAnonymous(*this, downcast<RenderBox>(descendant), container->style());
-        auto& placeholder = *newPlaceholder;
-        RenderTreeBuilder::current()->insertChild(*container, WTFMove(newPlaceholder), descendant.nextSibling());
-        auto takenDescendant = container->takeChild(*RenderTreeBuilder::current(), descendant);
-        
-        // This is a guard to stop an ancestor flow thread from processing the spanner.
-        gShiftingSpanner = true;
-        RenderTreeBuilder::current()->insertChildToRenderBlock(*multicolContainer, WTFMove(takenDescendant), insertBeforeMulticolChild);
-        gShiftingSpanner = false;
-        
-        // The spanner has now been moved out from the flow thread, but we don't want to
-        // examine its children anyway. They are all part of the spanner and shouldn't trigger
-        // creation of column sets or anything like that. Continue at its original position in
-        // the tree, i.e. where the placeholder was just put.
-        if (subtreeRoot == &descendant)
-            subtreeRoot = &placeholder;
-        nextDescendant = &placeholder;
-    } else {
-        // This is regular multicol content, i.e. not part of a spanner.
-        if (is<RenderMultiColumnSpannerPlaceholder>(nextRendererInFragmentedFlow)) {
-            // Inserted right before a spanner. Is there a set for us there?
-            RenderMultiColumnSpannerPlaceholder& placeholder = downcast<RenderMultiColumnSpannerPlaceholder>(*nextRendererInFragmentedFlow);
-            if (RenderObject* previous = placeholder.spanner()->previousSibling()) {
-                if (is<RenderMultiColumnSet>(*previous))
-                    return nextDescendant; // There's already a set there. Nothing to do.
-            }
-            insertBeforeMulticolChild = placeholder.spanner();
-        } else if (RenderMultiColumnSet* lastSet = lastMultiColumnSet()) {
-            // This child is not an immediate predecessor of a spanner, which means that if this
-            // child precedes a spanner at all, there has to be a column set created for us there
-            // already. If it doesn't precede any spanner at all, on the other hand, we need a
-            // column set at the end of the multicol container. We don't really check here if the
-            // child inserted precedes any spanner or not (as that's an expensive operation). Just
-            // make sure we have a column set at the end. It's no big deal if it remains unused.
-            if (!lastSet->nextSibling())
-                return nextDescendant;
-        }
-    }
-    // Need to create a new column set when there's no set already created. We also always insert
-    // another column set after a spanner. Even if it turns out that there are no renderers
-    // following the spanner, there may be bottom margins there, which take up space.
-    auto newSet = createMultiColumnSet(RenderStyle::createAnonymousStyleWithDisplay(multicolContainer->style(), BLOCK));
-    newSet->initializeStyle();
-    auto& set = *newSet;
-    RenderTreeBuilder::current()->insertChildToRenderBlock(*multicolContainer, WTFMove(newSet), insertBeforeMulticolChild);
-    invalidateFragments();
-
-    // We cannot handle immediate column set siblings at the moment (and there's no need for
-    // it, either). There has to be at least one spanner separating them.
-    ASSERT_UNUSED(set, !previousColumnSetOrSpannerSiblingOf(&set) || !previousColumnSetOrSpannerSiblingOf(&set)->isRenderMultiColumnSet());
-    ASSERT(!nextColumnSetOrSpannerSiblingOf(&set) || !nextColumnSetOrSpannerSiblingOf(&set)->isRenderMultiColumnSet());
-    
-    return nextDescendant;
-}
-
 RenderPtr<RenderMultiColumnSet> RenderMultiColumnFlow::createMultiColumnSet(RenderStyle&& style)
 {
     return createRenderer<RenderMultiColumnSet>(*this, WTFMove(style));
-}
-
-void RenderMultiColumnFlow::fragmentedFlowDescendantInserted(RenderObject& newDescendant)
-{
-    if (gShiftingSpanner || newDescendant.isInFlowRenderFragmentedFlow())
-        return;
-
-    auto* subtreeRoot = &newDescendant;
-    auto* descendant = subtreeRoot;
-    while (descendant) {
-        // Skip nested multicolumn flows.
-        if (is<RenderMultiColumnFlow>(*descendant)) {
-            descendant = descendant->nextSibling();
-            continue;
-        }
-        if (is<RenderMultiColumnSpannerPlaceholder>(*descendant)) {
-            // A spanner's placeholder has been inserted. The actual spanner renderer is moved from
-            // where it would otherwise occur (if it weren't a spanner) to becoming a sibling of the
-            // column sets.
-            RenderMultiColumnSpannerPlaceholder& placeholder = downcast<RenderMultiColumnSpannerPlaceholder>(*descendant);
-            ASSERT(!spannerMap().get(placeholder.spanner()));
-            spannerMap().add(placeholder.spanner(), makeWeakPtr(downcast<RenderMultiColumnSpannerPlaceholder>(descendant)));
-            ASSERT(!placeholder.firstChild()); // There should be no children here, but if there are, we ought to skip them.
-        } else
-            descendant = processPossibleSpannerDescendant(subtreeRoot, *descendant);
-        if (descendant)
-            descendant = descendant->nextInPreOrder(subtreeRoot);
-    }
 }
 
 void RenderMultiColumnFlow::handleSpannerRemoval(RenderObject& spanner)
