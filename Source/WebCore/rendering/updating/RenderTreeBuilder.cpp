@@ -405,6 +405,10 @@ void RenderTreeBuilder::removeFromParentAndDestroyCleaningUpAnonymousWrappers(Re
         removeFromParentAndDestroyCleaningUpAnonymousWrappers(destroyRootParent);
     // WARNING: child is deleted here.
 }
+void RenderTreeBuilder::multiColumnRelativeWillBeRemoved(RenderMultiColumnFlow& flow, RenderObject& relative)
+{
+    multiColumnBuilder().multiColumnRelativeWillBeRemoved(flow, relative);
+}
 
 void RenderTreeBuilder::insertChildToRenderInline(RenderInline& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild)
 {

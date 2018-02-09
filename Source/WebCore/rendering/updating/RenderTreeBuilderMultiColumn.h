@@ -41,11 +41,13 @@ public:
     // location in the tree.
     RenderObject* resolveMovedChild(RenderFragmentedFlow& enclosingFragmentedFlow, RenderObject* beforeChild);
     void multiColumnDescendantInserted(RenderMultiColumnFlow&, RenderObject& newDescendant);
+    void multiColumnRelativeWillBeRemoved(RenderMultiColumnFlow&, RenderObject& relative);
 
 private:
     void createFragmentedFlow(RenderBlockFlow&);
     void destroyFragmentedFlow(RenderBlockFlow&);
     RenderObject* processPossibleSpannerDescendant(RenderMultiColumnFlow&, RenderObject*& subtreeRoot, RenderObject& descendant);
+    void handleSpannerRemoval(RenderMultiColumnFlow&, RenderObject& spanner);
 
     RenderTreeBuilder& m_builder;
 };

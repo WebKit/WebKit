@@ -80,6 +80,7 @@ public:
     RenderObject* resolveMovedChildForMultiColumnFlow(RenderFragmentedFlow& enclosingFragmentedFlow, RenderObject* beforeChild);
     void removeFromParentAndDestroyCleaningUpAnonymousWrappers(RenderObject& child);
     void multiColumnDescendantInserted(RenderMultiColumnFlow&, RenderObject& newDescendant);
+    void multiColumnRelativeWillBeRemoved(RenderMultiColumnFlow&, RenderObject& relative);
 
 private:
     class FirstLetter;

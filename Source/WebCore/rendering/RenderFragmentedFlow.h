@@ -86,8 +86,6 @@ public:
 
     virtual bool singleFragmentHasUniformLogicalHeight() const { return true; }
     
-    // Called when a sibling or descendant of the flow thread is about to be removed.
-    virtual void fragmentedFlowRelativeWillBeRemoved(RenderObject&) { }
     // Called when a descendant box's layout is finished and it has been positioned within its container.
     virtual void fragmentedFlowDescendantBoxLaidOut(RenderBox*) { }
 

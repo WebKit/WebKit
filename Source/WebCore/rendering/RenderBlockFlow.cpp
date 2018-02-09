@@ -3852,9 +3852,9 @@ void RenderBlockFlow::addChild(RenderTreeBuilder& builder, RenderPtr<RenderObjec
 RenderPtr<RenderObject> RenderBlockFlow::takeChild(RenderTreeBuilder& builder, RenderObject& oldChild)
 {
     if (!renderTreeBeingDestroyed()) {
-        RenderFragmentedFlow* fragmentedFlow = multiColumnFlow();
+        auto* fragmentedFlow = multiColumnFlow();
         if (fragmentedFlow && fragmentedFlow != &oldChild)
-            fragmentedFlow->fragmentedFlowRelativeWillBeRemoved(oldChild);
+            builder.multiColumnRelativeWillBeRemoved(*fragmentedFlow, oldChild);
     }
     return RenderBlock::takeChild(builder, oldChild);
 }
