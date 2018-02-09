@@ -1,3 +1,12 @@
+2018-02-08  Matt Lewis  <jlewis3@apple.com>
+
+        Marked media/W3C/video/events/event_progress_manual.html as flaky on macOS WK2.
+        https://bugs.webkit.org/show_bug.cgi?id=177663
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
 2018-02-08  Chris Dumez  <cdumez@apple.com>
 
         Form submission after navigation fails when decidePolicyForNavigationAction is async

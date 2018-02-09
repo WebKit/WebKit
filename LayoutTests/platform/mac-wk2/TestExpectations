@@ -881,3 +881,6 @@ webkit.org/b/181753 [ HighSierra Release ] http/wpt/service-workers/update-servi
 webkit.org/b/181957 [ Release ] http/tests/misc/resource-timing-resolution.html [ Pass Failure ]
 
 webkit.org/b/181835 webrtc/captureCanvas-webrtc.html [ Pass Timeout ]
+
+webkit.org/b/177663 media/W3C/video/events/event_progress_manual.html [ Pass Failure ]
+
