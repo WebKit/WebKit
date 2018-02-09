@@ -145,3 +145,4 @@ set(PAL_LIBRARY_TYPE STATIC)
 set(WebKitLegacy_LIBRARY_TYPE SHARED)
 
 find_package(ICU REQUIRED)
+add_definitions(-DUCHAR_TYPE=wchar_t)
