@@ -1,3 +1,141 @@
+2018-02-09  Zalan Bujtas  <zalan@apple.com>
+
+        [RenderTreeBuilder] Introduce RenderTreeBuilder to willBeDestoryed/removeFromParentAndDestroy
+        https://bugs.webkit.org/show_bug.cgi?id=182635
+        <rdar://problem/37377489>
+
+        Reviewed by Antti Koivisto.
+
+        This patch helps finding callsites where we don't have a RenderTreeBuilder instance.
+
+        No change in functionality.
+
+        * dom/Document.cpp:
+        (WebCore::Document::setFullScreenRenderer):
+        * dom/Document.h:
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::willBeDestroyed):
+        (WebCore::RenderBlock::takeChild):
+        * rendering/RenderBlock.h:
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::willBeDestroyed):
+        * rendering/RenderBlockFlow.h:
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::willBeDestroyed):
+        * rendering/RenderBox.h:
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::willBeDestroyed):
+        (WebCore::RenderBoxModelObject::removeAndDestroyAllContinuations):
+        * rendering/RenderBoxModelObject.h:
+        * rendering/RenderButton.cpp:
+        (WebCore::RenderButton::setText):
+        * rendering/RenderCounter.cpp:
+        (WebCore::RenderCounter::willBeDestroyed):
+        * rendering/RenderCounter.h:
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::willBeDestroyed):
+        * rendering/RenderElement.h:
+        * rendering/RenderEmbeddedObject.cpp:
+        (WebCore::RenderEmbeddedObject::willBeDestroyed):
+        * rendering/RenderEmbeddedObject.h:
+        * rendering/RenderFragmentedFlow.cpp:
+        (WebCore::RenderFragmentedFlow::willBeDestroyed):
+        * rendering/RenderFragmentedFlow.h:
+        * rendering/RenderFullScreen.cpp:
+        (WebCore::RenderFullScreen::willBeDestroyed):
+        (WebCore::RenderFullScreen::wrapNewRenderer):
+        (WebCore::RenderFullScreen::wrapExistingRenderer):
+        (WebCore::RenderFullScreen::unwrapRenderer):
+        * rendering/RenderFullScreen.h:
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::willBeDestroyed):
+        * rendering/RenderImage.h:
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::willBeDestroyed):
+        * rendering/RenderInline.h:
+        * rendering/RenderLayerModelObject.cpp:
+        (WebCore::RenderLayerModelObject::willBeDestroyed):
+        * rendering/RenderLayerModelObject.h:
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::willBeDestroyed):
+        * rendering/RenderListBox.h:
+        * rendering/RenderListItem.cpp:
+        (WebCore::RenderListItem::willBeDestroyed):
+        * rendering/RenderListItem.h:
+        * rendering/RenderListMarker.cpp:
+        (WebCore::RenderListMarker::willBeDestroyed):
+        * rendering/RenderListMarker.h:
+        * rendering/RenderMenuList.cpp:
+        (WebCore::RenderMenuList::willBeDestroyed):
+        * rendering/RenderMenuList.h:
+        * rendering/RenderMultiColumnFlow.cpp:
+        (WebCore::RenderMultiColumnFlow::handleSpannerRemoval):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::removeFromParentAndDestroy):
+        (WebCore::RenderObject::willBeDestroyed):
+        (WebCore::RenderObject::destroy):
+        * rendering/RenderObject.h:
+        * rendering/RenderReplaced.cpp:
+        (WebCore::RenderReplaced::willBeDestroyed):
+        * rendering/RenderReplaced.h:
+        * rendering/RenderRuby.cpp:
+        (WebCore::RenderRubyAsInline::takeChild):
+        (WebCore::RenderRubyAsBlock::takeChild):
+        * rendering/RenderSearchField.cpp:
+        (WebCore::RenderSearchField::willBeDestroyed):
+        * rendering/RenderSearchField.h:
+        * rendering/RenderSnapshottedPlugIn.cpp:
+        (WebCore::RenderSnapshottedPlugIn::willBeDestroyed):
+        * rendering/RenderSnapshottedPlugIn.h:
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::willBeDestroyed):
+        * rendering/RenderText.h:
+        * rendering/RenderTextControlMultiLine.cpp:
+        (WebCore::RenderTextControlMultiLine::willBeDestroyed):
+        * rendering/RenderTextControlMultiLine.h:
+        * rendering/RenderTextFragment.cpp:
+        (WebCore::RenderTextFragment::willBeDestroyed):
+        (WebCore::RenderTextFragment::setText):
+        * rendering/RenderTextFragment.h:
+        * rendering/RenderVideo.cpp:
+        (WebCore::RenderVideo::willBeDestroyed):
+        * rendering/RenderVideo.h:
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::willBeDestroyed):
+        * rendering/RenderView.h:
+        * rendering/RenderWidget.cpp:
+        (WebCore::RenderWidget::willBeDestroyed):
+        * rendering/RenderWidget.h:
+        * rendering/svg/RenderSVGBlock.cpp:
+        (WebCore::RenderSVGBlock::willBeDestroyed):
+        * rendering/svg/RenderSVGBlock.h:
+        * rendering/svg/RenderSVGImage.cpp:
+        (WebCore::RenderSVGImage::willBeDestroyed):
+        * rendering/svg/RenderSVGImage.h:
+        * rendering/svg/RenderSVGInline.cpp:
+        (WebCore::RenderSVGInline::willBeDestroyed):
+        * rendering/svg/RenderSVGInline.h:
+        * rendering/svg/RenderSVGModelObject.cpp:
+        (WebCore::RenderSVGModelObject::willBeDestroyed):
+        * rendering/svg/RenderSVGModelObject.h:
+        * rendering/svg/RenderSVGResourceContainer.cpp:
+        (WebCore::RenderSVGResourceContainer::willBeDestroyed):
+        * rendering/svg/RenderSVGResourceContainer.h:
+        * rendering/svg/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::willBeDestroyed):
+        * rendering/svg/RenderSVGRoot.h:
+        * rendering/svg/RenderSVGText.cpp:
+        (WebCore::RenderSVGText::willBeDestroyed):
+        * rendering/svg/RenderSVGText.h:
+        * rendering/updating/RenderTreeBuilder.cpp:
+        (WebCore::RenderTreeBuilder::removeFromParentAndDestroyCleaningUpAnonymousWrappers):
+        * rendering/updating/RenderTreeBuilderList.cpp:
+        (WebCore::RenderTreeBuilder::List::updateItemMarker):
+        * rendering/updating/RenderTreeBuilderMultiColumn.cpp:
+        (WebCore::RenderTreeBuilder::MultiColumn::destroyFragmentedFlow):
+        * rendering/updating/RenderTreeBuilderRuby.cpp:
+        (WebCore::RenderTreeBuilder::Ruby::moveBlockChildren):
+
 2018-02-09  Brent Fulgham  <bfulgham@apple.com>
 
         [macOS, iOS] Expose OS marketing version in UserAgent

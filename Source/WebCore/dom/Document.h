@@ -152,6 +152,7 @@ class ProcessingInstruction;
 class QualifiedName;
 class Range;
 class RenderFullScreen;
+class RenderTreeBuilder;
 class RenderView;
 class RequestAnimationFrameCallback;
 class SVGDocumentExtensions;
@@ -1130,7 +1131,7 @@ public:
     WEBCORE_EXPORT void webkitWillExitFullScreenForElement(Element*);
     WEBCORE_EXPORT void webkitDidExitFullScreenForElement(Element*);
     
-    void setFullScreenRenderer(RenderFullScreen*);
+    void setFullScreenRenderer(RenderTreeBuilder&, RenderFullScreen*);
     RenderFullScreen* fullScreenRenderer() const { return m_fullScreenRenderer.get(); }
 
     void fullScreenChangeDelayTimerFired();

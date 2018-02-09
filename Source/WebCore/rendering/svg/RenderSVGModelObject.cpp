@@ -92,10 +92,10 @@ void RenderSVGModelObject::absoluteQuads(Vector<FloatQuad>& quads, bool* wasFixe
     quads.append(localToAbsoluteQuad(strokeBoundingBox(), UseTransforms, wasFixed));
 }
 
-void RenderSVGModelObject::willBeDestroyed()
+void RenderSVGModelObject::willBeDestroyed(RenderTreeBuilder& builder)
 {
     SVGResourcesCache::clientDestroyed(*this);
-    RenderElement::willBeDestroyed();
+    RenderElement::willBeDestroyed(builder);
 }
 
 void RenderSVGModelObject::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)

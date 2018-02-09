@@ -149,10 +149,10 @@ RenderImage::~RenderImage()
     // Do not add any code here. Add it to willBeDestroyed() instead.
 }
 
-void RenderImage::willBeDestroyed()
+void RenderImage::willBeDestroyed(RenderTreeBuilder& builder)
 {
     imageResource().shutdown();
-    RenderReplaced::willBeDestroyed();
+    RenderReplaced::willBeDestroyed(builder);
 }
 
 // If we'll be displaying either alt text or an image, add some padding.

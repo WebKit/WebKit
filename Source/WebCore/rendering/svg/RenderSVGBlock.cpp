@@ -71,10 +71,10 @@ void RenderSVGBlock::absoluteRects(Vector<IntRect>&, const LayoutPoint&) const
     ASSERT_NOT_REACHED();
 }
 
-void RenderSVGBlock::willBeDestroyed()
+void RenderSVGBlock::willBeDestroyed(RenderTreeBuilder& builder)
 {
     SVGResourcesCache::clientDestroyed(*this);
-    RenderBlockFlow::willBeDestroyed();
+    RenderBlockFlow::willBeDestroyed(builder);
 }
 
 void RenderSVGBlock::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)

@@ -194,7 +194,7 @@ protected:
     virtual LayoutUnit initialLogicalWidth() const { return 0; };
     
     void clearLinesToFragmentMap();
-    void willBeDestroyed() override;
+    void willBeDestroyed(RenderTreeBuilder&) override;
 
     void mapLocalToContainer(const RenderLayerModelObject* repaintContainer, TransformState&, MapCoordinatesFlags, bool* wasFixed) const override;
 

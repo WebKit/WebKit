@@ -128,7 +128,12 @@ void RenderButton::setText(const String& str)
         m_buttonText->setText(str.impl());
         return;
     }
-    m_buttonText->removeFromParentAndDestroy();
+    if (RenderTreeBuilder::current())
+        m_buttonText->removeFromParentAndDestroy(*RenderTreeBuilder::current());
+    else {
+        RenderTreeBuilder builder(*document().renderView());
+        m_buttonText->removeFromParentAndDestroy(builder);
+    }
 }
 
 String RenderButton::text() const

@@ -43,7 +43,7 @@ public:
     void updateCounter();
 
 private:
-    void willBeDestroyed() override;
+    void willBeDestroyed(RenderTreeBuilder&) override;
     
     const char* renderName() const override;
     bool isCounter() const override;

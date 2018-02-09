@@ -323,7 +323,7 @@ public:
     
 protected:
     RenderFragmentedFlow* locateEnclosingFragmentedFlow() const override;
-    void willBeDestroyed() override;
+    void willBeDestroyed(RenderTreeBuilder&) override;
 
     void layout() override;
 

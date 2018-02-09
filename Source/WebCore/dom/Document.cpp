@@ -6297,7 +6297,7 @@ void Document::webkitDidExitFullScreenForElement(Element*)
     exitingDocument.m_fullScreenChangeDelayTimer.startOneShot(0_s);
 }
 
-void Document::setFullScreenRenderer(RenderFullScreen* renderer)
+void Document::setFullScreenRenderer(RenderTreeBuilder& builder, RenderFullScreen* renderer)
 {
     if (renderer == m_fullScreenRenderer)
         return;
@@ -6312,7 +6312,7 @@ void Document::setFullScreenRenderer(RenderFullScreen* renderer)
     }
 
     if (m_fullScreenRenderer)
-        m_fullScreenRenderer->removeFromParentAndDestroy();
+        m_fullScreenRenderer->removeFromParentAndDestroy(builder);
     ASSERT(!m_fullScreenRenderer);
 
     m_fullScreenRenderer = makeWeakPtr(renderer);

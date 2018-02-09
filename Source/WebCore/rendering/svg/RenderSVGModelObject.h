@@ -69,7 +69,7 @@ public:
 protected:
     RenderSVGModelObject(SVGElement&, RenderStyle&&);
 
-    void willBeDestroyed() override;
+    void willBeDestroyed(RenderTreeBuilder&) override;
 
 private:
     bool isRenderSVGModelObject() const final { return true; }

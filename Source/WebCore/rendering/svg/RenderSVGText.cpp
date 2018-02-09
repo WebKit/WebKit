@@ -225,12 +225,12 @@ static inline void checkLayoutAttributesConsistency(RenderSVGText* text, Vector<
 #endif
 }
 
-void RenderSVGText::willBeDestroyed()
+void RenderSVGText::willBeDestroyed(RenderTreeBuilder& builder)
 {
     m_layoutAttributes.clear();
     m_layoutAttributesBuilder.clearTextPositioningElements();
 
-    RenderSVGBlock::willBeDestroyed();
+    RenderSVGBlock::willBeDestroyed(builder);
 }
 
 void RenderSVGText::subtreeChildWillBeRemoved(RenderObject* child, Vector<SVGTextLayoutAttributes*, 2>& affectedAttributes)

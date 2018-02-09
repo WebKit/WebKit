@@ -35,7 +35,7 @@ public:
     HTMLTextAreaElement& textAreaElement() const;
 
 private:
-    void willBeDestroyed() override;
+    void willBeDestroyed(RenderTreeBuilder&) override;
     void element() const = delete;
 
     bool isTextArea() const override { return true; }

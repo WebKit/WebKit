@@ -1050,7 +1050,7 @@ inline void RenderElement::clearSubtreeLayoutRootIfNeeded() const
     view().frameView().layoutContext().clearSubtreeLayoutRoot();
 }
 
-void RenderElement::willBeDestroyed()
+void RenderElement::willBeDestroyed(RenderTreeBuilder& builder)
 {
     if (m_style.hasFixedBackgroundImage() && !settings().fixedBackgroundsPaintRelativeToDocument())
         view().frameView().removeSlowRepaintObject(*this);
@@ -1060,7 +1060,7 @@ void RenderElement::willBeDestroyed()
     if (hasCounterNodeMap())
         RenderCounter::destroyCounterNodes(*this);
 
-    RenderObject::willBeDestroyed();
+    RenderObject::willBeDestroyed(builder);
 
     clearSubtreeLayoutRootIfNeeded();
 

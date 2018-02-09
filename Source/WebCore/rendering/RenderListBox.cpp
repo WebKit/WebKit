@@ -104,11 +104,11 @@ RenderListBox::~RenderListBox()
     // Do not add any code here. Add it to willBeDestroyed() instead.
 }
 
-void RenderListBox::willBeDestroyed()
+void RenderListBox::willBeDestroyed(RenderTreeBuilder& builder)
 {
     setHasVerticalScrollbar(false);
     view().frameView().removeScrollableArea(this);
-    RenderBlockFlow::willBeDestroyed();
+    RenderBlockFlow::willBeDestroyed(builder);
 }
 
 HTMLSelectElement& RenderListBox::selectElement() const

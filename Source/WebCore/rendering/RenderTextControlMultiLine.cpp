@@ -45,12 +45,12 @@ RenderTextControlMultiLine::~RenderTextControlMultiLine()
     // Do not add any code here. Add it to willBeDestroyed() instead.
 }
 
-void RenderTextControlMultiLine::willBeDestroyed()
+void RenderTextControlMultiLine::willBeDestroyed(RenderTreeBuilder& builder)
 {
     if (textAreaElement().isConnected())
         textAreaElement().rendererWillBeDestroyed();
 
-    RenderTextControl::willBeDestroyed();
+    RenderTextControl::willBeDestroyed(builder);
 }
 
 HTMLTextAreaElement& RenderTextControlMultiLine::textAreaElement() const

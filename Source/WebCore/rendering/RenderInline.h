@@ -97,7 +97,7 @@ public:
     void addChildIgnoringContinuation(RenderTreeBuilder&, RenderPtr<RenderObject> newChild, RenderObject* beforeChild = nullptr) final;
 
 protected:
-    void willBeDestroyed() override;
+    void willBeDestroyed(RenderTreeBuilder&) override;
 
     void styleWillChange(StyleDifference, const RenderStyle& newStyle) override;
     void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override;

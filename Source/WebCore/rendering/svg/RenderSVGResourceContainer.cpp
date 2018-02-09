@@ -55,7 +55,7 @@ void RenderSVGResourceContainer::layout()
     RenderSVGHiddenContainer::layout();
 }
 
-void RenderSVGResourceContainer::willBeDestroyed()
+void RenderSVGResourceContainer::willBeDestroyed(RenderTreeBuilder& builder)
 {
     SVGResourcesCache::resourceDestroyed(*this);
 
@@ -64,7 +64,7 @@ void RenderSVGResourceContainer::willBeDestroyed()
         m_registered = false;
     }
 
-    RenderSVGHiddenContainer::willBeDestroyed();
+    RenderSVGHiddenContainer::willBeDestroyed(builder);
 }
 
 void RenderSVGResourceContainer::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)

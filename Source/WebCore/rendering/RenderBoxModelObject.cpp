@@ -237,10 +237,10 @@ RenderBoxModelObject::~RenderBoxModelObject()
     // Do not add any code here. Add it to willBeDestroyed() instead.
 }
 
-void RenderBoxModelObject::willBeDestroyed()
+void RenderBoxModelObject::willBeDestroyed(RenderTreeBuilder& builder)
 {
     if (continuation() && !isContinuation()) {
-        removeAndDestroyAllContinuations();
+        removeAndDestroyAllContinuations(builder);
         ASSERT(!continuation());
     }
     if (hasContinuationChainNode())
@@ -252,7 +252,7 @@ void RenderBoxModelObject::willBeDestroyed()
     if (!renderTreeBeingDestroyed())
         view().imageQualityController().rendererWillBeDestroyed(*this);
 
-    RenderLayerModelObject::willBeDestroyed();
+    RenderLayerModelObject::willBeDestroyed(builder);
 }
 
 bool RenderBoxModelObject::hasVisibleBoxDecorationStyle() const
@@ -2551,14 +2551,14 @@ auto RenderBoxModelObject::ensureContinuationChainNode() -> ContinuationChainNod
     }).iterator->value;
 }
 
-void RenderBoxModelObject::removeAndDestroyAllContinuations()
+void RenderBoxModelObject::removeAndDestroyAllContinuations(RenderTreeBuilder& builder)
 {
     ASSERT(!isContinuation());
     ASSERT(hasContinuationChainNode());
     ASSERT(continuationChainNodeMap().contains(this));
     auto& continuationChainNode = *continuationChainNodeMap().get(this);
     while (continuationChainNode.next)
-        continuationChainNode.next->renderer->removeFromParentAndDestroy();
+        continuationChainNode.next->renderer->removeFromParentAndDestroy(builder);
     removeFromContinuationChain();
 }
 

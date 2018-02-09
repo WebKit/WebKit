@@ -343,7 +343,7 @@ RenderBlock::~RenderBlock()
 }
 
 // Note that this is not called for RenderBlockFlows.
-void RenderBlock::willBeDestroyed()
+void RenderBlock::willBeDestroyed(RenderTreeBuilder& builder)
 {
     if (!renderTreeBeingDestroyed()) {
         if (parent())
@@ -352,7 +352,7 @@ void RenderBlock::willBeDestroyed()
 
     blockWillBeDestroyed();
 
-    RenderBox::willBeDestroyed();
+    RenderBox::willBeDestroyed(builder);
 }
 
 void RenderBlock::blockWillBeDestroyed()
@@ -578,7 +578,7 @@ RenderPtr<RenderObject> RenderBlock::takeChild(RenderTreeBuilder& builder, Rende
             
             // Delete the now-empty block's lines and nuke it.
             nextBlock.deleteLines();
-            nextBlock.removeFromParentAndDestroy();
+            nextBlock.removeFromParentAndDestroy(builder);
             next = nullptr;
         }
     }

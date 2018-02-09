@@ -287,7 +287,7 @@ void RenderText::removeAndDestroyTextBoxes()
     m_lineBoxes.deleteAll();
 }
 
-void RenderText::willBeDestroyed()
+void RenderText::willBeDestroyed(RenderTreeBuilder& builder)
 {
     secureTextTimers().remove(this);
 
@@ -298,7 +298,7 @@ void RenderText::willBeDestroyed()
 
     setInlineWrapperForDisplayContents(nullptr);
 
-    RenderObject::willBeDestroyed();
+    RenderObject::willBeDestroyed(builder);
 }
 
 void RenderText::deleteLineBoxesBeforeSimpleLineLayout()
