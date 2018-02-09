@@ -1,3 +1,27 @@
+2018-02-08  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Always expose "composite" in output of getKeyframes()
+        https://bugs.webkit.org/show_bug.cgi?id=182600
+
+        Reviewed by Dean Jackson.
+
+        The Web Animations spec has changed and whereas the output of getKeyframes() would not feature the "composite" property
+        for "null" values, it now lists "composite" in all cases.
+
+        To support this, we needed to fix an issue in the code generator such that a "null" default value for an optional enum
+        type was supported.
+
+        * animation/KeyframeEffect.cpp:
+        (WebCore::KeyframeEffect::getKeyframes):
+        * animation/KeyframeEffect.h:
+        * animation/KeyframeEffect.idl:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateDefaultValue):
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::convertDictionary<TestObj::Dictionary>):
+        (WebCore::convertDictionaryToJS):
+        * bindings/scripts/test/TestObj.idl:
+
 2018-02-08  Youenn Fablet  <youenn@apple.com>
 
         CoreAudioCaptureSourceIOSListener should be a WebProcess singleton

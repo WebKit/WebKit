@@ -1,3 +1,16 @@
+2018-02-08  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Always expose "composite" in output of getKeyframes()
+        https://bugs.webkit.org/show_bug.cgi?id=182600
+
+        Reviewed by Dean Jackson.
+
+        Update expected results to account for a number of progressions.
+
+        * web-platform-tests/web-animations/interfaces/Animatable/animate-expected.txt:
+        * web-platform-tests/web-animations/interfaces/KeyframeEffect/composite-expected.txt:
+        * web-platform-tests/web-animations/interfaces/KeyframeEffect/setKeyframes-expected.txt:
+
 2018-02-07  Youenn Fablet  <youenn@apple.com>
 
         Remove www1/www2 URLs from service worker tests

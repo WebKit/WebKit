@@ -637,6 +637,18 @@ template<> TestObj::Dictionary convertDictionary<TestObj::Dictionary>(ExecState&
         RETURN_IF_EXCEPTION(throwScope, { });
     } else
         result.largeIntegerWithDefault = 0;
+    JSValue nullableEnumValue;
+    if (isNullOrUndefined)
+        nullableEnumValue = jsUndefined();
+    else {
+        nullableEnumValue = object->get(&state, Identifier::fromString(&state, "nullableEnum"));
+        RETURN_IF_EXCEPTION(throwScope, { });
+    }
+    if (!nullableEnumValue.isUndefined()) {
+        result.nullableEnum = convert<IDLNullable<IDLEnumeration<TestObj::EnumType>>>(state, nullableEnumValue);
+        RETURN_IF_EXCEPTION(throwScope, { });
+    } else
+        result.nullableEnum = std::nullopt;
     JSValue nullableIntegerWithDefaultValue;
     if (isNullOrUndefined)
         nullableIntegerWithDefaultValue = jsUndefined();
@@ -999,6 +1011,8 @@ JSC::JSObject* convertDictionaryToJS(JSC::ExecState& state, JSDOMGlobalObject& g
     }
     auto largeIntegerWithDefaultValue = toJS<IDLLongLong>(dictionary.largeIntegerWithDefault);
     result->putDirect(vm, JSC::Identifier::fromString(&vm, "largeIntegerWithDefault"), largeIntegerWithDefaultValue);
+    auto nullableEnumValue = toJS<IDLNullable<IDLEnumeration<TestObj::EnumType>>>(state, dictionary.nullableEnum);
+    result->putDirect(vm, JSC::Identifier::fromString(&vm, "nullableEnum"), nullableEnumValue);
     auto nullableIntegerWithDefaultValue = toJS<IDLNullable<IDLLong>>(dictionary.nullableIntegerWithDefault);
     result->putDirect(vm, JSC::Identifier::fromString(&vm, "nullableIntegerWithDefault"), nullableIntegerWithDefaultValue);
     auto nullableNodeValue = toJS<IDLNullable<IDLInterface<Node>>>(state, globalObject, dictionary.nullableNode);

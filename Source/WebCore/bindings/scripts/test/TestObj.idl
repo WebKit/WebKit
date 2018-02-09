@@ -490,6 +490,7 @@ typedef any AnyTypedef;
     unsigned long long unsignedLargeIntegerWithDefault = 0;
     long? nullableIntegerWithDefault = null;
     Node? nullableNode = null;
+    TestEnumType? nullableEnum = null;
     any anyValue;
     any anyValueWithNullDefault = null;
     [ImplementedAs=foo] any fooAlias;

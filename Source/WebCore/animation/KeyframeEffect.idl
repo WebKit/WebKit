@@ -48,4 +48,5 @@ dictionary BasePropertyIndexedKeyframe {
      double? offset = null;
      double computedOffset;
      DOMString easing = "linear";
+     CompositeOperation? composite = null;
 };
