@@ -42,6 +42,9 @@ public:
     Ruby(RenderTreeBuilder&);
 
     void insertChild(RenderRubyRun& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild);
+    RenderPtr<RenderObject> takeChild(RenderRubyAsInline& parent, RenderObject& child);
+    RenderPtr<RenderObject> takeChild(RenderRubyAsBlock& parent, RenderObject& child);
+
     RenderElement& findOrCreateParentForChild(RenderRubyAsBlock& parent, const RenderObject& child, RenderObject*& beforeChild);
     RenderElement& findOrCreateParentForChild(RenderRubyAsInline& parent, const RenderObject& child, RenderObject*& beforeChild);
 

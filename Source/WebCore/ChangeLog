@@ -1,3 +1,28 @@
+2018-02-09  Zalan Bujtas  <zalan@apple.com>
+
+        [RenderTreeBuilder] Move RenderRubyAsInline/AsBlock::takeChild mutation to a RenderTreeBuilder
+        https://bugs.webkit.org/show_bug.cgi?id=182651
+        <rdar://problem/37405042>
+
+        Reviewed by Antti Koivisto.
+
+        No change in functionality.
+
+        * rendering/RenderRuby.cpp:
+        (WebCore::RenderRubyAsInline::takeChild):
+        (WebCore::RenderRubyAsBlock::takeChild):
+        (WebCore::isAnonymousRubyInlineBlock): Deleted.
+        (WebCore::isRubyChildForNormalRemoval): Deleted.
+        (WebCore::findRubyRunParent): Deleted.
+        * rendering/updating/RenderTreeBuilder.cpp:
+        (WebCore::RenderTreeBuilder::takeChildFromRenderRubyAsInline):
+        (WebCore::RenderTreeBuilder::takeChildFromRenderRubyAsBlock):
+        * rendering/updating/RenderTreeBuilder.h:
+        * rendering/updating/RenderTreeBuilderRuby.cpp:
+        (WebCore::findRubyRunParent):
+        (WebCore::RenderTreeBuilder::Ruby::takeChild):
+        * rendering/updating/RenderTreeBuilderRuby.h:
+
 2018-02-09  Per Arne Vollan  <pvollan@apple.com>
 
         Assert that NSApp is not running in the WebProcess.

@@ -45,39 +45,6 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(RenderRubyAsInline);
 WTF_MAKE_ISO_ALLOCATED_IMPL(RenderRubyAsBlock);
 
-//=== generic helper functions to avoid excessive code duplication ===
-
-static inline bool isAnonymousRubyInlineBlock(const RenderObject* object)
-{
-    ASSERT(!object
-        || !isRuby(object->parent())
-        || is<RenderRubyRun>(*object)
-        || (object->isInline() && (object->isBeforeContent() || object->isAfterContent()))
-        || (object->isAnonymous() && is<RenderBlock>(*object) && object->style().display() == INLINE_BLOCK));
-
-    return object
-        && isRuby(object->parent())
-        && is<RenderBlock>(*object)
-        && !is<RenderRubyRun>(*object);
-}
-
-#ifndef ASSERT_DISABLED
-static inline bool isRubyChildForNormalRemoval(const RenderObject& object)
-{
-    return object.isRubyRun()
-    || object.isBeforeContent()
-    || object.isAfterContent()
-    || object.isRenderMultiColumnFlow()
-    || object.isRenderMultiColumnSet()
-    || isAnonymousRubyInlineBlock(&object);
-}
-#endif
-
-static inline RenderRubyRun& findRubyRunParent(RenderObject& child)
-{
-    return *lineageOfType<RenderRubyRun>(child).first();
-}
-
 //=== ruby as inline object ===
 
 RenderRubyAsInline::RenderRubyAsInline(Element& element, RenderStyle&& style)
@@ -95,26 +62,7 @@ void RenderRubyAsInline::styleDidChange(StyleDifference diff, const RenderStyle*
 
 RenderPtr<RenderObject> RenderRubyAsInline::takeChild(RenderTreeBuilder& builder, RenderObject& child)
 {
-    // If the child's parent is *this (must be a ruby run or generated content or anonymous block),
-    // just use the normal remove method.
-    if (child.parent() == this) {
-#ifndef ASSERT_DISABLED
-        ASSERT(isRubyChildForNormalRemoval(child));
-#endif
-        return RenderInline::takeChild(builder, child);
-    }
-    // If the child's parent is an anoymous block (must be generated :before/:after content)
-    // just use the block's remove method.
-    if (isAnonymousRubyInlineBlock(child.parent())) {
-        ASSERT(child.isBeforeContent() || child.isAfterContent());
-        auto& parent = *child.parent();
-        auto takenChild = parent.takeChild(builder, child);
-        parent.removeFromParentAndDestroy(builder);
-        return takenChild;
-    }
-
-    // Otherwise find the containing run and remove it from there.
-    return findRubyRunParent(child).takeChild(builder, child);
+    return builder.takeChildFromRenderRubyAsInline(*this, child);
 }
 
 //=== ruby as block object ===
@@ -134,26 +82,7 @@ void RenderRubyAsBlock::styleDidChange(StyleDifference diff, const RenderStyle* 
 
 RenderPtr<RenderObject> RenderRubyAsBlock::takeChild(RenderTreeBuilder& builder, RenderObject& child)
 {
-    // If the child's parent is *this (must be a ruby run or generated content or anonymous block),
-    // just use the normal remove method.
-    if (child.parent() == this) {
-#ifndef ASSERT_DISABLED
-        ASSERT(isRubyChildForNormalRemoval(child));
-#endif
-        return RenderBlockFlow::takeChild(builder, child);
-    }
-    // If the child's parent is an anoymous block (must be generated :before/:after content)
-    // just use the block's remove method.
-    if (isAnonymousRubyInlineBlock(child.parent())) {
-        ASSERT(child.isBeforeContent() || child.isAfterContent());
-        auto& parent = *child.parent();
-        auto takenChild = parent.takeChild(builder, child);
-        parent.removeFromParentAndDestroy(builder);
-        return takenChild;
-    }
-
-    // Otherwise find the containing run and remove it from there.
-    return findRubyRunParent(child).takeChild(builder, child);
+    return builder.takeChildFromRenderRubyAsBlock(*this, child);
 }
 
 } // namespace WebCore
