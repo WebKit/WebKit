@@ -322,7 +322,7 @@
     <dependencies>
       <dep package="pixman"/>
     </dependencies>
-    <branch module="/releases/individual/xserver/xorg-server-1.19.6.tar.bz2" version="1.16.4"
+    <branch module="/releases/individual/xserver/xorg-server-${version}.tar.bz2" version="1.19.6"
             repo="xorg"
             hash="sha256:a732502f1db000cf36a376cd0c010ffdbf32ecdd7f1fa08ba7f5bdf9601cc197"
             md5sum="3e47777ff034a331aed2322b078694a8">
@@ -335,18 +335,18 @@
              autogen-sh="configure"
              autogenargs="--disable-documentation">
     <pkg-config>wayland-server.pc</pkg-config>
-    <branch module="releases/wayland-1.12.0.tar.xz"
-            version="1.12.0"
+    <branch module="releases/wayland-${version}.tar.xz"
+            version="1.14.0"
             repo="wayland.freedesktop.org"
-            hash="sha256:d6b4135cba0188abcb7275513c72dede751d6194f6edc5b82183a3ba8b821ab1"/>
+            hash="sha256:ed80cabc0961a759a42092e2c39aabfc1ec9a13c86c98bbe2b812f008da27ab8"/>
   </autotools>
 
   <autotools id="wayland-protocols"
              autogen-sh="configure">
-    <branch module="releases/wayland-protocols-1.7.tar.xz"
-            version="1.7"
+    <branch module="releases/wayland-protocols-${version}.tar.xz"
+            version="1.12"
 	    repo="wayland.freedesktop.org"
-	    hash="sha256:635f2a937d318f1fecb97b54074ca211486e38af943868dd0fa82ea38d091c1f"/>
+	    hash="sha256:3b19e8a9e1e19474756a7069db23b90ca9b8ebb438448c6063b4a7fc89b7c8b2"/>
   </autotools>
 
   <autotools id="weston"
@@ -361,12 +361,10 @@
       <dep package="libinput"/>
       <dep package="wayland-protocols"/>
     </dependencies>
-    <branch module="releases/weston-1.12.0.tar.xz"
-            version="1.12.0"
+    <branch module="releases/weston-${version}.tar.xz"
+            version="3.0.0"
             repo="wayland.freedesktop.org"
-            hash="sha256:ac7ac2a32e3b9f50131fccded5d2326bd36b2226712d90b61999118a09af5033">
-      <patch file="weston-libweston-include-weston-egl-ext.h-in-drm-x11-and-wa.patch" strip="1"/>
-    </branch>
+            hash="sha256:cde1d55e8dd70c3cbb3d1ec72f60e60000041579caa1d6a262bd9c35e93723a5"/>
   </autotools>
 
   <autotools id="gtk-doc" autogen-sh="configure">
@@ -383,9 +381,9 @@
 
   <autotools id="libdrm" autogen-sh="configure">
     <pkg-config>libdrm.pc</pkg-config>
-    <branch module="/libdrm/libdrm-2.4.65.tar.bz2" version="2.4.65"
+    <branch module="/libdrm/libdrm-${version}.tar.bz2" version="2.4.89"
             repo="dri.freedesktop.org"
-            hash="sha256:71960ac8bde7d710992b1bc8879935e8300a870c36bd06f22412d0447e3d96c4"/>
+            hash="sha256:629f9782aabbb4809166de5f24d26fe0766055255038f16935602d89f136a02e"/>
   </autotools>
 
   <autotools id="mesa"
@@ -395,10 +393,10 @@
     <!--- WARNING: At jhbuildrc, when we define the path to the Gallium llvmpipe software rasterizer (needed by XvfbDriver),
           we assume that the directory is named "Mesa". So, don't change the checkoutdir name even if you update the version.  -->
     <branch checkoutdir="Mesa"
-            version="11.0.6"
-            module="/archive/older-versions/11.x/${version}/mesa-${version}.tar.xz"
+            version="17.3.3"
+            module="/archive/mesa-${version}.tar.xz"
             repo="mesa.freedesktop.org"
-            hash="sha256:8340e64cdc91999840404c211496f3de38e7b4cb38db34e2f72f1642c5134760">
+            hash="sha256:41bac5de0ef6adc1f41a1ec0f80c19e361298ce02fa81b5f9ba4fdca33a9379b">
     </branch>
     <dependencies>
       <dep package="llvm"/>
