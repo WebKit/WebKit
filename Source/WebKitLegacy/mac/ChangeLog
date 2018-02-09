@@ -1,3 +1,10 @@
+2018-02-09  Per Arne Vollan  <pvollan@apple.com>
+
+        Unreviewed 32-bit build fix after <https://trac.webkit.org/changeset/228308>.
+
+        * WebView/WebWindowAnimation.mm:
+        (-[WebWindowScaleAnimation additionalDurationNeededToReachFinalFrame]):
+
 2018-02-08  Per Arne Vollan  <pvollan@apple.com>
 
         Move WebVideoFullscreenController from WebCore to WebKitLegacy.

@@ -210,7 +210,7 @@ static void setScaledFrameForWindow(NSWindow *window, NSRect scaleFrame, NSRect 
     if (dist > maxDist)
         maxDist = dist;
     
-    return std::min(sqrt(maxDist) * speedFactor, maxAdditionalDuration);
+    return std::min(static_cast<CGFloat>(sqrt(maxDist) * speedFactor), maxAdditionalDuration);
 }
 
 - (void)startAnimation
