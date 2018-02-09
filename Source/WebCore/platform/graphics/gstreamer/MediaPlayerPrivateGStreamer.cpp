@@ -233,6 +233,14 @@ void MediaPlayerPrivateGStreamer::setPlaybinURL(const URL& url)
 
 void MediaPlayerPrivateGStreamer::load(const String& urlString)
 {
+    // FIXME: This method is still called even if supportsType() returned
+    // IsNotSupported. This would deserve more investigation but meanwhile make
+    // sure we don't ever try to play animated gif assets.
+    if (m_player->contentMIMEType() == "image/gif") {
+        loadingFailed(MediaPlayer::FormatError);
+        return;
+    }
+
     if (!MediaPlayerPrivateGStreamerBase::initializeGStreamerAndRegisterWebKitElements())
         return;
 
