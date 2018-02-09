@@ -1,3 +1,15 @@
+2018-02-09  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Add a way to check if a host is an IP address
+        https://bugs.webkit.org/show_bug.cgi?id=182427
+
+        Reviewed by Alex Christensen.
+
+        Add unit test for URL::hostIsIPAddress().
+
+        * TestWebKitAPI/Tests/WebCore/URL.cpp:
+        (TestWebKitAPI::TEST_F):
+
 2018-02-09  Philippe Normand  <pnormand@igalia.com>
 
         [GStreamer] Layout test fast/replaced/border-radius-clip.html crashes with GStreamer-CRITICAL **: gst_segment_to_stream_time: assertion 'segment->format == format' failed in gst_segment_to_stream_time()

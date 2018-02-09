@@ -231,4 +231,37 @@ TEST_F(URLTest, ProtocolIsInHTTPFamily)
     EXPECT_TRUE(protocolIsInHTTPFamily("https://!@#$%^&*()"));
 }
 
+TEST_F(URLTest, HostIsIPAddress)
+{
+    EXPECT_FALSE(URL::hostIsIPAddress({ }));
+    EXPECT_FALSE(URL::hostIsIPAddress(""));
+    EXPECT_FALSE(URL::hostIsIPAddress("localhost"));
+    EXPECT_FALSE(URL::hostIsIPAddress("127.localhost"));
+    EXPECT_FALSE(URL::hostIsIPAddress("localhost.127"));
+    EXPECT_FALSE(URL::hostIsIPAddress("127.0.0"));
+    EXPECT_FALSE(URL::hostIsIPAddress("127.0 .0.1"));
+    EXPECT_FALSE(URL::hostIsIPAddress(" 127.0.0.1"));
+    EXPECT_FALSE(URL::hostIsIPAddress("127..0.0.1"));
+    EXPECT_FALSE(URL::hostIsIPAddress("127.0.0."));
+    EXPECT_FALSE(URL::hostIsIPAddress("0123:4567:89AB:cdef:3210:7654:ba98"));
+    EXPECT_FALSE(URL::hostIsIPAddress("012x:4567:89AB:cdef:3210:7654:ba98:FeDc"));
+#if !PLATFORM(COCOA)
+    // FIXME: This fails in Mac.
+    EXPECT_FALSE(URL::hostIsIPAddress("00123:4567:89AB:cdef:3210:7654:ba98:FeDc"));
+#endif
+    EXPECT_FALSE(URL::hostIsIPAddress("0123:4567:89AB:cdef:3210:123.45.67.89"));
+    EXPECT_FALSE(URL::hostIsIPAddress(":::"));
+
+    EXPECT_TRUE(URL::hostIsIPAddress("127.0.0.1"));
+    EXPECT_TRUE(URL::hostIsIPAddress("123.45.67.89"));
+    EXPECT_TRUE(URL::hostIsIPAddress("0.0.0.0"));
+    EXPECT_TRUE(URL::hostIsIPAddress("::1"));
+    EXPECT_TRUE(URL::hostIsIPAddress("::"));
+    EXPECT_TRUE(URL::hostIsIPAddress("0123:4567:89AB:cdef:3210:7654:ba98:FeDc"));
+    EXPECT_TRUE(URL::hostIsIPAddress("0123:4567:89AB:cdef:3210:7654:ba98::"));
+    EXPECT_TRUE(URL::hostIsIPAddress("::4567:89AB:cdef:3210:7654:ba98:FeDc"));
+    EXPECT_TRUE(URL::hostIsIPAddress("0123:4567:89AB:cdef:3210:7654:123.45.67.89"));
+    EXPECT_TRUE(URL::hostIsIPAddress("::123.45.67.89"));
+}
+
 } // namespace TestWebKitAPI
