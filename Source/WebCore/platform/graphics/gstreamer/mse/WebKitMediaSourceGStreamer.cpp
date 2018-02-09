@@ -452,18 +452,13 @@ gboolean webKitMediaSrcQueryWithParent(GstPad* pad, GstObject* parent, GstQuery*
 
 void webKitMediaSrcUpdatePresentationSize(GstCaps* caps, Stream* stream)
 {
-    GstStructure* structure = gst_caps_get_structure(caps, 0);
-    const gchar* structureName = gst_structure_get_name(structure);
-    GstVideoInfo info;
-
     GST_OBJECT_LOCK(stream->parent);
-    if (g_str_has_prefix(structureName, "video/") && gst_video_info_from_caps(&info, caps)) {
-        float width, height;
-
-        // FIXME: Correct?.
-        width = info.width;
-        height = info.height * ((float) info.par_d / (float) info.par_n);
-        stream->presentationSize = WebCore::FloatSize(width, height);
+    if (WebCore::doCapsHaveType(caps, GST_VIDEO_CAPS_TYPE_PREFIX)) {
+        std::optional<WebCore::FloatSize> size = WebCore::getVideoResolutionFromCaps(caps);
+        if (size.has_value())
+            stream->presentationSize = size.value();
+        else
+            stream->presentationSize = WebCore::FloatSize();
     } else
         stream->presentationSize = WebCore::FloatSize();
 
