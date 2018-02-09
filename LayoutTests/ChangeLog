@@ -1,3 +1,13 @@
+2018-02-09  Andy Estes  <aestes@apple.com>
+
+        [Payment Request] Crash in PaymentRequest::canMakePayment() when Apple Pay payment method data is missing required fields
+        https://bugs.webkit.org/show_bug.cgi?id=182631
+
+        Reviewed by Mark Lam.
+
+        * http/tests/paymentrequest/payment-request-canmakepayment-method.https-expected.txt:
+        * http/tests/paymentrequest/payment-request-canmakepayment-method.https.html:
+
 2018-02-09  Ryan Haddad  <ryanhaddad@apple.com>
 
         Update TestExpectations for fast/forms/textarea/textarea-state-restore.html

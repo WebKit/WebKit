@@ -1,3 +1,28 @@
+2018-02-09  Andy Estes  <aestes@apple.com>
+
+        [Payment Request] Crash in PaymentRequest::canMakePayment() when Apple Pay payment method data is missing required fields
+        https://bugs.webkit.org/show_bug.cgi?id=182631
+
+        Reviewed by Mark Lam.
+
+        PaymentRequest::canMakePayment() needs to parse each payment method's serialized data to
+        determine if it is a supported payment method. If parsing fails by raising an exception, we
+        intend to skip over that payment method and try the next one. If all payment method data
+        fail to parse, we resolve the returned promise with false. At no point do we intend to
+        propagate the parsing exception up to the calling script, however.
+
+        Even though we intend to swallow any exceptions from parsing, we failed to clear the
+        JavaScript VM's exception state. The next time WebCore tries to execute JavaScript, a
+        release assertion is raised due to seeing an unexpected exception in the VM.
+
+        Fix this by using a CatchScope in PaymentRequest::canMakePayment(), and calling
+        CatchScope::clearException() in the places we intend to swallow exceptions.
+
+        Added a test case to http/tests/paymentrequest/payment-request-canmakepayment-method.https.html.
+
+        * Modules/paymentrequest/PaymentRequest.cpp:
+        (WebCore::PaymentRequest::canMakePayment):
+
 2018-02-09  Zalan Bujtas  <zalan@apple.com>
 
         [RenderTreeBuilder] Move multicolumn descendant/sibling removal logic to RenderTreeBuilder
