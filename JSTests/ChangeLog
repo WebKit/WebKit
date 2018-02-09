@@ -1,5 +1,12 @@
 2018-02-08  Yusuke Suzuki  <utatane.tea@gmail.com>
 
+        [JSC] Update Test262 to Feb 9 version
+        https://bugs.webkit.org/show_bug.cgi?id=182468
+
+        Reviewed by Saam Barati.
+
+2018-02-08  Yusuke Suzuki  <utatane.tea@gmail.com>
+
         Unreviewed, fix invalid line terminator in old test262 file part 2
         https://bugs.webkit.org/show_bug.cgi?id=182468
 

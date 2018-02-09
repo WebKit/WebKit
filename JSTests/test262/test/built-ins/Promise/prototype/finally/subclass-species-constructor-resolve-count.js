@@ -5,7 +5,6 @@ author: Jordan Harband
 description: finally on resolved Promise calls the SpeciesConstructor
 esid: sec-promise.prototype.finally
 features: [Promise.prototype.finally]
-flags: [async]
 ---*/
 
 class FooPromise extends Promise {
