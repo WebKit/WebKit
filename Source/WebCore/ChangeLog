@@ -1,3 +1,54 @@
+2018-02-08  Youenn Fablet  <youenn@apple.com>
+
+        CoreAudioCaptureSourceIOSListener should be a WebProcess singleton
+        https://bugs.webkit.org/show_bug.cgi?id=182606
+        <rdar://problem/37355283>
+
+        Reviewed by Eric Carlson.
+
+        Not testable right now as this relies on iOS specific Core Audio stack.
+        Efforts should be made to somehow mock that part and mock interruptions.
+
+        Made CoreAudioCaptureSourceFactoryIOS responsible to receive iOS interruption messages.
+        Before the patch, individual capture sources were receiving these messages.
+        When there is only one capture source per process this is fine but with more capture sources,
+        this is messing up things as they all share the same shared unit and we would try to interrupt it or resume it several times.
+
+        Also, if we are suspended and there is no more capture source, the shared unit will remain suspended indefinitely, as we will
+        not process the interruption messages.
+        With the patch, we always process the messages.
+        We still go through the active source as done now to limit the changes.
+        In case of no source, we go to the shared unit.
+        In the future, we should directly go to the shared unit and clients of the shared unit should see their state being updated.
+
+        As a way to prevent staying suspended on iOS, we unsuspend ourselves in CoreAudioCaptureSource constructor.
+        This is fine as this constructor is only called when getUserMedia grants access to the camera which always goes to the UIProcess.
+        And the UIProcess is only processing getUserMedia calls if the WebProcess is foregrounded.
+
+        * platform/mediastream/ios/CoreAudioCaptureSourceIOS.h:
+        * platform/mediastream/ios/CoreAudioCaptureSourceIOS.mm:
+        (-[WebCoreAudioCaptureSourceIOSListener initWithCallback:]):
+        (WebCore::CoreAudioCaptureSourceFactoryIOS::CoreAudioCaptureSourceFactoryIOS):
+        (WebCore::CoreAudioCaptureSourceFactoryIOS::~CoreAudioCaptureSourceFactoryIOS):
+        (WebCore::CoreAudioCaptureSourceFactory::singleton):
+        * platform/mediastream/mac/CoreAudioCaptureSource.cpp:
+        (WebCore::CoreAudioCaptureSourceFactory::singleton):
+        (WebCore::CoreAudioCaptureSource::create):
+        (WebCore::CoreAudioCaptureSourceFactory::beginInterruption):
+        (WebCore::CoreAudioCaptureSourceFactory::endInterruption):
+        (WebCore::CoreAudioCaptureSourceFactory::scheduleReconfiguration):
+        (WebCore::CoreAudioCaptureSource::factory):
+        (WebCore::CoreAudioCaptureSource::CoreAudioCaptureSource):
+        (WebCore::CoreAudioCaptureSource::~CoreAudioCaptureSource):
+        (WebCore::CoreAudioCaptureSource::startProducingData):
+        (WebCore::CoreAudioCaptureSource::scheduleReconfiguration):
+        (WebCore::CoreAudioCaptureSource::beginInterruption):
+        (WebCore::CoreAudioCaptureSource::endInterruption):
+        * platform/mediastream/mac/CoreAudioCaptureSource.h:
+        (WebCore::CoreAudioCaptureSourceFactory::setCoreAudioActiveSource):
+        (WebCore::CoreAudioCaptureSourceFactory::unsetCoreAudioActiveSource):
+        (WebCore::CoreAudioCaptureSourceFactory::coreAudioActiveSource):
+
 2018-02-08  Chris Dumez  <cdumez@apple.com>
 
         There should be a way to disable [OverrideBuiltins] behavior in a given DOMWrapperWorld

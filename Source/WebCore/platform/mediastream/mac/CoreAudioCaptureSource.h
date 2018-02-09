@@ -110,6 +110,29 @@ private:
     bool m_resumePending { false };
 };
 
+class CoreAudioCaptureSourceFactory : public RealtimeMediaSource::AudioCaptureFactory {
+public:
+    static CoreAudioCaptureSourceFactory& singleton();
+
+    void beginInterruption();
+    void endInterruption();
+    void scheduleReconfiguration();
+
+#if PLATFORM(IOS)
+    void setCoreAudioActiveSource(CoreAudioCaptureSource& source) { setActiveSource(source); }
+    void unsetCoreAudioActiveSource(CoreAudioCaptureSource& source) { unsetActiveSource(source); }
+    CoreAudioCaptureSource* coreAudioActiveSource() { return static_cast<CoreAudioCaptureSource*>(activeSource()); }
+#else
+    CoreAudioCaptureSource* coreAudioActiveSource() { return nullptr; }
+#endif
+
+private:
+    CaptureSourceOrError createAudioCaptureSource(const CaptureDevice& device, const MediaConstraints* constraints) final
+    {
+        return CoreAudioCaptureSource::create(device.persistentId(), constraints);
+    }
+};
+
 } // namespace WebCore
 
 #endif // ENABLE(MEDIA_STREAM)

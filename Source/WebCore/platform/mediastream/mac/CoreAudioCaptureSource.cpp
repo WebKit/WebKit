@@ -53,20 +53,13 @@
 namespace WebCore {
 using namespace PAL;
 
-class CoreAudioCaptureSourceFactory : public RealtimeMediaSource::AudioCaptureFactory
-{
-public:
-    CaptureSourceOrError createAudioCaptureSource(const CaptureDevice& device, const MediaConstraints* constraints) final
-    {
-        return CoreAudioCaptureSource::create(device.persistentId(), constraints);
-    }
-};
-
-static CoreAudioCaptureSourceFactory& coreAudioCaptureSourceFactory()
+#if PLATFORM(MAC)
+CoreAudioCaptureSourceFactory& CoreAudioCaptureSourceFactory::singleton()
 {
     static NeverDestroyed<CoreAudioCaptureSourceFactory> factory;
     return factory.get();
 }
+#endif
 
 const UInt32 outputBus = 0;
 const UInt32 inputBus = 1;
@@ -697,7 +690,7 @@ CaptureSourceOrError CoreAudioCaptureSource::create(const String& deviceID, cons
     if (!device)
         return { };
 
-    auto source = adoptRef(*new CoreAudioCaptureSourceIOS(deviceID, device->label()));
+    auto source = adoptRef(*new CoreAudioCaptureSource(deviceID, device->label(), 0));
 #endif
 
     if (constraints) {
@@ -708,9 +701,60 @@ CaptureSourceOrError CoreAudioCaptureSource::create(const String& deviceID, cons
     return CaptureSourceOrError(WTFMove(source));
 }
 
+void CoreAudioCaptureSourceFactory::beginInterruption()
+{
+    if (!isMainThread()) {
+        callOnMainThread([this] {
+            beginInterruption();
+        });
+        return;
+    }
+    ASSERT(isMainThread());
+
+    if (auto* source = coreAudioActiveSource()) {
+        source->beginInterruption();
+        return;
+    }
+    CoreAudioSharedUnit::singleton().suspend();
+}
+
+void CoreAudioCaptureSourceFactory::endInterruption()
+{
+    if (!isMainThread()) {
+        callOnMainThread([this] {
+            endInterruption();
+        });
+        return;
+    }
+    ASSERT(isMainThread());
+
+    if (auto* source = coreAudioActiveSource()) {
+        source->endInterruption();
+        return;
+    }
+    CoreAudioSharedUnit::singleton().reconfigureAudioUnit();
+}
+
+void CoreAudioCaptureSourceFactory::scheduleReconfiguration()
+{
+    if (!isMainThread()) {
+        callOnMainThread([this] {
+            scheduleReconfiguration();
+        });
+        return;
+    }
+    ASSERT(isMainThread());
+
+    if (auto* source = coreAudioActiveSource()) {
+        source->scheduleReconfiguration();
+        return;
+    }
+    CoreAudioSharedUnit::singleton().reconfigureAudioUnit();
+}
+
 RealtimeMediaSource::AudioCaptureFactory& CoreAudioCaptureSource::factory()
 {
-    return coreAudioCaptureSourceFactory();
+    return CoreAudioCaptureSourceFactory::singleton();
 }
 
 CoreAudioCaptureSource::CoreAudioCaptureSource(const String& deviceID, const String& label, uint32_t persistentID)
@@ -724,12 +768,19 @@ CoreAudioCaptureSource::CoreAudioCaptureSource(const String& deviceID, const Str
     initializeVolume(unit.volume());
 
     unit.addClient(*this);
+
+#if PLATFORM(IOS)
+    // We ensure that we unsuspend ourselves on the constructor as a capture source
+    // is created when getUserMedia grants access which only happens when the process is foregrounded.
+    if (unit.isSuspended())
+        unit.reconfigureAudioUnit();
+#endif
 }
 
 CoreAudioCaptureSource::~CoreAudioCaptureSource()
 {
 #if PLATFORM(IOS)
-    coreAudioCaptureSourceFactory().unsetActiveSource(*this);
+    CoreAudioCaptureSourceFactory::singleton().unsetCoreAudioActiveSource(*this);
 #endif
 
     CoreAudioSharedUnit::singleton().removeClient(*this);
@@ -748,7 +799,7 @@ void CoreAudioCaptureSource::removeEchoCancellationSource(AudioSampleDataSource&
 void CoreAudioCaptureSource::startProducingData()
 {
 #if PLATFORM(IOS)
-    coreAudioCaptureSourceFactory().setActiveSource(*this);
+    CoreAudioCaptureSourceFactory::singleton().setCoreAudioActiveSource(*this);
 #endif
 
     auto& unit = CoreAudioSharedUnit::singleton();
@@ -844,17 +895,6 @@ bool CoreAudioCaptureSource::applyEchoCancellation(bool enableEchoCancellation)
 
 void CoreAudioCaptureSource::scheduleReconfiguration()
 {
-    if (!isMainThread()) {
-        callOnMainThread([weakThis = createWeakPtr(), this] {
-            if (!weakThis)
-                return;
-
-            scheduleReconfiguration();
-        });
-
-        return;
-    }
-
     ASSERT(isMainThread());
     auto& unit = CoreAudioSharedUnit::singleton();
     if (!unit.hasAudioUnit() || m_reconfigurationState != ReconfigurationState::None)
@@ -874,17 +914,6 @@ void CoreAudioCaptureSource::scheduleReconfiguration()
 
 void CoreAudioCaptureSource::beginInterruption()
 {
-    if (!isMainThread()) {
-        callOnMainThread([weakThis = createWeakPtr(), this] {
-            if (!weakThis)
-                return;
-
-            beginInterruption();
-        });
-
-        return;
-    }
-
     ASSERT(isMainThread());
     auto& unit = CoreAudioSharedUnit::singleton();
     if (!unit.hasAudioUnit() || unit.isSuspended() || m_suspendPending)
@@ -900,17 +929,6 @@ void CoreAudioCaptureSource::beginInterruption()
 
 void CoreAudioCaptureSource::endInterruption()
 {
-    if (!isMainThread()) {
-        callOnMainThread([weakThis = createWeakPtr(), this] {
-            if (!weakThis)
-                return;
-
-            endInterruption();
-        });
-
-        return;
-    }
-
     ASSERT(isMainThread());
     auto& unit = CoreAudioSharedUnit::singleton();
     if (!unit.hasAudioUnit() || !unit.isSuspended() || m_resumePending)
