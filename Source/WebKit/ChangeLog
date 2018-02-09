@@ -1,3 +1,16 @@
+2018-02-08  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Remove WebProcessPool::platformInitialize stub.
+        https://bugs.webkit.org/show_bug.cgi?id=182621
+
+        Reviewed by Alex Christensen.
+
+        The #if here could be simplified to PLATFORM(WIN), but Windows too will need a proper implementation
+        as part of WK2 support, so this stub shouldn't need to exist at all.
+
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::platformInitialize): Deleted.
+
 2018-02-08  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         TestController should not exercise cocoa-specific resource load statistics APIs

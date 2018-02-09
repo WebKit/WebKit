@@ -283,12 +283,6 @@ WebProcessPool::WebProcessPool(API::ProcessPoolConfiguration& configuration)
     notifyThisWebProcessPoolWasCreated();
 }
 
-#if !PLATFORM(COCOA) && !PLATFORM(GTK) && !PLATFORM(WPE)
-void WebProcessPool::platformInitialize()
-{
-}
-#endif
-
 WebProcessPool::~WebProcessPool()
 {
     bool removed = processPools().removeFirst(this);
