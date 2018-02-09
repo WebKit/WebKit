@@ -3523,7 +3523,7 @@
 		BC06EDA00BFD660600856E9D /* JSHTMLTableRowElement.h in Headers */ = {isa = PBXBuildFile; fileRef = BC06ED9C0BFD660600856E9D /* JSHTMLTableRowElement.h */; };
 		BC06EDE40BFD6D0D00856E9D /* JSHTMLTableCellElement.h in Headers */ = {isa = PBXBuildFile; fileRef = BC06EDE20BFD6D0D00856E9D /* JSHTMLTableCellElement.h */; };
 		BC06EE050BFD71AA00856E9D /* JSHTMLTableElement.h in Headers */ = {isa = PBXBuildFile; fileRef = BC06EE030BFD71AA00856E9D /* JSHTMLTableElement.h */; };
-		BC073BAA0C399B1F000F5979 /* FloatConversion.h in Headers */ = {isa = PBXBuildFile; fileRef = BC073BA90C399B1F000F5979 /* FloatConversion.h */; };
+		BC073BAA0C399B1F000F5979 /* FloatConversion.h in Headers */ = {isa = PBXBuildFile; fileRef = BC073BA90C399B1F000F5979 /* FloatConversion.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC10D76817D8EE71005E2626 /* RenderBlockFlow.h in Headers */ = {isa = PBXBuildFile; fileRef = BCFB45F317D8E39200444446 /* RenderBlockFlow.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC124EE80C2641CD009E2349 /* BarProp.h in Headers */ = {isa = PBXBuildFile; fileRef = BC124EE50C2641CD009E2349 /* BarProp.h */; };
 		BC124F000C26447A009E2349 /* JSBarProp.h in Headers */ = {isa = PBXBuildFile; fileRef = BC124EFE0C26447A009E2349 /* JSBarProp.h */; };
@@ -3869,9 +3869,6 @@
 		CD7D33481C7A16BF00041293 /* CoreVideoSoftLink.h in Headers */ = {isa = PBXBuildFile; fileRef = CD7D33461C7A16BF00041293 /* CoreVideoSoftLink.h */; };
 		CD7DBB2918CA19C600C11066 /* CSSGridLineNamesValue.h in Headers */ = {isa = PBXBuildFile; fileRef = CD7DBB2718CA11FF00C11066 /* CSSGridLineNamesValue.h */; };
 		CD7E05221651C28200C1201F /* WebCoreAVFResourceLoader.mm in Sources */ = {isa = PBXBuildFile; fileRef = CD7E05211651A84100C1201F /* WebCoreAVFResourceLoader.mm */; };
-		CD82030A1395AB6A00F956C6 /* WebVideoFullscreenController.h in Headers */ = {isa = PBXBuildFile; fileRef = CD8203061395AB6A00F956C6 /* WebVideoFullscreenController.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		CD82030C1395AB6A00F956C6 /* WebVideoFullscreenHUDWindowController.h in Headers */ = {isa = PBXBuildFile; fileRef = CD8203081395AB6A00F956C6 /* WebVideoFullscreenHUDWindowController.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		CD8203101395ACE700F956C6 /* WebWindowAnimation.h in Headers */ = {isa = PBXBuildFile; fileRef = CD82030E1395ACE700F956C6 /* WebWindowAnimation.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CD8A7BBB197735FE00CBD643 /* AudioSourceProviderAVFObjC.mm in Sources */ = {isa = PBXBuildFile; fileRef = CD8A7BB9197735FE00CBD643 /* AudioSourceProviderAVFObjC.mm */; };
 		CD8A7BBC197735FE00CBD643 /* AudioSourceProviderAVFObjC.h in Headers */ = {isa = PBXBuildFile; fileRef = CD8A7BBA197735FE00CBD643 /* AudioSourceProviderAVFObjC.h */; };
 		CD8ACA891D237AA200ECC59E /* RemoteCommandListenerMac.h in Headers */ = {isa = PBXBuildFile; fileRef = CD8ACA871D237AA200ECC59E /* RemoteCommandListenerMac.h */; };
@@ -4271,7 +4268,6 @@
 		DE5F86121FA239E7006DB63A /* JSGCObservation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51714EAE1CF6654A004723C4 /* JSGCObservation.cpp */; };
 		DE5F861D1FA2815B006DB63A /* WebAccessibilityObjectWrapperMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = AA478A7E16CD70C3007D1BB4 /* WebAccessibilityObjectWrapperMac.mm */; };
 		DE5F861E1FA281FD006DB63A /* WebAccessibilityObjectWrapperBase.mm in Sources */ = {isa = PBXBuildFile; fileRef = 29A812460FBB9CA900510293 /* WebAccessibilityObjectWrapperBase.mm */; };
-		DE5F862C1FA28D8D006DB63A /* WebVideoFullscreenController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CD8203071395AB6A00F956C6 /* WebVideoFullscreenController.mm */; };
 		DE5F86501FA2AF24006DB63A /* UnifiedSource51-mm.mm in Sources */ = {isa = PBXBuildFile; fileRef = DE5F86361FA2AF04006DB63A /* UnifiedSource51-mm.mm */; };
 		DE5F86511FA2AF24006DB63A /* UnifiedSource52-mm.mm in Sources */ = {isa = PBXBuildFile; fileRef = DE5F86371FA2AF05006DB63A /* UnifiedSource52-mm.mm */; };
 		DE5F86521FA2AF24006DB63A /* UnifiedSource53-mm.mm in Sources */ = {isa = PBXBuildFile; fileRef = DE5F86351FA2AF03006DB63A /* UnifiedSource53-mm.mm */; };
@@ -12983,12 +12979,6 @@
 		CD7DBB2718CA11FF00C11066 /* CSSGridLineNamesValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSSGridLineNamesValue.h; sourceTree = "<group>"; };
 		CD7E05201651A84100C1201F /* WebCoreAVFResourceLoader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebCoreAVFResourceLoader.h; sourceTree = "<group>"; };
 		CD7E05211651A84100C1201F /* WebCoreAVFResourceLoader.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WebCoreAVFResourceLoader.mm; sourceTree = "<group>"; };
-		CD8203061395AB6A00F956C6 /* WebVideoFullscreenController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebVideoFullscreenController.h; sourceTree = "<group>"; };
-		CD8203071395AB6A00F956C6 /* WebVideoFullscreenController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebVideoFullscreenController.mm; sourceTree = "<group>"; };
-		CD8203081395AB6A00F956C6 /* WebVideoFullscreenHUDWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebVideoFullscreenHUDWindowController.h; sourceTree = "<group>"; };
-		CD8203091395AB6A00F956C6 /* WebVideoFullscreenHUDWindowController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebVideoFullscreenHUDWindowController.mm; sourceTree = "<group>"; };
-		CD82030E1395ACE700F956C6 /* WebWindowAnimation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebWindowAnimation.h; sourceTree = "<group>"; };
-		CD82030F1395ACE700F956C6 /* WebWindowAnimation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebWindowAnimation.mm; sourceTree = "<group>"; };
 		CD871C5C1FB52B6300F0B965 /* ISOSchemeTypeBox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ISOSchemeTypeBox.h; path = platform/graphics/iso/ISOSchemeTypeBox.h; sourceTree = SOURCE_ROOT; };
 		CD871C5E1FB52B6400F0B965 /* ISOProtectionSchemeInfoBox.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ISOProtectionSchemeInfoBox.cpp; path = platform/graphics/iso/ISOProtectionSchemeInfoBox.cpp; sourceTree = SOURCE_ROOT; };
 		CD871C5F1FB52B6400F0B965 /* ISOSchemeTypeBox.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ISOSchemeTypeBox.cpp; path = platform/graphics/iso/ISOSchemeTypeBox.cpp; sourceTree = SOURCE_ROOT; };
@@ -18680,12 +18670,6 @@
 				E1A3162C134BC32D007C9A4F /* WebNSAttributedStringExtras.mm */,
 				CD5896E01CD2B15100B3BCC8 /* WebPlaybackControlsManager.h */,
 				CD5896DF1CD2B15100B3BCC8 /* WebPlaybackControlsManager.mm */,
-				CD8203061395AB6A00F956C6 /* WebVideoFullscreenController.h */,
-				CD8203071395AB6A00F956C6 /* WebVideoFullscreenController.mm */,
-				CD8203081395AB6A00F956C6 /* WebVideoFullscreenHUDWindowController.h */,
-				CD8203091395AB6A00F956C6 /* WebVideoFullscreenHUDWindowController.mm */,
-				CD82030E1395ACE700F956C6 /* WebWindowAnimation.h */,
-				CD82030F1395ACE700F956C6 /* WebWindowAnimation.mm */,
 				9380F47709A11ACC001FDB34 /* WidgetMac.mm */,
 			);
 			path = mac;
@@ -28273,7 +28257,6 @@
 				07969DC217D14151007FF842 /* JSRTCStatsReport.h in Headers */,
 				5E2C436C1BCF071E0001E2BC /* JSRTCTrackEvent.h in Headers */,
 				BCEC01C30C274DDD009F4EC9 /* JSScreen.h in Headers */,
-				0F5B408A20212F770080F913 /* OriginThreadLocalCache.h in Headers */,
 				FDA15ECE12B03F61003A583A /* JSScriptProcessorNode.h in Headers */,
 				834476EF1DA5BC5E002B6ED2 /* JSScrollToOptions.h in Headers */,
 				CED06AD11C77754800FDFAF1 /* JSSecurityPolicyViolationEvent.h in Headers */,
@@ -28893,6 +28876,7 @@
 				4184F5161EAF05A800F18BF0 /* OrientationNotifier.h in Headers */,
 				0014628B103CD1DE000B20DB /* OriginAccessEntry.h in Headers */,
 				FE9E89FC16E2DC0500A908F8 /* OriginLock.h in Headers */,
+				0F5B408A20212F770080F913 /* OriginThreadLocalCache.h in Headers */,
 				FD581FAF1520F91F003A7A75 /* OscillatorNode.h in Headers */,
 				BC5EB5DD0E81B8DD00B25965 /* OutlineValue.h in Headers */,
 				7A29F57218C69514004D0F81 /* OutOfBandTextTrackPrivateAVF.h in Headers */,
@@ -30248,14 +30232,11 @@
 				1F8756B21E22C3350042C40D /* WebSQLiteDatabaseTrackerClient.h in Headers */,
 				31DEA4561B39F4D900F77178 /* WebSystemBackdropLayer.h in Headers */,
 				0F580FA31496939100FB5BD8 /* WebTiledBackingLayer.h in Headers */,
-				CD82030A1395AB6A00F956C6 /* WebVideoFullscreenController.h in Headers */,
 				3F42B31D1881191B00278AAC /* WebVideoFullscreenControllerAVKit.h in Headers */,
-				CD82030C1395AB6A00F956C6 /* WebVideoFullscreenHUDWindowController.h in Headers */,
 				F12171F616A8CF0B000053CA /* WebVTTElement.h in Headers */,
 				5D21A80313ECE5DF00BB7064 /* WebVTTParser.h in Headers */,
 				B10B6980140C174000BC1C26 /* WebVTTToken.h in Headers */,
 				B10B6982140C174000BC1C26 /* WebVTTTokenizer.h in Headers */,
-				CD8203101395ACE700F956C6 /* WebWindowAnimation.h in Headers */,
 				F55B3DE01251F12D003EF269 /* WeekInputType.h in Headers */,
 				85031B510A44EFC700F992E0 /* WheelEvent.h in Headers */,
 				2EBBC3D81B65988300F5253D /* WheelEventDeltaFilter.h in Headers */,
@@ -31477,7 +31458,6 @@
 				7C48A6D0191C9D6500026674 /* WebKitNamespace.cpp in Sources */,
 				0709D7921AE5557E004E42F8 /* WebMediaSessionManagerMac.cpp in Sources */,
 				1CAF34820A6C405200ABE06E /* WebScriptObject.mm in Sources */,
-				DE5F862C1FA28D8D006DB63A /* WebVideoFullscreenController.mm in Sources */,
 				F12171F516A8CED2000053CA /* WebVTTElement.cpp in Sources */,
 				5D21A80213ECE5DF00BB7064 /* WebVTTParser.cpp in Sources */,
 				B10B6981140C174000BC1C26 /* WebVTTTokenizer.cpp in Sources */,

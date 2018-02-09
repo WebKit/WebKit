@@ -30,6 +30,7 @@
 #import "WebNSWindowExtras.h"
 #import "WebPreferencesPrivate.h"
 #import "WebViewInternal.h"
+#import "WebWindowAnimation.h"
 #import <WebCore/Document.h>
 #import <WebCore/Element.h>
 #import <WebCore/FloatRect.h>
@@ -42,7 +43,6 @@
 #import <WebCore/RenderObject.h>
 #import <WebCore/RenderView.h>
 #import <WebCore/WebCoreFullScreenWindow.h>
-#import <WebCore/WebWindowAnimation.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/SoftLinking.h>
 

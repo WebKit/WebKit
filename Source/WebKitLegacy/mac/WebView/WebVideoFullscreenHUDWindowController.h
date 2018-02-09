@@ -38,8 +38,7 @@ class HTMLVideoElement;
 
 @protocol WebVideoFullscreenHUDWindowControllerDelegate;
 
-@interface WebVideoFullscreenHUDWindowController : NSWindowController
-{
+@interface WebVideoFullscreenHUDWindowController : NSWindowController {
     id <WebVideoFullscreenHUDWindowControllerDelegate> _delegate;
     NSTimer *_timelineUpdateTimer;
     NSTrackingArea *_area;

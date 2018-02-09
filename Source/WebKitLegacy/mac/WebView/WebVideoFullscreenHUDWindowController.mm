@@ -22,12 +22,11 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
+#if ENABLE(VIDEO) && PLATFORM(MAC)
+
 #import "WebVideoFullscreenHUDWindowController.h"
 
-#if ENABLE(VIDEO)
-
-#import "FloatConversion.h"
+#import <WebCore/FloatConversion.h>
 #import <WebCore/HTMLVideoElement.h>
 #import <pal/spi/cg/CoreGraphicsSPI.h>
 #import <pal/spi/mac/QTKitSPI.h>
@@ -130,8 +129,7 @@ using WebCore::narrowPrecisionToFloat;
 {
     NSRect hudFrame = [self frame];
     NSRect screenFrame = [[NSScreen mainScreen] frame];
-    [self setFrameTopLeftPoint:NSMakePoint(screenFrame.origin.x + (screenFrame.size.width - hudFrame.size.width) / 2,
-                                           screenFrame.origin.y + (screenFrame.size.height - hudFrame.size.height) / 6)];
+    [self setFrameTopLeftPoint:NSMakePoint(screenFrame.origin.x + (screenFrame.size.width - hudFrame.size.width) / 2, screenFrame.origin.y + (screenFrame.size.height - hudFrame.size.height) / 6)];
 }
 
 - (void)keyDown:(NSEvent *)event
@@ -203,23 +201,23 @@ static const NSTimeInterval HUDWindowFadeOutDelay = 3;
     NSString *charactersIgnoringModifiers = [event charactersIgnoringModifiers];
     if ([charactersIgnoringModifiers length] == 1) {
         switch ([charactersIgnoringModifiers characterAtIndex:0]) {
-            case ' ':
-                [self togglePlaying:nil];
-                return;
-            case NSUpArrowFunctionKey:
-                if ([event modifierFlags] & NSEventModifierFlagOption)
-                    [self setVolume:[self maxVolume]];
-                else
-                    [self incrementVolume];
-                return;
-            case NSDownArrowFunctionKey:
-                if ([event modifierFlags] & NSEventModifierFlagOption)
-                    [self setVolume:0];
-                else
-                    [self decrementVolume];
-                return;
-            default:
-                break;
+        case ' ':
+            [self togglePlaying:nil];
+            return;
+        case NSUpArrowFunctionKey:
+            if ([event modifierFlags] & NSEventModifierFlagOption)
+                [self setVolume:[self maxVolume]];
+            else
+                [self incrementVolume];
+            return;
+        case NSDownArrowFunctionKey:
+            if ([event modifierFlags] & NSEventModifierFlagOption)
+                [self setVolume:0];
+            else
+                [self decrementVolume];
+            return;
+        default:
+            break;
         }
     }
 
@@ -272,7 +270,7 @@ static const NSTimeInterval HUDWindowFadeOutDelay = 3;
     [self scheduleTimeUpdate];
 
     [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(fadeWindowOut) object:nil];
-    if (!_mouseIsInHUD && [self playing])   // Don't fade out when paused.
+    if (!_mouseIsInHUD && [self playing]) // Don't fade out when paused.
         [self performSelector:@selector(fadeWindowOut) withObject:nil afterDelay:HUDWindowFadeOutDelay];
 }
 
@@ -564,7 +562,7 @@ static NSView *createMediaUIBackgroundView()
         return;
 
     float volume = [self volume] - 10;
-    [self setVolume:MAX(volume, 0)];
+    [self setVolume:std::max(volume, 0.0f)];
 }
 
 - (void)incrementVolume

@@ -1,3 +1,25 @@
+2018-02-08  Per Arne Vollan  <pvollan@apple.com>
+
+        Move WebVideoFullscreenController from WebCore to WebKitLegacy.
+        https://bugs.webkit.org/show_bug.cgi?id=182615
+
+        Reviewed by Eric Carlson.
+
+        It is only used by WK1. Also there are a few references to NSApp in WebVideoFullscreenController.mm.
+        Ideally, we should not reference NSApp in WebCore.
+
+        No new tests. No change in behavior.
+
+        * SourcesMac.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * html/HTMLMediaElement.h:
+        * platform/mac/WebVideoFullscreenController.h: Removed.
+        * platform/mac/WebVideoFullscreenController.mm: Removed.
+        * platform/mac/WebVideoFullscreenHUDWindowController.h: Removed.
+        * platform/mac/WebVideoFullscreenHUDWindowController.mm: Removed.
+        * platform/mac/WebWindowAnimation.h: Removed.
+        * platform/mac/WebWindowAnimation.mm: Removed.
+
 2018-02-08  Chris Dumez  <cdumez@apple.com>
 
         Form submission after navigation fails when decidePolicyForNavigationAction is async

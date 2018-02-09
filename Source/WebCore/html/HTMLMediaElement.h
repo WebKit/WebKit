@@ -156,7 +156,7 @@ public:
 
     static HTMLMediaElement* bestMediaElementForShowingPlaybackControlsManager(MediaElementSession::PlaybackControlsPurpose);
 
-    void rewind(double timeDelta);
+    WEBCORE_EXPORT void rewind(double timeDelta);
     WEBCORE_EXPORT void returnToRealtime() override;
 
     // Eventually overloaded in HTMLVideoElement
@@ -227,7 +227,7 @@ public:
 
 // playback state
     WEBCORE_EXPORT double currentTime() const override;
-    void setCurrentTime(double) override;
+    WEBCORE_EXPORT void setCurrentTime(double) override;
     void setCurrentTimeWithTolerance(double, double toleranceBefore, double toleranceAfter);
     double currentTimeForBindings() const { return currentTime(); }
     WEBCORE_EXPORT ExceptionOr<void> setCurrentTimeForBindings(double);
@@ -306,7 +306,7 @@ public:
     WEBCORE_EXPORT bool controls() const;
     WEBCORE_EXPORT void setControls(bool);
     WEBCORE_EXPORT double volume() const override;
-    ExceptionOr<void> setVolume(double) override;
+    WEBCORE_EXPORT ExceptionOr<void> setVolume(double) override;
     WEBCORE_EXPORT bool muted() const override;
     WEBCORE_EXPORT void setMuted(bool) override;
 

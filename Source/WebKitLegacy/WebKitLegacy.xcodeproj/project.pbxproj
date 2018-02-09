@@ -774,6 +774,9 @@
 		C0B88E8B10A08F3D00FBB3F5 /* WebFrameLoadDelegatePrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = C0B88E8A10A08F3D00FBB3F5 /* WebFrameLoadDelegatePrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		C0C5B3EE1177A4A0002B0AEF /* WebUserContentURLPattern.h in Headers */ = {isa = PBXBuildFile; fileRef = C0C5B3EC1177A4A0002B0AEF /* WebUserContentURLPattern.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		C0C5B3EF1177A4A0002B0AEF /* WebUserContentURLPattern.mm in Sources */ = {isa = PBXBuildFile; fileRef = C0C5B3ED1177A4A0002B0AEF /* WebUserContentURLPattern.mm */; };
+		C1D81128202CD80000EE74F9 /* WebVideoFullscreenController.mm in Sources */ = {isa = PBXBuildFile; fileRef = C1D81127202CD80000EE74F9 /* WebVideoFullscreenController.mm */; };
+		C1D8112B202CDCC400EE74F9 /* WebVideoFullscreenHUDWindowController.mm in Sources */ = {isa = PBXBuildFile; fileRef = C1D81129202CDCC200EE74F9 /* WebVideoFullscreenHUDWindowController.mm */; };
+		C1D8112E202CED0800EE74F9 /* WebWindowAnimation.mm in Sources */ = {isa = PBXBuildFile; fileRef = C1D8112D202CED0700EE74F9 /* WebWindowAnimation.mm */; };
 		CD8BFCE715531224005AFB25 /* WebKitFullScreenListener.mm in Sources */ = {isa = PBXBuildFile; fileRef = CD8BFCE515531224005AFB25 /* WebKitFullScreenListener.mm */; };
 		CD8BFCE815531224005AFB25 /* WebKitFullScreenListener.h in Headers */ = {isa = PBXBuildFile; fileRef = CD8BFCE615531224005AFB25 /* WebKitFullScreenListener.h */; };
 		CDA62AE2125F87C2007FD118 /* WebFullScreenController.h in Headers */ = {isa = PBXBuildFile; fileRef = CDA62AE0125F87C2007FD118 /* WebFullScreenController.h */; };
@@ -1525,6 +1528,12 @@
 		C0B88E8A10A08F3D00FBB3F5 /* WebFrameLoadDelegatePrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebFrameLoadDelegatePrivate.h; sourceTree = "<group>"; };
 		C0C5B3EC1177A4A0002B0AEF /* WebUserContentURLPattern.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebUserContentURLPattern.h; sourceTree = "<group>"; };
 		C0C5B3ED1177A4A0002B0AEF /* WebUserContentURLPattern.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebUserContentURLPattern.mm; sourceTree = "<group>"; };
+		C1D81126202CD7FE00EE74F9 /* WebVideoFullscreenController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebVideoFullscreenController.h; sourceTree = "<group>"; };
+		C1D81127202CD80000EE74F9 /* WebVideoFullscreenController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebVideoFullscreenController.mm; sourceTree = "<group>"; };
+		C1D81129202CDCC200EE74F9 /* WebVideoFullscreenHUDWindowController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebVideoFullscreenHUDWindowController.mm; sourceTree = "<group>"; };
+		C1D8112A202CDCC300EE74F9 /* WebVideoFullscreenHUDWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebVideoFullscreenHUDWindowController.h; sourceTree = "<group>"; };
+		C1D8112C202CED0600EE74F9 /* WebWindowAnimation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebWindowAnimation.h; sourceTree = "<group>"; };
+		C1D8112D202CED0700EE74F9 /* WebWindowAnimation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebWindowAnimation.mm; sourceTree = "<group>"; };
 		CD8BFCE515531224005AFB25 /* WebKitFullScreenListener.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebKitFullScreenListener.mm; sourceTree = "<group>"; };
 		CD8BFCE615531224005AFB25 /* WebKitFullScreenListener.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebKitFullScreenListener.h; sourceTree = "<group>"; };
 		CDA62AE0125F87C2007FD118 /* WebFullScreenController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebFullScreenController.h; sourceTree = "<group>"; };
@@ -2070,12 +2079,18 @@
 				F834AAD60E64B1C700E2737C /* WebTextIterator.mm */,
 				515E27CC0458C86500CA2D3A /* WebUIDelegate.h */,
 				65A7D44A0568AB2600E70EF6 /* WebUIDelegatePrivate.h */,
+				C1D81126202CD7FE00EE74F9 /* WebVideoFullscreenController.h */,
+				C1D81127202CD80000EE74F9 /* WebVideoFullscreenController.mm */,
+				C1D8112A202CDCC300EE74F9 /* WebVideoFullscreenHUDWindowController.h */,
+				C1D81129202CDCC200EE74F9 /* WebVideoFullscreenHUDWindowController.mm */,
 				51A8B579042834F700CA2D3A /* WebView.h */,
 				51A8B57A042834F700CA2D3A /* WebView.mm */,
 				BC2E464B0FD8A96800A9D9DE /* WebViewData.h */,
 				BC2E464C0FD8A96800A9D9DE /* WebViewData.mm */,
 				930D02BB06275F640076701E /* WebViewInternal.h */,
 				51A8B57D0428353A00CA2D3A /* WebViewPrivate.h */,
+				C1D8112C202CED0600EE74F9 /* WebWindowAnimation.h */,
+				C1D8112D202CED0700EE74F9 /* WebWindowAnimation.mm */,
 			);
 			name = WebView;
 			path = mac/WebView;
@@ -3672,11 +3687,14 @@
 				C0C5B3EF1177A4A0002B0AEF /* WebUserContentURLPattern.mm in Sources */,
 				070F549C17F1E42B00169E04 /* WebUserMediaClient.mm in Sources */,
 				4618DFF91DEF760A0033C3AA /* WebValidationMessageClient.mm in Sources */,
+				C1D81128202CD80000EE74F9 /* WebVideoFullscreenController.mm in Sources */,
+				C1D8112B202CDCC400EE74F9 /* WebVideoFullscreenHUDWindowController.mm in Sources */,
 				939811070824BF01008DF038 /* WebView.mm in Sources */,
 				BC2E464E0FD8A96800A9D9DE /* WebViewData.mm in Sources */,
 				1430C12C1B2C5DF700DEA01D /* WebViewGroup.cpp in Sources */,
 				A10C1D771820300E0036883A /* WebVisiblePosition.mm in Sources */,
 				1AC7176E1A26568A002E3115 /* WebVisitedLinkStore.mm in Sources */,
+				C1D8112E202CED0800EE74F9 /* WebWindowAnimation.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3709,9 +3727,7 @@
 			baseConfigurationReference = 1C904FD20BA9DD0F0081E9D0 /* WebKitLegacy.xcconfig */;
 			buildSettings = {
 				DEBUG_DEFINES = "$(DEBUG_DEFINES_debug) ENABLE_WEBKIT_UNSET_DYLD_FRAMEWORK_PATH";
-				OTHER_LDFLAGS = (
-					"$(OTHER_LDFLAGS)",
-				);
+				OTHER_LDFLAGS = "$(OTHER_LDFLAGS)";
 			};
 			name = Debug;
 		};
@@ -3720,9 +3736,7 @@
 			baseConfigurationReference = 1C904FD20BA9DD0F0081E9D0 /* WebKitLegacy.xcconfig */;
 			buildSettings = {
 				DEBUG_DEFINES = "$(DEBUG_DEFINES_$(CURRENT_VARIANT)) ENABLE_WEBKIT_UNSET_DYLD_FRAMEWORK_PATH";
-				OTHER_LDFLAGS = (
-					"$(OTHER_LDFLAGS)",
-				);
+				OTHER_LDFLAGS = "$(OTHER_LDFLAGS)";
 			};
 			name = Release;
 		};
@@ -3731,9 +3745,7 @@
 			baseConfigurationReference = 1C904FD20BA9DD0F0081E9D0 /* WebKitLegacy.xcconfig */;
 			buildSettings = {
 				BUILD_VARIANTS = normal;
-				OTHER_LDFLAGS = (
-					"$(OTHER_LDFLAGS)",
-				);
+				OTHER_LDFLAGS = "$(OTHER_LDFLAGS)";
 			};
 			name = Production;
 		};

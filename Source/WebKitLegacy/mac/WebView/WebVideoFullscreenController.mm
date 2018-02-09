@@ -23,9 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
-
-#if ENABLE(VIDEO)
+#if ENABLE(VIDEO) && PLATFORM(MAC)
 
 #import "WebVideoFullscreenController.h"
 
@@ -50,8 +48,7 @@ SOFT_LINK_FRAMEWORK(AVFoundation)
 SOFT_LINK_CLASS(AVFoundation, AVPlayerLayer)
 
 using WebCore::PlatformMedia;
-@interface WebVideoFullscreenWindow : NSWindow<NSAnimationDelegate>
-{
+@interface WebVideoFullscreenWindow : NSWindow<NSAnimationDelegate> {
     SEL _controllerActionOnAnimationEnd;
     WebWindowScaleAnimation *_fullscreenAnimation; // (retain)
 }
@@ -210,10 +207,10 @@ using WebCore::PlatformMedia;
     // single screen is available.)  Is the fullscreen screen on the current space? IFF so, 
     // then exit fullscreen mode.    
     if (fullscreenWindow.screen == [NSScreen screens][0] && fullscreenWindow.onActiveSpace)
-         [self requestExitFullscreenWithAnimation:NO];
+        [self requestExitFullscreenWithAnimation:NO];
 }
-         
-         
+
+
 // MARK: -
 // MARK: Exposed Interface
 
@@ -332,7 +329,7 @@ static NSWindow *createBackgroundFullscreenWindow(NSRect frame, int level)
         if ([[NSScreen screens] objectAtIndex:0] == fullscreenScreen)
             options |= (NSApplicationPresentationAutoHideMenuBar | NSApplicationPresentationAutoHideDock);
         // Check if the current screen contains the dock by comparing the screen's frame to its
-        // visibleFrame; if a dock is present, the visibleFrame will differ.  If the current screen
+        // visibleFrame; if a dock is present, the visibleFrame will differ. If the current screen
         // contains the dock, hide it.
         else if (!NSEqualRects([fullscreenScreen frame], [fullscreenScreen visibleFrame]))
             options |= NSApplicationPresentationAutoHideDock;

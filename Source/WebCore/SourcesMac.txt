@@ -103,9 +103,6 @@ platform/mac/WebCoreFullScreenWarningView.mm
 platform/mac/WebCoreFullScreenWindow.mm
 platform/mac/WebGLBlacklist.mm
 platform/mac/WebNSAttributedStringExtras.mm
-platform/mac/WebVideoFullscreenController.mm @no-unify
-platform/mac/WebVideoFullscreenHUDWindowController.mm
-platform/mac/WebWindowAnimation.mm
 platform/mac/WidgetMac.mm
 
 platform/network/mac/NetworkStateNotifierMac.cpp

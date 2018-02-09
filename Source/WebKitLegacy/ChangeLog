@@ -1,3 +1,15 @@
+2018-02-08  Per Arne Vollan  <pvollan@apple.com>
+
+        Move WebVideoFullscreenController from WebCore to WebKitLegacy.
+        https://bugs.webkit.org/show_bug.cgi?id=182615
+
+        Reviewed by Eric Carlson.
+
+        It is only used by WK1. Also there are a few references to NSApp in WebVideoFullscreenController.mm.
+        Ideally, we should not reference NSApp in WebCore.
+
+        * WebKitLegacy.xcodeproj/project.pbxproj:
+
 2018-01-23  Alex Christensen  <achristensen@webkit.org>
 
         Use CompletionHandlers for ResourceHandleClient::didReceiveResponseAsync

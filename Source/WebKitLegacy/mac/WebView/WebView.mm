@@ -244,9 +244,9 @@
 #import "WebNSPasteboardExtras.h"
 #import "WebNSPrintOperationExtras.h"
 #import "WebPDFView.h"
+#import "WebVideoFullscreenController.h"
 #import <WebCore/TextIndicator.h>
 #import <WebCore/TextIndicatorWindow.h>
-#import <WebCore/WebVideoFullscreenController.h>
 #import <pal/spi/cocoa/AVKitSPI.h>
 #import <pal/spi/mac/LookupSPI.h>
 #import <pal/spi/mac/NSImmediateActionGestureRecognizerSPI.h>

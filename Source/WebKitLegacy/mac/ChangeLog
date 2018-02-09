@@ -1,3 +1,22 @@
+2018-02-08  Per Arne Vollan  <pvollan@apple.com>
+
+        Move WebVideoFullscreenController from WebCore to WebKitLegacy.
+        https://bugs.webkit.org/show_bug.cgi?id=182615
+
+        Reviewed by Eric Carlson.
+
+        It is only used by WK1. Also there are a few references to NSApp in WebVideoFullscreenController.mm.
+        Ideally, we should not reference NSApp in WebCore.
+
+        * WebView/WebFullScreenController.mm:
+        * WebView/WebVideoFullscreenController.h: Copied from Source/WebCore/platform/mac/WebVideoFullscreenController.h.
+        * WebView/WebVideoFullscreenController.mm: Copied from Source/WebCore/platform/mac/WebVideoFullscreenController.mm.
+        * WebView/WebVideoFullscreenHUDWindowController.h: Copied from Source/WebCore/platform/mac/WebVideoFullscreenHUDWindowController.h.
+        * WebView/WebVideoFullscreenHUDWindowController.mm: Copied from Source/WebCore/platform/mac/WebVideoFullscreenHUDWindowController.mm.
+        * WebView/WebView.mm:
+        * WebView/WebWindowAnimation.h: Copied from Source/WebCore/platform/mac/WebWindowAnimation.h.
+        * WebView/WebWindowAnimation.mm: Copied from Source/WebCore/platform/mac/WebWindowAnimation.mm.
+
 2018-01-13  Darin Adler  <darin@apple.com>
 
         Event improvements

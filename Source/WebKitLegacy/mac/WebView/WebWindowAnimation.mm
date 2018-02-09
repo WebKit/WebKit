@@ -23,11 +23,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import "config.h"
+#if PLATFORM(MAC)
 
 #import "WebWindowAnimation.h"
 
-#import "FloatConversion.h"
+#import <WebCore/FloatConversion.h>
 #import <pal/spi/cg/CoreGraphicsSPI.h>
 #import <wtf/Assertions.h>
 #import <wtf/MathExtras.h>
@@ -210,7 +210,7 @@ static void setScaledFrameForWindow(NSWindow *window, NSRect scaleFrame, NSRect 
     if (dist > maxDist)
         maxDist = dist;
     
-    return MIN(sqrt(maxDist) * speedFactor, maxAdditionalDuration);    
+    return std::min(sqrt(maxDist) * speedFactor, maxAdditionalDuration);
 }
 
 - (void)startAnimation
@@ -262,7 +262,7 @@ static void setScaledFrameForWindow(NSWindow *window, NSRect scaleFrame, NSRect 
 
 - (CGFloat)currentAlpha
 {
-    return MAX(0, MIN(1, _initialAlpha + [self currentValue] * (_finalAlpha - _initialAlpha)));
+    return std::max(static_cast<CGFloat>(0), std::min(static_cast<CGFloat>(1), _initialAlpha + [self currentValue] * (_finalAlpha - _initialAlpha)));
 }
 
 - (void)setCurrentProgress:(NSAnimationProgress)progress
@@ -294,3 +294,4 @@ static void setScaledFrameForWindow(NSWindow *window, NSRect scaleFrame, NSRect 
 
 @end
 
+#endif // PLATFORM(MAC)

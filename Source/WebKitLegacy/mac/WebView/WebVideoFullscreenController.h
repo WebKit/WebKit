@@ -27,8 +27,8 @@
 
 #if PLATFORM(MAC) && ENABLE(VIDEO)
 
-#import <AppKit/NSWindowController.h>
 #import <AppKit/NSScreen.h>
+#import <AppKit/NSWindowController.h>
 #import <wtf/RefPtr.h>
 
 namespace PAL {
