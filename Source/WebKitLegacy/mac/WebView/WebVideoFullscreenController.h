@@ -44,7 +44,7 @@ class HTMLVideoElement;
 @class WebWindowFadeAnimation;
 @class CALayer;
 
-WEBCORE_EXPORT @interface WebVideoFullscreenController : NSWindowController {
+@interface WebVideoFullscreenController : NSWindowController {
 @private
     RefPtr<WebCore::HTMLVideoElement> _videoElement; // (retain)
     id <WebVideoFullscreenControllerDelegate> _delegate; // (assign)

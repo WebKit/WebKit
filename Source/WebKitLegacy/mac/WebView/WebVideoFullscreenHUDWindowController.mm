@@ -44,9 +44,6 @@ SOFT_LINK_CLASS(QTKit, QTHUDTimeline)
 #define QTHUDSlider getQTHUDSliderClass()
 #define QTHUDTimeline getQTHUDTimelineClass()
 
-
-namespace WebCore {
-
 enum class MediaUIControl {
     Timeline,
     Slider,
@@ -58,11 +55,9 @@ enum class MediaUIControl {
     VolumeDownButton,
 };
 
-}
-
-using WebCore::MediaUIControl;
 using WebCore::HTMLVideoElement;
 using WebCore::narrowPrecisionToFloat;
+
 @interface WebVideoFullscreenHUDWindowController (Private) <NSWindowDelegate>
 
 - (void)updateTime;

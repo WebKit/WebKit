@@ -1,5 +1,23 @@
 2018-02-09  Per Arne Vollan  <pvollan@apple.com>
 
+        Follow-up fixes after moving WebVideoFullscreenController from WebCore to WebKitLegacy.
+        https://bugs.webkit.org/show_bug.cgi?id=182641
+
+        Reviewed by Dan Bernstein.
+
+        Remove incorrect use of WEBCORE_EXPORT and namespace WebCore after the files were moved in
+        https://trac.webkit.org/changeset/228308.
+
+        * WebView/WebVideoFullscreenController.h:
+        * WebView/WebVideoFullscreenHUDWindowController.mm:
+        * WebView/WebWindowAnimation.h:
+        * WebView/WebWindowAnimation.mm:
+        (WebCore::WebWindowAnimationDurationFromDuration): Deleted.
+        (WebCore::scaledRect): Deleted.
+        (WebCore::squaredDistance): Deleted.
+
+2018-02-09  Per Arne Vollan  <pvollan@apple.com>
+
         Unreviewed 32-bit build fix after <https://trac.webkit.org/changeset/228308>.
 
         * WebView/WebWindowAnimation.mm:
