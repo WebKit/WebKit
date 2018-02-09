@@ -1,3 +1,18 @@
+2018-02-09  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Object.shallowEqual always fails when comparing array property values
+        https://bugs.webkit.org/show_bug.cgi?id=182634
+        <rdar://problem/37374639>
+
+        Reviewed by Devin Rousso.
+
+        Object.shallowEqual should use Array.shallowEqual when comparing property
+        values, since strictly comparing objects/arrays is only true if both
+        operands reference the same Object.
+
+        * UserInterface/Base/Utilities.js:
+        (value):
+
 2018-02-08  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: add listing of Canvases/Programs/Recordings to the NavigationSidebar

@@ -26,6 +26,13 @@ function test()
             InspectorTest.expectThat(!Object.shallowEqual(obj1, obj3), "shallowEqual of unequal objects should be false.");
             InspectorTest.expectThat(!Object.shallowEqual(obj3, obj1), "shallowEqual of unequal objects should be false.");
 
+            InspectorTest.expectThat(Object.shallowEqual({x: []}, {x: []}), "shallowEqual of objects with similar arrays at the same key should be true.");
+            InspectorTest.expectThat(Object.shallowEqual({x: new Array}, {x: new Array}), "shallowEqual of objects with similar arrays at the same key should be true.");
+            InspectorTest.expectThat(Object.shallowEqual({x: [1]}, {x: [1]}), "shallowEqual of objects with similar arrays at the same key should be true.");
+
+            InspectorTest.expectThat(!Object.shallowEqual({x: [1]}, {x: []}), "shallowEqual of objects with dissimilar arrays at the same key should be false.");
+            InspectorTest.expectThat(!Object.shallowEqual({x: new Array(1)}, {x: new Array}), "shallowEqual of objects with dissimilar arrays at the same key should be false.");
+
             InspectorTest.expectThat(!Object.shallowEqual({}, null), "shallowEqual of an object and null should be false.");
             InspectorTest.expectThat(!Object.shallowEqual({}, 1.23), "shallowEqual of an object and non-object should be false.");
 

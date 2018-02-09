@@ -9,6 +9,11 @@ PASS: shallowEqual of equal objects should be true.
 PASS: shallowEqual of equal objects should be true.
 PASS: shallowEqual of unequal objects should be false.
 PASS: shallowEqual of unequal objects should be false.
+PASS: shallowEqual of objects with similar arrays at the same key should be true.
+PASS: shallowEqual of objects with similar arrays at the same key should be true.
+PASS: shallowEqual of objects with similar arrays at the same key should be true.
+PASS: shallowEqual of objects with dissimilar arrays at the same key should be false.
+PASS: shallowEqual of objects with dissimilar arrays at the same key should be false.
 PASS: shallowEqual of an object and null should be false.
 PASS: shallowEqual of an object and non-object should be false.
 PASS: shallowEqual of a non-object with itself should be false.

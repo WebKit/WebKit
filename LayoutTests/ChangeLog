@@ -1,3 +1,14 @@
+2018-02-09  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Object.shallowEqual always fails when comparing array property values
+        https://bugs.webkit.org/show_bug.cgi?id=182634
+        <rdar://problem/37374639>
+
+        Reviewed by Devin Rousso.
+
+        * inspector/unit-tests/object-utilities-expected.txt:
+        * inspector/unit-tests/object-utilities.html:
+
 2018-02-09  Andy Estes  <aestes@apple.com>
 
         [Payment Request] Crash in PaymentRequest::canMakePayment() when Apple Pay payment method data is missing required fields
