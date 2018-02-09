@@ -31,12 +31,9 @@
 #include <cstdint>
 #include <cstddef>
 #include <limits>
+#include <string.h>
 #include <type_traits>
 #include <chrono>
-
-#if !BCPU(X86_64)
-#include <string.h>
-#endif
 
 namespace bmalloc {
 

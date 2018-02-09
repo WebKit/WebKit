@@ -1,5 +1,14 @@
 2018-02-09  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
+        Improve of string.h include after r228317.
+        https://bugs.webkit.org/show_bug.cgi?id=182642
+
+        Reviewed by Mark Lam.
+
+        * bmalloc/Algorithm.h: Avoid an architecture-specific #include.
+
+2018-02-09  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
         Fix build for !BCPU(X86_64) after r228306
         https://bugs.webkit.org/show_bug.cgi?id=182563
 
