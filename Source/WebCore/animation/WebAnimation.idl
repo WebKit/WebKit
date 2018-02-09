@@ -38,7 +38,7 @@ enum AnimationPlayState {
     CustomConstructor()
 ] interface WebAnimation : EventTarget {
     attribute DOMString id;
-    attribute AnimationEffect? effect;
+    attribute AnimationEffectReadOnly? effect;
     attribute AnimationTimeline? timeline;
     [ImplementedAs=bindingsStartTime] attribute double? startTime;
     [MayThrowException, ImplementedAs=bindingsCurrentTime] attribute double? currentTime;

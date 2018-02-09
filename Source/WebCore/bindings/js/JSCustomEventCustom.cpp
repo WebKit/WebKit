@@ -38,7 +38,7 @@ JSC::JSValue JSCustomEvent::detail(JSC::ExecState& state) const
 {
     return cachedPropertyValue(state, *this, wrapped().cachedDetail(), [this] {
         JSC::JSValue detail = wrapped().detail();
-        return detail ? detail : jsNull();
+        return detail ? detail : JSC::jsNull();
     });
 }
 

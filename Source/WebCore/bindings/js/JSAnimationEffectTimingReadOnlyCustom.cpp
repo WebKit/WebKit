@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,32 +23,27 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "JSAnimationEffectTimingReadOnly.h"
 
-#include "AnimationEffectTimingReadOnly.h"
-#include "ExceptionOr.h"
-#include "FillMode.h"
-#include "PlaybackDirection.h"
-#include "TimingFunction.h"
-#include "WebAnimationUtilities.h"
-#include <wtf/Forward.h>
-#include <wtf/Ref.h>
-#include <wtf/RefCounted.h>
-#include <wtf/RefPtr.h>
-#include <wtf/Seconds.h>
-#include <wtf/Variant.h>
+#include "AnimationEffectTiming.h"
+#include "JSAnimationEffectTiming.h"
+#include "JSDOMBinding.h"
+
+using namespace JSC;
 
 namespace WebCore {
 
-class AnimationEffectTiming final : public AnimationEffectTimingReadOnly {
-public:
-    static Ref<AnimationEffectTiming> create();
-    ~AnimationEffectTiming();
+JSValue toJSNewlyCreated(ExecState*, JSDOMGlobalObject* globalObject, Ref<AnimationEffectTimingReadOnly>&& value)
+{
+    if (value->isAnimationEffectTiming())
+        return createWrapper<AnimationEffectTiming>(globalObject, WTFMove(value));
+    return createWrapper<AnimationEffectTimingReadOnly>(globalObject, WTFMove(value));
+}
 
-private:
-    AnimationEffectTiming();
-};
+JSValue toJS(ExecState* state, JSDOMGlobalObject* globalObject, AnimationEffectTimingReadOnly& value)
+{
+    return wrap(state, globalObject, value);
+}
 
 } // namespace WebCore
-
-SPECIALIZE_TYPE_TRAITS_ANIMATION_EFFECT_TIMING(AnimationEffectTiming, isAnimationEffectTiming());

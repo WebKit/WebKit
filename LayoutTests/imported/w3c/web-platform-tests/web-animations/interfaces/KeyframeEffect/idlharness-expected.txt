@@ -1,34 +1,34 @@
 
-FAIL AnimationEffectReadOnly interface: existence and properties of interface object assert_own_property: self does not have own property "AnimationEffectReadOnly" expected property "AnimationEffectReadOnly" missing
-FAIL AnimationEffectReadOnly interface object length assert_own_property: self does not have own property "AnimationEffectReadOnly" expected property "AnimationEffectReadOnly" missing
-FAIL AnimationEffectReadOnly interface object name assert_own_property: self does not have own property "AnimationEffectReadOnly" expected property "AnimationEffectReadOnly" missing
-FAIL AnimationEffectReadOnly interface: existence and properties of interface prototype object assert_own_property: self does not have own property "AnimationEffectReadOnly" expected property "AnimationEffectReadOnly" missing
-FAIL AnimationEffectReadOnly interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "AnimationEffectReadOnly" expected property "AnimationEffectReadOnly" missing
-FAIL AnimationEffectReadOnly interface: attribute timing assert_own_property: self does not have own property "AnimationEffectReadOnly" expected property "AnimationEffectReadOnly" missing
-FAIL AnimationEffectReadOnly interface: operation getComputedTiming() assert_own_property: self does not have own property "AnimationEffectReadOnly" expected property "AnimationEffectReadOnly" missing
-FAIL KeyframeEffectReadOnly interface: existence and properties of interface object assert_own_property: self does not have own property "KeyframeEffectReadOnly" expected property "KeyframeEffectReadOnly" missing
-FAIL KeyframeEffectReadOnly interface object length assert_own_property: self does not have own property "KeyframeEffectReadOnly" expected property "KeyframeEffectReadOnly" missing
-FAIL KeyframeEffectReadOnly interface object name assert_own_property: self does not have own property "KeyframeEffectReadOnly" expected property "KeyframeEffectReadOnly" missing
-FAIL KeyframeEffectReadOnly interface: existence and properties of interface prototype object assert_own_property: self does not have own property "KeyframeEffectReadOnly" expected property "KeyframeEffectReadOnly" missing
-FAIL KeyframeEffectReadOnly interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "KeyframeEffectReadOnly" expected property "KeyframeEffectReadOnly" missing
-FAIL KeyframeEffectReadOnly interface: attribute target assert_own_property: self does not have own property "KeyframeEffectReadOnly" expected property "KeyframeEffectReadOnly" missing
-FAIL KeyframeEffectReadOnly interface: attribute iterationComposite assert_own_property: self does not have own property "KeyframeEffectReadOnly" expected property "KeyframeEffectReadOnly" missing
-FAIL KeyframeEffectReadOnly interface: attribute composite assert_own_property: self does not have own property "KeyframeEffectReadOnly" expected property "KeyframeEffectReadOnly" missing
-FAIL KeyframeEffectReadOnly interface: operation getKeyframes() assert_own_property: self does not have own property "KeyframeEffectReadOnly" expected property "KeyframeEffectReadOnly" missing
-FAIL KeyframeEffectReadOnly must be primary interface of new KeyframeEffectReadOnly(null, null) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: KeyframeEffectReadOnly"
-FAIL Stringification of new KeyframeEffectReadOnly(null, null) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: KeyframeEffectReadOnly"
-FAIL KeyframeEffectReadOnly interface: new KeyframeEffectReadOnly(null, null) must inherit property "target" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: KeyframeEffectReadOnly"
-FAIL KeyframeEffectReadOnly interface: new KeyframeEffectReadOnly(null, null) must inherit property "iterationComposite" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: KeyframeEffectReadOnly"
-FAIL KeyframeEffectReadOnly interface: new KeyframeEffectReadOnly(null, null) must inherit property "composite" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: KeyframeEffectReadOnly"
-FAIL KeyframeEffectReadOnly interface: new KeyframeEffectReadOnly(null, null) must inherit property "getKeyframes()" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: KeyframeEffectReadOnly"
-FAIL AnimationEffectReadOnly interface: new KeyframeEffectReadOnly(null, null) must inherit property "timing" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: KeyframeEffectReadOnly"
-FAIL AnimationEffectReadOnly interface: new KeyframeEffectReadOnly(null, null) must inherit property "getComputedTiming()" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: KeyframeEffectReadOnly"
-FAIL KeyframeEffect interface: existence and properties of interface object assert_own_property: should inherit from KeyframeEffectReadOnly, but self has no such property expected property "KeyframeEffectReadOnly" missing
+PASS AnimationEffectReadOnly interface: existence and properties of interface object 
+PASS AnimationEffectReadOnly interface object length 
+PASS AnimationEffectReadOnly interface object name 
+PASS AnimationEffectReadOnly interface: existence and properties of interface prototype object 
+PASS AnimationEffectReadOnly interface: existence and properties of interface prototype object's "constructor" property 
+PASS AnimationEffectReadOnly interface: attribute timing 
+PASS AnimationEffectReadOnly interface: operation getComputedTiming() 
+PASS KeyframeEffectReadOnly interface: existence and properties of interface object 
+FAIL KeyframeEffectReadOnly interface object length assert_equals: wrong value for KeyframeEffectReadOnly.length expected 1 but got 2
+PASS KeyframeEffectReadOnly interface object name 
+PASS KeyframeEffectReadOnly interface: existence and properties of interface prototype object 
+PASS KeyframeEffectReadOnly interface: existence and properties of interface prototype object's "constructor" property 
+PASS KeyframeEffectReadOnly interface: attribute target 
+PASS KeyframeEffectReadOnly interface: attribute iterationComposite 
+PASS KeyframeEffectReadOnly interface: attribute composite 
+PASS KeyframeEffectReadOnly interface: operation getKeyframes() 
+PASS KeyframeEffectReadOnly must be primary interface of new KeyframeEffectReadOnly(null, null) 
+PASS Stringification of new KeyframeEffectReadOnly(null, null) 
+PASS KeyframeEffectReadOnly interface: new KeyframeEffectReadOnly(null, null) must inherit property "target" with the proper type 
+PASS KeyframeEffectReadOnly interface: new KeyframeEffectReadOnly(null, null) must inherit property "iterationComposite" with the proper type 
+PASS KeyframeEffectReadOnly interface: new KeyframeEffectReadOnly(null, null) must inherit property "composite" with the proper type 
+PASS KeyframeEffectReadOnly interface: new KeyframeEffectReadOnly(null, null) must inherit property "getKeyframes()" with the proper type 
+PASS AnimationEffectReadOnly interface: new KeyframeEffectReadOnly(null, null) must inherit property "timing" with the proper type 
+PASS AnimationEffectReadOnly interface: new KeyframeEffectReadOnly(null, null) must inherit property "getComputedTiming()" with the proper type 
+PASS KeyframeEffect interface: existence and properties of interface object 
 FAIL KeyframeEffect interface object length assert_equals: wrong value for KeyframeEffect.length expected 1 but got 2
 PASS KeyframeEffect interface object name 
-FAIL KeyframeEffect interface: existence and properties of interface prototype object assert_own_property: should inherit from KeyframeEffectReadOnly, but self has no such property expected property "KeyframeEffectReadOnly" missing
+PASS KeyframeEffect interface: existence and properties of interface prototype object 
 PASS KeyframeEffect interface: existence and properties of interface prototype object's "constructor" property 
-FAIL KeyframeEffect interface: attribute target assert_equals: setter must be function for PutForwards, Replaceable, or non-readonly attributes expected "function" but got "undefined"
+FAIL KeyframeEffect interface: attribute target assert_own_property: expected property "target" missing
 PASS KeyframeEffect interface: attribute iterationComposite 
 PASS KeyframeEffect interface: attribute composite 
 PASS KeyframeEffect interface: operation setKeyframes(object) 

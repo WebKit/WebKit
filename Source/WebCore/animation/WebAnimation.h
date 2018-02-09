@@ -38,7 +38,7 @@
 
 namespace WebCore {
 
-class AnimationEffect;
+class AnimationEffectReadOnly;
 class AnimationPlaybackEvent;
 class AnimationTimeline;
 class Document;
@@ -46,15 +46,15 @@ class RenderStyle;
 
 class WebAnimation final : public RefCounted<WebAnimation>, public EventTargetWithInlineData, public ActiveDOMObject {
 public:
-    static Ref<WebAnimation> create(Document&, AnimationEffect*);
-    static Ref<WebAnimation> create(Document&, AnimationEffect*, AnimationTimeline*);
+    static Ref<WebAnimation> create(Document&, AnimationEffectReadOnly*);
+    static Ref<WebAnimation> create(Document&, AnimationEffectReadOnly*, AnimationTimeline*);
     ~WebAnimation();
 
     const String& id() const { return m_id; }
     void setId(const String& id) { m_id = id; }
 
-    AnimationEffect* effect() const { return m_effect.get(); }
-    void setEffect(RefPtr<AnimationEffect>&&);
+    AnimationEffectReadOnly* effect() const { return m_effect.get(); }
+    void setEffect(RefPtr<AnimationEffectReadOnly>&&);
     AnimationTimeline* timeline() const { return m_timeline.get(); }
     void setTimeline(RefPtr<AnimationTimeline>&&);
 
@@ -130,7 +130,7 @@ private:
     void resetPendingTasks();
     
     String m_id;
-    RefPtr<AnimationEffect> m_effect;
+    RefPtr<AnimationEffectReadOnly> m_effect;
     RefPtr<AnimationTimeline> m_timeline;
     std::optional<Seconds> m_previousCurrentTime;
     std::optional<Seconds> m_startTime;

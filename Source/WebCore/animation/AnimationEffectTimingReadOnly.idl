@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,32 +23,17 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
-
-#include "AnimationEffectTimingReadOnly.h"
-#include "ExceptionOr.h"
-#include "FillMode.h"
-#include "PlaybackDirection.h"
-#include "TimingFunction.h"
-#include "WebAnimationUtilities.h"
-#include <wtf/Forward.h>
-#include <wtf/Ref.h>
-#include <wtf/RefCounted.h>
-#include <wtf/RefPtr.h>
-#include <wtf/Seconds.h>
-#include <wtf/Variant.h>
-
-namespace WebCore {
-
-class AnimationEffectTiming final : public AnimationEffectTimingReadOnly {
-public:
-    static Ref<AnimationEffectTiming> create();
-    ~AnimationEffectTiming();
-
-private:
-    AnimationEffectTiming();
+[
+    EnabledAtRuntime=WebAnimations,
+    Exposed=Window,
+    CustomToJSObject
+] interface AnimationEffectTimingReadOnly {
+    [ImplementedAs=bindingsDelay] readonly attribute double delay;
+    [ImplementedAs=bindingsEndDelay] readonly attribute double endDelay;
+    readonly attribute FillMode fill;
+    readonly attribute double iterationStart;
+    readonly attribute unrestricted double iterations;
+    [MayThrowException, ImplementedAs=bindingsDuration] readonly attribute (unrestricted double or DOMString) duration;
+    readonly attribute PlaybackDirection direction;
+    readonly attribute DOMString easing;
 };
-
-} // namespace WebCore
-
-SPECIALIZE_TYPE_TRAITS_ANIMATION_EFFECT_TIMING(AnimationEffectTiming, isAnimationEffectTiming());

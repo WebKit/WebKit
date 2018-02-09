@@ -37,7 +37,6 @@
 
 namespace WebCore {
 
-class AnimationEffect;
 class Element;
 class WebAnimation;
 

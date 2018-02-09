@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,9 +24,9 @@
  */
 
 #include "config.h"
-#include "AnimationEffect.h"
+#include "AnimationEffectReadOnly.h"
 
-#include "AnimationEffectTiming.h"
+#include "AnimationEffectTimingReadOnly.h"
 #include "FillMode.h"
 #include "JSComputedTimingProperties.h"
 #include "WebAnimationUtilities.h"
@@ -35,20 +35,20 @@ namespace WebCore {
 
 const auto timeEpsilon = Seconds::fromMilliseconds(0.001);
 
-AnimationEffect::AnimationEffect(ClassType classType)
+AnimationEffectReadOnly::AnimationEffectReadOnly(ClassType classType, Ref<AnimationEffectTimingReadOnly>&& timing)
     : m_classType(classType)
+    , m_timing(WTFMove(timing))
 {
-    m_timing = AnimationEffectTiming::create();
 }
 
-std::optional<Seconds> AnimationEffect::localTime() const
+std::optional<Seconds> AnimationEffectReadOnly::localTime() const
 {
     if (m_animation)
         return m_animation->currentTime();
     return std::nullopt;
 }
 
-auto AnimationEffect::phase() const -> Phase
+auto AnimationEffectReadOnly::phase() const -> Phase
 {
     // 3.5.5. Animation effect phases and states
     // https://drafts.csswg.org/web-animations-1/#animation-effect-phases-and-states
@@ -86,7 +86,7 @@ auto AnimationEffect::phase() const -> Phase
     return Phase::Active;
 }
 
-std::optional<Seconds> AnimationEffect::activeTime() const
+std::optional<Seconds> AnimationEffectReadOnly::activeTime() const
 {
     // 3.8.3.1. Calculating the active time
     // https://drafts.csswg.org/web-animations-1/#calculating-the-active-time
@@ -127,7 +127,7 @@ std::optional<Seconds> AnimationEffect::activeTime() const
     return std::nullopt;
 }
 
-std::optional<double> AnimationEffect::overallProgress() const
+std::optional<double> AnimationEffectReadOnly::overallProgress() const
 {
     // 3.8.3.2. Calculating the overall progress
     // https://drafts.csswg.org/web-animations-1/#calculating-the-overall-progress
@@ -156,7 +156,7 @@ std::optional<double> AnimationEffect::overallProgress() const
     return std::abs(overallProgress);
 }
 
-std::optional<double> AnimationEffect::simpleIterationProgress() const
+std::optional<double> AnimationEffectReadOnly::simpleIterationProgress() const
 {
     // 3.8.3.3. Calculating the simple iteration progress
     // https://drafts.csswg.org/web-animations-1/#calculating-the-simple-iteration-progress
@@ -189,7 +189,7 @@ std::optional<double> AnimationEffect::simpleIterationProgress() const
     return simpleIterationProgress;
 }
 
-std::optional<double> AnimationEffect::currentIteration() const
+std::optional<double> AnimationEffectReadOnly::currentIteration() const
 {
     // 3.8.4. Calculating the current iteration
     // https://drafts.csswg.org/web-animations-1/#calculating-the-current-iteration
@@ -212,18 +212,18 @@ std::optional<double> AnimationEffect::currentIteration() const
     return floor(overallProgress().value());
 }
 
-AnimationEffect::ComputedDirection AnimationEffect::currentDirection() const
+AnimationEffectReadOnly::ComputedDirection AnimationEffectReadOnly::currentDirection() const
 {
     // 3.9.1. Calculating the directed progress
     // https://drafts.csswg.org/web-animations-1/#calculating-the-directed-progress
 
     // If playback direction is normal, let the current direction be forwards.
     if (m_timing->direction() == PlaybackDirection::Normal)
-        return AnimationEffect::ComputedDirection::Forwards;
+        return AnimationEffectReadOnly::ComputedDirection::Forwards;
     
     // If playback direction is reverse, let the current direction be reverse.
     if (m_timing->direction() == PlaybackDirection::Reverse)
-        return AnimationEffect::ComputedDirection::Reverse;
+        return AnimationEffectReadOnly::ComputedDirection::Reverse;
     
     // Otherwise, let d be the current iteration.
     auto d = currentIteration().value();
@@ -233,11 +233,11 @@ AnimationEffect::ComputedDirection AnimationEffect::currentDirection() const
     // If d % 2 == 0, let the current direction be forwards, otherwise let the current direction be reverse.
     // If d is infinity, let the current direction be forwards.
     if (std::isinf(d) || !fmod(d, 2))
-        return AnimationEffect::ComputedDirection::Forwards;
-    return AnimationEffect::ComputedDirection::Reverse;
+        return AnimationEffectReadOnly::ComputedDirection::Forwards;
+    return AnimationEffectReadOnly::ComputedDirection::Reverse;
 }
 
-std::optional<double> AnimationEffect::directedProgress() const
+std::optional<double> AnimationEffectReadOnly::directedProgress() const
 {
     // 3.9.1. Calculating the directed progress
     // https://drafts.csswg.org/web-animations-1/#calculating-the-directed-progress
@@ -252,14 +252,14 @@ std::optional<double> AnimationEffect::directedProgress() const
     // 2. Calculate the current direction (we implement this as a separate method).
 
     // 3. If the current direction is forwards then return the simple iteration progress.
-    if (currentDirection() == AnimationEffect::ComputedDirection::Forwards)
+    if (currentDirection() == AnimationEffectReadOnly::ComputedDirection::Forwards)
         return effectSimpleIterationProgress.value();
 
     // Otherwise, return 1.0 - simple iteration progress.
     return 1 - effectSimpleIterationProgress.value();
 }
 
-std::optional<double> AnimationEffect::transformedProgress() const
+std::optional<double> AnimationEffectReadOnly::transformedProgress() const
 {
     // 3.10.1. Calculating the transformed progress
     // https://drafts.csswg.org/web-animations-1/#calculating-the-transformed-progress
@@ -280,7 +280,7 @@ std::optional<double> AnimationEffect::transformedProgress() const
         if (is<StepsTimingFunction>(timingFunction)) {
             // 1. Determine the current direction using the procedure defined in §3.9.1 Calculating the directed progress.
             // 2. If the current direction is forwards, let going forwards be true, otherwise it is false.
-            bool goingForwards = currentDirection() == AnimationEffect::ComputedDirection::Forwards;
+            bool goingForwards = currentDirection() == AnimationEffectReadOnly::ComputedDirection::Forwards;
             // 3. The before flag is set if the animation effect is in the before phase and going forwards is true;
             //    or if the animation effect is in the after phase and going forwards is false.
             auto effectPhase = phase();
@@ -295,12 +295,12 @@ std::optional<double> AnimationEffect::transformedProgress() const
     return effectDirectedProgressValue;
 }
 
-std::optional<double> AnimationEffect::iterationProgress() const
+std::optional<double> AnimationEffectReadOnly::iterationProgress() const
 {
     return transformedProgress();
 }
 
-ComputedTimingProperties AnimationEffect::getComputedTiming()
+ComputedTimingProperties AnimationEffectReadOnly::getComputedTiming()
 {
     ComputedTimingProperties computedTiming;
     computedTiming.delay = m_timing->bindingsDelay();

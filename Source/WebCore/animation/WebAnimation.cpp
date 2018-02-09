@@ -26,10 +26,11 @@
 #include "config.h"
 #include "WebAnimation.h"
 
-#include "AnimationEffect.h"
+#include "AnimationEffectReadOnly.h"
 #include "AnimationPlaybackEvent.h"
 #include "AnimationTimeline.h"
 #include "Document.h"
+#include "DocumentTimeline.h"
 #include "EventNames.h"
 #include "JSWebAnimation.h"
 #include "KeyframeEffect.h"
@@ -39,7 +40,7 @@
 
 namespace WebCore {
 
-Ref<WebAnimation> WebAnimation::create(Document& document, AnimationEffect* effect)
+Ref<WebAnimation> WebAnimation::create(Document& document, AnimationEffectReadOnly* effect)
 {
     auto result = adoptRef(*new WebAnimation(document));
     result->setEffect(effect);
@@ -47,7 +48,7 @@ Ref<WebAnimation> WebAnimation::create(Document& document, AnimationEffect* effe
     return result;
 }
 
-Ref<WebAnimation> WebAnimation::create(Document& document, AnimationEffect* effect, AnimationTimeline* timeline)
+Ref<WebAnimation> WebAnimation::create(Document& document, AnimationEffectReadOnly* effect, AnimationTimeline* timeline)
 {
     auto result = adoptRef(*new WebAnimation(document));
     result->setEffect(effect);
@@ -70,7 +71,7 @@ WebAnimation::~WebAnimation()
         m_timeline->removeAnimation(*this);
 }
 
-void WebAnimation::setEffect(RefPtr<AnimationEffect>&& effect)
+void WebAnimation::setEffect(RefPtr<AnimationEffectReadOnly>&& effect)
 {
     // 3.4.3. Setting the target effect of an animation
     // https://drafts.csswg.org/web-animations-1/#setting-the-target-effect

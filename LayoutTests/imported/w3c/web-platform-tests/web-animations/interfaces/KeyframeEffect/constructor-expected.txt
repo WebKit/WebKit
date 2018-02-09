@@ -1,265 +1,169 @@
 
-FAIL A KeyframeEffectReadOnly can be constructed with no frames Can't find variable: KeyframeEffectReadOnly
-FAIL easing values are parsed correctly when passed to the KeyframeEffectReadOnly constructor in KeyframeEffectOptions Can't find variable: KeyframeEffectReadOnly
-FAIL Invalid easing values are correctly rejected when passed to the KeyframeEffectReadOnly constructor in KeyframeEffectOptions assert_throws: TypeError is thrown for easing '' function "() => {
-      new KeyframeEffectReadOnly(target, null, { easing: invalidEasing });
-    }" threw object "ReferenceError: Can't find variable: KeyframeEffectReadOnly" ("ReferenceError") expected object "TypeError" ("TypeError")
-FAIL composite values are parsed correctly when passed to the KeyframeEffectReadOnly constructor in property-indexed keyframes Can't find variable: KeyframeEffectReadOnly
-FAIL composite values are parsed correctly when passed to the KeyframeEffectReadOnly constructor in regular keyframes Can't find variable: KeyframeEffectReadOnly
-FAIL composite value is null if the composite operation specified on the keyframe effect is being used Can't find variable: KeyframeEffectReadOnly
-FAIL A KeyframeEffectReadOnly can be constructed with a one property two value property-indexed keyframes specification Can't find variable: KeyframeEffectReadOnly
-FAIL A KeyframeEffectReadOnly constructed with a one property two value property-indexed keyframes specification roundtrips Can't find variable: KeyframeEffectReadOnly
-FAIL A KeyframeEffectReadOnly can be constructed with a one shorthand property two value property-indexed keyframes specification Can't find variable: KeyframeEffectReadOnly
-FAIL A KeyframeEffectReadOnly constructed with a one shorthand property two value property-indexed keyframes specification roundtrips Can't find variable: KeyframeEffectReadOnly
-FAIL A KeyframeEffectReadOnly can be constructed with a two property (one shorthand and one of its longhand components) two value property-indexed keyframes specification Can't find variable: KeyframeEffectReadOnly
-FAIL A KeyframeEffectReadOnly constructed with a two property (one shorthand and one of its longhand components) two value property-indexed keyframes specification roundtrips Can't find variable: KeyframeEffectReadOnly
-FAIL A KeyframeEffectReadOnly can be constructed with a two property two value property-indexed keyframes specification Can't find variable: KeyframeEffectReadOnly
-FAIL A KeyframeEffectReadOnly constructed with a two property two value property-indexed keyframes specification roundtrips Can't find variable: KeyframeEffectReadOnly
-FAIL A KeyframeEffectReadOnly can be constructed with a two property property-indexed keyframes specification with different numbers of values Can't find variable: KeyframeEffectReadOnly
-FAIL A KeyframeEffectReadOnly constructed with a two property property-indexed keyframes specification with different numbers of values roundtrips Can't find variable: KeyframeEffectReadOnly
-FAIL A KeyframeEffectReadOnly can be constructed with a property-indexed keyframes specification with an invalid value Can't find variable: KeyframeEffectReadOnly
-FAIL A KeyframeEffectReadOnly constructed with a property-indexed keyframes specification with an invalid value roundtrips Can't find variable: KeyframeEffectReadOnly
-FAIL A KeyframeEffectReadOnly can be constructed with a one property two value property-indexed keyframes specification that needs to stringify its values Can't find variable: KeyframeEffectReadOnly
-FAIL A KeyframeEffectReadOnly constructed with a one property two value property-indexed keyframes specification that needs to stringify its values roundtrips Can't find variable: KeyframeEffectReadOnly
-FAIL A KeyframeEffectReadOnly can be constructed with a property-indexed keyframes specification with a CSS variable reference Can't find variable: KeyframeEffectReadOnly
-FAIL A KeyframeEffectReadOnly constructed with a property-indexed keyframes specification with a CSS variable reference roundtrips Can't find variable: KeyframeEffectReadOnly
-FAIL A KeyframeEffectReadOnly can be constructed with a property-indexed keyframes specification with a CSS variable reference in a shorthand property Can't find variable: KeyframeEffectReadOnly
-FAIL A KeyframeEffectReadOnly constructed with a property-indexed keyframes specification with a CSS variable reference in a shorthand property roundtrips Can't find variable: KeyframeEffectReadOnly
-FAIL A KeyframeEffectReadOnly can be constructed with a one property one value property-indexed keyframes specification Can't find variable: KeyframeEffectReadOnly
-FAIL A KeyframeEffectReadOnly constructed with a one property one value property-indexed keyframes specification roundtrips Can't find variable: KeyframeEffectReadOnly
-FAIL A KeyframeEffectReadOnly can be constructed with a one property one non-array value property-indexed keyframes specification Can't find variable: KeyframeEffectReadOnly
-FAIL A KeyframeEffectReadOnly constructed with a one property one non-array value property-indexed keyframes specification roundtrips Can't find variable: KeyframeEffectReadOnly
-FAIL A KeyframeEffectReadOnly can be constructed with a one property two value property-indexed keyframes specification where the first value is invalid Can't find variable: KeyframeEffectReadOnly
-FAIL A KeyframeEffectReadOnly constructed with a one property two value property-indexed keyframes specification where the first value is invalid roundtrips Can't find variable: KeyframeEffectReadOnly
-FAIL A KeyframeEffectReadOnly can be constructed with a one property two value property-indexed keyframes specification where the second value is invalid Can't find variable: KeyframeEffectReadOnly
-FAIL A KeyframeEffectReadOnly constructed with a one property two value property-indexed keyframes specification where the second value is invalid roundtrips Can't find variable: KeyframeEffectReadOnly
-FAIL A KeyframeEffectReadOnly can be constructed with a property-indexed keyframe with a single offset Can't find variable: KeyframeEffectReadOnly
-FAIL A KeyframeEffectReadOnly constructed with a property-indexed keyframe with a single offset roundtrips Can't find variable: KeyframeEffectReadOnly
-FAIL A KeyframeEffectReadOnly can be constructed with a property-indexed keyframe with an array of offsets Can't find variable: KeyframeEffectReadOnly
-FAIL A KeyframeEffectReadOnly constructed with a property-indexed keyframe with an array of offsets roundtrips Can't find variable: KeyframeEffectReadOnly
-FAIL A KeyframeEffectReadOnly can be constructed with a property-indexed keyframe with an array of offsets that is too short Can't find variable: KeyframeEffectReadOnly
-FAIL A KeyframeEffectReadOnly constructed with a property-indexed keyframe with an array of offsets that is too short roundtrips Can't find variable: KeyframeEffectReadOnly
-FAIL A KeyframeEffectReadOnly can be constructed with a property-indexed keyframe with an array of offsets that is too long Can't find variable: KeyframeEffectReadOnly
-FAIL A KeyframeEffectReadOnly constructed with a property-indexed keyframe with an array of offsets that is too long roundtrips Can't find variable: KeyframeEffectReadOnly
-FAIL A KeyframeEffectReadOnly can be constructed with a property-indexed keyframe with an empty array of offsets Can't find variable: KeyframeEffectReadOnly
-FAIL A KeyframeEffectReadOnly constructed with a property-indexed keyframe with an empty array of offsets roundtrips Can't find variable: KeyframeEffectReadOnly
-FAIL A KeyframeEffectReadOnly can be constructed with a property-indexed keyframe with an array of offsets with an embedded null value Can't find variable: KeyframeEffectReadOnly
-FAIL A KeyframeEffectReadOnly constructed with a property-indexed keyframe with an array of offsets with an embedded null value roundtrips Can't find variable: KeyframeEffectReadOnly
-FAIL A KeyframeEffectReadOnly can be constructed with a property-indexed keyframe with an array of offsets with a trailing null value Can't find variable: KeyframeEffectReadOnly
-FAIL A KeyframeEffectReadOnly constructed with a property-indexed keyframe with an array of offsets with a trailing null value roundtrips Can't find variable: KeyframeEffectReadOnly
-FAIL A KeyframeEffectReadOnly can be constructed with a property-indexed keyframe with an array of offsets with leading and trailing null values Can't find variable: KeyframeEffectReadOnly
-FAIL A KeyframeEffectReadOnly constructed with a property-indexed keyframe with an array of offsets with leading and trailing null values roundtrips Can't find variable: KeyframeEffectReadOnly
-FAIL A KeyframeEffectReadOnly can be constructed with a property-indexed keyframe with an array of offsets with adjacent null values Can't find variable: KeyframeEffectReadOnly
-FAIL A KeyframeEffectReadOnly constructed with a property-indexed keyframe with an array of offsets with adjacent null values roundtrips Can't find variable: KeyframeEffectReadOnly
-FAIL A KeyframeEffectReadOnly can be constructed with a property-indexed keyframe with an array of offsets with all null values (and too many at that) Can't find variable: KeyframeEffectReadOnly
-FAIL A KeyframeEffectReadOnly constructed with a property-indexed keyframe with an array of offsets with all null values (and too many at that) roundtrips Can't find variable: KeyframeEffectReadOnly
-FAIL A KeyframeEffectReadOnly can be constructed with a property-indexed keyframe with a single null offset Can't find variable: KeyframeEffectReadOnly
-FAIL A KeyframeEffectReadOnly constructed with a property-indexed keyframe with a single null offset roundtrips Can't find variable: KeyframeEffectReadOnly
-FAIL A KeyframeEffectReadOnly can be constructed with a property-indexed keyframe with an array of offsets that is not strictly ascending in the unused part of the array Can't find variable: KeyframeEffectReadOnly
-FAIL A KeyframeEffectReadOnly constructed with a property-indexed keyframe with an array of offsets that is not strictly ascending in the unused part of the array roundtrips Can't find variable: KeyframeEffectReadOnly
-FAIL A KeyframeEffectReadOnly can be constructed with a property-indexed keyframe without any specified easing Can't find variable: KeyframeEffectReadOnly
-FAIL A KeyframeEffectReadOnly constructed with a property-indexed keyframe without any specified easing roundtrips Can't find variable: KeyframeEffectReadOnly
-FAIL A KeyframeEffectReadOnly can be constructed with a property-indexed keyframe with a single easing Can't find variable: KeyframeEffectReadOnly
-FAIL A KeyframeEffectReadOnly constructed with a property-indexed keyframe with a single easing roundtrips Can't find variable: KeyframeEffectReadOnly
-FAIL A KeyframeEffectReadOnly can be constructed with a property-indexed keyframe with an array of easings Can't find variable: KeyframeEffectReadOnly
-FAIL A KeyframeEffectReadOnly constructed with a property-indexed keyframe with an array of easings roundtrips Can't find variable: KeyframeEffectReadOnly
-FAIL A KeyframeEffectReadOnly can be constructed with a property-indexed keyframe with an array of easings that is too short Can't find variable: KeyframeEffectReadOnly
-FAIL A KeyframeEffectReadOnly constructed with a property-indexed keyframe with an array of easings that is too short roundtrips Can't find variable: KeyframeEffectReadOnly
-FAIL A KeyframeEffectReadOnly can be constructed with a property-indexed keyframe with a single-element array of easings Can't find variable: KeyframeEffectReadOnly
-FAIL A KeyframeEffectReadOnly constructed with a property-indexed keyframe with a single-element array of easings roundtrips Can't find variable: KeyframeEffectReadOnly
-FAIL A KeyframeEffectReadOnly can be constructed with a property-indexed keyframe with an empty array of easings Can't find variable: KeyframeEffectReadOnly
-FAIL A KeyframeEffectReadOnly constructed with a property-indexed keyframe with an empty array of easings roundtrips Can't find variable: KeyframeEffectReadOnly
-FAIL A KeyframeEffectReadOnly can be constructed with a property-indexed keyframe with an array of easings that is too long Can't find variable: KeyframeEffectReadOnly
-FAIL A KeyframeEffectReadOnly constructed with a property-indexed keyframe with an array of easings that is too long roundtrips Can't find variable: KeyframeEffectReadOnly
-FAIL A KeyframeEffectReadOnly can be constructed with a property-indexed keyframe with a single composite operation Can't find variable: KeyframeEffectReadOnly
-FAIL A KeyframeEffectReadOnly constructed with a property-indexed keyframe with a single composite operation roundtrips Can't find variable: KeyframeEffectReadOnly
-FAIL A KeyframeEffectReadOnly can be constructed with a property-indexed keyframe with a composite array Can't find variable: KeyframeEffectReadOnly
-FAIL A KeyframeEffectReadOnly constructed with a property-indexed keyframe with a composite array roundtrips Can't find variable: KeyframeEffectReadOnly
-FAIL A KeyframeEffectReadOnly can be constructed with a property-indexed keyframe with a composite array that is too short Can't find variable: KeyframeEffectReadOnly
-FAIL A KeyframeEffectReadOnly constructed with a property-indexed keyframe with a composite array that is too short roundtrips Can't find variable: KeyframeEffectReadOnly
-FAIL A KeyframeEffectReadOnly can be constructed with a property-indexed keyframe with a composite array that is too long Can't find variable: KeyframeEffectReadOnly
-FAIL A KeyframeEffectReadOnly constructed with a property-indexed keyframe with a composite array that is too long roundtrips Can't find variable: KeyframeEffectReadOnly
-FAIL A KeyframeEffectReadOnly can be constructed with a property-indexed keyframe with a single-element composite array Can't find variable: KeyframeEffectReadOnly
-FAIL A KeyframeEffectReadOnly constructed with a property-indexed keyframe with a single-element composite array roundtrips Can't find variable: KeyframeEffectReadOnly
-FAIL A KeyframeEffectReadOnly can be constructed with a one property one keyframe sequence Can't find variable: KeyframeEffectReadOnly
-FAIL A KeyframeEffectReadOnly constructed with a one property one keyframe sequence roundtrips Can't find variable: KeyframeEffectReadOnly
-FAIL A KeyframeEffectReadOnly can be constructed with a one property two keyframe sequence Can't find variable: KeyframeEffectReadOnly
-FAIL A KeyframeEffectReadOnly constructed with a one property two keyframe sequence roundtrips Can't find variable: KeyframeEffectReadOnly
-FAIL A KeyframeEffectReadOnly can be constructed with a two property two keyframe sequence Can't find variable: KeyframeEffectReadOnly
-FAIL A KeyframeEffectReadOnly constructed with a two property two keyframe sequence roundtrips Can't find variable: KeyframeEffectReadOnly
-FAIL A KeyframeEffectReadOnly can be constructed with a one shorthand property two keyframe sequence Can't find variable: KeyframeEffectReadOnly
-FAIL A KeyframeEffectReadOnly constructed with a one shorthand property two keyframe sequence roundtrips Can't find variable: KeyframeEffectReadOnly
-FAIL A KeyframeEffectReadOnly can be constructed with a two property (a shorthand and one of its component longhands) two keyframe sequence Can't find variable: KeyframeEffectReadOnly
-FAIL A KeyframeEffectReadOnly constructed with a two property (a shorthand and one of its component longhands) two keyframe sequence roundtrips Can't find variable: KeyframeEffectReadOnly
-FAIL A KeyframeEffectReadOnly can be constructed with a two property keyframe sequence where one property is missing from the first keyframe Can't find variable: KeyframeEffectReadOnly
-FAIL A KeyframeEffectReadOnly constructed with a two property keyframe sequence where one property is missing from the first keyframe roundtrips Can't find variable: KeyframeEffectReadOnly
-FAIL A KeyframeEffectReadOnly can be constructed with a two property keyframe sequence where one property is missing from the last keyframe Can't find variable: KeyframeEffectReadOnly
-FAIL A KeyframeEffectReadOnly constructed with a two property keyframe sequence where one property is missing from the last keyframe roundtrips Can't find variable: KeyframeEffectReadOnly
-FAIL A KeyframeEffectReadOnly can be constructed with a one property two keyframe sequence that needs to stringify its values Can't find variable: KeyframeEffectReadOnly
-FAIL A KeyframeEffectReadOnly constructed with a one property two keyframe sequence that needs to stringify its values roundtrips Can't find variable: KeyframeEffectReadOnly
-FAIL A KeyframeEffectReadOnly can be constructed with a keyframe sequence with a CSS variable reference Can't find variable: KeyframeEffectReadOnly
-FAIL A KeyframeEffectReadOnly constructed with a keyframe sequence with a CSS variable reference roundtrips Can't find variable: KeyframeEffectReadOnly
-FAIL A KeyframeEffectReadOnly can be constructed with a keyframe sequence with a CSS variable reference in a shorthand property Can't find variable: KeyframeEffectReadOnly
-FAIL A KeyframeEffectReadOnly constructed with a keyframe sequence with a CSS variable reference in a shorthand property roundtrips Can't find variable: KeyframeEffectReadOnly
-FAIL A KeyframeEffectReadOnly can be constructed with a keyframe sequence with duplicate values for a given interior offset Can't find variable: KeyframeEffectReadOnly
-FAIL A KeyframeEffectReadOnly constructed with a keyframe sequence with duplicate values for a given interior offset roundtrips Can't find variable: KeyframeEffectReadOnly
-FAIL A KeyframeEffectReadOnly can be constructed with a keyframe sequence with duplicate values for offsets 0 and 1 Can't find variable: KeyframeEffectReadOnly
-FAIL A KeyframeEffectReadOnly constructed with a keyframe sequence with duplicate values for offsets 0 and 1 roundtrips Can't find variable: KeyframeEffectReadOnly
-FAIL A KeyframeEffectReadOnly can be constructed with a two property four keyframe sequence Can't find variable: KeyframeEffectReadOnly
-FAIL A KeyframeEffectReadOnly constructed with a two property four keyframe sequence roundtrips Can't find variable: KeyframeEffectReadOnly
-FAIL A KeyframeEffectReadOnly can be constructed with a single keyframe sequence with omitted offset Can't find variable: KeyframeEffectReadOnly
-FAIL A KeyframeEffectReadOnly constructed with a single keyframe sequence with omitted offset roundtrips Can't find variable: KeyframeEffectReadOnly
-FAIL A KeyframeEffectReadOnly can be constructed with a single keyframe sequence with null offset Can't find variable: KeyframeEffectReadOnly
-FAIL A KeyframeEffectReadOnly constructed with a single keyframe sequence with null offset roundtrips Can't find variable: KeyframeEffectReadOnly
-FAIL A KeyframeEffectReadOnly can be constructed with a single keyframe sequence with string offset Can't find variable: KeyframeEffectReadOnly
-FAIL A KeyframeEffectReadOnly constructed with a single keyframe sequence with string offset roundtrips Can't find variable: KeyframeEffectReadOnly
-FAIL A KeyframeEffectReadOnly can be constructed with a one property keyframe sequence with some omitted offsets Can't find variable: KeyframeEffectReadOnly
-FAIL A KeyframeEffectReadOnly constructed with a one property keyframe sequence with some omitted offsets roundtrips Can't find variable: KeyframeEffectReadOnly
-FAIL A KeyframeEffectReadOnly can be constructed with a one property keyframe sequence with some null offsets Can't find variable: KeyframeEffectReadOnly
-FAIL A KeyframeEffectReadOnly constructed with a one property keyframe sequence with some null offsets roundtrips Can't find variable: KeyframeEffectReadOnly
-FAIL A KeyframeEffectReadOnly can be constructed with a two property keyframe sequence with some omitted offsets Can't find variable: KeyframeEffectReadOnly
-FAIL A KeyframeEffectReadOnly constructed with a two property keyframe sequence with some omitted offsets roundtrips Can't find variable: KeyframeEffectReadOnly
-FAIL A KeyframeEffectReadOnly can be constructed with a one property keyframe sequence with all omitted offsets Can't find variable: KeyframeEffectReadOnly
-FAIL A KeyframeEffectReadOnly constructed with a one property keyframe sequence with all omitted offsets roundtrips Can't find variable: KeyframeEffectReadOnly
-FAIL A KeyframeEffectReadOnly can be constructed with a keyframe sequence with different easing values, but the same easing value for a given offset Can't find variable: KeyframeEffectReadOnly
-FAIL A KeyframeEffectReadOnly constructed with a keyframe sequence with different easing values, but the same easing value for a given offset roundtrips Can't find variable: KeyframeEffectReadOnly
-FAIL A KeyframeEffectReadOnly can be constructed with a keyframe sequence with different composite values, but the same composite value for a given offset Can't find variable: KeyframeEffectReadOnly
-FAIL A KeyframeEffectReadOnly constructed with a keyframe sequence with different composite values, but the same composite value for a given offset roundtrips Can't find variable: KeyframeEffectReadOnly
-FAIL KeyframeEffectReadOnly constructor throws with keyframes with an out-of-bounded positive offset assert_throws: function "() => {
-      new KeyframeEffectReadOnly(target, subtest.input);
-    }" threw object "ReferenceError: Can't find variable: KeyframeEffectReadOnly" ("ReferenceError") expected object "TypeError" ("TypeError")
-FAIL KeyframeEffectReadOnly constructor throws with keyframes with an out-of-bounded negative offset assert_throws: function "() => {
-      new KeyframeEffectReadOnly(target, subtest.input);
-    }" threw object "ReferenceError: Can't find variable: KeyframeEffectReadOnly" ("ReferenceError") expected object "TypeError" ("TypeError")
-FAIL KeyframeEffectReadOnly constructor throws with property-indexed keyframes not loosely sorted by offset assert_throws: function "() => {
-      new KeyframeEffectReadOnly(target, subtest.input);
-    }" threw object "ReferenceError: Can't find variable: KeyframeEffectReadOnly" ("ReferenceError") expected object "TypeError" ("TypeError")
-FAIL KeyframeEffectReadOnly constructor throws with property-indexed keyframes not loosely sorted by offset even though not all offsets are specified assert_throws: function "() => {
-      new KeyframeEffectReadOnly(target, subtest.input);
-    }" threw object "ReferenceError: Can't find variable: KeyframeEffectReadOnly" ("ReferenceError") expected object "TypeError" ("TypeError")
-FAIL KeyframeEffectReadOnly constructor throws with property-indexed keyframes with offsets out of range assert_throws: function "() => {
-      new KeyframeEffectReadOnly(target, subtest.input);
-    }" threw object "ReferenceError: Can't find variable: KeyframeEffectReadOnly" ("ReferenceError") expected object "TypeError" ("TypeError")
-FAIL KeyframeEffectReadOnly constructor throws with keyframes not loosely sorted by offset assert_throws: function "() => {
-      new KeyframeEffectReadOnly(target, subtest.input);
-    }" threw object "ReferenceError: Can't find variable: KeyframeEffectReadOnly" ("ReferenceError") expected object "TypeError" ("TypeError")
-FAIL KeyframeEffectReadOnly constructor throws with property-indexed keyframes with an invalid easing value assert_throws: function "() => {
-      new KeyframeEffectReadOnly(target, subtest.input);
-    }" threw object "ReferenceError: Can't find variable: KeyframeEffectReadOnly" ("ReferenceError") expected object "TypeError" ("TypeError")
-FAIL KeyframeEffectReadOnly constructor throws with property-indexed keyframes with an invalid easing value as one of the array values assert_throws: function "() => {
-      new KeyframeEffectReadOnly(target, subtest.input);
-    }" threw object "ReferenceError: Can't find variable: KeyframeEffectReadOnly" ("ReferenceError") expected object "TypeError" ("TypeError")
-FAIL KeyframeEffectReadOnly constructor throws with property-indexed keyframe with an invalid easing in the unused part of the array of easings assert_throws: function "() => {
-      new KeyframeEffectReadOnly(target, subtest.input);
-    }" threw object "ReferenceError: Can't find variable: KeyframeEffectReadOnly" ("ReferenceError") expected object "TypeError" ("TypeError")
-FAIL KeyframeEffectReadOnly constructor throws with empty property-indexed keyframe with an invalid easing assert_throws: function "() => {
-      new KeyframeEffectReadOnly(target, subtest.input);
-    }" threw object "ReferenceError: Can't find variable: KeyframeEffectReadOnly" ("ReferenceError") expected object "TypeError" ("TypeError")
-FAIL KeyframeEffectReadOnly constructor throws with empty property-indexed keyframe with an invalid easings array assert_throws: function "() => {
-      new KeyframeEffectReadOnly(target, subtest.input);
-    }" threw object "ReferenceError: Can't find variable: KeyframeEffectReadOnly" ("ReferenceError") expected object "TypeError" ("TypeError")
-FAIL KeyframeEffectReadOnly constructor throws with a keyframe sequence with an invalid easing value assert_throws: function "() => {
-      new KeyframeEffectReadOnly(target, subtest.input);
-    }" threw object "ReferenceError: Can't find variable: KeyframeEffectReadOnly" ("ReferenceError") expected object "TypeError" ("TypeError")
-FAIL KeyframeEffectReadOnly constructor throws with property-indexed keyframes with an invalid composite value assert_throws: function "() => {
-      new KeyframeEffectReadOnly(target, subtest.input);
-    }" threw object "ReferenceError: Can't find variable: KeyframeEffectReadOnly" ("ReferenceError") expected object "TypeError" ("TypeError")
-FAIL KeyframeEffectReadOnly constructor throws with property-indexed keyframes with an invalid composite value as one of the array values assert_throws: function "() => {
-      new KeyframeEffectReadOnly(target, subtest.input);
-    }" threw object "ReferenceError: Can't find variable: KeyframeEffectReadOnly" ("ReferenceError") expected object "TypeError" ("TypeError")
-FAIL KeyframeEffectReadOnly constructor throws with keyframes with an invalid composite value assert_throws: function "() => {
-      new KeyframeEffectReadOnly(target, subtest.input);
-    }" threw object "ReferenceError: Can't find variable: KeyframeEffectReadOnly" ("ReferenceError") expected object "TypeError" ("TypeError")
-FAIL A KeyframeEffectReadOnly constructed without any KeyframeEffectOptions object Can't find variable: KeyframeEffectReadOnly
-FAIL A KeyframeEffectReadOnly constructed by an empty KeyframeEffectOptions object Can't find variable: KeyframeEffectReadOnly
-FAIL A KeyframeEffectReadOnly constructed by a normal KeyframeEffectOptions object Can't find variable: KeyframeEffectReadOnly
-FAIL A KeyframeEffectReadOnly constructed by a double value Can't find variable: KeyframeEffectReadOnly
-FAIL A KeyframeEffectReadOnly constructed by +Infinity Can't find variable: KeyframeEffectReadOnly
-FAIL A KeyframeEffectReadOnly constructed by an Infinity duration Can't find variable: KeyframeEffectReadOnly
-FAIL A KeyframeEffectReadOnly constructed by an auto duration Can't find variable: KeyframeEffectReadOnly
-FAIL A KeyframeEffectReadOnly constructed by an Infinity iterations Can't find variable: KeyframeEffectReadOnly
-FAIL A KeyframeEffectReadOnly constructed by an auto fill Can't find variable: KeyframeEffectReadOnly
-FAIL A KeyframeEffectReadOnly constructed by a forwards fill Can't find variable: KeyframeEffectReadOnly
-FAIL Invalid KeyframeEffectReadOnly option by -Infinity assert_throws: function "() => {
-      new KeyframeEffectReadOnly(target,
-                                 { left: ['10px', '20px'] },
-                                 subtest.input);
-    }" threw object "ReferenceError: Can't find variable: KeyframeEffectReadOnly" ("ReferenceError") expected object "TypeError" ("TypeError")
-FAIL Invalid KeyframeEffectReadOnly option by NaN assert_throws: function "() => {
-      new KeyframeEffectReadOnly(target,
-                                 { left: ['10px', '20px'] },
-                                 subtest.input);
-    }" threw object "ReferenceError: Can't find variable: KeyframeEffectReadOnly" ("ReferenceError") expected object "TypeError" ("TypeError")
-FAIL Invalid KeyframeEffectReadOnly option by a negative value assert_throws: function "() => {
-      new KeyframeEffectReadOnly(target,
-                                 { left: ['10px', '20px'] },
-                                 subtest.input);
-    }" threw object "ReferenceError: Can't find variable: KeyframeEffectReadOnly" ("ReferenceError") expected object "TypeError" ("TypeError")
-FAIL Invalid KeyframeEffectReadOnly option by a negative Infinity duration assert_throws: function "() => {
-      new KeyframeEffectReadOnly(target,
-                                 { left: ['10px', '20px'] },
-                                 subtest.input);
-    }" threw object "ReferenceError: Can't find variable: KeyframeEffectReadOnly" ("ReferenceError") expected object "TypeError" ("TypeError")
-FAIL Invalid KeyframeEffectReadOnly option by a NaN duration assert_throws: function "() => {
-      new KeyframeEffectReadOnly(target,
-                                 { left: ['10px', '20px'] },
-                                 subtest.input);
-    }" threw object "ReferenceError: Can't find variable: KeyframeEffectReadOnly" ("ReferenceError") expected object "TypeError" ("TypeError")
-FAIL Invalid KeyframeEffectReadOnly option by a negative duration assert_throws: function "() => {
-      new KeyframeEffectReadOnly(target,
-                                 { left: ['10px', '20px'] },
-                                 subtest.input);
-    }" threw object "ReferenceError: Can't find variable: KeyframeEffectReadOnly" ("ReferenceError") expected object "TypeError" ("TypeError")
-FAIL Invalid KeyframeEffectReadOnly option by a string duration assert_throws: function "() => {
-      new KeyframeEffectReadOnly(target,
-                                 { left: ['10px', '20px'] },
-                                 subtest.input);
-    }" threw object "ReferenceError: Can't find variable: KeyframeEffectReadOnly" ("ReferenceError") expected object "TypeError" ("TypeError")
-FAIL Invalid KeyframeEffectReadOnly option by a negative Infinity iterations assert_throws: function "() => {
-      new KeyframeEffectReadOnly(target,
-                                 { left: ['10px', '20px'] },
-                                 subtest.input);
-    }" threw object "ReferenceError: Can't find variable: KeyframeEffectReadOnly" ("ReferenceError") expected object "TypeError" ("TypeError")
-FAIL Invalid KeyframeEffectReadOnly option by a NaN iterations assert_throws: function "() => {
-      new KeyframeEffectReadOnly(target,
-                                 { left: ['10px', '20px'] },
-                                 subtest.input);
-    }" threw object "ReferenceError: Can't find variable: KeyframeEffectReadOnly" ("ReferenceError") expected object "TypeError" ("TypeError")
-FAIL Invalid KeyframeEffectReadOnly option by a negative iterations assert_throws: function "() => {
-      new KeyframeEffectReadOnly(target,
-                                 { left: ['10px', '20px'] },
-                                 subtest.input);
-    }" threw object "ReferenceError: Can't find variable: KeyframeEffectReadOnly" ("ReferenceError") expected object "TypeError" ("TypeError")
-FAIL Invalid KeyframeEffectReadOnly option by a blank easing assert_throws: function "() => {
-      new KeyframeEffectReadOnly(target,
-                                 { left: ['10px', '20px'] },
-                                 subtest.input);
-    }" threw object "ReferenceError: Can't find variable: KeyframeEffectReadOnly" ("ReferenceError") expected object "TypeError" ("TypeError")
-FAIL Invalid KeyframeEffectReadOnly option by an unrecognized easing assert_throws: function "() => {
-      new KeyframeEffectReadOnly(target,
-                                 { left: ['10px', '20px'] },
-                                 subtest.input);
-    }" threw object "ReferenceError: Can't find variable: KeyframeEffectReadOnly" ("ReferenceError") expected object "TypeError" ("TypeError")
-FAIL Invalid KeyframeEffectReadOnly option by an 'initial' easing assert_throws: function "() => {
-      new KeyframeEffectReadOnly(target,
-                                 { left: ['10px', '20px'] },
-                                 subtest.input);
-    }" threw object "ReferenceError: Can't find variable: KeyframeEffectReadOnly" ("ReferenceError") expected object "TypeError" ("TypeError")
-FAIL Invalid KeyframeEffectReadOnly option by an 'inherit' easing assert_throws: function "() => {
-      new KeyframeEffectReadOnly(target,
-                                 { left: ['10px', '20px'] },
-                                 subtest.input);
-    }" threw object "ReferenceError: Can't find variable: KeyframeEffectReadOnly" ("ReferenceError") expected object "TypeError" ("TypeError")
-FAIL Invalid KeyframeEffectReadOnly option by a variable easing assert_throws: function "() => {
-      new KeyframeEffectReadOnly(target,
-                                 { left: ['10px', '20px'] },
-                                 subtest.input);
-    }" threw object "ReferenceError: Can't find variable: KeyframeEffectReadOnly" ("ReferenceError") expected object "TypeError" ("TypeError")
-FAIL Invalid KeyframeEffectReadOnly option by a multi-value easing assert_throws: function "() => {
-      new KeyframeEffectReadOnly(target,
-                                 { left: ['10px', '20px'] },
-                                 subtest.input);
-    }" threw object "ReferenceError: Can't find variable: KeyframeEffectReadOnly" ("ReferenceError") expected object "TypeError" ("TypeError")
-FAIL A KeyframeEffectReadOnly constructed with null target Can't find variable: KeyframeEffectReadOnly
+PASS A KeyframeEffectReadOnly can be constructed with no frames 
+PASS easing values are parsed correctly when passed to the KeyframeEffectReadOnly constructor in KeyframeEffectOptions 
+PASS Invalid easing values are correctly rejected when passed to the KeyframeEffectReadOnly constructor in KeyframeEffectOptions 
+FAIL composite values are parsed correctly when passed to the KeyframeEffectReadOnly constructor in property-indexed keyframes Type error
+FAIL composite values are parsed correctly when passed to the KeyframeEffectReadOnly constructor in regular keyframes Type error
+PASS composite value is null if the composite operation specified on the keyframe effect is being used 
+PASS A KeyframeEffectReadOnly can be constructed with a one property two value property-indexed keyframes specification 
+FAIL A KeyframeEffectReadOnly constructed with a one property two value property-indexed keyframes specification roundtrips Type error
+FAIL A KeyframeEffectReadOnly can be constructed with a one shorthand property two value property-indexed keyframes specification assert_equals: properties on ComputedKeyframe #0 should match expected "composite,computedOffset,easing,margin,offset" but got "composite,computedOffset,easing,marginBottom,marginLeft,marginRight,marginTop,offset"
+FAIL A KeyframeEffectReadOnly constructed with a one shorthand property two value property-indexed keyframes specification roundtrips Type error
+FAIL A KeyframeEffectReadOnly can be constructed with a two property (one shorthand and one of its longhand components) two value property-indexed keyframes specification assert_equals: properties on ComputedKeyframe #0 should match expected "composite,computedOffset,easing,margin,marginTop,offset" but got "composite,computedOffset,easing,marginBottom,marginLeft,marginRight,marginTop,offset"
+FAIL A KeyframeEffectReadOnly constructed with a two property (one shorthand and one of its longhand components) two value property-indexed keyframes specification roundtrips Type error
+PASS A KeyframeEffectReadOnly can be constructed with a two property two value property-indexed keyframes specification 
+FAIL A KeyframeEffectReadOnly constructed with a two property two value property-indexed keyframes specification roundtrips Type error
+PASS A KeyframeEffectReadOnly can be constructed with a two property property-indexed keyframes specification with different numbers of values 
+FAIL A KeyframeEffectReadOnly constructed with a two property property-indexed keyframes specification with different numbers of values roundtrips Type error
+PASS A KeyframeEffectReadOnly can be constructed with a property-indexed keyframes specification with an invalid value 
+FAIL A KeyframeEffectReadOnly constructed with a property-indexed keyframes specification with an invalid value roundtrips Type error
+PASS A KeyframeEffectReadOnly can be constructed with a one property two value property-indexed keyframes specification that needs to stringify its values 
+FAIL A KeyframeEffectReadOnly constructed with a one property two value property-indexed keyframes specification that needs to stringify its values roundtrips Type error
+FAIL A KeyframeEffectReadOnly can be constructed with a property-indexed keyframes specification with a CSS variable reference assert_equals: value for 'left' on ComputedKeyframe #0 expected "var(--dist)" but got "auto"
+FAIL A KeyframeEffectReadOnly constructed with a property-indexed keyframes specification with a CSS variable reference roundtrips Type error
+FAIL A KeyframeEffectReadOnly can be constructed with a property-indexed keyframes specification with a CSS variable reference in a shorthand property assert_equals: properties on ComputedKeyframe #0 should match expected "composite,computedOffset,easing,margin,offset" but got "composite,computedOffset,easing,marginBottom,marginLeft,marginRight,marginTop,offset"
+FAIL A KeyframeEffectReadOnly constructed with a property-indexed keyframes specification with a CSS variable reference in a shorthand property roundtrips Type error
+PASS A KeyframeEffectReadOnly can be constructed with a one property one value property-indexed keyframes specification 
+FAIL A KeyframeEffectReadOnly constructed with a one property one value property-indexed keyframes specification roundtrips Type error
+PASS A KeyframeEffectReadOnly can be constructed with a one property one non-array value property-indexed keyframes specification 
+FAIL A KeyframeEffectReadOnly constructed with a one property one non-array value property-indexed keyframes specification roundtrips Type error
+PASS A KeyframeEffectReadOnly can be constructed with a one property two value property-indexed keyframes specification where the first value is invalid 
+FAIL A KeyframeEffectReadOnly constructed with a one property two value property-indexed keyframes specification where the first value is invalid roundtrips Type error
+PASS A KeyframeEffectReadOnly can be constructed with a one property two value property-indexed keyframes specification where the second value is invalid 
+FAIL A KeyframeEffectReadOnly constructed with a one property two value property-indexed keyframes specification where the second value is invalid roundtrips Type error
+PASS A KeyframeEffectReadOnly can be constructed with a property-indexed keyframe with a single offset 
+FAIL A KeyframeEffectReadOnly constructed with a property-indexed keyframe with a single offset roundtrips Type error
+FAIL A KeyframeEffectReadOnly can be constructed with a property-indexed keyframe with an array of offsets assert_equals: value for 'computedOffset' on ComputedKeyframe #1 expected 0.25 but got 0.45000000000000007
+FAIL A KeyframeEffectReadOnly constructed with a property-indexed keyframe with an array of offsets roundtrips Type error
+FAIL A KeyframeEffectReadOnly can be constructed with a property-indexed keyframe with an array of offsets that is too short assert_equals: value for 'computedOffset' on ComputedKeyframe #1 expected 0.25 but got 0.5
+FAIL A KeyframeEffectReadOnly constructed with a property-indexed keyframe with an array of offsets that is too short roundtrips Type error
+PASS A KeyframeEffectReadOnly can be constructed with a property-indexed keyframe with an array of offsets that is too long 
+FAIL A KeyframeEffectReadOnly constructed with a property-indexed keyframe with an array of offsets that is too long roundtrips Type error
+PASS A KeyframeEffectReadOnly can be constructed with a property-indexed keyframe with an empty array of offsets 
+FAIL A KeyframeEffectReadOnly constructed with a property-indexed keyframe with an empty array of offsets roundtrips Type error
+PASS A KeyframeEffectReadOnly can be constructed with a property-indexed keyframe with an array of offsets with an embedded null value 
+FAIL A KeyframeEffectReadOnly constructed with a property-indexed keyframe with an array of offsets with an embedded null value roundtrips Type error
+FAIL A KeyframeEffectReadOnly can be constructed with a property-indexed keyframe with an array of offsets with a trailing null value assert_equals: value for 'computedOffset' on ComputedKeyframe #1 expected 0.25 but got 0.5
+FAIL A KeyframeEffectReadOnly constructed with a property-indexed keyframe with an array of offsets with a trailing null value roundtrips Type error
+FAIL A KeyframeEffectReadOnly can be constructed with a property-indexed keyframe with an array of offsets with leading and trailing null values assert_equals: value for 'computedOffset' on ComputedKeyframe #1 expected 0.25 but got 0.5
+FAIL A KeyframeEffectReadOnly constructed with a property-indexed keyframe with an array of offsets with leading and trailing null values roundtrips Type error
+PASS A KeyframeEffectReadOnly can be constructed with a property-indexed keyframe with an array of offsets with adjacent null values 
+FAIL A KeyframeEffectReadOnly constructed with a property-indexed keyframe with an array of offsets with adjacent null values roundtrips Type error
+PASS A KeyframeEffectReadOnly can be constructed with a property-indexed keyframe with an array of offsets with all null values (and too many at that) 
+FAIL A KeyframeEffectReadOnly constructed with a property-indexed keyframe with an array of offsets with all null values (and too many at that) roundtrips Type error
+PASS A KeyframeEffectReadOnly can be constructed with a property-indexed keyframe with a single null offset 
+FAIL A KeyframeEffectReadOnly constructed with a property-indexed keyframe with a single null offset roundtrips Type error
+FAIL A KeyframeEffectReadOnly can be constructed with a property-indexed keyframe with an array of offsets that is not strictly ascending in the unused part of the array assert_equals: value for 'computedOffset' on ComputedKeyframe #1 expected 0.2 but got 0.4
+FAIL A KeyframeEffectReadOnly constructed with a property-indexed keyframe with an array of offsets that is not strictly ascending in the unused part of the array roundtrips Type error
+PASS A KeyframeEffectReadOnly can be constructed with a property-indexed keyframe without any specified easing 
+FAIL A KeyframeEffectReadOnly constructed with a property-indexed keyframe without any specified easing roundtrips Type error
+PASS A KeyframeEffectReadOnly can be constructed with a property-indexed keyframe with a single easing 
+FAIL A KeyframeEffectReadOnly constructed with a property-indexed keyframe with a single easing roundtrips Type error
+PASS A KeyframeEffectReadOnly can be constructed with a property-indexed keyframe with an array of easings 
+FAIL A KeyframeEffectReadOnly constructed with a property-indexed keyframe with an array of easings roundtrips Type error
+FAIL A KeyframeEffectReadOnly can be constructed with a property-indexed keyframe with an array of easings that is too short assert_equals: value for 'easing' on ComputedKeyframe #2 expected "ease-in" but got "ease-out"
+FAIL A KeyframeEffectReadOnly constructed with a property-indexed keyframe with an array of easings that is too short roundtrips Type error
+PASS A KeyframeEffectReadOnly can be constructed with a property-indexed keyframe with a single-element array of easings 
+FAIL A KeyframeEffectReadOnly constructed with a property-indexed keyframe with a single-element array of easings roundtrips Type error
+PASS A KeyframeEffectReadOnly can be constructed with a property-indexed keyframe with an empty array of easings 
+FAIL A KeyframeEffectReadOnly constructed with a property-indexed keyframe with an empty array of easings roundtrips Type error
+PASS A KeyframeEffectReadOnly can be constructed with a property-indexed keyframe with an array of easings that is too long 
+FAIL A KeyframeEffectReadOnly constructed with a property-indexed keyframe with an array of easings that is too long roundtrips Type error
+PASS A KeyframeEffectReadOnly can be constructed with a property-indexed keyframe with a single composite operation 
+PASS A KeyframeEffectReadOnly constructed with a property-indexed keyframe with a single composite operation roundtrips 
+PASS A KeyframeEffectReadOnly can be constructed with a property-indexed keyframe with a composite array 
+PASS A KeyframeEffectReadOnly constructed with a property-indexed keyframe with a composite array roundtrips 
+FAIL A KeyframeEffectReadOnly can be constructed with a property-indexed keyframe with a composite array that is too short assert_equals: value for 'composite' on ComputedKeyframe #2 expected "add" but got "replace"
+PASS A KeyframeEffectReadOnly constructed with a property-indexed keyframe with a composite array that is too short roundtrips 
+PASS A KeyframeEffectReadOnly can be constructed with a property-indexed keyframe with a composite array that is too long 
+PASS A KeyframeEffectReadOnly constructed with a property-indexed keyframe with a composite array that is too long roundtrips 
+PASS A KeyframeEffectReadOnly can be constructed with a property-indexed keyframe with a single-element composite array 
+PASS A KeyframeEffectReadOnly constructed with a property-indexed keyframe with a single-element composite array roundtrips 
+PASS A KeyframeEffectReadOnly can be constructed with a one property one keyframe sequence 
+FAIL A KeyframeEffectReadOnly constructed with a one property one keyframe sequence roundtrips Type error
+PASS A KeyframeEffectReadOnly can be constructed with a one property two keyframe sequence 
+FAIL A KeyframeEffectReadOnly constructed with a one property two keyframe sequence roundtrips Type error
+PASS A KeyframeEffectReadOnly can be constructed with a two property two keyframe sequence 
+FAIL A KeyframeEffectReadOnly constructed with a two property two keyframe sequence roundtrips Type error
+FAIL A KeyframeEffectReadOnly can be constructed with a one shorthand property two keyframe sequence assert_equals: properties on ComputedKeyframe #0 should match expected "composite,computedOffset,easing,margin,offset" but got "composite,computedOffset,easing,marginBottom,marginLeft,marginRight,marginTop,offset"
+FAIL A KeyframeEffectReadOnly constructed with a one shorthand property two keyframe sequence roundtrips Type error
+FAIL A KeyframeEffectReadOnly can be constructed with a two property (a shorthand and one of its component longhands) two keyframe sequence assert_equals: properties on ComputedKeyframe #0 should match expected "composite,computedOffset,easing,margin,marginTop,offset" but got "composite,computedOffset,easing,marginBottom,marginLeft,marginRight,marginTop,offset"
+FAIL A KeyframeEffectReadOnly constructed with a two property (a shorthand and one of its component longhands) two keyframe sequence roundtrips Type error
+PASS A KeyframeEffectReadOnly can be constructed with a two property keyframe sequence where one property is missing from the first keyframe 
+FAIL A KeyframeEffectReadOnly constructed with a two property keyframe sequence where one property is missing from the first keyframe roundtrips Type error
+PASS A KeyframeEffectReadOnly can be constructed with a two property keyframe sequence where one property is missing from the last keyframe 
+FAIL A KeyframeEffectReadOnly constructed with a two property keyframe sequence where one property is missing from the last keyframe roundtrips Type error
+PASS A KeyframeEffectReadOnly can be constructed with a one property two keyframe sequence that needs to stringify its values 
+FAIL A KeyframeEffectReadOnly constructed with a one property two keyframe sequence that needs to stringify its values roundtrips Type error
+FAIL A KeyframeEffectReadOnly can be constructed with a keyframe sequence with a CSS variable reference assert_equals: value for 'left' on ComputedKeyframe #0 expected "var(--dist)" but got "auto"
+FAIL A KeyframeEffectReadOnly constructed with a keyframe sequence with a CSS variable reference roundtrips Type error
+FAIL A KeyframeEffectReadOnly can be constructed with a keyframe sequence with a CSS variable reference in a shorthand property assert_equals: properties on ComputedKeyframe #0 should match expected "composite,computedOffset,easing,margin,offset" but got "composite,computedOffset,easing,marginBottom,marginLeft,marginRight,marginTop,offset"
+FAIL A KeyframeEffectReadOnly constructed with a keyframe sequence with a CSS variable reference in a shorthand property roundtrips Type error
+FAIL A KeyframeEffectReadOnly can be constructed with a keyframe sequence with duplicate values for a given interior offset Type error
+FAIL A KeyframeEffectReadOnly constructed with a keyframe sequence with duplicate values for a given interior offset roundtrips Type error
+FAIL A KeyframeEffectReadOnly can be constructed with a keyframe sequence with duplicate values for offsets 0 and 1 Type error
+FAIL A KeyframeEffectReadOnly constructed with a keyframe sequence with duplicate values for offsets 0 and 1 roundtrips Type error
+FAIL A KeyframeEffectReadOnly can be constructed with a two property four keyframe sequence Type error
+FAIL A KeyframeEffectReadOnly constructed with a two property four keyframe sequence roundtrips Type error
+PASS A KeyframeEffectReadOnly can be constructed with a single keyframe sequence with omitted offset 
+FAIL A KeyframeEffectReadOnly constructed with a single keyframe sequence with omitted offset roundtrips Type error
+PASS A KeyframeEffectReadOnly can be constructed with a single keyframe sequence with null offset 
+FAIL A KeyframeEffectReadOnly constructed with a single keyframe sequence with null offset roundtrips Type error
+PASS A KeyframeEffectReadOnly can be constructed with a single keyframe sequence with string offset 
+FAIL A KeyframeEffectReadOnly constructed with a single keyframe sequence with string offset roundtrips Type error
+PASS A KeyframeEffectReadOnly can be constructed with a one property keyframe sequence with some omitted offsets 
+FAIL A KeyframeEffectReadOnly constructed with a one property keyframe sequence with some omitted offsets roundtrips Type error
+PASS A KeyframeEffectReadOnly can be constructed with a one property keyframe sequence with some null offsets 
+FAIL A KeyframeEffectReadOnly constructed with a one property keyframe sequence with some null offsets roundtrips Type error
+PASS A KeyframeEffectReadOnly can be constructed with a two property keyframe sequence with some omitted offsets 
+FAIL A KeyframeEffectReadOnly constructed with a two property keyframe sequence with some omitted offsets roundtrips Type error
+PASS A KeyframeEffectReadOnly can be constructed with a one property keyframe sequence with all omitted offsets 
+FAIL A KeyframeEffectReadOnly constructed with a one property keyframe sequence with all omitted offsets roundtrips Type error
+FAIL A KeyframeEffectReadOnly can be constructed with a keyframe sequence with different easing values, but the same easing value for a given offset Type error
+FAIL A KeyframeEffectReadOnly constructed with a keyframe sequence with different easing values, but the same easing value for a given offset roundtrips Type error
+FAIL A KeyframeEffectReadOnly can be constructed with a keyframe sequence with different composite values, but the same composite value for a given offset Type error
+FAIL A KeyframeEffectReadOnly constructed with a keyframe sequence with different composite values, but the same composite value for a given offset roundtrips Type error
+PASS KeyframeEffectReadOnly constructor throws with keyframes with an out-of-bounded positive offset 
+PASS KeyframeEffectReadOnly constructor throws with keyframes with an out-of-bounded negative offset 
+PASS KeyframeEffectReadOnly constructor throws with property-indexed keyframes not loosely sorted by offset 
+PASS KeyframeEffectReadOnly constructor throws with property-indexed keyframes not loosely sorted by offset even though not all offsets are specified 
+PASS KeyframeEffectReadOnly constructor throws with property-indexed keyframes with offsets out of range 
+PASS KeyframeEffectReadOnly constructor throws with keyframes not loosely sorted by offset 
+PASS KeyframeEffectReadOnly constructor throws with property-indexed keyframes with an invalid easing value 
+PASS KeyframeEffectReadOnly constructor throws with property-indexed keyframes with an invalid easing value as one of the array values 
+PASS KeyframeEffectReadOnly constructor throws with property-indexed keyframe with an invalid easing in the unused part of the array of easings 
+PASS KeyframeEffectReadOnly constructor throws with empty property-indexed keyframe with an invalid easing 
+PASS KeyframeEffectReadOnly constructor throws with empty property-indexed keyframe with an invalid easings array 
+PASS KeyframeEffectReadOnly constructor throws with a keyframe sequence with an invalid easing value 
+PASS KeyframeEffectReadOnly constructor throws with property-indexed keyframes with an invalid composite value 
+PASS KeyframeEffectReadOnly constructor throws with property-indexed keyframes with an invalid composite value as one of the array values 
+PASS KeyframeEffectReadOnly constructor throws with keyframes with an invalid composite value 
+PASS A KeyframeEffectReadOnly constructed without any KeyframeEffectOptions object 
+PASS A KeyframeEffectReadOnly constructed by an empty KeyframeEffectOptions object 
+PASS A KeyframeEffectReadOnly constructed by a normal KeyframeEffectOptions object 
+PASS A KeyframeEffectReadOnly constructed by a double value 
+PASS A KeyframeEffectReadOnly constructed by +Infinity 
+PASS A KeyframeEffectReadOnly constructed by an Infinity duration 
+PASS A KeyframeEffectReadOnly constructed by an auto duration 
+PASS A KeyframeEffectReadOnly constructed by an Infinity iterations 
+PASS A KeyframeEffectReadOnly constructed by an auto fill 
+PASS A KeyframeEffectReadOnly constructed by a forwards fill 
+PASS Invalid KeyframeEffectReadOnly option by -Infinity 
+PASS Invalid KeyframeEffectReadOnly option by NaN 
+PASS Invalid KeyframeEffectReadOnly option by a negative value 
+PASS Invalid KeyframeEffectReadOnly option by a negative Infinity duration 
+PASS Invalid KeyframeEffectReadOnly option by a NaN duration 
+PASS Invalid KeyframeEffectReadOnly option by a negative duration 
+PASS Invalid KeyframeEffectReadOnly option by a string duration 
+PASS Invalid KeyframeEffectReadOnly option by a negative Infinity iterations 
+PASS Invalid KeyframeEffectReadOnly option by a NaN iterations 
+PASS Invalid KeyframeEffectReadOnly option by a negative iterations 
+PASS Invalid KeyframeEffectReadOnly option by a blank easing 
+PASS Invalid KeyframeEffectReadOnly option by an unrecognized easing 
+PASS Invalid KeyframeEffectReadOnly option by an 'initial' easing 
+PASS Invalid KeyframeEffectReadOnly option by an 'inherit' easing 
+PASS Invalid KeyframeEffectReadOnly option by a variable easing 
+PASS Invalid KeyframeEffectReadOnly option by a multi-value easing 
+PASS A KeyframeEffectReadOnly constructed with null target 
 PASS KeyframeEffect constructor propagates exceptions generated by accessing the options object 
 

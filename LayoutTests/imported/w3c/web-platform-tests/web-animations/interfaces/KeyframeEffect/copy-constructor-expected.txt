@@ -1,7 +1,7 @@
 
-FAIL Copied KeyframeEffectReadOnly has the same target Can't find variable: KeyframeEffectReadOnly
-FAIL Copied KeyframeEffectReadOnly has the same keyframes Can't find variable: KeyframeEffectReadOnly
-FAIL Copied KeyframeEffectReadOnly has the same KeyframeEffectOptions Can't find variable: KeyframeEffectReadOnly
-FAIL Copied KeyframeEffectReadOnly has the same timing content Can't find variable: KeyframeEffectReadOnly
-FAIL KeyframeEffect constructed from a KeyframeEffectReadOnly is mutable Can't find variable: KeyframeEffectReadOnly
+FAIL Copied KeyframeEffectReadOnly has the same target Not enough arguments
+FAIL Copied KeyframeEffectReadOnly has the same keyframes Not enough arguments
+FAIL Copied KeyframeEffectReadOnly has the same KeyframeEffectOptions Not enough arguments
+FAIL Copied KeyframeEffectReadOnly has the same timing content Not enough arguments
+FAIL KeyframeEffect constructed from a KeyframeEffectReadOnly is mutable Not enough arguments
 

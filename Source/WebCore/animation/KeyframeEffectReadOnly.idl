@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,8 +25,28 @@
 
 [
     EnabledAtRuntime=WebAnimations,
-    CustomToJSObject
-] interface AnimationEffect {
-    readonly attribute AnimationEffectTiming timing;
-    ComputedTimingProperties getComputedTiming();
+    Exposed=Window,
+    ConstructorMayThrowException,
+    ConstructorCallWith=ScriptState,
+    Constructor(Element? target, object? keyframes, optional (unrestricted double or KeyframeEffectOptions) options)
+] interface KeyframeEffectReadOnly : AnimationEffectReadOnly {
+    readonly attribute Element? target;
+    readonly attribute IterationCompositeOperation iterationComposite;
+    readonly attribute CompositeOperation composite;
+    [CallWith=ScriptState] sequence<object> getKeyframes();
+};
+
+dictionary BasePropertyIndexedKeyframe {
+    (sequence<double?> or double?) offset = [];
+    (sequence<DOMString> or DOMString) easing = [];
+    (sequence<CompositeOperation> or CompositeOperation) composite = [];
+};
+
+[
+    JSGenerateToJSObject
+] dictionary BaseComputedKeyframe {
+     double? offset = null;
+     double computedOffset;
+     DOMString easing = "linear";
+     CompositeOperation? composite = null;
 };

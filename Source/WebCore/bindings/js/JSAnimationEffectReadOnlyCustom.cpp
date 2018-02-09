@@ -23,32 +23,29 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "JSAnimationEffectReadOnly.h"
 
-#include "AnimationEffectTimingReadOnly.h"
-#include "ExceptionOr.h"
-#include "FillMode.h"
-#include "PlaybackDirection.h"
-#include "TimingFunction.h"
-#include "WebAnimationUtilities.h"
-#include <wtf/Forward.h>
-#include <wtf/Ref.h>
-#include <wtf/RefCounted.h>
-#include <wtf/RefPtr.h>
-#include <wtf/Seconds.h>
-#include <wtf/Variant.h>
+#include "JSDOMBinding.h"
+#include "JSKeyframeEffect.h"
+#include "KeyframeEffect.h"
+
+using namespace JSC;
 
 namespace WebCore {
 
-class AnimationEffectTiming final : public AnimationEffectTimingReadOnly {
-public:
-    static Ref<AnimationEffectTiming> create();
-    ~AnimationEffectTiming();
+JSValue toJSNewlyCreated(ExecState*, JSDOMGlobalObject* globalObject, Ref<AnimationEffectReadOnly>&& value)
+{
+    if (value->isKeyframeEffect())
+        return createWrapper<KeyframeEffect>(globalObject, WTFMove(value));
+    if (value->isKeyframeEffectReadOnly())
+        return createWrapper<KeyframeEffectReadOnly>(globalObject, WTFMove(value));
+    return createWrapper<AnimationEffectReadOnly>(globalObject, WTFMove(value));
+}
 
-private:
-    AnimationEffectTiming();
-};
+JSValue toJS(ExecState* state, JSDOMGlobalObject* globalObject, AnimationEffectReadOnly& value)
+{
+    return wrap(state, globalObject, value);
+}
 
 } // namespace WebCore
-
-SPECIALIZE_TYPE_TRAITS_ANIMATION_EFFECT_TIMING(AnimationEffectTiming, isAnimationEffectTiming());

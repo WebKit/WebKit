@@ -1,3 +1,169 @@
+2018-02-08  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Refactor AnimationEffect and KeyframeEffect into AnimationEffectReadOnly, KeyframeEffectReadOnly and KeyframeEffect
+        https://bugs.webkit.org/show_bug.cgi?id=182608
+
+        Reviewed by Dean Jackson.
+
+        Currently, we have an AnimationEffect class with read-write members and a KeyframeEffect subclass with read-write
+        members. The spec has an AnimationEffectReadOnly class, with read-only members, a KeyframeEffectReadOnly subclass,
+        with read-only members, and then the KeyframeEffect subclass (of KeyframeEffectReadOnly) with read-write members.
+
+        Likewise, currently we have an AnimationEffectTiming class with read-write members. While the spec has this class
+        as well, it also specifies a read-only AnimationEffectTimingReadOnly superclass.
+
+        In this patch we refactor the code to match the spec, which gives us a big boost in our WPT pass rate. The vast
+        majority of the code is just copied from one class to another verbatim. The limited actual code changes, all related
+        to the new subclassing, are:
+
+        - AnimationEffectTimingReadOnly is not actually read-only as far as WebCore is concerned, it actually exposes setters
+        for all of its properties, but the IDL for this class specifies all properties as read-only, so we match the spec. The
+        reason for this is that it is necessary to be able to set members of an AnimationEffectTimingReadOnly object based on
+        a Variant<double, KeyframeEffectOptions> provided to Element.animate() or the KeyframeEffectReadOnly and KeyframeEffect
+        constructors, and the logic to handle properties in such dictionaries is the same as the logic required to set individual
+        members in AnimationEffectTiming. So in essence, the sole role of AnimationTimingEffect is to provide an IDL interface
+        with read-write members, but the parent class is itself read-write as far as WebCore is concerned.
+
+        - AnimationEffectTimingReadOnly exposes a new setProperties() method which takes in a nullable Variant<double, KeyframeEffectOptions>
+        so that code that was previously specific to KeyframeEffect can be factored into this method and both the constructors of
+        KeyframeEffectReadOnly and KeyframeEffect can make use of it without code duplication.
+
+        - The AnimationEffectReadOnly constructor now takes an AnimationEffectTimingReadOnly as input since that class and
+        KeyframeEffectReadOnly expose an AnimationEffectTimingReadOnly object, while KeyframeEffect exposes an
+        AnimationEffectTiming read-write object. This allows the KeyframeEffect constructor to provide the right object type. 
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * Sources.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * animation/AnimationEffectReadOnly.cpp: Renamed from Source/WebCore/animation/AnimationEffect.cpp.
+        (WebCore::AnimationEffectReadOnly::AnimationEffectReadOnly):
+        (WebCore::AnimationEffectReadOnly::localTime const):
+        (WebCore::AnimationEffectReadOnly::phase const):
+        (WebCore::AnimationEffectReadOnly::activeTime const):
+        (WebCore::AnimationEffectReadOnly::overallProgress const):
+        (WebCore::AnimationEffectReadOnly::simpleIterationProgress const):
+        (WebCore::AnimationEffectReadOnly::currentIteration const):
+        (WebCore::AnimationEffectReadOnly::currentDirection const):
+        (WebCore::AnimationEffectReadOnly::directedProgress const):
+        (WebCore::AnimationEffectReadOnly::transformedProgress const):
+        (WebCore::AnimationEffectReadOnly::iterationProgress const):
+        (WebCore::AnimationEffectReadOnly::getComputedTiming):
+        * animation/AnimationEffectReadOnly.h: Renamed from Source/WebCore/animation/AnimationEffect.h.
+        (WebCore::AnimationEffectReadOnly::isKeyframeEffectReadOnly const):
+        (WebCore::AnimationEffectReadOnly::timing const):
+        * animation/AnimationEffectReadOnly.idl: Copied from Source/WebCore/animation/AnimationEffect.idl.
+        * animation/AnimationEffectTiming.cpp:
+        (WebCore::AnimationEffectTiming::AnimationEffectTiming):
+        (WebCore::AnimationEffectTiming::setIterationStart): Deleted.
+        (WebCore::AnimationEffectTiming::setIterations): Deleted.
+        (WebCore::AnimationEffectTiming::bindingsDuration const): Deleted.
+        (WebCore::AnimationEffectTiming::setBindingsDuration): Deleted.
+        (WebCore::AnimationEffectTiming::endTime const): Deleted.
+        (WebCore::AnimationEffectTiming::activeDuration const): Deleted.
+        (WebCore::AnimationEffectTiming::setEasing): Deleted.
+        * animation/AnimationEffectTiming.h:
+        (): Deleted.
+        * animation/AnimationEffectTiming.idl:
+        * animation/AnimationEffectTimingReadOnly.cpp: Copied from Source/WebCore/animation/AnimationEffectTiming.cpp.
+        (WebCore::AnimationEffectTimingReadOnly::create):
+        (WebCore::AnimationEffectTimingReadOnly::AnimationEffectTimingReadOnly):
+        (WebCore::AnimationEffectTimingReadOnly::~AnimationEffectTimingReadOnly):
+        (WebCore::AnimationEffectTimingReadOnly::setProperties):
+        (WebCore::AnimationEffectTimingReadOnly::setIterationStart):
+        (WebCore::AnimationEffectTimingReadOnly::setIterations):
+        (WebCore::AnimationEffectTimingReadOnly::bindingsDuration const):
+        (WebCore::AnimationEffectTimingReadOnly::setBindingsDuration):
+        (WebCore::AnimationEffectTimingReadOnly::setEasing):
+        (WebCore::AnimationEffectTimingReadOnly::endTime const):
+        (WebCore::AnimationEffectTimingReadOnly::activeDuration const):
+        * animation/AnimationEffectTimingReadOnly.h: Copied from Source/WebCore/animation/AnimationEffectTiming.h.
+        (WebCore::AnimationEffectTimingReadOnly::isAnimationEffectTiming const):
+        (WebCore::AnimationEffectTimingReadOnly::bindingsDelay const):
+        (WebCore::AnimationEffectTimingReadOnly::setBindingsDelay):
+        (WebCore::AnimationEffectTimingReadOnly::bindingsEndDelay const):
+        (WebCore::AnimationEffectTimingReadOnly::setBindingsEndDelay):
+        (WebCore::AnimationEffectTimingReadOnly::delay const):
+        (WebCore::AnimationEffectTimingReadOnly::setDelay):
+        (WebCore::AnimationEffectTimingReadOnly::endDelay const):
+        (WebCore::AnimationEffectTimingReadOnly::setEndDelay):
+        (WebCore::AnimationEffectTimingReadOnly::fill const):
+        (WebCore::AnimationEffectTimingReadOnly::setFill):
+        (WebCore::AnimationEffectTimingReadOnly::iterationStart const):
+        (WebCore::AnimationEffectTimingReadOnly::iterations const):
+        (WebCore::AnimationEffectTimingReadOnly::iterationDuration const):
+        (WebCore::AnimationEffectTimingReadOnly::setIterationDuration):
+        (WebCore::AnimationEffectTimingReadOnly::direction const):
+        (WebCore::AnimationEffectTimingReadOnly::setDirection):
+        (WebCore::AnimationEffectTimingReadOnly::easing const):
+        (WebCore::AnimationEffectTimingReadOnly::timingFunction const):
+        (WebCore::AnimationEffectTimingReadOnly::classType const):
+        * animation/AnimationEffectTimingReadOnly.idl: Renamed from Source/WebCore/animation/AnimationEffect.idl.
+        * animation/AnimationTimeline.h:
+        * animation/KeyframeEffect.cpp:
+        (WebCore::KeyframeEffect::create):
+        (WebCore::KeyframeEffect::KeyframeEffect):
+        (WebCore::IDLAttributeNameToAnimationPropertyName): Deleted.
+        (WebCore::CSSPropertyIDToIDLAttributeName): Deleted.
+        (WebCore::computeMissingKeyframeOffsets): Deleted.
+        (WebCore::processIterableKeyframes): Deleted.
+        (WebCore::processKeyframeLikeObject): Deleted.
+        (WebCore::processPropertyIndexedKeyframes): Deleted.
+        (WebCore::KeyframeEffect::getKeyframes): Deleted.
+        (WebCore::KeyframeEffect::processKeyframes): Deleted.
+        (WebCore::KeyframeEffect::computeStackingContextImpact): Deleted.
+        (WebCore::KeyframeEffect::apply): Deleted.
+        (WebCore::KeyframeEffect::shouldRunAccelerated): Deleted.
+        (WebCore::KeyframeEffect::getAnimatedStyle): Deleted.
+        (WebCore::KeyframeEffect::setAnimatedPropertiesInStyle): Deleted.
+        (WebCore::KeyframeEffect::startOrStopAccelerated): Deleted.
+        (WebCore::KeyframeEffect::renderer const): Deleted.
+        (WebCore::KeyframeEffect::currentStyle const): Deleted.
+        * animation/KeyframeEffect.h:
+        * animation/KeyframeEffect.idl:
+        * animation/KeyframeEffectReadOnly.cpp: Copied from Source/WebCore/animation/KeyframeEffect.cpp.
+        (WebCore::IDLAttributeNameToAnimationPropertyName):
+        (WebCore::CSSPropertyIDToIDLAttributeName):
+        (WebCore::computeMissingKeyframeOffsets):
+        (WebCore::processIterableKeyframes):
+        (WebCore::processKeyframeLikeObject):
+        (WebCore::processPropertyIndexedKeyframes):
+        (WebCore::KeyframeEffectReadOnly::create):
+        (WebCore::KeyframeEffectReadOnly::KeyframeEffectReadOnly):
+        (WebCore::KeyframeEffectReadOnly::getKeyframes):
+        (WebCore::KeyframeEffectReadOnly::processKeyframes):
+        (WebCore::KeyframeEffectReadOnly::computeStackingContextImpact):
+        (WebCore::KeyframeEffectReadOnly::apply):
+        (WebCore::KeyframeEffectReadOnly::shouldRunAccelerated):
+        (WebCore::KeyframeEffectReadOnly::getAnimatedStyle):
+        (WebCore::KeyframeEffectReadOnly::setAnimatedPropertiesInStyle):
+        (WebCore::KeyframeEffectReadOnly::startOrStopAccelerated):
+        (WebCore::KeyframeEffectReadOnly::renderer const):
+        (WebCore::KeyframeEffectReadOnly::currentStyle const):
+        * animation/KeyframeEffectReadOnly.h: Copied from Source/WebCore/animation/KeyframeEffect.h.
+        (WebCore::KeyframeEffectReadOnly::~KeyframeEffectReadOnly):
+        (WebCore::KeyframeEffectReadOnly::target const):
+        (WebCore::KeyframeEffectReadOnly::iterationComposite const):
+        (WebCore::KeyframeEffectReadOnly::composite const):
+        (WebCore::KeyframeEffectReadOnly::isRunningAccelerated const):
+        * animation/KeyframeEffectReadOnly.idl: Copied from Source/WebCore/animation/KeyframeEffect.idl.
+        * animation/WebAnimation.cpp:
+        (WebCore::WebAnimation::create):
+        (WebCore::WebAnimation::setEffect):
+        * animation/WebAnimation.h:
+        * animation/WebAnimation.idl:
+        * bindings/js/JSAnimationEffectReadOnlyCustom.cpp: Copied from Source/WebCore/bindings/js/JSAnimationEffectCustom.cpp.
+        (WebCore::toJSNewlyCreated):
+        (WebCore::toJS):
+        * bindings/js/JSAnimationEffectTimingReadOnlyCustom.cpp: Renamed from Source/WebCore/bindings/js/JSAnimationEffectCustom.cpp.
+        (WebCore::toJSNewlyCreated):
+        (WebCore::toJS):
+        * bindings/js/JSCustomEventCustom.cpp:
+        (WebCore::JSCustomEvent::detail const): Fix an error introduced in webkit.org/b/179591.
+        * bindings/js/JSWebAnimationCustom.cpp:
+        (WebCore::constructJSWebAnimation):
+        * bindings/js/WebCoreBuiltinNames.h:
+
 2018-02-09  Andy Estes  <aestes@apple.com>
 
         [Payment Request] Crash in PaymentRequest::canMakePayment() when Apple Pay payment method data is missing required fields

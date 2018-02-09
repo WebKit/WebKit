@@ -1,3 +1,21 @@
+2018-02-08  Antoine Quint  <graouts@apple.com>
+
+        [Web Animations] Refactor AnimationEffect and KeyframeEffect into AnimationEffectReadOnly, KeyframeEffectReadOnly and KeyframeEffect
+        https://bugs.webkit.org/show_bug.cgi?id=182608
+
+        Reviewed by Dean Jackson.
+
+        Update WPT expectations with progressions and updated failure points for all tests that involved
+        either AnimationEffectReadOnly or KeyframeEffectReadOnly.
+
+        * web-platform-tests/web-animations/interfaces/Animation/constructor-expected.txt:
+        * web-platform-tests/web-animations/interfaces/Animation/effect-expected.txt:
+        * web-platform-tests/web-animations/interfaces/AnimationEffectTiming/idlharness-expected.txt:
+        * web-platform-tests/web-animations/interfaces/Document/getAnimations-expected.txt:
+        * web-platform-tests/web-animations/interfaces/KeyframeEffect/constructor-expected.txt:
+        * web-platform-tests/web-animations/interfaces/KeyframeEffect/copy-constructor-expected.txt:
+        * web-platform-tests/web-animations/interfaces/KeyframeEffect/idlharness-expected.txt:
+
 2018-02-09  Youenn Fablet  <youenn@apple.com>
 
         Add support for cache storage of blob response

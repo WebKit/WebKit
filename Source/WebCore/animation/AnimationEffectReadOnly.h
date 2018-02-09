@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,12 +35,13 @@
 
 namespace WebCore {
 
-class AnimationEffect : public RefCounted<AnimationEffect> {
+class AnimationEffectReadOnly : public RefCounted<AnimationEffectReadOnly> {
 public:
-    virtual ~AnimationEffect() = default;
+    virtual ~AnimationEffectReadOnly() = default;
 
     bool isKeyframeEffect() const { return m_classType == KeyframeEffectClass; }
-    AnimationEffectTiming* timing() const { return m_timing.get(); }
+    bool isKeyframeEffectReadOnly() const { return m_classType == KeyframeEffectReadOnlyClass; }
+    AnimationEffectTimingReadOnly* timing() const { return m_timing.get(); }
     ComputedTimingProperties getComputedTiming();
     virtual void apply(RenderStyle&) = 0;
 
@@ -56,31 +57,33 @@ public:
 
 protected:
     enum ClassType {
-        KeyframeEffectClass
+        KeyframeEffectClass,
+        KeyframeEffectReadOnlyClass
     };
 
     ClassType classType() const { return m_classType; }
 
-    explicit AnimationEffect(ClassType);
+    explicit AnimationEffectReadOnly(ClassType, Ref<AnimationEffectTimingReadOnly>&&);
 
 private:
     enum class ComputedDirection { Forwards, Reverse };
 
+    ClassType m_classType;
+
     std::optional<double> overallProgress() const;
     std::optional<double> simpleIterationProgress() const;
     std::optional<double> currentIteration() const;
-    AnimationEffect::ComputedDirection currentDirection() const;
+    AnimationEffectReadOnly::ComputedDirection currentDirection() const;
     std::optional<double> directedProgress() const;
     std::optional<double> transformedProgress() const;
 
-    ClassType m_classType;
     RefPtr<WebAnimation> m_animation;
-    RefPtr<AnimationEffectTiming> m_timing;
+    RefPtr<AnimationEffectTimingReadOnly> m_timing;
 };
 
 } // namespace WebCore
 
 #define SPECIALIZE_TYPE_TRAITS_ANIMATION_EFFECT(ToValueTypeName, predicate) \
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::ToValueTypeName) \
-static bool isType(const WebCore::AnimationEffect& value) { return value.predicate; } \
+static bool isType(const WebCore::AnimationEffectReadOnly& value) { return value.predicate; } \
 SPECIALIZE_TYPE_TRAITS_END()

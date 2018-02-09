@@ -2,9 +2,9 @@
 PASS Animation can be constructed with null effect and null timeline 
 PASS Animation can be constructed with null effect and non-null timeline 
 PASS Animation can be constructed with null effect and no timeline parameter 
-FAIL Animation can be constructed with non-null effect and null timeline Can't find variable: KeyframeEffectReadOnly
-FAIL Animation can be constructed with non-null effect and non-null timeline Can't find variable: KeyframeEffectReadOnly
-FAIL Animation can be constructed with non-null effect and no timeline parameter Can't find variable: KeyframeEffectReadOnly
-FAIL Animation constructed by an effect with null target runs normally Can't find variable: KeyframeEffectReadOnly
-FAIL Animation constructed with a keyframe that target element is in iframe Can't find variable: KeyframeEffectReadOnly
+PASS Animation can be constructed with non-null effect and null timeline 
+PASS Animation can be constructed with non-null effect and non-null timeline 
+PASS Animation can be constructed with non-null effect and no timeline parameter 
+PASS Animation constructed by an effect with null target runs normally 
+PASS Animation constructed with a keyframe that target element is in iframe 
 
