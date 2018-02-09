@@ -1,3 +1,13 @@
+2018-02-09  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Use REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR on any non-Windows port.
+        https://bugs.webkit.org/show_bug.cgi?id=182623
+
+        Reviewed by Alex Christensen.
+
+        * StitchMarker/wtf/Platform.h:
+        Simplify #if.
+
 2018-02-01  Antti Koivisto  <antti@apple.com>
 
         StyleBench: Attribute selectors and other improvements

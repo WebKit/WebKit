@@ -1,3 +1,13 @@
+2018-02-09  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Use REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR on any non-Windows port.
+        https://bugs.webkit.org/show_bug.cgi?id=182623
+
+        Reviewed by Alex Christensen.
+
+        * wtf/Platform.h:
+        Simplify #if.
+
 2018-02-08  Filip Pizlo  <fpizlo@apple.com>
 
         Experiment with alternative implementation of memcpy/memset
