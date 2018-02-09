@@ -23,4 +23,5 @@ PASS getReader() after Cache.put
 PASS Cache.put with a VARY:* Response 
 PASS Cache.put with an embedded VARY:* Response 
 PASS Cache.put should store Response.redirect() correctly 
+PASS Cache.put called with simple Request and blob Response 
 

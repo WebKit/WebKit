@@ -85,6 +85,9 @@ public:
         m_readableStream = WTFMove(stream);
     }
 
+    bool isBlob() const { return WTF::holds_alternative<Ref<const Blob>>(m_data); }
+    bool isFormData() const { return WTF::holds_alternative<Ref<FormData>>(m_data); }
+
 private:
     explicit FetchBody(Ref<const Blob>&& data) : m_data(WTFMove(data)) { }
     explicit FetchBody(Ref<const ArrayBuffer>&& data) : m_data(WTFMove(data)) { }
@@ -102,8 +105,6 @@ private:
     void consumeText(Ref<DeferredPromise>&&, const String&);
     void consumeBlob(FetchBodyOwner&, Ref<DeferredPromise>&&);
 
-    bool isBlob() const { return WTF::holds_alternative<Ref<const Blob>>(m_data); }
-    bool isFormData() const { return WTF::holds_alternative<Ref<FormData>>(m_data); }
     bool isArrayBuffer() const { return WTF::holds_alternative<Ref<const ArrayBuffer>>(m_data); }
     bool isArrayBufferView() const { return WTF::holds_alternative<Ref<const ArrayBufferView>>(m_data); }
     bool isURLSearchParams() const { return WTF::holds_alternative<Ref<const URLSearchParams>>(m_data); }

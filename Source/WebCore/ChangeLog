@@ -1,5 +1,23 @@
 2018-02-09  Youenn Fablet  <youenn@apple.com>
 
+        Add support for cache storage of blob response
+        https://bugs.webkit.org/show_bug.cgi?id=182637
+
+        Reviewed by Brady Eidson.
+
+        Covered by updated WPT test.
+        When putting a blob response in cache, create a readable stream to easily get the body.
+        Make clear that caching form data is not supported.
+
+        * Modules/cache/DOMCache.cpp:
+        (WebCore::DOMCache::put):
+        * Modules/fetch/FetchBody.h:
+        (WebCore::FetchBody::isBlob const):
+        (WebCore::FetchBody::isFormData const):
+        * Modules/fetch/FetchResponse.h:
+
+2018-02-09  Youenn Fablet  <youenn@apple.com>
+
         Make CoreAudioCaptureSource error logging be release logging
         https://bugs.webkit.org/show_bug.cgi?id=182614
 

@@ -1,3 +1,17 @@
+2018-02-09  Youenn Fablet  <youenn@apple.com>
+
+        Add support for cache storage of blob response
+        https://bugs.webkit.org/show_bug.cgi?id=182637
+
+        Reviewed by Brady Eidson.
+
+        * web-platform-tests/service-workers/cache-storage/script-tests/cache-put.js:
+        (cache_test.async):
+        * web-platform-tests/service-workers/cache-storage/serviceworker/cache-put.https-expected.txt:
+        * web-platform-tests/service-workers/cache-storage/window/cache-put.https-expected.txt:
+        * web-platform-tests/service-workers/cache-storage/worker/cache-put.https-expected.txt:
+        * web-platform-tests/service-workers/cache-storage/window/cache-put.https.html:
+
 2018-02-09  Javier Fernandez  <jfernandez@igalia.com>
 
         [css-align] Implement the new behavior of 'legacy' for justify-items
