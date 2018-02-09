@@ -32,6 +32,7 @@
 #include "stdint.h"
 #include <string.h>
 #include <wtf/Assertions.h>
+#include <wtf/FastCopy.h>
 #include <wtf/FastMalloc.h>
 #include <wtf/StdLibExtras.h>
 

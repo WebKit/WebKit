@@ -1,3 +1,12 @@
+2018-02-09  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        Fix build on ARMv7 traditional JSCOnly bot after r228306
+        https://bugs.webkit.org/show_bug.cgi?id=182563
+
+        Unreviewed build fix.
+
+        * assembler/AssemblerBuffer.h:
+
 2018-02-08  Filip Pizlo  <fpizlo@apple.com>
 
         Experiment with alternative implementation of memcpy/memset
