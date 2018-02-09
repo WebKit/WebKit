@@ -439,6 +439,7 @@
     (home-subpath "/Library/Dictionaries"))
 
 (allow file-read-data
+    (literal "/usr/local/lib/log") ; <rdar://problem/36629495>
     ;; Needed for AES3 support
     (subpath "/Library/Audio/Plug-Ins/Components"))
 

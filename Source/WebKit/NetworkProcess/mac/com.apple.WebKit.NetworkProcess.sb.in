@@ -110,6 +110,10 @@
     (subpath (param "WEBKIT2_FRAMEWORK_DIR")))
 (allow system-fsctl (fsctl-command (_IO "h" 47)))
 
+(allow file-read-data
+    (literal "/usr/local/lib/log") ; <rdar://problem/36629495>
+)
+
 ;; Sandbox extensions
 (define (apply-read-and-issue-extension op path-filter)
     (op file-read* path-filter)

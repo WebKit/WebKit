@@ -1,3 +1,20 @@
+2018-02-09  Brent Fulgham  <bfulgham@apple.com>
+
+        Sandbox violating attempting to read log formatting preference file
+        https://bugs.webkit.org/show_bug.cgi?id=182648
+        <rdar://problem/36629495>
+
+        Reviewed by Eric Carlson.
+
+        Various frameworks attempt to read logging format information from /usr/local/lib/log. The sandbox is blocking
+        this, generating log spam and preventing some logging features from working properly. We should allow read
+        access to this path.
+
+        * NetworkProcess/mac/com.apple.WebKit.NetworkProcess.sb.in:
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.Networking.sb:
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2018-02-08  Chris Dumez  <cdumez@apple.com>
 
         There should be a way to disable [OverrideBuiltins] behavior in a given DOMWrapperWorld
