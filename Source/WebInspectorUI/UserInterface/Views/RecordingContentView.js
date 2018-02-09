@@ -32,6 +32,7 @@ WI.RecordingContentView = class RecordingContentView extends WI.ContentView
         super(representedObject);
 
         this._index = NaN;
+        this._action = null;
         this._snapshots = [];
         this._initialContent = null;
         this._throttler = this.throttle(200);
@@ -53,6 +54,12 @@ WI.RecordingContentView = class RecordingContentView extends WI.ContentView
             this._showGridButtonNavigationItem.visibilityPriority = WI.NavigationItem.VisibilityPriority.Low;
             this._showGridButtonNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._showGridButtonClicked, this);
             this._showGridButtonNavigationItem.activated = !!WI.settings.showImageGrid.value;
+
+            this._exportButtonNavigationItem = new WI.ButtonNavigationItem("export-recording", WI.UIString("Export"), "Images/Export.svg", 15, 15);
+            this._exportButtonNavigationItem.toolTip = WI.UIString("Export recording (%s)").format(WI.saveKeyboardShortcut.displayName);
+            this._exportButtonNavigationItem.buttonStyle = WI.ButtonNavigationItem.Style.ImageAndText;
+            this._exportButtonNavigationItem.visibilityPriority = WI.NavigationItem.VisibilityPriority.High;
+            this._exportButtonNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, () => { this._exportRecording(); });
         }
     }
 
@@ -88,16 +95,23 @@ WI.RecordingContentView = class RecordingContentView extends WI.ContentView
     {
         let isCanvas2D = this.representedObject.type === WI.Recording.Type.Canvas2D;
         let isCanvasWebGL = this.representedObject.type === WI.Recording.Type.CanvasWebGL;
-        if (isCanvas2D || isCanvasWebGL) {
-            let navigationItems = [this._showGridButtonNavigationItem];
-            if (isCanvas2D && WI.RecordingContentView.supportsCanvasPathDebugging())
-                navigationItems.unshift(this._showPathButtonNavigationItem);
-            return navigationItems;
-        }
-        return [];
+        if (!isCanvas2D && !isCanvasWebGL)
+            return [];
+
+        let navigationItems = [this._exportButtonNavigationItem, new WI.DividerNavigationItem];
+        if (isCanvas2D && WI.RecordingContentView.supportsCanvasPathDebugging())
+            navigationItems.push(this._showPathButtonNavigationItem);
+
+        navigationItems.push(this._showGridButtonNavigationItem);
+        return navigationItems;
     }
 
-    updateActionIndex(index, options = {})
+    get supplementalRepresentedObjects()
+    {
+        return this._action ? [this._action] : [];
+    }
+
+    updateActionIndex(index)
     {
         if (!this.representedObject)
             return;
@@ -114,9 +128,9 @@ WI.RecordingContentView = class RecordingContentView extends WI.ContentView
             this._updateSliderValue();
 
             if (this.representedObject.type === WI.Recording.Type.Canvas2D)
-                this._throttler._generateContentCanvas2D(index, actions, options);
+                this._throttler._generateContentCanvas2D(index, actions);
             else if (this.representedObject.type === WI.Recording.Type.CanvasWebGL)
-                this._throttler._generateContentCanvasWebGL(index, actions, options);
+                this._throttler._generateContentCanvasWebGL(index, actions);
         });
     }
 
@@ -150,15 +164,7 @@ WI.RecordingContentView = class RecordingContentView extends WI.ContentView
 
     get saveData()
     {
-        let filename = this.representedObject.displayName;
-        if (!filename.endsWith(".json"))
-            filename += ".json";
-
-        return {
-            url: "web-inspector:///" + encodeURI(filename),
-            content: JSON.stringify(this.representedObject.toJSON()),
-            forceSaveAs: true,
-        };
+        return {customSaveHandler: () => { this._exportRecording(); }};
     }
 
     // Protected
@@ -191,14 +197,31 @@ WI.RecordingContentView = class RecordingContentView extends WI.ContentView
 
     // Private
 
-    async _generateContentCanvas2D(index, actions, options = {})
+    _exportRecording()
+    {
+        if (!this.representedObject) {
+            InspectorFrontendHost.beep();
+            return;
+        }
+
+        let filename = this.representedObject.displayName;
+        let url = "web-inspector:///" + encodeURI(filename) + ".json";
+
+        WI.saveDataToFile({
+            url,
+            content: JSON.stringify(this.representedObject.toJSON()),
+            forceSaveAs: true,
+        });
+    }
+
+    async _generateContentCanvas2D(index, actions)
     {
         let imageLoad = (event) => {
             // Loading took too long and the current action index has already changed.
             if (index !== this._index)
                 return;
 
-            this._generateContentCanvas2D(index, actions, options);
+            this._generateContentCanvas2D(index, actions);
         };
 
         let initialState = this.representedObject.initialState;
@@ -226,6 +249,10 @@ WI.RecordingContentView = class RecordingContentView extends WI.ContentView
 
             for (let name in snapshot.state) {
                 if (!(name in snapshot.context))
+                    continue;
+
+                // Skip internal state used for path debugging.
+                if (name === "currentX" || name === "currentY")
                     continue;
 
                 try {
@@ -304,11 +331,43 @@ WI.RecordingContentView = class RecordingContentView extends WI.ContentView
             } else if (this._pathContext)
                 this._pathContext.canvas.remove();
 
-            callback();
+            let state = {
+                currentX: snapshot.context.currentX,
+                currentY: snapshot.context.currentY,
+                direction: snapshot.context.direction,
+                fillStyle: snapshot.context.fillStyle,
+                font: snapshot.context.font,
+                globalAlpha: snapshot.context.globalAlpha,
+                globalCompositeOperation: snapshot.context.globalCompositeOperation,
+                imageSmoothingEnabled: snapshot.context.imageSmoothingEnabled,
+                imageSmoothingQuality: snapshot.context.imageSmoothingQuality,
+                lineCap: snapshot.context.lineCap,
+                lineDash: snapshot.context.getLineDash(),
+                lineDashOffset: snapshot.context.lineDashOffset,
+                lineJoin: snapshot.context.lineJoin,
+                lineWidth: snapshot.context.lineWidth,
+                miterLimit: snapshot.context.miterLimit,
+                shadowBlur: snapshot.context.shadowBlur,
+                shadowColor: snapshot.context.shadowColor,
+                shadowOffsetX: snapshot.context.shadowOffsetX,
+                shadowOffsetY: snapshot.context.shadowOffsetY,
+                strokeStyle: snapshot.context.strokeStyle,
+                textAlign: snapshot.context.textAlign,
+                textBaseline: snapshot.context.textBaseline,
+                transform: snapshot.context.getTransform(),
+                webkitImageSmoothingEnabled: snapshot.context.webkitImageSmoothingEnabled,
+                webkitLineDash: snapshot.context.webkitLineDash,
+                webkitLineDashOffset: snapshot.context.webkitLineDashOffset,
+            };
+
+            if (WI.RecordingContentView.supportsCanvasPathDebugging())
+                state.setPath = [snapshot.context.getPath()];
 
             snapshot.context.restore();
             while (saveCount-- > 0)
                 snapshot.context.restore();
+
+            return state;
         };
 
         if (!snapshot) {
@@ -384,37 +443,7 @@ WI.RecordingContentView = class RecordingContentView extends WI.ContentView
                 startIndex = this._snapshots[lastSnapshotIndex].index;
             }
 
-            applyActions(startIndex, snapshot.index - 1, () => {
-                snapshot.state = {
-                    direction: snapshot.context.direction,
-                    fillStyle: snapshot.context.fillStyle,
-                    font: snapshot.context.font,
-                    globalAlpha: snapshot.context.globalAlpha,
-                    globalCompositeOperation: snapshot.context.globalCompositeOperation,
-                    imageSmoothingEnabled: snapshot.context.imageSmoothingEnabled,
-                    imageSmoothingQuality: snapshot.context.imageSmoothingQuality,
-                    lineCap: snapshot.context.lineCap,
-                    lineDashOffset: snapshot.context.lineDashOffset,
-                    lineJoin: snapshot.context.lineJoin,
-                    lineWidth: snapshot.context.lineWidth,
-                    miterLimit: snapshot.context.miterLimit,
-                    setLineDash: [snapshot.context.getLineDash()],
-                    setTransform: [snapshot.context.getTransform()],
-                    shadowBlur: snapshot.context.shadowBlur,
-                    shadowColor: snapshot.context.shadowColor,
-                    shadowOffsetX: snapshot.context.shadowOffsetX,
-                    shadowOffsetY: snapshot.context.shadowOffsetY,
-                    strokeStyle: snapshot.context.strokeStyle,
-                    textAlign: snapshot.context.textAlign,
-                    textBaseline: snapshot.context.textBaseline,
-                    webkitImageSmoothingEnabled: snapshot.context.webkitImageSmoothingEnabled,
-                    webkitLineDash: snapshot.context.webkitLineDash,
-                    webkitLineDashOffset: snapshot.context.webkitLineDashOffset,
-                };
-
-                if (WI.RecordingContentView.supportsCanvasPathDebugging())
-                    snapshot.state.setPath = [snapshot.context.getPath()];
-            });
+            snapshot.state = applyActions(startIndex, snapshot.index - 1);
 
             snapshot.content = new Image;
             snapshot.content.src = snapshot.element.toDataURL();
@@ -430,23 +459,27 @@ WI.RecordingContentView = class RecordingContentView extends WI.ContentView
                 --indexOfLastBeginPathAction;
         }
 
-        applyActions(snapshot.index, this._index, () => {
-            if (options.actionCompletedCallback)
-                options.actionCompletedCallback(actions[this._index], snapshot.context);
-        });
+        this._action = actions[this._index];
+
+        let state = applyActions(snapshot.index, this._index);
+        console.assert(!this._action.state || Object.shallowEqual(this._action.state, state));
+        if (!this._action.state)
+            this._action.state = state;
+
+        this.dispatchEventToListeners(WI.ContentView.Event.SupplementalRepresentedObjectsDidChange);
 
         this._previewContainer.appendChild(snapshot.element);
         this._updateImageGrid();
     }
 
-    async _generateContentCanvasWebGL(index, actions, options = {})
+    async _generateContentCanvasWebGL(index, actions)
     {
         let imageLoad = (event) => {
             // Loading took too long and the current action index has already changed.
             if (index !== this._index)
                 return;
 
-            this._generateContentCanvasWebGL(index, actions, options);
+            this._generateContentCanvasWebGL(index, actions);
         };
 
         let initialState = this.representedObject.initialState;
@@ -481,8 +514,7 @@ WI.RecordingContentView = class RecordingContentView extends WI.ContentView
             this._updateImageGrid();
         }
 
-        if (options.actionCompletedCallback)
-            options.actionCompletedCallback(actions[this._index]);
+        this.dispatchEventToListeners(WI.ContentView.Event.SupplementalRepresentedObjectsDidChange);
     }
 
     _updateCanvasPath()
@@ -545,12 +577,8 @@ WI.RecordingContentView = class RecordingContentView extends WI.ContentView
         if (visualActionIndex !== -1)
             index = this.representedObject.visualActionIndexes[visualActionIndex];
 
-        this.dispatchEventToListeners(WI.RecordingContentView.Event.RecordingActionIndexChanged, {index});
+        this.updateActionIndex(index);
     }
 };
 
 WI.RecordingContentView.SnapshotInterval = 5000;
-
-WI.RecordingContentView.Event = {
-    RecordingActionIndexChanged: "recording-action-index-changed",
-};

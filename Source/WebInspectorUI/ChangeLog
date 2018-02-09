@@ -1,3 +1,229 @@
+2018-02-08  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: add listing of Canvases/Programs/Recordings to the NavigationSidebar
+        https://bugs.webkit.org/show_bug.cgi?id=178744
+        <rdar://problem/35374379>
+
+        Reviewed by Devin Rousso.
+
+        * Localizations/en.lproj/localizedStrings.js:
+
+        * UserInterface/Images/Canvas2D.svg:
+        * UserInterface/Images/Canvas3D.svg:
+        * UserInterface/Images/Recording.svg:
+        Update canvas icons to be monochrome. Simplified the recording icon.
+
+        * UserInterface/Main.html:
+
+        * UserInterface/Models/RecordingAction.js:
+        (WI.RecordingAction.prototype.get state):
+        (WI.RecordingAction.prototype.set state):
+        Allow (2D) snapshot state to be associated with the action. Used by
+        RecordingActionDetailsSidebarPanel to retrieve the snapshot state.
+
+        * UserInterface/Views/CanvasContentView.css:
+        (.content-view.canvas:not(.tab)):
+        (.content-view.canvas:not(.tab) > .progress): Deleted.
+        (.content-view.canvas:not(.tab) > .progress > .frame-count): Deleted.
+
+        * UserInterface/Views/CanvasContentView.js:
+        (WI.CanvasContentView):
+        (WI.CanvasContentView.prototype.get navigationItems):
+        (WI.CanvasContentView.prototype.layout):
+        (WI.CanvasContentView.prototype.shown):
+        (WI.CanvasContentView.prototype._recordingStarted):
+        (WI.CanvasContentView.prototype._recordingProgress):
+        (WI.CanvasContentView.prototype._recordingStopped):
+        (WI.CanvasContentView.prototype._updateRecordNavigationItem):
+        (WI.CanvasContentView.prototype._updateProgressView):
+        Replace progress UI with a reusable ProgressView class.
+        When in the overview, clicking the CanvasContentView shows a dedicated
+        CanvasContentView for inspecting shaders and recordings. This behavior
+        is controlled by CollectionContentView, so we need to prevent it when
+        clicking inside the header and footer elements, which contain clickable UI.
+
+        * UserInterface/Views/CanvasDetailsSidebarPanel.js:
+        (WI.CanvasDetailsSidebarPanel.prototype.inspect):
+
+        * UserInterface/Views/CanvasOverviewContentView.css:
+        (.content-view.canvas-overview .content-view.canvas):
+        (.content-view.canvas-overview .content-view.canvas.is-recording):
+        (.content-view.canvas-overview .content-view.canvas > :matches(header, footer)):
+        (.content-view.canvas-overview .content-view.canvas > header):
+        (.content-view.canvas-overview .content-view.canvas.is-recording > header):
+        (.content-view.canvas-overview .content-view.canvas > header > .navigation-bar):
+        (.content-view.canvas-overview .content-view.canvas:matches(:hover, .is-recording) > header > .navigation-bar):
+        (.content-view.canvas-overview .content-view.canvas.is-recording > .progress-view,):
+        (.content-view.canvas-overview .content-view.canvas.is-recording > .preview):
+        (.content-view.canvas-overview .content-view.canvas > :matches(header, .progress, .preview, footer)): Deleted.
+        (.content-view.canvas-overview .content-view.canvas.selected > :matches(.progress, .preview, footer),): Deleted.
+        (.content-view.canvas-overview .content-view.canvas:not(:hover, .is-recording, .selected) > header > .navigation-bar): Deleted.
+        (.content-view.canvas-overview .content-view.canvas > :matches(.progress, .preview)): Deleted.
+        (.content-view.canvas-overview .content-view.canvas > .preview): Deleted.
+        (.content-view.canvas-overview .content-view.canvas > .progress ~ .preview): Deleted.
+        Clean up styles, and remove selection styles as canvases are no longer selectable in the overview.
+
+        * UserInterface/Views/CanvasOverviewContentView.js:
+        (WI.CanvasOverviewContentView):
+        (WI.CanvasOverviewContentView.prototype.get navigationItems):
+        (WI.CanvasOverviewContentView.prototype.attached):
+        (WI.CanvasOverviewContentView.prototype.detached):
+        (WI.CanvasOverviewContentView.prototype.get selectionPathComponents): Deleted.
+        (WI.CanvasOverviewContentView.prototype._changeSelectedItemVertically): Deleted.
+        (WI.CanvasOverviewContentView.prototype._changeSelectedItemHorizontally): Deleted.
+        (WI.CanvasOverviewContentView.prototype._selectionPathComponentsChanged): Deleted.
+        (WI.CanvasOverviewContentView.prototype._handleUp): Deleted.
+        (WI.CanvasOverviewContentView.prototype._handleRight): Deleted.
+        (WI.CanvasOverviewContentView.prototype._handleDown): Deleted.
+        (WI.CanvasOverviewContentView.prototype._handleLeft): Deleted.
+        (WI.CanvasOverviewContentView.prototype._handleSpace): Deleted.
+        (WI.CanvasOverviewContentView.prototype._supplementalRepresentedObjectsDidChange): Deleted.
+        Disable canvas selection. Remove logic for supplemental represented objects,
+        path components, and selection keyboard shortcuts.
+
+        * UserInterface/Views/CanvasSidebarPanel.css: Added.
+        (.sidebar > .panel.navigation.canvas > .content):
+        (.sidebar > .panel.navigation.canvas > .navigation-bar > .item.record-start-stop.disabled):
+        (.sidebar > .panel.navigation.canvas > .content > .tree-outline .item.canvas.canvas-2d .icon):
+        (.sidebar > .panel.navigation.canvas > .content > .tree-outline .item.canvas.webgl .icon):
+        (.sidebar > .panel.navigation.canvas > .content > .navigation-bar):
+        (.sidebar > .panel.navigation.canvas.has-recordings > .content > .tree-outline.canvas):
+        (.sidebar > .panel.navigation.canvas:not(.has-recordings) > .filter-bar,):
+        (.sidebar > .panel.navigation.canvas > .content > .tree-outline .item.recording > .icon):
+        (.sidebar > .panel.navigation.canvas > .content > .tree-outline .item.shader-program > .icon):
+        (.sidebar > .panel.navigation.canvas > .content > .tree-outline .item.folder-icon > .icon):
+        (.sidebar > .panel.navigation.canvas > .content > .tree-outline .item.folder-icon > .status):
+
+        * UserInterface/Views/CanvasSidebarPanel.js: Added.
+        (WI.CanvasSidebarPanel):
+        (WI.CanvasSidebarPanel.prototype.get canvas):
+        (WI.CanvasSidebarPanel.prototype.set canvas):
+        (WI.CanvasSidebarPanel.prototype.set recording):
+        (WI.CanvasSidebarPanel.prototype.set action):
+        (WI.CanvasSidebarPanel.prototype.shown):
+        (WI.CanvasSidebarPanel.prototype.hidden):
+        (WI.CanvasSidebarPanel.prototype.hasCustomFilters):
+        (WI.CanvasSidebarPanel.prototype.matchTreeElementAgainstCustomFilters):
+        (WI.CanvasSidebarPanel.prototype.initialLayout):
+        (WI.CanvasSidebarPanel.prototype._recordingAdded):
+        (WI.CanvasSidebarPanel.prototype._recordingRemoved):
+        (WI.CanvasSidebarPanel.prototype._scopeBarSelectionChanged):
+        (WI.CanvasSidebarPanel.prototype._toggleRecording):
+        (WI.CanvasSidebarPanel.prototype._currentRepresentedObjectsDidChange):
+        (WI.CanvasSidebarPanel.prototype._treeOutlineSelectionDidChange):
+        (WI.CanvasSidebarPanel.prototype._canvasChanged):
+        (WI.CanvasSidebarPanel.prototype._recordingChanged):
+        (WI.CanvasSidebarPanel.prototype._updateRecordNavigationItem):
+        (WI.CanvasSidebarPanel.prototype._updateRecordingScopeBar):
+        Add new navigation sidebar, split into two sections. The upper section
+        contains a tree with a single element for the current canvas, and child
+        elements for any shader programs. The maximum height of this section is 50%
+        of the sidebar's height. The lower section contains a tree for the selected
+        recording, and a scope bar for choosing between recordings.
+
+        * UserInterface/Views/CanvasTabContentView.css:
+        (.content-view.tab.canvas .navigation-bar > .item .canvas-overview .icon):
+        (.content-view.tab.canvas .navigation-bar > .item .canvas.canvas-2d .icon):
+        (.content-view.tab.canvas .navigation-bar > .item .canvas.webgl .icon):
+        (.content-view.tab.canvas .navigation-bar > .item .shader-program > .icon):
+        (.content-view.tab.canvas .navigation-bar > .item > .hierarchical-path-component > .icon): Deleted.
+        (.content-view.tab.canvas .navigation-bar > .item .canvas .icon): Deleted.
+
+        * UserInterface/Views/CanvasTabContentView.js:
+        (WI.CanvasTabContentView):
+        (WI.CanvasTabContentView.prototype.canShowRepresentedObject):
+        (WI.CanvasTabContentView.prototype.attached):
+        (WI.CanvasTabContentView.prototype._addCanvas):
+        (WI.CanvasTabContentView.prototype._removeCanvas):
+        (WI.CanvasTabContentView.prototype._canvasTreeOutlineSelectionDidChange):
+        (WI.CanvasTabContentView.prototype._recordingAdded):
+        (WI.CanvasTabContentView.prototype._handleSpace):
+        (WI.CanvasTabContentView.prototype.showRepresentedObject): Deleted.
+        (WI.CanvasTabContentView.prototype._navigationSidebarTreeOutlineSelectionChanged): Deleted.
+        (WI.CanvasTabContentView.prototype._recordingActionIndexChanged): Deleted.
+        (WI.CanvasTabContentView.prototype._updateActionIndex): Deleted.
+        The canvas tab now maintains a tree outline of all canvases, with an
+        "Overview" element as the root. The Overview element is always the first
+        item of content browser's hierarchical path.
+
+        * UserInterface/Views/CanvasTreeElement.js:
+        (WI.CanvasTreeElement.createRecordingTreeElement):
+        (WI.CanvasTreeElement):
+        (WI.CanvasTreeElement.prototype.onattach):
+        (WI.CanvasTreeElement.prototype.onpopulate):
+        (WI.CanvasTreeElement.prototype._updateStatus):
+        (WI.CanvasTreeElement.prototype.ondetach): Deleted.
+        Make it possible to not show recordings under the Canvas element.
+        Create `isRecording` status element (spinner).
+
+        * UserInterface/Views/CollectionContentView.js:
+        (WI.CollectionContentView.prototype.shown):
+        (WI.CollectionContentView.prototype.hidden):
+        Child ContentViews need to be updated when the collection's visibility changes.
+
+        * UserInterface/Views/ContentView.js:
+        (WI.ContentView.isViewable):
+
+        * UserInterface/Views/ProgressView.css: Added.
+        (.progress-view):
+        (.progress-view > .titles):
+        (.progress-view > .titles > .title):
+        (.progress-view > .titles > .subtitle):
+        (.progress-view > .titles > .subtitle::before):
+        (.progress-view > .indeterminate-progress-spinner):
+
+        * UserInterface/Views/ProgressView.js: Added.
+        (WI.ProgressView):
+        (WI.ProgressView.prototype.get title):
+        (WI.ProgressView.prototype.set title):
+        (WI.ProgressView.prototype.get subtitle):
+        (WI.ProgressView.prototype.set subtitle):
+        (WI.ProgressView.prototype.get visible):
+        (WI.ProgressView.prototype.set visible):
+        (WI.ProgressView.prototype.initialLayout):
+        (WI.ProgressView.prototype._updateTitles):
+        New view class (not a ContentView) for showing a generic progress message,
+        with a title, subtitle, and progress spinner.
+
+        * UserInterface/Views/RecordingContentView.css:
+        (.content-view:not(.tab).recording > .preview-container):
+        Remove unnecessary styles.
+
+        * UserInterface/Views/RecordingContentView.js:
+        (WI.RecordingContentView):
+        (WI.RecordingContentView.prototype.get navigationItems):
+        (WI.RecordingContentView.prototype.get supplementalRepresentedObjects):
+        (WI.RecordingContentView.prototype.updateActionIndex):
+        (WI.RecordingContentView.prototype.get saveData):
+        (WI.RecordingContentView.prototype._exportRecording):
+        Relocate the recording export logic and UI.
+        (WI.RecordingContentView.prototype.async._generateContentCanvas2D):
+        (WI.RecordingContentView.prototype.async._generateContentCanvasWebGL):
+        (WI.RecordingContentView.prototype._sliderChanged):
+        Refactor logic for notifying the rest of the UI of changes to the action slider.
+        The selected action is now exposed as a supplemental represented object, and a
+        corresponding SupplementalRepresentedObjectsDidChange event.
+
+        * UserInterface/Views/RecordingStateDetailsSidebarPanel.js:
+        (WI.RecordingStateDetailsSidebarPanel.prototype.inspect):
+        (WI.RecordingStateDetailsSidebarPanel.prototype.set action):
+        (WI.RecordingStateDetailsSidebarPanel.prototype._generateDetailsCanvas2D):
+        (WI.RecordingStateDetailsSidebarPanel):
+        (WI.RecordingStateDetailsSidebarPanel.prototype.updateAction): Deleted.
+
+        * UserInterface/Views/RecordingTraceDetailsSidebarPanel.js:
+        (WI.RecordingTraceDetailsSidebarPanel.prototype.inspect):
+        (WI.RecordingTraceDetailsSidebarPanel.prototype.set action):
+        (WI.RecordingTraceDetailsSidebarPanel):
+        (WI.RecordingTraceDetailsSidebarPanel.prototype.updateAction): Deleted.
+        Now that the selected action is exposed to the UI as a supplemental
+        represented object, details sidebars can be more decoupled from the
+        canvas tab, and be notified of changes to the selection via `inspect()`.
+
+        * UserInterface/Views/ResourceIcons.css:
+        (.canvas > .icon): Deleted.
+        (.shader-program .icon): Deleted.
+
 2018-02-08  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Styles: Typing value and quickly moving focus away may display outdated value in UI

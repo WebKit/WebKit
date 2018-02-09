@@ -46,8 +46,9 @@ WI.RecordingTraceDetailsSidebarPanel = class RecordingTraceDetailsSidebarPanel e
             objects = [objects];
 
         this.recording = objects.find((object) => object instanceof WI.Recording);
+        this.action = objects.find((object) => object instanceof WI.RecordingAction);
 
-        return !!this._recording;
+        return this._recording && this._action;
     }
 
     set recording(recording)
@@ -61,14 +62,18 @@ WI.RecordingTraceDetailsSidebarPanel = class RecordingTraceDetailsSidebarPanel e
         this.contentView.element.removeChildren();
     }
 
-    updateAction(action, context, options = {})
+    set action(action)
     {
+        console.assert(!action || action instanceof WI.RecordingAction);
         if (!this._recording || action === this._action)
             return;
 
         this._action = action;
 
         this.contentView.element.removeChildren();
+
+        if (!this._action)
+            return;
 
         let trace = this._action.trace;
         this._backtraceTreeController.callFrames = trace;

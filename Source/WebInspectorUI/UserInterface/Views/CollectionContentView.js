@@ -51,6 +51,22 @@ WI.CollectionContentView = class CollectionContentView extends WI.ContentView
         return [];
     }
 
+    shown()
+    {
+        super.shown();
+
+        for (let contentView of this._contentViewMap.values())
+            contentView.shown();
+    }
+
+    hidden()
+    {
+        for (let contentView of this._contentViewMap.values())
+            contentView.hidden();
+
+        super.hidden();
+    }
+
     get selectionEnabled()
     {
         return this._selectionEnabled;

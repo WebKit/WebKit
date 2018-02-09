@@ -38,13 +38,13 @@
     background-color: white;
 }
 
-.content-view.canvas-overview .content-view.canvas > :matches(header, .progress, .preview, footer) {
+.content-view.canvas-overview .content-view.canvas {
     border: 1px solid var(--border-color);
+    cursor: pointer;
 }
 
-.content-view.canvas-overview .content-view.canvas.selected > :matches(.progress, .preview, footer),
-.content-view.canvas-overview .content-view.canvas.selected:not(.is-recording) > header {
-    border-color: var(--selected-background-color);
+.content-view.canvas-overview .content-view.canvas.is-recording {
+    border-color: red;
 }
 
 .content-view.canvas-overview .content-view.canvas > :matches(header, footer) {
@@ -55,16 +55,15 @@
     align-items: center;
     padding: 0 6px;
     height: var(--navigation-bar-height);
+    cursor: default;
 }
 
 .content-view.canvas-overview .content-view.canvas > header {
     font-size: 13px;
-    border-bottom: none;
 }
 
 .content-view.canvas-overview .content-view.canvas.is-recording > header {
     background-color: red;
-    border-color: red;
 }
 
 .content-view.canvas-overview .content-view.canvas > header > .titles,
@@ -100,10 +99,13 @@
 .content-view.canvas-overview .content-view.canvas > header > .navigation-bar {
     align-items: initial;
     border: none;
+    opacity: 0;
+    transition: opacity 200ms ease-in-out;
 }
 
-.content-view.canvas-overview .content-view.canvas:not(:hover, .is-recording, .selected) > header > .navigation-bar {
-    visibility: hidden;
+.content-view.canvas-overview .content-view.canvas:matches(:hover, .is-recording) > header > .navigation-bar {
+    opacity: 1;
+    transition: opacity 200ms ease-in-out;
 }
 
 .content-view.canvas-overview .content-view.canvas:not(.is-recording) > header > .navigation-bar > .item.record-start-stop.disabled {
@@ -119,21 +121,13 @@
     filter: brightness(80%);
 }
 
-.content-view.canvas-overview .content-view.canvas > :matches(.progress, .preview) {
-    border-top: none;
-    border-bottom: none;
-}
-
+.content-view.canvas-overview .content-view.canvas.is-recording > .progress-view,
 .content-view.canvas-overview .content-view.canvas > .preview {
-    height: var(--preview-height);
-
-    --preview-height: 280px;
+    height: 280px;
 }
 
-.content-view.canvas-overview .content-view.canvas > .progress ~ .preview {
-    /* Keep the height of each CanvasContentView constant by subtracting the padding-top, */
-    /* padding-bottom, and text-height (1em) from the previously set height. */
-    height: calc(var(--preview-height) - 1em - (2 * var(--progress-padding)));
+.content-view.canvas-overview .content-view.canvas.is-recording > .preview {
+    display: none;
 }
 
 .content-view.canvas-overview .content-view.canvas > .preview > img {

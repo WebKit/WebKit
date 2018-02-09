@@ -43,8 +43,9 @@ WI.RecordingStateDetailsSidebarPanel = class RecordingStateDetailsSidebarPanel e
             objects = [objects];
 
         this.recording = objects.find((object) => object instanceof WI.Recording && object.type === WI.Recording.Type.Canvas2D);
+        this.action = objects.find((object) => object instanceof WI.RecordingAction);
 
-        return !!this._recording;
+        return this._recording && this._action;
     }
 
     set recording(recording)
@@ -59,22 +60,23 @@ WI.RecordingStateDetailsSidebarPanel = class RecordingStateDetailsSidebarPanel e
             this.contentView.removeSubview(subview);
     }
 
-    updateAction(action, context, options = {})
+    set action(action)
     {
+        console.assert(!action || action instanceof WI.RecordingAction);
         if (!this._recording || action === this._action)
             return;
 
         this._action = action;
 
-        if (this._recording.type === WI.Recording.Type.Canvas2D)
-            this._generateDetailsCanvas2D(action, context, options);
+        if (this._action && this._recording.type === WI.Recording.Type.Canvas2D)
+            this._generateDetailsCanvas2D(this._action);
 
         this.updateLayoutIfNeeded();
     }
 
     // Private
 
-    _generateDetailsCanvas2D(action, context, options = {})
+    _generateDetailsCanvas2D(action)
     {
         if (!this._dataGrid) {
             this._dataGrid = new WI.DataGrid({
@@ -87,40 +89,9 @@ WI.RecordingStateDetailsSidebarPanel = class RecordingStateDetailsSidebarPanel e
 
         this._dataGrid.removeChildren();
 
-        if (!context)
+        console.assert(action.state);
+        if (!action.state)
             return;
-
-        let state = {};
-
-        if (WI.RecordingContentView.supportsCanvasPathDebugging()) {
-            state.currentX = context.currentX;
-            state.currentY = context.currentY;
-        }
-
-        state.direction = context.direction;
-        state.fillStyle = context.fillStyle;
-        state.font = context.font;
-        state.globalAlpha = context.globalAlpha;
-        state.globalCompositeOperation = context.globalCompositeOperation;
-        state.imageSmoothingEnabled = context.imageSmoothingEnabled;
-        state.imageSmoothingQuality = context.imageSmoothingQuality;
-        state.lineCap = context.lineCap;
-        state.lineDash = context.getLineDash();
-        state.lineDashOffset = context.lineDashOffset;
-        state.lineJoin = context.lineJoin;
-        state.lineWidth = context.lineWidth;
-        state.miterLimit = context.miterLimit;
-        state.shadowBlur = context.shadowBlur;
-        state.shadowColor = context.shadowColor;
-        state.shadowOffsetX = context.shadowOffsetX;
-        state.shadowOffsetY = context.shadowOffsetY;
-        state.strokeStyle = context.strokeStyle;
-        state.textAlign = context.textAlign;
-        state.textBaseline = context.textBaseline;
-        state.transform = context.getTransform();
-        state.webkitImageSmoothingEnabled = context.webkitImageSmoothingEnabled;
-        state.webkitLineDash = context.webkitLineDash;
-        state.webkitLineDashOffset = context.webkitLineDashOffset;
 
         function isColorProperty(name) {
             return name === "fillStyle" || name === "strokeStyle" || name === "shadowColor";
@@ -135,8 +106,12 @@ WI.RecordingStateDetailsSidebarPanel = class RecordingStateDetailsSidebarPanel e
             return new WI.InlineSwatch(WI.InlineSwatch.Type.Color, color, readOnly);
         }
 
-        for (let name in state) {
-            let value = state[name];
+        for (let name in action.state) {
+            // Skip internal state used for path debugging.
+            if (name === "setPath")
+                continue;
+
+            let value = action.state[name];
             if (typeof value === "object") {
                 let isGradient = value instanceof CanvasGradient;
                 let isPattern = value instanceof CanvasPattern;
