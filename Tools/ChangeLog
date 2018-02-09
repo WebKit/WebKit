@@ -1,3 +1,66 @@
+2018-02-08  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        TestController should not exercise cocoa-specific resource load statistics APIs
+        https://bugs.webkit.org/show_bug.cgi?id=182355
+
+        Reviewed by Alex Christensen.
+
+        Remove unnecessary use of platform-specific APIs in the TestController, since there are
+        cross-platform APIs to do the same thing.
+
+        Also, ensure callbacks execute before returning from TestController's functions, since
+        otherwise the tests are guaranteed to be flaky at best, and also since there's nothing to
+        prevent the TestController from being destroyed before the callbacks execute.
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::resourceStatisticsVoidResultCallback):
+        (WTR::resourceStatisticsBooleanResultCallback):
+        (WTR::TestController::isStatisticsPrevalentResource):
+        (WTR::TestController::isStatisticsRegisteredAsSubFrameUnder):
+        (WTR::TestController::isStatisticsRegisteredAsRedirectingTo):
+        (WTR::TestController::isStatisticsHasHadUserInteraction):
+        (WTR::TestController::isStatisticsGrandfathered):
+        (WTR::TestController::statisticsUpdateCookiePartitioning):
+        (WTR::TestController::statisticsSetShouldPartitionCookiesForHost):
+        (WTR::TestController::statisticsClearInMemoryAndPersistentStore):
+        (WTR::TestController::statisticsClearInMemoryAndPersistentStoreModifiedSinceHours):
+        (WTR::TestController::statisticsClearThroughWebsiteDataRemoval):
+        (WTR::resourceStatisticsCallback): Deleted.
+        (WTR::TestController::statisticsClearThroughWebsiteDataRemovalCallback): Deleted.
+        * WebKitTestRunner/TestController.h:
+        * WebKitTestRunner/cocoa/TestControllerCocoa.mm:
+        (WTR::toNSString): Deleted.
+        (WTR::TestController::setStatisticsLastSeen): Deleted.
+        (WTR::TestController::setStatisticsPrevalentResource): Deleted.
+        (WTR::TestController::isStatisticsPrevalentResource): Deleted.
+        (WTR::TestController::isStatisticsRegisteredAsSubFrameUnder): Deleted.
+        (WTR::TestController::isStatisticsRegisteredAsRedirectingTo): Deleted.
+        (WTR::TestController::setStatisticsHasHadUserInteraction): Deleted.
+        (WTR::TestController::setStatisticsHasHadNonRecentUserInteraction): Deleted.
+        (WTR::TestController::isStatisticsHasHadUserInteraction): Deleted.
+        (WTR::TestController::setStatisticsGrandfathered): Deleted.
+        (WTR::TestController::isStatisticsGrandfathered): Deleted.
+        (WTR::TestController::setStatisticsSubframeUnderTopFrameOrigin): Deleted.
+        (WTR::TestController::setStatisticsSubresourceUnderTopFrameOrigin): Deleted.
+        (WTR::TestController::setStatisticsSubresourceUniqueRedirectTo): Deleted.
+        (WTR::TestController::setStatisticsTimeToLiveUserInteraction): Deleted.
+        (WTR::TestController::setStatisticsTimeToLiveCookiePartitionFree): Deleted.
+        (WTR::TestController::statisticsProcessStatisticsAndDataRecords): Deleted.
+        (WTR::TestController::statisticsUpdateCookiePartitioning): Deleted.
+        (WTR::TestController::statisticsSetShouldPartitionCookiesForHost): Deleted.
+        (WTR::TestController::statisticsSubmitTelemetry): Deleted.
+        (WTR::TestController::setStatisticsNotifyPagesWhenDataRecordsWereScanned): Deleted.
+        (WTR::TestController::setStatisticsShouldClassifyResourcesBeforeDataRecordsRemoval): Deleted.
+        (WTR::TestController::setStatisticsNotifyPagesWhenTelemetryWasCaptured): Deleted.
+        (WTR::TestController::setStatisticsMinimumTimeBetweenDataRecordsRemoval): Deleted.
+        (WTR::TestController::setStatisticsGrandfatheringTime): Deleted.
+        (WTR::TestController::setStatisticsMaxStatisticsEntries): Deleted.
+        (WTR::TestController::setStatisticsPruneEntriesDownTo): Deleted.
+        (WTR::TestController::statisticsClearInMemoryAndPersistentStore): Deleted.
+        (WTR::TestController::statisticsClearInMemoryAndPersistentStoreModifiedSinceHours): Deleted.
+        (WTR::TestController::statisticsClearThroughWebsiteDataRemoval): Deleted.
+        (WTR::TestController::statisticsResetToConsistentState): Deleted.
+
 2018-02-08  Jonathan Bedard  <jbedard@apple.com>
 
         webkit-patch suggest-reviewers dies with AttributeError: 'NoneType' object has no attribute 'revision'

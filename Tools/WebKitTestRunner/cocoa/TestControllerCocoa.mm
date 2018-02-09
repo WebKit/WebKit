@@ -53,13 +53,6 @@
 
 namespace WTR {
 
-#if WK_API_ENABLED
-static NSString* toNSString(WKStringRef string)
-{
-    return [NSString stringWithCString:toWTFString(string).utf8().data()];
-}
-#endif
-
 static WKWebViewConfiguration *globalWebViewConfiguration;
 
 void initializeWebViewConfiguration(const char* libraryPath, WKStringRef injectedBundlePath, WKContextRef context, WKContextConfigurationRef contextConfiguration)
@@ -256,212 +249,9 @@ void TestController::removeAllSessionCredentials()
 #endif
 }
 
-#if WK_API_ENABLED
-void TestController::setStatisticsLastSeen(WKStringRef hostName, double seconds)
-{
-    [globalWebViewConfiguration.websiteDataStore _resourceLoadStatisticsSetLastSeen:seconds forHost:toNSString(hostName)];
-}
-    
-void TestController::setStatisticsPrevalentResource(WKStringRef hostName, bool value)
-{
-    [globalWebViewConfiguration.websiteDataStore _resourceLoadStatisticsSetIsPrevalentResource:value forHost:toNSString(hostName)];
-}
-
-bool TestController::isStatisticsPrevalentResource(WKStringRef hostName)
-{
-    __block bool isDataReady = false;
-    __block bool isPrevalentResource = false;
-    [globalWebViewConfiguration.websiteDataStore _resourceLoadStatisticsIsPrevalentResource:toNSString(hostName) completionHandler:^(BOOL _isPrevalentResource) {
-        isPrevalentResource = _isPrevalentResource;
-        isDataReady = true;
-    }];
-    platformRunUntil(isDataReady, 0);
-
-    return isPrevalentResource;
-}
-
-bool TestController::isStatisticsRegisteredAsSubFrameUnder(WKStringRef subFrameHost, WKStringRef topFrameHost)
-{
-    __block bool isDataReady = false;
-    __block bool isRegisteredAsSubFrameUnder = false;
-    [globalWebViewConfiguration.websiteDataStore _resourceLoadStatisticsIsRegisteredAsSubFrameUnder:toNSString(subFrameHost) topFrameHost:toNSString(topFrameHost) completionHandler:^(BOOL _isRegisteredAsSubFrameUnder) {
-        isRegisteredAsSubFrameUnder = _isRegisteredAsSubFrameUnder;
-        isDataReady = true;
-    }];
-    platformRunUntil(isDataReady, 0);
-    
-    return isRegisteredAsSubFrameUnder;
-}
-
-bool TestController::isStatisticsRegisteredAsRedirectingTo(WKStringRef hostRedirectedFrom, WKStringRef hostRedirectedTo)
-{
-    __block bool isDataReady = false;
-    __block bool isRegisteredAsRedirectingTo = false;
-    [globalWebViewConfiguration.websiteDataStore _resourceLoadStatisticsIsRegisteredAsRedirectingTo:toNSString(hostRedirectedFrom) hostRedirectedTo:toNSString(hostRedirectedTo) completionHandler:^(BOOL _isRegisteredAsRedirectingTo) {
-        isRegisteredAsRedirectingTo = _isRegisteredAsRedirectingTo;
-        isDataReady = true;
-    }];
-    platformRunUntil(isDataReady, 0);
-    
-    return isRegisteredAsRedirectingTo;
-}
-
-void TestController::setStatisticsHasHadUserInteraction(WKStringRef hostName, bool value)
-{
-    [globalWebViewConfiguration.websiteDataStore _resourceLoadStatisticsSetHadUserInteraction:value forHost:toNSString(hostName)];
-}
-
-void TestController::setStatisticsHasHadNonRecentUserInteraction(WKStringRef hostName)
-{
-    [globalWebViewConfiguration.websiteDataStore _resourceLoadStatisticsSetHasHadNonRecentUserInteractionForHost:toNSString(hostName)];
-}
-
-bool TestController::isStatisticsHasHadUserInteraction(WKStringRef hostName)
-{
-    __block bool isDataReady = false;
-    __block bool hasHadUserInteraction = false;
-    [globalWebViewConfiguration.websiteDataStore _resourceLoadStatisticsHadUserInteraction:toNSString(hostName) completionHandler:^(BOOL _hasHadUserInteraction) {
-        hasHadUserInteraction = _hasHadUserInteraction;
-        isDataReady = true;
-    }];
-    platformRunUntil(isDataReady, 0);
-
-    return hasHadUserInteraction;
-}
-
-void TestController::setStatisticsGrandfathered(WKStringRef hostName, bool value)
-{
-    [globalWebViewConfiguration.websiteDataStore _resourceLoadStatisticsSetIsGrandfathered:value forHost:toNSString(hostName)];
-}
-
-bool TestController::isStatisticsGrandfathered(WKStringRef hostName)
-{
-    __block bool isDataReady = false;
-    __block bool isGrandfathered = false;
-    [globalWebViewConfiguration.websiteDataStore _resourceLoadStatisticsIsGrandfathered:toNSString(hostName) completionHandler:^(BOOL _isGrandfathered) {
-        isGrandfathered = _isGrandfathered;
-        isDataReady = true;
-    }];
-    platformRunUntil(isDataReady, 0);
-
-    return isGrandfathered;
-}
-
-void TestController::setStatisticsSubframeUnderTopFrameOrigin(WKStringRef hostName, WKStringRef topFrameHostName)
-{
-    [globalWebViewConfiguration.websiteDataStore _resourceLoadStatisticsSetSubframeUnderTopFrameOrigin:toNSString(topFrameHostName) forHost:toNSString(hostName)];
-}
-
-void TestController::setStatisticsSubresourceUnderTopFrameOrigin(WKStringRef hostName, WKStringRef topFrameHostName)
-{
-    [globalWebViewConfiguration.websiteDataStore _resourceLoadStatisticsSetSubresourceUnderTopFrameOrigin:toNSString(topFrameHostName) forHost:toNSString(hostName)];
-}
-
-void TestController::setStatisticsSubresourceUniqueRedirectTo(WKStringRef hostName, WKStringRef hostNameRedirectedTo)
-{
-    [globalWebViewConfiguration.websiteDataStore _resourceLoadStatisticsSetSubresourceUniqueRedirectTo:toNSString(hostNameRedirectedTo) forHost:toNSString(hostName)];
-}
-
-void TestController::setStatisticsTimeToLiveUserInteraction(double seconds)
-{
-    [globalWebViewConfiguration.websiteDataStore _resourceLoadStatisticsSetTimeToLiveUserInteraction:seconds];
-}
-
-void TestController::setStatisticsTimeToLiveCookiePartitionFree(double seconds)
-{
-    [globalWebViewConfiguration.websiteDataStore _resourceLoadStatisticsSetTimeToLiveCookiePartitionFree:seconds];
-}
-
-void TestController::statisticsProcessStatisticsAndDataRecords()
-{
-    [globalWebViewConfiguration.websiteDataStore _resourceLoadStatisticsProcessStatisticsAndDataRecords];
-}
-
-void TestController::statisticsUpdateCookiePartitioning()
-{
-    [globalWebViewConfiguration.websiteDataStore _resourceLoadStatisticsUpdateCookiePartitioning:^() {
-        m_currentInvocation->didSetPartitionOrBlockCookiesForHost();
-    }];
-}
-
-void TestController::statisticsSetShouldPartitionCookiesForHost(WKStringRef hostName, bool value)
-{
-    [globalWebViewConfiguration.websiteDataStore _resourceLoadStatisticsSetShouldPartitionCookies:value forHost:toNSString(hostName) completionHandler:^() {
-        m_currentInvocation->didSetPartitionOrBlockCookiesForHost();
-    }];
-}
-
-void TestController::statisticsSubmitTelemetry()
-{
-    [globalWebViewConfiguration.websiteDataStore _resourceLoadStatisticsSubmitTelemetry];
-}
-
-void TestController::setStatisticsNotifyPagesWhenDataRecordsWereScanned(bool value)
-{
-    [globalWebViewConfiguration.websiteDataStore _resourceLoadStatisticsSetNotifyPagesWhenDataRecordsWereScanned:value];
-}
-
-void TestController::setStatisticsShouldClassifyResourcesBeforeDataRecordsRemoval(bool value)
-{
-    [globalWebViewConfiguration.websiteDataStore _resourceLoadStatisticsSetShouldClassifyResourcesBeforeDataRecordsRemoval:value];
-}
-
-void TestController::setStatisticsNotifyPagesWhenTelemetryWasCaptured(bool value)
-{
-    [globalWebViewConfiguration.websiteDataStore _resourceLoadStatisticsSetNotifyPagesWhenTelemetryWasCaptured:value];
-}
-
-void TestController::setStatisticsMinimumTimeBetweenDataRecordsRemoval(double seconds)
-{
-    [globalWebViewConfiguration.websiteDataStore _resourceLoadStatisticsSetMinimumTimeBetweenDataRecordsRemoval:seconds];
-}
-
-void TestController::setStatisticsGrandfatheringTime(double seconds)
-{
-    [globalWebViewConfiguration.websiteDataStore _resourceLoadStatisticsSetGrandfatheringTime:seconds];
-}
-
-void TestController::setStatisticsMaxStatisticsEntries(unsigned entries)
-{
-    [globalWebViewConfiguration.websiteDataStore _resourceLoadStatisticsSetMaxStatisticsEntries:entries];
-}
-    
-void TestController::setStatisticsPruneEntriesDownTo(unsigned entries)
-{
-    [globalWebViewConfiguration.websiteDataStore _resourceLoadStatisticsSetPruneEntriesDownTo:entries];
-}
-    
-void TestController::statisticsClearInMemoryAndPersistentStore()
-{
-    [globalWebViewConfiguration.websiteDataStore _resourceLoadStatisticsClearInMemoryAndPersistentStore:^() {
-        m_currentInvocation->didClearStatisticsThroughWebsiteDataRemoval();
-    }];
-}
-
-void TestController::statisticsClearInMemoryAndPersistentStoreModifiedSinceHours(unsigned hours)
-{
-    [globalWebViewConfiguration.websiteDataStore _resourceLoadStatisticsClearInMemoryAndPersistentStoreModifiedSinceHours:hours completionHandler:^() {
-        m_currentInvocation->didClearStatisticsThroughWebsiteDataRemoval();
-    }];
-}
-
-void TestController::statisticsClearThroughWebsiteDataRemoval()
-{
-#if WK_API_ENABLED
-    auto types = adoptNS([[NSSet alloc] initWithObjects:_WKWebsiteDataTypeResourceLoadStatistics, nil]);
-    [globalWebViewConfiguration.websiteDataStore removeDataOfTypes:types.get() modifiedSince:[NSDate distantPast] completionHandler:^() {
-        m_currentInvocation->didClearStatisticsThroughWebsiteDataRemoval();
-    }];
-#endif
-}
-
-void TestController::statisticsResetToConsistentState()
-{
-    [globalWebViewConfiguration.websiteDataStore _resourceLoadStatisticsResetToConsistentState];
-}
-
 void TestController::getAllStorageAccessEntries()
 {
+#if WK_API_ENABLED
     [globalWebViewConfiguration.websiteDataStore _getAllStorageAccessEntries:^(NSArray<NSString *> *nsDomains) {
         Vector<String> domains;
         domains.reserveInitialCapacity(nsDomains.count);
@@ -469,8 +259,7 @@ void TestController::getAllStorageAccessEntries()
             domains.uncheckedAppend(domain);
         m_currentInvocation->didReceiveAllStorageAccessEntries(domains);
     }];
+#endif
 }
-
-#endif // WK_API_ENABLED
 
 } // namespace WTR
