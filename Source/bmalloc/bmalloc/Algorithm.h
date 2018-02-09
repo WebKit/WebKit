@@ -34,6 +34,10 @@
 #include <type_traits>
 #include <chrono>
 
+#if !BCPU(X86_64)
+#include <string.h>
+#endif
+
 namespace bmalloc {
 
 // Versions of min and max that are compatible with compile-time constants.
