@@ -206,6 +206,8 @@
 		0F5F3D681F3FEBA600B115A2 /* CagedUniquePtr.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CagedUniquePtr.h; sourceTree = "<group>"; };
 		0F60F32D1DFCBD1B00416D6C /* LockedPrintStream.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LockedPrintStream.cpp; sourceTree = "<group>"; };
 		0F60F32E1DFCBD1B00416D6C /* LockedPrintStream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LockedPrintStream.h; sourceTree = "<group>"; };
+		0F62A8A6202CCC14007B8623 /* FastCopy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FastCopy.h; sourceTree = "<group>"; };
+		0F62A8A7202CCC15007B8623 /* FastZeroFill.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FastZeroFill.h; sourceTree = "<group>"; };
 		0F66B2801DC97BAB004A1D3F /* ClockType.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ClockType.cpp; sourceTree = "<group>"; };
 		0F66B2811DC97BAB004A1D3F /* ClockType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ClockType.h; sourceTree = "<group>"; };
 		0F66B2821DC97BAB004A1D3F /* MonotonicTime.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MonotonicTime.cpp; sourceTree = "<group>"; };
@@ -864,9 +866,11 @@
 				A8A4729F151A825A004123FF /* ExportMacros.h */,
 				0F7C5FB51D885CF20044F5E2 /* FastBitVector.cpp */,
 				0FD81AC4154FB22E00983E72 /* FastBitVector.h */,
+				0F62A8A6202CCC14007B8623 /* FastCopy.h */,
 				A8A472A1151A825A004123FF /* FastMalloc.cpp */,
 				A8A472A2151A825A004123FF /* FastMalloc.h */,
 				0F79C7C31E73511800EB34D1 /* FastTLS.h */,
+				0F62A8A7202CCC15007B8623 /* FastZeroFill.h */,
 				B38FD7BC168953E80065C969 /* FeatureDefines.h */,
 				0F9D335B165DBA73005AD387 /* FilePrintStream.cpp */,
 				0F9D335C165DBA73005AD387 /* FilePrintStream.h */,

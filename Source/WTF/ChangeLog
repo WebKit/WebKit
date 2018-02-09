@@ -1,3 +1,141 @@
+2018-02-08  Filip Pizlo  <fpizlo@apple.com>
+
+        Experiment with alternative implementation of memcpy/memset
+        https://bugs.webkit.org/show_bug.cgi?id=182563
+
+        Reviewed by Michael Saboff and Mark Lam.
+        
+        Adds a faster x86_64-specific implementation of memcpy and memset. These versions go by
+        different names than memcpy/memset and have a different API:
+        
+        WTF::fastCopy<T>(T* dst, T* src, size_t N): copies N values of type T from src to dst.
+        WTF::fastZeroFill(T* dst, size_T N): writes N * sizeof(T) zeroes to dst.
+        
+        There are also *Bytes variants that take void* for dst and src and size_t numBytes. Those are
+        most appropriate in places where the code is already computing bytes.
+        
+        These will just call memcpy/memset on platforms where the optimized versions are not supported.
+        
+        These new functions are not known to the compiler to be memcpy/memset. This has the effect that
+        the compiler will not try to replace them with anything else. This could be good or bad:
+        
+        - It's *good* if the size is *not known* at compile time. In that case, by my benchmarks, these
+          versions are faster than either the memcpy/memset call or whatever else the compiler could
+          emit. This is because of a combination of inlining and the algorithm itself (see below).
+        
+        - It's *bad* if the size is *known* at compile time. In that case, the compiler could
+          potentially emit a fully unrolled memcpy/memset. That might not happen if the size is large
+          (even if it's known), but in this patch I avoid replacing any memcpy/memset calls when the
+          size is a constant. In particular, this totally avoids the call overhead -- if the size is
+          small, then the compiler will emit a nice inlined copy or set. If the size is large, then the
+          most optimal thing to do is emit the shortest piece of code possible, and that's a call to
+          memcpy/memset.
+        
+        It's unfortunate that you have to choose between them on your own. One way to avoid that might
+        have been to override the memcpy/memset symbols, so that the compiler can still do its
+        reasoning. But that's not quite right, since then we would lose inlining in the unknonw-size
+        case. Also, it's possible that for some unknown-size cases, the compiler could choose to emit
+        something on its own because it might think that some property of aliasing or alignment could
+        help it. I think it's a bit better to use our own copy/set implementations even in those cases.
+        Another way that I tried avoiding this is to detect inside fastCopy/fastZeroFill if the size is
+        constant. But there is no good way to do that in C++. There is a builtin for doing that inside a
+        macro, but that feels janky, so I didn't want to do it in this patch.
+        
+        The reason why these new fastCopy/fastZeroFill functions are faster is that:
+        
+        - They can be inlined. There is no function call. Only a few registers get clobbered. So, the
+          impact on the quality of the code surrounding the memcpy/memset is smaller.
+        
+        - They use type information to select the implementation. For sizes that are multiples of 2, 4,
+          or 8, the resulting code performs dramatically better on small arrays than memcpy because it
+          uses fewer cycles. The difference is greatest for 2 and 4 byte types, since memcpy usually
+          handles small arrays by tiering from a 8-byte word copy loop to a byte copy loop. So, for 2
+          or 4 byte arrays, we use an algorithm that tiers from 8-byte word down to a 2-byte or 4-byte
+          (depending on type) copy loop. So, for example, when copying a 16-bit string that has 1, 2, or
+          3 characters, this means doing 1, 2, or 3 word copies rather than 2, 4, or 6 byte copies. For
+          8-byte types, the resulting savings are mainly that there is no check to see if a tier-down to
+          the byte-copy loop is needed -- so really that means reducing code size. 1-byte types don't
+          get this inherent advantage over memcpy/memset, but they still benefit from all of the other
+          advantages of these functions. Of course, this advantage isn't inherent to our approach. The
+          compiler could also notice that the arguments to memcpy/memset have some alignment properties.
+          It could do it even more generally than we do - for example a copy over bytes where the size
+          is a multiple of 4 can use the 4-byte word algorithm. But based on my tests, the compiler does
+          not do this (even though it does other things, like turn a memset call with a zero value
+          argument into a bzero call).
+        
+        - They use a very nicely written word copy/set loop for small arrays. I spent a lot of time
+          getting the assembly just right. When we use memcpy/memset, sometimes we would optimize the
+          call by having a fast path word copy loop for small sizes. That's not necessary with this
+          implementation, since the assembly copy loop gets inlined.
+        
+        - They use `rep movs` or `rep stos` for copies of 200 bytes or more. This decision benchmarks
+          poorly on every synthetic memcpy/memset benchmark I have built, and so unsurprisingly, it's
+          not what system memcpy/memset does. Most system memcpy/memset implementations end up doing
+          some SSE for medium-sized copies,. However, I previously found that this decision is bad for
+          one of the memset calls in GC (see clearArray() and friends in ArrayConventions.h|cpp) - I was
+          able to make the overhead of that call virtually disappear by doing `rep stos` more
+          aggressively. The theory behind this change is that it's not just the GC that prefers smaller
+          `rep` threshold and no SSE. I am betting that `rep`ing more is better when the heap gets
+          chaotic and the data being copied is used in interesting ways -- hence, synthetic
+          memcpy/memset benchmarks think it's bad (they don't do enough chaotic memory accesses) while
+          it's good for real-world uses. Also, when I previously worked on JVMs, I had found that the
+          best memcpy/memset heuristics when dealing with GC'd objects in a crazy heap were different
+          than any memcpy/memset in any system library.
+        
+        This appears to be a 0.9% speed-up on PLT. I'm not sure if it's more because of the inlining or
+        the `rep`. I think it's both. I'll leave figuring out the exact tuning for future patches.
+
+        * wtf/BitVector.cpp:
+        (WTF::BitVector::setSlow):
+        (WTF::BitVector::clearAll):
+        (WTF::BitVector::resizeOutOfLine):
+        * wtf/BitVector.h:
+        (WTF::BitVector::wordCount):
+        (WTF::BitVector::OutOfLineBits::numWords const):
+        * wtf/ConcurrentBuffer.h:
+        (WTF::ConcurrentBuffer::growExact):
+        * wtf/FastBitVector.h:
+        (WTF::FastBitVectorWordOwner::operator=):
+        (WTF::FastBitVectorWordOwner::clearAll):
+        (WTF::FastBitVectorWordOwner::set):
+        * wtf/FastCopy.h: Added.
+        (WTF::fastCopy):
+        (WTF::fastCopyBytes):
+        * wtf/FastMalloc.cpp:
+        (WTF::fastZeroedMalloc):
+        (WTF::fastStrDup):
+        (WTF::tryFastZeroedMalloc):
+        * wtf/FastZeroFill.h: Added.
+        (WTF::fastZeroFill):
+        (WTF::fastZeroFillBytes):
+        * wtf/MD5.cpp:
+        * wtf/OSAllocator.h:
+        (WTF::OSAllocator::reallocateCommitted):
+        * wtf/StringPrintStream.cpp:
+        (WTF::StringPrintStream::increaseSize):
+        * wtf/Vector.h:
+        * wtf/persistence/PersistentDecoder.cpp:
+        (WTF::Persistence::Decoder::decodeFixedLengthData):
+        * wtf/persistence/PersistentEncoder.cpp:
+        (WTF::Persistence::Encoder::encodeFixedLengthData):
+        * wtf/text/CString.cpp:
+        (WTF::CString::init):
+        (WTF::CString::copyBufferIfNeeded):
+        * wtf/text/LineBreakIteratorPoolICU.h:
+        (WTF::LineBreakIteratorPool::makeLocaleWithBreakKeyword):
+        * wtf/text/StringBuilder.cpp:
+        (WTF::StringBuilder::allocateBuffer):
+        (WTF::StringBuilder::append):
+        * wtf/text/StringConcatenate.h:
+        * wtf/text/StringImpl.h:
+        (WTF::StringImpl::copyCharacters):
+        * wtf/text/icu/UTextProvider.cpp:
+        (WTF::uTextCloneImpl):
+        * wtf/text/icu/UTextProviderLatin1.cpp:
+        (WTF::uTextLatin1Clone):
+        (WTF::openLatin1UTextProvider):
+        * wtf/threads/Signals.cpp:
+
 2018-02-06  Darin Adler  <darin@apple.com>
 
         Event improvements

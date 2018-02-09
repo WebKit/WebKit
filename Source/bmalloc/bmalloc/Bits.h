@@ -80,7 +80,7 @@ public:
     
     BitsWordOwner& operator=(const BitsWordOwner& other)
     {
-        memcpy(m_words, other.m_words, arrayLength() * sizeof(uint32_t));
+        fastCopy(m_words, other.m_words, arrayLength());
         return *this;
     }
     
@@ -91,12 +91,12 @@ public:
     
     void clearAll()
     {
-        memset(m_words, 0, arrayLength() * sizeof(uint32_t));
+        fastZeroFill(m_words, arrayLength());
     }
     
     void set(const BitsWordOwner& other)
     {
-        memcpy(m_words, other.m_words, arrayLength() * sizeof(uint32_t));
+        fastCopy(m_words, other.m_words, arrayLength());
     }
     
     size_t numBits() const

@@ -553,9 +553,9 @@ bool JSArray::appendMemcpy(ExecState* exec, VM& vm, unsigned startIndex, JSC::JS
                 butterfly->contiguousInt32().at(this, i).setWithoutWriteBarrier(JSValue());
         }
     } else if (type == ArrayWithDouble)
-        memcpy(butterfly()->contiguousDouble().data() + startIndex, otherArray->butterfly()->contiguousDouble().data(), sizeof(JSValue) * otherLength);
+        fastCopy(butterfly()->contiguousDouble().data() + startIndex, otherArray->butterfly()->contiguousDouble().data(), otherLength);
     else
-        memcpy(butterfly()->contiguous().data() + startIndex, otherArray->butterfly()->contiguous().data(), sizeof(JSValue) * otherLength);
+        fastCopy(butterfly()->contiguous().data() + startIndex, otherArray->butterfly()->contiguous().data(), otherLength);
 
     return true;
 }
@@ -761,9 +761,9 @@ JSArray* JSArray::fastSlice(ExecState& exec, unsigned startIndex, unsigned count
 
         auto& resultButterfly = *resultArray->butterfly();
         if (arrayType == ArrayWithDouble)
-            memcpy(resultButterfly.contiguousDouble().data(), butterfly()->contiguousDouble().data() + startIndex, sizeof(JSValue) * count);
+            fastCopy(resultButterfly.contiguousDouble().data(), butterfly()->contiguousDouble().data() + startIndex, count);
         else
-            memcpy(resultButterfly.contiguous().data(), butterfly()->contiguous().data() + startIndex, sizeof(JSValue) * count);
+            fastCopy(resultButterfly.contiguous().data(), butterfly()->contiguous().data() + startIndex, count);
         resultButterfly.setPublicLength(count);
 
         return resultArray;

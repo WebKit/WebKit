@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2012, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -276,7 +276,7 @@ namespace JSC {
             if (!isAvailable(size))
                 grow(size);
 
-            memcpy(m_storage.buffer() + m_index, data, size);
+            fastCopyBytes(m_storage.buffer() + m_index, data, size);
             m_index += size;
         }
 

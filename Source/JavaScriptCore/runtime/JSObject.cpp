@@ -1178,10 +1178,10 @@ ArrayStorage* JSObject::constructConvertedArrayStorageWithoutCopyingElements(VM&
     Butterfly* newButterfly = Butterfly::createUninitialized(
         vm, this, 0, propertyCapacity, true, ArrayStorage::sizeFor(neededLength));
     
-    memcpy(
+    fastCopy(
         newButterfly->propertyStorage() - propertySize,
         m_butterfly->propertyStorage() - propertySize,
-        propertySize * sizeof(EncodedJSValue));
+        propertySize);
     
     ArrayStorage* newStorage = newButterfly->arrayStorage();
     newStorage->setVectorLength(neededLength);
@@ -3580,7 +3580,7 @@ void JSObject::shiftButterflyAfterFlattening(const GCSafeConcurrentJSLocker&, VM
     void* currentBase = oldButterfly->base(0, outOfLineCapacityAfter);
     void* newBase = newButterfly->base(0, outOfLineCapacityAfter);
 
-    memcpy(newBase, currentBase, Butterfly::totalSize(0, outOfLineCapacityAfter, hasIndexingHeader, indexingPayloadSizeInBytes));
+    fastCopyBytes(newBase, currentBase, Butterfly::totalSize(0, outOfLineCapacityAfter, hasIndexingHeader, indexingPayloadSizeInBytes));
     
     setButterfly(vm, newButterfly);
 }

@@ -203,7 +203,7 @@ void Vector<T>::reallocateBuffer(size_t newCapacity)
     size_t vmSize = bmalloc::vmSize(newCapacity * sizeof(T));
     T* newBuffer = vmSize ? static_cast<T*>(vmAllocate(vmSize)) : nullptr;
     if (m_buffer) {
-        std::memcpy(newBuffer, m_buffer, m_size * sizeof(T));
+        fastCopy(newBuffer, m_buffer, m_size);
         vmDeallocate(m_buffer, bmalloc::vmSize(m_capacity * sizeof(T)));
     }
 

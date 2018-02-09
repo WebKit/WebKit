@@ -172,7 +172,7 @@ kern_return_t catch_mach_exception_raise_state(
     Signal signal = fromMachException(exceptionType);
     RELEASE_ASSERT(signal != Signal::Unknown);
 
-    memcpy(outState, inState, inStateCount * sizeof(inState[0]));
+    fastCopy(outState, inState, inStateCount);
     *outStateCount = inStateCount;
 
 #if CPU(X86_64)

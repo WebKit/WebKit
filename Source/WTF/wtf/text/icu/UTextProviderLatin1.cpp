@@ -27,6 +27,7 @@
 #include "UTextProviderLatin1.h"
 
 #include "UTextProvider.h"
+#include <wtf/FastZeroFill.h>
 #include <wtf/text/StringImpl.h>
 
 namespace WTF {
@@ -82,7 +83,7 @@ static UText* uTextLatin1Clone(UText* destination, const UText* source, UBool de
     result->a = source->a;
     result->pFuncs = &uTextLatin1Funcs;
     result->chunkContents = (UChar*)result->pExtra;
-    memset(const_cast<UChar*>(result->chunkContents), 0, sizeof(UChar) * UTextWithBufferInlineCapacity);
+    fastZeroFill(const_cast<UChar*>(result->chunkContents), UTextWithBufferInlineCapacity);
 
     return result;
 }
@@ -228,7 +229,7 @@ UText* openLatin1UTextProvider(UTextWithBuffer* utWithBuffer, const LChar* strin
     text->a = length;
     text->pFuncs = &uTextLatin1Funcs;
     text->chunkContents = (UChar*)text->pExtra;
-    memset(const_cast<UChar*>(text->chunkContents), 0, sizeof(UChar) * UTextWithBufferInlineCapacity);
+    fastZeroFill(const_cast<UChar*>(text->chunkContents), UTextWithBufferInlineCapacity);
 
     return text;
 }

@@ -1,3 +1,46 @@
+2018-02-08  Filip Pizlo  <fpizlo@apple.com>
+
+        Experiment with alternative implementation of memcpy/memset
+        https://bugs.webkit.org/show_bug.cgi?id=182563
+
+        Reviewed by Michael Saboff and Mark Lam.
+        
+        This adopts new fastCopy/fastZeroFill calls for calls to memcpy/memset that do not take a
+        constant size argument.
+
+        * assembler/AssemblerBuffer.h:
+        (JSC::AssemblerBuffer::append):
+        * runtime/ArrayBuffer.cpp:
+        (JSC::ArrayBufferContents::tryAllocate):
+        (JSC::ArrayBufferContents::copyTo):
+        (JSC::ArrayBuffer::createInternal):
+        * runtime/ArrayBufferView.h:
+        (JSC::ArrayBufferView::zeroRangeImpl):
+        * runtime/ArrayConventions.cpp:
+        * runtime/ArrayConventions.h:
+        (JSC::clearArray):
+        * runtime/ArrayPrototype.cpp:
+        (JSC::arrayProtoPrivateFuncConcatMemcpy):
+        * runtime/ButterflyInlines.h:
+        (JSC::Butterfly::tryCreate):
+        (JSC::Butterfly::createOrGrowPropertyStorage):
+        (JSC::Butterfly::growArrayRight):
+        (JSC::Butterfly::resizeArray):
+        * runtime/GenericTypedArrayViewInlines.h:
+        (JSC::GenericTypedArrayView<Adaptor>::create):
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::appendMemcpy):
+        (JSC::JSArray::fastSlice):
+        * runtime/JSArrayBufferView.cpp:
+        (JSC::JSArrayBufferView::ConstructionContext::ConstructionContext):
+        * runtime/JSGenericTypedArrayViewInlines.h:
+        (JSC::JSGenericTypedArrayView<Adaptor>::set):
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::constructConvertedArrayStorageWithoutCopyingElements):
+        (JSC::JSObject::shiftButterflyAfterFlattening):
+        * runtime/PropertyTable.cpp:
+        (JSC::PropertyTable::PropertyTable):
+
 2018-02-08  Don Olmstead  <don.olmstead@sony.com>
 
         Remove JavaScriptCore/ForwardingHeaders directory

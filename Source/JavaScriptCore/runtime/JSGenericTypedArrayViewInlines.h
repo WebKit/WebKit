@@ -246,7 +246,7 @@ bool JSGenericTypedArrayView<Adaptor>::set(
 
     const ClassInfo* ci = object->classInfo(vm);
     if (ci->typedArrayStorageType == Adaptor::typeValue) {
-        // The super fast case: we can just memcpy since we're the same type.
+        // The super fast case: we can just memmove since we're the same type.
         JSGenericTypedArrayView* other = jsCast<JSGenericTypedArrayView*>(object);
         length = std::min(length, other->length());
         

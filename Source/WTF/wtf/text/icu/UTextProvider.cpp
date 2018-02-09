@@ -28,6 +28,7 @@
 
 #include <algorithm>
 #include <string.h>
+#include <wtf/FastCopy.h>
 
 namespace WTF {
 
@@ -55,10 +56,10 @@ UText* uTextCloneImpl(UText* destination, const UText* source, UBool deep, UErro
     void* extraNew = destination->pExtra;
     int32_t flags = destination->flags;
     int sizeToCopy = std::min(source->sizeOfStruct, destination->sizeOfStruct);
-    memcpy(destination, source, sizeToCopy);
+    fastCopyBytes(destination, source, sizeToCopy);
     destination->pExtra = extraNew;
     destination->flags = flags;
-    memcpy(destination->pExtra, source->pExtra, extraSize);
+    fastCopyBytes(destination->pExtra, source->pExtra, extraSize);
     fixPointer(source, destination, destination->context);
     fixPointer(source, destination, destination->p);
     fixPointer(source, destination, destination->q);

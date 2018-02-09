@@ -215,7 +215,7 @@ bool ArrayBufferView::zeroRangeImpl(unsigned byteOffset, size_t rangeByteLength)
     }
     
     uint8_t* base = static_cast<uint8_t*>(baseAddress());
-    memset(base + byteOffset, 0, rangeByteLength);
+    fastZeroFillBytes(base + byteOffset, rangeByteLength);
     return true;
 }
 

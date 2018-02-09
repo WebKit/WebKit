@@ -28,6 +28,7 @@
 
 #include <stdarg.h>
 #include <stdio.h>
+#include <wtf/FastCopy.h>
 #include <wtf/FastMalloc.h>
 
 namespace WTF {
@@ -119,7 +120,7 @@ void StringPrintStream::increaseSize(size_t newSize)
     // fastRealloc will just do malloc+free anyway. Also, this simplifies the code since
     // we can't realloc the inline buffer.
     char* newBuffer = static_cast<char*>(fastMalloc(m_size));
-    memcpy(newBuffer, m_buffer, m_next + 1);
+    fastCopy(newBuffer, m_buffer, m_next + 1);
     if (m_buffer != m_inlineBuffer)
         fastFree(m_buffer);
     m_buffer = newBuffer;

@@ -1,3 +1,28 @@
+2018-02-08  Filip Pizlo  <fpizlo@apple.com>
+
+        Experiment with alternative implementation of memcpy/memset
+        https://bugs.webkit.org/show_bug.cgi?id=182563
+
+        Reviewed by Michael Saboff and Mark Lam.
+        
+        Add a faster x86_64-specific implementation of memcpy and memset. Ideally, this would just be
+        implemented in WTF, but we have to copy it into bmalloc since bmalloc sits below WTF on the
+        stack.
+
+        * bmalloc/Algorithm.h:
+        (bmalloc::fastCopy):
+        (bmalloc::fastZeroFill):
+        * bmalloc/Allocator.cpp:
+        (bmalloc::Allocator::reallocate):
+        * bmalloc/Bits.h:
+        (bmalloc::BitsWordOwner::operator=):
+        (bmalloc::BitsWordOwner::clearAll):
+        (bmalloc::BitsWordOwner::set):
+        * bmalloc/IsoPageInlines.h:
+        (bmalloc::IsoPage<Config>::IsoPage):
+        * bmalloc/Vector.h:
+        (bmalloc::Vector<T>::reallocateBuffer):
+
 2018-02-05  JF Bastien  <jfbastien@apple.com>
 
         Gigacage: enable only for WebContent process and token executables

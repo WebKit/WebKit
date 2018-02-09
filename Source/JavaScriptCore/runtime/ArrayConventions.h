@@ -117,22 +117,17 @@ inline IndexingHeader baseIndexingHeaderForArrayStorage(unsigned length)
 }
 
 #if USE(JSVALUE64)
-JS_EXPORT_PRIVATE void clearArrayMemset(WriteBarrier<Unknown>* base, unsigned count);
 JS_EXPORT_PRIVATE void clearArrayMemset(double* base, unsigned count);
 #endif // USE(JSVALUE64)
 
 ALWAYS_INLINE void clearArray(WriteBarrier<Unknown>* base, unsigned count)
 {
 #if USE(JSVALUE64)
-    const unsigned minCountForMemset = 100;
-    if (count >= minCountForMemset) {
-        clearArrayMemset(base, count);
-        return;
-    }
-#endif
-    
+    fastZeroFill(base, count);
+#else
     for (unsigned i = count; i--;)
         base[i].clear();
+#endif
 }
 
 ALWAYS_INLINE void clearArray(double* base, unsigned count)

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2018 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,6 +27,7 @@
 #define OSAllocator_h
 
 #include <algorithm>
+#include <wtf/FastCopy.h>
 #include <wtf/VMTags.h>
 
 namespace WTF {
@@ -90,7 +91,7 @@ template<typename T>
 inline T* OSAllocator::reallocateCommitted(T* oldBase, size_t oldSize, size_t newSize, Usage usage, bool writable, bool executable)
 {
     void* newBase = reserveAndCommit(newSize, usage, writable, executable);
-    memcpy(newBase, oldBase, std::min(oldSize, newSize));
+    fastCopyBytes(newBase, oldBase, std::min(oldSize, newSize));
     decommitAndRelease(oldBase, oldSize);
     return static_cast<T*>(newBase);
 }

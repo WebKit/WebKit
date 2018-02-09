@@ -493,7 +493,7 @@ void MarkedBlock::Handle::associateWithOrigin(SecurityOriginToken securityOrigin
     if (m_securityOriginToken == securityOriginToken)
         return;
     
-    memset(&block(), 0, endAtom * atomSize);
+    fastZeroFillBytes(&block(), endAtom * atomSize);
     m_securityOriginToken = securityOriginToken;
 }
 
