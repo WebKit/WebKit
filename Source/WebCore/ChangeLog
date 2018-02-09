@@ -1,3 +1,24 @@
+2018-02-08  Chris Dumez  <cdumez@apple.com>
+
+        There should be a way to disable [OverrideBuiltins] behavior in a given DOMWrapperWorld
+        https://bugs.webkit.org/show_bug.cgi?id=182524
+        <rdar://problem/9057327>
+
+        Reviewed by Ryosuke Niwa.
+
+        Add new flag on DOMWrapperWorld indicating if the [OverrideBuiltins] behavior should
+        be enabled in this world or not. The behavior is enabled by default for Web-compatibility.
+        This flag is queried in accessVisibleNamedProperty() when doing the named property
+        lookup.
+
+        Covered by new API test.
+
+        * bindings/js/DOMWrapperWorld.h:
+        (WebCore::DOMWrapperWorld::disableOverrideBuiltinsBehavior):
+        (WebCore::DOMWrapperWorld::shouldDisableOverrideBuiltinsBehavior const):
+        * bindings/js/JSDOMAbstractOperations.h:
+        (WebCore::accessVisibleNamedProperty):
+
 2018-02-08  Per Arne Vollan  <pvollan@apple.com>
 
         Move WebVideoFullscreenController from WebCore to WebKitLegacy.

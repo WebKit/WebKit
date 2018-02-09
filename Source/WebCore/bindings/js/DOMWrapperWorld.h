@@ -47,6 +47,9 @@ public:
     void setShadowRootIsAlwaysOpen() { m_shadowRootIsAlwaysOpen = true; }
     bool shadowRootIsAlwaysOpen() const { return m_shadowRootIsAlwaysOpen; }
 
+    void disableOverrideBuiltinsBehavior() { m_shouldDisableOverrideBuiltinsBehavior = true; }
+    bool shouldDisableOverrideBuiltinsBehavior() const { return m_shouldDisableOverrideBuiltinsBehavior; }
+
     DOMObjectWrapperMap& wrappers() { return m_wrappers; }
 
     bool isNormal() const { return m_isNormal; }
@@ -63,6 +66,7 @@ private:
 
     bool m_isNormal;
     bool m_shadowRootIsAlwaysOpen { false };
+    bool m_shouldDisableOverrideBuiltinsBehavior { false };
 };
 
 DOMWrapperWorld& normalWorld(JSC::VM&);

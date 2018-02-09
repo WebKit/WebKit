@@ -58,6 +58,11 @@ void WKBundleScriptWorldMakeAllShadowRootsOpen(WKBundleScriptWorldRef scriptWorl
     toImpl(scriptWorldRef)->makeAllShadowRootsOpen();
 }
 
+void WKBundleScriptWorldDisableOverrideBuiltinsBehavior(WKBundleScriptWorldRef scriptWorldRef)
+{
+    toImpl(scriptWorldRef)->disableOverrideBuiltinsBehavior();
+}
+
 WKStringRef WKBundleScriptWorldCopyName(WKBundleScriptWorldRef scriptWorldRef)
 {
     return toCopiedAPI(toImpl(scriptWorldRef)->name());

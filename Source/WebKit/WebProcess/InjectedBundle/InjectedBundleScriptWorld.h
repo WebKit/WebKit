@@ -51,6 +51,7 @@ public:
 
     void clearWrappers();
     void makeAllShadowRootsOpen();
+    void disableOverrideBuiltinsBehavior();
 
     const String& name() const { return m_name; }
 

@@ -38,6 +38,7 @@ WK_EXPORT WKBundleScriptWorldRef WKBundleScriptWorldCreateWorld();
 WK_EXPORT WKBundleScriptWorldRef WKBundleScriptWorldNormalWorld();
 WK_EXPORT void WKBundleScriptWorldClearWrappers(WKBundleScriptWorldRef scriptWorld);
 WK_EXPORT void WKBundleScriptWorldMakeAllShadowRootsOpen(WKBundleScriptWorldRef scriptWorld);
+WK_EXPORT void WKBundleScriptWorldDisableOverrideBuiltinsBehavior(WKBundleScriptWorldRef scriptWorld);
 WK_EXPORT WKStringRef WKBundleScriptWorldCopyName(WKBundleScriptWorldRef scriptWorld);
 
 #ifdef __cplusplus

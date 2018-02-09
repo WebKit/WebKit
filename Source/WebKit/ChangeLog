@@ -1,3 +1,30 @@
+2018-02-08  Chris Dumez  <cdumez@apple.com>
+
+        There should be a way to disable [OverrideBuiltins] behavior in a given DOMWrapperWorld
+        https://bugs.webkit.org/show_bug.cgi?id=182524
+        <rdar://problem/9057327>
+
+        Reviewed by Ryosuke Niwa.
+
+        Add C API on WKBundleScriptWorld and Cocoa API on WKWebProcessPlugInScriptWorld to
+        disable the [OverrideBuiltins] behavior on a given script world.
+
+        The [OverrideBuiltins] behavior [1] is legacy behavior that is needed for Web compatibility
+        but allowing the client to disable this behavior in a given world makes development easier
+        and running injected script on uncontrolled content a lot more reliable.
+
+        [1] https://heycam.github.io/webidl/#OverrideBuiltins
+
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInScriptWorld.h:
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInScriptWorld.mm:
+        (-[WKWebProcessPlugInScriptWorld disableOverrideBuiltinsBehavior]):
+        * WebProcess/InjectedBundle/API/c/WKBundleScriptWorld.cpp:
+        (WKBundleScriptWorldDisableOverrideBuiltinsBehavior):
+        * WebProcess/InjectedBundle/API/c/WKBundleScriptWorld.h:
+        * WebProcess/InjectedBundle/InjectedBundleScriptWorld.cpp:
+        (WebKit::InjectedBundleScriptWorld::disableOverrideBuiltinsBehavior):
+        * WebProcess/InjectedBundle/InjectedBundleScriptWorld.h:
+
 2018-02-08  Ross Kirsling  <ross.kirsling@sony.com>
 
         Remove WebProcessPool::platformInitialize stub.

@@ -112,4 +112,9 @@ void InjectedBundleScriptWorld::makeAllShadowRootsOpen()
     m_world->setShadowRootIsAlwaysOpen();
 }
 
+void InjectedBundleScriptWorld::disableOverrideBuiltinsBehavior()
+{
+    m_world->disableOverrideBuiltinsBehavior();
+}
+
 } // namespace WebKit

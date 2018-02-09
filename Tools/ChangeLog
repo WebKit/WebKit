@@ -1,3 +1,22 @@
+2018-02-08  Chris Dumez  <cdumez@apple.com>
+
+        There should be a way to disable [OverrideBuiltins] behavior in a given DOMWrapperWorld
+        https://bugs.webkit.org/show_bug.cgi?id=182524
+        <rdar://problem/9057327>
+
+        Reviewed by Ryosuke Niwa.
+
+        Add API test coverage.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit/InjectedBundleDisableOverrideBuiltinsBehavior.cpp: Added.
+        (TestWebKitAPI::runJavaScriptAlert):
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKit/InjectedBundleDisableOverrideBuiltinsBehavior_Bundle.cpp: Added.
+        (TestWebKitAPI::InjectedBundleDisableOverrideBuiltinsBehaviorTest::InjectedBundleDisableOverrideBuiltinsBehaviorTest):
+        (TestWebKitAPI::InjectedBundleDisableOverrideBuiltinsBehaviorTest::initialize):
+        * TestWebKitAPI/Tests/WebKit/override-builtins-test.html: Added.
+
 2018-02-08  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         TestController should not exercise cocoa-specific resource load statistics APIs

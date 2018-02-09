@@ -61,6 +61,11 @@ using namespace WebKit;
     _world->makeAllShadowRootsOpen();
 }
 
+- (void)disableOverrideBuiltinsBehavior
+{
+    _world->disableOverrideBuiltinsBehavior();
+}
+
 - (NSString *)name
 {
     return _world->name();
