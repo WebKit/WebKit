@@ -1,3 +1,53 @@
+2018-02-09  Antti Koivisto  <antti@apple.com>
+
+        Move compiled selectors to StyleRule
+        https://bugs.webkit.org/show_bug.cgi?id=182602
+
+        Reviewed by Zalan Bujtas.
+
+        Currently they are owned by RuleData. Several RuleData objects can refer to the same StyleRule, requiring recompilation.
+        Compiled selectors are context-independent so they can be shared between all clients.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSSelectorList.cpp:
+        (WebCore::CSSSelectorList::listSize const):
+
+        Compute the number of complex selectors on the list.
+
+        * css/CSSSelectorList.h:
+        * css/DocumentRuleSets.cpp:
+        (WebCore::makeRuleSet):
+        (WebCore::DocumentRuleSets::classInvalidationRuleSets const):
+
+        Pass around list index along with the selector index (compiled selectors are found by list index).
+
+        * css/ElementRuleCollector.cpp:
+        (WebCore::ElementRuleCollector::ruleMatches):
+        * css/RuleSet.cpp:
+        (WebCore::RuleData::RuleData):
+        * css/RuleSet.h:
+        (WebCore::RuleData::compilationStatus const): Deleted.
+        (WebCore::RuleData::compiledSelectorCodeRef const): Deleted.
+        (WebCore::RuleData::setCompiledSelector const): Deleted.
+        (WebCore::RuleData::~RuleData): Deleted.
+        (WebCore::RuleData::compiledSelectorUsed const): Deleted.
+        * css/StyleRule.cpp:
+        (WebCore::StyleRule::StyleRule):
+        * css/StyleRule.h:
+
+            Add CompiledSelector member.
+
+        * cssjit/CompiledSelector.h: Added.
+
+            Move to a header of its own to keeps dependencies simple.
+
+        (WebCore::SelectorCompilationStatus::SelectorCompilationStatus):
+        (WebCore::SelectorCompilationStatus::operator Status const):
+        * cssjit/SelectorCompiler.h:
+        (): Deleted.
+        (WebCore::SelectorCompilationStatus::SelectorCompilationStatus): Deleted.
+        (WebCore::SelectorCompilationStatus::operator Status const): Deleted.
+
 2018-02-08  Antoine Quint  <graouts@apple.com>
 
         [Web Animations] Always expose "composite" in output of getKeyframes()

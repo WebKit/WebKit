@@ -66,6 +66,7 @@ public:
     void buildSelectorsText(StringBuilder&) const;
 
     unsigned componentCount() const;
+    unsigned listSize() const;
 
     CSSSelectorList& operator=(CSSSelectorList&&);
 
