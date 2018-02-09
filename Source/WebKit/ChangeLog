@@ -1,3 +1,12 @@
+2018-02-08  Don Olmstead  <don.olmstead@sony.com>
+
+        Remove JavaScriptCore/ForwardingHeaders directory
+        https://bugs.webkit.org/show_bug.cgi?id=182594
+
+        Reviewed by Mark Lam.
+
+        * PlatformGTK.cmake:
+
 2018-02-08  Tim Horton  <timothy_horton@apple.com>
 
         Make WebKit public headers modules-safe
