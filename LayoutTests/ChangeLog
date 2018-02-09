@@ -1,3 +1,16 @@
+2018-02-09  Javier Fernandez  <jfernandez@igalia.com>
+
+        [css-align] Implement the new behavior of 'legacy' for justify-items
+        https://bugs.webkit.org/show_bug.cgi?id=172712
+
+        Reviewed by Antti Koivisto.
+
+        Rebaselined Default Alignment related tests because of the new 'legacy' value.
+
+        * css3/parse-alignment-of-root-elements.html:
+        * css3/parse-place-items.html:
+        * fast/css/parse-justify-items.html:
+
 2018-02-08  Matt Lewis  <jlewis3@apple.com>
 
         Marked media/W3C/video/events/event_progress_manual.html as flaky on macOS WK2.

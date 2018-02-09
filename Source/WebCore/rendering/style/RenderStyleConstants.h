@@ -266,7 +266,7 @@ enum EBoxDirection { BNORMAL, BREVERSE };
 enum EAlignContent { AlignContentFlexStart, AlignContentFlexEnd, AlignContentCenter, AlignContentSpaceBetween, AlignContentSpaceAround, AlignContentStretch };
 enum EFlexDirection { FlowRow, FlowRowReverse, FlowColumn, FlowColumnReverse };
 enum EFlexWrap { FlexNoWrap, FlexWrap, FlexWrapReverse };
-enum ItemPosition { ItemPositionAuto, ItemPositionNormal, ItemPositionStretch, ItemPositionBaseline, ItemPositionLastBaseline, ItemPositionCenter, ItemPositionStart, ItemPositionEnd, ItemPositionSelfStart, ItemPositionSelfEnd, ItemPositionFlexStart, ItemPositionFlexEnd, ItemPositionLeft, ItemPositionRight };
+enum ItemPosition { ItemPositionLegacy, ItemPositionAuto, ItemPositionNormal, ItemPositionStretch, ItemPositionBaseline, ItemPositionLastBaseline, ItemPositionCenter, ItemPositionStart, ItemPositionEnd, ItemPositionSelfStart, ItemPositionSelfEnd, ItemPositionFlexStart, ItemPositionFlexEnd, ItemPositionLeft, ItemPositionRight };
 enum OverflowAlignment { OverflowAlignmentDefault, OverflowAlignmentUnsafe, OverflowAlignmentSafe };
 enum ItemPositionType { NonLegacyPosition, LegacyPosition };
 enum ContentPosition { ContentPositionNormal, ContentPositionBaseline, ContentPositionLastBaseline, ContentPositionCenter, ContentPositionStart, ContentPositionEnd, ContentPositionFlexStart, ContentPositionFlexEnd, ContentPositionLeft, ContentPositionRight };

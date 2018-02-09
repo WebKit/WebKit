@@ -1,3 +1,56 @@
+2018-02-09  Javier Fernandez  <jfernandez@igalia.com>
+
+        [css-align] Implement the new behavior of 'legacy' for justify-items
+        https://bugs.webkit.org/show_bug.cgi?id=172712
+
+        Reviewed by Antti Koivisto.
+
+        The syntax of the 'justify-items' property accepts a new 'legacy' value,
+        replacing the 'auto' value which is now parsed as invalid.
+
+        https://github.com/w3c/csswg-drafts/issues/1318
+
+        This change affects also to the 'place-items' shorthand, which doesn't
+        accept 'auto' and, for the time being, neither 'legacy'.
+
+        Since the new value 'legacy' is also the default value, I don't expect
+        this change to break content of sites currently using the 'justify-items'
+        property.
+
+        No new tests, rebaselined existing test.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::valueForItemPositionWithOverflowAlignment):
+        (WebCore::ComputedStyleExtractor::valueForPropertyinStyle):
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        (WebCore::CSSPrimitiveValue::operator ItemPosition const):
+        * css/CSSProperties.json:
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::adjustRenderStyle):
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::isAuto):
+        (WebCore::isNormalOrStretch):
+        (WebCore::consumeSelfPositionOverflowPosition):
+        (WebCore::consumeJustifyItems):
+        (WebCore::consumeSimplifiedDefaultPosition):
+        (WebCore::consumeSimplifiedSelfPosition):
+        (WebCore::CSSPropertyParser::consumePlaceItemsShorthand):
+        (WebCore::CSSPropertyParser::consumePlaceSelfShorthand):
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::alignmentOffset):
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::columnAxisPositionForChild const):
+        (WebCore::RenderGrid::rowAxisPositionForChild const):
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::resolvedSelfAlignment):
+        (WebCore::RenderStyle::resolvedJustifyItems const):
+        * rendering/style/RenderStyle.h:
+        (WebCore::RenderStyle::initialJustifyItems):
+        * rendering/style/RenderStyleConstants.h:
+        * rendering/style/StyleRareNonInheritedData.cpp:
+        (WebCore::StyleRareNonInheritedData::StyleRareNonInheritedData):
+
 2018-02-09  Yacine Bandou  <yacine.bandou_ext@softathome.com>
 
         [EME][GStreamer] Add support for encrypted caps in GStreamerUtilities

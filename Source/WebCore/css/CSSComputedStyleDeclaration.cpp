@@ -2524,7 +2524,10 @@ static Ref<CSSValueList> valueForItemPositionWithOverflowAlignment(const StyleSe
     } else {
         if (data.position() >= ItemPositionCenter && data.overflow() != OverflowAlignmentDefault)
             result->append(cssValuePool.createValue(data.overflow()));
-        result->append(cssValuePool.createValue(data.position()));
+        if (data.position() == ItemPositionLegacy)
+            result->append(cssValuePool.createIdentifierValue(CSSValueNormal));
+        else
+            result->append(cssValuePool.createValue(data.position()));
     }
     ASSERT(result->length() <= 2);
     return result;
@@ -3003,7 +3006,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyinStyle(const RenderSty
         case CSSPropertyJustifyContent:
             return valueForContentPositionAndDistributionWithOverflowAlignment(style.justifyContent(), CSSValueFlexStart);
         case CSSPropertyJustifyItems:
-            return valueForItemPositionWithOverflowAlignment(style.justifyItems().position() == ItemPositionAuto ? RenderStyle::initialDefaultAlignment() : style.justifyItems());
+            return valueForItemPositionWithOverflowAlignment(style.justifyItems());
         case CSSPropertyJustifySelf:
             return valueForItemPositionWithOverflowAlignment(style.justifySelf());
         case CSSPropertyPlaceContent:
