@@ -418,18 +418,22 @@ class CheckoutTest(unittest.TestCase):
 
     def test_suggested_reviewers(self):
         def mock_changelog_entries_for_revision(revision, changed_files=None):
+            if revision == 27:
+                return []
             if revision % 2 == 0:
                 return [ChangeLogEntry(_changelog1entry1)]
             return [ChangeLogEntry(_changelog1entry2)]
 
         def mock_revisions_changing_file(path, limit=5):
-            if path.endswith("ChangeLog"):
+            if path.endswith('ChangeLog'):
                 return [3]
+            if path.endswith('file_with_empty_changelog'):
+                return [27]
             return [4, 8]
 
         checkout = self._make_checkout()
-        checkout._scm.checkout_root = "/foo/bar"
-        checkout._scm.changed_files = lambda git_commit: ["file1", "file2", "relative/path/ChangeLog"]
+        checkout._scm.checkout_root = '/foo/bar'
+        checkout._scm.changed_files = lambda git_commit: ['file1', 'file2', 'relative/path/ChangeLog', 'file_with_empty_changelog']
         checkout._scm.revisions_changing_file = mock_revisions_changing_file
         checkout.changelog_entries_for_revision = mock_changelog_entries_for_revision
         reviewers = checkout.suggested_reviewers(git_commit=None)

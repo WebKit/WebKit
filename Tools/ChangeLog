@@ -1,3 +1,17 @@
+2018-02-08  Jonathan Bedard  <jbedard@apple.com>
+
+        webkit-patch suggest-reviewers dies with AttributeError: 'NoneType' object has no attribute 'revision'
+        https://bugs.webkit.org/show_bug.cgi?id=182584
+
+        Reviewed by Daniel Bates.
+
+        It is possible that a specific revision has an empty ChangeLog. In this case, Checkout.commit_info_for_revision
+        will return 'None'. Checkout.recent_commit_infos_for_files should never return a set with 'None' in it.
+
+        * Scripts/webkitpy/common/checkout/checkout.py:
+        (Checkout.recent_commit_infos_for_files): Remove any empty commit information from the set.
+        * Scripts/webkitpy/common/checkout/checkout_unittest.py: Add a file which references an empty ChangeLog.
+
 2018-02-08  Matt Lewis  <jlewis3@apple.com>
 
         Unreviewed, rolling out r228261.

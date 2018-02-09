@@ -137,7 +137,8 @@ class Checkout(object):
 
     def recent_commit_infos_for_files(self, paths):
         revisions = set(sum(map(self._scm.revisions_changing_file, paths), []))
-        return set(map(self.commit_info_for_revision, revisions))
+        # Remove a None entry from the set. This can happen if a revision does have an associated ChangeLog entry (e.g. r185745).
+        return set(map(self.commit_info_for_revision, revisions)) - set([None])
 
     def suggested_reviewers(self, git_commit, changed_files=None):
         changed_files = self.modified_non_changelogs(git_commit, changed_files)
