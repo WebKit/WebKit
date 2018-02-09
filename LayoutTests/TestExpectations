@@ -1702,3 +1702,4 @@ webkit.org/b/182177 imported/w3c/web-platform-tests/html/semantics/scripting-1/t
 
 webkit.org/b/182311 imported/w3c/web-platform-tests/service-workers/service-worker/navigation-redirect.https.html [ Skip ]
 
+webkit.org/b/90980 fast/forms/textarea/textarea-state-restore.html [ Pass Timeout ]

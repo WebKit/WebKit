@@ -170,8 +170,6 @@ webkit.org/b/98345 fast/parser/document-open-in-unload.html [ Skip ]
 
 webkit.org/b/141122 editing/selection/programmatic-selection-on-mac-is-directionless.html [ Pass Failure ]
 
-webkit.org/b/90980 fast/forms/textarea/textarea-state-restore.html [ Pass Timeout ]
-
 webkit.org/b/149087 http/tests/cache/disk-cache/disk-cache-cancel.html [ Pass Failure ]
 
 http/tests/appcache/decide-navigation-policy-after-delay.html [ Pass ]
