@@ -331,7 +331,7 @@ void Pasteboard::read(PasteboardPlainText& text)
     text.isURL = !text.text.isNull();
 }
 
-void Pasteboard::read(PasteboardWebContentReader& reader)
+void Pasteboard::read(PasteboardWebContentReader& reader, WebContentReadingPolicy policy)
 {
     PasteboardStrategy& strategy = *platformStrategies()->pasteboardStrategy();
 
@@ -347,7 +347,7 @@ void Pasteboard::read(PasteboardWebContentReader& reader)
         }
     }
 
-    if (types.contains(String(legacyFilenamesPasteboardType()))) {
+    if (policy == WebContentReadingPolicy::AnyType && types.contains(String(legacyFilenamesPasteboardType()))) {
         Vector<String> paths;
         strategy.getPathnamesForType(paths, legacyFilenamesPasteboardType(), m_pasteboardName);
         if (m_changeCount != changeCount() || reader.readFilePaths(paths))
@@ -373,6 +373,9 @@ void Pasteboard::read(PasteboardWebContentReader& reader)
                 return;
         }
     }
+
+    if (policy == WebContentReadingPolicy::OnlyRichTextTypes)
+        return;
 
     if (types.contains(String(legacyTIFFPasteboardType()))) {
         if (RefPtr<SharedBuffer> buffer = strategy.bufferForType(legacyTIFFPasteboardType(), m_pasteboardName)) {

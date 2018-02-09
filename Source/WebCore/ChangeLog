@@ -1,3 +1,88 @@
+2018-02-09  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Pasting from Excel no longer provides text/html data
+        https://bugs.webkit.org/show_bug.cgi?id=182636
+        <rdar://problem/37087060>
+
+        Reviewed by Ryosuke Niwa.
+
+        After r222656, we treat images on the pasteboard as files. However, we also have an existing policy which hides
+        text data ("text/uri-list", "text/html", "text/plain") from the page when files are present on the pasteboard.
+        When copying a table, Microsoft Excel writes a rendering of the table to the pasteboard as an image. This means
+        that we'll hide other data types (importantly, 'text/html') upon pasting, even though important clients (such as
+        Google Docs and Confluence) depend on the 'text/html' data in order to correctly handle the paste (rather than
+        paste as an image of a table).
+
+        To fix this, we add an exception to the DataTransfer.getData codepath when the pasteboard contains files.
+        Instead of always returning the empty string for text/html, we still allow pasteboard access, but only read
+        from a limited set of rich text types, i.e. web archive, RTF(D), and HTML markup. Importantly, this prevents
+        us from exposing any file paths that appear as plain text or URLs on the pasteboard. Just as in the regular
+        codepath for getData(), if the pasteboard data comes from the same origin, we allow unsanitized access;
+        otherwise, we use WebContentMarkupReader to extract markup from the pasteboard.
+
+        Tests:  PasteMixedContent.ImageFileAndPlainText
+                PasteMixedContent.ImageFileAndWebArchive
+                PasteMixedContent.ImageFileAndHTML
+                PasteMixedContent.ImageFileAndRTF
+                PasteMixedContent.ImageFileAndURL
+                PasteMixedContent.ImageFileWithHTMLAndURL
+                DataInteractionTests.DataTransferGetDataWhenDroppingImageAndMarkup
+
+        Also rebaselined some layout tests, which cover changes in behavior when dropping on macOS and pasting on iOS.
+
+        * dom/DataTransfer.cpp:
+        (WebCore::DataTransfer::getDataForItem const):
+
+        Augment the codepath handling the case where the pasteboard contains files, such that we allow reading
+        "text/html", but only from rich text types.
+
+        (WebCore::DataTransfer::readStringFromPasteboard const):
+
+        Factor out logic for reading from the pasteboard into a private helper. This is called in two places from
+        getDataForItem: in the normal (existing) path, and in the case where we allow 'text/html' to be read despite
+        files appearing in the pasteboard.
+
+        One important difference here is that this helper now takes a WebContentReadingPolicy, whose purpose is to
+        prevent reading from non-rich-text types when files appear in the pasteboard.
+
+        Another tweak here is that we now use `lowercaseType` instead of the original (unadjusted) `type` when reading
+        from the pasteboard. This doesn't seem to be intended in the first place.
+
+        (WebCore::DataTransfer::types const):
+
+        Tweak the implementation of DataTransfer.types() in the case where files exist on the pasteboard, such that we
+        also add "text/html" if it is present in the list of DOM-safe types.
+
+        * dom/DataTransfer.h:
+        * platform/Pasteboard.h:
+
+        Introduce WebContentReadingPolicy, which indicates whether or not we should limit web content reading from the
+        pasteboard to only rich text types upon paste or drop. Normally, we allow all types to be read as web content
+        (::AnyType), but when files appear on the pasteboard, we force OnlyRichTextTypes to ensure that no other types
+        can unintentionally be read back as web content.
+
+        * platform/StaticPasteboard.h:
+        * platform/gtk/PasteboardGtk.cpp:
+        (WebCore::Pasteboard::read):
+        * platform/ios/PasteboardIOS.mm:
+
+        Teach Pasteboard (on iOS) to respect WebContentReadingPolicy.
+
+        (WebCore::isTypeAllowedByReadingPolicy):
+        (WebCore::Pasteboard::read):
+        (WebCore::Pasteboard::readRespectingUTIFidelities):
+        * platform/mac/PasteboardMac.mm:
+
+        Teach Pasteboard (on macOS) to respect WebContentReadingPolicy.
+
+        (WebCore::Pasteboard::read):
+        * platform/win/PasteboardWin.cpp:
+        (WebCore::Pasteboard::read):
+        * platform/wpe/PasteboardWPE.cpp:
+        (WebCore::Pasteboard::read):
+
+        Adjust non-Cocoa Pasteboard implementations for an interface change.
+
 2018-02-09  Zalan Bujtas  <zalan@apple.com>
 
         [RenderTreeBuilder] Move RenderRubyAsInline/AsBlock::takeChild mutation to a RenderTreeBuilder

@@ -39,6 +39,7 @@ class Element;
 class FileList;
 class File;
 class Pasteboard;
+enum class WebContentReadingPolicy;
 
 class DataTransfer : public RefCounted<DataTransfer> {
 public:
@@ -121,6 +122,7 @@ private:
     bool forFileDrag() const { return false; }
 #endif
 
+    String readStringFromPasteboard(Document&, const String& lowercaseType, WebContentReadingPolicy) const;
     bool shouldSuppressGetAndSetDataToAvoidExposingFilePaths() const;
 
     enum class AddFilesType { No, Yes };

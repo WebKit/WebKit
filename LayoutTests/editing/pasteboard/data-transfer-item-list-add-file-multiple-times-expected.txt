@@ -247,7 +247,8 @@ removedItem.getAsFile() should be null: null
 6. After adding two files and some string data again
 {
     "data": {
-        "Files": ""
+        "Files": "",
+        "text/html": "<strong>some styled text</strong>"
     },
     "items": [
         {
@@ -296,7 +297,8 @@ removedItem.getAsFile() should be null: null
 7. After removing at index 2
 {
     "data": {
-        "Files": ""
+        "Files": "",
+        "text/html": "<strong>some styled text</strong>"
     },
     "items": [
         {
@@ -341,7 +343,8 @@ removedItem.getAsFile() should be null: null
 8. After removing at index 2
 {
     "data": {
-        "Files": ""
+        "Files": "",
+        "text/html": "<strong>some styled text</strong>"
     },
     "items": [
         {

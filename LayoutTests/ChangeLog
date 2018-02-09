@@ -1,3 +1,27 @@
+2018-02-08  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Pasting from Excel no longer provides text/html data
+        https://bugs.webkit.org/show_bug.cgi?id=182636
+        <rdar://problem/37087060>
+
+        Reviewed by Ryosuke Niwa.
+
+        Rebaseline some existing layout tests. We now expose "text/html" alongside "Files" on DataTransfer.types() in
+        some circumstances. This also provides some test coverage for ensuring that the paste codepath iOS allows the
+        page to request HTML, even if there are files on the pasteboard. See the WebCore ChangeLog for more detail.
+
+        * editing/pasteboard/data-transfer-item-list-add-file-multiple-times-expected.txt:
+        * editing/pasteboard/data-transfer-item-list-add-file-on-copy-expected.txt:
+        * editing/pasteboard/data-transfer-item-list-add-file-on-drag-expected.txt:
+
+        Adjust test expectations for the additional "text/html" type.
+
+        * editing/pasteboard/paste-image-does-not-reveal-file-url-expected.txt:
+        * editing/pasteboard/paste-image-does-not-reveal-file-url.html:
+
+        Instead of checking that types is [ "Files" ], just check that types contains "Files". On iOS, copying a
+        selected image does not also copy HTML, but on macOS it does; this covers both cases.
+
 2018-02-09  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Object.shallowEqual always fails when comparing array property values

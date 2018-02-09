@@ -1,3 +1,44 @@
+2018-02-08  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Pasting from Excel no longer provides text/html data
+        https://bugs.webkit.org/show_bug.cgi?id=182636
+        <rdar://problem/37087060>
+
+        Reviewed by Ryosuke Niwa.
+
+        Add new API tests to exercise pasting images with various other content types on macOS, and when dropping images
+        and HTML markup on iOS. See the WebCore ChangeLog for more detail.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/DataTransfer.html: Added.
+
+        Add a new API test harness that dumps various bits of information about a DataTransfer upon paste and drop.
+        While somewhat similar to some existing harnesses, this makes a distinction between the raw HTML data on the
+        pasteboard and the actual result of inserting said HTML into the DOM. This allows us to check that the HTML has
+        been sanitized, while making checks for the actual content of the HTML robust against inline style changes.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/PasteImage.mm:
+        * TestWebKitAPI/Tests/WebKitCocoa/PasteMixedContent.mm: Added.
+
+        Add a new test suite to exercise pasting mixed content types. In these test cases, the pasteboard contains a
+        file, with some combination of plain text, rich text, and URLs.
+
+        (imagePath):
+        (writeTypesAndDataToPasteboard):
+
+        Add a helper to write a var-arg list of content types and data to the general NSPasteboard.
+
+        (setUpWebView):
+        (markupString):
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/ios/DataInteractionTests.mm:
+        (TestWebKitAPI::testIconImageData):
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/cocoa/TestWKWebView.h:
+
+        Move a private declaration of -[WKWebView paste:] out to TestWKWebView.h, so that it can be shared across
+        multiple tests. Currently, it only resides in PasteImage.mm, but I need it in PasteMixedContent.mm as well.
+
 2018-02-09  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Add a way to check if a host is an IP address

@@ -64,6 +64,7 @@ class Range;
 class SelectionData;
 class SharedBuffer;
 
+enum class WebContentReadingPolicy { AnyType, OnlyRichTextTypes };
 enum ShouldSerializeSelectedTextForDataTransfer { DefaultSelectedTextType, IncludeImageAltTextForDataTransfer };
 
 // For writing to the pasteboard. Generally sorted with the richest formats on top.
@@ -209,7 +210,7 @@ public:
     virtual WEBCORE_EXPORT void clear(const String& type);
 
     virtual WEBCORE_EXPORT void read(PasteboardPlainText&);
-    virtual WEBCORE_EXPORT void read(PasteboardWebContentReader&);
+    virtual WEBCORE_EXPORT void read(PasteboardWebContentReader&, WebContentReadingPolicy = WebContentReadingPolicy::AnyType);
     virtual WEBCORE_EXPORT void read(PasteboardFileReader&);
 
     virtual WEBCORE_EXPORT void write(const PasteboardURL&);
@@ -273,7 +274,7 @@ public:
 private:
 #if PLATFORM(IOS)
     bool respectsUTIFidelities() const;
-    void readRespectingUTIFidelities(PasteboardWebContentReader&);
+    void readRespectingUTIFidelities(PasteboardWebContentReader&, WebContentReadingPolicy);
 
     enum class ReaderResult {
         ReadType,
