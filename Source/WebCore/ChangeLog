@@ -1,3 +1,17 @@
+2018-02-09  Dean Jackson  <dino@apple.com>
+
+        ImageBitmapRenderingContext should be Runtime guarded
+        https://bugs.webkit.org/show_bug.cgi?id=182665
+        <rdar://problem/37411410>
+
+        Reviewed by Sam Weinig.
+
+        Add a flag to ensure the ImageBitmapRenderingContext interface is only
+        visible when the runtime feature is enabled.
+
+        * bindings/js/WebCoreBuiltinNames.h:
+        * html/canvas/ImageBitmapRenderingContext.idl:
+
 2018-02-09  Don Olmstead  <don.olmstead@sony.com>
 
         [CMake] Make PAL headers copies
