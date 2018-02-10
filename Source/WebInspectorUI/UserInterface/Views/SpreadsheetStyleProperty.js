@@ -236,9 +236,9 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
     spreadsheetTextFieldDidChange(textField)
     {
         if (textField === this._valueTextField)
-            this.debounce(WI.SpreadsheetStyleProperty.CommitCoalesceDelay)._handleValueChange();
+            this._handleValueChange();
         else if (textField === this._nameTextField)
-            this.debounce(WI.SpreadsheetStyleProperty.CommitCoalesceDelay)._handleNameChange();
+            this._handleNameChange();
     }
 
     spreadsheetTextFieldDidCommit(textField, {direction})
@@ -655,5 +655,3 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
 };
 
 WI.SpreadsheetStyleProperty.StyleClassName = "property";
-
-WI.SpreadsheetStyleProperty.CommitCoalesceDelay = 250;
