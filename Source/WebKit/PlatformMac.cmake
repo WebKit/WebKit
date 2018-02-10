@@ -389,7 +389,6 @@ list(APPEND WebKit_SOURCES
 )
 
 list(APPEND WebKit_INCLUDE_DIRECTORIES
-    "${PAL_DIR}"
     "${WEBKIT_DIR}/NetworkProcess/cocoa"
     "${WEBKIT_DIR}/NetworkProcess/mac"
     "${WEBKIT_DIR}/PluginProcess/mac"

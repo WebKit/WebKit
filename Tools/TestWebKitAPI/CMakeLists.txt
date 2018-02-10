@@ -169,7 +169,6 @@ include_directories(
     ${CMAKE_BINARY_DIR}
     ${CMAKE_SOURCE_DIR}/Source
     ${JAVASCRIPTCORE_DIR}
-    ${PAL_DIR}
     ${THIRDPARTY_DIR}/gtest/include
     ${WEBKIT_DIR}/Platform/IPC
     ${WEBKIT_DIR}/Shared

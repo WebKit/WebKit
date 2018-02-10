@@ -1,3 +1,18 @@
+2018-02-09  Don Olmstead  <don.olmstead@sony.com>
+
+        [CMake] Make PAL headers copies
+        https://bugs.webkit.org/show_bug.cgi?id=182645
+
+        Reviewed by Alex Christensen.
+
+        * pal/CMakeLists.txt:
+        * pal/PlatformAppleWin.cmake:
+        * pal/PlatformGTK.cmake:
+        * pal/PlatformMac.cmake:
+        * pal/PlatformWPE.cmake:
+        * pal/PlatformWin.cmake:
+        * pal/PlatformWinCairo.cmake:
+
 2018-01-30  Myles C. Maxfield  <mmaxfield@apple.com>
 
         A disallowed user-installed font may be used if its PostScript name is specified

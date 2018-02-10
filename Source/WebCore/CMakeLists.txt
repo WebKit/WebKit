@@ -142,7 +142,6 @@ set(WebCore_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/xml"
     "${WEBCORE_DIR}/xml/parser"
     "${DERIVED_SOURCES_WEBCORE_DIR}"
-    "${PAL_DIR}"
 )
 
 set(WebCore_SYSTEM_INCLUDE_DIRECTORIES
