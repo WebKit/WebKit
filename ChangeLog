@@ -1,3 +1,15 @@
+2018-02-09  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Simplify .gitignore's WebKitLibraries/win section.
+        https://bugs.webkit.org/show_bug.cgi?id=182618
+
+        Reviewed by Per Arne Vollan.
+
+        We need to update this section for WinCairoRequirements regardless, but
+        it never needed to be this longwinded in the first place.
+
+        * .gitignore:
+
 2018-02-08  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [Meta][Win] Support ICU 59.1+
