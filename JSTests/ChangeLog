@@ -1,3 +1,15 @@
+2018-02-09  Filip Pizlo  <fpizlo@apple.com>
+
+        Don't waste memory for error.stack
+        https://bugs.webkit.org/show_bug.cgi?id=182656
+
+        Reviewed by Saam Barati.
+        
+        Tests the policy.
+
+        * stress/gc-error-stack.js: Added. Shows that the GC forgets frames now.
+        * stress/no-gc-error-stack.js: Added. Shows that the GC won't forget things if you ask for the stack.
+
 2018-02-08  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Update Test262 to Feb 9 version

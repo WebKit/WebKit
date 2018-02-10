@@ -339,6 +339,8 @@ public:
 #endif
     
     IsoSubspace directEvalExecutableSpace;
+    IsoSubspace errorInstanceSpace;
+    IsoSubspace exceptionSpace;
     IsoSubspace executableToCodeBlockEdgeSpace;
     IsoSubspace functionExecutableSpace;
     IsoSubspace indirectEvalExecutableSpace;
@@ -353,6 +355,8 @@ public:
     IsoSubspace weakSetSpace;
     IsoSubspace weakMapSpace;
     
+    IsoCellSet errorInstancesWithFinalizers;
+    IsoCellSet exceptionsWithFinalizers;
     IsoCellSet executableToCodeBlockEdgesWithConstraints;
     IsoCellSet executableToCodeBlockEdgesWithFinalizers;
     IsoCellSet inferredTypesWithFinalizers;

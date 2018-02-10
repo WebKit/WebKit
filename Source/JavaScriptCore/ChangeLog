@@ -1,3 +1,44 @@
+2018-02-09  Filip Pizlo  <fpizlo@apple.com>
+
+        Don't waste memory for error.stack
+        https://bugs.webkit.org/show_bug.cgi?id=182656
+
+        Reviewed by Saam Barati.
+        
+        This makes the StackFrames in ErrorInstance and Exception weak. We simply forget their
+        contents if we GC.
+        
+        This isn't going to happen under normal operation since your callees and code blocks will
+        still be alive when you ask for .stack.
+        
+        Bug 182650 tracks improving this so that it's not lossy. For now, I think it's worth it,
+        since it is likely to recover 3-5 MB on membuster.
+
+        * heap/Heap.cpp:
+        (JSC::Heap::finalizeUnconditionalFinalizers):
+        * runtime/ErrorInstance.cpp:
+        (JSC::ErrorInstance::visitChildren):
+        (JSC::ErrorInstance::finalizeUnconditionally):
+        * runtime/ErrorInstance.h:
+        (JSC::ErrorInstance::subspaceFor):
+        * runtime/Exception.cpp:
+        (JSC::Exception::visitChildren):
+        (JSC::Exception::finalizeUnconditionally):
+        * runtime/Exception.h:
+        (JSC::Exception::valueOffset): Deleted.
+        (JSC::Exception::value const): Deleted.
+        (JSC::Exception::stack const): Deleted.
+        (JSC::Exception::didNotifyInspectorOfThrow const): Deleted.
+        (JSC::Exception::setDidNotifyInspectorOfThrow): Deleted.
+        * runtime/StackFrame.cpp:
+        (JSC::StackFrame::isFinalizationCandidate):
+        (JSC::StackFrame::finalizeUnconditionally):
+        (JSC::StackFrame::visitChildren): Deleted.
+        * runtime/StackFrame.h:
+        * runtime/VM.cpp:
+        (JSC::VM::VM):
+        * runtime/VM.h:
+
 2018-02-09  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         Fix build on ARMv7 traditional JSCOnly bot after r228306
