@@ -63,7 +63,6 @@ public:
     {
     }
 
-    DocumentFragment& ensureFragment();
     void addFragment(Ref<DocumentFragment>&&);
 
 private:
