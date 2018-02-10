@@ -593,6 +593,7 @@
 		9BD6D3A71F7B21DC00BD4962 /* paste-image.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 9BD6D3A61F7B21CC00BD4962 /* paste-image.html */; };
 		9BDCCD871F7D0B0700009A18 /* PasteImage.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9BDCCD851F7D0B0700009A18 /* PasteImage.mm */; };
 		9BDD95581F83683600D20C60 /* PasteRTFD.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9BDD95561F83683600D20C60 /* PasteRTFD.mm */; };
+		9BF356CD202D458500F71160 /* mso-list.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 9BF356CC202D44F200F71160 /* mso-list.html */; };
 		9C64DC321D76198A004B598E /* YouTubePluginReplacement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9C64DC311D76198A004B598E /* YouTubePluginReplacement.cpp */; };
 		A10F047E1E3AD29C00C95E19 /* NSFileManagerExtras.mm in Sources */ = {isa = PBXBuildFile; fileRef = A10F047C1E3AD29C00C95E19 /* NSFileManagerExtras.mm */; };
 		A1146A8D1D2D7115000FE710 /* ContentFiltering.mm in Sources */ = {isa = PBXBuildFile; fileRef = A1146A8A1D2D704F000FE710 /* ContentFiltering.mm */; };
@@ -1020,6 +1021,7 @@
 				51CD1C721B38D48400142CA5 /* modal-alerts-in-new-about-blank-window.html in Copy Resources */,
 				7A1458FC1AD5C07000E06772 /* mouse-button-listener.html in Copy Resources */,
 				33E79E06137B5FD900E32D99 /* mouse-move-listener.html in Copy Resources */,
+				9BF356CD202D458500F71160 /* mso-list.html in Copy Resources */,
 				5797FE331EB15AB100B2F4A0 /* navigation-client-default-crypto.html in Copy Resources */,
 				C99B675F1E39736F00FC6C80 /* no-autoplay-with-controls.html in Copy Resources */,
 				93E2D2761ED7D53200FA76F6 /* offscreen-iframe-of-media-document.html in Copy Resources */,
@@ -1615,6 +1617,7 @@
 		9BD6D3A61F7B21CC00BD4962 /* paste-image.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "paste-image.html"; sourceTree = "<group>"; };
 		9BDCCD851F7D0B0700009A18 /* PasteImage.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = PasteImage.mm; sourceTree = "<group>"; };
 		9BDD95561F83683600D20C60 /* PasteRTFD.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = PasteRTFD.mm; sourceTree = "<group>"; };
+		9BF356CC202D44F200F71160 /* mso-list.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "mso-list.html"; sourceTree = "<group>"; };
 		9C64DC311D76198A004B598E /* YouTubePluginReplacement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = YouTubePluginReplacement.cpp; sourceTree = "<group>"; };
 		A10F047C1E3AD29C00C95E19 /* NSFileManagerExtras.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = NSFileManagerExtras.mm; sourceTree = "<group>"; };
 		A1146A8A1D2D704F000FE710 /* ContentFiltering.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ContentFiltering.mm; sourceTree = "<group>"; };
@@ -2447,6 +2450,7 @@
 				46C519E31D35629600DAA51A /* LocalStorageNullEntries.localstorage */,
 				46C519E41D35629600DAA51A /* LocalStorageNullEntries.localstorage-shm */,
 				7A6A2C711DCCFB0200C0D085 /* LocalStorageQuirkEnabled.html */,
+				9BF356CC202D44F200F71160 /* mso-list.html */,
 				93E2D2751ED7D51700FA76F6 /* offscreen-iframe-of-media-document.html */,
 				7CCB99221D3B44E7003922F6 /* open-multiple-external-url.html */,
 				CEBCA1341E3A803400C73293 /* page-with-csp-iframe.html */,

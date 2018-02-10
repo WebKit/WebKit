@@ -1,3 +1,17 @@
+2018-02-08  Ryosuke Niwa  <rniwa@webkit.org>
+
+        REGRESSION (r223440): Copying & pasting a list from Microsoft Word to TinyMCE fails
+        https://bugs.webkit.org/show_bug.cgi?id=182564
+
+        Reviewed by Wenson Hsieh.
+
+        Added a test to make sure special Microsoft Word quirks would not get triggered
+        when pasting content copied within WebKit.
+
+        * http/tests/security/clipboard/copy-paste-html-across-origin-strips-mso-list-expected.txt: Added.
+        * http/tests/security/clipboard/copy-paste-html-across-origin-strips-mso-list.html: Added.
+        * http/tests/security/clipboard/resources/copy-mso-list.html: Added.
+
 2018-02-09  Ryan Haddad  <ryanhaddad@apple.com>
 
         Mark two service worker LayoutTests as flaky.

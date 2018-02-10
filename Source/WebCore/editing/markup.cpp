@@ -36,6 +36,7 @@
 #include "CSSValueKeywords.h"
 #include "CacheStorageProvider.h"
 #include "ChildListMutationScope.h"
+#include "Comment.h"
 #include "DocumentFragment.h"
 #include "DocumentLoader.h"
 #include "DocumentType.h"
@@ -55,6 +56,7 @@
 #include "HTMLHtmlElement.h"
 #include "HTMLImageElement.h"
 #include "HTMLNames.h"
+#include "HTMLStyleElement.h"
 #include "HTMLTableElement.h"
 #include "HTMLTextAreaElement.h"
 #include "HTMLTextFormControlElement.h"
@@ -196,33 +198,26 @@ std::unique_ptr<Page> createPageForSanitizingWebContent()
     return page;
 }
 
-
-String sanitizeMarkup(const String& rawHTML, std::optional<WTF::Function<void(DocumentFragment&)>> fragmentSanitizer)
+String sanitizeMarkup(const String& rawHTML, MSOListQuirks msoListQuirks, std::optional<WTF::Function<void(DocumentFragment&)>> fragmentSanitizer)
 {
     auto page = createPageForSanitizingWebContent();
     Document* stagingDocument = page->mainFrame().document();
     ASSERT(stagingDocument);
-    auto* bodyElement = stagingDocument->body();
-    ASSERT(bodyElement);
 
     auto fragment = createFragmentFromMarkup(*stagingDocument, rawHTML, emptyString(), DisallowScriptingAndPluginContent);
 
     if (fragmentSanitizer)
         (*fragmentSanitizer)(fragment);
 
-    bodyElement->appendChild(fragment.get());
-
-    auto range = Range::create(*stagingDocument);
-    range->selectNodeContents(*bodyElement);
-    return createMarkup(range.get(), nullptr, AnnotateForInterchange, false, ResolveNonLocalURLs);
+    return sanitizedMarkupForFragmentInDocument(WTFMove(fragment), *stagingDocument, msoListQuirks, rawHTML);
 }
 
-    
+enum class MSOListMode { Preserve, DoNotPreserve };
 class StyledMarkupAccumulator final : public MarkupAccumulator {
 public:
     enum RangeFullySelectsNode { DoesFullySelectNode, DoesNotFullySelectNode };
 
-    StyledMarkupAccumulator(Vector<Node*>* nodes, EAbsoluteURLs, EAnnotateForInterchange, const Range*, bool needsPositionStyleConversion, Node* highestNodeToBeSerialized = nullptr);
+    StyledMarkupAccumulator(Vector<Node*>* nodes, EAbsoluteURLs, EAnnotateForInterchange, MSOListMode, const Range*, bool needsPositionStyleConversion, Node* highestNodeToBeSerialized = nullptr);
 
     Node* serializeNodes(Node* startNode, Node* pastEnd);
     void wrapWithNode(Node&, bool convertBlocksToInlines = false, RangeFullySelectsNode = DoesFullySelectNode);
@@ -253,6 +248,8 @@ private:
     enum NodeTraversalMode { EmitString, DoNotEmitString };
     Node* traverseNodesForSerialization(Node* startNode, Node* pastEnd, NodeTraversalMode);
 
+    bool appendNodeToPreserveMSOList(Node&);
+
     bool shouldAnnotate()
     {
         return m_shouldAnnotate == AnnotateForInterchange;
@@ -270,15 +267,18 @@ private:
     bool m_needRelativeStyleWrapper;
     bool m_needsPositionStyleConversion;
     bool m_needClearingDiv;
+    bool m_shouldPreserveMSOList;
+    bool m_inMSOList { false };
 };
 
-inline StyledMarkupAccumulator::StyledMarkupAccumulator(Vector<Node*>* nodes, EAbsoluteURLs shouldResolveURLs, EAnnotateForInterchange shouldAnnotate, const Range* range, bool needsPositionStyleConversion, Node* highestNodeToBeSerialized)
+inline StyledMarkupAccumulator::StyledMarkupAccumulator(Vector<Node*>* nodes, EAbsoluteURLs shouldResolveURLs, EAnnotateForInterchange shouldAnnotate, MSOListMode msoListMode, const Range* range, bool needsPositionStyleConversion, Node* highestNodeToBeSerialized)
     : MarkupAccumulator(nodes, shouldResolveURLs, range)
     , m_shouldAnnotate(shouldAnnotate)
     , m_highestNodeToBeSerialized(highestNodeToBeSerialized)
     , m_needRelativeStyleWrapper(false)
     , m_needsPositionStyleConversion(needsPositionStyleConversion)
     , m_needClearingDiv(false)
+    , m_shouldPreserveMSOList(msoListMode == MSOListMode::Preserve)
 {
 }
 
@@ -430,11 +430,15 @@ void StyledMarkupAccumulator::appendElement(StringBuilder& out, const Element& e
 
     const bool shouldAnnotateOrForceInline = element.isHTMLElement() && (shouldAnnotate() || addDisplayInline);
     const bool shouldOverrideStyleAttr = shouldAnnotateOrForceInline || shouldApplyWrappingStyle(element);
+    bool containsMSOList = false;
     if (element.hasAttributes()) {
         for (const Attribute& attribute : element.attributesIterator()) {
             // We'll handle the style attribute separately, below.
-            if (attribute.name() == styleAttr && shouldOverrideStyleAttr)
+            if (attribute.name() == styleAttr && shouldOverrideStyleAttr) {
+                if (m_shouldPreserveMSOList && attribute.value().contains(";mso-list:"))
+                    containsMSOList = true;
                 continue;
+            }
             if (element.isEventHandlerAttribute(attribute) || element.isJavaScriptURLAttribute(attribute))
                 continue;
             appendAttribute(out, element, attribute, 0);
@@ -477,6 +481,16 @@ void StyledMarkupAccumulator::appendElement(StringBuilder& out, const Element& e
             appendAttributeValue(out, newInlineStyle->style()->asText(), documentIsHTML);
             out.append('\"');
         }
+
+        if (containsMSOList) {
+            ASSERT(m_shouldPreserveMSOList);
+            // Unfortunately, TinyMCE doesn't recognize mso-list inline style if the style attribute contains properties.
+            // Generate a separate, second style attribute if newInlineStyle is not empty above.
+            // The inline style is preserved because the first attribute always wins but TinyMCE can still recognize the list.
+            out.appendLiteral(" style=\"");
+            appendAttributeValue(out, element.getAttribute(styleAttr), documentIsHTML);
+            out.append('\"');
+        }
     }
 
     appendCloseTag(out, element);
@@ -501,6 +515,7 @@ Node* StyledMarkupAccumulator::traverseNodesForSerialization(Node* startNode, No
     Vector<Node*> ancestorsToClose;
     Node* next;
     Node* lastClosed = nullptr;
+    m_inMSOList = false;
     for (Node* n = startNode; n != pastEnd; n = next) {
         // According to <rdar://problem/5730668>, it is possible for n to blow
         // past pastEnd and become null here. This shouldn't be possible.
@@ -518,7 +533,11 @@ Node* StyledMarkupAccumulator::traverseNodesForSerialization(Node* startNode, No
             continue;
         }
 
-        if (!n->renderer() && !enclosingElementWithTag(firstPositionInOrBeforeNode(n), selectTag)) {
+        bool shouldSkipNode = !n->renderer() && !enclosingElementWithTag(firstPositionInOrBeforeNode(n), selectTag);
+        if (UNLIKELY(m_shouldPreserveMSOList) && shouldEmit)
+            shouldSkipNode = appendNodeToPreserveMSOList(*n) || shouldSkipNode;
+
+        if (shouldSkipNode) {
             next = NodeTraversal::nextSkippingChildren(*n);
             // Don't skip over pastEnd.
             if (pastEnd && pastEnd->isDescendantOf(*n))
@@ -573,6 +592,44 @@ Node* StyledMarkupAccumulator::traverseNodesForSerialization(Node* startNode, No
     }
 
     return lastClosed;
+}
+
+bool StyledMarkupAccumulator::appendNodeToPreserveMSOList(Node& node)
+{
+    if (is<Comment>(node)) {
+        auto& commentNode = downcast<Comment>(node);
+        if (!m_inMSOList && commentNode.data() == "[if !supportLists]")
+            m_inMSOList = true;
+        else if (m_inMSOList && commentNode.data() == "[endif]")
+            m_inMSOList = false;
+        else
+            return false;
+        appendStartTag(commentNode);
+        return true;
+    }
+    if (is<HTMLStyleElement>(node)) {
+        auto* firstChild = node.firstChild();
+        if (!is<Text>(firstChild))
+            return false;
+
+        auto& textChild = downcast<Text>(*firstChild);
+        auto& styleContent = textChild.data();
+
+        const auto msoListDefinitionsStart = styleContent.find("/* List Definitions */");
+        const auto lastListItem = styleContent.reverseFind("\n@list");
+        if (msoListDefinitionsStart == notFound || lastListItem == notFound)
+            return false;
+
+        const auto msoListDefinitionsEnd = styleContent.find(";}\n", lastListItem);
+        if (msoListDefinitionsEnd == notFound || msoListDefinitionsStart >= msoListDefinitionsEnd)
+            return false;
+
+        appendStartTag(node);
+        appendTextSubstring(textChild, msoListDefinitionsStart, msoListDefinitionsEnd - msoListDefinitionsStart + 1);
+        appendEndTag(node);
+        return true;
+    }
+    return false;
 }
 
 static Node* ancestorToRetainStructureAndAppearanceForBlock(Node* commonAncestorBlock)
@@ -685,7 +742,7 @@ static Node* highestAncestorToWrapMarkup(const Range* range, EAnnotateForInterch
 // FIXME: Shouldn't we omit style info when annotate == DoNotAnnotateForInterchange? 
 // FIXME: At least, annotation and style info should probably not be included in range.markupString()
 static String createMarkupInternal(Document& document, const Range& range, Vector<Node*>* nodes,
-    EAnnotateForInterchange shouldAnnotate, bool convertBlocksToInlines, EAbsoluteURLs shouldResolveURLs)
+    EAnnotateForInterchange shouldAnnotate, bool convertBlocksToInlines, EAbsoluteURLs shouldResolveURLs, MSOListMode msoListMode)
 {
     static NeverDestroyed<const String> interchangeNewlineString(MAKE_STATIC_STRING_IMPL("<br class=\"" AppleInterchangeNewline "\">"));
 
@@ -708,7 +765,7 @@ static String createMarkupInternal(Document& document, const Range& range, Vecto
 
     bool needsPositionStyleConversion = body && fullySelectedRoot == body
         && document.settings().shouldConvertPositionStyleOnCopy();
-    StyledMarkupAccumulator accumulator(nodes, shouldResolveURLs, shouldAnnotate, &range, needsPositionStyleConversion, specialCommonAncestor);
+    StyledMarkupAccumulator accumulator(nodes, shouldResolveURLs, shouldAnnotate, msoListMode, &range, needsPositionStyleConversion, specialCommonAncestor);
     Node* pastEnd = range.pastLastNode();
 
     Node* startNode = range.firstNode();
@@ -779,7 +836,35 @@ static String createMarkupInternal(Document& document, const Range& range, Vecto
 
 String createMarkup(const Range& range, Vector<Node*>* nodes, EAnnotateForInterchange shouldAnnotate, bool convertBlocksToInlines, EAbsoluteURLs shouldResolveURLs)
 {
-    return createMarkupInternal(range.ownerDocument(), range, nodes, shouldAnnotate, convertBlocksToInlines, shouldResolveURLs);
+    return createMarkupInternal(range.ownerDocument(), range, nodes, shouldAnnotate, convertBlocksToInlines, shouldResolveURLs, MSOListMode::DoNotPreserve);
+}
+
+String sanitizedMarkupForFragmentInDocument(Ref<DocumentFragment>&& fragment, Document& document, MSOListQuirks msoListQuirks, const String& originalMarkup)
+{
+    MSOListMode msoListMode = MSOListMode::DoNotPreserve;
+    if (msoListQuirks == MSOListQuirks::CheckIfNeeded && originalMarkup.startsWith("<html xmlns:o=\"urn:schemas-microsoft-com:office:office\""))
+        msoListMode = MSOListMode::Preserve;
+
+    auto bodyElement = makeRefPtr(document.body());
+    ASSERT(bodyElement);
+    bodyElement->appendChild(WTFMove(fragment));
+
+    auto range = Range::create(document);
+    range->selectNodeContents(*bodyElement);
+    auto result = createMarkupInternal(document, range.get(), nullptr, AnnotateForInterchange, false, ResolveNonLocalURLs, msoListMode);
+
+    if (msoListMode == MSOListMode::Preserve) {
+        StringBuilder builder;
+        builder.appendLiteral("<html xmlns:o=\"urn:schemas-microsoft-com:office:office\"\n"
+            "xmlns:w=\"urn:schemas-microsoft-com:office:word\"\n"
+            "xmlns:m=\"http://schemas.microsoft.com/office/2004/12/omml\"\n"
+            "xmlns=\"http://www.w3.org/TR/REC-html40\">");
+        builder.append(result);
+        builder.appendLiteral("</html>");
+        return builder.toString();
+    }
+
+    return result;
 }
 
 Ref<DocumentFragment> createFragmentFromMarkup(Document& document, const String& markup, const String& baseURL, ParserContentPolicy parserContentPolicy)

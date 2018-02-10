@@ -86,6 +86,8 @@ protected:
 
     void appendStartTag(const Node&, Namespaces* = nullptr);
 
+    void appendTextSubstring(const Text&, unsigned start, unsigned length);
+
     void appendOpenTag(StringBuilder&, const Element&, Namespaces*);
     void appendCloseTag(StringBuilder&, const Element&);
 

@@ -1158,6 +1158,7 @@ http/tests/security/clipboard/copy-paste-url-across-origin-sanitizes-url.html [ 
 http/tests/security/clipboard/copy-paste-html-across-origin-sanitizes-html.html [ Skip ]
 http/tests/security/clipboard/copy-paste-html-cross-origin-iframe-across-origin.html [ Skip ]
 http/tests/security/clipboard/copy-paste-html-cross-origin-iframe-in-same-origin.html [ Skip ]
+http/tests/security/clipboard/copy-paste-html-across-origin-strips-mso-list.html [ Skip ]
 
 webkit.org/b/140783 [ Release ] editing/pasteboard/copy-standalone-image.html [ Failure ImageOnlyFailure ]
 webkit.org/b/140783 [ Debug ] editing/pasteboard/copy-standalone-image.html [ Skip ] # Debug Assertion

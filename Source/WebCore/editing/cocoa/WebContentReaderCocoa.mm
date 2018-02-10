@@ -375,18 +375,7 @@ static std::optional<MarkupAndArchive> extractMarkupAndArchive(SharedBuffer& buf
     return MarkupAndArchive { String::fromUTF8(mainResource->data().data(), mainResource->data().size()), mainResource.releaseNonNull(), archive.releaseNonNull() };
 }
 
-static String markupForFragmentInDocument(Ref<DocumentFragment>&& fragment, Document& document)
-{
-    auto* bodyElement = document.body();
-    ASSERT(bodyElement);
-    bodyElement->appendChild(WTFMove(fragment));
-
-    auto range = Range::create(document);
-    range->selectNodeContents(*bodyElement);
-    return createMarkup(range.get(), nullptr, AnnotateForInterchange, false, ResolveNonLocalURLs);
-}
-
-static String sanitizeMarkupWithArchive(Document& destinationDocument, MarkupAndArchive& markupAndArchive, const std::function<bool(const String)>& canShowMIMETypeAsHTML)
+static String sanitizeMarkupWithArchive(Document& destinationDocument, MarkupAndArchive& markupAndArchive, MSOListQuirks msoListQuirks, const std::function<bool(const String)>& canShowMIMETypeAsHTML)
 {
     auto page = createPageForSanitizingWebContent();
     Document* stagingDocument = page->mainFrame().document();
@@ -398,7 +387,7 @@ static String sanitizeMarkupWithArchive(Document& destinationDocument, MarkupAnd
 
     if (shouldReplaceRichContentWithAttachments()) {
         replaceRichContentWithAttachments(fragment, unreplacedResources);
-        return markupForFragmentInDocument(WTFMove(fragment), *stagingDocument);
+        return sanitizedMarkupForFragmentInDocument(WTFMove(fragment), *stagingDocument, msoListQuirks, markupAndArchive.markup);
     }
 
     HashMap<AtomicString, AtomicString> blobURLMap;
@@ -427,7 +416,7 @@ static String sanitizeMarkupWithArchive(Document& destinationDocument, MarkupAnd
 
         MarkupAndArchive subframeContent = { String::fromUTF8(subframeMainResource->data().data(), subframeMainResource->data().size()),
             subframeMainResource.releaseNonNull(), subframeArchive.copyRef() };
-        auto subframeMarkup = sanitizeMarkupWithArchive(destinationDocument, subframeContent, canShowMIMETypeAsHTML);
+        auto subframeMarkup = sanitizeMarkupWithArchive(destinationDocument, subframeContent, MSOListQuirks::Disabled, canShowMIMETypeAsHTML);
 
         CString utf8 = subframeMarkup.utf8();
         Vector<uint8_t> blobBuffer;
@@ -441,7 +430,7 @@ static String sanitizeMarkupWithArchive(Document& destinationDocument, MarkupAnd
 
     replaceSubresourceURLs(fragment.get(), WTFMove(blobURLMap));
 
-    return markupForFragmentInDocument(WTFMove(fragment), *stagingDocument);
+    return sanitizedMarkupForFragmentInDocument(WTFMove(fragment), *stagingDocument, msoListQuirks, markupAndArchive.markup);
 }
 
 bool WebContentReader::readWebArchive(SharedBuffer& buffer)
@@ -468,7 +457,7 @@ bool WebContentReader::readWebArchive(SharedBuffer& buffer)
         return true;
     }
 
-    String sanitizedMarkup = sanitizeMarkupWithArchive(*frame.document(), *result, [&] (const String& type) {
+    String sanitizedMarkup = sanitizeMarkupWithArchive(*frame.document(), *result, MSOListQuirks::Disabled, [&] (const String& type) {
         return frame.loader().client().canShowMIMETypeAsHTML(type);
     });
     fragment = createFragmentFromMarkup(*frame.document(), sanitizedMarkup, blankURL(), DisallowScriptingAndPluginContent);
@@ -495,7 +484,7 @@ bool WebContentMarkupReader::readWebArchive(SharedBuffer& buffer)
         return true;
     }
 
-    markup = sanitizeMarkupWithArchive(*frame.document(), *result, [&] (const String& type) {
+    markup = sanitizeMarkupWithArchive(*frame.document(), *result, msoListQuirksForMarkup(), [&] (const String& type) {
         return frame.loader().client().canShowMIMETypeAsHTML(type);
     });
 
@@ -529,7 +518,7 @@ bool WebContentReader::readHTML(const String& string)
 
     String markup;
     if (RuntimeEnabledFeatures::sharedFeatures().customPasteboardDataEnabled() && shouldSanitize()) {
-        markup = sanitizeMarkup(stringOmittingMicrosoftPrefix, WTF::Function<void (DocumentFragment&)> { [] (DocumentFragment& fragment) {
+        markup = sanitizeMarkup(stringOmittingMicrosoftPrefix, MSOListQuirks::Disabled, WTF::Function<void (DocumentFragment&)> { [] (DocumentFragment& fragment) {
             removeSubresourceURLAttributes(fragment, [] (const URL& url) {
                 return shouldReplaceSubresourceURL(url);
             });
@@ -548,7 +537,7 @@ bool WebContentMarkupReader::readHTML(const String& string)
 
     String rawHTML = stripMicrosoftPrefix(string);
     if (shouldSanitize()) {
-        markup = sanitizeMarkup(rawHTML, WTF::Function<void (DocumentFragment&)> { [] (DocumentFragment& fragment) {
+        markup = sanitizeMarkup(rawHTML, msoListQuirksForMarkup(), WTF::Function<void (DocumentFragment&)> { [] (DocumentFragment& fragment) {
             removeSubresourceURLAttributes(fragment, [] (const URL& url) {
                 return shouldReplaceSubresourceURL(url);
             });

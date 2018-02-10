@@ -45,5 +45,10 @@ bool FrameWebContentReader::shouldSanitize() const
     return frame.document()->originIdentifierForPasteboard() != contentOrigin;
 }
 
+MSOListQuirks FrameWebContentReader::msoListQuirksForMarkup() const
+{
+    return contentOrigin.isNull() ? MSOListQuirks::CheckIfNeeded : MSOListQuirks::Disabled;
+}
+
 }
 
