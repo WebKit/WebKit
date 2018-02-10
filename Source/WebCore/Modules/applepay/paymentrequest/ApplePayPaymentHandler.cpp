@@ -409,7 +409,6 @@ void ApplePayPaymentHandler::complete(std::optional<PaymentComplete>&& result)
     case PaymentComplete::Fail:
     case PaymentComplete::Unknown:
         authorizationResult.status = PaymentAuthorizationStatus::Failure;
-        authorizationResult.errors.append({ PaymentError::Code::Unknown, { }, std::nullopt });
         break;
     case PaymentComplete::Success:
         authorizationResult.status = PaymentAuthorizationStatus::Success;
