@@ -1,3 +1,9 @@
+2018-02-09  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Unreviewed, updated GTK test expectations after r228276
+
+        * platform/gtk/TestExpectations:
+
 2018-02-08  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Pasting from Excel no longer provides text/html data

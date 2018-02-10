@@ -1323,9 +1323,6 @@ webkit.org/b/180803 http/tests/media/hls/video-cookie.html [ Crash ]
 webkit.org/b/182106 imported/w3c/web-platform-tests/html/semantics/forms/textfieldselection/selection-start-end.html [ Crash ]
 webkit.org/b/182106 media/video-multiple-concurrent-playback.html [ Crash ]
 
-webkit.org/b/182603 storage/indexeddb/transaction-complete-workers-private.html [ Crash ]
-webkit.org/b/182603 storage/indexeddb/transaction-complete-workers.html [ Crash ]
-
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Crashing tests
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -2252,8 +2249,6 @@ webkit.org/b/182108 http/tests/media/hls/hls-webvtt-tracks.html [ Timeout ]
 webkit.org/b/182109 media/video-fullscreen-reload-crash.html [ Timeout ]
 
 webkit.org/b/182317 http/tests/resourceLoadStatistics/grandfathering.html [ Failure ]
-
-webkit.org/b/182603 fast/workers/worker-script-error.html [ Timeout ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests timing out
@@ -3334,14 +3329,6 @@ webkit.org/b/182223 fast/forms/listbox-selection.html [ Failure ]
 
 webkit.org/b/182502 http/tests/media/modern-media-controls [ Skip ]
 webkit.org/b/182502 media/modern-media-controls [ Skip ]
-
-webkit.org/b/182603 imported/w3c/web-platform-tests/workers/WorkerGlobalScope_ErrorEvent_colno.htm [ Failure ]
-webkit.org/b/182603 imported/w3c/web-platform-tests/workers/WorkerGlobalScope_ErrorEvent_filename.htm [ Failure ]
-webkit.org/b/182603 imported/w3c/web-platform-tests/workers/WorkerGlobalScope_ErrorEvent_lineno.htm [ Failure ]
-webkit.org/b/182603 imported/w3c/web-platform-tests/workers/WorkerGlobalScope_ErrorEvent_message.htm [ Failure ]
-webkit.org/b/182603 imported/w3c/web-platform-tests/workers/Worker_ErrorEvent_error.htm [ Failure ]
-webkit.org/b/182603 imported/w3c/web-platform-tests/workers/interfaces/WorkerGlobalScope/onerror/exception-in-onerror.html [ Failure ]
-webkit.org/b/182603 imported/w3c/web-platform-tests/workers/interfaces/WorkerGlobalScope/onerror/handled.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of non-crashing, non-flaky tests failing
