@@ -26,21 +26,21 @@
     window.benchmarkClient = {
         iterationCount: 5, // Use 4 different instances of DRT/WTR to run 5 iterations.
         willStartFirstIteration: function (iterationCount) {
-            createTest = function (name, aggregator, isLastTest) {
+            createTest = function (name, aggregator, isLastTest, unit = 'ms') {
                 return {
                     customIterationCount: iterationCount,
                     doNotIgnoreInitialRun: true,
                     doNotMeasureMemoryUsage: true,
                     continueTesting: !isLastTest,
-                    unit: 'ms',
+                    unit: unit,
                     name: name,
                     aggregator: aggregator};
             }
-            PerfTestRunner.prepareToMeasureValuesAsync(createTest(null, 'Total'));
+            PerfTestRunner.prepareToMeasureValuesAsync(createTest(null, 'Geometric'));
         },
         didRunSuites: function (measuredValues) {
-            PerfTestRunner.measureValueAsync(measuredValues.total);
-            valuesByIteration.push(measuredValues.tests);
+            PerfTestRunner.measureValueAsync(measuredValues.geomean);
+            valuesByIteration.push(measuredValues);
         },
         didFinishLastIteration: function () {
             document.head.removeChild(document.querySelector('style'));
@@ -53,9 +53,11 @@
                 values.aggregator = aggregator;
             }
 
+            var scores = [];
             valuesByIteration.forEach(function (measuredValues) {
-                for (var suiteName in measuredValues) {
-                    var suite = measuredValues[suiteName];
+                scores.push(measuredValues.score);
+                for (var suiteName in measuredValues.tests) {
+                    var suite = measuredValues.tests[suiteName];
                     for (var testName in suite.tests) {
                         var test = suite.tests[testName];
                         for (var subtestName in test.tests)
@@ -65,6 +67,8 @@
                     addToMeasuredValue(suite.total, suiteName, 'Total');
                 }
             });
+
+            PerfTestRunner.reportValues(createTest(null, null, false, 'pt'), scores);
 
             var fullNames = new Array;
             for (var fullName in measuredValuesByFullName)

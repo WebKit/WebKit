@@ -1,3 +1,24 @@
+2018-02-09  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Make run-perf-tests work with Speedometer 2.0 and re-enable the test
+        https://bugs.webkit.org/show_bug.cgi?id=182088
+
+        Reviewed by Antti Koivisto.
+
+        This patch updates the test harness to report new metrics of Speedometer 2.0.
+
+        Replaced the total time by the geometric mean of the time spent in each suite, and added scores
+        as a metric in addition to time. Also, updated the PerfTestRunner harness and the results template
+        to support "Score" metric with "pt" as its unit.
+
+        * Skipped: Unskipped the test.
+        * Speedometer/resources/benchmark-report.js:
+        (window.benchmarkClient.willStartFirstIteration..createTest): Added the unit as an optional argument
+        to report the score in addition to time. Also report the geomean of time instead of the total time.
+        (window.benchmarkClient.willStartFirstIteration): Report the geomean of time.
+        (window.benchmarkClient.didRunSuites): Record the entire measuredValues instead of just tests.
+        (window.benchmarkClient.didFinishLastIteration): Report the scores.
+
 2018-02-09  Ross Kirsling  <ross.kirsling@sony.com>
 
         Use REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR on any non-Windows port.

@@ -82,7 +82,6 @@ Parser/html-parser-threaded.html
 Layout/LineLayoutJapanese.html
 
 # Don't run the interactive runner. We run index.html
-Speedometer/index.html
 Speedometer/InteractiveRunner.html
 StyleBench/InteractiveRunner.html
 
