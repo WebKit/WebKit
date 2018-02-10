@@ -1,3 +1,23 @@
+2018-02-09  Andy Estes  <aestes@apple.com>
+
+        [Payment Request] Apple Pay sheet does not dismiss when calling complete() with result "unknown" or "fail"
+        https://bugs.webkit.org/show_bug.cgi?id=182658
+        <rdar://problem/37293917>
+
+        Reviewed by Brady Eidson.
+
+        When PaymentResponse::complete() is called with a result of "unknown" or "fail", we should
+        treat this as a fatal error and dismiss the Apple Pay sheet. However, we were adding an
+        error with code "unknown" to the authorization result, which PassKit interprets as a
+        non-fatal error. Instead, we should not set any errors and just use a status code of
+        PaymentAuthorizationStatus::Failure, which PassKit interprets as a fatal error, dismissing
+        the sheet.
+
+        No test possible.
+
+        * Modules/applepay/paymentrequest/ApplePayPaymentHandler.cpp:
+        (WebCore::ApplePayPaymentHandler::complete):
+
 2018-02-09  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Pasting from Excel no longer provides text/html data
