@@ -1,3 +1,16 @@
+2018-02-09  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Remove invalidated WebPage::handleEditingKeyboardEvent default implementation after r228260.
+        https://bugs.webkit.org/show_bug.cgi?id=182663
+
+        Reviewed by Chris Dumez.
+
+        This would need to be updated to turn `keyEvent` into `underlyingPlatformEvent`;
+        instead, we can remove it, as it's only for Windows, which doesn't yet support WK2.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::handleEditingKeyboardEvent): Deleted.
+
 2018-02-09  Nan Wang  <n_wang@apple.com>
 
         AX: Accessibility is not notified when a web process cancels the suspension
