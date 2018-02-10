@@ -242,6 +242,10 @@ body[dir=rtl] .tree-outline .item .status {
     height: 14px;
 }
 
+.tree-outline:not(.large):matches(:focus, .force-focus) .item.selected .status .indeterminate-progress-spinner {
+    filter: invert();
+}
+
 .tree-outline .item .title::after {
     content: "";
 }

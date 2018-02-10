@@ -1,5 +1,55 @@
 2018-02-09  Matt Baker  <mattbaker@apple.com>
 
+        Web Inspector: Canvas tab: tree selection abruptly changes when selecting a recording frame
+        https://bugs.webkit.org/show_bug.cgi?id=182667
+        <rdar://problem/37412639>
+
+        Reviewed by Devin Rousso.
+
+        * UserInterface/Views/CanvasSidebarPanel.css:
+        (.sidebar > .panel.navigation.canvas > .content > .recording-content > .navigation-bar):
+        (.sidebar > .panel.navigation.canvas:not(.has-recordings) > .filter-bar,):
+        (.sidebar > .panel.navigation.canvas > .content > .recording-content > .tree-outline .item.recording > .icon):
+        (.sidebar > .panel.navigation.canvas > .content > .recording-content > .tree-outline .item.folder-icon > .icon):
+        (.sidebar > .panel.navigation.canvas > .content > .recording-content > .tree-outline .item.folder-icon > .status):
+        (.sidebar > .panel.navigation.canvas > .content > .navigation-bar): Deleted.
+        (.sidebar > .panel.navigation.canvas > .content > .tree-outline .item.recording > .icon): Deleted.
+        (.sidebar > .panel.navigation.canvas > .content > .tree-outline .item.folder-icon > .icon): Deleted.
+        (.sidebar > .panel.navigation.canvas > .content > .tree-outline .item.folder-icon > .status): Deleted.
+        Style changes for the additional DOM element required to virtualize the recording tree outline.
+
+        * UserInterface/Views/CanvasSidebarPanel.js:
+        (WI.CanvasSidebarPanel):
+        In order to be virtualized, the tree must be the only child of its parent.
+
+        (WI.CanvasSidebarPanel.prototype.set action):
+        Ensure that a frame tree element isn't deselected when the last action
+        in the frame becomes selected in the RecordingContentView.
+
+        (WI.CanvasSidebarPanel.prototype.shown):
+        Refresh the sidebar, as represented objects may have changed while hidden.
+
+        (WI.CanvasSidebarPanel.prototype._currentRepresentedObjectsDidChange):
+        Unset the recording when no valid represented objects are found, to
+        prevent a stale recording tree from being shown when viewing the overview.
+
+        (WI.CanvasSidebarPanel.prototype._canvasChanged):
+        (WI.CanvasSidebarPanel.prototype._recordingChanged):
+        (WI.CanvasSidebarPanel.prototype._updateRecordingScopeBar):
+        Moved toggling of the "has-recordings" style to _canvasChanged, since
+        the navigation bar should be hidden when no canvas exists.
+
+        * UserInterface/Views/CollectionContentView.js:
+        (WI.CollectionContentView.prototype.addContentViewForItem):
+        (WI.CollectionContentView.prototype.removeContentViewForItem):
+        Drive by fixes for child view visible state.
+
+        * UserInterface/Views/TreeOutline.css:
+        (.tree-outline:not(.large):matches(:focus, .force-focus) .item.selected .status .indeterminate-progress-spinner):
+        Make spinner easier to see against the selection background color.
+
+2018-02-09  Matt Baker  <mattbaker@apple.com>
+
         Web Inspector: Object.shallowEqual always fails when comparing array property values
         https://bugs.webkit.org/show_bug.cgi?id=182634
         <rdar://problem/37374639>
