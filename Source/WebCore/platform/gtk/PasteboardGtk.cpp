@@ -236,7 +236,7 @@ void Pasteboard::read(PasteboardPlainText& text)
     text.text = m_selectionData->text();
 }
 
-void Pasteboard::read(PasteboardWebContentReader&)
+void Pasteboard::read(PasteboardWebContentReader&, WebContentReadingPolicy)
 {
 }
 

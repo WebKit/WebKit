@@ -3,7 +3,7 @@ Tests that pasting images do not reveal its file URL. To manually test, copy the
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS JSON.stringify(event.clipboardData.types) is "[\"Files\"]"
+PASS event.clipboardData.types.includes("Files") is true
 PASS event.clipboardData.getData("url") is ""
 PASS event.clipboardData.getData("text/plain") is ""
 PASS event.clipboardData.getData("text/uri-list") is ""

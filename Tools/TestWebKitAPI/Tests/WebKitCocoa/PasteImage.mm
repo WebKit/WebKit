@@ -36,10 +36,6 @@
 #include <MobileCoreServices/MobileCoreServices.h>
 #endif
 
-@interface WKWebView ()
-- (void)paste:(id)sender;
-@end
-
 #if PLATFORM(MAC)
 void writeImageDataToPasteboard(NSString *type, NSData *data)
 {

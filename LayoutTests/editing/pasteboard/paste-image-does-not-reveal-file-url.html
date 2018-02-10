@@ -31,7 +31,7 @@ function runTest()
 
 function check(event)
 {
-    shouldBeEqualToString('JSON.stringify(event.clipboardData.types)', '["Files"]');
+    shouldBeTrue('event.clipboardData.types.includes("Files")');
     shouldBeEqualToString('event.clipboardData.getData("url")', '');
     shouldBeEqualToString('event.clipboardData.getData("text/plain")', '');
     shouldBeEqualToString('event.clipboardData.getData("text/uri-list")', '');

@@ -53,7 +53,7 @@ public:
     void clear(const String& type) final;
 
     void read(PasteboardPlainText&) final { }
-    void read(PasteboardWebContentReader&) final { }
+    void read(PasteboardWebContentReader&, WebContentReadingPolicy) final { }
 
     void write(const PasteboardURL&) final { }
     void write(const PasteboardImage&) final { }

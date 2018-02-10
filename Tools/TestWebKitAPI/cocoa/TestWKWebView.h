@@ -34,6 +34,12 @@
 @class _WKActivatedElementInfo;
 #endif
 
+@interface WKWebView (AdditionalDeclarations)
+#if PLATFORM(MAC)
+- (void)paste:(id)sender;
+#endif
+@end
+
 @interface TestMessageHandler : NSObject <WKScriptMessageHandler>
 - (void)addMessage:(NSString *)message withHandler:(dispatch_block_t)handler;
 @end
