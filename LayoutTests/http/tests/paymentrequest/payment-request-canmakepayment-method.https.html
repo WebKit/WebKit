@@ -10,7 +10,7 @@
 <script src="/resources/testharness.js"></script>
 <script src="/resources/testharnessreport.js"></script>
 <script>
-    const applePay = Object.freeze({
+const applePay = Object.freeze({
     supportedMethods: "https://apple.com/apple-pay",
     data: {
         version: 2,
@@ -18,6 +18,11 @@
         merchantCapabilities: ["supports3DS"],
         supportedNetworks: ["visa", "masterCard"],
         countryCode: "US",
+    }
+});
+const invalidApplePay = Object.freeze({
+    supportedMethods: "https://apple.com/apple-pay",
+    data: {
     }
 });
 const defaultMethods = Object.freeze([applePay]);
@@ -96,6 +101,11 @@ promise_test(async t => {
   const request = new PaymentRequest(defaultMethods, defaultDetails);
   assert_true(await request.canMakePayment(), "basic-card should be supported");
 }, `If payment method identifier and serialized parts are supported, resolve promise with true.`);
+
+promise_test(async t => {
+  const request = new PaymentRequest([invalidApplePay], defaultDetails);
+  assert_false(await request.canMakePayment(), "Apple Pay with invalid data should not be supported");
+}, `If a payment method identifier is supported but its serialized parts are not, resolve promise with false.`);
 
 promise_test(async t => {
   const unsupportedMethods = [

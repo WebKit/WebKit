@@ -489,18 +489,25 @@ void PaymentRequest::canMakePayment(Document& document, CanMakePaymentPromise&& 
         return;
     }
 
+    auto scope = DECLARE_CATCH_SCOPE(document.execState()->vm());
     for (auto& paymentMethod : m_serializedMethodData) {
         auto data = parse(document, paymentMethod.serializedData);
-        if (data.hasException())
+        ASSERT(!!scope.exception() == data.hasException());
+        if (data.hasException()) {
+            scope.clearException();
             continue;
+        }
 
         auto handler = PaymentHandler::create(document, *this, paymentMethod.identifier);
         if (!handler)
             continue;
 
         auto exception = handler->convertData(data.releaseReturnValue());
-        if (exception.hasException())
+        ASSERT(!!scope.exception() == exception.hasException());
+        if (exception.hasException()) {
+            scope.clearException();
             continue;
+        }
 
         handler->canMakePayment([promise = WTFMove(promise)](bool canMakePayment) mutable {
             promise.resolve(canMakePayment);
