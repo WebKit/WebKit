@@ -420,4 +420,39 @@ RenderPtr<RenderObject> RenderTreeBuilder::Ruby::takeChild(RenderRubyAsBlock& pa
     return findRubyRunParent(child).takeChild(m_builder, child);
 }
 
+RenderPtr<RenderObject> RenderTreeBuilder::Ruby::takeChild(RenderRubyRun& parent, RenderObject& child)
+{
+    // If the child is a ruby text, then merge the ruby base with the base of
+    // the right sibling run, if possible.
+    if (!parent.beingDestroyed() && !parent.renderTreeBeingDestroyed() && child.isRubyText()) {
+        RenderRubyBase* base = parent.rubyBase();
+        RenderObject* rightNeighbour = parent.nextSibling();
+        if (base && is<RenderRubyRun>(rightNeighbour)) {
+            // Ruby run without a base can happen only at the first run.
+            RenderRubyRun& rightRun = downcast<RenderRubyRun>(*rightNeighbour);
+            if (rightRun.hasRubyBase()) {
+                RenderRubyBase* rightBase = rightRun.rubyBase();
+                // Collect all children in a single base, then swap the bases.
+                m_builder.moveRubyChildren(*rightBase, *base);
+                parent.moveChildTo(m_builder, &rightRun, base, RenderBoxModelObject::NormalizeAfterInsertion::No);
+                rightRun.moveChildTo(m_builder, &parent, rightBase, RenderBoxModelObject::NormalizeAfterInsertion::No);
+                // The now empty ruby base will be removed below.
+                ASSERT(!parent.rubyBase()->firstChild());
+            }
+        }
+    }
+
+    auto takenChild = parent.RenderBlockFlow::takeChild(m_builder, child);
+
+    if (!parent.beingDestroyed() && !parent.renderTreeBeingDestroyed()) {
+        // Check if our base (if any) is now empty. If so, destroy it.
+        RenderBlock* base = parent.rubyBase();
+        if (base && !base->firstChild()) {
+            auto takenBase = parent.RenderBlockFlow::takeChild(m_builder, *base);
+            base->deleteLines();
+        }
+    }
+    return takenChild;
+}
+
 }

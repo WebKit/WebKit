@@ -44,11 +44,12 @@ public:
     void insertChild(RenderRubyRun& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild);
     RenderPtr<RenderObject> takeChild(RenderRubyAsInline& parent, RenderObject& child);
     RenderPtr<RenderObject> takeChild(RenderRubyAsBlock& parent, RenderObject& child);
+    RenderPtr<RenderObject> takeChild(RenderRubyRun& parent, RenderObject& child);
+
+    void moveChildren(RenderRubyBase& from, RenderRubyBase& to);
 
     RenderElement& findOrCreateParentForChild(RenderRubyAsBlock& parent, const RenderObject& child, RenderObject*& beforeChild);
     RenderElement& findOrCreateParentForChild(RenderRubyAsInline& parent, const RenderObject& child, RenderObject*& beforeChild);
-
-    void moveChildren(RenderRubyBase& from, RenderRubyBase& to);
 
 private:
     void moveInlineChildren(RenderRubyBase& from, RenderRubyBase& to, RenderObject* beforeChild);
