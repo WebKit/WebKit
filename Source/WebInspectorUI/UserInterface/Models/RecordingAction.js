@@ -99,6 +99,9 @@ WI.RecordingAction = class RecordingAction extends WI.Object
     get hasVisibleEffect() { return this._hasVisibleEffect; }
     get stateModifiers() { return this._stateModifiers; }
 
+    get state() { return this._state; }
+    set state(state) { this._state = state; }
+
     markInvalid()
     {
         let wasValid = this._valid;

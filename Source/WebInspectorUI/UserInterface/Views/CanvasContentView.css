@@ -25,18 +25,6 @@
 
 .content-view.canvas:not(.tab) {
     background-color: hsl(0, 0%, 90%);
-
-    --progress-padding: 8px;
-}
-
-.content-view.canvas:not(.tab) > .progress {
-    padding: var(--progress-padding) 0;
-    text-align: center;
-    color: var(--text-color-gray-medium);
-}
-
-.content-view.canvas:not(.tab) > .progress > .frame-count {
-    color: var(--text-color-gray-dark);
 }
 
 .content-view.canvas:not(.tab) > .preview {
@@ -46,6 +34,11 @@
     width: 100%;
     height: 100%;
     padding: 15px;
+}
+
+.content-view.canvas:not(.tab) {
+    display: flex;
+    flex-direction: column;
 }
 
 .content-view.canvas:not(.tab) > .preview > img {

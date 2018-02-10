@@ -33,7 +33,7 @@ WI.CanvasContentView = class CanvasContentView extends WI.ContentView
 
         this.element.classList.add("canvas");
 
-        this._recordingProgressElement = null;
+        this._progressView = null;
         this._previewContainerElement = null;
         this._previewImageElement = null;
         this._errorElement = null;
@@ -45,7 +45,7 @@ WI.CanvasContentView = class CanvasContentView extends WI.ContentView
         this._recordingOptionElementMap = new WeakMap;
 
         if (this.representedObject.contextType === WI.Canvas.ContextType.Canvas2D || this.representedObject.contextType === WI.Canvas.ContextType.WebGL) {
-            const toolTip = WI.UIString("Start recording canvas actions. Shift-click to record a single frame.");
+            const toolTip = WI.UIString("Start recording canvas actions.\nShift-click to record a single frame.");
             const altToolTip = WI.UIString("Stop recording canvas actions");
             this._recordButtonNavigationItem = new WI.ToggleButtonNavigationItem("record-start-stop", toolTip, altToolTip, "Images/Record.svg", "Images/Stop.svg", 13, 13);
             this._recordButtonNavigationItem.visibilityPriority = WI.NavigationItem.VisibilityPriority.High;
@@ -66,10 +66,9 @@ WI.CanvasContentView = class CanvasContentView extends WI.ContentView
 
     get navigationItems()
     {
-        let navigationItems = [this._refreshButtonNavigationItem, this._showGridButtonNavigationItem];
-        if (this._recordButtonNavigationItem)
-            navigationItems.unshift(this._recordButtonNavigationItem);
-        return navigationItems;
+        // The toggle recording NavigationItem isn't added to the ContentBrowser's NavigationBar.
+        // It's added to the "quick access" NavigationBar shown when hovering the canvas in the overview.
+        return [this._refreshButtonNavigationItem, this._showGridButtonNavigationItem];
     }
 
     refresh()
@@ -97,6 +96,8 @@ WI.CanvasContentView = class CanvasContentView extends WI.ContentView
         super.initialLayout();
 
         let header = this.element.appendChild(document.createElement("header"));
+        header.addEventListener("click", (event) => { event.stopPropagation(); });
+
         let titles = header.appendChild(document.createElement("div"));
         titles.className = "titles";
 
@@ -120,6 +121,7 @@ WI.CanvasContentView = class CanvasContentView extends WI.ContentView
         this._previewContainerElement.className = "preview";
 
         let footer = this.element.appendChild(document.createElement("footer"));
+        footer.addEventListener("click", (event) => { event.stopPropagation(); });
 
         this._recordingSelectContainer = footer.appendChild(document.createElement("div"));
         this._recordingSelectContainer.classList.add("recordings", "hidden");
@@ -178,6 +180,7 @@ WI.CanvasContentView = class CanvasContentView extends WI.ContentView
         this.refresh();
 
         this._updateRecordNavigationItem();
+        this._updateProgressView();
     }
 
     attached()
@@ -262,16 +265,7 @@ WI.CanvasContentView = class CanvasContentView extends WI.ContentView
     _recordingStarted(event)
     {
         this._updateRecordNavigationItem();
-
-        if (!this.representedObject.isRecording)
-            return;
-
-        if (!this._recordingProgressElement) {
-            this._recordingProgressElement = this._previewContainerElement.insertAdjacentElement("beforebegin", document.createElement("div"));
-            this._recordingProgressElement.className = "progress";
-        }
-
-        this._recordingProgressElement.textContent = WI.UIString("Waiting for frames…");
+        this._updateProgressView();
     }
 
     _recordingProgress(event)
@@ -280,19 +274,7 @@ WI.CanvasContentView = class CanvasContentView extends WI.ContentView
         if (canvas !== this.representedObject)
             return;
 
-        this._recordingProgressElement.removeChildren();
-
-        let frameCountElement = this._recordingProgressElement.appendChild(document.createElement("span"));
-        frameCountElement.className = "frame-count";
-
-        let frameString = frameCount === 1 ? WI.UIString("%d Frame") : WI.UIString("%d Frames");
-        frameCountElement.textContent = frameString.format(frameCount);
-
-        this._recordingProgressElement.append(" ");
-
-        let bufferUsedElement = this._recordingProgressElement.appendChild(document.createElement("span"));
-        bufferUsedElement.className = "buffer-used";
-        bufferUsedElement.textContent = "(" + Number.bytesToString(bufferUsed) + ")";
+        this._updateProgressView(frameCount, bufferUsed);
     }
 
     _recordingStopped(event)
@@ -303,13 +285,10 @@ WI.CanvasContentView = class CanvasContentView extends WI.ContentView
         if (canvas !== this.representedObject)
             return;
 
+        this._updateProgressView();
+
         if (recording)
             this._addRecording(recording);
-
-        if (this._recordingProgressElement) {
-            this._recordingProgressElement.remove();
-            this._recordingProgressElement = null;
-        }
     }
 
     _handleRecordingSelectElementChange(event)
@@ -388,6 +367,35 @@ WI.CanvasContentView = class CanvasContentView extends WI.ContentView
         this._recordButtonNavigationItem.enabled = isRecording || !WI.canvasManager.recordingCanvas;
         this._recordButtonNavigationItem.toggled = isRecording;
 
+        this._refreshButtonNavigationItem.enabled = !isRecording;
+
         this.element.classList.toggle("is-recording", isRecording);
+    }
+
+    _updateProgressView(frameCount, bufferUsed)
+    {
+        if (!this.representedObject.isRecording) {
+            if (this._progressView && this._progressView.parentView) {
+                this.removeSubview(this._progressView);
+                this._progressView = null;
+            }
+            return;
+        }
+
+        if (!this._progressView) {
+            this._progressView = new WI.ProgressView;
+            this.element.insertBefore(this._progressView.element, this._previewContainerElement);
+            this.addSubview(this._progressView);
+        }
+
+        let title;
+        if (frameCount) {
+            let formatString = frameCount === 1 ? WI.UIString("%d Frame") : WI.UIString("%d Frames");
+            title = formatString.format(frameCount);
+        } else
+            title = WI.UIString("Waiting for frames…")
+
+        this._progressView.title = title;
+        this._progressView.subtitle = bufferUsed ? Number.bytesToString(bufferUsed) : "";
     }
 };

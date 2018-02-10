@@ -55,7 +55,7 @@ WI.CanvasDetailsSidebarPanel = class CanvasDetailsSidebarPanel extends WI.Detail
 
         this.canvas = objects.find((object) => object instanceof WI.Canvas);
 
-        return true;
+        return !!this.canvas;
     }
 
     get canvas()

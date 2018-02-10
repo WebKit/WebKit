@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Copyright © 2017 Apple Inc. All rights reserved. -->
 <svg xmlns="http://www.w3.org/2000/svg" id="root" version="1.1" viewBox="0 0 16 16">
-    <path d="M 6.5 8 A 1.5 1.5 0 1 1 5 6.5 1.5 1.5 0 0 1 6.5 8 Z M 5 9.5 h 6 m 0 -3 A 1.5 1.5 0 1 0 12.5 8 1.5 1.5 0 0 0 11 6.5 Z" fill="none" stroke="currentColor"/>
-    <path d="M1.5 3.729 v 8.542 a 1.127 1.127 0 0 0 1 1.22 h 11 a 1.127 1.127 0 0 0 1 -1.22 V 3.729 a 1.127 1.127 0 0 0 -1 -1.22 H 2.5 A 1.127 1.127 0 0 0 1.5 3.729 Z" fill="none" stroke="currentColor"/>
+    <circle cx="4" cy="8" r="2.5" fill="none" stroke="rgb(26, 26, 26)" stroke-width="1.2"/>
+    <circle cx="12" cy="8" r="2.5" fill="none" stroke="rgb(26, 26, 26)" stroke-width="1.2"/>
+    <line x1="4" y1="10.5" x2="12" y2="10.5" fill="none" stroke="rgb(26, 26, 26)"/>
 </svg>
