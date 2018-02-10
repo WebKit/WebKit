@@ -1,3 +1,12 @@
+2018-02-09  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Work towards rdar://problem/36837397.
+
+        Unreviewed test gardening..
+
+        * TestWebKitAPI/Tests/WebKitLegacy/ios/AudioSessionCategoryIOS.mm:
+        (TestWebKitAPI::TEST):
+
 2018-02-06  Jason Marcell  <jmarcell@apple.com>
 
         Cherry-pick r228188. rdar://problem/37293107

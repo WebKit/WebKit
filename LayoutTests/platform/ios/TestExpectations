@@ -3268,3 +3268,9 @@ webkit.org/b/180062 fast/text/user-installed-fonts/shadow-family.html [ ImageOnl
 webkit.org/b/180062 fast/text/user-installed-fonts/shadow-postscript.html [ ImageOnlyFailure ]
 webkit.org/b/180062 fast/text/user-installed-fonts/shadow.html [ ImageOnlyFailure ]
 webkit.org/b/180062 fast/text/user-installed-fonts/shadow-postscript-family.html [ ImageOnlyFailure ]
+
+# https://bugs.webkit.org/show_bug.cgi?id=182527
+media/media-fullscreen-loop-inline.html
+media/media-higher-prio-audio-stream.html
+media/modern-media-controls/playback-support/playback-support-autoplay.html
+media/video-background-playback.html
