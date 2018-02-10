@@ -1407,6 +1407,10 @@ void WebProcess::cancelPrepareToSuspend()
         return;
 
     cancelMarkAllLayersVolatile();
+    
+#if PLATFORM(IOS)
+    accessibilityProcessSuspendedNotification(false);
+#endif
 
     RELEASE_LOG(ProcessSuspension, "%p - WebProcess::cancelPrepareToSuspend() Sending DidCancelProcessSuspension IPC message", this);
     parentProcessConnection()->send(Messages::WebProcessProxy::DidCancelProcessSuspension(), 0);

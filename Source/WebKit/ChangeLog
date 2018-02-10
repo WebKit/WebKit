@@ -1,3 +1,17 @@
+2018-02-09  Nan Wang  <n_wang@apple.com>
+
+        AX: Accessibility is not notified when a web process cancels the suspension
+        https://bugs.webkit.org/show_bug.cgi?id=182659
+
+        Reviewed by Ryosuke Niwa.
+
+        We were notifying Accessibility with the web process suspended information in actualPrepareToSuspend
+        and processDidResume. However, the suspension can be canceled during the prepare call. So that we
+        should also post a notification in cancelPrepareToSuspend.
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::cancelPrepareToSuspend):
+
 2018-02-09  Brent Fulgham  <bfulgham@apple.com>
 
         Sandbox violating attempting to read log formatting preference file
