@@ -76,6 +76,7 @@ public:
     RenderPtr<RenderObject> takeChildFromRenderRubyAsInline(RenderRubyAsInline& parent, RenderObject& child);
     RenderPtr<RenderObject> takeChildFromRenderRubyAsBlock(RenderRubyAsBlock& parent, RenderObject& child);
     RenderPtr<RenderObject> takeChildFromRenderRubyRun(RenderRubyRun& parent, RenderObject& child);
+    RenderPtr<RenderObject> takeChildFromRenderBlock(RenderBlock& parent, RenderObject& oldChild);
 
     bool childRequiresTable(const RenderElement& parent, const RenderObject& child);
     void makeChildrenNonInline(RenderBlock& parent, RenderObject* insertionPoint = nullptr);

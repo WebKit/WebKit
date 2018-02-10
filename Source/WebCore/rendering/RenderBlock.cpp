@@ -482,42 +482,6 @@ void RenderBlock::deleteLines()
         cache->deferRecomputeIsIgnored(element());
 }
 
-static bool canDropAnonymousBlock(const RenderBlock& anonymousBlock)
-{
-    if (anonymousBlock.beingDestroyed() || anonymousBlock.continuation())
-        return false;
-    if (anonymousBlock.isRubyRun() || anonymousBlock.isRubyBase())
-        return false;
-    return true;
-}
-
-static bool canMergeContiguousAnonymousBlocks(RenderObject& oldChild, RenderObject* previous, RenderObject* next)
-{
-    ASSERT(!oldChild.renderTreeBeingDestroyed());
-
-    if (oldChild.isInline())
-        return false;
-
-    if (is<RenderBoxModelObject>(oldChild) && downcast<RenderBoxModelObject>(oldChild).continuation())
-        return false;
-
-    if (previous) {
-        if (!previous->isAnonymousBlock())
-            return false;
-        RenderBlock& previousAnonymousBlock = downcast<RenderBlock>(*previous);
-        if (!canDropAnonymousBlock(previousAnonymousBlock))
-            return false;
-    }
-    if (next) {
-        if (!next->isAnonymousBlock())
-            return false;
-        RenderBlock& nextAnonymousBlock = downcast<RenderBlock>(*next);
-        if (!canDropAnonymousBlock(nextAnonymousBlock))
-            return false;
-    }
-    return true;
-}
-
 void RenderBlock::dropAnonymousBoxChild(RenderTreeBuilder& builder, RenderBlock& child)
 {
     setNeedsLayoutAndPrefWidthsRecalc();
@@ -532,91 +496,7 @@ void RenderBlock::dropAnonymousBoxChild(RenderTreeBuilder& builder, RenderBlock&
 
 RenderPtr<RenderObject> RenderBlock::takeChild(RenderTreeBuilder& builder, RenderObject& oldChild)
 {
-    // No need to waste time in merging or removing empty anonymous blocks.
-    // We can just bail out if our document is getting destroyed.
-    if (renderTreeBeingDestroyed())
-        return RenderBox::takeChild(builder, oldChild);
-
-    // If this child is a block, and if our previous and next siblings are both anonymous blocks
-    // with inline content, then we can fold the inline content back together.
-    RenderObject* prev = oldChild.previousSibling();
-    RenderObject* next = oldChild.nextSibling();
-    bool canMergeAnonymousBlocks = canMergeContiguousAnonymousBlocks(oldChild, prev, next);
-    if (canMergeAnonymousBlocks && prev && next) {
-        prev->setNeedsLayoutAndPrefWidthsRecalc();
-        RenderBlock& nextBlock = downcast<RenderBlock>(*next);
-        RenderBlock& prevBlock = downcast<RenderBlock>(*prev);
-       
-        if (prev->childrenInline() != next->childrenInline()) {
-            RenderBlock& inlineChildrenBlock = prev->childrenInline() ? prevBlock : nextBlock;
-            RenderBlock& blockChildrenBlock = prev->childrenInline() ? nextBlock : prevBlock;
-            
-            // Place the inline children block inside of the block children block instead of deleting it.
-            // In order to reuse it, we have to reset it to just be a generic anonymous block.  Make sure
-            // to clear out inherited column properties by just making a new style, and to also clear the
-            // column span flag if it is set.
-            ASSERT(!inlineChildrenBlock.continuation());
-            // Cache this value as it might get changed in setStyle() call.
-            inlineChildrenBlock.setStyle(RenderStyle::createAnonymousStyleWithDisplay(style(), BLOCK));
-            auto blockToMove = takeChildInternal(inlineChildrenBlock);
-            
-            // Now just put the inlineChildrenBlock inside the blockChildrenBlock.
-            RenderObject* beforeChild = prev == &inlineChildrenBlock ? blockChildrenBlock.firstChild() : nullptr;
-            blockChildrenBlock.insertChildInternal(WTFMove(blockToMove), beforeChild);
-            next->setNeedsLayoutAndPrefWidthsRecalc();
-            
-            // inlineChildrenBlock got reparented to blockChildrenBlock, so it is no longer a child
-            // of "this". we null out prev or next so that is not used later in the function.
-            if (&inlineChildrenBlock == &prevBlock)
-                prev = nullptr;
-            else
-                next = nullptr;
-        } else {
-            // Take all the children out of the |next| block and put them in
-            // the |prev| block.
-            nextBlock.moveAllChildrenIncludingFloatsTo(builder, prevBlock, RenderBoxModelObject::NormalizeAfterInsertion::No);
-            
-            // Delete the now-empty block's lines and nuke it.
-            nextBlock.deleteLines();
-            nextBlock.removeFromParentAndDestroy(builder);
-            next = nullptr;
-        }
-    }
-
-    invalidateLineLayoutPath();
-
-    auto takenChild = RenderBox::takeChild(builder, oldChild);
-
-    RenderObject* child = prev ? prev : next;
-    if (canMergeAnonymousBlocks && child && !child->previousSibling() && !child->nextSibling() && canDropAnonymousBlockChild()) {
-        // The removal has knocked us down to containing only a single anonymous
-        // box. We can pull the content right back up into our box.
-        dropAnonymousBoxChild(builder, downcast<RenderBlock>(*child));
-    } else if (((prev && prev->isAnonymousBlock()) || (next && next->isAnonymousBlock())) && canDropAnonymousBlockChild()) {
-        // It's possible that the removal has knocked us down to a single anonymous
-        // block with floating siblings.
-        RenderBlock& anonBlock = downcast<RenderBlock>((prev && prev->isAnonymousBlock()) ? *prev : *next);
-        if (canDropAnonymousBlock(anonBlock)) {
-            bool dropAnonymousBlock = true;
-            for (auto& sibling : childrenOfType<RenderObject>(*this)) {
-                if (&sibling == &anonBlock)
-                    continue;
-                if (!sibling.isFloating()) {
-                    dropAnonymousBlock = false;
-                    break;
-                }
-            }
-            if (dropAnonymousBlock)
-                dropAnonymousBoxChild(builder, anonBlock);
-        }
-    }
-
-    if (!firstChild()) {
-        // If this was our last child be sure to clear out our line boxes.
-        if (childrenInline())
-            deleteLines();
-    }
-    return takenChild;
+    return builder.takeChildFromRenderBlock(*this, oldChild);
 }
 
 bool RenderBlock::childrenPreventSelfCollapsing() const

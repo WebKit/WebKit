@@ -1,3 +1,29 @@
+2018-02-10  Zalan Bujtas  <zalan@apple.com>
+
+        [RenderTreeBuilder] Move RenderBlock::takeChild mutation to a RenderTreeBuilder
+        https://bugs.webkit.org/show_bug.cgi?id=182662
+        <rdar://problem/37408571>
+
+        Reviewed by Simon Fraser.
+
+        No change in functionality.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::takeChild):
+        (WebCore::canDropAnonymousBlock): Deleted.
+        (WebCore::canMergeContiguousAnonymousBlocks): Deleted.
+        * rendering/RenderBlock.h:
+        (WebCore::RenderBlock::moveAllChildrenIncludingFloatsTo):
+        * rendering/RenderBlockFlow.h:
+        * rendering/updating/RenderTreeBuilder.cpp:
+        (WebCore::RenderTreeBuilder::takenChildFromRenderBlock):
+        * rendering/updating/RenderTreeBuilder.h:
+        * rendering/updating/RenderTreeBuilderBlock.cpp:
+        (WebCore::canDropAnonymousBlock):
+        (WebCore::canMergeContiguousAnonymousBlocks):
+        (WebCore::RenderTreeBuilder::Block::takeChild):
+        * rendering/updating/RenderTreeBuilderBlock.h:
+
 2018-02-08  Ryosuke Niwa  <rniwa@webkit.org>
 
         REGRESSION (r223440): Copying & pasting a list from Microsoft Word to TinyMCE fails

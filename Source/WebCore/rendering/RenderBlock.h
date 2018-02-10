@@ -397,6 +397,8 @@ public:
     LayoutRect paintRectToClipOutFromBorder(const LayoutRect&) override;
     void addChildIgnoringContinuation(RenderTreeBuilder&, RenderPtr<RenderObject> newChild, RenderObject* beforeChild) override;
     bool isInlineBlockOrInlineTable() const final { return isInline() && isReplaced(); }
+    // FIXME-BLOCKFLOW: Remove virtualizaion when all callers have moved to RenderBlockFlow
+    virtual void moveAllChildrenIncludingFloatsTo(RenderTreeBuilder& builder, RenderBlock& toBlock, RenderBoxModelObject::NormalizeAfterInsertion normalizeAfterInsertion) { moveAllChildrenTo(builder, &toBlock, normalizeAfterInsertion); }
 
 protected:
     virtual void addOverflowFromChildren();
@@ -433,9 +435,6 @@ private:
     LayoutUnit adjustLogicalLeftOffsetForLine(LayoutUnit offsetFromFloats, bool applyTextIndent) const;
 
     const char* renderName() const override;
-
-    // FIXME-BLOCKFLOW: Remove virtualizaion when all callers have moved to RenderBlockFlow
-    virtual void moveAllChildrenIncludingFloatsTo(RenderTreeBuilder& builder, RenderBlock& toBlock, RenderBoxModelObject::NormalizeAfterInsertion normalizeAfterInsertion) { moveAllChildrenTo(builder, &toBlock, normalizeAfterInsertion); }
 
     bool isSelfCollapsingBlock() const override;
     virtual bool childrenPreventSelfCollapsing() const;

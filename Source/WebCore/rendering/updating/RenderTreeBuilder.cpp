@@ -485,6 +485,11 @@ RenderPtr<RenderObject> RenderTreeBuilder::takeChildFromRenderRubyRun(RenderRuby
     return rubyBuilder().takeChild(parent, child);
 }
 
+RenderPtr<RenderObject> RenderTreeBuilder::takeChildFromRenderBlock(RenderBlock& parent, RenderObject& oldChild)
+{
+    return blockBuilder().takeChild(parent, oldChild);
+}
+
 void RenderTreeBuilder::updateAfterDescendants(RenderElement& renderer)
 {
     if (is<RenderBlock>(renderer))
