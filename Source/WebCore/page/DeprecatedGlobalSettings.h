@@ -137,7 +137,6 @@ private:
     WEBCORE_EXPORT static bool gShouldOptOutOfNetworkStateObservation;
 #endif
     WEBCORE_EXPORT static bool gManageAudioSession;
-    WEBCORE_EXPORT static bool gCustomPasteboardDataEnabled;
     
 #if ENABLE(MEDIA_STREAM)
     static bool gMockCaptureDevicesEnabled;

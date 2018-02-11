@@ -1,3 +1,14 @@
+2018-02-10  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Remove an unused static variable in DeprecatedGlobalSettings.h
+        https://bugs.webkit.org/show_bug.cgi?id=182672
+
+        Reviewed by Joseph Pecoraro.
+
+        After r227282, this flag is no longer used anywhere. No change in behavior.
+
+        * page/DeprecatedGlobalSettings.h:
+
 2018-02-10  Zalan Bujtas  <zalan@apple.com>
 
         [RenderTreeBuilder] Move RenderBlock::takeChild mutation to a RenderTreeBuilder
