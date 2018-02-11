@@ -1,3 +1,15 @@
+2018-02-11  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
+
+        [GTK] Scrolling sometimes jumps around
+        https://bugs.webkit.org/show_bug.cgi?id=178519
+
+        Reviewed by Michael Catanzaro.
+
+        * platform/gtk/ScrollAnimatorGtk.cpp:
+        (WebCore::ScrollAnimatorGtk::computeVelocity): use -1 as the multiplier for the accumulated deltas,
+        since all we need is to make them negative. Multiplying by -1000 leads to very high velocities being
+        returned, causing the viewport to scroll to the end of the page.
+
 2018-02-10  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Remove an unused static variable in DeprecatedGlobalSettings.h
