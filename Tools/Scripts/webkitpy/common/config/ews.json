@@ -9,7 +9,8 @@
         "port": "win",
         "watchers": [
             "bfulgham@apple.com"
-        ]
+        ],
+        "runTests": true
     },
     "iOS EWS": {
         "port": "ios-device",
