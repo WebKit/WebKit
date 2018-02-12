@@ -1,3 +1,15 @@
+2018-02-11  Guillaume Emont  <guijemont@igalia.com>
+
+        [MIPS] JSC needs to be built with -latomic
+        https://bugs.webkit.org/show_bug.cgi?id=182610
+
+        Reviewed by Žan Doberšek.
+
+        Since r228149, on MIPS we need to link with -latomic, because
+        __atomic_fetch_add_8 is not available as a compiler intrinsic.
+
+        * CMakeLists.txt:
+
 2018-02-09  Filip Pizlo  <fpizlo@apple.com>
 
         Don't waste memory for error.stack
