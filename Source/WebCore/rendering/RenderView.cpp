@@ -615,11 +615,8 @@ void RenderView::willBeDestroyed(RenderTreeBuilder& builder)
 {
     RenderBlockFlow::willBeDestroyed(builder);
     // FIXME: This is a workaround for leftover content (see webkit.org/b/182547).
-    if (firstChild()) {
-        RenderTreeBuilder builder(*this);
-        while (firstChild())
-            removeAndDestroyChild(builder, *firstChild());
-    }
+    while (firstChild())
+        removeAndDestroyChild(builder, *firstChild());
 
     ASSERT_WITH_MESSAGE(m_rendererCount == 1, "All other renderers in this render tree should have been destroyed");
 }

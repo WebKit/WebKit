@@ -2315,7 +2315,10 @@ void Document::destroyRenderTree()
     unscheduleStyleRecalc();
 
     // FIXME: RenderObject::view() uses m_renderView and we can't null it before destruction is completed
-    m_renderView->destroy();
+    {
+        RenderTreeBuilder builder(*m_renderView);
+        m_renderView->destroy();
+    }
     m_renderView.release();
 
     Node::setRenderer(nullptr);
