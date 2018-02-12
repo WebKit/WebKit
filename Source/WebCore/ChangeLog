@@ -1,3 +1,31 @@
+2018-02-12  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: defer focusedUIElement notifications
+        https://bugs.webkit.org/show_bug.cgi?id=182643
+        <rdar://problem/37394310>
+
+        Reviewed by Zalan Bujtas.
+
+        Deferring focus changes for accessibility has a number of benefits.
+            1) Reduces the chance of calling into layout during layout.
+            2) Coalesces multiple focus notifications that would be needlessly sent.
+            3) Improves performance by not calling out to the accessibility notification machinery during layout.
+
+        In this patch, I also started making more AXObjectCache calls private. This will reduce the chance that clients
+        will call into AXObjectCache during unexpected times.
+
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::deferFocusedUIElementChangeIfNeeded):
+        (WebCore::conditionallyAddNodeToFilterList):
+        (WebCore::filterVectorPairForRemoval):
+        (WebCore::filterMapForRemoval):
+        (WebCore::filterListForRemoval):
+        (WebCore::AXObjectCache::prepareForDocumentDestruction):
+        (WebCore::AXObjectCache::performDeferredCacheUpdate):
+        * accessibility/AXObjectCache.h:
+        * dom/Document.cpp:
+        (WebCore::Document::setFocusedElement):
+
 2018-02-11  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         [GTK] Scrolling sometimes jumps around

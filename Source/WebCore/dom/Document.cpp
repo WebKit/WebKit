@@ -3965,7 +3965,7 @@ bool Document::setFocusedElement(Element* element, FocusDirection direction, Foc
     if (!focusChangeBlocked && m_focusedElement) {
         // Create the AXObject cache in a focus change because GTK relies on it.
         if (AXObjectCache* cache = axObjectCache())
-            cache->handleFocusedUIElementChanged(oldFocusedElement.get(), newFocusedElement.get());
+            cache->deferFocusedUIElementChangeIfNeeded(oldFocusedElement.get(), newFocusedElement.get());
     }
 
     if (!focusChangeBlocked && page())
