@@ -340,6 +340,15 @@ void DOMCache::put(RequestInfo&& info, Ref<FetchResponse>&& response, DOMPromise
         return;
     }
 
+    if (response->isBlobFormData()) {
+        promise.reject(Exception { NotSupportedError, ASCIILiteral("Not implemented") });
+        return;
+    }
+
+    // FIXME: for efficiency, we should load blobs directly instead of going through the readableStream path.
+    if (response->isBlobBody())
+        response->readableStream(*scriptExecutionContext()->execState());
+
     if (response->isBodyReceivedByChunk()) {
         response->consumeBodyReceivedByChunk([promise = WTFMove(promise), request = WTFMove(request), response = WTFMove(response), data = SharedBuffer::create(), pendingActivity = makePendingActivity(*this), this](auto&& result) mutable {
 

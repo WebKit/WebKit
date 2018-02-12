@@ -93,6 +93,8 @@ public:
 
     bool isLoading() const { return !!m_bodyLoader; }
     bool isBodyReceivedByChunk() const { return isLoading() || hasReadableStreamBody(); }
+    bool isBlobBody() const { return !isBodyNull() && body().isBlob(); }
+    bool isBlobFormData() const { return !isBodyNull() && body().isFormData(); }
 
     using ConsumeDataByChunkCallback = WTF::Function<void(ExceptionOr<ReadableStreamChunk*>&&)>;
     void consumeBodyReceivedByChunk(ConsumeDataByChunkCallback&&);
