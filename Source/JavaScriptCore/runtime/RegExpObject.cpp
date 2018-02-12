@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- *  Copyright (C) 2003-2017 Apple Inc. All Rights Reserved.
+ *  Copyright (C) 2003-2018 Apple Inc. All Rights Reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -258,8 +258,10 @@ JSValue RegExpObject::matchGlobal(ExecState* exec, JSGlobalObject* globalObject,
     RETURN_IF_EXCEPTION(scope, { });
 
     String s = string->value(exec);
+    RETURN_IF_EXCEPTION(scope, { });
     RegExpConstructor* regExpConstructor = globalObject->regExpConstructor();
-    
+
+    ASSERT(!s.isNull());
     if (regExp->unicode()) {
         unsigned stringLength = s.length();
         scope.release();

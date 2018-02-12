@@ -1,3 +1,17 @@
+2018-02-12  Mark Lam  <mark.lam@apple.com>
+
+        Fix missing exception check in RegExpObject::matchGlobal().
+        https://bugs.webkit.org/show_bug.cgi?id=182701
+        <rdar://problem/37465865>
+
+        Reviewed by Michael Saboff.
+
+        This issue was discovered when running JSC tests on an asm LLInt build with
+        JSC_useJIT=false.
+
+        * runtime/RegExpObject.cpp:
+        (JSC::RegExpObject::matchGlobal):
+
 2018-02-11  Guillaume Emont  <guijemont@igalia.com>
 
         [MIPS] JSC needs to be built with -latomic
