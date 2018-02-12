@@ -1,3 +1,16 @@
+2018-02-12  Ryan Haddad  <ryanhaddad@apple.com>
+
+        [iOS] media tests failing ASSERT_NOT_REACHED() in WebCore::VideoFullscreenInterfaceAVKit::cleanupFullscreen()
+        https://bugs.webkit.org/show_bug.cgi?id=182527
+
+        Reviewed by Alexey Proskuryakov.
+
+        Temporarily remove an assertion from VideoFullscreenInterfaceAVKit to stop tests from crashing on iOS
+        while the root cause is being investigated.
+
+        * platform/ios/VideoFullscreenInterfaceAVKit.mm:
+        (VideoFullscreenInterfaceAVKit::exitFullscreenHandler):
+
 2018-02-12  Zalan Bujtas  <zalan@apple.com>
 
         [RenderTreeBuilder] Remove redundant RenderTreeBuilder instance
