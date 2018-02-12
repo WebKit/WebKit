@@ -1,3 +1,27 @@
+2018-02-12  Zalan Bujtas  <zalan@apple.com>
+
+        [RenderTreeBuilder] Move RenderBlock::dropAnonymousBoxChild to RenderTreeBuilder
+        https://bugs.webkit.org/show_bug.cgi?id=182704
+        <rdar://problem/37469469>
+
+        Reviewed by Antti Koivisto.
+
+        All the callsites are now in RenderTreeBuilder.
+
+        No change in functionality.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::dropAnonymousBoxChild): Deleted.
+        * rendering/RenderBlock.h:
+        * rendering/updating/RenderTreeBuilder.cpp:
+        (WebCore::RenderTreeBuilder::removeAnonymousWrappersForInlineChildrenIfNeeded):
+        (WebCore::RenderTreeBuilder::dropAnonymousBoxChild):
+        * rendering/updating/RenderTreeBuilder.h:
+        * rendering/updating/RenderTreeBuilderBlock.cpp:
+        (WebCore::RenderTreeBuilder::Block::takeChild):
+        (WebCore::RenderTreeBuilder::Block::dropAnonymousBoxChild):
+        * rendering/updating/RenderTreeBuilderBlock.h:
+
 2018-02-12  Matt Lewis  <jlewis3@apple.com>
 
         Unreviewed, rolling out r228376.

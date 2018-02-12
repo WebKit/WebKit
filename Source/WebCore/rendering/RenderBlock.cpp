@@ -482,18 +482,6 @@ void RenderBlock::deleteLines()
         cache->deferRecomputeIsIgnored(element());
 }
 
-void RenderBlock::dropAnonymousBoxChild(RenderTreeBuilder& builder, RenderBlock& child)
-{
-    setNeedsLayoutAndPrefWidthsRecalc();
-    setChildrenInline(child.childrenInline());
-    RenderObject* nextSibling = child.nextSibling();
-
-    auto toBeDeleted = takeChildInternal(child);
-    child.moveAllChildrenTo(builder, this, nextSibling, RenderBoxModelObject::NormalizeAfterInsertion::No);
-    // Delete the now-empty block's lines and nuke it.
-    child.deleteLines();
-}
-
 RenderPtr<RenderObject> RenderBlock::takeChild(RenderTreeBuilder& builder, RenderObject& oldChild)
 {
     return builder.takeChildFromRenderBlock(*this, oldChild);

@@ -88,6 +88,7 @@ public:
     void removeFromParentAndDestroyCleaningUpAnonymousWrappers(RenderObject& child);
     void multiColumnDescendantInserted(RenderMultiColumnFlow&, RenderObject& newDescendant);
     void multiColumnRelativeWillBeRemoved(RenderMultiColumnFlow&, RenderObject& relative);
+    void dropAnonymousBoxChild(RenderBlock& parent, RenderBlock& child);
 
 private:
     class FirstLetter;

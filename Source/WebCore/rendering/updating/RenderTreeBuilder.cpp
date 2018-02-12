@@ -342,7 +342,7 @@ void RenderTreeBuilder::removeAnonymousWrappersForInlineChildrenIfNeeded(RenderE
     for (current = blockParent.firstChild(); current; current = next) {
         next = current->nextSibling();
         if (current->isAnonymousBlock())
-            blockParent.dropAnonymousBoxChild(*this, downcast<RenderBlock>(*current));
+            blockBuilder().dropAnonymousBoxChild(blockParent, downcast<RenderBlock>(*current));
     }
 }
 
@@ -405,6 +405,12 @@ void RenderTreeBuilder::removeFromParentAndDestroyCleaningUpAnonymousWrappers(Re
         removeFromParentAndDestroyCleaningUpAnonymousWrappers(destroyRootParent);
     // WARNING: child is deleted here.
 }
+
+void RenderTreeBuilder::dropAnonymousBoxChild(RenderBlock& parent, RenderBlock& child)
+{
+    blockBuilder().dropAnonymousBoxChild(parent, child);
+}
+
 void RenderTreeBuilder::multiColumnRelativeWillBeRemoved(RenderMultiColumnFlow& flow, RenderObject& relative)
 {
     multiColumnBuilder().multiColumnRelativeWillBeRemoved(flow, relative);

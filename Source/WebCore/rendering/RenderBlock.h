@@ -191,7 +191,6 @@ public:
 
     static RenderPtr<RenderBlock> createAnonymousWithParentRendererAndDisplay(const RenderBox& parent, EDisplay = BLOCK);
     RenderPtr<RenderBlock> createAnonymousBlock(EDisplay = BLOCK) const;
-    void dropAnonymousBoxChild(RenderTreeBuilder&, RenderBlock& child);
 
     RenderPtr<RenderBox> createAnonymousBoxWithSameTypeAs(const RenderBox&) const override;
 
