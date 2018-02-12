@@ -1,3 +1,11 @@
+2018-02-12  Per Arne Vollan  <pvollan@apple.com>
+
+        Mark imported/mozilla/svg/conditions-07.svg as a flaky failure on Windows.
+
+        Unreviewed test gardening.
+
+        * platform/win/TestExpectations:
+
 2018-02-12  Matt Lewis  <jlewis3@apple.com>
 
         Skipped webgl/1.0.3/conformance/rendering/many-draw-calls.html on iOS Simulator Debug WK2
