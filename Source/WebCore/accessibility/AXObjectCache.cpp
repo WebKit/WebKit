@@ -1017,14 +1017,6 @@ void AXObjectCache::handleMenuItemSelected(Node* node)
     postNotification(getOrCreate(node), &document(), AXMenuListItemSelected);
 }
     
-void AXObjectCache::deferFocusedUIElementChangeIfNeeded(Node* oldNode, Node* newNode)
-{
-    if (nodeAndRendererAreValid(newNode) && rendererNeedsDeferredUpdate(*newNode->renderer()))
-        m_deferredFocusedNodeChange.append({ oldNode, newNode });
-    else
-        handleFocusedUIElementChanged(oldNode, newNode);
-}
-    
 void AXObjectCache::handleFocusedUIElementChanged(Node* oldNode, Node* newNode)
 {
     handleMenuItemSelected(newNode);
@@ -2785,33 +2777,25 @@ const Element* AXObjectCache::rootAXEditableElement(const Node* node)
     return result;
 }
 
-static void conditionallyAddNodeToFilterList(Node* node, const Document& document, HashSet<Node*>& nodesToRemove)
-{
-    if (!node->isConnected() || &node->document() == &document)
-        nodesToRemove.add(node);
-}
-    
-template<typename T>
-static void filterVectorPairForRemoval(const Vector<std::pair<T, T>>& list, const Document& document, HashSet<Node*>& nodesToRemove)
-{
-    for (auto& entry : list) {
-        conditionallyAddNodeToFilterList(entry.first, document, nodesToRemove);
-        conditionallyAddNodeToFilterList(entry.second, document, nodesToRemove);
-    }
-}
-    
 template<typename T, typename U>
 static void filterMapForRemoval(const HashMap<T, U>& list, const Document& document, HashSet<Node*>& nodesToRemove)
 {
-    for (auto& entry : list)
-        conditionallyAddNodeToFilterList(entry.key, document, nodesToRemove);
+    for (auto& entry : list) {
+        auto* node = entry.key;
+        if (node->isConnected() && &node->document() != &document)
+            continue;
+        nodesToRemove.add(node);
+    }
 }
 
 template<typename T>
 static void filterListForRemoval(const ListHashSet<T>& list, const Document& document, HashSet<Node*>& nodesToRemove)
 {
-    for (auto* node : list)
-        conditionallyAddNodeToFilterList(node, document, nodesToRemove);
+    for (auto* node : list) {
+        if (node->isConnected() && &node->document() != &document)
+            continue;
+        nodesToRemove.add(node);
+    }
 }
 
 void AXObjectCache::prepareForDocumentDestruction(const Document& document)
@@ -2824,7 +2808,6 @@ void AXObjectCache::prepareForDocumentDestruction(const Document& document)
     filterListForRemoval(m_deferredSelectedChildredChangedList, document, nodesToRemove);
     filterMapForRemoval(m_deferredTextFormControlValue, document, nodesToRemove);
     filterMapForRemoval(m_deferredAttributeChange, document, nodesToRemove);
-    filterVectorPairForRemoval(m_deferredFocusedNodeChange, document, nodesToRemove);
 
     for (auto* node : nodesToRemove)
         remove(*node);
@@ -2868,10 +2851,6 @@ void AXObjectCache::performDeferredCacheUpdate()
     for (auto& deferredAttributeChangeContext : m_deferredAttributeChange)
         handleAttributeChange(deferredAttributeChangeContext.value, deferredAttributeChangeContext.key);
     m_deferredAttributeChange.clear();
-    
-    for (auto& deferredFocusedChangeContext : m_deferredFocusedNodeChange)
-        handleFocusedUIElementChanged(deferredFocusedChangeContext.first, deferredFocusedChangeContext.second);
-    m_deferredFocusedNodeChange.clear();
 }
     
 void AXObjectCache::deferRecomputeIsIgnoredIfNeeded(Element* element)
