@@ -174,7 +174,7 @@ void RenderTreeBuilder::FirstLetter::updateStyle(RenderBlock& firstLetterBlock, 
         while (RenderObject* child = firstLetter->firstChild()) {
             if (is<RenderText>(*child))
                 downcast<RenderText>(*child).removeAndDestroyTextBoxes();
-            auto toMove = firstLetter->takeChild(m_builder, *child);
+            auto toMove = m_builder.takeChild(*firstLetter, *child);
             m_builder.insertChild(*newFirstLetter, WTFMove(toMove));
         }
 

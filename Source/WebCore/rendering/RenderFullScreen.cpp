@@ -132,7 +132,7 @@ void RenderFullScreen::wrapExistingRenderer(RenderElement& renderer, Document& d
 
     builder.insertChild(parent, WTFMove(newFullscreenRenderer), &renderer);
 
-    auto toMove = parent.takeChild(builder, renderer);
+    auto toMove = builder.takeChild(parent, renderer);
 
     // Always just do a full layout to ensure that line boxes get deleted properly.
     // Because objects moved from |parent| to |fullscreenRenderer|, we want to
@@ -178,7 +178,7 @@ void RenderFullScreen::unwrapRenderer(bool& requiresRenderTreeRebuild)
             // lying around on the child.
             if (is<RenderBox>(*child))
                 downcast<RenderBox>(*child).clearOverrideSize();
-            auto childToMove = child->parent()->takeChild(builder, *child);
+            auto childToMove = builder.takeChild(*child->parent(), *child);
             builder.insertChild(*parent(), WTFMove(childToMove), this);
             parent()->setNeedsLayoutAndPrefWidthsRecalc();
         }

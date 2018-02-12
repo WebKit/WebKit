@@ -1,5 +1,53 @@
 2018-02-12  Zalan Bujtas  <zalan@apple.com>
 
+        [RenderTreeBuilder] Introduce RenderTreebuilder::takeChild
+        https://bugs.webkit.org/show_bug.cgi?id=182707
+        <rdar://problem/37473433>
+
+        Reviewed by Antti Koivisto.
+
+        All takeChild calls should go through RenderTreeBuilder::takeChild from now on.
+        This patch also moves the Ruby related takeChild calls to RenderTreeBuilder.
+
+        No change in functionality.
+
+        * rendering/RenderButton.cpp:
+        (WebCore::RenderButton::takeChild):
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::removeAndDestroyChild):
+        * rendering/RenderFullScreen.cpp:
+        (WebCore::RenderFullScreen::wrapExistingRenderer):
+        (WebCore::RenderFullScreen::unwrapRenderer):
+        * rendering/RenderMenuList.cpp:
+        (RenderMenuList::takeChild):
+        * rendering/RenderRuby.cpp:
+        (WebCore::RenderRubyAsInline::takeChild): Deleted.
+        (WebCore::RenderRubyAsBlock::takeChild): Deleted.
+        * rendering/RenderRuby.h:
+        * rendering/RenderRubyRun.cpp:
+        (WebCore::RenderRubyRun::takeChild): Deleted.
+        * rendering/RenderRubyRun.h:
+        * rendering/updating/RenderTreeBuilder.cpp:
+        (WebCore::RenderTreeBuilder::takeChild):
+        (WebCore::RenderTreeBuilder::takeChildFromRenderRubyAsInline): Deleted.
+        (WebCore::RenderTreeBuilder::takeChildFromRenderRubyAsBlock): Deleted.
+        (WebCore::RenderTreeBuilder::takeChildFromRenderRubyRun): Deleted.
+        * rendering/updating/RenderTreeBuilder.h:
+        * rendering/updating/RenderTreeBuilderFirstLetter.cpp:
+        (WebCore::RenderTreeBuilder::FirstLetter::updateStyle):
+        * rendering/updating/RenderTreeBuilderList.cpp:
+        (WebCore::RenderTreeBuilder::List::updateItemMarker):
+        * rendering/updating/RenderTreeBuilderMultiColumn.cpp:
+        (WebCore::RenderTreeBuilder::MultiColumn::createFragmentedFlow):
+        (WebCore::RenderTreeBuilder::MultiColumn::destroyFragmentedFlow):
+        (WebCore::RenderTreeBuilder::MultiColumn::processPossibleSpannerDescendant):
+        * rendering/updating/RenderTreeBuilderRuby.cpp:
+        (WebCore::RenderTreeBuilder::Ruby::takeChild):
+        * rendering/updating/RenderTreeBuilderTable.cpp:
+        (WebCore::RenderTreeBuilder::Table::collapseAndDestroyAnonymousSiblingRows):
+
+2018-02-12  Zalan Bujtas  <zalan@apple.com>
+
         [RenderTreeBuilder] Move RenderBlock::dropAnonymousBoxChild to RenderTreeBuilder
         https://bugs.webkit.org/show_bug.cgi?id=182704
         <rdar://problem/37469469>

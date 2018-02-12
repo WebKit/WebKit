@@ -97,11 +97,6 @@ bool RenderRubyRun::isChildAllowed(const RenderObject& child, const RenderStyle&
     return child.isInline() || child.isRubyText();
 }
 
-RenderPtr<RenderObject> RenderRubyRun::takeChild(RenderTreeBuilder& builder, RenderObject& child)
-{
-    return builder.takeChildFromRenderRubyRun(*this, child);
-}
-
 RenderPtr<RenderRubyBase> RenderRubyRun::createRubyBase() const
 {
     auto newStyle = RenderStyle::createAnonymousStyleWithDisplay(style(), BLOCK);
