@@ -1,3 +1,20 @@
+2018-02-12  Saam Barati  <sbarati@apple.com>
+
+        DFG::emitCodeToGetArgumentsArrayLength needs to handle NewArrayBuffer/PhantomNewArrayBuffer
+        https://bugs.webkit.org/show_bug.cgi?id=182706
+        <rdar://problem/36833681>
+
+        Reviewed by Filip Pizlo.
+
+        When we added support for PhantomNewArrayBuffer, we forgot to update
+        the emitCodeToGetArgumentsArrayLength function to handle PhantomNewArrayBuffer.
+        This patch adds that support. It's trivial to generate the length for
+        a PhantomNewArrayBuffer node since it's a constant buffer, with a constant
+        length.
+
+        * dfg/DFGArgumentsUtilities.cpp:
+        (JSC::DFG::emitCodeToGetArgumentsArrayLength):
+
 2018-02-12  Mark Lam  <mark.lam@apple.com>
 
         Add more support for pointer preparations.

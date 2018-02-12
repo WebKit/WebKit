@@ -65,9 +65,15 @@ Node* emitCodeToGetArgumentsArrayLength(
     DFG_ASSERT(
         graph, arguments,
         arguments->op() == CreateDirectArguments || arguments->op() == CreateScopedArguments
-        || arguments->op() == CreateClonedArguments || arguments->op() == CreateRest
-        || arguments->op() == PhantomDirectArguments || arguments->op() == PhantomClonedArguments || arguments->op() == PhantomCreateRest,
+        || arguments->op() == CreateClonedArguments || arguments->op() == CreateRest || arguments->op() == NewArrayBuffer
+        || arguments->op() == PhantomDirectArguments || arguments->op() == PhantomClonedArguments
+        || arguments->op() == PhantomCreateRest || arguments->op() == PhantomNewArrayBuffer,
         arguments->op());
+
+    if (arguments->op() == NewArrayBuffer || arguments->op() == PhantomNewArrayBuffer) {
+        return insertionSet.insertConstant(
+            nodeIndex, origin, jsNumber(arguments->castOperand<JSFixedArray*>()->length()));
+    }
     
     InlineCallFrame* inlineCallFrame = arguments->origin.semantic.inlineCallFrame;
 
