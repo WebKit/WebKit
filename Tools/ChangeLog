@@ -1,3 +1,14 @@
+2018-02-12  Ross Kirsling  <ross.kirsling@sony.com>
+
+        download-latest-github-release .py should not use "browser download URL".
+        https://bugs.webkit.org/show_bug.cgi?id=182646
+
+        Reviewed by Per Arne Vollan.
+
+        * Scripts/download-latest-github-release.py:
+        Download request should be a proper GitHub API call and should actually include the token when applicable.
+        (Also clean up usage of args and print while we're in here.)
+
 2018-02-12  Per Arne Vollan  <pvollan@apple.com>
 
         EWS should run Windows tests.

@@ -59,13 +59,13 @@ def parse_args(argv):
     return parser.parse_args(argv)
 
 
-def find_latest_release(args):
-    url = '{}/repos/{}/releases/latest'.format(args.endpoint.rstrip('/'), args.repo)
+def find_latest_release(endpoint, repo, filename, token):
+    url = '{}/repos/{}/releases/latest'.format(endpoint.rstrip('/'), repo)
 
     request = urllib2.Request(url)
     request.add_header('Accept', 'application/vnd.github.v3+json')
-    if args.token:
-        request.add_header('Authorization', 'token {}'.format(args.token))
+    if token:
+        request.add_header('Authorization', 'token {}'.format(token))
 
     try:
         response = urllib2.urlopen(request)
@@ -75,15 +75,20 @@ def find_latest_release(args):
 
     data = json.loads(response.read())
     for asset in data['assets']:
-        if asset['name'] == args.filename:
+        if asset['name'] == filename:
             version_info = {'tag_name': data['tag_name'], 'updated_at': asset['updated_at']}
-            return asset['browser_download_url'], version_info
+            return asset['url'], version_info
     return None, None
 
 
-def download_release(source_url, target_path):
+def download_release(source_url, target_path, token):
+    request = urllib2.Request(source_url)
+    request.add_header('Accept', 'application/octet-stream')
+    if token:
+        request.add_header('Authorization', 'token {}'.format(token))
+
     with open(target_path, 'wb') as file:
-        file.write(urllib2.urlopen(source_url).read())
+        file.write(urllib2.urlopen(request).read())
 
 
 def load_version_info(version_info_path):
@@ -109,12 +114,12 @@ def main(argv):
 
     existing_version_info = load_version_info(version_info_path)
     if existing_version_info:
-        print('Found existing release:', existing_version_info['tag_name'])
+        print('Found existing release: {}'.format(existing_version_info['tag_name']))
     else:
         print('No existing release found.')
 
     print('Seeking latest release from {}...'.format(args.repo))
-    release_url, latest_version_info = find_latest_release(args)
+    release_url, latest_version_info = find_latest_release(args.endpoint, args.repo, args.filename, args.token)
 
     if not latest_version_info:
         if existing_version_info:
@@ -124,7 +129,7 @@ def main(argv):
         print('No release found!')
         return Status.COULD_NOT_FIND
 
-    print('Found latest release:', latest_version_info['tag_name'])
+    print('Found latest release: {}'.format(latest_version_info['tag_name']))
 
     if latest_version_info == existing_version_info:
         print('Already up-to-date!')
@@ -134,7 +139,7 @@ def main(argv):
         os.makedirs(args.output_dir)
 
     print('Downloading to {}...'.format(os.path.abspath(args.output_dir)))
-    download_release(release_url, binary_path)
+    download_release(release_url, binary_path, args.token)
     save_version_info(version_info_path, latest_version_info)
     print('Done!')
 
