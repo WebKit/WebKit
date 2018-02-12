@@ -53,6 +53,7 @@
 #import "WKPreviewElementInfoInternal.h"
 #import "WKSelectMenuViewController.h"
 #import "WKTextInputViewController.h"
+#import "WKTimePickerViewController.h"
 #import "WKUIDelegatePrivate.h"
 #import "WKWebViewConfiguration.h"
 #import "WKWebViewConfigurationPrivate.h"
@@ -4091,6 +4092,7 @@ static bool isAssistableInputType(InputType type)
     [self dismissTextInputViewController:YES];
     [self dismissNumberPadViewController:YES];
     [self dismissSelectMenuViewController:YES];
+    [self dismissTimePickerViewController:YES];
     if (!_isChangingFocus)
         [self dismissFocusedFormControlViewController:[_focusedFormControlViewController isVisible]];
 #endif
@@ -4103,6 +4105,25 @@ static bool isAssistableInputType(InputType type)
 }
 
 #if ENABLE(EXTRA_ZOOM_MODE)
+
+- (void)presentTimePickerViewController:(BOOL)animated
+{
+    if (_timePickerViewController)
+        return;
+
+    _timePickerViewController = adoptNS([[WKTimePickerViewController alloc] initWithText:_assistedNodeInformation.value textSuggestions:@[ ]]);
+    [_timePickerViewController setDelegate:self];
+    [_focusedFormControlViewController presentViewController:_timePickerViewController.get() animated:animated completion:nil];
+}
+
+- (void)dismissTimePickerViewController:(BOOL)animated
+{
+    if (!_timePickerViewController)
+        return;
+
+    auto timePickerViewController = WTFMove(_timePickerViewController);
+    [timePickerViewController dismissViewControllerAnimated:animated completion:nil];
+}
 
 - (void)presentSelectMenuViewController:(BOOL)animated
 {
@@ -4164,15 +4185,6 @@ static bool isAssistableInputType(InputType type)
 - (void)presentViewControllerForAssistedNode:(const AssistedNodeInformation&)info
 {
     switch (info.elementType) {
-    case InputType::ContentEditable:
-    case InputType::Text:
-    case InputType::Password:
-    case InputType::TextArea:
-    case InputType::Search:
-    case InputType::Email:
-    case InputType::URL:
-        [self presentTextInputViewController:YES];
-        break;
     case InputType::Number:
     case InputType::NumberPad:
     case InputType::Phone:
@@ -4181,7 +4193,13 @@ static bool isAssistableInputType(InputType type)
     case InputType::Select:
         [self presentSelectMenuViewController:YES];
         break;
+    case InputType::Time:
+        [self presentTimePickerViewController:YES];
+        break;
+    case InputType::None:
+        break;
     default:
+        [self presentTextInputViewController:YES];
         break;
     }
 }
@@ -4209,16 +4227,8 @@ static bool isAssistableInputType(InputType type)
 {
     // FIXME: Update cached AssistedNodeInformation state in the UI process.
     _page->setTextAsync(text);
-}
 
-- (void)textInputController:(WKTextFormControlViewController *)controller didRequestDismissalWithAction:(WKFormControlAction)action
-{
-    if (action == WKFormControlActionCancel) {
-        _page->blurAssistedNode();
-        return;
-    }
-
-    if (_assistedNodeInformation.formAction.isEmpty() && !_assistedNodeInformation.hasNextNode && !_assistedNodeInformation.hasPreviousNode) {
+    if (![self actionNameForFocusedFormControlController:_focusedFormControlViewController.get()] && !_assistedNodeInformation.hasNextNode && !_assistedNodeInformation.hasPreviousNode) {
         // In this case, there's no point in collapsing down to the form control focus UI because there's nothing the user could potentially do
         // besides dismiss the UI, so we just automatically dismiss the focused form control UI.
         _page->blurAssistedNode();
@@ -4228,6 +4238,12 @@ static bool isAssistableInputType(InputType type)
     [_focusedFormControlViewController show:NO];
     [self dismissTextInputViewController:YES];
     [self dismissNumberPadViewController:YES];
+    [self dismissTimePickerViewController:YES];
+}
+
+- (void)textInputControllerDidRequestDismissal:(WKTextFormControlViewController *)controller
+{
+    _page->blurAssistedNode();
 }
 
 - (void)focusedFormControlControllerDidSubmit:(WKFocusedFormControlViewController *)controller
@@ -4256,7 +4272,16 @@ static bool isAssistableInputType(InputType type)
     if (_assistedNodeInformation.formAction.isEmpty())
         return nil;
 
-    return _assistedNodeInformation.elementType == InputType::Search ? formControlSearchButtonTitle() : formControlGoButtonTitle();
+    switch (_assistedNodeInformation.elementType) {
+    case InputType::Select:
+    case InputType::Time:
+    case InputType::Date:
+        return nil;
+    case InputType::Search:
+        return formControlSearchButtonTitle();
+    default:
+        return formControlGoButtonTitle();
+    }
 }
 
 - (void)focusedFormControlControllerDidRequestNextNode:(WKFocusedFormControlViewController *)controller
@@ -4369,6 +4394,9 @@ static bool isAssistableInputType(InputType type)
         return;
 
     if ([_selectMenuViewController handleWheelEvent:event])
+        return;
+
+    if ([_timePickerViewController handleWheelEvent:event])
         return;
 
     if ([_focusedFormControlViewController handleWheelEvent:event])

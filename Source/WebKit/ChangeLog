@@ -1,3 +1,51 @@
+2018-02-12  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Extra zoom mode] Add support for <input type='time'> using time picker UI
+        https://bugs.webkit.org/show_bug.cgi?id=182683
+        <rdar://problem/35143162>
+
+        Reviewed by Tim Horton.
+
+        Adds support for showing a time picker when an input of type time is focused in extra zoomed mode.
+
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _stopAssistingNode]):
+        (-[WKContentView presentTimePickerViewController:]):
+        (-[WKContentView dismissTimePickerViewController:]):
+
+        Add helpers to dismiss and present the time picker view controller.
+
+        (-[WKContentView presentViewControllerForAssistedNode:]):
+
+        When focusing InputType::Time, present a time picker. Additionally, tweak the logic here to use the generic text
+        input view controller as a fallback when the other input view controllers (number pads, select menus and time
+        pickers thus far) are not relevant. This prevents us from completely being unable to edit form controls that are
+        currently unsupported.
+
+        (-[WKContentView textInputController:didCommitText:]):
+        (-[WKContentView textInputControllerDidRequestDismissal:]):
+
+        Tweak WKContentView for changes to WKTextFormControlViewControllerDelegate.
+
+        (-[WKContentView actionNameForFocusedFormControlController:]):
+
+        Adjust this implementation to hide the focused form control "Go" button for selects and time inputs. This
+        currently doesn't work for these form controls because it relies on implicit form submission; this should be
+        fixed by future changes, after which we should revert this adjustment.
+
+        (-[WKContentView _wheelChangedWithEvent:]):
+
+        Delegate wheel events to the time picker if needed.
+
+        (-[WKContentView textInputController:didRequestDismissalWithAction:]): Deleted.
+
+        Renamed to -textInputControllerDidRequestDismissal:.
+
+        * UIProcess/ios/forms/WKTimePickerViewController.h: Added.
+        * UIProcess/ios/forms/WKTimePickerViewController.mm: Added.
+        * WebKit.xcodeproj/project.pbxproj:
+
 2018-02-11  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [GTK] Unify builds for platform-specific files in WebKit layer

@@ -740,6 +740,8 @@
 		2EA7B3D22026CEF8009CE5AC /* WKNumberPadViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2EA7B3D02026CEF8009CE5AC /* WKNumberPadViewController.mm */; };
 		2EA7B3D52026CF23009CE5AC /* WKNumberPadView.h in Headers */ = {isa = PBXBuildFile; fileRef = 2EA7B3D32026CF23009CE5AC /* WKNumberPadView.h */; };
 		2EA7B3D62026CF23009CE5AC /* WKNumberPadView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2EA7B3D42026CF23009CE5AC /* WKNumberPadView.mm */; };
+		2EB6FC01203021960017E619 /* WKTimePickerViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2EB6FBFF203021960017E619 /* WKTimePickerViewController.h */; };
+		2EB6FC02203021960017E619 /* WKTimePickerViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2EB6FC00203021960017E619 /* WKTimePickerViewController.mm */; };
 		2EE4529F20292D2A00D81777 /* WKSelectMenuViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 2EE4529C20292BD900D81777 /* WKSelectMenuViewController.h */; };
 		2EE452A020292D2E00D81777 /* WKSelectMenuViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2EE4529B20292BD800D81777 /* WKSelectMenuViewController.mm */; };
 		2F809DD71FBD1BC9005FE63A /* TouchBarMenuItemData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2F809DD51FBD1BC9005FE63A /* TouchBarMenuItemData.cpp */; };
@@ -3100,6 +3102,8 @@
 		2EA7B3D02026CEF8009CE5AC /* WKNumberPadViewController.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = WKNumberPadViewController.mm; path = ios/forms/WKNumberPadViewController.mm; sourceTree = "<group>"; };
 		2EA7B3D32026CF23009CE5AC /* WKNumberPadView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = WKNumberPadView.h; path = ios/forms/WKNumberPadView.h; sourceTree = "<group>"; };
 		2EA7B3D42026CF23009CE5AC /* WKNumberPadView.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = WKNumberPadView.mm; path = ios/forms/WKNumberPadView.mm; sourceTree = "<group>"; };
+		2EB6FBFF203021960017E619 /* WKTimePickerViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = WKTimePickerViewController.h; path = ios/forms/WKTimePickerViewController.h; sourceTree = "<group>"; };
+		2EB6FC00203021960017E619 /* WKTimePickerViewController.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = WKTimePickerViewController.mm; path = ios/forms/WKTimePickerViewController.mm; sourceTree = "<group>"; };
 		2EE4529B20292BD800D81777 /* WKSelectMenuViewController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WKSelectMenuViewController.mm; path = ios/forms/WKSelectMenuViewController.mm; sourceTree = "<group>"; };
 		2EE4529C20292BD900D81777 /* WKSelectMenuViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WKSelectMenuViewController.h; path = ios/forms/WKSelectMenuViewController.h; sourceTree = "<group>"; };
 		2F809DD51FBD1BC9005FE63A /* TouchBarMenuItemData.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TouchBarMenuItemData.cpp; sourceTree = "<group>"; };
@@ -8366,6 +8370,8 @@
 				2E16B6C92017B768008996D6 /* WKTextInputViewController.mm */,
 				2E16B6D22017BA37008996D6 /* WKTextSuggestionButton.h */,
 				2E16B6D32017BA37008996D6 /* WKTextSuggestionButton.mm */,
+				2EB6FBFF203021960017E619 /* WKTimePickerViewController.h */,
+				2EB6FC00203021960017E619 /* WKTimePickerViewController.mm */,
 			);
 			name = forms;
 			sourceTree = "<group>";
@@ -9550,6 +9556,7 @@
 				2E16B6CA2017B768008996D6 /* WKTextInputViewController.h in Headers */,
 				0FCB4E6818BBE3D9000FCFC9 /* WKTextInputWindowController.h in Headers */,
 				2E16B6D42017BA37008996D6 /* WKTextSuggestionButton.h in Headers */,
+				2EB6FC01203021960017E619 /* WKTimePickerViewController.h in Headers */,
 				BC407608124FF0270068F20A /* WKType.h in Headers */,
 				7CD5EBBF1746B04C000C1C45 /* WKTypeRefWrapper.h in Headers */,
 				1AD8790A18B6C38A006CAFD7 /* WKUIDelegate.h in Headers */,
@@ -11180,6 +11187,7 @@
 				2E16B6CB2017B768008996D6 /* WKTextInputViewController.mm in Sources */,
 				0FCB4E6918BBE3D9000FCFC9 /* WKTextInputWindowController.mm in Sources */,
 				2E16B6D52017BA37008996D6 /* WKTextSuggestionButton.mm in Sources */,
+				2EB6FC02203021960017E619 /* WKTimePickerViewController.mm in Sources */,
 				BC407607124FF0270068F20A /* WKType.cpp in Sources */,
 				7CD5EBBE1746B04C000C1C45 /* WKTypeRefWrapper.mm in Sources */,
 				BC407609124FF0270068F20A /* WKURL.cpp in Sources */,

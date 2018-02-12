@@ -88,6 +88,7 @@ class WebPageProxy;
 @class WKNumberPadViewController;
 @class WKSelectMenuViewController;
 @class WKTextInputViewController;
+@class WKTimePickerViewController;
 #endif
 
 typedef void (^UIWKAutocorrectionCompletionHandler)(UIWKAutocorrectionRects *rectsForInput);
@@ -249,6 +250,7 @@ struct WKAutoCorrectionData {
     RetainPtr<WKFocusedFormControlViewController> _focusedFormControlViewController;
     RetainPtr<WKNumberPadViewController> _numberPadViewController;
     RetainPtr<WKSelectMenuViewController> _selectMenuViewController;
+    RetainPtr<WKTimePickerViewController> _timePickerViewController;
 #endif
 }
 
