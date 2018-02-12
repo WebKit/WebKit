@@ -1,0 +1,11 @@
+
+FAIL createImageBitmap rejects with RangeError if width is zero Can't find variable: createImageBitmap
+FAIL createImageBitmap rejects with RangeError if height is zero Can't find variable: createImageBitmap
+FAIL createImageBitmap rejects with RangeError if width is negative Can't find variable: createImageBitmap
+FAIL createImageBitmap rejects with RangeError if height is negative Can't find variable: createImageBitmap
+FAIL createImageBitmap rejects with InvalidStateError on an HTMLImageElement with no image data Can't find variable: createImageBitmap
+FAIL createImageBitmap from an HTMLImageElement with image data promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: createImageBitmap"
+FAIL createImageBitmap rejects with InvalidStateError from an canvas with zero dimensions Can't find variable: createImageBitmap
+FAIL createImageBitmap from an canvas promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: createImageBitmap"
+FAIL A closed ImageBitmap has zero width and height promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: createImageBitmap"
+

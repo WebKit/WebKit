@@ -1,0 +1,3 @@
+
+FAIL Test that canvas.getContext('bitmaprenderer') returns an instance of ImageBitmapRenderingContext Can't find variable: ImageBitmapRenderingContext
+

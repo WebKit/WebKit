@@ -1,0 +1,9 @@
+
+FAIL drawImage of ImageBitmap from HTMLImageElement promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: createImageBitmap"
+FAIL drawImage of ImageBitmap from HTMLCanvasElement promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: createImageBitmap"
+FAIL drawImage of ImageBitmap from HTMLImageElement with cropping promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: createImageBitmap"
+FAIL drawImage of ImageBitmap from HTMLImageElement with cropping and different origin promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: createImageBitmap"
+FAIL drawImage of ImageBitmap from HTMLImageElement with cropping and different non-zero origin promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: createImageBitmap"
+FAIL drawImage throws with InvalidStateError if the ImageBitmap is closed promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: createImageBitmap"
+FAIL drawImage throws with IndexSizeError if the source rectangle of the ImageBitmap is empty promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: createImageBitmap"
+

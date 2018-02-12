@@ -1,0 +1,12 @@
+
+FAIL createImageBitmap rejects with TypeError if resizeWidth is negative Can't find variable: createImageBitmap
+FAIL createImageBitmap rejects with TypeError if resizeHeight is negative Can't find variable: createImageBitmap
+FAIL createImageBitmap from HTMLImageElement with cropped source promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: createImageBitmap"
+FAIL createImageBitmap from HTMLCanvasElement with cropped source promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: createImageBitmap"
+FAIL createImageBitmap with a cropping rectangle that is bigger than the source promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: createImageBitmap"
+FAIL createImageBitmap with resizeWidth and resizeHeight promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: createImageBitmap"
+FAIL createImageBitmap with only resizeHeight should calculate resizeWidth promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: createImageBitmap"
+FAIL createImageBitmap with only resizeWidth should calculate resizeHeight promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: createImageBitmap"
+FAIL createImageBitmap with an SVG uses intrinsic size promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: createImageBitmap"
+FAIL createImageBitmap with an SVG that has no intrinsic size uses resize parameters promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: createImageBitmap"
+

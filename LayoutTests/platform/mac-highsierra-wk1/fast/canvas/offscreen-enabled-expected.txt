@@ -1,0 +1,3 @@
+FAIL: createImageBitmap should exist
+
+FAIL: OffscreenCanvas should exist

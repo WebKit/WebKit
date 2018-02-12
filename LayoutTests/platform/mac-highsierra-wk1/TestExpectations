@@ -1,0 +1,2 @@
+# Skip the test rather than update the reference file.
+http/wpt/offscreen-canvas/transferToImageBitmap-webgl.html [ Skip ]

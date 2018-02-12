@@ -1,0 +1,5 @@
+
+FAIL Test that an ImageBitmapRenderingContext with alpha disabled makes the canvas opaque Can't find variable: createImageBitmap
+FAIL Test that an ImageBitmapRenderingContext with alpha enabled preserves the alpha Can't find variable: createImageBitmap
+FAIL Test that the 'alpha' context creation attribute is true by default Can't find variable: createImageBitmap
+

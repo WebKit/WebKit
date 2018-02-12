@@ -1,3 +1,29 @@
+2018-02-12  Dean Jackson  <dino@apple.com>
+
+        Update expected results for this branch.
+        <rdar://problem/37331740>
+
+        * platform/mac-highsierra-wk1/TestExpectations: Added.
+        * platform/mac-highsierra-wk1/fast/canvas/offscreen-enabled-expected.txt: Added.
+        * platform/mac-highsierra-wk1/fast/mediacapturefromelement/CanvasCaptureMediaStream-imagebitmaprenderingcontext-expected.txt: Added.
+        * platform/mac-highsierra-wk1/http/wpt/2dcontext/imagebitmap/createImageBitmap-expected.txt: Added.
+        * platform/mac-highsierra-wk1/http/wpt/2dcontext/imagebitmap/createImageBitmap-sizing-expected.txt: Added.
+        * platform/mac-highsierra-wk1/http/wpt/2dcontext/imagebitmap/drawImage-ImageBitmap-expected.txt: Added.
+        * platform/mac-highsierra-wk1/http/wpt/offscreen-canvas/getContext-webgl-expected.txt: Added.
+        * platform/mac-highsierra-wk1/http/wpt/offscreen-canvas/offscreencanvas.constructor-expected.txt: Added.
+        * platform/mac-highsierra-wk1/http/wpt/offscreen-canvas/transferToImageBitmap-empty-expected.txt: Added.
+        * platform/mac-highsierra-wk1/imported/w3c/web-platform-tests/2dcontext/imagebitmap/createImageBitmap-drawImage-expected.txt: Added.
+        * platform/mac-highsierra-wk1/imported/w3c/web-platform-tests/2dcontext/imagebitmap/createImageBitmap-invalid-args-expected.txt: Added.
+        * platform/mac-highsierra-wk1/imported/w3c/web-platform-tests/2dcontext/imagebitmap/createImageBitmap-sizeOverflow-expected.txt: Added.
+        * platform/mac-highsierra-wk1/imported/w3c/web-platform-tests/imagebitmap-renderingcontext/bitmaprenderer-as-imagesource-expected.txt: Added.
+        * platform/mac-highsierra-wk1/imported/w3c/web-platform-tests/imagebitmap-renderingcontext/context-creation-expected.txt: Added.
+        * platform/mac-highsierra-wk1/imported/w3c/web-platform-tests/imagebitmap-renderingcontext/context-creation-with-alpha-expected.txt: Added.
+        * platform/mac-highsierra-wk1/imported/w3c/web-platform-tests/imagebitmap-renderingcontext/tranferFromImageBitmap-null-expected.txt: Added.
+        * platform/mac-highsierra-wk1/imported/w3c/web-platform-tests/imagebitmap-renderingcontext/transferFromImageBitmap-detached-expected.txt: Added.
+        * platform/mac-highsierra-wk1/inspector/canvas/requestContent-bitmaprenderer-expected.txt: Added.
+        * platform/mac/inspector/canvas/recording-2d-expected.png: Added.
+        * platform/mac/inspector/canvas/requestContent-bitmaprenderer-expected.png: Added.
+
 2018-02-12  Jason Marcell  <jmarcell@apple.com>
 
         Cherry-pick r228231. rdar://problem/37408885
