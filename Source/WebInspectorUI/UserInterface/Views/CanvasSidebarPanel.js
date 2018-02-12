@@ -48,11 +48,18 @@ WI.CanvasSidebarPanel = class CanvasSidebarPanel extends WI.NavigationSidebarPan
         this._canvasTreeOutline = this.createContentTreeOutline(suppressFiltering);
         this._canvasTreeOutline.element.classList.add("canvas");
 
+        let recordingContent = this.contentView.element.appendChild(document.createElement("div"));
+        recordingContent.className = "recording-content";
+
         this._recordingNavigationBar = new WI.NavigationBar;
-        this.contentView.addSubview(this._recordingNavigationBar);
+        this._recordingNavigationBar.element.classList.add("hidden");
+        recordingContent.appendChild(this._recordingNavigationBar.element);
 
         this._recordingTreeOutline = this.contentTreeOutline;
-        this.contentView.element.appendChild(this._recordingTreeOutline.element);
+        recordingContent.appendChild(this._recordingTreeOutline.element);
+
+        this._recordingTreeOutline.customIndent = true;
+        this._recordingTreeOutline.registerScrollVirtualizer(recordingContent, 20);
 
         this._canvasTreeOutline.addEventListener(WI.TreeOutline.Event.SelectionDidChange, this._treeOutlineSelectionDidChange, this);
         this._recordingTreeOutline.addEventListener(WI.TreeOutline.Event.SelectionDidChange, this._treeOutlineSelectionDidChange, this);
@@ -104,6 +111,19 @@ WI.CanvasSidebarPanel = class CanvasSidebarPanel extends WI.NavigationSidebarPan
         if (!this._recording)
             return;
 
+        let selectedTreeElement = this._recordingTreeOutline.selectedTreeElement;
+        if (!action) {
+            if (selectedTreeElement)
+                selectedTreeElement.deselect();
+            return;
+        }
+
+        if (selectedTreeElement && selectedTreeElement instanceof WI.FolderTreeElement) {
+            let lastActionTreeElement = selectedTreeElement.children.lastValue;
+            if (action === lastActionTreeElement.representedObject)
+                return;
+        }
+
         let treeElement = this._recordingTreeOutline.findTreeElement(action);
         console.assert(treeElement, "Missing tree element for recording action.", action);
         if (!treeElement)
@@ -121,6 +141,7 @@ WI.CanvasSidebarPanel = class CanvasSidebarPanel extends WI.NavigationSidebarPan
         super.shown();
 
         this.contentBrowser.addEventListener(WI.ContentBrowser.Event.CurrentRepresentedObjectsDidChange, this._currentRepresentedObjectsDidChange, this);
+        this._currentRepresentedObjectsDidChange();
     }
 
     hidden()
@@ -234,6 +255,7 @@ WI.CanvasSidebarPanel = class CanvasSidebarPanel extends WI.NavigationSidebarPan
         }
 
         this.canvas = null;
+        this.recording = null;
     }
 
     _treeOutlineSelectionDidChange(event)
@@ -265,8 +287,10 @@ WI.CanvasSidebarPanel = class CanvasSidebarPanel extends WI.NavigationSidebarPan
     {
         this._canvasTreeOutline.removeChildren();
 
-        if (!this._canvas)
+        if (!this._canvas) {
+            this._recordingNavigationBar.element.classList.add("hidden");
             return;
+        }
 
         const showRecordings = false;
         let canvasTreeElement = new WI.CanvasTreeElement(this._canvas, showRecordings);
@@ -290,6 +314,7 @@ WI.CanvasSidebarPanel = class CanvasSidebarPanel extends WI.NavigationSidebarPan
     _recordingChanged()
     {
         this._recordingTreeOutline.removeChildren();
+        this.element.classList.toggle("has-recordings", !!this._recording);
 
         if (!this._recording)
             return;
@@ -356,10 +381,9 @@ WI.CanvasSidebarPanel = class CanvasSidebarPanel extends WI.NavigationSidebarPan
             this._scopeBar = null;
         }
 
-        if (!this._canvas || !this._canvas.recordingCollection.items.size) {
-            this.element.classList.remove("has-recordings");
+        this._recordingNavigationBar.element.classList.toggle("hidden", !this._canvas || !this._recording);
+        if (!this._recording || !this._canvas)
             return;
-        }
 
         let scopeBarItems = [];
         let selectedScopeBarItem = null;
@@ -377,8 +401,6 @@ WI.CanvasSidebarPanel = class CanvasSidebarPanel extends WI.NavigationSidebarPan
         this._scopeBar = new WI.ScopeBar("canvas-recordinga-scope-bar", scopeBarItems, selectedScopeBarItem, true);
         this._scopeBar.addEventListener(WI.ScopeBar.Event.SelectionChanged, this._scopeBarSelectionChanged, this);
         this._recordingNavigationBar.insertNavigationItem(this._scopeBar, 0);
-
-        this.element.classList.add("has-recordings");
     }
 };
 

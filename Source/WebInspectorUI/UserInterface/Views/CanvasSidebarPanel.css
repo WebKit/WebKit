@@ -40,7 +40,7 @@
     content: url(../Images/Canvas3D.svg);
 }
 
-.sidebar > .panel.navigation.canvas > .content > .navigation-bar {
+.sidebar > .panel.navigation.canvas > .content > .recording-content > .navigation-bar {
     border-top: 1px solid var(--border-color);
 }
 
@@ -50,22 +50,22 @@
 }
 
 .sidebar > .panel.navigation.canvas:not(.has-recordings) > .filter-bar,
-.sidebar > .panel.navigation.canvas:not(.has-recordings) > .content > .navigation-bar {
+.sidebar > .panel.navigation.canvas:not(.has-recordings) > .content > .recording-content {
     display: none;
-}
-
-.sidebar > .panel.navigation.canvas > .content > .tree-outline .item.recording > .icon {
-    content: url(../Images/Recording.svg);
 }
 
 .sidebar > .panel.navigation.canvas > .content > .tree-outline .item.shader-program > .icon {
     content: image-set(url(../Images/DocumentGL.png) 1x, url(../Images/DocumentGL@2x.png) 2x);
 }
 
-.sidebar > .panel.navigation.canvas > .content > .tree-outline .item.folder-icon > .icon {
+.sidebar > .panel.navigation.canvas > .content > .recording-content > .tree-outline .item.recording > .icon {
+    content: url(../Images/Recording.svg);
+}
+
+.sidebar > .panel.navigation.canvas > .content > .recording-content > .tree-outline .item.folder-icon > .icon {
     content: url(../Images/RenderingFrame.svg);
 }
 
-.sidebar > .panel.navigation.canvas > .content > .tree-outline .item.folder-icon > .status {
+.sidebar > .panel.navigation.canvas > .content > .recording-content > .tree-outline .item.folder-icon > .status {
     line-height: 16px;
 }
