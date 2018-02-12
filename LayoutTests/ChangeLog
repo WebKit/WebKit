@@ -1,5 +1,14 @@
 2018-02-12  Matt Lewis  <jlewis3@apple.com>
 
+        Marked http/tests/workers/service/basic-messageport.html as flaky on macOS WK2.
+        https://bugs.webkit.org/show_bug.cgi?id=182630
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk2/TestExpectations:
+
+2018-02-12  Matt Lewis  <jlewis3@apple.com>
+
         Unreviewed, rolling out r228376.
 
         This caused accessibility/mac/selection-notification-focus-
