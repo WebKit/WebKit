@@ -1,3 +1,13 @@
+2018-02-11  Yousuke Kimoto  <yousuke.kimoto@sony.com>
+
+        [WinCairo] Add WKBaseWin.h
+        https://bugs.webkit.org/show_bug.cgi?id=182681
+
+        Reviewed by Yusuke Suzuki.
+
+        * PlatformWin.cmake:
+        * Shared/API/c/win/WKBaseWin.h: Added.
+
 2018-02-09  Ross Kirsling  <ross.kirsling@sony.com>
 
         Remove invalidated WebPage::handleEditingKeyboardEvent default implementation after r228260.

@@ -154,6 +154,7 @@ set(WebKit_FORWARDING_HEADERS_DIRECTORIES
     Shared/API/c
 
     Shared/API/c/cf
+    Shared/API/c/win
 
     UIProcess/API/c
     UIProcess/API/cpp
