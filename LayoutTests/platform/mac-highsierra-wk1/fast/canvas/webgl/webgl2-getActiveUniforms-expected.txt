@@ -1,0 +1,11 @@
+CONSOLE MESSAGE: line 1: TypeError: null is not an object (evaluating 'gl.NO_ERROR')
+Checks for proper getActiveUniforms() behavior on a simple WebGL 2 program.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+FAIL successfullyParsed should be true. Was false.
+Some tests failed.
+
+TEST COMPLETE
+

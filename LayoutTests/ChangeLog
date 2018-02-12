@@ -3,6 +3,18 @@
         Update expected results for this branch.
         <rdar://problem/37331740>
 
+        * fast/canvas/webgpu/webgpu-dispatch.html:
+        * platform/mac-highsierra-wk1/fast/canvas/webgl/webgl2-getActiveUniforms-expected.txt: Added.
+        * platform/mac-highsierra-wk1/fast/canvas/webgpu/webgpu-dispatch-expected.txt: Added.
+        * platform/mac-highsierra-wk1/fast/canvas/webgpu/webgpu-runtime-flag-expected.txt: Added.
+        * platform/mac-highsierra-wk1/inspector/canvas/create-context-webgpu-expected.txt: Added.
+        * platform/mac-highsierra-wk1/inspector/canvas/resolveCanvasContext-webgpu-expected.txt: Added.
+
+2018-02-12  Dean Jackson  <dino@apple.com>
+
+        Update expected results for this branch.
+        <rdar://problem/37331740>
+
         * platform/mac-highsierra-wk1/TestExpectations: Added.
         * platform/mac-highsierra-wk1/fast/canvas/offscreen-enabled-expected.txt: Added.
         * platform/mac-highsierra-wk1/fast/mediacapturefromelement/CanvasCaptureMediaStream-imagebitmaprenderingcontext-expected.txt: Added.

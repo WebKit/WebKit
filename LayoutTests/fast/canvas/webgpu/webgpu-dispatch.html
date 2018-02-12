@@ -40,6 +40,11 @@ function run() {
 
     window.internals.settings.setWebGPUEnabled(true);
     let gpu = document.createElement("canvas").getContext("webgpu");
+    if (!gpu) {
+        if (window.testRunner)
+            window.testRunner.notifyDone();
+        return;
+    }
     let commandQueue = gpu.createCommandQueue();
 
     let library = gpu.createLibrary(document.getElementById("script").text);

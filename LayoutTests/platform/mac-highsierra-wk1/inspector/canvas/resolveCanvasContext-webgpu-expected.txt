@@ -1,0 +1,8 @@
+Tests for the Canvas.resolveCanvasContext command for WebGPU contexts.
+
+
+== Running test suite: Canvas.resolveCanvasContextWebGPU
+-- Running test case: Canvas.resolveCanvasContextWebGPU.validIdentifier
+!! EXCEPTION: Missing Canvas.
+Stack Trace: #0: (anonymous) ((unknown))
+

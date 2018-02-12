@@ -1,0 +1,10 @@
+FAIL: Timed out waiting for notifyDone to be called
+Test that CanvasManager tracks creation and destruction of WebGPU canvases.
+
+
+== Running test suite: Canvas.CreateContextWebGPU
+-- Running test case: Canvas.CreateContextWebGPU.NoCanvases
+PASS: CanvasManager should have no canvases.
+
+-- Running test case: Canvas.CreateContextWebGPU.Attached
+
