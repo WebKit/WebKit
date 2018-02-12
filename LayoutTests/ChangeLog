@@ -1,3 +1,12 @@
+2018-02-12  Matt Lewis  <jlewis3@apple.com>
+
+        Skipped webgl/1.0.3/conformance/rendering/many-draw-calls.html on iOS Simulator Debug WK2
+        https://bugs.webkit.org/show_bug.cgi?id=182144
+
+        Unreviewed test expectations.
+
+        * platform/ios-wk2/TestExpectations:
+
 2018-02-12  Chris Fleizach  <cfleizach@apple.com>
 
         AX: defer focusedUIElement notifications

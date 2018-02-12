@@ -1317,3 +1317,5 @@ webkit.org/b/181957 [ Release ] http/tests/misc/resource-timing-resolution.html 
 
 webkit.org/b/181821 fast/visual-viewport/ios/caret-after-focus-in-fixed.html [ Pass Failure ]
 
+webkit.org/b/182144 [ Debug ] webgl/1.0.3/conformance/rendering/many-draw-calls.html [ Skip ]
+
